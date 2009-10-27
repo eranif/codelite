@@ -30,7 +30,7 @@
 #include <wx/regex.h>
 
 extern int gdb_result_lex();
-extern bool setGdbLexerInput(const std::string &in);
+extern bool setGdbLexerInput(const std::string &in, bool ascii);
 extern void gdb_result_lex_clean();
 extern std::string gdb_result_string;
 extern void gdb_result_push_buffer(const std::string &new_input);
@@ -487,14 +487,14 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 
 	wxString strline(line), tmpline;
 	TreeNode<wxString, NodeData> *tree = new TreeNode<wxString, NodeData>(data.name, data);
+	strline.Replace(wxT(" \\n "), wxT(""));
+	strline.Replace(wxT("\"\\n"), wxT("\""));
+	strline.Replace(wxT("{\\n "), wxT("{"));
+	strline.Replace(wxT("\\n}"), wxT("}"));
 
 	if (m_evaluateExpression == Locals) {
 #ifdef __WXMAC__
-		strline.Replace(wxT(" \\n "), wxT(""));
-		strline.Replace(wxT("{\\n "), wxT("{"));
-		strline.Replace(wxT("\\n}"), wxT("}"));
-
-		strline = strline.AfterFirst(wxT('{'));
+	strline = strline.AfterFirst(wxT('{'));
 		strline = strline.BeforeLast(wxT('}'));
 		if (strline.EndsWith(wxT("}")))
 #else
@@ -534,7 +534,7 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 			MakeTreeFromFrame(strline, tree);
 		} else {
 			const wxCharBuffer scannerText =  _C(strline);
-			setGdbLexerInput(scannerText.data());
+			setGdbLexerInput(scannerText.data(), true);
 			MakeTree(tree);
 		}
 	} catch ( ... ) {
@@ -821,7 +821,7 @@ void DbgCmdHandlerLocals::MakeTreeFromFrame(wxString &strline, TreeNode<wxString
 		}
 
 		const wxCharBuffer scannerText =  _C(text);
-		setGdbLexerInput(scannerText.data());
+		setGdbLexerInput(scannerText.data(), true);
 
 		MakeSubTree(parent);
 
@@ -853,7 +853,8 @@ bool DbgCmdResolveTypeHandler::ProcessOutput(const wxString& line)
 	// parse the output
 	// ^done,name="var2",numchild="1",value="{...}",type="orxAABOX"
 	const wxCharBuffer scannerText =  _C(line);
-	setGdbLexerInput(scannerText.data());
+	setGdbLexerInput(scannerText.data(), true);
+
 	int type;
 	wxString cmd, var_name;
 	wxString type_name, currentToken;
@@ -1106,7 +1107,7 @@ bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
 		dbg_output = dbg_output.Mid((size_t)(where + 9));
 
 		const wxCharBuffer scannerText =  _C(dbg_output);
-		setGdbLexerInput(scannerText.data());
+		setGdbLexerInput(scannerText.data(), true);
 
 		int type;
 		wxString currentToken;

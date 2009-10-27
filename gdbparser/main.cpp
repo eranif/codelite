@@ -1,8 +1,13 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string>
+#include <errno.h>
+#include <string.h>
+#include <memory.h>
+
 #include "gdb_result_parser.h"
 extern int gdb_result_lex();
-extern bool setGdbLexerInput(const std::string &in);
+extern bool setGdbLexerInput(const std::string &in, bool ascii);
 extern void gdb_parse_result(const std::string &in);
 extern void gdb_result_push_buffer(const std::string &new_input);
 extern void gdb_result_pop_buffer();
@@ -106,10 +111,17 @@ char *loadFile(const char *fileName)
 void MakeTree();
 bool testParseLocals()
 {
-	char *l = loadFile("test_locals.txt");
+	char *l = loadFile("test.txt");
 	if (!l) {
 		return false;
 	}
+//	setGdbLexerInput( l );
+////	MakeTree();
+//	int t(0);
+//	while(t = gdb_result_lex()) {
+//		printf("TYPE: %04d [%s]\n", t, gdb_result_string.c_str());
+//	}
+//	gdb_result_lex_clean();
 
 	std::string strline = l, tmpline;
 
@@ -121,7 +133,7 @@ bool testParseLocals()
 	if(pos != std::string::npos){
 		strline = strline.substr(0, pos);
 	}
-	
+
 #ifdef __WXMAC__
 	if(strline.find("^done,locals={") != std::string::npos)
 #else
@@ -135,9 +147,8 @@ bool testParseLocals()
 		strline = strline.erase(strline.length()-1);
 	}
 
-	setGdbLexerInput(strline);
+	setGdbLexerInput(strline, true);
 	MakeTree();
-
 	gdb_result_lex_clean();
 
 	return true;

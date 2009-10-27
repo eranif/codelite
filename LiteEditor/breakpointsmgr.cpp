@@ -320,7 +320,7 @@ void BreakptMgr::UnDisableAllBreakpoints()
 		bp.is_enabled = true;
 		*iter = bp;
 	}
-	
+
 	RefreshBreakpointMarkers(); // Make this visible to the user
 }
 
@@ -400,7 +400,7 @@ void BreakptMgr::ApplyPendingBreakpoints()
 		dbgr->Break(bp);
 		m_bps.push_back(bp);
 	}
-  
+
 	if (contIsNeeded) {
 		dbgr->Continue();
 	}
@@ -627,10 +627,10 @@ void BreakptMgr::EditBreakpoint(int index, bool &bpExist)
 	RefreshBreakpointMarkers();
 }
 
-void BreakptMgr::ReconcileBreakpoints(std::vector<BreakpointInfo>& li)
+void BreakptMgr::ReconcileBreakpoints(const std::vector<BreakpointInfo>& li)
 {
 	std::vector<BreakpointInfo> updated_bps;
-	std::vector<BreakpointInfo>::iterator li_iter = li.begin();
+	std::vector<BreakpointInfo>::const_iterator li_iter = li.begin();
 	for (; li_iter != li.end(); ++li_iter) {
 		int index = FindBreakpointById(li_iter->debugger_id, m_bps);
 		if (index == wxNOT_FOUND) {
@@ -671,7 +671,7 @@ void BreakptMgr::BreakpointHit(int id)
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
 		// A likely command, presumably at the end of the command-list, is 'continue' or 'cont'
-		// Filter this out and do it separately, otherwise Manager::UpdateLostControl isn't called to blank the indicator 
+		// Filter this out and do it separately, otherwise Manager::UpdateLostControl isn't called to blank the indicator
 		static wxRegEx reContinue(wxT("(([[:space:]]|(^))((cont$)|(continue)))"));
 		bool needsCont = false;
 		wxString commands = bp.commandlist;
@@ -947,7 +947,7 @@ void BreakptMgr::DropBreakpoint(std::vector<BreakpointInfo>& BPs, int newline)
 	// AddBreakpoint() doesn't do the disabled state: it can't, and there's no good way round this
 	// So if the dragged bp was disabled, we need to enable it here, otherwise it retains its disabled icon
 	bp.is_enabled = true;
-	
+
 	if (DelBreakpoint(bid)) {
 		AddBreakpoint(bp);
 		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
@@ -972,7 +972,7 @@ bool myDragImage::StartDrag()
 	m_startx = pt.x;
 	Move(pt);
 	Show();
-	
+
 	return false;
 }
 
@@ -989,7 +989,7 @@ void myDragImage::OnEndDrag(wxMouseEvent& event)
 	editor->SetCursor(oldcursor);
 	editor->Disconnect(wxEVT_MOTION, wxMouseEventHandler(myDragImage::OnMotion), NULL, this);
 	editor->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(myDragImage::OnEndDrag), NULL, this);
-	
+
 	// If the cursor is within spitting distance of the bp margin, assume it's a genuine drop
 	wxPoint pt = event.GetPosition();
 	if ((pt.x < 0) || ((pt.x - m_startx) > 10)) {

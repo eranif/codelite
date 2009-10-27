@@ -968,7 +968,7 @@ bool DbgGdb::EvaluateExpressionToString(const wxString &expression, const wxStri
 	watchName << ++counter;
 
 	wxString command;
-	command << wxT("-var-create ") << watchName << wxT(" 0 ") << expression;
+	command << wxT("-var-create ") << watchName << wxT(" * ") << expression;
 	//first create the expression
 	bool res = WriteCommand(command, new DbgCmdHandlerVarCreator(m_observer));
 	if (!res) {
@@ -1384,7 +1384,6 @@ bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo> &bpList, const wx
 
 	ExecuteCmd(wxT("set width 0"));
 	ExecuteCmd(wxT("set height 0"));
-	ExecuteCmd(wxT("set print elements 100")); // Allow large strings
 	ExecuteCmd(wxT("set print pretty on"));  // pretty printing
 
 	// set the project startup commands

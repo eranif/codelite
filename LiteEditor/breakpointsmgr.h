@@ -133,14 +133,14 @@ public:
 	void SetPendingBreakpoints(const std::vector<BreakpointInfo>& bps) {
 		m_PendingBPs.clear(); m_PendingBPs = bps;
 	}
-	
+
 	/**
 	 * @brief Returns true if there are pending breakpoints
 	 */
 	bool PendingBreakpointsExist() {
 		return ! m_PendingBPs.empty();
 	}
-  
+
 	/**
 	 * Send again to the debugger any breakpoints that weren't accepted by the debugger the first time
 	 *  (e.g. because they're inside a plugin)
@@ -230,7 +230,7 @@ public:
 	 * Update the m_bps with what the debugger really contains
 	 * from vector of breakpoints acquired from -break-list
 	 */
-	void ReconcileBreakpoints(std::vector<BreakpointInfo>& li);
+	void ReconcileBreakpoints(const std::vector<BreakpointInfo>& li);
 
 	/**
 	 * Clears the debugger_ids of all breakpoints.
@@ -264,17 +264,17 @@ public:
 	 * Notification from the debugger that breakpoint id was just hit
 	 */
 	void BreakpointHit(int id);
-	
+
 	/**
 	 * Starts 'drag'n'drop' for breakpoints
 	 */
 	void DragBreakpoint(LEditor* editor, int line, wxBitmap bitmap);
-	
+
 	/**
 	 * The 'drop' bit of breakpoints 'drag'n'drop'
 	 */
 	void DropBreakpoint(std::vector<BreakpointInfo>& BPs, int newline);
-	
+
 	/**
 	 * Getter for the myDragImage pointer
 	 */
@@ -305,7 +305,7 @@ class myDragImage  :  public wxDragImage, public wxEvtHandler
 	std::vector<BreakpointInfo> lineBPs;
 	int m_startx; // The initial x position
 	wxCursor oldcursor;
-	
+
 public:
 	myDragImage(LEditor* ed, wxBitmap bitmap, std::vector<BreakpointInfo>& BPs);
 	bool StartDrag();

@@ -568,11 +568,21 @@ void Frame::Initialize(bool loadLastSession)
 		inf.SetFramePosition(wxPoint(30, 3));
 	}
 
-	if (inf.GetFramePosition().y < 0 || inf.GetFramePosition().y > screenH) {
-		inf.SetFrameSize(wxSize(800, 600));
+	if (inf.GetFramePosition().y < 400 || inf.GetFramePosition().y > screenH) {
+		inf.SetFramePosition(wxPoint(30, 3));
 	}
 
-	m_theFrame = new Frame(	NULL,
+	wxSize frameSize ( inf.GetFrameSize() );
+	if ( inf.GetFrameSize().x < 400 || inf.GetFrameSize().x > screenW ) {
+		frameSize.SetWidth( 400 );
+	}
+	if ( inf.GetFrameSize().y < 400 || inf.GetFrameSize().y > screenH ) {
+		frameSize.SetHeight( 400 );
+	}
+
+	inf.SetFrameSize( frameSize );
+
+	m_theFrame = new Frame( NULL,
 	                        wxID_ANY,
 	                        title,
 	                        inf.GetFramePosition(),
@@ -1482,7 +1492,7 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 			wxWindowDisabler disableAll;
 			wxBusyInfo info(_T("Updating tags database, please wait..."), this);
 			wxTheApp->Yield();
-			
+
 			// Remove all tags from the database which starts with the paths which were
 			// removed from the parser include path
 			ITagsStorage *db = TagsManagerST::Get()->GetDatabase();
@@ -3297,7 +3307,7 @@ void Frame::ReloadExternallyModifiedProjectFiles()
 	if ( ManagerST::Get()->IsWorkspaceOpen() == false ) {
 		return;
 	}
-	
+
 	Workspace *workspace = WorkspaceST::Get();
 	bool workspace_modified = false, project_modified = false;
 

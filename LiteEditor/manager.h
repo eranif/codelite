@@ -467,7 +467,10 @@ public:
 
 	void SetMemory(const wxString &address, size_t count, const wxString &hex_value);
 
+	//---------------------------------------------------
 	// Debugging API
+	//---------------------------------------------------
+
 	void DbgStart(long pid = wxNOT_FOUND);
 	void DbgStop();
 	void DbgMarkDebuggerLine(const wxString &fileName, int lineno);
@@ -481,22 +484,25 @@ public:
 	void DbgClearWatches();
 	void DbgRestoreWatches();
 
-    // IDebuggerObserver event handlers
+	//---------------------------------------------------
+    // Internal implementaion for various debugger events
+	//---------------------------------------------------
+
 	void UpdateAddLine              (const wxString &line, const bool OnlyIfLoggingOn = false);
 	void UpdateFileLine             (const wxString &file, int lineno);
 	void UpdateLocals               (TreeNode<wxString, NodeData> *tree);
-    void UpdateStopped              ();
 	void UpdateGotControl           (DebuggerReasons reason);
 	void UpdateLostControl          ();
-	void UpdateBpAdded              (const int internal_id, const int debugger_id);
-	void UpdateExpression           (const wxString &expression, const wxString &evaluated);
 	void UpdateQuickWatch           (const wxString &expression, TreeNode<wxString, NodeData> *tree);
-	void UpdateStackList            (const StackEntryArray &stackArray);
 	void UpdateRemoteTargetConnected(const wxString &line);
-	void ReconcileBreakpoints       (std::vector<BreakpointInfo>& li);
-	void UpdateBpHit                (int id);
 	void UpdateTypeReolsved         (const wxString &expression, const wxString &type);
 	void UpdateTip                  (const wxString &expression, const wxString &tip);
+
+	//---------------------------------------------------
+	// Handle debugger event
+	//---------------------------------------------------
+
+	void DebuggerUpdate( const DebuggerEvent &event );
 
     //--------------------------- Build Management -----------------------------
 public:

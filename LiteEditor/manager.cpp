@@ -725,17 +725,17 @@ void Manager::RetagWorkspace(bool quickRetag)
 	for(size_t i=0; i<excludePaths.GetCount(); i++) {
 		fcFileOpener::Instance()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
 	}
-	
+
 	{
-		wxWindowDisabler disableAll; 
+		wxWindowDisabler disableAll;
 		wxBusyInfo bi(wxT("Scanning for include files to parse. please wait..."), Frame::Get());
-		
+
 		for(size_t i=0; i<projectFiles.size(); i++) {
 			crawlerScan(projectFiles.at(i).GetFullPath().mb_str(wxConvUTF8).data());
 			wxTheApp->Yield();
 		}
 	}
-	
+
 	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
 
 	// add to this set the workspace files to create a unique list of
@@ -2194,11 +2194,6 @@ void Manager::UpdateLocals ( TreeNode<wxString, NodeData> *tree )
 	}
 }
 
-void Manager::UpdateStopped()
-{
-	//do something here....
-}
-
 void Manager::UpdateGotControl ( DebuggerReasons reason )
 {
 	//put us on top of the z-order window
@@ -2282,11 +2277,6 @@ void Manager::UpdateLostControl()
 	// Reset the debugger call-stack pane
 	Frame::Get()->GetDebuggerPane()->GetFrameListView()->Clear();
 	Frame::Get()->GetDebuggerPane()->GetFrameListView()->SetCurrentLevel(0);
-}
-
-void Manager::UpdateBpHit(int id)
-{
-	GetBreakpointsMgr()->BreakpointHit(id);
 }
 
 void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name)
@@ -2394,21 +2384,6 @@ void Manager::UpdateTip(const wxString& expression, const wxString& tip)
 	Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->UpdateView( expression, tip );
 }
 
-void Manager::ReconcileBreakpoints(std::vector<BreakpointInfo>& li)
-{
-	GetBreakpointsMgr()->ReconcileBreakpoints(li);
-}
-
-void Manager::UpdateBpAdded(const int internal_id, const int debugger_id)
-{
-	GetBreakpointsMgr()->SetBreakpointDebuggerID(internal_id, debugger_id);
-}
-
-void Manager::UpdateExpression ( const wxString &expression, const wxString &evaluated )
-{
-	Frame::Get()->GetDebuggerPane()->GetWatchesTable()->UpdateExpression ( expression, evaluated );
-}
-
 void Manager::UpdateQuickWatch ( const wxString &expression, TreeNode<wxString, NodeData> *tree )
 {
 	if ( m_useTipWin ) {
@@ -2440,11 +2415,6 @@ void Manager::UpdateQuickWatch ( const wxString &expression, TreeNode<wxString, 
 			}
 		}
 	}
-}
-
-void Manager::UpdateStackList ( const StackEntryArray &stackArr )
-{
-	Frame::Get()->GetDebuggerPane()->GetFrameListView()->Update ( stackArr );
 }
 
 void Manager::UpdateRemoteTargetConnected(const wxString& line)
@@ -2554,10 +2524,10 @@ void Manager::RunCustomPreMakeCommand ( const wxString &project )
 	if ( m_shellProcess ) {
 		delete m_shellProcess;
 	}
-	m_shellProcess = new CompileRequest (	Frame::Get(), //owner window
+	m_shellProcess = new CompileRequest ( Frame::Get(),  //owner window
 	                                      info,
-	                                      wxEmptyString, 	//no file name (valid only for build file only)
-	                                      true );			//run premake step only
+	                                      wxEmptyString, //no file name (valid only for build file only)
+	                                      true );        //run premake step only
 	m_shellProcess->Process();
 }
 
@@ -2763,6 +2733,76 @@ void Manager::DoCmdWorkspace ( int cmd )
 void Manager::DbgClearWatches()
 {
 	m_dbgWatchExpressions.Clear();
+}
+
+void Manager::DebuggerUpdate(const DebuggerEvent& event)
+{
+	switch ( event.m_updateReason ) {
+
+	case DBG_UR_GOT_CONTROL:
+		UpdateGotControl(event.m_controlReason);
+		break;
+
+	case DBG_UR_LOST_CONTROL:
+		UpdateLostControl();
+		break;
+
+	case DBG_UR_FILE_LINE:
+		UpdateFileLine(event.m_file, event.m_line);
+		break;
+
+	case DBG_UR_ADD_LINE:
+		UpdateAddLine(event.m_text, event.m_onlyIfLogging);
+		break;
+
+	case DBG_UR_BP_ADDED:
+		GetBreakpointsMgr()->SetBreakpointDebuggerID(event.m_bpInternalId, event.m_bpDebuggerId);
+		break;
+
+	case DBG_UR_STOPPED:
+		// Nothing to do here
+		break;
+
+	case DBG_UR_LOCALS:
+		UpdateLocals(event.m_tree);
+		break;
+
+	case DBG_UR_EXPRESSION:
+		Frame::Get()->GetDebuggerPane()->GetWatchesTable()->UpdateExpression ( event.m_expression, event.m_evaluated );
+		break;
+
+	case DBG_UR_QUICK_WATCH:
+		UpdateQuickWatch(event.m_expression, event.m_tree);
+		break;
+
+	case DBG_UR_UPDATE_STACK_LIST:
+		Frame::Get()->GetDebuggerPane()->GetFrameListView()->Update ( event.m_stack );
+		break;
+
+	case DBG_UR_REMOTE_TARGET_CONNECTED:
+		UpdateRemoteTargetConnected( event.m_text );
+		break;
+
+	case DBG_UR_RECONCILE_BPTS:
+		GetBreakpointsMgr()->ReconcileBreakpoints( event.m_bpInfoList );
+		break;
+
+	case DBG_UR_BP_HIT:
+		GetBreakpointsMgr()->BreakpointHit( event.m_bpDebuggerId );
+		break;
+
+	case DBG_UR_TYPE_RESOLVED:
+		UpdateTypeReolsved( event.m_expression, event.m_evaluated );
+		break;
+
+	case DBG_UR_TIP:
+		UpdateTip( event.m_expression, event.m_text );
+		break;
+
+	case DBG_UR_INVALID:
+	default:
+		break;
+	}
 }
 
 

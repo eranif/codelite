@@ -3354,7 +3354,7 @@ wxMenu* LEditor::DoCreateDebuggerWatchMenu(const wxString &word)
 		item = new wxMenuItem(menu, wxNewId(), menuItemText);
 		menu->Prepend(item);
 		Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgCustomWatch), NULL, this);
-		m_dynItems.push_back(item);
+//		m_dynItems.push_back(item);
 		m_customCmds[item->GetId()] = cmd.GetCommand();
 	}
 

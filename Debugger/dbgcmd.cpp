@@ -1052,7 +1052,7 @@ bool DbgCmdListThreads::ProcessOutput(const wxString& line)
 
 	wxString output( GetOutput() );
 	DebuggerEvent e;
-
+	
 	//parse the debugger output
 	wxStringTokenizer tok(output, wxT("\n"), wxTOKEN_STRTOK);
 	while ( tok.HasMoreTokens() ) {
@@ -1181,6 +1181,7 @@ bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
 
 		gdb_result_lex_clean();
 	}
+	e.m_updateReason = DBG_UR_WATCHMEMORY;
 	e.m_evaluated  = output;
 	e.m_expression = m_address;
 	m_observer->DebuggerUpdate( e );

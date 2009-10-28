@@ -1,4 +1,8 @@
 
+class wxEvtHandler;
+class IProcess;
+#include <wx/string.h>
+
 #ifdef __WXMSW__
 #   include "winprocess_impl.h"
 #else

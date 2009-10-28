@@ -1,5 +1,5 @@
 #include "unixprocess_impl.h"
-#if defined(__WXMAC )||defined(__WXGTK__)
+#if defined(__WXMAC__)||defined(__WXGTK__)
 
 #include <unistd.h>
 #include <signal.h>

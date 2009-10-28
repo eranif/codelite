@@ -1,7 +1,7 @@
 #ifndef __unixprocessimpl__
 #define __unixprocessimpl__
 
-#if defined(__WXMAC )||defined(__WXGTK__)
+#if defined(__WXMAC__)||defined(__WXGTK__)
 #include "asyncprocess.h"
 #include "processreaderthread.h"
 

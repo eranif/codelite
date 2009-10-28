@@ -505,13 +505,17 @@ void LEditor::SetProperties()
 	IndicatorSetUnder(2, false);
 	IndicatorSetUnder(HYPERLINK_INDICATOR, false);
 	IndicatorSetUnder(MATCH_INDICATOR, false);
+	IndicatorSetUnder(DEBUGGER_INDICATOR, false);
 #else
 	IndicatorSetUnder(1, true);
 	IndicatorSetUnder(2, true);
 	IndicatorSetUnder(HYPERLINK_INDICATOR, true);
 	IndicatorSetUnder(MATCH_INDICATOR, true);
+	IndicatorSetUnder(DEBUGGER_INDICATOR, true);
 #endif
-	SetInidicatorValue(MATCH_INDICATOR, 1);
+	SetInidicatorValue(MATCH_INDICATOR,    1);
+	SetInidicatorValue(DEBUGGER_INDICATOR, 1);
+
 	SetUserIndicatorStyleAndColour(wxSCI_INDIC_SQUIGGLE, wxT("RED"));
 
 	wxColour col2(wxT("LIGHT BLUE"));
@@ -522,9 +526,12 @@ void LEditor::SetProperties()
 
 	IndicatorSetForeground(1, options->GetBookmarkBgColour());
 	IndicatorSetForeground(2, col2);
-	IndicatorSetStyle(HYPERLINK_INDICATOR, wxSCI_INDIC_PLAIN);
-	IndicatorSetStyle(MATCH_INDICATOR, wxSCI_INDIC_BOX);
+	IndicatorSetStyle     (HYPERLINK_INDICATOR, wxSCI_INDIC_PLAIN);
+	IndicatorSetStyle     (MATCH_INDICATOR, wxSCI_INDIC_BOX);
 	IndicatorSetForeground(MATCH_INDICATOR, wxT("GREY"));
+
+	IndicatorSetStyle     (DEBUGGER_INDICATOR, wxSCI_INDIC_BOX);
+	IndicatorSetForeground(DEBUGGER_INDICATOR, wxT("GREY"));
 
 	// Error
 	wxFont guiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -1801,6 +1808,9 @@ void LEditor::DelAllMarkers()
 
 	SetIndicatorCurrent(HYPERLINK_INDICATOR);
 	IndicatorClearRange(0, GetLength());
+
+	SetIndicatorCurrent(DEBUGGER_INDICATOR);
+	IndicatorClearRange(0, GetLength());
 }
 
 void LEditor::FindNextMarker()
@@ -2502,21 +2512,17 @@ void LEditor::AddDebuggerContextMenu(wxMenu *menu)
 	}
 
 	m_customCmds.clear();
+	wxString menuItemText;
 
 	wxMenuItem *item;
 	item = new wxMenuItem(menu, wxID_SEPARATOR);
 	menu->Prepend(item);
 	m_dynItems.push_back(item);
 
-
-	wxString menuItemText;
-
-	menuItemText.Clear();
-	menuItemText << wxT("Quick Watch '") << word << wxT("'");
-	item = new wxMenuItem(menu, wxNewId(), menuItemText);
-	menu->Prepend(item);
-	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgQuickWatch), NULL, this);
-	m_dynItems.push_back(item);
+	//---------------------------------------------
+	// Add custom commands
+	//---------------------------------------------
+	menu->Prepend(XRCID("debugger_watches"), wxT("More Watches"), DoCreateDebuggerWatchMenu(word));
 
 	menuItemText.Clear();
 	menuItemText << wxT("Add Watch '") << word << wxT("'");
@@ -2525,42 +2531,39 @@ void LEditor::AddDebuggerContextMenu(wxMenu *menu)
 	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgAddWatch), NULL, this);
 	m_dynItems.push_back(item);
 
+
+
+	menuItemText.Clear();
+	menuItemText << wxT("Quick Watch '") << word << wxT("'");
+	item = new wxMenuItem(menu, wxNewId(), menuItemText);
+	menu->Prepend(item);
+	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgQuickWatch), NULL, this);
+	m_dynItems.push_back(item);
+
 	item = new wxMenuItem(menu, wxNewId(), _("Run to cursor"));
 	menu->Prepend(item);
 	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
 	m_dynItems.push_back(item);
-
-	//---------------------------------------------
-	//add custom commands
-	//---------------------------------------------
-	DebuggerSettingsData data;
-	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
-	std::vector<DebuggerCmdData> cmds = data.GetCmds();
-
-	for (size_t i=0; i<cmds.size(); i++) {
-		if (i == 0) {
-			item = new wxMenuItem(menu, wxID_SEPARATOR);
-			menu->Prepend(item);
-			m_dynItems.push_back(item);
-		}
-
-		DebuggerCmdData cmd = cmds.at(i);
-		menuItemText.Clear();
-		menuItemText << wxT("Watch '") << word << wxT("' as '") << cmd.GetName() << wxT("'");
-		item = new wxMenuItem(menu, wxNewId(), menuItemText);
-		menu->Prepend(item);
-		menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgCustomWatch), NULL, this);
-		m_dynItems.push_back(item);
-		m_customCmds[item->GetId()] = cmd.GetCommand();
-	}
 }
 
 void LEditor::RemoveDebuggerContextMenu(wxMenu *menu)
 {
 	std::vector<wxMenuItem*>::iterator iter = m_dynItems.begin();
+
+	// disconnect all event handlers
 	for (; iter != m_dynItems.end(); iter++) {
-		menu->Destroy(*iter);
+		Disconnect((*iter)->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgCustomWatch), NULL, this);
+		menu->Remove( *iter );
 	}
+
+	wxMenuItem *item = menu->FindItem(XRCID("debugger_watches"));
+	while ( item )  {
+		if (item) {
+			menu->Destroy(item);
+		}
+		item = menu->FindItem(XRCID("debugger_watches"));
+	}
+
 	m_dynItems.clear();
 	m_customCmds.clear();
 }
@@ -3331,4 +3334,29 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 		navmgr->AddJump(jumpfrom, CreateBrowseRecord());
 	}
 	return res;
+}
+
+
+wxMenu* LEditor::DoCreateDebuggerWatchMenu(const wxString &word)
+{
+	DebuggerSettingsData data;
+	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
+	std::vector<DebuggerCmdData> cmds = data.GetCmds();
+
+	wxMenu*      menu = new wxMenu();
+	wxMenuItem *item(NULL);
+	wxString    menuItemText;
+
+	for (size_t i=0; i<cmds.size(); i++) {
+		DebuggerCmdData cmd = cmds.at(i);
+		menuItemText.Clear();
+		menuItemText << wxT("Watch '") << word << wxT("' as '") << cmd.GetName() << wxT("'");
+		item = new wxMenuItem(menu, wxNewId(), menuItemText);
+		menu->Prepend(item);
+		Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgCustomWatch), NULL, this);
+		m_dynItems.push_back(item);
+		m_customCmds[item->GetId()] = cmd.GetCommand();
+	}
+
+	return menu;
 }

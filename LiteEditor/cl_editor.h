@@ -41,6 +41,7 @@
 #include "breakpointsmgr.h"
 #include "plugin.h"
 
+#define DEBUGGER_INDICATOR          11
 #define MATCH_INDICATOR             10
 #define USER_INDICATOR              3
 #define HYPERLINK_INDICATOR         4
@@ -562,12 +563,13 @@ private:
 	// Conevert FindReplaceDialog flags to wxSD flags
 	size_t SearchFlags(const FindReplaceData &data);
 
-	void AddDebuggerContextMenu(wxMenu *menu);
-	void RemoveDebuggerContextMenu(wxMenu *menu);
-	void DoBreakptContextMenu(wxPoint clientPt);
-	void DoMarkHyperlink(wxMouseEvent &event, bool isMiddle);
-	void DoQuickJump(wxMouseEvent &event, bool isMiddle);
-	bool DoFindAndSelect(const wxString &pattern, const wxString &what, int start_pos, NavMgr *navmgr);
+	void    AddDebuggerContextMenu(wxMenu *menu);
+	void    RemoveDebuggerContextMenu(wxMenu *menu);
+	void    DoBreakptContextMenu(wxPoint clientPt);
+	void    DoMarkHyperlink(wxMouseEvent &event, bool isMiddle);
+	void    DoQuickJump(wxMouseEvent &event, bool isMiddle);
+	bool    DoFindAndSelect(const wxString &pattern, const wxString &what, int start_pos, NavMgr *navmgr);
+	wxMenu* DoCreateDebuggerWatchMenu(const wxString &word);
 
 	DECLARE_EVENT_TABLE()
 	void OnRemoveMatchInidicator(wxCommandEvent &e);

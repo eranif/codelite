@@ -391,7 +391,7 @@ void ContextCpp::RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<Tag
 	}
 }
 
-wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
+wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, bool forCC)
 {
 	bool cont(true);
 	int depth(0);
@@ -531,6 +531,11 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 
 	if (at < 0) at = 0;
 	wxString expr = ctrl->GetTextRange(at, pos);
+	if( !forCC ) {
+		// If we do not require the expression for CodeCompletion
+		// return the un-touched buffer
+		return expr;
+	}
 
 	//remove comments from it
 	CppScanner sc;
@@ -1295,6 +1300,10 @@ void ContextCpp::OnDbgDwellEnd(wxScintillaEvent &event)
 	wxUnusedVar(event);
 	Manager *mgr = ManagerST::Get();
 	mgr->DbgCancelQuickWatchTip();
+
+	// remove the debugger indicator
+	GetCtrl().SetIndicatorCurrent(DEBUGGER_INDICATOR);
+	GetCtrl().IndicatorClearRange(0, GetCtrl().GetLength());
 }
 
 void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
@@ -1312,27 +1321,31 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 			return;
 		}
 
-		long start(0), end(0);
+		long end(0);
 		long sel_start(0), sel_end(0);
 
-		start = ctrl.WordStartPosition(pos, true);
-		end   = ctrl.WordEndPosition(pos, true);
+		end = ctrl.WordEndPosition  (pos, true);
 
 		// if thers is no selected text, use the word calculated from the caret position
 		if (!ctrl.GetSelectedText().IsEmpty()) {
 			// selection is not empty, use it
 			sel_start = ctrl.GetSelectionStart();
-			sel_end = ctrl.GetSelectionEnd();
+			sel_end   = ctrl.GetSelectionEnd  ();
+			word = ctrl.GetTextRange(sel_start, sel_end);
+
+			// Mark the code we are going to try and show tip for
+			GetCtrl().SetIndicatorCurrent(DEBUGGER_INDICATOR);
+			GetCtrl().IndicatorFillRange(sel_start, sel_end - sel_start);
+
+		} else {
+			word = GetExpression(end, false, &GetCtrl(), false);
+			word.Trim().Trim(false);
+
+			// Mark the code we are going to try and show tip for
+			GetCtrl().SetIndicatorCurrent(DEBUGGER_INDICATOR);
+			GetCtrl().IndicatorFillRange(end - word.length(), word.Length());
 		}
 
-		// incase the cursor is placed inside the selected text,
-		// use the entire selected text and not only the "word"
-		if (pos >= sel_start && pos <= sel_end) {
-			start = sel_start;
-			end = sel_end;
-		}
-
-		word = ctrl.GetTextRange(start, end);
 		if (word.IsEmpty()) {
 			return;
 		}

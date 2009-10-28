@@ -621,6 +621,10 @@ bool DbgGdb::FilterMessage(const wxString &msg)
 		return true;
 	}
 
+	if ( tmpmsg.Contains(wxT("*running,thread-id")) ) {
+		return true;
+	}
+
 	if (tmpmsg.StartsWith(wxT(">"))||msg.StartsWith(wxT(">"))) {
 		// shell line
 		return true;
@@ -757,7 +761,9 @@ void DbgGdb::Poke()
 			cmd.ProcessOutput(line);
 		} else {
 			//Unknow format, just log it
-			m_observer->UpdateAddLine(line);
+			if( m_info.enableDebugLog && !FilterMessage(line)) {
+				m_observer->UpdateAddLine(line);
+			}
 		}
 	}
 }
@@ -783,7 +789,7 @@ void DbgGdb::DoProcessAsyncCommand(wxString &line, wxString &id)
 		//We also need to pass the control back to the program
 		m_observer->UpdateGotControl(DBG_CMD_ERROR);
 
-		if (!FilterMessage(line)) {
+		if ( !FilterMessage(line) && m_info.enableDebugLog ) {
 			m_observer->UpdateAddLine(line);
 		}
 

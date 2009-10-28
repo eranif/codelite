@@ -135,7 +135,7 @@ private:
 	wxString      GetWordUnderCaret();
 	wxString      GetFileImageString(const wxString &ext);
 	wxString      GetImageString(const TagEntry &entry);
-	wxString      GetExpression(long pos, bool onlyWord, LEditor *editor = NULL);
+	wxString      GetExpression(long pos, bool onlyWord, LEditor *editor = NULL, bool forCC = true);
 	void          DoGotoSymbol(TagEntryPtr tag);
 	bool          IsIncludeStatement(const wxString &line, wxString *fileName = NULL);
 	void          RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);

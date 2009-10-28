@@ -20,5 +20,21 @@
 	<string>CodeLite version 1.0</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>	
+	
+	<key>CFBundleDocumentTypes</key> <array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>workspace</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>      <string>cl_workspace.icns</string>
+			<key>CFBundleTypeName</key>          <string>CodeLite workspace</string>
+			<key>CFBundleTypeRole</key>          <string>Editor</string>
+			<key>LSIsAppleDefaultForType</key>   <true/>
+			<key>LSTypeIsPackage</key>           <false/>
+		</dict>
+		
+	</array>
+
 </dict>
 </plist>

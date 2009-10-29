@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="ActiveTip" Database=".\ActiveTip.tags">
-  <Project Name="ActiveTipDemo" Path="ActiveTipDemo\ActiveTipDemo.project" Active="Yes"/>
+<CodeLite_Workspace Name="ActiveTip" Database="./ActiveTip.tags">
+  <Project Name="ActiveTipDemo" Path="ActiveTipDemo/ActiveTipDemo.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="ActiveTipDemo" ConfigName="Debug"/>

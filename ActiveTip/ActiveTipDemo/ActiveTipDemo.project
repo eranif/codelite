@@ -18,10 +18,10 @@
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="ActiveTip">
-    <File Name="ActiveTip\active_tip.h"/>
-    <File Name="ActiveTip\active_tip.cpp"/>
-    <File Name="ActiveTip\ico_plus.xpm"/>
-    <File Name="ActiveTip\ico_minus.xpm"/>
+    <File Name="ActiveTip/active_tip.h"/>
+    <File Name="ActiveTip/active_tip.cpp"/>
+    <File Name="ActiveTip/ico_plus.xpm"/>
+    <File Name="ActiveTip/ico_minus.xpm"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">

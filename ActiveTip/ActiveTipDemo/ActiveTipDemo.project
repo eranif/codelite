@@ -2,7 +2,7 @@
 <CodeLite_Project Name="ActiveTipDemo">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00010001N0005Debug000000000000]]>
+      <![CDATA[00020001N0005Debug0000000000000001N0010Debug_Unix000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
@@ -23,6 +23,8 @@
     <File Name="ActiveTip/ico_plus.xpm"/>
     <File Name="ActiveTip/ico_minus.xpm"/>
   </VirtualDirectory>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Debug"/>
   <Settings Type="Executable">
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes )" Required="yes">
@@ -30,6 +32,33 @@
       </Compiler>
       <Linker Options="-O2;$(shell wx-config --debug=yes --libs --unicode=yes --static=no --universal=no );-mwindows" Required="yes"/>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/ActiveTipDemo" IntermediateDirectory="./Debug" Command="./ActiveTipDemo" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes )" Required="yes">
+        <Preprocessor Value="__WX__"/>
+      </Compiler>
+      <Linker Options="-O2;$(shell wx-config --debug=yes --libs --unicode=yes --static=no --universal=no );-mwindows" Required="yes"/>
+      <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/ActiveTipDemo" IntermediateDirectory="./Debug" Command="./ActiveTipDemo" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands></PostConnectCommands>
@@ -90,6 +119,5 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
+  <Dependencies Name="Debug_Unix"/>
 </CodeLite_Project>

@@ -222,19 +222,25 @@ void ActiveTip::DoDrawLine(wxDC& dc, ATLine& line)
 	wxRect rr = line.GetRect();
 	rr.Deflate(2);
 
-	// Set the colours
+	// draw the background
+	dc.SetBrush( wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK) );
+	dc.SetPen  ( wxColour(wxT("GREY")) );
+	dc.SetTextForeground( wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT) );
+	dc.DrawRectangle( line.GetRect() );
+
+	int plusIconMarginWidth = TEXT_X_PADDING + m_plusBmp.GetWidth() + TEXT_X_PADDING;
+
+	// if the line is active, highlight the inner rectangle,
 	if ( line.GetActive() ) {
 		dc.SetBrush( wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT) );
 		dc.SetPen  ( wxColour(wxT("GREY")) );
 		dc.SetTextForeground( wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT) );
-
-	} else {
-		dc.SetBrush( wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK) );
-		dc.SetPen  ( wxColour(wxT("GREY")) );
-		dc.SetTextForeground( wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT) );
+		wxRect highlightRect = line.GetRect();
+		highlightRect.SetX( highlightRect.GetX() + plusIconMarginWidth );
+		highlightRect.SetWidth( highlightRect.GetWidth() - plusIconMarginWidth );
+		dc.DrawRectangle( highlightRect );
 	}
 
-	dc.DrawRectangle( line.GetRect() );
 	// Draw [+] sign if this line is exapandable
 	int xx ( TEXT_X_PADDING + line.GetRect().x );
 	if ( line.GetIsExpandable() ) {

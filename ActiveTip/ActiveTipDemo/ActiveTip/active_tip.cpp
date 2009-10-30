@@ -146,7 +146,14 @@ void ActiveTip::OnPaint(wxPaintEvent& event)
 			m_collapseRect.SetWidth( m_minusBmp.GetWidth() + TEXT_X_PADDING*2);
 			m_collapseRect.SetHeight( m_minusBmp.GetHeight() + TEXT_Y_PADDING*2);
 			dc.SetTextForeground( wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
-			dc.DrawText( m_rects.at(m_rects.size()-1).m_title, MARGIN_WIDTH +  2* TEXT_X_PADDING, TEXT_Y_PADDING );
+			wxString title;
+			for(size_t i=1; i<m_rects.size(); i++){
+				title << m_rects.at(i).m_title << wxT("::");
+			}
+			title.RemoveLast();
+			title.RemoveLast();
+
+			dc.DrawText( title, MARGIN_WIDTH +  2* TEXT_X_PADDING, TEXT_Y_PADDING );
 
 		} else {
 			m_collapseRect = wxRect();

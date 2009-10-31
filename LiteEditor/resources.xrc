@@ -1,5 +1,4 @@
 <resource>
-	<object class="wxBitmap" name="downarrow">res/downarrow.png</object>
 	<object class="wxBitmap" name="findwhat">res/find_what.png</object>
 	<object class="wxBitmap" name="fold_airplane">res/outbox.png</object>
 	<object class="wxBitmap" name="read_only">res/lock.png</object>

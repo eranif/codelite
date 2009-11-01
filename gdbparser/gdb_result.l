@@ -17,9 +17,11 @@ bool setGdbLexerInput(const std::string &in, bool ascii);
 void gdb_result_lex_clean();
 void gdb_result_less(int count);
 
+extern std::string gdb_result_lval;
 
 #define RETURN_VAL(x) {\
 					gdb_result_string = yytext;\
+					gdb_result_lval   = yytext;\
 					return(x);}
 
 #define RETURN_ESCAPED_STRING(x) {\
@@ -27,6 +29,7 @@ void gdb_result_less(int count);
 					std::string str;\
 					str = gdb_result_string.substr(1);\
 					gdb_result_string = str;\
+					gdb_result_lval = str;\
 					return(x);}
 %}
 
@@ -36,7 +39,7 @@ void gdb_result_less(int count);
  * Some basic regexes
  */
 
-identifier [a-zA-Z_][0-9a-zA-Z_]*
+identifier [a-zA-Z_][0-9a-zA-Z_\-]*
 exponent_part [eE][-+]?[0-9]+
 fractional_constant ([0-9]*"."[0-9]+)|([0-9]+".")
 floating_constant (({fractional_constant}{exponent_part}?)|([0-9]+{exponent_part}))[FfLl]?
@@ -52,55 +55,70 @@ h_tab [\011]
 form_feed [\014]
 v_tab [\013]
 c_return [\015]
-escp_str_termi [\},]{1}
 horizontal_white [ ]|{h_tab}
+
+n_escape      [\]{2}n
+v_escape      [\]{2}v
+r_escape      [\]{2}r
+t_escape      [\]{2}t
+quotes_escape [\]{2}"
 
 %x string_state
 %x esc_string_state
 
 %%
 
-{horizontal_white}+     			                       {}
+{horizontal_white}+                                        {}
 ({v_tab}|{c_return}|{form_feed})+                          {}
 ({horizontal_white}|{v_tab}|{c_return}|{form_feed})*"\n"   {}
-{decimal_constant}  				                       {RETURN_VAL(GDB_INTEGER);}
-{octal_constant}    				                       {RETURN_VAL(GDB_OCTAL);}
-{hex_constant}      				                       {RETURN_VAL(GDB_HEX);}
-{floating_constant} 				                       {RETURN_VAL(GDB_FLOAT);}
-done 								                       {RETURN_VAL(GDB_DONE);}
-running 							                       {RETURN_VAL(GDB_RUNNING);}
-connected 							                       {RETURN_VAL(GDB_CONNECTED);}
-error								                       {RETURN_VAL(GDB_ERROR);}
-exit	 							                       {RETURN_VAL(GDB_EXIT);}
-stack-args							                       {RETURN_VAL(GDB_STACK_ARGS);}
-value								                       {RETURN_VAL(GDB_VALUE);}
-name								                       {RETURN_VAL(GDB_NAME);}
-args								                       {RETURN_VAL(GDB_ARGS);}
-level								                       {RETURN_VAL(GDB_LEVEL);}
+{decimal_constant}                                         {RETURN_VAL(GDB_INTEGER);}
+{octal_constant}                                           {RETURN_VAL(GDB_OCTAL);}
+{hex_constant}                                             {RETURN_VAL(GDB_HEX);}
+{floating_constant}                                        {RETURN_VAL(GDB_FLOAT);}
+done                                                       {RETURN_VAL(GDB_DONE);}
+running                                                    {RETURN_VAL(GDB_RUNNING);}
+connected                                                  {RETURN_VAL(GDB_CONNECTED);}
+error                                                      {RETURN_VAL(GDB_ERROR);}
+exit                                                       {RETURN_VAL(GDB_EXIT);}
+stack-args                                                 {RETURN_VAL(GDB_STACK_ARGS);}
+value                                                      {RETURN_VAL(GDB_VALUE);}
+name                                                       {RETURN_VAL(GDB_NAME);}
+args                                                       {RETURN_VAL(GDB_ARGS);}
+level                                                      {RETURN_VAL(GDB_LEVEL);}
 frame                                                      {RETURN_VAL(GDB_FRAME);}
-locals								                       {RETURN_VAL(GDB_LOCALS);}
-numchild							                       {RETURN_VAL(GDB_NUMCHILD);}
-type								                       {RETURN_VAL(GDB_TYPE);}
-data								                       {RETURN_VAL(GDB_DATA);}
-addr								                       {RETURN_VAL(GDB_ADDR);}
-ascii								                       {RETURN_VAL(GDB_ASCII);}
-{identifier}        				                       {RETURN_VAL(GDB_IDENTIFIER);}
-"^"									                       {RETURN_VAL((int)*yytext);}
-"="									                       {RETURN_VAL((int)*yytext);}
-"{"									                       {RETURN_VAL((int)*yytext);}
-"}"									                       {RETURN_VAL((int)*yytext);}
-","									                       {RETURN_VAL((int)*yytext);}
-"L"?["]                    			                       {BEGIN (string_state); gs_string = "\"";}
-"L"?[\\]["]                             	               {BEGIN (esc_string_state); gs_string = "\"";}
-.  									                       {RETURN_VAL((int)*yytext);}
-<string_state>"\\"["]                                      { gs_string += "\\\"";}
+locals                                                     {RETURN_VAL(GDB_LOCALS);}
+numchild                                                   {RETURN_VAL(GDB_NUMCHILD);}
+type                                                       {RETURN_VAL(GDB_TYPE);}
+data                                                       {RETURN_VAL(GDB_DATA);}
+addr                                                       {RETURN_VAL(GDB_ADDR);}
+ascii                                                      {RETURN_VAL(GDB_ASCII);}
+children                                                   {RETURN_VAL(GDB_CHILDREN);}
+child                                                      {RETURN_VAL(GDB_CHILD);}
+{identifier}                                               {RETURN_VAL(GDB_IDENTIFIER);}
+"^"                                                        {RETURN_VAL((int)*yytext);}
+"="                                                        {RETURN_VAL((int)*yytext);}
+"{"                                                        {RETURN_VAL((int)*yytext);}
+"}"                                                        {RETURN_VAL((int)*yytext);}
+","                                                        {RETURN_VAL((int)*yytext);}
+"L"?["]                                                    {BEGIN (string_state); gs_string = "\"";}
+"L"?[\\]["]                                                {BEGIN (esc_string_state); gs_string = "\"";}
+.                                                          {RETURN_VAL((int)*yytext);}
+<esc_string_state>"\\\\"n                                  { gs_string += "\\n"; }
+<esc_string_state>"\\\\"v                                  { gs_string += "\\v"; }
+<esc_string_state>"\\\\"r                                  { gs_string += "\\r"; }
+<esc_string_state>"\\\\"t                                  { gs_string += "\\t"; }
+<esc_string_state>"\\\\\\"["]                              { gs_string += "\\\""; }
+<esc_string_state>"\\\\\\\\"                               { gs_string += "\\"; }
+<string_state>"\\"["]{1}                                   { gs_string += "\\\"";}
 <string_state>["]                                          {
 	gs_string += "\"";
 	gdb_result_string = gs_string;
+	gdb_result_lval   = gdb_result_string;
 	gs_string.clear();
 	BEGIN (0);
 	return GDB_STRING;
 }
+
 <string_state>. { gs_string += yytext; }
 <esc_string_state>[\\]{2}{octal_escape} {
 	if(gs_ascii) {
@@ -116,10 +134,16 @@ ascii								                       {RETURN_VAL(GDB_ASCII);}
 		gs_string += yytext;
 	}
 }
-
-<esc_string_state>"\\"["]                                          {
+<esc_string_state>"\\\\"n                                        { gs_string += "\\n"; }
+<esc_string_state>"\\\\"v                                        { gs_string += "\\v"; }
+<esc_string_state>"\\\\"r                                        { gs_string += "\\r"; }
+<esc_string_state>"\\\\"t                                        { gs_string += "\\t"; }
+<esc_string_state>"\\\\\\"["]                                    { gs_string += "\\\""; }
+<esc_string_state>"\\\\\\\\"                                     { gs_string += "\\"; }
+<esc_string_state>"\\"["]                                        {
 	gs_string += "\"";
 	gdb_result_string = gs_string;
+	gdb_result_lval   = gdb_result_string;
 	gs_string.clear();
 	BEGIN (0);
 	return GDB_ESCAPED_STRING;
@@ -166,4 +190,8 @@ void gdb_result_pop_buffer(){
 	// create new buffer and use it
 	yy_switch_to_buffer( gs_bufferStack.back() );
 	gs_bufferStack.pop_back();
+}
+
+void gdb_result_error(const char* msg)
+{
 }

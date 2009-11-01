@@ -120,5 +120,8 @@ public:
 	virtual bool SetMemory(const wxString &address, size_t count, const wxString &hex_value);
 	virtual void SetDebuggerInformation(const DebuggerInformation &info);
 	virtual void BreakList();
+	virtual bool ListChildren(const wxString &name);
+	virtual bool CreateVariableObject(const wxString &expression);
+	virtual bool DeleteVariableObject(const wxString &name);
 };
 #endif //DBGINTERFACE_H

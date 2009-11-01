@@ -28,13 +28,7 @@
 #include "precompiled_header.h"
 #include "gdb_result_parser.h"
 #include <wx/regex.h>
-
-extern int gdb_result_lex();
-extern bool setGdbLexerInput(const std::string &in, bool ascii);
-extern void gdb_result_lex_clean();
-extern std::string gdb_result_string;
-extern void gdb_result_push_buffer(const std::string &new_input);
-extern void gdb_result_pop_buffer();
+#include "gdb_parser_incl.h"
 
 static void wxGDB_STRIP_QUOATES(wxString &currentToken)
 {
@@ -1052,7 +1046,7 @@ bool DbgCmdListThreads::ProcessOutput(const wxString& line)
 
 	wxString output( GetOutput() );
 	DebuggerEvent e;
-	
+
 	//parse the debugger output
 	wxStringTokenizer tok(output, wxT("\n"), wxTOKEN_STRTOK);
 	while ( tok.HasMoreTokens() ) {
@@ -1186,4 +1180,91 @@ bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
 	e.m_expression = m_address;
 	m_observer->DebuggerUpdate( e );
 	return true;
+}
+
+bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
+{
+	// Variable object was created
+	// Output sample:
+	// ^done,name="var1",numchild="2",value="{...}",type="ChildClass",thread-id="1",has_more="0"
+
+	VariableObject vo;
+	wxString modLine ( line );
+	int where = modLine.Find(wxT("name=\""));
+	if( where != wxNOT_FOUND ) {
+		modLine = modLine.Mid(where + 6); // +6: skips the name="
+		vo.gdbId = modLine.BeforeFirst(wxT('"'));
+	}
+
+	where = modLine.Find(wxT("numchild=\""));
+	if ( where = wxNOT_FOUND ) {
+		modLine = modLine.Mid(where + 10); // +10: skips the numchild="
+		wxString strNum = modLine.BeforeFirst(wxT('"'));
+		vo.numChilds = wxAtoi( strNum.c_str() );
+	}
+
+	where = modLine.Find(wxT("type=\""));
+	if ( where = wxNOT_FOUND ) {
+		modLine = modLine.Mid(where + 6); // +6: skips the type="
+		vo.typeName = modLine.BeforeFirst(wxT('"'));
+
+		if(vo.typeName.EndsWith(wxT(" *")) ) {
+			vo.isPtr = true;
+		}
+
+		if(vo.typeName.EndsWith(wxT(" **")) ) {
+			vo.isPtrPtr = true;
+		}
+	}
+
+	if( vo.gdbId.IsEmpty() == false  ) {
+		DebuggerEvent e;
+		e.m_updateReason = DBG_UR_VARIABLEOBJ;
+		e.m_variableObject = vo;
+		e.m_expression = m_expression;
+		m_observer->DebuggerUpdate( e );
+	}
+}
+
+static VariableObjChild FromParserOutput(const std::map<std::string, std::string > & attr)
+{
+	VariableObjChild child;
+	std::map<std::string, std::string >::const_iterator iter;
+
+	iter = attr.find("name");
+	if( iter != attr.end() ) {
+		child.gdbId = wxString(iter->second.c_str(), wxConvUTF8);
+	}
+
+	iter = attr.find("name");
+	if( iter != attr.end() ) {
+		child.varName = wxString(iter->second.c_str(), wxConvUTF8);
+	}
+
+	iter = attr.find("numchild");
+	if( iter != attr.end() ) {
+		if( iter->second.empty() == false ) {
+			child.numChilds = atoi(iter->second.c_str());
+		}
+	}
+	return child;
+}
+
+bool DbgCmdListChildren::ProcessOutput(const wxString& line)
+{
+	DebuggerEvent e;
+	wxCharBuffer cbuffer = line.mb_str(wxConvUTF8);
+	std::vector< std::map<std::string, std::string > > children;
+	gdbParseListChildren(cbuffer.data(), children);
+
+	// Convert the parser output to codelite data structure
+	for(size_t i=0; i<children.size(); i++) {
+		e.m_varObjChildren.push_back( FromParserOutput( children.at(i) ) );
+	}
+
+	if ( children.size() > 0 ) {
+		e.m_updateReason = DBG_UR_LISTCHILDREN;
+		e.m_expression = m_variable;
+		m_observer->DebuggerUpdate( e );
+	}
 }

@@ -95,7 +95,10 @@ static void StripString(wxString &string)
 	string = string.AfterFirst(wxT('"'));
 	string = string.BeforeLast(wxT('"'));
 	string.Replace(wxT("\\\""), wxT("\""));
-
+	string.Replace(wxT("\\\\"), wxT("\\"));
+	string.Replace(wxT("\\\\r\\\\n"), wxT("\r\n"));
+	string.Replace(wxT("\\\\n"), wxT("\n"));
+	string.Replace(wxT("\\\\r"), wxT("\r"));
 	string = string.Trim();
 }
 
@@ -869,12 +872,7 @@ bool DbgGdb::EvaluateExpressionToString(const wxString &expression, const wxStri
 	}
 
 	//and make sure we delete this variable
-	command.Clear();
-	//execute the watch command
-	command << wxT("-var-delete ") << watchName;
-
-	//we register NULL handler, which means this line can be safely ignored
-	return WriteCommand(command, NULL);
+	return DeleteVariableObject( watchName );
 }
 
 bool DbgGdb::EvaluateExpressionToTree(const wxString &expression)
@@ -930,7 +928,7 @@ bool DbgGdb::GetTip(const wxString &dbgCommand, const wxString& expression)
 
 bool DbgGdb::ResolveType(const wxString& expression)
 {
-	wxString output, cmd, var_name;
+	wxString cmd;
 	cmd << wxT("-var-create - * \"") << expression << wxT("\"");
 	return WriteCommand(cmd, new DbgCmdResolveTypeHandler(expression, this));
 }
@@ -1117,4 +1115,25 @@ void DbgGdb::SetCliHandler(DbgCmdCLIHandler* handler)
 DbgCmdCLIHandler* DbgGdb::GetCliHandler()
 {
 	return m_cliHandler;
+}
+
+bool DbgGdb::ListChildren(const wxString& name)
+{
+	wxString cmd;
+	cmd << wxT("-var-list-children ") << name;
+	return WriteCommand(cmd, new DbgCmdListChildren(m_observer, name));
+}
+
+bool DbgGdb::CreateVariableObject(const wxString& expression)
+{
+	wxString cmd;
+	cmd << wxT("-var-create - * \"") << expression << wxT("\"");
+	return WriteCommand(cmd, new DbgCmdCreateVarObj(m_observer, expression));
+}
+
+bool DbgGdb::DeleteVariableObject(const wxString& name)
+{
+	wxString cmd;
+	cmd << wxT("-var-delete ") << name;
+	return WriteCommand(cmd, NULL);
 }

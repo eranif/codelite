@@ -22,3 +22,5 @@
 #define GDB_DATA 278
 #define GDB_ADDR 279
 #define GDB_ASCII 280
+#define GDB_CHILDREN 281
+#define GDB_CHILD 282

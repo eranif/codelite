@@ -12,10 +12,12 @@
   <VirtualDirectory Name="Grammar">
     <File Name="gdb_result.l"/>
     <File Name="gdb_result.y"/>
+    <File Name="gdb_parser_incl.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="GeneratedParser">
     <File Name="gdb_result.cpp"/>
     <File Name="gdb_result_parser.h"/>
+    <File Name="gdb_result_parser.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
   <Settings Type="Executable">
@@ -35,6 +37,8 @@
       <PostBuild>
         <Command Enabled="yes">copy gdb_result.cpp ..\Debugger\.</Command>
         <Command Enabled="yes">copy gdb_result_parser.h ..\Debugger\.</Command>
+        <Command Enabled="yes">copy gdb_parser_incl.h ..\Debugger\.</Command>
+        <Command Enabled="yes">copy gdb_result_parser.cpp ..\Debugger\.</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <CleanCommand></CleanCommand>

@@ -12,6 +12,8 @@
   <VirtualDirectory Name="Generated Files">
     <File Name="gdb_result_parser.h"/>
     <File Name="gdb_result.cpp"/>
+    <File Name="gdb_parser_incl.h"/>
+    <File Name="gdb_result_parser.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
   <Settings Type="Dynamic Library">
@@ -169,6 +171,6 @@
   </Settings>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

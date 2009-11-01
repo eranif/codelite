@@ -296,4 +296,24 @@ public:
 
 	virtual bool ProcessOutput(const wxString & line);
 };
+
+// Handle the 'CreateVariableObject' call
+class DbgCmdCreateVarObj : public DbgCmdHandler {
+	wxString m_expression;
+public:
+	DbgCmdCreateVarObj(IDebuggerObserver *observer, const wxString &expression) : DbgCmdHandler(observer), m_expression(expression) {}
+	virtual ~DbgCmdCreateVarObj(){}
+
+	virtual bool ProcessOutput(const wxString & line);
+};
+
+// Handle the 'DbgCmdListChildren' call
+class DbgCmdListChildren : public DbgCmdHandler {
+	wxString m_variable;
+public:
+	DbgCmdListChildren(IDebuggerObserver *observer, const wxString &variable) : DbgCmdHandler(observer), m_variable(variable) {}
+	virtual ~DbgCmdListChildren(){}
+
+	virtual bool ProcessOutput(const wxString & line);
+};
 #endif //DBGCMD_H

@@ -69,13 +69,32 @@ struct StackEntry {
 };
 
 struct ThreadEntry {
-	bool 	 	active;
-	long 		dbgid;
-	wxString	more;
+	bool     active;
+	long     dbgid;
+	wxString more;
 };
 
-typedef std::vector<StackEntry> StackEntryArray;
-typedef std::vector<ThreadEntry> ThreadEntryArray;
+struct VariableObjChild {
+	int      numChilds;    // If this child has children (i.e. is this child a node or leaf)
+	wxString varName;      // the name of the variable object node
+	wxString gdbId;        // A unique name given by gdb which holds this node information for further queries
+
+	VariableObjChild() : numChilds(0) {}
+};
+
+struct VariableObject {
+	bool     isPtr;         // if this variable object is of type pointer
+	bool     isPtrPtr;      // if this variable object is of type pointer pointer
+	wxString gdbId;         // GDB unique identifier for this variable object
+	wxString typeName;      // the type of this variable object
+	int      numChilds;     // Number of children
+
+	VariableObject() : isPtr(false), isPtrPtr(false), numChilds(0) {}
+};
+
+typedef std::vector<VariableObjChild> VariableObjChildren;
+typedef std::vector<StackEntry>       StackEntryArray;
+typedef std::vector<ThreadEntry>      ThreadEntryArray;
 
 class BreakpointInfo: public SerializedObject
 {
@@ -350,7 +369,7 @@ class EnvironmentConfig;
 //-------------------------------------------------------
 /**
  * \ingroup Interfaces
- * Defines the debugger interface
+ * Defines the *GDB* debugger interface
  *
  * \version 1.0
  * first version
@@ -599,8 +618,31 @@ public:
 	 * \brief have the debugger list all breakpoints
 	 */
 	virtual void BreakList() = 0;
-};
 
+	// ----------------------------------------------------------------------------------------
+	// Variable object manipulation (GDB only)
+	// If you wish to implement a debugger other than
+	// GDB, implement all the 'Variable Object' releated method
+	// with an empty implementation
+	// ----------------------------------------------------------------------------------------
+	/**
+	 * @brief list the children of a variable object
+	 * @param name
+	 */
+	virtual bool ListChildren(const wxString& name) = 0;
+
+	/**
+	 * @brief create variable object from a given expression
+	 * @param expression
+	 */
+	virtual bool CreateVariableObject(const wxString &expression) = 0;
+
+	/**
+	 * @brief delete variable object
+	 * @param name
+	 */
+	virtual bool DeleteVariableObject(const wxString &name) = 0;
+};
 
 //-----------------------------------------------------------
 // Each debugger module must implement these two functions

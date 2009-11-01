@@ -17,8 +17,8 @@ ATLine::~ATLine()
 
 #define MARGIN_WIDTH        10
 #define MARGIN_HEIGHT       10
-#define TEXT_Y_PADDING      4
-#define TEXT_X_PADDING      4
+#define TEXT_Y_PADDING      2
+#define TEXT_X_PADDING      2
 #define TIP_WIDTH           500
 
 const wxEventType ACTIVETIP_LINE_EXPANDING = XRCID("at_line_expanding");

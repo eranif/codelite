@@ -269,7 +269,7 @@ void LEditor::SetProperties()
 	}
 
 	SetViewWhiteSpace(options->GetShowWhitspaces());
-	SetMouseDwellTime(250);
+	SetMouseDwellTime(500);
 	SetProperty(wxT("fold"), wxT("1"));
 	SetProperty(wxT("fold.html"), wxT("1"));
 	SetProperty(wxT("styling.within.preprocessor"), wxT("1"));

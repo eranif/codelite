@@ -139,5 +139,6 @@ void NewQuickWatchDlg::ShowDialog()
 {
 	wxGetMousePosition();
 	Move( wxGetMousePosition() );
+	m_treeCtrl->SetFocus();
 	wxWindow::Show();
 }

@@ -2754,8 +2754,17 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 				// Handle ASCII Viewer
 				wxString expression ( event.m_expression );
 				if( event.m_variableObject.isPtr && !event.m_expression.StartsWith(wxT("*")) ) {
-					expression.Prepend(wxT("(*"));
-					expression.Append(wxT(")"));
+					if( event.m_variableObject.typeName.Contains(wxT("char *"))    ||
+					    event.m_variableObject.typeName.Contains(wxT("wchar_t *")) ||
+						event.m_variableObject.typeName.Contains(wxT("QChar *"))   ||
+						event.m_variableObject.typeName.Contains(wxT("wxChar *")))
+					{
+						// dont de-reference
+					} else {
+						expression.Prepend(wxT("(*"));
+						expression.Append(wxT(")"));
+
+					}
 				}
 				UpdateTypeReolsved( expression, event.m_variableObject.typeName );
 			}

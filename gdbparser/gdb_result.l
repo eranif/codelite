@@ -10,6 +10,7 @@
 static std::vector<YY_BUFFER_STATE> gs_bufferStack;
 static std::string                  gs_string;
 static bool                         gs_ascii;
+static bool                         gs_want_whitespace = false;
 
 std::string gdb_result_string;
 bool setGdbLexerInput(const std::string &in, bool ascii);
@@ -68,9 +69,9 @@ quotes_escape [\]{2}"
 
 %%
 
-{horizontal_white}+                                        {}
-({v_tab}|{c_return}|{form_feed})+                          {}
-({horizontal_white}|{v_tab}|{c_return}|{form_feed})*"\n"   {}
+{horizontal_white}+                                        {if(gs_want_whitespace) RETURN_VAL((int)' '); }
+({v_tab}|{c_return}|{form_feed})+                          {if(gs_want_whitespace) RETURN_VAL((int)' '); }
+({horizontal_white}|{v_tab}|{c_return}|{form_feed})*"\n"   {if(gs_want_whitespace) RETURN_VAL((int)'\n'); }
 {decimal_constant}                                         {RETURN_VAL(GDB_INTEGER);}
 {octal_constant}                                           {RETURN_VAL(GDB_OCTAL);}
 {hex_constant}                                             {RETURN_VAL(GDB_HEX);}
@@ -104,13 +105,28 @@ child                                                      {RETURN_VAL(GDB_CHILD
 "L"?["]                                                    {BEGIN (string_state); gs_string = "\"";}
 "L"?[\\]["]                                                {BEGIN (esc_string_state); gs_string = "\"";}
 .                                                          {RETURN_VAL((int)*yytext);}
-<esc_string_state>"\\\\"n                                  { gs_string += "\\n"; }
-<esc_string_state>"\\\\"v                                  { gs_string += "\\v"; }
-<esc_string_state>"\\\\"r                                  { gs_string += "\\r"; }
-<esc_string_state>"\\\\"t                                  { gs_string += "\\t"; }
-<esc_string_state>"\\\\\\"["]                              { gs_string += "\\\""; }
-<esc_string_state>"\\\\\\\\"                               { gs_string += "\\"; }
+<string_state>"\\"{octal_escape} {
+	if(gs_ascii) {
+		unsigned int number(0);
+		std::stringstream s;
+		s << std::oct << yytext+2;
+		s >> number;
+
+		if(number) {
+			gs_string += (unsigned char)number;
+		}
+	} else {
+		gs_string += yytext;
+	}
+}
+<string_state>"\\\\"n                                      { gs_string += "\\n"; }
+<string_state>"\\\\"v                                      { gs_string += "\\v"; }
+<string_state>"\\\\"r                                      { gs_string += "\\r"; }
+<string_state>"\\\\"t                                      { gs_string += "\\t"; }
+<string_state>"\\\\\\"["]                                  { gs_string += "\\\""; }
+<string_state>"\\\\\\\\"                                   { gs_string += "\\"; }
 <string_state>"\\"["]{1}                                   { gs_string += "\\\"";}
+
 <string_state>["]                                          {
 	gs_string += "\"";
 	gdb_result_string = gs_string;
@@ -159,11 +175,13 @@ void gdb_result_lex_clean()
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 	gdb_result_lineno = 1;
 	gs_ascii = false;
+	gs_want_whitespace = false;
 }
 
-bool setGdbLexerInput(const std::string &in, bool ascii) {
+bool setGdbLexerInput(const std::string &in, bool ascii, bool wantWhitespace) {
 	BEGIN INITIAL;
 	gs_ascii = ascii;
+	gs_want_whitespace = wantWhitespace;
 	yy_scan_string(in.c_str());
 	return true;
 }

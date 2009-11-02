@@ -18,7 +18,7 @@
 
 int  gdb_result_lex();
 void gdb_result_error(const char*);
-bool setGdbLexerInput(const std::string &in, bool ascii);
+bool setGdbLexerInput(const std::string &in, bool ascii, bool wantWhitespace);
 void gdb_result_lex_clean();
 int  gdb_result_parse();
 
@@ -101,7 +101,7 @@ void gdbParseListChildren( const std::string &in, std::vector<std::map<std::stri
 	sg_attributes.clear();
 	sg_children.clear();
 
-	setGdbLexerInput(in, true);
+	setGdbLexerInput(in, true, false);
 	gdb_result_parse();
 
 	children = sg_children;

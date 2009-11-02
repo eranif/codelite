@@ -64,8 +64,8 @@ bool testChildrenParser();
 int main(int argc, char **argv)
 {
 //	testParseLocals();
-//	testTokens();
-	testChildrenParser();
+	testTokens();
+//	testChildrenParser();
 	return 0;
 }
 
@@ -128,7 +128,7 @@ bool testTokens()
 	if (!l) {
 		return false;
 	}
-	setGdbLexerInput(l, true);
+	setGdbLexerInput(l, true, true);
 	ReadTokens();
 	gdb_result_lex_clean();
 	free(l);
@@ -177,7 +177,7 @@ void ReadTokens()
 	int type(0);
 	GDB_LEX();
 	while (type != 0) {
-		printf("Token=%s\n", currentToken.c_str());
+		printf("Token=%s | %d\n", currentToken.c_str(), type);
 		GDB_LEX();
 	}
 }

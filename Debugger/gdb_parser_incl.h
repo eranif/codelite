@@ -7,7 +7,7 @@
 
 extern std::string gdb_result_string;
 
-extern bool setGdbLexerInput(const std::string &in, bool ascii);
+extern bool setGdbLexerInput(const std::string &in, bool ascii, bool wantWhitespace = false);
 extern void gdbParseListChildren( const std::string &in, std::vector<std::map<std::string, std::string> > &children);
 extern void gdb_parse_result(const std::string &in);
 extern void gdb_result_push_buffer(const std::string &new_input);

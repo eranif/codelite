@@ -106,11 +106,11 @@ static wxString wxGdbFixValue(const wxString &value)
 
 	// GDB MI tends to mess the strings...
 	// use our Flex lexer to normalize the value
-	setGdbLexerInput(value.mb_str(wxConvUTF8).data(), true);
+	setGdbLexerInput(value.mb_str(wxConvUTF8).data(), true, true);
 	GDB_LEX();
 	wxString display_line;
 	while ( type != 0 ) {
-		display_line << wxString(currentToken.c_str(), wxConvUTF8) << wxT(" ");
+		display_line << wxString(currentToken.c_str(), wxConvUTF8);
 		GDB_LEX();
 	}
 	gdb_result_lex_clean();
@@ -974,9 +974,10 @@ bool DbgCmdGetTipHandler::ProcessOutput(const wxString& line)
 	reGdbVar.ReplaceFirst(&evaluated, m_expression);
 	reGdbVar2.ReplaceAll (&evaluated, wxEmptyString);
 
-	evaluated.Replace(wxT("\\t"), wxT("\t"));
+	wxString fixedString = wxGdbFixValue( evaluated );
+
 	// Update the observer
-	m_observer->UpdateTip(m_expression, evaluated);
+	m_observer->UpdateTip(m_expression, fixedString);
 	return true;
 }
 

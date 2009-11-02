@@ -46,6 +46,8 @@
 
 extern const wxEventType wxEVT_CMD_RESTART_CODELITE;
 
+class NewQuickWatchDlg;
+
 class Manager : public wxEvtHandler, public IDebuggerObserver
 {
   	friend class Singleton<Manager>;
@@ -66,14 +68,16 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	std::list<QueueCommand> m_buildQueue;
 	wxArrayString           m_dbgWatchExpressions;
 	wxFileName              m_codeliteLauncher;
+	NewQuickWatchDlg       *m_newQuickWatchDlg;
 
 protected:
 	Manager(void);
 	virtual ~Manager(void);
 
-
      //--------------------------- Global State -----------------------------
 public:
+	NewQuickWatchDlg * GetQuickWatchDialog();
+
  	const wxString &GetStarupDirectory() const { return m_startupDir; }
  	void SetStarupDirectory(const wxString &path) { m_startupDir = path; }
 

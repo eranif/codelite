@@ -23,7 +23,6 @@
     <File Name="ActiveTip/ico_plus.xpm"/>
     <File Name="ActiveTip/ico_minus.xpm"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
   <Dependencies Name="Debug_Unix"/>
   <Settings Type="Executable">
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -118,4 +117,5 @@
     </GlobalSettings>
   </Settings>
   <Dependencies Name="Release"/>
+  <Dependencies Name="Debug"/>
 </CodeLite_Project>

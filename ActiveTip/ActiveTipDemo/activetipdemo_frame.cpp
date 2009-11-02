@@ -5,10 +5,24 @@
 #include <wx/sizer.h>
 #include <wx/menu.h> //wxMenuBar
 
+ATFrame CreateNewFrame()
+{
+	static int count(0);
+
+	// Construct a frame
+	ATFrame content;
+	for(int i=0; i<5; i++) {
+		ATLine line(wxString::Format(wxT("Key_%d"), ++count), wxT(""), count % 3 == 0 ? true : false, NULL);
+		line.SetValue( wxString::Format(wxT("Line Value %d"), count ) );
+		content.m_lines.push_back( line );
+	}
+	return content;
+}
+
 BEGIN_EVENT_TABLE(ActivetipdemoFrame, wxFrame)
 	EVT_CLOSE(ActivetipdemoFrame::OnClose)
+	EVT_MENU(10903,     ActivetipdemoFrame::OnShowTip)
 	EVT_MENU(wxID_EXIT, ActivetipdemoFrame::OnQuit)
-	EVT_COMMAND(wxID_ANY, ACTIVETIP_LINE_EXPANDING, ActivetipdemoFrame::OnActiveTipExpanding)
 END_EVENT_TABLE()
 
 ActivetipdemoFrame::ActivetipdemoFrame(wxWindow* parent,
@@ -41,9 +55,6 @@ void ActivetipdemoFrame::Initialize()
 
 	//Create a menu bar
 	CreateMenuBar();
-
-	ActiveTip *tip = new ActiveTip(this, CreateNewFrame());
-	sz->Add(tip);
 	sz->Layout();
 }
 
@@ -63,29 +74,19 @@ void ActivetipdemoFrame::CreateMenuBar()
 	wxMenuBar *mb = new wxMenuBar();
 	//File Menu
 	wxMenu *menu = new wxMenu();
+	menu->Append(10903, wxT("Show tip"), wxT("Show tip"), false);
+	menu->AppendSeparator();
 	menu->Append(wxID_EXIT);
+
 	mb->Append(menu, wxT("&File"));
+
 	SetMenuBar(mb);
 }
 
-void ActivetipdemoFrame::OnActiveTipExpanding(wxCommandEvent& e)
+void ActivetipdemoFrame::OnShowTip(wxCommandEvent& e)
 {
-	ActiveTipData *td = (ActiveTipData *)e.GetClientData();
-	td->hasNewFrame = true;
-	td->newFrame = CreateNewFrame();
-	e.Skip();
-}
-
-ATFrame ActivetipdemoFrame::CreateNewFrame()
-{
-	static int count(0);
-
-	// Construct a frame
-	ATFrame content;
-	for(int i=0; i<5; i++) {
-		ATLine line(wxString::Format(wxT("Key_%d"), ++count), wxT(""), count % 3 == 0 ? true : false, NULL);
-		line.SetValue( wxString::Format(wxT("Line Value %d"), count ) );
-		content.m_lines.push_back( line );
-	}
-	return content;
+	ATFrame frame = CreateNewFrame();
+	frame.m_title = wxT("First Frame");
+	ActiveTipWinodw tip(this, frame);
+	tip.ShowModal();
 }

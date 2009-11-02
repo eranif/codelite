@@ -72,7 +72,8 @@ enum DebuggerUpdateReason
 	DBG_UR_WATCHMEMORY,             // Watch memory is available
 	DBG_UR_LISTTHRAEDS,             // Threads list is available
 	DBG_UR_LISTCHILDREN,            // Children list for a variable object is available
-	DBG_UR_VARIABLEOBJ              // Variable object was created
+	DBG_UR_VARIABLEOBJ,             // Variable object was created
+	DBG_UR_EVALVARIABLEOBJ          // Variable object has be evaluated
 };
 
 struct DebuggerEvent {
@@ -88,7 +89,8 @@ struct DebuggerEvent {
 	int                           m_bpDebuggerId;  // DBG_UR_BP_ADDED, DBG_UR_BP_HIT
 	TreeNode<wxString, NodeData> *m_tree;          // DBG_UR_LOCALS, DBG_UR_QUICK_WATCH
 	wxString                      m_expression;    // DBG_UR_EXPRESSION, DBG_UR_QUICK_WATCH, DBG_UR_TYPE_RESOLVED, DBG_UR_TIP, DBG_UR_WATCHMEMORY, DBG_UR_VARIABLEOBJ
-	wxString                      m_evaluated;     // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY
+												   // DBG_UR_EVALVARIABLEOBJ
+	wxString                      m_evaluated;     // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY, DBG_UR_EVALVARIABLEOBJ
 	StackEntryArray               m_stack;         // DBG_UR_UPDATE_STACK_LIST
 	std::vector<BreakpointInfo>   m_bpInfoList;    // DBG_UR_RECONCILE_BPTS
 	bool                          m_onlyIfLogging; // DBG_UR_ADD_LINE

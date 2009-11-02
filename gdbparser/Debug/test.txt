@@ -1,1 +1,1 @@
-^done,numchild="2",children=[child={name="var1.MClass",exp="MClass",numchild="1",type="MClass",thread-id="1"},child={name="var1.public",exp="public",numchild="1",thread-id="1"}],has_more="0"
+0x3e3d49 \"C:\\\\TestArea\\\\TestExe\\\\Debug/./TestExe.exe\"

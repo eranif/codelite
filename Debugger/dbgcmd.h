@@ -316,4 +316,13 @@ public:
 
 	virtual bool ProcessOutput(const wxString & line);
 };
+
+class DbgCmdEvalVarObj : public DbgCmdHandler {
+	wxString m_variable;
+public:
+	DbgCmdEvalVarObj(IDebuggerObserver *observer, const wxString &variable) : DbgCmdHandler(observer), m_variable(variable) {}
+	virtual ~DbgCmdEvalVarObj(){}
+
+	virtual bool ProcessOutput(const wxString & line);
+};
 #endif //DBGCMD_H

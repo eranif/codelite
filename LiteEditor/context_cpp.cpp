@@ -63,6 +63,7 @@
 #include "workspacetab.h"
 #include "fileview.h"
 #include "refactorindexbuildjob.h"
+#include "new_quick_watch_dlg.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -1349,11 +1350,6 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 		if (word.IsEmpty()) {
 			return;
 		}
-
-		//make sure that this is indeed a variable name
-		if (!reCppIndentifier.Matches(word)) {
-			return;
-		}
 	} else {
 		return;
 	}
@@ -1361,6 +1357,12 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
 		dbgr->ResolveType(word);
+//		if( ManagerST::Get()->GetQuickWatchDialog()->IsShown() ) {
+//			// a 'Quick Show dialog' is already shown!
+//			// hide it
+//			ManagerST::Get()->GetQuickWatchDialog()->Hide();
+//		}
+//		dbgr->CreateVariableObject( word );
 	}
 }
 

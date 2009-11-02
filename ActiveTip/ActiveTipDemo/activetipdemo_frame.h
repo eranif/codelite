@@ -10,7 +10,6 @@ private:
 	void Initialize();
 	void CreateMenuBar();
 
-	ATFrame CreateNewFrame();
 public:
 	ActivetipdemoFrame(wxWindow* parent,
             wxWindowID id,
@@ -23,6 +22,7 @@ public:
 	DECLARE_EVENT_TABLE()
 
 	void OnClose(wxCloseEvent &e);
+	void OnShowTip(wxCommandEvent &e);
 	void OnQuit(wxCommandEvent &e);
 	void OnActiveTipExpanding(wxCommandEvent &e);
 

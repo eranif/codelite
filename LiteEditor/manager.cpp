@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "new_quick_watch_dlg.h"
 #include "fc_fileopener.h"
 #include "debuggerconfigtool.h"
 #include "debuggersettings.h"
@@ -177,6 +178,7 @@ Manager::Manager ( void )
 		, m_useTipWin ( false )
 		, m_tipWinPos ( wxNOT_FOUND )
 		, m_frameLineno ( wxNOT_FOUND )
+		, m_newQuickWatchDlg (NULL)
 {
 	m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
 	Connect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnRestart), NULL, this);
@@ -1986,6 +1988,11 @@ void Manager::DbgStop()
 		m_quickWatchDlg = NULL;
 	}
 
+	if ( m_newQuickWatchDlg ) {
+		m_newQuickWatchDlg->Destroy();
+		m_newQuickWatchDlg = NULL;
+	}
+
 	// remove all debugger markers
 	DbgUnMarkDebuggerLine();
 
@@ -2641,7 +2648,6 @@ void Manager::DoCleanProject ( const QueueCommand& buildInfo )
 		return;
 	}
 
-	// TODO :: replace the construction of CleanRequest to include the proper build configuration
 	if ( m_shellProcess ) {
 		delete m_shellProcess;
 	}
@@ -2799,13 +2805,42 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	case DBG_UR_WATCHMEMORY:
 		Frame::Get()->GetDebuggerPane()->GetMemoryView()->SetViewString( event.m_evaluated );
 		break;
+	case DBG_UR_VARIABLEOBJ:{
+			// we need a tree
+			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+			if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
+				if(dbgr->ListChildren(event.m_variableObject.gdbId)){
+					GetQuickWatchDialog()->m_mainVariableObject = event.m_variableObject.gdbId;
+					GetQuickWatchDialog()->m_variableName       = event.m_expression;
+				}
+			}
+		}
+		break;
+	case DBG_UR_LISTCHILDREN: {
+			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+			if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
+				if ( !GetQuickWatchDialog()->IsShown() ) {
+					GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
+					GetQuickWatchDialog()->m_mainVariableObject = event.m_expression;
+					GetQuickWatchDialog()->Show();
 
+				} else {
+					// The dialog is shown
+					GetQuickWatchDialog()->AddItems(event.m_expression, event.m_varObjChildren);
+				}
+			}
+		}
+		break;
+	case DBG_UR_EVALVARIABLEOBJ:
+		if(GetQuickWatchDialog()->IsShown()) {
+			GetQuickWatchDialog()->UpdateValue(event.m_expression, event.m_evaluated);
+		}
+		break;
 	case DBG_UR_INVALID:
 	default:
 		break;
 	}
 }
-
 
 void Manager::DbgRestoreWatches()
 {
@@ -2856,4 +2891,12 @@ void Manager::OnRestart(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
 	DoRestartCodeLite();
+}
+
+NewQuickWatchDlg* Manager::GetQuickWatchDialog()
+{
+	if(!m_newQuickWatchDlg) {
+		m_newQuickWatchDlg = new NewQuickWatchDlg(Frame::Get());
+	}
+	return m_newQuickWatchDlg;
 }

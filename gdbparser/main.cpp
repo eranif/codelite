@@ -64,8 +64,8 @@ bool testChildrenParser();
 int main(int argc, char **argv)
 {
 //	testParseLocals();
-//	testTokens();
-	testChildrenParser();
+	testTokens();
+//	testChildrenParser();
 	return 0;
 }
 
@@ -83,7 +83,7 @@ bool testChildrenParser()
 		std::map<std::string, std::string>::iterator iter = attr.begin();
 		printf("--------------\n");
 		for( ; iter != attr.end(); iter++ ){
-			printf("%s = %s\n", iter->first.c_str(), iter->second.c_str());
+			printf("%s=%s\n", iter->first.c_str(), iter->second.c_str());
 		}
 	}
 

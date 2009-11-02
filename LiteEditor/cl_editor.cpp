@@ -63,6 +63,7 @@
 #include "addincludefiledlg.h"
 #include "quickfindbar.h"
 #include "buidltab.h"
+#include <wx/wupdlock.h>
 
 // fix bug in wxscintilla.h
 #ifdef EVT_SCI_CALLTIP_CLICK

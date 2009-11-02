@@ -1,7 +1,8 @@
 #ifndef __ACTIVE_TIP_H__
 #define __ACTIVE_TIP_H__
 
-#include <wx/panel.h>
+#include <wx/window.h>
+#include <wx/dialog.h>
 #include <vector>
 #include <wx/bitmap.h>
 
@@ -37,21 +38,23 @@ class ATLine
 	ATClientData * m_clientData;
 	wxRect         m_rect;
 	bool           m_active;
-
+	bool           m_visible;
 public:
 	ATLine(const wxString& key, const wxString &value, bool isExpandable, ATClientData *clientData = NULL)
 			: m_key          ( key          )
 			, m_value        ( value        )
 			, m_isExpandable ( isExpandable )
 			, m_clientData   ( clientData   )
-			, m_active       ( false        ) {}
+			, m_active       ( false        )
+			, m_visible      ( false        ) {}
 
 	ATLine()
 			: m_key(wxT(""))
 			, m_value(wxT(""))
 			, m_isExpandable(false)
 			, m_clientData(NULL)
-			, m_active(false) {}
+			, m_active(false)
+			, m_visible(false) {}
 
 	~ATLine();
 
@@ -91,12 +94,17 @@ public:
 	bool GetActive() const {
 		return m_active;
 	}
+	void SetVisible(const bool& visible) {
+		this->m_visible = visible;
+	}
+	const bool& GetVisible() const {
+		return m_visible;
+	}
 };
 
 struct ATFrame {
 	wxString            m_title;
 	std::vector<ATLine> m_lines;
-	wxRect              m_rect;
 	bool                m_active;
 
 	ATFrame() : m_title(wxT("")), m_active(false) {}
@@ -104,7 +112,7 @@ struct ATFrame {
 
 typedef std::vector<ATFrame> ATFrames;
 
-class ActiveTip : public wxPanel
+class ActiveTipPanel : public wxPanel
 {
 	ATFrames   m_rects;
 	wxBitmap   m_plusBmp;
@@ -119,14 +127,14 @@ public:
 	};
 
 protected:
-	wxSize DoCalcSize();
+	void DoUpdateLines();
 	void DoDrawLine(wxDC &dc, ATLine &line);
 	void DoUnselectAll();
 	int  DoHitTest(const wxPoint &pt, size_t &idx);
 	void DoDrawFrame();
 public:
-	ActiveTip(wxWindow *parent, const ATFrame& frameContent);
-	virtual ~ActiveTip();
+	ActiveTipPanel(wxWindow *parent, const ATFrame& frameContent);
+	virtual ~ActiveTipPanel();
 
 	DECLARE_EVENT_TABLE()
 	void OnPaint(wxPaintEvent &event);
@@ -136,7 +144,22 @@ public:
 	void OnMouseMove(wxMouseEvent &event);
 };
 
-class ActiveTipData {
+extern ATFrame CreateNewFrame();
+
+class ActiveTipWinodw : public wxDialog
+{
+	ActiveTipPanel *m_tip;
+public:
+	ActiveTipWinodw(wxWindow *win, const ATFrame& frameContent);
+	virtual ~ActiveTipWinodw();
+
+	DECLARE_EVENT_TABLE()
+	void OnActiveTipExpanding(wxCommandEvent &e);
+	void OnCharDown          (wxKeyEvent     &e);
+};
+
+class ActiveTipData
+{
 public:
 	// new frame to display to the user
 	ATFrame       newFrame;
@@ -147,8 +170,7 @@ public:
 	bool          hasNewFrame;
 
 	ActiveTipData()
-		: clientData(NULL)
-		, hasNewFrame(false)
-		{}
+			: clientData(NULL)
+			, hasNewFrame(false) {}
 };
 #endif // __ACTIVE_TIP_H__

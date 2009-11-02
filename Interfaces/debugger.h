@@ -642,6 +642,12 @@ public:
 	 * @param name
 	 */
 	virtual bool DeleteVariableObject(const wxString &name) = 0;
+
+	/**
+	 * @brief evaluate variable object
+	 * @param name variable object
+	 */
+	virtual bool EvaluateVariableObject(const wxString &name) = 0;
 };
 
 //-----------------------------------------------------------

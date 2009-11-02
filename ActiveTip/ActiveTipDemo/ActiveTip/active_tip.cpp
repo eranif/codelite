@@ -20,20 +20,20 @@ ATLine::~ATLine()
 #define TEXT_Y_PADDING      2
 #define TEXT_X_PADDING      2
 #define TIP_WIDTH           500
-
+#define TIP_SIZE            wxSize(500, 400)
 const wxEventType ACTIVETIP_LINE_EXPANDING = XRCID("at_line_expanding");
 
-BEGIN_EVENT_TABLE(ActiveTip, wxPanel)
-	EVT_PAINT(ActiveTip::OnPaint)
-	EVT_ERASE_BACKGROUND(ActiveTip::OnEraseBg)
-	EVT_LEFT_DOWN(ActiveTip::OnMouseLeftDown)
-	EVT_LEFT_DCLICK(ActiveTip::OnMouseLeftDown)
-	EVT_LEAVE_WINDOW(ActiveTip::OnMouseLeaveWindow)
-	EVT_MOTION(ActiveTip::OnMouseMove)
+BEGIN_EVENT_TABLE(ActiveTipPanel, wxPanel)
+	EVT_PAINT(ActiveTipPanel::OnPaint)
+	EVT_ERASE_BACKGROUND(ActiveTipPanel::OnEraseBg)
+	EVT_LEFT_DOWN(ActiveTipPanel::OnMouseLeftDown)
+	EVT_LEFT_DCLICK(ActiveTipPanel::OnMouseLeftDown)
+	EVT_LEAVE_WINDOW(ActiveTipPanel::OnMouseLeaveWindow)
+	EVT_MOTION(ActiveTipPanel::OnMouseMove)
 END_EVENT_TABLE()
 
-ActiveTip::ActiveTip(wxWindow* parent, const ATFrame& frameContent)
-		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(300, 300))
+ActiveTipPanel::ActiveTipPanel(wxWindow* parent, const ATFrame& frameContent)
+		: wxPanel(parent, wxID_ANY, wxDefaultPosition, TIP_SIZE)
 {
 	m_plusBmp  = wxBitmap(ico_plus_xpm);
 	m_minusBmp = wxBitmap(ico_minus_xpm);
@@ -44,23 +44,23 @@ ActiveTip::ActiveTip(wxWindow* parent, const ATFrame& frameContent)
 	DoDrawFrame();
 }
 
-ActiveTip::~ActiveTip()
+ActiveTipPanel::~ActiveTipPanel()
 {
 }
 
-void ActiveTip::OnEraseBg(wxEraseEvent& event)
+void ActiveTipPanel::OnEraseBg(wxEraseEvent& event)
 {
 	wxUnusedVar(event);
 }
 
-void ActiveTip::OnMouseLeaveWindow(wxMouseEvent& event)
+void ActiveTipPanel::OnMouseLeaveWindow(wxMouseEvent& event)
 {
 	event.Skip();
 	DoUnselectAll();
 	Refresh();
 }
 
-void ActiveTip::OnMouseLeftDown(wxMouseEvent& event)
+void ActiveTipPanel::OnMouseLeftDown(wxMouseEvent& event)
 {
 	event.Skip();
 	if ( m_rects.size() ) {
@@ -102,17 +102,11 @@ void ActiveTip::OnMouseLeftDown(wxMouseEvent& event)
 	}
 }
 
-void ActiveTip::OnMouseMove(wxMouseEvent& event)
+void ActiveTipPanel::OnMouseMove(wxMouseEvent& event)
 {
 	event.Skip();
 	DoUnselectAll();
 	if ( m_rects.size() ) {
-
-		for (size_t i=0; i<m_rects.size()-1; i++) {
-			ATFrame &fr = m_rects.at(i);
-			fr.m_active = fr.m_rect.Contains( event.GetPosition() );
-			if (fr.m_active) break;
-		}
 
 		ATFrame &vf = m_rects.at(m_rects.size()-1);
 		for (size_t i=0; i<vf.m_lines.size(); i++) {
@@ -124,7 +118,7 @@ void ActiveTip::OnMouseMove(wxMouseEvent& event)
 	Refresh();
 }
 
-void ActiveTip::OnPaint(wxPaintEvent& event)
+void ActiveTipPanel::OnPaint(wxPaintEvent& event)
 {
 	wxUnusedVar( event );
 	wxBufferedPaintDC dc(this);
@@ -145,24 +139,27 @@ void ActiveTip::OnPaint(wxPaintEvent& event)
 			m_collapseRect.SetY( 0 );
 			m_collapseRect.SetWidth( m_minusBmp.GetWidth() + TEXT_X_PADDING*2);
 			m_collapseRect.SetHeight( m_minusBmp.GetHeight() + TEXT_Y_PADDING*2);
-			dc.SetTextForeground( wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
-			wxString title;
-			for(size_t i=1; i<m_rects.size(); i++){
-				title << m_rects.at(i).m_title << wxT("::");
-			}
-			title.RemoveLast();
-			title.RemoveLast();
-
-			dc.DrawText( title, MARGIN_WIDTH +  2* TEXT_X_PADDING, TEXT_Y_PADDING );
-
 		} else {
 			m_collapseRect = wxRect();
 		}
 
+		dc.SetTextForeground( wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
+		wxString title;
+		for (size_t i=0; i<m_rects.size(); i++) {
+			title << m_rects.at(i).m_title << wxT("::");
+		}
+		title.RemoveLast();
+		title.RemoveLast();
+
+		dc.DrawText( title,  m_plusBmp.GetWidth() +  3* TEXT_X_PADDING, TEXT_Y_PADDING );
+
+		// the active frame is always the last one
 		ATFrame &vf = m_rects.at(m_rects.size()-1);
 		for (size_t i=0; i<vf.m_lines.size(); i++) {
 			ATLine &line = vf.m_lines.at(i);
-			DoDrawLine( dc, line );
+			if( line.GetVisible() ) {
+				DoDrawLine( dc, line );
+			}
 		}
 	}
 
@@ -171,11 +168,13 @@ void ActiveTip::OnPaint(wxPaintEvent& event)
 	dc.DrawRectangle(rr);
 }
 
-wxSize ActiveTip::DoCalcSize()
+void ActiveTipPanel::DoUpdateLines()
 {
 	// Sanity
-	if ( m_rects.empty() ) return wxSize();
+	if ( m_rects.empty() ) return;
 
+	wxSize clientRect = GetClientSize();
+	int lineHeight;
 	// we got at least one frame to display
 
 	// each non-visible frame requires HIDDEN_FRAME_HEIGHT pixels in height
@@ -187,37 +186,33 @@ wxSize ActiveTip::DoCalcSize()
 	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	font.SetPointSize( 8 );
 	wxWindow::GetTextExtent(wxT("Tp"), &textWidth, &textHeight, NULL, NULL, &font);
+	lineHeight = textHeight + (TEXT_Y_PADDING * 2);
 
 	m_collapseRect = wxRect();
-	if ( m_rects.size() > 1 ) {
-		// keep margins for the collapse button
-		yy += textHeight + (TEXT_Y_PADDING * 2);
-		xx += MARGIN_WIDTH +  2* TEXT_X_PADDING;
-	}
+	// keep margins for the collapse button
+	yy += lineHeight;
 
 	ATFrame &fr = m_rects.at( m_rects.size() - 1 );
-	fr.m_rect.SetX(xx);
-	fr.m_rect.SetY(yy);
-	fr.m_rect.SetWidth(TIP_WIDTH);
-
 	// Calcualte the height based on the number of rows
-	int visibleFrameHeight(0);
 	for (size_t i=0; i<fr.m_lines.size(); i++) {
 		wxRect rr;
 		rr.SetY(yy);
 		rr.SetX(xx);
-		rr.SetHeight(textHeight + (TEXT_Y_PADDING * 2) +1 /* +1 to overlap this line with the one below it */);
+		rr.SetHeight( lineHeight +1 ); // +1 to overlap this line with the one below it
 		rr.SetWidth( TIP_WIDTH );
 		ATLine &line = fr.m_lines.at(i);
 		line.SetRect( rr );
-		yy += textHeight + (TEXT_Y_PADDING * 2);
-		visibleFrameHeight += textHeight + (TEXT_Y_PADDING * 2);
+
+		if ( yy + rr.GetHeight() < clientRect.GetHeight() ) {
+			line.SetVisible( true );
+		} else {
+			line.SetVisible( false );
+		}
+		yy += lineHeight;
 	}
-	fr.m_rect.SetHeight( visibleFrameHeight );
-	return wxSize(TIP_WIDTH, yy);
 }
 
-void ActiveTip::DoDrawLine(wxDC& dc, ATLine& line)
+void ActiveTipPanel::DoDrawLine(wxDC& dc, ATLine& line)
 {
 	wxRect rr = line.GetRect();
 	rr.Deflate(2);
@@ -263,15 +258,11 @@ void ActiveTip::DoDrawLine(wxDC& dc, ATLine& line)
 	dc.DrawText( displayText, xx, line.GetRect().y + TEXT_Y_PADDING );
 }
 
-void ActiveTip::DoUnselectAll()
+void ActiveTipPanel::DoUnselectAll()
 {
 	if ( m_rects.size() ) {
 
 		// Reset
-		for (size_t i=0; i<m_rects.size()-1; i++) {
-			ATFrame &fr = m_rects.at(i);
-			fr.m_active = false;
-		}
 		ATFrame &vf = m_rects.at(m_rects.size()-1);
 		for (size_t i=0; i<vf.m_lines.size(); i++) {
 			ATLine &line = vf.m_lines.at(i);
@@ -280,7 +271,7 @@ void ActiveTip::DoUnselectAll()
 	}
 }
 
-int ActiveTip::DoHitTest(const wxPoint& pt, size_t& idx)
+int ActiveTipPanel::DoHitTest(const wxPoint& pt, size_t& idx)
 {
 	idx = static_cast<size_t>(-1);
 	if ( m_rects.size() ) {
@@ -301,12 +292,46 @@ int ActiveTip::DoHitTest(const wxPoint& pt, size_t& idx)
 	return AT_NOWHERE;
 }
 
-void ActiveTip::DoDrawFrame()
+void ActiveTipPanel::DoDrawFrame()
 {
-	SetSizeHints( DoCalcSize() );
-	Layout();
-	if (GetParent()->GetSizer()) {
-		GetParent()->GetSizer()->Layout();
-	}
+	DoUpdateLines();
 	Refresh();
+}
+
+BEGIN_EVENT_TABLE(ActiveTipWinodw, wxDialog)
+	EVT_COMMAND(wxID_ANY, ACTIVETIP_LINE_EXPANDING, ActiveTipWinodw::OnActiveTipExpanding)
+	EVT_KEY_DOWN(ActiveTipWinodw::OnCharDown)
+END_EVENT_TABLE()
+
+ActiveTipWinodw::ActiveTipWinodw(wxWindow* win, const ATFrame& frameContent)
+		: wxDialog(win, wxID_ANY, wxString(wxT("ActiveTip")), wxDefaultPosition, TIP_SIZE, wxBORDER_SIMPLE)
+{
+	wxSizer *sz = new wxBoxSizer(wxVERTICAL);
+	SetSizer(sz);
+
+	m_tip = new ActiveTipPanel(this, frameContent);
+	m_tip->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ActiveTipWinodw::OnCharDown), NULL, this);
+	SetBackgroundColour( wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK) );
+	sz->Add(m_tip, 1, wxEXPAND|wxGROW|wxALL, 5);
+	Layout();
+}
+
+ActiveTipWinodw::~ActiveTipWinodw()
+{
+}
+
+void ActiveTipWinodw::OnActiveTipExpanding(wxCommandEvent& e)
+{
+	ActiveTipData *td = (ActiveTipData *)e.GetClientData();
+	td->hasNewFrame = true;
+	td->newFrame = CreateNewFrame();
+	e.Skip();
+}
+
+void ActiveTipWinodw::OnCharDown(wxKeyEvent& e)
+{
+	e.Skip();
+	if ( e.GetKeyCode() == WXK_ESCAPE ) {
+		EndModal( wxID_CANCEL );
+	}
 }

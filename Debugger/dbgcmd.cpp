@@ -76,6 +76,18 @@ static void GDB_STRIP_QUOATES(std::string &currentToken)
 	}
 }
 
+static void wxRemoveQuotes(wxString &str)
+{
+	if ( str.IsEmpty() ) {
+		return;
+	}
+
+	str.RemoveLast();
+	if ( str.IsEmpty() == false ) {
+		str.Remove(0, 1);
+	}
+}
+
 #define GDB_LEX()\
 	{\
 		type = gdb_result_lex();\
@@ -488,7 +500,7 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 
 	if (m_evaluateExpression == Locals) {
 #ifdef __WXMAC__
-	strline = strline.AfterFirst(wxT('{'));
+		strline = strline.AfterFirst(wxT('{'));
 		strline = strline.BeforeLast(wxT('}'));
 		if (strline.EndsWith(wxT("}")))
 #else
@@ -1191,33 +1203,33 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
 	VariableObject vo;
 	wxString modLine ( line );
 	int where = modLine.Find(wxT("name=\""));
-	if( where != wxNOT_FOUND ) {
+	if ( where != wxNOT_FOUND ) {
 		modLine = modLine.Mid(where + 6); // +6: skips the name="
 		vo.gdbId = modLine.BeforeFirst(wxT('"'));
 	}
 
 	where = modLine.Find(wxT("numchild=\""));
-	if ( where = wxNOT_FOUND ) {
+	if ( where != wxNOT_FOUND ) {
 		modLine = modLine.Mid(where + 10); // +10: skips the numchild="
 		wxString strNum = modLine.BeforeFirst(wxT('"'));
 		vo.numChilds = wxAtoi( strNum.c_str() );
 	}
 
 	where = modLine.Find(wxT("type=\""));
-	if ( where = wxNOT_FOUND ) {
+	if ( where != wxNOT_FOUND ) {
 		modLine = modLine.Mid(where + 6); // +6: skips the type="
 		vo.typeName = modLine.BeforeFirst(wxT('"'));
 
-		if(vo.typeName.EndsWith(wxT(" *")) ) {
+		if (vo.typeName.EndsWith(wxT(" *")) ) {
 			vo.isPtr = true;
 		}
 
-		if(vo.typeName.EndsWith(wxT(" **")) ) {
+		if (vo.typeName.EndsWith(wxT(" **")) ) {
 			vo.isPtrPtr = true;
 		}
 	}
 
-	if( vo.gdbId.IsEmpty() == false  ) {
+	if ( vo.gdbId.IsEmpty() == false  ) {
 		DebuggerEvent e;
 		e.m_updateReason = DBG_UR_VARIABLEOBJ;
 		e.m_variableObject = vo;
@@ -1232,19 +1244,34 @@ static VariableObjChild FromParserOutput(const std::map<std::string, std::string
 	std::map<std::string, std::string >::const_iterator iter;
 
 	iter = attr.find("name");
-	if( iter != attr.end() ) {
+	if ( iter != attr.end() ) {
 		child.gdbId = wxString(iter->second.c_str(), wxConvUTF8);
+		wxRemoveQuotes( child.gdbId );
+
 	}
 
-	iter = attr.find("name");
-	if( iter != attr.end() ) {
+	iter = attr.find("exp");
+	if ( iter != attr.end() ) {
 		child.varName = wxString(iter->second.c_str(), wxConvUTF8);
+		wxRemoveQuotes( child.varName );
 	}
 
 	iter = attr.find("numchild");
-	if( iter != attr.end() ) {
-		if( iter->second.empty() == false ) {
-			child.numChilds = atoi(iter->second.c_str());
+	if ( iter != attr.end() ) {
+		if ( iter->second.empty() == false ) {
+			wxString numChilds (iter->second.c_str(), wxConvUTF8);
+			wxRemoveQuotes( numChilds );
+			child.numChilds = wxAtoi(numChilds);
+		}
+	}
+
+	iter = attr.find("type");
+	if ( iter != attr.end() ) {
+		wxString type = wxString(iter->second.c_str(), wxConvUTF8);
+		wxRemoveQuotes ( type );
+		if (type.Contains(wxT("char *"))) {
+			// dont consider this as an array
+			child.numChilds = 0;
 		}
 	}
 	return child;
@@ -1253,12 +1280,14 @@ static VariableObjChild FromParserOutput(const std::map<std::string, std::string
 bool DbgCmdListChildren::ProcessOutput(const wxString& line)
 {
 	DebuggerEvent e;
-	wxCharBuffer cbuffer = line.mb_str(wxConvUTF8);
+	std::string cbuffer = line.mb_str(wxConvUTF8).data();
+	wxLogMessage(line);
+
 	std::vector< std::map<std::string, std::string > > children;
-	gdbParseListChildren(cbuffer.data(), children);
+	gdbParseListChildren(cbuffer, children);
 
 	// Convert the parser output to codelite data structure
-	for(size_t i=0; i<children.size(); i++) {
+	for (size_t i=0; i<children.size(); i++) {
 		e.m_varObjChildren.push_back( FromParserOutput( children.at(i) ) );
 	}
 
@@ -1267,4 +1296,41 @@ bool DbgCmdListChildren::ProcessOutput(const wxString& line)
 		e.m_expression = m_variable;
 		m_observer->DebuggerUpdate( e );
 	}
+}
+
+bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
+{
+	// -var-evaluate-expression var1
+	// ^done,value="{...}"
+	int         type(0);
+	std::string currentToken;
+	wxString    v;
+
+	int where = line.Find(wxT("value=\""));
+	if ( where != wxNOT_FOUND ) {
+		v = line.Mid(where + 7); // Skip the value="
+		if (v.IsEmpty() == false) {
+			v.RemoveLast(); // remove closing qoute
+		}
+
+		// GDB MI tends to mess the strings...
+		// use our Flex lexer to normalize the value
+		setGdbLexerInput(v.mb_str(wxConvUTF8).data(), true);
+		GDB_LEX();
+		wxString display_line;
+		while ( type != 0 ) {
+			display_line << wxString(currentToken.c_str(), wxConvUTF8) << wxT(" ");
+			GDB_LEX();
+		}
+		gdb_result_lex_clean();
+
+		if ( display_line.IsEmpty() == false ) {
+			DebuggerEvent e;
+			e.m_updateReason = DBG_UR_EVALVARIABLEOBJ;
+			e.m_expression = m_variable;
+			e.m_evaluated = display_line;
+			m_observer->DebuggerUpdate( e );
+		}
+	}
+
 }

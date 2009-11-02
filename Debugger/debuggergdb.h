@@ -123,5 +123,6 @@ public:
 	virtual bool ListChildren(const wxString &name);
 	virtual bool CreateVariableObject(const wxString &expression);
 	virtual bool DeleteVariableObject(const wxString &name);
+	virtual bool EvaluateVariableObject(const wxString &name);
 };
 #endif //DBGINTERFACE_H

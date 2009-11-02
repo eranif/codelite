@@ -47,6 +47,10 @@
       <File Name="quickdebugbase.cpp"/>
       <File Name="quickdebugbase.h"/>
       <File Name="quickdebugdlg.cpp"/>
+      <File Name="newquickwatch.cpp"/>
+      <File Name="newquickwatch.h"/>
+      <File Name="new_quick_watch_dlg.h"/>
+      <File Name="new_quick_watch_dlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Misc">
       <File Name="simpletable.cpp"/>
@@ -512,6 +516,7 @@
     <File Name="debuggerasciiviewerbase.fbp"/>
     <File Name="editorsettingsdockingwindowsbase.fbp"/>
     <File Name="tagsparsersearchpathsbasedlg.fbp"/>
+    <File Name="newquickwatch.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="breakpointsmgr.h"/>
@@ -834,11 +839,11 @@ resources.cpp: resources.xrc
     <Project Name="QMakePlugin"/>
     <Project Name="CppChecker"/>
   </Dependencies>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="wxscintilla"/>
+  <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
+    <Project Name="wxscintilla"/>
     <Project Name="wxpropgrid"/>
+    <Project Name="wxsqlite3"/>
     <Project Name="CodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
@@ -856,11 +861,11 @@ resources.cpp: resources.xrc
     <Project Name="QMakePlugin"/>
     <Project Name="CppChecker"/>
   </Dependencies>
-  <Dependencies Name="WinReleaseUnicode">
-    <Project Name="sqlite3"/>
+  <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
-    <Project Name="wxpropgrid"/>
+    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
+    <Project Name="wxpropgrid"/>
     <Project Name="CodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>

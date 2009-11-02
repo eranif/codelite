@@ -1137,3 +1137,10 @@ bool DbgGdb::DeleteVariableObject(const wxString& name)
 	cmd << wxT("-var-delete ") << name;
 	return WriteCommand(cmd, NULL);
 }
+
+bool DbgGdb::EvaluateVariableObject(const wxString& name)
+{
+	wxString cmd;
+	cmd << wxT("-var-evaluate-expression ") << name;
+	return WriteCommand(cmd, new DbgCmdEvalVarObj(m_observer, name));
+}

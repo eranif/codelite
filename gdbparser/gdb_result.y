@@ -65,7 +65,7 @@ parse: children_list
 
 children_list:    {sg_attributes.clear(); sg_children.clear();} child_pattern
 				|  error {
-				 printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
+				// printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
 				}
 			;
 

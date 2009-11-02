@@ -2325,12 +2325,6 @@ void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name
 		get_tip = true;
 	}
 
-
-	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
-	if (editor && dbgr->GetDebuggerInformation().showTooltips && command.IsEmpty() == false) {
-		get_tip = true;
-	}
-
 	if ( get_tip ) {
 		dbgr->GetTip(dbg_command, command); // Will trigger a call to UpdateTip()
 	}
@@ -2338,25 +2332,6 @@ void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name
 
 void Manager::UpdateTip(const wxString& expression, const wxString& tip)
 {
-
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if ( dbgr && dbgr->GetDebuggerInformation().showTooltips ) {
-		LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
-		if ( editor ) {
-			wxPoint pt = wxGetMousePosition();
-			wxPoint clientPt = editor->ScreenToClient(pt);
-			int pos = editor->PositionFromPoint(clientPt);
-
-			// do some formatting before we display the tooltip
-			wxString evaluated (tip);
-			evaluated.Replace(wxT("\r\n"), wxT("\n"));
-			evaluated.Replace(wxT("\n,"), wxT(",\n"));
-			evaluated.Replace(wxT("\n\n"), wxT("\n"));
-
-			editor->DoCancelCalltip();
-			editor->DoShowCalltip(pos, evaluated, ct_debugger);
-		}
-	}
 	Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->UpdateView( expression, tip );
 }
 
@@ -2747,25 +2722,42 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 			// we need a tree
 			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 			if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
-				GetQuickWatchDialog()->m_mainVariableObject = event.m_variableObject.gdbId;
-				GetQuickWatchDialog()->m_variableName       = event.m_expression;
-				if( event.m_variableObject.typeName.IsEmpty() == false ) {
-					GetQuickWatchDialog()->m_variableName << wxT(" (") << event.m_variableObject.typeName << wxT(") ");
-				}
-				if( event.m_evaluated.IsEmpty() == false ) {
-					GetQuickWatchDialog()->m_variableName << wxT(" = ") << event.m_evaluated;
-				}
-				if ( event.m_variableObject.numChilds > 0 ) {
-					// Complex type
-					dbgr->ListChildren(event.m_variableObject.gdbId);
 
-				} else {
-					// Simple type, no need for further calls, show the dialog
-					if ( !GetQuickWatchDialog()->IsShown() ) {
-						GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
-						GetQuickWatchDialog()->ShowDialog();
+				if ( dbgr->GetDebuggerInformation().showTooltips ) {
+
+					/////////////////////////////////////////////
+					// Handle Tooltips
+					/////////////////////////////////////////////
+
+					GetQuickWatchDialog()->m_mainVariableObject = event.m_variableObject.gdbId;
+					GetQuickWatchDialog()->m_variableName       = event.m_expression;
+					if( event.m_variableObject.typeName.IsEmpty() == false ) {
+						GetQuickWatchDialog()->m_variableName << wxT(" (") << event.m_variableObject.typeName << wxT(") ");
 					}
+					if( event.m_evaluated.IsEmpty() == false ) {
+						GetQuickWatchDialog()->m_variableName << wxT(" = ") << event.m_evaluated;
+					}
+					if ( event.m_variableObject.numChilds > 0 ) {
+						// Complex type
+						dbgr->ListChildren(event.m_variableObject.gdbId);
+
+					} else {
+						// Simple type, no need for further calls, show the dialog
+						if ( !GetQuickWatchDialog()->IsShown() ) {
+							GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
+							GetQuickWatchDialog()->ShowDialog();
+						}
+					}
+
 				}
+
+				// Handle ASCII Viewer
+				wxString expression ( event.m_expression );
+				if( event.m_variableObject.isPtr && !event.m_expression.StartsWith(wxT("*")) ) {
+					expression.Prepend(wxT("(*"));
+					expression.Append(wxT(")"));
+				}
+				UpdateTypeReolsved( expression, event.m_variableObject.typeName );
 			}
 		}
 		break;

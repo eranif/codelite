@@ -1108,7 +1108,7 @@ DbgCmdCLIHandler* DbgGdb::GetCliHandler()
 bool DbgGdb::ListChildren(const wxString& name)
 {
 	wxString cmd;
-	cmd << wxT("-var-list-children ") << name;
+	cmd << wxT("-var-list-children \"") << name << wxT("\"");
 	return WriteCommand(cmd, new DbgCmdListChildren(m_observer, name));
 }
 
@@ -1122,13 +1122,13 @@ bool DbgGdb::CreateVariableObject(const wxString& expression)
 bool DbgGdb::DeleteVariableObject(const wxString& name)
 {
 	wxString cmd;
-	cmd << wxT("-var-delete ") << name;
+	cmd << wxT("-var-delete \"") << name << wxT("\"");
 	return WriteCommand(cmd, NULL);
 }
 
 bool DbgGdb::EvaluateVariableObject(const wxString& name)
 {
 	wxString cmd;
-	cmd << wxT("-var-evaluate-expression ") << name;
+	cmd << wxT("-var-evaluate-expression \"") << name << wxT("\"");
 	return WriteCommand(cmd, new DbgCmdEvalVarObj(m_observer, name));
 }

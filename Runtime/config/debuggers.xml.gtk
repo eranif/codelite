@@ -1,46 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Debuggers>
   <ArchiveObject Name="DebuggerCommands">
-    <long Value="7" Name="size"/>
+    <long Value="4" Name="size"/>
     <SerializedObject Name="DebuggerCmd0">
       <wxString Value="string" Name="m_name"/>
-      <wxString Value="$(Variable)" Name="m_command"/>
-      <wxString Value="pstring" Name="m_dbgCommand"/>
+      <wxString Value="$(Variable)._M_dataplus._M_p" Name="m_command"/>
+      <wxString Value="print" Name="m_dbgCommand"/>
     </SerializedObject>
     <SerializedObject Name="DebuggerCmd1">
       <wxString Value="wxString" Name="m_name"/>
-      <wxString Value="$(Variable).ToAscii().m_str" Name="m_command"/>
+      <wxString Value="$(Variable).m_pchData" Name="m_command"/>
       <wxString Value="print" Name="m_dbgCommand"/>
     </SerializedObject>
-    <SerializedObject Name="DebuggerCmd2">
-      <wxString Value="vector" Name="m_name"/>
-      <wxString Value="$(Variable)" Name="m_command"/>
-      <wxString Value="pvector" Name="m_dbgCommand"/>
+	<SerializedObject Name="DebuggerCmd2">
+      <wxString Value="QString" Name="m_name"/>
+      <wxString Value="(wchar_t*)$(Variable).d->array" Name="m_command"/>
+      <wxString Value="print" Name="m_dbgCommand"/>
     </SerializedObject>
 	<SerializedObject Name="DebuggerCmd3">
-      <wxString Value="QString" Name="m_name"/>
-      <wxString Value="$(Variable)" Name="m_command"/>
-      <wxString Value="printqstring" Name="m_dbgCommand"/>
-    </SerializedObject>
-	<SerializedObject Name="DebuggerCmd4">
       <wxString Value="wstring" Name="m_name"/>
-      <wxString Value="$(Variable)" Name="m_command"/>
-      <wxString Value="pwstring" Name="m_dbgCommand"/>
-    </SerializedObject>
-	<SerializedObject Name="DebuggerCmd5">
-      <wxString Value="list" Name="m_name"/>
-      <wxString Value="$(Variable)" Name="m_command"/>
-      <wxString Value="plist" Name="m_dbgCommand"/>
-    </SerializedObject>
-	<SerializedObject Name="DebuggerCmd6">
-      <wxString Value="map" Name="m_name"/>
-      <wxString Value="$(Variable)" Name="m_command"/>
-      <wxString Value="pmap" Name="m_dbgCommand"/>
-    </SerializedObject>
-	<SerializedObject Name="DebuggerCmd6">
-      <wxString Value="multimap" Name="m_name"/>
-      <wxString Value="$(Variable)" Name="m_command"/>
-      <wxString Value="pmap" Name="m_dbgCommand"/>
+      <wxString Value="$(Variable)._M_dataplus._M_p" Name="m_command"/>
+      <wxString Value="print" Name="m_dbgCommand"/>
     </SerializedObject>
   </ArchiveObject>
   <ArchiveObject Name="DebuggersData">
@@ -51,19 +31,7 @@
     <bool Value="1" Name="enablePendingBreakpoints"/>
     <bool Value="0" Name="breakAtWinMain"/>
     <CData Name="startup_commands">
-      <![CDATA[define printqstring
-    printf "(QString)0x%x (length=%i): \"",&$arg0,$arg0.d->size
-    set $i=0
-    while $i < $arg0.d->size
-        set $c=$arg0.d->data[$i++]
-        if $c < 32 || $c > 127
-                printf "\\u0x%04x", $c
-        else
-                printf "%c", (char)$c
-        end
-    end
-    printf "\"\n"
-end
+      <![CDATA[
 define pvector
 	if $argc == 0
 		help pvector
@@ -657,52 +625,6 @@ document pbitset
 	pbitset b - prints all bits in b
 end
 
-
-
-#
-# std::string
-#
-
-define pstring
-	if $argc == 0
-		help pstring
-	else
-		printf "String \t\t\t= \"%s\"\n", $arg0._M_data()
-		printf "String size/length \t= %u\n", $arg0._M_rep()._M_length
-		printf "String capacity \t= %u\n", $arg0._M_rep()._M_capacity
-		printf "String ref-count \t= %d\n", $arg0._M_rep()._M_refcount
-	end
-end
-
-document pstring
-	Prints std::string information.
-	Syntax: pstring <string>
-	Example:
-	pstring s - Prints content, size/length, capacity and ref-count of string s
-end
-
-#
-# std::wstring
-#
-
-define pwstring
-	if $argc == 0
-		help pwstring
-	else
-		call printf("WString \t\t= \"%ls\"\n", $arg0._M_data())
-		printf "WString size/length \t= %u\n", $arg0._M_rep()._M_length
-		printf "WString capacity \t= %u\n", $arg0._M_rep()._M_capacity
-		printf "WString ref-count \t= %d\n", $arg0._M_rep()._M_refcount
-	end
-end
-
-document pwstring
-	Prints std::wstring information.
-	Syntax: pwstring <wstring>
-	Example:
-	pwstring s - Prints content, size/length, capacity and ref-count of wstring s
-end
-
 #
 # C++ related beautifiers (optional)
 #
@@ -715,6 +637,5 @@ set print demangle on
 set demangle-style gnu-v3
 set print sevenbit-strings off]]>
     </CData>
-
   </ArchiveObject>
 </Debuggers>

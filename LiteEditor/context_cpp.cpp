@@ -1361,7 +1361,6 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 		return;
 	}
 
-//	dbgr->ResolveType(word);
 	dbgr->CreateVariableObject( word );
 }
 

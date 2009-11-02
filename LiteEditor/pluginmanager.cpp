@@ -88,7 +88,7 @@ void PluginManager::Load()
 #endif
 
 	wxString fileSpec( wxT( "*." ) + ext );
-	PluginConfig::Instance()->Load(wxT("config/plugins.xml"));
+	PluginConfig::Instance()->Load(wxT("config/plugins.xml"), wxT("2.0.1"));
 
 	PluginsData pluginsData;
 	PluginConfig::Instance()->ReadObject(wxT("plugins_data"), &pluginsData);

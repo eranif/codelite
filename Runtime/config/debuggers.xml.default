@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Debuggers>
+<Debuggers Version="2.0.1">
   <ArchiveObject Name="DebuggerCommands">
     <long Value="4" Name="size"/>
     <SerializedObject Name="DebuggerCmd0">

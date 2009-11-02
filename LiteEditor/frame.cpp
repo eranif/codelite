@@ -652,7 +652,7 @@ void Frame::CreateGUIControls(void)
 #endif
 
 	//initialize debugger configuration tool
-	DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"));
+	DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"), wxT("2.0.1"));
 	WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
 
 	// FIXME:: Dragging toolar with transparent ON seems to crash (WX > 2.8.8)

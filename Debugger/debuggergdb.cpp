@@ -875,18 +875,6 @@ bool DbgGdb::EvaluateExpressionToString(const wxString &expression, const wxStri
 	return DeleteVariableObject( watchName );
 }
 
-bool DbgGdb::EvaluateExpressionToTree(const wxString &expression)
-{
-	wxString command;
-	wxString tmp(expression);
-
-	tmp = tmp.Trim().Trim(false);
-	command << wxT("-data-evaluate-expression ") << expression;
-
-	//first create the expression
-	return WriteCommand(command, new DbgCmdHandlerLocals(m_observer, DbgCmdHandlerLocals::EvaluateExpression, expression));
-}
-
 bool DbgGdb::ListFrames()
 {
 	return WriteCommand(wxT("-stack-list-frames"), new DbgCmdStackList(m_observer));

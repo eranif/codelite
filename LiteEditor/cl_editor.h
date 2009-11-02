@@ -592,7 +592,6 @@ private:
 	void OnFocusLost(wxFocusEvent &event);
 	void OnLeftDClick(wxScintillaEvent &event);
 	void OnPopupMenuUpdateUI(wxUpdateUIEvent &event);
-	void OnDbgQuickWatch(wxCommandEvent &event);
 	void OnDbgAddWatch(wxCommandEvent &event);
 	void OnDbgRunToCursor(wxCommandEvent &event);
 	void OnDbgCustomWatch(wxCommandEvent &event);

@@ -44,11 +44,12 @@ void NewQuickWatchDlg::OnExpandItem( wxTreeEvent& event )
 void NewQuickWatchDlg::BuildTree(const VariableObjChildren& children, IDebugger *debugger)
 {
 	m_debugger = debugger;
-	if( children.empty() ) return;
 	m_gdbId2Item.clear();
 	m_gdbId2ItemLeaf.clear();
 	m_treeCtrl->DeleteAllItems();
 	wxTreeItemId root = m_treeCtrl->AddRoot( m_variableName );
+
+	if( children.empty() ) return;
 	DoAddChildren( root, children );
 }
 
@@ -75,11 +76,11 @@ void NewQuickWatchDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChildr
 		if ( ch.numChilds > 0 ) {
 			// add fake node to this item, so it will have the [+] on the side
 			m_treeCtrl->AppendItem(child, wxT("<dummy>"));
-		} else {
-			// TODO:: this node is a leaf, call dbgr->EvaluateVariableObject()
-			m_debugger->EvaluateVariableObject( ch.gdbId );
-			m_gdbId2ItemLeaf[ch.gdbId] = child;
 		}
+
+		// ask gdb for the value for this node
+		m_debugger->EvaluateVariableObject( ch.gdbId );
+		m_gdbId2ItemLeaf[ch.gdbId] = child;
 	}
 }
 
@@ -117,4 +118,19 @@ void NewQuickWatchDlg::DoCleanUp()
 	m_gdbId2ItemLeaf.clear();
 	m_mainVariableObject = wxT("");
 	m_variableName = wxT("");
+}
+
+void NewQuickWatchDlg::HideDialog()
+{
+	DoCleanUp();
+	Close(true);
+}
+
+void NewQuickWatchDlg::OnKeyDown(wxKeyEvent& event)
+{
+	if( event.GetKeyCode() == WXK_ESCAPE ) {
+		HideDialog();
+	} else {
+		event.Skip();
+	}
 }

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "localvarstree.h"
 #include "new_quick_watch_dlg.h"
 #include "fc_fileopener.h"
 #include "debuggerconfigtool.h"
@@ -171,7 +172,6 @@ Manager::Manager ( void )
 		: m_shellProcess ( NULL )
 		, m_asyncExeCmd ( NULL )
 		, m_breakptsmgr( new BreakptMgr )
-		, m_quickWatchDlg ( NULL )
 		, m_isShutdown ( false )
 		, m_workspceClosing ( false )
 		, m_dbgCanInteract ( false )
@@ -1685,7 +1685,7 @@ void Manager::UpdateDebuggerPane()
 		// updated
 		//--------------------------------------------------------------------
 
-		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == pane->GetLocalsTree() ) || IsPaneVisible ( DebuggerPane::LOCALS ) ) {
+		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetLocalsTree() ) || IsPaneVisible ( DebuggerPane::LOCALS ) ) {
 
 			//update the locals tree
 			dbgr->QueryLocals();
@@ -1983,11 +1983,6 @@ void Manager::DbgStart ( long pid )
 
 void Manager::DbgStop()
 {
-	if ( m_quickWatchDlg ) {
-		m_quickWatchDlg->Destroy();
-		m_quickWatchDlg = NULL;
-	}
-
 	if ( m_newQuickWatchDlg ) {
 		m_newQuickWatchDlg->Destroy();
 		m_newQuickWatchDlg = NULL;
@@ -2095,25 +2090,6 @@ void Manager::DbgDoSimpleCommand ( int cmd )
 			break;
 		}
 	}
-}
-
-void Manager::DbgQuickWatch ( const wxString &expression, bool useTipWin, long pos )
-{
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if ( dbgr && dbgr->IsRunning() ) {
-		m_useTipWin = useTipWin;
-		m_tipWinPos = pos;
-		dbgr->EvaluateExpressionToTree ( expression );
-	}
-}
-
-void Manager::DbgCancelQuickWatchTip()
-{
-	/*
-	if(m_debuggerTipWin){
-		m_debuggerTipWin->Dismiss();
-	}
-	*/
 }
 
 void Manager::DbgSetFrame ( int frame, int lineno )
@@ -2382,39 +2358,6 @@ void Manager::UpdateTip(const wxString& expression, const wxString& tip)
 		}
 	}
 	Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->UpdateView( expression, tip );
-}
-
-void Manager::UpdateQuickWatch ( const wxString &expression, TreeNode<wxString, NodeData> *tree )
-{
-	if ( m_useTipWin ) {
-
-#if 0
-		m_useTipWin = false;
-		if ( m_debuggerTipWin ) {
-			delete m_debuggerTipWin;
-		}
-		m_debuggerTipWin = new DebuggerTip ( Frame::Get(), expression, tree, m_tipWinPos );
-		m_debuggerTipWin->Popup();
-#endif
-
-	} else {
-		//Display a dialog with the expression
-		if ( !m_quickWatchDlg ) {
-			//first time?
-			m_quickWatchDlg = new QuickWatchDlg ( Frame::Get(), expression, tree );
-			m_quickWatchDlg->ShowModal();
-		} else {
-			//Dialog already created
-			if ( m_quickWatchDlg->IsShown() ) {
-				//dialog is visible, just update the tree
-				m_quickWatchDlg->Init ( expression, tree );
-			} else {
-				//Update the tree
-				m_quickWatchDlg->Init ( expression, tree );
-				m_quickWatchDlg->ShowModal();
-			}
-		}
-	}
 }
 
 void Manager::UpdateRemoteTargetConnected(const wxString& line)
@@ -2769,11 +2712,6 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	case DBG_UR_EXPRESSION:
 		Frame::Get()->GetDebuggerPane()->GetWatchesTable()->UpdateExpression ( event.m_expression, event.m_evaluated );
 		break;
-
-	case DBG_UR_QUICK_WATCH:
-		UpdateQuickWatch(event.m_expression, event.m_tree);
-		break;
-
 	case DBG_UR_UPDATE_STACK_LIST:
 		Frame::Get()->GetDebuggerPane()->GetFrameListView()->Update ( event.m_stack );
 		break;
@@ -2809,9 +2747,24 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 			// we need a tree
 			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 			if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
-				if(dbgr->ListChildren(event.m_variableObject.gdbId)){
-					GetQuickWatchDialog()->m_mainVariableObject = event.m_variableObject.gdbId;
-					GetQuickWatchDialog()->m_variableName       = event.m_expression;
+				GetQuickWatchDialog()->m_mainVariableObject = event.m_variableObject.gdbId;
+				GetQuickWatchDialog()->m_variableName       = event.m_expression;
+				if( event.m_variableObject.typeName.IsEmpty() == false ) {
+					GetQuickWatchDialog()->m_variableName << wxT(" (") << event.m_variableObject.typeName << wxT(") ");
+				}
+				if( event.m_evaluated.IsEmpty() == false ) {
+					GetQuickWatchDialog()->m_variableName << wxT(" = ") << event.m_evaluated;
+				}
+				if ( event.m_variableObject.numChilds > 0 ) {
+					// Complex type
+					dbgr->ListChildren(event.m_variableObject.gdbId);
+
+				} else {
+					// Simple type, no need for further calls, show the dialog
+					if ( !GetQuickWatchDialog()->IsShown() ) {
+						GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
+						GetQuickWatchDialog()->Show();
+					}
 				}
 			}
 		}

@@ -24,3 +24,4 @@
 #define GDB_ASCII 280
 #define GDB_CHILDREN 281
 #define GDB_CHILD 282
+#define GDB_MORE 283

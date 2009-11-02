@@ -82,67 +82,105 @@ static std::vector<std::map<std::string, std::string> > sg_children;
 #define GDB_ASCII 280
 #define GDB_CHILDREN 281
 #define GDB_CHILD 282
+#define GDB_MORE 283
 #define YYERRCODE 256
 short gdb_result_lhs[] = {                                        -1,
-    0,    0,    2,    1,    1,    3,    5,    3,    4,    7,
-    4,    6,    6,    6,    6,
+    0,    0,    3,    1,    1,    2,    6,    2,    4,    7,
+    4,    5,    9,    5,    8,    8,    8,    8,    8,
 };
 short gdb_result_len[] = {                                         2,
-    1,    2,    0,   13,    1,    5,    0,    8,    3,    0,
-    6,    1,    1,    1,    1,
+    1,    2,    0,    2,    1,   12,    0,    9,    5,    0,
+    8,    3,    0,    6,    1,    1,    1,    1,    1,
 };
 short gdb_result_defred[] = {                                      0,
-    5,    0,    1,    0,    2,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    4,    0,
-   12,   15,   13,   14,    0,    0,    0,    0,    0,    0,
-    0,    0,    8,    0,   11,
+    5,    0,    1,    0,    2,    0,    4,    0,    0,    0,
+    0,    0,    0,    0,    0,    7,    0,    0,    0,   18,
+   15,   19,   16,   17,    8,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    6,    0,    0,   14,    0,    0,
+    0,    0,   11,
 };
 short gdb_result_dgoto[] = {                                       2,
-    3,    4,   17,   25,   29,   26,   32,
+    3,    7,    4,   32,   25,   18,   41,   26,   33,
 };
-short gdb_result_sindex[] = {                                   -253,
-    0, -253,    0,  -90,    0, -252,  -38, -269,  -53, -258,
-  -34, -267,  -46,  -75, -265,  -42,  -73, -105,    0, -264,
-    0,    0,    0,    0, -104,  -39,    0, -244,  -20,    0,
- -265,  -19,    0, -264,    0,
+short gdb_result_sindex[] = {                                   -252,
+    0, -252,    0,  -86,    0, -248,    0,  -34, -263,  -50,
+  -49, -250, -249,  -25,  -24,    0, -260, -261,  -39,    0,
+    0,    0,    0,    0,    0,  -38,  -67, -242, -256,    0,
+  -33,  -66,  -15,  -93,    0, -261, -261,    0,  -94,    0,
+  -12, -256,    0,
 };
-short gdb_result_rindex[] = {                                    -68,
-    0,  -68,    0,    0,    0,    0,    0,    0,    0,    0,
+short gdb_result_rindex[] = {                                    -61,
+    0,  -61,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,  -43,    0,    0,  -44,
-    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    1,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,  -44,
+    0,    0,    0,
 };
 short gdb_result_gindex[] = {                                      0,
-   25,    0,   -3,   -5,    0,    0,    0,
+   32,    0,    0,   -7,  -30,    0,    0,    0,    0,
 };
-#define YYTABLESIZE 81
+#define YYTABLESIZE 257
 short gdb_result_table[] = {                                      10,
-    7,   21,    1,    6,    7,    8,    9,   10,   11,   12,
-   22,   23,   24,   13,   14,   15,   16,   20,   18,   19,
-   27,   28,   30,   31,   34,    3,    5,   33,   35,    0,
+   12,   20,   10,    1,   21,   38,   39,    6,    8,    9,
+   12,   13,   11,   22,   23,   24,   14,   15,   16,   17,
+   19,   27,   28,   29,   30,   31,   35,   34,   36,   37,
+   40,   42,    3,    5,   43,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,   13,    0,    0,    0,    9,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    6,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    9,
+    0,    0,    0,    0,   12,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,   12,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,   12,
 };
 short gdb_result_check[] = {                                      44,
-   44,  266,  256,   94,  257,   44,  276,   61,  267,   44,
-  275,  276,  277,  281,   61,   91,  282,  123,   61,   93,
-  125,   61,  267,   44,   44,   94,    2,   31,   34,   -1,
+    0,  263,  266,  256,  266,   36,   37,   94,  257,   44,
+   61,   61,  276,  275,  276,  277,  267,  267,   44,   44,
+  281,   61,   61,   91,  267,  282,   93,   61,   44,  123,
+  125,   44,   94,    2,   42,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   44,   -1,   -1,   -1,   93,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   93,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-  125,
+   -1,   -1,   -1,   -1,   94,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,  125,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,  256,
 };
 #define YYFINAL 2
 #ifndef YYDEBUG
 #define YYDEBUG 1
 #endif
-#define YYMAXTOKEN 282
+#define YYMAXTOKEN 283
 #if YYDEBUG
 char *gdb_result_name[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -156,24 +194,28 @@ char *gdb_result_name[] = {
 "GDB_STACK_ARGS","GDB_VALUE","GDB_ARGS","GDB_FRAME","GDB_NAME","GDB_STRING",
 "GDB_LEVEL","GDB_ESCAPED_STRING","GDB_LOCALS","GDB_INTEGER","GDB_OCTAL",
 "GDB_HEX","GDB_FLOAT","GDB_IDENTIFIER","GDB_NUMCHILD","GDB_TYPE","GDB_DATA",
-"GDB_ADDR","GDB_ASCII","GDB_CHILDREN","GDB_CHILD",
+"GDB_ADDR","GDB_ASCII","GDB_CHILDREN","GDB_CHILD","GDB_MORE",
 };
 char *gdb_result_rule[] = {
 "$accept : parse",
 "parse : children_list",
 "parse : parse children_list",
 "$$1 :",
-"children_list : $$1 '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN '=' '[' children ']'",
+"children_list : $$1 child_pattern",
 "children_list : error",
-"children : GDB_CHILD '=' '{' child_attributes '}'",
+"child_pattern : '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN '=' '[' children ']'",
 "$$2 :",
-"children : GDB_CHILD '=' '{' child_attributes '}' $$2 ',' children",
-"child_attributes : child_key '=' GDB_STRING",
+"child_pattern : '^' GDB_DONE ',' GDB_NAME '=' GDB_STRING ',' $$2 child_attributes",
+"children : GDB_CHILD '=' '{' child_attributes '}'",
 "$$3 :",
-"child_attributes : child_key '=' GDB_STRING $$3 ',' child_attributes",
+"children : GDB_CHILD '=' '{' child_attributes '}' $$3 ',' children",
+"child_attributes : child_key '=' GDB_STRING",
+"$$4 :",
+"child_attributes : child_key '=' GDB_STRING $$4 ',' child_attributes",
 "child_key : GDB_NAME",
 "child_key : GDB_NUMCHILD",
 "child_key : GDB_TYPE",
+"child_key : GDB_VALUE",
 "child_key : GDB_IDENTIFIER",
 };
 #endif
@@ -359,34 +401,46 @@ case 3:
 break;
 case 5:
 {
-				 /*printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());*/
+				 printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
 				}
 break;
-case 6:
+case 7:
+{sg_attributes[yyvsp[-3]] = yyvsp[-1];}
+break;
+case 8:
 {
 					sg_children.push_back( sg_attributes );
 					sg_attributes.clear();
 				}
 break;
-case 7:
-{sg_children.push_back( sg_attributes ); sg_attributes.clear(); }
-break;
 case 9:
-{ sg_attributes[yyvsp[-2]] = yyvsp[0]; }
+{
+					sg_children.push_back( sg_attributes );
+					sg_attributes.clear();
+				}
 break;
 case 10:
-{ sg_attributes[yyvsp[-2]] = yyvsp[0]; }
+{sg_children.push_back( sg_attributes ); sg_attributes.clear(); }
 break;
 case 12:
-{yyval = yyvsp[0];}
+{ sg_attributes[yyvsp[-2]] = yyvsp[0]; }
 break;
 case 13:
-{yyval = yyvsp[0];}
-break;
-case 14:
-{yyval = yyvsp[0];}
+{ sg_attributes[yyvsp[-2]] = yyvsp[0]; }
 break;
 case 15:
+{yyval = yyvsp[0];}
+break;
+case 16:
+{yyval = yyvsp[0];}
+break;
+case 17:
+{yyval = yyvsp[0];}
+break;
+case 18:
+{yyval = yyvsp[0];}
+break;
+case 19:
 {yyval = yyvsp[0];}
 break;
     }

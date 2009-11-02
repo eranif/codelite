@@ -78,7 +78,7 @@ void DebuggersData::DeSerialize(Archive &arch)
 		arch.Read(wxT("showTooltips"), info.showTooltips);
 		arch.Read(wxT("debugAsserts"), info.debugAsserts);
 		arch.ReadCData(wxT("startup_commands"), info.startupCommands);
-		
+
 		// Trim leading whitepsace
 		info.startupCommands.Trim();
 		m_debuggers.push_back(info);
@@ -252,7 +252,7 @@ void DebuggerMgr::SetActiveDebugger(const wxString &name)
 void DebuggerMgr::SetDebuggerInformation(const wxString &name, const DebuggerInformation &info)
 {
 	m_debuggersData.SetDebuggerInformation(name, info);
-	
+
 	if (m_activeDebuggerName == name) {
 		IDebugger *dbgr = GetActiveDebugger();
 		if (dbgr && dbgr->IsRunning()) {

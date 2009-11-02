@@ -55,6 +55,7 @@ static std::vector<std::map<std::string, std::string> > sg_children;
 %token GDB_ASCII
 %token GDB_CHILDREN
 %token GDB_CHILD
+%token GDB_MORE
 
 %%
 
@@ -62,11 +63,19 @@ parse: children_list
 	 | parse children_list
 	 ;
 
-children_list:  {sg_attributes.clear(); sg_children.clear();} '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN '=' '[' children ']'
-			 |  error {
-				 //printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
+children_list:    {sg_attributes.clear(); sg_children.clear();} child_pattern
+				|  error {
+				 printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
 				}
 			;
+
+child_pattern :   '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN '=' '[' children ']'
+				| '^' GDB_DONE ',' GDB_NAME '=' GDB_STRING ',' {sg_attributes[$4] = $6;} child_attributes
+				{
+					sg_children.push_back( sg_attributes );
+					sg_attributes.clear();
+				}
+				;
 
 children     : GDB_CHILD '=' '{' child_attributes '}' {
 					sg_children.push_back( sg_attributes );
@@ -82,6 +91,7 @@ child_attributes :  child_key '=' GDB_STRING { sg_attributes[$1] = $3; }
 child_key: GDB_NAME       {$$ = $1;}
 		 | GDB_NUMCHILD   {$$ = $1;}
 		 | GDB_TYPE       {$$ = $1;}
+		 | GDB_VALUE      {$$ = $1;}
 		 | GDB_IDENTIFIER {$$ = $1;}
 		 ;
 %%

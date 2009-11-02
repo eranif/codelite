@@ -30,6 +30,17 @@
 #include <wx/regex.h>
 #include "gdb_parser_incl.h"
 
+#define GDB_LEX()\
+	{\
+		type = gdb_result_lex();\
+		currentToken = gdb_result_string;\
+	}
+
+#define GDB_BREAK(ch)\
+	if(type != (int)ch){\
+		break;\
+	}
+
 static void wxGDB_STRIP_QUOATES(wxString &currentToken)
 {
 	size_t where = currentToken.find(wxT("\""));
@@ -88,16 +99,23 @@ static void wxRemoveQuotes(wxString &str)
 	}
 }
 
-#define GDB_LEX()\
-	{\
-		type = gdb_result_lex();\
-		currentToken = gdb_result_string;\
-	}
+static wxString wxGdbFixValue(const wxString &value)
+{
+	int         type(0);
+	std::string currentToken;
 
-#define GDB_BREAK(ch)\
-	if(type != (int)ch){\
-		break;\
+	// GDB MI tends to mess the strings...
+	// use our Flex lexer to normalize the value
+	setGdbLexerInput(value.mb_str(wxConvUTF8).data(), true);
+	GDB_LEX();
+	wxString display_line;
+	while ( type != 0 ) {
+		display_line << wxString(currentToken.c_str(), wxConvUTF8) << wxT(" ");
+		GDB_LEX();
 	}
+	gdb_result_lex_clean();
+	return display_line;
+}
 
 static wxString NextValue(wxString &line, wxString &key)
 {
@@ -556,8 +574,6 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 
 	if (m_evaluateExpression == Locals || m_evaluateExpression == This || m_evaluateExpression == FunctionArguments) {
 		m_observer->UpdateLocals(tree);
-	} else {
-		m_observer->UpdateQuickWatch(m_expression, tree);
 	}
 	return true;
 }
@@ -1196,45 +1212,71 @@ bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
 
 bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
 {
+	DebuggerEvent e;
 	// Variable object was created
 	// Output sample:
 	// ^done,name="var1",numchild="2",value="{...}",type="ChildClass",thread-id="1",has_more="0"
+	std::vector<std::map<std::string, std::string> > children;
+	gdbParseListChildren(line.mb_str(wxConvUTF8).data(), children);
 
-	VariableObject vo;
-	wxString modLine ( line );
-	int where = modLine.Find(wxT("name=\""));
-	if ( where != wxNOT_FOUND ) {
-		modLine = modLine.Mid(where + 6); // +6: skips the name="
-		vo.gdbId = modLine.BeforeFirst(wxT('"'));
-	}
+	if( children.size() ) {
+		std::map<std::string, std::string> attr = children.at(0);
+		VariableObject vo;
+		std::map<std::string, std::string >::const_iterator iter;
 
-	where = modLine.Find(wxT("numchild=\""));
-	if ( where != wxNOT_FOUND ) {
-		modLine = modLine.Mid(where + 10); // +10: skips the numchild="
-		wxString strNum = modLine.BeforeFirst(wxT('"'));
-		vo.numChilds = wxAtoi( strNum.c_str() );
-	}
-
-	where = modLine.Find(wxT("type=\""));
-	if ( where != wxNOT_FOUND ) {
-		modLine = modLine.Mid(where + 6); // +6: skips the type="
-		vo.typeName = modLine.BeforeFirst(wxT('"'));
-
-		if (vo.typeName.EndsWith(wxT(" *")) ) {
-			vo.isPtr = true;
+		iter = attr.find("name");
+		if ( iter != attr.end() ) {
+			vo.gdbId = wxString(iter->second.c_str(), wxConvUTF8);
+			wxRemoveQuotes( vo.gdbId );
 		}
 
-		if (vo.typeName.EndsWith(wxT(" **")) ) {
-			vo.isPtrPtr = true;
+		iter = attr.find("numchild");
+		if ( iter != attr.end() ) {
+			if ( iter->second.empty() == false ) {
+				wxString numChilds (iter->second.c_str(), wxConvUTF8);
+				wxRemoveQuotes( numChilds );
+				vo.numChilds = wxAtoi(numChilds);
+			}
 		}
-	}
 
-	if ( vo.gdbId.IsEmpty() == false  ) {
-		DebuggerEvent e;
-		e.m_updateReason = DBG_UR_VARIABLEOBJ;
-		e.m_variableObject = vo;
-		e.m_expression = m_expression;
-		m_observer->DebuggerUpdate( e );
+		// For primitive types, we also get the value
+		iter = attr.find("value");
+		if ( iter != attr.end() ) {
+
+			if ( iter->second.empty() == false ) {
+				wxString v (iter->second.c_str(), wxConvUTF8);
+				wxRemoveQuotes( v );
+				wxString val = wxGdbFixValue(v);
+				if ( val.IsEmpty()== false) {
+					e.m_evaluated = val;
+				}
+			}
+		}
+
+		iter = attr.find("type");
+		if ( iter != attr.end() ) {
+			if ( iter->second.empty() == false ) {
+				wxString t (iter->second.c_str(), wxConvUTF8);
+				wxRemoveQuotes( t );
+				vo.typeName = t;
+			}
+
+			if (vo.typeName.EndsWith(wxT(" *")) ) {
+				vo.isPtr = true;
+			}
+
+			if (vo.typeName.EndsWith(wxT(" **")) ) {
+				vo.isPtrPtr = true;
+			}
+		}
+
+		if ( vo.gdbId.IsEmpty() == false  ) {
+
+			e.m_updateReason = DBG_UR_VARIABLEOBJ;
+			e.m_variableObject = vo;
+			e.m_expression = m_expression;
+			m_observer->DebuggerUpdate( e );
+		}
 	}
 }
 
@@ -1265,13 +1307,17 @@ static VariableObjChild FromParserOutput(const std::map<std::string, std::string
 		}
 	}
 
-	iter = attr.find("type");
+	// For primitive types, we also get the value
+	iter = attr.find("value");
 	if ( iter != attr.end() ) {
-		wxString type = wxString(iter->second.c_str(), wxConvUTF8);
-		wxRemoveQuotes ( type );
-		if (type.Contains(wxT("char *"))) {
-			// dont consider this as an array
-			child.numChilds = 0;
+		if ( iter->second.empty() == false ) {
+			wxString v (iter->second.c_str(), wxConvUTF8);
+			wxRemoveQuotes( v );
+			child.value = wxGdbFixValue(v);
+
+			if( child.value.IsEmpty() == false ) {
+				child.varName << wxT(" = ") << child.value;
+			}
 		}
 	}
 	return child;
@@ -1281,13 +1327,19 @@ bool DbgCmdListChildren::ProcessOutput(const wxString& line)
 {
 	DebuggerEvent e;
 	std::string cbuffer = line.mb_str(wxConvUTF8).data();
-	wxLogMessage(line);
 
 	std::vector< std::map<std::string, std::string > > children;
 	gdbParseListChildren(cbuffer, children);
 
 	// Convert the parser output to codelite data structure
 	for (size_t i=0; i<children.size(); i++) {
+		/*std::map<std::string, std::string>           attr = children.at(i);
+		std::map<std::string, std::string>::iterator iter = attr.begin();
+
+		for( ; iter != attr.end(); iter++ ){
+			wxLogMessage(wxT("%s=%s\n"), wxString(iter->first.c_str(), wxConvUTF8).c_str(), wxString(iter->second.c_str(), wxConvUTF8).c_str());
+		}*/
+
 		e.m_varObjChildren.push_back( FromParserOutput( children.at(i) ) );
 	}
 
@@ -1302,8 +1354,6 @@ bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
 {
 	// -var-evaluate-expression var1
 	// ^done,value="{...}"
-	int         type(0);
-	std::string currentToken;
 	wxString    v;
 
 	int where = line.Find(wxT("value=\""));
@@ -1313,18 +1363,9 @@ bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
 			v.RemoveLast(); // remove closing qoute
 		}
 
-		// GDB MI tends to mess the strings...
-		// use our Flex lexer to normalize the value
-		setGdbLexerInput(v.mb_str(wxConvUTF8).data(), true);
-		GDB_LEX();
-		wxString display_line;
-		while ( type != 0 ) {
-			display_line << wxString(currentToken.c_str(), wxConvUTF8) << wxT(" ");
-			GDB_LEX();
-		}
-		gdb_result_lex_clean();
-
-		if ( display_line.IsEmpty() == false ) {
+		wxString display_line = wxGdbFixValue( v );
+		display_line.Trim().Trim(false);
+		if ( display_line.IsEmpty() == false && display_line != wxT("{...}")) {
 			DebuggerEvent e;
 			e.m_updateReason = DBG_UR_EVALVARIABLEOBJ;
 			e.m_expression = m_variable;

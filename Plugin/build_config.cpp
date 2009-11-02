@@ -58,12 +58,12 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		if (linker) {
 			m_linkerRequired = XmlUtils::ReadBool(linker, wxT("Required"), true);
 		}
-		
+
 		wxXmlNode *resCmp = XmlUtils::FindFirstByTagName(node, wxT("ResourceCompiler"));
 		if (resCmp) {
 			m_isResCmpNeeded = XmlUtils::ReadBool(resCmp, wxT("Required"), true);
 		}
-		
+
 		// read the postbuild commands
 		wxXmlNode *debugger = XmlUtils::FindFirstByTagName(node, wxT("Debugger"));
 		m_isDbgRemoteTarget = false;
@@ -173,7 +173,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		m_commonConfig.SetCompileOptions(wxT("-g"));
 		m_commonConfig.SetLinkOptions(wxT("-O0"));
 		m_commonConfig.SetLibPath(wxT(".;Debug"));
-		
+
 		m_name = wxT("Debug");
 		m_compilerRequired = true;
 		m_linkerRequired = true;
@@ -248,7 +248,7 @@ wxXmlNode *BuildConfig::ToXml() const
 	if (resCmp) {
 		resCmp->AddProperty(wxT("Required"), BoolToString(m_isResCmpNeeded));
 	}
-	
+
 	wxXmlNode *general = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("General"));
 	general->AddProperty(wxT("OutputFile"), m_outputFile);
 	general->AddProperty(wxT("IntermediateDirectory"), m_intermediateDirectory);

@@ -1299,9 +1299,6 @@ void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
 void ContextCpp::OnDbgDwellEnd(wxScintillaEvent &event)
 {
 	wxUnusedVar(event);
-	Manager *mgr = ManagerST::Get();
-	mgr->DbgCancelQuickWatchTip();
-
 	// remove the debugger indicator
 	GetCtrl().SetIndicatorCurrent(DEBUGGER_INDICATOR);
 	GetCtrl().IndicatorClearRange(0, GetCtrl().GetLength());
@@ -1310,6 +1307,16 @@ void ContextCpp::OnDbgDwellEnd(wxScintillaEvent &event)
 void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 {
 	static wxRegEx reCppIndentifier(wxT("[a-zA-Z_][a-zA-Z0-9_]*"));
+
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
+		if( ManagerST::Get()->GetQuickWatchDialog()->IsShown() ) {
+			// a 'Quick Show dialog' is already shown!
+			// dont show another tip
+			return;
+		}
+	}
+
 	wxPoint pt;
 	wxString word;
 	pt.x = event.GetX();
@@ -1354,16 +1361,8 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 		return;
 	}
 
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-		dbgr->ResolveType(word);
-//		if( ManagerST::Get()->GetQuickWatchDialog()->IsShown() ) {
-//			// a 'Quick Show dialog' is already shown!
-//			// hide it
-//			ManagerST::Get()->GetQuickWatchDialog()->Hide();
-//		}
-//		dbgr->CreateVariableObject( word );
-	}
+//	dbgr->ResolveType(word);
+	dbgr->CreateVariableObject( word );
 }
 
 int ContextCpp::FindLineToAddInclude()

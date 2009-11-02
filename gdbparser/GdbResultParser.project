@@ -8,6 +8,7 @@
   <Description/>
   <VirtualDirectory Name="src">
     <File Name="main.cpp"/>
+    <File Name="Debug\test.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Grammar">
     <File Name="gdb_result.l"/>

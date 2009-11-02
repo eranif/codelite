@@ -26,6 +26,7 @@ protected:
 	void OnBtnCancel(wxCommandEvent &e);
 	void OnCloseEvent(wxCloseEvent &e);
 	void DoAddChildren(wxTreeItemId &item, const VariableObjChildren &children);
+	void OnKeyDown(wxKeyEvent &event);
 	void DoCleanUp();
 
 public:
@@ -36,6 +37,7 @@ public:
 	void AddItems   ( const wxString &varname, const VariableObjChildren &children);
 	void UpdateValue( const wxString &varname, const wxString &value);
 	void BuildTree  (const VariableObjChildren &children, IDebugger *debugger);
+	void HideDialog ();
 
 };
 

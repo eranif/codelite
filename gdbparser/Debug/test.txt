@@ -1,1 +1,1 @@
-0x3e3d49 \"C:\\\\TestArea\\\\TestExe\\\\Debug/./TestExe.exe\"
+^done,name="var2",numchild="1",value="{...}",type="char *",thread-id="1",has_more="0"

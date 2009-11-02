@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cl_editor.h"
+#include "new_quick_watch_dlg.h"
 #include "buildtabsettingsdata.h"
 #include "jobqueue.h"
 #include "stringhighlighterjob.h"
@@ -2254,6 +2255,10 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 {
 	// hide completion box
 	HideCompletionBox();
+
+	if( ManagerST::Get()->GetQuickWatchDialog()->IsShown() )
+		ManagerST::Get()->GetQuickWatchDialog()->HideDialog();
+
 #ifdef __WXMSW__
 	long value(0);
 	EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
@@ -2532,15 +2537,7 @@ void LEditor::AddDebuggerContextMenu(wxMenu *menu)
 	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgAddWatch), NULL, this);
 	m_dynItems.push_back(item);
 
-
-
 	menuItemText.Clear();
-	menuItemText << wxT("Quick Watch '") << word << wxT("'");
-	item = new wxMenuItem(menu, wxNewId(), menuItemText);
-	menu->Prepend(item);
-	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgQuickWatch), NULL, this);
-	m_dynItems.push_back(item);
-
 	item = new wxMenuItem(menu, wxNewId(), _("Run to cursor"));
 	menu->Prepend(item);
 	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
@@ -2567,20 +2564,6 @@ void LEditor::RemoveDebuggerContextMenu(wxMenu *menu)
 
 	m_dynItems.clear();
 	m_customCmds.clear();
-}
-
-void LEditor::OnDbgQuickWatch(wxCommandEvent &event)
-{
-	wxUnusedVar(event);
-
-	wxString word = GetSelectedText();
-	if (word.IsEmpty()) {
-		word = GetWordAtCaret();
-		if (word.IsEmpty()) {
-			return;
-		}
-	}
-	ManagerST::Get()->DbgQuickWatch(word);
 }
 
 void LEditor::OnDbgAddWatch(wxCommandEvent &event)

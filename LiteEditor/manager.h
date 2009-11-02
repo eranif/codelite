@@ -37,7 +37,6 @@
 #include "async_executable_cmd.h"
 #include "filehistory.h"
 #include "breakpointsmgr.h"
-#include "quickwatchdlg.h"
 
 
 // ====================================================================
@@ -58,7 +57,6 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
  	ShellCommand           *m_shellProcess;
  	AsyncExeCmd            *m_asyncExeCmd;
  	BreakptMgr             *m_breakptsmgr;
- 	QuickWatchDlg          *m_quickWatchDlg;
  	bool                    m_isShutdown;
  	bool                    m_workspceClosing;
  	bool                    m_dbgCanInteract;
@@ -480,8 +478,6 @@ public:
 	void DbgMarkDebuggerLine(const wxString &fileName, int lineno);
 	void DbgUnMarkDebuggerLine();
 	void DbgDoSimpleCommand(int cmd);
-	void DbgQuickWatch(const wxString &expression, bool useTipWin = false, long pos = wxNOT_FOUND);
-	void DbgCancelQuickWatchTip();
 	void DbgSetFrame(int frame, int lineno);
 	void DbgSetThread(long threadId);
 	bool DbgCanInteract() {	return m_dbgCanInteract; }
@@ -497,7 +493,6 @@ public:
 	void UpdateLocals               (TreeNode<wxString, NodeData> *tree);
 	void UpdateGotControl           (DebuggerReasons reason);
 	void UpdateLostControl          ();
-	void UpdateQuickWatch           (const wxString &expression, TreeNode<wxString, NodeData> *tree);
 	void UpdateRemoteTargetConnected(const wxString &line);
 	void UpdateTypeReolsved         (const wxString &expression, const wxString &type);
 	void UpdateTip                  (const wxString &expression, const wxString &tip);

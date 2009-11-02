@@ -78,6 +78,7 @@ struct VariableObjChild {
 	int      numChilds;    // If this child has children (i.e. is this child a node or leaf)
 	wxString varName;      // the name of the variable object node
 	wxString gdbId;        // A unique name given by gdb which holds this node information for further queries
+	wxString value;
 
 	VariableObjChild() : numChilds(0) {}
 };
@@ -598,7 +599,6 @@ public:
 	//The short one, which returns a string, and long one
 	//which returns a tree of the result
 	virtual bool EvaluateExpressionToString(const wxString &expression, const wxString &format) = 0;
-	virtual bool EvaluateExpressionToTree(const wxString &expression) = 0;
 
 	/**
 	 * \brief a request to display memory from address -> address + count. This is a synchronous call

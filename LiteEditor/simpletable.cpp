@@ -254,11 +254,6 @@ wxArrayString SimpleTable::GetExpressions()
 	return expressions;
 }
 
-void SimpleTable::DoShowMoreDetails(long item)
-{
-	ManagerST::Get()->DbgQuickWatch(GetColumnText(item, 0));
-}
-
 void SimpleTable::OnMenuExpandExpr(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
@@ -346,4 +341,9 @@ void SimpleTable::OnNewWatch_Iternal(wxCommandEvent& event)
 		AddExpression(expr);
 		RefreshValues();
 	}
+}
+
+void SimpleTable::DoShowMoreDetails(long item)
+{
+	// TODO:: Show new Quick Watch dialog for this item
 }

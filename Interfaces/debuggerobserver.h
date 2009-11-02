@@ -62,7 +62,6 @@ enum DebuggerUpdateReason
 	DBG_UR_STOPPED,                 // Debugger stopped
 	DBG_UR_LOCALS,                  // Local variables are available
 	DBG_UR_EXPRESSION,              // A requested expression evaluation has completed and is available
-	DBG_UR_QUICK_WATCH,             // Update the quick watch view
 	DBG_UR_UPDATE_STACK_LIST,       // Stack List is available
 	DBG_UR_REMOTE_TARGET_CONNECTED, // Remove target is now connected
 	DBG_UR_RECONCILE_BPTS,          // Reconcile breakpoints is needed
@@ -87,8 +86,8 @@ struct DebuggerEvent {
 	wxString                      m_text;          // DBG_UR_ADD_LINE, DBG_UR_REMOTE_TARGET_CONNECTED, DBG_UR_TIP
 	int                           m_bpInternalId;  // DBG_UR_BP_ADDED
 	int                           m_bpDebuggerId;  // DBG_UR_BP_ADDED, DBG_UR_BP_HIT
-	TreeNode<wxString, NodeData> *m_tree;          // DBG_UR_LOCALS, DBG_UR_QUICK_WATCH
-	wxString                      m_expression;    // DBG_UR_EXPRESSION, DBG_UR_QUICK_WATCH, DBG_UR_TYPE_RESOLVED, DBG_UR_TIP, DBG_UR_WATCHMEMORY, DBG_UR_VARIABLEOBJ
+	TreeNode<wxString, NodeData> *m_tree;          // DBG_UR_LOCALS
+	wxString                      m_expression;    // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_TIP, DBG_UR_WATCHMEMORY, DBG_UR_VARIABLEOBJ
 												   // DBG_UR_EVALVARIABLEOBJ
 	wxString                      m_evaluated;     // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY, DBG_UR_EVALVARIABLEOBJ
 	StackEntryArray               m_stack;         // DBG_UR_UPDATE_STACK_LIST
@@ -227,19 +226,6 @@ public:
 		e.m_updateReason = DBG_UR_EXPRESSION;
 		e.m_expression = expression;
 		e.m_evaluated= evaluated;
-		DebuggerUpdate( e );
-	}
-
-	/**
-	 * @brief update the quick watch view.
-	 * @param expression expression that CodeLite requested to quick view
-	 * @param tree a tree representing the evaluated expression
-	 */
-	void UpdateQuickWatch(const wxString &expression, TreeNode<wxString, NodeData> *tree) {
-		DebuggerEvent e;
-		e.m_updateReason = DBG_UR_QUICK_WATCH;
-		e.m_expression = expression;
-		e.m_tree = tree;
 		DebuggerUpdate( e );
 	}
 

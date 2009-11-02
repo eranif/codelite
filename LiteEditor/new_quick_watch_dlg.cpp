@@ -134,3 +134,10 @@ void NewQuickWatchDlg::OnKeyDown(wxKeyEvent& event)
 		event.Skip();
 	}
 }
+
+void NewQuickWatchDlg::ShowDialog()
+{
+	wxGetMousePosition();
+	Move( wxGetMousePosition() );
+	wxWindow::Show();
+}

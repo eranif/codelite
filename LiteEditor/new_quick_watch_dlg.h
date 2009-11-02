@@ -38,6 +38,7 @@ public:
 	void UpdateValue( const wxString &varname, const wxString &value);
 	void BuildTree  (const VariableObjChildren &children, IDebugger *debugger);
 	void HideDialog ();
+	void ShowDialog ();
 
 };
 

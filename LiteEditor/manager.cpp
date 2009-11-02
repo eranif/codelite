@@ -2763,7 +2763,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 					// Simple type, no need for further calls, show the dialog
 					if ( !GetQuickWatchDialog()->IsShown() ) {
 						GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
-						GetQuickWatchDialog()->Show();
+						GetQuickWatchDialog()->ShowDialog();
 					}
 				}
 			}
@@ -2775,7 +2775,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 				if ( !GetQuickWatchDialog()->IsShown() ) {
 					GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
 					GetQuickWatchDialog()->m_mainVariableObject = event.m_expression;
-					GetQuickWatchDialog()->Show();
+					GetQuickWatchDialog()->ShowDialog();
 
 				} else {
 					// The dialog is shown

@@ -16,9 +16,7 @@ NewQuickWatch::NewQuickWatch( wxWindow* parent, wxWindowID id, const wxString& t
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	m_treeCtrl = new wxTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_ROW_LINES|wxTR_SINGLE|wxNO_BORDER );
-	m_treeCtrl->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
-	
+	m_treeCtrl = new wxTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_ROW_LINES|wxTR_SINGLE );
 	mainSizer->Add( m_treeCtrl, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( mainSizer );

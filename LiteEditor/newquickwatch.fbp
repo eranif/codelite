@@ -80,7 +80,7 @@
                     <property name="flag">wxEXPAND</property>
                     <property name="proportion">1</property>
                     <object class="wxTreeCtrl" expanded="1">
-                        <property name="bg">wxSYS_COLOUR_INFOBK</property>
+                        <property name="bg"></property>
                         <property name="context_help"></property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>
@@ -98,7 +98,7 @@
                         <property name="tooltip"></property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
-                        <property name="window_style">wxNO_BORDER</property>
+                        <property name="window_style"></property>
                         <event name="OnChar"></event>
                         <event name="OnEnterWindow"></event>
                         <event name="OnEraseBackground"></event>

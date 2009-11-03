@@ -20,6 +20,7 @@
 #include "ScintillaWX.h"
 #include "wx/wxscintilla.h"
 
+#include <wx/dcbuffer.h>
 #include <wx/wx.h>
 #include <wx/tokenzr.h>
 #include <wx/mstream.h>
@@ -3109,7 +3110,12 @@ void wxScintilla::AppendTextRaw (const char* text) {
 // Event handlers
 
 void wxScintilla::OnPaint (wxPaintEvent& WXUNUSED(evt)) {
-    wxPaintDC dc(this);
+#ifdef __WXGTK__
+	// On Mac / Windows there is no real need for this
+    wxBufferedPaintDC dc(this);
+#else
+	wxPaintDC dc(this);
+#endif	
     m_swx->DoPaint (&dc, GetUpdateRegion().GetBox());
 }
 

@@ -1279,6 +1279,7 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
 			m_observer->DebuggerUpdate( e );
 		}
 	}
+	return true;
 }
 
 static VariableObjChild FromParserOutput(const std::map<std::string, std::string > & attr)
@@ -1334,13 +1335,6 @@ bool DbgCmdListChildren::ProcessOutput(const wxString& line)
 
 	// Convert the parser output to codelite data structure
 	for (size_t i=0; i<children.size(); i++) {
-		/*std::map<std::string, std::string>           attr = children.at(i);
-		std::map<std::string, std::string>::iterator iter = attr.begin();
-
-		for( ; iter != attr.end(); iter++ ){
-			wxLogMessage(wxT("%s=%s\n"), wxString(iter->first.c_str(), wxConvUTF8).c_str(), wxString(iter->second.c_str(), wxConvUTF8).c_str());
-		}*/
-
 		e.m_varObjChildren.push_back( FromParserOutput( children.at(i) ) );
 	}
 
@@ -1349,6 +1343,7 @@ bool DbgCmdListChildren::ProcessOutput(const wxString& line)
 		e.m_expression = m_variable;
 		m_observer->DebuggerUpdate( e );
 	}
+	return true;
 }
 
 bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
@@ -1373,6 +1368,7 @@ bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
 			e.m_evaluated = display_line;
 			m_observer->DebuggerUpdate( e );
 		}
+		return true;
 	}
-
+	return false;
 }

@@ -69,13 +69,21 @@ children_list:    {sg_attributes.clear(); sg_children.clear();} child_pattern
 				}
 			;
 
-child_pattern :   '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN '=' '[' children ']'
+child_pattern :   '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN '=' list_open children list_close
 				| '^' GDB_DONE ',' GDB_NAME '=' GDB_STRING ',' {sg_attributes[$4] = $6;} child_attributes
 				{
 					sg_children.push_back( sg_attributes );
 					sg_attributes.clear();
 				}
 				;
+
+list_open :  '['
+			|'{'
+			;
+
+list_close: ']'
+			|'}'
+			;
 
 children     : GDB_CHILD '=' '{' child_attributes '}' {
 					sg_children.push_back( sg_attributes );

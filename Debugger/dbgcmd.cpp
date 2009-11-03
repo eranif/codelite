@@ -779,8 +779,8 @@ bool DbgCmdHandlerEvalExpr::ProcessOutput(const wxString &line)
 	wxString tmpLine(line);
 	line.StartsWith(wxT("^done,value=\""), &tmpLine);
 	tmpLine.RemoveLast();
-	tmpLine.Replace(wxT("\\\""), wxT("\""));
-	m_observer->UpdateExpression(m_expression, tmpLine);
+	wxString fixedStr = wxGdbFixValue( tmpLine );
+	m_observer->UpdateExpression(m_expression, fixedStr);
 	return true;
 }
 

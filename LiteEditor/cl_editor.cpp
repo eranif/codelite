@@ -475,12 +475,17 @@ void LEditor::SetProperties()
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 
-#ifdef __WXMAC__
+#if defined(__WXMAC__)
 	// turning off these two greatly improves performance
 	// on Mac
 	SetTwoPhaseDraw(false);
 	SetBufferedDraw(false);
-#else
+	
+#elif defined(__WXGTK__)	
+	SetTwoPhaseDraw(true);
+	SetBufferedDraw(false);
+	
+#else // MSW
 	SetTwoPhaseDraw(true);
 	SetBufferedDraw(true);
 #endif

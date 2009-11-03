@@ -9,8 +9,10 @@ public:
 };
 
 NewQuickWatchDlg::NewQuickWatchDlg( wxWindow* parent)
-		: NewQuickWatch( parent )
+		: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(300, 300) )
 {
+	Centre();
+	
 	WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
 }
 
@@ -123,7 +125,7 @@ void NewQuickWatchDlg::DoCleanUp()
 void NewQuickWatchDlg::HideDialog()
 {
 	DoCleanUp();
-	Close(true);
+	wxDialog::Show(false);
 }
 
 void NewQuickWatchDlg::OnKeyDown(wxKeyEvent& event)
@@ -137,8 +139,7 @@ void NewQuickWatchDlg::OnKeyDown(wxKeyEvent& event)
 
 void NewQuickWatchDlg::ShowDialog()
 {
-	wxGetMousePosition();
-	Move( wxGetMousePosition() );
 	m_treeCtrl->SetFocus();
-	wxWindow::Show();
+	Move( wxGetMousePosition() );
+	wxDialog::Show();
 }

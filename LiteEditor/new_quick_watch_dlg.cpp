@@ -12,7 +12,7 @@ NewQuickWatchDlg::NewQuickWatchDlg( wxWindow* parent)
 		: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(300, 300) )
 {
 	Centre();
-	
+
 	WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
 }
 

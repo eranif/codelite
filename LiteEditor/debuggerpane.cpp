@@ -111,7 +111,7 @@ void DebuggerPane::CreateGUIControls()
 	ADD_DEBUGGER_PAGE(m_localsTree, LOCALS, wxXmlResource::Get()->LoadBitmap(wxT("locals_view")));
 
 	//add the watches view
-	m_watchesTable = new SimpleTable(m_book);
+	m_watchesTable = new WatchesTable(m_book);
 	ADD_DEBUGGER_PAGE(m_watchesTable, WATCHES, wxXmlResource::Get()->LoadBitmap(wxT("watches")));
 
 	m_asciiViewer = new DebuggerAsciiViewer(this);

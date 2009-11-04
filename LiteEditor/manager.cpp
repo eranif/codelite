@@ -2754,9 +2754,8 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 					expression.Append(wxT(")"));
 
 				}
-				UpdateTypeReolsved( expression, event.m_variableObject.typeName );
-
 			}
+			UpdateTypeReolsved( expression, event.m_variableObject.typeName );
 		} else if ( event.m_userReason == DBG_USERR_WATCHTABLE ) {
 			// Double clicked on the 'Watches' table
 			DoShowQuickWatchDialog( event );

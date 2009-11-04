@@ -501,7 +501,8 @@ public:
 	// Handle debugger event
 	//---------------------------------------------------
 
-	void DebuggerUpdate( const DebuggerEvent &event );
+	void DebuggerUpdate        ( const DebuggerEvent &event );
+	void DoShowQuickWatchDialog( const DebuggerEvent &event );
 
     //--------------------------- Build Management -----------------------------
 public:

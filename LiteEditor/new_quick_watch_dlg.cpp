@@ -138,9 +138,14 @@ void NewQuickWatchDlg::OnKeyDown(wxKeyEvent& event)
 	}
 }
 
-void NewQuickWatchDlg::ShowDialog()
+void NewQuickWatchDlg::ShowDialog(bool center)
 {
 	m_treeCtrl->SetFocus();
-	Move( wxGetMousePosition() );
+	if ( center ) {
+		Centre();
+	} else {
+		Move( wxGetMousePosition() );
+
+	}
 	wxDialog::Show();
 }

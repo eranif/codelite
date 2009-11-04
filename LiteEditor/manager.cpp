@@ -286,7 +286,7 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 	// send an event to the main frame indicating that a re-tag is required
 	// we do this only if the "smart retagging" is on
 	TagsOptionsData tagsopt = TagsManagerST::Get()->GetCtagsOptions();
-	if( tagsopt.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ) {
+	if ( tagsopt.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ) {
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
 		Frame::Get()->AddPendingEvent(e);
 	}
@@ -333,7 +333,7 @@ void Manager::AddToRecentlyOpenedWorkspaces ( const wxString &fileName )
 	// Add this workspace to the history. Don't check for uniqueness:
 	// if it's already on the list, wxFileHistory will move it to the top
 	wxString short_name;
-	if( fileName.EndsWith(wxT(".workspace"), &short_name) ) {
+	if ( fileName.EndsWith(wxT(".workspace"), &short_name) ) {
 		m_recentWorkspaces.AddFileToHistory ( short_name );
 
 	} else {
@@ -344,8 +344,8 @@ void Manager::AddToRecentlyOpenedWorkspaces ( const wxString &fileName )
 	wxArrayString files;
 	m_recentWorkspaces.GetFiles ( files );
 
-	for( size_t i=0; i<files.GetCount(); i++ ) {
-		if(files.Item(i).EndsWith(wxT(".workspace")) == false) {
+	for ( size_t i=0; i<files.GetCount(); i++ ) {
+		if (files.Item(i).EndsWith(wxT(".workspace")) == false) {
 			files.Item(i).Append(wxT(".workspace"));
 		}
 	}
@@ -697,7 +697,7 @@ void Manager::RetagWorkspace(bool quickRetag)
 {
 	// in the case of re-tagging the entire workspace and full re-tagging is enabled
 	// it is faster to drop the tables instead of deleting
-	if( !quickRetag )
+	if ( !quickRetag )
 		TagsManagerST::Get()->GetDatabase()->RecreateDatabase();
 
 	wxArrayString projects;
@@ -720,11 +720,11 @@ void Manager::RetagWorkspace(bool quickRetag)
 	fcFileOpener::Instance()->ClearSearchPath();
 	ParseThreadST::Get()->GetSearchPaths( searchPaths, excludePaths );
 
-	for(size_t i=0; i<searchPaths.GetCount(); i++) {
+	for (size_t i=0; i<searchPaths.GetCount(); i++) {
 		fcFileOpener::Instance()->AddSearchPath(searchPaths.Item(i).mb_str(wxConvUTF8).data());
 	}
 
-	for(size_t i=0; i<excludePaths.GetCount(); i++) {
+	for (size_t i=0; i<excludePaths.GetCount(); i++) {
 		fcFileOpener::Instance()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
 	}
 
@@ -732,7 +732,7 @@ void Manager::RetagWorkspace(bool quickRetag)
 		wxWindowDisabler disableAll;
 		wxBusyInfo bi(wxT("Scanning for include files to parse. please wait..."), Frame::Get());
 
-		for(size_t i=0; i<projectFiles.size(); i++) {
+		for (size_t i=0; i<projectFiles.size(); i++) {
 			crawlerScan(projectFiles.at(i).GetFullPath().mb_str(wxConvUTF8).data());
 			wxTheApp->Yield();
 		}
@@ -742,7 +742,7 @@ void Manager::RetagWorkspace(bool quickRetag)
 
 	// add to this set the workspace files to create a unique list of
 	// files
-	for(size_t i=0; i<projectFiles.size(); i++) {
+	for (size_t i=0; i<projectFiles.size(); i++) {
 		wxString fn( projectFiles.at(i).GetFullPath() );
 		fileSet.insert( fn.mb_str(wxConvUTF8).data() );
 	}
@@ -2259,9 +2259,15 @@ void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	// Sanity
-	if ( dbgr == NULL               ) {return;}
-	if ( dbgr->IsRunning() == false ) {return;}
-	if ( DbgCanInteract() == false  ) {return;}
+	if ( dbgr == NULL               ) {
+		return;
+	}
+	if ( dbgr->IsRunning() == false ) {
+		return;
+	}
+	if ( DbgCanInteract() == false  ) {
+		return;
+	}
 
 	// gdb returns usually expression like:
 	// const string &, so in order to get the actual type
@@ -2654,6 +2660,8 @@ void Manager::DbgClearWatches()
 
 void Manager::DebuggerUpdate(const DebuggerEvent& event)
 {
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	DebuggerInformation dbgInfo = dbgr ? dbgr->GetDebuggerInformation() : DebuggerInformation();
 	switch ( event.m_updateReason ) {
 
 	case DBG_UR_GOT_CONTROL:
@@ -2718,75 +2726,60 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	case DBG_UR_WATCHMEMORY:
 		Frame::Get()->GetDebuggerPane()->GetMemoryView()->SetViewString( event.m_evaluated );
 		break;
-	case DBG_UR_VARIABLEOBJ:{
-			// we need a tree
-			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-			if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
+	case DBG_UR_VARIABLEOBJ: {
+		// we need a tree
 
-				if ( dbgr->GetDebuggerInformation().showTooltips ) {
+		if ( event.m_userReason == DBG_USERR_QUICKWACTH ) {
 
-					/////////////////////////////////////////////
-					// Handle Tooltips
-					/////////////////////////////////////////////
+			if ( dbgInfo.showTooltips ) {
 
-					GetQuickWatchDialog()->m_mainVariableObject = event.m_variableObject.gdbId;
-					GetQuickWatchDialog()->m_variableName       = event.m_expression;
-					if( event.m_variableObject.typeName.IsEmpty() == false ) {
-						GetQuickWatchDialog()->m_variableName << wxT(" (") << event.m_variableObject.typeName << wxT(") ");
-					}
-					if( event.m_evaluated.IsEmpty() == false ) {
-						GetQuickWatchDialog()->m_variableName << wxT(" = ") << event.m_evaluated;
-					}
-					if ( event.m_variableObject.numChilds > 0 ) {
-						// Complex type
-						dbgr->ListChildren(event.m_variableObject.gdbId, DBG_USERR_QUICKWACTH);
+				/////////////////////////////////////////////
+				// Handle Tooltips
+				/////////////////////////////////////////////
 
-					} else {
-						// Simple type, no need for further calls, show the dialog
-						if ( !GetQuickWatchDialog()->IsShown() ) {
-							GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
-							GetQuickWatchDialog()->ShowDialog();
-						}
-					}
+				DoShowQuickWatchDialog( event );
 
-				}
+			}
 
-				// Handle ASCII Viewer
-				wxString expression ( event.m_expression );
-				if( event.m_variableObject.isPtr && !event.m_expression.StartsWith(wxT("*")) ) {
-					if( event.m_variableObject.typeName.Contains(wxT("char *"))    ||
-					    event.m_variableObject.typeName.Contains(wxT("wchar_t *")) ||
-						event.m_variableObject.typeName.Contains(wxT("QChar *"))   ||
-						event.m_variableObject.typeName.Contains(wxT("wxChar *")))
-					{
-						// dont de-reference
-					} else {
-						expression.Prepend(wxT("(*"));
-						expression.Append(wxT(")"));
+			// Handle ASCII Viewer
+			wxString expression ( event.m_expression );
+			if ( event.m_variableObject.isPtr && !event.m_expression.StartsWith(wxT("*")) ) {
+				if ( event.m_variableObject.typeName.Contains(wxT("char *"))    ||
+				        event.m_variableObject.typeName.Contains(wxT("wchar_t *")) ||
+				        event.m_variableObject.typeName.Contains(wxT("QChar *"))   ||
+				        event.m_variableObject.typeName.Contains(wxT("wxChar *"))) {
+					// dont de-reference
+				} else {
+					expression.Prepend(wxT("(*"));
+					expression.Append(wxT(")"));
 
-					}
 				}
 				UpdateTypeReolsved( expression, event.m_variableObject.typeName );
-			}
-		}
-		break;
-	case DBG_UR_LISTCHILDREN: {
-			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-			if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
-				if ( !GetQuickWatchDialog()->IsShown() ) {
-					GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
-					GetQuickWatchDialog()->m_mainVariableObject = event.m_expression;
-					GetQuickWatchDialog()->ShowDialog();
 
-				} else {
-					// The dialog is shown
-					GetQuickWatchDialog()->AddItems(event.m_expression, event.m_varObjChildren);
-				}
+			}
+		} else if ( event.m_userReason == DBG_USERR_WATCHTABLE ) {
+			// Double clicked on the 'Watches' table
+			DoShowQuickWatchDialog( event );
+		}
+	}
+	break;
+	case DBG_UR_LISTCHILDREN: {
+		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+		if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
+			if ( !GetQuickWatchDialog()->IsShown() ) {
+				GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
+				GetQuickWatchDialog()->m_mainVariableObject = event.m_expression;
+				GetQuickWatchDialog()->ShowDialog( event.m_userReason == DBG_USERR_WATCHTABLE );
+
+			} else {
+				// The dialog is shown
+				GetQuickWatchDialog()->AddItems(event.m_expression, event.m_varObjChildren);
 			}
 		}
-		break;
+	}
+	break;
 	case DBG_UR_EVALVARIABLEOBJ:
-		if(GetQuickWatchDialog()->IsShown()) {
+		if (GetQuickWatchDialog()->IsShown()) {
 			GetQuickWatchDialog()->UpdateValue(event.m_expression, event.m_evaluated);
 		}
 		break;
@@ -2849,8 +2842,39 @@ void Manager::OnRestart(wxCommandEvent& event)
 
 NewQuickWatchDlg* Manager::GetQuickWatchDialog()
 {
-	if(!m_newQuickWatchDlg) {
+	if (!m_newQuickWatchDlg) {
 		m_newQuickWatchDlg = new NewQuickWatchDlg(Frame::Get());
 	}
 	return m_newQuickWatchDlg;
+}
+
+void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
+{
+	/////////////////////////////////////////////
+	// Handle Tooltips
+	/////////////////////////////////////////////
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
+		GetQuickWatchDialog()->m_mainVariableObject = event.m_variableObject.gdbId;
+		GetQuickWatchDialog()->m_variableName       = event.m_expression;
+		if ( event.m_variableObject.typeName.IsEmpty() == false ) {
+			GetQuickWatchDialog()->m_variableName << wxT(" (") << event.m_variableObject.typeName << wxT(") ");
+		}
+		if ( event.m_evaluated.IsEmpty() == false ) {
+			GetQuickWatchDialog()->m_variableName << wxT(" = ") << event.m_evaluated;
+		}
+		if ( event.m_variableObject.numChilds > 0 ) {
+			// Complex type
+			dbgr->ListChildren(event.m_variableObject.gdbId, event.m_userReason);
+
+		} else {
+			// Simple type, no need for further calls, show the dialog
+			if ( !GetQuickWatchDialog()->IsShown() ) {
+				GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
+				// If the reason for showing the dialog was the 'Watches' table being d-clicked,
+				// center the dialog
+				GetQuickWatchDialog()->ShowDialog( event.m_userReason == DBG_USERR_WATCHTABLE );
+			}
+		}
+	}
 }

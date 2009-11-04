@@ -1,5 +1,6 @@
 #include "new_quick_watch_dlg.h"
 #include "windowattrmanager.h"
+#include "debuggerobserver.h"
 
 class QWTreeData : public wxTreeItemData {
 public:
@@ -35,7 +36,7 @@ void NewQuickWatchDlg::OnExpandItem( wxTreeEvent& event )
 				QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(item);
 				if( data ) {
 					// Ask the debugger for information
-					m_debugger->ListChildren(data->_voc.gdbId);
+					m_debugger->ListChildren(data->_voc.gdbId, DBG_USERR_QUICKWACTH);
 					m_gdbId2Item[data->_voc.gdbId] = item;
 				}
 			}
@@ -81,7 +82,7 @@ void NewQuickWatchDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChildr
 		}
 
 		// ask gdb for the value for this node
-		m_debugger->EvaluateVariableObject( ch.gdbId );
+		m_debugger->EvaluateVariableObject( ch.gdbId, DBG_USERR_QUICKWACTH );
 		m_gdbId2ItemLeaf[ch.gdbId] = child;
 	}
 }

@@ -2739,7 +2739,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 					}
 					if ( event.m_variableObject.numChilds > 0 ) {
 						// Complex type
-						dbgr->ListChildren(event.m_variableObject.gdbId);
+						dbgr->ListChildren(event.m_variableObject.gdbId, DBG_USERR_QUICKWACTH);
 
 					} else {
 						// Simple type, no need for further calls, show the dialog

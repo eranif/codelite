@@ -349,7 +349,7 @@ void WatchesTable::DoShowMoreDetails(long item)
 		wxString value = GetColumnText(item, 0);
 		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 		if ( dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() ) {
-			dbgr->CreateVariableObject( value );
+			dbgr->CreateVariableObject( value, DBG_USERR_WATCHTABLE );
 		}
 	}
 }

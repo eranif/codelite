@@ -75,6 +75,12 @@ enum DebuggerUpdateReason
 	DBG_UR_EVALVARIABLEOBJ          // Variable object has be evaluated
 };
 
+enum UserReason {
+	DBG_USERR_QUICKWACTH = 0,
+	DBG_USERR_WATCHTABLE,
+	DBG_USERR_LOCALS
+};
+
 struct DebuggerEvent {
 	DebuggerUpdateReason          m_updateReason;  // Event reason - the reason why this event was sent
 												   // ==================================================
@@ -96,6 +102,7 @@ struct DebuggerEvent {
 	ThreadEntryArray              m_threads;       // DBG_UR_LISTTHRAEDS
 	VariableObjChildren           m_varObjChildren;// DBG_UR_LISTCHILDREN
 	VariableObject                m_variableObject;// DBG_UR_VARIABLEOBJ
+	int                           m_userReason;    // User reason as provided in the calling API which triggered the DebuggerUpdate call
 
 	DebuggerEvent()
 		: m_updateReason  (DBG_UR_INVALID)
@@ -109,6 +116,7 @@ struct DebuggerEvent {
 		, m_expression    (wxEmptyString )
 		, m_evaluated     (wxEmptyString )
 		, m_onlyIfLogging (false         )
+		, m_userReason    (wxNOT_FOUND   )
 	{
 		m_stack.clear();
 		m_bpInfoList.clear();

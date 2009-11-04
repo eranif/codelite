@@ -300,8 +300,14 @@ public:
 // Handle the 'CreateVariableObject' call
 class DbgCmdCreateVarObj : public DbgCmdHandler {
 	wxString m_expression;
+	int      m_userReason;
+
 public:
-	DbgCmdCreateVarObj(IDebuggerObserver *observer, const wxString &expression) : DbgCmdHandler(observer), m_expression(expression) {}
+	DbgCmdCreateVarObj(IDebuggerObserver *observer, const wxString &expression, int userReason)
+		: DbgCmdHandler(observer)
+		, m_expression(expression)
+		, m_userReason(userReason) {}
+
 	virtual ~DbgCmdCreateVarObj(){}
 
 	virtual bool ProcessOutput(const wxString & line);
@@ -310,8 +316,13 @@ public:
 // Handle the 'DbgCmdListChildren' call
 class DbgCmdListChildren : public DbgCmdHandler {
 	wxString m_variable;
+	int      m_userReason;
 public:
-	DbgCmdListChildren(IDebuggerObserver *observer, const wxString &variable) : DbgCmdHandler(observer), m_variable(variable) {}
+	DbgCmdListChildren(IDebuggerObserver *observer, const wxString &variable, int userReason)
+		: DbgCmdHandler(observer)
+		, m_variable(variable)
+		, m_userReason(userReason) {}
+
 	virtual ~DbgCmdListChildren(){}
 
 	virtual bool ProcessOutput(const wxString & line);
@@ -319,8 +330,13 @@ public:
 
 class DbgCmdEvalVarObj : public DbgCmdHandler {
 	wxString m_variable;
+	int      m_userReason;
 public:
-	DbgCmdEvalVarObj(IDebuggerObserver *observer, const wxString &variable) : DbgCmdHandler(observer), m_variable(variable) {}
+	DbgCmdEvalVarObj(IDebuggerObserver *observer, const wxString &variable, int userReason)
+		: DbgCmdHandler(observer)
+		, m_variable   (variable)
+		, m_userReason ( userReason ) {}
+
 	virtual ~DbgCmdEvalVarObj(){}
 
 	virtual bool ProcessOutput(const wxString & line);

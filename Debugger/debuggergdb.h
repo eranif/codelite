@@ -119,9 +119,9 @@ public:
 	virtual bool SetMemory(const wxString &address, size_t count, const wxString &hex_value);
 	virtual void SetDebuggerInformation(const DebuggerInformation &info);
 	virtual void BreakList();
-	virtual bool ListChildren(const wxString &name);
-	virtual bool CreateVariableObject(const wxString &expression);
+	virtual bool ListChildren(const wxString &name, int userReason);
+	virtual bool CreateVariableObject(const wxString &expression, int userReason);
 	virtual bool DeleteVariableObject(const wxString &name);
-	virtual bool EvaluateVariableObject(const wxString &name);
+	virtual bool EvaluateVariableObject(const wxString &name, int userReason);
 };
 #endif //DBGINTERFACE_H

@@ -1276,6 +1276,7 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
 			e.m_updateReason = DBG_UR_VARIABLEOBJ;
 			e.m_variableObject = vo;
 			e.m_expression = m_expression;
+			e.m_userReason = m_userReason;
 			m_observer->DebuggerUpdate( e );
 		}
 	}
@@ -1341,6 +1342,7 @@ bool DbgCmdListChildren::ProcessOutput(const wxString& line)
 	if ( children.size() > 0 ) {
 		e.m_updateReason = DBG_UR_LISTCHILDREN;
 		e.m_expression = m_variable;
+		e.m_userReason = m_userReason;
 		m_observer->DebuggerUpdate( e );
 	}
 	return true;
@@ -1366,6 +1368,7 @@ bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
 			e.m_updateReason = DBG_UR_EVALVARIABLEOBJ;
 			e.m_expression = m_variable;
 			e.m_evaluated = display_line;
+			e.m_userReason = m_userReason;
 			m_observer->DebuggerUpdate( e );
 		}
 		return true;

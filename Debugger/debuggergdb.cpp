@@ -1105,18 +1105,18 @@ DbgCmdCLIHandler* DbgGdb::GetCliHandler()
 	return m_cliHandler;
 }
 
-bool DbgGdb::ListChildren(const wxString& name)
+bool DbgGdb::ListChildren(const wxString& name, int userReason)
 {
 	wxString cmd;
 	cmd << wxT("-var-list-children \"") << name << wxT("\"");
-	return WriteCommand(cmd, new DbgCmdListChildren(m_observer, name));
+	return WriteCommand(cmd, new DbgCmdListChildren(m_observer, name, userReason));
 }
 
-bool DbgGdb::CreateVariableObject(const wxString& expression)
+bool DbgGdb::CreateVariableObject(const wxString& expression, int userReason)
 {
 	wxString cmd;
 	cmd << wxT("-var-create - * \"") << expression << wxT("\"");
-	return WriteCommand(cmd, new DbgCmdCreateVarObj(m_observer, expression));
+	return WriteCommand(cmd, new DbgCmdCreateVarObj(m_observer, expression, userReason));
 }
 
 bool DbgGdb::DeleteVariableObject(const wxString& name)
@@ -1126,9 +1126,9 @@ bool DbgGdb::DeleteVariableObject(const wxString& name)
 	return WriteCommand(cmd, NULL);
 }
 
-bool DbgGdb::EvaluateVariableObject(const wxString& name)
+bool DbgGdb::EvaluateVariableObject(const wxString& name, int userReason)
 {
 	wxString cmd;
 	cmd << wxT("-var-evaluate-expression \"") << name << wxT("\"");
-	return WriteCommand(cmd, new DbgCmdEvalVarObj(m_observer, name));
+	return WriteCommand(cmd, new DbgCmdEvalVarObj(m_observer, name, userReason));
 }

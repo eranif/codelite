@@ -629,13 +629,13 @@ public:
 	 * @brief list the children of a variable object
 	 * @param name
 	 */
-	virtual bool ListChildren(const wxString& name) = 0;
+	virtual bool ListChildren(const wxString& name, int userReason) = 0;
 
 	/**
 	 * @brief create variable object from a given expression
 	 * @param expression
 	 */
-	virtual bool CreateVariableObject(const wxString &expression) = 0;
+	virtual bool CreateVariableObject(const wxString &expression, int userReason) = 0;
 
 	/**
 	 * @brief delete variable object
@@ -647,7 +647,7 @@ public:
 	 * @brief evaluate variable object
 	 * @param name variable object
 	 */
-	virtual bool EvaluateVariableObject(const wxString &name) = 0;
+	virtual bool EvaluateVariableObject(const wxString &name, int userReason) = 0;
 };
 
 //-----------------------------------------------------------

@@ -63,9 +63,8 @@ bool testChildrenParser();
 
 int main(int argc, char **argv)
 {
-//	testParseLocals();
-	testTokens();
-//	testChildrenParser();
+//	testTokens();
+	testChildrenParser();
 	return 0;
 }
 

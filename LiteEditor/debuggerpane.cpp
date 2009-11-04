@@ -24,13 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/aui/framemanager.h>
 #include "debuggerasciiviewer.h"
+#include "localstable.h"
 #include "dockablepane.h"
 #include "editor_config.h"
 #include "detachedpanesinfo.h"
  #include "wx/dcbuffer.h"
 #include "memoryview.h"
 #include "debuggerpane.h"
-#include "localvarstree.h"
 #include "simpletable.h"
 #include "listctrlpanel.h"
 #include "wx/xrc/xmlres.h"
@@ -107,8 +107,8 @@ void DebuggerPane::CreateGUIControls()
 	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
 	detachedPanes = dpi.GetPanes();
 
-	m_localsTree = new LocalVarsTree(m_book, wxID_ANY);
-	ADD_DEBUGGER_PAGE(m_localsTree, LOCALS, wxXmlResource::Get()->LoadBitmap(wxT("locals_view")));
+	m_localsTable = new LocalsTable(m_book);
+	ADD_DEBUGGER_PAGE(m_localsTable, LOCALS, wxXmlResource::Get()->LoadBitmap(wxT("locals_view")));
 
 	//add the watches view
 	m_watchesTable = new WatchesTable(m_book);
@@ -144,7 +144,7 @@ void DebuggerPane::SelectTab(const wxString &tabName)
 
 void DebuggerPane::Clear()
 {
-	GetLocalsTree()->Clear();
+	GetLocalsTable()->Clear();
 	GetWatchesTable()->Clear();
 	GetFrameListView()->Clear();
 	GetThreadsView()->Clear();

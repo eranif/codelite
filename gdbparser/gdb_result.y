@@ -21,11 +21,12 @@ void gdb_result_error(const char*);
 bool setGdbLexerInput(const std::string &in, bool ascii, bool wantWhitespace);
 void gdb_result_lex_clean();
 int  gdb_result_parse();
+void cleanup();
 
 extern std::string gdb_result_lval;
 static std::map<std::string, std::string>               sg_attributes;
 static std::vector<std::map<std::string, std::string> > sg_children;
-
+static std::vector<std::string>                         sg_locals;
 %}
 
 %token GDB_DONE
@@ -63,7 +64,7 @@ parse: children_list
 	 | parse children_list
 	 ;
 
-children_list:    {sg_attributes.clear(); sg_children.clear();} child_pattern
+children_list:    { cleanup(); } child_pattern
 				|  error {
 				// printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
 				}
@@ -75,7 +76,17 @@ child_pattern :   '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN 
 					sg_children.push_back( sg_attributes );
 					sg_attributes.clear();
 				}
+				/* ^done,locals=[{name="pcls",type="ChildClass *",value="0x0"},{name="s",type="string *",value="0x3e2550"}] */
+				| '^' GDB_DONE ',' GDB_LOCALS '=' list_open locals list_close
 				;
+
+locals      : '{' child_attributes '}'
+			{
+				sg_children.push_back( sg_attributes );
+				sg_attributes.clear();
+			}
+			| '{' child_attributes '}' {sg_children.push_back( sg_attributes ); sg_attributes.clear(); } ',' locals
+			;
 
 list_open :  '['
 			|'{'
@@ -103,11 +114,16 @@ child_key: GDB_NAME       {$$ = $1;}
 		 | GDB_IDENTIFIER {$$ = $1;}
 		 ;
 %%
-
-void gdbParseListChildren( const std::string &in, std::vector<std::map<std::string, std::string> > &children)
+void cleanup()
 {
 	sg_attributes.clear();
 	sg_children.clear();
+	sg_locals.clear();
+}
+
+void gdbParseListChildren( const std::string &in, std::vector<std::map<std::string, std::string> > &children)
+{
+	cleanup();
 
 	setGdbLexerInput(in, true, false);
 	gdb_result_parse();

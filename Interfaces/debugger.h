@@ -93,9 +93,16 @@ struct VariableObject {
 	VariableObject() : isPtr(false), isPtrPtr(false), numChilds(0) {}
 };
 
+struct LocalVariable {
+	wxString name;
+	wxString value;
+	wxString type;
+};
+
 typedef std::vector<VariableObjChild> VariableObjChildren;
 typedef std::vector<StackEntry>       StackEntryArray;
 typedef std::vector<ThreadEntry>      ThreadEntryArray;
+typedef std::vector<LocalVariable>    LocalVariables;
 
 class BreakpointInfo: public SerializedObject
 {

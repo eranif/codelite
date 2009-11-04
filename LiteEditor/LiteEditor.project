@@ -423,8 +423,6 @@
     <File Name="workspace_pane.h"/>
     <File Name="debuggerpane.h"/>
     <File Name="debuggerpane.cpp"/>
-    <File Name="localvarstree.h"/>
-    <File Name="localvarstree.cpp"/>
     <File Name="fileexplorer.cpp"/>
     <File Name="fileexplorer.h"/>
     <File Name="mainbook.cpp"/>
@@ -461,6 +459,8 @@
     <File Name="debuggerasciiviewerbase.h"/>
     <File Name="debuggerasciiviewer.h"/>
     <File Name="debuggerasciiviewer.cpp"/>
+    <File Name="localstable.cpp"/>
+    <File Name="localstable.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

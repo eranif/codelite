@@ -92,7 +92,7 @@ struct DebuggerEvent {
 	wxString                      m_text;          // DBG_UR_ADD_LINE, DBG_UR_REMOTE_TARGET_CONNECTED, DBG_UR_TIP
 	int                           m_bpInternalId;  // DBG_UR_BP_ADDED
 	int                           m_bpDebuggerId;  // DBG_UR_BP_ADDED, DBG_UR_BP_HIT
-	TreeNode<wxString, NodeData> *m_tree;          // DBG_UR_LOCALS
+	LocalVariables                m_locals;        // DBG_UR_LOCALS
 	wxString                      m_expression;    // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_TIP, DBG_UR_WATCHMEMORY, DBG_UR_VARIABLEOBJ
 												   // DBG_UR_EVALVARIABLEOBJ
 	wxString                      m_evaluated;     // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY, DBG_UR_EVALVARIABLEOBJ
@@ -112,7 +112,6 @@ struct DebuggerEvent {
 		, m_text          (wxEmptyString )
 		, m_bpInternalId  (wxNOT_FOUND   )
 		, m_bpDebuggerId  (wxNOT_FOUND   )
-		, m_tree          (NULL          )
 		, m_expression    (wxEmptyString )
 		, m_evaluated     (wxEmptyString )
 		, m_onlyIfLogging (false         )
@@ -217,10 +216,11 @@ public:
 	 * @param tree tree data strcuture which represents the local variables
 	 * @sa TreeNode
 	 */
-	void UpdateLocals(TreeNode<wxString, NodeData> *tree) {
+	void UpdateLocals(const LocalVariables &locals) {
 		DebuggerEvent e;
 		e.m_updateReason = DBG_UR_LOCALS;
-		e.m_tree = tree;
+		e.m_userReason   = DBG_USERR_LOCALS;
+		e.m_locals = locals;
 		DebuggerUpdate( e );
 	}
 

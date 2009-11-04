@@ -30,7 +30,7 @@
 #include <wx/imaglist.h>
 
 class ListCtrlPanel;
-class LocalVarsTree;
+class LocalsTable;
 class WatchesTable;
 class BreakpointDlg;
 class ThreadListPanel;
@@ -51,7 +51,7 @@ public:
 
 private:
 	Notebook *            m_book;
-	LocalVarsTree *       m_localsTree;
+	LocalsTable *         m_localsTable;
 	wxString              m_caption;
 	WatchesTable *         m_watchesTable;
 	ListCtrlPanel *       m_frameList;
@@ -72,8 +72,8 @@ public:
 
 	//setters/getters
 	const wxString &     GetCaption() const{return m_caption;}
-	LocalVarsTree *      GetLocalsTree() {return m_localsTree;}
-	WatchesTable *        GetWatchesTable(){return m_watchesTable;}
+	LocalsTable *        GetLocalsTable() {return m_localsTable;}
+	WatchesTable *       GetWatchesTable(){return m_watchesTable;}
 	ListCtrlPanel *      GetFrameListView(){return m_frameList;}
 	BreakpointDlg *      GetBreakpointView(){return m_breakpoints;}
 	ThreadListPanel *    GetThreadsView(){return m_threads;}

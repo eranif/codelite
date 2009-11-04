@@ -127,28 +127,9 @@ public:
 class DbgCmdHandlerLocals : public DbgCmdHandler
 {
 public:
-	enum {
-		EvaluateExpression,
-		Locals,
-		This,
-		FunctionArguments
-	};
-
-protected:
-	void MakeTree(TreeNode<wxString, NodeData> *parent);
-	void MakeTreeFromFrame(wxString &strline, TreeNode<wxString, NodeData> *parent);
-	void MakeSubTree(TreeNode<wxString, NodeData> *parent);
-	int m_evaluateExpression;
-	wxString m_expression;
-
-public:
-	DbgCmdHandlerLocals(IDebuggerObserver *observer, int kind = Locals, const wxString &expr = wxEmptyString)
-			: DbgCmdHandler(observer)
-			, m_evaluateExpression(kind)
-			, m_expression(expr) {}
-
+	DbgCmdHandlerLocals(IDebuggerObserver *observer)
+			: DbgCmdHandler(observer) {}
 	virtual ~DbgCmdHandlerLocals() {}
-
 	virtual bool ProcessOutput(const wxString &line);
 };
 
@@ -243,7 +224,8 @@ public:
 	}
 };
 
-class DbgCmdGetTipHandler : public DbgCmdCLIHandler {
+class DbgCmdGetTipHandler : public DbgCmdCLIHandler
+{
 
 	wxString m_expression;
 
@@ -256,88 +238,95 @@ public:
 };
 
 // Callback for handling 'set condition' command
-class DbgCmdSetConditionHandler : public DbgCmdHandler {
+class DbgCmdSetConditionHandler : public DbgCmdHandler
+{
 	BreakpointInfo m_bp;
 public:
 	DbgCmdSetConditionHandler(IDebuggerObserver *observer, const BreakpointInfo& bp) : DbgCmdHandler(observer), m_bp(bp) {}
-	virtual ~DbgCmdSetConditionHandler(){}
+	virtual ~DbgCmdSetConditionHandler() {}
 
 	virtual bool ProcessOutput(const wxString & line);
 };
 
 // Callback for handling parsing the -break-list output from
 // the debugger
-class DbgCmdBreakList : public DbgCmdHandler {
+class DbgCmdBreakList : public DbgCmdHandler
+{
 public:
 	DbgCmdBreakList(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
-	virtual ~DbgCmdBreakList(){}
+	virtual ~DbgCmdBreakList() {}
 
 	virtual bool ProcessOutput(const wxString & line);
 };
 
 // Callback for handling threads info
 // command
-class DbgCmdListThreads : public DbgCmdCLIHandler {
+class DbgCmdListThreads : public DbgCmdCLIHandler
+{
 public:
 	DbgCmdListThreads(IDebuggerObserver *observer) : DbgCmdCLIHandler(observer) {}
-	virtual ~DbgCmdListThreads(){}
+	virtual ~DbgCmdListThreads() {}
 
 	virtual bool ProcessOutput(const wxString & line);
 };
 
 // Callback for handling the '-data-read-memory' command
-class DbgCmdWatchMemory : public DbgCmdHandler {
+class DbgCmdWatchMemory : public DbgCmdHandler
+{
 	wxString m_address;
 	size_t   m_count;
 
 public:
 	DbgCmdWatchMemory(IDebuggerObserver *observer, const wxString &address, size_t count) : DbgCmdHandler(observer), m_address(address), m_count(count) {}
-	virtual ~DbgCmdWatchMemory(){}
+	virtual ~DbgCmdWatchMemory() {}
 
 	virtual bool ProcessOutput(const wxString & line);
 };
 
 // Handle the 'CreateVariableObject' call
-class DbgCmdCreateVarObj : public DbgCmdHandler {
+class DbgCmdCreateVarObj : public DbgCmdHandler
+{
 	wxString m_expression;
 	int      m_userReason;
 
 public:
 	DbgCmdCreateVarObj(IDebuggerObserver *observer, const wxString &expression, int userReason)
-		: DbgCmdHandler(observer)
-		, m_expression(expression)
-		, m_userReason(userReason) {}
+			: DbgCmdHandler(observer)
+			, m_expression(expression)
+			, m_userReason(userReason) {}
 
-	virtual ~DbgCmdCreateVarObj(){}
+	virtual ~DbgCmdCreateVarObj() {}
 
 	virtual bool ProcessOutput(const wxString & line);
 };
 
 // Handle the 'DbgCmdListChildren' call
-class DbgCmdListChildren : public DbgCmdHandler {
+class DbgCmdListChildren : public DbgCmdHandler
+{
 	wxString m_variable;
 	int      m_userReason;
 public:
 	DbgCmdListChildren(IDebuggerObserver *observer, const wxString &variable, int userReason)
-		: DbgCmdHandler(observer)
-		, m_variable(variable)
-		, m_userReason(userReason) {}
+			: DbgCmdHandler(observer)
+			, m_variable(variable)
+			, m_userReason(userReason) {}
 
-	virtual ~DbgCmdListChildren(){}
+	virtual ~DbgCmdListChildren() {}
 
 	virtual bool ProcessOutput(const wxString & line);
 };
 
-class DbgCmdEvalVarObj : public DbgCmdHandler {
+class DbgCmdEvalVarObj : public DbgCmdHandler
+{
 	wxString m_variable;
 	int      m_userReason;
 public:
 	DbgCmdEvalVarObj(IDebuggerObserver *observer, const wxString &variable, int userReason)
-		: DbgCmdHandler(observer)
-		, m_variable   (variable)
-		, m_userReason ( userReason ) {}
+			: DbgCmdHandler(observer)
+			, m_variable   (variable)
+			, m_userReason ( userReason ) {}
 
-	virtual ~DbgCmdEvalVarObj(){}
+	virtual ~DbgCmdEvalVarObj() {}
 
 	virtual bool ProcessOutput(const wxString & line);
 };

@@ -23,7 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
-#include "localvarstree.h"
+#include "localstable.h"
 #include "new_quick_watch_dlg.h"
 #include "fc_fileopener.h"
 #include "debuggerconfigtool.h"
@@ -1685,7 +1685,7 @@ void Manager::UpdateDebuggerPane()
 		// updated
 		//--------------------------------------------------------------------
 
-		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetLocalsTree() ) || IsPaneVisible ( DebuggerPane::LOCALS ) ) {
+		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == pane->GetLocalsTable() ) || IsPaneVisible ( DebuggerPane::LOCALS ) ) {
 
 			//update the locals tree
 			dbgr->QueryLocals();
@@ -2142,32 +2142,6 @@ void Manager::UpdateFileLine ( const wxString &filename, int lineno )
 
 	DbgMarkDebuggerLine ( fileName, lineNumber );
 	UpdateDebuggerPane();
-}
-
-void Manager::UpdateLocals ( TreeNode<wxString, NodeData> *tree )
-{
-	NodeData data = tree->GetData();
-	static TreeNode<wxString, NodeData> *thisTree ( NULL );
-	static TreeNode<wxString, NodeData> *funcArgsTree ( NULL );
-
-	if ( data.name == wxT ( "*this" ) ) {
-		//append this tree to the local's tree
-		thisTree = tree;//keep the tree and wait for the other call that will come
-	} else if ( data.name == wxT ( "Function Arguments" ) ) {
-		funcArgsTree = tree;//keep the tree and wait for the other call that will come
-	} else {
-		//if we already have thisTree, append it as child of this tree
-		if ( funcArgsTree ) {
-			tree->AddChild ( funcArgsTree );
-			funcArgsTree = NULL;
-		}
-
-		if ( thisTree ) {
-			tree->AddChild ( thisTree );
-			thisTree = NULL;
-		}
-		Frame::Get()->GetDebuggerPane()->GetLocalsTree()->BuildTree ( tree );
-	}
 }
 
 void Manager::UpdateGotControl ( DebuggerReasons reason )
@@ -2689,7 +2663,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		break;
 
 	case DBG_UR_LOCALS:
-		UpdateLocals(event.m_tree);
+		Frame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateLocals( event.m_locals );
 		break;
 
 	case DBG_UR_EXPRESSION:
@@ -2727,8 +2701,6 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		Frame::Get()->GetDebuggerPane()->GetMemoryView()->SetViewString( event.m_evaluated );
 		break;
 	case DBG_UR_VARIABLEOBJ: {
-		// we need a tree
-
 		if ( event.m_userReason == DBG_USERR_QUICKWACTH ) {
 
 			if ( dbgInfo.showTooltips ) {
@@ -2759,6 +2731,9 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		} else if ( event.m_userReason == DBG_USERR_WATCHTABLE ) {
 			// Double clicked on the 'Watches' table
 			DoShowQuickWatchDialog( event );
+
+		} else if ( event.m_userReason == DBG_USERR_LOCALS ) {
+			DoShowQuickWatchDialog( event );
 		}
 	}
 	break;
@@ -2768,7 +2743,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 			if ( !GetQuickWatchDialog()->IsShown() ) {
 				GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
 				GetQuickWatchDialog()->m_mainVariableObject = event.m_expression;
-				GetQuickWatchDialog()->ShowDialog( event.m_userReason == DBG_USERR_WATCHTABLE );
+				GetQuickWatchDialog()->ShowDialog( (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS) );
 
 			} else {
 				// The dialog is shown
@@ -2872,7 +2847,7 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 				GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
 				// If the reason for showing the dialog was the 'Watches' table being d-clicked,
 				// center the dialog
-				GetQuickWatchDialog()->ShowDialog( event.m_userReason == DBG_USERR_WATCHTABLE );
+				GetQuickWatchDialog()->ShowDialog( (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS) );
 			}
 		}
 	}

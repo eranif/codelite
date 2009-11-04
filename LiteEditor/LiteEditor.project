@@ -835,11 +835,11 @@ resources.cpp: resources.xrc
     <Project Name="QMakePlugin"/>
     <Project Name="CppChecker"/>
   </Dependencies>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="wxscintilla"/>
+  <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
+    <Project Name="wxscintilla"/>
     <Project Name="wxpropgrid"/>
+    <Project Name="wxsqlite3"/>
     <Project Name="CodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
@@ -857,11 +857,11 @@ resources.cpp: resources.xrc
     <Project Name="QMakePlugin"/>
     <Project Name="CppChecker"/>
   </Dependencies>
-  <Dependencies Name="WinReleaseUnicode">
-    <Project Name="sqlite3"/>
+  <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
-    <Project Name="wxpropgrid"/>
+    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
+    <Project Name="wxpropgrid"/>
     <Project Name="CodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>

@@ -149,3 +149,17 @@ void NewQuickWatchDlg::ShowDialog(bool center)
 	}
 	wxDialog::Show();
 }
+
+void NewQuickWatchDlg::OnLeftDown(wxMouseEvent& e)
+{
+	int flags;
+	wxTreeItemId item = m_treeCtrl->HitTest(e.GetPosition(), flags);
+	if ( item.IsOk() && m_treeCtrl->ItemHasChildren(item) && (flags & wxTREE_HITTEST_ONITEMLABEL )) {
+		if ( m_treeCtrl->IsExpanded(item) ) {
+			m_treeCtrl->Collapse( item );
+		} else {
+			m_treeCtrl->Expand( item );
+		}
+	}
+	e.Skip();
+}

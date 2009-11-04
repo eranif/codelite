@@ -28,7 +28,7 @@ protected:
 	void DoAddChildren(wxTreeItemId &item, const VariableObjChildren &children);
 	void OnKeyDown(wxKeyEvent &event);
 	void DoCleanUp();
-
+	void OnLeftDown(wxMouseEvent &e);
 public:
 	/** Constructor */
 	NewQuickWatchDlg( wxWindow* parent);

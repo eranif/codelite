@@ -30,6 +30,7 @@
     <bool Value="0" Name="enableDebugLog"/>
     <bool Value="1" Name="enablePendingBreakpoints"/>
     <bool Value="0" Name="breakAtWinMain"/>
+	<bool Value="1" Name="showTooltips"/>
     <CData Name="startup_commands">
       <![CDATA[
 define pvector

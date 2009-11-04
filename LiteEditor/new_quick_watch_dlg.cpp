@@ -29,16 +29,20 @@ void NewQuickWatchDlg::OnExpandItem( wxTreeEvent& event )
 		if( m_treeCtrl->ItemHasChildren(item) ) {
 			wxTreeItemIdValue kookie;
 			wxTreeItemId child = m_treeCtrl->GetFirstChild(item, kookie);
-			if( child.IsOk() && m_treeCtrl->GetItemText(child) == wxT("<dummy>") ) {
-				// Dummy node, remove it and ask the debugger for information
-				m_treeCtrl->SetItemText(child, wxT("Loading..."));
+			while ( child.IsOk() ) {
+				if( m_treeCtrl->GetItemText(child) == wxT("<dummy>") ) {
+					// Dummy node, remove it and ask the debugger for information
+					m_treeCtrl->SetItemText(child, wxT("Loading..."));
 
-				QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(item);
-				if( data ) {
-					// Ask the debugger for information
-					m_debugger->ListChildren(data->_voc.gdbId, DBG_USERR_QUICKWACTH);
-					m_gdbId2Item[data->_voc.gdbId] = item;
+					QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(item);
+					if( data ) {
+						// Ask the debugger for information
+						m_debugger->ListChildren(data->_voc.gdbId, DBG_USERR_QUICKWACTH);
+						m_gdbId2Item[data->_voc.gdbId] = item;
+					}
+					break;
 				}
+				child = m_treeCtrl->GetNextChild(item, kookie);
 			}
 		}
 	}
@@ -70,20 +74,35 @@ void NewQuickWatchDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChildr
 	if( item.IsOk() == false ) return;
 
 	if(m_treeCtrl->GetRootItem() != item && m_treeCtrl->ItemHasChildren(item)) {
-		m_treeCtrl->DeleteChildren(item);
+		// delete the <dummy> node
+		wxTreeItemIdValue kookie;
+		wxTreeItemId child = m_treeCtrl->GetFirstChild(item, kookie);
+		while ( child.IsOk() ) {
+			wxString itemText = m_treeCtrl->GetItemText(child);
+			if( itemText == wxT("<dummy>") || itemText == wxT("Loading...")) {
+				m_treeCtrl->Delete( child );
+			}
+			child = m_treeCtrl->GetNextChild(item, kookie);
+		}
 	}
 
 	for(size_t i=0; i<children.size(); i++) {
 		VariableObjChild ch = children.at(i);
-		wxTreeItemId child = m_treeCtrl->AppendItem(item, ch.varName, -1, -1, new QWTreeData(ch));
-		if ( ch.numChilds > 0 ) {
-			// add fake node to this item, so it will have the [+] on the side
-			m_treeCtrl->AppendItem(child, wxT("<dummy>"));
+		if ( ch.varName != wxT("public") && ch.varName != wxT("private") && ch.varName != wxT("protected") ) {
+			// Real node
+			wxTreeItemId child = m_treeCtrl->AppendItem(item, ch.varName, -1, -1, new QWTreeData(ch));
+			if ( ch.numChilds > 0 ) {
+				// add fake node to this item, so it will have the [+] on the side
+				m_treeCtrl->AppendItem(child, wxT("<dummy>"));
+			}
+			// ask gdb for the value for this node
+			m_debugger->EvaluateVariableObject( ch.gdbId, DBG_USERR_QUICKWACTH );
+			m_gdbId2ItemLeaf[ch.gdbId] = child;
+		} else {
+			// Fake node
+			m_debugger->ListChildren(ch.gdbId, DBG_USERR_QUICKWACTH);
+			m_gdbId2Item[ch.gdbId] = item;
 		}
-
-		// ask gdb for the value for this node
-		m_debugger->EvaluateVariableObject( ch.gdbId, DBG_USERR_QUICKWACTH );
-		m_gdbId2ItemLeaf[ch.gdbId] = child;
 	}
 }
 

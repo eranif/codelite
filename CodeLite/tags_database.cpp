@@ -906,6 +906,24 @@ void TagsStorageSQLite::GetTagsByFileScopeAndKind(const wxFileName& fileName, co
 	DoFetchTags(sql, tags);
 }
 
+void TagsStorageSQLite::GetAllTagsNames(wxArrayString& names)
+{
+	try {
+
+		wxString query(wxT("SELECT distinct name FROM tags order by name ASC LIMIT "));
+		query  << GetMaxWorkspaceTagToColour();
+
+		wxSQLite3ResultSet res = Query(query);
+		while (res.NextRow()) {
+			// add unique strings only
+			names.Add( res.GetString(0) );
+		}
+
+	} catch (wxSQLite3Exception &e) {
+		wxUnusedVar(e);
+	}
+}
+
 void TagsStorageSQLite::GetTagsNames(const wxArrayString& kind, wxArrayString& names)
 {
 	if ( kind.IsEmpty() ) return;
@@ -921,7 +939,7 @@ void TagsStorageSQLite::GetTagsNames(const wxArrayString& kind, wxArrayString& n
 		whereClause << wxT(") ");
 
 		wxString query(wxT("SELECT distinct name FROM tags WHERE "));
-		query << whereClause << wxT(" order by name ASC LIMIT 500");
+		query << whereClause << wxT(" order by name ASC LIMIT ") << GetMaxWorkspaceTagToColour();
 
 		wxSQLite3ResultSet res = Query(query);
 		while (res.NextRow()) {

@@ -43,17 +43,12 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 		m_checkBoxEnableLog->SetValue(info.enableDebugLog);
 		m_checkBoxEnablePendingBreakpoints->SetValue(info.enablePendingBreakpoints);
 		m_checkBreakAtWinMain->SetValue(info.breakAtWinMain);
-		m_checkResolveStarThis->SetValue(info.resolveThis);
 		m_checkShowTerminal->SetValue(info.showTerminal);
 		m_checkUseRelativePaths->SetValue(info.useRelativeFilePaths);
 		m_catchThrow->SetValue(info.catchThrow);
 		m_showTooltips->SetValue(info.showTooltips);
 		m_textCtrlStartupCommands->SetValue( info.startupCommands );
 
-//		if ( commands.IsEmpty() ) {
-//			if( info.name == wxT("GNU gdb debugger") ) {
-//			}
-//		}
 #ifdef __WXMSW__
 		m_checkBoxDebugAssert->SetValue(info.debugAsserts);
 #endif
@@ -157,7 +152,6 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		info.path                     = page->m_textCtrDbgPath->GetValue();
 		info.name                     = page->m_title;
 		info.breakAtWinMain           = page->m_checkBreakAtWinMain->IsChecked();
-		info.resolveThis              = page->m_checkResolveStarThis->IsChecked();
 		info.showTerminal             = page->m_checkShowTerminal->IsChecked();
 		info.consoleCommand           = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
 		info.useRelativeFilePaths     = page->m_checkUseRelativePaths->IsChecked();

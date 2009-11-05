@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -70,6 +70,7 @@ class LocalsTableBase : public wxPanel
 
 	protected:
 		wxListView* m_listTable;
+		wxChoice* m_choiceExpand;
 
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnItemActivated( wxListEvent& event ){ event.Skip(); }

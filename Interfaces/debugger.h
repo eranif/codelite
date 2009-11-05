@@ -315,7 +315,6 @@ public:
 	bool      enableDebugLog;
 	bool      enablePendingBreakpoints;
 	bool      breakAtWinMain;
-	bool      resolveThis;
 	bool      showTerminal;
 	wxString  consoleCommand;
 	bool      useRelativeFilePaths;
@@ -331,7 +330,6 @@ public:
 			, enableDebugLog(false)
 			, enablePendingBreakpoints(true)
 			, breakAtWinMain(false)
-			, resolveThis(false)
 			, showTerminal(false)
 			, consoleCommand(TERMINAL_CMD)
 			, useRelativeFilePaths(false)

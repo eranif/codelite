@@ -212,8 +212,8 @@ void QuickFindBar::OnUpdateUI(wxUpdateUIEvent &e)
 void QuickFindBar::OnEnter(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	bool alt = wxGetKeyState(WXK_ALT);
-	wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, alt ? XRCID("find_prev_quick") : XRCID("find_next_quick"));
+	bool shift = wxGetKeyState(WXK_SHIFT);
+	wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, shift ? XRCID("find_prev_quick") : XRCID("find_next_quick"));
 	GetEventHandler()->AddPendingEvent(evt);
 }
 

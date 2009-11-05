@@ -569,12 +569,6 @@ bool DbgGdb::QueryFileLine()
 
 bool DbgGdb::QueryLocals()
 {
-	//the order of the commands here is important
-	if (m_info.resolveThis) {
-//		if (!WriteCommand(wxT("-data-evaluate-expression *this"), new DbgCmdHandlerLocals(m_observer, DbgCmdHandlerLocals::This, wxT("*this")))) {
-//			return false;
-//		}
-	}
 	bool res = WriteCommand(wxT("-stack-list-locals 2"), new DbgCmdHandlerLocals(m_observer));
 	if ( !res ) {
 		return false;

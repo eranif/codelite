@@ -442,6 +442,8 @@ public:
 	 */
 	virtual void GetTagsByFileScopeAndKind(const wxFileName& fileName, const wxString &scopeName, const wxArrayString& kind, std::vector< TagEntryPtr > &tags);
 
+	virtual void GetAllTagsNames(wxArrayString& names);
+
 	virtual void GetTagsNames(const wxArrayString& kind, wxArrayString& names);
 };
 #endif // CODELITE_TAGS_DATABASE_H

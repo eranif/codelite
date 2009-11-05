@@ -35,12 +35,16 @@ LocalsTable::~LocalsTable()
 
 void LocalsTable::OnItemActivated(wxListEvent& event)
 {
-	DoShowDetails( event.m_itemIndex );
+	if ( m_choiceExpand->GetSelection() == 1 ) {
+		DoShowDetails( event.m_itemIndex );
+	}
 }
 
 void LocalsTable::OnItemSelected(wxListEvent& event)
 {
-	//DoShowDetails( event.m_itemIndex );
+	if ( m_choiceExpand->GetSelection() == 0 ) {
+		DoShowDetails( event.m_itemIndex );
+	}
 	event.Skip();
 }
 

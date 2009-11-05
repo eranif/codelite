@@ -1159,5 +1159,3 @@ bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
 	}
 	return false;
 }
-
-

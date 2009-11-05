@@ -35,6 +35,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_fileSpec(wxT  ("*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc"))
 		, m_minWordLen    (3)
 		, m_parserEnabled (true)
+		, m_maxItemToColour(1000)
 {
 	m_languages.Add(wxT("C++"));
 }
@@ -60,6 +61,7 @@ void TagsOptionsData::Serialize(Archive &arch)
 	arch.Write(wxT("m_parserSearchPaths"), m_parserSearchPaths);
 	arch.Write(wxT("m_parserEnabled"),     m_parserEnabled);
 	arch.Write(wxT("m_parserExcludePaths"),m_parserExcludePaths);
+	arch.Write(wxT("m_maxItemToColour"),   m_maxItemToColour);
 }
 
 void TagsOptionsData::DeSerialize(Archive &arch)
@@ -73,7 +75,7 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	arch.Read(wxT("m_parserSearchPaths"),  m_parserSearchPaths);
 	arch.Read(wxT("m_parserEnabled"),      m_parserEnabled);
 	arch.Read(wxT("m_parserExcludePaths"), m_parserExcludePaths);
-
+	arch.Read(wxT("m_maxItemToColour"),    m_maxItemToColour);
 	// Hack: remove "extern"
 	int where = m_prep.Index(wxT("extern"));
 	if (where != wxNOT_FOUND) {

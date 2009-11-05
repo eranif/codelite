@@ -14,6 +14,7 @@ class ITagsStorage
 protected:
 	wxFileName m_fileName;
 	int        m_singleSearchLimit;
+	int        m_maxWorkspaceTagToColour;
 public:
 	enum {
 		OrderNone,
@@ -22,7 +23,7 @@ public:
 	};
 
 public:
-	ITagsStorage() : m_singleSearchLimit(1000) {}
+	ITagsStorage() : m_singleSearchLimit(1000), m_maxWorkspaceTagToColour(1000) {}
 	virtual ~ITagsStorage() {};
 
 	/**
@@ -34,7 +35,7 @@ public:
 	}
 
 	void SetSingleSearchLimit(int singleSearchLimit) {
-		if( singleSearchLimit < 0 ) {
+		if ( singleSearchLimit < 0 ) {
 			singleSearchLimit = 1000;
 		}
 		this->m_singleSearchLimit = singleSearchLimit;
@@ -42,6 +43,14 @@ public:
 
 	int GetSingleSearchLimit() const {
 		return m_singleSearchLimit;
+	}
+
+	void SetMaxWorkspaceTagToColour(int maxWorkspaceTagToColour) {
+		this->m_maxWorkspaceTagToColour = maxWorkspaceTagToColour;
+	}
+
+	int GetMaxWorkspaceTagToColour() const {
+		return m_maxWorkspaceTagToColour;
 	}
 
 	// -----------------------------------------------------------------
@@ -226,6 +235,12 @@ public:
 	 * @param tags
 	 */
 	virtual void GetTagsByFileScopeAndKind(const wxFileName& fileName, const wxString &scopeName, const wxArrayString& kind, std::vector< TagEntryPtr > &tags) = 0;
+
+	/**
+	 * @brief return a unique list of names
+	 * @param names
+	 */
+	virtual void GetAllTagsNames(wxArrayString& names) = 0;
 
 	/**
 	 * @brief return a unique list of names

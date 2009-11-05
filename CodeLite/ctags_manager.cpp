@@ -1743,6 +1743,12 @@ void TagsManager::GetFunctions(std::vector< TagEntryPtr > &tags, const wxString 
 void TagsManager::GetAllTagsNames(wxArrayString &tagsList)
 {
 	size_t kind = GetCtagsOptions().GetCcColourFlags();
+	if (kind == CC_COLOUR_ALL)
+	{
+		m_workspaceDatabase->GetAllTagsNames(tagsList);
+		return;
+	}
+
 	wxArrayString kindArr;
 
 	if ( kind & CC_COLOUR_CLASS) {

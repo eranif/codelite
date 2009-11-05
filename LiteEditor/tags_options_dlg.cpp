@@ -97,7 +97,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkBoxVariable->SetValue                  (m_data.GetCcColourFlags() & CC_COLOUR_VARIABLE);
 	m_listBoxSearchPaths->Append                  ( m_data.GetParserSearchPaths() );
 	m_listBoxSearchPaths1->Append                 ( m_data.GetParserExcludePaths() );
-
+	m_spinCtrlMaxItemToColour->SetValue           ( m_data.GetMaxItemToColour() );
 	//initialize the ctags page
 	wxString prep;
 	for (size_t i=0; i<m_data.GetPreprocessor().GetCount(); i++) {
@@ -172,6 +172,7 @@ void TagsOptionsDlg::CopyData()
 	m_data.SetLanguageSelection(m_comboBoxLang->GetStringSelection());
 	m_data.SetParserSearchPaths( m_listBoxSearchPaths->GetStrings() );
 	m_data.SetParserExcludePaths( m_listBoxSearchPaths1->GetStrings() );
+	m_data.SetMaxItemToColour( m_spinCtrlMaxItemToColour->GetValue() );
 
 }
 

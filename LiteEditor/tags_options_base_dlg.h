@@ -16,11 +16,12 @@
 #include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+#include <wx/stattext.h>
+#include <wx/spinctrl.h>
 #include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/stattext.h>
 #include <wx/listbox.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
@@ -50,6 +51,8 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxCheckBox* m_checkDisplayTypeInfo;
 		wxCheckBox* m_checkDisplayFunctionTip;
 		wxCheckBox* m_checkCppKeywordAssist;
+		wxStaticText* m_staticText72;
+		wxSpinCtrl* m_spinCtrlMaxItemToColour;
 		wxCheckBox* m_checkColourLocalVars;
 		wxCheckBox* m_checkColourProjTags;
 		wxCheckBox* m_checkBoxClass;

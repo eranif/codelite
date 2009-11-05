@@ -59,6 +59,9 @@ enum CodeCompletionColourOpts {
 	CC_COLOUR_ENUMERATOR        = 0x00000200,
 	CC_COLOUR_VARIABLE          = 0x00000400,
 	CC_COLOUR_MEMBER            = 0x00000800,
+	CC_COLOUR_ALL               = CC_COLOUR_CLASS | CC_COLOUR_STRUCT | CC_COLOUR_FUNCTION |
+	CC_COLOUR_ENUM | CC_COLOUR_UNION | CC_COLOUR_PROTOTYPE | CC_COLOUR_TYPEDEF | CC_COLOUR_MACRO |
+	CC_COLOUR_NAMESPACE | CC_COLOUR_ENUMERATOR | CC_COLOUR_VARIABLE | CC_COLOUR_MEMBER,
 	CC_COLOUR_DEFAULT           = CC_COLOUR_CLASS | CC_COLOUR_STRUCT | CC_COLOUR_FUNCTION |
 	CC_COLOUR_ENUM | CC_COLOUR_PROTOTYPE
 };
@@ -74,7 +77,7 @@ class TagsOptionsData : public SerializedObject
 	wxArrayString    m_parserSearchPaths;
 	wxArrayString    m_parserExcludePaths;
 	bool             m_parserEnabled;
-
+	int              m_maxItemToColour;
 public:
 	TagsOptionsData();
 	virtual ~TagsOptionsData();
@@ -149,6 +152,12 @@ public:
 	}
 	const wxArrayString& GetParserExcludePaths() const {
 		return m_parserExcludePaths;
+	}
+	void SetMaxItemToColour(int maxItemToColour) {
+		this->m_maxItemToColour = maxItemToColour;
+	}
+	int GetMaxItemToColour() const {
+		return m_maxItemToColour;
 	}
 };
 

@@ -75,18 +75,20 @@ class DebuggerPageBase : public wxPanel
 	private:
 	
 	protected:
+		wxNotebook* m_notebook3;
+		wxPanel* m_panel3;
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textCtrDbgPath;
 		wxButton* m_buttonBrowse;
 		wxCheckBox* m_checkBoxEnablePendingBreakpoints;
 		wxCheckBox* m_checkBreakAtWinMain;
-		wxCheckBox* m_checkResolveStarThis;
 		wxCheckBox* m_catchThrow;
 		wxCheckBox* m_checkBoxDebugAssert;
 		wxCheckBox* m_checkBoxEnableLog;
 		wxCheckBox* m_checkShowTerminal;
 		wxCheckBox* m_checkUseRelativePaths;
 		wxCheckBox* m_showTooltips;
+		wxPanel* m_panel4;
 		wxTextCtrl* m_textCtrlStartupCommands;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -95,7 +97,7 @@ class DebuggerPageBase : public wxPanel
 		
 	
 	public:
-		DebuggerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		DebuggerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 633,397 ), long style = wxTAB_TRAVERSAL );
 		~DebuggerPageBase();
 	
 };

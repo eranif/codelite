@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -102,6 +102,12 @@ LocalsTableBase::LocalsTableBase( wxWindow* parent, wxWindowID id, const wxPoint
 	bSizer3->Add( m_listTable, 1, wxEXPAND|wxALL, 1 );
 
 	bSizer1->Add( bSizer3, 1, wxEXPAND, 5 );
+
+	wxString m_choiceExpandChoices[] = { wxT("Select an entry to show explore it in the 'Display Variable' dialog"), wxT("Double click an entry to explore it in the 'Display Variable' dialog") };
+	int m_choiceExpandNChoices = sizeof( m_choiceExpandChoices ) / sizeof( wxString );
+	m_choiceExpand = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceExpandNChoices, m_choiceExpandChoices, 0 );
+	m_choiceExpand->SetSelection( 1 );
+	bSizer1->Add( m_choiceExpand, 0, wxALL|wxEXPAND, 5 );
 
 	this->SetSizer( bSizer1 );
 	this->Layout();

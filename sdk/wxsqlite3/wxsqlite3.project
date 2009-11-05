@@ -140,10 +140,10 @@
   <Dependencies Name="ReleaseUnicode">
     <Project Name="sqlite3"/>
   </Dependencies>
-  <Dependencies Name="WinDebugUnicode">
+  <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
   </Dependencies>
-  <Dependencies Name="WinReleaseUnicode">
+  <Dependencies Name="WinDebugUnicode">
     <Project Name="sqlite3"/>
   </Dependencies>
 </CodeLite_Project>

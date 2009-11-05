@@ -14,7 +14,8 @@ public:
 
 protected:
 	void     DoShowDetails (long item);
-	long     DoGetIdxByName(const wxString &name);
+	long     DoGetIdxByName(const wxString      &name);
+	long     DoGetIdxByVar (const LocalVariable &var, const wxString &kind);
 
 public:
 	LocalsTable(wxWindow *parent);

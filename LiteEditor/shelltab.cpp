@@ -302,10 +302,6 @@ void DebugTab::AppendLine(const wxString& line)
 	} else {
 		AppendText(line);
 	}
-
-    if (m_sci->GetLine(m_sci->GetLineCount()-1) != line.BeforeFirst(wxT('\n'))) {
-
-    }
 }
 
 void DebugTab::OnUpdateUI(wxUpdateUIEvent& e)

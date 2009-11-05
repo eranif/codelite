@@ -5,6 +5,7 @@
 #include "debuggermanager.h"
 #include "manager.h"
 #include "new_quick_watch_dlg.h"
+#include <set>
 
 #define LOCAL_NAME_COL      0
 #define LOCAL_TYPE_COL      1
@@ -45,15 +46,33 @@ void LocalsTable::OnItemSelected(wxListEvent& event)
 
 void LocalsTable::UpdateLocals(const LocalVariables& locals)
 {
-	wxWindowUpdateLocker locker( m_listTable );
+	LocalVariables vars = locals;
+	// locate all items that were modified
+	for(size_t i=0; i<vars.size(); i++){
+		LocalVariable &var = vars.at(i);
+		wxString      oldValue;
+
+		// try to locate this variable in the table
+		long idx = DoGetIdxByVar(var, sKindLocalVariable);
+		if ( idx != wxNOT_FOUND ) {
+			oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
+			var.updated = (oldValue != var.value);
+		}
+	}
+
+	wxWindowUpdateLocker locker ( this );
 	m_listTable->DeleteAllItems();
-	for(size_t i=0; i<locals.size(); i++){
-		LocalVariable var = locals.at(i);
+
+	for(size_t i=0; i<vars.size(); i++) {
+		LocalVariable &var = vars.at(i);
 		long idx = AppendListCtrlRow(m_listTable);
 		SetColumnText(m_listTable, idx, LOCAL_NAME_COL,  var.name  );
 		SetColumnText(m_listTable, idx, LOCAL_TYPE_COL,  var.type  );
-		SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
 		SetColumnText(m_listTable, idx, LOCAL_KIND_COL,  sKindLocalVariable );
+		SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
+		if ( var.updated ) {
+			m_listTable->SetItemTextColour(idx, wxT("RED"));
+		}
 	}
 }
 
@@ -61,20 +80,40 @@ void LocalsTable::UpdateLocals(const LocalVariables& locals)
 void LocalsTable::UpdateFuncArgs(const LocalVariables& args)
 {
 	// Delete all 'function arguments' first
-	wxWindowUpdateLocker locker( m_listTable );
-	for(int i=0; i<m_listTable->GetItemCount(); i++) {
+	LocalVariables vars = args;
+
+	// locate all items that were modified
+	for(size_t i=0; i<vars.size(); i++){
+		LocalVariable &var = vars.at(i);
+		wxString      oldValue;
+
+		// try to locate this variable in the table
+		long idx = DoGetIdxByVar(var, sKindFunctionArgument);
+		if ( idx != wxNOT_FOUND ) {
+			oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
+			var.updated = (oldValue != var.value);
+		}
+	}
+
+	wxWindowUpdateLocker locker ( this );
+
+	// Delete all function arguments from the table
+	for(int i=0; i<m_listTable->GetItemCount(); i++){
 		if(GetColumnText(m_listTable, i, LOCAL_KIND_COL) == sKindFunctionArgument) {
 			m_listTable->DeleteItem(i);
 		}
 	}
 
-	for(size_t i=0; i<args.size(); i++){
-		LocalVariable var = args.at(i);
+	for(size_t i=0; i<vars.size(); i++) {
+		LocalVariable &var = vars.at(i);
 		long idx = AppendListCtrlRow(m_listTable);
 		SetColumnText(m_listTable, idx, LOCAL_NAME_COL,  var.name  );
 		SetColumnText(m_listTable, idx, LOCAL_TYPE_COL,  var.type  );
-		SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
 		SetColumnText(m_listTable, idx, LOCAL_KIND_COL,  sKindFunctionArgument );
+		SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
+		if ( var.updated ) {
+			m_listTable->SetItemTextColour(idx, wxT("RED"));
+		}
 	}
 }
 
@@ -127,4 +166,16 @@ wxString LocalsTable::GetRealType(const wxString& gdbType)
 
 	realType.Trim().Trim(false);
 	return realType;
+}
+
+long LocalsTable::DoGetIdxByVar(const LocalVariable& var, const wxString& kind)
+{
+	for( int i=0; i<m_listTable->GetItemCount(); i++){
+		if( GetColumnText(m_listTable, i, LOCAL_NAME_COL) == var.name &&
+			GetColumnText(m_listTable, i, LOCAL_KIND_COL) == kind)
+		{
+			return i;
+		}
+	}
+	return wxNOT_FOUND;
 }

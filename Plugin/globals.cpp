@@ -194,14 +194,13 @@ bool IsValidCppIndetifier(const wxString &id)
 long AppendListCtrlRow(wxListCtrl *list)
 {
 	long item;
+	list->GetItemCount() ? item = list->GetItemCount() : item = 0;
+
 	wxListItem info;
 	// Set the item display name
 	info.SetColumn(0);
+	info.SetId(item);
 	item = list->InsertItem(info);
-
-#ifdef __WXMAC__
-	item = list->GetItemCount()-1;
-#endif
 	return item;
 }
 

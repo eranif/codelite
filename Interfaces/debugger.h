@@ -97,6 +97,10 @@ struct LocalVariable {
 	wxString name;
 	wxString value;
 	wxString type;
+	bool     updated;
+
+	LocalVariable() : updated(false) {}
+	~LocalVariable(){}
 };
 
 typedef std::vector<VariableObjChild> VariableObjChildren;

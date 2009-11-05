@@ -289,8 +289,22 @@ void DebugTab::OnStopProc(wxCommandEvent& e)
 
 void DebugTab::AppendLine(const wxString& line)
 {
+	if ( m_sci->GetLineCount() > 2 ) {
+		wxString lineBefore = m_sci->GetLine(m_sci->GetLineCount()-2);
+		wxString newLine (line);
+		newLine.Trim().Trim(false);
+		lineBefore.Trim().Trim(false);
+		if( (lineBefore == newLine) && (newLine == wxT("Continuing...")) ) {
+			// Dont add this line...
+		} else {
+			AppendText(line);
+		}
+	} else {
+		AppendText(line);
+	}
+
     if (m_sci->GetLine(m_sci->GetLineCount()-1) != line.BeforeFirst(wxT('\n'))) {
-        AppendText(line);
+
     }
 }
 

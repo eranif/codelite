@@ -1310,7 +1310,7 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-		if( ManagerST::Get()->GetQuickWatchDialog()->IsShown() ) {
+		if( ManagerST::Get()->GetDisplayVariableDialog()->IsShown() ) {
 			// a 'Quick Show dialog' is already shown!
 			// dont show another tip
 			return;

@@ -575,8 +575,11 @@ bool DbgGdb::QueryLocals()
 //			return false;
 //		}
 	}
-
-	return WriteCommand(wxT("-stack-list-locals 2"), new DbgCmdHandlerLocals(m_observer));
+	bool res = WriteCommand(wxT("-stack-list-locals 2"), new DbgCmdHandlerLocals(m_observer));
+	if ( !res ) {
+		return false;
+	}
+	return WriteCommand(wxT("-stack-list-arguments 2 0 0 "), new DbgCmdHandlerFuncArgs(m_observer));
 }
 
 bool DbgGdb::ExecuteCmd(const wxString &cmd)
@@ -903,7 +906,7 @@ void DbgGdb::OnProcessEndEx(wxProcessEvent &e)
 	m_env->UnApplyEnv();
 }
 
-bool DbgGdb::GetTip(const wxString &dbgCommand, const wxString& expression)
+bool DbgGdb::GetAsciiViewerContent(const wxString &dbgCommand, const wxString& expression)
 {
 	wxString cmd;
 	cmd << dbgCommand << wxT(" ") << expression;

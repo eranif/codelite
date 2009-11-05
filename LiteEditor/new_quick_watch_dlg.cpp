@@ -9,7 +9,7 @@ public:
 	virtual ~QWTreeData(){}
 };
 
-NewQuickWatchDlg::NewQuickWatchDlg( wxWindow* parent)
+DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
 		: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(300, 300) )
 {
 	Centre();
@@ -17,12 +17,12 @@ NewQuickWatchDlg::NewQuickWatchDlg( wxWindow* parent)
 	WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
 }
 
-NewQuickWatchDlg::~NewQuickWatchDlg()
+DisplayVariableDlg::~DisplayVariableDlg()
 {
 	WindowAttrManager::Save(this, wxT("NewQuickWatchDlg"), NULL);
 }
 
-void NewQuickWatchDlg::OnExpandItem( wxTreeEvent& event )
+void DisplayVariableDlg::OnExpandItem( wxTreeEvent& event )
 {
 	wxTreeItemId item = event.GetItem();
 	if( item.IsOk()) {
@@ -48,7 +48,7 @@ void NewQuickWatchDlg::OnExpandItem( wxTreeEvent& event )
 	}
 }
 
-void NewQuickWatchDlg::BuildTree(const VariableObjChildren& children, IDebugger *debugger)
+void DisplayVariableDlg::BuildTree(const VariableObjChildren& children, IDebugger *debugger)
 {
 	m_debugger = debugger;
 	m_gdbId2Item.clear();
@@ -60,7 +60,7 @@ void NewQuickWatchDlg::BuildTree(const VariableObjChildren& children, IDebugger 
 	DoAddChildren( root, children );
 }
 
-void NewQuickWatchDlg::AddItems(const wxString& varname, const VariableObjChildren& children)
+void DisplayVariableDlg::AddItems(const wxString& varname, const VariableObjChildren& children)
 {
 	std::map<wxString, wxTreeItemId>::iterator iter = m_gdbId2Item.find(varname);
 	if( iter != m_gdbId2Item.end() ) {
@@ -69,7 +69,7 @@ void NewQuickWatchDlg::AddItems(const wxString& varname, const VariableObjChildr
 	}
 }
 
-void NewQuickWatchDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChildren& children)
+void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChildren& children)
 {
 	if( item.IsOk() == false ) return;
 
@@ -106,13 +106,13 @@ void NewQuickWatchDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChildr
 	}
 }
 
-void NewQuickWatchDlg::OnBtnCancel(wxCommandEvent& e)
+void DisplayVariableDlg::OnBtnCancel(wxCommandEvent& e)
 {
 	DoCleanUp();
 	e.Skip();
 }
 
-void NewQuickWatchDlg::UpdateValue(const wxString& varname, const wxString& value)
+void DisplayVariableDlg::UpdateValue(const wxString& varname, const wxString& value)
 {
 	std::map<wxString, wxTreeItemId>::iterator iter = m_gdbId2ItemLeaf.find(varname);
 	if( iter != m_gdbId2ItemLeaf.end() ) {
@@ -125,13 +125,13 @@ void NewQuickWatchDlg::UpdateValue(const wxString& varname, const wxString& valu
 	}
 }
 
-void NewQuickWatchDlg::OnCloseEvent(wxCloseEvent& e)
+void DisplayVariableDlg::OnCloseEvent(wxCloseEvent& e)
 {
 	DoCleanUp();
 	e.Skip();
 }
 
-void NewQuickWatchDlg::DoCleanUp()
+void DisplayVariableDlg::DoCleanUp()
 {
 	if(m_debugger && m_mainVariableObject.IsEmpty() == false) {
 		m_debugger->DeleteVariableObject(m_mainVariableObject);
@@ -142,13 +142,13 @@ void NewQuickWatchDlg::DoCleanUp()
 	m_variableName = wxT("");
 }
 
-void NewQuickWatchDlg::HideDialog()
+void DisplayVariableDlg::HideDialog()
 {
 	DoCleanUp();
 	wxDialog::Show(false);
 }
 
-void NewQuickWatchDlg::OnKeyDown(wxKeyEvent& event)
+void DisplayVariableDlg::OnKeyDown(wxKeyEvent& event)
 {
 	if( event.GetKeyCode() == WXK_ESCAPE ) {
 		HideDialog();
@@ -157,7 +157,7 @@ void NewQuickWatchDlg::OnKeyDown(wxKeyEvent& event)
 	}
 }
 
-void NewQuickWatchDlg::ShowDialog(bool center)
+void DisplayVariableDlg::ShowDialog(bool center)
 {
 	m_treeCtrl->SetFocus();
 	if ( center ) {
@@ -169,7 +169,7 @@ void NewQuickWatchDlg::ShowDialog(bool center)
 	wxDialog::Show();
 }
 
-void NewQuickWatchDlg::OnLeftDown(wxMouseEvent& e)
+void DisplayVariableDlg::OnLeftDown(wxMouseEvent& e)
 {
 	int flags;
 	wxTreeItemId item = m_treeCtrl->HitTest(e.GetPosition(), flags);

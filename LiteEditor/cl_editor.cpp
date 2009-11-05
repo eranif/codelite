@@ -480,11 +480,11 @@ void LEditor::SetProperties()
 	// on Mac
 	SetTwoPhaseDraw(false);
 	SetBufferedDraw(false);
-	
-#elif defined(__WXGTK__)	
+
+#elif defined(__WXGTK__)
 	SetTwoPhaseDraw(true);
 	SetBufferedDraw(false);
-	
+
 #else // MSW
 	SetTwoPhaseDraw(true);
 	SetBufferedDraw(true);
@@ -2261,8 +2261,8 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 	// hide completion box
 	HideCompletionBox();
 
-	if( ManagerST::Get()->GetQuickWatchDialog()->IsShown() )
-		ManagerST::Get()->GetQuickWatchDialog()->HideDialog();
+	if( ManagerST::Get()->GetDisplayVariableDialog()->IsShown() )
+		ManagerST::Get()->GetDisplayVariableDialog()->HideDialog();
 
 #ifdef __WXMSW__
 	long value(0);

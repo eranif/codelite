@@ -178,7 +178,7 @@ Manager::Manager ( void )
 		, m_useTipWin ( false )
 		, m_tipWinPos ( wxNOT_FOUND )
 		, m_frameLineno ( wxNOT_FOUND )
-		, m_newQuickWatchDlg (NULL)
+		, m_displayVariableDlg (NULL)
 {
 	m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
 	Connect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnRestart), NULL, this);
@@ -1755,17 +1755,17 @@ void Manager::SetMemory ( const wxString& address, size_t count, const wxString 
 void Manager::DbgStart ( long pid )
 {
 	//set the working directory to the project directory
-	DirSaver ds;
-	wxString errMsg;
-	wxString output;
-	wxString debuggerName;
-	wxString exepath;
-	wxString wd;
-	wxString args;
-	BuildConfigPtr bldConf;
-	ProjectPtr proj;
-	long PID ( -1 );
+	DirSaver            ds;
+	wxString            errMsg;
+	wxString            output;
+	wxString            debuggerName;
+	wxString            exepath;
+	wxString            wd;
+	wxString            args;
+	BuildConfigPtr      bldConf;
+	ProjectPtr          proj;
 	DebuggerStartupInfo startup_info;
+	long                PID ( -1 );
 
 #if defined(__WXGTK__)
 	wxString where;
@@ -1934,6 +1934,10 @@ void Manager::DbgStart ( long pid )
 	// Hmm. The above comment is probably no longer true; but it'll do no harm to Initialise() anyway
 	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
+	// Initialize the 'Locals' table. We do this for performane reason so we
+	// wont need to read from the XML each time perform 'next' step
+	Frame::Get()->GetDebuggerPane()->GetLocalsTable()->Initialize();
+
 	// let the active editor get the focus
 	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 	if ( editor ) {
@@ -1983,9 +1987,9 @@ void Manager::DbgStart ( long pid )
 
 void Manager::DbgStop()
 {
-	if ( m_newQuickWatchDlg ) {
-		m_newQuickWatchDlg->Destroy();
-		m_newQuickWatchDlg = NULL;
+	if ( m_displayVariableDlg ) {
+		m_displayVariableDlg->Destroy();
+		m_displayVariableDlg = NULL;
 	}
 
 	// remove all debugger markers
@@ -2306,11 +2310,11 @@ void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name
 	}
 
 	if ( get_tip ) {
-		dbgr->GetTip(dbg_command, command); // Will trigger a call to UpdateTip()
+		dbgr->GetAsciiViewerContent(dbg_command, command); // Will trigger a call to UpdateTip()
 	}
 }
 
-void Manager::UpdateTip(const wxString& expression, const wxString& tip)
+void Manager::UpdateAsciiViewer(const wxString& expression, const wxString& tip)
 {
 	Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->UpdateView( expression, tip );
 }
@@ -2666,6 +2670,10 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		Frame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateLocals( event.m_locals );
 		break;
 
+	case DBG_UR_FUNC_ARGS:
+		Frame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateFuncArgs( event.m_locals );
+		break;
+
 	case DBG_UR_EXPRESSION:
 		Frame::Get()->GetDebuggerPane()->GetWatchesTable()->UpdateExpression ( event.m_expression, event.m_evaluated );
 		break;
@@ -2689,8 +2697,8 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		UpdateTypeReolsved( event.m_expression, event.m_evaluated );
 		break;
 
-	case DBG_UR_TIP:
-		UpdateTip( event.m_expression, event.m_text );
+	case DBG_UR_ASCII_VIEWER:
+		UpdateAsciiViewer( event.m_expression, event.m_text );
 		break;
 
 	case DBG_UR_LISTTHRAEDS:
@@ -2740,21 +2748,21 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	case DBG_UR_LISTCHILDREN: {
 		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 		if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
-			if ( !GetQuickWatchDialog()->IsShown() ) {
-				GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
-				GetQuickWatchDialog()->m_mainVariableObject = event.m_expression;
-				GetQuickWatchDialog()->ShowDialog( (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS) );
+			if ( !GetDisplayVariableDialog()->IsShown() ) {
+				GetDisplayVariableDialog()->BuildTree( event.m_varObjChildren, dbgr );
+				GetDisplayVariableDialog()->m_mainVariableObject = event.m_expression;
+				GetDisplayVariableDialog()->ShowDialog( (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS) );
 
 			} else {
 				// The dialog is shown
-				GetQuickWatchDialog()->AddItems(event.m_expression, event.m_varObjChildren);
+				GetDisplayVariableDialog()->AddItems(event.m_expression, event.m_varObjChildren);
 			}
 		}
 	}
 	break;
 	case DBG_UR_EVALVARIABLEOBJ:
-		if (GetQuickWatchDialog()->IsShown()) {
-			GetQuickWatchDialog()->UpdateValue(event.m_expression, event.m_evaluated);
+		if (GetDisplayVariableDialog()->IsShown()) {
+			GetDisplayVariableDialog()->UpdateValue(event.m_expression, event.m_evaluated);
 		}
 		break;
 	case DBG_UR_INVALID:
@@ -2814,12 +2822,12 @@ void Manager::OnRestart(wxCommandEvent& event)
 	DoRestartCodeLite();
 }
 
-NewQuickWatchDlg* Manager::GetQuickWatchDialog()
+DisplayVariableDlg* Manager::GetDisplayVariableDialog()
 {
-	if (!m_newQuickWatchDlg) {
-		m_newQuickWatchDlg = new NewQuickWatchDlg(Frame::Get());
+	if (!m_displayVariableDlg) {
+		m_displayVariableDlg = new DisplayVariableDlg(Frame::Get());
 	}
-	return m_newQuickWatchDlg;
+	return m_displayVariableDlg;
 }
 
 void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
@@ -2829,13 +2837,13 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 	/////////////////////////////////////////////
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
-		GetQuickWatchDialog()->m_mainVariableObject = event.m_variableObject.gdbId;
-		GetQuickWatchDialog()->m_variableName       = event.m_expression;
+		GetDisplayVariableDialog()->m_mainVariableObject = event.m_variableObject.gdbId;
+		GetDisplayVariableDialog()->m_variableName       = event.m_expression;
 		if ( event.m_variableObject.typeName.IsEmpty() == false ) {
-			GetQuickWatchDialog()->m_variableName << wxT(" (") << event.m_variableObject.typeName << wxT(") ");
+			GetDisplayVariableDialog()->m_variableName << wxT(" (") << event.m_variableObject.typeName << wxT(") ");
 		}
 		if ( event.m_evaluated.IsEmpty() == false ) {
-			GetQuickWatchDialog()->m_variableName << wxT(" = ") << event.m_evaluated;
+			GetDisplayVariableDialog()->m_variableName << wxT(" = ") << event.m_evaluated;
 		}
 		if ( event.m_variableObject.numChilds > 0 ) {
 			// Complex type
@@ -2843,11 +2851,11 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 
 		} else {
 			// Simple type, no need for further calls, show the dialog
-			if ( !GetQuickWatchDialog()->IsShown() ) {
-				GetQuickWatchDialog()->BuildTree( event.m_varObjChildren, dbgr );
+			if ( !GetDisplayVariableDialog()->IsShown() ) {
+				GetDisplayVariableDialog()->BuildTree( event.m_varObjChildren, dbgr );
 				// If the reason for showing the dialog was the 'Watches' table being d-clicked,
 				// center the dialog
-				GetQuickWatchDialog()->ShowDialog( (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS) );
+				GetDisplayVariableDialog()->ShowDialog( (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS) );
 			}
 		}
 	}

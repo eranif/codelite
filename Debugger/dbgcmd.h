@@ -133,6 +133,15 @@ public:
 	virtual bool ProcessOutput(const wxString &line);
 };
 
+class DbgCmdHandlerFuncArgs : public DbgCmdHandler
+{
+public:
+	DbgCmdHandlerFuncArgs(IDebuggerObserver *observer)
+			: DbgCmdHandler(observer) {}
+	virtual ~DbgCmdHandlerFuncArgs() {}
+	virtual bool ProcessOutput(const wxString &line);
+};
+
 // A Void Handler, which is here simply to ignore a reply from the debugger
 class DbgCmdHandlerVarCreator : public DbgCmdHandler
 {

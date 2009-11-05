@@ -45,7 +45,7 @@
 
 extern const wxEventType wxEVT_CMD_RESTART_CODELITE;
 
-class NewQuickWatchDlg;
+class DisplayVariableDlg;
 
 class Manager : public wxEvtHandler, public IDebuggerObserver
 {
@@ -66,7 +66,7 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	std::list<QueueCommand> m_buildQueue;
 	wxArrayString           m_dbgWatchExpressions;
 	wxFileName              m_codeliteLauncher;
-	NewQuickWatchDlg       *m_newQuickWatchDlg;
+	DisplayVariableDlg       *m_displayVariableDlg;
 
 protected:
 	Manager(void);
@@ -74,7 +74,7 @@ protected:
 
      //--------------------------- Global State -----------------------------
 public:
-	NewQuickWatchDlg * GetQuickWatchDialog();
+	DisplayVariableDlg * GetDisplayVariableDialog();
 
  	const wxString &GetStarupDirectory() const { return m_startupDir; }
  	void SetStarupDirectory(const wxString &path) { m_startupDir = path; }
@@ -494,7 +494,7 @@ public:
 	void UpdateLostControl          ();
 	void UpdateRemoteTargetConnected(const wxString &line);
 	void UpdateTypeReolsved         (const wxString &expression, const wxString &type);
-	void UpdateTip                  (const wxString &expression, const wxString &tip);
+	void UpdateAsciiViewer                  (const wxString &expression, const wxString &tip);
 
 	//---------------------------------------------------
 	// Handle debugger event

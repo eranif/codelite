@@ -592,7 +592,7 @@ public:
 	 * @param expression expression to evaluate
 	 * @return true if evaluation succeeded, false otherwise
 	 */
-	virtual bool GetTip(const wxString &dbgCommand, const wxString &expression) = 0;
+	virtual bool GetAsciiViewerContent(const wxString &dbgCommand, const wxString &expression) = 0;
 
 	/**
 	 * \brief resolve expression and return its actual type this is an async call. When this function is done, it will trigger a call to

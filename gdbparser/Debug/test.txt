@@ -1,1 +1,1 @@
-^done,locals=[{name="pcls",type="ChildClass *",value="0x0"},{name="s",type="string *",value="0x3e3e08"},{name="i",type="int",value="4216822"},{name="v",type="std::vector<int, std::allocator<int> >"},{name="cls",type="ChildClass"}]
+^done,stack-args=[frame={level="0",args=[{name="argc",type="int",value="1"},{name="argv",type="char **",value="0x3e2570"}]}]

@@ -514,6 +514,54 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 	return true;
 }
 
+bool DbgCmdHandlerFuncArgs::ProcessOutput(const wxString &line)
+{
+	LocalVariables locals;
+
+	std::vector<std::map<std::string, std::string> > children;
+	gdbParseListChildren(line.mb_str(wxConvUTF8).data(), children);
+
+	for (size_t i=0; i<children.size(); i++) {
+		std::map<std::string, std::string> attr = children.at(i);
+		LocalVariable var;
+		std::map<std::string, std::string >::const_iterator iter;
+
+		iter = attr.find("name");
+		if ( iter != attr.end() ) {
+			var.name = wxString(iter->second.c_str(), wxConvUTF8);
+			wxRemoveQuotes( var.name );
+		}
+
+		// For primitive types, we also get the value
+		iter = attr.find("value");
+		if ( iter != attr.end() ) {
+			if ( iter->second.empty() == false ) {
+				wxString v (iter->second.c_str(), wxConvUTF8);
+				wxRemoveQuotes( v );
+				var.value = wxGdbFixValue(v);
+			}
+		}
+
+		var.value.Trim().Trim(false);
+		if(var.value.IsEmpty()) {
+			var.value = wxT("{...}");
+		}
+
+		iter = attr.find("type");
+		if ( iter != attr.end() ) {
+			if ( iter->second.empty() == false ) {
+				wxString t (iter->second.c_str(), wxConvUTF8);
+				wxRemoveQuotes( t );
+				var.type = t;
+			}
+		}
+
+		locals.push_back( var );
+	}
+	m_observer->UpdateFunctionArguments( locals );
+	return true;
+}
+
 bool DbgCmdHandlerVarCreator::ProcessOutput(const wxString &line)
 {
 	wxUnusedVar(line);
@@ -695,7 +743,7 @@ bool DbgCmdGetTipHandler::ProcessOutput(const wxString& line)
 	wxString fixedString = wxGdbFixValue( evaluated );
 
 	// Update the observer
-	m_observer->UpdateTip(m_expression, fixedString);
+	m_observer->UpdateAsciiViewer(m_expression, fixedString);
 	return true;
 }
 
@@ -1093,3 +1141,5 @@ bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
 	}
 	return false;
 }
+
+

@@ -1,4 +1,6 @@
 #include "localstable.h"
+#include <wx/wupdlock.h>
+#include "debuggerconfigtool.h"
 #include "globals.h"
 #include "debuggermanager.h"
 #include "manager.h"
@@ -7,6 +9,10 @@
 #define LOCAL_NAME_COL      0
 #define LOCAL_TYPE_COL      1
 #define LOCAL_VALUE_COL     2
+#define LOCAL_KIND_COL      3
+
+static const wxString sKindLocalVariable   (wxT("Local Variable"));
+static const wxString sKindFunctionArgument(wxT("Function Argument"));
 
 LocalsTable::LocalsTable(wxWindow *parent)
 		: LocalsTableBase(parent)
@@ -14,10 +20,12 @@ LocalsTable::LocalsTable(wxWindow *parent)
 	m_listTable->InsertColumn(LOCAL_NAME_COL, wxT("Name"));
 	m_listTable->InsertColumn(LOCAL_TYPE_COL, wxT("Type"));
 	m_listTable->InsertColumn(LOCAL_VALUE_COL, wxT("Value"));
+	m_listTable->InsertColumn(LOCAL_KIND_COL, wxT("Kind"));
 
 	m_listTable->SetColumnWidth(LOCAL_NAME_COL, 200);
 	m_listTable->SetColumnWidth(LOCAL_TYPE_COL, 200);
 	m_listTable->SetColumnWidth(LOCAL_VALUE_COL, 200);
+	m_listTable->SetColumnWidth(LOCAL_KIND_COL, 200);
 }
 
 LocalsTable::~LocalsTable()
@@ -37,16 +45,37 @@ void LocalsTable::OnItemSelected(wxListEvent& event)
 
 void LocalsTable::UpdateLocals(const LocalVariables& locals)
 {
-	m_listTable->Freeze();
+	wxWindowUpdateLocker locker( m_listTable );
 	m_listTable->DeleteAllItems();
 	for(size_t i=0; i<locals.size(); i++){
 		LocalVariable var = locals.at(i);
 		long idx = AppendListCtrlRow(m_listTable);
-		SetColumnText(m_listTable, idx, LOCAL_NAME_COL, var.name  );
-		SetColumnText(m_listTable, idx, LOCAL_TYPE_COL, var.type  );
+		SetColumnText(m_listTable, idx, LOCAL_NAME_COL,  var.name  );
+		SetColumnText(m_listTable, idx, LOCAL_TYPE_COL,  var.type  );
 		SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
+		SetColumnText(m_listTable, idx, LOCAL_KIND_COL,  sKindLocalVariable );
 	}
-	m_listTable->Thaw();
+}
+
+
+void LocalsTable::UpdateFuncArgs(const LocalVariables& args)
+{
+	// Delete all 'function arguments' first
+	wxWindowUpdateLocker locker( m_listTable );
+	for(int i=0; i<m_listTable->GetItemCount(); i++) {
+		if(GetColumnText(m_listTable, i, LOCAL_KIND_COL) == sKindFunctionArgument) {
+			m_listTable->DeleteItem(i);
+		}
+	}
+
+	for(size_t i=0; i<args.size(); i++){
+		LocalVariable var = args.at(i);
+		long idx = AppendListCtrlRow(m_listTable);
+		SetColumnText(m_listTable, idx, LOCAL_NAME_COL,  var.name  );
+		SetColumnText(m_listTable, idx, LOCAL_TYPE_COL,  var.type  );
+		SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
+		SetColumnText(m_listTable, idx, LOCAL_KIND_COL,  sKindFunctionArgument );
+	}
 }
 
 void LocalsTable::DoShowDetails(long item)
@@ -57,8 +86,8 @@ void LocalsTable::DoShowDetails(long item)
 		wxString name = GetColumnText(m_listTable, sel, LOCAL_NAME_COL);
 		if( dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() ) {
 
-			if ( ManagerST::Get()->GetQuickWatchDialog()->IsShown() ) {
-				ManagerST::Get()->GetQuickWatchDialog()->HideDialog();
+			if ( ManagerST::Get()->GetDisplayVariableDialog()->IsShown() ) {
+				ManagerST::Get()->GetDisplayVariableDialog()->HideDialog();
 			}
 
 			dbgr->CreateVariableObject(name, DBG_USERR_LOCALS);
@@ -79,4 +108,23 @@ long LocalsTable::DoGetIdxByName(const wxString& name)
 void LocalsTable::Clear()
 {
 	m_listTable->DeleteAllItems();
+}
+
+void LocalsTable::Initialize()
+{
+	// Read the debugger defined commands
+	DebuggerSettingsData data;
+	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
+	m_dbgCmds = data.GetCmds();
+}
+
+wxString LocalsTable::GetRealType(const wxString& gdbType)
+{
+	wxString realType ( gdbType );
+	realType.Replace(wxT("*"), wxT(""));
+	realType.Replace(wxT("const"), wxT(""));
+	realType.Replace(wxT("&"), wxT(""));
+
+	realType.Trim().Trim(false);
+	return realType;
 }

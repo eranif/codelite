@@ -61,13 +61,14 @@ enum DebuggerUpdateReason
 	DBG_UR_BP_ADDED,                // Breakpoint was added
 	DBG_UR_STOPPED,                 // Debugger stopped
 	DBG_UR_LOCALS,                  // Local variables are available
+	DBG_UR_FUNC_ARGS,               // Function arguments are available
 	DBG_UR_EXPRESSION,              // A requested expression evaluation has completed and is available
 	DBG_UR_UPDATE_STACK_LIST,       // Stack List is available
 	DBG_UR_REMOTE_TARGET_CONNECTED, // Remove target is now connected
 	DBG_UR_RECONCILE_BPTS,          // Reconcile breakpoints is needed
 	DBG_UR_BP_HIT,                  // Breakpoint was hit
 	DBG_UR_TYPE_RESOLVED,           // The debugger has evaluated the a type
-	DBG_UR_TIP,                     // Tip is available
+	DBG_UR_ASCII_VIEWER,            // Tip is available
 	DBG_UR_WATCHMEMORY,             // Watch memory is available
 	DBG_UR_LISTTHRAEDS,             // Threads list is available
 	DBG_UR_LISTCHILDREN,            // Children list for a variable object is available
@@ -89,11 +90,11 @@ struct DebuggerEvent {
 	DebuggerReasons               m_controlReason; // DBG_UR_GOT_CONTROL
 	wxString                      m_file;          // DBG_UR_FILE_LINE
 	int                           m_line;          // DBG_UR_FILE_LINE
-	wxString                      m_text;          // DBG_UR_ADD_LINE, DBG_UR_REMOTE_TARGET_CONNECTED, DBG_UR_TIP
+	wxString                      m_text;          // DBG_UR_ADD_LINE, DBG_UR_REMOTE_TARGET_CONNECTED, DBG_UR_ASCII_VIEWER
 	int                           m_bpInternalId;  // DBG_UR_BP_ADDED
 	int                           m_bpDebuggerId;  // DBG_UR_BP_ADDED, DBG_UR_BP_HIT
 	LocalVariables                m_locals;        // DBG_UR_LOCALS
-	wxString                      m_expression;    // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_TIP, DBG_UR_WATCHMEMORY, DBG_UR_VARIABLEOBJ
+	wxString                      m_expression;    // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_ASCII_VIEWER, DBG_UR_WATCHMEMORY, DBG_UR_VARIABLEOBJ
 												   // DBG_UR_EVALVARIABLEOBJ
 	wxString                      m_evaluated;     // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY, DBG_UR_EVALVARIABLEOBJ
 	StackEntryArray               m_stack;         // DBG_UR_UPDATE_STACK_LIST
@@ -213,14 +214,25 @@ public:
 
 	/**
 	 * @brief update the locals view
-	 * @param tree tree data strcuture which represents the local variables
-	 * @sa TreeNode
+	 * @param array containing the local variable
 	 */
 	void UpdateLocals(const LocalVariables &locals) {
 		DebuggerEvent e;
 		e.m_updateReason = DBG_UR_LOCALS;
 		e.m_userReason   = DBG_USERR_LOCALS;
 		e.m_locals = locals;
+		DebuggerUpdate( e );
+	}
+
+	/**
+	 * @brief update the locals view
+	 * @param array containing the function arguments
+	 */
+	void UpdateFunctionArguments(const LocalVariables &args) {
+		DebuggerEvent e;
+		e.m_updateReason = DBG_UR_FUNC_ARGS;
+		e.m_userReason   = DBG_USERR_LOCALS;
+		e.m_locals = args;
 		DebuggerUpdate( e );
 	}
 
@@ -300,9 +312,9 @@ public:
 	 * @param expression
 	 * @param tip
 	 */
-	void UpdateTip (const wxString &expression, const wxString &tip) {
+	void UpdateAsciiViewer (const wxString &expression, const wxString &tip) {
 		DebuggerEvent e;
-		e.m_updateReason = DBG_UR_TIP;
+		e.m_updateReason = DBG_UR_ASCII_VIEWER;
 		e.m_expression = expression;
 		e.m_text = tip;
 		DebuggerUpdate( e );

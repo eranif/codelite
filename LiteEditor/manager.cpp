@@ -2668,10 +2668,30 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 
 	case DBG_UR_LOCALS:
 		Frame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateLocals( event.m_locals );
+#ifdef __WXMAC__
+		{
+			for(size_t i=0; i<event.m_locals.size(); i++){
+				LocalVariable v = event.m_locals.at(i);
+				if(v.gdbId.IsEmpty() == false) {
+					dbgr->DeleteVariableObject(v.gdbId);
+				}
+			}
+		}
+#endif
 		break;
 
 	case DBG_UR_FUNC_ARGS:
 		Frame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateFuncArgs( event.m_locals );
+#ifdef __WXMAC__
+		{
+			for(size_t i=0; i<event.m_locals.size(); i++){
+				LocalVariable v = event.m_locals.at(i);
+				if(v.gdbId.IsEmpty() == false) {
+					dbgr->DeleteVariableObject(v.gdbId);
+				}
+			}
+		}
+#endif
 		break;
 
 	case DBG_UR_EXPRESSION:

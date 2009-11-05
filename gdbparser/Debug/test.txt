@@ -1,1 +1,2 @@
-^done,stack-args=[frame={level="0",args=[{name="argc",type="int",value="1"},{name="argv",type="char **",value="0x3e2570"}]}]
+^done,stack-args={frame={level="0",args={varobj={exp="argc",value="1",name="var8",numchild="0",type="int",typecode="INT",dynamic_type="",in_scope="true",block_start_addr="0x00001e76",block_end_addr="0x00001f42"},varobj={exp="argv",value="0xbffffaa8",name="var9",numchild="1",type="char **",typecode="PTR",dynamic_type="",in_scope="true",block_start_addr="0x00001e76",block_end_addr="0x00001f42"}}}}
+

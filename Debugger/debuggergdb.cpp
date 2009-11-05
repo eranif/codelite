@@ -74,9 +74,9 @@ static wxRegEx reConnectionRefused(wxT("[0-9a-zA-Z/\\\\-\\_]*:[0-9]+: Connection
 DebuggerInfo GetDebuggerInfo()
 {
 	DebuggerInfo info = {
-		wxT("GNU gdb debugger"),
+		wxT("GNU GDB Debugger"),
 		wxT("CreateDebuggerGDB"),
-		wxT("v1.0"),
+		wxT("v2.0"),
 		wxT("Eran Ifrah")
 	};
 	return info;

@@ -98,6 +98,7 @@ struct LocalVariable {
 	wxString value;
 	wxString type;
 	bool     updated;
+	wxString gdbId; // Mac generates variable object for locals as well...
 
 	LocalVariable() : updated(false) {}
 	~LocalVariable(){}

@@ -95,6 +95,7 @@ addr                                                       {RETURN_VAL(GDB_ADDR)
 ascii                                                      {RETURN_VAL(GDB_ASCII);}
 children                                                   {RETURN_VAL(GDB_CHILDREN);}
 child                                                      {RETURN_VAL(GDB_CHILD);}
+varobj                                                     {RETURN_VAL(GDB_VAROBJ);}
 "{...}"                                                    {RETURN_VAL(GDB_MORE);}
 {identifier}                                               {RETURN_VAL(GDB_IDENTIFIER);}
 "^"                                                        {RETURN_VAL((int)*yytext);}

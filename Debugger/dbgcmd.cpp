@@ -484,6 +484,15 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 			wxRemoveQuotes( var.name );
 		}
 
+		iter = attr.find("exp");
+		if ( iter != attr.end() ) {
+			// We got exp? are we on Mac!!??
+			// Anyways, replace exp with name and keep name as gdbId
+			var.gdbId = var.name;
+			var.name = wxString(iter->second.c_str(), wxConvUTF8);
+			wxRemoveQuotes( var.name );
+		}
+
 		// For primitive types, we also get the value
 		iter = attr.find("value");
 		if ( iter != attr.end() ) {
@@ -528,6 +537,15 @@ bool DbgCmdHandlerFuncArgs::ProcessOutput(const wxString &line)
 
 		iter = attr.find("name");
 		if ( iter != attr.end() ) {
+			var.name = wxString(iter->second.c_str(), wxConvUTF8);
+			wxRemoveQuotes( var.name );
+		}
+
+		iter = attr.find("exp");
+		if ( iter != attr.end() ) {
+			// We got exp? are we on Mac!!??
+			// Anyways, replace exp with name and keep name as gdbId
+			var.gdbId = var.name;
 			var.name = wxString(iter->second.c_str(), wxConvUTF8);
 			wxRemoveQuotes( var.name );
 		}

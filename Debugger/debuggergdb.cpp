@@ -203,6 +203,11 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 
 	//set the environment variables
 	m_env->ApplyEnv(NULL);
+
+	m_observer->UpdateAddLine(wxString::Format(wxT("Current working dir: %s"), wxGetCwd().c_str()));
+	m_observer->UpdateAddLine(wxString::Format(wxT("Launching gdb from : %s"), wxGetCwd().c_str()));
+	m_observer->UpdateAddLine(wxString::Format(wxT("Starting debugger  : %s"), cmd.c_str()));
+
 	m_gdbProcess = CreateAsyncProcess(this, cmd);
 	if (!m_gdbProcess) {
 		return false;
@@ -239,7 +244,10 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 
 	//set the environment variables
 	m_env->ApplyEnv(NULL);
-	m_observer->UpdateAddLine(wxString::Format(wxT("Starting debugger: %s"), cmd.c_str()));
+
+	m_observer->UpdateAddLine(wxString::Format(wxT("Current working dir: %s"), wxGetCwd().c_str()));
+	m_observer->UpdateAddLine(wxString::Format(wxT("Launching gdb from : %s"), cwd.c_str()));
+	m_observer->UpdateAddLine(wxString::Format(wxT("Starting debugger  : %s"), cmd.c_str()));
 	m_gdbProcess = CreateAsyncProcess(this, cmd, cwd);
 	if (!m_gdbProcess) {
 		return false;

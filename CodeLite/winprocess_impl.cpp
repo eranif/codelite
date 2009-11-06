@@ -29,16 +29,26 @@
 #include <wx/filefn.h>
 #include <memory>
 
+class MyDirGuard {
+	wxString _d;
+public:
+	MyDirGuard() : _d( wxGetCwd() ){}
+	~MyDirGuard(){ wxSetWorkingDirectory(_d);}
+};
+
 /*static*/
 IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxString &errMsg, const wxString &workingDir)
 {
 	SECURITY_ATTRIBUTES saAttr;
 	BOOL                fSuccess;
 
+	MyDirGuard dg;
+
 	wxString wd(workingDir);
 	if (workingDir.IsEmpty()) {
 		wd = wxGetCwd();
 	}
+	wxSetWorkingDirectory( wd );
 
 	// Set the bInheritHandle flag so pipe handles are inherited.
 	saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -120,10 +130,10 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
 	ZeroMemory( &siStartInfo, sizeof(STARTUPINFO) );
 	siStartInfo.cb = sizeof(STARTUPINFO);
 
-	siStartInfo.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW; ;
-	siStartInfo.hStdInput = prc->hChildStdinRd;
+	siStartInfo.dwFlags    = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW; ;
+	siStartInfo.hStdInput  = prc->hChildStdinRd;
 	siStartInfo.hStdOutput = prc->hChildStdoutWr;
-	siStartInfo.hStdError = prc->hChildStdoutWr;
+	siStartInfo.hStdError  = prc->hChildStdoutWr;
 
 	// Set the window to hide
 	siStartInfo.wShowWindow = SW_HIDE;
@@ -134,7 +144,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
 	                          TRUE,                   // handles are inherited
 	                          CREATE_NO_WINDOW,       // creation flags
 	                          NULL,                   // use parent's environment
-	                          wd.c_str(),             // CD to tmp dir
+	                          NULL,                   // CD to tmp dir
 	                          &siStartInfo,           // STARTUPINFO pointer
 	                          &prc->piProcInfo);      // receives PROCESS_INFORMATION
 	if ( ret ) {

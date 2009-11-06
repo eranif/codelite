@@ -583,6 +583,7 @@ createInstallTarget()
 	if [ "$add_desktop_icon" = "yes" ] ; then
 	  if test -d $HOME/Desktop/ ; then
 	    echo "	@cp -fpr Runtime/codelite.desktop $HOME/Desktop/" >> Makefile
+		echo "	@chmod +x $HOME/Desktop/codelite.desktop" >> Makefile
 	  fi
 	fi
 	echo "" >> Makefile

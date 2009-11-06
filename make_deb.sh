@@ -74,6 +74,7 @@ generateDesktopFile()
 {
     rm -fr fakeroot/usr/share/applications/codelite.desktop
 	cp -fr Runtime/codelite.desktop fakeroot/usr/share/applications/codelite.desktop
+	chmod +x fakeroot/usr/share/applications/codelite.desktop
 }
 
 ## Making menu entry for WMs

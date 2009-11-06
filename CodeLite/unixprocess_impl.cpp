@@ -1,6 +1,9 @@
 #include "unixprocess_impl.h"
+
 #if defined(__WXMAC__)||defined(__WXGTK__)
 
+#include <wx/stdpaths.h>
+#include <wx/filename.h>
 #include <unistd.h>
 #include <signal.h>
 #include <sys/types.h>
@@ -95,7 +98,11 @@ void UnixProcessImpl::Cleanup()
 	}
 
 	// Kill the child process
-	kill(m_pid, 9);
+	wxString cmd;
+	wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+	wxFileName script(exePath.GetPath(), wxT("codelite_kill_children"));
+	cmd << wxT("/bin/sh -f ") << script.GetFullPath() << wxT(" ") << GetPid();
+	wxExecute(cmd, wxEXEC_ASYNC);
 }
 
 bool UnixProcessImpl::IsAlive()
@@ -157,9 +164,9 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, co
 	int d;
 	d = pipe(filedes);
 	d = pipe(filedes2);
-	
+
 	wxUnusedVar (d);
-	
+
 	int stdin_pipe_write = filedes[1];
 	int stdin_pipe_read  = filedes[0];
 
@@ -168,12 +175,12 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, co
 
 	// fork the child process
 	wxString curdir = wxGetCwd();
-	
+
 	int rc = fork();
 	if ( rc == 0 ) {
 		// Child process
 		wxSetWorkingDirectory( workingDirectory );
-		
+
 		int stdin_file  = fileno( stdin  );
 		int stdout_file = fileno( stdout );
 		int stderr_file = fileno( stderr );
@@ -194,18 +201,18 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, co
 
 	} else if ( rc < 0 ) {
 		// Error
-		
+
 		// restore the working directory
 		wxSetWorkingDirectory(curdir);
-		
+
 		return NULL;
-		
+
 	} else {
 		// Parent
-		
+
 		// restore the working directory
 		wxSetWorkingDirectory(curdir);
-		
+
 		UnixProcessImpl *proc = new UnixProcessImpl(parent);
 		proc->SetReadHandle  (stdout_pipe_read);
 		proc->SetWriteHandler(stdin_pipe_write);

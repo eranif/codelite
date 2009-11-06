@@ -286,6 +286,7 @@ void WinProcessImpl::StartReaderThread()
 	// Launch the 'Reader' thread
 	m_thr = new ProcessReaderThread();
 	m_thr->SetProcess( this );
+	m_thr->SetNotifyWindow( m_parent );
 	m_thr->Start();
 }
 #endif //__WXMSW__

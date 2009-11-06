@@ -143,55 +143,6 @@ static void ParseStackEntry(const wxString &line, StackEntry &entry)
 	}
 }
 
-static bool ParseFrameLocals(wxString &strline, wxString &name, wxString &v)
-{
-	// search for name="XXX"
-	wxString rest;
-	int where = strline.Find(wxT("name=\""));
-	if (where != wxNOT_FOUND) {
-		strline = strline.Mid((size_t)where + 6);
-
-		// serarch for closing quoat
-		for (size_t i=0; i<strline.size(); i++) {
-			if (strline.GetChar(i) == '"') {
-				if (i > 0 && strline.GetChar(i-1) != wxT('\\')) {
-					// this is not an escaped string
-					// remove this string from the original strline
-					strline = strline.Mid(i);
-					break;
-				} else {
-					v << strline.GetChar(i);
-				}
-			} else {
-				name << strline.GetChar(i);
-			}
-		}
-	}
-
-	where = strline.Find(wxT(",value=\""));
-	if (where != wxNOT_FOUND) {
-		strline = strline.Mid((size_t)where+8);
-		// search for
-		// serarch for closing quoat
-		for (size_t i=0; i<strline.size(); i++) {
-			if (strline.GetChar(i) == '"') {
-				if (i > 0 && strline.GetChar(i-1) != wxT('\\')) {
-					// this is not an escaped string
-					// remove this string from the original strline
-					strline = strline.Mid(i);
-					break;
-				} else {
-					v << strline.GetChar(i);
-				}
-			} else {
-				v << strline.GetChar(i);
-			}
-		}
-	}
-
-	return !v.IsEmpty() && !name.IsEmpty();
-}
-
 bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 {
 #if defined (__WXMSW__) || defined (__WXGTK__)

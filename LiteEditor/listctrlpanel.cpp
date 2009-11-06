@@ -69,7 +69,7 @@ void ListCtrlPanel::Update ( const StackEntryArray &stackArr )
 	m_listCtrl->Freeze();
 	Clear();
 	if (!stackArr.empty()) {
-		for (int i=(int)stackArr.size()-1; i>=0; i--) {
+		for (int i=0; i<(int)stackArr.size(); i++) {
 			long item = AppendListCtrlRow(m_listCtrl);
 
 			StackEntry entry = stackArr.at(i);

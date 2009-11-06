@@ -49,10 +49,11 @@ extern "C" DebuggerInfo GetDebuggerInfo();
 
 class DbgCmdHandler;
 class DbgCmdCLIHandler;
+class IProcess;
 
 WX_DECLARE_STRING_HASH_MAP(DbgCmdHandler*, HandlersMap);
 
-class DbgGdb : public InteractiveProcess, public IDebugger
+class DbgGdb : public wxEvtHandler, public IDebugger
 {
 	HandlersMap                 m_handlers;
 	long                        m_debuggeePid;
@@ -60,17 +61,19 @@ class DbgGdb : public InteractiveProcess, public IDebugger
 	std::vector<BreakpointInfo> m_bpList;
 	bool                        m_isRemote;
 	DbgCmdCLIHandler*           m_cliHandler;
+	IProcess*                   m_gdbProcess;
+	wxArrayString               m_gdbOutputArr;
 
 protected:
 	void           RegisterHandler(const wxString &id, DbgCmdHandler *cmd);
 	DbgCmdHandler *PopHandler(const wxString &id);
 	void           EmptyQueue();
 	bool           FilterMessage(const wxString &msg);
+	bool           DoGetNextLine(wxString &line);
 
 	//wrapper for convinience
 	void DoProcessAsyncCommand(wxString &line, wxString &id);
 	void SetBreakpoints();
-	void OnProcessEndEx(wxProcessEvent &e);
 
 	bool               DoLocateGdbExecutable(const wxString &debuggerPath, wxString &dbgExeName);
 	bool               DoInitializeGdb      (const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds);
@@ -123,5 +126,10 @@ public:
 	virtual bool CreateVariableObject(const wxString &expression, int userReason);
 	virtual bool DeleteVariableObject(const wxString &name);
 	virtual bool EvaluateVariableObject(const wxString &name, int userReason);
+
+	// Event handlers
+	DECLARE_EVENT_TABLE()
+	void OnProcessEnd(wxCommandEvent &e);
+	void OnDataRead  (wxCommandEvent &e);
 };
 #endif //DBGINTERFACE_H

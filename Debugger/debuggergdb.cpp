@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "debuggergdb.h"
+#include "processreaderthread.h"
+#include "asyncprocess.h"
 #include <wx/ffile.h>
 #include "exelocator.h"
 #include "environmentconfig.h"
@@ -110,6 +112,11 @@ static wxString MakeId()
 	return newId;
 }
 
+BEGIN_EVENT_TABLE(DbgGdb, wxEvtHandler)
+	EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  DbgGdb::OnDataRead)
+	EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, DbgGdb::OnProcessEnd)
+END_EVENT_TABLE()
+
 DbgGdb::DbgGdb()
 		: m_debuggeePid(wxNOT_FOUND)
 		, m_isRemote   (false)
@@ -181,7 +188,6 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 	//debugee process into it
 	wxString ptyName;
 	if (!m_consoleFinder.FindConsole(wxT("CodeLite: gdb"), ptyName)) {
-		SetBusy(false);
 		wxLogMessage(wxT("Failed to allocate console for debugger"));
 		return false;
 	}
@@ -195,29 +201,16 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 	cmd << wxT(" --pid=") << m_debuggeePid;
 	wxLogMessage(cmd);
 
-	//m_proc will be deleted upon termination
-	m_proc = new PipedProcess(wxNewId(), cmd);
-	if (m_proc) {
-
-		//set the environment variables
-		m_env->ApplyEnv(NULL);
-
-		if (m_proc->Start() == 0) {
-
-			//set the environment variables
-			m_env->UnApplyEnv();
-
-			//failed to start the debugger
-			delete m_proc;
-			SetBusy(false);
-			return false;
-		}
-
-		DoInitializeGdb(bpList, cmds);
-		m_observer->UpdateGotControl(DBG_END_STEPPING);
-		return true;
+	//set the environment variables
+	m_env->ApplyEnv(NULL);
+	m_gdbProcess = CreateAsyncProcess(this, cmd);
+	if (!m_gdbProcess) {
+		return false;
 	}
-	return false;
+
+	DoInitializeGdb(bpList, cmds);
+	m_observer->UpdateGotControl(DBG_END_STEPPING);
+	return true;
 }
 
 bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds)
@@ -234,7 +227,6 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 	//debugee process into it
 	wxString ptyName;
 	if (!m_consoleFinder.FindConsole(exeName, ptyName)) {
-		SetBusy(false);
 		wxLogMessage(wxT("Failed to allocate console for debugger, do u have Xterm installed?"));
 		return false;
 	}
@@ -244,32 +236,17 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 #endif
 
 	m_debuggeePid = wxNOT_FOUND;
-	//m_proc will be deleted upon termination
-	m_proc = new PipedProcess(wxNewId(), cmd);
-	if (m_proc) {
-		//change directory to the debugger working directory as set in the
-		//project settings
-		DirKeeper keeper;
-		wxSetWorkingDirectory(cwd);
 
-		//set the environment variables
-		m_env->ApplyEnv(NULL);
-
-		if (m_proc->Start( !m_info.showTerminal ) == 0) {
-			//failed to start the debugger
-			delete m_proc;
-			SetBusy(false);
-
-			//Unset the environment variables
-			m_env->UnApplyEnv();
-
-			return false;
-		}
-
-		DoInitializeGdb(bpList, cmds);
-		return true;
+	//set the environment variables
+	m_env->ApplyEnv(NULL);
+	m_observer->UpdateAddLine(wxString::Format(wxT("Starting debugger: %s"), cmd.c_str()));
+	m_gdbProcess = CreateAsyncProcess(this, cmd, cwd);
+	if (!m_gdbProcess) {
+		return false;
 	}
-	return false;
+
+	DoInitializeGdb(bpList, cmds);
+	return true;
 }
 
 bool DbgGdb::WriteCommand(const wxString &command, DbgCmdHandler *handler)
@@ -309,22 +286,18 @@ bool DbgGdb::Run(const wxString &args, const wxString &comm)
 
 bool DbgGdb::Stop()
 {
-	if (IsBusy()) {
-		Disconnect(wxEVT_TIMER, wxTimerEventHandler(DbgGdb::OnTimer), NULL, this);
-		m_proc->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(DbgGdb::OnProcessEndEx), NULL, this);
-
-		InteractiveProcess::StopProcess();
-		SetBusy(false);
-
-		//free allocated console for this session
-		m_consoleFinder.FreeConsole();
-
-		//return control to the program
-		m_observer->UpdateGotControl(DBG_DBGR_KILLED);
-		EmptyQueue();
-
-		m_bpList.clear();
+	if (m_gdbProcess) {
+		delete m_gdbProcess;
+		m_gdbProcess = NULL;
 	}
+	//free allocated console for this session
+	m_consoleFinder.FreeConsole();
+
+	//return control to the program
+	m_observer->UpdateGotControl(DBG_DBGR_KILLED);
+	EmptyQueue();
+	m_gdbOutputArr.Clear();
+	m_bpList.clear();
 	return true;
 }
 
@@ -531,7 +504,7 @@ bool DbgGdb::StepOut()
 
 bool DbgGdb::IsRunning()
 {
-	return IsBusy();
+	return m_gdbProcess != NULL;
 }
 
 bool DbgGdb::Interrupt()
@@ -578,10 +551,13 @@ bool DbgGdb::QueryLocals()
 
 bool DbgGdb::ExecuteCmd(const wxString &cmd)
 {
-	if (m_info.enableDebugLog) {
-		m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), cmd.c_str()));
+	if( m_gdbProcess ) {
+		if (m_info.enableDebugLog) {
+			m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), cmd.c_str()));
+		}
+		return m_gdbProcess->Write(cmd);
 	}
-	return Write(cmd);
+	return false;
 }
 
 bool DbgGdb::RemoveAllBreaks()
@@ -635,16 +611,16 @@ void DbgGdb::Poke()
 
 	//poll the debugger output
 	wxString line;
-	if ( !m_proc ) {
+	if ( !m_gdbProcess || m_gdbOutputArr.IsEmpty() ) {
 		return;
 	}
 
 	if (m_debuggeePid == wxNOT_FOUND) {
 		if (m_isRemote) {
-			m_debuggeePid = m_proc->GetPid();
+			m_debuggeePid = m_gdbProcess->GetPid();
 		} else {
 			std::vector<long> children;
-			ProcUtils::GetChildren(m_proc->GetPid(), children);
+			ProcUtils::GetChildren(m_gdbProcess->GetPid(), children);
 			std::sort(children.begin(), children.end());
 			if (children.empty() == false) {
 				m_debuggeePid = children.at(0);
@@ -658,21 +634,7 @@ void DbgGdb::Poke()
 		}
 	}
 
-	int lineRead(0);
-	for ( ;; ) {
-		line.Empty();
-
-		//did we reach the maximum reads per interval?
-		//if the answer is yes, give up the CPU and wait for another chance
-		if (lineRead == 5) {
-			break;
-		}
-
-		//try to read a line from the debugger
-		ReadLine(line, 1);
-
-		line = line.Trim();
-		line = line.Trim(false);
+	while ( DoGetNextLine( line ) ) {
 
 		// For string manipulations without damaging the original line read
 		wxString tmpline ( line );
@@ -701,16 +663,8 @@ void DbgGdb::Poke()
 
 		if( tmpline.StartsWith(wxT(">")) ) {
 			// Shell line, probably user command line
-			break;
+			continue;
 		}
-
-		line.Replace(wxT("(gdb)"), wxEmptyString);
-		if (line.IsEmpty()) {
-			break;
-		}
-		lineRead++;
-
-
 
 		if (line.StartsWith(wxT("~")) || line.StartsWith(wxT("&"))) {
 
@@ -893,11 +847,16 @@ bool DbgGdb::SelectThread(long threadId)
 	return WriteCommand(command, NULL);
 }
 
-void DbgGdb::OnProcessEndEx(wxProcessEvent &e)
+void DbgGdb::OnProcessEnd(wxCommandEvent &e)
 {
-	InteractiveProcess::OnProcessEnd(e);
+	if ( m_gdbProcess ) {
+		delete m_gdbProcess;
+		m_gdbProcess = NULL;
+	}
+
 	m_observer->UpdateGotControl(DBG_EXITED_NORMALLY);
 	m_env->UnApplyEnv();
+	m_gdbOutputArr.Clear();
 }
 
 bool DbgGdb::GetAsciiViewerContent(const wxString &dbgCommand, const wxString& expression)
@@ -960,11 +919,10 @@ void DbgGdb::BreakList()
 
 bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgExeName)
 {
-	if (IsBusy()) {
+	if (m_gdbProcess) {
 		//dont allow second instance of the debugger
 		return false;
 	}
-	SetBusy(true);
 	wxString cmd;
 
 	dbgExeName = debuggerPath;
@@ -976,7 +934,6 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
 	if (ExeLocator::Locate(dbgExeName, actualPath) == false) {
 		wxMessageBox(wxString::Format(wxT("Failed to locate gdb! at '%s'"), dbgExeName.c_str()),
 		             wxT("CodeLite"));
-		SetBusy(false);
 		return false;
 	}
 
@@ -1010,7 +967,6 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
 		m_observer->UpdateAddLine(wxString::Format(wxT("Using gdbinit file: %s"), codelite_gdbinit_file.c_str()));
 		file.Write(startupInfo);
 		file.Close();
-		
 #ifdef __WXMSW__
 		dbgExeName << wxT(" --command=\"") << codelite_gdbinit_file << wxT("\"");
 #endif
@@ -1023,12 +979,6 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
 
 bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds)
 {
-	Connect(wxEVT_TIMER, wxTimerEventHandler(DbgGdb::OnTimer), NULL, this);
-	m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(DbgGdb::OnProcessEndEx), NULL, this);
-	m_canUse = true;
-	m_timer->Start(10);
-	wxWakeUpIdle();
-
 	//place breakpoint at first line
 #ifdef __WXMSW__
 	ExecuteCmd(wxT("set  new-console on"));
@@ -1066,8 +1016,7 @@ bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo> &bpList, const wx
 		//try also to set breakpoint at WinMain
 		WriteCommand(wxT("-break-insert main"), NULL);
 	}
-
-	return true; // to stop the compiler complaining
+	return true;
 }
 
 bool DbgGdb::ExecCLICommand(const wxString& command, DbgCmdCLIHandler* handler)
@@ -1127,4 +1076,43 @@ bool DbgGdb::EvaluateVariableObject(const wxString& name, int userReason)
 	wxString cmd;
 	cmd << wxT("-var-evaluate-expression \"") << name << wxT("\"");
 	return WriteCommand(cmd, new DbgCmdEvalVarObj(m_observer, name, userReason));
+}
+
+void DbgGdb::OnDataRead(wxCommandEvent& e)
+{
+	// Data arrived from the debugger
+	ProcessEventData *ped = (ProcessEventData *)e.GetClientData();
+	wxArrayString lines = wxStringTokenize(ped->GetData(), wxT("\n"), wxTOKEN_STRTOK);
+
+	for(size_t i=0; i<lines.GetCount(); i++) {
+		wxString line = lines.Item(i);
+		line.Replace(wxT("(gdb)"), wxT(""));
+		line.Trim().Trim(false);
+		if ( line.IsEmpty() == false ) {
+			m_gdbOutputArr.Add( line );
+			//wxPrintf(wxT("Debugger: %s\n"), line.c_str());	
+		}
+	}
+	delete ped;
+	
+	if ( m_gdbOutputArr.IsEmpty() == false ) {
+		// Trigger GDB processing
+		Poke();
+	}
+}
+
+bool DbgGdb::DoGetNextLine(wxString& line)
+{
+	line.Clear();
+	if ( m_gdbOutputArr.IsEmpty() ){
+		return false;
+	}
+	line = m_gdbOutputArr.Item(0);
+	m_gdbOutputArr.RemoveAt(0);
+	line.Replace(wxT("(gdb)"), wxT(""));
+	line.Trim().Trim(false);
+	if(line.IsEmpty()) {
+		return false;
+	}
+	return true;
 }

@@ -140,7 +140,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	//---------------------------------------------------
 	// System events
 	//---------------------------------------------------
-	EVT_IDLE(Frame::OnIdle)
+	//EVT_IDLE(Frame::OnIdle)
 	EVT_ACTIVATE(Frame::OnAppActivated)
 	EVT_CLOSE(Frame::OnClose)
 	EVT_TIMER(FrameTimerId, Frame::OnTimer)

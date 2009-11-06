@@ -34,7 +34,7 @@
   <Project Name="QMakePlugin" Path="QmakePlugin/QMakePlugin.project" Active="No"/>
   <Project Name="CppChecker" Path="cppchecker/CppChecker.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxpropgrid" ConfigName="WinReleaseUnicode"/>
@@ -82,7 +82,7 @@
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Unix_Mac_Custom_Makefile" Selected="no">
+    <WorkspaceConfiguration Name="Unix_Mac_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
       <Project Name="wxpropgrid" ConfigName="DebugUnicode"/>

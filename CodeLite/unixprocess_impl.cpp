@@ -137,8 +137,10 @@ bool UnixProcessImpl::Read(wxString& buff)
 
 bool UnixProcessImpl::Write(const wxString& buff)
 {
-	int bytes = write(GetWriteHandle(), buff.mb_str(wxConvUTF8).data(), buff.Length());
-	return bytes == buff.length();
+	wxString tmpbuf = buff;
+	tmpbuf << wxT("\n");
+	int bytes = write(GetWriteHandle(), tmpbuf.mb_str(wxConvUTF8).data(), tmpbuf.Length());
+	return bytes == (int)tmpbuf.length();
 }
 
 IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, const wxString& workingDirectory)
@@ -152,9 +154,12 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, co
 	int filedes2[2];
 
 	// create a pipe
-	pipe(filedes);
-	pipe(filedes2);
-
+	int d;
+	d = pipe(filedes);
+	d = pipe(filedes2);
+	
+	wxUnusedVar (d);
+	
 	int stdin_pipe_write = filedes[1];
 	int stdin_pipe_read  = filedes[0];
 
@@ -162,8 +167,13 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, co
 	int stdout_pipe_read  = filedes2[0];
 
 	// fork the child process
+	wxString curdir = wxGetCwd();
+	
 	int rc = fork();
 	if ( rc == 0 ) {
+		// Child process
+		wxSetWorkingDirectory( workingDirectory );
+		
 		int stdin_file  = fileno( stdin  );
 		int stdout_file = fileno( stdout );
 		int stderr_file = fileno( stderr );
@@ -184,9 +194,18 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, co
 
 	} else if ( rc < 0 ) {
 		// Error
+		
+		// restore the working directory
+		wxSetWorkingDirectory(curdir);
+		
 		return NULL;
+		
 	} else {
 		// Parent
+		
+		// restore the working directory
+		wxSetWorkingDirectory(curdir);
+		
 		UnixProcessImpl *proc = new UnixProcessImpl(parent);
 		proc->SetReadHandle  (stdout_pipe_read);
 		proc->SetWriteHandler(stdin_pipe_write);
@@ -204,6 +223,7 @@ void UnixProcessImpl::StartReaderThread()
 	// Launch the 'Reader' thread
 	m_thr = new ProcessReaderThread();
 	m_thr->SetProcess( this );
+	m_thr->SetNotifyWindow( m_parent );
 	m_thr->Start();
 }
 

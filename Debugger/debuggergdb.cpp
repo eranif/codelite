@@ -1010,8 +1010,10 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
 		m_observer->UpdateAddLine(wxString::Format(wxT("Using gdbinit file: %s"), codelite_gdbinit_file.c_str()));
 		file.Write(startupInfo);
 		file.Close();
-
+		
+#ifdef __WXMSW__
 		dbgExeName << wxT(" --command=\"") << codelite_gdbinit_file << wxT("\"");
+#endif
 
 	}
 

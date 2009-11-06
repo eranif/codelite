@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef WORKER_THREAD_H
+#ifndef WORKER_THREAD_H
 #define WORKER_THREAD_H
 
 #include <deque>
@@ -40,6 +40,8 @@ class IProcess;
 class ProcessEventData
 {
 	wxString m_data;
+	IProcess *m_process;
+
 public:
 	ProcessEventData() {}
 	virtual ~ProcessEventData() {}
@@ -49,6 +51,12 @@ public:
 	}
 	const wxString& GetData() const {
 		return m_data;
+	}
+	void SetProcess(IProcess* process) {
+		this->m_process = process;
+	}
+	IProcess* GetProcess() {
+		return m_process;
 	}
 };
 
@@ -81,7 +89,7 @@ public:
 	 * Called when the thread exits
 	 * whether it terminates normally or is stopped with Delete() (but not when it is Kill()'ed!)
 	 */
-	virtual void OnExit(){};
+	virtual void OnExit() {};
 
 
 	/**
@@ -89,7 +97,9 @@ public:
 	 * between current source file tree and the actual tree.
 	 * \param evtHandler
 	 */
-	void SetNotifyWindow( wxEvtHandler* evtHandler ) { m_notifiedWindow  = evtHandler; }
+	void SetNotifyWindow( wxEvtHandler* evtHandler ) {
+		m_notifiedWindow  = evtHandler;
+	}
 
 	/**
 	 * Stops the thread
@@ -104,7 +114,9 @@ public:
 	 */
 	void Start(int priority = WXTHREAD_DEFAULT_PRIORITY);
 
-	void SetProcess( IProcess *proc ) { m_process = proc; }
+	void SetProcess( IProcess *proc ) {
+		m_process = proc;
+	}
 };
 
 extern const wxEventType wxEVT_PROC_DATA_READ;

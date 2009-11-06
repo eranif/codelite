@@ -849,6 +849,9 @@ bool DbgGdb::SelectThread(long threadId)
 
 void DbgGdb::OnProcessEnd(wxCommandEvent &e)
 {
+	ProcessEventData *ped = (ProcessEventData *)e.GetClientData();
+	delete ped;
+
 	if ( m_gdbProcess ) {
 		delete m_gdbProcess;
 		m_gdbProcess = NULL;
@@ -1090,11 +1093,11 @@ void DbgGdb::OnDataRead(wxCommandEvent& e)
 		line.Trim().Trim(false);
 		if ( line.IsEmpty() == false ) {
 			m_gdbOutputArr.Add( line );
-			//wxPrintf(wxT("Debugger: %s\n"), line.c_str());	
+			//wxPrintf(wxT("Debugger: %s\n"), line.c_str());
 		}
 	}
 	delete ped;
-	
+
 	if ( m_gdbOutputArr.IsEmpty() == false ) {
 		// Trigger GDB processing
 		Poke();

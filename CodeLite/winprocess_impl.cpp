@@ -157,6 +157,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
 		return NULL;
 	}
 
+	prc->SetPid( prc->dwProcessId );
 	prc->StartReaderThread();
 	return prc;
 }

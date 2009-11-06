@@ -59,10 +59,8 @@ void* ProcessReaderThread::Entry()
 					wxCommandEvent e(wxEVT_PROC_DATA_READ);
 					ProcessEventData *ed = new ProcessEventData();
 					ed->SetData(buff);
+					ed->SetProcess( m_process );
 					e.SetClientData( ed );
-#ifdef DEBUG__
-					wxPrintf(wxT("Thread: [%s]\n"), buff.c_str());
-#endif					
 					if ( m_notifiedWindow ) {
 						m_notifiedWindow->AddPendingEvent( e );
 					} else {
@@ -72,13 +70,14 @@ void* ProcessReaderThread::Entry()
 			} else {
 				// Process terminated??, exit
 				wxCommandEvent e(wxEVT_PROC_TERMINATED);
+				ProcessEventData *ed = new ProcessEventData();
+				ed->SetProcess( m_process );
+				e.SetClientData( ed );
 				if ( m_notifiedWindow ) {
 					m_notifiedWindow->AddPendingEvent( e );
+				} else {
+					delete ed;
 				}
-#ifdef DEBUG__
-					wxPrintf(wxT("Thread: [process termianted!]\n"));
-#endif	
-
 #if defined(__WXGTK__)||defined(__WXMAC__)
 				// Perform process cleanup
 				int status(0);

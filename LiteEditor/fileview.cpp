@@ -150,11 +150,18 @@ FileViewTree::~FileViewTree()
 
 void FileViewTree::Create( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
 {
+	bool multi (false);
+	long val   (0);
+	if(EditorConfigST::Get()->GetLongValue(wxT("WspTreeMultipleSelection"), val) == false) {val = 0;}
+	val ? multi = true : multi = false;
+
 #ifndef __WXGTK__
-	style |= ( wxTR_HAS_BUTTONS | wxTR_MULTIPLE | wxTR_LINES_AT_ROOT );
+	style |= ( wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT );
 #else
-	style |= ( wxTR_HAS_BUTTONS | wxTR_MULTIPLE );
+	style |= ( wxTR_HAS_BUTTONS );
 #endif
+	if (multi) style |= wxTR_MULTIPLE;
+
 	wxTreeCtrl::Create( parent, id, pos, size, style );
 
 	BuildTree();
@@ -169,8 +176,20 @@ void FileViewTree::Create( wxWindow *parent, const wxWindowID id, const wxPoint&
 
 void FileViewTree::BuildTree()
 {
+	bool multi (false);
+	long val   (0);
+	if(EditorConfigST::Get()->GetLongValue(wxT("WspTreeMultipleSelection"), val) == false) {val = 0;}
+	val ? multi = true : multi = false;
+
 	DeleteAllItems();
+	long flags = GetWindowStyle();
+	if ( multi ) {
+		SetWindowStyle( flags | wxTR_MULTIPLE );
+	} else {
+		SetWindowStyle( flags & ~(wxTR_MULTIPLE) );
+	}
 	m_itemsToSort.clear();
+
 
 	if ( ManagerST::Get()->IsWorkspaceOpen() ) {
 		// Add an invisible tree root
@@ -1124,7 +1143,18 @@ void FileViewTree::OnItemActivated( wxTreeEvent &event )
 
 size_t FileViewTree::GetMultiSelection( wxArrayTreeItemIds &arr )
 {
-	return GetSelections( arr );
+	if ( HasFlag(wxTR_MULTIPLE) ) {
+		// we are using multiple selection tree
+		return GetSelections( arr );
+	} else {
+		wxTreeItemId sel = GetSelection();
+		if(sel.IsOk()) {
+			arr.Add( sel );
+			return 1;
+		}
+		arr.Clear();
+		return 0;
+	}
 }
 
 void FileViewTree::OnRetagProject( wxCommandEvent &event )
@@ -1296,7 +1326,10 @@ void FileViewTree::ExpandToPath(const wxString &project, const wxFileName &fileN
 			if (fileItem.IsOk()) {
 				// Now we're using a wxTR_MULTIPLE tree, we need to unselect here, otherwise all project files get selected
 				// And,no, SelectItem(fileItem, false) isn't the answer: in 2.8 it toggles (a wx bug) and the 'selected' tab ends up unselected
-				UnselectAll();
+				if ( HasFlag( wxTR_MULTIPLE ) ) {
+					UnselectAll();
+				}
+
 				SelectItem(fileItem);
 
 				if ( IsVisible( fileItem ) == false ) {

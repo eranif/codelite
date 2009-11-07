@@ -40,6 +40,7 @@ class WinProcessImpl : public IProcess
 
 protected:
 	void StartReaderThread();
+	bool DoReadFromPipe(HANDLE pipe, wxString &buff);
 
 public:
 	WinProcessImpl(wxEvtHandler *parent);
@@ -70,7 +71,8 @@ private:
 	// Creating process related handles
 	HANDLE hChildStdinRd, hChildStdinWr, hChildStdinWrDup,
 	hChildStdoutRd, hChildStdoutWr, hChildStdoutRdDup,
-	hSaveStdin, hSaveStdout;
+	hChildStderrRd, hChildStderrWr, hChildStderrRdDup,
+	hSaveStdin, hSaveStdout, hSaveStderr;
 
 	// Child process id & information
 	DWORD dwProcessId;

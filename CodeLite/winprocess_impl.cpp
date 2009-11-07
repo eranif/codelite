@@ -54,6 +54,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
 	saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
 	saAttr.bInheritHandle = TRUE;
 	saAttr.lpSecurityDescriptor = NULL;
+	WinProcessImpl *prc = new WinProcessImpl(parent);
 
 	// The steps for redirecting child process's STDOUT:
 	//     1. Save current STDOUT, to be restored later.
@@ -62,8 +63,6 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
 	//        the pipe, so it is inherited by the child process.
 	//     4. Create a noninheritable duplicate of the read handle and
 	//        close the inheritable read handle.
-
-	WinProcessImpl *prc = new WinProcessImpl(parent);
 
 	// Save the handle to the current STDOUT.
 	prc->hSaveStdout = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -90,6 +89,40 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
 		return NULL;
 	}
 	CloseHandle( prc->hChildStdoutRd );
+
+	// The steps for redirecting child process's STDERR:
+	//     1. Save current STDERR, to be restored later.
+	//     2. Create anonymous pipe to be STDERR for child process.
+	//     3. Set STDERR of the parent process to be write handle to
+	//        the pipe, so it is inherited by the child process.
+	//     4. Create a noninheritable duplicate of the read handle and
+	//        close the inheritable read handle.
+
+	// Save the handle to the current STDERR.
+	prc->hSaveStderr = GetStdHandle(STD_ERROR_HANDLE);
+
+	// Create a pipe for the child process's STDERR.
+	if ( !CreatePipe( &prc->hChildStderrRd, &prc->hChildStderrWr, &saAttr, 0) ) {
+		delete prc;
+		return NULL;
+	}
+
+	// Set a write handle to the pipe to be STDERR.
+	if ( !SetStdHandle(STD_ERROR_HANDLE, prc->hChildStderrWr) ) {
+		delete prc;
+		return NULL;
+	}
+
+	// Create noninheritable read handle and close the inheritable read handle.
+	fSuccess = DuplicateHandle( GetCurrentProcess(), prc->hChildStderrRd,
+	                            GetCurrentProcess(),  &prc->hChildStderrRdDup ,
+	                            0,  FALSE,
+	                            DUPLICATE_SAME_ACCESS );
+	if ( !fSuccess ) {
+		delete prc;
+		return NULL;
+	}
+	CloseHandle( prc->hChildStderrRd );
 
 	// The steps for redirecting child process's STDIN:
 	//     1.  Save current STDIN, to be restored later.
@@ -133,7 +166,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
 	siStartInfo.dwFlags    = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW; ;
 	siStartInfo.hStdInput  = prc->hChildStdinRd;
 	siStartInfo.hStdOutput = prc->hChildStdoutWr;
-	siStartInfo.hStdError  = prc->hChildStdoutWr;
+	siStartInfo.hStdError  = prc->hChildStderrWr;
 
 	// Set the window to hide
 	siStartInfo.wShowWindow = SW_HIDE;
@@ -158,10 +191,16 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
 
 	// After process creation, restore the saved STDIN and STDOUT.
 	if ( !SetStdHandle(STD_INPUT_HANDLE, prc->hSaveStdin) ) {
+
 		delete prc;
 		return NULL;
 	}
 	if ( !SetStdHandle(STD_OUTPUT_HANDLE, prc->hSaveStdout) ) {
+
+		delete prc;
+		return NULL;
+	}
+	if ( !SetStdHandle(STD_OUTPUT_HANDLE, prc->hSaveStderr) ) {
 
 		delete prc;
 		return NULL;
@@ -177,9 +216,11 @@ WinProcessImpl::WinProcessImpl(wxEvtHandler *parent)
 	, m_thr   (NULL  )
 {
 	hChildStdinRd       = NULL;
-	hChildStdoutWr      = NULL;
 	hChildStdinWrDup    = NULL;
+	hChildStdoutWr      = NULL;
 	hChildStdoutRdDup   = NULL;
+	hChildStderrWr      = NULL;
+	hChildStderrRdDup   = NULL;
 	piProcInfo.hProcess = NULL;
 	piProcInfo.hThread  = NULL;
 }
@@ -191,42 +232,25 @@ WinProcessImpl::~WinProcessImpl()
 
 bool WinProcessImpl::Read(wxString& buff)
 {
-	DWORD dwRead;
-	DWORD dwMode;
-	DWORD dwTimeout;
-	char *chBuf = new char [65536+1];     //64K should be sufficient buffer
-	memset(chBuf, 0, 65536+1);
+	DWORD le1(-1);
+	DWORD le2(-1);
+	buff.Clear();
 
-	std::auto_ptr<char> sp(chBuf);
-
-	// Make the pipe to non-blocking mode
-	dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
-	dwTimeout = 1000;
-	SetNamedPipeHandleState(hChildStdoutRdDup,
-	                        &dwMode,
-	                        NULL,
-	                        &dwTimeout);    // Timeout of 30 seconds
-
-	BOOL bRes = ReadFile( hChildStdoutRdDup, chBuf, 65536, &dwRead, NULL);
-	if ( bRes ) {
-		// Success read
-		chBuf[dwRead/sizeof(char)] = 0;
-		buff = wxString(chBuf, wxConvUTF8);
-		if (buff.IsEmpty() && dwRead > 0) {
-			//conversion failed
-			buff = wxString::From8BitData(chBuf);
-		}
-		return true;
+	if( !DoReadFromPipe(hChildStderrRdDup, buff) ) {
+		le2 = GetLastError();
 	}
 
-	DWORD le = GetLastError();
-	if( le == ERROR_NO_DATA ) {
+	if( !DoReadFromPipe(hChildStdoutRdDup, buff) ) {
+		le1 = GetLastError();
+	}
+
+	if( le1 == ERROR_NO_DATA && le2 == ERROR_NO_DATA) {
 		if ( IsAlive() ) {
 			wxThread::Sleep(10);
 			return true;
 		}
 	}
-	return false;
+	return buff.IsEmpty() == false;
 }
 
 bool WinProcessImpl::Write(const wxString& buff)
@@ -278,9 +302,11 @@ void WinProcessImpl::Cleanup()
 		TerminateProcess(piProcInfo.hProcess, 255);
 	}
 	CloseHandle( hChildStdinRd);
-	CloseHandle( hChildStdoutWr);
 	CloseHandle( hChildStdinWrDup );
+	CloseHandle( hChildStdoutWr);
 	CloseHandle( hChildStdoutRdDup );
+	CloseHandle( hChildStderrWr);
+	CloseHandle( hChildStderrRdDup );
 	CloseHandle( piProcInfo.hProcess );
 	CloseHandle( piProcInfo.hThread );
 
@@ -288,6 +314,8 @@ void WinProcessImpl::Cleanup()
 	hChildStdoutWr      = NULL;
 	hChildStdinWrDup    = NULL;
 	hChildStdoutRdDup   = NULL;
+	hChildStderrWr      = NULL;
+	hChildStderrRdDup   = NULL;
 	piProcInfo.hProcess = NULL;
 	piProcInfo.hThread  = NULL;
 }
@@ -300,5 +328,41 @@ void WinProcessImpl::StartReaderThread()
 	m_thr->SetNotifyWindow( m_parent );
 	m_thr->Start();
 }
+
+bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff)
+{
+	DWORD dwRead;
+	DWORD dwMode;
+	DWORD dwTimeout;
+	char *chBuf = new char [65536+1];     //64K should be sufficient buffer
+	memset(chBuf, 0, 65536+1);
+
+	std::auto_ptr<char> sp(chBuf);
+
+	// Make the pipe to non-blocking mode
+	dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
+	dwTimeout = 1000;
+	SetNamedPipeHandleState(pipe,
+	                        &dwMode,
+	                        NULL,
+	                        &dwTimeout);
+
+	BOOL bRes = ReadFile( pipe, chBuf, 65536, &dwRead, NULL);
+	if ( bRes ) {
+		wxString tmpBuff;
+		// Success read
+		chBuf[dwRead/sizeof(char)] = 0;
+		tmpBuff = wxString(chBuf, wxConvUTF8);
+		if (tmpBuff.IsEmpty() && dwRead > 0) {
+			//conversion failed
+			tmpBuff = wxString::From8BitData(chBuf);
+		}
+		buff << tmpBuff;
+		return true;
+	}
+
+	return false;
+}
 #endif //__WXMSW__
+
 

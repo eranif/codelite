@@ -22,8 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef WORKER_THREAD_H
-#define WORKER_THREAD_H
+#ifndef _ProcessReaderThread_H_
+#define _ProcessReaderThread_H_
 
 #include <deque>
 #include "wx/thread.h"
@@ -122,4 +122,4 @@ public:
 extern const wxEventType wxEVT_PROC_DATA_READ;
 extern const wxEventType wxEVT_PROC_TERMINATED;
 
-#endif // WORKER_THREAD_H
+#endif // _ProcessReaderThread_H_

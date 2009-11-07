@@ -212,7 +212,7 @@ void FileViewTree::BuildTree()
 		Thaw();
 
 		//set selection to first item
-		SelectItem( root, false );
+		SelectItem( root, HasFlag(wxTR_MULTIPLE) ? false : true );
 	}
 }
 

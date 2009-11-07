@@ -22,11 +22,19 @@ int main(int argc, char **argv)
 	bool check_parent(false);
 	long parent_pid (0);
 	if(argc < 2){
-		printf("Usage: %s <string> [--pid]\n", argv[0]);
+		printf("Usage: %s <string> [--pid]\n",    argv[0]);
+		printf("Usage: %s --batch <file_list> <output file>\n", argv[0]);
 		printf("   <string> - a unique string that identifies this indexer from other instances               \n");
 		printf("   --pid    - when set, <string> is handled as process number and the indexer will            \n");
+		printf("   --batch  - when set, batch parsing is done using list of files set in file_list argument   \n");
 		printf("              check if this process alive. Incase it is down, the indexer will go down as well\n");
 		return 1;
+	}
+
+	if ( argc == 4 && strcmp( argv[1], "--batch") == 0 ) {
+		// Batch mode
+		ctags_batch_parse(argv[2], argv[3]);
+		return 0;
 	}
 
 	if ( argc == 3 && strcmp( argv[2], "--pid") == 0 ) {

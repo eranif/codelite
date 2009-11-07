@@ -14,7 +14,7 @@ typedef void (*CTAGS_FREE_FUNC)(char *);
 char *ctags_make_tags (const char *cmd, const char *infile);
 void ctags_shutdown();
 void ctags_free(char *ptr);
-
+void ctags_batch_parse(const char* filelist, const char * outputfile);
 #ifdef __cplusplus
 }
 #endif

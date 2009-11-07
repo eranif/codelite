@@ -568,7 +568,9 @@ extern char *ctags_make_tags (const char *cmd, const char *infile)
 	makeTags (args);
 	cArgDelete(args);
 
-	stringListClear(Option.ignore);
+	if ( Option.ignore ) {
+		stringListClear(Option.ignore);
+	}
 
 	/* open the tags file, read it and convert it into char* */
 	file_name = (char*)malloc(strlen(TagFile.directory) + 6);
@@ -698,19 +700,49 @@ extern void ctags_free(char *ptr)
 	}
 }
 
-#if 0
-int main(int argc, char **argv)
+extern void ctags_batch_parse(const char* filelist, const char * outputfile)
 {
-	int i = 0;
-	for (i=0; i<10000; i++) {
-		char *tags = ctags_make_tags("--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p  -IwxT,_T", "test.h");
-		printf("%s\n\n\n\n\n", tags);
-		free(tags);
+	/* Open the filelist and load list of files */
+	char *  line         = (char*)0;
+	FILE *  fp           = NULL;
+	list_t *l            = NULL;
+	int counter          = 0;
+
+	char *file_content = load_file(filelist);
+
+	if( !file_content ) return;
+
+	/* Open output file */
+	fp = fopen(outputfile, "w+a");
+	if ( !fp ) return;
+
+	/* read the string as line by line */
+	line = strtok(file_content, "\r\n");
+
+	list_init( &l );
+
+	while (line) {
+		if(strlen(line)){
+			list_append(l, (void*)strdup(line));
+		}
+		line = strtok((char*)0, "\n");
 	}
 
+	list_node_t *n = l->head;
+	while( n ) {
+		counter++;
+		char *tags = (char*)0;
+		tags = ctags_make_tags("--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ", (char*)n->data);
+		free(n->data);
+		if ( tags ) {
+			fprintf(fp, "%s", tags);
+			free(tags);
+		}
+		n = n->next;
+	}
+	list_destroy( l );
+	free ( file_content );
 	ctags_shutdown();
-	return 0;
 }
-#endif
 
 /* vi:set tabstop=4 shiftwidth=4: */

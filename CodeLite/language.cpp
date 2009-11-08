@@ -1212,6 +1212,15 @@ void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &t
 		tag->SetName(tagName);
 		tag->SetKind(wxT("variable"));
 		tag->SetParent(wxT("<local>"));
+
+		wxString scope;
+		if(var.m_typeScope.empty() == false) {
+			scope << wxString(var.m_typeScope.c_str(), wxConvUTF8) << wxT("::");
+		}
+		if(var.m_type.empty() == false) {
+			scope << wxString(var.m_type.c_str(), wxConvUTF8);
+		}
+		tag->SetScope(scope);
 		tag->SetAccess(wxT("public"));
 		tag->SetPattern(_U(var.m_pattern.c_str()));
 		tags.push_back(tag);

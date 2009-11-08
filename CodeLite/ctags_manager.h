@@ -40,6 +40,7 @@
 #include "setters_getters_data.h"
 #include "extdbdata.h"
 #include "language.h"
+#include <set>
 
 #ifdef USE_TRACE
 #include <wx/stopwatch.h>
@@ -129,7 +130,7 @@ class TagsManager : public wxEvtHandler
 	wxString                      m_cachedFile;
 	bool                          m_enableCaching;
 	wxEvtHandler*                 m_evtHandler;
-
+	std::set<wxString>            m_CppIgnoreKeyWords;
 public:
 
 	void SetLanguage(Language *lang);
@@ -703,6 +704,7 @@ protected:
 	void           UpdateFileTree(const std::vector<wxFileName> &files, bool bold);
 	void           UpdateFileTree(ITagsStorage *td, bool bold);
 	void           DoFilterNonNeededFilesForRetaging(wxArrayString &strFiles, ITagsStorage *db);
+	void           DoGetFunctionTipForEmptyExpression(const wxString &word, const wxString &text, std::vector<TagEntryPtr> &tips);
 };
 
 /// create the singleton typedef

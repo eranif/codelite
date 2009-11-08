@@ -112,6 +112,12 @@ TagsManager::TagsManager()
 	m_ctagsCmd = wxT("  --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
 	m_timer = new wxTimer(this, CtagsMgrTimerId);
 	m_timer->Start(100);
+
+	// CPP keywords that are usually followed by open brace '('
+	m_CppIgnoreKeyWords.insert(wxT("while"));
+	m_CppIgnoreKeyWords.insert(wxT("if"));
+	m_CppIgnoreKeyWords.insert(wxT("for"));
+	m_CppIgnoreKeyWords.insert(wxT("switch"));
 }
 
 TagsManager::~TagsManager()
@@ -909,10 +915,14 @@ void TagsManager::FilterDeclarations(const std::vector<TagEntryPtr> &src, std::v
 
 clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno, const wxString &expr, const wxString &text, const wxString &word)
 {
-	std::vector<TagEntryPtr> candidates;
 	wxString path;
 	wxString typeName, typeScope, tmp;
 	std::vector<TagEntryPtr> tips;
+
+	// Skip any C++ keywords
+	if ( m_CppIgnoreKeyWords.find(word) != m_CppIgnoreKeyWords.end() ) {
+		return NULL;
+	}
 
 	// Trim whitespace from right and left
 	wxString expression(expr);
@@ -935,15 +945,22 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno,
 	}
 
 	if (expression.IsEmpty()) {
-		std::vector<wxString> additionlScopes;
-		//we are probably examining a global function, or a scope function
-		wxString scopeName = GetLanguage()->GetScopeName(text, &additionlScopes);
-		GetGlobalTags(word, candidates, ExactMatch);
-		TagsByScopeAndName(scopeName, word, candidates);
-		for (size_t i=0; i<additionlScopes.size(); i++) {
-			TagsByScopeAndName(additionlScopes.at(i), word, candidates);
+		DoGetFunctionTipForEmptyExpression(word, text, tips);
+
+		if(tips.empty()) {
+			// no luck yet
+			// we now try this:
+			// Perhaps our "function" is actually a constuctor, e.g.:
+			// ClassName cls(
+			wxString alteredText ( text );
+			alteredText.Append(wxT(";"));
+			std::vector<TagEntryPtr> tmpCandidates;
+			GetLocalTags(word, text, tmpCandidates, ExactMatch);
+			if( tmpCandidates.size() == 1) {
+				TagEntryPtr t = tmpCandidates.at(0);
+				DoGetFunctionTipForEmptyExpression(t->GetScope(), text, tips);
+			}
 		}
-		GetFunctionTipFromTags(candidates, word, tips);
 	} else {
 		wxString oper, dummy;
 		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
@@ -2153,4 +2170,19 @@ void TagsManager::GetTagsByKind(std::vector<TagEntryPtr>& tags, const wxArrayStr
 {
 	wxUnusedVar(partName);
 	m_workspaceDatabase->GetTagsByKind(kind, wxEmptyString, ITagsStorage::OrderNone, tags);
+}
+
+void TagsManager::DoGetFunctionTipForEmptyExpression(const wxString& word, const wxString& text, std::vector<TagEntryPtr>& tips)
+{
+	std::vector<TagEntryPtr> candidates;
+	std::vector<wxString>    additionlScopes;
+
+	//we are probably examining a global function, or a scope function
+	wxString scopeName = GetLanguage()->GetScopeName(text, &additionlScopes);
+	GetGlobalTags(word, candidates, ExactMatch);
+	TagsByScopeAndName(scopeName, word, candidates);
+	for (size_t i=0; i<additionlScopes.size(); i++) {
+		TagsByScopeAndName(additionlScopes.at(i), word, candidates);
+	}
+	GetFunctionTipFromTags(candidates, word, tips);
 }

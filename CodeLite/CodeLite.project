@@ -259,7 +259,6 @@
   </Settings>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="AsyncProcess">
     <File Name="asyncprocess.cpp"/>
     <File Name="asyncprocess.h"/>
@@ -271,4 +270,5 @@
     <File Name="winprocess_impl.h"/>
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

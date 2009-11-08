@@ -131,7 +131,7 @@ ImportFilesDialog::~ImportFilesDialog()
 	size_t flags(0);
 	if(m_checkBoxFilesWOExt->IsChecked()) flags |= IFS_INCLUDE_FILES_WO_EXT;
 	options.SetFlags( flags );
-	EditorConfigST::Get()->ReadObject(wxT("import_dir_options"), &options);
+	EditorConfigST::Get()->WriteObject(wxT("import_dir_options"), &options);
 }
 
 void ImportFilesDialog::OnChangeDir(wxCommandEvent& event)

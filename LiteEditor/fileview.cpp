@@ -28,7 +28,6 @@
 #include "frame.h"
 #include "nameanddescdlg.h"
 #include "globals.h"
-#include "importfilesdlg.h"
 #include "manager.h"
 #include "tree.h"
 #include <wx/xrc/xmlres.h>

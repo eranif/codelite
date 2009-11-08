@@ -422,8 +422,12 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 void FileViewTree::OnPopupMenu( wxTreeEvent &event )
 {
 	if ( event.GetItem().IsOk() ) {
-		SelectItem(event.GetItem());
+		if ( IsSelected(event.GetItem()) == false ) {
+			// Don't call SelectItem() if it's already selected: in <wx2.9 it toggles!
+			SelectItem(event.GetItem());
+		}
 		wxTreeItemId item = event.GetItem();
+
 		if ( item.IsOk() ) {
 			FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
 			switch ( data->GetData().GetKind() ) {
@@ -937,6 +941,9 @@ wxString FileViewTree::GetItemPath( wxTreeItemId &item )
 void FileViewTree::OnProjectProperties( wxCommandEvent & WXUNUSED( event ) )
 {
 	wxTreeItemId item = GetSingleSelection();
+	if (!item.IsOk()) {
+		return;
+	}
 
 	wxString projectName( GetItemText( item ) );
 	wxString title( projectName );

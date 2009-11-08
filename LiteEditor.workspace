@@ -106,7 +106,7 @@
       <Project Name="QMakePlugin" ConfigName="DebugUnicode"/>
       <Project Name="CppChecker" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="no">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
       <Project Name="wxpropgrid" ConfigName="ReleaseUnicode"/>
@@ -130,7 +130,7 @@
       <Project Name="QMakePlugin" ConfigName="DebugUnicode"/>
       <Project Name="CppChecker" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="WinReleaseUnicode_NoPlugins" Selected="yes">
+    <WorkspaceConfiguration Name="WinReleaseUnicode_NoPlugins" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxpropgrid" ConfigName="WinReleaseUnicode"/>

@@ -239,10 +239,16 @@ wxTreeItemId FileViewTree::GetSingleSelection()
 #if wxVERSION_NUMBER > 2900
 	return GetFocusedItem();
 #else
-	wxTreeItemId invalid;
-	wxArrayTreeItemIds arr;
-	size_t count = GetMultiSelection( arr );
-	return (count > 0) ? arr.Item(0) : invalid;
+	if ( HasFlag(wxTR_MULTIPLE) ) {
+		wxTreeItemId invalid;
+		wxArrayTreeItemIds arr;
+		size_t count = GetMultiSelection( arr );
+		return (count > 0) ? arr.Item(0) : invalid;
+
+	} else {
+		// Single selection tree
+		return GetSelection();
+	}
 #endif
 }
 
@@ -415,7 +421,8 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 
 void FileViewTree::OnPopupMenu( wxTreeEvent &event )
 {
-	if ( GetSingleSelection().IsOk() ) {
+	if ( event.GetItem().IsOk() ) {
+		SelectItem(event.GetItem());
 		wxTreeItemId item = event.GetItem();
 		if ( item.IsOk() ) {
 			FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );

@@ -34,7 +34,8 @@ enum {
 class ImportFilesSettings : public SerializedObject
 {
 	wxString m_fileMask;
-	size_t m_flags;
+	size_t   m_flags;
+	wxString m_baseDir;
 
 public:
 	ImportFilesSettings();
@@ -58,5 +59,11 @@ public:
 		return m_flags;
 	}
 
+	void SetBaseDir(const wxString& baseDir) {
+		this->m_baseDir = baseDir;
+	}
+	const wxString& GetBaseDir() const {
+		return m_baseDir;
+	}
 };
 #endif // __importfilessettings__

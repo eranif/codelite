@@ -73,7 +73,7 @@ static const char *Checkbox_on_XPM[] = {
 };
 
 /* XPM */
-static char * check_box_disabled_xpm[] = {
+static const char * check_box_disabled_xpm[] = {
 "16 16 10 1",
 " 	c None",
 ".	c #185284",

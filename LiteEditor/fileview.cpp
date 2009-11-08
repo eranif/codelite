@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/tokenzr.h>
+#include "importfilesdialog.h"
 #include "fileview.h"
 #include "frame.h"
 #include "nameanddescdlg.h"
@@ -1407,49 +1408,76 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 		return;
 	}
 
-	wxString message;
-	message << wxT("Select Directory to import:");
-
 	wxString vdPath = GetItemPath( item );
 	wxString project;
 	project = vdPath.BeforeFirst(wxT(':'));
-
 	ProjectPtr proj = ManagerST::Get()->GetProject( project );
 
-	ImportFilesDlg *dlg = new ImportFilesDlg(NULL, proj->GetFileName().GetPath());
-	if (dlg->ShowModal() != wxID_OK) {
-		dlg->Destroy();
+	bool              extlessFiles(false);
+	wxArrayString     dirs;
+	wxArrayString     files;
+	wxArrayString     all_files;
+	wxString          filespec;
+	ImportFilesDialog dlg(Frame::Get());
+
+	if(dlg.ShowModal() != wxID_OK) {
 		return;
 	}
 
-	wxString path = dlg->GetBaseDir();
-	bool noExtFiles = dlg->GetIncludeFilesWoExt();
+	extlessFiles = dlg.ExtlessFiles();
+	dlg.GetDirectories( dirs );
+	filespec = dlg.GetFileMask();
 
-	wxString mask = dlg->GetFileMask();
-	dlg->Destroy();
+	wxDir::GetAllFiles(dlg.GetBaseDir(), &all_files);
 
+	wxStringTokenizer tok(filespec, wxT(";"));
+	std::set<wxString> specMap;
+	while ( tok.HasMoreTokens() ) {
+		wxString v = tok.GetNextToken().AfterLast(wxT('*'));
+		v = v.AfterLast(wxT('.')).MakeLower();
+		specMap.insert( v );
+	}
+
+	//filter non interesting files
+	for (size_t i=0; i<all_files.GetCount(); i++) {
+		wxFileName fn(all_files.Item(i));
+
+		if (dirs.Index(fn.GetPath()) == wxNOT_FOUND) {
+			continue;
+		}
+
+		/* always excluded by default */
+		wxString filepath = fn.GetPath();
+		if( filepath.Contains(wxT(".svn"))           || filepath.Contains(wxT(".cvs"))           ||
+			filepath.Contains(wxT(".arch-ids"))      || filepath.Contains(wxT("arch-inventory")) ||
+			filepath.Contains(wxT("autom4te.cache")) || filepath.Contains(wxT("BitKeeper"))      ||
+			filepath.Contains(wxT(".bzr"))           || filepath.Contains(wxT(".bzrignore"))     ||
+			filepath.Contains(wxT("CVS"))            || filepath.Contains(wxT(".cvsignore"))     ||
+			filepath.Contains(wxT("_darcs"))         || filepath.Contains(wxT(".deps"))          ||
+			filepath.Contains(wxT("EIFGEN"))         || filepath.Contains(wxT(".git"))           ||
+			filepath.Contains(wxT(".hg"))            || filepath.Contains(wxT("PENDING"))        ||
+			filepath.Contains(wxT("RCS"))            || filepath.Contains(wxT("RESYNC"))         ||
+			filepath.Contains(wxT("SCCS"))           || filepath.Contains(wxT("{arch}")))
+		{
+			continue;
+		}
+
+		if ( specMap.empty() ) {
+			files.Add(all_files.Item(i));
+		} else if (fn.GetExt().IsEmpty() & extlessFiles) {
+			files.Add(all_files.Item(i));
+		} else if (specMap.find(fn.GetExt().MakeLower()) != specMap.end()) {
+			files.Add(all_files.Item(i));
+		}
+	}
+
+	wxString   path = dlg.GetBaseDir();
 	//{ Fixe bug 2847625
 	if (path.EndsWith(wxT("/")) || path.EndsWith(wxT("\\"))) {
 		path.RemoveLast();
-	}
-	//} bug 2847625
+	}//} Fixe bug 2847625
 
 	wxFileName rootPath(path);
-
-	//Collect all candidates files
-	wxArrayString files;
-	DirTraverser trv(mask, noExtFiles);
-
-	//ignore .svn & .cvs files
-	wxArrayString excludeDirs;
-	excludeDirs.Add(wxT(".svn"));
-	excludeDirs.Add(wxT(".cvs"));
-
-	trv.SetExcludeDirs(excludeDirs);
-	wxDir dir(path);
-
-	dir.Traverse(trv);
-	files = trv.GetFiles();
 
 	// loop over the files and construct for each file a record with
 	// the following information:

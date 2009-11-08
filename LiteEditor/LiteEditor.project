@@ -291,6 +291,8 @@
       <File Name="newprojectdlg.cpp"/>
       <File Name="new_item_base_dlg.h"/>
       <File Name="new_item_base_dlg.cpp"/>
+      <File Name="importfilesdialog.cpp"/>
+      <File Name="importfilesdialog.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Plugins">
       <File Name="pluginmgrdlg.h"/>
@@ -513,6 +515,7 @@
     <File Name="editorsettingsdockingwindowsbase.fbp"/>
     <File Name="tagsparsersearchpathsbasedlg.fbp"/>
     <File Name="newquickwatch.fbp"/>
+    <File Name="importfilesdialog.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="breakpointsmgr.h"/>

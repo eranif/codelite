@@ -272,7 +272,7 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	m_button1->SetDefault(); 
 	bSizer4->Add( m_button1, 0, wxALL, 5 );
 	
-	m_button2 = new wxButton( this, wxID_ANY, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button2 = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_button2, 0, wxALL, 5 );
 	
 	mainSizer->Add( bSizer4, 0, wxALIGN_CENTER_HORIZONTAL, 5 );

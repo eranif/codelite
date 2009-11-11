@@ -29,12 +29,12 @@
 #include <wx/fontmap.h>
 
 EditorSettingsLocal::EditorSettingsLocal( OptionsConfigPtr hrOptions, wxXmlNode* nde, enum prefsLevel level /*=pLevel_dunno*/, wxWindow* parent /*=NULL*/, wxWindowID id /*=wxID_ANY*/, const wxString& title /*=wxT("Local Preferences")*/)
-	: LocalEditorSettingsbase( parent, id, title ), higherOptions(hrOptions), node(nde)
+		: LocalEditorSettingsbase( parent, id, title ), higherOptions(hrOptions), node(nde)
 {
 	wxString label = title;
 	if (level == pLevel_workspace) {
 		label = wxT("Workspace local editor preferences");
-	} else if (level == pLevel_project){
+	} else if (level == pLevel_project) {
 		label = wxT("Project local editor preferences");
 	}
 	SetTitle(label);
@@ -58,8 +58,8 @@ void EditorSettingsLocal::DisplayHigherValues( const OptionsConfigPtr options )
 	// There should be 'global' (or workspace if this will be a project setting) values for each setting
 	// Insert them all, but leave the enabling checkboxes ticked, so the items will be disabled
 	m_indentsUsesTabs->SetValue(options->GetIndentUsesTabs());
-    m_indentWidth->SetValue(options->GetIndentWidth());
-    m_tabWidth->SetValue(options->GetTabWidth());
+	m_indentWidth->SetValue(options->GetIndentWidth());
+	m_tabWidth->SetValue(options->GetTabWidth());
 	m_displayLineNumbers->SetValue(options->GetDisplayLineNumbers());
 	m_showIndentationGuideLines->SetValue(options->GetShowIndentationGuidelines());
 
@@ -76,9 +76,9 @@ void EditorSettingsLocal::DisplayHigherValues( const OptionsConfigPtr options )
 	case wxSCI_WS_VISIBLEAFTERINDENT:
 		m_whitespaceStyle->SetStringSelection(wxT("Visible after indentation"));
 		break;
-    case wxSCI_WS_INDENTVISIBLE:
-        m_whitespaceStyle->SetStringSelection(wxT("Indentation only"));
-        break;
+	case wxSCI_WS_INDENTVISIBLE:
+		m_whitespaceStyle->SetStringSelection(wxT("Indentation only"));
+		break;
 	default:
 		m_whitespaceStyle->SetStringSelection(wxT("Invisible"));
 		break;
@@ -314,8 +314,3 @@ void EditorSettingsLocal::fileEncodingUpdateUI( wxUpdateUIEvent& event )
 	m_fileEncoding->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 	m_staticTextfileEncoding->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 }
-
-
-
-
-

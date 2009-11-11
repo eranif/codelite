@@ -191,7 +191,7 @@ void OptionsConfig::SetFileFontEncoding(const wxString& strFileFontEncoding)
 
 //-------------------------------------------------------------------------
 
-LocalOptionsConfig::LocalOptionsConfig(OptionsConfigPtr& opts, wxXmlNode *node)
+LocalOptionsConfig::LocalOptionsConfig(OptionsConfigPtr opts, wxXmlNode *node)
 {
 	// Used for reading local values, which are merged into the passed OptionsConfigPtr only if valid
 	// So no need to call the baseclass ctor or set our member vars
@@ -236,7 +236,7 @@ LocalOptionsConfig::LocalOptionsConfig(OptionsConfigPtr& opts, wxXmlNode *node)
 	}
 }
 
-LocalOptionsConfig::LocalOptionsConfig(LocalOptionsConfigPtr& opts, wxXmlNode *node)
+LocalOptionsConfig::LocalOptionsConfig(LocalOptionsConfigPtr opts, wxXmlNode *node)
 {
 	// Used for reading local values, which are stored in the passed empty LocalOptionsConfigPtr only if valid
 	// This is the same code as the previous ctor,except opts is a *Local*OptionsConfigPtr

@@ -325,7 +325,7 @@ public:
 	void Set(const T info) {
 		datum = info;
 		valid = true;
-	}	
+	}
 	void Reset() {
 		valid = false;
 	}
@@ -351,11 +351,11 @@ class LocalOptionsConfig : public OptionsConfig
 	validVar<int>      m_localshowWhitspaces;
 	validVar<wxString> m_localeolMode;
 	validVar<bool>     m_localhideChangeMarkerMargin;
-	
+
 public:
 	LocalOptionsConfig(); // Used for setting local values
-	LocalOptionsConfig(OptionsConfigPtr& opts, wxXmlNode *node); // Used for merging local values into the already-found global ones
-	LocalOptionsConfig(LocalOptionsConfigPtr& opts, wxXmlNode *node); // Used for storing local values in a previously-empty instance
+	LocalOptionsConfig(OptionsConfigPtr opts, wxXmlNode *node); // Used for merging local values into the already-found global ones
+	LocalOptionsConfig(LocalOptionsConfigPtr opts, wxXmlNode *node); // Used for storing local values in a previously-empty instance
 	virtual ~LocalOptionsConfig(void){}
 
 	bool HideChangeMarkerMarginIsValid() const {
@@ -409,31 +409,31 @@ public:
 		if (m_localdisplayFoldMargin.isValid()) {
 			return m_localdisplayFoldMargin.GetDatum();
 		}
-		return false; 
+		return false;
 	}
 	bool GetDisplayBookmarkMargin() const {
 		if (m_localdisplayBookmarkMargin.isValid()) {
 			return m_localdisplayBookmarkMargin.GetDatum();
 		}
-		return false; 
+		return false;
 	}
 	bool GetHighlightCaretLine() const {
 		if (m_localhighlightCaretLine.isValid()) {
 			return m_localhighlightCaretLine.GetDatum();
 		}
-		return false; 
+		return false;
 	}
 	bool GetDisplayLineNumbers() const {
 		if (m_localdisplayLineNumbers.isValid()) {
 			return m_localdisplayLineNumbers.GetDatum();
 		}
-		return false; 
+		return false;
 	}
 	bool GetShowIndentationGuidelines() const {
 		if (m_localshowIndentationGuidelines.isValid()) {
 			return m_localshowIndentationGuidelines.GetDatum();
 		}
-		return false; 
+		return false;
 	}
 
 	void SetHideChangeMarkerMargin(bool hideChangeMarkerMargin) {
@@ -461,7 +461,7 @@ public:
 		if (m_localindentUsesTabs.isValid()) {
 			return m_localindentUsesTabs.GetDatum();
 		}
-		return false; 
+		return false;
 	}
 	void SetIndentWidth(const int& indentWidth) {
 		m_localindentWidth.Set(indentWidth);
@@ -470,7 +470,7 @@ public:
 		if (m_localindentWidth.isValid()) {
 			return m_localindentWidth.GetDatum();
 		}
-		return wxNOT_FOUND; 
+		return wxNOT_FOUND;
 	}
 	void SetTabWidth(const int& tabWidth) {
 		m_localtabWidth.Set(tabWidth);
@@ -479,7 +479,7 @@ public:
 		if (m_localtabWidth.isValid()) {
 			return m_localtabWidth.GetDatum();
 		}
-		return wxNOT_FOUND; 
+		return wxNOT_FOUND;
 	}
 
 	wxFontEncoding GetFileFontEncoding() const {
@@ -497,7 +497,7 @@ public:
 		if (m_localshowWhitspaces.isValid()) {
 			return m_localshowWhitspaces.GetDatum();
 		}
-		return wxNOT_FOUND; 
+		return wxNOT_FOUND;
 	}
 
 	void SetEolMode(const wxString& eolMode) {
@@ -509,7 +509,7 @@ public:
 		}
 		return wxT("");
 	}
-	
+
 	/**
 	 * Return an XML representation of this object
 	 * \return XML node

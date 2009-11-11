@@ -33,6 +33,7 @@
   <Project Name="wxpropgrid" Path="sdk/wxpropgrid/wxpropgrid.project" Active="No"/>
   <Project Name="QMakePlugin" Path="QmakePlugin/QMakePlugin.project" Active="No"/>
   <Project Name="CppChecker" Path="cppchecker/CppChecker.project" Active="No"/>
+  <Options/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>

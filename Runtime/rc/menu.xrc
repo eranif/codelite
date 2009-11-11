@@ -12,6 +12,9 @@
 			<object class="wxMenuItem" name="refresh_file">
 				<label>&amp;Reload File</label>
 			</object>
+            <object class="wxMenuItem" name="load_tab_group">
+                <label>Load a group of tabs</label>
+            </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="save_file">
                 <label>&amp;Save File</label>
@@ -21,6 +24,9 @@
             </object>
             <object class="wxMenuItem" name="save_all">
                 <label>Save all files</label>
+            </object>
+            <object class="wxMenuItem" name="save_tab_group">
+                <label>Save tabs as group</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 

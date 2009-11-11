@@ -73,7 +73,7 @@ public:
 	void UpdateNavBar (LEditor *editor);
 	bool IsNavBarShown()                    { return m_navBar->IsShown(); }
 
-    void SaveSession   (SessionEntry &session);
+    void SaveSession   (SessionEntry &session, wxArrayInt& intArr);
     void RestoreSession(SessionEntry &session);
 
     LEditor *GetActiveEditor();

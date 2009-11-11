@@ -307,51 +307,13 @@ wxString EditorConfig::GetTagsDatabase() const
 	}
 }
 
-void EditorConfig::GetRecentlyOpenedFies(wxArrayString &files)
+void EditorConfig::GetRecentItems(wxArrayString &files, const wxString nodeName)
 {
-	//find the root node of the recent files
-	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("RecentFiles"));
-	if (node) {
-		wxXmlNode *child = node->GetChildren();
-		while (child) {
-			if (child->GetName() == wxT("File")) {
-				wxString fileName = XmlUtils::ReadString(child, wxT("Name"));
-				// wxXmlDocument Saves/Loads items in reverse order, so prepend, not add.
-				if( wxFileExists( fileName) ) files.Insert(fileName, 0);
-			}
-			child = child->GetNext();
-		}
-	}
+	if (nodeName.IsEmpty()) {
+		return;
 }
-
-void EditorConfig::SetRecentlyOpenedFies(const wxArrayString &files)
-{
-	wxString nodeName = wxT("RecentFiles");
+	//find the root node
 	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), nodeName);
-	if (node) {
-		wxXmlNode *root = m_doc->GetRoot();
-		root->RemoveChild(node);
-		delete node;
-	}
-	//create new entry in the configuration file
-	node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, nodeName);
-	m_doc->GetRoot()->AddChild(node);
-	for (size_t i=0; i<files.GetCount(); i++) {
-		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
-		child->AddProperty(wxT("Name"), files.Item(i));
-		node->AddChild(child);
-	}
-
-	//save the data to disk
-	DoSave();
-	SendCmdEvent(wxEVT_EDITOR_CONFIG_CHANGED, (void*) &nodeName);
-}
-
-
-void EditorConfig::GetRecentlyOpenedWorkspaces(wxArrayString &files)
-{
-	//find the root node of the recent files
-	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("RecentWorkspaces"));
 	if (node) {
 		wxXmlNode *child = node->GetChildren();
 		while (child) {
@@ -365,15 +327,19 @@ void EditorConfig::GetRecentlyOpenedWorkspaces(wxArrayString &files)
 	}
 }
 
-void EditorConfig::SetRecentlyOpenedWorkspaces(const wxArrayString &files)
+void EditorConfig::SetRecentItems(const wxArrayString &files, const wxString nodeName)
 {
-	wxString nodeName = wxT("RecentWorkspaces");
+	if (nodeName.IsEmpty()) {
+		return;
+	}
+	//find the root node
 	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), nodeName);
 	if (node) {
 		wxXmlNode *root = m_doc->GetRoot();
 		root->RemoveChild(node);
 		delete node;
 	}
+	//create new entry in the configuration file
 	node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, nodeName);
 	m_doc->GetRoot()->AddChild(node);
 	for (size_t i=0; i<files.GetCount(); i++) {

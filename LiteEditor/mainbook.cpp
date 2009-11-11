@@ -218,12 +218,12 @@ void MainBook::ClearFileHistory()
 		m_recentFiles.RemoveFileFromHistory ( 0 );
 	}
 	wxArrayString files;
-	EditorConfigST::Get()->SetRecentlyOpenedFies ( files );
+	EditorConfigST::Get()->SetRecentItems( files, wxT("RecentFiles") );
 }
 
 void MainBook::GetRecentlyOpenedFiles ( wxArrayString &files )
 {
-	EditorConfigST::Get()->GetRecentlyOpenedFies ( files );
+	EditorConfigST::Get()->GetRecentItems( files, wxT("RecentFiles") );
 }
 
 void MainBook::UpdateNavBar(LEditor *editor)
@@ -246,7 +246,7 @@ void MainBook::ShowNavBar(bool s)
 	Refresh();
 }
 
-void MainBook::SaveSession(SessionEntry &session)
+void MainBook::SaveSession(SessionEntry &session, wxArrayInt& intArr)
 {
 	std::vector<LEditor*> editors;
 	GetAllEditors(editors);
@@ -254,6 +254,10 @@ void MainBook::SaveSession(SessionEntry &session)
 	session.SetSelectedTab(0);
 	std::vector<TabInfo> vTabInfoArr;
 	for (size_t i = 0; i < editors.size(); i++) {
+		if ( (intArr.GetCount() > i) && (!intArr.Item(i)) ) {
+			// If we're saving only selected editors, and this isn't one of them...
+			continue;
+		}
 		if (editors[i] == GetActiveEditor()) {
 			session.SetSelectedTab(vTabInfoArr.size());
 		}
@@ -444,7 +448,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 	m_recentFiles.AddFileToHistory ( fileName.GetFullPath() );
 	wxArrayString files;
 	m_recentFiles.GetFiles ( files );
-	EditorConfigST::Get()->SetRecentlyOpenedFies ( files );
+	EditorConfigST::Get()->SetRecentItems( files, wxT("RecentFiles") );
 
 	if (addjump) {
 		BrowseRecord jumpto = editor->CreateBrowseRecord();

@@ -29,12 +29,6 @@
 
 #include <memory>
 
-namespace
-{
-	const wxChar defaultSessionName[] = wxT("Default");
-	const wxChar sessionTag[] = wxT("Session");
-}
-
 //Session entry
 SessionEntry::SessionEntry()
 {
@@ -76,6 +70,21 @@ void SessionEntry::Serialize(Archive &arch)
 
 
 //---------------------------------------------
+
+void TabGroupEntry::DeSerialize(Archive &arch)
+{
+	arch.Read(wxT("m_TabgroupName"), m_tabgroupName);
+	arch.Read(wxT("TabInfoArray"), m_vTabInfoArr);
+}
+
+void TabGroupEntry::Serialize(Archive &arch)
+{
+	arch.Write(wxT("m_TabgroupName"), m_tabgroupName);
+	arch.Write(wxT("TabInfoArray"), m_vTabInfoArr);
+}
+
+
+//---------------------------------------------
 SessionManager & SessionManager::Get()
 {
 	static SessionManager theManager;
@@ -106,12 +115,16 @@ bool SessionManager::Load(const wxString &fileName)
 	return m_doc.IsOk();
 }
 
-wxFileName SessionManager::GetSessionFileName(const wxString& name) const
+wxFileName SessionManager::GetSessionFileName(const wxString& name, const wxString& suffix /*=wxT("")*/) const
 {
+	if (suffix.IsEmpty()) {
 	return name + wxT(".session");
 }
 
-bool SessionManager::FindSession(const wxString &name, SessionEntry &session)
+	return name + suffix;
+}
+
+bool SessionManager::FindSession(const wxString &name, SessionEntry &session, const wxString& suffix /*=wxT("")*/, const wxChar* Tag /*=sessionTag*/)
 {
 	if (!m_doc.GetRoot()) {
 		return false;
@@ -122,7 +135,7 @@ bool SessionManager::FindSession(const wxString &name, SessionEntry &session)
 
 	wxXmlDocument doc;
 
-	const wxFileName& sessionFileName = GetSessionFileName(name);
+	const wxFileName& sessionFileName = GetSessionFileName(name, suffix);
 	if (sessionFileName.FileExists())
 	{
 		if (!doc.Load(sessionFileName.GetFullPath()) || !doc.IsOk())
@@ -130,11 +143,11 @@ bool SessionManager::FindSession(const wxString &name, SessionEntry &session)
 	}
 	else
 	{
-		doc.SetRoot(new wxXmlNode(NULL, wxXML_ELEMENT_NODE, sessionTag));
+		doc.SetRoot(new wxXmlNode(NULL, wxXML_ELEMENT_NODE, Tag));
 	}
 
 	wxXmlNode* const node = doc.GetRoot();
-	if (!node || node->GetName() != sessionTag)
+	if (!node || node->GetName() != Tag)
 		return false;
 
 	Archive arch;
@@ -144,7 +157,7 @@ bool SessionManager::FindSession(const wxString &name, SessionEntry &session)
 	return true;
 }
 
-bool SessionManager::Save(const wxString &name, SessionEntry &session)
+bool SessionManager::Save(const wxString &name, SessionEntry &session, const wxString& suffix /*=wxT("")*/, const wxChar* Tag /*=sessionTag*/)
 {
 	if (!m_doc.GetRoot()) {
 		return false;
@@ -153,7 +166,7 @@ bool SessionManager::Save(const wxString &name, SessionEntry &session)
 	if (name.empty())
 		return false;
 
-	std::auto_ptr<wxXmlNode> child(new wxXmlNode(NULL, wxXML_ELEMENT_NODE, sessionTag));
+	std::auto_ptr<wxXmlNode> child(new wxXmlNode(NULL, wxXML_ELEMENT_NODE, Tag));
 	child->AddProperty(wxT("Name"), name);
 
 	Archive arch;
@@ -163,7 +176,8 @@ bool SessionManager::Save(const wxString &name, SessionEntry &session)
 	wxXmlDocument doc;
 	doc.SetRoot(child.release());
 
-	const wxFileName& sessionFileName = GetSessionFileName(name);
+	// If we're saving a tabgroup, suffix will be ".tabgroup", not the default ".session"
+	const wxFileName& sessionFileName = GetSessionFileName(name, suffix);
 	return doc.Save(sessionFileName.GetFullPath());
 }
 

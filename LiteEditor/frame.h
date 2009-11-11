@@ -282,7 +282,6 @@ private:
 	void CreateRecentlyOpenedFilesMenu();
 	void CreateRecentlyOpenedWorkspacesMenu();
 	void CreateWelcomePage();
-	void CreateMenuBar();
 	void ReloadExternallyModifiedProjectFiles();
 
 protected:
@@ -298,6 +297,7 @@ protected:
 	void OnSave(wxCommandEvent& event);
 	void OnSaveAs(wxCommandEvent& event);
 	void OnFileReload(wxCommandEvent& event);
+	void OnFileLoadTabGroup(wxCommandEvent& event);
 	void OnCompleteWord(wxCommandEvent& event);
 	void OnFunctionCalltip(wxCommandEvent& event);
 	void OnDeleteProject(wxCommandEvent& event);
@@ -307,6 +307,7 @@ protected:
 	void OnFileClose(wxCommandEvent &event);
 	void OnFileCloseUI(wxUpdateUIEvent &event);
 	void OnFileSaveAll(wxCommandEvent &event);
+	void OnFileSaveTabGroup(wxCommandEvent &event);
 	void OnFileFindAndReplace(wxCommandEvent &event);
 	void OnFileExistUpdateUI(wxUpdateUIEvent &event);
 	void OnCompleteWordUpdateUI(wxUpdateUIEvent &event);

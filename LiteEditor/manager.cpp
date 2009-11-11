@@ -302,7 +302,7 @@ void Manager::CloseWorkspace()
 	//save the current session before closing
 	SessionEntry session;
 	session.SetWorkspaceName ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
-	Frame::Get()->GetMainBook()->SaveSession(session);
+	wxArrayInt unused; Frame::Get()->GetMainBook()->SaveSession(session, unused);
 	GetBreakpointsMgr()->SaveSession(session);
 	SessionManager::Get().Save ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session );
 
@@ -350,7 +350,7 @@ void Manager::AddToRecentlyOpenedWorkspaces ( const wxString &fileName )
 		}
 	}
 
-	EditorConfigST::Get()->SetRecentlyOpenedWorkspaces ( files );
+	EditorConfigST::Get()->SetRecentItems( files, wxT("RecentWorkspaces") );
 }
 
 void Manager::ClearWorkspaceHistory()
@@ -360,12 +360,12 @@ void Manager::ClearWorkspaceHistory()
 		m_recentWorkspaces.RemoveFileFromHistory ( 0 );
 	}
 	wxArrayString files;
-	EditorConfigST::Get()->SetRecentlyOpenedWorkspaces ( files );
+	EditorConfigST::Get()->SetRecentItems( files, wxT("RecentWorkspaces") );
 }
 
 void Manager::GetRecentlyOpenedWorkspaces ( wxArrayString &files )
 {
-	EditorConfigST::Get()->GetRecentlyOpenedWorkspaces ( files );
+	EditorConfigST::Get()->GetRecentItems( files, wxT("RecentWorkspaces") );
 }
 
 

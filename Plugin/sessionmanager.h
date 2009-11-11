@@ -30,6 +30,14 @@
 #include "wx/xml/xml.h"
 #include <vector>
 
+namespace
+{
+	const wxChar defaultSessionName[] = wxT("Default");
+	const wxChar sessionTag[] = wxT("Session");
+	const wxChar tabgroupTag[] = wxT("Tabgroup");
+}
+
+
 /**
  * \class SessionEntry
  * \brief Session entry is associated per workspace
@@ -37,6 +45,7 @@
  * \date 09/25/07
  */
 class SessionEntry : public SerializedObject {
+protected:
 	int m_selectedTab;
 	wxArrayString m_tabs;
 	wxString m_workspaceName;
@@ -67,6 +76,24 @@ public:
 };
 
 /**
+ * \class TabGroupEntry
+ * \brief TabGroupEntry serialises a named group of tabs
+ */
+class TabGroupEntry : public SessionEntry 
+{
+	wxString m_tabgroupName;
+
+public:
+	TabGroupEntry(){}
+	virtual ~TabGroupEntry(){}
+
+	void Serialize(Archive &arch);
+	void DeSerialize(Archive &arch);
+	void SetTabgroupName(const wxString& tabgroupName) { m_tabgroupName = tabgroupName; }
+	const wxString& GetTabgroupName() const { return m_tabgroupName; }
+};
+
+/**
  * \class SessionManager
  * \brief
  * \author Eran
@@ -83,13 +110,13 @@ private:
 public:
 	static SessionManager& Get();
 	bool Load(const wxString &fileName);
-	bool Save(const wxString &name, SessionEntry &session);
-	bool FindSession(const wxString &name, SessionEntry &session);
+	bool Save(const wxString &name, SessionEntry &session, const wxString& suffix = wxT(""), const wxChar* Tag = sessionTag);
+	bool FindSession(const wxString &name, SessionEntry &session, const wxString& suffix = wxT(""), const wxChar* Tag = sessionTag);
 	void SetLastWorkspaceName(const wxString &name);
 	wxString GetLastSession();
 
 private:
-	wxFileName GetSessionFileName(const wxString& name) const;
+	wxFileName GetSessionFileName(const wxString& name, const wxString& suffix = wxT("")) const;
 };
 
 #endif //SESSIONMANAGER_H

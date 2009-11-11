@@ -319,6 +319,12 @@
       <File Name="aboutdlgbase.cpp"/>
       <File Name="contributers.h"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="Sessions">
+      <File Name="tabgroupdlg.h"/>
+      <File Name="tabgroupbasedlgs.cpp"/>
+      <File Name="tabgroupbasedlgs.h"/>
+      <File Name="tabgroupdlg.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
     <File Name="app.cpp"/>

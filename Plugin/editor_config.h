@@ -193,28 +193,18 @@ public:
 	void SaveLexers();
 
 	/**
-	 * get an array of recently opened files
+	 * get an array of recently opened items e.g. workspaces
 	 * \param files  [output] a place holder for the output
+	 * \param nodename  the type of item to get
 	 */
-	void GetRecentlyOpenedFies(wxArrayString &files);
+	void GetRecentItems(wxArrayString &files, const wxString nodeName);
 
 	/**
-	 * get an array of recently opened files
+	 * Set an array of recently opened items e.g. workspaces
 	 * \param files  list of files to save
+	 * \param nodename  the type of item to set
 	 */
-	void SetRecentlyOpenedFies(const wxArrayString &files);
-
-	/**
-	 * get an array of recently opened workspaces
-	 * \param files  [output] a place holder for the output
-	 */
-	void GetRecentlyOpenedWorkspaces(wxArrayString &files);
-
-	/**
-	 * get an array of recently opened workspaces
-	 * \param files  list of files to save
-	 */
-	void SetRecentlyOpenedWorkspaces(const wxArrayString &files);
+	void SetRecentItems(const wxArrayString &files, const wxString nodeName);
 
 	/**
 	 * \brief write an archived object to the xml configuration

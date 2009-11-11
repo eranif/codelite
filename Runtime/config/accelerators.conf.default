@@ -113,7 +113,7 @@ svn_options|Plugins::Subversion|Options...|
 copyrights_options|Plugins::Copyright|Insert Copyright Block|
 insert_copyrights|Plugins::Copyright|Batch Insert of Copyright Block|
 batch_insert_copyrights|Plugins::Copyright|Settings...|
-options|Settings|Editor...|Alt-O
+options|Settings|Global Editor Preferences...|Alt-O
 synatx_highlight|Settings|Syntax Highlight & Fonts...|
 configure_accelerators|Settings|Configure accelerators...|
 add_envvar|Settings|Environment Variables...|Ctrl-Shift-V

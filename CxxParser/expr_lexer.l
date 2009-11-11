@@ -1,13 +1,14 @@
-%{ 
+%{
 /* Included code before lex code */
 /*************** Includes and Defines *****************************/
 
-   
+
 #include "map"
 #include "cpp_lexer.h"		// YACC generated definitions based on C++ grammar
 #include "errno.h"
 
 #define YYSTYPE std::string
+#define ECHO
 
 #include "string"
 #include <stdlib.h>
@@ -96,7 +97,7 @@ horizontal_white [ ]|{h_tab}
 "//" {
 			BEGIN CPP_COMMENT;
      }
-     
+
 {horizontal_white}+     {
 			WHITE_RETURN(' ');
 			}
@@ -247,12 +248,12 @@ catch				{CPP_KEYWORD_RETURN(LE_CATCH);}
 "^="                	{NAMEDOP_RETURN(LE_ERassign);}
 "|="					{NAMEDOP_RETURN(LE_ORassign);}
 "..."					{NAMEDOP_RETURN(LE_ELLIPSIS);}
-<<EOF>> 				{	
+<<EOF>> 				{
 							//reset lexer
 							yyterminate();
 						}
 .						{return yytext[0];}
-<PREPR>\n		{ 
+<PREPR>\n		{
 						defineFound = false;
 						BEGIN INITIAL;
 					}
@@ -265,20 +266,20 @@ catch				{CPP_KEYWORD_RETURN(LE_CATCH);}
 <WRAP_PREP>\n	{
 						BEGIN PREPR;
 					}
-<WRAP_PREP>{identifier}   { 
-						if(defineFound)
-						{
-							defineFound = false;
-						}
-					}				
-<PREPR>{identifier}       { 
+<WRAP_PREP>{identifier}   {
 						if(defineFound)
 						{
 							defineFound = false;
 						}
 					}
-<WRAP_PREP>.	{}					
-<PREPR>.			{}		
+<PREPR>{identifier}       {
+						if(defineFound)
+						{
+							defineFound = false;
+						}
+					}
+<WRAP_PREP>.	{}
+<PREPR>.			{}
 <CPP_COMMENT>\n {BEGIN INITIAL;}
 <CPP_COMMENT>.	 {}
 <C_COMMENT>"*/" {BEGIN INITIAL;}
@@ -297,17 +298,17 @@ bool exprIsaMACRO(char *string)
 
 void cl_expr_lex_clean()
 {
-	yy_flush_buffer(YY_CURRENT_BUFFER); 
+	yy_flush_buffer(YY_CURRENT_BUFFER);
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 	cl_expr_lineno = 1;
 }
 
 /*******************************************************************/
-bool setExprLexerInput(const std::string &in) 
+bool setExprLexerInput(const std::string &in)
 {
 	BEGIN INITIAL;
 	yy_scan_string(in.c_str());
-	
+
 	//update the working file name
 	return true;
 }

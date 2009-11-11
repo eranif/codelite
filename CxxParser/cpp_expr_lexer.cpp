@@ -799,12 +799,13 @@ char *yytext;
 /* Included code before lex code */
 /*************** Includes and Defines *****************************/
 
-   
+
 #include "map"
 #include "cpp_lexer.h"		// YACC generated definitions based on C++ grammar
 #include "errno.h"
 
 #define YYSTYPE std::string
+#define ECHO
 
 #include "string"
 #include <stdlib.h>
@@ -1629,7 +1630,7 @@ case YY_STATE_EOF(PREPR):
 case YY_STATE_EOF(WRAP_PREP):
 case YY_STATE_EOF(CPP_COMMENT):
 case YY_STATE_EOF(C_COMMENT):
-{	
+{
 							//reset lexer
 							yyterminate();
 						}
@@ -1640,7 +1641,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-{ 
+{
 						defineFound = false;
 						BEGIN INITIAL;
 					}
@@ -1665,16 +1666,16 @@ YY_RULE_SETUP
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-{ 
+{
 						if(defineFound)
 						{
 							defineFound = false;
 						}
-					}				
+					}
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-{ 
+{
 						if(defineFound)
 						{
 							defineFound = false;
@@ -1683,11 +1684,11 @@ YY_RULE_SETUP
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-{}					
+{}
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
-{}		
+{}
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
@@ -2606,17 +2607,17 @@ bool exprIsaMACRO(char *string)
 
 void cl_expr_lex_clean()
 {
-	yy_flush_buffer(YY_CURRENT_BUFFER); 
+	yy_flush_buffer(YY_CURRENT_BUFFER);
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 	cl_expr_lineno = 1;
 }
 
 /*******************************************************************/
-bool setExprLexerInput(const std::string &in) 
+bool setExprLexerInput(const std::string &in)
 {
 	BEGIN INITIAL;
 	yy_scan_string(in.c_str());
-	
+
 	//update the working file name
 	return true;
 }

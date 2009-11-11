@@ -3,4 +3,4 @@
 //const char * const filePath;
 //tagFile *const file;
 //const sortType type;
-(int argc, char *argv[]);
+(std::vector<int>*)v

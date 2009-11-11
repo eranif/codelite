@@ -132,6 +132,23 @@ BuildMatrixPtr Workspace::GetBuildMatrix() const
 	return new BuildMatrix( XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("BuildMatrix")) );
 }
 
+wxXmlNode* Workspace::GetWorkspaceEditorOptions() const
+{
+	return XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Options"));
+}
+
+void Workspace::SetWorkspaceEditorOptions(LocalOptionsConfigPtr opts)
+{
+	wxXmlNode *parent = m_doc.GetRoot();
+	wxXmlNode *oldOptions = XmlUtils::FindFirstByTagName(parent, wxT("Options"));
+	if (oldOptions) {
+		oldOptions->GetParent()->RemoveChild(oldOptions);
+		delete oldOptions;
+	}
+	parent->AddChild(opts->ToXml());
+	SaveXmlFile();
+}
+
 void Workspace::SetBuildMatrix(BuildMatrixPtr mapping)
 {
 	wxXmlNode *parent = m_doc.GetRoot();

@@ -45,6 +45,7 @@
 #include <wx/progdlg.h>
 #include "editor_config.h"
 #include "yestoalldlg.h"
+#include "editorsettingslocal.h"
 
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
@@ -61,12 +62,15 @@ FileViewTree::FileViewTree()
 
 void FileViewTree::ConnectEvents()
 {
+	Connect( XRCID( "local_workspace_prefs" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnLocalPrefs ), NULL, this );
+
 	Connect( XRCID( "remove_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRemoveProject ), NULL, this );
 	Connect( XRCID( "set_as_active" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnSetActive ), NULL, this );
 	Connect( XRCID( "new_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnNewItem ), NULL, this );
 	Connect( XRCID( "add_existing_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnAddExistingItem ), NULL, this );
 	Connect( XRCID( "new_virtual_folder" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnNewVirtualFolder ), NULL, this );
 	Connect( XRCID( "remove_virtual_folder" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRemoveVirtualFolder ), NULL, this );
+	Connect( XRCID( "local_project_prefs" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnLocalPrefs ), NULL, this );
 	Connect( XRCID( "project_properties" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnProjectProperties ), NULL, this );
 	Connect( XRCID( "sort_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnSortItem ), NULL, this );
 	Connect( XRCID( "remove_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRemoveItem ), NULL, this );
@@ -936,6 +940,56 @@ wxString FileViewTree::GetItemPath( wxTreeItemId &item )
 	}
 
 	return path;
+}
+
+void FileViewTree::OnLocalPrefs( wxCommandEvent& event )
+{
+	if (!ManagerST::Get()->IsWorkspaceOpen()) {
+		return; // Probably not possible, but...
+	}
+
+	wxXmlNode* wsnode = WorkspaceST::Get()->GetWorkspaceEditorOptions();
+
+	// Start by getting the global settings
+	OptionsConfigPtr higherOptions = EditorConfigST::Get()->GetOptions();
+
+	// If we're setting workspace options, run the dialog and return
+	if (event.GetId() == XRCID("local_workspace_prefs")) {
+		EditorSettingsLocal dlg(higherOptions, wsnode, pLevel_workspace, this);
+		if (dlg.ShowModal() == wxID_OK) {
+			WorkspaceST::Get()->SetWorkspaceEditorOptions(dlg.GetLocalOpts());
+				
+			Frame::Get()->GetMainBook()->ApplySettingsChanges();
+
+			// Notify plugins that some settings have changed
+			PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
+		}
+		return;
+	}
+	
+	// Otherwise we're getting project prefs
+	wxTreeItemId item = GetSingleSelection();
+	if ( !item.IsOk() ) {
+		return;
+	}
+	wxString errMsg; wxXmlNode* pnode = NULL;
+	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(GetItemText(item), errMsg);
+	if (proj) {
+		pnode = proj->GetProjectEditorOptions();
+		// Don't check pnode: it'll be NULL if there are currently no project options
+		// Merge any local workspace options with the global ones inside 'options'
+		LocalOptionsConfig wsOC(higherOptions, wsnode);
+
+		EditorSettingsLocal dlg(higherOptions, pnode, pLevel_project, this);
+		if (dlg.ShowModal() == wxID_OK) {
+			proj->SetProjectEditorOptions(dlg.GetLocalOpts());
+				
+			Frame::Get()->GetMainBook()->ApplySettingsChanges();
+
+			// Notify plugins that some settings have changed
+			PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
+		}
+	}
 }
 
 void FileViewTree::OnProjectProperties( wxCommandEvent & WXUNUSED( event ) )

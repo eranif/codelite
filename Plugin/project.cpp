@@ -412,6 +412,23 @@ void Project::GetFiles(wxXmlNode *parent, std::vector<wxFileName> &files, bool a
 	}
 }
 
+wxXmlNode* Project::GetProjectEditorOptions() const
+{
+	return XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Options"));
+}
+
+void Project::SetProjectEditorOptions(LocalOptionsConfigPtr opts)
+{
+	wxXmlNode *parent = m_doc.GetRoot();
+	wxXmlNode *oldOptions = XmlUtils::FindFirstByTagName(parent, wxT("Options"));
+	if (oldOptions) {
+		oldOptions->GetParent()->RemoveChild(oldOptions);
+		delete oldOptions;
+	}
+	parent->AddChild(opts->ToXml());
+	SaveXmlFile();
+}
+
 ProjectSettingsPtr Project::GetSettings() const
 {
 	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Settings"));

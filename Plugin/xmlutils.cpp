@@ -91,6 +91,11 @@ wxString XmlUtils::ReadString(wxXmlNode *node, const wxString &propName, const w
 	return node->GetPropVal(propName, defaultValue);
 }
 
+bool XmlUtils::ReadStringIfExists(wxXmlNode* node, const wxString& propName, wxString& value)
+{
+	return node->GetPropVal(propName, &value);
+}
+
 long XmlUtils::ReadLong(wxXmlNode *node, const wxString &propName, long defaultValue)
 {
 	wxString val = node->GetPropVal(propName, wxEmptyString);
@@ -109,12 +114,27 @@ long XmlUtils::ReadLong(wxXmlNode *node, const wxString &propName, long defaultV
 	return retVal;
 }
 
+bool XmlUtils::ReadLongIfExists(wxXmlNode *node, const wxString &propName, long& answer)
+{
+	wxString value;
+	if( ! node->GetPropVal(propName, &value) ) {
+		return false;
+	}
+
+	if(value.StartsWith(wxT("\""))){
+		value = value.AfterFirst(wxT('"'));
+	}
+	if(value.EndsWith(wxT("\""))){
+		value = value.BeforeLast(wxT('"'));
+	}
+
+	bool retVal = value.ToLong(&answer);
+	return retVal;
+}
+
 bool XmlUtils::ReadBool(wxXmlNode *node, const wxString &propName, bool defaultValue)
 {
 	wxString val = node->GetPropVal(propName, wxEmptyString);
-	if( val.IsEmpty() ){
-		return defaultValue;
-	}
 
 	if(val.IsEmpty()){
 		return defaultValue;
@@ -127,6 +147,21 @@ bool XmlUtils::ReadBool(wxXmlNode *node, const wxString &propName, bool defaultV
 		retVal = false;
 	}
 	return retVal;
+}
+
+bool XmlUtils::ReadBoolIfExists(wxXmlNode* node, const wxString& propName, bool& answer)
+{
+	wxString value;
+	if( ! node->GetPropVal(propName, &value) ) {
+		return false;
+	}
+
+	if(value.CmpNoCase(wxT("yes")) == 0){
+		answer = true;
+	} else {
+		answer = false;
+	}
+	return true;
 }
 
 void XmlUtils::SetNodeContent(wxXmlNode *node, const wxString &text)

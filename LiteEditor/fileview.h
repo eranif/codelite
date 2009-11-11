@@ -124,6 +124,7 @@ protected:
 	virtual void OnNewItem(wxCommandEvent &event);
 	virtual void OnAddExistingItem(wxCommandEvent &event);
 	virtual void OnNewVirtualFolder(wxCommandEvent &event);
+	virtual void OnLocalPrefs(wxCommandEvent &event);
 	virtual void OnProjectProperties(wxCommandEvent &event);
 	virtual void OnSortItem(wxCommandEvent &event);
 	virtual void OnRemoveVirtualFolder(wxCommandEvent &event);

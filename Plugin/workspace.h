@@ -33,6 +33,7 @@
 #include <map>
 //#include "ctags_manager.h"
 #include "configuration_mapping.h"
+#include "optionsconfig.h"
 
 
 #ifdef WXMAKINGDLL_LE_SDK
@@ -216,6 +217,16 @@ public:
 	 * Save workspace & projects settings
 	 */
 	void Save();
+
+	/**
+	 * Return a node pointing to any workspace-wide editor preferences
+	 */
+	wxXmlNode* GetWorkspaceEditorOptions() const;
+
+	/**
+	 * Add or update local workspace options
+	 */
+	void SetWorkspaceEditorOptions(LocalOptionsConfigPtr opts);
 
 	/**
 	 * Return the configuration mapping for the workspace. 'Configuration Mapping' is

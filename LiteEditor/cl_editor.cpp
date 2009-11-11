@@ -256,7 +256,7 @@ void LEditor::SetProperties()
 	SetRectangularSelectionModifier(wxSCI_SCMOD_CTRL);
 	SetAdditionalSelectionTyping(true);
 
-	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+	OptionsConfigPtr options = GetOptions();
 	CallTipUseStyle(1);
 
 	m_hightlightMatchedBraces = options->GetHighlightMatchedBraces();
@@ -1000,7 +1000,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	}
 
 	// save the file using the user's defined encoding
-	wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
+	wxCSConv fontEncConv(GetOptions()->GetFileFontEncoding());
 
 	// trim lines / append LF if needed
 	TrimText();
@@ -2843,7 +2843,7 @@ int LEditor::GetEOLByContent()
 
 int LEditor::GetEOLByOS()
 {
-	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+	OptionsConfigPtr options = GetOptions();
 	if (options->GetEolMode() == wxT("Unix (LF)")) {
 		return wxSCI_EOL_LF;
 	} else if (options->GetEolMode() == wxT("Mac (CR)")) {
@@ -3348,4 +3348,35 @@ wxMenu* LEditor::DoCreateDebuggerWatchMenu(const wxString &word)
 	}
 
 	return menu;
+}
+
+OptionsConfigPtr LEditor::GetOptions()
+{
+	// Start by getting the global settings
+	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+	
+	// Now see if this editor is part of a project (and therefore also of a workspace)
+	// If so, get first any workspace-wide preferences, then any project ones
+	if ( !GetProject().IsEmpty() ) {
+		if (ManagerST::Get()->IsWorkspaceOpen()) {
+			wxXmlNode* wsnode = WorkspaceST::Get()->GetWorkspaceEditorOptions();
+			if (wsnode) {
+				// Any local workspace options will replace the global ones inside 'options'
+				LocalOptionsConfig wsOC(options, wsnode);
+			}
+			
+			wxString errMsg;
+			ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(GetProject(), errMsg);
+			if (proj) {
+				wxXmlNode* pnode = proj->GetProjectEditorOptions();
+				if (pnode) {
+					LocalOptionsConfig pOC(options, pnode);
+				}
+			}
+		}
+	}
+	
+	// This space intentionally left blank :p  Maybe, one day there'll be individual-editor options too
+	
+	return options;
 }

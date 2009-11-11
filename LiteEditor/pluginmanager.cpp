@@ -425,6 +425,12 @@ bool PluginManager::CreateVirtualDirectory(const wxString& parentPath, const wxS
 
 OptionsConfigPtr PluginManager::GetEditorSettings()
 {
+	// First try to use LEditor::GetOptions, as it takes account of local preferences
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	if (editor) {
+		return editor->GetOptions();
+	}
+	// Failing that...
 	return EditorConfigST::Get()->GetOptions();
 }
 

@@ -539,6 +539,11 @@ public:
 	//----------------------------------------------------------------------------
 	//----------------------------------------------------------------------------
 
+	/**
+	 * Get editor options. Takes any workspace/project overrides into account
+	 */
+	OptionsConfigPtr GetOptions();
+	
 	void SetIsVisible(const bool& isVisible) {
 		this->m_isVisible = isVisible;
 	}

@@ -94,6 +94,15 @@ public:
 	 * \param defaultValue default value to return if no property exist
 	 */
 	static long ReadLong(wxXmlNode *node, const wxString &propName, long defaultValue = -1);
+	
+	/**
+	 * Try to read long property from the given node
+	 * If it doesn't exist, don't provide a default value.
+	 * \param propName the property name
+	 * \param answer will contain the result if found
+	 * \return true if answer is valid, false if not found
+	 */
+	static bool ReadLongIfExists(wxXmlNode *node, const wxString &propName, long& answer);
 
 	/**
 	 * Read a boolean property from the given node
@@ -101,6 +110,24 @@ public:
 	 * \param defaultValue default value to return if no property exist
 	 */
 	static bool ReadBool(wxXmlNode *node, const wxString &propName, bool defaultValue = false);
+
+	/**
+	 * Try to read a boolean property from the given node.
+	 * If it doesn't exist, don't provide a default value.
+	 * \param propName the property name
+	 * \param value will contain the result if found
+	 * \return true if answer is valid, false if not found
+	 */
+	static bool ReadStringIfExists(wxXmlNode* node, const wxString& propName, wxString& value);
+
+	/**
+	 * Try to read a boolean property from the given node.
+	 * If it doesn't exist, don't provide a default value.
+	 * \param propName the property name
+	 * \param answer will contain the result if found
+	 * \return true if answer is valid, false if not found
+	 */
+	static bool ReadBoolIfExists(wxXmlNode* node, const wxString& propName, bool& answer);
 
 	/**
 	 * Remove all children of xml node

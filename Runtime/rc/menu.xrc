@@ -461,7 +461,7 @@
             <label>Settin&amp;gs</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="wxID_PREFERENCES">
-                <label>&amp;Editor...</label>
+                <label>Global &amp;Editor Preferences...</label>
             </object>
 			<object class="wxMenuItem" name="syntax_highlight">
                 <label>&amp;Syntax Highlight and &amp;Fonts...</label>
@@ -793,6 +793,11 @@
         <object class="wxMenuItem" name="save_as_template">
             <label>Save As Template...</label>
         </object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="local_project_prefs">
+            <label>Project Editor Preferences...</label>
+        </object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="project_properties">
             <label>Settings...</label>
         </object>
@@ -826,6 +831,10 @@
         </object>
 		<object class="wxMenuItem" name="reload_workspace">
             <label>Reload Workspace</label>
+        </object>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="local_workspace_prefs">
+            <label>Workspace Editor Preferences...</label>
         </object>
     </object>
 

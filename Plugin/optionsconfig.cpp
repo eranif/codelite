@@ -188,3 +188,171 @@ void OptionsConfig::SetFileFontEncoding(const wxString& strFileFontEncoding)
 		this->m_fileFontEncoding = wxFONTENCODING_UTF8;
 	}
 }
+
+//-------------------------------------------------------------------------
+
+LocalOptionsConfig::LocalOptionsConfig(OptionsConfigPtr& opts, wxXmlNode *node)
+{
+	// Used for reading local values, which are merged into the passed OptionsConfigPtr only if valid
+	// So no need to call the baseclass ctor or set our member vars
+	if ( node ) {
+		bool answer; wxString str; long l;
+		if (XmlUtils::ReadBoolIfExists(node, wxT("DisplayFoldMargin"), answer) ) {
+			opts->SetDisplayFoldMargin(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("DisplayBookmarkMargin"), answer) ) {
+			opts->SetDisplayBookmarkMargin(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("HighlightCaretLine"), answer) ) {
+			opts->SetHighlightCaretLine(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("ShowLineNumber"), answer) ) {
+			opts->SetDisplayLineNumbers(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("IndentationGuides"), answer) ) {
+			opts->SetShowIndentationGuidelines(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("IndentUsesTabs"), answer) ) {
+			opts->SetIndentUsesTabs(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("HideChangeMarkerMargin"), answer) ) {
+			opts->SetHideChangeMarkerMargin(answer);
+		}
+		if (XmlUtils::ReadLongIfExists(node, wxT("IndentWidth"), l) ) {
+			opts->SetIndentWidth(l);
+		}
+		if (XmlUtils::ReadLongIfExists(node, wxT("TabWidth"), l) ) {
+			opts->SetTabWidth(l);
+		}
+		if (XmlUtils::ReadLongIfExists(node, wxT("ShowWhitespaces"), l) ) {
+			opts->SetShowWhitspaces(l);
+		}
+		if (XmlUtils::ReadStringIfExists(node, wxT("EOLMode"), str) ) {
+			opts->SetEolMode(str);
+		}
+		if (XmlUtils::ReadStringIfExists(node, wxT("FileFontEncoding"), str) ) {
+			opts->SetFileFontEncoding(str);
+		}
+	}
+}
+
+LocalOptionsConfig::LocalOptionsConfig(LocalOptionsConfigPtr& opts, wxXmlNode *node)
+{
+	// Used for reading local values, which are stored in the passed empty LocalOptionsConfigPtr only if valid
+	// This is the same code as the previous ctor,except opts is a *Local*OptionsConfigPtr
+	// This duplication is ugly, but not as ugly as any alternatives I could think of :(
+	// (The main problem is that e.g. LocalOptionsConfig::SetDisplayFoldMargin has a different prototype to OptionsConfig::SetDisplayFoldMargin)
+	if ( node ) {
+		bool answer; wxString str; long l;
+		if (XmlUtils::ReadBoolIfExists(node, wxT("DisplayFoldMargin"), answer) ) {
+			opts->SetDisplayFoldMargin(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("DisplayBookmarkMargin"), answer) ) {
+			opts->SetDisplayBookmarkMargin(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("HighlightCaretLine"), answer) ) {
+			opts->SetHighlightCaretLine(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("ShowLineNumber"), answer) ) {
+			opts->SetDisplayLineNumbers(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("IndentationGuides"), answer) ) {
+			opts->SetShowIndentationGuidelines(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("IndentUsesTabs"), answer) ) {
+			opts->SetIndentUsesTabs(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("HideChangeMarkerMargin"), answer) ) {
+			opts->SetHideChangeMarkerMargin(answer);
+		}
+		if (XmlUtils::ReadLongIfExists(node, wxT("IndentWidth"), l) ) {
+			opts->SetIndentWidth(l);
+		}
+		if (XmlUtils::ReadLongIfExists(node, wxT("TabWidth"), l) ) {
+			opts->SetTabWidth(l);
+		}
+		if (XmlUtils::ReadLongIfExists(node, wxT("ShowWhitespaces"), l) ) {
+			opts->SetShowWhitespaces(l);
+		}
+		if (XmlUtils::ReadStringIfExists(node, wxT("EOLMode"), str) ) {
+			opts->SetEolMode(str);
+		}
+		if (XmlUtils::ReadStringIfExists(node, wxT("FileFontEncoding"), str) ) {
+			opts->SetFileFontEncoding(str);
+		}
+	}
+}
+
+LocalOptionsConfig::LocalOptionsConfig()
+{
+	// Used to create an empty instance to save-to-xml any local preferences
+	// Any invalid ones aren't saved: the global choice will be used automatically
+
+	// All the members are validVars, which auto-set to invalid, so no need to do anything here
+}
+
+wxXmlNode* LocalOptionsConfig::ToXml(wxXmlNode* parent /*=NULL*/) const
+{
+	wxXmlNode *n = new wxXmlNode(parent, wxXML_ELEMENT_NODE, wxT("Options"));
+
+	if (DisplayFoldMarginIsValid()) {
+		n->AddProperty(wxT("DisplayFoldMargin"),         BoolToString(m_localdisplayFoldMargin.GetDatum()));
+	}
+	if (DisplayBookmarkMarginIsValid()) {
+		n->AddProperty(wxT("DisplayBookmarkMargin"),     BoolToString(m_localdisplayBookmarkMargin.GetDatum()));
+	}
+	if (HighlightCaretLineIsValid()) {
+		n->AddProperty(wxT("HighlightCaretLine"),        BoolToString(m_localhighlightCaretLine.GetDatum()));
+	}
+	if (DisplayLineNumbersIsValid()) {
+		n->AddProperty(wxT("ShowLineNumber"),            BoolToString(m_localdisplayLineNumbers.GetDatum()));
+	}
+	if (ShowIndentationGuidelinesIsValid()) {
+		n->AddProperty(wxT("IndentationGuides"),         BoolToString(m_localshowIndentationGuidelines.GetDatum()));
+	}
+	if (IndentUsesTabsIsValid()) {
+		n->AddProperty(wxT("IndentUsesTabs"),            BoolToString(m_localindentUsesTabs.GetDatum()));
+	}
+	if (HideChangeMarkerMarginIsValid()) {
+		n->AddProperty(wxT("HideChangeMarkerMargin"),    BoolToString(m_localhideChangeMarkerMargin.GetDatum()));
+	}
+
+	if (EolModeIsValid()) {
+		n->AddProperty(wxT("EOLMode"),                	 m_localeolMode.GetDatum());
+	}
+
+	wxString tmp;
+	if (IndentWidthIsValid()) {
+		tmp << m_localindentWidth.GetDatum();
+		n->AddProperty(wxT("IndentWidth"), tmp);
+	}
+
+    tmp.clear();
+	if (TabWidthIsValid()) {
+		tmp << m_localtabWidth.GetDatum();
+		n->AddProperty(wxT("TabWidth"), tmp);
+	}
+
+	tmp.clear();
+	if (ShowWhitespacesIsValid()) {
+		tmp << m_localshowWhitspaces.GetDatum();
+		n->AddProperty(wxT("ShowWhitespaces"), tmp);
+	}
+
+	tmp.clear();
+	if (FileFontEncodingIsValid()) {
+		tmp = wxFontMapper::GetEncodingName(m_localfileFontEncoding.GetDatum());
+		n->AddProperty(wxT("FileFontEncoding"), tmp);
+	}
+
+	return n;
+}
+
+void LocalOptionsConfig::SetFileFontEncoding(const wxString& strFileFontEncoding)
+{
+	m_localfileFontEncoding.Set(wxFontMapper::Get()->CharsetToEncoding(strFileFontEncoding, false));
+
+	if (wxFONTENCODING_SYSTEM == m_localfileFontEncoding.GetDatum()) {
+		m_localfileFontEncoding.Set(wxFONTENCODING_UTF8);
+	}
+}

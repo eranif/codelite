@@ -325,6 +325,12 @@
       <File Name="tabgroupbasedlgs.h"/>
       <File Name="tabgroupdlg.cpp"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="LocalSettings">
+      <File Name="editorsettingslocal.cpp"/>
+      <File Name="editorsettingslocal.h"/>
+      <File Name="editorsettingslocalbase.cpp"/>
+      <File Name="editorsettingslocalbase.h"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
     <File Name="app.cpp"/>

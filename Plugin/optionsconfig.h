@@ -34,6 +34,7 @@
 
 class OptionsConfig : public ConfObject
 {
+protected:
 	bool           m_displayFoldMargin;
 	bool           m_underlineFoldLine;
 	wxString       m_foldStyle;
@@ -70,6 +71,7 @@ class OptionsConfig : public ConfObject
 	bool           m_hideOutputPaneNotIfDebug;
 	bool           m_showQuickFinder;
 public:
+	OptionsConfig(){}
 	OptionsConfig(wxXmlNode *node);
 	virtual ~OptionsConfig(void);
 
@@ -309,5 +311,211 @@ public:
 };
 
 typedef SmartPtr<OptionsConfig> OptionsConfigPtr;
+
+class LocalOptionsConfig;
+typedef SmartPtr<LocalOptionsConfig> LocalOptionsConfigPtr;
+
+template <typename T>
+class validVar
+{
+	bool valid;
+	T datum;
+public:
+	validVar() : valid(false){}
+	void Set(const T info) {
+		datum = info;
+		valid = true;
+	}	
+	void Reset() {
+		valid = false;
+	}
+	T GetDatum() const {
+		return datum;
+	}
+	bool isValid() const {
+		return valid;
+	}
+};
+
+class LocalOptionsConfig : public OptionsConfig
+{
+	validVar<bool>     m_localdisplayFoldMargin;
+	validVar<bool>     m_localdisplayBookmarkMargin;
+	validVar<bool>     m_localhighlightCaretLine;
+	validVar<bool>     m_localdisplayLineNumbers;
+	validVar<bool>     m_localshowIndentationGuidelines;
+	validVar<bool>     m_localindentUsesTabs;
+	validVar<int>      m_localindentWidth;
+	validVar<int>      m_localtabWidth;
+	validVar<wxFontEncoding> m_localfileFontEncoding;
+	validVar<int>      m_localshowWhitspaces;
+	validVar<wxString> m_localeolMode;
+	validVar<bool>     m_localhideChangeMarkerMargin;
+	
+public:
+	LocalOptionsConfig(); // Used for setting local values
+	LocalOptionsConfig(OptionsConfigPtr& opts, wxXmlNode *node); // Used for merging local values into the already-found global ones
+	LocalOptionsConfig(LocalOptionsConfigPtr& opts, wxXmlNode *node); // Used for storing local values in a previously-empty instance
+	virtual ~LocalOptionsConfig(void){}
+
+	bool HideChangeMarkerMarginIsValid() const {
+		return m_localhideChangeMarkerMargin.isValid();
+	}
+	bool DisplayFoldMarginIsValid() const {
+		return m_localdisplayFoldMargin.isValid();
+	}
+	bool DisplayBookmarkMarginIsValid() const {
+		return m_localdisplayBookmarkMargin.isValid();
+	}
+	bool HighlightCaretLineIsValid() const {
+		return m_localhighlightCaretLine.isValid();
+	}
+	bool DisplayLineNumbersIsValid() const {
+		return m_localdisplayLineNumbers.isValid();
+	}
+	bool ShowIndentationGuidelinesIsValid() const {
+		return m_localshowIndentationGuidelines.isValid();
+	}
+	bool IndentUsesTabsIsValid() const {
+		return m_localindentUsesTabs.isValid();
+	}
+	bool IndentWidthIsValid() const {
+		return m_localindentWidth.isValid();
+	}
+	bool TabWidthIsValid() const {
+		return m_localtabWidth.isValid();
+	}
+	bool FileFontEncodingIsValid() const {
+		return m_localfileFontEncoding.isValid();
+	}
+	bool ShowWhitespacesIsValid() const {
+		return m_localshowWhitspaces.isValid();
+	}
+	bool EolModeIsValid() const {
+		return m_localeolMode.isValid();
+	}
+
+	//-------------------------------------
+	// Setters/Getters
+	//-------------------------------------
+
+	bool GetHideChangeMarkerMargin() const {
+		if (m_localhideChangeMarkerMargin.isValid()) {
+			return m_localhideChangeMarkerMargin.GetDatum();
+		}
+		return false;// It's invalid anyway, so false will do as well as anything
+	}
+	bool GetDisplayFoldMargin() const {
+		if (m_localdisplayFoldMargin.isValid()) {
+			return m_localdisplayFoldMargin.GetDatum();
+		}
+		return false; 
+	}
+	bool GetDisplayBookmarkMargin() const {
+		if (m_localdisplayBookmarkMargin.isValid()) {
+			return m_localdisplayBookmarkMargin.GetDatum();
+		}
+		return false; 
+	}
+	bool GetHighlightCaretLine() const {
+		if (m_localhighlightCaretLine.isValid()) {
+			return m_localhighlightCaretLine.GetDatum();
+		}
+		return false; 
+	}
+	bool GetDisplayLineNumbers() const {
+		if (m_localdisplayLineNumbers.isValid()) {
+			return m_localdisplayLineNumbers.GetDatum();
+		}
+		return false; 
+	}
+	bool GetShowIndentationGuidelines() const {
+		if (m_localshowIndentationGuidelines.isValid()) {
+			return m_localshowIndentationGuidelines.GetDatum();
+		}
+		return false; 
+	}
+
+	void SetHideChangeMarkerMargin(bool hideChangeMarkerMargin) {
+		m_localhideChangeMarkerMargin.Set(hideChangeMarkerMargin);
+	}
+	void SetDisplayFoldMargin(bool b) {
+		m_localdisplayFoldMargin.Set(b);
+	}
+	void SetDisplayBookmarkMargin(bool b) {
+		m_localdisplayBookmarkMargin.Set(b);
+	}
+	void SetHighlightCaretLine(bool b) {
+		m_localhighlightCaretLine.Set(b);
+	}
+	void SetDisplayLineNumbers(bool b) {
+		m_localdisplayLineNumbers.Set(b);
+	}
+	void SetShowIndentationGuidelines(bool b) {
+		m_localshowIndentationGuidelines.Set(b);
+	}
+	void SetIndentUsesTabs(const bool& indentUsesTabs) {
+		m_localindentUsesTabs.Set(indentUsesTabs);
+	}
+	bool GetIndentUsesTabs() const {
+		if (m_localindentUsesTabs.isValid()) {
+			return m_localindentUsesTabs.GetDatum();
+		}
+		return false; 
+	}
+	void SetIndentWidth(const int& indentWidth) {
+		m_localindentWidth.Set(indentWidth);
+	}
+	int GetIndentWidth() const {
+		if (m_localindentWidth.isValid()) {
+			return m_localindentWidth.GetDatum();
+		}
+		return wxNOT_FOUND; 
+	}
+	void SetTabWidth(const int& tabWidth) {
+		m_localtabWidth.Set(tabWidth);
+	}
+	int GetTabWidth() const {
+		if (m_localtabWidth.isValid()) {
+			return m_localtabWidth.GetDatum();
+		}
+		return wxNOT_FOUND; 
+	}
+
+	wxFontEncoding GetFileFontEncoding() const {
+		if (m_localfileFontEncoding.isValid()) {
+			return m_localfileFontEncoding.GetDatum();
+		}
+		return (wxFontEncoding)(wxFONTENCODING_MAX + 1);
+	}
+	void SetFileFontEncoding(const wxString& strFileFontEncoding);
+
+	void SetShowWhitespaces(const int& showWhitespaces) {
+		m_localshowWhitspaces.Set(showWhitespaces);
+	}
+	int GetShowWhitespaces() const {
+		if (m_localshowWhitspaces.isValid()) {
+			return m_localshowWhitspaces.GetDatum();
+		}
+		return wxNOT_FOUND; 
+	}
+
+	void SetEolMode(const wxString& eolMode) {
+		m_localeolMode.Set(eolMode);
+	}
+	wxString GetEolMode() const {
+		if (m_localeolMode.isValid()) {
+			return m_localeolMode.GetDatum();
+		}
+		return wxT("");
+	}
+	
+	/**
+	 * Return an XML representation of this object
+	 * \return XML node
+	 */
+	wxXmlNode *ToXml(wxXmlNode* parent = NULL) const;
+};
+
 
 #endif // OPTIONS_CONFIG_H

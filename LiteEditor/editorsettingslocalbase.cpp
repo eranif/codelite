@@ -294,6 +294,7 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	m_whitespaceStyleEnable->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::whitespaceStyleUpdateUI ), NULL, this );
 	m_choiceEOLEnable->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::choiceEOLUpdateUI ), NULL, this );
 	m_fileEncodingEnable->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::fileEncodingUpdateUI ), NULL, this );
+	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LocalEditorSettingsbase::OnOK ), NULL, this );
 }
 
 LocalEditorSettingsbase::~LocalEditorSettingsbase()
@@ -311,4 +312,5 @@ LocalEditorSettingsbase::~LocalEditorSettingsbase()
 	m_whitespaceStyleEnable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::whitespaceStyleUpdateUI ), NULL, this );
 	m_choiceEOLEnable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::choiceEOLUpdateUI ), NULL, this );
 	m_fileEncodingEnable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::fileEncodingUpdateUI ), NULL, this );
+	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LocalEditorSettingsbase::OnOK ), NULL, this );
 }

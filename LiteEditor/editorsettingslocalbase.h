@@ -81,6 +81,7 @@ class LocalEditorSettingsbase : public wxDialog
 		virtual void whitespaceStyleUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void choiceEOLUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void fileEncodingUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnOK( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:

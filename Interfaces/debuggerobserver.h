@@ -79,7 +79,8 @@ enum DebuggerUpdateReason
 enum UserReason {
 	DBG_USERR_QUICKWACTH = 0,
 	DBG_USERR_WATCHTABLE,
-	DBG_USERR_LOCALS
+	DBG_USERR_LOCALS,
+	DBG_USERR_LOCALS_INLINE
 };
 
 struct DebuggerEvent {

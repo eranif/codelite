@@ -63,8 +63,8 @@ bool testChildrenParser();
 
 int main(int argc, char **argv)
 {
-//	testTokens();
-	testChildrenParser();
+	testTokens();
+//	testChildrenParser();
 	return 0;
 }
 

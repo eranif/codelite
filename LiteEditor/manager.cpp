@@ -2759,6 +2759,10 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 
 		} else if ( event.m_userReason == DBG_USERR_LOCALS ) {
 			DoShowQuickWatchDialog( event );
+
+		} else if ( event.m_userReason == DBG_USERR_LOCALS_INLINE ) {
+			Frame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateInline( event );
+
 		}
 	}
 	break;

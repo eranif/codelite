@@ -106,7 +106,7 @@ varobj                                                     {RETURN_VAL(GDB_VAROB
 "L"?["]                                                    {BEGIN (string_state); gs_string = "\"";}
 "L"?[\\]["]                                                {BEGIN (esc_string_state); gs_string = "\"";}
 .                                                          {RETURN_VAL((int)*yytext);}
-<string_state>"\\"{octal_escape} {
+<string_state>[\\]{1,2}{octal_escape} {
 	if(gs_ascii) {
 		unsigned int number(0);
 		std::stringstream s;

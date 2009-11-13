@@ -51,21 +51,21 @@ void LocalsTable::OnItemSelected(wxListEvent& event)
 void LocalsTable::UpdateLocals(const LocalVariables& locals)
 {
 	LocalVariables vars = locals;
-	// locate all items that were modified
-	for(size_t i=0; i<vars.size(); i++){
-		LocalVariable &var = vars.at(i);
-		wxString      oldValue;
-
-		// try to locate this variable in the table
-		long idx = DoGetIdxByVar(var, sKindLocalVariable);
-		if ( idx != wxNOT_FOUND ) {
-			oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
-			var.updated = (oldValue != var.value);
-		}
-	}
+//	// locate all items that were modified
+//	for(size_t i=0; i<vars.size(); i++){
+//		LocalVariable &var = vars.at(i);
+//		wxString      oldValue;
+//
+//		// try to locate this variable in the table
+//		long idx = DoGetIdxByVar(var, sKindLocalVariable);
+//		if ( idx != wxNOT_FOUND ) {
+//			oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
+//			var.updated = (oldValue != var.value);
+//		}
+//	}
 
 	wxWindowUpdateLocker locker ( this );
-	m_listTable->DeleteAllItems();
+	Clear();
 
 	for(size_t i=0; i<vars.size(); i++) {
 		LocalVariable &var = vars.at(i);
@@ -73,31 +73,33 @@ void LocalsTable::UpdateLocals(const LocalVariables& locals)
 		SetColumnText(m_listTable, idx, LOCAL_NAME_COL,  var.name  );
 		SetColumnText(m_listTable, idx, LOCAL_TYPE_COL,  var.type  );
 		SetColumnText(m_listTable, idx, LOCAL_KIND_COL,  sKindLocalVariable );
-		SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
-		if ( var.updated ) {
-			m_listTable->SetItemTextColour(idx, wxT("RED"));
+		// If this variable has an "inline" value, dont display the row data
+		if ( !DoShowInline(var, idx) ) {
+			SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
 		}
+//		if ( var.updated ) {
+//			m_listTable->SetItemTextColour(idx, wxT("RED"));
+//		}
 	}
 }
 
 
 void LocalsTable::UpdateFuncArgs(const LocalVariables& args)
 {
-	// Delete all 'function arguments' first
 	LocalVariables vars = args;
 
-	// locate all items that were modified
-	for(size_t i=0; i<vars.size(); i++){
-		LocalVariable &var = vars.at(i);
-		wxString      oldValue;
-
-		// try to locate this variable in the table
-		long idx = DoGetIdxByVar(var, sKindFunctionArgument);
-		if ( idx != wxNOT_FOUND ) {
-			oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
-			var.updated = (oldValue != var.value);
-		}
-	}
+//	// locate all items that were modified
+//	for(size_t i=0; i<vars.size(); i++){
+//		LocalVariable &var = vars.at(i);
+//		wxString      oldValue;
+//
+//		// try to locate this variable in the table
+//		long idx = DoGetIdxByVar(var, sKindFunctionArgument);
+//		if ( idx != wxNOT_FOUND ) {
+//			oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
+//			var.updated = (oldValue != var.value);
+//		}
+//	}
 
 	wxWindowUpdateLocker locker ( this );
 
@@ -114,10 +116,14 @@ void LocalsTable::UpdateFuncArgs(const LocalVariables& args)
 		SetColumnText(m_listTable, idx, LOCAL_NAME_COL,  var.name  );
 		SetColumnText(m_listTable, idx, LOCAL_TYPE_COL,  var.type  );
 		SetColumnText(m_listTable, idx, LOCAL_KIND_COL,  sKindFunctionArgument );
-		SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
-		if ( var.updated ) {
-			m_listTable->SetItemTextColour(idx, wxT("RED"));
+
+		if ( !DoShowInline(var, idx) ) {
+			SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
 		}
+
+//		if ( var.updated ) {
+//			m_listTable->SetItemTextColour(idx, wxT("RED"));
+//		}
 	}
 }
 
@@ -151,6 +157,7 @@ long LocalsTable::DoGetIdxByName(const wxString& name)
 void LocalsTable::Clear()
 {
 	m_listTable->DeleteAllItems();
+	m_expression2Idx.clear();
 }
 
 void LocalsTable::Initialize()
@@ -182,4 +189,39 @@ long LocalsTable::DoGetIdxByVar(const LocalVariable& var, const wxString& kind)
 		}
 	}
 	return wxNOT_FOUND;
+}
+
+bool LocalsTable::DoShowInline(const LocalVariable& var, long item)
+{
+	wxString realType = GetRealType( var.type );
+	for(size_t i=0; i<m_dbgCmds.size(); i++) {
+		DebuggerCmdData dcd = m_dbgCmds.at(i);
+		if(dcd.GetName() == realType) {
+			// Create variable object for this variable
+			// and display the content
+			wxString expression = dcd.GetCommand();
+			expression.Replace(wxT("$(Variable)"), var.name);
+			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+			if( dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() ) {
+				dbgr->CreateVariableObject(expression, DBG_USERR_LOCALS_INLINE);
+				m_expression2Idx[expression] = item;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void LocalsTable::UpdateInline(const DebuggerEvent& event)
+{
+	wxString key = event.m_expression;
+	std::map<wxString, long>::iterator iter = m_expression2Idx.find(key);
+	if(iter != m_expression2Idx.end() && event.m_evaluated.IsEmpty() == false){
+		long idx = iter->second;
+		SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, event.m_evaluated);
+	}
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
+		dbgr->DeleteVariableObject(event.m_variableObject.gdbId);
+	}
 }

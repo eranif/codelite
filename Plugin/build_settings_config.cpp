@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : build_settings_config.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : build_settings_config.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "build_settings_config.h"
@@ -37,11 +37,14 @@ BuildSettingsConfig::~BuildSettingsConfig()
 	delete m_doc;
 }
 
-bool BuildSettingsConfig::Load()
+bool BuildSettingsConfig::Load(const wxString &version)
 {
 	wxString initialSettings = ConfFileLocator::Instance()->Locate(wxT("config/build_settings.xml"));
 	bool loaded = m_doc->Load(initialSettings);
-	
+	wxString xmlVersion = m_doc->GetRoot()->GetPropVal(wxT("Version"), wxEmptyString);
+	if ( xmlVersion != version ) {
+		loaded = m_doc->Load(ConfFileLocator::Instance()->GetDefaultCopy(wxT("config/build_settings.xml")));
+	}
 	m_fileName = ConfFileLocator::Instance()->GetLocalCopy(wxT("config/build_settings.xml"));
 	return loaded;
 }
@@ -84,7 +87,7 @@ void BuildSettingsConfig::SetCompiler(CompilerPtr cmp)
 		m_doc->GetRoot()->AddChild(node);
 		node->AddChild(cmp->ToXml());
 	}
-	
+
 	m_doc->Save(m_fileName.GetFullPath());
 }
 

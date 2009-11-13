@@ -1,2 +1,1 @@
-^done,stack-args={frame={level="0",args={varobj={exp="argc",value="1",name="var8",numchild="0",type="int",typecode="INT",dynamic_type="",in_scope="true",block_start_addr="0x00001e76",block_end_addr="0x00001f42"},varobj={exp="argv",value="0xbffffaa8",name="var9",numchild="1",type="char **",typecode="PTR",dynamic_type="",in_scope="true",block_start_addr="0x00001e76",block_end_addr="0x00001f42"}}}}
-
+(wxChar *) 0xa1758c "C\000:\\000\\P\000r\000o\000g\000r\000a\000m\000 \000F\000i\000l\000e\000s\000\C\000o\000d\000e\000L\000i\000t\000e\000\ \000\r\000\n\000 \000H\000i\000 \000T\000h\000e\000r\000e\000!\000"

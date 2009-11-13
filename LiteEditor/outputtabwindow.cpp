@@ -103,7 +103,7 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 
 	sci->SetHotspotActiveUnderline (true);
 	sci->SetHotspotActiveForeground(true, wxT("BLUE"));
-
+	sci->SetHotspotSingleLine(true);
 	sci->SetMarginType(1, wxSCI_MARGIN_SYMBOL);
 	sci->SetMarginMask(4, wxSCI_MASK_FOLDERS);
 
@@ -111,13 +111,10 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 	sci->SetMarginWidth(1, 0);
 	sci->SetMarginWidth(2, 0);
 
-	sci->SetFoldFlags(16); // mark folded lines with line below
-
 	if (folding) {
 		sci->SetMarginWidth(4, 16);
 		sci->SetProperty(wxT("fold"), wxT("1"));
 		sci->SetMarginSensitive(4, true);
-//		sci->StyleSetForeground(wxSCI_STYLE_DEFAULT, wxT("GREY"));
 	}
 
 	// current line marker

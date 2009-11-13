@@ -515,3 +515,19 @@ time_t GetFileModificationTime(const wxString &filename)
 	}
 	return buff.st_mtime;
 }
+
+void WrapInShell(wxString& cmd)
+{
+	wxString command;
+#ifdef __WXMSW__
+    wxChar *shell = wxGetenv(wxT("COMSPEC"));
+    if ( !shell )
+       shell = (wxChar*) wxT("\\COMMAND.COM");
+
+	command << shell << wxT(" /c \"");
+	command << cmd << wxT("\"");
+	cmd = command;
+#else
+	cmd.Prepend(wxT("/bin/sh -c "));
+#endif
+}

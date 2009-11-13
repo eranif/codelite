@@ -138,6 +138,7 @@ void CompileRequest::Process(IManager *manager)
 		return;
 	}
 
+	WrapInShell(cmd);
 	m_proc = new clProcess(wxNewId(), cmd);
 	if (m_proc) {
 		DirSaver ds;

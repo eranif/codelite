@@ -203,5 +203,10 @@ wxString NormalizePath(const wxString &path);
 time_t GetFileModificationTime(const wxString &filename);
 time_t GetFileModificationTime(const wxFileName &filename);
 
+/**
+ * @brief wrap a given command in the shell command (e.g. cmd /c "command")
+ */
+void WrapInShell(wxString &cmd);
+
 #endif //GLOBALS_H
 

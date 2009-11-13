@@ -240,7 +240,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 				PRINT_TIMESTAMP(wxString::Format(wxT("Generating makefile for project %s...\n"), dependProj->GetName().c_str()));
 				// generate the dependency project makefile
 				GenerateMakefile(dependProj, projectSelConf, confToBuild.IsEmpty() ? force : true);
-				text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\"\n");
+				text << GetProjectMakeCommand(wspfile, fn, dependProj, confToBuild);
 				PRINT_TIMESTAMP(wxString::Format(wxT("Generating makefile for project %s...done\n"), dependProj->GetName().c_str()));
 			}
 		}
@@ -284,7 +284,9 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 		text << wxT("\t") << cmd << wxT("\n");
 
 	} else {
-		text << wxT("\t") << GetCdCmd(wspfile, projectPath) << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\" \n");
+
+		text << GetProjectMakeCommand(wspfile, projectPath, proj, projectSelConf);
+
 	}
 
 	//create the clean target
@@ -482,29 +484,13 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 	//even when a dependencie was modified
 	wxString targetName(bldConf->GetIntermediateDirectory());
 
-	//dont always add the 'PrePreBuild' dependenice, or else it will
-	//lead to constant archiving of static libraries, even when there is
-	//"Nothing to be done for 'all'" :D
-	wxString prePreBuildTarget(wxT("PrePreBuild"));
-	if (bldConf->GetPreBuildCustom().IsEmpty()) {
-		prePreBuildTarget = wxEmptyString;
-	}
-
 	if (settings->GetProjectType(bldConf->GetName()) == Project::EXECUTABLE || settings->GetProjectType(bldConf->GetName()) == Project::DYNAMIC_LIBRARY) {
 		text << wxT("all: $(OutputFile)\n\n");
-		if ( HasPrebuildCommands(bldConf) ) {
-			text << wxT("$(OutputFile): makeDirStep ") << prePreBuildTarget << wxT(" PreBuild $(Objects)\n");
-		} else {
-			text << wxT("$(OutputFile): makeDirStep ") << prePreBuildTarget << wxT(" $(Objects)\n");
-		}
+		text << wxT("$(OutputFile): makeDirStep $(Objects)\n");
 		targetName = wxT("makeDirStep");
 	} else {
 		text << wxT("all: $(IntermediateDirectory) $(OutputFile)\n\n");
-		if (HasPrebuildCommands(bldConf)) {
-			text << wxT("$(OutputFile): ") << prePreBuildTarget << wxT(" PreBuild $(Objects)\n");
-		} else {
-			text << wxT("$(OutputFile): ") << prePreBuildTarget << wxT(" $(Objects)\n");
-		}
+		text << wxT("$(OutputFile): $(Objects)\n");
 	}
 
 	if (bldConf->IsLinkerRequired()) {
@@ -815,7 +801,9 @@ void BuilderGnuMake::CreatePreBuildEvents(BuildConfigPtr bldConf, wxString &text
 	name = NormalizeConfigName(name);
 
 	//add PrePreBuild
-	if (!bldConf->GetPreBuildCustom().IsEmpty()) {
+	wxString preprebuild = bldConf->GetPreBuildCustom();
+	preprebuild.Trim().Trim(false);
+	if (preprebuild.IsEmpty() == false) {
 		text << wxT("PrePreBuild: ");
 		text << bldConf->GetPreBuildCustom() << wxT("\n");
 	}
@@ -888,30 +876,29 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 
 	wxString buildOpts = bldConf->GetCompileOptions();
 	buildOpts.Replace(wxT(";"), wxT(" "));
-	text << wxT("CmpOptions :=") << buildOpts << wxT(" $(Preprocessors)") << wxT("\n");
+	text << wxT("CmpOptions             :=") << buildOpts << wxT(" $(Preprocessors)") << wxT("\n");
 
 	//only if resource compiler required, evaluate the resource variables
 	if (bldConf->IsResCompilerRequired()) {
 		wxString rcBuildOpts = bldConf->GetResCompileOptions();
 		rcBuildOpts.Replace(wxT(";"), wxT(" "));
-		text << wxT("RcCmpOptions :=") << rcBuildOpts << wxT("\n");
-		text << wxT("RcCompilerName :=") << cmp->GetTool(wxT("ResourceCompiler")) << wxT("\n");
+		text << wxT("RcCmpOptions           :=") << rcBuildOpts << wxT("\n");
+		text << wxT("RcCompilerName         :=") << cmp->GetTool(wxT("ResourceCompiler")) << wxT("\n");
 	}
 
 	wxString linkOpt = bldConf->GetLinkOptions();
 	linkOpt.Replace(wxT(";"), wxT(" "));
 
 	//link options are kept with semi-colons, strip them
-	text << wxT("LinkOptions := ") << linkOpt << wxT("\n");
+	text << wxT("LinkOptions            := ") << linkOpt << wxT("\n");
 
 	// add the global include path followed by the project include path
-	text << wxT("IncludePath := ") << ParseIncludePath(cmp->GetGlobalIncludePath(), proj->GetName(), bldConf->GetName()) << wxT(" ") << ParseIncludePath(bldConf->GetIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
-
-	text << wxT("RcIncludePath :=") << ParseIncludePath(bldConf->GetResCmpIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
-	text << wxT("Libs :=") << ParseLibs(bldConf->GetLibraries()) << wxT("\n");
+	text << wxT("IncludePath            := ") << ParseIncludePath(cmp->GetGlobalIncludePath(), proj->GetName(), bldConf->GetName()) << wxT(" ") << ParseIncludePath(bldConf->GetIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
+	text << wxT("RcIncludePath          :=") << ParseIncludePath(bldConf->GetResCmpIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
+	text << wxT("Libs                   :=") << ParseLibs(bldConf->GetLibraries()) << wxT("\n");
 
 	// add the global library path followed by the project library path
-	text << wxT("LibPath :=") << ParseLibPath(cmp->GetGlobalLibPath(), proj->GetName(), bldConf->GetName()) << wxT(" ") << ParseLibPath(bldConf->GetLibPath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
+	text << wxT("LibPath                :=") << ParseLibPath(cmp->GetGlobalLibPath(), proj->GetName(), bldConf->GetName()) << wxT(" ") << ParseLibPath(bldConf->GetLibPath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
 	text << wxT("\n\n");
 }
 
@@ -1041,23 +1028,14 @@ wxString BuilderGnuMake::GetCleanCommand(const wxString &project, const wxString
 wxString BuilderGnuMake::GetPOBuildCommand(const wxString &project, const wxString &confToBuild)
 {
 	wxString errMsg, cmd;
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
-	if (!bldConf) {
+	ProjectPtr     proj    = WorkspaceST::Get()->FindProjectByName(project, errMsg);
+	if (!proj) {
 		return wxEmptyString;
 	}
 
 	//generate the makefile
 	Export(project, confToBuild, true, false, errMsg);
-
-	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
-	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
-	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
-
-	// fix: replace all Windows like slashes to POSIX
-	buildTool.Replace(wxT("\\"), wxT("/"));
-
-	//cd to the project directory
-	cmd << buildTool << wxT(" \"") << project << wxT(".mk\"") ;
+	cmd = GetProjectMakeCommand(proj, confToBuild);
 	return cmd;
 }
 
@@ -1210,4 +1188,63 @@ void BuilderGnuMake::CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString
 			text << wxT("\t@echo Done\n");
 		}
 	}
+}
+
+wxString BuilderGnuMake::GetProjectMakeCommand(const wxFileName& wspfile, const wxFileName& projectPath, ProjectPtr proj, const wxString &confToBuild)
+{
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
+
+	//iterate over the dependencies projects and generate makefile
+	wxString makeCommand;
+	wxString basicMakeCommand;
+
+	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(false);
+	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
+	basicMakeCommand << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\"");
+
+	makeCommand << wxT("\t") << GetCdCmd(wspfile, projectPath);
+	if( bldConf ) {
+		wxString preprebuild = bldConf->GetPreBuildCustom();
+		preprebuild.Trim().Trim(false);
+		if (preprebuild.IsEmpty() == false) {
+			makeCommand << basicMakeCommand << wxT(" PrePreBuild && ");
+		}
+
+		if (HasPrebuildCommands(bldConf) ) {
+			makeCommand << basicMakeCommand << wxT(" PreBuild && ");
+		}
+
+	}
+
+	makeCommand << basicMakeCommand << wxT("\n");
+	return makeCommand;
+}
+
+wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& confToBuild)
+{
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
+
+	//iterate over the dependencies projects and generate makefile
+	wxString makeCommand;
+	wxString basicMakeCommand;
+
+	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(false);
+	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
+	basicMakeCommand << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\"");
+
+	if( bldConf ) {
+		wxString preprebuild = bldConf->GetPreBuildCustom();
+		preprebuild.Trim().Trim(false);
+		if (preprebuild.IsEmpty() == false) {
+			makeCommand << basicMakeCommand << wxT(" PrePreBuild && ");
+		}
+
+		if (HasPrebuildCommands(bldConf) ) {
+			makeCommand << basicMakeCommand << wxT(" PreBuild && ");
+		}
+
+	}
+
+	makeCommand << basicMakeCommand << wxT("\n");
+	return makeCommand;
 }

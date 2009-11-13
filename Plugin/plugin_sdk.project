@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="plugin_sdk">
-  <VirtualDirectory Name="Source Files">
+  <VirtualDirectory Name="src">
     <File Name="async_executable_cmd.cpp"/>
     <File Name="build_config.cpp"/>
     <File Name="buildmanager.cpp"/>
@@ -24,7 +24,7 @@
     <File Name="custombuildrequest.h"/>
     <File Name="build_config_common.cpp"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="Header Files">
+  <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>
     <File Name="buildmanager.h"/>
     <File Name="clean_request.h"/>

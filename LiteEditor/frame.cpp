@@ -1290,7 +1290,7 @@ void Frame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
 {
 	wxArrayString previousgroups;
 	EditorConfigST::Get()->GetRecentItems( previousgroups, wxT("RecentTabgroups") );
-	
+
 	// Check the previous items still exist
 	for (int n = (int)previousgroups.GetCount()-1; n >= 0; --n) {
 		if (!wxFileName::FileExists(previousgroups.Item(n)) ) {
@@ -1298,7 +1298,7 @@ void Frame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
 		}
 	}
 	EditorConfigST::Get()->SetRecentItems( previousgroups, wxT("RecentTabgroups") ); // In case any were deleted
-	
+
 	wxString path = ManagerST::Get()->IsWorkspaceOpen() ? WorkspaceST::Get()->GetWorkspaceFileName().GetPath() : wxGetHomeDir();
 	LoadTabGroupDlg dlg(this, path, previousgroups);
 
@@ -1306,14 +1306,14 @@ void Frame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
 	std::vector<LEditor*> editors;
 	GetMainBook()->GetAllEditors(editors);
 	dlg.EnableReplaceCheck(editors.size());
-	
+
 	if (dlg.ShowModal() != wxID_OK) {
 		return;
 	}
 
 	wxString filepath = dlg.GetListBox()->GetStringSelection();
 	wxString sessionFilepath = filepath.BeforeLast(wxT('.'));
-	
+
 	TabGroupEntry session;
 	if (SessionManager::Get().FindSession(sessionFilepath, session, wxString(wxT(".tabgroup")), tabgroupTag) ) {
 		// We've 'loaded' the requested tabs. If required, delete any current ones
@@ -1321,7 +1321,7 @@ void Frame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
 			GetMainBook()->CloseAll(true);
 		}
 		GetMainBook()->RestoreSession(session);
-		
+
 		// Remove any previous instance of this group from the history, then prepend it and save
 		int index = previousgroups.Index(filepath);
 		if (index != wxNOT_FOUND) {
@@ -1329,7 +1329,7 @@ void Frame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
 		}
 		previousgroups.Insert(filepath, 0);
 		EditorConfigST::Get()->SetRecentItems( previousgroups, wxT("RecentTabgroups") );
-	}	
+	}
 }
 
 void Frame::OnFileReload(wxCommandEvent &event)
@@ -1446,13 +1446,13 @@ void Frame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 		filepaths.Add(editors[i]->GetFileName().GetFullPath());
 	}
 	dlg.SetListTabs(filepaths);
-	
+
 	while (true) {
 
 		if (dlg.ShowModal() != wxID_OK) {
 			return;
 		}
-		
+
 		wxString sessionName = dlg.GetTabgroupName();
 		if (sessionName.IsEmpty()) {
 			if ( wxMessageBox(_("Please enter a name for the tab group"), wxT("CodeLite"), wxICON_ERROR|wxOK|wxCANCEL, this) != wxOK ) {
@@ -1487,7 +1487,7 @@ void Frame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 			session.SetTabgroupName(path + sessionName);
 			GetMainBook()->SaveSession(session, intArr);
 			SessionManager::Get().Save(session.GetTabgroupName(), session, wxString(wxT(".tabgroup")), tabgroupTag);
-			
+
 			// Remove any previous instance of this group from the history, then prepend it and save
 			int index = previousgroups.Index(filepath);
 			if (index != wxNOT_FOUND) {
@@ -1495,12 +1495,12 @@ void Frame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 			}
 			previousgroups.Insert(filepath, 0);
 			EditorConfigST::Get()->SetRecentItems( previousgroups, wxT("RecentTabgroups") );
-			
+
 			SetStatusMessage(wxT("Tab group saved"), 0);
 		}
 
 		return;
-	} 
+	}
 }
 
 void Frame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
@@ -3054,6 +3054,10 @@ void Frame::OnFunctionCalltipUI(wxUpdateUIEvent& event)
 void Frame::OnReloadWorkspace(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
+
+	// Save the current session before re-loading
+	SaveLayoutAndSession();
+
 	ManagerST::Get()->ReloadWorkspace();
 }
 
@@ -3449,8 +3453,8 @@ void Frame::ReloadExternallyModifiedProjectFiles()
 		return;
 
 	if (wxMessageBox(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO, this) == wxYES) {
-		ManagerST::Get()->ReloadWorkspace();
-		return;
+		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
+		AddPendingEvent( evt );
 	}
 }
 

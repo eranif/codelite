@@ -386,7 +386,8 @@ wxApp* PluginManager::GetTheApp()
 
 void PluginManager::ReloadWorkspace()
 {
-	ManagerST::Get()->ReloadWorkspace();
+	wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
+	Frame::Get()->AddPendingEvent( evt );
 }
 
 IPlugin* PluginManager::GetPlugin(const wxString& pluginName)

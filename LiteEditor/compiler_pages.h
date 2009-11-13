@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May 12 2009)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -16,12 +16,12 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/textctrl.h>
+#include <wx/listctrl.h>
+#include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/statline.h>
 #include <wx/panel.h>
-#include <wx/listctrl.h>
-#include <wx/button.h>
+#include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/valtext.h>
 #include <wx/dialog.h>
@@ -37,21 +37,27 @@ class CompilerPatternsBase : public wxPanel
 	private:
 	
 	protected:
-		wxStaticText* m_staticText161;
-		wxStaticText* m_staticText5;
-		wxTextCtrl* m_textErrorPattern;
-		wxStaticText* m_staticText6;
-		wxTextCtrl* m_textErrorFileIndex;
-		wxStaticText* m_staticText7;
-		wxTextCtrl* m_textErrorLineNumber;
-		wxStaticLine* m_staticline5;
-		wxStaticText* m_staticText17;
-		wxStaticText* m_staticText51;
-		wxTextCtrl* m_textWarnPattern;
-		wxStaticText* m_staticText61;
-		wxTextCtrl* m_textWarnFileIndex;
-		wxStaticText* m_staticText71;
-		wxTextCtrl* m_textWarnLineNumber;
+		wxListCtrl* m_listErrPatterns;
+		wxButton* m_btnAddErrPattern;
+		wxButton* m_btnDelErrPattern;
+		wxButton* m_btnUpdateErrPattern;
+		wxListCtrl* m_listWarnPatterns;
+		wxButton* m_btnAddWarnPattern;
+		wxButton* m_btnDelWarnPattern;
+		wxButton* m_btnUpdateWarnPattern;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnErrItemActivated( wxListEvent& event ) { event.Skip(); }
+		virtual void OnBtnAddErrPattern( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnBtnDelErrPattern( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnErrorPatternSelectedUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnBtnUpdateErrPattern( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnWarnItemActivated( wxListEvent& event ) { event.Skip(); }
+		virtual void OnBtnAddWarnPattern( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnBtnDelWarnPattern( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnWarningPatternSelectedUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnBtnUpdateWarnPattern( wxCommandEvent& event ) { event.Skip(); }
+		
 	
 	public:
 		
@@ -248,6 +254,38 @@ class CompilerOptionDlgBase : public wxDialog
 		
 		CompilerOptionDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 256,140 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~CompilerOptionDlgBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class CompilerPatternDlgBase
+///////////////////////////////////////////////////////////////////////////////
+class CompilerPatternDlgBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText5;
+		wxTextCtrl* m_textPattern;
+		wxStaticText* m_staticText6;
+		wxTextCtrl* m_textFileIndex;
+		wxStaticText* m_staticText7;
+		wxTextCtrl* m_textLineNumber;
+		wxStaticLine* m_staticline5;
+		wxButton* m_buttonOK;
+		wxButton* m_buttonCancel;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnSubmit( wxCommandEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		wxString m_pattern; 
+		wxString m_fileIdx; 
+		wxString m_lineIdx; 
+		
+		CompilerPatternDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 348,160 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~CompilerPatternDlgBase();
 	
 };
 

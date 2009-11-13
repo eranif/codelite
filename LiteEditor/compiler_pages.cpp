@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May 12 2009)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -17,92 +17,120 @@ CompilerPatternsBase::CompilerPatternsBase( wxWindow* parent, wxWindowID id, con
 	wxBoxSizer* bSizerError;
 	bSizerError = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText161 = new wxStaticText( this, wxID_ANY, _("Compiler Errors Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText* m_staticText161;
+	m_staticText161 = new wxStaticText( this, wxID_ANY, _("Compiler Errors Patterns:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText161->Wrap( -1 );
 	m_staticText161->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
 	
 	bSizerError->Add( m_staticText161, 0, wxALL, 5 );
 	
-	wxFlexGridSizer* fgSizer41;
-	fgSizer41 = new wxFlexGridSizer( 2, 2, 0, 0 );
-	fgSizer41->AddGrowableCol( 1 );
-	fgSizer41->SetFlexibleDirection( wxBOTH );
-	fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	wxBoxSizer* bSizer25;
+	bSizer25 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText5 = new wxStaticText( this, wxID_ANY, _("Regex Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText5->Wrap( -1 );
-	fgSizer41->Add( m_staticText5, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	m_listErrPatterns = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
+	bSizer25->Add( m_listErrPatterns, 1, wxALL|wxEXPAND, 5 );
 	
-	m_textErrorPattern = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer41->Add( m_textErrorPattern, 0, wxEXPAND|wxALL, 5 );
+	wxBoxSizer* bSizer26;
+	bSizer26 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText6 = new wxStaticText( this, wxID_ANY, _("File Index in Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText6->Wrap( -1 );
-	fgSizer41->Add( m_staticText6, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	m_btnAddErrPattern = new wxButton( this, wxID_ANY, _("Add"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_btnAddErrPattern->SetToolTip( _("Add new error pattern") );
 	
-	m_textErrorFileIndex = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer41->Add( m_textErrorFileIndex, 0, wxEXPAND|wxALL, 5 );
+	bSizer26->Add( m_btnAddErrPattern, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText7 = new wxStaticText( this, wxID_ANY, _("Line Number in Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText7->Wrap( -1 );
-	fgSizer41->Add( m_staticText7, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	m_btnDelErrPattern = new wxButton( this, wxID_ANY, _("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_btnDelErrPattern->SetToolTip( _("Delete the selected error pattern") );
 	
-	m_textErrorLineNumber = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer41->Add( m_textErrorLineNumber, 0, wxEXPAND|wxALL, 5 );
+	bSizer26->Add( m_btnDelErrPattern, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizerError->Add( fgSizer41, 1, wxEXPAND, 5 );
+	m_btnUpdateErrPattern = new wxButton( this, wxID_ANY, _("Edit..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_btnUpdateErrPattern->SetToolTip( _("Edit the selected error pattern") );
 	
+	bSizer26->Add( m_btnUpdateErrPattern, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer25->Add( bSizer26, 0, 0, 5 );
+	
+	bSizerError->Add( bSizer25, 1, wxEXPAND, 5 );
+	
+	wxStaticLine* m_staticline5;
 	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizerError->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );
 	
-	bSizer14->Add( bSizerError, 0, wxEXPAND, 5 );
+	bSizer14->Add( bSizerError, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizerWarnings;
 	bSizerWarnings = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText17 = new wxStaticText( this, wxID_ANY, _("Compiler Warnings Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText* m_staticText17;
+	m_staticText17 = new wxStaticText( this, wxID_ANY, _("Compiler Warnings Patterns:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText17->Wrap( -1 );
 	m_staticText17->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
 	
 	bSizerWarnings->Add( m_staticText17, 0, wxALL, 5 );
 	
-	wxFlexGridSizer* fgSizer5;
-	fgSizer5 = new wxFlexGridSizer( 2, 2, 0, 0 );
-	fgSizer5->AddGrowableCol( 1 );
-	fgSizer5->SetFlexibleDirection( wxBOTH );
-	fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	wxBoxSizer* bSizer251;
+	bSizer251 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText51 = new wxStaticText( this, wxID_ANY, _("Regex Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText51->Wrap( -1 );
-	fgSizer5->Add( m_staticText51, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	m_listWarnPatterns = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
+	bSizer251->Add( m_listWarnPatterns, 1, wxALL|wxEXPAND, 5 );
 	
-	m_textWarnPattern = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer5->Add( m_textWarnPattern, 0, wxEXPAND|wxALL, 5 );
+	wxBoxSizer* bSizer261;
+	bSizer261 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText61 = new wxStaticText( this, wxID_ANY, _("File Index in Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText61->Wrap( -1 );
-	fgSizer5->Add( m_staticText61, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	m_btnAddWarnPattern = new wxButton( this, wxID_ANY, _("Add"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_btnAddWarnPattern->SetToolTip( _("Add new warning pattern") );
 	
-	m_textWarnFileIndex = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer5->Add( m_textWarnFileIndex, 0, wxEXPAND|wxALL, 5 );
+	bSizer261->Add( m_btnAddWarnPattern, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText71 = new wxStaticText( this, wxID_ANY, _("Line Number in Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText71->Wrap( -1 );
-	fgSizer5->Add( m_staticText71, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	m_btnDelWarnPattern = new wxButton( this, wxID_ANY, _("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_btnDelWarnPattern->SetToolTip( _("Delete the selected warning pattern") );
 	
-	m_textWarnLineNumber = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer5->Add( m_textWarnLineNumber, 0, wxEXPAND|wxALL, 5 );
+	bSizer261->Add( m_btnDelWarnPattern, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizerWarnings->Add( fgSizer5, 1, wxEXPAND, 5 );
+	m_btnUpdateWarnPattern = new wxButton( this, wxID_ANY, _("Edit..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_btnUpdateWarnPattern->SetToolTip( _("Edit the selected warning pattern") );
 	
-	bSizer14->Add( bSizerWarnings, 0, wxEXPAND, 5 );
+	bSizer261->Add( m_btnUpdateWarnPattern, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer251->Add( bSizer261, 0, 0, 5 );
+	
+	bSizerWarnings->Add( bSizer251, 1, wxEXPAND, 5 );
+	
+	bSizer14->Add( bSizerWarnings, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer14 );
 	this->Layout();
+	
+	// Connect Events
+	m_listErrPatterns->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerPatternsBase::OnErrItemActivated ), NULL, this );
+	m_btnAddErrPattern->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternsBase::OnBtnAddErrPattern ), NULL, this );
+	m_btnDelErrPattern->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternsBase::OnBtnDelErrPattern ), NULL, this );
+	m_btnDelErrPattern->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CompilerPatternsBase::OnErrorPatternSelectedUI ), NULL, this );
+	m_btnUpdateErrPattern->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternsBase::OnBtnUpdateErrPattern ), NULL, this );
+	m_btnUpdateErrPattern->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CompilerPatternsBase::OnErrorPatternSelectedUI ), NULL, this );
+	m_listWarnPatterns->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerPatternsBase::OnWarnItemActivated ), NULL, this );
+	m_btnAddWarnPattern->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternsBase::OnBtnAddWarnPattern ), NULL, this );
+	m_btnDelWarnPattern->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternsBase::OnBtnDelWarnPattern ), NULL, this );
+	m_btnDelWarnPattern->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CompilerPatternsBase::OnWarningPatternSelectedUI ), NULL, this );
+	m_btnUpdateWarnPattern->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternsBase::OnBtnUpdateWarnPattern ), NULL, this );
+	m_btnUpdateWarnPattern->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CompilerPatternsBase::OnWarningPatternSelectedUI ), NULL, this );
 }
 
 CompilerPatternsBase::~CompilerPatternsBase()
 {
+	// Disconnect Events
+	m_listErrPatterns->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerPatternsBase::OnErrItemActivated ), NULL, this );
+	m_btnAddErrPattern->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternsBase::OnBtnAddErrPattern ), NULL, this );
+	m_btnDelErrPattern->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternsBase::OnBtnDelErrPattern ), NULL, this );
+	m_btnDelErrPattern->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CompilerPatternsBase::OnErrorPatternSelectedUI ), NULL, this );
+	m_btnUpdateErrPattern->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternsBase::OnBtnUpdateErrPattern ), NULL, this );
+	m_btnUpdateErrPattern->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CompilerPatternsBase::OnErrorPatternSelectedUI ), NULL, this );
+	m_listWarnPatterns->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerPatternsBase::OnWarnItemActivated ), NULL, this );
+	m_btnAddWarnPattern->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternsBase::OnBtnAddWarnPattern ), NULL, this );
+	m_btnDelWarnPattern->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternsBase::OnBtnDelWarnPattern ), NULL, this );
+	m_btnDelWarnPattern->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CompilerPatternsBase::OnWarningPatternSelectedUI ), NULL, this );
+	m_btnUpdateWarnPattern->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternsBase::OnBtnUpdateWarnPattern ), NULL, this );
+	m_btnUpdateWarnPattern->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CompilerPatternsBase::OnWarningPatternSelectedUI ), NULL, this );
 }
 
 CompilerToolsBase::CompilerToolsBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -495,4 +523,74 @@ CompilerOptionDlgBase::CompilerOptionDlgBase( wxWindow* parent, wxWindowID id, c
 
 CompilerOptionDlgBase::~CompilerOptionDlgBase()
 {
+}
+
+CompilerPatternDlgBase::CompilerPatternDlgBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizerError;
+	bSizerError = new wxBoxSizer( wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer41;
+	fgSizer41 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer41->AddGrowableCol( 1 );
+	fgSizer41->SetFlexibleDirection( wxBOTH );
+	fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText5 = new wxStaticText( this, wxID_ANY, _("Regex Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5->Wrap( -1 );
+	fgSizer41->Add( m_staticText5, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	
+	m_textPattern = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textPattern->SetValidator( wxTextValidator( wxFILTER_NONE, &m_pattern ) );
+	
+	fgSizer41->Add( m_textPattern, 0, wxEXPAND|wxALL, 5 );
+	
+	m_staticText6 = new wxStaticText( this, wxID_ANY, _("File Index in Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6->Wrap( -1 );
+	fgSizer41->Add( m_staticText6, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	
+	m_textFileIndex = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textFileIndex->SetValidator( wxTextValidator( wxFILTER_NUMERIC, &m_fileIdx ) );
+	
+	fgSizer41->Add( m_textFileIndex, 0, wxEXPAND|wxALL, 5 );
+	
+	m_staticText7 = new wxStaticText( this, wxID_ANY, _("Line Number in Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7->Wrap( -1 );
+	fgSizer41->Add( m_staticText7, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	
+	m_textLineNumber = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textLineNumber->SetValidator( wxTextValidator( wxFILTER_NUMERIC, &m_lineIdx ) );
+	
+	fgSizer41->Add( m_textLineNumber, 0, wxEXPAND|wxALL, 5 );
+	
+	bSizerError->Add( fgSizer41, 1, wxEXPAND, 5 );
+	
+	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizerError->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer24;
+	bSizer24 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_buttonOK = new wxButton( this, wxID_ANY, _("OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK->SetDefault(); 
+	bSizer24->Add( m_buttonOK, 0, wxALL, 5 );
+	
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer24->Add( m_buttonCancel, 0, wxALL, 5 );
+	
+	bSizerError->Add( bSizer24, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	this->SetSizer( bSizerError );
+	this->Layout();
+	
+	// Connect Events
+	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternDlgBase::OnSubmit ), NULL, this );
+}
+
+CompilerPatternDlgBase::~CompilerPatternDlgBase()
+{
+	// Disconnect Events
+	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternDlgBase::OnSubmit ), NULL, this );
 }

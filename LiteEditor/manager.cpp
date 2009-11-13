@@ -2495,23 +2495,20 @@ bool Manager::IsBuildEndedSuccessfully() const
 			return false;
 		}
 
-		//check every line to see if we got an error/warning
+		//check every line to see if we got an error
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf     ( m_shellProcess->GetInfo().GetProject(), m_shellProcess->GetInfo().GetConfiguration() );
 		CompilerPtr    cmp     = BuildSettingsConfigST::Get()->GetCompiler( bldConf->GetCompilerType() );
 
-		wxString errPattern  = cmp->GetErrPattern();
-		wxString warnPattern = cmp->GetWarnPattern();
+		const Compiler::CmpListInfoPattern& errPatterns = cmp->GetErrPatterns();
 
-		wxRegEx reErr  ( errPattern );
-		wxRegEx reWarn ( warnPattern );
+		// TODO : optimize by precompiling all regex in an array
 		for ( size_t i=0; i<lines.GetCount(); i++ ) {
-			if ( reWarn.IsValid() && reWarn.Matches ( lines.Item ( i ) ) ) {
-				//skip warnings
-				continue;
-			}
-
-			if ( reErr.IsValid() && reErr.Matches ( lines.Item ( i ) ) ) {
-				return false;
+			Compiler::CmpListInfoPattern::const_iterator itPattern;
+			for (itPattern = errPatterns.begin(); itPattern != errPatterns.end(); ++itPattern) {
+				wxRegEx reErr(itPattern->pattern);
+				if ( reErr.IsValid() && reErr.Matches ( lines.Item ( i ) ) ) {
+					return false;
+				}
 			}
 		}
 	}

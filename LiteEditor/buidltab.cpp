@@ -227,16 +227,32 @@ void BuildTab::AppendText ( const wxString &text )
 
 	if ( info.linecolor == wxSCI_LEX_GCC_BUILDING || !m_cmp ) {
 		// no more line info to get
-	} else if ( ExtractLineInfo ( info, text, m_cmp->GetWarnPattern(),
-	                              m_cmp->GetWarnFileNameIndex(), m_cmp->GetWarnLineNumberIndex() ) ) {
-		info.linecolor = wxSCI_LEX_GCC_WARNING;
-		m_warnCount++;
-	} else if ( ExtractLineInfo ( info, text, m_cmp->GetErrPattern(),
-	                              m_cmp->GetErrFileNameIndex(), m_cmp->GetErrLineNumberIndex() ) ) {
-		info.linecolor = wxSCI_LEX_GCC_ERROR;
-		m_errorCount++;
+	} else {
+		// Find error first
+		bool isError = false;
+		const Compiler::CmpListInfoPattern& errPatterns = m_cmp->GetErrPatterns();
+		Compiler::CmpListInfoPattern::const_iterator itPattern;
+		for (itPattern = errPatterns.begin(); itPattern != errPatterns.end(); ++itPattern) {
+			if ( ExtractLineInfo(info, text, itPattern->pattern, itPattern->fileNameIndex, itPattern->lineNumberIndex)) {
+				info.linecolor = wxSCI_LEX_GCC_ERROR;
+				m_errorCount++;
+				isError = true;
+				break;
+			}
+		}
+		if (!isError) {
+			// If it is not an error, maybe it's a warning
+			const Compiler::CmpListInfoPattern& warnPatterns = m_cmp->GetWarnPatterns();
+			for (itPattern = warnPatterns.begin(); itPattern != warnPatterns.end(); ++itPattern) {
+				if ( ExtractLineInfo(info, text, itPattern->pattern, itPattern->fileNameIndex, itPattern->lineNumberIndex)) {
+					info.linecolor = wxSCI_LEX_GCC_WARNING;
+					m_warnCount++;
+					break;
+				}
+			}
+		}
 	}
-
+	
 	if ( info.linecolor != wxSCI_LEX_GCC_OUTPUT ) {
 		m_lineInfo[lineno] = info;
 		m_lineMap[text] = lineno;

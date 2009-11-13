@@ -28,6 +28,7 @@
 #include "configuration_object.h"
 #include "smart_ptr.h"
 #include <map>
+#include <list>
 
 #ifdef WXMAKINGDLL_LE_SDK
 #    define WXDLLIMPEXP_LE_SDK WXEXPORT
@@ -67,6 +68,14 @@ public:
 		wxString help;
 	};
 	typedef std::map<wxString, CmpCmdLineOption> CmpCmdLineOptions;
+	
+	struct CmpInfoPattern {
+		wxString pattern;
+		wxString lineNumberIndex;
+		wxString fileNameIndex;
+	};
+	typedef std::list<CmpInfoPattern> CmpListInfoPattern;
+	
 
 private:
 	void AddCmpFileType(const wxString &extension, CmpFileKind type, const wxString &compile_line);
@@ -81,13 +90,8 @@ protected:
     wxString m_dependSuffix;
     wxString m_preprocessSuffix;
     
-	wxString m_errorPattern;
-	wxString m_errorLineNubmerIndex;
-	wxString m_errorFileNameIndex;
-
-	wxString m_warningPattern;
-	wxString m_warningLineNubmerIndex;
-	wxString m_warningFileNameIndex;
+	CmpListInfoPattern m_errorPatterns;
+	CmpListInfoPattern m_warningPatterns;
 
 	std::map<wxString, wxString> m_tools;
 	wxString m_globalIncludePath;
@@ -148,43 +152,19 @@ public:
 	const wxString &GetName() const {
 		return m_name;
 	}
-	const wxString &GetErrPattern() const {
-		return m_errorPattern;
+	const CmpListInfoPattern &GetErrPatterns() const {
+		return m_errorPatterns;
 	}
-	const wxString &GetErrFileNameIndex() const {
-		return m_errorFileNameIndex;
-	}
-	const wxString &GetErrLineNumberIndex() const {
-		return m_errorLineNubmerIndex;
-	}
-	const wxString &GetWarnPattern() const {
-		return m_warningPattern;
-	}
-	const wxString &GetWarnFileNameIndex() const {
-		return m_warningFileNameIndex;
-	}
-	const wxString &GetWarnLineNumberIndex() const {
-		return m_warningLineNubmerIndex;
+	const CmpListInfoPattern &GetWarnPatterns() const {
+		return m_warningPatterns;
 	}
 
-	void SetErrPattern(const wxString &s) {
-		m_errorPattern = s;
+	void SetErrPatterns(const CmpListInfoPattern &p) {
+		m_errorPatterns = p;
 	}
-	void SetErrFileNameIndex(const wxString &s) {
-		m_errorFileNameIndex = s;
+	void SetWarnPatterns(const CmpListInfoPattern &p) {
+		m_warningPatterns = p;
 	}
-	void SetErrLineNumberIndex(const wxString &s) {
-		m_errorLineNubmerIndex = s;
-	}
-	void SetWarnPattern(const wxString &s) {
-		m_warningPattern = s;
-	}
-	void SetWarnFileNameIndex(const wxString &s) {
-		m_warningFileNameIndex = s;
-	}
-	void SetWarnLineNumberIndex(const wxString &s) {
-		m_warningLineNubmerIndex = s;
-	};
 
 	void SetGlobalIncludePath(const wxString& globalIncludePath) {
 		this->m_globalIncludePath = globalIncludePath;

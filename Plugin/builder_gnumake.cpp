@@ -1228,7 +1228,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& 
 	wxString makeCommand;
 	wxString basicMakeCommand;
 
-	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(false);
+	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
 	basicMakeCommand << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\"");
 

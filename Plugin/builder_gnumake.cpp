@@ -1245,6 +1245,6 @@ wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& 
 
 	}
 
-	makeCommand << basicMakeCommand << wxT("\n");
+	makeCommand << basicMakeCommand;
 	return makeCommand;
 }

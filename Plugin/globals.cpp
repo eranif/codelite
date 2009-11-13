@@ -528,6 +528,8 @@ void WrapInShell(wxString& cmd)
 	command << cmd << wxT("\"");
 	cmd = command;
 #else
-	cmd.Prepend(wxT("/bin/sh -c "));
+	command << wxT("/bin/sh -c '");
+	command << cmd << wxT("'");
+	cmd = command;
 #endif
 }

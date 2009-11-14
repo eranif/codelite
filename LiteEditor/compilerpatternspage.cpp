@@ -21,24 +21,27 @@ CompilerPatternsPage::CompilerPatternsPage( wxWindow* parent, const wxString &cm
 	const Compiler::CmpListInfoPattern& errPatterns = cmp->GetErrPatterns();
 	Compiler::CmpListInfoPattern::const_iterator itPattern;
 	for (itPattern = errPatterns.begin(); itPattern != errPatterns.end(); ++itPattern) {
-		long item = m_listErrPatterns->InsertItem(m_listErrPatterns->GetItemCount(), itPattern->pattern);
-		m_listErrPatterns->SetItem(item, COL_LINE_IDX, itPattern->lineNumberIndex);
-		m_listErrPatterns->SetItem(item, COL_FILE_IDX, itPattern->fileNameIndex);
+		long item = AppendListCtrlRow(m_listErrPatterns);
+		SetColumnText(m_listErrPatterns, item, COL_PATTERN,  itPattern->pattern);
+		SetColumnText(m_listErrPatterns, item, COL_LINE_IDX, itPattern->lineNumberIndex);
+		SetColumnText(m_listErrPatterns, item, COL_FILE_IDX, itPattern->fileNameIndex);
 	}
+
 	const Compiler::CmpListInfoPattern& warnPatterns = cmp->GetWarnPatterns();
 	for (itPattern = warnPatterns.begin(); itPattern != warnPatterns.end(); ++itPattern) {
-		long item = m_listWarnPatterns->InsertItem(m_listWarnPatterns->GetItemCount(), itPattern->pattern);
-		m_listWarnPatterns->SetItem(item, COL_LINE_IDX, itPattern->lineNumberIndex);
-		m_listWarnPatterns->SetItem(item, COL_FILE_IDX, itPattern->fileNameIndex);
+		long item = AppendListCtrlRow(m_listWarnPatterns);
+		SetColumnText(m_listWarnPatterns, item, COL_PATTERN,  itPattern->pattern);
+		SetColumnText(m_listWarnPatterns, item, COL_LINE_IDX, itPattern->lineNumberIndex);
+		SetColumnText(m_listWarnPatterns, item, COL_FILE_IDX, itPattern->fileNameIndex);
 	}
 
 	m_listWarnPatterns->SetColumnWidth(COL_PATTERN , 200);
-	m_listWarnPatterns->SetColumnWidth(COL_FILE_IDX, 50);
 	m_listWarnPatterns->SetColumnWidth(COL_LINE_IDX, 50);
+	m_listWarnPatterns->SetColumnWidth(COL_FILE_IDX, 50);
 
 	m_listErrPatterns->SetColumnWidth(COL_PATTERN , 200);
-	m_listErrPatterns->SetColumnWidth(COL_FILE_IDX, 50);
 	m_listErrPatterns->SetColumnWidth(COL_LINE_IDX, 50);
+	m_listErrPatterns->SetColumnWidth(COL_FILE_IDX, 50);
 }
 
 void CompilerPatternsPage::Save(CompilerPtr cmp)

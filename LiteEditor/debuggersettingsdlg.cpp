@@ -46,9 +46,10 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 		m_checkShowTerminal->SetValue(info.showTerminal);
 		m_checkUseRelativePaths->SetValue(info.useRelativeFilePaths);
 		m_catchThrow->SetValue(info.catchThrow);
+		m_spinCtrlNumElements->SetValue(info.maxDisplayStringSize);
 		m_showTooltips->SetValue(info.showTooltips);
 		m_textCtrlStartupCommands->SetValue( info.startupCommands );
-
+		m_spinCtrlNumElements->SetValue(info.maxDisplayStringSize);
 #ifdef __WXMSW__
 		m_checkBoxDebugAssert->SetValue(info.debugAsserts);
 #endif
@@ -158,6 +159,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		info.catchThrow               = page->m_catchThrow->IsChecked();
 		info.showTooltips             = page->m_showTooltips->IsChecked();
 		info.startupCommands          = page->m_textCtrlStartupCommands->GetValue();
+		info.maxDisplayStringSize     = page->m_spinCtrlNumElements->GetValue();
 #ifdef __WXMSW__
 		info.debugAsserts             = page->m_checkBoxDebugAssert->IsChecked();
 #endif

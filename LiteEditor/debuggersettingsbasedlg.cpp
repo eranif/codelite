@@ -124,8 +124,8 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 	
-	m_notebook3 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-	m_panel3 = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_choicebook1 = new wxChoicebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCHB_DEFAULT );
+	m_panel3 = new wxPanel( m_choicebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
 	
@@ -191,11 +191,27 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	bSizer8->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
 	
+	wxStaticBoxSizer* sbSizer3;
+	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Display:") ), wxHORIZONTAL );
+	
+	m_staticText2 = new wxStaticText( m_panel3, wxID_ANY, wxT("Set a limit on how many elements of an array GDB will print (including strings)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2->Wrap( -1 );
+	m_staticText2->SetToolTip( wxT(" For no limit, set it to 0") );
+	
+	sbSizer3->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_spinCtrlNumElements = new wxSpinCtrl( m_panel3, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 10000, 200 );
+	m_spinCtrlNumElements->SetToolTip( wxT("For no limit, set it to 0") );
+	
+	sbSizer3->Add( m_spinCtrlNumElements, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	bSizer8->Add( sbSizer3, 0, wxEXPAND|wxALL, 5 );
+	
 	m_panel3->SetSizer( bSizer8 );
 	m_panel3->Layout();
 	bSizer8->Fit( m_panel3 );
-	m_notebook3->AddPage( m_panel3, wxT("General"), true );
-	m_panel4 = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_choicebook1->AddPage( m_panel3, wxT("General"), false );
+	m_panel4 = new wxPanel( m_choicebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 	
@@ -207,12 +223,12 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_panel4->SetSizer( bSizer9 );
 	m_panel4->Layout();
 	bSizer9->Fit( m_panel4 );
-	m_notebook3->AddPage( m_panel4, wxT("Startup Commands"), false );
-	
-	bSizer7->Add( m_notebook3, 1, wxEXPAND | wxALL, 5 );
+	m_choicebook1->AddPage( m_panel4, wxT("Startup Commands"), false );
+	bSizer7->Add( m_choicebook1, 1, wxEXPAND | wxALL, 5 );
 	
 	this->SetSizer( bSizer7 );
 	this->Layout();
+	bSizer7->Fit( this );
 	
 	// Connect Events
 	m_buttonBrowse->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerPageBase::OnBrowse ), NULL, this );

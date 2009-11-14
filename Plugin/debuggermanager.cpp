@@ -55,7 +55,9 @@ void DebuggersData::Serialize(Archive &arch)
 		arch.Write(wxT("catchThrow"), info.catchThrow);
 		arch.Write(wxT("showTooltips"), info.showTooltips);
 		arch.Write(wxT("debugAsserts"), info.debugAsserts);
+		arch.Write(wxT("maxDisplayStringSize"), info.maxDisplayStringSize);
 		arch.WriteCData(wxT("startup_commands"), info.startupCommands);
+
 	}
 }
 
@@ -75,6 +77,7 @@ void DebuggersData::DeSerialize(Archive &arch)
 		arch.Read(wxT("catchThrow"), info.catchThrow);
 		arch.Read(wxT("showTooltips"), info.showTooltips);
 		arch.Read(wxT("debugAsserts"), info.debugAsserts);
+		arch.Read(wxT("maxDisplayStringSize"), info.maxDisplayStringSize);
 		arch.ReadCData(wxT("startup_commands"), info.startupCommands);
 
 		// Trim leading whitepsace

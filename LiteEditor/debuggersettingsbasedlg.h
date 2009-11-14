@@ -28,6 +28,8 @@
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/statbox.h>
+#include <wx/spinctrl.h>
+#include <wx/choicebk.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -77,7 +79,7 @@ class DebuggerPageBase : public wxPanel
 	private:
 	
 	protected:
-		wxNotebook* m_notebook3;
+		wxChoicebook* m_choicebook1;
 		wxPanel* m_panel3;
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textCtrDbgPath;
@@ -90,6 +92,8 @@ class DebuggerPageBase : public wxPanel
 		wxCheckBox* m_checkShowTerminal;
 		wxCheckBox* m_checkUseRelativePaths;
 		wxCheckBox* m_showTooltips;
+		wxStaticText* m_staticText2;
+		wxSpinCtrl* m_spinCtrlNumElements;
 		wxPanel* m_panel4;
 		wxTextCtrl* m_textCtrlStartupCommands;
 		
@@ -100,7 +104,7 @@ class DebuggerPageBase : public wxPanel
 	
 	public:
 		
-		DebuggerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 633,397 ), long style = wxTAB_TRAVERSAL );
+		DebuggerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~DebuggerPageBase();
 	
 };

@@ -178,9 +178,8 @@ void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
 		InsertColumn(n, column_headers[n]);
 	}
 
-	// Reverse through the items, as AppendListCtrlRow() inserts at 0, and the bps look silly with their id's reverse-sorted
-	std::vector<BreakpointInfo>::reverse_iterator iter = bps.rbegin();
-	for (; iter != bps.rend(); ++iter) {
+	std::vector<BreakpointInfo>::iterator iter = bps.begin();
+	for (; iter != bps.end(); ++iter) {
 		long item = AppendListCtrlRow(this);
 
 		// Store the internal and external ids

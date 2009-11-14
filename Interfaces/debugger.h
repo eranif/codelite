@@ -396,10 +396,14 @@ protected:
 	IDebuggerObserver * m_observer;
 	DebuggerInformation m_info;
 	EnvironmentConfig * m_env;
+	wxString            m_name;
 
 public:
 	IDebugger() : m_env(NULL) {};
 	virtual ~IDebugger() {};
+
+	void SetName(const wxString &name) {m_name = name;}
+	wxString GetName() const {return m_name;}
 
 	void SetObserver(IDebuggerObserver *observer) {
 		m_observer = observer;
@@ -425,7 +429,7 @@ public:
 	 * \brief Sets the logging level 'on the fly'
 	 * \param level the new level
 	 */
-	void SetDebugLoggingLevel(bool level) {
+	void EnableLogging(bool level) {
 		m_info.enableDebugLog = level;
 	}
 
@@ -433,7 +437,7 @@ public:
 	 * \brief Gets the current logging level
 	 * \return the current level
 	 */
-	bool GetDebugLoggingLevel() const {
+	bool IsLoggingEnabled() const {
 		return m_info.enableDebugLog;
 	}
 

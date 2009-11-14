@@ -2074,24 +2074,29 @@ void Manager::DbgDoSimpleCommand ( int cmd )
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() ) {
-		switch ( cmd ) {
-		case DBG_NEXT:
-			dbgr->Next();
-			break;
-		case DBG_STEPIN:
-			dbgr->StepIn();
-			break;
-		case DBG_STEPOUT:
-			dbgr->StepOut();
-			break;
-		case DBG_PAUSE:
+		// except for the PAUSE command, all other gdb commands
+		// requires that GDB is interactive
+		if(cmd == DBG_PAUSE) {
 			dbgr->Interrupt();
-			break;
-		case DBG_SHOW_CURSOR:
-			dbgr->QueryFileLine();
-			break;
-		default:
-			break;
+
+		} else if(DbgCanInteract()) {
+
+			switch ( cmd ) {
+			case DBG_NEXT:
+				dbgr->Next();
+				break;
+			case DBG_STEPIN:
+				dbgr->StepIn();
+				break;
+			case DBG_STEPOUT:
+				dbgr->StepOut();
+				break;
+			case DBG_SHOW_CURSOR:
+				dbgr->QueryFileLine();
+				break;
+			default:
+				break;
+			}
 		}
 	}
 }
@@ -2127,7 +2132,7 @@ void Manager::UpdateAddLine ( const wxString &line, const bool OnlyIfLoggingOn /
 	// There are a few messages that are only worth displaying if full logging is enabled
 	if (OnlyIfLoggingOn) {
 		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-		if ( dbgr && (dbgr->GetDebugLoggingLevel()==false) ) {
+		if ( dbgr && (dbgr->IsLoggingEnabled()==false) ) {
 			return;
 		}
 	}

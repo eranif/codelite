@@ -255,7 +255,7 @@ void DebuggerMgr::SetDebuggerInformation(const wxString &name, const DebuggerInf
 		IDebugger *dbgr = GetActiveDebugger();
 		if (dbgr && dbgr->IsRunning()) {
 			// If this debugger is currently running, tell it that the logging level may have changed
-			dbgr->SetDebugLoggingLevel(info.enableDebugLog);
+			dbgr->EnableLogging(info.enableDebugLog);
 		}
 	}
 }

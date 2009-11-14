@@ -87,6 +87,7 @@ DebuggerInfo GetDebuggerInfo()
 IDebugger *CreateDebuggerGDB()
 {
 	static DbgGdb theGdbDebugger;
+	theGdbDebugger.SetName(wxT("GNU gdb debugger"));
 	return &theGdbDebugger;
 }
 

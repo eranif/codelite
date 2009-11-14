@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -33,7 +33,13 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID i
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
-	m_book = new wxNotebook( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_book = new wxListbook( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_DEFAULT );
+	#ifndef __WXGTK__ // Small icon style not supported in GTK
+	wxListView* m_bookListView = m_book->GetListView();
+	long m_bookFlags = m_bookListView->GetWindowStyleFlag();
+	m_bookFlags = ( m_bookFlags & ~wxLC_ICON ) | wxLC_SMALL_ICON;
+	m_bookListView->SetWindowStyleFlag( m_bookFlags );
+	#endif
 	
 	bSizer3->Add( m_book, 1, wxEXPAND | wxALL, 5 );
 	
@@ -148,19 +154,15 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	gSizer3 = new wxGridSizer( 4, 1, 0, 0 );
 	
 	m_checkBoxEnablePendingBreakpoints = new wxCheckBox( m_panel3, wxID_ANY, wxT("Enable pending breakpoint"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	gSizer3->Add( m_checkBoxEnablePendingBreakpoints, 0, wxALL, 5 );
 	
 	m_checkBreakAtWinMain = new wxCheckBox( m_panel3, wxID_ANY, wxT("Automatically set breakpoint at main"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	gSizer3->Add( m_checkBreakAtWinMain, 0, wxALL, 5 );
 	
 	m_catchThrow = new wxCheckBox( m_panel3, wxID_ANY, wxT("Break when C++ execption is thrown"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	gSizer3->Add( m_catchThrow, 0, wxALL, 5 );
 	
 	m_checkBoxDebugAssert = new wxCheckBox( m_panel3, wxID_ANY, wxT("Break at assertion failure (MinGW only)"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	gSizer3->Add( m_checkBoxDebugAssert, 0, wxALL, 5 );
 	
 	sbSizer1->Add( gSizer3, 1, wxEXPAND|wxALL, 5 );
@@ -174,19 +176,15 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	gSizer2 = new wxGridSizer( 4, 1, 0, 0 );
 	
 	m_checkBoxEnableLog = new wxCheckBox( m_panel3, wxID_ANY, wxT("Enable full debugger logging"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	gSizer2->Add( m_checkBoxEnableLog, 0, wxALL, 5 );
 	
 	m_checkShowTerminal = new wxCheckBox( m_panel3, wxID_ANY, wxT("Show debugger terminal"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	gSizer2->Add( m_checkShowTerminal, 0, wxALL, 5 );
 	
 	m_checkUseRelativePaths = new wxCheckBox( m_panel3, wxID_ANY, wxT("Use file name only for breakpoints (NO full paths)"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	gSizer2->Add( m_checkUseRelativePaths, 0, wxALL, 5 );
 	
 	m_showTooltips = new wxCheckBox( m_panel3, wxID_ANY, wxT("While debugging, show debugger tooltips"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	gSizer2->Add( m_showTooltips, 0, wxALL, 5 );
 	
 	sbSizer2->Add( gSizer2, 1, wxEXPAND|wxALL, 5 );

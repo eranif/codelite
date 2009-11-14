@@ -76,10 +76,10 @@ void LocalsTable::UpdateLocals(const LocalVariables& locals)
 		// If this variable has an "inline" value, dont display the row data
 		if ( !DoShowInline(var, idx) ) {
 			SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
+//			if ( var.updated ) {
+//				m_listTable->SetItemTextColour(idx, wxT("RED"));
+//			}
 		}
-//		if ( var.updated ) {
-//			m_listTable->SetItemTextColour(idx, wxT("RED"));
-//		}
 	}
 }
 
@@ -119,11 +119,10 @@ void LocalsTable::UpdateFuncArgs(const LocalVariables& args)
 
 		if ( !DoShowInline(var, idx) ) {
 			SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
+//			if ( var.updated ) {
+//				m_listTable->SetItemTextColour(idx, wxT("RED"));
+//			}
 		}
-
-//		if ( var.updated ) {
-//			m_listTable->SetItemTextColour(idx, wxT("RED"));
-//		}
 	}
 }
 
@@ -218,8 +217,13 @@ void LocalsTable::UpdateInline(const DebuggerEvent& event)
 	std::map<wxString, long>::iterator iter = m_expression2Idx.find(key);
 	if(iter != m_expression2Idx.end() && event.m_evaluated.IsEmpty() == false){
 		long idx = iter->second;
+		wxString oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
 		SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, event.m_evaluated);
+		if(oldValue.IsEmpty() == false && oldValue != event.m_evaluated) {
+			m_listTable->SetItemTextColour(idx, wxT("RED"));
+		}
 	}
+
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
 		dbgr->DeleteVariableObject(event.m_variableObject.gdbId);

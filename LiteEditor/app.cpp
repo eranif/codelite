@@ -53,6 +53,12 @@
 #define __PERFORMANCE
 #include "performance.h"
 
+//////////////////////////////////////////////
+// Define the version string for this codelite
+//////////////////////////////////////////////
+extern wxChar *SvnRevision;
+wxString CODELITE_VERSION_STR = wxString::Format(wxT("v2.0.%s-RC1"), SvnRevision);
+
 #if defined(__WXMAC__)||defined(__WXGTK__)
 #include <signal.h> // sigprocmask
 #endif
@@ -60,8 +66,6 @@
 #ifdef __WXMSW__
 #include <wx/msw/registry.h> //registry keys
 #endif
-
-extern wxChar *SvnRevision;
 
 #ifdef __WXMAC__
 #include <mach-o/dyld.h>
@@ -96,7 +100,7 @@ static wxBitmap clDrawSplashBitmap(	const wxBitmap& bitmap,
 									const wxString &subTitle)
 {
 	wxBitmap bmp ( bitmap.GetWidth(), bitmap.GetHeight()  );
-	
+
     wxMemoryDC dcMem;
 
 #ifdef USE_PALETTE_IN_SPLASH
@@ -110,7 +114,7 @@ static wxBitmap clDrawSplashBitmap(	const wxBitmap& bitmap,
 
     dcMem.SelectObject( bmp );
 	dcMem.DrawBitmap  ( bitmap, 0, 0, true);
-	
+
 	//write the main title & subtitle
 	wxCoord w, h, w1, h1;
 	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -121,28 +125,28 @@ static wxBitmap clDrawSplashBitmap(	const wxBitmap& bitmap,
 	dcMem.GetMultiLineTextExtent(mainTitle, &w, &h);
 	wxCoord bmpW = bitmap.GetWidth();
 	wxCoord bmpH = bitmap.GetHeight();
-	
-	//draw shadow 
+
+	//draw shadow
 	dcMem.SetTextForeground(wxT("LIGHT GRAY"));
-	
+
 	dcMem.DrawText(mainTitle, bmpW - w - 9, 11);
-	//draw the text	
+	//draw the text
 	dcMem.SetTextForeground(wxT("BLACK"));
 	dcMem.SetFont(font);
-	
+
 	//draw the main title
 	wxCoord textX = bmpW - w - 10;
 	wxCoord textY = 10;
 	dcMem.DrawText(mainTitle, textX, textY);
-	
+
 	//draw the subtitle
 	dcMem.SetFont(smallfont);
 	dcMem.SetTextForeground(wxT("WHITE"));
 	dcMem.GetMultiLineTextExtent(subTitle, &w1, &h1);
-	
+
 	wxCoord stextX = textX + (w - w1)/2;
 	wxCoord stextY = bmpH - h1 - 10;
-	
+
 	dcMem.DrawText(subTitle, stextX, stextY);
 	dcMem.SelectObject(wxNullBitmap);
 
@@ -418,7 +422,7 @@ bool App::OnInit()
 
 					EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
 					cfg->SaveLongValue(wxT("UpdateWxPaths"), 1);
-					
+
 					wxSetEnv(wxT("WX_INCL_HOME"), strWx + wxT("\\include"));
 				}
 			}
@@ -444,8 +448,7 @@ bool App::OnInit()
 		wxBitmap bitmap;
 		wxString splashName(mgr->GetStarupDirectory() + wxT("/images/splashscreen.png"));
 		if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
-			wxString mainTitle;
-			mainTitle << wxT("v1.0.") << SvnRevision;
+			wxString mainTitle = CODELITE_VERSION_STR;
 			wxBitmap splash = clDrawSplashBitmap(bitmap, mainTitle, wxT(""));
 			m_splash = new wxSplashScreen(splash,
 			                            wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,

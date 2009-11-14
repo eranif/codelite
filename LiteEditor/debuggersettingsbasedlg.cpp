@@ -194,16 +194,29 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	wxStaticBoxSizer* sbSizer3;
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Display:") ), wxHORIZONTAL );
 	
+	wxFlexGridSizer* fgSizer21;
+	fgSizer21 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer21->SetFlexibleDirection( wxBOTH );
+	fgSizer21->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
 	m_staticText2 = new wxStaticText( m_panel3, wxID_ANY, wxT("Set a limit on how many elements of an array GDB will print (including strings)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	m_staticText2->SetToolTip( wxT(" For no limit, set it to 0") );
 	
-	sbSizer3->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer21->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_spinCtrlNumElements = new wxSpinCtrl( m_panel3, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 10000, 200 );
 	m_spinCtrlNumElements->SetToolTip( wxT("For no limit, set it to 0") );
 	
-	sbSizer3->Add( m_spinCtrlNumElements, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer21->Add( m_spinCtrlNumElements, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_checkBoxExpandLocals = new wxCheckBox( m_panel3, wxID_ANY, wxT("Evaluate items in the 'Locals' view based on the 'PreDefined' types where possible"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer21->Add( m_checkBoxExpandLocals, 0, wxALL, 5 );
+	
+	
+	fgSizer21->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	sbSizer3->Add( fgSizer21, 1, wxEXPAND|wxALL, 5 );
 	
 	bSizer8->Add( sbSizer3, 0, wxEXPAND|wxALL, 5 );
 	

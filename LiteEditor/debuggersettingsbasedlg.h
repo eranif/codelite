@@ -94,6 +94,8 @@ class DebuggerPageBase : public wxPanel
 		wxCheckBox* m_showTooltips;
 		wxStaticText* m_staticText2;
 		wxSpinCtrl* m_spinCtrlNumElements;
+		wxCheckBox* m_checkBoxExpandLocals;
+		
 		wxPanel* m_panel4;
 		wxTextCtrl* m_textCtrlStartupCommands;
 		

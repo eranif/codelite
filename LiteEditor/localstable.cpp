@@ -50,19 +50,30 @@ void LocalsTable::OnItemSelected(wxListEvent& event)
 
 void LocalsTable::UpdateLocals(const LocalVariables& locals)
 {
+	bool evaluatingLocals = true;
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if( dbgr && dbgr->GetDebuggerInformation().resolveLocals == false) {
+		evaluatingLocals = false;
+	}
+
 	LocalVariables vars = locals;
-//	// locate all items that were modified
-//	for(size_t i=0; i<vars.size(); i++){
-//		LocalVariable &var = vars.at(i);
-//		wxString      oldValue;
-//
-//		// try to locate this variable in the table
-//		long idx = DoGetIdxByVar(var, sKindLocalVariable);
-//		if ( idx != wxNOT_FOUND ) {
-//			oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
-//			var.updated = (oldValue != var.value);
-//		}
-//	}
+	// locate all items that were modified
+	// this feature is disabled when 'Locals' resolving is enabled
+	// due to the async nature of the debugger
+	if( !evaluatingLocals ) {
+		for(size_t i=0; i<vars.size(); i++){
+			LocalVariable &var = vars.at(i);
+			wxString      oldValue;
+
+			// try to locate this variable in the table
+			long idx = DoGetIdxByVar(var, sKindLocalVariable);
+			if ( idx != wxNOT_FOUND ) {
+				oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
+				var.updated = (oldValue != var.value);
+			}
+		}
+
+	}
 
 	wxWindowUpdateLocker locker ( this );
 	Clear();
@@ -76,9 +87,9 @@ void LocalsTable::UpdateLocals(const LocalVariables& locals)
 		// If this variable has an "inline" value, dont display the row data
 		if ( !DoShowInline(var, idx) ) {
 			SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
-//			if ( var.updated ) {
-//				m_listTable->SetItemTextColour(idx, wxT("RED"));
-//			}
+			if ( var.updated && evaluatingLocals == false ) {
+				m_listTable->SetItemTextColour(idx, wxT("RED"));
+			}
 		}
 	}
 }
@@ -86,20 +97,29 @@ void LocalsTable::UpdateLocals(const LocalVariables& locals)
 
 void LocalsTable::UpdateFuncArgs(const LocalVariables& args)
 {
+	bool evaluatingLocals = true;
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if( dbgr && dbgr->GetDebuggerInformation().resolveLocals == false) {
+		evaluatingLocals = false;
+	}
 	LocalVariables vars = args;
 
-//	// locate all items that were modified
-//	for(size_t i=0; i<vars.size(); i++){
-//		LocalVariable &var = vars.at(i);
-//		wxString      oldValue;
-//
-//		// try to locate this variable in the table
-//		long idx = DoGetIdxByVar(var, sKindFunctionArgument);
-//		if ( idx != wxNOT_FOUND ) {
-//			oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
-//			var.updated = (oldValue != var.value);
-//		}
-//	}
+	// locate all items that were modified
+	// this feature is disabled when 'Locals' resolving is enabled
+	// due to the async nature of the debugger
+	if( !evaluatingLocals ) {
+		for(size_t i=0; i<vars.size(); i++){
+			LocalVariable &var = vars.at(i);
+			wxString      oldValue;
+
+			// try to locate this variable in the table
+			long idx = DoGetIdxByVar(var, sKindFunctionArgument);
+			if ( idx != wxNOT_FOUND ) {
+				oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
+				var.updated = (oldValue != var.value);
+			}
+		}
+	}
 
 	wxWindowUpdateLocker locker ( this );
 
@@ -119,9 +139,9 @@ void LocalsTable::UpdateFuncArgs(const LocalVariables& args)
 
 		if ( !DoShowInline(var, idx) ) {
 			SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
-//			if ( var.updated ) {
-//				m_listTable->SetItemTextColour(idx, wxT("RED"));
-//			}
+			if ( var.updated && evaluatingLocals == false ) {
+				m_listTable->SetItemTextColour(idx, wxT("RED"));
+			}
 		}
 	}
 }
@@ -192,8 +212,12 @@ long LocalsTable::DoGetIdxByVar(const LocalVariable& var, const wxString& kind)
 
 bool LocalsTable::DoShowInline(const LocalVariable& var, long item)
 {
-	wxString realType = GetRealType( var.type );
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if( dbgr && dbgr->GetDebuggerInformation().resolveLocals == false) {
+		return false;
+	}
+
+	wxString realType = GetRealType( var.type );
 	for(size_t i=0; i<m_dbgCmds.size(); i++) {
 		DebuggerCmdData dcd = m_dbgCmds.at(i);
 		if(dcd.GetName() == realType) {

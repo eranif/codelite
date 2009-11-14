@@ -120,6 +120,7 @@
 #include "tabgroupdlg.h"
 
 // from auto-generated file svninfo.cpp:
+extern wxString CODELITE_VERSION_STR;
 extern const wxChar *SvnRevision;
 
 // from iconsextra.cpp:
@@ -1236,7 +1237,7 @@ void Frame::OnFileExistUpdateUI(wxUpdateUIEvent &event)
 void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	wxString mainTitle;
-	mainTitle << wxT("v1.0.") << SvnRevision;
+	mainTitle = CODELITE_VERSION_STR;
 
 	AboutDlg dlg(this, mainTitle);
 	dlg.SetInfo(wxString::Format(wxT("SVN build, revision: %s"), SvnRevision));

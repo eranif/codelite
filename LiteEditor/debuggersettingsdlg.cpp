@@ -49,7 +49,8 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 		m_spinCtrlNumElements->SetValue(info.maxDisplayStringSize);
 		m_showTooltips->SetValue(info.showTooltips);
 		m_textCtrlStartupCommands->SetValue( info.startupCommands );
-		m_spinCtrlNumElements->SetValue(info.maxDisplayStringSize);
+
+		m_checkBoxExpandLocals->SetValue(info.resolveLocals);
 #ifdef __WXMSW__
 		m_checkBoxDebugAssert->SetValue(info.debugAsserts);
 #endif
@@ -160,6 +161,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		info.showTooltips             = page->m_showTooltips->IsChecked();
 		info.startupCommands          = page->m_textCtrlStartupCommands->GetValue();
 		info.maxDisplayStringSize     = page->m_spinCtrlNumElements->GetValue();
+		info.resolveLocals            = page->m_checkBoxExpandLocals->IsChecked();
 #ifdef __WXMSW__
 		info.debugAsserts             = page->m_checkBoxDebugAssert->IsChecked();
 #endif

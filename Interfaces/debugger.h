@@ -323,6 +323,7 @@ public:
 	bool      debugAsserts;
 	wxString  startupCommands;
 	int       maxDisplayStringSize;
+	bool      resolveLocals;
 
 public:
 	DebuggerInformation()
@@ -338,7 +339,8 @@ public:
 			, showTooltips(false)
 			, debugAsserts(false)
 			, startupCommands(wxEmptyString)
-			, maxDisplayStringSize(200){}
+			, maxDisplayStringSize(200)
+			, resolveLocals (false){}
 	~DebuggerInformation() {}
 };
 

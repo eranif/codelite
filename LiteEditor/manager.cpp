@@ -2074,29 +2074,24 @@ void Manager::DbgDoSimpleCommand ( int cmd )
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() ) {
-		// except for the PAUSE command, all other gdb commands
-		// requires that GDB is interactive
-		if(cmd == DBG_PAUSE) {
+		switch ( cmd ) {
+		case DBG_PAUSE:
 			dbgr->Interrupt();
-
-		} else if(DbgCanInteract()) {
-
-			switch ( cmd ) {
-			case DBG_NEXT:
-				dbgr->Next();
-				break;
-			case DBG_STEPIN:
-				dbgr->StepIn();
-				break;
-			case DBG_STEPOUT:
-				dbgr->StepOut();
-				break;
-			case DBG_SHOW_CURSOR:
-				dbgr->QueryFileLine();
-				break;
-			default:
-				break;
-			}
+			break;
+		case DBG_NEXT:
+			dbgr->Next();
+			break;
+		case DBG_STEPIN:
+			dbgr->StepIn();
+			break;
+		case DBG_STEPOUT:
+			dbgr->StepOut();
+			break;
+		case DBG_SHOW_CURSOR:
+			dbgr->QueryFileLine();
+			break;
+		default:
+			break;
 		}
 	}
 }

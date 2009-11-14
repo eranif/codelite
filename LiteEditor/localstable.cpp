@@ -193,6 +193,7 @@ long LocalsTable::DoGetIdxByVar(const LocalVariable& var, const wxString& kind)
 bool LocalsTable::DoShowInline(const LocalVariable& var, long item)
 {
 	wxString realType = GetRealType( var.type );
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	for(size_t i=0; i<m_dbgCmds.size(); i++) {
 		DebuggerCmdData dcd = m_dbgCmds.at(i);
 		if(dcd.GetName() == realType) {
@@ -200,7 +201,6 @@ bool LocalsTable::DoShowInline(const LocalVariable& var, long item)
 			// and display the content
 			wxString expression = dcd.GetCommand();
 			expression.Replace(wxT("$(Variable)"), var.name);
-			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 			if( dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() ) {
 				dbgr->CreateVariableObject(expression, DBG_USERR_LOCALS_INLINE);
 				m_expression2Idx[expression] = item;
@@ -215,13 +215,9 @@ void LocalsTable::UpdateInline(const DebuggerEvent& event)
 {
 	wxString key = event.m_expression;
 	std::map<wxString, long>::iterator iter = m_expression2Idx.find(key);
-	if(iter != m_expression2Idx.end() && event.m_evaluated.IsEmpty() == false){
+	if(iter != m_expression2Idx.end()){
 		long idx = iter->second;
-		wxString oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
 		SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, event.m_evaluated);
-		if(oldValue.IsEmpty() == false && oldValue != event.m_evaluated) {
-			m_listTable->SetItemTextColour(idx, wxT("RED"));
-		}
 	}
 
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();

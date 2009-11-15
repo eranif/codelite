@@ -21,8 +21,8 @@ to_lower|Edit|Make Lowercase|
 to_upper |Edit|Make Uppercase|
 transpose_lines|Edit|Transpose Lines|Ctrl-T
 wxID_SELECTALL|Edit|Select All|Ctrl-A
-match_brace|Edit|Match Brace|Ctrl-E
-select_to_brace|Edit|Select to Brace|Ctrl-Shift-E
+match_brace|Edit|Match Brace|Ctrl-]
+select_to_brace|Edit|Select to Brace|Ctrl-Shift-]
 complete_word|Edit|Complete Word|Ctrl-SPACE
 function_call_tip|Edit|Display Function Calltip|Ctrl-Shift-SPACE
 convert_eol_win|Edit|Convert to Windows Format|Ctrl-Shift-W
@@ -63,8 +63,8 @@ find_type|Search|Find Type...|Ctrl-Shift-T
 find_symbol|Search|Quick Outline...|Ctrl-Shift-O
 goto_definition|Search|Find Symbol|Ctrl-D
 goto_previous_definition|Search|Go To Previous Location|Ctrl-P
-wxID_BACKWARD|Search|Navigate Backward|
-wxID_FORWARD|Search|Navigate Forward|
+wxID_BACKWARD|Search|Navigate Backward|Ctrl-,
+wxID_FORWARD|Search|Navigate Forward|Ctrl-.
 goto_linenumber|Search|Go To...|Ctrl-G
 toggle_bookmark|Search|Toggle Bookmark|Ctrl-B
 next_bookmark|Search|Next Bookmark|F2

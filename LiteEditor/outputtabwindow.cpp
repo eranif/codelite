@@ -56,8 +56,10 @@ OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString
 		, m_autoAppear(true)
 {
 	CreateGUIControls();
-	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),      NULL, this);
-	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL, this);
+	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),   NULL, this);
+	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),   NULL, this);
+	wxTheApp->Connect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
+	wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
 }
 
 OutputTabWindow::~OutputTabWindow()
@@ -328,7 +330,10 @@ void OutputTabWindow::OnEditUI(wxUpdateUIEvent& e)
 
 	switch (e.GetId()) {
 	case wxID_COPY:
-		if(m_sci->GetSelectedText().IsEmpty()) e.Enable(false);
+		e.Enable( m_sci->GetSelectedText().IsEmpty() == false );
+		break;
+	case wxID_SELECTALL:
+		e.Enable(true);
 		break;
 	default:
 		break;

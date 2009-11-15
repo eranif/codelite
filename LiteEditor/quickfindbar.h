@@ -53,7 +53,7 @@ protected:
 	void OnCopy     (wxCommandEvent  &e);
 	void OnPaste    (wxCommandEvent  &e);
 	void OnSelectAll(wxCommandEvent  &e);
-
+	void OnEditUI   (wxUpdateUIEvent &e);
     DECLARE_EVENT_TABLE()
 
 public:

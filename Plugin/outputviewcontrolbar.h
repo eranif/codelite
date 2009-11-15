@@ -152,14 +152,15 @@ public:
 	virtual void OnMouseLDown        (wxMouseEvent &event) {
 		event.Skip();
 	}
-	virtual void OnEnter             (wxCommandEvent &event);
-	virtual void OnTextUpdated       (wxCommandEvent &event);
-	virtual void OnShowSearchOptions (wxCommandEvent &event);
-	virtual void OnHideSearchBar     (wxCommandEvent &event);
-	virtual void OnMenuSelection     (wxCommandEvent &event);
-	virtual void OnKeyDown           (wxKeyEvent     &event);
-	virtual void OnFocus             (wxFocusEvent   &event);
-	virtual void OnEdit              (wxCommandEvent &event);
+	virtual void OnEnter             (wxCommandEvent  &event);
+	virtual void OnTextUpdated       (wxCommandEvent  &event);
+	virtual void OnShowSearchOptions (wxCommandEvent  &event);
+	virtual void OnHideSearchBar     (wxCommandEvent  &event);
+	virtual void OnMenuSelection     (wxCommandEvent  &event);
+	virtual void OnKeyDown           (wxKeyEvent      &event);
+	virtual void OnFocus             (wxFocusEvent    &event);
+	virtual void OnEdit              (wxCommandEvent  &event);
+	virtual void OnEditUI            (wxUpdateUIEvent &event);
 };
 
 class OutputViewControlBarToggleButton : public wxToggleButton

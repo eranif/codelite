@@ -1204,10 +1204,10 @@ void Frame::DispatchCommandEvent(wxCommandEvent &event)
 
 void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 {
-//	if ( !IsEditorEvent(event) ) {
-//		event.Skip();
-//		return;
-//	}
+	if ( !IsEditorEvent(event) ) {
+		event.Skip();
+		return;
+	}
 
 	LEditor* editor = GetMainBook()->GetActiveEditor();
 	if ( !editor ) {

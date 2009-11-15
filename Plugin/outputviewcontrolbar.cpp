@@ -720,10 +720,16 @@ OutputViewSearchCtrl::OutputViewSearchCtrl(wxWindow* win)
 	m_findWhat->Connect(wxEVT_KILL_FOCUS,           wxFocusEventHandler(OutputViewSearchCtrl::OnFocus)        , NULL, this);
 	m_findWhat->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(OutputViewSearchCtrl::OnKeyDown), NULL, this);
 
+	// Editor event
 	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewSearchCtrl::OnEdit),      NULL, this);
 	wxTheApp->Connect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewSearchCtrl::OnEdit),      NULL, this);
 	wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewSearchCtrl::OnEdit),      NULL, this);
 	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewSearchCtrl::OnEdit),      NULL, this);
+
+	wxTheApp->Connect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputViewSearchCtrl::OnEditUI),      NULL, this);
+	wxTheApp->Connect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputViewSearchCtrl::OnEditUI),      NULL, this);
+	wxTheApp->Connect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputViewSearchCtrl::OnEditUI),      NULL, this);
+	wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputViewSearchCtrl::OnEditUI),      NULL, this);
 
 	m_button = new wxBitmapButton(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("findwhat")));
 	m_button->SetToolTip(wxT("Show Finder Search Categories"));
@@ -1009,4 +1015,30 @@ void OutputViewControlBarToggleButton::DoShowPopupMenu()
 
 	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewControlBar::OnMenuSelection), NULL, bar);
 	PopupMenu( &popupMenu, rr.x, rr.y );
+}
+
+void OutputViewSearchCtrl::OnEditUI(wxUpdateUIEvent& event)
+{
+	// is m_findWhat in focus??
+	if ( !IsFocused() ) {
+		event.Skip();
+		return;
+	}
+
+	switch ( event.GetId() ) {
+	case wxID_CUT:
+		event.Enable( m_findWhat->CanCopy() );
+		break;
+	case wxID_COPY:
+		event.Enable(  m_findWhat->CanCopy() );
+		break;
+	case wxID_PASTE:
+		event.Enable(m_findWhat->CanPaste());
+		break;
+	case wxID_SELECTALL:
+		event.Enable(true);
+		break;
+	default:
+		break;
+	}
 }

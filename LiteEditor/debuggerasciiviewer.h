@@ -14,6 +14,10 @@ class IDebugger;
 class DebuggerAsciiViewer : public DebuggerAsciiViewerBase
 {
 	void OnClearView(wxCommandEvent &e);
+	void OnEdit  (wxCommandEvent &e);
+	void OnEditUI(wxUpdateUIEvent &e);
+
+	bool IsFocused();
 public:
 	/** Constructor */
 	DebuggerAsciiViewer( wxWindow* parent     );

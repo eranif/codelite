@@ -48,9 +48,20 @@ DebuggerAsciiViewer::DebuggerAsciiViewer( wxWindow* parent )
 
 	// Set TELETYPE font (monospace)
 	m_textView->StyleSetFont(wxSCI_STYLE_DEFAULT, font);
-	m_textView->StyleSetSize(wxSCI_STYLE_DEFAULT, 8   );
+	m_textView->StyleSetSize(wxSCI_STYLE_DEFAULT, 12  );
 
 	m_textView->SetReadOnly(true);
+
+	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit),   NULL, this);
+	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit),   NULL, this);
+	wxTheApp->Connect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
+	wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
+}
+
+bool DebuggerAsciiViewer::IsFocused()
+{
+	wxWindow *win = wxWindow::FindFocus();
+	return (win && win == m_textView);
 }
 
 void DebuggerAsciiViewer::UpdateView(const wxString &expr, const wxString &value)
@@ -73,4 +84,43 @@ void DebuggerAsciiViewer::OnClearView(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	UpdateView(wxT(""), wxT(""));
+}
+
+
+void DebuggerAsciiViewer::OnEditUI(wxUpdateUIEvent& e)
+{
+	if ( !IsFocused() ) {
+		e.Skip();
+		return;
+	}
+	switch ( e.GetId() ) {
+	case wxID_SELECTALL:
+		e.Enable(true);
+		break;
+	case wxID_COPY:
+		e.Enable( m_textView->GetSelectedText().IsEmpty() == false );
+		break;
+	default:
+		e.Enable(false);
+		break;
+	}
+}
+
+void DebuggerAsciiViewer::OnEdit(wxCommandEvent& e)
+{
+	if ( !IsFocused() ) {
+		e.Skip();
+		return;
+	}
+
+	switch ( e.GetId() ) {
+	case wxID_SELECTALL:
+		m_textView->SelectAll();
+		break;
+	case wxID_COPY:
+		m_textView->Copy();
+		break;
+	default:
+		break;
+	}
 }

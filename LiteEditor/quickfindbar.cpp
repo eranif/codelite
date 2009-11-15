@@ -94,6 +94,10 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 	wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnPaste),     NULL, this);
 	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnSelectAll), NULL, this);
 
+	wxTheApp->Connect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBar::OnEditUI), NULL, this);
+	wxTheApp->Connect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBar::OnEditUI), NULL, this);
+	wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBar::OnEditUI), NULL, this);
+
 	mainSizer->Layout();
 
 }
@@ -248,4 +252,27 @@ bool QuickFindBar::IsFocused()
 {
 	wxWindow *win = wxWindow::FindFocus();
 	return win && win == m_findWhat;
+}
+
+void QuickFindBar::OnEditUI(wxUpdateUIEvent& e)
+{
+	if ( !IsFocused() ) {
+		e.Skip();
+		return;
+	}
+
+	switch(e.GetId()) {
+	case wxID_SELECTALL:
+		e.Enable( m_findWhat->GetValue().IsEmpty() == false );
+		break;
+	case wxID_COPY:
+		e.Enable(m_findWhat->CanCopy());
+		break;
+	case wxID_PASTE:
+		e.Enable(m_findWhat->CanPaste());
+		break;
+	default:
+		e.Enable(false);
+		break;
+	}
 }

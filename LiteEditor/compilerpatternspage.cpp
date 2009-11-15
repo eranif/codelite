@@ -8,13 +8,13 @@ CompilerPatternsPage::CompilerPatternsPage( wxWindow* parent, const wxString &cm
 		: CompilerPatternsBase( parent )
 		, m_cmpname(cmpname)
 {
-	m_listErrPatterns->InsertColumn(COL_PATTERN,  _("Pattern"));
-	m_listErrPatterns->InsertColumn(COL_LINE_IDX, _("Line number index"));
-	m_listErrPatterns->InsertColumn(COL_FILE_IDX, _("File name index"));
+	m_listErrPatterns->InsertColumn(0,  _("Pattern"));
+	m_listErrPatterns->InsertColumn(1,  _("File name index"));
+	m_listErrPatterns->InsertColumn(2,  _("Line number index"));
 
-	m_listWarnPatterns->InsertColumn(COL_PATTERN,  _("Pattern"));
-	m_listWarnPatterns->InsertColumn(COL_LINE_IDX, _("Line number index"));
-	m_listWarnPatterns->InsertColumn(COL_FILE_IDX, _("File name index"));
+	m_listWarnPatterns->InsertColumn(0,  _("Pattern"));
+	m_listWarnPatterns->InsertColumn(1,  _("File name index"));
+	m_listWarnPatterns->InsertColumn(2,  _("Line number index"));
 
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(m_cmpname);
 
@@ -22,26 +22,26 @@ CompilerPatternsPage::CompilerPatternsPage( wxWindow* parent, const wxString &cm
 	Compiler::CmpListInfoPattern::const_iterator itPattern;
 	for (itPattern = errPatterns.begin(); itPattern != errPatterns.end(); ++itPattern) {
 		long item = AppendListCtrlRow(m_listErrPatterns);
-		SetColumnText(m_listErrPatterns, item, COL_PATTERN,  itPattern->pattern);
-		SetColumnText(m_listErrPatterns, item, COL_LINE_IDX, itPattern->lineNumberIndex);
-		SetColumnText(m_listErrPatterns, item, COL_FILE_IDX, itPattern->fileNameIndex);
+		SetColumnText(m_listErrPatterns, item, 0,  itPattern->pattern);
+		SetColumnText(m_listErrPatterns, item, 1, itPattern->fileNameIndex);
+		SetColumnText(m_listErrPatterns, item, 2, itPattern->lineNumberIndex);
 	}
 
 	const Compiler::CmpListInfoPattern& warnPatterns = cmp->GetWarnPatterns();
 	for (itPattern = warnPatterns.begin(); itPattern != warnPatterns.end(); ++itPattern) {
 		long item = AppendListCtrlRow(m_listWarnPatterns);
-		SetColumnText(m_listWarnPatterns, item, COL_PATTERN,  itPattern->pattern);
-		SetColumnText(m_listWarnPatterns, item, COL_LINE_IDX, itPattern->lineNumberIndex);
-		SetColumnText(m_listWarnPatterns, item, COL_FILE_IDX, itPattern->fileNameIndex);
+		SetColumnText(m_listWarnPatterns, item, 0,  itPattern->pattern);
+		SetColumnText(m_listWarnPatterns, item, 1, itPattern->fileNameIndex);
+		SetColumnText(m_listWarnPatterns, item, 2, itPattern->lineNumberIndex);
 	}
 
-	m_listWarnPatterns->SetColumnWidth(COL_PATTERN , 200);
-	m_listWarnPatterns->SetColumnWidth(COL_LINE_IDX, 50);
-	m_listWarnPatterns->SetColumnWidth(COL_FILE_IDX, 50);
+	m_listWarnPatterns->SetColumnWidth(0, 200);
+	m_listWarnPatterns->SetColumnWidth(1, 50);
+	m_listWarnPatterns->SetColumnWidth(2, 50);
 
-	m_listErrPatterns->SetColumnWidth(COL_PATTERN , 200);
-	m_listErrPatterns->SetColumnWidth(COL_LINE_IDX, 50);
-	m_listErrPatterns->SetColumnWidth(COL_FILE_IDX, 50);
+	m_listErrPatterns->SetColumnWidth(0, 200);
+	m_listErrPatterns->SetColumnWidth(1, 50);
+	m_listErrPatterns->SetColumnWidth(2, 50);
 }
 
 void CompilerPatternsPage::Save(CompilerPtr cmp)
@@ -49,9 +49,9 @@ void CompilerPatternsPage::Save(CompilerPtr cmp)
 	Compiler::CmpListInfoPattern errPatterns;
 	for (int i = 0; i < m_listErrPatterns->GetItemCount(); ++i) {
 		Compiler::CmpInfoPattern infoPattern;
-		infoPattern.pattern         = GetColumnText(m_listErrPatterns, i, COL_PATTERN);
-		infoPattern.lineNumberIndex = GetColumnText(m_listErrPatterns, i, COL_LINE_IDX);
-		infoPattern.fileNameIndex   = GetColumnText(m_listErrPatterns, i, COL_FILE_IDX);
+		infoPattern.pattern         = GetColumnText(m_listErrPatterns, i, 0);
+		infoPattern.fileNameIndex   = GetColumnText(m_listErrPatterns, i, 1);
+		infoPattern.lineNumberIndex = GetColumnText(m_listErrPatterns, i, 2);
 		errPatterns.push_back(infoPattern);
 	}
 	cmp->SetErrPatterns(errPatterns);
@@ -59,9 +59,9 @@ void CompilerPatternsPage::Save(CompilerPtr cmp)
 	Compiler::CmpListInfoPattern warnPatterns;
 	for (int i = 0; i < m_listWarnPatterns->GetItemCount(); ++i) {
 		Compiler::CmpInfoPattern infoPattern;
-		infoPattern.pattern         = GetColumnText(m_listWarnPatterns, i, COL_PATTERN);
-		infoPattern.lineNumberIndex = GetColumnText(m_listWarnPatterns, i, COL_LINE_IDX);
-		infoPattern.fileNameIndex   = GetColumnText(m_listWarnPatterns, i, COL_FILE_IDX);
+		infoPattern.pattern         = GetColumnText(m_listWarnPatterns, i, 0);
+		infoPattern.fileNameIndex   = GetColumnText(m_listWarnPatterns, i, 1);
+		infoPattern.lineNumberIndex = GetColumnText(m_listWarnPatterns, i, 2);
 		warnPatterns.push_back(infoPattern);
 	}
 	cmp->SetWarnPatterns(warnPatterns);
@@ -71,9 +71,10 @@ void CompilerPatternsPage::OnBtnAddErrPattern( wxCommandEvent& event )
 {
 	CompilerPatternDlg dlg(this, _("Add compiler error pattern"));
 	if (dlg.ShowModal() == wxID_OK) {
-		long item = m_listErrPatterns->InsertItem(m_listErrPatterns->GetItemCount(), dlg.m_pattern);
-		m_listErrPatterns->SetItem(item, COL_LINE_IDX, dlg.m_lineIdx);
-		m_listErrPatterns->SetItem(item, COL_FILE_IDX, dlg.m_fileIdx);
+		long item = AppendListCtrlRow( m_listErrPatterns );
+		SetColumnText(m_listErrPatterns, item, 0, dlg.m_pattern);
+		SetColumnText(m_listErrPatterns, item, 1, dlg.m_fileIdx);
+		SetColumnText(m_listErrPatterns, item, 2, dlg.m_lineIdx);
 	}
 }
 
@@ -103,15 +104,15 @@ void CompilerPatternsPage::OnErrItemActivated( wxListEvent& event )
 
 void CompilerPatternsPage::DoUpdateErrPattern(long item)
 {
-	wxString pattern = GetColumnText(m_listErrPatterns, item, COL_PATTERN);
-	wxString fileIdx = GetColumnText(m_listErrPatterns, item, COL_FILE_IDX);
-	wxString lineIdx = GetColumnText(m_listErrPatterns, item, COL_LINE_IDX);
+	wxString pattern = GetColumnText(m_listErrPatterns, item, 0);
+	wxString fileIdx = GetColumnText(m_listErrPatterns, item, 1);
+	wxString lineIdx = GetColumnText(m_listErrPatterns, item, 2);
 	CompilerPatternDlg dlg(this, _("Update compiler error pattern"));
 	dlg.SetPattern(pattern, lineIdx, fileIdx);
 	if (dlg.ShowModal() == wxID_OK) {
-		SetColumnText(m_listErrPatterns, item, COL_PATTERN,  dlg.m_pattern);
-		SetColumnText(m_listErrPatterns, item, COL_FILE_IDX, dlg.m_fileIdx);
-		SetColumnText(m_listErrPatterns, item, COL_LINE_IDX, dlg.m_lineIdx);
+		SetColumnText(m_listErrPatterns, item, 0,  dlg.m_pattern);
+		SetColumnText(m_listErrPatterns, item, 1, dlg.m_fileIdx);
+		SetColumnText(m_listErrPatterns, item, 2, dlg.m_lineIdx);
 	}
 }
 
@@ -119,9 +120,10 @@ void CompilerPatternsPage::OnBtnAddWarnPattern( wxCommandEvent& event )
 {
 	CompilerPatternDlg dlg(this, _("Add compiler warning pattern"));
 	if (dlg.ShowModal() == wxID_OK) {
-		long item = m_listWarnPatterns->InsertItem(m_listWarnPatterns->GetItemCount(), dlg.m_pattern);
-		m_listWarnPatterns->SetItem(item, COL_LINE_IDX, dlg.m_lineIdx);
-		m_listWarnPatterns->SetItem(item, COL_FILE_IDX, dlg.m_fileIdx);
+		long item = AppendListCtrlRow( m_listWarnPatterns );
+		SetColumnText(m_listWarnPatterns, item, 0, dlg.m_pattern);
+		SetColumnText(m_listWarnPatterns, item, 1, dlg.m_fileIdx);
+		SetColumnText(m_listWarnPatterns, item, 2, dlg.m_lineIdx);
 	}
 }
 
@@ -150,15 +152,15 @@ void CompilerPatternsPage::OnWarnItemActivated( wxListEvent& event )
 
 void CompilerPatternsPage::DoUpdateWarnPattern(long item)
 {
-	wxString pattern = GetColumnText(m_listWarnPatterns, item, COL_PATTERN);
-	wxString fileIdx = GetColumnText(m_listWarnPatterns, item, COL_FILE_IDX);
-	wxString lineIdx = GetColumnText(m_listWarnPatterns, item, COL_LINE_IDX);
+	wxString pattern = GetColumnText(m_listWarnPatterns, item, 0);
+	wxString fileIdx = GetColumnText(m_listWarnPatterns, item, 1);
+	wxString lineIdx = GetColumnText(m_listWarnPatterns, item, 2);
 	CompilerPatternDlg dlg(this, _("Update compiler warning pattern"));
 	dlg.SetPattern(pattern, lineIdx, fileIdx);
 	if (dlg.ShowModal() == wxID_OK) {
-		SetColumnText(m_listWarnPatterns, item, COL_PATTERN,  dlg.m_pattern);
-		SetColumnText(m_listWarnPatterns, item, COL_FILE_IDX, dlg.m_fileIdx);
-		SetColumnText(m_listWarnPatterns, item, COL_LINE_IDX, dlg.m_lineIdx);
+		SetColumnText(m_listWarnPatterns, item, 0,  dlg.m_pattern);
+		SetColumnText(m_listWarnPatterns, item, 1, dlg.m_fileIdx);
+		SetColumnText(m_listWarnPatterns, item, 2, dlg.m_lineIdx);
 	}
 }
 

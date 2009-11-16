@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<BuildSettings Version="2.0.1">
+<BuildSettings Version="2.0.2">
   <Compilers>
     <Compiler Name="gnu g++">
       <Switch Name="ArchiveOutput" Value=" "/>
@@ -17,7 +17,7 @@
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="g++ -shared -fPIC"/>
       <Option Name="ObjectSuffix" Value=".o"/>
-      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)( error)</Pattern>
+      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: error)</Pattern>
       <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning)</Pattern>
       <GlobalIncludePath></GlobalIncludePath>
       <GlobalLibPath></GlobalLibPath>
@@ -56,7 +56,7 @@
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="gcc -shared -fPIC"/>
       <Option Name="ObjectSuffix" Value=".o"/>
-      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)( error)</Pattern>
+      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: error)</Pattern>
       <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning)</Pattern>
       <GlobalIncludePath></GlobalIncludePath>
       <GlobalLibPath></GlobalLibPath>

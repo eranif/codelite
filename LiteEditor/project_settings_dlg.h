@@ -70,8 +70,9 @@ protected:
 	virtual void OnDebuggingRemoteTarget(wxCommandEvent &e);
 	virtual void OnBrowseCommandWD(wxCommandEvent &e);
 	virtual void OnBrowseIntermediateDir(wxCommandEvent &e);
-	virtual void OnBrowseCustomBuildWD(wxCommandEvent &e);
-
+	virtual void OnBrowseCustomBuildWD  (wxCommandEvent &e);
+	virtual void OnBrowsePreCmpHeader   (wxCommandEvent &e);
+	virtual void OnBrowseProgram        (wxCommandEvent &e);
 	/**
 	 * Custom target handling
 	 */

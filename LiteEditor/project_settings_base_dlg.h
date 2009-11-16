@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -55,14 +55,15 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxButton* m_buttonApply;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnConfigurationTypeSelected( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonConfigurationManager( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonHelp( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonOK( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonApply( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnConfigurationTypeSelected( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonConfigurationManager( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonHelp( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonApply( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
+		
 		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 734,502 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~ProjectSettingsBaseDlg();
 	
@@ -97,7 +98,7 @@ class ProjectConfigurationBasePanel : public wxPanel
 		wxStaticLine* m_staticline5;
 		wxStaticText* m_staticText18;
 		wxTextCtrl* m_textCommand;
-		
+		wxButton* m_buttonBrowseProgram;
 		wxStaticText* m_staticText19;
 		wxTextCtrl* m_textCommandArguments;
 		
@@ -120,6 +121,10 @@ class ProjectConfigurationBasePanel : public wxPanel
 		wxStaticText* m_staticText171;
 		wxTextCtrl* m_textPreprocessor;
 		wxButton* m_buttonAddPreprocessor;
+		wxStaticLine* m_staticline14;
+		wxStaticText* m_staticTextPreCompiledHeader;
+		wxTextCtrl* m_textCtrlPreCompiledHeader;
+		wxButton* m_buttonBrowsePreCompiledHeader;
 		wxPanel* m_linkerPage;
 		wxCheckBox* m_checkLinkerNeeded;
 		wxStaticText* m_staticText3311;
@@ -204,46 +209,49 @@ class ProjectConfigurationBasePanel : public wxPanel
 		wxStaticText* m_staticText24;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnCmdEvtVModified( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnBrowseIntermediateDir( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnBrowseCommandWD( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnCheckCompilerNeeded( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonAddCompilerOptions( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnAddSearchPath( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonAddPreprocessor( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnCheckLinkerNeeded( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnAddLibrary( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnAddLibraryPath( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonAddLinkerOptions( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnSelectDebuggerPath( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnDebuggingRemoteTarget( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnResourceCmpNeeded( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnResourceCmpAddOption( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnResourceCmpAddPath( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnNewPreBuildCommand( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnDeletePreBuildCommand( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnEditPreBuildCommand( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnUpPreBuildCommand( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnDownPreBuildCommand( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnEditPostBuildCommand( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnNewPostBuildCommand( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnDeletePostBuildCommand( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnUpPostBuildCommand( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnDownPostBuildCommand( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnCustomBuildEnabled( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnBrowseCustomBuildWD( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnItemActivated( wxListEvent& event ){ event.Skip(); }
-		virtual void OnItemSelected( wxListEvent& event ){ event.Skip(); }
-		virtual void OnNewTarget( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnEditTarget( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnEditTargetUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void OnDeleteTarget( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnDeleteTargetUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void OnChoiceMakefileTool( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnCmdEvtVModified( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnBrowseIntermediateDir( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnBrowseProgram( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnBrowseCommandWD( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnCheckCompilerNeeded( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonAddCompilerOptions( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddSearchPath( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonAddPreprocessor( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnBrowsePreCmpHeader( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnCheckLinkerNeeded( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddLibrary( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddLibraryPath( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonAddLinkerOptions( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnSelectDebuggerPath( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDebuggingRemoteTarget( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnResourceCmpNeeded( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnResourceCmpAddOption( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnResourceCmpAddPath( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnNewPreBuildCommand( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDeletePreBuildCommand( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnEditPreBuildCommand( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnUpPreBuildCommand( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDownPreBuildCommand( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnEditPostBuildCommand( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnNewPostBuildCommand( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDeletePostBuildCommand( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnUpPostBuildCommand( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDownPostBuildCommand( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnCustomBuildEnabled( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnBrowseCustomBuildWD( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnItemActivated( wxListEvent& event ) { event.Skip(); }
+		virtual void OnItemSelected( wxListEvent& event ) { event.Skip(); }
+		virtual void OnNewTarget( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnEditTarget( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnEditTargetUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnDeleteTarget( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDeleteTargetUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnChoiceMakefileTool( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
-		ProjectConfigurationBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		
+		ProjectConfigurationBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 596,424 ), long style = wxTAB_TRAVERSAL );
 		~ProjectConfigurationBasePanel();
 	
 };
@@ -286,18 +294,19 @@ class GlobalSettingsBasePanel : public wxPanel
 		wxButton* m_buttonAddResCmpPath;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnCmdEvtVModified( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonAddCompilerOptions( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnAddSearchPath( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonAddPreprocessor( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnAddLibrary( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnAddLibraryPath( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonAddLinkerOptions( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnResourceCmpAddOption( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnResourceCmpAddPath( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnCmdEvtVModified( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonAddCompilerOptions( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddSearchPath( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonAddPreprocessor( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddLibrary( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddLibraryPath( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonAddLinkerOptions( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnResourceCmpAddOption( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnResourceCmpAddPath( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
+		
 		GlobalSettingsBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
 		~GlobalSettingsBasePanel();
 	

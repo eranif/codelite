@@ -298,7 +298,7 @@ void ProjectConfigurationPanel::CopyValues(const wxString &confName)
 	m_textCtrlDbgPort->SetValue(buildConf->GetDbgHostPort());
 
 	m_textCtrlDebuggerPath->SetValue(buildConf->GetDebuggerPath());
-
+	m_textCtrlPreCompiledHeader->SetValue(buildConf->GetPrecompiledHeader());
 	//set the custom pre-prebuild step
 	wxString customPreBuild = buildConf->GetPreBuildCustom();
 
@@ -436,6 +436,7 @@ void ProjectConfigurationPanel::SaveValues(const wxString &confName)
 	buildConf->SetDbgHostName(m_textCtrl1DbgHost->GetValue());
 	buildConf->SetDbgHostPort(m_textCtrlDbgPort->GetValue());
 	buildConf->SetDebuggerPath(m_textCtrlDebuggerPath->GetValue());
+	buildConf->SetPrecompiledHeader(m_textCtrlPreCompiledHeader->GetValue());
 
 	//set the pre-build step
 	wxString rules = m_textPreBuildRule->GetValue();
@@ -619,6 +620,9 @@ void ProjectConfigurationPanel::DisableCompilerPage(bool disable)
 	m_textPreprocessor->Enable(!disable);
 	m_buttonAddPreprocessor->Enable(!disable);
 	m_buttonCompilerOptions->Enable(!disable);
+	m_textCtrlPreCompiledHeader->Enable(!disable);
+	m_staticTextPreCompiledHeader->Enable(!disable);
+	m_buttonBrowsePreCompiledHeader->Enable(!disable);
 }
 
 void ProjectConfigurationPanel::DisableLinkerPage(bool disable)
@@ -1281,4 +1285,27 @@ void GlobalSettingsPanel::OnResourceCmpAddPath(wxCommandEvent &event)
 ProjectConfigurationPanel::~ProjectConfigurationPanel()
 {
 	PluginManager::Get()->UnHookProjectSettingsTab(m_notebook, m_projectName, wxEmptyString /* all tabs */);
+}
+
+void ProjectConfigurationPanel::OnBrowsePreCmpHeader(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	wxString projectPath;
+	ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
+	if (p) {
+		projectPath = p->GetFileName().GetPath();
+	}
+	wxString preCmpHeader = wxFileSelector(wxT("Select file:"), projectPath, NULL);
+	if (preCmpHeader.IsEmpty() == false) {
+		m_textCtrlPreCompiledHeader->SetValue( preCmpHeader );
+	}
+}
+
+void ProjectConfigurationPanel::OnBrowseProgram(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	wxString program = wxFileSelector(wxT("Select Program to Run / Debug:"));
+	if (program.IsEmpty() == false) {
+		m_textCommand->SetValue( program );
+	}
 }

@@ -496,9 +496,10 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 	if (bldConf->IsLinkerRequired()) {
 		CreateTargets(proj->GetSettings()->GetProjectType(bldConf->GetName()), bldConf, text);
 	}
-	CreatePostBuildEvents(bldConf, text);
-	CreateMakeDirsTarget(bldConf, targetName, text);
-	CreatePreBuildEvents(bldConf, text);
+	CreatePostBuildEvents        (bldConf, text);
+	CreateMakeDirsTarget         (bldConf, targetName, text);
+	CreatePreBuildEvents         (bldConf, text);
+	CreatePreCompiledHeaderTarget(bldConf, text);
 
 	//-----------------------------------------------------------
 	// Create a list of targets that should be built according to
@@ -695,8 +696,9 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 			//make sure we deletes it as well
 			exeExt = wxT(".exe");
 		}
-		text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)") << wxT("\n");;
-		text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)") << exeExt << wxT("\n");;
+		text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)") << wxT("\n");
+		text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)") << exeExt << wxT("\n");
+		text << wxT("\t") << wxT("$(RM) ") << wxT("*.gch") << wxT("\n");
 	} else {
 		//on linux we dont really need resource compiler...
 		for (size_t i=0; i<abs_files.size(); i++) {
@@ -715,6 +717,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 
 		//delete the output file as well
 		text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)\n");
+		text << wxT("\t") << wxT("$(RM) ") << wxT("*.gch") << wxT("\n");
 	}
 
 	if (generateDependeciesFiles) {
@@ -1205,13 +1208,21 @@ wxString BuilderGnuMake::GetProjectMakeCommand(const wxFileName& wspfile, const 
 	makeCommand << wxT("\t") << GetCdCmd(wspfile, projectPath);
 	if( bldConf ) {
 		wxString preprebuild = bldConf->GetPreBuildCustom();
+		wxString precmpheader = bldConf->GetPrecompiledHeader();
+		precmpheader.Trim().Trim(false);
 		preprebuild.Trim().Trim(false);
+
 		if (preprebuild.IsEmpty() == false) {
 			makeCommand << basicMakeCommand << wxT(" PrePreBuild && ");
 		}
 
 		if (HasPrebuildCommands(bldConf) ) {
 			makeCommand << basicMakeCommand << wxT(" PreBuild && ");
+		}
+
+		// Run pre-compiled header compilation if any
+		if( precmpheader.IsEmpty() == false) {
+			makeCommand << basicMakeCommand << wxT(" ") << precmpheader << wxT(".gch") << wxT(" && ");
 		}
 
 	}
@@ -1234,7 +1245,10 @@ wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& 
 
 	if( bldConf ) {
 		wxString preprebuild = bldConf->GetPreBuildCustom();
+		wxString precmpheader = bldConf->GetPrecompiledHeader();
+		precmpheader.Trim().Trim(false);
 		preprebuild.Trim().Trim(false);
+
 		if (preprebuild.IsEmpty() == false) {
 			makeCommand << basicMakeCommand << wxT(" PrePreBuild && ");
 		}
@@ -1243,8 +1257,25 @@ wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& 
 			makeCommand << basicMakeCommand << wxT(" PreBuild && ");
 		}
 
+		// Run pre-compiled header compilation if any
+		if( precmpheader.IsEmpty() == false) {
+			makeCommand << basicMakeCommand << wxT(" ") << precmpheader << wxT(".gch") << wxT(" && ");
+		}
 	}
 
 	makeCommand << basicMakeCommand;
 	return makeCommand;
+}
+
+void BuilderGnuMake::CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxString& text)
+{
+	wxString filename = bldConf->GetPrecompiledHeader();
+	filename.Trim().Trim(false);
+
+	if(filename.IsEmpty()) return;
+	text << wxT("\n");
+	text << wxT("# PreCompiled Header\n");
+	text << filename << wxT(".gch: ") << filename << wxT("\n");
+	text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch) ") << filename << wxT(" $(CmpOptions) $(IncludePath)\n");
+	text << wxT("\n");
 }

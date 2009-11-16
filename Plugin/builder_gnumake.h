@@ -60,7 +60,7 @@ private:
 	void CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text);
 	void CreatePreBuildEvents(BuildConfigPtr bldConf, wxString &text);
 	void CreatePostBuildEvents(BuildConfigPtr bldConf, wxString &text);
-
+	void CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxString &text);
 	void CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString &text);
 	void CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxString &text);
 

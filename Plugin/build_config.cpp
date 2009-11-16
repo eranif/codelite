@@ -52,6 +52,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		wxXmlNode *compile = XmlUtils::FindFirstByTagName(node, wxT("Compiler"));
 		if (compile) {
 			m_compilerRequired = XmlUtils::ReadBool(compile, wxT("Required"), true);
+			m_precompiledHeader = XmlUtils::ReadString(compile, wxT("PreCompiledHeader"));
 		}
 
 		wxXmlNode *linker = XmlUtils::FindFirstByTagName(node, wxT("Linker"));
@@ -236,7 +237,8 @@ wxXmlNode *BuildConfig::ToXml() const
 
 	wxXmlNode *compile = XmlUtils::FindFirstByTagName(node, wxT("Compiler"));
 	if (compile) {
-		compile->AddProperty(wxT("Required"), BoolToString(m_compilerRequired));
+		compile->AddProperty(wxT("Required"),          BoolToString(m_compilerRequired));
+		compile->AddProperty(wxT("PreCompiledHeader"), m_precompiledHeader);
 	}
 
 	wxXmlNode *link = XmlUtils::FindFirstByTagName(node, wxT("Linker"));

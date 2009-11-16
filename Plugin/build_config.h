@@ -84,7 +84,7 @@ public:
 
 private:
 	BuildConfigCommon m_commonConfig;
-	
+
 	wxString m_name;
 	BuildCommandList m_preBuildCommands;
 	BuildCommandList m_postBuildCommands;
@@ -110,7 +110,7 @@ private:
 	wxString m_toolName;
 	wxString m_makeGenerationCommand;
 	wxString m_singleFileBuildCommand;
-    wxString m_preprocessFileCommand;
+	wxString m_preprocessFileCommand;
 	wxString m_debuggerStartupCmds;
 	wxString m_debuggerPostRemoteConnectCmds;
 	bool m_isDbgRemoteTarget;
@@ -121,6 +121,7 @@ private:
 	wxString m_buildCmpWithGlobalSettings;
 	wxString m_buildLnkWithGlobalSettings;
 	wxString m_buildResWithGlobalSettings;
+	wxString m_precompiledHeader;
 
 public:
 	BuildConfig(wxXmlNode *node);
@@ -323,13 +324,13 @@ public:
 	const wxString& GetSingleFileBuildCommand() const {
 		return m_singleFileBuildCommand;
 	}
-    
-    void SetPreprocessFileCommand(const wxString &preprocessFileCommand) {
-        this->m_preprocessFileCommand = preprocessFileCommand;
-    }
-    const wxString &GetPreprocessFileCommand() const {
-        return m_preprocessFileCommand;
-    }
+
+	void SetPreprocessFileCommand(const wxString &preprocessFileCommand) {
+		this->m_preprocessFileCommand = preprocessFileCommand;
+	}
+	const wxString &GetPreprocessFileCommand() const {
+		return m_preprocessFileCommand;
+	}
 
 	const wxString &GetProjectType() const {
 		return m_projectType;
@@ -385,30 +386,36 @@ public:
 	const wxString& GetDebuggerPostRemoteConnectCmds() const {
 		return m_debuggerPostRemoteConnectCmds;
 	}
-	
+
 	const wxString& GetBuildCmpWithGlobalSettings() const {
 		return m_buildCmpWithGlobalSettings;
 	}
 	void SetBuildCmpWithGlobalSettings(const wxString &buildType) {
 		m_buildCmpWithGlobalSettings = buildType;
 	}
-	
+
 	const wxString& GetBuildLnkWithGlobalSettings() const {
 		return m_buildLnkWithGlobalSettings;
 	}
 	void SetBuildLnkWithGlobalSettings(const wxString &buildType) {
 		m_buildLnkWithGlobalSettings = buildType;
 	}
-	
+
 	const wxString& GetBuildResWithGlobalSettings() const {
 		return m_buildResWithGlobalSettings;
 	}
 	void SetBuildResWithGlobalSettings(const wxString &buildType) {
 		m_buildResWithGlobalSettings = buildType;
 	}
-	
+
 	const BuildConfigCommon& GetCommonConfiguration() const {
 		return m_commonConfig;
+	}
+	void SetPrecompiledHeader(const wxString& precompiledHeader) {
+		this->m_precompiledHeader = precompiledHeader;
+	}
+	const wxString& GetPrecompiledHeader() const {
+		return m_precompiledHeader;
 	}
 };
 

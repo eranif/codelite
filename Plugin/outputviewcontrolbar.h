@@ -31,7 +31,7 @@ public:
 	}
 
 public:
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 	std::vector<OutputViewControlBarButton*>       m_buttons;
 #else
 	std::vector<OutputViewControlBarToggleButton*> m_buttons;

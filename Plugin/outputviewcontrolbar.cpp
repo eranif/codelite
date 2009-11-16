@@ -104,7 +104,7 @@ void OutputViewControlBar::OnPaint(wxPaintEvent& event)
 
 void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, bool selected, long style)
 {
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 	OutputViewControlBarButton *button = new OutputViewControlBarButton(this, text, bmp, style);
 	button->SetState( selected ? OutputViewControlBarButton::Button_Pressed : OutputViewControlBarButton::Button_Normal );
 	m_buttons.push_back( button );
@@ -121,7 +121,7 @@ void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, 
 
 void OutputViewControlBar::OnButtonClicked(wxCommandEvent& event)
 {
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 	OutputViewControlBarButton *button = (OutputViewControlBarButton *)event.GetEventObject();
 #else
 	OutputViewControlBarToggleButton *button = (OutputViewControlBarToggleButton *)event.GetEventObject();
@@ -187,7 +187,7 @@ void OutputViewControlBar::OnRender(wxAuiManagerEvent& event)
 
 void OutputViewControlBar::DoMarkActive(const wxString& name)
 {
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 	for (size_t i=0; i<m_buttons.size(); i++) {
 		OutputViewControlBarButton *button = m_buttons.at(i);
 		if ( button->GetText() == name ) {
@@ -286,7 +286,7 @@ void OutputViewControlBar::OnSize(wxSizeEvent& event)
 
 void OutputViewControlBar::DoToggleButton(wxWindow* button, bool fromMenu)
 {
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 	OutputViewControlBarButton *bt = (OutputViewControlBarButton*)button;
 	if ( bt && bt->GetState() == OutputViewControlBarButton::Button_Pressed ) {
 		// second click on an already pressed button, hide the AUI pane
@@ -317,7 +317,7 @@ void OutputViewControlBar::DoToggleButton(wxWindow* button, bool fromMenu)
 wxWindow* OutputViewControlBar::DoFindButton(const wxString& name)
 {
 	for (size_t i=0; i<m_buttons.size(); i++) {
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 		OutputViewControlBarButton *      button = m_buttons.at(i);
 #else
 		OutputViewControlBarToggleButton *button = m_buttons.at(i);
@@ -333,7 +333,7 @@ wxWindow* OutputViewControlBar::DoFindButton(const wxString& name)
 void OutputViewControlBar::OnMenuSelection(wxCommandEvent& event)
 {
 	for (size_t i=0; i<m_buttons.size(); i++) {
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 		OutputViewControlBarButton *      button = m_buttons.at(i);
 #else
 		OutputViewControlBarToggleButton *button = m_buttons.at(i);
@@ -386,7 +386,7 @@ void OutputViewControlBar::OnEditorFocus(wxCommandEvent& event)
 
 		// re-draw all the buttons
 		for (size_t i=0; i<m_buttons.size(); i++) {
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 			OutputViewControlBarButton *button = m_buttons.at(i);
 			button->SetState( OutputViewControlBarButton::Button_Normal);
 			button->Refresh();
@@ -412,7 +412,7 @@ void OutputViewControlBar::DoShowQuickFinder(bool show)
 			GetSizer()->Hide(m_searchBar);
 			GetSizer()->Layout();
 
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 			for (size_t i=0; i<m_buttons.size(); i++) {
 				OutputViewControlBarButton *button = m_buttons.at(i);
 				button->Refresh();
@@ -435,7 +435,7 @@ void OutputViewControlBar::DoShowQuickFinder(bool show)
 			GetSizer()->Show(m_searchBar);
 			GetSizer()->Layout();
 
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 			for (size_t i=0; i<m_buttons.size(); i++) {
 				OutputViewControlBarButton *button = m_buttons.at(i);
 				button->Refresh();
@@ -640,13 +640,13 @@ void OutputViewControlBarButton::DoShowPopupMenu()
 	wxRect rr = GetSize();
 	wxMenu popupMenu;
 
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 #endif
 
 	OutputViewControlBar *bar = (OutputViewControlBar *)GetParent();
 	for (size_t i=0; i<bar->m_buttons.size(); i++) {
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 		OutputViewControlBarButton *button = bar->m_buttons.at(i);
 #else
 		OutputViewControlBarToggleButton *button = bar->m_buttons.at(i);
@@ -657,7 +657,7 @@ void OutputViewControlBarButton::DoShowPopupMenu()
 		}
 
 		wxString text = button->GetText();
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 		bool selected = button->GetState() == OutputViewControlBarButton::Button_Pressed;
 #else
 		bool selected = button->GetValue();
@@ -974,13 +974,13 @@ void OutputViewControlBarToggleButton::DoShowPopupMenu()
 
 	OutputViewControlBar *bar = (OutputViewControlBar *)GetParent();
 	for (size_t i=0; i<bar->m_buttons.size(); i++) {
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 		OutputViewControlBarButton *button = bar->m_buttons.at(i);
 #else
 		OutputViewControlBarToggleButton *button = bar->m_buttons.at(i);
 #endif
 		wxString text = button->GetText();
-#ifdef __WXMSW__
+#ifndef __WXGTK__
 		bool selected = button->GetState() == OutputViewControlBarButton::Button_Pressed;
 #else
 		bool selected = button->GetValue();

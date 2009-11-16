@@ -1,7 +1,7 @@
 #ifndef __settersgetterstreectrl__
 #define __settersgetterstreectrl__
 
-#include <checkdirtreectrl.h>
+#include "checkdirtreectrl.h"
 #include "entry.h"
 
 //----------------------------------------------------

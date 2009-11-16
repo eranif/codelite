@@ -69,11 +69,6 @@ createVariables()
 	#echo "	-lwxscintilla\$(EXT) -lwxpropgrid\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 	echo "	-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 	echo "PLUGIN_LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) \$(shell wx-config --libs \$(WXCFG))" >> Makefile
-
-
-	if [ "$is_so_lib" = "no" ]; then
-		echo "INCLUDES := \$(INCLUDES) -ILiteEditor " >> Makefile
-	fi
 	echo "INCLUDES := \$(INCLUDES) ${additional_include_path} " >> Makefile
 	echo "" >> Makefile
 	if [ "$os_name" != "Darwin" ] ; then

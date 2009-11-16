@@ -560,12 +560,7 @@ void OutputViewControlBarButton::OnPaint(wxPaintEvent& event)
 
 	// draw the border
 	if ( m_style != 0 ) {
-#ifdef __WXMAC__
-		// we need a darker color on Mac
-		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
-#else
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-#endif
 		dc.SetBrush( *wxTRANSPARENT_BRUSH );
 		dc.DrawRoundedRectangle(rect, 1);
 

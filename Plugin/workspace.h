@@ -34,6 +34,7 @@
 //#include "ctags_manager.h"
 #include "configuration_mapping.h"
 #include "optionsconfig.h"
+#include "localworkspace.h"
 
 
 #ifdef WXMAKINGDLL_LE_SDK

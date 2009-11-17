@@ -35,6 +35,7 @@
 #include "serialized_object.h"
 #include "project_settings.h"
 #include "optionsconfig.h"
+#include "localworkspace.h"
 
 //incase we are using DLL build of wxWdigets, we need to make this class to export its
 //classes

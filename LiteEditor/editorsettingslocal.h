@@ -28,9 +28,7 @@
 
 #include "editorsettingslocalbase.h"
 #include "optionsconfig.h"
-
-// Denotes whether we're dealing with preferences at a global, workspace, project or (maybe one day) file level
-enum prefsLevel { pLevel_global, pLevel_workspace, pLevel_project, pLevel_file, pLevel_dunno };
+#include "localworkspace.h"
 
 class EditorSettingsLocal : public LocalEditorSettingsbase
 {

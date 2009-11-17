@@ -23,6 +23,8 @@
     <File Name="custombuildrequest.cpp"/>
     <File Name="custombuildrequest.h"/>
     <File Name="build_config_common.cpp"/>
+    <File Name="localworkspace.h"/>
+    <File Name="localworkspace.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>

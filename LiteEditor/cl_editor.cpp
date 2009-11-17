@@ -65,6 +65,7 @@
 #include "quickfindbar.h"
 #include "buidltab.h"
 #include <wx/wupdlock.h>
+#include "localworkspace.h"
 
 // fix bug in wxscintilla.h
 #ifdef EVT_SCI_CALLTIP_CLICK
@@ -3355,28 +3356,8 @@ OptionsConfigPtr LEditor::GetOptions()
 	// Start by getting the global settings
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
 	
-	// Now see if this editor is part of a project (and therefore also of a workspace)
-	// If so, get first any workspace-wide preferences, then any project ones
-	if ( !GetProject().IsEmpty() ) {
-		if (ManagerST::Get()->IsWorkspaceOpen()) {
-			wxXmlNode* wsnode = WorkspaceST::Get()->GetWorkspaceEditorOptions();
-			if (wsnode) {
-				// Any local workspace options will replace the global ones inside 'options'
-				LocalOptionsConfig wsOC(options, wsnode);
-			}
-			
-			wxString errMsg;
-			ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(GetProject(), errMsg);
-			if (proj) {
-				wxXmlNode* pnode = proj->GetProjectEditorOptions();
-				if (pnode) {
-					LocalOptionsConfig pOC(options, pnode);
-				}
-			}
-		}
-	}
-	
-	// This space intentionally left blank :p  Maybe, one day there'll be individual-editor options too
+	// Now let any local preferences overwrite the global equivalent
+    LocalWorkspaceST::Get()->GetOptions( options, GetProject() );
 	
 	return options;
 }

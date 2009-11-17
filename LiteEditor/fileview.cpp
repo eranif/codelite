@@ -46,6 +46,7 @@
 #include "editor_config.h"
 #include "yestoalldlg.h"
 #include "editorsettingslocal.h"
+#include "localworkspace.h"
 
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
@@ -948,19 +949,18 @@ void FileViewTree::OnLocalPrefs( wxCommandEvent& event )
 		return; // Probably not possible, but...
 	}
 
-	wxXmlNode* wsnode = WorkspaceST::Get()->GetWorkspaceEditorOptions();
+	wxXmlNode* lwsnode = LocalWorkspaceST::Get()->GetLocalWorkspaceOptionsNode();
+    // Don't check lwsnode: it'll be NULL if there are currently no local workspace options
 
 	// Start by getting the global settings
 	OptionsConfigPtr higherOptions = EditorConfigST::Get()->GetOptions();
 
 	// If we're setting workspace options, run the dialog and return
 	if (event.GetId() == XRCID("local_workspace_prefs")) {
-		EditorSettingsLocal dlg(higherOptions, wsnode, pLevel_workspace, this);
-		if (dlg.ShowModal() == wxID_OK) {
-			WorkspaceST::Get()->SetWorkspaceEditorOptions(dlg.GetLocalOpts());
-				
+		EditorSettingsLocal dlg(higherOptions, lwsnode, pLevel_workspace, this);
+		if (dlg.ShowModal() == wxID_OK &&
+					LocalWorkspaceST::Get()->SetWorkspaceOptions(dlg.GetLocalOpts()) ) {
 			Frame::Get()->GetMainBook()->ApplySettingsChanges();
-
 			// Notify plugins that some settings have changed
 			PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
 		}
@@ -972,25 +972,20 @@ void FileViewTree::OnLocalPrefs( wxCommandEvent& event )
 	if ( !item.IsOk() ) {
 		return;
 	}
-	wxString errMsg; wxXmlNode* pnode = NULL;
-	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(GetItemText(item), errMsg);
-	if (proj) {
-		pnode = proj->GetProjectEditorOptions();
-		// Don't check pnode: it'll be NULL if there are currently no project options
-		// Merge any local workspace options with the global ones inside 'options'
-		LocalOptionsConfig wsOC(higherOptions, wsnode);
 
-		EditorSettingsLocal dlg(higherOptions, pnode, pLevel_project, this);
-		if (dlg.ShowModal() == wxID_OK) {
-			proj->SetProjectEditorOptions(dlg.GetLocalOpts());
+	wxXmlNode* lpnode = LocalWorkspaceST::Get()->GetLocalProjectOptionsNode(GetItemText(item));
+	// Don't check lpnode: it'll be NULL if there are currently no local project options
+	// Merge any local workspace options with the global ones inside 'higherOptions'
+	LocalOptionsConfig wsOC(higherOptions, lwsnode);
 				
+	EditorSettingsLocal dlg(higherOptions, lpnode, pLevel_project, this);
+	if (dlg.ShowModal() == wxID_OK &&
+			LocalWorkspaceST::Get()->SetProjectOptions(dlg.GetLocalOpts(), GetItemText(item)) ) {
 			Frame::Get()->GetMainBook()->ApplySettingsChanges();
-
 			// Notify plugins that some settings have changed
 			PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
 		}
 	}
-}
 
 void FileViewTree::OnProjectProperties( wxCommandEvent & WXUNUSED( event ) )
 {

@@ -302,6 +302,7 @@ protected:
 	void OnFunctionCalltip(wxCommandEvent& event);
 	void OnDeleteProject(wxCommandEvent& event);
 	void OnAbout(wxCommandEvent& event);
+	void OnCheckForUpdate(wxCommandEvent &e);
 	void OnFileNew(wxCommandEvent &event);
 	void OnFileOpen(wxCommandEvent &event);
 	void OnFileClose(wxCommandEvent &event);

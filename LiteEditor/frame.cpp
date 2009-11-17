@@ -392,6 +392,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	// Help menu
 	//-------------------------------------------------------
 	EVT_MENU(wxID_ABOUT,                        Frame::OnAbout)
+	EVT_MENU(XRCID("check_for_update"),         Frame::OnCheckForUpdate)
 
 	//-----------------------------------------------------------------
 	// Toolbar
@@ -3573,4 +3574,9 @@ void Frame::UpdateTagsOptions(const TagsOptionsData& tod)
 	TagsManagerST::Get()->SetCtagsOptions( m_tagsOptionsData );
 	EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
 	ParseThreadST::Get()->SetSearchPaths( tod.GetParserSearchPaths(), tod.GetParserExcludePaths() );
+}
+
+void Frame::OnCheckForUpdate(wxCommandEvent& e)
+{
+	JobQueueSingleton::Instance()->PushJob( new WebUpdateJob(this) );
 }

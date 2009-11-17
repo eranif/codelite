@@ -696,9 +696,18 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 			//make sure we deletes it as well
 			exeExt = wxT(".exe");
 		}
+
+
 		text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)") << wxT("\n");
 		text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)") << exeExt << wxT("\n");
-		text << wxT("\t") << wxT("$(RM) ") << wxT("*.gch") << wxT("\n");
+
+		// Remove the pre-compiled header
+		wxString pchFile = bldConf->GetPrecompiledHeader();
+		pchFile.Trim().Trim(false);
+
+		if(pchFile.IsEmpty() == false) {
+			text << wxT("\t") << wxT("$(RM) ") << pchFile << wxT(".gch") << wxT("\n");
+		}
 	} else {
 		//on linux we dont really need resource compiler...
 		for (size_t i=0; i<abs_files.size(); i++) {
@@ -717,7 +726,15 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 
 		//delete the output file as well
 		text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)\n");
-		text << wxT("\t") << wxT("$(RM) ") << wxT("*.gch") << wxT("\n");
+
+		// Remove the pre-compiled header
+		wxString pchFile = bldConf->GetPrecompiledHeader();
+		pchFile.Trim().Trim(false);
+
+		if(pchFile.IsEmpty() == false) {
+			text << wxT("\t") << wxT("$(RM) ") << pchFile << wxT(".gch") << wxT("\n");
+		}
+
 	}
 
 	if (generateDependeciesFiles) {

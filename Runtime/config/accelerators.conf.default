@@ -22,7 +22,7 @@ to_upper |Edit|Make Uppercase|
 transpose_lines|Edit|Transpose Lines|Ctrl-T
 wxID_SELECTALL|Edit|Select All|Ctrl-A
 match_brace|Edit|Match Brace|Ctrl-]
-select_to_brace|Edit|Select to Brace|Ctrl-Shift-]
+select_to_brace|Edit|Select to Brace|Ctrl-Shift-E
 complete_word|Edit|Complete Word|Ctrl-SPACE
 function_call_tip|Edit|Display Function Calltip|Ctrl-Shift-SPACE
 convert_eol_win|Edit|Convert to Windows Format|Ctrl-Shift-W

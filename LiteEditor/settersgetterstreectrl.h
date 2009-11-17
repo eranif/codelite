@@ -27,6 +27,7 @@ public:
 public:
 	virtual wxTreeItemId AddRoot   (const wxString& text, bool checked, wxTreeItemData* data = NULL);
 	virtual wxTreeItemId AppendItem(const wxTreeItemId& parent, const wxString& text, bool checked, wxTreeItemData* data = NULL);
+	virtual void         Check(const wxTreeItemId& item, bool check = true);
 
 	DECLARE_EVENT_TABLE();
 	void OnItemChecked   (wxCheckTreeCtrlEvent &e);

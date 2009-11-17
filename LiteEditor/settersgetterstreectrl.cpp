@@ -196,3 +196,28 @@ void SettersGettersTreeCtrl::OnItemChecked(wxCheckTreeCtrlEvent& e)
 		e.Skip();
 	}
 }
+
+void SettersGettersTreeCtrl::Check(const wxTreeItemId& item, bool check)
+{
+	if (item.IsOk()) {
+		wxTreeItemData *data = this->GetItemData(item);
+		if ( data ) {
+			SettersGettersTreeData* d = dynamic_cast<SettersGettersTreeData*>( data );
+			if ( d ) {
+				if ( d->m_disabled ) {
+					return; // do nothing
+				} else {
+					switch (d->m_kind) {
+					case SettersGettersTreeData::Kind_Root:
+					case SettersGettersTreeData::Kind_Parent:
+						// do nothing
+						break;
+					default:
+						wxCheckTreeCtrl::Check(item, check);
+						break;
+					}
+				}
+			}
+		}
+	}
+}

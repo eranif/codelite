@@ -46,7 +46,7 @@ public:
 	virtual wxTreeItemId AppendItem(const wxTreeItemId& parent, const wxString& text, bool checked, wxTreeItemData* data = NULL);
 
 	bool IsChecked(const wxTreeItemId& item) const;
-	void Check(const wxTreeItemId& item, bool check = true);
+	virtual void Check(const wxTreeItemId& item, bool check = true);
 	void RecursiveCheck(const wxTreeItemId &item, bool check = true);
 
 	DECLARE_EVENT_TABLE();

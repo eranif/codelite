@@ -131,7 +131,7 @@
                         <event name="OnTreeItemActivated"></event>
                         <event name="OnTreeItemCollapsed"></event>
                         <event name="OnTreeItemCollapsing"></event>
-                        <event name="OnTreeItemExpanded"></event>
+                        <event name="OnTreeItemExpanded">OnItemExpanded</event>
                         <event name="OnTreeItemExpanding">OnExpandItem</event>
                         <event name="OnTreeItemGetTooltip"></event>
                         <event name="OnTreeItemMenu"></event>

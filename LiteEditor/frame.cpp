@@ -574,7 +574,7 @@ void Frame::Initialize(bool loadLastSession)
 		inf.SetFramePosition(wxPoint(30, 3));
 	}
 
-	if (inf.GetFramePosition().y < 400 || inf.GetFramePosition().y > screenH) {
+	if (inf.GetFramePosition().y < 0 || inf.GetFramePosition().y > screenH) {
 		inf.SetFramePosition(wxPoint(30, 3));
 	}
 

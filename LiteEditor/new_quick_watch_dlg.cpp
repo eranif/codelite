@@ -182,3 +182,9 @@ void DisplayVariableDlg::OnLeftDown(wxMouseEvent& e)
 	}
 	e.Skip();
 }
+
+
+void DisplayVariableDlg::OnItemExpanded(wxTreeEvent& event)
+{
+	event.Skip();
+}

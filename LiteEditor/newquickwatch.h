@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -36,6 +36,7 @@ class NewQuickWatch : public wxDialog
 		virtual void OnCloseEvent( wxCloseEvent& event ){ event.Skip(); }
 		virtual void OnKeyDown( wxKeyEvent& event ){ event.Skip(); }
 		virtual void OnLeftDown( wxMouseEvent& event ){ event.Skip(); }
+		virtual void OnItemExpanded( wxTreeEvent& event ){ event.Skip(); }
 		virtual void OnExpandItem( wxTreeEvent& event ){ event.Skip(); }
 		
 	

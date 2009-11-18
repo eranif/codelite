@@ -22,7 +22,8 @@ public:
 
 protected:
 	// Handlers for NewQuickWatch events.
-	void OnExpandItem( wxTreeEvent& event );
+	void OnExpandItem  ( wxTreeEvent& event );
+	void OnItemExpanded( wxTreeEvent& event );
 	void OnBtnCancel(wxCommandEvent &e);
 	void OnCloseEvent(wxCloseEvent &e);
 	void DoAddChildren(wxTreeItemId &item, const VariableObjChildren &children);

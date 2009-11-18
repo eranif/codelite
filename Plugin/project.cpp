@@ -90,13 +90,13 @@ bool Project::Load(const wxString &path)
 	if ( !m_doc.Load(path) ) {
 		return false;
 	}
-	
+
 	// Workaround WX bug: load the plugins data (GetAllPluginsData will strip any trailing whitespaces)
 	// and then set them back
 	std::map<wxString, wxString> pluginsData;
 	GetAllPluginsData(pluginsData);
 	SetAllPluginsData(pluginsData, false);
-	
+
 	m_vdCache.clear();
 
 	m_fileName = path;
@@ -190,7 +190,7 @@ bool Project::IsFileExist(const wxString &fileName)
 	GetFiles(files);
 
 	for (size_t i=0; i<files.size(); i++) {
-		if (files.at(i).GetFullPath().CmpNoCase(tmp.GetFullPath()) == 0) {
+		if (files.at(i).GetFullPath().CmpNoCase(tmp.GetFullPath(wxPATH_UNIX)) == 0) {
 			return true;
 		}
 	}
@@ -218,7 +218,7 @@ bool Project::AddFile(const wxString &fileName, const wxString &virtualDirPath)
 	}
 
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
-	node->AddProperty(wxT("Name"), tmp.GetFullPath());
+	node->AddProperty(wxT("Name"), tmp.GetFullPath(wxPATH_UNIX));
 	vd->AddChild(node);
 	if (!InTransaction()) {
 		SaveXmlFile();
@@ -269,10 +269,12 @@ bool Project::RemoveFile(const wxString &fileName, const wxString &virtualDir)
 	wxFileName tmp(fileName);
 	tmp.MakeRelativeTo(m_fileName.GetPath());
 
-	wxXmlNode *node = XmlUtils::FindNodeByName(vd, wxT("File"), tmp.GetFullPath());
+	wxXmlNode *node = XmlUtils::FindNodeByName(vd, wxT("File"), tmp.GetFullPath(wxPATH_UNIX));
 	if ( node ) {
 		node->GetParent()->RemoveChild( node );
 		delete node;
+	} else {
+		wxLogMessage(wxT("Failed to remove file %s from project"), tmp.GetFullPath(wxPATH_UNIX).c_str());
 	}
 	SetModified(true);
 	return SaveXmlFile();
@@ -645,11 +647,11 @@ bool Project::RenameFile(const wxString& oldName, const wxString& virtualDir, co
 	wxFileName tmp(oldName);
 	tmp.MakeRelativeTo(m_fileName.GetPath());
 
-	wxXmlNode *node = XmlUtils::FindNodeByName(vd, wxT("File"), tmp.GetFullPath());
+	wxXmlNode *node = XmlUtils::FindNodeByName(vd, wxT("File"), tmp.GetFullPath(wxPATH_UNIX));
 	if ( node ) {
 		// update the new name
 		tmp.SetFullName(newName);
-		XmlUtils::UpdateProperty(node, wxT("Name"), tmp.GetFullPath());
+		XmlUtils::UpdateProperty(node, wxT("Name"), tmp.GetFullPath(wxPATH_UNIX));
 	}
 
 	SetModified(true);
@@ -668,7 +670,7 @@ wxString Project::GetVDByFileName(const wxString& file)
 	tmp.MakeRelativeTo(m_fileName.GetPath());
 
 	wxString path(wxEmptyString);
-	wxXmlNode *fileNode = FindFile(m_doc.GetRoot(), tmp.GetFullPath());
+	wxXmlNode *fileNode = FindFile(m_doc.GetRoot(), tmp.GetFullPath(wxPATH_UNIX));
 
 	if (fileNode) {
 		wxXmlNode *parent = fileNode->GetParent();
@@ -823,7 +825,7 @@ bool Project::FastAddFile(const wxString& fileName, const wxString& virtualDir)
 	tmp.MakeRelativeTo(m_fileName.GetPath());
 
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
-	node->AddProperty(wxT("Name"), tmp.GetFullPath());
+	node->AddProperty(wxT("Name"), tmp.GetFullPath(wxPATH_UNIX));
 	vd->AddChild(node);
 	if (!InTransaction()) {
 		SaveXmlFile();
@@ -1014,7 +1016,7 @@ void Project::SetAllPluginsData(const std::map<wxString, wxString>& pluginsDataM
 	for(; iter != pluginsDataMap.end(); iter ++) {
 		SetPluginData( iter->first, iter->second );
 	}
-	
+
 	if ( saveToFile ) {
 		SaveXmlFile();
 	}

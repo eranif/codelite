@@ -194,7 +194,7 @@ bool Workspace::CreateWorkspace(const wxString &name, const wxString &path, wxSt
 	wxXmlNode *root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CodeLite_Workspace"));
 	m_doc.SetRoot(root);
 	m_doc.GetRoot()->AddProperty(wxT("Name"), name);
-	m_doc.GetRoot()->AddProperty(wxT("Database"), dbFileName.GetFullPath());
+	m_doc.GetRoot()->AddProperty(wxT("Database"), dbFileName.GetFullPath(wxPATH_UNIX));
 
 	SaveXmlFile();
 	//create an empty build matrix
@@ -324,7 +324,7 @@ bool Workspace::CreateProject(const wxString &name, const wxString &path, const 
 	// Add an entry to the workspace file
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
 	node->AddProperty(wxT("Name"), name);
-	node->AddProperty(wxT("Path"), tmp.GetFullPath());
+	node->AddProperty(wxT("Path"), tmp.GetFullPath(wxPATH_UNIX));
 
 	m_doc.GetRoot()->AddChild(node);
 
@@ -392,7 +392,7 @@ bool Workspace::AddProject(const wxString & path, wxString &errMsg)
 
 		wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
 		node->AddProperty(wxT("Name"), fn.GetName());
-		node->AddProperty(wxT("Path"), fn.GetFullPath());
+		node->AddProperty(wxT("Path"), fn.GetFullPath(wxPATH_UNIX));
 		node->AddProperty(wxT("Active"), m_projects.size() == 1 ? wxT("Yes") : wxT("No"));
 		m_doc.GetRoot()->AddChild(node);
 		if (!SaveXmlFile()) {

@@ -21,6 +21,7 @@ public:
 	std::string     m_defaultValue;	// used mainly for function arguments with default values foo(int = 0);
 	std::string     m_arrayBrackets;
 	bool            m_isEllipsis;
+	bool            m_isBasicType;
 
 public:
 	Variable();

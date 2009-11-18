@@ -1,4 +1,5 @@
 #include "variable.h"
+#include <iostream>
 
 Variable::Variable()
 {
@@ -29,6 +30,7 @@ Variable & Variable::operator =(const Variable &src)
 	m_defaultValue  = src.m_defaultValue;
 	m_arrayBrackets = src.m_arrayBrackets;
 	m_isEllipsis    = src.m_isEllipsis;
+	m_isBasicType   = src.m_isBasicType;
 	return *this;
 }
 
@@ -47,24 +49,23 @@ void Variable::Reset()
 	m_defaultValue = "";
 	m_arrayBrackets = "";
 	m_isEllipsis = false;
+	m_isBasicType = false;
 }
 
 void Variable::Print()
 {
-	fprintf(    stdout, "{m_name=%s, m_defaultValue=%s, m_lineno=%d, m_starAmp=%s, m_type=%s, m_isConst=%s, m_typeScope=%s, m_templateDecl=%s, m_arrayBrackets=%s, m_isPtr=%s, m_isTemplate=%s, m_isEllips=%s }\n",
-				m_name.c_str(),
-				m_defaultValue.c_str(),
-				m_lineno,
-				m_starAmp.c_str(),
-				m_type.c_str(),
-				m_isConst ? "true" : "false",
-				m_typeScope.c_str(),
-				m_templateDecl.c_str(),
-				m_arrayBrackets.c_str(),
-				m_isPtr ? "true" : "false",
-				m_isTemplate ? "true" : "false",
-				m_isEllipsis ? "true" : "false");
-
-	fprintf( stdout, "Pattern: %s\n", m_pattern.c_str());
-	fflush(stdout);
+	std::cout << "m_name         :" << m_name.c_str() << "\n"
+			  << "m_defaultValue :" << m_defaultValue.c_str() << "\n"
+			  << "m_lineno       :" << m_lineno << "\n"
+			  << "m_starAmp      :" << m_starAmp.c_str() << "\n"
+			  << "m_type         :" << m_type.c_str() << "\n"
+			  << "m_isConst      :" << m_isConst << "\n"
+			  << "m_typeScope    :" << m_typeScope.c_str() << "\n"
+			  << "m_templateDecl :" << m_templateDecl.c_str() << "\n"
+			  << "m_arrayBrackets:" << m_arrayBrackets.c_str() << "\n"
+			  << "m_isPtr        :" << m_isPtr << "\n"
+			  << "m_isTemplate   :" << m_isTemplate << "\n"
+			  << "m_isEllips     :" << m_isEllipsis << "\n"
+			  << "m_isBasicType  :" << m_isBasicType << "\n"
+			  << "m_pattern      :" << m_pattern.c_str() << "\n";
 }

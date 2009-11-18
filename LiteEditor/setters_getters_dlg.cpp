@@ -156,10 +156,15 @@ wxString SettersGettersDlg::GenerateSetter(TagEntryPtr tag, bool &alreadyExist, 
 		func << method_name;
 
 		// add the signature
-		if (!var.m_isPtr) {
+		if( var.m_isBasicType ) {
+			method_signature << wxT("(");
+
+		} else if (!var.m_isPtr) {
 			method_signature << wxT("(const ");
+
 		} else {
 			method_signature << wxT("(");
+
 		}
 
 		if (!scope.IsEmpty() && !(scope == wxT("<global>"))) {
@@ -167,10 +172,15 @@ wxString SettersGettersDlg::GenerateSetter(TagEntryPtr tag, bool &alreadyExist, 
 		}
 
 		method_signature << _U(var.m_type.c_str()) << _U(var.m_templateDecl.c_str()) << _U(var.m_starAmp.c_str());
-		if (!var.m_isPtr) {
+		if(var.m_isBasicType) {
+			method_signature << wxT(" ");
+
+		} else if (!var.m_isPtr) {
 			method_signature << wxT("& ");
+
 		} else {
 			method_signature << wxT(" ");
+
 		}
 
 		wxString tmpName = _U(var.m_name.c_str());
@@ -204,13 +214,15 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool &alreadyExist, 
 	if (LanguageST::Get()->VariableFromPattern(tag->GetPattern(), tag->GetName(), var)) {
 		wxString func;
 		wxString scope = _U(var.m_typeScope.c_str());
-		if (!var.m_isPtr) {
+
+		if (!var.m_isPtr && !var.m_isBasicType) {
 			func << wxT("const ");
 			if (!scope.IsEmpty() && !(scope == wxT("<global>"))) {
 				func << scope
 				<< wxT("::");
 			}
 			func << _U(var.m_type.c_str()) << _U(var.m_templateDecl.c_str()) << _U(var.m_starAmp.c_str()) << wxT("& ");
+
 		} else {
 			// generate different code for pointer
 			if (!scope.IsEmpty() && !(scope == wxT("<global>"))) {
@@ -233,7 +245,6 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool &alreadyExist, 
 
 		// add the method name
 		func << method_name;
-
 		if (!var.m_isPtr) {
 			method_signature << wxT("() const");
 
@@ -389,7 +400,7 @@ void SettersGettersDlg::BuildTree()
 	// Append all members to the check list
 	m_checkListMembers->DeleteAllItems();
 	wxTreeItemId root = m_checkListMembers->AddRoot(wxT("Root"), false, new SettersGettersTreeData(NULL, SettersGettersTreeData::Kind_Root, false));
-	
+
 	m_checkFormat->SetValue(data.GetFormatSource());
 	m_checkStartWithUppercase->SetValue(data.GetUseUpperCase());
 
@@ -419,14 +430,14 @@ void SettersGettersDlg::BuildTree()
 		}
 		m_checkListMembers->Expand(parent);
 	}
-	
+
 	m_checkForDuplicateEntries = false;
 
 	if (m_members.empty() == false) {
 		m_textClassName->SetValue(m_members.at(0)->GetParent());
 	}
 
-	
+
 	m_checkListMembers->Thaw();
 }
 

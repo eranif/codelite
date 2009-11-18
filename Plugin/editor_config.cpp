@@ -480,7 +480,7 @@ void EditorConfig::LoadLexers(bool loadDefault)
 
 		//try to locate a file with the same name but with the user extension
 		wxFileName fn(files.Item(i));
-		wxString userLexer( fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) + fn.GetName() +  wxT(".") + wxGetUserName() + wxT("_xml"));
+		wxString userLexer( fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) + fn.GetName() +  wxT(".") + clGetUserName() + wxT("_xml"));
 		if ( wxFileName::FileExists( userLexer ) ) {
 			if (!loadDefault) {
 				fileToLoad = userLexer;

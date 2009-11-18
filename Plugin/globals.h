@@ -208,5 +208,10 @@ time_t GetFileModificationTime(const wxFileName &filename);
  */
 void WrapInShell(wxString &cmd);
 
+/**
+ * @brief return the current user name without any special characters
+ * @return
+ */
+wxString clGetUserName();
 #endif //GLOBALS_H
 

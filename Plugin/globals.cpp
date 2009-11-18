@@ -533,3 +533,24 @@ void WrapInShell(wxString& cmd)
 	cmd = command;
 #endif
 }
+
+
+wxString clGetUserName()
+{
+    wxString squashedname, name = wxGetUserName();
+
+    // The wx doc says that 'name' may now be e.g. "Mr. John Smith"
+    // So try to make it more suitable to be an extension
+    name.MakeLower();
+	name.Replace(wxT(" "), wxT("_"));
+	for (size_t i=0; i<name.Len(); ++i) {
+		wxChar ch = name.GetChar(i);
+		if( (ch < wxT('a') || ch > wxT('z')) && ch != wxT('_')){
+			// Non [a-z_] character: skip it
+		} else {
+			squashedname << ch;
+		}
+	}
+
+	return (squashedname.IsEmpty() ? wxString(wxT("someone")) : squashedname);
+}

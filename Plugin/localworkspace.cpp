@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "editor_config.h"
+#include "globals.h"
 #include "optionsconfig.h"
 #include <wx/fontmap.h>
 #include <wx/utils.h>
@@ -47,7 +48,7 @@ void LocalWorkspace::GetOptions( OptionsConfigPtr options, const wxString& proje
         // Any local workspace options will replace the global ones inside 'options'
         LocalOptionsConfig wsOC(options, lwsnode);
     }
-    
+
     wxXmlNode* lpnode = GetLocalProjectOptionsNode(projectname);
     if (lpnode) {
         LocalOptionsConfig pOC(options, lpnode);
@@ -62,13 +63,13 @@ void LocalWorkspace::GetOptions( OptionsConfigPtr options, const wxString& proje
     if ( !SanityCheck() ) {
         return false;
     }
-	
+
     // Start by getting the global settings
 	OptionsConfigPtr higherOptions = EditorConfigST::Get()->GetOptions();
 
 	wxXmlNode* lwsnode = GetLocalWorkspaceOptionsNode();
     // Don't check lwsnode: it'll be NULL if there are currently no local options
-    
+
     EditorSettingsLocal dlg(higherOptions, lwsnode, pLevel_workspace, NULL);
     if (dlg.ShowModal() == wxID_OK) {
         SaveWorkspaceOptions(dlg.GetLocalOpts());
@@ -84,14 +85,14 @@ bool LocalWorkspace::SetProjectOptions( const wxString& projectname )
     if ( !SanityCheck() ) {
         return false;
     }
-    
+
 	// Start by getting the global settings
 	OptionsConfigPtr higherOptions = EditorConfigST::Get()->GetOptions();
 
 	wxXmlNode* lwsnode = GetLocalWorkspaceOptionsNode();
 	wxXmlNode* lpnode = GetLocalProjectOptionsNode(projectname);
     // Don't check the nodes: they'll be NULL if there are currently no local options
-    
+
     // Merge any local workspace options with the global ones inside 'options'
     LocalOptionsConfig wsOC(higherOptions, lwsnode);
 
@@ -131,7 +132,7 @@ bool LocalWorkspace::SetProjectOptions(LocalOptionsConfigPtr opts, const wxStrin
 	//	<Project Name="foo">
 	//		<Options something="on" something_else="off"/>
     //	</Project>
-	
+
 	if ( !SanityCheck() ) {
         return false;
     }
@@ -157,28 +158,8 @@ bool LocalWorkspace::SaveXmlFile()
 	return m_doc.Save(m_fileName.GetFullPath());
 }
 
-wxString LocalWorkspace::GetUserName()
-{
-    wxString squashedname, name = wxGetUserName();
-    
-    // The wx doc says that 'name' may now be e.g. "Mr. John Smith"
-    // So try to make it more suitable to be an extension
-    name.MakeLower();
-	name.Replace(wxT(" "), wxT("_"));
-	for (size_t i=0; i<name.Len(); ++i) {
-		wxChar ch = name.GetChar(i);
-		if( (ch < wxT('a') || ch > wxT('z')) && ch != wxT('_')){
-			// Non [a-z_] character: skip it
-		} else {
-			squashedname << ch;
-		}
-	}
-
-	return (squashedname.IsEmpty() ? wxString(wxT("someone")) : squashedname);
-}
-
 bool LocalWorkspace::SanityCheck()
-{    
+{
 /*    // First check there's a workspace open. If not, abort
     if (!ManagerST::Get()->IsWorkspaceOpen()) {
         return false;
@@ -187,7 +168,7 @@ bool LocalWorkspace::SanityCheck()
     if (WorkspaceFullPath.IsEmpty()) {
         return false;
     }
-    
+
     // Next, that it's the same workspace as any previous Create()
     // If so, and assuming m_doc is valid, there's nothing more to do
     if ( (WorkspaceFullPath == m_fileName.GetFullPath().BeforeLast(wxT('.'))) && m_doc.IsOk() ) {
@@ -202,7 +183,7 @@ bool LocalWorkspace::Create()
 {
     m_doc = wxXmlDocument();
     // The idea is to make a name in the format foo.workspace.frodo
-    wxString fullpath = WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() + wxT('.') + GetUserName();
+    wxString fullpath = WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() + wxT('.') + clGetUserName();
 	m_fileName = wxFileName(fullpath);
 	m_fileName.MakeAbsolute();
 

@@ -43,7 +43,7 @@ class validVar
 	bool valid;
 	T datum;
 public:
-	validVar() : valid(false){}
+	validVar() : valid(false) {}
 	void Set(const T info) {
 		datum = info;
 		valid = true;
@@ -78,7 +78,7 @@ public:
 	LocalOptionsConfig(); // Used for setting local values
 	LocalOptionsConfig(OptionsConfigPtr opts, wxXmlNode *node); // Used for merging local values into the already-found global ones
 	LocalOptionsConfig(LocalOptionsConfigPtr opts, wxXmlNode *node); // Used for storing local values in a previously-empty instance
-	virtual ~LocalOptionsConfig(void){}
+	virtual ~LocalOptionsConfig(void) {}
 
 	bool HideChangeMarkerMarginIsValid() const {
 		return m_localhideChangeMarkerMargin.isValid();
@@ -239,71 +239,56 @@ public:
 	wxXmlNode *ToXml(wxXmlNode* parent = NULL, const wxString& nodename = wxT("Options")) const;
 };
 
-#ifdef WXMAKINGDLL_LE_SDK
-#    define WXDLLIMPEXP_LE_SDK WXEXPORT
-#elif defined(WXUSINGDLL_LE_SDK)
-#    define WXDLLIMPEXP_LE_SDK WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_LE_SDK
-#endif // WXMAKINGDLL_LE_SDK
-
-/*!
- * \brief
- * Local Options manager class
- *
- */
-class WXDLLIMPEXP_LE_SDK LocalWorkspace
+class LocalWorkspace
 {
 private:
 	friend class Singleton<LocalWorkspace>;
 	wxXmlDocument m_doc;
-    wxFileName m_fileName;
+	wxFileName m_fileName;
 
 	/// Constructor
-	LocalWorkspace(){}
+	LocalWorkspace() {}
 
 	/// Destructor
-	virtual ~LocalWorkspace(){}
-    
+	virtual ~LocalWorkspace() {}
+
 protected:
-/*void SaveWorkspaceOptions(LocalOptionsConfigPtr opts);
-void SaveProjectOptions(LocalOptionsConfigPtr opts, const wxString& projectname);*/
-void LoadOptions();
-wxString GetUserName();
-bool SanityCheck();
-bool Create();
-bool SaveXmlFile();
+	/*void SaveWorkspaceOptions(LocalOptionsConfigPtr opts);
+	void SaveProjectOptions(LocalOptionsConfigPtr opts, const wxString& projectname);*/
+	void LoadOptions();
+	bool SanityCheck();
+	bool Create();
+	bool SaveXmlFile();
 
 
 
 public:
-	 /**
-	 * @brief Get any local editor preferences, merging the values into the global options
-	 * \param options the global options
-	 * \param projectname the name of the currently active project
-	 */
-    void GetOptions(OptionsConfigPtr options, const wxString& projectname);
-	 /**
-	 * @brief Sets any local editor preferences for the current workspace
-	 * \param opts the local options to save
-	 */
-    bool SetWorkspaceOptions(LocalOptionsConfigPtr opts);
-	 /**
-	 * @brief Sets any local editor preferences for the named project
-	 * \param opts the local options to save
-	 * \param projectname the name of the project
-	 */
-    bool SetProjectOptions(LocalOptionsConfigPtr opts, const wxString& projectname);
-	 /**
-	 * @brief Returns the node where any current local workspace options are stored
-	 */
+	/**
+	* @brief Get any local editor preferences, merging the values into the global options
+	* \param options the global options
+	* \param projectname the name of the currently active project
+	*/
+	void GetOptions(OptionsConfigPtr options, const wxString& projectname);
+	/**
+	* @brief Sets any local editor preferences for the current workspace
+	* \param opts the local options to save
+	*/
+	bool SetWorkspaceOptions(LocalOptionsConfigPtr opts);
+	/**
+	* @brief Sets any local editor preferences for the named project
+	* \param opts the local options to save
+	* \param projectname the name of the project
+	*/
+	bool SetProjectOptions(LocalOptionsConfigPtr opts, const wxString& projectname);
+	/**
+	* @brief Returns the node where any current local workspace options are stored
+	*/
 	wxXmlNode* GetLocalWorkspaceOptionsNode() const;
-	 /**
-	 * @brief Returns the node where any current local project options are stored
-	 * \param projectname the name of the project
-	 */
+	/**
+	* @brief Returns the node where any current local project options are stored
+	* \param projectname the name of the project
+	*/
 	wxXmlNode* GetLocalProjectOptionsNode(const wxString& projectname) const;
-	
 };
 
 

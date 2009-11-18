@@ -1787,8 +1787,8 @@ void Frame::OnBuildEnded(wxCommandEvent &event)
 		//If the build process was part of a 'Build and Run' command, check whether an erros
 		//occured during build process, if non, launch the output
 		m_buildAndRun = false;
-		if (ManagerST::Get()->IsBuildEndedSuccessfully() ||
-		        wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION) == wxYES, this) {
+		if ( ManagerST::Get()->IsBuildEndedSuccessfully() ||
+		     wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION, this) == wxYES) {
 			ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
 		}
 	}

@@ -208,7 +208,7 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, co
 	if ( rc == 0 ) {
 		// Set process group to child process' pid.  Then killing -pid
 		// of the parent will kill the process and all of its children.
-		//setsid();
+		setsid();
 
 		// Child process
 		if(workingDirectory.IsEmpty() == false) {

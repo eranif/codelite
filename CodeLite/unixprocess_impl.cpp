@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/select.h>
 #include <errno.h>
+#include <sys/wait.h>
 
 static char *argv[128];
 static int    argc = 0;
@@ -111,14 +112,19 @@ void UnixProcessImpl::Cleanup()
 {
 	close(GetReadHandle());
 	close(GetWriteHandle());
-
+	
+	
 	if ( m_thr ) {
 		// Stop the reader thread
 		m_thr->Stop();
 		delete m_thr;
 	}
-
-	wxKill(GetPid(), wxSIGKILL, NULL, wxKILL_CHILDREN);
+	
+	wxKill (GetPid(), wxSIGKILL, NULL, wxKILL_CHILDREN);
+	// Perform process cleanup
+	int status(0);
+	waitpid(GetPid(), &status, 0);
+	
 	/*
 #ifdef __WXGTK__
 	// Kill the child process

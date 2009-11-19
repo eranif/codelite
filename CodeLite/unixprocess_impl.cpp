@@ -17,6 +17,7 @@ static void make_argv(const wxString &cmd)
 {
 	wxString      currentWord;
 	bool          inString(false);
+	bool          inSingleString(false);
 	wxArrayString argvArray;
 
 	// release previous allocation
@@ -30,24 +31,43 @@ static void make_argv(const wxString &cmd)
 		switch ( cmd.GetChar(i) ) {
 		case wxT(' '):
 					case wxT('\t'):
-							if ( !inString && currentWord.IsEmpty() == false ) {
+							if ( !inSingleString && !inString && currentWord.IsEmpty() == false ) {
 						// we found the end of the new token
 						argvArray.Add( currentWord );
 						currentWord.Clear();
-					} else if ( inString ) {
+					} else if ( inString || inSingleString ) {
 						// we are inside a string, concatenate the char
 						currentWord << cmd.GetChar(i);
 					}
 			break;
+		case wxT('\''):
+			if ( inString ) {
+				currentWord << cmd.GetChar(i);
+				
+			} else  if ( inSingleString && currentWord.IsEmpty() == false ) {
+			// this is the terminating quotation mark
+				argvArray.Add( currentWord );
+				currentWord.Clear();
+				inSingleString = false;
+			} else {
+				currentWord.Clear();
+				inSingleString = true;
+			}
+			break;
 		case wxT('"'):
-						if ( inString && currentWord.IsEmpty() == false ) {
+				if ( inSingleString ) {
+					currentWord << cmd.GetChar(i);
+					
+				} else if ( inString && currentWord.IsEmpty() == false ) {
 					// this is the terminating quotation mark
 					argvArray.Add( currentWord );
 					currentWord.Clear();
 					inString = false;
+					
 				} else {
 					currentWord.Clear();
 					inString = true;
+					
 				}
 			break;
 		default:
@@ -69,6 +89,7 @@ static void make_argv(const wxString &cmd)
 	argc = argvArray.GetCount();
 	for (size_t i=0; i<argvArray.GetCount(); i++ ) {
 		argv[i] = strdup(argvArray.Item(i).mb_str(wxConvUTF8).data());
+		//printf("Argv[%d]=%s\n", i, argv[i]);
 	}
 	argv[argc] = 0;
 }
@@ -187,11 +208,14 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, co
 	if ( rc == 0 ) {
 		// Set process group to child process' pid.  Then killing -pid
 		// of the parent will kill the process and all of its children.
-		setsid();
+		//setsid();
 
 		// Child process
-		wxSetWorkingDirectory( workingDirectory );
-
+		if(workingDirectory.IsEmpty() == false) {
+			wxSetWorkingDirectory( workingDirectory );
+		}
+//		wxPrintf(wxT("My current WD is: %s\n"), wxGetCwd().c_str());
+		
 		int stdin_file  = fileno( stdin  );
 		int stdout_file = fileno( stdout );
 		int stderr_file = fileno( stderr );

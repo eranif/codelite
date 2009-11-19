@@ -104,7 +104,7 @@ void PluginManager::Load()
 	TagsManagerST::Get()->SetLanguage( LanguageST::Get() );
 
 #ifdef __WXGTK__
-	wxString pluginsDir(_U(PLUGINS_DIR));
+	wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
 #else
 	wxString pluginsDir(ManagerST::Get()->GetInstallDir() + wxT( "/plugins" ));
 #endif

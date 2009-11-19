@@ -54,7 +54,7 @@ generateControlFile()
 {
     rm -fr fakeroot/DEBIAN/control
     echo "Package: codelite" >> fakeroot/DEBIAN/control
-    echo "Version: 1.0.${cur_rev}" >> fakeroot/DEBIAN/control
+    echo "Version: 2.0.${cur_rev}" >> fakeroot/DEBIAN/control
     echo "Section: devel " >> fakeroot/DEBIAN/control
     echo "Priority: optional " >> fakeroot/DEBIAN/control
     echo "Architecture: ${arch} " >> fakeroot/DEBIAN/control

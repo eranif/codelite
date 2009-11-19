@@ -97,12 +97,19 @@ void UnixProcessImpl::Cleanup()
 		delete m_thr;
 	}
 
+	wxKill(GetPid(), wxSIGKILL, NULL, wxKILL_CHILDREN);
+	/*
+#ifdef __WXGTK__
 	// Kill the child process
 	wxString cmd;
 	wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
 	wxFileName script(exePath.GetPath(), wxT("codelite_kill_children"));
 	cmd << wxT("/bin/sh -f ") << script.GetFullPath() << wxT(" ") << GetPid();
 	wxExecute(cmd, wxEXEC_ASYNC);
+#else
+	 wxKill(GetPid(), wxSIGKILL, NULL, wxKILL_CHILDREN);
+#endif
+  */
 }
 
 bool UnixProcessImpl::IsAlive()
@@ -178,6 +185,10 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, co
 
 	int rc = fork();
 	if ( rc == 0 ) {
+		// Set process group to child process' pid.  Then killing -pid
+		// of the parent will kill the process and all of its children.
+		setsid();
+
 		// Child process
 		wxSetWorkingDirectory( workingDirectory );
 

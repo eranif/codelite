@@ -28,6 +28,7 @@
 #include "processreaderthread.h"
 #include <wx/filefn.h>
 #include <memory>
+#include "procutils.h"
 
 class MyDirGuard {
 	wxString _d;
@@ -299,8 +300,17 @@ void WinProcessImpl::Cleanup()
 
 	// terminate the process
 	if (IsAlive()) {
+		std::map<unsigned long, bool> tree;
+		ProcUtils::GetProcTree(tree, GetPid());
+
+		std::map<unsigned long, bool>::iterator iter = tree.begin();
+		for(; iter != tree.end(); iter++){
+			wxKillError rc;
+			wxKill(iter->first, wxSIGKILL, &rc);
+		}
 		TerminateProcess(piProcInfo.hProcess, 255);
 	}
+
 	CloseHandle( hChildStdinRd);
 	CloseHandle( hChildStdinWrDup );
 	CloseHandle( hChildStdoutWr);

@@ -1136,7 +1136,7 @@
                                                             <property name="font"></property>
                                                             <property name="hidden">0</property>
                                                             <property name="id">wxID_ANY</property>
-                                                            <property name="label">Enable pending breakpoint</property>
+                                                            <property name="label">Enable pending breakpoints</property>
                                                             <property name="maximum_size"></property>
                                                             <property name="minimum_size"></property>
                                                             <property name="name">m_checkBoxEnablePendingBreakpoints</property>
@@ -1248,7 +1248,7 @@
                                                             <property name="font"></property>
                                                             <property name="hidden">0</property>
                                                             <property name="id">wxID_ANY</property>
-                                                            <property name="label">Break when C++ execption is thrown</property>
+                                                            <property name="label">Break when C++ exception is thrown</property>
                                                             <property name="maximum_size"></property>
                                                             <property name="minimum_size"></property>
                                                             <property name="name">m_catchThrow</property>

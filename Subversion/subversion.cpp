@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <wx/app.h>
 #include "updatepostcmdaction.h"
 #include "applypatchpostcmdaction.h"
 #include "revertpostcmdaction.h"
@@ -42,7 +43,6 @@
 #include "wx/menu.h"
 #include "wx/xrc/xmlres.h"
 #include "svndriver.h"
-#include "wx/app.h"
 #include "virtualdirtreectrl.h"
 #include "wx/treectrl.h"
 #include "svnhandler.h"

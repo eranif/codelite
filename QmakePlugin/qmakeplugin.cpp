@@ -1,3 +1,5 @@
+#include <wx/app.h>
+#include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/mimetype.h>
 #include "globals.h"
@@ -6,7 +8,6 @@
 #include "procutils.h"
 #include "project.h"
 #include "workspace.h"
-#include <wx/app.h>
 #include "build_settings_config.h"
 #include "qmakegenerator.h"
 #include <wx/log.h>

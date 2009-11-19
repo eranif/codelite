@@ -1,4 +1,6 @@
 #include "quickfinder.h"
+#include <wx/app.h>
+#include <wx/log.h>
 #include "quickfinder_selectsymbol.h"
 #include <wx/msgdlg.h>
 #include "ctags_manager.h"

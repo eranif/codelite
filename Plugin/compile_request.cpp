@@ -23,6 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "compile_request.h"
+#include <wx/app.h>
+#include <wx/log.h>
+#include "asyncprocess.h"
 #include "imanager.h"
 #include "macros.h"
 #include "compiler.h"
@@ -52,9 +55,8 @@ CompileRequest::~CompileRequest()
 //do the actual cleanup
 void CompileRequest::Process(IManager *manager)
 {
-	wxString cmd;
-	wxString errMsg;
-	SetBusy(true);
+	wxString  cmd;
+	wxString  errMsg;
 	StringMap om;
 
 	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
@@ -65,7 +67,6 @@ void CompileRequest::Process(IManager *manager)
 	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
 		AppendLine(wxT("Cant find project: ") + m_info.GetProject());
-		SetBusy(false);
 		return;
 	}
 
@@ -96,7 +97,6 @@ void CompileRequest::Process(IManager *manager)
 
 		// the build is being handled by some plugin, no need to build it
 		// using the standard way
-		SetBusy(false);
 		return;
 	}
 
@@ -134,64 +134,52 @@ void CompileRequest::Process(IManager *manager)
 		} else {
 			AppendLine(wxT("Command line is empty. Build aborted."));
 		}
-		SetBusy(false);
 		return;
 	}
 
 	WrapInShell(cmd);
-	m_proc = new clProcess(wxNewId(), cmd);
-	if (m_proc) {
-		DirSaver ds;
+	DirSaver ds;
 
+	DoSetWorkingDirectory(proj, false, m_fileName.IsEmpty() == false);
+
+	//expand the variables of the command
+	cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
+
+	//print the build command
+	AppendLine(cmd + wxT("\n"));
+	if (m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
+		// set working directory
 		DoSetWorkingDirectory(proj, false, m_fileName.IsEmpty() == false);
-
-		//expand the variables of the command
-		cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
-
-		//replace the command line
-		m_proc->SetCommand(cmd);
-
-		//print the build command
-		AppendLine(cmd + wxT("\n"));
-		if (m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
-			// set working directory
-			DoSetWorkingDirectory(proj, false, m_fileName.IsEmpty() == false);
-		}
-
-		// print the prefix message of the build start. This is important since the parser relies
-		// on this message
-		if (m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
-			wxString configName(m_info.GetConfiguration());
-
-			//also, send another message to the main frame, indicating which project is being built
-			//and what configuration
-			wxString text;
-			text << BUILD_PROJECT_PREFIX << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
-			if (m_fileName.IsEmpty()) {
-				text << wxT("----------\n");
-			} else if (m_preprocessOnly) {
-				text << wxT(" (Preprocess Single File)----------\n");
-			} else {
-				text << wxT(" (Single File Build)----------\n");
-			}
-			AppendLine(text);
-		}
-
-		env->ApplyEnv( &om );
-		if (m_proc->Start() == 0) {
-			wxString message;
-			message << wxT("Failed to start build process, command: ") << cmd << wxT(", process terminated with exit code: 0");
-			env->UnApplyEnv();
-			AppendLine(message);
-			delete m_proc;
-			SetBusy(false);
-			return;
-		}
-
-		env->UnApplyEnv();
-
-		m_timer->Start(10);
-		Connect(wxEVT_TIMER, wxTimerEventHandler(CompileRequest::OnTimer), NULL, this);
-		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(CompileRequest::OnProcessEnd), NULL, this);
 	}
+
+	// print the prefix message of the build start. This is important since the parser relies
+	// on this message
+	if (m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
+		wxString configName(m_info.GetConfiguration());
+
+		//also, send another message to the main frame, indicating which project is being built
+		//and what configuration
+		wxString text;
+		text << BUILD_PROJECT_PREFIX << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
+		if (m_fileName.IsEmpty()) {
+			text << wxT("----------\n");
+		} else if (m_preprocessOnly) {
+			text << wxT(" (Preprocess Single File)----------\n");
+		} else {
+			text << wxT(" (Single File Build)----------\n");
+		}
+		AppendLine(text);
+	}
+
+	env->ApplyEnv( &om );
+	m_proc = CreateAsyncProcess(this, cmd);
+	if (!m_proc ) {
+		wxString message;
+		message << wxT("Failed to start build process, command: ") << cmd << wxT(", process terminated with exit code: 0");
+		env->UnApplyEnv();
+		AppendLine(message);
+		return;
+	}
+
+	env->UnApplyEnv();
 }

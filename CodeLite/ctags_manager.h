@@ -27,6 +27,8 @@
 #define CODELITE_CTAGS_MANAGER_H
 
 #include "wx/event.h"
+#include <wx/timer.h>
+#include <wx/stopwatch.h>
 #include "wx/process.h"
 #include "cl_process.h"
 #include "tree.h"

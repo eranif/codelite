@@ -1,29 +1,30 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : templateclassdlg.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : templateclassdlg.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/textbuf.h>
+#include <wx/dirdlg.h>
 #include <wx/textfile.h>
 #include "virtualdirectoryselector.h"
 #include <wx/filefn.h>
@@ -140,7 +141,7 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 	wxString buffer = GetStringDb()->GetString( baseClass, swHeader );
 	buffer.Replace( swPhClass, newClassName );
 	buffer.Replace(wxT("\v"), eol[m_curEol].c_str());
-	
+
 	files.Add( m_projectPath + m_textCtrlHeaderFile->GetValue() );
 	SaveBufferToFile( files.Item(0), buffer );
 
@@ -148,7 +149,7 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 	buffer += GetStringDb()->GetString( baseClass, swSource );
 	buffer.Replace( swPhClass, newClassName );
 	buffer.Replace(wxT("\v"), eol[m_curEol].c_str());
-	
+
 	files.Add( m_projectPath + m_textCtrlCppFile->GetValue() );
 	SaveBufferToFile( files.Item(1), buffer );
 
@@ -159,7 +160,7 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 		<< wxString::Format( wxT( "%s%s%s" ), files.Item(1).c_str(), eol[m_curEol].c_str(), eol[m_curEol].c_str())
 		<< wxT( "Files successfully created." );
 		// We have a .cpp and an .h file, and there may well be a :src and an :include folder available
-		// So try to place the files appropriately. If that fails, dump both in the selected folder	
+		// So try to place the files appropriately. If that fails, dump both in the selected folder
 		if ( m_pManager->AddFilesToVirtualFolderIntelligently( m_textCtrlVD->GetValue(), files )
 				|| m_pManager->AddFilesToVirtualFolder( m_textCtrlVD->GetValue(), files ) ) {
 			wxMessageBox(msg, wxT("Add template class"), wxOK|wxCENTER|wxICON_INFORMATION, this);

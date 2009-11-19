@@ -22,7 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <wx/app.h>
+#include <wx/log.h>
 #include "build_settings_config.h"
+#include "asyncprocess.h"
 #include "imanager.h"
 #include "macros.h"
 #include "compiler.h"
@@ -53,8 +56,6 @@ void CleanRequest::Process(IManager *manager)
 	wxString errMsg;
 	StringMap om;
 
-	SetBusy(true);
-
 	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
 	BuildManager *       bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
 	Workspace *          w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
@@ -64,7 +65,6 @@ void CleanRequest::Process(IManager *manager)
 	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
 		AppendLine(wxT("Cant find project: ") + m_info.GetProject());
-		SetBusy(false);
 		return;
 	}
 	wxString             pname (proj->GetName());
@@ -78,7 +78,6 @@ void CleanRequest::Process(IManager *manager)
 
 	if ( cmd.IsEmpty() ) {
 		AppendLine(wxT("Sorry, there is no 'Clean' command available\n"));
-		SetBusy(false);
 		return;
 	}
 
@@ -95,7 +94,6 @@ void CleanRequest::Process(IManager *manager)
 		}
 	} else {
 		AppendLine(wxT("Sorry, couldn't find the Build configuration\n"));
-		SetBusy(false);
 		return;
 	}
 
@@ -108,58 +106,45 @@ void CleanRequest::Process(IManager *manager)
 
 		// the build is being handled by some plugin, no need to build it
 		// using the standard way
-		SetBusy(false);
 		return;
 	}
 	SendStartMsg();
 
 	//expand the variables of the command
 	cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), wxEmptyString);
-	m_proc = new clProcess(wxNewId(), cmd);
+	DirSaver ds;
+	DoSetWorkingDirectory(proj, false, false);
 
-	if (m_proc) {
+	if (m_info.GetProjectOnly() ) {
+		//need to change directory to project dir
+		wxSetWorkingDirectory(proj->GetFileName().GetPath());
+	}
+	//print the build command
+	AppendLine(cmd + wxT("\n"));
 
-		DirSaver ds;
-		DoSetWorkingDirectory(proj, false, false);
+	// print the prefix message of the build start. This is important since the parser relies
+	// on this message
+	if(m_info.GetProjectOnly()){
+		wxString configName(m_info.GetConfiguration());
 
-		if (m_info.GetProjectOnly() ) {
-			//need to change directory to project dir
-			wxSetWorkingDirectory(proj->GetFileName().GetPath());
-		}
-		//print the build command
-		AppendLine(cmd + wxT("\n"));
+		//also, send another message to the main frame, indicating which project is being built
+		//and what configuration
+		wxString text;
+		text << CLEAN_PROJECT_PREFIX << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
+		text << wxT("----------\n");
+		AppendLine(text);
+	}
 
-		// print the prefix message of the build start. This is important since the parser relies
-		// on this message
-		if(m_info.GetProjectOnly()){
-			wxString configName(m_info.GetConfiguration());
+	//apply environment settings
+	EnvironmentConfig::Instance()->ApplyEnv( &om );
+	m_proc = CreateAsyncProcess(this, cmd);
+	if ( !m_proc ) {
 
-			//also, send another message to the main frame, indicating which project is being built
-			//and what configuration
-			wxString text;
-			text << CLEAN_PROJECT_PREFIX << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
-			text << wxT("----------\n");
-			AppendLine(text);
-		}
-
-		//apply environment settings
-		EnvironmentConfig::Instance()->ApplyEnv( &om );
-
-		if (m_proc->Start() == 0) {
-
-			//remove environment settings applied
-			EnvironmentConfig::Instance()->UnApplyEnv();
-
-			wxString message;
-			message << wxT("Failed to start clean process, command: ") << cmd << wxT(", process terminated with exit code: 0");
-			AppendLine(message);
-			SetBusy(false);
-			delete m_proc;
-			return;
-		}
-
-		Connect(wxEVT_TIMER, wxTimerEventHandler(CleanRequest::OnTimer), NULL, this);
-		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(CleanRequest::OnProcessEnd), NULL, this);
-		m_timer->Start(10);
+		//remove environment settings applied
+		EnvironmentConfig::Instance()->UnApplyEnv();
+		wxString message;
+		message << wxT("Failed to start clean process, command: ") << cmd << wxT(", process terminated with exit code: 0");
+		AppendLine(message);
+		return;
 	}
 }

@@ -28,10 +28,9 @@
 #include "project.h"
 #include "queuecommand.h"
 #include "wx/event.h"
-#include "cl_process.h"
-#include "wx/timer.h"
 
 class IManager;
+class IProcess;
 
 extern const wxEventType wxEVT_SHELL_COMMAND_ADDLINE;
 extern const wxEventType wxEVT_SHELL_COMMAND_STARTED;
@@ -47,29 +46,22 @@ extern const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN;
 class ShellCommand : public wxEvtHandler
 {
 protected:
-	clProcess *   m_proc;
+	IProcess*     m_proc;
 	wxEvtHandler *m_owner;
-	wxTimer *     m_timer;
-	bool          m_busy;
-	bool          m_stop;
 	wxArrayString m_lines;
 	QueueCommand  m_info;
 
 protected:
-	virtual void OnTimer(wxTimerEvent &event);
-	virtual void OnProcessEnd(wxProcessEvent& event);
-	virtual void PrintOutput();
-	virtual void DoPrintOutput(const wxString &out, const wxString &errs);
+	virtual void DoPrintOutput      (const wxString &out);
+	virtual void OnProcessOutput    (wxCommandEvent &e);
+	virtual void OnProcessTerminated(wxCommandEvent &e);
+
 	void CleanUp();
 	void DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool isFileOnly);
 
 public:
 	bool IsBusy() const {
-		return m_busy;
-	}
-
-	void SetBusy(bool busy) {
-		m_busy = busy;
+		return m_proc != NULL;
 	}
 
 	void Stop();
@@ -90,22 +82,12 @@ public:
 	// \param owner the window owner for this action
 	ShellCommand(wxEvtHandler *owner, const QueueCommand &buildInfo);
 
-	/**
-	 * \brief
-	 * \return
-	 */
-	virtual ~ShellCommand() {
-		delete m_timer;
-	};
-
-	/**
-	 * \brief
-	 * \return
-	 */
+	virtual ~ShellCommand() {}
 	virtual void Process(IManager *manager = NULL) = 0;
 
 	void AppendLine(const wxString &line);
 	void SendStartMsg();
 	void SendEndMsg();
+	DECLARE_EVENT_TABLE()
 };
 #endif

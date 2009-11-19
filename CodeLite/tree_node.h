@@ -1,45 +1,38 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : tree_node.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : tree_node.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef CODELITE_TREE_NODE_H
+
+#ifndef CODELITE_TREE_NODE_H
 #define CODELITE_TREE_NODE_H
+
 
 #include <map>
 #include <iostream>
 #include <vector>
-#include <wx/wx.h>
-
-#ifdef WXMAKINGDLL_CODELITE
-#    define WXDLLIMPEXP_CL WXEXPORT
-#elif defined(WXUSINGDLL_CODELITE)
-#    define WXDLLIMPEXP_CL WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_CL
-#endif 
 
 template <class TKey, class TData>
-class WXDLLIMPEXP_CL TreeNode
+class TreeNode
 {
 	TKey  m_key;
 	TData m_data;
@@ -140,14 +133,14 @@ public:
 	* \return newly added node
 	*/
 	TreeNode* AddChild(const TKey& key, const TData& data) ;
-	
+
 	/**
 	 * \brief Append new child to this tree node
 	 * \param newNode node to append, must be allocated on the heap
 	 * \return the newly added tree node
 	 */
 	TreeNode* AddChild(TreeNode* newNode);
-	
+
 	/**
 	* Remove first occurance of node with a given key.
 	* If the node to be removed is the root, a std::exception* is thrown, which must be deleted by caller.

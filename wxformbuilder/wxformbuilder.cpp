@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include <wx/app.h>
 #include "confformbuilder.h"
 #include <wx/mimetype.h>
 #include "procutils.h"
@@ -32,7 +33,6 @@
 #include "globals.h"
 #include "formbuildsettingsdlg.h"
 #include "wxfbitemdlg.h"
-#include <wx/app.h>
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
 #include "wxformbuilder.h"

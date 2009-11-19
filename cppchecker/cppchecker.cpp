@@ -1,3 +1,4 @@
+#include <wx/app.h>
 #include "imanager.h"
 #include "procutils.h"
 #include "cppcheckreportpage.h"
@@ -7,7 +8,6 @@
 #include "custom_notebook.h"
 #include "workspace.h"
 #include "project.h"
-#include <wx/app.h>
 #include "fileextmanager.h"
 #include "jobqueue.h"
 #include "cppchecker.h"

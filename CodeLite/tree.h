@@ -1,41 +1,35 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : tree.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : tree.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef CODELITE_TREE_H
+
+#ifndef CODELITE_TREE_H
 #define CODELITE_TREE_H
 
-#ifdef WXMAKINGDLL_CODELITE
-#    define WXDLLIMPEXP_CL WXEXPORT
-#elif defined(WXUSINGDLL_CODELITE)
-#    define WXDLLIMPEXP_CL WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_CL
-#endif
-
 #include "tree_node.h"
+
 template <typename TKey, typename TData>
-class WXDLLIMPEXP_CL Tree
+class Tree
 {
 	std::map<TKey, TreeNode<TKey, TData>*> m_nodes;
 	TreeNode<TKey, TData>* m_root;
@@ -58,9 +52,9 @@ public:
 	 * \return node
 	 */
 	TreeNode<TKey, TData>* Find(const TKey& key) ;
-	
+
 	/**
-	 * Remove node (and all its sub nodes) from the tree using key as the criteria. 
+	 * Remove node (and all its sub nodes) from the tree using key as the criteria.
 	 * This function does not delete the removed node.
 	 * \param key search key
 	 * \return remove node
@@ -68,14 +62,14 @@ public:
 	TreeNode<TKey, TData>* Remove(const TKey& key);
 
 	/**
-	 * Add child node to the tree. 
+	 * Add child node to the tree.
 	 * \param key New node key
-	 * \param data New node data 
+	 * \param data New node data
 	 * \param parent New node parent, if left NULL parent is set to root
 	 * \return newly added node
 	 */
 	TreeNode<TKey, TData>* AddChild(const TKey& key, const TData& data, TreeNode<TKey, TData>* parent = NULL) ;
-	
+
 	/**
 	 * Returns tree root.
 	 * \return root node
@@ -88,14 +82,14 @@ public:
 	 * \param depth Tab depth (for internal use)
 	 */
 	void Print(std::ostream& stream = std::cout , int depth = 0);
-	
+
 	/**
 	 * Compare this tree against another tree.
 	 * \param targetTree Target tree to compare with
 	 * \param deletedItems Array of pairs of items which exist in this tree and not in target tree
-	 * \param modifiedItems Array of pairs of items which have the same key but differnt data 
+	 * \param modifiedItems Array of pairs of items which have the same key but differnt data
 	 * \param newItems Aarray of pairs of items which exist in the target tree but not in this tree
-	 * \param fromNode If its set to null, comparison will start from this tree root node, if not null, 
+	 * \param fromNode If its set to null, comparison will start from this tree root node, if not null,
 	 * comparison will compare sub-tree which root of its fromNode
 	 */
 	void Compare(Tree* targetTree, std::vector<std::pair<TKey, TData> >& deletedItems, std::vector<std::pair<TKey, TData> >& modifiedItems, std::vector<std::pair<TKey, TData> >& newItems, TreeNode<TKey, TData>* fromNode = NULL);
@@ -194,7 +188,7 @@ void Tree<TKey, TData>::Compare(Tree* targetTree, std::vector<std::pair<TKey, TD
 	fromNode == NULL ? node = GetRoot() : node = fromNode;
 	TreeWalker<TKey, TData> sourceTreeWalker(node);
 	TreeWalker<TKey, TData> targetTreeWalker(targetTree->GetRoot());
-	
+
 	for(; !sourceTreeWalker.End(); sourceTreeWalker++)
 	{
 		if( sourceTreeWalker.GetNode()->IsRoot() )
@@ -205,12 +199,12 @@ void Tree<TKey, TData>::Compare(Tree* targetTree, std::vector<std::pair<TKey, TD
 		{
 			// Item does not exist in target tree which means it must been deleted
 			std::pair<TKey, TData> itemPair;
-			
+
 			itemPair.first = sourceTreeWalker.GetNode()->GetKey().c_str();
 			itemPair.second = sourceTreeWalker.GetNode()->GetData();
 			deletedItems.push_back( itemPair );
 		}
-		else 
+		else
 		{
 			// Compare data
 			if(node->GetData() == sourceTreeWalker.GetNode()->GetData())
@@ -223,7 +217,7 @@ void Tree<TKey, TData>::Compare(Tree* targetTree, std::vector<std::pair<TKey, TD
 			modifiedItems.push_back( itemPair );
 		}
 	}
-	
+
 	for(; !targetTreeWalker.End(); targetTreeWalker++)
 	{
 		if(targetTreeWalker.GetNode()->IsRoot())

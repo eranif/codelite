@@ -22,8 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-
+#include <wx/app.h>
+#include <wx/log.h>
 #include "buildmanager.h"
+#include "asyncprocess.h"
 #include "macros.h"
 #include "imanager.h"
 #include <wx/ffile.h>
@@ -48,9 +50,8 @@ CustomBuildRequest::~CustomBuildRequest()
 
 void CustomBuildRequest::Process(IManager *manager)
 {
-	wxString cmd;
-	wxString errMsg;
-	SetBusy(true);
+	wxString  cmd;
+	wxString  errMsg;
 	StringMap om;
 
 	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
@@ -60,7 +61,6 @@ void CustomBuildRequest::Process(IManager *manager)
 	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
 		AppendLine(wxT("Cant find project: ") + m_info.GetProject());
-		SetBusy(false);
 		return;
 	}
 
@@ -78,11 +78,10 @@ void CustomBuildRequest::Process(IManager *manager)
 	wxApp *app = manager ? manager->GetTheApp() : wxTheApp;
 	app->ProcessEvent(event);
 
-	if(app->ProcessEvent(event)){
+	if (app->ProcessEvent(event)) {
 
 		// the build is being handled by some plugin, no need to build it
 		// using the standard way
-		SetBusy(false);
 		return;
 	}
 
@@ -92,7 +91,6 @@ void CustomBuildRequest::Process(IManager *manager)
 	BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
 	if ( !bldConf ) {
 		wxLogMessage(wxString::Format(wxT("Failed to find build configuration for project '%s' and configuration '%s'"), m_info.GetProject().c_str(), m_info.GetConfiguration().c_str()));
-		SetBusy(false);
 		return;
 	}
 
@@ -116,8 +114,8 @@ void CustomBuildRequest::Process(IManager *manager)
 	} else if (m_info.GetCustomBuildTarget() == wxT("Compile Single File")) {
 		cmd = bldConf->GetSingleFileBuildCommand();
 	} else if (m_info.GetCustomBuildTarget() == wxT("Preprocess File")) {
-        cmd = bldConf->GetPreprocessFileCommand();
-    }
+		cmd = bldConf->GetPreprocessFileCommand();
+	}
 
 	// if still no luck, try with the other custom targets
 	if (cmd.IsEmpty()) {
@@ -135,57 +133,47 @@ void CustomBuildRequest::Process(IManager *manager)
 		} else {
 			AppendLine(wxT("Command line is empty. Build aborted."));
 		}
-		SetBusy(false);
 		return;
 	}
 
-	m_proc = new clProcess(wxNewId(), cmd);
-	if (m_proc) {
-		DirSaver ds;
 
-		DoSetWorkingDirectory(proj, true, false);
+	DirSaver ds;
 
-		//expand the variables of the command
-		cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
+	DoSetWorkingDirectory(proj, true, false);
 
-		// in case our configuration includes post/pre build commands
-		// we generate a makefile to include them as well and we update
-		// the build command
-		DoUpdateCommand(manager, cmd, proj, bldConf);
+	//expand the variables of the command
+	cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
 
-		//replace the command line
-		m_proc->SetCommand(cmd);
+	// in case our configuration includes post/pre build commands
+	// we generate a makefile to include them as well and we update
+	// the build command
+	DoUpdateCommand(manager, cmd, proj, bldConf);
 
-		//print the build command
-		AppendLine(cmd + wxT("\n"));
-		wxString configName(m_info.GetConfiguration());
+	//print the build command
+	AppendLine(cmd + wxT("\n"));
+	wxString configName(m_info.GetConfiguration());
 
-		//also, send another message to the main frame, indicating which project is being built
-		//and what configuration
-		wxString text;
-		if (isClean) {
-			text << CLEAN_PROJECT_PREFIX;
-		} else {
-			text << BUILD_PROJECT_PREFIX;
-		}
-		text << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]----------\n");
-
-		AppendLine(text);
-		env->ApplyEnv( &om );
-		if (m_proc->Start() == 0) {
-			wxString message;
-			message << wxT("Failed to start build process, command: ") << cmd << wxT(", process terminated with exit code: 0");
-			EnvironmentConfig::Instance()->UnApplyEnv();
-			AppendLine(message);
-			delete m_proc;
-			SetBusy(false);
-			return;
-		}
-		env->UnApplyEnv();
-		m_timer->Start(10);
-		Connect(wxEVT_TIMER, wxTimerEventHandler(CustomBuildRequest::OnTimer), NULL, this);
-		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(CustomBuildRequest::OnProcessEnd), NULL, this);
+	//also, send another message to the main frame, indicating which project is being built
+	//and what configuration
+	wxString text;
+	if (isClean) {
+		text << CLEAN_PROJECT_PREFIX;
+	} else {
+		text << BUILD_PROJECT_PREFIX;
 	}
+	text << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]----------\n");
+
+	AppendLine(text);
+	env->ApplyEnv( &om );
+	m_proc = CreateAsyncProcess(this, cmd);
+	if ( !m_proc ) {
+		wxString message;
+		message << wxT("Failed to start build process, command: ") << cmd << wxT(", process terminated with exit code: 0");
+		EnvironmentConfig::Instance()->UnApplyEnv();
+		AppendLine(message);
+		return;
+	}
+	env->UnApplyEnv();
 }
 
 void CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf)

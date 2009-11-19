@@ -103,7 +103,7 @@ LocalsTableBase::LocalsTableBase( wxWindow* parent, wxWindowID id, const wxPoint
 
 	bSizer1->Add( bSizer3, 1, wxEXPAND, 5 );
 
-	wxString m_choiceExpandChoices[] = { wxT("Select an entry to show explore it in the 'Display Variable' dialog"), wxT("Double click an entry to explore it in the 'Display Variable' dialog") };
+	wxString m_choiceExpandChoices[] = { wxT("Select an entry to explore it in the 'Display Variable' dialog"), wxT("Double click an entry to explore it in the 'Display Variable' dialog") };
 	int m_choiceExpandNChoices = sizeof( m_choiceExpandChoices ) / sizeof( wxString );
 	m_choiceExpand = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceExpandNChoices, m_choiceExpandChoices, 0 );
 	m_choiceExpand->SetSelection( 1 );

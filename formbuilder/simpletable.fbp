@@ -560,7 +560,7 @@
                     <property name="proportion">0</property>
                     <object class="wxChoice" expanded="1">
                         <property name="bg"></property>
-                        <property name="choices">&quot;Select an entry to show explore it in the &apos;Display Variable&apos; dialog&quot; &quot;Double click an entry to explore it in the &apos;Display Variable&apos; dialog&quot;</property>
+                        <property name="choices">&quot;Select an entry to explore it in the &apos;Display Variable&apos; dialog&quot; &quot;Double click an entry to explore it in the &apos;Display Variable&apos; dialog&quot;</property>
                         <property name="context_help"></property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>

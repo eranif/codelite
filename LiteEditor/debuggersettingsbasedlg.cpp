@@ -153,13 +153,13 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	wxGridSizer* gSizer3;
 	gSizer3 = new wxGridSizer( 4, 1, 0, 0 );
 	
-	m_checkBoxEnablePendingBreakpoints = new wxCheckBox( m_panel3, wxID_ANY, wxT("Enable pending breakpoint"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxEnablePendingBreakpoints = new wxCheckBox( m_panel3, wxID_ANY, wxT("Enable pending breakpoints"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer3->Add( m_checkBoxEnablePendingBreakpoints, 0, wxALL, 5 );
 	
 	m_checkBreakAtWinMain = new wxCheckBox( m_panel3, wxID_ANY, wxT("Automatically set breakpoint at main"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer3->Add( m_checkBreakAtWinMain, 0, wxALL, 5 );
 	
-	m_catchThrow = new wxCheckBox( m_panel3, wxID_ANY, wxT("Break when C++ execption is thrown"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_catchThrow = new wxCheckBox( m_panel3, wxID_ANY, wxT("Break when C++ exception is thrown"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer3->Add( m_catchThrow, 0, wxALL, 5 );
 	
 	m_checkBoxDebugAssert = new wxCheckBox( m_panel3, wxID_ANY, wxT("Break at assertion failure (MinGW only)"), wxDefaultPosition, wxDefaultSize, 0 );

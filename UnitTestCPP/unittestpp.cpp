@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-
+#include <wx/app.h>
 #include "unittestspage.h"
 #include "macros.h"
 #include "unittestdata.h"
@@ -40,7 +40,6 @@
 #include <wx/ffile.h>
 #include <wx/msgdlg.h>
 #include "unittestpp.h"
-#include <wx/app.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/menuitem.h>
 #include <wx/menu.h>

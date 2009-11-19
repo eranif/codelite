@@ -24,6 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "workspace.h"
+#include <wx/app.h>
+#include <wx/msgdlg.h>
 #include "subversion.h"
 #include "imanager.h"
 #include "updatepostcmdaction.h"

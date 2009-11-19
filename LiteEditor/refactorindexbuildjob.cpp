@@ -22,12 +22,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <wx/sizer.h>
 #include <wx/stopwatch.h>
 #include <wx/progdlg.h>
 #include "cppwordscanner.h"
 #include <wx/filename.h>
 #include "refactorindexbuildjob.h"
-//#include "tokendb.h"
 #include "workspace.h"
 
 //#define POST_NEW_STATUS(msg, value, act)
@@ -79,7 +79,7 @@ void RefactorIndexBuildJob::Parse(const wxString &word, CppTokensMap &l)
 
 		scanner.Match(word, l);
 	}
-	
+
 //	long elapsed = watch.Time();
 //	wxPrintf(wxT("Parsing completed.\n"));
 //	wxPrintf(wxT("Time to collect symbols: %d milliseconds. Total files scanned: %d\n"), elapsed, m_files.size());

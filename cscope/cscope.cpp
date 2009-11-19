@@ -23,6 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "csscopeconfdata.h"
+#include <wx/app.h>
+#include <wx/textdlg.h>
+#include <wx/menu.h>
+#include <wx/log.h>
+#include <wx/msgdlg.h>
 #include <wx/stdpaths.h>
 #include "cscopestatusmessage.h"
 #include "dirsaver.h"

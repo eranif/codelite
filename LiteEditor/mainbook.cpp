@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include "custom_tab.h"
 #include "globals.h"
 #include "ctags_manager.h"
 #include "frame.h"
@@ -461,6 +462,21 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 {
 	if (m_book->GetPageIndex(win) != Notebook::npos || m_detachedTabs.find(win) != m_detachedTabs.end())
 		return false;
+
+	long MaxBuffers(15);
+	EditorConfigST::Get()->GetLongValue(wxT("MaxOpenedTabs"), MaxBuffers);
+
+	if( (long)(m_book->GetPageCount() + m_detachedTabs.size()) >= MaxBuffers ) {
+		// We have reached the limit of the number of open buffers
+		// Close the last used buffer
+		const wxArrayPtrVoid &arr = m_book->GetHistory();
+		if ( arr.GetCount() ) {
+			// We got at least one page, close the last used
+			CustomTab *tab = static_cast<CustomTab*>(arr.Item(arr.GetCount()-1));
+			ClosePage(tab->GetWindow());
+		}
+	}
+
 	win->Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(MainBook::OnFocus), NULL, this);
 
 	LEditor *editor = dynamic_cast<LEditor*>(win);

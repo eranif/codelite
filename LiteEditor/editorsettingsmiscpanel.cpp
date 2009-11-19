@@ -83,6 +83,9 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 	EditorConfigST::Get()->GetLongValue(wxT("MaxItemsInFindReplaceDialog"), max_items);
 	m_maxItemsFindReplace->SetValue(max_items);
 
+	long maxTabs(15);
+	EditorConfigST::Get()->GetLongValue(wxT("MaxOpenedTabs"), maxTabs);
+	m_spinCtrlMaxOpenTabs->SetValue(maxTabs);
 }
 
 void EditorSettingsMiscPanel::OnClearButtonClick( wxCommandEvent& )
@@ -113,7 +116,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 	}
 
 	EditorConfigST::Get()->SaveLongValue(wxT("MaxItemsInFindReplaceDialog"), value);
-
+	EditorConfigST::Get()->SaveLongValue(wxT("MaxOpenedTabs"), m_spinCtrlMaxOpenTabs->GetValue());
 
 	//check to see of the icon size was modified
 	int oldIconSize(24);

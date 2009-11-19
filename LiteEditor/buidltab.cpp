@@ -252,7 +252,7 @@ void BuildTab::AppendText ( const wxString &text )
 			}
 		}
 	}
-	
+
 	if ( info.linecolor != wxSCI_LEX_GCC_OUTPUT ) {
 		m_lineInfo[lineno] = info;
 		m_lineMap[text] = lineno;

@@ -584,6 +584,13 @@ bool Manager::IsFileInWorkspace ( const wxString &fileName )
 
 wxFileName Manager::FindFile ( const wxString &filename, const wxString &project )
 {
+	wxString tmpfile(filename);
+	tmpfile.Trim().Trim(false);
+
+	if(tmpfile.IsEmpty()) {
+		return wxFileName();
+	}
+
 	wxFileName fn ( filename );
 	if ( !fn.FileExists() ) {
 		// try to open the file as is
@@ -620,7 +627,7 @@ wxFileName Manager::FindFile ( const wxArrayString& files, const wxFileName &fn 
 
 	// try to convert it to absolute path
 	wxFileName f1 ( fn );
-	if ( f1.MakeAbsolute() && f1.FileExists() && !f1.GetFullPath().Contains ( wxT ( ".." ) ) ) {
+	if ( f1.MakeAbsolute() /*&& f1.FileExists()*/ && !f1.GetFullPath().Contains ( wxT ( ".." ) ) ) {
 		return f1;
 	}
 

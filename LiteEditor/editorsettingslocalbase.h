@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Feb  8 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -56,6 +56,10 @@ class LocalEditorSettingsbase : public wxDialog
 		wxCheckBox* m_showIndentationGuideLines;
 		wxCheckBox* m_highlightCaretLineEnable;
 		wxCheckBox* m_highlightCaretLine;
+		wxCheckBox* m_checkBoxTrimLineEnable;
+		wxCheckBox* m_checkBoxTrimLine;
+		wxCheckBox* m_checkBoxAppendLFEnable;
+		wxCheckBox* m_checkBoxAppendLF;
 		wxCheckBox* m_whitespaceStyleEnable;
 		wxStaticText* m_staticTextwhitespaceStyle;
 		wxChoice* m_whitespaceStyle;
@@ -78,6 +82,8 @@ class LocalEditorSettingsbase : public wxDialog
 		virtual void displayLineNumbersUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void showIndentationGuideLinesUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void highlightCaretLineUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void checkBoxTrimLineUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void checkBoxAppendLFUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void whitespaceStyleUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void choiceEOLUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void fileEncodingUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
@@ -85,6 +91,7 @@ class LocalEditorSettingsbase : public wxDialog
 		
 	
 	public:
+		
 		LocalEditorSettingsbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Local Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~LocalEditorSettingsbase();
 	

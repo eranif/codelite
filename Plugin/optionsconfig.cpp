@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "editor_config.h"
 #include "optionsconfig.h"
 #include <wx/fontmap.h>
 #include "xmlutils.h"
@@ -63,6 +64,8 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_hideOutpuPaneOnUserClick(false)
 		, m_hideOutputPaneNotIfDebug(true)
 		, m_showQuickFinder(true)
+		, m_TrimLine(true)
+		, m_AppendLF(true)
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
@@ -103,6 +106,12 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_hideOutpuPaneOnUserClick = XmlUtils::ReadBool(node, wxT("HideOutputPaneOnUserClick"));
 		m_hideOutputPaneNotIfDebug = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfDebug"));
 		m_showQuickFinder = XmlUtils::ReadBool(node, wxT("ShowQuickFinder"), m_showQuickFinder);
+		// These hacks will likely be changed in the future. If so, we'll be able to remove the #include "editor_config.h" too
+		long trim(0); long appendLf(0);
+		EditorConfigST::Get()->GetLongValue(wxT("EditorTrimEmptyLines"), trim);
+		m_TrimLine = (trim > 0);
+		EditorConfigST::Get()->GetLongValue(wxT("EditorAppendLf"), appendLf);
+		m_AppendLF = (appendLf > 0);
 	}
 }
 

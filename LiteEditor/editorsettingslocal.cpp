@@ -64,6 +64,8 @@ void EditorSettingsLocal::DisplayHigherValues( const OptionsConfigPtr options )
 	m_showIndentationGuideLines->SetValue(options->GetShowIndentationGuidelines());
 
 	m_highlightCaretLine->SetValue(options->GetHighlightCaretLine());
+	m_checkBoxTrimLine->SetValue(options->GetTrimLine());
+	m_checkBoxAppendLF->SetValue(options->GetAppendLF());
 
 	m_checkBoxHideChangeMarkerMargin->SetValue( options->GetHideChangeMarkerMargin() );
 	m_checkBoxDisplayFoldMargin->SetValue( options->GetDisplayFoldMargin() );
@@ -130,12 +132,18 @@ void EditorSettingsLocal::DisplayLocalValues( const LocalOptionsConfigPtr option
 		m_showIndentationGuideLines->SetValue(options->GetShowIndentationGuidelines());
 		m_showIndentationGuideLinesEnable->SetValue(false);
 	}
-
 	if (options->HighlightCaretLineIsValid()) {
 		m_highlightCaretLine->SetValue(options->GetHighlightCaretLine());
 		m_highlightCaretLineEnable->SetValue(false);
 	}
-
+	if (options->TrimLineIsValid()) {
+		m_checkBoxTrimLine->SetValue(options->GetHighlightCaretLine());
+		m_checkBoxTrimLineEnable->SetValue(false);
+	}
+	if (options->AppendLFIsValid()) {
+		m_checkBoxAppendLF->SetValue(options->GetHighlightCaretLine());
+		m_checkBoxAppendLFEnable->SetValue(false);
+	}
 	if (options->HideChangeMarkerMarginIsValid()) {
 		m_checkBoxHideChangeMarkerMargin->SetValue( options->GetHideChangeMarkerMargin() );
 		m_checkBoxHideChangeMarkerMarginEnable->SetValue(false);
@@ -210,6 +218,12 @@ void EditorSettingsLocal::OnOK( wxCommandEvent& event )
 	if (m_highlightCaretLine->IsEnabled()) {
 		GetLocalOpts()->SetHighlightCaretLine( m_highlightCaretLine->GetValue() );
 	}
+	if (m_checkBoxTrimLine->IsEnabled()) {
+		GetLocalOpts()->SetTrimLine( m_checkBoxTrimLine->GetValue() );
+	}
+	if (m_checkBoxAppendLF->IsEnabled()) {
+		GetLocalOpts()->SetAppendLF( m_checkBoxAppendLF->GetValue() );
+	}
 	if (m_checkBoxHideChangeMarkerMargin->IsEnabled()) {
 		GetLocalOpts()->SetHideChangeMarkerMargin( m_checkBoxHideChangeMarkerMargin->GetValue() );
 	}
@@ -251,49 +265,51 @@ void EditorSettingsLocal::indentWidthUpdateUI( wxUpdateUIEvent& event )
 	m_staticTextindentWidth->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 }
 
-
 void EditorSettingsLocal::tabWidthUpdateUI( wxUpdateUIEvent& event )
 {
 	m_tabWidth->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 	m_staticTexttabWidth->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 }
 
-
 void EditorSettingsLocal::displayBookmarkMarginUpdateUI( wxUpdateUIEvent& event )
 {
 	m_displayBookmarkMargin->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 }
-
 
 void EditorSettingsLocal::checkBoxDisplayFoldMarginUpdateUI( wxUpdateUIEvent& event )
 {
 	m_checkBoxDisplayFoldMargin->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 }
 
-
 void EditorSettingsLocal::checkBoxHideChangeMarkerMarginUpdateUI( wxUpdateUIEvent& event )
 {
 	m_checkBoxHideChangeMarkerMargin->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 }
-
 
 void EditorSettingsLocal::displayLineNumbersUpdateUI( wxUpdateUIEvent& event )
 {
 	m_displayLineNumbers->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 }
 
-
 void EditorSettingsLocal::showIndentationGuideLinesUpdateUI( wxUpdateUIEvent& event )
 {
 	m_showIndentationGuideLines->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 }
-
 
 void EditorSettingsLocal::highlightCaretLineUpdateUI( wxUpdateUIEvent& event )
 {
 	m_highlightCaretLine->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 }
 
+void EditorSettingsLocal::checkBoxTrimLineUpdateUI( wxUpdateUIEvent& event )
+{
+	m_checkBoxTrimLine->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
+}
+
+void EditorSettingsLocal::checkBoxAppendLFUpdateUI( wxUpdateUIEvent& event )
+{
+	m_checkBoxAppendLF->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
+}
 
 void EditorSettingsLocal::whitespaceStyleUpdateUI( wxUpdateUIEvent& event )
 {
@@ -301,13 +317,11 @@ void EditorSettingsLocal::whitespaceStyleUpdateUI( wxUpdateUIEvent& event )
 	m_staticTextwhitespaceStyle->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 }
 
-
 void EditorSettingsLocal::choiceEOLUpdateUI( wxUpdateUIEvent& event )
 {
 	m_choiceEOL->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 	m_EOLstatic->Enable( ! ((wxCheckBox*)event.GetEventObject())->IsChecked() );
 }
-
 
 void EditorSettingsLocal::fileEncodingUpdateUI( wxUpdateUIEvent& event )
 {

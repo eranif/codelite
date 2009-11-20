@@ -2990,10 +2990,8 @@ void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
 
 void LEditor::TrimText()
 {
-	long trim(0);
-	long appendLf(0);
-	EditorConfigST::Get()->GetLongValue(wxT("EditorTrimEmptyLines"), trim);
-	EditorConfigST::Get()->GetLongValue(wxT("EditorAppendLf"), appendLf);
+	bool trim = GetOptions()->GetTrimLine();
+	bool appendLf = GetOptions()->GetAppendLF();
 
 	if (!trim && !appendLf) {
 		return;
@@ -3357,7 +3355,9 @@ OptionsConfigPtr LEditor::GetOptions()
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
 	
 	// Now let any local preferences overwrite the global equivalent
+	if (ManagerST::Get()->IsWorkspaceOpen()) {
     LocalWorkspaceST::Get()->GetOptions( options, GetProject() );
+	}
 	
 	return options;
 }

@@ -64,6 +64,8 @@ class LocalOptionsConfig
 	validVar<bool>     m_localdisplayFoldMargin;
 	validVar<bool>     m_localdisplayBookmarkMargin;
 	validVar<bool>     m_localhighlightCaretLine;
+	validVar<bool>     m_localTrimLine;
+	validVar<bool>     m_localAppendLF;
 	validVar<bool>     m_localdisplayLineNumbers;
 	validVar<bool>     m_localshowIndentationGuidelines;
 	validVar<bool>     m_localindentUsesTabs;
@@ -91,6 +93,12 @@ public:
 	}
 	bool HighlightCaretLineIsValid() const {
 		return m_localhighlightCaretLine.isValid();
+	}
+	bool TrimLineIsValid() const {
+		return m_localTrimLine.isValid();
+	}
+	bool AppendLFIsValid() const {
+		return m_localAppendLF.isValid();
 	}
 	bool DisplayLineNumbersIsValid() const {
 		return m_localdisplayLineNumbers.isValid();
@@ -145,6 +153,18 @@ public:
 		}
 		return false;
 	}
+	bool GetTrimLine() const {
+		if (m_localTrimLine.isValid()) {
+			return m_localTrimLine.GetDatum();
+		}
+		return false;
+	}
+	bool GetAppendLF() const {
+		if (m_localAppendLF.isValid()) {
+			return m_localAppendLF.GetDatum();
+		}
+		return false;
+	}
 	bool GetDisplayLineNumbers() const {
 		if (m_localdisplayLineNumbers.isValid()) {
 			return m_localdisplayLineNumbers.GetDatum();
@@ -169,6 +189,12 @@ public:
 	}
 	void SetHighlightCaretLine(bool b) {
 		m_localhighlightCaretLine.Set(b);
+	}
+	void SetTrimLine(bool b) {
+		m_localTrimLine.Set(b);
+	}
+	void SetAppendLF(bool b) {
+		m_localAppendLF.Set(b);
 	}
 	void SetDisplayLineNumbers(bool b) {
 		m_localdisplayLineNumbers.Set(b);

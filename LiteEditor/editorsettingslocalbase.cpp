@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Feb  8 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -31,20 +31,17 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	
 	m_indentsUsesTabsEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_indentsUsesTabsEnable->SetValue(true);
-	
 	m_indentsUsesTabsEnable->SetToolTip( wxT("Disply line numbers margin") );
 	
 	fgSizer31->Add( m_indentsUsesTabsEnable, 0, wxALL, 5 );
 	
 	m_indentsUsesTabs = new wxCheckBox( this, wxID_ANY, wxT("Use tabs in indentation"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	m_indentsUsesTabs->SetToolTip( wxT("If clear, only spaces will be used for indentation.\nIf set, a mixture of tabs and spaces will be used.") );
 	
 	fgSizer31->Add( m_indentsUsesTabs, 0, wxALL, 5 );
 	
 	m_tabWidthEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_tabWidthEnable->SetValue(true);
-	
 	m_tabWidthEnable->SetToolTip( wxT("Disply line numbers margin") );
 	
 	fgSizer31->Add( m_tabWidthEnable, 0, wxALL, 5 );
@@ -66,7 +63,6 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	
 	m_indentWidthEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_indentWidthEnable->SetValue(true);
-	
 	m_indentWidthEnable->SetToolTip( wxT("Disply line numbers margin") );
 	
 	fgSizer31->Add( m_indentWidthEnable, 0, wxALL, 5 );
@@ -101,39 +97,33 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	
 	m_displayBookmarkMarginEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_displayBookmarkMarginEnable->SetValue(true);
-	
 	m_displayBookmarkMarginEnable->SetToolTip( wxT("Disply line numbers margin") );
 	
 	fgSizer21->Add( m_displayBookmarkMarginEnable, 0, wxALL, 5 );
 	
 	m_displayBookmarkMargin = new wxCheckBox( this, wxID_ANY, wxT("Display Selection / Bookmark margin"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	m_displayBookmarkMargin->SetToolTip( wxT("When enabled, mark matching brace with unique colour") );
 	
 	fgSizer21->Add( m_displayBookmarkMargin, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_checkBoxDisplayFoldMarginEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_checkBoxDisplayFoldMarginEnable->SetValue(true);
-	
 	m_checkBoxDisplayFoldMarginEnable->SetToolTip( wxT("Disply line numbers margin") );
 	
 	fgSizer21->Add( m_checkBoxDisplayFoldMarginEnable, 0, wxALL, 5 );
 	
 	m_checkBoxDisplayFoldMargin = new wxCheckBox( this, wxID_ANY, wxT("Display Folding margin"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	m_checkBoxDisplayFoldMargin->SetToolTip( wxT("Display horizontal guides for matching braces \"{\"") );
 	
 	fgSizer21->Add( m_checkBoxDisplayFoldMargin, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_checkBoxHideChangeMarkerMarginEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_checkBoxHideChangeMarkerMarginEnable->SetValue(true);
-	
 	m_checkBoxHideChangeMarkerMarginEnable->SetToolTip( wxT("Disply line numbers margin") );
 	
 	fgSizer21->Add( m_checkBoxHideChangeMarkerMarginEnable, 0, wxALL, 5 );
 	
 	m_checkBoxHideChangeMarkerMargin = new wxCheckBox( this, wxID_ANY, wxT("Hide change marker margin"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	m_checkBoxHideChangeMarkerMargin->SetToolTip( wxT("Display horizontal guides for matching braces \"{\"") );
 	
 	fgSizer21->Add( m_checkBoxHideChangeMarkerMargin, 0, wxALL, 5 );
@@ -153,48 +143,59 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	
 	m_displayLineNumbersEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_displayLineNumbersEnable->SetValue(true);
-	
 	m_displayLineNumbersEnable->SetToolTip( wxT("Disply line numbers margin") );
 	
 	fgSizer2->Add( m_displayLineNumbersEnable, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_displayLineNumbers = new wxCheckBox( this, wxID_ANY, wxT("Display line numbers"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	m_displayLineNumbers->Enable( false );
 	m_displayLineNumbers->SetToolTip( wxT("Disply line numbers margin") );
 	
 	fgSizer2->Add( m_displayLineNumbers, 0, wxALL, 5 );
 	
 	m_showIndentationGuideLinesEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_showIndentationGuideLinesEnable->SetValue(true);
-	
 	m_showIndentationGuideLinesEnable->SetToolTip( wxT("Display horizontal guides for matching braces \"{\"") );
 	
 	fgSizer2->Add( m_showIndentationGuideLinesEnable, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_showIndentationGuideLines = new wxCheckBox( this, wxID_ANY, wxT("Show indentation guidelines"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	m_showIndentationGuideLines->SetToolTip( wxT("Display horizontal guides for matching braces \"{\"") );
 	
 	fgSizer2->Add( m_showIndentationGuideLines, 0, wxALL, 5 );
 	
 	m_highlightCaretLineEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_highlightCaretLineEnable->SetValue(true);
-	
 	m_highlightCaretLineEnable->SetToolTip( wxT("Set different background colour for the line containing the caret") );
 	
 	fgSizer2->Add( m_highlightCaretLineEnable, 0, wxALL, 5 );
 	
 	m_highlightCaretLine = new wxCheckBox( this, wxID_ANY, wxT("Highlight caret line"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	m_highlightCaretLine->Enable( false );
 	m_highlightCaretLine->SetToolTip( wxT("Set different background colour for the line containing the caret") );
 	
 	fgSizer2->Add( m_highlightCaretLine, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
+	m_checkBoxTrimLineEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_checkBoxTrimLineEnable->SetValue(true); 
+	m_checkBoxTrimLineEnable->SetToolTip( wxT("Set different background colour for the line containing the caret") );
+	
+	fgSizer2->Add( m_checkBoxTrimLineEnable, 0, wxALL, 5 );
+	
+	m_checkBoxTrimLine = new wxCheckBox( this, wxID_ANY, wxT("When saving files, trim empty lines"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer2->Add( m_checkBoxTrimLine, 0, wxALL, 5 );
+	
+	m_checkBoxAppendLFEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_checkBoxAppendLFEnable->SetValue(true); 
+	m_checkBoxAppendLFEnable->SetToolTip( wxT("Set different background colour for the line containing the caret") );
+	
+	fgSizer2->Add( m_checkBoxAppendLFEnable, 0, wxALL, 5 );
+	
+	m_checkBoxAppendLF = new wxCheckBox( this, wxID_ANY, wxT("If missing, append EOL at end of file"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxAppendLF->SetToolTip( wxT("Make sure the file finishes with an end-of-line") );
+	
+	fgSizer2->Add( m_checkBoxAppendLF, 0, wxALL, 5 );
+	
 	m_whitespaceStyleEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_whitespaceStyleEnable->SetValue(true);
-	
 	m_whitespaceStyleEnable->SetToolTip( wxT("Set different background colour for the line containing the caret") );
 	
 	fgSizer2->Add( m_whitespaceStyleEnable, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
@@ -216,7 +217,6 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	
 	m_choiceEOLEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_choiceEOLEnable->SetValue(true);
-	
 	m_choiceEOLEnable->SetToolTip( wxT("Set different background colour for the line containing the caret") );
 	
 	fgSizer2->Add( m_choiceEOLEnable, 0, wxALL, 5 );
@@ -240,7 +240,6 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	
 	m_fileEncodingEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_fileEncodingEnable->SetValue(true);
-	
 	m_fileEncodingEnable->SetToolTip( wxT("Set different background colour for the line containing the caret") );
 	
 	fgSizer2->Add( m_fileEncodingEnable, 0, wxALL, 5 );
@@ -250,8 +249,6 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	
 	m_staticTextfileEncoding = new wxStaticText( this, wxID_ANY, wxT("File font encoding"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextfileEncoding->Wrap( -1 );
-	m_staticTextfileEncoding->Enable( false );
-	
 	gSizer21->Add( m_staticTextfileEncoding, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	wxArrayString m_fileEncodingChoices;
@@ -291,6 +288,8 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	m_displayLineNumbersEnable->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::displayLineNumbersUpdateUI ), NULL, this );
 	m_showIndentationGuideLinesEnable->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::showIndentationGuideLinesUpdateUI ), NULL, this );
 	m_highlightCaretLineEnable->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::highlightCaretLineUpdateUI ), NULL, this );
+	m_checkBoxTrimLineEnable->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::checkBoxTrimLineUpdateUI ), NULL, this );
+	m_checkBoxAppendLFEnable->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::checkBoxAppendLFUpdateUI ), NULL, this );
 	m_whitespaceStyleEnable->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::whitespaceStyleUpdateUI ), NULL, this );
 	m_choiceEOLEnable->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::choiceEOLUpdateUI ), NULL, this );
 	m_fileEncodingEnable->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::fileEncodingUpdateUI ), NULL, this );
@@ -309,6 +308,8 @@ LocalEditorSettingsbase::~LocalEditorSettingsbase()
 	m_displayLineNumbersEnable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::displayLineNumbersUpdateUI ), NULL, this );
 	m_showIndentationGuideLinesEnable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::showIndentationGuideLinesUpdateUI ), NULL, this );
 	m_highlightCaretLineEnable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::highlightCaretLineUpdateUI ), NULL, this );
+	m_checkBoxTrimLineEnable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::checkBoxTrimLineUpdateUI ), NULL, this );
+	m_checkBoxAppendLFEnable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::checkBoxAppendLFUpdateUI ), NULL, this );
 	m_whitespaceStyleEnable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::whitespaceStyleUpdateUI ), NULL, this );
 	m_choiceEOLEnable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::choiceEOLUpdateUI ), NULL, this );
 	m_fileEncodingEnable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::fileEncodingUpdateUI ), NULL, this );

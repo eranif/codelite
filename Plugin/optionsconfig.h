@@ -70,6 +70,8 @@ protected:
 	bool           m_hideOutpuPaneOnUserClick;
 	bool           m_hideOutputPaneNotIfDebug;
 	bool           m_showQuickFinder;
+	bool           m_TrimLine;
+	bool           m_AppendLF;
 public:
 	OptionsConfig(){}
 	OptionsConfig(wxXmlNode *node);
@@ -79,6 +81,18 @@ public:
 	// Setters/Getters
 	//-------------------------------------
 
+	void SetTrimLine(const bool& trimLine) {
+		this->m_TrimLine = trimLine;
+	}
+	const bool& GetTrimLine() const {
+		return m_TrimLine;
+	}
+	void SetAppendLF(const bool& appendLF) {
+		this->m_AppendLF = appendLF;
+	}
+	const bool& GetAppendLF() const {
+		return m_AppendLF;
+	}
 	void SetShowQuickFinder(const bool& showQuickFinder) {
 		this->m_showQuickFinder = showQuickFinder;
 	}

@@ -37,7 +37,7 @@
 
 void LocalWorkspace::GetOptions( OptionsConfigPtr options, const wxString& projectname )
 {
-    // First, a SanityCheck(). This protects against a change of workspace, or none, and calls Create() if needed
+    // First, a SanityCheck(). This protects against a change of workspace, and calls Create() if needed
     if ( !SanityCheck() ) {
         return;
     }
@@ -56,55 +56,6 @@ void LocalWorkspace::GetOptions( OptionsConfigPtr options, const wxString& proje
 
 	// This space intentionally left blank :p  Maybe, one day there'll be individual-editor options too
 }
-
-/*bool LocalWorkspace::SetWorkspaceOptions()
-{
-    // First, a SanityCheck(). This protects against a change of workspace, or none, and calls Create() if needed
-    if ( !SanityCheck() ) {
-        return false;
-    }
-
-    // Start by getting the global settings
-	OptionsConfigPtr higherOptions = EditorConfigST::Get()->GetOptions();
-
-	wxXmlNode* lwsnode = GetLocalWorkspaceOptionsNode();
-    // Don't check lwsnode: it'll be NULL if there are currently no local options
-
-    EditorSettingsLocal dlg(higherOptions, lwsnode, pLevel_workspace, NULL);
-    if (dlg.ShowModal() == wxID_OK) {
-        SaveWorkspaceOptions(dlg.GetLocalOpts());
-        return true;
-    }
-
-	return false;
-}
-
-bool LocalWorkspace::SetProjectOptions( const wxString& projectname )
-{
-    // First, a SanityCheck(). This protects against a change of workspace, or none, and calls Create() if needed
-    if ( !SanityCheck() ) {
-        return false;
-    }
-
-	// Start by getting the global settings
-	OptionsConfigPtr higherOptions = EditorConfigST::Get()->GetOptions();
-
-	wxXmlNode* lwsnode = GetLocalWorkspaceOptionsNode();
-	wxXmlNode* lpnode = GetLocalProjectOptionsNode(projectname);
-    // Don't check the nodes: they'll be NULL if there are currently no local options
-
-    // Merge any local workspace options with the global ones inside 'options'
-    LocalOptionsConfig wsOC(higherOptions, lwsnode);
-
-    EditorSettingsLocal dlg(higherOptions, lpnode, pLevel_project, NULL);
-    if (dlg.ShowModal() == wxID_OK) {
-        SaveProjectOptions(dlg.GetLocalOpts(), projectname);
-        return true;
-    }
-
-    return false;
-}
-*/
 
 bool LocalWorkspace::SetWorkspaceOptions(LocalOptionsConfigPtr opts)
 {
@@ -160,16 +111,12 @@ bool LocalWorkspace::SaveXmlFile()
 
 bool LocalWorkspace::SanityCheck()
 {
-/*    // First check there's a workspace open. If not, abort
-    if (!ManagerST::Get()->IsWorkspaceOpen()) {
-        return false;
-    }*/
     wxString WorkspaceFullPath = WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath();
     if (WorkspaceFullPath.IsEmpty()) {
         return false;
     }
 
-    // Next, that it's the same workspace as any previous Create()
+    // Check that the current workspace is the same as any previous Create()
     // If so, and assuming m_doc is valid, there's nothing more to do
     if ( (WorkspaceFullPath == m_fileName.GetFullPath().BeforeLast(wxT('.'))) && m_doc.IsOk() ) {
         return true;
@@ -223,6 +170,12 @@ LocalOptionsConfig::LocalOptionsConfig(OptionsConfigPtr opts, wxXmlNode *node)
 		if (XmlUtils::ReadBoolIfExists(node, wxT("HighlightCaretLine"), answer) ) {
 			opts->SetHighlightCaretLine(answer);
 		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("EditorTrimEmptyLines"), answer) ) {
+			opts->SetTrimLine(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("EditorAppendLf"), answer) ) {
+			opts->SetAppendLF(answer);
+		}
 		if (XmlUtils::ReadBoolIfExists(node, wxT("ShowLineNumber"), answer) ) {
 			opts->SetDisplayLineNumbers(answer);
 		}
@@ -269,6 +222,12 @@ LocalOptionsConfig::LocalOptionsConfig(LocalOptionsConfigPtr opts, wxXmlNode *no
 		}
 		if (XmlUtils::ReadBoolIfExists(node, wxT("HighlightCaretLine"), answer) ) {
 			opts->SetHighlightCaretLine(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("EditorTrimEmptyLines"), answer) ) {
+			opts->SetTrimLine(answer);
+		}
+		if (XmlUtils::ReadBoolIfExists(node, wxT("EditorAppendLf"), answer) ) {
+			opts->SetAppendLF(answer);
 		}
 		if (XmlUtils::ReadBoolIfExists(node, wxT("ShowLineNumber"), answer) ) {
 			opts->SetDisplayLineNumbers(answer);
@@ -320,6 +279,12 @@ wxXmlNode* LocalOptionsConfig::ToXml(wxXmlNode* parent /*=NULL*/, const wxString
 	}
 	if (HighlightCaretLineIsValid()) {
 		n->AddProperty(wxT("HighlightCaretLine"),        BoolToString(m_localhighlightCaretLine.GetDatum()));
+	}
+	if (TrimLineIsValid()) {
+		n->AddProperty(wxT("EditorTrimEmptyLines"),      BoolToString(m_localTrimLine.GetDatum()));
+	}
+	if (AppendLFIsValid()) {
+		n->AddProperty(wxT("EditorAppendLf"),            BoolToString(m_localAppendLF.GetDatum()));
 	}
 	if (DisplayLineNumbersIsValid()) {
 		n->AddProperty(wxT("ShowLineNumber"),            BoolToString(m_localdisplayLineNumbers.GetDatum()));

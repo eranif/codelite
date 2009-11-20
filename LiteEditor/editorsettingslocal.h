@@ -53,6 +53,8 @@ protected:
 	void displayLineNumbersUpdateUI( wxUpdateUIEvent& event );
 	void showIndentationGuideLinesUpdateUI( wxUpdateUIEvent& event );
 	void highlightCaretLineUpdateUI( wxUpdateUIEvent& event );
+	void checkBoxTrimLineUpdateUI( wxUpdateUIEvent& event );
+	void checkBoxAppendLFUpdateUI( wxUpdateUIEvent& event );
 	void whitespaceStyleUpdateUI( wxUpdateUIEvent& event );
 	void choiceEOLUpdateUI( wxUpdateUIEvent& event );
 	void fileEncodingUpdateUI( wxUpdateUIEvent& event );

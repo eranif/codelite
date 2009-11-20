@@ -444,6 +444,12 @@ bool App::OnInit()
 	cfg->ReadObject(wxT("GeneralInfo"), &inf);
 
 	bool showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
+
+	// Dont show splashscreen in debug build, its annoying
+#ifdef __WXDEBUG__
+	showSplash = false;
+#endif
+
 	if (showSplash) {
 		wxBitmap bitmap;
 		wxString splashName(mgr->GetStarupDirectory() + wxT("/images/splashscreen.png"));

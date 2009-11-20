@@ -185,7 +185,7 @@ bool wxScintilla::Create (wxWindow *parent,
     // Reduces flicker on GTK+/X11
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 #if wxCHECK_VERSION(2, 8, 0)
-	SetInitialBestSize(size);
+	SetInitialSize(size);
 #else
     SetBestFittingSize(size);
 #endif

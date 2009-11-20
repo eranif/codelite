@@ -152,8 +152,11 @@ derivation_list			:	/*empty*/ {$$ = "";}
 							| 	derivation_list ',' parent_class {$$ = $1 + $2 + $3;}
 							;
 
-parent_class				: 	access_specifier LE_IDENTIFIER	opt_template_specifier {$$ = $1 + " " + $2 + $3;}
+parent_class				: 	access_specifier class_name opt_template_specifier {$$ = $1 + " " + $2 + $3;}
 							;
+class_name                  : LE_IDENTIFIER                    {$$ = $1;}
+							| class_name LE_CLCL LE_IDENTIFIER {$$ = $1 + $2 + $2;}
+                            ;
 
 opt_template_specifier	: /*empty*/	{$$ = "";}
 							| '<' template_parameter_list '>' {$$ = $1 + $2 + $3;}

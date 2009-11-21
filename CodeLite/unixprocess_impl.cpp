@@ -134,12 +134,12 @@ void UnixProcessImpl::Cleanup()
 	cmd << wxT("/bin/sh -f ") << script.GetFullPath() << wxT(" ") << GetPid();
 	wxExecute(cmd, wxEXEC_ASYNC);
 #else
-	wxKill (GetPid(), wxSIGKILL, NULL, wxKILL_CHILDREN);
+	wxKill (GetPid(), wxSIGKILL);
 	// Perform process cleanup
 	int status(0);
 	waitpid(GetPid(), &status, 0);
 #endif
-  
+
 }
 
 bool UnixProcessImpl::IsAlive()

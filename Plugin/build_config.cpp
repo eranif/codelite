@@ -123,6 +123,8 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 					m_customBuildCmd = child->GetNodeContent();
 				} else if (child->GetName() == wxT("CleanCommand")) {
 					m_customCleanCmd = child->GetNodeContent();
+				} else if (child->GetName() == wxT("RebuildCommand")) {
+					m_customRebuildCmd = child->GetNodeContent();
 				} else if (child->GetName() == wxT("SingleFileCommand")) {
 					m_singleFileBuildCommand = child->GetNodeContent();
 				} else if (child->GetName() == wxT("PreprocessFileCommand")) {
@@ -328,6 +330,9 @@ wxXmlNode *BuildConfig::ToXml() const
 
 	wxXmlNode *clnCmd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("CleanCommand"));
 	XmlUtils::SetNodeContent(clnCmd, m_customCleanCmd);
+
+	wxXmlNode *rebldCmd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("RebuildCommand"));
+	XmlUtils::SetNodeContent(rebldCmd, m_customRebuildCmd);
 
 	// add all 'Targets'
 	std::map<wxString, wxString>::const_iterator ir = m_customTargets.begin();

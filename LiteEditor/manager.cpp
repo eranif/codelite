@@ -2388,6 +2388,7 @@ void Manager::ProcessCommandQueue()
 	case QueueCommand::Clean:
 		DoCleanProject ( qcmd );
 		break;
+	case QueueCommand::ReBuild:
 	case QueueCommand::Build:
 		DoBuildProject ( qcmd );
 		break;

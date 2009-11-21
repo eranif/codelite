@@ -1088,61 +1088,53 @@ wxString BuilderGnuMake::GetPOBuildCommand(const wxString &project, const wxStri
 
 	//generate the makefile
 	Export(project, confToBuild, true, false, errMsg);
-	cmd = GetProjectMakeCommand(proj, confToBuild);
+	cmd = GetProjectMakeCommand(proj, confToBuild, wxT("all"), false, false);
 	return cmd;
 }
 
 wxString BuilderGnuMake::GetPOCleanCommand(const wxString &project, const wxString &confToBuild)
 {
 	wxString errMsg, cmd;
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
-	if (!bldConf) {
+	ProjectPtr     proj    = WorkspaceST::Get()->FindProjectByName(project, errMsg);
+	if (!proj) {
 		return wxEmptyString;
 	}
 
 	//generate the makefile
 	Export(project, confToBuild, true, false, errMsg);
-
-	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
-	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
-
-	// fix: replace all Windows like slashes to POSIX
-	buildTool.Replace(wxT("\\"), wxT("/"));
-	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
-
-	//cd to the project directory
-	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" clean");
+	cmd = GetProjectMakeCommand(proj, confToBuild, wxT("clean"), false, true);
 	return cmd;
 }
 
-wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg)
+wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName)
 {
-	wxString cmd;
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
-	if (!bldConf) {
+	wxString errMsg, cmd;
+	ProjectPtr     proj    = WorkspaceST::Get()->FindProjectByName(project, errMsg);
+	if (!proj) {
 		return wxEmptyString;
 	}
 
 	//generate the makefile
 	Export(project, confToBuild, true, false, errMsg);
 
-	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
-	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
+	// Build the target list
+	wxString      target;
+	wxString      cmpType;
+	wxFileName    fn(fileName);
 
-	// fix: replace all Windows like slashes to POSIX
-	buildTool.Replace(wxT("\\"), wxT("/"));
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
+	if( !bldConf ) {
+		return wxEmptyString;
+	}
 
-	//create the target
-	wxString tareget;
-	wxString objSuffix;
-	wxFileName fn(fileName);
-
-	wxString cmpType = bldConf->GetCompilerType();
+	cmpType = bldConf->GetCompilerType();
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
+	fn.MakeRelativeTo(proj->GetFileName().GetPath());
 
-	tareget << bldConf->GetIntermediateDirectory() << wxT("/") << fn.GetName() << cmp->GetObjectSuffix();
-	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" ") << tareget;
+	wxString relPath = fn.GetPath(true, wxPATH_UNIX);
+	target << relPath << bldConf->GetIntermediateDirectory() << wxT("/") << fn.GetName() << cmp->GetObjectSuffix();
 
+	cmd = GetProjectMakeCommand(proj, confToBuild, target, false, false);
 	return EnvironmentConfig::Instance()->ExpandVariables(cmd);
 }
 
@@ -1281,7 +1273,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(const wxFileName& wspfile, const 
 	return makeCommand;
 }
 
-wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& confToBuild)
+wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& confToBuild, const wxString &target, bool addCleanTarget, bool cleanOnly)
 {
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
 
@@ -1291,9 +1283,13 @@ wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& 
 
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
-	basicMakeCommand << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\"");
+	basicMakeCommand << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\" ");
 
-	if( bldConf ) {
+	if( addCleanTarget ) {
+		makeCommand << basicMakeCommand << wxT(" clean && ");
+	}
+
+	if( bldConf && !cleanOnly ) {
 		wxString preprebuild = bldConf->GetPreBuildCustom();
 		wxString precmpheader = bldConf->GetPrecompiledHeader();
 		precmpheader.Trim().Trim(false);
@@ -1313,7 +1309,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& 
 		}
 	}
 
-	makeCommand << basicMakeCommand;
+	makeCommand << basicMakeCommand << wxT(" ") << target;
 	return makeCommand;
 }
 
@@ -1328,4 +1324,18 @@ void BuilderGnuMake::CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxStr
 	text << filename << wxT(".gch: ") << filename << wxT("\n");
 	text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch) ") << filename << wxT(" $(CmpOptions) $(IncludePath)\n");
 	text << wxT("\n");
+}
+
+wxString BuilderGnuMake::GetPORebuildCommand(const wxString& project, const wxString& confToBuild)
+{
+	wxString errMsg, cmd;
+	ProjectPtr     proj    = WorkspaceST::Get()->FindProjectByName(project, errMsg);
+	if (!proj) {
+		return wxEmptyString;
+	}
+
+	//generate the makefile
+	Export(project, confToBuild, true, false, errMsg);
+	cmd = GetProjectMakeCommand(proj, confToBuild, wxT("all"), true, false);
+	return cmd;
 }

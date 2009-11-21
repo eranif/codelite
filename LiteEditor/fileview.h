@@ -138,6 +138,7 @@ protected:
 	virtual void OnRunPremakeStep(wxCommandEvent &event);
 	virtual void OnBuildProjectOnly(wxCommandEvent &event);
 	virtual void OnCleanProjectOnly(wxCommandEvent &event);
+	virtual void OnRebuildProjectOnly(wxCommandEvent &event);
 	virtual void OnStopBuild(wxCommandEvent &event);
 	virtual void OnRetagProject(wxCommandEvent &event);
 	virtual void OnRetagWorkspace(wxCommandEvent &event);

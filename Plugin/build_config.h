@@ -101,6 +101,7 @@ private:
 	wxString m_projectType;
 	wxString m_customBuildCmd;
 	wxString m_customCleanCmd;
+	wxString m_customRebuildCmd;
 	bool m_isResCmpNeeded;
 	wxString m_debuggerType;
 	wxString m_customPostBuildRule;
@@ -194,6 +195,9 @@ public:
 	const wxString &GetCustomCleanCmd()const {
 		return m_customCleanCmd;
 	}
+	const wxString& GetCustomRebuildCmd() const {
+		return m_customRebuildCmd;
+	}
 	void SetIncludePath(const wxArrayString &paths) {
 		m_commonConfig.SetIncludePath(paths);
 	}
@@ -249,6 +253,9 @@ public:
 	}
 	void SetCustomCleanCmd(const wxString &cmd) {
 		m_customCleanCmd = cmd;
+	}
+	void SetCustomRebuildCmd(const wxString &cmd) {
+		m_customRebuildCmd = cmd;
 	}
 	void EnableCustomBuild(bool enable) {
 		m_enableCustomBuild = enable;

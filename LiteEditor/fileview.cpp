@@ -84,9 +84,9 @@ void FileViewTree::ConnectEvents()
 	Connect( XRCID( "generate_makefile" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRunPremakeStep ), NULL, this );
 	Connect( XRCID( "stop_build" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnStopBuild ), NULL, this );
 	Connect( XRCID( "retag_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRetagProject ), NULL, this );
-//	Connect( XRCID( "retag_workspace" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRetagWorkspace ), NULL, this );
 	Connect( XRCID( "build_project_only" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnBuildProjectOnly ), NULL, this );
 	Connect( XRCID( "clean_project_only" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnCleanProjectOnly ), NULL, this );
+	Connect( XRCID( "rebuild_project_only" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRebuildProjectOnly), NULL, this );
 	Connect( XRCID( "import_directory" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnImportDirectory ), NULL, this );
 	Connect( XRCID( "compile_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnCompileItem ), NULL, this );
 	Connect( XRCID( "preprocess_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnPreprocessItem ), NULL, this );
@@ -112,6 +112,7 @@ void FileViewTree::ConnectEvents()
 	Connect( XRCID( "retag_workspace" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "build_project_only" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "clean_project_only" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
+	Connect( XRCID( "rebuild_project_only" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "import_directory" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "compile_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "preprocess_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
@@ -966,7 +967,7 @@ void FileViewTree::OnLocalPrefs( wxCommandEvent& event )
 		}
 		return;
 	}
-	
+
 	// Otherwise we're getting project prefs
 	wxTreeItemId item = GetSingleSelection();
 	if ( !item.IsOk() ) {
@@ -977,7 +978,7 @@ void FileViewTree::OnLocalPrefs( wxCommandEvent& event )
 	// Don't check lpnode: it'll be NULL if there are currently no local project options
 	// Merge any local workspace options with the global ones inside 'higherOptions'
 	LocalOptionsConfig wsOC(higherOptions, lwsnode);
-				
+
 	EditorSettingsLocal dlg(higherOptions, lpnode, pLevel_project, this);
 	if (dlg.ShowModal() == wxID_OK &&
 			LocalWorkspaceST::Get()->SetProjectOptions(dlg.GetLocalOpts(), GetItemText(item)) ) {
@@ -1806,4 +1807,29 @@ bool FileViewTree::DoAddNewItem(wxTreeItemId& item, const wxString& filename, co
 	Expand( item );
 	SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 	return true;
+}
+
+void FileViewTree::OnRebuildProjectOnly(wxCommandEvent& event)
+{
+	wxUnusedVar( event );
+	wxTreeItemId item = GetSingleSelection();
+	if ( item.IsOk() ) {
+		wxString projectName = GetItemText( item );
+
+		wxString conf;
+		// get the selected configuration to be built
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+		if (bldConf) {
+			conf = bldConf->GetName();
+		}
+
+		QueueCommand info(projectName, conf, true, QueueCommand::ReBuild);
+		if (bldConf && bldConf->IsCustomBuild()) {
+			info.SetKind(QueueCommand::CustomBuild);
+			info.SetCustomBuildTarget(wxT("Rebuild"));
+		}
+
+		ManagerST::Get()->PushQueueCommand(info);
+		ManagerST::Get()->ProcessCommandQueue();
+	}
 }

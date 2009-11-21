@@ -108,11 +108,16 @@ void CustomBuildRequest::Process(IManager *manager)
 	bool isClean(false);
 	if (m_info.GetCustomBuildTarget() == wxT("Build")) {
 		cmd = bldConf->GetCustomBuildCmd();
+
 	} else if (m_info.GetCustomBuildTarget() == wxT("Clean")) {
 		cmd = bldConf->GetCustomCleanCmd();
 		isClean = true;
+	} else if ( m_info.GetCustomBuildTarget() == wxT("Rebuild")) {
+		cmd = bldConf->GetCustomRebuildCmd();
+
 	} else if (m_info.GetCustomBuildTarget() == wxT("Compile Single File")) {
 		cmd = bldConf->GetSingleFileBuildCommand();
+
 	} else if (m_info.GetCustomBuildTarget() == wxT("Preprocess File")) {
 		cmd = bldConf->GetPreprocessFileCommand();
 	}

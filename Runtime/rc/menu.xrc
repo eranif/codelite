@@ -742,6 +742,7 @@
 		<object class="wxMenuItem" name="clean_project">
 			<label>Clean</label>
 		</object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenu" name="project_only">
 			<label>Project Only</label>
 			<style>wxMENU_TEAROFF</style>
@@ -750,6 +751,10 @@
 			</object>
 			<object class="wxMenuItem" name="clean_project_only">
 				<label>Clean</label>
+			</object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+			<object class="wxMenuItem" name="rebuild_project_only">
+				<label>Rebuild</label>
 			</object>
 		</object>
 

@@ -48,8 +48,9 @@ public:
 	virtual wxString GetCleanCommand(const wxString &project, const wxString &confToBuild);
 	virtual wxString GetPOBuildCommand(const wxString &project, const wxString &confToBuild);
 	virtual wxString GetPOCleanCommand(const wxString &project, const wxString &confToBuild);
-	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg);
+	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName);
 	virtual wxString GetPreprocessFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg);
+	virtual wxString GetPORebuildCommand(const wxString &project, const wxString &confToBuild);
 
 private:
 	void GenerateMakefile(ProjectPtr proj, const wxString &confToBuild, bool force);
@@ -72,7 +73,7 @@ private:
 	wxString ParsePreprocessor(const wxString &prep);
 	bool HasPrebuildCommands(BuildConfigPtr bldConf) const;
 	wxString GetProjectMakeCommand(const wxFileName &wspfile, const wxFileName& projectPath, ProjectPtr proj, const wxString &confToBuild);
-	wxString GetProjectMakeCommand(ProjectPtr proj, const wxString &confToBuild);
+	wxString GetProjectMakeCommand(ProjectPtr proj, const wxString &confToBuild, const wxString &target, bool addCleanTarget, bool cleanOnly);
 
 };
 #endif // BUILDER_GNUMAKE_H

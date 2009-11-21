@@ -112,6 +112,7 @@ void CleanRequest::Process(IManager *manager)
 
 	//expand the variables of the command
 	cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), wxEmptyString);
+	WrapInShell(cmd);
 	DirSaver ds;
 	DoSetWorkingDirectory(proj, false, false);
 

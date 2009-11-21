@@ -81,9 +81,19 @@ void CompileRequest::Process(IManager *manager)
 	if (m_fileName.IsEmpty() == false) {
 		//we got a complie request of a single file
 		cmd = m_preprocessOnly ? builder->GetPreprocessFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg)
-		      : builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg);
+		      : builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
 	} else if (m_info.GetProjectOnly()) {
-		cmd = builder->GetPOBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
+
+		switch ( m_info.GetKind() ) {
+		case QueueCommand::ReBuild:
+			cmd = builder->GetPORebuildCommand(m_info.GetProject(), m_info.GetConfiguration());
+			break;
+		default:
+		case QueueCommand::Build:
+			cmd = builder->GetPOBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
+			break;
+		}
+
 	} else {
 		cmd = builder->GetBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
 	}

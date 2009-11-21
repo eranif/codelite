@@ -42,8 +42,9 @@
 #include "wx/tokenzr.h"
 #include "addoptioncheckdlg.h"
 
-static const wxString CUSTOM_TARGET_BUILD = wxT("Build");
-static const wxString CUSTOM_TARGET_CLEAN = wxT("Clean");
+static const wxString CUSTOM_TARGET_BUILD   = wxT("Build");
+static const wxString CUSTOM_TARGET_CLEAN   = wxT("Clean");
+static const wxString CUSTOM_TARGET_REBUILD = wxT("Rebuild");
 static const wxString CUSTOM_TARGET_COMPILE_SINGLE_FILE = wxT("Compile Single File");
 static const wxString CUSTOM_TARGET_PREPROCESS_FILE = wxT("Preprocess File");
 static const wxString GLOBAL_SETTINGS_LABEL = wxT("Global settings");
@@ -257,6 +258,10 @@ void ProjectConfigurationPanel::CopyValues(const wxString &confName)
 	SetColumnText(m_listCtrlTargets, item, 1, buildConf->GetCustomCleanCmd());
 
 	item = AppendListCtrlRow(m_listCtrlTargets);
+	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_REBUILD);
+	SetColumnText(m_listCtrlTargets, item, 1, buildConf->GetCustomRebuildCmd());
+
+	item = AppendListCtrlRow(m_listCtrlTargets);
 	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_COMPILE_SINGLE_FILE);
 	SetColumnText(m_listCtrlTargets, item, 1, buildConf->GetSingleFileBuildCommand());
 
@@ -269,7 +274,11 @@ void ProjectConfigurationPanel::CopyValues(const wxString &confName)
 	std::map<wxString, wxString>::iterator titer = targets.begin();
 	for (; titer != targets.end(); titer++) {
 
-		if (titer->first == CUSTOM_TARGET_BUILD || titer->first == CUSTOM_TARGET_CLEAN || titer->first == CUSTOM_TARGET_COMPILE_SINGLE_FILE || titer->first == CUSTOM_TARGET_PREPROCESS_FILE) {
+		if (titer->first == CUSTOM_TARGET_BUILD               ||
+			titer->first == CUSTOM_TARGET_CLEAN               ||
+			titer->first == CUSTOM_TARGET_REBUILD             ||
+			titer->first == CUSTOM_TARGET_COMPILE_SINGLE_FILE ||
+			titer->first == CUSTOM_TARGET_PREPROCESS_FILE) {
 			continue;
 		}
 
@@ -393,7 +402,11 @@ void ProjectConfigurationPanel::SaveValues(const wxString &confName)
 	std::map<wxString, wxString> targets;
 	for (int i=0; i<(int)m_listCtrlTargets->GetItemCount(); i++) {
 		wxString colText = GetColumnText(m_listCtrlTargets, i, 0);
-		if (colText == CUSTOM_TARGET_BUILD || colText == CUSTOM_TARGET_CLEAN || colText == CUSTOM_TARGET_COMPILE_SINGLE_FILE || colText == CUSTOM_TARGET_PREPROCESS_FILE) {
+		if (colText == CUSTOM_TARGET_BUILD               ||
+			colText == CUSTOM_TARGET_CLEAN               ||
+			colText == CUSTOM_TARGET_REBUILD             ||
+			colText == CUSTOM_TARGET_COMPILE_SINGLE_FILE ||
+			colText == CUSTOM_TARGET_PREPROCESS_FILE) {
 			continue;
 		}
 		targets[GetColumnText(m_listCtrlTargets, i, 0)] = GetColumnText(m_listCtrlTargets, i, 1);
@@ -418,6 +431,7 @@ void ProjectConfigurationPanel::SaveValues(const wxString &confName)
 
 	buildConf->SetCustomBuildCmd(GetTargetCommand(CUSTOM_TARGET_BUILD));
 	buildConf->SetCustomCleanCmd(GetTargetCommand(CUSTOM_TARGET_CLEAN));
+	buildConf->SetCustomRebuildCmd(GetTargetCommand(CUSTOM_TARGET_REBUILD));
 	buildConf->SetSingleFileBuildCommand(GetTargetCommand(CUSTOM_TARGET_COMPILE_SINGLE_FILE));
 	buildConf->SetPreprocessFileCommand(GetTargetCommand(CUSTOM_TARGET_PREPROCESS_FILE));
 
@@ -921,7 +935,11 @@ void ProjectConfigurationPanel::OnDeleteTargetUI(wxUpdateUIEvent& e)
 {
 	if (m_selecteCustomTaregt != wxNOT_FOUND) {
 		wxString name = GetColumnText(m_listCtrlTargets, m_selecteCustomTaregt, 0);
-		e.Enable(name != CUSTOM_TARGET_BUILD && name != CUSTOM_TARGET_CLEAN && name != CUSTOM_TARGET_COMPILE_SINGLE_FILE && m_checkEnableCustomBuild->IsChecked());
+		e.Enable(name != CUSTOM_TARGET_BUILD               &&
+				 name != CUSTOM_TARGET_CLEAN               &&
+				 name != CUSTOM_TARGET_REBUILD             &&
+				 name != CUSTOM_TARGET_COMPILE_SINGLE_FILE &&
+				 m_checkEnableCustomBuild->IsChecked());
 	} else {
 		e.Enable(false);
 	}
@@ -945,7 +963,10 @@ void ProjectConfigurationPanel::DoEditItem(long item)
 		dlg.SetValue(cmd);
 
 		// dont allow user to modify the common targets
-		if (target == CUSTOM_TARGET_BUILD || target == CUSTOM_TARGET_CLEAN || target == CUSTOM_TARGET_COMPILE_SINGLE_FILE) {
+		if (target == CUSTOM_TARGET_BUILD              ||
+			target == CUSTOM_TARGET_CLEAN              ||
+			target == CUSTOM_TARGET_REBUILD            ||
+			target == CUSTOM_TARGET_COMPILE_SINGLE_FILE) {
 			dlg.DisableName();
 		}
 

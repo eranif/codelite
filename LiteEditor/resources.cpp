@@ -18696,7 +18696,7 @@ void InitXmlResource()
         wxFSFile *f = fsys.OpenFile(wxT("memory:XRC_resource/dummy_file"));
         wxMemoryFSHandler::RemoveFile(wxT("XRC_resource/dummy_file"));
         if (f) delete f;
-        else wxFileSystem::AddHandler(new wxMemoryFSHandler);
+        else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
     XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_find_what.png"), xml_res_file_0, xml_res_size_0, _T("image/png"));

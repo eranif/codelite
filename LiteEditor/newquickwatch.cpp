@@ -29,6 +29,7 @@ NewQuickWatch::NewQuickWatch( wxWindow* parent, wxWindowID id, const wxString& t
 	
 	// Connect Events
 	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( NewQuickWatch::OnCloseEvent ) );
+	m_treeCtrl->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( NewQuickWatch::OnMouseEnterWindow ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( NewQuickWatch::OnKeyDown ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( NewQuickWatch::OnMouseLeaveWindow ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( NewQuickWatch::OnLeftDown ), NULL, this );
@@ -40,6 +41,7 @@ NewQuickWatch::~NewQuickWatch()
 {
 	// Disconnect Events
 	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( NewQuickWatch::OnCloseEvent ) );
+	m_treeCtrl->Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( NewQuickWatch::OnMouseEnterWindow ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( NewQuickWatch::OnKeyDown ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( NewQuickWatch::OnMouseLeaveWindow ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( NewQuickWatch::OnLeftDown ), NULL, this );

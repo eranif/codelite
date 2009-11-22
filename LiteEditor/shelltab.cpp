@@ -320,7 +320,7 @@ DebugTabPanel::DebugTabPanel( wxWindow* parent, wxWindowID id, const wxPoint& po
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 
 	m_checkBoxEnableLog = new wxCheckBox( this, wxID_ANY, wxT("Enable debugger full logging"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_checkBoxEnableLog, 0, wxALL|wxEXPAND, 5 );
+	bSizer1->Add( m_checkBoxEnableLog, 0, wxALL|wxEXPAND, 0 );
 
 	this->SetSizer( bSizer1 );
 	this->Layout();

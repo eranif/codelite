@@ -112,7 +112,7 @@
                         <property name="window_name"></property>
                         <property name="window_style">wxNO_BORDER</property>
                         <event name="OnChar"></event>
-                        <event name="OnEnterWindow"></event>
+                        <event name="OnEnterWindow">OnMouseEnterWindow</event>
                         <event name="OnEraseBackground"></event>
                         <event name="OnKeyDown">OnKeyDown</event>
                         <event name="OnKeyUp"></event>

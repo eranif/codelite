@@ -1,6 +1,9 @@
 #include "new_quick_watch_dlg.h"
+#include <wx/timer.h>
 #include "windowattrmanager.h"
 #include "debuggerobserver.h"
+
+#define TIPTIMERID 34347
 
 class QWTreeData : public wxTreeItemData {
 public:
@@ -9,17 +12,23 @@ public:
 	virtual ~QWTreeData(){}
 };
 
+BEGIN_EVENT_TABLE(DisplayVariableDlg, NewQuickWatch)
+EVT_TIMER(TIPTIMERID, DisplayVariableDlg::OnTimer)
+END_EVENT_TABLE()
 DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
 		: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(500, 400) )
-
+		, m_leftWindow(false)
 {
 	Centre();
-	m_textHeight = GetCharHeight() + 4;
 	WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
+	m_timer = new wxTimer(this, TIPTIMERID);
 }
 
 DisplayVariableDlg::~DisplayVariableDlg()
 {
+	m_timer->Stop();
+	delete m_timer;
+	m_timer = NULL;
 	WindowAttrManager::Save(this, wxT("NewQuickWatchDlg"), NULL);
 }
 
@@ -192,6 +201,20 @@ void DisplayVariableDlg::OnItemExpanded(wxTreeEvent& event)
 
 void DisplayVariableDlg::OnMouseLeaveWindow(wxMouseEvent& e)
 {
-	HideDialog();
+	m_leftWindow = true;
+	m_timer->Start(250, true);
 }
 
+void DisplayVariableDlg::OnMouseEnterWindow(wxMouseEvent& e)
+{
+	m_leftWindow = false;
+	e.Skip();
+}
+
+void DisplayVariableDlg::OnTimer(wxTimerEvent& e)
+{
+	if( m_leftWindow ) {
+		m_leftWindow = false;
+		HideDialog();
+	}
+}

@@ -1324,12 +1324,12 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 		wxString pat = t->GetPattern();
 
 		if (k == wxT("function") || k == wxT("prototype")) {
-//			wxString tip;
-//			tip << wxT("function:") << t->GetSignature();
-//
+			wxString tip;
+			tip << wxT("function:") << t->GetSignature();
+
 			// collect each signature only once, we do this by using
 			// map
-			tipsMap[t->GetSignature()] = t;
+			tipsMap[tip] = t;
 		} else if (k == wxT("class")) {
 
 			// this tag is a class declaration that matches the word
@@ -1879,6 +1879,10 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
 
 		if (v.m_templateDecl.empty() == false) {
 			str_output << _U(v.m_templateDecl.c_str());
+		}
+
+		if (v.m_rightSideConst.empty() == false) {
+			str_output << wxT(" ") << _U(v.m_rightSideConst.c_str()) << wxT(" ");
 		}
 
 		if (v.m_starAmp.empty() == false) {

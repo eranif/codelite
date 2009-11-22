@@ -4,9 +4,4 @@
 //tagFile *const file;
 //const char* type;
 
-class MainWindow : public Gtk::Window
-{
-public:
-	MainWindow();
-	~MainWindow();
-
+(CharT const*            str,parser<DerivedT> const& p)

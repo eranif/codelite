@@ -31,6 +31,7 @@ Variable & Variable::operator =(const Variable &src)
 	m_arrayBrackets = src.m_arrayBrackets;
 	m_isEllipsis    = src.m_isEllipsis;
 	m_isBasicType   = src.m_isBasicType;
+	m_rightSideConst= src.m_rightSideConst;
 	return *this;
 }
 
@@ -50,22 +51,25 @@ void Variable::Reset()
 	m_arrayBrackets = "";
 	m_isEllipsis = false;
 	m_isBasicType = false;
+	m_rightSideConst = "";
 }
 
 void Variable::Print()
 {
-	std::cout << "m_name         :" << m_name.c_str() << "\n"
-			  << "m_defaultValue :" << m_defaultValue.c_str() << "\n"
-			  << "m_lineno       :" << m_lineno << "\n"
-			  << "m_starAmp      :" << m_starAmp.c_str() << "\n"
-			  << "m_type         :" << m_type.c_str() << "\n"
-			  << "m_isConst      :" << m_isConst << "\n"
-			  << "m_typeScope    :" << m_typeScope.c_str() << "\n"
-			  << "m_templateDecl :" << m_templateDecl.c_str() << "\n"
-			  << "m_arrayBrackets:" << m_arrayBrackets.c_str() << "\n"
-			  << "m_isPtr        :" << m_isPtr << "\n"
-			  << "m_isTemplate   :" << m_isTemplate << "\n"
-			  << "m_isEllips     :" << m_isEllipsis << "\n"
-			  << "m_isBasicType  :" << m_isBasicType << "\n"
-			  << "m_pattern      :" << m_pattern.c_str() << "\n";
+	std::cout << "------------------" << "\n"
+			  << "m_name           :" << m_name.c_str() << "\n"
+			  << "m_defaultValue   :" << m_defaultValue.c_str() << "\n"
+			  << "m_lineno         :" << m_lineno << "\n"
+			  << "m_starAmp        :" << m_starAmp.c_str() << "\n"
+			  << "m_type           :" << m_type.c_str() << "\n"
+			  << "m_isConst        :" << m_isConst << "\n"
+			  << "m_rightSideConst :" << m_rightSideConst.c_str() << "\n"
+			  << "m_typeScope      :" << m_typeScope.c_str() << "\n"
+			  << "m_templateDecl   :" << m_templateDecl.c_str() << "\n"
+			  << "m_arrayBrackets  :" << m_arrayBrackets.c_str() << "\n"
+			  << "m_isPtr          :" << m_isPtr << "\n"
+			  << "m_isTemplate     :" << m_isTemplate << "\n"
+			  << "m_isEllips       :" << m_isEllipsis << "\n"
+			  << "m_isBasicType    :" << m_isBasicType << "\n"
+			  << "m_pattern        :" << m_pattern.c_str() << "\n";
 }

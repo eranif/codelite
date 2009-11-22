@@ -342,8 +342,11 @@ nested_scope_specifier: /*empty*/ {$$ = "";}
                     | nested_scope_specifier scope_specifier {    $$ = $1 + $2;}
                     ;
 
-const_spec	        : /* empty */    {$$ = ""; }
-                    | LE_CONST     { $$ = $1; }
+const_spec	        : /* empty */      {$$ = "";                          }
+                    | LE_CONST         { $$ = $1;                         }
+                    | LE_CONST '*'     { $$ = $1 + $2; curr_var.m_rightSideConst = $$;     }
+                    | LE_CONST '&'     { $$ = $1 + $2; curr_var.m_rightSideConst = $$;     }
+					| LE_CONST '*' '*' { $$ = $1 + $2 + $3; curr_var.m_rightSideConst = $$;}
                     ;
 
 amp_item	        : /*empty*/    {$$ = ""; }

@@ -19,6 +19,7 @@ public:
 	std::map<wxString, wxTreeItemId> m_gdbId2ItemLeaf;
 	wxString                         m_mainVariableObject;
 	wxString                         m_variableName;
+	int                              m_textHeight;
 
 protected:
 	// Handlers for NewQuickWatch events.
@@ -30,6 +31,8 @@ protected:
 	void OnKeyDown(wxKeyEvent &event);
 	void DoCleanUp();
 	void OnLeftDown(wxMouseEvent &e);
+	void OnMouseLeaveWindow(wxMouseEvent &e);
+
 public:
 	/** Constructor */
 	DisplayVariableDlg( wxWindow* parent);

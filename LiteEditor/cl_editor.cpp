@@ -1122,6 +1122,12 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 	// First see if we're hovering over a breakpoint or build marker
 	// Assume anywhere to the left of the fold margin qualifies
 	int margin = 0;
+	wxPoint pt ( ScreenToClient(wxGetMousePosition()) );
+	wxRect  clientRect = GetClientRect();
+	/*if( clientRect.Contains(pt) == false ) {
+		wxLogMessage(wxT("Dwell start called but mouse is off the client area"));
+	}*/
+
 	for (int n=0; n < FOLD_MARGIN_ID; ++n) {
 		margin += GetMarginWidth(n);
 	}
@@ -1150,9 +1156,10 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 			DoShowCalltip(position, tooltip, type);
 		}
 
-	} else if (ManagerST::Get()->DbgCanInteract()) {
+	} else if (ManagerST::Get()->DbgCanInteract() && clientRect.Contains(pt)) {
 		//debugger is running and responsive, query it about the current token
 		m_context->OnDbgDwellStart(event);
+
 	} else if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_TYPE_INFO) {
 		m_context->OnDwellStart(event);
 	}
@@ -3353,11 +3360,11 @@ OptionsConfigPtr LEditor::GetOptions()
 {
 	// Start by getting the global settings
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-	
+
 	// Now let any local preferences overwrite the global equivalent
 	if (ManagerST::Get()->IsWorkspaceOpen()) {
     LocalWorkspaceST::Get()->GetOptions( options, GetProject() );
 	}
-	
+
 	return options;
 }

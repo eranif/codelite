@@ -10,10 +10,11 @@ public:
 };
 
 DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
-		: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(300, 300) )
+		: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(500, 400) )
+
 {
 	Centre();
-
+	m_textHeight = GetCharHeight() + 4;
 	WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
 }
 
@@ -188,3 +189,9 @@ void DisplayVariableDlg::OnItemExpanded(wxTreeEvent& event)
 {
 	event.Skip();
 }
+
+void DisplayVariableDlg::OnMouseLeaveWindow(wxMouseEvent& e)
+{
+	HideDialog();
+}
+

@@ -624,13 +624,9 @@ wxFileName Manager::FindFile ( const wxArrayString& files, const wxFileName &fn 
 	if ( fn.IsAbsolute() && !fn.GetFullPath().Contains ( wxT ( ".." ) ) ) {
 		return fn;
 	}
-
-	// try to convert it to absolute path
-	wxFileName f1 ( fn );
-	if ( f1.MakeAbsolute() /*&& f1.FileExists()*/ && !f1.GetFullPath().Contains ( wxT ( ".." ) ) ) {
-		return f1;
-	}
-
+	
+	std::vector<wxFileName> matches;
+	// Try to find a match in the workspace (by comparing full paths)
 	for ( size_t i=0; i< files.GetCount(); i++ ) {
 		wxFileName tmpFileName ( files.Item ( i ) );
 		if ( tmpFileName.GetFullPath().CmpNoCase(fn.GetFullPath()) == 0 ) {
@@ -641,17 +637,11 @@ wxFileName Manager::FindFile ( const wxArrayString& files, const wxFileName &fn 
 				return tmpFileName;
 			}
 		}
-	}
-
-	std::vector<wxFileName> matches;
-
-	for ( size_t i=0; i< files.GetCount(); i++ ) {
-		wxFileName tmpFileName ( files.Item ( i ) );
 		if ( tmpFileName.GetFullName() == fn.GetFullName() ) {
 			matches.push_back ( tmpFileName );
 		}
 	}
-
+	
 	wxString lastDir;
 	wxArrayString dirs = fn.GetDirs();
 	if ( dirs.GetCount() > 0 ) {
@@ -695,6 +685,12 @@ wxFileName Manager::FindFile ( const wxArrayString& files, const wxFileName &fn 
 			} else {
 				return matches.at ( 0 );
 			}
+		}
+	} else {
+		// try to convert it to absolute path
+		wxFileName f1 ( fn );
+		if ( f1.MakeAbsolute() /*&& f1.FileExists()*/ && !f1.GetFullPath().Contains ( wxT ( ".." ) ) ) {
+			return f1;
 		}
 	}
 	return wxFileName();

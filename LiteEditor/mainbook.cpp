@@ -378,10 +378,28 @@ LEditor *MainBook::NewEditor()
 	return editor;
 }
 
+static bool IsFileExists(const wxFileName &filename) {
+#ifdef __WXMSW__
+	struct stat buff;
+	const wxCharBuffer cname = filename.GetFullPath(wxPATH_UNIX).mb_str(wxConvUTF8);
+	if (stat(cname.data(), &buff) < 0) {
+		return false;
+	}
+	return true;
+#else
+	return filename.FileExists();
+#endif
+}
+
 LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectName, int lineno, long position, bool addjump)
 {
 	wxFileName fileName(file_name);
 	fileName.MakeAbsolute();
+
+	if(IsFileExists(fileName) == false) {
+		wxLogMessage(wxT("Failed to open: %s: No such file or directory"), fileName.GetFullPath().c_str());
+		return NULL;
+	}
 
 	wxString projName = projectName;
 	if (projName.IsEmpty()) {

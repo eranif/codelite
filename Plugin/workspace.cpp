@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "workspace.h"
+#include <wx/app.h>
 #include <wx/msgdlg.h>
 #include <wx/log.h>
 #include "environmentconfig.h"
@@ -103,7 +104,7 @@ bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
 
 			if ( !DoAddProject(projectPath, errMsg) ) {
 				if (wxMessageBox(wxString::Format(wxT("Error occured while loading project, error was:\n%s\nDo you want to skip it and continue loading the workspace?"), errMsg.c_str()),
-				                 wxT("CodeLite"), wxYES_NO|wxICON_QUESTION|wxCENTER) == wxNO) {
+				                 wxT("CodeLite"), wxYES_NO|wxICON_QUESTION|wxCENTER|wxSTAY_ON_TOP, wxTheApp->GetTopWindow()) == wxNO) {
 					return false;
 				} else {
 					wxLogMessage(wxString::Format(wxT("WARNING: Project '%s' was not loaded"), projectPath.c_str()));

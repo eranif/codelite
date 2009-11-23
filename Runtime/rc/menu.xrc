@@ -342,6 +342,10 @@
                 <label>&amp;Add an Existing Project</label>
             </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+			<object class="wxMenuItem" name="project_properties">
+                <label>&amp;Open Active Project Settings...</label>
+            </object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="full_retag_workspace">
 				<label>Retag Workspace ( Full )</label>
 				<help>Retag the workspace by dropping the old tags tables, and recreate them</help>

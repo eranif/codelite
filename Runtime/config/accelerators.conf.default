@@ -75,6 +75,7 @@ switch_to_workspace|Workspace|Switch to Workspace...|
 close_workspace|Workspace|Close Workspace|
 reload_workspace|Workspace|Reload Workspace|
 import_from_msvs|Workspace|Import MS Visual Studio Solution File...|
+project_properties|Workspace|Open Active Project Settings...|Alt-F7
 new_project|Workspace|Create New Project|
 add_project|Workspace|Add an Existing Project|
 configuration_manager|Build|Configuration Manager...|

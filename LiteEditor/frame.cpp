@@ -301,12 +301,14 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("add_project"),              Frame::OnProjectAddProject)
 	EVT_MENU(XRCID("retag_workspace"),          Frame::OnRetagWorkspace)
 	EVT_MENU(XRCID("full_retag_workspace"),     Frame::OnRetagWorkspace)
+	EVT_MENU(XRCID("project_properties"),       Frame::OnShowActiveProjectSettings)
 
 	EVT_UPDATE_UI(XRCID("close_workspace"),     Frame::OnWorkspaceOpen)
 	EVT_UPDATE_UI(XRCID("reload_workspace"),    Frame::OnReloadWorkspaceUI)
 	EVT_UPDATE_UI(XRCID("add_project"),         Frame::OnWorkspaceMenuUI)
 	EVT_UPDATE_UI(XRCID("retag_workspace"),     Frame::OnWorkspaceOpen)
 	EVT_UPDATE_UI(XRCID("full_retag_workspace"),Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("project_properties"),  Frame::OnShowActiveProjectSettingsUI)
 
 	//-------------------------------------------------------
 	// Build menu
@@ -3579,4 +3581,16 @@ void Frame::UpdateTagsOptions(const TagsOptionsData& tod)
 void Frame::OnCheckForUpdate(wxCommandEvent& e)
 {
 	JobQueueSingleton::Instance()->PushJob( new WebUpdateJob(this) );
+}
+
+void Frame::OnShowActiveProjectSettings(wxCommandEvent& e)
+{
+	GetWorkspaceTab()->ProcessEvent( e );
+}
+
+void Frame::OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e)
+{
+	wxArrayString projectList;
+	WorkspaceST::Get()->GetProjectList( projectList );
+	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && (projectList.IsEmpty() == false));
 }

@@ -45,19 +45,7 @@
 #include "open_resouce_dlg.h"
 #include "macros.h"
 #include "manager.h"
-
-class MyStringClientData : public wxClientData
-{
-public:
-    MyStringClientData() : m_data() { }
-    MyStringClientData( const wxString &data ) : m_data(data) { }
-	virtual ~MyStringClientData() {}
-    void SetData( const wxString &data ) { m_data = data; }
-    const wxString& GetData() const { return m_data; }
-
-private:
-    wxString  m_data;
-};
+#include "string_client_data.h"
 
 ///////////////////////////////////////////////////////////////////////////
 BEGIN_EVENT_TABLE(OpenResourceDlg, wxDialog)

@@ -27,6 +27,7 @@
 #include "frame.h"
 #include "manager.h"
 #include "openwindowspanel.h"
+#include "string_client_data.h"
 
 OpenWindowsPanel::OpenWindowsPanel( wxWindow* parent, const wxString &caption )
     : OpenWindowsPanelBase( parent )
@@ -53,7 +54,7 @@ int OpenWindowsPanel::EditorItem(LEditor *editor)
     if (editor) {
         wxString path = editor->GetFileName().GetFullPath();
         for (unsigned i = 0; i < m_fileList->GetCount(); i++) {
-            wxStringClientData *data = dynamic_cast<wxStringClientData *>(m_fileList->GetClientObject(i));
+            MyStringClientData *data = dynamic_cast<MyStringClientData *>(m_fileList->GetClientObject(i));
             if (data->GetData() == path)
                 return i;
         }
@@ -63,7 +64,7 @@ int OpenWindowsPanel::EditorItem(LEditor *editor)
 
 void OpenWindowsPanel::DoOpenSelectedItem(int item)
 {
-	wxStringClientData *data = dynamic_cast<wxStringClientData *>(m_fileList->GetClientObject(item));
+	MyStringClientData *data = dynamic_cast<MyStringClientData *>(m_fileList->GetClientObject(item));
     Frame::Get()->GetMainBook()->OpenFile(data->GetData(), wxEmptyString);
 }
 
@@ -128,7 +129,7 @@ void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
     m_fileList->Freeze();
     if (i == wxNOT_FOUND) {
         wxString txt = editor->GetFileName().GetFullName();
-        wxStringClientData *data = new wxStringClientData(editor->GetFileName().GetFullPath());
+        MyStringClientData *data = new MyStringClientData(editor->GetFileName().GetFullPath());
         i = m_fileList->Append(txt, data);
     }
     m_fileList->Select(i);

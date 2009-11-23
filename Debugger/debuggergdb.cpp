@@ -301,9 +301,9 @@ bool DbgGdb::Stop()
 		m_gdbProcess = NULL;
 	}
 	
-	if ( m_debuggeePid != wxNOT_FOUND ) {
-		wxKill(m_debuggeePid, wxSIGKILL);
-	}
+//	if ( m_debuggeePid != wxNOT_FOUND ) {
+//		wxKill(m_debuggeePid, wxSIGKILL);
+//	}
 	
 	//free allocated console for this session
 	m_consoleFinder.FreeConsole();

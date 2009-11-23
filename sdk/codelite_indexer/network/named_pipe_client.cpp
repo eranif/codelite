@@ -26,14 +26,14 @@ bool clNamedPipeClient::connect(long )
 
 	while (1) {
 		_pipeHandle = CreateFile(
-		                  getPipePath(),  // pipe name
-		                  GENERIC_READ |  // read and write access
+		                  getPipePath(),        // pipe name
+		                  GENERIC_READ |        // read and write access
 		                  GENERIC_WRITE,
-		                  0,              // no sharing
-		                  NULL,           // default security attributes
-		                  OPEN_EXISTING,  // opens existing pipe
-		                  0,              // default attributes
-		                  NULL);          // no template file
+		                  0,                    // no sharing
+		                  NULL,                 // default security attributes
+		                  OPEN_EXISTING,        // opens existing pipe
+		                  FILE_FLAG_OVERLAPPED, // default attributes
+		                  NULL);                // no template file
 
 		if (_pipeHandle != INVALID_PIPE_HANDLE)
 			return true;
@@ -59,13 +59,13 @@ bool clNamedPipeClient::connect(long )
 	}
 #else // MSW
 	struct sockaddr_un server;
-	
+
 	_pipeHandle = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (_pipeHandle < 0) {
 		perror("ERROR");
 		return false;
 	}
-	
+
 	server.sun_family = AF_UNIX;
 	strcpy(server.sun_path, getPipePath());
 

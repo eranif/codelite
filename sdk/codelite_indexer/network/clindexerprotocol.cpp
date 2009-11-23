@@ -33,6 +33,11 @@ bool clIndexerProtocol::ReadReply(clNamedPipe* conn, clIndexerReply& reply)
 		return false;
 	}
 
+	if ((buff_len / (1024*1024)) > 15) {
+		// Dont read buffers larger than 15MB...
+		return false;
+	}
+
 	char *data = new char[buff_len];
 	sp.reset(data);
 

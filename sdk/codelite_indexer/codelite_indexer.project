@@ -131,23 +131,23 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands></PostConnectCommands>
-        <StartupCommands></StartupCommands>
+        <PostConnectCommands/>
+        <StartupCommands/>
       </Debugger>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
-        <PreprocessFileCommand></PreprocessFileCommand>
-        <SingleFileCommand></SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Debug_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -161,25 +161,23 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="C:\Development\C++\codelite\CL_trunk\sdk\codelite_indexer\Debug\$(ProjectName)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands></PostConnectCommands>
-        <StartupCommands></StartupCommands>
+        <PostConnectCommands/>
+        <StartupCommands/>
       </Debugger>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
-        <PreprocessFileCommand></PreprocessFileCommand>
-        <SingleFileCommand></SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -194,23 +192,23 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands></PostConnectCommands>
-        <StartupCommands></StartupCommands>
+        <PostConnectCommands/>
+        <StartupCommands/>
       </Debugger>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
-        <PreprocessFileCommand></PreprocessFileCommand>
-        <SingleFileCommand></SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -223,25 +221,23 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/codelite_indexer" IntermediateDirectory="./Release" Command="C:\Development\C++\codelite\CL_trunk\sdk\codelite_indexer\Release\$(ProjectName)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands></PostConnectCommands>
-        <StartupCommands></StartupCommands>
+        <PostConnectCommands/>
+        <StartupCommands/>
       </Debugger>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
-        <PreprocessFileCommand></PreprocessFileCommand>
-        <SingleFileCommand></SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <GlobalSettings>

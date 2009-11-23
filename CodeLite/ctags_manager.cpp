@@ -435,7 +435,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 	clIndexerReply reply;
 	try {
 		if (!clIndexerProtocol::ReadReply(&client, reply)) {
-			wxPrintf(wxT("ERROR: failed to read reply\n"));
+			RestartCtagsProcess();
 			return;
 		}
 	} catch (std::bad_alloc &ex) {

@@ -269,6 +269,6 @@
     <File Name="winprocess_impl.cpp"/>
     <File Name="winprocess_impl.h"/>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

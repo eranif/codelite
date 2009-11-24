@@ -2461,12 +2461,16 @@ void LEditor::ToggleBreakpoint(int lineno)
 
 void LEditor::SetWarningMarker(int lineno)
 {
-	MarkerAdd(lineno, smt_warning);
+	if(lineno >= 0) {
+		MarkerAdd(lineno, smt_warning);
+	}
 }
 
 void LEditor::SetErrorMarker(int lineno)
 {
-	MarkerAdd(lineno, smt_error);
+	if(lineno >= 0) {
+		MarkerAdd(lineno, smt_error);
+	}
 }
 
 void LEditor::DelAllCompilerMarkers()

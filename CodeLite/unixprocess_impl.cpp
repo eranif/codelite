@@ -129,11 +129,13 @@ void UnixProcessImpl::Cleanup()
 #ifdef __WXGTK__
 
 	// Kill the child process
-	wxString cmd;
-	wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
-	wxFileName script(exePath.GetPath(), wxT("codelite_kill_children"));
-	cmd << wxT("/bin/sh -f ") << script.GetFullPath() << wxT(" ") << GetPid();
-	wxExecute(cmd, wxEXEC_ASYNC);
+	if ( IsAlive() ) {
+		wxString cmd;
+		wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+		wxFileName script(exePath.GetPath(), wxT("codelite_kill_children"));
+		cmd << wxT("/bin/sh -f ") << script.GetFullPath() << wxT(" ") << GetPid();
+		wxExecute(cmd, wxEXEC_ASYNC);
+	}
 	
 	// Perform process cleanup
 	int status(0);

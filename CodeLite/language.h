@@ -216,8 +216,9 @@ private:
 	 * \brief Attempt to fix template results
 	 * \param typeName the type name that was detected by the parser
 	 * \param typeScope the type scope
+	 * \param moreScopes additional scopes (they are collected by parsing any 'using namespace XXX' lines in the code
 	 */
-	bool OnTemplates(wxString &typeName, wxString &typeScope, Variable &parent);
+	bool OnTemplates(wxString &typeName, wxString &typeScope, Variable &parent, const std::vector<wxString> &moreScopes);
 
 	/**
 	 * \brief attempt to expand 'typedef' to their actual value

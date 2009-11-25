@@ -411,7 +411,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 					tmp_name == typeName ? res_typedef = false : res_typedef = true;
 
 					tmp_name = typeName;
-					res_templte = OnTemplates(typeName, typeScope, parent);
+					res_templte = OnTemplates(typeName, typeScope, parent, additionalScopes);
 					tmp_name == typeName ? res_templte = false : res_templte = true;
 
 				} while ( res_templte || res_typedef ) ;
@@ -447,7 +447,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 					}
 
 					// do template subsitute
-					if (OnTemplates(typeName, typeScope, m_parentVar)) {
+					if (OnTemplates(typeName, typeScope, m_parentVar, additionalScopes)) {
 						//do typedef subsitute
 						wxString tmp_name(typeName);
 						while (OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList)) {
@@ -486,7 +486,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 	return evaluationSucceeded;
 }
 
-bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &parent)
+bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &parent, const std::vector<wxString> &moreScopes)
 {
 	bool res (false);
 	//make sure that the type really exist
@@ -546,10 +546,29 @@ bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &pa
 				//we loop over the template list, and search for our real type
 				for (size_t i=0; i< templateDecl.GetCount(); i++) {
 					if (templateDecl.Item(i) == typeName) {
+
 						if (templateImpl.GetCount() > i) {
-							for (size_t j=0; j<2; j++) {
+							// We are now looping over all available scopes
+							// to try and resolve the type found inside the
+							// template initialization
+							// We first try to resolve it as is, next using the parent scope
+							// and last we loop over all the additional scopes (from the 'using namespace XXX')
+							size_t loopSize = 2 + moreScopes.size();
+							for (size_t j=0; j<loopSize; j++) {
 								std::vector<TagEntryPtr> tags_vec;
-								wxString tagpath = j == 0 ? templateImpl.Item(i) : wxString::Format(wxT("%s::%s"), parent_scope.c_str(), templateImpl.Item(i).c_str());
+								wxString tagpath;
+								switch (j) {
+								case 0: // Use the type as it appears
+									tagpath = templateImpl.Item(i);
+									break;
+								case 1: // try with the parent scope prepended
+									tagpath = wxString::Format(wxT("%s::%s"), parent_scope.c_str(), templateImpl.Item(i).c_str());
+									break;
+								default:
+									tagpath = wxString::Format(wxT("%s::%s"), moreScopes.at(j-2).c_str(), templateImpl.Item(i).c_str());
+									break;
+								}
+
 								tagsManager->FindByPath(tagpath, tags_vec);
 								//replace template arguments with actual values
 								if (tags_vec.size() == 1) {
@@ -882,7 +901,11 @@ bool Language::TypeFromName(const wxString &             name,           // Inpu
 					typeScope = var.m_typeScope.empty() ? wxT("<global>") : _U(var.m_typeScope.c_str());
 
 					m_parentVar = var;
-					return CorrectUsingNamespace(type, typeScope, moreScopes, scopeName, tags);
+					bool res = CorrectUsingNamespace(type, typeScope, moreScopes, scopeName, tags);
+
+					// Incase the typeScope was updated, update m_parentVar as well!
+					m_parentVar.m_typeScope = typeScope.mb_str(wxConvUTF8).data();
+					return res;
 				}
 			}
 
@@ -1337,7 +1360,11 @@ bool Language::ResolveTempalte(wxString& typeName, wxString& typeScope, const wx
 	v.m_type = _C(type);
 	v.m_typeScope = _C(scope);
 	v.m_templateDecl = _C(parenttempalteInitList);
-	while ( OnTemplates(typeName, typeScope, v)) {
+
+	// FIXME: For now we are passing here an empty additional scopes
+	// but this needs to be corrected
+	std::vector<wxString> additionalScopes;
+	while ( OnTemplates(typeName, typeScope, v, additionalScopes)) {
 		// Do typedef subsitute
 		wxString tmp_name(typeName);
 		wxString dummy, templateInitList;

@@ -127,7 +127,7 @@ void AddOptionCheckDlg::UpdateCmdLine()
 	std::list<wxString>::const_iterator itOption = options.begin();
 	for ( ; itOption != options.end(); ++itOption)
 	{
-		if(!value.Contains(*itOption))
+		if(!value.Contains(*itOption + wxT(";")))
 		{
 			if(!value.empty()) value << wxT(";");
 			value << *itOption;

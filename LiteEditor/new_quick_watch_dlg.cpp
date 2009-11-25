@@ -202,7 +202,8 @@ void DisplayVariableDlg::OnItemExpanded(wxTreeEvent& event)
 void DisplayVariableDlg::OnMouseLeaveWindow(wxMouseEvent& e)
 {
 	m_leftWindow = true;
-	m_timer->Start(250, true);
+	m_timer->Start(500, true);
+	e.Skip();
 }
 
 void DisplayVariableDlg::OnMouseEnterWindow(wxMouseEvent& e)
@@ -214,7 +215,16 @@ void DisplayVariableDlg::OnMouseEnterWindow(wxMouseEvent& e)
 void DisplayVariableDlg::OnTimer(wxTimerEvent& e)
 {
 	if( m_leftWindow ) {
-		m_leftWindow = false;
-		HideDialog();
+		// The wxEVT_LEAVE_WINDOW event happened when the mouse leaves the *client* area
+		// That makes it impossible to resize the dialog, or even to use the scrollbar
+		// So test if we're still inside the NC area + a bit to spare
+		wxRect rect = GetScreenRect().Inflate(10,30);
+		if ( rect.Contains(wxGetMousePosition()) ) {
+			// Don't Hide, just restart the timer
+			m_timer->Start(500, true);
+		} else {
+			m_leftWindow = false;
+			HideDialog();
+		}
 	}
 }

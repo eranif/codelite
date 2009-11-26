@@ -37,6 +37,8 @@ class IManager;
 class NewIneritanceDlg : public NewIneritanceBaseDlg
 {
 	IManager *m_mgr;
+	wxString m_fileName;
+	
 protected:
 	// Handlers for NewIneritanceBaseDlg events.
 	void OnButtonMore( wxCommandEvent& event );
@@ -46,6 +48,8 @@ public:
 	NewIneritanceDlg( wxWindow* parent, IManager *mgr, const wxString &parentName = wxEmptyString, const wxString &access = wxEmptyString );
 	wxString GetParentName() {return m_textCtrlInhertiance->GetValue();}
 	wxString GetAccess() {return m_choiceAccess->GetStringSelection();}
+	
+	wxString GetFileName() const { return m_fileName; }
 };
 
 #endif // __newinheritancedlg__

@@ -84,19 +84,6 @@ struct ascendingSortOp {
 	}
 };
 
-static void GizmosRemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
-{
-	for (size_t i=0; i<src.size(); i++) {
-		if (i == 0) {
-			target.push_back(src.at(0));
-		} else {
-			if (src.at(i)->GetName() != target.at(target.size()-1)->GetName()) {
-				target.push_back(src.at(i));
-			}
-		}
-	}
-}
-
 //-------------------------------------
 // helper methods
 //-------------------------------------
@@ -108,17 +95,19 @@ static void ExpandVariables(wxString &content, const NewWxProjectInfo &info)
 
 	wxString appfilename = projname + wxT("_app");
 	wxString framefilename = projname + wxT("_frame");
-	content.Replace(wxT("$(MainFile)"), projname);
-	content.Replace(wxT("$(AppFile)"), appfilename);
+
+	content.Replace(wxT("$(MainFile)"),      projname);
+	content.Replace(wxT("$(AppFile)"),       appfilename);
 	content.Replace(wxT("$(MainFrameFile)"), framefilename);
-	content.Replace(wxT("$(Unicode)"), info.GetFlags() & wxWidgetsUnicode ? wxT("yes") : wxT("no"));
-	content.Replace(wxT("$(Static)"), info.GetFlags() & wxWidgetsStatic ? wxT("yes") : wxT("no"));
-	content.Replace(wxT("$(Universal)"), info.GetFlags() & wxWidgetsUniversal ? wxT("yes") : wxT("no"));
-	content.Replace(wxT("$(WinResFlag)"), info.GetFlags() & wxWidgetsWinRes ? wxT("yes") : wxT("no"));
-	content.Replace(wxT("$(MWindowsFlag)"), info.GetFlags() & wxWidgetsSetMWindows ? wxT("-mwindows") : wxEmptyString);
-	content.Replace(wxT("$(PCHFlag)"), info.GetFlags() & wxWidgetsPCH ? wxT("WX_PRECOMP") : wxEmptyString);
+	content.Replace(wxT("$(Unicode)"),       info.GetFlags() & wxWidgetsUnicode ? wxT("yes") : wxT("no"));
+	content.Replace(wxT("$(Static)"),        info.GetFlags() & wxWidgetsStatic ? wxT("yes") : wxT("no"));
+	content.Replace(wxT("$(Universal)"),     info.GetFlags() & wxWidgetsUniversal ? wxT("yes") : wxT("no"));
+	content.Replace(wxT("$(WinResFlag)"),    info.GetFlags() & wxWidgetsWinRes ? wxT("yes") : wxT("no"));
+	content.Replace(wxT("$(MWindowsFlag)"),  info.GetFlags() & wxWidgetsSetMWindows ? wxT("-mwindows") : wxEmptyString);
+	content.Replace(wxT("$(PCHFlag)"),       info.GetFlags() & wxWidgetsPCH ? wxT("WX_PRECOMP") : wxEmptyString);
 	content.Replace(wxT("$(PCHCmpOptions)"), info.GetFlags() & wxWidgetsPCH ? wxT("-Winvalid-pch;-include wx_pch.h") : wxEmptyString);
-	content.Replace(wxT("$(PCHMakeCmd)"), info.GetFlags() & wxWidgetsPCH ? wxT("wx_pch.h.gch\nwx_pch.h.gch: wx_pch.h\n\t$(CompilerName) wx_pch.h $(CmpOptions) $(IncludePath)") : wxEmptyString);
+	content.Replace(wxT("$(PCHMakeCmd)"),    info.GetFlags() & wxWidgetsPCH ? wxT("wx_pch.h.gch\nwx_pch.h.gch: wx_pch.h\n\t$(CompilerName) wx_pch.h $(CmpOptions) $(IncludePath)") : wxEmptyString);
+
 	if( info.GetFlags() & wxWidgetsWinRes ) content.Replace(wxT("$(WinResFile)"), wxT("<File Name=\"resources.rc\" />") );
 	if( info.GetFlags() & wxWidgetsPCH )content.Replace(wxT("$(PCHFile)"), wxT("<File Name=\"wx_pch.h\" />") );
 
@@ -160,6 +149,14 @@ static void WriteFile(const wxString &fileName, const wxString &content)
 
 	file.Write(content);
 	file.Close();
+}
+
+static void WriteNamespacesDeclaration(const wxArrayString& namespacesList, wxString& buffer)
+{
+	for (int i = 0; i < namespacesList.Count(); i++)
+	{
+		buffer << wxT("namespace ") << namespacesList[i] << wxT("\n{\n\n");
+	}
 }
 
 GizmosPlugin::GizmosPlugin(IManager *manager)
@@ -393,8 +390,19 @@ void GizmosPlugin::DoCreateNewClass()
 
 void GizmosPlugin::CreateClass(const NewClassInfo &info)
 {
-	wxString macro(info.name);
-	macro.MakeLower();
+	wxString macro(info.blockGuard);
+	if( macro.IsEmpty() ) {
+		// use the name instead
+		macro = info.name;
+		macro.MakeUpper();
+		macro << wxT("_H");
+	}
+
+	wxString srcFile;
+	srcFile << info.path << wxFileName::GetPathSeparator() << info.fileName << wxT(".cpp");
+
+	wxString hdrFile;
+	hdrFile << info.path << wxFileName::GetPathSeparator() << info.fileName << wxT(".h");
 
 	//create cpp + h file
 	wxString cpp;
@@ -403,9 +411,39 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 	//----------------------------------------------------
 	// header file
 	//----------------------------------------------------
-	header << wxT("#ifndef __") << macro << wxT("__\n");
-	header << wxT("#define __") << macro << wxT("__\n");
+	header << wxT("#ifndef ") << macro << wxT("\n");
+	header << wxT("#define ") << macro << wxT("\n");
 	header << wxT("\n");
+
+	wxString closeMethod;
+	if (info.isInline)
+		closeMethod = wxT("\n\t{\n\t}\n");
+	else
+		closeMethod = wxT(";\n");
+
+	// Add include for base classes
+	if (info.parents.empty() == false) {
+		for (size_t i=0; i< info.parents.size(); i++) {
+
+			ClassParentInfo pi = info.parents.at(i);
+
+			// Make the include file name relative to the header file
+			// we are generating
+			wxFileName headerFileName(hdrFile);
+
+			wxFileName includeFileName(pi.fileName);
+			includeFileName.MakeRelativeTo (headerFileName.GetPath());
+
+			header << wxT("#include \"") << includeFileName.GetFullPath() << wxT("\" // Base class\n");
+		}
+		header << wxT("\n");
+	}
+
+	// Open namespace
+	if (!info.namespacesList.IsEmpty()) {
+		WriteNamespacesDeclaration (info.namespacesList, header);
+	}
+
 	header << wxT("class ") << info.name;
 
 	if (info.parents.empty() == false) {
@@ -425,8 +463,8 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 	if (info.isAssingable == false) {
 		//declare copy constructor & assingment operator as private
 		header << wxT("private:\n");
-		header << wxT("\t") << info.name << wxT("(const ") << info.name << wxT("& rhs);\n");
-		header << wxT("\t") << info.name << wxT("& operator=(const ") << info.name << wxT("& rhs);\n");
+		header << wxT("\t") << info.name << wxT("(const ") << info.name << wxT("& rhs)") << closeMethod;
+		header << wxT("\t") << info.name << wxT("& operator=(const ") << info.name << wxT("& rhs)") << closeMethod;
 		header << wxT("\n");
 	}
 
@@ -445,11 +483,11 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 		}
 	} else {
 		header << wxT("public:\n");
-		header << wxT("\t") << info.name << wxT("();\n");
+		header << wxT("\t") << info.name << wxT("()") << closeMethod;
 		if (info.isVirtualDtor) {
-			header << wxT("\tvirtual ~") << info.name << wxT("();\n\n");
+			header << wxT("\tvirtual ~") << info.name << wxT("()") << closeMethod << wxT("\n");
 		} else {
-			header << wxT("\t~") << info.name << wxT("();\n\n");
+			header << wxT("\t~") << info.name << wxT("()") << closeMethod << wxT("\n");
 		}
 
 	}
@@ -461,50 +499,17 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 		header << v_decl;
 	}
 
-	header << wxT("};\n");
-	header << wxT("#endif // __") << macro << wxT("__\n");
+	header << wxT("};\n\n");
 
-	//----------------------------------------------------
-	// source file
-	//----------------------------------------------------
-	cpp << wxT("#include \"") << info.fileName << wxT(".h\"\n");
-	if (info.isSingleton) {
-		cpp << info.name << wxT("* ") << info.name << wxT("::ms_instance = 0;\n\n");
-	}
-	//ctor/dtor
-	cpp << info.name << wxT("::") << info.name << wxT("()\n");
-	cpp << wxT("{\n}\n\n");
-	cpp << info.name << wxT("::~") << info.name << wxT("()\n");
-	cpp << wxT("{\n}\n\n");
-	if (info.isSingleton) {
-		cpp << info.name << wxT("* ") << info.name << wxT("::Instance()\n");
-		cpp << wxT("{\n");
-		cpp << wxT("\tif(ms_instance == 0){\n");
-		cpp << wxT("\t\tms_instance = new ") << info.name << wxT("();\n");
-		cpp << wxT("\t}\n");
-		cpp << wxT("\treturn ms_instance;\n");
-		cpp << wxT("}\n\n");
-
-		cpp << wxT("void ") << info.name << wxT("::Release()\n");
-		cpp << wxT("{\n");
-		cpp << wxT("\tif(ms_instance){\n");
-		cpp << wxT("\t\tdelete ms_instance;\n");
-		cpp << wxT("\t}\n");
-		cpp << wxT("\tms_instance = 0;\n");
-		cpp << wxT("}\n\n");
+	// Close namespaces
+	for (int i = 0; i < info.namespacesList.Count(); i++)
+	{
+		header << wxT("}\n\n");
 	}
 
-	cpp << DoGetVirtualFuncImpl(info);
+	header << wxT("#endif // ") << macro << wxT("\n");
 
 	wxFFile file;
-	wxString srcFile;
-	wxString hdrFile;
-	srcFile << info.path << wxFileName::GetPathSeparator() << info.fileName << wxT(".cpp");
-	hdrFile << info.path << wxFileName::GetPathSeparator() << info.fileName << wxT(".h");
-
-	file.Open(srcFile, wxT("w+b"));
-	file.Write(cpp);
-	file.Close();
 
 	file.Open(hdrFile, wxT("w+b"));
 	file.Write(header);
@@ -512,8 +517,60 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 
 	//if we have a selected virtual folder, add the files to it
 	wxArrayString paths;
-	paths.Add(srcFile);
 	paths.Add(hdrFile);
+
+	//----------------------------------------------------
+	// source file
+	//----------------------------------------------------
+	if (!info.isInline)
+	{
+		cpp << wxT("#include \"") << info.fileName << wxT(".h\"\n\n");
+
+		// Open namespace
+		if (!info.namespacesList.IsEmpty()) {
+			WriteNamespacesDeclaration (info.namespacesList, cpp);
+		}
+
+		if (info.isSingleton) {
+			cpp << info.name << wxT("* ") << info.name << wxT("::ms_instance = 0;\n\n");
+		}
+		//ctor/dtor
+		cpp << info.name << wxT("::") << info.name << wxT("()\n");
+		cpp << wxT("{\n}\n\n");
+		cpp << info.name << wxT("::~") << info.name << wxT("()\n");
+		cpp << wxT("{\n}\n\n");
+		if (info.isSingleton) {
+			cpp << info.name << wxT("* ") << info.name << wxT("::Instance()\n");
+			cpp << wxT("{\n");
+			cpp << wxT("\tif(ms_instance == 0){\n");
+			cpp << wxT("\t\tms_instance = new ") << info.name << wxT("();\n");
+			cpp << wxT("\t}\n");
+			cpp << wxT("\treturn ms_instance;\n");
+			cpp << wxT("}\n\n");
+
+			cpp << wxT("void ") << info.name << wxT("::Release()\n");
+			cpp << wxT("{\n");
+			cpp << wxT("\tif(ms_instance){\n");
+			cpp << wxT("\t\tdelete ms_instance;\n");
+			cpp << wxT("\t}\n");
+			cpp << wxT("\tms_instance = 0;\n");
+			cpp << wxT("}\n\n");
+		}
+
+		cpp << DoGetVirtualFuncImpl(info);
+
+		// Close namespaces
+		for (int i = 0; i < info.namespacesList.Count(); i++)
+		{
+			cpp << wxT("}\n\n");
+		}
+
+		file.Open(srcFile, wxT("w+b"));
+		file.Write(cpp);
+		file.Close();
+
+		paths.Add(srcFile);
+	}
 
 	// We have a .cpp and an .h file, and there may well be a :src and an :include folder available
 	// So try to place the files appropriately. If that fails, dump both in the selected folder
@@ -795,8 +852,12 @@ wxString GizmosPlugin::DoGetVirtualFuncImpl(const NewClassInfo &info)
 	std::vector< TagEntryPtr > tags;
 	for (std::vector< TagEntryPtr >::size_type i=0; i< info.parents.size(); i++) {
 		ClassParentInfo pi = info.parents.at(i);
-		m_mgr->GetTagsManager()->TagsByScope(pi.name, tmp_tags);
+
+		// Load all prototypes / functions of the parent scope
+		m_mgr->GetTagsManager()->TagsByScope(pi.name, wxT("prototype"), tmp_tags, false);
+		m_mgr->GetTagsManager()->TagsByScope(pi.name, wxT("function"),  tmp_tags, false);
 	}
+
 	// and finally sort the results
 	std::sort(tmp_tags.begin(), tmp_tags.end(), ascendingSortOp());
 	GizmosRemoveDuplicates(tmp_tags, no_dup_tags);
@@ -835,7 +896,10 @@ wxString GizmosPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info)
 	std::vector< TagEntryPtr > tags;
 	for (std::vector< TagEntryPtr >::size_type i=0; i< info.parents.size(); i++) {
 		ClassParentInfo pi = info.parents.at(i);
-		m_mgr->GetTagsManager()->TagsByScope(pi.name, tmp_tags);
+
+		// Load all prototypes / functions of the parent scope
+		m_mgr->GetTagsManager()->TagsByScope(pi.name, wxT("prototype"), tmp_tags, false);
+		m_mgr->GetTagsManager()->TagsByScope(pi.name, wxT("function"),  tmp_tags, false);
 	}
 
 	// and finally sort the results
@@ -860,7 +924,12 @@ wxString GizmosPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info)
 	wxString decl;
 	for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
 		TagEntryPtr tt = tags.at(i);
-		decl << wxT("\t") << m_mgr->GetTagsManager()->FormatFunction(tt);
+		wxString ff = m_mgr->GetTagsManager()->FormatFunction(tt);
+
+		if (info.isInline)
+			ff.Replace (wxT(";"), wxT("\n\t{\n\t}"));
+
+		decl << wxT("\t") << ff;
 	}
 	return decl;
 }
@@ -894,4 +963,35 @@ void GizmosPlugin::OnGizmos(wxCommandEvent& e)
 void GizmosPlugin::OnGizmosUI(wxUpdateUIEvent& e)
 {
 	e.Enable(m_mgr->IsWorkspaceOpen());
+}
+
+void GizmosPlugin::GizmosRemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
+{
+	std::map<wxString, TagEntryPtr> uniqueSet;
+	for (size_t i=0; i<src.size(); i++) {
+
+		wxString  signature = src.at(i)->GetSignature();
+		wxString  key              = m_mgr->GetTagsManager()->NormalizeFunctionSig(signature, 0);
+		int       hasDefaultValues = signature.Find(wxT("="));
+
+		key.Prepend(src.at(i)->GetName());
+		if ( uniqueSet.find(key) != uniqueSet.end() ) {
+			// we already got an instance of this method,
+			// incase we have default values in the this Tag, keep this
+			// TagEntryPtr, otherwise keep the previous tag
+			if(hasDefaultValues != wxNOT_FOUND) {
+				uniqueSet[key] = src.at(i);
+			}
+
+		} else {
+			// First time
+			uniqueSet[key] = src.at(i);
+		}
+	}
+
+	// copy the unique set to the output vector
+	std::map<wxString, TagEntryPtr>::iterator iter = uniqueSet.begin();
+	for(; iter != uniqueSet.end(); iter++) {
+		target.push_back( iter->second );
+	}
 }

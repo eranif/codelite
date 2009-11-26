@@ -38,6 +38,7 @@ class GizmosPlugin : public IPlugin
 	std::vector<wxMenuItem*> m_vdDynItems;
 protected:
 	void CreateWxProject(NewWxProjectInfo &info);
+	void GizmosRemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
 
 public:
 	GizmosPlugin(IManager *manager);

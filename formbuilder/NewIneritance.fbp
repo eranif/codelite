@@ -352,7 +352,7 @@
                                 <property name="proportion">0</property>
                                 <object class="wxChoice" expanded="1">
                                     <property name="bg"></property>
-                                    <property name="choices">&quot;public&quot; &quot;private&quot; &quot;protected&quot;</property>
+                                    <property name="choices">&quot;public&quot; &quot;private&quot; &quot;protected&quot; &quot;virtual&quot;</property>
                                     <property name="context_help"></property>
                                     <property name="enabled">1</property>
                                     <property name="fg"></property>

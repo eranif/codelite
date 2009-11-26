@@ -55,8 +55,10 @@ protected:
 	TagsManager *m_tagsManager;
 	wxTimer *m_timer;
 	long m_selectedItem;
+	wxArrayString m_kind;
 	
 protected:
+	void Ctor();
 	void Init();
 	void OnCharHook(wxKeyEvent &event);
 	void OnItemActivated(wxListEvent &event);
@@ -68,6 +70,7 @@ protected:
 	
 public:
 	OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id = wxID_ANY, wxString title = wxT("Open Type"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 682, 353 ), int style = wxDEFAULT_DIALOG_STYLE);
+	OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, const wxArrayString &kind, int id = wxID_ANY, wxString title = wxT("Open Type"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 682, 353 ), int style = wxDEFAULT_DIALOG_STYLE);
 	virtual ~OpenTypeDlg();
 	TagEntryPtr GetSelectedTag() const {return m_tag;}
 	DECLARE_EVENT_TABLE()

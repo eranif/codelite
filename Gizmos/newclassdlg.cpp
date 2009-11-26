@@ -22,7 +22,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "newclassdlg.h"
+
+#include "newclassdlg.h"
+#include "windowattrmanager.h"
 #include <wx/dirdlg.h>
 #include <wx/msgdlg.h>
 #include "virtualdirectoryselector.h"
@@ -32,9 +34,10 @@
 #include "globals.h"
 #include "wx/dir.h"
 #include "workspace.h"
+#include "open_type_dlg.h"
 
 NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
-		: NewClassBaseDlg( parent, wxID_ANY, wxT("New Class"), wxDefaultPosition, wxSize( 690,631 ), wxDEFAULT_DIALOG_STYLE)
+		: NewClassBaseDlg( parent )
 		, m_selectedItem(wxNOT_FOUND)
 		, m_mgr(mgr)
 {
@@ -43,6 +46,8 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 	//set two columns to our list
 	m_listCtrl1->InsertColumn(0, wxT("Name"));
 	m_listCtrl1->InsertColumn(1, wxT("Access"));
+
+	m_listCtrl1->InsertColumn(2, wxT("File"));
 
 	TreeItemInfo item = mgr->GetSelectedTreeItemInfo(TreeFileView);
 	if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory){
@@ -73,6 +78,12 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 	GetSizer()->Layout();
 	Centre();
 	m_textClassName->SetFocus();
+	WindowAttrManager::Load(this, wxT("NewClassDlg"), m_mgr->GetConfigTool());
+}
+
+NewClassDlg::~NewClassDlg()
+{
+	WindowAttrManager::Save(this, wxT("NewClassDlg"), m_mgr->GetConfigTool());
 }
 
 void NewClassDlg::OnListItemActivated( wxListEvent& event )
@@ -86,6 +97,9 @@ void NewClassDlg::OnListItemActivated( wxListEvent& event )
 		//now set the text to this column
 		SetColumnText(m_listCtrl1, m_selectedItem, 0, dlg->GetParentName());
 		SetColumnText(m_listCtrl1, m_selectedItem, 1, dlg->GetAccess());
+
+		SetColumnText(m_listCtrl1, m_selectedItem, 2, dlg->GetFileName());
+
 		m_listCtrl1->Refresh();
 	}
 	dlg->Destroy();
@@ -106,6 +120,9 @@ void NewClassDlg::OnButtonAdd( wxCommandEvent& event )
 
 		SetColumnText(m_listCtrl1, item, 0, dlg->GetParentName());
 		SetColumnText(m_listCtrl1, item, 1, dlg->GetAccess());
+
+		SetColumnText(m_listCtrl1, item, 2, dlg->GetFileName());
+
 		m_listCtrl1->Refresh();
 	}
 	dlg->Destroy();
@@ -140,6 +157,9 @@ void NewClassDlg::GetInheritance(std::vector< ClassParentInfo > &inheritVec)
 		ClassParentInfo info;
 		info.name = GetColumnText(m_listCtrl1, item, 0);
 		info.access = GetColumnText(m_listCtrl1, item, 1);
+
+		info.fileName = GetColumnText(m_listCtrl1, item, 2);
+
 		inheritVec.push_back(info);
 	}
 }
@@ -164,6 +184,21 @@ bool NewClassDlg::ValidateInput()
 		msg << wxT("'") << m_textClassName->GetValue() << wxT("' is not a valid C++ qualifier");
 		wxMessageBox(msg, wxT("CodeLite"), wxOK | wxICON_WARNING);
 		return false;
+	}
+
+	//validate the namespace
+	if (!m_textCtrlNamespace->GetValue().IsEmpty()) {
+		wxArrayString namespacesList;
+		this->GetNamespacesList(namespacesList);
+		//validate each namespace
+		for (int i = 0; i < namespacesList.Count(); i++) {
+			if (!IsValidCppIndetifier (namespacesList[i])) {
+				wxString msg;
+				msg << wxT("'") << namespacesList[i] << wxT("' is not a valid C++ qualifier");
+				wxMessageBox(msg, wxT("CodeLite"), wxOK | wxICON_WARNING);
+				return false;
+			}
+		}
 	}
 
 	//validate the path of the class
@@ -204,16 +239,24 @@ bool NewClassDlg::ValidateInput()
 
 void NewClassDlg::GetNewClassInfo(NewClassInfo &info)
 {
-	info.isSingleton = this->IsSingleton();
 	info.name = this->GetClassName();
+	this->GetNamespacesList(info.namespacesList);
 	this->GetInheritance(info.parents);
-	info.path = this->GetClassPath();
-	info.isAssingable = this->IsCopyableClass();
-	info.fileName = this->GetClassFile();
-	info.isVirtualDtor = m_checkBoxVirtualDtor->IsChecked();
+	if (this->IsInline()) {
+		info.isInline = true;
+		info.isSingleton = false;
+	} else {
+		info.isInline = false;
+		info.isSingleton = this->IsSingleton();
+	}
+	info.path               = this->GetClassPath().Trim().Trim(false);
+	info.isAssingable       = this->IsCopyableClass();
+	info.fileName           = this->GetClassFile().Trim().Trim(false);
+	info.isVirtualDtor      = m_checkBoxVirtualDtor->IsChecked();
 	info.implAllPureVirtual = m_checkBoxImplPureVirtual->IsChecked();
-	info.implAllVirtual = m_checkBoxImplVirtual->IsChecked();
-	info.virtualDirectory = m_textCtrlVD->GetValue();
+	info.implAllVirtual     = m_checkBoxImplVirtual->IsChecked();
+	info.virtualDirectory   = m_textCtrlVD->GetValue().Trim().Trim(false);
+	info.blockGuard         = m_textCtrlBlockGuard->GetValue().Trim().Trim(false);
 }
 
 wxString NewClassDlg::GetClassFile()
@@ -286,5 +329,63 @@ void NewClassDlg::OnBrowseVD(wxCommandEvent& e)
 	VirtualDirectorySelector dlg(this, m_mgr->GetWorkspace(), m_textCtrlVD->GetValue());
 	if(dlg.ShowModal() == wxID_OK){
 		m_textCtrlVD->SetValue(dlg.GetVirtualDirectoryPath());
+	}
+}
+
+void NewClassDlg::OnBrowseNamespace(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+
+	wxArrayString kinds;
+	kinds.Add(wxT("namespace"));
+
+	OpenTypeDlg *dlg = new OpenTypeDlg(this, m_mgr->GetTagsManager(), kinds);
+	if(dlg->ShowModal() == wxID_OK){
+		wxString nameSpace;
+		if(	dlg->GetSelectedTag()->GetScope().IsEmpty() == false &&
+			dlg->GetSelectedTag()->GetScope() != wxT("<global>"))
+		{
+			nameSpace << dlg->GetSelectedTag()->GetScope() << wxT("::");
+		}
+		nameSpace << dlg->GetSelectedTag()->GetName();
+
+		m_textCtrlNamespace->SetValue(nameSpace);
+	}
+}
+
+void NewClassDlg::GetNamespacesList(wxArrayString& namespacesArray)
+{
+	wxString textNamespaces = this->GetClassNamespace();
+	textNamespaces.Trim();
+
+	if (textNamespaces.IsEmpty())
+		return;
+
+	int prevPos = 0;
+	int pos = textNamespaces.find (wxT("::"), prevPos);
+
+	while (pos != wxString::npos) {
+		wxString token = textNamespaces.Mid(prevPos, pos-prevPos);
+
+		namespacesArray.Add (token);
+
+		prevPos = pos+2;
+		pos = textNamespaces.find (wxT("::"), prevPos);
+	}
+
+	wxString lastToken = textNamespaces.Mid(prevPos);
+	namespacesArray.Add (lastToken);
+}
+
+void NewClassDlg::OnCheckInline(wxCommandEvent &e)
+{
+	// Inline implementation conflict with singleton implementation
+	// so disable the relative checkbox
+	if (e.IsChecked()) {
+		if (m_checkBox6->IsEnabled())
+			m_checkBox6->Enable (false);
+	} else {
+		if (!m_checkBox6->IsEnabled())
+			m_checkBox6->Enable (true);
 	}
 }

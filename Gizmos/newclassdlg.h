@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : newclassdlg.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : newclassdlg.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef __newclassdlg__
@@ -38,19 +38,35 @@ class IManager;
 struct ClassParentInfo {
 	wxString name;
 	wxString access;
+	wxString fileName;
 };
 
 struct NewClassInfo {
-	wxString name;
-	wxString path;
-	wxString fileName;
-	wxString virtualDirectory;
-	bool isSingleton;
-	bool isAssingable;
-	bool isVirtualDtor;
-	bool implAllPureVirtual;
-	bool implAllVirtual;
+	wxString                       name;
+	wxArrayString                  namespacesList;
+	wxString                       blockGuard;
+	wxString                       path;
+	wxString                       fileName;
+	wxString                       virtualDirectory;
+	bool                           isSingleton;
+	bool                           isAssingable;
+	bool                           isVirtualDtor;
+	bool                           implAllPureVirtual;
+	bool                           implAllVirtual;
+	bool                           isInline;
 	std::vector< ClassParentInfo > parents;
+
+	NewClassInfo()
+		: isSingleton(false)
+		, isAssingable(false)
+		, isVirtualDtor(false)
+		, implAllPureVirtual(false)
+		, implAllVirtual(false)
+		, isInline(false)
+	{}
+
+	~NewClassInfo()
+	{}
 };
 
 /** Implementing NewClassBaseDlg */
@@ -73,19 +89,26 @@ protected:
 	void OnCheckImpleAllVirtualFunctions(wxCommandEvent &e);
 	void OnBrowseFolder(wxCommandEvent &e);
 	void OnBrowseVD(wxCommandEvent &e);
-	
+	void OnBrowseNamespace(wxCommandEvent &e);
+	void OnCheckInline(wxCommandEvent &e);
+
 public:
 	/** Constructor */
 	NewClassDlg( wxWindow* parent, IManager *mgr );
+	virtual ~NewClassDlg();
+
 	void GetNewClassInfo(NewClassInfo &info);
-	
+
 	void GetInheritance(std::vector< ClassParentInfo > &inheritVec);
 	bool IsSingleton() {return m_checkBox6->GetValue();}
 	wxString GetClassName(){return m_textClassName->GetValue();}
+	wxString GetClassNamespace() const {return m_textCtrlNamespace->GetValue();}
 	wxString GetClassPath();
 	wxString GetClassFile();
 	bool IsCopyableClass(){return !m_checkBoxCopyable->IsChecked();}
 	wxString GetVirtualDirectoryPath() {return m_textCtrlVD->GetValue();}
+	void GetNamespacesList(wxArrayString& namespacesArray);
+	bool IsInline() const {return m_checkBoxInline->GetValue();}
 };
 
 #endif // __newclassdlg__

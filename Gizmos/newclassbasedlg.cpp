@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : newclassbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -50,7 +25,7 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
-	m_bmp = new wxStaticBitmap( m_mainPanel, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
+	m_bmp = new wxStaticBitmap( m_mainPanel, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( -1,66 ), 0 );
 	bSizer3->Add( m_bmp, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 0 );
 	
 	m_mainPanel->SetSizer( bSizer3 );
@@ -64,26 +39,54 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	bSizer1->Add( m_staticline2, 0, wxEXPAND|wxALL|wxALIGN_CENTER_HORIZONTAL, 0 );
 	
 	wxFlexGridSizer* fgSizer1;
-	fgSizer1 = new wxFlexGridSizer( 2, 3, 0, 0 );
+	fgSizer1 = new wxFlexGridSizer( 5, 3, 0, 0 );
 	fgSizer1->AddGrowableCol( 1 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Class Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	fgSizer1->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textClassName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textClassName->SetToolTip( wxT("The class name") );
+	
 	fgSizer1->Add( m_textClassName, 0, wxALL|wxEXPAND, 5 );
 	
-	m_panel2 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	fgSizer1->Add( m_panel2, 1, wxEXPAND | wxALL, 5 );
+	
+	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	m_staticTextNamespace = new wxStaticText( this, wxID_ANY, wxT("Namespace:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextNamespace->Wrap( -1 );
+	fgSizer1->Add( m_staticTextNamespace, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	m_textCtrlNamespace = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlNamespace->SetToolTip( wxT("Place this class inside a namspace") );
+	
+	fgSizer1->Add( m_textCtrlNamespace, 0, wxALL|wxEXPAND, 5 );
+	
+	m_buttonBrowseNamespaces = new wxButton( this, wxID_ANY, wxT("Browse..."), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_buttonBrowseNamespaces, 0, wxALL, 5 );
+	
+	m_staticText6 = new wxStaticText( this, wxID_ANY, wxT("Block Guard:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6->Wrap( -1 );
+	fgSizer1->Add( m_staticText6, 0, wxALL, 5 );
+	
+	m_textCtrlBlockGuard = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlBlockGuard->SetToolTip( wxT("Set block guard to prevent multiple file inclusion. If left empty, the class name is used") );
+	
+	fgSizer1->Add( m_textCtrlBlockGuard, 0, wxALL|wxEXPAND, 5 );
+	
+	
+	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Generated Files Path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	fgSizer1->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlGenFilePath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlGenFilePath->SetToolTip( wxT("Generated files path (directory)") );
+	
 	fgSizer1->Add( m_textCtrlGenFilePath, 1, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowseFolder = new wxButton( this, wxID_ANY, wxT("Browse..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -94,6 +97,8 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	fgSizer1->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlVD = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+	m_textCtrlVD->SetToolTip( wxT("Select the virtual folder to place the generated files inside CodeLite's project") );
+	
 	fgSizer1->Add( m_textCtrlVD, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonSelectVD = new wxButton( this, wxID_ANY, wxT("Browse..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -104,12 +109,19 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	m_staticline6 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline6, 0, wxEXPAND | wxALL, 5 );
 	
-	m_checkBoxEnterFileName = new wxCheckBox( this, wxID_ANY, wxT("Manually enter file name (without the extension):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxInline = new wxCheckBox( this, wxID_ANY, wxT("Inline (generate declaration and implementation in the header file)"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer1->Add( m_checkBoxInline, 0, wxALL, 5 );
 	
+	m_checkBoxEnterFileName = new wxCheckBox( this, wxID_ANY, wxT("Manually enter file name (without the extension):"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_checkBoxEnterFileName, 0, wxALL, 5 );
 	
+	wxBoxSizer* bSizer7;
+	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
+	
 	m_textCtrlFileName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_textCtrlFileName, 0, wxALL|wxEXPAND, 5 );
+	bSizer7->Add( m_textCtrlFileName, 1, wxALL|wxEXPAND, 5 );
+	
+	bSizer1->Add( bSizer7, 0, wxEXPAND, 5 );
 	
 	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline4, 0, wxEXPAND | wxALL, 5 );
@@ -145,23 +157,18 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_checkBoxCopyable = new wxCheckBox( this, wxID_ANY, wxT("Declare this class as non-copyable class"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	fgSizer2->Add( m_checkBoxCopyable, 0, wxALL, 5 );
 	
 	m_checkBoxImplVirtual = new wxCheckBox( this, wxID_ANY, wxT("Implement all virtual functions"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	fgSizer2->Add( m_checkBoxImplVirtual, 0, wxALL, 5 );
 	
 	m_checkBox6 = new wxCheckBox( this, wxID_ANY, wxT("This is a singleton class"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	fgSizer2->Add( m_checkBox6, 0, wxALL, 5 );
 	
 	m_checkBoxImplPureVirtual = new wxCheckBox( this, wxID_ANY, wxT("Implement all pure virtual functions"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	fgSizer2->Add( m_checkBoxImplPureVirtual, 0, wxALL, 5 );
 	
 	m_checkBoxVirtualDtor = new wxCheckBox( this, wxID_ANY, wxT("Virtual destructor"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	fgSizer2->Add( m_checkBoxVirtualDtor, 0, wxALL, 5 );
 	
 	bSizer1->Add( fgSizer2, 0, wxEXPAND, 5 );
@@ -183,13 +190,16 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	bSizer1->Fit( this );
 	
 	this->Centre( wxBOTH );
 	
 	// Connect Events
 	m_textClassName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewClassBaseDlg::OnTextEnter ), NULL, this );
+	m_buttonBrowseNamespaces->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseNamespace ), NULL, this );
 	m_buttonBrowseFolder->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseFolder ), NULL, this );
 	m_buttonSelectVD->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseVD ), NULL, this );
+	m_checkBoxInline->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnCheckInline ), NULL, this );
 	m_checkBoxEnterFileName->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnCheckEnterFileNameManually ), NULL, this );
 	m_listCtrl1->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( NewClassBaseDlg::OnListItemActivated ), NULL, this );
 	m_listCtrl1->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( NewClassBaseDlg::OnListItemDeSelected ), NULL, this );
@@ -205,8 +215,10 @@ NewClassBaseDlg::~NewClassBaseDlg()
 {
 	// Disconnect Events
 	m_textClassName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewClassBaseDlg::OnTextEnter ), NULL, this );
+	m_buttonBrowseNamespaces->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseNamespace ), NULL, this );
 	m_buttonBrowseFolder->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseFolder ), NULL, this );
 	m_buttonSelectVD->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseVD ), NULL, this );
+	m_checkBoxInline->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnCheckInline ), NULL, this );
 	m_checkBoxEnterFileName->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnCheckEnterFileNameManually ), NULL, this );
 	m_listCtrl1->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( NewClassBaseDlg::OnListItemActivated ), NULL, this );
 	m_listCtrl1->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( NewClassBaseDlg::OnListItemDeSelected ), NULL, this );

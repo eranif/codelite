@@ -65,7 +65,27 @@ OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxStri
 		, m_selectedItem(wxNOT_FOUND)
 {
 	m_tagsManager = tagsMgr;
+	
+	Ctor();
+}
 
+OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, const wxArrayString &kind, int id, wxString title, wxPoint pos, wxSize size, int style )
+		: wxDialog( parent, id, title, pos, size, style )
+		, m_selectedItem(wxNOT_FOUND)
+		, m_kind(kind)
+{
+	m_tagsManager = tagsMgr;
+	
+	Ctor();	
+}
+
+OpenTypeDlg::~OpenTypeDlg()
+{
+	delete m_il;
+}
+
+void OpenTypeDlg::Ctor()
+{
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 	wxBoxSizer* mainSizer;
@@ -110,16 +130,12 @@ OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxStri
 	m_il->Add(bmp);
 
 	Init();
+	
 	ConnectButton(m_buttonOK, OpenTypeDlg::OnOK);
 	ConnectCmdTextUpdated(m_textTypeName, OpenTypeDlg::OnText)
 	this->SetSizer( mainSizer );
 	this->Layout();
 	Centre();
-}
-
-OpenTypeDlg::~OpenTypeDlg()
-{
-	delete m_il;
 }
 
 void OpenTypeDlg::Init()
@@ -131,7 +147,16 @@ void OpenTypeDlg::Init()
 	m_listTypes->SetColumnWidth(0, 200);
 	
 	std::vector<TagEntryPtr> tags;
-	m_tagsManager->OpenType(tags);
+	
+	if (m_kind.IsEmpty())
+	{
+		m_tagsManager->OpenType(tags);
+	}
+	else
+	{
+		m_tagsManager->GetTagsByKind(tags, m_kind);
+	}
+	
 	m_listTypes->SetImageList(m_il, wxIMAGE_LIST_SMALL);
 	m_listTypes->SetItems(tags);
 	m_listTypes->SetItemCount(tags.size());

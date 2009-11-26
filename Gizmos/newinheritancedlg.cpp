@@ -51,6 +51,8 @@ void NewIneritanceDlg::OnButtonMore( wxCommandEvent& event )
 		}
 		parentName << dlg->GetSelectedTag()->GetName();
 		m_textCtrlInhertiance->SetValue(parentName);
+		
+		m_fileName = dlg->GetSelectedTag()->GetFile();
 	}
 	dlg->Destroy();
 }

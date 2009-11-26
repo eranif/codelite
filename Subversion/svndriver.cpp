@@ -319,7 +319,9 @@ void SvnDriver::Commit()
 		text << wxT("# ") << file_name << wxT("\n");
 
 		wxArrayString tmpArr = wxStringTokenize(file_name, wxT(" "), wxTOKEN_STRTOK);
-		files.Add(tmpArr.Last());
+		if(tmpArr.IsEmpty() == false) {
+			files.Add(tmpArr.Last());
+		}
 	}
 
 	// we are going to add only:
@@ -381,8 +383,11 @@ void SvnDriver::CommitFile(const wxString &fileName, SvnPostCmdAction *handler)
 		file_name = file_name.Trim().Trim(false);
 		text << wxT("# ") << file_name << wxT("\n");
 
+
 		wxArrayString tmpArr = wxStringTokenize(file_name, wxT(" "), wxTOKEN_STRTOK);
-		files.Add(tmpArr.Last());
+		if(tmpArr.IsEmpty() == false) {
+			files.Add(tmpArr.Last());
+		}
 	}
 
 	// Get Log message from user

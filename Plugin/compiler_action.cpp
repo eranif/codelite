@@ -90,25 +90,8 @@ void ShellCommand::SendEndMsg()
 
 void ShellCommand::DoPrintOutput(const wxString &out)
 {
-	//loop over the lines read from the compiler
-	wxArrayString lines = wxStringTokenize(out, wxT("\n"), wxTOKEN_STRTOK);
-	for(size_t i=0; i<lines.GetCount(); i++) {
-		wxString line = lines.Item(i);
-		line.Trim().Trim(false);
-
-		if ( line.Contains(wxT("Entering directory")) ||
-		     line.Contains(wxT("Leaving directory"))  ||
-		     line.Contains(wxT("type attributes are honored only at type definition")) ||
-		     line.Contains(wxT("type attributes ignored after type is already defined")) ||
-		     line.StartsWith(wxT("# "))
-		   ) {
-			//skip it
-			continue;
-		} else {
-			//print it
-			AppendLine(line + wxT("\n"));
-		}
-	}
+	// Write the buffer as-is to the build tab !!
+	AppendLine(out);
 }
 
 void ShellCommand::CleanUp()

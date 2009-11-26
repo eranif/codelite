@@ -93,6 +93,16 @@ BuildTab::~BuildTab()
 
 int BuildTab::ColorLine ( int, const char *text, size_t &start, size_t &len )
 {
+	wxString txt(text, wxConvUTF8);
+
+	if(txt.Contains(wxT("Entering directory"))) {
+		return wxSCI_LEX_GCC_MAKE_ENTER;
+	}
+
+	if(txt.Contains(wxT("Leaving directory"))) {
+		return wxSCI_LEX_GCC_MAKE_LEAVING;
+	}
+
 	std::map<wxString,int>::iterator i = s_bt->m_lineMap.find ( _U ( text ) );
 	if ( i == s_bt->m_lineMap.end() )
 		return wxSCI_LEX_GCC_OUTPUT;
@@ -125,6 +135,12 @@ void BuildTab::SetStyles ( wxScintilla *sci )
 
 	InitStyle ( sci, wxSCI_LEX_GCC, true );
 
+	sci->StyleSetForeground ( wxSCI_LEX_GCC_MAKE_ENTER, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
+	sci->StyleSetBackground ( wxSCI_LEX_GCC_MAKE_ENTER, wxSystemSettings::GetColour (wxSYS_COLOUR_WINDOW ) );
+
+	sci->StyleSetForeground ( wxSCI_LEX_GCC_MAKE_LEAVING, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
+	sci->StyleSetBackground ( wxSCI_LEX_GCC_MAKE_LEAVING, wxSystemSettings::GetColour (wxSYS_COLOUR_WINDOW ) );
+
 	sci->StyleSetForeground ( wxSCI_LEX_GCC_OUTPUT, wxT("BLACK") );
 	sci->StyleSetBackground ( wxSCI_LEX_GCC_OUTPUT, wxSystemSettings::GetColour ( wxSYS_COLOUR_WINDOW ) );
 
@@ -146,12 +162,14 @@ void BuildTab::SetStyles ( wxScintilla *sci )
 	wxFont font ( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL );
 	wxFont bold ( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxFONTWEIGHT_BOLD );
 
-	sci->StyleSetFont ( wxSCI_LEX_GCC_DEFAULT,   font );
-	sci->StyleSetFont ( wxSCI_LEX_GCC_OUTPUT,    font );
-	sci->StyleSetFont ( wxSCI_LEX_GCC_BUILDING,  bold );
-	sci->StyleSetFont ( wxSCI_LEX_GCC_FILE_LINK, font );
-	sci->StyleSetFont ( wxSCI_LEX_GCC_WARNING,   options.GetBoldWarnFont() ? bold : font );
-	sci->StyleSetFont ( wxSCI_LEX_GCC_ERROR,     options.GetBoldErrFont()  ? bold : font );
+	sci->StyleSetFont ( wxSCI_LEX_GCC_DEFAULT,      font );
+	sci->StyleSetFont ( wxSCI_LEX_GCC_OUTPUT,       font );
+	sci->StyleSetFont ( wxSCI_LEX_GCC_BUILDING,     bold );
+	sci->StyleSetFont ( wxSCI_LEX_GCC_FILE_LINK,    font );
+	sci->StyleSetFont ( wxSCI_LEX_GCC_WARNING,      options.GetBoldWarnFont() ? bold : font );
+	sci->StyleSetFont ( wxSCI_LEX_GCC_ERROR,        options.GetBoldErrFont()  ? bold : font );
+	sci->StyleSetFont ( wxSCI_LEX_GCC_MAKE_ENTER,   font );
+	sci->StyleSetFont ( wxSCI_LEX_GCC_MAKE_LEAVING, font );
 
 	sci->Colourise ( 0, sci->GetLength() );
 }

@@ -106,7 +106,7 @@ static void ExpandVariables(wxString &content, const NewWxProjectInfo &info)
 	content.Replace(wxT("$(MWindowsFlag)"),  info.GetFlags() & wxWidgetsSetMWindows ? wxT("-mwindows") : wxEmptyString);
 	content.Replace(wxT("$(PCHFlag)"),       info.GetFlags() & wxWidgetsPCH ? wxT("WX_PRECOMP") : wxEmptyString);
 	content.Replace(wxT("$(PCHCmpOptions)"), info.GetFlags() & wxWidgetsPCH ? wxT("-Winvalid-pch;-include wx_pch.h") : wxEmptyString);
-	content.Replace(wxT("$(PCHMakeCmd)"),    info.GetFlags() & wxWidgetsPCH ? wxT("wx_pch.h.gch\nwx_pch.h.gch: wx_pch.h\n\t$(CompilerName) wx_pch.h $(CmpOptions) $(IncludePath)") : wxEmptyString);
+	content.Replace(wxT("$(PCHFileName)"),   info.GetFlags() & wxWidgetsPCH ? wxT("wx_pch.h") : wxEmptyString);
 
 	if( info.GetFlags() & wxWidgetsWinRes ) content.Replace(wxT("$(WinResFile)"), wxT("<File Name=\"resources.rc\" />") );
 	if( info.GetFlags() & wxWidgetsPCH )content.Replace(wxT("$(PCHFile)"), wxT("<File Name=\"wx_pch.h\" />") );

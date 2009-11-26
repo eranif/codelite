@@ -78,8 +78,8 @@ private:
 
 	void Initialize       ();
 	void DoMarkAndOpenFile(std::map<int,LineInfo>::iterator i, bool clearsel);
-    bool ExtractLineInfo  (LineInfo &info, const wxString &text, const wxString &pattern,
-                           const wxString &fileidx, const wxString &lineidx);
+    bool ExtractLineInfo  (LineInfo &info, const wxString &text, const wxString &pattern, const wxString &fileidx, const wxString &lineidx);
+	void DoProcessLine    (const wxString &text, int lineno);
     void MarkEditor       (LEditor *editor);
     std::map<int,LineInfo>::iterator GetNextBadLine();
 

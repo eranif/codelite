@@ -196,88 +196,17 @@ void BuildTab::Clear()
 
 void BuildTab::AppendText ( const wxString &text )
 {
-	LineInfo info;
-	int lineno = m_sci->GetLineCount()-1; // get line number before appending new text
-
-    info.linetext = text;
-	OutputTabWindow::AppendText ( text );
-
-	if ( text.Contains ( BUILD_PROJECT_PREFIX ) ) {
-		// now building the next project
-		wxString prj = text.AfterFirst ( wxT ( '[' ) ).BeforeFirst ( wxT ( ']' ) );
-		info.project       = prj.BeforeFirst ( wxT ( '-' ) ).Trim ( false ).Trim();
-		info.configuration = prj.AfterFirst ( wxT ( '-' ) ).Trim ( false ).Trim();
-		info.linecolor     = wxSCI_LEX_GCC_BUILDING;
-		m_cmp.Reset ( NULL );
-		// need to know the compiler in use for this project to extract
-		// file/line and error/warning status from the text
-		ProjectPtr proj = ManagerST::Get()->GetProject ( info.project );
-		if ( proj ) {
-			ProjectSettingsPtr settings = proj->GetSettings();
-			if ( settings ) {
-				BuildConfigPtr bldConf = settings->GetBuildConfiguration ( info.configuration );
-				if ( !bldConf ) {
-					// no buildconf matching the named conf, so use first buildconf instead
-					ProjectSettingsCookie cookie;
-					bldConf = settings->GetFirstBuildConfiguration ( cookie );
-				}
-				if ( bldConf ) {
-					m_cmp = BuildSettingsConfigST::Get()->GetCompiler ( bldConf->GetCompilerType() );
-				}
-			}
-		} else {
-			// probably custom build with project names incorret
-			// assign the default compiler for this purpose
-			if ( BuildSettingsConfigST::Get()->IsCompilerExist(wxT("gnu g++")) ) {
-				m_cmp = BuildSettingsConfigST::Get()->GetCompiler( wxT("gnu g++") );
-			}
-		}
-	} else if ( !m_lineInfo.empty() ) {
-		// consider this line part of the currently building project
-		info.project       = m_lineInfo.rbegin()->second.project;
-		info.configuration = m_lineInfo.rbegin()->second.configuration;
-	}
-
-	// check for start-of-build or end-of-build messages
-	if ( text.StartsWith ( BUILD_START_MSG ) || text.StartsWith ( BUILD_END_MSG ) ) {
-		info.linecolor = wxSCI_LEX_GCC_BUILDING;
-	}
-
-	if ( info.linecolor == wxSCI_LEX_GCC_BUILDING || !m_cmp ) {
-		// no more line info to get
+	int lineno = m_sci->GetLineCount()-1;    // get line number before appending new text
+    OutputTabWindow::AppendText ( text );
+	int newLineno = m_sci->GetLineCount()-1; // Get the new line number
+	int lineCount = newLineno - lineno;
+	if(lineCount == 0) {
+		// We are still at the same line number
+		DoProcessLine(m_sci->GetLine(lineno), lineno);
 	} else {
-		// Find error first
-		bool isError = false;
-		const Compiler::CmpListInfoPattern& errPatterns = m_cmp->GetErrPatterns();
-		Compiler::CmpListInfoPattern::const_iterator itPattern;
-		for (itPattern = errPatterns.begin(); itPattern != errPatterns.end(); ++itPattern) {
-			if ( ExtractLineInfo(info, text, itPattern->pattern, itPattern->fileNameIndex, itPattern->lineNumberIndex)) {
-				info.linecolor = wxSCI_LEX_GCC_ERROR;
-				m_errorCount++;
-				isError = true;
-				break;
-			}
+		for(int i=0; i<lineCount; i++) {
+			DoProcessLine(m_sci->GetLine(lineno+i), lineno+i);
 		}
-		if (!isError) {
-			// If it is not an error, maybe it's a warning
-			const Compiler::CmpListInfoPattern& warnPatterns = m_cmp->GetWarnPatterns();
-			for (itPattern = warnPatterns.begin(); itPattern != warnPatterns.end(); ++itPattern) {
-				if ( ExtractLineInfo(info, text, itPattern->pattern, itPattern->fileNameIndex, itPattern->lineNumberIndex)) {
-					info.linecolor = wxSCI_LEX_GCC_WARNING;
-					m_warnCount++;
-					break;
-				}
-			}
-		}
-	}
-
-	if ( info.linecolor != wxSCI_LEX_GCC_OUTPUT ) {
-		m_lineInfo[lineno] = info;
-		m_lineMap[text] = lineno;
-        if (!info.filename.IsEmpty() && (info.linecolor == wxSCI_LEX_GCC_ERROR || info.linecolor == wxSCI_LEX_GCC_WARNING)) {
-            m_fileMap.insert(std::make_pair(info.filename, lineno));
-        }
-		Frame::Get()->GetOutputPane()->GetErrorsTab()->AppendLine ( lineno );
 	}
 }
 
@@ -648,4 +577,88 @@ wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno, wxMemor
 	}
 
 	return tip ;
+}
+
+void BuildTab::DoProcessLine(const wxString& text, int lineno)
+{
+	LineInfo info;
+	info.linetext = text;
+
+	if ( text.Contains ( BUILD_PROJECT_PREFIX ) ) {
+		// now building the next project
+		wxString prj = text.AfterFirst ( wxT ( '[' ) ).BeforeFirst ( wxT ( ']' ) );
+		info.project       = prj.BeforeFirst ( wxT ( '-' ) ).Trim ( false ).Trim();
+		info.configuration = prj.AfterFirst ( wxT ( '-' ) ).Trim ( false ).Trim();
+		info.linecolor     = wxSCI_LEX_GCC_BUILDING;
+		m_cmp.Reset ( NULL );
+		// need to know the compiler in use for this project to extract
+		// file/line and error/warning status from the text
+		ProjectPtr proj = ManagerST::Get()->GetProject ( info.project );
+		if ( proj ) {
+			ProjectSettingsPtr settings = proj->GetSettings();
+			if ( settings ) {
+				BuildConfigPtr bldConf = settings->GetBuildConfiguration ( info.configuration );
+				if ( !bldConf ) {
+					// no buildconf matching the named conf, so use first buildconf instead
+					ProjectSettingsCookie cookie;
+					bldConf = settings->GetFirstBuildConfiguration ( cookie );
+				}
+				if ( bldConf ) {
+					m_cmp = BuildSettingsConfigST::Get()->GetCompiler ( bldConf->GetCompilerType() );
+				}
+			}
+		} else {
+			// probably custom build with project names incorret
+			// assign the default compiler for this purpose
+			if ( BuildSettingsConfigST::Get()->IsCompilerExist(wxT("gnu g++")) ) {
+				m_cmp = BuildSettingsConfigST::Get()->GetCompiler( wxT("gnu g++") );
+			}
+		}
+	} else if ( !m_lineInfo.empty() ) {
+		// consider this line part of the currently building project
+		info.project       = m_lineInfo.rbegin()->second.project;
+		info.configuration = m_lineInfo.rbegin()->second.configuration;
+	}
+
+	// check for start-of-build or end-of-build messages
+	if ( text.StartsWith ( BUILD_START_MSG ) || text.StartsWith ( BUILD_END_MSG ) ) {
+		info.linecolor = wxSCI_LEX_GCC_BUILDING;
+	}
+
+	if ( info.linecolor == wxSCI_LEX_GCC_BUILDING || !m_cmp ) {
+		// no more line info to get
+	} else {
+		// Find error first
+		bool isError = false;
+		const Compiler::CmpListInfoPattern& errPatterns = m_cmp->GetErrPatterns();
+		Compiler::CmpListInfoPattern::const_iterator itPattern;
+		for (itPattern = errPatterns.begin(); itPattern != errPatterns.end(); ++itPattern) {
+			if ( ExtractLineInfo(info, text, itPattern->pattern, itPattern->fileNameIndex, itPattern->lineNumberIndex)) {
+				info.linecolor = wxSCI_LEX_GCC_ERROR;
+				m_errorCount++;
+				isError = true;
+				break;
+			}
+		}
+		if (!isError) {
+			// If it is not an error, maybe it's a warning
+			const Compiler::CmpListInfoPattern& warnPatterns = m_cmp->GetWarnPatterns();
+			for (itPattern = warnPatterns.begin(); itPattern != warnPatterns.end(); ++itPattern) {
+				if ( ExtractLineInfo(info, text, itPattern->pattern, itPattern->fileNameIndex, itPattern->lineNumberIndex)) {
+					info.linecolor = wxSCI_LEX_GCC_WARNING;
+					m_warnCount++;
+					break;
+				}
+			}
+		}
+	}
+
+	if ( info.linecolor != wxSCI_LEX_GCC_OUTPUT ) {
+		m_lineInfo[lineno] = info;
+		m_lineMap[text] = lineno;
+        if (!info.filename.IsEmpty() && (info.linecolor == wxSCI_LEX_GCC_ERROR || info.linecolor == wxSCI_LEX_GCC_WARNING)) {
+            m_fileMap.insert(std::make_pair(info.filename, lineno));
+        }
+		Frame::Get()->GetOutputPane()->GetErrorsTab()->AppendLine ( lineno );
+	}
 }

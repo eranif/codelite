@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/tokenzr.h>
+#include "workspacesettingsdlg.h"
 #include "importfilesdialog.h"
 #include "fileview.h"
 #include "frame.h"
@@ -64,6 +65,7 @@ FileViewTree::FileViewTree()
 void FileViewTree::ConnectEvents()
 {
 	Connect( XRCID( "local_workspace_prefs" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnLocalPrefs ), NULL, this );
+	Connect( XRCID( "local_workspace_settings" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnLocalWorkspaceSettings ), NULL, this );
 
 	Connect( XRCID( "remove_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRemoveProject ), NULL, this );
 	Connect( XRCID( "set_as_active" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnSetActive ), NULL, this );
@@ -118,6 +120,7 @@ void FileViewTree::ConnectEvents()
 	Connect( XRCID( "preprocess_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "rename_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "generate_makefile" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
+	Connect( XRCID( "local_workspace_settings" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 }
 
 void FileViewTree::OnBuildInProgress( wxUpdateUIEvent &event )
@@ -1831,5 +1834,28 @@ void FileViewTree::OnRebuildProjectOnly(wxCommandEvent& event)
 
 		ManagerST::Get()->PushQueueCommand(info);
 		ManagerST::Get()->ProcessCommandQueue();
+	}
+}
+
+void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
+{
+	bool retagRequires;
+	wxArrayString includePaths, excludePaths;
+	LocalWorkspaceST::Get()->GetParserPaths(includePaths, excludePaths);
+
+	WorkspaceSettingsDlg dlg(Frame::Get(), includePaths, excludePaths);
+	if(dlg.ShowModal() == wxID_OK) {
+		// Update the new paths
+		wxArrayString localIncludePaths = dlg.GetIncludePaths();
+		wxArrayString localExcludePaths = dlg.GetExcludePaths();
+
+		LocalWorkspaceST::Get()->SetParserPaths(localIncludePaths, localExcludePaths);
+		retagRequires = ManagerST::Get()->UpdateParserPaths();
+
+		// send notification to the main frame to perform retag
+		if ( retagRequires ) {
+			wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
+			Frame::Get()->AddPendingEvent( event );
+		}
 	}
 }

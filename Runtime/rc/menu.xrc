@@ -849,6 +849,10 @@
         <object class="wxMenuItem" name="local_workspace_prefs">
             <label>Workspace Editor Preferences...</label>
         </object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="local_workspace_settings">
+            <label>Workspace Settings...</label>
+        </object>
     </object>
 
 	<object class="wxMenu" name="file_tree_file">
@@ -922,11 +926,23 @@
 
 		<object class="wxMenu" name="tags_paths">
 			<label>Tags</label>
-			<object class="wxMenuItem" name="tags_add_include">
-				<label>Add this path to the parser search path</label>
+			<object class="wxMenu" name="global_paths">
+				<label>Global Parser Paths</label>
+				<object class="wxMenuItem" name="tags_add_global_include">
+					<label>Add to include paths</label>
+				</object>
+				<object class="wxMenuItem" name="tags_add_global_exclude">
+					<label>Add to exclude paths</label>
+				</object>
 			</object>
-			<object class="wxMenuItem" name="tags_add_exclude">
-				<label>Add this path to the parser exclude path</label>
+			<object class="wxMenu" name="workspcae_paths">
+				<label>Workspace Parser Paths</label>
+				<object class="wxMenuItem" name="tags_add_workspace_include">
+					<label>Add to include paths</label>
+				</object>
+				<object class="wxMenuItem" name="tags_add_workspace_exclude">
+					<label>Add to exclude paths</label>
+				</object>
 			</object>
 		</object>
 

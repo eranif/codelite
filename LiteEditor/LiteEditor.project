@@ -289,6 +289,10 @@
       <File Name="new_item_base_dlg.cpp"/>
       <File Name="importfilesdialog.cpp"/>
       <File Name="importfilesdialog.h"/>
+      <File Name="workspacesettingsbase.cpp"/>
+      <File Name="workspacesettingsbase.h"/>
+      <File Name="workspacesettingsdlg.h"/>
+      <File Name="workspacesettingsdlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Plugins">
       <File Name="pluginmgrdlg.h"/>
@@ -524,6 +528,7 @@
     <File Name="tagsparsersearchpathsbasedlg.fbp"/>
     <File Name="newquickwatch.fbp"/>
     <File Name="importfilesdialog.fbp"/>
+    <File Name="workspacesettingsbase.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="breakpointsmgr.h"/>

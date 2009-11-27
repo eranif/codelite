@@ -315,6 +315,15 @@ public:
 	* \param projectname the name of the project
 	*/
 	wxXmlNode* GetLocalProjectOptionsNode(const wxString& projectname) const;
+
+	/**
+	 * @brief return the workspace C++ parser specific include + exclude paths
+	 * @param inclduePaths [output]
+	 * @param excludePaths [output]
+	 */
+	void GetParserPaths(wxArrayString &inclduePaths, wxArrayString &excludePaths);
+	void SetParserPaths(const wxArrayString &inclduePaths, const wxArrayString &excludePaths);
+
 };
 
 

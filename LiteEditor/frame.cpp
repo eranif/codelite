@@ -1620,7 +1620,10 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 
 		TagsManagerST::Get()->SetCtagsOptions( m_tagsOptionsData );
 		EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
-		ParseThreadST::Get()->SetSearchPaths( m_tagsOptionsData.GetParserSearchPaths(), m_tagsOptionsData.GetParserExcludePaths() );
+
+		// We use this method 'UpdateParserPaths' since it will also update the parser
+		// thread with any workspace search/exclude paths related
+		ManagerST::Get()->UpdateParserPaths();
 
 		TagsManagerST::Get()->GetDatabase()->SetMaxWorkspaceTagToColour( m_tagsOptionsData.GetMaxItemToColour() );
 

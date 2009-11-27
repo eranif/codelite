@@ -153,6 +153,9 @@ protected:
 	virtual void SortItem(wxTreeItemId &item);
 	virtual void OnRenameVirtualFolder(wxCommandEvent &e);
 	virtual wxTreeItemId ItemByFullPath(const wxString &fullPath);
+	virtual void OnLocalWorkspaceSettings(wxCommandEvent &e);
+
+
 
 	// Tree sorting
 	virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);

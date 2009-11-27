@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "fileexplorertree.h"
+#include "localworkspace.h"
 #include "editor_config.h"
 #include "dirsaver.h"
 #include "manager.h"
@@ -47,17 +48,20 @@ FileExplorerTree::FileExplorerTree(wxWindow *parent, wxWindowID id)
 		, m_itemsAdded(false)
 {
 	m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("file_explorer_menu"));
-	Connect(XRCID("open_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenFile), NULL, this);
-	Connect(XRCID("open_file_in_text_editor"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenFileInTextEditor), NULL, this);
-	Connect(XRCID("refresh_node"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnRefreshNode), NULL, this);
-	Connect(XRCID("delete_node"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnDeleteNode), NULL, this);
-    Connect(XRCID("search_node"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnSearchNode), NULL, this);
-    Connect(XRCID("tags_add_include"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnTagNode), NULL, this);
-    Connect(XRCID("tags_add_exclude"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnTagNode), NULL, this);
-	Connect(XRCID("open_shell"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenShell), NULL, this);
+	Connect(XRCID("open_file"),                     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenFile), NULL, this);
+	Connect(XRCID("open_file_in_text_editor"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenFileInTextEditor), NULL, this);
+	Connect(XRCID("refresh_node"),                  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnRefreshNode), NULL, this);
+	Connect(XRCID("delete_node"),                   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnDeleteNode), NULL, this);
+    Connect(XRCID("search_node"),                   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnSearchNode), NULL, this);
+    Connect(XRCID("tags_add_global_include"),       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnTagNode), NULL, this);
+    Connect(XRCID("tags_add_global_exclude"),       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnTagNode), NULL, this);
+    Connect(XRCID("tags_add_workspace_include"),    wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnTagNode), NULL, this);
+    Connect(XRCID("tags_add_workspace_exclude"),    wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnTagNode), NULL, this);
+	Connect(XRCID("open_shell"),                    wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenShell), NULL, this);
 	Connect(XRCID("open_with_default_application"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenWidthDefaultApp), NULL, this);
-	Connect(GetId(), wxEVT_LEFT_DCLICK, wxMouseEventHandler( FileExplorerTree::OnMouseDblClick ) );
-	Connect(GetId(), wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(FileExplorerTree::OnKeyDown));
+	Connect(GetId(),                                wxEVT_LEFT_DCLICK, wxMouseEventHandler( FileExplorerTree::OnMouseDblClick ) );
+	Connect(GetId(),                                wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(FileExplorerTree::OnKeyDown));
+
 	TagsManagerST::Get()->Connect(wxEVT_UPDATE_FILETREE_EVENT, wxCommandEventHandler(FileExplorerTree::OnTagsUpdated), NULL, this);
 }
 
@@ -144,7 +148,7 @@ void FileExplorerTree::OnTagNode(wxCommandEvent &e)
 			path.RemoveLast();
 		}
 
-		if ( e.GetId() == XRCID("tags_add_include") ) {
+		if ( e.GetId() == XRCID("tags_add_global_include") ) {
 			// add this directory as include path
 			wxArrayString arr = tod.GetParserSearchPaths();
 			if ( arr.Index( path ) == wxNOT_FOUND ) {
@@ -154,13 +158,37 @@ void FileExplorerTree::OnTagNode(wxCommandEvent &e)
 				Frame::Get()->UpdateTagsOptions( tod );
 				retagRequires = true;
 			}
-		} else {
+		} else if ( e.GetId() == XRCID("tags_add_global_exclude") ){
 			wxArrayString arr = tod.GetParserExcludePaths();
 			if ( arr.Index(path) == wxNOT_FOUND ) {
 				arr.Add( path );
 				tod.SetParserExcludePaths( arr );
 
 				Frame::Get()->UpdateTagsOptions( tod );
+				retagRequires = true;
+			}
+		} else if ( e.GetId() == XRCID("tags_add_workspace_include") ){
+			wxArrayString includePaths, excludePaths;
+			LocalWorkspaceST::Get()->GetParserPaths(includePaths, excludePaths);
+
+			if ( includePaths.Index(path) == wxNOT_FOUND ) {
+				includePaths.Add( path );
+				// Write down the new paths
+				LocalWorkspaceST::Get()->SetParserPaths(includePaths, excludePaths);
+				// Update the parser
+				ManagerST::Get()->UpdateParserPaths();
+				retagRequires = true;
+			}
+		} else if ( e.GetId() == XRCID("tags_add_workspace_exclude") ){
+			wxArrayString includePaths, excludePaths;
+			LocalWorkspaceST::Get()->GetParserPaths(includePaths, excludePaths);
+
+			if ( excludePaths.Index(path) == wxNOT_FOUND ) {
+				excludePaths.Add( path );
+				// Write down the new paths
+				LocalWorkspaceST::Get()->SetParserPaths(includePaths, excludePaths);
+				// Update the parser
+				ManagerST::Get()->UpdateParserPaths();
 				retagRequires = true;
 			}
 		}

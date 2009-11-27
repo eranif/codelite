@@ -150,6 +150,13 @@ public:
 	 */
 	FileHistory &GetRecentlyOpenedWorkspacesClass() { return m_recentWorkspaces; }
 
+	/**
+	 * @brief update the C++ parser search / exclude paths with the global paths
+	 * and the workspace specifc ones
+	 * @return true if the paths were modified, false otherwise
+	 */
+	bool UpdateParserPaths();
+
 protected:
 	void DoSetupWorkspace(const wxString &path);
 	void AddToRecentlyOpenedWorkspaces(const wxString &fileName);

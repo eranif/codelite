@@ -283,6 +283,9 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 		}
 	}
 
+	// Update the parser search paths
+	UpdateParserPaths();
+
 	// send an event to the main frame indicating that a re-tag is required
 	// we do this only if the "smart retagging" is on
 	TagsOptionsData tagsopt = TagsManagerST::Get()->GetCtagsOptions();
@@ -325,7 +328,9 @@ void Manager::CloseWorkspace()
 	wxSetWorkingDirectory ( GetStarupDirectory() );
 #endif
 
+	UpdateParserPaths();
 	m_workspceClosing = false;
+
 }
 
 void Manager::AddToRecentlyOpenedWorkspaces ( const wxString &fileName )
@@ -624,7 +629,7 @@ wxFileName Manager::FindFile ( const wxArrayString& files, const wxFileName &fn 
 	if ( fn.IsAbsolute() && !fn.GetFullPath().Contains ( wxT ( ".." ) ) ) {
 		return fn;
 	}
-	
+
 	std::vector<wxFileName> matches;
 	// Try to find a match in the workspace (by comparing full paths)
 	for ( size_t i=0; i< files.GetCount(); i++ ) {
@@ -641,7 +646,7 @@ wxFileName Manager::FindFile ( const wxArrayString& files, const wxFileName &fn 
 			matches.push_back ( tmpFileName );
 		}
 	}
-	
+
 	wxString lastDir;
 	wxArrayString dirs = fn.GetDirs();
 	if ( dirs.GetCount() > 0 ) {
@@ -2884,4 +2889,37 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 			}
 		}
 	}
+}
+
+bool Manager::UpdateParserPaths()
+{
+	wxArrayString localIncludePaths;
+	wxArrayString localExcludePaths;
+
+	// If we have an opened workspace, get its search paths
+	if(IsWorkspaceOpen()) {
+		LocalWorkspaceST::Get()->GetParserPaths(localIncludePaths, localExcludePaths);
+	}
+
+	// Update the parser thread with the new paths
+	wxArrayString uniIncludePath, uniExcludePath;
+	TagsOptionsData tod = Frame::Get()->GetTagsOptions();
+	uniIncludePath = tod.GetParserSearchPaths();
+	uniExcludePath = tod.GetParserExcludePaths();
+
+	// Add new paths to the include path
+	for(size_t i=0; i<localIncludePaths.GetCount(); i++){
+		if(uniIncludePath.Index(localIncludePaths.Item(i)) == wxNOT_FOUND) {
+			uniIncludePath.Add( localIncludePaths.Item(i) );
+		}
+	}
+
+	for(size_t i=0; i<localExcludePaths.GetCount(); i++){
+		if(uniExcludePath.Index(localExcludePaths.Item(i)) == wxNOT_FOUND) {
+			uniExcludePath.Add( localExcludePaths.Item(i) );
+		}
+	}
+
+	ParseThreadST::Get()->SetSearchPaths( uniIncludePath, uniExcludePath );
+	return true;
 }

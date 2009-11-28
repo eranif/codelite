@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : listctrlpanel.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : listctrlpanel.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "listctrlpanel.h"
@@ -39,11 +39,11 @@ ListCtrlPanel::ListCtrlPanel ( wxWindow* parent )
 	imageList->Add(currLevel);
 	m_listCtrl->AssignImageList(imageList.release(), wxIMAGE_LIST_SMALL);
 
-	m_listCtrl->InsertColumn ( 0, wxT("Level")		);
-	m_listCtrl->InsertColumn ( 1, wxT("Address")	);
-	m_listCtrl->InsertColumn ( 2, wxT("Function")	);
-	m_listCtrl->InsertColumn ( 3, wxT("File")		);
-	m_listCtrl->InsertColumn ( 4, wxT("Line")		);
+	m_listCtrl->InsertColumn ( 0, wxT("Level")   );
+	m_listCtrl->InsertColumn ( 1, wxT("Address") );
+	m_listCtrl->InsertColumn ( 2, wxT("Function"));
+	m_listCtrl->InsertColumn ( 3, wxT("File")    );
+	m_listCtrl->InsertColumn ( 4, wxT("Line")    );
 }
 
 void ListCtrlPanel::OnItemActivated ( wxListEvent& event )
@@ -122,6 +122,30 @@ wxString ListCtrlPanel::GetColumnText(long index, long column)
 void ListCtrlPanel::SetCurrentLevel(const int level)
 {
 	// Set m_currLevel to level, or 0 if level is out of bounds
-	m_currLevel = 
-				(level >=0 && level < m_listCtrl->GetItemCount()) ? level : 0;
+	m_currLevel = (level >=0 && level < m_listCtrl->GetItemCount()) ? level : 0;
+}
+
+void ListCtrlPanel::OnItemRightClicked(wxListEvent& event)
+{
+	// Popup the menu
+	wxMenu menu;
+
+	menu.Append(XRCID("stack_copy_backtrace"),  wxT("Copy Backtrace to Clipboard"));
+	menu.Connect(XRCID("stack_copy_backtrace"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(ListCtrlPanel::OnCopyBacktrace), NULL, this);
+	m_listCtrl->PopupMenu( &menu );
+}
+
+void ListCtrlPanel::OnCopyBacktrace(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	wxString trace;
+	for(int i=0; i<m_listCtrl->GetItemCount(); i++) {
+		trace << ::GetColumnText(m_listCtrl, i, 0) << wxT("  ")
+			  << ::GetColumnText(m_listCtrl, i, 1) << wxT("  ")
+			  << ::GetColumnText(m_listCtrl, i, 2) << wxT("  ")
+			  << ::GetColumnText(m_listCtrl, i, 3) << wxT("  ")
+			  << ::GetColumnText(m_listCtrl, i, 4) << wxT("\n");
+	}
+	trace.RemoveLast();
+	CopyToClipboard( trace );
 }

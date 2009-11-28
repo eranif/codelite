@@ -39,6 +39,8 @@ class ListCtrlPanel : public ListCtrlPanelBase
 protected:
 	// Handlers for ListCtrlPanelBase events.
 	void OnItemActivated( wxListEvent& event );
+	void OnItemRightClicked(wxListEvent& event);
+	void OnCopyBacktrace(wxCommandEvent &event);
 	void SetColumnText ( long indx, long column, const wxString &rText );
 	wxString GetColumnText(long index, long column);
 

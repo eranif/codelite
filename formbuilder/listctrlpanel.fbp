@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <wxFormBuilder_Project>
-    <FileVersion major="1" minor="8" />
+    <FileVersion major="1" minor="10" />
     <object class="Project" expanded="1">
-        <property name="bitmaps"></property>
         <property name="class_decoration"></property>
         <property name="code_generation">C++</property>
+        <property name="disconnect_events">1</property>
+        <property name="disconnect_mode">source_name</property>
+        <property name="disconnect_python_events">0</property>
         <property name="encoding">UTF-8</property>
         <property name="event_generation">connect</property>
         <property name="file">listctrlpanelbase</property>
         <property name="first_id">1000</property>
         <property name="help_provider">none</property>
-        <property name="icons"></property>
         <property name="internationalize">0</property>
         <property name="name">ListCtrlPanel</property>
         <property name="namespace"></property>
         <property name="path">../LiteEditor</property>
         <property name="precompiled_header"></property>
         <property name="relative_path">1</property>
+        <property name="skip_python_events">1</property>
         <property name="use_enum">0</property>
         <property name="use_microsoft_bom">0</property>
         <object class="Panel" expanded="1">
             <property name="bg"></property>
             <property name="context_help"></property>
             <property name="enabled">1</property>
+            <property name="event_handler">impl_virtual</property>
             <property name="fg"></property>
             <property name="font"></property>
             <property name="hidden">0</property>
@@ -34,6 +37,10 @@
             <property name="size">500,300</property>
             <property name="subclass"></property>
             <property name="tooltip"></property>
+            <property name="validator_data_type"></property>
+            <property name="validator_style">wxFILTER_NONE</property>
+            <property name="validator_type">wxDefaultValidator</property>
+            <property name="validator_variable"></property>
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
             <property name="window_style">wxTAB_TRAVERSAL</property>
@@ -87,6 +94,10 @@
                         <property name="style">wxLC_REPORT|wxLC_SINGLE_SEL</property>
                         <property name="subclass"></property>
                         <property name="tooltip"></property>
+                        <property name="validator_data_type"></property>
+                        <property name="validator_style">wxFILTER_NONE</property>
+                        <property name="validator_type">wxDefaultValidator</property>
+                        <property name="validator_variable"></property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
                         <property name="window_style"></property>
@@ -117,7 +128,7 @@
                         <event name="OnListItemDeselected"></event>
                         <event name="OnListItemFocused"></event>
                         <event name="OnListItemMiddleClick"></event>
-                        <event name="OnListItemRightClick"></event>
+                        <event name="OnListItemRightClick">OnItemRightClicked</event>
                         <event name="OnListItemSelected"></event>
                         <event name="OnListKeyDown"></event>
                         <event name="OnMiddleDClick"></event>

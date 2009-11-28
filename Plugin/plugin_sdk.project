@@ -60,6 +60,7 @@
     <File Name="dynamiclibrary.cpp"/>
     <File Name="conffilelocator.cpp"/>
     <File Name="conffilelocator.h"/>
+    <File Name="string_client_data.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Builders">
     <File Name="builder.h"/>

@@ -3,7 +3,7 @@
 procs=`ps --ppid $1 | grep -v PID | awk '{print $1;}'`
 for p in $procs
 do
-	kill -9 $p
+	kill -9 $p 2> /dev/null
 done
-kill -9 $1
+kill -9 $1 2> /dev/null
 

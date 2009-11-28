@@ -1002,3 +1002,8 @@ void myDragImage::OnEndDrag(wxMouseEvent& event)
 		ManagerST::Get()->GetBreakpointsMgr()->DropBreakpoint(lineBPs, newline);
 	}
 }
+
+void BreakptMgr::RefreshBreakpointsForEditor(LEditor* editor)
+{
+	DoRefreshFileBreakpoints( editor );
+}

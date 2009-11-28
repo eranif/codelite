@@ -221,6 +221,16 @@ void DisplayVariableDlg::OnMouseEnterWindow(wxMouseEvent& e)
 void DisplayVariableDlg::OnTimer(wxTimerEvent& e)
 {
 	if( m_leftWindow ) {
+		wxMouseState state = wxGetMouseState();
+		// This is to fix a 'MouseCapture' bug on Linux while leaving the mouse Window
+		// and mouse button is clicked and scrolling the scrollbar (H or Vertical)
+		// The UI hangs
+		if(state.LeftDown()) {
+			// Don't Hide, just restart the timer
+			m_timer->Start(500, true);
+			return;
+		}
+
 		// The wxEVT_LEAVE_WINDOW event happened when the mouse leaves the *client* area
 		// That makes it impossible to resize the dialog, or even to use the scrollbar
 		// So test if we're still inside the NC area + a bit to spare

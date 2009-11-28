@@ -114,6 +114,11 @@ public:
 		Clear();
 	}
 
+	/**
+	 * @brief refresh the breakpoints marker for a given editor
+	 * @param editor
+	 */
+	void RefreshBreakpointsForEditor(LEditor* editor);
 
 	/**
 	 * Refresh all line-type breakpoint markers in all editors

@@ -2014,6 +2014,15 @@ void LEditor::ReloadFile()
 	Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("editor"));
 
 	SetReloadingFile( false );
+
+//	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+//	if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
+//		// Trigger a break list command, which in turn
+//		// will reply with a complete list of breakpoints and will cause
+//		// codelite to refresh the breakpoints on this editor (as well as
+//		// on all open editors)
+//		dbgr->BreakList();
+//	}
 }
 
 void LEditor::SetEditorText(const wxString &text)

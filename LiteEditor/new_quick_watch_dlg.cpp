@@ -1,7 +1,13 @@
+#include <wx/xrc/xmlres.h>
+#include "simpletable.h"
+#include "frame.h"
 #include "new_quick_watch_dlg.h"
+#include <wx/menu.h>
 #include <wx/timer.h>
 #include "windowattrmanager.h"
 #include "debuggerobserver.h"
+#include <wx/log.h>
+#include "globals.h"
 
 #define TIPTIMERID 34347
 
@@ -228,3 +234,90 @@ void DisplayVariableDlg::OnTimer(wxTimerEvent& e)
 		}
 	}
 }
+
+void DisplayVariableDlg::OnItemMenu(wxTreeEvent& event)
+{
+	event.Skip();
+	wxTreeItemId item = event.GetItem();
+
+	if(item.IsOk())
+		m_treeCtrl->SelectItem(item);
+
+	// Dont show popup menu for fake nodes
+	if (IsFakeItem(item) )
+		return;
+
+	// Popup the menu
+	wxMenu menu;
+
+	menu.Append(XRCID("tip_add_watch"),  wxT("Add Watch"));
+	menu.Append(XRCID("tip_copy_value"), wxT("Copy Value to Clipboard"));
+
+	menu.Connect(XRCID("tip_add_watch"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection), NULL, this);
+	menu.Connect(XRCID("tip_copy_value"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection), NULL, this);
+
+	m_treeCtrl->PopupMenu( &menu );
+}
+
+wxString DisplayVariableDlg::DoGetItemPath(const wxTreeItemId& treeItem)
+{
+	wxString fullpath;
+	wxTreeItemId item = treeItem;
+	while ( item.IsOk() ) {
+		wxString text = m_treeCtrl->GetItemText(item);
+		text = text.BeforeFirst(wxT('='));
+		text.Trim().Trim(false);
+
+		if ( item != m_treeCtrl->GetRootItem() ) {
+			if ( IsFakeItem(item) == false ) {
+				text.Prepend(wxT("."));
+				fullpath.Prepend(text);
+			}
+		} else {
+			// Root item
+			fullpath.Prepend(text);
+		}
+
+		// Are we at root yet?
+		if ( m_treeCtrl->GetRootItem() == item )
+			break;
+
+		item = m_treeCtrl->GetItemParent(item);
+	}
+	return fullpath;
+}
+
+bool DisplayVariableDlg::IsFakeItem(const wxTreeItemId& item)
+{
+	if ( item.IsOk() == false ) return true; // fake
+
+	if ( item != m_treeCtrl->GetRootItem() ) {
+		QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(item);
+		if( data )
+			return data->_voc.isAFake;
+
+		return false;
+
+	} else {
+		return false;
+	}
+}
+
+void DisplayVariableDlg::OnMenuSelection(wxCommandEvent& e)
+{
+	wxTreeItemId item = m_treeCtrl->GetSelection();
+	if(item.IsOk() && !IsFakeItem(item)) {
+		if(e.GetId() == XRCID("tip_add_watch")) {
+			wxString fullpath = DoGetItemPath(item);
+			Frame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(fullpath);
+			Frame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
+			Frame::Get()->GetDebuggerPane()->GetWatchesTable()->RefreshValues();
+
+		} else if (e.GetId() == XRCID("tip_copy_value")) {
+			wxString itemText = m_treeCtrl->GetItemText(item);
+			itemText = itemText.AfterFirst(wxT('='));
+			CopyToClipboard( itemText );
+		}
+	}
+}
+

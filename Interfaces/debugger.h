@@ -79,8 +79,8 @@ struct VariableObjChild {
 	wxString varName;      // the name of the variable object node
 	wxString gdbId;        // A unique name given by gdb which holds this node information for further queries
 	wxString value;
-
-	VariableObjChild() : numChilds(0) {}
+	bool     isAFake;      // Sets to true of this variable object is a fake node
+	VariableObjChild() : numChilds(0), isAFake(false) {}
 };
 
 struct VariableObject {

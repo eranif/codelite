@@ -1022,6 +1022,13 @@ static VariableObjChild FromParserOutput(const std::map<std::string, std::string
 {
 	VariableObjChild child;
 	std::map<std::string, std::string >::const_iterator iter;
+	wxString type;
+
+	iter = attr.find("type");
+	if ( iter != attr.end() ) {
+		type = wxString(iter->second.c_str(), wxConvUTF8);
+		wxRemoveQuotes( type );
+	}
 
 	iter = attr.find("name");
 	if ( iter != attr.end() ) {
@@ -1034,6 +1041,15 @@ static VariableObjChild FromParserOutput(const std::map<std::string, std::string
 	if ( iter != attr.end() ) {
 		child.varName = wxString(iter->second.c_str(), wxConvUTF8);
 		wxRemoveQuotes( child.varName );
+
+		// type == exp -> a fake node
+		if ( type == child.varName ) {
+			child.isAFake = true;
+
+		} else if ( child.varName == wxT("pubilc") || child.varName == wxT("private") || child.varName == wxT("protected") ) {
+			child.isAFake = true;
+
+		}
 	}
 
 	iter = attr.find("numchild");

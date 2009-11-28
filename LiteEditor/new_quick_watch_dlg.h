@@ -24,6 +24,12 @@ public:
 	wxString                         m_variableName;
 	wxTimer*                         m_timer;
 	bool                             m_leftWindow;
+	wxString                         m_fullpath;
+
+protected:
+	bool     IsFakeItem(const wxTreeItemId &item);
+	wxString DoGetItemPath(const wxTreeItemId &item);
+
 protected:
 	// Handlers for NewQuickWatch events.
 	void OnExpandItem  ( wxTreeEvent& event );
@@ -37,7 +43,10 @@ protected:
 	void OnMouseLeaveWindow(wxMouseEvent &e);
 	void OnMouseEnterWindow(wxMouseEvent &e);
 	void OnTimer(wxTimerEvent &e);
+	void OnItemMenu(wxTreeEvent& event);
+	void OnMenuSelection(wxCommandEvent &e);
 	DECLARE_EVENT_TABLE()
+
 public:
 	/** Constructor */
 	DisplayVariableDlg( wxWindow* parent);

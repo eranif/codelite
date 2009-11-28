@@ -2869,12 +2869,14 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 	if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
 		GetDisplayVariableDialog()->m_mainVariableObject = event.m_variableObject.gdbId;
 		GetDisplayVariableDialog()->m_variableName       = event.m_expression;
-		if ( event.m_variableObject.typeName.IsEmpty() == false ) {
-			GetDisplayVariableDialog()->m_variableName << wxT(" (") << event.m_variableObject.typeName << wxT(") ");
-		}
 		if ( event.m_evaluated.IsEmpty() == false ) {
 			GetDisplayVariableDialog()->m_variableName << wxT(" = ") << event.m_evaluated;
 		}
+
+		if ( event.m_variableObject.typeName.IsEmpty() == false ) {
+			GetDisplayVariableDialog()->m_variableName << wxT(" [") << event.m_variableObject.typeName << wxT("] ");
+		}
+
 		if ( event.m_variableObject.numChilds > 0 ) {
 			// Complex type
 			dbgr->ListChildren(event.m_variableObject.gdbId, event.m_userReason);

@@ -257,23 +257,22 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 			   ) {
 				// assertion caught
 				m_observer->UpdateGotControl(DBG_BP_ASSERTION_HIT);
-			} else {
-				m_observer->UpdateGotControl(DBG_BP_HIT);
-			}
-		} else {
-			// Notify the container that we got control back from debugger
-			m_observer->UpdateGotControl(DBG_BP_HIT);
-			// Now discover which bp was hit. Fortunately, that's in the next token: bkptno="12"
-			// Except that it no longer is in gdb 7.0. It's now: ..disp="keep",bkptno="12". So:
-			static wxRegEx reGetBreakNo(wxT("bkptno=\"([0-9]+)\""));
-			if (reGetBreakNo.Matches(line)) {
-				wxString number = reGetBreakNo.GetMatch(line, 1);
-				long id;
-				if (number.ToLong(&id)) {
-					m_observer->UpdateBpHit((int)id);
-				}
 			}
 		}
+
+		// Notify the container that we got control back from debugger
+		m_observer->UpdateGotControl(DBG_BP_HIT);
+		// Now discover which bp was hit. Fortunately, that's in the next token: bkptno="12"
+		// Except that it no longer is in gdb 7.0. It's now: ..disp="keep",bkptno="12". So:
+		static wxRegEx reGetBreakNo(wxT("bkptno=\"([0-9]+)\""));
+		if (reGetBreakNo.Matches(line)) {
+			wxString number = reGetBreakNo.GetMatch(line, 1);
+			long id;
+			if (number.ToLong(&id)) {
+				m_observer->UpdateBpHit((int)id);
+			}
+		}
+
 
 	} else if (reason == wxT("signal-received")) {
 		//got signal
@@ -737,69 +736,71 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
 {
 	wxString dbg_output( line );
 	std::vector<BreakpointInfo> li;
-	if (dbg_output.Find(wxT("body=[]")) != wxNOT_FOUND) {
-		// No breakpoints. This will happen when the only bp had been a temporary one, now deleted
-		// So reconcile with the empty vector, to remove that bp from the manager/editor
-		m_observer->ReconcileBreakpoints(li);
-		return true;
-	}
+	std::vector<std::map<std::string, std::string> > children;
+	gdbParseListChildren(dbg_output.mb_str(wxConvUTF8).data(), children);
 
-	dbg_output.Replace(wxT("\""), wxT(""));
-	dbg_output.Replace(wxT("\\"), wxT(""));
+	// Children is a vector of map of attribues.
+	// Each map represents an information about a breakpoint
+	// the way gdb sees it
+	for(size_t i=0; i<children.size(); i++) {
+		BreakpointInfo breakpoint;
+		std::map<std::string, std::string> attr = children.at(i);
+		std::map<std::string, std::string >::const_iterator iter;
 
-	// We've got a string containing the -break-list output. Extract the data for each bp
-	// We only need to know the following:
-	// Does the breakpoint still exist? (or was it temporary, now deleted; or a watchpoint now out of scope)
-	// Is it (still) ignored? It might have been, but now the ignore-count has dec.ed to 0
-	// So, having stripped the quotes and escapes, we're looking for bkpt={number=14 ..... ,ignore=1...
-	static wxRegEx reNumber(wxT("number=([0-9]+)"));
-	static wxRegEx reIgnore(wxT("ignore=([0-9]+)"));
-
-	wxArrayString breakarray;
-	int offset;
-	// Split the list into individual breakpoints, then parse each one
-	if ((offset = dbg_output.Find(wxT("number="))) == wxNOT_FOUND) {
-		return true;
-	}
-	dbg_output = dbg_output.Mid(offset);
-	do {
-		size_t next = dbg_output.find(wxT("number="), 7);
-		wxString breakpt(dbg_output);
-		if (next != wxString::npos) {
-			breakpt = dbg_output.Left(next);
+		iter = attr.find("file");
+		if ( iter != attr.end() ) {
+			breakpoint.file = wxString(iter->second.c_str(), wxConvUTF8);
+			wxRemoveQuotes( breakpoint.file );
 		}
-		breakarray.Add(breakpt);
-		dbg_output = dbg_output.Mid(breakpt.Len());
-	} while (dbg_output.Find(wxT("number=")) != wxNOT_FOUND);
 
-	for (size_t n=0; n < breakarray.GetCount(); ++n) {
-		wxString breakpt = breakarray[n];
-		if (! reNumber.Matches(breakpt)) {
-			continue;
+		iter = attr.find("fullname");
+		if ( iter != attr.end() ) {
+			breakpoint.file = wxString(iter->second.c_str(), wxConvUTF8);
+			wxRemoveQuotes( breakpoint.file );
 		}
-		BreakpointInfo bp;
-		wxString id = reNumber.GetMatch(breakpt, 1);
-		long l;
-		if (! id.ToLong(&l)) {
-			continue;	// Syntax error :/
-		}
-		bp.debugger_id = (int)l;
 
-		// That section should always have worked. This one will only match for ignored breakpoints
-		if (reIgnore.Matches(breakpt)) {
-			wxString id = reIgnore.GetMatch(breakpt, 1);
-			long l;
-			if (id.ToLong(&l)) {
-				bp.ignore_number = (int)l;
+		iter = attr.find("at");
+		if ( iter != attr.end() ) {
+			breakpoint.at = wxString(iter->second.c_str(), wxConvUTF8);
+			wxRemoveQuotes( breakpoint.at );
+		}
+
+		// If we got fullname, use it instead of 'file'
+		iter = attr.find("line");
+		if ( iter != attr.end() ) {
+			if ( iter->second.empty() == false ) {
+				wxString lineNumber (iter->second.c_str(), wxConvUTF8);
+				wxRemoveQuotes( lineNumber );
+				breakpoint.lineno = wxAtoi(lineNumber);
 			}
 		}
 
-		li.push_back(bp);
+		// get the 'ignore' attribute
+		iter = attr.find("ignore");
+		if ( iter != attr.end() ) {
+			if ( iter->second.empty() == false ) {
+				wxString ignore (iter->second.c_str(), wxConvUTF8);
+				wxRemoveQuotes( ignore );
+				breakpoint.ignore_number = wxAtoi(ignore);
+			}
+		}
+
+		// breakpoint ID
+		iter = attr.find("number");
+		if ( iter != attr.end() ) {
+			if ( iter->second.empty() == false ) {
+				wxString bpId (iter->second.c_str(), wxConvUTF8);
+				wxRemoveQuotes( bpId );
+				breakpoint.debugger_id = wxAtoi(bpId);
+			}
+		}
+		li.push_back( breakpoint );
 	}
 
 	// We now have a vector of bps, each containing its debugger_id and ignore-count.
 	// Pass the vector to the breakpoints manager to be reconciled
-	m_observer->ReconcileBreakpoints(li);
+	if( li.empty() == false )
+		m_observer->ReconcileBreakpoints(li);
 	return true;
 }
 

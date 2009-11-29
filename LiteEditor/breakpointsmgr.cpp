@@ -48,6 +48,12 @@ bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, c
 
 bool BreakptMgr::AddBreakpoint(const BreakpointInfo &bp)
 {
+	if(bp.file.IsEmpty() && bp.function_name.IsEmpty() && bp.memory_address != wxNOT_FOUND) {
+		// no function nor file?
+		// do nothing then
+		return true;
+	}
+
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
 		// If the debugger is already running, tell it we want a new bp
@@ -634,14 +640,16 @@ void BreakptMgr::ReconcileBreakpoints(const std::vector<BreakpointInfo>& li)
 	for (; li_iter != li.end(); ++li_iter) {
 		int index = FindBreakpointById(li_iter->debugger_id, m_bps);
 		if (index == wxNOT_FOUND) {
-			continue; // Shouldn't happen
+			updated_bps.push_back(*li_iter);
+
+		} else {
+			// We've match the debugger_id from -break-list with a bp
+			// Update the ignore-count, then store it in a new vector
+			BreakpointInfo bp = m_bps.at(index);
+			bp.ignore_number = li_iter->ignore_number;
+			SetBestBPType(bp);	// as this might have just changed
+			updated_bps.push_back(bp);
 		}
-		// We've match the debugger_id from -break-list with a bp
-		// Update the ignore-count, then store it in a new vector
-		BreakpointInfo bp = m_bps.at(index);
-		bp.ignore_number = li_iter->ignore_number;
-		SetBestBPType(bp);	// as this might have just changed
-		updated_bps.push_back(bp);
 	}
 	// All the still-existing bps have been added to updated_bps
 	// So throw away m_bps (which will contain stale bps) and replace with the new vector
@@ -916,6 +924,7 @@ void BreakptMgr::LoadSession(const SessionEntry& session)
 		bp.internal_id = GetNextID();
 		AddBreakpoint(bp);
 	}
+	RefreshBreakpointMarkers();
 }
 
 void BreakptMgr::DragBreakpoint(LEditor* editor, int line, wxBitmap bitmap)

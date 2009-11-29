@@ -330,16 +330,37 @@ void MainBook::GetAllEditors(std::vector<LEditor*> &editors)
 
 LEditor *MainBook::FindEditor(const wxString &fileName)
 {
+	wxString unixStyleFile(fileName);
+#ifdef __WXMSW__
+	unixStyleFile.Replace(wxT("\\"), wxT("/"));
+#endif
+
 	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
-		if (editor && editor->GetFileName().GetFullPath().CmpNoCase(fileName) == 0)
-			return editor;
+		if (editor) {
+			wxString unixStyleFile(editor->GetFileName().GetFullPath());
+			wxString nativeFile   (editor->GetFileName().GetFullPath());
+#ifdef __WXMSW__
+			unixStyleFile.Replace(wxT("\\"), wxT("/"));
+#endif
+			if(nativeFile.CmpNoCase(fileName) == 0 || unixStyleFile.CmpNoCase(fileName) == 0) {
+				return editor;
+			}
+		}
 	}
 
 	for (std::set<wxWindow*>::iterator i = m_detachedTabs.begin(); i != m_detachedTabs.end(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(*i);
-		if (editor && editor->GetFileName().GetFullPath().CmpNoCase(fileName) == 0)
-			return editor;
+		if (editor) {
+			wxString unixStyleFile(editor->GetFileName().GetFullPath());
+			wxString nativeFile   (editor->GetFileName().GetFullPath());
+#ifdef __WXMSW__
+			unixStyleFile.Replace(wxT("\\"), wxT("/"));
+#endif
+			if(nativeFile.CmpNoCase(fileName) == 0 || unixStyleFile.CmpNoCase(fileName) == 0) {
+				return editor;
+			}
+		}
 	}
 	return NULL;
 }

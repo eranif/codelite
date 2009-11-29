@@ -300,11 +300,11 @@ bool DbgGdb::Stop()
 		delete m_gdbProcess;
 		m_gdbProcess = NULL;
 	}
-	
+
 //	if ( m_debuggeePid != wxNOT_FOUND ) {
 //		wxKill(m_debuggeePid, wxSIGKILL);
 //	}
-	
+
 	//free allocated console for this session
 	m_consoleFinder.FreeConsole();
 
@@ -434,17 +434,6 @@ bool DbgGdb::SetIgnoreLevel(const int bid, const int ignorecount)
 	wxString command(wxT("-break-after "));
 	command << bid << wxT(" ") << ignorecount;
 	return WriteCommand(command, NULL);
-
-//	wxString dbg_output;
-//	if (ExecSyncCmd(command, dbg_output)) {
-//		// If successful, the only output is ^done, so assume that means it worked
-//		if (dbg_output.Find(wxT("^done")) != wxNOT_FOUND) {
-//			m_observer->UpdateAddLine(wxString::Format(wxT("Set ignore-count %d for breakpoint %d"), ignorecount, bid));
-//			return true;
-//		}
-//	}
-//
-//	return false;
 }
 
 bool DbgGdb::SetEnabledState(const int bid, const bool enable)
@@ -459,17 +448,6 @@ bool DbgGdb::SetEnabledState(const int bid, const bool enable)
 	}
 	command << bid;
 	return WriteCommand(command, NULL);
-//
-//	wxString dbg_output;
-//	if (ExecSyncCmd(command, dbg_output)) {
-//		// If successful, the only output is ^done, so assume that means it worked
-//		if (dbg_output.Find(wxT("^done")) != wxNOT_FOUND) {
-//			m_observer->UpdateAddLine(wxString::Format(wxT("Breakpoint %d %s"), bid, enable ? wxT("enabled"):wxT("disabled")));
-//			return true;
-//		}
-//	}
-//
-//	return false;
 }
 
 bool DbgGdb::SetCondition(const BreakpointInfo& bp)

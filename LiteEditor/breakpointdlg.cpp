@@ -172,7 +172,7 @@ void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
 	ClearAll();
 	const wxChar* column_headers[] =
 		{ wxT("ID"), wxT("Breakpoint Type"), wxT("Enabled"), wxT("File"),
-			wxT("Line"), wxT("Function"), wxT("Memory"), wxT("Ignored"), wxT("Extras")
+			wxT("Line"), wxT("Function"), wxT("At"), wxT("Memory"), wxT("Ignored"), wxT("Extras")
 		};
 	for (int n=col_id; n <= col_extras;++n) {
 		InsertColumn(n, column_headers[n]);
@@ -198,6 +198,7 @@ void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
 			disabled = wxT("disabled");
 		}
 		SetColumnText(this, item, col_enabled, disabled, wxNOT_FOUND);
+		SetColumnText(this, item, col_at,      iter->at, wxNOT_FOUND);
 
 		// A breakpoint will have either a file/lineno or a function-name (e.g.main(), or a memory address)
 		// A watchpoint will have watchpt_data (the variable it's watching). Display that in the 'Function' col

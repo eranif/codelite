@@ -2014,7 +2014,7 @@ void LEditor::ReloadFile()
 	Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("editor"));
 
 	SetReloadingFile( false );
-
+	ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(this);
 //	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 //	if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
 //		// Trigger a break list command, which in turn

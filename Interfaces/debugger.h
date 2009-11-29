@@ -129,6 +129,7 @@ public:
 	enum WP_type           watchpoint_type;	// If this is a watchpoint, holds which sort it is
 	wxString               commandlist;
 	wxString               conditions;
+	wxString               at;
 
 	BreakpointInfo(const BreakpointInfo& BI ):
 			file(BI.file),
@@ -145,11 +146,12 @@ public:
 			is_temp (BI.is_temp),
 			watchpoint_type(BI.watchpoint_type),
 			commandlist(BI.commandlist),
-			conditions(BI.conditions) {
+			conditions(BI.conditions),
+			at(BI.at) {
 	}
 
 	BreakpointInfo() : lineno(-1), regex(false), memory_address(-1), debugger_id(-1), bp_type(BP_type_break),
-			ignore_number(0), is_enabled(true), is_temp(false), watchpoint_type(WP_watch)	{}
+			ignore_number(0), is_enabled(true), is_temp(false), watchpoint_type(WP_watch) {}
 
 //	BreakpointInfo(const BreakpointInfo& BI ) {
 //		*this = BI;
@@ -201,11 +203,12 @@ public:
 		watchpoint_type  = BI.watchpoint_type;
 		commandlist      = BI.commandlist;
 		conditions       = BI.conditions;
+		at               = BI.at;
 		return *this;
 	}
 
 	bool operator==(const BreakpointInfo& BI) {
-		return ((file == BI.file) && (lineno == BI.lineno) && (function_name == BI.function_name) && (memory_address == BI.memory_address)
+		return ((at == BI.at) && (file == BI.file) && (lineno == BI.lineno) && (function_name == BI.function_name) && (memory_address == BI.memory_address)
 		        && (bp_type == BI.bp_type) &&  (watchpt_data == BI.watchpt_data)&& (is_enabled == BI.is_enabled)
 		        && (ignore_number == BI.ignore_number) && (conditions == BI.conditions) && (commandlist == BI.commandlist) && (is_temp == BI.is_temp)
 		        && (bp_type==BP_type_watchpt ? (watchpoint_type == BI.watchpoint_type) : true) && (!function_name.IsEmpty() ? (regex == BI.regex) : true));
@@ -222,9 +225,7 @@ protected:
 		arch.Write(wxT("watchpoint_type"), watchpoint_type);
 		arch.Write(wxT("watchpt_data"), watchpt_data);
 		// WriteCDate tends to write white-space even for empty commandlists
-		if (!commandlist.IsEmpty()) {
-		arch.WriteCData(wxT("commandlist"), commandlist);
-		}
+		arch.WriteCData(wxT("commandlist"), commandlist.Trim().Trim(false));
 		arch.Write(wxT("regex"), regex);
 		arch.Write(wxT("is_temp"), is_temp);
 		arch.Write(wxT("is_enabled"), is_enabled);

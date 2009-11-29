@@ -3195,7 +3195,7 @@ void LEditor::OnChange(wxScintillaEvent& event)
 	if (event.GetModificationType() & wxSCI_MOD_INSERTTEXT || event.GetModificationType() & wxSCI_MOD_DELETETEXT) {
 
 		int numlines(event.GetLinesAdded());
-		if ( numlines ) {
+		if ( numlines && GetReloadingFile() == false) {
 			// a line was added / removed from the document, synchronized between the breakpoints on this editor
 			// and the breakpoint manager
 			UpdateBreakpoints();

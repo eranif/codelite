@@ -1050,6 +1050,8 @@ static VariableObjChild FromParserOutput(const std::map<std::string, std::string
 		} else if ( child.varName == wxT("pubilc") || child.varName == wxT("private") || child.varName == wxT("protected") ) {
 			child.isAFake = true;
 
+		} else if ( type.Contains(wxT("class ")) || type.Contains(wxT("struct "))) {
+			child.isAFake = true;
 		}
 	}
 

@@ -171,7 +171,7 @@ bool UnixProcessImpl::Read(wxString& buff)
 		return true;
 	} else if ( rc > 0 ) {
 		// there is something to read
-		char buffer[2048]; // our read buffer
+		char buffer[1024*64]; // our read buffer
 		memset(buffer, 0, sizeof(buffer));
 		if(read(GetReadHandle(), buffer, sizeof(buffer)) > 0) {
 			buff.Empty();

@@ -1083,8 +1083,12 @@ void DbgGdb::OnDataRead(wxCommandEvent& e)
 {
 	// Data arrived from the debugger
 	ProcessEventData *ped = (ProcessEventData *)e.GetClientData();
-	wxArrayString lines = wxStringTokenize(ped->GetData(), wxT("\n"), wxTOKEN_STRTOK);
+	 
+	wxString bufferRead;
+	bufferRead << ped->GetData();
+	delete ped;
 
+	wxArrayString lines = wxStringTokenize(bufferRead, wxT("\n"), wxTOKEN_STRTOK);
 	for(size_t i=0; i<lines.GetCount(); i++) {
 		wxString line = lines.Item(i);
 		line.Replace(wxT("(gdb)"), wxT(""));
@@ -1094,7 +1098,6 @@ void DbgGdb::OnDataRead(wxCommandEvent& e)
 			//wxPrintf(wxT("Debugger: %s\n"), line.c_str());
 		}
 	}
-	delete ped;
 
 	if ( m_gdbOutputArr.IsEmpty() == false ) {
 		// Trigger GDB processing

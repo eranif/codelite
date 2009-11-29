@@ -228,9 +228,8 @@ void BreakptMgr::DoRefreshFileBreakpoints(LEditor* editor)
 {
 	// Load the file's line-type bps into fi, and make a set of their line-numbers
 	std::multimap<int, BreakpointInfo> bps;
-	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
-	for (; iter != m_bps.end(); ++iter) {
-		BreakpointInfo b = *iter;
+	for(size_t i=0; i<m_bps.size(); i++) {
+		BreakpointInfo b = m_bps.at(i);
 		if ((editor->GetFileName() == b.file) && (b.lineno != -1)) {
 			bps.insert(std::pair<int, BreakpointInfo>(b.lineno, b));
 		}
@@ -308,11 +307,9 @@ void BreakptMgr::DoProvideBestBP_Type(LEditor* editor, const std::vector<Breakpo
 // Invalidates each debugger_id
 void BreakptMgr::ClearBP_debugger_ids()
 {
-	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
-	for (; iter != m_bps.end(); iter++) {
-		BreakpointInfo bp = *iter;
+	for (size_t i=0; i<m_bps.size(); i++) {
+		BreakpointInfo &bp = m_bps.at(i);
 		bp.debugger_id = -1;
-		*iter = bp;
 	}
 }
 
@@ -320,11 +317,9 @@ void BreakptMgr::ClearBP_debugger_ids()
 // That way they're guaranteed all to be enabled when it starts again
 void BreakptMgr::UnDisableAllBreakpoints()
 {
-	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
-	for (; iter != m_bps.end(); iter++) {
-		BreakpointInfo bp = *iter;
+	for (size_t i=0; i<m_bps.size(); i++) {
+		BreakpointInfo &bp = m_bps.at(i);
 		bp.is_enabled = true;
-		*iter = bp;
 	}
 
 	RefreshBreakpointMarkers(); // Make this visible to the user

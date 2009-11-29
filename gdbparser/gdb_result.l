@@ -97,6 +97,12 @@ children                                                   {RETURN_VAL(GDB_CHILD
 child                                                      {RETURN_VAL(GDB_CHILD);}
 varobj                                                     {RETURN_VAL(GDB_VAROBJ);}
 "{...}"                                                    {RETURN_VAL(GDB_MORE);}
+BreakpointTable                                            {RETURN_VAL(GDB_BREAKPOINT_TABLE);}
+nr_rows                                                    {RETURN_VAL(GDB_NR_ROWS);}
+nr_cols                                                    {RETURN_VAL(GDB_NR_COLS);}
+hdr                                                        {RETURN_VAL(GDB_HDR);}
+body                                                       {RETURN_VAL(GDB_BODY);}
+bkpt                                                       {RETURN_VAL(GDB_BKPT);}
 {identifier}                                               {RETURN_VAL(GDB_IDENTIFIER);}
 "^"                                                        {RETURN_VAL((int)*yytext);}
 "="                                                        {RETURN_VAL((int)*yytext);}

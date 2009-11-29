@@ -138,6 +138,7 @@ include            {PP_KEYWORD_RETURN(LE_INCLUDE); }
 int                 {PA_KEYWORD_RETURN(LE_INT);}
 line               {PP_KEYWORD_RETURN(LE_LINE);}
 long                {PA_KEYWORD_RETURN(LE_LONG);}
+bool                {PA_KEYWORD_RETURN(LE_BOOL);}
 pragma             {PP_KEYWORD_RETURN(LE_PRAGMA);}
 register            {PA_KEYWORD_RETURN(LE_REGISTER);}
 return              {PA_KEYWORD_RETURN(LE_RETURN);}

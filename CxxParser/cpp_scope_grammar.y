@@ -43,7 +43,7 @@ extern void cl_scope_less(int count);
 %token  LE_BREAK           LE_ELSE            LE_LONG            LE_SWITCH
 %token  LE_CASE            LE_ENUM            LE_REGISTER        LE_TYPEDEF
 %token  LE_CHAR            LE_EXTERN          LE_RETURN          LE_UNION
-%token  LE_CONST           LE_FLOAT           LE_SHORT           LE_UNSIGNED
+%token  LE_CONST           LE_FLOAT           LE_SHORT           LE_UNSIGNED      LE_BOOL
 %token  LE_CONTINUE        LE_FOR             LE_SIGNED          LE_VOID
 %token  LE_DEFAULT         LE_GOTO            LE_SIZEOF          LE_VOLATILE
 %token  LE_DO              LE_IF              LE_STATIC          LE_WHILE
@@ -93,17 +93,24 @@ extern void cl_scope_less(int count);
 
 %%
 /* Costants */
-basic_type_name:
-        LE_INT			{ $$ = $1; }
-        | LE_CHAR		{ $$ = $1; }
-        | LE_SHORT		{ $$ = $1; }
-        | LE_LONG		{ $$ = $1; }
-        | LE_FLOAT		{ $$ = $1; }
-        | LE_DOUBLE		{ $$ = $1; }
-        | LE_SIGNED		{ $$ = $1; }
-        | LE_UNSIGNED	{ $$ = $1; }
-        | LE_VOID		{ $$ = $1; }
-        ;
+basic_type_name_inter:    LE_INT          { $$ = $1; }
+                |         LE_CHAR         { $$ = $1; }
+                |         LE_SHORT        { $$ = $1; }
+                |         LE_LONG         { $$ = $1; }
+                |         LE_FLOAT        { $$ = $1; }
+                |         LE_DOUBLE       { $$ = $1; }
+                |         LE_SIGNED       { $$ = $1; }
+                |         LE_UNSIGNED     { $$ = $1; }
+                |         LE_VOID         { $$ = $1; }
+                |         LE_BOOL         { $$ = $1; }
+                ;
+
+basic_type_name:	LE_UNSIGNED basic_type_name_inter     { $$ = $1 + " " + $2; }
+                |	LE_SIGNED basic_type_name_inter     { $$ = $1 + " " + $2; }
+                |	LE_LONG LE_LONG                     { $$ = $1 + " " + $2; }
+                |	LE_LONG LE_INT                         { $$ = $1 + " " + $2; }
+                |	basic_type_name_inter                   { $$ = $1; }
+                ;
 
 
 /* ========================================================================*/

@@ -118,7 +118,7 @@ public:
 	wxString               watchpt_data;
 	wxString               function_name;
 	bool                   regex;            // Is the function_name a regex?
-	int                    memory_address;
+	wxString               memory_address;
 	// How to identify the bp. Because the debugger won't always be running, we need an internal id as well as the debugger's one
 	int                    internal_id;
 	int                    debugger_id;	// -1 signifies not set
@@ -130,6 +130,7 @@ public:
 	wxString               commandlist;
 	wxString               conditions;
 	wxString               at;
+	wxString               what;
 
 	BreakpointInfo(const BreakpointInfo& BI ):
 			file(BI.file),
@@ -147,10 +148,11 @@ public:
 			watchpoint_type(BI.watchpoint_type),
 			commandlist(BI.commandlist),
 			conditions(BI.conditions),
-			at(BI.at) {
-	}
+			at(BI.at),
+			what(BI.what)
+	{}
 
-	BreakpointInfo() : lineno(-1), regex(false), memory_address(-1), debugger_id(-1), bp_type(BP_type_break),
+	BreakpointInfo() : lineno(-1), regex(false), debugger_id(-1), bp_type(BP_type_break),
 			ignore_number(0), is_enabled(true), is_temp(false), watchpoint_type(WP_watch) {}
 
 //	BreakpointInfo(const BreakpointInfo& BI ) {
@@ -203,12 +205,13 @@ public:
 		watchpoint_type  = BI.watchpoint_type;
 		commandlist      = BI.commandlist;
 		conditions       = BI.conditions;
-		at               = BI.at;
+		at               = BI.at;                 // Provided by the debugger, no need to serialize
+		what             = BI.what;               // Provided by the debugger, no need to serialize
 		return *this;
 	}
 
 	bool operator==(const BreakpointInfo& BI) {
-		return ((at == BI.at) && (file == BI.file) && (lineno == BI.lineno) && (function_name == BI.function_name) && (memory_address == BI.memory_address)
+		return ((what == BI.what) && (at == BI.at) && (file == BI.file) && (lineno == BI.lineno) && (function_name == BI.function_name) && (memory_address == BI.memory_address)
 		        && (bp_type == BI.bp_type) &&  (watchpt_data == BI.watchpt_data)&& (is_enabled == BI.is_enabled)
 		        && (ignore_number == BI.ignore_number) && (conditions == BI.conditions) && (commandlist == BI.commandlist) && (is_temp == BI.is_temp)
 		        && (bp_type==BP_type_watchpt ? (watchpoint_type == BI.watchpoint_type) : true) && (!function_name.IsEmpty() ? (regex == BI.regex) : true));

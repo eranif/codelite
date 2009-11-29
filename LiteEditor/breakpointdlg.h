@@ -50,10 +50,43 @@ struct bpd_IDs
 
 class BreakpointsListctrl : public wxListCtrl
 {
-	enum column_ids { col_id, col_type, col_enabled, col_file, col_lineno, col_functionname, col_at, col_memory, col_ignorecount, col_extras };
+	enum column_ids { col_id, col_type, col_enabled, col_file, col_lineno, col_functionname, col_at, col_memory, col_what, col_ignorecount, col_extras };
 public:
 	BreakpointsListctrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxLC_REPORT | wxLC_SINGLE_SEL)
-		: wxListCtrl(parent, id, pos, size, style) {}
+		: wxListCtrl(parent, id, pos, size, style)
+		{
+			const wxChar* column_headers[] =
+			{
+				wxT("ID"),
+				wxT("Type"),
+				wxT("Enabled"),
+				wxT("File"),
+				wxT("Line"),
+				wxT("Function"),
+				wxT("At"),
+				wxT("Memory"),
+				wxT("What"),
+				wxT("Ignored"),
+				wxT("Extras")
+			};
+
+			for (int n=col_id; n <= col_extras;++n) {
+				InsertColumn(n, column_headers[n]);
+			}
+
+			SetColumnWidth(col_id  ,         50);
+			SetColumnWidth(col_type,         100);
+			SetColumnWidth(col_enabled,      100);
+			SetColumnWidth(col_file,         300);
+			SetColumnWidth(col_lineno,       100);
+			SetColumnWidth(col_functionname, 100);
+			SetColumnWidth(col_at,           100);
+			SetColumnWidth(col_memory,       100);
+			SetColumnWidth(col_what,         100);
+			SetColumnWidth(col_ignorecount,  50);
+			SetColumnWidth(col_extras,       50);
+		}
+
 	void Initialise(std::vector<BreakpointInfo>& bps);
 	int GetSelection();
 	int GetLinenoColumn() {

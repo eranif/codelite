@@ -386,7 +386,7 @@ bool DbgGdb::Break(const BreakpointInfo& bp)
 	// prepare the 'break where' string (address, file:line or regex)
 	//------------------------------------------------------------------------
 	wxString breakWhere, ignoreCounnt, condition, gdbCommand;
-	if (bp.memory_address != wxNOT_FOUND) {
+	if (bp.memory_address.IsEmpty() == false) {
 
 		// Memory is easy: just prepend *. gdb copes happily with (at least) hex or decimal
 		breakWhere << wxT('*') << bp.memory_address;
@@ -1083,7 +1083,7 @@ void DbgGdb::OnDataRead(wxCommandEvent& e)
 {
 	// Data arrived from the debugger
 	ProcessEventData *ped = (ProcessEventData *)e.GetClientData();
-	 
+
 	wxString bufferRead;
 	bufferRead << ped->GetData();
 	delete ped;

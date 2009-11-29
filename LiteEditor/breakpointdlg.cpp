@@ -169,14 +169,7 @@ void BreakpointDlg::OnAdd(wxCommandEvent& e)
 void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
 {
 	Freeze();
-	ClearAll();
-	const wxChar* column_headers[] =
-		{ wxT("ID"), wxT("Breakpoint Type"), wxT("Enabled"), wxT("File"),
-			wxT("Line"), wxT("Function"), wxT("At"), wxT("Memory"), wxT("Ignored"), wxT("Extras")
-		};
-	for (int n=col_id; n <= col_extras;++n) {
-		InsertColumn(n, column_headers[n]);
-	}
+	DeleteAllItems();
 
 	std::vector<BreakpointInfo>::iterator iter = bps.begin();
 	for (; iter != bps.end(); ++iter) {
@@ -197,22 +190,29 @@ void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
 		if (!iter->is_enabled) {
 			disabled = wxT("disabled");
 		}
-		SetColumnText(this, item, col_enabled, disabled, wxNOT_FOUND);
-		SetColumnText(this, item, col_at,      iter->at, wxNOT_FOUND);
+		SetColumnText(this, item, col_enabled, disabled  );
+		SetColumnText(this, item, col_at,      iter->at  );
+		SetColumnText(this, item, col_what,    iter->what);
 
 		// A breakpoint will have either a file/lineno or a function-name (e.g.main(), or a memory address)
 		// A watchpoint will have watchpt_data (the variable it's watching). Display that in the 'Function' col
 		if ((iter->bp_type==BP_type_watchpt) && (!iter->watchpt_data.IsEmpty())) {
 			SetColumnText(this, item, col_functionname, iter->watchpt_data, wxNOT_FOUND);
+
 		} else if (!iter->function_name.IsEmpty()) {
 			SetColumnText(this, item, col_functionname, iter->function_name, wxNOT_FOUND);
-		} else if (iter->memory_address != -1) {
-			wxString addr; addr << iter->memory_address;
+
+		} else if (iter->memory_address.IsEmpty() == false) {
+			wxString addr;
+			addr << iter->memory_address;
 			SetColumnText(this, item, col_memory, addr, wxNOT_FOUND);
+
 		} else {
 			SetColumnText(this, item, col_file, iter->file, wxNOT_FOUND);
-			wxString line; line << iter->lineno;
+			wxString line;
+			line << iter->lineno;
 			SetColumnText(this, item, col_lineno, line, wxNOT_FOUND);
+
 		}
 
 		wxString ignore;
@@ -236,27 +236,6 @@ void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
 			SetColumnText(this, item, col_extras, extras, wxNOT_FOUND);
 		}
 	}
-
-	for (int col=0; col < GetColumnCount(); ++col) {
-		// If there are no items, size the columns to fit the header labels: it looks ugly otherwise
-		if (GetItemCount() == 0) {
-			SetColumnWidth(col, wxLIST_AUTOSIZE_USEHEADER);
-			continue;
-		}
-		// Otherwise, use the maximum of the itemsize and headersize
-		SetColumnWidth(col, wxLIST_AUTOSIZE);
-		int itemwidth = GetColumnWidth(col);
-		int headerwidth, y; GetTextExtent(column_headers[col], &headerwidth,&y);
-		// The width returned from GetTextExtent() is too small (bold font?) so add a fiddle-factor
-		int extrawidth =
-#if defined (__WXMSW__)
-			20;
-#else
-			12;
-#endif
-		SetColumnWidth(col, wxMax(itemwidth,headerwidth+extrawidth));
-	}
-
 	Thaw();
 }
 

@@ -48,7 +48,7 @@ bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, c
 
 bool BreakptMgr::AddBreakpoint(const BreakpointInfo &bp)
 {
-	if(bp.file.IsEmpty() && bp.function_name.IsEmpty() && bp.memory_address != wxNOT_FOUND) {
+	if(bp.file.IsEmpty() && bp.function_name.IsEmpty() && bp.memory_address.IsEmpty() == false) {
 		// no function nor file?
 		// do nothing then
 		return true;
@@ -641,8 +641,11 @@ void BreakptMgr::ReconcileBreakpoints(const std::vector<BreakpointInfo>& li)
 			// We've match the debugger_id from -break-list with a bp
 			// Update the ignore-count, then store it in a new vector
 			BreakpointInfo bp = m_bps.at(index);
-			bp.ignore_number = li_iter->ignore_number;
-			SetBestBPType(bp);	// as this might have just changed
+			bp.ignore_number  = li_iter->ignore_number;
+			bp.what           = li_iter->what;
+			bp.at             = li_iter->at;
+
+			SetBestBPType(bp);  // as this might have just changed
 			updated_bps.push_back(bp);
 		}
 	}
@@ -747,7 +750,7 @@ std::set<wxString> BreakptMgr::GetFilesWithBreakpointMarkers()
 	for (; iter != m_bps.end(); ++iter) {
 		// If this bp is a lineno or function type, add its file to the set
 		wxString fileName = iter->file;
-		if ((!fileName.IsEmpty()) && (iter->memory_address == -1)) {
+		if ((!fileName.IsEmpty()) && (iter->memory_address.IsEmpty())) {
 			filenames.insert(fileName);
 		}
 	}

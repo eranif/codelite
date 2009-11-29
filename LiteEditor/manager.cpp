@@ -2209,10 +2209,11 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 		if ( dbgr && dbgr->IsRunning() ) {
 			dbgr->QueryFileLine();
-			// If a bp hit, do -break-list so that we can update breakpoint info e.g. ignore-count
-			if ((reason==DBG_BP_HIT) || (reason==DBG_UNKNOWN)) {
-				dbgr->BreakList();
-			}
+			dbgr->BreakList();
+//			// If a bp hit, do -break-list so that we can update breakpoint info e.g. ignore-count
+//			if ((reason==DBG_BP_HIT) || (reason==DBG_UNKNOWN)) {
+//				dbgr->BreakList();
+//			}
 		}
 	}
 	break;

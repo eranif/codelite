@@ -32,7 +32,7 @@ void BreakptPropertiesDlg::EnterBPData( const BreakpointInfo &bp )
 		m_textWatchExpression->SetValue(bp.watchpt_data);
 	} else {
 		its_a_breakpt = true;
-		if (bp.memory_address != -1) {
+		if (bp.memory_address.IsEmpty() == false) {
 			m_checkBreakMemory->SetValue(true);
 			m_textBreakMemory->Clear();
 			*m_textBreakMemory << bp.memory_address;
@@ -116,16 +116,12 @@ void BreakptPropertiesDlg::EndModal( int retCode )
 			b.file = m_textFilename->GetValue();
 			// Reset other data, so that it'll be recognised as a function bp
 			b.lineno = -1;
-			b.memory_address = -1;
+			b.memory_address.Clear();
 			break;
 
 		case wbc_memory:
 			contents = m_textBreakMemory->GetValue();
-			if ( ! contents.ToLong(&l, 0) ) {
-				wxMessageBox(_("The breakpoint's memory address is invalid. Please try again."), _(":/"), wxICON_ERROR);
-				return;
-			}
-			b.memory_address = (int)l;
+			b.memory_address = contents;
 			break;
 		}
 	}

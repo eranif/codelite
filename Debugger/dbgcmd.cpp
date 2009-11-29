@@ -399,7 +399,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 
 	if (m_bpType == BP_type_watchpt) {
 		msg <<  m_bp.watchpt_data;
-	} else if (m_bp.memory_address != -1) {
+	} else if (m_bp.memory_address.IsEmpty() == false) {
 		msg <<  wxT("address ") << m_bp.memory_address;
 	} else {
 		if (! m_bp.file.IsEmpty()) {
@@ -746,6 +746,24 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
 		BreakpointInfo breakpoint;
 		std::map<std::string, std::string> attr = children.at(i);
 		std::map<std::string, std::string >::const_iterator iter;
+
+		iter = attr.find("what");
+		if ( iter != attr.end() ) {
+			breakpoint.what = wxString(iter->second.c_str(), wxConvUTF8);
+			wxRemoveQuotes( breakpoint.what );
+		}
+
+//		iter = attr.find("func");
+//		if ( iter != attr.end() ) {
+//			breakpoint.function_name = wxString(iter->second.c_str(), wxConvUTF8);
+//			wxRemoveQuotes( breakpoint.function_name );
+//		}
+//
+//		iter = attr.find("addr");
+//		if ( iter != attr.end() ) {
+//			breakpoint.memory_address = wxString(iter->second.c_str(), wxConvUTF8);
+//			wxRemoveQuotes( breakpoint.memory_address );
+//		}
 
 		iter = attr.find("file");
 		if ( iter != attr.end() ) {

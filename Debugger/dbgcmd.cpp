@@ -298,11 +298,12 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 			//default
 			m_observer->UpdateGotControl(DBG_RECV_SIGNAL);
 		}
-	} else if (reason == wxT("exited-normally")) {
+	} else if (reason == wxT("exited-normally") || reason == wxT("exited")) {
 		m_observer->UpdateAddLine(_("Program exited normally."));
 
 		//debugee program exit normally
 		m_observer->UpdateGotControl(DBG_EXITED_NORMALLY);
+		
 	} else if (reason == wxT("function-finished")) {
 		wxString message;
 		int where = line.Find(wxT("return-value"));

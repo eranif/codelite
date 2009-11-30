@@ -303,7 +303,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 
 		//debugee program exit normally
 		m_observer->UpdateGotControl(DBG_EXITED_NORMALLY);
-		
+
 	} else if (reason == wxT("function-finished")) {
 		wxString message;
 		int where = line.Find(wxT("return-value"));
@@ -1066,7 +1066,7 @@ static VariableObjChild FromParserOutput(const std::map<std::string, std::string
 		if ( type == child.varName ) {
 			child.isAFake = true;
 
-		} else if ( child.varName == wxT("pubilc") || child.varName == wxT("private") || child.varName == wxT("protected") ) {
+		} else if ( child.varName == wxT("public") || child.varName == wxT("private") || child.varName == wxT("protected") ) {
 			child.isAFake = true;
 
 		} else if ( type.Contains(wxT("class ")) || type.Contains(wxT("struct "))) {

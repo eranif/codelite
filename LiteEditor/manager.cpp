@@ -23,10 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "crawler_include.h"
 #include "renamefiledlg.h"
 #include "localstable.h"
 #include "new_quick_watch_dlg.h"
-#include "crawler_include.h"
 #include "debuggerconfigtool.h"
 #include "debuggersettings.h"
 #include "debuggerasciiviewer.h"
@@ -1003,7 +1003,7 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 	std::vector<IncludeStatement> includes, matches;
 
 	for(size_t i=0; i<workspaceFiles.GetCount(); i++) {
-		crawlerFindIncludes(workspaceFiles.Item(i).mb_str(wxConvUTF8).data(), includes);
+		IncludeFinder(workspaceFiles.Item(i).mb_str(wxConvUTF8).data(), includes);
 	}
 
 	// Filter non-relevant matches

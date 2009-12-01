@@ -473,13 +473,6 @@ char *yytext;
 #include "crawler_include.h"
 
 std::list<YY_BUFFER_STATE> include_stack;
-/* scanner mode */
-static bool collectingIncludes = false;
-/* collect include statements */
-static std::vector<IncludeStatement> *pIncludes = NULL;
-/* current file name */
-static std::string currentFileName;
-
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -762,24 +755,6 @@ case 9:
 YY_RULE_SETUP
 { /* got the include file name */
 
-	if ( collectingIncludes ) {
-		// Just collect the include file
-
-		std::string mod_path ( yytext );
-		static std::string trimString("\"<> \t");
-
-		mod_path.erase(0, mod_path.find_first_not_of(trimString));
-		mod_path.erase(mod_path.find_last_not_of    (trimString)+1);
-
-		IncludeStatement incldueStatement;
-		incldueStatement.file         = mod_path;
-		incldueStatement.line         = yylineno;
-		incldueStatement.includedFrom = currentFileName;
-		incldueStatement.pattern      = yytext;
-
-		pIncludes->push_back( incldueStatement );
-
-	} else {
 		// Open the new file
 		FILE * new_file(NULL);
 		if ( fcFileOpener::Instance()->getDepth() < fcFileOpener::Instance()->getMaxDepth() ) {
@@ -801,8 +776,6 @@ YY_RULE_SETUP
 			// depth by 1
 			fcFileOpener::Instance()->incDepth();
 		}
-
-	}
 }
 	YY_BREAK
 case 10:
@@ -830,16 +803,7 @@ case YY_STATE_EOF(incl):
 case YY_STATE_EOF(c_comment):
 case YY_STATE_EOF(cpp_comment):
 {
-	if ( collectingIncludes ) {
-		if ( YY_CURRENT_BUFFER->yy_input_file ) {
-			fclose( YY_CURRENT_BUFFER->yy_input_file );
-			YY_CURRENT_BUFFER->yy_input_file = NULL;
-		}
-
-		yy_delete_buffer    ( YY_CURRENT_BUFFER    );
-		yyterminate();
-
-	} else if ( include_stack.empty() == false ) {
+	if ( include_stack.empty() == false ) {
 
 		if ( YY_CURRENT_BUFFER->yy_input_file ) {
 			fclose( YY_CURRENT_BUFFER->yy_input_file );
@@ -1760,7 +1724,7 @@ int yywrap() {
 int crawlerScan( const char* filePath )
 {
 	BEGIN INITIAL;
-
+	fc_lineno = 1;
 	FILE* fp = fopen(filePath, "r");
 	if ( fp == NULL ) {
 		//printf("%s\n", strerror(errno));
@@ -1776,31 +1740,3 @@ int crawlerScan( const char* filePath )
 	return rc;
 }
 
-int crawlerFindIncludes( const char* filePath, std::vector<IncludeStatement> &includes )
-{
-	BEGIN INITIAL;
-	collectingIncludes = true;
-	pIncludes          = &includes;
-	currentFileName    = filePath;
-
-	FILE* fp = fopen(filePath, "r");
-	if ( fp == NULL ) {
-
-		// Cleanup
-		collectingIncludes = false;
-		pIncludes          = NULL;
-		currentFileName.clear();
-		return -1;
-	}
-
-	yy_switch_to_buffer( yy_create_buffer(fp, YY_BUF_SIZE) );
-	fc_in = fp;
-	int rc = fc_lex();
-	yy_delete_buffer    ( YY_CURRENT_BUFFER    );
-
-	// Cleanup
-	collectingIncludes = false;
-	pIncludes          = NULL;
-	currentFileName.clear();
-	return rc;
-}

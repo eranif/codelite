@@ -38,12 +38,5 @@ int main(int argc, char **argv)
 //			printf("%s\n", (*iter).c_str());
 //		}
 	}*/
-
-	std::vector<IncludeStatement> includes;
-	crawlerFindIncludes("../test.h", includes);
-	std::vector<IncludeStatement>::iterator iter = includes.begin();
-	for( ; iter != includes.end(); iter++ ) {
-		printf("%s at %d\n", (*iter).file.c_str(), (*iter).line);
-	}
 	return 0;
 }

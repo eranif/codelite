@@ -272,4 +272,8 @@
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <VirtualDirectory Name="include_finder">
+    <File Name="include_finder.h"/>
+    <File Name="include_finder.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

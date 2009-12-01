@@ -117,6 +117,12 @@ include                 {BEGIN(incl);}
 
 <<EOF>> {
 	if ( collectingIncludes ) {
+		if ( YY_CURRENT_BUFFER->yy_input_file ) {
+			fclose( YY_CURRENT_BUFFER->yy_input_file );
+			YY_CURRENT_BUFFER->yy_input_file = NULL;
+		}
+
+		yy_delete_buffer    ( YY_CURRENT_BUFFER    );
 		yyterminate();
 
 	} else if ( include_stack.empty() == false ) {

@@ -831,6 +831,12 @@ case YY_STATE_EOF(c_comment):
 case YY_STATE_EOF(cpp_comment):
 {
 	if ( collectingIncludes ) {
+		if ( YY_CURRENT_BUFFER->yy_input_file ) {
+			fclose( YY_CURRENT_BUFFER->yy_input_file );
+			YY_CURRENT_BUFFER->yy_input_file = NULL;
+		}
+
+		yy_delete_buffer    ( YY_CURRENT_BUFFER    );
 		yyterminate();
 
 	} else if ( include_stack.empty() == false ) {

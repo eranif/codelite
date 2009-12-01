@@ -146,12 +146,12 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 	}
 
 	if (topWin) {
-		topWin->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(SubversionPlugin::OnFileSaved), NULL, this);
-		topWin->Connect(wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(SubversionPlugin::OnProjectFileAdded), NULL, this);
-		topWin->Connect(wxEVT_FILE_VIEW_INIT_DONE, wxCommandEventHandler(SubversionPlugin::OnRefrshIconsStatus), NULL, this);
-        topWin->Connect(wxEVT_FILE_VIEW_REFRESHED, wxCommandEventHandler(SubversionPlugin::OnRefreshIconsCond), NULL, this);
-
-		topWin->Connect(wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEventHandler(SubversionPlugin::OnLinkClicked), NULL, this);
+		topWin->Connect(wxEVT_FILE_SAVED,                wxCommandEventHandler(SubversionPlugin::OnFileSaved),         NULL, this);
+		topWin->Connect(wxEVT_PROJ_FILE_ADDED,           wxCommandEventHandler(SubversionPlugin::OnProjectFileAdded),  NULL, this);
+		topWin->Connect(wxEVT_FILE_VIEW_INIT_DONE,       wxCommandEventHandler(SubversionPlugin::OnRefrshIconsStatus), NULL, this);
+        topWin->Connect(wxEVT_FILE_VIEW_REFRESHED,       wxCommandEventHandler(SubversionPlugin::OnRefreshIconsCond),  NULL, this);
+		topWin->Connect(wxEVT_FILE_RENAMED,              wxCommandEventHandler(SubversionPlugin::OnRenameFile),        NULL, this);
+		topWin->Connect(wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEventHandler(SubversionPlugin::OnLinkClicked),      NULL, this);
 
 		topWin->Connect(XRCID("svn_update"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnUpdate), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCommit), NULL, (wxEvtHandler*)this);
@@ -1294,4 +1294,15 @@ void SubversionPlugin::OnCopy(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	m_svn->Copy();
+}
+
+void SubversionPlugin::OnRenameFile(wxCommandEvent& e)
+{
+	if(IsWorkspaceUnderSvn()) {
+		wxArrayString *files = (wxArrayString*)e.GetClientData();
+		wxString oldName = files->Item(0);
+		wxString newName = files->Item(1);
+		m_svn->RenameFile(oldName, newName);
+	}
+	e.Skip();
 }

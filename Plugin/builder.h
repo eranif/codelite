@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef BUILDER_H
+#ifndef BUILDER_H
 #define BUILDER_H
 
 #include "wx/string.h"
@@ -40,7 +40,8 @@
  *
  * \author Eran
  */
-class Builder {
+class Builder
+{
 protected:
 	wxString m_name;
 	wxString m_buildTool;
@@ -55,9 +56,15 @@ public:
 	Builder(const wxString &name, const wxString &buildTool, const wxString &buildToolOptions) ;
 	virtual ~Builder();
 
-	void SetBuildTool(const wxString &buildTool) { m_buildTool = buildTool; }
-	void SetBuildToolOptions(const wxString &buildToolOptions) { m_buildToolOptions = buildToolOptions; }
-	void SetBuildToolJobs(const wxString &buildToolJobs) { m_buildToolJobs = buildToolJobs; }
+	void SetBuildTool(const wxString &buildTool) {
+		m_buildTool = buildTool;
+	}
+	void SetBuildToolOptions(const wxString &buildToolOptions) {
+		m_buildToolOptions = buildToolOptions;
+	}
+	void SetBuildToolJobs(const wxString &buildToolJobs) {
+		m_buildToolJobs = buildToolJobs;
+	}
 
 	/**
 	 * Normalize the configuration name, this is done by removing any trailing and leading
@@ -68,27 +75,47 @@ public:
 	/**
 	 * \return the builder name
 	 */
-	const wxString &GetName() const { return m_name; }
+	const wxString &GetName() const {
+		return m_name;
+	}
+
+	// ================ API ==========================
+	// The below API as default implementation, but can be
+	// overrided in the derived class
+	// ================ API ==========================
 
 	/**
 	 * \return the build tool assoicated with this builder
 	 */
-	wxString GetBuildToolCommand(bool isCommandlineCommand) const;
+	virtual wxString GetBuildToolCommand(bool isCommandlineCommand) const {
+		return GetBuildToolFromConfig();
+	}
 
 	/**
 	 * return the build tool name
 	 */
-	wxString GetBuildToolName() const;
+	virtual wxString GetBuildToolName() const {
+		return GetBuildToolFromConfig();
+	}
 
 	/**
 	 * return the build tool options
 	 */
-	wxString GetBuildToolOptions() const;
+	virtual wxString GetBuildToolOptions() const {
+		return GetBuildToolOptionsFromConfig();
+	}
 
 	/**
 	 * return the build tool jobs
 	 */
-	wxString GetBuildToolJobs() const;
+	virtual wxString GetBuildToolJobs() const {
+		return GetBuildToolJobsFromConfig();
+	}
+
+	// ================ API ==========================
+	// The below API must be implemented by the
+	// derived class
+	// ================ API ==========================
 
 	/**
 	 * Export the build system specific file (e.g. GNU makefile, Ant file etc)

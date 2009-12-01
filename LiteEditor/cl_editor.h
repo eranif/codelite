@@ -259,8 +259,10 @@ public:
 	void FindNextMarker();
 	// Find previous marker and move cursor to that line
 	void FindPrevMarker();
+
 	// Replace all
 	bool ReplaceAll();
+	bool ReplaceAllExactMatch(const wxString &what, const wxString &replaceWith);
 	// mark all occurances
 	bool MarkAll();
 
@@ -543,7 +545,7 @@ public:
 	 * Get editor options. Takes any workspace/project overrides into account
 	 */
 	OptionsConfigPtr GetOptions();
-	
+
 	void SetIsVisible(const bool& isVisible) {
 		this->m_isVisible = isVisible;
 	}

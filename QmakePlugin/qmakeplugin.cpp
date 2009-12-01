@@ -356,7 +356,7 @@ wxString QMakePlugin::DoGetBuildCommand(const wxString &project, const wxString 
 		return wxEmptyString;
 	}
 
-	BuildSystemPtr bsptr = m_mgr->GetBuildSettingsConfigManager()->GetBuildSystem(wxT ( "GNU makefile for g++/gcc" ));
+	BuilderConfigPtr bsptr = m_mgr->GetBuildSettingsConfigManager()->GetBuilderConfig(wxT ( "GNU makefile for g++/gcc" ));
 	wxString buildTool   = bsptr->GetToolPath();
 	buildTool            = m_mgr->GetWorkspace()->ExpandVariables(buildTool);
 	wxString jobs        = bsptr->GetToolJobs();

@@ -115,6 +115,7 @@
     <File Name="crawler_lexer.cpp"/>
     <File Name="fc_fileopener.cpp"/>
     <File Name="fc_fileopener.h"/>
+    <File Name="crawler_include.h"/>
   </VirtualDirectory>
   <Settings Type="Static Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">

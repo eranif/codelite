@@ -36,14 +36,8 @@ public:
 	BuilderGnuMake();
 	virtual ~BuilderGnuMake();
 
-	/**
-	 * Export the build system specific file (e.g. GNU makefile, Ant file etc)
-	 * to allow users to invoke them manualy from the command line
-	 * \param project project to export.
-	 * \param errMsg output
-	 * \return true on success, false otherwise.
-	 */
-	virtual bool Export(const wxString &project, const wxString &confToBuild, bool isProjectOnly, bool force, wxString &errMsg);
+	// Implement the Builder Interface
+	virtual bool     Export(const wxString &project, const wxString &confToBuild, bool isProjectOnly, bool force, wxString &errMsg);
 	virtual wxString GetBuildCommand(const wxString &project, const wxString &confToBuild);
 	virtual wxString GetCleanCommand(const wxString &project, const wxString &confToBuild);
 	virtual wxString GetPOBuildCommand(const wxString &project, const wxString &confToBuild);
@@ -51,6 +45,9 @@ public:
 	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName);
 	virtual wxString GetPreprocessFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg);
 	virtual wxString GetPORebuildCommand(const wxString &project, const wxString &confToBuild);
+
+	// Override default methods defined in the builder interface
+	virtual wxString GetBuildToolCommand(bool isCommandlineCommand) const;
 
 private:
 	void GenerateMakefile(ProjectPtr proj, const wxString &confToBuild, bool force);

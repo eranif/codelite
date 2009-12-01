@@ -96,10 +96,13 @@ enum {
 	//clientData is the selected word (wxString*)
 	wxEVT_CCBOX_SELECTION_MADE,
 
-	//clientData is fileName (wxString*)
+	// clientData is fileName (wxString*)
 	wxEVT_FILE_SAVED,
-	//clientData is list of files which have been retagged (std::vector<wxFileName>*)
+	// clientData is list of files which have been retagged (std::vector<wxFileName>*)
 	wxEVT_FILE_RETAGGED,
+	// clientData is wxArrayString*: Item(0) = oldName
+	//                               Item(1) = newName
+	wxEVT_FILE_RENAMED,
 	//clientData is ParseThreadEventData*
 	wxEVT_SYNBOL_TREE_UPDATE_ITEM,
 	//clientData is ParseThreadEventData*

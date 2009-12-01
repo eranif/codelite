@@ -1339,3 +1339,34 @@ wxString BuilderGnuMake::GetPORebuildCommand(const wxString& project, const wxSt
 	cmd = GetProjectMakeCommand(proj, confToBuild, wxT("all"), true, false);
 	return cmd;
 }
+
+wxString BuilderGnuMake::GetBuildToolCommand(bool isCommandlineCommand) const
+{
+	wxString jobsCmd;
+	wxString buildTool;
+
+#if defined (__WXMSW__)
+	wxString jobs = GetBuildToolJobsFromConfig();
+	if (jobs == wxT("unlimited"))
+		jobsCmd = wxT(" -j ");
+	else
+		jobsCmd = wxT(" -j ") + jobs + wxT(" ");
+
+	buildTool = GetBuildToolFromConfig();
+#else
+	if (isCommandlineCommand) {
+		wxString jobs = GetBuildToolJobsFromConfig();
+		if (jobs == wxT("unlimited"))
+			jobsCmd = wxT(" -j ");
+		else
+			jobsCmd = wxT(" -j ") + jobs + wxT(" ");
+
+		buildTool = GetBuildToolFromConfig();
+	} else {
+		jobsCmd = wxEmptyString;
+		buildTool = wxT("$(MAKE)");
+	}
+#endif
+	//enclose the tool path in quatation marks
+	return wxT("\"") + buildTool + wxT("\" ") + jobsCmd + GetBuildToolOptionsFromConfig() ;
+}

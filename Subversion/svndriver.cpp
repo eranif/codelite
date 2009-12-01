@@ -923,7 +923,14 @@ void SvnDriver::Copy()
 
 		SvnCopyDlg dlg(m_manager->GetTheApp()->GetTopWindow(), m_manager->GetConfigTool());
 		dlg.SetSourceURL( url );
-		dlg.SetTargetURL( wxT("") );
+
+		wxString urlNoTrunk;
+		if ( url.EndsWith(wxT("trunk)"), &urlNoTrunk) ) {
+			url = urlNoTrunk;
+			url.Append(wxT("tags"));
+		}
+
+		dlg.SetTargetURL( url );
 
 		if( dlg.ShowModal() == wxID_OK ) {
 			// prepare the command
@@ -955,4 +962,23 @@ wxString SvnDriver::GetSvnURLFromCurrentDir()
 	}
 
 	return wxEmptyString;
+}
+
+void SvnDriver::RenameFile(const wxString& oldName, const wxString& newName)
+{
+	ENTER_SVN_AND_SELECT()
+	wxString command;
+	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
+	command << wxT("mv ");
+	command << wxT("\"") << oldName << wxT("\" ");
+	command << wxT("\"") << newName << wxT("\"");
+
+	wxArrayString outputArr;
+	PrintMessage(command + wxT("\n"));
+
+	ProcUtils::SafeExecuteCommand(command, outputArr);
+
+	PrintMessage(outputArr);
+	PrintMessage(wxT("\n"));
+	PrintMessage(commandSeparator);
 }

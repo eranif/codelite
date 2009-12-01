@@ -110,12 +110,12 @@ public:
 	/**
 	 * Add build system
 	 */
-	void SetBuildSystem(BuildSystemPtr bs);
+	void SetBuildSystem(BuilderConfigPtr bs);
 
 	/**
 	 * get build system from configuration by name
 	 */
-	BuildSystemPtr GetBuildSystem(const wxString &name);
+	BuilderConfigPtr GetBuilderConfig(const wxString &name);
 };
 
 typedef Singleton<BuildSettingsConfig> BuildSettingsConfigST;

@@ -58,6 +58,7 @@ protected:
 	void     CommitWithAuth(const wxString &cmd, const TreeItemInfo &item);
 	void     DoDiff(const wxFileName &fileName, bool promptForRevision);
 	wxString GetSvnURLFromCurrentDir();
+
 public:
 	SvnDriver(SubversionPlugin *plugin, IManager *mgr);
 	virtual ~SvnDriver();
@@ -82,6 +83,7 @@ public:
 	void CommitFile(const wxString &fileName, SvnPostCmdAction *handler = NULL);
 	void DiffFile(const wxFileName &fileName);
 	void RevertFile(const wxFileName &fileName, SvnPostCmdAction *handler = NULL);
+	void RenameFile(const wxString &oldName, const wxString &newName);
 
 	//operations taken from the file explorer tree
 	void Abort();

@@ -23,9 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "renamefiledlg.h"
 #include "localstable.h"
 #include "new_quick_watch_dlg.h"
-#include "fc_fileopener.h"
+#include "crawler_include.h"
 #include "debuggerconfigtool.h"
 #include "debuggersettings.h"
 #include "debuggerasciiviewer.h"
@@ -77,7 +78,6 @@
 #include "manager.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
-extern int crawlerScan(const char *path);
 
 //---------------------------------------------------------------
 // Menu accelerators helper methods
@@ -956,26 +956,94 @@ bool Manager::RemoveFile ( const wxString &fileName, const wxString &vdFullPath 
 
 bool Manager::RenameFile(const wxString &origName, const wxString &newName, const wxString &vdFullPath)
 {
+	// Step: 1
 	// remove the file from the workspace (this will erase it from the symbol database and will
 	// also close the editor that it is currently opened in (if any)
 	if (!RemoveFile(origName, vdFullPath))
 		return false;
 
-	// rename the file on filesystem
-	wxRenameFile(origName, newName);
+	// Step: 2
+	// Notify the plugins, maybe they want to override the
+	// default behavior (e.g. Subversion plugin)
+	wxArrayString f;
+	f.Add(origName);
+	f.Add(newName);
+	if(SendCmdEvent(wxEVT_FILE_RENAMED, (void*)&f)) {
+
+
+	} else {
+		// rename the file on filesystem
+		wxRenameFile(origName, newName);
+
+	}
 
 	// readd file to project with the new name
 	wxString projName = vdFullPath.BeforeFirst(wxT(':'));
 	ProjectPtr proj = GetProject(projName);
 	proj->FastAddFile(newName, vdFullPath.AfterFirst(wxT(':')));
 
+	// Step 3: retag the new file
 	RetagFile(newName);
 
-	// notify of file addition
+	// Step 4: send an event about new file was added
+	// to the workspace
 	wxArrayString files;
 	files.Add(newName);
 	SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&files);
 
+	// Step 5: Change all include files refering to the old
+	// file
+	if( !IsWorkspaceOpen() ) {
+		// if there is no workspace opened, we are done
+		return true;
+	}
+
+	wxArrayString     workspaceFiles;
+	GetWorkspaceFiles(workspaceFiles);
+	std::vector<IncludeStatement> includes, matches;
+
+	for(size_t i=0; i<workspaceFiles.GetCount(); i++) {
+		crawlerFindIncludes(workspaceFiles.Item(i).mb_str(wxConvUTF8).data(), includes);
+	}
+
+	// Filter non-relevant matches
+	wxString oldName ( origName ) ;
+	oldName.Replace(wxT("\\"), wxT("/"));
+	for(size_t i=0; i<includes.size(); i++) {
+		wxString   inclName (includes.at(i).file.c_str(), wxConvUTF8);
+		wxFileName inclFn   ( inclName );
+
+		if(oldName.EndsWith(inclFn.GetFullName())) {
+			matches.push_back(includes.at(i));
+		}
+	}
+
+	// Prompt the user with the list of files which are about to be modified
+	wxFileName newFile(newName);
+	RenameFileDlg dlg(Frame::Get(), newFile.GetFullName(), matches);
+	if(dlg.ShowModal() == wxID_OK) {
+		matches.clear();
+		matches     = dlg.GetMatches();
+
+		for(size_t i=0; i<matches.size(); i++) {
+			IncludeStatement includeStatement = matches.at(i);
+			wxString editorFileName (includeStatement.includedFrom.c_str(), wxConvUTF8);
+			wxString findWhat       (includeStatement.pattern.c_str(),      wxConvUTF8);
+			wxString oldIncl        (includeStatement.file.c_str(),         wxConvUTF8);
+
+			// We want to keep the original open/close braces
+			// "" or <>
+			wxFileName strippedOldInc(oldIncl);
+			wxString   replaceWith   (findWhat);
+
+			replaceWith.Replace(strippedOldInc.GetFullName(), newFile.GetFullName());
+
+			LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(editorFileName, wxEmptyString, 0);
+			if (editor && (editor->GetFileName().GetFullPath().CmpNoCase(editorFileName) == 0) ) {
+				editor->ReplaceAllExactMatch(findWhat, replaceWith);
+			}
+		}
+	}
 	return true;
 }
 

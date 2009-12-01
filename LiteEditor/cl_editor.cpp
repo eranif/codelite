@@ -3381,3 +3381,35 @@ OptionsConfigPtr LEditor::GetOptions()
 
 	return options;
 }
+
+bool LEditor::ReplaceAllExactMatch(const wxString& what, const wxString& replaceWith)
+{
+	int offset( 0 );
+	wxString findWhat = what;
+	size_t   flags = wxSD_MATCHWHOLEWORD | wxSD_MATCHCASE;
+
+	int pos(0);
+	int match_len(0);
+	int posInChars(0);
+	int match_lenInChars(0);
+	int matchCount(0);
+	wxString txt = GetText();
+
+	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len, posInChars, match_lenInChars) ) {
+		txt.Remove(posInChars, match_lenInChars);
+		txt.insert(posInChars, replaceWith);
+		matchCount++;
+		offset = pos + UTF8Length(replaceWith, replaceWith.length()); // match_len;
+	}
+
+	// replace the buffer
+	BeginUndoAction();
+	long savedPos = GetCurrentPos();
+
+	SetText(txt);
+	// Restore the caret
+	SetCaretAt(savedPos);
+
+	EndUndoAction();
+	return (matchCount > 0);
+}

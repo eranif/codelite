@@ -40,16 +40,16 @@ class VdtcTreeItemBase;
 
 class SubversionPlugin : public IPlugin
 {
-	wxMenu *m_svnMenu;
-	SvnDriver *m_svn;
+	wxMenu *      m_svnMenu;
+	SvnDriver *   m_svn;
 	wxEvtHandler *topWin;
-	SvnOptions m_options;
-	friend class SvnDriver;
-	bool m_isValid;
-	wxMenuItem *m_explorerSepItem;
-	wxMenuItem *m_workspaceSepItem;
-	wxMenuItem *m_projectSepItem;
+	SvnOptions    m_options;
+	bool          m_isValid;
+	wxMenuItem *  m_explorerSepItem;
+	wxMenuItem *  m_workspaceSepItem;
+	wxMenuItem *  m_projectSepItem;
 
+	friend class SvnDriver;
 
 protected:
 	void SendSvnMenuEvent(int id);
@@ -132,6 +132,7 @@ protected:
 	void OnResolveConflict(wxCommandEvent &e);
 	void OnPatch(wxCommandEvent &e);
 	void OnCopy(wxCommandEvent &e);
+	void OnRenameFile(wxCommandEvent &e);
 };
 
 #endif //SUBVERSION_H

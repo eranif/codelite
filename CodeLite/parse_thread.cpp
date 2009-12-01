@@ -24,8 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
 #include <wx/tokenzr.h>
-#include "fc_fileopener.h"
-
+#include "crawler_include.h"
 #include "parse_thread.h"
 #include "ctags_manager.h"
 #include "istorage.h"
@@ -56,7 +55,7 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
 
 const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS = XRCID("parse_thread_updated_symbols");
 const wxEventType wxEVT_PARSE_THREAD_MESSAGE              = XRCID("parse_thread_update_status_bar");
-extern int crawlerScan(const char *path);
+
 
 ParseThread::ParseThread()
 		: WorkerThread()

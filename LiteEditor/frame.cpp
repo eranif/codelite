@@ -1138,9 +1138,9 @@ void Frame::UpdateBuildTools()
 	BuildManagerST::Get()->AddBuilder ( builder );
 
 	//update the configuration files
-	BuildSystemPtr bsptr = BuildSettingsConfigST::Get()->GetBuildSystem ( wxT ( "GNU makefile for g++/gcc" ) );
+	BuilderConfigPtr bsptr = BuildSettingsConfigST::Get()->GetBuilderConfig ( wxT ( "GNU makefile for g++/gcc" ) );
 	if ( !bsptr ) {
-		bsptr = new BuildSystem ( NULL );
+		bsptr = new BuilderConfig ( NULL );
 		bsptr->SetName ( wxT ( "GNU makefile for g++/gcc" ) );
 	}
 
@@ -2007,7 +2007,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 		int cpus = wxThread::GetCPUCount();
 		if (cpus != wxNOT_FOUND) {
 			//update the build system
-			BuildSystemPtr bs = BuildSettingsConfigST::Get()->GetBuildSystem(wxT("GNU makefile for g++/gcc"));
+			BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig(wxT("GNU makefile for g++/gcc"));
 			if ( bs ) {
 				wxString jobs;
 				jobs << cpus;

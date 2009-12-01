@@ -33,7 +33,7 @@
 #include "debuggerobserver.h"
 #include "workspace.h"
 #include "queuecommand.h"
-#include "compiler_action.h"
+#include "shell_command.h"
 #include "async_executable_cmd.h"
 #include "filehistory.h"
 #include "breakpointsmgr.h"

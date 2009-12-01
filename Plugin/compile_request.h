@@ -25,7 +25,7 @@
 #ifndef COMPILE_REQUEST_H
 #define COMPILE_REQUEST_H
 
-#include "compiler_action.h"
+#include "shell_command.h"
 
 class CompileRequest : public ShellCommand {
 	wxString m_fileName;

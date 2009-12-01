@@ -6,7 +6,6 @@
     <File Name="buildmanager.cpp"/>
     <File Name="clean_request.cpp"/>
     <File Name="compile_request.cpp"/>
-    <File Name="compiler_action.cpp"/>
     <File Name="configuration_mapping.cpp"/>
     <File Name="lexer_configuration.cpp"/>
     <File Name="optionsconfig.cpp"/>
@@ -25,6 +24,7 @@
     <File Name="build_config_common.cpp"/>
     <File Name="localworkspace.h"/>
     <File Name="localworkspace.cpp"/>
+    <File Name="shell_command.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>
@@ -32,7 +32,6 @@
     <File Name="clean_request.h"/>
     <File Name="compile_request.h"/>
     <File Name="compiler.h"/>
-    <File Name="compiler_action.h"/>
     <File Name="configuration_mapping.h"/>
     <File Name="configuration_object.h"/>
     <File Name="lexer_configuration.h"/>
@@ -45,6 +44,7 @@
     <File Name="volumelocatorthread.h"/>
     <File Name="queuecommand.cpp"/>
     <File Name="queuecommand.h"/>
+    <File Name="shell_command.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Commons">
     <File Name="xmlutils.cpp"/>

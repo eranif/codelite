@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
  #ifndef CLEAN_REQUEST_H
 #define CLEAN_REQUEST_H
-#include "compiler_action.h"
+#include "shell_command.h"
 
 /**
  * \class CleanRequest

@@ -27,7 +27,7 @@
 #include <wx/xrc/xmlres.h>
 #include "globals.h"
 #include "workspace.h"
-#include "compiler_action.h"
+#include "shell_command.h"
 #include "wx/tokenzr.h"
 #include "asyncprocess.h"
 

@@ -26,7 +26,7 @@
 #ifndef __custombuildrequest__
 #define __custombuildrequest__
 
-#include "compiler_action.h"
+#include "shell_command.h"
 #include "build_config.h"
 
 class CustomBuildRequest : public ShellCommand

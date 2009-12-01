@@ -33,7 +33,7 @@
 #include "cl_process.h"
 #include "tree.h"
 #include "entry.h"
-#include "tags_database.h"
+#include "tags_storage_sqlite3.h"
 #include <wx/thread.h>
 #include "singleton.h"
 #include "cl_calltip.h"

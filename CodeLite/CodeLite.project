@@ -89,8 +89,8 @@
     <File Name="fileentry.cpp"/>
     <File Name="fileentry.h"/>
     <File Name="istorage.h"/>
-    <File Name="tags_database.h"/>
-    <File Name="tags_database.cpp"/>
+    <File Name="tags_storage_sqlite3.h"/>
+    <File Name="tags_storage_sqlite3.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies/>
@@ -270,10 +270,10 @@
     <File Name="winprocess_impl.cpp"/>
     <File Name="winprocess_impl.h"/>
   </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="include_finder">
     <File Name="include_finder.h"/>
     <File Name="include_finder.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

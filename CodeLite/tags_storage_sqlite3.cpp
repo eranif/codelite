@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
 #include <wx/longlong.h>
-#include "tags_database.h"
+#include "tags_storage_sqlite3.h"
 
 
 //-------------------------------------------------

@@ -17,28 +17,20 @@ RenameFileDlg::RenameFileDlg( wxWindow* parent, const wxString &replaceWith, std
 		int idx = m_checkListMatches->Append(displayString);
 
 		// Keep the information about this entry
-		IncludeStatementEntry ise;
-		ise.checked = true;
-		ise.statement = is;
-		m_entries[idx] = ise;
+		m_entries[idx] = is;
 		m_checkListMatches->Check(idx);
 	}
 
 	if ( m_checkListMatches->GetCount() ) {
 		m_checkListMatches->Select(0);
-		DoSelectItem(0, RFD_Select);
+		DoSelectItem(0);
 	}
 	WindowAttrManager::Load(this, wxT("RenameFileDlg"), NULL);
 }
 
 void RenameFileDlg::OnFileSelected( wxCommandEvent& event )
 {
-	DoSelectItem(event.GetSelection(), RFD_None);
-}
-
-void RenameFileDlg::OnFileToggeled( wxCommandEvent& event )
-{
-	DoSelectItem(event.GetSelection(), event.IsChecked() ? RFD_Select : RFD_UnSelect);
+	DoSelectItem(event.GetSelection());
 }
 
 RenameFileDlg::~RenameFileDlg()
@@ -46,33 +38,29 @@ RenameFileDlg::~RenameFileDlg()
 	WindowAttrManager::Save(this, wxT("RenameFileDlg"), NULL);
 }
 
-void RenameFileDlg::DoSelectItem(int idx, int check)
+void RenameFileDlg::DoSelectItem(int idx)
 {
-	std::map<int, IncludeStatementEntry>::iterator iter = m_entries.find(idx);
+	std::map<int, IncludeStatement>::iterator iter = m_entries.find(idx);
 	if ( iter != m_entries.end() ) {
-		IncludeStatementEntry ise = iter->second;
+		IncludeStatement ise = iter->second;
 		wxString line;
-		line << ise.statement.line;
+		line << ise.line;
 		m_staticTextFoundInLine->SetLabel( line );
 
-		m_staticTextIncludedInFile->SetLabel(wxString(ise.statement.includedFrom.c_str(), wxConvUTF8));
-		m_staticTextPattern->SetLabel(wxString::Format(wxT("#include %s"), wxString(ise.statement.pattern.c_str(), wxConvUTF8).c_str()));
-		if(check != RFD_None) {
-			check == RFD_Select ? ise.checked = true : ise.checked = false;
-		}
-
-		// Update the entry
-		m_entries[idx] = ise;
+		m_staticTextIncludedInFile->SetLabel(wxString(ise.includedFrom.c_str(), wxConvUTF8));
+		m_staticTextPattern->SetLabel(wxString::Format(wxT("#include %s"), wxString(ise.pattern.c_str(), wxConvUTF8).c_str()));
 	}
 }
 
 std::vector<IncludeStatement> RenameFileDlg::GetMatches() const
 {
 	std::vector<IncludeStatement> matches;
-	std::map<int, IncludeStatementEntry>::const_iterator iter = m_entries.begin();
-	for(; iter != m_entries.end(); iter++){
-		if(iter->second.checked) {
-			matches.push_back(iter->second.statement);
+	for(unsigned int i=0; i<m_checkListMatches->GetCount(); i++) {
+		if( m_checkListMatches->IsChecked(i) ) {
+			std::map<int, IncludeStatement>::const_iterator iter = m_entries.find((int)i);
+			if(iter != m_entries.end()) {
+				matches.push_back(iter->second);
+			}
 		}
 	}
 	return matches;

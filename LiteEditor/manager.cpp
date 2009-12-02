@@ -973,8 +973,10 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 
 	} else {
 		// rename the file on filesystem
-		wxRenameFile(origName, newName);
-
+		if(wxRenameFile(origName, newName) == false){
+			wxLogMessage(wxT("Failed to rename file from %s to %s"), origName.c_str(), newName.c_str());
+			return false;
+		}
 	}
 
 	// readd file to project with the new name
@@ -1010,37 +1012,41 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 	wxString oldName ( origName ) ;
 	oldName.Replace(wxT("\\"), wxT("/"));
 	for(size_t i=0; i<includes.size(); i++) {
+
 		wxString   inclName (includes.at(i).file.c_str(), wxConvUTF8);
 		wxFileName inclFn   ( inclName );
 
 		if(oldName.EndsWith(inclFn.GetFullName())) {
 			matches.push_back(includes.at(i));
 		}
+
 	}
 
 	// Prompt the user with the list of files which are about to be modified
 	wxFileName newFile(newName);
-	RenameFileDlg dlg(Frame::Get(), newFile.GetFullName(), matches);
-	if(dlg.ShowModal() == wxID_OK) {
-		matches.clear();
-		matches     = dlg.GetMatches();
+	if(matches.empty() == false){
+		RenameFileDlg dlg(Frame::Get(), newFile.GetFullName(), matches);
+		if(dlg.ShowModal() == wxID_OK) {
+			matches.clear();
+			matches     = dlg.GetMatches();
 
-		for(size_t i=0; i<matches.size(); i++) {
-			IncludeStatement includeStatement = matches.at(i);
-			wxString editorFileName (includeStatement.includedFrom.c_str(), wxConvUTF8);
-			wxString findWhat       (includeStatement.pattern.c_str(),      wxConvUTF8);
-			wxString oldIncl        (includeStatement.file.c_str(),         wxConvUTF8);
+			for(size_t i=0; i<matches.size(); i++) {
+				IncludeStatement includeStatement = matches.at(i);
+				wxString editorFileName (includeStatement.includedFrom.c_str(), wxConvUTF8);
+				wxString findWhat       (includeStatement.pattern.c_str(),      wxConvUTF8);
+				wxString oldIncl        (includeStatement.file.c_str(),         wxConvUTF8);
 
-			// We want to keep the original open/close braces
-			// "" or <>
-			wxFileName strippedOldInc(oldIncl);
-			wxString   replaceWith   (findWhat);
+				// We want to keep the original open/close braces
+				// "" or <>
+				wxFileName strippedOldInc(oldIncl);
+				wxString   replaceWith   (findWhat);
 
-			replaceWith.Replace(strippedOldInc.GetFullName(), newFile.GetFullName());
+				replaceWith.Replace(strippedOldInc.GetFullName(), newFile.GetFullName());
 
-			LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(editorFileName, wxEmptyString, 0);
-			if (editor && (editor->GetFileName().GetFullPath().CmpNoCase(editorFileName) == 0) ) {
-				editor->ReplaceAllExactMatch(findWhat, replaceWith);
+				LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(editorFileName, wxEmptyString, 0);
+				if (editor && (editor->GetFileName().GetFullPath().CmpNoCase(editorFileName) == 0) ) {
+					editor->ReplaceAllExactMatch(findWhat, replaceWith);
+				}
 			}
 		}
 	}

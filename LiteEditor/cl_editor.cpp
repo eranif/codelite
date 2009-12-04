@@ -234,7 +234,7 @@ void LEditor::FillBPtoMarkerArray()
 }
 
 // Looks for a struct for this breakpoint-type
-BPtoMarker LEditor::GetMarkerForBreakpt(enum BP_type bp_type)
+BPtoMarker LEditor::GetMarkerForBreakpt(enum BreakpointType bp_type)
 {
 	std::vector<BPtoMarker>::iterator iter = m_BPstoMarkers.begin();
 	for (; iter != m_BPstoMarkers.end(); ++iter) {
@@ -2505,7 +2505,7 @@ void LEditor::DelAllCompilerMarkers()
 }
 
 // Maybe one day we'll display multiple bps differently
-void LEditor::SetBreakpointMarker(int lineno, BP_type bptype, bool is_disabled, const std::vector<BreakpointInfo>& bps)
+void LEditor::SetBreakpointMarker(int lineno, BreakpointType bptype, bool is_disabled, const std::vector<BreakpointInfo>& bps)
 {
 	BPtoMarker bpm = GetMarkerForBreakpt(bptype);
 	sci_marker_types markertype = is_disabled ? bpm.marker_disabled : bpm.marker;
@@ -2521,7 +2521,7 @@ void LEditor::DelAllBreakpointMarkers()
 	m_breakpointsInfo.clear();
 
 	for (int bp_type = BP_FIRST_ITEM; bp_type <= BP_LAST_MARKED_ITEM; ++bp_type) {
-		BPtoMarker bpm = GetMarkerForBreakpt((BP_type)bp_type);
+		BPtoMarker bpm = GetMarkerForBreakpt((BreakpointType)bp_type);
 		MarkerDeleteAll(bpm.marker);
 		MarkerDeleteAll(bpm.marker_disabled);
 	}

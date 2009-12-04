@@ -2086,10 +2086,9 @@ void Manager::DbgStop()
 	//clear the debugger pane
 	Frame::Get()->GetDebuggerPane()->Clear();
 
-	// The list of breakpoints is still there, but their debugger_ids are now invalid
-	// So remove them, and enable all disabled bps (since these can't be applied if the debugger restarts).
-	GetBreakpointsMgr()->ClearBP_debugger_ids();
-	GetBreakpointsMgr()->UnDisableAllBreakpoints();
+	// Notify the breakpoint manager that the debugger has stopped
+	GetBreakpointsMgr()->DebuggerStopped();
+
 	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
 	// Clear the ascii viewer

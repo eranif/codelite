@@ -86,7 +86,7 @@ void BreakptPropertiesDlg::EndModal( int retCode )
 	int selectedPage = m_choicebook->GetSelection();
 	if (m_choicebook->GetPageText((size_t)selectedPage) == _("Watchpoint")) {
 		b.bp_type = BP_type_watchpt;
-		b.watchpoint_type = (WP_type)m_radioWatchtype->GetSelection();
+		b.watchpoint_type = (WatchpointType)m_radioWatchtype->GetSelection();
 		b.watchpt_data = m_textWatchExpression->GetValue();
 		if (b.watchpt_data.IsEmpty()) {
 			wxMessageBox(_("You don't seem to have entered a variable for the watchpoint to watch. Please try again."), wxT(":/"), wxICON_ERROR);

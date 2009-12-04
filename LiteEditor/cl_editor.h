@@ -76,7 +76,7 @@ enum calltip_type { ct_function_hover, ct_debugger, ct_function_proto, ct_breakp
 * Holds which marker and mask are associated with each breakpoint type
 */
 typedef struct _BPtoMarker {
-	enum BP_type bp_type;	// An enum of possible break/watchpoint types. In debugger.h
+	enum BreakpointType bp_type;	// An enum of possible break/watchpoint types. In debugger.h
 	sci_marker_types marker;
 	marker_mask_type mask;
 	sci_marker_types marker_disabled;
@@ -388,7 +388,7 @@ public:
 	//--------------------------------
 	// breakpoint visualisation
 	//--------------------------------
-	virtual void SetBreakpointMarker(int lineno, BP_type bptype, bool is_disabled, const std::vector<BreakpointInfo>& li);
+	virtual void SetBreakpointMarker(int lineno, BreakpointType bptype, bool is_disabled, const std::vector<BreakpointInfo>& li);
 	virtual void DelAllBreakpointMarkers();
 
 	virtual void HighlightLine(int lineno);
@@ -562,7 +562,7 @@ public:
 
 private:
 	void FillBPtoMarkerArray();
-	BPtoMarker GetMarkerForBreakpt(enum BP_type bp_type);
+	BPtoMarker GetMarkerForBreakpt(enum BreakpointType bp_type);
 	void SetProperties();
 	void DefineMarker(int marker, int markerType, wxColor fore, wxColor back);
 	void SetLineNumberWidth();

@@ -42,7 +42,7 @@ class myDragImage;
 class BreakptMgr
 {
 	std::vector<BreakpointInfo> m_bps;        // The vector of breakpoints
-	std::vector<BreakpointInfo> m_PendingBPs; // These are any breakpoints that the debugger won't (yet) accept (often because they're in a plugin)
+	std::vector<BreakpointInfo> m_pendingBreakpointsList; // These are any breakpoints that the debugger won't (yet) accept (often because they're in a plugin)
 
 	int NextInternalID;		// Used to give each bp a unique internal ID. Start at 10k to avoid confusion with gdb's IDs
 
@@ -136,14 +136,14 @@ public:
 	 * @param bps
 	 */
 	void SetPendingBreakpoints(const std::vector<BreakpointInfo>& bps) {
-		m_PendingBPs.clear(); m_PendingBPs = bps;
+		m_pendingBreakpointsList.clear(); m_pendingBreakpointsList = bps;
 	}
 
 	/**
 	 * @brief Returns true if there are pending breakpoints
 	 */
 	bool PendingBreakpointsExist() {
-		return ! m_PendingBPs.empty();
+		return ! m_pendingBreakpointsList.empty();
 	}
 
 	/**
@@ -224,7 +224,7 @@ public:
 	 * return whether this line has a breakpoint of type bp_type
 	 * Any matches found are returned in li
 	 */
-	bool GetMatchingBreakpoints(std::vector<BreakpointInfo>& li, const wxString &fileName, const int lineno, enum BP_type bp_type);
+	bool GetMatchingBreakpoints(std::vector<BreakpointInfo>& li, const wxString &fileName, const int lineno, enum BreakpointType bp_type);
 
 	/**
 	 * Returns a string containing details of any breakpoints on this line
@@ -241,7 +241,7 @@ public:
 	 * Clears the debugger_ids of all breakpoints.
 	 * Called when the debugger has stopped, so they're  no longer valid
 	 */
-	void ClearBP_debugger_ids();
+	void DebuggerStopped();
 
 	/**
 	 * Since a bp can't be created disabled, enable them all here when the debugger stops

@@ -170,6 +170,8 @@ LEditor::LEditor(wxWindow* parent)
 		eol = alternate_eol;
 	}
 	SetEOLMode(eol);
+
+	m_disableSmartIndent = GetOptions()->GetDisableSmartIndent();
 }
 
 LEditor::~LEditor()
@@ -260,9 +262,10 @@ void LEditor::SetProperties()
 	OptionsConfigPtr options = GetOptions();
 	CallTipUseStyle(1);
 
-	m_hightlightMatchedBraces = options->GetHighlightMatchedBraces();
-	m_autoAddMatchedBrace = options->GetAutoAddMatchedBraces();
+	m_hightlightMatchedBraces   = options->GetHighlightMatchedBraces();
+	m_autoAddMatchedBrace       = options->GetAutoAddMatchedBraces();
 	m_autoAdjustHScrollbarWidth = options->GetAutoAdjustHScrollBarWidth();
+	m_disableSmartIndent        = options->GetDisableSmartIndent();
 
 	if (!m_hightlightMatchedBraces) {
 		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
@@ -643,7 +646,10 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		matchChar = '}';
 		break;
 	case ':':
-		m_context->AutoIndent(event.GetKey());
+
+		if(m_disableSmartIndent == false)
+			m_context->AutoIndent(event.GetKey());
+
 		// fall through...
 	case '.':
 	case '>':
@@ -656,24 +662,34 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		ShowFunctionTipFromCurrentPos();
 		break;
 	case '}':
-		m_context->AutoIndent(event.GetKey());
+		if(m_disableSmartIndent == false)
+			m_context->AutoIndent(event.GetKey());
 		break;
 	case '\n': {
 			// incase ENTER was hit immediatly after we inserted '{' into the code...
-			if ( s_lastCharEntered == wxT('{') && m_autoAddMatchedBrace ) {
+			if ( s_lastCharEntered == wxT('{') && m_autoAddMatchedBrace && !m_disableSmartIndent) {
 				matchChar = '}';
 				InsertText(pos, matchChar);
 				BeginUndoAction();
 				//InsertText(pos, GetEolString());
 				CharRight();
-				m_context->AutoIndent(wxT('}'));
+
+				if(m_disableSmartIndent == false)
+					m_context->AutoIndent(wxT('}'));
+
 				InsertText(pos, GetEolString());
 				CharRight();
 				SetCaretAt(pos);
-				m_context->AutoIndent(wxT('\n'));
+
+				if(m_disableSmartIndent == false)
+					m_context->AutoIndent(wxT('\n'));
+
 				EndUndoAction();
 			} else {
-				m_context->AutoIndent(event.GetKey());
+
+				if(m_disableSmartIndent == false)
+					m_context->AutoIndent(event.GetKey());
+
 				// incase we are typing in a folded line, make sure it is visible
 				EnsureVisible(curLine+1);
 			}
@@ -685,7 +701,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		break;
 	}
 
-	if (matchChar && m_autoAddMatchedBrace && !m_context->IsCommentOrString(pos)) {
+	if (matchChar && m_autoAddMatchedBrace && !m_disableSmartIndent && !m_context->IsCommentOrString(pos)) {
 		if ( matchChar == ')' ) {
 			// avoid adding close brace if the next char is not a whitespace
 			// character
@@ -3174,7 +3190,7 @@ void LEditor::SetEOL()
 
 void LEditor::OnChange(wxScintillaEvent& event)
 {
-	if ( m_autoAddMatchedBrace ) {
+	if ( m_autoAddMatchedBrace && !m_disableSmartIndent) {
 		if ( (event.GetModificationType() & wxSCI_MOD_BEFOREDELETE) && (event.GetModificationType() & wxSCI_PERFORMED_USER) ) {
 			wxString deletedText = GetTextRange(event.GetPosition(), event.GetPosition() + event.GetLength());
 			if ( deletedText.IsEmpty() == false && deletedText.Length() == 1 ) {
@@ -3376,7 +3392,7 @@ OptionsConfigPtr LEditor::GetOptions()
 
 	// Now let any local preferences overwrite the global equivalent
 	if (ManagerST::Get()->IsWorkspaceOpen()) {
-    LocalWorkspaceST::Get()->GetOptions( options, GetProject() );
+		LocalWorkspaceST::Get()->GetOptions( options, GetProject() );
 	}
 
 	return options;

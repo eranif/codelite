@@ -130,6 +130,7 @@ class LEditor : public wxScintilla, public IEditor
 	bool                                        m_autoAdjustHScrollbarWidth;
 	calltip_type                                m_calltipType;
 	bool                                        m_reloadingFile;
+	bool                                        m_disableSmartIndent;
 
 public:
 	static FindReplaceData &GetFindReplaceData() {
@@ -156,6 +157,10 @@ public:
 	// Save content of the editor to a given file (Save As...)
 	// this function prompts the user for selecting file name
 	bool SaveFileAs();
+
+	void SetDisableSmartIndent(bool disableSmartIndent) {
+		this->m_disableSmartIndent = disableSmartIndent;
+	}
 
 	/**
 	 * @brief set the EOL mode of the file by applying this logic:

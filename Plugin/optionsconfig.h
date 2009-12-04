@@ -72,8 +72,10 @@ protected:
 	bool           m_showQuickFinder;
 	bool           m_TrimLine;
 	bool           m_AppendLF;
+	bool           m_disableSmartIndent;
+
 public:
-	OptionsConfig(){}
+	OptionsConfig() {}
 	OptionsConfig(wxXmlNode *node);
 	virtual ~OptionsConfig(void);
 
@@ -81,6 +83,12 @@ public:
 	// Setters/Getters
 	//-------------------------------------
 
+	void SetDisableSmartIndent(bool disableSmartIndent) {
+		this->m_disableSmartIndent = disableSmartIndent;
+	}
+	bool GetDisableSmartIndent() const {
+		return m_disableSmartIndent;
+	}
 	void SetTrimLine(const bool& trimLine) {
 		this->m_TrimLine = trimLine;
 	}

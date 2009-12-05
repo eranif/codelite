@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite Revision="$(Revision)" Version="2.0.1">
+<CodeLite Revision="$(Revision)" Version="2.0.2">
   <ArchiveObject Name="m_tagsOptionsData">
     <long Value="728" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep">
@@ -55,6 +55,10 @@
       <wxString Value="__restrict"/>
       <wxString Value="__THROW"/>
       <wxString Value="__wur"/>
+      <wxString Value="_STD_BEGIN=namespace std{"/>
+      <wxString Value="_STD_END=}"/>
+      <wxString Value="__CLRCALL_OR_CDECL"/>
+      <wxString Value="_CRTIMP2_PURE"/>
     </wxArrayString>
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">

@@ -531,8 +531,7 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 
 	//start the editor creator thread
 	m_timer = new wxTimer(this, FrameTimerId);
-	m_timer->Start(2500);
-
+	
 	// connect common edit events
 	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::DispatchCommandEvent), NULL, this);
 	wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::DispatchCommandEvent), NULL, this);
@@ -619,6 +618,7 @@ void Frame::Initialize(bool loadLastSession)
 	}
 
 	m_theFrame->SendSizeEvent();
+	m_theFrame->StartTimer();
 }
 
 Frame* Frame::Get()
@@ -1988,59 +1988,53 @@ void Frame::OnExecuteNoDebugUI(wxUpdateUIEvent &event)
 
 void Frame::OnTimer(wxTimerEvent &event)
 {
-	static bool first(true);
-	//Attach external database symbol
-	if (first) {
-		first = false;
+	// since there is a bug in wxURL, which it can not be used while constucting a wxFrame,
+	// it must be called *after* the frame constuction
+	// add new version notification updater
+	long check(1);
+	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
 
-		// since there is a bug in wxURL, which it can not be used while constucting a wxFrame,
-		// it must be called *after* the frame constuction
-		// add new version notification updater
-		long check(1);
-		EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
+	if ( check ) {
+		JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this));
+	}
 
-		if ( check ) {
-			JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this));
-		}
+	//update the build system to contain the number of CPUs
+	int cpus = wxThread::GetCPUCount();
+	if (cpus != wxNOT_FOUND) {
+		//update the build system
+		BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig(wxT("GNU makefile for g++/gcc"));
+		if ( bs ) {
+			wxString jobs;
+			jobs << cpus;
 
-		//update the build system to contain the number of CPUs
-		int cpus = wxThread::GetCPUCount();
-		if (cpus != wxNOT_FOUND) {
-			//update the build system
-			BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig(wxT("GNU makefile for g++/gcc"));
-			if ( bs ) {
-				wxString jobs;
-				jobs << cpus;
+			if ( bs->GetToolJobs() != jobs ) {
 
-				if ( bs->GetToolJobs() != jobs ) {
+				//prompt the user
+				long val(0);
+				bool do_it(false);
+				if ( !EditorConfigST::Get()->GetLongValue(wxT("AdjustCPUNumber"), val) ) {
 
-					//prompt the user
-					long val(0);
-					bool do_it(false);
-					if ( !EditorConfigST::Get()->GetLongValue(wxT("AdjustCPUNumber"), val) ) {
-
-						//no entry was found in the configuration file, popup the dialog and ask the user
-						ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, wxT("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), wxT("CodeLite"));
-						if (dlg->ShowModal() == wxID_OK) {
-							do_it = true;
-						}
-
-						if ( dlg->GetDontAskMeAgain() ) {
-							// the user wishes that his answer will be kept
-							EditorConfigST::Get()->SaveLongValue(wxT("AdjustCPUNumber"), do_it ? 1 : 0);
-						}
-						dlg->Destroy();
-
-					} else {
-						do_it = !(val == 0);
+					//no entry was found in the configuration file, popup the dialog and ask the user
+					ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, wxT("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), wxT("CodeLite"));
+					if (dlg->ShowModal() == wxID_OK) {
+						do_it = true;
 					}
 
-					// are we allowed to update the concurrent jobs number?
-					if ( do_it ) {
-						bs->SetToolJobs( jobs );
-						BuildSettingsConfigST::Get()->SetBuildSystem(bs);
-						wxLogMessage(wxT("Info: setting number of concurrent builder jobs to ") + jobs);
+					if ( dlg->GetDontAskMeAgain() ) {
+						// the user wishes that his answer will be kept
+						EditorConfigST::Get()->SaveLongValue(wxT("AdjustCPUNumber"), do_it ? 1 : 0);
 					}
+					dlg->Destroy();
+
+				} else {
+					do_it = !(val == 0);
+				}
+
+				// are we allowed to update the concurrent jobs number?
+				if ( do_it ) {
+					bs->SetToolJobs( jobs );
+					BuildSettingsConfigST::Get()->SetBuildSystem(bs);
+					wxLogMessage(wxT("Info: setting number of concurrent builder jobs to ") + jobs);
 				}
 			}
 		}
@@ -3596,4 +3590,10 @@ void Frame::OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e)
 	wxArrayString projectList;
 	WorkspaceST::Get()->GetProjectList( projectList );
 	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && (projectList.IsEmpty() == false));
+}
+
+
+void Frame::StartTimer()
+{
+	m_timer->Start(2500, true);
 }

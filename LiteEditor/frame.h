@@ -166,7 +166,7 @@ public:
 	DebuggerPane *GetDebuggerPane() {
 		return m_debuggerPane;
 	}
-
+	
 	/**
 	 * @return the workspace pane (the one that contained the Symbol view & class view)
 	 */
@@ -255,7 +255,8 @@ private:
 	Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLIP_CHILDREN);
 	wxString CreateWorkspaceTable();
 	wxString CreateFilesTable();
-
+	void     StartTimer();
+	
 private:
 	/**
 	 * Construct all the GUI controls of the main frame. this function is called

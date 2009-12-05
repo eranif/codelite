@@ -294,7 +294,6 @@ void BuildTab::DoMarkAndOpenFile ( std::map<int,LineInfo>::iterator i, bool scro
 	}
 
     // mark the current error/warning line in the output tab
-	int pos = m_sci->PositionFromLine ( i->first );
     m_sci->MarkerDeleteAll   ( 0x7           );
 	m_sci->MarkerAdd         ( i->first, 0x7 );
 

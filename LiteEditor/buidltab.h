@@ -77,7 +77,7 @@ private:
     static void SetStyles(wxScintilla *sci);
 
 	void Initialize       ();
-	void DoMarkAndOpenFile(std::map<int,LineInfo>::iterator i, bool clearsel);
+	void DoMarkAndOpenFile(std::map<int,LineInfo>::iterator i, bool scrollToLine);
     bool ExtractLineInfo  (LineInfo &info, const wxString &text, const wxString &pattern, const wxString &fileidx, const wxString &lineidx);
 	void DoProcessLine    (const wxString &text, int lineno);
     void MarkEditor       (LEditor *editor);

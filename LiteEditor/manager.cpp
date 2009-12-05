@@ -518,6 +518,12 @@ void Manager::GetProjectList ( wxArrayString &list )
 
 ProjectPtr Manager::GetProject ( const wxString &name ) const
 {
+	wxString projectName ( name );
+	projectName.Trim().Trim(false);
+
+	if(projectName.IsEmpty())
+		return NULL;
+
 	wxString errMsg;
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName ( name, errMsg );
 	if ( !proj ) {

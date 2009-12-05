@@ -83,7 +83,7 @@ public:
 	ShellCommand(wxEvtHandler *owner, const QueueCommand &buildInfo);
 
 	virtual ~ShellCommand() {}
-	virtual void Process(IManager *manager = NULL) = 0;
+	virtual void Process(IManager *manager) = 0;
 
 	void AppendLine(const wxString &line);
 	void SendStartMsg();

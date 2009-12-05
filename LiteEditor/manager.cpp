@@ -2513,7 +2513,7 @@ void Manager::RunCustomPreMakeCommand ( const wxString &project )
 	                                      info,
 	                                      wxEmptyString, //no file name (valid only for build file only)
 	                                      true );        //run premake step only
-	m_shellProcess->Process();
+	m_shellProcess->Process(PluginManager::Get());
 }
 
 void Manager::CompileFile ( const wxString &projectName, const wxString &fileName, bool preprocessOnly )
@@ -2561,7 +2561,7 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 		m_shellProcess = NULL;
 		break;
 	}
-	m_shellProcess->Process();
+	m_shellProcess->Process(PluginManager::Get());
 }
 
 bool Manager::IsBuildEndedSuccessfully() const
@@ -2621,7 +2621,7 @@ void Manager::DoBuildProject ( const QueueCommand& buildInfo )
 	}
 
 	m_shellProcess = new CompileRequest ( Frame::Get(), buildInfo );
-	m_shellProcess->Process();
+	m_shellProcess->Process(PluginManager::Get());
 }
 
 void Manager::DoCleanProject ( const QueueCommand& buildInfo )
@@ -2634,7 +2634,7 @@ void Manager::DoCleanProject ( const QueueCommand& buildInfo )
 		delete m_shellProcess;
 	}
 	m_shellProcess = new CleanRequest ( Frame::Get(), buildInfo );
-	m_shellProcess->Process();
+	m_shellProcess->Process(PluginManager::Get());
 }
 
 void Manager::DoCustomBuild ( const QueueCommand& buildInfo )
@@ -2660,7 +2660,7 @@ void Manager::DoCustomBuild ( const QueueCommand& buildInfo )
 		delete m_shellProcess;
 	}
 	m_shellProcess = new CustomBuildRequest ( Frame::Get(), buildInfo, wxEmptyString );
-	m_shellProcess->Process();
+	m_shellProcess->Process( PluginManager::Get() );
 }
 
 void Manager::DoCmdWorkspace ( int cmd )

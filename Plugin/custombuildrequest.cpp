@@ -54,9 +54,9 @@ void CustomBuildRequest::Process(IManager *manager)
 	wxString  errMsg;
 	StringMap om;
 
-	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
-	Workspace *w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
-	EnvironmentConfig *env(manager ? manager->GetEnv() : EnvironmentConfig::Instance());
+	BuildSettingsConfig *bsc ( manager->GetBuildSettingsConfigManager() );
+	Workspace *          w   ( manager->GetWorkspace()                  );
+	EnvironmentConfig *  env ( manager->GetEnv()                        );
 
 	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
@@ -142,17 +142,65 @@ void CustomBuildRequest::Process(IManager *manager)
 	}
 
 
+	// Working directory:
+	// By default we use the project path
+	//////////////////////////////////////////////////////
+
 	DirSaver ds;
 
-	DoSetWorkingDirectory(proj, true, false);
+	//first set the path to the project working directory
+	::wxSetWorkingDirectory(proj->GetFileName().GetPath());
+
+	// If a working directory was specified, use it instead
+	wxString wd = bldConf->GetCustomBuildWorkingDir();
+	wd.Trim().Trim(false);
+
+	wxString filename;
+	if(manager->GetActiveEditor()) {
+		filename = manager->GetActiveEditor()->GetFileName().GetFullPath();
+	}
+
+	if (wd.IsEmpty()) {
+
+		// use the project path
+		wd = proj->GetFileName().GetPath();
+
+	} else {
+
+		// expand macros from the working directory
+		wd = ExpandAllVariables(wd,
+								WorkspaceST::Get(),
+								proj->GetName(),
+								bldConf->GetName(),
+								filename);
+	}
+
+	::wxSetWorkingDirectory(wd);
+
+	// Print message to the build tab
+	AppendLine(wxString::Format(wxT("MESSAGE: Working directory is set to: %s\n"), wd.c_str()));
+
+	// Command handling:
+	//////////////////////////////////////////////////////
 
 	//expand the variables of the command
-	cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
+	cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), filename);
 
 	// in case our configuration includes post/pre build commands
 	// we generate a makefile to include them as well and we update
 	// the build command
 	DoUpdateCommand(manager, cmd, proj, bldConf);
+
+#ifdef __WXMSW__
+	// Windows CD command requires the paths to be backslashe
+	if(cmd.Find(wxT("cd ")) != wxNOT_FOUND)
+		cmd.Replace(wxT("/"), wxT("\\"));
+#endif
+
+	// Wrap the build command in the shell, so it will be able
+	// to perform 'chain' commands like
+	// cd SOMEWHERE && make && ...
+	WrapInShell(cmd);
 
 	//print the build command
 	AppendLine(cmd + wxT("\n"));

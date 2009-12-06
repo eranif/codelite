@@ -178,7 +178,7 @@ void CustomBuildRequest::Process(IManager *manager)
 	::wxSetWorkingDirectory(wd);
 
 	// Print message to the build tab
-	AppendLine(wxString::Format(wxT("MESSAGE: Working directory is set to: %s\n"), wd.c_str()));
+	AppendLine(wxString::Format(wxT("MESSAGE: Working directory is set to: '%s'\n"), wd.c_str()));
 
 	// Command handling:
 	//////////////////////////////////////////////////////

@@ -26,14 +26,44 @@
 #define __buidltab__
 
 #include <map>
+#include <vector>
+#include <wx/regex.h>
 #include <wx/filename.h>
 #include <wx/stopwatch.h>
-
 #include "outputtabwindow.h"
 #include "compiler.h"
 #include "buildtabsettingsdata.h"
 
 class LEditor;
+
+class CompiledPattern {
+public:
+	wxRegEx* regex;
+	wxString fileIndex;
+	wxString lineIndex;
+	
+public:
+	CompiledPattern(wxRegEx *re, const wxString &file, const wxString &line)
+	: regex(re) 
+	, fileIndex(file)
+	, lineIndex(line)
+	{}
+	
+	~CompiledPattern()
+	{
+		if(regex) {
+			delete regex;
+			regex = NULL;
+		}
+	}
+};
+
+typedef SmartPtr<CompiledPattern> CompiledPatternPtr;
+
+struct CompilerPatterns {
+	std::vector<CompiledPatternPtr> errorsPatterns;
+	std::vector<CompiledPatternPtr> warningPatterns;
+};
 
 class BuildTab : public OutputTabWindow
 {
@@ -56,31 +86,33 @@ private:
         size_t   filestart;
         size_t   filelen;
     };
-
-	std::map<int, LineInfo>     m_lineInfo;
-    std::map<wxString, int>     m_lineMap;
-    std::multimap<wxString,int> m_fileMap;
-
-    int  m_showMe;
-    bool m_autoHide;
-	bool m_skipWarnings;
-    bool m_building;
-    int  m_errorCount;
-    int  m_warnCount;
-
-    CompilerPtr m_cmp; // compiler in use during currently building project
-    wxStopWatch m_sw;  // times the entire build
-
-    static BuildTab *s_bt; // self reference for ColorLine to access the m_line* maps
-
+	
+private:
+	std::map<int, LineInfo>              m_lineInfo;
+    std::map<wxString, int>              m_lineMap;
+    std::multimap<wxString,int>          m_fileMap;
+    int                                  m_showMe;
+    bool                                 m_autoHide;
+	bool                                 m_skipWarnings;
+    bool                                 m_building;
+    int                                  m_errorCount;
+    int                                  m_warnCount;
+    CompilerPtr                          m_cmp;               // compiler in use during currently building project
+    wxStopWatch                          m_sw;                // times the entire build
+    static BuildTab *                    s_bt;                // self reference for ColorLine to access the m_line* maps
+	std::map<wxString, CompilerPatterns> m_compilerParseInfo;
+	wxString                             m_baseDir;
+	
+private:
     static int  ColorLine(int, const char *text, size_t &start, size_t &len);
     static void SetStyles(wxScintilla *sci);
 
 	void Initialize       ();
-	void DoMarkAndOpenFile(std::map<int,LineInfo>::iterator i, bool scrollToLine);
-    bool ExtractLineInfo  (LineInfo &info, const wxString &text, const wxString &pattern, const wxString &fileidx, const wxString &lineidx);
-	void DoProcessLine    (const wxString &text, int lineno);
-    void MarkEditor       (LEditor *editor);
+	void DoMarkAndOpenFile  (std::map<int,LineInfo>::iterator i, bool scrollToLine);
+    bool ExtractLineInfo    (LineInfo &info, const wxString &text, const wxRegEx &re, const wxString &fileidx, const wxString &lineidx);
+	bool GetCompilerPatterns(const wxString &compilerName, CompilerPatterns &patterns);
+	void DoProcessLine      (const wxString &text, int lineno);
+    void MarkEditor         (LEditor *editor);
     std::map<int,LineInfo>::iterator GetNextBadLine();
 
     // Event handlers

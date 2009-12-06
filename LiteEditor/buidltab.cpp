@@ -210,15 +210,13 @@ void BuildTab::AppendText ( const wxString &text )
 	}
 }
 
-bool BuildTab::ExtractLineInfo ( LineInfo &info, const wxString &text, const wxString &pattern,
-                                 const wxString &fileidx, const wxString &lineidx )
+bool BuildTab::ExtractLineInfo ( LineInfo &info, const wxString &text, const wxRegEx &re, const wxString &fileidx, const wxString &lineidx )
 {
 	long fidx, lidx;
 	if ( !fileidx.ToLong ( &fidx ) || !lineidx.ToLong ( &lidx ) )
 		return false;
 
-	wxRegEx re ( pattern );
-	if ( !re.IsValid() || !re.Matches ( text ) )
+	if ( !re.Matches ( text ) )
 		return false;
 
 	size_t start;
@@ -235,13 +233,16 @@ bool BuildTab::ExtractLineInfo ( LineInfo &info, const wxString &text, const wxS
         // find the actual workspace file (if possible)
 		wxString filename = text.Mid( info.filestart, info.filelen).Trim().Trim(false);
 		wxFileName fn(filename);
-
-		ProjectPtr project = ManagerST::Get()->GetProject(info.project);
-		if(project) {
-			fn.Normalize(wxPATH_NORM_ALL, project->GetFileName().GetPath());
-		} else {
-			fn.Normalize(wxPATH_NORM_ALL);
+		
+		// Use the current base dir
+		wxString baseDir ( m_baseDir );
+		if(baseDir.IsEmpty()) {
+			ProjectPtr project = ManagerST::Get()->GetProject(info.project);
+			if(project) {
+				baseDir = project->GetFileName().GetPath();
+			}
 		}
+		fn.Normalize(wxPATH_NORM_ALL, baseDir);
 		info.filename = fn.GetFullPath();
 	}
 
@@ -387,7 +388,38 @@ void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 	e.Skip();
 
 	m_building = true;
-
+	
+	// Clear all compiler parsing information
+	m_compilerParseInfo.clear();
+		
+	// Loop over all known compilers and cache the regular expressions
+	BuildSettingsConfigCookie cookie;
+	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
+	while( cmp ) {
+		CompilerPatterns cmpPatterns;
+		const Compiler::CmpListInfoPattern& errPatterns  = cmp->GetErrPatterns();
+		const Compiler::CmpListInfoPattern& warnPatterns = cmp->GetWarnPatterns();
+		Compiler::CmpListInfoPattern::const_iterator iter;
+		for (iter = errPatterns.begin(); iter != errPatterns.end(); iter++) {
+			
+			CompiledPatternPtr compiledPatternPtr(new CompiledPattern(new wxRegEx(iter->pattern), iter->fileNameIndex, iter->lineNumberIndex));
+			if(compiledPatternPtr->regex->IsValid()) {
+				cmpPatterns.errorsPatterns.push_back( compiledPatternPtr );
+			}
+		}
+		
+		for (iter = warnPatterns.begin(); iter != warnPatterns.end(); iter++) {
+			
+			CompiledPatternPtr compiledPatternPtr(new CompiledPattern(new wxRegEx(iter->pattern), iter->fileNameIndex, iter->lineNumberIndex));
+			if(compiledPatternPtr->regex->IsValid()) {
+				cmpPatterns.warningPatterns.push_back( compiledPatternPtr );
+			}
+		}
+		
+		m_compilerParseInfo[cmp->GetName()] = cmpPatterns;
+		cmp =  BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
+	}
+	
 	if ( e.GetEventType() != wxEVT_SHELL_COMMAND_STARTED_NOCLEAN ) {
 		Clear();
 	}
@@ -646,16 +678,29 @@ void BuildTab::DoProcessLine(const wxString& text, int lineno)
 	if ( text.StartsWith ( BUILD_START_MSG ) || text.StartsWith ( BUILD_END_MSG ) ) {
 		info.linecolor = wxSCI_LEX_GCC_BUILDING;
 	}
-
+	
+	// Check for makefile directory changes lines
+	if(text.Contains(wxT("Entering directory `"))) {
+		wxString currentDir = text.AfterFirst(wxT('`'));
+		currentDir = currentDir.BeforeLast(wxT('\''));
+		m_baseDir = currentDir;
+	}
+	
 	if ( info.linecolor == wxSCI_LEX_GCC_BUILDING || !m_cmp ) {
 		// no more line info to get
 	} else {
+		
 		// Find error first
 		bool isError = false;
-		const Compiler::CmpListInfoPattern& errPatterns = m_cmp->GetErrPatterns();
-		Compiler::CmpListInfoPattern::const_iterator itPattern;
-		for (itPattern = errPatterns.begin(); itPattern != errPatterns.end(); ++itPattern) {
-			if ( ExtractLineInfo(info, text, itPattern->pattern, itPattern->fileNameIndex, itPattern->lineNumberIndex)) {
+		
+		CompilerPatterns cmpPatterns;
+		if(!GetCompilerPatterns(m_cmp->GetName(), cmpPatterns)) {
+			return;
+		}
+		
+		for(size_t i=0; i<cmpPatterns.errorsPatterns.size(); i++) {
+			CompiledPatternPtr cmpPatterPtr = cmpPatterns.errorsPatterns.at(i);
+			if ( ExtractLineInfo(info, text, *(cmpPatterPtr->regex), cmpPatterPtr->fileIndex, cmpPatterPtr->lineIndex) ) {
 				info.linecolor = wxSCI_LEX_GCC_ERROR;
 				m_errorCount++;
 				isError = true;
@@ -664,11 +709,12 @@ void BuildTab::DoProcessLine(const wxString& text, int lineno)
 		}
 		if (!isError) {
 			// If it is not an error, maybe it's a warning
-			const Compiler::CmpListInfoPattern& warnPatterns = m_cmp->GetWarnPatterns();
-			for (itPattern = warnPatterns.begin(); itPattern != warnPatterns.end(); ++itPattern) {
-				if ( ExtractLineInfo(info, text, itPattern->pattern, itPattern->fileNameIndex, itPattern->lineNumberIndex)) {
+			for(size_t i=0; i<cmpPatterns.warningPatterns.size(); i++) {
+				CompiledPatternPtr cmpPatterPtr = cmpPatterns.warningPatterns.at(i);
+				if ( ExtractLineInfo(info, text, *(cmpPatterPtr->regex), cmpPatterPtr->fileIndex, cmpPatterPtr->lineIndex) ) {
 					info.linecolor = wxSCI_LEX_GCC_WARNING;
 					m_warnCount++;
+					isError = true;
 					break;
 				}
 			}
@@ -683,4 +729,14 @@ void BuildTab::DoProcessLine(const wxString& text, int lineno)
         }
 		Frame::Get()->GetOutputPane()->GetErrorsTab()->AppendLine ( lineno );
 	}
+}
+
+bool BuildTab::GetCompilerPatterns(const wxString& compilerName, CompilerPatterns& patterns)
+{
+	std::map<wxString, CompilerPatterns>::iterator iter = m_compilerParseInfo.find(compilerName);
+	if(iter == m_compilerParseInfo.end()) {
+		return false;
+	}
+	patterns = iter->second;
+	return true;
 }

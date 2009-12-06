@@ -3,12 +3,13 @@
   <Description>A UnitTest++ executable</Description>
   <Settings Type="Executable">
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g">
+        <IncludePath Value="$(UNIT_TEST_PP_SRC_DIR)/src"/>
         <IncludePath Value="."/>
       </Compiler>
       <Linker Required="yes" Options="">
-        <LibraryPath Value=""/>
+        <LibraryPath Value="$(UNIT_TEST_PP_SRC_DIR)/Debug"/>
         <Library Value="libUnitTest++.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -28,12 +29,13 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="">
         <IncludePath Value="."/>
+        <IncludePath Value="$(UNIT_TEST_PP_SRC_DIR)/src"/>
       </Compiler>
       <Linker Required="yes" Options="-O2">
-        <LibraryPath Value=""/>
+        <LibraryPath Value="$(UNIT_TEST_PP_SRC_DIR)/Release"/>
         <Library Value="libUnitTest++.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>

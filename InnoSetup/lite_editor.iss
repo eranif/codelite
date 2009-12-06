@@ -53,7 +53,6 @@ Source: "..\Runtime\lexers\BlackTheme\*.xml"; DestDir: "{app}\lexers\BlackTheme\
 Source: "..\Runtime\debuggers\Debugger.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\plugins\resources\*"; DestDir: "{app}\plugins\resources\"; Flags: ignoreversion ; Components: Editor
-;Source: "..\sdk\curl\lib\libcurl-4.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\Runtime\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\codelite_launcher.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\codelite_cppcheck.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
@@ -62,7 +61,6 @@ Source: "..\Runtime\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ; Compo
 Source: "..\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
-Source: "..\Runtime\src\*"; DestDir: "{app}\src"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW-4.4.0\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW-4.4.0\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW-4.4.0\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

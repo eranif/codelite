@@ -24,9 +24,10 @@ PrivilegesRequired=none
 Name: "eng"; MessagesFile: "compiler:Default.isl"
 
 [Components]
-Name: "Editor"; Description: "CodeLite IDE (Editor + Plugins)"; Types: full custom;
-Name: "MinGW"; Description: "MinGW 4.4.0 full (gcc/g++/gdb/WinAPI)"; Types: full;
+Name: "Editor";           Description: "CodeLite IDE (Editor + Plugins)";                               Types: full custom;
+Name: "MinGW";            Description: "MinGW 4.4.0 full (gcc/g++/gdb/WinAPI)";                         Types: full;
 Name: "wxWidgets_2_8_10"; Description: "wxWidgets framework, built as monolithic shared debug/release"; Types: full;
+Name: "UnitTestPP";       Description: "UnitTest++ 1.3 framework";                                      Types: full;
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -61,7 +62,6 @@ Source: "..\Runtime\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ; Compo
 Source: "..\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
-Source: "..\Runtime\src\*"; DestDir: "{app}\src"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW-4.4.0\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW-4.4.0\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW-4.4.0\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
@@ -74,6 +74,7 @@ Source: "C:\MinGW-4.4.0\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversio
 Source: "C:\MinGW-4.4.0\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW-4.4.0\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
 Source: "..\Runtime\wxWidgets-2.8.10\*"; DestDir: "{code:GetWxInstallDir}"; Flags: recursesubdirs ; Components: wxWidgets_2_8_10
+Source: "..\UnitTest++\*"; DestDir: "{code:GetUnitTestPPInstallDir}"; Flags: recursesubdirs ; Components: UnitTestPP
 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}"
@@ -85,12 +86,14 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite "; Workin
 Root: HKCR	; Subkey: "*\shell\Open With CodeLite\command"; ValueType: string; ValueName: ""; ValueData: "{app}\CodeLite.exe -b ""{app}"" ""%1"""
 Root: HKCU	; Subkey: "SOFTWARE\CodeLite\"; ValueType: string; ValueName: "mingw"; ValueData: "{code:GetMinGWInstallDir}"
 Root: HKCU	; Subkey: "SOFTWARE\CodeLite\"; ValueType: string; ValueName: "wx"; ValueData: "{code:GetWxInstallDir}"
+Root: HKCU	; Subkey: "SOFTWARE\CodeLite\"; ValueType: string; ValueName: "unittestpp"; ValueData: "{code:GetUnitTestPPInstallDir}"
 
 [Code]
 var
-  MinGW_Page: TInputDirWizardPage;
-  Wx_Page: TInputDirWizardPage;
-
+  MinGW_Page:      TInputDirWizardPage;
+  Wx_Page:         TInputDirWizardPage;
+  UnitTestPP_Page: TInputDirWizardPage;
+  
 procedure CreateMinGWPage();
 begin
   MinGW_Page := CreateInputDirPage(wpSelectComponents,
@@ -119,6 +122,26 @@ begin
 
   // Set initial value (optional)
   Wx_Page.Values[0] := ExpandConstant('{sd}\wxWidgets-2.8.10\');
+end;
+
+procedure CreateUnitTestPPPage();
+begin
+  UnitTestPP_Page := CreateInputDirPage(wpSelectComponents,
+          'Select UnitTest++ Installation Folder', 'Where should setup place UnitTest++?',
+          'UnitTest++ framework will be stored in the following folder.'#13#10#13#10 +
+          'To continue, click Next. If you would like to select a different folder, click Browse.',
+          False, 'New Folder');
+
+  // Add item (with an empty caption)
+  UnitTestPP_Page.Add('');
+
+  // Set initial value (optional)
+  UnitTestPP_Page.Values[0] := ExpandConstant('{sd}\UnitTest++-1.3\');
+end;
+
+function GetUnitTestPPInstallDir(Param: String): String;
+begin
+  Result := UnitTestPP_Page.Values[0];
 end;
 
 function GetMinGWInstallDir(Param: String): String;
@@ -165,5 +188,11 @@ begin
     if IsComponentSelected('wxWidgets_2_8_10') = False then
       Result := True;
   end
+  
+  if PageID = UnitTestPP_Page.ID then begin
+    if IsComponentSelected('UnitTestPP') = False then
+      Result := True;
+  end
+  
 end;
 

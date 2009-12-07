@@ -117,6 +117,7 @@ class TagsManager : public wxEvtHandler
 
 	ITagsStorage *                m_workspaceDatabase;
 	wxCriticalSection             m_cs;
+	wxCriticalSection             m_crawlerLocker;
 	wxFileName                    m_codeliteIndexerPath;
 	clProcess*                    m_codeliteIndexerProcess;
 	wxString                      m_ctagsCmd;
@@ -653,7 +654,13 @@ public:
 	 * @return tag tree, must be freed by caller
 	 */
 	TagTreePtr TreeFromTags(const wxString& tags, int &count);
-
+	
+	/**
+	 * @brief lock/unlock the TagsManager locker
+	 */
+	void CrawlerLock();
+	void CrawlerUnlock();
+	
 protected:
 	std::map<wxString, bool> m_typeScopeCache;
 	std::map<wxString, bool> m_typeScopeContainerCache;

@@ -213,11 +213,19 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 	}
 	wxStopWatch sw;
 	sw.Start();
+	
+	// Before using the 'crawlerScan' we lock it, since it is not mt-safe
+	TagsManagerST::Get()->CrawlerLock();
 	for(size_t i=0; i<filteredFileList.GetCount(); i++) {
 		crawlerScan(filteredFileList.Item(i).mb_str(wxConvUTF8).data());
-		TEST_DESTROY();
+		if( TestDestroy() ) {
+			TagsManagerST::Get()->CrawlerUnlock();
+			DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> received 'TestDestroy()'") ) );
+			return;
+		}
 	}
-
+	TagsManagerST::Get()->CrawlerUnlock();
+	
 	// collect the results
 	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
 	std::set<std::string>::iterator iter = fileSet.begin();
@@ -379,8 +387,12 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
 
 	// Invoke the crawler
 	const wxCharBuffer cfile = filename.mb_str(wxConvUTF8);
+	
+	// Before using the 'crawlerScan' we lock it, since it is not mt-safe
+	TagsManagerST::Get()->CrawlerLock();
 	crawlerScan( cfile.data() );
-
+	TagsManagerST::Get()->CrawlerUnlock();
+	
 	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
 	std::set<std::string>::iterator iter = fileSet.begin();
 	for (; iter != fileSet.end(); iter++ ) {

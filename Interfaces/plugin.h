@@ -131,7 +131,13 @@ enum {
 	// This event is sent from plugins to the application to tell it to reload
 	// any open files (and re-tag them as well)
 	wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED,
-
+	
+	// Same as wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED
+	// just without prompting the user
+	// this event only reload code files without 
+	// any reload to the workspace / project
+	wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT,
+	
 	// Sent by the project settings dialogs to indicate that
 	// the project configurations are saved
 	// clientData is the project name (wxString*)

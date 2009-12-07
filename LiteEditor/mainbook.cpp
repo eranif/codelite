@@ -622,7 +622,7 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 	return res;
 }
 
-void MainBook::ReloadExternallyModified()
+void MainBook::ReloadExternallyModified(bool prompt)
 {
 	std::vector<LEditor*> editors;
 	GetAllEditors(editors);
@@ -642,9 +642,11 @@ void MainBook::ReloadExternallyModified()
 		}
 	}
 	editors.resize(n);
-
-	UserSelectFiles(files, wxT("Reload Modified Files"),
-	                wxT("Files have been modified outside the editor.\nChoose which files you would like to reload."), false);
+	
+	if(prompt) {
+		UserSelectFiles(files, wxT("Reload Modified Files"), wxT("Files have been modified outside the editor.\nChoose which files you would like to reload."), false);
+	}
+	
 	std::vector<wxFileName> filesToRetag;
 	for (size_t i = 0; i < files.size(); i++) {
 		if (files[i].second) {
@@ -652,9 +654,14 @@ void MainBook::ReloadExternallyModified()
 			filesToRetag.push_back(files[i].first);
 		}
 	}
-	if (!filesToRetag.empty()) {
+	if (filesToRetag.size() > 1) {
 		TagsManagerST::Get()->RetagFiles(filesToRetag, true);
 		SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&filesToRetag);
+		
+	} else if (filesToRetag.size() == 1) {
+		ManagerST::Get()->RetagFile(filesToRetag.at(0).GetFullPath());
+		SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&filesToRetag);
+		
 	}
 }
 

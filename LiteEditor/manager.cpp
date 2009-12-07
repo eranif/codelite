@@ -744,12 +744,16 @@ void Manager::RetagWorkspace(bool quickRetag)
 
 	{
 		wxWindowDisabler disableAll;
-		wxBusyInfo bi(wxT("Scanning for include files to parse. please wait..."), Frame::Get());
-
+		//wxBusyInfo bi(wxT("Scanning for include files to parse. please wait..."), Frame::Get());
+		Frame::Get()->SetStatusMessage(wxT("Scanning for include files to parse. please wait..."), 0);
+		
+		// Before using the 'crawlerScan' we lock it, since it is not mt-safe
+		TagsManagerST::Get()->CrawlerLock();
 		for (size_t i=0; i<projectFiles.size(); i++) {
 			crawlerScan(projectFiles.at(i).GetFullPath().mb_str(wxConvUTF8).data());
-			wxTheApp->Yield();
 		}
+		TagsManagerST::Get()->CrawlerUnlock();
+		Frame::Get()->SetStatusMessage(wxT("Done"), 0);
 	}
 
 	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
@@ -776,9 +780,11 @@ void Manager::RetagWorkspace(bool quickRetag)
 	// -----------------------------------------------
 	// tag them
 	// -----------------------------------------------
-
+	
+	Frame::Get()->SetStatusMessage(wxT("Retagging..."), 0);
 	TagsManagerST::Get()->RetagFiles ( projectFiles, quickRetag );
 	long end   = sw.Time();
+	Frame::Get()->SetStatusMessage(wxT("Done"), 0);
 	wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), (end)/1000, projectFiles.size());
 	SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
 }

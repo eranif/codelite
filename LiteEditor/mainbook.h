@@ -103,7 +103,7 @@ public:
 
 	bool SaveAll(bool askUser, bool includeUntitled);
 
-    void ReloadExternallyModified();
+    void ReloadExternallyModified(bool prompt);
 
     bool ClosePage      (const wxString &text) { return ClosePage(FindPage(text)); }
     bool ClosePage      (wxWindow *win);

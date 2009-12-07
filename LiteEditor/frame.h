@@ -404,6 +404,7 @@ protected:
 	void OnLoadWelcomePageUI(wxUpdateUIEvent &event);
 	void OnAppActivated(wxActivateEvent &event);
 	void OnReloadExternallModified(wxCommandEvent &e);
+	void OnReloadExternallModifiedNoPrompt(wxCommandEvent &e);
 	void OnCompileFile(wxCommandEvent &e);
 	void OnCompileFileUI(wxUpdateUIEvent &e);
 	void OnCloseAllButThis(wxCommandEvent &e);

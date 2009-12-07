@@ -484,7 +484,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_DOCKPANE,    Frame::OnNewDetachedPane)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, Frame::OnDestroyDetachedPane)
 
-	EVT_MENU(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED, Frame::OnReloadExternallModified)
+	EVT_MENU(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED,          Frame::OnReloadExternallModified)
+	EVT_MENU(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT, Frame::OnReloadExternallModifiedNoPrompt)
 END_EVENT_TABLE()
 
 
@@ -2684,7 +2685,7 @@ void Frame::OnAppActivated(wxActivateEvent &e)
 {
 	if (m_theFrame && e.GetActive()) {
 		m_theFrame->ReloadExternallyModifiedProjectFiles();
-		m_theFrame->GetMainBook()->ReloadExternallyModified();
+		m_theFrame->GetMainBook()->ReloadExternallyModified(true);
 	}
 	e.Skip();
 }
@@ -3411,7 +3412,13 @@ void Frame::OnReloadExternallModified(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	ReloadExternallyModifiedProjectFiles();
-	GetMainBook()->ReloadExternallyModified();
+	GetMainBook()->ReloadExternallyModified(true);
+}
+
+void Frame::OnReloadExternallModifiedNoPrompt(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	GetMainBook()->ReloadExternallyModified(false);
 }
 
 void Frame::ReloadExternallyModifiedProjectFiles()

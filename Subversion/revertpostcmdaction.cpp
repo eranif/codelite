@@ -18,7 +18,7 @@ RevertPostCmdAction::~RevertPostCmdAction()
 
 void RevertPostCmdAction::DoCommand()
 {
-	wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED);
+	wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT);
 	m_mgr->GetTheApp()->GetTopWindow()->AddPendingEvent(e);
 
 	// Notify the mainframe to re-tag workspace

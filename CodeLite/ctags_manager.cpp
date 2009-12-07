@@ -94,6 +94,23 @@ extern void get_variables(const std::string &in, VariableList &li, const std::ma
 static int CtagsMgrTimerId = wxNewId();
 
 //------------------------------------------------------------------------------
+// Progress dialog
+//------------------------------------------------------------------------------
+class MyProgress : public wxProgressDialog 
+{
+public:
+	MyProgress(const wxString &title, size_t count) : 
+		wxProgressDialog(title, wxT(""), (int) count, NULL, wxPD_APP_MODAL|wxPD_AUTO_HIDE|wxPD_CAN_ABORT|wxPD_SMOOTH )
+	{
+		SetSize(500, -1);
+		Centre();
+	}
+		
+	virtual ~MyProgress() 
+	{}
+};
+
+//------------------------------------------------------------------------------
 // CTAGS Manager
 //------------------------------------------------------------------------------
 BEGIN_EVENT_TABLE(TagsManager, wxEvtHandler)
@@ -1088,13 +1105,7 @@ bool TagsManager::DoBuildDatabase(const wxArrayString &files, ITagsStorage &db, 
 	}
 
 	// Create a progress dialog
-	wxProgressDialog prgDlg( wxT("Building tags database ..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"),
-	                         (int)files.GetCount(),
-	                          NULL,
-							  wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT );
-	prgDlg.GetSizer()->Fit( &prgDlg );
-	prgDlg.Layout();
-	prgDlg.Centre();
+	MyProgress prgDlg(wxT("Building tags database ..."), files.GetCount());
 	prgDlg.Update(0, wxT("Parsing..."));
 
 	// We commit every 10 files
@@ -2194,3 +2205,15 @@ void TagsManager::DoGetFunctionTipForEmptyExpression(const wxString& word, const
 	}
 	GetFunctionTipFromTags(candidates, word, tips);
 }
+
+
+void TagsManager::CrawlerLock()
+{
+	m_crawlerLocker.Enter();
+}
+
+void TagsManager::CrawlerUnlock()
+{
+	m_crawlerLocker.Leave();
+}
+

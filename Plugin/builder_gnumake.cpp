@@ -615,6 +615,10 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 	text << wxT("##\n");
 
 	Compiler::CmpFileTypeInfo ft;
+	
+	// Collect all the sub-directories that we generate files for
+	wxArrayString subDirs;
+			
 	PRINT_TIMESTAMP(wxT("Looping over the file list...\n"));
 	for (size_t i=0; i<abs_files.size(); i++) {
 		// is this file interests the compiler?
@@ -639,9 +643,14 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 
 			relPath = rel_paths.at(i).GetPath(true, wxPATH_UNIX);
 			relPath.Trim().Trim(false);
+			
+			if(subDirs.Index(relPath) == wxNOT_FOUND) {
+				subDirs.Add(relPath);
+			}
+			
 			compilationLine.Replace(wxT("$(FilePath)"),     relPath);
 			compilationLine.Replace(wxT("\\"), wxT("/"));
-
+			
 			if (ft.kind == Compiler::CmpFileKindSource) {
 				wxString objectName;
 				wxString dependFile;
@@ -771,8 +780,12 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 	}
 
 	if (generateDependeciesFiles) {
-		text << wxT("\n-include $(IntermediateDirectory)/*$(DependSuffix)\n");
+		text << wxT("\n");
+		for(size_t i=0; i<subDirs.GetCount(); i++) {
+			text << wxT("-include ") << subDirs.Item(i) << wxT("$(IntermediateDirectory)/*$(DependSuffix)\n");
+		}
 	}
+	
 	text << wxT("\n\n");
 	PRINT_TIMESTAMP(wxT("Creating file targets...done\n"));
 }

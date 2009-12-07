@@ -242,7 +242,8 @@ bool BuildTab::ExtractLineInfo ( LineInfo &info, const wxString &text, const wxR
 				baseDir = project->GetFileName().GetPath();
 			}
 		}
-		fn.Normalize(wxPATH_NORM_ALL, baseDir);
+		
+		fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG, baseDir);
 		info.filename = fn.GetFullPath();
 	}
 
@@ -284,9 +285,9 @@ void BuildTab::DoMarkAndOpenFile ( std::map<int,LineInfo>::iterator i, bool scro
 
 	ProjectPtr project = ManagerST::Get()->GetProject(info.project);
 	if(project) {
-		filename.Normalize(wxPATH_NORM_ALL, project->GetFileName().GetPath());
+		filename.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG, project->GetFileName().GetPath());
 	} else {
-		filename.Normalize(wxPATH_NORM_ALL);
+		filename.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
 	}
 
 	LEditor *editor = Frame::Get()->GetMainBook()->OpenFile ( filename.GetFullPath(), info.project, info.linenum );

@@ -1798,6 +1798,7 @@ void Frame::OnBuildEnded(wxCommandEvent &event)
 			ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
 		}
 	}
+	// Process next command from the queue
 	ManagerST::Get()->ProcessCommandQueue();
 }
 

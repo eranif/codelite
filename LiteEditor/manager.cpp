@@ -74,7 +74,7 @@
 #include "custombuildrequest.h"
 #include "compile_request.h"
 #include "clean_request.h"
-
+#include "buidltab.h"
 #include "manager.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
@@ -2578,36 +2578,8 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 
 bool Manager::IsBuildEndedSuccessfully() const
 {
-	//build is still running?
-	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
-		return false;
-	}
-
-	wxArrayString lines;
-	if ( m_shellProcess ) {
-
-		if ( !m_shellProcess->GetLines ( lines ) ) {
-			return false;
-		}
-
-		//check every line to see if we got an error
-		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf     ( m_shellProcess->GetInfo().GetProject(), m_shellProcess->GetInfo().GetConfiguration() );
-		CompilerPtr    cmp     = BuildSettingsConfigST::Get()->GetCompiler( bldConf->GetCompilerType() );
-
-		const Compiler::CmpListInfoPattern& errPatterns = cmp->GetErrPatterns();
-
-		// TODO : optimize by precompiling all regex in an array
-		for ( size_t i=0; i<lines.GetCount(); i++ ) {
-			Compiler::CmpListInfoPattern::const_iterator itPattern;
-			for (itPattern = errPatterns.begin(); itPattern != errPatterns.end(); ++itPattern) {
-				wxRegEx reErr(itPattern->pattern);
-				if ( reErr.IsValid() && reErr.Matches ( lines.Item ( i ) ) ) {
-					return false;
-				}
-			}
-		}
-	}
-	return true;
+	// return the result of the last build
+	return Frame::Get()->GetOutputPane()->GetBuildTab()->GetBuildEndedSuccessfully();
 }
 
 void Manager::DoBuildProject ( const QueueCommand& buildInfo )

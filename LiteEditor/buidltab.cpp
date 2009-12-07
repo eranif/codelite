@@ -386,7 +386,7 @@ void BuildTab::OnRepeatOutputUI ( wxUpdateUIEvent& e )
 void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 {
 	e.Skip();
-
+	
 	m_building = true;
 	
 	// Clear all compiler parsing information
@@ -421,8 +421,10 @@ void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 	}
 	
 	if ( e.GetEventType() != wxEVT_SHELL_COMMAND_STARTED_NOCLEAN ) {
+		// Reset output and counters
 		Clear();
 	}
+	
 	AppendText ( BUILD_START_MSG );
 	Frame::Get()->SetStatusMessage ( e.GetString(), 3, XRCID ( "build" ) );
     OutputPane *opane = Frame::Get()->GetOutputPane();
@@ -493,8 +495,8 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 	}
 
 	MarkEditor ( Frame::Get()->GetMainBook()->GetActiveEditor() );
-
-	// notify the plugins that the build had started
+	
+	// notify the plugins that the build had ended
 	PostCmdEvent(wxEVT_BUILD_ENDED);
 }
 

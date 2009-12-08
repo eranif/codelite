@@ -120,8 +120,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="ProcessControl">
     <File Name="pipedprocess.h"/>
-    <File Name="interactiveprocess.cpp"/>
-    <File Name="interactiveprocess.h"/>
     <File Name="pipedprocess.cpp"/>
     <File Name="consolefinder.cpp"/>
     <File Name="consolefinder.h"/>

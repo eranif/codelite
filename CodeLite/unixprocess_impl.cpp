@@ -44,7 +44,7 @@ static void make_argv(const wxString &cmd)
 		case wxT('\''):
 			if ( inString ) {
 				currentWord << cmd.GetChar(i);
-				
+
 			} else  if ( inSingleString && currentWord.IsEmpty() == false ) {
 			// this is the terminating quotation mark
 				argvArray.Add( currentWord );
@@ -58,17 +58,17 @@ static void make_argv(const wxString &cmd)
 		case wxT('"'):
 				if ( inSingleString ) {
 					currentWord << cmd.GetChar(i);
-					
+
 				} else if ( inString && currentWord.IsEmpty() == false ) {
 					// this is the terminating quotation mark
 					argvArray.Add( currentWord );
 					currentWord.Clear();
 					inString = false;
-					
+
 				} else {
 					currentWord.Clear();
 					inString = true;
-					
+
 				}
 			break;
 		default:
@@ -112,20 +112,14 @@ void UnixProcessImpl::Cleanup()
 {
 	close(GetReadHandle());
 	close(GetWriteHandle());
-	
-	
+
+
 	if ( m_thr ) {
 		// Stop the reader thread
 		m_thr->Stop();
 		delete m_thr;
 	}
-	
-//	wxKill (GetPid(), wxSIGKILL, NULL, wxKILL_CHILDREN);
-//	// Perform process cleanup
-//	int status(0);
-//	waitpid(GetPid(), &status, 0);
-	
- 	
+
 #ifdef __WXGTK__
 
 	// Kill the child process
@@ -136,13 +130,13 @@ void UnixProcessImpl::Cleanup()
 		cmd << wxT("/bin/sh -f ") << script.GetFullPath() << wxT(" ") << GetPid();
 		wxExecute(cmd, wxEXEC_ASYNC);
 	}
-	
+
 	// Perform process cleanup
 	int status(0);
 	waitpid(GetPid(), &status, 0);
-	
+
 #else
-	wxKill (GetPid(), wxSIGKILL);
+	wxKill (GetPid(), wxSIGTERM);
 	// Perform process cleanup
 	int status(0);
 	waitpid(GetPid(), &status, 0);
@@ -232,7 +226,7 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, co
 			wxSetWorkingDirectory( workingDirectory );
 		}
 //		wxPrintf(wxT("My current WD is: %s\n"), wxGetCwd().c_str());
-		
+
 		int stdin_file  = fileno( stdin  );
 		int stdout_file = fileno( stdout );
 		int stderr_file = fileno( stderr );

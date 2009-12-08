@@ -27,7 +27,6 @@
 
 #include "wx/string.h"
 #include "wx/event.h"
-#include "interactiveprocess.h"
 #include "list"
 #include "debugger.h"
 #include <wx/hashmap.h>

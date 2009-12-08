@@ -60,6 +60,7 @@ class OutputViewControlBar;
 // Helper class
 //--------------------------------
 extern const wxEventType wxEVT_UPDATE_STATUS_BAR;
+extern const wxEventType wxEVT_LOAD_PERSPECTIVE ;
 
 struct StartPageData {
 	wxString name;
@@ -450,8 +451,7 @@ protected:
 	void OnShowQuickFinder (wxCommandEvent &e);
 	void OnShowActiveProjectSettings(wxCommandEvent &e);
 	void OnShowActiveProjectSettingsUI(wxUpdateUIEvent &e);
-
-// Any class wishing to process wxWindows events must use this macro
+	void OnLoadPerspective(wxCommandEvent &e);
 	DECLARE_EVENT_TABLE()
 };
 

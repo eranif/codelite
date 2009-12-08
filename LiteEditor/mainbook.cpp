@@ -550,6 +550,7 @@ bool MainBook::DetachPage(wxWindow* win)
 		return false;
 	wxAuiPaneInfo info = wxAuiPaneInfo().Name(m_book->GetPageText(pos)).Caption(m_book->GetPageText(pos))
 	                     .BestSize(win->GetSize()).Float();
+	info.FloatingPosition(50, 100);
 	m_book->RemovePage(pos, false);
 	Frame::Get()->GetDockingManager().AddPane(win, info);
 	m_detachedTabs.insert(win);
@@ -642,11 +643,11 @@ void MainBook::ReloadExternallyModified(bool prompt)
 		}
 	}
 	editors.resize(n);
-	
+
 	if(prompt) {
 		UserSelectFiles(files, wxT("Reload Modified Files"), wxT("Files have been modified outside the editor.\nChoose which files you would like to reload."), false);
 	}
-	
+
 	std::vector<wxFileName> filesToRetag;
 	for (size_t i = 0; i < files.size(); i++) {
 		if (files[i].second) {
@@ -657,11 +658,11 @@ void MainBook::ReloadExternallyModified(bool prompt)
 	if (filesToRetag.size() > 1) {
 		TagsManagerST::Get()->RetagFiles(filesToRetag, true);
 		SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&filesToRetag);
-		
+
 	} else if (filesToRetag.size() == 1) {
 		ManagerST::Get()->RetagFile(filesToRetag.at(0).GetFullPath());
 		SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&filesToRetag);
-		
+
 	}
 }
 

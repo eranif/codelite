@@ -130,6 +130,7 @@ extern unsigned char cubes_alpha[];
 static int FrameTimerId = wxNewId();
 
 const wxEventType wxEVT_UPDATE_STATUS_BAR = XRCID("update_status_bar");
+const wxEventType wxEVT_LOAD_PERSPECTIVE  = XRCID("load_perspective");
 
 
 //----------------------------------------------------------------
@@ -482,6 +483,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_UPTODATE,      Frame::OnNewVersionAvailable)
 
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_DOCKPANE,    Frame::OnNewDetachedPane)
+	EVT_COMMAND(wxID_ANY, wxEVT_LOAD_PERSPECTIVE,    Frame::OnLoadPerspective)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, Frame::OnDestroyDetachedPane)
 
 	EVT_MENU(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED,          Frame::OnReloadExternallModified)
@@ -811,6 +813,11 @@ void Frame::CreateGUIControls(void)
 	}
 
 	Layout();
+	
+	// After all the plugins / panes have been loaded, 
+	// its time to re-load the perspective
+	wxCommandEvent evt(wxEVT_LOAD_PERSPECTIVE);
+	AddPendingEvent( evt );
 }
 
 void Frame::CreateViewAsSubMenu()
@@ -2638,42 +2645,7 @@ void Frame::OnShowWelcomePage(wxCommandEvent &event)
 void Frame::CompleteInitialization()
 {
 	PluginManager::Get()->Load();
-
-	// after the plugin are loaded, it is time to load the saved
-	// perspective
-	long loadIt(1);
-	EditorConfigST::Get()->GetLongValue(wxT("LoadSavedPrespective"), loadIt);
-	if (loadIt) {
-
-		//locate the layout file
-		wxString file_name(ManagerST::Get()->GetStarupDirectory() + wxT("/config/codelite.layout"));
-		wxString pers(wxEmptyString);
-
-		if (wxFileName(file_name).FileExists()) {
-			//load this file
-			ReadFileWithConversion(file_name, pers);
-		}
-
-		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == SvnRevision) {
-			m_mgr.LoadPerspective(pers);
-		} else {
-			EditorConfigST::Get()->SetRevision(SvnRevision);
-		}
-	}
-
-	// Since of revision 3048, we need to manually force some of the changes
-	// to the "Output View" pane, otherwise users wont be able to see them
-	// unless they delete their codelite.layout file, which people usually
-	// dont do
-	GetDockingManager().GetPane(wxT("Output View")).Floatable(false);
-	GetDockingManager().GetPane(wxT("Output View")).Dockable(false);
-	GetDockingManager().GetPane(wxT("Output View")).CloseButton(false);
-	GetDockingManager().GetPane(wxT("Output View")).CaptionVisible(false);
-	GetDockingManager().GetPane(wxT("Output View")).Hide();
-	GetDockingManager().Update();
-
-	EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
-
+	
 	// Add buttons to the OutputControlBarView
 	m_controlBar->AddAllButtons();
 
@@ -3604,4 +3576,41 @@ void Frame::OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e)
 void Frame::StartTimer()
 {
 	m_timer->Start(2500, true);
+}
+
+void Frame::OnLoadPerspective(wxCommandEvent& e)
+{
+	long loadIt(1);
+	EditorConfigST::Get()->GetLongValue(wxT("LoadSavedPrespective"), loadIt);
+	if (loadIt) {
+
+		//locate the layout file
+		wxString file_name(ManagerST::Get()->GetStarupDirectory() + wxT("/config/codelite.layout"));
+		wxString pers(wxEmptyString);
+
+		if (wxFileName(file_name).FileExists()) {
+			//load this file
+			ReadFileWithConversion(file_name, pers);
+		}
+
+		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == SvnRevision) {
+			m_mgr.LoadPerspective(pers);
+		} else {
+			EditorConfigST::Get()->SetRevision(SvnRevision);
+		}
+	}
+
+	// Since of revision 3048, we need to manually force some of the changes
+	// to the "Output View" pane, otherwise users wont be able to see them
+	// unless they delete their codelite.layout file, which people usually
+	// dont do
+	GetDockingManager().GetPane(wxT("Output View")).Floatable(false);
+	GetDockingManager().GetPane(wxT("Output View")).Dockable(false);
+	GetDockingManager().GetPane(wxT("Output View")).CloseButton(false);
+	GetDockingManager().GetPane(wxT("Output View")).CaptionVisible(false);
+	GetDockingManager().GetPane(wxT("Output View")).Hide();
+	GetDockingManager().Update();
+
+	EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
+
 }

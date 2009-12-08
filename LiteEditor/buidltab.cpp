@@ -329,8 +329,11 @@ void BuildTab::MarkEditor ( LEditor *editor )
 	std::multimap<wxString,int>::iterator e = iters.second;
     if (b == m_fileMap.end())
         return;
+		
+	std::set<wxString> uniqueSet;
     for (; b != e; b++ ) {
-
+		
+		// get the line info related to the BuildTab's line number (b->second)
         std::map<int,LineInfo>::iterator i = m_lineInfo.find ( b->second ) ;
 
         if ( i == m_lineInfo.end() )
@@ -340,9 +343,25 @@ void BuildTab::MarkEditor ( LEditor *editor )
 		if ( line_colour == wxSCI_LEX_GCC_ERROR || line_colour == wxSCI_LEX_GCC_WARNING ) {
 
 			wxMemoryBuffer style_bytes;
-			int      line_number = i->second.linenum;
+			LineInfo lineInfo = i->second;
+			
+			// For performance, dont add the exact same markers to the same line number/filename 
+			// with the exact same tip
+			wxString tipMagic;
+			tipMagic << lineInfo.linenum << lineInfo.linetext;
+			if(uniqueSet.find(tipMagic) != uniqueSet.end()) {
+				// we already reported the exact same tip for that line
+				// skip this one
+				continue;
+			} else {
+				// add it to the unique set
+				uniqueSet.insert(tipMagic);
+			}
+			
+			// format the tip
+			int line_number = lineInfo.linenum;
 			wxString tip = GetBuildToolTip(editor->GetFileName().GetFullPath(), line_number, style_bytes);
-
+						
 			// Set annotations
 			if ( options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotations ) {
 				editor->AnnotationSetText (line_number, tip);

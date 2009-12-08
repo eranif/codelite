@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/tokenzr.h>
+#include "pluginmanager.h"
 #include "workspacesettingsdlg.h"
 #include "importfilesdialog.h"
 #include "fileview.h"
@@ -1062,11 +1063,11 @@ void FileViewTree::OnSaveAsTemplate( wxCommandEvent & WXUNUSED( event ) )
 		wxString name = GetItemText( item );
 		ProjectPtr proj = ManagerST::Get()->GetProject( name );
 		if ( proj ) {
-			NameAndDescDlg *dlg = new NameAndDescDlg(NULL, name);
-			if ( dlg->ShowModal() == wxID_OK ) {
-				wxString newName = dlg->GetName();
-				wxString desc  	 = dlg->GetDescription();
-				wxString type    = dlg->GetType();
+			NameAndDescDlg dlg(Frame::Get(), PluginManager::Get(), name);
+			if ( dlg.ShowModal() == wxID_OK ) {
+				wxString newName = dlg.GetName();
+				wxString desc  	 = dlg.GetDescription();
+				wxString type    = dlg.GetType();
 
 				newName = newName.Trim().Trim(false);
 				desc = desc.Trim().Trim(false);
@@ -1080,7 +1081,6 @@ void FileViewTree::OnSaveAsTemplate( wxCommandEvent & WXUNUSED( event ) )
 					newProj.CopyTo ( tmplateDir, newName, desc );
 				}
 			}
-			dlg->Destroy();
 		}
 	}
 }

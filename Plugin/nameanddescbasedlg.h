@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -17,7 +17,7 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/textctrl.h>
-#include <wx/choice.h>
+#include <wx/combobox.h>
 #include <wx/sizer.h>
 #include <wx/statline.h>
 #include <wx/button.h>
@@ -37,7 +37,7 @@ class NameAndDescBaseDlg : public wxDialog
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_textCtrlName;
 		wxStaticText* m_staticText4;
-		wxChoice* m_choiceType;
+		wxComboBox* m_choiceType;
 		wxStaticText* m_staticText2;
 		wxTextCtrl* m_textCtrlDescription;
 		wxStaticLine* m_staticline1;
@@ -45,11 +45,12 @@ class NameAndDescBaseDlg : public wxDialog
 		wxButton* m_buttonCancel;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnButtonOK( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonCancel( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonCancel( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
+		
 		NameAndDescBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Save Project As Template"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 594,220 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~NameAndDescBaseDlg();
 	

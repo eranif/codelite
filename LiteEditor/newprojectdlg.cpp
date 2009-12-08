@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "newprojectdlg.h"
+#include "pluginmanager.h"
 #include "windowattrmanager.h"
 #include <wx/xrc/xmlres.h>
 #include "globals.h"
@@ -32,6 +33,7 @@
 #include "manager.h"
 #include "dirtraverser.h"
 #include <wx/imaglist.h>
+#include <set>
 
 NewProjectDlg::NewProjectDlg( wxWindow* parent )
 		:
@@ -41,7 +43,36 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 	m_listTemplates->SetColumnWidth( 0, m_listTemplates->GetSize().GetWidth() );
 
 	//get list of project templates
-	GetProjectTemplateList(m_list);
+	wxImageList *lstImages (NULL);
+	GetProjectTemplateList(PluginManager::Get(), m_list, &m_mapImages, &lstImages);
+	
+	// assign image list to the list control which takes ownership of it (it will delete the image list)
+	m_listTemplates->AssignImageList(lstImages, wxIMAGE_LIST_SMALL);
+	
+	m_chCategories->Clear();
+	std::list<ProjectPtr>::iterator iter = m_list.begin();
+	std::set<wxString>              categories;
+	
+	// Add the 'All' category
+	categories.insert(wxT("All"));
+	for(; iter != m_list.end(); iter++) {
+		wxString internalType = (*iter)->GetProjectInternalType();
+		if(internalType.IsEmpty()) internalType = wxT("Others");
+		categories.insert( internalType );
+	}
+	
+	std::set<wxString>::iterator cIter = categories.begin();
+	for(; cIter != categories.end(); cIter++) {
+		m_chCategories->Append((*cIter));
+	}
+	
+	// Select the 'Console' to be the default
+	int where = m_chCategories->FindString(wxT("Console"));
+	if(where == wxNOT_FOUND) {
+		where = 0;
+	}
+	
+	m_chCategories->SetSelection(where);
 	FillProjectTemplateListCtrl(m_chCategories->GetStringSelection());
 
 	//append list of compilers
@@ -70,57 +101,6 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 NewProjectDlg::~NewProjectDlg()
 {
 	WindowAttrManager::Save(this, wxT("NewProjectDialog"), NULL);
-}
-
-void NewProjectDlg::GetProjectTemplateList ( std::list<ProjectPtr> &list )
-{
-	wxString tmplateDir = ManagerST::Get()->GetStarupDirectory() + PATH_SEP + wxT ( "templates/projects" );
-	wxImageList *lstImages = new wxImageList(24, 24, true);
-
-	//read all files under this directory
-	DirTraverser dt ( wxT ( "*.project" ) );
-
-	wxDir dir ( tmplateDir );
-	dir.Traverse ( dt );
-
-	wxArrayString &files = dt.GetFiles();
-
-	if ( files.GetCount() > 0 ) {
-		for ( size_t i=0; i<files.GetCount(); i++ ) {
-			ProjectPtr proj ( new Project() );
-			if ( !proj->Load ( files.Item ( i ) ) ) {
-				//corrupted xml file?
-				wxLogMessage ( wxT ( "Failed to load template project: " ) + files.Item ( i ) + wxT ( " (corrupted XML?)" ) );
-				continue;
-			}
-			list.push_back ( proj );
-			// load template icon
-			wxFileName fn( files.Item( i ) );
-			wxString imageFileName(fn.GetPath( wxPATH_GET_SEPARATOR ) + wxT("icon.png") );
-			if( wxFileExists( imageFileName )) {
-				int img_id = lstImages->Add( wxBitmap( fn.GetPath( wxPATH_GET_SEPARATOR ) + wxT("icon.png"), wxBITMAP_TYPE_PNG ) );;
-				m_mapImages[proj->GetName()] = img_id;
-			} else {
-				int img_id = lstImages->Add( wxXmlResource::Get()->LoadBitmap(wxT("plugin24")) );
-				m_mapImages[proj->GetName()] = img_id;
-			}
-		}
-	} else {
-		//if we ended up here, it means the installation got screwed up since
-		//there should be at least 8 project templates !
-		//create 3 default empty projects
-		ProjectPtr exeProj ( new Project() );
-		ProjectPtr libProj ( new Project() );
-		ProjectPtr dllProj ( new Project() );
-		libProj->Create ( wxT ( "Static Library" ), wxEmptyString, tmplateDir, Project::STATIC_LIBRARY );
-		dllProj->Create ( wxT ( "Dynamic Library" ), wxEmptyString, tmplateDir, Project::DYNAMIC_LIBRARY );
-		exeProj->Create ( wxT ( "Executable" ), wxEmptyString, tmplateDir, Project::EXECUTABLE );
-		list.push_back ( libProj );
-		list.push_back ( dllProj );
-		list.push_back ( exeProj );
-	}
-	// assign image list to the list control which takes ownership of it (it will delete the image list)
-	m_listTemplates->AssignImageList(lstImages, wxIMAGE_LIST_SMALL);
 }
 
 void NewProjectDlg::OnProjectPathChanged( wxFileDirPickerEvent& event )
@@ -275,8 +255,11 @@ void NewProjectDlg::FillProjectTemplateListCtrl(const wxString& category)
 		{
 			long item = AppendListCtrlRow(m_listTemplates);
 			std::map<wxString,int>::iterator img_iter = m_mapImages.find((*iter)->GetName());
-			int imgid(wxNOT_FOUND);
-			img_iter == m_mapImages.end() ? imgid = wxNOT_FOUND : imgid = m_mapImages[(*iter)->GetName()];
+			int imgid(0);
+			if(img_iter != m_mapImages.end()) {
+				imgid = img_iter->second;
+			}
+			
 			SetColumnText(m_listTemplates, item, 0, (*iter)->GetName(), imgid);
 		}
 	}

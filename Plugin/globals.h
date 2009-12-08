@@ -33,6 +33,7 @@
 
 class wxListCtrl;
 class IEditor;
+class IManager;
 
 /**
  * \brief send command event to the application (wxTheApp),
@@ -213,5 +214,14 @@ void WrapInShell(wxString &cmd);
  * @return
  */
 wxString clGetUserName();
+
+/**
+ * @brief return list of projects available based on the installed tempaltes
+ * @param list list of projects
+ * @param imageMap when provided, returns the image index (set in the lstImages) mapped to the project type
+ * @param lstImages wxImageList allocated on the heap for the projects
+ */
+void GetProjectTemplateList( IManager *manager, std::list<ProjectPtr> &list, std::map<wxString,int> *imageMap = NULL, wxImageList **lstImages = NULL);
+
 #endif //GLOBALS_H
 

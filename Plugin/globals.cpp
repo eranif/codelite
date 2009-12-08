@@ -23,6 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include <wx/xrc/xmlres.h>
+#include "dirtraverser.h"
+#include "imanager.h"
 #include <wx/dataobj.h>
 #include <wx/stdpaths.h>
 #include "drawingutils.h"
@@ -556,3 +559,61 @@ wxString clGetUserName()
 
 	return (squashedname.IsEmpty() ? wxString(wxT("someone")) : squashedname);
 }
+
+void GetProjectTemplateList ( IManager *manager, std::list<ProjectPtr> &list, std::map<wxString,int> *imageMap, wxImageList **lstImages )
+{
+	wxString tmplateDir = manager->GetStartupDirectory() + wxFileName::GetPathSeparator() + wxT ( "templates/projects" );
+	
+	//read all files under this directory
+	DirTraverser dt ( wxT ( "*.project" ) );
+
+	wxDir dir ( tmplateDir );
+	dir.Traverse ( dt );
+
+	wxArrayString &files = dt.GetFiles();
+	
+	if ( files.GetCount() > 0 ) {
+		
+		// Allocate image list
+		if(imageMap) {
+			// add the default icon at position 0
+			*lstImages = new wxImageList(24, 24, true);
+			(*lstImages)->Add( wxXmlResource::Get()->LoadBitmap(wxT("plugin24")) );
+		}
+
+		for ( size_t i=0; i<files.GetCount(); i++ ) {
+			ProjectPtr proj ( new Project() );
+			if ( !proj->Load ( files.Item ( i ) ) ) {
+				//corrupted xml file?
+				wxLogMessage ( wxT ( "Failed to load template project: " ) + files.Item ( i ) + wxT ( " (corrupted XML?)" ) );
+				continue;
+			}
+			list.push_back ( proj );
+			
+			// load template icon
+			if ( imageMap ) {
+		
+				wxFileName fn( files.Item( i ) );
+				wxString imageFileName(fn.GetPath( wxPATH_GET_SEPARATOR ) + wxT("icon.png") );
+				if( wxFileExists( imageFileName )) {
+					int img_id = (*lstImages)->Add( wxBitmap( fn.GetPath( wxPATH_GET_SEPARATOR ) + wxT("icon.png"), wxBITMAP_TYPE_PNG ) );;
+					(*imageMap)[proj->GetName()] = img_id;
+				}
+			}
+		}
+	} else {
+		//if we ended up here, it means the installation got screwed up since
+		//there should be at least 8 project templates !
+		//create 3 default empty projects
+		ProjectPtr exeProj ( new Project() );
+		ProjectPtr libProj ( new Project() );
+		ProjectPtr dllProj ( new Project() );
+		libProj->Create ( wxT ( "Static Library" ), wxEmptyString, tmplateDir, Project::STATIC_LIBRARY );
+		dllProj->Create ( wxT ( "Dynamic Library" ), wxEmptyString, tmplateDir, Project::DYNAMIC_LIBRARY );
+		exeProj->Create ( wxT ( "Executable" ), wxEmptyString, tmplateDir, Project::EXECUTABLE );
+		list.push_back ( libProj );
+		list.push_back ( dllProj );
+		list.push_back ( exeProj );
+	}
+}
+

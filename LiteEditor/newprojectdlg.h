@@ -51,13 +51,13 @@ protected:
 	void OnCategorySelected( wxCommandEvent& event );
 
 	ProjectPtr FindProject(const wxString &name);
-	void GetProjectTemplateList(std::list<ProjectPtr> &list);
 	void FillProjectTemplateListCtrl(const wxString& category);
 
 	void UpdateFullFileName();
 	void UpdateProjectPage();
 
 public:
+	
 	/** Constructor */
 	NewProjectDlg( wxWindow* parent );
 	virtual ~NewProjectDlg();

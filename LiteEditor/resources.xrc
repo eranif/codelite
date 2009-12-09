@@ -62,6 +62,7 @@
 	<object class="wxBitmap" name="collapse">res/collapse.png</object>
 	<object class="wxBitmap" name="gohome">res/gohome.png</object>
 	<object class="wxBitmap" name="project_conflict">res/messagebox_warning.png</object>
+	<object class="wxBitmap" name="files_unversioned">res/messagebox_info.png</object>
 	<object class="wxBitmap" name="error">res/mail_mark_important.png</object>
 	<object class="wxBitmap" name="text_view">res/view_text.png</object>
 

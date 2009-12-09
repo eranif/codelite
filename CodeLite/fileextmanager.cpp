@@ -10,11 +10,11 @@ void FileExtManager::Init()
 	if ( !init_done ) {
 		init_done = true;
 
-		m_map[wxT("cc") ] = TypeSource;
-		m_map[wxT("cpp")] = TypeSource;
-		m_map[wxT("cxx")] = TypeSource;
-		m_map[wxT("c++")] = TypeSource;
-		m_map[wxT("c")  ] = TypeSource;
+		m_map[wxT("cc") ] = TypeSourceCpp;
+		m_map[wxT("cpp")] = TypeSourceCpp;
+		m_map[wxT("cxx")] = TypeSourceCpp;
+		m_map[wxT("c++")] = TypeSourceCpp;
+		m_map[wxT("c")  ] = TypeSourceC;
 
 		m_map[wxT("h")   ] = TypeHeader;
 		m_map[wxT("hpp") ] = TypeHeader;
@@ -34,6 +34,10 @@ void FileExtManager::Init()
 		m_map[wxT("l")   ] = TypeLex;
 		m_map[wxT("ui")  ] = TypeQtForm;
 		m_map[wxT("qrc") ] = TypeQtResource;
+
+		m_map[wxT("project") ]   = TypeProject;
+		m_map[wxT("workspace") ] = TypeWorkspace;
+		m_map[wxT("fbp") ] = TypeFormbuilder;
 	}
 }
 

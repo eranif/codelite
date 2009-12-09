@@ -11,13 +11,17 @@ public:
 		SvnNodeTypeUnversionedRoot,
 		SvnNodeTypeDeletedRoot,
 		SvnNodeTypeAddedRoot,
-		SvnNodeTypeConflictRoot
+		SvnNodeTypeConflictRoot,
+		SvnNodeTypeFile
 	};
 
 	SvnNodeType m_type;
+	wxString    m_filepath;
 
 public:
-	SvnTreeData(SvnNodeType type) : m_type(type) {
+	SvnTreeData(SvnNodeType type, const wxString &filepath)
+			: m_type(type)
+			, m_filepath(filepath) {
 	}
 
 	virtual ~SvnTreeData() {
@@ -28,6 +32,12 @@ public:
 	}
 	const SvnNodeType& GetType() const {
 		return m_type;
+	}
+	void SetFilepath(const wxString& filepath) {
+		this->m_filepath = filepath;
+	}
+	const wxString& GetFilepath() const {
+		return m_filepath;
 	}
 };
 

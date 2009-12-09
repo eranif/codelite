@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -18,7 +18,7 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_textCtrlRootDir = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-	bSizer2->Add( m_textCtrlRootDir, 1, wxALL|wxEXPAND, 5 );
+	bSizer2->Add( m_textCtrlRootDir, 1, wxALL, 5 );
 	
 	m_buttonChangeRootDir = new wxButton( this, wxID_ANY, _("&Select"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonChangeRootDir->SetToolTip( _("Select a different root directory") );
@@ -27,7 +27,7 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	
 	mainSizer->Add( bSizer2, 0, wxEXPAND, 5 );
 	
-	m_treeCtrl = new wxTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_HIDE_ROOT|wxTR_MULTIPLE );
+	m_treeCtrl = new wxTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_MULTIPLE );
 	mainSizer->Add( m_treeCtrl, 1, wxALL|wxEXPAND, 5 );
 	
 	this->SetSizer( mainSizer );

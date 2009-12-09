@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -37,11 +37,12 @@ class SubversionPageBase : public wxPanel
 		wxTreeCtrl* m_treeCtrl;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnChangeRootDir( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnTreeMenu( wxTreeEvent& event ){ event.Skip(); }
+		virtual void OnChangeRootDir( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnTreeMenu( wxTreeEvent& event ) { event.Skip(); }
 		
 	
 	public:
+		
 		SubversionPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~SubversionPageBase();
 	

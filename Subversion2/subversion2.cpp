@@ -42,22 +42,23 @@ Subversion2::~Subversion2()
 
 wxToolBar *Subversion2::CreateToolBar(wxWindow *parent)
 {
+	wxUnusedVar(parent);
 	// Create the toolbar to be used by the plugin
 	wxToolBar *tb(NULL);
-	
-/*	
+
+/*
 	// You can use the below code a snippet:
  	// First, check that CodeLite allows plugin to register plugins
 	if (m_mgr->AllowToolbar()) {
 		// Support both toolbars icon size
 		int size = m_mgr->GetToolbarIconSize();
-		
+
 		// Allocate new toolbar, which will be freed later by CodeLite
 		tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
-		
+
 		// Set the toolbar size
 		tb->SetToolBitmapSize(wxSize(size, size));
-		
+
 		// Add tools to the plugins toolbar. You must provide 2 sets of icons: 24x24 and 16x16
 		if (size == 24) {
 			tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("New Plugin Wizard..."));
@@ -71,7 +72,7 @@ wxToolBar *Subversion2::CreateToolBar(wxWindow *parent)
 		// And finally, we must call 'Realize()'
 		tb->Realize();
 	}
-	
+
 	// return the toolbar, it can be NULL if CodeLite does not allow plugins to register toolbars
 	// or in case the plugin simply does not require toolbar
 */
@@ -80,7 +81,8 @@ wxToolBar *Subversion2::CreateToolBar(wxWindow *parent)
 
 void Subversion2::CreatePluginMenu(wxMenu *pluginsMenu)
 {
-/*	
+	wxUnusedVar(pluginsMenu);
+/*
 	// You can use the below code a snippet:
  	wxMenu *menu = new wxMenu();
 	wxMenuItem *item(NULL);
@@ -96,36 +98,14 @@ void Subversion2::CreatePluginMenu(wxMenu *pluginsMenu)
 
 void Subversion2::HookPopupMenu(wxMenu *menu, MenuType type)
 {
-	if (type == MenuTypeEditor) {
-		//TODO::Append items for the editor context menu
-	} else if (type == MenuTypeFileExplorer) {
-		//TODO::Append items for the file explorer context menu
-	} else if (type == MenuTypeFileView_Workspace) {
-		//TODO::Append items for the file view / workspace context menu
-	} else if (type == MenuTypeFileView_Project) {
-		//TODO::Append items for the file view/Project context menu
-	} else if (type == MenuTypeFileView_Folder) {
-		//TODO::Append items for the file view/Virtual folder context menu
-	} else if (type == MenuTypeFileView_File) {
-		//TODO::Append items for the file view/file context menu
-	}
+	wxUnusedVar(menu);
+	wxUnusedVar(type);
 }
 
 void Subversion2::UnHookPopupMenu(wxMenu *menu, MenuType type)
 {
-	if (type == MenuTypeEditor) {
-		//TODO::Unhook items for the editor context menu
-	} else if (type == MenuTypeFileExplorer) {
-		//TODO::Unhook  items for the file explorer context menu
-	} else if (type == MenuTypeFileView_Workspace) {
-		//TODO::Unhook  items for the file view / workspace context menu
-	} else if (type == MenuTypeFileView_Project) {
-		//TODO::Unhook  items for the file view/Project context menu
-	} else if (type == MenuTypeFileView_Folder) {
-		//TODO::Unhook  items for the file view/Virtual folder context menu
-	} else if (type == MenuTypeFileView_File) {
-		//TODO::Unhook  items for the file view/file context menu
-	}
+	wxUnusedVar(menu);
+	wxUnusedVar(type);
 }
 
 void Subversion2::UnPlug()
@@ -140,8 +120,8 @@ void Subversion2::UnPlug()
 void Subversion2::DoInitialize()
 {
 	Notebook *book = m_mgr->GetWorkspacePaneNotebook();
-	m_subversionPage = new SubversionPage(book);
-	
+	m_subversionPage = new SubversionPage(book, m_mgr);
+
 	wxString caption( wxT("Subversion") );
-	book->AddPage(m_subversionPage, caption, wxT("Subversion"));	
+	book->AddPage(m_subversionPage, caption, wxT("Subversion"));
 }

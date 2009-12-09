@@ -285,7 +285,8 @@ void CppCheckPlugin::OnCheckWorkspaceItem(wxCommandEvent& e)
 
 		// only C/C++ files
 		for (size_t i=0; i< tmpfiles.size(); i++ ) {
-			if ( FileExtManager::GetType( tmpfiles.at(i).GetFullPath() ) == FileExtManager::TypeSource ) {
+			if (FileExtManager::GetType( tmpfiles.at(i).GetFullPath() ) == FileExtManager::TypeSourceC ||
+				FileExtManager::GetType( tmpfiles.at(i).GetFullPath() ) == FileExtManager::TypeSourceCpp) {
 				m_filelist.Add( tmpfiles.at(i).GetFullPath() );
 			}
 		}
@@ -320,7 +321,8 @@ void CppCheckPlugin::OnCheckProjectItem(wxCommandEvent& e)
 
 		// only C/C++ files
 		for (size_t i=0; i< tmpfiles.size(); i++ ) {
-			if ( FileExtManager::GetType( tmpfiles.at(i).GetFullPath() ) == FileExtManager::TypeSource ) {
+			if ( FileExtManager::GetType( tmpfiles.at(i).GetFullPath() ) == FileExtManager::TypeSourceC ||
+			     FileExtManager::GetType( tmpfiles.at(i).GetFullPath() ) == FileExtManager::TypeSourceCpp ) {
 				m_filelist.Add( tmpfiles.at(i).GetFullPath() );
 			}
 		}
@@ -428,8 +430,8 @@ void CppCheckPlugin::GetFileListFromDir(const wxString& root)
 
 	for (size_t i=0; i<tmparr.GetCount(); i++) {
 		switch (FileExtManager::GetType( tmparr.Item(i) ) ) {
-
-		case FileExtManager::TypeSource: {
+		case FileExtManager::TypeSourceC:
+		case FileExtManager::TypeSourceCpp: {
 			m_filelist.Add( tmparr.Item(i) );
 			break;
 		}

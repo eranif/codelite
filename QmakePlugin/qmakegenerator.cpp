@@ -204,7 +204,8 @@ void QMakeProFileGenerator::SetFiles(wxString& pro_file, ProjectPtr proj)
 		wxFileName fn = files.at(i);
 
 		switch ( FileExtManager::GetType( fn.GetFullName() )) {
-		case FileExtManager::TypeSource:
+		case FileExtManager::TypeSourceC:
+		case FileExtManager::TypeSourceCpp:
 			sources << BUFF << fn.GetFullPath() << wxT("\\\n");
 			break;
 		case FileExtManager::TypeHeader:

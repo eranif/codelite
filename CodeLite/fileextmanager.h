@@ -8,13 +8,17 @@ class FileExtManager {
 
 public:
 	enum FileType {
-		TypeSource,
+		TypeSourceC,
+		TypeSourceCpp,
 		TypeHeader,
 		TypeResource,
 		TypeYacc,
 		TypeLex,
 		TypeQtForm,
 		TypeQtResource,
+		TypeWorkspace,
+		TypeProject,
+		TypeFormbuilder,
 		TypeOther
 	};
 

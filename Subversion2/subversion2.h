@@ -9,11 +9,11 @@ class Subversion2 : public IPlugin
 {
 private:
 	SubversionPage *m_subversionPage;
-	
+
 public:
 	Subversion2(IManager *manager);
 	~Subversion2();
-	
+
 	//--------------------------------------------
 	//Abstract methods
 	//--------------------------------------------
@@ -22,7 +22,7 @@ public:
 	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnPlug();
-	
+
 protected:
 	void DoInitialize();
 };

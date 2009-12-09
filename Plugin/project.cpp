@@ -574,7 +574,8 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
 		file_node->AddProperty(wxT("Name"), fn.GetFullName());
 
 		switch ( FileExtManager::GetType( fn.GetFullName() ) ) {
-		case FileExtManager::TypeSource:
+		case FileExtManager::TypeSourceC:
+		case FileExtManager::TypeSourceCpp:
 
 			// source file
 			if ( !srcNode ) {

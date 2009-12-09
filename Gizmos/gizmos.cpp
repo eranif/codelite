@@ -275,6 +275,7 @@ void GizmosPlugin::DoCreateNewPlugin()
 		if (!fn.MakeRelativeTo(wxGetCwd())) {
 			wxLogMessage(wxT("Warning: Failed to convert paths to relative path."));
 		}
+
 #ifdef __WXMSW__
 		wxString dllExt(wxT("dll"));
 #else

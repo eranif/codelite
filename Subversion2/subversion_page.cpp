@@ -1,4 +1,5 @@
 #include "plugin.h"
+#include "wxterminal.h"
 #include <wx/dirdlg.h>
 #include "fileextmanager.h"
 #include "svnsettingsdata.h"
@@ -12,14 +13,15 @@
 #include "imanager.h"
 #include "workspace.h"
 #include <wx/app.h>
+#include "subversion2.h"
 
-SubversionPage::SubversionPage( wxWindow* parent, IManager *manager )
+SubversionPage::SubversionPage( wxWindow* parent, Subversion2 *plugin )
 		: SubversionPageBase( parent )
-		, m_manager(manager)
+		, m_plugin          ( plugin )
 {
 	CreatGUIControls();
-	m_manager->GetTheApp()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionPage::OnWorkspaceLoaded), NULL, this);
-	m_manager->GetTheApp()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionPage::OnWorkspaceClosed), NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionPage::OnWorkspaceLoaded), NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionPage::OnWorkspaceClosed), NULL, this);
 }
 
 void SubversionPage::OnChangeRootDir( wxCommandEvent& event )
@@ -62,8 +64,8 @@ void SubversionPage::CreatGUIControls()
 
 	m_treeCtrl->AssignImageList( imageList );
 
-	if(m_manager->IsWorkspaceOpen()) {
-		m_textCtrlRootDir->SetValue(m_manager->GetWorkspace()->GetWorkspaceFileName().GetPath());
+	if(m_plugin->GetManager()->IsWorkspaceOpen()) {
+		m_textCtrlRootDir->SetValue(m_plugin->GetManager()->GetWorkspace()->GetWorkspaceFileName().GetPath());
 	}
 	BuildTree();
 }
@@ -83,13 +85,13 @@ void SubversionPage::BuildTree()
 
 	wxString command;
 	command << DoGetSvnExeName() << wxT("--xml -q --non-interactive status");
-	m_simpleCommand.Execute(command, rootDir, new SvnStatusHandler(m_manager, this));
+	m_simpleCommand.Execute(command, rootDir, new SvnStatusHandler(m_plugin->GetManager(), this));
 }
 
 void SubversionPage::OnWorkspaceLoaded(wxCommandEvent& event)
 {
 	event.Skip();
-	m_textCtrlRootDir->SetValue(m_manager->GetWorkspace()->GetWorkspaceFileName().GetPath());
+	m_textCtrlRootDir->SetValue(m_plugin->GetManager()->GetWorkspace()->GetWorkspaceFileName().GetPath());
 	BuildTree();
 }
 
@@ -98,6 +100,7 @@ void SubversionPage::OnWorkspaceClosed(wxCommandEvent& event)
 	event.Skip();
 	m_textCtrlRootDir->SetValue(wxT(""));
 	ClearAll();
+	m_plugin->GetShell()->Clear();
 }
 
 void SubversionPage::ClearAll()
@@ -155,7 +158,7 @@ void SubversionPage::DoAddNode(const wxString& title, int imgId, SvnTreeData::Sv
 wxString SubversionPage::DoGetSvnExeName()
 {
 	SvnSettingsData ssd;
-	m_manager->GetConfigTool()->ReadObject(wxT("SvnSettingsData"), &ssd);
+	m_plugin->GetManager()->GetConfigTool()->ReadObject(wxT("SvnSettingsData"), &ssd);
 	wxString executeable;
 	executeable << wxT("\"") << ssd.GetExecutable() << wxT("\" ");
 	return executeable;

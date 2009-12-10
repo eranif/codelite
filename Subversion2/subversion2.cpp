@@ -1,6 +1,7 @@
 #include "subversion2.h"
 #include "subversion_page.h"
 #include <wx/xrc/xmlres.h>
+#include "wxterminal.h"
 
 static Subversion2* thePlugin = NULL;
 
@@ -110,18 +111,35 @@ void Subversion2::UnHookPopupMenu(wxMenu *menu, MenuType type)
 
 void Subversion2::UnPlug()
 {
-	size_t index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_subversionPage);
+	// Remove the tab pined to the workspcae pane
+	size_t index(Notebook::npos);
+	index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_subversionPage);
 	if(index != Notebook::npos) {
 		m_mgr->GetWorkspacePaneNotebook()->RemovePage(index, false);
 	}
+
+	// Remove the tab pined to the output pane
+	index = m_mgr->GetOutputPaneNotebook()->GetPageIndex(m_subversionShell);
+	if(index != Notebook::npos) {
+		m_mgr->GetOutputPaneNotebook()->RemovePage(index, false);
+	}
+
 	m_subversionPage->Destroy();
+	m_subversionShell->Destroy();
 }
 
 void Subversion2::DoInitialize()
 {
 	Notebook *book = m_mgr->GetWorkspacePaneNotebook();
-	m_subversionPage = new SubversionPage(book, m_mgr);
+	m_subversionPage = new SubversionPage(book, this);
 
 	wxString caption( wxT("Subversion") );
 	book->AddPage(m_subversionPage, caption, wxT("Subversion"));
+
+	book = m_mgr->GetOutputPaneNotebook();
+	m_subversionShell = new wxTerminal(book);
+
+	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("output_win"));
+	caption = wxT("Console");
+	book->AddPage(m_subversionShell, caption, wxT("Console"), bmp);
 }

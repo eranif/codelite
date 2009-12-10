@@ -4,11 +4,13 @@
 #include "plugin.h"
 
 class SubversionPage;
+class wxTerminal;
 
 class Subversion2 : public IPlugin
 {
 private:
 	SubversionPage *m_subversionPage;
+	wxTerminal     *m_subversionShell;
 
 public:
 	Subversion2(IManager *manager);
@@ -22,6 +24,14 @@ public:
 	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnPlug();
+
+	wxTerminal *GetShell() {
+		return m_subversionShell;
+	}
+
+	IManager *GetManager() {
+		return m_mgr;
+	}
 
 protected:
 	void DoInitialize();

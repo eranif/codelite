@@ -7,6 +7,8 @@ class SvnTreeData : public wxTreeItemData
 {
 public:
 	enum SvnNodeType {
+		SvnNodeTypeInvalid = -1,
+		SvnNodeTypeRoot,
 		SvnNodeTypeModifiedRoot,
 		SvnNodeTypeUnversionedRoot,
 		SvnNodeTypeDeletedRoot,

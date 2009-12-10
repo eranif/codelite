@@ -1,4 +1,5 @@
 #include "subversion2.h"
+#include "svnshell.h"
 #include "subversion_page.h"
 #include <wx/xrc/xmlres.h>
 #include "wxterminal.h"
@@ -137,7 +138,7 @@ void Subversion2::DoInitialize()
 	book->AddPage(m_subversionPage, caption, wxT("Subversion"));
 
 	book = m_mgr->GetOutputPaneNotebook();
-	m_subversionShell = new wxTerminal(book);
+	m_subversionShell = new SvnShell(book);
 
 	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("output_win"));
 	caption = wxT("Console");

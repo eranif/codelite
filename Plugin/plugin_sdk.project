@@ -228,7 +228,6 @@
   </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <Settings Type="Static Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);$(shell pkg-config --cflags gtk+-2.0)" Required="yes" PreCompiledHeader="">
@@ -385,4 +384,11 @@
     <File Name="renamefilebasedlg.fbp"/>
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
+  <VirtualDirectory Name="Terminal">
+    <File Name="wxterminalbase.h"/>
+    <File Name="wxterminal.cpp"/>
+    <File Name="wxterminal.h"/>
+    <File Name="wxterminalbase.cpp"/>
+  </VirtualDirectory>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

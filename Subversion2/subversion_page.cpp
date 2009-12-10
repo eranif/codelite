@@ -1,4 +1,6 @@
 #include "plugin.h"
+#include "svncommithandler.h"
+#include <wx/menu.h>
 #include "wxterminal.h"
 #include <wx/dirdlg.h>
 #include "fileextmanager.h"
@@ -14,6 +16,7 @@
 #include "workspace.h"
 #include <wx/app.h>
 #include "subversion2.h"
+#include "svnshell.h"
 
 SubversionPage::SubversionPage( wxWindow* parent, Subversion2 *plugin )
 		: SubversionPageBase( parent )
@@ -37,7 +40,29 @@ void SubversionPage::OnChangeRootDir( wxCommandEvent& event )
 
 void SubversionPage::OnTreeMenu( wxTreeEvent& event )
 {
-	// TODO: Implement OnTreeMenu
+	// Popup the menu
+	wxArrayTreeItemIds items;
+	size_t count = m_treeCtrl->GetSelections(items);
+	if(count) {
+		SvnTreeData::SvnNodeType type = DoGetSelectionType(items);
+		if(type == SvnTreeData::SvnNodeTypeInvalid)
+			// Mix or an invalid selection
+			return;
+
+		wxMenu menu;
+		switch (type) {
+		case SvnTreeData::SvnNodeTypeFile:
+			CreateFileMenu( &menu );
+			break;
+		case SvnTreeData::SvnNodeTypeRoot:
+			CreateRootMenu( &menu );
+			break;
+		default:
+			return;
+		}
+
+		PopupMenu( &menu );
+	}
 }
 
 void SubversionPage::CreatGUIControls()
@@ -80,7 +105,7 @@ void SubversionPage::BuildTree()
 		root = m_treeCtrl->AddRoot(svnNO_FILES_TO_DISPLAY, 0, 0);
 		return;
 	} else {
-		root = m_treeCtrl->AddRoot(rootDir, 0, 0);
+		root = m_treeCtrl->AddRoot(rootDir, 0, 0, new SvnTreeData(SvnTreeData::SvnNodeTypeRoot, rootDir));
 	}
 
 	wxString command;
@@ -143,10 +168,8 @@ void SubversionPage::DoAddNode(const wxString& title, int imgId, SvnTreeData::Sv
 
 		// Add all children items
 		for(size_t i=0; i<files.GetCount(); i++) {
-			wxString   filename(files.Item(i));
-			wxFileName fullpath(filename     );
-			fullpath.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG, basePath);
-			m_treeCtrl->AppendItem(parent, files.Item(i), DoGetIconIndex(filename), DoGetIconIndex(filename), new SvnTreeData(SvnTreeData::SvnNodeTypeFile, fullpath.GetFullPath().c_str()));
+			wxString filename(files.Item(i));
+			m_treeCtrl->AppendItem(parent, files.Item(i), DoGetIconIndex(filename), DoGetIconIndex(filename), new SvnTreeData(SvnTreeData::SvnNodeTypeFile, files.Item(i)));
 		}
 
 		if( nodeType != SvnTreeData::SvnNodeTypeUnversionedRoot) {
@@ -200,4 +223,62 @@ int SubversionPage::DoGetIconIndex(const wxString& filename)
 		break;
 	}
 	return iconIndex;
+}
+
+SvnTreeData::SvnNodeType SubversionPage::DoGetSelectionType(const wxArrayTreeItemIds& items)
+{
+	m_paths.Clear();
+	SvnTreeData::SvnNodeType type(SvnTreeData::SvnNodeTypeInvalid);
+	for(size_t i=0; i<items.GetCount(); i++) {
+		if(items.Item(i).IsOk() == false) {
+			m_paths.Clear();
+			return SvnTreeData::SvnNodeTypeInvalid;
+		}
+
+		SvnTreeData *data = (SvnTreeData *)m_treeCtrl->GetItemData(items.Item(i));
+		if ( !data ) {
+			m_paths.Clear();
+			return SvnTreeData::SvnNodeTypeInvalid;
+		}
+
+		if(type == SvnTreeData::SvnNodeTypeInvalid) {
+			type = data->GetType();
+			m_paths.Add(data->GetFilepath());
+
+		} else if(data->GetType() != type) {
+			m_paths.Clear();
+			return SvnTreeData::SvnNodeTypeInvalid;
+
+		} else {
+			// Same type, just add the path
+			m_paths.Add(data->GetFilepath());
+		}
+	}
+	return type;
+}
+
+void SubversionPage::CreateFileMenu(wxMenu* menu)
+{
+	menu->Append(XRCID("svn_commit"),  wxT("Commit"));
+	menu->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit), NULL, this);
+}
+
+void SubversionPage::CreateRootMenu(wxMenu* menu)
+{
+	menu->Append(XRCID("svn_commit"),  wxT("Commit"));
+	menu->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit), NULL, this);
+}
+
+void SubversionPage::OnCommit(wxCommandEvent& event)
+{
+	wxString command;
+	command << DoGetSvnExeName()
+			<< wxT(" commit ");
+
+	for(size_t i=0; i<m_paths.GetCount(); i++) {
+		command << wxT("\"") << m_paths.Item(i) << wxT("\" ");
+	}
+	command << wxT(" -m \"\"");
+
+	m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin->GetManager(), this));
 }

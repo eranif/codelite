@@ -1,4 +1,5 @@
 #include "plugin.h"
+#include "commit_dialog.h"
 #include "svncommithandler.h"
 #include <wx/menu.h>
 #include "wxterminal.h"
@@ -54,9 +55,17 @@ void SubversionPage::OnTreeMenu( wxTreeEvent& event )
 		case SvnTreeData::SvnNodeTypeFile:
 			CreateFileMenu( &menu );
 			break;
+
 		case SvnTreeData::SvnNodeTypeRoot:
 			CreateRootMenu( &menu );
 			break;
+
+		case SvnTreeData::SvnNodeTypeAddedRoot:
+		case SvnTreeData::SvnNodeTypeDeletedRoot:
+		case SvnTreeData::SvnNodeTypeModifiedRoot:
+			CreateSecondRootMenu( &menu );
+			break;
+
 		default:
 			return;
 		}
@@ -241,9 +250,43 @@ SvnTreeData::SvnNodeType SubversionPage::DoGetSelectionType(const wxArrayTreeIte
 			return SvnTreeData::SvnNodeTypeInvalid;
 		}
 
-		if(type == SvnTreeData::SvnNodeTypeInvalid) {
+		if(data->GetType() == SvnTreeData::SvnNodeTypeRoot && items.GetCount() == 1) {
+			// populate the list of paths with all the added paths
+			DoGetPaths( items.Item(i), m_paths );
+			return SvnTreeData::SvnNodeTypeRoot;
+		}
+
+		if(data->GetType() == SvnTreeData::SvnNodeTypeAddedRoot && items.GetCount() == 1) {
+			// populate the list of paths with all the added paths
+			DoGetPaths( items.Item(i), m_paths );
+			return SvnTreeData::SvnNodeTypeAddedRoot;
+		}
+
+		if(data->GetType() == SvnTreeData::SvnNodeTypeDeletedRoot && items.GetCount() == 1) {
+			// populate the list of paths with all the deleted paths
+			DoGetPaths( items.Item(i), m_paths );
+			return SvnTreeData::SvnNodeTypeDeletedRoot;
+		}
+
+		if(data->GetType() == SvnTreeData::SvnNodeTypeConflictRoot && items.GetCount() == 1) {
+			// populate the list of paths with all the conflicted paths
+			DoGetPaths( items.Item(i), m_paths );
+			return SvnTreeData::SvnNodeTypeConflictRoot;
+		}
+
+		if(data->GetType() == SvnTreeData::SvnNodeTypeModifiedRoot && items.GetCount() == 1) {
+			// populate the list of paths with all the conflicted paths
+			DoGetPaths( items.Item(i), m_paths );
+			return SvnTreeData::SvnNodeTypeModifiedRoot;
+		}
+
+		if(type == SvnTreeData::SvnNodeTypeInvalid &&
+		   (data->GetType() == SvnTreeData::SvnNodeTypeFile || data->GetType() == SvnTreeData::SvnNodeTypeRoot)) {
 			type = data->GetType();
 			m_paths.Add(data->GetFilepath());
+
+		} else if( type == SvnTreeData::SvnNodeTypeInvalid ) {
+			type = data->GetType();
 
 		} else if(data->GetType() != type) {
 			m_paths.Clear();
@@ -255,6 +298,12 @@ SvnTreeData::SvnNodeType SubversionPage::DoGetSelectionType(const wxArrayTreeIte
 		}
 	}
 	return type;
+}
+
+void SubversionPage::CreateSecondRootMenu(wxMenu* menu)
+{
+	menu->Append(XRCID("svn_commit"),  wxT("Commit"));
+	menu->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit), NULL, this);
 }
 
 void SubversionPage::CreateFileMenu(wxMenu* menu)
@@ -272,13 +321,53 @@ void SubversionPage::CreateRootMenu(wxMenu* menu)
 void SubversionPage::OnCommit(wxCommandEvent& event)
 {
 	wxString command;
-	command << DoGetSvnExeName()
-			<< wxT(" commit ");
 
-	for(size_t i=0; i<m_paths.GetCount(); i++) {
-		command << wxT("\"") << m_paths.Item(i) << wxT("\" ");
+	// Pope the "Commit Dialog" dialog
+
+	CommitDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_paths, m_plugin->GetManager());
+	if(dlg.ShowModal() == wxID_OK) {
+		m_paths = dlg.GetPaths();
+		if(m_paths.IsEmpty())
+			return;
+
+		command << DoGetSvnExeName()
+				<< wxT(" commit ");
+
+		for(size_t i=0; i<m_paths.GetCount(); i++) {
+			command << wxT("\"") << m_paths.Item(i) << wxT("\" ");
+		}
+
+		command << wxT(" -m \"");
+		command << dlg.GetMesasge();
+		command << wxT("\"");
+		m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin->GetManager(), this));
 	}
-	command << wxT(" -m \"\"");
+}
 
-	m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin->GetManager(), this));
+void SubversionPage::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths)
+{
+	if( m_treeCtrl->ItemHasChildren(parent) == false ) {
+		return;
+	}
+
+	wxTreeItemIdValue cookie;
+	wxTreeItemId item = m_treeCtrl->GetFirstChild(parent, cookie);
+	while( item.IsOk() ) {
+		SvnTreeData *data = (SvnTreeData *)m_treeCtrl->GetItemData(item);
+		if(data) {
+			if(data->GetFilepath().IsEmpty() == false) {
+				m_paths.Add( data->GetFilepath() );
+			}
+
+			if(( data->GetType() == SvnTreeData::SvnNodeTypeAddedRoot    ||
+				 data->GetType() == SvnTreeData::SvnNodeTypeModifiedRoot ||
+				 data->GetType() == SvnTreeData::SvnNodeTypeDeletedRoot) &&
+
+				m_treeCtrl->ItemHasChildren(item)) {
+
+				DoGetPaths(item, paths);
+			}
+		}
+		item = m_treeCtrl->GetNextChild(parent, cookie);
+	}
 }

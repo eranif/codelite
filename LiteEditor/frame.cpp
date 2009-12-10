@@ -534,7 +534,7 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 
 	//start the editor creator thread
 	m_timer = new wxTimer(this, FrameTimerId);
-	
+
 	// connect common edit events
 	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::DispatchCommandEvent), NULL, this);
 	wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::DispatchCommandEvent), NULL, this);
@@ -622,6 +622,11 @@ void Frame::Initialize(bool loadLastSession)
 
 	m_theFrame->SendSizeEvent();
 	m_theFrame->StartTimer();
+
+	// After all the plugins / panes have been loaded,
+	// its time to re-load the perspective
+	wxCommandEvent evt(wxEVT_LOAD_PERSPECTIVE);
+	m_theFrame->AddPendingEvent( evt );
 }
 
 Frame* Frame::Get()
@@ -813,11 +818,6 @@ void Frame::CreateGUIControls(void)
 	}
 
 	Layout();
-	
-	// After all the plugins / panes have been loaded, 
-	// its time to re-load the perspective
-	wxCommandEvent evt(wxEVT_LOAD_PERSPECTIVE);
-	AddPendingEvent( evt );
 }
 
 void Frame::CreateViewAsSubMenu()
@@ -2645,7 +2645,7 @@ void Frame::OnShowWelcomePage(wxCommandEvent &event)
 void Frame::CompleteInitialization()
 {
 	PluginManager::Get()->Load();
-	
+
 	// Add buttons to the OutputControlBarView
 	m_controlBar->AddAllButtons();
 

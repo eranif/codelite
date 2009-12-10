@@ -28,13 +28,15 @@
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
   <VirtualDirectory Name="UI">
-    <File Name="subversionpagebase.cpp"/>
-    <File Name="subversionpagebase.h"/>
     <File Name="subversion_page.h"/>
+    <File Name="subversion2_ui.cpp"/>
+    <File Name="subversion2_ui.h"/>
     <File Name="subversion_page.cpp"/>
+    <File Name="commit_dialog.h"/>
+    <File Name="commit_dialog.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
-    <File Name="subversionpagebase.fbp"/>
+    <File Name="subversion2.fbp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -227,6 +229,6 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

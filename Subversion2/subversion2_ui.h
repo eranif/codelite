@@ -5,8 +5,8 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __subversionpagebase__
-#define __subversionpagebase__
+#ifndef __subversion2_ui__
+#define __subversion2_ui__
 
 #include <wx/intl.h>
 
@@ -20,6 +20,11 @@
 #include <wx/sizer.h>
 #include <wx/treectrl.h>
 #include <wx/panel.h>
+#include <wx/stattext.h>
+#include <wx/checklst.h>
+#include <wx/splitter.h>
+#include <wx/statline.h>
+#include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -48,4 +53,36 @@ class SubversionPageBase : public wxPanel
 	
 };
 
-#endif //__subversionpagebase__
+///////////////////////////////////////////////////////////////////////////////
+/// Class CommitDialogBase
+///////////////////////////////////////////////////////////////////////////////
+class CommitDialogBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxSplitterWindow* m_splitter1;
+		wxPanel* m_panel1;
+		wxStaticText* m_staticText2;
+		wxCheckListBox* m_checkListFiles;
+		wxPanel* m_panel2;
+		wxStaticText* m_staticText1;
+		wxTextCtrl* m_textCtrlMessage;
+		wxStaticLine* m_staticline1;
+		wxButton* m_button2;
+		wxButton* m_button3;
+	
+	public:
+		
+		CommitDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Commit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~CommitDialogBase();
+		void m_splitter1OnIdle( wxIdleEvent& )
+		{
+			m_splitter1->SetSashPosition( 0 );
+			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CommitDialogBase::m_splitter1OnIdle ), NULL, this );
+		}
+		
+	
+};
+
+#endif //__subversion2_ui__

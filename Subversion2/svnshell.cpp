@@ -5,6 +5,7 @@ SvnShell::SvnShell(wxWindow *parent)
 		: wxTerminal(parent)
 		, m_handler(NULL)
 {
+	SetReadOnly(true);
 }
 
 SvnShell::~SvnShell()

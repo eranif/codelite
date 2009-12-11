@@ -2,23 +2,26 @@
 #define SVNCOMMANDHANDLER_H
 
 #include <wx/string.h>
-#include "imanager.h"
+
+class Subversion2;
+class IManager;
 
 class SvnCommandHandler
 {
-	IManager*          m_manager;
+protected:
+	Subversion2 *m_plugin;
 
 public:
-	SvnCommandHandler(IManager *manager)
-			: m_manager(manager)
+	SvnCommandHandler(Subversion2 *plugin)
+			: m_plugin(plugin)
 	{
 	}
 
 	virtual ~SvnCommandHandler() {
 	}
 
-	IManager* GetManager() {
-		return m_manager;
+	Subversion2* GetPlugin() {
+		return m_plugin;
 	}
 
 	virtual void Process(const wxString &output) = 0;

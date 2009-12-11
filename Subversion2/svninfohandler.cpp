@@ -2,11 +2,11 @@
 #include "subversion_page.h"
 #include "svnxml.h"
 #include "svninfo.h"
+#include "subversion2.h"
 
-SvnInfoHandler::SvnInfoHandler(IManager *manager, int reason, SubversionPage *ui)
-		: SvnCommandHandler(manager)
+SvnInfoHandler::SvnInfoHandler(Subversion2 *plugin, int reason)
+		: SvnCommandHandler(plugin)
 		, m_reason(reason)
-		, m_ui    (ui)
 {
 }
 
@@ -18,5 +18,5 @@ void SvnInfoHandler::Process(const wxString& output)
 {
 	SvnInfo svninfo;
 	SvnXML::GetSvnInfo(output, svninfo);
-	m_ui->OnSvnInfo(svninfo, m_reason);
+	m_plugin->GetSvnPage()->OnSvnInfo(svninfo, m_reason);
 }

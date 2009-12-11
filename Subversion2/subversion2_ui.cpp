@@ -177,3 +177,78 @@ SvnCopyDialogBase::SvnCopyDialogBase( wxWindow* parent, wxWindowID id, const wxS
 SvnCopyDialogBase::~SvnCopyDialogBase()
 {
 }
+
+SvnShellBase::SvnShellBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
+{
+	wxBoxSizer* bSizer9;
+	bSizer9 = new wxBoxSizer( wxVERTICAL );
+	
+	m_textCtrlOutput = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2 );
+	m_textCtrlOutput->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
+	bSizer9->Add( m_textCtrlOutput, 1, wxALL|wxEXPAND, 5 );
+	
+	this->SetSizer( bSizer9 );
+	this->Layout();
+}
+
+SvnShellBase::~SvnShellBase()
+{
+}
+
+SvnLoginDialogBase::SvnLoginDialogBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer10;
+	bSizer10 = new wxBoxSizer( wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer2;
+	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer2->AddGrowableCol( 1 );
+	fgSizer2->SetFlexibleDirection( wxBOTH );
+	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText6 = new wxStaticText( this, wxID_ANY, _("Username:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6->Wrap( -1 );
+	fgSizer2->Add( m_staticText6, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlUsername = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlUsername->SetMinSize( wxSize( 300,-1 ) );
+	
+	fgSizer2->Add( m_textCtrlUsername, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticText7 = new wxStaticText( this, wxID_ANY, _("Password:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7->Wrap( -1 );
+	fgSizer2->Add( m_staticText7, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlPassword = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD|wxTE_RICH2 );
+	fgSizer2->Add( m_textCtrlPassword, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer10->Add( fgSizer2, 1, wxEXPAND, 5 );
+	
+	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer10->Add( m_staticline4, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer11;
+	bSizer11 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_button6 = new wxButton( this, wxID_OK, _("&Login"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button6->SetDefault(); 
+	bSizer11->Add( m_button6, 0, wxALL, 5 );
+	
+	m_button7 = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer11->Add( m_button7, 0, wxALL, 5 );
+	
+	bSizer10->Add( bSizer11, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	this->SetSizer( bSizer10 );
+	this->Layout();
+	bSizer10->Fit( this );
+	
+	this->Centre( wxBOTH );
+}
+
+SvnLoginDialogBase::~SvnLoginDialogBase()
+{
+}

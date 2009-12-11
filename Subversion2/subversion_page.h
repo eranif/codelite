@@ -79,6 +79,7 @@ protected:
 
 	// Svn events
 	void OnCommit         (wxCommandEvent &event);
+	void OnCommitWithLogin(wxCommandEvent &event);
 	void OnUpdate         (wxCommandEvent &event);
 	void OnRevert         (wxCommandEvent &event);
 	void OnAdd            (wxCommandEvent &event);

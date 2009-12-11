@@ -2,7 +2,6 @@
 #include "svnshell.h"
 #include "subversion_page.h"
 #include <wx/xrc/xmlres.h>
-#include "wxterminal.h"
 
 static Subversion2* thePlugin = NULL;
 

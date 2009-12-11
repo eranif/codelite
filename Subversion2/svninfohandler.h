@@ -6,10 +6,8 @@ class SubversionPage;
 
 class SvnInfoHandler : public SvnCommandHandler {
 	int             m_reason;
-	SubversionPage *m_ui;
-
 public:
-	SvnInfoHandler(IManager *manager, int reason, SubversionPage *ui);
+	SvnInfoHandler(Subversion2 *plugin, int reason);
 	virtual ~SvnInfoHandler();
 
 public:

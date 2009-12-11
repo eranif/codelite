@@ -1,10 +1,10 @@
 #include "svnstatushandler.h"
 #include "subversion_page.h"
+#include "subversion2.h"
 #include "svnxml.h"
 
-SvnStatusHandler::SvnStatusHandler(IManager *manager, SubversionPage *ui)
-		: SvnCommandHandler(manager)
-		, m_ui(ui)
+SvnStatusHandler::SvnStatusHandler(Subversion2 *plugin)
+		: SvnCommandHandler(plugin)
 {
 }
 
@@ -16,5 +16,5 @@ void SvnStatusHandler::Process(const wxString& output)
 {
 	wxArrayString modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles;
 	SvnXML::GetFiles(output, modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles);
-	m_ui->UpdateTree(modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles);
+	GetPlugin()->GetSvnPage()->UpdateTree(modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles);
 }

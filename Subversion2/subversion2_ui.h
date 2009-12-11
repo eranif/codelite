@@ -111,4 +111,44 @@ class SvnCopyDialogBase : public wxDialog
 	
 };
 
+///////////////////////////////////////////////////////////////////////////////
+/// Class SvnShellBase
+///////////////////////////////////////////////////////////////////////////////
+class SvnShellBase : public wxPanel 
+{
+	private:
+	
+	protected:
+		wxTextCtrl* m_textCtrlOutput;
+	
+	public:
+		
+		SvnShellBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		~SvnShellBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class SvnLoginDialogBase
+///////////////////////////////////////////////////////////////////////////////
+class SvnLoginDialogBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText6;
+		wxTextCtrl* m_textCtrlUsername;
+		wxStaticText* m_staticText7;
+		wxTextCtrl* m_textCtrlPassword;
+		wxStaticLine* m_staticline4;
+		wxButton* m_button6;
+		wxButton* m_button7;
+	
+	public:
+		
+		SvnLoginDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Login"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~SvnLoginDialogBase();
+	
+};
+
 #endif //__subversion2_ui__

@@ -4,11 +4,11 @@
 #include "svncommandhandler.h" // Base class
 
 class SubversionPage;
+class Subversion2;
 
 class SvnStatusHandler : public SvnCommandHandler {
-	SubversionPage *m_ui;
 public:
-	SvnStatusHandler(IManager *manager, SubversionPage *ui);
+	SvnStatusHandler(Subversion2 *plugin);
 	virtual ~SvnStatusHandler();
 
 public:

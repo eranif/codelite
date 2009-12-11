@@ -1,19 +1,17 @@
-#ifndef SVNCOMMITHANDLER_H
-#define SVNCOMMITHANDLER_H
+#ifndef SVN_DEFAULT_COMMAND_HANDLER_H
+#define SVN_DEFAULT_COMMAND_HANDLER_H
 
 #include "svncommandhandler.h" // Base class
 
 class SubversionPage;
 
 class SvnDefaultCommandHandler : public SvnCommandHandler {
-	SubversionPage *m_ui;
-
 public:
-	SvnDefaultCommandHandler(IManager *manager, SubversionPage *ui);
+	SvnDefaultCommandHandler(Subversion2 *plugin);
 	virtual ~SvnDefaultCommandHandler();
 
 public:
 	virtual void Process(const wxString &output);
 };
 
-#endif // SVNCOMMITHANDLER_H
+#endif // SVN_DEFAULT_COMMAND_HANDLER_H

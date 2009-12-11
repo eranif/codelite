@@ -33,6 +33,10 @@ public:
 		return m_mgr;
 	}
 
+	SubversionPage *GetSvnPage() {
+		return m_subversionPage;
+	}
+
 protected:
 	void DoInitialize();
 };

@@ -13,6 +13,7 @@
     <File Name="svnshell.cpp"/>
     <File Name="svn_default_command_handler.cpp"/>
     <File Name="svninfohandler.cpp"/>
+    <File Name="svncommithandler.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="subversion2.h"/>
@@ -27,6 +28,7 @@
     <File Name="svn_default_command_handler.h"/>
     <File Name="svninfohandler.h"/>
     <File Name="svninfo.h"/>
+    <File Name="svncommithandler.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
@@ -39,10 +41,13 @@
     <File Name="commit_dialog.cpp"/>
     <File Name="svn_copy_dialog.h"/>
     <File Name="svn_copy_dialog.cpp"/>
+    <File Name="svn_login_dialog.h"/>
+    <File Name="svn_login_dialog.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="subversion2.fbp"/>
   </VirtualDirectory>
+  <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" Required="yes" PreCompiledHeader="">
@@ -133,7 +138,7 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes" PreCompiledHeader="">
+      <Compiler Options="-g;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
@@ -234,6 +239,5 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

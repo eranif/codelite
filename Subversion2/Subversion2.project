@@ -11,7 +11,8 @@
     <File Name="svncommand.cpp"/>
     <File Name="svnxml.cpp"/>
     <File Name="svnshell.cpp"/>
-    <File Name="svncommithandler.cpp"/>
+    <File Name="svn_default_command_handler.cpp"/>
+    <File Name="svninfohandler.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="subversion2.h"/>
@@ -23,7 +24,9 @@
     <File Name="svncommand.h"/>
     <File Name="svnxml.h"/>
     <File Name="svnshell.h"/>
-    <File Name="svncommithandler.h"/>
+    <File Name="svn_default_command_handler.h"/>
+    <File Name="svninfohandler.h"/>
+    <File Name="svninfo.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
@@ -34,6 +37,8 @@
     <File Name="subversion_page.cpp"/>
     <File Name="commit_dialog.h"/>
     <File Name="commit_dialog.cpp"/>
+    <File Name="svn_copy_dialog.h"/>
+    <File Name="svn_copy_dialog.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="subversion2.fbp"/>

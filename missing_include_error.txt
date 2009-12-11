@@ -1,0 +1,10 @@
+C:/Development/C++/codelite/CL_trunk/LiteEditor/importfilesdialog.cpp:39: error: 'TagsManagerST' has not been declared
+C:/Development/C++/codelite/CL_trunk/LiteEditor/importfilesdialog.cpp:40: error: 'TagsManagerST' has not been declared
+C:/Development/C++/codelite/CL_trunk/LiteEditor/importfilesdialog.cpp:40: error: 'CC_PARSE_EXT_LESS_FILES' was not declared in this scope
+C:/Development/C++/codelite/CL_trunk/LiteEditor/importfilesdialog.cpp:49: error: 'ProjectPtr' was not declared in this scope
+C:/Development/C++/codelite/CL_trunk/LiteEditor/importfilesdialog.cpp:49: error: expected ';' before 'proj'
+C:/Development/C++/codelite/CL_trunk/LiteEditor/importfilesdialog.cpp:50: error: 'proj' was not declared in this scope
+C:/Development/C++/codelite/CL_trunk/LiteEditor/importfilesdialog.cpp:58: error: invalid use of incomplete type 'struct CheckDirTreeCtrl'
+C:/Development/C++/codelite/CL_trunk/LiteEditor/importfilesdialog.h:51: error: forward declaration of 'struct CheckDirTreeCtrl'
+C:/Development/C++/codelite/CL_trunk/LiteEditor/importfilesdialog.cpp:59: error: invalid conversion from 'CheckDirTreeCtrl*' to 'int'
+C:/Development/C++/codelite/CL_trunk/LiteEditor/importfilesdialog.cpp:59: error:   initializing argument 1 of 'wxSizerItem* wxSizer::Add(int, int, int, int, int, wxObject*)'

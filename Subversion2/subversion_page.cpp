@@ -1,6 +1,8 @@
 #include "plugin.h"
+#include "svn_copy_dialog.h"
+#include "svninfohandler.h"
 #include "commit_dialog.h"
-#include "svncommithandler.h"
+#include "svn_default_command_handler.h"
 #include <wx/menu.h>
 #include "wxterminal.h"
 #include <wx/dirdlg.h>
@@ -322,11 +324,13 @@ void SubversionPage::CreateFileMenu(wxMenu* menu)
 {
 	menu->Append(XRCID("svn_commit"),  wxT("Commit"));
 	menu->Append(XRCID("svn_update"),  wxT("Update"));
+	menu->Append(XRCID("svn_add"),     wxT("Add"));
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_revert"),  wxT("Revert"));
 
 	menu->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit), NULL, this);
 	menu->Connect(XRCID("svn_update"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnUpdate), NULL, this);
+	menu->Connect(XRCID("svn_add"),    wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnAdd),    NULL, this);
 	menu->Connect(XRCID("svn_revert"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnRevert), NULL, this);
 }
 
@@ -335,11 +339,18 @@ void SubversionPage::CreateRootMenu(wxMenu* menu)
 	menu->Append(XRCID("svn_commit"),  wxT("Commit"));
 	menu->Append(XRCID("svn_update"),  wxT("Update"));
 	menu->AppendSeparator();
+
 	menu->Append(XRCID("svn_revert"),  wxT("Revert"));
+	menu->AppendSeparator();
+
+	menu->Append(XRCID("svn_tag"),     wxT("Create Tag"));
+	menu->Append(XRCID("svn_branch"),  wxT("Create Branch"));
 
 	menu->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit), NULL, this);
 	menu->Connect(XRCID("svn_update"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnUpdate), NULL, this);
 	menu->Connect(XRCID("svn_revert"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnRevert), NULL, this);
+	menu->Connect(XRCID("svn_tag"),    wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnTag),    NULL, this);
+	menu->Connect(XRCID("svn_branch"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnBranch), NULL, this);
 }
 
 void SubversionPage::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths)
@@ -386,7 +397,7 @@ void SubversionPage::OnUpdate(wxCommandEvent& event)
 		}
 	}
 
-	m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin->GetManager(), this));
+	m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin->GetManager(), this));
 }
 
 void SubversionPage::OnCommit(wxCommandEvent& event)
@@ -411,13 +422,22 @@ void SubversionPage::OnCommit(wxCommandEvent& event)
 		command << wxT(" -m \"");
 		command << dlg.GetMesasge();
 		command << wxT("\"");
-		m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin->GetManager(), this));
+		m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin->GetManager(), this));
 	}
 }
 
 
 void SubversionPage::OnAdd(wxCommandEvent& event)
 {
+	wxString command;
+	command << DoGetSvnExeName() << wxT(" add ");
+
+	// Concatenate list of files to be updated
+	for(size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+		command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
+	}
+
+	m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin->GetManager(), this));
 }
 
 void SubversionPage::OnRevert(wxCommandEvent& event)
@@ -433,8 +453,65 @@ void SubversionPage::OnRevert(wxCommandEvent& event)
 	} else {
 		command << wxT(".");
 	}
-	m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin->GetManager(), this));
+	m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin->GetManager(), this));
 }
 
+void SubversionPage::OnBranch(wxCommandEvent& event)
+{
+	wxString command;
+	command << DoGetSvnExeName() << wxT("info --xml ");
 
+	m_simpleCommand.Execute(command, m_textCtrlRootDir->GetValue(), new SvnInfoHandler(m_plugin->GetManager(), SvnInfo_Branch, this));
+}
 
+void SubversionPage::OnTag(wxCommandEvent& event)
+{
+	wxString command;
+	command << DoGetSvnExeName() << wxT("info --xml ");
+
+	m_simpleCommand.Execute(command, m_textCtrlRootDir->GetValue(), new SvnInfoHandler(m_plugin->GetManager(), SvnInfo_Tag, this));
+}
+
+void SubversionPage::OnDelete(wxCommandEvent& event)
+{
+}
+
+void SubversionPage::OnResolve(wxCommandEvent& event)
+{
+}
+
+void SubversionPage::OnSvnInfo(const SvnInfo& svnInfo, int reason)
+{
+	if(reason == SvnInfo_Info ) {
+		// Do something with this
+	} else {
+
+		SvnCopyDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow());
+
+		switch(reason) {
+		default:
+		case SvnInfo_Tag:
+			dlg.SetTitle(wxT("Create Tag"));
+			dlg.SetSourceURL(svnInfo.m_sourceUrl);
+			dlg.SetTargetURL(svnInfo.m_url + wxT("/tags/"));
+			break;
+		case SvnInfo_Branch:
+			dlg.SetTitle(wxT("Create Branch"));
+			dlg.SetSourceURL(svnInfo.m_sourceUrl);
+			dlg.SetTargetURL(svnInfo.m_url + wxT("/branches/"));
+			break;
+		}
+		if(dlg.ShowModal() == wxID_OK) {
+			wxString command;
+			command << DoGetSvnExeName()
+					<< wxT("copy ")
+					<< dlg.GetSourceURL()
+					<< wxT(" ")
+					<< dlg.GetTargetURL()
+					<< wxT(" -m \"")
+					<< dlg.GetMessage()
+					<< wxT("\"");
+			m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin->GetManager(), this));
+		}
+	}
+}

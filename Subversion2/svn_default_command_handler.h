@@ -5,12 +5,12 @@
 
 class SubversionPage;
 
-class SvnCommitHandler : public SvnCommandHandler {
+class SvnDefaultCommandHandler : public SvnCommandHandler {
 	SubversionPage *m_ui;
 
 public:
-	SvnCommitHandler(IManager *manager, SubversionPage *ui);
-	virtual ~SvnCommitHandler();
+	SvnDefaultCommandHandler(IManager *manager, SubversionPage *ui);
+	virtual ~SvnDefaultCommandHandler();
 
 public:
 	virtual void Process(const wxString &output);

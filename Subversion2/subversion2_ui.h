@@ -85,4 +85,30 @@ class CommitDialogBase : public wxDialog
 	
 };
 
+///////////////////////////////////////////////////////////////////////////////
+/// Class SvnCopyDialogBase
+///////////////////////////////////////////////////////////////////////////////
+class SvnCopyDialogBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText3;
+		wxTextCtrl* m_textCtrlSourceURL;
+		wxStaticText* m_staticText4;
+		wxTextCtrl* m_textCtrlTargetURL;
+		wxStaticLine* m_staticline3;
+		wxStaticText* m_staticText5;
+		wxTextCtrl* m_textCtrlComment;
+		wxStaticLine* m_staticline2;
+		wxButton* m_button4;
+		wxButton* m_button5;
+	
+	public:
+		
+		SvnCopyDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create Svn Tag"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 575,315 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~SvnCopyDialogBase();
+	
+};
+
 #endif //__subversion2_ui__

@@ -6,11 +6,12 @@
 
 class SvnCommandHandler
 {
-	IManager *m_manager;
+	IManager*          m_manager;
 
 public:
 	SvnCommandHandler(IManager *manager)
-			: m_manager(manager) {
+			: m_manager(manager)
+	{
 	}
 
 	virtual ~SvnCommandHandler() {

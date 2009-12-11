@@ -27,6 +27,7 @@
 
 #include "wx/string.h"
 #include "wx/arrstr.h"
+#include "svninfo.h"
 
 class SvnXML
 {
@@ -35,7 +36,7 @@ public:
 	~SvnXML();
 
 	static void GetFiles(const wxString &input, wxArrayString& modifiedFiles, wxArrayString &conflictedFiles, wxArrayString &unversionedFiles, wxArrayString& newFiles, wxArrayString& deletedFiles);
-	static wxString GetRevision(const wxString& input);
+	static void GetSvnInfo(const wxString& input, SvnInfo &svnInfo);
 };
 
 #endif //SVNXMLPARSER_H

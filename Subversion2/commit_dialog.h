@@ -14,8 +14,8 @@ class CommitDialog : public CommitDialogBase
 {
 	IManager *m_manager;
 
-private:
-	wxString NormalizeMessage(const wxString &message);
+public:
+	static wxString NormalizeMessage(const wxString &message);
 
 public:
 	/** Constructor */

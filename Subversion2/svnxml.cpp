@@ -84,13 +84,14 @@ void SvnXML::GetFiles(const wxString &input, wxArrayString& modifiedFiles, wxArr
 	}
 }
 
-wxString SvnXML::GetRevision(const wxString& input)
+void SvnXML::GetSvnInfo(const wxString& input, SvnInfo &svnInfo)
 {
 	wxStringInputStream stream(input);
 	wxXmlDocument doc(stream);
+
 	if (!doc.IsOk()) {
 		//wxLogMessage(input);
-		return wxEmptyString;
+		return;
 	}
 
 	wxXmlNode *root = doc.GetRoot();
@@ -98,10 +99,38 @@ wxString SvnXML::GetRevision(const wxString& input)
 		wxXmlNode *node = root->GetChildren();
 		while ( node ) {
 			if (node->GetName() == wxT("entry")) {
-				return XmlUtils::ReadString(node, wxT("revision"), wxEmptyString);
+				node->GetPropVal(wxT("revision"), &svnInfo.m_revision);
+
+				// Look for the URL
+				wxXmlNode *child = node->GetChildren();
+				while( child ) {
+					if(child->GetName() == wxT("url")) {
+						svnInfo.m_sourceUrl = child->GetNodeContent();
+					}
+
+					if(child->GetName() == wxT("author")) {
+						svnInfo.m_author = child->GetNodeContent();
+					}
+
+					if(child->GetName() == wxT("date")) {
+						svnInfo.m_date = child->GetNodeContent();
+					}
+
+					if( child->GetName() == wxT("repository") ) {
+						wxXmlNode *gchild = child->GetChildren();
+						while( gchild ) {
+							if(gchild->GetName() == wxT("root")) {
+								svnInfo.m_url = gchild->GetNodeContent();
+								break;
+							}
+							gchild = gchild->GetNext();
+						}
+					}
+					child = child->GetNext();
+				}
 			}
 			node = node->GetNext();
 		}
 	}
-	return wxEmptyString;
+	return;
 }

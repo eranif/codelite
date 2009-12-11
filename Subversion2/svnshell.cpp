@@ -31,6 +31,9 @@ void SvnShell::OnProcessEnd(wxCommandEvent& event)
 		delete m_handler;
 		m_handler = NULL;
 	}
+
+	// set back the read only mode
+	SetReadOnly(true);
 }
 
 bool SvnShell::Run(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler)
@@ -47,7 +50,5 @@ bool SvnShell::Run(const wxString& cmd, const wxString& workingDirectory, SvnCom
 
 	SetWorkingDirectory(workingDirectory);
 	wxTerminal::Execute(cmd);
-
-	SetReadOnly(true);
 	return true;
 }

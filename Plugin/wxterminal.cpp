@@ -446,7 +446,9 @@ void wxTerminal::SetReadOnly(bool readOnly)
 void wxTerminal::SetWorkingDirectory(const wxString& workingDirectory)
 {
 	m_workingDir = workingDirectory;
-	m_textCtrl->AppendText(wxT("\n"));
+	wxString text;
+	text << wxT("cd ") << workingDirectory << wxT("\n");
+	m_textCtrl->AppendText( text );
 	DoWritePrompt();
 }
 

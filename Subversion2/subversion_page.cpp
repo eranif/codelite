@@ -324,14 +324,20 @@ void SubversionPage::CreateFileMenu(wxMenu* menu)
 {
 	menu->Append(XRCID("svn_commit"),  wxT("Commit"));
 	menu->Append(XRCID("svn_update"),  wxT("Update"));
-	menu->Append(XRCID("svn_add"),     wxT("Add"));
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_revert"),  wxT("Revert"));
+	menu->AppendSeparator();
+	menu->Append(XRCID("svn_add"),     wxT("Add"));
+	menu->Append(XRCID("svn_delete"),  wxT("Delete"));
+	menu->AppendSeparator();
+	menu->Append(XRCID("svn_resolve"), wxT("Resolve"));
 
-	menu->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit), NULL, this);
-	menu->Connect(XRCID("svn_update"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnUpdate), NULL, this);
-	menu->Connect(XRCID("svn_add"),    wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnAdd),    NULL, this);
-	menu->Connect(XRCID("svn_revert"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnRevert), NULL, this);
+	menu->Connect(XRCID("svn_commit"),  wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit),  NULL, this);
+	menu->Connect(XRCID("svn_update"),  wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnUpdate),  NULL, this);
+	menu->Connect(XRCID("svn_add"),     wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnAdd),     NULL, this);
+	menu->Connect(XRCID("svn_revert"),  wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnRevert),  NULL, this);
+	menu->Connect(XRCID("svn_resolve"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnResolve), NULL, this);
+	menu->Connect(XRCID("svn_delete"),  wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnDelete),  NULL, this);
 }
 
 void SubversionPage::CreateRootMenu(wxMenu* menu)
@@ -474,10 +480,28 @@ void SubversionPage::OnTag(wxCommandEvent& event)
 
 void SubversionPage::OnDelete(wxCommandEvent& event)
 {
+	wxString command;
+	command << DoGetSvnExeName() << wxT(" delete ");
+
+	// Concatenate list of files to be updated
+	for(size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+		command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
+	}
+
+	m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin->GetManager(), this));
 }
 
 void SubversionPage::OnResolve(wxCommandEvent& event)
 {
+	wxString command;
+	command << DoGetSvnExeName() << wxT(" resolved ");
+
+	// Concatenate list of files to be updated
+	for(size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+		command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
+	}
+
+	m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin->GetManager(), this));
 }
 
 void SubversionPage::OnSvnInfo(const SvnInfo& svnInfo, int reason)

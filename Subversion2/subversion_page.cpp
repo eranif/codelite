@@ -314,10 +314,13 @@ void SubversionPage::CreateSecondRootMenu(wxMenu* menu)
 	menu->Append(XRCID("svn_update"),  wxT("Update"));
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_revert"),  wxT("Revert"));
+	menu->AppendSeparator();
+	menu->Append(XRCID("svn_diff"),    wxT("Create Diff..."));
 
 	menu->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit), NULL, this);
 	menu->Connect(XRCID("svn_update"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnUpdate), NULL, this);
 	menu->Connect(XRCID("svn_revert"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnRevert), NULL, this);
+	menu->Connect(XRCID("svn_diff"),   wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnDiff),   NULL, this);
 }
 
 void SubversionPage::CreateFileMenu(wxMenu* menu)
@@ -331,6 +334,8 @@ void SubversionPage::CreateFileMenu(wxMenu* menu)
 	menu->Append(XRCID("svn_delete"),  wxT("Delete"));
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_resolve"), wxT("Resolve"));
+	menu->AppendSeparator();
+	menu->Append(XRCID("svn_diff"),    wxT("Create Diff..."));
 
 	menu->Connect(XRCID("svn_commit"),  wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit),  NULL, this);
 	menu->Connect(XRCID("svn_update"),  wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnUpdate),  NULL, this);
@@ -338,6 +343,7 @@ void SubversionPage::CreateFileMenu(wxMenu* menu)
 	menu->Connect(XRCID("svn_revert"),  wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnRevert),  NULL, this);
 	menu->Connect(XRCID("svn_resolve"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnResolve), NULL, this);
 	menu->Connect(XRCID("svn_delete"),  wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnDelete),  NULL, this);
+	menu->Connect(XRCID("svn_diff"),    wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnDiff),    NULL, this);
 }
 
 void SubversionPage::CreateRootMenu(wxMenu* menu)
@@ -352,11 +358,17 @@ void SubversionPage::CreateRootMenu(wxMenu* menu)
 	menu->Append(XRCID("svn_tag"),     wxT("Create Tag"));
 	menu->Append(XRCID("svn_branch"),  wxT("Create Branch"));
 
+	menu->AppendSeparator();
+	menu->Append(XRCID("svn_diff"),    wxT("Create Diff..."));
+	menu->Append(XRCID("svn_patch"),   wxT("Apply Patch..."));
+
 	menu->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit), NULL, this);
 	menu->Connect(XRCID("svn_update"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnUpdate), NULL, this);
 	menu->Connect(XRCID("svn_revert"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnRevert), NULL, this);
 	menu->Connect(XRCID("svn_tag"),    wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnTag),    NULL, this);
 	menu->Connect(XRCID("svn_branch"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnBranch), NULL, this);
+	menu->Connect(XRCID("svn_diff"),   wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnDiff),   NULL, this);
+	menu->Connect(XRCID("svn_patch"),  wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnPatch),  NULL, this);
 }
 
 void SubversionPage::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths)
@@ -504,6 +516,14 @@ void SubversionPage::OnResolve(wxCommandEvent& event)
 	m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin->GetManager(), this));
 }
 
+void SubversionPage::OnDiff(wxCommandEvent& event)
+{
+}
+
+void SubversionPage::OnPatch(wxCommandEvent& event)
+{
+}
+
 void SubversionPage::OnSvnInfo(const SvnInfo& svnInfo, int reason)
 {
 	if(reason == SvnInfo_Info ) {
@@ -539,3 +559,4 @@ void SubversionPage::OnSvnInfo(const SvnInfo& svnInfo, int reason)
 		}
 	}
 }
+

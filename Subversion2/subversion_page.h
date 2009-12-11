@@ -86,6 +86,8 @@ protected:
 	void OnBranch         (wxCommandEvent &event);
 	void OnTag            (wxCommandEvent &event);
 	void OnResolve        (wxCommandEvent &event);
+	void OnDiff           (wxCommandEvent &event);
+	void OnPatch          (wxCommandEvent &event);
 
 public:
 	/** Constructor */

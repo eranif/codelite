@@ -236,65 +236,71 @@ int SubversionPage::DoGetIconIndex(const wxString& filename)
 
 SvnTreeData::SvnNodeType SubversionPage::DoGetSelectionType(const wxArrayTreeItemIds& items)
 {
-	m_paths.Clear();
+	m_selectionInfo.Clear();
 	SvnTreeData::SvnNodeType type(SvnTreeData::SvnNodeTypeInvalid);
 	for(size_t i=0; i<items.GetCount(); i++) {
 		if(items.Item(i).IsOk() == false) {
-			m_paths.Clear();
-			return SvnTreeData::SvnNodeTypeInvalid;
+			m_selectionInfo.Clear();
+			return m_selectionInfo.m_selectionType; // Invalid
 		}
 
 		SvnTreeData *data = (SvnTreeData *)m_treeCtrl->GetItemData(items.Item(i));
 		if ( !data ) {
-			m_paths.Clear();
-			return SvnTreeData::SvnNodeTypeInvalid;
+			m_selectionInfo.Clear();
+			return m_selectionInfo.m_selectionType; // Invalid
 		}
 
 		if(data->GetType() == SvnTreeData::SvnNodeTypeRoot && items.GetCount() == 1) {
 			// populate the list of paths with all the added paths
-			DoGetPaths( items.Item(i), m_paths );
-			return SvnTreeData::SvnNodeTypeRoot;
+			DoGetPaths( items.Item(i), m_selectionInfo.m_paths );
+			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeRoot;
+			return m_selectionInfo.m_selectionType;
 		}
 
 		if(data->GetType() == SvnTreeData::SvnNodeTypeAddedRoot && items.GetCount() == 1) {
 			// populate the list of paths with all the added paths
-			DoGetPaths( items.Item(i), m_paths );
-			return SvnTreeData::SvnNodeTypeAddedRoot;
+			DoGetPaths( items.Item(i), m_selectionInfo.m_paths );
+			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeAddedRoot;
+			return m_selectionInfo.m_selectionType;
 		}
 
 		if(data->GetType() == SvnTreeData::SvnNodeTypeDeletedRoot && items.GetCount() == 1) {
 			// populate the list of paths with all the deleted paths
-			DoGetPaths( items.Item(i), m_paths );
-			return SvnTreeData::SvnNodeTypeDeletedRoot;
+			DoGetPaths( items.Item(i), m_selectionInfo.m_paths );
+			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeDeletedRoot;
+			return m_selectionInfo.m_selectionType;
 		}
 
 		if(data->GetType() == SvnTreeData::SvnNodeTypeConflictRoot && items.GetCount() == 1) {
 			// populate the list of paths with all the conflicted paths
-			DoGetPaths( items.Item(i), m_paths );
-			return SvnTreeData::SvnNodeTypeConflictRoot;
+			DoGetPaths( items.Item(i), m_selectionInfo.m_paths );
+			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeConflictRoot;
+			return m_selectionInfo.m_selectionType;
 		}
 
 		if(data->GetType() == SvnTreeData::SvnNodeTypeModifiedRoot && items.GetCount() == 1) {
 			// populate the list of paths with all the conflicted paths
-			DoGetPaths( items.Item(i), m_paths );
-			return SvnTreeData::SvnNodeTypeModifiedRoot;
+			DoGetPaths( items.Item(i), m_selectionInfo.m_paths );
+			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeModifiedRoot;
+			return m_selectionInfo.m_selectionType;
 		}
 
 		if(type == SvnTreeData::SvnNodeTypeInvalid &&
 		   (data->GetType() == SvnTreeData::SvnNodeTypeFile || data->GetType() == SvnTreeData::SvnNodeTypeRoot)) {
 			type = data->GetType();
-			m_paths.Add(data->GetFilepath());
+			m_selectionInfo.m_selectionType = type;
+			m_selectionInfo.m_paths.Add(data->GetFilepath());
 
 		} else if( type == SvnTreeData::SvnNodeTypeInvalid ) {
 			type = data->GetType();
 
 		} else if(data->GetType() != type) {
-			m_paths.Clear();
+			m_selectionInfo.m_paths.Clear();
 			return SvnTreeData::SvnNodeTypeInvalid;
 
 		} else {
 			// Same type, just add the path
-			m_paths.Add(data->GetFilepath());
+			m_selectionInfo.m_paths.Add(data->GetFilepath());
 		}
 	}
 	return type;
@@ -303,45 +309,37 @@ SvnTreeData::SvnNodeType SubversionPage::DoGetSelectionType(const wxArrayTreeIte
 void SubversionPage::CreateSecondRootMenu(wxMenu* menu)
 {
 	menu->Append(XRCID("svn_commit"),  wxT("Commit"));
+	menu->Append(XRCID("svn_update"),  wxT("Update"));
+	menu->AppendSeparator();
+	menu->Append(XRCID("svn_revert"),  wxT("Revert"));
+
 	menu->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit), NULL, this);
+	menu->Connect(XRCID("svn_update"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnUpdate), NULL, this);
+	menu->Connect(XRCID("svn_revert"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnRevert), NULL, this);
 }
 
 void SubversionPage::CreateFileMenu(wxMenu* menu)
 {
 	menu->Append(XRCID("svn_commit"),  wxT("Commit"));
+	menu->Append(XRCID("svn_update"),  wxT("Update"));
+	menu->AppendSeparator();
+	menu->Append(XRCID("svn_revert"),  wxT("Revert"));
+
 	menu->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit), NULL, this);
+	menu->Connect(XRCID("svn_update"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnUpdate), NULL, this);
+	menu->Connect(XRCID("svn_revert"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnRevert), NULL, this);
 }
 
 void SubversionPage::CreateRootMenu(wxMenu* menu)
 {
 	menu->Append(XRCID("svn_commit"),  wxT("Commit"));
+	menu->Append(XRCID("svn_update"),  wxT("Update"));
+	menu->AppendSeparator();
+	menu->Append(XRCID("svn_revert"),  wxT("Revert"));
+
 	menu->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit), NULL, this);
-}
-
-void SubversionPage::OnCommit(wxCommandEvent& event)
-{
-	wxString command;
-
-	// Pope the "Commit Dialog" dialog
-
-	CommitDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_paths, m_plugin->GetManager());
-	if(dlg.ShowModal() == wxID_OK) {
-		m_paths = dlg.GetPaths();
-		if(m_paths.IsEmpty())
-			return;
-
-		command << DoGetSvnExeName()
-				<< wxT(" commit ");
-
-		for(size_t i=0; i<m_paths.GetCount(); i++) {
-			command << wxT("\"") << m_paths.Item(i) << wxT("\" ");
-		}
-
-		command << wxT(" -m \"");
-		command << dlg.GetMesasge();
-		command << wxT("\"");
-		m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin->GetManager(), this));
-	}
+	menu->Connect(XRCID("svn_update"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnUpdate), NULL, this);
+	menu->Connect(XRCID("svn_revert"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnRevert), NULL, this);
 }
 
 void SubversionPage::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths)
@@ -356,7 +354,7 @@ void SubversionPage::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths
 		SvnTreeData *data = (SvnTreeData *)m_treeCtrl->GetItemData(item);
 		if(data) {
 			if(data->GetFilepath().IsEmpty() == false) {
-				m_paths.Add( data->GetFilepath() );
+				paths.Add( data->GetFilepath() );
 			}
 
 			if(( data->GetType() == SvnTreeData::SvnNodeTypeAddedRoot    ||
@@ -371,3 +369,72 @@ void SubversionPage::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths
 		item = m_treeCtrl->GetNextChild(parent, cookie);
 	}
 }
+
+////////////////////////////////////////////
+// Source control command handlers
+////////////////////////////////////////////
+
+void SubversionPage::OnUpdate(wxCommandEvent& event)
+{
+	wxString command;
+	command << DoGetSvnExeName() << wxT(" update ");
+
+	if(m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
+		// Concatenate list of files to be updated
+		for(size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+			command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
+		}
+	}
+
+	m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin->GetManager(), this));
+}
+
+void SubversionPage::OnCommit(wxCommandEvent& event)
+{
+	wxString command;
+
+	// Pope the "Commit Dialog" dialog
+
+	CommitDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_selectionInfo.m_paths, m_plugin->GetManager());
+	if(dlg.ShowModal() == wxID_OK) {
+		m_selectionInfo.m_paths = dlg.GetPaths();
+		if(m_selectionInfo.m_paths.IsEmpty())
+			return;
+
+		command << DoGetSvnExeName()
+				<< wxT(" commit ");
+
+		for(size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+			command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
+		}
+
+		command << wxT(" -m \"");
+		command << dlg.GetMesasge();
+		command << wxT("\"");
+		m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin->GetManager(), this));
+	}
+}
+
+
+void SubversionPage::OnAdd(wxCommandEvent& event)
+{
+}
+
+void SubversionPage::OnRevert(wxCommandEvent& event)
+{
+	wxString command;
+	command << DoGetSvnExeName() << wxT(" revert --recursive ");
+
+	if(m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
+		// Concatenate list of files to be updated
+		for(size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+			command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
+		}
+	} else {
+		command << wxT(".");
+	}
+	m_plugin->GetShell()->Run(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin->GetManager(), this));
+}
+
+
+

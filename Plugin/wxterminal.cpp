@@ -85,6 +85,9 @@ wxTerminal::wxTerminal( wxWindow* parent )
 
 	m_promptStyle = m_defaultStyle;
 	m_promptStyle.SetTextColour( wxT("BLUE") );	m_workingDir = wxGetCwd();
+
+	// %h=hostname %H=hostname_up_to_dot %u=username %w=cwd %W=cwd basename only %$= either $, or # if root
+	m_promptFormat = wxT("%u@%h: %w$");
 	DoWritePrompt();
 }
 
@@ -108,7 +111,7 @@ void wxTerminal::OnKey(wxKeyEvent& event)
 	if( m_textCtrl->IsEditable() == false) {
 		return;
 	}
-	
+
 	if(m_exitOnKey) {
 		GetParent()->Close(true);
 		return;
@@ -306,15 +309,11 @@ void wxTerminal::DoInsertLine(const wxString& value)
 void wxTerminal::DoWritePrompt()
 {
 	wxString prompt;
-
-	// %h=hostname %H=hostname_up_to_dot %u=username %w=cwd %W=cwd basename only %$= either $, or # if root
-	wxString PromptFormat = wxT("%u@%h: %w$");
-
-	for ( size_t n=0; n < PromptFormat.Len(); ++n ) {
-		wxChar c = PromptFormat[n];
+	for ( size_t n=0; n < m_promptFormat.Len(); ++n ) {
+		wxChar c = m_promptFormat[n];
 		if ( c != wxT('%') ) prompt += c;             // If this is a standard character, add it to the string
 		else {
-			c = PromptFormat[++n];                    // If it was '%', the next char determines what to do
+			c = m_promptFormat[++n];                    // If it was '%', the next char determines what to do
 			if ( c==wxT('%') ) {
 				prompt += c;                          // %% really means it
 				continue;
@@ -460,4 +459,9 @@ void wxTerminal::Clear()
 {
 	m_textCtrl->Clear();
 	DoWritePrompt();
+}
+
+void wxTerminal::SetPromptFormat(const wxString& promptFormat)
+{
+	m_promptFormat = promptFormat;
 }

@@ -6,6 +6,7 @@ SvnShell::SvnShell(wxWindow *parent)
 		, m_handler(NULL)
 {
 	SetReadOnly(true);
+	SetPromptFormat(wxT("%w>"));
 }
 
 SvnShell::~SvnShell()

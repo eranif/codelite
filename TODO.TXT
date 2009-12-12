@@ -1,6 +1,10 @@
 - add build-errors-assistant
 - Build System: add option to move regex Up/Down
 - Add new 'scp' plugin
-- Svn plugin: re-write the sucker - create Subversion2
 - Move Qmake to be an integrated part of codelite build system
 - Check for environment variable existance in the project build configuration
+- Subversion2: add icons to the 'Svn Preferences' dialog
+- Subversion2: Make the tree sub nodes BOLD
+- Subversion2: Make the 'Stop Svn' button disabled when process is not running
+- Subversion2: Increase plugin_interface version to higher number so Subversion1 will be removed
+- Subversion2: Implement SSH options

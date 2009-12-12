@@ -669,7 +669,7 @@ void SubversionPage::OnCommitWithLogin(wxCommandEvent& event)
 			command << wxT(" -m \"");
 			command << commitdlg.GetMesasge();
 			command << wxT("\"");
-			m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin), true);
+			m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin), false);
 		}
 	}
 }

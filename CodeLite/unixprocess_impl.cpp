@@ -11,118 +11,193 @@
 #include <errno.h>
 #include <sys/wait.h>
 
-static char *argv[128];
+static char  **argv;
 static int    argc = 0;
+
+// ----------------------------------------------
+#define ISBLANK(ch) ((ch) == ' ' || (ch) == '\t')
+
+/*  Routines imported from standard C runtime libraries. */
+
+#ifdef __STDC__
+
+#include <stddef.h>
+#include <string.h>
+#include <stdlib.h>
+
+#else	/* !__STDC__ */
+
+#if !defined _WIN32 || defined __GNUC__
+extern char *memcpy ();		/* Copy memory region */
+extern int strlen ();		/* Count length of string */
+extern char *malloc ();		/* Standard memory allocater */
+extern char *realloc ();	/* Standard memory reallocator */
+extern void free ();		/* Free malloc'd memory */
+extern char *strdup ();		/* Duplicate a string */
+#endif
+
+#endif	/* __STDC__ */
+
+
+#ifndef NULL
+#define NULL 0
+#endif
+
+#ifndef EOS
+#define EOS '\0'
+#endif
+
+#define INITIAL_MAXARGC 8	/* Number of args + NULL in initial argv */
+
+void freeargv (char **vector)
+{
+	register char **scan;
+
+	if (vector != NULL) {
+		for (scan = vector; *scan != NULL; scan++) {
+			free (*scan);
+		}
+		free (vector);
+	}
+}
+
+char **
+dupargv (char **argv)
+{
+	int argc;
+	char **copy;
+
+	if (argv == NULL)
+		return NULL;
+
+	/* the vector */
+	for (argc = 0; argv[argc] != NULL; argc++);
+	copy = (char **) malloc ((argc + 1) * sizeof (char *));
+	if (copy == NULL)
+		return NULL;
+
+	/* the strings */
+	for (argc = 0; argv[argc] != NULL; argc++) {
+		int len = strlen (argv[argc]);
+		copy[argc] = (char*)malloc (sizeof (char *) * (len + 1));
+		if (copy[argc] == NULL) {
+			freeargv (copy);
+			return NULL;
+		}
+		strcpy (copy[argc], argv[argc]);
+	}
+	copy[argc] = NULL;
+	return copy;
+}
+
+char **buildargv (const char *input)
+{
+	char *arg;
+	char *copybuf;
+	int squote = 0;
+	int dquote = 0;
+	int bsquote = 0;
+	int argc = 0;
+	int maxargc = 0;
+	char **argv = NULL;
+	char **nargv;
+
+	if (input != NULL) {
+		copybuf = (char *) alloca (strlen (input) + 1);
+		/* Is a do{}while to always execute the loop once.  Always return an
+		argv, even for null strings.  See NOTES above, test case below. */
+		do {
+			/* Pick off argv[argc] */
+			while (ISBLANK (*input)) {
+				input++;
+			}
+			if ((maxargc == 0) || (argc >= (maxargc - 1))) {
+				/* argv needs initialization, or expansion */
+				if (argv == NULL) {
+					maxargc = INITIAL_MAXARGC;
+					nargv = (char **) malloc (maxargc * sizeof (char *));
+				} else {
+					maxargc *= 2;
+					nargv = (char **) realloc (argv, maxargc * sizeof (char *));
+				}
+				if (nargv == NULL) {
+					if (argv != NULL) {
+						freeargv (argv);
+						argv = NULL;
+					}
+					break;
+				}
+				argv = nargv;
+				argv[argc] = NULL;
+			}
+			/* Begin scanning arg */
+			arg = copybuf;
+			while (*input != EOS) {
+				if (ISBLANK (*input) && !squote && !dquote && !bsquote) {
+					break;
+				} else {
+					if (bsquote) {
+						bsquote = 0;
+						*arg++ = *input;
+					} else if (*input == '\\') {
+						bsquote = 1;
+					} else if (squote) {
+						if (*input == '\'') {
+							squote = 0;
+						} else {
+							*arg++ = *input;
+						}
+					} else if (dquote) {
+						if (*input == '"') {
+							dquote = 0;
+						} else {
+							*arg++ = *input;
+						}
+					} else {
+						if (*input == '\'') {
+							squote = 1;
+						} else if (*input == '"') {
+							dquote = 1;
+						} else {
+							*arg++ = *input;
+						}
+					}
+					input++;
+				}
+			}
+			*arg = EOS;
+			argv[argc] = strdup (copybuf);
+			if (argv[argc] == NULL) {
+				freeargv (argv);
+				argv = NULL;
+				break;
+			}
+			argc++;
+			argv[argc] = NULL;
+
+			while (ISBLANK (*input)) {
+				input++;
+			}
+		} while (*input != EOS);
+	}
+	return (argv);
+}
+
+//-----------------------------------------------------
 
 static void make_argv(const wxString &cmd)
 {
-	wxString      currentWord;
-	bool          inString(false);
-	bool          inSingleString(false);
-	bool          stringFromMiddle(false);
-	wxArrayString argvArray;
-
-	// release previous allocation
-	for (int i=0; i<argc; i++ ) {
-		if ( argv[i] ) {
-			free(argv[i]);
-		}
+	if(argc) {
+		freeargv(argv);
+		argc=0;
 	}
-	argc = 0;
-	for ( size_t i=0; i<cmd.Length(); i++ ) {
-		switch ( cmd.GetChar(i) ) {
-		case wxT(' '):
-					case wxT('\t'):
-							if ( !inSingleString && !inString && currentWord.IsEmpty() == false ) {
-						// we found the end of the new token
-						argvArray.Add( currentWord );
-						currentWord.Clear();
-					} else if ( inString || inSingleString ) {
-						// we are inside a string, concatenate the char
-						currentWord << cmd.GetChar(i);
-					}
-			break;
-		case wxT('\''):
-			if ( inString ) {
-				currentWord << cmd.GetChar(i);
-
-			} else  if ( inSingleString && currentWord.IsEmpty() == false ) {
-				// this is the terminating quotation mark
-				if(stringFromMiddle) {
-					// concatenate this char as well
-					currentWord << cmd.GetChar(i);
-				}
-				
-				argvArray.Add( currentWord );
-				currentWord.Clear();
-				inSingleString = false;
-				
-			} else if(currentWord.IsEmpty()){
-				currentWord.Clear();
-				inSingleString = true;
-				
-			} else {
-				// we found an opening quotation mark,
-				// however the current word is not empty
-				// usually its something like this:
-				// options='...'
-				currentWord << cmd.GetChar(i);
-				stringFromMiddle = true;
-				inSingleString = true;
-				stringFromMiddle = false;
-			}
-			break;
-		case wxT('"'):
-				if ( inSingleString ) {
-					currentWord << cmd.GetChar(i);
-
-				} else if ( inString && currentWord.IsEmpty() == false ) {
-					// this is the terminating quotation mark
-					if(stringFromMiddle) {
-						// concatenate this char as well
-						currentWord << cmd.GetChar(i);
-					}
-					argvArray.Add( currentWord );
-					currentWord.Clear();
-					inString = false;
-					stringFromMiddle = false;
-
-				} else if(currentWord.IsEmpty()) {
-					currentWord.Clear();
-					inString = true;
-					
-				} else {
-					// we found an opening quotation mark,
-					// however the current word is not empty
-					// usually its something like this:
-					// options="..."
-					currentWord << cmd.GetChar(i);
-					stringFromMiddle = true;
-					inString = true;
-				}
-			break;
-		default:
-			currentWord << cmd.GetChar(i);
-			break;
-		}
+	
+	argv = buildargv(cmd.mb_str(wxConvUTF8).data());
+	argc=0;
+	
+	for (char **targs = argv; *targs != NULL; targs++) {
+		argc++;
 	}
-
-	if ( inString ) {
-		// we got an unterminated string quotations
-		argc = 0;
-		return;
-	}
-
-	if ( currentWord.IsEmpty() == false ) {
-		argvArray.Add( currentWord );
-	}
-
-	argc = argvArray.GetCount();
-	for (size_t i=0; i<argvArray.GetCount(); i++ ) {
-		argv[i] = strdup(argvArray.Item(i).mb_str(wxConvUTF8).data());
-//		printf("Argv[%d]=%s\n", i, argv[i]);
-	}
-	argv[argc] = 0;
 }
 
 UnixProcessImpl::UnixProcessImpl(wxEvtHandler *parent)

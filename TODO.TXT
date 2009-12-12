@@ -4,9 +4,6 @@
 - Move Qmake to be an integrated part of codelite build system
 - Check for environment variable existance in the project build configuration
 - Subversion2: add icons to the 'Svn Preferences' dialog
-- Subversion2: Make the tree sub nodes BOLD
 - Subversion2: Make the 'Stop Svn' button disabled when process is not running
-- Subversion2: Increase plugin_interface version to higher number so Subversion1 will be removed
 - Subversion2: Implement SSH options
-- Subversion2: When performing Svn actions, show the 'Svn' tab
 - Make detached tabs from plugin to be part of the prespective

@@ -86,7 +86,7 @@ bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, 
 
 	// Wrap the command in the OS Shell
 	wxString cmdShell (cmd);
-	WrapInShell(cmdShell);
+	//WrapInShell(cmdShell);
 
 	m_process = CreateAsyncProcess(this, cmdShell, workingDirectory);
 	if(!m_process) {

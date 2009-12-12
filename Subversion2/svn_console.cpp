@@ -1,8 +1,10 @@
 #include "svn_console.h"
+#include <wx/aui/framemanager.h>
 #include <wx/xrc/xmlres.h>
 #include "processreaderthread.cpp"
 #include "globals.h"
 #include "processreaderthread.h"
+#include "subversion2.h"
 
 //-------------------------------------------------------------
 BEGIN_EVENT_TABLE(SvnConsole, SvnShellBase)
@@ -10,10 +12,11 @@ BEGIN_EVENT_TABLE(SvnConsole, SvnShellBase)
 	EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, SvnConsole::OnProcessEnd       )
 END_EVENT_TABLE()
 
-SvnConsole::SvnConsole(wxWindow *parent)
+SvnConsole::SvnConsole(wxWindow *parent, Subversion2* plugin)
 		: SvnShellBase(parent)
 		, m_handler(NULL)
 		, m_process(NULL)
+		, m_plugin (plugin)
 {
 }
 
@@ -49,6 +52,7 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 		m_process = NULL;
 	}
 	AppendText(wxT("Done.\n"));
+	AppendText(wxT("-----\n"));
 }
 
 bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler, bool printCommand)
@@ -61,7 +65,21 @@ bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, 
 
 	m_output.Clear();
 	m_handler = handler;
-
+	
+	// Make sure that the Output View pane is visible
+	wxAuiPaneInfo &info = m_plugin->GetManager()->GetDockingManager()->GetPane(wxT("Output View"));
+	if (info.IsOk() && !info.IsShown()) {
+		info.Show();
+		m_plugin->GetManager()->GetDockingManager()->Update();
+	}
+	
+	// Select the Subversion tab
+	Notebook *book = m_plugin->GetManager()->GetOutputPaneNotebook();
+	size_t where = book->GetPageIndex(m_plugin->GetShell());
+	if(where != Notebook::npos) {
+		book->SetSelection(where);
+	}
+	
 	// Print the command?
 	if(printCommand)
 		AppendText(cmd + wxT("\n"));

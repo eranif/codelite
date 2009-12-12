@@ -9,4 +9,4 @@
 - Subversion2: Increase plugin_interface version to higher number so Subversion1 will be removed
 - Subversion2: Implement SSH options
 - Subversion2: When performing Svn actions, show the 'Svn' tab
-- Subversion2: Change the SVN tab to be 'Subversion' (change icon as well)
+- Make detached tabs from plugin to be part of the prespective

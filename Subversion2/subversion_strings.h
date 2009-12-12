@@ -7,5 +7,5 @@ const wxString svnADDED_FILES         = wxT("Added Files");
 const wxString svnDELETED_FILES       = wxT("Deleted Files");
 const wxString svnCONFLICTED_FILES    = wxT("Conflicted Files");
 const wxString svnUNVERSIONED_FILES   = wxT("Unversioned Files");
-
+const wxString svnCONSOLE_TEXT        = wxT("Subversion");
 #endif // SVNSTRINGS_H

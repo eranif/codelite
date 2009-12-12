@@ -1,4 +1,5 @@
 #include "subversion2.h"
+#include "subversion_strings.h"
 #include <wx/menu.h>
 #include <wx/app.h>
 #include "svn_preferences_dialog.h"
@@ -133,15 +134,13 @@ void Subversion2::DoInitialize()
 	Notebook *book = m_mgr->GetWorkspacePaneNotebook();
 	m_subversionPage = new SubversionPage(book, this);
 
-	wxString caption( wxT("Subversion") );
-	book->AddPage(m_subversionPage, caption, wxT("Subversion"));
-
+	
+	book->AddPage(m_subversionPage, svnCONSOLE_TEXT, svnCONSOLE_TEXT);
 	book = m_mgr->GetOutputPaneNotebook();
-	m_subversionShell = new SvnConsole(book);
+	m_subversionShell = new SvnConsole(book, this);
 
-	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("output_win"));
-	caption = wxT("Console");
-	book->AddPage(m_subversionShell, caption, wxT("Console"), bmp);
+	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("svn_repo"));
+	book->AddPage(m_subversionShell, svnCONSOLE_TEXT, svnCONSOLE_TEXT, bmp);
 }
 
 SvnSettingsData Subversion2::GetSettings()

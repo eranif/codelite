@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include <wx/settings.h>
 #include <wx/filedlg.h>
 #include <wx/textdlg.h>
 #include "plugin.h"
@@ -197,7 +198,12 @@ void SubversionPage::DoAddNode(const wxString& title, int imgId, SvnTreeData::Sv
 	if (files.IsEmpty() == false) {
 
 		wxTreeItemId parent = m_treeCtrl->AppendItem(root, title, imgId, imgId, new SvnTreeData(nodeType, wxT("")));
-
+		
+		// Set the parent node with bold font
+		wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+		font.SetWeight(wxBOLD);
+		m_treeCtrl->SetItemFont(parent, font);
+		
 		// Add all children items
 		for (size_t i=0; i<files.GetCount(); i++) {
 			wxString filename(files.Item(i));

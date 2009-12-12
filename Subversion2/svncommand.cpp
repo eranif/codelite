@@ -1,5 +1,7 @@
 #include "svncommand.h"
+#include "svn_console.h"
 #include "globals.h"
+#include "subversion2.h"
 
 BEGIN_EVENT_TABLE(SvnCommand, wxEvtHandler)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  SvnCommand::OnProcessOutput)
@@ -24,7 +26,9 @@ bool SvnCommand::Execute(const wxString& command, const wxString& workingDirecto
 	// Wrap the command in the OS Shell
 	wxString cmdShell (command);
 	WrapInShell(cmdShell);
-
+//	if(handler) {
+//		handler->GetPlugin()->GetShell()->AppendText(command + wxT("\n"));
+//	}
 	m_process = CreateAsyncProcess(this, command, workingDirectory);
 	if ( !m_process ) {
 		return false;

@@ -19,6 +19,7 @@ static void make_argv(const wxString &cmd)
 	wxString      currentWord;
 	bool          inString(false);
 	bool          inSingleString(false);
+	bool          stringFromMiddle(false);
 	wxArrayString argvArray;
 
 	// release previous allocation
@@ -46,13 +47,29 @@ static void make_argv(const wxString &cmd)
 				currentWord << cmd.GetChar(i);
 
 			} else  if ( inSingleString && currentWord.IsEmpty() == false ) {
-			// this is the terminating quotation mark
+				// this is the terminating quotation mark
+				if(stringFromMiddle) {
+					// concatenate this char as well
+					currentWord << cmd.GetChar(i);
+				}
+				
 				argvArray.Add( currentWord );
 				currentWord.Clear();
 				inSingleString = false;
-			} else {
+				
+			} else if(currentWord.IsEmpty()){
 				currentWord.Clear();
 				inSingleString = true;
+				
+			} else {
+				// we found an opening quotation mark,
+				// however the current word is not empty
+				// usually its something like this:
+				// options='...'
+				currentWord << cmd.GetChar(i);
+				stringFromMiddle = true;
+				inSingleString = true;
+				stringFromMiddle = false;
 			}
 			break;
 		case wxT('"'):
@@ -61,14 +78,27 @@ static void make_argv(const wxString &cmd)
 
 				} else if ( inString && currentWord.IsEmpty() == false ) {
 					// this is the terminating quotation mark
+					if(stringFromMiddle) {
+						// concatenate this char as well
+						currentWord << cmd.GetChar(i);
+					}
 					argvArray.Add( currentWord );
 					currentWord.Clear();
 					inString = false;
+					stringFromMiddle = false;
 
-				} else {
+				} else if(currentWord.IsEmpty()) {
 					currentWord.Clear();
 					inString = true;
-
+					
+				} else {
+					// we found an opening quotation mark,
+					// however the current word is not empty
+					// usually its something like this:
+					// options="..."
+					currentWord << cmd.GetChar(i);
+					stringFromMiddle = true;
+					inString = true;
 				}
 			break;
 		default:
@@ -90,7 +120,7 @@ static void make_argv(const wxString &cmd)
 	argc = argvArray.GetCount();
 	for (size_t i=0; i<argvArray.GetCount(); i++ ) {
 		argv[i] = strdup(argvArray.Item(i).mb_str(wxConvUTF8).data());
-		//printf("Argv[%d]=%s\n", i, argv[i]);
+//		printf("Argv[%d]=%s\n", i, argv[i]);
 	}
 	argv[argc] = 0;
 }

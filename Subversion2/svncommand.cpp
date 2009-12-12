@@ -1,4 +1,5 @@
 #include "svncommand.h"
+#include "globals.h"
 
 BEGIN_EVENT_TABLE(SvnCommand, wxEvtHandler)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  SvnCommand::OnProcessOutput)
@@ -19,8 +20,13 @@ SvnCommand::~SvnCommand()
 bool SvnCommand::Execute(const wxString& command, const wxString& workingDirectory, SvnCommandHandler *handler)
 {
 	ClearAll();
+
+	// Wrap the command in the OS Shell
+	wxString cmdShell (command);
+	WrapInShell(cmdShell);
+
 	m_process = CreateAsyncProcess(this, command, workingDirectory);
-	if ( ! m_process ) {
+	if ( !m_process ) {
 		return false;
 	}
 	m_workingDirectory = workingDirectory.c_str();

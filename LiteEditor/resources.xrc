@@ -67,6 +67,7 @@
 	<object class="wxBitmap" name="text_view">res/view_text.png</object>
 	<object class="wxBitmap" name="edit_add">res/edit_add.png</object>
 	<object class="wxBitmap" name="edit_delete">res/edit_delete.png</object>
+	<object class="wxBitmap" name="eraser">res/eraser.png</object>
 
 	<!-- Mimetype -->
 	<object class="wxBitmap" name="page_white_c">res/mimetype/page_white_c.png</object>

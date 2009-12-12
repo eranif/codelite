@@ -25,6 +25,12 @@
 #include <wx/splitter.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
+#include <wx/checkbox.h>
+#include <wx/statbox.h>
+#include <wx/bitmap.h>
+#include <wx/image.h>
+#include <wx/icon.h>
+#include <wx/notebook.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -148,6 +154,62 @@ class SvnLoginDialogBase : public wxDialog
 		
 		SvnLoginDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Login"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~SvnLoginDialogBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class SvnPreferencesDialogBase
+///////////////////////////////////////////////////////////////////////////////
+class SvnPreferencesDialogBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxNotebook* m_notebook;
+		wxPanel* m_panel3;
+		wxStaticText* m_staticTextExe;
+		wxTextCtrl* m_textCtrlSvnExecutable;
+		wxButton* m_buttonBrowse;
+		wxStaticText* m_staticText9;
+		wxTextCtrl* m_textCtrlIgnorePattern;
+		wxCheckBox* m_checkBoxAddToSvn;
+		wxCheckBox* m_checkBoxRetag;
+		wxPanel* m_panel4;
+		wxCheckBox* m_checkBoxUseExternalDiff;
+		wxStaticText* m_staticText10;
+		wxTextCtrl* m_textCtrlDiffViewer;
+		wxButton* m_buttonBrowseExtDiff;
+		wxStaticText* m_staticText11;
+		wxTextCtrl* m_textCtrlDiffViewerCommand;
+		
+		
+		wxStaticText* m_staticText16;
+		wxStaticText* m_staticText17;
+		
+		wxStaticText* m_staticText18;
+		wxStaticText* m_staticText19;
+		wxPanel* m_panel5;
+		wxStaticText* m_staticText20;
+		wxTextCtrl* m_textCtrlSSHClient;
+		wxButton* m_button12;
+		wxStaticText* m_staticText21;
+		wxTextCtrl* m_textCtrlSshClientArgs;
+		wxStaticText* m_staticText22;
+		wxButton* m_button8;
+		wxButton* m_button9;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnBrowseSvnExe( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnUseExternalDiffUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnBrowseDiffViewer( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnBrowseSSHClient( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		SvnPreferencesDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Subversion Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~SvnPreferencesDialogBase();
 	
 };
 

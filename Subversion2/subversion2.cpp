@@ -1,5 +1,8 @@
 #include "subversion2.h"
-#include "svnshell.h"
+#include <wx/menu.h>
+#include <wx/app.h>
+#include "svn_preferences_dialog.h"
+#include "svn_console.h"
 #include "subversion_page.h"
 #include <wx/xrc/xmlres.h>
 
@@ -34,6 +37,8 @@ Subversion2::Subversion2(IManager *manager)
 {
 	m_longName = wxT("Subversion plugin for codelite2.0 based on the svn command line tool");
 	m_shortName = wxT("Subversion2");
+
+	GetManager()->GetTheApp()->Connect(XRCID("subversion2_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSettings), NULL, this);
 	DoInitialize();
 }
 
@@ -83,18 +88,13 @@ wxToolBar *Subversion2::CreateToolBar(wxWindow *parent)
 void Subversion2::CreatePluginMenu(wxMenu *pluginsMenu)
 {
 	wxUnusedVar(pluginsMenu);
-/*
+
 	// You can use the below code a snippet:
  	wxMenu *menu = new wxMenu();
 	wxMenuItem *item(NULL);
-	item = new wxMenuItem(menu, XRCID("new_plugin"), _("New CodeLite Plugin Wizard..."), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("subversion2_settings"), _("Subversion Options"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-	item = new wxMenuItem(menu, XRCID("new_class"), _("New Class Wizard..."), wxEmptyString, wxITEM_NORMAL);
-	menu->Append(item);
-	item = new wxMenuItem(menu, XRCID("new_wx_project"), _("New wxWidgets Project Wizard..."), wxEmptyString, wxITEM_NORMAL);
-	menu->Append(item);
-	pluginsMenu->Append(wxID_ANY, _("Gizmos"), menu);
-*/
+	pluginsMenu->Append(wxID_ANY, _("Subversion2"), menu);
 }
 
 void Subversion2::HookPopupMenu(wxMenu *menu, MenuType type)
@@ -137,9 +137,30 @@ void Subversion2::DoInitialize()
 	book->AddPage(m_subversionPage, caption, wxT("Subversion"));
 
 	book = m_mgr->GetOutputPaneNotebook();
-	m_subversionShell = new SvnShell(book);
+	m_subversionShell = new SvnConsole(book);
 
 	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("output_win"));
 	caption = wxT("Console");
 	book->AddPage(m_subversionShell, caption, wxT("Console"), bmp);
+}
+
+SvnSettingsData Subversion2::GetSettings()
+{
+	SvnSettingsData ssd;
+	GetManager()->GetConfigTool()->ReadObject(wxT("SvnSettingsData"), &ssd);
+	return ssd;
+}
+
+void Subversion2::SetSettings(SvnSettingsData& ssd)
+{
+	GetManager()->GetConfigTool()->WriteObject(wxT("SvnSettingsData"), &ssd);
+}
+
+void Subversion2::OnSettings(wxCommandEvent& event)
+{
+	SvnPreferencesDialog dlg(GetManager()->GetTheApp()->GetTopWindow(), this);
+	if(dlg.ShowModal() == wxID_OK) {
+		// Update the Subversion view
+		GetSvnPage()->BuildTree();
+	}
 }

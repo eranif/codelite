@@ -1,26 +1,27 @@
-#include "svnshell.h"
+#include "svn_console.h"
+#include <wx/xrc/xmlres.h>
 #include "processreaderthread.cpp"
 #include "globals.h"
 #include "processreaderthread.h"
 
 //-------------------------------------------------------------
-BEGIN_EVENT_TABLE(SvnShell, SvnShellBase)
-	EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  SvnShell::OnReadProcessOutput)
-	EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, SvnShell::OnProcessEnd       )
+BEGIN_EVENT_TABLE(SvnConsole, SvnShellBase)
+	EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  SvnConsole::OnReadProcessOutput)
+	EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, SvnConsole::OnProcessEnd       )
 END_EVENT_TABLE()
 
-SvnShell::SvnShell(wxWindow *parent)
+SvnConsole::SvnConsole(wxWindow *parent)
 		: SvnShellBase(parent)
 		, m_handler(NULL)
 		, m_process(NULL)
 {
 }
 
-SvnShell::~SvnShell()
+SvnConsole::~SvnConsole()
 {
 }
 
-void SvnShell::OnReadProcessOutput(wxCommandEvent& event)
+void SvnConsole::OnReadProcessOutput(wxCommandEvent& event)
 {
 	ProcessEventData *ped = (ProcessEventData *)event.GetClientData();
 	if (ped) {
@@ -32,7 +33,7 @@ void SvnShell::OnReadProcessOutput(wxCommandEvent& event)
 	delete ped;
 }
 
-void SvnShell::OnProcessEnd(wxCommandEvent& event)
+void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 {
 	ProcessEventData *ped = (ProcessEventData *)event.GetClientData();
 	delete ped;
@@ -47,9 +48,10 @@ void SvnShell::OnProcessEnd(wxCommandEvent& event)
 		delete m_process;
 		m_process = NULL;
 	}
+	AppendText(wxT("Done.\n"));
 }
 
-bool SvnShell::Execute(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler, bool printCommand)
+bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler, bool printCommand)
 {
 	if (m_process) {
 		// another process is already running...
@@ -76,19 +78,19 @@ bool SvnShell::Execute(const wxString& cmd, const wxString& workingDirectory, Sv
 	return true;
 }
 
-void SvnShell::AppendText(const wxString& text)
+void SvnConsole::AppendText(const wxString& text)
 {
 	m_textCtrlOutput->SetInsertionPointEnd();
 	m_textCtrlOutput->SetSelection(m_textCtrlOutput->GetLastPosition(), m_textCtrlOutput->GetLastPosition());
-	m_textCtrlOutput->AppendText(wxString::Format(wxT(">%s"), text.c_str()));
+	m_textCtrlOutput->AppendText(text);
 }
 
-void SvnShell::Clear()
+void SvnConsole::Clear()
 {
 	m_textCtrlOutput->Clear();
 }
 
-void SvnShell::Stop()
+void SvnConsole::Stop()
 {
 	if(m_process) {
 		delete m_process;
@@ -96,3 +98,4 @@ void SvnShell::Stop()
 	}
 	AppendText(wxT("Aborted.\n"));
 }
+

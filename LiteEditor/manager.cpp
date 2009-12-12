@@ -746,7 +746,7 @@ void Manager::RetagWorkspace(bool quickRetag)
 		wxWindowDisabler disableAll;
 		//wxBusyInfo bi(wxT("Scanning for include files to parse. please wait..."), Frame::Get());
 		Frame::Get()->SetStatusMessage(wxT("Scanning for include files to parse. please wait..."), 0);
-		
+
 		// Before using the 'crawlerScan' we lock it, since it is not mt-safe
 		TagsManagerST::Get()->CrawlerLock();
 		for (size_t i=0; i<projectFiles.size(); i++) {
@@ -780,7 +780,7 @@ void Manager::RetagWorkspace(bool quickRetag)
 	// -----------------------------------------------
 	// tag them
 	// -----------------------------------------------
-	
+
 	Frame::Get()->SetStatusMessage(wxT("Retagging..."), 0);
 	TagsManagerST::Get()->RetagFiles ( projectFiles, quickRetag );
 	long end   = sw.Time();
@@ -980,18 +980,13 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 	wxArrayString f;
 	f.Add(origName);
 	f.Add(newName);
-	if(SendCmdEvent(wxEVT_FILE_RENAMED, (void*)&f)) {
 
+	SendCmdEvent(wxEVT_FILE_RENAMED, (void*)&f);
 
-	} else {
-		// rename the file on filesystem
-		if(wxRenameFile(origName, newName) == false){
-			wxLogMessage(wxT("Failed to rename file from %s to %s"), origName.c_str(), newName.c_str());
-			return false;
-		}
-	}
+	// rename the file on filesystem
+	wxRenameFile(origName, newName);
 
-	// readd file to project with the new name
+	// read file to project with the new name
 	wxString projName = vdFullPath.BeforeFirst(wxT(':'));
 	ProjectPtr proj = GetProject(projName);
 	proj->FastAddFile(newName, vdFullPath.AfterFirst(wxT(':')));

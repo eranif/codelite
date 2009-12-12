@@ -1,6 +1,10 @@
+#include <wx/app.h>
+#include <wx/filedlg.h>
+#include <wx/textdlg.h>
 #include "plugin.h"
+#include "procutils.h"
 #include "svn_login_dialog.h"
-#include "svncommithandler.h"
+#include "svn_command_handlers.h"
 #include "svn_copy_dialog.h"
 #include "svninfohandler.h"
 #include "commit_dialog.h"
@@ -18,9 +22,9 @@
 #include <wx/imaglist.h>
 #include "imanager.h"
 #include "workspace.h"
-#include <wx/app.h>
 #include "subversion2.h"
-#include "svnshell.h"
+#include "svn_console.h"
+#include "globals.h"
 
 SubversionPage::SubversionPage( wxWindow* parent, Subversion2 *plugin )
 		: SubversionPageBase( parent )
@@ -29,6 +33,9 @@ SubversionPage::SubversionPage( wxWindow* parent, Subversion2 *plugin )
 	CreatGUIControls();
 	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionPage::OnWorkspaceLoaded), NULL, this);
 	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionPage::OnWorkspaceClosed), NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_FILE_SAVED,       wxCommandEventHandler(SubversionPage::OnRefreshView),     NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_PROJ_FILE_ADDED,  wxCommandEventHandler(SubversionPage::OnRefreshView),     NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_FILE_RENAMED,     wxCommandEventHandler(SubversionPage::OnFileRenamed),     NULL, this);
 	Connect(XRCID("svn_commit2"), wxCommandEventHandler(SubversionPage::OnCommitWithLogin), NULL, this);
 }
 
@@ -37,7 +44,7 @@ void SubversionPage::OnChangeRootDir( wxCommandEvent& event )
 	wxUnusedVar(event);
 	wxString path(m_textCtrlRootDir->GetValue());
 	wxString new_path = wxDirSelector(wxT("Select working directory:"), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-	if(new_path.IsEmpty() == false){
+	if (new_path.IsEmpty() == false) {
 		m_textCtrlRootDir->SetValue(new_path);
 		BuildTree();
 	}
@@ -48,9 +55,9 @@ void SubversionPage::OnTreeMenu( wxTreeEvent& event )
 	// Popup the menu
 	wxArrayTreeItemIds items;
 	size_t count = m_treeCtrl->GetSelections(items);
-	if(count) {
+	if (count) {
 		SvnTreeData::SvnNodeType type = DoGetSelectionType(items);
-		if(type == SvnTreeData::SvnNodeTypeInvalid)
+		if (type == SvnTreeData::SvnNodeTypeInvalid)
 			// Mix or an invalid selection
 			return;
 
@@ -102,7 +109,23 @@ void SubversionPage::CreatGUIControls()
 
 	m_treeCtrl->AssignImageList( imageList );
 
-	if(m_plugin->GetManager()->IsWorkspaceOpen()) {
+	// Add toolbar
+	//Create the toolbar
+	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
+
+	tb->AddTool(XRCID("clear_svn_output"), wxT("Clear Svn Output Tab"), wxXmlResource::Get()->LoadBitmap(wxT("document_delete")), wxT("Clear Svn Output Tab"), wxITEM_NORMAL);
+	tb->AddTool(XRCID("svn_stop"),         wxT("Stop current svn process"), wxXmlResource::Get()->LoadBitmap ( wxT ( "stop_build16" ) ), wxT ( "Stop current svn process" ) );
+	tb->AddTool(XRCID("svn_cleanup"),      wxT("Svn Cleanup"), wxXmlResource::Get()->LoadBitmap ( wxT ( "eraser" ) ), wxT ( "Svn Cleanup" ) );
+
+	tb->Connect(XRCID("clear_svn_output"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPage::OnClearOuptut), NULL, this);
+	tb->Connect(XRCID("svn_stop"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPage::OnStop),        NULL, this);
+	tb->Connect(XRCID("svn_cleanup"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPage::OnCleanup),     NULL, this);
+
+	wxSizer *sz = GetSizer();
+	sz->Insert(0, tb, 0, wxEXPAND);
+	tb->Realize();
+
+	if (m_plugin->GetManager()->IsWorkspaceOpen()) {
 		m_textCtrlRootDir->SetValue(m_plugin->GetManager()->GetWorkspace()->GetWorkspaceFileName().GetPath());
 	}
 	BuildTree();
@@ -112,14 +135,12 @@ void SubversionPage::BuildTree()
 {
 	wxString rootDir = m_textCtrlRootDir->GetValue();
 
-	wxTreeItemId root;
-	if(rootDir.IsEmpty()) {
-		root = m_treeCtrl->AddRoot(svnNO_FILES_TO_DISPLAY, 0, 0);
+	if (rootDir.IsEmpty()) {
 		return;
 	}
 
 	wxString command;
-	command << DoGetSvnExeName() << wxT("--xml -q status");
+	command << DoGetSvnExeName(true) << wxT("--xml -q status");
 	m_simpleCommand.Execute(command, rootDir, new SvnStatusHandler(m_plugin));
 }
 
@@ -162,7 +183,7 @@ void SubversionPage::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
 	DoAddNode(svnCONFLICTED_FILES,  4, SvnTreeData::SvnNodeTypeConflictRoot,    conflictedFiles);
 	DoAddNode(svnUNVERSIONED_FILES, 5, SvnTreeData::SvnNodeTypeUnversionedRoot, unversionedFiles);
 
-	if(m_treeCtrl->ItemHasChildren(root)) {
+	if (m_treeCtrl->ItemHasChildren(root)) {
 		m_treeCtrl->Expand(root);
 	}
 }
@@ -173,28 +194,39 @@ void SubversionPage::DoAddNode(const wxString& title, int imgId, SvnTreeData::Sv
 	wxString basePath = m_textCtrlRootDir->GetValue();
 
 	// Add the basic four root items
-	if(files.IsEmpty() == false) {
+	if (files.IsEmpty() == false) {
 
 		wxTreeItemId parent = m_treeCtrl->AppendItem(root, title, imgId, imgId, new SvnTreeData(nodeType, wxT("")));
 
 		// Add all children items
-		for(size_t i=0; i<files.GetCount(); i++) {
+		for (size_t i=0; i<files.GetCount(); i++) {
 			wxString filename(files.Item(i));
 			m_treeCtrl->AppendItem(parent, files.Item(i), DoGetIconIndex(filename), DoGetIconIndex(filename), new SvnTreeData(SvnTreeData::SvnNodeTypeFile, files.Item(i)));
 		}
 
-		if( nodeType != SvnTreeData::SvnNodeTypeUnversionedRoot) {
+		if ( nodeType != SvnTreeData::SvnNodeTypeUnversionedRoot) {
 			m_treeCtrl->Expand(parent);
 		}
 	}
 }
 
-wxString SubversionPage::DoGetSvnExeName()
+wxString SubversionPage::DoGetSvnExeName(bool includeIgnoreList)
 {
-	SvnSettingsData ssd;
-	m_plugin->GetManager()->GetConfigTool()->ReadObject(wxT("SvnSettingsData"), &ssd);
+	SvnSettingsData ssd = m_plugin->GetSettings();
 	wxString executeable;
-	executeable << wxT("\"") << ssd.GetExecutable() << wxT("\" --non-interactive ");
+	bool encloseQuotations = false;
+	wxString exeName = ssd.GetExecutable();
+	exeName.Trim().Trim(false);
+	encloseQuotations = (exeName.Find(wxT(" ")) != wxNOT_FOUND);
+	if (encloseQuotations) {
+		executeable << wxT("\"") << ssd.GetExecutable() << wxT("\" --non-interactive --trust-server-cert ");
+	} else {
+		executeable << ssd.GetExecutable() << wxT(" --non-interactive --trust-server-cert ");
+	}
+
+	if (includeIgnoreList) {
+		executeable << wxT(" --config-option config:miscellany:global-ignores=\"") << ssd.GetIgnoreFilePattern() << wxT("\" ");
+	}
 	return executeable;
 }
 
@@ -240,8 +272,8 @@ SvnTreeData::SvnNodeType SubversionPage::DoGetSelectionType(const wxArrayTreeIte
 {
 	m_selectionInfo.Clear();
 	SvnTreeData::SvnNodeType type(SvnTreeData::SvnNodeTypeInvalid);
-	for(size_t i=0; i<items.GetCount(); i++) {
-		if(items.Item(i).IsOk() == false) {
+	for (size_t i=0; i<items.GetCount(); i++) {
+		if (items.Item(i).IsOk() == false) {
 			m_selectionInfo.Clear();
 			return m_selectionInfo.m_selectionType; // Invalid
 		}
@@ -252,51 +284,51 @@ SvnTreeData::SvnNodeType SubversionPage::DoGetSelectionType(const wxArrayTreeIte
 			return m_selectionInfo.m_selectionType; // Invalid
 		}
 
-		if(data->GetType() == SvnTreeData::SvnNodeTypeRoot && items.GetCount() == 1) {
+		if (data->GetType() == SvnTreeData::SvnNodeTypeRoot && items.GetCount() == 1) {
 			// populate the list of paths with all the added paths
 			DoGetPaths( items.Item(i), m_selectionInfo.m_paths );
 			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeRoot;
 			return m_selectionInfo.m_selectionType;
 		}
 
-		if(data->GetType() == SvnTreeData::SvnNodeTypeAddedRoot && items.GetCount() == 1) {
+		if (data->GetType() == SvnTreeData::SvnNodeTypeAddedRoot && items.GetCount() == 1) {
 			// populate the list of paths with all the added paths
 			DoGetPaths( items.Item(i), m_selectionInfo.m_paths );
 			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeAddedRoot;
 			return m_selectionInfo.m_selectionType;
 		}
 
-		if(data->GetType() == SvnTreeData::SvnNodeTypeDeletedRoot && items.GetCount() == 1) {
+		if (data->GetType() == SvnTreeData::SvnNodeTypeDeletedRoot && items.GetCount() == 1) {
 			// populate the list of paths with all the deleted paths
 			DoGetPaths( items.Item(i), m_selectionInfo.m_paths );
 			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeDeletedRoot;
 			return m_selectionInfo.m_selectionType;
 		}
 
-		if(data->GetType() == SvnTreeData::SvnNodeTypeConflictRoot && items.GetCount() == 1) {
+		if (data->GetType() == SvnTreeData::SvnNodeTypeConflictRoot && items.GetCount() == 1) {
 			// populate the list of paths with all the conflicted paths
 			DoGetPaths( items.Item(i), m_selectionInfo.m_paths );
 			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeConflictRoot;
 			return m_selectionInfo.m_selectionType;
 		}
 
-		if(data->GetType() == SvnTreeData::SvnNodeTypeModifiedRoot && items.GetCount() == 1) {
+		if (data->GetType() == SvnTreeData::SvnNodeTypeModifiedRoot && items.GetCount() == 1) {
 			// populate the list of paths with all the conflicted paths
 			DoGetPaths( items.Item(i), m_selectionInfo.m_paths );
 			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeModifiedRoot;
 			return m_selectionInfo.m_selectionType;
 		}
 
-		if(type == SvnTreeData::SvnNodeTypeInvalid &&
-		   (data->GetType() == SvnTreeData::SvnNodeTypeFile || data->GetType() == SvnTreeData::SvnNodeTypeRoot)) {
+		if (type == SvnTreeData::SvnNodeTypeInvalid &&
+		        (data->GetType() == SvnTreeData::SvnNodeTypeFile || data->GetType() == SvnTreeData::SvnNodeTypeRoot)) {
 			type = data->GetType();
 			m_selectionInfo.m_selectionType = type;
 			m_selectionInfo.m_paths.Add(data->GetFilepath());
 
-		} else if( type == SvnTreeData::SvnNodeTypeInvalid ) {
+		} else if ( type == SvnTreeData::SvnNodeTypeInvalid ) {
 			type = data->GetType();
 
-		} else if(data->GetType() != type) {
+		} else if (data->GetType() != type) {
 			m_selectionInfo.m_paths.Clear();
 			return SvnTreeData::SvnNodeTypeInvalid;
 
@@ -348,49 +380,51 @@ void SubversionPage::CreateFileMenu(wxMenu* menu)
 
 void SubversionPage::CreateRootMenu(wxMenu* menu)
 {
-	menu->Append(XRCID("svn_commit"),  wxT("Commit"));
-	menu->Append(XRCID("svn_update"),  wxT("Update"));
+	menu->Append(XRCID("svn_commit"),        wxT("Commit"));
+	menu->Append(XRCID("svn_update"),        wxT("Update"));
 	menu->AppendSeparator();
 
-	menu->Append(XRCID("svn_revert"),  wxT("Revert"));
+	menu->Append(XRCID("svn_revert"),        wxT("Revert"));
 	menu->AppendSeparator();
 
-	menu->Append(XRCID("svn_tag"),     wxT("Create Tag"));
-	menu->Append(XRCID("svn_branch"),  wxT("Create Branch"));
-
+	menu->Append(XRCID("svn_tag"),           wxT("Create Tag"));
+	menu->Append(XRCID("svn_branch"),        wxT("Create Branch"));
 	menu->AppendSeparator();
-	menu->Append(XRCID("svn_diff"),    wxT("Create Diff..."));
-	menu->Append(XRCID("svn_patch"),   wxT("Apply Patch..."));
 
-	menu->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit), NULL, this);
-	menu->Connect(XRCID("svn_update"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnUpdate), NULL, this);
-	menu->Connect(XRCID("svn_revert"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnRevert), NULL, this);
-	menu->Connect(XRCID("svn_tag"),    wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnTag),    NULL, this);
-	menu->Connect(XRCID("svn_branch"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnBranch), NULL, this);
-	menu->Connect(XRCID("svn_diff"),   wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnDiff),   NULL, this);
-	menu->Connect(XRCID("svn_patch"),  wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnPatch),  NULL, this);
+	menu->Append(XRCID("svn_diff"),          wxT("Create Diff..."));
+	menu->Append(XRCID("svn_patch"),         wxT("Apply Patch..."));
+	menu->Append(XRCID("svn_patch_dry_run"), wxT("Apply Patch - Dry Run..."));
+
+	menu->Connect(XRCID("svn_commit"),        wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnCommit),      NULL, this);
+	menu->Connect(XRCID("svn_update"),        wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnUpdate),      NULL, this);
+	menu->Connect(XRCID("svn_revert"),        wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnRevert),      NULL, this);
+	menu->Connect(XRCID("svn_tag"),           wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnTag),         NULL, this);
+	menu->Connect(XRCID("svn_branch"),        wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnBranch),      NULL, this);
+	menu->Connect(XRCID("svn_diff"),          wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnDiff),        NULL, this);
+	menu->Connect(XRCID("svn_patch"),         wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnPatch),       NULL, this);
+	menu->Connect(XRCID("svn_patch_dry_run"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SubversionPage::OnPatchDryRun), NULL, this);
 }
 
 void SubversionPage::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths)
 {
-	if( m_treeCtrl->ItemHasChildren(parent) == false ) {
+	if ( m_treeCtrl->ItemHasChildren(parent) == false ) {
 		return;
 	}
 
 	wxTreeItemIdValue cookie;
 	wxTreeItemId item = m_treeCtrl->GetFirstChild(parent, cookie);
-	while( item.IsOk() ) {
+	while ( item.IsOk() ) {
 		SvnTreeData *data = (SvnTreeData *)m_treeCtrl->GetItemData(item);
-		if(data) {
-			if(data->GetFilepath().IsEmpty() == false) {
+		if (data) {
+			if (data->GetFilepath().IsEmpty() == false) {
 				paths.Add( data->GetFilepath() );
 			}
 
-			if(( data->GetType() == SvnTreeData::SvnNodeTypeAddedRoot    ||
-				 data->GetType() == SvnTreeData::SvnNodeTypeModifiedRoot ||
-				 data->GetType() == SvnTreeData::SvnNodeTypeDeletedRoot) &&
+			if (( data->GetType() == SvnTreeData::SvnNodeTypeAddedRoot    ||
+			        data->GetType() == SvnTreeData::SvnNodeTypeModifiedRoot ||
+			        data->GetType() == SvnTreeData::SvnNodeTypeDeletedRoot) &&
 
-				m_treeCtrl->ItemHasChildren(item)) {
+			        m_treeCtrl->ItemHasChildren(item)) {
 
 				DoGetPaths(item, paths);
 			}
@@ -406,16 +440,16 @@ void SubversionPage::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths
 void SubversionPage::OnUpdate(wxCommandEvent& event)
 {
 	wxString command;
-	command << DoGetSvnExeName() << wxT(" update ");
+	command << DoGetSvnExeName(false) << wxT(" update ");
 
-	if(m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
+	if (m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
 		// Concatenate list of files to be updated
-		for(size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+		for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
 			command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
 		}
 	}
 
-	m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin));
+	m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnUpdateHandler(m_plugin));
 }
 
 void SubversionPage::OnCommit(wxCommandEvent& event)
@@ -425,15 +459,14 @@ void SubversionPage::OnCommit(wxCommandEvent& event)
 	// Pope the "Commit Dialog" dialog
 
 	CommitDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_selectionInfo.m_paths, m_plugin->GetManager());
-	if(dlg.ShowModal() == wxID_OK) {
+	if (dlg.ShowModal() == wxID_OK) {
 		m_selectionInfo.m_paths = dlg.GetPaths();
-		if(m_selectionInfo.m_paths.IsEmpty())
+		if (m_selectionInfo.m_paths.IsEmpty())
 			return;
 
-		command << DoGetSvnExeName()
-				<< wxT(" commit ");
+		command << DoGetSvnExeName(true) << wxT(" commit ");
 
-		for(size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+		for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
 			command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
 		}
 
@@ -448,10 +481,10 @@ void SubversionPage::OnCommit(wxCommandEvent& event)
 void SubversionPage::OnAdd(wxCommandEvent& event)
 {
 	wxString command;
-	command << DoGetSvnExeName() << wxT(" add ");
+	command << DoGetSvnExeName(true) << wxT(" add ");
 
 	// Concatenate list of files to be updated
-	for(size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+	for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
 		command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
 	}
 
@@ -461,11 +494,11 @@ void SubversionPage::OnAdd(wxCommandEvent& event)
 void SubversionPage::OnRevert(wxCommandEvent& event)
 {
 	wxString command;
-	command << DoGetSvnExeName() << wxT(" revert --recursive ");
+	command << DoGetSvnExeName(false) << wxT(" revert --recursive ");
 
-	if(m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
+	if (m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
 		// Concatenate list of files to be updated
-		for(size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+		for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
 			command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
 		}
 	} else {
@@ -477,7 +510,7 @@ void SubversionPage::OnRevert(wxCommandEvent& event)
 void SubversionPage::OnBranch(wxCommandEvent& event)
 {
 	wxString command;
-	command << DoGetSvnExeName() << wxT("info --xml ");
+	command << DoGetSvnExeName(false) << wxT("info --xml ");
 
 	m_simpleCommand.Execute(command, m_textCtrlRootDir->GetValue(), new SvnInfoHandler(m_plugin, SvnInfo_Branch));
 }
@@ -485,7 +518,7 @@ void SubversionPage::OnBranch(wxCommandEvent& event)
 void SubversionPage::OnTag(wxCommandEvent& event)
 {
 	wxString command;
-	command << DoGetSvnExeName() << wxT("info --xml ");
+	command << DoGetSvnExeName(false) << wxT("info --xml ");
 
 	m_simpleCommand.Execute(command, m_textCtrlRootDir->GetValue(), new SvnInfoHandler(m_plugin, SvnInfo_Tag));
 }
@@ -493,10 +526,10 @@ void SubversionPage::OnTag(wxCommandEvent& event)
 void SubversionPage::OnDelete(wxCommandEvent& event)
 {
 	wxString command;
-	command << DoGetSvnExeName() << wxT(" delete ");
+	command << DoGetSvnExeName(false) << wxT(" delete ");
 
 	// Concatenate list of files to be updated
-	for(size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+	for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
 		command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
 	}
 
@@ -506,10 +539,10 @@ void SubversionPage::OnDelete(wxCommandEvent& event)
 void SubversionPage::OnResolve(wxCommandEvent& event)
 {
 	wxString command;
-	command << DoGetSvnExeName() << wxT(" resolved ");
+	command << DoGetSvnExeName(false) << wxT(" resolved ");
 
 	// Concatenate list of files to be updated
-	for(size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+	for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
 		command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
 	}
 
@@ -518,21 +551,75 @@ void SubversionPage::OnResolve(wxCommandEvent& event)
 
 void SubversionPage::OnDiff(wxCommandEvent& event)
 {
+	wxString diffAgainst(wxT("BASE"));
+	diffAgainst = wxGetTextFromUser(wxT("Insert base revision to diff against:"), wxT("Diff against"), wxT("BASE"));
+	if (diffAgainst.empty()) {
+		// user clicked 'Cancel'
+		diffAgainst = wxT("BASE");
+	}
+
+	bool     useExtDiff = m_plugin->GetSettings().GetFlags() & SvnUseExternalDiff;
+	wxString extDiff    = m_plugin->GetSettings().GetExternalDiffViewer();
+	extDiff.Trim().Trim(false);
+
+	// Only use external diff viewer when the selected file is equal to 1 and the selection is a file!
+	if ( useExtDiff && extDiff.IsEmpty() == false && m_selectionInfo.m_paths.GetCount() == 1 && m_selectionInfo.m_selectionType == SvnTreeData::SvnNodeTypeFile ) {
+		wxString extDiffCmd = m_plugin->GetSettings().GetExternalDiffViewerCommand();
+
+		// export BASE revision of file to tmp file
+		const wxString& base = wxFileName::CreateTempFileName( wxT("svnExport"), (wxFile*)NULL );
+		::wxRemoveFile( base ); // just want the name, not the file.
+		wxString exportCmd;
+		exportCmd << DoGetSvnExeName(false);
+		exportCmd << wxT("export -r ") << diffAgainst << wxT(" \"") << m_selectionInfo.m_paths.Item(0) << wxT("\" ") << base;
+
+		// Launch export command
+		wxArrayString output;
+		ProcUtils::ExecuteCommand(exportCmd, output);
+
+		// We now got 2 files:
+		// m_selectionInfo.m_paths.Item(0) and 'base'
+		extDiffCmd.Replace(wxT("$(MyFile)"),       wxString::Format( wxT("\"%s\""), m_selectionInfo.m_paths.Item(0).c_str()));
+		extDiffCmd.Replace(wxT("$(OriginalFile)"), wxString::Format( wxT("\"%s\""), base.c_str()));
+
+		wxString command;
+		command << wxT("\"") << extDiff << wxT("\" ") << extDiffCmd;
+
+		// Launch the external diff
+		m_plugin->GetShell()->AppendText(command + wxT("\n"));
+		m_diffCommand.Execute(command, m_textCtrlRootDir->GetValue(), NULL);
+	} else {
+		// Simple diff
+		wxString command;
+		command << DoGetSvnExeName(false) << wxT("diff -r") << diffAgainst << wxT(" ");
+		for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+			command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
+		}
+		m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDiffHandler(m_plugin));
+	}
 }
 
 void SubversionPage::OnPatch(wxCommandEvent& event)
 {
+	wxUnusedVar(event);
+	DoPatch(false);
+}
+
+void SubversionPage::OnPatchDryRun(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	DoPatch(true);
 }
 
 void SubversionPage::OnSvnInfo(const SvnInfo& svnInfo, int reason)
 {
-	if(reason == SvnInfo_Info ) {
+	if (reason == SvnInfo_Info ) {
 		// Do something with this
 	} else {
 
 		SvnCopyDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow());
 
-		switch(reason) {
+		switch (reason) {
 		default:
 		case SvnInfo_Tag:
 			dlg.SetTitle(wxT("Create Tag"));
@@ -545,16 +632,16 @@ void SubversionPage::OnSvnInfo(const SvnInfo& svnInfo, int reason)
 			dlg.SetTargetURL(svnInfo.m_url + wxT("/branches/"));
 			break;
 		}
-		if(dlg.ShowModal() == wxID_OK) {
+		if (dlg.ShowModal() == wxID_OK) {
 			wxString command;
-			command << DoGetSvnExeName()
-					<< wxT("copy ")
-					<< dlg.GetSourceURL()
-					<< wxT(" ")
-					<< dlg.GetTargetURL()
-					<< wxT(" -m \"")
-					<< dlg.GetMessage()
-					<< wxT("\"");
+			command << DoGetSvnExeName(false)
+			<< wxT("copy ")
+			<< dlg.GetSourceURL()
+			<< wxT(" ")
+			<< dlg.GetTargetURL()
+			<< wxT(" -m \"")
+			<< dlg.GetMessage()
+			<< wxT("\"");
 			m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin));
 		}
 	}
@@ -563,26 +650,111 @@ void SubversionPage::OnSvnInfo(const SvnInfo& svnInfo, int reason)
 void SubversionPage::OnCommitWithLogin(wxCommandEvent& event)
 {
 	SvnLoginDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow());
-	if(dlg.ShowModal() == wxID_OK) {
+	if (dlg.ShowModal() == wxID_OK) {
 		wxString command;
-		command << DoGetSvnExeName() << wxT(" commit --username ") << dlg.GetUsername() << wxT(" --password ") << dlg.GetPassword() << wxT(" ");
+		command << DoGetSvnExeName(true) << wxT(" commit --username ") << dlg.GetUsername() << wxT(" --password ") << dlg.GetPassword() << wxT(" ");
 
 		// Pop the commit dialog message now
 		CommitDialog commitdlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_selectionInfo.m_paths, m_plugin->GetManager());
-		if(commitdlg.ShowModal() == wxID_OK) {
+		if (commitdlg.ShowModal() == wxID_OK) {
 			m_selectionInfo.m_paths = commitdlg.GetPaths();
 
-			if(m_selectionInfo.m_paths.IsEmpty())
+			if (m_selectionInfo.m_paths.IsEmpty())
 				return;
 
-			for(size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+			for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
 				command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
 			}
 
 			command << wxT(" -m \"");
 			command << commitdlg.GetMesasge();
 			command << wxT("\"");
-			m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin));
+			m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnCommitHandler(m_plugin), false);
 		}
 	}
+}
+
+void SubversionPage::OnCleanup(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	wxString command;
+	command << DoGetSvnExeName(false) << wxT(" cleanup ");
+	m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), NULL);
+}
+
+void SubversionPage::OnStop(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	m_plugin->GetShell()->Stop();
+}
+
+void SubversionPage::OnClearOuptut(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	m_plugin->GetShell()->Clear();
+}
+
+void SubversionPage::DoPatch(bool dryRun)
+{
+	// open a file selector to select the patch file
+	const wxString ALL(	wxT("Patch files (*.patch;*.diff)|*.patch;*.diff|")
+	                    wxT("All Files (*)|*"));
+
+
+	wxString patchFile = wxFileSelector(wxT("Select Patch File:"), NULL, NULL, NULL, ALL, 0, m_plugin->GetManager()->GetTheApp()->GetTopWindow());
+	if (patchFile.IsEmpty() == false) {
+
+		// try to load and convert the file into the platform line ending
+		wxString fileContent;
+
+		if (!ReadFileWithConversion(patchFile, fileContent)) {
+			m_plugin->GetShell()->AppendText(wxString::Format(wxT("Failed to read patch file '%s'\n"), patchFile.c_str()));
+			return;
+		}
+
+		// Make sure the file has \n line ending
+		fileContent.Replace(wxT("\r\n"), wxT("\n"));
+
+		wxString tmpFileName(patchFile + wxT(".tmp"));
+		if (!WriteFileWithBackup(tmpFileName, fileContent, false)) {
+			// failed to write the temporary file
+			m_plugin->GetShell()->AppendText(wxString::Format(wxT("Failed to convert patch file EOL mode '%s'\n"), tmpFileName.c_str()));
+			return;
+		}
+
+		// execute the command
+		wxString command;
+		command << wxT("patch -p0 ");
+		if(dryRun)
+			command << wxT(" --dry-run ");
+		command << wxT(" -i \"") << tmpFileName << wxT("\"");
+
+		SvnCommandHandler *handler(NULL);
+		if(dryRun) {
+			handler = new SvnPatchDryRunHandler(m_plugin);
+		} else {
+			handler = new SvnPatchHandler(m_plugin);
+		}
+		m_simpleCommand.Execute(command, m_textCtrlRootDir->GetValue(), handler);
+	}
+}
+
+void SubversionPage::OnRefreshView(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	BuildTree();
+}
+
+void SubversionPage::OnFileRenamed(wxCommandEvent& event)
+{
+	wxArrayString *files = (wxArrayString*)event.GetClientData();
+	if(files) {
+		wxString oldName = files->Item(0);
+		wxString newName = files->Item(1);
+		wxString command;
+		command << DoGetSvnExeName(false) << wxT(" rename \"") << oldName << wxT("\" \"") << newName << wxT("\"");
+		m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnStatusHandler(m_plugin));
+	}
+
+	event.Skip();
 }

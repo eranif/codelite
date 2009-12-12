@@ -10,10 +10,10 @@
     <File Name="svnstatushandler.cpp"/>
     <File Name="svncommand.cpp"/>
     <File Name="svnxml.cpp"/>
-    <File Name="svnshell.cpp"/>
     <File Name="svn_default_command_handler.cpp"/>
     <File Name="svninfohandler.cpp"/>
-    <File Name="svncommithandler.cpp"/>
+    <File Name="svn_command_handlers.cpp"/>
+    <File Name="svn_console.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="subversion2.h"/>
@@ -24,11 +24,11 @@
     <File Name="svnstatushandler.h"/>
     <File Name="svncommand.h"/>
     <File Name="svnxml.h"/>
-    <File Name="svnshell.h"/>
     <File Name="svn_default_command_handler.h"/>
     <File Name="svninfohandler.h"/>
     <File Name="svninfo.h"/>
-    <File Name="svncommithandler.h"/>
+    <File Name="svn_command_handlers.h"/>
+    <File Name="svn_console.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
@@ -43,6 +43,8 @@
     <File Name="svn_copy_dialog.cpp"/>
     <File Name="svn_login_dialog.h"/>
     <File Name="svn_login_dialog.cpp"/>
+    <File Name="svn_preferences_dialog.h"/>
+    <File Name="svn_preferences_dialog.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="subversion2.fbp"/>

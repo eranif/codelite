@@ -2,15 +2,19 @@
 #define __Subversion2__
 
 #include "plugin.h"
+#include "svnsettingsdata.h"
 
 class SubversionPage;
-class SvnShell;
+class SvnConsole;
 
 class Subversion2 : public IPlugin
 {
 private:
 	SubversionPage *m_subversionPage;
-	SvnShell       *m_subversionShell;
+	SvnConsole       *m_subversionShell;
+
+protected:
+	void OnSettings(wxCommandEvent &event);
 
 public:
 	Subversion2(IManager *manager);
@@ -25,7 +29,7 @@ public:
 	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnPlug();
 
-	SvnShell *GetShell() {
+	SvnConsole *GetShell() {
 		return m_subversionShell;
 	}
 
@@ -36,6 +40,9 @@ public:
 	SubversionPage *GetSvnPage() {
 		return m_subversionPage;
 	}
+
+	SvnSettingsData GetSettings();
+	void            SetSettings(SvnSettingsData& ssd);
 
 protected:
 	void DoInitialize();

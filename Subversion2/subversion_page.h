@@ -36,6 +36,7 @@ class SubversionPage : public SubversionPageBase
 	Subversion2*         m_plugin;
 	wxTreeItemId         m_modifiedItems;
 	SvnCommand           m_simpleCommand;
+	SvnCommand           m_diffCommand;
 	SvnPageSelectionInfo m_selectionInfo;
 
 public:
@@ -52,17 +53,17 @@ protected:
 	void                     CreatGUIControls();
 	void                     ClearAll();
 	void                     DoAddNode(const wxString &title, int imgId, SvnTreeData::SvnNodeType nodeType, const wxArrayString &files);
-	wxString                 DoGetSvnExeName();
+	wxString                 DoGetSvnExeName(bool includeIgnoreList);
 	int                      DoGetIconIndex(const wxString &filename);
 	SvnTreeData::SvnNodeType DoGetSelectionType(const wxArrayTreeItemIds &items);
 	void                     DoGetPaths(const wxTreeItemId &parent, wxArrayString &paths);
 
 protected:
 	// Menu management
-	void CreateFileMenu(wxMenu *menu);
-	void CreateRootMenu(wxMenu *menu);
+	void CreateFileMenu      (wxMenu *menu);
+	void CreateRootMenu      (wxMenu *menu);
 	void CreateSecondRootMenu(wxMenu *menu);
-
+	void DoPatch             (bool dryRun);
 public:
 	/**
 	 * @brief this method is called from the SvnInfoCommabdHandler'
@@ -73,9 +74,12 @@ public:
 
 protected:
 
-	// Events
+	// IDE Events
 	void OnWorkspaceLoaded(wxCommandEvent &event);
 	void OnWorkspaceClosed(wxCommandEvent &event);
+	void OnClearOuptut    (wxCommandEvent &event);
+	void OnRefreshView    (wxCommandEvent &event);
+	void OnFileRenamed    (wxCommandEvent &event);
 
 	// Svn events
 	void OnCommit         (wxCommandEvent &event);
@@ -89,6 +93,9 @@ protected:
 	void OnResolve        (wxCommandEvent &event);
 	void OnDiff           (wxCommandEvent &event);
 	void OnPatch          (wxCommandEvent &event);
+	void OnPatchDryRun    (wxCommandEvent &event);
+	void OnStop           (wxCommandEvent &event);
+	void OnCleanup        (wxCommandEvent &event);
 
 public:
 	/** Constructor */

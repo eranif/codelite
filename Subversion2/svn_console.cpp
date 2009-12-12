@@ -115,5 +115,6 @@ void SvnConsole::Stop()
 		m_process = NULL;
 	}
 	AppendText(wxT("Aborted.\n"));
+	AppendText(wxT("--------\n"));
 }
 

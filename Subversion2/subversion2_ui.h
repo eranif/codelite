@@ -213,4 +213,31 @@ class SvnPreferencesDialogBase : public wxDialog
 	
 };
 
+///////////////////////////////////////////////////////////////////////////////
+/// Class SvnInfoDialog
+///////////////////////////////////////////////////////////////////////////////
+class SvnInfoDialog : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText19;
+		wxStaticText* m_staticText21;
+		wxStaticText* m_staticText23;
+		wxStaticText* m_staticText25;
+		wxStaticText* m_staticText27;
+		wxButton* m_button13;
+	
+	public:
+		wxTextCtrl* m_textCtrlRootURL;
+		wxTextCtrl* m_textCtrlURL;
+		wxTextCtrl* m_textCtrlRevision;
+		wxTextCtrl* m_textCtrlAuthor;
+		wxTextCtrl* m_textCtrlDate;
+		
+		SvnInfoDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Info"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 462,244 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~SvnInfoDialog();
+	
+};
+
 #endif //__subversion2_ui__

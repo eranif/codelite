@@ -96,6 +96,7 @@ protected:
 	void OnPatchDryRun    (wxCommandEvent &event);
 	void OnStop           (wxCommandEvent &event);
 	void OnCleanup        (wxCommandEvent &event);
+	void OnShowSvnInfo    (wxCommandEvent &event);
 
 public:
 	/** Constructor */

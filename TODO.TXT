@@ -7,3 +7,4 @@
 - Subversion2: Make the 'Stop Svn' button disabled when process is not running
 - Subversion2: Implement SSH options
 - Make detached tabs from plugin to be part of the prespective
+- Subversion2: double clicking an item, should open it in the editor

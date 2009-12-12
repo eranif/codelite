@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include "subversion2_ui.h"
 #include <wx/settings.h>
 #include <wx/filedlg.h>
 #include <wx/textdlg.h>
@@ -115,12 +116,21 @@ void SubversionPage::CreatGUIControls()
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
 
 	tb->AddTool(XRCID("clear_svn_output"), wxT("Clear Svn Output Tab"), wxXmlResource::Get()->LoadBitmap(wxT("document_delete")), wxT("Clear Svn Output Tab"), wxITEM_NORMAL);
+	tb->AddTool(XRCID("svn_refresh"),      wxT("Refresh View"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_refresh" ) ), wxT ( "Refresh View" ) );
+	tb->AddSeparator();
+
 	tb->AddTool(XRCID("svn_stop"),         wxT("Stop current svn process"), wxXmlResource::Get()->LoadBitmap ( wxT ( "stop_build16" ) ), wxT ( "Stop current svn process" ) );
 	tb->AddTool(XRCID("svn_cleanup"),      wxT("Svn Cleanup"), wxXmlResource::Get()->LoadBitmap ( wxT ( "eraser" ) ), wxT ( "Svn Cleanup" ) );
+
+	tb->AddSeparator();
+	tb->AddTool(XRCID("svn_info"),         wxT("Svn Info"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_info" ) ), wxT ( "Svn Info" ) );
+
 
 	tb->Connect(XRCID("clear_svn_output"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPage::OnClearOuptut), NULL, this);
 	tb->Connect(XRCID("svn_stop"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPage::OnStop),        NULL, this);
 	tb->Connect(XRCID("svn_cleanup"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPage::OnCleanup),     NULL, this);
+	tb->Connect(XRCID("svn_info"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPage::OnShowSvnInfo), NULL, this);
+	tb->Connect(XRCID("svn_refresh"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPage::OnRefreshView), NULL, this);
 
 	wxSizer *sz = GetSizer();
 	sz->Insert(0, tb, 0, wxEXPAND);
@@ -198,12 +208,12 @@ void SubversionPage::DoAddNode(const wxString& title, int imgId, SvnTreeData::Sv
 	if (files.IsEmpty() == false) {
 
 		wxTreeItemId parent = m_treeCtrl->AppendItem(root, title, imgId, imgId, new SvnTreeData(nodeType, wxT("")));
-		
+
 		// Set the parent node with bold font
 		wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 		font.SetWeight(wxBOLD);
 		m_treeCtrl->SetItemFont(parent, font);
-		
+
 		// Add all children items
 		for (size_t i=0; i<files.GetCount(); i++) {
 			wxString filename(files.Item(i));
@@ -620,7 +630,14 @@ void SubversionPage::OnPatchDryRun(wxCommandEvent& event)
 void SubversionPage::OnSvnInfo(const SvnInfo& svnInfo, int reason)
 {
 	if (reason == SvnInfo_Info ) {
-		// Do something with this
+		SvnInfoDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow());
+		dlg.m_textCtrlAuthor->SetValue( svnInfo.m_author );
+		dlg.m_textCtrlDate->SetValue( svnInfo.m_date );
+		dlg.m_textCtrlRevision->SetValue( svnInfo.m_revision );
+		dlg.m_textCtrlRootURL->SetValue( svnInfo.m_url );
+		dlg.m_textCtrlURL->SetValue( svnInfo.m_sourceUrl );
+		dlg.ShowModal();
+
 	} else {
 
 		SvnCopyDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow());
@@ -763,4 +780,12 @@ void SubversionPage::OnFileRenamed(wxCommandEvent& event)
 	}
 
 	event.Skip();
+}
+
+void SubversionPage::OnShowSvnInfo(wxCommandEvent& event)
+{
+	wxString command;
+	command << DoGetSvnExeName(false) << wxT("info --xml ");
+
+	m_simpleCommand.Execute(command, m_textCtrlRootDir->GetValue(), new SvnInfoHandler(m_plugin, SvnInfo_Info));
 }

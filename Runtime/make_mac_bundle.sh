@@ -103,7 +103,7 @@ cp config/debuggers.xml.default ./CodeLite.app/Contents/SharedSupport/config
 cp ../lib/CodeFormatter.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/Debugger.so ./CodeLite.app/Contents/SharedSupport/debuggers/
 cp ../lib/Gizmos.so ./CodeLite.app/Contents/SharedSupport/plugins/
-cp ../lib/Subversion.so ./CodeLite.app/Contents/SharedSupport/plugins/
+cp ../lib/Subversion2.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/cscope.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/Copyright.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/UnitTestCPP.so ./CodeLite.app/Contents/SharedSupport/plugins/

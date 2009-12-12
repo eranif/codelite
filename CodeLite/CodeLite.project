@@ -258,8 +258,6 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="DebugUnicode"/>
-  <Dependencies Name="ReleaseUnicode"/>
   <VirtualDirectory Name="AsyncProcess">
     <File Name="asyncprocess.cpp"/>
     <File Name="asyncprocess.h"/>
@@ -274,6 +272,8 @@
     <File Name="include_finder.h"/>
     <File Name="include_finder.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

@@ -8,3 +8,5 @@
 - Subversion2: Make the 'Stop Svn' button disabled when process is not running
 - Subversion2: Increase plugin_interface version to higher number so Subversion1 will be removed
 - Subversion2: Implement SSH options
+- Subversion2: When performing Svn actions, show the 'Svn' tab
+- Subversion2: Change the SVN tab to be 'Subversion' (change icon as well)

@@ -144,7 +144,7 @@ cp -pfr Runtime/lexers/* fakeroot/${PREFIX}/share/codelite/lexers/
 cp -pr lib/Debugger.so fakeroot/${PREFIX}/lib/codelite/debuggers/
 cp -pr lib/CodeFormatter.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/Copyright.so fakeroot/${PREFIX}/lib/codelite/
-cp -pr lib/Subversion.so fakeroot/${PREFIX}/lib/codelite/
+cp -pr lib/Subversion2.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/Gizmos.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/cscope.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/UnitTestCPP.so fakeroot/${PREFIX}/lib/codelite/

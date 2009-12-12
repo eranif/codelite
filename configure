@@ -749,7 +749,7 @@ echo "Plugins:\\" >> Makefile
 echo "Debugger\\" >> Makefile
 echo "Gizmos\\" >> Makefile
 echo "cscope\\" >> Makefile
-echo "Subversion\\" >> Makefile
+echo "Subversion2\\" >> Makefile
 echo "CodeFormatter\\" >> Makefile
 echo "Copyright\\" >> Makefile
 echo "UnitTestCPP\\" >> Makefile
@@ -772,7 +772,7 @@ echo "plugins_install:\\" >> Makefile
 echo "Debugger_install\\" >> Makefile
 echo "Gizmos_install\\" >> Makefile
 echo "cscope_install\\" >> Makefile
-echo "Subversion_install\\" >> Makefile
+echo "Subversion2_install\\" >> Makefile
 echo "CodeFormatter_install\\" >> Makefile
 echo "Copyright_install\\" >> Makefile
 echo "UnitTestCPP_install\\" >> Makefile
@@ -796,7 +796,7 @@ echo "clean_plugins:\\" >> Makefile
 echo "Debugger_clean\\" >> Makefile
 echo "Gizmos_clean\\" >> Makefile
 echo "cscope_clean\\" >> Makefile
-echo "Subversion_clean\\" >> Makefile
+echo "Subversion2_clean\\" >> Makefile
 echo "CodeFormatter_clean\\" >> Makefile
 echo "Copyright_clean\\" >> Makefile
 echo "UnitTestCPP_clean\\" >> Makefile
@@ -820,7 +820,7 @@ echo "" >> Makefile
 createPluginMakefile "Debugger" "Debugger" "\$(DESTDIR)$plugins_dir/debuggers/" "../Runtime/debuggers"
 createPluginMakefile "Gizmos" "Gizmos"  "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "cscope" "cscope" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "Subversion" "Subversion" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "Subversion2" "Subversion2" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "CodeFormatter" "CodeFormatter" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "Copyright" "Copyright" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "UnitTestCPP" "UnitTestCPP" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"

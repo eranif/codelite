@@ -2233,7 +2233,7 @@
                     <property name="proportion">1</property>
                     <object class="wxNotebook" expanded="1">
                         <property name="bg"></property>
-                        <property name="bitmapsize"></property>
+                        <property name="bitmapsize">32,32</property>
                         <property name="context_help"></property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>

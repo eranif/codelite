@@ -263,6 +263,12 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	bSizer12 = new wxBoxSizer( wxVERTICAL );
 	
 	m_notebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	wxSize m_notebookImageSize = wxSize( 32,32 );
+	int m_notebookIndex = 0;
+	wxImageList* m_notebookImages = new wxImageList( m_notebookImageSize.GetWidth(), m_notebookImageSize.GetHeight() );
+	m_notebook->AssignImageList( m_notebookImages );
+	wxBitmap m_notebookBitmap;
+	wxImage m_notebookImage;
 	m_panel3 = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer15;
 	bSizer15 = new wxBoxSizer( wxVERTICAL );

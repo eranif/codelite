@@ -981,10 +981,10 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 	f.Add(origName);
 	f.Add(newName);
 
-	SendCmdEvent(wxEVT_FILE_RENAMED, (void*)&f);
-
-	// rename the file on filesystem
-	wxRenameFile(origName, newName);
+	if(!SendCmdEvent(wxEVT_FILE_RENAMED, (void*)&f)){
+		// rename the file on filesystem
+		wxRenameFile(origName, newName);
+	}
 
 	// read file to project with the new name
 	wxString projName = vdFullPath.BeforeFirst(wxT(':'));

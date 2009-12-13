@@ -121,11 +121,6 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
 
 	menu->AppendSeparator();
 
-	item = new wxMenuItem(menu, XRCID("svn_explorer_checkout"), wxT("Checkout"), wxEmptyString, wxITEM_NORMAL);
-	menu->Append(item);
-
-	menu->AppendSeparator();
-
 	item = new wxMenuItem(menu, XRCID("svn_explorer_revert"), wxT("Revert"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 	return menu;

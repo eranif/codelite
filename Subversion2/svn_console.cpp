@@ -1,4 +1,5 @@
 #include "svn_console.h"
+#include "subversion_strings.h"
 #include <wx/tokenzr.h>
 #include <wx/aui/framemanager.h>
 #include <wx/xrc/xmlres.h>
@@ -52,7 +53,6 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 		delete m_process;
 		m_process = NULL;
 	}
-	AppendText(wxT("Done.\n"));
 	AppendText(wxT("-----\n"));
 }
 
@@ -60,7 +60,9 @@ bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, 
 {
 	if (m_process) {
 		// another process is already running...
-		AppendText(wxT("MESSAGE: Another process is currently running...\n"));
+		AppendText(svnANOTHER_PROCESS_RUNNING);
+		if(handler)
+			delete handler;
 		return false;
 	}
 
@@ -131,3 +133,12 @@ void SvnConsole::Stop()
 	AppendText(wxT("--------\n"));
 }
 
+bool SvnConsole::IsRunning()
+{
+	return m_process != NULL;
+}
+
+bool SvnConsole::IsEmpty()
+{
+	return m_textCtrlOutput->IsEmpty();
+}

@@ -3,8 +3,13 @@
 - Add new 'scp' plugin
 - Move Qmake to be an integrated part of codelite build system
 - Check for environment variable existance in the project build configuration
-- Subversion2: add icons to the 'Svn Preferences' dialog
-- Subversion2: Make the 'Stop Svn' button disabled when process is not running
-- Subversion2: Implement SSH options
 - Make detached tabs from plugin to be part of the prespective
-- Subversion2: double clicking an item, should open it in the editor
+- Subversion2: Add basic options to Explorer tab:
+
+  Svn -> Delete
+  Svn -> Add
+  Svn -> Checkout
+  Svn -> Commit
+  Svn -> Update
+  Svn -> Revert
+   

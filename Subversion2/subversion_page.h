@@ -98,7 +98,12 @@ protected:
 	void OnStop           (wxCommandEvent &event);
 	void OnCleanup        (wxCommandEvent &event);
 	void OnShowSvnInfo    (wxCommandEvent &event);
-
+	
+	DECLARE_EVENT_TABLE()
+	
+	void OnStopUI         (wxUpdateUIEvent &event);
+	void OnClearOuptutUI  (wxUpdateUIEvent &event);
+	
 public:
 	/** Constructor */
 	SubversionPage( wxWindow* parent, Subversion2 *plugin);

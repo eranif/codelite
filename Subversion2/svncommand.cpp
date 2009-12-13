@@ -1,4 +1,5 @@
 #include "svncommand.h"
+#include "subversion_strings.h"
 #include "svn_console.h"
 #include "globals.h"
 #include "subversion2.h"
@@ -21,14 +22,21 @@ SvnCommand::~SvnCommand()
 
 bool SvnCommand::Execute(const wxString& command, const wxString& workingDirectory, SvnCommandHandler *handler)
 {
+	// Dont run 2 commands at the same time
+	if(m_process) {
+		if(handler) {
+			handler->GetPlugin()->GetShell()->AppendText(svnANOTHER_PROCESS_RUNNING);
+			delete handler;
+		}
+		return false;
+	}
+	
 	ClearAll();
 
 	// Wrap the command in the OS Shell
 	wxString cmdShell (command);
 	WrapInShell(cmdShell);
-//	if(handler) {
-//		handler->GetPlugin()->GetShell()->AppendText(command + wxT("\n"));
-//	}
+
 	m_process = CreateAsyncProcess(this, command, workingDirectory);
 	if ( !m_process ) {
 		return false;
@@ -59,6 +67,12 @@ void SvnCommand::OnProcessTerminated(wxCommandEvent& event)
 
 		m_handler->Process(m_output);
 		delete m_handler;
+		m_handler = NULL;
+	}
+	
+	if (m_process) {
+		delete m_process;
+		m_process = NULL;
 	}
 }
 
@@ -67,9 +81,4 @@ void SvnCommand::ClearAll()
 	m_workingDirectory.Clear();
 	m_command.Clear();
 	m_output.Clear();
-	if (m_process) {
-		delete m_process;
-		m_process = NULL;
-	}
-	m_handler = NULL;
 }

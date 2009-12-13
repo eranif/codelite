@@ -27,5 +27,7 @@ public:
 	void Clear  ();
 	void Stop   ();
 	void AppendText(const wxString &text);
+	bool IsRunning();
+	bool IsEmpty();
 };
 #endif // SVNSHELL_H

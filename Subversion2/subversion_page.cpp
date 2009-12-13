@@ -28,6 +28,11 @@
 #include "svn_console.h"
 #include "globals.h"
 
+BEGIN_EVENT_TABLE(SubversionPage, SubversionPageBase)
+	EVT_UPDATE_UI(XRCID("svn_stop"),         SubversionPage::OnStopUI)
+	EVT_UPDATE_UI(XRCID("clear_svn_output"), SubversionPage::OnClearOuptutUI)
+END_EVENT_TABLE()
+
 SubversionPage::SubversionPage( wxWindow* parent, Subversion2 *plugin )
 		: SubversionPageBase( parent )
 		, m_plugin          ( plugin )
@@ -131,7 +136,7 @@ void SubversionPage::CreatGUIControls()
 	tb->Connect(XRCID("svn_cleanup"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPage::OnCleanup),     NULL, this);
 	tb->Connect(XRCID("svn_info"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPage::OnShowSvnInfo), NULL, this);
 	tb->Connect(XRCID("svn_refresh"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPage::OnRefreshView), NULL, this);
-
+	
 	wxSizer *sz = GetSizer();
 	sz->Insert(0, tb, 0, wxEXPAND);
 	tb->Realize();
@@ -158,8 +163,11 @@ void SubversionPage::BuildTree()
 void SubversionPage::OnWorkspaceLoaded(wxCommandEvent& event)
 {
 	event.Skip();
-	m_textCtrlRootDir->SetValue(m_plugin->GetManager()->GetWorkspace()->GetWorkspaceFileName().GetPath());
-	BuildTree();
+	Workspace *workspace = m_plugin->GetManager()->GetWorkspace();
+	if(m_plugin->GetManager()->IsWorkspaceOpen() && workspace) {
+		m_textCtrlRootDir->SetValue(workspace->GetWorkspaceFileName().GetPath());
+		BuildTree();
+	}
 }
 
 void SubversionPage::OnWorkspaceClosed(wxCommandEvent& event)
@@ -184,10 +192,10 @@ void SubversionPage::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
 	// Add root node
 	wxString rootDir = m_textCtrlRootDir->GetValue();
 	wxTreeItemId root = m_treeCtrl->AddRoot(rootDir, 0, 0, new SvnTreeData(SvnTreeData::SvnNodeTypeRoot, rootDir));
-
-	// TODO :: Compare original path with the current path set
-	// if they different, skip this
-
+	
+	if(root.IsOk() == false)
+		return;
+	
 	DoAddNode(svnMODIFIED_FILES,    1, SvnTreeData::SvnNodeTypeModifiedRoot,    modifiedFiles);
 	DoAddNode(svnADDED_FILES,       2, SvnTreeData::SvnNodeTypeAddedRoot,       newFiles);
 	DoAddNode(svnDELETED_FILES,     3, SvnTreeData::SvnNodeTypeDeletedRoot,     deletedFiles);
@@ -641,19 +649,25 @@ void SubversionPage::OnSvnInfo(const SvnInfo& svnInfo, int reason)
 	} else {
 
 		SvnCopyDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow());
-
+		
+		wxString baseUrlNoTrunk (svnInfo.m_sourceUrl);
+		svnInfo.m_sourceUrl.EndsWith(wxT("trunk"), &baseUrlNoTrunk);
+		
 		switch (reason) {
+			
 		default:
 		case SvnInfo_Tag:
 			dlg.SetTitle(wxT("Create Tag"));
 			dlg.SetSourceURL(svnInfo.m_sourceUrl);
-			dlg.SetTargetURL(svnInfo.m_url + wxT("/tags/"));
+			dlg.SetTargetURL(baseUrlNoTrunk + wxT("tags/"));
 			break;
+			
 		case SvnInfo_Branch:
 			dlg.SetTitle(wxT("Create Branch"));
 			dlg.SetSourceURL(svnInfo.m_sourceUrl);
-			dlg.SetTargetURL(svnInfo.m_url + wxT("/branches/"));
+			dlg.SetTargetURL(baseUrlNoTrunk + wxT("branches/"));
 			break;
+			
 		}
 		if (dlg.ShowModal() == wxID_OK) {
 			wxString command;
@@ -792,14 +806,35 @@ void SubversionPage::OnShowSvnInfo(wxCommandEvent& event)
 
 void SubversionPage::OnItemActivated(wxTreeEvent& event)
 {
-	wxTreeItemId item = event.GetItem();
-	if(item.IsOk() == false)
-		return;
-
-	SvnTreeData *data = (SvnTreeData *)m_treeCtrl->GetItemData(item);
-	if (data && data->GetType() == SvnTreeData::SvnNodeTypeFile) {
-		wxString filename;
-		filename << m_textCtrlRootDir->GetValue() << wxFileName::GetPathSeparator() << data->GetFilepath();
-		m_plugin->GetManager()->OpenFile(filename);
+	wxArrayTreeItemIds items;
+	wxArrayString      paths;
+	size_t count = m_treeCtrl->GetSelections(items);
+	for(size_t i=0; i<count; i++) {
+		wxTreeItemId item = items.Item(i);
+		
+		if(item.IsOk() == false)
+			continue;
+			
+		SvnTreeData *data = (SvnTreeData *)m_treeCtrl->GetItemData(item);
+		if (data && data->GetType() == SvnTreeData::SvnNodeTypeFile) {
+			paths.Add(m_textCtrlRootDir->GetValue() + wxFileName::GetPathSeparator() + data->GetFilepath());
+		}
 	}
+	
+	for(size_t i=0; i<paths.GetCount(); i++) {
+		
+		if(wxFileName(paths.Item(i)).IsDir() == false)
+			m_plugin->GetManager()->OpenFile(paths.Item(i));
+			
+	}
+}
+
+void SubversionPage::OnStopUI(wxUpdateUIEvent& event)
+{
+	event.Enable(m_plugin->GetShell()->IsRunning());
+}
+
+void SubversionPage::OnClearOuptutUI(wxUpdateUIEvent& event)
+{
+	event.Enable(m_plugin->GetShell()->IsEmpty() == false);
 }

@@ -1,4 +1,5 @@
 #include "svn_preferences_dialog.h"
+#include <wx/imaglist.h>
 #include "windowattrmanager.h"
 #include "imanager.h"
 #include "subversion2.h"
@@ -23,6 +24,18 @@ SvnPreferencesDialog::SvnPreferencesDialog( wxWindow* parent, Subversion2 *plugi
 	m_checkBoxRetag->SetValue( ssd.GetFlags() & SvnRetagWorkspace );
 	m_checkBoxUseExternalDiff->SetValue( ssd.GetFlags() & SvnUseExternalDiff );
 	WindowAttrManager::Load(this, wxT("SvnPreferencesDialog"), m_plugin->GetManager()->GetConfigTool());
+	
+	wxImageList *imgList = new wxImageList(32, 32, true);
+	imgList->Add(m_plugin->LoadBitmapFile(wxT("svn_settings.png")));
+	imgList->Add(m_plugin->LoadBitmapFile(wxT("svn_diff.png")));
+	imgList->Add(m_plugin->LoadBitmapFile(wxT("svn_ssh.png")));
+	
+	m_notebook->AssignImageList( imgList );
+	m_notebook->SetPageImage(0, 0);
+	m_notebook->SetPageImage(1, 1);
+	m_notebook->SetPageImage(2, 2);
+	m_notebook->Refresh();
+	
 }
 
 SvnPreferencesDialog::~SvnPreferencesDialog()

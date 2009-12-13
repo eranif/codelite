@@ -1,4 +1,5 @@
 #include "svn_console.h"
+#include <wx/tokenzr.h>
 #include <wx/aui/framemanager.h>
 #include <wx/xrc/xmlres.h>
 #include "processreaderthread.cpp"
@@ -101,6 +102,18 @@ void SvnConsole::AppendText(const wxString& text)
 	m_textCtrlOutput->SetInsertionPointEnd();
 	m_textCtrlOutput->SetSelection(m_textCtrlOutput->GetLastPosition(), m_textCtrlOutput->GetLastPosition());
 	m_textCtrlOutput->AppendText(text);
+	
+	// Call scrolllines with the number of lines added 
+	// +1
+	// Count number of newlines (i.e lines)
+    int lines = 0;
+    const wxChar* cstr = text.c_str();
+    for( ; *cstr ; ++cstr )
+        if( *cstr == wxT('\n') )
+            ++lines;
+
+	m_textCtrlOutput->ScrollLines(lines + 1);
+	m_textCtrlOutput->ShowPosition(m_textCtrlOutput->GetLastPosition());
 }
 
 void SvnConsole::Clear()

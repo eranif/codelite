@@ -542,7 +542,7 @@ void SubversionPage::OnTag(wxCommandEvent& event)
 void SubversionPage::OnDelete(wxCommandEvent& event)
 {
 	wxString command;
-	command << DoGetSvnExeName(false) << wxT(" delete ");
+	command << DoGetSvnExeName(false) << wxT(" --force delete ");
 
 	// Concatenate list of files to be updated
 	for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {

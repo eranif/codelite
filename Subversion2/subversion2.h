@@ -15,7 +15,7 @@ private:
 
 protected:
 	void OnSettings(wxCommandEvent &event);
-
+	
 public:
 	Subversion2(IManager *manager);
 	~Subversion2();
@@ -46,6 +46,7 @@ public:
 
 protected:
 	void DoInitialize();
+	void DoSetSSH();
 };
 
 #endif //Subversion2

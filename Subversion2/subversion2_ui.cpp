@@ -505,7 +505,7 @@ SvnInfoDialog::SvnInfoDialog( wxWindow* parent, wxWindowID id, const wxString& t
 	
 	fgSizer7->Add( m_staticText19, 0, wxALL, 5 );
 	
-	m_textCtrlRootURL = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxTE_RICH2 );
+	m_textCtrlRootURL = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 300,-1 ), wxTE_READONLY|wxTE_RICH2 );
 	fgSizer7->Add( m_textCtrlRootURL, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText21 = new wxStaticText( this, wxID_ANY, _("URL:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -559,6 +559,7 @@ SvnInfoDialog::SvnInfoDialog( wxWindow* parent, wxWindowID id, const wxString& t
 	
 	this->SetSizer( bSizer17 );
 	this->Layout();
+	bSizer17->Fit( this );
 	
 	this->Centre( wxBOTH );
 }

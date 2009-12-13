@@ -237,7 +237,7 @@ class SvnInfoDialog : public wxDialog
 		wxTextCtrl* m_textCtrlAuthor;
 		wxTextCtrl* m_textCtrlDate;
 		
-		SvnInfoDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Info"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 462,244 ), long style = wxDEFAULT_DIALOG_STYLE );
+		SvnInfoDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Info"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~SvnInfoDialog();
 	
 };

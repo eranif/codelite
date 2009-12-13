@@ -4022,7 +4022,7 @@
             <property name="minimum_size"></property>
             <property name="name">SvnInfoDialog</property>
             <property name="pos"></property>
-            <property name="size">462,244</property>
+            <property name="size">-1,-1</property>
             <property name="style">wxDEFAULT_DIALOG_STYLE</property>
             <property name="subclass"></property>
             <property name="title">Svn Info</property>
@@ -4170,7 +4170,7 @@
                                         <property name="name">m_textCtrlRootURL</property>
                                         <property name="permission">public</property>
                                         <property name="pos"></property>
-                                        <property name="size"></property>
+                                        <property name="size">300,-1</property>
                                         <property name="style">wxTE_READONLY|wxTE_RICH2</property>
                                         <property name="subclass"></property>
                                         <property name="tooltip"></property>

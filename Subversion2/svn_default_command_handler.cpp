@@ -1,6 +1,6 @@
 #include "svn_default_command_handler.h"
 #include "subversion2.h"
-#include "subversion_page.h"
+#include "subversion_view.h"
 
 SvnDefaultCommandHandler::SvnDefaultCommandHandler(Subversion2 *plugin)
 		: SvnCommandHandler(plugin)

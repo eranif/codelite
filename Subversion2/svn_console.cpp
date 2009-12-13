@@ -60,7 +60,7 @@ bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, 
 {
 	if (m_process) {
 		// another process is already running...
-		AppendText(svnANOTHER_PROCESS_RUNNING);
+		//AppendText(svnANOTHER_PROCESS_RUNNING);
 		if(handler)
 			delete handler;
 		return false;
@@ -68,21 +68,21 @@ bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, 
 
 	m_output.Clear();
 	m_handler = handler;
-	
+
 	// Make sure that the Output View pane is visible
 	wxAuiPaneInfo &info = m_plugin->GetManager()->GetDockingManager()->GetPane(wxT("Output View"));
 	if (info.IsOk() && !info.IsShown()) {
 		info.Show();
 		m_plugin->GetManager()->GetDockingManager()->Update();
 	}
-	
+
 	// Select the Subversion tab
 	Notebook *book = m_plugin->GetManager()->GetOutputPaneNotebook();
 	size_t where = book->GetPageIndex(m_plugin->GetShell());
 	if(where != Notebook::npos) {
 		book->SetSelection(where);
 	}
-	
+
 	// Print the command?
 	if(printCommand)
 		AppendText(cmd + wxT("\n"));
@@ -104,8 +104,8 @@ void SvnConsole::AppendText(const wxString& text)
 	m_textCtrlOutput->SetInsertionPointEnd();
 	m_textCtrlOutput->SetSelection(m_textCtrlOutput->GetLastPosition(), m_textCtrlOutput->GetLastPosition());
 	m_textCtrlOutput->AppendText(text);
-	
-	// Call scrolllines with the number of lines added 
+
+	// Call scrolllines with the number of lines added
 	// +1
 	// Count number of newlines (i.e lines)
     int lines = 0;

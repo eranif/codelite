@@ -9,7 +9,7 @@
 #include <wx/app.h>
 #include "svn_preferences_dialog.h"
 #include "svn_console.h"
-#include "subversion_page.h"
+#include "subversion_view.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/menuitem.h>
 #include <wx/menu.h>
@@ -28,10 +28,10 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 extern "C" EXPORT PluginInfo GetPluginInfo()
 {
 	PluginInfo info;
-	info.SetAuthor(wxT("eran"));
-	info.SetName(wxT("Subversion2"));
+	info.SetAuthor(wxT("Eran Ifrah"));
+	info.SetName(wxT("Subversion"));
 	info.SetDescription(wxT("Subversion plugin for codelite2.0 based on the svn command line tool"));
-	info.SetVersion(wxT("v1.0"));
+	info.SetVersion(wxT("v2.0"));
 	return info;
 }
 

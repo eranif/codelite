@@ -32,10 +32,8 @@
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="UI">
-    <File Name="subversion_page.h"/>
     <File Name="subversion2_ui.cpp"/>
     <File Name="subversion2_ui.h"/>
-    <File Name="subversion_page.cpp"/>
     <File Name="commit_dialog.h"/>
     <File Name="commit_dialog.cpp"/>
     <File Name="svn_copy_dialog.h"/>
@@ -44,6 +42,8 @@
     <File Name="svn_login_dialog.cpp"/>
     <File Name="svn_preferences_dialog.h"/>
     <File Name="svn_preferences_dialog.cpp"/>
+    <File Name="subversion_view.h"/>
+    <File Name="subversion_view.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="subversion2.fbp"/>

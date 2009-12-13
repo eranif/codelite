@@ -3,7 +3,7 @@
 #include <wx/file.h>
 #include "svnsettingsdata.h"
 #include "svn_command_handlers.h"
-#include "subversion_page.h"
+#include "subversion_view.h"
 #include <wx/xrc/xmlres.h>
 #include "subversion2.h"
 

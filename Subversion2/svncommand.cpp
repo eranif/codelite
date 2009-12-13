@@ -25,12 +25,12 @@ bool SvnCommand::Execute(const wxString& command, const wxString& workingDirecto
 	// Dont run 2 commands at the same time
 	if(m_process) {
 		if(handler) {
-			handler->GetPlugin()->GetShell()->AppendText(svnANOTHER_PROCESS_RUNNING);
+			//handler->GetPlugin()->GetShell()->AppendText(svnANOTHER_PROCESS_RUNNING);
 			delete handler;
 		}
 		return false;
 	}
-	
+
 	ClearAll();
 
 	// Wrap the command in the OS Shell
@@ -69,7 +69,7 @@ void SvnCommand::OnProcessTerminated(wxCommandEvent& event)
 		delete m_handler;
 		m_handler = NULL;
 	}
-	
+
 	if (m_process) {
 		delete m_process;
 		m_process = NULL;

@@ -1,6 +1,6 @@
 #include "svnstatushandler.h"
 #include "svn_console.h"
-#include "subversion_page.h"
+#include "subversion_view.h"
 #include "subversion2.h"
 #include "svnxml.h"
 

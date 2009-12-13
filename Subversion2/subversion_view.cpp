@@ -18,7 +18,7 @@
 #include "svnstatushandler.h"
 #include <wx/wupdlock.h>
 #include "subversion_strings.h"
-#include "subversion_page.h"
+#include "subversion_view.h"
 #include <wx/xrc/xmlres.h>
 #include "svntreedata.h"
 #include <wx/imaglist.h>

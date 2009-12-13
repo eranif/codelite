@@ -6,4 +6,5 @@
 - Make detached tabs from plugin to be part of the prespective
 - Subversion2: Add options button to the toolbar
 - Subversion2: Add option to add file 'ignored'
+- Subversion2: Add option to diff from the 'Explorer'
 

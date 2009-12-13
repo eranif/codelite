@@ -785,8 +785,6 @@ void SubversionView::OnFileRenamed(wxCommandEvent& event)
 		command << m_plugin->GetSvnExeName(false) << wxT(" rename \"") << oldName << wxT("\" \"") << newName << wxT("\"");
 		m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnStatusHandler(m_plugin));
 	}
-
-	event.Skip();
 }
 
 void SubversionView::OnShowSvnInfo(wxCommandEvent& event)

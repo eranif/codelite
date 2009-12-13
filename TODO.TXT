@@ -5,16 +5,5 @@
 - Check for environment variable existance in the project build configuration
 - Make detached tabs from plugin to be part of the prespective
 - Subversion2: Add options button to the toolbar
-- Subversion2: Add basic options to Explorer tab:
-
-	Svn -> Commit
-	Svn -> Update
-	--
-	Svn -> Checkout
-	--
-	Svn -> Add
-	--
-	Svn -> Delete
-	Svn -> Revert
-	--
+- Subversion2: Add option to add file 'ignored'
 

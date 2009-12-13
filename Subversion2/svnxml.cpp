@@ -108,12 +108,19 @@ void SvnXML::GetSvnInfo(const wxString& input, SvnInfo &svnInfo)
 						svnInfo.m_sourceUrl = child->GetNodeContent();
 					}
 
-					if(child->GetName() == wxT("author")) {
-						svnInfo.m_author = child->GetNodeContent();
-					}
+					// Last commit info
+					if( child->GetName() == wxT("commit") ) {
+						wxXmlNode *gchild = child->GetChildren();
+						while( gchild ) {
+							if(gchild->GetName() == wxT("author")) {
+								svnInfo.m_author = gchild->GetNodeContent();
+							}
 
-					if(child->GetName() == wxT("date")) {
-						svnInfo.m_date = child->GetNodeContent();
+							if(gchild->GetName() == wxT("date")) {
+								svnInfo.m_date = gchild->GetNodeContent();
+							}
+							gchild = gchild->GetNext();
+						}
 					}
 
 					if( child->GetName() == wxT("repository") ) {

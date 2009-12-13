@@ -4,12 +4,17 @@
 - Move Qmake to be an integrated part of codelite build system
 - Check for environment variable existance in the project build configuration
 - Make detached tabs from plugin to be part of the prespective
+- Subversion2: Add options button to the toolbar
 - Subversion2: Add basic options to Explorer tab:
 
-  Svn -> Delete
-  Svn -> Add
-  Svn -> Checkout
-  Svn -> Commit
-  Svn -> Update
-  Svn -> Revert
-   
+	Svn -> Commit
+	Svn -> Update
+	--
+	Svn -> Checkout
+	--
+	Svn -> Add
+	--
+	Svn -> Delete
+	Svn -> Revert
+	--
+

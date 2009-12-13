@@ -47,9 +47,6 @@ public:
 	};
 
 protected:
-	// Handlers for SubversionPageBase events.
-	void                     OnChangeRootDir ( wxCommandEvent& event );
-	void                     OnTreeMenu      ( wxTreeEvent&    event );
 	void                     CreatGUIControls();
 	void                     ClearAll();
 	void                     DoAddNode(const wxString &title, int imgId, SvnTreeData::SvnNodeType nodeType, const wxArrayString &files);
@@ -73,6 +70,10 @@ public:
 	void OnSvnInfo(const SvnInfo& svnInfo, int reason);
 
 protected:
+	// Handlers for SubversionPageBase events.
+	void OnChangeRootDir ( wxCommandEvent& event );
+	void OnTreeMenu      ( wxTreeEvent&    event );
+	void OnItemActivated ( wxTreeEvent&    event );
 
 	// IDE Events
 	void OnWorkspaceLoaded(wxCommandEvent &event);

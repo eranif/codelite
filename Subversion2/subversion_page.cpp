@@ -789,3 +789,17 @@ void SubversionPage::OnShowSvnInfo(wxCommandEvent& event)
 
 	m_simpleCommand.Execute(command, m_textCtrlRootDir->GetValue(), new SvnInfoHandler(m_plugin, SvnInfo_Info));
 }
+
+void SubversionPage::OnItemActivated(wxTreeEvent& event)
+{
+	wxTreeItemId item = event.GetItem();
+	if(item.IsOk() == false)
+		return;
+
+	SvnTreeData *data = (SvnTreeData *)m_treeCtrl->GetItemData(item);
+	if (data && data->GetType() == SvnTreeData::SvnNodeTypeFile) {
+		wxString filename;
+		filename << m_textCtrlRootDir->GetValue() << wxFileName::GetPathSeparator() << data->GetFilepath();
+		m_plugin->GetManager()->OpenFile(filename);
+	}
+}

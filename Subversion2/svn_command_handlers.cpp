@@ -14,7 +14,7 @@ void SvnCommitHandler::Process(const wxString& output)
 	if (svnOutput.Contains(wxT("could not authenticate to server"))) {
 		// failed to login...
 		wxCommandEvent event(XRCID("svn_commit2"));
-		GetPlugin()->GetSvnPage()->AddPendingEvent( event );
+		m_owner->AddPendingEvent( event );
 
 	} else {
 		SvnDefaultCommandHandler::Process(output);

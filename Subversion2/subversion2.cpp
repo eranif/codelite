@@ -1,4 +1,9 @@
 #include "subversion2.h"
+#include "svn_login_dialog.h"
+#include "svn_command_handlers.h"
+#include <wx/textdlg.h>
+#include "commit_dialog.h"
+#include "svnstatushandler.h"
 #include "subversion_strings.h"
 #include <wx/menu.h>
 #include <wx/app.h>
@@ -6,6 +11,8 @@
 #include "svn_console.h"
 #include "subversion_page.h"
 #include <wx/xrc/xmlres.h>
+#include <wx/menuitem.h>
+#include <wx/menu.h>
 
 static Subversion2* thePlugin = NULL;
 
@@ -34,17 +41,34 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 }
 
 Subversion2::Subversion2(IManager *manager)
-		: IPlugin(manager)
+		: IPlugin          (manager)
+		, m_explorerSepItem(NULL)
 {
 	m_longName = wxT("Subversion plugin for codelite2.0 based on the svn command line tool");
 	m_shortName = wxT("Subversion2");
 
-	GetManager()->GetTheApp()->Connect(XRCID("subversion2_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSettings), NULL, this);
 	DoInitialize();
+
+	GetManager()->GetTheApp()->Connect(XRCID("subversion2_settings"),  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSettings), NULL, this);
+	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_commit"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnCommit),   NULL, this);
+	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_update"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnUpdate),   NULL, this);
+	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_add"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnAdd),      NULL, this);
+	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_delete"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDelete),   NULL, this);
+	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_checkout"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnCheckout), NULL, this);
+	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_revert"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnRevert),   NULL, this);
+	Connect(XRCID("svn_commit2"), wxCommandEventHandler(Subversion2::OnCommit2), NULL, this);
 }
 
 Subversion2::~Subversion2()
 {
+	GetManager()->GetTheApp()->Disconnect(XRCID("subversion2_settings"),  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSettings), NULL, this);
+	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_commit"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnCommit),   NULL, this);
+	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_update"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnUpdate),   NULL, this);
+	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_add"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnAdd),      NULL, this);
+	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_delete"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDelete),   NULL, this);
+	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_checkout"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnCheckout), NULL, this);
+	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_revert"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnRevert),   NULL, this);
+	Disconnect(XRCID("svn_commit2"), wxCommandEventHandler(Subversion2::OnCommit2), NULL, this);
 }
 
 wxToolBar *Subversion2::CreateToolBar(wxWindow *parent)
@@ -52,37 +76,6 @@ wxToolBar *Subversion2::CreateToolBar(wxWindow *parent)
 	wxUnusedVar(parent);
 	// Create the toolbar to be used by the plugin
 	wxToolBar *tb(NULL);
-
-	/*
-		// You can use the below code a snippet:
-	 	// First, check that CodeLite allows plugin to register plugins
-		if (m_mgr->AllowToolbar()) {
-			// Support both toolbars icon size
-			int size = m_mgr->GetToolbarIconSize();
-
-			// Allocate new toolbar, which will be freed later by CodeLite
-			tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
-
-			// Set the toolbar size
-			tb->SetToolBitmapSize(wxSize(size, size));
-
-			// Add tools to the plugins toolbar. You must provide 2 sets of icons: 24x24 and 16x16
-			if (size == 24) {
-				tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("New Plugin Wizard..."));
-				tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class24")), wxT("New Class..."));
-				tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project24")), wxT("New wxWidget Project"));
-			} else {
-				tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("New Plugin Wizard..."));
-				tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class16")), wxT("New Class..."));
-				tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project16")), wxT("New wxWidget Project"));
-			}
-			// And finally, we must call 'Realize()'
-			tb->Realize();
-		}
-
-		// return the toolbar, it can be NULL if CodeLite does not allow plugins to register toolbars
-		// or in case the plugin simply does not require toolbar
-	*/
 	return tb;
 }
 
@@ -100,14 +93,54 @@ void Subversion2::CreatePluginMenu(wxMenu *pluginsMenu)
 
 void Subversion2::HookPopupMenu(wxMenu *menu, MenuType type)
 {
-	wxUnusedVar(menu);
-	wxUnusedVar(type);
+	if (type == MenuTypeFileExplorer) {
+		if (!menu->FindItem(XRCID("SUBVERSION_EXPLORER_POPUP"))) {
+			m_explorerSepItem = menu->PrependSeparator();
+			menu->Prepend(XRCID("SUBVERSION_EXPLORER_POPUP"), wxT("Subversion"), CreateFileExplorerPopMenu());
+		}
+	}
+}
+wxMenu* Subversion2::CreateFileExplorerPopMenu()
+{
+	//Create the popup menu for the file explorer
+	//The only menu that we are interseted is the file explorer menu
+	wxMenu* menu = new wxMenu();
+	wxMenuItem *item(NULL);
+
+	item = new wxMenuItem(menu, XRCID("svn_explorer_commit"), wxT("Commit"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
+	item = new wxMenuItem(menu, XRCID("svn_explorer_update"), wxT("Update"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
+	menu->AppendSeparator();
+
+	item = new wxMenuItem(menu, XRCID("svn_explorer_add"), wxT("Add"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
+	item = new wxMenuItem(menu, XRCID("svn_explorer_delete"), wxT("Delete"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
+	menu->AppendSeparator();
+
+	item = new wxMenuItem(menu, XRCID("svn_explorer_checkout"), wxT("Checkout"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
+	menu->AppendSeparator();
+
+	item = new wxMenuItem(menu, XRCID("svn_explorer_revert"), wxT("Revert"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	return menu;
 }
 
 void Subversion2::UnHookPopupMenu(wxMenu *menu, MenuType type)
 {
-	wxUnusedVar(menu);
-	wxUnusedVar(type);
+	wxMenuItem *item = menu->FindItem(XRCID("SUBVERSION_EXPLORER_POPUP"));
+	if (item) {
+		menu->Destroy(item);
+		menu->Destroy(m_explorerSepItem);
+		m_explorerSepItem = NULL;
+	}
 }
 
 void Subversion2::UnPlug()
@@ -140,7 +173,7 @@ void Subversion2::DoInitialize()
 
 	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("svn_repo"));
 	book->AddPage(m_subversionShell, svnCONSOLE_TEXT, svnCONSOLE_TEXT, bmp);
-	
+
 	DoSetSSH();
 }
 
@@ -182,4 +215,102 @@ void Subversion2::DoSetSSH()
 		wxString env_value(sshClient + wxT(" ") + sshClientArgs);
 		wxSetEnv(wxT("SVN_SSH"), env_value.c_str());
 	}
+}
+
+////////////////////////////////////////////////
+// File Explorer SVN command handlers
+////////////////////////////////////////////////
+
+void Subversion2::OnAdd(wxCommandEvent& event)
+{
+	wxString command;
+	command << GetSvnExeName(true) << wxT(" --recursive add \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	GetShell()->Execute(command, DoGetFileExplorerItemFullPath(), new SvnStatusHandler(this));
+}
+
+void Subversion2::OnCheckout(wxCommandEvent& event)
+{
+}
+
+void Subversion2::OnCommit(wxCommandEvent& event)
+{
+	wxString comment = wxGetTextFromUser(wxT("Enter Commit Message"), wxT("Svn Commit"));
+	comment = CommitDialog::NormalizeMessage(comment);
+
+	wxString command;
+	command << GetSvnExeName(true) << wxT(" commit \"") << DoGetFileExplorerItemFullPath() << wxT("\" -m \"") << comment << wxT("\"");
+	GetShell()->Execute(command, DoGetFileExplorerItemFullPath(), new SvnCommitHandler(this, this));
+}
+
+void Subversion2::OnDelete(wxCommandEvent& event)
+{
+	wxString command;
+	command << GetSvnExeName(false) << wxT(" delete --recursive --force \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	GetShell()->Execute(command, DoGetFileExplorerItemFullPath(), new SvnDefaultCommandHandler(this));
+}
+
+void Subversion2::OnRevert(wxCommandEvent& event)
+{
+	wxString command;
+	command << GetSvnExeName(false) << wxT(" revert --recursive \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	GetShell()->Execute(command, DoGetFileExplorerItemFullPath(), new SvnDefaultCommandHandler(this));
+}
+
+void Subversion2::OnUpdate(wxCommandEvent& event)
+{
+	wxString command;
+	command << GetSvnExeName(false) << wxT(" update \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	GetShell()->Execute(command, DoGetFileExplorerItemFullPath(), new SvnUpdateHandler(this));
+}
+
+void Subversion2::OnCommit2(wxCommandEvent& event)
+{
+	SvnLoginDialog dlg(GetManager()->GetTheApp()->GetTopWindow());
+	if (dlg.ShowModal() == wxID_OK) {
+		wxString command;
+		command << GetSvnExeName(true) << wxT(" commit --username ") << dlg.GetUsername() << wxT(" --password ") << dlg.GetPassword() << wxT(" ");
+
+		wxString comment = wxGetTextFromUser(wxT("Enter Commit Message"), wxT("Svn Commit"));
+		comment = CommitDialog::NormalizeMessage(comment);
+
+		command << wxT(" \"") << DoGetFileExplorerItemFullPath() << wxT("\" -m \"") << comment << wxT("\"");
+		GetShell()->Execute(command, DoGetFileExplorerItemFullPath(), new SvnCommitHandler(this, this));
+	}
+
+}
+
+wxString Subversion2::GetSvnExeName(bool includeIgnoreList)
+{
+	SvnSettingsData ssd = GetSettings();
+	wxString executeable;
+	bool encloseQuotations = false;
+	wxString exeName = ssd.GetExecutable();
+	exeName.Trim().Trim(false);
+	encloseQuotations = (exeName.Find(wxT(" ")) != wxNOT_FOUND);
+	if (encloseQuotations) {
+		executeable << wxT("\"") << ssd.GetExecutable() << wxT("\" --non-interactive --trust-server-cert ");
+	} else {
+		executeable << ssd.GetExecutable() << wxT(" --non-interactive --trust-server-cert ");
+	}
+
+	if (includeIgnoreList) {
+		executeable << wxT(" --config-option config:miscellany:global-ignores=\"") << ssd.GetIgnoreFilePattern() << wxT("\" ");
+	}
+	return executeable;
+}
+
+wxString Subversion2::DoGetFileExplorerItemFullPath()
+{
+	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
+	wxString filename ( item.m_fileName.GetFullPath() );
+	filename.Trim().Trim(false);
+
+	if(filename.EndsWith(wxT("\\"))) {
+		filename.RemoveLast();
+
+	} else if(filename.EndsWith(wxT("/"))) {
+		filename.RemoveLast();
+
+	}
+	return filename;
 }

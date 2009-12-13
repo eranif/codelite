@@ -50,7 +50,6 @@ protected:
 	void                     CreatGUIControls();
 	void                     ClearAll();
 	void                     DoAddNode(const wxString &title, int imgId, SvnTreeData::SvnNodeType nodeType, const wxArrayString &files);
-	wxString                 DoGetSvnExeName(bool includeIgnoreList);
 	int                      DoGetIconIndex(const wxString &filename);
 	SvnTreeData::SvnNodeType DoGetSelectionType(const wxArrayTreeItemIds &items);
 	void                     DoGetPaths(const wxTreeItemId &parent, wxArrayString &paths);
@@ -98,12 +97,12 @@ protected:
 	void OnStop           (wxCommandEvent &event);
 	void OnCleanup        (wxCommandEvent &event);
 	void OnShowSvnInfo    (wxCommandEvent &event);
-	
+
 	DECLARE_EVENT_TABLE()
-	
+
 	void OnStopUI         (wxUpdateUIEvent &event);
 	void OnClearOuptutUI  (wxUpdateUIEvent &event);
-	
+
 public:
 	/** Constructor */
 	SubversionPage( wxWindow* parent, Subversion2 *plugin);

@@ -8,9 +8,9 @@
 //----------------------------------------------------
 
 class SvnCommitHandler : public SvnDefaultCommandHandler {
-
+	wxEvtHandler *m_owner;
 public:
-	SvnCommitHandler(Subversion2 *plugin) : SvnDefaultCommandHandler(plugin) {};
+	SvnCommitHandler(Subversion2 *plugin, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin), m_owner(owner) {};
 	virtual ~SvnCommitHandler(){};
 
 public:

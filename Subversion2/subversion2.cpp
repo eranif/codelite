@@ -225,7 +225,7 @@ void Subversion2::OnAdd(wxCommandEvent& event)
 {
 	wxString command;
 	command << GetSvnExeName(true) << wxT(" --recursive add \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
-	GetShell()->Execute(command, DoGetFileExplorerItemFullPath(), new SvnStatusHandler(this));
+	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnStatusHandler(this));
 }
 
 void Subversion2::OnCheckout(wxCommandEvent& event)
@@ -239,28 +239,28 @@ void Subversion2::OnCommit(wxCommandEvent& event)
 
 	wxString command;
 	command << GetSvnExeName(true) << wxT(" commit \"") << DoGetFileExplorerItemFullPath() << wxT("\" -m \"") << comment << wxT("\"");
-	GetShell()->Execute(command, DoGetFileExplorerItemFullPath(), new SvnCommitHandler(this, this));
+	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnCommitHandler(this, this));
 }
 
 void Subversion2::OnDelete(wxCommandEvent& event)
 {
 	wxString command;
 	command << GetSvnExeName(false) << wxT(" delete --recursive --force \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
-	GetShell()->Execute(command, DoGetFileExplorerItemFullPath(), new SvnDefaultCommandHandler(this));
+	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this));
 }
 
 void Subversion2::OnRevert(wxCommandEvent& event)
 {
 	wxString command;
 	command << GetSvnExeName(false) << wxT(" revert --recursive \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
-	GetShell()->Execute(command, DoGetFileExplorerItemFullPath(), new SvnDefaultCommandHandler(this));
+	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this));
 }
 
 void Subversion2::OnUpdate(wxCommandEvent& event)
 {
 	wxString command;
 	command << GetSvnExeName(false) << wxT(" update \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
-	GetShell()->Execute(command, DoGetFileExplorerItemFullPath(), new SvnUpdateHandler(this));
+	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnUpdateHandler(this));
 }
 
 void Subversion2::OnCommit2(wxCommandEvent& event)
@@ -274,7 +274,7 @@ void Subversion2::OnCommit2(wxCommandEvent& event)
 		comment = CommitDialog::NormalizeMessage(comment);
 
 		command << wxT(" \"") << DoGetFileExplorerItemFullPath() << wxT("\" -m \"") << comment << wxT("\"");
-		GetShell()->Execute(command, DoGetFileExplorerItemFullPath(), new SvnCommitHandler(this, this));
+		GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnCommitHandler(this, this));
 	}
 
 }
@@ -313,4 +313,10 @@ wxString Subversion2::DoGetFileExplorerItemFullPath()
 
 	}
 	return filename;
+}
+
+wxString Subversion2::DoGetFileExplorerItemPath()
+{
+	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
+	return item.m_fileName.GetPath();
 }

@@ -65,6 +65,7 @@ protected:
 	void DoInitialize();
 	void DoSetSSH();
 	wxString DoGetFileExplorerItemFullPath();
+	wxString DoGetFileExplorerItemPath();
 };
 
 #endif //Subversion2

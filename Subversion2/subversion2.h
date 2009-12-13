@@ -4,7 +4,7 @@
 #include "plugin.h"
 #include "svnsettingsdata.h"
 
-class SubversionPage;
+class SubversionView;
 class SvnConsole;
 class wxMenu;
 class wxMenuItem;
@@ -12,7 +12,7 @@ class wxMenuItem;
 class Subversion2 : public IPlugin
 {
 private:
-	SubversionPage*   m_subversionPage;
+	SubversionView*   m_subversionPage;
 	SvnConsole*       m_subversionShell;
 	wxMenuItem*       m_explorerSepItem;
 
@@ -27,7 +27,6 @@ protected:
 	void OnUpdate  (wxCommandEvent &event);
 	void OnAdd     (wxCommandEvent &event);
 	void OnDelete  (wxCommandEvent &event);
-	void OnCheckout(wxCommandEvent &event);
 	void OnRevert  (wxCommandEvent &event);
 
 	wxMenu* CreateFileExplorerPopMenu();
@@ -53,7 +52,7 @@ public:
 		return m_mgr;
 	}
 
-	SubversionPage *GetSvnPage() {
+	SubversionView *GetSvnPage() {
 		return m_subversionPage;
 	}
 

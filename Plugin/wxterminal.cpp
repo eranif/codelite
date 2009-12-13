@@ -8,7 +8,13 @@
 #define SHELL_PREFIX  wxT("cmd /c ")
 #define SHELL_WRAPPER wxT("\"")
 #else
+
+#ifdef __WXMAC__
+#include <sys/wait.h>
+#else
 #include <wait.h>
+#endif
+
 #include <signal.h>
 #define SHELL_PREFIX  wxT("/bin/sh -c ")
 #define SHELL_WRAPPER wxT("'")

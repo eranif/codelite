@@ -47,6 +47,7 @@
 	<object class="wxBitmap" name="svn_info">res/help_about.png</object>
 	<object class="wxBitmap" name="svn_refresh">res/reload.png</object>
 	<object class="wxBitmap" name="svn_repo">res/svn_repo.png</object>
+	<object class="wxBitmap" name="svn_checkout">res/svn_checkout.png</object>
 	<object class="wxBitmap" name="document_root">res/drive.png</object>
 	<object class="wxBitmap" name="locals_view">res/locals_view.png</object>
 	<object class="wxBitmap" name="watches">res/watches.png</object>

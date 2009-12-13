@@ -22,7 +22,7 @@ public:
 
 public:
 	SvnPageSelectionInfo() : m_selectionType(SvnTreeData::SvnNodeTypeInvalid) {}
-	~SvnPageSelectionInfo() {}
+	virtual ~SvnPageSelectionInfo() {}
 
 	void Clear() {
 		m_paths.Clear();
@@ -31,7 +31,7 @@ public:
 };
 
 /** Implementing SubversionPageBase */
-class SubversionPage : public SubversionPageBase
+class SubversionView : public SubversionPageBase
 {
 	Subversion2*         m_plugin;
 	wxTreeItemId         m_modifiedItems;
@@ -97,6 +97,7 @@ protected:
 	void OnStop           (wxCommandEvent &event);
 	void OnCleanup        (wxCommandEvent &event);
 	void OnShowSvnInfo    (wxCommandEvent &event);
+	void OnCheckout       (wxCommandEvent &event);
 
 	DECLARE_EVENT_TABLE()
 
@@ -105,7 +106,8 @@ protected:
 
 public:
 	/** Constructor */
-	SubversionPage( wxWindow* parent, Subversion2 *plugin);
+	SubversionView( wxWindow* parent, Subversion2 *plugin);
+	virtual ~SubversionView();
 
 	void UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString &conflictedFiles, const wxArrayString &unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles);
 	void BuildTree();

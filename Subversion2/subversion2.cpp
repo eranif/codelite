@@ -54,7 +54,6 @@ Subversion2::Subversion2(IManager *manager)
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_update"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnUpdate),   NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_add"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnAdd),      NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_delete"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDelete),   NULL, this);
-	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_checkout"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnCheckout), NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_revert"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnRevert),   NULL, this);
 	Connect(XRCID("svn_commit2"), wxCommandEventHandler(Subversion2::OnCommit2), NULL, this);
 }
@@ -66,7 +65,6 @@ Subversion2::~Subversion2()
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_update"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnUpdate),   NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_add"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnAdd),      NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_delete"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDelete),   NULL, this);
-	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_checkout"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnCheckout), NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_revert"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnRevert),   NULL, this);
 	Disconnect(XRCID("svn_commit2"), wxCommandEventHandler(Subversion2::OnCommit2), NULL, this);
 }
@@ -165,7 +163,7 @@ void Subversion2::UnPlug()
 void Subversion2::DoInitialize()
 {
 	Notebook *book = m_mgr->GetWorkspacePaneNotebook();
-	m_subversionPage = new SubversionPage(book, this);
+	m_subversionPage = new SubversionView(book, this);
 
 	book->AddPage(m_subversionPage, svnCONSOLE_TEXT, svnCONSOLE_TEXT);
 	book = m_mgr->GetOutputPaneNotebook();
@@ -228,10 +226,6 @@ void Subversion2::OnAdd(wxCommandEvent& event)
 	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnStatusHandler(this));
 }
 
-void Subversion2::OnCheckout(wxCommandEvent& event)
-{
-}
-
 void Subversion2::OnCommit(wxCommandEvent& event)
 {
 	wxString comment = wxGetTextFromUser(wxT("Enter Commit Message"), wxT("Svn Commit"));
@@ -245,7 +239,7 @@ void Subversion2::OnCommit(wxCommandEvent& event)
 void Subversion2::OnDelete(wxCommandEvent& event)
 {
 	wxString command;
-	command << GetSvnExeName(false) << wxT(" delete --recursive --force \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	command << GetSvnExeName(false) << wxT(" delete --force \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
 	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this));
 }
 

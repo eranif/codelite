@@ -3,7 +3,7 @@
 
 #include "svncommandhandler.h" // Base class
 
-class SubversionPage;
+class SubversionView;
 
 class SvnDefaultCommandHandler : public SvnCommandHandler {
 public:

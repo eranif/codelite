@@ -2,7 +2,7 @@
 #define SVNINFOHANDLER_H
 
 #include "svncommandhandler.h" // Base class
-class SubversionPage;
+class SubversionView;
 
 class SvnInfoHandler : public SvnCommandHandler {
 	int             m_reason;

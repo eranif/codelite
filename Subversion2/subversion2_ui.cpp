@@ -567,3 +567,88 @@ SvnInfoDialog::SvnInfoDialog( wxWindow* parent, wxWindowID id, const wxString& t
 SvnInfoDialog::~SvnInfoDialog()
 {
 }
+
+SvnCheckoutDialogBase::SvnCheckoutDialogBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer19;
+	bSizer19 = new wxBoxSizer( wxVERTICAL );
+	
+	wxStaticBoxSizer* sbSizer4;
+	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer8;
+	fgSizer8 = new wxFlexGridSizer( 2, 3, 0, 0 );
+	fgSizer8->AddGrowableCol( 1 );
+	fgSizer8->SetFlexibleDirection( wxBOTH );
+	fgSizer8->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText24 = new wxStaticText( this, wxID_ANY, _("URL of repository:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText24->Wrap( -1 );
+	fgSizer8->Add( m_staticText24, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_comboBoxRepoURL = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+	fgSizer8->Add( m_comboBoxRepoURL, 0, wxALL|wxEXPAND, 5 );
+	
+	
+	fgSizer8->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	m_staticText25 = new wxStaticText( this, wxID_ANY, _("Checkout directory:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText25->Wrap( -1 );
+	fgSizer8->Add( m_staticText25, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrl20 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer8->Add( m_textCtrl20, 0, wxALL|wxEXPAND, 5 );
+	
+	m_buttonBrowseDir = new wxButton( this, wxID_ANY, _("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer8->Add( m_buttonBrowseDir, 0, wxALL, 5 );
+	
+	sbSizer4->Add( fgSizer8, 1, wxEXPAND|wxALL, 5 );
+	
+	bSizer19->Add( sbSizer4, 0, wxEXPAND|wxALL, 5 );
+	
+	wxStaticBoxSizer* sbSizer5;
+	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Checkout Directory:") ), wxVERTICAL );
+	
+	m_staticTextCheckoutDirectory = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextCheckoutDirectory->Wrap( -1 );
+	sbSizer5->Add( m_staticTextCheckoutDirectory, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer19->Add( sbSizer5, 0, wxEXPAND|wxALL, 5 );
+	
+	
+	bSizer19->Add( 0, 0, 1, wxEXPAND|wxALL, 5 );
+	
+	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer19->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer20;
+	bSizer20 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_button14 = new wxButton( this, wxID_OK, _("OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button14->SetDefault(); 
+	bSizer20->Add( m_button14, 0, wxALL, 5 );
+	
+	m_button15 = new wxButton( this, wxID_ANY, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer20->Add( m_button15, 0, wxALL, 5 );
+	
+	bSizer19->Add( bSizer20, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+	
+	this->SetSizer( bSizer19 );
+	this->Layout();
+	bSizer19->Fit( this );
+	
+	this->Centre( wxBOTH );
+	
+	// Connect Events
+	m_textCtrl20->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( SvnCheckoutDialogBase::OnCheckoutDirectoryText ), NULL, this );
+	m_buttonBrowseDir->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnCheckoutDialogBase::OnBrowseDirectory ), NULL, this );
+}
+
+SvnCheckoutDialogBase::~SvnCheckoutDialogBase()
+{
+	// Disconnect Events
+	m_textCtrl20->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( SvnCheckoutDialogBase::OnCheckoutDirectoryText ), NULL, this );
+	m_buttonBrowseDir->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnCheckoutDialogBase::OnBrowseDirectory ), NULL, this );
+}

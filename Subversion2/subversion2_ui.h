@@ -32,6 +32,7 @@
 #include <wx/icon.h>
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
+#include <wx/combobox.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -239,6 +240,38 @@ class SvnInfoDialog : public wxDialog
 		
 		SvnInfoDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Info"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~SvnInfoDialog();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class SvnCheckoutDialogBase
+///////////////////////////////////////////////////////////////////////////////
+class SvnCheckoutDialogBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText24;
+		wxComboBox* m_comboBoxRepoURL;
+		
+		wxStaticText* m_staticText25;
+		wxTextCtrl* m_textCtrl20;
+		wxButton* m_buttonBrowseDir;
+		wxStaticText* m_staticTextCheckoutDirectory;
+		
+		wxStaticLine* m_staticline5;
+		wxButton* m_button14;
+		wxButton* m_button15;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnCheckoutDirectoryText( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnBrowseDirectory( wxCommandEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		SvnCheckoutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Checkout"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~SvnCheckoutDialogBase();
 	
 };
 

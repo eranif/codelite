@@ -41,7 +41,7 @@ SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
 	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionView::OnWorkspaceLoaded), NULL, this);
 	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionView::OnWorkspaceClosed), NULL, this);
 	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_FILE_SAVED,       wxCommandEventHandler(SubversionView::OnRefreshView),     NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_PROJ_FILE_ADDED,  wxCommandEventHandler(SubversionView::OnRefreshView),     NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_PROJ_FILE_ADDED,  wxCommandEventHandler(SubversionView::OnFileAdded  ),     NULL, this);
 	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_FILE_RENAMED,     wxCommandEventHandler(SubversionView::OnFileRenamed),     NULL, this);
 	Connect(XRCID("svn_commit2"), wxCommandEventHandler(SubversionView::OnCommitWithLogin), NULL, this);
 }
@@ -51,7 +51,7 @@ SubversionView::~SubversionView()
 	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionView::OnWorkspaceLoaded), NULL, this);
 	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionView::OnWorkspaceClosed), NULL, this);
 	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_FILE_SAVED,       wxCommandEventHandler(SubversionView::OnRefreshView),     NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_PROJ_FILE_ADDED,  wxCommandEventHandler(SubversionView::OnRefreshView),     NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_PROJ_FILE_ADDED,  wxCommandEventHandler(SubversionView::OnFileAdded),       NULL, this);
 	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_FILE_RENAMED,     wxCommandEventHandler(SubversionView::OnFileRenamed),     NULL, this);
 	Disconnect(XRCID("svn_commit2"), wxCommandEventHandler(SubversionView::OnCommitWithLogin), NULL, this);
 }
@@ -771,8 +771,26 @@ void SubversionView::DoPatch(bool dryRun)
 
 void SubversionView::OnRefreshView(wxCommandEvent& event)
 {
-	wxUnusedVar(event);
+	event.Skip();
 	BuildTree();
+}
+
+void SubversionView::OnFileAdded(wxCommandEvent& event)
+{
+	event.Skip();
+	SvnSettingsData ssd = m_plugin->GetSettings();
+	if(ssd.GetFlags() & SvnAddFileToSvn) {
+		wxArrayString *files = (wxArrayString*)event.GetClientData();
+		if(files) {
+			wxString command;
+			command << m_plugin->GetSvnExeName(true) << wxT(" add ");
+			for(size_t i=0; i<files->GetCount(); i++){
+				command << wxT("\"") << files->Item(i) << wxT("\" ");
+			}
+			command.RemoveLast();
+			m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin));
+		}
+	}
 }
 
 void SubversionView::OnFileRenamed(wxCommandEvent& event)
@@ -783,7 +801,7 @@ void SubversionView::OnFileRenamed(wxCommandEvent& event)
 		wxString newName = files->Item(1);
 		wxString command;
 		command << m_plugin->GetSvnExeName(false) << wxT(" rename \"") << oldName << wxT("\" \"") << newName << wxT("\"");
-		m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnStatusHandler(m_plugin));
+		m_plugin->GetShell()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin));
 	}
 }
 
@@ -833,3 +851,4 @@ void SubversionView::OnClearOuptutUI(wxUpdateUIEvent& event)
 void SubversionView::OnCheckout(wxCommandEvent& event)
 {
 }
+

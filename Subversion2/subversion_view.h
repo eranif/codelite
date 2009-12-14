@@ -80,6 +80,7 @@ protected:
 	void OnClearOuptut    (wxCommandEvent &event);
 	void OnRefreshView    (wxCommandEvent &event);
 	void OnFileRenamed    (wxCommandEvent &event);
+	void OnFileAdded      (wxCommandEvent &event);
 
 	// Svn events
 	void OnCommit         (wxCommandEvent &event);

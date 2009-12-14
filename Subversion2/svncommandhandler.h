@@ -5,6 +5,7 @@
 
 class Subversion2;
 class IManager;
+class IProcess;
 
 class SvnCommandHandler
 {
@@ -24,6 +25,12 @@ public:
 		return m_plugin;
 	}
 
+	/**
+	 * @brief handle here process output (e.g. interactive commands that needs response)
+	 * @param process the process
+	 * @param output  the process output
+	 */
+	virtual void OnProcessOutput(IProcess *process, const wxString &output);
 	virtual void Process(const wxString &output) = 0;
 };
 

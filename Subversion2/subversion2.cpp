@@ -1,4 +1,8 @@
+#include <wx/app.h>
 #include "subversion2.h"
+#include "procutils.h"
+#include <wx/ffile.h>
+#include <wx/stdpaths.h>
 #include "svn_login_dialog.h"
 #include "svn_command_handlers.h"
 #include <wx/textdlg.h>
@@ -6,7 +10,6 @@
 #include "svnstatushandler.h"
 #include "subversion_strings.h"
 #include <wx/menu.h>
-#include <wx/app.h>
 #include "svn_preferences_dialog.h"
 #include "svn_console.h"
 #include "subversion_view.h"
@@ -168,6 +171,14 @@ void Subversion2::DoInitialize()
 	book->AddPage(m_subversionShell, svnCONSOLE_TEXT, svnCONSOLE_TEXT, bmp);
 
 	DoSetSSH();
+	// We need to perform a dummy call to svn so it will create all the default
+	// setup directory layout
+	wxString      command;
+	wxArrayString output;
+
+	command << GetSvnExeName() << wxT(" info");
+	ProcUtils::ExecuteCommand(command, output);
+	UpdateIgnorePatterns();
 }
 
 SvnSettingsData Subversion2::GetSettings()
@@ -189,6 +200,7 @@ void Subversion2::OnSettings(wxCommandEvent& event)
 		// Update the Subversion view
 		GetSvnPage()->BuildTree();
 		DoSetSSH();
+		UpdateIgnorePatterns();
 	}
 }
 
@@ -217,7 +229,7 @@ void Subversion2::DoSetSSH()
 void Subversion2::OnAdd(wxCommandEvent& event)
 {
 	wxString command;
-	command << GetSvnExeName(true) << wxT(" --recursive add \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	command << GetSvnExeName() << wxT(" --recursive add \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
 	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnStatusHandler(this));
 }
 
@@ -227,28 +239,28 @@ void Subversion2::OnCommit(wxCommandEvent& event)
 	comment = CommitDialog::NormalizeMessage(comment);
 
 	wxString command;
-	command << GetSvnExeName(true) << wxT(" commit \"") << DoGetFileExplorerItemFullPath() << wxT("\" -m \"") << comment << wxT("\"");
+	command << GetSvnExeName() << wxT(" commit \"") << DoGetFileExplorerItemFullPath() << wxT("\" -m \"") << comment << wxT("\"");
 	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnCommitHandler(this, this));
 }
 
 void Subversion2::OnDelete(wxCommandEvent& event)
 {
 	wxString command;
-	command << GetSvnExeName(false) << wxT(" delete --force \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	command << GetSvnExeName() << wxT(" delete --force \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
 	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this));
 }
 
 void Subversion2::OnRevert(wxCommandEvent& event)
 {
 	wxString command;
-	command << GetSvnExeName(false) << wxT(" revert --recursive \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	command << GetSvnExeName() << wxT(" revert --recursive \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
 	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this));
 }
 
 void Subversion2::OnUpdate(wxCommandEvent& event)
 {
 	wxString command;
-	command << GetSvnExeName(false) << wxT(" update \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	command << GetSvnExeName() << wxT(" update \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
 	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnUpdateHandler(this));
 }
 
@@ -257,7 +269,7 @@ void Subversion2::OnCommit2(wxCommandEvent& event)
 	SvnLoginDialog dlg(GetManager()->GetTheApp()->GetTopWindow());
 	if (dlg.ShowModal() == wxID_OK) {
 		wxString command;
-		command << GetSvnExeName(true) << wxT(" commit --username ") << dlg.GetUsername() << wxT(" --password ") << dlg.GetPassword() << wxT(" ");
+		command << GetSvnExeName() << wxT(" commit --username ") << dlg.GetUsername() << wxT(" --password ") << dlg.GetPassword() << wxT(" ");
 
 		wxString comment = wxGetTextFromUser(wxT("Enter Commit Message"), wxT("Svn Commit"));
 		comment = CommitDialog::NormalizeMessage(comment);
@@ -268,7 +280,7 @@ void Subversion2::OnCommit2(wxCommandEvent& event)
 
 }
 
-wxString Subversion2::GetSvnExeName(bool includeIgnoreList)
+wxString Subversion2::GetSvnExeName()
 {
 	SvnSettingsData ssd = GetSettings();
 	wxString executeable;
@@ -281,10 +293,7 @@ wxString Subversion2::GetSvnExeName(bool includeIgnoreList)
 	} else {
 		executeable << ssd.GetExecutable() << wxT(" --non-interactive --trust-server-cert ");
 	}
-
-	if (includeIgnoreList) {
-		executeable << wxT(" --config-option config:miscellany:global-ignores=\"") << ssd.GetIgnoreFilePattern() << wxT("\" ");
-	}
+	executeable << wxT(" --config-dir \"") << GetUserConfigDir() << wxT("\" ");
 	return executeable;
 }
 
@@ -308,4 +317,32 @@ wxString Subversion2::DoGetFileExplorerItemPath()
 {
 	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
 	return item.m_fileName.GetPath();
+}
+
+wxString Subversion2::GetUserConfigDir()
+{
+	wxString configDir(wxStandardPaths::Get().GetUserDataDir());
+	if(wxFileName::DirExists(configDir) == false) {
+		wxMkdir(configDir);
+	}
+
+	configDir << wxFileName::GetPathSeparator() << wxT("subversion");
+	return configDir;
+}
+
+void Subversion2::UpdateIgnorePatterns()
+{
+	wxString configFile;
+	wxString configDir = GetUserConfigDir();
+	configFile << configDir << wxFileName::GetPathSeparator() << wxT("config");
+
+	wxFFile fp;
+	fp.Open(configFile.c_str(), wxT("w+b"));
+	if(fp.IsOpened()) {
+		fp.Write(wxT("[miscellany]\n"));
+		fp.Write(wxT("global-ignores = "));
+		fp.Write(GetSettings().GetIgnoreFilePattern());
+		fp.Write(wxT("\n"));
+		fp.Close();
+	}
 }

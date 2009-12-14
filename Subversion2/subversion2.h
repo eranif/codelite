@@ -58,7 +58,9 @@ public:
 
 	SvnSettingsData GetSettings();
 	void            SetSettings(SvnSettingsData& ssd);
-	wxString        GetSvnExeName(bool includeIgnoreList);
+	wxString        GetSvnExeName();
+	wxString        GetUserConfigDir();
+	void            UpdateIgnorePatterns();
 
 protected:
 	void DoInitialize();

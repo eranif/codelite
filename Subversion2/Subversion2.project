@@ -29,6 +29,7 @@
     <File Name="svninfo.h"/>
     <File Name="svn_command_handlers.h"/>
     <File Name="svn_console.h"/>
+    <File Name="svncommandhandler.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="UI">
@@ -243,6 +244,6 @@
   </Settings>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

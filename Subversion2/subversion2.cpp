@@ -177,7 +177,7 @@ void Subversion2::DoInitialize()
 	wxString      command;
 	wxArrayString output;
 
-	command << GetSvnExeName() << wxT(" info");
+	command << GetSvnExeName() << wxT(" --help ");
 	ProcUtils::ExecuteCommand(command, output);
 	UpdateIgnorePatterns();
 	DoGetSvnVersion();
@@ -343,13 +343,20 @@ void Subversion2::UpdateIgnorePatterns()
 	wxString configFile;
 	wxString configDir = GetUserConfigDir();
 	configFile << configDir << wxFileName::GetPathSeparator() << wxT("config");
-
+	
+	// Convert any whitespace to space
+	wxString ignorePatterns(GetSettings().GetIgnoreFilePattern());
+	ignorePatterns.Replace(wxT("\r\n"), wxT(" "));
+	ignorePatterns.Replace(wxT("\n"),   wxT(" "));
+	ignorePatterns.Replace(wxT("\t"),   wxT(" "));
+	ignorePatterns.Replace(wxT("\v"),   wxT(" "));
+	
 	wxFFile fp;
 	fp.Open(configFile.c_str(), wxT("w+b"));
 	if(fp.IsOpened()) {
 		fp.Write(wxT("[miscellany]\n"));
 		fp.Write(wxT("global-ignores = "));
-		fp.Write(GetSettings().GetIgnoreFilePattern());
+		fp.Write(ignorePatterns);
 		fp.Write(wxT("\n"));
 		fp.Close();
 	}

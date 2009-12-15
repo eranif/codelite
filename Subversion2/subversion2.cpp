@@ -177,7 +177,8 @@ void Subversion2::DoInitialize()
 	wxString      command;
 	wxArrayString output;
 
-	command << GetSvnExeName() << wxT(" --help ");
+	command << GetSvnExeName(false) << wxT(" --help ");
+	
 	ProcUtils::ExecuteCommand(command, output);
 	UpdateIgnorePatterns();
 	DoGetSvnVersion();
@@ -255,7 +256,7 @@ void Subversion2::OnDelete(wxCommandEvent& event)
 void Subversion2::OnRevert(wxCommandEvent& event)
 {
 	wxString command;
-	command << GetSvnExeName() << wxT(" revert --recursive \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	command << GetSvnExeName(false) << wxT(" revert --recursive \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
 	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this));
 }
 
@@ -282,7 +283,7 @@ void Subversion2::OnCommit2(wxCommandEvent& event)
 
 }
 
-wxString Subversion2::GetSvnExeName()
+wxString Subversion2::GetSvnExeName(bool nonInteractive)
 {
 	SvnSettingsData ssd = GetSettings();
 	wxString executeable;
@@ -291,10 +292,13 @@ wxString Subversion2::GetSvnExeName()
 	exeName.Trim().Trim(false);
 	encloseQuotations = (exeName.Find(wxT(" ")) != wxNOT_FOUND);
 	if (encloseQuotations) {
-		executeable << wxT("\"") << ssd.GetExecutable() << wxT("\" --non-interactive ");
+		executeable << wxT("\"") << ssd.GetExecutable() << wxT("\" ");
 	} else {
-		executeable << ssd.GetExecutable() << wxT(" --non-interactive ");
+		executeable << ssd.GetExecutable() << wxT(" ");
 	}
+	
+	if(nonInteractive)
+		executeable << wxT(" --non-interactive ");
 
 	// --trust-server-cert was introduced in version >=1.6
 	if(m_svnClientVersion >= 1.6) {
@@ -365,6 +369,6 @@ void Subversion2::UpdateIgnorePatterns()
 void Subversion2::DoGetSvnVersion()
 {
 	wxString command;
-	command << GetSvnExeName() << wxT(" --version ");
+	command << GetSvnExeName(false) << wxT(" --version ");
 	m_simpleCommand.Execute(command, wxT(""), new SvnVersionHandler(this));
 }

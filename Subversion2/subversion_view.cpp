@@ -511,7 +511,7 @@ void SubversionView::OnAdd(wxCommandEvent& event)
 void SubversionView::OnRevert(wxCommandEvent& event)
 {
 	wxString command;
-	command << m_plugin->GetSvnExeName() << wxT(" revert --recursive ");
+	command << m_plugin->GetSvnExeName(false) << wxT(" revert --recursive ");
 
 	if (m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
 		// Concatenate list of files to be updated
@@ -556,7 +556,7 @@ void SubversionView::OnDelete(wxCommandEvent& event)
 void SubversionView::OnResolve(wxCommandEvent& event)
 {
 	wxString command;
-	command << m_plugin->GetSvnExeName() << wxT(" resolved ");
+	command << m_plugin->GetSvnExeName(false) << wxT(" resolved ");
 
 	// Concatenate list of files to be updated
 	for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {

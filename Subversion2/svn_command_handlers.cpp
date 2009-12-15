@@ -12,7 +12,7 @@ void SvnCommitHandler::Process(const wxString& output)
 {
 	wxString svnOutput( output );
 	svnOutput.MakeLower();
-	if (svnOutput.Contains(wxT("could not authenticate to server"))) {
+	if (svnOutput.Contains(wxT("could not authenticate to server")) || svnOutput.Contains(wxT(": authorization failed"))) {
 		// failed to login...
 		wxCommandEvent event(XRCID("svn_commit2"));
 		m_owner->AddPendingEvent( event );
@@ -89,7 +89,7 @@ void SvnPatchDryRunHandler::Process(const wxString& output)
 
 void SvnVersionHandler::Process(const wxString& output)
 {
-	//GetPlugin()->GetShell()->AppendText(output);
+	//GetPlugin()->GetConsole()->AppendText(output);
 	wxRegEx reVersion(wxT("svn, version ([0-9]\\.[0-9])(\\.[0-9])"));
 	if(reVersion.Matches(output)) {
 		wxString strVersion = reVersion.GetMatch(output, 1);

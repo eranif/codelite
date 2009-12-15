@@ -61,7 +61,7 @@ public:
 
 	SvnSettingsData GetSettings();
 	void            SetSettings(SvnSettingsData& ssd);
-	wxString        GetSvnExeName();
+	wxString        GetSvnExeName(bool nonInteractive = true);
 	wxString        GetUserConfigDir();
 	void            UpdateIgnorePatterns();
 

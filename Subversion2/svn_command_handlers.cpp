@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include <wx/regex.h>
 #include "svn_console.h"
 #include <wx/file.h>
 #include "svnsettingsdata.h"
@@ -84,4 +85,19 @@ void SvnPatchDryRunHandler::Process(const wxString& output)
 	GetPlugin()->GetShell()->AppendText(wxT("===== APPLYING PATCH - DRY RUN =====\n"));
 	GetPlugin()->GetShell()->AppendText(output);
 	GetPlugin()->GetShell()->AppendText(wxT("===== OUTPUT END =====\n"));
+}
+
+void SvnVersionHandler::Process(const wxString& output)
+{
+	//GetPlugin()->GetShell()->AppendText(output);
+	wxRegEx reVersion(wxT("svn, version ([0-9]\\.[0-9])(\\.[0-9])"));
+	if(reVersion.Matches(output)) {
+		wxString strVersion = reVersion.GetMatch(output, 1);
+
+		double version(0.0);
+		strVersion.ToDouble(&version);
+
+		GetPlugin()->GetShell()->AppendText(wxString::Format(wxT("== Svn client version: %s ==\n"), strVersion.c_str()));
+		GetPlugin()->SetSvnClientVersion(version);
+	}
 }

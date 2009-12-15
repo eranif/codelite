@@ -572,7 +572,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 		wxRect fillRect(bmpRect);
 		fillRect.height -= 3;
-		top ? fillRect.y  += 3 : fillRect.y -= 3;
+		top ? fillRect.y  += 3 : fillRect.y;
 
 		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
 		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
@@ -615,6 +615,8 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		// draw the text 3 pixles "more down"
 		if(!top && GetSelected()){
 			txtYCoord += 3;
+		} else if(!top) {
+			txtYCoord += 1;
 		}
 
 		// Make sure the colour used here is the system default

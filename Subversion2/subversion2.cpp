@@ -46,6 +46,7 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 Subversion2::Subversion2(IManager *manager)
 		: IPlugin          (manager)
 		, m_explorerSepItem(NULL)
+		, m_svnClientVersion(0.0)
 {
 	m_longName = wxT("Subversion plugin for codelite2.0 based on the svn command line tool");
 	m_shortName = wxT("Subversion2");
@@ -179,6 +180,7 @@ void Subversion2::DoInitialize()
 	command << GetSvnExeName() << wxT(" info");
 	ProcUtils::ExecuteCommand(command, output);
 	UpdateIgnorePatterns();
+	DoGetSvnVersion();
 }
 
 SvnSettingsData Subversion2::GetSettings()
@@ -289,10 +291,16 @@ wxString Subversion2::GetSvnExeName()
 	exeName.Trim().Trim(false);
 	encloseQuotations = (exeName.Find(wxT(" ")) != wxNOT_FOUND);
 	if (encloseQuotations) {
-		executeable << wxT("\"") << ssd.GetExecutable() << wxT("\" --non-interactive --trust-server-cert ");
+		executeable << wxT("\"") << ssd.GetExecutable() << wxT("\" --non-interactive ");
 	} else {
-		executeable << ssd.GetExecutable() << wxT(" --non-interactive --trust-server-cert ");
+		executeable << ssd.GetExecutable() << wxT(" --non-interactive ");
 	}
+
+	// --trust-server-cert was introduced in version >=1.6
+	if(m_svnClientVersion >= 1.6) {
+		executeable << wxT(" --trust-server-cert ");
+	}
+
 	executeable << wxT(" --config-dir \"") << GetUserConfigDir() << wxT("\" ");
 	return executeable;
 }
@@ -345,4 +353,11 @@ void Subversion2::UpdateIgnorePatterns()
 		fp.Write(wxT("\n"));
 		fp.Close();
 	}
+}
+
+void Subversion2::DoGetSvnVersion()
+{
+	wxString command;
+	command << GetSvnExeName() << wxT(" --version ");
+	m_simpleCommand.Execute(command, wxT(""), new SvnVersionHandler(this));
 }

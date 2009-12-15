@@ -2,6 +2,7 @@
 #define __Subversion2__
 
 #include "plugin.h"
+#include "svncommand.h"
 #include "svnsettingsdata.h"
 
 class SubversionView;
@@ -15,6 +16,8 @@ private:
 	SubversionView*   m_subversionPage;
 	SvnConsole*       m_subversionShell;
 	wxMenuItem*       m_explorerSepItem;
+	SvnCommand        m_simpleCommand;
+	double            m_svnClientVersion;
 
 protected:
 	void OnSettings(wxCommandEvent &event);
@@ -62,12 +65,16 @@ public:
 	wxString        GetUserConfigDir();
 	void            UpdateIgnorePatterns();
 
+	void SetSvnClientVersion(double svnClientVersion) {
+		this->m_svnClientVersion = svnClientVersion;
+	}
 protected:
 	void DoInitialize();
 	void DoSetSSH();
+	void DoGetSvnVersion();
+
 	wxString DoGetFileExplorerItemFullPath();
 	wxString DoGetFileExplorerItemPath();
 };
 
 #endif //Subversion2
-

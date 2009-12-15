@@ -72,4 +72,18 @@ public:
 public:
 	virtual void Process(const wxString &output);
 };
+
+//----------------------------------------------------
+//Svn version handler
+//----------------------------------------------------
+
+class SvnVersionHandler : public SvnDefaultCommandHandler {
+
+public:
+	SvnVersionHandler(Subversion2 *plugin) : SvnDefaultCommandHandler(plugin) {};
+	virtual ~SvnVersionHandler(){};
+
+public:
+	virtual void Process(const wxString &output);
+};
 #endif // SVNCOMMITHANDLER_H

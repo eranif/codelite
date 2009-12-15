@@ -56,3 +56,8 @@ wxArrayString CommitDialog::GetPaths()
 	}
 	return paths;
 }
+
+void CommitDialog::OnChoiceMessage(wxCommandEvent& e)
+{
+//	m_choiceMessages->GetClientObject()
+}

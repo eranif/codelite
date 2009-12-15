@@ -23,6 +23,7 @@
 #include <wx/stattext.h>
 #include <wx/checklst.h>
 #include <wx/splitter.h>
+#include <wx/choice.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
 #include <wx/checkbox.h>
@@ -77,9 +78,15 @@ class CommitDialogBase : public wxDialog
 		wxPanel* m_panel2;
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textCtrlMessage;
+		wxStaticText* m_staticText27;
+		wxChoice* m_choiceMessages;
 		wxStaticLine* m_staticline1;
 		wxButton* m_button2;
 		wxButton* m_button3;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnChoiceMessage( wxCommandEvent& event ) { event.Skip(); }
+		
 	
 	public:
 		

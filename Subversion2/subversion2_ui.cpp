@@ -88,7 +88,16 @@ CommitDialogBase::CommitDialogBase( wxWindow* parent, wxWindowID id, const wxStr
 	m_panel2->Layout();
 	bSizer6->Fit( m_panel2 );
 	m_splitter1->SplitVertically( m_panel1, m_panel2, 0 );
-	bSizer3->Add( m_splitter1, 1, wxEXPAND, 5 );
+	bSizer3->Add( m_splitter1, 1, wxEXPAND|wxALL, 5 );
+	
+	m_staticText27 = new wxStaticText( this, wxID_ANY, _("Recent commit messages:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText27->Wrap( -1 );
+	bSizer3->Add( m_staticText27, 0, wxALL|wxEXPAND, 5 );
+	
+	wxArrayString m_choiceMessagesChoices;
+	m_choiceMessages = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceMessagesChoices, 0 );
+	m_choiceMessages->SetSelection( 0 );
+	bSizer3->Add( m_choiceMessages, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer3->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
@@ -110,10 +119,15 @@ CommitDialogBase::CommitDialogBase( wxWindow* parent, wxWindowID id, const wxStr
 	bSizer3->Fit( this );
 	
 	this->Centre( wxBOTH );
+	
+	// Connect Events
+	m_choiceMessages->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( CommitDialogBase::OnChoiceMessage ), NULL, this );
 }
 
 CommitDialogBase::~CommitDialogBase()
 {
+	// Disconnect Events
+	m_choiceMessages->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( CommitDialogBase::OnChoiceMessage ), NULL, this );
 }
 
 SvnCopyDialogBase::SvnCopyDialogBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )

@@ -16,7 +16,8 @@ class CommitDialog : public CommitDialogBase
 
 public:
 	static wxString NormalizeMessage(const wxString &message);
-
+	void OnChoiceMessage(wxCommandEvent &e);
+	
 public:
 	/** Constructor */
 	CommitDialog( wxWindow* parent, const wxArrayString &paths, IManager *manager );

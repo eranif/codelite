@@ -18,5 +18,5 @@ void SvnInfoHandler::Process(const wxString& output)
 {
 	SvnInfo svninfo;
 	SvnXML::GetSvnInfo(output, svninfo);
-	m_plugin->GetSvnPage()->OnSvnInfo(svninfo, m_reason);
+	m_plugin->GetSvnView()->OnSvnInfo(svninfo, m_reason);
 }

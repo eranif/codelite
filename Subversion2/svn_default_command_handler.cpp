@@ -17,5 +17,5 @@ void SvnDefaultCommandHandler::Process(const wxString &output)
 	wxUnusedVar(output);
 
 	// Refresh the SVN output page
-	GetPlugin()->GetSvnPage()->BuildTree();
+	GetPlugin()->GetSvnView()->BuildTree();
 }

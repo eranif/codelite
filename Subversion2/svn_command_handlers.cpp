@@ -82,9 +82,9 @@ void SvnPatchHandler::Process(const wxString& output)
 
 void SvnPatchDryRunHandler::Process(const wxString& output)
 {
-	GetPlugin()->GetShell()->AppendText(wxT("===== APPLYING PATCH - DRY RUN =====\n"));
-	GetPlugin()->GetShell()->AppendText(output);
-	GetPlugin()->GetShell()->AppendText(wxT("===== OUTPUT END =====\n"));
+	GetPlugin()->GetConsole()->AppendText(wxT("===== APPLYING PATCH - DRY RUN =====\n"));
+	GetPlugin()->GetConsole()->AppendText(output);
+	GetPlugin()->GetConsole()->AppendText(wxT("===== OUTPUT END =====\n"));
 }
 
 void SvnVersionHandler::Process(const wxString& output)
@@ -97,7 +97,7 @@ void SvnVersionHandler::Process(const wxString& output)
 		double version(0.0);
 		strVersion.ToDouble(&version);
 
-		GetPlugin()->GetShell()->AppendText(wxString::Format(wxT("== Svn client version: %s ==\n"), strVersion.c_str()));
+		GetPlugin()->GetConsole()->AppendText(wxString::Format(wxT("== Svn client version: %s ==\n"), strVersion.c_str()));
 		GetPlugin()->SetSvnClientVersion(version);
 	}
 }

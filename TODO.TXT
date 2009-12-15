@@ -7,3 +7,4 @@
 - Subversion2: Add options button to the toolbar
 - Subversion2: Add option to add file 'ignored'
 - Subversion2: Add option to diff + patch from the 'Explorer'
+- Subversion2: add the 'last commit messages' to the commit dialog

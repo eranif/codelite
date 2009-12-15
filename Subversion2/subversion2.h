@@ -13,8 +13,8 @@ class wxMenuItem;
 class Subversion2 : public IPlugin
 {
 private:
-	SubversionView*   m_subversionPage;
-	SvnConsole*       m_subversionShell;
+	SubversionView*   m_subversionView;
+	SvnConsole*       m_subversionConsole;
 	wxMenuItem*       m_explorerSepItem;
 	SvnCommand        m_simpleCommand;
 	double            m_svnClientVersion;
@@ -47,16 +47,16 @@ public:
 	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnPlug();
 
-	SvnConsole *GetShell() {
-		return m_subversionShell;
+	SvnConsole *GetConsole() {
+		return m_subversionConsole;
 	}
 
 	IManager *GetManager() {
 		return m_mgr;
 	}
 
-	SubversionView *GetSvnPage() {
-		return m_subversionPage;
+	SubversionView *GetSvnView() {
+		return m_subversionView;
 	}
 
 	SvnSettingsData GetSettings();

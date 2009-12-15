@@ -144,32 +144,32 @@ void Subversion2::UnPlug()
 {
 	// Remove the tab pined to the workspcae pane
 	size_t index(Notebook::npos);
-	index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_subversionPage);
+	index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_subversionView);
 	if (index != Notebook::npos) {
 		m_mgr->GetWorkspacePaneNotebook()->RemovePage(index, false);
 	}
 
 	// Remove the tab pined to the output pane
-	index = m_mgr->GetOutputPaneNotebook()->GetPageIndex(m_subversionShell);
+	index = m_mgr->GetOutputPaneNotebook()->GetPageIndex(m_subversionConsole);
 	if (index != Notebook::npos) {
 		m_mgr->GetOutputPaneNotebook()->RemovePage(index, false);
 	}
 
-	m_subversionPage->Destroy();
-	m_subversionShell->Destroy();
+	m_subversionView->Destroy();
+	m_subversionConsole->Destroy();
 }
 
 void Subversion2::DoInitialize()
 {
 	Notebook *book = m_mgr->GetWorkspacePaneNotebook();
-	m_subversionPage = new SubversionView(book, this);
+	m_subversionView = new SubversionView(book, this);
 
-	book->AddPage(m_subversionPage, svnCONSOLE_TEXT, svnCONSOLE_TEXT);
+	book->AddPage(m_subversionView, svnCONSOLE_TEXT, svnCONSOLE_TEXT);
 	book = m_mgr->GetOutputPaneNotebook();
-	m_subversionShell = new SvnConsole(book, this);
+	m_subversionConsole = new SvnConsole(book, this);
 
 	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("svn_repo"));
-	book->AddPage(m_subversionShell, svnCONSOLE_TEXT, svnCONSOLE_TEXT, bmp);
+	book->AddPage(m_subversionConsole, svnCONSOLE_TEXT, svnCONSOLE_TEXT, bmp);
 
 	DoSetSSH();
 	// We need to perform a dummy call to svn so it will create all the default
@@ -200,7 +200,7 @@ void Subversion2::OnSettings(wxCommandEvent& event)
 	SvnPreferencesDialog dlg(GetManager()->GetTheApp()->GetTopWindow(), this);
 	if (dlg.ShowModal() == wxID_OK) {
 		// Update the Subversion view
-		GetSvnPage()->BuildTree();
+		GetSvnView()->BuildTree();
 		DoSetSSH();
 		UpdateIgnorePatterns();
 	}
@@ -232,7 +232,7 @@ void Subversion2::OnAdd(wxCommandEvent& event)
 {
 	wxString command;
 	command << GetSvnExeName() << wxT(" --recursive add \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
-	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnStatusHandler(this));
+	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnStatusHandler(this));
 }
 
 void Subversion2::OnCommit(wxCommandEvent& event)
@@ -242,28 +242,28 @@ void Subversion2::OnCommit(wxCommandEvent& event)
 
 	wxString command;
 	command << GetSvnExeName() << wxT(" commit \"") << DoGetFileExplorerItemFullPath() << wxT("\" -m \"") << comment << wxT("\"");
-	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnCommitHandler(this, this));
+	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnCommitHandler(this, this));
 }
 
 void Subversion2::OnDelete(wxCommandEvent& event)
 {
 	wxString command;
 	command << GetSvnExeName() << wxT(" delete --force \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
-	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this));
+	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this));
 }
 
 void Subversion2::OnRevert(wxCommandEvent& event)
 {
 	wxString command;
 	command << GetSvnExeName() << wxT(" revert --recursive \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
-	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this));
+	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this));
 }
 
 void Subversion2::OnUpdate(wxCommandEvent& event)
 {
 	wxString command;
 	command << GetSvnExeName() << wxT(" update \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
-	GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnUpdateHandler(this));
+	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnUpdateHandler(this));
 }
 
 void Subversion2::OnCommit2(wxCommandEvent& event)
@@ -277,7 +277,7 @@ void Subversion2::OnCommit2(wxCommandEvent& event)
 		comment = CommitDialog::NormalizeMessage(comment);
 
 		command << wxT(" \"") << DoGetFileExplorerItemFullPath() << wxT("\" -m \"") << comment << wxT("\"");
-		GetShell()->Execute(command, DoGetFileExplorerItemPath(), new SvnCommitHandler(this, this));
+		GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnCommitHandler(this, this));
 	}
 
 }

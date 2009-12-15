@@ -19,6 +19,7 @@ SvnConsole::SvnConsole(wxWindow *parent, Subversion2* plugin)
 		, m_handler(NULL)
 		, m_process(NULL)
 		, m_plugin (plugin)
+		, m_printProcessOutput(true)
 {
 }
 
@@ -34,7 +35,9 @@ void SvnConsole::OnReadProcessOutput(wxCommandEvent& event)
 	}
 
 	// print the output
-	AppendText( ped->GetData() );
+	if(m_printProcessOutput)
+		AppendText( ped->GetData() );
+		
 	delete ped;
 }
 
@@ -56,8 +59,9 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 	AppendText(wxT("-----\n"));
 }
 
-bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler, bool printCommand)
+bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler, bool printCommand, bool printProcessOutput)
 {
+	m_printProcessOutput = printProcessOutput;
 	if (m_process) {
 		// another process is already running...
 		//AppendText(svnANOTHER_PROCESS_RUNNING);
@@ -78,7 +82,7 @@ bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, 
 
 	// Select the Subversion tab
 	Notebook *book = m_plugin->GetManager()->GetOutputPaneNotebook();
-	size_t where = book->GetPageIndex(m_plugin->GetShell());
+	size_t where = book->GetPageIndex(m_plugin->GetConsole());
 	if(where != Notebook::npos) {
 		book->SetSelection(where);
 	}

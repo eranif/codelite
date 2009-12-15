@@ -259,7 +259,6 @@ class SvnCheckoutDialogBase : public wxDialog
 		wxButton* m_buttonBrowseDir;
 		wxStaticText* m_staticTextCheckoutDirectory;
 		
-		wxStaticLine* m_staticline5;
 		wxButton* m_button14;
 		wxButton* m_button15;
 		

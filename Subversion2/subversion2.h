@@ -17,6 +17,7 @@ private:
 	SvnConsole*       m_subversionConsole;
 	wxMenuItem*       m_explorerSepItem;
 	SvnCommand        m_simpleCommand;
+	SvnCommand        m_diffCommand;
 	double            m_svnClientVersion;
 
 protected:
@@ -31,7 +32,9 @@ protected:
 	void OnAdd     (wxCommandEvent &event);
 	void OnDelete  (wxCommandEvent &event);
 	void OnRevert  (wxCommandEvent &event);
-
+	void OnDiff    (wxCommandEvent &event);
+	void OnPatch   (wxCommandEvent &event);
+	
 	wxMenu* CreateFileExplorerPopMenu();
 
 public:
@@ -64,7 +67,8 @@ public:
 	wxString        GetSvnExeName(bool nonInteractive = true);
 	wxString        GetUserConfigDir();
 	void            UpdateIgnorePatterns();
-
+	void            Patch(bool dryRun, const wxString &workingDirectory);
+	
 	void SetSvnClientVersion(double svnClientVersion) {
 		this->m_svnClientVersion = svnClientVersion;
 	}

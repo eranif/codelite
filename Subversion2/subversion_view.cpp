@@ -726,29 +726,7 @@ void SubversionView::OnClearOuptut(wxCommandEvent& event)
 
 void SubversionView::DoPatch(bool dryRun)
 {
-	// open a file selector to select the patch file
-	const wxString ALL(	wxT("Patch files (*.patch;*.diff)|*.patch;*.diff|")
-	                    wxT("All Files (*)|*"));
-
-
-	wxString patchFile = wxFileSelector(wxT("Select Patch File:"), NULL, NULL, NULL, ALL, 0, m_plugin->GetManager()->GetTheApp()->GetTopWindow());
-	if (patchFile.IsEmpty() == false) {
-
-		// execute the command
-		wxString command;
-		command << wxT("patch -p0 ");
-		if(dryRun)
-			command << wxT(" --dry-run ");
-		command << wxT(" -i \"") << patchFile << wxT("\"");
-
-		SvnCommandHandler *handler(NULL);
-		if(dryRun) {
-			handler = new SvnPatchDryRunHandler(m_plugin);
-		} else {
-			handler = new SvnPatchHandler(m_plugin);
-		}
-		m_simpleCommand.Execute(command, m_textCtrlRootDir->GetValue(), handler);
-	}
+	m_plugin->Patch(dryRun, m_textCtrlRootDir->GetValue());
 }
 
 void SubversionView::OnRefreshView(wxCommandEvent& event)

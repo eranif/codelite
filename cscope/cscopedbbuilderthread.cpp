@@ -54,7 +54,7 @@ void CscopeDbBuilderThread::ProcessRequest(ThreadRequest *request)
 	wxArrayString output;
 
 	//set environment variables required by cscope
-	wxSetEnv(wxT("TMPDIR"), wxT("."));
+	wxSetEnv(wxT("TMPDIR"), wxFileName::GetTempDir());
 	ProcUtils::SafeExecuteCommand(req->GetCmd(), output);
 	SendStatusEvent( wxT("Parsing results..."), 50, wxEmptyString, req->GetOwner() );
 

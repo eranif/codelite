@@ -620,9 +620,6 @@ SvnCheckoutDialogBase::SvnCheckoutDialogBase( wxWindow* parent, wxWindowID id, c
 	
 	bSizer19->Add( 0, 0, 1, wxEXPAND|wxALL, 5 );
 	
-	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizer19->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );
-	
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxHORIZONTAL );
 	

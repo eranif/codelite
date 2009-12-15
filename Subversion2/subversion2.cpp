@@ -16,6 +16,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/menuitem.h>
 #include <wx/menu.h>
+#include <wx/filedlg.h>
 
 static Subversion2* thePlugin = NULL;
 
@@ -59,6 +60,8 @@ Subversion2::Subversion2(IManager *manager)
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_add"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnAdd),      NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_delete"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDelete),   NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_revert"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnRevert),   NULL, this);
+	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_patch"),    wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnPatch),    NULL, this);
+	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_diff"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDiff),     NULL, this);
 	Connect(XRCID("svn_commit2"), wxCommandEventHandler(Subversion2::OnCommit2), NULL, this);
 }
 
@@ -70,6 +73,8 @@ Subversion2::~Subversion2()
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_add"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnAdd),      NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_delete"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDelete),   NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_revert"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnRevert),   NULL, this);
+	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_patch"),    wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnPatch),    NULL, this);
+	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_diff"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDiff),     NULL, this);
 	Disconnect(XRCID("svn_commit2"), wxCommandEventHandler(Subversion2::OnCommit2), NULL, this);
 }
 
@@ -127,6 +132,13 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
 
 	item = new wxMenuItem(menu, XRCID("svn_explorer_revert"), wxT("Revert"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
+	menu->AppendSeparator();
+	
+	item = new wxMenuItem(menu, XRCID("svn_explorer_diff"), wxT("Create Diff"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	item = new wxMenuItem(menu, XRCID("svn_explorer_patch"), wxT("Apply Patch"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	
 	return menu;
 }
 
@@ -283,6 +295,61 @@ void Subversion2::OnCommit2(wxCommandEvent& event)
 
 }
 
+void Subversion2::OnDiff(wxCommandEvent& event)
+{
+	wxString diffAgainst(wxT("BASE"));
+	diffAgainst = wxGetTextFromUser(wxT("Insert base revision to diff against:"), wxT("Diff against"), wxT("BASE"));
+	if (diffAgainst.empty()) {
+		// user clicked 'Cancel'
+		diffAgainst = wxT("BASE");
+	}
+
+	bool     useExtDiff = GetSettings().GetFlags() & SvnUseExternalDiff;
+	wxString extDiff    = GetSettings().GetExternalDiffViewer();
+	extDiff.Trim().Trim(false);
+
+	// Only use external diff viewer when the selected file is equal to 1 and the selection is a file!
+	if ( useExtDiff && extDiff.IsEmpty() == false) {
+		wxString extDiffCmd = GetSettings().GetExternalDiffViewerCommand();
+
+		// export BASE revision of file to tmp file
+		const wxString& base = wxFileName::CreateTempFileName( wxT("svnExport"), (wxFile*)NULL );
+		::wxRemoveFile( base ); // just want the name, not the file.
+
+		wxString exportCmd;
+		exportCmd << GetSvnExeName();
+		exportCmd << wxT("export -r ") << diffAgainst << wxT(" \"") << DoGetFileExplorerItemFullPath() << wxT("\" ") << base;
+
+		// Launch export command
+		wxArrayString output;
+		ProcUtils::ExecuteCommand(exportCmd, output);
+
+		// We now got 2 files:
+		// m_selectionInfo.m_paths.Item(0) and 'base'
+		extDiffCmd.Replace(wxT("$(MyFile)"),       wxString::Format( wxT("\"%s\""), DoGetFileExplorerItemFullPath().c_str()));
+		extDiffCmd.Replace(wxT("$(OriginalFile)"), wxString::Format( wxT("\"%s\""), base.c_str()));
+
+		wxString command;
+		command << wxT("\"") << extDiff << wxT("\" ") << extDiffCmd;
+
+		// Launch the external diff
+		GetConsole()->AppendText(command + wxT("\n"));
+		m_diffCommand.Execute(command, DoGetFileExplorerItemPath(), NULL);
+		
+	} else {
+		// Simple diff
+		wxString command;
+		command << GetSvnExeName() << wxT("diff -r") << diffAgainst;
+		GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDiffHandler(this), true, false);
+	}
+}
+
+void Subversion2::OnPatch(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	Patch(false, DoGetFileExplorerItemPath());
+}
+
 wxString Subversion2::GetSvnExeName(bool nonInteractive)
 {
 	SvnSettingsData ssd = GetSettings();
@@ -371,4 +438,37 @@ void Subversion2::DoGetSvnVersion()
 	wxString command;
 	command << GetSvnExeName(false) << wxT(" --version ");
 	m_simpleCommand.Execute(command, wxT(""), new SvnVersionHandler(this));
+}
+
+void Subversion2::Patch(bool dryRun, const wxString &workingDirectory)
+{
+// open a file selector to select the patch file
+	const wxString ALL(	wxT("Patch files (*.patch;*.diff)|*.patch;*.diff|")
+	                    wxT("All Files (*)|*"));
+
+
+	wxString patchFile = wxFileSelector(wxT("Select Patch File:"), 
+										NULL, 
+										NULL, 
+										NULL, 
+										ALL, 
+										0, 
+										GetManager()->GetTheApp()->GetTopWindow());
+	if (patchFile.IsEmpty() == false) {
+
+		// execute the command
+		wxString command;
+		command << wxT("patch -p0 ");
+		if(dryRun)
+			command << wxT(" --dry-run ");
+		command << wxT(" -i \"") << patchFile << wxT("\"");
+
+		SvnCommandHandler *handler(NULL);
+		if(dryRun) {
+			handler = new SvnPatchDryRunHandler(this);
+		} else {
+			handler = new SvnPatchHandler(this);
+		}
+		m_simpleCommand.Execute(command, workingDirectory, handler);
+	}
 }

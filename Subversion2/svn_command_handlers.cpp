@@ -7,19 +7,12 @@
 #include "subversion_view.h"
 #include <wx/xrc/xmlres.h>
 #include "subversion2.h"
+#include "imanager.h"
+#include "ieditor.h"
 
 void SvnCommitHandler::Process(const wxString& output)
 {
-	wxString svnOutput( output );
-	svnOutput.MakeLower();
-	if (svnOutput.Contains(wxT("could not authenticate to server")) || svnOutput.Contains(wxT(": authorization failed"))) {
-		// failed to login...
-		wxCommandEvent event(XRCID("svn_commit2"));
-		m_owner->AddPendingEvent( event );
-
-	} else {
-		SvnDefaultCommandHandler::Process(output);
-	}
+	SvnDefaultCommandHandler::Process(output);
 }
 
 void SvnUpdateHandler::Process(const wxString& output)
@@ -99,5 +92,14 @@ void SvnVersionHandler::Process(const wxString& output)
 
 		GetPlugin()->GetConsole()->AppendText(wxString::Format(wxT("== Svn client version: %s ==\n"), strVersion.c_str()));
 		GetPlugin()->SetSvnClientVersion(version);
+	}
+}
+
+void SvnLogHandler::Process(const wxString& output)
+{
+	// create new editor and set the output to it
+	IEditor *editor = GetPlugin()->GetManager()->NewEditor();
+	if(editor) {
+		editor->AppendText(output);
 	}
 }

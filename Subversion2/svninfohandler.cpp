@@ -4,8 +4,8 @@
 #include "svninfo.h"
 #include "subversion2.h"
 
-SvnInfoHandler::SvnInfoHandler(Subversion2 *plugin, int reason)
-		: SvnCommandHandler(plugin)
+SvnInfoHandler::SvnInfoHandler(Subversion2 *plugin,  int reason, int commandId, wxEvtHandler *owner)
+		: SvnCommandHandler(plugin, commandId, owner)
 		, m_reason(reason)
 {
 }

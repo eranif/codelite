@@ -2,8 +2,8 @@
 #include "subversion2.h"
 #include "subversion_view.h"
 
-SvnDefaultCommandHandler::SvnDefaultCommandHandler(Subversion2 *plugin)
-		: SvnCommandHandler(plugin)
+SvnDefaultCommandHandler::SvnDefaultCommandHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner)
+		: SvnCommandHandler(plugin, commandId, owner)
 {
 }
 

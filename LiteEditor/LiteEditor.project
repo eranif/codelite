@@ -819,6 +819,15 @@ resources.cpp: resources.xrc
     <Project Name="ExternalTools"/>
     <Project Name="ContinuousBuild"/>
   </Dependencies>
+  <Dependencies Name="WinReleaseUnicode_NoPlugins">
+    <Project Name="wxscintilla"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="CodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="wxpropgrid"/>
+  </Dependencies>
   <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
@@ -840,15 +849,6 @@ resources.cpp: resources.xrc
     <Project Name="QMakePlugin"/>
     <Project Name="CppChecker"/>
     <Project Name="Subversion2"/>
-  </Dependencies>
-  <Dependencies Name="WinReleaseUnicode_NoPlugins">
-    <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="wxpropgrid"/>
   </Dependencies>
   <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>

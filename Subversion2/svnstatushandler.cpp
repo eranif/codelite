@@ -4,8 +4,8 @@
 #include "subversion2.h"
 #include "svnxml.h"
 
-SvnStatusHandler::SvnStatusHandler(Subversion2 *plugin)
-		: SvnCommandHandler(plugin)
+SvnStatusHandler::SvnStatusHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner)
+		: SvnCommandHandler(plugin, commandId, owner)
 {
 }
 

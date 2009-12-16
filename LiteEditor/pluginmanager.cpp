@@ -573,3 +573,7 @@ void PluginManager::UnHookProjectSettingsTab(wxNotebook* book, const wxString &p
 	}
 }
 
+IEditor* PluginManager::NewEditor()
+{
+	return Frame::Get()->GetMainBook()->NewEditor();
+}

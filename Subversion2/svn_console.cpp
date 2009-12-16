@@ -47,7 +47,17 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 	delete ped;
 
 	if (m_handler) {
-		m_handler->Process(m_output);
+		
+		if(m_handler->TestLoginRequired(m_output)) {
+			// re-issue the last command but this time with login dialog
+			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Login failed. Retyring\n"));
+			m_handler->ProcessLoginRequired();
+			
+		} else {
+			// command ended successfully, invoke the "success" callback
+			m_handler->Process(m_output);
+		}
+		
 		delete m_handler;
 		m_handler = NULL;
 	}

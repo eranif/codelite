@@ -29,14 +29,14 @@ protected:
 	// File Explorer event handlers
 	///////////////////////////////////////////////////////////
 	void OnCommit  (wxCommandEvent &event);
-	void OnCommit2 (wxCommandEvent &event); // Commit with login prompt
 	void OnUpdate  (wxCommandEvent &event);
 	void OnAdd     (wxCommandEvent &event);
 	void OnDelete  (wxCommandEvent &event);
 	void OnRevert  (wxCommandEvent &event);
 	void OnDiff    (wxCommandEvent &event);
 	void OnPatch   (wxCommandEvent &event);
-
+	void OnLog     (wxCommandEvent &event);
+	
 	wxMenu* CreateFileExplorerPopMenu();
 
 public:
@@ -69,7 +69,7 @@ public:
 	wxString        GetSvnExeName(bool nonInteractive = true);
 	wxString        GetUserConfigDir();
 	void            UpdateIgnorePatterns();
-	void            Patch(bool dryRun, const wxString &workingDirectory);
+	void            Patch(bool dryRun, const wxString &workingDirectory, wxEvtHandler *owner, int id);
 
 	void SetSvnClientVersion(double svnClientVersion) {
 		this->m_svnClientVersion = svnClientVersion;
@@ -78,6 +78,8 @@ public:
 	CommitMessagesCache& GetCommitMessagesCache() {
 		return m_commitMessagesCache;
 	}
+	
+	bool LoginIfNeeded(wxCommandEvent& event, wxString& loginString);
 	
 protected:
 	void DoInitialize();

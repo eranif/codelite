@@ -7,7 +7,7 @@ class SubversionView;
 class SvnInfoHandler : public SvnCommandHandler {
 	int             m_reason;
 public:
-	SvnInfoHandler(Subversion2 *plugin, int reason);
+	SvnInfoHandler(Subversion2 *plugin, int reason, int commandId, wxEvtHandler *owner);
 	virtual ~SvnInfoHandler();
 
 public:

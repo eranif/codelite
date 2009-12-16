@@ -59,7 +59,7 @@ protected:
 	void CreateFileMenu      (wxMenu *menu);
 	void CreateRootMenu      (wxMenu *menu);
 	void CreateSecondRootMenu(wxMenu *menu);
-	void DoPatch             (bool dryRun);
+	
 public:
 	/**
 	 * @brief this method is called from the SvnInfoCommabdHandler'
@@ -67,7 +67,8 @@ public:
 	 * @param reason the reason this handler was invoked
 	 */
 	void OnSvnInfo(const SvnInfo& svnInfo, int reason);
-
+	bool LoginIfNeeded(wxCommandEvent &event, wxString &loginString);
+	
 protected:
 	// Handlers for SubversionPageBase events.
 	void OnChangeRootDir ( wxCommandEvent& event );
@@ -84,7 +85,6 @@ protected:
 
 	// Svn events
 	void OnCommit         (wxCommandEvent &event);
-	void OnCommitWithLogin(wxCommandEvent &event);
 	void OnUpdate         (wxCommandEvent &event);
 	void OnRevert         (wxCommandEvent &event);
 	void OnAdd            (wxCommandEvent &event);

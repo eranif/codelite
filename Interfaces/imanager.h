@@ -364,6 +364,13 @@ public:
      * @brief select a window in mainbook
      */
     virtual bool SelectPage(wxWindow *win) = 0;
+	
+	
+	/**
+	 * @brief open new editor "untitiled"
+	 * @return pointer to the editor
+	 */
+	virtual IEditor *NewEditor() = 0;
 };
 
 

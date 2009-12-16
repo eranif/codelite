@@ -118,7 +118,8 @@ public:
     virtual bool                   AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
     virtual bool                   SelectPage(wxWindow *win);
 	virtual NavMgr *               GetNavigationMgr();
-
+	virtual IEditor*               NewEditor();
+	
 	//------------------------------------
 	//End of IManager interface
 	//------------------------------------

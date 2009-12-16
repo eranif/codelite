@@ -8,7 +8,7 @@ class Subversion2;
 
 class SvnStatusHandler : public SvnCommandHandler {
 public:
-	SvnStatusHandler(Subversion2 *plugin);
+	SvnStatusHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner);
 	virtual ~SvnStatusHandler();
 
 public:

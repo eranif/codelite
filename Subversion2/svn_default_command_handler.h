@@ -7,7 +7,7 @@ class SubversionView;
 
 class SvnDefaultCommandHandler : public SvnCommandHandler {
 public:
-	SvnDefaultCommandHandler(Subversion2 *plugin);
+	SvnDefaultCommandHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner);
 	virtual ~SvnDefaultCommandHandler();
 
 public:

@@ -8,9 +8,8 @@
 //----------------------------------------------------
 
 class SvnCommitHandler : public SvnDefaultCommandHandler {
-	wxEvtHandler *m_owner;
 public:
-	SvnCommitHandler(Subversion2 *plugin, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin), m_owner(owner) {};
+	SvnCommitHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
 	virtual ~SvnCommitHandler(){};
 
 public:
@@ -24,7 +23,7 @@ public:
 class SvnUpdateHandler : public SvnDefaultCommandHandler {
 
 public:
-	SvnUpdateHandler(Subversion2 *plugin) : SvnDefaultCommandHandler(plugin) {};
+	SvnUpdateHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
 	virtual ~SvnUpdateHandler(){};
 
 public:
@@ -38,7 +37,7 @@ public:
 class SvnDiffHandler : public SvnDefaultCommandHandler {
 
 public:
-	SvnDiffHandler(Subversion2 *plugin) : SvnDefaultCommandHandler(plugin) {};
+	SvnDiffHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
 	virtual ~SvnDiffHandler(){};
 
 public:
@@ -52,7 +51,7 @@ public:
 class SvnPatchHandler : public SvnDefaultCommandHandler {
 
 public:
-	SvnPatchHandler(Subversion2 *plugin) : SvnDefaultCommandHandler(plugin) {};
+	SvnPatchHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
 	virtual ~SvnPatchHandler(){};
 
 public:
@@ -66,7 +65,7 @@ public:
 class SvnPatchDryRunHandler : public SvnDefaultCommandHandler {
 
 public:
-	SvnPatchDryRunHandler(Subversion2 *plugin) : SvnDefaultCommandHandler(plugin) {};
+	SvnPatchDryRunHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
 	virtual ~SvnPatchDryRunHandler(){};
 
 public:
@@ -80,8 +79,22 @@ public:
 class SvnVersionHandler : public SvnDefaultCommandHandler {
 
 public:
-	SvnVersionHandler(Subversion2 *plugin) : SvnDefaultCommandHandler(plugin) {};
+	SvnVersionHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
 	virtual ~SvnVersionHandler(){};
+
+public:
+	virtual void Process(const wxString &output);
+};
+
+//----------------------------------------------------
+//Svn Log handler
+//----------------------------------------------------
+
+class SvnLogHandler : public SvnDefaultCommandHandler {
+
+public:
+	SvnLogHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
+	virtual ~SvnLogHandler(){};
 
 public:
 	virtual void Process(const wxString &output);

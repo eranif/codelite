@@ -155,6 +155,7 @@ void SubversionView::CreatGUIControls()
 
 	tb->AddSeparator();
 	tb->AddTool(XRCID("svn_info"),         wxT("Svn Info"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_info" ) ), wxT ( "Svn Info" ) );
+	tb->AddTool(XRCID("svn_settings"),     wxT("Svn Settings..."), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_settings" ) ), wxT ( "Svn Settings..." ) );
 
 	tb->Connect(XRCID("clear_svn_output"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnClearOuptut), NULL, this);
 	tb->Connect(XRCID("svn_stop"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnStop),        NULL, this);
@@ -162,6 +163,7 @@ void SubversionView::CreatGUIControls()
 	tb->Connect(XRCID("svn_info"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnShowSvnInfo), NULL, this);
 	tb->Connect(XRCID("svn_refresh"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnRefreshView), NULL, this);
 	tb->Connect(XRCID("svn_checkout"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnCheckout),    NULL, this);
+	tb->Connect(XRCID("svn_settings"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnSettings),    NULL, this);
 
 	wxSizer *sz = GetSizer();
 	sz->Insert(0, tb, 0, wxEXPAND);
@@ -811,4 +813,10 @@ void SubversionView::OnIgnoreFilePattern(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
 	m_plugin->IgnoreFiles(m_selectionInfo.m_paths, true);
+}
+
+void SubversionView::OnSettings(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	m_plugin->EditSettings();
 }

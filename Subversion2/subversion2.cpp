@@ -226,13 +226,8 @@ void Subversion2::SetSettings(SvnSettingsData& ssd)
 
 void Subversion2::OnSettings(wxCommandEvent& event)
 {
-	SvnPreferencesDialog dlg(GetManager()->GetTheApp()->GetTopWindow(), this);
-	if (dlg.ShowModal() == wxID_OK) {
-		// Update the Subversion view
-		GetSvnView()->BuildTree();
-		DoSetSSH();
-		UpdateIgnorePatterns();
-	}
+	wxUnusedVar(event);
+	EditSettings();
 }
 
 void Subversion2::DoSetSSH()
@@ -576,3 +571,13 @@ void Subversion2::OnIgnoreFilePattern(wxCommandEvent& event)
 	IgnoreFiles(arr, true);
 }
 
+void Subversion2::EditSettings()
+{
+	SvnPreferencesDialog dlg(GetManager()->GetTheApp()->GetTopWindow(), this);
+	if (dlg.ShowModal() == wxID_OK) {
+		// Update the Subversion view
+		GetSvnView()->BuildTree();
+		DoSetSSH();
+		UpdateIgnorePatterns();
+	}
+}

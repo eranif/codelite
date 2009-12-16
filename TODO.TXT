@@ -4,6 +4,7 @@
 - Move Qmake to be an integrated part of codelite build system
 - Check for environment variable existance in the project build configuration
 - Make detached tabs from plugin to be part of the prespective
-- Subversion2: Add options button to the toolbar
 - Subversion2: Implement the 'Checkout' option
 - add option to implement all non implemented virtual methods of parent
+- Add functiion implementationm: make sure that the dialog has the correct title
+- Add functiion implementationm: dont add extra LF when not needed

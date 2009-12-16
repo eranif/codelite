@@ -41,6 +41,7 @@ BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_MENU(XRCID("svn_patch"),              SubversionView::OnPatch)
 	EVT_MENU(XRCID("svn_patch_dry_run"),      SubversionView::OnPatchDryRun)
 	EVT_MENU(XRCID("svn_resolve"),            SubversionView::OnResolve)
+	EVT_MENU(XRCID("svn_add"),                SubversionView::OnAdd)
 	EVT_MENU(XRCID("svn_delete"),             SubversionView::OnDelete)
 	EVT_MENU(XRCID("svn_ignore_file"),        SubversionView::OnIgnoreFile)
 	EVT_MENU(XRCID("svn_ignore_file_pattern"),SubversionView::OnIgnoreFilePattern)
@@ -524,7 +525,7 @@ void SubversionView::OnRevert(wxCommandEvent& event)
 	if(m_plugin->LoginIfNeeded(event, loginString) == false) {
 		return;
 	}
-	command << m_plugin->GetSvnExeName(false) << loginString << wxT(" revert --recursive ");
+	command << m_plugin->GetSvnExeName(true) << loginString << wxT(" revert --recursive ");
 
 	if (m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
 		// Concatenate list of files to be updated

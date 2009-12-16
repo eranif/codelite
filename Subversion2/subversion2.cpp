@@ -396,7 +396,8 @@ wxString Subversion2::GetSvnExeName(bool nonInteractive)
 		executeable << wxT(" --non-interactive ");
 
 	// --trust-server-cert was introduced in version >=1.6
-	if(m_svnClientVersion >= 1.6) {
+	// but it also requires --non-interactive mode enabled
+	if(m_svnClientVersion >= 1.6 && nonInteractive) {
 		executeable << wxT(" --trust-server-cert ");
 	}
 

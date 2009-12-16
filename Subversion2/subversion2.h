@@ -28,15 +28,17 @@ protected:
 	///////////////////////////////////////////////////////////
 	// File Explorer event handlers
 	///////////////////////////////////////////////////////////
-	void OnCommit  (wxCommandEvent &event);
-	void OnUpdate  (wxCommandEvent &event);
-	void OnAdd     (wxCommandEvent &event);
-	void OnDelete  (wxCommandEvent &event);
-	void OnRevert  (wxCommandEvent &event);
-	void OnDiff    (wxCommandEvent &event);
-	void OnPatch   (wxCommandEvent &event);
-	void OnLog     (wxCommandEvent &event);
-	
+	void OnCommit           (wxCommandEvent &event);
+	void OnUpdate           (wxCommandEvent &event);
+	void OnAdd              (wxCommandEvent &event);
+	void OnDelete           (wxCommandEvent &event);
+	void OnRevert           (wxCommandEvent &event);
+	void OnDiff             (wxCommandEvent &event);
+	void OnPatch            (wxCommandEvent &event);
+	void OnLog              (wxCommandEvent &event);
+	void OnIgnoreFile       (wxCommandEvent &event);
+	void OnIgnoreFilePattern(wxCommandEvent &event);
+
 	wxMenu* CreateFileExplorerPopMenu();
 
 public:
@@ -70,17 +72,17 @@ public:
 	wxString        GetUserConfigDir();
 	void            UpdateIgnorePatterns();
 	void            Patch(bool dryRun, const wxString &workingDirectory, wxEvtHandler *owner, int id);
-
+	void            IgnoreFiles(const wxArrayString& files, bool pattern);
 	void SetSvnClientVersion(double svnClientVersion) {
 		this->m_svnClientVersion = svnClientVersion;
 	}
-	
+
 	CommitMessagesCache& GetCommitMessagesCache() {
 		return m_commitMessagesCache;
 	}
-	
+
 	bool LoginIfNeeded(wxCommandEvent& event, wxString& loginString);
-	
+
 protected:
 	void DoInitialize();
 	void DoSetSSH();

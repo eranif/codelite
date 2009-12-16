@@ -37,7 +37,7 @@ void SvnConsole::OnReadProcessOutput(wxCommandEvent& event)
 	// print the output
 	if(m_printProcessOutput)
 		AppendText( ped->GetData() );
-		
+
 	delete ped;
 }
 
@@ -47,17 +47,18 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 	delete ped;
 
 	if (m_handler) {
-		
+
 		if(m_handler->TestLoginRequired(m_output)) {
 			// re-issue the last command but this time with login dialog
-			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Login failed. Retyring\n"));
+			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Authentication failed. Retrying...\n"));
 			m_handler->ProcessLoginRequired();
-			
+
 		} else {
 			// command ended successfully, invoke the "success" callback
 			m_handler->Process(m_output);
+			AppendText(wxT("-----\n"));
 		}
-		
+
 		delete m_handler;
 		m_handler = NULL;
 	}
@@ -66,7 +67,6 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 		delete m_process;
 		m_process = NULL;
 	}
-	AppendText(wxT("-----\n"));
 }
 
 bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler, bool printCommand, bool printProcessOutput)

@@ -31,18 +31,20 @@
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_UPDATE_UI(XRCID("svn_stop"),         SubversionView::OnStopUI)
 	EVT_UPDATE_UI(XRCID("clear_svn_output"), SubversionView::OnClearOuptutUI)
-	
-	EVT_MENU(XRCID("svn_commit"),        SubversionView::OnCommit)
-	EVT_MENU(XRCID("svn_update"),        SubversionView::OnUpdate)
-	EVT_MENU(XRCID("svn_revert"),        SubversionView::OnRevert)
-	EVT_MENU(XRCID("svn_tag"),           SubversionView::OnTag)
-	EVT_MENU(XRCID("svn_branch"),        SubversionView::OnBranch)
-	EVT_MENU(XRCID("svn_diff"),          SubversionView::OnDiff)
-	EVT_MENU(XRCID("svn_patch"),         SubversionView::OnPatch)
-	EVT_MENU(XRCID("svn_patch_dry_run"), SubversionView::OnPatchDryRun)
-	EVT_MENU(XRCID("svn_resolve"),       SubversionView::OnResolve)
-	EVT_MENU(XRCID("svn_delete"),        SubversionView::OnDelete)
-	
+
+	EVT_MENU(XRCID("svn_commit"),             SubversionView::OnCommit)
+	EVT_MENU(XRCID("svn_update"),             SubversionView::OnUpdate)
+	EVT_MENU(XRCID("svn_revert"),             SubversionView::OnRevert)
+	EVT_MENU(XRCID("svn_tag"),                SubversionView::OnTag)
+	EVT_MENU(XRCID("svn_branch"),             SubversionView::OnBranch)
+	EVT_MENU(XRCID("svn_diff"),               SubversionView::OnDiff)
+	EVT_MENU(XRCID("svn_patch"),              SubversionView::OnPatch)
+	EVT_MENU(XRCID("svn_patch_dry_run"),      SubversionView::OnPatchDryRun)
+	EVT_MENU(XRCID("svn_resolve"),            SubversionView::OnResolve)
+	EVT_MENU(XRCID("svn_delete"),             SubversionView::OnDelete)
+	EVT_MENU(XRCID("svn_ignore_file"),        SubversionView::OnIgnoreFile)
+	EVT_MENU(XRCID("svn_ignore_file_pattern"),SubversionView::OnIgnoreFilePattern)
+
 END_EVENT_TABLE()
 
 SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
@@ -390,6 +392,13 @@ void SubversionView::CreateFileMenu(wxMenu* menu)
 	menu->Append(XRCID("svn_resolve"), wxT("Resolve"));
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_diff"),    wxT("Create Diff..."));
+	menu->AppendSeparator();
+
+	wxMenu *subMenu;
+	subMenu = new wxMenu;
+	subMenu->Append(XRCID("svn_ignore_file"),         wxT("Ignore this file"));
+	subMenu->Append(XRCID("svn_ignore_file_pattern"), wxT("Ignore this file pattern"));
+	menu->Append(wxID_ANY, wxT("Ignore"), subMenu);
 }
 
 void SubversionView::CreateRootMenu(wxMenu* menu)
@@ -466,13 +475,13 @@ void SubversionView::OnCommit(wxCommandEvent& event)
 	wxString command;
 
 	// Pope the "Commit Dialog" dialog
-	
+
 	CommitDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_selectionInfo.m_paths, m_plugin);
 	if (dlg.ShowModal() == wxID_OK) {
 		m_selectionInfo.m_paths = dlg.GetPaths();
 		if (m_selectionInfo.m_paths.IsEmpty())
 			return;
-		
+
 		wxString loginString;
 		if(m_plugin->LoginIfNeeded(event, loginString) == false) {
 			return;
@@ -673,7 +682,7 @@ void SubversionView::OnSvnInfo(const SvnInfo& svnInfo, int reason)
 
 		}
 		if (dlg.ShowModal() == wxID_OK) {
-			
+
 			wxString command;
 			command << m_plugin->GetSvnExeName()
 			<< wxT("copy ")
@@ -791,3 +800,14 @@ void SubversionView::OnCheckout(wxCommandEvent& event)
 {
 }
 
+void SubversionView::OnIgnoreFile(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	m_plugin->IgnoreFiles(m_selectionInfo.m_paths, false);
+}
+
+void SubversionView::OnIgnoreFilePattern(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	m_plugin->IgnoreFiles(m_selectionInfo.m_paths, true);
+}

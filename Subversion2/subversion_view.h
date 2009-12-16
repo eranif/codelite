@@ -59,7 +59,7 @@ protected:
 	void CreateFileMenu      (wxMenu *menu);
 	void CreateRootMenu      (wxMenu *menu);
 	void CreateSecondRootMenu(wxMenu *menu);
-	
+
 public:
 	/**
 	 * @brief this method is called from the SvnInfoCommabdHandler'
@@ -68,7 +68,7 @@ public:
 	 */
 	void OnSvnInfo(const SvnInfo& svnInfo, int reason);
 	bool LoginIfNeeded(wxCommandEvent &event, wxString &loginString);
-	
+
 protected:
 	// Handlers for SubversionPageBase events.
 	void OnChangeRootDir ( wxCommandEvent& event );
@@ -84,22 +84,23 @@ protected:
 	void OnFileAdded      (wxCommandEvent &event);
 
 	// Svn events
-	void OnCommit         (wxCommandEvent &event);
-	void OnUpdate         (wxCommandEvent &event);
-	void OnRevert         (wxCommandEvent &event);
-	void OnAdd            (wxCommandEvent &event);
-	void OnDelete         (wxCommandEvent &event);
-	void OnBranch         (wxCommandEvent &event);
-	void OnTag            (wxCommandEvent &event);
-	void OnResolve        (wxCommandEvent &event);
-	void OnDiff           (wxCommandEvent &event);
-	void OnPatch          (wxCommandEvent &event);
-	void OnPatchDryRun    (wxCommandEvent &event);
-	void OnStop           (wxCommandEvent &event);
-	void OnCleanup        (wxCommandEvent &event);
-	void OnShowSvnInfo    (wxCommandEvent &event);
-	void OnCheckout       (wxCommandEvent &event);
-
+	void OnCommit           (wxCommandEvent &event);
+	void OnUpdate           (wxCommandEvent &event);
+	void OnRevert           (wxCommandEvent &event);
+	void OnAdd              (wxCommandEvent &event);
+	void OnDelete           (wxCommandEvent &event);
+	void OnBranch           (wxCommandEvent &event);
+	void OnTag              (wxCommandEvent &event);
+	void OnResolve          (wxCommandEvent &event);
+	void OnDiff             (wxCommandEvent &event);
+	void OnPatch            (wxCommandEvent &event);
+	void OnPatchDryRun      (wxCommandEvent &event);
+	void OnStop             (wxCommandEvent &event);
+	void OnCleanup          (wxCommandEvent &event);
+	void OnShowSvnInfo      (wxCommandEvent &event);
+	void OnCheckout         (wxCommandEvent &event);
+	void OnIgnoreFile       (wxCommandEvent &event);
+	void OnIgnoreFilePattern(wxCommandEvent &event);
 	DECLARE_EVENT_TABLE()
 
 	void OnStopUI         (wxUpdateUIEvent &event);

@@ -70,6 +70,10 @@ void SvnCommand::OnProcessTerminated(wxCommandEvent& event)
 			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Authentication failed. Retrying...\n"));
 			m_handler->ProcessLoginRequired();
 
+		} else if(m_handler->TestVerificationFailed(m_output)) {
+			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Server certificate verification failed. Retrying...\n"));
+			m_handler->ProcessVerificationRequired();
+		
 		} else {
 			// command ended successfully, invoke the "success" callback
 			m_handler->Process(m_output);

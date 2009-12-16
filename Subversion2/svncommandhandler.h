@@ -8,8 +8,8 @@ class Subversion2;
 class IManager;
 class IProcess;
 
-#define LOGIN_REQUIRES 1253
-
+#define LOGIN_REQUIRES     1253
+#define INTERACTIVE_MODE   1254
 class SvnCommandHandler
 {
 protected:
@@ -59,6 +59,29 @@ public:
 		return false;
 	}
 	
+	bool TestVerificationFailed(const wxString &output) {
+		wxString svnOutput( output );
+		svnOutput.MakeLower();
+		if (svnOutput.Contains(wxT("certificate verification failed"))) {
+			// failed to login...
+			return true;
+		}
+		return false;
+	}
+	
+	// "(R)eject, accept (t)emporarily or accept (p)ermanently"
+	// password for 'login' gnome keyring
+	bool TestInteractiveVerification(const wxString &output) {
+		wxString svnOutput( output );
+		svnOutput.MakeLower();
+		if (svnOutput.Contains(wxT("(r)eject, accept (t)emporarily or accept (p)ermanently")) )
+		{
+			// failed to login...
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * @brief handle here process output (e.g. interactive commands that needs response)
 	 * @param process the process
@@ -75,6 +98,19 @@ public:
 			int eventId (m_commandId);
 			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, eventId);
 			event.SetInt(LOGIN_REQUIRES);
+			m_owner->AddPendingEvent(event);
+		}
+	}
+	
+	/**
+	 * @brief the svn operation failed due to server certificate errorlogin error. Retry the last command but this
+	 * time, pop the login dialog
+	 */
+	virtual void ProcessVerificationRequired() {
+		if(m_commandId != wxNOT_FOUND && m_owner) {
+			int eventId (m_commandId);
+			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, eventId);
+			event.SetInt(INTERACTIVE_MODE);
 			m_owner->AddPendingEvent(event);
 		}
 	}

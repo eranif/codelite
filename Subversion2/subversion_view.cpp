@@ -461,7 +461,8 @@ void SubversionView::OnUpdate(wxCommandEvent& event)
 	if(m_plugin->LoginIfNeeded(event, loginString) == false) {
 		return;
 	}
-	command << m_plugin->GetSvnExeName() << loginString << wxT(" update ");
+	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
+	command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" update ");
 
 	if (m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
 		// Concatenate list of files to be updated
@@ -489,7 +490,8 @@ void SubversionView::OnCommit(wxCommandEvent& event)
 		if(m_plugin->LoginIfNeeded(event, loginString) == false) {
 			return;
 		}
-		command << m_plugin->GetSvnExeName() << loginString << wxT(" commit ");
+		bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
+		command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" commit ");
 
 		for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
 			command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
@@ -510,7 +512,9 @@ void SubversionView::OnAdd(wxCommandEvent& event)
 	if(m_plugin->LoginIfNeeded(event, loginString) == false) {
 		return;
 	}
-	command << m_plugin->GetSvnExeName() << loginString << wxT(" add ");
+	
+	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
+	command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" add ");
 
 	// Concatenate list of files to be updated
 	for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
@@ -563,7 +567,8 @@ void SubversionView::OnDelete(wxCommandEvent& event)
 	if(m_plugin->LoginIfNeeded(event, loginString) == false) {
 		return;
 	}
-	command << m_plugin->GetSvnExeName() << loginString << wxT(" --force delete ");
+	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
+	command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" --force delete ");
 
 	// Concatenate list of files to be updated
 	for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
@@ -580,7 +585,9 @@ void SubversionView::OnResolve(wxCommandEvent& event)
 	if(m_plugin->LoginIfNeeded(event, loginString) == false) {
 		return;
 	}
-	command << m_plugin->GetSvnExeName(false) << loginString << wxT(" resolved ");
+	
+	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
+	command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" resolved ");
 
 	// Concatenate list of files to be updated
 	for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
@@ -705,7 +712,7 @@ void SubversionView::OnCleanup(wxCommandEvent& event)
 	wxUnusedVar(event);
 	wxString command;
 	command << m_plugin->GetSvnExeName() << wxT(" cleanup ");
-	m_plugin->GetConsole()->Execute(command, m_textCtrlRootDir->GetValue(), NULL);
+	m_plugin->GetConsole()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin, wxNOT_FOUND, NULL));
 }
 
 void SubversionView::OnStop(wxCommandEvent& event)

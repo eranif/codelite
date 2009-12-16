@@ -86,8 +86,9 @@ public:
 		return m_commitMessagesCache;
 	}
 
-	bool LoginIfNeeded(wxCommandEvent& event, wxString& loginString);
-
+	bool LoginIfNeeded        (wxCommandEvent &event, wxString& loginString);
+	bool GetNonInteractiveMode(wxCommandEvent &event);
+	
 protected:
 	void DoInitialize();
 	void DoSetSSH();

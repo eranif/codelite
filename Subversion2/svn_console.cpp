@@ -1,3 +1,5 @@
+#include <wx/app.h>
+#include <wx/textdlg.h>
 #include "svn_console.h"
 #include "subversion_strings.h"
 #include <wx/tokenzr.h>
@@ -34,10 +36,29 @@ void SvnConsole::OnReadProcessOutput(wxCommandEvent& event)
 		m_output.Append(ped->GetData().c_str());
 	}
 
-	// print the output
+	wxString s (ped->GetData());
+	s.MakeLower();
+	
 	if(m_printProcessOutput)
 		AppendText( ped->GetData() );
+		
+	if(s.Contains(wxT("(r)eject, accept (t)emporarily or accept (p)ermanently"))) {
+		AppendText( wxT("\n(Answering 'p')\n") );
+		m_process->Write(wxT("p"));
+		
+		wxString message;
+		message << wxT(" ***********************************************\n");
+		message << wxT(" * MESSAGE:                                    *\n");
+		message << wxT(" * Terminating SVN process.                    *\n");
+		message << wxT(" * Please run cleanup from the Subversion View,*\n");
+		message << wxT(" * And re-try again                            *\n");
+		message << wxT(" ***********************************************\n");
+		
+		wxThread::Sleep(100);
+		AppendText( message );
+		m_process->Cleanup();
 
+	}
 	delete ped;
 }
 
@@ -52,12 +73,17 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 			// re-issue the last command but this time with login dialog
 			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Authentication failed. Retrying...\n"));
 			m_handler->ProcessLoginRequired();
-
+			
+		} else if(m_handler->TestVerificationFailed(m_output)) {
+			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Server certificate verification failed. Retrying...\n"));
+			m_handler->ProcessVerificationRequired();
+			
 		} else {
 			// command ended successfully, invoke the "success" callback
 			m_handler->Process(m_output);
 			AppendText(wxT("-----\n"));
 		}
+		
 
 		delete m_handler;
 		m_handler = NULL;

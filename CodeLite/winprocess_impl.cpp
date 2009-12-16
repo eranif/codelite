@@ -296,6 +296,7 @@ void WinProcessImpl::Cleanup()
 		// Stop the reader thread
 		m_thr->Stop();
 		delete m_thr;
+		m_thr = NULL;
 	}
 
 	// terminate the process

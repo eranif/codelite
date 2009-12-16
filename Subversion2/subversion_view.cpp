@@ -154,8 +154,8 @@ void SubversionView::CreatGUIControls()
 	tb->AddTool(XRCID("svn_checkout"),         wxT("Svn Checkout"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_checkout" ) ), wxT ( "Svn Checkout" ) );
 
 	tb->AddSeparator();
-	tb->AddTool(XRCID("svn_info"),         wxT("Svn Info"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_info" ) ), wxT ( "Svn Info" ) );
 	tb->AddTool(XRCID("svn_settings"),     wxT("Svn Settings..."), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_settings" ) ), wxT ( "Svn Settings..." ) );
+	tb->AddTool(XRCID("svn_info"),         wxT("Svn Info"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_info" ) ), wxT ( "Svn Info" ) );
 
 	tb->Connect(XRCID("clear_svn_output"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnClearOuptut), NULL, this);
 	tb->Connect(XRCID("svn_stop"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnStop),        NULL, this);

@@ -2,6 +2,7 @@
 #define __Subversion2__
 
 #include "plugin.h"
+#include "commitmessagescache.h"
 #include "svncommand.h"
 #include "svnsettingsdata.h"
 
@@ -13,12 +14,13 @@ class wxMenuItem;
 class Subversion2 : public IPlugin
 {
 private:
-	SubversionView*   m_subversionView;
-	SvnConsole*       m_subversionConsole;
-	wxMenuItem*       m_explorerSepItem;
-	SvnCommand        m_simpleCommand;
-	SvnCommand        m_diffCommand;
-	double            m_svnClientVersion;
+	SubversionView*     m_subversionView;
+	SvnConsole*         m_subversionConsole;
+	wxMenuItem*         m_explorerSepItem;
+	SvnCommand          m_simpleCommand;
+	SvnCommand          m_diffCommand;
+	double              m_svnClientVersion;
+	CommitMessagesCache m_commitMessagesCache;
 
 protected:
 	void OnSettings(wxCommandEvent &event);
@@ -34,7 +36,7 @@ protected:
 	void OnRevert  (wxCommandEvent &event);
 	void OnDiff    (wxCommandEvent &event);
 	void OnPatch   (wxCommandEvent &event);
-	
+
 	wxMenu* CreateFileExplorerPopMenu();
 
 public:
@@ -68,10 +70,15 @@ public:
 	wxString        GetUserConfigDir();
 	void            UpdateIgnorePatterns();
 	void            Patch(bool dryRun, const wxString &workingDirectory);
-	
+
 	void SetSvnClientVersion(double svnClientVersion) {
 		this->m_svnClientVersion = svnClientVersion;
 	}
+	
+	CommitMessagesCache& GetCommitMessagesCache() {
+		return m_commitMessagesCache;
+	}
+	
 protected:
 	void DoInitialize();
 	void DoSetSSH();

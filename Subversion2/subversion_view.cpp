@@ -475,7 +475,7 @@ void SubversionView::OnCommit(wxCommandEvent& event)
 
 	// Pope the "Commit Dialog" dialog
 
-	CommitDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_selectionInfo.m_paths, m_plugin->GetManager());
+	CommitDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_selectionInfo.m_paths, m_plugin);
 	if (dlg.ShowModal() == wxID_OK) {
 		m_selectionInfo.m_paths = dlg.GetPaths();
 		if (m_selectionInfo.m_paths.IsEmpty())
@@ -685,7 +685,7 @@ void SubversionView::OnCommitWithLogin(wxCommandEvent& event)
 		command << m_plugin->GetSvnExeName() << wxT(" commit --username ") << dlg.GetUsername() << wxT(" --password ") << dlg.GetPassword() << wxT(" ");
 
 		// Pop the commit dialog message now
-		CommitDialog commitdlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_selectionInfo.m_paths, m_plugin->GetManager());
+		CommitDialog commitdlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_selectionInfo.m_paths, m_plugin);
 		if (commitdlg.ShowModal() == wxID_OK) {
 			m_selectionInfo.m_paths = commitdlg.GetPaths();
 

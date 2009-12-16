@@ -6,6 +6,6 @@
 - Make detached tabs from plugin to be part of the prespective
 - Subversion2: Add options button to the toolbar
 - Subversion2: Implement the 'Checkout' option
+- Subversion2: add option to 'change log'
 - Subversion2: Add option to add file 'ignored'
-- Subversion2: add the 'last commit messages' to the commit dialog
 - add option to implement all non implemented virtual methods of parent

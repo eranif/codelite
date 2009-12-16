@@ -270,7 +270,7 @@ void Subversion2::OnAdd(wxCommandEvent& event)
 
 void Subversion2::OnCommit(wxCommandEvent& event)
 {
-	wxString comment = wxGetTextFromUser(wxT("Enter Commit Message"), wxT("Svn Commit"));
+	wxString comment = wxGetTextFromUser(wxT("Enter Commit Message"), wxT("Svn Commit"), wxT(""), GetManager()->GetTheApp()->GetTopWindow());
 	comment = CommitDialog::NormalizeMessage(comment);
 
 	wxString command;
@@ -319,7 +319,7 @@ void Subversion2::OnUpdate(wxCommandEvent& event)
 void Subversion2::OnDiff(wxCommandEvent& event)
 {
 	wxString diffAgainst(wxT("BASE"));
-	diffAgainst = wxGetTextFromUser(wxT("Insert base revision to diff against:"), wxT("Diff against"), wxT("BASE"));
+	diffAgainst = wxGetTextFromUser(wxT("Insert base revision to diff against:"), wxT("Diff against"), wxT("BASE"), GetManager()->GetTheApp()->GetTopWindow());
 	if (diffAgainst.empty()) {
 		// user clicked 'Cancel'
 		diffAgainst = wxT("BASE");
@@ -503,18 +503,18 @@ void Subversion2::Patch(bool dryRun, const wxString &workingDirectory, wxEvtHand
 
 void Subversion2::OnLog(wxCommandEvent& event)
 {
-	wxString revision = wxGetTextFromUser(wxT("From revision:"), wxT("Svn Log"));
-	if(revision.IsEmpty())
-		return;
-
-	wxString command;
-
-	wxString loginString;
-	if(LoginIfNeeded(event, loginString) == false) {
-		return;
+	SvnLogDialog dlg(GetManager()->GetTheApp()->GetTopWindow());
+	dlg.m_to->SetValue(wxT("BASE"));
+	dlg.m_compact->SetValue(true);
+	if(dlg.ShowModal() == wxID_OK) {
+		wxString command;
+		wxString loginString;
+		if(LoginIfNeeded(event, loginString) == false) {
+			return;
+		}
+		command << GetSvnExeName() << loginString << wxT(" log -r") << dlg.m_from->GetValue() << wxT(":") << dlg.m_to->GetValue() << wxT(" \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+		GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnLogHandler(this, dlg.m_compact->IsChecked(), event.GetId(), this), loginString.IsEmpty(), false);
 	}
-	command << GetSvnExeName() << loginString << wxT(" log -r") << revision << wxT(" \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
-	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnLogHandler(this, event.GetId(), this), loginString.IsEmpty(), false);
 }
 
 bool Subversion2::LoginIfNeeded(wxCommandEvent& event, wxString& loginString)

@@ -663,3 +663,64 @@ SvnCheckoutDialogBase::~SvnCheckoutDialogBase()
 	m_textCtrl20->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( SvnCheckoutDialogBase::OnCheckoutDirectoryText ), NULL, this );
 	m_buttonBrowseDir->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnCheckoutDialogBase::OnBrowseDirectory ), NULL, this );
 }
+
+SvnLogDialog::SvnLogDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer21;
+	bSizer21 = new wxBoxSizer( wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer9;
+	fgSizer9 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer9->AddGrowableCol( 1 );
+	fgSizer9->SetFlexibleDirection( wxBOTH );
+	fgSizer9->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText28 = new wxStaticText( this, wxID_ANY, _("From revision:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText28->Wrap( -1 );
+	fgSizer9->Add( m_staticText28, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_from = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
+	fgSizer9->Add( m_from, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticText29 = new wxStaticText( this, wxID_ANY, _("To revision:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText29->Wrap( -1 );
+	fgSizer9->Add( m_staticText29, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_to = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer9->Add( m_to, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer21->Add( fgSizer9, 0, wxEXPAND|wxALL, 5 );
+	
+	
+	bSizer21->Add( 0, 0, 1, wxEXPAND|wxALL, 5 );
+	
+	m_compact = new wxCheckBox( this, wxID_ANY, _("Create compact log"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer21->Add( m_compact, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer21->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer22;
+	bSizer22 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_button17 = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button17->SetDefault(); 
+	bSizer22->Add( m_button17, 0, wxALL, 5 );
+	
+	m_button18 = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer22->Add( m_button18, 0, wxALL, 5 );
+	
+	bSizer21->Add( bSizer22, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	this->SetSizer( bSizer21 );
+	this->Layout();
+	bSizer21->Fit( this );
+	
+	this->Centre( wxBOTH );
+}
+
+SvnLogDialog::~SvnLogDialog()
+{
+}

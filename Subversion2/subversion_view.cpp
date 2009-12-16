@@ -590,7 +590,7 @@ void SubversionView::OnResolve(wxCommandEvent& event)
 void SubversionView::OnDiff(wxCommandEvent& event)
 {
 	wxString diffAgainst(wxT("BASE"));
-	diffAgainst = wxGetTextFromUser(wxT("Insert base revision to diff against:"), wxT("Diff against"), wxT("BASE"));
+	diffAgainst = wxGetTextFromUser(wxT("Insert base revision to diff against:"), wxT("Diff against"), wxT("BASE"), m_plugin->GetManager()->GetTheApp()->GetTopWindow());
 	if (diffAgainst.empty()) {
 		// user clicked 'Cancel'
 		diffAgainst = wxT("BASE");

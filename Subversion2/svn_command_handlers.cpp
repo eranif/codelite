@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include <wx/tokenzr.h>
 #include <wx/regex.h>
 #include "svn_console.h"
 #include <wx/file.h>
@@ -98,8 +99,48 @@ void SvnVersionHandler::Process(const wxString& output)
 void SvnLogHandler::Process(const wxString& output)
 {
 	// create new editor and set the output to it
+	wxString changeLog (output);
+	if(m_compact) {
+		// remove non interesting lines
+		changeLog = Compact(changeLog);
+	}
+
 	IEditor *editor = GetPlugin()->GetManager()->NewEditor();
 	if(editor) {
-		editor->AppendText(output);
+		editor->AppendText(changeLog);
 	}
+}
+
+wxString SvnLogHandler::Compact(const wxString& message)
+{
+	wxString compactMsg (message);
+	compactMsg.Replace(wxT("\r\n"), wxT("\n"));
+	compactMsg.Replace(wxT("\r"),   wxT("\n"));
+	compactMsg.Replace(wxT("\v"),   wxT("\n"));
+	wxArrayString lines = wxStringTokenize(compactMsg, wxT("\n"), wxTOKEN_STRTOK);
+	compactMsg.Clear();
+	for(size_t i=0; i<lines.GetCount(); i++) {
+		wxString line = lines.Item(i);
+		line.Trim().Trim(false);
+
+		if(line.IsEmpty())
+			continue;
+
+		if(line.StartsWith(wxT("----------"))) {
+			continue;
+		}
+
+		if(line == wxT("\"")) {
+			continue;
+		}
+		static wxRegEx reRevisionPrefix(wxT("^(r[0-9]+)"));
+		if(reRevisionPrefix.Matches(line)) {
+			continue;
+		}
+		compactMsg << line << wxT("\n");
+	}
+	if(compactMsg.IsEmpty() == false) {
+		compactMsg.RemoveLast();
+	}
+	return compactMsg;
 }

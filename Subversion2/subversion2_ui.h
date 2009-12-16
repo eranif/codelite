@@ -281,4 +281,29 @@ class SvnCheckoutDialogBase : public wxDialog
 	
 };
 
+///////////////////////////////////////////////////////////////////////////////
+/// Class SvnLogDialog
+///////////////////////////////////////////////////////////////////////////////
+class SvnLogDialog : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText28;
+		wxStaticText* m_staticText29;
+		
+		wxStaticLine* m_staticline5;
+		wxButton* m_button17;
+		wxButton* m_button18;
+	
+	public:
+		wxTextCtrl* m_from;
+		wxTextCtrl* m_to;
+		wxCheckBox* m_compact;
+		
+		SvnLogDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Log"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~SvnLogDialog();
+	
+};
+
 #endif //__subversion2_ui__

@@ -91,9 +91,11 @@ public:
 //----------------------------------------------------
 
 class SvnLogHandler : public SvnDefaultCommandHandler {
-
+	bool m_compact;
+protected:
+	wxString Compact(const wxString &message);
 public:
-	SvnLogHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
+	SvnLogHandler(Subversion2 *plugin, bool compact, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner), m_compact(compact) {};
 	virtual ~SvnLogHandler(){};
 
 public:

@@ -374,6 +374,21 @@ bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff)
 
 	return false;
 }
+
+void WinProcessImpl::Terminate()
+{
+	// terminate the process
+	if (IsAlive()) {
+		std::map<unsigned long, bool> tree;
+		ProcUtils::GetProcTree(tree, GetPid());
+
+		std::map<unsigned long, bool>::iterator iter = tree.begin();
+		for(; iter != tree.end(); iter++){
+			wxKillError rc;
+			wxKill(iter->first, wxSIGKILL, &rc);
+		}
+		TerminateProcess(piProcInfo.hProcess, 255);
+	}
+}
+
 #endif //__WXMSW__
-
-

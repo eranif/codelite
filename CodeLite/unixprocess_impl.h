@@ -38,6 +38,8 @@ public:
 	virtual bool IsAlive();
 	virtual bool Read(wxString& buff);
 	virtual bool Write(const wxString& buff);
+	virtual void Terminate();
+	
 };
 #endif //#if defined(__WXMAC )||defined(__WXGTK__)
 #endif // __unixprocessimpl__

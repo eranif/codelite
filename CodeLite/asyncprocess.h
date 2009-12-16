@@ -34,6 +34,11 @@ public:
 	// still alive
 	virtual void Cleanup() = 0;
 	
+	// Terminate the process. It is recommended to use this method
+	// so it will invoke the 'Cleaup' procedure and the process
+	// termination event will be sent out
+	virtual void Terminate() = 0;
+	
 	void SetPid(const int& pid) {
 		this->m_pid = pid;
 	}

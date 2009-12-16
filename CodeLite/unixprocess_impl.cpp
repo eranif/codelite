@@ -386,4 +386,23 @@ void UnixProcessImpl::StartReaderThread()
 	m_thr->Start();
 }
 
+void UnixProcessImpl::Terminate()
+{
+#ifdef __WXGTK__
+
+	// Kill the child process
+	if ( IsAlive() ) {
+		wxString cmd;
+		wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+		wxFileName script(exePath.GetPath(), wxT("codelite_kill_children"));
+		cmd << wxT("/bin/sh -f ") << script.GetFullPath() << wxT(" ") << GetPid();
+		wxExecute(cmd, wxEXEC_ASYNC);
+	}
+
+#else
+	wxKill (GetPid(), wxSIGTERM);
+#endif	
+}
+
 #endif //#if defined(__WXMAC )||defined(__WXGTK__)
+

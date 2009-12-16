@@ -56,7 +56,7 @@ void SvnConsole::OnReadProcessOutput(wxCommandEvent& event)
 		
 		wxThread::Sleep(100);
 		AppendText( message );
-		m_process->Cleanup();
+		m_process->Terminate();
 
 	}
 	delete ped;

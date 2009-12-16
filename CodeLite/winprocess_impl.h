@@ -66,7 +66,9 @@ public:
 	// Clean the process resources and kill the process if it is
 	// still alive
 	virtual void Cleanup();
-
+	
+	virtual void Terminate();
+	
 private:
 	// Creating process related handles
 	HANDLE hChildStdinRd, hChildStdinWr, hChildStdinWrDup,

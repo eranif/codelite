@@ -14,7 +14,8 @@ class SvnConsole : public SvnShellBase
 	IProcess*          m_process;
 	Subversion2*       m_plugin;
 	bool               m_printProcessOutput;
-	
+	wxString           m_workingDirectory;
+
 protected:
 	DECLARE_EVENT_TABLE()
 	virtual void OnReadProcessOutput(wxCommandEvent& event);

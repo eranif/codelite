@@ -38,14 +38,14 @@ void SvnConsole::OnReadProcessOutput(wxCommandEvent& event)
 
 	wxString s (ped->GetData());
 	s.MakeLower();
-	
+
 	if(m_printProcessOutput)
 		AppendText( ped->GetData() );
-		
+
 	if(s.Contains(wxT("(r)eject, accept (t)emporarily or accept (p)ermanently"))) {
 		AppendText( wxT("\n(Answering 'p')\n") );
 		m_process->Write(wxT("p"));
-		
+
 		wxString message;
 		message << wxT(" ***********************************************\n");
 		message << wxT(" * MESSAGE:                                    *\n");
@@ -53,7 +53,7 @@ void SvnConsole::OnReadProcessOutput(wxCommandEvent& event)
 		message << wxT(" * Please run cleanup from the Subversion View,*\n");
 		message << wxT(" * And re-try again                            *\n");
 		message << wxT(" ***********************************************\n");
-		
+
 		wxThread::Sleep(100);
 		AppendText( message );
 		m_process->Terminate();
@@ -72,18 +72,18 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 		if(m_handler->TestLoginRequired(m_output)) {
 			// re-issue the last command but this time with login dialog
 			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Authentication failed. Retrying...\n"));
-			m_handler->ProcessLoginRequired();
-			
+			m_handler->ProcessLoginRequired(m_workingDirectory);
+
 		} else if(m_handler->TestVerificationFailed(m_output)) {
 			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Server certificate verification failed. Retrying...\n"));
 			m_handler->ProcessVerificationRequired();
-			
+
 		} else {
 			// command ended successfully, invoke the "success" callback
 			m_handler->Process(m_output);
 			AppendText(wxT("-----\n"));
 		}
-		
+
 
 		delete m_handler;
 		m_handler = NULL;
@@ -136,6 +136,7 @@ bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, 
 		AppendText(wxT("Failed to launch Subversion client.\n"));
 		return false;
 	}
+	m_workingDirectory = workingDirectory;
 	return true;
 }
 

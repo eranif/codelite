@@ -35,7 +35,7 @@ public:
 	void SetCommandId(int commandId) {
 		this->m_commandId = commandId;
 	}
-	
+
 	void SetOwner(wxEvtHandler* owner) {
 		this->m_owner = owner;
 	}
@@ -47,9 +47,9 @@ public:
 	wxEvtHandler* GetOwner() {
 		return m_owner;
 	}
-	
+
 	bool TestLoginRequired(const wxString &output) {
-		
+
 		wxString svnOutput( output );
 		svnOutput.MakeLower();
 		if (svnOutput.Contains(wxT("could not authenticate to server")) || svnOutput.Contains(wxT(": authorization failed"))) {
@@ -58,7 +58,7 @@ public:
 		}
 		return false;
 	}
-	
+
 	bool TestVerificationFailed(const wxString &output) {
 		wxString svnOutput( output );
 		svnOutput.MakeLower();
@@ -68,7 +68,7 @@ public:
 		}
 		return false;
 	}
-	
+
 	// "(R)eject, accept (t)emporarily or accept (p)ermanently"
 	// password for 'login' gnome keyring
 	bool TestInteractiveVerification(const wxString &output) {
@@ -81,27 +81,32 @@ public:
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @brief handle here process output (e.g. interactive commands that needs response)
 	 * @param process the process
 	 * @param output  the process output
 	 */
 	virtual void OnProcessOutput(IProcess *process, const wxString &output);
-	
+
 	/**
 	 * @brief the svn operation failed due to login error. Retry the last command but this
 	 * time, pop the login dialog
 	 */
-	virtual void ProcessLoginRequired() {
+	virtual void ProcessLoginRequired(const wxString &workingDirectory) {
 		if(m_commandId != wxNOT_FOUND && m_owner) {
 			int eventId (m_commandId);
 			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, eventId);
+
+			// set the command
 			event.SetInt(LOGIN_REQUIRES);
+
+			// set the working directory where the svn was invoked from
+			event.SetString(workingDirectory);
 			m_owner->AddPendingEvent(event);
 		}
 	}
-	
+
 	/**
 	 * @brief the svn operation failed due to server certificate errorlogin error. Retry the last command but this
 	 * time, pop the login dialog
@@ -114,7 +119,7 @@ public:
 			m_owner->AddPendingEvent(event);
 		}
 	}
-	
+
 	virtual void Process(const wxString &output) = 0;
 };
 

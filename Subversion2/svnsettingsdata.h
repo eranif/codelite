@@ -11,13 +11,14 @@ enum SvnSettingsDataFlags {
 
 class SvnSettingsData : public SerializedObject
 {
-	wxString m_executable;
-	wxString m_ignoreFilePattern;
-	wxString m_externalDiffViewer;
-	wxString m_externalDiffViewerCommand;
-	wxString m_sshClient;
-	wxString m_sshClientArgs;
-	size_t   m_flags;
+	wxString      m_executable;
+	wxString      m_ignoreFilePattern;
+	wxString      m_externalDiffViewer;
+	wxString      m_externalDiffViewerCommand;
+	wxString      m_sshClient;
+	wxString      m_sshClientArgs;
+	size_t        m_flags;
+	wxArrayString m_urls;
 
 public:
 	SvnSettingsData()
@@ -27,8 +28,7 @@ public:
 			, m_externalDiffViewerCommand(wxT("$(MyFile) $(OriginalFile)"))
 			, m_sshClient(wxT(""))
 			, m_sshClientArgs(wxT(""))
-			, m_flags(SvnAddFileToSvn|SvnRetagWorkspace)
-	{
+			, m_flags(SvnAddFileToSvn|SvnRetagWorkspace) {
 	}
 
 	virtual ~SvnSettingsData() {
@@ -43,6 +43,7 @@ public:
 		arch.Read(wxT("m_sshClient"),                 m_sshClient);
 		arch.Read(wxT("m_sshClientArgs"),             m_sshClientArgs);
 		arch.Read(wxT("m_flags"),                     m_flags);
+		arch.Read(wxT("m_urls"),                      m_urls);
 	}
 
 	virtual void Serialize(Archive &arch) {
@@ -53,6 +54,7 @@ public:
 		arch.Write(wxT("m_sshClient"),                 m_sshClient);
 		arch.Write(wxT("m_sshClientArgs"),             m_sshClientArgs);
 		arch.Write(wxT("m_flags"),                     m_flags);
+		arch.Write(wxT("m_urls"),                      m_urls);
 	}
 
 	void SetExecutable(const wxString& executable) {
@@ -96,6 +98,12 @@ public:
 	}
 	const wxString& GetSshClientArgs() const {
 		return m_sshClientArgs;
+	}
+	void SetUrls(const wxArrayString& urls) {
+		this->m_urls = urls;
+	}
+	const wxArrayString& GetUrls() const {
+		return m_urls;
 	}
 };
 

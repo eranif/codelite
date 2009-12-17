@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include "svn_checkout_dialog.h"
 #include "subversion2_ui.h"
 #include <wx/settings.h>
 #include <wx/filedlg.h>
@@ -808,6 +809,11 @@ void SubversionView::OnClearOuptutUI(wxUpdateUIEvent& event)
 
 void SubversionView::OnCheckout(wxCommandEvent& event)
 {
+	SvnCheckoutDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_plugin);
+	if(dlg.ShowModal() == wxID_OK) {
+//		wxString command;
+//		command << 
+	}
 }
 
 void SubversionView::OnIgnoreFile(wxCommandEvent& event)

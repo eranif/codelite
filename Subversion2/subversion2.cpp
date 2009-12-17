@@ -197,12 +197,12 @@ void Subversion2::DoInitialize()
 	if( IsSubversionViewDetached() ) {
 		// Make the window child of the main panel (which is the parent of the notebook)
 		new DockablePane(book->GetParent()->GetParent(), book, m_subversionView, svnCONSOLE_TEXT, wxNullBitmap, wxSize(200, 200));
-		
+
 	} else {
-		
+
 		book->AddPage(m_subversionView, svnCONSOLE_TEXT, svnCONSOLE_TEXT, wxNullBitmap, true);
 	}
-	
+
 	book = m_mgr->GetOutputPaneNotebook();
 	m_subversionConsole = new SvnConsole(book, this);
 
@@ -308,7 +308,7 @@ void Subversion2::OnRevert(wxCommandEvent& event)
 	if(LoginIfNeeded(event, loginString) == false) {
 		return;
 	}
-	
+
 	command << GetSvnExeName(false) << loginString << wxT(" revert --recursive \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
 	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this, event.GetId(), this), loginString.IsEmpty());
 }
@@ -540,6 +540,7 @@ bool Subversion2::GetNonInteractiveMode(wxCommandEvent& event)
 
 bool Subversion2::LoginIfNeeded(wxCommandEvent& event, wxString& loginString)
 {
+	// TODO:: try to locate the password in the passworkd database instead of prompting the user
 	loginString.Empty();
 	if(event.GetInt() == LOGIN_REQUIRES) {
 		SvnLoginDialog dlg(GetManager()->GetTheApp()->GetTopWindow());

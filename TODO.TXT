@@ -6,4 +6,5 @@
 - Subversion2: Implement the 'Checkout' option
 - add option to implement all non implemented virtual methods of parent
 - Add functiion implementationm: make sure that the dialog has the correct title
+- Add functiion implementationm: dont add extra LF when not needed=======
 - Add functiion implementationm: dont add extra LF when not needed

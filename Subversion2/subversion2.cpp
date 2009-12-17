@@ -1,4 +1,6 @@
 #include <wx/app.h>
+#include "detachedpanesinfo.h"
+#include "dockablepane.h"
 #include "subversion2.h"
 #include "procutils.h"
 #include <wx/ffile.h>
@@ -189,10 +191,18 @@ void Subversion2::UnPlug()
 
 void Subversion2::DoInitialize()
 {
+	// create tab (possibly detached)
 	Notebook *book = m_mgr->GetWorkspacePaneNotebook();
 	m_subversionView = new SubversionView(book, this);
-
-	book->AddPage(m_subversionView, svnCONSOLE_TEXT, svnCONSOLE_TEXT);
+	if( IsSubversionViewDetached() ) {
+		// Make the window child of the main panel (which is the parent of the notebook)
+		new DockablePane(book->GetParent()->GetParent(), book, m_subversionView, svnCONSOLE_TEXT, wxNullBitmap, wxSize(200, 200));
+		
+	} else {
+		
+		book->AddPage(m_subversionView, svnCONSOLE_TEXT, svnCONSOLE_TEXT, wxNullBitmap, true);
+	}
+	
 	book = m_mgr->GetOutputPaneNotebook();
 	m_subversionConsole = new SvnConsole(book, this);
 
@@ -597,3 +607,10 @@ void Subversion2::EditSettings()
 	}
 }
 
+bool Subversion2::IsSubversionViewDetached()
+{
+	DetachedPanesInfo dpi;
+	m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
+	wxArrayString detachedPanes = dpi.GetPanes();
+	return detachedPanes.Index(svnCONSOLE_TEXT) != wxNOT_FOUND;
+}

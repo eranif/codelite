@@ -24,7 +24,7 @@ private:
 
 protected:
 	void OnSettings(wxCommandEvent &event);
-
+	
 public:
 	void EditSettings();
 
@@ -45,7 +45,7 @@ protected:
 	void OnIgnoreFilePattern(wxCommandEvent &event);
 
 	wxMenu* CreateFileExplorerPopMenu();
-
+	bool    IsSubversionViewDetached();
 public:
 	Subversion2(IManager *manager);
 	~Subversion2();

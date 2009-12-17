@@ -744,7 +744,8 @@ void Manager::RetagWorkspace(bool quickRetag)
 
 	{
 		wxWindowDisabler disableAll;
-		//wxBusyInfo bi(wxT("Scanning for include files to parse. please wait..."), Frame::Get());
+		wxBusyCursor waitPlease;
+		
 		Frame::Get()->SetStatusMessage(wxT("Scanning for include files to parse. please wait..."), 0);
 
 		// Before using the 'crawlerScan' we lock it, since it is not mt-safe

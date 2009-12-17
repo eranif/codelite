@@ -178,15 +178,18 @@ void SubversionView::CreatGUIControls()
 
 void SubversionView::BuildTree()
 {
-	wxString rootDir = m_textCtrlRootDir->GetValue();
+	BuildTree( m_textCtrlRootDir->GetValue() );
+}
 
-	if (rootDir.IsEmpty()) {
+void SubversionView::BuildTree(const wxString& root)
+{
+	if(root.IsEmpty())
 		return;
-	}
 
+	m_textCtrlRootDir->SetValue(root);
 	wxString command;
 	command << m_plugin->GetSvnExeName() << wxT("--xml -q status");
-	m_simpleCommand.Execute(command, rootDir, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL));
+	m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL));
 }
 
 void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
@@ -513,7 +516,7 @@ void SubversionView::OnAdd(wxCommandEvent& event)
 	if(m_plugin->LoginIfNeeded(event, loginString) == false) {
 		return;
 	}
-	
+
 	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
 	command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" add ");
 
@@ -586,7 +589,7 @@ void SubversionView::OnResolve(wxCommandEvent& event)
 	if(m_plugin->LoginIfNeeded(event, loginString) == false) {
 		return;
 	}
-	
+
 	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
 	command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" resolved ");
 
@@ -811,8 +814,13 @@ void SubversionView::OnCheckout(wxCommandEvent& event)
 {
 	SvnCheckoutDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_plugin);
 	if(dlg.ShowModal() == wxID_OK) {
-//		wxString command;
-//		command << 
+		wxString loginString;
+		if(!m_plugin->LoginIfNeeded(event, loginString))
+			return;
+		wxString command;
+		bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
+		command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" co ") << dlg.GetURL() << wxT(" \"") << dlg.GetTargetDir() << wxT("\"");
+		m_plugin->GetConsole()->Execute(command, wxT(""), new SvnCheckoutHandler(m_plugin, event.GetId(), this), loginString.IsEmpty(), true);
 	}
 }
 

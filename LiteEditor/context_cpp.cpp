@@ -584,7 +584,7 @@ void ContextCpp::AddMenuDynamicContent(wxMenu *menu)
 	wxString fileName;
 
 	LEditor &rCtrl = GetCtrl();
-	VALIDATE_PROJECT(rCtrl);
+//	VALIDATE_PROJECT(rCtrl);
 
 	wxString menuItemText;
 	wxString line = rCtrl.GetCurLine();
@@ -593,7 +593,7 @@ void ContextCpp::AddMenuDynamicContent(wxMenu *menu)
 	if (IsIncludeStatement(line, &fileName)) {
 
 		PrependMenuItemSeparator(menu);
-		menuItemText << wxT("Open Workspace File \"") << fileName << wxT("\"");
+		menuItemText << wxT("Open Include File \"") << fileName << wxT("\"");
 
 		PrependMenuItem(menu, menuItemText, wxCommandEventHandler(ContextCpp::OnContextOpenDocument));
 		m_selectedWord = fileName;
@@ -618,7 +618,6 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	LEditor &rCtrl = GetCtrl();
-	VALIDATE_PROJECT(rCtrl);
 
 	//get expression
 	int pos = rCtrl.GetCurrentPos();

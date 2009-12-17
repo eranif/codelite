@@ -101,4 +101,17 @@ public:
 public:
 	virtual void Process(const wxString &output);
 };
+
+//----------------------------------------------------
+// Svn Checkout handler
+//----------------------------------------------------
+
+class SvnCheckoutHandler : public SvnDefaultCommandHandler {
+public:
+	SvnCheckoutHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner){};
+	virtual ~SvnCheckoutHandler(){};
+
+public:
+	virtual void Process(const wxString &output);
+};
 #endif // SVNCOMMITHANDLER_H

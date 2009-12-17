@@ -612,9 +612,7 @@ SvnCheckoutDialogBase::SvnCheckoutDialogBase( wxWindow* parent, wxWindowID id, c
 	m_staticText25->Wrap( -1 );
 	fgSizer8->Add( m_staticText25, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrl20 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-	m_textCtrl20->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
-	
+	m_textCtrl20 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer8->Add( m_textCtrl20, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowseDir = new wxButton( this, wxID_ANY, _("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -623,15 +621,6 @@ SvnCheckoutDialogBase::SvnCheckoutDialogBase( wxWindow* parent, wxWindowID id, c
 	sbSizer4->Add( fgSizer8, 1, wxEXPAND|wxALL, 5 );
 	
 	bSizer19->Add( sbSizer4, 0, wxEXPAND|wxALL, 5 );
-	
-	wxStaticBoxSizer* sbSizer5;
-	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Checkout Directory:") ), wxVERTICAL );
-	
-	m_staticTextCheckoutDirectory = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticTextCheckoutDirectory->Wrap( -1 );
-	sbSizer5->Add( m_staticTextCheckoutDirectory, 0, wxALL|wxEXPAND, 5 );
-	
-	bSizer19->Add( sbSizer5, 0, wxEXPAND|wxALL, 5 );
 	
 	
 	bSizer19->Add( 0, 0, 1, wxALL|wxEXPAND, 5 );
@@ -656,7 +645,6 @@ SvnCheckoutDialogBase::SvnCheckoutDialogBase( wxWindow* parent, wxWindowID id, c
 	
 	// Connect Events
 	m_comboBoxRepoURL->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( SvnCheckoutDialogBase::OnCheckoutDirectoryText ), NULL, this );
-	m_textCtrl20->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( SvnCheckoutDialogBase::OnCheckoutDirectoryText ), NULL, this );
 	m_buttonBrowseDir->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnCheckoutDialogBase::OnBrowseDirectory ), NULL, this );
 	m_button14->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnCheckoutDialogBase::OnOkUI ), NULL, this );
 }
@@ -665,7 +653,6 @@ SvnCheckoutDialogBase::~SvnCheckoutDialogBase()
 {
 	// Disconnect Events
 	m_comboBoxRepoURL->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( SvnCheckoutDialogBase::OnCheckoutDirectoryText ), NULL, this );
-	m_textCtrl20->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( SvnCheckoutDialogBase::OnCheckoutDirectoryText ), NULL, this );
 	m_buttonBrowseDir->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnCheckoutDialogBase::OnBrowseDirectory ), NULL, this );
 	m_button14->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnCheckoutDialogBase::OnOkUI ), NULL, this );
 }

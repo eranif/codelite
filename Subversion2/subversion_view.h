@@ -67,7 +67,6 @@ public:
 	 * @param reason the reason this handler was invoked
 	 */
 	void OnSvnInfo(const SvnInfo& svnInfo, int reason);
-	bool LoginIfNeeded(wxCommandEvent &event, wxString &loginString);
 
 protected:
 	// Handlers for SubversionPageBase events.
@@ -114,6 +113,7 @@ public:
 
 	void UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString &conflictedFiles, const wxArrayString &unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles);
 	void BuildTree();
+	void BuildTree(const wxString &root);
 };
 
 #endif // __subversion_page__

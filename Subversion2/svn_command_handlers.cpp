@@ -144,3 +144,8 @@ wxString SvnLogHandler::Compact(const wxString& message)
 	}
 	return compactMsg;
 }
+
+void SvnCheckoutHandler::Process(const wxString& output)
+{
+	wxUnusedVar(output);
+}

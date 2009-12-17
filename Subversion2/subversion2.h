@@ -24,7 +24,7 @@ private:
 
 protected:
 	void OnSettings(wxCommandEvent &event);
-	
+
 public:
 	void EditSettings();
 
@@ -43,6 +43,7 @@ protected:
 	void OnLog              (wxCommandEvent &event);
 	void OnIgnoreFile       (wxCommandEvent &event);
 	void OnIgnoreFilePattern(wxCommandEvent &event);
+	void OnSelectAsView     (wxCommandEvent &event);
 
 	wxMenu* CreateFileExplorerPopMenu();
 	bool    IsSubversionViewDetached();
@@ -88,7 +89,7 @@ public:
 
 	bool LoginIfNeeded        (wxCommandEvent &event, wxString& loginString);
 	bool GetNonInteractiveMode(wxCommandEvent &event);
-	
+
 protected:
 	void DoInitialize();
 	void DoSetSSH();

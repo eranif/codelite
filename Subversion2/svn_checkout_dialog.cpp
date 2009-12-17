@@ -8,6 +8,7 @@ SvnCheckoutDialog::SvnCheckoutDialog( wxWindow* parent, Subversion2* plugin )
 		: SvnCheckoutDialogBase( parent )
 		, m_plugin(plugin)
 {
+	m_textCtrl20->SetValue(wxGetCwd());
 	wxArrayString urls = m_plugin->GetSettings().GetUrls();
 	m_comboBoxRepoURL->Append(urls);
 	WindowAttrManager::Load(this, wxT("SvnCheckoutDialog"), m_plugin->GetManager()->GetConfigTool());
@@ -15,10 +16,10 @@ SvnCheckoutDialog::SvnCheckoutDialog( wxWindow* parent, Subversion2* plugin )
 
 SvnCheckoutDialog::~SvnCheckoutDialog()
 {
-	SvnSettingsData ssd = m_plugin->GetSettings(); 
+	SvnSettingsData ssd = m_plugin->GetSettings();
 	wxArrayString   urls;
 	wxString        selection = m_comboBoxRepoURL->GetValue();
-	
+
 	urls = ssd.GetUrls();
 	selection.Trim().Trim(false);
 	if(urls.Index(selection) == wxNOT_FOUND && selection.IsEmpty() == false) {
@@ -27,19 +28,6 @@ SvnCheckoutDialog::~SvnCheckoutDialog()
 	ssd.SetUrls(urls);
 	m_plugin->SetSettings(ssd);
 	WindowAttrManager::Save(this, wxT("SvnCheckoutDialog"), m_plugin->GetManager()->GetConfigTool());
-}
-
-void SvnCheckoutDialog::OnCheckoutDirectoryText( wxCommandEvent& event )
-{
-	wxString dir = m_textCtrl20->GetValue();
-	if(dir.IsEmpty() == false) {
-		wxString name = m_comboBoxRepoURL->GetValue().AfterLast(wxT('/'));
-		dir << wxFileName::GetPathSeparator() << name;
-		m_staticTextCheckoutDirectory->SetLabel( dir );	
-		
-	} else {
-		m_staticTextCheckoutDirectory->SetLabel(wxT(""));
-	}
 }
 
 void SvnCheckoutDialog::OnBrowseDirectory( wxCommandEvent& event )
@@ -53,7 +41,7 @@ void SvnCheckoutDialog::OnBrowseDirectory( wxCommandEvent& event )
 
 wxString SvnCheckoutDialog::GetTargetDir()
 {
-	return m_staticTextCheckoutDirectory->GetLabel();
+	return m_textCtrl20->GetLabel();
 }
 
 wxString SvnCheckoutDialog::GetURL()

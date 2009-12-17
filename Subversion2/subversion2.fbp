@@ -4280,7 +4280,7 @@
                                         <property name="name">m_textCtrlRootURL</property>
                                         <property name="permission">public</property>
                                         <property name="pos"></property>
-                                        <property name="size">300,-1</property>
+                                        <property name="size">500,-1</property>
                                         <property name="style">wxTE_READONLY|wxTE_RICH2</property>
                                         <property name="subclass"></property>
                                         <property name="tooltip"></property>
@@ -5441,7 +5441,7 @@
                 </object>
             </object>
         </object>
-        <object class="Dialog" expanded="1">
+        <object class="Dialog" expanded="0">
             <property name="bg"></property>
             <property name="center">wxBOTH</property>
             <property name="context_help"></property>

@@ -1579,14 +1579,14 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 		targetFile = rCtrl.GetFileName().GetFullPath();
 	}
 
-	MoveFuncImplDlg *dlg = new MoveFuncImplDlg(NULL, body, targetFile);
-	if (dlg->ShowModal() == wxID_OK) {
+	MoveFuncImplDlg dlg(NULL, body, targetFile);
+	dlg.SetTitle(wxT("Implement All Un-Implemented Methods"));
+	if (dlg.ShowModal() == wxID_OK) {
 		//get the updated data
-		targetFile = dlg->GetFileName();
-		body = dlg->GetText();
+		targetFile = dlg.GetFileName();
+		body = dlg.GetText();
 		OpenFileAndAppend(targetFile, body);
 	}
-	dlg->Destroy();
 }
 
 void ContextCpp::OnAddImpl(wxCommandEvent &e)
@@ -1665,14 +1665,14 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 			targetFile = rCtrl.GetFileName().GetFullPath();
 		}
 
-		MoveFuncImplDlg *dlg = new MoveFuncImplDlg(NULL, body, targetFile);
-		if (dlg->ShowModal() == wxID_OK) {
+		MoveFuncImplDlg dlg(NULL, body, targetFile);
+		dlg.SetTitle(wxT("Add Function Implmentation"));
+		if (dlg.ShowModal() == wxID_OK) {
 			//get the updated data
-			targetFile = dlg->GetFileName();
-			body = dlg->GetText();
+			targetFile = dlg.GetFileName();
+			body = dlg.GetText();
 			OpenFileAndAppend(targetFile, body);
 		}
-		dlg->Destroy();
 	}
 }
 
@@ -1687,9 +1687,7 @@ bool ContextCpp::OpenFileAndAppend ( const wxString &fileName, const wxString &t
 	if (editor->GetText().EndsWith(editor->GetEolString()) == false) {
 		editor->AppendText(editor->GetEolString());
 	}
-	if (editor->GetText().EndsWith(editor->GetEolString() + editor->GetEolString()) == false) {
-		editor->AppendText(editor->GetEolString());
-	}
+
 	int lineNum = editor->GetLineCount();
 	editor->GotoLine ( lineNum-1 );
 	editor->AppendText ( text );

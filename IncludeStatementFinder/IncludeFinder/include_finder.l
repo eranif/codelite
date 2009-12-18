@@ -50,7 +50,7 @@ static std::string currentFile;
 
 "L"?[']{c_char}+[']     {/* eat a string */}
 "L"?["]{s_char}*["]     {/* eat a string */}
-include                 {BEGIN(incl);}
+#[ \t]*include          {BEGIN(incl);}
 .                       {}
 <incl>\n                {BEGIN(INITIAL);}
 <incl>[ \t]*            {}      /* eat the whitespace        */

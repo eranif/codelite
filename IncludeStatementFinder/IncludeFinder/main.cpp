@@ -6,8 +6,7 @@
 int main(int argc, char **argv)
 {
 	std::vector<IncludeStatement> includes;
-	for(int i=0; i<10; i++)
-		IncludeFinder("../test.h", includes);
+	IncludeFinder("../test.h", includes);
 
 	for(size_t i=0; i<includes.size(); i++) {
 		IncludeStatement is = includes.at(i);

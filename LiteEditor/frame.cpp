@@ -292,11 +292,11 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("removeall_bookmarks"),     Frame::OnFileExistUpdateUI   )
 	EVT_UPDATE_UI(XRCID("next_fif_match"),          Frame::OnNextFiFMatchUI      )
 	EVT_UPDATE_UI(XRCID("previous_fif_match"),      Frame::OnPreviousFiFMatchUI  )
-	EVT_UPDATE_UI(XRCID("quickfinder_class"),       Frame::OnShowQuickFinderUI )
-	EVT_UPDATE_UI(XRCID("quickfinder_function"),    Frame::OnShowQuickFinderUI )
-	EVT_UPDATE_UI(XRCID("quickfinder_macro"),       Frame::OnShowQuickFinderUI )
-	EVT_UPDATE_UI(XRCID("quickfinder_typedef"),     Frame::OnShowQuickFinderUI )
-	EVT_UPDATE_UI(XRCID("quickfinder_file"),        Frame::OnShowQuickFinderUI )
+//	EVT_UPDATE_UI(XRCID("quickfinder_class"),       Frame::OnShowQuickFinderUI )
+//	EVT_UPDATE_UI(XRCID("quickfinder_function"),    Frame::OnShowQuickFinderUI )
+//	EVT_UPDATE_UI(XRCID("quickfinder_macro"),       Frame::OnShowQuickFinderUI )
+//	EVT_UPDATE_UI(XRCID("quickfinder_typedef"),     Frame::OnShowQuickFinderUI )
+//	EVT_UPDATE_UI(XRCID("quickfinder_file"),        Frame::OnShowQuickFinderUI )
 
 
 	//-------------------------------------------------------
@@ -3528,26 +3528,26 @@ void Frame::OnPreviousFiFMatchUI(wxUpdateUIEvent& e)
 
 void Frame::OnShowQuickFinderUI(wxUpdateUIEvent& e)
 {
-	// Determine the search type
-	wxString searchType;
-	wxString currentSearchType = EditorConfigST::Get()->GetStringValue(wxT("QuickFinderSearchType"));
-
-	if(e.GetId() == XRCID("quickfinder_class")) {
-		e.Check(ST_CLASS == currentSearchType);
-
-	} else if(e.GetId() == XRCID("quickfinder_function")) {
-		e.Check(ST_FUNCTION == currentSearchType);
-
-	} else if(e.GetId() == XRCID("quickfinder_macro")) {
-		e.Check(ST_MACRO == currentSearchType);
-
-	} else if(e.GetId() == XRCID("quickfinder_typedef")) {
-		e.Check(ST_TYPEDEF == currentSearchType);
-
-	} else {
-		e.Check(ST_WORKSPACE_FILE == currentSearchType);
-
-	}
+//	// Determine the search type
+//	wxString searchType;
+//	wxString currentSearchType = EditorConfigST::Get()->GetStringValue(wxT("QuickFinderSearchType"));
+//
+//	if(e.GetId() == XRCID("quickfinder_class")) {
+//		e.Check(ST_CLASS == currentSearchType);
+//
+//	} else if(e.GetId() == XRCID("quickfinder_function")) {
+//		e.Check(ST_FUNCTION == currentSearchType);
+//
+//	} else if(e.GetId() == XRCID("quickfinder_macro")) {
+//		e.Check(ST_MACRO == currentSearchType);
+//
+//	} else if(e.GetId() == XRCID("quickfinder_typedef")) {
+//		e.Check(ST_TYPEDEF == currentSearchType);
+//
+//	} else {
+//		e.Check(ST_WORKSPACE_FILE == currentSearchType);
+//
+//	}
 }
 
 void Frame::OnShowQuickFinder(wxCommandEvent& e)

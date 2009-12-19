@@ -621,6 +621,14 @@ public:
 	void GetUnImplementedFunctions(const wxString &scopeName, std::map<wxString, TagEntryPtr> &protos);
 
 	/**
+	 * @brief get list of virtual functions from the parent which were not override by
+	 * the derived class (scopeName)
+	 * @param scopeName derived class
+	 * @param protos  [output]
+	 */
+	void GetUnOverridedParentVirtualFunctions(const wxString &scopeName, bool onlyPureVirtual, std::vector<TagEntryPtr> &protos);
+
+	/**
 	 * @brief send event to the file tree to mark tags file as bold
 	 * @param bold
 	 */
@@ -654,13 +662,13 @@ public:
 	 * @return tag tree, must be freed by caller
 	 */
 	TagTreePtr TreeFromTags(const wxString& tags, int &count);
-	
+
 	/**
 	 * @brief lock/unlock the TagsManager locker
 	 */
 	void CrawlerLock();
 	void CrawlerUnlock();
-	
+
 protected:
 	std::map<wxString, bool> m_typeScopeCache;
 	std::map<wxString, bool> m_typeScopeContainerCache;

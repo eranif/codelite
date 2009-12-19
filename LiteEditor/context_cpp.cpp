@@ -25,6 +25,7 @@
 
 
 #include "pluginmanager.h"
+#include "implement_parent_virtual_functions.h"
 #include "debuggerasciiviewer.h"
 #include <wx/file.h>
 #include "threebuttondlg.h"
@@ -161,6 +162,8 @@ BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 	EVT_MENU(XRCID("move_impl"),                    ContextCpp::OnMoveImpl)
 	EVT_MENU(XRCID("add_impl"),                     ContextCpp::OnAddImpl)
 	EVT_MENU(XRCID("add_multi_impl"),               ContextCpp::OnAddMultiImpl)
+	EVT_MENU(XRCID("add_virtual_impl"),             ContextCpp::OnOverrideParentVritualFunctions)
+	EVT_MENU(XRCID("add_pure_virtual_impl"),        ContextCpp::OnOverrideParentVritualFunctions)
 	EVT_MENU(XRCID("setters_getters"),              ContextCpp::OnGenerateSettersGetters)
 	EVT_MENU(XRCID("add_include_file"),             ContextCpp::OnAddIncludeFile)
 	EVT_MENU(XRCID("rename_function"),              ContextCpp::OnRenameFunction)
@@ -1003,6 +1006,37 @@ void ContextCpp::OnSwapFiles(wxCommandEvent &event)
 	SwapFiles(GetCtrl().GetFileName());
 }
 
+
+void ContextCpp::DoMakeDoxyCommentString(DoxygenComment& dc)
+{
+	LEditor &editor = GetCtrl();
+	CommentConfigData data;
+	EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
+
+	wxString blockStart(wxT("/**\n"));
+	if (!data.GetUseSlash2Stars()) {
+		blockStart = wxT("/*!\n");
+	}
+
+	//prepend the prefix to the
+	wxString classPattern = data.GetClassPattern();
+	wxString funcPattern  = data.GetFunctionPattern();
+
+	//replace $(Name) here **before** the call to ExpandAllVariables()
+	classPattern.Replace(wxT("$(Name)"), dc.name);
+	funcPattern.Replace(wxT("$(Name)"), dc.name);
+
+	classPattern = ExpandAllVariables(classPattern, WorkspaceST::Get(), editor.GetProjectName(), wxEmptyString, editor.GetFileName().GetFullPath());
+	funcPattern = ExpandAllVariables(funcPattern, WorkspaceST::Get(), editor.GetProjectName(), wxEmptyString, editor.GetFileName().GetFullPath());
+
+	dc.comment.Replace(wxT("$(ClassPattern)"), classPattern);
+	dc.comment.Replace(wxT("$(FunctionPattern)"), funcPattern);
+
+	//close the comment
+	dc.comment << wxT(" */\n");
+	dc.comment.Prepend(blockStart);
+}
+
 void ContextCpp::OnInsertDoxyComment(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
@@ -1022,33 +1056,12 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent &event)
 		keyPrefix = wxT('@');
 	}
 
-	wxString blockStart(wxT("/**\n"));
-	if (!data.GetUseSlash2Stars()) {
-		blockStart = wxT("/*!\n");
-	}
-
 	DoxygenComment dc = TagsManagerST::Get()->GenerateDoxygenComment(editor.GetFileName().GetFullPath(), lineno, keyPrefix);
 	//do we have a comment?
 	if (dc.comment.IsEmpty())
 		return;
 
-	//prepend the prefix to the
-	wxString classPattern = data.GetClassPattern();
-	wxString funcPattern  = data.GetFunctionPattern();
-
-	//replace $(Name) here **before** the call to ExpandAllVariables()
-	classPattern.Replace(wxT("$(Name)"), dc.name);
-	funcPattern.Replace(wxT("$(Name)"), dc.name);
-
-	classPattern = ExpandAllVariables(classPattern, WorkspaceST::Get(), editor.GetProjectName(), wxEmptyString, editor.GetFileName().GetFullPath());
-	funcPattern = ExpandAllVariables(funcPattern, WorkspaceST::Get(), editor.GetProjectName(), wxEmptyString, editor.GetFileName().GetFullPath());
-
-	dc.comment.Replace(wxT("$(ClassPattern)"), classPattern);
-	dc.comment.Replace(wxT("$(FunctionPattern)"), funcPattern);
-
-	//close the comment
-	dc.comment << wxT(" */\n");
-	dc.comment.Prepend(blockStart);
+	DoMakeDoxyCommentString(dc);
 
 	editor.InsertTextWithIndentation(dc.comment, lineno);
 
@@ -1175,14 +1188,8 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 			editor.InsertTextWithIndentation(code, lineno);
 		}
 
-		if ( s_dlg->GetFormatText() ) {
-			IPlugin *formatter = PluginManager::Get()->GetPlugin(wxT("CodeFormatter"));
-			if (formatter) {
-				// code formatter is available, format the current source file
-				wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("format_source"));
-				Frame::Get()->GetEventHandler()->AddPendingEvent(e);
-			}
-		}
+		if ( s_dlg->GetFormatText() )
+			DoFormatActiveEditor();
 	}
 }
 
@@ -1536,6 +1543,61 @@ bool ContextCpp::DoGetFunctionBody(long curPos, long &blockStartPos, long &block
 	        (blockStartPos != wxNOT_FOUND);
 }
 
+void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
+{
+	LEditor &rCtrl = GetCtrl();
+	VALIDATE_WORKSPACE();
+
+	// Get the text from the file start point until the current position
+	int      pos      = rCtrl.GetCurrentPos();
+	wxString context  = rCtrl.GetTextRange(0, pos);
+	bool     onlyPure = e.GetId() == XRCID("add_pure_virtual_impl");
+
+	wxString scopeName = TagsManagerST::Get()->GetScopeName(context);
+	if (scopeName.IsEmpty() || scopeName == wxT("<global>")) {
+		wxMessageBox(_("Cant resolve scope properly. Found <") + scopeName + wxT(">"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+		return;
+	}
+
+	// get map of all unimlpemented methods
+	std::vector<TagEntryPtr> protos;
+	TagsManagerST::Get()->GetUnOverridedParentVirtualFunctions(scopeName, onlyPure, protos);
+
+	// No methods to add?
+	if(protos.empty())
+		return;
+
+	// Locate the swapped file
+	wxString targetFile(rCtrl.GetFileName().GetFullPath());
+	FindSwappedFile(rCtrl.GetFileName(), targetFile);
+
+	CommentConfigData data;
+	EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
+
+	//get doxygen comment based on file and line
+	wxChar keyPrefix(wxT('\\'));
+	if (data.GetUseShtroodel()) {
+		keyPrefix = wxT('@');
+	}
+
+	ImplementParentVirtualFunctionsDialog dlg(wxTheApp->GetTopWindow(), scopeName, protos, keyPrefix, this);
+	dlg.m_textCtrlImplFile->SetValue(targetFile);
+	if(dlg.ShowModal() == wxID_OK) {
+		wxString implFile = dlg.m_textCtrlImplFile->GetValue();
+		wxString impl     = dlg.GetImpl();
+		wxString decl     = dlg.GetDecl();
+		rCtrl.InsertText(rCtrl.GetCurrentPos(), decl);
+		if(dlg.m_checkBoxFormat->IsChecked())
+			DoFormatActiveEditor();
+
+		// Open teh implementation file and format it if needed
+		OpenFileAppendAndFormat(implFile, impl, dlg.m_checkBoxFormat->IsChecked());
+	}
+
+	// Restore this file to be the active one
+	Frame::Get()->GetMainBook()->OpenFile(GetCtrl().GetFileName().GetFullPath());
+}
+
 void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
@@ -1580,7 +1642,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 	}
 
 	MoveFuncImplDlg dlg(NULL, body, targetFile);
-	dlg.SetTitle(wxT("Implement All Un-Implemented Methods"));
+	dlg.SetTitle(wxT("Implement All Un-Implemented Functions"));
 	if (dlg.ShowModal() == wxID_OK) {
 		//get the updated data
 		targetFile = dlg.GetFileName();
@@ -1670,10 +1732,28 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 		if (dlg.ShowModal() == wxID_OK) {
 			//get the updated data
 			targetFile = dlg.GetFileName();
-			body = dlg.GetText();
+			body       = dlg.GetText();
 			OpenFileAndAppend(targetFile, body);
 		}
 	}
+}
+
+void ContextCpp::DoFormatActiveEditor()
+{
+	IPlugin *formatter = PluginManager::Get()->GetPlugin(wxT("CodeFormatter"));
+	if (formatter) {
+		// code formatter is available, format the current source file
+		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("format_source"));
+		Frame::Get()->GetEventHandler()->ProcessEvent(e);
+	}
+}
+
+bool ContextCpp::OpenFileAppendAndFormat(const wxString& fileName, const wxString& text, bool format)
+{
+	OpenFileAndAppend(fileName, text);
+	if(format)
+		DoFormatActiveEditor();
+	return true;
 }
 
 bool ContextCpp::OpenFileAndAppend ( const wxString &fileName, const wxString &text )
@@ -1683,7 +1763,6 @@ bool ContextCpp::OpenFileAndAppend ( const wxString &fileName, const wxString &t
 		return false;
 
 	// if needed, append EOL
-	// in an ideal world, we would like that the file will be terminated with 2xEOL
 	if (editor->GetText().EndsWith(editor->GetEolString()) == false) {
 		editor->AppendText(editor->GetEolString());
 	}

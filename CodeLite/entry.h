@@ -131,6 +131,15 @@ public:
 	 */
 	const bool IsContainer() const;
 
+	/**
+	 * @brief return true if this tag represents a constructor
+	 */
+	bool IsConstructor() const;
+	/**
+	 * @brief return true if this tag represents a destructor
+	 */
+	bool IsDestructor() const;
+
 	//------------------------------------------
 	// Operations
 	//------------------------------------------

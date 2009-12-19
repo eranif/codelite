@@ -910,14 +910,15 @@ wxString GizmosPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info)
 	//filter out all non virtual functions
 	for (std::vector< TagEntryPtr >::size_type i=0; i< no_dup_tags.size(); i++) {
 		TagEntryPtr tt = no_dup_tags.at(i);
-		bool collect(false);
-		if (info.implAllVirtual) {
-			collect = m_mgr->GetTagsManager()->IsVirtual(tt);
-		} else if (info.implAllPureVirtual) {
-			collect = m_mgr->GetTagsManager()->IsPureVirtual(tt);
-		}
 
-		if (collect) {
+		// Skip c-tors/d-tors
+		if(tt->IsDestructor() || tt->IsConstructor())
+			continue;
+
+		if (info.implAllVirtual && m_mgr->GetTagsManager()->IsVirtual(tt)) {
+			tags.push_back(tt);
+
+		} else if (info.implAllPureVirtual && m_mgr->GetTagsManager()->IsPureVirtual(tt)) {
 			tags.push_back(tt);
 		}
 	}

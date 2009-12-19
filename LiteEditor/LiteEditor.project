@@ -209,6 +209,10 @@
       <File Name="tagsparsersearchpathsbasedlg.h"/>
       <File Name="tags_parser_search_path_dlg.h"/>
       <File Name="tags_parser_search_path_dlg.cpp"/>
+      <File Name="implementparentvirtualfunctionsbase.cpp"/>
+      <File Name="implementparentvirtualfunctionsbase.h"/>
+      <File Name="implement_parent_virtual_functions.h"/>
+      <File Name="implement_parent_virtual_functions.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Compiler">
       <File Name="advanced_settings.h"/>
@@ -421,6 +425,7 @@
     <File Name="colourrequest.h"/>
     <File Name="refactorindexbuildjob.cpp"/>
     <File Name="refactorindexbuildjob.h"/>
+    <File Name="implparentvirtualfunctionsdata.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="code_parser.rc"/>
@@ -529,6 +534,7 @@
     <File Name="newquickwatch.fbp"/>
     <File Name="importfilesdialog.fbp"/>
     <File Name="workspacesettingsbase.fbp"/>
+    <File Name="implementparentvirtualfunctionsbase.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="breakpointsmgr.h"/>

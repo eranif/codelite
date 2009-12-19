@@ -531,3 +531,20 @@ void TagEntry::FromLine(const wxString& line)
 
 	this->Create(fileName, name, lineNumber, pattern, kind, extFields);
 }
+
+bool TagEntry::IsConstructor() const
+{
+	if(GetKind() != wxT("function") && GetKind() != wxT("prototype"))
+		return false;
+
+	return GetName() == GetScope();
+}
+
+bool TagEntry::IsDestructor() const
+{
+	if(GetKind() != wxT("function") && GetKind() != wxT("prototype"))
+		return false;
+
+	return GetName().StartsWith(wxT("~"));
+}
+

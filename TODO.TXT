@@ -2,7 +2,6 @@
 - Build System: add option to move regex Up/Down
 - Add new 'scp' plugin
 - Move Qmake to be an integrated part of codelite build system
-- add option to implement all non implemented virtual methods of parent
-- Add functiion implementationm: make sure that the dialog has the correct title
-- Add functiion implementationm: dont add extra LF when not needed
 - Add option to run 'environment' script
+- Support global namespace (::)
+- make size_t basic type

@@ -96,17 +96,17 @@ static int CtagsMgrTimerId = wxNewId();
 //------------------------------------------------------------------------------
 // Progress dialog
 //------------------------------------------------------------------------------
-class MyProgress : public wxProgressDialog 
+class MyProgress : public wxProgressDialog
 {
 public:
-	MyProgress(const wxString &title, size_t count) : 
+	MyProgress(const wxString &title, size_t count) :
 		wxProgressDialog(title, wxT(""), (int) count, NULL, wxPD_APP_MODAL|wxPD_AUTO_HIDE|wxPD_CAN_ABORT|wxPD_SMOOTH )
 	{
 		SetSize(500, -1);
 		Centre();
 	}
-		
-	virtual ~MyProgress() 
+
+	virtual ~MyProgress()
 	{}
 };
 
@@ -2217,3 +2217,95 @@ void TagsManager::CrawlerUnlock()
 	m_crawlerLocker.Leave();
 }
 
+void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName, bool onlyPureVirtual, std::vector<TagEntryPtr> &protos)
+{
+	std::vector<TagEntryPtr> tags;
+	std::map<wxString, TagEntryPtr> parentSignature2tag;
+	std::map<wxString, TagEntryPtr> classSignature2tag;
+
+	GetDatabase()->GetTagsByPath(scopeName, tags);
+	if(tags.size() != 1) {
+		return;
+	}
+
+	TagEntryPtr classTag = tags.at(0);
+	if(classTag->GetKind() != wxT("class") && classTag->GetKind() != wxT("struct"))
+		return;
+
+
+	// Step 1:
+	// ========
+	// Compoze a list of all virtual functions from the direct parent(s)
+	// class (there could be a multiple inheritance...)
+	wxString      ineheritsList = classTag->GetInherits();
+	wxArrayString parents = wxStringTokenize(ineheritsList, wxT(","), wxTOKEN_STRTOK);
+	wxArrayString kind;
+
+	tags.clear();
+	kind.Add(wxT("prototype"));
+	kind.Add(wxT("function" ));
+	for(wxArrayString::size_type i=0; i<parents.GetCount(); i++) {
+		GetDatabase()->GetTagsByScopeAndKind(parents.Item(i), kind, tags);
+	}
+
+	for(wxArrayString::size_type i=0; i<tags.size(); i++) {
+		TagEntryPtr t   = tags.at(i);
+
+		// Skip c-tors/d-tors
+		if(t->IsDestructor() || t->IsConstructor())
+			continue;
+
+		if( onlyPureVirtual ) {
+
+			// Collect only pure virtual methods
+			if( IsPureVirtual(t) ) {
+				TagEntryPtr t   = tags.at(i);
+				wxString    sig = NormalizeFunctionSig(t->GetSignature(), 0);
+				sig.Prepend(t->GetName());
+				parentSignature2tag[sig] = tags.at(i);
+			}
+
+		} else {
+
+			// Collect both virtual and pure virtual
+			if( IsVirtual(tags.at(i)) || IsPureVirtual(tags.at(i)) ) {
+				wxString    sig = NormalizeFunctionSig(t->GetSignature(), 0);
+				sig.Prepend(t->GetName());
+				parentSignature2tag[sig] = tags.at(i);
+			}
+		}
+	}
+
+	// Step 2:
+	// ========
+	// Collect a list of function prototypes from the class
+	tags.clear();
+	GetDatabase()->GetTagsByScopeAndKind(scopeName, kind, tags);
+	for(size_t i=0; i<tags.size(); i++){
+		TagEntryPtr t   = tags.at(i);
+		wxString    sig = NormalizeFunctionSig(t->GetSignature(), 0);
+		sig.Prepend(t->GetName());
+		classSignature2tag[sig] = t;
+	}
+
+	// Step 3:
+	// =======
+	// remove any entry from the parent tags which exists in the child tags
+	std::map<wxString, TagEntryPtr>::iterator iter = classSignature2tag.begin();
+	for(; iter != classSignature2tag.end(); iter++) {
+		if(parentSignature2tag.find(iter->first) != parentSignature2tag.end()) {
+			// the current signature exists both in the child and the parent,
+			// remove it
+			parentSignature2tag.erase(iter->first);
+		}
+	}
+
+	// Step 4:
+	// =======
+	// parentSignature2tag now contains map of signature/tags of virtual functions which exists
+	// in the parent but could not be found in the child
+	iter = parentSignature2tag.begin();
+	for(; iter != parentSignature2tag.end(); iter++) {
+		protos.push_back(iter->second);
+	}
+}

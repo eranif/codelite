@@ -28,6 +28,7 @@
 #include "context_base.h"
 #include "cpptoken.h"
 #include "cl_calltip.h"
+#include "ctags_manager.h"
 #include <map>
 #include "entry.h"
 
@@ -125,12 +126,14 @@ public:
 	virtual void OnMoveImpl(wxCommandEvent &e);
 	virtual void OnAddImpl(wxCommandEvent &e);
 	virtual void OnAddMultiImpl(wxCommandEvent &e);
+	virtual void OnOverrideParentVritualFunctions(wxCommandEvent &e);
 	virtual void OnRenameFunction(wxCommandEvent &e);
 	virtual void OnRetagFile(wxCommandEvent &e);
 	virtual void OnUserTypedXChars(const wxString &word);
 	virtual void OnCallTipClick(wxScintillaEvent &e);
 	virtual void OnCalltipCancel();
 	DECLARE_EVENT_TABLE();
+
 private:
 	wxString      GetWordUnderCaret();
 	wxString      GetFileImageString(const wxString &ext);
@@ -143,6 +146,10 @@ private:
 	void          MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr> &tags);
 	void          DoOpenWorkspaceFile();
 
+public:
+	void          DoMakeDoxyCommentString(DoxygenComment &dc);
+
+private:
 	/**
 	 * \brief try to find a swapped file for this rhs. The logic is based on the C++ coding conventions
 	 * a swapped file for a.cpp will be a.h or a.hpp
@@ -184,6 +191,18 @@ private:
 	 * \return true on success, false otherwise
 	 */
 	bool OpenFileAndAppend(const wxString &fileName, const wxString &text);
+
+	/**
+	 * @brief open file specified by the 'fileName' parameter and append 'text'
+	 * to its content
+	 * @param fileName file to open. Must be in full path
+	 * @param text string text to append
+	 * @param format set to true of formatting should take place after text insertion
+	 * @return true on success, false otherwise
+	 */
+	bool OpenFileAppendAndFormat(const wxString &fileName, const wxString &text, bool format);
+
+	void DoFormatActiveEditor();
 };
 
 #endif // CONTEXT_CPP_H

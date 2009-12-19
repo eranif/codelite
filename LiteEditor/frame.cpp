@@ -250,7 +250,11 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	//-------------------------------------------------------
 	EVT_MENU(wxID_FIND,                         Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_REPLACE,                      Frame::DispatchCommandEvent)
-	EVT_MENU(XRCID("show_quick_finder"),        Frame::OnShowQuickFinder   )
+	EVT_MENU(XRCID("quickfinder_class"),        Frame::OnShowQuickFinder   )
+	EVT_MENU(XRCID("quickfinder_function"),     Frame::OnShowQuickFinder   )
+	EVT_MENU(XRCID("quickfinder_macro"),        Frame::OnShowQuickFinder   )
+	EVT_MENU(XRCID("quickfinder_typedef"),      Frame::OnShowQuickFinder   )
+	EVT_MENU(XRCID("quickfinder_file"),         Frame::OnShowQuickFinder   )
 	EVT_MENU(XRCID("find_next"),                Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("find_previous"),            Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("find_next_at_caret"),       Frame::DispatchCommandEvent)
@@ -288,6 +292,11 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("removeall_bookmarks"),     Frame::OnFileExistUpdateUI   )
 	EVT_UPDATE_UI(XRCID("next_fif_match"),          Frame::OnNextFiFMatchUI      )
 	EVT_UPDATE_UI(XRCID("previous_fif_match"),      Frame::OnPreviousFiFMatchUI  )
+	EVT_UPDATE_UI(XRCID("quickfinder_class"),       Frame::OnShowQuickFinderUI )
+	EVT_UPDATE_UI(XRCID("quickfinder_function"),    Frame::OnShowQuickFinderUI )
+	EVT_UPDATE_UI(XRCID("quickfinder_macro"),       Frame::OnShowQuickFinderUI )
+	EVT_UPDATE_UI(XRCID("quickfinder_typedef"),     Frame::OnShowQuickFinderUI )
+	EVT_UPDATE_UI(XRCID("quickfinder_file"),        Frame::OnShowQuickFinderUI )
 
 
 	//-------------------------------------------------------
@@ -3517,6 +3526,30 @@ void Frame::OnPreviousFiFMatchUI(wxUpdateUIEvent& e)
 	e.Enable(GetOutputPane()->GetFindResultsTab()->GetPageCount() > 0);
 }
 
+void Frame::OnShowQuickFinderUI(wxUpdateUIEvent& e)
+{
+	// Determine the search type
+	wxString searchType;
+	wxString currentSearchType = EditorConfigST::Get()->GetStringValue(wxT("QuickFinderSearchType"));
+
+	if(e.GetId() == XRCID("quickfinder_class")) {
+		e.Check(ST_CLASS == currentSearchType);
+
+	} else if(e.GetId() == XRCID("quickfinder_function")) {
+		e.Check(ST_FUNCTION == currentSearchType);
+
+	} else if(e.GetId() == XRCID("quickfinder_macro")) {
+		e.Check(ST_MACRO == currentSearchType);
+
+	} else if(e.GetId() == XRCID("quickfinder_typedef")) {
+		e.Check(ST_TYPEDEF == currentSearchType);
+
+	} else {
+		e.Check(ST_WORKSPACE_FILE == currentSearchType);
+
+	}
+}
+
 void Frame::OnShowQuickFinder(wxCommandEvent& e)
 {
 	// the proper way of showing it, is by setting the configuration to true and
@@ -3526,6 +3559,25 @@ void Frame::OnShowQuickFinder(wxCommandEvent& e)
 	opts->SetShowQuickFinder( true );
 	EditorConfigST::Get()->SetOptions( opts );
 
+	// Determine the search type
+	wxString searchType;
+	if(e.GetId() == XRCID("quickfinder_class")) {
+		searchType = ST_CLASS;
+
+	} else if(e.GetId() == XRCID("quickfinder_function")) {
+		searchType = ST_FUNCTION;
+
+	} else if(e.GetId() == XRCID("quickfinder_macro")) {
+		searchType = ST_MACRO;
+
+	} else if(e.GetId() == XRCID("quickfinder_typedef")) {
+		searchType = ST_TYPEDEF;
+	} else {
+		searchType = ST_WORKSPACE_FILE;
+	}
+
+	// Set the search type
+	EditorConfigST::Get()->SaveStringValue(wxT("QuickFinderSearchType"), searchType);
 	PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
 }
 

@@ -44,12 +44,12 @@ static unsigned char list_bits[] = {
 #    define DARK_FACTOR     1.2
 #endif
 
-static wxString ST_CLASS          = wxT("Class, struct or union");
-static wxString ST_WORKSPACE_FILE = wxT("Workspace file");
-static wxString ST_MACRO          = wxT("Macro");
-static wxString ST_TYPEDEF        = wxT("Typedef");
-static wxString ST_FUNCTION       = wxT("Function");
-static wxString TYPE_HERE_TEXT    = wxT("<Type String to Search>");
+wxString ST_CLASS          = wxT("Class, struct or union");
+wxString ST_WORKSPACE_FILE = wxT("Workspace file");
+wxString ST_MACRO          = wxT("Macro");
+wxString ST_TYPEDEF        = wxT("Typedef");
+wxString ST_FUNCTION       = wxT("Function");
+wxString TYPE_HERE_TEXT    = wxT("<Type String to Search>");
 
 
 BEGIN_EVENT_TABLE(OutputViewControlBar, wxPanel)
@@ -366,6 +366,9 @@ void OutputViewControlBar::OnMenuSelection(wxCommandEvent& event)
 void OutputViewControlBar::OnEditorSettingsChanged(wxCommandEvent& event)
 {
 	event.Skip();
+
+	// Reload the string from the disk
+	m_searchBar->m_searchType = EditorConfigST::Get()->GetStringValue(wxT("QuickFinderSearchType"));
 	DoShowQuickFinder(EditorConfigST::Get()->GetOptions()->GetShowQuickFinder());
 }
 

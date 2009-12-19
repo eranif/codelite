@@ -25,9 +25,8 @@ match_brace|Edit|Match Brace|Ctrl-]
 select_to_brace|Edit|Select to Brace|Ctrl-Shift-E
 complete_word|Edit|Complete Word|Ctrl-SPACE
 function_call_tip|Edit|Display Function Calltip|Ctrl-Shift-SPACE
-convert_eol_win|Edit|Convert to Windows Format|Ctrl-Shift-W
-convert_eol_unix|Edit|Convert to Unix Format|Ctrl-Shift-U
-convert_eol_mac|Edit|Convert to Mac Format|Ctrl-Shift-M
+convert_eol_win|Edit|Convert to Windows Format|
+convert_eol_unix|Edit|Convert to Unix Format|
 word_wrap|View|Word Wrap|
 toggle_fold|View|Toggle Current Fold|Alt-RIGHT
 fold_all|View|Toggle All Folds|Ctrl-Alt-RIGHT
@@ -48,7 +47,11 @@ show_build_toolbar|View::Toolbars|Build ToolBar|
 show_debug_toolbar|View::Toolbars|Debug ToolBar|
 toggle_panes|View|Toggle All Panes|Ctrl-M
 find_in_files|Search|Find In Files...|Ctrl-Shift-F
-show_quick_finder|Search|Show QuickFinder...|Ctrl-Shift-Y
+quickfinder_class|Search::Open QuickFinder for|Class, struct or union|Ctrl-Shift-C
+quickfinder_function|Search::Open QuickFinder for|Function|Ctrl-Shift-U
+quickfinder_macro|Search::Open QuickFinder for|Macro|Ctrl-Shift-M
+quickfinder_typedef|Search::Open QuickFinder for|Typedef|Ctrl-Shift-P
+quickfinder_file|Search::Open QuickFinder for|Workspace file|Ctrl-Shift-W
 wxID_FIND|Search|Find...|Ctrl-K
 wxID_REPLACE|Search|Replace...|Ctrl-H
 find_next|Search|Find Next|F3
@@ -132,8 +135,8 @@ setters_getters|C++::Code Generation / Refactoring|Generate Setters/Getters...|
 move_impl|C++::Code Generation / Refactoring|Move Function Implementation to...|
 add_impl|C++::Code Generation / Refactoring|Add Function Implementation...|
 rename_function|C++::Code Generation / Refactoring|Rename Symbol...|Ctrl-Shift-H
-comment_selection|C++|Comment Selection|Ctrl-Shift-C
-comment_line|C++|Toggle Line Comment|Ctrl-Shift-P
+comment_selection|C++|Comment Selection|
+comment_line|C++|Toggle Line Comment|
 add_include_file|C++|Add Include File|Ctrl-Shift-I
 insert_breakpoint|C++|Toggle Breakpoint|F9
 toggle_bookmark|C++|Toggle Bookmark|Ctrl-B

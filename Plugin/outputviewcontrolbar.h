@@ -10,11 +10,23 @@
 #include <wx/textctrl.h>
 
 //--------------------------------------------------------
+
+extern wxString ST_CLASS;
+extern wxString ST_WORKSPACE_FILE;
+extern wxString ST_MACRO;
+extern wxString ST_TYPEDEF;
+extern wxString ST_FUNCTION;
+extern wxString TYPE_HERE_TEXT;
+
+//--------------------------------------------------------
+
 class wxAuiManager;
 class OutputViewControlBarButton;
 class Notebook;
 class OutputViewSearchCtrl;
 class OutputViewControlBarToggleButton;
+
+//--------------------------------------------------------
 
 class OutputViewControlBar : public wxPanel
 {

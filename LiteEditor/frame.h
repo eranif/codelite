@@ -167,7 +167,7 @@ public:
 	DebuggerPane *GetDebuggerPane() {
 		return m_debuggerPane;
 	}
-	
+
 	/**
 	 * @return the workspace pane (the one that contained the Symbol view & class view)
 	 */
@@ -257,7 +257,7 @@ private:
 	wxString CreateWorkspaceTable();
 	wxString CreateFilesTable();
 	void     StartTimer();
-	
+
 private:
 	/**
 	 * Construct all the GUI controls of the main frame. this function is called
@@ -448,7 +448,8 @@ protected:
 	void OnShowWhitespace(wxCommandEvent &e);
 	void OnShowFullScreen(wxCommandEvent &e);
 	void OnSetStatusMessage(wxCommandEvent &e);
-	void OnShowQuickFinder (wxCommandEvent &e);
+	void OnShowQuickFinder  (wxCommandEvent &e);
+	void OnShowQuickFinderUI(wxUpdateUIEvent &e);
 	void OnShowActiveProjectSettings(wxCommandEvent &e);
 	void OnShowActiveProjectSettingsUI(wxUpdateUIEvent &e);
 	void OnLoadPerspective(wxCommandEvent &e);

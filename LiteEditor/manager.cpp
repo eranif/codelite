@@ -742,9 +742,9 @@ void Manager::RetagWorkspace(bool quickRetag)
 		fcFileOpener::Instance()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
 	}
 
+	wxBusyCursor waitPlease;
 	{
 		wxWindowDisabler disableAll;
-		wxBusyCursor waitPlease;
 		
 		Frame::Get()->SetStatusMessage(wxT("Scanning for include files to parse. please wait..."), 0);
 

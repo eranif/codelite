@@ -535,7 +535,7 @@ void SubversionView::OnRevert(wxCommandEvent& event)
 	if(m_plugin->LoginIfNeeded(event, loginString) == false) {
 		return;
 	}
-	command << m_plugin->GetSvnExeName(true) << loginString << wxT(" revert --recursive ");
+	command << m_plugin->GetSvnExeName(false) << loginString << wxT(" revert --recursive ");
 
 	if (m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
 		// Concatenate list of files to be updated
@@ -715,7 +715,7 @@ void SubversionView::OnCleanup(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
 	wxString command;
-	command << m_plugin->GetSvnExeName() << wxT(" cleanup ");
+	command << m_plugin->GetSvnExeName(false) << wxT(" cleanup ");
 	m_plugin->GetConsole()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin, wxNOT_FOUND, NULL));
 }
 

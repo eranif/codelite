@@ -16,6 +16,7 @@ public:
 	std::string m_scope;
 	bool        m_isTemplate;
 	std::string m_templateInitList;
+	bool        m_isGlobalScope;
 
 public:
 	ExpressionResult();

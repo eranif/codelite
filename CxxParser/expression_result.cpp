@@ -40,5 +40,6 @@ void ExpressionResult::Reset()
 	m_isPtr = false;
 	m_scope = "";
 	m_isTemplate = false;
+	m_isGlobalScope = false;
 	m_templateInitList = "";
 }

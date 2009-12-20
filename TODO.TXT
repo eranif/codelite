@@ -3,5 +3,4 @@
 - Add new 'scp' plugin
 - Move Qmake to be an integrated part of codelite build system
 - Add option to run 'environment' script
-- Support global namespace (::)
-- make size_t basic type
+

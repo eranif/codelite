@@ -281,8 +281,8 @@ bool Language::ProcessExpression(const wxString& stmt,
 			result = ParseExpression(word);
 
 
-			//parsing failed?
-			if (result.m_name.empty()) {
+			// Parsing failed?
+			if (result.m_name.empty() && result.m_isGlobalScope == false) {
 				wxLogMessage(wxString::Format(wxT("Failed to parse '%s' from '%s'"), word.c_str(), statement.c_str()));
 				evaluationSucceeded = false;
 				break;
@@ -299,6 +299,11 @@ bool Language::ProcessExpression(const wxString& stmt,
 
 				typeScope = result.m_scope.empty() ? wxT("<global>") : _U(result.m_scope.c_str());
 				typeName = _U(result.m_name.c_str());
+
+			} else if (result.m_isGlobalScope) {
+				typeScope = wxT("<global>");
+				typeName  = wxT("<global>");
+
 			} else if (result.m_isThis) {
 				//-----------------------------------------
 				// special handle for 'this' keyword
@@ -860,8 +865,14 @@ wxString Language::GetScopeName(const wxString &in, std::vector<wxString> *addit
 
 ExpressionResult Language::ParseExpression(const wxString &in)
 {
-	const wxCharBuffer buf = _C(in);
-	ExpressionResult result = parse_expression(buf.data());
+	ExpressionResult result;
+	if( in.IsEmpty() ) {
+		result.m_isGlobalScope = true;
+
+	} else {
+		const wxCharBuffer buf = _C(in);
+		result = parse_expression(buf.data());
+	}
 	return result;
 }
 

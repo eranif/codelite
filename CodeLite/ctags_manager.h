@@ -721,7 +721,7 @@ protected:
 	void           UpdateFileTree(const std::vector<wxFileName> &files, bool bold);
 	void           UpdateFileTree(ITagsStorage *td, bool bold);
 	void           DoFilterNonNeededFilesForRetaging(wxArrayString &strFiles, ITagsStorage *db);
-	void           DoGetFunctionTipForEmptyExpression(const wxString &word, const wxString &text, std::vector<TagEntryPtr> &tips);
+	void           DoGetFunctionTipForEmptyExpression(const wxString &word, const wxString &text, std::vector<TagEntryPtr> &tips, bool globalScopeOnly = false);
 };
 
 /// create the singleton typedef

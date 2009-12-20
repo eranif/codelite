@@ -606,19 +606,33 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 	}
 
 	wxString oper;
-	if (expression.IsEmpty()) {
-		//collect all the tags from the current scope, and
-		//from the global scope
+	wxString tmpExp(expression);
+	tmpExp.Trim().Trim(false);
+
+	if ( tmpExp.IsEmpty() ) {
+		// Collect all the tags from the current scope, and
+		// from the global scope
 		scope = GetLanguage()->OptimizeScope(text);
 		std::vector<TagEntryPtr> tmpCandidates;
-		GetGlobalTags(word, tmpCandidates);
-		GetLocalTags(word, scope, tmpCandidates, PartialMatch | IgnoreCaseSensitive);
-		GetLocalTags(word, funcSig, tmpCandidates, PartialMatch | IgnoreCaseSensitive);
+		GetGlobalTags     (word, tmpCandidates);
+		GetLocalTags      (word, scope,   tmpCandidates, PartialMatch | IgnoreCaseSensitive);
+		GetLocalTags      (word, funcSig, tmpCandidates, PartialMatch | IgnoreCaseSensitive);
 		TagsByScopeAndName(scopeName, word, tmpCandidates);
+
 		for (size_t i=0; i<additionlScopes.size(); i++) {
 			TagsByScopeAndName(additionlScopes.at(i), word, tmpCandidates);
 		}
-		RemoveDuplicates(tmpCandidates, candidates);
+
+		RemoveDuplicates  (tmpCandidates, candidates);
+
+	} else if( tmpExp == wxT("::") ) {
+		// Global scope only
+		// e.g.: ::My <CTRL>+<SPACE>
+		// Collect all tags from the global scope which starts with 'My' (i.e. 'word')
+		std::vector<TagEntryPtr> tmpCandidates;
+		GetGlobalTags     (word, tmpCandidates);
+		RemoveDuplicates  (tmpCandidates, candidates);
+
 	} else {
 		wxString typeName, typeScope, dummy;
 		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
@@ -658,17 +672,24 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 	expression.erase(expression.find_last_not_of(trimRightString)+1);
 	wxString oper;
 	wxString scopeTeamplateInitList;
+	bool     isGlobalScopeOperator(false);
 
-	PERF_BLOCK("ProcessExpression") {
-		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, scopeTeamplateInitList);
-		if (!res) {
-			PERF_END();
-			wxLogMessage(wxString::Format(wxT("Failed to resolve %s"), expression.c_str()));
-			return false;
+	if( expression == wxT("::") ) {
+		// global scope
+		isGlobalScopeOperator = true;
+
+	} else {
+
+		PERF_BLOCK("ProcessExpression") {
+			bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, scopeTeamplateInitList);
+			if (!res) {
+				PERF_END();
+				wxLogMessage(wxString::Format(wxT("Failed to resolve %s"), expression.c_str()));
+				return false;
+			}
 		}
 	}
-
-	//load all tags from the database that matches typeName & typeScope
+	// Load all tags from the database that matches typeName & typeScope
 	wxString scope;
 	if (typeScope == wxT("<global>"))
 		scope << typeName;
@@ -679,7 +700,12 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 	//incase the last operator used was '::', retrieve all kinds of tags. Otherwise (-> , . operators were used)
 	//retrieve only the members/prototypes/functions/enums
 	wxArrayString filter;
-	if (oper == wxT("::")) {
+
+	if ( isGlobalScopeOperator ) {
+		// Fetch all tags from the global scope
+		GetDatabase()->GetTagsByScope(wxT("<global>"), candidates);
+
+	} else if (oper == wxT("::")) {
 		filter.Add(wxT("function"));
 		filter.Add(wxT("member"));
 		filter.Add(wxT("prototype"));
@@ -965,6 +991,7 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno,
 		return NULL;
 	}
 
+	expression.Trim().Trim(false);
 	if (expression.IsEmpty()) {
 		DoGetFunctionTipForEmptyExpression(word, text, tips);
 
@@ -982,6 +1009,10 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno,
 				DoGetFunctionTipForEmptyExpression(t->GetScope(), text, tips);
 			}
 		}
+	} else if( expression == wxT("::") ) {
+		// Test the global scope
+		DoGetFunctionTipForEmptyExpression(word, text, tips, true);
+
 	} else {
 		wxString oper, dummy;
 		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
@@ -2191,21 +2222,24 @@ void TagsManager::GetTagsByKind(std::vector<TagEntryPtr>& tags, const wxArrayStr
 	m_workspaceDatabase->GetTagsByKind(kind, wxEmptyString, ITagsStorage::OrderNone, tags);
 }
 
-void TagsManager::DoGetFunctionTipForEmptyExpression(const wxString& word, const wxString& text, std::vector<TagEntryPtr>& tips)
+void TagsManager::DoGetFunctionTipForEmptyExpression(const wxString& word, const wxString& text, std::vector<TagEntryPtr>& tips, bool globalScopeOnly/* = false*/)
 {
 	std::vector<TagEntryPtr> candidates;
 	std::vector<wxString>    additionlScopes;
 
 	//we are probably examining a global function, or a scope function
-	wxString scopeName = GetLanguage()->GetScopeName(text, &additionlScopes);
 	GetGlobalTags(word, candidates, ExactMatch);
-	TagsByScopeAndName(scopeName, word, candidates);
-	for (size_t i=0; i<additionlScopes.size(); i++) {
-		TagsByScopeAndName(additionlScopes.at(i), word, candidates);
+
+	if( !globalScopeOnly ) {
+		wxString scopeName = GetLanguage()->GetScopeName(text, &additionlScopes);
+		TagsByScopeAndName(scopeName, word, candidates);
+		for (size_t i=0; i<additionlScopes.size(); i++) {
+			TagsByScopeAndName(additionlScopes.at(i), word, candidates);
+		}
+
 	}
 	GetFunctionTipFromTags(candidates, word, tips);
 }
-
 
 void TagsManager::CrawlerLock()
 {

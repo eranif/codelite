@@ -444,6 +444,7 @@
 #define wxSCI_LEX_SVN_MERGED 	3
 #define wxSCI_LEX_SVN_DELETED 	4
 #define wxSCI_LEX_SVN_ADDED 	5
+#define wxSCI_LEX_SVN_INFO  	6
 
 //ERAN - END
 

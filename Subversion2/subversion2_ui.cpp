@@ -199,10 +199,8 @@ SvnShellBase::SvnShellBase( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 	
-	m_textCtrlOutput = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2 );
-	m_textCtrlOutput->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
-	
-	bSizer9->Add( m_textCtrlOutput, 1, wxALL|wxEXPAND, 5 );
+	m_sci = new wxScintilla(this);
+	bSizer9->Add( m_sci, 1, wxALL|wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer9 );
 	this->Layout();

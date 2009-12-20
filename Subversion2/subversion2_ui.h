@@ -26,6 +26,7 @@
 #include <wx/choice.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
+#include <wx/wxscintilla.h>
 #include <wx/checkbox.h>
 #include <wx/statbox.h>
 #include <wx/bitmap.h>
@@ -135,7 +136,7 @@ class SvnShellBase : public wxPanel
 	private:
 	
 	protected:
-		wxTextCtrl* m_textCtrlOutput;
+		wxScintilla* m_sci;
 	
 	public:
 		

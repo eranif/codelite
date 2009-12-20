@@ -57,23 +57,36 @@ static void ColouriseSvnDoc(
 			lineBuffer[linePos] = '\0';
 			std::string str(lineBuffer);
 
+			// Trim
+			str.erase(0, str.find_first_not_of(" \t\r\n\v"));
+
 			if (str.length() > 2) {
 				if (str.at(0) == 'U' && str.at(1) == ' ') {
 					styler.ColourTo(i, SCLEX_SVN_UPDATED);
+
 				} else if (str.at(0) == '_' && str.at(1) == 'U' && str.at(1) == ' ') {
 					styler.ColourTo(i, SCLEX_SVN_UPDATED);
+
 				} else if (str.at(0) == 'U' && str.at(1) == 'U' && str.at(1) == ' ') {
 					styler.ColourTo(i, SCLEX_SVN_UPDATED);
+
 				} else if (str.at(0) == 'C' && str.at(1) == ' ') {
 					styler.ColourTo(i, SCLEX_SVN_CONFLICT);
+
 				} else if (str.at(0) == 'G' && str.at(1) == ' ') {
 					styler.ColourTo(i, SCLEX_SVN_MERGED);
+
 				} else if (str.at(0) == 'M' && str.at(1) == ' ') {
 					styler.ColourTo(i, SCLEX_SVN_MERGED);
+
 				} else if (str.at(0) == 'A' && str.at(1) == ' ') {
 					styler.ColourTo(i, SCLEX_SVN_ADDED);
+
 				} else if (str.at(0) == 'D' && str.at(1) == ' ') {
 					styler.ColourTo(i, SCLEX_SVN_DELETED);
+
+				} else if (str.at(0) == '=' || str.at(0) == '-') {
+					styler.ColourTo(i, SCLEX_SVN_INFO);
 				} else {
 					styler.ColourTo(i, SCLEX_SVN_DEFAULT);
 				}

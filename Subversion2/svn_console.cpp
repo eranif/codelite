@@ -45,6 +45,7 @@ SvnConsole::SvnConsole(wxWindow *parent, Subversion2* plugin)
 	m_sci->SetMarginWidth(1, 0);
 	m_sci->SetMarginWidth(2, 0);
 
+	m_sci->SetWrapMode(wxSCI_WRAP_CHAR);
 	m_sci->SetWrapStartIndent(4);
 	m_sci->SetWrapVisualFlags(2);
 	m_sci->SetScrollWidthTracking(true);

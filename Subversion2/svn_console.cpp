@@ -56,19 +56,19 @@ SvnConsole::SvnConsole(wxWindow *parent, Subversion2* plugin)
 	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_INFO,     wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
 	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_INFO,     wxSystemSettings::GetColour (wxSYS_COLOUR_WINDOW ) );
 
-	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_ADDED,    wxT("DARK GREEN") );
+	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_ADDED,    wxT("PALE GREEN") );
 	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_ADDED,    wxSystemSettings::GetColour (wxSYS_COLOUR_WINDOW ) );
 
-	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_MERGED,   wxT("DARK GREEN") );
+	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_MERGED,   wxT("PALE GREEN") );
 	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_MERGED,   wxSystemSettings::GetColour (wxSYS_COLOUR_WINDOW ) );
 
-	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_UPDATED,  wxT("DARK GREEN") );
+	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_UPDATED,  wxT("PALE GREEN") );
 	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_UPDATED,  wxSystemSettings::GetColour (wxSYS_COLOUR_WINDOW ) );
 
 	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_CONFLICT, wxT("RED") );
 	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_CONFLICT, wxSystemSettings::GetColour (wxSYS_COLOUR_WINDOW ) );
 
-	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_DELETED,  wxT("DARK GREEN") );
+	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_DELETED,  wxT("PALE GREEN") );
 	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_DELETED,  wxSystemSettings::GetColour ( wxSYS_COLOUR_WINDOW ) );
 
 	m_sci->StyleSetFont ( wxSCI_LEX_SVN_INFO,     font );

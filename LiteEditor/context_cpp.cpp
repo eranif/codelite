@@ -331,8 +331,21 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 	int line = rCtrl.LineFromPosition(curpos);
 	if (nChar == wxT('\n')) {
 
-		int prevpos = wxNOT_FOUND;
-		wxChar ch = rCtrl.PreviousChar(curpos, prevpos);
+		int      prevpos (wxNOT_FOUND);
+		int      foundPos(wxNOT_FOUND);
+		wxString word;
+
+		wxChar ch = rCtrl.PreviousChar(curpos, prevpos );
+		word      = rCtrl.PreviousWord(curpos, foundPos);
+
+		// user hit ENTER after 'else'
+		if ( word == wxT("else") ) {
+			int prevLine = rCtrl.LineFromPosition(prevpos);
+			rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
+			rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+			rCtrl.ChooseCaretX(); // set new column as "current" column
+			return;
+		}
 
 		// User typed 'ENTER' immediatly after closing brace ')'
 		if ( prevpos != wxNOT_FOUND && ch == wxT(')') ) {
@@ -342,23 +355,28 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 
 			if (rCtrl.MatchBraceBack(wxT(')'), prevpos, openBracePos)) {
 				rCtrl.PreviousChar(openBracePos, posWordBeforeOpenBrace);
-				if (posWordBeforeOpenBrace != wxNOT_FOUND && rCtrl.GetStyleAt(posWordBeforeOpenBrace) == wxSCI_C_WORD) {
-					int prevLine = rCtrl.LineFromPosition(prevpos);
-					rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
-					rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
-					rCtrl.ChooseCaretX(); // set new column as "current" column
-					return;
+				if (posWordBeforeOpenBrace != wxNOT_FOUND) {
+					word = rCtrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
+
+					// c++ expression with single line and should be treated separatly
+					if( word == wxT("if") || word == wxT("while") || word == wxT("for")) {
+						int prevLine = rCtrl.LineFromPosition(prevpos);
+						rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
+						rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+						rCtrl.ChooseCaretX(); // set new column as "current" column
+						return;
+					}
 				}
 			}
 		}
-		
+
 		// User typed 'ENTER' immediatly after colons ':'
 		if ( prevpos != wxNOT_FOUND && ch == wxT(':') ) {
 
 			int  posWordBeforeColons(wxNOT_FOUND);
 			rCtrl.PreviousChar(prevpos, posWordBeforeColons);
 			if (posWordBeforeColons != wxNOT_FOUND && rCtrl.GetStyleAt(posWordBeforeColons) == wxSCI_C_WORD) {
-				
+
 				int prevLine = rCtrl.LineFromPosition(posWordBeforeColons);
 				// Indent this line according to the block indentation level
 				int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
@@ -368,7 +386,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 				}
 			}
 		}
-		
+
 		if ( prevpos != wxNOT_FOUND && ch == wxT('}') ) {
 			// the next line should have the same indentation line as this one
 			int prevLine = rCtrl.LineFromPosition(prevpos);
@@ -377,7 +395,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 			rCtrl.ChooseCaretX();
 			return;
 		}
-		
+
 		if (prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
 
 			// Indent this line according to the block indentation level

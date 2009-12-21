@@ -330,7 +330,7 @@ void LEditor::SetProperties()
 	SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_bookmarks | mmt_indicator | mmt_compiler | mmt_all_breakpoints));
 
 	// Define the styles for the editing margin
-	StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("GREEN")));
+	StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("PALE GREEN")));
 	StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
 
 	SetMarginType     (EDIT_TRACKER_MARGIN_ID, 4); // Styled Text margin
@@ -748,7 +748,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 {
 	// Get current position
 	long pos = GetCurrentPos();
-	
+
 	//ignore << and >>
 	int charAfter  = SafeGetChar(PositionAfter(pos));
 	int charBefore = SafeGetChar(PositionBefore(pos));
@@ -1213,6 +1213,33 @@ void LEditor::OnUpdateUI(wxUpdateUIEvent &event)
 //-----------------------------------------------------------------------
 // Misc functions
 //-----------------------------------------------------------------------
+
+wxString LEditor::PreviousWord(int pos, int& foundPos)
+{
+	// Get the partial word that we have
+	wxChar ch = 0;
+	long curpos = PositionBefore( pos );
+	if (curpos == 0) {
+		foundPos = wxNOT_FOUND;
+		return wxT("");
+	}
+
+	while ( true ) {
+		ch = GetCharAt( curpos );
+		if (ch == wxT('\t') || ch == wxT(' ') || ch == wxT('\r') || ch == wxT('\v') || ch == wxT('\n')) {
+			long tmpPos = curpos;
+			curpos = PositionBefore( curpos );
+			if (curpos == 0 && tmpPos == curpos)
+				break;
+		} else {
+			long start = WordStartPosition(curpos, true);
+			long end   = WordEndPosition  (curpos, true);
+			return GetTextRange(start, end);
+		}
+	}
+	foundPos = wxNOT_FOUND;
+	return wxT("");
+}
 
 wxChar LEditor::PreviousChar(const int& pos, int &foundPos, bool wantWhitespace)
 {

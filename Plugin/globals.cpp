@@ -564,7 +564,7 @@ wxString clGetUserName()
 void GetProjectTemplateList ( IManager *manager, std::list<ProjectPtr> &list, std::map<wxString,int> *imageMap, wxImageList **lstImages )
 {
 	wxString tmplateDir = manager->GetStartupDirectory() + wxFileName::GetPathSeparator() + wxT ( "templates/projects" );
-	
+
 	//read all files under this directory
 	DirTraverser dt ( wxT ( "*.project" ) );
 
@@ -572,15 +572,15 @@ void GetProjectTemplateList ( IManager *manager, std::list<ProjectPtr> &list, st
 	dir.Traverse ( dt );
 
 	wxArrayString &files = dt.GetFiles();
-	
+
 	if ( files.GetCount() > 0 ) {
-		
-		// Allocate image list
-		if(imageMap) {
-			// add the default icon at position 0
-			*lstImages = new wxImageList(24, 24, true);
-			(*lstImages)->Add( wxXmlResource::Get()->LoadBitmap(wxT("plugin24")) );
-		}
+
+//		// Allocate image list
+//		if(imageMap) {
+//			// add the default icon at position 0
+//			*lstImages = new wxImageList(24, 24, true);
+//			(*lstImages)->Add( wxXmlResource::Get()->LoadBitmap(wxT("plugin24")) );
+//		}
 
 		for ( size_t i=0; i<files.GetCount(); i++ ) {
 			ProjectPtr proj ( new Project() );
@@ -590,10 +590,10 @@ void GetProjectTemplateList ( IManager *manager, std::list<ProjectPtr> &list, st
 				continue;
 			}
 			list.push_back ( proj );
-			
+
 			// load template icon
 			if ( imageMap ) {
-		
+
 				wxFileName fn( files.Item( i ) );
 				wxString imageFileName(fn.GetPath( wxPATH_GET_SEPARATOR ) + wxT("icon.png") );
 				if( wxFileExists( imageFileName )) {

@@ -280,8 +280,10 @@ public:
 
 	// Util function
 	int SafeGetChar(int pos);
-	wxChar PreviousChar(const int& pos, int &foundPos, bool wantWhitespace = false);
-	wxChar NextChar(const int& pos, int &foundPos);
+	wxChar   PreviousChar(const int& pos, int &foundPos, bool wantWhitespace = false);
+	wxString PreviousWord(int pos, int &foundPos);
+	wxChar   NextChar    (const int& pos, int &foundPos);
+
 	int  FindString (const wxString &str, int flags, const bool down, long pos);
 
 	bool FindAndSelect();

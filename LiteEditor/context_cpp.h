@@ -69,6 +69,7 @@ private:
 	void DoCreateFile(const wxFileName &fn);
 	int  DoGetCalltipParamterIndex();
 	void DoUpdateCalltipHighlight();
+
 public:
 	ContextCpp(LEditor *container);
 	virtual ~ContextCpp();

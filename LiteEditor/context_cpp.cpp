@@ -350,7 +350,6 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 					return;
 				}
 			}
-
 		}
 		
 		// User typed 'ENTER' immediatly after colons ':'
@@ -369,11 +368,21 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 				}
 			}
 		}
-
+		
+		if ( prevpos != wxNOT_FOUND && ch == wxT('}') ) {
+			// the next line should have the same indentation line as this one
+			int prevLine = rCtrl.LineFromPosition(prevpos);
+			rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(prevLine));
+			rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+			rCtrl.ChooseCaretX();
+			return;
+		}
+		
 		if (prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
 
 			// Indent this line according to the block indentation level
 			int foldLevel = (rCtrl.GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+			//wxLogMessage(wxT("Fold=%d, line=%d"), foldLevel, line);
 			if (foldLevel) {
 				rCtrl.SetLineIndentation(line, rCtrl.GetIndent() * foldLevel);
 				rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));

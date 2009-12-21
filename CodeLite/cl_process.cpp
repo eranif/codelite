@@ -1,31 +1,32 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : cl_process.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : cl_process.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "cl_process.h"
+#include <wx/log.h>
 #include <wx/txtstrm.h>
 #include <wx/sstream.h>
-#include "procutils.h" 
+#include "procutils.h"
 
 clProcess::clProcess(int id, const wxString &cmdLine, bool redirect)
 : wxProcess(NULL, id)
@@ -52,23 +53,28 @@ void clProcess::SetPid(long pid)
 
 void clProcess::Terminate()
 {
+	wxLog::EnableLogging(false);
 	wxKillError rc;
 #ifdef __WXMSW__
 	std::map<unsigned long, bool> tree;
 	ProcUtils::GetProcTree(tree, GetPid());
 
+
 	std::map<unsigned long, bool>::iterator iter = tree.begin();
 	for(; iter != tree.end(); iter++){
-		wxKill(iter->first, wxSIGKILL, &rc);
+		if(wxProcess::Exists(iter->first)) {
+			wxKill(iter->first, wxSIGKILL, &rc);
+		}
 	}
 #else
 	wxKill(GetPid(), wxSIGKILL, &rc, wxKILL_CHILDREN);
-#endif 
+#endif
 
-	// Sleep for 20 ms to allow the process to be killed and 
-	// the main frame to handle the event or else we can get 
+	// Sleep for 20 ms to allow the process to be killed and
+	// the main frame to handle the event or else we can get
 	// memory leak
 	wxMilliSleep( 150 );
+	wxLog::EnableLogging(true);
 }
 
 long clProcess::Start(bool hide)
@@ -76,12 +82,12 @@ long clProcess::Start(bool hide)
 	if(m_redirect){
 		Redirect();
 	}
-	
+
 	long flags = wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER ;
 	if( !hide ){
 		flags |= wxEXEC_NOHIDE;
 	}
-	
+
 	m_pid = wxExecute(m_cmd, flags, this);
 	return m_pid;
 }
@@ -92,7 +98,7 @@ bool clProcess::HasInput(wxString &input, wxString &errors)
 		wxASSERT_MSG(false, wxT("Process is not redirected"));
 		return false;
 	}
-	
+
 	bool hasInput = false;
 	while ( IsInputAvailable() )
 	{

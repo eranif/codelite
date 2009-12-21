@@ -745,7 +745,7 @@ void Manager::RetagWorkspace(bool quickRetag)
 	wxBusyCursor waitPlease;
 	{
 		wxWindowDisabler disableAll;
-		
+
 		Frame::Get()->SetStatusMessage(wxT("Scanning for include files to parse. please wait..."), 0);
 
 		// Before using the 'crawlerScan' we lock it, since it is not mt-safe
@@ -1734,6 +1734,12 @@ void Manager::OnProcessEnd ( wxProcessEvent &event )
 {
 	m_asyncExeCmd->ProcessEnd ( event );
 	m_asyncExeCmd->GetProcess()->Disconnect ( wxEVT_END_PROCESS, wxProcessEventHandler ( Manager::OnProcessEnd ), NULL, this );
+
+#ifdef __WXMSW__
+	// On Windows, sometimes killing the DOS Windows, does not kill the children
+	m_asyncExeCmd->Terminate();
+#endif
+
 	delete m_asyncExeCmd;
 	m_asyncExeCmd = NULL;
 

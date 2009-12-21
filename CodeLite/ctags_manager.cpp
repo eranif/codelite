@@ -704,8 +704,12 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 	if ( isGlobalScopeOperator ) {
 		// Fetch all tags from the global scope
 		GetDatabase()->GetTagsByScope(wxT("<global>"), candidates);
-
+		
+		if(candidates.empty() == false)
+			std::sort(candidates.begin(), candidates.end(), SAscendingSort());
+		
 	} else if (oper == wxT("::")) {
+		
 		filter.Add(wxT("function"));
 		filter.Add(wxT("member"));
 		filter.Add(wxT("prototype"));

@@ -748,7 +748,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 {
 	// Get current position
 	long pos = GetCurrentPos();
-
+	
 	//ignore << and >>
 	int charAfter  = SafeGetChar(PositionAfter(pos));
 	int charBefore = SafeGetChar(PositionBefore(pos));
@@ -760,14 +760,14 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	if (m_hightlightMatchedBraces) {
 		if ( sel_text.IsEmpty() == false) {
 			wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
-		} else if (	(charCurrnt == '<' && charAfter == '<'   ) 	||	//<<
-		            (charCurrnt == '<' && charBefore == '<'  ) 	||	//<<
-		            (charCurrnt == '>' && charAfter == '>'   ) 	||	//>>
-		            (charCurrnt == '>' && charBefore == '>'  )  ||	//>>
-		            (beforeBefore == '<' && charBefore == '<')  ||	//<<
-		            (beforeBefore == '>' && charBefore == '>')  ||	//>>
-		            (beforeBefore == '-' && charBefore == '>')  ||	//->
-		            (charCurrnt == '>' && charBefore == '-'  )	) {	//->
+		} else if ( (charCurrnt == '<'   && charAfter  == '<')  ||  //<<
+		            (charCurrnt == '<'   && charBefore == '<')  ||  //<<
+		            (charCurrnt == '>'   && charAfter  == '>')  ||  //>>
+		            (charCurrnt == '>'   && charBefore == '>')  ||  //>>
+		            (beforeBefore == '<' && charBefore == '<')  ||  //<<
+		            (beforeBefore == '>' && charBefore == '>')  ||  //>>
+		            (beforeBefore == '-' && charBefore == '>')  ||  //->
+		            (charCurrnt == '>'   && charBefore == '-'  ) ) { //->
 			wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
 		} else {
 			if ((charCurrnt == '{' || charCurrnt == '[' || GetCharAt(pos) == '<' || charCurrnt == '(') && !m_context->IsCommentOrString(pos)) {

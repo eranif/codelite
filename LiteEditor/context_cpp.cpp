@@ -330,16 +330,63 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 	}
 	int line = rCtrl.LineFromPosition(curpos);
 	if (nChar == wxT('\n')) {
+
 		int prevpos = wxNOT_FOUND;
 		wxChar ch = rCtrl.PreviousChar(curpos, prevpos);
+
+		// User typed 'ENTER' immediatly after closing brace ')'
+		if ( prevpos != wxNOT_FOUND && ch == wxT(')') ) {
+
+			long openBracePos          (wxNOT_FOUND);
+			int  posWordBeforeOpenBrace(wxNOT_FOUND);
+
+			if (rCtrl.MatchBraceBack(wxT(')'), prevpos, openBracePos)) {
+				rCtrl.PreviousChar(openBracePos, posWordBeforeOpenBrace);
+				if (posWordBeforeOpenBrace != wxNOT_FOUND && rCtrl.GetStyleAt(posWordBeforeOpenBrace) == wxSCI_C_WORD) {
+					int prevLine = rCtrl.LineFromPosition(prevpos);
+					rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
+					rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+					rCtrl.ChooseCaretX(); // set new column as "current" column
+					return;
+				}
+			}
+
+		}
+		
+		// User typed 'ENTER' immediatly after colons ':'
+		if ( prevpos != wxNOT_FOUND && ch == wxT(':') ) {
+
+			int  posWordBeforeColons(wxNOT_FOUND);
+			rCtrl.PreviousChar(prevpos, posWordBeforeColons);
+			if (posWordBeforeColons != wxNOT_FOUND && rCtrl.GetStyleAt(posWordBeforeColons) == wxSCI_C_WORD) {
+				
+				int prevLine = rCtrl.LineFromPosition(posWordBeforeColons);
+				// Indent this line according to the block indentation level
+				int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+				if (foldLevel) {
+					rCtrl.SetLineIndentation(prevLine, ((foldLevel-1)*rCtrl.GetIndent()) );
+					rCtrl.ChooseCaretX();
+				}
+			}
+		}
+
 		if (prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
-			ContextBase::AutoIndent(nChar);
+
+			// Indent this line according to the block indentation level
+			int foldLevel = (rCtrl.GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+			if (foldLevel) {
+				rCtrl.SetLineIndentation(line, rCtrl.GetIndent() * foldLevel);
+				rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+				rCtrl.ChooseCaretX();
+			}
 			return;
 		}
-		//open brace? increase indent size
+
+		// Open brace? increase indent size
 		int prevLine = rCtrl.LineFromPosition(prevpos);
 		rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
 		rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+
 	} else if (nChar == wxT('}')) {
 		long matchPos = wxNOT_FOUND;
 		if (!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos))
@@ -535,7 +582,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 
 	if (at < 0) at = 0;
 	wxString expr = ctrl->GetTextRange(at, pos);
-	if( !forCC ) {
+	if ( !forCC ) {
 		// If we do not require the expression for CodeCompletion
 		// return the un-touched buffer
 		return expr;
@@ -1316,7 +1363,7 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-		if( ManagerST::Get()->GetDisplayVariableDialog()->IsShown() ) {
+		if ( ManagerST::Get()->GetDisplayVariableDialog()->IsShown() ) {
 			// a 'Quick Show dialog' is already shown!
 			// dont show another tip
 			return;
@@ -1564,7 +1611,7 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
 	TagsManagerST::Get()->GetUnOverridedParentVirtualFunctions(scopeName, onlyPure, protos);
 
 	// No methods to add?
-	if(protos.empty())
+	if (protos.empty())
 		return;
 
 	// Locate the swapped file
@@ -1582,12 +1629,12 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
 
 	ImplementParentVirtualFunctionsDialog dlg(wxTheApp->GetTopWindow(), scopeName, protos, keyPrefix, this);
 	dlg.m_textCtrlImplFile->SetValue(targetFile);
-	if(dlg.ShowModal() == wxID_OK) {
+	if (dlg.ShowModal() == wxID_OK) {
 		wxString implFile = dlg.m_textCtrlImplFile->GetValue();
 		wxString impl     = dlg.GetImpl();
 		wxString decl     = dlg.GetDecl();
 		rCtrl.InsertText(rCtrl.GetCurrentPos(), decl);
-		if(dlg.m_checkBoxFormat->IsChecked())
+		if (dlg.m_checkBoxFormat->IsChecked())
 			DoFormatActiveEditor();
 
 		// Open teh implementation file and format it if needed
@@ -1751,7 +1798,7 @@ void ContextCpp::DoFormatActiveEditor()
 bool ContextCpp::OpenFileAppendAndFormat(const wxString& fileName, const wxString& text, bool format)
 {
 	OpenFileAndAppend(fileName, text);
-	if(format)
+	if (format)
 		DoFormatActiveEditor();
 	return true;
 }
@@ -2682,14 +2729,14 @@ int ContextCpp::DoGetCalltipParamterIndex()
 									depth++;
 				break;
 			case wxT('>'):
-				if ( ch_before == wxT('-') ) {
-					// operator noting to do
-					break;
-				}
+							if ( ch_before == wxT('-') ) {
+						// operator noting to do
+						break;
+					}
 				// fall through
 			case wxT(')'):
-				case wxT(']'):
-					depth--;
+						case wxT(']'):
+								depth--;
 				break;
 			default:
 				break;
@@ -2713,4 +2760,3 @@ void ContextCpp::DoUpdateCalltipHighlight()
 		}
 	}
 }
-

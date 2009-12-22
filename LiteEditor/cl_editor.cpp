@@ -788,7 +788,18 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 
 	//update line number
 	wxString message;
-	message << wxT("Ln ") << curLine+1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos << wxT(",  Style ") << GetStyleAt(pos);
+	
+	int foldLevel = (GetFoldLevel(curLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+	message << wxT("Ln ") 
+			<< curLine+1 
+			<< wxT(",  Col ") 
+			<< GetColumn(pos) 
+			<< wxT(",  Pos ") 
+			<< pos 
+			<< wxT(",  Style ") 
+			<< GetStyleAt(pos)
+			<< wxT(", Fold ")
+			<< foldLevel;
 
 	// Always update the status bar with event, calling it directly causes performance degredation
 	DoSetStatusMessage(message, 1);

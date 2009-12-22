@@ -24,26 +24,29 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/msgdlg.h>
+#include "externaltooldlg.h"
 #include "externaltoolsdata.h"
 #include "newtooldlg.h"
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include "macrosdlg.h"
 
-NewToolDlg::NewToolDlg( wxWindow* parent, IManager *mgr, const wxString &id, const wxString &name, const wxString &path, const wxString &wd, const wxString &args, const wxString &icon16, const wxString &icon24, bool captureOutput, bool saveAllFiles)
+NewToolDlg::NewToolDlg( wxWindow* parent, IManager *mgr, ExternalToolData *data)
 		: NewToolBase( parent )
 		, m_mgr(mgr)
 {
 	m_choiceId->SetFocus();
-	m_textCtrlArguments->SetValue(args);
-	m_choiceId->SetStringSelection(id);
-	m_textCtrlPath->SetValue(path);
-	m_textCtrlWd->SetValue(wd);
-	m_textCtrlIcon16->SetValue(icon16);
-	m_textCtrlIcon24->SetValue(icon24);
-	m_textCtrlName->SetValue(name);
-	m_checkBoxCaptureProcessOutput->SetValue(captureOutput);
-	m_checkBoxSaveAllFilesBefore->SetValue(saveAllFiles);
+	if( data ) {
+		m_textCtrlArguments->SetValue(data->m_args);
+		m_choiceId->SetStringSelection(data->m_id);
+		m_textCtrlPath->SetValue(data->m_path);
+		m_textCtrlWd->SetValue(data->m_workingDirectory);
+		m_textCtrlIcon16->SetValue(data->m_icon16);
+		m_textCtrlIcon24->SetValue(data->m_icon24);
+		m_textCtrlName->SetValue(data->m_name);
+		m_checkBoxCaptureProcessOutput->SetValue(data->m_captureOutput);
+		m_checkBoxSaveAllFilesBefore->SetValue(data->m_saveAllFiles);
+	}
 }
 
 void NewToolDlg::OnButtonBrowsePath( wxCommandEvent& event )

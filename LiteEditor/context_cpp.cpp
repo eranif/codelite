@@ -330,7 +330,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 	}
 	int line = rCtrl.LineFromPosition(curpos);
 	if (nChar == wxT('\n')) {
-
+		
 		int      prevpos (wxNOT_FOUND);
 		int      foundPos(wxNOT_FOUND);
 		wxString word;
@@ -388,19 +388,39 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 		}
 
 		if ( prevpos != wxNOT_FOUND && ch == wxT('}') ) {
-			// the next line should have the same indentation line as this one
+			// The next line should have the same indentation line as this one
 			int prevLine = rCtrl.LineFromPosition(prevpos);
 			rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(prevLine));
 			rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
 			rCtrl.ChooseCaretX();
 			return;
 		}
-
+		
+		if ( prevpos != wxNOT_FOUND && ch == wxT(';') ) {
+			
+			// check to see if this line contains '}' as well
+			int tline          = rCtrl.LineFromPosition(prevpos);
+			int tlineStartPos  = rCtrl.PositionFromLine(tline);
+			int tlineEndPos    = prevpos;
+			
+			if(tlineEndPos > tlineStartPos && tlineStartPos > 0) {
+				for(int i=tlineStartPos; i<tlineEndPos; i++) {
+					if(rCtrl.GetCharAt(i) == wxT('}')) {
+						// The next line should have the same indentation line as this one
+						int prevLine = rCtrl.LineFromPosition(prevpos);
+						rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(prevLine));
+						rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+						rCtrl.ChooseCaretX();
+						return;
+					}
+				}
+			}
+		}
+		
 		if (prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
 
 			// Indent this line according to the block indentation level
 			int foldLevel = (rCtrl.GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
-			//wxLogMessage(wxT("Fold=%d, line=%d"), foldLevel, line);
 			if (foldLevel) {
 				rCtrl.SetLineIndentation(line, rCtrl.GetIndent() * foldLevel);
 				rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
@@ -857,8 +877,6 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString &word)
 	TagsManagerST::Get()->GetFiles(fileName, files);
 
 	std::sort(files.begin(), files.end(), SFileSort());
-
-	wxLogMessage(wxString::Format(wxT("Completing: %s"), fileName.c_str()));
 
 	if ( files.empty() == false ) {
 		GetCtrl().RegisterImageForKind(wxT("FileCpp"),    m_cppFileBmp);

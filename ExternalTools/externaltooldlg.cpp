@@ -1,33 +1,35 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : externaltooldlg.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : externaltooldlg.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
 #include "globals.h"
+#include <wx/clntdata.h>
 #include <wx/msgdlg.h>
 #include "externaltoolsdata.h"
 #include "newtooldlg.h"
 #include "externaltooldlg.h"
+
 
 ExternalToolDlg::ExternalToolDlg( wxWindow* parent, IManager *mgr )
 		: ExternalToolBaseDlg( parent )
@@ -57,17 +59,17 @@ void ExternalToolDlg::OnItemSelected( wxListEvent& event )
 
 void ExternalToolDlg::OnButtonNew( wxCommandEvent& event )
 {
-	NewToolDlg dlg(this, m_mgr, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, false, false);
+	NewToolDlg dlg(this, m_mgr, NULL);
 	if (dlg.ShowModal() == wxID_OK) {
-		DoUpdateEntry(	dlg.GetToolId(), 
-						dlg.GetToolName(), 
-						dlg.GetPath(), 
-						dlg.GetWorkingDirectory(), 
-						dlg.GetArguments(), 
-						dlg.GetIcon16(), 
-						dlg.GetIcon24(), 
-						dlg.GetCaptureProcessOutput(),
-						dlg.GetSaveAllFiles());
+		DoUpdateEntry( dlg.GetToolId(),
+		               dlg.GetToolName(),
+		               dlg.GetPath(),
+		               dlg.GetWorkingDirectory(),
+		               dlg.GetArguments(),
+		               dlg.GetIcon16(),
+		               dlg.GetIcon24(),
+		               dlg.GetCaptureProcessOutput(),
+		               dlg.GetSaveAllFiles());
 	}
 }
 
@@ -90,7 +92,7 @@ void ExternalToolDlg::OnButtonEditUI( wxUpdateUIEvent& event )
 
 void ExternalToolDlg::OnButtonDelete( wxCommandEvent& event )
 {
-	if(wxMessageBox(_("Are you sure you want to delete this tool?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES){
+	if (wxMessageBox(_("Are you sure you want to delete this tool?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
 		m_listCtrlTools->DeleteItem(m_item);
 	}
 }
@@ -105,103 +107,79 @@ void ExternalToolDlg::Initialize()
 	m_listCtrlTools->InsertColumn(0, wxT("ID"));
 	m_listCtrlTools->InsertColumn(1, wxT("Name"));
 	m_listCtrlTools->InsertColumn(2, wxT("Path"));
-	m_listCtrlTools->InsertColumn(3, wxT("Arguments"));
-	m_listCtrlTools->InsertColumn(4, wxT("Working directory"));
-	m_listCtrlTools->InsertColumn(5, wxT("Small Icon"));
-	m_listCtrlTools->InsertColumn(6, wxT("Large Icon"));
-	m_listCtrlTools->InsertColumn(7, wxT("Capture Output"));
-	m_listCtrlTools->InsertColumn(8, wxT("Save All Files"));
 
-	// TODO: populate the list from the settings
-	m_listCtrlTools->SetColumnWidth(0, 100);
-	m_listCtrlTools->SetColumnWidth(1, 100);
-	m_listCtrlTools->SetColumnWidth(2, 100);
-	m_listCtrlTools->SetColumnWidth(3, 100);
-	m_listCtrlTools->SetColumnWidth(4, 100);
-	m_listCtrlTools->SetColumnWidth(5, 100);
-	m_listCtrlTools->SetColumnWidth(6, 100);
-	m_listCtrlTools->SetColumnWidth(7, 100);
-	m_listCtrlTools->SetColumnWidth(8, 100);
+	m_listCtrlTools->SetColumnWidth(0, 200);
+	m_listCtrlTools->SetColumnWidth(1, 200);
+	m_listCtrlTools->SetColumnWidth(2, 200);
 }
 
 void ExternalToolDlg::DoUpdateEntry(const wxString& id, const wxString& name, const wxString& path, const wxString& workingDirectory, const wxString& arguments, const wxString &icon16, const wxString &icon24, bool captureOutput, bool saveAllFiles)
 {
 	// try to see if 'id' already exist in the list control
 	long item(wxNOT_FOUND);
-	for(size_t i=0; i<(size_t)m_listCtrlTools->GetItemCount(); i++){
-		if(GetColumnText(m_listCtrlTools, i, 0) == id){
+	for (size_t i=0; i<(size_t)m_listCtrlTools->GetItemCount(); i++) {
+		if (GetColumnText(m_listCtrlTools, i, 0) == id) {
 			item = i;
+			
+			// Delete old data
+			ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(item);
+			if ( data )
+				delete data;
+			
 			break;
 		}
 	}
-	
+
 	// append new row
-	if(item == wxNOT_FOUND){
+	if (item == wxNOT_FOUND) {
 		item = AppendListCtrlRow(m_listCtrlTools);
 	}
-	
+
 	SetColumnText(m_listCtrlTools, item, 0, id);
 	SetColumnText(m_listCtrlTools, item, 1, name);
 	SetColumnText(m_listCtrlTools, item, 2, path);
-	SetColumnText(m_listCtrlTools, item, 3, arguments);
-	SetColumnText(m_listCtrlTools, item, 4, workingDirectory);
-	SetColumnText(m_listCtrlTools, item, 5, icon16);
-	SetColumnText(m_listCtrlTools, item, 6, icon24);
-	SetColumnText(m_listCtrlTools, item, 7, captureOutput ? wxT("Yes") : wxT("No"));
-	SetColumnText(m_listCtrlTools, item, 8, saveAllFiles ? wxT("Yes") : wxT("No"));
 	
-	m_listCtrlTools->SetColumnWidth(0, 150);
-	m_listCtrlTools->SetColumnWidth(1, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(2, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(3, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(4, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(5, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(6, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(7, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(8, wxLIST_AUTOSIZE);
+	ExternalToolData* data = new ExternalToolData(id, name, path, workingDirectory, arguments, icon16, icon24, captureOutput, saveAllFiles);
+	m_listCtrlTools->SetItemPtrData(item, wxUIntPtr(data));
 }
 
 void ExternalToolDlg::DoEditEntry(long item)
 {
-	wxString id = GetColumnText(m_listCtrlTools, m_item, 0);
-	wxString name = GetColumnText(m_listCtrlTools, m_item, 1);
-	wxString path = GetColumnText(m_listCtrlTools, m_item, 2);
-	wxString args = GetColumnText(m_listCtrlTools, m_item, 3);
-	wxString wd = GetColumnText(m_listCtrlTools, m_item, 4);
-	wxString icon16 = GetColumnText(m_listCtrlTools, m_item, 5);
-	wxString icon24 = GetColumnText(m_listCtrlTools, m_item, 6);
-	bool captureOutput = GetColumnText(m_listCtrlTools, m_item, 7) == wxT("Yes") ? true : false;
-	bool saveAllFiles = GetColumnText(m_listCtrlTools, m_item, 8) == wxT("Yes") ? true : false;
-	
-	NewToolDlg dlg(this, m_mgr, id, name, path, wd, args, icon16, icon24, captureOutput, saveAllFiles);
+	ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(item);
+	NewToolDlg dlg(this, m_mgr, data);
 	if (dlg.ShowModal() == wxID_OK) {
-		DoUpdateEntry(	dlg.GetToolId(), 
-						dlg.GetToolName(), 
-						dlg.GetPath(), 
-						dlg.GetWorkingDirectory(), 
-						dlg.GetArguments(), 
-						dlg.GetIcon16(), 
-						dlg.GetIcon24(), 
-						dlg.GetCaptureProcessOutput(),
-						dlg.GetSaveAllFiles());
+		DoUpdateEntry(	dlg.GetToolId(),
+		               dlg.GetToolName(),
+		               dlg.GetPath(),
+		               dlg.GetWorkingDirectory(),
+		               dlg.GetArguments(),
+		               dlg.GetIcon16(),
+		               dlg.GetIcon24(),
+		               dlg.GetCaptureProcessOutput(),
+		               dlg.GetSaveAllFiles());
 	}
 }
 
 std::vector<ToolInfo> ExternalToolDlg::GetTools()
 {
 	std::vector<ToolInfo> tools;
-	for(size_t i=0; i<(size_t)m_listCtrlTools->GetItemCount(); i++){
+	for (size_t i=0; i<(size_t)m_listCtrlTools->GetItemCount(); i++) {
+		
 		ToolInfo ti;
-		ti.SetId(GetColumnText(m_listCtrlTools, i, 0));
-		ti.SetName(GetColumnText(m_listCtrlTools, i, 1));
-		ti.SetPath(GetColumnText(m_listCtrlTools, i, 2));
-		ti.SetArguments(GetColumnText(m_listCtrlTools, i, 3));
-		ti.SetWd(GetColumnText(m_listCtrlTools, i, 4));
-		ti.SetIcon16(GetColumnText(m_listCtrlTools, i, 5));
-		ti.SetIcon24(GetColumnText(m_listCtrlTools, i, 6));
-		ti.SetCaptureOutput(GetColumnText(m_listCtrlTools, i, 7) == wxT("Yes") ? true : false);
-		ti.SetSaveAllFiles(GetColumnText(m_listCtrlTools, i, 8) == wxT("Yes") ? true : false);
-		tools.push_back(ti);
+		ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(i);
+		
+		if(data) {
+			ti.SetId(data->m_id);
+			ti.SetName(data->m_name);
+			ti.SetPath(data->m_path);
+			ti.SetArguments(data->m_args);
+			ti.SetWd(data->m_workingDirectory);
+			ti.SetIcon16(data->m_icon16);
+			ti.SetIcon24(data->m_icon24);
+			ti.SetCaptureOutput(data->m_captureOutput);
+			ti.SetSaveAllFiles(data->m_saveAllFiles);
+			tools.push_back(ti);
+		}
 	}
 	return tools;
 }
@@ -210,30 +188,18 @@ void ExternalToolDlg::SetTools(const std::vector<ToolInfo>& tools)
 {
 	m_listCtrlTools->Freeze();
 	m_listCtrlTools->DeleteAllItems();
-	
-	for(size_t i=0; i<tools.size(); i++){
+
+	for (size_t i=0; i<tools.size(); i++) {
 		ToolInfo ti = tools.at(i);
 		long item = AppendListCtrlRow(m_listCtrlTools);
+		
+		ExternalToolData *data = new ExternalToolData(ti);
+		m_listCtrlTools->SetItemPtrData(item, wxUIntPtr(data));
+		
 		SetColumnText(m_listCtrlTools, item, 0, ti.GetId());
 		SetColumnText(m_listCtrlTools, item, 1, ti.GetName());
 		SetColumnText(m_listCtrlTools, item, 2, ti.GetPath());
-		SetColumnText(m_listCtrlTools, item, 3, ti.GetArguments());
-		SetColumnText(m_listCtrlTools, item, 4, ti.GetWd());
-		SetColumnText(m_listCtrlTools, item, 5, ti.GetIcon16());
-		SetColumnText(m_listCtrlTools, item, 6, ti.GetIcon24());
-		SetColumnText(m_listCtrlTools, item, 7, ti.GetCaptureOutput() ? wxT("Yes") : wxT("No"));
-		SetColumnText(m_listCtrlTools, item, 8, ti.GetSaveAllFiles() ? wxT("Yes") : wxT("No"));
 	}
-	
-	m_listCtrlTools->SetColumnWidth(0, 150);
-	m_listCtrlTools->SetColumnWidth(1, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(2, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(3, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(4, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(5, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(6, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(7, wxLIST_AUTOSIZE);
-	m_listCtrlTools->SetColumnWidth(8, wxLIST_AUTOSIZE);
-	
+
 	m_listCtrlTools->Thaw();
 }

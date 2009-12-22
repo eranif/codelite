@@ -202,8 +202,13 @@ void SvnConsole::AppendText(const wxString& text)
 	m_sci->SetSelectionEnd(m_sci->GetLength());
 	m_sci->SetSelectionStart(m_sci->GetLength());
 	m_sci->SetCurrentPos(m_sci->GetLength());
-	m_sci->EnsureCaretVisible();
+
 	m_sci->AppendText(text);
+
+	m_sci->SetSelectionEnd(m_sci->GetLength());
+	m_sci->SetSelectionStart(m_sci->GetLength());
+	m_sci->SetCurrentPos(m_sci->GetLength());
+	m_sci->EnsureCaretVisible();
 	m_sci->SetReadOnly(true);
 }
 

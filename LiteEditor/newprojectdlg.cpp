@@ -45,33 +45,33 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 	//get list of project templates
 	wxImageList *lstImages (NULL);
 	GetProjectTemplateList(PluginManager::Get(), m_list, &m_mapImages, &lstImages);
-	
+
 	// assign image list to the list control which takes ownership of it (it will delete the image list)
 	m_listTemplates->AssignImageList(lstImages, wxIMAGE_LIST_SMALL);
-	
+
 	m_chCategories->Clear();
 	std::list<ProjectPtr>::iterator iter = m_list.begin();
 	std::set<wxString>              categories;
-	
+
 	// Add the 'All' category
 	categories.insert(wxT("All"));
-	for(; iter != m_list.end(); iter++) {
+	for (; iter != m_list.end(); iter++) {
 		wxString internalType = (*iter)->GetProjectInternalType();
-		if(internalType.IsEmpty()) internalType = wxT("Others");
+		if (internalType.IsEmpty()) internalType = wxT("Others");
 		categories.insert( internalType );
 	}
-	
+
 	std::set<wxString>::iterator cIter = categories.begin();
-	for(; cIter != categories.end(); cIter++) {
+	for (; cIter != categories.end(); cIter++) {
 		m_chCategories->Append((*cIter));
 	}
-	
+
 	// Select the 'Console' to be the default
 	int where = m_chCategories->FindString(wxT("Console"));
-	if(where == wxNOT_FOUND) {
+	if (where == wxNOT_FOUND) {
 		where = 0;
 	}
-	
+
 	m_chCategories->SetSelection(where);
 	FillProjectTemplateListCtrl(m_chCategories->GetStringSelection());
 
@@ -90,7 +90,7 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 		m_chCompiler->SetSelection(0);
 	}
 
-	m_dpProjPath->SetPath( WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
+	m_textCtrlProjectPath->SetValue( WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
 	m_txtProjName->SetFocus();
 	Centre();
 
@@ -101,11 +101,6 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 NewProjectDlg::~NewProjectDlg()
 {
 	WindowAttrManager::Save(this, wxT("NewProjectDialog"), NULL);
-}
-
-void NewProjectDlg::OnProjectPathChanged( wxFileDirPickerEvent& event )
-{
-	UpdateFullFileName();
 }
 
 void NewProjectDlg::OnProjectNameChanged(wxCommandEvent& event)
@@ -119,13 +114,13 @@ void NewProjectDlg::OnCreate(wxCommandEvent &event)
 	wxString projFullPath = m_stxtFullFileName->GetLabel();
 	wxFileName fn(projFullPath);
 
-	if(m_cbSeparateDir->IsChecked()){
+	if (m_cbSeparateDir->IsChecked()) {
 		// dont check the return
 		Mkdir(fn.GetPath());
 	}
 
 	// dont allow whitespace in project name
-	if(m_txtProjName->GetValue().Find(wxT(" ")) != wxNOT_FOUND){
+	if (m_txtProjName->GetValue().Find(wxT(" ")) != wxNOT_FOUND) {
 		wxMessageBox(_("Whitespace is not allowed in project name"), wxT("Error"), wxOK | wxICON_HAND | wxCENTER, this);
 		return;
 	}
@@ -136,17 +131,17 @@ void NewProjectDlg::OnCreate(wxCommandEvent &event)
 	}
 
 	// make sure that there is no conflict in files between the template project and the selected path
-	if(m_projectData.m_srcProject) {
+	if (m_projectData.m_srcProject) {
 		ProjectPtr p = m_projectData.m_srcProject;
 		wxString base_dir( fn.GetPath() );
 		std::vector<wxFileName> files;
 		p->GetFiles(files);
 
-		for(size_t i=0; i<files.size(); i++){
+		for (size_t i=0; i<files.size(); i++) {
 			wxFileName f = files.at(i);
 			wxString new_file = base_dir + wxT("/") + f.GetFullName();
 
-			if( wxFileName::FileExists(new_file) ) {
+			if ( wxFileName::FileExists(new_file) ) {
 				// this file already - notify the user
 				wxString msg;
 				msg << wxT("The File '") << f.GetFullName() << wxT("' already exists at the target directory '") << base_dir << wxT("'\n");
@@ -193,7 +188,7 @@ ProjectPtr NewProjectDlg::FindProject(const wxString &name)
 void NewProjectDlg::UpdateFullFileName()
 {
 	wxString projectPath;
-	projectPath << m_dpProjPath->GetPath();
+	projectPath << m_textCtrlProjectPath->GetValue();
 
 	projectPath = projectPath.Trim().Trim(false);
 
@@ -202,12 +197,12 @@ void NewProjectDlg::UpdateFullFileName()
 		projectPath << wxFileName::GetPathSeparator();
 	}
 
-	if( m_txtProjName->GetValue().Trim().Trim(false).IsEmpty() ) {
+	if ( m_txtProjName->GetValue().Trim().Trim(false).IsEmpty() ) {
 		m_stxtFullFileName->SetLabel(wxEmptyString);
 		return;
 	}
 
-	if( m_cbSeparateDir->IsChecked()) {
+	if ( m_cbSeparateDir->IsChecked()) {
 		//append the workspace name
 		projectPath << m_txtProjName->GetValue();
 		projectPath << wxFileName::GetPathSeparator();
@@ -222,7 +217,7 @@ void NewProjectDlg::UpdateFullFileName()
 void NewProjectDlg::UpdateProjectPage()
 {
 	//update the description
-	if( m_projectData.m_srcProject) {
+	if ( m_projectData.m_srcProject) {
 		wxString desc = m_projectData.m_srcProject->GetDescription();
 		desc = desc.Trim().Trim(false);
 		desc.Replace(wxT("\t"), wxT(" "));
@@ -230,10 +225,10 @@ void NewProjectDlg::UpdateProjectPage()
 
 		// select the correct compiler
 		ProjectSettingsPtr settings  = m_projectData.m_srcProject->GetSettings();
-		if(settings){
+		if (settings) {
 			ProjectSettingsCookie ck;
 			BuildConfigPtr buildConf = settings->GetFirstBuildConfiguration(ck);
-			if(buildConf){
+			if (buildConf) {
 				m_chCompiler->SetStringSelection( buildConf->GetCompilerType() );
 			}
 		}
@@ -245,28 +240,45 @@ void NewProjectDlg::FillProjectTemplateListCtrl(const wxString& category)
 	m_listTemplates->DeleteAllItems();
 
 	std::list<ProjectPtr>::iterator iter = m_list.begin();
-	for(; iter != m_list.end(); iter++) {
+	for (; iter != m_list.end(); iter++) {
 		wxString intType = (*iter)->GetProjectInternalType();
 
-		if( (category == wxT("All")) ||
-			(intType == category) ||
-			( (intType == wxEmptyString) && (category == wxT("Others")) ) ||
-			( (m_chCategories->FindString(intType) == wxNOT_FOUND) && (category == wxT("Others")) ) )
-		{
+		if ( (category == wxT("All")) ||
+		        (intType == category) ||
+		        ( (intType == wxEmptyString) && (category == wxT("Others")) ) ||
+		        ( (m_chCategories->FindString(intType) == wxNOT_FOUND) && (category == wxT("Others")) ) ) {
 			long item = AppendListCtrlRow(m_listTemplates);
 			std::map<wxString,int>::iterator img_iter = m_mapImages.find((*iter)->GetName());
 			int imgid(0);
-			if(img_iter != m_mapImages.end()) {
+			if (img_iter != m_mapImages.end()) {
 				imgid = img_iter->second;
 			}
-			
+
 			SetColumnText(m_listTemplates, item, 0, (*iter)->GetName(), imgid);
 		}
 	}
 
-	if( m_listTemplates->GetItemCount() ) {
+	if ( m_listTemplates->GetItemCount() ) {
 		m_projectData.m_srcProject = FindProject(m_listTemplates->GetItemText(0));
 		m_listTemplates->SetItemState(0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 		UpdateProjectPage();
 	}
+}
+
+void NewProjectDlg::OnBrowseProjectPath(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+
+	wxString path(m_textCtrlProjectPath->GetValue());
+	wxString new_path = wxDirSelector(wxT("Select Project Path:"), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	if (new_path.IsEmpty() == false) {
+		m_textCtrlProjectPath->SetValue(new_path);
+	}
+}
+
+void NewProjectDlg::OnProjectPathUpdated(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	
+	UpdateFullFileName();
 }

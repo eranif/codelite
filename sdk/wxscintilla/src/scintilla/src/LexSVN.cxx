@@ -85,8 +85,12 @@ static void ColouriseSvnDoc(
 				} else if (str.at(0) == 'D' && str.at(1) == ' ') {
 					styler.ColourTo(i, SCLEX_SVN_DELETED);
 
-				} else if (str.at(0) == '=' || str.at(0) == '-') {
+				} else if (str.at(0) == '=' || str.at(1) == '=') {
 					styler.ColourTo(i, SCLEX_SVN_INFO);
+
+				} else if (str.at(0) == '-' || str.at(1) == '-') {
+					styler.ColourTo(i, SCLEX_SVN_INFO);
+
 				} else {
 					styler.ColourTo(i, SCLEX_SVN_DEFAULT);
 				}

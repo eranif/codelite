@@ -575,12 +575,12 @@ void GetProjectTemplateList ( IManager *manager, std::list<ProjectPtr> &list, st
 
 	if ( files.GetCount() > 0 ) {
 
-//		// Allocate image list
-//		if(imageMap) {
-//			// add the default icon at position 0
-//			*lstImages = new wxImageList(24, 24, true);
-//			(*lstImages)->Add( wxXmlResource::Get()->LoadBitmap(wxT("plugin24")) );
-//		}
+		// Allocate image list
+		if(imageMap) {
+			// add the default icon at position 0
+			*lstImages = new wxImageList(24, 24, true);
+			//(*lstImages)->Add( wxXmlResource::Get()->LoadBitmap(wxT("plugin24")) );
+		}
 
 		for ( size_t i=0; i<files.GetCount(); i++ ) {
 			ProjectPtr proj ( new Project() );

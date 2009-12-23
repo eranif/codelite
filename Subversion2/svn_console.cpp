@@ -165,20 +165,6 @@ bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, 
 	m_output.Clear();
 	m_handler = handler;
 
-	// Make sure that the Output View pane is visible
-	wxAuiPaneInfo &info = m_plugin->GetManager()->GetDockingManager()->GetPane(wxT("Output View"));
-	if (info.IsOk() && !info.IsShown()) {
-		info.Show();
-		m_plugin->GetManager()->GetDockingManager()->Update();
-	}
-
-	// Select the Subversion tab
-	Notebook *book = m_plugin->GetManager()->GetOutputPaneNotebook();
-	size_t where = book->GetPageIndex(m_plugin->GetConsole());
-	if (where != Notebook::npos) {
-		book->SetSelection(where);
-	}
-
 	// Print the command?
 	if (printCommand)
 		AppendText(cmd + wxT("\n"));
@@ -237,4 +223,21 @@ bool SvnConsole::IsRunning()
 bool SvnConsole::IsEmpty()
 {
 	return m_sci->GetText().IsEmpty();
+}
+
+void SvnConsole::EnsureVisible()
+{
+	// Make sure that the Output View pane is visible
+	wxAuiPaneInfo &info = m_plugin->GetManager()->GetDockingManager()->GetPane(wxT("Output View"));
+	if (info.IsOk() && !info.IsShown()) {
+		info.Show();
+		m_plugin->GetManager()->GetDockingManager()->Update();
+	}
+
+	// Select the Subversion tab
+	Notebook *book = m_plugin->GetManager()->GetOutputPaneNotebook();
+	size_t where = book->GetPageIndex(m_plugin->GetConsole());
+	if (where != Notebook::npos) {
+		book->SetSelection(where);
+	}
 }

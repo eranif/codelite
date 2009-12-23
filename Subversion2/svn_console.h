@@ -31,5 +31,7 @@ public:
 	void AppendText(const wxString &text);
 	bool IsRunning();
 	bool IsEmpty();
+	void EnsureVisible();
+
 };
 #endif // SVNSHELL_H

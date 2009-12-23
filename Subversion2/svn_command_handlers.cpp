@@ -64,7 +64,9 @@ void SvnDiffHandler::Process(const wxString& output)
 void SvnPatchHandler::Process(const wxString& output)
 {
 	// Print the patch output to the subversion console
+	GetPlugin()->GetConsole()->EnsureVisible();
 	GetPlugin()->GetConsole()->AppendText(output);
+	GetPlugin()->GetConsole()->AppendText(wxT("-----\n"));
 
 	// Retag workspace only if no conflict were found
 	// send an event to the main frame indicating that a re-tag is required
@@ -79,6 +81,7 @@ void SvnPatchHandler::Process(const wxString& output)
 
 void SvnPatchDryRunHandler::Process(const wxString& output)
 {
+	GetPlugin()->GetConsole()->EnsureVisible();
 	GetPlugin()->GetConsole()->AppendText(wxT("===== APPLYING PATCH - DRY RUN =====\n"));
 	GetPlugin()->GetConsole()->AppendText(output);
 	GetPlugin()->GetConsole()->AppendText(wxT("===== OUTPUT END =====\n"));

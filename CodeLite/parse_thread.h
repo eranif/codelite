@@ -75,11 +75,15 @@ public:
  */
 class ParseRequest : public ThreadRequest
 {
-	wxString _file;
-	wxString _dbfile;
-	wxString _tags;
-	int      _type;
+	wxString      _file;
+	wxString      _dbfile;
+	wxString      _tags;
+	int           _type;
 
+public:
+	wxEvtHandler*            _evtHandler;
+	std::vector<std::string> _workspaceFiles;
+	bool                     _quickRetag;
 public:
 	enum {
 		PR_FILESAVED,
@@ -89,7 +93,7 @@ public:
 public:
 
 	// ctor/dtor
-	ParseRequest() : _type (PR_FILESAVED) {}
+	ParseRequest() : _type (PR_FILESAVED), _evtHandler(NULL), _quickRetag(false) {}
 	virtual ~ParseRequest() ;
 
 	// accessors
@@ -294,6 +298,7 @@ END_DECLARE_EVENT_TYPES()
 
 extern const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS;
 extern const wxEventType wxEVT_PARSE_THREAD_MESSAGE;
+extern const wxEventType wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE;
 
 typedef void (wxEvtHandler::*SymbolTreeEventFunction)(SymbolTreeEvent&);
 

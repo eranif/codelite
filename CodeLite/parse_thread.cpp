@@ -55,6 +55,7 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
 
 const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS = XRCID("parse_thread_updated_symbols");
 const wxEventType wxEVT_PARSE_THREAD_MESSAGE              = XRCID("parse_thread_update_status_bar");
+const wxEventType wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE   = XRCID("parse_thread_scan_includes_done");
 
 
 ParseThread::ParseThread()
@@ -76,9 +77,9 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	ParseRequest *req    = (ParseRequest*)request;
 
 	switch (req->getType()) {
-//	case ParseRequest::PR_PARSEINCLUDES:
-//		ProcessIncludes( req );
-//		break;
+	case ParseRequest::PR_PARSEINCLUDES:
+		ProcessIncludes( req );
+		break;
 	default:
 	case ParseRequest::PR_FILESAVED:
 		ProcessSimple( req );
@@ -162,26 +163,14 @@ void ParseThread::GetSearchPaths(wxArrayString& paths, wxArrayString &excludePat
 
 void ParseThread::ProcessIncludes(ParseRequest* req)
 {
-	DEBUG_MESSAGE( wxString::Format(wxT("ProcessIncludes -> restarting codelite_indexer")) ) ;
-	TagsManagerST::Get()->RestartCtagsProcess();
-
 	DEBUG_MESSAGE( wxString::Format(wxT("ProcessIncludes -> started")) ) ;
-	wxString      dbfile = req->getDbfile();
-	if ( !m_pDb ) {
-		m_pDb = new TagsStorageSQLite();
-	}
-
-	m_pDb->OpenDatabase( dbfile );
-	std::vector<FileEntryPtr> files;
-
-	m_pDb->GetFiles(files);
 
 	// Remove from this list all files which starts with one of the crawler search paths
 	wxArrayString searchPaths, excludePaths, filteredFileList;
 	GetSearchPaths( searchPaths, excludePaths );
 
-	for(size_t i=0; i<files.size(); i++) {
-		wxString name = files.at(i)->GetFile();
+	for(size_t i=0; i<req->_workspaceFiles.size(); i++) {
+		wxString name(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
 		wxFileName fn = name;
 		fn.MakeAbsolute();
 
@@ -211,9 +200,7 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 	for(size_t i=0; i<searchPaths.GetCount(); i++) {
 		fcFileOpener::Instance()->AddSearchPath(searchPaths.Item(i).mb_str(wxConvUTF8).data());
 	}
-	wxStopWatch sw;
-	sw.Start();
-	
+
 	// Before using the 'crawlerScan' we lock it, since it is not mt-safe
 	TagsManagerST::Get()->CrawlerLock();
 	for(size_t i=0; i<filteredFileList.GetCount(); i++) {
@@ -224,29 +211,15 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 			return;
 		}
 	}
+
 	TagsManagerST::Get()->CrawlerUnlock();
-	
+	std::set<std::string> *newSet = new std::set<std::string>(fcFileOpener::Instance()->GetResults());
+
 	// collect the results
-	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
-	std::set<std::string>::iterator iter = fileSet.begin();
-	for (; iter != fileSet.end(); iter++ ) {
-		wxFileName fn(wxString((*iter).c_str(), wxConvUTF8));
-		fn.MakeAbsolute();
-		if ( arrFiles.Index(fn.GetFullPath()) == wxNOT_FOUND ) {
-			arrFiles.Add( fn.GetFullPath() );
-		}
-	}
-
-	// Remove any file which was recently updated
-	int initalCount = arrFiles.GetCount();
-	DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> Files that need parse %d, time elapsed to get list %d ms"), arrFiles.GetCount(), sw.Time()/1000) ) ;
-	TagsManagerST::Get()->FilterNonNeededFilesForRetaging(arrFiles, m_pDb);
-	DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> Actual files that need parse %d"), arrFiles.GetCount()) );
-
-	ParseAndStoreFiles( arrFiles, initalCount );
-
-	delete m_pDb;
-	m_pDb = NULL;
+	wxCommandEvent event(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE);
+	event.SetClientData(newSet);
+	event.SetInt((int)req->_quickRetag);
+	wxPostEvent(req->_evtHandler, event);
 }
 
 void ParseThread::ProcessSimple(ParseRequest* req)
@@ -387,12 +360,12 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
 
 	// Invoke the crawler
 	const wxCharBuffer cfile = filename.mb_str(wxConvUTF8);
-	
+
 	// Before using the 'crawlerScan' we lock it, since it is not mt-safe
 	TagsManagerST::Get()->CrawlerLock();
 	crawlerScan( cfile.data() );
 	TagsManagerST::Get()->CrawlerUnlock();
-	
+
 	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
 	std::set<std::string>::iterator iter = fileSet.begin();
 	for (; iter != fileSet.end(); iter++ ) {

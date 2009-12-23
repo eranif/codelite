@@ -253,6 +253,12 @@ public:
 	void RetagWorkspace(bool quickRetag);
 
 	/**
+	 * @brief the parser thread has completed to scan for include files to parse
+	 * @param event
+	 */
+	void OnIncludeFilesScanDone(wxCommandEvent &event);
+
+	/**
 	 * \brief retag a given file
 	 * \param filename
 	 */

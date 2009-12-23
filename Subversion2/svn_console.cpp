@@ -165,6 +165,8 @@ bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, 
 	m_output.Clear();
 	m_handler = handler;
 
+	EnsureVisible();
+
 	// Print the command?
 	if (printCommand)
 		AppendText(cmd + wxT("\n"));

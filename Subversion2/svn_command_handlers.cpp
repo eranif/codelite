@@ -63,6 +63,9 @@ void SvnDiffHandler::Process(const wxString& output)
 
 void SvnPatchHandler::Process(const wxString& output)
 {
+	// Print the patch output to the subversion console
+	GetPlugin()->GetConsole()->AppendText(output);
+
 	// Retag workspace only if no conflict were found
 	// send an event to the main frame indicating that a re-tag is required
 	if( GetPlugin()->GetSettings().GetFlags() & SvnRetagWorkspace ) {

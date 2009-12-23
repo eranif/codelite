@@ -53,11 +53,15 @@ void BreakptPropertiesDlg::EnterBPData( const BreakpointInfo &bp )
 		}
 	}
 
+	// We need temporarily to Disconnect this event, otherwise it's impossible to edit a watchpoint while the debugger's running
+	// as SetSelection(1) causes a wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING event, which is vetoed
+	m_choicebook->Disconnect( wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING, wxChoicebookEventHandler( BreakptPropertiesDlg::OnPageChanging ), NULL, this );
 	if (its_a_breakpt) {
 		m_choicebook->SetSelection(0);
 	} else {
 		m_choicebook->SetSelection(1);
 	}
+	m_choicebook->Connect( wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING, wxChoicebookEventHandler( BreakptPropertiesDlg::OnPageChanging ), NULL, this );
 
 	// if b.debugger_id > -1, the debugger must be running
 	if (b.debugger_id > -1) {

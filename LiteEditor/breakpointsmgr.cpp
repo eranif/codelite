@@ -657,7 +657,11 @@ void BreakptMgr::ReconcileBreakpoints(const std::vector<BreakpointInfo>& li)
 	for (; li_iter != li.end(); ++li_iter) {
 		int index = FindBreakpointById(li_iter->debugger_id, m_bps);
 		if (index == wxNOT_FOUND) {
-			updated_bps.push_back(*li_iter);
+			// This will happen e.g. if a bp was auto-set on Main()
+			// If so, its internal_id will be invalid
+			BreakpointInfo bp = *li_iter;
+			bp.internal_id = GetNextID();
+			updated_bps.push_back(bp);
 
 		} else {
 			// We've match the debugger_id from -break-list with a bp

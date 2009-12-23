@@ -24,6 +24,16 @@ createVariables()
 	is_so_lib=$1
 	additional_include_path=$2
 
+	if [ "$os_name" = "Darwin" ]; then
+		if [ "$is_64bit" = "yes" ]; then
+			compiler_name=${compiler_name}" -m64 "
+			c_compiler_name=${c_compiler_name}" -m64 "
+		else
+			compiler_name=${compiler_name}" -m32 "
+			c_compiler_name=${c_compiler_name}" -m32 "
+		fi
+	fi
+
 	if [ "$is_64bit" = "yes" ]; then
 		compiler_name=${compiler_name}" -DON_64_BIT "
 		c_compiler_name=${c_compiler_name}" -DON_64_BIT "
@@ -77,6 +87,9 @@ createVariables()
 		echo "PLUGIN_LINK_FLAGS := \$(PLUGIN_LINK_FLAGS) \$(shell pkg-config --libs gtk+-2.0)" >> Makefile
 	else
 		echo "CCFLAGS := \$(CCFLAGS) -D__APPLE__ -DMACOSX" >> Makefile
+	fi
+	if [ "$os_name" = "FreeBSD" ]; then
+		echo "LINK_FLAGS += -lkvm" >> Makefile
 	fi
 	echo "INCLUDES := \$(INCLUDES) -I. -I${base_dir}/sdk/codelite_indexer/network -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxscintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/include -I${base_dir}/sdk/wxpropgrid/include	 -I${base_dir}/sdk/wxscintilla/src/scintilla/src -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite " >> Makefile
 	echo "" >> Makefile

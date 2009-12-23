@@ -9,7 +9,7 @@
 #define SHELL_WRAPPER wxT("\"")
 #else
 
-#ifdef __WXMAC__
+#if defined(__WXMAC__) || defined(__FreeBSD__)
 #include <sys/wait.h>
 #else
 #include <wait.h>

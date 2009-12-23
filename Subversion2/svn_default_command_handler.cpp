@@ -13,8 +13,11 @@ SvnDefaultCommandHandler::~SvnDefaultCommandHandler()
 
 void SvnDefaultCommandHandler::Process(const wxString &output)
 {
-	// TODO:: do something with the output
 	wxUnusedVar(output);
+
+	// Reload any modified files
+	wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT);
+	GetPlugin()->GetManager()->GetTheApp()->GetTopWindow()->AddPendingEvent(e);
 
 	// Refresh the SVN output page
 	GetPlugin()->GetSvnView()->BuildTree();

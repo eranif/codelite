@@ -154,8 +154,12 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 			while (child) {
 				if (child->GetName() == wxT("CustomPreBuild")) {
 					m_customPreBuildRule = child->GetNodeContent();
+					m_customPreBuildRule.Trim().Trim(false);
+
 				} else if (child->GetName() == wxT("CustomPostBuild")) {
 					m_customPostBuildRule = child->GetNodeContent();
+					m_customPostBuildRule.Trim().Trim(false);
+
 				}
 				child = child->GetNext();
 			}

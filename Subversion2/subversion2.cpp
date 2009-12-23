@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include <wx/tokenzr.h>
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
 #include "subversion2.h"
@@ -562,8 +563,7 @@ bool Subversion2::LoginIfNeeded(wxCommandEvent& event, wxString& loginString)
 void Subversion2::IgnoreFiles(const wxArrayString& files, bool pattern)
 {
 	SvnSettingsData ssd = GetSettings();
-	wxString ignorePattern;
-	ignorePattern << ssd.GetIgnoreFilePattern() ;
+	wxArrayString ignorePatternArr = wxStringTokenize(ssd.GetIgnoreFilePattern(), wxT(" \r\n\t\v"), wxTOKEN_STRTOK);
 
 	for(size_t i=0; i<files.GetCount(); i++) {
 		wxString entry;
@@ -573,14 +573,22 @@ void Subversion2::IgnoreFiles(const wxArrayString& files, bool pattern)
 		} else {
 			entry << fn.GetFullName();
 		}
-		if(ignorePattern.Find(entry) == wxNOT_FOUND) {
-			ignorePattern << wxT(" ") << entry;
+
+		if(ignorePatternArr.Index(entry) == wxNOT_FOUND) {
+			ignorePatternArr.Add(entry);
 		}
 	}
 
-	ssd.SetIgnoreFilePattern(ignorePattern);
+	wxString ignorePatternStr;
+	for(size_t i=0; i<ignorePatternArr.GetCount(); i++){
+		ignorePatternStr << ignorePatternArr.Item(i) << wxT(" ");
+	}
+	ignorePatternStr.RemoveLast();
+	ssd.SetIgnoreFilePattern(ignorePatternStr);
+
 	// write down the changes
 	SetSettings( ssd );
+
 	// update the config file
 	UpdateIgnorePatterns();
 

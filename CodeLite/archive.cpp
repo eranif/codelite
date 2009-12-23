@@ -74,8 +74,11 @@ static void SetNodeContent(wxXmlNode *node, const wxString &text)
 		delete contentNode;
 	}
 
-	contentNode = new wxXmlNode(wxXML_TEXT_NODE, wxEmptyString, text);
-	node->AddChild( contentNode );
+	if(!text.IsEmpty()){
+		contentNode = new wxXmlNode(wxXML_TEXT_NODE, wxEmptyString, text);
+		node->AddChild( contentNode );
+
+	}
 }
 
 static void SetCDATANodeContent(wxXmlNode* node, const wxString& text)
@@ -97,8 +100,10 @@ static void SetCDATANodeContent(wxXmlNode* node, const wxString& text)
 		delete contentNode;
 	}
 
-	contentNode = new wxXmlNode(wxXML_CDATA_SECTION_NODE, wxEmptyString, text);
-	node->AddChild( contentNode );
+	if(!text.IsEmpty()){
+		contentNode = new wxXmlNode(wxXML_CDATA_SECTION_NODE, wxEmptyString, text);
+		node->AddChild( contentNode );
+	}
 }
 
 // class Tab info

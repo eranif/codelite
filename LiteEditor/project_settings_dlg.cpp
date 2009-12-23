@@ -465,7 +465,15 @@ void ProjectConfigurationPanel::SaveValues(const wxString &confName)
 	prebuilstep << deps << wxT("\n");
 	prebuilstep << rules;
 	prebuilstep << wxT("\n");
-	buildConf->SetPreBuildCustom(prebuilstep);
+
+	// Set the content only if there is real content to add
+	wxString tmpPreBuildStep(prebuilstep);
+	tmpPreBuildStep.Trim().Trim(false);
+	if(tmpPreBuildStep.IsEmpty() == false){
+		buildConf->SetPreBuildCustom(prebuilstep);
+	} else {
+		buildConf->SetPreBuildCustom(wxT(""));
+	}
 
 	BuildCommandList cmds;
 	cmds.clear();

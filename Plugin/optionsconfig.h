@@ -73,6 +73,7 @@ protected:
 	bool           m_TrimLine;
 	bool           m_AppendLF;
 	bool           m_disableSmartIndent;
+	bool           m_disableSemicolonShift;
 
 public:
 	OptionsConfig() {}
@@ -83,6 +84,12 @@ public:
 	// Setters/Getters
 	//-------------------------------------
 
+	bool GetDisableSemicolonShift() const {
+		return m_disableSemicolonShift;
+	}
+	void SetDisableSemicolonShift(bool disableSemicolonShift) {
+		this->m_disableSemicolonShift = disableSemicolonShift;
+	}
 	void SetDisableSmartIndent(bool disableSmartIndent) {
 		this->m_disableSmartIndent = disableSmartIndent;
 	}

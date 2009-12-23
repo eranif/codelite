@@ -42,7 +42,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel( wxWindow* pare
 	m_caretLineColourPicker->SetColour(options->GetCaretLineColour());
 	m_choiceEOL->SetStringSelection(options->GetEolMode());
 	m_checkBoxHideChangeMarkerMargin->SetValue( options->GetHideChangeMarkerMargin() );
-
+	m_checkBoxDisableSemicolonShift->SetValue( options->GetDisableSemicolonShift() );
     EnableDisableCaretLineColourPicker();
 
 	switch (options->GetShowWhitspaces()) {
@@ -74,6 +74,7 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
 	options->SetAutoAddMatchedBraces(m_checkBoxAutoCompleteBraces->IsChecked());
 	options->SetEolMode(m_choiceEOL->GetStringSelection());
 	options->SetHideChangeMarkerMargin( m_checkBoxHideChangeMarkerMargin->IsChecked() );
+	options->SetDisableSemicolonShift( m_checkBoxDisableSemicolonShift->IsChecked() );
 
 	// save the whitespace visibility
 	int style(wxSCI_WS_INVISIBLE); // inivisble

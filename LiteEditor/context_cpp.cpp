@@ -330,7 +330,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 	}
 	int line = rCtrl.LineFromPosition(curpos);
 	if (nChar == wxT('\n')) {
-		
+
 		int      prevpos (wxNOT_FOUND);
 		int      foundPos(wxNOT_FOUND);
 		wxString word;
@@ -359,7 +359,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 					word = rCtrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
 
 					// c++ expression with single line and should be treated separatly
-					if( word == wxT("if") || word == wxT("while") || word == wxT("for")) {
+					if ( word == wxT("if") || word == wxT("while") || word == wxT("for")) {
 						int prevLine = rCtrl.LineFromPosition(prevpos);
 						rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
 						rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
@@ -395,17 +395,17 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 			rCtrl.ChooseCaretX();
 			return;
 		}
-		
+
 		if ( prevpos != wxNOT_FOUND && ch == wxT(';') ) {
-			
+
 			// check to see if this line contains '}' as well
 			int tline          = rCtrl.LineFromPosition(prevpos);
 			int tlineStartPos  = rCtrl.PositionFromLine(tline);
 			int tlineEndPos    = prevpos;
-			
-			if(tlineEndPos > tlineStartPos && tlineStartPos > 0) {
-				for(int i=tlineStartPos; i<tlineEndPos; i++) {
-					if(rCtrl.GetCharAt(i) == wxT('}')) {
+
+			if (tlineEndPos > tlineStartPos && tlineStartPos > 0) {
+				for (int i=tlineStartPos; i<tlineEndPos; i++) {
+					if (rCtrl.GetCharAt(i) == wxT('}')) {
 						// The next line should have the same indentation line as this one
 						int prevLine = rCtrl.LineFromPosition(prevpos);
 						rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(prevLine));
@@ -416,7 +416,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 				}
 			}
 		}
-		
+
 		if (prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
 
 			// Indent this line according to the block indentation level
@@ -2802,6 +2802,39 @@ void ContextCpp::DoUpdateCalltipHighlight()
 		if (index != wxNOT_FOUND) {
 			m_ct->GetHighlightPos(index, start, len);
 			ctrl.CallTipSetHighlight(start, start + len);
+		}
+	}
+}
+
+void ContextCpp::SemicolonShift()
+{
+	int foundPos    (wxNOT_FOUND);
+	int semiColonPos(wxNOT_FOUND);
+	LEditor &ctrl = GetCtrl();
+	if (ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
+
+		// test to see if we are inside a 'for' statement
+		long openBracePos          (wxNOT_FOUND);
+		int  posWordBeforeOpenBrace(wxNOT_FOUND);
+
+		if (ctrl.MatchBraceBack(wxT(')'), semiColonPos, openBracePos)) {
+			ctrl.PreviousChar(openBracePos, posWordBeforeOpenBrace);
+			if (posWordBeforeOpenBrace != wxNOT_FOUND) {
+				wxString word = ctrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
+
+				// c++ expression with single line and should be treated separatly
+				if ( word == wxT("for"))
+					return;
+
+				// At the current pos, we got a ';'
+				// at semiColonPos we got ;
+				// switch
+				ctrl.DeleteBack();
+				ctrl.SetCurrentPos(semiColonPos);
+				ctrl.InsertText(semiColonPos, wxT(";"));
+				ctrl.SetCaretAt(semiColonPos+1);
+				ctrl.HideCompletionBox();
+			}
 		}
 	}
 }

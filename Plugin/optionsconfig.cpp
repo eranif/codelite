@@ -67,6 +67,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_TrimLine(true)
 		, m_AppendLF(true)
 		, m_disableSmartIndent(false)
+		, m_disableSemicolonShift(false)
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
@@ -108,6 +109,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_hideOutputPaneNotIfDebug = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfDebug"));
 		m_showQuickFinder = XmlUtils::ReadBool(node, wxT("ShowQuickFinder"), m_showQuickFinder);
 		m_disableSmartIndent = XmlUtils::ReadBool(node, wxT("DisableSmartIndent"), m_disableSmartIndent);
+		m_disableSemicolonShift = XmlUtils::ReadBool(node, wxT("DisableSemicolonShift"), m_disableSemicolonShift);
 
 		// These hacks will likely be changed in the future. If so, we'll be able to remove the #include "editor_config.h" too
 		long trim(0); long appendLf(0);
@@ -149,6 +151,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("HideOutputPaneNotIfDebug"),	 BoolToString(m_hideOutputPaneNotIfDebug));
 	n->AddProperty(wxT("ShowQuickFinder"),           BoolToString(m_showQuickFinder));
 	n->AddProperty(wxT("DisableSmartIndent"),        BoolToString(m_disableSmartIndent));
+	n->AddProperty(wxT("DisableSemicolonShift"),     BoolToString(m_disableSemicolonShift));
 	n->AddProperty(wxT("ConsoleCommand"),            m_programConsoleCommand);
 	n->AddProperty(wxT("EOLMode"),                   m_eolMode);
 

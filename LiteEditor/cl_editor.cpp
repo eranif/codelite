@@ -266,6 +266,7 @@ void LEditor::SetProperties()
 	m_autoAddMatchedBrace       = options->GetAutoAddMatchedBraces();
 	m_autoAdjustHScrollbarWidth = options->GetAutoAdjustHScrollBarWidth();
 	m_disableSmartIndent        = options->GetDisableSmartIndent();
+	m_disableSemicolonShift     = options->GetDisableSemicolonShift();
 
 	if (!m_hightlightMatchedBraces) {
 		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
@@ -633,18 +634,27 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 			ShowFunctionTipFromCurrentPos();
 		}
 		break;
+
+	case ';':
+		if(!m_disableSemicolonShift)
+			m_context->SemicolonShift();
+		break;
+
 	case '(':
 		if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
 			CodeComplete();
 		}
 		matchChar = ')';
 		break;
+
 	case '[':
 		matchChar = ']';
 		break;
+
 	case '{':
 		matchChar = '}';
 		break;
+
 	case ':':
 
 		if(m_disableSmartIndent == false)
@@ -788,15 +798,15 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 
 	//update line number
 	wxString message;
-	
+
 	int foldLevel = (GetFoldLevel(curLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
-	message << wxT("Ln ") 
-			<< curLine+1 
-			<< wxT(",  Col ") 
-			<< GetColumn(pos) 
-			<< wxT(",  Pos ") 
-			<< pos 
-			<< wxT(",  Style ") 
+	message << wxT("Ln ")
+			<< curLine+1
+			<< wxT(",  Col ")
+			<< GetColumn(pos)
+			<< wxT(",  Pos ")
+			<< pos
+			<< wxT(",  Style ")
 			<< GetStyleAt(pos)
 			<< wxT(", Fold ")
 			<< foldLevel;
@@ -1289,8 +1299,10 @@ wxChar LEditor::NextChar( const int &pos, int &foundPos )
 	wxChar ch = 0;
 	long nextpos = pos;
 	while ( true ) {
-		if ( nextpos == GetLength() )
-			break; // eof
+
+		if ( nextpos >= GetLength() )
+			break;
+
 		ch = GetCharAt( nextpos );
 		if (ch == wxT('\t') || ch == wxT(' ') || ch == wxT('\r') || ch == wxT('\v') || ch == wxT('\n')) {
 			nextpos = PositionAfter( nextpos );

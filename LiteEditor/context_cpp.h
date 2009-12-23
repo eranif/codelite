@@ -90,6 +90,8 @@ public:
 	virtual wxString CallTipContent();
 	virtual void SetActive();
 
+	virtual void SemicolonShift();
+
 	// ctrl-click style navigation support
 	virtual int GetHyperlinkRange(int pos, int &start, int &end);
 	virtual void GoHyperlink(int start, int end, int type, bool alt);
@@ -184,13 +186,13 @@ private:
 	 */
 	bool ResolveWord(LEditor *ctrl, int pos, const wxString &word, RefactorSource *rs);
 
- 	/**
-	 * \brief open file specified by the 'fileName' parameter and append 'text'
-	 * to its content
-	 * \param fileName file to open. Must be in full path
-	 * \param text string text to append
-	 * \return true on success, false otherwise
-	 */
+	/**
+	* \brief open file specified by the 'fileName' parameter and append 'text'
+	* to its content
+	* \param fileName file to open. Must be in full path
+	* \param text string text to append
+	* \return true on success, false otherwise
+	*/
 	bool OpenFileAndAppend(const wxString &fileName, const wxString &text);
 
 	/**

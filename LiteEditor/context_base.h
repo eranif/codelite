@@ -107,6 +107,7 @@ public:
 	virtual void GotoDefinition(){}
 	virtual void GotoPreviousDefintion(){}
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl){return NULL;}
+	virtual void SemicolonShift(){}
 
     // ctrl-click style navigation support
 	virtual int  GetHyperlinkRange(int pos, int &start, int &end);

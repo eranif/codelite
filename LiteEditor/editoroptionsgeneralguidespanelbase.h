@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -40,7 +40,7 @@ class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 		wxCheckBox* m_highlightCaretLine;
 		wxCheckBox* m_checkBoxAdjustScrollbarSize;
 		wxCheckBox* m_checkBoxHideChangeMarkerMargin;
-		
+		wxCheckBox* m_checkBoxDisableSemicolonShift;
 		wxStaticText* m_staticText1;
 		wxColourPickerCtrl* m_caretLineColourPicker;
 		wxStaticText* m_staticText2;
@@ -49,10 +49,11 @@ class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 		wxChoice* m_choiceEOL;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnHighlightCaretLine( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnHighlightCaretLine( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
+		
 		EditorOptionsGeneralGuidesPanelBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~EditorOptionsGeneralGuidesPanelBase();
 	

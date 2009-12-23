@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -22,35 +22,44 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_displayLineNumbers = new wxCheckBox( this, wxID_ANY, _("Display line numbers"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_displayLineNumbers->SetToolTip( _("Show line numbers margin") );
 	
 	fgSizer1->Add( m_displayLineNumbers, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_showIndentationGuideLines = new wxCheckBox( this, wxID_ANY, _("Show indentation guidelines"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_showIndentationGuideLines->SetToolTip( _("Turn on indentation highlights guides (small vertical lines)") );
 	
 	fgSizer1->Add( m_showIndentationGuideLines, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_checkBoxMatchBraces = new wxCheckBox( this, wxID_ANY, _("Highlight matched braces"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxMatchBraces->SetToolTip( _("Highlight matched braces") );
 	
 	fgSizer1->Add( m_checkBoxMatchBraces, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_checkBoxAutoCompleteBraces = new wxCheckBox( this, wxID_ANY, _("Auto Complete Braces"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxAutoCompleteBraces->SetToolTip( _("Auto add matching close brace") );
 	
 	fgSizer1->Add( m_checkBoxAutoCompleteBraces, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_highlightCaretLine = new wxCheckBox( this, wxID_ANY, _("Highlight caret line"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_highlightCaretLine->SetToolTip( _("Highlight the caret line") );
 	
 	fgSizer1->Add( m_highlightCaretLine, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	m_checkBoxAdjustScrollbarSize = new wxCheckBox( this, wxID_ANY, _("Auto adjust editor's horizontal scrollbar width"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxAdjustScrollbarSize->SetToolTip( _("Adujst the horizontal scrollbar width to the editor's content") );
 	
 	fgSizer1->Add( m_checkBoxAdjustScrollbarSize, 0, wxALL, 5 );
 	
 	m_checkBoxHideChangeMarkerMargin = new wxCheckBox( this, wxID_ANY, _("Hide change marker margin"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxHideChangeMarkerMargin->SetToolTip( _("Hide / Display the change marker margin (red/green marks when line is modified)") );
 	
 	fgSizer1->Add( m_checkBoxHideChangeMarkerMargin, 0, wxALL, 5 );
 	
+	m_checkBoxDisableSemicolonShift = new wxCheckBox( this, wxID_ANY, _("Disable semicolon shift"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxDisableSemicolonShift->SetToolTip( _("Auto swap between semicolon and closing brace") );
 	
-	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
+	fgSizer1->Add( m_checkBoxDisableSemicolonShift, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Caret line backgound color:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );

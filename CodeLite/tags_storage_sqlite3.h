@@ -364,6 +364,12 @@ public:
 	virtual void GetTagsByKindAndFile(const wxArrayString& kind, const wxString &fileName, const wxString &orderingColumn, int order, std::vector<TagEntryPtr> &tags);
 
 	/**
+	 * @brief
+	 * @param tags
+	 */
+	virtual void GetGlobalFunctions(std::vector<TagEntryPtr> &tags);
+
+	/**
 	 * @brief delete an entry by file name
 	 * @param filename
 	 * @return
@@ -377,12 +383,12 @@ public:
 	 */
 	virtual int InsertFileEntry ( const wxString &filename, int timestamp );
 
-		/**
-	 * @brief update file entry using file name as key
-	 * @param filename
-	 * @param timestamp new timestamp
-	 * @return
-	 */
+	/**
+	* @brief update file entry using file name as key
+	* @param filename
+	* @param timestamp new timestamp
+	* @return
+	*/
 	virtual int UpdateFileEntry ( const wxString &filename , int timestamp );
 
 	/**

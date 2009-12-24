@@ -154,7 +154,7 @@ void TagsStorageSQLite::RecreateDatabase()
 		// Close the database
 		m_db->Close();
 		wxString filename = m_fileName.GetFullPath();
-		if(wxRemoveFile(m_fileName.GetFullPath()) == false ) {
+		if (wxRemoveFile(m_fileName.GetFullPath()) == false ) {
 
 			// faild to delete it, probably someone else got it opened as well
 			m_fileName.Clear();
@@ -1001,5 +1001,12 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const 
 	}
 
 	// get get the tags
+	DoFetchTags(sql, tags);
+}
+
+void TagsStorageSQLite::GetGlobalFunctions(std::vector<TagEntryPtr>& tags)
+{
+	wxString sql;
+	sql << wxT("select * from tags where scope = '<global>' AND kind IN ('function', 'prototype') LIMIT ") << GetSingleSearchLimit();
 	DoFetchTags(sql, tags);
 }

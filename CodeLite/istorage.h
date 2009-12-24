@@ -132,7 +132,13 @@ public:
 	 * @param tags
 	 */
 	virtual void GetTagsByKindAndFile(const wxArrayString& kind, const wxString &fileName, const wxString &orderingColumn, int order, std::vector<TagEntryPtr> &tags) = 0;
-
+	
+	/**
+	 * @brief return list of all global functions
+	 * @param tags  [output]
+	 */
+	virtual void GetGlobalFunctions(std::vector<TagEntryPtr> &tags) = 0;
+	
 	// -------------------------- Files Table -------------------------------------------
 
 	/**

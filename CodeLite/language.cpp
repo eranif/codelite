@@ -283,11 +283,16 @@ bool Language::ProcessExpression(const wxString& stmt,
 
 			// Parsing failed?
 			if (result.m_name.empty() && result.m_isGlobalScope == false) {
-				wxLogMessage(wxString::Format(wxT("Failed to parse '%s' from '%s'"), word.c_str(), statement.c_str()));
 				evaluationSucceeded = false;
 				break;
 			}
-
+			
+			// m_isGlobalScope can only be true for '::' operator
+			if(result.m_isGlobalScope && op != wxT("::")) {
+				evaluationSucceeded = false;
+				break;
+			}
+			
 			scopeTemplateInitList.Clear();
 			word.clear();
 			//no tokens before this, what we need to do now, is find the TagEntry

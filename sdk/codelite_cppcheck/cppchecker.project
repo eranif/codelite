@@ -175,7 +175,6 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="WinDebug"/>
   <VirtualDirectory Name="utils">
     <File Name="utils\ethread.h"/>
     <File Name="utils\ethread_unix.cpp"/>
@@ -185,5 +184,6 @@
     <File Name="utils\utils.cpp"/>
     <File Name="utils\utils.h"/>
   </VirtualDirectory>
+  <Dependencies Name="WinDebug"/>
   <Dependencies Name="WinRelease"/>
 </CodeLite_Project>

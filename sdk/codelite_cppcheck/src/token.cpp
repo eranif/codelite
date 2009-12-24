@@ -48,19 +48,22 @@ Token::~Token()
 void Token::str(const std::string &s)
 {
     _str = s;
+
     _isName = bool(_str[0] == '_' || std::isalpha(_str[0]));
-    _isNumber = bool(std::isdigit(_str[(_str[0] == '-') ? 1 : 0]) != 0);
+
+    if (std::isdigit(_str[0]))
+        _isNumber = true;
+    else if (_str.length() > 1 && _str[0] == '-' && std::isdigit(_str[1]))
+        _isNumber = true;
+    else
+        _isNumber = false;
+
     if (_str == "true" || _str == "false")
         _isBoolean = true;
     else
         _isBoolean = false;
 
     _varId = 0;
-}
-
-void Token::str(const char s[])
-{
-    str(std::string(s));
 }
 
 void Token::concatStr(std::string const& b)
@@ -529,10 +532,27 @@ size_t Token::getStrLength(const Token *tok)
 bool Token::isStandardType() const
 {
     bool ret = false;
-    const char *type[] = {"bool", "char", "short", "int", "long", "float", "double", 0};
+    const char *type[] = {"bool", "char", "short", "int", "long", "float", "double", "size_t", 0};
     for (int i = 0; type[i]; i++)
         ret |= (_str == type[i]);
     return ret;
+}
+
+void Token::move(Token *srcStart, Token *srcEnd, Token *newLocation)
+{
+    /**[newLocation] -> b -> c -> [srcStart] -> [srcEnd] -> f */
+
+    // Fix the gap, which tokens to be moved will leave
+    srcStart->previous()->next(srcEnd->next());
+    srcEnd->next()->previous(srcStart->previous());
+
+    // Fix the tokens to be moved
+    srcEnd->next(newLocation->next());
+    srcStart->previous(newLocation);
+
+    // Fix the tokens at newLocation
+    newLocation->next()->previous(srcEnd);
+    newLocation->next(srcStart);
 }
 
 //---------------------------------------------------------------------------
@@ -579,17 +599,28 @@ void Token::createMutualLinks(Token *begin, Token *end)
     assert(begin != NULL);
     assert(end != NULL);
     assert(begin != end);
-
     begin->link(end);
     end->link(begin);
 }
 
 void Token::printOut(const char *title) const
 {
-    std::cout << stringifyList(true, title) << std::endl;
+    const std::vector<std::string> fileNames;
+    std::cout << stringifyList(true, title, fileNames) << std::endl;
+}
+
+void Token::printOut(const char *title, const std::vector<std::string> &fileNames) const
+{
+    std::cout << stringifyList(true, title, fileNames) << std::endl;
 }
 
 std::string Token::stringifyList(bool varid, const char *title) const
+{
+    const std::vector<std::string> fileNames;
+    return stringifyList(varid, title, fileNames);
+}
+
+std::string Token::stringifyList(bool varid, const char *title, const std::vector<std::string> &fileNames) const
 {
     std::ostringstream ret;
     if (title)
@@ -609,7 +640,11 @@ std::string Token::stringifyList(bool varid, const char *title) const
             }
 
             fileIndex = static_cast<int>(tok->_fileIndex);
-            ret << "\n\n##file " << fileIndex << "";
+            ret << "\n\n##file ";
+            if (fileNames.size() > static_cast<unsigned int>(fileIndex))
+                ret << fileNames.at(fileIndex);
+            else
+                ret << fileIndex;
 
             linenr = lineNumbers[fileIndex];
             fileChange = true;

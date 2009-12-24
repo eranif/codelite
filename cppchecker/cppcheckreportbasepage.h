@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -45,22 +45,23 @@ class CppCheckReportBasePage : public wxPanel
 		ProgressCtrl *m_progress;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnListCtrlItemActivated( wxListEvent& event ){ event.Skip(); }
-		virtual void OnClearReport( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnClearReportUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void OnStopChecking( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnStopCheckingUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void OnSkipFile( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnSkipFileUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnListCtrlItemActivated( wxListEvent& event ) { event.Skip(); }
+		virtual void OnClearReport( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnClearReportUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnStopChecking( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnStopCheckingUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnSkipFile( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnSkipFileUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	
 	public:
+		
 		CppCheckReportBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 482,238 ), long style = wxTAB_TRAVERSAL );
 		~CppCheckReportBasePage();
 		void m_splitter1OnIdle( wxIdleEvent& )
 		{
-		m_splitter1->SetSashPosition( 90 );
-		m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CppCheckReportBasePage::m_splitter1OnIdle ), NULL, this );
+			m_splitter1->SetSashPosition( 90 );
+			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CppCheckReportBasePage::m_splitter1OnIdle ), NULL, this );
 		}
 		
 	

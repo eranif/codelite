@@ -29,7 +29,6 @@
 #include <sstream>
 #include <cstring>
 #include <fstream>
-#include <map>
 #include <stdexcept>
 
 #ifdef __GNUC__
@@ -45,8 +44,8 @@
 //---------------------------------------------------------------------------
 
 CppCheck::CppCheck(ErrorLogger &errorLogger)
+        : _errorLogger(errorLogger)
 {
-    _errorLogger = &errorLogger;
 }
 
 CppCheck::~CppCheck()
@@ -76,11 +75,9 @@ void CppCheck::clearFiles()
     _fileContents.clear();
 }
 
-
-
-const char * CppCheck::version() const
+const char * CppCheck::version()
 {
-    return "1.38";
+    return "1.39";
 }
 
 void CppCheck::parseFromArgs(int argc, const char* const argv[])
@@ -101,7 +98,7 @@ void CppCheck::parseFromArgs(int argc, const char* const argv[])
 
         // Show all messages
         else if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "--all") == 0)
-            _settings._showAll = true;
+            _settings.addEnabled("possibleError");
 
         // Only print something when there are errors
         else if (strcmp(argv[i], "-q") == 0 || strcmp(argv[i], "--quiet") == 0)
@@ -109,7 +106,7 @@ void CppCheck::parseFromArgs(int argc, const char* const argv[])
 
         // Checking coding style
         else if (strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "--style") == 0)
-            _settings._checkCodingStyle = true;
+            _settings.addEnabled("style");
 
         // Filter errors
         else if (strcmp(argv[i], "--suppressions") == 0)
@@ -117,11 +114,11 @@ void CppCheck::parseFromArgs(int argc, const char* const argv[])
             ++i;
 
             if (i >= argc)
-                throw std::runtime_error("No file specified for the --suppressions option");
+                throw std::runtime_error("cppcheck: No file specified for the --suppressions option");
 
             std::ifstream f(argv[i]);
             if (!f.is_open())
-                throw std::runtime_error("couldn't open the file \"" + std::string(argv[i]) + "\"");
+                throw std::runtime_error("cppcheck: Couldn't open the file \"" + std::string(argv[i]) + "\"");
             _settings.suppressions(f);
         }
 
@@ -139,7 +136,7 @@ void CppCheck::parseFromArgs(int argc, const char* const argv[])
 
         // Check if there are unused functions
         else if (strcmp(argv[i], "--unused-functions") == 0)
-            _settings._unusedFunctions = true;
+            _settings.addEnabled("unusedFunctions");
 
         // Append userdefined code to checked source code
         else if (strncmp(argv[i], "--append=", 9) == 0)
@@ -158,6 +155,11 @@ void CppCheck::parseFromArgs(int argc, const char* const argv[])
             break;
         }
 
+
+        else if (strncmp(argv[i], "--enable=", 9) == 0)
+        {
+            _settings.addEnabled(argv[i] + 9);
+        }
 
         // --error-exitcode=1
         else if (strncmp(argv[i], "--error-exitcode=", 17) == 0)
@@ -206,11 +208,11 @@ void CppCheck::parseFromArgs(int argc, const char* const argv[])
         else if (strcmp(argv[i], "--template") == 0)
         {
             // "--template path/"
-                ++i;
-                if (i >= argc)
+            ++i;
+            if (i >= argc)
                 throw std::runtime_error("cppcheck: argument to '--template' is missing");
 
-                _settings._outputFormat = argv[i];
+            _settings._outputFormat = argv[i];
             if (_settings._outputFormat == "gcc")
                 _settings._outputFormat = "{file}:{line}: {severity}: {message}";
             else if (_settings._outputFormat == "vs")
@@ -256,11 +258,11 @@ void CppCheck::parseFromArgs(int argc, const char* const argv[])
             ++i;
 
             if (i >= argc || !strstr(argv[i], ".lst"))
-                throw std::runtime_error("No .lst file specified for the --auto-dealloc option");
+                throw std::runtime_error("cppcheck: No .lst file specified for the --auto-dealloc option");
 
             std::ifstream f(argv[i]);
             if (!f.is_open())
-                throw std::runtime_error("couldn't open the file \"" + std::string(argv[i+1]) + "\"");
+                throw std::runtime_error("cppcheck: couldn't open the file \"" + std::string(argv[i+1]) + "\"");
             _settings.autoDealloc(f);
         }
 
@@ -308,9 +310,9 @@ void CppCheck::parseFromArgs(int argc, const char* const argv[])
             pathnames.push_back(argv[i]);
     }
 
-    if (_settings._unusedFunctions && _settings._jobs > 1)
+    if (_settings.isEnabled("unusedFunctions") && _settings._jobs > 1)
     {
-        throw std::runtime_error("cppcheck: error: --unused-functions can't be used with -j option.");
+        reportOut("unusedFunctions check can't be used with -j option, so it was disabled.");
     }
 
     if (pathnames.size() > 0)
@@ -327,16 +329,15 @@ void CppCheck::parseFromArgs(int argc, const char* const argv[])
         oss <<   "Cppcheck - A tool for static C/C++ code analysis\n"
         "\n"
         "Syntax:\n"
-        "    cppcheck [--all] [--append=file] [--auto-dealloc file.lst]\n"
+        "    cppcheck [--all] [--append=file] [--auto-dealloc file.lst] [--enable]\n"
         "             [--error-exitcode=[n]] [--force] [--help] [-Idir] [-j [jobs]]\n"
-        "             [--quiet] [--style] [--suppressions file.txt] [--unused-functions]\n"
-        "             [--verbose] [--version] [--xml] [file or path1] [file or path] ...\n"
+        "             [--quiet] [--style] [--suppressions file.txt] [--verbose]\n"
+        "             [--version] [--xml] [file or path1] [file or path] ...\n"
         "\n"
         "If path is given instead of filename, *.cpp, *.cxx, *.cc, *.c++ and *.c files\n"
         "are checked recursively from given directory.\n\n"
         "Options:\n"
-        "    -a, --all            Make the checking more sensitive. More bugs are\n"
-        "                         detected, but there are also more false positives\n"
+        "    -a, --all            deprecated, use --enable=possibleError\n"
         "    --append=file        This allows you to provide information about\n"
         "                         functions by providing an implementation for these.\n"
         "    --auto-dealloc file  Suppress warnings about classes that have automatic\n"
@@ -345,6 +346,16 @@ void CppCheck::parseFromArgs(int argc, const char* const argv[])
         "                         classname / line - in a .lst file.\n"
         "                         This option can be used several times, allowing you to\n"
         "                         specify several .lst files.\n"
+        "    --enable=id          Enable specific checks. The available ids are:\n"
+        "                          * all - enable all checks\n"
+        "                          * exceptNew - exception safety when using new\n"
+        "                          * exceptRealloc - exception safety when reallocating\n"
+        "                          * possibleError - Make the checking more sensitive.\n"
+        "                            More bugs are detected, but there are also\n"
+        "                            more false positives\n"
+        "                          * style - Check coding style\n"
+        "                          * unusedFunctions - check for unused functions\n"
+        "                         Several ids can be given if you separate them with commas\n"
         "    --error-exitcode=[n] If errors are found, integer [n] is returned instead\n"
         "                         of default 0. EXIT_FAILURE is returned\n"
         "                         if arguments are not valid or if no input files are\n"
@@ -358,7 +369,7 @@ void CppCheck::parseFromArgs(int argc, const char* const argv[])
         "                         paths are relative to source files, this is not needed\n"
         "    -j [jobs]            Start [jobs] threads to do the checking simultaneously.\n"
         "    -q, --quiet          Only print error messages\n"
-        "    -s, --style          Check coding style\n"
+        "    -s, --style          deprecated, use --enable=style\n"
         "    --suppressions file  Suppress warnings listed in the file. Filename and line\n"
         "                         are optional. The format of the single line in file is:\n"
         "                         [error id]:[filename]:[line]\n"
@@ -366,7 +377,7 @@ void CppCheck::parseFromArgs(int argc, const char* const argv[])
         "                         '{file}:{line},{severity},{id},{message}' or\n"
         "                         '{file}({line}):({severity}) {message}'\n"
         "                         Pre-defined templates: gcc, vs\n"
-        "    --unused-functions   Check if there are unused functions\n"
+        "    --unused-functions   deprecated, use --enable=unusedFunctions\n"
         "    -v, --verbose        More detailed error reports\n"
         "    --version            Print out version number\n"
         "    --xml                Write results in xml to error stream.\n"
@@ -399,7 +410,7 @@ unsigned int CppCheck::check()
         std::string fname = _filenames[c];
 
         if (_settings._errorsOnly == false)
-            _errorLogger->reportOut(std::string("Checking ") + fname + std::string("..."));
+            _errorLogger.reportOut(std::string("Checking ") + fname + std::string("..."));
 
         try
         {
@@ -430,19 +441,19 @@ unsigned int CppCheck::check()
                 if (!_settings._force && checkCount > 11)
                 {
                     if (_settings._errorsOnly == false)
-                        _errorLogger->reportOut(std::string("Bailing out from checking ") + fname + ": Too many configurations. Recheck this file with --force if you want to check them all.");
+                        _errorLogger.reportOut(std::string("Bailing out from checking ") + fname + ": Too many configurations. Recheck this file with --force if you want to check them all.");
 
                     break;
                 }
 
                 cfg = *it;
                 TIMER_START();
-                const std::string codeWithoutCfg = Preprocessor::getcode(filedata, *it, fname, _errorLogger);
+                const std::string codeWithoutCfg = Preprocessor::getcode(filedata, *it, fname, &_errorLogger);
                 TIMER_END("Preprocessor::getcode");
 
                 // If only errors are printed, print filename after the check
                 if (_settings._errorsOnly == false && it != configurations.begin())
-                    _errorLogger->reportOut(std::string("Checking ") + fname + ": " + cfg + std::string("..."));
+                    _errorLogger.reportOut(std::string("Checking ") + fname + ": " + cfg + std::string("..."));
 
                 checkFile(codeWithoutCfg + _settings.append(), _filenames[c].c_str());
                 ++checkCount;
@@ -451,19 +462,19 @@ unsigned int CppCheck::check()
         catch (std::runtime_error &e)
         {
             // Exception was thrown when checking this file..
-            _errorLogger->reportOut("Bailing out from checking " + fname + ": " + e.what());
+            _errorLogger.reportOut("Bailing out from checking " + fname + ": " + e.what());
         }
 
-        _errorLogger->reportStatus(c + 1, (unsigned int)_filenames.size());
+        _errorLogger.reportStatus(c + 1, (unsigned int)_filenames.size());
     }
 
     // This generates false positives - especially for libraries
     _settings._verbose = false;
-    if (_settings._unusedFunctions)
+    if (_settings.isEnabled("unusedFunctions") && _settings._jobs == 1)
     {
         _errout.str("");
         if (_settings._errorsOnly == false)
-            _errorLogger->reportOut("Checking usage of global functions..");
+            _errorLogger.reportOut("Checking usage of global functions..");
 
         _checkUnusedFunctions.check();
     }
@@ -498,7 +509,7 @@ void CppCheck::checkFile(const std::string &code, const char FileName[])
 
     {
         TIMER_START();
-    _tokenizer.fillFunctionList();
+        _tokenizer.fillFunctionList();
         TIMER_END("Tokenizer::fillFunctionList");
     }
 
@@ -512,11 +523,14 @@ void CppCheck::checkFile(const std::string &code, const char FileName[])
 
     {
         TIMER_START();
-        _tokenizer.simplifyTokenList();
+        bool result = _tokenizer.simplifyTokenList();
         TIMER_END("Tokenizer::simplifyTokenList");
+        if (!result)
+            return;
     }
 
-    if (_settings._unusedFunctions)
+
+    if (_settings.isEnabled("unusedFunctions") && _settings._jobs == 1)
         _checkUnusedFunctions.parseTokens(_tokenizer);
 
     // call all "runSimplifiedChecks" in all registered Check classes
@@ -561,14 +575,14 @@ void CppCheck::reportErr(const ErrorLogger::ErrorMessage &msg)
         errmsg2 += "\n    Defines=\'" + cfg + "\'\n";
     }
 
-    _errorLogger->reportErr(msg);
+    _errorLogger.reportErr(msg);
 
     _errout << errmsg2 << std::endl;
 }
 
 void CppCheck::reportOut(const std::string &outmsg)
 {
-    _errorLogger->reportOut(outmsg);
+    _errorLogger.reportOut(outmsg);
 }
 
 const std::vector<std::string> &CppCheck::filenames() const

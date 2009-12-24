@@ -73,6 +73,13 @@ void CheckStl::iterators()
 
                 tok2 = tok2->tokAt(4);
             }
+            else if (Token::Match(tok2, "%varid% = %var% . erase (", iteratorId))
+            {
+                validIterator = true;
+                tok2 = tok2->tokAt(5)->link();
+                if (!tok2)
+                    break;
+            }
             else if (!validIterator && Token::Match(tok2, "* %varid%", iteratorId))
             {
                 dereferenceErasedError(tok2, tok2->strAt(1));
@@ -295,109 +302,128 @@ void CheckStl::pushback()
     // Iterator becomes invalid after push_back or push_front..
     for (const Token *tok = _tokenizer->tokens(); tok; tok = tok->next())
     {
-        if (Token::simpleMatch(tok, "vector <"))
+        if (!Token::simpleMatch(tok, "vector <"))
+            continue;
+
+        // if iterator declaration inside for() loop
+        bool iteratorDeclaredInsideLoop = false;
+        if ((tok->tokAt(-2) && Token::simpleMatch(tok->tokAt(-2), "for (")) ||
+            (tok->tokAt(-4) && Token::simpleMatch(tok->tokAt(-4), "for ( std ::")))
         {
-            // if iterator declaration inside for() loop
-            bool iteratorDeclaredInsideLoop = false;
-            if ((tok->tokAt(-2) && Token::simpleMatch(tok->tokAt(-2), "for (")) ||
-                (tok->tokAt(-4) && Token::simpleMatch(tok->tokAt(-4), "for ( std ::")))
+            iteratorDeclaredInsideLoop = true;
+        }
+
+        while (tok && tok->str() != ">")
+            tok = tok->next();
+        if (!tok)
+            break;
+        if (!Token::Match(tok, "> :: iterator|const_iterator %var% =|;"))
+            continue;
+
+        const unsigned int iteratorid(tok->tokAt(3)->varId());
+        if (iteratorid == 0)
+            continue;
+
+        if (iteratorDeclaredInsideLoop && tok->tokAt(4)->str() == "=")
+        {
+            // skip "> :: iterator|const_iterator"
+            tok = tok->tokAt(3);
+        }
+
+        unsigned int vectorid = 0;
+        int indent = 0;
+        std::string invalidIterator;
+        for (const Token *tok2 = tok; indent >= 0 && tok2; tok2 = tok2->next())
+        {
+            if (tok2->str() == "{" || tok2->str() == "(")
+                ++indent;
+            else if (tok2->str() == "}" || tok2->str() == ")")
             {
-                iteratorDeclaredInsideLoop = true;
+                if (indent == 0 && Token::simpleMatch(tok2, ") {"))
+                    tok2 = tok2->next();
+                else
+                    --indent;
             }
 
-            while (tok && tok->str() != ">")
-                tok = tok->next();
-            if (!tok)
-                break;
-            if (Token::Match(tok, "> :: iterator|const_iterator %var% =|;"))
+            // Using push_back or push_front inside a loop..
+            if (Token::Match(tok2, "for ("))
             {
-                const unsigned int iteratorid(tok->tokAt(3)->varId());
-                if (iteratorid == 0)
+                tok2 = tok2->tokAt(2);
+            }
+
+            if (Token::Match(tok2, "%varid% = %var% . begin ( ) ; %varid% != %var% . end ( ) ; ++| %varid% ++| ) {", iteratorid))
+            {
+                const unsigned int vectorid(tok2->tokAt(2)->varId());
+                if (vectorid == 0)
                     continue;
 
-                if (iteratorDeclaredInsideLoop && tok->tokAt(4)->str() == "=")
+                const Token *pushback = 0;
+                unsigned int indent3 = 0;
+                for (const Token *tok3 = tok2->tokAt(20); tok3; tok3 = tok3->next())
                 {
-                    // skip "> :: iterator|const_iterator"
-                    tok = tok->tokAt(3);
+                    if (tok3->str() == "{")
+                        ++indent3;
+                    else if (tok3->str() == "}")
+                    {
+                        if (indent3 <= 1)
+                            break;
+                        --indent3;
+                    }
+                    else if (tok3->str() == "break")
+                    {
+                        pushback = 0;
+                        break;
+                    }
+                    else if (Token::Match(tok3, "%varid% . push_front|push_back|insert (", vectorid))
+                    {
+                        pushback = tok3->tokAt(2);
+                    }
                 }
 
-                std::string vectorname;
-                int indent = 0;
-                std::string invalidIterator;
-                for (const Token *tok2 = tok; indent >= 0 && tok2; tok2 = tok2->next())
+                if (pushback)
+                    invalidIteratorError(pushback, pushback->str(), tok2->strAt(0));
+            }
+
+            // Assigning iterator..
+            if (Token::Match(tok2, "%varid% =", iteratorid))
+            {
+                if (Token::Match(tok2->tokAt(2), "%var% . begin|end|rbegin|rend ( )"))
                 {
-                    if (tok2->str() == "{" || tok2->str() == "(")
-                        ++indent;
-                    else if (tok2->str() == "}" || tok2->str() == ")")
-                    {
-                        if (indent == 0 && Token::simpleMatch(tok2, ") {"))
-                            tok2 = tok2->next();
-                        else
-                            --indent;
-                    }
-
-                    // Using push_back or push_front inside a loop..
-                    if (Token::Match(tok2, "for ("))
-                    {
-                        tok2 = tok2->tokAt(2);
-                    }
-
-                    if (Token::Match(tok2, "%varid% = %var% . begin ( ) ; %varid% != %var% . end ( ) ; ++| %varid% ++| ) {", iteratorid))
-                    {
-                        const unsigned int vectorid(tok2->tokAt(2)->varId());
-                        if (vectorid == 0)
-                            continue;
-
-                        const Token *pushback = 0;
-                        unsigned int indent3 = 0;
-                        for (const Token *tok3 = tok2->tokAt(20); tok3; tok3 = tok3->next())
-                        {
-                            if (tok3->str() == "{")
-                                ++indent3;
-                            else if (tok3->str() == "}")
-                            {
-                                if (indent3 <= 1)
-                                    break;
-                                --indent3;
-                            }
-                            else if (tok3->str() == "break")
-                            {
-                                pushback = 0;
-                                break;
-                            }
-                            else if (Token::Match(tok3, "%varid% . push_front|push_back|insert (", vectorid))
-                            {
-                                pushback = tok3->tokAt(2);
-                            }
-                        }
-
-                        if (pushback)
-                            invalidIteratorError(pushback, pushback->str(), tok2->strAt(0));
-                    }
-
-                    // Assigning iterator..
-                    if (Token::Match(tok2, "%varid% =", iteratorid))
-                    {
-                        if (Token::Match(tok2->tokAt(2), "%var% . begin|end|rbegin|rend ( )"))
-                            vectorname = tok2->strAt(2);
-                        else
-                            vectorname = "";
-                        invalidIterator = "";
-                    }
-
-                    // push_back on vector..
-                    if (vectorname.size() && Token::Match(tok2, (vectorname + " . push_front|push_back|insert").c_str()))
-                        invalidIterator = tok2->strAt(2);
-
-                    // Using invalid iterator..
-                    if (!invalidIterator.empty())
-                    {
-                        if (Token::Match(tok2, "++|--|*|+|-|(|,|=|!= %varid%", iteratorid))
-                            invalidIteratorError(tok2, invalidIterator, tok2->strAt(1));
-                        if (Token::Match(tok2, "%varid% ++|--|+|-", iteratorid))
-                            invalidIteratorError(tok2, invalidIterator, tok2->str());
-                    }
+                    vectorid = tok2->tokAt(2)->varId();
+                    tok2 = tok2->tokAt(6);
                 }
+                else
+                {
+                    vectorid = 0;
+                }
+                invalidIterator = "";
+            }
+
+            // push_back on vector..
+            if (vectorid > 0 && Token::Match(tok2, "%varid% . push_front|push_back|insert (", vectorid))
+            {
+                if (!invalidIterator.empty() && Token::Match(tok2->tokAt(2), "insert ( %varid% ,", iteratorid))
+                {
+                    invalidIteratorError(tok2, invalidIterator, tok2->strAt(4));
+                    break;
+                }
+
+                invalidIterator = tok2->strAt(2);
+                if (!iteratorDeclaredInsideLoop)
+                {
+                    tok2 = tok2->tokAt(3)->link();
+                    if (!tok2)
+                        break;
+                }
+            }
+
+            // Using invalid iterator..
+            if (!invalidIterator.empty())
+            {
+                if (Token::Match(tok2, "++|--|*|+|-|(|,|=|!= %varid%", iteratorid))
+                    invalidIteratorError(tok2, invalidIterator, tok2->strAt(1));
+                if (Token::Match(tok2, "%varid% ++|--|+|-", iteratorid))
+                    invalidIteratorError(tok2, invalidIterator, tok2->str());
             }
         }
     }
@@ -469,4 +495,36 @@ void CheckStl::stlBoundries()
 void CheckStl::stlBoundriesError(const Token *tok, const std::string &container_name)
 {
     reportError(tok, Severity::error, "stlBoundries", container_name + " range check should use != and not < since the order of the pointers isn't guaranteed");
+}
+
+
+
+void CheckStl::find()
+{
+    for (const Token *tok = _tokenizer->tokens(); tok; tok = tok->next())
+    {
+        if (tok->str() != ";")
+            continue;
+        if (!Token::Match(tok->next(), "%var% = std :: find ("))
+            continue;
+        const unsigned int iteratorid = tok->next()->varId();
+        if (iteratorid == 0)
+            continue;
+        tok = tok->tokAt(6)->link();
+        if (!tok)
+            break;
+        for (const Token *tok2 = tok; tok2; tok2 = tok2->next())
+        {
+            if (tok2->str() == "{" || tok2->str() == "}" || tok2->str() == "(" || tok2->str() == ")")
+                break;
+            if (tok2->varId() == iteratorid && Token::simpleMatch(tok2->previous(), "*"))
+                findError(tok2);
+        }
+    }
+}
+
+
+void CheckStl::findError(const Token *tok)
+{
+    reportError(tok, Severity::error, "stlfind", "dangerous usage of find result");
 }

@@ -44,7 +44,7 @@ private:
 public:
     Tokenizer();
     Tokenizer(const Settings * settings, ErrorLogger *errorLogger);
-    ~Tokenizer();
+    virtual ~Tokenizer();
 
     /**
      * Tokenize code
@@ -77,8 +77,13 @@ public:
     /** Set variable id */
     void setVarId();
 
-    /** Simplify tokenlist */
-    void simplifyTokenList();
+    /**
+     * Simplify tokenlist
+     *
+     * @return false if there is an error that requires aborting
+     * the checking of this file.
+     */
+    bool simplifyTokenList();
 
     static void deleteTokens(Token *tok);
     static const char *getParameterName(const Token *ftok, int par);
@@ -120,6 +125,13 @@ public:
      * their member functions and member variables.
      */
     std::map<std::string, ClassInfo> _classInfoList;
+
+    /**
+     * Simplify constant calculations such as "1+2" => "3"
+     * @return true if modifications to token-list are done.
+     *         false if no modifications are done.
+     */
+    bool simplifyCalculations();
 
 #ifndef _MSC_VER
 private:
@@ -268,13 +280,6 @@ private:
     bool simplifyRedundantParanthesis();
 
     /**
-     * Simplify constant calculations such as "1+2" => "3"
-     * @return true if modifications to token-list are done.
-     *         false if no modifications are done.
-     */
-    bool simplifyCalculations();
-
-    /**
      * Simplify functions like "void f(x) int x; {"
      * into "void f(int x) {"
      */
@@ -305,12 +310,29 @@ private:
     std::string simplifyString(const std::string &source);
 
     /**
+     * Use "<" comparison instead of ">"
+     * Use "<=" comparison instead of ">="
+     */
+    void simplifyComparisonOrder();
+
+    /**
+     * Change "int const x;" into "const int x;"
+     */
+    void simplifyConst();
+
+    /**
      * Remove exception specifications. This function calls itself recursively.
      * @param tok First token in scope to cleanup
      */
     void removeExceptionSpecifications(Token *tok) const;
 
     void insertTokens(Token *dest, const Token *src, unsigned int n);
+
+    /**
+     * Send error message to error logger about internal bug.
+     * @param tok, the token that this bug concerns.
+     */
+    void cppcheckError(const Token *tok) const;
 
     /**
      * Setup links for tokens so that one can call Token::link().
@@ -337,6 +359,13 @@ private:
      * @return always true.
      */
     bool validate() const;
+
+    /**
+     * Helper function for simplifyDoWhileAddBraces()
+     * @param tok This must be a "do" token, which is
+     * not followed by "{".
+     */
+    bool simplifyDoWhileAddBracesHelper(Token *tok);
 
     /** Disable assignment operator */
     void operator=(const Tokenizer &);

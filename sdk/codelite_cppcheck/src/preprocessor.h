@@ -77,6 +77,13 @@ public:
      */
     static std::string getcode(const std::string &filedata, std::string cfg, const std::string &filename, ErrorLogger *errorLogger);
 
+    /**
+     * simplify condition
+     * @param variables Variable values
+     * @param condition The condition to simplify
+     */
+    static void simplifyCondition(const std::map<std::string, std::string> &variables, std::string &condition);
+
 protected:
 
     static void writeError(const std::string &fileName, const std::string &code, size_t pos, ErrorLogger *errorLogger, const std::string &errorType, const std::string &errorText);
@@ -129,7 +136,7 @@ private:
      * Get all possible configurations sorted in alphabetical order.
      * By looking at the ifdefs and ifndefs in filedata
      */
-    std::list<std::string> getcfgs(const std::string &filedata);
+    std::list<std::string> getcfgs(const std::string &filedata, const std::string &filename);
 
     static std::string getdef(std::string line, bool def);
 

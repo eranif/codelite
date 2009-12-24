@@ -1,4 +1,5 @@
 #include "cppcheckreportpage.h"
+#include "globals.h"
 #include "drawingutils.h"
 #include "cppchecker.h"
 #include "plugin.h"
@@ -34,23 +35,24 @@ CppCheckReportPage::CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheck
  */
 void CppCheckReportPage::FileSelected( const wxString &filename )
 {
-	CppCheckResults::const_iterator itFileRes = m_results.find(filename);
-	if (itFileRes == m_results.end()) {
+	std::vector<CppCheckResult> *results = m_results.GetResultsForFile(filename);
+	if (results->empty()) {
 		wxLogError(_("CppChecker error : file %s not found !"), filename.c_str());
 		return;
 	}
 
 	Freeze();
 
-	m_listCtrlReport->DeleteAllItems();
-	const CppCheckFileResults& fileRes = itFileRes->second;
-	for (CppCheckFileResults::const_iterator itRes = fileRes.begin(); itRes != fileRes.end(); ++itRes) {
-		const CppCheckResult& res = *itRes;
-		long idx = m_listCtrlReport->InsertItem(m_listCtrlReport->GetItemCount(), res.id);
-		m_listCtrlReport->SetItem(idx, 1, wxString::Format(wxT("%d"), res.lineno));
-		m_listCtrlReport->SetItem(idx, 2, res.severity);
-		m_listCtrlReport->SetItem(idx, 3, res.msg);
-		m_listCtrlReport->SetItemPtrData(idx, (wxUIntPtr)(&res));
+	ClearListCtrl();
+
+	for (size_t i=0; i<results->size(); i++) {
+		CppCheckResult res = results->at(i);
+		long idx = AppendListCtrlRow(m_listCtrlReport);
+		SetColumnText(m_listCtrlReport, idx, 0, res.id);
+		SetColumnText(m_listCtrlReport, idx, 1, wxString::Format(wxT("%d"), res.lineno));
+		SetColumnText(m_listCtrlReport, idx, 2, res.severity);
+		SetColumnText(m_listCtrlReport, idx, 3, res.msg);
+		m_listCtrlReport->SetItemPtrData(idx, (wxUIntPtr)(new CppCheckResult(res)));
 	}
 
 	Thaw();
@@ -61,7 +63,11 @@ void CppCheckReportPage::FileSelected( const wxString &filename )
  */
 void CppCheckReportPage::OnListCtrlItemActivated( wxListEvent& event )
 {
-	const CppCheckResult* res = (const CppCheckResult*) event.GetItem().GetData();
+	int item = event.m_itemIndex;
+	if(item == wxNOT_FOUND)
+		return;
+
+	const CppCheckResult* res = (const CppCheckResult*) m_listCtrlReport->GetItemData(item);
 	if (res) {
 		m_mgr->OpenFile(res->filename, wxEmptyString, res->lineno - 1);
 	}
@@ -88,21 +94,13 @@ void CppCheckReportPage::OnStopChecking( wxCommandEvent& event )
 /**
  * Add results to the actual ones
  */
-void CppCheckReportPage::AddResults(const CppCheckResults* results)
+void CppCheckReportPage::AddResults(const wxString &xmlOutput)
 {
-	if (!results) {
-		return;
-	}
+	m_results.AddResultsForFile(xmlOutput);
 
-	// Append results to existing ones
-	for (CppCheckResults::const_iterator itFileRes = results->begin(); itFileRes != results->end(); ++ itFileRes) {
-		m_results[itFileRes->first].insert(m_results[itFileRes->first].end(), itFileRes->second.begin(), itFileRes->second.end());
-	}
-
-	for (CppCheckResults::const_iterator itFileRes = results->begin(); itFileRes != results->end(); ++ itFileRes) {
-		m_filelist->AddFile( itFileRes->first );
-	}
-
+	wxArrayString files = m_results.GetFiles();
+	for(size_t i=0; i<files.GetCount(); i++)
+		m_filelist->AddFile( files.Item(i) );
 }
 
 void CppCheckReportPage::SetStatus(const wxString& status)
@@ -127,9 +125,9 @@ void CppCheckReportPage::Clear()
 
 void CppCheckReportPage::DoClearReport()
 {
-	m_results.clear();
+	m_results.ClearAll();
 	m_filelist->Clear();
-	m_listCtrlReport->DeleteAllItems();
+	ClearListCtrl();
 	m_progress->Clear();
 }
 
@@ -145,3 +143,13 @@ void CppCheckReportPage::OnSkipFileUI(wxUpdateUIEvent& event)
 	event.Enable( m_plugin->AnalysisInProgress() );
 }
 
+void CppCheckReportPage::ClearListCtrl()
+{
+	for(size_t i=0; i<m_listCtrlReport->GetItemCount(); i++) {
+		CppCheckResult* data = (CppCheckResult*)m_listCtrlReport->GetItemData(i);
+		if(data) {
+			delete data;
+		}
+	}
+	m_listCtrlReport->DeleteAllItems();
+}

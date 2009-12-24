@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -17,14 +17,15 @@ CppCheckReportBasePage::CppCheckReportBasePage( wxWindow* parent, wxWindowID id,
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_splitter1 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE );
+	m_splitter1 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME );
 	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( CppCheckReportBasePage::m_splitter1OnIdle ), NULL, this );
+	
 	m_panel1 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
 	m_filelist = new CppCheckFileListCtrl(m_panel1);
-	bSizer3->Add( m_filelist, 1, wxALL|wxEXPAND, 5 );
+	bSizer3->Add( m_filelist, 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 	
 	m_panel1->SetSizer( bSizer3 );
 	m_panel1->Layout();
@@ -34,7 +35,7 @@ CppCheckReportBasePage::CppCheckReportBasePage( wxWindow* parent, wxWindowID id,
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 	
 	m_listCtrlReport = new wxListCtrl( m_panel2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
-	bSizer2->Add( m_listCtrlReport, 1, wxALL|wxEXPAND, 5 );
+	bSizer2->Add( m_listCtrlReport, 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 	
 	m_panel2->SetSizer( bSizer2 );
 	m_panel2->Layout();

@@ -120,12 +120,12 @@ void ExternalToolDlg::DoUpdateEntry(const wxString& id, const wxString& name, co
 	for (size_t i=0; i<(size_t)m_listCtrlTools->GetItemCount(); i++) {
 		if (GetColumnText(m_listCtrlTools, i, 0) == id) {
 			item = i;
-			
+
 			// Delete old data
 			ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(item);
 			if ( data )
 				delete data;
-			
+
 			break;
 		}
 	}
@@ -138,7 +138,7 @@ void ExternalToolDlg::DoUpdateEntry(const wxString& id, const wxString& name, co
 	SetColumnText(m_listCtrlTools, item, 0, id);
 	SetColumnText(m_listCtrlTools, item, 1, name);
 	SetColumnText(m_listCtrlTools, item, 2, path);
-	
+
 	ExternalToolData* data = new ExternalToolData(id, name, path, workingDirectory, arguments, icon16, icon24, captureOutput, saveAllFiles);
 	m_listCtrlTools->SetItemPtrData(item, wxUIntPtr(data));
 }
@@ -164,10 +164,10 @@ std::vector<ToolInfo> ExternalToolDlg::GetTools()
 {
 	std::vector<ToolInfo> tools;
 	for (size_t i=0; i<(size_t)m_listCtrlTools->GetItemCount(); i++) {
-		
+
 		ToolInfo ti;
 		ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(i);
-		
+
 		if(data) {
 			ti.SetId(data->m_id);
 			ti.SetName(data->m_name);
@@ -187,15 +187,21 @@ std::vector<ToolInfo> ExternalToolDlg::GetTools()
 void ExternalToolDlg::SetTools(const std::vector<ToolInfo>& tools)
 {
 	m_listCtrlTools->Freeze();
+	for(size_t i=0; i<m_listCtrlTools->GetItemCount(); i++) {
+		ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(i);
+		if(data) {
+			delete data;
+		}
+	}
 	m_listCtrlTools->DeleteAllItems();
 
 	for (size_t i=0; i<tools.size(); i++) {
 		ToolInfo ti = tools.at(i);
 		long item = AppendListCtrlRow(m_listCtrlTools);
-		
+
 		ExternalToolData *data = new ExternalToolData(ti);
 		m_listCtrlTools->SetItemPtrData(item, wxUIntPtr(data));
-		
+
 		SetColumnText(m_listCtrlTools, item, 0, ti.GetId());
 		SetColumnText(m_listCtrlTools, item, 1, ti.GetName());
 		SetColumnText(m_listCtrlTools, item, 2, ti.GetPath());

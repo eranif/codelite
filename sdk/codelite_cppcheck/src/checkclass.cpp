@@ -130,9 +130,18 @@ CheckClass::Var *CheckClass::getVarList(const Token *tok1, bool withClasses)
             varname = next->strAt(3);
         }
 
+        // Array?
         else if (Token::Match(next, "%type% %var% [") && next->next()->str() != "operator")
         {
+            if (Token::findmatch(_tokenizer->tokens(), ("class " + next->str()).c_str()))
+                continue;
             varname = next->strAt(1);
+        }
+
+        // Pointer array?
+        else if (Token::Match(next, "%type% * %var% ["))
+        {
+            varname = next->strAt(2);
         }
 
         // std::string..
@@ -865,15 +874,19 @@ void CheckClass::thisSubtractionError(const Token *tok)
 
 void CheckClass::thisSubtraction()
 {
-    const Token *tok = Token::findmatch(_tokenizer->tokens(), "this - %var%");
-    if (tok)
+    const Token *tok = _tokenizer->tokens();
+    for (;;)
     {
-        thisSubtractionError(tok);
+        tok = Token::findmatch(tok, "this - %var%");
+        if (!tok)
+            break;
+
+        if (!Token::simpleMatch(tok->previous(), "*"))
+            thisSubtractionError(tok);
+
+        tok = tok->next();
     }
 }
-
-
-
 
 void CheckClass::noConstructorError(const Token *tok, const std::string &classname)
 {

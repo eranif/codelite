@@ -20,6 +20,7 @@
 #define TokenH
 
 #include <string>
+#include <vector>
 
 /// @addtogroup Core
 /// @{
@@ -41,7 +42,6 @@ public:
     ~Token();
 
     void str(const std::string &s);
-    void str(const char s[]);
 
     void concatStr(std::string const& b);
 
@@ -221,6 +221,16 @@ public:
     void printOut(const char *title = 0) const;
 
     /**
+     * For debugging purposes, prints token and all tokens
+     * followed by it.
+     * @param title Title for the printout or use default parameter or 0
+     * for no title.
+     * @param fileNames Prints out file name instead of file index.
+     * File index should match the index of the string in this vector.
+     */
+    void printOut(const char *title, const std::vector<std::string> &fileNames) const;
+
+    /**
      * Replace token replaceThis with tokens between start and end,
      * including start and end. The replaceThis token is deleted.
      * @param replaceThis This token will be deleted.
@@ -230,7 +240,8 @@ public:
     static void replace(Token *replaceThis, Token *start, Token *end);
 
     /** Stringify a token list (with or without varId) */
-    std::string stringifyList(bool varid = true, const char *title = 0) const;
+    std::string stringifyList(bool varid = 0, const char *title = 0) const;
+    std::string stringifyList(bool varid, const char *title, const std::vector<std::string> &fileNames) const;
 
     /**
      * This is intended to be used for the first token in the list
@@ -273,6 +284,15 @@ public:
      * @return String value
      */
     std::string strValue() const;
+
+    /**
+     * Move srcStart and srcEnd tokens and all tokens between then
+     * into new a location. Only links between tokens are changed.
+     * @param srcStart This is the first token to be moved
+     * @param srcEnd The last token to be moved
+     * @param newLocation srcStart will be placed after this token.
+     */
+    static void move(Token *srcStart, Token *srcEnd, Token *newLocation);
 
 private:
     void next(Token *next)

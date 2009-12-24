@@ -61,7 +61,6 @@ CppCheckPlugin::CppCheckPlugin(IManager *manager)
 		, m_restartRequired(false)
 #endif // __WXMSW__
 		, m_fileProcessed(1)
-		, m_errorsCount  (0)
 {
 	FileExtManager::Init();
 
@@ -392,11 +391,7 @@ void CppCheckPlugin::OnCheckCompleted(wxCommandEvent& e)
  */
 void CppCheckPlugin::OnReport(wxCommandEvent& e)
 {
-	CppCheckResults* results = ParseResults(e.GetString());
-	if (results) {
-		m_view->AddResults(results);
-		m_errorsCount += results->size();
-	}
+	m_view->AddResults(e.GetString());
 }
 
 /**
@@ -449,7 +444,7 @@ void CppCheckPlugin::ProcessNextFromList()
 		// no more files to process
 		m_view->SetStatus(wxT("Done"));
 
-		if ( m_errorsCount == 0 ) {
+		if ( m_view->GetErrorCount() == 0 ) {
 			wxMessageBox(_("No errors were found"), _("cppcheck"));
 		}
 	}
@@ -489,42 +484,6 @@ void CppCheckPlugin::OnStartDaemon(wxCommandEvent& e)
 	StartCppCheckDaemon();
 #endif
 	e.Skip();
-}
-
-/**
- * Parse the CppCheck string result
- *
- * \param res xml string
- */
-CppCheckResults* CppCheckPlugin::ParseResults(const wxString& res)
-{
-	// Create XML parser
-	wxStringInputStream xmlStream(res);
-	wxXmlDocument xmlDoc(xmlStream);
-	if (!xmlDoc.IsOk()) {
-		return NULL;
-	}
-	wxXmlNode* root = xmlDoc.GetRoot();
-	if (!root || root->GetName() != wxT("results")) {
-		return NULL;
-	}
-
-	CppCheckResults* results = new CppCheckResults;
-
-	for (wxXmlNode* child = root->GetChildren(); child; child = child->GetNext()) {
-		if (child->GetName() == wxT("error")) {
-			CppCheckResult res;
-			child->GetPropVal(wxT("id"), &res.id);
-			child->GetPropVal(wxT("file"), &res.filename);
-			wxString sLine;
-			child->GetPropVal(wxT("line"), &sLine);
-			sLine.ToLong(&res.lineno);
-			child->GetPropVal(wxT("severity"), &res.severity);
-			child->GetPropVal(wxT("msg"), &res.msg);
-			(*results)[res.filename].push_back(res);
-		}
-	}
-	return results;
 }
 
 /**
@@ -642,6 +601,6 @@ void CppCheckPlugin::DoStartTest()
 {
 	RemoveExcludedFiles();
 	SetTabVisible(true);
-	m_errorsCount = 0;
+	m_view->Clear();
 	ProcessNextFromList();
 }

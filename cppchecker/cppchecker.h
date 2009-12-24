@@ -28,7 +28,6 @@ class CppCheckPlugin : public IPlugin
 	bool                 m_restartRequired;
 #endif // __WXMSW__
 	size_t               m_fileProcessed;
-	int                  m_errorsCount;
 
 protected:
 	wxMenu *         CreateFileExplorerPopMenu();
@@ -40,7 +39,6 @@ protected:
 	void             ProcessNextFromList();
 	void             RemoveExcludedFiles();
 	void             SetTabVisible(bool clearContent);
-	CppCheckResults* ParseResults(const wxString& res);
 	void             DoProcess(size_t count);
 	void             DoStartTest();
 

@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 
 Settings::Settings()
 {
@@ -31,7 +32,6 @@ Settings::Settings()
     _verbose = false;
     _force = false;
     _xml = false;
-    _unusedFunctions = false;
     _jobs = 1;
     _exitCode = 0;
     _showtime = false;
@@ -54,7 +54,7 @@ void Settings::autoDealloc(std::istream &istr)
             continue;
 
         // Add classname to list
-        _autoDealloc.push_back(line);
+        _autoDealloc.insert(line);
     }
 }
 
@@ -114,14 +114,73 @@ bool Settings::isSuppressed(const std::string &errorId, const std::string &file,
     return true;
 }
 
+void Settings::addEnabled(const std::string &str)
+{
+    // Enable parameters may be comma separated...
+    if (str.find(",") != std::string::npos)
+    {
+        std::string::size_type prevPos = 0;
+        std::string::size_type pos = 0;
+        while ((pos = str.find(",", pos)) != std::string::npos)
+        {
+            if (pos == prevPos)
+                throw std::runtime_error("cppcheck: --enable parameter is empty");
+            addEnabled(str.substr(prevPos, pos - prevPos));
+            ++pos;
+            prevPos = pos;
+        }
+        if (prevPos >= str.length())
+            throw std::runtime_error("cppcheck: --enable parameter is empty");
+        addEnabled(str.substr(prevPos));
+        return;
+    }
+
+    bool handled = false;
+
+    if (str == "all")
+        handled = _checkCodingStyle = _showAll = true;
+    else if (str == "style")
+        handled = _checkCodingStyle = true;
+    else if (str == "possibleError")
+        handled = _showAll = true;
+
+    std::set<std::string> id;
+    id.insert("exceptNew");
+    id.insert("exceptRealloc");
+    id.insert("unusedFunctions");
+
+    if (str == "all")
+    {
+        std::set<std::string>::const_iterator it;
+        for (it = id.begin(); it != id.end(); ++it)
+            _enabled[*it] = true;
+    }
+    else if (id.find(str) != id.end())
+    {
+        _enabled[str] = true;
+    }
+    else if (!handled)
+    {
+        if (str.empty())
+            throw std::runtime_error("cppcheck: --enable parameter is empty");
+        else
+            throw std::runtime_error("cppcheck: there is no --enable parameter with the name '" + str + "'");
+    }
+}
+
+bool Settings::isEnabled(const std::string &str) const
+{
+    return bool(_enabled.find(str) != _enabled.end());
+}
+
 void Settings::addAutoAllocClass(const std::string &name)
 {
-    _autoDealloc.push_back(name);
+    _autoDealloc.insert(name);
 }
 
 bool Settings::isAutoDealloc(const char classname[]) const
 {
-    return (std::find(_autoDealloc.begin(), _autoDealloc.end(), classname) != _autoDealloc.end());
+    return (_autoDealloc.find(classname) != _autoDealloc.end());
 }
 
 

@@ -76,6 +76,7 @@ public:
         checkOther.strPlusChar();
         checkOther.invalidFunctionUsage();
         checkOther.checkZeroDivision();
+        checkOther.uninitvar();
     }
 
     // Casting
@@ -111,6 +112,9 @@ public:
     /** possible null pointer dereference */
     void nullPointer();
 
+    /** reading uninitialized var */
+    void uninitvar();
+
     /** Check zero division*/
     void checkZeroDivision();
 
@@ -123,6 +127,7 @@ public:
     // if (haystack.find(needle) != haystack.end())
     //    haystack.remove(needle);
     void redundantCondition2();
+
 
     // Error messages..
     void cstyleCastError(const Token *tok);
@@ -142,6 +147,8 @@ public:
     void strPlusChar(const Token *tok);
     void nullPointerError(const Token *tok, const std::string &varname);
     void nullPointerError(const Token *tok, const std::string &varname, const int line);
+    void uninitdataError(const Token *tok, const std::string &varname);
+    void uninitvarError(const Token *tok, const std::string &varname);
     void zerodivError(const Token *tok);
     void postIncrementError(const Token *tok, const std::string &var_name, const bool isIncrement);
 
@@ -151,6 +158,8 @@ public:
         sprintfOverlappingDataError(0, "varname");
         udivError(0);
         nullPointerError(0, "pointer");
+        uninitdataError(0, "varname");
+        uninitvarError(0, "varname");
         zerodivError(0);
 
         // style
@@ -185,8 +194,9 @@ public:
                " * [[OverlappingData|bad usage of the function 'sprintf' (overlapping data)]]\n"
                " * division with zero\n"
                " * null pointer dereferencing\n"
+               " * using uninitialized variables and data\n"
 
-               // warning
+               // style
                " * C-style pointer cast in cpp file\n"
                " * redundant if\n"
                " * bad usage of the function 'strtol'\n"

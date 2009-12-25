@@ -1,4 +1,5 @@
 #include "continuousbuild.h"
+#include "fileextmanager.h"
 #include "build_settings_config.h"
 #include "workspace.h"
 #include "custombuildrequest.h"
@@ -43,6 +44,7 @@ END_EVENT_TABLE()
 ContinuousBuild::ContinuousBuild(IManager *manager)
 		: IPlugin(manager)
 		, m_shellProcess(NULL)
+		, m_buildInProgress(false)
 {
 	m_longName = wxT("Continuous build plugin which compiles files on save and report errors");
 	m_shortName = wxT("ContinuousBuild");
@@ -52,7 +54,9 @@ ContinuousBuild::ContinuousBuild(IManager *manager)
 	m_mgr->GetOutputPaneNotebook()->AddPage(m_view, wxT("Continuous Build"), wxT("Continuous Build"), LoadBitmapFile(wxT("compfile.png")), false);
 
 	m_topWin = m_mgr->GetTheApp();
-	m_topWin->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
+	m_topWin->Connect(wxEVT_FILE_SAVED,               wxCommandEventHandler(ContinuousBuild::OnFileSaved),           NULL, this);
+	m_topWin->Connect(wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved),     NULL, this);
+	m_topWin->Connect(wxEVT_FILE_SAVE_BY_BUILD_END,   wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
 }
 
 ContinuousBuild::~ContinuousBuild()
@@ -97,25 +101,42 @@ void ContinuousBuild::UnPlug()
 			break;
 		}
 	}
-	m_topWin->Disconnect(wxEVT_FILE_SAVED, wxCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
+	m_topWin->Disconnect(wxEVT_FILE_SAVED,               wxCommandEventHandler(ContinuousBuild::OnFileSaved),           NULL, this);
+	m_topWin->Disconnect(wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved),     NULL, this);
+	m_topWin->Disconnect(wxEVT_FILE_SAVE_BY_BUILD_END,   wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
 }
 
 void ContinuousBuild::OnFileSaved(wxCommandEvent& e)
 {
+	// Dont build while the main build is in progress
+	if (m_buildInProgress)
+		return;
+
 	ContinousBuildConf conf;
 	m_mgr->GetConfigTool()->ReadObject(wxT("ContinousBuildConf"), &conf);
 
 	if (conf.GetEnabled()) {
 		wxString *fileName = (wxString*) e.GetClientData();
-		if (fileName) {
-			DoBuild(*fileName);
+		if(fileName) {
+			FileExtManager::FileType type = FileExtManager::GetType(*fileName);
+			switch(type) {
+				case FileExtManager::TypeSourceC:
+				case FileExtManager::TypeSourceCpp:
+				case FileExtManager::TypeResource: {
+					DoBuild(*fileName);
+					break;
+				}
+				default:{
+					break;
+				}
+			}
 		}
 	}
 }
 
 void ContinuousBuild::DoBuild(const wxString& fileName)
 {
-	if(m_mgr->IsWorkspaceOpen() == false) {
+	if (m_mgr->IsWorkspaceOpen() == false) {
 		return;
 	}
 
@@ -148,10 +169,10 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 	wxString conf = bldConf->GetName();
 
 	m_currentBuildInfo.project = projectName;
-    m_currentBuildInfo.config = conf;
+	m_currentBuildInfo.config = conf;
 	m_currentBuildInfo.file = fileName;
 
-	if( !IsCompilable(fileName) ) {
+	if ( !IsCompilable(fileName) ) {
 		return;
 	}
 
@@ -184,8 +205,8 @@ void ContinuousBuild::OnShellAddLine(wxCommandEvent& e)
 void ContinuousBuild::OnShellBuildStarted(wxCommandEvent& e)
 {
 	m_view->SetStatusMessage(_("Compiling file: ") + m_currentBuildInfo.file);
-    m_mgr->SetStatusMessage(wxString::Format(wxT("Compiling %s..."),
-                            wxFileName(m_currentBuildInfo.file).GetFullName().c_str()), 4, XRCID("continuous"));
+	m_mgr->SetStatusMessage(wxString::Format(wxT("Compiling %s..."),
+	                        wxFileName(m_currentBuildInfo.file).GetFullName().c_str()), 4, XRCID("continuous"));
 }
 
 void ContinuousBuild::OnShellProcessEnded(wxCommandEvent& e)
@@ -194,7 +215,7 @@ void ContinuousBuild::OnShellProcessEnded(wxCommandEvent& e)
 	m_view->RemoveFile(m_currentBuildInfo.file);
 	m_view->SetStatusMessage(wxEmptyString);
 
-    m_mgr->SetStatusMessage(wxEmptyString, 3, XRCID("continuous"));
+	m_mgr->SetStatusMessage(wxEmptyString, 3, XRCID("continuous"));
 
 	DoReportErrors();
 	m_currentBuildInfo.Clear();
@@ -221,23 +242,23 @@ void ContinuousBuild::StopAll()
 
 void ContinuousBuild::DoReportErrors()
 {
-    wxCommandEvent start(wxEVT_SHELL_COMMAND_STARTED);
-    m_mgr->GetTheApp()->ProcessEvent(start);
+	wxCommandEvent start(wxEVT_SHELL_COMMAND_STARTED);
+	m_mgr->GetTheApp()->ProcessEvent(start);
 
-	for (size_t i=0; i<m_currentBuildInfo.output.GetCount(); i++){
-        wxCommandEvent line(wxEVT_SHELL_COMMAND_ADDLINE);
-        line.SetString(m_currentBuildInfo.output.Item(i));
-        m_mgr->GetTheApp()->ProcessEvent(line);
+	for (size_t i=0; i<m_currentBuildInfo.output.GetCount(); i++) {
+		wxCommandEvent line(wxEVT_SHELL_COMMAND_ADDLINE);
+		line.SetString(m_currentBuildInfo.output.Item(i));
+		m_mgr->GetTheApp()->ProcessEvent(line);
 	}
 
-    wxCommandEvent stop(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
-    m_mgr->GetTheApp()->ProcessEvent(stop);
+	wxCommandEvent stop(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+	m_mgr->GetTheApp()->ProcessEvent(stop);
 }
 
 bool ContinuousBuild::IsCompilable(const wxString& fileName)
 {
 	CompilerPtr cmp = DoGetCompiler();
-	if(cmp) {
+	if (cmp) {
 		Compiler::CmpFileTypeInfo ft;
 		bool res = cmp->GetCmpFileType(fileName.AfterLast(wxT('.')), ft);
 		return res && ft.kind == Compiler::CmpFileKindSource;
@@ -249,11 +270,11 @@ CompilerPtr ContinuousBuild::DoGetCompiler()
 {
 	wxString err_msg;
 	ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(m_currentBuildInfo.project, err_msg);
-	if(proj) {
+	if (proj) {
 		ProjectSettingsPtr settings = proj->GetSettings();
-		if(settings) {
+		if (settings) {
 			BuildConfigPtr bldConf = settings->GetBuildConfiguration(m_currentBuildInfo.config);
-			if(bldConf){
+			if (bldConf) {
 				wxString type = bldConf->GetCompilerType();
 //				wxLogMessage(wxString::Format(wxT("Compiler type=%s, for configuration=%s"), type.c_str(), projConf.c_str()));
 				return m_mgr->GetBuildSettingsConfigManager()->GetCompiler(type);
@@ -261,4 +282,25 @@ CompilerPtr ContinuousBuild::DoGetCompiler()
 		}
 	}
 	return NULL;
+}
+
+void ContinuousBuild::OnIgnoreFileSaved(wxCommandEvent& e)
+{
+	e.Skip();
+
+	m_buildInProgress = true;
+	// Clear the queue
+	m_files.Clear();
+
+	// Clear the view
+	m_view->ClearAll();
+
+	// set message
+	m_view->SetStatusMessage(wxT("CodeLite initiated a build, clearing queue content"));
+}
+
+void ContinuousBuild::OnStopIgnoreFileSaved(wxCommandEvent& e)
+{
+	e.Skip();
+	m_buildInProgress = false;
 }

@@ -25,17 +25,18 @@ struct CurrentBuildFile {
 class ContinuousBuild : public IPlugin
 {
 	ContinousBuildPane *m_view;
-	wxEvtHandler *m_topWin;
-	ShellCommand *m_shellProcess;
-	wxArrayString m_files;
-	CurrentBuildFile m_currentBuildInfo;
+	wxEvtHandler *      m_topWin;
+	ShellCommand *      m_shellProcess;
+	wxArrayString       m_files;
+	CurrentBuildFile    m_currentBuildInfo;
+	bool                m_buildInProgress;
 
 public:
 	void DoBuild(const wxString &fileName);
 	void DoReportErrors();
 	bool IsCompilable(const wxString &fileName);
 	CompilerPtr DoGetCompiler();
-	
+
 public:
 	ContinuousBuild(IManager *manager);
 	~ContinuousBuild();
@@ -54,10 +55,12 @@ public:
 	// Event handlers
 	DECLARE_EVENT_TABLE()
 
-	void OnFileSaved(wxCommandEvent &e);
-	void OnShellAddLine(wxCommandEvent &e);
-	void OnShellBuildStarted(wxCommandEvent &e);
-	void OnShellProcessEnded(wxCommandEvent &e);
+	void OnFileSaved           (wxCommandEvent &e);
+	void OnIgnoreFileSaved     (wxCommandEvent &e);
+	void OnStopIgnoreFileSaved (wxCommandEvent &e);
+	void OnShellAddLine        (wxCommandEvent &e);
+	void OnShellBuildStarted   (wxCommandEvent &e);
+	void OnShellProcessEnded   (wxCommandEvent &e);
 };
 
 #endif //ContinuousBuild

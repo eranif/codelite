@@ -96,6 +96,13 @@ enum {
 	//clientData is the selected word (wxString*)
 	wxEVT_CCBOX_SELECTION_MADE,
 
+	// the following 2 events are used as "transaction"
+	// the first event indicates that any "wxEVT_FILE_SAVED" event sent from this point
+	// is due to build process which is about to starte
+	// the later event, indicates the end of that transaction
+	wxEVT_FILE_SAVE_BY_BUILD_END,
+	wxEVT_FILE_SAVE_BY_BUILD_START,
+
 	// clientData is fileName (wxString*)
 	wxEVT_FILE_SAVED,
 	// clientData is list of files which have been retagged (std::vector<wxFileName>*)
@@ -131,13 +138,13 @@ enum {
 	// This event is sent from plugins to the application to tell it to reload
 	// any open files (and re-tag them as well)
 	wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED,
-	
+
 	// Same as wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED
 	// just without prompting the user
-	// this event only reload code files without 
+	// this event only reload code files without
 	// any reload to the workspace / project
 	wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT,
-	
+
 	// Sent by the project settings dialogs to indicate that
 	// the project configurations are saved
 	// clientData is the project name (wxString*)

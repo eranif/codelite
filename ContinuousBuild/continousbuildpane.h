@@ -13,9 +13,9 @@ class ContinuousBuild;
 /** Implementing ContinousBuildBasePane */
 class ContinousBuildPane : public ContinousBuildBasePane
 {
-	IManager *m_mgr;
+	IManager *       m_mgr;
 	ContinuousBuild *m_plugin;
-	
+
 protected:
 	// Handlers for ContinousBuildBasePane events.
 	void OnEnableCB( wxCommandEvent& event );
@@ -23,15 +23,16 @@ protected:
 	void OnChoiceNumberOfJobsUI( wxUpdateUIEvent& event );
 	void OnStopAll( wxCommandEvent& event );
 	void OnStopUI( wxUpdateUIEvent& event );
-	
+
 	void DoUpdateConf();
-	
+
 public:
 	/** Constructor */
 	ContinousBuildPane( wxWindow* parent, IManager *manager, ContinuousBuild *plugin );
 	void RemoveFile(const wxString &file);
 	void AddFile(const wxString &file);
 	void SetStatusMessage(const wxString &msg);
+	void ClearAll();
 };
 
 #endif // __continousbuildpane__

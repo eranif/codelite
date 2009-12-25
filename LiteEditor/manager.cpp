@@ -2486,9 +2486,7 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 		return;
 	}
 
-	//save all files before compiling, but dont saved new documents
-	if (!Frame::Get()->GetMainBook()->SaveAll(false, false))
-		return;
+	DoSaveAllFilesBeforeBuild();
 
 	//If a debug session is running, stop it.
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -2539,9 +2537,7 @@ void Manager::DoBuildProject ( const QueueCommand& buildInfo )
 	if ( m_shellProcess && m_shellProcess->IsBusy() )
 		return;
 
-	//save all files before compiling, but dont saved new documents
-	if (!Frame::Get()->GetMainBook()->SaveAll(false, false))
-		return;
+	DoSaveAllFilesBeforeBuild();
 
 	//If a debug session is running, stop it.
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -2579,9 +2575,8 @@ void Manager::DoCustomBuild ( const QueueCommand& buildInfo )
 		return;
 	}
 
-	//save all files before compiling, but dont saved new documents
-	if (!Frame::Get()->GetMainBook()->SaveAll(false, false))
-		return;
+	DoSaveAllFilesBeforeBuild();
+
 
 	//If a debug session is running, stop it.
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -2981,4 +2976,15 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 	Frame::Get()->SetStatusMessage(wxT("Done"), 0);
 	wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), (end)/1000, projectFiles.size());
 	SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
+}
+
+void Manager::DoSaveAllFilesBeforeBuild()
+{
+	// Save all files before compiling, but dont saved new documents
+	SendCmdEvent(wxEVT_FILE_SAVE_BY_BUILD_START);
+	if (!Frame::Get()->GetMainBook()->SaveAll(false, false)) {
+		SendCmdEvent(wxEVT_FILE_SAVE_BY_BUILD_END);
+		return;
+	}
+	SendCmdEvent(wxEVT_FILE_SAVE_BY_BUILD_END);
 }

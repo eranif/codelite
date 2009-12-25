@@ -16,7 +16,7 @@ ContinousBuildPane::ContinousBuildPane( wxWindow* parent, IManager *manager, Con
 	m_choiceNumberOfJobs->SetSelection(0);
 	ContinousBuildConf conf;
 	m_mgr->GetConfigTool()->ReadObject(wxT("ContinousBuildConf"), &conf);
-	
+
 	m_checkBox1->SetValue(conf.GetEnabled());
 }
 
@@ -27,7 +27,7 @@ void ContinousBuildPane::OnEnableCB( wxCommandEvent& event )
 			return;
 		}
 	}
-	
+
 	DoUpdateConf();
 }
 
@@ -61,7 +61,7 @@ void ContinousBuildPane::DoUpdateConf()
 	conf.SetEnabled(m_checkBox1->IsChecked());
 	long cpus(1);
 	m_choiceNumberOfJobs->GetStringSelection().ToLong(&cpus);
-	
+
 	conf.SetParallelProcesses(cpus);
 	m_mgr->GetConfigTool()->WriteObject(wxT("ContinousBuildConf"), &conf);
 }
@@ -84,4 +84,9 @@ void ContinousBuildPane::AddFile(const wxString& file)
 void ContinousBuildPane::SetStatusMessage(const wxString& msg)
 {
 	m_staticTextStatus->SetLabel(msg);
+}
+
+void ContinousBuildPane::ClearAll()
+{
+	m_listBoxQueue->Clear();
 }

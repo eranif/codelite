@@ -28,7 +28,6 @@ void FileExtManager::Init()
 		m_map[wxT("rc")  ] = TypeResource;
 		m_map[wxT("res") ] = TypeResource;
 		m_map[wxT("xrc") ] = TypeResource;
-		m_map[wxT("inl") ] = TypeResource;
 
 		m_map[wxT("y")   ] = TypeYacc;
 		m_map[wxT("l")   ] = TypeLex;

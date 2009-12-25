@@ -9,7 +9,7 @@
   <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
   <Project Name="wxscintilla" Path="sdk/wxscintilla/wxscintilla.project"/>
   <Project Name="plugin_sdk" Path="Plugin/plugin_sdk.project" Active="No"/>
-  <Project Name="LiteEditor" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
+  <Project Name="LiteEditor" Path="LiteEditor/LiteEditor.project" Active="No"/>
   <Project Name="sqlite3" Path="sqlite3/sqlite3.project"/>
   <Project Name="CodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
   <Project Name="DebuggerGDB" Path="Debugger/DebuggerGDB.project" Active="No"/>
@@ -28,7 +28,7 @@
   <Project Name="snipwiz" Path="SnipWiz/snipwiz.project" Active="No"/>
   <Project Name="wxFormBuilder" Path="wxformbuilder/wxFormBuilder.project" Active="No"/>
   <Project Name="abbreviation" Path="abbreviation/abbreviation.project" Active="No"/>
-  <Project Name="ContinuousBuild" Path="ContinuousBuild/ContinuousBuild.project" Active="No"/>
+  <Project Name="ContinuousBuild" Path="ContinuousBuild/ContinuousBuild.project" Active="Yes"/>
   <Project Name="wxpropgrid" Path="sdk/wxpropgrid/wxpropgrid.project" Active="No"/>
   <Project Name="QMakePlugin" Path="QmakePlugin/QMakePlugin.project" Active="No"/>
   <Project Name="CppChecker" Path="cppchecker/CppChecker.project" Active="No"/>

@@ -3,4 +3,5 @@
 - Add new 'scp' plugin
 - Move Qmake to be an integrated part of codelite build system
 - Add option to run 'environment' script
-
+- Auto Indentation: default: should not indent to the right
+- Change 'continous build' build process to use an internal method. Limit it to use the default codelite build system (dont support any custom build processes)

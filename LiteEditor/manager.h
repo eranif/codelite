@@ -582,6 +582,7 @@ protected:
 	void DoCleanProject(const QueueCommand &buildInfo);
 	void DoCustomBuild(const QueueCommand &buildInfo);
 	void DoCmdWorkspace(int cmd);
+	void DoSaveAllFilesBeforeBuild();
 };
 
 typedef Singleton<Manager> ManagerST;

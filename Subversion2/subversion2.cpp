@@ -665,5 +665,6 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
 		command << wxT("\"") << files.Item(i) << wxT("\" ");
 	}
 
+	GetManager()->SetStatusMessage(wxT("Executing svn blame..."), 0);
 	m_blameCommand.Execute(command, wxT(""), new SvnBlameHandler(this, event.GetId(), this));
 }

@@ -26,12 +26,13 @@ SvnBlameDialog::SvnBlameDialog(wxWindow* window, const wxString &content)
 		m_textCtrl->StyleSetFont(i, font);
 	}
 
-	m_textCtrl->SetMarginType (0, wxSCI_MARGIN_TEXT);
-	m_textCtrl->SetMarginWidth(1, 0);
+	m_textCtrl->SetMarginType (0, wxSCI_MARGIN_TEXT  );
+	m_textCtrl->SetMarginType (1, wxSCI_MARGIN_NUMBER);
+	m_textCtrl->SetMarginWidth(1, 4 + 5*m_textCtrl->TextWidth(wxSCI_STYLE_LINENUMBER, wxT("9")));
 	m_textCtrl->SetMarginWidth(2, 0);
 	m_textCtrl->SetMarginWidth(3, 0);
 	m_textCtrl->SetMarginWidth(4, 0);
-
+	m_textCtrl->SetTabWidth(4);
 	SetText();
 }
 
@@ -41,12 +42,16 @@ SvnBlameDialog::~SvnBlameDialog()
 
 void SvnBlameDialog::SetText()
 {
-
-	m_textCtrl->StyleSetBackground(1, DrawingUtils::LightColour(wxT("GREEN"),  7.0));
-	m_textCtrl->StyleSetBackground(2, DrawingUtils::LightColour(wxT("BLUE"),   7.0));
-	m_textCtrl->StyleSetBackground(3, DrawingUtils::LightColour(wxT("ORANGE"), 7.0));
-	m_textCtrl->StyleSetBackground(4, DrawingUtils::LightColour(wxT("YELLOW"), 7.0));
-	m_textCtrl->StyleSetBackground(5, DrawingUtils::LightColour(wxT("PURPLE"), 7.0));
+	// Define some colors
+	m_textCtrl->StyleSetBackground(1, DrawingUtils::LightColour(wxT("GREEN"),      7.0));
+	m_textCtrl->StyleSetBackground(2, DrawingUtils::LightColour(wxT("BLUE"),       7.0));
+	m_textCtrl->StyleSetBackground(3, DrawingUtils::LightColour(wxT("ORANGE"),     7.0));
+	m_textCtrl->StyleSetBackground(4, DrawingUtils::LightColour(wxT("YELLOW"),     7.0));
+	m_textCtrl->StyleSetBackground(5, DrawingUtils::LightColour(wxT("PURPLE"),     7.0));
+	m_textCtrl->StyleSetBackground(6, DrawingUtils::LightColour(wxT("RED"),        7.0));
+	m_textCtrl->StyleSetBackground(7, DrawingUtils::LightColour(wxT("BROWN"),      7.0));
+	m_textCtrl->StyleSetBackground(8, DrawingUtils::LightColour(wxT("LIGHT GREY"), 7.0));
+	m_textCtrl->StyleSetBackground(9, DrawingUtils::LightColour(wxT("SIENNA"),     7.0));
 
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
@@ -54,8 +59,7 @@ void SvnBlameDialog::SetText()
 	int xx, yy;
 	int marginWidth(0);
 
-	static int s_style(1);
-
+	int s_style(1);
 	std::map<wxString, int> authorsColorsMap;
 	wxArrayString lines = wxStringTokenize(m_content, wxT("\n"), wxTOKEN_RET_DELIMS);
 	for(size_t i=0; i<lines.GetCount(); i++) {
@@ -85,7 +89,7 @@ void SvnBlameDialog::SetText()
 		} else {
 			style = s_style;
 			s_style ++;
-			if(s_style > 5)
+			if(s_style > 9)
 				s_style = 1;
 			authorsColorsMap[author] = style;
 		}

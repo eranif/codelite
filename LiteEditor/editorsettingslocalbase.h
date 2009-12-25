@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb  8 2009)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -73,21 +73,21 @@ class LocalEditorSettingsbase : public wxDialog
 		wxButton* m_button2;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void indentsUsesTabsUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void tabWidthUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void indentWidthUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void displayBookmarkMarginUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void checkBoxDisplayFoldMarginUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void checkBoxHideChangeMarkerMarginUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void displayLineNumbersUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void showIndentationGuideLinesUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void highlightCaretLineUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void indentsUsesTabsUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void tabWidthUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void indentWidthUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void displayBookmarkMarginUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void checkBoxDisplayFoldMarginUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void checkBoxHideChangeMarkerMarginUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void displayLineNumbersUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void showIndentationGuideLinesUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void highlightCaretLineUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void checkBoxTrimLineUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void checkBoxAppendLFUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void whitespaceStyleUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void choiceEOLUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void fileEncodingUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void OnOK( wxCommandEvent& event ){ event.Skip(); }
+		virtual void whitespaceStyleUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void choiceEOLUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void fileEncodingUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnOK( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:

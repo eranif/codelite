@@ -163,6 +163,8 @@ void SvnCheckoutHandler::Process(const wxString& output)
 
 void SvnBlameHandler::Process(const wxString& output)
 {
+	GetPlugin()->GetConsole()->AppendText(wxT("Loading Svn blame dialog...\n"));
+	GetPlugin()->GetConsole()->AppendText(wxT("--------\n"));
 	SvnBlameDialog dlg(GetPlugin()->GetManager()->GetTheApp()->GetTopWindow(), output);
 	dlg.ShowModal();
 }

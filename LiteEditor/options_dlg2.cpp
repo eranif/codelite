@@ -131,7 +131,7 @@ void OptionsDlg2::Initialize()
 #endif
 
 	AddPage(new EditorSettingsFolding(m_treeBook),        wxT("Folding"));
-	AddPage(new EditorSettingsBookmarksPanel(m_treeBook), wxT("Bookmarks"));
+	AddPage(new EditorSettingsBookmarksPanel(m_treeBook), wxT("Bookmarks & Breakpoints"));
 	AddPage(new EditorSettingsDialogs(m_treeBook),        wxT("Dialogs"));
 	AddPage(new EditorSettingsDockingWindows(m_treeBook), wxT("Docking Windows"));
 

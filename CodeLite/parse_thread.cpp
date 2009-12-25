@@ -201,6 +201,10 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 		fcFileOpener::Instance()->AddSearchPath(searchPaths.Item(i).mb_str(wxConvUTF8).data());
 	}
 
+	for(size_t i=0; i<excludePaths.GetCount(); i++) {
+		fcFileOpener::Instance()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
+	}
+
 	// Before using the 'crawlerScan' we lock it, since it is not mt-safe
 	TagsManagerST::Get()->CrawlerLock();
 	for(size_t i=0; i<filteredFileList.GetCount(); i++) {
@@ -358,6 +362,10 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
 		fcFileOpener::Instance()->AddSearchPath( includePaths.Item(i).mb_str(wxConvUTF8).data() );
 	}
 
+	for(size_t i=0; i<excludePaths.GetCount(); i++) {
+		fcFileOpener::Instance()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
+	}
+
 	// Invoke the crawler
 	const wxCharBuffer cfile = filename.mb_str(wxConvUTF8);
 
@@ -375,7 +383,6 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
 			arrFiles.Add(fn.GetFullPath());
 		}
 	}
-
 }
 
 void ParseThread::ParseAndStoreFiles(const wxArrayString& arrFiles, int initalCount)

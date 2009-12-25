@@ -26,8 +26,7 @@ SvnBlameDialog::SvnBlameDialog(wxWindow* window, const wxString &content)
 		m_textCtrl->StyleSetFont(i, font);
 	}
 
-	m_textCtrl->SetMarginType (0, wxSCI_MARGIN_RTEXT);
-	m_textCtrl->SetMarginWidth(0, 200);
+	m_textCtrl->SetMarginType (0, wxSCI_MARGIN_TEXT);
 	m_textCtrl->SetMarginWidth(1, 0);
 	m_textCtrl->SetMarginWidth(2, 0);
 	m_textCtrl->SetMarginWidth(3, 0);
@@ -53,7 +52,9 @@ void SvnBlameDialog::SetText()
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 
 	int xx, yy;
-	int marginWidth(100);
+	int marginWidth(0);
+
+	static int s_style(1);
 
 	std::map<wxString, int> authorsColorsMap;
 	wxArrayString lines = wxStringTokenize(m_content, wxT("\n"), wxTOKEN_RET_DELIMS);
@@ -82,7 +83,10 @@ void SvnBlameDialog::SetText()
 			// Create new random color and use it
 			style = (*iter).second;
 		} else {
-			style = (time(NULL) % 5) + 1;
+			style = s_style;
+			s_style ++;
+			if(s_style > 5)
+				s_style = 1;
 			authorsColorsMap[author] = style;
 		}
 

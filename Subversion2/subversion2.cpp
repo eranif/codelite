@@ -66,6 +66,7 @@ Subversion2::Subversion2(IManager *manager)
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_patch"),               wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnPatch),             NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_diff"),                wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDiff),              NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_log"),                 wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnLog),               NULL, this);
+	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_blame"),               wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnBlame),             NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_ignore_file"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFile),        NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_ignore_file_pattern"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFilePattern), NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_set_as_view"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSelectAsView),      NULL, this);
@@ -82,6 +83,7 @@ Subversion2::~Subversion2()
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_patch"),               wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnPatch),             NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_diff"),                wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDiff),              NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_log"),                 wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnLog),               NULL, this);
+	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_blame"),               wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnBlame),             NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_ignore_file"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFile),        NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_ignore_file_pattern"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFilePattern), NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_set_as_view"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSelectAsView),      NULL, this);
@@ -150,6 +152,10 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
 	item = new wxMenuItem(menu, XRCID("svn_explorer_diff"), wxT("Create Diff"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 	item = new wxMenuItem(menu, XRCID("svn_explorer_patch"), wxT("Apply Patch"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	menu->AppendSeparator();
+
+	item = new wxMenuItem(menu, XRCID("svn_explorer_blame"), wxT("Blame ..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
@@ -633,4 +639,31 @@ void Subversion2::OnSelectAsView(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
 	GetSvnView()->BuildTree(DoGetFileExplorerItemPath());
+}
+
+void Subversion2::OnBlame(wxCommandEvent& event)
+{
+	wxArrayString files;
+	files.Add(DoGetFileExplorerItemFullPath());
+	Blame(event, files);
+}
+
+void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
+{
+	wxString command;
+	wxString loginString;
+
+	bool nonInteractive = GetNonInteractiveMode(event);
+	if(LoginIfNeeded(event, loginString) == false) {
+		return;
+	}
+
+	command << GetSvnExeName(nonInteractive) << loginString << wxT(" blame ");
+
+	// Concatenate list of files to be updated
+	for (size_t i=0; i<files.GetCount(); i++) {
+		command << wxT("\"") << files.Item(i) << wxT("\" ");
+	}
+
+	m_blameCommand.Execute(command, wxT(""), new SvnBlameHandler(this, event.GetId(), this));
 }

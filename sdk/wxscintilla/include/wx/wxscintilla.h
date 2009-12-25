@@ -134,8 +134,10 @@
 #define wxSCI_MASK_FOLDERS 0xFE000000
 #define wxSCI_MARGIN_SYMBOL 0
 #define wxSCI_MARGIN_NUMBER 1
-#define wxSCI_MARGIN_BACK 2
-#define wxSCI_MARGIN_FORE 3
+#define wxSCI_MARGIN_BACK   2
+#define wxSCI_MARGIN_FORE   3
+#define wxSCI_MARGIN_TEXT   4
+#define wxSCI_MARGIN_RTEXT  5
 
 // Styles in range 32..38 are predefined for parts of the UI and are not used as normal styles.
 // Styles 39 is for future use.

@@ -19,6 +19,7 @@ private:
 	wxMenuItem*         m_explorerSepItem;
 	SvnCommand          m_simpleCommand;
 	SvnCommand          m_diffCommand;
+	SvnCommand          m_blameCommand;
 	double              m_svnClientVersion;
 	CommitMessagesCache m_commitMessagesCache;
 
@@ -41,6 +42,7 @@ protected:
 	void OnDiff             (wxCommandEvent &event);
 	void OnPatch            (wxCommandEvent &event);
 	void OnLog              (wxCommandEvent &event);
+	void OnBlame            (wxCommandEvent &event);
 	void OnIgnoreFile       (wxCommandEvent &event);
 	void OnIgnoreFilePattern(wxCommandEvent &event);
 	void OnSelectAsView     (wxCommandEvent &event);
@@ -79,6 +81,8 @@ public:
 	void            UpdateIgnorePatterns();
 	void            Patch(bool dryRun, const wxString &workingDirectory, wxEvtHandler *owner, int id);
 	void            IgnoreFiles(const wxArrayString& files, bool pattern);
+	void            Blame(wxCommandEvent& event, const wxArrayString &files);
+
 	void SetSvnClientVersion(double svnClientVersion) {
 		this->m_svnClientVersion = svnClientVersion;
 	}

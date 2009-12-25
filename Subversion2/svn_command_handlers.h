@@ -114,4 +114,17 @@ public:
 public:
 	virtual void Process(const wxString &output);
 };
+
+//----------------------------------------------------
+// Svn blame handler
+//----------------------------------------------------
+
+class SvnBlameHandler : public SvnCommandHandler {
+public:
+	SvnBlameHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnCommandHandler(plugin, commandId, owner){};
+	virtual ~SvnBlameHandler(){};
+
+public:
+	virtual void Process(const wxString &output);
+};
 #endif // SVNCOMMITHANDLER_H

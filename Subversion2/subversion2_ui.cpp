@@ -18,12 +18,12 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_textCtrlRootDir = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-	bSizer2->Add( m_textCtrlRootDir, 1, wxALL, 5 );
+	bSizer2->Add( m_textCtrlRootDir, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 	
-	m_buttonChangeRootDir = new wxButton( this, wxID_ANY, _("&Select"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonChangeRootDir = new wxButton( this, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
 	m_buttonChangeRootDir->SetToolTip( _("Select a different root directory") );
 	
-	bSizer2->Add( m_buttonChangeRootDir, 0, wxALL|wxEXPAND, 5 );
+	bSizer2->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 	
 	mainSizer->Add( bSizer2, 0, wxEXPAND, 5 );
 	

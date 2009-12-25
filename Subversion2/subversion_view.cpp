@@ -46,6 +46,7 @@ BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_MENU(XRCID("svn_delete"),             SubversionView::OnDelete)
 	EVT_MENU(XRCID("svn_ignore_file"),        SubversionView::OnIgnoreFile)
 	EVT_MENU(XRCID("svn_ignore_file_pattern"),SubversionView::OnIgnoreFilePattern)
+	EVT_MENU(XRCID("svn_blame"),              SubversionView::OnBlame)
 
 END_EVENT_TABLE()
 
@@ -74,7 +75,7 @@ void SubversionView::OnChangeRootDir( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 	wxString path(m_textCtrlRootDir->GetValue());
-	wxString new_path = wxDirSelector(wxT("Select working directory:"), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = wxDirSelector(wxT(""), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
 		m_textCtrlRootDir->SetValue(new_path);
 		BuildTree();
@@ -399,6 +400,9 @@ void SubversionView::CreateFileMenu(wxMenu* menu)
 	menu->Append(XRCID("svn_resolve"), wxT("Resolve"));
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_diff"),    wxT("Create Diff..."));
+	menu->AppendSeparator();
+
+	menu->Append(XRCID("svn_blame"),    wxT("Blame..."));
 	menu->AppendSeparator();
 
 	wxMenu *subMenu;
@@ -840,4 +844,9 @@ void SubversionView::OnSettings(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
 	m_plugin->EditSettings();
+}
+
+void SubversionView::OnBlame(wxCommandEvent& event)
+{
+	m_plugin->Blame(event, m_selectionInfo.m_paths);
 }

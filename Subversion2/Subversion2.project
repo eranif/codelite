@@ -49,6 +49,8 @@
     <File Name="subversion_view.cpp"/>
     <File Name="svn_checkout_dialog.cpp"/>
     <File Name="svn_checkout_dialog.h"/>
+    <File Name="svnblamedialog.h"/>
+    <File Name="svnblamedialog.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="subversion2.fbp"/>

@@ -101,6 +101,8 @@ protected:
 	void OnCheckout         (wxCommandEvent &event);
 	void OnIgnoreFile       (wxCommandEvent &event);
 	void OnIgnoreFilePattern(wxCommandEvent &event);
+	void OnBlame            (wxCommandEvent &event);
+
 	DECLARE_EVENT_TABLE()
 
 	void OnStopUI         (wxUpdateUIEvent &event);

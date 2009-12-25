@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include "svnblamedialog.h"
 #include <wx/tokenzr.h>
 #include <wx/regex.h>
 #include "svn_console.h"
@@ -158,4 +159,10 @@ wxString SvnLogHandler::Compact(const wxString& message)
 void SvnCheckoutHandler::Process(const wxString& output)
 {
 	wxUnusedVar(output);
+}
+
+void SvnBlameHandler::Process(const wxString& output)
+{
+	SvnBlameDialog dlg(GetPlugin()->GetManager()->GetTheApp()->GetTopWindow(), output);
+	dlg.ShowModal();
 }

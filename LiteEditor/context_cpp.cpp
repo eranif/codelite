@@ -2608,6 +2608,8 @@ void ContextCpp::DoOpenWorkspaceFile()
 	wxString tmpName(m_selectedWord);
 
 	tmpName.Replace(wxT("\\"), wxT("/"));
+	if(tmpName.Contains(wxT("..")))
+		tmpName = fileName.GetFullName();
 
 	std::vector<wxFileName> files, files2;
 	TagsManagerST::Get()->GetFiles(fileName.GetFullName(), files);

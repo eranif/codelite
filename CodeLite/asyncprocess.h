@@ -16,9 +16,10 @@ class IProcess
 protected:
 	wxEvtHandler *m_parent;
 	int           m_pid;
+	int           m_exitCode;
 
 public:
-	IProcess(wxEvtHandler *parent) : m_parent(parent), m_pid(-1) {}
+	IProcess(wxEvtHandler *parent) : m_parent(parent), m_pid(-1), m_exitCode(0) {}
 	virtual ~IProcess() {}
 
 	// Read from process stdout - return immediately if no data is available
@@ -33,17 +34,22 @@ public:
 	// Clean the process resources and kill the process if it is
 	// still alive
 	virtual void Cleanup() = 0;
-	
+
 	// Terminate the process. It is recommended to use this method
 	// so it will invoke the 'Cleaup' procedure and the process
 	// termination event will be sent out
 	virtual void Terminate() = 0;
-	
-	void SetPid(const int& pid) {
+
+	void SetPid(int pid) {
 		this->m_pid = pid;
 	}
-	const int& GetPid() const {
+
+	int GetPid() const {
 		return m_pid;
+	}
+
+	int GetExitCode() const {
+		return m_exitCode;
 	}
 };
 

@@ -251,7 +251,15 @@ bool WinProcessImpl::Read(wxString& buff)
 			return true;
 		}
 	}
-	return buff.IsEmpty() == false;
+
+	bool success = !buff.IsEmpty();
+	if(!success) {
+		DWORD dwExitCode;
+		if (GetExitCodeProcess(piProcInfo.hProcess, &dwExitCode)) {
+			m_exitCode = (int)dwExitCode;
+		}
+	}
+	return success;
 }
 
 bool WinProcessImpl::Write(const wxString& buff)

@@ -2,40 +2,23 @@
 #define __ContinuousBuild__
 
 #include "plugin.h"
+#include "buildprocess.h"
 #include "compiler.h"
 
 class wxEvtHandler;
 class ContinousBuildPane;
 class ShellCommand;
 
-struct CurrentBuildFile {
-	wxString file;
-	wxString project;
-    wxString config;
-	wxArrayString output;
-
-	void Clear() {
-		output.Clear();
-		file.Clear();
-		project.Clear();
-        config.Clear();
-	}
-};
-
 class ContinuousBuild : public IPlugin
 {
 	ContinousBuildPane *m_view;
 	wxEvtHandler *      m_topWin;
-	ShellCommand *      m_shellProcess;
+	BuildProcess        m_buildProcess;
 	wxArrayString       m_files;
-	CurrentBuildFile    m_currentBuildInfo;
 	bool                m_buildInProgress;
 
 public:
-	void DoBuild(const wxString &fileName);
-	void DoReportErrors();
-	bool IsCompilable(const wxString &fileName);
-	CompilerPtr DoGetCompiler();
+	void        DoBuild(const wxString &fileName);
 
 public:
 	ContinuousBuild(IManager *manager);
@@ -58,9 +41,8 @@ public:
 	void OnFileSaved           (wxCommandEvent &e);
 	void OnIgnoreFileSaved     (wxCommandEvent &e);
 	void OnStopIgnoreFileSaved (wxCommandEvent &e);
-	void OnShellAddLine        (wxCommandEvent &e);
-	void OnShellBuildStarted   (wxCommandEvent &e);
-	void OnShellProcessEnded   (wxCommandEvent &e);
+	void OnBuildProcessEnded   (wxCommandEvent &e);
+	void OnBuildProcessOutput  (wxCommandEvent &e);
 };
 
 #endif //ContinuousBuild

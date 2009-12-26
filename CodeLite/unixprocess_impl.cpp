@@ -191,10 +191,10 @@ static void make_argv(const wxString &cmd)
 		freeargv(argv);
 		argc=0;
 	}
-	
+
 	argv = buildargv(cmd.mb_str(wxConvUTF8).data());
 	argc=0;
-	
+
 	for (char **targs = argv; *targs != NULL; targs++) {
 		argc++;
 	}
@@ -283,6 +283,10 @@ bool UnixProcessImpl::Read(wxString& buff)
 		if ( rc == EINTR || rc == EAGAIN ) {
 			return true;
 		}
+		// Process terminated
+		int status(0);
+		waitpid(GetPid(), &status, 0);
+		m_exitCode = WEXITSTATUS(status);
 		return false;
 	}
 }
@@ -401,7 +405,7 @@ void UnixProcessImpl::Terminate()
 
 #else
 	wxKill (GetPid(), wxSIGTERM);
-#endif	
+#endif
 }
 
 #endif //#if defined(__WXMAC )||defined(__WXGTK__)

@@ -21,57 +21,75 @@ ContinousBuildBasePane::ContinousBuildBasePane( wxWindow* parent, wxWindowID id,
 	bSizer5->Add( m_checkBox1, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 	
 	
-	bSizer5->Add( 0, 0, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer5->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Build concurrency:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText3->Wrap( -1 );
-	bSizer5->Add( m_staticText3, 0, wxALIGN_CENTER_VERTICAL, 5 );
+	m_buttonCancel = new wxButton( this, wxID_ANY, _("&Clear All"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel->SetDefault(); 
+	bSizer5->Add( m_buttonCancel, 0, wxEXPAND|wxALL, 5 );
 	
-	wxArrayString m_choiceNumberOfJobsChoices;
-	m_choiceNumberOfJobs = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceNumberOfJobsChoices, 0 );
-	m_choiceNumberOfJobs->SetSelection( 0 );
-	bSizer5->Add( m_choiceNumberOfJobs, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+	mainSizer->Add( bSizer5, 0, wxEXPAND, 5 );
 	
-	mainSizer->Add( bSizer5, 0, wxEXPAND|wxTOP, 5 );
+	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	mainSizer->Add( m_staticline1, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 	
-	wxBoxSizer* bSizer2;
-	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer* bSizer51;
+	bSizer51 = new wxBoxSizer( wxHORIZONTAL );
+	
+	wxBoxSizer* bSizer6;
+	bSizer6 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText31 = new wxStaticText( this, wxID_ANY, _("Queued Files:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText31->Wrap( -1 );
+	m_staticText31->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
+	
+	bSizer6->Add( m_staticText31, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
 	m_listBoxQueue = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	bSizer2->Add( m_listBoxQueue, 1, wxEXPAND|wxTOP, 5 );
+	bSizer6->Add( m_listBoxQueue, 1, wxEXPAND|wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
-	wxBoxSizer* bSizer3;
-	bSizer3 = new wxBoxSizer( wxVERTICAL );
+	bSizer51->Add( bSizer6, 1, wxEXPAND, 5 );
 	
-	m_buttonCancel = new wxButton( this, wxID_ANY, _("&Stop All"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_buttonCancel->SetDefault(); 
-	bSizer3->Add( m_buttonCancel, 0, wxEXPAND|wxALL, 5 );
+	wxBoxSizer* bSizer9;
+	bSizer9 = new wxBoxSizer( wxVERTICAL );
 	
-	bSizer2->Add( bSizer3, 0, wxEXPAND, 5 );
+	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Failed Files:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4->Wrap( -1 );
+	m_staticText4->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
+	m_staticText4->SetForegroundColour( wxColour( 255, 0, 0 ) );
+	m_staticText4->Hide();
 	
-	mainSizer->Add( bSizer2, 1, wxEXPAND, 5 );
+	bSizer9->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
-	m_staticTextStatus = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticTextStatus->Wrap( -1 );
-	mainSizer->Add( m_staticTextStatus, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+	m_listBoxFailedFiles = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+	m_listBoxFailedFiles->Hide();
+	
+	bSizer9->Add( m_listBoxFailedFiles, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	bSizer51->Add( bSizer9, 1, wxEXPAND, 5 );
+	
+	mainSizer->Add( bSizer51, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
 	
 	// Connect Events
 	m_checkBox1->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ContinousBuildBasePane::OnEnableCB ), NULL, this );
-	m_choiceNumberOfJobs->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ContinousBuildBasePane::OnChoiceNumberOfJobs ), NULL, this );
-	m_choiceNumberOfJobs->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnChoiceNumberOfJobsUI ), NULL, this );
 	m_buttonCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ContinousBuildBasePane::OnStopAll ), NULL, this );
 	m_buttonCancel->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnStopUI ), NULL, this );
+	m_staticText31->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnEnableContBuildUI ), NULL, this );
+	m_listBoxQueue->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnEnableContBuildUI ), NULL, this );
+	m_staticText4->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnEnableContBuildUI ), NULL, this );
+	m_listBoxFailedFiles->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnEnableContBuildUI ), NULL, this );
 }
 
 ContinousBuildBasePane::~ContinousBuildBasePane()
 {
 	// Disconnect Events
 	m_checkBox1->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ContinousBuildBasePane::OnEnableCB ), NULL, this );
-	m_choiceNumberOfJobs->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ContinousBuildBasePane::OnChoiceNumberOfJobs ), NULL, this );
-	m_choiceNumberOfJobs->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnChoiceNumberOfJobsUI ), NULL, this );
 	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ContinousBuildBasePane::OnStopAll ), NULL, this );
 	m_buttonCancel->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnStopUI ), NULL, this );
+	m_staticText31->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnEnableContBuildUI ), NULL, this );
+	m_listBoxQueue->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnEnableContBuildUI ), NULL, this );
+	m_staticText4->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnEnableContBuildUI ), NULL, this );
+	m_listBoxFailedFiles->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnEnableContBuildUI ), NULL, this );
 }

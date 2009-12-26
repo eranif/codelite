@@ -39,11 +39,12 @@ class IProcess;
  */
 class ProcessEventData
 {
-	wxString m_data;
+	wxString  m_data;
 	IProcess *m_process;
+	int       m_exitCode;
 
 public:
-	ProcessEventData() {}
+	ProcessEventData() : m_exitCode(0) {}
 	virtual ~ProcessEventData() {}
 
 	void SetData(const wxString& data) {
@@ -57,6 +58,12 @@ public:
 	}
 	IProcess* GetProcess() {
 		return m_process;
+	}
+	void SetExitCode(int exitCode) {
+		this->m_exitCode = exitCode;
+	}
+	int GetExitCode() const {
+		return m_exitCode;
 	}
 };
 

@@ -60,6 +60,7 @@ void* ProcessReaderThread::Entry()
 					ProcessEventData *ed = new ProcessEventData();
 					ed->SetData(buff);
 					ed->SetProcess( m_process );
+
 					e.SetClientData( ed );
 					if ( m_notifiedWindow ) {
 						m_notifiedWindow->AddPendingEvent( e );
@@ -72,6 +73,8 @@ void* ProcessReaderThread::Entry()
 				wxCommandEvent e(wxEVT_PROC_TERMINATED);
 				ProcessEventData *ed = new ProcessEventData();
 				ed->SetProcess( m_process );
+				ed->SetExitCode(m_process->GetExitCode());
+
 				e.SetClientData( ed );
 				if ( m_notifiedWindow ) {
 					m_notifiedWindow->AddPendingEvent( e );

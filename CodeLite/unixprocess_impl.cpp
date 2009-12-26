@@ -1,8 +1,8 @@
 #include "unixprocess_impl.h"
-
+ 
 #if defined(__WXMAC__)||defined(__WXGTK__)
 
-#include <wx/stdpaths.h>
+#include <wx/stdpaths.h> 
 #include <wx/filename.h>
 #include <unistd.h>
 #include <signal.h>

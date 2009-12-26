@@ -14,6 +14,12 @@
 #include "continousbuildconf.h"
 #include <wx/log.h>
 
+#if 0
+#define PRINT_MESSAGE(x) wxPrintf(x);
+#else
+#define PRINT_MESSAGE(x) (void)x;
+#endif
+
 static ContinuousBuild* thePlugin = NULL;
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
@@ -106,9 +112,12 @@ void ContinuousBuild::UnPlug()
 
 void ContinuousBuild::OnFileSaved(wxCommandEvent& e)
 {
+	PRINT_MESSAGE(wxT("ContinuousBuild::OnFileSaved\n"));
 	// Dont build while the main build is in progress
-	if (m_buildInProgress)
+	if (m_buildInProgress) {
+		PRINT_MESSAGE(wxT("Build already in progress, skipping\n"));
 		return;
+	}
 
 	ContinousBuildConf conf;
 	m_mgr->GetConfigTool()->ReadObject(wxT("ContinousBuildConf"), &conf);
@@ -117,14 +126,20 @@ void ContinuousBuild::OnFileSaved(wxCommandEvent& e)
 		wxString *fileName = (wxString*) e.GetClientData();
 		if(fileName)
 			DoBuild(*fileName);
+	} else {
+		PRINT_MESSAGE(wxT("ContinuousBuild is disabled\n"));
 	}
 }
 
 void ContinuousBuild::DoBuild(const wxString& fileName)
 {
+	PRINT_MESSAGE(wxT("DoBuild\n"));
 	// Make sure a workspace is opened
-	if (!m_mgr->IsWorkspaceOpen())
+	if (!m_mgr->IsWorkspaceOpen()) {
+		PRINT_MESSAGE(wxT("No workspace opened!\n"));
 		return;
+	}
+		
 
 	// Filter non source files
 	FileExtManager::FileType type = FileExtManager::GetType(fileName);
@@ -134,32 +149,43 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 		case FileExtManager::TypeResource:
 			break;
 
-		default:
+		default: {
+			PRINT_MESSAGE(wxT("Non source file\n"));
 			return;
+		}
 	}
 
 	wxString projectName = m_mgr->GetProjectNameByFile(fileName);
-	if(projectName.IsEmpty())
+	if(projectName.IsEmpty()) {
+		PRINT_MESSAGE(wxT("Project name is empty\n"));
 		return;
-
+	}
+	
 	wxString errMsg;
 	ProjectPtr project = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
-	if(!project)
+	if(!project){
+		PRINT_MESSAGE(wxT("Could not find project for file\n"));
 		return;
+	}
 
 	// get the selected configuration to be build
 	BuildConfigPtr bldConf = m_mgr->GetWorkspace()->GetProjBuildConf( project->GetName(), wxEmptyString );
 	if ( !bldConf ) {
+		PRINT_MESSAGE(wxT("Failed to locate build configuration\n"));
 		return;
 	}
 
 	BuilderPtr builder = m_mgr->GetBuildManager()->GetBuilder( wxT( "GNU makefile for g++/gcc" ) );
-	if(!builder)
+	if(!builder){
+		PRINT_MESSAGE(wxT("Failed to located builder\n"));
 		return;
+	}
 
 	// Only normal file builds are supported
-	if(bldConf->IsCustomBuild())
+	if(bldConf->IsCustomBuild()){
+		PRINT_MESSAGE(wxT("Build is custom. Skipping\n"));
 		return;
+	}
 
 	// get the single file command to use
 	wxString cmd      = builder->GetSingleFileCmd(projectName, bldConf->GetName(), fileName);
@@ -175,7 +201,8 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 		}
 		return;
 	}
-
+	
+	PRINT_MESSAGE(wxString::Format(wxT("cmd:%s\n"), cmd.c_str()));
 	if(!m_buildProcess.Execute(cmd, fileName, project->GetFileName().GetPath(), this))
 		return;
 

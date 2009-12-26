@@ -67,3 +67,10 @@ void ContinousBuildPane::OnEnableContBuildUI(wxUpdateUIEvent& event)
 {
 	event.Enable(m_checkBox1->IsChecked());
 }
+
+void ContinousBuildPane::OnEnableCB(wxCommandEvent& event)
+{
+	ContinousBuildConf conf;
+	conf.SetEnabled(event.IsChecked());
+	m_mgr->GetConfigTool()->WriteObject(wxT("ContinousBuildConf"), &conf);
+}

@@ -20,6 +20,11 @@ protected:
 	// Handlers for ContinousBuildBasePane events.
 	void OnStopAll( wxCommandEvent& event );
 	void OnStopUI( wxUpdateUIEvent& event );
+	/**
+	 * @brief
+	 * @param event
+	 */
+	virtual void OnEnableCB( wxCommandEvent& event );
 
 	void DoUpdateConf();
 

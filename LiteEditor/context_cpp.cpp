@@ -372,17 +372,35 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 
 		// User typed 'ENTER' immediatly after colons ':'
 		if ( prevpos != wxNOT_FOUND && ch == wxT(':') ) {
-
 			int  posWordBeforeColons(wxNOT_FOUND);
-			rCtrl.PreviousChar(prevpos, posWordBeforeColons);
-			if (posWordBeforeColons != wxNOT_FOUND && rCtrl.GetStyleAt(posWordBeforeColons) == wxSCI_C_WORD) {
 
+			rCtrl.PreviousChar(prevpos, posWordBeforeColons);
+			if (posWordBeforeColons != wxNOT_FOUND) {
+				word = rCtrl.PreviousWord(posWordBeforeColons, foundPos);
 				int prevLine = rCtrl.LineFromPosition(posWordBeforeColons);
-				// Indent this line according to the block indentation level
-				int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
-				if (foldLevel) {
-					rCtrl.SetLineIndentation(prevLine, ((foldLevel-1)*rCtrl.GetIndent()) );
-					rCtrl.ChooseCaretX();
+
+				// If we found one of the following keywords, un-indent their line by (foldLevel - 1)*indentSize
+				if ( word == wxT("public") || word == wxT("private") || word == wxT("protected") || word == wxT("default") ) {
+
+					// Indent this line according to the block indentation level
+					int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+					if (foldLevel) {
+						rCtrl.SetLineIndentation(prevLine, ((foldLevel-1)*rCtrl.GetIndent()) );
+						rCtrl.ChooseCaretX();
+					}
+
+				} else {
+
+					wxString lineString = rCtrl.GetLine(prevLine);
+					// We are on a line with 'case ', un-indent its line to be: (foldLevel - 1)*indentSize
+					if(lineString.Contains(wxT("case "))){
+						// Indent this line according to the block indentation level
+						int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+						if (foldLevel) {
+							rCtrl.SetLineIndentation(prevLine, ((foldLevel-1)*rCtrl.GetIndent()) );
+							rCtrl.ChooseCaretX();
+						}
+					}
 				}
 			}
 		}

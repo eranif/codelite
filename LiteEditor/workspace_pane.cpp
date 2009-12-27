@@ -42,6 +42,7 @@
 #include "workspacetab.h"
 #include "workspace_pane.h"
 
+#define OPEN_CONFIG_MGR_STR wxT("<Open Configuration Manager...>")
 
 WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr)
     : wxPanel(parent)
@@ -76,15 +77,11 @@ void WorkspacePane::CreateGUIControls()
 	mainSizer->Add(hsz, 0, wxEXPAND|wxALL, 5);
 
 	wxArrayString choices;
-	m_workspaceConfig = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, choices, wxCB_READONLY|wxALIGN_CENTER_VERTICAL);
+	m_workspaceConfig = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, choices);
 	m_workspaceConfig->Enable(false);
-	ConnectCombo(m_workspaceConfig, WorkspacePane::OnConfigurationManagerChoice);
+	m_workspaceConfig->Append(OPEN_CONFIG_MGR_STR);
+	ConnectChoice(m_workspaceConfig, WorkspacePane::OnConfigurationManagerChoice);
 	hsz->Add(m_workspaceConfig, 1, wxEXPAND);
-
-	wxButton *btn = new wxButton(this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-	ConnectButton(btn, WorkspacePane::OnConfigurationManager);
-	btn->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspacePane::OnConfigurationManagerUI), NULL, this);
-	hsz->Add(btn, 0, wxALIGN_CENTER_VERTICAL);
 
 	// add static line separator
 	wxStaticLine *line = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -277,6 +274,7 @@ void WorkspacePane::OnWorkspaceConfig(wxCommandEvent& e)
 	if (m_workspaceConfig->GetCount() > 0) {
         m_workspaceConfig->SetStringSelection(matrix->GetSelectedConfigurationName());
 	}
+	m_workspaceConfig->Append(OPEN_CONFIG_MGR_STR);
 	m_workspaceConfig->Thaw();
 }
 
@@ -288,13 +286,6 @@ void WorkspacePane::OnWorkspaceClosed(wxCommandEvent& e)
     m_winStack->Clear();
 }
 
-void WorkspacePane::OnConfigurationManager(wxCommandEvent& e)
-{
-	ConfigurationManagerDlg *dlg = new ConfigurationManagerDlg(this);
-	dlg->ShowModal();
-	dlg->Destroy();
-}
-
 void WorkspacePane::OnConfigurationManagerUI(wxUpdateUIEvent& e)
 {
 	e.Enable(ManagerST::Get()->IsWorkspaceOpen());
@@ -302,7 +293,25 @@ void WorkspacePane::OnConfigurationManagerUI(wxUpdateUIEvent& e)
 
 void WorkspacePane::OnConfigurationManagerChoice(wxCommandEvent &event)
 {
+	wxString selection = m_workspaceConfig->GetStringSelection();
+	if(selection == OPEN_CONFIG_MGR_STR){
+		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("configuration_manager"));
+		e.SetEventObject(this);
+		ProcessEvent(e);
+		return;
+	}
+
 	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-	matrix->SetSelectedConfigurationName(event.GetString());
+	matrix->SetSelectedConfigurationName(selection);
 	ManagerST::Get()->SetWorkspaceBuildMatrix(matrix);
+}
+
+void WorkspacePane::OnConfigurationManager(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	ConfigurationManagerDlg dlg(this);
+	dlg.ShowModal();
+
+	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
+	m_workspaceConfig->SetStringSelection(matrix->GetSelectedConfigurationName());
 }

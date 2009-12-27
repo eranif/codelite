@@ -51,6 +51,8 @@
     <File Name="svn_checkout_dialog.h"/>
     <File Name="svnblamedialog.h"/>
     <File Name="svnblamedialog.cpp"/>
+    <File Name="svnblameeditor.h"/>
+    <File Name="svnblameeditor.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="subversion2.fbp"/>

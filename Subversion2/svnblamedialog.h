@@ -3,19 +3,15 @@
 
 #include <wx/dialog.h>
 
-class wxScintilla;
+class SvnBlameEditor;
+
 class SvnBlameDialog : public wxDialog {
 public:
-	wxString     m_content;
-	wxScintilla *m_textCtrl;
-
-protected:
-	void SetText();
+	SvnBlameEditor *m_textCtrl;
 
 public:
 	SvnBlameDialog(wxWindow *window, const wxString &content);
 	virtual ~SvnBlameDialog();
-
 };
 
 #endif // SVNBLAMEDIALOG_H

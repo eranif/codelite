@@ -369,7 +369,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		topRect.height /= 3;
 		topRect.height *= 2;
 		
-		DrawingUtils::PaintStraightGradientBox(memDc, topRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), bgTabColour, true);
+		DrawingUtils::PaintStraightGradientBox(memDc, topRect, bgTabColour, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
 		
 	} else if ( GetSelected() ) {
 		wxRect rt(bmpRect);

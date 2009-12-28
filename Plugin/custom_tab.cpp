@@ -37,13 +37,13 @@
 #define clMASK_COLOR wxColor(0, 128, 128)
 
 #ifdef __WXMSW__
-#    define TAB_RADIUS  1
+#    define TAB_RADIUS   3
 #    define LIGHT_FACTOR 2
 #elif defined(__WXGTK__)
-#    define TAB_RADIUS 0
+#    define TAB_RADIUS   0
 #    define LIGHT_FACTOR 2
 #else
-#    define TAB_RADIUS 3
+#    define TAB_RADIUS   3
 #    define LIGHT_FACTOR 0
 #endif
 
@@ -98,7 +98,7 @@ void CustomTab::OnPaint(wxPaintEvent &event)
 {
 	wxUnusedVar(event);
 	wxBufferedPaintDC dc(this);
-
+	
 	if (m_orientation == wxLEFT || m_orientation == wxRIGHT) {
 		SetSizeHints(CalcTabWidth(), CalcTabHeight());
 		DoDrawVerticalTab(dc);
@@ -129,6 +129,7 @@ int CustomTab::CalcTabHeight()
 	if (GetText().IsEmpty() == false) {
 		int xx(0), yy(0);
 		wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+		font.SetWeight(wxBOLD);
 		wxWindow::GetTextExtent(GetText(), &xx, &yy, NULL, NULL, &font);
 
 		tmpTabHeight += xx;
@@ -158,8 +159,8 @@ int CustomTab::CalcTabWidth()
 		int xx, yy;
 		wxString stam(wxT("Tp"));
 		wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+		font.SetWeight(wxBOLD);
 		wxWindow::GetTextExtent(stam, &xx, &yy, NULL, NULL, &font);
-
 		yy > tmpTabWidth ? tmpTabWidth = yy : tmpTabWidth = tmpTabWidth;
 	}
 
@@ -336,6 +337,10 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 
 	//set the default GUI font
 	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	if(GetSelected()) {
+		font.SetWeight(wxBOLD);
+	}
+
 	memDc.SetFont(font);
 	wxRect bmpRect(0, 0, bmp.GetWidth(), bmp.GetHeight());
 
@@ -437,10 +442,8 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		wxCoord xBtnYCoord = (bmp.GetHeight() - 16)/2 + 2;
 
 		//draw the x button, only if we are the active tab
-		if (GetSelected()) {
-			memDc.DrawBitmap(GetXBmp(), posx, xBtnYCoord, true);
-		}
-
+		memDc.DrawBitmap(GetXBmp(), posx, xBtnYCoord, true);
+		
 		if (m_orientation == wxLEFT) {
 			m_xButtonRect = wxRect(xBtnYCoord, GetPadding(), 16, 16);
 		} else {
@@ -532,6 +535,9 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 	//set the default GUI font
 	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	if(GetSelected()) {
+		font.SetWeight(wxBOLD);
+	}
 	memDc.SetFont(font);
 
 	wxRect bmpRect(0, 0, bmp.GetWidth(), bmp.GetHeight());
@@ -558,7 +564,13 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		fillRect.x += 2;
 		fillRect.height -= 1;
 		memDc.DrawRoundedRectangle(fillRect, TAB_RADIUS);
-
+		
+		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
+		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
+		wxRect topRect(fillRect);
+		topRect.height /= 2;
+		DrawingUtils::PaintStraightGradientBox(memDc, topRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), bgTabColour, true);
+		
 	} else if ( GetSelected() ) {
 		wxRect fillRect(bmpRect);
 		if (GetSelected()) {
@@ -649,11 +661,10 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	//draw x button if needed
 	if (GetBookStyle() & wxVB_HAS_X) {
 		//draw the x button, only if we are the active tab
-		if (GetSelected()) {
-			x_yoffset = (bmp.GetHeight() - GetXBmp().GetHeight())/2;
-			top ? x_yoffset += 2 : x_yoffset;
-			memDc.DrawBitmap(GetXBmp(), posx, x_yoffset, true);
-		}
+		x_yoffset = (bmp.GetHeight() - GetXBmp().GetHeight())/2;
+		top ? x_yoffset += 2 : x_yoffset;
+		memDc.DrawBitmap(GetXBmp(), posx, x_yoffset, true);
+		
 		int xWidth = GetXBmp().GetWidth();
 		m_xButtonRect = wxRect(posx, x_yoffset, xWidth, GetXBmp().GetHeight());
 		posx += xWidth + GetPadding();

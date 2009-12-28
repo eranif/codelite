@@ -283,7 +283,7 @@ void wxTabContainer::SetSelection(CustomTab *tab, bool notify)
 
 	tab->SetSelected(true);
 	EnsureVisible(tab);
-
+	
 	tab->Refresh();
 	tab->GetWindow()->SetFocus();
 

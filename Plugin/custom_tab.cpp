@@ -98,7 +98,7 @@ void CustomTab::OnPaint(wxPaintEvent &event)
 {
 	wxUnusedVar(event);
 	wxBufferedPaintDC dc(this);
-	
+
 	if (m_orientation == wxLEFT || m_orientation == wxRIGHT) {
 		SetSizeHints(CalcTabWidth(), CalcTabHeight());
 		DoDrawVerticalTab(dc);
@@ -175,7 +175,7 @@ void CustomTab::OnLeftDown(wxMouseEvent &e)
 
 	//check if the click was on x button
 	wxPoint pt = e.GetPosition();
-	if (m_xButtonRect.Contains(pt) && GetSelected()) {
+	if (m_xButtonRect.Contains(pt)/* && GetSelected()*/) {
 		//click was made inside the x button area
 		m_x_state = XPushed;
 		Refresh();
@@ -362,27 +362,27 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		rt.x += 1;
 		rt.height -= 1;
 		memDc.DrawRoundedRectangle(rt, TAB_RADIUS);
-		
+
 		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
 		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
 		wxRect topRect(rt);
 		topRect.height /= 3;
 		topRect.height *= 2;
-		
+
 		DrawingUtils::PaintStraightGradientBox(memDc, topRect, bgTabColour, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
-		
+
 	} else if ( GetSelected() ) {
 		wxRect rt(bmpRect);
 		rt.y += 1;
 		memDc.DrawRoundedRectangle(rt, TAB_RADIUS);
-		
+
 		wxRect topRect(rt);
 		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
 		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
-		
+
 		topRect.height /= 3;
 		topRect.height *= 2;
-		
+
 		DrawingUtils::PaintStraightGradientBox(memDc, topRect, bgTabColour, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
 
 	} else {
@@ -450,7 +450,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 
 		//draw the x button, only if we are the active tab
 		memDc.DrawBitmap(GetXBmp(), posx, xBtnYCoord, true);
-		
+
 		if (m_orientation == wxLEFT) {
 			m_xButtonRect = wxRect(xBtnYCoord, GetPadding(), 16, 16);
 		} else {
@@ -558,7 +558,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	if (top && GetSelected()) {
 		wxRect fillRect(bmpRect);
 		fillRect.y += 1;
-		
+
 		// We want the gradient NOT to be painted on the border,
 		// so we reduce the width of the fillRect by 2 pixles
 		// also, we need to adjust the x & y coordinates by 1 pixel
@@ -566,30 +566,30 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		fillRect.x += 2;
 		fillRect.height -= 1;
 		memDc.DrawRoundedRectangle(fillRect, TAB_RADIUS);
-		
+
 		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
 		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
 		wxRect topRect(fillRect);
 		topRect.height /= 3;
 		topRect.height *= 2;
-		
+
 		DrawingUtils::PaintStraightGradientBox(memDc, topRect, bgTabColour, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
-		
+
 	} else if ( GetSelected() ) {
 		wxRect fillRect(bmpRect);
 		fillRect.height -= 1;
-		
+
 		memDc.DrawRoundedRectangle(fillRect, TAB_RADIUS);
-		
+
 		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
 		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
 		wxRect topRect(fillRect);
-		
+
 		topRect.height /= 3;
 		topRect.height *= 2;
 		topRect.y      += (topRect.height/3)+2;
 		DrawingUtils::PaintStraightGradientBox(memDc, topRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), bgTabColour, true);
-		
+
 	} else {
 
 		wxRect fillRect(bmpRect);
@@ -670,7 +670,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		x_yoffset = (bmp.GetHeight() - GetXBmp().GetHeight())/2;
 		top ? x_yoffset += 2 : x_yoffset;
 		memDc.DrawBitmap(GetXBmp(), posx, x_yoffset, true);
-		
+
 		int xWidth = GetXBmp().GetWidth();
 		m_xButtonRect = wxRect(posx, x_yoffset, xWidth, GetXBmp().GetHeight());
 		posx += xWidth + GetPadding();

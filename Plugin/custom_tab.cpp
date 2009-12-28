@@ -353,11 +353,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 
 	if (left && GetSelected()) {
 		wxRect rt(bmpRect);
-		if (GetSelected()) {
-			rt.y += 1;
-		} else {
-			rt.y += 3;
-		}
+		rt.y += 1;
 
 		// we want the gradient NOT to be painted on the border,
 		// so we reduce the width of the fillRect by 2 pixles
@@ -366,15 +362,29 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		rt.x += 1;
 		rt.height -= 1;
 		memDc.DrawRoundedRectangle(rt, TAB_RADIUS);
+		
+		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
+		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
+		wxRect topRect(rt);
+		topRect.height /= 3;
+		topRect.height *= 2;
+		
+		DrawingUtils::PaintStraightGradientBox(memDc, topRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), bgTabColour, true);
+		
 	} else if ( GetSelected() ) {
 		wxRect rt(bmpRect);
-		if (GetSelected()) {
-			rt.y += 1;
-		} else {
-			rt.y += 3;
-		}
-
+		rt.y += 1;
 		memDc.DrawRoundedRectangle(rt, TAB_RADIUS);
+		
+		wxRect topRect(rt);
+		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
+		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
+		
+		topRect.height /= 3;
+		topRect.height *= 2;
+		
+		DrawingUtils::PaintStraightGradientBox(memDc, topRect, bgTabColour, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
+
 	} else {
 		wxRect fillRect(bmpRect);
 		fillRect.height -= 3;
@@ -383,9 +393,6 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
 		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
 
-//		memDc.SetBrush( bgTabColour );
-//		memDc.SetPen( *wxTRANSPARENT_PEN );
-//		memDc.DrawRectangle(fillRect);
 		DrawingUtils::PaintStraightGradientBox( memDc,
 												fillRect,
 												wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE),
@@ -550,13 +557,8 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 	if (top && GetSelected()) {
 		wxRect fillRect(bmpRect);
-
-		if (GetSelected()) {
-			fillRect.y += 1;
-		} else {
-			fillRect.y += 3;
-		}
-
+		fillRect.y += 1;
+		
 		// We want the gradient NOT to be painted on the border,
 		// so we reduce the width of the fillRect by 2 pixles
 		// also, we need to adjust the x & y coordinates by 1 pixel
@@ -568,18 +570,26 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
 		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
 		wxRect topRect(fillRect);
-		topRect.height /= 2;
-		DrawingUtils::PaintStraightGradientBox(memDc, topRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), bgTabColour, true);
+		topRect.height /= 3;
+		topRect.height *= 2;
+		
+		DrawingUtils::PaintStraightGradientBox(memDc, topRect, bgTabColour, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
 		
 	} else if ( GetSelected() ) {
 		wxRect fillRect(bmpRect);
-		if (GetSelected()) {
-			fillRect.height -= 1;
-		} else {
-			fillRect.height -= 3;
-		}
+		fillRect.height -= 1;
+		
 		memDc.DrawRoundedRectangle(fillRect, TAB_RADIUS);
-
+		
+		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
+		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
+		wxRect topRect(fillRect);
+		
+		topRect.height /= 3;
+		topRect.height *= 2;
+		topRect.y      += (topRect.height/3)+2;
+		DrawingUtils::PaintStraightGradientBox(memDc, topRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), bgTabColour, true);
+		
 	} else {
 
 		wxRect fillRect(bmpRect);
@@ -588,10 +598,6 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
 		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
-
-//		memDc.SetBrush( bgTabColour );
-//		memDc.SetPen( *wxTRANSPARENT_PEN );
-//		memDc.DrawRectangle(fillRect);
 		DrawingUtils::PaintStraightGradientBox(memDc, fillRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), bgTabColour, true);
 	}
 

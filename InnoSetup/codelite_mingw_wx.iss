@@ -158,6 +158,7 @@ procedure InitializeWizard();
 begin
   CreateMinGWPage();
   CreateWxPage();
+  CreateUnitTestPPPage();
 end;
 
 // Uninstall

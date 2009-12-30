@@ -25,7 +25,7 @@ public:
 	SvnConsole(wxWindow *parent, Subversion2* plugin);
 	virtual ~SvnConsole();
 
-	bool Execute(const wxString &cmd, const wxString &workingDirectory, SvnCommandHandler *handler, bool printCommand = true, bool printProcessOutput = true);
+	bool Execute(const wxString &cmd, const wxString &workingDirectory, SvnCommandHandler *handler, bool printProcessOutput = true);
 	void Clear  ();
 	void Stop   ();
 	void AppendText(const wxString &text);

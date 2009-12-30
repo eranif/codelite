@@ -91,7 +91,7 @@ public:
 		return m_commitMessagesCache;
 	}
 
-	bool LoginIfNeeded        (wxCommandEvent &event, wxString& loginString);
+	bool LoginIfNeeded        (wxCommandEvent &event, const wxString &workingDirectory, wxString& loginString);
 	bool GetNonInteractiveMode(wxCommandEvent &event);
 
 protected:

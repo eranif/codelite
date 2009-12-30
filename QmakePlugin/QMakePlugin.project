@@ -6,12 +6,7 @@
     <File Name="qmakeconf.h"/>
     <File Name="qmakeplugindata.cpp"/>
     <File Name="qmakeplugindata.h"/>
-    <File Name="wxmd5.cpp"/>
-    <File Name="wxmd5.h"/>
     <File Name="MD5.h"/>
-    <File Name="md5c.c"/>
-    <File Name="md5_global.h"/>
-    <File Name="md5.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="qmakeplugin.h"/>

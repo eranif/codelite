@@ -151,7 +151,7 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 	}
 }
 
-bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler, bool printCommand, bool printProcessOutput)
+bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler, bool printProcessOutput)
 {
 	m_printProcessOutput = printProcessOutput;
 	if (m_process) {
@@ -168,8 +168,7 @@ bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, 
 	EnsureVisible();
 
 	// Print the command?
-	if (printCommand)
-		AppendText(cmd + wxT("\n"));
+	AppendText(cmd + wxT("\n"));
 
 	// Wrap the command in the OS Shell
 	wxString cmdShell (cmd);
@@ -190,8 +189,19 @@ void SvnConsole::AppendText(const wxString& text)
 	m_sci->SetSelectionEnd(m_sci->GetLength());
 	m_sci->SetSelectionStart(m_sci->GetLength());
 	m_sci->SetCurrentPos(m_sci->GetLength());
-
-	m_sci->AppendText(text);
+	
+	wxString noPasswordText(text);
+	
+	int where = noPasswordText.Find(wxT("--password "));
+	if(where != wxNOT_FOUND) {
+		where += wxStrlen(wxT("--password "));
+		wxString password = noPasswordText.Mid(where);
+		password = password.BeforeFirst(wxT(' '));
+		
+		noPasswordText.Replace(password, wxT("******"));
+	}
+		
+	m_sci->AppendText(noPasswordText);
 
 	m_sci->SetSelectionEnd(m_sci->GetLength());
 	m_sci->SetSelectionStart(m_sci->GetLength());

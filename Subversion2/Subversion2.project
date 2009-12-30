@@ -14,6 +14,7 @@
     <File Name="svninfohandler.cpp"/>
     <File Name="svn_command_handlers.cpp"/>
     <File Name="svn_console.cpp"/>
+    <File Name="subversion_password_db.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="subversion2.h"/>
@@ -32,6 +33,7 @@
     <File Name="svncommandhandler.cpp"/>
     <File Name="commitmessagescache.h"/>
     <File Name="commitmessagescache.cpp"/>
+    <File Name="subversion_password_db.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="UI">

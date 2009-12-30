@@ -518,6 +518,8 @@ SvnInfoDialog::SvnInfoDialog( wxWindow* parent, wxWindowID id, const wxString& t
 	fgSizer7->Add( m_staticText19, 0, wxALL, 5 );
 	
 	m_textCtrlRootURL = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 500,-1 ), wxTE_READONLY|wxTE_RICH2 );
+	m_textCtrlRootURL->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+	
 	fgSizer7->Add( m_textCtrlRootURL, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText21 = new wxStaticText( this, wxID_ANY, _("URL:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -527,6 +529,8 @@ SvnInfoDialog::SvnInfoDialog( wxWindow* parent, wxWindowID id, const wxString& t
 	fgSizer7->Add( m_staticText21, 0, wxALL, 5 );
 	
 	m_textCtrlURL = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxTE_RICH2 );
+	m_textCtrlURL->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+	
 	fgSizer7->Add( m_textCtrlURL, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText23 = new wxStaticText( this, wxID_ANY, _("Revision:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -536,6 +540,8 @@ SvnInfoDialog::SvnInfoDialog( wxWindow* parent, wxWindowID id, const wxString& t
 	fgSizer7->Add( m_staticText23, 0, wxALL, 5 );
 	
 	m_textCtrlRevision = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxTE_RICH2 );
+	m_textCtrlRevision->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+	
 	fgSizer7->Add( m_textCtrlRevision, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText25 = new wxStaticText( this, wxID_ANY, _("Author:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -545,6 +551,8 @@ SvnInfoDialog::SvnInfoDialog( wxWindow* parent, wxWindowID id, const wxString& t
 	fgSizer7->Add( m_staticText25, 0, wxALL, 5 );
 	
 	m_textCtrlAuthor = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxTE_RICH2 );
+	m_textCtrlAuthor->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+	
 	fgSizer7->Add( m_textCtrlAuthor, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText27 = new wxStaticText( this, wxID_ANY, _("Date:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -554,6 +562,8 @@ SvnInfoDialog::SvnInfoDialog( wxWindow* parent, wxWindowID id, const wxString& t
 	fgSizer7->Add( m_staticText27, 0, wxALL, 5 );
 	
 	m_textCtrlDate = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxTE_RICH2 );
+	m_textCtrlDate->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+	
 	fgSizer7->Add( m_textCtrlDate, 0, wxALL|wxEXPAND, 5 );
 	
 	sbSizer3->Add( fgSizer7, 1, wxEXPAND|wxALL, 5 );

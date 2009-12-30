@@ -4265,7 +4265,7 @@
                                     <property name="flag">wxALL|wxEXPAND</property>
                                     <property name="proportion">0</property>
                                     <object class="wxTextCtrl" expanded="1">
-                                        <property name="bg"></property>
+                                        <property name="bg">wxSYS_COLOUR_BTNFACE</property>
                                         <property name="context_help"></property>
                                         <property name="enabled">1</property>
                                         <property name="fg"></property>
@@ -4379,7 +4379,7 @@
                                     <property name="flag">wxALL|wxEXPAND</property>
                                     <property name="proportion">0</property>
                                     <object class="wxTextCtrl" expanded="1">
-                                        <property name="bg"></property>
+                                        <property name="bg">wxSYS_COLOUR_BTNFACE</property>
                                         <property name="context_help"></property>
                                         <property name="enabled">1</property>
                                         <property name="fg"></property>
@@ -4493,7 +4493,7 @@
                                     <property name="flag">wxALL|wxEXPAND</property>
                                     <property name="proportion">0</property>
                                     <object class="wxTextCtrl" expanded="1">
-                                        <property name="bg"></property>
+                                        <property name="bg">wxSYS_COLOUR_BTNFACE</property>
                                         <property name="context_help"></property>
                                         <property name="enabled">1</property>
                                         <property name="fg"></property>
@@ -4607,7 +4607,7 @@
                                     <property name="flag">wxALL|wxEXPAND</property>
                                     <property name="proportion">0</property>
                                     <object class="wxTextCtrl" expanded="1">
-                                        <property name="bg"></property>
+                                        <property name="bg">wxSYS_COLOUR_BTNFACE</property>
                                         <property name="context_help"></property>
                                         <property name="enabled">1</property>
                                         <property name="fg"></property>
@@ -4721,7 +4721,7 @@
                                     <property name="flag">wxALL|wxEXPAND</property>
                                     <property name="proportion">0</property>
                                     <object class="wxTextCtrl" expanded="1">
-                                        <property name="bg"></property>
+                                        <property name="bg">wxSYS_COLOUR_BTNFACE</property>
                                         <property name="context_help"></property>
                                         <property name="enabled">1</property>
                                         <property name="fg"></property>

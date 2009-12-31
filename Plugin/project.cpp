@@ -92,7 +92,9 @@ bool Project::Load(const wxString &path)
 	if ( !m_doc.Load(path) ) {
 		return false;
 	}
-
+	
+	ConvertToUnixFormat(m_doc.GetRoot());
+	
 	// Workaround WX bug: load the plugins data (GetAllPluginsData will strip any trailing whitespaces)
 	// and then set them back
 	std::map<wxString, wxString> pluginsData;
@@ -1028,4 +1030,34 @@ void Project::SetAllPluginsData(const std::map<wxString, wxString>& pluginsDataM
 time_t Project::GetFileLastModifiedTime() const
 {
 	return GetFileModificationTime(GetFileName());
+}
+
+void Project::ConvertToUnixFormat(wxXmlNode* parent)
+{
+	if(!parent)
+		return;
+	
+	wxXmlNode *child = parent->GetChildren();
+	while(child) {
+		
+		if(child->GetName() == wxT("VirtualDirectory")) {
+			
+			ConvertToUnixFormat(child);
+			
+		} else if(child->GetName() == wxT("File")) {
+			
+			wxXmlProperty *props = child->GetProperties();
+			// Convert the path to unix format
+			while ( props ) {
+				if(props->GetName() == wxT("Name")) {
+					wxString val = props->GetValue();
+					val.Replace(wxT("\\"), wxT("/"));
+					props->SetValue(val);
+					break;
+				}
+				props = props->GetNext();
+			}
+		}
+		child = child->GetNext();
+	}
 }

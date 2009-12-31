@@ -593,6 +593,12 @@ void Workspace::Save()
 bool Workspace::AddNewFile(const wxString &vdFullPath, const wxString &fileName, wxString &errMsg)
 {
 	wxStringTokenizer tkz(vdFullPath, wxT(":"));
+	
+	// We should have at least 2 tokens:
+	// project:virtual directory
+	if(tkz.CountTokens() < 2)
+		return false;
+	
 	wxString projName = tkz.GetNextToken();
 	wxString fixedPath;
 	// Construct new path excluding the first token

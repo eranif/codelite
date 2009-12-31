@@ -496,7 +496,13 @@ private:
 	 * Return list of projects that this projects depends on
 	 */
 	wxArrayString GetDependencies() const;
-
+	
+	/**
+	 * @brief convert all the files paths to Unix format
+	 * @param parent
+	 */
+	void ConvertToUnixFormat(wxXmlNode *parent);
+	
 	bool SaveXmlFile();
 };
 

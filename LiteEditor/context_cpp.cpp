@@ -1998,7 +1998,7 @@ void ContextCpp::ApplySettings()
 
 	// Update the control
 	LEditor &rCtrl = GetCtrl();
-	rCtrl.SetLexer(lexPtr->GetLexerId());
+	rCtrl.SetLexer((int)lexPtr->GetLexerId());
 
 	wxString keyWords = lexPtr->GetKeyWords(0);
 	keyWords.Replace(wxT("\n"), wxT(" "));

@@ -53,6 +53,8 @@ void SvnDiffHandler::Process(const wxString& output)
 {
 	IEditor *editor = GetPlugin()->GetManager()->NewEditor();
 	if(editor) {
+		// Set the lexer name to 'Diff'
+		editor->SetLexerName(wxT("Diff"));
 		editor->AppendText(output);
 	}
 }

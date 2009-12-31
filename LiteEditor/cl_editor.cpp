@@ -636,7 +636,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		break;
 
 	case ';':
-		if(!m_disableSemicolonShift)
+		if (!m_disableSemicolonShift)
 			m_context->SemicolonShift();
 		break;
 
@@ -657,7 +657,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 
 	case ':':
 
-		if(m_disableSmartIndent == false)
+		if (m_disableSmartIndent == false)
 			m_context->AutoIndent(event.GetKey());
 
 		// fall through...
@@ -672,7 +672,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		ShowFunctionTipFromCurrentPos();
 		break;
 	case '}':
-		if(m_disableSmartIndent == false)
+		if (m_disableSmartIndent == false)
 			m_context->AutoIndent(event.GetKey());
 		break;
 	case '\n': {
@@ -684,20 +684,20 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 				//InsertText(pos, GetEolString());
 				CharRight();
 
-				if(m_disableSmartIndent == false)
+				if (m_disableSmartIndent == false)
 					m_context->AutoIndent(wxT('}'));
 
 				InsertText(pos, GetEolString());
 				CharRight();
 				SetCaretAt(pos);
 
-				if(m_disableSmartIndent == false)
+				if (m_disableSmartIndent == false)
 					m_context->AutoIndent(wxT('\n'));
 
 				EndUndoAction();
 			} else {
 
-				if(m_disableSmartIndent == false)
+				if (m_disableSmartIndent == false)
 					m_context->AutoIndent(event.GetKey());
 
 				// incase we are typing in a folded line, make sure it is visible
@@ -801,15 +801,15 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 
 	int foldLevel = (GetFoldLevel(curLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
 	message << wxT("Ln ")
-			<< curLine+1
-			<< wxT(",  Col ")
-			<< GetColumn(pos)
-			<< wxT(",  Pos ")
-			<< pos
-			<< wxT(",  Style ")
-			<< GetStyleAt(pos)
-			<< wxT(", Fold ")
-			<< foldLevel;
+	<< curLine+1
+	<< wxT(",  Col ")
+	<< GetColumn(pos)
+	<< wxT(",  Pos ")
+	<< pos
+	<< wxT(",  Style ")
+	<< GetStyleAt(pos)
+	<< wxT(", Fold ")
+	<< foldLevel;
 
 	// Always update the status bar with event, calling it directly causes performance degredation
 	DoSetStatusMessage(message, 1);
@@ -2344,7 +2344,7 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 	// hide completion box
 	HideCompletionBox();
 
-	if( ManagerST::Get()->GetDisplayVariableDialog()->IsShown() )
+	if ( ManagerST::Get()->GetDisplayVariableDialog()->IsShown() )
 		ManagerST::Get()->GetDisplayVariableDialog()->HideDialog();
 
 #ifdef __WXMSW__
@@ -2536,14 +2536,14 @@ void LEditor::ToggleBreakpoint(int lineno)
 
 void LEditor::SetWarningMarker(int lineno)
 {
-	if(lineno >= 0) {
+	if (lineno >= 0) {
 		MarkerAdd(lineno, smt_warning);
 	}
 }
 
 void LEditor::SetErrorMarker(int lineno)
 {
-	if(lineno >= 0) {
+	if (lineno >= 0) {
 		MarkerAdd(lineno, smt_error);
 	}
 }
@@ -2756,7 +2756,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	// If the number of elements exceeds the maximum query result,
 	// alert the user
 	int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
-	if( tags.size() >= (size_t) limit ) {
+	if ( tags.size() >= (size_t) limit ) {
 		this->DoSetStatusMessage(wxString::Format(wxT("Too many items were found. Narrow your search criteria (Displaying %d)"), tags.size()), 0);
 	}
 
@@ -2777,7 +2777,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	// If the number of elements exceeds the maximum query result,
 	// alert the user
 	int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
-	if( tags.size() >= (size_t) limit ) {
+	if ( tags.size() >= (size_t) limit ) {
 		this->DoSetStatusMessage(wxString::Format(wxT("Too many items were found. Narrow your search criteria (Displaying %d)"), tags.size()), 0);
 	}
 
@@ -3334,7 +3334,7 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 	int match_len ( 0 ), pos ( 0 );
 
 	// set the caret at the document start
-	if(start_pos < 0 || start_pos > GetLength()) {
+	if (start_pos < 0 || start_pos > GetLength()) {
 		start_pos = 0;
 	}
 
@@ -3478,4 +3478,9 @@ bool LEditor::ReplaceAllExactMatch(const wxString& what, const wxString& replace
 
 	EndUndoAction();
 	return (matchCount > 0);
+}
+
+void LEditor::SetLexerName(const wxString& lexerName)
+{
+	SetSyntaxHighlight(lexerName);
 }

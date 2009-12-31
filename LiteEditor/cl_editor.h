@@ -516,6 +516,8 @@ public:
 	virtual wxString GetSelection();
 	virtual void SelectText(int startPos, int len);
 
+	virtual void SetLexerName(const wxString &lexerName);
+
 	// User Indicators API
 	virtual void SetUserIndicatorStyleAndColour(int style, const wxColour &colour);
 	virtual void SetUserIndicator(int startPos, int len);

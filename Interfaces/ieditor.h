@@ -262,6 +262,12 @@ public:
 	 * @return return true if a match was found, false otherwise
 	 */
 	virtual bool FindAndSelect(const wxString &pattern, const wxString &what, int from_pos, NavMgr *navmgr) = 0;
+
+	/**
+	 * @brief set a lexer to the editor
+	 * @param lexerName
+	 */
+	virtual void SetLexerName(const wxString &lexerName) = 0;
 };
 
 #endif //IEDITOR_H

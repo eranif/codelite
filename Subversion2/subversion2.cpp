@@ -720,8 +720,8 @@ void Subversion2::OnGetCompileLine(wxCommandEvent& event)
 	
 	wxString content = event.GetString();
 	content << wxT(" -D");
-	content << macroName << wxT("=\"");
-	content << svnInfo.m_revision << wxT("\" ");
+	content << macroName << wxT("=\\\"");
+	content << svnInfo.m_revision << wxT("\\\" ");
 	event.SetString( content );
 	event.Skip();
 }

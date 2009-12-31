@@ -464,24 +464,17 @@ createPluginMakefile()
 	  createVariables "yes"
 	fi
 
-	## Hack to include the md5c.c file in the makefile for the qmake plugin
-	if [ "$plugin_name" = "QmakePlugin" ] ; then
-	  createObjectList "*.cpp md5c.c" "${plugin_name}Objects"
-	elif [ "$plugin_name" = "CppCheck" ] ; then
+	if [ "$plugin_name" = "CppCheck" ] ; then
 	  createObjectList "*.cpp ../sdk/codelite_cppcheck/network/*.cpp" "${plugin_name}Objects"
 	else
 	  createObjectList "*.cpp" "${plugin_name}Objects"
 	fi
 
 	createPluginTargets "${plugin_name}" "${post_install_path}"
-	if [ "$plugin_name" = "QmakePlugin" ] ; then
-	  #createRules_sharedObject "*.cpp md5c.c" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT) -lwxpropgrid\$(EXT)"
-	  createRules_sharedObject "*.cpp md5c.c" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
-	elif [ "$plugin_name" = "CppCheck" ] ; then
+	if [ "$plugin_name" = "CppCheck" ] ; then
 	  #createRules_sharedObject "*.cpp ../sdk/codelite_cppcheck/network/*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT) -lwxpropgrid\$(EXT)"
 	  createRules_sharedObject "*.cpp ../sdk/codelite_cppcheck/network/*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
 	else
-	 #createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -l    wxsqlite3\$(EXT) -lwxpropgrid\$(EXT)"
 	 createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -l    wxsqlite3\$(EXT)"
 	fi
 

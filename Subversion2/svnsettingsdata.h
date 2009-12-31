@@ -4,9 +4,10 @@
 #include "serialized_object.h" // Base class
 
 enum SvnSettingsDataFlags {
-	SvnAddFileToSvn    = 0x00000001,
-	SvnRetagWorkspace  = 0x00000002,
-	SvnUseExternalDiff = 0x00000004
+	SvnAddFileToSvn        = 0x00000001,
+	SvnRetagWorkspace      = 0x00000002,
+	SvnUseExternalDiff     = 0x00000004,
+	SvnExposeRevisionMacro = 0x00000008
 };
 
 class SvnSettingsData : public SerializedObject
@@ -19,6 +20,7 @@ class SvnSettingsData : public SerializedObject
 	wxString      m_sshClientArgs;
 	size_t        m_flags;
 	wxArrayString m_urls;
+	wxString      m_revisionMacroName;
 
 public:
 	SvnSettingsData()
@@ -28,7 +30,8 @@ public:
 			, m_externalDiffViewerCommand(wxT("$(MyFile) $(OriginalFile)"))
 			, m_sshClient(wxT(""))
 			, m_sshClientArgs(wxT(""))
-			, m_flags(SvnAddFileToSvn|SvnRetagWorkspace) {
+			, m_flags(SvnAddFileToSvn|SvnRetagWorkspace)
+			, m_revisionMacroName(wxT("SVN_REVISION")) {
 	}
 
 	virtual ~SvnSettingsData() {
@@ -44,6 +47,7 @@ public:
 		arch.Read(wxT("m_sshClientArgs"),             m_sshClientArgs);
 		arch.Read(wxT("m_flags"),                     m_flags);
 		arch.Read(wxT("m_urls"),                      m_urls);
+		arch.Read(wxT("m_revisionMacroName"),         m_revisionMacroName);
 	}
 
 	virtual void Serialize(Archive &arch) {
@@ -55,8 +59,15 @@ public:
 		arch.Write(wxT("m_sshClientArgs"),             m_sshClientArgs);
 		arch.Write(wxT("m_flags"),                     m_flags);
 		arch.Write(wxT("m_urls"),                      m_urls);
+		arch.Write(wxT("m_revisionMacroName"),         m_revisionMacroName);
 	}
 
+	void SetRevisionMacroName(const wxString& revisionMacroName) {
+		this->m_revisionMacroName = revisionMacroName;
+	}
+	const wxString& GetRevisionMacroName() const {
+		return m_revisionMacroName;
+	}
 	void SetExecutable(const wxString& executable) {
 		this->m_executable = executable;
 	}

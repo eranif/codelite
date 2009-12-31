@@ -206,6 +206,10 @@ class SvnPreferencesDialogBase : public wxDialog
 		wxStaticText* m_staticText21;
 		wxTextCtrl* m_textCtrlSshClientArgs;
 		wxStaticText* m_staticText22;
+		wxPanel* m_panel6;
+		wxCheckBox* m_checkBoxExposeRevisionMacro;
+		wxStaticText* m_staticText29;
+		wxTextCtrl* m_textCtrlMacroName;
 		wxButton* m_button8;
 		wxButton* m_button9;
 		
@@ -214,6 +218,7 @@ class SvnPreferencesDialogBase : public wxDialog
 		virtual void OnUseExternalDiffUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnBrowseDiffViewer( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnBrowseSSHClient( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddRevisionMacroUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
 		
 	

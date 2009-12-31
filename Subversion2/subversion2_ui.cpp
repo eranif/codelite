@@ -440,6 +440,29 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	m_panel5->Layout();
 	bSizer161->Fit( m_panel5 );
 	m_notebook->AddPage( m_panel5, _("SSH Client"), false );
+	m_panel6 = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer23;
+	bSizer23 = new wxBoxSizer( wxVERTICAL );
+	
+	m_checkBoxExposeRevisionMacro = new wxCheckBox( m_panel6, wxID_ANY, _("Add revision number as preprocessor definition in the compilation line"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer23->Add( m_checkBoxExposeRevisionMacro, 0, wxALL|wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer24;
+	bSizer24 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_staticText29 = new wxStaticText( m_panel6, wxID_ANY, _("Preprocessor name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText29->Wrap( -1 );
+	bSizer24->Add( m_staticText29, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlMacroName = new wxTextCtrl( m_panel6, wxID_ANY, _("SVN_REVISION"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer24->Add( m_textCtrlMacroName, 1, wxALL|wxEXPAND, 5 );
+	
+	bSizer23->Add( bSizer24, 0, wxEXPAND|wxALL, 5 );
+	
+	m_panel6->SetSizer( bSizer23 );
+	m_panel6->Layout();
+	bSizer23->Fit( m_panel6 );
+	m_notebook->AddPage( m_panel6, _("Integration"), false );
 	
 	bSizer12->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 	
@@ -474,6 +497,8 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	m_staticText18->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
 	m_staticText19->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
 	m_button12->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnPreferencesDialogBase::OnBrowseSSHClient ), NULL, this );
+	m_staticText29->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnAddRevisionMacroUI ), NULL, this );
+	m_textCtrlMacroName->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnAddRevisionMacroUI ), NULL, this );
 	m_button8->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnPreferencesDialogBase::OnButtonOK ), NULL, this );
 }
 
@@ -492,6 +517,8 @@ SvnPreferencesDialogBase::~SvnPreferencesDialogBase()
 	m_staticText18->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
 	m_staticText19->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
 	m_button12->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnPreferencesDialogBase::OnBrowseSSHClient ), NULL, this );
+	m_staticText29->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnAddRevisionMacroUI ), NULL, this );
+	m_textCtrlMacroName->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnAddRevisionMacroUI ), NULL, this );
 	m_button8->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnPreferencesDialogBase::OnButtonOK ), NULL, this );
 }
 

@@ -942,8 +942,17 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 
 	wxString buildOpts = bldConf->GetCompileOptions();
 	buildOpts.Replace(wxT(";"), wxT(" "));
+	
+	// Let the plugins add their content here
+	wxCommandEvent e(wxEVT_GET_ADDITIONAL_COMPILEFLAGS);
+	wxTheApp->ProcessEvent(e);
+	
+	wxString additionalCompileFlags = e.GetString();
+	if(additionalCompileFlags.IsEmpty() == false)
+		buildOpts << wxT(" ") << additionalCompileFlags;
+	
 	text << wxT("CmpOptions             :=") << buildOpts << wxT(" $(Preprocessors)") << wxT("\n");
-
+	
 	//only if resource compiler required, evaluate the resource variables
 	if (bldConf->IsResCompilerRequired()) {
 		wxString rcBuildOpts = bldConf->GetResCompileOptions();

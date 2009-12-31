@@ -2,6 +2,7 @@
 #define __Subversion2__
 
 #include "plugin.h"
+#include "svninfo.h"
 #include "commitmessagescache.h"
 #include "svncommand.h"
 #include "svnsettingsdata.h"
@@ -46,9 +47,16 @@ protected:
 	void OnIgnoreFile       (wxCommandEvent &event);
 	void OnIgnoreFilePattern(wxCommandEvent &event);
 	void OnSelectAsView     (wxCommandEvent &event);
-
+	
+	///////////////////////////////////////////////////////////
+	// IDE events
+	///////////////////////////////////////////////////////////
+	void OnGetCompileLine   (wxCommandEvent &event);
+	
 	wxMenu* CreateFileExplorerPopMenu();
-	bool    IsSubversionViewDetached();
+	bool    IsSubversionViewDetached ();
+	void    DoGetSvnInfoSync         (SvnInfo& svnInfo, const wxString &workingDirectory);
+	
 public:
 	Subversion2(IManager *manager);
 	~Subversion2();

@@ -113,9 +113,10 @@ public:
 	SubversionView( wxWindow* parent, Subversion2 *plugin);
 	virtual ~SubversionView();
 
-	void UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString &conflictedFiles, const wxArrayString &unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles);
-	void BuildTree();
-	void BuildTree(const wxString &root);
+	void     UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString &conflictedFiles, const wxArrayString &unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles);
+	void     BuildTree();
+	void     BuildTree(const wxString &root);
+	wxString GetRootDir() const {return m_textCtrlRootDir->GetValue();}
 };
 
 #endif // __subversion_page__

@@ -20,6 +20,8 @@ protected:
 	void OnBrowseSSHClient ( wxCommandEvent& event );
 	void OnButtonOK        ( wxCommandEvent &event );
 	void OnUseExternalDiffUI( wxUpdateUIEvent &event);
+	void OnAddRevisionMacroUI( wxUpdateUIEvent& event );
+
 protected:
 	wxString DoGetExecutable(const wxString &basePath);
 

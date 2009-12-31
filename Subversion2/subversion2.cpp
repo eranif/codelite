@@ -72,6 +72,8 @@ Subversion2::Subversion2(IManager *manager)
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_ignore_file"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFile),        NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_ignore_file_pattern"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFilePattern), NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_set_as_view"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSelectAsView),      NULL, this);
+	
+	GetManager()->GetTheApp()->Connect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, wxCommandEventHandler(Subversion2::OnGetCompileLine), NULL, this);
 }
 
 Subversion2::~Subversion2()
@@ -555,25 +557,10 @@ bool Subversion2::GetNonInteractiveMode(wxCommandEvent& event)
 
 bool Subversion2::LoginIfNeeded(wxCommandEvent& event, const wxString &workingDirectory, wxString& loginString)
 {
-	wxString svnInfoCommand;
-	wxString xmlStr;
-	
 	UpdateIgnorePatterns();
 	
-	svnInfoCommand << GetSvnExeName() << wxT(" info --xml ");
-	if(workingDirectory.Find(wxT(" ")))
-		svnInfoCommand << wxT("\"") << workingDirectory << wxT("\"");
-	else 
-		svnInfoCommand << workingDirectory;
-	
-	wxArrayString xmlArr;
-	ProcUtils::ExecuteCommand(svnInfoCommand, xmlArr);
-	for(size_t i=0; i<xmlArr.GetCount(); i++){
-		xmlStr << xmlArr.Item(i);
-	}
-	
 	SvnInfo svnInfo;
-	SvnXML::GetSvnInfo(xmlStr, svnInfo);
+	DoGetSvnInfoSync( svnInfo, workingDirectory );
 	
 	bool loginFailed = (event.GetInt() == LOGIN_REQUIRES);
 	
@@ -712,4 +699,53 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
 	GetConsole()->EnsureVisible();
 	GetConsole()->AppendText(command + wxT("\n"));
 	m_blameCommand.Execute(command, wxT(""), new SvnBlameHandler(this, event.GetId(), this));
+}
+
+void Subversion2::OnGetCompileLine(wxCommandEvent& event)
+{
+	if ( !(GetSettings().GetFlags() & SvnExposeRevisionMacro) )
+		return;
+	
+	wxString macroName ( GetSettings().GetRevisionMacroName() );
+	macroName.Trim().Trim(false);
+	
+	if(macroName.IsEmpty())
+		return;
+	
+	wxString workingDirectory = m_subversionView->GetRootDir();
+	workingDirectory.Trim().Trim(false);
+	
+	SvnInfo svnInfo;
+	DoGetSvnInfoSync(svnInfo, workingDirectory);
+	
+	wxString content = event.GetString();
+	content << wxT(" -D");
+	content << macroName << wxT("=\"");
+	content << svnInfo.m_revision << wxT("\" ");
+	event.SetString( content );
+	event.Skip();
+}
+
+void Subversion2::DoGetSvnInfoSync(SvnInfo& svnInfo, const wxString &workingDirectory)
+{
+	wxString svnInfoCommand;
+	wxString xmlStr;
+	
+	svnInfoCommand << GetSvnExeName() << wxT(" info --xml ");
+	if(workingDirectory.Find(wxT(" ")))
+		svnInfoCommand << wxT("\"") << workingDirectory << wxT("\"");
+	else 
+		svnInfoCommand << workingDirectory;
+	
+	wxArrayString xmlArr;
+	
+	wxLog::EnableLogging(false);
+	ProcUtils::ExecuteCommand(svnInfoCommand, xmlArr);
+	
+	for(size_t i=0; i<xmlArr.GetCount(); i++){
+		xmlStr << xmlArr.Item(i);
+	}
+	
+	SvnXML::GetSvnInfo(xmlStr, svnInfo);
+	wxLog::EnableLogging(true);
 }

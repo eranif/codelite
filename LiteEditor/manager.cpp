@@ -1175,7 +1175,7 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 		execLine = opts->GetProgramConsoleCommand();
 
 		wxString tmp_cmd;
-		tmp_cmd = wxT("cd ") + proj->GetFileName().GetPath() + wxT ( " && cd " ) + wd + wxT ( " && " ) + cmd + wxT ( " " ) + cmdArgs;
+		tmp_cmd = wxT("cd \"") + proj->GetFileName().GetPath() + wxT ( "\" && cd \"" ) + wd + wxT ( "\" && " ) + cmd + wxT ( " " ) + cmdArgs;
 
 		execLine.Replace(wxT("$(CMD)"), tmp_cmd);
 		execLine.Replace(wxT("$(TITLE)"), cmd + wxT ( " " ) + cmdArgs);

@@ -185,6 +185,7 @@ class SvnPreferencesDialogBase : public wxDialog
 		wxTextCtrl* m_textCtrlIgnorePattern;
 		wxCheckBox* m_checkBoxAddToSvn;
 		wxCheckBox* m_checkBoxRetag;
+		wxCheckBox* m_checkBoxRenameFile;
 		wxPanel* m_panel4;
 		wxCheckBox* m_checkBoxUseExternalDiff;
 		wxStaticText* m_staticText10;

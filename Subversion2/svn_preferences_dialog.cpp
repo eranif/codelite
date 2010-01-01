@@ -20,12 +20,13 @@ SvnPreferencesDialog::SvnPreferencesDialog( wxWindow* parent, Subversion2 *plugi
 	m_textCtrlSSHClient->SetValue(ssd.GetSshClient());
 	m_textCtrlSvnExecutable->SetValue(ssd.GetExecutable());
 	m_textCtrlMacroName->SetValue(ssd.GetRevisionMacroName());
-	
+
 	m_checkBoxAddToSvn->SetValue( ssd.GetFlags() & SvnAddFileToSvn );
 	m_checkBoxRetag->SetValue( ssd.GetFlags() & SvnRetagWorkspace );
 	m_checkBoxUseExternalDiff->SetValue( ssd.GetFlags() & SvnUseExternalDiff );
 	m_checkBoxExposeRevisionMacro->SetValue( ssd.GetFlags() & SvnExposeRevisionMacro );
-	
+	m_checkBoxRenameFile->SetValue( ssd.GetFlags() & SvnRenameFileInRepo );
+
 	WindowAttrManager::Load(this, wxT("SvnPreferencesDialog"), m_plugin->GetManager()->GetConfigTool());
 
 	wxImageList *imgList = new wxImageList(32, 32, true);
@@ -114,11 +115,15 @@ void SvnPreferencesDialog::OnButtonOK(wxCommandEvent& event)
 	if (m_checkBoxUseExternalDiff->IsChecked()) {
 		flags |= SvnUseExternalDiff;
 	}
-	
+
 	if (m_checkBoxExposeRevisionMacro->IsChecked()) {
 		flags |= SvnExposeRevisionMacro;
 	}
-	
+
+	if (m_checkBoxRenameFile->IsChecked()) {
+		flags |= SvnRenameFileInRepo;
+	}
+
 	ssd.SetFlags(flags);
 	m_plugin->SetSettings( ssd );
 }

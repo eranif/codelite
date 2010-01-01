@@ -934,6 +934,7 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 
 	if(!SendCmdEvent(wxEVT_FILE_RENAMED, (void*)&f)){
 		// rename the file on filesystem
+		wxLogNull noLog;
 		wxRenameFile(origName, newName);
 	}
 

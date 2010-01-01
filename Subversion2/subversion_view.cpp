@@ -748,13 +748,22 @@ void SubversionView::OnFileAdded(wxCommandEvent& event)
 	if(ssd.GetFlags() & SvnAddFileToSvn) {
 		wxArrayString *files = (wxArrayString*)event.GetClientData();
 		if(files) {
+			bool     addToSvn(false);
 			wxString command;
 			command << m_plugin->GetSvnExeName() << wxT(" add ");
 			for(size_t i=0; i<files->GetCount(); i++){
-				command << wxT("\"") << files->Item(i) << wxT("\" ");
+
+				if(m_plugin->IsPathUnderSvn(files->Item(i))) {
+					command << wxT("\"") << files->Item(i) << wxT("\" ");
+					addToSvn = true;
+				}
+
 			}
-			command.RemoveLast();
-			m_plugin->GetConsole()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin, event.GetId(), this));
+
+			if(addToSvn) {
+				command.RemoveLast();
+				m_plugin->GetConsole()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin, event.GetId(), this));
+			}
 		}
 	}
 }
@@ -762,13 +771,23 @@ void SubversionView::OnFileAdded(wxCommandEvent& event)
 void SubversionView::OnFileRenamed(wxCommandEvent& event)
 {
 	wxArrayString *files = (wxArrayString*)event.GetClientData();
-	if(files) {
+
+	// If the Svn Client Version is set to 0.0 it means that we dont have SVN client installed
+	if( m_plugin->GetSvnClientVersion() && files && (m_plugin->GetSettings().GetFlags() & SvnRenameFileInRepo) ) {
 		wxString oldName = files->Item(0);
 		wxString newName = files->Item(1);
+
+		if(m_plugin->IsPathUnderSvn(oldName) == false){
+			event.Skip();
+			return;
+		}
+
 		wxString command;
 		command << m_plugin->GetSvnExeName() << wxT(" rename \"") << oldName << wxT("\" \"") << newName << wxT("\"");
 		m_plugin->GetConsole()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin, event.GetId(), this));
-	}
+
+	} else
+		event.Skip();
 }
 
 void SubversionView::OnShowSvnInfo(wxCommandEvent& event)

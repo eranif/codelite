@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include <wx/filefn.h>
 #include "subversion_password_db.h"
 #include "svnxml.h"
 #include <wx/tokenzr.h>
@@ -72,7 +73,7 @@ Subversion2::Subversion2(IManager *manager)
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_ignore_file"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFile),        NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_ignore_file_pattern"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFilePattern), NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_set_as_view"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSelectAsView),      NULL, this);
-	
+
 	GetManager()->GetTheApp()->Connect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, wxCommandEventHandler(Subversion2::OnGetCompileLine), NULL, this);
 }
 
@@ -424,7 +425,7 @@ wxString Subversion2::GetSvnExeName(bool nonInteractive)
 
 	// --trust-server-cert was introduced in version >=1.6
 	// but it also requires --non-interactive mode enabled
-	if(m_svnClientVersion >= 1.6 && nonInteractive) {
+	if(GetSvnClientVersion() >= 1.6 && nonInteractive) {
 		executeable << wxT(" --trust-server-cert ");
 	}
 
@@ -543,7 +544,7 @@ void Subversion2::OnLog(wxCommandEvent& event)
 		if(LoginIfNeeded(event, DoGetFileExplorerItemPath(), loginString) == false) {
 			return;
 		}
-		
+
 		bool nonInteractive = GetNonInteractiveMode(event);
 		command << GetSvnExeName(nonInteractive) << loginString << wxT(" log -r") << dlg.m_from->GetValue() << wxT(":") << dlg.m_to->GetValue() << wxT(" \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
 		GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnLogHandler(this, dlg.m_compact->IsChecked(), event.GetId(), this), false);
@@ -558,26 +559,26 @@ bool Subversion2::GetNonInteractiveMode(wxCommandEvent& event)
 bool Subversion2::LoginIfNeeded(wxCommandEvent& event, const wxString &workingDirectory, wxString& loginString)
 {
 	UpdateIgnorePatterns();
-	
+
 	SvnInfo svnInfo;
 	DoGetSvnInfoSync( svnInfo, workingDirectory );
-	
+
 	bool loginFailed = (event.GetInt() == LOGIN_REQUIRES);
-	
+
 	SubversionPasswordDb db;
 	wxString user, password;
-	
+
 	if(loginFailed) {
 		// if we got here, it means that we already tried to login with either user prompt / using the stored password
 		// to prevent an endless loop, remove the old entry from the password db
 		db.DeleteLogin(svnInfo.m_url);
 	}
-	
+
 	if(db.GetLogin(svnInfo.m_url, user, password)) {
 		loginString << wxT(" --username ") << user << wxT(" --password ") << password << wxT(" ");
 		return true;
 	}
-	
+
 	// Use the root URL as the key for the login here
 	loginString.Empty();
 	if(loginFailed) {
@@ -680,10 +681,10 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
 {
 	wxString command;
 	wxString loginString;
-	
+
 	if(files.GetCount() == 0)
 		return;
-	
+
 	bool nonInteractive = GetNonInteractiveMode(event);
 	if(LoginIfNeeded(event, files.Item(0), loginString) == false) {
 		return;
@@ -695,7 +696,7 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
 	for (size_t i=0; i<files.GetCount(); i++) {
 		command << wxT("\"") << files.Item(i) << wxT("\" ");
 	}
-	
+
 	GetConsole()->EnsureVisible();
 	GetConsole()->AppendText(command + wxT("\n"));
 	m_blameCommand.Execute(command, wxT(""), new SvnBlameHandler(this, event.GetId(), this));
@@ -705,19 +706,19 @@ void Subversion2::OnGetCompileLine(wxCommandEvent& event)
 {
 	if ( !(GetSettings().GetFlags() & SvnExposeRevisionMacro) )
 		return;
-	
+
 	wxString macroName ( GetSettings().GetRevisionMacroName() );
 	macroName.Trim().Trim(false);
-	
+
 	if(macroName.IsEmpty())
 		return;
-	
+
 	wxString workingDirectory = m_subversionView->GetRootDir();
 	workingDirectory.Trim().Trim(false);
-	
+
 	SvnInfo svnInfo;
 	DoGetSvnInfoSync(svnInfo, workingDirectory);
-	
+
 	wxString content = event.GetString();
 	content << wxT(" -D");
 	content << macroName << wxT("=\\\"");
@@ -730,22 +731,39 @@ void Subversion2::DoGetSvnInfoSync(SvnInfo& svnInfo, const wxString &workingDire
 {
 	wxString svnInfoCommand;
 	wxString xmlStr;
-	
+
 	svnInfoCommand << GetSvnExeName() << wxT(" info --xml ");
 	if(workingDirectory.Find(wxT(" ")))
 		svnInfoCommand << wxT("\"") << workingDirectory << wxT("\"");
-	else 
+	else
 		svnInfoCommand << workingDirectory;
-	
+
 	wxArrayString xmlArr;
-	
+
 	wxLog::EnableLogging(false);
 	ProcUtils::ExecuteCommand(svnInfoCommand, xmlArr);
-	
+
 	for(size_t i=0; i<xmlArr.GetCount(); i++){
 		xmlStr << xmlArr.Item(i);
 	}
-	
+
 	SvnXML::GetSvnInfo(xmlStr, svnInfo);
 	wxLog::EnableLogging(true);
+}
+
+bool Subversion2::IsPathUnderSvn(const wxString& path)
+{
+	wxFileName fn(path);
+	wxString svnDirectory1(fn.GetPath());
+	wxString svnDirectory2(fn.GetPath());
+	svnDirectory1 << wxFileName::GetPathSeparator() << wxT(".svn");
+	svnDirectory2 << wxFileName::GetPathSeparator() << wxT("_svn");
+
+	if(wxDirExists(svnDirectory1.c_str()))
+		return true;
+
+	if(wxDirExists(svnDirectory2.c_str()))
+		return true;
+
+	return false;
 }

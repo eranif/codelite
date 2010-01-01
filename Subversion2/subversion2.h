@@ -47,16 +47,16 @@ protected:
 	void OnIgnoreFile       (wxCommandEvent &event);
 	void OnIgnoreFilePattern(wxCommandEvent &event);
 	void OnSelectAsView     (wxCommandEvent &event);
-	
+
 	///////////////////////////////////////////////////////////
 	// IDE events
 	///////////////////////////////////////////////////////////
 	void OnGetCompileLine   (wxCommandEvent &event);
-	
+
 	wxMenu* CreateFileExplorerPopMenu();
 	bool    IsSubversionViewDetached ();
 	void    DoGetSvnInfoSync         (SvnInfo& svnInfo, const wxString &workingDirectory);
-	
+
 public:
 	Subversion2(IManager *manager);
 	~Subversion2();
@@ -95,12 +95,16 @@ public:
 		this->m_svnClientVersion = svnClientVersion;
 	}
 
+	double GetSvnClientVersion() const {
+		return m_svnClientVersion;
+	}
 	CommitMessagesCache& GetCommitMessagesCache() {
 		return m_commitMessagesCache;
 	}
 
 	bool LoginIfNeeded        (wxCommandEvent &event, const wxString &workingDirectory, wxString& loginString);
 	bool GetNonInteractiveMode(wxCommandEvent &event);
+	bool IsPathUnderSvn       (const wxString &path);
 
 protected:
 	void DoInitialize();

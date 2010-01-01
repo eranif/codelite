@@ -319,6 +319,9 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	m_checkBoxRetag = new wxCheckBox( m_panel3, wxID_ANY, _("Retag workspace after svn update, revert or applying patch"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_checkBoxRetag, 0, wxALL|wxEXPAND, 5 );
 	
+	m_checkBoxRenameFile = new wxCheckBox( m_panel3, wxID_ANY, _("When renaming a file in the project, rename it in the repository as well"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer1->Add( m_checkBoxRenameFile, 0, wxALL|wxEXPAND, 5 );
+	
 	bSizer15->Add( sbSizer1, 0, wxALL|wxEXPAND, 5 );
 	
 	m_panel3->SetSizer( bSizer15 );

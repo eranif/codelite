@@ -704,12 +704,12 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 	if ( isGlobalScopeOperator ) {
 		// Fetch all tags from the global scope
 		GetDatabase()->GetGlobalFunctions(candidates);
-		
+
 		if(candidates.empty() == false)
 			std::sort(candidates.begin(), candidates.end(), SAscendingSort());
-		
+
 	} else if (oper == wxT("::")) {
-		
+
 		filter.Add(wxT("function"));
 		filter.Add(wxT("member"));
 		filter.Add(wxT("prototype"));
@@ -1983,7 +1983,7 @@ void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<
 		//override the scope to be our scope...
 		tag->SetScope( scopeName );
 
-		key << NormalizeFunctionSig( tag->GetSignature() );
+		key << NormalizeFunctionSig( tag->GetSignature(), 0 );
 		protos[key] = tag;
 	}
 
@@ -1993,7 +1993,7 @@ void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<
 	for ( size_t i=0; i < vimpl.size() ; i++ ) {
 		TagEntryPtr tag = vimpl.at(i);
 		wxString key = tag->GetName();
-		key << NormalizeFunctionSig( tag->GetSignature() );
+		key << NormalizeFunctionSig( tag->GetSignature(), 0 );
 		std::map<wxString, TagEntryPtr>::iterator iter = protos.find(key);
 
 		if ( iter != protos.end() ) {

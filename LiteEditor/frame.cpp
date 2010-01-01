@@ -3381,6 +3381,9 @@ void Frame::OnShowFullScreen(wxCommandEvent& e)
 		// apply the changes
 		GetDockingManager().Update();
 		ShowFullScreen(true);
+
+		// Re-apply the menu accelerators
+		ManagerST::Get()->UpdateMenuAccelerators();
 	}
 }
 

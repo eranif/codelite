@@ -97,8 +97,7 @@ void SvnVersionHandler::Process(const wxString& output)
 
 		GetPlugin()->GetConsole()->AppendText(wxString::Format(wxT("== Svn client version: %s ==\n"), strVersion.c_str()));
 		GetPlugin()->SetSvnClientVersion(version);
-	} else
-		GetPlugin()->SetSvnClientVersion(0.0);
+	}
 }
 
 void SvnLogHandler::Process(const wxString& output)

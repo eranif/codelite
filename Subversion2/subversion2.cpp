@@ -486,7 +486,8 @@ void Subversion2::UpdateIgnorePatterns()
 		fp.Write(wxT("global-ignores = "));
 		fp.Write(ignorePatterns);
 		fp.Write(wxT("\n\n[auth]\n"));
-		fp.Write(wxT("password-stores ="));
+		fp.Write(wxT("password-stores =\n"));
+		fp.Write(wxT("store-passwords = no\n"));
 		fp.Write(wxT("\n"));
 		fp.Close();
 	}

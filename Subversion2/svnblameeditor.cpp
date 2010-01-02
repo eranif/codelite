@@ -31,7 +31,7 @@ void SvnBlameEditor::Initialize()
 
 	for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
 		StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-		StyleSetForeground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+		StyleSetForeground(i, *wxBLACK);
 		StyleSetFont(i, font);
 	}
 

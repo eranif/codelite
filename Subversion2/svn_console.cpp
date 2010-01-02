@@ -28,7 +28,7 @@ SvnConsole::SvnConsole(wxWindow *parent, Subversion2* plugin)
 
 	for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
 		m_sci->StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-		m_sci->StyleSetForeground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+		m_sci->StyleSetForeground(i, *wxBLACK);
 	}
 
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

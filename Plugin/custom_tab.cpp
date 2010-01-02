@@ -33,6 +33,7 @@
 
 // Images
 #include "tabicons.h"
+#define PNAEL_BG_COLOUR DrawingUtils::GetPanelBgColour()
 
 #define clMASK_COLOR wxColor(0, 128, 128)
 
@@ -344,8 +345,8 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 	memDc.SetFont(font);
 	wxRect bmpRect(0, 0, bmp.GetWidth(), bmp.GetHeight());
 
-	memDc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-	memDc.SetPen(wxSystemSettings::GetColour  (wxSYS_COLOUR_3DFACE));
+	memDc.SetBrush(PNAEL_BG_COLOUR);
+	memDc.SetPen(PNAEL_BG_COLOUR);
 	memDc.DrawRectangle(bmpRect);
 
 	//fill the bmp with a nice gradient colour
@@ -363,13 +364,13 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		rt.height -= 1;
 		memDc.DrawRoundedRectangle(rt, TAB_RADIUS);
 
-		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
+		wxColour bgTabColour ( PNAEL_BG_COLOUR );
 		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
 		wxRect topRect(rt);
 		topRect.height /= 3;
 		topRect.height *= 2;
 
-		DrawingUtils::PaintStraightGradientBox(memDc, topRect, bgTabColour, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
+		DrawingUtils::PaintStraightGradientBox(memDc, topRect, bgTabColour, PNAEL_BG_COLOUR, true);
 
 	} else if ( GetSelected() ) {
 		wxRect rt(bmpRect);
@@ -377,13 +378,13 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		memDc.DrawRoundedRectangle(rt, TAB_RADIUS);
 
 		wxRect topRect(rt);
-		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
+		wxColour bgTabColour ( PNAEL_BG_COLOUR );
 		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
 
 		topRect.height /= 3;
 		topRect.height *= 2;
 
-		DrawingUtils::PaintStraightGradientBox(memDc, topRect, bgTabColour, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
+		DrawingUtils::PaintStraightGradientBox(memDc, topRect, bgTabColour, PNAEL_BG_COLOUR, true);
 
 	} else {
 		wxRect fillRect(bmpRect);
@@ -395,7 +396,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 
 		DrawingUtils::PaintStraightGradientBox( memDc,
 												fillRect,
-												wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE),
+												PNAEL_BG_COLOUR,
 												bgTabColour,
 												true);
 	}
@@ -510,7 +511,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 
 	if (GetSelected()) {
 		// draw an inner white rectangle as well
-		wxColour innerBorderCol (wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		wxColour innerBorderCol (PNAEL_BG_COLOUR);
 		innerBorderCol = DrawingUtils::LightColour(innerBorderCol, 3);
 		dc.SetPen  ( wxPen(innerBorderCol) );
 
@@ -521,12 +522,12 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 
 	if (left && GetSelected()) {
 		//draw a line
-		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		dc.SetPen(PNAEL_BG_COLOUR);
 		dc.DrawLine(rr.x + rr.width - 1, 0, rr.x + rr.width - 1, rr.y + rr.height);
 
 	} else if (!left && GetSelected()) {
 		//draw a line
-		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		dc.SetPen(PNAEL_BG_COLOUR);
 		dc.DrawLine(0, 0, 0, tmpRect.y + tmpRect.height);
 	}
 }
@@ -548,8 +549,8 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	memDc.SetFont(font);
 
 	wxRect bmpRect(0, 0, bmp.GetWidth(), bmp.GetHeight());
-	memDc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-	memDc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	memDc.SetBrush(PNAEL_BG_COLOUR);
+	memDc.SetPen(PNAEL_BG_COLOUR);
 	memDc.DrawRectangle(bmpRect);
 
 	//fill the bmp with a nice gradient colour
@@ -567,13 +568,13 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		fillRect.height -= 1;
 		memDc.DrawRoundedRectangle(fillRect, TAB_RADIUS);
 
-		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
+		wxColour bgTabColour ( PNAEL_BG_COLOUR );
 		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
 		wxRect topRect(fillRect);
 		topRect.height /= 3;
 		topRect.height *= 2;
 
-		DrawingUtils::PaintStraightGradientBox(memDc, topRect, bgTabColour, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
+		DrawingUtils::PaintStraightGradientBox(memDc, topRect, bgTabColour, PNAEL_BG_COLOUR, true);
 
 	} else if ( GetSelected() ) {
 		wxRect fillRect(bmpRect);
@@ -581,14 +582,14 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 		memDc.DrawRoundedRectangle(fillRect, TAB_RADIUS);
 
-		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
+		wxColour bgTabColour ( PNAEL_BG_COLOUR );
 		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
 		wxRect topRect(fillRect);
 
 		topRect.height /= 3;
 		topRect.height *= 2;
 		topRect.y      += (topRect.height/3)+2;
-		DrawingUtils::PaintStraightGradientBox(memDc, topRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), bgTabColour, true);
+		DrawingUtils::PaintStraightGradientBox(memDc, topRect, PNAEL_BG_COLOUR, bgTabColour, true);
 
 	} else {
 
@@ -598,7 +599,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
 		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
-		DrawingUtils::PaintStraightGradientBox(memDc, fillRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), bgTabColour, true);
+		DrawingUtils::PaintStraightGradientBox(memDc, fillRect, PNAEL_BG_COLOUR, bgTabColour, true);
 	}
 
 	int text_yoffset(1);
@@ -721,7 +722,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 	if (GetSelected()) {
 		// draw the inner white border
-		wxColour innerBorderCol (wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		wxColour innerBorderCol (PNAEL_BG_COLOUR);
 		innerBorderCol = DrawingUtils::LightColour(innerBorderCol, 3);
 		dc.SetPen  ( wxPen(innerBorderCol) );
 
@@ -731,13 +732,13 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 	if (top && GetSelected()) {
 		//draw a line
-		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		dc.SetPen(PNAEL_BG_COLOUR);
 		dc.DrawLine(0, rr.GetHeight()-1, rr.GetWidth(), rr.GetHeight()-1);
 
 	} else if (!top && GetSelected()) {
 		//draw a line
 
-		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		dc.SetPen(PNAEL_BG_COLOUR);
 		dc.DrawLine(0, 0, rr.GetWidth(), 0);
 	}
 }

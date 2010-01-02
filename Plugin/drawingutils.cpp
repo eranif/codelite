@@ -22,10 +22,15 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <wx/app.h>
+#include <wx/panel.h>
 #include "wx/settings.h"
 #include "drawingutils.h"
 #include "wx/dc.h"
 
+#ifdef __WXGTK__
+#include <gtk/gtk.h>
+#endif
 //////////////////////////////////////////////////
 // Colour methods to convert HSL <-> RGB
 //////////////////////////////////////////////////
@@ -333,4 +338,30 @@ wxColor DrawingUtils::DarkColour(const wxColour& color, float percent)
 
 	HSL_2_RGB(h, s, l, &r, &g, &b);
 	return wxColour((unsigned char)r, (unsigned char)g, (unsigned char)b);
+}
+
+wxColor DrawingUtils::GetPanelBgColour()
+{
+#ifdef __WXGTK__
+	static bool     intitialized(false);
+	static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	
+	if( !intitialized ) {
+		// try to get the background colour from a menu
+		GtkWidget *menu = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		GtkStyle   *def = gtk_rc_get_style( menu );
+		if(!def)
+			def = gtk_widget_get_default_style();
+		
+		if(def) {
+			GdkColor col = def->bg[GTK_STATE_NORMAL];
+			bgColour = wxColour(col);
+		}
+		gtk_widget_destroy( menu );
+		intitialized = true;
+	}
+	return bgColour;
+#else
+	return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+#endif
 }

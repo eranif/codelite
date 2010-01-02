@@ -515,8 +515,8 @@ void OutputViewControlBarButton::OnPaint(wxPaintEvent& event)
 
 	// Fill the background
 	wxRect rect = GetClientSize();
-	dc.SetBrush( wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT) );
-	dc.SetPen  ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT) );
+	dc.SetBrush( DrawingUtils::GetPanelBgColour() );
+	dc.SetPen  ( DrawingUtils::GetPanelBgColour() );
 
 	// draw the background
 	dc.DrawRectangle( rect );

@@ -37,6 +37,8 @@
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 
+#define PNAEL_BG_COLOUR DrawingUtils::GetPanelBgColour()
+
 BEGIN_EVENT_TABLE(wxTabContainer, wxPanel)
 	EVT_PAINT(wxTabContainer::OnPaint)
 	EVT_ERASE_BACKGROUND(wxTabContainer::OnEraseBg)
@@ -53,11 +55,11 @@ void wxTabContainer::DoDrawBackground(wxDC &dc, bool gradient, int orientation, 
 {
 
 	// set the gradient colours, by default we use the same colours
-	wxColour col1 = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-	wxColour col2 = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+	wxColour col1 = PNAEL_BG_COLOUR;
+	wxColour col2 = PNAEL_BG_COLOUR;
 
 	if (gradient) {
-		col1 = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+		col1 = PNAEL_BG_COLOUR;
 		col2 = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 3.0);
 
 		//paint gradient background
@@ -85,7 +87,7 @@ void wxTabContainer::DoDrawBackground(wxDC &dc, bool gradient, int orientation, 
 
 void wxTabContainer::DoDrawMargin(wxDC &dc, int orientation, const wxRect &rr)
 {
-	wxPen _3dFace(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	wxPen _3dFace(PNAEL_BG_COLOUR);
 	wxPen borderPen(DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), DrawingUtils::GetDdkShadowLightFactor2()));
 
 	for (int i=0; i<3; i++) {
@@ -353,8 +355,8 @@ void wxTabContainer::OnPaint(wxPaintEvent &e)
 	wxRect rr = GetClientSize();
 
 	if (GetTabsCount() == 0) {
-		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-		dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		dc.SetPen(PNAEL_BG_COLOUR);
+		dc.SetBrush(PNAEL_BG_COLOUR);
 		dc.DrawRectangle(rr);
 		return;
 	}
@@ -804,8 +806,8 @@ void DropButton::OnPaint(wxPaintEvent& e)
 	wxBufferedPaintDC dc(this);
 
 	if (GetItemCount() == 0) {
-		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-		dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		dc.SetPen(PNAEL_BG_COLOUR);
+		dc.SetBrush(PNAEL_BG_COLOUR);
 		dc.DrawRectangle(rr);
 		return;
 	}

@@ -33,6 +33,8 @@
 #include "dropbutton.h"
 #include "custom_tabcontainer.h"
 
+#define PNAEL_BG_COLOUR DrawingUtils::GetPanelBgColour()
+
 static unsigned char list_bits[] = {
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 	0x0f, 0xf8, 0xff, 0xff, 0x0f, 0xf8, 0x1f, 0xfc, 0x3f, 0xfe, 0x7f, 0xff,
@@ -55,7 +57,7 @@ DropButtonBase::DropButtonBase(wxWindow *parent)
 	wxColour color(*wxBLACK);
 	wxImage img = wxBitmap((const char*)list_bits, 16, 16).ConvertToImage();
 	img.Replace(0, 0, 0, 123, 123, 123);
-	img.Replace(255,255,255,color.Red(),color.Green(),color.Blue());
+	img.Replace(255, 255, 255, color.Red(), color.Green(), color.Blue());
 	img.SetMaskColour(123, 123, 123);
 	m_arrowDownBmp = wxBitmap(img);
 }
@@ -120,7 +122,7 @@ void DropButtonBase::OnPaint(wxPaintEvent &e)
 	wxRect rr = GetSize();
 
 	wxBufferedPaintDC dc(this);
-	wxColour lightColour  = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+	wxColour lightColour  = PNAEL_BG_COLOUR;
 	dc.SetPen(lightColour);
 	dc.SetBrush(lightColour);
 	dc.DrawRectangle(rr);

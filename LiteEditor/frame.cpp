@@ -672,20 +672,20 @@ void Frame::CreateGUIControls(void)
 #endif
 
 // Mac only
-#if defined (__WXMAC__)
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR, wxT("WHITE"));
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+#if defined (__WXMAC__) || defined (__WXGTK__)
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,        wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,      DrawingUtils::GetPanelBgColour());
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,   wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTIONTEXT));
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_SASH_COLOUR,                  DrawingUtils::GetPanelBgColour());
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR,            DrawingUtils::GetPanelBgColour());
 #endif
 
 	//initialize debugger configuration tool
 	DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"), wxT("2.0.1"));
 	WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
 
-	// FIXME:: Dragging toolar with transparent ON seems to crash (WX > 2.8.8)
-//	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
-
-// On wx2.8.7, AUI dragging is broken but this happens only in debug build & on GTK
+	// On wx2.8.7, AUI dragging is broken but this happens only in debug build & on GTK
 #if defined (__WXGTK__) && defined (__WXDEBUG__)
 	m_mgr.SetFlags(wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_TRANSPARENT_DRAG|wxAUI_MGR_RECTANGLE_HINT);
 #endif

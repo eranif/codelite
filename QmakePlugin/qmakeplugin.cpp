@@ -60,6 +60,7 @@ QMakePlugin::QMakePlugin(IManager *manager)
 	app->Connect(wxEVT_GET_PROJECT_CLEAN_CMD,    wxCommandEventHandler(QMakePlugin::OnGetCleanCommand),     NULL, this);
 	app->Connect(wxEVT_GET_IS_PLUGIN_MAKEFILE,   wxCommandEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
 	app->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED, wxCommandEventHandler(QMakePlugin::OnOpenFile),            NULL, this);
+	app->Connect(wxEVT_PLUGIN_EXPORT_MAKEFILE,   wxCommandEventHandler(QMakePlugin::OnExportMakefile),      NULL, this);
 }
 
 QMakePlugin::~QMakePlugin()
@@ -487,5 +488,56 @@ void QMakePlugin::OnOpenFile(wxCommandEvent &event)
 		}
 	}
 	// we failed, call event.Skip()
+	event.Skip();
+}
+
+void QMakePlugin::OnExportMakefile(wxCommandEvent& event)
+{
+	QmakePluginData::BuildConfPluginData bcpd;
+
+	wxString *cd = (wxString *)event.GetClientData();
+	wxString  project = *cd;
+	wxString  config  = event.GetString();
+
+	if ( !DoGetData(project, config, bcpd) ) {
+		event.Skip();
+		return;
+	}
+
+	if ( bcpd.m_enabled ) {
+		// This project/configuration is qmake project
+		QMakeProFileGenerator generator(m_mgr, project, config);
+
+		// Regenerate the .pro file
+		generator.Generate();
+
+		// run qmake
+		wxString qmake_exe = m_conf->Read(wxString::Format(wxT("%s/qmake"),     bcpd.m_qmakeConfig.c_str()));
+		wxString qmakespec = m_conf->Read(wxString::Format(wxT("%s/qmakespec"), bcpd.m_qmakeConfig.c_str()));
+		wxString qtdir     = m_conf->Read(wxString::Format(wxT("%s/qtdir"),     bcpd.m_qmakeConfig.c_str()));
+
+		// Create qmake comand
+		wxString qmake_exe_line;
+		qmake_exe.Trim().Trim(false);
+		qmakespec.Trim().Trim(false);
+
+		// Set QTDIR
+		DirSaver ds;
+		{
+
+			wxString errMsg;
+			ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(project, errMsg);
+			if ( !p ) {
+				return;
+			}
+
+			wxSetWorkingDirectory ( p->GetFileName().GetPath(wxPATH_GET_SEPARATOR|wxPATH_GET_VOLUME) );
+			wxSetEnv(wxT("QTDIR"), qtdir);
+			qmake_exe_line << wxT("\"") << qmake_exe << wxT("\" -spec ") << qmakespec << wxT(" ") << generator.GetProFileName();
+
+			wxArrayString output;
+			ProcUtils::SafeExecuteCommand(qmake_exe_line, output);
+		}
+	}
 	event.Skip();
 }

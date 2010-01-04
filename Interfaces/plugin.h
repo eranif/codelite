@@ -193,7 +193,7 @@ enum {
 	// the return answer is done by simply avoid calling event.Skip() (which will result in ProcessEvent() == true)
 	wxEVT_GET_IS_PLUGIN_MAKEFILE,
 	wxEVT_GET_IS_PLUGIN_BUILD,
-	
+
 	/**
 	 * Debug related events
 	 */
@@ -213,22 +213,28 @@ enum {
 	// sent after the debugger stopped
 	// clientData is NULL
 	wxEVT_DEBUG_ENDED,
-	
+
 	/**
 	 ** Build events (additional)
 	 **/
-	// These events allows the plugins to concatenate a string 
+	// These events allows the plugins to concatenate a string
 	// to the compilation/link line of the default build system
 	// By using the event.SetString()/event.GetString()
-	// Note, that the since all multiple plugins 
-	// might be interesting with this feature, it is recommened 
+	// Note, that the since all multiple plugins
+	// might be interesting with this feature, it is recommened
 	// to use it like this:
 	// wxString content = event.GetString();
 	// content << wxT(" -DMYMACRO ");
 	// event.SetString( content );
 	// event.Skip();
 	wxEVT_GET_ADDITIONAL_COMPILEFLAGS,
-	wxEVT_GET_ADDITIONAL_LINKFLAGS
+	wxEVT_GET_ADDITIONAL_LINKFLAGS,
+
+	// Sent to the plugins to request to export the makefile
+	// for the project + configuration
+	// clientData is the builded project name (wxString*)
+	// event.GetString() returns the selected configuration
+	wxEVT_PLUGIN_EXPORT_MAKEFILE
 };
 
 //------------------------------------------------------------------

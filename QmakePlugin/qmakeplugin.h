@@ -42,6 +42,7 @@ public:
 	void OnGetIsPluginMakefile (wxCommandEvent &event);
 	void OnNewQmakeBasedProject(wxCommandEvent &event);
 	void OnOpenFile            (wxCommandEvent &event);
+	void OnExportMakefile      (wxCommandEvent &event);
 };
 
 #endif //QMakePlugin

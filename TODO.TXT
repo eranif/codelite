@@ -1,6 +1,6 @@
 - add build-errors-assistant
 - Build System: add option to move regex Up/Down
 - Add new 'scp' plugin
-- Move Qmake to be an integrated part of codelite build system
 - Add option to run 'environment' script
 - Tasks tab - use the new wxCheckListCtrl to customize it
+- Add Macro manager to codelite and replace the global method 'ExpandAllVariables'

@@ -389,7 +389,6 @@
   </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="md5">
     <File Name="wxmd5.cpp"/>
     <File Name="wxmd5.h"/>
@@ -398,4 +397,5 @@
     <File Name="md5c.c"/>
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

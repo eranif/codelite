@@ -416,12 +416,21 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBuild, bool force)
 {
-	wxString pname (proj->GetName());;
-	bool isPluginGeneratedMakefile = SendCmdEvent(wxEVT_GET_IS_PLUGIN_MAKEFILE, (void*)&pname, confToBuild);
+	wxString pname (proj->GetName());
+	wxString tmpConfigName(confToBuild.c_str());
+	if (confToBuild.IsEmpty()) {
+		BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+		tmpConfigName = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(), proj->GetName());
+	}
+
+	bool isPluginGeneratedMakefile = SendCmdEvent(wxEVT_GET_IS_PLUGIN_MAKEFILE, (void*)&pname, tmpConfigName);
 
 	// we handle custom builds and non-custom build separatly:
 	if ( isPluginGeneratedMakefile ) {
-		// nothing to be done here, since the makefile will be generated in the 'wxEVT_CMD_BUILD_STARTING' event
+		if( force ) {
+			// Generate the makefile
+			SendCmdEvent(wxEVT_PLUGIN_EXPORT_MAKEFILE, (void*)&pname, tmpConfigName);
+		}
 		return;
 	}
 
@@ -615,10 +624,10 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 	text << wxT("##\n");
 
 	Compiler::CmpFileTypeInfo ft;
-	
+
 	// Collect all the sub-directories that we generate files for
 	wxArrayString subDirs;
-			
+
 	PRINT_TIMESTAMP(wxT("Looping over the file list...\n"));
 	for (size_t i=0; i<abs_files.size(); i++) {
 		// is this file interests the compiler?
@@ -643,14 +652,14 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 
 			relPath = rel_paths.at(i).GetPath(true, wxPATH_UNIX);
 			relPath.Trim().Trim(false);
-			
+
 			if(subDirs.Index(relPath) == wxNOT_FOUND) {
 				subDirs.Add(relPath);
 			}
-			
+
 			compilationLine.Replace(wxT("$(FilePath)"),     relPath);
 			compilationLine.Replace(wxT("\\"), wxT("/"));
-			
+
 			if (ft.kind == Compiler::CmpFileKindSource) {
 				wxString objectName;
 				wxString dependFile;
@@ -785,7 +794,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 			text << wxT("-include ") << subDirs.Item(i) << wxT("$(IntermediateDirectory)/*$(DependSuffix)\n");
 		}
 	}
-	
+
 	text << wxT("\n\n");
 	PRINT_TIMESTAMP(wxT("Creating file targets...done\n"));
 }
@@ -942,17 +951,17 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 
 	wxString buildOpts = bldConf->GetCompileOptions();
 	buildOpts.Replace(wxT(";"), wxT(" "));
-	
+
 	// Let the plugins add their content here
 	wxCommandEvent e(wxEVT_GET_ADDITIONAL_COMPILEFLAGS);
 	wxTheApp->ProcessEvent(e);
-	
+
 	wxString additionalCompileFlags = e.GetString();
 	if(additionalCompileFlags.IsEmpty() == false)
 		buildOpts << wxT(" ") << additionalCompileFlags;
-	
+
 	text << wxT("CmpOptions             :=") << buildOpts << wxT(" $(Preprocessors)") << wxT("\n");
-	
+
 	//only if resource compiler required, evaluate the resource variables
 	if (bldConf->IsResCompilerRequired()) {
 		wxString rcBuildOpts = bldConf->GetResCompileOptions();

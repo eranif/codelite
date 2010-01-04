@@ -293,17 +293,19 @@ void Subversion2::OnAdd(wxCommandEvent& event)
 
 void Subversion2::OnCommit(wxCommandEvent& event)
 {
-	wxString comment = wxGetTextFromUser(wxT("Enter Commit Message"), wxT("Svn Commit"), wxT(""), GetManager()->GetTheApp()->GetTopWindow());
-	comment = CommitDialog::NormalizeMessage(comment);
-
 	wxString command;
 	wxString loginString;
 	if(LoginIfNeeded(event, DoGetFileExplorerItemPath(), loginString) == false) {
 		return;
 	}
-	bool nonInteractive = GetNonInteractiveMode(event);
-	command << GetSvnExeName(nonInteractive) << loginString << wxT(" commit \"") << DoGetFileExplorerItemFullPath() << wxT("\" -m \"") << comment << wxT("\"");
-	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnCommitHandler(this, event.GetId(), this));
+
+	CommitDialog dlg(GetManager()->GetTheApp()->GetTopWindow(), this);
+	if(dlg.ShowModal() == wxID_OK) {
+		bool nonInteractive = GetNonInteractiveMode(event);
+		wxString comment = dlg.GetMesasge();
+		command << GetSvnExeName(nonInteractive) << loginString << wxT(" commit \"") << DoGetFileExplorerItemFullPath() << wxT("\" -m \"") << comment << wxT("\"");
+		GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnCommitHandler(this, event.GetId(), this));
+	}
 }
 
 void Subversion2::OnDelete(wxCommandEvent& event)

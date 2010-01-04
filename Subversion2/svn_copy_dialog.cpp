@@ -2,10 +2,11 @@
 #include "commit_dialog.h"  // NormalizeMessage()
 
 SvnCopyDialog::SvnCopyDialog( wxWindow* parent )
-:
-SvnCopyDialogBase( parent )
+: SvnCopyDialogBase( parent )
 {
-
+	m_textCtrlTargetURL->SetFocus();
+	m_textCtrlTargetURL->SelectAll();
+	m_textCtrlTargetURL->SetInsertionPointEnd();
 }
 
 void SvnCopyDialog::SetSourceURL(const wxString& url)

@@ -55,6 +55,7 @@ protected:
 
 	wxMenu* CreateFileExplorerPopMenu();
 	bool    IsSubversionViewDetached ();
+public:
 	void    DoGetSvnInfoSync         (SvnInfo& svnInfo, const wxString &workingDirectory);
 
 public:

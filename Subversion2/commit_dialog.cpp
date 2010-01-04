@@ -9,9 +9,27 @@ class CommitMessageStringData : public wxClientData {
 public:
 	CommitMessageStringData(const wxString &data) : m_data(data.c_str()){}
 	virtual ~CommitMessageStringData(){}
-	
+
 	const wxString &GetData() const {return m_data;}
 };
+
+CommitDialog::CommitDialog(wxWindow* parent, Subversion2* plugin)
+: CommitDialogBase( parent )
+, m_plugin(plugin)
+{
+	m_checkListFiles->Clear();
+	m_checkListFiles->Disable();
+	m_panel1->Disable();
+	wxArrayString lastMessages, previews;
+	m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
+
+	for(size_t i=0; i<previews.GetCount(); i++) {
+		m_choiceMessages->Append(previews.Item(i), new CommitMessageStringData(lastMessages.Item(i)));
+	}
+
+	m_textCtrlMessage->SetFocus();
+	WindowAttrManager::Load(this, wxT("CommitDialog"), m_plugin->GetManager()->GetConfigTool());
+}
 
 CommitDialog::CommitDialog( wxWindow* parent, const wxArrayString &paths, Subversion2 *plugin)
 		: CommitDialogBase( parent )
@@ -21,14 +39,14 @@ CommitDialog::CommitDialog( wxWindow* parent, const wxArrayString &paths, Subver
 		int index = m_checkListFiles->Append(paths.Item(i));
 		m_checkListFiles->Check((unsigned int)index);
 	}
-	
+
 	wxArrayString lastMessages, previews;
 	m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
-	
+
 	for(size_t i=0; i<previews.GetCount(); i++) {
 		m_choiceMessages->Append(previews.Item(i), new CommitMessageStringData(lastMessages.Item(i)));
 	}
-	
+
 	m_textCtrlMessage->SetFocus();
 	WindowAttrManager::Load(this, wxT("CommitDialog"), m_plugin->GetManager()->GetConfigTool());
 }
@@ -80,11 +98,12 @@ wxArrayString CommitDialog::GetPaths()
 void CommitDialog::OnChoiceMessage(wxCommandEvent& e)
 {
 	int idx = e.GetSelection();
-	if(idx == wxNOT_FOUND) 
+	if(idx == wxNOT_FOUND)
 		return;
-	
+
 	CommitMessageStringData* data = (CommitMessageStringData*)m_choiceMessages->GetClientObject(idx);
 	if(data) {
 		m_textCtrlMessage->SetValue(data->GetData());
 	}
 }
+

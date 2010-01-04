@@ -60,14 +60,6 @@ protected:
 	void CreateRootMenu      (wxMenu *menu);
 	void CreateSecondRootMenu(wxMenu *menu);
 
-public:
-	/**
-	 * @brief this method is called from the SvnInfoCommabdHandler'
-	 * @param svnInfo Svn Info struct
-	 * @param reason the reason this handler was invoked
-	 */
-	void OnSvnInfo(const SvnInfo& svnInfo, int reason);
-
 protected:
 	// Handlers for SubversionPageBase events.
 	void OnChangeRootDir ( wxCommandEvent& event );

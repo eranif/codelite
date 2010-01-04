@@ -11,7 +11,6 @@
     <File Name="svncommand.cpp"/>
     <File Name="svnxml.cpp"/>
     <File Name="svn_default_command_handler.cpp"/>
-    <File Name="svninfohandler.cpp"/>
     <File Name="svn_command_handlers.cpp"/>
     <File Name="svn_console.cpp"/>
     <File Name="subversion_password_db.cpp"/>
@@ -26,7 +25,6 @@
     <File Name="svncommand.h"/>
     <File Name="svnxml.h"/>
     <File Name="svn_default_command_handler.h"/>
-    <File Name="svninfohandler.h"/>
     <File Name="svninfo.h"/>
     <File Name="svn_command_handlers.h"/>
     <File Name="svn_console.h"/>
@@ -256,6 +254,6 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

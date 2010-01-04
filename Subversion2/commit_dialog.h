@@ -17,10 +17,11 @@ class CommitDialog : public CommitDialogBase
 public:
 	static wxString NormalizeMessage(const wxString &message);
 	void OnChoiceMessage(wxCommandEvent &e);
-	
+
 public:
 	/** Constructor */
 	CommitDialog( wxWindow* parent, const wxArrayString &paths, Subversion2 *plugin );
+	CommitDialog( wxWindow* parent, Subversion2 *plugin );
 	virtual ~CommitDialog();
 
 	wxString      GetMesasge();

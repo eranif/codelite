@@ -407,23 +407,21 @@ bool App::OnInit()
 				rk.QueryValue(wxT("mingw"), strMingw);
 			}
 
-			long up(0);
-			if( !cfg->GetLongValue(wxT("UpdateWxPaths"), up)){
-				if(strWx.IsEmpty() == false) {
-					// we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
-					EvnVarList vars;
-					EnvironmentConfig::Instance()->Load();
+			EvnVarList vars;
+			EnvironmentConfig::Instance()->Load();
+			EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
 
-					EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
-
+			if(strWx.IsEmpty() == false) {
+				// we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
+				std::map<wxString, wxString> envs = vars.GetVariables(wxT("Default"));
+				if(envs.find(wxT("WXWIN")) == envs.end())
 					vars.AddVariable(wxT("Default"), wxT("WXWIN"), strWx);
+
+				if(envs.find(wxT("WXCFG")) == envs.end())
 					vars.AddVariable(wxT("Default"), wxT("WXCFG"), wxT("gcc_dll\\mswu"));
 
-					EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
-					cfg->SaveLongValue(wxT("UpdateWxPaths"), 1);
-
-					wxSetEnv(wxT("WX_INCL_HOME"), strWx + wxT("\\include"));
-				}
+				EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
+				wxSetEnv(wxT("WX_INCL_HOME"), strWx + wxT("\\include"));
 			}
 
 			if(strMingw.IsEmpty() == false) {

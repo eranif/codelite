@@ -2935,9 +2935,9 @@ bool Manager::UpdateParserPaths()
 void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 {
 	Frame::Get()->SetStatusMessage(wxT("Retagging..."), 0);
-	std::set<std::string> fileSet = *(std::set<std::string>*)event.GetClientData();
-	delete (std::set<std::string>*)event.GetClientData();
-
+	std::set<std::string> *fileSet = (std::set<std::string>*)event.GetClientData();
+//	fprintf(stderr, "fileSet size=%d\n", fileSet->size());
+	
 	wxArrayString projects;
 	GetProjectList ( projects );
 
@@ -2953,15 +2953,20 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 	// files
 	for (size_t i=0; i<projectFiles.size(); i++) {
 		wxString fn( projectFiles.at(i).GetFullPath() );
-		fileSet.insert( fn.mb_str(wxConvUTF8).data() );
+		fileSet->insert( fn.mb_str(wxConvUTF8).data() );
 	}
-
+	
+//	fprintf(stderr, "Parsing the following files\n");
 	// recreate the list in the form of vector (the API requirs vector)
 	projectFiles.clear();
-	std::set<std::string>::iterator iter = fileSet.begin();
-	for (; iter != fileSet.end(); iter++ ) {
+	std::set<std::string>::iterator iter = fileSet->begin();
+	for (; iter != fileSet->end(); iter++ ) {
 		wxFileName fn(wxString((*iter).c_str(), wxConvUTF8));
 		fn.MakeAbsolute();
+		
+//		const wxCharBuffer cfile = _C(fn.GetFullPath());
+//		fprintf(stderr, "%s\n", cfile.data());
+		
 		projectFiles.push_back( fn );
 	}
 
@@ -2977,6 +2982,8 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 	Frame::Get()->SetStatusMessage(wxT("Done"), 0);
 	wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), (end)/1000, projectFiles.size());
 	SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
+	
+	delete fileSet;
 }
 
 void Manager::DoSaveAllFilesBeforeBuild()

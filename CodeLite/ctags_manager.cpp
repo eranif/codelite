@@ -513,7 +513,10 @@ bool TagsManager::IsValidCtagsFile(const wxFileName &filename) const
 	wxStringTokenizer tkz(filespec, wxT(";"));
 	while (tkz.HasMoreTokens()) {
 		wxString spec = tkz.NextToken();
-		if (wxMatchWild(spec, filename.GetFullName())) {
+		spec.MakeLower();
+		wxString lowerName = filename.GetFullName();
+		lowerName.MakeLower();
+		if (wxMatchWild(spec, lowerName)) {
 			is_ok = true;
 			break;
 		}

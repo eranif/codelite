@@ -37,6 +37,7 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM)
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
 
 #if 0
+#define PARSE_THREAD_DBG
 #    ifdef __WXMSW__
 #        define DEBUG_MESSAGE(x) wxLogMessage(x)
 #    else
@@ -198,17 +199,22 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 	fcFileOpener::Instance()->ClearSearchPath();
 
 	for(size_t i=0; i<searchPaths.GetCount(); i++) {
-		fcFileOpener::Instance()->AddSearchPath(searchPaths.Item(i).mb_str(wxConvUTF8).data());
+		const wxCharBuffer path = _C(searchPaths.Item(i));
+		DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Search Path: %s "), searchPaths.Item(i).c_str()) );
+		fcFileOpener::Instance()->AddSearchPath(path.data());
 	}
 
 	for(size_t i=0; i<excludePaths.GetCount(); i++) {
-		fcFileOpener::Instance()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
+		const wxCharBuffer path = _C(excludePaths.Item(i));
+		DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Exclude Path: %s "), excludePaths.Item(i).c_str()) );
+		fcFileOpener::Instance()->AddExcludePath(path.data());
 	}
 
 	// Before using the 'crawlerScan' we lock it, since it is not mt-safe
 	TagsManagerST::Get()->CrawlerLock();
 	for(size_t i=0; i<filteredFileList.GetCount(); i++) {
-		crawlerScan(filteredFileList.Item(i).mb_str(wxConvUTF8).data());
+		const wxCharBuffer cfile = filteredFileList.Item(i).mb_str(wxConvUTF8);
+		crawlerScan(cfile.data());
 		if( TestDestroy() ) {
 			TagsManagerST::Get()->CrawlerUnlock();
 			DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> received 'TestDestroy()'") ) );
@@ -219,6 +225,14 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 	TagsManagerST::Get()->CrawlerUnlock();
 	std::set<std::string> *newSet = new std::set<std::string>(fcFileOpener::Instance()->GetResults());
 
+#ifdef PARSE_THREAD_DBG
+	std::set<std::string>::iterator iter = newSet->begin();
+	for(; iter != newSet->end(); iter++) {
+		wxString fileN((*iter).c_str(), wxConvUTF8);
+		DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> %s"), fileN.c_str() ) );
+	}
+#endif
+	
 	// collect the results
 	wxCommandEvent event(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE);
 	event.SetClientData(newSet);

@@ -396,6 +396,6 @@
     <File Name="md5_global.h"/>
     <File Name="md5c.c"/>
   </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

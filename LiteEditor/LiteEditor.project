@@ -181,6 +181,8 @@
       <File Name="yestoallbasedlg.cpp"/>
       <File Name="yestoallbasedlg.h"/>
       <File Name="yestoalldlg.cpp"/>
+      <File Name="env_var_dlg_base.h"/>
+      <File Name="env_var_dlg_base.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>

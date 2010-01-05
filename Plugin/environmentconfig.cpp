@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : environmentconfig.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : environmentconfig.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "wx/utils.h"
@@ -69,29 +69,29 @@ wxString EnvironmentConfig::ExpandVariables(const wxString &in)
 {
 	static wxRegEx reVarPattern(wxT("\\$\\(( *)([a-zA-Z0-9_]+)( *)\\)"));
 	wxString result(in);
-	
+
 	ApplyEnv(NULL);
-	
+
 	EvnVarList vars;
 	ReadObject(wxT("Variables"), &vars);
-	StringMap variables = vars.GetVariables();
+	std::map<wxString, wxString> variables = vars.GetEnvVarSets();
 
 	while (reVarPattern.Matches(result)) {
 		wxString varName = reVarPattern.GetMatch(result, 2);
 		wxString text = reVarPattern.GetMatch(result);
-		
+
 		wxString replacement;
 		if(varName == wxT("MAKE")) {
-			//ignore this variable, since it is probably was passed here 
+			//ignore this variable, since it is probably was passed here
 			//by the makefile generator
-			replacement = wxT("___MAKE___");	
+			replacement = wxT("___MAKE___");
 		}else{
 			//search for workspace variable with this name
 			wxGetEnv(varName, &replacement);
-		}	
+		}
 		result.Replace(text, replacement);
 	}
-	
+
 	//restore the ___MAKE___ back to $(MAKE)
 	result.Replace(wxT("___MAKE___"), wxT("$(MAKE)"));
 	UnApplyEnv();
@@ -103,9 +103,10 @@ void EnvironmentConfig::ApplyEnv(StringMap *overrideMap)
 	//read the environments variables
 	EvnVarList vars;
 	ReadObject(wxT("Variables"), &vars);
-	StringMap variables = vars.GetVariables();
-	
-	
+
+	// get the active environment variables set
+	std::map<wxString, wxString> variables = vars.GetVariables();
+
 	// if we have an "override map" place all the entries from the override map
 	// into the global map before applying the environment
 	if(overrideMap) {
@@ -114,25 +115,25 @@ void EnvironmentConfig::ApplyEnv(StringMap *overrideMap)
 			variables[it->first] = it->second;
 		}
 	}
-	
-	StringMap::iterator iter = variables.begin();
+
+	std::map<wxString, wxString>::iterator iter = variables.begin();
 	m_envSnapshot.clear();
 	for ( ; iter != variables.end(); iter++ ) {
 		wxString key = iter->first;
 		wxString val = iter->second;
-		
+
 		//keep old value before changing it
 		wxString oldVal(wxEmptyString);
 		wxGetEnv(key, &oldVal);
 		m_envSnapshot[key] = oldVal;
-		
+
 		//allow value to include itself
 		//so this is valid:
-		//PATH=$(PATH):C:\SomePath 
+		//PATH=$(PATH):C:\SomePath
 		//but note that the following is not valid: PATH=$(OtherVarName):C:\SomePath
 		wxString varName(wxT("$(") + key + wxT(")"));
 		val.Replace(varName, oldVal);
-		
+
 		//set the new value
 		wxSetEnv(key, val);
 	}
@@ -145,7 +146,7 @@ void EnvironmentConfig::UnApplyEnv()
 	for ( ; iter != m_envSnapshot.end(); iter++ ) {
 		wxString key = iter->first;
 		wxString value = iter->second;
-		
+
 		wxSetEnv(key, value);
 	}
 	m_envSnapshot.clear();

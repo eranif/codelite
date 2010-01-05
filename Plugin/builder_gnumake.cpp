@@ -478,8 +478,8 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 	//----------------------------------------------------------
 	EvnVarList vars;
 	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
-	StringMap varMap = vars.GetVariables();
-	StringMap::const_iterator iter = varMap.begin();
+	std::map<wxString, wxString> varMap = vars.GetVariables();
+	std::map<wxString, wxString>::const_iterator iter = varMap.begin();
 
 	for (; iter != varMap.end(); iter++) {
 		wxString name = iter->first;

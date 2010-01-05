@@ -415,11 +415,9 @@ bool App::OnInit()
 					EnvironmentConfig::Instance()->Load();
 
 					EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
-					StringMap varMap = vars.GetVariables();
-					varMap[wxT("WXWIN")] = strWx;
-					varMap[wxT("WXCFG")] = wxT("gcc_dll\\mswu");
 
-					vars.SetVariables(varMap);
+					vars.AddVariable(wxT("Default"), wxT("WXWIN"), strWx);
+					vars.AddVariable(wxT("Default"), wxT("WXCFG"), wxT("gcc_dll\\mswu"));
 
 					EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
 					cfg->SaveLongValue(wxT("UpdateWxPaths"), 1);

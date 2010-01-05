@@ -82,7 +82,7 @@ UnitTestPP::UnitTestPP(IManager *manager)
 	m_longName = wxT("A Unit test plugin based on the UnitTest++ framework");
 	m_shortName = wxT("UnitTestPP");
 	m_topWindow = m_mgr->GetTheApp();
-	
+
 #ifdef __WXMSW__
 	wxRegKey rk(wxT("HKEY_CURRENT_USER\\Software\\CodeLite"));
 	if(rk.Exists()) {
@@ -90,16 +90,13 @@ UnitTestPP::UnitTestPP(IManager *manager)
 		if(rk.HasValue(wxT("unittestpp"))){
 			rk.QueryValue(wxT("unittestpp"), strUnitTestPP);
 		}
-		
+
 		if(strUnitTestPP.IsEmpty() == false) {
 			// Add the UnitTestPP environment variable to codelite's
 			// environment variables
 			EvnVarList vars;
 			m_mgr->GetEnv()->ReadObject(wxT("Variables"), &vars);
-
-			StringMap varMap = vars.GetVariables();
-			varMap[wxT("UNIT_TEST_PP_SRC_DIR")] = strUnitTestPP;
-			vars.SetVariables( varMap );
+			vars.AddVariable(wxT("Default"), wxT("UNIT_TEST_PP_SRC_DIR"), strUnitTestPP);
 			m_mgr->GetEnv()->WriteObject(wxT("Variables"), &vars);
 		}
 	}

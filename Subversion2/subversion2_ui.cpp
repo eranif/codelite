@@ -18,17 +18,17 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_textCtrlRootDir = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-	bSizer2->Add( m_textCtrlRootDir, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	bSizer2->Add( m_textCtrlRootDir, 1, wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_buttonChangeRootDir = new wxButton( this, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
 	m_buttonChangeRootDir->SetToolTip( _("Select a different root directory") );
 	
-	bSizer2->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	bSizer2->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	mainSizer->Add( bSizer2, 0, wxEXPAND, 5 );
 	
 	m_treeCtrl = new wxTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_MULTIPLE );
-	mainSizer->Add( m_treeCtrl, 1, wxALL|wxEXPAND, 5 );
+	mainSizer->Add( m_treeCtrl, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();

@@ -4,7 +4,7 @@
 #include "windowattrmanager.h"
 
 EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent )
-: EnvVarsTableDlgBase( parent )
+		: EnvVarsTableDlgBase( parent )
 {
 	EvnVarList vars;
 	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
@@ -13,11 +13,11 @@ EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent )
 
 	WindowAttrManager::Load(this, wxT("EnvVarsTableDlg"), NULL);
 	std::map<wxString, wxString>::iterator iter = envSets.begin();
-	for(; iter != envSets.end(); iter++) {
+	for (; iter != envSets.end(); iter++) {
 		wxString name    = iter->first;
 		wxString content = iter->second;
 
-		if(name == wxT("Default")) {
+		if (name == wxT("Default")) {
 			m_textCtrlDefault->SetText(content);
 		} else {
 			EnvVarSetPage *page = new EnvVarSetPage(m_notebook1);
@@ -27,9 +27,8 @@ EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent )
 	}
 
 	m_notebook1->SetSelection(0);
-	for(size_t i=0; i<m_notebook1->GetPageCount(); i++){
-		if(m_notebook1->GetPageText(i) == activePage)
-		{
+	for (size_t i=0; i<m_notebook1->GetPageCount(); i++) {
+		if (m_notebook1->GetPageText(i) == activePage) {
 			m_notebook1->GetPage(i)->SetFocus();
 			m_notebook1->SetSelection(i);
 			break;
@@ -57,9 +56,8 @@ void EnvVarsTableDlg::OnButtonOk( wxCommandEvent& event )
 	content.Trim().Trim(false);
 	envSets[name] = content;
 
-	for(size_t i=1; i<m_notebook1->GetPageCount(); i++)
-	{
-		if(i == (size_t)m_notebook1->GetSelection()){
+	for (size_t i=1; i<m_notebook1->GetPageCount(); i++) {
+		if (i == (size_t)m_notebook1->GetSelection()) {
 			vars.SetActiveSet(m_notebook1->GetPageText(i));
 		}
 
@@ -76,4 +74,14 @@ void EnvVarsTableDlg::OnButtonOk( wxCommandEvent& event )
 
 void EnvVarsTableDlg::OnNewSet( wxCommandEvent& event )
 {
+}
+
+void EnvVarsTableDlg::OnDeleteSet(wxCommandEvent& event)
+{
+}
+
+void EnvVarsTableDlg::OnDeleteSetUI(wxUpdateUIEvent& event)
+{
+	int i = m_notebook1->GetSelection();
+	event.Enable(i != wxNOT_FOUND && m_notebook1->GetPageText(i) != wxT("Default"));
 }

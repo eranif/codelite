@@ -18,12 +18,9 @@
 #include <wx/statbox.h>
 #include <wx/wxscintilla.h>
 #include <wx/panel.h>
-#include <wx/bitmap.h>
-#include <wx/image.h>
-#include <wx/icon.h>
-#include <wx/notebook.h>
-#include <wx/statline.h>
+#include <wx/choicebk.h>
 #include <wx/button.h>
+#include <wx/statline.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -38,18 +35,21 @@ class EnvVarsTableDlgBase : public wxDialog
 	
 	protected:
 		wxStaticText* m_staticText1;
-		wxNotebook* m_notebook1;
+		wxStaticText* m_staticText2;
+		wxChoicebook* m_notebook1;
 		wxPanel* m_panel1;
 		wxScintilla* m_textCtrlDefault;
+		wxButton* m_buttonNewSet;
+		wxButton* m_buttonDeleteSet;
 		wxStaticLine* m_staticline4;
 		wxButton* m_buttonOk;
 		wxButton* m_buttonCancel;
-		wxButton* m_buttonNewSet;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnLeftUp( wxMouseEvent& event ) { event.Skip(); }
-		virtual void OnButtonOk( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnNewSet( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDeleteSet( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDeleteSetUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnButtonOk( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:

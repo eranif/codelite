@@ -16,6 +16,8 @@ protected:
 	void OnLeftUp( wxMouseEvent& event );
 	void OnButtonOk( wxCommandEvent& event );
 	void OnNewSet( wxCommandEvent& event );
+	void OnDeleteSet( wxCommandEvent& event );
+	void OnDeleteSetUI( wxUpdateUIEvent& event );
 
 public:
 	/** Constructor */

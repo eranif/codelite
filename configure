@@ -76,7 +76,6 @@ createVariables()
 	echo "" >> Makefile
 	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DINSTALL_DIR=\\\"${prefix}/share/codelite\\\" -DPLUGINS_DIR=\\\"${plugins_dir}\\\"" >> Makefile
 	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
-	#echo "	-lwxscintilla\$(EXT) -lwxpropgrid\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 	echo "	-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 	echo "PLUGIN_LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 	echo "INCLUDES := \$(INCLUDES) ${additional_include_path} " >> Makefile
@@ -101,7 +100,7 @@ createMainTargets()
 	echo "## build targets" >> Makefile
 
 	## default
-	target_all="all :  pre_build SQLite Scintilla PropGrid CodeLite SDK LiteEditor codelite_indexer codelite_cppcheck Plugins "
+	target_all="all :  pre_build SQLite Scintilla CodeLite SDK LiteEditor codelite_indexer codelite_cppcheck Plugins "
 
 	## if we are on Linux, print the post message
 	if [ "$os_name" = "Linux" ]; then
@@ -472,7 +471,6 @@ createPluginMakefile()
 
 	createPluginTargets "${plugin_name}" "${post_install_path}"
 	if [ "$plugin_name" = "CppCheck" ] ; then
-	  #createRules_sharedObject "*.cpp ../sdk/codelite_cppcheck/network/*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT) -lwxpropgrid\$(EXT)"
 	  createRules_sharedObject "*.cpp ../sdk/codelite_cppcheck/network/*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
 	else
 	 createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -l    wxsqlite3\$(EXT)"
@@ -718,7 +716,7 @@ createObjectList "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.
 createObjectList "sdk/codelite_indexer/network/*.cpp CodeLite/*.cpp" "CodeLiteObjects"
 createObjectList "LiteEditor/*.cpp" "LiteEditorObjects"
 createObjectList "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects"
-createObjectList "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects"
+#createObjectList "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects"
 createObjectList "Plugin/*.cpp Plugin/*.c" "SDKObjects"
 
 createMainTargets
@@ -730,7 +728,7 @@ createRules_sharedObject  "Plugin/*.cpp Plugin/*.c" "SDKObjects" "SDK" "libplugi
 createRules_sharedObject  "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects" "Scintilla" "libwxscintilla\$(EXT)" "dont_copy"
 createRules_sharedObject  "sdk/codelite_indexer/network/*.cpp CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "libcodelite\$(EXT)" "dont_copy" "-L./lib -lwxsqlite3\$(EXT)"
 createRules_sharedObject  "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "libwxsqlite3\$(EXT)" "dont_copy" ""
-createRules_sharedObject  "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects" "PropGrid" "libwxpropgrid\$(EXT)" "dont_copy" ""
+#createRules_sharedObject  "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects" "PropGrid" "libwxpropgrid\$(EXT)" "dont_copy" ""
 
 # Then the binary, and indexer
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}

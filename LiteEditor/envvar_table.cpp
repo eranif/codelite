@@ -1,4 +1,5 @@
 #include "envvar_table.h"
+#include <wx/wupdlock.h>
 #include "evnvarlist.h"
 #include "environmentconfig.h"
 #include "windowattrmanager.h"
@@ -74,14 +75,36 @@ void EnvVarsTableDlg::OnButtonOk( wxCommandEvent& event )
 
 void EnvVarsTableDlg::OnNewSet( wxCommandEvent& event )
 {
+	wxString name = wxGetTextFromUser(wxT("Enter Name:"));
+	if(name.IsEmpty())
+		return;
+
+	DoAddPage(name, false);
 }
 
 void EnvVarsTableDlg::OnDeleteSet(wxCommandEvent& event)
 {
+	wxUnusedVar(event);
+
+	int selection = m_notebook1->GetSelection();
+	if(selection == wxNOT_FOUND)
+		return;
+
+	wxString name = m_notebook1->GetPageText((size_t)selection);
+	if(wxMessageBox(wxString::Format(wxT("Are you sure you want to delete '%s' environment variables set?"), name.c_str()), wxT("Confirm"), wxYES_NO|wxICON_QUESTION) != wxYES)
+		return;
+	m_notebook1->DeletePage((size_t)selection);
 }
 
 void EnvVarsTableDlg::OnDeleteSetUI(wxUpdateUIEvent& event)
 {
 	int i = m_notebook1->GetSelection();
 	event.Enable(i != wxNOT_FOUND && m_notebook1->GetPageText(i) != wxT("Default"));
+}
+
+void EnvVarsTableDlg::DoAddPage(const wxString& name, bool select)
+{
+	wxWindowUpdateLocker locker(this);
+	EnvVarSetPage *page = new EnvVarSetPage(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(0,0));
+	m_notebook1->AddPage(page, name, select);
 }

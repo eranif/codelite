@@ -24,7 +24,7 @@ WorkspaceSettingsBase::WorkspaceSettingsBase( wxWindow* parent, wxWindowID id, c
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel2, wxID_ANY, wxEmptyString ), wxVERTICAL );
 	
-	m_staticText1 = new wxStaticText( m_panel2, wxID_ANY, _("Add search path(s) for the parser.\nThe search paths are used for locating include files for this workspace ONLY"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( m_panel2, wxID_ANY, _("Add search path(s) for the code completion parser.\nThe search paths are used for locating include files for this workspace ONLY"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	sbSizer1->Add( m_staticText1, 0, wxALL|wxEXPAND, 5 );
 	
@@ -55,7 +55,7 @@ WorkspaceSettingsBase::WorkspaceSettingsBase( wxWindow* parent, wxWindowID id, c
 	wxStaticBoxSizer* sbSizer2;
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_panel2, wxID_ANY, wxEmptyString ), wxVERTICAL );
 	
-	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, _("Add exclude path(s) for the parser.\nCodeLite will skip any file found inside these paths while scanning for include files for this workspace ONLY"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, _("Add exclude path(s) for the code completion parser.\nCodeLite will skip any file found inside these paths while scanning for include files for this workspace ONLY"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	sbSizer2->Add( m_staticText2, 1, wxEXPAND|wxALL, 5 );
 	
@@ -86,7 +86,34 @@ WorkspaceSettingsBase::WorkspaceSettingsBase( wxWindow* parent, wxWindowID id, c
 	m_panel2->SetSizer( bSizer4 );
 	m_panel2->Layout();
 	bSizer4->Fit( m_panel2 );
-	m_notebook1->AddPage( m_panel2, _("Parser Include Files"), false );
+	m_notebook1->AddPage( m_panel2, _("Parser Include Files"), true );
+	m_panelEnv = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer81;
+	bSizer81 = new wxBoxSizer( wxVERTICAL );
+	
+	wxStaticBoxSizer* sbSizer3;
+	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_panelEnv, wxID_ANY, wxEmptyString ), wxVERTICAL );
+	
+	m_staticText3 = new wxStaticText( m_panelEnv, wxID_ANY, _("By default, CodeLite uses the current active environment variables set as defined in the Settings > Environment Variables dialog.\nHowever, you may choose a different set to become the active set when this workspace is loaded selecting it here."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	sbSizer3->Add( m_staticText3, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer81->Add( sbSizer3, 0, wxEXPAND|wxALL, 5 );
+	
+	m_staticText4 = new wxStaticText( m_panelEnv, wxID_ANY, _("Environment sets:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4->Wrap( -1 );
+	bSizer81->Add( m_staticText4, 0, wxALL|wxEXPAND, 5 );
+	
+	wxString m_choiceEnvSetsChoices[] = { _("Default") };
+	int m_choiceEnvSetsNChoices = sizeof( m_choiceEnvSetsChoices ) / sizeof( wxString );
+	m_choiceEnvSets = new wxChoice( m_panelEnv, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceEnvSetsNChoices, m_choiceEnvSetsChoices, 0 );
+	m_choiceEnvSets->SetSelection( 0 );
+	bSizer81->Add( m_choiceEnvSets, 0, wxALL|wxEXPAND, 5 );
+	
+	m_panelEnv->SetSizer( bSizer81 );
+	m_panelEnv->Layout();
+	bSizer81->Fit( m_panelEnv );
+	m_notebook1->AddPage( m_panelEnv, _("Environment"), false );
 	
 	mainSizer->Add( m_notebook1, 1, wxEXPAND | wxALL, 5 );
 	
@@ -122,6 +149,8 @@ WorkspaceSettingsBase::WorkspaceSettingsBase( wxWindow* parent, wxWindowID id, c
 	m_button7->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceSettingsBase::OnRemoveExcludePathUI ), NULL, this );
 	m_button8->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnClearAllExcludePaths ), NULL, this );
 	m_button8->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceSettingsBase::OnClearAllExcludePathsUI ), NULL, this );
+	m_choiceEnvSets->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( WorkspaceSettingsBase::OnEnvSelected ), NULL, this );
+	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnButtonOK ), NULL, this );
 }
 
 WorkspaceSettingsBase::~WorkspaceSettingsBase()
@@ -137,4 +166,6 @@ WorkspaceSettingsBase::~WorkspaceSettingsBase()
 	m_button7->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceSettingsBase::OnRemoveExcludePathUI ), NULL, this );
 	m_button8->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnClearAllExcludePaths ), NULL, this );
 	m_button8->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceSettingsBase::OnClearAllExcludePathsUI ), NULL, this );
+	m_choiceEnvSets->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( WorkspaceSettingsBase::OnEnvSelected ), NULL, this );
+	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnButtonOK ), NULL, this );
 }

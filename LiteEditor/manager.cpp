@@ -1660,7 +1660,7 @@ void Manager::ExecuteNoDebug ( const wxString &projectName )
 	//execute the program:
 	//- no hiding the console
 	//- no redirection of the stdin/out
-	EnvironmentConfig::Instance()->ApplyEnv ( NULL );
+	EnvSetter env;
 
 	// call it again here to get the actual exection line - we do it here since
 	// the environment has been applied
@@ -1670,7 +1670,6 @@ void Manager::ExecuteNoDebug ( const wxString &projectName )
 	if ( m_asyncExeCmd->GetProcess() ) {
 		m_asyncExeCmd->GetProcess()->Connect ( wxEVT_END_PROCESS, wxProcessEventHandler ( Manager::OnProcessEnd ), NULL, this );
 	}
-	EnvironmentConfig::Instance()->UnApplyEnv();
 }
 
 void Manager::KillProgram()
@@ -1693,9 +1692,6 @@ void Manager::OnProcessEnd ( wxProcessEvent &event )
 
 	delete m_asyncExeCmd;
 	m_asyncExeCmd = NULL;
-
-	//unset the environment variables
-	EnvironmentConfig::Instance()->UnApplyEnv();
 
 	//return the focus back to the editor
 	if ( Frame::Get()->GetMainBook()->GetActiveEditor() ) {
@@ -2937,7 +2933,7 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 	Frame::Get()->SetStatusMessage(wxT("Retagging..."), 0);
 	std::set<std::string> *fileSet = (std::set<std::string>*)event.GetClientData();
 //	fprintf(stderr, "fileSet size=%d\n", fileSet->size());
-	
+
 	wxArrayString projects;
 	GetProjectList ( projects );
 
@@ -2955,7 +2951,7 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 		wxString fn( projectFiles.at(i).GetFullPath() );
 		fileSet->insert( fn.mb_str(wxConvUTF8).data() );
 	}
-	
+
 //	fprintf(stderr, "Parsing the following files\n");
 	// recreate the list in the form of vector (the API requirs vector)
 	projectFiles.clear();
@@ -2963,10 +2959,10 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 	for (; iter != fileSet->end(); iter++ ) {
 		wxFileName fn(wxString((*iter).c_str(), wxConvUTF8));
 		fn.MakeAbsolute();
-		
+
 //		const wxCharBuffer cfile = _C(fn.GetFullPath());
 //		fprintf(stderr, "%s\n", cfile.data());
-		
+
 		projectFiles.push_back( fn );
 	}
 
@@ -2982,7 +2978,7 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 	Frame::Get()->SetStatusMessage(wxT("Done"), 0);
 	wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), (end)/1000, projectFiles.size());
 	SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
-	
+
 	delete fileSet;
 }
 

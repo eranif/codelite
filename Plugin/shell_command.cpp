@@ -144,7 +144,6 @@ void ShellCommand::OnProcessOutput(wxCommandEvent& e)
 
 void ShellCommand::OnProcessTerminated(wxCommandEvent& e)
 {
-	EnvironmentConfig::Instance()->UnApplyEnv();
 	ProcessEventData *ped = (ProcessEventData*)e.GetClientData();
 	delete ped;
 	CleanUp();

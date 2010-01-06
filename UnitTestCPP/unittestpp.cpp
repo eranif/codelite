@@ -358,19 +358,15 @@ void UnitTestPP::OnRunUnitTests(wxCommandEvent& e)
 	if (m_proc) {
 
 		//set the environment variables
-		m_mgr->GetEnv()->ApplyEnv(NULL);
+		EnvSetter env(m_mgr->GetEnv());
 
 		if (m_proc->Start() == 0) {
-
-			//set the environment variables
-			m_mgr->GetEnv()->UnApplyEnv();
 
 			//failed to start the process
 			delete m_proc;
 			m_proc = NULL;
 			return;
 		}
-		m_mgr->GetEnv()->UnApplyEnv();
 		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(UnitTestPP::OnProcessTerminated), NULL, this);
 	}
 }

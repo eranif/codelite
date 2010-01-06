@@ -109,7 +109,7 @@ EnvVarSetPage::EnvVarSetPage( wxWindow* parent, wxWindowID id, const wxPoint& po
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 	
 	m_textCtrl = new wxScintilla(this);
-	bSizer6->Add( m_textCtrl, 1, wxALL|wxEXPAND, 5 );
+	bSizer6->Add( m_textCtrl, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer6 );
 	this->Layout();

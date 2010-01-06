@@ -1840,16 +1840,9 @@ void FileViewTree::OnRebuildProjectOnly(wxCommandEvent& event)
 void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
 {
 	bool retagRequires;
-	wxArrayString includePaths, excludePaths;
-	LocalWorkspaceST::Get()->GetParserPaths(includePaths, excludePaths);
-
-	WorkspaceSettingsDlg dlg(Frame::Get(), includePaths, excludePaths);
+	WorkspaceSettingsDlg dlg(Frame::Get(), LocalWorkspaceST::Get());
 	if(dlg.ShowModal() == wxID_OK) {
 		// Update the new paths
-		wxArrayString localIncludePaths = dlg.GetIncludePaths();
-		wxArrayString localExcludePaths = dlg.GetExcludePaths();
-
-		LocalWorkspaceST::Get()->SetParserPaths(localIncludePaths, localExcludePaths);
 		retagRequires = ManagerST::Get()->UpdateParserPaths();
 
 		// send notification to the main frame to perform retag

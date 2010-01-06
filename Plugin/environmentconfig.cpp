@@ -70,7 +70,7 @@ wxString EnvironmentConfig::ExpandVariables(const wxString &in)
 	static wxRegEx reVarPattern(wxT("\\$\\(( *)([a-zA-Z0-9_]+)( *)\\)"));
 	wxString result(in);
 
-	ApplyEnv(NULL);
+	EnvSetter env(this);
 
 	EvnVarList vars;
 	ReadObject(wxT("Variables"), &vars);
@@ -94,7 +94,6 @@ wxString EnvironmentConfig::ExpandVariables(const wxString &in)
 
 	//restore the ___MAKE___ back to $(MAKE)
 	result.Replace(wxT("___MAKE___"), wxT("$(MAKE)"));
-	UnApplyEnv();
 	return result;
 }
 

@@ -822,18 +822,6 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 		IndicatorClearRange(end, GetTextLength()-end);
 	}
 
-	switch ( GetEOLMode() ) {
-	case wxSCI_EOL_CR:
-		DoSetStatusMessage(wxT("EOL Mode: Mac"), 2);
-		break;
-	case wxSCI_EOL_CRLF:
-		DoSetStatusMessage(wxT("EOL Mode: Dos/Windows"), 2);
-		break;
-	default:
-		DoSetStatusMessage(wxT("EOL Mode: Unix"), 2);
-		break;
-	}
-
 	if (sel_text.IsEmpty()) {
 		// remove indicators
 		SetIndicatorCurrent(2);

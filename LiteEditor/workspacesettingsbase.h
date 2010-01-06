@@ -24,6 +24,7 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
+#include <wx/choice.h>
 #include <wx/notebook.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
@@ -51,6 +52,10 @@ class WorkspaceSettingsBase : public wxDialog
 		wxButton* m_button6;
 		wxButton* m_button7;
 		wxButton* m_button8;
+		wxPanel* m_panelEnv;
+		wxStaticText* m_staticText3;
+		wxStaticText* m_staticText4;
+		wxChoice* m_choiceEnvSets;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonOk;
 		wxButton* m_buttonCancel;
@@ -66,6 +71,8 @@ class WorkspaceSettingsBase : public wxDialog
 		virtual void OnRemoveExcludePathUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnClearAllExcludePaths( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClearAllExcludePathsUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnEnvSelected( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:

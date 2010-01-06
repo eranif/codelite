@@ -204,7 +204,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 	wxLogMessage(cmd);
 
 	//set the environment variables
-	m_env->ApplyEnv(NULL);
+	EnvSetter env(m_env);
 
 	m_observer->UpdateAddLine(wxString::Format(wxT("Current working dir: %s"), wxGetCwd().c_str()));
 	m_observer->UpdateAddLine(wxString::Format(wxT("Launching gdb from : %s"), wxGetCwd().c_str()));
@@ -245,7 +245,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 	m_debuggeePid = wxNOT_FOUND;
 
 	//set the environment variables
-	m_env->ApplyEnv(NULL);
+	EnvSetter env(m_env);
 
 	m_observer->UpdateAddLine(wxString::Format(wxT("Current working dir: %s"), wxGetCwd().c_str()));
 	m_observer->UpdateAddLine(wxString::Format(wxT("Launching gdb from : %s"), cwd.c_str()));
@@ -847,7 +847,6 @@ void DbgGdb::OnProcessEnd(wxCommandEvent &e)
 	}
 
 	m_observer->UpdateGotControl(DBG_EXITED_NORMALLY);
-	m_env->UnApplyEnv();
 	m_gdbOutputArr.Clear();
 }
 

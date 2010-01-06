@@ -217,16 +217,15 @@ void CustomBuildRequest::Process(IManager *manager)
 	text << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]----------\n");
 
 	AppendLine(text);
-	env->ApplyEnv( &om );
+	EnvSetter environment(env, &om);
+
 	m_proc = CreateAsyncProcess(this, cmd);
 	if ( !m_proc ) {
 		wxString message;
 		message << wxT("Failed to start build process, command: ") << cmd << wxT(", process terminated with exit code: 0");
-		EnvironmentConfig::Instance()->UnApplyEnv();
 		AppendLine(message);
 		return;
 	}
-	env->UnApplyEnv();
 }
 
 void CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf)

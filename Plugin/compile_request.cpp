@@ -181,15 +181,12 @@ void CompileRequest::Process(IManager *manager)
 		AppendLine(text);
 	}
 
-	env->ApplyEnv( &om );
+	EnvSetter envir(env, &om);
 	m_proc = CreateAsyncProcess(this, cmd);
 	if (!m_proc ) {
 		wxString message;
 		message << wxT("Failed to start build process, command: ") << cmd << wxT(", process terminated with exit code: 0");
-		env->UnApplyEnv();
 		AppendLine(message);
 		return;
 	}
-
-	env->UnApplyEnv();
 }

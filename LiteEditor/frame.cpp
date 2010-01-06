@@ -1114,7 +1114,8 @@ void Frame::UpdateBuildTools()
 	wxString path;
 	bool is_ok ( true );
 
-	EnvironmentConfig::Instance()->ApplyEnv ( NULL );
+	// Apply the environment
+	EnvSetter env;
 
 	if ( tool.Contains ( wxT ( "$" ) ) ) {
 		//expand
@@ -1136,10 +1137,8 @@ void Frame::UpdateBuildTools()
 		}
 	} else {
 		//we are good, nothing to be done
-		EnvironmentConfig::Instance()->UnApplyEnv();
 		return;
 	}
-	EnvironmentConfig::Instance()->UnApplyEnv();
 
 	wxString message;
 	if ( !is_ok ) {

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "editor_config.h"
+#include <wx/log.h>
 #include "globals.h"
 #include "optionsconfig.h"
 #include <wx/fontmap.h>
@@ -296,6 +297,7 @@ bool LocalWorkspace::SaveXmlFile()
 
 bool LocalWorkspace::SanityCheck()
 {
+	wxLogNull noLog;
     wxString WorkspaceFullPath = WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath();
     if (WorkspaceFullPath.IsEmpty()) {
         return false;
@@ -391,3 +393,32 @@ void LocalWorkspace::SetParserPaths(const wxArrayString& inclduePaths, const wxA
 	}
 	SaveXmlFile();
 }
+
+wxString LocalWorkspace::GetActiveEnvironmentSet()
+{
+	if(!SanityCheck())
+		return wxT("");
+
+	wxXmlNode* envNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Environment"));
+	wxString setName;
+	if( envNode ) {
+		setName = envNode->GetPropVal(wxT("Name"), wxT(""));
+	}
+	return setName;
+}
+
+void LocalWorkspace::SetActiveEnvironmentSet(const wxString& setName)
+{
+	if(!SanityCheck())
+		return;
+
+	wxXmlNode* envNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Environment"));
+	if ( envNode ) {
+		m_doc.GetRoot()->RemoveChild( envNode );
+		delete envNode;
+	}
+	envNode = new wxXmlNode(m_doc.GetRoot(), wxXML_ELEMENT_NODE, wxT("Environment"));
+	envNode->AddProperty(wxT("Name"), setName);
+	SaveXmlFile();
+}
+

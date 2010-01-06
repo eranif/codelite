@@ -247,9 +247,8 @@ void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 		wxSetWorkingDirectory(working_dir);
 
 		// apply environment
-		m_mgr->GetEnv()->ApplyEnv(NULL);
+		EnvSetter envGuard(m_mgr->GetEnv());
 		wxExecute(command);
-		m_mgr->GetEnv()->UnApplyEnv();
 
 	} else {
 		// create a piped process
@@ -259,9 +258,9 @@ void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 		}
 
 		m_pipedProcess = new AsyncExeCmd(m_mgr->GetOutputWindow());
-		m_mgr->GetEnv()->ApplyEnv(NULL);
 
 		DirSaver ds;
+		EnvSetter envGuard(m_mgr->GetEnv());
 		wxSetWorkingDirectory(working_dir);
 
 		// hide console if any,
@@ -270,7 +269,6 @@ void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 		if (m_pipedProcess->GetProcess()) {
 			m_pipedProcess->GetProcess()->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(ExternalToolsPlugin::OnProcessEnd), NULL, this);
 		}
-		m_mgr->GetEnv()->UnApplyEnv();
 	}
 }
 

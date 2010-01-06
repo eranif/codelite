@@ -281,7 +281,6 @@ private:
 protected:
 	/*void SaveWorkspaceOptions(LocalOptionsConfigPtr opts);
 	void SaveProjectOptions(LocalOptionsConfigPtr opts, const wxString& projectname);*/
-	void LoadOptions();
 	bool SanityCheck();
 	bool Create();
 	bool SaveXmlFile();
@@ -324,6 +323,11 @@ public:
 	void GetParserPaths(wxArrayString &inclduePaths, wxArrayString &excludePaths);
 	void SetParserPaths(const wxArrayString &inclduePaths, const wxArrayString &excludePaths);
 
+	/**
+	 * @brief set and get the active environment variables set name
+	 */
+	void     SetActiveEnvironmentSet(const wxString &setName);
+	wxString GetActiveEnvironmentSet();
 };
 
 

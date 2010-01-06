@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/tokenzr.h>
+#include "environmentconfig.h"
+#include "evnvarlist.h"
 #include "pluginmanager.h"
 #include "workspacesettingsdlg.h"
 #include "importfilesdialog.h"
@@ -1842,6 +1844,20 @@ void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
 	bool retagRequires;
 	WorkspaceSettingsDlg dlg(Frame::Get(), LocalWorkspaceST::Get());
 	if(dlg.ShowModal() == wxID_OK) {
+		
+		// Set the workspace's environment variable set to the active one
+		wxString   activeSet       = LocalWorkspaceST::Get()->GetActiveEnvironmentSet();
+		wxString   globalActiveSet = EnvironmentConfig::Instance()->GetSettings().GetActiveSet();
+		EvnVarList vars            = EnvironmentConfig::Instance()->GetSettings();
+	
+		// Make sure that the environment set exist, if not, set it to the editor's set
+		if(vars.IsSetExist(activeSet) == false)
+			activeSet = globalActiveSet;
+		
+		vars.SetActiveSet(activeSet);
+		EnvironmentConfig::Instance()->SetSettings(vars);
+		Frame::Get()->SetStatusMessage(wxString::Format(wxT("Environment set: '%s'"), activeSet.c_str()), 2);
+		
 		// Update the new paths
 		retagRequires = ManagerST::Get()->UpdateParserPaths();
 

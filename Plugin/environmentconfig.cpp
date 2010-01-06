@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "wx/utils.h"
+#include "wx/utils.h"
 #include "wx/regex.h"
 #include "wx/filename.h"
 #include "environmentconfig.h"
@@ -150,3 +150,16 @@ void EnvironmentConfig::UnApplyEnv()
 	}
 	m_envSnapshot.clear();
 }
+
+EvnVarList EnvironmentConfig::GetSettings()
+{
+	EvnVarList vars;
+	ReadObject(wxT("Variables"), &vars);
+	return vars;
+}
+
+void EnvironmentConfig::SetSettings(EvnVarList &vars)
+{
+	WriteObject(wxT("Variables"), &vars);
+}
+

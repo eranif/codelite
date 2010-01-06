@@ -27,6 +27,7 @@
 
 #include "configurationtoolbase.h"
 #include "archive.h"
+#include "evnvarlist.h"
 
 class EnvironmentConfig : public ConfigurationToolBase {
 
@@ -40,7 +41,8 @@ public:
 	wxString ExpandVariables(const wxString &in);
 	void ApplyEnv(StringMap *overrideMap);
 	void UnApplyEnv();
-
+	EvnVarList GetSettings();
+	void       SetSettings(EvnVarList &vars);
 private:
 	EnvironmentConfig();
 	virtual ~EnvironmentConfig();

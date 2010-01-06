@@ -106,3 +106,8 @@ wxString EvnVarList::DoGetSetVariablesStr(const wxString& setName, wxString& sel
 	}
 	return currentValueStr;
 }
+
+bool EvnVarList::IsSetExist(const wxString& setName)
+{
+	return m_envVarSets.find(setName) != m_envVarSets.end();
+}

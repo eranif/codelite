@@ -1759,8 +1759,8 @@ void Frame::OnTogglePanes(wxCommandEvent &event)
 void Frame::OnAddEnvironmentVariable(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	EnvVarsTableDlg *dlg = new EnvVarsTableDlg(this);
-	dlg->ShowModal();
+	EnvVarsTableDlg dlg(this);
+	dlg.ShowModal();
 
 	if (ManagerST::Get()->IsWorkspaceOpen()) {
 		//mark all the projects as dirty
@@ -1773,8 +1773,6 @@ void Frame::OnAddEnvironmentVariable(wxCommandEvent &event)
 			}
 		}
 	}
-
-	dlg->Destroy();
 }
 
 void Frame::OnAdvanceSettings(wxCommandEvent &event)

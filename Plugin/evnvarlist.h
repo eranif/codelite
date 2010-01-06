@@ -55,7 +55,7 @@ public:
 
 	void AddVariable(const wxString &setName, const wxString &name, const wxString &value);
 	std::map<wxString, wxString> GetVariables(const wxString &setName = wxT(""));
-
+	bool IsSetExist(const wxString &setName);
 public:
 	virtual void DeSerialize(Archive &arch);
 	virtual void Serialize  (Archive &arch);

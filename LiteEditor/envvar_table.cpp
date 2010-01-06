@@ -34,9 +34,7 @@ EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent )
 		if (name == wxT("Default")) {
 			m_textCtrlDefault->SetText(content);
 		} else {
-			EnvVarSetPage *page = new EnvVarSetPage(m_notebook1);
-			page->m_textCtrl->SetText(content);
-			m_notebook1->AddPage(page, name);
+			DoAddPage(name, content, false);
 		}
 	}
 
@@ -92,7 +90,7 @@ void EnvVarsTableDlg::OnNewSet( wxCommandEvent& event )
 	if(name.IsEmpty())
 		return;
 
-	DoAddPage(name, false);
+	DoAddPage(name, wxT(""), false);
 }
 
 void EnvVarsTableDlg::OnDeleteSet(wxCommandEvent& event)
@@ -115,7 +113,7 @@ void EnvVarsTableDlg::OnDeleteSetUI(wxUpdateUIEvent& event)
 	event.Enable(i != wxNOT_FOUND && m_notebook1->GetPageText(i) != wxT("Default"));
 }
 
-void EnvVarsTableDlg::DoAddPage(const wxString& name, bool select)
+void EnvVarsTableDlg::DoAddPage(const wxString &name, const wxString &content, bool select)
 {
 	wxWindowUpdateLocker locker(this);
 	EnvVarSetPage *page = new EnvVarSetPage(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(0,0));
@@ -131,5 +129,6 @@ void EnvVarsTableDlg::DoAddPage(const wxString& name, bool select)
 		sci->StyleSetForeground(i, *wxBLACK);
 		sci->StyleSetFont(i, font);
 	}
+	sci->SetText(content);
 	m_notebook1->AddPage(page, name, select);
 }

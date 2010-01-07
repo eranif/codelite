@@ -112,6 +112,7 @@ void ContinuousBuild::UnPlug()
 
 void ContinuousBuild::OnFileSaved(wxCommandEvent& e)
 {
+	e.Skip();
 	PRINT_MESSAGE(wxT("ContinuousBuild::OnFileSaved\n"));
 	// Dont build while the main build is in progress
 	if (m_buildInProgress) {

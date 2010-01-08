@@ -30,23 +30,24 @@
 Compiler::Compiler(wxXmlNode *node)
 {
     // ensure all relevant entries exist in switches map (makes sure they show up in build settings dlg)
-    m_switches[wxT("Include")] = wxEmptyString;
-    m_switches[wxT("Debug")] = wxEmptyString;
-    m_switches[wxT("Preprocessor")] = wxEmptyString;
-    m_switches[wxT("Library")] = wxEmptyString;
-    m_switches[wxT("LibraryPath")] = wxEmptyString;
-    m_switches[wxT("Source")] = wxEmptyString;
-    m_switches[wxT("Output")] = wxEmptyString;
-    m_switches[wxT("Object")] = wxEmptyString;
-    m_switches[wxT("ArchiveOutput")] = wxEmptyString;
+    m_switches[wxT("Include")]        = wxEmptyString;
+    m_switches[wxT("Debug")]          = wxEmptyString;
+    m_switches[wxT("Preprocessor")]   = wxEmptyString;
+    m_switches[wxT("Library")]        = wxEmptyString;
+    m_switches[wxT("LibraryPath")]    = wxEmptyString;
+    m_switches[wxT("Source")]         = wxEmptyString;
+    m_switches[wxT("Output")]         = wxEmptyString;
+    m_switches[wxT("Object")]         = wxEmptyString;
+    m_switches[wxT("ArchiveOutput")]  = wxEmptyString;
     m_switches[wxT("PreprocessOnly")] = wxEmptyString;
 
     // ensure all relevant entries exist in tools map (makes sure they show up in build settings dlg)
-    m_tools[wxT("LinkerName")] = wxEmptyString;
+    m_tools[wxT("LinkerName")]             = wxEmptyString;
     m_tools[wxT("SharedObjectLinkerName")] = wxEmptyString;
-    m_tools[wxT("CompilerName")] = wxEmptyString;
-    m_tools[wxT("ArchiveTool")] = wxEmptyString;
-    m_tools[wxT("ResourceCompiler")] = wxEmptyString;
+    m_tools[wxT("CompilerName")]           = wxEmptyString;
+    m_tools[wxT("C_CompilerName")]         = wxEmptyString;
+    m_tools[wxT("ArchiveTool")]            = wxEmptyString;
+    m_tools[wxT("ResourceCompiler")]       = wxEmptyString;
 
 	m_fileTypes.clear();
 	if (node) {
@@ -141,18 +142,19 @@ Compiler::Compiler(wxXmlNode *node)
 		}
 	} else {
 		//create a default compiler: g++
-		m_name = wxT("gnu g++");
-		m_switches[wxT("Include")] = wxT("-I");
-		m_switches[wxT("Debug")] = wxT("-g ");
-		m_switches[wxT("Preprocessor")] = wxT("-D");
-		m_switches[wxT("Library")] = wxT("-l");
-		m_switches[wxT("LibraryPath")] = wxT("-L");
-		m_switches[wxT("Source")] = wxT("-c ");
-		m_switches[wxT("Output")] = wxT("-o ");
-		m_switches[wxT("Object")] = wxT("-o ");
-		m_switches[wxT("ArchiveOutput")] = wxT(" ");
+		m_name                            = wxT("gnu g++");
+		m_switches[wxT("Include")]        = wxT("-I");
+		m_switches[wxT("Debug")]          = wxT("-g ");
+		m_switches[wxT("Preprocessor")]   = wxT("-D");
+		m_switches[wxT("Library")]        = wxT("-l");
+		m_switches[wxT("LibraryPath")]    = wxT("-L");
+		m_switches[wxT("Source")]         = wxT("-c ");
+		m_switches[wxT("Output")]         = wxT("-o ");
+		m_switches[wxT("Object")]         = wxT("-o ");
+		m_switches[wxT("ArchiveOutput")]  = wxT(" ");
         m_switches[wxT("PreprocessOnly")] = wxT("-E");
-		m_objectSuffix = wxT(".o");
+		m_objectSuffix                    = wxT(".o");
+		m_preprocessSuffix                = wxT(".i");
 
 		CmpInfoPattern pattern;
 		pattern.pattern         = wxT("^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)( error)");
@@ -164,14 +166,15 @@ Compiler::Compiler(wxXmlNode *node)
 		pattern.lineNumberIndex = wxT("3");
 		m_warningPatterns.push_back(pattern);
 
-		m_tools[wxT("LinkerName")] = wxT("g++");
+		m_tools[wxT("LinkerName")]             = wxT("g++");
 		m_tools[wxT("SharedObjectLinkerName")] = wxT("g++ -shared -fPIC");
-		m_tools[wxT("CompilerName")] = wxT("g++");
-		m_tools[wxT("ArchiveTool")] = wxT("ar rcu");
-		m_tools[wxT("ResourceCompiler")] = wxT("windres");
-		m_globalIncludePath = wxEmptyString;
-		m_globalLibPath = wxEmptyString;
-		m_pathVariable = wxEmptyString;
+		m_tools[wxT("CompilerName")]           = wxT("g++");
+		m_tools[wxT("C_CompilerName")]         = wxT("gcc");
+		m_tools[wxT("ArchiveTool")]            = wxT("ar rcu");
+		m_tools[wxT("ResourceCompiler")]       = wxT("windres");
+		m_globalIncludePath                    = wxEmptyString;
+		m_globalLibPath                        = wxEmptyString;
+		m_pathVariable                         = wxEmptyString;
 		m_generateDependeciesFile = false;
 	}
     if (m_generateDependeciesFile && m_dependSuffix.IsEmpty()) {
@@ -185,11 +188,11 @@ Compiler::Compiler(wxXmlNode *node)
 		AddCmpFileType(wxT("cpp"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
 		AddCmpFileType(wxT("cxx"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
 		AddCmpFileType(wxT("c++"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
-		AddCmpFileType(wxT("c"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
-		AddCmpFileType(wxT("cc"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
-		AddCmpFileType(wxT("m"), CmpFileKindSource, wxT("$(CompilerName) -X objective-c $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
-		AddCmpFileType(wxT("mm"), CmpFileKindSource, wxT("$(CompilerName) -X objective-c++ $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
-		AddCmpFileType(wxT("rc"), CmpFileKindResource, wxT("$(RcCompilerName) -i \"$(FileFullPath)\" $(RcCmpOptions)   $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileFullName)$(ObjectSuffix) $(RcIncludePath)"));
+		AddCmpFileType(wxT("c"),   CmpFileKindSource, wxT("$(C_CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("cc"),  CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("m"),   CmpFileKindSource, wxT("$(CompilerName) -x objective-c $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("mm"),  CmpFileKindSource, wxT("$(CompilerName) -x objective-c++ $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("rc"),  CmpFileKindResource, wxT("$(RcCompilerName) -i \"$(FileFullPath)\" $(RcCmpOptions)   $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileFullName)$(ObjectSuffix) $(RcIncludePath)"));
 	}
 }
 
@@ -318,7 +321,14 @@ wxString Compiler::GetTool(const wxString &name) const
 {
 	std::map<wxString, wxString>::const_iterator iter = m_tools.find(name);
 	if (iter == m_tools.end()) {
+		if(name == wxT("C_CompilerName")) {
+			// an upgrade, return the CompilerName
+			return GetTool(wxT("CompilerName"));
+		}
 		return wxEmptyString;
+	}
+	if(name == wxT("C_CompilerName") && iter->second.empty()) {
+		return GetTool(wxT("CompilerName"));
 	}
 	return iter->second;
 }

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "project.h"
+#include "fileextmanager.h"
 #include <wx/app.h>
 #include <wx/msgdlg.h>
 
@@ -679,15 +680,17 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 				text << wxT("\t") << GetMakeDirCmd(bldConf, relPath) << wxT("\n");
 				text << wxT("\t") << compilationLine << wxT("\n");
 
+				wxString compilerMacro = DoGetCompilerMacro(rel_paths.at(i).GetFullPath(wxPATH_UNIX));
 				if (generateDependeciesFiles) {
 					text << dependFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
 					text << wxT("\t") << GetMakeDirCmd(bldConf, relPath) << wxT("\n");
-					text << wxT("\t") << wxT("@$(CompilerName) $(CmpOptions) $(IncludePath) -MT") << objectName <<wxT(" -MF") << dependFile << wxT(" -MM \"") << absFileName << wxT("\"\n\n");
+					text << wxT("\t") << wxT("@") << compilerMacro << wxT(" $(CmpOptions) $(IncludePath) -MT") << objectName <<wxT(" -MF") << dependFile << wxT(" -MM \"") << absFileName << wxT("\"\n\n");
 				}
+
 				if (supportPreprocessOnlyFiles) {
 					text << preprocessedFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
 					text << wxT("\t") << GetMakeDirCmd(bldConf, relPath) << wxT("\n");
-					text << wxT("\t") << wxT("$(CompilerName) $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ") << preprocessedFile << wxT(" \"") << absFileName << wxT("\"\n\n");
+					text << wxT("\t") << wxT("@") << compilerMacro << wxT(" $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ") << preprocessedFile << wxT(" \"") << absFileName << wxT("\"\n\n");
 				}
 
 			} else if (ft.kind == Compiler::CmpFileKindResource && bldConf->IsResCompilerRequired()) {
@@ -927,7 +930,6 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("User                   :=") << wxGetUserName() << wxT("\n");
 	text << wxT("Date                   :=") << wxDateTime::Now().FormatDate() << wxT("\n");
 	text << wxT("CodeLitePath           :=\"") << WorkspaceST::Get()->GetStartupDir() << wxT("\"\n");
-
 	text << wxT("LinkerName             :=") << cmp->GetTool(wxT("LinkerName")) << wxT("\n");
 	text << wxT("ArchiveTool            :=") << cmp->GetTool(wxT("ArchiveTool")) << wxT("\n");
 	text << wxT("SharedObjectLinkerName :=") << cmp->GetTool(wxT("SharedObjectLinkerName")) << wxT("\n");
@@ -942,7 +944,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("PreprocessorSwitch     :=") << cmp->GetSwitch(wxT("Preprocessor")) << wxT("\n");
 	text << wxT("SourceSwitch           :=") << cmp->GetSwitch(wxT("Source")) << wxT("\n");
 	text << wxT("CompilerName           :=") << cmp->GetTool(wxT("CompilerName")) << wxT("\n");
-
+	text << wxT("C_CompilerName         :=") << cmp->GetTool(wxT("C_CompilerName")) << wxT("\n");
 	text << wxT("OutputFile             :=") << bldConf->GetOutputFileName() << wxT("\n");
 	text << wxT("Preprocessors          :=") << ParsePreprocessor(bldConf->GetPreprocessor()) << wxT("\n");
 	text << wxT("ObjectSwitch           :=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
@@ -1353,7 +1355,7 @@ void BuilderGnuMake::CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxStr
 	text << wxT("\n");
 	text << wxT("# PreCompiled Header\n");
 	text << filename << wxT(".gch: ") << filename << wxT("\n");
-	text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch) ") << filename << wxT(" $(CmpOptions) $(IncludePath)\n");
+	text << wxT("\t") << DoGetCompilerMacro(filename) << wxT(" $(SourceSwitch) ") << filename << wxT(" $(CmpOptions) $(IncludePath)\n");
 	text << wxT("\n");
 }
 
@@ -1400,4 +1402,19 @@ wxString BuilderGnuMake::GetBuildToolCommand(bool isCommandlineCommand) const
 #endif
 	//enclose the tool path in quatation marks
 	return wxT("\"") + buildTool + wxT("\" ") + jobsCmd + GetBuildToolOptionsFromConfig() ;
+}
+
+wxString BuilderGnuMake::DoGetCompilerMacro(const wxString& filename)
+{
+	wxString compilerMacro(wxT("$(CompilerName)"));
+	switch(FileExtManager::GetType(filename)) {
+	case FileExtManager::TypeSourceC:
+		compilerMacro = wxT("$(C_CompilerName)");
+		break;
+	case FileExtManager::TypeSourceCpp:
+	default:
+		compilerMacro = wxT("$(CompilerName)");
+		break;
+	}
+	return compilerMacro;
 }

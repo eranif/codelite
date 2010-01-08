@@ -76,6 +76,8 @@ class CompilerToolsBase : public wxPanel
 	protected:
 		wxStaticText* m_staticText9;
 		wxTextCtrl* m_textCompilerName;
+		wxStaticText* m_staticText25;
+		wxTextCtrl* m_textCtrlCCompilerName;
 		wxStaticText* m_staticText11;
 		wxTextCtrl* m_textLinkerName;
 		wxStaticText* m_staticText12;

@@ -361,7 +361,7 @@ void Notebook::InsertPage(CustomTab* tab, size_t index)
 	}
 }
 
-void Notebook::InsertPage(size_t index, wxWindowMSW* win, const wxString& text, const wxString& tooltip, const wxBitmap& bmp, bool selected)
+void Notebook::InsertPage(size_t index, wxWindow* win, const wxString& text, const wxString& tooltip, const wxBitmap& bmp, bool selected)
 {
 	Freeze();
 

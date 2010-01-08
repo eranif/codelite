@@ -2,6 +2,7 @@
 #define SVNSETTINGSDATA_H
 
 #include "serialized_object.h" // Base class
+#include "custom_notebook.h"
 
 enum SvnSettingsDataFlags {
 	SvnAddFileToSvn        = 0x00000001,
@@ -22,6 +23,7 @@ class SvnSettingsData : public SerializedObject
 	size_t        m_flags;
 	wxArrayString m_urls;
 	wxString      m_revisionMacroName;
+	size_t        m_svnTabIndex;
 
 public:
 	SvnSettingsData()
@@ -32,7 +34,8 @@ public:
 			, m_sshClient(wxT(""))
 			, m_sshClientArgs(wxT(""))
 			, m_flags(SvnAddFileToSvn|SvnRetagWorkspace)
-			, m_revisionMacroName(wxT("SVN_REVISION")) {
+			, m_revisionMacroName(wxT("SVN_REVISION"))
+			, m_svnTabIndex(Notebook::npos) {
 	}
 
 	virtual ~SvnSettingsData() {
@@ -49,6 +52,7 @@ public:
 		arch.Read(wxT("m_flags"),                     m_flags);
 		arch.Read(wxT("m_urls"),                      m_urls);
 		arch.Read(wxT("m_revisionMacroName"),         m_revisionMacroName);
+		arch.Read(wxT("m_svnTabIndex"),               m_svnTabIndex);
 	}
 
 	virtual void Serialize(Archive &arch) {
@@ -61,8 +65,15 @@ public:
 		arch.Write(wxT("m_flags"),                     m_flags);
 		arch.Write(wxT("m_urls"),                      m_urls);
 		arch.Write(wxT("m_revisionMacroName"),         m_revisionMacroName);
+		arch.Write(wxT("m_svnTabIndex"),               m_svnTabIndex);
 	}
 
+	void SetSvnTabIndex(const size_t& svnTabIndex) {
+		this->m_svnTabIndex = svnTabIndex;
+	}
+	const size_t& GetSvnTabIndex() const {
+		return m_svnTabIndex;
+	}
 	void SetRevisionMacroName(const wxString& revisionMacroName) {
 		this->m_revisionMacroName = revisionMacroName;
 	}

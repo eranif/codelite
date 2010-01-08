@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include <wx/log.h>
 #include <wx/imaglist.h>
 #include <wx/xrc/xmlres.h>
 #include "dirtraverser.h"
@@ -143,6 +144,7 @@ wxString GetColumnText(wxListCtrl *list, long index, long column)
 
 bool ReadFileWithConversion(const wxString &fileName, wxString &content)
 {
+	wxLogNull noLog;
 	content.Clear();
 	wxFFile file(fileName, wxT("rb"));
 	if (file.IsOpened()) {

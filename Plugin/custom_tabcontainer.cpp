@@ -185,7 +185,7 @@ void wxTabContainer::Initialize()
 	sz->Layout();
 }
 
-void wxTabContainer::AddTab(CustomTab *tab)
+void wxTabContainer::InsertTab(CustomTab* tab, size_t index)
 {
 	size_t oldSel(0);
 
@@ -194,10 +194,18 @@ void wxTabContainer::AddTab(CustomTab *tab)
 		PushPageHistory(tab);
 	}
 
-	if (m_orientation == wxLEFT || m_orientation == wxRIGHT) {
-		m_tabsSizer->Add(tab, 0, wxLEFT | wxRIGHT, 3);
+	if(index >= GetTabsCount()) {
+		if (m_orientation == wxLEFT || m_orientation == wxRIGHT) {
+			m_tabsSizer->Add(tab, 0, wxLEFT | wxRIGHT, 3);
+		} else {
+			m_tabsSizer->Add(tab, 0, wxTOP | wxBOTTOM, 3);
+		}
 	} else {
-		m_tabsSizer->Add(tab, 0, wxTOP | wxBOTTOM, 3);
+		if (m_orientation == wxLEFT || m_orientation == wxRIGHT) {
+			m_tabsSizer->Insert(index, tab, 0, wxLEFT | wxRIGHT, 3);
+		} else {
+			m_tabsSizer->Insert(index, tab, 0, wxTOP | wxBOTTOM, 3);
+		}
 	}
 
 	if (tab->GetSelected()) {
@@ -223,6 +231,11 @@ void wxTabContainer::AddTab(CustomTab *tab)
 		event.SetEventObject( GetParent() );
 		GetParent()->ProcessEvent(event);
 	}
+}
+
+void wxTabContainer::AddTab(CustomTab *tab)
+{
+	InsertTab(tab, GetTabsCount());
 }
 
 CustomTab* wxTabContainer::GetSelection()
@@ -285,7 +298,7 @@ void wxTabContainer::SetSelection(CustomTab *tab, bool notify)
 
 	tab->SetSelected(true);
 	EnsureVisible(tab);
-	
+
 	tab->Refresh();
 	tab->GetWindow()->SetFocus();
 

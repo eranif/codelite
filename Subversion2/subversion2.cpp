@@ -191,10 +191,13 @@ void Subversion2::UnPlug()
 {
 	// Remove the tab pined to the workspcae pane
 	size_t index(Notebook::npos);
+	SvnSettingsData ssd = GetSettings();
 	index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_subversionView);
 	if (index != Notebook::npos) {
 		m_mgr->GetWorkspacePaneNotebook()->RemovePage(index, false);
 	}
+	ssd.SetSvnTabIndex(index);
+	SetSettings(ssd);
 
 	// Remove the tab pined to the output pane
 	index = m_mgr->GetOutputPaneNotebook()->GetPageIndex(m_subversionConsole);
@@ -216,8 +219,11 @@ void Subversion2::DoInitialize()
 		new DockablePane(book->GetParent()->GetParent(), book, m_subversionView, svnCONSOLE_TEXT, wxNullBitmap, wxSize(200, 200));
 
 	} else {
-
-		book->AddPage(m_subversionView, svnCONSOLE_TEXT, svnCONSOLE_TEXT, wxNullBitmap, true);
+		size_t index = GetSettings().GetSvnTabIndex();
+		if(index == Notebook::npos)
+			book->AddPage(m_subversionView, svnCONSOLE_TEXT, svnCONSOLE_TEXT, wxNullBitmap, true);
+		else
+			book->InsertPage(index, m_subversionView, svnCONSOLE_TEXT, svnCONSOLE_TEXT, wxNullBitmap, true);
 	}
 
 	book = m_mgr->GetOutputPaneNotebook();

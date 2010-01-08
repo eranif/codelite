@@ -3,4 +3,5 @@
 - Add new 'scp' plugin
 - Add option to run 'environment' script
 - Tasks tab - use the new wxCheckListCtrl to customize it
-- Add Macro manager to codelite and replace the global method 'ExpandAllVariables'
+- Add $(C_CompilerName) to the available macros
+- Svn: Change the order of the login dialog to come first incase of commit failure

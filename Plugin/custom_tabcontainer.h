@@ -81,6 +81,7 @@ public:
 	virtual ~wxTabContainer();
 
 	void AddTab(CustomTab *tab);
+	void InsertTab(CustomTab *tab, size_t index);
 	CustomTab *GetSelection();
 
 	void SetSelection(CustomTab *tab, bool notify = false);

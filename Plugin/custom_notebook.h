@@ -96,12 +96,14 @@ public:
 	 * \param selected set the page as the selected page
 	 */
 	void AddPage(wxWindow *win, const wxString &text, const wxString &tooltip, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
+	void InsertPage(size_t index, wxWindow *win, const wxString &text, const wxString &tooltip, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
 
 	/**
 	 * \brief add page to the book
 	 * \param tab to be added
 	 */
 	void AddPage(CustomTab *tab);
+	void InsertPage(CustomTab* tab, size_t index);
 
 	/**
 	 * \brief return page at give position

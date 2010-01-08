@@ -245,6 +245,7 @@ void Manager::CreateWorkspace ( const wxString &name, const wxString &path )
 
 void Manager::OpenWorkspace ( const wxString &path )
 {
+	wxLogNull noLog;
 	CloseWorkspace();
 
 	wxString errMsg;
@@ -288,20 +289,20 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 
 	// Update the parser search paths
 	UpdateParserPaths();
-	
+
 	// Set the workspace's environment variable set to the active one
 	wxString   activeSet       = LocalWorkspaceST::Get()->GetActiveEnvironmentSet();
 	wxString   globalActiveSet = EnvironmentConfig::Instance()->GetSettings().GetActiveSet();
 	EvnVarList vars            = EnvironmentConfig::Instance()->GetSettings();
-	
+
 	// Make sure that the environment set exist, if not, set it to the editor's set
 	if(vars.IsSetExist(activeSet) == false)
 		activeSet = globalActiveSet;
-	
+
 	vars.SetActiveSet(activeSet);
 	EnvironmentConfig::Instance()->SetSettings(vars);
 	Frame::Get()->SetStatusMessage(wxString::Format(wxT("Environment set: '%s'"), activeSet.c_str()), 2);
-	
+
 	// send an event to the main frame indicating that a re-tag is required
 	// we do this only if the "smart retagging" is on
 	TagsOptionsData tagsopt = TagsManagerST::Get()->GetCtagsOptions();
@@ -2921,15 +2922,16 @@ bool Manager::UpdateParserPaths()
 	}
 
 	// Update the parser thread with the new paths
-	wxArrayString uniIncludePath, uniExcludePath;
+	wxArrayString globalIncludePath, uniExcludePath;
 	TagsOptionsData tod = Frame::Get()->GetTagsOptions();
-	uniIncludePath = tod.GetParserSearchPaths();
-	uniExcludePath = tod.GetParserExcludePaths();
+	globalIncludePath   = tod.GetParserSearchPaths();
+	uniExcludePath      = tod.GetParserExcludePaths();
 
-	// Add new paths to the include path
-	for(size_t i=0; i<localIncludePaths.GetCount(); i++){
-		if(uniIncludePath.Index(localIncludePaths.Item(i)) == wxNOT_FOUND) {
-			uniIncludePath.Add( localIncludePaths.Item(i) );
+	// Add the global search paths to the local workspace
+	// include paths (the order does matter)
+	for(size_t i=0; i<globalIncludePath.GetCount(); i++){
+		if(localIncludePaths.Index(globalIncludePath.Item(i)) == wxNOT_FOUND) {
+			localIncludePaths.Add( globalIncludePath.Item(i) );
 		}
 	}
 
@@ -2939,7 +2941,7 @@ bool Manager::UpdateParserPaths()
 		}
 	}
 
-	ParseThreadST::Get()->SetSearchPaths( uniIncludePath, uniExcludePath );
+	ParseThreadST::Get()->SetSearchPaths( localIncludePaths, uniExcludePath );
 	return true;
 }
 

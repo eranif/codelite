@@ -484,8 +484,13 @@ void SubversionView::OnUpdate(wxCommandEvent& event)
 void SubversionView::OnCommit(wxCommandEvent& event)
 {
 	wxString command;
+	wxString loginString;
+	if(m_plugin->LoginIfNeeded(event, m_textCtrlRootDir->GetValue(), loginString) == false) {
+		return;
+	}
 
-	// Pope the "Commit Dialog" dialog
+	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
+	command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" commit ");
 
 	CommitDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_selectionInfo.m_paths, m_plugin);
 	if (dlg.ShowModal() == wxID_OK) {
@@ -493,12 +498,6 @@ void SubversionView::OnCommit(wxCommandEvent& event)
 		if (m_selectionInfo.m_paths.IsEmpty())
 			return;
 
-		wxString loginString;
-		if(m_plugin->LoginIfNeeded(event, m_textCtrlRootDir->GetValue(), loginString) == false) {
-			return;
-		}
-		bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
-		command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" commit ");
 
 		for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
 			command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");

@@ -59,7 +59,7 @@
       <wxString Value="__CLRCALL_OR_CDECL"/>
       <wxString Value="_CRTIMP2_PURE"/>
     </wxArrayString>
-    <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc" Name="m_fileSpec"/>
+    <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc;*.hh" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">
       <wxString Value="C++"/>
     </wxArrayString>

@@ -4,4 +4,4 @@
 - Add option to run 'environment' script
 - Tasks tab - use the new wxCheckListCtrl to customize it
 - Add $(C_CompilerName) to the available macros
-- Svn: Change the order of the login dialog to come first incase of commit failure
+

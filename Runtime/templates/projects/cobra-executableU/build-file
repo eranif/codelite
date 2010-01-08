@@ -1,0 +1,13 @@
+# build-file
+# Cobra Build file for a cobra multifile build from within codelite.
+# (In this case an executable (.Net exe) build
+#
+# Place filenames for the library to be built in this file,
+# one entry per line, whitespace and lines starting with '#' are ignored.
+#
+# Lacking a -out:FILENAME override on the compile line
+# The first filename given will have its name used as the name of the executable
+# e.g
+# MyApp.cobra
+# appStuff.cobra
+#   will generate an executable named MyApp (MyApp.exe).

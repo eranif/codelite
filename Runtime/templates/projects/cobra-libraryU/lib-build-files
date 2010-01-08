@@ -1,0 +1,13 @@
+# lib-build-files
+# Cobra Build file for a cobra multifile build from within codelite.
+# (In this case a Library (.Net assembly) build
+#
+# Place filenames for the library to be built in this file,
+# one entry per line, whitespace and lines starting with '#' are ignored.
+#
+# Lacking a -out:FILENAME override on the compile line
+# The first filename given will have its name used as the name of the library
+# e.g
+# Lib1.cobra
+# OtherLib2.cobra
+#   will generate a libraryname of Lib1.dll

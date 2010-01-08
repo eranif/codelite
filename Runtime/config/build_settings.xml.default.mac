@@ -85,6 +85,55 @@
       <LinkerOption Name="-s">Remove all symbol table and relocation information from the executable.</LinkerOption>
 	  <LinkerOption Name="-fopenmp">Enable OpenMP (linkage).</LinkerOption>
     </Compiler>
+    <Compiler Name="cobra" GenerateDependenciesFiles="no">
+      <Switch Name="ArchiveOutput" Value="-ert"/>
+      <Switch Name="Debug" Value="-debug"/>
+      <Switch Name="Include" Value="-ref:"/>
+      <Switch Name="Library" Value="-reference:"/>
+      <Switch Name="LibraryPath" Value="-lib:"/>
+      <Switch Name="Object" Value="-t:lib"/>
+      <Switch Name="Output" Value="-out:"/>
+      <Switch Name="PreprocessOnly" Value=""/>
+      <Switch Name="Preprocessor" Value=""/>
+      <Switch Name="Source" Value="-c "/>
+      <Tool Name="ArchiveTool" Value=""/>
+      <Tool Name="CompilerName" Value="cobra.exe"/>
+      <Tool Name="LinkerName" Value=""/>
+      <Tool Name="ResourceCompiler" Value=""/>
+      <Tool Name="SharedObjectLinkerName" Value=""/>
+      <File Extension="cobra" CompilationLine="$(CompilerName) $(SourceSwitch)  $(CmpOptions) $(FileFullName)" Kind="0"/>
+      <File Extension="cs" CompilationLine="$(CompilerName) $(SourceSwitch) &quot;$(FileFullPath)&quot; $(CmpOptions) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName).cs " Kind="0"/>
+      <Option Name="ObjectSuffix" Value=".cobra.cs"/>
+      <Option Name="DependSuffix" Value=""/>
+      <Option Name="PreprocessSuffix" Value=""/>
+      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="2">^([a-zA-Z\.0-9_/\+\-]+)\(([0-9]+)\): error:</Pattern>
+      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="2">^([a-zA-Z\.0-9_/\+\-]+)\(([0-9]+)\): warning:</Pattern>
+      <GlobalIncludePath></GlobalIncludePath>
+      <GlobalLibPath></GlobalLibPath>
+      <PathVariable></PathVariable>
+      <CompilerOption Name="-c -compile">compile Only</CompilerOption>
+      <CompilerOption Name="-cin  -compile-if-needed">Only compile if any src newer than output file</CompilerOption>
+      <CompilerOption Name="-d -debug">compile debugging enabled</CompilerOption>
+      <CompilerOption Name="-ert">embed Cobra runtime in exe</CompilerOption>
+      <CompilerOption Name="-help">print full option usage info</CompilerOption>
+      <CompilerOption Name="-include-asserts">include asserts in exe (default=yes)</CompilerOption>
+      <CompilerOption Name="-include-nil-checks">include chks on non nilable items (default=yes)</CompilerOption>
+      <CompilerOption Name="-include-tests">include unit tests (default=yes)</CompilerOption>
+      <CompilerOption Name="-include-traces">include trace stmts in output assembly (default=yes)</CompilerOption>
+      <CompilerOption Name="-kif">Keep Intermediate files</CompilerOption>
+      <CompilerOption Name="-lib:PATH">specify additional directories to search for references</CompilerOption>
+      <CompilerOption Name="-main:TYPENAME">Specify type (class) containing the 'main' method</CompilerOption>
+      <CompilerOption Name="-ns: -name-space:NAME">Sets Namespace for all src files as if specified in files</CompilerOption>
+      <CompilerOption Name="-number:decimal|float|float32|float64">Sets real nunmeric type for 'number' type and fractional literals</CompilerOption>
+      <CompilerOption Name="-o -optimize">Optimize</CompilerOption>
+      <CompilerOption Name="-out:Filename">specify output filename</CompilerOption>
+      <CompilerOption Name="-ref  -reference:Some.dll">Add ref to a dll</CompilerOption>
+      <CompilerOption Name="-t -target:exe|winexe|lib|module">build specific target type</CompilerOption>
+      <CompilerOption Name="-timeit">gives runtime duration and other stats</CompilerOption>
+      <CompilerOption Name="-turbo">set option switches to maximise Runtime perf</CompilerOption>
+      <CompilerOption Name="-v -verbosity:[0-5]">enable extra compiler output</CompilerOption>
+      <CompilerOption Name="-version">Print just the version number</CompilerOption>
+    </Compiler>
   </Compilers>
   <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="make" Options="-f" Jobs="2"/>
 </BuildSettings>

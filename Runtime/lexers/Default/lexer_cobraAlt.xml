@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lexer Name="CobraAlt" Id="2">
+  <KeyWords0>adds all and any as assert base body bool branch break callable catch char class const continue cue decimal def do dynamic each else end ensure enum event every except expect extend false finally float for from get has if ignore implements implies import in inherits inlined int interface invariant is listen lock mixin must namespace new nil not number objc of old or pass passthrough post print pro raise ref require return same set sig stop struct success test this throw to trace true try uint use using var where while yield</KeyWords0>
+  <KeyWords1>abstract fake internal nonvirtual private protected public shared vari inout out override partial virtual </KeyWords1>
+  <KeyWords2></KeyWords2>
+  <KeyWords3></KeyWords3>
+  <KeyWords4></KeyWords4>
+  <Extensions>*.cobra-A</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="FixedMedium9x15" Colour="#495A25" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="1" Name="CommentLine" Bold="no" Face="" Colour="#1D7B0F" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="2" Name="Number" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="3" Name="String" Bold="no" Face="" Colour="#FC1C03" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="4" Name="Character" Bold="no" Face="" Colour="#EE0D0D" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="5" Name="KeyWord0" Bold="no" Face="" Colour="#1F1FFF" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="6" Name="Triple" Bold="no" Face="" Colour="#206056" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="7" Name="DocString" Bold="yes" Face="Courier New" Colour="#229711" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="8" Name="ClassName" Bold="no" Face="" Colour="#8E3C91" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="9" Name="Defname" Bold="no" Face="" Colour="#990099" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#242424" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="12" Name="Comment Block" Bold="no" Face="" Colour="#18640F" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="13" Name="StringEOL" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="14" Name="KeyWord1" Bold="no" Face="" Colour="#7A00F0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="15" Name="Directive" Bold="no" Face="" Colour="#07782C" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" Size="10"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#000000" BgColour="#C0C0C0" Italic="no" Underline="no" Size="10"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" Size="10"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="10"/>
+  </Properties>
+</Lexer>

@@ -1,0 +1,6 @@
+class Hello
+
+	def main is shared
+		print "hello world\n"
+		CobraCore.exit(0)
+

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="cobra-library" InternalType="User templates">
+  <Description>Build a .Net Library (assembly) from Cobra source.
+Root of source file tree assumed in same directory as project file.
+Debug files are made in the same directory
+Release files placed in ./Release directory
+</Description>
+  <Settings Type="Dynamic Library">
+    <Configuration Name="Debug" CompilerType="Cobra" DebuggerType="">
+      <Compiler Options="" Required="no">
+        <IncludePath Value=""/>
+      </Compiler>
+      <Linker Options="" Required="no"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="./$(ProjectName)" IntermediateDirectory="$(ProjectPath)" Command="echo" CommandArguments="Generated file is a library - need app" WorkingDirectory="$(ProjectPath)" PauseExecWhenProcTerminates="yes"/>
+      <Debugger/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <Target Name="echo">echo $(CurrentFileName)</Target>
+        <CleanCommand>rm -rf *~ *.cobra.cs *.exe *.pdb</CleanCommand>
+        <BuildCommand>$(cobrac) -c -target:lib -debug -files:lib-build-files</BuildCommand>
+        <PreprocessFileCommand>pwd</PreprocessFileCommand>
+        <SingleFileCommand>$(cobrac) -c -target:lib -debug $(CurrentFileName)</SingleFileCommand>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(ProjectPath)</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="Cobra" DebuggerType="">
+      <Compiler Options="" Required="no">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="no"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="$(ProjectPath)/Release" Command="echo" CommandArguments="Generated file is a library - need app" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Debugger/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <Target Name="echo">echo $(CurrentFileName)</Target>
+        <CleanCommand>rm -rf *~ *.cobra.cs *.exe *.pdb</CleanCommand>
+        <BuildCommand>$(cobrac) -c -target:lib -out:./Release/$(ProjectName} -files:lib-build-files</BuildCommand>
+        <PreprocessFileCommand>pwd</PreprocessFileCommand>
+        <SingleFileCommand>$(cobrac) -c -target:lib $(CurrentFileName)</SingleFileCommand>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(ProjectPath)</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Turbo" CompilerType="Cobra" DebuggerType="">
+      <Compiler Options="" Required="no">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="no"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="$(ProjectPath)/Turbo" Command="echo" CommandArguments="Generated file is a library - need app" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Debugger/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <Target Name="echo">echo $(CurrentFileName)</Target>
+        <CleanCommand>rm -rf *~ *.cobra.cs *.exe *.pdb</CleanCommand>
+        <BuildCommand>$(cobrac) -c -target:lib -turbo -files:lib-build-files</BuildCommand>
+        <PreprocessFileCommand>pwd</PreprocessFileCommand>
+        <SingleFileCommand>$(cobrac) -c -target:lib -turbo $(CurrentFileName)</SingleFileCommand>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(ProjectPath)</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <GlobalSettings>
+      <Compiler Options=""/>
+      <Linker Options=""/>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+  </Settings>
+  <Dependencies/>
+  <VirtualDirectory Name="resources">
+    <File Name="lib-build-files"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="src"/>
+</CodeLite_Project>

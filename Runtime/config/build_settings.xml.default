@@ -13,6 +13,7 @@
       <Switch Name="Source" Value="-c "/>
       <Tool Name="ArchiveTool" Value="ar rcus"/>
       <Tool Name="CompilerName" Value="g++"/>
+      <Tool Name="C_CompilerName" Value="gcc"/>
       <Tool Name="LinkerName" Value="g++"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="g++ -shared -fPIC"/>
@@ -55,6 +56,7 @@
       <Switch Name="Source" Value="-c "/>
       <Tool Name="ArchiveTool" Value="ar rcus"/>
       <Tool Name="CompilerName" Value="gcc"/>
+      <Tool Name="C_CompilerName" Value="gcc"/>
       <Tool Name="LinkerName" Value="gcc"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="gcc -shared -fPIC"/>
@@ -98,6 +100,7 @@
       <Switch Name="Source" Value="-c "/>
       <Tool Name="ArchiveTool" Value=""/>
       <Tool Name="CompilerName" Value="cobra.exe"/>
+      <Tool Name="C_CompilerName" Value="cobra.exe"/>
       <Tool Name="LinkerName" Value=""/>
       <Tool Name="ResourceCompiler" Value=""/>
       <Tool Name="SharedObjectLinkerName" Value=""/>

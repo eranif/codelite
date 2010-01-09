@@ -52,7 +52,7 @@ fix_shared_object_depends libplugin
 fix_shared_object_depends libcodelite
 fix_shared_object_depends libwxscintilla
 fix_shared_object_depends libwxsqlite
-fix_shared_object_depends libwxpropgrid
+#fix_shared_object_depends libwxpropgrid
 
 #echo install_name_tool -change /usr/lib/libcurl.4.dylib @executable_path/libcurl.4.dylib ${exe_name}
 #install_name_tool -change /usr/lib/libcurl.4.dylib @executable_path/libcurl.4.dylib ${exe_name}

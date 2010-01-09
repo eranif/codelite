@@ -22,7 +22,7 @@ SvnCheckoutDialog::~SvnCheckoutDialog()
 
 	urls = ssd.GetUrls();
 	selection.Trim().Trim(false);
-	if(urls.Index(selection) == wxNOT_FOUND && selection.IsEmpty() == false) {
+	if (urls.Index(selection) == wxNOT_FOUND && selection.IsEmpty() == false) {
 		urls.Add(selection);
 	}
 	ssd.SetUrls(urls);
@@ -34,7 +34,7 @@ void SvnCheckoutDialog::OnBrowseDirectory( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 	wxString new_path = wxDirSelector(wxT(""), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-	if(new_path.IsEmpty() == false){
+	if (new_path.IsEmpty() == false) {
 		m_textCtrl20->SetValue(new_path);
 	}
 }
@@ -52,4 +52,16 @@ wxString SvnCheckoutDialog::GetURL()
 void SvnCheckoutDialog::OnOkUI(wxUpdateUIEvent& event)
 {
 	event.Enable(m_textCtrl20->GetValue().IsEmpty() == false && m_comboBoxRepoURL->GetValue().IsEmpty() == false);
+}
+
+void SvnCheckoutDialog::OnOK(wxCommandEvent& event)
+{
+	// Check the target directory
+	wxString targetDir = GetTargetDir();
+	if(wxFileName::DirExists(targetDir)) {
+		if(wxMessageBox(wxString::Format(wxT("The checkout directory '%s' already exists\ncontinue with the checkout?"), targetDir.c_str()), wxT("Confirm"), wxYES_NO|wxICON_WARNING) == wxNO) {
+			return;
+		}
+	}
+	event.Skip();
 }

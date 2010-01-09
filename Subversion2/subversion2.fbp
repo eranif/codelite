@@ -2273,7 +2273,7 @@
                 </object>
             </object>
         </object>
-        <object class="Dialog" expanded="1">
+        <object class="Dialog" expanded="0">
             <property name="bg"></property>
             <property name="center">wxBOTH</property>
             <property name="context_help"></property>
@@ -5579,7 +5579,7 @@
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
-                                <event name="OnButtonClick"></event>
+                                <event name="OnButtonClick">OnOK</event>
                                 <event name="OnChar"></event>
                                 <event name="OnEnterWindow"></event>
                                 <event name="OnEraseBackground"></event>

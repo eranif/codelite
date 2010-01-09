@@ -278,6 +278,7 @@ class SvnCheckoutDialogBase : public wxDialog
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCheckoutDirectoryText( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnBrowseDirectory( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnOK( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnOkUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	

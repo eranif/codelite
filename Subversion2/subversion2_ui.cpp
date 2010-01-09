@@ -684,6 +684,7 @@ SvnCheckoutDialogBase::SvnCheckoutDialogBase( wxWindow* parent, wxWindowID id, c
 	// Connect Events
 	m_comboBoxRepoURL->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( SvnCheckoutDialogBase::OnCheckoutDirectoryText ), NULL, this );
 	m_buttonBrowseDir->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnCheckoutDialogBase::OnBrowseDirectory ), NULL, this );
+	m_button14->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnCheckoutDialogBase::OnOK ), NULL, this );
 	m_button14->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnCheckoutDialogBase::OnOkUI ), NULL, this );
 }
 
@@ -692,6 +693,7 @@ SvnCheckoutDialogBase::~SvnCheckoutDialogBase()
 	// Disconnect Events
 	m_comboBoxRepoURL->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( SvnCheckoutDialogBase::OnCheckoutDirectoryText ), NULL, this );
 	m_buttonBrowseDir->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnCheckoutDialogBase::OnBrowseDirectory ), NULL, this );
+	m_button14->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnCheckoutDialogBase::OnOK ), NULL, this );
 	m_button14->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnCheckoutDialogBase::OnOkUI ), NULL, this );
 }
 

@@ -18,6 +18,8 @@ protected:
 	void OnBrowseDirectory      ( wxCommandEvent  &event );
 	void OnOkUI                 ( wxUpdateUIEvent &event );
 
+	virtual void OnOK( wxCommandEvent& event );
+
 public:
 	/** Constructor */
 	SvnCheckoutDialog( wxWindow* parent, Subversion2 *plugin );

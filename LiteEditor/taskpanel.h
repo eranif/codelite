@@ -35,17 +35,15 @@ class TaskPanel : public FindResultsTab
 {
 private:
     wxArrayString m_extensions;
-	std::vector<wxToggleButton*> m_task;
+	wxButton *m_findWhat;
     wxChoice *m_scope;
     wxChoice *m_filter;
 
 protected:
     SearchData DoGetSearchData();
-    void       OnToggle       (wxCommandEvent  &e);
+    void       OnFindWhat     (wxCommandEvent  &e);
 	void       OnSearch       (wxCommandEvent  &e);
-    void       OnCustomize    (wxCommandEvent  &e);
     void       OnSearchUI     (wxUpdateUIEvent &e);
-    void       OnCustomizeUI  (wxUpdateUIEvent &e);
 	void       OnRepeatOutput (wxCommandEvent  &e);
 
     DECLARE_EVENT_TABLE()

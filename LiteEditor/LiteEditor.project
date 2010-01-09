@@ -341,6 +341,15 @@
       <File Name="editorsettingslocalbase.cpp"/>
       <File Name="editorsettingslocalbase.h"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="Tasks">
+      <File Name="tasksfindwhatdlgbase.cpp"/>
+      <File Name="tasksfindwhatdlgbase.h"/>
+      <File Name="tasks_find_what_dlg.h"/>
+      <File Name="tasks_find_what_dlg.cpp"/>
+      <File Name="taskpanel.cpp"/>
+      <File Name="taskpanel.h"/>
+      <File Name="taskspaneldata.h"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
     <File Name="app.cpp"/>
@@ -472,8 +481,6 @@
     <File Name="memoryview.cpp"/>
     <File Name="memoryview.h"/>
     <File Name="memoryviewbase.cpp"/>
-    <File Name="taskpanel.h"/>
-    <File Name="taskpanel.cpp"/>
     <File Name="errorstab.h"/>
     <File Name="errorstab.cpp"/>
     <File Name="debuggerasciiviewerbase.cpp"/>
@@ -537,6 +544,7 @@
     <File Name="importfilesdialog.fbp"/>
     <File Name="workspacesettingsbase.fbp"/>
     <File Name="implementparentvirtualfunctionsbase.fbp"/>
+    <File Name="tasksfindwhatdlgbase.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="breakpointsmgr.h"/>
@@ -583,28 +591,6 @@
     <Project Name="plugin_sdk"/>
     <Project Name="DebuggerGDB"/>
     <Project Name="wxpropgrid"/>
-  </Dependencies>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="wxpropgrid"/>
-    <Project Name="CodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-    <Project Name="Copyright"/>
-    <Project Name="UnitTestPP"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="snipwiz"/>
-    <Project Name="wxFormBuilder"/>
-    <Project Name="abbreviation"/>
-    <Project Name="ContinuousBuild"/>
-    <Project Name="QMakePlugin"/>
-    <Project Name="CppChecker"/>
-    <Project Name="Subversion2"/>
   </Dependencies>
   <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
@@ -881,6 +867,28 @@ resources.cpp: resources.xrc
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <Dependencies Name="WinDebugUnicode">
+    <Project Name="wxscintilla"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="wxpropgrid"/>
+    <Project Name="CodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
+    <Project Name="abbreviation"/>
+    <Project Name="ContinuousBuild"/>
+    <Project Name="QMakePlugin"/>
+    <Project Name="CppChecker"/>
+    <Project Name="Subversion2"/>
+  </Dependencies>
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
     <Project Name="wxscintilla"/>

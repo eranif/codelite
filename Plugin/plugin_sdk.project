@@ -142,6 +142,8 @@
       <File Name="windowstack.cpp"/>
       <File Name="outputviewcontrolbar.cpp"/>
       <File Name="outputviewcontrolbar.h"/>
+      <File Name="listctrl_improved.h"/>
+      <File Name="listctrl_improved.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="threebuttondlg.h"/>

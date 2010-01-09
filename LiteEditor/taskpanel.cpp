@@ -23,6 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include "editor_config.h"
+#include "taskspaneldata.h"
+#include "tasks_find_what_dlg.h"
 #include <wx/tglbtn.h>
 #include "frame.h"
 #include "manager.h"
@@ -30,13 +33,9 @@
 #include "taskpanel.h"
 
 BEGIN_EVENT_TABLE(TaskPanel, FindResultsTab)
-    EVT_TOGGLEBUTTON(wxID_ANY,        TaskPanel::OnToggle)
-
     EVT_BUTTON(XRCID("search"),       TaskPanel::OnSearch)
-    EVT_BUTTON(XRCID("customize"),    TaskPanel::OnCustomize)
-
+	EVT_BUTTON(XRCID("find_what"),    TaskPanel::OnFindWhat)
     EVT_UPDATE_UI(XRCID("search"),    TaskPanel::OnSearchUI)
-    EVT_UPDATE_UI(XRCID("customize"), TaskPanel::OnCustomizeUI)
 END_EVENT_TABLE()
 
 TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
@@ -44,14 +43,6 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
     , m_scope(NULL)
     , m_filter(NULL)
 {
-    // TODO: could load some of the following data (tasks, scopes, filters) from EditorConfig:
-
-    wxArrayString tasks;
-    tasks.Add(wxT("TODO"));
-    tasks.Add(wxT("FIXME"));
-    tasks.Add(wxT("BUG"));
-    tasks.Add(wxT("ATTN"));
-
     wxArrayString scopes;
     scopes.Add(SEARCH_IN_PROJECT);
     scopes.Add(SEARCH_IN_WORKSPACE);
@@ -59,25 +50,13 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
 
     wxArrayString filters;
     filters.Add(wxT("C/C++ Sources"));
-    m_extensions.Add(wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"));
+    m_extensions.Add(wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc;*.hh"));
     filters.Add(wxT("All Files"));
     m_extensions.Add(wxT("*.*"));
 
     wxBoxSizer *horzSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    wxStaticText *text = new wxStaticText(this, wxID_ANY, wxT("Find:"));
-    horzSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
-
-    for (size_t i = 0; i < sizeof(tasks)/sizeof(tasks[0]); i++) {
-        wxToggleButton *btn = new wxToggleButton(this, wxID_ANY, tasks[i], wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-        btn->SetValue(true);
-        btn->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-        btn->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
-        m_task.push_back(btn);
-        horzSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2);
-    }
-
-    text = new wxStaticText(this, wxID_ANY, wxT("In:"));
+    wxStaticText *text = new wxStaticText(this, wxID_ANY, wxT("Search Tasks in:"));
     horzSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
     m_scope = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, scopes);
@@ -91,8 +70,8 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
     wxButton *btn = new wxButton(this, XRCID("search"), wxT("&Search"));
     horzSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
-    btn = new wxButton(this, XRCID("customize"), wxT("&Customize"));
-    horzSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2);
+	m_findWhat = new wxButton(this, XRCID("find_what"), _("Find What..."));
+	horzSizer->Add(m_findWhat, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2);
 
 	wxBoxSizer *vertSizer = new wxBoxSizer(wxVERTICAL);
 	vertSizer->Add(horzSizer, 0, wxEXPAND|wxTOP|wxBOTTOM);
@@ -120,22 +99,27 @@ SearchData TaskPanel::DoGetSearchData()
     data.SetUseEditorFontConfig(false);
     data.SetOwner(this);
 
-	// /[/*] *(TODO|ATTN|BUG|FIXME) *:*
-    wxString sfind = wxT("/[/*] *(");
+	wxString sfind;
 
-    for (size_t i = 0; i < m_task.size(); i++) {
-        if (m_task[i]->GetValue()) {
-            sfind << m_task[i]->GetLabelText() << wxT('|');
-        }
-    }
+	// Load all info from disk
+	TasksPanelData d;
+	EditorConfigST::Get()->ReadObject(wxT("TasksPanelData"), &d);
 
-	if (sfind.Last() == wxT('(')) {
-        // fallback
-        sfind << wxT("TODO|ATTN|FIXME|BUG");
-    }
+	std::map<wxString, wxString>::const_iterator iter = d.GetTasks().begin();
+	for(; iter != d.GetTasks().end(); iter++){
+		wxString name  = iter->first;
+		wxString regex = iter->second;
+		bool enabled   = (d.GetEnabledItems().Index(iter->first) != wxNOT_FOUND);
 
-    sfind.Last() = wxT(')');
-    sfind << wxT(" *:*");
+		regex.Trim().Trim(false);
+		wxRegEx re(regex);
+		if(enabled && !regex.IsEmpty() && re.IsValid())
+			sfind << wxT("(") << regex << wxT(")|");
+	}
+
+	if(sfind.empty() == false)
+		sfind.RemoveLast();
+
     data.SetFindString(sfind);
 
 	wxString rootDir = m_scope->GetStringSelection();
@@ -161,14 +145,6 @@ SearchData TaskPanel::DoGetSearchData()
 	return data;
 }
 
-void TaskPanel::OnToggle(wxCommandEvent &e)
-{
-    wxToggleButton *btn = (wxToggleButton*) e.GetEventObject();
-	btn->SetBackgroundColour(e.IsChecked() ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT) : wxNullColour);
-    btn->SetForegroundColour(e.IsChecked() ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT) : wxNullColour);
-    btn->Refresh();
-}
-
 void TaskPanel::OnSearch(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
@@ -178,32 +154,16 @@ void TaskPanel::OnSearch(wxCommandEvent& e)
 
 void TaskPanel::OnSearchUI(wxUpdateUIEvent& e)
 {
-    bool any = false;
-    for (size_t i = 0; i < m_task.size() && !any; i++) {
-        any = m_task[i]->GetValue();
-    }
-    e.Enable(m_recv == NULL && any);
-}
-
-void TaskPanel::OnCustomize(wxCommandEvent& e)
-{
-    LoadFindInFilesData();
-    SearchData data = DoGetSearchData();
-    m_find->SetSearchData(data);
-    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
-    if (editor) {
-        // remove selection so it doesn't clobber the find-string in the dialog
-        editor->SetSelection(-1,-1);
-    }
-    OnFindInFiles(e);
-}
-
-void TaskPanel::OnCustomizeUI(wxUpdateUIEvent& e)
-{
-    OnSearchUI(e);
+    e.Enable(true);
 }
 
 void TaskPanel::OnRepeatOutput(wxCommandEvent& e)
 {
 	OnSearch(e);
+}
+
+void TaskPanel::OnFindWhat(wxCommandEvent& e)
+{
+	TasksFindWhatDlg dlg(this);
+	dlg.ShowModal();
 }

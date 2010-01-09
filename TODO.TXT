@@ -1,7 +1,5 @@
 - add build-errors-assistant
 - Build System: add option to move regex Up/Down
 - Add new 'scp' plugin
-- Add option to run 'environment' script
-- Tasks tab - use the new wxCheckListCtrl to customize it
-- Add $(C_CompilerName) to the available macros
+- New Class: sometimes the base class include file is incorrect
 

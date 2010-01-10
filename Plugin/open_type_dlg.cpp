@@ -186,8 +186,12 @@ void OpenTypeDlg::PopulateList()
 void OpenTypeDlg::OnCharHook(wxKeyEvent &event)
 {
 	if (event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
-		TryOpenAndEndModal();
+		
+		m_selectedItem = m_listTypes->GetFirstSelected();
+		if(m_selectedItem != wxNOT_FOUND)
+			TryOpenAndEndModal();
 		return;
+		
 	} else if (event.GetKeyCode() == WXK_DOWN) {
 		long selectedItem = m_listTypes->GetFirstSelected();
 		if (selectedItem == wxNOT_FOUND && m_listTypes->GetItemCount() > 0) {
@@ -258,14 +262,17 @@ void OpenTypeDlg::TryOpenAndEndModal()
 void OpenTypeDlg::OnOK(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	TryOpenAndEndModal();
+	m_selectedItem = m_listTypes->GetFirstSelected();
+	if(m_selectedItem != wxNOT_FOUND)
+		TryOpenAndEndModal();
 }
 
 void OpenTypeDlg::OnItemActivated(wxListEvent &event)
 {
-	m_selectedItem = event.m_itemIndex;
-	TryOpenAndEndModal();
-
+	wxUnusedVar(event);
+	m_selectedItem = m_listTypes->GetFirstSelected();
+	if(m_selectedItem != wxNOT_FOUND)
+		TryOpenAndEndModal();
 }
 
 void OpenTypeDlg::OnAllowPartialMatch(wxCommandEvent& e)

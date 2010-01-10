@@ -428,14 +428,9 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 
 			ClassParentInfo pi = info.parents.at(i);
 
-			// Make the include file name relative to the header file
-			// we are generating
-			wxFileName headerFileName(hdrFile);
-
+			// Include the header name only (no paths)
 			wxFileName includeFileName(pi.fileName);
-			includeFileName.MakeRelativeTo (headerFileName.GetPath());
-
-			header << wxT("#include \"") << includeFileName.GetFullPath() << wxT("\" // Base class\n");
+			header << wxT("#include \"") << includeFileName.GetFullName() << wxT("\" // Base class: ") << pi.name << wxT("\n");
 		}
 		header << wxT("\n");
 	}

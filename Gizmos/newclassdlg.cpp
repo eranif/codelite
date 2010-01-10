@@ -155,9 +155,8 @@ void NewClassDlg::GetInheritance(std::vector< ClassParentInfo > &inheritVec)
 			break;
 
 		ClassParentInfo info;
-		info.name = GetColumnText(m_listCtrl1, item, 0);
-		info.access = GetColumnText(m_listCtrl1, item, 1);
-
+		info.name     = GetColumnText(m_listCtrl1, item, 0);
+		info.access   = GetColumnText(m_listCtrl1, item, 1);
 		info.fileName = GetColumnText(m_listCtrl1, item, 2);
 
 		inheritVec.push_back(info);

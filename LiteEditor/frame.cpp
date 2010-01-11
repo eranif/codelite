@@ -1782,8 +1782,8 @@ void Frame::OnAdvanceSettings(wxCommandEvent &event)
 		selected_page = 1;
 	}
 
-	AdvancedDlg *dlg = new AdvancedDlg(this, selected_page);
-	if (dlg->ShowModal() == wxID_OK) {
+	AdvancedDlg dlg(this, selected_page);
+	if (dlg.ShowModal() == wxID_OK) {
 		//mark the whole workspace as dirty so makefile generation will take place
 		//force makefile generation upon configuration change
 		if (ManagerST::Get()->IsWorkspaceOpen()) {
@@ -1797,7 +1797,7 @@ void Frame::OnAdvanceSettings(wxCommandEvent &event)
 			}
 		}
 	}
-	dlg->Destroy();
+	SetEnvStatusMessage();
 }
 
 void Frame::OnBuildEnded(wxCommandEvent &event)
@@ -2659,6 +2659,8 @@ void Frame::CompleteInitialization()
 	// Connect some system events
 	m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(Frame::OnDockablePaneClosed), NULL, this);
 	m_mgr.Connect(wxEVT_AUI_RENDER,     wxAuiManagerEventHandler(Frame::OnAuiManagerRender),   NULL, this);
+	
+	SetEnvStatusMessage();
 }
 
 void Frame::OnAppActivated(wxActivateEvent &e)
@@ -3666,4 +3668,20 @@ void Frame::OnLoadPerspective(wxCommandEvent& e)
 
 	EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
 
+}
+
+void Frame::SetEnvStatusMessage()
+{
+	// Set the workspace's environment variable set to the active one
+	wxString   activeSet       = LocalWorkspaceST::Get()->GetActiveEnvironmentSet();
+	wxString   globalActiveSet = EnvironmentConfig::Instance()->GetSettings().GetActiveSet();
+	EvnVarList vars            = EnvironmentConfig::Instance()->GetSettings();
+
+	// Make sure that the environment set exist, if not, set it to the editor's set
+	if(vars.IsSetExist(activeSet) == false)
+		activeSet = globalActiveSet;
+
+	vars.SetActiveSet(activeSet);
+	EnvironmentConfig::Instance()->SetSettings(vars);
+	SetStatusMessage(wxString::Format(wxT("Env: '%s', Builder: '%s'"), activeSet.c_str(), BuildSettingsConfigST::Get()->GetSelectedBuildSystem().c_str()), 2);
 }

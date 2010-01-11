@@ -36,12 +36,19 @@ class BuilderConfig
 	wxString m_toolPath;
 	wxString m_toolOptions;
 	wxString m_toolJobs;
+	bool     m_isActive;
 
 public:
 	BuilderConfig(wxXmlNode *node);
 	virtual ~BuilderConfig();
 	wxXmlNode *ToXml() const;
 
+	void SetIsActive(bool isActive) {
+		this->m_isActive = isActive;
+	}
+	bool GetIsActive() const {
+		return m_isActive;
+	}
 	const wxString &GetName() const {
 		return m_name;
 	}

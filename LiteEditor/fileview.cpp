@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/tokenzr.h>
+#include "build_settings_config.h"
 #include "environmentconfig.h"
 #include "evnvarlist.h"
 #include "pluginmanager.h"
@@ -552,8 +553,7 @@ void FileViewTree::OnExportMakefile( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName, errMsg;
-		//TODO:: make the builder name configurable
-		BuilderPtr builder = BuildManagerST::Get()->GetBuilder( wxT( "GNU makefile for g++/gcc" ) );
+		BuilderPtr builder = BuildManagerST::Get()->GetSelectedBuilder(); // use current builder 
 		projectName = GetItemText( item );
 		if ( !builder->Export( projectName, wxEmptyString, false, true, errMsg ) ) {
 			wxMessageBox( errMsg, wxT( "CodeLite" ), wxICON_HAND );
@@ -1845,19 +1845,7 @@ void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
 	WorkspaceSettingsDlg dlg(Frame::Get(), LocalWorkspaceST::Get());
 	if(dlg.ShowModal() == wxID_OK) {
 		
-		// Set the workspace's environment variable set to the active one
-		wxString   activeSet       = LocalWorkspaceST::Get()->GetActiveEnvironmentSet();
-		wxString   globalActiveSet = EnvironmentConfig::Instance()->GetSettings().GetActiveSet();
-		EvnVarList vars            = EnvironmentConfig::Instance()->GetSettings();
-	
-		// Make sure that the environment set exist, if not, set it to the editor's set
-		if(vars.IsSetExist(activeSet) == false)
-			activeSet = globalActiveSet;
-		
-		vars.SetActiveSet(activeSet);
-		EnvironmentConfig::Instance()->SetSettings(vars);
-		Frame::Get()->SetStatusMessage(wxString::Format(wxT("Environment set: '%s'"), activeSet.c_str()), 2);
-		
+		Frame::Get()->SetEnvStatusMessage();
 		// Update the new paths
 		retagRequires = ManagerST::Get()->UpdateParserPaths();
 

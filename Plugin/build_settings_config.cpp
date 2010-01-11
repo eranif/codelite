@@ -171,3 +171,33 @@ BuilderConfigPtr BuildSettingsConfig::GetBuilderConfig(const wxString &name)
 	}
 	return NULL;
 }
+
+void BuildSettingsConfig::SaveBuilderConfig(BuilderPtr builder)
+{
+	//update configuration file
+	BuilderConfigPtr bsptr(new BuilderConfig(NULL));
+	bsptr->SetName(builder->GetName());
+	bsptr->SetToolPath(builder->GetBuildToolName());
+	bsptr->SetToolOptions(builder->GetBuildToolOptions());
+	bsptr->SetToolJobs(builder->GetBuildToolJobs());
+	bsptr->SetIsActive(builder->IsActive());
+	SetBuildSystem(bsptr);
+}
+
+wxString BuildSettingsConfig::GetSelectedBuildSystem() {
+	wxString active(wxT("GNU makefile for g++/gcc"));
+	
+	wxXmlNode *node = m_doc->GetRoot()->GetChildren();
+	while( node ) {
+		if(node->GetName() == wxT("BuildSystem")) {
+			if(node->GetPropVal(wxT("Active"), wxT("")) == wxT("yes")) {
+				active = node->GetPropVal(wxT("Name"), wxT(""));
+				break;
+			}
+		}
+		node = node->GetNext();
+	}
+	
+	return active;
+}
+

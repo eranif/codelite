@@ -289,19 +289,7 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 
 	// Update the parser search paths
 	UpdateParserPaths();
-
-	// Set the workspace's environment variable set to the active one
-	wxString   activeSet       = LocalWorkspaceST::Get()->GetActiveEnvironmentSet();
-	wxString   globalActiveSet = EnvironmentConfig::Instance()->GetSettings().GetActiveSet();
-	EvnVarList vars            = EnvironmentConfig::Instance()->GetSettings();
-
-	// Make sure that the environment set exist, if not, set it to the editor's set
-	if(vars.IsSetExist(activeSet) == false)
-		activeSet = globalActiveSet;
-
-	vars.SetActiveSet(activeSet);
-	EnvironmentConfig::Instance()->SetSettings(vars);
-	Frame::Get()->SetStatusMessage(wxString::Format(wxT("Environment set: '%s'"), activeSet.c_str()), 2);
+	Frame::Get()->SetEnvStatusMessage();
 
 	// send an event to the main frame indicating that a re-tag is required
 	// we do this only if the "smart retagging" is on

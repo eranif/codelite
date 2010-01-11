@@ -77,7 +77,8 @@ void CompileRequest::Process(IManager *manager)
 	wxApp *app = manager ? manager->GetTheApp() : wxTheApp;
 	wxString pname (proj->GetName());
 
-	BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
+	//BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
+	BuilderPtr builder = bm->GetSelectedBuilder();
 	if (m_fileName.IsEmpty() == false) {
 		//we got a complie request of a single file
 		cmd = m_preprocessOnly ? builder->GetPreprocessFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg)

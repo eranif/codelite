@@ -47,11 +47,8 @@ protected:
 	wxString m_buildTool;
 	wxString m_buildToolOptions;
 	wxString m_buildToolJobs;
-
-	wxString GetBuildToolFromConfig() const;
-	wxString GetBuildToolOptionsFromConfig() const;
-	wxString GetBuildToolJobsFromConfig() const;
-
+	bool     m_isActive;
+	
 public:
 	Builder(const wxString &name, const wxString &buildTool, const wxString &buildToolOptions) ;
 	virtual ~Builder();
@@ -83,33 +80,47 @@ public:
 	// The below API as default implementation, but can be
 	// overrided in the derived class
 	// ================ API ==========================
-
+	
+	/**
+	 * @brief set this builder as the active builder. It also makes sure that all other 
+	 * builders are set as non-active
+	 */
+	virtual void SetActive();
+	
+	/**
+	 * @brief return true if this builder is the active one
+	 * @return 
+	 */
+	virtual bool IsActive() const {
+		return m_isActive;
+	}
+	
 	/**
 	 * \return the build tool assoicated with this builder
 	 */
 	virtual wxString GetBuildToolCommand(bool isCommandlineCommand) const {
-		return GetBuildToolFromConfig();
+		return m_buildTool;
 	}
 
 	/**
 	 * return the build tool name
 	 */
 	virtual wxString GetBuildToolName() const {
-		return GetBuildToolFromConfig();
+		return m_buildTool;
 	}
 
 	/**
 	 * return the build tool options
 	 */
 	virtual wxString GetBuildToolOptions() const {
-		return GetBuildToolOptionsFromConfig();
+		return m_buildToolOptions;
 	}
 
 	/**
 	 * return the build tool jobs
 	 */
 	virtual wxString GetBuildToolJobs() const {
-		return GetBuildToolJobsFromConfig();
+		return m_buildToolJobs;
 	}
 
 	// ================ API ==========================

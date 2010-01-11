@@ -69,7 +69,8 @@ void CleanRequest::Process(IManager *manager)
 	}
 	wxString             pname (proj->GetName());
 
-	BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
+	//BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
+	BuilderPtr builder = bm->GetSelectedBuilder();
 	if (m_info.GetProjectOnly()) {
 		cmd = builder->GetPOCleanCommand(m_info.GetProject(), m_info.GetConfiguration());
 	} else {

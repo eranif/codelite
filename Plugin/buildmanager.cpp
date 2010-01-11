@@ -25,12 +25,14 @@
  #include "buildmanager.h"
 #include "builder.h"
 #include "builder_gnumake.h"
+#include "builder_gnumake_onestep.h"
 
 
 BuildManager::BuildManager()
 {
 	// register all builders here
 	AddBuilder(new BuilderGnuMake());
+	AddBuilder(new BuilderGnuMakeOneStep());
 }
 
 BuildManager::~BuildManager()
@@ -72,10 +74,28 @@ BuilderPtr BuildManager::GetBuilder(const wxString &name)
 			return iter->second;
 		}
 	}
-	return NULL;
+	
+	// return the default builder
+	return m_builders.begin()->second;
 }
 
 BuilderPtr BuildManager::GetSelectedBuilder()
 {
-	return m_builders.begin()->second;
+	// Gnu Makefile C/C++ is the default builder
+	BuilderPtr defaultBuilder = m_builders.begin()->second;
+	
+	std::list<wxString> builders;
+	GetBuilders(builders);
+	
+	std::list<wxString>::iterator iter = builders.begin();
+	for(; iter != builders.end(); iter++) {
+		
+		wxString builderName = *iter;
+		BuilderPtr builder = BuildManagerST::Get()->GetBuilder(builderName);
+		if(builder->IsActive())
+			return builder;
+		
+	}
+	
+	return defaultBuilder;
 }

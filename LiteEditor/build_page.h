@@ -76,5 +76,6 @@ public:
 	virtual ~BuildSystemPage(){}
 
 	void Save();
+	void SetSelected();
 };
 #endif //__build_page__

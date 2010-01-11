@@ -22,18 +22,22 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef BUILDER_GNUMAKE_H
+#ifndef BUILDER_GNUMAKE_H
 #define BUILDER_GNUMAKE_H
 
 #include "builder.h"
 #include "workspace.h"
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
-
+/*
+ * Build using a generated (Gnu) Makefile - this is made as a traditional multistep build :
+ *  sources -> (preprocess) -> compile -> link -> exec/lib.
+ */
 class BuilderGnuMake : public Builder
 {
 public:
 	BuilderGnuMake();
+	BuilderGnuMake(const wxString &name, const wxString &buildTool, const wxString &buildToolOptions);
 	virtual ~BuilderGnuMake();
 
 	// Implement the Builder Interface
@@ -46,6 +50,13 @@ public:
 	virtual wxString GetPreprocessFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg);
 	virtual wxString GetPORebuildCommand(const wxString &project, const wxString &confToBuild);
 
+protected:
+	virtual void CreateListMacros(ProjectPtr proj, const wxString &confToBuild, wxString &text);
+	void CreateSrcList(ProjectPtr proj, const wxString &confToBuild, wxString &text);
+	void CreateObjectList(ProjectPtr proj, const wxString &confToBuild, wxString &text);
+	virtual void CreateLinkTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text, wxString &targetName);
+	virtual void CreateFileTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text);
+	void CreateCleanTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text);
 	// Override default methods defined in the builder interface
 	virtual wxString GetBuildToolCommand(bool isCommandlineCommand) const;
 
@@ -53,8 +64,6 @@ private:
 	void GenerateMakefile(ProjectPtr proj, const wxString &confToBuild, bool force);
 	void CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldConf, wxString &text);
 	void CreateMakeDirsTarget(BuildConfigPtr bldConf, const wxString &targetName, wxString &text);
-	void CreateFileTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text);
-	void CreateObjectList(ProjectPtr proj, const wxString &confToBuild, wxString &text);
 	void CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text);
 	void CreatePreBuildEvents(BuildConfigPtr bldConf, wxString &text);
 	void CreatePostBuildEvents(BuildConfigPtr bldConf, wxString &text);

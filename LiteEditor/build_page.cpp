@@ -81,12 +81,14 @@ BuildPage::BuildPage( wxWindow* parent, int id, wxPoint pos, wxSize size, int st
 
 void BuildPage::CustomInit()
 {
+	//rest of builders list
 	std::list<wxString> builders;
 	BuildManagerST::Get()->GetBuilders(builders);
 
 	std::list<wxString>::iterator iter = builders.begin();
 	for(; iter != builders.end(); iter++){
-		m_bookBuildSystems->AddPage(CreateBuildSystemPage(*iter), *iter);
+		BuilderPtr builder = BuildManagerST::Get()->GetBuilder(*iter);
+		m_bookBuildSystems->AddPage(CreateBuildSystemPage(*iter), *iter, builder->IsActive());
 	}
 }
 
@@ -97,6 +99,19 @@ wxPanel *BuildPage::CreateBuildSystemPage(const wxString &name)
 
 void BuildPage::Save()
 {
+	// save the "fix on startup" flag
+	EditorConfigST::Get()->SaveLongValue(wxT("FixBuildToolOnStartup"),    m_fixOnStartup->IsChecked() ? 1 : 0);
+	EditorConfigST::Get()->SaveLongValue(wxT("GenerateFullPathMakefile"), m_useFullPaths->IsChecked() ? 1 : 0);
+
+	// Save current page displayed as 'selected' builder
+	int sel = (int) m_bookBuildSystems->GetSelection();
+	
+	//wxLogMessage(wxString::Format( wxT("selection:%d"), sel ));
+	BuildSystemPage *page = dynamic_cast<BuildSystemPage*>(m_bookBuildSystems->GetPage(sel));
+	if (page) {
+		page->SetSelected();
+	}
+	
 	int count = (int)m_bookBuildSystems->GetPageCount();
 	for(int i=0; i<count; i++){
 		BuildSystemPage *page = dynamic_cast<BuildSystemPage*>(m_bookBuildSystems->GetPage(i));
@@ -104,10 +119,6 @@ void BuildPage::Save()
 			page->Save();
 		}
 	}
-
-	// save the "fix on startup" flag
-	EditorConfigST::Get()->SaveLongValue(wxT("FixBuildToolOnStartup"), m_fixOnStartup->IsChecked() ? 1 : 0);
-	EditorConfigST::Get()->SaveLongValue(wxT("GenerateFullPathMakefile"), m_useFullPaths->IsChecked() ? 1 : 0);
 }
 
 //---------------------------------------------------------------
@@ -147,6 +158,7 @@ BuildSystemPage::BuildSystemPage(wxWindow *parent, wxString name)
 	choices.Add(wxT("3"));
 	choices.Add(wxT("4"));
 	choices.Add(wxT("unlimited"));
+	//choices.Add(wxT("unspecified"));  // TODO: hops enable this and use to suppress -j opt switch
 	m_choiceJobs = new wxComboBox(this, wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, choices, wxCB_READONLY);
 	fgSizer4->Add( m_choiceJobs, 1, wxALL|wxEXPAND, 5);
 
@@ -169,16 +181,13 @@ void BuildSystemPage::Save()
 	builder->SetBuildToolOptions(m_textBuildToolOptions->GetValue());
 	builder->SetBuildToolJobs(m_choiceJobs->GetValue());
 	BuildManagerST::Get()->AddBuilder(builder);
+	
+	// Save the configuration
+	BuildSettingsConfigST::Get()->SaveBuilderConfig(builder);
+}
 
-	//update configuration file
-	BuilderConfigPtr bsptr = BuildSettingsConfigST::Get()->GetBuilderConfig(m_name);
-	if(!bsptr){
-		bsptr = new BuilderConfig(NULL);
-		bsptr->SetName(m_name);
-
-	}
-	bsptr->SetToolPath(m_filePicker->GetPath());
-	bsptr->SetToolOptions(m_textBuildToolOptions->GetValue());
-	bsptr->SetToolJobs(m_choiceJobs->GetValue());
-	BuildSettingsConfigST::Get()->SetBuildSystem(bsptr);
+void BuildSystemPage::SetSelected()
+{
+	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(m_name);
+	builder->SetActive();
 }

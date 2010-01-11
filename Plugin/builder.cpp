@@ -22,20 +22,29 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "builder.h"
+
+#include "builder.h"
 #include "macros.h"
 #include "build_settings_config.h"
 #include "workspace.h"
+#include "buildmanager.h"
 
 Builder::Builder(const wxString &name, const wxString &buildTool, const wxString &buildToolOptions)
-		: m_name(name)
-		, m_buildTool(buildTool)
-		, m_buildToolOptions(buildToolOptions)
-
+: m_name(name)
+, m_buildTool(buildTool)
+, m_buildToolOptions(buildToolOptions)
+, m_isActive(false)
 {
 	//override values from configuration file
-	m_buildTool        = GetBuildToolFromConfig();
-	m_buildToolOptions = GetBuildToolOptionsFromConfig();
+	BuilderConfigPtr config = BuildSettingsConfigST::Get()->GetBuilderConfig(m_name);
+	if(config) {
+		m_buildTool        = config->GetToolPath();
+		m_buildToolOptions = config->GetToolOptions();
+		m_isActive         = config->GetIsActive();
+		m_buildToolJobs    = config->GetToolJobs();
+	} else {
+		m_isActive = (m_name == wxT("GNU makefile for g++/gcc"));
+	}
 }
 
 Builder::~Builder()
@@ -50,32 +59,20 @@ wxString Builder::NormalizeConfigName(const wxString &confgName)
 	return normalized;
 }
 
-wxString Builder::GetBuildToolFromConfig() const
+void Builder::SetActive()
 {
-	BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig(m_name);
-	if ( !bs ) {
-		return m_buildTool;
+	std::list<wxString> builders;
+	BuildManagerST::Get()->GetBuilders(builders);
+	std::list<wxString>::iterator iter = builders.begin();
+	for(; iter != builders.end(); iter++) {
+		
+		wxString builderName = *iter;
+		BuilderPtr builder = BuildManagerST::Get()->GetBuilder(builderName);
+		
+		if(builder && builder->m_name == m_name)
+			builder->m_isActive = true;
+		
+		else if(builder)
+			builder->m_isActive = false;
 	}
-
-	return bs->GetToolPath();
-}
-
-wxString Builder::GetBuildToolOptionsFromConfig() const
-{
-	BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig(m_name);
-	if ( !bs ) {
-		return m_buildToolOptions;
-	}
-
-	return bs->GetToolOptions();
-}
-
-wxString Builder::GetBuildToolJobsFromConfig() const
-{
-	BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig(m_name);
-	if ( !bs ) {
-		return m_buildToolJobs;
-	}
-
-	return bs->GetToolJobs();
 }

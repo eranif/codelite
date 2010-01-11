@@ -26,23 +26,16 @@
 #define BUILD_CONFIG_SETTINGS_H
 
 #include "wx/string.h"
+#include "builder.h"
 #include "singleton.h"
 #include "compiler.h"
 #include "wx/xml/xml.h"
 #include "wx/filename.h"
 #include "build_system.h"
 
-#ifdef WXMAKINGDLL_LE_SDK
-#    define WXDLLIMPEXP_LE_SDK WXEXPORT
-#elif defined(WXUSINGDLL_LE_SDK)
-#    define WXDLLIMPEXP_LE_SDK WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_LE_SDK
-#endif // WXMAKINGDLL_LE_SDK
-
 // Cookie class for the editor to provide reentrance operations
 // on various methods (such as iteration)
-class WXDLLIMPEXP_LE_SDK BuildSettingsConfigCookie {
+class BuildSettingsConfigCookie {
 public:
 	wxXmlNode *child;
 	wxXmlNode *parent;
@@ -55,7 +48,7 @@ public:
 /**
  * \class BuildSettingsConfig the build system configuration
  */
-class WXDLLIMPEXP_LE_SDK BuildSettingsConfig
+class BuildSettingsConfig
 {
 	wxXmlDocument *m_doc;
 	wxFileName m_fileName;
@@ -116,6 +109,17 @@ public:
 	 * get build system from configuration by name
 	 */
 	BuilderConfigPtr GetBuilderConfig(const wxString &name);
+	
+	/**
+	 * @brief save builder configurtation to the XML file
+	 * @param builder
+	 */
+	void SaveBuilderConfig(BuilderPtr builder);
+	
+	/*
+	 * get name of current selected build system from configuration 
+	 */
+	 wxString GetSelectedBuildSystem(); 
 };
 
 typedef Singleton<BuildSettingsConfig> BuildSettingsConfigST;

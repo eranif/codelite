@@ -101,7 +101,13 @@ public:
 	}
 
 	wxPanel *GetMainPanel() {return m_mainPanel;}
-
+	
+	/**
+	 * @brief update the environment status message:
+	 * which displays to the user the current environment set used + the active builder
+	 */
+	void SetEnvStatusMessage();
+	
 	virtual ~Frame(void);
 	/**
 	 * @brief set frame option flag

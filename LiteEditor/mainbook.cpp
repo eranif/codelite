@@ -402,7 +402,7 @@ LEditor *MainBook::NewEditor()
 static bool IsFileExists(const wxFileName &filename) {
 #ifdef __WXMSW__
 	struct stat buff;
-	const wxCharBuffer cname = filename.GetFullPath(wxPATH_UNIX).mb_str(wxConvUTF8);
+	const wxCharBuffer cname = filename.GetFullPath().mb_str(wxConvUTF8);
 	if (stat(cname.data(), &buff) < 0) {
 		return false;
 	}

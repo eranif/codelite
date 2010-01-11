@@ -80,9 +80,10 @@ bool BreakptMgr::AddBreakpoint(const BreakpointInfo &bp)
 		}
 	}
 
+	// Add this breakpoint to the list only if it does not already exist
+	// in the breakpoint list
 	if( !alreadyExist ) {
 		m_bps.push_back(newBreakpoint);
-		m_pendingBreakpointsList.push_back(newBreakpoint); // Add also to the 'pending' array
 	}
 
 	DeleteAllBreakpointMarkers();
@@ -671,6 +672,9 @@ void BreakptMgr::ReconcileBreakpoints(const std::vector<BreakpointInfo>& li)
 			bp.what           = li_iter->what;
 			bp.at             = li_iter->at;
 
+			// Remove it from the m_bps list
+			m_bps.erase(m_bps.begin()+index);
+
 			SetBestBPType(bp);  // as this might have just changed
 			updated_bps.push_back(bp);
 		}
@@ -679,6 +683,10 @@ void BreakptMgr::ReconcileBreakpoints(const std::vector<BreakpointInfo>& li)
 	// So throw away m_bps (which will contain stale bps) and replace with the new vector
 	// First though, delete all markers. Otherwise, if the last in a file has been deleted...
 	DeleteAllBreakpointMarkers();
+
+	// All the stale breakpoints should be assigned to the 'm_pendingBreakpointList'
+	m_pendingBreakpointsList = m_bps;
+
 	m_bps.clear();
 	SetBreakpoints(updated_bps);
 

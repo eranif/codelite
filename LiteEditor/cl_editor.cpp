@@ -1942,35 +1942,45 @@ bool LEditor::ReplaceAll()
 		txt = GetText();
 	}
 
+	bool replaceInSelectionOnly = m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY;
+
+	BeginUndoAction();
+	long savedPos = GetCurrentPos();
 	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len, posInChars, match_lenInChars) ) {
+		// Manipulate the buffer
 		txt.Remove(posInChars, match_lenInChars);
 		txt.insert(posInChars, replaceWith);
+
+		// When not in 'selection only' update the editor buffer as well
+		if( !replaceInSelectionOnly ) {
+			SetSelectionStart(pos);
+			SetSelectionEnd  (pos + match_len);
+			ReplaceSelection (replaceWith);
+		}
+
 		m_findReplaceDlg->IncReplacedCount();
 		offset = pos + UTF8Length(replaceWith, replaceWith.length()); // match_len;
 	}
 
-	// replace the buffer
-	BeginUndoAction();
-	long savedPos = GetCurrentPos();
-
-	if ( m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY ) {
+	if ( replaceInSelectionOnly ) {
 		// replace the selection
 		ReplaceSelection(txt);
 
 		// place the caret at the end of the selection
 		SetCurrentPos(GetSelectionEnd());
 		EnsureCaretVisible();
+
 	} else {
-		SetText(txt);
+		// The editor buffer was already updated
 		// Restore the caret
 		SetCaretAt(savedPos);
 	}
 
 	EndUndoAction();
 
-	if ( m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY ) {
+	if ( replaceInSelectionOnly )
 		m_findReplaceDlg->ResetSelectionOnlyFlag();
-	}
+
 	m_findReplaceDlg->SetReplacementsMessage();
 	return m_findReplaceDlg->GetReplacedCount() > 0;
 }
@@ -2069,14 +2079,6 @@ void LEditor::ReloadFile()
 
 	SetReloadingFile( false );
 	ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(this);
-//	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-//	if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-//		// Trigger a break list command, which in turn
-//		// will reply with a complete list of breakpoints and will cause
-//		// codelite to refresh the breakpoints on this editor (as well as
-//		// on all open editors)
-//		dbgr->BreakList();
-//	}
 }
 
 void LEditor::SetEditorText(const wxString &text)

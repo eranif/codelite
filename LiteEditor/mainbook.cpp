@@ -401,12 +401,11 @@ LEditor *MainBook::NewEditor()
 
 static bool IsFileExists(const wxFileName &filename) {
 #ifdef __WXMSW__
-	struct stat buff;
-	const wxCharBuffer cname = filename.GetFullPath().mb_str(wxConvUTF8);
-	if (stat(cname.data(), &buff) < 0) {
+	wxString drive  = filename.GetVolume();
+	if(drive.Length()>1)
 		return false;
-	}
-	return true;
+
+	return filename.FileExists();
 #else
 	return filename.FileExists();
 #endif

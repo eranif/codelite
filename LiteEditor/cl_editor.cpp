@@ -652,6 +652,8 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		break;
 
 	case '{':
+		if(!m_disableSmartIndent)
+			m_context->AutoIndent(event.GetKey());
 		matchChar = '}';
 		break;
 

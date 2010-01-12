@@ -460,7 +460,20 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 		if (secondLine == line)
 			return;
 		rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(secondLine));
+
+	} else if (nChar == wxT('{')) {
+		wxString lineString = rCtrl.GetLine(line);
+		lineString.Trim().Trim(false);
+		if(lineString == wxT("{")) {
+			// indent this line accroding to the fold level
+			// Indent this line according to the block indentation level
+			int foldLevel = (rCtrl.GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+			if (foldLevel) {
+				rCtrl.SetLineIndentation(line, rCtrl.GetIndent() * foldLevel);
+			}
+		}
 	}
+
 	rCtrl.ChooseCaretX(); // set new column as "current" column
 }
 

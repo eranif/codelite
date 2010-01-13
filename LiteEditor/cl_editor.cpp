@@ -191,6 +191,7 @@ void LEditor::SetSyntaxHighlight()
 	m_rightClickMenu->AppendSeparator(); // separates plugins
 	SetProperties();
 	UpdateColours();
+	m_context->ApplySettings();
 	m_context->SetActive();
 }
 
@@ -1074,6 +1075,7 @@ void LEditor::SetSyntaxHighlight(const wxString &lexerName)
 
 	SetEOL();
 	m_context->SetActive();
+	m_context->ApplySettings();
 }
 
 //this function is called before the debugger startup

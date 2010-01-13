@@ -380,70 +380,24 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 				int prevLine = rCtrl.LineFromPosition(posWordBeforeColons);
 
 				// If we found one of the following keywords, un-indent their line by (foldLevel - 1)*indentSize
-				if ( word == wxT("public") || word == wxT("private") || word == wxT("protected") || word == wxT("default") ) {
-
+				if ( word == wxT("public") || word == wxT("private") || word == wxT("protected")) {
+					
+					ContextBase::AutoIndent(nChar);
+					
 					// Indent this line according to the block indentation level
 					int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
 					if (foldLevel) {
 						rCtrl.SetLineIndentation(prevLine, ((foldLevel-1)*rCtrl.GetIndent()) );
 						rCtrl.ChooseCaretX();
 					}
-
-				} else {
-
-					wxString lineString = rCtrl.GetLine(prevLine);
-					// We are on a line with 'case ', un-indent its line to be: (foldLevel - 1)*indentSize
-					if(lineString.Contains(wxT("case "))){
-						// Indent this line according to the block indentation level
-						int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
-						if (foldLevel) {
-							rCtrl.SetLineIndentation(prevLine, ((foldLevel-1)*rCtrl.GetIndent()) );
-							rCtrl.ChooseCaretX();
-						}
-					}
+					return;
 				}
 			}
 		}
-
-		if ( prevpos != wxNOT_FOUND && ch == wxT('}') ) {
-			// The next line should have the same indentation line as this one
-			int prevLine = rCtrl.LineFromPosition(prevpos);
-			rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(prevLine));
-			rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
-			rCtrl.ChooseCaretX();
-			return;
-		}
-
-		if ( prevpos != wxNOT_FOUND && ch == wxT(';') ) {
-
-			// check to see if this line contains '}' as well
-			int tline          = rCtrl.LineFromPosition(prevpos);
-			int tlineStartPos  = rCtrl.PositionFromLine(tline);
-			int tlineEndPos    = prevpos;
-
-			if (tlineEndPos > tlineStartPos && tlineStartPos > 0) {
-				for (int i=tlineStartPos; i<tlineEndPos; i++) {
-					if (rCtrl.GetCharAt(i) == wxT('}')) {
-						// The next line should have the same indentation line as this one
-						int prevLine = rCtrl.LineFromPosition(prevpos);
-						rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(prevLine));
-						rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
-						rCtrl.ChooseCaretX();
-						return;
-					}
-				}
-			}
-		}
-
+		
+		// use the previous line indentation level
 		if (prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
-
-			// Indent this line according to the block indentation level
-			int foldLevel = (rCtrl.GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
-			if (foldLevel) {
-				rCtrl.SetLineIndentation(line, rCtrl.GetIndent() * foldLevel);
-				rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
-				rCtrl.ChooseCaretX();
-			}
+			ContextBase::AutoIndent(nChar);
 			return;
 		}
 
@@ -453,6 +407,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 		rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
 
 	} else if (nChar == wxT('}')) {
+		
 		long matchPos = wxNOT_FOUND;
 		if (!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos))
 			return;
@@ -464,17 +419,16 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 	} else if (nChar == wxT('{')) {
 		wxString lineString = rCtrl.GetLine(line);
 		lineString.Trim().Trim(false);
-		if(lineString == wxT("{")) {
-			// indent this line accroding to the fold level
-			// Indent this line according to the block indentation level
-			int foldLevel = (rCtrl.GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
-			if (foldLevel) {
-				rCtrl.SetLineIndentation(line, rCtrl.GetIndent() * foldLevel);
-			}
+		if (lineString == wxT("{")) {
+			// indent this line accroding to the previous line
+			int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
+			rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line-1));
+			rCtrl.ChooseCaretX();
 		}
 	}
-
-	rCtrl.ChooseCaretX(); // set new column as "current" column
+	
+	// set new column as "current" column
+	rCtrl.ChooseCaretX();
 }
 
 bool ContextCpp::IsCommentOrString(long pos)
@@ -2639,7 +2593,7 @@ void ContextCpp::DoOpenWorkspaceFile()
 	wxString tmpName(m_selectedWord);
 
 	tmpName.Replace(wxT("\\"), wxT("/"));
-	if(tmpName.Contains(wxT("..")))
+	if (tmpName.Contains(wxT("..")))
 		tmpName = fileName.GetFullName();
 
 	std::vector<wxFileName> files, files2;

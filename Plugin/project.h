@@ -319,6 +319,12 @@ public:
 	void GetFiles(std::vector<wxFileName> &files, bool absPath = false);
 
 	/**
+	 * Return list of files in this project as a wxString in blank separated format.
+	 * \param files
+	 */
+	wxString GetFiles(bool absPath = false);	
+
+	/**
 	 * Return list of files in this project - in both absolute and relative path
 	 * \param files relative paths
 	 * \param absFiles absolute paths

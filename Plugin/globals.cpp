@@ -307,8 +307,11 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 				output.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
 				output.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
 			}
+			output.Replace(wxT("$(ProjectFiles)"),   proj->GetFiles());
+			output.Replace(wxT("$(ProjectFilesAbs)"),proj->GetFiles(true));
 		}
 	}
+	
 	if (fileName.IsEmpty() == false) {
 		wxFileName fn(fileName);
 

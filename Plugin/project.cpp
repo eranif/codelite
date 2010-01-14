@@ -384,6 +384,21 @@ void Project::GetFilesByVirtualDir(const wxString &vdFullPath, wxArrayString &fi
 	}
 }
 
+wxString Project::GetFiles(bool absPath)
+{
+	std::vector<wxFileName> files;
+	GetFiles(files,absPath);
+
+	wxString temp;
+	for (size_t i = 0; i < files.size(); i++)
+		temp << wxT("\"") << files.at(i).GetFullPath() << wxT("\" ");
+	
+	if(temp.IsEmpty() == false)
+		temp.RemoveLast();
+	
+	return temp;
+}
+
 void Project::GetFiles(std::vector<wxFileName> &files, bool absPath)
 {
 	if (absPath) {

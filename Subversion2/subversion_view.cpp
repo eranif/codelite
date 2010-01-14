@@ -684,51 +684,13 @@ void SubversionView::OnDiff(wxCommandEvent& event)
 		diffAgainst = wxT("BASE");
 	}
 
-	bool     useExtDiff = m_plugin->GetSettings().GetFlags() & SvnUseExternalDiff;
-	wxString extDiff    = m_plugin->GetSettings().GetExternalDiffViewer();
-	extDiff.Trim().Trim(false);
-
-	// Only use external diff viewer when the selected file is equal to 1 and the selection is a file AND when comparing against BASE
-	if ( diffAgainst == wxT("BASE") &&
-		 useExtDiff &&
-	     extDiff.IsEmpty() == false &&
-	     m_selectionInfo.m_paths.GetCount() == 1 &&
-	     m_selectionInfo.m_selectionType == SvnTreeData::SvnNodeTypeFile ) {
-
-		wxString extDiffCmd = m_plugin->GetSettings().GetExternalDiffViewerCommand();
-
-		// export BASE revision of file to tmp file
-		const wxString& base = wxFileName::CreateTempFileName( wxT("svnExport"), (wxFile*)NULL );
-		::wxRemoveFile( base ); // just want the name, not the file.
-		wxString exportCmd;
-		exportCmd << m_plugin->GetSvnExeName();
-		exportCmd << wxT("export -r ") << diffAgainst << wxT(" \"") << m_selectionInfo.m_paths.Item(0) << wxT("\" ") << base;
-
-		// Launch export command
-		wxArrayString output;
-		ProcUtils::ExecuteCommand(exportCmd, output);
-
-		// We now got 2 files:
-		// m_selectionInfo.m_paths.Item(0) and 'base'
-		extDiffCmd.Replace(wxT("$(MyFile)"),       wxString::Format( wxT("\"%s\""), m_selectionInfo.m_paths.Item(0).c_str()));
-		extDiffCmd.Replace(wxT("$(OriginalFile)"), wxString::Format( wxT("\"%s\""), base.c_str()));
-
-		wxString command;
-		command << wxT("\"") << extDiff << wxT("\" ") << extDiffCmd;
-
-		// Launch the external diff
-		m_plugin->GetConsole()->AppendText(command + wxT("\n"));
-		m_diffCommand.Execute(command, m_textCtrlRootDir->GetValue(), new SvnDiffHandler(m_plugin, event.GetId(), this));
-
-	} else {
-		// Simple diff
-		wxString command;
-		command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" diff -r") << diffAgainst << wxT(" ");
-		for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
-			command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
-		}
-		m_plugin->GetConsole()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDiffHandler(m_plugin, event.GetId(), this), false);
+	// Simple diff
+	wxString command;
+	command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" diff -r") << diffAgainst << wxT(" ");
+	for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+		command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
 	}
+	m_plugin->GetConsole()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDiffHandler(m_plugin, event.GetId(), this), false);
 }
 
 void SubversionView::OnPatch(wxCommandEvent& event)

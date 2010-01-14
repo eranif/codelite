@@ -1,4 +1,4 @@
 - add build-errors-assistant
 - Build System: add option to move regex Up/Down
 - Add new 'scp' plugin
-- Opening brace does not auto indent
+

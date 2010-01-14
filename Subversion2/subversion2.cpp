@@ -359,54 +359,14 @@ void Subversion2::OnDiff(wxCommandEvent& event)
 		diffAgainst = wxT("BASE");
 	}
 
-	bool     useExtDiff = GetSettings().GetFlags() & SvnUseExternalDiff;
-	wxString extDiff    = GetSettings().GetExternalDiffViewer();
-	extDiff.Trim().Trim(false);
-
-	// Only use external diff viewer when the selected file is equal to 1 and the selection is a file!
-	if ( useExtDiff && extDiff.IsEmpty() == false) {
-		wxString extDiffCmd = GetSettings().GetExternalDiffViewerCommand();
-
-		// export BASE revision of file to tmp file
-		const wxString& base = wxFileName::CreateTempFileName( wxT("svnExport"), (wxFile*)NULL );
-		::wxRemoveFile( base ); // just want the name, not the file.
-
-		wxString exportCmd;
-		wxString loginString;
-		if(LoginIfNeeded(event, DoGetFileExplorerItemPath(), loginString) == false) {
-			return;
-		}
-		bool nonInteractive = GetNonInteractiveMode(event);
-		exportCmd << GetSvnExeName(nonInteractive) << loginString;
-		exportCmd << wxT("export -r ") << diffAgainst << wxT(" \"") << DoGetFileExplorerItemFullPath() << wxT("\" ") << base;
-
-		// Launch export command
-		wxArrayString output;
-		ProcUtils::ExecuteCommand(exportCmd, output);
-
-		// We now got 2 files:
-		// m_selectionInfo.m_paths.Item(0) and 'base'
-		extDiffCmd.Replace(wxT("$(MyFile)"),       wxString::Format( wxT("\"%s\""), DoGetFileExplorerItemFullPath().c_str()));
-		extDiffCmd.Replace(wxT("$(OriginalFile)"), wxString::Format( wxT("\"%s\""), base.c_str()));
-
-		wxString command;
-		command << wxT("\"") << extDiff << wxT("\" ") << extDiffCmd;
-
-		// Launch the external diff
-		GetConsole()->AppendText(command + wxT("\n"));
-		m_diffCommand.Execute(command, DoGetFileExplorerItemPath(), NULL);
-
-	} else {
-		// Simple diff
-		wxString command;
-		wxString loginString;
-		if(LoginIfNeeded(event, DoGetFileExplorerItemPath(), loginString) == false) {
-			return;
-		}
-		bool nonInteractive = GetNonInteractiveMode(event);
-		command << GetSvnExeName(nonInteractive) << loginString << wxT("diff -r") << diffAgainst;
-		GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDiffHandler(this, event.GetId(), this), false);
+	wxString command;
+	wxString loginString;
+	if(LoginIfNeeded(event, DoGetFileExplorerItemPath(), loginString) == false) {
+		return;
 	}
+	bool nonInteractive = GetNonInteractiveMode(event);
+	command << GetSvnExeName(nonInteractive) << loginString << wxT("diff -r") << diffAgainst << wxT(" ") << DoGetFileExplorerItemFullPath();
+	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDiffHandler(this, event.GetId(), this), false);
 }
 
 void Subversion2::OnPatch(wxCommandEvent& event)
@@ -486,7 +446,12 @@ void Subversion2::UpdateIgnorePatterns()
 	ignorePatterns.Replace(wxT("\n"),   wxT(" "));
 	ignorePatterns.Replace(wxT("\t"),   wxT(" "));
 	ignorePatterns.Replace(wxT("\v"),   wxT(" "));
-
+	
+	wxString diffTool = GetSettings().GetExternalDiffViewer();
+	if(!(GetSettings().GetFlags() & SvnUseExternalDiff)) {
+		diffTool.Empty();
+	}
+	
 	wxFFile fp;
 	fp.Open(configFile.c_str(), wxT("w+b"));
 	if(fp.IsOpened()) {
@@ -497,6 +462,14 @@ void Subversion2::UpdateIgnorePatterns()
 		fp.Write(wxT("password-stores =\n"));
 		fp.Write(wxT("store-passwords = no\n"));
 		fp.Write(wxT("\n"));
+		fp.Write(wxT("[helpers]\n"));
+		
+		if(diffTool.IsEmpty() == false) {
+			fp.Write(wxT("diff-cmd = "));
+			fp.Write(diffTool);
+			fp.Write(wxT("\n"));
+		}
+		
 		fp.Close();
 	}
 }

@@ -327,7 +327,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	m_panel3->SetSizer( bSizer15 );
 	m_panel3->Layout();
 	bSizer15->Fit( m_panel3 );
-	m_notebook->AddPage( m_panel3, _("General"), true );
+	m_notebook->AddPage( m_panel3, _("General"), false );
 	m_panel4 = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer16;
 	bSizer16 = new wxBoxSizer( wxVERTICAL );
@@ -336,7 +336,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	bSizer16->Add( m_checkBoxUseExternalDiff, 0, wxALL|wxEXPAND, 5 );
 	
 	wxFlexGridSizer* fgSizer5;
-	fgSizer5 = new wxFlexGridSizer( 2, 3, 0, 0 );
+	fgSizer5 = new wxFlexGridSizer( 1, 3, 0, 0 );
 	fgSizer5->AddGrowableCol( 1 );
 	fgSizer5->SetFlexibleDirection( wxBOTH );
 	fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -351,56 +351,12 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	m_buttonBrowseExtDiff = new wxButton( m_panel4, wxID_ANY, _("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer5->Add( m_buttonBrowseExtDiff, 0, wxALL, 5 );
 	
-	m_staticText11 = new wxStaticText( m_panel4, wxID_ANY, _("Command:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText11->Wrap( -1 );
-	fgSizer5->Add( m_staticText11, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_textCtrlDiffViewerCommand = new wxTextCtrl( m_panel4, wxID_ANY, _("$(MyFile) $(OriginalFile)"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer5->Add( m_textCtrlDiffViewerCommand, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	
-	fgSizer5->Add( 0, 0, 1, wxEXPAND, 5 );
-	
 	bSizer16->Add( fgSizer5, 0, wxEXPAND|wxALL, 5 );
-	
-	wxFlexGridSizer* fgSizer51;
-	fgSizer51 = new wxFlexGridSizer( 2, 3, 0, 0 );
-	fgSizer51->AddGrowableCol( 2 );
-	fgSizer51->SetFlexibleDirection( wxBOTH );
-	fgSizer51->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	
-	fgSizer51->Add( 50, 0, 1, wxEXPAND, 5 );
-	
-	m_staticText16 = new wxStaticText( m_panel4, wxID_ANY, _("$(MyFile):"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText16->Wrap( -1 );
-	m_staticText16->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
-	
-	fgSizer51->Add( m_staticText16, 0, wxALL|wxEXPAND, 5 );
-	
-	m_staticText17 = new wxStaticText( m_panel4, wxID_ANY, _("Your file, with your changes"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText17->Wrap( -1 );
-	fgSizer51->Add( m_staticText17, 0, wxALL|wxEXPAND, 5 );
-	
-	
-	fgSizer51->Add( 0, 0, 1, wxEXPAND, 5 );
-	
-	m_staticText18 = new wxStaticText( m_panel4, wxID_ANY, _("$(OriginalFile):"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText18->Wrap( -1 );
-	m_staticText18->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
-	
-	fgSizer51->Add( m_staticText18, 0, wxALL, 5 );
-	
-	m_staticText19 = new wxStaticText( m_panel4, wxID_ANY, _("The original file, without your changes"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText19->Wrap( -1 );
-	fgSizer51->Add( m_staticText19, 0, wxALL|wxEXPAND, 5 );
-	
-	bSizer16->Add( fgSizer51, 1, wxEXPAND, 5 );
 	
 	m_panel4->SetSizer( bSizer16 );
 	m_panel4->Layout();
 	bSizer16->Fit( m_panel4 );
-	m_notebook->AddPage( m_panel4, _("External Diff"), false );
+	m_notebook->AddPage( m_panel4, _("External Diff"), true );
 	m_panel5 = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer161;
 	bSizer161 = new wxBoxSizer( wxVERTICAL );
@@ -493,12 +449,6 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	m_textCtrlDiffViewer->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
 	m_buttonBrowseExtDiff->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnPreferencesDialogBase::OnBrowseDiffViewer ), NULL, this );
 	m_buttonBrowseExtDiff->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
-	m_staticText11->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
-	m_textCtrlDiffViewerCommand->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
-	m_staticText16->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
-	m_staticText17->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
-	m_staticText18->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
-	m_staticText19->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
 	m_button12->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnPreferencesDialogBase::OnBrowseSSHClient ), NULL, this );
 	m_staticText29->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnAddRevisionMacroUI ), NULL, this );
 	m_textCtrlMacroName->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnAddRevisionMacroUI ), NULL, this );
@@ -513,12 +463,6 @@ SvnPreferencesDialogBase::~SvnPreferencesDialogBase()
 	m_textCtrlDiffViewer->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
 	m_buttonBrowseExtDiff->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnPreferencesDialogBase::OnBrowseDiffViewer ), NULL, this );
 	m_buttonBrowseExtDiff->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
-	m_staticText11->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
-	m_textCtrlDiffViewerCommand->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
-	m_staticText16->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
-	m_staticText17->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
-	m_staticText18->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
-	m_staticText19->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnUseExternalDiffUI ), NULL, this );
 	m_button12->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnPreferencesDialogBase::OnBrowseSSHClient ), NULL, this );
 	m_staticText29->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnAddRevisionMacroUI ), NULL, this );
 	m_textCtrlMacroName->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnAddRevisionMacroUI ), NULL, this );

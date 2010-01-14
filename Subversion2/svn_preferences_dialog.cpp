@@ -14,7 +14,6 @@ SvnPreferencesDialog::SvnPreferencesDialog( wxWindow* parent, Subversion2 *plugi
 	ssd = m_plugin->GetSettings();
 
 	m_textCtrlDiffViewer->SetValue(ssd.GetExternalDiffViewer());
-	m_textCtrlDiffViewerCommand->SetValue(ssd.GetExternalDiffViewerCommand());
 	m_textCtrlIgnorePattern->SetValue(ssd.GetIgnoreFilePattern());
 	m_textCtrlSshClientArgs->SetValue(ssd.GetSshClientArgs());
 	m_textCtrlSSHClient->SetValue(ssd.GetSshClient());
@@ -96,7 +95,6 @@ void SvnPreferencesDialog::OnButtonOK(wxCommandEvent& event)
 
 	SvnSettingsData ssd;
 	ssd.SetExternalDiffViewer(m_textCtrlDiffViewer->GetValue());
-	ssd.SetExternalDiffViewerCommand(m_textCtrlDiffViewerCommand->GetValue());
 	ssd.SetIgnoreFilePattern(m_textCtrlIgnorePattern->GetValue());
 	ssd.SetSshClient(m_textCtrlSSHClient->GetValue());
 	ssd.SetSshClientArgs(m_textCtrlSshClientArgs->GetValue());

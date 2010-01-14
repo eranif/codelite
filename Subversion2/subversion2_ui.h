@@ -191,15 +191,6 @@ class SvnPreferencesDialogBase : public wxDialog
 		wxStaticText* m_staticText10;
 		wxTextCtrl* m_textCtrlDiffViewer;
 		wxButton* m_buttonBrowseExtDiff;
-		wxStaticText* m_staticText11;
-		wxTextCtrl* m_textCtrlDiffViewerCommand;
-		
-		
-		wxStaticText* m_staticText16;
-		wxStaticText* m_staticText17;
-		
-		wxStaticText* m_staticText18;
-		wxStaticText* m_staticText19;
 		wxPanel* m_panel5;
 		wxStaticText* m_staticText20;
 		wxTextCtrl* m_textCtrlSSHClient;

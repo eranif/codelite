@@ -51,6 +51,11 @@ void SvnUpdateHandler::Process(const wxString& output)
 
 void SvnDiffHandler::Process(const wxString& output)
 {
+	// Open the changes inside the editor only if we are not using an external 
+	// diff viewer
+	if(GetPlugin()->GetSettings().GetFlags() & SvnUseExternalDiff)
+		return;
+	
 	IEditor *editor = GetPlugin()->GetManager()->NewEditor();
 	if(editor) {
 		// Set the lexer name to 'Diff'

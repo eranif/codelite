@@ -87,7 +87,7 @@ public:
 	void            SetSettings(SvnSettingsData& ssd);
 	wxString        GetSvnExeName(bool nonInteractive = true);
 	wxString        GetUserConfigDir();
-	void            UpdateIgnorePatterns();
+	void            RecreateLocalSvnConfigFile();
 	void            Patch(bool dryRun, const wxString &workingDirectory, wxEvtHandler *owner, int id);
 	void            IgnoreFiles(const wxArrayString& files, bool pattern);
 	void            Blame(wxCommandEvent& event, const wxArrayString &files);

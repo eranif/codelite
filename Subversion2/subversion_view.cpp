@@ -46,6 +46,7 @@ BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_MENU(XRCID("svn_ignore_file"),        SubversionView::OnIgnoreFile)
 	EVT_MENU(XRCID("svn_ignore_file_pattern"),SubversionView::OnIgnoreFilePattern)
 	EVT_MENU(XRCID("svn_blame"),              SubversionView::OnBlame)
+	EVT_MENU(XRCID("svn_checkout"),           SubversionView::OnCheckout)
 
 END_EVENT_TABLE()
 
@@ -163,7 +164,6 @@ void SubversionView::CreatGUIControls()
 	tb->Connect(XRCID("svn_cleanup"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnCleanup),     NULL, this);
 	tb->Connect(XRCID("svn_info"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnShowSvnInfo), NULL, this);
 	tb->Connect(XRCID("svn_refresh"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnRefreshView), NULL, this);
-	tb->Connect(XRCID("svn_checkout"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnCheckout),    NULL, this);
 	tb->Connect(XRCID("svn_settings"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnSettings),    NULL, this);
 
 	wxSizer *sz = GetSizer();
@@ -831,15 +831,17 @@ void SubversionView::OnClearOuptutUI(wxUpdateUIEvent& event)
 
 void SubversionView::OnCheckout(wxCommandEvent& event)
 {
+	wxString loginString;
+	if(!m_plugin->LoginIfNeeded(event, m_textCtrlRootDir->GetValue(), loginString))
+		return;
+		
+	wxString command;
+	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
+	
 	SvnCheckoutDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_plugin);
 	if(dlg.ShowModal() == wxID_OK) {
-		wxString loginString;
-		if(!m_plugin->LoginIfNeeded(event, m_textCtrlRootDir->GetValue(), loginString))
-			return;
-		wxString command;
-		bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
 		command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" co ") << dlg.GetURL() << wxT(" \"") << dlg.GetTargetDir() << wxT("\"");
-		m_plugin->GetConsole()->Execute(command, wxT(""), new SvnCheckoutHandler(m_plugin, event.GetId(), this), true);
+		m_plugin->GetConsole()->ExecuteURL(command, dlg.GetURL(), new SvnCheckoutHandler(m_plugin, event.GetId(), this), true);
 	}
 }
 

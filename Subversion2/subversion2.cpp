@@ -241,7 +241,7 @@ void Subversion2::DoInitialize()
 	command << GetSvnExeName(false) << wxT(" --help ");
 
 	ProcUtils::ExecuteCommand(command, output);
-	UpdateIgnorePatterns();
+	RecreateLocalSvnConfigFile();
 	DoGetSvnVersion();
 }
 
@@ -434,7 +434,7 @@ wxString Subversion2::GetUserConfigDir()
 	return configDir;
 }
 
-void Subversion2::UpdateIgnorePatterns()
+void Subversion2::RecreateLocalSvnConfigFile()
 {
 	wxString configFile;
 	wxString configDir = GetUserConfigDir();
@@ -540,12 +540,20 @@ bool Subversion2::GetNonInteractiveMode(wxCommandEvent& event)
 
 bool Subversion2::LoginIfNeeded(wxCommandEvent& event, const wxString &workingDirectory, wxString& loginString)
 {
-	UpdateIgnorePatterns();
+	RecreateLocalSvnConfigFile();
 
-	SvnInfo svnInfo;
-	DoGetSvnInfoSync( svnInfo, workingDirectory );
+	SvnInfo  svnInfo;
+	wxString repoUrl;
+	
+	if(event.GetInt() == LOGIN_REQUIRES_URL) {
+		repoUrl = event.GetString();
+		
+	} else {
+		DoGetSvnInfoSync( svnInfo, workingDirectory );
+		repoUrl = svnInfo.m_url;
+	}
 
-	bool loginFailed = (event.GetInt() == LOGIN_REQUIRES);
+	bool loginFailed = (event.GetInt() == LOGIN_REQUIRES) || (event.GetInt() == LOGIN_REQUIRES_URL);
 
 	SubversionPasswordDb db;
 	wxString user, password;
@@ -553,10 +561,10 @@ bool Subversion2::LoginIfNeeded(wxCommandEvent& event, const wxString &workingDi
 	if(loginFailed) {
 		// if we got here, it means that we already tried to login with either user prompt / using the stored password
 		// to prevent an endless loop, remove the old entry from the password db
-		db.DeleteLogin(svnInfo.m_url);
+		db.DeleteLogin(repoUrl);
 	}
 
-	if(db.GetLogin(svnInfo.m_url, user, password)) {
+	if(db.GetLogin(repoUrl, user, password)) {
 		loginString << wxT(" --username ") << user << wxT(" --password ") << password << wxT(" ");
 		return true;
 	}
@@ -568,7 +576,7 @@ bool Subversion2::LoginIfNeeded(wxCommandEvent& event, const wxString &workingDi
 		if (dlg.ShowModal() == wxID_OK) {
 			loginString << wxT(" --username ") << dlg.GetUsername() << wxT(" --password ") << dlg.GetPassword() << wxT(" ");
 			// Store the user name and password
-			db.SetLogin(svnInfo.m_url, dlg.GetUsername(), dlg.GetPassword());
+			db.SetLogin(repoUrl, dlg.GetUsername(), dlg.GetPassword());
 			return true;
 		} else {
 			return false;
@@ -607,7 +615,7 @@ void Subversion2::IgnoreFiles(const wxArrayString& files, bool pattern)
 	SetSettings( ssd );
 
 	// update the config file
-	UpdateIgnorePatterns();
+	RecreateLocalSvnConfigFile();
 
 	// refresh the view
 	GetSvnView()->BuildTree();
@@ -634,7 +642,7 @@ void Subversion2::EditSettings()
 		// Update the Subversion view
 		GetSvnView()->BuildTree();
 		DoSetSSH();
-		UpdateIgnorePatterns();
+		RecreateLocalSvnConfigFile();
 	}
 }
 

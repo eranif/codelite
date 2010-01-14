@@ -128,8 +128,13 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 		if (m_handler->TestLoginRequired(m_output)) {
 			// re-issue the last command but this time with login dialog
 			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Authentication failed. Retrying...\n"));
-			m_handler->ProcessLoginRequired(m_workingDirectory);
-
+			
+			// If we got a URL use it
+			if(m_url.IsEmpty() == false)
+				m_handler->ProcessLoginRequiredForURL(m_url);
+			else 
+				m_handler->ProcessLoginRequired(m_workingDirectory);
+			
 		} else if (m_handler->TestVerificationFailed(m_output)) {
 			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Server certificate verification failed. Retrying...\n"));
 			m_handler->ProcessVerificationRequired();
@@ -149,36 +154,25 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 		delete m_process;
 		m_process = NULL;
 	}
+	
+	m_workingDirectory.Clear();
+	m_url.Clear();
+}
+
+bool SvnConsole::ExecuteURL(const wxString& cmd, const wxString& url, SvnCommandHandler* handler, bool printProcessOutput)
+{
+	if(!DoExecute(cmd, handler, wxT(""), printProcessOutput))
+		return false;
+	
+	m_url = url;
+	return true;
 }
 
 bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler, bool printProcessOutput)
 {
-	m_printProcessOutput = printProcessOutput;
-	if (m_process) {
-		// another process is already running...
-		//AppendText(svnANOTHER_PROCESS_RUNNING);
-		if (handler)
-			delete handler;
+	if(!DoExecute(cmd, handler, workingDirectory, printProcessOutput))
 		return false;
-	}
-
-	m_output.Clear();
-	m_handler = handler;
-
-	EnsureVisible();
-
-	// Print the command?
-	AppendText(cmd + wxT("\n"));
-
-	// Wrap the command in the OS Shell
-	wxString cmdShell (cmd);
-	//WrapInShell(cmdShell);
-
-	m_process = CreateAsyncProcess(this, cmdShell, workingDirectory);
-	if (!m_process) {
-		AppendText(wxT("Failed to launch Subversion client.\n"));
-		return false;
-	}
+	
 	m_workingDirectory = workingDirectory;
 	return true;
 }
@@ -252,4 +246,38 @@ void SvnConsole::EnsureVisible()
 	if (where != Notebook::npos) {
 		book->SetSelection(where);
 	}
+}
+
+bool SvnConsole::DoExecute(const wxString& cmd, SvnCommandHandler* handler, const wxString &workingDirectory, bool printProcessOutput)
+{
+	m_workingDirectory.Clear();
+	m_url.Clear();
+
+	m_printProcessOutput = printProcessOutput;
+	if (m_process) {
+		// another process is already running...
+		//AppendText(svnANOTHER_PROCESS_RUNNING);
+		if (handler)
+			delete handler;
+		return false;
+	}
+
+	m_output.Clear();
+	m_handler = handler;
+
+	EnsureVisible();
+
+	// Print the command?
+	AppendText(cmd + wxT("\n"));
+
+	// Wrap the command in the OS Shell
+	wxString cmdShell (cmd);
+	//WrapInShell(cmdShell);
+
+	m_process = CreateAsyncProcess(this, cmdShell, workingDirectory);
+	if (!m_process) {
+		AppendText(wxT("Failed to launch Subversion client.\n"));
+		return false;
+	}
+	return true;
 }

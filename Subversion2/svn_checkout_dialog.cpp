@@ -41,7 +41,7 @@ void SvnCheckoutDialog::OnBrowseDirectory( wxCommandEvent& event )
 
 wxString SvnCheckoutDialog::GetTargetDir()
 {
-	return m_textCtrl20->GetLabel();
+	return m_textCtrl20->GetValue();
 }
 
 wxString SvnCheckoutDialog::GetURL()

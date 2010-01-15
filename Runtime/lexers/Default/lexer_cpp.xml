@@ -5,7 +5,7 @@
   <KeyWords2/>
   <KeyWords3/>
   <KeyWords4/>
-  <Extensions>*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y</Extensions>
+  <Extensions>*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh</Extensions>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Italic="no" Underline="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
     <Property Id="1" Name="Common C style comment" Bold="no" Italic="yes" Underline="no" Face="" Colour="#0080C0" BgColour="#FFFFFF" Size="9"/>

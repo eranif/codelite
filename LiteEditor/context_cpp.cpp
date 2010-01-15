@@ -319,15 +319,22 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 {
 	LEditor &rCtrl = GetCtrl();
 
+	if(rCtrl.GetDisableSmartIndent()) {
+		ContextBase::AutoIndent(nChar);
+		return;
+	}
+
 	int curpos = rCtrl.GetCurrentPos();
 	if (IsComment(curpos) && nChar == wxT('\n')) {
 		AutoAddComment();
 		return;
 	}
+
 	if (IsCommentOrString(curpos)) {
 		ContextBase::AutoIndent(nChar);
 		return;
 	}
+
 	int line = rCtrl.LineFromPosition(curpos);
 	if (nChar == wxT('\n')) {
 
@@ -381,9 +388,9 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 
 				// If we found one of the following keywords, un-indent their line by (foldLevel - 1)*indentSize
 				if ( word == wxT("public") || word == wxT("private") || word == wxT("protected")) {
-					
+
 					ContextBase::AutoIndent(nChar);
-					
+
 					// Indent this line according to the block indentation level
 					int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
 					if (foldLevel) {
@@ -394,7 +401,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 				}
 			}
 		}
-		
+
 		// use the previous line indentation level
 		if (prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
 			ContextBase::AutoIndent(nChar);
@@ -407,7 +414,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 		rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
 
 	} else if (nChar == wxT('}')) {
-		
+
 		long matchPos = wxNOT_FOUND;
 		if (!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos))
 			return;
@@ -419,14 +426,17 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 	} else if (nChar == wxT('{')) {
 		wxString lineString = rCtrl.GetLine(line);
 		lineString.Trim().Trim(false);
-		if (lineString == wxT("{")) {
+
+		int matchPos = wxNOT_FOUND;
+		wxChar previousChar = rCtrl.PreviousChar(rCtrl.PositionBefore(curpos), matchPos);
+		if(previousChar != wxT('{') && lineString == wxT("{")) {
 			// indent this line accroding to the previous line
 			int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
 			rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line-1));
 			rCtrl.ChooseCaretX();
 		}
 	}
-	
+
 	// set new column as "current" column
 	rCtrl.ChooseCaretX();
 }
@@ -2027,7 +2037,7 @@ void ContextCpp::ApplySettings()
 	//delete uneeded commands
 	rCtrl.CmdKeyClear('/', wxSCI_SCMOD_CTRL);
 	rCtrl.CmdKeyClear('/', wxSCI_SCMOD_CTRL|wxSCI_SCMOD_SHIFT);
-	
+
 	// update word characters to allow '~' as valid word character
 	rCtrl.SetWordChars(wxT("~_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"));
 }

@@ -163,6 +163,9 @@ public:
 		this->m_disableSmartIndent = disableSmartIndent;
 	}
 
+	bool GetDisableSmartIndent() const {
+		return m_disableSmartIndent;
+	}
 	/**
 	 * @brief set the EOL mode of the file by applying this logic:
 	 * - if the file has content, use the current cotext EOL

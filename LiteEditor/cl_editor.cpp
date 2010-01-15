@@ -650,15 +650,12 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		break;
 
 	case '{':
-		if(!m_disableSmartIndent)
-			m_context->AutoIndent(event.GetKey());
+		m_context->AutoIndent(event.GetKey());
 		matchChar = '}';
 		break;
 
 	case ':':
-
-		if (m_disableSmartIndent == false)
-			m_context->AutoIndent(event.GetKey());
+		m_context->AutoIndent(event.GetKey());
 
 		// fall through...
 	case '.':
@@ -672,8 +669,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		ShowFunctionTipFromCurrentPos();
 		break;
 	case '}':
-		if (m_disableSmartIndent == false)
-			m_context->AutoIndent(event.GetKey());
+		m_context->AutoIndent(event.GetKey());
 		break;
 	case '\n': {
 			// incase ENTER was hit immediatly after we inserted '{' into the code...
@@ -684,21 +680,18 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 				//InsertText(pos, GetEolString());
 				CharRight();
 
-				if (m_disableSmartIndent == false)
-					m_context->AutoIndent(wxT('}'));
+				m_context->AutoIndent(wxT('}'));
 
 				InsertText(pos, GetEolString());
 				CharRight();
 				SetCaretAt(pos);
 
-				if (m_disableSmartIndent == false)
-					m_context->AutoIndent(wxT('\n'));
+				m_context->AutoIndent(wxT('\n'));
 
 				EndUndoAction();
 			} else {
 
-				if (m_disableSmartIndent == false)
-					m_context->AutoIndent(event.GetKey());
+				m_context->AutoIndent(event.GetKey());
 
 				// incase we are typing in a folded line, make sure it is visible
 				EnsureVisible(curLine+1);

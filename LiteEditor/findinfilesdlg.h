@@ -44,18 +44,22 @@ class FindInFilesDialog : public FindInFilesDialogBase
 	virtual void OnAddPath( wxCommandEvent& event );
 	virtual void OnRemovePath( wxCommandEvent& event );
 	virtual void OnClearPaths( wxCommandEvent& event );
-
-
+	virtual void OnClearPathsUI( wxUpdateUIEvent& event );
+	virtual void OnRemovePathUI( wxUpdateUIEvent& event );
 	void OnCharEvent(wxKeyEvent &event);
+
+	virtual void OnFindWhatUI( wxUpdateUIEvent& event );
 
 public:
 	FindInFilesDialog(wxWindow* parent, wxWindowID id, const FindReplaceData& data);
 	virtual ~FindInFilesDialog();
 
-    void SetSearchData(const SearchData &data);
-    void SetRootDir   (const wxString &rootDir);
+	void SetSearchData(const SearchData &data);
+	void SetRootDir   (const wxString &rootDir);
 
-	FindReplaceData& GetData() { return m_data; }
+	FindReplaceData& GetData() {
+		return m_data;
+	}
 
 	virtual bool Show();
 };

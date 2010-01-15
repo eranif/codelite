@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include <wx/wupdlock.h>
 #include "drawingutils.h"
 #include "custom_tabcontainer.h"
 #include "custom_tab.h"
@@ -248,10 +249,26 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
 
 	if (e.GetInt() != 0 || m_sci == NULL) {
 		if (m_book) {
+			wxWindowUpdateLocker locker(this);
 			wxScintilla *sci = new wxScintilla(m_book);
 			SetStyles(sci);
 
-			// add new page
+			// Make sure we can add more tabs, if not delete the last used tab and then add
+			// a new tab
+
+			long MaxBuffers(15);
+			EditorConfigST::Get()->GetLongValue(wxT("MaxOpenedTabs"), MaxBuffers);
+
+			if( (long)m_book->GetPageCount() >= MaxBuffers ) {
+				// We have reached the limit of the number of open buffers
+				// Close the last used buffer
+				const wxArrayPtrVoid &arr = m_book->GetHistory();
+				if ( arr.GetCount() ) {
+					CustomTab *tab = static_cast<CustomTab*>(arr.Item(arr.GetCount()-1));
+					m_book->DeletePage( m_book->GetTabContainer()->TabToIndex(tab) );
+				}
+			}
+
 			m_book->AddPage(sci, label, label, wxNullBitmap, true);
 			size_t where = m_book->GetPageCount() - 1;
 

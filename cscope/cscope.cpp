@@ -471,8 +471,10 @@ void Cscope::OnCreateDB(wxCommandEvent &e)
 		endMsg << wxT("Recreated CScope DB");
 	}
 
-	//Do the actual create db
-	command << wxT(" -L -i ") << list_file;
+	// Do the actual create db
+	// since the process is always running from the workspace
+	// directory, there is no need to specify the full path of the list file
+	command << wxT(" -L -i cscope_file.list");
 	DoCscopeCommand(command, wxEmptyString, endMsg);
 }
 

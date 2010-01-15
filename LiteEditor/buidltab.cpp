@@ -446,7 +446,7 @@ void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 	}
 	
 	AppendText ( BUILD_START_MSG );
-	Frame::Get()->SetStatusMessage ( e.GetString(), 3, XRCID ( "build" ) );
+//	Frame::Get()->SetStatusMessage ( e.GetString(), 3, XRCID ( "build" ) );
     OutputPane *opane = Frame::Get()->GetOutputPane();
 	if (m_showMe == BuildTabSettingsData::ShowOnEnd &&
             m_autoHide &&
@@ -466,12 +466,12 @@ void BuildTab::OnBuildAddLine ( wxCommandEvent &e )
 {
 	e.Skip();
 	AppendText ( e.GetString() );
-    if (e.GetInt() == QueueCommand::CustomBuild && e.GetString().Contains(BUILD_PROJECT_PREFIX) && !m_lineInfo.empty()) {
-        // try to show more specific progress in custom builds
-        LineInfo &info = m_lineInfo.rbegin()->second;
-        Frame::Get()->SetStatusMessage(wxString::Format(wxT("Building %s (%s)"),
-                                       info.project.c_str(), info.configuration.c_str()), 3, XRCID("build"));
-    }
+//    if (e.GetInt() == QueueCommand::CustomBuild && e.GetString().Contains(BUILD_PROJECT_PREFIX) && !m_lineInfo.empty()) {
+//        // try to show more specific progress in custom builds
+//        LineInfo &info = m_lineInfo.rbegin()->second;
+//        Frame::Get()->SetStatusMessage(wxString::Format(wxT("Building %s (%s)"),
+//                                       info.project.c_str(), info.configuration.c_str()), 3, XRCID("build"));
+//    }
 }
 
 void BuildTab::OnBuildEnded ( wxCommandEvent &e )
@@ -493,7 +493,7 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 	term << wxT ( '\n' );
 	AppendText ( term );
 
-	Frame::Get()->SetStatusMessage ( wxEmptyString, 3, XRCID ( "build" ) );
+//	Frame::Get()->SetStatusMessage ( wxEmptyString, 3, XRCID ( "build" ) );
 
 	bool success = m_errorCount == 0 && ( m_skipWarnings || m_warnCount == 0 );
 	bool viewing = ManagerST::Get()->IsPaneVisible ( Frame::Get()->GetOutputPane()->GetCaption() ) &&

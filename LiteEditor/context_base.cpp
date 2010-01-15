@@ -30,6 +30,9 @@
 #include "cl_editor.h"
 #include "frame.h"
 
+#define CL_LINE_MODIFIED_STYLE      200
+#define CL_LINE_SAVED_STYLE         201
+
 ContextBase::ContextBase(LEditor *container)
 		: m_container(container)
 		, m_name(wxEmptyString)
@@ -65,6 +68,10 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 
 	rCtrl.StyleClearAll();
 	rCtrl.SetStyleBits(rCtrl.GetStyleBitsNeeded());
+
+	// Define the styles for the editing margin
+	rCtrl.StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("PALE GREEN")));
+	rCtrl.StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
 
 	// by default indicators are set to be opaque rounded box
 #ifdef __WXMAC__

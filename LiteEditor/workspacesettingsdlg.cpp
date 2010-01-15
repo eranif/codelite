@@ -28,16 +28,26 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *lo
 	}
 
 	// select the current workspace active set name
+	wxString activeEnvSet;
 	int where = m_choiceEnvSets->FindString(localWorkspace->GetActiveEnvironmentSet());
 	if (where == wxNOT_FOUND) {
 		// try to select the default active set
 		where = m_choiceEnvSets->FindString(activePage);
-		if (where != wxNOT_FOUND)
+		if (where != wxNOT_FOUND) {
 			m_choiceEnvSets->SetSelection(where);
+			activeEnvSet = activePage;
+		}
 
 	} else {
+		activeEnvSet = localWorkspace->GetActiveEnvironmentSet();
 		m_choiceEnvSets->SetSelection(where);
 	}
+
+	if(activeEnvSet.IsEmpty() == false){
+		vars.SetActiveSet(activeEnvSet);
+		EnvironmentConfig::Instance()->SetSettings(vars);
+	}
+
 	WindowAttrManager::Load(this, wxT("WorkspaceSettingsDlg"), NULL);
 }
 

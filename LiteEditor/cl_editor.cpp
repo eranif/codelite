@@ -189,10 +189,11 @@ void LEditor::SetSyntaxHighlight()
 	m_context = ContextManager::Get()->NewContextByFileName(this, m_fileName);
 	m_rightClickMenu = m_context->GetMenu();
 	m_rightClickMenu->AppendSeparator(); // separates plugins
+
 	SetProperties();
 	UpdateColours();
-	m_context->ApplySettings();
 	m_context->SetActive();
+	m_context->ApplySettings();
 }
 
 // Fills the struct array that marries breakpoint type to marker and mask
@@ -330,10 +331,6 @@ void LEditor::SetProperties()
 
 	// line number margin displays every thing but folding, bookmarks and breakpoint
 	SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_bookmarks | mmt_indicator | mmt_compiler | mmt_all_breakpoints));
-
-	// Define the styles for the editing margin
-	StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("PALE GREEN")));
-	StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
 
 	SetMarginType     (EDIT_TRACKER_MARGIN_ID, 4); // Styled Text margin
 	SetMarginWidth    (EDIT_TRACKER_MARGIN_ID, options->GetHideChangeMarkerMargin() ? 0 : 3);
@@ -1070,6 +1067,7 @@ void LEditor::SetSyntaxHighlight(const wxString &lexerName)
 	m_context = ContextManager::Get()->NewContext(this, lexerName);
 	m_rightClickMenu = m_context->GetMenu();
 	m_rightClickMenu->AppendSeparator(); // separates plugins
+
 	SetProperties();
 	UpdateColours();
 

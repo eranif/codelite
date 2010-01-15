@@ -2026,7 +2026,8 @@ void ContextCpp::ApplySettings()
 
 	//delete uneeded commands
 	rCtrl.CmdKeyClear('/', wxSCI_SCMOD_CTRL);
-
+	rCtrl.CmdKeyClear('/', wxSCI_SCMOD_CTRL|wxSCI_SCMOD_SHIFT);
+	
 	// update word characters to allow '~' as valid word character
 	rCtrl.SetWordChars(wxT("~_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"));
 }

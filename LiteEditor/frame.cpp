@@ -775,7 +775,7 @@ void Frame::CreateGUIControls(void)
 	// And finally create a status bar
 	wxStatusBar* statusBar = new wxStatusBar(this, wxID_ANY);
 	SetStatusBar(statusBar);
-	m_status.resize(4);
+	m_status.resize(3);
 	GetStatusBar()->SetFieldsCount(m_status.size());
 	SetStatusMessage(wxT("Ready"), 0);
 	SetStatusMessage(wxT("Done"), m_status.size()-1);
@@ -2659,7 +2659,7 @@ void Frame::CompleteInitialization()
 	// Connect some system events
 	m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(Frame::OnDockablePaneClosed), NULL, this);
 	m_mgr.Connect(wxEVT_AUI_RENDER,     wxAuiManagerEventHandler(Frame::OnAuiManagerRender),   NULL, this);
-	
+
 	SetEnvStatusMessage();
 }
 

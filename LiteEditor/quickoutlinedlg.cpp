@@ -97,14 +97,16 @@ void QuickOutlineDlg::OnCharHook(wxKeyEvent &e)
 {
 	if (e.GetKeyCode() == WXK_ESCAPE) {
 		EndModal(wxID_CANCEL);
+		
 	} else if (e.GetKeyCode() == WXK_NUMPAD_ENTER || e.GetKeyCode() == WXK_RETURN) {
-		if (m_treeOutline->ActivateSelectedItem()) {
-			EndModal(wxID_OK);
-		}
+		m_treeOutline->ActivateSelectedItem();
+		
 	} else if (e.GetKeyCode() == WXK_UP) {
 		m_treeOutline->AdvanceSelection(false);
+		
 	} else if (e.GetKeyCode() == WXK_DOWN) {
 		m_treeOutline->AdvanceSelection();
+		
 	} else {
 		e.Skip();
 	}
@@ -121,5 +123,5 @@ void QuickOutlineDlg::OnTextEntered(wxCommandEvent &WXUNUSED(e))
 void QuickOutlineDlg::OnItemSelected(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-//	EndModal(wxID_OK);
+	Close();
 }

@@ -304,6 +304,12 @@ void WorkspacePane::OnConfigurationManagerChoice(wxCommandEvent &event)
 	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
 	matrix->SetSelectedConfigurationName(selection);
 	ManagerST::Get()->SetWorkspaceBuildMatrix(matrix);
+	
+	// Set the focus to the active editor if any
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	if(editor)
+		editor->SetActive();
+	
 }
 
 void WorkspacePane::OnConfigurationManager(wxCommandEvent& e)

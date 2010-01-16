@@ -149,6 +149,7 @@ wxTabContainer::wxTabContainer(wxWindow *win, wxWindowID id, int orientation, lo
 		Hide();
 	}
 	Initialize();
+	Connect(wxEVT_CMD_ENSURE_SEL_TAB_VISIBILE, wxCommandEventHandler(wxTabContainer::OnEnsureVisible), NULL, this);
 }
 
 wxTabContainer::~wxTabContainer()
@@ -394,7 +395,9 @@ void wxTabContainer::OnEraseBg(wxEraseEvent &)
 
 void wxTabContainer::OnSizeEvent(wxSizeEvent &e)
 {
-	DoShowMaxTabs();
+	wxCommandEvent evt(wxEVT_CMD_ENSURE_SEL_TAB_VISIBILE);
+	AddPendingEvent(evt);
+	
 	Refresh();
 	e.Skip();
 }
@@ -619,6 +622,9 @@ bool wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notif
 
 void wxTabContainer::EnsureVisible(CustomTab *tab)
 {
+	if(!tab)
+		return;
+	
 	if (!IsVisible(tab)) {
 		Freeze();
 		//make sure all tabs are visible
@@ -654,12 +660,15 @@ bool wxTabContainer::IsVisible(CustomTab *tab, bool fullShown)
 	wxPoint pos = tab->GetPosition();
 	wxSize tabSize = tab->GetSize();
 	wxRect rr = GetSize();
-
+	
+	// get the tab's width + 10 pixels spare
+	int tabWidth = tabSize.GetWidth();
+	
 	bool cond0(true);
-	if (rr.width > tabSize.x && fullShown) {
+	if (rr.width > tabWidth && fullShown) {
 		//the visible area has enough space to show the entire
 		//tab, force it
-		cond0 = !(pos.x + tabSize.x > rr.x + rr.width);
+		cond0 = !(pos.x + tabWidth > rr.x + rr.width);
 	}
 	bool cond1 = !(pos.x > rr.x + rr.width);
 	bool cond2 = m_tabsSizer->IsShown(tab);
@@ -743,12 +752,12 @@ void wxTabContainer::DoShowMaxTabs()
 
 	Freeze();
 
-	size_t first = GetFirstVisibleTab();
-	size_t last  = GetLastVisibleTab();
+	size_t     first = GetFirstVisibleTab();
+	size_t      last = GetLastVisibleTab();
+	//size_t  selIndex = TabToIndex(GetSelection());
+	CustomTab *t2    = IndexToTab(last);
 
-	CustomTab *t2 = IndexToTab(last);
-
-	if (first != Notebook::npos && last != Notebook::npos && last != first) {
+	if (first != Notebook::npos && last != Notebook::npos) {
 		int i = (int) first;
 		for (; i>=0; i--) {
 			m_tabsSizer->Show((size_t)i);
@@ -759,15 +768,27 @@ void wxTabContainer::DoShowMaxTabs()
 				// continue;
 				continue;
 			} else {
-				i++;
-				m_tabsSizer->Show((size_t)i);
-				m_tabsSizer->Layout();
+				if( (i + 1) < (int)GetTabsCount() ) {
+					i++;
+					m_tabsSizer->Show((size_t)i);
+					m_tabsSizer->Layout();
+				}
 				break;
 			}
 		}
 	}
 	Thaw();
 	Refresh();
+}
+
+void wxTabContainer::OnEnsureVisible(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	CustomTab *tab = GetSelection();
+	if(tab) {
+		EnsureVisible( tab );
+	}
+	DoShowMaxTabs();
 }
 
 //--------------------------------------------------------------------

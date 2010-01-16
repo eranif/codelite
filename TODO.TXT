@@ -1,4 +1,3 @@
 - add build-errors-assistant
-- Build System: add option to move regex Up/Down
 - Add new 'scp' plugin
 

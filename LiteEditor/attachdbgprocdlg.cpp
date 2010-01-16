@@ -74,18 +74,26 @@ void AttachDbgProcDlg::RefreshProcessesList(int colToSort)
 
 	if (colToSort == 0) {//sort by PID
 		std::sort(proclist.begin(), proclist.end(), PIDSorter());
+		
 	} else if (colToSort == 1) {//sort by name
 		std::sort(proclist.begin(), proclist.end(), NameSorter());
+		
 	}
 
 	for (size_t i=0; i<proclist.size(); i++) {
 		long item = AppendListCtrlRow(m_listCtrlProcesses);
 		ProcessEntry entry = proclist.at(i);
 		wxString spid;
+		bool selfPid = (entry.pid == (long)wxGetProcessId());
 		spid << entry.pid;
 		SetColumnText(m_listCtrlProcesses, item, 0, spid);
 		SetColumnText(m_listCtrlProcesses, item, 1, entry.name);
+		
+		if(selfPid) {
+			m_listCtrlProcesses->SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+		}
 	}
+	
 	m_listCtrlProcesses->SetColumnWidth(0, 100);
 	m_listCtrlProcesses->SetColumnWidth(1, 200);
 	m_listCtrlProcesses->Thaw();

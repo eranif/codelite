@@ -1926,7 +1926,10 @@ void Manager::DbgStart ( long pid )
 
 	//set ourselves as the observer for the debugger class
 	dbgr->SetObserver ( this );
-
+	
+	// Set the 'Is remote debugging' flag'
+	dbgr->SetIsRemoteDebugging(bldConf && bldConf->GetIsDbgRemoteTarget() && PID == wxNOT_FOUND);
+	
 	// Loop through the open editors and let each editor
 	// a chance to update the debugger manager with any line
 	// changes (i.e. file was edited and breakpoints were moved)
@@ -1998,7 +2001,7 @@ void Manager::DbgStart ( long pid )
 	// set the debug tab as active
 	ShowOutputPane(OutputPane::OUTPUT_DEBUG);
 
-	if ( bldConf && bldConf->GetIsDbgRemoteTarget() && pid == wxNOT_FOUND ) {
+	if ( dbgr->GetIsRemoteDebugging() ) {
 
 		// debugging remote target
 		wxString comm;

@@ -121,7 +121,6 @@ END_EVENT_TABLE()
 
 DbgGdb::DbgGdb()
 		: m_debuggeePid(wxNOT_FOUND)
-		, m_isRemote   (false)
 		, m_cliHandler (NULL)
 {
 #ifdef __WXMSW__
@@ -279,18 +278,18 @@ bool DbgGdb::Start(const wxString &exeName, const wxString &cwd, const std::vect
 
 bool DbgGdb::Run(const wxString &args, const wxString &comm)
 {
-	m_isRemote = false;
-	if (comm.IsEmpty()) {
+	if ( !GetIsRemoteDebugging() ) {
 
 		// add handler for this command
 		return WriteCommand(wxT("-exec-run ") + args, new DbgCmdHandlerAsyncCmd(m_observer));
 
 	} else {
 		// attach to the remote gdb server
-		m_isRemote = true;
 		wxString cmd;
+		//cmd << wxT("-target-select remote ") << comm << wxT(" ") << args;
 		cmd << wxT("target remote ") << comm << wxT(" ") << args;
 		return WriteCommand(cmd, new DbgCmdHandlerRemoteDebugging(m_observer, this));
+		
 	}
 }
 
@@ -605,8 +604,9 @@ void DbgGdb::Poke()
 	}
 
 	if (m_debuggeePid == wxNOT_FOUND) {
-		if (m_isRemote) {
+		if (GetIsRemoteDebugging()) {
 			m_debuggeePid = m_gdbProcess->GetPid();
+			
 		} else {
 			std::vector<long> children;
 			ProcUtils::GetChildren(m_gdbProcess->GetPid(), children);
@@ -733,7 +733,7 @@ void DbgGdb::DoProcessAsyncCommand(wxString &line, wxString &id)
 			m_observer->UpdateAddLine(line);
 		}
 
-	} else if (line.StartsWith(wxT("^done"))) {
+	} else if (line.StartsWith(wxT("^done")) || line.StartsWith(wxT("^connected"))) {
 		//The synchronous operation was successful, results are the return values.
 		DbgCmdHandler *handler = PopHandler(id);
 		if (handler) {
@@ -745,6 +745,7 @@ void DbgGdb::DoProcessAsyncCommand(wxString &line, wxString &id)
 		//asynchronous command was executed
 		//send event that we dont have the control anymore
 		m_observer->UpdateLostControl();
+		
 	} else if (line.StartsWith(wxT("*stopped"))) {
 		//get the stop reason,
 		if (line == wxT("*stopped")) {
@@ -848,6 +849,7 @@ void DbgGdb::OnProcessEnd(wxCommandEvent &e)
 
 	m_observer->UpdateGotControl(DBG_EXITED_NORMALLY);
 	m_gdbOutputArr.Clear();
+	SetIsRemoteDebugging(false);
 }
 
 bool DbgGdb::GetAsciiViewerContent(const wxString &dbgCommand, const wxString& expression)
@@ -1006,7 +1008,11 @@ bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo> &bpList, const wx
 
 	// keep the list of breakpoints
 	m_bpList = bpList;
-	SetBreakpoints();
+	
+	if(GetIsRemoteDebugging() == false) 
+		// When remote debugging, apply the breakpoints after we connect the 
+		// gdbserver
+		SetBreakpoints();
 
 	if (m_info.breakAtWinMain) {
 		//try also to set breakpoint at WinMain

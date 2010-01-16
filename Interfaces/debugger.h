@@ -125,7 +125,7 @@ struct LocalVariable {
 	wxString gdbId; // Mac generates variable object for locals as well...
 
 	LocalVariable() : updated(false) {}
-	~LocalVariable(){}
+	~LocalVariable() {}
 };
 
 typedef std::vector<VariableObjChild> VariableObjChildren;
@@ -175,8 +175,7 @@ public:
 			conditions(BI.conditions),
 			at(BI.at),
 			what(BI.what),
-			origin(BI.origin)
-	{}
+			origin(BI.origin) {}
 
 	BreakpointInfo() : lineno(-1), regex(false), debugger_id(-1), bp_type(BP_type_break),
 			ignore_number(0), is_enabled(true), is_temp(false), watchpoint_type(WP_watch), origin(BO_Other) {}
@@ -353,7 +352,7 @@ public:
 			, debugAsserts(false)
 			, startupCommands(wxEmptyString)
 			, maxDisplayStringSize(200)
-			, resolveLocals (false){}
+			, resolveLocals (false) {}
 	~DebuggerInformation() {}
 };
 
@@ -414,13 +413,18 @@ protected:
 	DebuggerInformation m_info;
 	EnvironmentConfig * m_env;
 	wxString            m_name;
+	bool                m_isRemoteDebugging;
 
 public:
-	IDebugger() : m_env(NULL) {};
+	IDebugger() : m_env(NULL), m_isRemoteDebugging(false) {};
 	virtual ~IDebugger() {};
 
-	void SetName(const wxString &name) {m_name = name;}
-	wxString GetName() const {return m_name;}
+	void SetName(const wxString &name) {
+		m_name = name;
+	}
+	wxString GetName() const {
+		return m_name;
+	}
 
 	void SetObserver(IDebuggerObserver *observer) {
 		m_observer = observer;
@@ -442,6 +446,14 @@ public:
 		return m_info;
 	}
 
+	void SetIsRemoteDebugging(bool isRemoteDebugging) {
+		this->m_isRemoteDebugging = isRemoteDebugging;
+	}
+	
+	bool GetIsRemoteDebugging() const {
+		return m_isRemoteDebugging;
+	}
+	
 	/**
 	 * \brief Sets the logging level 'on the fly'
 	 * \param level the new level

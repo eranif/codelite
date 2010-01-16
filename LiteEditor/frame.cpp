@@ -3273,7 +3273,8 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 			if (SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info))
 				// plugin stopped debugging
 				return;
-
+			
+			dbgr->SetIsRemoteDebugging(false);
 			dbgr->Start(dbgname, exepath, wd, bpList, cmds);
 
 			// notify plugins that the debugger just started

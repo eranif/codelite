@@ -3346,40 +3346,13 @@ void Frame::OnRetagWorkspace(wxCommandEvent& event)
 void Frame::OnShowFullScreen(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	static std::set<wxString> s_toolbars;
 
 	if (IsFullScreen()) {
-
-		// show all toolbars that were hiddne due to fullscreen mode
-		std::set<wxString>::iterator iter = s_toolbars.begin();
-		for (; iter != s_toolbars.end(); iter++) {
-			wxAuiPaneInfo &info = GetDockingManager().GetPane(*iter);
-			if (info.IsOk() && info.IsShown() == false) {
-				info.Show();
-			}
-		}
-
-		// apply the changes
-		GetDockingManager().Update();
-
-		// clear the list
-		s_toolbars.clear();
-
 		ShowFullScreen(false);
+		
 	} else {
-		// get list of all shown toolbars
-		std::map<int, wxString>::iterator iter = m_toolbars.begin();
-		for (; iter != m_toolbars.end(); iter++) {
-			wxAuiPaneInfo &info = GetDockingManager().GetPane(iter->second);
-			if (info.IsOk() && info.IsShown()) {
-				s_toolbars.insert(iter->second);
-				info.Hide();
-			}
-		}
-
-		// apply the changes
-		GetDockingManager().Update();
-		ShowFullScreen(true);
+		
+		ShowFullScreen(true, wxFULLSCREEN_NOCAPTION|wxFULLSCREEN_NOBORDER);
 
 		// Re-apply the menu accelerators
 		ManagerST::Get()->UpdateMenuAccelerators();

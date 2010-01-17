@@ -29,31 +29,40 @@
 
 class wxTextCtrl;
 class wxScintilla;
-
+class wxButton;
+class wxStaticText;
 
 class QuickFindBar : public wxPanel
 {
 protected:
-    wxTextCtrl  *m_findWhat;
-    wxScintilla *m_sci;
-    size_t       m_flags;
-	wxButton	*m_closeButton;
+    wxTextCtrl   *m_findWhat;
+	wxTextCtrl   *m_replaceWith;
+	wxButton     *m_replaceButton;
+	wxStaticText *m_replaceStaticText;
+    wxScintilla  *m_sci;
+    size_t        m_flags;
+	wxButton     *m_closeButton;
 
+protected:
+	void ShowReplaceControls(bool show = true);
+	
     void DoSearch(bool fwd, bool incr);
-	bool IsFocused();
-	void OnHide    (wxCommandEvent  &e);
-	void OnNext    (wxCommandEvent  &e);
-	void OnPrev    (wxCommandEvent  &e);
-	void OnText    (wxCommandEvent  &e);
-    void OnCheckBox(wxCommandEvent  &e);
-	void OnKeyDown (wxKeyEvent      &e);
-	void OnEnter   (wxCommandEvent  &e);
-    void OnUpdateUI(wxUpdateUIEvent &e);
-
-	void OnCopy     (wxCommandEvent  &e);
-	void OnPaste    (wxCommandEvent  &e);
-	void OnSelectAll(wxCommandEvent  &e);
-	void OnEditUI   (wxUpdateUIEvent &e);
+	wxTextCtrl *GetFocusedControl();;
+	void OnHide         (wxCommandEvent  &e);
+	void OnNext         (wxCommandEvent  &e);
+	void OnPrev         (wxCommandEvent  &e);
+	void OnText         (wxCommandEvent  &e);
+    void OnCheckBox     (wxCommandEvent  &e);
+	void OnKeyDown      (wxKeyEvent      &e);
+	void OnEnter        (wxCommandEvent  &e);
+	void OnReplace      (wxCommandEvent  &e);
+    void OnUpdateUI     (wxUpdateUIEvent &e);
+    void OnReplaceUI    (wxUpdateUIEvent &e);
+	void OnReplaceEnter (wxCommandEvent &e);
+	void OnCopy         (wxCommandEvent  &e);
+	void OnPaste        (wxCommandEvent  &e);
+	void OnSelectAll    (wxCommandEvent  &e);
+	void OnEditUI       (wxUpdateUIEvent &e);
     DECLARE_EVENT_TABLE()
 
 public:
@@ -62,7 +71,7 @@ public:
     bool Show(bool s = true);
 
     wxScintilla *GetEditor() { return m_sci; }
-    void SetEditor(wxScintilla *sci) { m_sci = sci; }
+    void SetEditor(wxScintilla *sci) ;
 };
 
 #endif // __quickfindbar__

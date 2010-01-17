@@ -10,4 +10,4 @@
     </StringMap>
   </ArchiveObject>
 </EnvironmentVariables>
-- Add 'Replace' button + text control to the incremental search bar
+- Capture 'wxAssert' and display its content in the debugger

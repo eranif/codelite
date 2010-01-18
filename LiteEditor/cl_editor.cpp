@@ -156,7 +156,7 @@ LEditor::LEditor(wxWindow* parent)
 	ms_bookmarkShapes[wxT("Small Arrow")]       = wxSCI_MARK_ARROW;
 	ms_bookmarkShapes[wxT("Circle")]            = wxSCI_MARK_CIRCLE;
 
-	SetSyntaxHighlight();
+	//SetSyntaxHighlight();
 	CmdKeyClear(wxT('D'), wxSCI_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
 	Connect(wxEVT_SCI_DWELLSTART, wxScintillaEventHandler(LEditor::OnDwellStart), NULL, this);
 

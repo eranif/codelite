@@ -174,7 +174,6 @@ ContextCpp::ContextCpp(LEditor *container)
 		: ContextBase(container)
 		, m_rclickMenu(NULL)
 {
-	ApplySettings();
 	Initialize();
 }
 

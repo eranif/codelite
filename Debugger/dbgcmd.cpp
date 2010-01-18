@@ -294,6 +294,9 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 		} else if (signame == wxT("SIGABRT")) {
 			m_observer->UpdateGotControl(DBG_RECV_SIGNAL_SIGABRT);
 
+		} else if (signame == wxT("SIGTRAP")) {
+			m_observer->UpdateGotControl(DBG_RECV_SIGNAL_SIGTRAP);
+			
 		} else {
 			//default
 			m_observer->UpdateGotControl(DBG_RECV_SIGNAL);

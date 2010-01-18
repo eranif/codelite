@@ -2202,18 +2202,24 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 	//put us on top of the z-order window
 	Frame::Get()->Raise();
 	m_dbgCanInteract = true;
-
+	
 	switch ( reason ) {
-	case DBG_RECV_SIGNAL_EXC_BAD_ACCESS:
-	case DBG_RECV_SIGNAL_SIGABRT:
-	case DBG_RECV_SIGNAL_SIGSEGV: { //program received signal sigsegv
+	case DBG_RECV_SIGNAL_SIGTRAP:         // DebugBreak()
+	case DBG_RECV_SIGNAL_EXC_BAD_ACCESS:  // SIGSEGV on Mac
+	case DBG_RECV_SIGNAL_SIGABRT:         // assert() ?
+	case DBG_RECV_SIGNAL_SIGSEGV: {       // program received signal sigsegv
+	
 		wxString signame = wxT ( "SIGSEGV" );
-		if ( reason == DBG_RECV_SIGNAL_EXC_BAD_ACCESS ) {
+		
+		if ( reason == DBG_RECV_SIGNAL_EXC_BAD_ACCESS )
 			signame = wxT ( "EXC_BAD_ACCESS" );
-		} else if ( reason == DBG_RECV_SIGNAL_SIGABRT ) {
+			
+		else if ( reason == DBG_RECV_SIGNAL_SIGABRT )
 			signame = wxT ( "SIGABRT" );
-		}
-
+			
+		else if ( reason == DBG_RECV_SIGNAL_SIGTRAP )
+			signame = wxT ( "SIGTRAP" );
+		
 		DebugMessage ( _("Program Received signal ") + signame + _("\n") );
 		wxMessageDialog dlg( Frame::Get(), _("Program Received signal ") + signame + wxT("\n") +
 		                     _("Stack trace is available in the 'Call Stack' tab\n"),
@@ -2251,10 +2257,6 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 		if ( dbgr && dbgr->IsRunning() ) {
 			dbgr->QueryFileLine();
 			dbgr->BreakList();
-//			// If a bp hit, do -break-list so that we can update breakpoint info e.g. ignore-count
-//			if ((reason==DBG_BP_HIT) || (reason==DBG_UNKNOWN)) {
-//				dbgr->BreakList();
-//			}
 		}
 	}
 	break;

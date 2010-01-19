@@ -62,7 +62,7 @@ protected:
 
 public:
 	QuickFindBar(wxWindow *parent, wxWindowID id = wxID_ANY);
-
+	int GetCloseButtonId();
 	bool Show(bool s = true);
 
 	wxScintilla *GetEditor() {

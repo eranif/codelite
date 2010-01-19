@@ -76,7 +76,7 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
 	m_inputSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
 	m_findBar = new QuickFindBar(this);
-	m_findBar->Connect(XRCID("close_quickfind"), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ShellTab::OnShowInput), NULL, this);
+	m_findBar->Connect(m_findBar->GetCloseButtonId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ShellTab::OnShowInput), NULL, this);
 	m_findBar->SetEditor(m_sci);
 
 	// grab the base class scintilla and put our sizer in its place

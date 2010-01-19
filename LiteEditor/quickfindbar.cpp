@@ -100,8 +100,8 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 
 void QuickFindBar::OnHide(wxCommandEvent &e)
 {
-	wxUnusedVar(e);
 	Show(false);
+	e.Skip();
 }
 
 void QuickFindBar::OnNext(wxCommandEvent &e)
@@ -274,12 +274,14 @@ void QuickFindBar::ShowReplaceControls(bool show)
 		m_replaceWith->Show();
 		m_replaceButton->Show();
 		m_replaceStaticText->Show();
+		optionsSizer->SetOrientation(wxVERTICAL);
 		GetSizer()->Layout();
 
 	} else if ( !show && m_replaceWith->IsShown()) {
 		m_replaceWith->Show(false);
 		m_replaceButton->Show(false);
 		m_replaceStaticText->Show(false);
+		optionsSizer->SetOrientation(wxHORIZONTAL);
 		GetSizer()->Layout();
 
 	}
@@ -313,4 +315,9 @@ void QuickFindBar::OnCheckBoxWord(wxCommandEvent& event)
 		m_flags |= wxSD_MATCHWHOLEWORD;
 	else 
 		m_flags &= ~wxSD_MATCHWHOLEWORD;
+}
+
+int QuickFindBar::GetCloseButtonId()
+{
+	return m_closeButton->GetId();
 }

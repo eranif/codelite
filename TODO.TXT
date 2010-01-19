@@ -10,4 +10,3 @@
     </StringMap>
   </ArchiveObject>
 </EnvironmentVariables>
-- Capture 'wxAssert' and display its content in the debugger

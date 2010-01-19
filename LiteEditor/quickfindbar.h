@@ -26,52 +26,49 @@
 #define __quickfindbar__
 
 #include <wx/panel.h>
+#include "quickfindbarbase.h"
 
-class wxTextCtrl;
 class wxScintilla;
-class wxButton;
-class wxStaticText;
-
-class QuickFindBar : public wxPanel
+class QuickFindBar : public QuickFindBarBase
 {
-protected:
-    wxTextCtrl   *m_findWhat;
-	wxTextCtrl   *m_replaceWith;
-	wxButton     *m_replaceButton;
-	wxStaticText *m_replaceStaticText;
-    wxScintilla  *m_sci;
-    size_t        m_flags;
-	wxButton     *m_closeButton;
-
+	wxScintilla  *m_sci;
+	size_t        m_flags;
 protected:
 	void ShowReplaceControls(bool show = true);
-	
-    void DoSearch(bool fwd, bool incr);
-	wxTextCtrl *GetFocusedControl();;
-	void OnHide         (wxCommandEvent  &e);
-	void OnNext         (wxCommandEvent  &e);
-	void OnPrev         (wxCommandEvent  &e);
-	void OnText         (wxCommandEvent  &e);
-    void OnCheckBox     (wxCommandEvent  &e);
-	void OnKeyDown      (wxKeyEvent      &e);
-	void OnEnter        (wxCommandEvent  &e);
-	void OnReplace      (wxCommandEvent  &e);
-    void OnUpdateUI     (wxUpdateUIEvent &e);
-    void OnReplaceUI    (wxUpdateUIEvent &e);
-	void OnReplaceEnter (wxCommandEvent &e);
+	void DoSearch(bool fwd, bool incr);
+	wxTextCtrl *GetFocusedControl();
+
+	// General events
 	void OnCopy         (wxCommandEvent  &e);
 	void OnPaste        (wxCommandEvent  &e);
 	void OnSelectAll    (wxCommandEvent  &e);
 	void OnEditUI       (wxUpdateUIEvent &e);
-    DECLARE_EVENT_TABLE()
+
+
+	// Control events
+	void OnHide         (wxCommandEvent  &e);
+	void OnNext         (wxCommandEvent  &e);
+	void OnPrev         (wxCommandEvent  &e);
+	void OnText         (wxCommandEvent  &e);
+	void OnKeyDown      (wxKeyEvent      &e);
+	void OnEnter        (wxCommandEvent  &e);
+	void OnReplace      (wxCommandEvent  &e);
+	void OnUpdateUI     (wxUpdateUIEvent &e);
+	void OnReplaceUI    (wxUpdateUIEvent &e);
+	void OnReplaceEnter (wxCommandEvent &e);
+	void OnCheckBoxCase ( wxCommandEvent& event );
+	void OnCheckBoxRegex( wxCommandEvent& event );
+	void OnCheckBoxWord ( wxCommandEvent& event );
 
 public:
 	QuickFindBar(wxWindow *parent, wxWindowID id = wxID_ANY);
 
-    bool Show(bool s = true);
+	bool Show(bool s = true);
 
-    wxScintilla *GetEditor() { return m_sci; }
-    void SetEditor(wxScintilla *sci) ;
+	wxScintilla *GetEditor() {
+		return m_sci;
+	}
+	void SetEditor(wxScintilla *sci) ;
 };
 
 #endif // __quickfindbar__

@@ -399,6 +399,8 @@
     <File Name="clauidockart.h"/>
     <File Name="settersgetterstreectrl.cpp"/>
     <File Name="settersgetterstreectrl.h"/>
+    <File Name="quickfindbarbase.cpp"/>
+    <File Name="quickfindbarbase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>
@@ -545,6 +547,7 @@
     <File Name="workspacesettingsbase.fbp"/>
     <File Name="implementparentvirtualfunctionsbase.fbp"/>
     <File Name="tasksfindwhatdlgbase.fbp"/>
+    <File Name="quickfindbarbase.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="breakpointsmgr.h"/>

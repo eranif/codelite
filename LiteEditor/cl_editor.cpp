@@ -155,8 +155,8 @@ LEditor::LEditor(wxWindow* parent)
 	ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSCI_MARK_ROUNDRECT;
 	ms_bookmarkShapes[wxT("Small Arrow")]       = wxSCI_MARK_ARROW;
 	ms_bookmarkShapes[wxT("Circle")]            = wxSCI_MARK_CIRCLE;
-
-	//SetSyntaxHighlight();
+	
+	SetSyntaxHighlight();
 	CmdKeyClear(wxT('D'), wxSCI_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
 	Connect(wxEVT_SCI_DWELLSTART, wxScintillaEventHandler(LEditor::OnDwellStart), NULL, this);
 
@@ -191,9 +191,10 @@ void LEditor::SetSyntaxHighlight()
 	m_rightClickMenu->AppendSeparator(); // separates plugins
 
 	SetProperties();
-	UpdateColours();
+	
 	m_context->SetActive();
 	m_context->ApplySettings();
+	UpdateColours();
 }
 
 // Fills the struct array that marries breakpoint type to marker and mask
@@ -1062,11 +1063,12 @@ void LEditor::SetSyntaxHighlight(const wxString &lexerName)
 	m_rightClickMenu->AppendSeparator(); // separates plugins
 
 	SetProperties();
-	UpdateColours();
-
+	
 	SetEOL();
 	m_context->SetActive();
 	m_context->ApplySettings();
+	
+	UpdateColours();
 }
 
 //this function is called before the debugger startup
@@ -1496,7 +1498,7 @@ void LEditor::SetActive()
 
 	SetFocus();
 	SetSCIFocus(true);
-
+	
 	m_context->SetActive();
 
 	wxScintillaEvent dummy;

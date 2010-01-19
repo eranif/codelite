@@ -14,14 +14,14 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxHORIZONTAL );
 	
+	m_closeButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( -1,-1 ), wxBU_AUTODRAW );
+	mainSizer->Add( m_closeButton, 0, 0, 5 );
+	
 	wxFlexGridSizer* fgSizer1;
-	fgSizer1 = new wxFlexGridSizer( 2, 5, 0, 0 );
-	fgSizer1->AddGrowableCol( 2 );
+	fgSizer1 = new wxFlexGridSizer( 2, 4, 0, 0 );
+	fgSizer1->AddGrowableCol( 1 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
-	
-	m_closeButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( -1,-1 ), wxBU_AUTODRAW );
-	fgSizer1->Add( m_closeButton, 0, wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_staticTextFind = new wxStaticText( this, wxID_ANY, _("Find:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextFind->Wrap( -1 );
@@ -30,27 +30,24 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_findWhat = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2 );
 	m_findWhat->SetToolTip( _("Hit ENTER to search, or Shift + ENTER to search backward") );
 	
-	fgSizer1->Add( m_findWhat, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	fgSizer1->Add( m_findWhat, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	m_buttonFindNext = new wxButton( this, wxID_ANY, _("Next"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
 	m_buttonFindNext->SetDefault(); 
-	fgSizer1->Add( m_buttonFindNext, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+	fgSizer1->Add( m_buttonFindNext, 0, wxEXPAND|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_buttonFindPrevious = new wxButton( this, wxID_ANY, _("Previous"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	fgSizer1->Add( m_buttonFindPrevious, 0, wxEXPAND, 5 );
-	
-	
-	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
+	fgSizer1->Add( m_buttonFindPrevious, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_replaceStaticText = new wxStaticText( this, wxID_ANY, _("Replace with:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_replaceStaticText->Wrap( -1 );
 	fgSizer1->Add( m_replaceStaticText, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 	
 	m_replaceWith = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2 );
-	fgSizer1->Add( m_replaceWith, 0, wxEXPAND, 5 );
+	fgSizer1->Add( m_replaceWith, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	m_replaceButton = new wxButton( this, wxID_ANY, _("Replace"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	fgSizer1->Add( m_replaceButton, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+	fgSizer1->Add( m_replaceButton, 0, wxEXPAND|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );

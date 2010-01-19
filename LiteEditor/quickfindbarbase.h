@@ -43,7 +43,6 @@ class QuickFindBarBase : public wxPanel
 		wxTextCtrl* m_findWhat;
 		wxButton* m_buttonFindNext;
 		wxButton* m_buttonFindPrevious;
-		
 		wxStaticText* m_replaceStaticText;
 		wxTextCtrl* m_replaceWith;
 		wxButton* m_replaceButton;

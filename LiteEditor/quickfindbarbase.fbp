@@ -97,7 +97,7 @@
                         <property name="permission">protected</property>
                         <property name="pos"></property>
                         <property name="selected"></property>
-                        <property name="size">22,22</property>
+                        <property name="size">-1,-1</property>
                         <property name="style">wxBU_AUTODRAW</property>
                         <property name="subclass"></property>
                         <property name="tooltip">Close Incremental Search Bar</property>
@@ -107,7 +107,7 @@
                         <property name="validator_variable"></property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
-                        <property name="window_style">wxNO_BORDER</property>
+                        <property name="window_style"></property>
                         <event name="OnButtonClick">OnHide</event>
                         <event name="OnChar"></event>
                         <event name="OnEnterWindow"></event>
@@ -158,7 +158,7 @@
                         <property name="permission">protected</property>
                         <property name="pos"></property>
                         <property name="selected"></property>
-                        <property name="size">22,22</property>
+                        <property name="size">-1,-1</property>
                         <property name="style">wxBU_AUTODRAW</property>
                         <property name="subclass"></property>
                         <property name="tooltip">Toggle Replace Controls</property>
@@ -168,7 +168,7 @@
                         <property name="validator_variable"></property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
-                        <property name="window_style">wxNO_BORDER</property>
+                        <property name="window_style"></property>
                         <event name="OnButtonClick">OnToggleReplaceControls</event>
                         <event name="OnChar"></event>
                         <event name="OnEnterWindow"></event>

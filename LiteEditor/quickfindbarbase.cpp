@@ -14,14 +14,14 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_closeButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 22,22 ), wxBU_AUTODRAW|wxNO_BORDER );
+	m_closeButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( -1,-1 ), wxBU_AUTODRAW );
 	m_closeButton->SetToolTip( _("Close Incremental Search Bar") );
 	
 	m_closeButton->SetToolTip( _("Close Incremental Search Bar") );
 	
 	mainSizer->Add( m_closeButton, 0, 0, 5 );
 	
-	m_showReplaceButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 22,22 ), wxBU_AUTODRAW|wxNO_BORDER );
+	m_showReplaceButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( -1,-1 ), wxBU_AUTODRAW );
 	m_showReplaceButton->SetToolTip( _("Toggle Replace Controls") );
 	
 	m_showReplaceButton->SetToolTip( _("Toggle Replace Controls") );

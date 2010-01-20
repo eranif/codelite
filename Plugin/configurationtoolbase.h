@@ -30,6 +30,7 @@
 class SerializedObject;
 
 class ConfigurationToolBase {
+protected:
 	wxXmlDocument m_doc;
 	wxString m_fileName;
 	

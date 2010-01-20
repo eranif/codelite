@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "wx/utils.h"
+#include "xmlutils.h"
 #include "wx/regex.h"
 #include "wx/filename.h"
 #include "environmentconfig.h"
@@ -62,7 +63,35 @@ wxString EnvironmentConfig::GetRootName()
 
 bool EnvironmentConfig::Load()
 {
-	return ConfigurationToolBase::Load( wxT("config/environment_variables.xml") );
+	bool loaded = ConfigurationToolBase::Load( wxT("config/environment_variables.xml") );
+	if(loaded) {
+		// make sure that we are using the new format
+		wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("ArchiveObject"));
+		if(node) {
+			node = XmlUtils::FindFirstByTagName(node, wxT("StringMap"));
+			if(node) {
+				
+				// this is an old version, convert it to the new format
+				EvnVarList vars;
+				std::map<wxString, wxString> envSets;
+				wxString content;
+				
+				wxXmlNode *child = node->GetChildren();
+				while(child) {
+					if(child->GetName() == wxT("MapEntry")) {
+						wxString key = child->GetPropVal(wxT("Key"),   wxT(""));
+						wxString val = child->GetPropVal(wxT("Value"), wxT(""));
+						content << key << wxT("=") << val << wxT("\n");
+					}
+					child = child->GetNext();
+				}
+				envSets[wxT("Default")] = content.Trim().Trim(false);
+				vars.SetEnvVarSets(envSets);
+				SetSettings(vars);
+			}
+		}
+	}
+	return loaded;
 }
 
 wxString EnvironmentConfig::ExpandVariables(const wxString &in)

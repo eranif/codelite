@@ -64,6 +64,7 @@
 	<object class="wxBitmap" name="wx_project_header">res/wxproject.png</object>
 	<object class="wxBitmap" name="colourise">res/package_utilities.png</object>
 	<object class="wxBitmap" name="collapse">res/collapse.png</object>
+	<object class="wxBitmap" name="expand">res/expand.png</object>
 	<object class="wxBitmap" name="gohome">res/gohome.png</object>
 	<object class="wxBitmap" name="project_conflict">res/messagebox_warning.png</object>
 	<object class="wxBitmap" name="files_unversioned">res/messagebox_info.png</object>

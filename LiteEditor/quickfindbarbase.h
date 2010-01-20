@@ -39,6 +39,7 @@ class QuickFindBarBase : public wxPanel
 	
 	protected:
 		wxBitmapButton* m_closeButton;
+		wxBitmapButton* m_showReplaceButton;
 		wxStaticText* m_staticTextFind;
 		wxTextCtrl* m_findWhat;
 		wxButton* m_buttonFindNext;
@@ -54,6 +55,7 @@ class QuickFindBarBase : public wxPanel
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnHide( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnToggleReplaceControls( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnKeyDown( wxKeyEvent& event ) { event.Skip(); }
 		virtual void OnText( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEnter( wxCommandEvent& event ) { event.Skip(); }

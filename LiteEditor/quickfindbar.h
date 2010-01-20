@@ -37,7 +37,8 @@ protected:
 	void ShowReplaceControls(bool show = true);
 	void DoSearch(bool fwd, bool incr);
 	wxTextCtrl *GetFocusedControl();
-
+	void DoShowControls();
+	
 	// General events
 	void OnCopy         (wxCommandEvent  &e);
 	void OnPaste        (wxCommandEvent  &e);
@@ -59,6 +60,7 @@ protected:
 	void OnCheckBoxCase ( wxCommandEvent& event );
 	void OnCheckBoxRegex( wxCommandEvent& event );
 	void OnCheckBoxWord ( wxCommandEvent& event );
+	void OnToggleReplaceControls( wxCommandEvent& event );
 
 public:
 	QuickFindBar(wxWindow *parent, wxWindowID id = wxID_ANY);

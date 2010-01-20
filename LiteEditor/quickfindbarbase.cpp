@@ -14,8 +14,19 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_closeButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( -1,-1 ), wxBU_AUTODRAW );
+	m_closeButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 22,22 ), wxBU_AUTODRAW|wxNO_BORDER );
+	m_closeButton->SetToolTip( _("Close Incremental Search Bar") );
+	
+	m_closeButton->SetToolTip( _("Close Incremental Search Bar") );
+	
 	mainSizer->Add( m_closeButton, 0, 0, 5 );
+	
+	m_showReplaceButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 22,22 ), wxBU_AUTODRAW|wxNO_BORDER );
+	m_showReplaceButton->SetToolTip( _("Toggle Replace Controls") );
+	
+	m_showReplaceButton->SetToolTip( _("Toggle Replace Controls") );
+	
+	mainSizer->Add( m_showReplaceButton, 0, 0, 5 );
 	
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 2, 4, 0, 0 );
@@ -34,10 +45,10 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	m_buttonFindNext = new wxButton( this, wxID_ANY, _("Next"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
 	m_buttonFindNext->SetDefault(); 
-	fgSizer1->Add( m_buttonFindNext, 0, wxEXPAND|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer1->Add( m_buttonFindNext, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxLEFT, 5 );
 	
 	m_buttonFindPrevious = new wxButton( this, wxID_ANY, _("Previous"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	fgSizer1->Add( m_buttonFindPrevious, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer1->Add( m_buttonFindPrevious, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxLEFT, 5 );
 	
 	m_replaceStaticText = new wxStaticText( this, wxID_ANY, _("Replace with:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_replaceStaticText->Wrap( -1 );
@@ -47,17 +58,17 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	fgSizer1->Add( m_replaceWith, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	m_replaceButton = new wxButton( this, wxID_ANY, _("Replace"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	fgSizer1->Add( m_replaceButton, 0, wxEXPAND|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer1->Add( m_replaceButton, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxLEFT, 5 );
 	
 	
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	mainSizer->Add( fgSizer1, 1, wxEXPAND, 0 );
+	mainSizer->Add( fgSizer1, 1, 0, 0 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
-	mainSizer->Add( m_staticline1, 0, wxEXPAND|wxLEFT, 5 );
+	mainSizer->Add( m_staticline1, 0, wxLEFT|wxEXPAND, 5 );
 	
-	optionsSizer = new wxBoxSizer( wxVERTICAL );
+	optionsSizer = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_checkBoxCase = new wxCheckBox( this, wxID_ANY, _("Case"), wxDefaultPosition, wxDefaultSize, 0 );
 	optionsSizer->Add( m_checkBoxCase, 0, wxRIGHT|wxLEFT, 5 );
@@ -68,7 +79,7 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_checkBoxRegex = new wxCheckBox( this, wxID_ANY, _("Regexp"), wxDefaultPosition, wxDefaultSize, 0 );
 	optionsSizer->Add( m_checkBoxRegex, 0, wxRIGHT|wxLEFT, 5 );
 	
-	mainSizer->Add( optionsSizer, 0, wxALIGN_CENTER_HORIZONTAL, 1 );
+	mainSizer->Add( optionsSizer, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 1 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -76,6 +87,7 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	// Connect Events
 	m_closeButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnHide ), NULL, this );
+	m_showReplaceButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnToggleReplaceControls ), NULL, this );
 	m_findWhat->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( QuickFindBarBase::OnKeyDown ), NULL, this );
 	m_findWhat->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( QuickFindBarBase::OnText ), NULL, this );
 	m_findWhat->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( QuickFindBarBase::OnEnter ), NULL, this );
@@ -97,6 +109,7 @@ QuickFindBarBase::~QuickFindBarBase()
 {
 	// Disconnect Events
 	m_closeButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnHide ), NULL, this );
+	m_showReplaceButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnToggleReplaceControls ), NULL, this );
 	m_findWhat->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( QuickFindBarBase::OnKeyDown ), NULL, this );
 	m_findWhat->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( QuickFindBarBase::OnText ), NULL, this );
 	m_findWhat->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( QuickFindBarBase::OnEnter ), NULL, this );

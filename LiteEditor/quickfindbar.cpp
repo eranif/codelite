@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include "editor_config.h"
 #include <wx/statline.h>
 #include "manager.h"
 #include <wx/textctrl.h>
@@ -37,6 +38,8 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 {
 	Hide();
 	m_closeButton->SetBitmapLabel(wxXmlResource::Get()->LoadBitmap(wxT("page_close16")));
+	DoShowControls();
+
 	GetSizer()->Fit(this);
 	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnCopy),      NULL, this);
 	wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnPaste),     NULL, this);
@@ -51,9 +54,11 @@ bool QuickFindBar::Show(bool show)
 {
 	bool res = wxPanel::Show(show);
 	if (res) {
-		GetParent()->GetSizer()->Show(this, show, true);
 		GetParent()->GetSizer()->Layout();
 	}
+	
+	DoShowControls();
+	
 	if (!m_sci) {
 		// nothing to do
 	} else if (!show) {
@@ -274,14 +279,12 @@ void QuickFindBar::ShowReplaceControls(bool show)
 		m_replaceWith->Show();
 		m_replaceButton->Show();
 		m_replaceStaticText->Show();
-		optionsSizer->SetOrientation(wxVERTICAL);
 		GetSizer()->Layout();
 
 	} else if ( !show && m_replaceWith->IsShown()) {
 		m_replaceWith->Show(false);
 		m_replaceButton->Show(false);
 		m_replaceStaticText->Show(false);
-		optionsSizer->SetOrientation(wxHORIZONTAL);
 		GetSizer()->Layout();
 
 	}
@@ -290,34 +293,57 @@ void QuickFindBar::ShowReplaceControls(bool show)
 void QuickFindBar::SetEditor(wxScintilla* sci)
 {
 	m_sci = sci;
-	ShowReplaceControls(m_sci && !m_sci->GetReadOnly());
+	DoShowControls();
 }
 
 void QuickFindBar::OnCheckBoxCase(wxCommandEvent& event)
 {
-	if(event.IsChecked()) 
+	if (event.IsChecked())
 		m_flags |= wxSD_MATCHCASE;
-	else 
+	else
 		m_flags &= ~wxSD_MATCHCASE;
 }
 
 void QuickFindBar::OnCheckBoxRegex(wxCommandEvent& event)
 {
-	if(event.IsChecked()) 
+	if (event.IsChecked())
 		m_flags |= wxSD_REGULAREXPRESSION;
-	else 
+	else
 		m_flags &= ~wxSD_REGULAREXPRESSION;
 }
 
 void QuickFindBar::OnCheckBoxWord(wxCommandEvent& event)
 {
-	if(event.IsChecked()) 
+	if (event.IsChecked())
 		m_flags |= wxSD_MATCHWHOLEWORD;
-	else 
+	else
 		m_flags &= ~wxSD_MATCHWHOLEWORD;
 }
 
 int QuickFindBar::GetCloseButtonId()
 {
 	return m_closeButton->GetId();
+}
+
+void QuickFindBar::OnToggleReplaceControls(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	long v(m_replaceButton->IsShown() ? 0 : 1);
+	EditorConfigST::Get()->SaveLongValue(wxT("QuickFindBarShowReplace"), v);
+	DoShowControls();
+}
+
+void QuickFindBar::DoShowControls()
+{
+	long v(1);
+	EditorConfigST::Get()->GetLongValue(wxT("QuickFindBarShowReplace"), v);
+	bool canShowToggleReplaceButton = m_sci && !m_sci->GetReadOnly();
+	bool showReplaceControls        = canShowToggleReplaceButton && v;
+	
+	m_showReplaceButton->Show(canShowToggleReplaceButton);
+	ShowReplaceControls(showReplaceControls);
+	wxBitmap bmp = showReplaceControls ? wxXmlResource::Get()->LoadBitmap(wxT("expand")) : wxXmlResource::Get()->LoadBitmap(wxT("collapse"));
+	m_showReplaceButton->SetBitmapLabel(bmp);
+	
+	GetParent()->GetSizer()->Layout();
 }

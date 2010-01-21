@@ -20,10 +20,10 @@
 #include <wx/settings.h>
 #include <wx/string.h>
 #include <wx/button.h>
+#include <wx/statline.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/sizer.h>
-#include <wx/statline.h>
 #include <wx/checkbox.h>
 #include <wx/panel.h>
 
@@ -40,6 +40,7 @@ class QuickFindBarBase : public wxPanel
 	protected:
 		wxBitmapButton* m_closeButton;
 		wxBitmapButton* m_showReplaceButton;
+		wxStaticLine* m_staticline2;
 		wxStaticText* m_staticTextFind;
 		wxTextCtrl* m_findWhat;
 		wxButton* m_buttonFindNext;

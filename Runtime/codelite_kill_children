@@ -6,5 +6,5 @@ do
 	# Use SIGTERM by default
 	kill $p 2> /dev/null
 done
-kill -9 $1 2> /dev/null
+kill $1 2> /dev/null
 

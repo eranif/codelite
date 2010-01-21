@@ -119,7 +119,6 @@ cp ../lib/libwxscintillau.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libpluginu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libcodeliteu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libwxsqlite3u.so ./CodeLite.app/Contents/MacOS/
-cp ../lib/libwxpropgridu.so ./CodeLite.app/Contents/MacOS/
 
 cp ../sdk/codelite_indexer/codelite_indexer   ./CodeLite.app/Contents/SharedSupport/
 cp ../sdk/codelite_cppcheck/codelite_cppcheck ./CodeLite.app/Contents/SharedSupport/

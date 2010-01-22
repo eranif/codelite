@@ -1260,7 +1260,7 @@ void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 	mainTitle = CODELITE_VERSION_STR;
 
 	AboutDlg dlg(this, mainTitle);
-	dlg.SetInfo(wxString::Format(wxT("SVN build, revision: %s"), SvnRevision));
+	dlg.SetInfo(mainTitle);
 	dlg.ShowModal();
 }
 

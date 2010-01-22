@@ -101,18 +101,8 @@ static wxBitmap clDrawSplashBitmap(	const wxBitmap& bitmap,
 									const wxString &subTitle)
 {
 	wxBitmap bmp ( bitmap.GetWidth(), bitmap.GetHeight()  );
-
     wxMemoryDC dcMem;
-
-#ifdef USE_PALETTE_IN_SPLASH
-    bool hiColour = (wxDisplayDepth() >= 16) ;
-
-    if (bitmap.GetPalette() && !hiColour)
-    {
-        dcMem.SetPalette(* bitmap.GetPalette());
-    }
-#endif // USE_PALETTE_IN_SPLASH
-
+	
     dcMem.SelectObject( bmp );
 	dcMem.DrawBitmap  ( bitmap, 0, 0, true);
 
@@ -129,16 +119,17 @@ static wxBitmap clDrawSplashBitmap(	const wxBitmap& bitmap,
 
 	//draw shadow
 	dcMem.SetTextForeground(wxT("LIGHT GRAY"));
-
-	dcMem.DrawText(mainTitle, bmpW - w - 9, 11);
+	
+	wxCoord textX = (bmpW - w)/2;
+	dcMem.DrawText(mainTitle, textX, 11);
+	
 	//draw the text
 	dcMem.SetTextForeground(wxT("BLACK"));
 	dcMem.SetFont(font);
 
 	//draw the main title
-	wxCoord textX = bmpW - w - 10;
 	wxCoord textY = 10;
-	dcMem.DrawText(mainTitle, textX, textY);
+	dcMem.DrawText(mainTitle, textX-1, textY);
 
 	//draw the subtitle
 	dcMem.SetFont(smallfont);
@@ -150,14 +141,49 @@ static wxBitmap clDrawSplashBitmap(	const wxBitmap& bitmap,
 
 	dcMem.DrawText(subTitle, stextX, stextY);
 	dcMem.SelectObject(wxNullBitmap);
-
-#ifdef USE_PALETTE_IN_SPLASH
-    if (bitmap.GetPalette() && !hiColour)
-    {
-        dcMem.SetPalette(wxNullPalette);
-    }
-#endif // USE_PALETTE_IN_SPLASH
 	return bmp;
+}
+
+//-----------------------------------------------------
+// Splashscreen
+//-----------------------------------------------------
+class clSplashScreen : public wxSplashScreen
+{
+	wxBitmap m_bmp;
+public:
+	clSplashScreen(const wxBitmap& bmp) : wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 2000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFRAME_SHAPED| wxNO_BORDER| wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP)
+	{
+		m_bmp = bmp;
+		SetSize(wxSize(m_bmp.GetWidth(), m_bmp.GetHeight()));
+		
+#ifndef __WXGTK__
+	// On wxGTK we can't do this yet because the window hasn't been created
+	// yet so we wait until the EVT_WINDOW_CREATE event happens.  On wxMSW and
+	// wxMac the window has been created at this point so we go ahead and set
+	// the shape now.
+	SetWindowShape();
+#endif
+	}
+	
+	void SetWindowShape()
+	{
+		wxRegion region(m_bmp, *wxWHITE);
+		SetShape(region);
+	}
+	
+	DECLARE_EVENT_TABLE()
+	void OnWindowCreate(wxWindowCreateEvent &e);
+};
+
+BEGIN_EVENT_TABLE(clSplashScreen, wxSplashScreen)
+#ifdef __WXGTK__
+EVT_WINDOW_CREATE(clSplashScreen::OnWindowCreate)
+#endif
+END_EVENT_TABLE()
+
+void clSplashScreen::OnWindowCreate(wxWindowCreateEvent& e)
+{
+	SetWindowShape();
 }
 
 #if wxVERSION_NUMBER < 2900
@@ -443,7 +469,7 @@ bool App::OnInit()
 	bool showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
 
 	// Dont show splashscreen in debug build, its annoying
-#ifdef __WXDEBUG__
+#if 0
 	showSplash = false;
 #endif
 
@@ -453,10 +479,7 @@ bool App::OnInit()
 		if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
 			wxString mainTitle = CODELITE_VERSION_STR;
 			wxBitmap splash = clDrawSplashBitmap(bitmap, mainTitle, wxT(""));
-			m_splash = new wxSplashScreen(splash,
-			                            wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
-			                            2000, NULL, wxID_ANY);
-			wxTheApp->Yield();
+			m_splash = new clSplashScreen(splash);
 		}
 	}
 
@@ -630,3 +653,4 @@ bool App::CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir
 	}
 	return true;
 }
+

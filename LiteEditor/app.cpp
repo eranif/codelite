@@ -431,8 +431,6 @@ bool App::OnInit()
 		}
 	}
 	
-	Yield();
-	
 	// Create the main application window (a dialog in this case)
 	// NOTE: Vertical dimension comprises the caption bar.
 	//       Horizontal dimension has to take into account the thin
@@ -440,9 +438,11 @@ bool App::OnInit()
 	//       Win 95).
 	Frame::Initialize( parser.GetParamCount() == 0 );
 	m_pMainFrame = Frame::Get();
-	
+
+#ifdef __WXGTK__
 	Yield();
-	
+#endif
+
 	// update the accelerators table
 	ManagerST::Get()->UpdateMenuAccelerators();
 	m_pMainFrame->Show(TRUE);

@@ -327,7 +327,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	m_panel3->SetSizer( bSizer15 );
 	m_panel3->Layout();
 	bSizer15->Fit( m_panel3 );
-	m_notebook->AddPage( m_panel3, _("General"), false );
+	m_notebook->AddPage( m_panel3, _("General"), true );
 	m_panel4 = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer16;
 	bSizer16 = new wxBoxSizer( wxVERTICAL );
@@ -356,7 +356,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	m_panel4->SetSizer( bSizer16 );
 	m_panel4->Layout();
 	bSizer16->Fit( m_panel4 );
-	m_notebook->AddPage( m_panel4, _("External Diff"), true );
+	m_notebook->AddPage( m_panel4, _("External Diff"), false );
 	m_panel5 = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer161;
 	bSizer161 = new wxBoxSizer( wxVERTICAL );

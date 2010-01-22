@@ -128,42 +128,11 @@ static wxBitmap clDrawSplashBitmap(const wxBitmap& bitmap, const wxString &mainT
 //-----------------------------------------------------
 class clSplashScreen : public wxSplashScreen
 {
-	wxBitmap m_bmp;
 public:
-	clSplashScreen(const wxBitmap& bmp) : wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 2000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFRAME_SHAPED| wxBORDER_SIMPLE| wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP)
+	clSplashScreen(const wxBitmap& bmp) : wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 5000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE| wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP)
 	{
-		m_bmp = bmp;
-		SetSize(wxSize(m_bmp.GetWidth(), m_bmp.GetHeight()));
-		
-#ifndef __WXGTK__
-	// On wxGTK we can't do this yet because the window hasn't been created
-	// yet so we wait until the EVT_WINDOW_CREATE event happens.  On wxMSW and
-	// wxMac the window has been created at this point so we go ahead and set
-	// the shape now.
-	SetWindowShape();
-#endif
 	}
-	
-	void SetWindowShape()
-	{
-		wxRegion region(m_bmp, *wxWHITE);
-		SetShape(region);
-	}
-	
-	DECLARE_EVENT_TABLE()
-	void OnWindowCreate(wxWindowCreateEvent &e);
 };
-
-BEGIN_EVENT_TABLE(clSplashScreen, wxSplashScreen)
-#ifdef __WXGTK__
-EVT_WINDOW_CREATE(clSplashScreen::OnWindowCreate)
-#endif
-END_EVENT_TABLE()
-
-void clSplashScreen::OnWindowCreate(wxWindowCreateEvent& e)
-{
-	SetWindowShape();
-}
 
 #if wxVERSION_NUMBER < 2900
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
@@ -461,7 +430,9 @@ bool App::OnInit()
 			m_splash = new clSplashScreen(splash);
 		}
 	}
-
+	
+	Yield();
+	
 	// Create the main application window (a dialog in this case)
 	// NOTE: Vertical dimension comprises the caption bar.
 	//       Horizontal dimension has to take into account the thin
@@ -469,7 +440,9 @@ bool App::OnInit()
 	//       Win 95).
 	Frame::Initialize( parser.GetParamCount() == 0 );
 	m_pMainFrame = Frame::Get();
-
+	
+	Yield();
+	
 	// update the accelerators table
 	ManagerST::Get()->UpdateMenuAccelerators();
 	m_pMainFrame->Show(TRUE);

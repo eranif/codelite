@@ -151,7 +151,7 @@ class clSplashScreen : public wxSplashScreen
 {
 	wxBitmap m_bmp;
 public:
-	clSplashScreen(const wxBitmap& bmp) : wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 2000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFRAME_SHAPED| wxNO_BORDER| wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP)
+	clSplashScreen(const wxBitmap& bmp) : wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 2000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFRAME_SHAPED| wxBORDER_SIMPLE| wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP)
 	{
 		m_bmp = bmp;
 		SetSize(wxSize(m_bmp.GetWidth(), m_bmp.GetHeight()));

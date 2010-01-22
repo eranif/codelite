@@ -96,9 +96,7 @@ wxString MacGetBasePath()
 // helper method to draw the revision + version
 // on our splash screen
 //-------------------------------------------------
-static wxBitmap clDrawSplashBitmap(	const wxBitmap& bitmap,
-								    const wxString &mainTitle,
-									const wxString &subTitle)
+static wxBitmap clDrawSplashBitmap(const wxBitmap& bitmap, const wxString &mainTitle)
 {
 	wxBitmap bmp ( bitmap.GetWidth(), bitmap.GetHeight()  );
     wxMemoryDC dcMem;
@@ -107,7 +105,7 @@ static wxBitmap clDrawSplashBitmap(	const wxBitmap& bitmap,
 	dcMem.DrawBitmap  ( bitmap, 0, 0, true);
 
 	//write the main title & subtitle
-	wxCoord w, h, w1, h1;
+	wxCoord w, h;
 	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont smallfont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	font.SetPointSize(12);
@@ -115,31 +113,12 @@ static wxBitmap clDrawSplashBitmap(	const wxBitmap& bitmap,
 	dcMem.SetFont(font);
 	dcMem.GetMultiLineTextExtent(mainTitle, &w, &h);
 	wxCoord bmpW = bitmap.GetWidth();
-	wxCoord bmpH = bitmap.GetHeight();
 
 	//draw shadow
-	dcMem.SetTextForeground(wxT("LIGHT GRAY"));
+	dcMem.SetTextForeground(wxT("WHITE"));
 	
 	wxCoord textX = (bmpW - w)/2;
 	dcMem.DrawText(mainTitle, textX, 11);
-	
-	//draw the text
-	dcMem.SetTextForeground(wxT("BLACK"));
-	dcMem.SetFont(font);
-
-	//draw the main title
-	wxCoord textY = 10;
-	dcMem.DrawText(mainTitle, textX-1, textY);
-
-	//draw the subtitle
-	dcMem.SetFont(smallfont);
-	dcMem.SetTextForeground(wxT("WHITE"));
-	dcMem.GetMultiLineTextExtent(subTitle, &w1, &h1);
-
-	wxCoord stextX = textX + (w - w1)/2;
-	wxCoord stextY = bmpH - h1 - 10;
-
-	dcMem.DrawText(subTitle, stextX, stextY);
 	dcMem.SelectObject(wxNullBitmap);
 	return bmp;
 }
@@ -478,7 +457,7 @@ bool App::OnInit()
 		wxString splashName(mgr->GetStarupDirectory() + wxT("/images/splashscreen.png"));
 		if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
 			wxString mainTitle = CODELITE_VERSION_STR;
-			wxBitmap splash = clDrawSplashBitmap(bitmap, mainTitle, wxT(""));
+			wxBitmap splash = clDrawSplashBitmap(bitmap, mainTitle);
 			m_splash = new clSplashScreen(splash);
 		}
 	}

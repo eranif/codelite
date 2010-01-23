@@ -325,7 +325,7 @@ clProcess *TagsManager::StartCtagsProcess()
 	uid << wxGetProcessId();
 	
 	if(m_codeliteIndexerPath.FileExists() == false) {
-		wxMessageBox(wxString::Format(wxT("Could not locate indexer: %s"), m_codeliteIndexerPath.GetFullPath().c_str()), wxT("CodeLite"), wxOK|wxCENTER|wxICON_ERROR);
+		wxLogMessage(wxT("ERROR: Could not locate indexer: %s"), m_codeliteIndexerPath.GetFullPath().c_str());
 		m_codeliteIndexerProcess = NULL;
 		return NULL;
 	}

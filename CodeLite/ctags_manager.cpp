@@ -323,7 +323,13 @@ clProcess *TagsManager::StartCtagsProcess()
 	// build the command, we surround ctags name with double quatations
 	wxString uid;
 	uid << wxGetProcessId();
-
+	
+	if(m_codeliteIndexerPath.FileExists() == false) {
+		wxMessageBox(wxString::Format(wxT("Could not locate indexer: %s"), m_codeliteIndexerPath.GetFullPath().c_str()), wxT("CodeLite"), wxOK|wxCENTER|wxICON_ERROR);
+		m_codeliteIndexerProcess = NULL;
+		return NULL;
+	}
+	
 	// concatenate the PID to identifies this channel to this instance of codelite
 	cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\" ") << uid << wxT(" --pid");
 	clProcess* process;
@@ -365,6 +371,9 @@ void TagsManager::SetCodeLiteIndexerPath(const wxString& path)
 	wxCriticalSectionLocker locker(m_cs);
 
 	m_codeliteIndexerPath = wxFileName(path, wxT("codelite_indexer"));
+#ifdef __WXMSW__
+	m_codeliteIndexerPath.SetExt(wxT("exe"));
+#endif
 }
 
 void TagsManager::OnCtagsEnd(wxProcessEvent& event)

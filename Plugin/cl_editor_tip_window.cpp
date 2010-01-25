@@ -228,13 +228,13 @@ void clEditorTipWindow::DoAdjustPosition()
 {
 	wxPoint pt = m_point;
 	wxSize sz         = DoGetTipSize();
-	wxSize parentSize = GetParent()->GetSize();
+	wxRect parentSize = GetParent()->GetClientRect();
 	
 	pt.y += m_lineHeight;
 	
-	if(pt.x + sz.x > parentSize.x) {
+	if(pt.x + sz.x > parentSize.width) {
 		// our tip can not fit into the screen, shift it left
-		pt.x -= ((pt.x + sz.x) - parentSize.x);
+		pt.x -= ((pt.x + sz.x) - parentSize.width);
 	}
 	
 	Move(pt);

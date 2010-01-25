@@ -76,7 +76,12 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 			int x = DoGetTextLen(txtBefore);
 			int w = DoGetTextLen(txtInclude);
 			
-			dc.SetBrush( wxBrush( DrawingUtils::LightColour(wxT("BLUE"), 9)) );
+			
+			if ( DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK)) ) 
+				dc.SetBrush( *wxTRANSPARENT_BRUSH );
+			else 
+				dc.SetBrush( wxBrush( DrawingUtils::LightColour(wxT("BLUE"), 9)) );
+				
 			dc.SetPen  ( wxPen  ( DrawingUtils::LightColour(wxT("BLUE"), 6)) );
 			dc.DrawRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2));
 		}
@@ -244,6 +249,9 @@ void clEditorTipWindow::DoAdjustPosition()
 	if(pt.x + sz.x > parentSize.width) {
 		// our tip can not fit into the screen, shift it left
 		pt.x -= ((pt.x + sz.x) - parentSize.width);
+		
+		if(pt.x < 0)
+			pt.x = 0;
 	}
 	
 	Move(pt);

@@ -34,8 +34,6 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 	wxFont font        = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont disableFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	disableFont.SetStyle(wxFONTSTYLE_ITALIC);
-	SetSizeHints(DoGetTipSize());
-	
 	wxRect rr = GetClientRect();
 	
 	dc.SetPen  ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );

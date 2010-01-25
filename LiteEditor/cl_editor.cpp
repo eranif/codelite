@@ -185,6 +185,22 @@ time_t LEditor::GetFileLastModifiedTime() const
 	return GetFileModificationTime(m_fileName.GetFullPath());
 }
 
+void LEditor::SetSyntaxHighlight(const wxString &lexerName)
+{
+	ClearDocumentStyle();
+	m_context = ContextManager::Get()->NewContext(this, lexerName);
+	m_rightClickMenu = m_context->GetMenu();
+	m_rightClickMenu->AppendSeparator(); // separates plugins
+
+	SetProperties();
+	
+	SetEOL();
+	m_context->SetActive();
+	m_context->ApplySettings();
+	
+	UpdateColours();
+}
+
 void LEditor::SetSyntaxHighlight()
 {
 	ClearDocumentStyle();
@@ -1057,22 +1073,6 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	wxString file_name = fileName.GetFullPath();
 	SendCmdEvent(wxEVT_FILE_SAVED, (void*)&file_name);
 	return true;
-}
-
-void LEditor::SetSyntaxHighlight(const wxString &lexerName)
-{
-	ClearDocumentStyle();
-	m_context = ContextManager::Get()->NewContext(this, lexerName);
-	m_rightClickMenu = m_context->GetMenu();
-	m_rightClickMenu->AppendSeparator(); // separates plugins
-
-	SetProperties();
-	
-	SetEOL();
-	m_context->SetActive();
-	m_context->ApplySettings();
-	
-	UpdateColours();
 }
 
 //this function is called before the debugger startup
@@ -2706,12 +2706,6 @@ void LEditor::UpdateColours()
 			SetKeyWords(4, wxEmptyString);
 		}
 	}
-
-	//colourise the document
-	int startLine = GetFirstVisibleLine();
-	int endLine =  startLine + LinesOnScreen();
-	if (endLine >= (GetLineCount() - 1))
-		endLine--;
 
 	Colourise(0, wxSCI_INVALID_POSITION);
 }

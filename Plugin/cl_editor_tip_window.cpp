@@ -82,8 +82,13 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 			else 
 				dc.SetBrush( wxBrush( DrawingUtils::LightColour(wxT("BLUE"), 9)) );
 				
-			dc.SetPen  ( wxPen  ( DrawingUtils::LightColour(wxT("BLUE"), 6)) );
+			dc.SetPen  ( wxPen  ( DrawingUtils::LightColour(wxT("BLUE"), 9)) );
+#ifdef __WXGTK__
 			dc.DrawRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2));
+#else
+			dc.DrawRoundedRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2), 3);
+#endif
+
 		}
 	}
 	

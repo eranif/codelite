@@ -443,7 +443,8 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		editor = new LEditor(m_book);
 		editor->Create(projName, fileName);
 		AddPage(editor, fileName.GetFullName());
-
+		editor->SetSyntaxHighlight();
+		
 		// mark the editor as read only if needed
 		MarkEditorReadOnly(editor, IsFileReadOnly(editor->GetFileName()));
 

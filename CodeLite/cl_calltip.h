@@ -99,6 +99,12 @@ public:
 	wxString First();
 
 	/**
+	 * @brief return the current tip
+	 * @return return the current tip
+	 */
+	wxString Current();
+
+	/**
 	 * Return number of tips stored in this object
 	 * \return number of tips
 	 */
@@ -117,6 +123,10 @@ public:
 	 */
 	void GetHighlightPos(int index, int &start, int &len);
 
+	int GetCurr() const {
+		return m_curr;
+	}
+	
 private:
 	wxString TipAt(int at);
 };

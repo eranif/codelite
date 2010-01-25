@@ -48,6 +48,7 @@
 
 class wxFindReplaceDialog;
 class CCBox;
+class clEditorTipWindow;
 
 enum sci_annotation_styles {
 	eAnnotationStyleError = 128, eAnnotationStyleWarning
@@ -132,6 +133,7 @@ class LEditor : public wxScintilla, public IEditor
 	bool                                        m_reloadingFile;
 	bool                                        m_disableSmartIndent;
 	bool                                        m_disableSemicolonShift;
+	clEditorTipWindow*                        m_functionTip;
 
 public:
 	static FindReplaceData &GetFindReplaceData() {
@@ -145,6 +147,9 @@ public:
 		return m_reloadingFile;
 	}
 
+	clEditorTipWindow* GetFunctionTip() {
+		return m_functionTip;
+	}
 public:
 	/// Construct a LEditor object
 	LEditor(wxWindow* parent);

@@ -70,7 +70,7 @@ wxString clCallTip::TipAt(int at)
 {
 	wxString tip;
 	if ( m_tips.size() > 1 ) {
-		tip << _T("\001 ") << static_cast<int>(m_curr)+1 << _T(" of ") << static_cast<int>(m_tips.size()) << _T(" \002 ") << m_tips.at(at).str ;
+		tip << m_tips.at(at).str ;
 	} else {
 		tip << m_tips.at( 0 ).str;
 	}
@@ -80,7 +80,6 @@ wxString clCallTip::TipAt(int at)
 wxString clCallTip::Next()
 {
 	// format a tip string and return it
-	wxString tip;
 	if ( m_tips.empty() )
 		return wxEmptyString;
 
@@ -95,7 +94,6 @@ wxString clCallTip::Next()
 wxString clCallTip::Prev()
 {
 	// format a tip string and return it
-	wxString tip;
 	if ( m_tips.empty() )
 		return wxEmptyString;
 
@@ -196,22 +194,27 @@ void clCallTip::Initialize(const std::vector<TagEntryPtr> &tips)
 void clCallTip::GetHighlightPos(int index, int& start, int& len)
 {
 	start = wxNOT_FOUND;
-	len = wxNOT_FOUND;
+	len   = wxNOT_FOUND;
 	if (m_curr >= 0 && m_curr < (int)m_tips.size()) {
 		clTipInfo ti = m_tips.at(m_curr);
 		int base = ti.str.Find(wxT("("));
-
-		if (m_tips.size() > 1) {
-			// multiple tooltips exists, make sure we calculate the up and down arrows
-			wxString arrowsStr;
-			arrowsStr << _T("\001 ") << static_cast<int>(m_curr)+1 << _T(" of ") << static_cast<int>(m_tips.size()) << _T(" \002 ");
-			base += arrowsStr.Length();
-		}
-
+		
 		// sanity
 		if (base != wxNOT_FOUND && index < (int)ti.paramLen.size() && index >= 0) {
 			start = ti.paramLen.at(index).first + base;
 			len =  ti.paramLen.at(index).second;
 		}
 	}
+}
+
+wxString clCallTip::Current()
+{
+	// format a tip string and return it
+	if ( m_tips.empty() )
+		return wxEmptyString;
+	
+	if ( m_curr >= (int)m_tips.size() || m_curr < 0) {
+		m_curr = 0;
+	}
+	return TipAt(m_curr);
 }

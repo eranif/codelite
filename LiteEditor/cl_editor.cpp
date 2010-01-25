@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cl_editor.h"
+#include "cl_editor_tip_window.h"
 #include "new_quick_watch_dlg.h"
 #include "buildtabsettingsdata.h"
 #include "jobqueue.h"
@@ -150,6 +151,7 @@ LEditor::LEditor(wxWindow* parent)
 		, m_autoAdjustHScrollbarWidth(true)
 		, m_calltipType              (ct_none)
 		, m_reloadingFile            (false)
+		, m_functionTip              (NULL)
 {
 	ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSCI_MARK_SMALLRECT;
 	ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSCI_MARK_ROUNDRECT;
@@ -170,7 +172,7 @@ LEditor::LEditor(wxWindow* parent)
 		eol = alternate_eol;
 	}
 	SetEOLMode(eol);
-
+	m_functionTip = new clEditorTipWindow(this);
 	m_disableSmartIndent = GetOptions()->GetDisableSmartIndent();
 }
 
@@ -627,13 +629,13 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 
 	wxChar matchChar (0);
 	switch ( event.GetKey() ) {
-	case ',':
-		if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
-			// try to force the function tooltip
-			ShowFunctionTipFromCurrentPos();
-		}
-		break;
-
+//	case ',':
+//		if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
+//			// try to force the function tooltip
+//			ShowFunctionTipFromCurrentPos();
+//		}
+//		break;
+//
 	case ';':
 		if (!m_disableSemicolonShift)
 			m_context->SemicolonShift();
@@ -666,9 +668,11 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		}
 		break;
 	case ')':
-		DoCancelCalltip();
-		ShowFunctionTipFromCurrentPos();
+		// Remove one tip from the queue. If the queue new size is 0
+		// the tooltip is then cancelled
+		GetFunctionTip()->Remove();
 		break;
+		
 	case '}':
 		m_context->AutoIndent(event.GetKey());
 		break;
@@ -2210,6 +2214,9 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 void LEditor::OnKeyDown(wxKeyEvent &event)
 {
 	//let the context process it as well
+	if(GetFunctionTip()->IsActive() && event.GetKeyCode() == WXK_ESCAPE)
+		GetFunctionTip()->Deactivate();
+		
 	if (IsCompletionBoxShown()) {
 		switch (event.GetKeyCode()) {
 		case WXK_NUMPAD_ENTER:
@@ -2330,7 +2337,8 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 {
 	// hide completion box
 	HideCompletionBox();
-
+	GetFunctionTip()->Deactivate();
+	
 	if ( ManagerST::Get()->GetDisplayVariableDialog()->IsShown() )
 		ManagerST::Get()->GetDisplayVariableDialog()->HideDialog();
 
@@ -3156,6 +3164,7 @@ void LEditor::DoCancelCalltip()
 {
 	m_calltipType = ct_none;
 	CallTipCancel();
+	GetFunctionTip()->Deactivate();
 	// let the context process this as well
 	m_context->OnCalltipCancel();
 }

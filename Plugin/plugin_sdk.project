@@ -146,6 +146,8 @@
       <File Name="outputviewcontrolbar.h"/>
       <File Name="listctrl_improved.h"/>
       <File Name="listctrl_improved.cpp"/>
+      <File Name="cl_editor_tip_window.cpp"/>
+      <File Name="cl_editor_tip_window.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="threebuttondlg.h"/>
@@ -400,6 +402,6 @@
     <File Name="md5_global.h"/>
     <File Name="md5c.c"/>
   </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

@@ -27,7 +27,6 @@
 
 #include "context_base.h"
 #include "cpptoken.h"
-#include "cl_calltip.h"
 #include "ctags_manager.h"
 #include <map>
 #include "entry.h"
@@ -36,7 +35,6 @@ class RefactorSource;
 
 class ContextCpp : public ContextBase
 {
-	clCallTipPtr m_ct;
 	std::map<wxString, int> m_propertyInt;
 	wxMenu *m_rclickMenu;
 

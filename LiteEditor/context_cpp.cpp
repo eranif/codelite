@@ -25,6 +25,7 @@
 
 
 #include "pluginmanager.h"
+#include "cl_editor_tip_window.h"
 #include "implement_parent_virtual_functions.h"
 #include "debuggerasciiviewer.h"
 #include <wx/file.h>
@@ -1282,37 +1283,15 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 void ContextCpp::OnKeyDown(wxKeyEvent &event)
 {
 	LEditor &ctrl = GetCtrl();
-	int pos = ctrl.GetCurrentPos();
-
-	if (m_ct && m_ct->Count() && ctrl.CallTipActive() && ctrl.GetCalltipType() == ct_function_proto) {
-
+	if (ctrl.GetFunctionTip()->IsActive()) {
 		switch (event.GetKeyCode()) {
-
-		case WXK_UP: {
-			int index = DoGetCalltipParamterIndex();
-			int start(wxNOT_FOUND), len(wxNOT_FOUND);
-			wxString tip = m_ct->Prev();
-
-			if (index != wxNOT_FOUND) {
-				m_ct->GetHighlightPos(index, start, len);
-			}
-			ctrl.CallTipCancel();
-			ctrl.DoShowCalltip(pos, tip, ct_function_proto, start, len);
-		}
-		return;
-
-		case WXK_DOWN: {
-			int index = DoGetCalltipParamterIndex();
-			int start(wxNOT_FOUND), len(wxNOT_FOUND);
-			wxString tip = m_ct->Next();
-
-			if (index != wxNOT_FOUND) {
-				m_ct->GetHighlightPos(index, start, len);
-			}
-			ctrl.CallTipCancel();
-			ctrl.DoShowCalltip(pos, tip, ct_function_proto, start, len);
-		}
-		return;
+		case WXK_UP:
+			ctrl.GetFunctionTip()->SelectPrev(DoGetCalltipParamterIndex());
+			return;
+		
+		case WXK_DOWN:
+			ctrl.GetFunctionTip()->SelectNext(DoGetCalltipParamterIndex());
+			return;
 		}
 	}
 	event.Skip();
@@ -2433,11 +2412,12 @@ void ContextCpp::MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryP
 wxString ContextCpp::CallTipContent()
 {
 	// if we have an active call tip, return its content
-	if (GetCtrl().CallTipActive() && m_ct && m_ct->Count() > 0) {
-		return m_ct->All();
-	}
+	if (GetCtrl().GetFunctionTip()->IsActive())
+		return GetCtrl().GetFunctionTip()->GetText();
+
 	return wxEmptyString;
 }
+
 void ContextCpp::DoCodeComplete(long pos)
 {
 	long currentPosition = pos;
@@ -2548,18 +2528,19 @@ void ContextCpp::DoCodeComplete(long pos)
 		expr = GetExpression(rCtrl.PositionBefore(currentPosition), false);
 
 		//display function tooltip
-		int word_end = rCtrl.WordEndPosition(end, true);
+		int word_end   = rCtrl.WordEndPosition(end, true);
 		int word_start = rCtrl.WordStartPosition(end, true);
 
 		// get the token
 		wxString word = rCtrl.GetTextRange(word_start, word_end);
-		m_ct = TagsManagerST::Get()->GetFunctionTip(rCtrl.GetFileName(), line, expr, text, word);
-		if (m_ct && m_ct->Count() > 0) {
-			rCtrl.CallTipCancel();
-			int start(wxNOT_FOUND), len(wxNOT_FOUND);
-			m_ct->GetHighlightPos(DoGetCalltipParamterIndex(), start, len);
-			rCtrl.DoShowCalltip(currentPosition, m_ct->First(), ct_function_proto, start, len);
-		}
+		rCtrl.GetFunctionTip()->Add( TagsManagerST::Get()->GetFunctionTip(rCtrl.GetFileName(), line, expr, text, word) );
+		rCtrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
+		
+		// In an ideal world, we would like our tooltip to be placed 
+		// on top of the caret.
+		wxPoint pt = rCtrl.PointFromPosition(word_start);
+		rCtrl.GetFunctionTip()->Activate(pt, rCtrl.GetCurrLineHeight());
+		
 	} else {
 
 		if (TagsManagerST::Get()->AutoCompleteCandidates(rCtrl.GetFileName(), line, expr, text, candidates)) {
@@ -2698,37 +2679,7 @@ void ContextCpp::OnGotoNextFunction(wxCommandEvent& event)
 
 void ContextCpp::OnCallTipClick(wxScintillaEvent& e)
 {
-	int pos = GetCtrl().GetCurrentPos();
-	switch (e.GetPosition()) {
-	case 1: // Up
-		if (m_ct) {
-			int index = DoGetCalltipParamterIndex();
-			int start(wxNOT_FOUND), len(wxNOT_FOUND);
-			wxString tip = m_ct->Next();
-
-			if (index != wxNOT_FOUND) {
-				m_ct->GetHighlightPos(index, start, len);
-			}
-			GetCtrl().CallTipCancel();
-			GetCtrl().DoShowCalltip(pos, tip, ct_function_proto, start, len);
-		}
-		break;
-	case 2: // down arrow
-		if (m_ct) {
-			int index = DoGetCalltipParamterIndex();
-			int start(wxNOT_FOUND), len(wxNOT_FOUND);
-			wxString tip = m_ct->Prev();
-			if (index != wxNOT_FOUND) {
-				m_ct->GetHighlightPos(index, start, len);
-			}
-			GetCtrl().CallTipCancel();
-			GetCtrl().DoShowCalltip(pos, tip, ct_function_proto, start, len);
-		}
-		break;
-	case 0: // elsewhere
-		GetCtrl().DoCancelCalltip();
-		break;
-	}
+	wxUnusedVar(e);
 }
 
 void ContextCpp::OnCalltipCancel()
@@ -2792,14 +2743,8 @@ int ContextCpp::DoGetCalltipParamterIndex()
 void ContextCpp::DoUpdateCalltipHighlight()
 {
 	LEditor &ctrl = GetCtrl();
-	if (ctrl.CallTipActive() && m_ct && m_ct->Count() && ctrl.GetCalltipType() == ct_function_proto) {
-		int index = DoGetCalltipParamterIndex();
-		int start(wxNOT_FOUND), len(wxNOT_FOUND);
-
-		if (index != wxNOT_FOUND) {
-			m_ct->GetHighlightPos(index, start, len);
-			ctrl.CallTipSetHighlight(start, start + len);
-		}
+	if (ctrl.GetFunctionTip()->IsActive()) {
+		ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
 	}
 }
 

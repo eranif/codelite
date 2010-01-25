@@ -2114,6 +2114,12 @@ public:
 
     // Set the foreground colour of a style.
     void StyleSetForeground (int style, const wxColour& fore);
+	
+	// Get the background colour of a style
+	wxColour StyleGetBackground(int style);
+	
+	// Get the foreground colour of a style
+	wxColour StyleGetForeground(int style);
 
     // Set the background colour of a style.
     void StyleSetBackground (int style, const wxColour& back);

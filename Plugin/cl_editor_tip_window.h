@@ -19,6 +19,7 @@ protected:
 	wxString             m_tipText;
 	wxPoint              m_point;
 	int                  m_lineHeight;
+	wxColour             m_parentBgColour;
 	
 protected:
 	wxSize DoGetTipSize();
@@ -38,7 +39,7 @@ public:
 	bool         IsEmpty();
 	void         Clear();
 	bool         IsActive();
-	void         Activate(wxPoint pt, int lineHeight);
+	void         Activate(wxPoint pt, int lineHeight, wxColour parentBgColour);
 	void         Deactivate();
 	void         SelectNext (int argIdxToHilight);
 	void         SelectPrev (int argIdxToHilight);

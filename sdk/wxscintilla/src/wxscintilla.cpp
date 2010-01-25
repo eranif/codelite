@@ -597,6 +597,18 @@ void wxScintilla::StyleSetBackground (int style, const wxColour& back) {
     SendMsg (SCI_STYLESETBACK, style, wxColourAsLong(back));
 }
 
+wxColour wxScintilla::StyleGetBackground(int style)
+{
+    long colour = SendMsg (SCI_STYLEGETBACK, style, 0);
+    return wxColourFromLong(colour);
+}
+
+wxColour wxScintilla::StyleGetForeground(int style)
+{
+    long colour = SendMsg (SCI_STYLEGETFORE, style, 0);
+    return wxColourFromLong(colour);
+}
+
 // Set a style to be bold or not.
 void wxScintilla::StyleSetBold (int style, bool bold) {
     SendMsg (SCI_STYLESETBOLD, style, bold);

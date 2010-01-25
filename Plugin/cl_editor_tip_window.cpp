@@ -3,6 +3,7 @@
 #include "drawingutils.h"
 #include <wx/settings.h>
 #include <wx/dcbuffer.h>
+#include <wx/log.h>
 
 BEGIN_EVENT_TABLE(clEditorTipWindow, wxPanel)
 EVT_PAINT(clEditorTipWindow::OnPaint)
@@ -34,16 +35,24 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 	wxFont font        = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont disableFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	disableFont.SetStyle(wxFONTSTYLE_ITALIC);
+	disableFont.SetPointSize(disableFont.GetPointSize() - 1);
 	wxRect rr = GetClientRect();
 	
+	// draw the background using the parent background colour
+	dc.SetBrush(m_parentBgColour);
+	dc.SetPen  (m_parentBgColour);
+	dc.DrawRectangle(rr);
+	
+	// Draw the tip body + outline
 	dc.SetPen  ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
 	dc.SetBrush( wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+	
 	dc.DrawRectangle(rr);
 	dc.SetFont(font);
 	
 	// Highlight the text
 	clCallTipPtr tip = GetTip();
-	int secondLineY = (rr.GetHeight()/2);
+	int secondLineY = (rr.GetHeight()/2) + 1;
 	int firstLineY  = TIP_SPACER;
 	if(tip) {
 		wxString txt;
@@ -69,7 +78,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 			
 			dc.SetBrush( wxBrush( DrawingUtils::LightColour(wxT("BLUE"), 9)) );
 			dc.SetPen  ( wxPen  ( DrawingUtils::LightColour(wxT("BLUE"), 6)) );
-			dc.DrawRectangle(x + TIP_SPACER, firstLineY-(TIP_SPACER/2), w, (rr.GetHeight()/2));
+			dc.DrawRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2));
 		}
 	}
 	
@@ -173,14 +182,16 @@ wxString clEditorTipWindow::GetText()
 	return wxT("");
 }
 
-void clEditorTipWindow::Activate(wxPoint pt, int lineHeight)
+void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgColour)
 {
 	if(m_tips.empty())
 		return;
 		
-	m_point      = pt;
-	m_lineHeight = lineHeight;
+	m_point          = pt;
+	m_lineHeight     = lineHeight;
+	m_parentBgColour = parentBgColour;
 	
+//	wxLogMessage(wxT("%s"), parentBgColour.GetAsString(wxC2S_NAME|wxC2S_CSS_SYNTAX).c_str());
 	DoAdjustPosition();
 	
 	if(!IsActive()) {

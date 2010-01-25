@@ -2538,8 +2538,8 @@ void ContextCpp::DoCodeComplete(long pos)
 		
 		// In an ideal world, we would like our tooltip to be placed 
 		// on top of the caret.
-		wxPoint pt = rCtrl.PointFromPosition(word_start);
-		rCtrl.GetFunctionTip()->Activate(pt, rCtrl.GetCurrLineHeight());
+		wxPoint pt = rCtrl.PointFromPosition(currentPosition);
+		rCtrl.GetFunctionTip()->Activate(pt, rCtrl.GetCurrLineHeight(), rCtrl.StyleGetBackground(wxSCI_C_DEFAULT));
 		
 	} else {
 

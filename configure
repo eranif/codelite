@@ -522,7 +522,7 @@ createPluginTargets()
 
 createInstallTarget()
 {
-	echo "install: core_install plugins_install" >> Makefile
+	echo "install: uninstall core_install plugins_install" >> Makefile
 	echo "" >> Makefile
 
 	echo "core_install:" >> Makefile

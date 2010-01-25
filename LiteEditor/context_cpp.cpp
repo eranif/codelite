@@ -2775,7 +2775,7 @@ void ContextCpp::SemicolonShift()
 				ctrl.SetCurrentPos(semiColonPos);
 				ctrl.InsertText(semiColonPos, wxT(";"));
 				ctrl.SetCaretAt(semiColonPos+1);
-				ctrl.CallTipCancel();
+				ctrl.GetFunctionTip()->Deactivate();
 			}
 		}
 	}

@@ -80,9 +80,9 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 			if ( DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK)) ) 
 				dc.SetBrush( *wxTRANSPARENT_BRUSH );
 			else 
-				dc.SetBrush( wxBrush( DrawingUtils::LightColour(wxT("BLUE"), 9)) );
+				dc.SetBrush( wxBrush( DrawingUtils::LightColour(wxT("BLUE"), 7)) );
 				
-			dc.SetPen  ( wxPen  ( DrawingUtils::LightColour(wxT("BLUE"), 9)) );
+			dc.SetPen  ( wxPen  ( DrawingUtils::LightColour(wxT("BLUE"), 7)) );
 #ifdef __WXGTK__
 			dc.DrawRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2));
 #else

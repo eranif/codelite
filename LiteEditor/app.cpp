@@ -435,18 +435,10 @@ bool App::OnInit()
 	Frame::Initialize( parser.GetParamCount() == 0 );
 	m_pMainFrame = Frame::Get();
 
-#ifdef __WXGTK__
-	Yield();
-#endif
-
 	// update the accelerators table
 	ManagerST::Get()->UpdateMenuAccelerators();
 	m_pMainFrame->Show(TRUE);
 	SetTopWindow(m_pMainFrame);
-
-	if ( m_splash ) {
-		m_splash->Close(true);
-	}
 
 	long lineNumber(0);
 	parser.Found(wxT("l"), &lineNumber);

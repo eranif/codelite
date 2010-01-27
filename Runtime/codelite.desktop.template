@@ -5,5 +5,5 @@ Exec=codelite %f
 Icon=%%PREFIX%%/share/codelite/images/cubes.png
 Terminal=false
 Type=Application
-Categories=Development
+Categories=Development;
 StartupNotify=true

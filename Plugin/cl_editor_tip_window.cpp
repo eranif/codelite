@@ -249,7 +249,14 @@ void clEditorTipWindow::DoAdjustPosition()
 	wxSize sz         = DoGetTipSize();
 	wxRect parentSize = GetParent()->GetClientRect();
 	
-	pt.y += m_lineHeight;
+	// by default place the tip below the caret
+	
+	if (pt.y + m_lineHeight + sz.y > parentSize.height) {
+		pt.y -= sz.y;
+		
+	} else {
+		pt.y += m_lineHeight;
+	}
 	
 	if(pt.x + sz.x > parentSize.width) {
 		// our tip can not fit into the screen, shift it left
@@ -258,7 +265,6 @@ void clEditorTipWindow::DoAdjustPosition()
 		if(pt.x < 0)
 			pt.x = 0;
 	}
-	
 	Move(pt);
 }
 

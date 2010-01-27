@@ -1,5 +1,5 @@
 Name:           codelite
-Version:        1.0.2841
+Version:        2.2.0
 Release:        1%{?dist}
 License:        GPLv2+
 Group:          Development/Tools
@@ -25,8 +25,9 @@ users to easily create, build and debug complex projects.
 %install
 %{__rm} -rf $RPM_BUILD_ROOT
 %{__make} DESTDIR=$RPM_BUILD_ROOT install
-desktop-file-install  --delete-original       \
-    --copy-generic-name-to-name                              \
+desktop-file-install  --delete-original                            \
+   --vendor codelite                                               \
+#   --copy-generic-name-to-name                                    \
           --dir $RPM_BUILD_ROOT%{_datadir}/applications            \
                 $RPM_BUILD_ROOT%{_datadir}/applications/codelite.desktop
 %clean
@@ -52,4 +53,7 @@ desktop-file-install  --delete-original       \
   code: fixed perms and other rpmlint issues.
 * Sat Feb 21 2009 Jess Portnoy <kernel01@gmail.com> 1.0.2781-1
 - Reworked the rpm package to satisfy Fedora Core conventions.
+* Wed Jan 27 2010 Jess Portnoy <kernel01@gmail.com>
+- Reomved obsolete switch (--copy-generic-name-to-name)
+  updated version number to 2.2.0
 

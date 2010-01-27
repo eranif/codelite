@@ -138,6 +138,6 @@
       <CompilerOption Name="-version">Print just the version number</CompilerOption>
     </Compiler>
   </Compilers>
-  <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="mingw32-make.exe" Options="-f" Jobs="2" Active="yes"/>
-  <BuildSystem Name="GNU makefile onestep build" ToolPath="mingw32-make.exe" Options="-f" Jobs="1" Active="no"/>
+  <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="make" Options="-f" Jobs="2" Active="yes"/>
+  <BuildSystem Name="GNU makefile onestep build" ToolPath="make" Options="-f" Jobs="1" Active="no"/>
 </BuildSettings>

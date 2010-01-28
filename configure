@@ -524,7 +524,7 @@ createPluginTargets()
 
 createInstallTarget()
 {
-	echo "install: core_install plugins_install" >> Makefile
+	echo "install: uninstall core_install plugins_install" >> Makefile
 	echo "" >> Makefile
 
 	echo "core_install:" >> Makefile
@@ -597,7 +597,6 @@ createUnInstallTarget()
 	if [ "$make_symlink" = "yes" ] ; then
 	  echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
 	fi
-#	echo "	@\$(RM) -fr  /usr/lib/libsqlite3-cl.so" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_fix_files" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_exec" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_kill_children" >> Makefile
@@ -613,11 +612,7 @@ createUnInstallTarget()
 	echo "	@\$(RM) -fr  \$(DESTDIR)$plugins_dir/" >> Makefile
     # Check write permission for /usr/share/applications, in case we're using a 'local' prefix and not doing sudo
 	echo "	@if test -w \$(DESTDIR)$prefix/share/applications ; then \\" >> Makefile
-	if [ "$add_desktop_icon" = "yes" ] ; then
-	  if test -d $HOME/Desktop/ ; then
 	    echo "	  \$(RM) -fr \$(DESTDIR)$prefix/share/applications/codelite.desktop; \\" >> Makefile
-	  fi
-	fi
 	echo "	fi" >> Makefile
 	echo "	@\$(RM) -fr ~/Desktop/codelite.desktop" >> Makefile
 	echo "" >> Makefile

@@ -2211,21 +2211,31 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 	
 		wxString signame = wxT ( "SIGSEGV" );
 		
-		if ( reason == DBG_RECV_SIGNAL_EXC_BAD_ACCESS )
+		// show the dialog only if the signal is not sigtrap
+		// since sigtap might be triggered by user inserting a breakpoint
+		// into an already running debug session
+		bool     showDialog(false);
+		if ( reason == DBG_RECV_SIGNAL_EXC_BAD_ACCESS ) {
 			signame = wxT ( "EXC_BAD_ACCESS" );
+			showDialog = true;
 			
-		else if ( reason == DBG_RECV_SIGNAL_SIGABRT )
+		} else if ( reason == DBG_RECV_SIGNAL_SIGABRT ) {
 			signame = wxT ( "SIGABRT" );
+			showDialog = true;
 			
-		else if ( reason == DBG_RECV_SIGNAL_SIGTRAP )
+		} else if ( reason == DBG_RECV_SIGNAL_SIGTRAP ) {
 			signame = wxT ( "SIGTRAP" );
+			
+		}
 		
 		DebugMessage ( _("Program Received signal ") + signame + _("\n") );
-		wxMessageDialog dlg( Frame::Get(), _("Program Received signal ") + signame + wxT("\n") +
-		                     _("Stack trace is available in the 'Call Stack' tab\n"),
-		                     wxT("CodeLite"), wxICON_ERROR|wxOK );
-		dlg.ShowModal();
-
+		if(showDialog) {
+			wxMessageDialog dlg( Frame::Get(), _("Program Received signal ") + signame + wxT("\n") +
+								 _("Stack trace is available in the 'Call Stack' tab\n"),
+								 wxT("CodeLite"), wxICON_ERROR|wxOK );
+			dlg.ShowModal();
+		}
+		
 		//Print the stack trace
 		wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( wxT("Debugger") );
 		if ( info.IsShown() ) {

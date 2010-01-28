@@ -1,2 +1,10 @@
 - add build-errors-assistant
 - Add new 'scp' plugin
+- Change the tip color selection to a lighter color (Windows)
+- Unified the open-resource/open-type/quick-finder into a single dialog
+- Change 'toggle multi/single select' icon
+- Add option to customize the single toolbar
+- Apply patch to fix Mac OSX font dialog
+- Add new second tip to the code-completion box which shows the conent of the comment on top of the current tip
+- Add 'workspace settings' entry in the menu bar
+- Add 'workspace editor preferences' entry in the menu bar

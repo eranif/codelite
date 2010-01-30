@@ -20,6 +20,7 @@
 #include <wx/choice.h>
 #include <wx/sizer.h>
 #include <wx/listbox.h>
+#include <wx/statbox.h>
 #include <wx/checkbox.h>
 #include <wx/statline.h>
 #include <wx/button.h>
@@ -42,8 +43,8 @@ class OpenResourceDialogBase : public wxDialog
 		wxChoice* m_choiceResourceType;
 		wxStaticText* m_staticText1;
 		wxListBox* m_listBoxOptions;
-		wxStaticText* m_staticTextErrorMessage;
 		wxStaticText* m_fullText;
+		wxStaticText* m_staticTextErrorMessage;
 		wxCheckBox* m_checkBoxUsePartialMatching;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonOk;

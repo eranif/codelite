@@ -52,17 +52,21 @@ OpenResourceDialogBase::OpenResourceDialogBase( wxWindow* parent, wxWindowID id,
 	m_listBoxOptions = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
 	mainSizer->Add( m_listBoxOptions, 1, wxALL|wxEXPAND, 5 );
 	
-	m_staticTextErrorMessage = new wxStaticText( this, wxID_ANY, _("MyLabel"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticTextErrorMessage->Wrap( -1 );
-	m_staticTextErrorMessage->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
-	m_staticTextErrorMessage->SetForegroundColour( wxColour( 255, 0, 0 ) );
-	m_staticTextErrorMessage->Hide();
-	
-	mainSizer->Add( m_staticTextErrorMessage, 0, wxALL|wxEXPAND, 5 );
+	wxStaticBoxSizer* sbSizer1;
+	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxVERTICAL );
 	
 	m_fullText = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
 	m_fullText->Wrap( -1 );
-	mainSizer->Add( m_fullText, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
+	sbSizer1->Add( m_fullText, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
+	
+	mainSizer->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
+	
+	m_staticTextErrorMessage = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextErrorMessage->Wrap( -1 );
+	m_staticTextErrorMessage->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
+	m_staticTextErrorMessage->SetForegroundColour( wxColour( 255, 128, 128 ) );
+	
+	mainSizer->Add( m_staticTextErrorMessage, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxUsePartialMatching = new wxCheckBox( this, wxID_ANY, _("Use partial matching"), wxDefaultPosition, wxDefaultSize, 0 );
 	mainSizer->Add( m_checkBoxUsePartialMatching, 0, wxALL|wxEXPAND, 5 );

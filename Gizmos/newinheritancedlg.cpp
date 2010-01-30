@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "newinheritancedlg.h"
+#include "open_resource_dialog.h"
 #include "windowattrmanager.h"
-#include "open_type_dlg.h"
 #include "imanager.h"
 
 NewIneritanceDlg::NewIneritanceDlg( wxWindow* parent, IManager *mgr, const wxString &parentName, const wxString &access )
@@ -49,18 +49,17 @@ NewIneritanceDlg::~NewIneritanceDlg()
 
 void NewIneritanceDlg::OnButtonMore( wxCommandEvent& event )
 {
-	OpenTypeDlg *dlg = new OpenTypeDlg(this, m_mgr->GetTagsManager());
-	if(dlg->ShowModal() == wxID_OK){
+	m_textCtrlInhertiance->SetFocus();
+	OpenResourceDialog dlg(this, m_mgr, OpenResourceDialog::TYPE_CLASS, false);
+	if(dlg.ShowModal() == wxID_OK){
 		wxString parentName;
-		if(	dlg->GetSelectedTag()->GetScope().IsEmpty() == false &&
-			dlg->GetSelectedTag()->GetScope() != wxT("<global>"))
+		if( dlg.GetSelection().m_scope.IsEmpty() == false && dlg.GetSelection().m_scope != wxT("<global>"))
 		{
-			parentName << dlg->GetSelectedTag()->GetScope() << wxT("::");
+			parentName << dlg.GetSelection().m_scope << wxT("::");
 		}
-		parentName << dlg->GetSelectedTag()->GetName();
+		parentName << dlg.GetSelection().m_name;
 		m_textCtrlInhertiance->SetValue(parentName);
 
-		m_fileName = dlg->GetSelectedTag()->GetFile();
+		m_fileName = dlg.GetSelection().m_file;
 	}
-	dlg->Destroy();
 }

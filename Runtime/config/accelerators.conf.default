@@ -47,11 +47,9 @@ show_build_toolbar|View::Toolbars|Build ToolBar|
 show_debug_toolbar|View::Toolbars|Debug ToolBar|
 toggle_panes|View|Toggle All Panes|Ctrl-M
 find_in_files|Search|Find In Files...|Ctrl-Shift-F
-quickfinder_class|Search::Open QuickFinder for|Class, struct or union|Ctrl-Shift-C
-quickfinder_function|Search::Open QuickFinder for|Function|Ctrl-Shift-U
-quickfinder_macro|Search::Open QuickFinder for|Macro|Ctrl-Shift-M
-quickfinder_typedef|Search::Open QuickFinder for|Typedef|Ctrl-Shift-P
-quickfinder_file|Search::Open QuickFinder for|Workspace file|Ctrl-Shift-W
+find_function|Search|Find Function...|Ctrl-Shift-U
+find_macro|Search|Find Macro...|Ctrl-Shift-M
+find_typedef|Search|Find Typedef...|Ctrl-Shift-P
 wxID_FIND|Search|Find...|Ctrl-K
 wxID_REPLACE|Search|Replace...|Ctrl-H
 find_next|Search|Find Next|F3

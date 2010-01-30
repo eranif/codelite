@@ -23,10 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "open_resource_dialog.h" // New open resource 
 #include <wx/busyinfo.h>
 #include "tags_parser_search_path_dlg.h"
 #include "includepathlocator.h"
-#include "quickfinder.h"
 #include "outputviewcontrolbar.h"
 #include "clauidockart.h"
 
@@ -93,8 +93,6 @@
 #include "build_settings_config.h"
 #include "macros.h"
 #include "async_executable_cmd.h"
-#include "open_resouce_dlg.h"
-#include "open_type_dlg.h"
 #include "workspace_pane.h"
 #include "navigationmanager.h"
 #include "debuggermanager.h"
@@ -250,18 +248,16 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	//-------------------------------------------------------
 	EVT_MENU(wxID_FIND,                         Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_REPLACE,                      Frame::DispatchCommandEvent)
-	EVT_MENU(XRCID("quickfinder_class"),        Frame::OnShowQuickFinder   )
-	EVT_MENU(XRCID("quickfinder_function"),     Frame::OnShowQuickFinder   )
-	EVT_MENU(XRCID("quickfinder_macro"),        Frame::OnShowQuickFinder   )
-	EVT_MENU(XRCID("quickfinder_typedef"),      Frame::OnShowQuickFinder   )
-	EVT_MENU(XRCID("quickfinder_file"),         Frame::OnShowQuickFinder   )
+	EVT_MENU(XRCID("find_function"),            Frame::OnFindResourceXXX   )
+	EVT_MENU(XRCID("find_macro"),               Frame::OnFindResourceXXX   )
+	EVT_MENU(XRCID("find_typedef"),             Frame::OnFindResourceXXX   )
+	EVT_MENU(XRCID("find_resource"),            Frame::OnFindResourceXXX   )
+	EVT_MENU(XRCID("find_type"),                Frame::OnFindResourceXXX   )
 	EVT_MENU(XRCID("find_next"),                Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("find_previous"),            Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("find_next_at_caret"),       Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("find_previous_at_caret"),   Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("incremental_search"),       Frame::OnIncrementalSearch )
-	EVT_MENU(XRCID("find_resource"),            Frame::OnFindResource      )
-	EVT_MENU(XRCID("find_type"),                Frame::OnFindType          )
 	EVT_MENU(XRCID("find_symbol"),              Frame::OnQuickOutline      )
 	EVT_MENU(XRCID("goto_definition"),          Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("goto_previous_definition"), Frame::DispatchCommandEvent)
@@ -282,6 +278,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("incremental_search"),      Frame::OnFileExistUpdateUI   )
 	EVT_UPDATE_UI(XRCID("find_resource"),           Frame::OnWorkspaceOpen       )
 	EVT_UPDATE_UI(XRCID("find_type"),               Frame::OnWorkspaceOpen       )
+	EVT_UPDATE_UI(XRCID("find_function"),           Frame::OnWorkspaceOpen       )
+	EVT_UPDATE_UI(XRCID("find_macro"),              Frame::OnWorkspaceOpen       )
+	EVT_UPDATE_UI(XRCID("find_typedef"),            Frame::OnWorkspaceOpen       )
+
 	EVT_UPDATE_UI(XRCID("find_symbol"),             Frame::OnCompleteWordUpdateUI)
 	EVT_UPDATE_UI(XRCID("goto_definition"),         Frame::DispatchUpdateUIEvent )
 	EVT_UPDATE_UI(XRCID("goto_previous_definition"),Frame::DispatchUpdateUIEvent )
@@ -292,12 +292,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("removeall_bookmarks"),     Frame::OnFileExistUpdateUI   )
 	EVT_UPDATE_UI(XRCID("next_fif_match"),          Frame::OnNextFiFMatchUI      )
 	EVT_UPDATE_UI(XRCID("previous_fif_match"),      Frame::OnPreviousFiFMatchUI  )
-//	EVT_UPDATE_UI(XRCID("quickfinder_class"),       Frame::OnShowQuickFinderUI )
-//	EVT_UPDATE_UI(XRCID("quickfinder_function"),    Frame::OnShowQuickFinderUI )
-//	EVT_UPDATE_UI(XRCID("quickfinder_macro"),       Frame::OnShowQuickFinderUI )
-//	EVT_UPDATE_UI(XRCID("quickfinder_typedef"),     Frame::OnShowQuickFinderUI )
-//	EVT_UPDATE_UI(XRCID("quickfinder_file"),        Frame::OnShowQuickFinderUI )
-
 
 	//-------------------------------------------------------
 	// Project menu
@@ -812,9 +806,6 @@ void Frame::CreateGUIControls(void)
 	//load debuggers
 	DebuggerMgr::Get().Initialize(this, EnvironmentConfig::Instance(), ManagerST::Get()->GetInstallDir());
 	DebuggerMgr::Get().LoadDebuggers();
-
-	// Initialize the QuickFinder
-	QuickFinder::Initialize(PluginManager::Get());
 
 	wxString sessConfFile;
 	sessConfFile << ManagerST::Get()->GetStarupDirectory() << wxT("/config/sessions.xml");
@@ -2132,42 +2123,6 @@ void Frame::OnQuickOutline(wxCommandEvent &event)
 		editor->SetActive();
 	}
 #endif
-}
-
-void Frame::OnFindType(wxCommandEvent &event)
-{
-	wxUnusedVar(event);
-	if (ManagerST::Get()->IsWorkspaceOpen() == false)
-		return;
-
-	OpenTypeDlg *dlg = new OpenTypeDlg(this, TagsManagerST::Get());
-	if (dlg->ShowModal() == wxID_OK) {
-		TagEntryPtr tag = dlg->GetSelectedTag();
-		if (tag && tag->IsOk()) {
-			LEditor *editor = GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine());
-			if (editor) {
-				editor->FindAndSelect(tag->GetPattern(), tag->GetName());
-			}
-		}
-	}
-	dlg->Destroy();
-}
-
-void Frame::OnFindResource(wxCommandEvent &event)
-{
-	wxUnusedVar(event);
-	if (ManagerST::Get()->IsWorkspaceOpen() == false)
-		return;
-
-	OpenResourceDlg *dlg = new OpenResourceDlg(this);
-	if (dlg->ShowModal() == wxID_OK) {
-		wxString fileName = dlg->GetFileName();
-		if (fileName.IsEmpty() == false) {
-			wxString projectName = ManagerST::Get()->GetProjectNameByFile(fileName);
-			Frame::Get()->GetMainBook()->OpenFile(fileName, projectName);
-		}
-	}
-	dlg->Destroy();
 }
 
 void Frame::OnAddSymbols(SymbolTreeEvent &event)
@@ -3501,59 +3456,27 @@ void Frame::OnPreviousFiFMatchUI(wxUpdateUIEvent& e)
 	e.Enable(GetOutputPane()->GetFindResultsTab()->GetPageCount() > 0);
 }
 
-void Frame::OnShowQuickFinderUI(wxUpdateUIEvent& e)
+void Frame::OnFindResourceXXX(wxCommandEvent& e)
 {
-//	// Determine the search type
-//	wxString searchType;
-//	wxString currentSearchType = EditorConfigST::Get()->GetStringValue(wxT("QuickFinderSearchType"));
-//
-//	if(e.GetId() == XRCID("quickfinder_class")) {
-//		e.Check(ST_CLASS == currentSearchType);
-//
-//	} else if(e.GetId() == XRCID("quickfinder_function")) {
-//		e.Check(ST_FUNCTION == currentSearchType);
-//
-//	} else if(e.GetId() == XRCID("quickfinder_macro")) {
-//		e.Check(ST_MACRO == currentSearchType);
-//
-//	} else if(e.GetId() == XRCID("quickfinder_typedef")) {
-//		e.Check(ST_TYPEDEF == currentSearchType);
-//
-//	} else {
-//		e.Check(ST_WORKSPACE_FILE == currentSearchType);
-//
-//	}
-}
-
-void Frame::OnShowQuickFinder(wxCommandEvent& e)
-{
-	// the proper way of showing it, is by setting the configuration to true and
-	// sending an event
-	// Notify plugins about settings changed
-	OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-	opts->SetShowQuickFinder( true );
-	EditorConfigST::Get()->SetOptions( opts );
-
 	// Determine the search type
 	wxString searchType;
-	if(e.GetId() == XRCID("quickfinder_class")) {
-		searchType = ST_CLASS;
+	if(e.GetId() == XRCID("find_function")) {
+		searchType = OpenResourceDialog::TYPE_FUNCTION;
 
-	} else if(e.GetId() == XRCID("quickfinder_function")) {
-		searchType = ST_FUNCTION;
+	} else if(e.GetId() == XRCID("find_macro")) {
+		searchType = OpenResourceDialog::TYPE_MACRO;
 
-	} else if(e.GetId() == XRCID("quickfinder_macro")) {
-		searchType = ST_MACRO;
-
-	} else if(e.GetId() == XRCID("quickfinder_typedef")) {
-		searchType = ST_TYPEDEF;
+	} else if(e.GetId() == XRCID("find_typedef")) {
+		searchType = OpenResourceDialog::TYPE_TYPEDEF;
+		
 	} else {
-		searchType = ST_WORKSPACE_FILE;
+		searchType = OpenResourceDialog::TYPE_WORKSPACE_FILE;
 	}
-
-	// Set the search type
-	EditorConfigST::Get()->SaveStringValue(wxT("QuickFinderSearchType"), searchType);
-	PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
+	
+	OpenResourceDialog dlg(this, PluginManager::Get(), searchType);
+	if(dlg.ShowModal() == wxID_OK) {
+		OpenResourceDialog::OpenSelection(dlg.GetSelection(), PluginManager::Get());
+	}
 }
 
 void Frame::OnParsingThreadMessage(wxCommandEvent& e)

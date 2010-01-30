@@ -544,6 +544,14 @@ public:
 	 * @param partName name criterion (partial)
 	 */
 	void GetTagsByKind(std::vector<TagEntryPtr> &tags, const wxArrayString &kind, const wxString &partName = wxEmptyString);
+	
+	/**
+	 * @brief return list of tags by KIND
+	 * @param tags [output]
+	 * @param kind the kind of the tags to fetch from the database
+	 * @param partName name criterion (partial)
+	 */
+	void GetTagsByKindLimit(std::vector<TagEntryPtr> &tags, const wxArrayString &kind, int limit, const wxString &partName = wxEmptyString);
 
 	/**
 	 * @brief generate function body/impl based on a tag

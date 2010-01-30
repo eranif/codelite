@@ -223,10 +223,6 @@
 					<checkable>1</checkable>
 				</object>
 				<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-<!--				<object class="wxMenuItem" name="show_nav_toolbar">
-					<label>Navigation ToolBar</label>
-					<checkable>1</checkable>
-				</object> -->
 			</object>
 
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
@@ -239,25 +235,6 @@
         <object class="wxMenu" name="search_menu">
             <label>&amp;Search</label>
             <style>wxMENU_TEAROFF</style>
-			<object class="wxMenu" name="show_quick_finder">
-                <label>Open QuickFinder for</label>
-				<object class="wxMenuItem" name="quickfinder_class">
-					<label>Class, struct or union</label>
-				</object>
-				<object class="wxMenuItem" name="quickfinder_function">
-					<label>Function</label>
-				</object>
-				<object class="wxMenuItem" name="quickfinder_macro">
-					<label>Macro</label>
-				</object>
-				<object class="wxMenuItem" name="quickfinder_typedef">
-					<label>Typedef</label>
-				</object>
-				<object class="wxMenuItem" name="quickfinder_file">
-					<label>Workspace file</label>
-				</object>
-            </object>
-			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="find_in_files">
                 <label>&amp;Find In Files...</label>
             </object>
@@ -297,6 +274,16 @@
             <object class="wxMenuItem" name="find_type">
                 <label>Find &amp;Type...</label>
             </object>
+			<object class="wxMenuItem" name="find_function">
+				<label>Find &amp;Function...</label>
+			</object>
+			<object class="wxMenuItem" name="find_macro">
+				<label>Find &amp;Macro...</label>
+			</object>
+			<object class="wxMenuItem" name="find_typedef">
+				<label>Find Type&amp;def...</label>
+			</object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="find_symbol">
                 <label>&amp;Quick Outline...</label>
             </object>

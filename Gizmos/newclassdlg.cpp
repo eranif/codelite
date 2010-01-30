@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "newclassdlg.h"
+#include "open_resource_dialog.h"
 #include "windowattrmanager.h"
 #include <wx/dirdlg.h>
 #include <wx/msgdlg.h>
@@ -34,7 +35,6 @@
 #include "globals.h"
 #include "wx/dir.h"
 #include "workspace.h"
-#include "open_type_dlg.h"
 
 NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 		: NewClassBaseDlg( parent )
@@ -338,16 +338,13 @@ void NewClassDlg::OnBrowseNamespace(wxCommandEvent &e)
 	wxArrayString kinds;
 	kinds.Add(wxT("namespace"));
 
-	OpenTypeDlg *dlg = new OpenTypeDlg(this, m_mgr->GetTagsManager(), kinds);
-	if(dlg->ShowModal() == wxID_OK){
+	OpenResourceDialog dlg(this, m_mgr, OpenResourceDialog::TYPE_NAMESPACE, false);
+	if(dlg.ShowModal() == wxID_OK){
 		wxString nameSpace;
-		if(	dlg->GetSelectedTag()->GetScope().IsEmpty() == false &&
-			dlg->GetSelectedTag()->GetScope() != wxT("<global>"))
-		{
-			nameSpace << dlg->GetSelectedTag()->GetScope() << wxT("::");
+		if( dlg.GetSelection().m_scope.IsEmpty() == false && dlg.GetSelection().m_scope != wxT("<global>")){
+			nameSpace << dlg.GetSelection().m_scope << wxT("::");
 		}
-		nameSpace << dlg->GetSelectedTag()->GetName();
-
+		nameSpace << dlg.GetSelection().m_name;
 		m_textCtrlNamespace->SetValue(nameSpace);
 	}
 }

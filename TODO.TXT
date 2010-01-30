@@ -1,10 +1,12 @@
 - add build-errors-assistant
 - Add new 'scp' plugin
 - Change the tip color selection to a lighter color (Windows)
-- Unified the open-resource/open-type/quick-finder into a single dialog
 - Change 'toggle multi/single select' icon
 - Add option to customize the single toolbar
 - Apply patch to fix Mac OSX font dialog
 - Add new second tip to the code-completion box which shows the conent of the comment on top of the current tip
 - Add 'workspace settings' entry in the menu bar
 - Add 'workspace editor preferences' entry in the menu bar
+- Code-Formatter: make the event to accept the file name for formatting
+- Refactoring: remove extra spaces from 'implement inherited virtual' + add the 'virtual' keyword as an option
+- Refactoring: add an option to add 'add forward decl'

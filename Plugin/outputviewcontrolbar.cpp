@@ -1,7 +1,6 @@
 #include "outputviewcontrolbar.h"
 #include "globals.h"
 #include <wx/bmpbuttn.h>
-#include "quickfinder.h"
 #include <wx/button.h>
 #include <wx/frame.h>
 #include "editor_config.h"
@@ -231,18 +230,8 @@ void OutputViewControlBar::AddAllButtons()
 	m_moreButton = new OutputViewControlBarButton(this, wxT("More"), wxBitmap(img), 0);
 	m_moreButton->SetState( OutputViewControlBarButton::Button_Normal );
 
-	// Add the search control
-	m_searchBar = new OutputViewSearchCtrl(this);
-
 	//m_buttons.push_back( m_searchBar );
 	GetSizer()->Add(m_moreButton, 0, wxALL | wxEXPAND, 1);
-	GetSizer()->Add(m_searchBar , 0, wxALL | wxEXPAND, 1);
-
-	// Hide it?
-	if (!EditorConfigST::Get()->GetOptions()->GetShowQuickFinder()) {
-		GetSizer()->Hide(m_searchBar);
-	}
-
 	GetSizer()->Layout();
 
 	if ( m_book ) {
@@ -343,33 +332,11 @@ void OutputViewControlBar::OnMenuSelection(wxCommandEvent& event)
 			break;
 		}
 	}
-
-	if ( XRCID("Hide QuickFinder") == event.GetId() ) {
-		DoShowQuickFinder(false);
-
-		// update the configuration file
-		OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-		opts->SetShowQuickFinder( false );
-		EditorConfigST::Get()->SetOptions( opts );
-	}
-
-	if ( XRCID("Show Finder") == event.GetId() ) {
-		DoShowQuickFinder(true);
-
-		// update the configuration file
-		OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-		opts->SetShowQuickFinder( true );
-		EditorConfigST::Get()->SetOptions( opts );
-	}
 }
 
 void OutputViewControlBar::OnEditorSettingsChanged(wxCommandEvent& event)
 {
 	event.Skip();
-
-	// Reload the string from the disk
-	m_searchBar->m_searchType = EditorConfigST::Get()->GetStringValue(wxT("QuickFinderSearchType"));
-	DoShowQuickFinder(EditorConfigST::Get()->GetOptions()->GetShowQuickFinder());
 }
 
 void OutputViewControlBar::OnEditorFocus(wxCommandEvent& event)
@@ -401,58 +368,6 @@ void OutputViewControlBar::OnEditorFocus(wxCommandEvent& event)
 		}
 		// and hide the output view
 		DoTogglePane(true);
-	}
-}
-
-void OutputViewControlBar::DoShowQuickFinder(bool show)
-{
-	wxFrame * main_frame = dynamic_cast<wxFrame*>( wxTheApp->GetTopWindow() );
-	if (!show) {
-		// Hide it
-
-		if (GetSizer()->IsShown(m_searchBar)) {
-			main_frame->Freeze();
-			GetSizer()->Hide(m_searchBar);
-			GetSizer()->Layout();
-
-#ifndef __WXGTK__
-			for (size_t i=0; i<m_buttons.size(); i++) {
-				OutputViewControlBarButton *button = m_buttons.at(i);
-				button->Refresh();
-			}
-#endif
-			if ( main_frame ) {
-				main_frame->SendSizeEvent();
-			}
-
-			// set the focus to the active editor
-			QuickFinder::FocusActiveEditor();
-			main_frame->Thaw();
-		}
-
-	} else {
-		// Show it
-
-		if ( GetSizer()->IsShown(m_searchBar) == false ) {
-			main_frame->Freeze();
-			GetSizer()->Show(m_searchBar);
-			GetSizer()->Layout();
-
-#ifndef __WXGTK__
-			for (size_t i=0; i<m_buttons.size(); i++) {
-				OutputViewControlBarButton *button = m_buttons.at(i);
-				button->Refresh();
-			}
-#endif
-
-			if ( main_frame ) {
-				main_frame->SendSizeEvent();
-			}
-			main_frame->Thaw();
-		}
-		GetSearchBar()->m_findWhat->SetFocus();
-		GetSearchBar()->m_findWhat->SelectAll();
-
 	}
 }
 
@@ -679,263 +594,10 @@ void OutputViewControlBarButton::DoShowPopupMenu()
 		font.SetWeight(wxNORMAL);
 #endif
 	}
-	bool     isQuickFinderShown( bar->GetSizer()->IsShown( bar->GetSearchBar() ) );
-
-	if ( !isQuickFinderShown ) {
-		popupMenu.AppendSeparator();
-		wxString quickFinderText ( wxT("Show Finder") );
-		wxMenuItem *item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(quickFinderText.c_str()), quickFinderText, quickFinderText, wxITEM_NORMAL);
-		popupMenu.Append( item );
-	}
-
 	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewControlBar::OnMenuSelection), NULL, bar);
 	PopupMenu( &popupMenu, rr.x, rr.y );
 }
 
-// -----------------------------------------------------------------------------------------
-
-OutputViewSearchCtrl::OutputViewSearchCtrl(wxWindow* win)
-		: OutputViewControlBarButton(win, wxEmptyString, wxNullBitmap)
-{
-
-#ifdef __WXMAC__
-	GREY_TEXT = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-#else
-	GREY_TEXT = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
-#endif
-	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
-	SetSizer( mainSizer );
-
-	m_findWhat = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2);
-	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-	m_findWhat->SetValue(TYPE_HERE_TEXT);
-	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)    );
-
-	m_findWhat->SetMinSize(wxSize(200,-1));
-	m_findWhat->Connect(wxEVT_COMMAND_TEXT_ENTER,   wxCommandEventHandler(OutputViewSearchCtrl::OnEnter      ), NULL, this);
-	m_findWhat->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OutputViewSearchCtrl::OnTextUpdated), NULL, this);
-	m_findWhat->Connect(wxEVT_SET_FOCUS,            wxFocusEventHandler(OutputViewSearchCtrl::OnFocus)        , NULL, this);
-	m_findWhat->Connect(wxEVT_KILL_FOCUS,           wxFocusEventHandler(OutputViewSearchCtrl::OnFocus)        , NULL, this);
-	m_findWhat->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(OutputViewSearchCtrl::OnKeyDown), NULL, this);
-
-	// Editor event
-	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewSearchCtrl::OnEdit),      NULL, this);
-	wxTheApp->Connect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewSearchCtrl::OnEdit),      NULL, this);
-	wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewSearchCtrl::OnEdit),      NULL, this);
-	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewSearchCtrl::OnEdit),      NULL, this);
-
-	wxTheApp->Connect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputViewSearchCtrl::OnEditUI),      NULL, this);
-	wxTheApp->Connect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputViewSearchCtrl::OnEditUI),      NULL, this);
-	wxTheApp->Connect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputViewSearchCtrl::OnEditUI),      NULL, this);
-	wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputViewSearchCtrl::OnEditUI),      NULL, this);
-
-	m_button = new wxBitmapButton(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("findwhat")));
-	m_button->SetToolTip(wxT("Show Finder Search Categories"));
-
-	m_buttonHide = new wxBitmapButton(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("page_close16")));
-	m_buttonHide->SetToolTip(wxT("Close Finder"));
-
-	m_button->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OutputViewSearchCtrl::OnShowSearchOptions), NULL, this);
-	m_buttonHide->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OutputViewSearchCtrl::OnHideSearchBar), NULL, this);
-
-#ifdef __WXMAC__
-	mainSizer->Add(m_buttonHide,   0, wxALL | wxALIGN_CENTER_VERTICAL , 2);
-#else
-	mainSizer->Add(m_buttonHide,   0, wxLEFT| wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL , 2);
-#endif
-
-	mainSizer->Add(m_findWhat, 0, wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL , 2);
-
-#ifdef __WXMAC__
-	mainSizer->Add(m_button,   0, wxALL | wxALIGN_CENTER_VERTICAL , 2);
-#else
-	mainSizer->Add(m_button,   0, wxRIGHT| wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL , 2);
-#endif
-	mainSizer->Fit(this);
-
-	// Initialize the various search types
-	m_searchTypeArray.Add(ST_CLASS);
-	m_searchTypeArray.Add(ST_FUNCTION);
-	m_searchTypeArray.Add(ST_MACRO);
-	m_searchTypeArray.Add(ST_TYPEDEF);
-	m_searchTypeArray.Add(ST_WORKSPACE_FILE);
-
-	// load the search type
-	m_searchType = EditorConfigST::Get()->GetStringValue(wxT("QuickFinderSearchType"));
-	if ( m_searchType.IsEmpty() ) {
-		m_searchType = ST_WORKSPACE_FILE;
-	}
-}
-
-OutputViewSearchCtrl::~OutputViewSearchCtrl()
-{
-}
-
-void OutputViewSearchCtrl::OnEnter(wxCommandEvent& event)
-{
-	wxUnusedVar(event);
-	wxArrayString kind;
-
-
-	if ( m_searchType == ST_WORKSPACE_FILE ) {
-		if ( !QuickFinder::OpenWorkspaceFile(m_findWhat->GetValue()) ) {
-			m_findWhat->SetBackgroundColour(wxT("PINK"));
-			m_findWhat->Refresh();
-			m_findWhat->SetFocus();
-		}
-		return;
-	} else if ( m_searchType == ST_CLASS ) {
-		kind.Add(wxT("class"));
-		kind.Add(wxT("struct"));
-		kind.Add(wxT("union"));
-
-	} else if ( m_searchType == ST_FUNCTION ) {
-		kind.Add(wxT("function"));
-		kind.Add(wxT("prototype"));
-
-	} else if ( m_searchType == ST_MACRO) {
-		kind.Add(wxT("macro"));
-
-	} else if ( m_searchType == ST_TYPEDEF) {
-		kind.Add(wxT("typedef"));
-
-	}
-
-	wxString what ( m_findWhat->GetValue() );
-	what.Trim().Trim(false);
-
-	if ( what.IsEmpty() ) {
-		m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-		m_findWhat->Refresh();
-		m_findWhat->SetFocus();
-		return;
-	}
-
-	if ( !QuickFinder::OpenType(m_findWhat->GetValue(), kind) ) {
-		m_findWhat->SetBackgroundColour(wxT("PINK"));
-		m_findWhat->Refresh();
-		m_findWhat->SetFocus();
-	}
-}
-
-void OutputViewSearchCtrl::OnShowSearchOptions(wxCommandEvent& event)
-{
-	wxRect rect = m_button->GetRect();
-	wxMenu popupMenu;
-
-	wxMenuItem *item (NULL);
-
-	for (size_t i=0; i<m_searchTypeArray.GetCount(); i++) {
-		item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(m_searchTypeArray.Item(i).c_str()), m_searchTypeArray.Item(i), m_searchTypeArray.Item(i), wxITEM_CHECK);
-		popupMenu.Append( item );
-		item->Check( m_searchType == m_searchTypeArray.Item(i) );
-	}
-
-	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewSearchCtrl::OnMenuSelection), NULL, this);
-	PopupMenu( &popupMenu, rect.x, rect.y);
-
-}
-
-void OutputViewSearchCtrl::OnMenuSelection(wxCommandEvent& event)
-{
-	// set the focus to the m_findWhat control
-	m_findWhat->SetFocus();
-
-	for (size_t i=0; i<m_searchTypeArray.GetCount(); i++) {
-		if ( wxXmlResource::GetXRCID(m_searchTypeArray.Item(i).c_str()) == event.GetId() ) {
-			m_searchType = m_searchTypeArray.Item(i);
-			// and save the search type
-			EditorConfigST::Get()->SaveStringValue(wxT("QuickFinderSearchType"), m_searchType);
-			break;
-		}
-	}
-}
-
-void OutputViewSearchCtrl::OnKeyDown(wxKeyEvent& e)
-{
-	switch (e.GetKeyCode()) {
-	case WXK_ESCAPE: {
-		OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-		opts->SetShowQuickFinder( false );
-		EditorConfigST::Get()->SetOptions( opts );
-
-		PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
-		break;
-	}
-	default:
-		e.Skip();
-	}
-}
-
-void OutputViewSearchCtrl::OnTextUpdated(wxCommandEvent& event)
-{
-	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-	event.Skip();
-}
-
-void OutputViewSearchCtrl::OnFocus(wxFocusEvent& event)
-{
-	event.Skip();
-	if ( event.GetEventType() == wxEVT_KILL_FOCUS ) {
-
-		// we lost the focus
-		if ( m_findWhat->GetValue().IsEmpty() ) {
-			m_findWhat->SetValue(TYPE_HERE_TEXT);
-			m_findWhat->Refresh();
-			return;
-		}
-	}
-
-	// we got the focus
-	if ( m_findWhat->GetValue() == TYPE_HERE_TEXT ) {
-		m_findWhat->Clear();
-	}
-
-	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)    );
-	m_findWhat->Refresh();
-}
-
-void OutputViewSearchCtrl::OnEdit(wxCommandEvent& event)
-{
-	// is m_findWhat in focus??
-	if ( !IsFocused() ) {
-		event.Skip();
-		return;
-	}
-
-	switch ( event.GetId() ) {
-	case wxID_CUT:
-		if ( m_findWhat->CanCopy() ) m_findWhat->Cut();
-		break;
-	case wxID_COPY:
-		if ( m_findWhat->CanCopy() ) m_findWhat->Copy();
-		break;
-	case wxID_PASTE:
-		if ( m_findWhat->CanPaste() ) m_findWhat->Paste();
-		break;
-	case wxID_SELECTALL:
-		m_findWhat->SelectAll();
-		break;
-	default:
-		break;
-	}
-}
-
-void OutputViewSearchCtrl::OnHideSearchBar(wxCommandEvent& event)
-{
-	OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-	opts->SetShowQuickFinder( false );
-	EditorConfigST::Get()->SetOptions( opts );
-
-	PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
-}
-
-bool OutputViewSearchCtrl::IsFocused()
-{
-	bool visible = GetSizer()->IsShown(m_findWhat);
-	wxWindow *win = wxWindow::FindFocus();
-	return win && win == m_findWhat && visible;
-}
 BEGIN_EVENT_TABLE(OutputViewControlBarToggleButton, wxToggleButton)
 	EVT_TOGGLEBUTTON(wxID_ANY, OutputViewControlBarToggleButton::OnButtonToggled)
 END_EVENT_TABLE()
@@ -1002,41 +664,6 @@ void OutputViewControlBarToggleButton::DoShowPopupMenu()
 		font.SetWeight(wxNORMAL);
 #endif
 	}
-	popupMenu.AppendSeparator();
-
-	bool     isQuickFinderShown( bar->GetSizer()->IsShown( bar->GetSearchBar() ) );
-	wxString quickFinderText;
-
-	quickFinderText = isQuickFinderShown ? wxT("Hide QuickFinder") : wxT("Show Finder");
-	wxMenuItem *item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(quickFinderText.c_str()), quickFinderText, quickFinderText, wxITEM_NORMAL);
-	popupMenu.Append( item );
-
 	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewControlBar::OnMenuSelection), NULL, bar);
 	PopupMenu( &popupMenu, rr.x, rr.y );
-}
-
-void OutputViewSearchCtrl::OnEditUI(wxUpdateUIEvent& event)
-{
-	// is m_findWhat in focus??
-	if ( !IsFocused() ) {
-		event.Skip();
-		return;
-	}
-
-	switch ( event.GetId() ) {
-	case wxID_CUT:
-		event.Enable( m_findWhat->CanCopy() );
-		break;
-	case wxID_COPY:
-		event.Enable(  m_findWhat->CanCopy() );
-		break;
-	case wxID_PASTE:
-		event.Enable(m_findWhat->CanPaste());
-		break;
-	case wxID_SELECTALL:
-		event.Enable(true);
-		break;
-	default:
-		break;
-	}
 }

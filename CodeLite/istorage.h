@@ -86,6 +86,15 @@ public:
 	virtual void GetTagsByKind (const wxArrayString &kinds, const wxString &orderingColumn, int order, std::vector<TagEntryPtr> &tags) = 0;
 
 	/**
+	 * @brief return array of tags by kind.
+	 * @param kinds array of kinds
+	 * @param orderingColumn the column that the output should be ordered by (leave empty for no sorting)
+	 * @param order OrderAsc, OrderDesc or use OrderNone for no ordering the results
+	 * @param tags
+	 */
+	virtual void GetTagsByKindLimit (const wxArrayString &kinds, const wxString &orderingColumn, int order, int limit, const wxString &partName, std::vector<TagEntryPtr> &tags) = 0;
+	
+	/**
 	 * @brief return array of items by path
 	 * @param path
 	 * @param tags

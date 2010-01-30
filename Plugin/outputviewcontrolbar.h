@@ -23,7 +23,6 @@ extern wxString TYPE_HERE_TEXT;
 class wxAuiManager;
 class OutputViewControlBarButton;
 class Notebook;
-class OutputViewSearchCtrl;
 class OutputViewControlBarToggleButton;
 
 //--------------------------------------------------------
@@ -32,15 +31,7 @@ class OutputViewControlBar : public wxPanel
 {
 	wxAuiManager *                           m_aui;
 	Notebook*                                m_book;
-	OutputViewSearchCtrl *                   m_searchBar;
 	OutputViewControlBarButton*              m_moreButton;
-public:
-	void SetSearchBar(OutputViewSearchCtrl* searchBar) {
-		this->m_searchBar = searchBar;
-	}
-	OutputViewSearchCtrl* GetSearchBar() {
-		return m_searchBar;
-	}
 
 public:
 #ifndef __WXGTK__
@@ -72,7 +63,6 @@ protected:
 	wxWindow *  DoFindButton     (const wxString &name);
 	void        DoMarkActive     (const wxString &name);
 	bool        DoFindDockInfo   (const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info);
-	void        DoShowQuickFinder(bool show);
 };
 
 //--------------------------------------------------------
@@ -138,41 +128,6 @@ public:
 	virtual void OnPaint          (wxPaintEvent &event);
 	virtual void OnEraseBackground(wxEraseEvent &event);
 	virtual void OnMouseLDown     (wxMouseEvent &event);
-};
-
-class OutputViewSearchCtrl : public OutputViewControlBarButton
-{
-	bool IsFocused();
-
-public:
-	wxTextCtrl   *m_findWhat;
-	wxButton     *m_button;
-	wxButton     *m_buttonHide;
-	wxString      m_searchType;
-	wxArrayString m_searchTypeArray;
-	wxColour      GREY_TEXT;
-public:
-	OutputViewSearchCtrl(wxWindow *win);
-	~OutputViewSearchCtrl();
-	// override parent methods which we dont really need
-	virtual void OnPaint             (wxPaintEvent &event) {
-		event.Skip();
-	}
-	virtual void OnEraseBackground   (wxEraseEvent &event) {
-		event.Skip();
-	}
-	virtual void OnMouseLDown        (wxMouseEvent &event) {
-		event.Skip();
-	}
-	virtual void OnEnter             (wxCommandEvent  &event);
-	virtual void OnTextUpdated       (wxCommandEvent  &event);
-	virtual void OnShowSearchOptions (wxCommandEvent  &event);
-	virtual void OnHideSearchBar     (wxCommandEvent  &event);
-	virtual void OnMenuSelection     (wxCommandEvent  &event);
-	virtual void OnKeyDown           (wxKeyEvent      &event);
-	virtual void OnFocus             (wxFocusEvent    &event);
-	virtual void OnEdit              (wxCommandEvent  &event);
-	virtual void OnEditUI            (wxUpdateUIEvent &event);
 };
 
 class OutputViewControlBarToggleButton : public wxToggleButton

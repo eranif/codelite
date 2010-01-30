@@ -1010,3 +1010,42 @@ void TagsStorageSQLite::GetGlobalFunctions(std::vector<TagEntryPtr>& tags)
 	sql << wxT("select * from tags where scope = '<global>' AND kind IN ('function', 'prototype') LIMIT ") << GetSingleSearchLimit();
 	DoFetchTags(sql, tags);
 }
+
+void TagsStorageSQLite::GetTagsByKindLimit(const wxArrayString& kinds, const wxString& orderingColumn, int order, int limit, const wxString &partName, std::vector<TagEntryPtr>& tags)
+{
+	wxString sql;
+	sql << wxT("select * from tags where kind in (");
+	for (size_t i=0; i<kinds.GetCount(); i++) {
+		sql << wxT("'") << kinds.Item(i) << wxT("',");
+	}
+	sql.RemoveLast();
+	sql << wxT(") ");
+
+	if ( orderingColumn.IsEmpty() == false ) {
+		sql << wxT("order by ") << orderingColumn;
+		switch (order) {
+		case ITagsStorage::OrderAsc:
+			sql << wxT(" ASC");
+			break;
+		case ITagsStorage::OrderDesc:
+			sql << wxT(" DESC");
+			break;
+		case ITagsStorage::OrderNone:
+		default:
+			break;
+		}
+	}
+	
+	if(partName.IsEmpty() == false) {
+		wxString tmpName(partName);
+		tmpName.Replace(wxT("_"), wxT("^_"));
+		sql << wxT(" AND name like '%%") << tmpName << wxT("%%' ESCAPE '^' ");
+	}
+	
+	if(limit > 0) {
+		sql << wxT(" LIMIT ") << limit;
+	}
+	
+	DoFetchTags(sql, tags);
+	
+}

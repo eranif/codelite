@@ -353,8 +353,6 @@ protected:
 	void OnExecuteNoDebugUI(wxUpdateUIEvent &event);
 	void OnTimer(wxTimerEvent &event);
 	void OnFileCloseAll(wxCommandEvent &event);
-	void OnFindResource(wxCommandEvent &event);
-	void OnFindType(wxCommandEvent &event);
 	void OnQuickOutline(wxCommandEvent &event);
 	void OnImportMSVS(wxCommandEvent &e);
 	void OnDebugAttach(wxCommandEvent &event);
@@ -454,7 +452,7 @@ protected:
 	void OnShowWhitespace(wxCommandEvent &e);
 	void OnShowFullScreen(wxCommandEvent &e);
 	void OnSetStatusMessage(wxCommandEvent &e);
-	void OnShowQuickFinder  (wxCommandEvent &e);
+	void OnFindResourceXXX  (wxCommandEvent &e);
 	void OnShowQuickFinderUI(wxUpdateUIEvent &e);
 	void OnShowActiveProjectSettings(wxCommandEvent &e);
 	void OnShowActiveProjectSettingsUI(wxUpdateUIEvent &e);

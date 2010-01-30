@@ -23,8 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "open_type_dlg.h"
+#include <wx/app.h>
+#include <wx/choicdlg.h>
 #include "unittestpp.h"
+#include "open_resource_dialog.h"
+#include <wx/msgdlg.h>
 #include "testclassdlg.h"
 #include "imanager.h"
 #include "ctags_manager.h"
@@ -126,16 +129,17 @@ void TestClassDlg::OnButtonOk(wxCommandEvent& e)
 
 void TestClassDlg::OnShowClassListDialog(wxCommandEvent& e)
 {
-	OpenTypeDlg *dlg = new OpenTypeDlg(m_manager->GetTheApp()->GetTopWindow(), m_manager->GetTagsManager());
-	if (dlg->ShowModal() == wxID_OK) {
+	m_textCtrlClassName->SetFocus();
+	OpenResourceDialog dlg(m_manager->GetTheApp()->GetTopWindow(), m_manager, OpenResourceDialog::TYPE_CLASS, false);
+	if (dlg.ShowModal() == wxID_OK) {
+		
 		// do something with the selected text
-		m_textCtrlClassName->SetValue( dlg->GetSelectedTag()->GetName() );
+		m_textCtrlClassName->SetValue( dlg.GetSelection().m_name );
 
 		// display the class methods
 		DoRefreshFunctions();
-
+		
 	}
-	dlg->Destroy();
 }
 
 void TestClassDlg::DoRefreshFunctions(bool repportError)

@@ -154,8 +154,6 @@
       <File Name="threebuttonbasedlg.cpp"/>
       <File Name="threebuttonbasedlg.h"/>
       <File Name="threebuttondlg.cpp"/>
-      <File Name="open_type_dlg.h"/>
-      <File Name="open_type_dlg.cpp"/>
       <File Name="nameanddescdlg.h"/>
       <File Name="nameanddescbasedlg.cpp"/>
       <File Name="nameanddescbasedlg.h"/>
@@ -174,6 +172,10 @@
       <File Name="renamefilebasedlg.h"/>
       <File Name="renamefiledlg.h"/>
       <File Name="renamefiledlg.cpp"/>
+      <File Name="openresourcedialogbase.cpp"/>
+      <File Name="openresourcedialogbase.h"/>
+      <File Name="open_resource_dialog.h"/>
+      <File Name="open_resource_dialog.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
       <File Name="custom_notebook.cpp"/>
@@ -227,10 +229,6 @@
   <VirtualDirectory Name="Images">
     <File Name="overlaytool.cpp"/>
     <File Name="overlaytool.h"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="QuickFinder">
-    <File Name="quickfinder.h"/>
-    <File Name="quickfinder.cpp"/>
   </VirtualDirectory>
   <Settings Type="Static Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -386,6 +384,7 @@
   </Settings>
   <VirtualDirectory Name="formbuilder">
     <File Name="renamefilebasedlg.fbp"/>
+    <File Name="openresourcedialogbase.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Terminal">
     <File Name="wxterminalbase.h"/>

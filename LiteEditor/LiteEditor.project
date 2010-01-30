@@ -397,8 +397,6 @@
     <File Name="clauidockart.h"/>
     <File Name="settersgetterstreectrl.cpp"/>
     <File Name="settersgetterstreectrl.h"/>
-    <File Name="quickfindbarbase.cpp"/>
-    <File Name="quickfindbarbase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>

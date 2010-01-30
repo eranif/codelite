@@ -229,7 +229,7 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
 
 			if (wxMatchWild(curSel, fileNameOnly)) {
 				// keep the fullpath
-				tmpArr.Add(fileName);
+				tmpArr.Add(m_files.Item(i));
 			}
 		}
 	}

@@ -3469,6 +3469,8 @@ void Frame::OnFindResourceXXX(wxCommandEvent& e)
 	} else if(e.GetId() == XRCID("find_typedef")) {
 		searchType = OpenResourceDialog::TYPE_TYPEDEF;
 		
+	} else if(e.GetId() == XRCID("find_type")) {
+		searchType = OpenResourceDialog::TYPE_CLASS;
 	} else {
 		searchType = OpenResourceDialog::TYPE_WORKSPACE_FILE;
 	}

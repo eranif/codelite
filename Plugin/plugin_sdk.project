@@ -164,10 +164,6 @@
       <File Name="macrosbasedlg.cpp"/>
       <File Name="macrosbasedlg.h"/>
       <File Name="macrosdlg.cpp"/>
-      <File Name="quickfinder_basedlg.h"/>
-      <File Name="quickfinder_basedlg.cpp"/>
-      <File Name="quickfinder_selectsymbol.h"/>
-      <File Name="quickfinder_selectsymbol.cpp"/>
       <File Name="renamefilebasedlg.cpp"/>
       <File Name="renamefilebasedlg.h"/>
       <File Name="renamefiledlg.h"/>

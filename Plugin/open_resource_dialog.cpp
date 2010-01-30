@@ -86,6 +86,7 @@ void OpenResourceDialog::OnUsePartialMatching( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 	DoPopulateList();
+	m_textCtrlResourceName->SetFocus();
 }
 
 void OpenResourceDialog::OnEnter(wxCommandEvent& event)

@@ -583,12 +583,13 @@ public:
 	bool IsTypeAndScopeExists(const wxString &typeName, wxString &scope);
 
 	/**
-	 * @brief return true if type & scope do exist in the symbols database and is container
-	 * @param typeName
-	 * @param scope
+	 * @brief return true if type & scope do exist in the symbols database and is container. This function also modifies the
+	 * typeName & scope to match real typename and scope (according to the TagsStorage)
+	 * @param typeName [intput/output]
+	 * @param scope    [intput/output]
 	 * @return
 	 */
-	bool IsTypeAndScopeContainer(const wxString &typeName, wxString &scope);
+	bool IsTypeAndScopeContainer(wxString &typeName, wxString &scope);
 
 	/**
 	 * @brief try to process a given expression and evaluate it into type & typescope

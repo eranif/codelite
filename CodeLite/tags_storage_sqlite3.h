@@ -433,7 +433,7 @@ public:
 	 * @param scope [intput/output]
 	 * @return true on success
 	 */
-	virtual bool IsTypeAndScopeContainer(const wxString& typeName, wxString& scope);
+	virtual bool IsTypeAndScopeContainer(wxString& typeName, wxString& scope);
 
 	/**
 	 * @brief return true if type & scope do exist in the symbols database and is container

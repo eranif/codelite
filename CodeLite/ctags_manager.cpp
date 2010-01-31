@@ -1236,7 +1236,7 @@ void TagsManager::DoFindByNameAndScope(const wxString &name, const wxString &sco
 	}
 }
 
-bool TagsManager::IsTypeAndScopeContainer(const wxString& typeName, wxString& scope)
+bool TagsManager::IsTypeAndScopeContainer(wxString& typeName, wxString& scope)
 {
 	wxString cacheKey;
 	cacheKey << typeName << wxT("@") << scope;
@@ -1253,7 +1253,12 @@ bool TagsManager::IsTypeAndScopeContainer(const wxString& typeName, wxString& sc
 	wxString _typeName = DoReplaceMacros(typeName);
 	wxString _scope    = DoReplaceMacros(scope);
 
-	return m_workspaceDatabase->IsTypeAndScopeContainer(_typeName, _scope);
+	bool res = m_workspaceDatabase->IsTypeAndScopeContainer(_typeName, _scope);
+	if(res) {
+		typeName = _typeName;
+		scope    = _scope;
+	}
+	return res;
 }
 
 bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope)

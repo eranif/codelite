@@ -209,11 +209,11 @@ public:
 	/**
 	 * @brief return true if type exist under a given scope.
 	 * Incase it exist but under the <global> scope, 'scope' will be modified
-	 * @param typeName type to search
+	 * @param typeName type to search [intput/output]
 	 * @param scope [intput/output]
 	 * @return true on success
 	 */
-	virtual bool IsTypeAndScopeContainer(const wxString& typeName, wxString& scope) = 0;
+	virtual bool IsTypeAndScopeContainer(wxString& typeName, wxString& scope) = 0;
 
 	/**
 	 * @brief return true if type exist under a given scope.

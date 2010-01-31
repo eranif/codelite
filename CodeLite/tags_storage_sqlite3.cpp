@@ -803,10 +803,32 @@ int TagsStorageSQLite::UpdateTagEntry(const TagEntry& tag)
 	return TagOk;
 }
 
-bool TagsStorageSQLite::IsTypeAndScopeContainer(const wxString& typeName, wxString& scope)
+bool TagsStorageSQLite::IsTypeAndScopeContainer(wxString& typeName, wxString& scope)
 {
 	wxString sql;
-	sql << wxT("select scope,kind from tags where name='") << typeName << wxT("'");
+	
+	// Break the typename to 'name' and scope
+	wxString typeNameNoScope(typeName.AfterLast(wxT(':')));
+	wxString scopeOne       (typeName.BeforeLast(wxT(':')));
+	
+	if(scopeOne.EndsWith(wxT(":")))
+		scopeOne.RemoveLast();
+	
+	wxString combinedScope;
+	
+	if(scope != wxT("<global>"))
+		combinedScope << scope;
+	
+	if(scopeOne.IsEmpty() == false) {
+		if(combinedScope.IsEmpty() == false)
+			combinedScope << wxT("::");
+		combinedScope << scopeOne;
+	}
+	
+//	if(combinedScope.IsEmpty()) 
+//		combinedScope = wxT("<global>");
+		
+	sql << wxT("select scope,kind from tags where name='") << typeNameNoScope << wxT("'");
 
 	bool found_global(false);
 
@@ -817,9 +839,25 @@ bool TagsStorageSQLite::IsTypeAndScopeContainer(const wxString& typeName, wxStri
 			wxString kindFounded  (rs.GetString(1));
 
 			bool containerKind = kindFounded == wxT("struct") || kindFounded == wxT("class");
-			if (scopeFounded == scope && containerKind) {
+			if (scopeFounded == combinedScope && containerKind) {
+				scope    = combinedScope;
+				typeName = typeNameNoScope;
 				//we got an exact match
 				return true;
+				
+			} else if (scopeFounded == scopeOne && containerKind) {
+				// this is equal to cases like this:
+				// class A {
+				// typedef std::list<int> List;
+				// List l;
+				// };
+				// the combinedScope will be: 'A::std'
+				// however, the actual scope is 'std'
+				scope    = scopeOne;
+				typeName = typeNameNoScope;
+				//we got an exact match
+				return true;
+				
 			} else if ( containerKind && scopeFounded == wxT("<global>") ) {
 				found_global = true;
 			}
@@ -831,9 +869,11 @@ bool TagsStorageSQLite::IsTypeAndScopeContainer(const wxString& typeName, wxStri
 
 	// if we reached here, it means we did not find any exact match
 	if ( found_global ) {
-		scope = wxT("<global>");
+		scope    = wxT("<global>");
+		typeName = typeNameNoScope;
 		return true;
 	}
+	
 	return false;
 }
 

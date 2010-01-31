@@ -169,16 +169,20 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 	// Remove from this list all files which starts with one of the crawler search paths
 	wxArrayString searchPaths, excludePaths, filteredFileList;
 	GetSearchPaths( searchPaths, excludePaths );
-
+	
+	DEBUG_MESSAGE( wxString::Format(wxT("Initial workspace files count is %d"), req->_workspaceFiles.size()) ) ;
+	
 	for(size_t i=0; i<req->_workspaceFiles.size(); i++) {
 		wxString name(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
-		wxFileName fn = name;
+		wxFileName fn(name);
 		fn.MakeAbsolute();
 
 		bool isFromSearchPath(false);
 		for(size_t j=0; j<searchPaths.GetCount(); j++) {
-			wxFileName p ( searchPaths.Item(j) );
+			wxFileName p ( searchPaths.Item(j) + wxFileName::GetPathSeparator());
+			//DEBUG_MESSAGE( wxString::Format(wxT("Comparing %s vs %s"), fn.GetFullPath().c_str(), p.GetPath().c_str()));
 			if( fn.GetFullPath().StartsWith(p.GetPath()) ) {
+				//DEBUG_MESSAGE(wxT("Match was found for file, this file will NOT be parsed!"));
 				isFromSearchPath = true;
 				break;
 			}
@@ -187,7 +191,9 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 		// this file is not part of the search paths
 		if( !isFromSearchPath ) {
 			filteredFileList.Add( fn.GetFullPath() );
-		}
+		}/* else {
+			DEBUG_MESSAGE( wxString::Format(wxT("File %s is filtered"), fn.GetFullPath().c_str()) ) ;
+		}*/
 	}
 
 	DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> Workspace files %d"), filteredFileList.GetCount()) );

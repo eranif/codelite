@@ -253,7 +253,7 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
 			wxString fileName(m_files.Item(i));
 			wxString fileNameOnly(wxFileName(fileName).GetFullName());
 
-			fileName= fileName.MakeLower();
+			fileNameOnly.MakeLower();
 
 			//append wildcard at the end
 			if (!curSel.EndsWith(wxT("*"))) {

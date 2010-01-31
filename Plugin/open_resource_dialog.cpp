@@ -1,4 +1,5 @@
 #include "open_resource_dialog.h"
+#include <wx/xrc/xmlres.h>
 #include "globals.h"
 #include "editor_config.h"
 #include "ieditor.h"
@@ -18,11 +19,20 @@ wxString OpenResourceDialog::TYPE_FUNCTION       = wxT("Function");
 wxString OpenResourceDialog::TYPE_TYPEDEF        = wxT("Typedef");
 wxString OpenResourceDialog::TYPE_NAMESPACE      = wxT("Namespace");
 
+BEGIN_EVENT_TABLE(OpenResourceDialog, OpenResourceDialogBase)
+	EVT_TIMER(XRCID("OR_TIMER"), OpenResourceDialog::OnTimer)
+END_EVENT_TABLE()
+
 OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager, const wxString &type, bool allowChangeType )
 		: OpenResourceDialogBase( parent )
 		, m_manager(manager)
 		, m_type(type)
+		, m_needRefresh(false)
 {
+	
+	m_timer = new wxTimer(this, XRCID("OR_TIMER"));
+	m_timer->Start(500);
+	
 	m_listOptions->InsertColumn(0, wxT(""));
 	m_listOptions->InsertColumn(1, wxT(""));
 	m_listOptions->InsertColumn(2, wxT(""));
@@ -72,6 +82,9 @@ OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager, con
 
 OpenResourceDialog::~OpenResourceDialog()
 {
+	m_timer->Stop();
+	delete m_timer;
+	
 	WindowAttrManager::Save(this, wxT("OpenResourceDialog"), m_manager->GetConfigTool());
 	SimpleLongValue l;
 	l.SetValue(m_checkBoxUsePartialMatching->IsChecked() ? 1 : 0);
@@ -80,8 +93,8 @@ OpenResourceDialog::~OpenResourceDialog()
 
 void OpenResourceDialog::OnText( wxCommandEvent& event )
 {
+	m_needRefresh = true;
 	event.Skip();
-	DoPopulateList();
 }
 
 void OpenResourceDialog::OnType( wxCommandEvent& event )
@@ -263,6 +276,11 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
 	for (size_t i=0; i<tmpArr.GetCount(); i++) {
 		wxFileName fn(tmpArr.Item(i));
 		DoAppendLine(fn.GetFullName(), fn.GetFullPath(), wxT(""), false, new OpenResourceDialogItemData(tmpArr.Item(i), -1, wxT(""), OpenResourceDialog::TYPE_WORKSPACE_FILE, wxT(""), wxT("")));
+		
+		if( i == 150 ) {
+			m_staticTextErrorMessage->SetLabel(wxT("Too many matches, please narrow down your search"));
+			break;
+		}
 	}
 
 	if (m_listOptions->GetItemCount() > 0) {
@@ -395,4 +413,12 @@ int OpenResourceDialog::DoAppendLine(const wxString& col1, const wxString& col2,
 		font.SetWeight(wxBOLD);
 	m_listOptions->SetItemFont(index, font);
 	return index;
+}
+
+void OpenResourceDialog::OnTimer(wxTimerEvent& event)
+{
+	if(m_needRefresh)
+		DoPopulateList();
+		
+	m_needRefresh = false;
 }

@@ -35,13 +35,13 @@ OpenResourceDialogBase::OpenResourceDialogBase( wxWindow* parent, wxWindowID id,
 	fgSizer1->Add( m_staticText3, 0, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 	
 	m_textCtrlResourceName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2 );
-	fgSizer1->Add( m_textCtrlResourceName, 0, wxALL|wxEXPAND, 5 );
+	fgSizer1->Add( m_textCtrlResourceName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	wxString m_choiceResourceTypeChoices[] = { _("Workspace file"), _("Class, struct or union"), _("Function"), _("Typedef"), _("Macro"), _("Namespace") };
 	int m_choiceResourceTypeNChoices = sizeof( m_choiceResourceTypeChoices ) / sizeof( wxString );
 	m_choiceResourceType = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceResourceTypeNChoices, m_choiceResourceTypeChoices, 0 );
 	m_choiceResourceType->SetSelection( 0 );
-	fgSizer1->Add( m_choiceResourceType, 0, wxEXPAND|wxALL, 5 );
+	fgSizer1->Add( m_choiceResourceType, 0, wxEXPAND|wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	mainSizer->Add( fgSizer1, 0, wxEXPAND, 5 );
 	
@@ -49,17 +49,17 @@ OpenResourceDialogBase::OpenResourceDialogBase( wxWindow* parent, wxWindowID id,
 	m_staticText1->Wrap( -1 );
 	mainSizer->Add( m_staticText1, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
-	m_listBoxOptions = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	mainSizer->Add( m_listBoxOptions, 1, wxALL|wxEXPAND, 5 );
+	m_listOptions = new wxListView( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
+	mainSizer->Add( m_listOptions, 1, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxVERTICAL );
 	
 	m_fullText = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
 	m_fullText->Wrap( -1 );
-	sbSizer1->Add( m_fullText, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
+	sbSizer1->Add( m_fullText, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
 	
-	mainSizer->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
+	mainSizer->Add( sbSizer1, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 	
 	m_staticTextErrorMessage = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextErrorMessage->Wrap( -1 );
@@ -97,8 +97,6 @@ OpenResourceDialogBase::OpenResourceDialogBase( wxWindow* parent, wxWindowID id,
 	m_textCtrlResourceName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( OpenResourceDialogBase::OnText ), NULL, this );
 	m_textCtrlResourceName->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( OpenResourceDialogBase::OnEnter ), NULL, this );
 	m_choiceResourceType->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( OpenResourceDialogBase::OnType ), NULL, this );
-	m_listBoxOptions->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( OpenResourceDialogBase::OnItemSelected ), NULL, this );
-	m_listBoxOptions->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( OpenResourceDialogBase::OnItemActivated ), NULL, this );
 	m_checkBoxUsePartialMatching->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( OpenResourceDialogBase::OnUsePartialMatching ), NULL, this );
 	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( OpenResourceDialogBase::OnOK ), NULL, this );
 	m_buttonOk->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( OpenResourceDialogBase::OnOKUI ), NULL, this );
@@ -111,8 +109,6 @@ OpenResourceDialogBase::~OpenResourceDialogBase()
 	m_textCtrlResourceName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( OpenResourceDialogBase::OnText ), NULL, this );
 	m_textCtrlResourceName->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( OpenResourceDialogBase::OnEnter ), NULL, this );
 	m_choiceResourceType->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( OpenResourceDialogBase::OnType ), NULL, this );
-	m_listBoxOptions->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( OpenResourceDialogBase::OnItemSelected ), NULL, this );
-	m_listBoxOptions->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( OpenResourceDialogBase::OnItemActivated ), NULL, this );
 	m_checkBoxUsePartialMatching->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( OpenResourceDialogBase::OnUsePartialMatching ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( OpenResourceDialogBase::OnOK ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( OpenResourceDialogBase::OnOKUI ), NULL, this );

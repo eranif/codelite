@@ -57,7 +57,8 @@ protected:
 	void DoPopulateTags();
 	void DoSelectItem(int selection, bool makeFirst = true);
 	void Clear();
-
+	int  DoAppendLine(const wxString &col1, const wxString &col2, const wxString &col3, bool boldFont, OpenResourceDialogItemData *clientData);
+	
 public:
 	static wxString TYPE_WORKSPACE_FILE;
 	static wxString TYPE_CLASS;
@@ -72,11 +73,11 @@ protected:
 	void OnType( wxCommandEvent& event );
 	void OnUsePartialMatching( wxCommandEvent& event );
 	void OnEnter( wxCommandEvent& event );
-	void OnItemActivated( wxCommandEvent& event );
+	void OnItemActivated( wxListEvent& event );
 	void OnKeyDown( wxKeyEvent& event );
 	void OnOK( wxCommandEvent& event );
 	void OnOKUI( wxUpdateUIEvent& event );
-	void OnItemSelected( wxCommandEvent& event );
+	void OnItemSelected( wxListEvent& event );
 
 
 public:

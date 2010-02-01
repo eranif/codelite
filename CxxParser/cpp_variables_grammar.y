@@ -9,6 +9,7 @@
 #include "stdio.h"
 #include "map"
 #include "variable.h"
+#include "cl_typedef.h"
 
 #ifdef yylex
 #undef yylex
@@ -23,11 +24,13 @@ int  cl_var_parse();
 void syncParser();
 void var_consumeDefaultValue(char c1, char c2);
 
-static VariableList *gs_vars = NULL;
-static std::vector<std::string> gs_names;
-static bool g_isUsedWithinFunc = false;
-Variable curr_var;
-static std::string s_tmpString;
+static  VariableList *           gs_vars = NULL;
+static  std::vector<std::string> gs_names;
+static  bool                     g_isUsedWithinFunc = false;
+static  std::string              s_tmpString;
+static  Variable                 curr_var;
+static  clTypedefList            gs_typedefs;
+static  clTypedef                gs_currentTypedef;
 
 //---------------------------------------------
 // externs defined in the lexer
@@ -129,15 +132,31 @@ translation_unit	:        /*empty*/
                         | translation_unit external_decl
                         ;
 
-external_decl	    :    {curr_var.Reset(); gs_names.clear(); s_tmpString.clear();} variables
-                        | 	error {
-                            	yyclearin;    //clear lookahead token
-                            	yyerrok;
-//                              printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_var_lval.c_str(), cl_scope_lineno);
-                            	var_syncParser();
+external_decl	    :    {curr_var.Reset(); gs_names.clear(); s_tmpString.clear(); gs_currentTypedef.clear(); } variables
+						| typedefs
+                        | error {
+                            yyclearin;    //clear lookahead token
+                            yyerrok;
+                            //printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_var_lval.c_str(), cl_scope_lineno);
                             }
                         ;
+/** Typedefs **/
 
+typedefs             : LE_TYPEDEF real_type new_name ';'
+						{
+							gs_typedefs.push_back(gs_currentTypedef);
+						}
+						;
+						
+real_type : variable_decl 
+			{ 
+				gs_currentTypedef.m_realType = curr_var;
+			}
+			;
+			
+new_name   : LE_IDENTIFIER { gs_currentTypedef.m_name = $1; }
+		   ;
+		 
 /* the following rules are for template parameters no declarations! */
 parameter_list	: /* empty */        {$$ = "";}
                             | template_parameter	{$$ = $1;}
@@ -506,28 +525,17 @@ void var_consumeDefaultValue(char c1, char c2)
     }
 }
 
-void var_syncParser(){
-//	int depth = 1;
-//	bool cont(true);
-//
-//	while (depth > 0 && cont) {
-//    	int ch = cl_scope_lex();
-//    	if(ch == 0)                    { break;}
-//    	if(ch == ',' && depth == 0) { break;}
-//    	if(ch == ';' && depth == 0) { break;}
-//    	if(ch == ')' && depth == 0) { break;}
-//
-//    	if(ch == ')'){
-//        	depth--;
-//        	continue;
-//        }
-//    	else if(ch == '('){
-//        	depth ++ ;
-//        	continue;
-//        }
-//    	printf("%d ", ch);
-//    }
-//	printf("\n");
+void clean_up()
+{
+	gs_vars = NULL;
+
+    // restore settings
+	setUseIgnoreMacros(true);
+	g_isUsedWithinFunc = false;
+	gs_typedefs.clear();
+	
+    //do the lexer cleanup
+	cl_scope_lex_clean();
 }
 
 // return the scope name at the end of the input string
@@ -548,13 +556,22 @@ void get_variables(const std::string &in, VariableList &li, const std::map<std::
 
     //call tghe main parsing routine
 	cl_var_parse();
-	gs_vars = NULL;
-
-    // restore settings
-	setUseIgnoreMacros(true);
-	g_isUsedWithinFunc = false;
-
-    //do the lexer cleanup
-	cl_scope_lex_clean();
+	clean_up();
 }
 
+// return the scope name at the end of the input string
+void get_typedefs(const std::string &in, clTypedefList &li)
+{
+	std::map<std::string, std::string> dummy;
+	
+    // provide the lexer with new input
+	if( !setLexerInput(in, dummy) ){
+    	return;
+    }
+	
+	// set the parser local output to our variable list
+	cl_var_parse();
+	li = gs_typedefs;
+
+	clean_up();
+}

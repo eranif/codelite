@@ -5,4 +5,8 @@
 //const char* type;
 //
 //(CharT const*            str,parser<DerivedT> const& p)
-bool a;
+//bool a;
+
+typedef std::vector<int> MyList;
+typedef std::vector<int> List2;
+int a;

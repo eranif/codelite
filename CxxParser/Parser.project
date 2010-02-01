@@ -22,6 +22,7 @@
     <File Name="variable.h"/>
     <File Name="expression_result.h"/>
     <File Name="function.h"/>
+    <File Name="cl_typedef.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="grammar">
     <File Name="cpp.l"/>
@@ -52,8 +53,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy *.h ..\CodeLite\.</Command>
-        <Command Enabled="yes">copy *.cpp ..\CodeLite\.</Command>
+        <Command Enabled="no">copy *.h ..\CodeLite\.</Command>
+        <Command Enabled="no">copy *.cpp ..\CodeLite\.</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

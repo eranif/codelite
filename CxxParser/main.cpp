@@ -1,5 +1,6 @@
 //test the parser
 #include "windows.h"
+#include "cl_typedef.h"
 #include "stdio.h"
 #include "errno.h"
 #include "string.h"
@@ -17,9 +18,11 @@ extern std::string get_scope_name(const std::string &in,
 extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap, bool isUsedWithinFunc);
 extern ExpressionResult &parse_expression(const std::string &in);
 extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, std::string> &ignoreTokens);
+extern void get_typedefs(const std::string &in, clTypedefList &li);
 
 void testScopeParser(char *buf);
 void testVarParser(char *buf);
+void testTypedefParser(char *buf);
 void testExprParser(char *buf);
 void testFuncParser(char *buf);
 char *loadFile(const char *fileName);
@@ -38,6 +41,7 @@ int main()
 	testVarParser(buf);
 	//testExprParser(buf);
 	//testFuncParser(buf);
+	//testTypedefParser(buf);
 	free(buf);
 }
 
@@ -106,6 +110,21 @@ void testVarParser(char *buf)
 	}
 
 //	printf("total time: %d\n", end-start);
+	printf("matches found: %d\n", li.size());
+}
+
+void testTypedefParser(char *buf)
+{
+	printf("===== Testing Typedef parser ======\n");
+	clTypedefList li;
+
+
+	std::map<std::string, std::string> ignoreTokens;
+	get_typedefs(buf, li);
+	for (clTypedefList::iterator iter = li.begin(); iter != li.end(); iter++) {
+		clTypedef var = *iter;
+		var.print();
+	}
 	printf("matches found: %d\n", li.size());
 }
 

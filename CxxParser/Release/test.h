@@ -6,7 +6,14 @@
 //
 //(CharT const*            str,parser<DerivedT> const& p)
 //bool a;
-
-typedef std::vector<int> MyList;
+//
+//typedef std::vector<int> MyList;
+//typedef std::vector<int> List2;
+//int a;
+//
+//#include <list>
 typedef std::vector<int> List2;
-int a;
+int main(int argc, char **argv)
+{
+	typedef std::list<int> TheList;
+	TheList lst;

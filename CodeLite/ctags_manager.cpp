@@ -52,6 +52,7 @@
 #include <wx/string.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/msgdlg.h>
+#include "code_completion_api.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -90,7 +91,6 @@ struct tagParseResult {
 	wxString fileName;
 };
 
-extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens, bool isUsedWithinFunc);
 static int CtagsMgrTimerId = wxNewId();
 
 //------------------------------------------------------------------------------

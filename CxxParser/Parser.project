@@ -16,6 +16,7 @@
     <File Name="expression_result.cpp"/>
     <File Name="function.cpp"/>
     <File Name="cpp_func_parser.cpp"/>
+    <File Name="typedef_parser.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="incldue">
     <File Name="cpp_lexer.h"/>
@@ -31,11 +32,13 @@
     <File Name="expr_grammar.y"/>
     <File Name="expr_lexer.l"/>
     <File Name="cpp_func_parser.y"/>
+    <File Name="typedef_grammar.y"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="test_suite">
     <File Name="Release/test.h"/>
   </VirtualDirectory>
+  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;" Required="yes" PreCompiledHeader="">
@@ -68,7 +71,7 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
-        <CustomPreBuild>scope_parser.cpp cpp_lexer.cpp var_parser.cpp cpp_expr_lexer.cpp cpp_expr_parser.cpp cpp_func_parser.cpp
+        <CustomPreBuild>scope_parser.cpp cpp_lexer.cpp var_parser.cpp cpp_expr_lexer.cpp cpp_expr_parser.cpp cpp_func_parser.cpp typedef_parser.cpp
 scope_parser.cpp: cpp_scope_grammar.y
 	yacc -dl  -t -v -pcl_scope_ cpp_scope_grammar.y
 	mv y.tab.c scope_parser.cpp
@@ -77,6 +80,10 @@ scope_parser.cpp: cpp_scope_grammar.y
 cpp_lexer.cpp: cpp.l
 	flex -L  -Pcl_scope_ cpp.l
 	mv lex.cl_scope_.c cpp_lexer.cpp
+
+typedef_parser.cpp: typedef_grammar.y
+	yacc -l  -t -v -pcl_typedef_  typedef_grammar.y
+	mv y.tab.c typedef_parser.cpp
 
 var_parser.cpp: cpp_variables_grammar.y
 	yacc -l  -t -v -pcl_var_ cpp_variables_grammar.y
@@ -106,5 +113,4 @@ cpp_func_parser.cpp: cpp_func_parser.y
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="Release"/>
 </CodeLite_Project>

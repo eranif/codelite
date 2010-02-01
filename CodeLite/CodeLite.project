@@ -68,6 +68,7 @@
     <File Name="performance.h"/>
     <File Name="fileextmanager.h"/>
     <File Name="winprocess.h"/>
+    <File Name="code_completion_api.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="GeneratedFiles">
     <File Name="expression_result.h"/>
@@ -80,6 +81,8 @@
     <File Name="function.cpp"/>
     <File Name="var_parser.cpp"/>
     <File Name="variable.cpp"/>
+    <File Name="cl_typedef.h"/>
+    <File Name="typedef_parser.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="database">
     <File Name="comment.h"/>

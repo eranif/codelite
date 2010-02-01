@@ -60,18 +60,14 @@
 #include "frame.h"
 #include "debuggermanager.h"
 #include "addincludefiledlg.h"
-#include "variable.h"
-#include "function.h"
 #include "workspacetab.h"
 #include "fileview.h"
 #include "refactorindexbuildjob.h"
 #include "new_quick_watch_dlg.h"
+#include "code_completion_api.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
-
-extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens, bool isUsedWithinFunc);
-extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, std::string> &ignoreTokens);
 
 static bool IsSource(const wxString &ext)
 {

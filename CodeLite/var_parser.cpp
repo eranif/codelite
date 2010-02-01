@@ -39,6 +39,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include "stdio.h"
 #include "map"
 #include "variable.h"
+#include "cl_typedef.h"
 
 #ifdef yylex
 #undef yylex
@@ -53,11 +54,11 @@ int  cl_var_parse();
 void syncParser();
 void var_consumeDefaultValue(char c1, char c2);
 
-static VariableList *gs_vars = NULL;
-static std::vector<std::string> gs_names;
-static bool g_isUsedWithinFunc = false;
-Variable curr_var;
-static std::string s_tmpString;
+static  VariableList *           gs_vars = NULL;
+static  std::vector<std::string> gs_names;
+static  bool                     g_isUsedWithinFunc = false;
+static  std::string              s_tmpString;
+static  Variable                 curr_var;
 
 /*---------------------------------------------*/
 /* externs defined in the lexer*/
@@ -549,28 +550,16 @@ void var_consumeDefaultValue(char c1, char c2)
     }
 }
 
-void var_syncParser(){
-//	int depth = 1;
-//	bool cont(true);
-//
-//	while (depth > 0 && cont) {
-//    	int ch = cl_scope_lex();
-//    	if(ch == 0)                    { break;}
-//    	if(ch == ',' && depth == 0) { break;}
-//    	if(ch == ';' && depth == 0) { break;}
-//    	if(ch == ')' && depth == 0) { break;}
-//
-//    	if(ch == ')'){
-//        	depth--;
-//        	continue;
-//        }
-//    	else if(ch == '('){
-//        	depth ++ ;
-//        	continue;
-//        }
-//    	printf("%d ", ch);
-//    }
-//	printf("\n");
+void clean_up()
+{
+	gs_vars = NULL;
+
+    // restore settings
+	setUseIgnoreMacros(true);
+	g_isUsedWithinFunc = false;
+	
+    //do the lexer cleanup
+	cl_scope_lex_clean();
 }
 
 // return the scope name at the end of the input string
@@ -591,16 +580,8 @@ void get_variables(const std::string &in, VariableList &li, const std::map<std::
 
     //call tghe main parsing routine
 	cl_var_parse();
-	gs_vars = NULL;
-
-    // restore settings
-	setUseIgnoreMacros(true);
-	g_isUsedWithinFunc = false;
-
-    //do the lexer cleanup
-	cl_scope_lex_clean();
+	clean_up();
 }
-
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -787,14 +768,13 @@ case 15:
 { yyval = yyvsp[0]; }
 break;
 case 18:
-{curr_var.Reset(); gs_names.clear(); s_tmpString.clear();}
+{curr_var.Reset(); gs_names.clear(); s_tmpString.clear(); }
 break;
 case 20:
 {
-                            	yyclearin;    /*clear lookahead token*/
-                            	yyerrok;
-/*                              printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_var_lval.c_str(), cl_scope_lineno);*/
-                            	var_syncParser();
+                            yyclearin;    /*clear lookahead token*/
+                            yyerrok;
+/*                            printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_var_lval.c_str(), cl_scope_lineno);*/
                             }
 break;
 case 21:

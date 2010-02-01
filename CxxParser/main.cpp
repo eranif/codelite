@@ -1,24 +1,12 @@
 //test the parser
 #include "windows.h"
-#include "cl_typedef.h"
 #include "stdio.h"
 #include "errno.h"
 #include "string.h"
 #include "vector"
 #include "string"
-#include "variable.h"
-#include "function.h"
-#include "expression_result.h"
 #include "map"
-
-extern std::string get_scope_name(const std::string &in,
-	                                  std::vector<std::string > &additionlNS,
-	                                  const std::map<std::string, std::string> &ignoreTokens);
-
-extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap, bool isUsedWithinFunc);
-extern ExpressionResult &parse_expression(const std::string &in);
-extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, std::string> &ignoreTokens);
-extern void get_typedefs(const std::string &in, clTypedefList &li);
+#include "code_completion_api.h"
 
 void testScopeParser(char *buf);
 void testVarParser(char *buf);
@@ -38,10 +26,10 @@ int main()
 
 	//print the scope name
 	//testScopeParser(buf);
-	testVarParser(buf);
+	//testVarParser(buf);
 	//testExprParser(buf);
 	//testFuncParser(buf);
-	//testTypedefParser(buf);
+	testTypedefParser(buf);
 	free(buf);
 }
 

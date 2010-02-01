@@ -37,18 +37,7 @@
 //#define __PERFORMANCE
 #include "performance.h"
 
-//===============================================================
-//defined in generated files from the yacc grammar:
-//cpp_scope_garmmar.y
-//cpp_variables_grammar.y
-//expr_garmmar.y
-
-extern std::string get_scope_name(const std::string &in, std::vector<std::string> &additionlNS, const std::map<std::string, std::string> &ignoreTokens);
-extern ExpressionResult &parse_expression(const std::string &in);
-extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens, bool isUsedWithinFunc);
-extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, std::string> &ignoreTokens);
-
-//===============================================================
+#include "code_completion_api.h"
 
 Language::Language()
 		: m_expression(wxEmptyString)
@@ -649,7 +638,7 @@ bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &temp
 			filtered_tags.push_back(t);
 		}
 	}
-
+	
 	if (filtered_tags.size() == 1) {
 		//we have a single match, test to see if it a typedef
 		TagEntryPtr tag = filtered_tags.at(0);
@@ -668,6 +657,27 @@ bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &temp
 			// this and will update the typeScope to 'global' if needed
 			tagsManager->IsTypeAndScopeContainer(typeName, typeScope);
 			res = true;
+		}
+	}
+	
+	if(filtered_tags.empty() ) {
+		// this is yet another attempt to fix a match which we failed to resolve it completly
+		// a good example for such case is using a typedef which was defined inside a function
+		// body
+		
+		// try to locate any typedefs defined locally
+		clTypedefList typedefsList;
+		const wxCharBuffer buf = _C(GetVisibleScope());
+		get_typedefs(buf.data(), typedefsList);
+		
+		if(typedefsList.size() == 1) {
+			clTypedef td = *typedefsList.begin();
+			wxString matchName(td.m_name.c_str(), wxConvUTF8);
+			if(matchName == typeName) {
+				typeName         = wxString(td.m_realType.m_type.c_str(),         wxConvUTF8);
+				typeScope        = wxString(td.m_realType.m_typeScope.c_str(),    wxConvUTF8);
+				templateInitList = wxString(td.m_realType.m_templateDecl.c_str(), wxConvUTF8);
+			}
 		}
 	}
 	return res;

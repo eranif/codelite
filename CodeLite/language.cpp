@@ -670,13 +670,18 @@ bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &temp
 		const wxCharBuffer buf = _C(GetVisibleScope());
 		get_typedefs(buf.data(), typedefsList);
 		
-		if(typedefsList.size() == 1) {
-			clTypedef td = *typedefsList.begin();
-			wxString matchName(td.m_name.c_str(), wxConvUTF8);
-			if(matchName == typeName) {
-				typeName         = wxString(td.m_realType.m_type.c_str(),         wxConvUTF8);
-				typeScope        = wxString(td.m_realType.m_typeScope.c_str(),    wxConvUTF8);
-				templateInitList = wxString(td.m_realType.m_templateDecl.c_str(), wxConvUTF8);
+		if(typedefsList.empty() == false) {
+			// take the first match
+			clTypedefList::iterator iter = typedefsList.begin();
+			for(; iter != typedefsList.end(); iter++) {
+				clTypedef td = *iter;
+				wxString matchName(td.m_name.c_str(), wxConvUTF8);
+				if(matchName == typeName) {
+					typeName         = wxString(td.m_realType.m_type.c_str(),         wxConvUTF8);
+					typeScope        = wxString(td.m_realType.m_typeScope.c_str(),    wxConvUTF8);
+					templateInitList = wxString(td.m_realType.m_templateDecl.c_str(), wxConvUTF8);
+					break;
+				}
 			}
 		}
 	}

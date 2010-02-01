@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef CODELITE_LANGUAGE_H
+#ifndef CODELITE_LANGUAGE_H
 #define CODELITE_LANGUAGE_H
 
 #include "tokenizer.h"
@@ -35,9 +35,9 @@
 #include "variable.h"
 #include "function.h"
 #include "comment.h"
+#include <vector>
 
-enum SearchFlags
-{
+enum SearchFlags {
 	PartialMatch        = 1,
 	ExactMatch          = 2,
 	IgnoreCaseSensitive = 4
@@ -60,6 +60,17 @@ class Language
 {
 	friend class Singleton<Language>;
 
+private:
+	std::map<char, char>    m_braces;
+	std::vector<wxString>   m_delimArr;
+	wxString                m_expression;
+	CppScannerPtr           m_scanner;
+	CppScannerPtr           m_tokenScanner;
+	Variable                m_parentVar;
+	TagsManager *           m_tm;
+	wxString                m_visibleScope;
+	wxString                m_lastFunctionSignature;
+	std::vector<wxString>   m_additionalScopes;     // collected by parsing 'using namespace XXX'
 public:
 	/**
 	 * Return the visible scope of syntax starting at depth zero.
@@ -89,6 +100,24 @@ public:
 	 */
 	wxString OptimizeScope(const wxString& srcString);
 
+	void SetLastFunctionSignature(const wxString& lastFunctionSignature) {
+		this->m_lastFunctionSignature = lastFunctionSignature;
+	}
+	void SetVisibleScope(const wxString& visibleScope) {
+		this->m_visibleScope = visibleScope;
+	}
+	const wxString& GetLastFunctionSignature() const {
+		return m_lastFunctionSignature;
+	}
+	const wxString& GetVisibleScope() const {
+		return m_visibleScope;
+	}
+	void SetAdditionalScopes(const std::vector<wxString>& additionalScopes) {
+		this->m_additionalScopes = additionalScopes;
+	}
+	const std::vector<wxString>& GetAdditionalScopes() const {
+		return m_additionalScopes;
+	}
 	/**
 	 * Set the language specific auto completion delimeteres, for example: for C++ you should populate
 	 * the array with { . , -> , :: }
@@ -155,22 +184,17 @@ public:
 	 * get the name's type, using local scope when possible. if parsing of local scope fails to find
 	 * a match, try the symbol database
 	 * \param name name to search for
-	 * \param text the scope
-	 * \param scopeName the scope name
 	 * \param firstToken set to true if the 'name' is the first token in the chain (myClass.some_func(). --> when testing for some_func(), firstToken = false
 	 * and when testing myClass. --> first token is set to true
 	 * \param type [output] name's type, incase 'name' is matched to a function, type will contain the type of the reutrn value of the function
 	 * \param typeScope [output] type's scope
 	 * \return true on success false otherwise
 	 */
-	bool TypeFromName(	const wxString &name,
-						const wxString &text,
-						const wxString &extraScope,
-						const wxString &scopeName,
-						const std::vector<wxString> &moreScopes,
-						bool firstToken,
-						wxString &type,
-						wxString &typeScope);
+	bool TypeFromName( const wxString &name,
+	                   const wxString &scopeName,
+	                   bool firstToken,
+	                   wxString &type,
+	                   wxString &typeScope);
 
 	/**
 	 * Collect local variables from given scope text (in) and an optional symbol name
@@ -188,11 +212,12 @@ public:
 	bool ResolveTempalte(wxString &typeName, wxString &typeScope, const wxString &parentPath, const wxString &parenttempalteInitList);
 private:
 	bool DoSearchByNameAndScope(const wxString &name,
-								const wxString &scopeName,
-								std::vector<TagEntryPtr> &tags,
-								wxString &type,
-								wxString &typeScope);
-	bool CorrectUsingNamespace(wxString &type, wxString &typeScope, const std::vector<wxString> &moreScopes, const wxString &parentScope, std::vector<TagEntryPtr>& tags);
+	                            const wxString &scopeName,
+	                            std::vector<TagEntryPtr> &tags,
+	                            wxString &type,
+	                            wxString &typeScope);
+								
+	bool CorrectUsingNamespace(wxString &type, wxString &typeScope, const wxString &parentScope, std::vector<TagEntryPtr>& tags);
 	/**
 	 * Private constructor
 	 */
@@ -216,9 +241,8 @@ private:
 	 * \brief Attempt to fix template results
 	 * \param typeName the type name that was detected by the parser
 	 * \param typeScope the type scope
-	 * \param moreScopes additional scopes (they are collected by parsing any 'using namespace XXX' lines in the code
 	 */
-	bool OnTemplates(wxString &typeName, wxString &typeScope, Variable &parent, const std::vector<wxString> &moreScopes);
+	bool OnTemplates(wxString &typeName, wxString &typeScope, Variable &parent);
 
 	/**
 	 * \brief attempt to expand 'typedef' to their actual value
@@ -236,14 +260,6 @@ private:
 	void ParseTemplateArgs(CppScanner *scanner, wxArrayString &argsList);
 	void ParseTemplateInitList(CppScanner *scanner, wxArrayString &argsList);
 	void DoRemoveTempalteInitialization(wxString &str, wxString &tmplInitList);
-private:
-	std::map<char, char>    m_braces;
-	std::vector<wxString>	m_delimArr;
-	wxString m_expression;
-	CppScannerPtr m_scanner;
-	CppScannerPtr m_tokenScanner;
-	Variable m_parentVar;
-	TagsManager *m_tm;
 };
 
 typedef Singleton<Language> LanguageST;

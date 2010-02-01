@@ -270,7 +270,11 @@ bool Language::ProcessExpression(const wxString& stmt,
 				lastFuncSig = tag->GetSignature();
 			}
 		}
-
+		
+		SetLastFunctionSignature(lastFuncSig);
+		SetVisibleScope         (visibleScope);
+		SetAdditionalScopes     (additionalScopes);
+		
 		//get next token using the tokenscanner object
 		m_tokenScanner->SetText(_C(statement));
 		Variable parent;
@@ -384,10 +388,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 				PERF_BLOCK("TypeFromName") {
 					for (int i=0; i<2; i++) {
 						res = TypeFromName( _name,
-											visibleScope,
-											lastFuncSig,
 											scopeToSearch,
-											additionalScopes,
 											parentTypeName.IsEmpty(),
 											typeName,   //output
 											typeScope); //output
@@ -421,7 +422,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 					tmp_name == typeName ? res_typedef = false : res_typedef = true;
 
 					tmp_name = typeName;
-					res_templte = OnTemplates(typeName, typeScope, parent, additionalScopes);
+					res_templte = OnTemplates(typeName, typeScope, parent);
 					tmp_name == typeName ? res_templte = false : res_templte = true;
 
 				} while ( res_templte || res_typedef ) ;
@@ -457,7 +458,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 					}
 
 					// do template subsitute
-					if (OnTemplates(typeName, typeScope, m_parentVar, additionalScopes)) {
+					if (OnTemplates(typeName, typeScope, m_parentVar)) {
 						//do typedef subsitute
 						wxString tmp_name(typeName);
 						while (OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList)) {
@@ -496,7 +497,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 	return evaluationSucceeded;
 }
 
-bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &parent, const std::vector<wxString> &moreScopes)
+bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &parent)
 {
 	bool res (false);
 	//make sure that the type really exist
@@ -563,7 +564,7 @@ bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &pa
 							// template initialization
 							// We first try to resolve it as is, next using the parent scope
 							// and last we loop over all the additional scopes (from the 'using namespace XXX')
-							size_t loopSize = 2 + moreScopes.size();
+							size_t loopSize = 2 + GetAdditionalScopes().size();
 							for (size_t j=0; j<loopSize; j++) {
 								std::vector<TagEntryPtr> tags_vec;
 								wxString tagpath;
@@ -575,7 +576,7 @@ bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &pa
 									tagpath = wxString::Format(wxT("%s::%s"), parent_scope.c_str(), templateImpl.Item(i).c_str());
 									break;
 								default:
-									tagpath = wxString::Format(wxT("%s::%s"), moreScopes.at(j-2).c_str(), templateImpl.Item(i).c_str());
+									tagpath = wxString::Format(wxT("%s::%s"), GetAdditionalScopes().at(j-2).c_str(), templateImpl.Item(i).c_str());
 									break;
 								}
 
@@ -882,10 +883,7 @@ ExpressionResult Language::ParseExpression(const wxString &in)
 }
 
 bool Language::TypeFromName(const wxString &             name,           // Input
-                            const wxString &             text,           // Input
-                            const wxString &             extraScope,     // Input
                             const wxString &             scopeName,      // Input
-                            const std::vector<wxString>& moreScopes,     // Input
                             bool                         firstToken,     // Input
                             wxString&                    type,           // Output
                             wxString&                    typeScope)      // Output
@@ -903,8 +901,8 @@ bool Language::TypeFromName(const wxString &             name,           // Inpu
 	if (!DoSearchByNameAndScope(name, scopeName, tags, type, typeScope)) {
 		if (firstToken) {
 			//can we test visible scope?
-			const wxCharBuffer buf = _C(text);
-			const wxCharBuffer buf2 = _C(extraScope);
+			const wxCharBuffer buf = _C(GetVisibleScope());
+			const wxCharBuffer buf2 = _C(GetLastFunctionSignature());
 			get_variables(buf.data(), li, ignoreTokens, false);
 			get_variables(buf2.data(), li, ignoreTokens, true);
 
@@ -917,7 +915,7 @@ bool Language::TypeFromName(const wxString &             name,           // Inpu
 					typeScope = var.m_typeScope.empty() ? wxT("<global>") : _U(var.m_typeScope.c_str());
 
 					m_parentVar = var;
-					bool res = CorrectUsingNamespace(type, typeScope, moreScopes, scopeName, tags);
+					bool res = CorrectUsingNamespace(type, typeScope, scopeName, tags);
 
 					// Incase the typeScope was updated, update m_parentVar as well!
 					m_parentVar.m_typeScope = typeScope.mb_str(wxConvUTF8).data();
@@ -927,10 +925,10 @@ bool Language::TypeFromName(const wxString &             name,           // Inpu
 
 			//failed to find it in the local scope
 			//try the additional scopes
-			for (size_t i=0; i<moreScopes.size(); i++) {
+			for (size_t i=0; i<GetAdditionalScopes().size(); i++) {
 				tags.clear();
-				if (DoSearchByNameAndScope(name, moreScopes.at(i), tags, type, typeScope)) {
-					return CorrectUsingNamespace(type, typeScope, moreScopes, scopeName, tags);
+				if (DoSearchByNameAndScope(name, GetAdditionalScopes().at(i), tags, type, typeScope)) {
+					return CorrectUsingNamespace(type, typeScope, scopeName, tags);
 				}
 			}
 		}
@@ -952,22 +950,22 @@ bool Language::TypeFromName(const wxString &             name,           // Inpu
 			m_parentVar.m_type = _C(type);
 			m_parentVar.m_typeScope = _C(typeScope);
 		}
-		return CorrectUsingNamespace(type, typeScope, moreScopes, scopeName, tags);
+		return CorrectUsingNamespace(type, typeScope, scopeName, tags);
 	}
 }
 
-bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const std::vector<wxString> &moreScopes, const wxString &parentScope, std::vector<TagEntryPtr> &tags)
+bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const wxString &parentScope, std::vector<TagEntryPtr> &tags)
 {
 	if (!GetTagsManager()->IsTypeAndScopeExists(type, typeScope)) {
-		if (moreScopes.empty() == false) {
+		if (GetAdditionalScopes().empty() == false) {
 			//the type does not exist in the global scope,
 			//try the additional scopes
-			for (size_t i=0; i<moreScopes.size(); i++) {
+			for (size_t i=0; i<GetAdditionalScopes().size(); i++) {
 				tags.clear();
 
 				// try the typeScope in any of the "using namespace XXX" declarations
 				// passed here (i.e. moreScopes variable)
-				wxString newScope(moreScopes.at(i));
+				wxString newScope(GetAdditionalScopes().at(i));
 				if (typeScope != wxT("<global>")) {
 					newScope << wxT("::") << typeScope;
 				}
@@ -1377,10 +1375,7 @@ bool Language::ResolveTempalte(wxString& typeName, wxString& typeScope, const wx
 	v.m_typeScope = _C(scope);
 	v.m_templateDecl = _C(parenttempalteInitList);
 
-	// FIXME: For now we are passing here an empty additional scopes
-	// but this needs to be corrected
-	std::vector<wxString> additionalScopes;
-	while ( OnTemplates(typeName, typeScope, v, additionalScopes)) {
+	while ( OnTemplates(typeName, typeScope, v)) {
 		// Do typedef subsitute
 		wxString tmp_name(typeName);
 		wxString dummy, templateInitList;

@@ -362,6 +362,7 @@ void LineAnnotation::Init() {
 
 void LineAnnotation::InsertLine(int line) {
 	if (annotations.Length()) {
+		annotations.EnsureLength(line);
 		annotations.Insert(line, 0);
 	}
 }

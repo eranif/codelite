@@ -804,8 +804,8 @@ int Document::GetColumn(int pos) {
 
 int Document::FindColumn(int line, int column) {
 	int position = LineStart(line);
-	int columnCurrent = 0;
 	if ((line >= 0) && (line < LinesTotal())) {
+	int columnCurrent = 0;
 		while ((columnCurrent < column) && (position < Length())) {
 			char ch = cb.CharAt(position);
 			if (ch == '\t') {

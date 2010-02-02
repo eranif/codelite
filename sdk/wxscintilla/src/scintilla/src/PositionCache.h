@@ -136,7 +136,7 @@ class BreakFinder {
 	int subBreak;
 	void Insert(int val);
 public:
-	BreakFinder(LineLayout *ll_, int lineStart_, int lineEnd_, int posLineStart_, bool utf8_, int xStart);
+	BreakFinder(LineLayout *ll_, int lineStart_, int lineEnd_, int posLineStart_, bool utf8_, int xStart, bool breakForSelection);
 	~BreakFinder();
 	int First();
 	int Next();

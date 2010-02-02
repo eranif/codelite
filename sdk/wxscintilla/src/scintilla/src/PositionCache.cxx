@@ -386,7 +386,7 @@ static int NextBadU(const char *s, int p, int len, int &trailBytes) {
 	return -1;
 }
 
-BreakFinder::BreakFinder(LineLayout *ll_, int lineStart_, int lineEnd_, int posLineStart_, bool utf8_, int xStart) :
+BreakFinder::BreakFinder(LineLayout *ll_, int lineStart_, int lineEnd_, int posLineStart_, bool utf8_, int xStart, bool breakForSelection) :
 	ll(ll_),
 	lineStart(lineStart_),
 	lineEnd(lineEnd_),
@@ -412,13 +412,17 @@ BreakFinder::BreakFinder(LineLayout *ll_, int lineStart_, int lineEnd_, int posL
 		nextBreak--;
 	}
 
+	if (breakForSelection) {
 	SelectionSegment segmentLine(SelectionPosition(posLineStart), SelectionPosition(posLineStart + lineEnd));
 	for (size_t r=0; r<ll->psel->Count(); r++) {
 		SelectionSegment portion = ll->psel->Range(r).Intersect(segmentLine);
+			if (!(portion.start == portion.end)) {
 		if (portion.start.IsValid())
 			Insert(portion.start.Position() - posLineStart - 1);
 		if (portion.end.IsValid())
 			Insert(portion.end.Position() - posLineStart - 1);
+	}
+		}
 	}
 
 	Insert(ll->edgeColumn - 1);

@@ -143,6 +143,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	bool multipleSelection;
 	bool additionalSelectionTyping;
 	bool additionalCaretsBlink;
+	bool additionalCaretsVisible;
 
 	int virtualSpaceOptions;
 
@@ -482,6 +483,8 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	sptr_t StyleGetMessage(unsigned int iMessage, uptr_t wParam, sptr_t lParam);
 
 	static const char *StringFromEOLMode(int eolMode);
+
+	static sptr_t StringResult(sptr_t lParam, const char *val);
 
 public:
 	// Public so the COM thunks can access it.

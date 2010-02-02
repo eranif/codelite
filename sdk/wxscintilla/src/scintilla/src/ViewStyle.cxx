@@ -139,6 +139,7 @@ ViewStyle::ViewStyle(const ViewStyle &source) {
 	fixedColumnWidth = source.fixedColumnWidth;
 	zoomLevel = source.zoomLevel;
 	viewWhitespace = source.viewWhitespace;
+	whitespaceSize = source.whitespaceSize;
 	viewIndentationGuides = source.viewIndentationGuides;
 	viewEOL = source.viewEOL;
 	showMarkedLines = source.showMarkedLines;
@@ -242,10 +243,11 @@ void ViewStyle::Init(size_t stylesSize_) {
 	}
 	zoomLevel = 0;
 	viewWhitespace = wsInvisible;
+	whitespaceSize = 1;
 	viewIndentationGuides = ivNone;
 	viewEOL = false;
 	showMarkedLines = true;
-	extraFontFlag = false;
+	extraFontFlag = 0;
 	extraAscent = 0;
 	extraDescent = 0;
 	marginStyleOffset = 0;

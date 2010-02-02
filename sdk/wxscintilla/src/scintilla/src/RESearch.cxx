@@ -418,6 +418,7 @@ int RESearch::GetBackslashExpression(
 				ChSet(static_cast<unsigned char>(c));
 			}
 		}
+		break;
 	case 'w':
 		for (c = 0; c < MAXCHR; c++) {
 			if (iswordc(static_cast<unsigned char>(c))) {

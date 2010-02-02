@@ -92,6 +92,7 @@ public:
 	int fixedColumnWidth;
 	int zoomLevel;
 	WhiteSpaceVisibility viewWhitespace;
+	int whitespaceSize;
 	IndentView viewIndentationGuides;
 	bool viewEOL;
 	bool showMarkedLines;
@@ -105,7 +106,7 @@ public:
 	int caretStyle;
 	int caretWidth;
 	bool someStylesProtected;
-	bool extraFontFlag;
+	int extraFontFlag;
 	int extraAscent;
 	int extraDescent;
 	int marginStyleOffset;

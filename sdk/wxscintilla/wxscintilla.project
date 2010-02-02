@@ -152,6 +152,8 @@
       <File Name="src/scintilla/src/LexPowerPro.cxx"/>
       <File Name="src/scintilla/src/LexSML.cxx"/>
       <File Name="src/scintilla/src/LexSorcus.cxx"/>
+      <File Name="src/scintilla/src/LexMarkdown.cxx"/>
+      <File Name="src/scintilla/src/FontQuality.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="include">
       <File Name="src/scintilla/include/Accessor.h"/>

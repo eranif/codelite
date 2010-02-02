@@ -316,7 +316,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 	LEditor &rCtrl = GetCtrl();
 
 	if(rCtrl.GetDisableSmartIndent()) {
-		ContextBase::AutoIndent(nChar);
+		/*ContextBase::AutoIndent(nChar);*/
 		return;
 	}
 

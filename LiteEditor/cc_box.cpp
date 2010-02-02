@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "cc_box.h"
+#include "cl_editor_tip_window.h"
 #include "cl_editor.h"
 #include "globals.h"
 #include <wx/imaglist.h>
@@ -339,7 +340,10 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 					editor->SetCurrentPos(new_pos);
 					editor->SetSelectionStart(new_pos);
 					editor->SetSelectionEnd(new_pos);
-					editor->DoCancelCalltip();
+					
+					// remove the current tip that we just activated.
+					// if this was the last tip, it will also make it go away
+					editor->GetFunctionTip()->Remove();
 				}
 			}
 		}

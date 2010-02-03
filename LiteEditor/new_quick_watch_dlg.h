@@ -23,9 +23,11 @@ public:
 	wxString                         m_mainVariableObject;
 	wxString                         m_variableName;
 	wxTimer*                         m_timer;
+	wxTimer*                         m_timer2;
 	bool                             m_leftWindow;
 	wxString                         m_fullpath;
-
+	wxTreeItemId                     m_hoveredItem;
+	
 protected:
 	bool     IsFakeItem(const wxTreeItemId &item);
 	wxString DoGetItemPath(const wxTreeItemId &item);
@@ -43,8 +45,11 @@ protected:
 	void OnMouseLeaveWindow(wxMouseEvent &e);
 	void OnMouseEnterWindow(wxMouseEvent &e);
 	void OnTimer(wxTimerEvent &e);
+	void OnTimer2(wxTimerEvent &e);
 	void OnItemMenu(wxTreeEvent& event);
 	void OnMenuSelection(wxCommandEvent &e);
+	void OnMouseMove( wxMouseEvent& event );
+
 	DECLARE_EVENT_TABLE()
 
 public:

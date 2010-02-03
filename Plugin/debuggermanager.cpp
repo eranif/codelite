@@ -31,93 +31,10 @@
 #include "debuggerconfigtool.h"
 
 //---------------------------------------------------------
-DebuggersData::DebuggersData()
-{
-}
-
-DebuggersData::~DebuggersData()
-{
-}
-
-void DebuggersData::Serialize(Archive &arch)
-{
-	size_t count = m_debuggers.size();
-	arch.Write(wxT("debuggersCount"), count);
-	for(size_t i=0; i<count; i++){
-		DebuggerInformation info = m_debuggers.at(i);
-		arch.Write(wxT("name"), info.name);
-		arch.Write(wxT("path"), info.path);
-		arch.Write(wxT("enableDebugLog"), info.enableDebugLog);
-		arch.Write(wxT("enablePendingBreakpoints"), info.enablePendingBreakpoints);
-		arch.Write(wxT("breakAtWinMain"), info.breakAtWinMain);
-		arch.Write(wxT("showTerminal"), info.showTerminal);
-		arch.Write(wxT("useRelativePaths"), info.useRelativeFilePaths);
-		arch.Write(wxT("catchThrow"), info.catchThrow);
-		arch.Write(wxT("showTooltips"), info.showTooltips);
-		arch.Write(wxT("debugAsserts"), info.debugAsserts);
-		arch.Write(wxT("maxDisplayStringSize"), info.maxDisplayStringSize);
-		arch.Write(wxT("resolveLocals"), info.resolveLocals);
-		arch.WriteCData(wxT("startup_commands"), info.startupCommands);
-
-	}
-}
-
-void DebuggersData::DeSerialize(Archive &arch)
-{
-	size_t count;
-	arch.Read(wxT("debuggersCount"), count);
-	for(size_t i=0; i<count; i++){
-		DebuggerInformation info;
-		arch.Read(wxT("name"), info.name);
-		arch.Read(wxT("path"), info.path);
-		arch.Read(wxT("enableDebugLog"), info.enableDebugLog);
-		arch.Read(wxT("enablePendingBreakpoints"), info.enablePendingBreakpoints);
-		arch.Read(wxT("breakAtWinMain"), info.breakAtWinMain);
-		arch.Read(wxT("showTerminal"), info.showTerminal);
-		arch.Read(wxT("useRelativePaths"), info.useRelativeFilePaths);
-		arch.Read(wxT("catchThrow"), info.catchThrow);
-		arch.Read(wxT("showTooltips"), info.showTooltips);
-		arch.Read(wxT("debugAsserts"), info.debugAsserts);
-		arch.Read(wxT("maxDisplayStringSize"), info.maxDisplayStringSize);
-		arch.Read(wxT("resolveLocals"), info.resolveLocals);
-		arch.ReadCData(wxT("startup_commands"), info.startupCommands);
-
-		// Trim leading whitepsace
-		info.startupCommands.Trim();
-		m_debuggers.push_back(info);
-	}
-}
-
-bool DebuggersData::GetDebuggerInformation(const wxString &name, DebuggerInformation &info)
-{
-	for(size_t i=0; i<m_debuggers.size(); i++){
-		if(m_debuggers.at(i).name == name){
-			info = m_debuggers.at(i);
-			return true;
-		}
-	}
-	return false;
-}
-
-void DebuggersData::SetDebuggerInformation(const wxString &name, const DebuggerInformation &info)
-{
-	//remove old entry
-	for(size_t i=0; i<m_debuggers.size(); i++){
-		if(m_debuggers.at(i).name == name){
-			m_debuggers.erase(m_debuggers.begin()+i);
-			break;
-		}
-	}
-	m_debuggers.push_back(info);
-}
-
-//---------------------------------------------------------
 DebuggerMgr *DebuggerMgr::ms_instance = NULL;
 
 DebuggerMgr::DebuggerMgr()
 {
-	//load debugger data from configuration file
-	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggersData"), &m_debuggersData);
 }
 
 DebuggerMgr::~DebuggerMgr()
@@ -130,7 +47,6 @@ DebuggerMgr::~DebuggerMgr()
 	m_dl.clear();
 	m_debuggers.clear();
 
-	DebuggerConfigTool::Get()->WriteObject(wxT("DebuggersData"), &m_debuggersData);
 }
 
 DebuggerMgr& DebuggerMgr::Get()
@@ -254,18 +170,10 @@ void DebuggerMgr::SetActiveDebugger(const wxString &name)
 
 void DebuggerMgr::SetDebuggerInformation(const wxString &name, const DebuggerInformation &info)
 {
-	m_debuggersData.SetDebuggerInformation(name, info);
-
-	if (m_activeDebuggerName == name) {
-		IDebugger *dbgr = GetActiveDebugger();
-		if (dbgr && dbgr->IsRunning()) {
-			// If this debugger is currently running, tell it that the logging level may have changed
-			dbgr->EnableLogging(info.enableDebugLog);
-		}
-	}
+	DebuggerConfigTool::Get()->WriteObject(name, (SerializedObject*)&info);
 }
 
 bool DebuggerMgr::GetDebuggerInformation(const wxString &name, DebuggerInformation &info)
 {
-	return m_debuggersData.GetDebuggerInformation(name, info);
+	return DebuggerConfigTool::Get()->ReadObject(name, &info);
 }

@@ -37,31 +37,13 @@
 class EnvironmentConfig;
 class BreakptMgr;
 
-class DebuggersData : public SerializedObject
-{
-private:
-	std::vector<DebuggerInformation> m_debuggers;
-
-public:
-	DebuggersData();
-	virtual ~DebuggersData();
-
-	bool GetDebuggerInformation(const wxString &name, DebuggerInformation &info);
-	void SetDebuggerInformation(const wxString &name, const DebuggerInformation &info);
-	
-	void Serialize(Archive &arc);
-	void DeSerialize(Archive &arc);
-};
-
 class DebuggerMgr
 {
-	std::map<wxString, IDebugger*> m_debuggers;
-	wxString m_baseDir;
+	std::map<wxString, IDebugger*>   m_debuggers;
+	wxString                         m_baseDir;
 	std::vector< clDynamicLibrary* > m_dl;
-	wxString m_activeDebuggerName;
-//	wxEvtHandler *m_parent;  This doesn't seem to be used
-	DebuggersData m_debuggersData;
-	EnvironmentConfig *m_env;
+	wxString                         m_activeDebuggerName;
+	EnvironmentConfig*               m_env;
 	
 private:
 	DebuggerMgr();
@@ -77,7 +59,6 @@ public:
 	void Initialize(wxEvtHandler *parent, EnvironmentConfig *env, const wxString &dir) 
 	{ 
 		m_baseDir = dir; 
-//		m_parent = parent;  This doesn't seem to be used
 		m_env = env;
 	}
 

@@ -48,6 +48,7 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 		m_catchThrow->SetValue(info.catchThrow);
 		m_spinCtrlNumElements->SetValue(info.maxDisplayStringSize);
 		m_showTooltips->SetValue(info.showTooltips);
+		m_checkBoxAutoExpand->SetValue(info.autoExpandTipItems);
 		m_textCtrlStartupCommands->SetValue( info.startupCommands );
 
 		m_checkBoxExpandLocals->SetValue(info.resolveLocals);
@@ -165,6 +166,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 #ifdef __WXMSW__
 		info.debugAsserts             = page->m_checkBoxDebugAssert->IsChecked();
 #endif
+		info.autoExpandTipItems       = page->m_checkBoxAutoExpand->IsChecked();
 		DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
 	}
 

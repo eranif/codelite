@@ -319,7 +319,7 @@ public:
 	}
 };
 
-class DebuggerInformation
+class DebuggerInformation : public SerializedObject
 {
 public:
 	wxString  name;
@@ -336,6 +336,7 @@ public:
 	wxString  startupCommands;
 	int       maxDisplayStringSize;
 	bool      resolveLocals;
+	bool      autoExpandTipItems;
 
 public:
 	DebuggerInformation()
@@ -352,8 +353,48 @@ public:
 			, debugAsserts(false)
 			, startupCommands(wxEmptyString)
 			, maxDisplayStringSize(200)
-			, resolveLocals (false) {}
-	~DebuggerInformation() {}
+			, resolveLocals     (false)
+			, autoExpandTipItems(true)
+	{}
+	virtual ~DebuggerInformation() {}
+
+	void Serialize(Archive &arch) {
+		arch.Write(wxT("name"),                     name);
+		arch.Write(wxT("path"),                     path);
+		arch.Write(wxT("enableDebugLog"),           enableDebugLog);
+		arch.Write(wxT("enablePendingBreakpoints"), enablePendingBreakpoints);
+		arch.Write(wxT("breakAtWinMain"),           breakAtWinMain);
+		arch.Write(wxT("showTerminal"),             showTerminal);
+		arch.Write(wxT("consoleCommand"),           consoleCommand);
+		arch.Write(wxT("useRelativeFilePaths"),     useRelativeFilePaths);
+		arch.Write(wxT("catchThrow"),               catchThrow);
+		arch.Write(wxT("showTooltips"),             showTooltips);
+		arch.Write(wxT("debugAsserts"),             debugAsserts);
+		arch.WriteCData(wxT("startupCommands"),     startupCommands);
+		arch.Write(wxT("maxDisplayStringSize"),     maxDisplayStringSize);
+		arch.Write(wxT("resolveLocals"),            resolveLocals);
+		arch.Write(wxT("autoExpandTipItems"),       autoExpandTipItems);
+	}
+	
+	void DeSerialize(Archive &arch) {
+		arch.Read(wxT("name"),                     name);
+		arch.Read(wxT("path"),                     path);
+		arch.Read(wxT("enableDebugLog"),           enableDebugLog);
+		arch.Read(wxT("enablePendingBreakpoints"), enablePendingBreakpoints);
+		arch.Read(wxT("breakAtWinMain"),           breakAtWinMain);
+		arch.Read(wxT("showTerminal"),             showTerminal);
+		arch.Read(wxT("consoleCommand"),           consoleCommand);
+		arch.Read(wxT("useRelativeFilePaths"),     useRelativeFilePaths);
+		arch.Read(wxT("catchThrow"),               catchThrow);
+		arch.Read(wxT("showTooltips"),             showTooltips);
+		arch.Read(wxT("debugAsserts"),             debugAsserts);
+		arch.ReadCData(wxT("startupCommands"),          startupCommands);
+		startupCommands.Trim();
+		
+		arch.Read(wxT("maxDisplayStringSize"),     maxDisplayStringSize);
+		arch.Read(wxT("resolveLocals"),            resolveLocals);
+		arch.Read(wxT("autoExpandTipItems"),       autoExpandTipItems);
+	}
 };
 
 class IDebugger;
@@ -449,11 +490,11 @@ public:
 	void SetIsRemoteDebugging(bool isRemoteDebugging) {
 		this->m_isRemoteDebugging = isRemoteDebugging;
 	}
-	
+
 	bool GetIsRemoteDebugging() const {
 		return m_isRemoteDebugging;
 	}
-	
+
 	/**
 	 * \brief Sets the logging level 'on the fly'
 	 * \param level the new level

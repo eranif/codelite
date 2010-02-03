@@ -169,27 +169,21 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	bSizer8->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
 	
-	wxStaticBoxSizer* sbSizer2;
-	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Misc:") ), wxVERTICAL );
+	wxStaticBoxSizer* sbSizer4;
+	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Debugger Tooltip:") ), wxVERTICAL );
 	
-	wxGridSizer* gSizer2;
-	gSizer2 = new wxGridSizer( 4, 1, 0, 0 );
-	
-	m_checkBoxEnableLog = new wxCheckBox( m_panel3, wxID_ANY, wxT("Enable full debugger logging"), wxDefaultPosition, wxDefaultSize, 0 );
-	gSizer2->Add( m_checkBoxEnableLog, 0, wxALL, 5 );
-	
-	m_checkShowTerminal = new wxCheckBox( m_panel3, wxID_ANY, wxT("Show debugger terminal"), wxDefaultPosition, wxDefaultSize, 0 );
-	gSizer2->Add( m_checkShowTerminal, 0, wxALL, 5 );
-	
-	m_checkUseRelativePaths = new wxCheckBox( m_panel3, wxID_ANY, wxT("Use file name only for breakpoints (NO full paths)"), wxDefaultPosition, wxDefaultSize, 0 );
-	gSizer2->Add( m_checkUseRelativePaths, 0, wxALL, 5 );
+	wxGridSizer* gSizer31;
+	gSizer31 = new wxGridSizer( 2, 1, 0, 0 );
 	
 	m_showTooltips = new wxCheckBox( m_panel3, wxID_ANY, wxT("While debugging, show debugger tooltips"), wxDefaultPosition, wxDefaultSize, 0 );
-	gSizer2->Add( m_showTooltips, 0, wxALL, 5 );
+	gSizer31->Add( m_showTooltips, 0, wxEXPAND|wxALL, 5 );
 	
-	sbSizer2->Add( gSizer2, 1, wxEXPAND|wxALL, 5 );
+	m_checkBoxAutoExpand = new wxCheckBox( m_panel3, wxID_ANY, wxT("Auto expand items under the cursor"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer31->Add( m_checkBoxAutoExpand, 0, wxEXPAND|wxALL, 5 );
 	
-	bSizer8->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
+	sbSizer4->Add( gSizer31, 0, wxEXPAND|wxALL, 5 );
+	
+	bSizer8->Add( sbSizer4, 0, wxEXPAND|wxALL, 5 );
 	
 	wxStaticBoxSizer* sbSizer3;
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Display:") ), wxHORIZONTAL );
@@ -220,10 +214,29 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	bSizer8->Add( sbSizer3, 0, wxEXPAND|wxALL, 5 );
 	
+	wxStaticBoxSizer* sbSizer2;
+	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Misc:") ), wxVERTICAL );
+	
+	wxGridSizer* gSizer2;
+	gSizer2 = new wxGridSizer( 4, 1, 0, 0 );
+	
+	m_checkBoxEnableLog = new wxCheckBox( m_panel3, wxID_ANY, wxT("Enable full debugger logging"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer2->Add( m_checkBoxEnableLog, 0, wxALL, 5 );
+	
+	m_checkShowTerminal = new wxCheckBox( m_panel3, wxID_ANY, wxT("Show debugger terminal"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer2->Add( m_checkShowTerminal, 0, wxALL, 5 );
+	
+	m_checkUseRelativePaths = new wxCheckBox( m_panel3, wxID_ANY, wxT("Use file name only for breakpoints (NO full paths)"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer2->Add( m_checkUseRelativePaths, 0, wxALL, 5 );
+	
+	sbSizer2->Add( gSizer2, 1, wxEXPAND|wxALL, 5 );
+	
+	bSizer8->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
+	
 	m_panel3->SetSizer( bSizer8 );
 	m_panel3->Layout();
 	bSizer8->Fit( m_panel3 );
-	m_choicebook1->AddPage( m_panel3, wxT("General"), false );
+	m_choicebook1->AddPage( m_panel3, wxT("General"), true );
 	m_panel4 = new wxPanel( m_choicebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );

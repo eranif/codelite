@@ -9,25 +9,30 @@
 #include <wx/log.h>
 #include "globals.h"
 
-#define TIPTIMERID 34347
+#define TIPTIMERID  34347
+#define TIPTIMERID2 34348
 
-class QWTreeData : public wxTreeItemData {
+class QWTreeData : public wxTreeItemData
+{
 public:
 	VariableObjChild _voc;
-	QWTreeData(const VariableObjChild &voc) : _voc(voc){}
-	virtual ~QWTreeData(){}
+	QWTreeData(const VariableObjChild &voc) : _voc(voc) {}
+	virtual ~QWTreeData() {}
 };
 
 BEGIN_EVENT_TABLE(DisplayVariableDlg, NewQuickWatch)
-EVT_TIMER(TIPTIMERID, DisplayVariableDlg::OnTimer)
+	EVT_TIMER(TIPTIMERID,  DisplayVariableDlg::OnTimer)
+	EVT_TIMER(TIPTIMERID2, DisplayVariableDlg::OnTimer2)
 END_EVENT_TABLE()
+
 DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
 		: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(500, 400) )
 		, m_leftWindow(false)
 {
 	Centre();
 	WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
-	m_timer = new wxTimer(this, TIPTIMERID);
+	m_timer  = new wxTimer(this, TIPTIMERID);
+	m_timer2 = new wxTimer(this, TIPTIMERID2);
 }
 
 DisplayVariableDlg::~DisplayVariableDlg()
@@ -41,17 +46,17 @@ DisplayVariableDlg::~DisplayVariableDlg()
 void DisplayVariableDlg::OnExpandItem( wxTreeEvent& event )
 {
 	wxTreeItemId item = event.GetItem();
-	if( item.IsOk()) {
-		if( m_treeCtrl->ItemHasChildren(item) ) {
+	if ( item.IsOk()) {
+		if ( m_treeCtrl->ItemHasChildren(item) ) {
 			wxTreeItemIdValue kookie;
 			wxTreeItemId child = m_treeCtrl->GetFirstChild(item, kookie);
 			while ( child.IsOk() ) {
-				if( m_treeCtrl->GetItemText(child) == wxT("<dummy>") ) {
+				if ( m_treeCtrl->GetItemText(child) == wxT("<dummy>") ) {
 					// Dummy node, remove it and ask the debugger for information
 					m_treeCtrl->SetItemText(child, wxT("Loading..."));
 
 					QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(item);
-					if( data ) {
+					if ( data ) {
 						// Ask the debugger for information
 						m_debugger->ListChildren(data->_voc.gdbId, DBG_USERR_QUICKWACTH);
 						m_gdbId2Item[data->_voc.gdbId] = item;
@@ -72,14 +77,14 @@ void DisplayVariableDlg::BuildTree(const VariableObjChildren& children, IDebugge
 	m_treeCtrl->DeleteAllItems();
 	wxTreeItemId root = m_treeCtrl->AddRoot( m_variableName );
 
-	if( children.empty() ) return;
+	if ( children.empty() ) return;
 	DoAddChildren( root, children );
 }
 
 void DisplayVariableDlg::AddItems(const wxString& varname, const VariableObjChildren& children)
 {
 	std::map<wxString, wxTreeItemId>::iterator iter = m_gdbId2Item.find(varname);
-	if( iter != m_gdbId2Item.end() ) {
+	if ( iter != m_gdbId2Item.end() ) {
 		wxTreeItemId item = iter->second;
 		DoAddChildren( item, children );
 	}
@@ -87,22 +92,22 @@ void DisplayVariableDlg::AddItems(const wxString& varname, const VariableObjChil
 
 void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChildren& children)
 {
-	if( item.IsOk() == false ) return;
+	if ( item.IsOk() == false ) return;
 
-	if(m_treeCtrl->GetRootItem() != item && m_treeCtrl->ItemHasChildren(item)) {
+	if (m_treeCtrl->GetRootItem() != item && m_treeCtrl->ItemHasChildren(item)) {
 		// delete the <dummy> node
 		wxTreeItemIdValue kookie;
 		wxTreeItemId child = m_treeCtrl->GetFirstChild(item, kookie);
 		while ( child.IsOk() ) {
 			wxString itemText = m_treeCtrl->GetItemText(child);
-			if( itemText == wxT("<dummy>") || itemText == wxT("Loading...")) {
+			if ( itemText == wxT("<dummy>") || itemText == wxT("Loading...")) {
 				m_treeCtrl->Delete( child );
 			}
 			child = m_treeCtrl->GetNextChild(item, kookie);
 		}
 	}
 
-	for(size_t i=0; i<children.size(); i++) {
+	for (size_t i=0; i<children.size(); i++) {
 		VariableObjChild ch = children.at(i);
 		if ( ch.varName != wxT("public") && ch.varName != wxT("private") && ch.varName != wxT("protected") ) {
 			// Real node
@@ -131,7 +136,7 @@ void DisplayVariableDlg::OnBtnCancel(wxCommandEvent& e)
 void DisplayVariableDlg::UpdateValue(const wxString& varname, const wxString& value)
 {
 	std::map<wxString, wxTreeItemId>::iterator iter = m_gdbId2ItemLeaf.find(varname);
-	if( iter != m_gdbId2ItemLeaf.end() ) {
+	if ( iter != m_gdbId2ItemLeaf.end() ) {
 		wxTreeItemId item = iter->second;
 		if ( item.IsOk() ) {
 			wxString curtext = m_treeCtrl->GetItemText( item );
@@ -149,7 +154,7 @@ void DisplayVariableDlg::OnCloseEvent(wxCloseEvent& e)
 
 void DisplayVariableDlg::DoCleanUp()
 {
-	if(m_debugger && m_mainVariableObject.IsEmpty() == false) {
+	if (m_debugger && m_mainVariableObject.IsEmpty() == false) {
 		m_debugger->DeleteVariableObject(m_mainVariableObject);
 	}
 	m_gdbId2Item.clear();
@@ -166,7 +171,7 @@ void DisplayVariableDlg::HideDialog()
 
 void DisplayVariableDlg::OnKeyDown(wxKeyEvent& event)
 {
-	if( event.GetKeyCode() == WXK_ESCAPE ) {
+	if ( event.GetKeyCode() == WXK_ESCAPE ) {
 		HideDialog();
 	} else {
 		event.Skip();
@@ -220,12 +225,12 @@ void DisplayVariableDlg::OnMouseEnterWindow(wxMouseEvent& e)
 
 void DisplayVariableDlg::OnTimer(wxTimerEvent& e)
 {
-	if( m_leftWindow ) {
+	if ( m_leftWindow ) {
 		wxMouseState state = wxGetMouseState();
 		// This is to fix a 'MouseCapture' bug on Linux while leaving the mouse Window
 		// and mouse button is clicked and scrolling the scrollbar (H or Vertical)
 		// The UI hangs
-		if(state.LeftDown()) {
+		if (state.LeftDown()) {
 			// Don't Hide, just restart the timer
 			m_timer->Start(500, true);
 			return;
@@ -250,7 +255,7 @@ void DisplayVariableDlg::OnItemMenu(wxTreeEvent& event)
 	event.Skip();
 	wxTreeItemId item = event.GetItem();
 
-	if(item.IsOk())
+	if (item.IsOk())
 		m_treeCtrl->SelectItem(item);
 
 	// Dont show popup menu for fake nodes
@@ -303,7 +308,7 @@ bool DisplayVariableDlg::IsFakeItem(const wxTreeItemId& item)
 
 	if ( item != m_treeCtrl->GetRootItem() ) {
 		QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(item);
-		if( data )
+		if ( data )
 			return data->_voc.isAFake;
 
 		return false;
@@ -316,8 +321,8 @@ bool DisplayVariableDlg::IsFakeItem(const wxTreeItemId& item)
 void DisplayVariableDlg::OnMenuSelection(wxCommandEvent& e)
 {
 	wxTreeItemId item = m_treeCtrl->GetSelection();
-	if(item.IsOk() && !IsFakeItem(item)) {
-		if(e.GetId() == XRCID("tip_add_watch")) {
+	if (item.IsOk() && !IsFakeItem(item)) {
+		if (e.GetId() == XRCID("tip_add_watch")) {
 			wxString fullpath = DoGetItemPath(item);
 			Frame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(fullpath);
 			Frame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
@@ -331,3 +336,40 @@ void DisplayVariableDlg::OnMenuSelection(wxCommandEvent& e)
 	}
 }
 
+void DisplayVariableDlg::OnMouseMove(wxMouseEvent& event)
+{
+	DebuggerInformation debuggerInfo;
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if(dbgr) {
+		DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), debuggerInfo);
+	}
+	
+	if(debuggerInfo.autoExpandTipItems) {
+		int flags (0);
+		wxTreeItemId item = m_treeCtrl->HitTest(event.GetPosition(), flags);
+		if(item.IsOk() && (flags & wxTREE_HITTEST_ONITEMLABEL)) {
+			
+			if(item != m_hoveredItem) {
+				m_timer2->Stop();
+				m_hoveredItem = item;
+				m_timer2->Start(500, true);
+				return;
+				
+			} else 
+				return;
+		
+		}
+		
+		m_hoveredItem = wxTreeItemId();
+		m_timer2->Stop();
+	}
+}
+
+void DisplayVariableDlg::OnTimer2(wxTimerEvent& e)
+{
+	if(m_hoveredItem.IsOk() && m_treeCtrl->ItemHasChildren(m_hoveredItem) && m_treeCtrl->IsExpanded(m_hoveredItem) == false) {
+		m_treeCtrl->SelectItem(m_hoveredItem);
+		m_treeCtrl->Expand(m_hoveredItem);
+	}
+	m_hoveredItem = wxTreeItemId();
+}

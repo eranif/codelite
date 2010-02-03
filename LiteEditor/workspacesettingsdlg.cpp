@@ -23,6 +23,8 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *lo
 	m_choiceEnvSets->Clear();
 
 	std::map<wxString, wxString>::iterator iter = envSets.begin();
+	int useActiveSetIndex = m_choiceEnvSets->Append(wxT("<Use Active Set>"));
+	
 	for (; iter != envSets.end(); iter++) {
 		m_choiceEnvSets->Append(iter->first);
 	}
@@ -31,12 +33,8 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *lo
 	wxString activeEnvSet;
 	int where = m_choiceEnvSets->FindString(localWorkspace->GetActiveEnvironmentSet());
 	if (where == wxNOT_FOUND) {
-		// try to select the default active set
-		where = m_choiceEnvSets->FindString(activePage);
-		if (where != wxNOT_FOUND) {
-			m_choiceEnvSets->SetSelection(where);
-			activeEnvSet = activePage;
-		}
+		activeEnvSet = activePage;
+		m_choiceEnvSets->SetSelection(useActiveSetIndex);
 
 	} else {
 		activeEnvSet = localWorkspace->GetActiveEnvironmentSet();

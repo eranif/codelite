@@ -41,8 +41,10 @@ public:
 	virtual ~EvnVarList();
 
 	void SetActiveSet(const wxString& activeSet) {
-		this->m_activeSet = activeSet;
+		if(activeSet != wxT("<Use Active Set>"))
+			this->m_activeSet = activeSet;
 	}
+	
 	const wxString& GetActiveSet() const {
 		return m_activeSet;
 	}

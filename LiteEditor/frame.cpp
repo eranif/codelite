@@ -1752,7 +1752,8 @@ void Frame::OnAddEnvironmentVariable(wxCommandEvent &event)
 	wxUnusedVar(event);
 	EnvVarsTableDlg dlg(this);
 	dlg.ShowModal();
-
+	SetEnvStatusMessage();
+	
 	if (ManagerST::Get()->IsWorkspaceOpen()) {
 		//mark all the projects as dirty
 		wxArrayString projects;

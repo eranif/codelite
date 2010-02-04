@@ -17,6 +17,12 @@ static eQueue<clNamedPipe*> g_connectionQueue;
 
 int main(int argc, char **argv)
 {
+
+#ifdef __WXMSW__
+	// No windows crash dialogs
+	SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOGPFAULTERRORBOX|SEM_NOOPENFILEERRORBOX);
+#endif
+
 	int  max_requests(5000);
 	int  requests(0);
 	bool check_parent(false);

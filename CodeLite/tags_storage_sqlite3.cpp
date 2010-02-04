@@ -95,10 +95,7 @@ void TagsStorageSQLite::CreateSchema()
 		sql = wxT("PRAGMA temp_store = MEMORY;");
 		m_db->ExecuteUpdate(sql);
 
-//		sql = wxT("PRAGMA default_cache_size = 2000;");
-//		m_db->ExecuteUpdate(sql);
-
-		sql = wxT("create  table if not exists tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, file string, line integer, kind string, access string, signature string, pattern string, parent string, inherits string, path string, typeref string, scope string);");
+		sql = wxT("create  table if not exists tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, file string, line integer, kind string, access string, signature string, pattern string, parent string, inherits string, path string, typeref string, scope string, return_value string);");
 		m_db->ExecuteUpdate(sql);
 
 		sql = wxT("create  table if not exists FILES (ID INTEGER PRIMARY KEY AUTOINCREMENT, file string, last_retagged integer);");
@@ -455,19 +452,20 @@ void TagsStorageSQLite::DeleteFromFilesByPrefix(const wxFileName& dbpath, const 
 TagEntry* TagsStorageSQLite::FromSQLite3ResultSet(wxSQLite3ResultSet& rs)
 {
 	TagEntry *entry = new TagEntry();
-	entry->SetId       (rs.GetInt(0)   );
-	entry->SetName     (rs.GetString(1));
-	entry->SetFile     (rs.GetString(2));
-	entry->SetLine     (rs.GetInt(3)   );
-	entry->SetKind     (rs.GetString(4));
-	entry->SetAccess   (rs.GetString(5));
-	entry->SetSignature(rs.GetString(6));
-	entry->SetPattern  (rs.GetString(7));
-	entry->SetParent   (rs.GetString(8));
-	entry->SetInherits (rs.GetString(9));
-	entry->SetPath     (rs.GetString(10));
-	entry->SetTyperef  (rs.GetString(11));
-	entry->SetScope    (rs.GetString(12));
+	entry->SetId         (rs.GetInt(0)   );
+	entry->SetName       (rs.GetString(1));
+	entry->SetFile       (rs.GetString(2));
+	entry->SetLine       (rs.GetInt(3)   );
+	entry->SetKind       (rs.GetString(4));
+	entry->SetAccess     (rs.GetString(5));
+	entry->SetSignature  (rs.GetString(6));
+	entry->SetPattern    (rs.GetString(7));
+	entry->SetParent     (rs.GetString(8));
+	entry->SetInherits   (rs.GetString(9));
+	entry->SetPath       (rs.GetString(10));
+	entry->SetTyperef    (rs.GetString(11));
+	entry->SetScope      (rs.GetString(12));
+	entry->SetReturnValue(rs.GetString(13));
 	return entry;
 }
 
@@ -746,7 +744,7 @@ int TagsStorageSQLite::InsertTagEntry(const TagEntry& tag)
 		return TagOk;
 
 	try {
-		wxSQLite3Statement statement = m_db->PrepareStatement(wxT("INSERT INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+		wxSQLite3Statement statement = m_db->PrepareStatement(wxT("INSERT INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 		statement.Bind(1,  tag.GetName());
 		statement.Bind(2,  tag.GetFile());
 		statement.Bind(3,  tag.GetLine());
@@ -759,6 +757,7 @@ int TagsStorageSQLite::InsertTagEntry(const TagEntry& tag)
 		statement.Bind(10, tag.GetPath());
 		statement.Bind(11, tag.GetTyperef());
 		statement.Bind(12, tag.GetScope());
+		statement.Bind(13, tag.GetReturnValue());
 		statement.ExecuteUpdate();
 	} catch (wxSQLite3Exception& exc) {
 
@@ -777,7 +776,7 @@ int TagsStorageSQLite::UpdateTagEntry(const TagEntry& tag)
 		return TagOk;
 
 	try {
-		wxSQLite3Statement statement = m_db->PrepareStatement(wxT("UPDATE TAGS SET Name=?, File=?, Line=?, Access=?, Pattern=?, Parent=?, Inherits=?, Typeref=?, Scope=? WHERE Kind=? AND Signature=? AND Path=?"));
+		wxSQLite3Statement statement = m_db->PrepareStatement(wxT("UPDATE TAGS SET Name=?, File=?, Line=?, Access=?, Pattern=?, Parent=?, Inherits=?, Typeref=?, Scope=?, Return_Value=? WHERE Kind=? AND Signature=? AND Path=?"));
 		// update
 		statement.Bind(1,  tag.GetName());
 		statement.Bind(2,  tag.GetFile());
@@ -788,11 +787,12 @@ int TagsStorageSQLite::UpdateTagEntry(const TagEntry& tag)
 		statement.Bind(7,  tag.GetInherits());
 		statement.Bind(8,  tag.GetTyperef());
 		statement.Bind(9,  tag.GetScope());
+		statement.Bind(10, tag.GetReturnValue());
 
 		// where?
-		statement.Bind(10, tag.GetKind());
-		statement.Bind(11, tag.GetSignature());
-		statement.Bind(12, tag.GetPath());
+		statement.Bind(11, tag.GetKind());
+		statement.Bind(12, tag.GetSignature());
+		statement.Bind(13, tag.GetPath());
 
 		statement.ExecuteUpdate();
 	} catch (wxSQLite3Exception& exc) {
@@ -825,9 +825,7 @@ bool TagsStorageSQLite::IsTypeAndScopeContainer(wxString& typeName, wxString& sc
 		combinedScope << scopeOne;
 	}
 	
-//	if(combinedScope.IsEmpty()) 
-//		combinedScope = wxT("<global>");
-		
+
 	sql << wxT("select scope,kind from tags where name='") << typeNameNoScope << wxT("'");
 
 	bool found_global(false);
@@ -881,17 +879,46 @@ bool TagsStorageSQLite::IsTypeAndScopeContainer(wxString& typeName, wxString& sc
 bool TagsStorageSQLite::IsTypeAndScopeExist(const wxString& typeName, wxString& scope)
 {
 	wxString sql;
-	sql << wxT("select scope from tags where name='") << typeName << wxT("'");
-	bool found_global(false);
+	wxString strippedName;
+	wxString secondScope;
+	wxString bestScope;
+	wxString parent;
+	
+	strippedName = typeName.AfterLast(wxT(':'));
+	secondScope  = typeName.BeforeLast(wxT(':'));
+	
+	if(secondScope.EndsWith(wxT(":")))
+		secondScope.RemoveLast();
+	
+	if(strippedName.IsEmpty())
+		return false;
+		
+	sql << wxT("select scope,parent from tags where name='") << strippedName << wxT("' and kind in ('class', 'struct', 'typedef')");
+	bool     foundOther(false);
+	wxString scopeFounded;
+	wxString parentFounded;
+	
+	if(secondScope.IsEmpty() == false)
+		scope << wxT("::") << secondScope;
+		
+	parent = scope.AfterLast(wxT(':'));
+	
 	try {
 		wxSQLite3ResultSet rs = Query(sql);
 		while (rs.NextRow()) {
-			wxString scopeFounded (rs.GetString(0));
+			
+			scopeFounded  = rs.GetString(0);
+			parentFounded = rs.GetString(1);
+			
 			if ( scopeFounded == scope ) {
 				// exact match
 				return true;
-			} else if ( scopeFounded == wxT("<global>") ) {
-				found_global = true;
+				
+			} else if(parentFounded == parent) {
+				bestScope  = scopeFounded;
+				
+			} else {
+				foundOther = true;
 			}
 		}
 
@@ -900,8 +927,12 @@ bool TagsStorageSQLite::IsTypeAndScopeExist(const wxString& typeName, wxString& 
 	}
 
 	// if we reached here, it means we did not find any exact match
-	if ( found_global ) {
-		scope = wxT("<global>");
+	if ( bestScope.IsEmpty() == false ) {
+		scope = bestScope;
+		return true;
+		
+	} else if ( foundOther ) {
+		scope = scopeFounded;
 		return true;
 	}
 	return false;

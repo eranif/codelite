@@ -30,6 +30,7 @@ static  std::string              s_tmpString;
 static  Variable                 curr_var;
 static  clTypedefList            gs_typedefs;
 static  clTypedef                gs_currentTypedef;
+static  std::string              s_templateInitList;
 
 //---------------------------------------------
 // externs defined in the lexer
@@ -131,7 +132,7 @@ translation_unit	:        /*empty*/
                         | translation_unit external_decl
                         ;
 
-external_decl	    :     {curr_var.Reset(); gs_names.clear(); s_tmpString.clear(); gs_currentTypedef.clear(); } typedefs
+external_decl	    :     {curr_var.Reset(); gs_names.clear(); s_tmpString.clear(); gs_currentTypedef.clear(); s_templateInitList.clear();} typedefs
 						| error {
                             yyclearin;    //clear lookahead token
                             yyerrok;
@@ -141,15 +142,28 @@ external_decl	    :     {curr_var.Reset(); gs_names.clear(); s_tmpString.clear()
 /** Typedefs **/
 
 typedefs             : stmnt_starter LE_TYPEDEF real_type new_name ';'
-						{
-							gs_currentTypedef.m_name = $4;
-							gs_typedefs.push_back(gs_currentTypedef);
-						}
-						;
+  					{
+						gs_currentTypedef.m_name = $4;
+						if(gs_currentTypedef.m_realType.m_templateDecl.empty())
+							gs_currentTypedef.m_realType.m_templateDecl = s_templateInitList;
+						s_templateInitList.clear();
+						gs_typedefs.push_back(gs_currentTypedef);
 						
-real_type : variable_decl 
+					}
+					 | stmnt_starter LE_TYPEDEF LE_TYPENAME real_type new_name ';'
+					 {
+						gs_currentTypedef.m_name = $5;
+						if(gs_currentTypedef.m_realType.m_templateDecl.empty())
+							gs_currentTypedef.m_realType.m_templateDecl = s_templateInitList;
+						s_templateInitList.clear();
+						gs_typedefs.push_back(gs_currentTypedef);
+					 }
+					;
+						
+real_type : variable_decl special_star_amp
 			{ 
 				gs_currentTypedef.m_realType = curr_var;
+				gs_currentTypedef.m_realType.m_isPtr = ($2.find("*") != std::string::npos);
 			}
 			;
 			
@@ -181,7 +195,7 @@ applicable for C++, for cases where a function is declared as
 void scope::foo(){ ... }
 */
 scope_specifier	:	LE_IDENTIFIER LE_CLCL {$$ = $1+ $2; }
-                |	LE_IDENTIFIER  '<' parameter_list '>' LE_CLCL {$$ = $1 + $2 + $3 + $4 + $5;}
+                |	LE_IDENTIFIER  '<' parameter_list '>' LE_CLCL {$$ = $1 ; s_templateInitList = $2 + $3 + $4;}
                 ;
 
 nested_scope_specifier: /*empty*/ {$$ = "";}

@@ -28,6 +28,7 @@
 #include <wx/tokenzr.h>
 #include "tokenizer.h"
 #include "language.h"
+#include "code_completion_api.h"
 
 TagEntry::TagEntry(const tagEntry& entry)
 {
@@ -322,92 +323,24 @@ wxString TagEntry::NameFromTyperef(wxString &templateInitList)
 
 bool TagEntry::TypedefFromPattern(const wxString &tagPattern, const wxString &typedefName, wxString &name, wxString &templateInit)
 {
-	CppScanner sc;
-	//remove the pattern prefix & suffix
 	wxString pattern(tagPattern);
+	
 	pattern.StartsWith(wxT("/^"), &pattern);
-	sc.SetText( _C(pattern) );
-
-	int type(0);
-	int depth(0);
-	bool found(false);
-	wxString token;
-	while ((type = sc.yylex()) != 0) {
-		if (type == 0)
-			return false;
-
-		if (!found) {
-			if (type != TYPEDEF) {
-				continue;
-			} else {
-				found = true;
-				continue;
-			}
-		}
-
-		token = _U(sc.YYText());
-		if (token == typedefName) {
-			//we found the end token, break
-			break;
-		}
-
-		switch (type) {
-		case CLCL:
-			if (depth == 0) {
-				name << token;
-			} else {
-				templateInit << token;
-			}
-			break;
-
-		case IDENTIFIER:
-			if (depth == 0) {
-				name << token;
-			} else {
-				templateInit << token;
-			}
-			break;
-
-		case wxT('<'):
-						depth++;
-			if (depth > 0) {
-				templateInit << token;
-			}
-			break;
-
-		case wxT('>'):
-						if (depth > 0) {
-					templateInit << token;
-				}
-			depth--;
-			break;
-
-		case wxT('{'):
-					case wxT('('):
-						case wxT('['):
-								if (depth > 0) {
-							templateInit << token;
-						}
-			depth++;
-			break;
-
-		case wxT('}'):
-					case wxT(')'):
-						case wxT(']'):
-								if (depth > 0) {
-							templateInit << token;
-						}
-			depth--;
-			break;
-
-		default:
-			if (depth > 0) {
-				templateInit << token;
-			}
-			break;
-		}
+	const wxCharBuffer cdata = pattern.mb_str(wxConvUTF8);
+	
+	clTypedefList li;
+	get_typedefs(cdata.data(), li);
+	
+	if(li.size() == 1) {
+		clTypedef td = *li.begin();
+		templateInit = _U(td.m_realType.m_templateDecl.c_str());
+		if(td.m_realType.m_typeScope.empty() == false)
+			name << _U(td.m_realType.m_typeScope.c_str()) << wxT("::");
+			
+		name         << _U(td.m_realType.m_type.c_str());
+		return true;
 	}
-	return true;
+	return false;
 }
 
 wxString TagEntry::GetPattern() const
@@ -548,3 +481,47 @@ bool TagEntry::IsDestructor() const
 	return GetName().StartsWith(wxT("~"));
 }
 
+
+wxString TagEntry::GetReturnValue() const
+{
+	wxString returnValue = GetExtField(_T("returns"));
+	returnValue.Trim().Trim(false);
+	returnValue.Replace(wxT("virtual"), wxT(""));
+	return returnValue;
+}
+
+bool TagEntry::IsFunction() const
+{
+	return GetKind() == wxT("function");
+}
+
+bool TagEntry::IsMethod() const
+{
+	return IsPrototype() || IsFunction();
+}
+
+bool TagEntry::IsPrototype() const
+{
+	return GetKind() == wxT("prototype") ;
+}
+
+
+bool TagEntry::IsClass() const
+{
+	return GetKind() == wxT("class");
+}
+
+bool TagEntry::IsMacro() const
+{
+	return GetKind() == wxT("macro");
+}
+
+bool TagEntry::IsStruct() const
+{
+	return GetKind() == wxT("struct");
+}
+
+bool TagEntry::IsScopeGlobal() const
+{
+	return GetScope().IsEmpty() || GetScope() == wxT("<global>");
+}

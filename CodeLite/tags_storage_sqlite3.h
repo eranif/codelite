@@ -32,7 +32,7 @@
 #include "istorage.h"
 #include <wx/wxsqlite3.h>
 
-const wxString gTagsDatabaseVersion(wxT("CodeLite Version 2.0"));
+const wxString gTagsDatabaseVersion(wxT("CodeLite Version 2.2"));
 
 /**
 TagsDatabase is a wrapper around wxSQLite3 database with tags specific functions.

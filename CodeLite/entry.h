@@ -139,7 +139,19 @@ public:
 	 * @brief return true if this tag represents a destructor
 	 */
 	bool IsDestructor() const;
-
+	
+	/**
+	 * @brief return true of the this tag is a function or prototype
+	 */
+	bool IsMethod() const;
+	
+	bool IsFunction() const;
+	bool IsPrototype() const;
+	bool IsMacro() const;
+	bool IsClass() const;
+	bool IsStruct() const;
+	bool IsScopeGlobal() const;
+	
 	//------------------------------------------
 	// Operations
 	//------------------------------------------
@@ -183,7 +195,10 @@ public:
 
 	wxString GetInherits() const { return GetExtField(_T("inherits")); }
 	wxString GetTyperef() const { return GetExtField(_T("typeref")); }
-
+	
+	void     SetReturnValue(const wxString &retVal  ) { m_extFields[_T("returns")]   = retVal; }
+	wxString GetReturnValue() const;
+	
 	const wxString &GetScope() const {return m_scope;}
 	void SetScope(const wxString &scope){m_scope = scope;}
 

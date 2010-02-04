@@ -657,4 +657,55 @@ extern char *readSourceLines (vString* const vLine, fpos_t location, fpos_t endP
 	return vLine->buffer;
 }
 
+// ERAN IFRAH - Add support for return value 
+extern char *readChars (vString* const buffer, fpos_t location, fpos_t endPos)
+{
+	fpos_t orignalPosition;
+	char *result;
+	size_t count     = 0;
+	long sizeToRead  = -1;
+	
+	if(location <0)
+		return NULL;
+	
+	fgetpos (File.fp, &orignalPosition);
+	fsetpos (File.fp, &location);
+
+	/* set pointer to start point */
+	fsetpos (File.fp, &location);
+
+	vStringClear(buffer);
+	sizeToRead = endPos - location + 1;
+	if(sizeToRead < 0) {
+		/* restore original file position */
+		fsetpos (File.fp, &orignalPosition);
+		return NULL;
+	}
+	
+	result = (char*)malloc(sizeToRead);
+	if(!result) {
+		fsetpos (File.fp, &orignalPosition);
+		return NULL;
+	}
+	
+	memset(result, 0, sizeToRead);
+	
+	count = fread(result, 1, sizeToRead, File.fp);
+	if(count != sizeToRead) {
+		/* restore original file position */
+		fsetpos (File.fp, &orignalPosition);
+		/* free allocated buffer */
+		free(result);
+		return NULL;
+	}
+	
+	vStringCatS(buffer, result);
+	/* restore original file position */
+	fsetpos (File.fp, &orignalPosition);
+	/* free allocated buffer */
+	free(result);
+	
+	return buffer->buffer;
+}
+// ERAN IFRAH - Add support for return value - END
 /* vi:set tabstop=4 shiftwidth=4: */

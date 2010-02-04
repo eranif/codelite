@@ -12,7 +12,9 @@
 //int a;
 //
 //#include <list>
-typedef std::vector<int> List2;
+typedef typename iterator_traits<_Iterator>::pointer   pointer2;
+typedef _Tp*                               pointer;
+typedef typename std::vector<int> List2;
 int main(int argc, char **argv)
 {
 	typedef std::list<int> TheList;

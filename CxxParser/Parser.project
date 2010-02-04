@@ -38,7 +38,6 @@
   <VirtualDirectory Name="test_suite">
     <File Name="Release/test.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;" Required="yes" PreCompiledHeader="">
@@ -56,8 +55,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="no">copy *.h ..\CodeLite\.</Command>
-        <Command Enabled="no">copy *.cpp ..\CodeLite\.</Command>
+        <Command Enabled="yes">copy *.h ..\CodeLite\.</Command>
+        <Command Enabled="yes">copy *.cpp ..\CodeLite\.</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -113,4 +112,5 @@ cpp_func_parser.cpp: cpp_func_parser.y
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

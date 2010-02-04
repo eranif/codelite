@@ -223,6 +223,8 @@ bool Language::ProcessExpression(const wxString& stmt,
                                  wxString &scopeTemplateInitList)	//output
 {
 	bool evaluationSucceeded = true;
+	
+	std::map<wxString, wxString> ignoreTokens = GetTagsManager()->GetCtagsOptions().GetPreprocessorAsWxMap();
 	PERF_BLOCK("Language::ProcessExpression") {
 		ExpressionResult result;
 		wxString statement( stmt );
@@ -393,8 +395,16 @@ bool Language::ProcessExpression(const wxString& stmt,
 				}
 
 				if (!res) {
-					evaluationSucceeded = false;
-					break;
+					std::map<wxString, wxString>::iterator where = ignoreTokens.find(scopeToSearch + wxT("::") + typeName);
+					if(where != ignoreTokens.end()) {
+						typeName  = where->second;
+						evaluationSucceeded = true;
+						
+					} else {
+						evaluationSucceeded = false;
+						break;
+						
+					}
 				}
 
 				//-------------------------------------
@@ -411,14 +421,17 @@ bool Language::ProcessExpression(const wxString& stmt,
 					tmp_name == typeName ? res_typedef = false : res_typedef = true;
 
 					tmp_name = typeName;
-					res_templte = OnTemplates(typeName, typeScope, parent);
+					res_templte = OnTemplates(typeName, typeScope, parent, scopeTemplateInitList);
 					tmp_name == typeName ? res_templte = false : res_templte = true;
 
 				} while ( res_templte || res_typedef ) ;
 
 				// try match any overloading operator to the typeName
 				wxString origTypeName(typeName);
-
+				
+				// Make sure that the typeName & typeScope do exist!
+				GetTagsManager()->IsTypeAndScopeExists(typeName, typeScope);
+				
 				// keep the typeScope in variable origTypeScope since it might be modified by
 				// the OnArrowOperatorOverloading() method, but we might need it again in case
 				// -> operator overloading is found
@@ -447,7 +460,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 					}
 
 					// do template subsitute
-					if (OnTemplates(typeName, typeScope, m_parentVar)) {
+					if (OnTemplates(typeName, typeScope, m_parentVar, scopeTemplateInitList)) {
 						//do typedef subsitute
 						wxString tmp_name(typeName);
 						while (OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList)) {
@@ -460,7 +473,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 					}
 				}
 			}
-
+			
 			parent = m_parentVar;
 
 			//Keep the information about this token for next iteration
@@ -470,23 +483,25 @@ bool Language::ProcessExpression(const wxString& stmt,
 				parent.m_templateDecl = result.m_templateInitList;
 				parent.m_type = _C(typeName);
 				parent.m_typeScope = _C(typeScope);
-
+				
 			} else if (templateInitList.IsEmpty() == false) {
 
 				parent.m_isTemplate = true;
 				parent.m_templateDecl = _C(templateInitList);
 				parent.m_type = _C(typeName);
 				parent.m_typeScope = _C(typeScope);
+				
 			}
 
 			parentTypeName = typeName;
 			parentTypeScope = typeScope;
 		}
 	}
+	
 	return evaluationSucceeded;
 }
 
-bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &parent)
+bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &parent, const wxString &scopeTemplateInitList)
 {
 	bool res (false);
 	//make sure that the type really exist
@@ -529,13 +544,17 @@ bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &pa
 					}
 				}
 
-				wxArrayString templateDecl; // the names of the classes/typenames 'T'
-				wxArrayString templateImpl; // the actual initialisation list
-
-				CppScanner implScanner;
+				wxArrayString templateDecl;      // the names of the classes/typenames 'T'
+				wxArrayString templateImpl;      // the actual initialisation list
+				wxArrayString templateImplGloal; // The most upper template implementation list
+				
+				CppScanner implScanner, globalImplScanner;
 				implScanner.SetText(parent.m_templateDecl.c_str());
 				ParseTemplateInitList(&implScanner, templateImpl);
-
+				
+				globalImplScanner.SetText(_C(scopeTemplateInitList));
+				ParseTemplateInitList(&globalImplScanner, templateImplGloal);
+				
 				if ( foundTemplate ) {
 					//we found our template declaration
 					ParseTemplateArgs(&declScanner, templateDecl);
@@ -546,8 +565,17 @@ bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &pa
 				//we loop over the template list, and search for our real type
 				for (size_t i=0; i< templateDecl.GetCount(); i++) {
 					if (templateDecl.Item(i) == typeName) {
-
-						if (templateImpl.GetCount() > i) {
+						
+						wxString tokenName;
+						if (templateImpl.GetCount() > i && templateImpl.Item(i) != typeName) {
+							tokenName = templateImpl.Item(i);
+							
+						} else if(templateImplGloal.GetCount() > i && templateImplGloal.Item(i) != typeName) {
+							tokenName = templateImplGloal.Item(i);
+							
+						}
+						
+						if (tokenName.IsEmpty() == false) {
 							// We are now looping over all available scopes
 							// to try and resolve the type found inside the
 							// template initialization
@@ -559,13 +587,13 @@ bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &pa
 								wxString tagpath;
 								switch (j) {
 								case 0: // Use the type as it appears
-									tagpath = templateImpl.Item(i);
+									tagpath = tokenName;
 									break;
 								case 1: // try with the parent scope prepended
-									tagpath = wxString::Format(wxT("%s::%s"), parent_scope.c_str(), templateImpl.Item(i).c_str());
+									tagpath = wxString::Format(wxT("%s::%s"), parent_scope.c_str(), tokenName.c_str());
 									break;
 								default:
-									tagpath = wxString::Format(wxT("%s::%s"), GetAdditionalScopes().at(j-2).c_str(), templateImpl.Item(i).c_str());
+									tagpath = wxString::Format(wxT("%s::%s"), GetAdditionalScopes().at(j-2).c_str(), tokenName.c_str());
 									break;
 								}
 
@@ -655,7 +683,7 @@ bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &temp
 			// if the resolved type does not exist, try again against the
 			// global namespace. IsTypeAndScopeContainer() will check
 			// this and will update the typeScope to 'global' if needed
-			tagsManager->IsTypeAndScopeContainer(typeName, typeScope);
+			tagsManager->IsTypeAndScopeExists(typeName, typeScope);
 			res = true;
 		}
 	}
@@ -971,7 +999,11 @@ bool Language::TypeFromName(const wxString &             name,           // Inpu
 
 bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const wxString &parentScope, std::vector<TagEntryPtr> &tags)
 {
-	if (!GetTagsManager()->IsTypeAndScopeExists(type, typeScope)) {
+	wxString strippedScope(typeScope);
+	wxString tmplInitList;
+	DoRemoveTempalteInitialization(strippedScope, tmplInitList);
+	
+	if (!GetTagsManager()->IsTypeAndScopeExists(type, strippedScope)) {
 		if (GetAdditionalScopes().empty() == false) {
 			//the type does not exist in the global scope,
 			//try the additional scopes
@@ -1055,7 +1087,7 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 			//we have a single match!
 			if (tag->GetKind() == wxT("function") || tag->GetKind() == wxT("prototype")) {
 				clFunction foo;
-				if (FunctionFromPattern(tag->GetPattern(), foo)) {
+				if (FunctionFromPattern(tag, foo)) {
 					type = _U(foo.m_returnValue.m_type.c_str());
 					typeScope = foo.m_returnValue.m_typeScope.empty() ? wxT("<global>") : _U(foo.m_returnValue.m_typeScope.c_str());
 					return true;
@@ -1085,7 +1117,7 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 			for (size_t i=0; i<tags.size(); i++) {
 				TagEntryPtr tag(tags.at(i));
 				wxString dbg_str = tag->GetPattern();
-				if (!FunctionFromPattern(tag->GetPattern(), foo)) {
+				if (!FunctionFromPattern(tag, foo)) {
 					allthesame = false;
 					break;
 				}
@@ -1135,10 +1167,10 @@ bool Language::VariableFromPattern(const wxString &in, const wxString &name, Var
 	return false;
 }
 
-bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
+bool Language::FunctionFromPattern(TagEntryPtr tag, clFunction &foo)
 {
 	FunctionList fooList;
-	wxString pattern(in);
+	wxString pattern(tag->GetPattern());
 	//we need to extract the return value from the pattern
 	pattern = pattern.BeforeLast(wxT('$'));
 	pattern = pattern.AfterFirst(wxT('^'));
@@ -1164,7 +1196,9 @@ bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
 	get_functions(patbuf.data(), fooList, ignoreTokens);
 	if (fooList.size() == 1) {
 		foo = (*fooList.begin());
+		DoFixFunctionUsingCtagsReturnValue(foo, tag);
 		return true;
+		
 	} else if (fooList.size() == 0) {
 		//fail to parse the statement, assume we got a broken pattern
 		//(this can happen because ctags keeps only the first line of a function which was declared
@@ -1183,32 +1217,43 @@ bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
 		get_functions(patbuf1.data(), fooList, ignoreTokens);
 		if (fooList.size() == 1) {
 			foo = (*fooList.begin());
+			DoFixFunctionUsingCtagsReturnValue(foo, tag);
 			return true;
+			
 		} else if (fooList.empty()) {
 			//try a nasty hack:
 			//the yacc cant find ctor declarations
 			//so add a 'void ' infront of the function...
 			wxString pat_tag(pattern);
 			pat_tag = pat_tag.Trim(false).Trim();
-
 			wxString pat3;
-
-			// consider virtual methods as well
-			bool virt(false);
-			virt = pat_tag.StartsWith(wxT("virtual"), &pat3);
-			if ( virt ) {
-				pat3.Prepend(wxT("void "));
-				pat3.Prepend(wxT("virtual "));
-			} else {
+			bool dummyReturnValue(true);
+			
+			// failed to parse function.
+			if(tag->GetReturnValue().IsEmpty() == false) {
 				pat3 = pat_tag;
-				pat3.Prepend(wxT("void "));
+				pat3.Prepend(tag->GetReturnValue() + wxT(" "));
+				dummyReturnValue = false;
+				
+			} else {
+				// consider virtual methods as well
+				bool virt(false);
+				virt = pat_tag.StartsWith(wxT("virtual"), &pat3);
+				if ( virt ) {
+					pat3.Prepend(wxT("void "));
+					pat3.Prepend(wxT("virtual "));
+				} else {
+					pat3 = pat_tag;
+					pat3.Prepend(wxT("void "));
+				}
 			}
-
 			const wxCharBuffer patbuf2 = _C(pat3);
 			get_functions(patbuf2.data(), fooList, ignoreTokens);
 			if (fooList.size() == 1) {
 				foo = (*fooList.begin());
-				foo.m_returnValue.Reset();//clear the dummy return value
+				
+				if(dummyReturnValue)
+					foo.m_returnValue.Reset(); //clear the dummy return value
 				return true;
 			}
 		}
@@ -1301,11 +1346,18 @@ bool Language::OnArrowOperatorOverloading(wxString &typeName, wxString &typeScop
 				//we found our overloading operator
 				//extract the 'real' type from the pattern
 				clFunction f;
-				if (FunctionFromPattern(pattern, f)) {
+				if (FunctionFromPattern(tags.at(i), f)) {
 					typeName = _U(f.m_returnValue.m_type.c_str());
-					typeScope = f.m_returnValue.m_typeScope.empty() ? wxT("<global>") : _U(f.m_returnValue.m_typeScope.c_str());
+					
+					// first assume that the return value has the same scope like the parent (unless the return value has a scope)
+					typeScope = f.m_returnValue.m_typeScope.empty() ? scope : _U(f.m_returnValue.m_typeScope.c_str());
+					
+					// Call the magic method that fixes typename/typescope
+					GetTagsManager()->IsTypeAndScopeExists(typeName, typeScope);
+					
 					ret = true;
 					break;
+					
 				} else {
 					//failed to extract the return value from the patterm
 					//fallback to the current behavior
@@ -1369,7 +1421,7 @@ void Language::DoRemoveTempalteInitialization(wxString& str, wxString &tmplInitL
 	}
 }
 
-bool Language::ResolveTempalte(wxString& typeName, wxString& typeScope, const wxString& parentPath, const wxString& parenttempalteInitList)
+bool Language::ResolveTemplate(wxString& typeName, wxString& typeScope, const wxString& parentPath, const wxString& parenttempalteInitList)
 {
 	Variable v;
 	v.m_isTemplate = true;
@@ -1390,7 +1442,7 @@ bool Language::ResolveTempalte(wxString& typeName, wxString& typeScope, const wx
 	v.m_typeScope = _C(scope);
 	v.m_templateDecl = _C(parenttempalteInitList);
 
-	while ( OnTemplates(typeName, typeScope, v)) {
+	while ( OnTemplates(typeName, typeScope, v, parenttempalteInitList)) {
 		// Do typedef subsitute
 		wxString tmp_name(typeName);
 		wxString dummy, templateInitList;
@@ -1403,4 +1455,20 @@ bool Language::ResolveTempalte(wxString& typeName, wxString& typeScope, const wx
 		}
 	}
 	return true;
+}
+
+void Language::DoFixFunctionUsingCtagsReturnValue(clFunction& foo, TagEntryPtr tag)
+{
+	if(foo.m_returnValue.m_name.empty()) {
+		// Use the CTAGS return value
+		wxString ctagsRetValue = tag->GetReturnValue();
+		const wxCharBuffer cbuf = ctagsRetValue.mb_str(wxConvUTF8);
+		std::map<std::string, std::string> ignoreTokens = GetTagsManager()->GetCtagsOptions().GetPreprocessorAsMap();
+		
+		VariableList li;
+		get_variables(cbuf.data(), li, ignoreTokens, false);
+		if(li.size() == 1) {
+			foo.m_returnValue = *li.begin();
+		}
+	}
 }

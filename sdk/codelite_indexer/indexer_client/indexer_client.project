@@ -141,6 +141,6 @@
   </Settings>
   <Dependencies Name="Debug_Unix"/>
   <Dependencies Name="Release_Unix"/>
-  <Dependencies Name="Debug_Win"/>
   <Dependencies Name="Release_Win"/>
+  <Dependencies Name="Debug_Win"/>
 </CodeLite_Project>

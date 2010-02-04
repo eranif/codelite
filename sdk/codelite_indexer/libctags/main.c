@@ -542,6 +542,7 @@ char *load_file(const char *fileName)
 	bytes = fread(buf, sizeof(char), len, fp);
 	if (bytes != len) {
 		fclose(fp);
+		free(buf);
 		printf("failed to read from file 'test.h': %s\n", strerror(errno));
 		return NULL;
 	}
@@ -740,6 +741,7 @@ extern void ctags_batch_parse(const char* filelist, const char * outputfile)
 		}
 		n = n->next;
 	}
+	fclose(fp);
 	list_destroy( l );
 	free ( file_content );
 	ctags_shutdown();

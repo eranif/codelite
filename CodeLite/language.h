@@ -207,9 +207,9 @@ public:
 
 
 	bool VariableFromPattern(const wxString &pattern, const wxString &name, Variable &var);
-	bool FunctionFromPattern(const wxString &pattern, clFunction &foo);
+	bool FunctionFromPattern(TagEntryPtr tag, clFunction &foo);
 
-	bool ResolveTempalte(wxString &typeName, wxString &typeScope, const wxString &parentPath, const wxString &parenttempalteInitList);
+	bool ResolveTemplate(wxString &typeName, wxString &typeScope, const wxString &parentPath, const wxString &parenttempalteInitList);
 private:
 	bool DoSearchByNameAndScope(const wxString &name,
 	                            const wxString &scopeName,
@@ -242,7 +242,7 @@ private:
 	 * \param typeName the type name that was detected by the parser
 	 * \param typeScope the type scope
 	 */
-	bool OnTemplates(wxString &typeName, wxString &typeScope, Variable &parent);
+	bool OnTemplates(wxString &typeName, wxString &typeScope, Variable &parent, const wxString &scopeTemplateInitList);
 
 	/**
 	 * \brief attempt to expand 'typedef' to their actual value
@@ -260,6 +260,9 @@ private:
 	void ParseTemplateArgs(CppScanner *scanner, wxArrayString &argsList);
 	void ParseTemplateInitList(CppScanner *scanner, wxArrayString &argsList);
 	void DoRemoveTempalteInitialization(wxString &str, wxString &tmplInitList);
+	
+	void DoFixFunctionUsingCtagsReturnValue(clFunction &foo, TagEntryPtr tag);
+	
 };
 
 typedef Singleton<Language> LanguageST;

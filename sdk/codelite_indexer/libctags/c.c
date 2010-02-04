@@ -1157,12 +1157,15 @@ static void makeTag (const tokenInfo *const token,
 
 		findScopeHierarchy (scope, st);
 		addOtherFields (&e, type, st, scope, typeRef);
-		if(st->token[0]->keyword == KEYWORD_TEMPLATE){
-			e.templatefilePosition = st->token[0]->filePosition;
+		
+		// ERAN IFRAH
+		e.statementStartPos = st->token[0]->filePosition;
+		e.tagNameFilePos    = token->filePosition;
+		if(st->token[0]->keyword == KEYWORD_TEMPLATE)
 			e.hasTemplate = TRUE;
-		}else{
+		else
 			e.hasTemplate = FALSE;
-		}
+		// ERAN IFRAH - END
 
 		makeTagEntry (&e);
 		makeExtraTagEntry (type, &e, scope);

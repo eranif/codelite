@@ -656,7 +656,7 @@ public:
 	 * @param pattern ctags pattern of the method
 	 * @return return value of the method from the pattern of empty string
 	 */
-	wxString GetFunctionReturnValueFromPattern(const wxString &pattern);
+	wxString GetFunctionReturnValueFromPattern(TagEntryPtr tag);
 	/**
 	 * @brief fileter a recently tagged files from the strFiles array
 	 * @param strFiles

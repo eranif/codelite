@@ -54,19 +54,20 @@ typedef struct sTagFields {
 /*  Information about the current tag candidate.
  */
 typedef struct sTagEntryInfo {
-	boolean     lineNumberEntry;  /* pattern or line number entry */
-	unsigned long lineNumber;     /* line number of tag */
-	fpos_t      filePosition;     /* file position of line containing tag */
-	fpos_t      templatefilePosition;     /* template keyword position */
-	boolean		hasTemplate;	/* does the token has template keyword? */
-	const char* language;         /* language of source file */
-	boolean     isFileScope;      /* is tag visibile only within source file? */
-	boolean     isFileEntry;      /* is this just an entry for a file name? */
-	boolean     truncateLine;     /* truncate tag line at end of tag name? */
-	const char *sourceFileName;   /* name of source file */
-	const char *name;             /* name of the tag */
-	const char *kindName;         /* kind of tag */
-	char        kind;             /* single character representation of kind */
+	boolean     lineNumberEntry;      /* pattern or line number entry */
+	unsigned long lineNumber;         /* line number of tag */
+	fpos_t      filePosition;         /* file position of line containing tag */
+	fpos_t      statementStartPos;    /* The position of file containing the first pos we started collecting information */
+	fpos_t      tagNameFilePos;       /* The position in the file of the tag name */
+	boolean     hasTemplate;          /* does the token has template keyword? */
+	const char* language;             /* language of source file */
+	boolean     isFileScope;          /* is tag visibile only within source file? */
+	boolean     isFileEntry;          /* is this just an entry for a file name? */
+	boolean     truncateLine;         /* truncate tag line at end of tag name? */
+	const char *sourceFileName;       /* name of source file */
+	const char *name;                 /* name of the tag */
+	const char *kindName;             /* kind of tag */
+	char        kind;                 /* single character representation of kind */
 	struct {
 		const char* access;
 		const char* fileScope;

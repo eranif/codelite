@@ -1276,9 +1276,9 @@ bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope
 	// replace macros:
 	// replace the provided typeName and scope with user defined macros as appeared in the PreprocessorMap
 	wxString _typeName = DoReplaceMacros(typeName);
-	wxString _scope    = DoReplaceMacros(scope);
+	          scope    = DoReplaceMacros(scope);
 
-	return m_workspaceDatabase->IsTypeAndScopeExist(_typeName, _scope);
+	return m_workspaceDatabase->IsTypeAndScopeExist(_typeName, scope);
 }
 
 bool TagsManager::GetDerivationList(const wxString &path, std::vector<wxString> &derivationList)
@@ -1346,18 +1346,23 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 
 		// create a proper tooltip from the stripped pattern
 		TagEntryPtr t= tags.at(i);
-		if (t->GetKind() == wxT("function") || t->GetKind() == wxT("prototype")) {
+		if (t->IsMethod()) {
 
 			// add return value
 			tip.Clear();
+			
+			wxString retValue = t->GetReturnValue();
+			if(retValue.IsEmpty() == false) {
+				tip << retValue << wxT(" ");
 
-			wxString ret_value = GetFunctionReturnValueFromPattern(t->GetPattern());
-			if (ret_value.IsEmpty() == false) {
-				tip << ret_value << wxT(" ");
+			} else {
+				wxString ret_value = GetFunctionReturnValueFromPattern(t);
+				if (ret_value.IsEmpty() == false) {
+					tip << ret_value << wxT(" ");
+				}
 			}
-
 			// add the scope
-			if (t->GetScope() != wxT("<global>")) {
+			if (!t->IsScopeGlobal()) {
 				tip << t->GetScope() << wxT("::");
 			}
 
@@ -1383,17 +1388,17 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 			continue;
 
 		TagEntryPtr t = tags.at(i);
-		wxString k = t->GetKind();
 		wxString pat = t->GetPattern();
 
-		if (k == wxT("function") || k == wxT("prototype")) {
+		if ( t->IsMethod() ) {
 			wxString tip;
 			tip << wxT("function:") << t->GetSignature();
 
 			// collect each signature only once, we do this by using
 			// map
 			tipsMap[tip] = t;
-		} else if (k == wxT("class")) {
+			
+		} else if (t->IsClass()) {
 
 			// this tag is a class declaration that matches the word
 			// user is probably is typing something like
@@ -1412,14 +1417,14 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 
 			for (size_t i=0; i<ctor_tags.size(); i++) {
 				TagEntryPtr ctor_tag = ctor_tags.at(i);
-				if ( ctor_tag->GetKind() == wxT("function") || ctor_tag->GetKind() == wxT("prototype") ) {
+				if ( ctor_tag->IsMethod() ) {
 					wxString tip;
 					tip << wxT("function:") << ctor_tag->GetSignature();
 					tipsMap[ctor_tag->GetSignature()] = ctor_tag;
 				}
 			}
 
-		} else if (k == wxT("macro")) {
+		} else if (t->IsMacro()) {
 
 			wxString tip;
 			wxString macroName = t->GetName();
@@ -1545,7 +1550,7 @@ bool TagsManager::ProcessExpression(const wxFileName &filename, int lineno, cons
 	bool res = GetLanguage()->ProcessExpression(expr, scopeText, filename, lineno, typeName, typeScope, oper, scopeTempalteInitiList);
 	if (res && IsTypeAndScopeExists(typeName, typeScope) == false && scopeTempalteInitiList.empty() == false) {
 		// try to resolve it again
-		res = GetLanguage()->ResolveTempalte(typeName, typeScope, typeScope, scopeTempalteInitiList);
+		res = GetLanguage()->ResolveTemplate(typeName, typeScope, typeScope, scopeTempalteInitiList);
 	}
 	return res;
 }
@@ -1631,7 +1636,7 @@ bool TagsManager::GetFunctionDetails(const wxFileName &fileName, int lineno, Tag
 {
 	tag = FunctionFromFileLine(fileName, lineno);
 	if (tag) {
-		GetLanguage()->FunctionFromPattern( tag->GetPattern(), func );
+		GetLanguage()->FunctionFromPattern( tag, func );
 		return true;
 	}
 	return false;
@@ -1671,7 +1676,7 @@ TagEntryPtr TagsManager::FirstScopeOfFile(const wxFileName &fileName)
 wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString &scope)
 {
 	clFunction foo;
-	if (!GetLanguage()->FunctionFromPattern(tag->GetPattern(), foo)) {
+	if (!GetLanguage()->FunctionFromPattern(tag, foo)) {
 		return wxEmptyString;
 	}
 
@@ -1729,7 +1734,7 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString 
 bool TagsManager::IsPureVirtual(TagEntryPtr tag)
 {
 	clFunction foo;
-	if (!GetLanguage()->FunctionFromPattern(tag->GetPattern(), foo)) {
+	if (!GetLanguage()->FunctionFromPattern(tag, foo)) {
 		return false;
 	}
 	return foo.m_isPureVirtual;
@@ -1738,7 +1743,7 @@ bool TagsManager::IsPureVirtual(TagEntryPtr tag)
 bool TagsManager::IsVirtual(TagEntryPtr tag)
 {
 	clFunction foo;
-	if (!GetLanguage()->FunctionFromPattern(tag->GetPattern(), foo)) {
+	if (!GetLanguage()->FunctionFromPattern(tag, foo)) {
 		return false;
 	}
 	return foo.m_isVirtual;
@@ -2026,7 +2031,7 @@ void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<
 	for (; it != tmpMap.end() ; it++ ) {
 		TagEntryPtr tag = it->second;
 		clFunction f;
-		if ( GetLanguage()->FunctionFromPattern(tag->GetPattern(), f) ) {
+		if ( GetLanguage()->FunctionFromPattern(tag, f) ) {
 			if ( !f.m_isPureVirtual ) {
 				// incude this function
 				protos[it->first] = it->second;
@@ -2211,12 +2216,12 @@ void TagsManager::DoFilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITa
 	FilterNonNeededFilesForRetaging(strFiles, db);
 }
 
-wxString TagsManager::GetFunctionReturnValueFromPattern(const wxString& pattern)
+wxString TagsManager::GetFunctionReturnValueFromPattern(TagEntryPtr tag)
 {
 	// evaluate the return value of the tag
 	clFunction foo;
 	wxString return_value;
-	if (GetLanguage()->FunctionFromPattern(pattern, foo)) {
+	if (GetLanguage()->FunctionFromPattern(tag, foo)) {
 		if (foo.m_retrunValusConst.empty() == false) {
 			return_value << _U(foo.m_retrunValusConst.c_str()) << wxT(" ");
 		}

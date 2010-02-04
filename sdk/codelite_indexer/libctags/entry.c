@@ -766,9 +766,13 @@ static int addExtensionFields (const tagEntryInfo *const tag)
 				tag->extensionFields.signature);
 	
 	// ERAN IFRAH - Add support for return value 
-	if(tag->statementStartPos >=0 && (tag->kind == 'p' || tag->kind == 'f')) {
+	if(tag->kind == 'p' || tag->kind == 'f') {
 		/* tag is function (decl or impl) */
-		int count = (tag->tagNameFilePos - tag->statementStartPos);
+#ifdef __WXMSW__		
+		int count = ((int)tag->tagNameFilePos - (int)tag->statementStartPos);
+#else
+		int count = (tag->tagNameFilePos.__pos - tag->statementStartPos.__pos);
+#endif
 		if(count == 0) {
 			/* entire declaration is set on a single line */
 			vString *returnValue = vStringNew();

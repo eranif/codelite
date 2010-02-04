@@ -664,10 +664,14 @@ extern char *readChars (vString* const buffer, fpos_t location, fpos_t endPos)
 	char *result;
 	size_t count     = 0;
 	long sizeToRead  = -1;
-	
-	if(location <0)
+
+#ifdef __WXMSW__
+	if(location < 0)
 		return NULL;
-	
+#else
+	if(location.__pos < 0)
+		return NULL;
+#endif
 	fgetpos (File.fp, &orignalPosition);
 	fsetpos (File.fp, &location);
 
@@ -675,7 +679,11 @@ extern char *readChars (vString* const buffer, fpos_t location, fpos_t endPos)
 	fsetpos (File.fp, &location);
 
 	vStringClear(buffer);
+#ifdef __WXMSW__
 	sizeToRead = endPos - location + 1;
+#else
+	sizeToRead = endPos.__pos - location.__pos + 1;
+#endif
 	if(sizeToRead < 0) {
 		/* restore original file position */
 		fsetpos (File.fp, &orignalPosition);

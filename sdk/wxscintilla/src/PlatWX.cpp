@@ -373,43 +373,39 @@ void SurfaceImpl::RoundedRectangle(PRectangle rc, ColourAllocated fore, ColourAl
 {
     PenColour(fore);
     BrushColour(back);
-    hdc->DrawRoundedRectangle(wxRectFromPRectangle(rc), 4);
+	wxRect rr = wxRectFromPRectangle(rc);
+	hdc->DrawRoundedRectangle(rr, 0);
 }
 
-#ifdef __WXMSW__
-#define wxPy_premultiply(p, a)   ((p) * (a) / 0xff)
-#else
-#define wxPy_premultiply(p, a)   (p)
-#endif
+void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated fill, int alphaFill, ColourAllocated outline, int alphaOutline, int WXUNUSED(flags))
+{
 
-void SurfaceImpl::AlphaRectangle(PRectangle rc, int cornerSize,
-                                 ColourAllocated fill, int alphaFill,
-                                 ColourAllocated outline, int alphaOutline,
-                                 int /*flags*/) {
 #ifdef wxHAVE_RAW_BITMAP
-
-    // TODO:  do something with cornerSize
     wxUnusedVar(cornerSize);
-    
     int x, y;
     wxRect r = wxRectFromPRectangle(rc);
+
     wxBitmap bmp(r.width, r.height, 32);
     wxAlphaPixelData pixData(bmp);
     pixData.UseAlpha();
+	wxAlphaPixelData::Iterator p(pixData);
 
     // Set the fill pixels
     ColourDesired cdf(fill.AsLong());
     int red   = cdf.GetRed();
     int green = cdf.GetGreen();
     int blue  = cdf.GetBlue();
-
-    wxAlphaPixelData::Iterator p(pixData);
+#ifdef __WXMSW__
+	int aFill = alphaFill;
+#else
+	int aFill = 0xff;
+#endif
     for (y=0; y<r.height; y++) {
         p.MoveTo(pixData, 0, y);
         for (x=0; x<r.width; x++) {
-            p.Red()   = wxPy_premultiply(red,   alphaFill);
-            p.Green() = wxPy_premultiply(green, alphaFill);
-            p.Blue()  = wxPy_premultiply(blue,  alphaFill);
+			p.Red()   = red   * aFill / 0xff;
+			p.Green() = green * aFill / 0xff;
+			p.Blue()  = blue  * aFill / 0xff;
             p.Alpha() = alphaFill;
             ++p; 
         }
@@ -420,29 +416,33 @@ void SurfaceImpl::AlphaRectangle(PRectangle rc, int cornerSize,
     red   = cdo.GetRed();
     green = cdo.GetGreen();
     blue  = cdo.GetBlue();
-    for (x=0; x<r.width; x++) {
+#ifdef __WXMSW__
+	int aOutline = alphaOutline;
+#else
+	int aOutline = 0xff;
+#endif
+	for (x=1; x<r.width-1; x++) {
         p.MoveTo(pixData, x, 0);
-        p.Red()   = wxPy_premultiply(red,   alphaOutline);
-        p.Green() = wxPy_premultiply(green, alphaOutline);
-        p.Blue()  = wxPy_premultiply(blue,  alphaOutline);
+		p.Red()   = red   * aOutline / 0xff;
+		p.Green() = green * aOutline / 0xff;
+		p.Blue()  = blue  * aOutline / 0xff;
         p.Alpha() = alphaOutline;        
         p.MoveTo(pixData, x, r.height-1);
-        p.Red()   = wxPy_premultiply(red,   alphaOutline);
-        p.Green() = wxPy_premultiply(green, alphaOutline);
-        p.Blue()  = wxPy_premultiply(blue,  alphaOutline);
+		p.Red()   = red   * aOutline / 0xff;
+		p.Green() = green * aOutline / 0xff;
+		p.Blue()  = blue  * aOutline / 0xff;
         p.Alpha() = alphaOutline;        
     }
-
-    for (y=0; y<r.height; y++) {
+	for (y=1; y<r.height-1; y++) {
         p.MoveTo(pixData, 0, y);
-        p.Red()   = wxPy_premultiply(red,   alphaOutline);
-        p.Green() = wxPy_premultiply(green, alphaOutline);
-        p.Blue()  = wxPy_premultiply(blue,  alphaOutline);
+		p.Red()   = red   * aOutline / 0xff;
+		p.Green() = green * aOutline / 0xff;
+		p.Blue()  = blue  * aOutline / 0xff;
         p.Alpha() = alphaOutline;        
         p.MoveTo(pixData, r.width-1, y);
-        p.Red()   = wxPy_premultiply(red,   alphaOutline);
-        p.Green() = wxPy_premultiply(green, alphaOutline);
-        p.Blue()  = wxPy_premultiply(blue,  alphaOutline);
+		p.Red()   = red   * aOutline / 0xff;
+		p.Green() = green * aOutline / 0xff;
+		p.Blue()  = blue  * aOutline / 0xff;
         p.Alpha() = alphaOutline;        
     }
     
@@ -453,7 +453,7 @@ void SurfaceImpl::AlphaRectangle(PRectangle rc, int cornerSize,
     wxUnusedVar(cornerSize);
     wxUnusedVar(alphaFill);
     wxUnusedVar(alphaOutline);
-    RectangleDraw(rc, outline, fill);
+	RoundedRectangle(rc, outline, fill);
 #endif
 }
 

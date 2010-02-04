@@ -2458,27 +2458,44 @@ void Editor::DrawAnnotation(Surface *surface, ViewStyle &vsDraw, int line, int x
 			lengthAnnotation = stAnnotation.LineLength(start);
 			lineInAnnotation++;
 		}
+
 		PRectangle rcText = rcSegment;
+
 		if (vs.annotationVisible == ANNOTATION_BOXED) {
 			surface->FillRectangle(rcText,
 				vsDraw.styles[stAnnotation.StyleAt(start) + vsDraw.annotationStyleOffset].back.allocated);
 			rcText.left += vsDraw.spaceWidth;
 		}
+
 		DrawStyledText(surface, vsDraw, vsDraw.annotationStyleOffset, rcText, rcText.top + vsDraw.maxAscent,
 			stAnnotation, start, lengthAnnotation);
 		if (vs.annotationVisible == ANNOTATION_BOXED) {
+
+			// Set grey border colour
+			ColourDesired greyCol     (128, 128, 128);
+			ColourDesired lightGreyCol(192, 192, 192);
+
+			surface->PenColour(greyCol.AsLong());
+
 			surface->MoveTo(rcSegment.left, rcSegment.top);
 			surface->LineTo(rcSegment.left, rcSegment.bottom);
+
+			surface->PenColour(lightGreyCol.AsLong());
 			surface->MoveTo(rcSegment.right, rcSegment.top);
 			surface->LineTo(rcSegment.right, rcSegment.bottom);
+
 			if (subLine == ll->lines){
+				surface->PenColour(lightGreyCol.AsLong());
 				surface->MoveTo(rcSegment.left, rcSegment.top);
 				surface->LineTo(rcSegment.right, rcSegment.top);
 			}
+
 			if (subLine == ll->lines+annotationLines-1) {
+				surface->PenColour(greyCol.AsLong());
 				surface->MoveTo(rcSegment.left, rcSegment.bottom - 1);
 				surface->LineTo(rcSegment.right, rcSegment.bottom - 1);
 			}
+
 		}
 	}
 }

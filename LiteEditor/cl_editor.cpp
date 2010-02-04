@@ -562,20 +562,6 @@ void LEditor::SetProperties()
 	IndicatorSetStyle     (DEBUGGER_INDICATOR, wxSCI_INDIC_BOX);
 	IndicatorSetForeground(DEBUGGER_INDICATOR, wxT("GREY"));
 
-	// Error
-	wxFont guiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	BuildTabSettingsData cmpColoursOptions;
-	EditorConfigST::Get()->ReadObject ( wxT ( "build_tab_settings" ), &cmpColoursOptions);
-
-	StyleSetBackground(eAnnotationStyleError, DrawingUtils::LightColour(cmpColoursOptions.GetErrorColour(), 9.0));
-	StyleSetForeground(eAnnotationStyleError, cmpColoursOptions.GetErrorColour());
-	StyleSetFont(eAnnotationStyleError, guiFont);
-
-	// Warning
-	StyleSetBackground(eAnnotationStyleWarning, DrawingUtils::LightColour(cmpColoursOptions.GetErrorColour(), 9.0));
-	StyleSetForeground(eAnnotationStyleWarning, cmpColoursOptions.GetWarnColour());
-	StyleSetFont(eAnnotationStyleWarning, guiFont);
-
 	CmdKeyClear(wxT('L'), wxSCI_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
 }
 

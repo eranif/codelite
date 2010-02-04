@@ -25,6 +25,8 @@
 
 
 #include "pluginmanager.h"
+#include "drawingutils.h"
+#include "buildtabsettingsdata.h"
 #include "cl_editor_tip_window.h"
 #include "implement_parent_virtual_functions.h"
 #include "debuggerasciiviewer.h"
@@ -2014,6 +2016,20 @@ void ContextCpp::ApplySettings()
 
 	// update word characters to allow '~' as valid word character
 	rCtrl.SetWordChars(wxT("~_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"));
+	
+	// Error
+	wxFont guiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	BuildTabSettingsData cmpColoursOptions;
+	
+	EditorConfigST::Get()->ReadObject ( wxT ( "build_tab_settings" ), &cmpColoursOptions);
+	rCtrl.StyleSetBackground(eAnnotationStyleError, DrawingUtils::LightColour(cmpColoursOptions.GetErrorColour(), 9.0));
+	rCtrl.StyleSetForeground(eAnnotationStyleError, cmpColoursOptions.GetErrorColour());
+	rCtrl.StyleSetFont(eAnnotationStyleError, guiFont);
+	
+	// Warning
+	rCtrl.StyleSetBackground(eAnnotationStyleWarning, DrawingUtils::LightColour(cmpColoursOptions.GetErrorColour(), 9.0));
+	rCtrl.StyleSetForeground(eAnnotationStyleWarning, cmpColoursOptions.GetWarnColour());
+	rCtrl.StyleSetFont(eAnnotationStyleWarning, guiFont);
 }
 
 void ContextCpp::Initialize()

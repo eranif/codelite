@@ -242,6 +242,7 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
 	if (m_treeCtrl->ItemHasChildren(root)) {
 		m_treeCtrl->Expand(root);
 	}
+	DoLinkEditor();
 }
 
 void SubversionView::DoAddNode(const wxString& title, int imgId, SvnTreeData::SvnNodeType nodeType, const wxArrayString& files)
@@ -883,12 +884,14 @@ void SubversionView::OnLinkEditor(wxCommandEvent& event)
 	
 	m_plugin->SetSettings(ssd);
 	
-	if(event.IsChecked())
-		DoLinkEditor();
+	DoLinkEditor();
 }
 
 void SubversionView::DoLinkEditor()
 {
+	if(!(m_plugin->GetSettings().GetFlags() & SvnLinkEditor))
+		return;
+		
 	IEditor *editor = m_plugin->GetManager()->GetActiveEditor();
 	if(!editor)
 		return;
@@ -913,6 +916,7 @@ void SubversionView::DoLinkEditor()
 				if(fn.GetFullPath() == fullPath) {
 					m_treeCtrl->UnselectAll();
 					m_treeCtrl->SelectItem(child);
+					m_treeCtrl->EnsureVisible(child);
 					return;
 				}
 				child = m_treeCtrl->GetNextChild(parent, childCookie);
@@ -925,6 +929,5 @@ void SubversionView::DoLinkEditor()
 void SubversionView::OnActiveEditorChanged(wxCommandEvent& event)
 {
 	event.Skip();
-	if(m_plugin->GetSettings().GetFlags() & SvnLinkEditor)
-		DoLinkEditor();
+	DoLinkEditor();
 }

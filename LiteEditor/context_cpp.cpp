@@ -1807,6 +1807,7 @@ void ContextCpp::DoFormatActiveEditor()
 	if (formatter) {
 		// code formatter is available, format the current source file
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("format_source"));
+		e.SetString(GetCtrl().GetFileName().GetFullPath());
 		Frame::Get()->GetEventHandler()->ProcessEvent(e);
 	}
 }

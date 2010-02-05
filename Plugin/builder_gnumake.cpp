@@ -78,10 +78,10 @@ static wxString GetMakeDirCmd(BuildConfigPtr bldConf, const wxString &relPath = 
 
 	wxString text;
 	if (OS_WINDOWS) {
-		text << wxT("@makedir \"") << relativePath << intermediateDirectory << wxT("\"");
+		text << wxT("@$(MakeDirCommand) \"") << relativePath << intermediateDirectory << wxT("\"");
 	} else {
 		//other OSs
-		text << wxT("@test -d ") << relativePath << intermediateDirectory << wxT(" || mkdir -p ") << relativePath << intermediateDirectory;
+		text << wxT("@test -d ") << relativePath << intermediateDirectory << wxT(" || $(MakeDirCommand) ") << relativePath << intermediateDirectory;
 	}
 	return text;
 }
@@ -476,16 +476,27 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 	wxString text;
 
 	text << wxT("##") << wxT("\n");
-	text << wxT("## Auto Generated makefile, please do not edit") << wxT("\n");;
+	text << wxT("## Auto Generated makefile by CodeLite IDE") << wxT("\n");
+	text << wxT("## any manual changes will be erased      ") << wxT("\n");
 	text << wxT("##") << wxT("\n");
-
+	
+	// Create the makefile variables
+	CreateConfigsVariables(proj, bldConf, text);
+	
 	//----------------------------------------------------------
-	//copy environment variables to the makefile
+	// copy environment variables to the makefile
+	// We put them after the 'hard-coeded' ones
+	// so user will be able to override any of the default
+	// variables by defining its own
 	//----------------------------------------------------------
 	EvnVarList vars;
 	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
 	std::map<wxString, wxString> varMap = vars.GetVariables();
 	std::map<wxString, wxString>::const_iterator iter = varMap.begin();
+	
+	text << wxT("##") << wxT("\n");
+	text << wxT("## User defined environment variables") << wxT("\n");
+	text << wxT("##") << wxT("\n");
 
 	for (; iter != varMap.end(); iter++) {
 		wxString name = iter->first;
@@ -497,7 +508,6 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 	text << wxT("ProjectName:=") << proj->GetName() << wxT("\n");
 	text << wxT("\n");
 
-	CreateConfigsVariables(proj, bldConf, text);
 	CreateListMacros(proj, confToBuild, text); // list of srcs and list of objects
 
 	//-----------------------------------------------------------
@@ -884,12 +894,8 @@ void BuilderGnuMake::CreateLinkTargets(const wxString &type, BuildConfigPtr bldC
 
 void BuilderGnuMake::CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text)
 {
-	if (OS_WINDOWS) {
-		text << wxT("\t") << wxT("@makedir $(@D)\n");
-	} else {
-		text << wxT("\t") << wxT("@mkdir -p $(@D)\n");
-	}
-
+	text << wxT("\t@$(MakeDirCommand) $(@D)\n");
+	
 	if (type == Project::STATIC_LIBRARY) {
 		//create a static library
 		text << wxT("\t") << wxT("$(ArchiveTool) $(ArchiveOutputSwitch)$(OutputFile) $(Objects)\n");
@@ -1030,7 +1036,13 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("ObjectSwitch           :=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
 	text << wxT("ArchiveOutputSwitch    :=") << cmp->GetSwitch(wxT("ArchiveOutput")) << wxT("\n");
 	text << wxT("PreprocessOnlySwitch   :=") << cmp->GetSwitch(wxT("PreprocessOnly")) << wxT("\n");
-
+	
+	if (OS_WINDOWS) {
+		text << wxT("MakeDirCommand         :=") << wxT("makedir") << wxT("\n");
+	} else {
+		text << wxT("MakeDirCommand         :=") << wxT("mkdir -p") << wxT("\n");
+	}
+	
 	wxString buildOpts = bldConf->GetCompileOptions();
 	buildOpts.Replace(wxT(";"), wxT(" "));
 

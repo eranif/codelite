@@ -9,7 +9,8 @@ enum SvnSettingsDataFlags {
 	SvnRetagWorkspace      = 0x00000002,
 	SvnUseExternalDiff     = 0x00000004,
 	SvnExposeRevisionMacro = 0x00000008,
-	SvnRenameFileInRepo    = 0x00000010
+	SvnRenameFileInRepo    = 0x00000010,
+	SvnLinkEditor          = 0x00000020
 };
 
 class SvnSettingsData : public SerializedObject

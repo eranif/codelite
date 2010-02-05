@@ -31,7 +31,8 @@
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_UPDATE_UI(XRCID("svn_stop"),         SubversionView::OnStopUI)
 	EVT_UPDATE_UI(XRCID("clear_svn_output"), SubversionView::OnClearOuptutUI)
-
+	
+	EVT_MENU(XRCID("svn_link_editor"),        SubversionView::OnLinkEditor)
 	EVT_MENU(XRCID("svn_commit"),             SubversionView::OnCommit)
 	EVT_MENU(XRCID("svn_update"),             SubversionView::OnUpdate)
 	EVT_MENU(XRCID("svn_revert"),             SubversionView::OnRevert)
@@ -55,20 +56,22 @@ SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
 		, m_plugin          ( plugin )
 {
 	CreatGUIControls();
-	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionView::OnWorkspaceLoaded), NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionView::OnWorkspaceClosed), NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_FILE_SAVED,       wxCommandEventHandler(SubversionView::OnRefreshView),     NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_PROJ_FILE_ADDED,  wxCommandEventHandler(SubversionView::OnFileAdded  ),     NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_FILE_RENAMED,     wxCommandEventHandler(SubversionView::OnFileRenamed),     NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_LOADED,      wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),     NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(SubversionView::OnWorkspaceClosed),     NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_FILE_SAVED,            wxCommandEventHandler(SubversionView::OnRefreshView),         NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_PROJ_FILE_ADDED,       wxCommandEventHandler(SubversionView::OnFileAdded  ),         NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_FILE_RENAMED,          wxCommandEventHandler(SubversionView::OnFileRenamed),         NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
 }
 
 SubversionView::~SubversionView()
 {
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionView::OnWorkspaceLoaded), NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionView::OnWorkspaceClosed), NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_FILE_SAVED,       wxCommandEventHandler(SubversionView::OnRefreshView),     NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_PROJ_FILE_ADDED,  wxCommandEventHandler(SubversionView::OnFileAdded),       NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_FILE_RENAMED,     wxCommandEventHandler(SubversionView::OnFileRenamed),     NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),          NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionView::OnWorkspaceClosed),          NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_FILE_SAVED,       wxCommandEventHandler(SubversionView::OnRefreshView),              NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_PROJ_FILE_ADDED,  wxCommandEventHandler(SubversionView::OnFileAdded),                NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_FILE_RENAMED,     wxCommandEventHandler(SubversionView::OnFileRenamed),              NULL, this);
+	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
 }
 
 void SubversionView::OnChangeRootDir( wxCommandEvent& event )
@@ -142,9 +145,11 @@ void SubversionView::CreatGUIControls()
 	m_treeCtrl->AssignImageList( imageList );
 
 	// Add toolbar
-	//Create the toolbar
+	// Create the toolbar
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
-
+	tb->AddTool(XRCID("svn_link_editor"), wxT("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
+	tb->ToggleTool(XRCID("svn_link_editor"), m_plugin->GetSettings().GetFlags() & SvnLinkEditor);
+	
 	tb->AddTool(XRCID("clear_svn_output"), wxT("Clear Svn Output Tab"), wxXmlResource::Get()->LoadBitmap(wxT("document_delete")), wxT("Clear Svn Output Tab"), wxITEM_NORMAL);
 	tb->AddTool(XRCID("svn_refresh"),      wxT("Refresh View"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_refresh" ) ), wxT ( "Refresh View" ) );
 	tb->AddSeparator();
@@ -681,7 +686,7 @@ void SubversionView::OnDiff(wxCommandEvent& event)
 	diffAgainst = wxGetTextFromUser(wxT("Insert base revision to diff against:"), wxT("Diff against"), wxT("BASE"), m_plugin->GetManager()->GetTheApp()->GetTopWindow());
 	if (diffAgainst.empty()) {
 		// user clicked 'Cancel'
-		diffAgainst = wxT("BASE");
+		return;
 	}
 
 	// Simple diff
@@ -866,4 +871,60 @@ void SubversionView::OnSettings(wxCommandEvent& event)
 void SubversionView::OnBlame(wxCommandEvent& event)
 {
 	m_plugin->Blame(event, m_selectionInfo.m_paths);
+}
+
+void SubversionView::OnLinkEditor(wxCommandEvent& event)
+{
+	SvnSettingsData ssd = m_plugin->GetSettings();
+	if(event.IsChecked())
+		ssd.SetFlags(ssd.GetFlags() | SvnLinkEditor);
+	else
+		ssd.SetFlags(ssd.GetFlags() & ~SvnLinkEditor);
+	
+	m_plugin->SetSettings(ssd);
+	
+	if(event.IsChecked())
+		DoLinkEditor();
+}
+
+void SubversionView::DoLinkEditor()
+{
+	IEditor *editor = m_plugin->GetManager()->GetActiveEditor();
+	if(!editor)
+		return;
+	
+	wxString fullPath = editor->GetFileName().GetFullPath();
+	wxTreeItemId root = m_treeCtrl->GetRootItem();
+	if(root.IsOk() == false)
+		return;
+	
+	wxString basePath = m_textCtrlRootDir->GetValue();
+	wxTreeItemIdValue cookie;
+	wxTreeItemIdValue childCookie;
+	wxTreeItemId parent = m_treeCtrl->GetFirstChild(root, cookie);
+	while(parent.IsOk()) {
+		// Loop over the main nodes 'modified', 'unversioned' etc
+		if(m_treeCtrl->ItemHasChildren(parent)) {
+			// Loop over the files under the main nodes
+			wxTreeItemId child = m_treeCtrl->GetFirstChild(parent, childCookie);
+			while(child.IsOk()) {
+				wxString itemText = m_treeCtrl->GetItemText(child);
+				wxFileName fn(basePath + wxFileName::GetPathSeparator() + itemText);
+				if(fn.GetFullPath() == fullPath) {
+					m_treeCtrl->UnselectAll();
+					m_treeCtrl->SelectItem(child);
+					return;
+				}
+				child = m_treeCtrl->GetNextChild(parent, childCookie);
+			}
+		}
+		parent = m_treeCtrl->GetNextChild(root, cookie);
+	}
+}
+
+void SubversionView::OnActiveEditorChanged(wxCommandEvent& event)
+{
+	event.Skip();
+	if(m_plugin->GetSettings().GetFlags() & SvnLinkEditor)
+		DoLinkEditor();
 }

@@ -53,7 +53,8 @@ protected:
 	int                      DoGetIconIndex(const wxString &filename);
 	SvnTreeData::SvnNodeType DoGetSelectionType(const wxArrayTreeItemIds &items);
 	void                     DoGetPaths(const wxTreeItemId &parent, wxArrayString &paths);
-
+	void                     DoLinkEditor();
+	
 protected:
 	// Menu management
 	void CreateFileMenu      (wxMenu *menu);
@@ -67,34 +68,36 @@ protected:
 	void OnItemActivated ( wxTreeEvent&    event );
 
 	// IDE Events
-	void OnWorkspaceLoaded(wxCommandEvent &event);
-	void OnWorkspaceClosed(wxCommandEvent &event);
-	void OnClearOuptut    (wxCommandEvent &event);
-	void OnRefreshView    (wxCommandEvent &event);
-	void OnFileRenamed    (wxCommandEvent &event);
-	void OnFileAdded      (wxCommandEvent &event);
-	void OnSettings       (wxCommandEvent &event);
-
+	void OnWorkspaceLoaded    (wxCommandEvent &event);
+	void OnWorkspaceClosed    (wxCommandEvent &event);
+	void OnClearOuptut        (wxCommandEvent &event);
+	void OnRefreshView        (wxCommandEvent &event);
+	void OnFileRenamed        (wxCommandEvent &event);
+	void OnFileAdded          (wxCommandEvent &event);
+	void OnSettings           (wxCommandEvent &event);
+	void OnActiveEditorChanged(wxCommandEvent &event);
+	
 	// Svn events
-	void OnCommit           (wxCommandEvent &event);
-	void OnUpdate           (wxCommandEvent &event);
-	void OnRevert           (wxCommandEvent &event);
-	void OnAdd              (wxCommandEvent &event);
-	void OnDelete           (wxCommandEvent &event);
-	void OnBranch           (wxCommandEvent &event);
-	void OnTag              (wxCommandEvent &event);
-	void OnResolve          (wxCommandEvent &event);
-	void OnDiff             (wxCommandEvent &event);
-	void OnPatch            (wxCommandEvent &event);
-	void OnPatchDryRun      (wxCommandEvent &event);
-	void OnStop             (wxCommandEvent &event);
-	void OnCleanup          (wxCommandEvent &event);
-	void OnShowSvnInfo      (wxCommandEvent &event);
-	void OnCheckout         (wxCommandEvent &event);
-	void OnIgnoreFile       (wxCommandEvent &event);
-	void OnIgnoreFilePattern(wxCommandEvent &event);
-	void OnBlame            (wxCommandEvent &event);
-
+	void OnCommit             (wxCommandEvent &event);
+	void OnUpdate             (wxCommandEvent &event);
+	void OnRevert             (wxCommandEvent &event);
+	void OnAdd                (wxCommandEvent &event);
+	void OnDelete             (wxCommandEvent &event);
+	void OnBranch             (wxCommandEvent &event);
+	void OnTag                (wxCommandEvent &event);
+	void OnResolve            (wxCommandEvent &event);
+	void OnDiff               (wxCommandEvent &event);
+	void OnPatch              (wxCommandEvent &event);
+	void OnPatchDryRun        (wxCommandEvent &event);
+	void OnStop               (wxCommandEvent &event);
+	void OnCleanup            (wxCommandEvent &event);
+	void OnShowSvnInfo        (wxCommandEvent &event);
+	void OnCheckout           (wxCommandEvent &event);
+	void OnIgnoreFile         (wxCommandEvent &event);
+	void OnIgnoreFilePattern  (wxCommandEvent &event);
+	void OnBlame              (wxCommandEvent &event);
+	void OnLinkEditor         (wxCommandEvent &event);
+	
 	DECLARE_EVENT_TABLE()
 
 	void OnStopUI         (wxUpdateUIEvent &event);

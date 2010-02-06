@@ -100,7 +100,13 @@ void SvnPreferencesDialog::OnButtonOK(wxCommandEvent& event)
 	ssd.SetSshClientArgs(m_textCtrlSshClientArgs->GetValue());
 	ssd.SetExecutable(m_textCtrlSvnExecutable->GetValue());
 	ssd.SetRevisionMacroName(m_textCtrlMacroName->GetValue());
+	
+	// Link Editor flag is not set via this dialog
+	// so read its current value before adding the other
+	// flags
 	size_t flags(0);
+	if(m_plugin->GetSettings().GetFlags() & SvnLinkEditor)
+		flags = SvnLinkEditor;
 
 	if (m_checkBoxAddToSvn->IsChecked()) {
 		flags |= SvnAddFileToSvn;

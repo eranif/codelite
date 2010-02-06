@@ -17,6 +17,7 @@ ImplementParentVirtualFunctionsBase::ImplementParentVirtualFunctionsBase( wxWind
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_splitter1 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME );
+	m_splitter1->SetSashGravity( 0.5 );
 	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( ImplementParentVirtualFunctionsBase::m_splitter1OnIdle ), NULL, this );
 	
 	m_panel1 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -71,6 +72,9 @@ ImplementParentVirtualFunctionsBase::ImplementParentVirtualFunctionsBase( wxWind
 	m_checkBoxAddDoxy = new wxCheckBox( this, wxID_ANY, _("Add doxygen comments for the functions"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_checkBoxAddDoxy, 0, wxALL|wxEXPAND, 5 );
 	
+	m_checkBoxAddVirtualKeyword = new wxCheckBox( this, wxID_ANY, _("Prepend 'virtual' keyword to the functions"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer1->Add( m_checkBoxAddVirtualKeyword, 0, wxALL|wxEXPAND, 5 );
+	
 	mainSizer->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
 	
 	wxBoxSizer* buttonSizer;
@@ -93,10 +97,12 @@ ImplementParentVirtualFunctionsBase::ImplementParentVirtualFunctionsBase( wxWind
 	
 	// Connect Events
 	m_checkBoxAddDoxy->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ImplementParentVirtualFunctionsBase::OnAddDoxy ), NULL, this );
+	m_checkBoxAddVirtualKeyword->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ImplementParentVirtualFunctionsBase::OnAddVirtual ), NULL, this );
 }
 
 ImplementParentVirtualFunctionsBase::~ImplementParentVirtualFunctionsBase()
 {
 	// Disconnect Events
 	m_checkBoxAddDoxy->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ImplementParentVirtualFunctionsBase::OnAddDoxy ), NULL, this );
+	m_checkBoxAddVirtualKeyword->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ImplementParentVirtualFunctionsBase::OnAddVirtual ), NULL, this );
 }

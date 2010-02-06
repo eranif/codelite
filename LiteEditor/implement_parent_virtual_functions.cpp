@@ -20,6 +20,7 @@ ImplementParentVirtualFunctionsDialog::ImplementParentVirtualFunctionsDialog( wx
 
 	m_checkBoxFormat->SetValue(data.GetFlags() & ImplParentVirtualFunctionsData::FormatText);
 	m_checkBoxAddDoxy->SetValue(data.GetFlags() & ImplParentVirtualFunctionsData::InsertDoxygenComment);
+	m_checkBoxAddVirtualKeyword->SetValue(data.GetFlags() & ImplParentVirtualFunctionsData::PrependVirtual);
 	DoInitialize(false);
 }
 
@@ -33,7 +34,10 @@ ImplementParentVirtualFunctionsDialog::~ImplementParentVirtualFunctionsDialog()
 
 	if(m_checkBoxFormat->IsChecked())
 		flags |= ImplParentVirtualFunctionsData::FormatText;
-
+	
+	if(m_checkBoxAddVirtualKeyword->IsChecked())
+		flags |= ImplParentVirtualFunctionsData::PrependVirtual;
+	
 	data.SetFlags(flags);
 	EditorConfigST::Get()->WriteObject(wxT("ImplParentVirtualFunctionsData"), &data);
 	WindowAttrManager::Save(this, wxT("ImplementParentVirtualFunctionsDialog"), NULL);
@@ -50,8 +54,9 @@ void ImplementParentVirtualFunctionsDialog::DoInitialize(bool updateDoxyOnly)
 	m_textCtrlProtos->Clear();
 
 	wxString decl;
-	bool addComments = m_checkBoxAddDoxy->IsChecked();
-
+	bool addComments    = m_checkBoxAddDoxy->IsChecked();
+	bool virtualKeyword = m_checkBoxAddVirtualKeyword->IsChecked();
+	
 	// Add declration
 	//////////////////////////////////////////////////////
 	for (size_t i=0; i<m_tags.size(); i++) {
@@ -80,9 +85,11 @@ void ImplementParentVirtualFunctionsDialog::DoInitialize(bool updateDoxyOnly)
 		}
 
 		tag->SetScope(m_scope);
-		decl << TagsManagerST::Get()->FormatFunction(tag, false) << wxT("\n");
+		decl << TagsManagerST::Get()->FormatFunction(tag, virtualKeyword ? FunctionFormat_WithVirtual : 0);
+		decl.Trim().Trim(false);
+		decl << wxT("\n");
 	}
-
+	decl.Trim().Trim(false);
 	m_textCtrlProtos->SetValue(decl);
 
 	if ( !updateDoxyOnly ) {
@@ -93,17 +100,16 @@ void ImplementParentVirtualFunctionsDialog::DoInitialize(bool updateDoxyOnly)
 		for (size_t i=0; i<m_tags.size(); i++) {
 			TagEntryPtr tag = m_tags.at(i);
 			tag->SetScope(m_scope);
-			impl << TagsManagerST::Get()->FormatFunction(tag, true) << wxT("\n");
+			impl << TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl) << wxT("\n");
 		}
 		m_textCtrlImpl->SetValue(impl);
-
 	}
 }
 
 wxString ImplementParentVirtualFunctionsDialog::GetDecl()
 {
 	wxString decl ( m_textCtrlProtos->GetValue() );
-	decl.Trim().Trim();
+	decl.Trim().Trim(false);
 	decl.Prepend(wxT("\n"));
 	decl.Append(wxT("\n"));
 	return decl;
@@ -112,4 +118,10 @@ wxString ImplementParentVirtualFunctionsDialog::GetDecl()
 wxString ImplementParentVirtualFunctionsDialog::GetImpl()
 {
 	return m_textCtrlImpl->GetValue();
+}
+
+void ImplementParentVirtualFunctionsDialog::OnAddVirtual(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	DoInitialize(true);
 }

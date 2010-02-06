@@ -20,6 +20,8 @@ class ImplementParentVirtualFunctionsDialog : public ImplementParentVirtualFunct
 	wxString                 m_scope;
 protected:
 	void OnAddDoxy  (wxCommandEvent &event);
+	void OnAddVirtual( wxCommandEvent& event );
+
 
 protected:
 	void DoInitialize(bool updateDoxyOnly);

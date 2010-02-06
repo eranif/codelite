@@ -1673,7 +1673,7 @@ TagEntryPtr TagsManager::FirstScopeOfFile(const wxFileName &fileName)
 	return tags.at(0);
 }
 
-wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString &scope)
+wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxString &scope)
 {
 	clFunction foo;
 	if (!GetLanguage()->FunctionFromPattern(tag, foo)) {
@@ -1681,7 +1681,8 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString 
 	}
 
 	wxString body;
-	if (foo.m_isVirtual && impl == false) {
+	// add virtual keyword to declarations only && if the flags is set
+	if (foo.m_isVirtual && (flags & FunctionFormat_WithVirtual) && !(flags & FunctionFormat_Impl)) {
 		body << wxT("virtual ");
 	}
 
@@ -1702,7 +1703,7 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString 
 		body << wxT(" ");
 	}
 
-	if (impl) {
+	if (flags & FunctionFormat_Impl) {
 		if (scope.IsEmpty()) {
 			if (tag->GetScope() != wxT("<global>")) {
 				body << tag->GetScope() << wxT("::");
@@ -1712,7 +1713,7 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString 
 		}
 	}
 
-	if ( impl ) {
+	if ( flags & FunctionFormat_Impl ) {
 		body << tag->GetName() << NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name );
 	} else {
 		body << tag->GetName() << tag->GetSignature();
@@ -1722,7 +1723,7 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString 
 		body << wxT(" const");
 	}
 
-	if (impl) {
+	if (flags & FunctionFormat_Impl) {
 		body << wxT("\n{\n}\n");
 	} else {
 		body << wxT(";\n");

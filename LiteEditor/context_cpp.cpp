@@ -1274,7 +1274,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 		}
 
 		if ( s_dlg->GetFormatText() )
-			DoFormatActiveEditor();
+			DoFormatEditor( &GetCtrl() );
 	}
 }
 
@@ -1508,7 +1508,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 		if (DoGetFunctionBody(curPos, blockStartPos, blockEndPos, content)) {
 
 			//create the functions body
-			wxString body = TagsManagerST::Get()->FormatFunction(tag, true);
+			wxString body = TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
 			//remove the empty content provided by this function
 			body = body.BeforeLast(wxT('{'));
 			body = body.Trim().Trim(false);
@@ -1651,7 +1651,7 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
 		wxString decl     = dlg.GetDecl();
 		rCtrl.InsertText(rCtrl.GetCurrentPos(), decl);
 		if (dlg.m_checkBoxFormat->IsChecked())
-			DoFormatActiveEditor();
+			DoFormatEditor( &GetCtrl() );
 
 		// Open teh implementation file and format it if needed
 		OpenFileAppendAndFormat(implFile, impl, dlg.m_checkBoxFormat->IsChecked());
@@ -1692,7 +1692,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 		//use normalize function signature rather than the default one
 		//this will ensure that default values are removed
 		tag->SetSignature(TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name ));
-		body << TagsManagerST::Get()->FormatFunction(tag, true);
+		body << TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
 		body << wxT("\n");
 	}
 
@@ -1780,7 +1780,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 		//will not appear in the function implementation
 		wxString newSig = TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name );
 		tag->SetSignature( newSig );
-		wxString body = TagsManagerST::Get()->FormatFunction(tag, true);
+		wxString body = TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
 
 		wxString targetFile;
 		FindSwappedFile(rCtrl.GetFileName(), targetFile);
@@ -1801,30 +1801,30 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 	}
 }
 
-void ContextCpp::DoFormatActiveEditor()
+void ContextCpp::DoFormatEditor(LEditor *editor)
 {
 	IPlugin *formatter = PluginManager::Get()->GetPlugin(wxT("CodeFormatter"));
-	if (formatter) {
+	if (formatter && editor) {
 		// code formatter is available, format the current source file
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("format_source"));
-		e.SetString(GetCtrl().GetFileName().GetFullPath());
+		e.SetString(editor->GetFileName().GetFullPath());
 		Frame::Get()->GetEventHandler()->ProcessEvent(e);
 	}
 }
 
 bool ContextCpp::OpenFileAppendAndFormat(const wxString& fileName, const wxString& text, bool format)
 {
-	OpenFileAndAppend(fileName, text);
-	if (format)
-		DoFormatActiveEditor();
+	LEditor *editor = OpenFileAndAppend(fileName, text);
+	if (format && editor)
+		DoFormatEditor(editor);
 	return true;
 }
 
-bool ContextCpp::OpenFileAndAppend ( const wxString &fileName, const wxString &text )
+LEditor* ContextCpp::OpenFileAndAppend ( const wxString &fileName, const wxString &text )
 {
 	LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(fileName, wxEmptyString, 0);
 	if (!editor)
-		return false;
+		return NULL;
 
 	// if needed, append EOL
 	if (editor->GetText().EndsWith(editor->GetEolString()) == false) {
@@ -1834,7 +1834,7 @@ bool ContextCpp::OpenFileAndAppend ( const wxString &fileName, const wxString &t
 	int lineNum = editor->GetLineCount();
 	editor->GotoLine ( lineNum-1 );
 	editor->AppendText ( text );
-	return true;
+	return editor;
 }
 
 void ContextCpp::OnFileSaved()

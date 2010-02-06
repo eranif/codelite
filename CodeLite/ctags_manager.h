@@ -76,6 +76,11 @@ enum NormalizeFuncFlag {
 	Normalize_Func_Default_value = 0x00000002,
 };
 
+enum FunctionFormatFlag {
+	FunctionFormat_WithVirtual   = 0x00000001,
+	FunctionFormat_Impl          = 0x00000002
+};
+
 class ITagsStorage;
 
 /**
@@ -560,7 +565,7 @@ public:
 	 * @param scope real function scope to use
 	 * @return the function impl/decl
 	 */
-	wxString FormatFunction(TagEntryPtr tag, bool impl = false, const wxString &scope = wxEmptyString);
+	wxString FormatFunction(TagEntryPtr tag, size_t flags = FunctionFormat_WithVirtual, const wxString &scope = wxEmptyString);
 
 	/**
 	 * @brief return true of the tag contains a pure virtual function

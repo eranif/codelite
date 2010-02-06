@@ -10,6 +10,7 @@ public:
 	enum {
 		InsertDoxygenComment   = 0x00000001,
 		FormatText             = 0x00000002,
+		PrependVirtual         = 0x00000004,
 		ImplParentVFuncDefault = InsertDoxygenComment | FormatText
 	};
 

@@ -7,5 +7,4 @@
 - Add new second tip to the code-completion box which shows the conent of the comment on top of the current tip
 - Add 'workspace settings' entry in the menu bar
 - Add 'workspace editor preferences' entry in the menu bar
-- Refactoring: remove extra spaces from 'implement inherited virtual' + add the 'virtual' keyword as an option
 - Refactoring: add an option to add 'add forward decl'

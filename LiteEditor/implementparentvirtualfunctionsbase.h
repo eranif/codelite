@@ -43,11 +43,13 @@ class ImplementParentVirtualFunctionsBase : public wxDialog
 		wxPanel* m_panel2;
 		wxStaticText* m_staticText2;
 		wxTextCtrl* m_textCtrlImpl;
+		wxCheckBox* m_checkBoxAddVirtualKeyword;
 		wxButton* m_buttonOk;
 		wxButton* m_buttonCancel;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnAddDoxy( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddVirtual( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:

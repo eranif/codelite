@@ -191,7 +191,7 @@ private:
 	* \param text string text to append
 	* \return true on success, false otherwise
 	*/
-	bool OpenFileAndAppend(const wxString &fileName, const wxString &text);
+	LEditor* OpenFileAndAppend(const wxString &fileName, const wxString &text);
 
 	/**
 	 * @brief open file specified by the 'fileName' parameter and append 'text'
@@ -203,7 +203,11 @@ private:
 	 */
 	bool OpenFileAppendAndFormat(const wxString &fileName, const wxString &text, bool format);
 
-	void DoFormatActiveEditor();
+	/**
+	 * @brief format editor
+	 * @param editor
+	 */
+	void DoFormatEditor(LEditor *editor);
 };
 
 #endif // CONTEXT_CPP_H

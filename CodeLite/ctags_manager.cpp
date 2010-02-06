@@ -1272,7 +1272,12 @@ bool TagsManager::IsTypeAndScopeExists(wxString &typeName, wxString &scope)
 	if (iter != m_typeScopeCache.end()) {
 		return iter->second;
 	}
-
+	
+	// First try the fast query to save some time
+	if(m_workspaceDatabase->IsTypeAndScopeExistLimitOne(typeName, scope)) {
+		//wxLogMessage(wxT("Type Exist! Skipping!"));
+		return true;
+	}
 	// replace macros:
 	// replace the provided typeName and scope with user defined macros as appeared in the PreprocessorMap
 	typeName = DoReplaceMacros(typeName);

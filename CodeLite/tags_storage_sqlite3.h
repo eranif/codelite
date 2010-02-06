@@ -436,6 +436,14 @@ public:
 	virtual bool IsTypeAndScopeContainer(wxString& typeName, wxString& scope);
 
 	/**
+	 * @brief
+	 * @param typeName
+	 * @param scope
+	 * @return
+	 */
+	virtual bool IsTypeAndScopeExistLimitOne(const wxString &typeName, const wxString &scope);
+
+	/**
 	 * @brief return true if type & scope do exist in the symbols database and is container
 	 * @param typeName
 	 * @param scope

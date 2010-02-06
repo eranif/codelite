@@ -223,7 +223,15 @@ public:
 	 * @return true on success
 	 */
 	virtual bool IsTypeAndScopeExist(wxString& typeName, wxString& scope) = 0;
-
+	
+	/**
+	 * @brief return true if typeName & scope exists in the storage (it uses LIMIT 1, hence LimitOne)
+	 * @param typeName
+	 * @param scope
+	 * @return 
+	 */
+	virtual bool IsTypeAndScopeExistLimitOne(const wxString &typeName, const wxString &scope) = 0;
+	
 	/**
 	 * @brief return list of given scopes of file in ascending order
 	 * @param fileName

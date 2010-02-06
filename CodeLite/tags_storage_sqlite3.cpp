@@ -806,25 +806,25 @@ int TagsStorageSQLite::UpdateTagEntry(const TagEntry& tag)
 bool TagsStorageSQLite::IsTypeAndScopeContainer(wxString& typeName, wxString& scope)
 {
 	wxString sql;
-	
+
 	// Break the typename to 'name' and scope
 	wxString typeNameNoScope(typeName.AfterLast(wxT(':')));
 	wxString scopeOne       (typeName.BeforeLast(wxT(':')));
-	
-	if(scopeOne.EndsWith(wxT(":")))
+
+	if (scopeOne.EndsWith(wxT(":")))
 		scopeOne.RemoveLast();
-	
+
 	wxString combinedScope;
-	
-	if(scope != wxT("<global>"))
+
+	if (scope != wxT("<global>"))
 		combinedScope << scope;
-	
-	if(scopeOne.IsEmpty() == false) {
-		if(combinedScope.IsEmpty() == false)
+
+	if (scopeOne.IsEmpty() == false) {
+		if (combinedScope.IsEmpty() == false)
 			combinedScope << wxT("::");
 		combinedScope << scopeOne;
 	}
-	
+
 
 	sql << wxT("select scope,kind from tags where name='") << typeNameNoScope << wxT("'");
 
@@ -842,7 +842,7 @@ bool TagsStorageSQLite::IsTypeAndScopeContainer(wxString& typeName, wxString& sc
 				typeName = typeNameNoScope;
 				//we got an exact match
 				return true;
-				
+
 			} else if (scopeFounded == scopeOne && containerKind) {
 				// this is equal to cases like this:
 				// class A {
@@ -855,7 +855,7 @@ bool TagsStorageSQLite::IsTypeAndScopeContainer(wxString& typeName, wxString& sc
 				typeName = typeNameNoScope;
 				//we got an exact match
 				return true;
-				
+
 			} else if ( containerKind && scopeFounded == wxT("<global>") ) {
 				found_global = true;
 			}
@@ -871,7 +871,7 @@ bool TagsStorageSQLite::IsTypeAndScopeContainer(wxString& typeName, wxString& sc
 		typeName = typeNameNoScope;
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -884,42 +884,42 @@ bool TagsStorageSQLite::IsTypeAndScopeExist(wxString& typeName, wxString& scope)
 	wxString bestScope;
 	wxString parent;
 	wxString tmpScope(scope);
-	
+
 	strippedName = typeName.AfterLast(wxT(':'));
 	secondScope  = typeName.BeforeLast(wxT(':'));
-	
-	if(secondScope.EndsWith(wxT(":")))
+
+	if (secondScope.EndsWith(wxT(":")))
 		secondScope.RemoveLast();
-	
-	if(strippedName.IsEmpty())
+
+	if (strippedName.IsEmpty())
 		return false;
-		
+
 	sql << wxT("select scope,parent from tags where name='") << strippedName << wxT("' and kind in ('class', 'struct', 'typedef') LIMIT 50");
 	bool     foundOther(false);
 	wxString scopeFounded;
 	wxString parentFounded;
-	
-	if(secondScope.IsEmpty() == false)
+
+	if (secondScope.IsEmpty() == false)
 		tmpScope << wxT("::") << secondScope;
-		
+
 	parent = tmpScope.AfterLast(wxT(':'));
-	
+
 	try {
 		wxSQLite3ResultSet rs = Query(sql);
 		while (rs.NextRow()) {
-			
+
 			scopeFounded  = rs.GetString(0);
 			parentFounded = rs.GetString(1);
-			
+
 			if ( scopeFounded == tmpScope ) {
 				// exact match
 				scope    = scopeFounded;
 				typeName = strippedName;
 				return true;
-				
-			} else if(parentFounded == parent) {
+
+			} else if (parentFounded == parent) {
 				bestScope  = scopeFounded;
-				
+
 			} else {
 				foundOther = true;
 			}
@@ -934,7 +934,7 @@ bool TagsStorageSQLite::IsTypeAndScopeExist(wxString& typeName, wxString& scope)
 		scope    = bestScope;
 		typeName = strippedName;
 		return true;
-		
+
 	} else if ( foundOther ) {
 		scope    = scopeFounded;
 		typeName = strippedName;
@@ -1111,17 +1111,40 @@ void TagsStorageSQLite::GetTagsByKindLimit(const wxArrayString& kinds, const wxS
 			break;
 		}
 	}
-	
-	if(partName.IsEmpty() == false) {
+
+	if (partName.IsEmpty() == false) {
 		wxString tmpName(partName);
 		tmpName.Replace(wxT("_"), wxT("^_"));
 		sql << wxT(" AND name like '%%") << tmpName << wxT("%%' ESCAPE '^' ");
 	}
-	
-	if(limit > 0) {
+
+	if (limit > 0) {
 		sql << wxT(" LIMIT ") << limit;
 	}
-	
+
 	DoFetchTags(sql, tags);
+
+}
+bool TagsStorageSQLite::IsTypeAndScopeExistLimitOne(const wxString& typeName, const wxString& scope)
+{
+	wxString sql;
+	wxString path;
 	
+	// Build the path
+	if(scope.IsEmpty() == false && scope != wxT("<global>"))
+		path << scope << wxT("::");
+		
+	path << typeName;
+	sql << wxT("select ID from tags where path='") << path << wxT("' and kind in ('class', 'struct', 'typedef') LIMIT 1");
+	
+	try {
+		wxSQLite3ResultSet rs = Query(sql);
+		if (rs.NextRow()) {
+			return true;
+		}
+
+	} catch ( wxSQLite3Exception& e) {
+		wxUnusedVar(e);
+	}
+	return false;
 }

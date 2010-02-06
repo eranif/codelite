@@ -29,7 +29,7 @@ static  std::vector<std::string> gs_names;
 static  bool                     g_isUsedWithinFunc = false;
 static  std::string              s_tmpString;
 static  Variable                 curr_var;
-
+static  std::string              s_templateInitList;
 //---------------------------------------------
 // externs defined in the lexer
 //---------------------------------------------
@@ -131,7 +131,7 @@ translation_unit	:        /*empty*/
                         | translation_unit external_decl
                         ;
 
-external_decl	    :    {curr_var.Reset(); gs_names.clear(); s_tmpString.clear(); } variables
+external_decl	    :    {curr_var.Reset(); gs_names.clear(); s_tmpString.clear(); s_templateInitList.clear();} variables
                         | error {
                             yyclearin;    //clear lookahead token
                             yyerrok;
@@ -170,6 +170,10 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
                             	curr_var.m_starAmp = $3;
                             	curr_var.m_lineno = cl_scope_lineno;
+								if(curr_var.m_templateDecl.empty())
+									curr_var.m_templateDecl = s_templateInitList;
+								s_templateInitList.clear();
+
                             	for(size_t i=0; i< gs_names.size(); i++)
                                 {
                                     //create new variable for every variable name found
@@ -197,6 +201,10 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	curr_var.m_starAmp       = $3;
                             	curr_var.m_arrayBrackets = $6;
                             	curr_var.m_lineno        = cl_scope_lineno;
+								if(curr_var.m_templateDecl.empty())
+									curr_var.m_templateDecl = s_templateInitList;
+								s_templateInitList.clear();	
+								
 								//create new variable for every variable name found
                                 var = curr_var;
                             	var.m_name               = $5;
@@ -217,7 +225,10 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	curr_var.m_starAmp       = $3;
                             	curr_var.m_arrayBrackets = $6;
                             	curr_var.m_lineno        = cl_scope_lineno;
-
+								if(curr_var.m_templateDecl.empty())
+									curr_var.m_templateDecl = s_templateInitList;
+								s_templateInitList.clear();	
+								
                                 //create new variable for every variable name found
                             	var = curr_var;
                             	var.m_name = $5;
@@ -238,7 +249,10 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
                             	curr_var.m_starAmp = $3;
                             	curr_var.m_lineno = cl_scope_lineno;
-
+								if(curr_var.m_templateDecl.empty())
+									curr_var.m_templateDecl = s_templateInitList;
+								s_templateInitList.clear();	
+								
                                 //create new variable for every variable name found
                             	var = curr_var;
                             	var.m_name = "";
@@ -262,7 +276,10 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
                             	curr_var.m_starAmp = $3;
                             	curr_var.m_lineno = cl_scope_lineno;
-
+								if(curr_var.m_templateDecl.empty())
+									curr_var.m_templateDecl = s_templateInitList;
+								s_templateInitList.clear();	
+								
                                 //create new variable for every variable name found
                             	var = curr_var;
                             	var.m_name = "";
@@ -336,9 +353,9 @@ applicable for C++, for cases where a function is declared as
 void scope::foo(){ ... }
 */
 scope_specifier	:	LE_IDENTIFIER LE_CLCL {$$ = $1+ $2; }
-                |	LE_IDENTIFIER  '<' parameter_list '>' LE_CLCL {$$ = $1 + $2 + $3 + $4 + $5;}
+                |	LE_IDENTIFIER  '<' parameter_list '>' LE_CLCL {$$ = $1 ; s_templateInitList = $2 + $3 + $4;}
                 ;
-
+				
 nested_scope_specifier: /*empty*/ {$$ = "";}
                     | nested_scope_specifier scope_specifier {    $$ = $1 + $2;}
                     ;
@@ -405,7 +422,6 @@ variable_decl       :   const_spec basic_type_name
                             $3.erase($3.find_last_not_of(":")+1);
                         	curr_var.m_typeScope = $3;
                         	curr_var.m_type = $4;
-                        	curr_var.m_isTemplate = false;
                         	curr_var.m_isConst = !$1.empty();
                         	s_tmpString.clear();
                         }
@@ -415,7 +431,7 @@ variable_decl       :   const_spec basic_type_name
                             $3.erase($3.find_last_not_of(":")+1);
                         	curr_var.m_typeScope = $3;
                         	curr_var.m_type = $4;
-                        	curr_var.m_isTemplate = false;
+                        	curr_var.m_isTemplate = !curr_var.m_templateDecl.empty();
                         	curr_var.m_isConst = !$1.empty();
                         	s_tmpString.clear();
                         }

@@ -1261,7 +1261,7 @@ bool TagsManager::IsTypeAndScopeContainer(wxString& typeName, wxString& scope)
 	return res;
 }
 
-bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope)
+bool TagsManager::IsTypeAndScopeExists(wxString &typeName, wxString &scope)
 {
 	wxString cacheKey;
 	cacheKey << typeName << wxT("@") << scope;
@@ -1275,10 +1275,10 @@ bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope
 
 	// replace macros:
 	// replace the provided typeName and scope with user defined macros as appeared in the PreprocessorMap
-	wxString _typeName = DoReplaceMacros(typeName);
-	          scope    = DoReplaceMacros(scope);
+	typeName = DoReplaceMacros(typeName);
+	scope    = DoReplaceMacros(scope);
 
-	return m_workspaceDatabase->IsTypeAndScopeExist(_typeName, scope);
+	return m_workspaceDatabase->IsTypeAndScopeExist(typeName, scope);
 }
 
 bool TagsManager::GetDerivationList(const wxString &path, std::vector<wxString> &derivationList)

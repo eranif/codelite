@@ -2238,7 +2238,7 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 		
 		//Print the stack trace
 		wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( wxT("Debugger") );
-		if ( info.IsShown() ) {
+		if ( info.IsShown() && showDialog ) {
 			Frame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
 			UpdateDebuggerPane();
 		}

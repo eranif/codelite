@@ -876,13 +876,14 @@ bool TagsStorageSQLite::IsTypeAndScopeContainer(wxString& typeName, wxString& sc
 }
 
 
-bool TagsStorageSQLite::IsTypeAndScopeExist(const wxString& typeName, wxString& scope)
+bool TagsStorageSQLite::IsTypeAndScopeExist(wxString& typeName, wxString& scope)
 {
 	wxString sql;
 	wxString strippedName;
 	wxString secondScope;
 	wxString bestScope;
 	wxString parent;
+	wxString tmpScope(scope);
 	
 	strippedName = typeName.AfterLast(wxT(':'));
 	secondScope  = typeName.BeforeLast(wxT(':'));
@@ -893,15 +894,15 @@ bool TagsStorageSQLite::IsTypeAndScopeExist(const wxString& typeName, wxString& 
 	if(strippedName.IsEmpty())
 		return false;
 		
-	sql << wxT("select scope,parent from tags where name='") << strippedName << wxT("' and kind in ('class', 'struct', 'typedef')");
+	sql << wxT("select scope,parent from tags where name='") << strippedName << wxT("' and kind in ('class', 'struct', 'typedef') LIMIT 50");
 	bool     foundOther(false);
 	wxString scopeFounded;
 	wxString parentFounded;
 	
 	if(secondScope.IsEmpty() == false)
-		scope << wxT("::") << secondScope;
+		tmpScope << wxT("::") << secondScope;
 		
-	parent = scope.AfterLast(wxT(':'));
+	parent = tmpScope.AfterLast(wxT(':'));
 	
 	try {
 		wxSQLite3ResultSet rs = Query(sql);
@@ -910,8 +911,10 @@ bool TagsStorageSQLite::IsTypeAndScopeExist(const wxString& typeName, wxString& 
 			scopeFounded  = rs.GetString(0);
 			parentFounded = rs.GetString(1);
 			
-			if ( scopeFounded == scope ) {
+			if ( scopeFounded == tmpScope ) {
 				// exact match
+				scope    = scopeFounded;
+				typeName = strippedName;
 				return true;
 				
 			} else if(parentFounded == parent) {
@@ -928,11 +931,13 @@ bool TagsStorageSQLite::IsTypeAndScopeExist(const wxString& typeName, wxString& 
 
 	// if we reached here, it means we did not find any exact match
 	if ( bestScope.IsEmpty() == false ) {
-		scope = bestScope;
+		scope    = bestScope;
+		typeName = strippedName;
 		return true;
 		
 	} else if ( foundOther ) {
-		scope = scopeFounded;
+		scope    = scopeFounded;
+		typeName = strippedName;
 		return true;
 	}
 	return false;

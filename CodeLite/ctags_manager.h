@@ -580,7 +580,7 @@ public:
 	 * @param scope
 	 * @return
 	 */
-	bool IsTypeAndScopeExists(const wxString &typeName, wxString &scope);
+	bool IsTypeAndScopeExists(wxString &typeName, wxString &scope);
 
 	/**
 	 * @brief return true if type & scope do exist in the symbols database and is container. This function also modifies the

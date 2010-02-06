@@ -44,18 +44,49 @@ enum SearchFlags {
 };
 
 class TagsManager;
-/**
- * Language, a helper class that parses (currently) C/C++ code.
- * It conatains all the parsing of small fragments of code, in places where
- * ctags chosose to ignore (for example, ctags provides us with a member name,
- * but it does not provide us with its qualifier).
- *
- * Whenever possible, it is advised to use TagsManager API instead of Language API.
- *
- * \ingroup CodeLite
- * \date 09-02-2006
- * \author Eran
- */
+
+class Scope
+{
+	wxString                   typeName;
+	wxString                   typeScope;
+	std::vector<wxArrayString> templateInstantiationVector;
+	wxArrayString              templateDeclaration;
+
+public:
+	Scope() {}
+	~Scope() {}
+
+	void SetTemplateDeclaration(const wxArrayString& templateDeclaration) {
+		this->templateDeclaration = templateDeclaration;
+	}
+	void SetTemplateInstantiation(const wxArrayString& templateInstantiation) ;
+
+	void SetTypeName(const wxString& typeName) {
+		this->typeName = typeName;
+	}
+	void SetTypeScope(const wxString& typeScope) {
+		this->typeScope = typeScope;
+	}
+	const wxArrayString& GetTemplateDeclaration() const {
+		return templateDeclaration;
+	}
+	const wxString& GetTypeName() const {
+		return typeName;
+	}
+	const wxString& GetTypeScope() const {
+		return typeScope;
+	}
+	bool IsTemplate() const {
+		return templateDeclaration.IsEmpty() == false;
+	}
+
+	wxString Substitute(const wxString &name) ;
+
+	void Clear() ;
+
+	wxString GetPath() const ;
+};
+
 class Language
 {
 	friend class Singleton<Language>;
@@ -66,11 +97,12 @@ private:
 	wxString                m_expression;
 	CppScannerPtr           m_scanner;
 	CppScannerPtr           m_tokenScanner;
-	Variable                m_parentVar;
 	TagsManager *           m_tm;
 	wxString                m_visibleScope;
 	wxString                m_lastFunctionSignature;
 	std::vector<wxString>   m_additionalScopes;     // collected by parsing 'using namespace XXX'
+	Scope                   m_scope;
+
 public:
 	/**
 	 * Return the visible scope of syntax starting at depth zero.
@@ -99,6 +131,8 @@ public:
 	 * \return visible scope
 	 */
 	wxString OptimizeScope(const wxString& srcString);
+
+	void CheckForTemplateAndTypedef(wxString &typeName, wxString &typeScope);
 
 	void SetLastFunctionSignature(const wxString& lastFunctionSignature) {
 		this->m_lastFunctionSignature = lastFunctionSignature;
@@ -216,7 +250,7 @@ private:
 	                            std::vector<TagEntryPtr> &tags,
 	                            wxString &type,
 	                            wxString &typeScope);
-								
+
 	bool CorrectUsingNamespace(wxString &type, wxString &typeScope, const wxString &parentScope, std::vector<TagEntryPtr>& tags);
 	/**
 	 * Private constructor
@@ -242,12 +276,12 @@ private:
 	 * \param typeName the type name that was detected by the parser
 	 * \param typeScope the type scope
 	 */
-	bool OnTemplates(wxString &typeName, wxString &typeScope, Variable &parent, const wxString &scopeTemplateInitList);
+	bool OnTemplates(wxString &typeName, wxString &typeScope);
 
 	/**
 	 * \brief attempt to expand 'typedef' to their actual value
 	 */
-	bool OnTypedef(wxString &typeName, wxString &typeScope, wxString &templateInitList, const wxString &optionalScope, wxString &scopeTempalteInitList);
+	bool OnTypedef(wxString &typeName, wxString &typeScope);
 
 	/**
 	 * \brief expand reference operator (->) overloading
@@ -257,12 +291,14 @@ private:
 	 */
 	bool OnArrowOperatorOverloading(wxString &typeName, wxString &typeScope);
 
-	void ParseTemplateArgs(CppScanner *scanner, wxArrayString &argsList);
-	void ParseTemplateInitList(CppScanner *scanner, wxArrayString &argsList);
-	void DoRemoveTempalteInitialization(wxString &str, wxString &tmplInitList);
-	
+	void ParseTemplateArgs             (const wxString &argListStr, wxArrayString &argsList);
+	void ParseTemplateInitList         (const wxString &argListStr, wxArrayString &argsList);
+	void DoRemoveTempalteInitialization(wxString &str, wxArrayString &tmplInitList);
+
 	void DoFixFunctionUsingCtagsReturnValue(clFunction &foo, TagEntryPtr tag);
-	
+	void DoExtractTemplateDeclarationArgs();
+	void DoExtractTemplateDeclarationArgsFromScope();
+	void DoExtractTemplateDeclarationArgs(TagEntryPtr tag);
 };
 
 typedef Singleton<Language> LanguageST;

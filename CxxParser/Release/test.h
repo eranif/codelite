@@ -12,10 +12,11 @@
 //int a;
 //
 //#include <list>
-typedef typename iterator_traits<_Iterator>::pointer   pointer2;
-typedef _Tp*                               pointer;
-typedef typename std::vector<int> List2;
-int main(int argc, char **argv)
-{
-	typedef std::list<int> TheList;
-	TheList lst;
+//typedef typename iterator_traits<_Iterator>::pointer   pointer2;
+//typedef _Tp*                               pointer;
+//typedef typename std::vector<int> List2;
+//int main(int argc, char **argv)
+//{
+//	typedef std::list<int> TheList;
+//	TheList lst;
+std::list<std::string>::iterator iter = li.begin();

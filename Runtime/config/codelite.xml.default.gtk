@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite Revision="653" Version="2.0.3">
+<CodeLite Revision="653" Version="2.0.4">
   <ArchiveObject Name="m_tagsOptionsData">
     <long Value="728" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep">
@@ -45,6 +45,7 @@
       <wxString Value="Q_INLINE_TEMPLATE"/>
       <wxString Value="Q_OUTOFLINE_TEMPLATE"/>
       <wxString Value="_GLIBCXX_BEGIN_NAMESPACE(std)=namespace std{"/>
+      <wxString Value="_GLIBCXX_BEGIN_NAMESPACE(__gnu_cxx)=namespace __gnu_cxx{"/>	  
       <wxString Value="_GLIBCXX_END_NAMESPACE=}"/>
       <wxString Value="_GLIBCXX_BEGIN_NESTED_NAMESPACE(std, _GLIBCXX_STD)=namespace std{"/>
       <wxString Value="_GLIBCXX_BEGIN_NESTED_NAMESPACE(std, _GLIBCXX_STD_D)=namespace std{"/>
@@ -54,19 +55,16 @@
       <wxString Value="__restrict"/>
       <wxString Value="__THROW"/>
       <wxString Value="__wur"/>
-	  <wxString Value="_STD_BEGIN=namespace std{"/>
+      <wxString Value="_STD_BEGIN=namespace std{"/>
       <wxString Value="_STD_END=}"/>
       <wxString Value="__CLRCALL_OR_CDECL"/>
       <wxString Value="_CRTIMP2_PURE"/>
-	  <wxString Value="std::vector::reference=_Tp"/>
+      <wxString Value="std::vector::reference=_Tp"/>
       <wxString Value="std::vector::const_reference=_Tp"/>
-      <wxString Value="std::vector::iterator=_Tp"/>
-      <wxString Value="std::vector::const_iterator=_Tp"/>
-      <wxString Value="std::list::reference=_Tp"/>
-      <wxString Value="std::list::const_reference=_Tp"/>
-      <wxString Value="std::list::iterator=_Tp"/>
-      <wxString Value="std::list::const_iterator=_Tp"/>
-
+      <wxString Value="std::queue::reference=_Tp"/>
+      <wxString Value="std::queue::const_reference=_Tp"/>
+      <wxString Value="std::map::iterator=pair&lt;typename _T1, typename _T2&gt;"/>
+      <wxString Value="std::map::const_iterator=pair&lt;typename _T1, typename _T2&gt;"/>
     </wxArrayString>
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc;*.hh" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">

@@ -59,7 +59,7 @@ static  std::vector<std::string> gs_names;
 static  bool                     g_isUsedWithinFunc = false;
 static  std::string              s_tmpString;
 static  Variable                 curr_var;
-
+static  std::string              s_templateInitList;
 /*---------------------------------------------*/
 /* externs defined in the lexer*/
 /*---------------------------------------------*/
@@ -768,7 +768,7 @@ case 15:
 { yyval = yyvsp[0]; }
 break;
 case 18:
-{curr_var.Reset(); gs_names.clear(); s_tmpString.clear(); }
+{curr_var.Reset(); gs_names.clear(); s_tmpString.clear(); s_templateInitList.clear();}
 break;
 case 20:
 {
@@ -810,6 +810,10 @@ case 27:
                             	curr_var.m_isPtr = (yyvsp[-3].find("*") != (size_t)-1);
                             	curr_var.m_starAmp = yyvsp[-3];
                             	curr_var.m_lineno = cl_scope_lineno;
+								if(curr_var.m_templateDecl.empty())
+									curr_var.m_templateDecl = s_templateInitList;
+								s_templateInitList.clear();
+
                             	for(size_t i=0; i< gs_names.size(); i++)
                                 {
                                     /*create new variable for every variable name found*/
@@ -835,6 +839,10 @@ case 28:
                             	curr_var.m_starAmp       = yyvsp[-3];
                             	curr_var.m_arrayBrackets = yyvsp[0];
                             	curr_var.m_lineno        = cl_scope_lineno;
+								if(curr_var.m_templateDecl.empty())
+									curr_var.m_templateDecl = s_templateInitList;
+								s_templateInitList.clear();	
+								
 								/*create new variable for every variable name found*/
                                 var = curr_var;
                             	var.m_name               = yyvsp[-1];
@@ -856,7 +864,10 @@ case 29:
                             	curr_var.m_starAmp       = yyvsp[-3];
                             	curr_var.m_arrayBrackets = yyvsp[0];
                             	curr_var.m_lineno        = cl_scope_lineno;
-
+								if(curr_var.m_templateDecl.empty())
+									curr_var.m_templateDecl = s_templateInitList;
+								s_templateInitList.clear();	
+								
                                 /*create new variable for every variable name found*/
                             	var = curr_var;
                             	var.m_name = yyvsp[-1];
@@ -878,7 +889,10 @@ case 30:
                             	curr_var.m_isPtr = (yyvsp[-2].find("*") != (size_t)-1);
                             	curr_var.m_starAmp = yyvsp[-2];
                             	curr_var.m_lineno = cl_scope_lineno;
-
+								if(curr_var.m_templateDecl.empty())
+									curr_var.m_templateDecl = s_templateInitList;
+								s_templateInitList.clear();	
+								
                                 /*create new variable for every variable name found*/
                             	var = curr_var;
                             	var.m_name = "";
@@ -903,7 +917,10 @@ case 31:
                             	curr_var.m_isPtr = (yyvsp[-1].find("*") != (size_t)-1);
                             	curr_var.m_starAmp = yyvsp[-1];
                             	curr_var.m_lineno = cl_scope_lineno;
-
+								if(curr_var.m_templateDecl.empty())
+									curr_var.m_templateDecl = s_templateInitList;
+								s_templateInitList.clear();	
+								
                                 /*create new variable for every variable name found*/
                             	var = curr_var;
                             	var.m_name = "";
@@ -980,7 +997,7 @@ case 48:
 {yyval = yyvsp[-1]+ yyvsp[0]; }
 break;
 case 49:
-{yyval = yyvsp[-4] + yyvsp[-3] + yyvsp[-2] + yyvsp[-1] + yyvsp[0];}
+{yyval = yyvsp[-4] ; s_templateInitList = yyvsp[-3] + yyvsp[-2] + yyvsp[-1];}
 break;
 case 50:
 {yyval = "";}
@@ -1073,7 +1090,6 @@ case 71:
                             yyvsp[-3].erase(yyvsp[-3].find_last_not_of(":")+1);
                         	curr_var.m_typeScope = yyvsp[-3];
                         	curr_var.m_type = yyvsp[-2];
-                        	curr_var.m_isTemplate = false;
                         	curr_var.m_isConst = !yyvsp[-5].empty();
                         	s_tmpString.clear();
                         }
@@ -1084,7 +1100,7 @@ case 72:
                             yyvsp[-1].erase(yyvsp[-1].find_last_not_of(":")+1);
                         	curr_var.m_typeScope = yyvsp[-1];
                         	curr_var.m_type = yyvsp[0];
-                        	curr_var.m_isTemplate = false;
+                        	curr_var.m_isTemplate = !curr_var.m_templateDecl.empty();
                         	curr_var.m_isConst = !yyvsp[-3].empty();
                         	s_tmpString.clear();
                         }

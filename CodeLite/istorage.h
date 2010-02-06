@@ -222,7 +222,7 @@ public:
 	 * @param scope [intput/output]
 	 * @return true on success
 	 */
-	virtual bool IsTypeAndScopeExist(const wxString& typeName, wxString& scope) = 0;
+	virtual bool IsTypeAndScopeExist(wxString& typeName, wxString& scope) = 0;
 
 	/**
 	 * @brief return list of given scopes of file in ascending order

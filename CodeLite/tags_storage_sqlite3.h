@@ -441,7 +441,7 @@ public:
 	 * @param scope
 	 * @return
 	 */
-	virtual bool IsTypeAndScopeExist(const wxString &typeName, wxString &scope);
+	virtual bool IsTypeAndScopeExist(wxString &typeName, wxString &scope);
 
 	/**
 	 * @brief return list of scopes (classes, namespaces, structs) from a given file as a unique and ascended ordered

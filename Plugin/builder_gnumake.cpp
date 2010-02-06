@@ -482,6 +482,7 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 	
 	// Create the makefile variables
 	CreateConfigsVariables(proj, bldConf, text);
+
 	
 	//----------------------------------------------------------
 	// copy environment variables to the makefile
@@ -504,9 +505,7 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 		text << name << wxT(":=") << value << wxT("") << wxT("\n");
 	}
 
-	//create a variable for the project name as well
-	text << wxT("ProjectName:=") << proj->GetName() << wxT("\n");
-	text << wxT("\n");
+
 
 	CreateListMacros(proj, confToBuild, text); // list of srcs and list of objects
 
@@ -1005,6 +1004,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("## ") << name << wxT("\n");
 
 	// Expand the build macros into the generated makefile
+	text << wxT("ProjectName            :=") << proj->GetName() << wxT("\n");
 	text << wxT("ConfigurationName      :=") << name << wxT("\n");
 	text << wxT("IntermediateDirectory  :=") << bldConf->GetIntermediateDirectory() << wxT("\n");
 	text << wxT("OutDir                 := $(IntermediateDirectory)\n");

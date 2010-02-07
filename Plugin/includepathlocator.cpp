@@ -14,7 +14,7 @@ IncludePathLocator::~IncludePathLocator()
 {
 }
 
-void IncludePathLocator::Locate(wxArrayString& paths)
+void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePaths)
 {
 	// try to locate QMAKE
 	wxFileConfig  qmakeConf(wxEmptyString, wxEmptyString, m_mgr->GetStartupDirectory() + wxT("/config/qmake.ini"));
@@ -77,6 +77,8 @@ void IncludePathLocator::Locate(wxArrayString& paths)
 		// we got the path to the installation of wxWidgets
 		if (wxDir::Exists(wxwin)) {
 			paths.Add( wxwin );
+			excludePaths.Add( wxwin + wxT("\\univ") );
+			excludePaths.Add( wxwin + wxT("\\unix") );
 		}
 	}
 
@@ -88,6 +90,7 @@ void IncludePathLocator::Locate(wxArrayString& paths)
 		paths.Add(standardIncludeBase + wxT("\\include"));
 		standardIncludeBase << wxT("\\lib\\gcc\\mingw32\\4.4.0\\include\\c++");
 		paths.Add( standardIncludeBase );
+		excludePaths.Add( standardIncludeBase + wxT("\\debug") );
 	}
 #else
 	// run wx-config and parse the output
@@ -135,6 +138,7 @@ void IncludePathLocator::Locate(wxArrayString& paths)
 
 			if (sHighestVersion.IsEmpty() == false) {
 				paths.Add( base + sHighestVersion );
+				excludePaths.Add( base + sHighestVersion + wxT("/debug") );
 			}
 		}
 	}

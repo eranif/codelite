@@ -13,10 +13,12 @@ class TagsParserSearchPathsDlg : public TagsParserSearchPathsBaseDlg
 {
 public:
 	/** Constructor */
-	TagsParserSearchPathsDlg( wxWindow* parent, const wxArrayString &paths );
+	TagsParserSearchPathsDlg( wxWindow* parent, const wxArrayString &paths, const wxArrayString &excludePaths );
 	virtual ~TagsParserSearchPathsDlg();
 
 	wxArrayString GetSearchPaths() const;
+	wxArrayString GetExcludePath() const;
+	
 };
 
 #endif // __tags_parser_search_path_dlg__

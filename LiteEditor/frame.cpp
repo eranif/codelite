@@ -2056,17 +2056,20 @@ void Frame::OnTimer(wxTimerEvent &event)
 		if ( m_tagsOptionsData.GetParserSearchPaths().IsEmpty() ) {
 			// Try to locate the paths automatically
 			wxArrayString paths;
+			wxArrayString excudePaths;
 			IncludePathLocator locator(PluginManager::Get());
-			locator.Locate( paths );
+			locator.Locate( paths, excudePaths );
 
-			if ( paths.IsEmpty() == false ) {
-				TagsParserSearchPathsDlg dlg(this, paths);
-				if(dlg.ShowModal() == wxID_OK) {
-					paths = dlg.GetSearchPaths();
-				} else {
-					paths.Empty();
-				}
-			}
+//			if ( paths.IsEmpty() == false ) {
+//				TagsParserSearchPathsDlg dlg(this, paths, excudePaths);
+//				if(dlg.ShowModal() == wxID_OK) {
+//					paths       = dlg.GetSearchPaths();
+//					excudePaths = dlg.GetExcludePath();
+//				} else {
+//					paths.Empty();
+//					excudePaths.Empty();
+//				}
+//			}
 
 			if ( paths.IsEmpty() ) {
 
@@ -2077,10 +2080,11 @@ void Frame::OnTimer(wxTimerEvent &event)
 								wxT("This can be done from the main menu: Settings > Tags Settings > Include Files"), _("CodeLite"), wxOK|wxCENTER|wxICON_INFORMATION, this);
 
 			} else {
-				m_tagsOptionsData.SetParserSearchPaths( paths );
-
+				m_tagsOptionsData.SetParserSearchPaths ( paths       );
+				m_tagsOptionsData.SetParserExcludePaths( excudePaths );
+				
 				// Update the parser thread
-				ParseThreadST::Get()->SetSearchPaths( paths, m_tagsOptionsData.GetParserExcludePaths() );
+				ParseThreadST::Get()->SetSearchPaths( paths, excudePaths );
 				EditorConfigST::Get()->WriteObject( wxT("m_tagsOptionsData"), &m_tagsOptionsData );
 			}
 		}

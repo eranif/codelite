@@ -10,6 +10,6 @@ public:
 	IncludePathLocator(IManager *mgr);
 	~IncludePathLocator();
 	
-	void Locate(wxArrayString &paths);
+	void Locate(wxArrayString &paths, wxArrayString &excludePaths);
 };
 #endif // __includepathlocator__

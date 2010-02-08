@@ -830,7 +830,7 @@ static int writePatternEntry (const tagEntryInfo *const tag)
 	boolean newlineTerminated;
 
 	//Eran Ifrah [PATCH START]
-	if (tag->hasTemplate) {
+	if (tag->hasTemplate || tag->kind == 't' /* typedef */) {
 		char *const line = (char*)readSourceLines(TagFile.vLine, tag->statementStartPos, tag->filePosition);
 
 		for(; i<(int)TagFile.vLine->length; i++){
@@ -844,10 +844,10 @@ static int writePatternEntry (const tagEntryInfo *const tag)
 		length += fprintf (TagFile.fp, "%c^", searchChar);
 		length += writeSourceLine (TagFile.fp, line);
 		length += fprintf (TagFile.fp, "%s%c", newlineTerminated ? "$":"", searchChar);
-
+	
 		return length;
 		//Eran Ifrah [PATCH END]
-	}else{
+	} else {
 		char *const line = readSourceLine (TagFile.vLine, tag->filePosition, NULL);
 		if (tag->truncateLine)
 			truncateTagLine (line, tag->name, FALSE);

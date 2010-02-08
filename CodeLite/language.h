@@ -45,41 +45,40 @@ enum SearchFlags {
 
 class TagsManager;
 
-class Scope
+class TemplateHelper
 {
-	wxString                   typeName;
-	wxString                   typeScope;
 	std::vector<wxArrayString> templateInstantiationVector;
 	wxArrayString              templateDeclaration;
-
+	wxString                   typeScope;
+	wxString                   typeName;
 public:
-	Scope() {}
-	~Scope() {}
+	TemplateHelper() {}
+	~TemplateHelper() {}
 
 	void SetTemplateDeclaration(const wxArrayString& templateDeclaration) {
 		this->templateDeclaration = templateDeclaration;
 	}
 	void SetTemplateInstantiation(const wxArrayString& templateInstantiation) ;
 
-	void SetTypeName(const wxString& typeName) {
-		this->typeName = typeName;
-	}
-	void SetTypeScope(const wxString& typeScope) {
-		this->typeScope = typeScope;
-	}
 	const wxArrayString& GetTemplateDeclaration() const {
 		return templateDeclaration;
-	}
-	const wxString& GetTypeName() const {
-		return typeName;
-	}
-	const wxString& GetTypeScope() const {
-		return typeScope;
 	}
 	bool IsTemplate() const {
 		return templateDeclaration.IsEmpty() == false;
 	}
 
+	void SetTypeScope(const wxString& typeScope) {
+		this->typeScope = typeScope;
+	}
+	const wxString& GetTypeScope() const {
+		return typeScope;
+	}
+	void SetTypeName(const wxString& typeName) {
+		this->typeName = typeName;
+	}
+	const wxString& GetTypeName() const {
+		return typeName;
+	}
 	wxString Substitute(const wxString &name) ;
 
 	void Clear() ;
@@ -101,7 +100,7 @@ private:
 	wxString                m_visibleScope;
 	wxString                m_lastFunctionSignature;
 	std::vector<wxString>   m_additionalScopes;     // collected by parsing 'using namespace XXX'
-	Scope                   m_scope;
+	TemplateHelper          m_templateHelper;
 
 public:
 	/**
@@ -282,6 +281,7 @@ private:
 	 * \brief attempt to expand 'typedef' to their actual value
 	 */
 	bool OnTypedef(wxString &typeName, wxString &typeScope);
+	void DoSimpleTypedef(wxString &typeName, wxString &typeScope);
 
 	/**
 	 * \brief expand reference operator (->) overloading

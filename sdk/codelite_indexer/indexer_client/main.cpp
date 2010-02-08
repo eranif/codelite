@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 	std::vector<std::string> files;
 
 #ifdef __WXMSW__
-	files.push_back("C:\\Development\\C++\\codelite\\sdk\\codelite_indexer\\workerthread_test.h");
+	files.push_back("C:\\Development\\C++\\codelite\\CL_trunk\\sdk\\codelite_indexer\\workerthread_test.h");
 #else
 	char *home = getenv("HOME");
 	std::string file_name;

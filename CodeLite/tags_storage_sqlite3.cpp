@@ -26,6 +26,15 @@
 #include <wx/longlong.h>
 #include "tags_storage_sqlite3.h"
 
+#if 0
+#define SQL_LOG 1
+#ifdef __WXMSW__
+# define SQL_LOG_NAME "codelite_tags_sql.log"
+#else
+# define SQL_LOG_NAME "/tmp/codelite_tags_sql.log"
+#endif
+static FILE* log_fp = NULL;
+#endif
 
 //-------------------------------------------------
 // Tags database class implementation
@@ -471,6 +480,14 @@ TagEntry* TagsStorageSQLite::FromSQLite3ResultSet(wxSQLite3ResultSet& rs)
 
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags)
 {
+#if SQL_LOG
+	if(!log_fp)
+		log_fp = fopen(SQL_LOG_NAME, "w+b");
+	
+	fprintf(log_fp, "%s\n", sql.mb_str(wxConvUTF8).data());
+	fflush(log_fp);
+#endif
+
 	// try the cache first
 	try {
 		wxSQLite3ResultSet ex_rs;
@@ -491,6 +508,14 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags, const wxArrayString& kinds)
 {
+#if SQL_LOG
+	if(!log_fp)
+		log_fp = fopen(SQL_LOG_NAME, "w+b");
+	
+	fprintf(log_fp, "%s\n", sql.mb_str(wxConvUTF8).data());
+	fflush(log_fp);
+#endif
+
 	try {
 		wxSQLite3ResultSet ex_rs;
 		ex_rs = Query(sql);
@@ -1050,7 +1075,7 @@ void TagsStorageSQLite::GetTagsByPath(const wxString& path, std::vector<TagEntry
 	if (path.empty()) return;
 
 	wxString sql;
-	sql << wxT("select * from tags where path ='") << path << wxT("'");
+	sql << wxT("select * from tags where path ='") << path << wxT("' LIMIT 1");
 	DoFetchTags(sql, tags);
 }
 

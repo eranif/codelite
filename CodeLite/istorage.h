@@ -15,6 +15,8 @@ protected:
 	wxFileName m_fileName;
 	int        m_singleSearchLimit;
 	int        m_maxWorkspaceTagToColour;
+	bool       m_useCache;
+
 public:
 	enum {
 		OrderNone,
@@ -23,9 +25,17 @@ public:
 	};
 
 public:
-	ITagsStorage() : m_singleSearchLimit(1000), m_maxWorkspaceTagToColour(1000) {}
+	ITagsStorage() : m_singleSearchLimit(1000), m_maxWorkspaceTagToColour(1000), m_useCache(false) {}
 	virtual ~ITagsStorage() {};
 
+	virtual void SetUseCache(bool useCache) {
+		this->m_useCache = useCache;
+	}
+	
+	virtual bool GetUseCache() const {
+		return m_useCache;
+	}
+	
 	/**
 	 * Return the currently opened database.
 	 * @return Currently open database
@@ -93,7 +103,7 @@ public:
 	 * @param tags
 	 */
 	virtual void GetTagsByKindLimit (const wxArrayString &kinds, const wxString &orderingColumn, int order, int limit, const wxString &partName, std::vector<TagEntryPtr> &tags) = 0;
-	
+
 	/**
 	 * @brief return array of items by path
 	 * @param path
@@ -141,13 +151,13 @@ public:
 	 * @param tags
 	 */
 	virtual void GetTagsByKindAndFile(const wxArrayString& kind, const wxString &fileName, const wxString &orderingColumn, int order, std::vector<TagEntryPtr> &tags) = 0;
-	
+
 	/**
 	 * @brief return list of all global functions
 	 * @param tags  [output]
 	 */
 	virtual void GetGlobalFunctions(std::vector<TagEntryPtr> &tags) = 0;
-	
+
 	// -------------------------- Files Table -------------------------------------------
 
 	/**
@@ -223,15 +233,15 @@ public:
 	 * @return true on success
 	 */
 	virtual bool IsTypeAndScopeExist(wxString& typeName, wxString& scope) = 0;
-	
+
 	/**
 	 * @brief return true if typeName & scope exists in the storage (it uses LIMIT 1, hence LimitOne)
 	 * @param typeName
 	 * @param scope
-	 * @return 
+	 * @return
 	 */
 	virtual bool IsTypeAndScopeExistLimitOne(const wxString &typeName, const wxString &scope) = 0;
-	
+
 	/**
 	 * @brief return list of given scopes of file in ascending order
 	 * @param fileName
@@ -360,6 +370,34 @@ enum {
 	TagOk = 0,
 	TagExist,
 	TagError
+};
+
+/**
+ * \class StorageCacheEnabler
+ * \author eran
+ * \date 02/08/10
+ * \file istorage.h
+ * \brief helper class to turn on/off storage cache flag
+ */
+class StorageCacheEnabler
+{
+	ITagsStorage *m_storage;
+	
+public:
+	StorageCacheEnabler(ITagsStorage *storage) : m_storage(storage)
+	{
+		if(m_storage) {
+			m_storage->SetUseCache(true);
+		}
+	}
+	
+	~StorageCacheEnabler()
+	{
+		if(m_storage) {
+			m_storage->SetUseCache(false);
+			m_storage = NULL;
+		}
+	}
 };
 
 #endif // ISTORAGE_H

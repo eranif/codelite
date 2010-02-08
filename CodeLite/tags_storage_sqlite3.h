@@ -70,16 +70,35 @@ Table Name: FILES
 | id           | Number | ID
 | file         | String | Full path of the file
 | last_retagged| Number | Timestamp for the last time this file was retagged
-
 *
 \date 08-22-2006
 \author Eran
 \ingroup CodeLite
 */
+
+class TagsStorageSQLiteCache
+{
+	std::map<wxString, std::vector<TagEntryPtr> > m_cache;
+protected:
+	bool DoGet  (const wxString &key, std::vector<TagEntryPtr> &tags);
+	void DoStore(const wxString &key, const std::vector<TagEntryPtr> &tags);
+	
+public:
+	TagsStorageSQLiteCache();
+	virtual ~TagsStorageSQLiteCache();
+	
+	bool Get  (const wxString &sql, std::vector<TagEntryPtr> &tags);
+	bool Get  (const wxString &sql, const wxArrayString &kind, std::vector<TagEntryPtr> &tags);
+	void Store(const wxString &sql, const std::vector<TagEntryPtr> &tags);
+	void Store(const wxString &sql, const wxArrayString &kind, const std::vector<TagEntryPtr> &tags);
+	void Clear();
+};
+
 class TagsStorageSQLite : public ITagsStorage
 {
-	wxSQLite3Database *m_db;
-
+	wxSQLite3Database *    m_db;
+	TagsStorageSQLiteCache m_cache;
+	
 private:
 	/**
 	 * @brief fetch tags from the database
@@ -118,7 +137,14 @@ public:
 	 * Destructor
 	 */
 	virtual ~TagsStorageSQLite();
-
+	
+	virtual void SetUseCache(bool useCache) {
+		ITagsStorage::SetUseCache(useCache);
+		if(!useCache) {
+			m_cache.Clear();
+		}
+	}
+	
 	/**
 	 * Return the currently opened database.
 	 * @return Currently open database
@@ -471,4 +497,5 @@ public:
 
 	virtual void GetTagsNames(const wxArrayString& kind, wxArrayString& names);
 };
+
 #endif // CODELITE_TAGS_DATABASE_H

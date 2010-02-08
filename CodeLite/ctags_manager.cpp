@@ -589,6 +589,8 @@ void TagsManager::TagsByScope(const wxString& scope, std::vector<TagEntryPtr> &t
 
 bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int lineno, const wxString& expr, const wxString& text, const wxString &word, std::vector<TagEntryPtr> &candidates)
 {
+	// Enable caching during the lifetime of this method
+	StorageCacheEnabler cacheEnabler(m_workspaceDatabase);
 	PERF_START("WordCompletionCandidates");
 
 	candidates.clear();
@@ -672,7 +674,10 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno, const wxString& expr, const wxString& text, std::vector<TagEntryPtr>& candidates)
 {
 	PERF_START("AutoCompleteCandidates");
-
+	
+	// Enable caching during the lifetime of this method
+	StorageCacheEnabler cacheEnabler(m_workspaceDatabase);
+	
 	candidates.clear();
 	wxString path;
 	wxString typeName, typeScope;
@@ -978,6 +983,9 @@ void TagsManager::FilterDeclarations(const std::vector<TagEntryPtr> &src, std::v
 
 clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno, const wxString &expr, const wxString &text, const wxString &word)
 {
+	// Enable caching during the lifetime of this method
+	StorageCacheEnabler cacheEnabler(m_workspaceDatabase);
+	
 	wxString path;
 	wxString typeName, typeScope, tmp;
 	std::vector<TagEntryPtr> tips;

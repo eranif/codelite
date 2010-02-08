@@ -895,7 +895,7 @@ bool TagsStorageSQLite::IsTypeAndScopeExist(wxString& typeName, wxString& scope)
 		return false;
 
 	sql << wxT("select scope,parent from tags where name='") << strippedName << wxT("' and kind in ('class', 'struct', 'typedef') LIMIT 50");
-	bool     foundOther(false);
+	int     foundOther(0);
 	wxString scopeFounded;
 	wxString parentFounded;
 
@@ -921,7 +921,7 @@ bool TagsStorageSQLite::IsTypeAndScopeExist(wxString& typeName, wxString& scope)
 				bestScope  = scopeFounded;
 
 			} else {
-				foundOther = true;
+				foundOther++;
 			}
 		}
 
@@ -935,7 +935,7 @@ bool TagsStorageSQLite::IsTypeAndScopeExist(wxString& typeName, wxString& scope)
 		typeName = strippedName;
 		return true;
 
-	} else if ( foundOther ) {
+	} else if ( foundOther == 1) {
 		scope    = scopeFounded;
 		typeName = strippedName;
 		return true;

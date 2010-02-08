@@ -82,11 +82,11 @@ class TagsStorageSQLiteCache
 protected:
 	bool DoGet  (const wxString &key, std::vector<TagEntryPtr> &tags);
 	void DoStore(const wxString &key, const std::vector<TagEntryPtr> &tags);
-	
+
 public:
 	TagsStorageSQLiteCache();
 	virtual ~TagsStorageSQLiteCache();
-	
+
 	bool Get  (const wxString &sql, std::vector<TagEntryPtr> &tags);
 	bool Get  (const wxString &sql, const wxArrayString &kind, std::vector<TagEntryPtr> &tags);
 	void Store(const wxString &sql, const std::vector<TagEntryPtr> &tags);
@@ -98,7 +98,7 @@ class TagsStorageSQLite : public ITagsStorage
 {
 	wxSQLite3Database *    m_db;
 	TagsStorageSQLiteCache m_cache;
-	
+
 private:
 	/**
 	 * @brief fetch tags from the database
@@ -137,14 +137,14 @@ public:
 	 * Destructor
 	 */
 	virtual ~TagsStorageSQLite();
-	
+
 	virtual void SetUseCache(bool useCache) {
 		ITagsStorage::SetUseCache(useCache);
-		if(!useCache) {
+		if (!useCache) {
 			m_cache.Clear();
 		}
 	}
-	
+
 	/**
 	 * Return the currently opened database.
 	 * @return Currently open database
@@ -484,6 +484,11 @@ public:
 	 * @param scopes
 	 */
 	virtual void GetScopesFromFileAsc(const wxFileName &fileName, std::vector< wxString > &scopes);
+
+	/**
+	 * @brief
+	 */
+	virtual void ClearCache();
 
 	/**
 	 * @brief

@@ -299,6 +299,7 @@ END_DECLARE_EVENT_TYPES()
 extern const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS;
 extern const wxEventType wxEVT_PARSE_THREAD_MESSAGE;
 extern const wxEventType wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE;
+extern const wxEventType wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE;
 
 typedef void (wxEvtHandler::*SymbolTreeEventFunction)(SymbolTreeEvent&);
 

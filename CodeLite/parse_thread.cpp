@@ -57,6 +57,7 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
 const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS = XRCID("parse_thread_updated_symbols");
 const wxEventType wxEVT_PARSE_THREAD_MESSAGE              = XRCID("parse_thread_update_status_bar");
 const wxEventType wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE   = XRCID("parse_thread_scan_includes_done");
+const wxEventType wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE     = XRCID("parse_thread_clear_tags_cache");
 
 
 ParseThread::ParseThread()
@@ -191,9 +192,7 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 		// this file is not part of the search paths
 		if( !isFromSearchPath ) {
 			filteredFileList.Add( fn.GetFullPath() );
-		}/* else {
-			DEBUG_MESSAGE( wxString::Format(wxT("File %s is filtered"), fn.GetFullPath().c_str()) ) ;
-		}*/
+		}
 	}
 
 	DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> Workspace files %d"), filteredFileList.GetCount()) );
@@ -337,7 +336,12 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 	// If there is no event handler set to handle this comaprison
 	// results, then nothing more to be done
 	if (m_notifiedWindow ) {
-
+		
+		bool sendClearCacheEvent(false);
+		std::vector<std::pair<wxString, TagEntry> >  realModifiedItems;
+		
+		sendClearCacheEvent = (!deletedItems.empty() || !realModifiedItems.empty() || !newItems.empty());
+		
 		// send "end" event
 		wxCommandEvent e(wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS);
 		wxPostEvent(m_notifiedWindow, e);
@@ -350,7 +354,7 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 			SendEvent(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM, req->getFile(), goodNewItems);
 
 		if ( !modifiedItems.empty() ) {
-			std::vector<std::pair<wxString, TagEntry> >  realModifiedItems;
+			
 			for (size_t i=0; i<modifiedItems.size(); i++) {
 				std::pair<wxString, TagEntry> p = modifiedItems.at(i);
 				if (!p.second.GetDifferOnByLineNumber()) {
@@ -360,6 +364,11 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 			if (realModifiedItems.empty() == false) {
 				SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, req->getFile(), realModifiedItems);
 			}
+		}
+		
+		if(sendClearCacheEvent) {
+			wxCommandEvent clearCacheEvent(wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE);
+			wxPostEvent(m_notifiedWindow, clearCacheEvent);
 		}
 	}
 

@@ -43,6 +43,7 @@ TagsStorageSQLite::TagsStorageSQLite()
 		: ITagsStorage()
 {
 	m_db    = new wxSQLite3Database();
+	SetUseCache(true);
 }
 
 TagsStorageSQLite::~TagsStorageSQLite()
@@ -481,12 +482,12 @@ TagEntry* TagsStorageSQLite::FromSQLite3ResultSet(wxSQLite3ResultSet& rs)
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags)
 {
 #if SQL_LOG
-	if(!log_fp)
+	if (!log_fp)
 		log_fp = fopen(SQL_LOG_NAME, "w+b");
 #endif
 
-	if(GetUseCache()) {
-		if(m_cache.Get(sql, tags) == true) {
+	if (GetUseCache()) {
+		if (m_cache.Get(sql, tags) == true) {
 #if SQL_LOG
 			fprintf(log_fp, "[CACHED ITEMS] %s\n", sql.mb_str(wxConvUTF8).data());
 			fflush(log_fp);
@@ -516,8 +517,8 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 	} catch (wxSQLite3Exception &e) {
 		wxUnusedVar ( e );
 	}
-	
-	if(GetUseCache()) {
+
+	if (GetUseCache()) {
 		m_cache.Store(sql, tags);
 	}
 }
@@ -525,12 +526,12 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags, const wxArrayString& kinds)
 {
 #if SQL_LOG
-	if(!log_fp)
+	if (!log_fp)
 		log_fp = fopen(SQL_LOG_NAME, "w+b");
 #endif
 
-	if(GetUseCache()) {
-		if(m_cache.Get(sql, kinds, tags) == true) {
+	if (GetUseCache()) {
+		if (m_cache.Get(sql, kinds, tags) == true) {
 #if SQL_LOG
 			fprintf(log_fp, "[CACHED ITEMS] %s\n", sql.mb_str(wxConvUTF8).data());
 			fflush(log_fp);
@@ -539,7 +540,7 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 		}
 	}
 
-#if SQL_LOG	
+#if SQL_LOG
 	fprintf(log_fp, "%s\n", sql.mb_str(wxConvUTF8).data());
 	fflush(log_fp);
 #endif
@@ -566,7 +567,7 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 		wxUnusedVar ( e );
 	}
 
-	if(GetUseCache()) {
+	if (GetUseCache()) {
 		m_cache.Store(sql, kinds, tags);
 	}
 }
@@ -799,7 +800,11 @@ int TagsStorageSQLite::InsertTagEntry(const TagEntry& tag)
 	// If this node is a dummy, (IsOk() == false) we dont insert it to database
 	if ( !tag.IsOk() )
 		return TagOk;
-
+	
+	if(GetUseCache()) {
+		ClearCache();
+	}
+	
 	try {
 		wxSQLite3Statement statement = m_db->PrepareStatement(wxT("INSERT INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 		statement.Bind(1,  tag.GetName());
@@ -1186,14 +1191,14 @@ bool TagsStorageSQLite::IsTypeAndScopeExistLimitOne(const wxString& typeName, co
 {
 	wxString sql;
 	wxString path;
-	
+
 	// Build the path
-	if(scope.IsEmpty() == false && scope != wxT("<global>"))
+	if (scope.IsEmpty() == false && scope != wxT("<global>"))
 		path << scope << wxT("::");
-		
+
 	path << typeName;
 	sql << wxT("select ID from tags where path='") << path << wxT("' and kind in ('class', 'struct', 'typedef') LIMIT 1");
-	
+
 	try {
 		wxSQLite3ResultSet rs = Query(sql);
 		if (rs.NextRow()) {
@@ -1228,10 +1233,10 @@ bool TagsStorageSQLiteCache::Get(const wxString& sql, const wxArrayString& kind,
 {
 	wxString key;
 	key << sql;
-	for(size_t i=0; i<kind.GetCount(); i++) {
+	for (size_t i=0; i<kind.GetCount(); i++) {
 		key << wxT("@") << kind.Item(i);
 	}
-	
+
 	return DoGet(key, tags);
 }
 
@@ -1243,7 +1248,7 @@ void TagsStorageSQLiteCache::Store(const wxString& sql, const std::vector<TagEnt
 void TagsStorageSQLiteCache::Clear()
 {
 #if SQL_LOG
-	if(!log_fp)
+	if (!log_fp)
 		log_fp = fopen(SQL_LOG_NAME, "w+b");
 #endif
 
@@ -1259,7 +1264,7 @@ void TagsStorageSQLiteCache::Store(const wxString& sql, const wxArrayString& kin
 {
 	wxString key;
 	key << sql;
-	for(size_t i=0; i<kind.GetCount(); i++) {
+	for (size_t i=0; i<kind.GetCount(); i++) {
 		key << wxT("@") << kind.Item(i);
 	}
 	DoStore(key, tags);
@@ -1268,8 +1273,7 @@ void TagsStorageSQLiteCache::Store(const wxString& sql, const wxArrayString& kin
 bool TagsStorageSQLiteCache::DoGet(const wxString& key, std::vector<TagEntryPtr>& tags)
 {
 	std::map<wxString, std::vector<TagEntryPtr> >::iterator iter = m_cache.find(key);
-	if(iter != m_cache.end())
-	{
+	if (iter != m_cache.end()) {
 		tags = iter->second;
 		return true;
 	}
@@ -1281,3 +1285,7 @@ void TagsStorageSQLiteCache::DoStore(const wxString& key, const std::vector<TagE
 	m_cache[key] = tags;
 }
 
+void TagsStorageSQLite::ClearCache()
+{
+	m_cache.Clear();
+}

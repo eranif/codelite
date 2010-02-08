@@ -383,7 +383,7 @@ protected:
 	void OnParsingThreadDone          (wxCommandEvent  &e);
 	void OnParsingThreadMessage       (wxCommandEvent  &e);
 	void OnDatabaseUpgrade            (wxCommandEvent  &e);
-
+	void OnClearTagsCache             (wxCommandEvent  &e);
 	void OnRecentFile(wxCommandEvent &event);
 	void OnRecentWorkspace(wxCommandEvent &event);
 	void OnBackwardForward(wxCommandEvent &event);

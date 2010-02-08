@@ -676,7 +676,12 @@ public:
 	 * @return tag tree, must be freed by caller
 	 */
 	TagTreePtr TreeFromTags(const wxString& tags, int &count);
-
+	
+	/**
+	 * @brief clear the underlying caching mechanism
+	 */
+	void ClearTagsCache();
+	
 	/**
 	 * @brief lock/unlock the TagsManager locker
 	 */

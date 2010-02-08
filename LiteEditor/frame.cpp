@@ -472,7 +472,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	//-----------------------------------------------------------------
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone   )
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_MESSAGE             , Frame::OnParsingThreadMessage)
-
+	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE,     Frame::OnClearTagsCache)
+	
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR, Frame::OnSetStatusMessage)
 	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE,   Frame::OnDatabaseUpgrade )
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, Frame::OnBuildEnded)
@@ -3588,4 +3589,11 @@ void Frame::SetEnvStatusMessage()
 	vars.SetActiveSet(activeSet);
 	EnvironmentConfig::Instance()->SetSettings(vars);
 	SetStatusMessage(wxString::Format(wxT("Env: '%s', Builder: '%s'"), activeSet.c_str(), BuildSettingsConfigST::Get()->GetSelectedBuildSystem().c_str()), 2);
+}
+
+void Frame::OnClearTagsCache(wxCommandEvent& e)
+{
+	e.Skip();
+	TagsManagerST::Get()->ClearTagsCache();
+	SetStatusMessage(wxT("Tags cache cleared"), 0);
 }

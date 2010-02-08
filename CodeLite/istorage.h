@@ -37,6 +37,11 @@ public:
 	}
 	
 	/**
+	 * @brief clear the storage cache
+	 */
+	virtual void ClearCache() = 0;
+	
+	/**
 	 * Return the currently opened database.
 	 * @return Currently open database
 	 */

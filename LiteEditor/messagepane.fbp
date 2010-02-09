@@ -204,10 +204,10 @@
                                                 <property name="flag">wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxStaticText" expanded="1">
-                                                    <property name="bg"></property>
+                                                    <property name="bg">wxSYS_COLOUR_INFOBK</property>
                                                     <property name="context_help"></property>
                                                     <property name="enabled">1</property>
-                                                    <property name="fg"></property>
+                                                    <property name="fg">wxSYS_COLOUR_INFOTEXT</property>
                                                     <property name="font">,90,92,-1,70,0</property>
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
@@ -259,10 +259,10 @@
                                                 <property name="flag">wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxStaticText" expanded="1">
-                                                    <property name="bg"></property>
+                                                    <property name="bg">wxSYS_COLOUR_INFOBK</property>
                                                     <property name="context_help"></property>
                                                     <property name="enabled">1</property>
-                                                    <property name="fg"></property>
+                                                    <property name="fg">wxSYS_COLOUR_INFOTEXT</property>
                                                     <property name="font"></property>
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
@@ -382,7 +382,7 @@
                     <property name="flag">wxEXPAND | wxALL</property>
                     <property name="proportion">0</property>
                     <object class="wxStaticLine" expanded="1">
-                        <property name="bg"></property>
+                        <property name="bg">wxSYS_COLOUR_INFOBK</property>
                         <property name="context_help"></property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>

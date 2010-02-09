@@ -151,6 +151,7 @@ public:
 	bool IsClass() const;
 	bool IsStruct() const;
 	bool IsScopeGlobal() const;
+	bool IsTypedef() const;
 	
 	//------------------------------------------
 	// Operations

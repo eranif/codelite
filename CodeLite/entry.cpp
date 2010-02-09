@@ -525,3 +525,8 @@ bool TagEntry::IsScopeGlobal() const
 {
 	return GetScope().IsEmpty() || GetScope() == wxT("<global>");
 }
+
+bool TagEntry::IsTypedef() const
+{
+	return GetKind() == wxT("typedef");
+}

@@ -138,12 +138,7 @@ public:
 	 */
 	virtual ~TagsStorageSQLite();
 
-	virtual void SetUseCache(bool useCache) {
-		ITagsStorage::SetUseCache(useCache);
-		if (!useCache) {
-			m_cache.Clear();
-		}
-	}
+	virtual void SetUseCache(bool useCache);
 
 	/**
 	 * Return the currently opened database.

@@ -800,11 +800,11 @@ int TagsStorageSQLite::InsertTagEntry(const TagEntry& tag)
 	// If this node is a dummy, (IsOk() == false) we dont insert it to database
 	if ( !tag.IsOk() )
 		return TagOk;
-	
-	if(GetUseCache()) {
+
+	if (GetUseCache()) {
 		ClearCache();
 	}
-	
+
 	try {
 		wxSQLite3Statement statement = m_db->PrepareStatement(wxT("INSERT INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 		statement.Bind(1,  tag.GetName());
@@ -1288,4 +1288,9 @@ void TagsStorageSQLiteCache::DoStore(const wxString& key, const std::vector<TagE
 void TagsStorageSQLite::ClearCache()
 {
 	m_cache.Clear();
+}
+
+void TagsStorageSQLite::SetUseCache(bool useCache)
+{
+	ITagsStorage::SetUseCache(useCache);
 }

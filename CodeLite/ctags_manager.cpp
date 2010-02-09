@@ -150,7 +150,8 @@ TagsManager::~TagsManager()
 
 	wxCriticalSectionLocker locker(m_cs);
 	if (m_canDeleteCtags) {
-		if (m_codeliteIndexerProcess)	m_codeliteIndexerProcess->Disconnect(m_codeliteIndexerProcess->GetUid(), wxEVT_END_PROCESS, wxProcessEventHandler(TagsManager::OnCtagsEnd), NULL, this);
+		if (m_codeliteIndexerProcess) m_codeliteIndexerProcess->Disconnect(m_codeliteIndexerProcess->GetUid(), wxEVT_END_PROCESS, wxProcessEventHandler(TagsManager::OnCtagsEnd), NULL, this);
+		
 		// terminate ctags process
 		if (m_codeliteIndexerProcess) m_codeliteIndexerProcess->Terminate();
 
@@ -2061,7 +2062,11 @@ void TagsManager::CacheFile(const wxString& fileName)
 	wxArrayString kinds;
 	kinds.Add(wxT("function"));
 	kinds.Add(wxT("prototype"));
+	// disable the cache
+	m_workspaceDatabase->SetUseCache(false);
 	m_workspaceDatabase->GetTagsByKindAndFile(kinds, fileName, wxT("line"), ITagsStorage::OrderDesc, m_cachedFileFunctionsTags);
+	// re-enable it
+	m_workspaceDatabase->SetUseCache(true);
 }
 
 void TagsManager::ClearCachedFile(const wxString &fileName)

@@ -294,7 +294,7 @@ private:
 	void ParseTemplateArgs             (const wxString &argListStr, wxArrayString &argsList);
 	void ParseTemplateInitList         (const wxString &argListStr, wxArrayString &argsList);
 	void DoRemoveTempalteInitialization(wxString &str, wxArrayString &tmplInitList);
-
+	void DoResolveTemplateInitializationList(wxArrayString &tmpInitList);
 	void DoFixFunctionUsingCtagsReturnValue(clFunction &foo, TagEntryPtr tag);
 	void DoExtractTemplateDeclarationArgs();
 	void DoExtractTemplateDeclarationArgsFromScope();

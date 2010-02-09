@@ -49,6 +49,28 @@ static wxString PathFromNameAndScope(const wxString &typeName, const wxString &t
 	return path;
 }
 
+static wxString NameFromPath(const wxString &path)
+{
+	wxString name = path.AfterLast(wxT(':'));
+	return name;
+}
+
+static wxString ScopeFromPath(const wxString &path)
+{
+	wxString scope = path.BeforeLast(wxT(':'));
+	if(scope.IsEmpty())
+		return wxT("<global>");
+		
+	if(scope.EndsWith(wxT(":"))) {
+		scope.RemoveLast();
+	}
+	
+	if(scope.IsEmpty())
+		return wxT("<global>");
+		
+	return scope;
+}
+
 Language::Language()
 		: m_expression(wxEmptyString)
 		, m_scanner(new CppScanner())
@@ -589,6 +611,11 @@ bool Language::OnTypedef(wxString &typeName, wxString &typeScope)
 		if (realName.IsEmpty() == false) {
 			wxArrayString scopeTempalteInitList;
 			ParseTemplateInitList(tmpInitList, scopeTempalteInitList);
+			
+			// Incase any of the template initialization list is a
+			// typedef, resolve it as well
+			//DoResolveTemplateInitializationList(scopeTempalteInitList);
+			
 			if (!scopeTempalteInitList.IsEmpty()) {
 				m_templateHelper.SetTemplateInstantiation(scopeTempalteInitList);
 			}
@@ -1489,20 +1516,56 @@ void Language::CheckForTemplateAndTypedef(wxString& typeName, wxString& typeScop
 		typeName = completeTypedefResolved;
 #else
 		typedefMatch = OnTypedef(typeName, typeScope);
-#endif		
+#endif
+		// Attempt to fix the result
+		GetTagsManager()->IsTypeAndScopeExists(typeName, typeScope);
+		
 		if (typedefMatch) {
 			// The typeName was a typedef, so make sure we update the template declaration list
 			// with the actual type
 			std::vector<TagEntryPtr> tags;
 			GetTagsManager()->FindByPath(PathFromNameAndScope(typeName, typeScope), tags);
-			if (tags.size() == 1)
+			if (tags.size() == 1 && !tags.at(0)->IsTypedef()) {
+				// Not a typedef
 				DoExtractTemplateDeclarationArgs(tags.at(0));
+				
+			} else if(tags.size() == 1) {
+				// Typedef
+				TagEntryPtr t = tags.at(0);
+				wxString pattern ( t->GetPattern() );
+				wxArrayString tmpInitList;
+				DoRemoveTempalteInitialization(pattern, tmpInitList);
+				
+				// Incase any of the template initialization list is a
+				// typedef, resolve it as well
+				DoResolveTemplateInitializationList(tmpInitList);
+				
+				m_templateHelper.SetTemplateInstantiation(tmpInitList);
+			}
 		}
 
 		templateMatch = OnTemplates(typeName, typeScope);
 		retry++;
 		
 	} while ( (typedefMatch || templateMatch) && retry < 15 ) ;
+}
+
+void Language::DoResolveTemplateInitializationList(wxArrayString &tmpInitList)
+{
+	for(size_t i=0; i<tmpInitList.GetCount(); i++) {
+		wxString fixedTemplateArg;
+		wxString name  = NameFromPath (tmpInitList.Item(i));
+		
+		wxString tmpScope = ScopeFromPath(tmpInitList.Item(i));
+		wxString scope = tmpScope == wxT("<global>") ? m_templateHelper.GetPath() : tmpScope;
+		
+		DoSimpleTypedef(name, scope);
+		if(GetTagsManager()->GetDatabase()->IsTypeAndScopeExistLimitOne(name, scope) == false) {
+			// no match, assume template: NAME only
+			tmpInitList.Item(i) = name;
+		} else 
+			tmpInitList.Item(i) = PathFromNameAndScope(name, scope);
+	}
 }
 
 void Language::DoExtractTemplateDeclarationArgs()

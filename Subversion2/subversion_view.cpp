@@ -539,11 +539,9 @@ void SubversionView::OnAdd(wxCommandEvent& event)
 void SubversionView::OnRevert(wxCommandEvent& event)
 {
 	wxString command;
-	wxString loginString;
-	if(m_plugin->LoginIfNeeded(event, m_textCtrlRootDir->GetValue(), loginString) == false) {
-		return;
-	}
-	command << m_plugin->GetSvnExeName(false) << loginString << wxT(" revert --recursive ");
+	
+	// Svn revert does not require login string
+	command << m_plugin->GetSvnExeName(false) << wxT(" revert --recursive ");
 
 	if (m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
 		// Concatenate list of files to be updated

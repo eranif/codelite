@@ -330,10 +330,7 @@ void Subversion2::OnRevert(wxCommandEvent& event)
 {
 	wxString command;
 	wxString loginString;
-	if(LoginIfNeeded(event, DoGetFileExplorerItemPath(), loginString) == false) {
-		return;
-	}
-
+	
 	command << GetSvnExeName(false) << loginString << wxT(" revert --recursive \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
 	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this, event.GetId(), this));
 }

@@ -972,6 +972,8 @@ bool Language::TypeFromName(const wxString &             name,           // Inpu
 						wxArrayString tp;
 						ParseTemplateInitList(_U(var.m_templateDecl.c_str()), tp);
 						m_templateHelper.SetTemplateInstantiation(tp);
+						
+						DoExtractTemplateDeclarationArgs();
 					}
 					break;
 				}

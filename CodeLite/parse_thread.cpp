@@ -445,6 +445,13 @@ void ParseThread::ParseAndStoreFiles(const wxArrayString& arrFiles, int initalCo
 
 		e.SetClientData(new wxString(message.c_str()));
 		m_notifiedWindow->AddPendingEvent( e );
+		
+		// if we added new symbols to the database, send an even to the main thread
+		// to clear the tags cache
+		if(totalSymbols) {
+			wxCommandEvent clearCacheEvent(wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE);
+			m_notifiedWindow->AddPendingEvent(clearCacheEvent);
+		}
 	}
 }
 

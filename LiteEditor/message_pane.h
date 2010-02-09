@@ -22,9 +22,11 @@ class MessagePaneData
 {
 	std::vector<MessageDetails> m_queue;
 public:
-	MessagePaneData(){}
-	~MessagePaneData() { Clear(); }
-	
+	MessagePaneData() {}
+	~MessagePaneData() {
+		Clear();
+	}
+
 	void           PushMessage(const MessageDetails &msg);
 	void           PopMessage();
 	MessageDetails CurrentMessage();
@@ -36,16 +38,19 @@ public:
 class MessagePane : public MessagePaneBase
 {
 	MessagePaneData m_messages;
-	
+
 protected:
 	// Handlers for MessagePaneBase events.
 	void OnKeyDown( wxKeyEvent& event );
 	void OnButtonClose( wxCommandEvent& event );
 	void OnActionButton( wxCommandEvent& event );
+	void OnEraseBG( wxEraseEvent& event );
+	void OnPaint( wxPaintEvent& event );
+
 	void DoHide();
 	void DoShowNextMessage();
 	void DoShowCurrentMessage();
-	
+
 public:
 	/** Constructor */
 	MessagePane( wxWindow* parent );

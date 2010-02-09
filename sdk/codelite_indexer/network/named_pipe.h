@@ -5,6 +5,7 @@
 // Windows
 #include <WinSock2.h>
 #include <Windows.h>
+#include <string>
 
 #define PIPE_HANDLE HANDLE
 #define INVALID_PIPE_HANDLE INVALID_HANDLE_VALUE
@@ -16,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 
 #define PIPE_HANDLE int
 #define INVALID_PIPE_HANDLE -1
@@ -51,7 +53,7 @@ public:
 	virtual void disconnect() = 0;
 
 	const char* getPipePath() const {
-		return _pipePath;
+		return _pipePath.c_str();
 	}
 
 	ZNP_ERROR getLastError() {
@@ -67,7 +69,7 @@ public:
 protected:
 
 	void setPipePath(const char* path) {
-		_pipePath = strdup(path);
+		_pipePath = path;
 	}
 
 	void setPipeHandle(PIPE_HANDLE handle) {
@@ -77,8 +79,8 @@ protected:
 	PIPE_HANDLE _pipeHandle;
 
 private:
-	char* _pipePath;
-	ZNP_ERROR _lastError;
+	std::string _pipePath;
+	ZNP_ERROR   _lastError;
 };
 
 #endif // named_pipe_h__

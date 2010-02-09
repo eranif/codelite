@@ -31,7 +31,7 @@
 		tmp[len] = 0;\
 		p += len;\
 		s = tmp;\
-		delete tmp;\
+		delete []tmp;\
 	}\
 }
 

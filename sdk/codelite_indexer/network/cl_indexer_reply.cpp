@@ -3,6 +3,7 @@
 #include "cl_indexer_macros.h"
 
 clIndexerReply::clIndexerReply()
+: m_completionCode(0)
 {
 }
 

@@ -3,6 +3,7 @@
 #include "cl_indexer_macros.h"
 
 clIndexerRequest::clIndexerRequest()
+: m_cmd(CLI_PARSE)
 {
 }
 

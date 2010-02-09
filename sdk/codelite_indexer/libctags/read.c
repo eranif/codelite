@@ -66,6 +66,7 @@ static char *load_file(const char *fileName) {
 	long bytes = fread(buf, sizeof(char), len, fp);
 	if (bytes != len) {
 		fclose(fp);
+		free(buf);
 		return 0;
 	}
 

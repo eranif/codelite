@@ -768,7 +768,7 @@ static int addExtensionFields (const tagEntryInfo *const tag)
 	// ERAN IFRAH - Add support for return value 
 	if(tag->kind == 'p' || tag->kind == 'f') {
 		/* tag is function (decl or impl) */
-#ifdef __WXMSW__		
+#if defined(__WXMSW__)||defined(__APPLE__)
 		int count = ((int)tag->tagNameFilePos - (int)tag->statementStartPos);
 #else
 		int count = (tag->tagNameFilePos.__pos - tag->statementStartPos.__pos);
@@ -796,25 +796,25 @@ static int addExtensionFields (const tagEntryInfo *const tag)
 			
 			vStringDelete(returnValue);
 		} else {
+			// read return value pattern (up to 1024 chars)
+			char *returnValue = (char*)malloc(1024);
+			memset(returnValue, 0, 1024);
 			
-			vString *returnValue = vStringNew();
-			if(readChars(returnValue, tag->statementStartPos, tag->tagNameFilePos)) {
+			if(returnValue && readChars(returnValue, 1024, tag->statementStartPos, tag->tagNameFilePos)) {
 				int i=0;
-				for(; i<count; i++){
+				for(; i<strlen(returnValue); i++){
 					/* replace all whitespaces into spaces */
-					if(returnValue->buffer[i] == '\n' || returnValue->buffer[i] == '\r' || returnValue->buffer[i] == '\t' || returnValue->buffer[i] == '\v'){
-						returnValue->buffer[i] = ' ';
+					if(returnValue[i] == '\n' || returnValue[i] == '\r' || returnValue[i] == '\t' || returnValue[i] == '\v'){
+						returnValue[i] = ' ';
 					}
 				}
 				
-				if(returnValue->size > count)
-					returnValue->buffer[count] = '\0';
-					
 				/* remove the virtual part of the string (if any) */
-				length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, returnValue->buffer);
-				
+				length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, returnValue);
 			}
-			vStringDelete(returnValue);
+			
+			if(returnValue)
+				free(returnValue);
 		}
 		// ERAN IFRAH - Add support for return value - END
 	}

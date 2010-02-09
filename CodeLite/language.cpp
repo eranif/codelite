@@ -436,10 +436,11 @@ bool Language::ProcessExpression(const wxString& stmt,
 				
 				// HACK1: Let the user override the parser decisions
 				wxString path = PathFromNameAndScope(typeName, typeScope);
-				if(ignoreTokens.find(path) != ignoreTokens.end()) {
+				std::map<wxString, wxString>::iterator where = ignoreTokens.find(path);
+				if(where != ignoreTokens.end()) {
 					wxArrayString argList;
-					typeName = ignoreTokens.at(path).BeforeFirst(wxT('<'));
-					wxString argsString = ignoreTokens.at(path).AfterFirst(wxT('<'));
+					typeName            = where->second.BeforeFirst(wxT('<'));
+					wxString argsString = where->second.AfterFirst(wxT('<'));
 					argsString.Prepend(wxT("<"));
 					ParseTemplateArgs(argsString, argList);
 					

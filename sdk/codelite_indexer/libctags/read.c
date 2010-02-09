@@ -658,19 +658,19 @@ extern char *readSourceLines (vString* const vLine, fpos_t location, fpos_t endP
 }
 
 // ERAN IFRAH - Add support for return value 
-extern char *readChars (vString* const buffer, fpos_t location, fpos_t endPos)
+extern int readChars (char *buffer, size_t bufferSize, fpos_t location, fpos_t endPos)
 {
 	fpos_t orignalPosition;
 	char *result;
 	size_t count     = 0;
 	long sizeToRead  = -1;
 
-#ifdef __WXMSW__
+#if defined(__WXMSW__) || defined(__APPLE__)
 	if(location < 0)
-		return NULL;
+		return 0;
 #else
 	if(location.__pos < 0)
-		return NULL;
+		return 0;
 #endif
 	fgetpos (File.fp, &orignalPosition);
 	fsetpos (File.fp, &location);
@@ -678,8 +678,9 @@ extern char *readChars (vString* const buffer, fpos_t location, fpos_t endPos)
 	/* set pointer to start point */
 	fsetpos (File.fp, &location);
 
-	vStringClear(buffer);
-#ifdef __WXMSW__
+	memset(buffer, bufferSize, 0);
+	
+#if defined(__WXMSW__)|| defined(__APPLE__)
 	sizeToRead = endPos - location + 1;
 #else
 	sizeToRead = endPos.__pos - location.__pos + 1;
@@ -687,33 +688,26 @@ extern char *readChars (vString* const buffer, fpos_t location, fpos_t endPos)
 	if(sizeToRead < 0) {
 		/* restore original file position */
 		fsetpos (File.fp, &orignalPosition);
-		return NULL;
+		return 0;
 	}
 	
-	result = (char*)malloc(sizeToRead);
-	if(!result) {
+	if(sizeToRead >= bufferSize) {
+		/* restore original file position */
 		fsetpos (File.fp, &orignalPosition);
-		return NULL;
+		return 0;
 	}
-	
-	memset(result, 0, sizeToRead);
-	
-	count = fread(result, 1, sizeToRead, File.fp);
+		
+	count = fread(buffer, 1, sizeToRead, File.fp);
 	if(count != sizeToRead) {
 		/* restore original file position */
 		fsetpos (File.fp, &orignalPosition);
 		/* free allocated buffer */
-		free(result);
-		return NULL;
+		return 0;
 	}
 	
-	vStringCatS(buffer, result);
 	/* restore original file position */
 	fsetpos (File.fp, &orignalPosition);
-	/* free allocated buffer */
-	free(result);
-	
-	return buffer->buffer;
+	return sizeToRead;
 }
 // ERAN IFRAH - Add support for return value - END
 /* vi:set tabstop=4 shiftwidth=4: */

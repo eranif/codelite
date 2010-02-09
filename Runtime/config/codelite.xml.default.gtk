@@ -65,6 +65,8 @@
       <wxString Value="std::queue::const_reference=_Tp"/>
       <wxString Value="std::map::iterator=pair&lt;typename _T1, typename _T2&gt;"/>
       <wxString Value="std::map::const_iterator=pair&lt;typename _T1, typename _T2&gt;"/>
+      <wxString Value="std::deque::reference=_Tp"/>
+      <wxString Value="std::deque::const_reference=_Tp"/>
     </wxArrayString>
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc;*.hh" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">

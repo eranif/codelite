@@ -1,8 +1,8 @@
-//(double x, double y, bool children = sfWITHCHILDREN, ...)
-//const wxString const str;
-//const char * const filePath;
-//tagFile *const file;
-//const char* type;
+(double x, double y, bool children = sfWITHCHILDREN, ...)
+const wxString const str;
+const char * const filePath;
+tagFile *const file;
+const char* type;
 //
 //(CharT const*            str,parser<DerivedT> const& p)
 //bool a;
@@ -19,4 +19,5 @@
 //{
 //	typedef std::list<int> TheList;
 //	TheList lst;
-std::list<std::string>::iterator iter = li.begin();
+const MSG* const eran, ifrah;
+const MSG* const ifrah2;

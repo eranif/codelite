@@ -1956,14 +1956,14 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
 			str_output << _U(v.m_templateDecl.c_str());
 		}
 
-		if (v.m_rightSideConst.empty() == false) {
-			str_output << wxT(" ") << _U(v.m_rightSideConst.c_str()) << wxT(" ");
-		}
-
 		if (v.m_starAmp.empty() == false) {
 			str_output << _U(v.m_starAmp.c_str());
 		}
 
+		if (v.m_rightSideConst.empty() == false) {
+			str_output << wxT(" ") << _U(v.m_rightSideConst.c_str());
+		}
+		
 		if (v.m_name.empty() == false && (flags & Normalize_Func_Name)) {
 			str_output << wxT(" ") << _U(v.m_name.c_str());
 		} else if ( v.m_isEllipsis ) {

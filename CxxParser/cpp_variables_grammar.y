@@ -170,6 +170,7 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
                             	curr_var.m_starAmp = $3;
                             	curr_var.m_lineno = cl_scope_lineno;
+								curr_var.m_rightSideConst = $4;
 								if(curr_var.m_templateDecl.empty())
 									curr_var.m_templateDecl = s_templateInitList;
 								s_templateInitList.clear();
@@ -178,7 +179,7 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                                 {
                                     //create new variable for every variable name found
                                 	var = curr_var;
-                                	var.m_pattern = "/^" + $1 + " " + $2 + " " + $3 + " " + $4 +  " " + gs_names.at(i) + " $/";
+                                	var.m_pattern = "/^" + $1 + " " + $2 + " " + $3 + " " + $4 +  " " + $5 + " $/";
                                 	var.m_name = gs_names.at(i);
                                 	gs_vars->push_back(var);
                                 }
@@ -200,6 +201,7 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
                             	curr_var.m_starAmp       = $3;
                             	curr_var.m_arrayBrackets = $6;
+								curr_var.m_rightSideConst= $4;
                             	curr_var.m_lineno        = cl_scope_lineno;
 								if(curr_var.m_templateDecl.empty())
 									curr_var.m_templateDecl = s_templateInitList;
@@ -219,12 +221,14 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             {
                             	Variable var;
                             	std::string pattern;
-                            	curr_var.m_pattern       = "/^";
-                            	curr_var.m_pattern      += $1 + " " + $2 + " " + $3 + " " + $4 + " " + $5 + " " + $6 + " $/";
-                            	curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
-                            	curr_var.m_starAmp       = $3;
-                            	curr_var.m_arrayBrackets = $6;
-                            	curr_var.m_lineno        = cl_scope_lineno;
+                            	curr_var.m_pattern         = "/^";
+                            	curr_var.m_pattern        += $1 + " " + $2 + " " + $3 + " " + $4 + " " + $5 + " " + $6 + " $/";
+                            	curr_var.m_isPtr           = ($3.find("*") != (size_t)-1);
+                            	curr_var.m_starAmp         = $3;
+                            	curr_var.m_arrayBrackets   = $6;
+								curr_var.m_rightSideConst  = $4;
+                            	curr_var.m_lineno          = cl_scope_lineno;
+								
 								if(curr_var.m_templateDecl.empty())
 									curr_var.m_templateDecl = s_templateInitList;
 								s_templateInitList.clear();	
@@ -244,11 +248,12 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             {
                             	Variable var;
                             	std::string pattern;
-                            	curr_var.m_pattern = "/^";
-                            	curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + $4 + " $/";
-                            	curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
-                            	curr_var.m_starAmp = $3;
-                            	curr_var.m_lineno = cl_scope_lineno;
+                            	curr_var.m_pattern       = "/^";
+                            	curr_var.m_pattern       += $1 + " " + $2 + " " + $3 + " " + $4 + " $/";
+                            	curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
+                            	curr_var.m_starAmp       = $3;
+								curr_var.m_rightSideConst= $4;
+                            	curr_var.m_lineno        = cl_scope_lineno;
 								if(curr_var.m_templateDecl.empty())
 									curr_var.m_templateDecl = s_templateInitList;
 								s_templateInitList.clear();	
@@ -265,17 +270,18 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	cl_scope_less(0);
                             }
                         }
-                        | ',' variable_decl special_star_amp postfix3
+                        | ',' variable_decl special_star_amp const_spec postfix3
                         {
                         	if(gs_vars && g_isUsedWithinFunc)
                             {
                             	Variable var;
                             	std::string pattern;
                             	curr_var.m_pattern = "/^";
-                            	curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + "$/";
+                            	curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + $4 + "$/";
                             	curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
                             	curr_var.m_starAmp = $3;
                             	curr_var.m_lineno = cl_scope_lineno;
+								curr_var.m_rightSideConst= $4;
 								if(curr_var.m_templateDecl.empty())
 									curr_var.m_templateDecl = s_templateInitList;
 								s_templateInitList.clear();	

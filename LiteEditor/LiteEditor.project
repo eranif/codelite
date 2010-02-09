@@ -399,6 +399,10 @@
     <File Name="settersgetterstreectrl.h"/>
     <File Name="quickfindbarbase.h"/>
     <File Name="quickfindbarbase.cpp"/>
+    <File Name="messagepane_base.h"/>
+    <File Name="messagepane_base.cpp"/>
+    <File Name="message_pane.h"/>
+    <File Name="message_pane.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>
@@ -546,6 +550,7 @@
     <File Name="implementparentvirtualfunctionsbase.fbp"/>
     <File Name="tasksfindwhatdlgbase.fbp"/>
     <File Name="quickfindbarbase.fbp"/>
+    <File Name="messagepane.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="breakpointsmgr.h"/>

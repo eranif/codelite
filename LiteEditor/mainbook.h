@@ -33,6 +33,7 @@
 #include "custom_notebook.h"
 #include "filehistory.h"
 
+class MessagePane;
 class MainBook : public wxPanel
 {
 private:
@@ -43,7 +44,9 @@ private:
     wxWindow     *m_currentPage;
 
     std::set<wxWindow*> m_detachedTabs;
-
+	MessagePane  *m_messagePane;
+	
+private:
     void CreateGuiControls();
     void ConnectEvents    ();
 
@@ -69,6 +72,8 @@ public:
 	FileHistory &GetRecentlyOpenedFilesClass() { return m_recentFiles; }
 
 	void ShowQuickBar (bool s = true)       { m_quickFindBar->Show(s); }
+	void ShowMessage  (const wxString &message, const wxString &buttonLabel = wxEmptyString, int commandId = wxNOT_FOUND, wxEvtHandler *window = NULL);
+	
 	void ShowNavBar   (bool s = true);
 	void UpdateNavBar (LEditor *editor);
 	bool IsNavBarShown()                    { return m_navBar->IsShown(); }

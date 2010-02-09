@@ -1274,7 +1274,8 @@ bool TagsStorageSQLiteCache::DoGet(const wxString& key, std::vector<TagEntryPtr>
 {
 	std::map<wxString, std::vector<TagEntryPtr> >::iterator iter = m_cache.find(key);
 	if (iter != m_cache.end()) {
-		tags = iter->second;
+		// Append the results to the output tags
+		tags.insert(tags.end(), iter->second.begin(), iter->second.end());
 		return true;
 	}
 	return false;

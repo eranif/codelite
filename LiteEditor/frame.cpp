@@ -2073,12 +2073,12 @@ void Frame::OnTimer(wxTimerEvent &event)
 //			}
 
 			if ( paths.IsEmpty() ) {
-
-				wxMessageBox(   wxT("CodeLite has detected that there are no search paths set for the parser\n")
+				GetMainBook()->ShowMessage(
+								wxT("CodeLite has detected that there are no search paths set for the parser\n")
 								wxT("This means that CodeLite will *NOT* be able to offer any code completion\n")
 								wxT("for non-workspace files (e.g. string.h).\n")
 								wxT("To fix this, please set search paths for the parser\n")
-								wxT("This can be done from the main menu: Settings > Tags Settings > Include Files"), _("CodeLite"), wxOK|wxCENTER|wxICON_INFORMATION, this);
+								wxT("This can be done from the main menu: Settings > Tags Settings > Include Files"));
 
 			} else {
 				m_tagsOptionsData.SetParserSearchPaths ( paths       );
@@ -3500,11 +3500,8 @@ void Frame::OnParsingThreadMessage(wxCommandEvent& e)
 // TagsManager, prompt the user
 void Frame::OnDatabaseUpgrade(wxCommandEvent& e)
 {
-	int answer = wxMessageBox(wxT("Your workspace symbols file does not match the current version of CodeLite. This can be fixed by re-tagging your workspace\nWould you like to re-tag your workspace now?"),
-							  wxT("CodeLite"), wxYES_NO|wxICON_QUESTION|wxCENTER, this);
-	if ( answer == wxYES ) {
-		OnRetagWorkspace( e /* dummy */);
-	}
+	GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. This can be fixed by re-tagging your workspace\nWould you like to re-tag your workspace now?"), 
+									wxT("Retag Workspace Now!"), XRCID("full_retag_workspace"), this);
 }
 
 void Frame::UpdateTagsOptions(const TagsOptionsData& tod)

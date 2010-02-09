@@ -39,7 +39,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 	Hide();
 	m_closeButton->SetBitmapLabel(wxXmlResource::Get()->LoadBitmap(wxT("page_close16")));
 	DoShowControls();
-
+	
 	GetSizer()->Fit(this);
 	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnCopy),      NULL, this);
 	wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnPaste),     NULL, this);

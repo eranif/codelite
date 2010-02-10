@@ -1730,7 +1730,7 @@ void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event))
 
 	if ( dlg.restartRquired ) {
 #ifdef __WXMAC__
-		wxMessageBox(_("Some of the changes made requires restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK, this);
+		GetMainBook()->ShowMessage(_("Some of the changes made requires restart of CodeLite"));
 #else
 		// On Winodws & GTK we offer auto-restart
 		ButtonDetails btn1, btn2;
@@ -1739,9 +1739,9 @@ void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event))
 		btn1.menuCommand = false;
 		btn1.window      = ManagerST::Get();
 		
+		// set button window to NULL
 		btn2.buttonLabel = wxT("Not now");
-		btn2.commandId   = -2; // Dummy
-		btn2.window      = ManagerST::Get();
+		btn2.window      = NULL;
 		
 		GetMainBook()->ShowMessage(_("Some of the changes made requires restart of CodeLite\nWould you like to restart now?"), btn1, btn2);
 #endif

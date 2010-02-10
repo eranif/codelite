@@ -49,17 +49,18 @@ void MessagePane::DoShowCurrentMessage()
 	m_buttonAction1->Hide();
 	m_buttonAction2->Hide();
 	
-	if (msg.btn1.window && msg.btn1.commandId != wxNOT_FOUND) {
+	// display the buttons
+	if (msg.btn1.buttonLabel.IsEmpty() == false) {
 		m_buttonAction->SetLabel(msg.btn1.buttonLabel);
 		m_buttonAction->Show();
 	}
 	
-	if (msg.btn2.commandId != wxNOT_FOUND) {
+	if (msg.btn2.buttonLabel.IsEmpty() == false) {
 		m_buttonAction1->SetLabel(msg.btn2.buttonLabel);
 		m_buttonAction1->Show();
 	}
 	
-	if (msg.btn3.commandId != wxNOT_FOUND) {
+	if (msg.btn3.buttonLabel.IsEmpty() == false) {
 		m_buttonAction2->SetLabel(msg.btn3.buttonLabel);
 		m_buttonAction2->Show();
 	}
@@ -161,20 +162,20 @@ void MessagePane::OnPaint(wxPaintEvent& event)
 void MessagePane::OnActionButton1(wxCommandEvent& event)
 {
 	MessageDetails msg = m_messages.CurrentMessage();
-	DoPostEvent(msg.btn1);
+	DoPostEvent(msg.btn2);
 	DoShowNextMessage();
 }
 
 void MessagePane::OnActionButton2(wxCommandEvent& event)
 {
 	MessageDetails msg = m_messages.CurrentMessage();
-	DoPostEvent(msg.btn2);
+	DoPostEvent(msg.btn3);
 	DoShowNextMessage();
 }
 
 void MessagePane::DoPostEvent(ButtonDetails btn)
 {
-	if (btn.commandId > 0 && btn.window) {
+	if (btn.commandId != wxNOT_FOUND && btn.window) {
 		if(btn.menuCommand) {
 			wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, btn.commandId);
 			btn.window->AddPendingEvent(evt);

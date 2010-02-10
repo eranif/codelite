@@ -363,7 +363,7 @@ void BuildTab::MarkEditor ( LEditor *editor )
 			wxString tip = GetBuildToolTip(editor->GetFileName().GetFullPath(), line_number, style_bytes);
 						
 			// Set annotations
-			if ( options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotations ) {
+			if ( line_number >= 0 && options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotations ) {
 				editor->AnnotationSetText (line_number, tip);
 				editor->AnnotationSetStyles(line_number, style_bytes );
 			}

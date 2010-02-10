@@ -432,9 +432,7 @@ createRules_exe ()
 	done
 	echo >> Makefile
 
-	echo "${rule_name}: \$(${object_list_name})" >> Makefile
-	# Hack to make -j2 work. Without it, one job tries to make the CodeLite exe before the other has finished creating libpluginu.so
-	echo "	@sleep 1" >> Makefile
+	echo "${rule_name}: \$(${object_list_name}) SDK" >> Makefile
 	echo "	\$(CMP) -o ${exename} \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
 	echo >> Makefile
 }

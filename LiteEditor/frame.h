@@ -415,7 +415,7 @@ protected:
 	void OnCloseAllButThis(wxCommandEvent &e);
 	void OnWorkspaceMenuUI(wxUpdateUIEvent &e);
 	void OnUpdateBuildRefactorIndexBar(wxCommandEvent &e);
-
+	void OnUpdateNumberOfBuildProcesses(wxCommandEvent &e);
 	void OnBuildWorkspace(wxCommandEvent &e);
 	void OnBuildWorkspaceUI(wxUpdateUIEvent &e);
 	void OnCleanWorkspace(wxCommandEvent &e);

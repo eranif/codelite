@@ -473,7 +473,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone   )
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_MESSAGE             , Frame::OnParsingThreadMessage)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE,     Frame::OnClearTagsCache)
-	
+	EVT_MENU   (XRCID("update_num_builders_count"),                Frame::OnUpdateNumberOfBuildProcesses)
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR, Frame::OnSetStatusMessage)
 	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE,   Frame::OnDatabaseUpgrade )
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, Frame::OnBuildEnded)
@@ -1733,11 +1733,17 @@ void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event))
 		wxMessageBox(_("Some of the changes made requires restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK, this);
 #else
 		// On Winodws & GTK we offer auto-restart
-		int answer = wxMessageBox(_("Some of the changes made requires restart of CodeLite\nWould you like to restart now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL, this);
-		if ( answer == wxYES ) {
-			wxCommandEvent e(wxEVT_CMD_RESTART_CODELITE);
-			ManagerST::Get()->AddPendingEvent(e);
-		}
+		ButtonDetails btn1, btn2;
+		btn1.buttonLabel = wxT("Restart Now!");
+		btn1.commandId   = wxEVT_CMD_RESTART_CODELITE;
+		btn1.menuCommand = false;
+		btn1.window      = ManagerST::Get();
+		
+		btn2.buttonLabel = wxT("Not now");
+		btn2.commandId   = -2; // Dummy
+		btn2.window      = ManagerST::Get();
+		
+		GetMainBook()->ShowMessage(_("Some of the changes made requires restart of CodeLite\nWould you like to restart now?"), btn1, btn2);
 #endif
 	}
 }
@@ -2015,36 +2021,15 @@ void Frame::OnTimer(wxTimerEvent &event)
 		if ( bs ) {
 			wxString jobs;
 			jobs << cpus;
-
+			
 			if ( bs->GetToolJobs() != jobs ) {
-
-				//prompt the user
-				long val(0);
-				bool do_it(false);
-				if ( !EditorConfigST::Get()->GetLongValue(wxT("AdjustCPUNumber"), val) ) {
-
-					//no entry was found in the configuration file, popup the dialog and ask the user
-					ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, wxT("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), wxT("CodeLite"));
-					if (dlg->ShowModal() == wxID_OK) {
-						do_it = true;
-					}
-
-					if ( dlg->GetDontAskMeAgain() ) {
-						// the user wishes that his answer will be kept
-						EditorConfigST::Get()->SaveLongValue(wxT("AdjustCPUNumber"), do_it ? 1 : 0);
-					}
-					dlg->Destroy();
-
-				} else {
-					do_it = !(val == 0);
-				}
-
-				// are we allowed to update the concurrent jobs number?
-				if ( do_it ) {
-					bs->SetToolJobs( jobs );
-					BuildSettingsConfigST::Get()->SetBuildSystem(bs);
-					wxLogMessage(wxT("Info: setting number of concurrent builder jobs to ") + jobs);
-				}
+				
+				ButtonDetails btn1;
+				btn1.buttonLabel = wxT("Update Number of Build Processes");
+				btn1.commandId   = XRCID("update_num_builders_count");
+				btn1.window      = this;
+				
+				GetMainBook()->ShowMessage(wxT("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), btn1);
 			}
 		}
 
@@ -2060,18 +2045,6 @@ void Frame::OnTimer(wxTimerEvent &event)
 			wxArrayString excudePaths;
 			IncludePathLocator locator(PluginManager::Get());
 			locator.Locate( paths, excudePaths );
-
-//			if ( paths.IsEmpty() == false ) {
-//				TagsParserSearchPathsDlg dlg(this, paths, excudePaths);
-//				if(dlg.ShowModal() == wxID_OK) {
-//					paths       = dlg.GetSearchPaths();
-//					excudePaths = dlg.GetExcludePath();
-//				} else {
-//					paths.Empty();
-//					excudePaths.Empty();
-//				}
-//			}
-
 			if ( paths.IsEmpty() ) {
 				GetMainBook()->ShowMessage(
 								wxT("CodeLite has detected that there are no search paths set for the parser\n")
@@ -3500,8 +3473,12 @@ void Frame::OnParsingThreadMessage(wxCommandEvent& e)
 // TagsManager, prompt the user
 void Frame::OnDatabaseUpgrade(wxCommandEvent& e)
 {
-	GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. This can be fixed by re-tagging your workspace\nWould you like to re-tag your workspace now?"), 
-									wxT("Retag Workspace Now!"), XRCID("full_retag_workspace"), this);
+	ButtonDetails btn;
+	btn.buttonLabel = wxT("Retag Workspace Now!");
+	btn.commandId   = XRCID("full_retag_workspace");
+	btn.window      = this;
+	
+	GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. This can be fixed by re-tagging your workspace\nWould you like to re-tag your workspace now?"), btn);
 }
 
 void Frame::UpdateTagsOptions(const TagsOptionsData& tod)
@@ -3593,4 +3570,18 @@ void Frame::OnClearTagsCache(wxCommandEvent& e)
 	e.Skip();
 	TagsManagerST::Get()->ClearTagsCache();
 	SetStatusMessage(wxT("Tags cache cleared"), 0);
+}
+
+void Frame::OnUpdateNumberOfBuildProcesses(wxCommandEvent& e)
+{
+	int cpus = wxThread::GetCPUCount();
+	BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig(wxT("GNU makefile for g++/gcc"));
+	if(bs && cpus != wxNOT_FOUND) {
+		wxString jobs;
+		jobs << cpus;
+		
+		bs->SetToolJobs( jobs );
+		BuildSettingsConfigST::Get()->SetBuildSystem(bs);
+		wxLogMessage(wxT("Info: setting number of concurrent builder jobs to ") + jobs);
+	}
 }

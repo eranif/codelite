@@ -32,6 +32,7 @@
 #include "quickfindbar.h"
 #include "custom_notebook.h"
 #include "filehistory.h"
+#include "message_pane.h"
 
 class MessagePane;
 class MainBook : public wxPanel
@@ -72,7 +73,7 @@ public:
 	FileHistory &GetRecentlyOpenedFilesClass() { return m_recentFiles; }
 
 	void ShowQuickBar (bool s = true)       { m_quickFindBar->Show(s); }
-	void ShowMessage  (const wxString &message, const wxString &buttonLabel = wxEmptyString, int commandId = wxNOT_FOUND, wxEvtHandler *window = NULL);
+	void ShowMessage  (const wxString &message, const ButtonDetails &btn1 = ButtonDetails(), const ButtonDetails &btn2 = ButtonDetails(), const ButtonDetails &btn3 = ButtonDetails());
 	
 	void ShowNavBar   (bool s = true);
 	void UpdateNavBar (LEditor *editor);

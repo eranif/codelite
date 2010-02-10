@@ -31,6 +31,9 @@ void MessagePane::DoHide()
 	if (IsShown()) {
 		// Hide all default controls
 		m_buttonAction->Hide();
+		m_buttonAction1->Hide();
+		m_buttonAction2->Hide();
+	
 		m_messages.Clear();
 		Hide();
 		GetParent()->GetSizer()->Layout();
@@ -39,37 +42,45 @@ void MessagePane::DoHide()
 
 void MessagePane::DoShowCurrentMessage()
 {
-	int commandId = m_messages.CurrentMessage().commandId;
-	wxString txt  = m_messages.CurrentMessage().message;
-	wxEvtHandler* window = m_messages.CurrentMessage().window;
-	wxString buttonLabel = m_messages.CurrentMessage().buttonLabel;
+	MessageDetails msg   = m_messages.CurrentMessage();
+	wxString txt         = msg.message;
 
-	if (commandId != wxNOT_FOUND && window) {
-		m_buttonAction->SetLabel(buttonLabel);
-		m_buttonAction->SetDefault();
+	m_buttonAction->Hide();
+	m_buttonAction1->Hide();
+	m_buttonAction2->Hide();
+	
+	if (msg.btn1.window && msg.btn1.commandId != wxNOT_FOUND) {
+		m_buttonAction->SetLabel(msg.btn1.buttonLabel);
 		m_buttonAction->Show();
-
-	} else {
-		m_buttonAction->Hide();
-
 	}
-
+	
+	if (msg.btn2.commandId != wxNOT_FOUND) {
+		m_buttonAction1->SetLabel(msg.btn2.buttonLabel);
+		m_buttonAction1->Show();
+	}
+	
+	if (msg.btn3.commandId != wxNOT_FOUND) {
+		m_buttonAction2->SetLabel(msg.btn3.buttonLabel);
+		m_buttonAction2->Show();
+	}
+		
 	m_staticTextMessage->SetLabel(txt);
 	if (IsShown() == false) {
 		Show();
 	}
+	GetSizer()->Fit(this);
 	GetParent()->GetSizer()->Layout();
 	Refresh();
 }
 
-void MessagePane::ShowMessage(const wxString& message, const wxString &buttonLabel, int commandId, wxEvtHandler *window)
+void MessagePane::ShowMessage(const wxString &message, const ButtonDetails& btn1, const ButtonDetails& btn2, const ButtonDetails& btn3)
 {
 	MessageDetails msg;
-	msg.buttonLabel = buttonLabel;
-	msg.commandId   = commandId;
 	msg.message     = message;
-	msg.window      = window;
-
+	msg.btn1        = btn1;
+	msg.btn2        = btn2;
+	msg.btn3        = btn3;
+	
 	m_messages.PushMessage(msg);
 	DoShowCurrentMessage();
 }
@@ -77,12 +88,7 @@ void MessagePane::ShowMessage(const wxString& message, const wxString &buttonLab
 void MessagePane::OnActionButton(wxCommandEvent& event)
 {
 	MessageDetails msg = m_messages.CurrentMessage();
-
-	if (msg.commandId != wxNOT_FOUND && msg.window) {
-		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, msg.commandId);
-		msg.window->AddPendingEvent(evt);
-	}
-
+	DoPostEvent(msg.btn1);
 	DoShowNextMessage();
 }
 
@@ -140,14 +146,41 @@ void MessagePane::OnPaint(wxPaintEvent& event)
 {
 	wxBufferedPaintDC dc(this);
 	wxRect rr = GetClientRect();
-	
+
 	dc.SetPen(  wxPen  (wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
 	dc.DrawRectangle(rr);
-	
+
 	rr.Deflate(2);
 	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW)));
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK)));
-	
+
 	dc.DrawRectangle(rr);
+}
+
+void MessagePane::OnActionButton1(wxCommandEvent& event)
+{
+	MessageDetails msg = m_messages.CurrentMessage();
+	DoPostEvent(msg.btn1);
+	DoShowNextMessage();
+}
+
+void MessagePane::OnActionButton2(wxCommandEvent& event)
+{
+	MessageDetails msg = m_messages.CurrentMessage();
+	DoPostEvent(msg.btn2);
+	DoShowNextMessage();
+}
+
+void MessagePane::DoPostEvent(ButtonDetails btn)
+{
+	if (btn.commandId > 0 && btn.window) {
+		if(btn.menuCommand) {
+			wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, btn.commandId);
+			btn.window->AddPendingEvent(evt);
+		} else {
+			wxCommandEvent evt(btn.commandId);
+			btn.window->AddPendingEvent(evt);
+		}
+	}
 }

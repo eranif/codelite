@@ -891,7 +891,7 @@ bool MainBook::DoSelectPage(wxWindow* win)
 	return true;
 }
 
-void MainBook::ShowMessage(const wxString &message, const wxString &buttonLabel, int commandId, wxEvtHandler *window)
+void MainBook::ShowMessage(const wxString &message, const ButtonDetails &btn1, const ButtonDetails &btn2, const ButtonDetails &btn3)
 {
-	m_messagePane->ShowMessage(message, buttonLabel, commandId, window);
+	m_messagePane->ShowMessage(message, btn1, btn2, btn3);
 }

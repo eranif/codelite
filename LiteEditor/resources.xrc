@@ -45,6 +45,7 @@
 	<object class="wxBitmap" name="message_pane_inf">res/message_pane_info.png</object>
 	<object class="wxBitmap" name="message_pane_restart">res/system_restart.png</object>
 	<object class="wxBitmap" name="message_pane_fix">res/preferences_other.png</object>
+	<object class="wxBitmap" name="message_pane_warning">res/warning.png</object>
 	<object class="wxBitmap" name="debugger_tab">res/debug_windows.png</object>
 	<object class="wxBitmap" name="help_icon">res/help.png</object>
 	<object class="wxBitmap" name="svn_info">res/help_about.png</object>

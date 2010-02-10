@@ -256,7 +256,13 @@ void Manager::OpenWorkspace ( const wxString &path )
 		wxMessageBox ( errMsg, wxT ( "Error" ), wxOK | wxICON_HAND );
 		return;
 	}
-
+	
+	// OpenWorkspace returned true, but errMsg is not empty
+	// this could only mean that we removed a fauly project
+	if(errMsg.IsEmpty() == false) {
+		Frame::Get()->GetMainBook()->ShowMessage(errMsg, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_warning")));
+	}
+	
 	DoSetupWorkspace ( path );
 }
 

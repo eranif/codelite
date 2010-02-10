@@ -81,7 +81,7 @@ bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
 	CloseWorkspace();
 	wxFileName workSpaceFile(fileName);
 	if (workSpaceFile.FileExists() == false) {
-		errMsg = wxString::Format(wxT("Workspace file no longer exist: '%s'"), fileName.c_str());
+		errMsg = wxString::Format(wxT("Could not open workspace file: '%s'"), fileName.c_str());
 		return false;
 	}
 
@@ -99,29 +99,36 @@ bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
 
 	// Load all projects
 	wxXmlNode *child = m_doc.GetRoot()->GetChildren();
+	std::vector<wxXmlNode*> removedChildren;
+	wxString tmperr;
 	while (child) {
 		if (child->GetName() == wxT("Project")) {
 			wxString projectPath = child->GetPropVal(wxT("Path"), wxEmptyString);
 
 			if ( !DoAddProject(projectPath, errMsg) ) {
-				if (wxMessageBox(wxString::Format(wxT("Error occured while loading project, error was:\n%s\nDo you want to skip it and continue loading the workspace?"), errMsg.c_str()),
-				                 wxT("CodeLite"), wxYES_NO|wxICON_QUESTION|wxCENTER|wxSTAY_ON_TOP, wxTheApp->GetTopWindow()) == wxNO) {
-					return false;
-				} else {
-					wxLogMessage(wxString::Format(wxT("WARNING: Project '%s' was not loaded"), projectPath.c_str()));
-				}
+				tmperr << wxString::Format(wxT("Error occured while loading project: \"%s\"\nCodeLite has removed the faulty project from the workspace\n"), projectPath.c_str());
+				removedChildren.push_back(child);
 			}
 		}
 		child = child->GetNext();
 	}
-
+	
+	// Delete the faulty projects
+	for(size_t i=0; i<removedChildren.size(); i++) {
+		wxXmlNode *ch = removedChildren.at(i);
+		ch->GetParent()->RemoveChild(ch);
+		delete ch;
+	}
+	
 	// Load the database
 	wxString dbfile = GetStringProperty(wxT("Database"), errMsg);
 	if ( dbfile.IsEmpty() ) {
 		errMsg = wxT("Missing 'Database' value in workspace '");
 		return false;
 	}
-
+	
+	errMsg = tmperr;
+	
 	// the database file names are relative to the workspace,
 	// convert them to absolute path
 	wxFileName fn(dbfile);
@@ -270,11 +277,24 @@ void Workspace::AddProjectToBuildMatrix(ProjectPtr prj)
 				prjBldConf = settings->GetNextBuildConfiguration(cookie);
 			}
 		}
-
+		
+		
+		// Dont add duplicate entries
 		ConfigMappingEntry entry(prj->GetName(), matchConf->GetName());
-		prjList.push_back(entry);
-		(*iter)->SetConfigMappingList(prjList);
-		matrix->SetConfiguration((*iter));
+		WorkspaceConfiguration::ConfigMappingList::iterator lIter = prjList.begin();
+		bool isNewEntry (true);
+		for(; lIter != prjList.end(); lIter++) {
+			if(lIter->m_name == entry.m_name) {
+				isNewEntry = false;
+				break;
+			}
+		}
+		
+		if ( !isNewEntry ) {
+			prjList.push_back(entry);
+			(*iter)->SetConfigMappingList(prjList);
+			matrix->SetConfiguration((*iter));
+		}
 	}
 
 	// and set the configuration name

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/socket.h>
+#include "fileextmanager.h"
 #include <wx/splash.h>
 #include "evnvarlist.h"
 #include "environmentconfig.h"
@@ -50,6 +51,7 @@
 #include "wx/tokenzr.h"
 #include "wx/dir.h"
 #include <wx/stdpaths.h>
+#include "frame.h"
 
 #define __PERFORMANCE
 #include "performance.h"
@@ -593,3 +595,14 @@ bool App::CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir
 	return true;
 }
 
+void App::MacOpenFile(const wxString& fileName)
+{
+	switch (FileExtManager::GetType(fileName)) {
+	case FileExtManager::TypeWorkspace:
+		ManagerST::Get()->OpenWorkspace(fileName);
+		break;
+	default:
+		Frame::Get()->GetMainBook()->OpenFile(fileName);
+		break;
+	}
+}

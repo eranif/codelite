@@ -1743,7 +1743,7 @@ void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event))
 		btn2.buttonLabel = wxT("Not now");
 		btn2.window      = NULL;
 		
-		GetMainBook()->ShowMessage(_("Some of the changes made requires restart of CodeLite\nWould you like to restart now?"), btn1, btn2);
+		GetMainBook()->ShowMessage(_("Some of the changes made requires restart of CodeLite\nWould you like to restart now?"), wxXmlResource::Get()->LoadBitmap(wxT("message_pane_restart")), btn1, btn2);
 #endif
 	}
 }
@@ -2029,7 +2029,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 				btn1.commandId   = XRCID("update_num_builders_count");
 				btn1.window      = this;
 				
-				GetMainBook()->ShowMessage(wxT("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), btn1);
+				GetMainBook()->ShowMessage(wxT("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), wxXmlResource::Get()->LoadBitmap(wxT("message_pane_fix")), btn1);
 			}
 		}
 
@@ -3478,7 +3478,7 @@ void Frame::OnDatabaseUpgrade(wxCommandEvent& e)
 	btn.commandId   = XRCID("full_retag_workspace");
 	btn.window      = this;
 	
-	GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. This can be fixed by re-tagging your workspace\nWould you like to re-tag your workspace now?"), btn);
+	GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. This can be fixed by re-tagging your workspace\nWould you like to re-tag your workspace now?"), wxNullBitmap, btn);
 }
 
 void Frame::UpdateTagsOptions(const TagsOptionsData& tod)

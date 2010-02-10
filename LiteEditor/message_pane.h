@@ -16,6 +16,7 @@ public:
 	int           commandId;
 	wxEvtHandler* window;
 	bool          menuCommand;
+	bool          isDefault;
 	
 public:
 	ButtonDetails() : buttonLabel(wxT("")), commandId(wxNOT_FOUND), window(NULL), menuCommand(true)
@@ -28,13 +29,13 @@ class MessageDetails
 {
 public:
 	wxString      message;
-	
+	wxBitmap      bmp;
 	ButtonDetails btn1;
 	ButtonDetails btn2;
 	ButtonDetails btn3;
 	
 public:
-	MessageDetails()
+	MessageDetails() : bmp(wxNullBitmap)
 	{}
 	
 	~MessageDetails()
@@ -82,7 +83,7 @@ public:
 	/** Constructor */
 	MessagePane( wxWindow* parent );
 
-	void ShowMessage(const wxString &message, const ButtonDetails& btn1 = ButtonDetails(), const ButtonDetails& btn2 = ButtonDetails(), const ButtonDetails& btn3 = ButtonDetails());
+	void ShowMessage(const wxString &message, const wxBitmap &bmp = wxNullBitmap, const ButtonDetails& btn1 = ButtonDetails(), const ButtonDetails& btn2 = ButtonDetails(), const ButtonDetails& btn3 = ButtonDetails());
 };
 
 #endif // __message_pane__

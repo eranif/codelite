@@ -55,6 +55,8 @@ public:
 	const wxArrayString& GetParserPaths() const {
 		return m_parserPaths;
 	}
+	void MacOpenFile(const wxString &fileName);
+	
 protected:
 	virtual bool OnInit();
 	virtual int OnExit();

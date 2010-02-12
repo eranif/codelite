@@ -38,6 +38,7 @@
 #include "performance.h"
 
 #include "code_completion_api.h"
+#include "scope_optimizer.h"
 
 static wxString PathFromNameAndScope(const wxString &typeName, const wxString &typeScope)
 {
@@ -99,108 +100,12 @@ Language::~Language()
 /// Return the visible scope until pchStopWord is encountered
 wxString Language::OptimizeScope(const wxString& srcString)
 {
-	wxString wxcurrScope;
-	std::vector<std::string> scope_stack;
-	std::string currScope;
-
-	int type;
-
-	// Initialize the scanner with the string to search
-	const wxCharBuffer scannerText =  _C(srcString);
-	m_scanner->SetText( scannerText.data());
-	bool changedLine = false;
-	bool prepLine = false;
-	int curline = 0;
-	while (true) {
-		type = m_scanner->yylex();
-
-
-		// Eof ?
-		if (type == 0) {
-			if (!currScope.empty())
-				scope_stack.push_back(currScope);
-			break;
-		}
-
-		// eat up all tokens until next line
-		if ( prepLine && m_scanner->lineno() == curline) {
-			currScope += " ";
-			currScope += m_scanner->YYText();
-			continue;
-		}
-
-		prepLine = false;
-
-		// Get the current line number, it will help us detect preprocessor lines
-		changedLine = (m_scanner->lineno() > curline);
-		if (changedLine) {
-			currScope += "\n";
-		}
-
-		curline = m_scanner->lineno();
-		switch (type) {
-		case (int)'(':
-						currScope += "\n";
-			scope_stack.push_back(currScope);
-			currScope = "(\n";
-			break;
-		case (int)'{':
-						currScope += "\n";
-			scope_stack.push_back(currScope);
-			currScope = "{\n";
-			break;
-		case (int)')':
-						// Discard the current scope since it is completed
-						if ( !scope_stack.empty() ) {
-					currScope = scope_stack.back();
-					scope_stack.pop_back();
-					currScope += "()";
-				} else
-					currScope.clear();
-			break;
-		case (int)'}':
-						// Discard the current scope since it is completed
-						if ( !scope_stack.empty() ) {
-					currScope = scope_stack.back();
-					scope_stack.pop_back();
-					currScope += "\n{}\n";
-				} else {
-					currScope.clear();
-				}
-			break;
-		case (int)'#':
-						if (changedLine) {
-					// We are at the start of a new line
-					// consume everything until new line is found or end of text
-					currScope += " ";
-					currScope += m_scanner->YYText();
-					prepLine = true;
-					break;
-				}
-		default:
-			currScope += " ";
-			currScope += m_scanner->YYText();
-			break;
-		}
-	}
-
-	m_scanner->Reset();
-
-	if (scope_stack.empty())
-		return srcString;
-
-	currScope.clear();
-	size_t i = 0;
-	for (; i < scope_stack.size(); i++)
-		currScope += scope_stack.at(i);
-
-	// if the current scope is not empty, terminate it with ';' and return
-	if ( currScope.empty() == false ) {
-		currScope += ";";
-		return _U(currScope.c_str());
-	}
-
-	return srcString;
+	std::string out;
+	const wxCharBuffer inp = srcString.mb_str(wxConvUTF8);
+	::OptimizeScope(inp.data(), out);
+	
+	wxString scope = _U(out.c_str());
+	return scope;
 }
 
 bool Language::NextToken(wxString &token, wxString &delim)

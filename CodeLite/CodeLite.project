@@ -83,6 +83,8 @@
     <File Name="variable.cpp"/>
     <File Name="cl_typedef.h"/>
     <File Name="typedef_parser.cpp"/>
+    <File Name="scope_optimizer.h"/>
+    <File Name="scope_optimizer.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="database">
     <File Name="comment.h"/>
@@ -277,6 +279,6 @@
   </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

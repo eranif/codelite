@@ -1243,8 +1243,8 @@ case 75:
 YY_RULE_SETUP
 {
 	if(catch_for_scope.empty() == false)
-		current_scope += catch_for_scope;
-	catch_for_scope.clear();
+		catch_for_scope.clear();
+		
 	// default keep the current token
 	current_scope += yytext;
 }
@@ -2176,16 +2176,27 @@ int yywrap() {
 	return 1; 
 }
 
+void scope_optimizer_clean()
+{
+	yy_flush_buffer(YY_CURRENT_BUFFER);
+	yy_delete_buffer(YY_CURRENT_BUFFER);
+	
+	scope_stack.clear();
+	current_scope.clear();
+	current_state = INITIAL;
+	current_brace_depth = 1;
+	catch_for_scope.clear();
+}
+
 int OptimizeScope(const std::string &inputScope, std::string &optimizedScope)
 {
 	BEGIN INITIAL;
-	current_state = INITIAL;
-	current_scope.clear();
 	yy_scan_string(inputScope.c_str());
 	
 	int rc = scope_optimizer_lex();
 	if (scope_stack.empty()) {
 		optimizedScope = inputScope;
+		scope_optimizer_clean();
 		return rc;
 	}
 	
@@ -2199,6 +2210,7 @@ int OptimizeScope(const std::string &inputScope, std::string &optimizedScope)
 		current_scope += ";";
 		optimizedScope = current_scope;
 	}
+	scope_optimizer_clean();
 	return rc;
 }
 

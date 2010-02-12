@@ -8,9 +8,7 @@ int main(int argc, char **argv)
 		for (size_t counter=0; 
 				counter<10; 
 				counter++)
-		{
-			printf("My Loop");
-			std::string s;
+		{	std::string s;
 		int v;
 	
 	

@@ -65,6 +65,8 @@
       <wxString Value="std::vector::const_iterator=_Tp"/>
       <wxString Value="std::queue::reference=_Tp"/>
       <wxString Value="std::queue::const_reference=_Tp"/>
+      <wxString Value="std::set::const_iterator=_Key"/>
+      <wxString Value="std::set::iterator=_Key"/>
       <wxString Value="std::deque::reference=_Tp"/>
       <wxString Value="std::deque::const_reference=_Tp"/>
       <wxString Value="std::map::iterator=pair&lt;typename _T1, typename _T2&gt;"/>

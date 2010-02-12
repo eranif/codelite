@@ -31,8 +31,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="no">copy scope_optimizer.h ..\..\CodeLite</Command>
-        <Command Enabled="no">copy scope_optimizer.cpp ..\..\CodeLite</Command>
+        <Command Enabled="yes">copy scope_optimizer.h ..\..\CodeLite</Command>
+        <Command Enabled="yes">copy scope_optimizer.cpp ..\..\CodeLite</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

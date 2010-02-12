@@ -318,7 +318,7 @@ void LEditor::SetProperties()
 	SetXCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
 
 	caretSlop = 1;
-	caretZone = 1;
+	caretZone = 2;
 	caretStrict = 4;
 	caretEven = 8;
 	caretJumps = 0;
@@ -976,7 +976,8 @@ bool LEditor::SaveFileAs()
 
 		// update the tab title (again) since we really want to trigger an update to the file tooltip
 		Frame::Get()->GetMainBook()->SetPageTitle(this, m_fileName.GetFullName());
-
+		Frame::Get()->SetFrameTitle(this);
+		
 		// update syntax highlight
 		SetSyntaxHighlight();
 

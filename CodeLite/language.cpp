@@ -174,7 +174,6 @@ bool Language::ProcessExpression(const wxString& stmt,
 
 		statement.erase(0, statement.find_first_not_of(trimString));
 		statement.erase(statement.find_last_not_of(trimString)+1);
-		wxString dbgStmnt = statement;
 
 		// First token is handled sepratly
 		wxString word;
@@ -355,16 +354,16 @@ bool Language::ProcessExpression(const wxString& stmt,
 				}
 				
 				GetTagsManager()->IsTypeAndScopeExists(typeName, typeScope);
-
-				//-------------------------------------
-				// do typedef / template subsitutations
-				//-------------------------------------
-				CheckForTemplateAndTypedef(typeName, typeScope);
-
-				if ( op == wxT("->") && OnArrowOperatorOverloading(typeName, typeScope) ) {
+				
+				int  retryCount(0);
+				bool cont(false);
+				do {
 					CheckForTemplateAndTypedef(typeName, typeScope);
-				}
+					cont = ( op == wxT("->") && OnArrowOperatorOverloading(typeName, typeScope) );
+					retryCount++;
+				} while( cont && retryCount < 5);
 			}
+			
 			parentTypeName = typeName;
 			parentTypeScope = typeScope;
 		}
@@ -1605,8 +1604,9 @@ void TemplateHelper::SetTemplateInstantiation(const wxArrayString& templInstanti
 
 wxString TemplateHelper::Substitute(const wxString& name)
 {
-	for(size_t i=0; i<templateInstantiationVector.size(); i++) {
-		
+//	for(size_t i=0; i<templateInstantiationVector.size(); i++) {
+	int count = static_cast<int>(templateInstantiationVector.size());
+	for(int i=count-1; i>=0; i--) {
 		int where = templateDeclaration.Index(name);
 		if (where != wxNOT_FOUND) {
 			// it exists, return the name in the templateInstantiation list

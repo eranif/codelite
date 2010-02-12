@@ -110,6 +110,7 @@ for[ ]*\(               {
 	if(current_brace_depth == 0) {
 		current_state = INITIAL; 
 		catch_for_scope += ";";
+		current_brace_depth = 1;
 		BEGIN(INITIAL);
 	} else {
 		catch_for_scope += yytext;

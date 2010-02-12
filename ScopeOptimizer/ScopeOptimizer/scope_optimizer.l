@@ -200,6 +200,7 @@ const_cast          {}
 reinterpret_cast    {}
 using               {}
 throw               {}
+{identifier}        |
 .                   {
 	if(catch_for_scope.empty() == false)
 		catch_for_scope.clear();

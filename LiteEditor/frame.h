@@ -457,6 +457,8 @@ protected:
 	void OnShowActiveProjectSettings(wxCommandEvent &e);
 	void OnShowActiveProjectSettingsUI(wxUpdateUIEvent &e);
 	void OnLoadPerspective(wxCommandEvent &e);
+	void OnWorkspaceSettings(wxCommandEvent &e);
+	void OnWorkspaceEditorPreferences(wxCommandEvent &e);
 	DECLARE_EVENT_TABLE()
 };
 

@@ -296,6 +296,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	//-------------------------------------------------------
 	// Project menu
 	//-------------------------------------------------------
+	EVT_MENU(XRCID("local_workspace_prefs"),    Frame::OnWorkspaceEditorPreferences)
+	EVT_MENU(XRCID("local_workspace_settings"), Frame::OnWorkspaceSettings)
 	EVT_MENU(XRCID("new_workspace"),            Frame::OnProjectNewWorkspace)
 	EVT_MENU(XRCID("switch_to_workspace"),      Frame::OnSwitchWorkspace)
 	EVT_MENU(XRCID("close_workspace"),          Frame::OnCloseWorkspace)
@@ -307,12 +309,14 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("full_retag_workspace"),     Frame::OnRetagWorkspace)
 	EVT_MENU(XRCID("project_properties"),       Frame::OnShowActiveProjectSettings)
 
-	EVT_UPDATE_UI(XRCID("close_workspace"),     Frame::OnWorkspaceOpen)
-	EVT_UPDATE_UI(XRCID("reload_workspace"),    Frame::OnReloadWorkspaceUI)
-	EVT_UPDATE_UI(XRCID("add_project"),         Frame::OnWorkspaceMenuUI)
-	EVT_UPDATE_UI(XRCID("retag_workspace"),     Frame::OnWorkspaceOpen)
-	EVT_UPDATE_UI(XRCID("full_retag_workspace"),Frame::OnWorkspaceOpen)
-	EVT_UPDATE_UI(XRCID("project_properties"),  Frame::OnShowActiveProjectSettingsUI)
+	EVT_UPDATE_UI(XRCID("local_workspace_prefs"),    Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("local_workspace_settings"), Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("close_workspace"),          Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("reload_workspace"),         Frame::OnReloadWorkspaceUI)
+	EVT_UPDATE_UI(XRCID("add_project"),              Frame::OnWorkspaceMenuUI)
+	EVT_UPDATE_UI(XRCID("retag_workspace"),          Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("full_retag_workspace"),     Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("project_properties"),       Frame::OnShowActiveProjectSettingsUI)
 
 	//-------------------------------------------------------
 	// Build menu
@@ -3585,3 +3589,14 @@ void Frame::OnUpdateNumberOfBuildProcesses(wxCommandEvent& e)
 		wxLogMessage(wxT("Info: setting number of concurrent builder jobs to ") + jobs);
 	}
 }
+
+void Frame::OnWorkspaceEditorPreferences(wxCommandEvent& e)
+{
+	GetWorkspaceTab()->GetFileView()->ProcessEvent(e);
+}
+
+void Frame::OnWorkspaceSettings(wxCommandEvent& e)
+{
+	GetWorkspaceTab()->GetFileView()->ProcessEvent(e);
+}
+

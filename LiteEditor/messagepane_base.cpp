@@ -14,11 +14,14 @@ MessagePaneBase::MessagePaneBase( wxWindow* parent, wxWindowID id, const wxPoint
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
 	
-	m_panel2 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panel2 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSIMPLE_BORDER|wxTAB_TRAVERSAL );
 	m_panel2->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
 	
 	wxBoxSizer* mainSizer;
-	mainSizer = new wxBoxSizer( wxVERTICAL );
+	mainSizer = new wxBoxSizer( wxHORIZONTAL );
+	
+	wxBoxSizer* bSizer81;
+	bSizer81 = new wxBoxSizer( wxHORIZONTAL );
 	
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
@@ -50,7 +53,7 @@ MessagePaneBase::MessagePaneBase( wxWindow* parent, wxWindowID id, const wxPoint
 	
 	bSizer3->Add( m_staticTextMessage, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	bSizer2->Add( bSizer3, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	bSizer2->Add( bSizer3, 1, wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_panel1->SetSizer( bSizer2 );
 	m_panel1->Layout();
@@ -76,9 +79,11 @@ MessagePaneBase::MessagePaneBase( wxWindow* parent, wxWindowID id, const wxPoint
 	m_buttonAction2 = new wxButton( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer7->Add( m_buttonAction2, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALL, 5 );
 	
-	bSizer4->Add( bSizer7, 0, wxEXPAND, 5 );
+	bSizer4->Add( bSizer7, 0, wxALIGN_CENTER_VERTICAL, 5 );
 	
-	mainSizer->Add( bSizer4, 1, wxEXPAND, 5 );
+	bSizer81->Add( bSizer4, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	
+	mainSizer->Add( bSizer81, 1, wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_panel2->SetSizer( mainSizer );
 	m_panel2->Layout();

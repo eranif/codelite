@@ -100,7 +100,7 @@ createMainTargets()
 	echo "## build targets" >> Makefile
 
 	## default
-	target_all="all :  pre_build SQLite Scintilla CodeLite SDK LiteEditor codelite_indexer codelite_cppcheck Plugins "
+	target_all="all :  pre_build SQLite Scintilla CodeLite SDK codelite_indexer codelite_cppcheck Plugins LiteEditor "
 
 	## if we are on Linux, print the post message
 	if [ "$os_name" = "Linux" ]; then
@@ -388,8 +388,13 @@ createRules_sharedObject ()
 	if [ "$os_name" = "Darwin" ]; then
 		shared_obj_switch=" -dynamiclib "
 	fi
-
-	echo "${rule_name}: \$(${object_list_name})" >> Makefile
+	
+	if [ "$rule_name" = "SDK" ]; then
+		echo "${rule_name}: \$(${object_list_name}) CodeLite " >> Makefile
+	else 
+		echo "${rule_name}: \$(${object_list_name})" >> Makefile
+	fi
+	
 	echo "	\$(CMP) -fPIC ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(PLUGIN_LINK_FLAGS) ${additional_link_libs}" >> Makefile
 	if [ $dont_copy != "dont_copy" ]; then
 		echo "	cp -f ${base_dir}/\$(OUTPUT_DIR)/${libname}.so ${runtime_path}/." >> Makefile
@@ -434,6 +439,9 @@ createRules_exe ()
 
 	echo "${rule_name}: \$(${object_list_name}) SDK" >> Makefile
 	echo "	\$(CMP) -o ${exename} \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
+	echo "	@echo ==========================================================" >> Makefile
+	echo "	@echo Done, please run \"sudo make install\"." >> Makefile
+	echo "	@echo ==========================================================" >> Makefile
 	echo >> Makefile
 }
 
@@ -619,7 +627,7 @@ createUnInstallTarget()
 createEndMessage()
 {
 	if [ "$os_name" = "Linux" ]; then
-		echo "post_build_msg:" >> Makefile
+		echo "post_build_msg: \$(LiteEditor)" >> Makefile
 		echo "	@echo ==========================================================" >> Makefile
 		echo "	@echo Done, please run \"sudo make install\"." >> Makefile
 		echo "	@echo ==========================================================" >> Makefile
@@ -737,7 +745,7 @@ echo "" >> Makefile
 
 createEndMessage
 
-echo "Plugins:\\" >> Makefile
+echo "Plugins: SDK \\" >> Makefile
 
 ########################################################
 ##

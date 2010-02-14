@@ -679,7 +679,7 @@ extern int readChars (char *buffer, size_t bufferSize, fpos_t location, fpos_t e
 	/* set pointer to start point */
 	fsetpos (File.fp, &location);
 
-	memset(buffer, bufferSize, 0);
+	memset(buffer, 0, bufferSize);
 	
 #if defined(__WXMSW__)|| defined(__APPLE__)
 	sizeToRead = endPos - location + 1;

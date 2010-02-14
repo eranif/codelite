@@ -22,9 +22,8 @@
 #include <wx/stattext.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
-#include <wx/bmpbuttn.h>
-#include <wx/button.h>
 #include <wx/statline.h>
+#include <wx/button.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -42,8 +41,8 @@ class MessagePaneBase : public wxPanel
 		wxPanel* m_panel1;
 		wxStaticText* m_staticText2;
 		wxStaticText* m_staticTextMessage;
-		wxBitmapButton* m_bpButtonClose;
-		wxStaticLine* m_staticline1;
+		wxStaticLine* m_staticline3;
+		wxButton* m_buttonClose;
 		wxButton* m_buttonAction;
 		wxButton* m_buttonAction1;
 		wxButton* m_buttonAction2;

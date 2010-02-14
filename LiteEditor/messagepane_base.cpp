@@ -57,31 +57,28 @@ MessagePaneBase::MessagePaneBase( wxWindow* parent, wxWindowID id, const wxPoint
 	bSizer2->Fit( m_panel1 );
 	bSizer4->Add( m_panel1, 1, wxEXPAND|wxALL, 5 );
 	
-	m_bpButtonClose = new wxBitmapButton( m_panel2, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_bpButtonClose->SetDefault(); 
-	bSizer4->Add( m_bpButtonClose, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	m_staticline3 = new wxStaticLine( m_panel2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL|wxLI_VERTICAL );
+	bSizer4->Add( m_staticline3, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 	
-	mainSizer->Add( bSizer4, 1, wxEXPAND, 5 );
+	wxBoxSizer* bSizer7;
+	bSizer7 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticline1 = new wxStaticLine( m_panel2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	m_staticline1->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
-	
-	mainSizer->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
-	
-	wxBoxSizer* bSizer5;
-	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
+	m_buttonClose = new wxButton( m_panel2, wxID_CANCEL, _("Hide"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer7->Add( m_buttonClose, 0, wxEXPAND|wxALL, 5 );
 	
 	m_buttonAction = new wxButton( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonAction->SetDefault(); 
-	bSizer5->Add( m_buttonAction, 0, wxALL, 5 );
+	bSizer7->Add( m_buttonAction, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALL, 5 );
 	
 	m_buttonAction1 = new wxButton( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer5->Add( m_buttonAction1, 0, wxALL, 5 );
+	bSizer7->Add( m_buttonAction1, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALL, 5 );
 	
 	m_buttonAction2 = new wxButton( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer5->Add( m_buttonAction2, 0, wxALL, 5 );
+	bSizer7->Add( m_buttonAction2, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALL, 5 );
 	
-	mainSizer->Add( bSizer5, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	bSizer4->Add( bSizer7, 0, wxEXPAND, 5 );
+	
+	mainSizer->Add( bSizer4, 1, wxEXPAND, 5 );
 	
 	m_panel2->SetSizer( mainSizer );
 	m_panel2->Layout();
@@ -95,7 +92,7 @@ MessagePaneBase::MessagePaneBase( wxWindow* parent, wxWindowID id, const wxPoint
 	// Connect Events
 	this->Connect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler( MessagePaneBase::OnEraseBG ) );
 	this->Connect( wxEVT_PAINT, wxPaintEventHandler( MessagePaneBase::OnPaint ) );
-	m_bpButtonClose->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnButtonClose ), NULL, this );
+	m_buttonClose->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnButtonClose ), NULL, this );
 	m_buttonAction->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnActionButton ), NULL, this );
 	m_buttonAction1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnActionButton1 ), NULL, this );
 	m_buttonAction2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnActionButton2 ), NULL, this );
@@ -106,7 +103,7 @@ MessagePaneBase::~MessagePaneBase()
 	// Disconnect Events
 	this->Disconnect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler( MessagePaneBase::OnEraseBG ) );
 	this->Disconnect( wxEVT_PAINT, wxPaintEventHandler( MessagePaneBase::OnPaint ) );
-	m_bpButtonClose->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnButtonClose ), NULL, this );
+	m_buttonClose->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnButtonClose ), NULL, this );
 	m_buttonAction->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnActionButton ), NULL, this );
 	m_buttonAction1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnActionButton1 ), NULL, this );
 	m_buttonAction2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnActionButton2 ), NULL, this );

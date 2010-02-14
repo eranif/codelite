@@ -6,7 +6,6 @@
 MessagePane::MessagePane( wxWindow* parent )
 		: MessagePaneBase( parent )
 {
-	m_bpButtonClose->SetBitmapLabel(wxXmlResource::Get()->LoadBitmap(wxT("page_close16")));
 	m_bitmap1->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("message_pane_inf")));
 	m_buttonAction->Hide();
 	Hide();

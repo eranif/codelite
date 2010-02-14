@@ -278,24 +278,11 @@ void Workspace::AddProjectToBuildMatrix(ProjectPtr prj)
 			}
 		}
 		
-		
-		// Dont add duplicate entries
 		ConfigMappingEntry entry(prj->GetName(), matchConf->GetName());
-		WorkspaceConfiguration::ConfigMappingList::iterator lIter = prjList.begin();
-		bool isNewEntry (true);
-		for(; lIter != prjList.end(); lIter++) {
-			if(lIter->m_name == entry.m_name) {
-				isNewEntry = false;
-				break;
-			}
-		}
-		
-		if ( !isNewEntry ) {
 			prjList.push_back(entry);
 			(*iter)->SetConfigMappingList(prjList);
 			matrix->SetConfiguration((*iter));
 		}
-	}
 
 	// and set the configuration name
 	matrix->SetSelectedConfigurationName(selConfName);

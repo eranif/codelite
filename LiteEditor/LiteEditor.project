@@ -441,6 +441,8 @@
     <File Name="refactorindexbuildjob.cpp"/>
     <File Name="refactorindexbuildjob.h"/>
     <File Name="implparentvirtualfunctionsdata.h"/>
+    <File Name="macromanager.h"/>
+    <File Name="macromanager.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="code_parser.rc"/>

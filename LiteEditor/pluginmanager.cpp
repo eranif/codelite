@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "environmentconfig.h"
+#include "macromanager.h"
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "jobqueue.h"
@@ -446,16 +447,16 @@ void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name)
 
 TagEntryPtr PluginManager::GetTagAtCaret(bool scoped, bool impl)
 {
-    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
-    if (!editor)
-        return NULL;
-    return editor->GetContext()->GetTagAtCaret(scoped, impl);
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	if (!editor)
+		return NULL;
+	return editor->GetContext()->GetTagAtCaret(scoped, impl);
 }
 
 bool PluginManager::AllowToolbar()
 {
 	long v;
-	if(EditorConfigST::Get()->GetLongValue(wxT("UseSingleToolbar"), v)){
+	if (EditorConfigST::Get()->GetLongValue(wxT("UseSingleToolbar"), v)) {
 		return v ? false : true;
 	} else {
 		// entry does not exist
@@ -484,7 +485,7 @@ void PluginManager::EnableToolbars()
 
 void PluginManager::SetStatusMessage(const wxString &msg, int col, int id)
 {
-    Frame::Get()->SetStatusMessage(msg, col, id);
+	Frame::Get()->SetStatusMessage(msg, col, id);
 }
 
 void PluginManager::ProcessCommandQueue()
@@ -529,22 +530,22 @@ BuildSettingsConfig* PluginManager::GetBuildSettingsConfigManager()
 
 bool PluginManager::ClosePage(const wxString &text)
 {
-    return Frame::Get()->GetMainBook()->ClosePage(text);
+	return Frame::Get()->GetMainBook()->ClosePage(text);
 }
 
 wxWindow *PluginManager::FindPage(const wxString &text)
 {
-    return Frame::Get()->GetMainBook()->FindPage(text);
+	return Frame::Get()->GetMainBook()->FindPage(text);
 }
 
 bool PluginManager::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp, bool selected)
 {
-    return Frame::Get()->GetMainBook()->AddPage(win, text, bmp, selected);
+	return Frame::Get()->GetMainBook()->AddPage(win, text, bmp, selected);
 }
 
 bool PluginManager::SelectPage(wxWindow *win)
 {
-    return Frame::Get()->GetMainBook()->SelectPage(win);
+	return Frame::Get()->GetMainBook()->SelectPage(win);
 }
 
 bool PluginManager::OpenFile(const BrowseRecord& rec)
@@ -576,4 +577,9 @@ void PluginManager::UnHookProjectSettingsTab(wxNotebook* book, const wxString &p
 IEditor* PluginManager::NewEditor()
 {
 	return Frame::Get()->GetMainBook()->NewEditor();
+}
+
+IMacroManager* PluginManager::GetMacrosManager()
+{
+	return MacroManager::Instance();
 }

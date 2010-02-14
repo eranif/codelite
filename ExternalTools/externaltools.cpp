@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "environmentconfig.h"
+#include "imacromanager.h"
 #include <wx/aui/framemanager.h>
 #include "async_executable_cmd.h"
 #include <wx/bitmap.h>
@@ -220,21 +221,13 @@ void ExternalToolsPlugin::OnLaunchExternalTool(wxCommandEvent& e)
 void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 {
 	wxString command, working_dir;
-	wxString current_file;
-
-	if (m_mgr->GetActiveEditor()) {
-		current_file = m_mgr->GetActiveEditor()->GetFileName().GetFullPath();
-	}
 
 	command << wxT("\"") << ti.GetPath() << wxT("\" ") << ti.GetArguments();
 	working_dir = ti.GetWd();
 
 	if (m_mgr->IsWorkspaceOpen()) {
-		command = ExpandAllVariables(command, m_mgr->GetWorkspace(), m_mgr->GetWorkspace()->GetActiveProjectName(), wxEmptyString, current_file);
-		working_dir = ExpandAllVariables(working_dir, m_mgr->GetWorkspace(), m_mgr->GetWorkspace()->GetActiveProjectName(), wxEmptyString, current_file);
-	} else {
-		command = ExpandAllVariables(command, NULL, wxEmptyString, wxEmptyString, current_file);
-		working_dir = ExpandAllVariables(working_dir, NULL, wxEmptyString, wxEmptyString, current_file);
+		command     = m_mgr->GetMacrosManager()->Expand(command, m_mgr, m_mgr->GetWorkspace()->GetActiveProjectName());
+		working_dir = m_mgr->GetMacrosManager()->Expand(working_dir, m_mgr, m_mgr->GetWorkspace()->GetActiveProjectName());
 	}
 
 	// check to see if we require to save all files before continuing

@@ -43,6 +43,7 @@ class IPlugin;
 class BuildManager;
 class BuildSettingsConfig;
 class NavMgr;
+class IMacroManager;
 
 //--------------------------
 //Auxulary class
@@ -371,6 +372,11 @@ public:
 	 * @return pointer to the editor
 	 */
 	virtual IEditor *NewEditor() = 0;
+	
+	/**
+	 * @brief return the macro manager
+	 */
+	virtual IMacroManager *GetMacrosManager() = 0;
 };
 
 

@@ -9,6 +9,7 @@
     <File Name="imanager.h"/>
     <File Name="plugin_version.h"/>
     <File Name="ikeyboard.h"/>
+    <File Name="imacromanager.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Settings Type="Static Library">

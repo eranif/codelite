@@ -477,11 +477,12 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone   )
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_MESSAGE             , Frame::OnParsingThreadMessage)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE,     Frame::OnClearTagsCache)
+	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR,                 Frame::OnSetStatusMessage)
+	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE,                   Frame::OnDatabaseUpgrade )
+	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED,       Frame::OnBuildEnded)
 	EVT_MENU   (XRCID("update_num_builders_count"),                Frame::OnUpdateNumberOfBuildProcesses)
-	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR, Frame::OnSetStatusMessage)
-	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE,   Frame::OnDatabaseUpgrade )
-	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, Frame::OnBuildEnded)
-
+	EVT_MENU   (XRCID("goto_codelite_download_url"),               Frame::OnGotoCodeLiteDownloadPage)
+	
 	EVT_SYMBOLTREE_ADD_ITEM(wxID_ANY,    Frame::OnAddSymbols)
 	EVT_SYMBOLTREE_DELETE_ITEM(wxID_ANY, Frame::OnDeleteSymbols)
 	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
@@ -2015,7 +2016,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
 
 	if ( check ) {
-		JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this));
+		JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this, false));
 	}
 
 	//update the build system to contain the number of CPUs
@@ -2880,15 +2881,24 @@ void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 	WebUpdateJobData *data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
 	if (data) {
 		if (data->IsUpToDate() == false) {
-			NewVersionDlg dlg(this);
-			dlg.SetMessage(wxString::Format(wxT("A new version is available!\nCurrent version: rev%d\nNew version: rev%d\nWould you like CodeLite to take you to the download page?"), data->GetCurrentVersion(), data->GetNewVersion()));
-			dlg.SetReleaseNotesURL(data->GetReleaseNotes());
-			if (dlg.ShowModal() == wxID_OK) {
-				wxString url = data->GetUrl();
-				wxLaunchDefaultBrowser(url);
-			}
+			
+			m_codeliteDownloadPageURL = data->GetUrl();
+			ButtonDetails btn;
+			btn.buttonLabel = wxT("Download Now!");
+			btn.commandId   = XRCID("goto_codelite_download_url");
+			btn.isDefault   = true;
+			btn.window      = this;
+			
+			GetMainBook()->ShowMessage(wxT("A new version of CodeLite is available. Download it?"), wxXmlResource::Get()->LoadBitmap(wxT("message_pane_software_update")), btn);
+		
 		} else {
-			wxLogMessage(wxString::Format(wxT("Info: CodeLite is up-to-date (or newer), version used: %d, version on site:%d"), data->GetCurrentVersion(), data->GetNewVersion()));
+			if(!data->GetShowMessage()) {
+				wxLogMessage(wxString::Format(wxT("Info: CodeLite is up-to-date (or newer), version used: %d, version on site:%d"), data->GetCurrentVersion(), data->GetNewVersion()));
+				
+			} else {
+				// User initiated the version check request
+				GetMainBook()->ShowMessage(wxT("CodeLite is up-to-date"));
+			}
 		}
 		delete data;
 	}
@@ -3496,7 +3506,7 @@ void Frame::UpdateTagsOptions(const TagsOptionsData& tod)
 
 void Frame::OnCheckForUpdate(wxCommandEvent& e)
 {
-	JobQueueSingleton::Instance()->PushJob( new WebUpdateJob(this) );
+	JobQueueSingleton::Instance()->PushJob( new WebUpdateJob(this, true) );
 }
 
 void Frame::OnShowActiveProjectSettings(wxCommandEvent& e)
@@ -3601,3 +3611,9 @@ void Frame::OnWorkspaceSettings(wxCommandEvent& e)
 	GetWorkspaceTab()->GetFileView()->ProcessEvent(e);
 }
 
+void Frame::OnGotoCodeLiteDownloadPage(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	wxLaunchDefaultBrowser(m_codeliteDownloadPageURL);
+	m_codeliteDownloadPageURL.Clear();
+}

@@ -23,7 +23,7 @@ MessagePaneBase::MessagePaneBase( wxWindow* parent, wxWindowID id, const wxPoint
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_bitmap1 = new wxStaticBitmap( m_panel2, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 32,32 ), 0 );
+	m_bitmap1 = new wxStaticBitmap( m_panel2, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 48,48 ), 0 );
 	bSizer4->Add( m_bitmap1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_panel1 = new wxPanel( m_panel2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL|wxWANTS_CHARS );
@@ -50,7 +50,7 @@ MessagePaneBase::MessagePaneBase( wxWindow* parent, wxWindowID id, const wxPoint
 	
 	bSizer3->Add( m_staticTextMessage, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	bSizer2->Add( bSizer3, 1, wxEXPAND, 5 );
+	bSizer2->Add( bSizer3, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	m_panel1->SetSizer( bSizer2 );
 	m_panel1->Layout();

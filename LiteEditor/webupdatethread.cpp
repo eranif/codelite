@@ -36,8 +36,9 @@ const wxEventType wxEVT_CMD_VERSION_UPTODATE = wxNewEventType();
 
 static const size_t DLBUFSIZE = 4096;
 
-WebUpdateJob::WebUpdateJob(wxEvtHandler *parent)
+WebUpdateJob::WebUpdateJob(wxEvtHandler *parent, bool userRequest)
 		: Job(parent)
+		, m_userRequest(userRequest)
 {
 }
 
@@ -70,6 +71,7 @@ void WebUpdateJob::Process(wxThread* thread)
 //	}
 //	curl_global_cleanup();
 
+//	wxURL url(wxT("http://codelite.org/packages_test.txt"));
 	wxURL url(wxT("http://codelite.org/packages.txt"));
 	if (url.GetError() == wxURL_NOERR) {
 		
@@ -158,12 +160,12 @@ void WebUpdateJob::ParseFile()
 				if ( webrev > currev ) {
 					// notify the user that a new version is available
 					wxCommandEvent e(wxEVT_CMD_NEW_VERSION_AVAILABLE);
-					e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), currev, webrev, false));
+					e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), currev, webrev, false, m_userRequest));
 					wxPostEvent(m_parent, e);
 				} else {
 					// version is up to date, notify the main thread about it
 					wxCommandEvent e(wxEVT_CMD_VERSION_UPTODATE);
-					e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), currev, webrev, true));
+					e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), currev, webrev, true, m_userRequest));
 					wxPostEvent(m_parent, e);
 				}
 				break;

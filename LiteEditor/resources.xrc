@@ -42,10 +42,6 @@
 	<object class="wxBitmap" name="output_win">res/commandprompt.png</object>
 	<object class="wxBitmap" name="debug_window">res/trace.png</object>
 	<object class="wxBitmap" name="sym_wiz_bmp">res/sym_wiz_bmp.png</object>
-	<object class="wxBitmap" name="message_pane_inf">res/message_pane_info.png</object>
-	<object class="wxBitmap" name="message_pane_restart">res/system_restart.png</object>
-	<object class="wxBitmap" name="message_pane_fix">res/preferences_other.png</object>
-	<object class="wxBitmap" name="message_pane_warning">res/warning.png</object>
 	<object class="wxBitmap" name="debugger_tab">res/debug_windows.png</object>
 	<object class="wxBitmap" name="help_icon">res/help.png</object>
 	<object class="wxBitmap" name="svn_info">res/help_about.png</object>
@@ -206,4 +202,12 @@
 	<object class="wxBitmap" name="overlay_ok">res/ok.png</object>
 	<object class="wxBitmap" name="overlay_modified">res/modified.png</object>
 	<object class="wxBitmap" name="overlay_conflict">res/conflict.png</object>
+	
+	<!-- Message Pane icons -->
+	<object class="wxBitmap" name="message_pane_inf">res/MessagePane/message_pane_info.png</object>
+	<object class="wxBitmap" name="message_pane_restart">res/MessagePane/system_restart.png</object>
+	<object class="wxBitmap" name="message_pane_fix">res/MessagePane/preferences_other.png</object>
+	<object class="wxBitmap" name="message_pane_warning">res/MessagePane/warning.png</object>
+	<object class="wxBitmap" name="message_pane_software_update">res/MessagePane/system_software_update.png</object>
+	
 </resource>

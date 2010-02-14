@@ -91,7 +91,7 @@ class Frame : public wxFrame
 	DockablePaneMenuManager *             m_DPmenuMgr;
 	OutputViewControlBar *                m_controlBar;
 	wxPanel*                              m_mainPanel;
-
+	wxString                              m_codeliteDownloadPageURL;
 public:
 	static Frame* Get();
 	static void Initialize(bool loadLastSession);
@@ -445,6 +445,7 @@ protected:
 	void OnConfigureAccelerators(wxCommandEvent &e);
 	void OnStartPageEvent(wxCommandEvent &e);
 	void OnNewVersionAvailable(wxCommandEvent &e);
+	void OnGotoCodeLiteDownloadPage(wxCommandEvent &e);
 	void OnBatchBuild(wxCommandEvent &e);
 	void OnBatchBuildUI(wxUpdateUIEvent &e);
 	void OnSyntaxHighlight(wxCommandEvent &e);

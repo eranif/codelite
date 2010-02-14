@@ -70,12 +70,12 @@
             <event name="OnUpdateUI"></event>
             <object class="wxBoxSizer" expanded="1">
                 <property name="minimum_size"></property>
-                <property name="name">bSizer6</property>
+                <property name="name">bSizer8</property>
                 <property name="orient">wxVERTICAL</property>
                 <property name="permission">none</property>
                 <object class="sizeritem" expanded="1">
-                    <property name="border">2</property>
-                    <property name="flag">wxEXPAND | wxALL</property>
+                    <property name="border">0</property>
+                    <property name="flag">wxEXPAND</property>
                     <property name="proportion">1</property>
                     <object class="wxPanel" expanded="1">
                         <property name="bg">wxSYS_COLOUR_INFOBK</property>
@@ -220,7 +220,7 @@
                                             <event name="OnChar"></event>
                                             <event name="OnEnterWindow"></event>
                                             <event name="OnEraseBackground"></event>
-                                            <event name="OnKeyDown">OnKeyDown</event>
+                                            <event name="OnKeyDown"></event>
                                             <event name="OnKeyUp"></event>
                                             <event name="OnKillFocus"></event>
                                             <event name="OnLeaveWindow"></event>

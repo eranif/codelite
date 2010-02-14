@@ -1,80 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite Revision="653" Version="2.0.4">
+<CodeLite Revision="653" Version="2.0.5">
   <ArchiveObject Name="m_tagsOptionsData">
     <long Value="728" Name="m_ccFlags"/>
-    <wxArrayString Name="m_prep">
-	  <wxString Value="EXPORT"/>
-      <wxString Value="WXDLLIMPEXP_CORE"/>
-      <wxString Value="WXDLLIMPEXP_BASE"/>
-      <wxString Value="WXDLLIMPEXP_XML"/>
-      <wxString Value="WXDLLIMPEXP_XRC"/>
-      <wxString Value="WXDLLIMPEXP_ADV"/>
-      <wxString Value="WXDLLIMPEXP_AUI"/>
-      <wxString Value="WXDLLIMPEXP_CL"/>
-      <wxString Value="WXDLLIMPEXP_LE_SDK"/>
-      <wxString Value="WXDLLIMPEXP_SQLITE3"/>
-      <wxString Value="WXMAKINGDLL"/>
-      <wxString Value="WXUSINGDLL"/>
-      <wxString Value="_CRTIMP"/>
-      <wxString Value="__CRT_INLINE"/>
-      <wxString Value="__cdecl"/>
-      <wxString Value="__stdcall"/>
-      <wxString Value="WXDLLEXPORT"/>
-      <wxString Value="WXDLLIMPORT"/>
-      <wxString Value="wxT"/>
-      <wxString Value="wxTopLevelWindowNative=wxTopLevelWindowMSW"/>
-      <wxString Value="wxWindow=wxWindowMSW"/>
-      <wxString Value="wxStatusBar=wxStatusBarBase"/>
-      <wxString Value="WXUNUSED"/>
-      <wxString Value="wxDEPRECATED"/>
-      <wxString Value="_T"/>
-      <wxString Value="ATTRIBUTE_PRINTF_1"/>
-      <wxString Value="ATTRIBUTE_PRINTF_2"/>
-      <wxString Value="WXDLLIMPEXP_FWD_BASE"/>
-      <wxString Value="WXDLLIMPEXP_FWD_CORE"/>
-      <wxString Value="extern"/>
-      <wxString Value="DLLIMPORT"/>
-      <wxString Value="DECLARE_INSTANCE_TYPE"/>
-      <wxString Value="emit"/>
-      <wxString Value="Q_OBJECT"/>
-      <wxString Value="Q_PACKED"/>
-      <wxString Value="Q_GADGET"/>
-      <wxString Value="QT_BEGIN_HEADER"/>
-      <wxString Value="QT_END_HEADER"/>
-      <wxString Value="Q_REQUIRED_RESULT"/>
-      <wxString Value="Q_INLINE_TEMPLATE"/>
-      <wxString Value="Q_OUTOFLINE_TEMPLATE"/>
-      <wxString Value="_GLIBCXX_BEGIN_NAMESPACE(std)=namespace std{"/>
-      <wxString Value="_GLIBCXX_BEGIN_NAMESPACE(__gnu_cxx)=namespace __gnu_cxx{"/>	  
-      <wxString Value="_GLIBCXX_END_NAMESPACE=}"/>
-      <wxString Value="_GLIBCXX_BEGIN_NESTED_NAMESPACE(std, _GLIBCXX_STD)=namespace std{"/>
-      <wxString Value="_GLIBCXX_BEGIN_NESTED_NAMESPACE(std, _GLIBCXX_STD_D)=namespace std{"/>
-      <wxString Value="_GLIBCXX_END_NESTED_NAMESPACE=}"/>
-      <wxString Value="_GLIBCXX_STD=std"/>
-      <wxString Value="__const=const"/>
-      <wxString Value="__restrict"/>
-      <wxString Value="__THROW"/>
-      <wxString Value="__wur"/>
-	  <wxString Value="_STD_BEGIN=namespace std{"/>
-      <wxString Value="_STD_END=}"/>
-      <wxString Value="__CLRCALL_OR_CDECL"/>
-      <wxString Value="_CRTIMP2_PURE"/>
-      <wxString Value="std::vector::reference=_Tp"/>
-      <wxString Value="std::vector::const_reference=_Tp"/>
-	  <wxString Value="std::vector::iterator=_Tp"/>
-      <wxString Value="std::vector::const_iterator=_Tp"/>
-      <wxString Value="std::queue::reference=_Tp"/>
-      <wxString Value="std::queue::const_reference=_Tp"/>
-      <wxString Value="std::set::const_iterator=_Key"/>
-      <wxString Value="std::set::iterator=_Key"/>
-      <wxString Value="std::deque::reference=_Tp"/>
-      <wxString Value="std::deque::const_reference=_Tp"/>
-      <wxString Value="std::map::iterator=pair&lt;typename _T1, typename _T2&gt;"/>
-      <wxString Value="std::map::const_iterator=pair&lt;typename _T1, typename _T2&gt;"/>
-      <wxString Value="std::multimap::iterator=pair&lt;typename _T1, typename _T2&gt;"/>
-      <wxString Value="std::multimap::const_iterator=pair&lt;typename _T1, typename _T2&gt;"/>
-    </wxArrayString>
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc;*.hh" Name="m_fileSpec"/>
+	<CData Name="m_tokens">
+      <![CDATA[EXPORT
+WXDLLIMPEXP_CORE
+WXDLLIMPEXP_BASE
+WXDLLIMPEXP_XML
+WXDLLIMPEXP_XRC
+WXDLLIMPEXP_ADV
+WXDLLIMPEXP_AUI
+WXDLLIMPEXP_CL
+WXDLLIMPEXP_LE_SDK
+WXDLLIMPEXP_SQLITE3
+WXMAKINGDLL
+WXUSINGDLL
+_CRTIMP
+__CRT_INLINE
+__cdecl
+__stdcall
+WXDLLEXPORT
+WXDLLIMPORT
+wxT
+wxTopLevelWindowNative=wxTopLevelWindowMSW
+wxWindowNative=wxWindowBase
+wxWindow=wxWindowMSW
+wxStatusBar=wxStatusBarBase
+BEGIN_DECLARE_EVENT_TYPES()=enum {
+END_DECLARE_EVENT_TYPES()=};
+DECLARE_EVENT_TYPE
+DECLARE_EXPORTED_EVENT_TYPE
+WXUNUSED+
+wxDEPRECATED
+_T
+ATTRIBUTE_PRINTF_1
+ATTRIBUTE_PRINTF_2
+WXDLLIMPEXP_FWD_BASE
+WXDLLIMPEXP_FWD_CORE
+DLLIMPORT
+DECLARE_INSTANCE_TYPE
+emit
+Q_OBJECT
+Q_PACKED
+Q_GADGET
+QT_BEGIN_HEADER
+QT_END_HEADER
+Q_REQUIRED_RESULT
+Q_INLINE_TEMPLATE
+Q_OUTOFLINE_TEMPLATE
+_GLIBCXX_BEGIN_NAMESPACE(std)=namespace std{
+_GLIBCXX_BEGIN_NAMESPACE(__gnu_cxx)=namespace __gnu_cxx{
+_GLIBCXX_END_NAMESPACE=}
+_GLIBCXX_BEGIN_NESTED_NAMESPACE(std, _GLIBCXX_STD)=namespace std{
+_GLIBCXX_BEGIN_NESTED_NAMESPACE(std, _GLIBCXX_STD_D)=namespace std{
+_GLIBCXX_END_NESTED_NAMESPACE=}
+_GLIBCXX_STD=std
+__const=const
+__restrict
+__THROW
+__wur
+_STD_BEGIN=namespace std{
+_STD_END=}
+__CLRCALL_OR_CDECL
+_CRTIMP2_PURE]]>
+    </CData>
+	<CData Name="m_types">
+      <![CDATA[std::vector::reference=_Tp
+std::vector::const_reference=_Tp
+std::vector::iterator=_Tp
+std::vector::const_iterator=_Tp
+std::queue::reference=_Tp
+std::queue::const_reference=_Tp
+std::set::const_iterator=_Key
+std::set::iterator=_Key
+std::deque::reference=_Tp
+std::deque::const_reference=_Tp
+std::map::iterator=pair<typename _T1, typename _T2>
+std::map::const_iterator=pair<typename _T1, typename _T2>
+std::multimap::iterator=pair<typename _T1, typename _T2>
+std::multimap::const_iterator=pair<typename _T1, typename _T2>]]>
+    </CData>
     <wxArrayString Name="m_languages">
       <wxString Value="C++"/>
     </wxArrayString>

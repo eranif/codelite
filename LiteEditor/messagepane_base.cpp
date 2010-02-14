@@ -11,8 +11,8 @@
 
 MessagePaneBase::MessagePaneBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
 {
-	wxBoxSizer* bSizer6;
-	bSizer6 = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer* bSizer8;
+	bSizer8 = new wxBoxSizer( wxVERTICAL );
 	
 	m_panel2 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_panel2->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
@@ -86,16 +86,15 @@ MessagePaneBase::MessagePaneBase( wxWindow* parent, wxWindowID id, const wxPoint
 	m_panel2->SetSizer( mainSizer );
 	m_panel2->Layout();
 	mainSizer->Fit( m_panel2 );
-	bSizer6->Add( m_panel2, 1, wxEXPAND | wxALL, 2 );
+	bSizer8->Add( m_panel2, 1, wxEXPAND, 0 );
 	
-	this->SetSizer( bSizer6 );
+	this->SetSizer( bSizer8 );
 	this->Layout();
-	bSizer6->Fit( this );
+	bSizer8->Fit( this );
 	
 	// Connect Events
 	this->Connect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler( MessagePaneBase::OnEraseBG ) );
 	this->Connect( wxEVT_PAINT, wxPaintEventHandler( MessagePaneBase::OnPaint ) );
-	m_panel1->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( MessagePaneBase::OnKeyDown ), NULL, this );
 	m_bpButtonClose->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnButtonClose ), NULL, this );
 	m_buttonAction->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnActionButton ), NULL, this );
 	m_buttonAction1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnActionButton1 ), NULL, this );
@@ -107,7 +106,6 @@ MessagePaneBase::~MessagePaneBase()
 	// Disconnect Events
 	this->Disconnect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler( MessagePaneBase::OnEraseBG ) );
 	this->Disconnect( wxEVT_PAINT, wxPaintEventHandler( MessagePaneBase::OnPaint ) );
-	m_panel1->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( MessagePaneBase::OnKeyDown ), NULL, this );
 	m_bpButtonClose->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnButtonClose ), NULL, this );
 	m_buttonAction->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnActionButton ), NULL, this );
 	m_buttonAction1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnActionButton1 ), NULL, this );

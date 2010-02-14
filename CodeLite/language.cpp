@@ -164,7 +164,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 	// clear previous searches scope's
 	m_templateHelper.Clear();
 
-	std::map<wxString, wxString> ignoreTokens = GetTagsManager()->GetCtagsOptions().GetPreprocessorAsWxMap();
+	std::map<wxString, wxString> typeMap = GetTagsManager()->GetCtagsOptions().GetTypesMap();
 	PERF_BLOCK("Language::ProcessExpression") {
 		ExpressionResult result;
 		wxString statement( stmt );
@@ -340,8 +340,8 @@ bool Language::ProcessExpression(const wxString& stmt,
 				
 				// HACK1: Let the user override the parser decisions
 				wxString path = PathFromNameAndScope(typeName, typeScope);
-				std::map<wxString, wxString>::iterator where = ignoreTokens.find(path);
-				if(where != ignoreTokens.end()) {
+				std::map<wxString, wxString>::iterator where = typeMap.find(path);
+				if(where != typeMap.end()) {
 					wxArrayString argList;
 					typeName            = where->second.BeforeFirst(wxT('<'));
 					wxString argsString = where->second.AfterFirst(wxT('<'));
@@ -763,7 +763,7 @@ wxString Language::GetScopeName(const wxString &in, std::vector<wxString> *addit
 	const wxCharBuffer buf = _C(in);
 
 	TagsManager *mgr = GetTagsManager();
-	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
+	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetTokensMap();
 
 	std::string scope_name = get_scope_name(buf.data(), moreNS, ignoreTokens);
 	wxString scope = _U(scope_name.c_str());
@@ -805,7 +805,7 @@ bool Language::TypeFromName(const wxString &             name,           // Inpu
 	std::vector<TagEntryPtr> tags;	
 	
 	TagsManager *mgr = GetTagsManager();
-	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
+	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetTokensMap();
 
 	if (!DoSearchByNameAndScope(name, scopeName, tags, type, typeScope)) {
 		if (firstToken) {
@@ -1058,7 +1058,7 @@ bool Language::VariableFromPattern(const wxString &in, const wxString &name, Var
 	li.clear();
 
 	TagsManager *mgr = GetTagsManager();
-	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
+	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetTokensMap();
 
 	get_variables(patbuf.data(), li, ignoreTokens, false);
 	VariableList::iterator iter = li.begin();
@@ -1095,7 +1095,7 @@ bool Language::FunctionFromPattern(TagEntryPtr tag, clFunction &foo)
 	pattern << wxT(';');
 
 	TagsManager *mgr = GetTagsManager();
-	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
+	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetTokensMap();
 
 	const wxCharBuffer patbuf = _C(pattern);
 	get_functions(patbuf.data(), fooList, ignoreTokens);
@@ -1177,7 +1177,7 @@ void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &t
 	li.clear();
 
 	TagsManager *mgr = GetTagsManager();
-	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
+	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetTokensMap();
 
 	// incase the 'in' string starts with '(' it is most likely that the input string is the
 	// function signature in that case we pass 'true' as the fourth parameter to get_variables(..)
@@ -1376,7 +1376,7 @@ void Language::DoFixFunctionUsingCtagsReturnValue(clFunction& foo, TagEntryPtr t
 		// Use the CTAGS return value
 		wxString ctagsRetValue = tag->GetReturnValue();
 		const wxCharBuffer cbuf = ctagsRetValue.mb_str(wxConvUTF8);
-		std::map<std::string, std::string> ignoreTokens = GetTagsManager()->GetCtagsOptions().GetPreprocessorAsMap();
+		std::map<std::string, std::string> ignoreTokens = GetTagsManager()->GetCtagsOptions().GetTokensMap();
 
 		VariableList li;
 		get_variables(cbuf.data(), li, ignoreTokens, false);

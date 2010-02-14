@@ -51,7 +51,6 @@ class MessagePaneBase : public wxPanel
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnEraseBG( wxEraseEvent& event ) { event.Skip(); }
 		virtual void OnPaint( wxPaintEvent& event ) { event.Skip(); }
-		virtual void OnKeyDown( wxKeyEvent& event ) { event.Skip(); }
 		virtual void OnButtonClose( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnActionButton( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnActionButton1( wxCommandEvent& event ) { event.Skip(); }

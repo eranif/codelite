@@ -1918,7 +1918,7 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 
 wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, std::vector<std::pair<int, int> > *paramLen)
 {
-	std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetPreprocessorAsMap();
+	std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetTokensMap();
 
 	VariableList li;
 	const wxCharBuffer patbuf = _C(sig);
@@ -2016,7 +2016,7 @@ void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<
 		protos[key] = tag;
 	}
 
-	std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetPreprocessorAsMap();
+	std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetTokensMap();
 
 	// remove functions with implementation
 	for ( size_t i=0; i < vimpl.size() ; i++ ) {
@@ -2100,7 +2100,7 @@ wxString TagsManager::DoReplaceMacros(wxString name)
 	// replace the provided typeName and scope with user defined macros as appeared in the PreprocessorMap
 	wxString _name(name);
 
-	std::map<wxString, wxString> iTokens = GetCtagsOptions().GetPreprocessorAsWxMap();
+	std::map<wxString, wxString> iTokens = GetCtagsOptions().GetTokensWxMap();
 	std::map<wxString, wxString>::iterator it = iTokens.end();
 
 	it = iTokens.find(name);

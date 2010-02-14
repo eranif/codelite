@@ -1,4 +1,5 @@
 #include "message_pane.h"
+#include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/dcbuffer.h>
 
@@ -58,16 +59,22 @@ void MessagePane::DoShowCurrentMessage()
 	if (msg.btn1.buttonLabel.IsEmpty() == false) {
 		m_buttonAction->SetLabel(msg.btn1.buttonLabel);
 		m_buttonAction->Show();
+		if(msg.btn1.isDefault)
+			m_buttonAction->SetDefault();
 	}
 	
 	if (msg.btn2.buttonLabel.IsEmpty() == false) {
 		m_buttonAction1->SetLabel(msg.btn2.buttonLabel);
 		m_buttonAction1->Show();
+		if(msg.btn2.isDefault)
+			m_buttonAction1->SetDefault();
 	}
 	
 	if (msg.btn3.buttonLabel.IsEmpty() == false) {
 		m_buttonAction2->SetLabel(msg.btn3.buttonLabel);
 		m_buttonAction2->Show();
+		if(msg.btn3.isDefault)
+			m_buttonAction2->SetDefault();
 	}
 		
 	m_staticTextMessage->SetLabel(txt);
@@ -151,17 +158,17 @@ void MessagePane::OnEraseBG(wxEraseEvent& event)
 void MessagePane::OnPaint(wxPaintEvent& event)
 {
 	wxBufferedPaintDC dc(this);
-	wxRect rr = GetClientRect();
-
-	dc.SetPen(  wxPen  (wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
-	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
-	dc.DrawRectangle(rr);
-
-	rr.Deflate(2);
-	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW)));
-	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK)));
-
-	dc.DrawRectangle(rr);
+//	wxRect rr = GetClientRect();
+//
+//	dc.SetPen(  wxPen  (wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
+//	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
+//	dc.DrawRectangle(rr);
+//
+//	rr.Deflate(1);
+//	dc.SetPen(wxPen( *wxRED_PEN ));
+//	dc.SetBrush( *wxTRANSPARENT_BRUSH );
+//
+//	dc.DrawRectangle(rr);
 }
 
 void MessagePane::OnActionButton1(wxCommandEvent& event)

@@ -41,7 +41,6 @@ enum CodeCompletionOpts {
 	CC_CPP_KEYWORD_ASISST         = 0x00000200,
 	CC_DISABLE_AUTO_PARSING       = 0x00000800,
 	CC_MARK_TAGS_FILES_IN_BOLD    = 0x00001000,
-//	CC_USE_FULL_RETAGGING         = 0x00002000,
 	CC_RETAG_WORKSPACE_ON_STARTUP = 0x00004000,
 	CC_ACCURATE_SCOPE_RESOLVING   = 0x00008000
 };
@@ -70,7 +69,8 @@ class TagsOptionsData : public SerializedObject
 {
 	size_t           m_ccFlags;
 	size_t           m_ccColourFlags;
-	wxArrayString    m_prep;
+	wxString         m_tokens;
+	wxString         m_types;
 	wxString         m_fileSpec;
 	wxArrayString    m_languages;
 	int              m_minWordLen;
@@ -89,8 +89,8 @@ public:
 	void SetFileSpec(const wxString &filespec) {
 		m_fileSpec = filespec;
 	}
-	void SetPreprocessor(const wxArrayString& prep) {
-		m_prep = prep;
+	void SetPreprocessor(const wxString& tokens) {
+		m_tokens = tokens;
 	}
 	void SetLanguages(const wxArrayString &langs) {
 		m_languages = langs;
@@ -100,11 +100,24 @@ public:
 	const wxArrayString &GetLanguages() const {
 		return m_languages;
 	}
-	const wxArrayString& GetPreprocessor() const {
-		return m_prep;
+
+	void SetTokens(const wxString& tokens) {
+		this->m_tokens = tokens;
 	}
-	std::map<std::string, std::string> GetPreprocessorAsMap() const;
-	std::map<wxString, wxString> GetPreprocessorAsWxMap() const;
+	void SetTypes(const wxString& types) {
+		this->m_types = types;
+	}
+	const wxString& GetTokens() const {
+		return m_tokens;
+	}
+	const wxString& GetTypes() const {
+		return m_types;
+	}
+	std::map<std::string, std::string> GetTokensMap() const;
+
+	std::map<wxString, wxString> GetTokensWxMap() const;
+
+	std::map<wxString, wxString> GetTypesMap() const;
 
 	const size_t& GetFlags() const {
 		return m_ccFlags;

@@ -26,8 +26,8 @@
 #include <wx/button.h>
 #include <wx/textctrl.h>
 #include <wx/combobox.h>
-#include <wx/notebook.h>
 #include <wx/statline.h>
+#include <wx/notebook.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -79,15 +79,19 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxButton* m_buttonRemoveExcludePath;
 		wxButton* m_buttonClearAllExcludPath;
 		wxPanel* m_ctagsPage;
-		wxStaticText* m_staticText1;
-		wxTextCtrl* m_textPrep;
-		wxButton* m_buttonAdd;
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_textFileSpec;
 		wxStaticText* m_staticText5;
 		wxComboBox* m_comboBoxLang;
 		wxCheckBox* m_checkFilesWithoutExt;
-		wxCheckBox* m_checkBoxAccurateScopeNameResolving;
+		wxStaticLine* m_staticline2;
+		wxNotebook* m_notebook2;
+		wxPanel* m_panel4;
+		wxStaticText* m_staticText9;
+		wxTextCtrl* m_textPrep;
+		wxPanel* m_panel5;
+		wxStaticText* m_staticText91;
+		wxTextCtrl* m_textTypes;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonOK;
 		wxButton* m_buttonCancel;
@@ -106,7 +110,6 @@ class TagsOptionsBaseDlg : public wxDialog
 		virtual void OnRemoveExcludePathUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnClearAllExcludePaths( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClearAllExcludePathsUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnButtonAdd( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
 		
 	

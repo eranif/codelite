@@ -1741,13 +1741,14 @@ void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event))
 		btn1.buttonLabel = wxT("Restart Now!");
 		btn1.commandId   = wxEVT_CMD_RESTART_CODELITE;
 		btn1.menuCommand = false;
+		btn1.isDefault   = true;
 		btn1.window      = ManagerST::Get();
 		
 		// set button window to NULL
 		btn2.buttonLabel = wxT("Not now");
 		btn2.window      = NULL;
 		
-		GetMainBook()->ShowMessage(_("Some of the changes made requires restart of CodeLite\nWould you like to restart now?"), wxXmlResource::Get()->LoadBitmap(wxT("message_pane_restart")), btn1, btn2);
+		GetMainBook()->ShowMessage(_("Some of the changes made requires a restart of CodeLite, Restart now?"), wxXmlResource::Get()->LoadBitmap(wxT("message_pane_restart")), btn1, btn2);
 #endif
 	}
 }

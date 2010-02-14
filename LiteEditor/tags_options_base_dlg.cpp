@@ -223,23 +223,6 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText1 = new wxStaticText( m_ctagsPage, wxID_ANY, wxT("Preprocessors:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1->Wrap( -1 );
-	fgSizer2->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	wxBoxSizer* bSizer5;
-	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_textPrep = new wxTextCtrl( m_ctagsPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_textPrep->SetMinSize( wxSize( 300,-1 ) );
-	
-	bSizer5->Add( m_textPrep, 1, wxEXPAND|wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
-	m_buttonAdd = new wxButton( m_ctagsPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer5->Add( m_buttonAdd, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
-	
-	fgSizer2->Add( bSizer5, 1, wxEXPAND|wxALL, 5 );
-	
 	m_staticText3 = new wxStaticText( m_ctagsPage, wxID_ANY, wxT("File Types:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer2->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -261,8 +244,59 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	m_checkFilesWithoutExt = new wxCheckBox( m_ctagsPage, wxID_ANY, wxT("Parse files without extension"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add( m_checkFilesWithoutExt, 0, wxALL|wxEXPAND, 5 );
 	
-	m_checkBoxAccurateScopeNameResolving = new wxCheckBox( m_ctagsPage, wxID_ANY, wxT("Use more accurate scope name resolving (you might notice a minor performance impact on large files)"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer6->Add( m_checkBoxAccurateScopeNameResolving, 0, wxALL|wxEXPAND, 5 );
+	m_staticline2 = new wxStaticLine( m_ctagsPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer6->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
+	
+	m_notebook2 = new wxNotebook( m_ctagsPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_panel4 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panel4->SetToolTip( wxT("Specifies a list of identifiers which are to be specially handled while parsing C and C++ source files.\nWhen the identifiers listed are simple identifiers, these identifiers will be ignored during parsing of the source files.\nIf two identifiers are separated with the ’=’ character, the first identifiers is replaced by the second identifier for parsing purposes") );
+	
+	wxBoxSizer* bSizer5;
+	bSizer5 = new wxBoxSizer( wxVERTICAL );
+	
+	wxStaticBoxSizer* sbSizer52;
+	sbSizer52 = new wxStaticBoxSizer( new wxStaticBox( m_panel4, wxID_ANY, wxEmptyString ), wxVERTICAL );
+	
+	m_staticText9 = new wxStaticText( m_panel4, wxID_ANY, wxT("Specify here a list of identifiers which are to be specially handled while parsing C and C++ source files.\nWhen the identifiers listed are simple identifiers, these identifiers will be ignored during parsing of the source files.\nIf two identifiers are separated with the ’=’ character, the first identifiers is replaced by the second identifier for parsing purposes"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText9->Wrap( -1 );
+	sbSizer52->Add( m_staticText9, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer5->Add( sbSizer52, 0, wxEXPAND|wxALL, 5 );
+	
+	m_textPrep = new wxTextCtrl( m_panel4, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2 );
+	m_textPrep->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	m_textPrep->SetMinSize( wxSize( 300,-1 ) );
+	
+	bSizer5->Add( m_textPrep, 1, wxEXPAND, 5 );
+	
+	m_panel4->SetSizer( bSizer5 );
+	m_panel4->Layout();
+	bSizer5->Fit( m_panel4 );
+	m_notebook2->AddPage( m_panel4, wxT("Tokens"), true );
+	m_panel5 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer13;
+	bSizer13 = new wxBoxSizer( wxVERTICAL );
+	
+	wxStaticBoxSizer* sbSizer521;
+	sbSizer521 = new wxStaticBoxSizer( new wxStaticBox( m_panel5, wxID_ANY, wxEmptyString ), wxVERTICAL );
+	
+	m_staticText91 = new wxStaticText( m_panel5, wxID_ANY, wxT("Specify here a list of types which are to be specially handled while parsing C and C++ source files in the format of TYPE1=TYPE2.\nSo when TYPE1 is found, CodeLite will offer completion as if it was TYPE2 was found"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText91->Wrap( -1 );
+	sbSizer521->Add( m_staticText91, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer13->Add( sbSizer521, 0, wxEXPAND|wxALL, 5 );
+	
+	m_textTypes = new wxTextCtrl( m_panel5, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2 );
+	m_textTypes->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
+	bSizer13->Add( m_textTypes, 1, wxEXPAND, 5 );
+	
+	m_panel5->SetSizer( bSizer13 );
+	m_panel5->Layout();
+	bSizer13->Fit( m_panel5 );
+	m_notebook2->AddPage( m_panel5, wxT("Types"), false );
+	
+	bSizer6->Add( m_notebook2, 1, wxEXPAND | wxALL, 5 );
 	
 	m_ctagsPage->SetSizer( bSizer6 );
 	m_ctagsPage->Layout();
@@ -317,7 +351,6 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	m_buttonRemoveExcludePath->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnRemoveExcludePathUI ), NULL, this );
 	m_buttonClearAllExcludPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnClearAllExcludePaths ), NULL, this );
 	m_buttonClearAllExcludPath->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnClearAllExcludePathsUI ), NULL, this );
-	m_buttonAdd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonAdd ), NULL, this );
 	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonOK ), NULL, this );
 }
 
@@ -348,6 +381,5 @@ TagsOptionsBaseDlg::~TagsOptionsBaseDlg()
 	m_buttonRemoveExcludePath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnRemoveExcludePathUI ), NULL, this );
 	m_buttonClearAllExcludPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnClearAllExcludePaths ), NULL, this );
 	m_buttonClearAllExcludPath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnClearAllExcludePathsUI ), NULL, this );
-	m_buttonAdd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonAdd ), NULL, this );
 	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonOK ), NULL, this );
 }

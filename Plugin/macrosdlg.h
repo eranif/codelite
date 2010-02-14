@@ -42,7 +42,8 @@ class MacrosDlg : public MacrosBaseDlg
 public:	
 	enum {
 		MacrosProject,
-		MacrosCompiler
+		MacrosCompiler,
+		MacrosExternalTools
 	};
 	
 protected:

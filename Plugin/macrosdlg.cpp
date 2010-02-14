@@ -60,6 +60,10 @@ void MacrosDlg::Initialize()
 	m_listCtrlMacros->InsertColumn(1, wxT("Description"));
 
 	switch ( m_content ) {
+	case MacrosExternalTools:
+		AddMacro(wxT("$(CurrentSelection)"),      wxT("Expands to the selected text in the active editor"));
+		AddMacro(wxT("$(ProjectOutputFile)"),     wxT("Expands to the project binary output file"));
+		// fall ...
 	case MacrosProject:
 		AddMacro(wxT("$(ProjectPath)"),           wxT("Expands to project's path"));
 		AddMacro(wxT("$(WorkspacePath)"),         wxT("Expands to workspace's path"));

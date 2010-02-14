@@ -37,6 +37,7 @@ public:
 	 * $(Date)
 	 * $(CodeLitePath)
 	 * $(CurrentSelection)
+	 * $(ProjectOutputFile)
 	 */
 	wxString Expand(const wxString &expression, IManager *manager, const wxString &project, const wxString &confToBuild = wxEmptyString);
 };

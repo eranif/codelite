@@ -72,7 +72,7 @@ void NewToolDlg::OnButtonBrowseWD( wxCommandEvent& event )
 void NewToolDlg::OnButtonHelp( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	MacrosDlg dlg(this, MacrosDlg::MacrosProject);
+	MacrosDlg dlg(this, MacrosDlg::MacrosExternalTools);
 	dlg.ShowModal();
 }
 

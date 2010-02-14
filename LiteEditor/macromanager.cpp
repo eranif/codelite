@@ -50,15 +50,19 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
 			expandedString.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			expandedString.Replace(wxT("$(ProjectName)"), project_name);
 			if (bldConf) {
+				expandedString.Replace(wxT("$(ProjectOutputFile)"), bldConf->GetOutputFileName());
 				expandedString.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
 				expandedString.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
 				expandedString.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
 			}
+			
 			if(expandedString.Find(wxT("$(ProjectFiles)")) != wxNOT_FOUND)
 				expandedString.Replace(wxT("$(ProjectFiles)"),   proj->GetFiles());
 			
 			if(expandedString.Find(wxT("$(ProjectFilesAbs)")) != wxNOT_FOUND)
 				expandedString.Replace(wxT("$(ProjectFilesAbs)"),proj->GetFiles(true));
+			
+			
 		}
 	}
 	

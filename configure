@@ -104,7 +104,7 @@ createMainTargets()
 
 	## if we are on Linux, print the post message
 	if [ "$os_name" = "Linux" ]; then
-		target_all="$target_all post_build_msg"
+		target_all="$target_all"
 	fi
 
 	if [ "$os_name" = "Darwin" ]; then
@@ -624,16 +624,6 @@ createUnInstallTarget()
 	echo "" >> Makefile
 }
 
-createEndMessage()
-{
-	if [ "$os_name" = "Linux" ]; then
-		echo "post_build_msg: \$(LiteEditor)" >> Makefile
-		echo "	@echo ==========================================================" >> Makefile
-		echo "	@echo Done, please run \"sudo make install\"." >> Makefile
-		echo "	@echo ==========================================================" >> Makefile
-	fi
-}
-
 Show_Help_and_Exit()
 {
 	echo "This is the CodeLite configure script"
@@ -742,8 +732,6 @@ createUnInstallTarget
 
 echo "-include \$(OBJ_DIR)/*.d" >> Makefile
 echo "" >> Makefile
-
-createEndMessage
 
 echo "Plugins: SDK \\" >> Makefile
 

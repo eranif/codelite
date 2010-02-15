@@ -22,21 +22,14 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef XMLUTILS_H
+#ifndef XMLUTILS_H
 #define XMLUTILS_H
 
 #include "wx/xml/xml.h"
-
-#ifdef WXMAKINGDLL_LE_SDK
-#    define WXDLLIMPEXP_LE_SDK WXEXPORT
-#elif defined(WXUSINGDLL_LE_SDK)
-#    define WXDLLIMPEXP_LE_SDK WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_LE_SDK
-#endif // WXMAKINGDLL_LE_SDK
+#include "serialized_object.h"
 
 /// A collection of XML utils
-class WXDLLIMPEXP_LE_SDK XmlUtils {
+class XmlUtils {
 public:
 	/// Find a child node by name by iterating the parent children. NULL if no childs exist
 	/// \param parent  the parent node whom to be searched
@@ -134,7 +127,23 @@ public:
 	 * \param node xml node
 	 */
 	static void RemoveChildren(wxXmlNode *node);
-
+	
+	/**
+	 * @brief read serialized object with version support
+	 * @param root
+	 * @param name
+	 * @param obj
+	 * @return 
+	 */
+	static bool StaticReadObject (wxXmlNode *root, const wxString &name, SerializedObject *obj);
+	/**
+	 * @brief write serialized object with version support
+	 * @param root
+	 * @param name
+	 * @param obj
+	 * @return 
+	 */
+	static bool StaticWriteObject(wxXmlNode *root, const wxString &name, SerializedObject *obj);
 };
 
 #endif // XMLUTILS_H

@@ -224,3 +224,55 @@ void XmlUtils::SetCDATANodeContent(wxXmlNode* node, const wxString& text)
 		node->AddChild( contentNode );
 	}
 }
+
+bool XmlUtils::StaticReadObject(wxXmlNode* root, const wxString& name, SerializedObject* obj)
+{
+	//find the object node in the xml file
+	
+	wxXmlNode *node = XmlUtils::FindNodeByName(root, wxT("ArchiveObject"), name);
+	if (node) {
+		
+		// Check to see if we need a version check
+		wxString objectVersion = obj->GetVersion();
+		if(objectVersion.IsEmpty() == false) {
+			if(node->GetPropVal(wxT("Version"), wxT("")) != objectVersion) {
+				return false;
+			}
+		}
+		
+		Archive arch;
+		arch.SetXmlNode(node);
+		obj->DeSerialize(arch);
+		return true;
+	}
+	return false;
+}
+
+bool XmlUtils::StaticWriteObject(wxXmlNode* root, const wxString& name, SerializedObject* obj)
+{
+	if(!root)
+		return false;
+
+	Archive arch;
+	wxXmlNode *child = XmlUtils::FindNodeByName(root, wxT("ArchiveObject"), name);
+	if (child) {
+		wxXmlNode *n = root;
+		n->RemoveChild(child);
+		delete child;
+	}
+
+	//create new xml node for this object
+	child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("ArchiveObject"));
+	root->AddChild(child);
+	
+	wxString objectVersion = obj->GetVersion();
+	if(objectVersion.IsEmpty() == false)
+		child->AddProperty(wxT("Version"), objectVersion);
+		
+	child->AddProperty(wxT("Name"), name);
+
+	arch.SetXmlNode(child);
+	//serialize the object into the archive
+	obj->Serialize(arch);
+	return true;
+}

@@ -422,7 +422,9 @@ protected:
 	void OnCleanWorkspaceUI(wxUpdateUIEvent &e);
 	void OnReBuildWorkspace(wxCommandEvent &e);
 	void OnReBuildWorkspaceUI(wxUpdateUIEvent &e);
-
+	void OnUpdateParserPath(wxCommandEvent &e);
+	void OnNeverUpdateParserPath(wxCommandEvent &e);
+	
 	//EOL
 	void OnConvertEol(wxCommandEvent &e);
 	void OnViewDisplayEOL(wxCommandEvent &e);

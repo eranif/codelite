@@ -483,6 +483,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU   (XRCID("update_num_builders_count"),                Frame::OnUpdateNumberOfBuildProcesses)
 	EVT_MENU   (XRCID("goto_codelite_download_url"),               Frame::OnGotoCodeLiteDownloadPage)
 	
+	EVT_MENU   (XRCID("never_update_parser_paths"),                Frame::OnNeverUpdateParserPath)
+	EVT_MENU   (XRCID("update_parser_paths"),                      Frame::OnUpdateParserPath)
+	
 	EVT_SYMBOLTREE_ADD_ITEM(wxID_ANY,    Frame::OnAddSymbols)
 	EVT_SYMBOLTREE_DELETE_ITEM(wxID_ANY, Frame::OnDeleteSymbols)
 	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
@@ -1749,7 +1752,7 @@ void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event))
 		btn2.buttonLabel = wxT("Not now");
 		btn2.window      = NULL;
 		
-		GetMainBook()->ShowMessage(_("Some of the changes made requires a restart of CodeLite, Restart now?"), wxXmlResource::Get()->LoadBitmap(wxT("message_pane_restart")), btn1, btn2);
+		GetMainBook()->ShowMessage(_("Some of the changes made requires a restart of CodeLite, Restart now?"), false, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_restart")), btn1, btn2);
 #endif
 	}
 }
@@ -2013,8 +2016,10 @@ void Frame::OnTimer(wxTimerEvent &event)
 	// it must be called *after* the frame constuction
 	// add new version notification updater
 	long check(1);
-	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
-
+	long updatePaths(1);
+	
+	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"),   check);
+	EditorConfigST::Get()->GetLongValue(wxT("UpdateParserPaths"), updatePaths);
 	if ( check ) {
 		JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this, false));
 	}
@@ -2035,7 +2040,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 				btn1.commandId   = XRCID("update_num_builders_count");
 				btn1.window      = this;
 				
-				GetMainBook()->ShowMessage(wxT("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), wxXmlResource::Get()->LoadBitmap(wxT("message_pane_fix")), btn1);
+				GetMainBook()->ShowMessage(wxT("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), true, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_fix")), btn1);
 			}
 		}
 
@@ -2051,21 +2056,36 @@ void Frame::OnTimer(wxTimerEvent &event)
 			wxArrayString excudePaths;
 			IncludePathLocator locator(PluginManager::Get());
 			locator.Locate( paths, excudePaths );
-			if ( paths.IsEmpty() ) {
+			
+			if ( paths.IsEmpty() && updatePaths) {
 				GetMainBook()->ShowMessage(
-								wxT("CodeLite has detected that there are no search paths set for the parser\n")
-								wxT("This means that CodeLite will *NOT* be able to offer any code completion\n")
-								wxT("for non-workspace files (e.g. string.h).\n")
+								wxT("CodeLite could not find any search paths set for the code completion parser\n")
+								wxT("This means that CodeLite will *NOT* be able to offer any code completion for non-workspace files (e.g. string.h).\n")
 								wxT("To fix this, please set search paths for the parser\n")
 								wxT("This can be done from the main menu: Settings > Tags Settings > Include Files"));
 
 			} else {
-				m_tagsOptionsData.SetParserSearchPaths ( paths       );
-				m_tagsOptionsData.SetParserExcludePaths( excudePaths );
-				
-				// Update the parser thread
-				ParseThreadST::Get()->SetSearchPaths( paths, excudePaths );
-				EditorConfigST::Get()->WriteObject( wxT("m_tagsOptionsData"), &m_tagsOptionsData );
+				if(updatePaths) {
+					ButtonDetails btnYes, btnNo, btnNoNever;
+					
+					btnYes.buttonLabel = wxT("Update paths");
+					btnYes.commandId   = XRCID("update_parser_paths");
+					btnYes.isDefault   = true;
+					btnYes.window      = this;
+					
+					btnNo.buttonLabel = wxT("Not now");
+					btnNo.isDefault   = false;
+					btnNo.window      = NULL;
+					
+					btnNoNever.buttonLabel = wxT("No. And dont ask me again!");
+					btnNoNever.isDefault   = false;
+					btnNoNever.window      = this;
+					btnNoNever.commandId   = XRCID("never_update_parser_paths");
+					
+					GetMainBook()->ShowMessage(
+									wxT("Should CodeLite update your code completion parser search paths ? (since there are none..)"),
+									false, wxNullBitmap, btnYes, btnNo, btnNoNever);
+				}
 			}
 		}
 
@@ -2889,7 +2909,7 @@ void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 			btn.isDefault   = true;
 			btn.window      = this;
 			
-			GetMainBook()->ShowMessage(wxT("A new version of CodeLite is available. Download it?"), wxXmlResource::Get()->LoadBitmap(wxT("message_pane_software_update")), btn);
+			GetMainBook()->ShowMessage(wxT("A new version of CodeLite is available. Download it?"), true, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_software_update")), btn);
 		
 		} else {
 			if(!data->GetShowMessage()) {
@@ -3493,7 +3513,7 @@ void Frame::OnDatabaseUpgrade(wxCommandEvent& e)
 	btn.commandId   = XRCID("full_retag_workspace");
 	btn.window      = this;
 	
-	GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. This can be fixed by re-tagging your workspace\nWould you like to re-tag your workspace now?"), wxNullBitmap, btn);
+	GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. This can be fixed by re-tagging your workspace\nWould you like to re-tag your workspace now?"), true, wxNullBitmap, btn);
 }
 
 void Frame::UpdateTagsOptions(const TagsOptionsData& tod)
@@ -3616,4 +3636,26 @@ void Frame::OnGotoCodeLiteDownloadPage(wxCommandEvent& e)
 	wxUnusedVar(e);
 	wxLaunchDefaultBrowser(m_codeliteDownloadPageURL);
 	m_codeliteDownloadPageURL.Clear();
+}
+
+void Frame::OnUpdateParserPath(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	wxArrayString paths;
+	wxArrayString excudePaths;
+	IncludePathLocator locator(PluginManager::Get());
+	locator.Locate( paths, excudePaths );
+	
+	m_tagsOptionsData.SetParserSearchPaths ( paths       );
+	m_tagsOptionsData.SetParserExcludePaths( excudePaths );
+	
+	// Update the parser thread
+	ParseThreadST::Get()->SetSearchPaths( paths, excudePaths );
+	EditorConfigST::Get()->WriteObject( wxT("m_tagsOptionsData"), &m_tagsOptionsData );
+}
+
+void Frame::OnNeverUpdateParserPath(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	EditorConfigST::Get()->SaveLongValue(wxT("UpdateParserPaths"), 0);
 }

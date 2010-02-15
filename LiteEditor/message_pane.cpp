@@ -49,6 +49,12 @@ void MessagePane::DoShowCurrentMessage()
 	m_buttonAction1->Hide();
 	m_buttonAction2->Hide();
 	
+	if(msg.showHideButton) {
+		m_buttonClose->Show();
+	} else {
+		m_buttonClose->Hide();
+	}
+	
 	if(msg.bmp.IsOk() == false)
 		m_bitmap1->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("message_pane_inf")));
 	else
@@ -85,14 +91,15 @@ void MessagePane::DoShowCurrentMessage()
 	Refresh();
 }
 
-void MessagePane::ShowMessage(const wxString &message, const wxBitmap &bmp, const ButtonDetails& btn1, const ButtonDetails& btn2, const ButtonDetails& btn3)
+void MessagePane::ShowMessage(const wxString &message, bool showHideButton, const wxBitmap &bmp, const ButtonDetails& btn1, const ButtonDetails& btn2, const ButtonDetails& btn3)
 {
 	MessageDetails msg;
-	msg.message     = message;
-	msg.btn1        = btn1;
-	msg.btn2        = btn2;
-	msg.btn3        = btn3;
-	msg.bmp         = bmp;
+	msg.message        = message;
+	msg.btn1           = btn1;
+	msg.btn2           = btn2;
+	msg.btn3           = btn3;
+	msg.bmp            = bmp;
+	msg.showHideButton = showHideButton;
 	m_messages.PushMessage(msg);
 	DoShowCurrentMessage();
 }

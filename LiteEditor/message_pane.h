@@ -33,9 +33,10 @@ public:
 	ButtonDetails btn1;
 	ButtonDetails btn2;
 	ButtonDetails btn3;
+	bool          showHideButton;
 	
 public:
-	MessageDetails() : bmp(wxNullBitmap)
+	MessageDetails() : bmp(wxNullBitmap), showHideButton(true)
 	{}
 	
 	~MessageDetails()
@@ -83,7 +84,7 @@ public:
 	/** Constructor */
 	MessagePane( wxWindow* parent );
 
-	void ShowMessage(const wxString &message, const wxBitmap &bmp = wxNullBitmap, const ButtonDetails& btn1 = ButtonDetails(), const ButtonDetails& btn2 = ButtonDetails(), const ButtonDetails& btn3 = ButtonDetails());
+	void ShowMessage(const wxString &message, bool showHideButton = true, const wxBitmap &bmp = wxNullBitmap, const ButtonDetails& btn1 = ButtonDetails(), const ButtonDetails& btn2 = ButtonDetails(), const ButtonDetails& btn3 = ButtonDetails());
 };
 
 #endif // __message_pane__

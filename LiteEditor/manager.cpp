@@ -260,7 +260,7 @@ void Manager::OpenWorkspace ( const wxString &path )
 	// OpenWorkspace returned true, but errMsg is not empty
 	// this could only mean that we removed a fauly project
 	if(errMsg.IsEmpty() == false) {
-		Frame::Get()->GetMainBook()->ShowMessage(errMsg, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_warning")));
+		Frame::Get()->GetMainBook()->ShowMessage(errMsg, true, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_warning")));
 	}
 	
 	DoSetupWorkspace ( path );

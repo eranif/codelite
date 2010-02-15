@@ -46,11 +46,15 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
 			project_name.Replace(wxT(" "), wxT("_"));
 
 			BuildConfigPtr bldConf = workspace->GetProjBuildConf(proj->GetName(), confToBuild);
+			if (bldConf) {
+				expandedString.Replace(wxT("$(ProjectOutputFile)"), bldConf->GetOutputFileName());
+			}
+			
 			expandedString.Replace(wxT("$(ProjectPath)"), proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			expandedString.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			expandedString.Replace(wxT("$(ProjectName)"), project_name);
+			
 			if (bldConf) {
-				expandedString.Replace(wxT("$(ProjectOutputFile)"), bldConf->GetOutputFileName());
 				expandedString.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
 				expandedString.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
 				expandedString.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());

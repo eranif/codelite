@@ -140,7 +140,6 @@ cp -pr Runtime/config/codelite.xml.default.gtk fakeroot/${PREFIX}/share/codelite
 cp -pr Runtime/rc/menu.xrc fakeroot/${PREFIX}/share/codelite/rc/
 cp -pfr Runtime/templates/* fakeroot/${PREFIX}/share/codelite/templates/
 cp -pfr Runtime/lexers/* fakeroot/${PREFIX}/share/codelite/lexers/
-#cp -pr static-symbols.tags fakeroot/${PREFIX}/share/codelite/
 cp -pr lib/Debugger.so fakeroot/${PREFIX}/lib/codelite/debuggers/
 cp -pr lib/CodeFormatter.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/Copyright.so fakeroot/${PREFIX}/lib/codelite/
@@ -150,7 +149,7 @@ cp -pr lib/cscope.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/UnitTestCPP.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/ExternalTools.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/ContinuousBuild.so fakeroot/${PREFIX}/lib/codelite/
-#cp -pr lib/SymbolView.so fakeroot/${PREFIX}/lib/codelite/
+cp -pr lib/SymbolView.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/SnipWiz.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/wxformbuilder.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/abbreviation.so fakeroot/${PREFIX}/lib/codelite/
@@ -160,7 +159,7 @@ cp -pr lib/libwxscintillau.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/libpluginu.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/libcodeliteu.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/libwxsqlite3u.so fakeroot/${PREFIX}/lib/codelite/
-#cp -pr lib/libwxpropgridu.so fakeroot/${PREFIX}/lib/codelite/
+cp -pr lib/libwxpropgridu.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr Runtime/plugins/resources/*.* fakeroot/${PREFIX}/lib/codelite/resources/
 cp -pr Runtime/*.html fakeroot/${PREFIX}/share/codelite/
 cp -pr Runtime/astyle.sample fakeroot/${PREFIX}/share/codelite/

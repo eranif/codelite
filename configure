@@ -735,7 +735,7 @@ createUnInstallTarget
 echo "-include \$(OBJ_DIR)/*.d" >> Makefile
 echo "" >> Makefile
 
-echo "Plugins: SDK \\" >> Makefile
+echo "Plugins: PropGrid SDK \\" >> Makefile
 
 ########################################################
 ##

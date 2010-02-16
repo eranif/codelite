@@ -36,7 +36,7 @@
   <Project Name="Subversion2" Path="Subversion2/Subversion2.project" Active="No"/>
   <Project Name="SymbolView" Path="SymbolView/SymbolView.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxpropgrid" ConfigName="WinReleaseUnicode"/>
@@ -86,7 +86,7 @@
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="no">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
       <Project Name="wxpropgrid" ConfigName="ReleaseUnicode"/>
@@ -111,7 +111,7 @@
       <Project Name="abbreviation" ConfigName="ReleaseUnicode"/>
       <Project Name="SymbolView" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="WinReleaseUnicode_NoPlugins" Selected="yes">
+    <WorkspaceConfiguration Name="WinReleaseUnicode_NoPlugins" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxpropgrid" ConfigName="WinReleaseUnicode"/>
@@ -161,7 +161,7 @@
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="SymbolView" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="yes">
+    <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="no">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
       <Project Name="wxpropgrid" ConfigName="DebugUnicode"/>

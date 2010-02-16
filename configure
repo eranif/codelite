@@ -23,7 +23,8 @@ createVariables()
 	exe_name1="codelite"
 	is_so_lib=$1
 	additional_include_path=$2
-
+	additional_links=$3
+	
 	if [ "$os_name" = "Darwin" ]; then
 		if [ "$is_64bit" = "yes" ]; then
 			compiler_name=${compiler_name}" -m64 "
@@ -75,9 +76,8 @@ createVariables()
 	echo "DESTDIR=" >> Makefile
 	echo "" >> Makefile
 	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DINSTALL_DIR=\\\"${prefix}/share/codelite\\\" -DPLUGINS_DIR=\\\"${plugins_dir}\\\"" >> Makefile
-	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
-	echo "	-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
-	echo "PLUGIN_LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) \$(shell wx-config --libs \$(WXCFG))" >> Makefile
+	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) -lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
+	echo "PLUGIN_LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) \$(shell wx-config --libs \$(WXCFG)) ${additional_links} " >> Makefile
 	echo "INCLUDES := \$(INCLUDES) ${additional_include_path} " >> Makefile
 	echo "" >> Makefile
 	if [ "$os_name" != "Darwin" ] ; then
@@ -100,7 +100,7 @@ createMainTargets()
 	echo "## build targets" >> Makefile
 
 	## default
-	target_all="all :  pre_build SQLite Scintilla CodeLite SDK codelite_indexer codelite_cppcheck Plugins LiteEditor "
+	target_all="all :  pre_build SQLite Scintilla PropGrid CodeLite SDK codelite_indexer codelite_cppcheck Plugins LiteEditor "
 
 	## if we are on Linux, print the post message
 	if [ "$os_name" = "Linux" ]; then
@@ -465,6 +465,8 @@ createPluginMakefile()
 
 	if [ "$plugin_name" = "CppCheck" ] ; then
 	  createVariables "yes" "-I../sdk/codelite_cppcheck/"
+	elif [ "$plugin_name" = "SymbolView" ] ; then
+	  createVariables "yes" "" "-lwxpropgrid\$(EXT)"
 	else
 	  createVariables "yes"
 	fi

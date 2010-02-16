@@ -496,6 +496,37 @@ public:
 	virtual void GetAllTagsNames(wxArrayString& names);
 
 	virtual void GetTagsNames(const wxArrayString& kind, wxArrayString& names);
+	/**
+	 * @brief
+	 * @param files
+	 * @param tags
+	 */
+	virtual void GetTagsByFiles(const wxArrayString &files, std::vector<TagEntryPtr>& tags);
+	/**
+	 * @brief
+	 * @param files
+	 * @param scope
+	 * @param tags
+	 */
+	virtual void GetTagsByFilesAndScope(const wxArrayString &files, const wxString &scope, std::vector<TagEntryPtr>& tags);
+	/**
+	 * @brief
+	 * @param files
+	 * @param kinds
+	 * @param scope
+	 * @param tags
+	 */
+	virtual void GetTagsByFilesKindAndScope(const wxArrayString &files, const wxArrayString &kinds, const wxString &scope, std::vector<TagEntryPtr>& tags);
+	/**
+	 * @brief
+	 * @param files
+	 * @param kinds
+	 * @param scope
+	 * @param typeref
+	 * @param tags
+	 */
+	virtual void GetTagsByFilesScopeTyperefAndKind(const wxArrayString &files, const wxArrayString &kinds, const wxString &scope, const wxString &typeref, std::vector<TagEntryPtr>& tags);
+
 };
 
 #endif // CODELITE_TAGS_DATABASE_H

@@ -369,6 +369,37 @@ public:
 	 * @param tags [output]
 	 */
 	virtual void GetTagsByScopesAndKind(const wxArrayString& scopes, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags) = 0;
+	
+	/**
+	 * @brief return tags by files / scope
+	 * @param files
+	 * @param scope
+	 * @param tags
+	 */
+	virtual void GetTagsByFilesAndScope(const wxArrayString &files, const wxString &scope, std::vector<TagEntryPtr>& tags) = 0;
+	/**
+	 * @brief return tags by files / kinds / scope (the relation between the three is AND)
+	 * @param files
+	 * @param kinds
+	 * @param scope
+	 * @param tags
+	 */
+	virtual void GetTagsByFilesKindAndScope(const wxArrayString &files, const wxArrayString &kinds, const wxString &scope, std::vector<TagEntryPtr>& tags) = 0;
+	/**
+	 * @brief 
+	 * @param files
+	 * @param kinds
+	 * @param scope
+	 * @param typeref
+	 * @param tags
+	 */
+	virtual void GetTagsByFilesScopeTyperefAndKind(const wxArrayString &files, const wxArrayString &kinds, const wxString &scope, const wxString &typeref, std::vector<TagEntryPtr>& tags) = 0;
+	/**
+	 * @brief return tags by files
+	 * @param files
+	 * @param tags
+	 */
+	virtual void GetTagsByFiles(const wxArrayString &files, std::vector<TagEntryPtr>& tags) = 0;
 };
 
 enum {

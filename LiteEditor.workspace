@@ -34,6 +34,7 @@
   <Project Name="CppChecker" Path="cppchecker/CppChecker.project" Active="No"/>
   <Options/>
   <Project Name="Subversion2" Path="Subversion2/Subversion2.project" Active="No"/>
+  <Project Name="SymbolView" Path="SymbolView/SymbolView.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
@@ -41,6 +42,7 @@
       <Project Name="wxpropgrid" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
+      <Project Name="SymbolView" ConfigName="WinReleaseUnicode"/>
       <Project Name="Subversion2" ConfigName="WinReleaseUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="WinReleaseUnicode"/>
@@ -65,6 +67,7 @@
       <Project Name="wxpropgrid" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
+      <Project Name="SymbolView" ConfigName="WinDebugUnicode"/>
       <Project Name="Subversion2" ConfigName="WinDebugUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="WinDebugUnicode"/>
@@ -83,7 +86,7 @@
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="no">
+    <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
       <Project Name="wxpropgrid" ConfigName="ReleaseUnicode"/>
@@ -106,8 +109,9 @@
       <Project Name="CodeLite" ConfigName="ReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="ReleaseUnicode"/>
       <Project Name="abbreviation" ConfigName="ReleaseUnicode"/>
+      <Project Name="SymbolView" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="WinReleaseUnicode_NoPlugins" Selected="no">
+    <WorkspaceConfiguration Name="WinReleaseUnicode_NoPlugins" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxpropgrid" ConfigName="WinReleaseUnicode"/>
@@ -130,8 +134,9 @@
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
       <Project Name="CppChecker" ConfigName="DebugUnicode"/>
       <Project Name="Subversion2" ConfigName="DebugUnicode"/>
+      <Project Name="SymbolView" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="no">
+    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxpropgrid" ConfigName="WinDebugUnicode"/>
@@ -154,8 +159,9 @@
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
+      <Project Name="SymbolView" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="no">
+    <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
       <Project Name="wxpropgrid" ConfigName="DebugUnicode"/>
@@ -178,6 +184,7 @@
       <Project Name="CodeLite" ConfigName="DebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
       <Project Name="abbreviation" ConfigName="DebugUnicode"/>
+      <Project Name="SymbolView" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

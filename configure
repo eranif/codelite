@@ -709,7 +709,7 @@ createObjectList "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.
 createObjectList "sdk/codelite_indexer/network/*.cpp CodeLite/*.cpp" "CodeLiteObjects"
 createObjectList "LiteEditor/*.cpp" "LiteEditorObjects"
 createObjectList "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects"
-#createObjectList "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects"
+createObjectList "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects"
 createObjectList "Plugin/*.cpp Plugin/*.c" "SDKObjects"
 
 createMainTargets
@@ -721,7 +721,7 @@ createRules_sharedObject  "Plugin/*.cpp Plugin/*.c" "SDKObjects" "SDK" "libplugi
 createRules_sharedObject  "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects" "Scintilla" "libwxscintilla\$(EXT)" "dont_copy"
 createRules_sharedObject  "sdk/codelite_indexer/network/*.cpp CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "libcodelite\$(EXT)" "dont_copy" "-L./lib -lwxsqlite3\$(EXT)"
 createRules_sharedObject  "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "libwxsqlite3\$(EXT)" "dont_copy" ""
-#createRules_sharedObject  "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects" "PropGrid" "libwxpropgrid\$(EXT)" "dont_copy" ""
+createRules_sharedObject  "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects" "PropGrid" "libwxpropgrid\$(EXT)" "dont_copy" ""
 
 # Then the binary, and indexer
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
@@ -752,7 +752,7 @@ echo "ExternalTools\\" >> Makefile
 echo "SnipWiz\\" >> Makefile
 echo "wxformbuilder\\" >> Makefile
 echo "abbreviation\\" >> Makefile
-#echo "SymbolView\\" >> Makefile
+echo "SymbolView\\" >> Makefile
 echo "ContinuousBuild\\" >> Makefile
 echo "QmakePlugin\\" >> Makefile
 echo "CppCheck" >> Makefile
@@ -775,7 +775,7 @@ echo "ExternalTools_install\\" >> Makefile
 echo "SnipWiz_install\\" >> Makefile
 echo "wxformbuilder_install\\" >> Makefile
 echo "abbreviation_install\\" >> Makefile
-#echo "SymbolView_install\\" >> Makefile
+echo "SymbolView_install\\" >> Makefile
 echo "ContinuousBuild_install\\" >> Makefile
 echo "QmakePlugin_install\\" >> Makefile
 echo "CppCheck_install" >> Makefile
@@ -799,7 +799,7 @@ echo "ExternalTools_clean\\" >> Makefile
 echo "SnipWiz_clean\\" >> Makefile
 echo "wxformbuilder_clean\\" >> Makefile
 echo "abbreviation_clean\\" >> Makefile
-#echo "SymbolView_clean\\" >> Makefile
+echo "SymbolView_clean\\" >> Makefile
 echo "ContinuousBuild_clean\\" >> Makefile
 echo "QmakePlugin_clean\\" >> Makefile
 echo "CppCheck_clean" >> Makefile
@@ -823,7 +823,7 @@ createPluginMakefile "ExternalTools" "ExternalTools" "\$(DESTDIR)$plugins_dir/" 
 createPluginMakefile "SnipWiz" "SnipWiz" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "wxformbuilder" "wxformbuilder" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "abbreviation" "abbreviation" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-#createPluginMakefile "SymbolView" "SymbolView" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "SymbolView" "SymbolView" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "ContinuousBuild" "ContinuousBuild" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "QmakePlugin" "QmakePlugin" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "cppchecker" "CppCheck" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"

@@ -52,7 +52,7 @@ fix_shared_object_depends libplugin
 fix_shared_object_depends libcodelite
 fix_shared_object_depends libwxscintilla
 fix_shared_object_depends libwxsqlite
-#fix_shared_object_depends libwxpropgrid
+fix_shared_object_depends libwxpropgrid
 
 #echo install_name_tool -change /usr/lib/libcurl.4.dylib @executable_path/libcurl.4.dylib ${exe_name}
 #install_name_tool -change /usr/lib/libcurl.4.dylib @executable_path/libcurl.4.dylib ${exe_name}
@@ -108,7 +108,7 @@ cp ../lib/cscope.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/Copyright.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/UnitTestCPP.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/ExternalTools.so ./CodeLite.app/Contents/SharedSupport/plugins/
-#cp ../lib/SymbolView.so ./CodeLite.app/Contents/SharedSupport/plugins/
+cp ../lib/SymbolView.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/ContinuousBuild.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/SnipWiz.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/wxformbuilder.so ./CodeLite.app/Contents/SharedSupport/plugins/

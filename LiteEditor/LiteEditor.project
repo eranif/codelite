@@ -920,6 +920,7 @@ resources.cpp: resources.xrc
     <Project Name="QMakePlugin"/>
     <Project Name="CppChecker"/>
     <Project Name="Subversion2"/>
+    <Project Name="SymbolView"/>
   </Dependencies>
   <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
@@ -942,6 +943,7 @@ resources.cpp: resources.xrc
     <Project Name="QMakePlugin"/>
     <Project Name="CppChecker"/>
     <Project Name="Subversion2"/>
+    <Project Name="SymbolView"/>
   </Dependencies>
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
@@ -964,5 +966,6 @@ resources.cpp: resources.xrc
     <Project Name="QMakePlugin"/>
     <Project Name="CppChecker"/>
     <Project Name="Subversion2"/>
+    <Project Name="SymbolView"/>
   </Dependencies>
 </CodeLite_Project>

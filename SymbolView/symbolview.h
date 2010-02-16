@@ -193,9 +193,8 @@ private:
     //--------------------------------------------
     wxString GetSymbolsPath(const wxString &fileName, const wxString &projectName = wxEmptyString);
     wxString GetSymbolsPath(IEditor *editor);
-    void GetFiles(const wxFileName &path, std::multimap<wxString,wxString> &files);
+    void GetFiles(const wxFileName &path, wxArrayString &files);
     void GetPaths(const wxArrayString &files, std::multimap<wxString,wxString> &filePaths);
-    wxSQLite3ResultSet GetTags(const std::multimap<wxString,wxString> &sqlopts);
     void InitSymbolProperties();
     void ShowSymbolProperties();
 

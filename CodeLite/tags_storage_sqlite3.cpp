@@ -1149,6 +1149,73 @@ void TagsStorageSQLite::GetGlobalFunctions(std::vector<TagEntryPtr>& tags)
 	DoFetchTags(sql, tags);
 }
 
+void TagsStorageSQLite::GetTagsByFiles(const wxArrayString& files, std::vector<TagEntryPtr>& tags)
+{
+	if(files.IsEmpty())
+		return;
+		
+	wxString sql;
+	sql << wxT("select * from tags where file in (");
+	for(size_t i=0; i<files.GetCount(); i++) {
+		sql << wxT("'") << files.Item(i) << wxT("',");
+	}
+	sql.RemoveLast();
+	sql << wxT(")");
+	DoFetchTags(sql, tags);
+}
+
+void TagsStorageSQLite::GetTagsByFilesAndScope(const wxArrayString& files, const wxString& scope, std::vector<TagEntryPtr>& tags)
+{
+	if(files.IsEmpty())
+		return;
+		
+	wxString sql;
+	sql << wxT("select * from tags where file in (");
+	for(size_t i=0; i<files.GetCount(); i++) {
+		sql << wxT("'") << files.Item(i) << wxT("',");
+	}
+	sql.RemoveLast();
+	sql << wxT(")");
+	
+	sql << wxT(" AND scope='") << scope << wxT("'");
+	DoFetchTags(sql, tags);
+}
+
+void TagsStorageSQLite::GetTagsByFilesKindAndScope(const wxArrayString& files, const wxArrayString& kinds, const wxString& scope, std::vector<TagEntryPtr>& tags)
+{
+	if(files.IsEmpty())
+		return;
+		
+	wxString sql;
+	sql << wxT("select * from tags where file in (");
+	for(size_t i=0; i<files.GetCount(); i++) {
+		sql << wxT("'") << files.Item(i) << wxT("',");
+	}
+	sql.RemoveLast();
+	sql << wxT(")");
+	
+	sql << wxT(" AND scope='") << scope << wxT("'");
+	DoFetchTags(sql, tags, kinds);
+}
+
+void TagsStorageSQLite::GetTagsByFilesScopeTyperefAndKind(const wxArrayString& files, const wxArrayString& kinds, const wxString& scope, const wxString& typeref, std::vector<TagEntryPtr>& tags)
+{
+	if(files.IsEmpty())
+		return;
+		
+	wxString sql;
+	sql << wxT("select * from tags where file in (");
+	for(size_t i=0; i<files.GetCount(); i++) {
+		sql << wxT("'") << files.Item(i) << wxT("',");
+	}
+	sql.RemoveLast();
+	sql << wxT(")");
+	
+	sql << wxT(" AND scope='") << scope << wxT("'");
+	sql << wxT(" AND typeref='") << typeref << wxT("'");
+	DoFetchTags(sql, tags, kinds);
+}
+
 void TagsStorageSQLite::GetTagsByKindLimit(const wxArrayString& kinds, const wxString& orderingColumn, int order, int limit, const wxString &partName, std::vector<TagEntryPtr>& tags)
 {
 	wxString sql;
@@ -1295,3 +1362,4 @@ void TagsStorageSQLite::SetUseCache(bool useCache)
 {
 	ITagsStorage::SetUseCache(useCache);
 }
+

@@ -317,7 +317,7 @@ bool App::OnInit()
 #endif
 
 	// Update codelite revision and Version
-	EditorConfig::Init( SvnRevision, wxT("2.0.2") );
+	EditorConfigST::Get()->Init(SvnRevision, wxT("2.0.2") );
 
 	wxString curdir = wxGetCwd();
 	::wxSetWorkingDirectory(homeDir);

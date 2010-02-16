@@ -71,9 +71,6 @@ void SimpleStringValue::DeSerialize(Archive &arch)
 
 //-------------------------------------------------------------------------------------------
 
-wxString EditorConfig::m_svnRevision;
-wxString EditorConfig::m_version;
-
 EditorConfig::EditorConfig()
 		: m_transcation(false)
 {

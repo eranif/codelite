@@ -110,10 +110,10 @@ class EditorConfig : public IConfigTool
 	wxFileName                       m_fileName;
 	std::map<wxString, LexerConfPtr> m_lexers;
 	bool                             m_transcation;
-
-	static wxString m_svnRevision;
-	static wxString m_version;
-
+	wxString                         m_svnRevision;
+	wxString                         m_version;
+	
+private:
 	bool DoSave() const;
 	bool DoLoadDefaultSettings();
 
@@ -121,9 +121,9 @@ public:
 
 	//load lexers again, based on the active theme
 	void LoadLexers(bool loadDefault);
-	static void Init(const wxChar *revision, const wxChar* version) {
-		m_svnRevision  = revision;
-		m_version      = version;
+	void Init(const wxChar *revision, const wxChar* version) {
+		this->m_svnRevision  = revision;
+		this->m_version      = version;
 	}
 
 public:

@@ -739,6 +739,9 @@ void Manager::RetagWorkspace(bool quickRetag)
 	// Create a parsing request
 	ParseRequest *parsingRequest = new ParseRequest();
 	for (size_t i=0; i<projectFiles.size(); i++) {
+		// filter any non valid coding file
+		if(!TagsManagerST::Get()->IsValidCtagsFile(projectFiles.at(i)))
+			continue;
 		parsingRequest->_workspaceFiles.push_back( projectFiles.at(i).GetFullPath().mb_str(wxConvUTF8).data() );
 	}
 

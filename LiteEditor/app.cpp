@@ -253,6 +253,7 @@ bool App::OnInit()
 		homeDir = wxStandardPaths::Get().GetUserDataDir(); // ~/Library/Application Support/codelite or ~/.codelite
 
 		//Create the directory structure
+		wxLogNull noLog;
 		wxMkdir(homeDir);
 		wxMkdir(homeDir + wxT("/lexers/"));
 		wxMkdir(homeDir + wxT("/lexers/Default"));

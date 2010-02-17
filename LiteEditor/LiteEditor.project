@@ -451,6 +451,9 @@
     <File Name="resources.xrc"/>
     <File Name="../Runtime/config/accelerators.conf.default"/>
     <File Name="../InnoSetup/lite_editor.iss"/>
+    <File Name="../Runtime/config/codelite.xml.default.gtk"/>
+    <File Name="../Runtime/config/codelite.xml.default"/>
+    <File Name="../Runtime/config/codelite.xml.default.mac"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Docking Windows">
     <File Name="output_pane.cpp"/>

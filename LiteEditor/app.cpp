@@ -167,9 +167,6 @@ static void massCopy(const wxString &sourceDir, const wxString &spec, const wxSt
 }
 
 IMPLEMENT_APP(App)
-BEGIN_EVENT_TABLE(App, wxApp)
-	//EVT_COMMAND(wxID_ANY, HIDE_SPLASH_EVENT_ID, App::OnHideSplash)
-END_EVENT_TABLE()
 
 extern void InitXmlResource();
 App::App(void)
@@ -256,14 +253,14 @@ bool App::OnInit()
 		homeDir = wxStandardPaths::Get().GetUserDataDir(); // ~/Library/Application Support/codelite or ~/.codelite
 
 		//Create the directory structure
-		wxMkDir(homeDir.ToAscii(), 0777);
-		wxMkDir((homeDir + wxT("/lexers/")).ToAscii(), 0777);
-		wxMkDir((homeDir + wxT("/lexers/Default")).ToAscii(), 0777);
-		wxMkDir((homeDir + wxT("/lexers/BlackTheme")).ToAscii(), 0777);
-		wxMkDir((homeDir + wxT("/rc/")).ToAscii(), 0777);
-		wxMkDir((homeDir + wxT("/images/")).ToAscii(), 0777);
-		wxMkDir((homeDir + wxT("/templates/")).ToAscii(), 0777);
-		wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
+		wxMkdir(homeDir);
+		wxMkdir(homeDir + wxT("/lexers/"));
+		wxMkdir(homeDir + wxT("/lexers/Default"));
+		wxMkdir(homeDir + wxT("/lexers/BlackTheme"));
+		wxMkdir(homeDir + wxT("/rc/"));
+		wxMkdir(homeDir + wxT("/images/"));
+		wxMkdir(homeDir + wxT("/templates/"));
+		wxMkdir(homeDir + wxT("/config/"));
 
 		//copy the settings from the global location if needed
 		wxString installPath( INSTALL_DIR, wxConvUTF8 );
@@ -278,16 +275,16 @@ bool App::OnInit()
 
 #elif defined (__WXMAC__)
 	SetAppName(wxT("codelite"));
-	homeDir = wxGetHomeDir() + wxT("/.codelite/");
+	homeDir = wxStandardPaths::Get().GetUserDataDir();
 	//Create the directory structure
-	wxMkDir(homeDir.ToAscii(), 0777);
-	wxMkDir((homeDir + wxT("/lexers/")).ToAscii(), 0777);
-	wxMkDir((homeDir + wxT("/lexers/Default")).ToAscii(), 0777);
-	wxMkDir((homeDir + wxT("/lexers/BlackTheme")).ToAscii(), 0777);
-	wxMkDir((homeDir + wxT("/rc/")).ToAscii(), 0777);
-	wxMkDir((homeDir + wxT("/images/")).ToAscii(), 0777);
-	wxMkDir((homeDir + wxT("/templates/")).ToAscii(), 0777);
-	wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
+	wxMkdir(homeDir);
+	wxMkdir(homeDir + wxT("/lexers/"));
+	wxMkdir(homeDir + wxT("/lexers/Default"));
+	wxMkdir(homeDir + wxT("/lexers/BlackTheme"));
+	wxMkdir(homeDir + wxT("/rc/"));
+	wxMkdir(homeDir + wxT("/images/"));
+	wxMkdir(homeDir + wxT("/templates/"));
+	wxMkdir(homeDir + wxT("/config/"));
 
 	wxString installPath( MacGetBasePath() );
 	ManagerST::Get()->SetInstallDir( installPath );
@@ -477,32 +474,19 @@ int App::OnExit()
 
 bool App::CopySettings(const wxString &destDir, wxString& installPath)
 {
-	bool fileExist = wxFileName::FileExists( destDir + wxT("/config/codelite.xml") );
-	bool copyAnyways(true);
-
-	if (fileExist) {
-		if (CheckRevision(destDir + wxT("/config/codelite.xml")) == true) {
-			//revision is ok
-			copyAnyways = false;
-		}
-	}
-
-	if ( !fileExist || copyAnyways ) {
-		///////////////////////////////////////////////////////////////////////////////////////////
-		// copy new settings from the global installation location which is currently located at
-		// /usr/local/share/codelite/ (Linux) or at codelite.app/Contents/SharedSupport
-		///////////////////////////////////////////////////////////////////////////////////////////
-		CopyDir(installPath + wxT("/templates/"), destDir + wxT("/templates/"));
-		CopyDir(installPath + wxT("/lexers/"), destDir + wxT("/lexers/"));
-		massCopy  (installPath + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));
-		massCopy  (installPath + wxT("/"), wxT("*.tags"), destDir + wxT("/"));
-		wxCopyFile(installPath + wxT("/config/codelite.xml.default"), destDir + wxT("/config/codelite.xml.default"));
-		wxCopyFile(installPath + wxT("/rc/menu.xrc"), destDir + wxT("/rc/menu.xrc"));
-		wxCopyFile(installPath + wxT("/index.html"), destDir + wxT("/index.html"));
-		wxCopyFile(installPath + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
-		wxCopyFile(installPath + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
-		wxCopyFile(installPath + wxT("/config/accelerators.conf.default"), destDir + wxT("/config/accelerators.conf.default"));
-	}
+	///////////////////////////////////////////////////////////////////////////////////////////
+	// copy new settings from the global installation location which is currently located at
+	// /usr/local/share/codelite/ (Linux) or at codelite.app/Contents/SharedSupport
+	///////////////////////////////////////////////////////////////////////////////////////////
+	CopyDir(installPath + wxT("/templates/"), destDir + wxT("/templates/"));
+	CopyDir(installPath + wxT("/lexers/"), destDir + wxT("/lexers/"));
+	massCopy  (installPath + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));
+	wxCopyFile(installPath + wxT("/config/codelite.xml.default"), destDir + wxT("/config/codelite.xml.default"));
+	wxCopyFile(installPath + wxT("/rc/menu.xrc"), destDir + wxT("/rc/menu.xrc"));
+	wxCopyFile(installPath + wxT("/index.html"), destDir + wxT("/index.html"));
+	wxCopyFile(installPath + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
+	wxCopyFile(installPath + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
+	wxCopyFile(installPath + wxT("/config/accelerators.conf.default"), destDir + wxT("/config/accelerators.conf.default"));
 	return true;
 }
 
@@ -520,37 +504,6 @@ void App::OnFatalException()
 	walker.Walk();
 	wxAppBase::ExitMainLoop();
 #endif
-}
-
-void App::OnIdle(wxIdleEvent &e)
-{
-	//delegate the event to the manager class
-	Frame::Get()->ProcessEvent(e);
-	e.Skip();
-}
-
-void App::OnHideSplash(wxCommandEvent &e)
-{
-	m_splash->Close(true);
-	m_splash->Destroy();
-	e.Skip();
-}
-
-bool App::CheckRevision(const wxString &fileName)
-{
-	wxXmlDocument doc;
-	doc.Load(fileName);
-	if (doc.IsOk()) {
-		wxXmlNode *root = doc.GetRoot();
-		if (root) {
-			wxString configRevision = XmlUtils::ReadString(root, wxT("Revision"));
-			wxString curRevision(SvnRevision);
-			if (configRevision.Trim().Trim(false) == curRevision.Trim().Trim(false)) {
-				return true;
-			}
-		}
-	}
-	return false;
 }
 
 bool App::CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir)

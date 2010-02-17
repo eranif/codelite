@@ -36,9 +36,8 @@ class App : public wxApp
 	wxSingleInstanceChecker *m_singleInstance;
 	wxArrayString            m_parserPaths;
 
-private:	// Methods
+private: // Methods
 	bool CopySettings(const wxString &destDir, wxString& installPath);
-	bool CheckRevision(const wxString &fileName);
 	bool CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir);
 
 #ifdef __WXMSW__
@@ -63,9 +62,6 @@ protected:
 	virtual void OnFatalException();
 
 private:
-	DECLARE_EVENT_TABLE()
-	void OnIdle(wxIdleEvent &e);
-	void OnHideSplash(wxCommandEvent &e);
 };
 
 #endif // LITEEDITOR_APP_H

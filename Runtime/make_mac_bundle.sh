@@ -77,23 +77,8 @@ cp config/accelerators.conf.default ./CodeLite.app/Contents/SharedSupport/config
 cp config/build_settings.xml.default.mac ./CodeLite.app/Contents/SharedSupport/config/build_settings.xml.default
 cp config/plugins.xml.default ./CodeLite.app/Contents/SharedSupport/config
 
-##
-## replace the revision macro
-##
-cur_rev=`svn info | grep Revision | awk '{print $2;}'`
-file_exist=`test -f ./CodeLite.app/Contents/SharedSupport/config/liteeditor.xml`
-file_exist=$?
-if [ $file_exist -eq 1 ]
-then
-	## file does not exist, create an empty file
-	touch ./CodeLite.app/Contents/SharedSupport/config/codelite.xml
-fi
-
-## empty the file
-\cp /dev/null ./CodeLite.app/Contents/SharedSupport/config/codelite.xml
-
-## replace $(Revision) with the actual revision, and create new file
-cat config/liteeditor.xml.mac | sed s/\$\(Revision\)/${cur_rev}/g >> ./CodeLite.app/Contents/SharedSupport/config/codelite.xml.default
+## copy default Mac configuration file
+cp config/codelite.xml.default.mac ./CodeLite.app/Contents/SharedSupport/config/codelite.xml.default
 
 ## replace the executable name according to the configuration used in the build
 cat Info.plist.template | sed s/EXE_NAME/${exe_name}/g >> ./CodeLite.app/Contents/Info.plist

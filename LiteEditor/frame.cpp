@@ -1737,23 +1737,7 @@ void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event))
 	dlg.ShowModal();
 
 	if ( dlg.restartRquired ) {
-#ifdef __WXMAC__
-		GetMainBook()->ShowMessage(_("Some of the changes made requires restart of CodeLite"));
-#else
-		// On Winodws & GTK we offer auto-restart
-		ButtonDetails btn1, btn2;
-		btn1.buttonLabel = wxT("Restart Now!");
-		btn1.commandId   = wxEVT_CMD_RESTART_CODELITE;
-		btn1.menuCommand = false;
-		btn1.isDefault   = true;
-		btn1.window      = ManagerST::Get();
-		
-		// set button window to NULL
-		btn2.buttonLabel = wxT("Not now");
-		btn2.window      = NULL;
-		
-		GetMainBook()->ShowMessage(_("Some of the changes made requires a restart of CodeLite, Restart now?"), false, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_restart")), btn1, btn2);
-#endif
+		DoSuggestRestart();
 	}
 }
 
@@ -2796,16 +2780,7 @@ void Frame::OnManagePlugins(wxCommandEvent &e)
 {
 	PluginMgrDlg dlg(this);
 	if (dlg.ShowModal() == wxID_OK) {
-#ifdef __WXMAC__
-		wxMessageBox(_("Changes will take place after restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK, this);
-#else
-		// On Winodws & GTK we offer auto-restart
-		int answer = wxMessageBox(_("Changes made requires restart of CodeLite\nWould you like to restart now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL, this);
-		if ( answer == wxYES ) {
-			wxCommandEvent e(wxEVT_CMD_RESTART_CODELITE);
-			ManagerST::Get()->AddPendingEvent(e);
-		}
-#endif
+		DoSuggestRestart();
 	}
 }
 
@@ -2820,9 +2795,8 @@ void Frame::OnCppContextMenu(wxCommandEvent &e)
 
 void Frame::OnConfigureAccelerators(wxCommandEvent &e)
 {
-	AccelTableDlg *dlg = new AccelTableDlg(this);
-	dlg->ShowModal();
-	dlg->Destroy();
+	AccelTableDlg dlg(this);
+	dlg.ShowModal();
 }
 
 void Frame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e)
@@ -3658,4 +3632,25 @@ void Frame::OnNeverUpdateParserPath(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	EditorConfigST::Get()->SaveLongValue(wxT("UpdateParserPaths"), 0);
+}
+
+void Frame::DoSuggestRestart()
+{
+#ifdef __WXMAC__
+	GetMainBook()->ShowMessage(_("Some of the changes made requires restart of CodeLite"));
+#else
+	// On Winodws & GTK we offer auto-restart
+	ButtonDetails btn1, btn2;
+	btn1.buttonLabel = wxT("Restart Now!");
+	btn1.commandId   = wxEVT_CMD_RESTART_CODELITE;
+	btn1.menuCommand = false;
+	btn1.isDefault   = true;
+	btn1.window      = ManagerST::Get();
+	
+	// set button window to NULL
+	btn2.buttonLabel = wxT("Not now");
+	btn2.window      = NULL;
+	
+	GetMainBook()->ShowMessage(_("Some of the changes made requires a restart of CodeLite, Restart now?"), false, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_restart")), btn1, btn2);
+#endif
 }

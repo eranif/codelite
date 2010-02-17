@@ -38,6 +38,7 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
 	Workspace *workspace = manager->GetWorkspace();
 	
 	if ( workspace ) {
+		expandedString.Replace(wxT("$(WorkspaceName)"), workspace->GetName());
 		ProjectPtr proj = workspace->FindProjectByName(project, errMsg);
 		if (proj) {
 			wxString project_name(proj->GetName());

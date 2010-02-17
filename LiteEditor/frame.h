@@ -291,7 +291,8 @@ private:
 	void CreateRecentlyOpenedWorkspacesMenu();
 	void CreateWelcomePage();
 	void ReloadExternallyModifiedProjectFiles();
-
+	void DoSuggestRestart();
+	
 protected:
 	//----------------------------------------------------
 	// event handlers

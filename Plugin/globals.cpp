@@ -291,6 +291,7 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 	wxString errMsg;
 	wxString output(expression);
 	if ( workspace ) {
+		output.Replace(wxT("$(WorkspaceName)"), workspace->GetName());
 		ProjectPtr proj = workspace->FindProjectByName(projectName, errMsg);
 		if (proj) {
 			wxString project_name(proj->GetName());

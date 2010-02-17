@@ -277,15 +277,20 @@ bool App::OnInit()
 #elif defined (__WXMAC__)
 	SetAppName(wxT("codelite"));
 	homeDir = wxStandardPaths::Get().GetUserDataDir();
-	//Create the directory structure
-	wxMkdir(homeDir);
-	wxMkdir(homeDir + wxT("/lexers/"));
-	wxMkdir(homeDir + wxT("/lexers/Default"));
-	wxMkdir(homeDir + wxT("/lexers/BlackTheme"));
-	wxMkdir(homeDir + wxT("/rc/"));
-	wxMkdir(homeDir + wxT("/images/"));
-	wxMkdir(homeDir + wxT("/templates/"));
-	wxMkdir(homeDir + wxT("/config/"));
+	
+	{
+		wxLogNull noLog;
+		
+		//Create the directory structure
+		wxMkdir(homeDir);
+		wxMkdir(homeDir + wxT("/lexers/"));
+		wxMkdir(homeDir + wxT("/lexers/Default"));
+		wxMkdir(homeDir + wxT("/lexers/BlackTheme"));
+		wxMkdir(homeDir + wxT("/rc/"));
+		wxMkdir(homeDir + wxT("/images/"));
+		wxMkdir(homeDir + wxT("/templates/"));
+		wxMkdir(homeDir + wxT("/config/"));	
+	}
 
 	wxString installPath( MacGetBasePath() );
 	ManagerST::Get()->SetInstallDir( installPath );
@@ -475,6 +480,8 @@ int App::OnExit()
 
 bool App::CopySettings(const wxString &destDir, wxString& installPath)
 {
+	wxLogNull noLog;
+	
 	///////////////////////////////////////////////////////////////////////////////////////////
 	// copy new settings from the global installation location which is currently located at
 	// /usr/local/share/codelite/ (Linux) or at codelite.app/Contents/SharedSupport

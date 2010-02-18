@@ -52,7 +52,10 @@ fix_shared_object_depends libplugin
 fix_shared_object_depends libcodelite
 fix_shared_object_depends libwxscintilla
 fix_shared_object_depends libwxsqlite
+old_exe_name=${exe_name}
+exe_name="../lib/SymbolView.so"
 fix_shared_object_depends libwxpropgrid
+exe_name=${old_exe_name}
 
 #echo install_name_tool -change /usr/lib/libcurl.4.dylib @executable_path/libcurl.4.dylib ${exe_name}
 #install_name_tool -change /usr/lib/libcurl.4.dylib @executable_path/libcurl.4.dylib ${exe_name}
@@ -101,6 +104,7 @@ cp ../lib/abbreviation.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/QmakePlugin.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/CppCheck.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/libwxscintillau.so ./CodeLite.app/Contents/MacOS/
+cp ../lib/libwxpropgridu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libpluginu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libcodeliteu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libwxsqlite3u.so ./CodeLite.app/Contents/MacOS/

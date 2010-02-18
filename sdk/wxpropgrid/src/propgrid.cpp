@@ -3430,7 +3430,7 @@ void wxPropertyGrid::CalculateFontAndBitmapStuff( int vspacing )
 {
 	int x = 0, y = 0;
 
-    m_captionFont = wxScrolledWindow::GetFont();
+    m_captionFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 
 	GetTextExtent(wxT("jG"), &x, &y, 0, 0, &m_captionFont);
     m_subgroup_extramargin = x + (x/2);
@@ -6852,7 +6852,10 @@ void wxPropertyGrid::RecalculateVirtualSize( int forceXPos )
 {
     if ( (m_iFlags & wxPG_FL_RECALCULATING_VIRTUAL_SIZE) || m_frozen )
         return;
-
+	
+	if(wxPG_PIXELS_PER_UNIT == 0)
+		return;
+	
     //
     // If virtual height was changed, then recalculate editor control position(s)
     if ( m_pState->m_vhCalcPending )
@@ -6939,14 +6942,21 @@ void wxPropertyGrid::OnResize( wxSizeEvent& event )
 {
     if ( !(m_iFlags & wxPG_FL_INITIALIZED) )
         return;
-
+		
+	// Avoid crashes
+	if(wxPG_PIXELS_PER_UNIT == 0)
+		return;
+		
     int width, height;
     GetClientSize(&width,&height);
 
     m_width = width;
     m_height = height;
-
-    m_visPropArray.SetCount((height/m_lineHeight)+10);
+	
+	if(m_lineHeight)
+		m_visPropArray.SetCount((height/m_lineHeight)+10);
+	else
+		m_visPropArray.SetCount((height)+10);
 
 #if wxPG_DOUBLE_BUFFER
     if ( !(GetExtraStyle() & wxPG_EX_NATIVE_DOUBLE_BUFFERING) )

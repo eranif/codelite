@@ -214,7 +214,9 @@ void SymbolViewPlugin::CreateGUIControls()
 	m_tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
 	m_tb->AddTool(XRCID("gohome"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxT("Go to Active Editor Symbols"), wxITEM_NORMAL);
     m_tb->AddTool(XRCID("show_properties"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("cscope")), wxT("Show Symbol Properties"), wxITEM_CHECK);
-    m_tb->ToggleTool(XRCID("show_properties"), false);
+#ifndef __WXMAC__
+	m_tb->ToggleTool(XRCID("show_properties"), false);
+#endif	
 	m_tb->Realize();
 	sz->Add(m_tb, 0, wxEXPAND);
 
@@ -756,7 +758,6 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 	}
 
 	// get files to scan for tags
-	ViewMode viewMode = GetViewMode();
 	wxArrayString files;
 	
 	WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();

@@ -25,7 +25,7 @@ NavBarBase::NavBarBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, con
 	wxArrayString m_scopeChoices;
 	m_scope = new wxChoice( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_scopeChoices, 0 );
 	m_scope->SetSelection( 0 );
-	bSizer3->Add( m_scope, 0, wxEXPAND, 5 );
+	bSizer3->Add( m_scope, 0, wxEXPAND|wxBOTTOM, 2 );
 	
 	m_panel1->SetSizer( bSizer3 );
 	m_panel1->Layout();
@@ -37,7 +37,7 @@ NavBarBase::NavBarBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, con
 	wxArrayString m_funcChoices;
 	m_func = new wxChoice( m_panel2, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_funcChoices, 0 );
 	m_func->SetSelection( 0 );
-	bSizer4->Add( m_func, 0, wxEXPAND, 5 );
+	bSizer4->Add( m_func, 0, wxEXPAND|wxBOTTOM, 2 );
 	
 	m_panel2->SetSizer( bSizer4 );
 	m_panel2->Layout();

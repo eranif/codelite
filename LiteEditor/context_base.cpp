@@ -74,7 +74,7 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 	rCtrl.StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
 
 	// by default indicators are set to be opaque rounded box
-#ifdef __WXMAC__
+#if 0
 	rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_BOX);
 	rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_BOX);
 #else

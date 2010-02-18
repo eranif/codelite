@@ -333,7 +333,7 @@ void LEditor::SetProperties()
 	SetCaretLineVisible(options->GetHighlightCaretLine());
 	SetCaretLineBackground(options->GetCaretLineColour());
 
-#ifdef __WXMSW__
+#if defined (__WXMSW__) || defined(__WXMAC__)
 	SetCaretLineBackgroundAlpha(30);
 #endif
 
@@ -500,7 +500,7 @@ void LEditor::SetProperties()
 #if defined(__WXMAC__)
 	// turning off these two greatly improves performance
 	// on Mac
-	SetTwoPhaseDraw(false);
+	SetTwoPhaseDraw(true);
 	SetBufferedDraw(false);
 
 #elif defined(__WXGTK__)
@@ -529,7 +529,7 @@ void LEditor::SetProperties()
 	//right click menu
 	UsePopUp(m_rightClickMenu ? false : true);
 
-#ifdef __WXMAC__
+#if 0
 	IndicatorSetUnder(1, false);
 	IndicatorSetUnder(2, false);
 	IndicatorSetUnder(HYPERLINK_INDICATOR, false);
@@ -542,6 +542,7 @@ void LEditor::SetProperties()
 	IndicatorSetUnder(MATCH_INDICATOR, true);
 	IndicatorSetUnder(DEBUGGER_INDICATOR, true);
 #endif
+
 	SetInidicatorValue(MATCH_INDICATOR,    1);
 	SetInidicatorValue(DEBUGGER_INDICATOR, 1);
 
@@ -827,10 +828,10 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 		SetIndicatorCurrent(2);
 		IndicatorClearRange(0, GetLength());
 
-#ifdef __WXMAC__
-		Refresh();
-#endif
-
+//#ifdef __WXMAC__
+//		Refresh();
+//#endif
+//
 	}
 
 	RecalcHorizontalScrollbar();

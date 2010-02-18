@@ -92,7 +92,7 @@
                         <property name="permission">protected</property>
                         <property name="pos"></property>
                         <property name="sashgravity">0</property>
-                        <property name="sashpos">0</property>
+                        <property name="sashpos">150</property>
                         <property name="sashsize">-1</property>
                         <property name="size"></property>
                         <property name="splitmode">wxSPLIT_VERTICAL</property>

@@ -42,7 +42,7 @@ NavBarBase::NavBarBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, con
 	m_panel2->SetSizer( bSizer4 );
 	m_panel2->Layout();
 	bSizer4->Fit( m_panel2 );
-	m_splitter->SplitVertically( m_panel1, m_panel2, 0 );
+	m_splitter->SplitVertically( m_panel1, m_panel2, 150 );
 	mainSizer->Add( m_splitter, 0, wxEXPAND|wxALL, 2 );
 	
 	this->SetSizer( mainSizer );

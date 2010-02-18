@@ -50,7 +50,7 @@ class NavBarBase : public wxPanel
 		~NavBarBase();
 		void m_splitterOnIdle( wxIdleEvent& )
 		{
-			m_splitter->SetSashPosition( 0 );
+			m_splitter->SetSashPosition( 150 );
 			m_splitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( NavBarBase::m_splitterOnIdle ), NULL, this );
 		}
 		

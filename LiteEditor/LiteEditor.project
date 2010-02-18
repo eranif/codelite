@@ -403,6 +403,8 @@
     <File Name="messagepane_base.cpp"/>
     <File Name="message_pane.h"/>
     <File Name="message_pane.cpp"/>
+    <File Name="navbarbase.cpp"/>
+    <File Name="navbarbase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>
@@ -556,6 +558,7 @@
     <File Name="tasksfindwhatdlgbase.fbp"/>
     <File Name="quickfindbarbase.fbp"/>
     <File Name="messagepane.fbp"/>
+    <File Name="navbarbase.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="breakpointsmgr.h"/>

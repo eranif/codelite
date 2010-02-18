@@ -210,7 +210,6 @@ Manager::~Manager ( void )
 	BuildSettingsConfigST::Free();
 	SearchThreadST::Free();
 	MenuManager::Free();
-	EditorConfigST::Free();
 	EnvironmentConfig::Release();
 
 	if ( m_shellProcess ) {

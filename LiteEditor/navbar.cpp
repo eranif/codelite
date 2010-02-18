@@ -23,34 +23,27 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <vector>
+#include "editor_config.h"
 #include "ctags_manager.h"
 #include "cl_editor.h"
 #include "manager.h"
 #include "frame.h"
-#include "macros.h"
 #include "navbar.h"
 
 NavBar::NavBar(wxWindow* parent)
-    : wxPanel(parent)
+    : NavBarBase(parent)
 {
-    wxBoxSizer *sz = new wxBoxSizer(wxHORIZONTAL);
-    SetSizer(sz);
-    
-    m_scope = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(200, -1));
-    sz->Add(m_scope, 0, wxEXPAND);
-    m_scope->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(NavBar::OnScopeListMouseDown), NULL, this);
-    ConnectChoice(m_scope, NavBar::OnScope);
-    
-    m_func = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(600, -1));
-    sz->Add(m_func, 1, wxEXPAND);
-    m_func->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(NavBar::OnFuncListMouseDown), NULL, this);
-    ConnectChoice(m_func, NavBar::OnFunction);
-    
-    sz->Layout();
+	long sashPos(150);
+	EditorConfigST::Get()->GetLongValue(wxT("NavBarSashPos"), sashPos);
+	m_splitter->SetSashPosition(sashPos);
+	
+//	m_splitter->UpdateSize();
 }
 
 NavBar::~NavBar()
 {
+	// Save the sash position
+	EditorConfigST::Get()->SaveLongValue(wxT("NavBarSashPos"), m_splitter->GetSashPosition());
 }
 
 void NavBar::OnScopeListMouseDown(wxMouseEvent& e)
@@ -141,9 +134,7 @@ void NavBar::OnFunction(wxCommandEvent& e)
 void NavBar::DoShow(bool s)
 {
     if (Show(s)) {
-        wxSizer *sz = GetParent()->GetSizer();
-        sz->Show(this, s, true);
-        sz->Layout();
+        GetParent()->GetSizer()->Layout();
     }
 }
 
@@ -169,28 +160,3 @@ void NavBar::UpdateScope(TagEntryPtr tag)
     
     Thaw();
 }
-
-//void NavBar::UpdateScope(LEditor *editor)
-//{
-//    if (!editor || !IsShown())
-//        return;
-//        
-//	static long lastPos(wxNOT_FOUND);
-//	static long lastLine(wxNOT_FOUND);
-//
-//	//check the current position
-//	long curpos = editor->GetCurrentPos();
-//	if (curpos == lastPos) 
-//        return;
-//    lastPos = curpos;
-//    
-//    //check the current line
-//    long curline = editor->LineFromPosition(curpos);
-//    if (curline == lastLine)
-//        return;
-//    lastLine = curline;
-//    
-//    TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(editor->GetFileName(), lastLine+1);
-//	UpdateScope(tag);
-//}
-

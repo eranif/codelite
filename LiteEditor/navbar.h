@@ -26,32 +26,29 @@
 #define __navbar__
 
 #include <vector>
+#include "navbarbase.h"
 #include <wx/choice.h>
 #include "entry.h"
 
 class LEditor;
 
-class NavBar : public wxPanel 
+class NavBar : public NavBarBase 
 {
 private:
-	wxChoice *m_scope;
-	wxChoice *m_func;
-    
     std::vector<TagEntryPtr> m_tags;
     
-	void OnFuncListMouseDown(wxMouseEvent &e);
+	void OnFuncListMouseDown (wxMouseEvent &e);
 	void OnScopeListMouseDown(wxMouseEvent &e);
-	void OnScope(wxCommandEvent &e);
-	void OnFunction(wxCommandEvent &e);
+	void OnScope             (wxCommandEvent &e);
+	void OnFunction          (wxCommandEvent &e);
     
 public:
 	NavBar(wxWindow *parent);
-	~NavBar();
+	virtual ~NavBar();
     
     void DoShow(bool s = true);
     
 	void UpdateScope(TagEntryPtr tag);
-    //void UpdateScope(LEditor *editor);
 };
 
 #endif // __navbar__

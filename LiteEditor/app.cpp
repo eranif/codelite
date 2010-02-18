@@ -474,6 +474,7 @@ bool App::OnInit()
 
 int App::OnExit()
 {
+	EditorConfigST::Free();
 	ConfFileLocator::Release();
 	return 0;
 }

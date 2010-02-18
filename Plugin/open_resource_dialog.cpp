@@ -314,9 +314,6 @@ void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selecti
 
 void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
 {
-#ifdef __WXMAC__
-	event.Skip();
-#else
 	if (event.GetKeyCode() == WXK_DOWN && m_listOptions->GetItemCount()> 0) {
 		//up key
 		int cursel = m_listOptions->GetFirstSelected();
@@ -355,7 +352,6 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
 
 	} else
 		event.Skip();
-#endif
 }
 
 void OpenResourceDialog::OnOK(wxCommandEvent& event)
@@ -381,7 +377,12 @@ bool OpenResourceDialogItemData::IsOk() const
 
 void OpenResourceDialog::DoSelectItem(int selection, bool makeFirst)
 {
-	//no selection is made
+	// Unselect current item first
+	int currentSelection = m_listOptions->GetFirstSelected();
+	if(currentSelection != wxNOT_FOUND) {
+		m_listOptions->Select(currentSelection, false);
+	}
+	
 	m_listOptions->Select(selection);
 	if(makeFirst)
 		m_listOptions->EnsureVisible(selection);

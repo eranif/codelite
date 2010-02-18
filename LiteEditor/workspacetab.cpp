@@ -70,7 +70,6 @@ WorkspaceTab::~WorkspaceTab()
     wxTheApp->Disconnect(wxEVT_PROJ_REMOVED,          wxCommandEventHandler(WorkspaceTab::OnProjectRemoved),      NULL, this);
     wxTheApp->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(WorkspaceTab::OnActiveEditorChanged), NULL, this);
     wxTheApp->Disconnect(wxEVT_EDITOR_CLOSING,        wxCommandEventHandler(WorkspaceTab::OnEditorClosing),       NULL, this);
-    wxTheApp->Disconnect(wxEVT_ALL_EDITORS_CLOSED,    wxCommandEventHandler(WorkspaceTab::OnAllEditorsClosed),    NULL, this);
 }
 
 void WorkspaceTab::CreateGUIControls()
@@ -124,7 +123,6 @@ void WorkspaceTab::ConnectEvents()
     wxTheApp->Connect(wxEVT_PROJ_REMOVED,          wxCommandEventHandler(WorkspaceTab::OnProjectRemoved),      NULL, this);
     wxTheApp->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(WorkspaceTab::OnActiveEditorChanged), NULL, this);
     wxTheApp->Connect(wxEVT_EDITOR_CLOSING,        wxCommandEventHandler(WorkspaceTab::OnEditorClosing),       NULL, this);
-    wxTheApp->Connect(wxEVT_ALL_EDITORS_CLOSED,    wxCommandEventHandler(WorkspaceTab::OnAllEditorsClosed),    NULL, this);
 }
 
 void WorkspaceTab::OnLinkEditor(wxCommandEvent &e)
@@ -308,17 +306,6 @@ void WorkspaceTab::OnWorkspaceLoaded(wxCommandEvent& e)
 void WorkspaceTab::OnEditorClosing(wxCommandEvent& e)
 {
     e.Skip();
-}
-
-void WorkspaceTab::OnAllEditorsClosed(wxCommandEvent& e)
-{
-    e.Skip();
-    if (m_isLinkedToEditor) {
-        Freeze();
-        OnCollapseAll(e);
-        OnGoHome(e);
-        Thaw();
-    }
 }
 
 void WorkspaceTab::OnWorkspaceClosed(wxCommandEvent& e)

@@ -59,7 +59,6 @@ class WorkspaceTab : public wxPanel
     void OnProjectFileRemoved   (wxCommandEvent  &e);
     void OnActiveEditorChanged  (wxCommandEvent  &e);
     void OnEditorClosing        (wxCommandEvent  &e);
-    void OnAllEditorsClosed     (wxCommandEvent  &e);
 
 
 public:

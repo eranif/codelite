@@ -88,7 +88,7 @@ void MessagePane::DoShowCurrentMessage()
 	}
 	GetSizer()->Fit(this);
 	GetParent()->GetSizer()->Layout();
-	Refresh();
+	GetParent()->Refresh();
 }
 
 void MessagePane::ShowMessage(const wxString &message, bool showHideButton, const wxBitmap &bmp, const ButtonDetails& btn1, const ButtonDetails& btn2, const ButtonDetails& btn3)

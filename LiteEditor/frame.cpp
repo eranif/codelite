@@ -3368,7 +3368,7 @@ void Frame::ReloadExternallyModifiedProjectFiles()
 	btn.isDefault   = false;
 	btn.window      = this;
 	
-	noBtn.buttonLabel = wxT("&No");
+	noBtn.buttonLabel = wxT("&Don't reload");
 	noBtn.isDefault   = true;
 	noBtn.window      = NULL;
 	

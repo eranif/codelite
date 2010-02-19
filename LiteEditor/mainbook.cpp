@@ -68,7 +68,7 @@ void MainBook::CreateGuiControls()
 	sz->Add(m_quickFindBar, 0, wxTOP|wxBOTTOM|wxEXPAND);
 	
 	m_messagePane = new MessagePane(this);
-	sz->Insert(0, m_messagePane, 0, wxTOP|wxBOTTOM|wxEXPAND, 0, NULL);
+	sz->Insert(0, m_messagePane, 0, wxALL|wxEXPAND, 5, NULL);
 	
 	sz->Layout();
 }

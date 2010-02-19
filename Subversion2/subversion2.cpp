@@ -293,7 +293,7 @@ void Subversion2::OnAdd(wxCommandEvent& event)
 		return;
 	}
 	bool nonInteractive = GetNonInteractiveMode(event);
-	command << GetSvnExeName(nonInteractive) << loginString << wxT(" --recursive add \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	command << GetSvnExeName(nonInteractive) << loginString << wxT(" add \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
 	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnStatusHandler(this, event.GetId(), this));
 }
 

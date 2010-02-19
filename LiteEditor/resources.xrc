@@ -209,5 +209,6 @@
 	<object class="wxBitmap" name="message_pane_fix">res/MessagePane/preferences_other.png</object>
 	<object class="wxBitmap" name="message_pane_warning">res/MessagePane/warning.png</object>
 	<object class="wxBitmap" name="message_pane_software_update">res/MessagePane/system_software_update.png</object>
+	<object class="wxBitmap" name="message_pane_reload_workspace">res/MessagePane/folder_home_reload.png</object>
 	
 </resource>

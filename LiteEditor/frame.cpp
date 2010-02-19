@@ -3361,11 +3361,18 @@ void Frame::ReloadExternallyModifiedProjectFiles()
 
 	if (!project_modified && !workspace_modified)
 		return;
-
-	if (wxMessageBox(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO, this) == wxYES) {
-		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
-		AddPendingEvent( evt );
-	}
+	
+	ButtonDetails btn, noBtn;
+	btn.buttonLabel = wxT("Reload Workspace");
+	btn.commandId   = XRCID("reload_workspace");
+	btn.isDefault   = false;
+	btn.window      = this;
+	
+	noBtn.buttonLabel = wxT("&No");
+	noBtn.isDefault   = true;
+	noBtn.window      = NULL;
+	
+	GetMainBook()->ShowMessage(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), false, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_reload_workspace")), noBtn, btn);
 }
 
 void Frame::SaveLayoutAndSession()

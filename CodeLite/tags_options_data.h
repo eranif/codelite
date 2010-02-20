@@ -114,6 +114,8 @@ public:
 		return m_types;
 	}
 	std::map<std::string, std::string> GetTokensMap() const;
+	
+	std::map<wxString, wxString> GetTokensWxReversedMap() const;
 
 	std::map<wxString, wxString> GetTokensWxMap() const;
 

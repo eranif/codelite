@@ -114,6 +114,13 @@ bool RemoveDirectory(const wxString &path);
 bool IsValidCppIndetifier(const wxString &id);
 
 /**
+ * \brief return true of word is a C++ keyword
+ * \param word
+ * \return 
+ */
+bool IsCppKeyword(const wxString &word);
+
+/**
  * \brief return true of id is a valid cpp file
  */
 bool IsValidCppFile(const wxString &id);

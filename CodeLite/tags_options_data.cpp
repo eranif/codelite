@@ -27,6 +27,9 @@
 #include <wx/ffile.h>
 #include "tags_options_data.h"
 
+extern bool IsValidCppIndetifier(const wxString &id);
+extern bool IsCppKeyword(const wxString &word);
+
 //---------------------------------------------------------
 
 TagsOptionsData::TagsOptionsData()
@@ -111,7 +114,7 @@ wxT("_STD_END=}\n")
 wxT("__CLRCALL_OR_CDECL\n")
 wxT("_CRTIMP2_PURE");
 
-	m_types = 
+	m_types =
 wxT("std::vector::reference=_Tp\n")
 wxT("std::vector::const_reference=_Tp\n")
 wxT("std::vector::iterator=_Tp\n")
@@ -163,7 +166,7 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	arch.Read     (wxT("m_parserEnabled"),     m_parserEnabled);
 	arch.Read     (wxT("m_parserExcludePaths"),m_parserExcludePaths);
 	arch.Read     (wxT("m_maxItemToColour"),   m_maxItemToColour);
-	
+
 	// since of build 3749, we *always* set CC_ACCURATE_SCOPE_RESOLVING to true
 	m_ccFlags |= CC_ACCURATE_SCOPE_RESOLVING;
 }
@@ -174,10 +177,10 @@ wxString TagsOptionsData::ToString() const
 
 	wxString file_name, file_content;
 	wxGetEnv(wxT("CTAGS_REPLACEMENTS"), &file_name);
-	
+
 	std::map<wxString, wxString> tokensMap = GetTokensWxMap();
 	std::map<wxString, wxString>::iterator iter = tokensMap.begin();
-	
+
 	if(tokensMap.empty() == false) {
 		options = wxT(" -I");
 		for(; iter != tokensMap.end(); iter++) {
@@ -192,7 +195,7 @@ wxString TagsOptionsData::ToString() const
 		options.RemoveLast();
 		options += wxT(" ");
 	}
-	
+
 	// write the file content
 	if (file_name.IsEmpty() == false) {
 		wxFFile fp(file_name, wxT("w+b"));
@@ -263,6 +266,21 @@ std::map<wxString,wxString> TagsOptionsData::GetTypesMap() const
 		wxString k = item.BeforeFirst(wxT('='));
 		wxString v = item.AfterFirst(wxT('='));
 		tokens[k] = v;
+	}
+	return tokens;
+}
+
+std::map<wxString,wxString> TagsOptionsData::GetTokensWxReversedMap() const
+{
+	std::map<wxString, wxString> tokens;
+	wxArrayString typesArr = wxStringTokenize(m_types, wxT("\r\n"), wxTOKEN_STRTOK);
+	for (size_t i=0; i<typesArr.GetCount(); i++) {
+		wxString item = typesArr.Item(i).Trim().Trim(false);
+		wxString v = item.AfterFirst(wxT('='));
+		wxString k = item.BeforeFirst(wxT('='));
+
+		if(IsValidCppIndetifier(k) && !IsCppKeyword(k))
+			tokens[k] = v;
 	}
 	return tokens;
 }

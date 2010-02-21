@@ -115,7 +115,8 @@ public:
 	}
 	std::map<std::string, std::string> GetTokensMap() const;
 	
-	std::map<wxString, wxString> GetTokensWxReversedMap() const;
+	std::map<std::string, std::string> GetTokensReversedMap() const;
+	std::map<wxString, wxString> GetTokensReversedWxMap() const;
 
 	std::map<wxString, wxString> GetTokensWxMap() const;
 

@@ -1691,7 +1691,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 		TagEntryPtr tag = iter->second;
 		//use normalize function signature rather than the default one
 		//this will ensure that default values are removed
-		tag->SetSignature(TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name ));
+		tag->SetSignature(TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name | Normalize_Func_Reverse_Macro ));
 		body << TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
 		body << wxT("\n");
 	}
@@ -1778,7 +1778,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 		//create the functions body
 		//replace the function signature with the normalized one, so default values
 		//will not appear in the function implementation
-		wxString newSig = TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name );
+		wxString newSig = TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name | Normalize_Func_Reverse_Macro);
 		tag->SetSignature( newSig );
 		wxString body = TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
 

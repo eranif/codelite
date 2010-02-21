@@ -125,7 +125,7 @@ void clCallTip::Initialize(const std::vector<TagEntryPtr> &tips)
 	for (size_t i=0; i< tips.size(); i++) {
 		tagCallTipInfo cti;
 		TagEntryPtr t = tips.at(i);
-		if (t->GetKind() == wxT("function") || t->GetKind() == wxT("prototype")) {
+		if ( t->IsMethod() ) {
 
 			wxString raw_sig ( t->GetSignature().Trim().Trim(false) );
 
@@ -136,11 +136,11 @@ void clCallTip::Initialize(const std::vector<TagEntryPtr> &tips)
 
 			// the key for unique entries is the function prototype without the variables names and
 			// any default values
-			wxString  key           = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, 0);
+			wxString  key           = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, Normalize_Func_Reverse_Macro);
 
 			// the signature that we want to keep is one with name & default values, so try and get the maximum out of the
 			// function signature
-			wxString  full_signature = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, Normalize_Func_Name | Normalize_Func_Default_value, &cti.paramLen);
+			wxString  full_signature = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, Normalize_Func_Name | Normalize_Func_Default_value | Normalize_Func_Reverse_Macro, &cti.paramLen);
 			cti.sig                  = full_signature;
 
 			if (hasDefaultValues) {

@@ -1919,6 +1919,10 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, std::vector<std::pair<int, int> > *paramLen)
 {
 	std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetTokensMap();
+	std::map<std::string, std::string> reverseTokens;
+	
+	if(flags & Normalize_Func_Reverse_Macro)
+		reverseTokens = GetCtagsOptions().GetTokensReversedMap();
 
 	VariableList li;
 	const wxCharBuffer patbuf = _C(sig);
@@ -1949,6 +1953,13 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
 		}
 
 		if (v.m_type.empty() == false) {
+			if(flags & Normalize_Func_Reverse_Macro) {
+				// replace the type if it exists in the map
+				std::map<std::string, std::string>::iterator miter = reverseTokens.find(v.m_type);
+				if(miter != reverseTokens.end()) {
+					v.m_type = miter->second;
+				}
+			}
 			str_output << _U(v.m_type.c_str());
 		}
 
@@ -2012,7 +2023,7 @@ void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<
 		//override the scope to be our scope...
 		tag->SetScope( scopeName );
 
-		key << NormalizeFunctionSig( tag->GetSignature(), 0 );
+		key << NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Reverse_Macro );
 		protos[key] = tag;
 	}
 
@@ -2022,7 +2033,7 @@ void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<
 	for ( size_t i=0; i < vimpl.size() ; i++ ) {
 		TagEntryPtr tag = vimpl.at(i);
 		wxString key = tag->GetName();
-		key << NormalizeFunctionSig( tag->GetSignature(), 0 );
+		key << NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Reverse_Macro );
 		std::map<wxString, TagEntryPtr>::iterator iter = protos.find(key);
 
 		if ( iter != protos.end() ) {
@@ -2336,7 +2347,7 @@ void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName
 			// Collect only pure virtual methods
 			if( IsPureVirtual(t) ) {
 				TagEntryPtr t   = tags.at(i);
-				wxString    sig = NormalizeFunctionSig(t->GetSignature(), 0);
+				wxString    sig = NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Reverse_Macro);
 				sig.Prepend(t->GetName());
 				parentSignature2tag[sig] = tags.at(i);
 			}
@@ -2345,7 +2356,7 @@ void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName
 
 			// Collect both virtual and pure virtual
 			if( IsVirtual(tags.at(i)) || IsPureVirtual(tags.at(i)) ) {
-				wxString    sig = NormalizeFunctionSig(t->GetSignature(), 0);
+				wxString    sig = NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Reverse_Macro);
 				sig.Prepend(t->GetName());
 				parentSignature2tag[sig] = tags.at(i);
 			}
@@ -2359,7 +2370,7 @@ void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName
 	GetDatabase()->GetTagsByScopeAndKind(scopeName, kind, tags);
 	for(size_t i=0; i<tags.size(); i++){
 		TagEntryPtr t   = tags.at(i);
-		wxString    sig = NormalizeFunctionSig(t->GetSignature(), 0);
+		wxString    sig = NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Reverse_Macro);
 		sig.Prepend(t->GetName());
 		classSignature2tag[sig] = t;
 	}

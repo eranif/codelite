@@ -49,12 +49,7 @@ void MessagePane::DoShowCurrentMessage()
 	m_buttonAction1->Hide();
 	m_buttonAction2->Hide();
 	
-	if(msg.showHideButton) {
-		m_buttonClose->Show();
-	} else {
-		m_buttonClose->Hide();
-	}
-	
+	bool hasDefaultButton (false);
 	if(msg.bmp.IsOk() == false)
 		m_bitmap1->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("message_pane_inf")));
 	else
@@ -64,28 +59,50 @@ void MessagePane::DoShowCurrentMessage()
 	if (msg.btn1.buttonLabel.IsEmpty() == false) {
 		m_buttonAction->SetLabel(msg.btn1.buttonLabel);
 		m_buttonAction->Show();
-		if(msg.btn1.isDefault)
+		if(msg.btn1.isDefault){
 			m_buttonAction->SetDefault();
+			m_buttonAction->SetFocus();
+			hasDefaultButton = true;
+		}
 	}
 	
 	if (msg.btn2.buttonLabel.IsEmpty() == false) {
 		m_buttonAction1->SetLabel(msg.btn2.buttonLabel);
 		m_buttonAction1->Show();
-		if(msg.btn2.isDefault)
+		if(msg.btn2.isDefault){
 			m_buttonAction1->SetDefault();
+			m_buttonAction1->SetFocus();
+			hasDefaultButton = true;
+		}
 	}
 	
 	if (msg.btn3.buttonLabel.IsEmpty() == false) {
 		m_buttonAction2->SetLabel(msg.btn3.buttonLabel);
 		m_buttonAction2->Show();
-		if(msg.btn3.isDefault)
+		if(msg.btn3.isDefault){
 			m_buttonAction2->SetDefault();
+			m_buttonAction2->SetFocus();
+			hasDefaultButton = true;
+		}
 	}
-		
+	
+	// Show hide button if needed and make the default if there is
+	// no default button
+	if(msg.showHideButton) {
+		m_buttonClose->Show();
+		if(hasDefaultButton) {
+			m_buttonClose->SetDefault();
+			m_buttonClose->SetFocus();
+		}
+	} else {
+		m_buttonClose->Hide();
+	}
+	
 	m_staticTextMessage->SetLabel(txt);
 	if (IsShown() == false) {
 		Show();
 	}
+	
 	GetSizer()->Fit(this);
 	GetParent()->GetSizer()->Layout();
 	GetParent()->Refresh();

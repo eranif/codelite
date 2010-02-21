@@ -270,17 +270,34 @@ std::map<wxString,wxString> TagsOptionsData::GetTypesMap() const
 	return tokens;
 }
 
-std::map<wxString,wxString> TagsOptionsData::GetTokensWxReversedMap() const
+std::map<std::string, std::string> TagsOptionsData::GetTokensReversedMap() const
 {
-	std::map<wxString, wxString> tokens;
-	wxArrayString typesArr = wxStringTokenize(m_types, wxT("\r\n"), wxTOKEN_STRTOK);
+	std::map<std::string, std::string> tokens;
+	wxArrayString typesArr = wxStringTokenize(m_tokens, wxT("\r\n"), wxTOKEN_STRTOK);
 	for (size_t i=0; i<typesArr.GetCount(); i++) {
 		wxString item = typesArr.Item(i).Trim().Trim(false);
-		wxString v = item.AfterFirst(wxT('='));
-		wxString k = item.BeforeFirst(wxT('='));
+		wxString k = item.AfterFirst(wxT('='));
+		wxString v = item.BeforeFirst(wxT('='));
 
-		if(IsValidCppIndetifier(k) && !IsCppKeyword(k))
+		if(IsValidCppIndetifier(k) && !IsCppKeyword(k)) {
+			tokens[k.mb_str(wxConvUTF8).data()] = v.mb_str(wxConvUTF8).data();
+		}
+	}
+	return tokens;
+}
+
+std::map<wxString,wxString> TagsOptionsData::GetTokensReversedWxMap() const
+{
+	std::map<wxString, wxString> tokens;
+	wxArrayString typesArr = wxStringTokenize(m_tokens, wxT("\r\n"), wxTOKEN_STRTOK);
+	for (size_t i=0; i<typesArr.GetCount(); i++) {
+		wxString item = typesArr.Item(i).Trim().Trim(false);
+		wxString k = item.AfterFirst(wxT('='));
+		wxString v = item.BeforeFirst(wxT('='));
+
+		if(IsValidCppIndetifier(k) && !IsCppKeyword(k)) {
 			tokens[k] = v;
+		}
 	}
 	return tokens;
 }

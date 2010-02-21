@@ -74,6 +74,8 @@ enum NormalizeFuncFlag {
 	Normalize_Func_Name          = 0x00000001,
 	// variable default value
 	Normalize_Func_Default_value = 0x00000002,
+	// re-place back macros
+	Normalize_Func_Reverse_Macro = 0x00000004
 };
 
 enum FunctionFormatFlag {

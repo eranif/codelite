@@ -1720,9 +1720,9 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
 	}
 
 	if ( flags & FunctionFormat_Impl ) {
-		body << tag->GetName() << NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name );
+		body << tag->GetName() << NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name | Normalize_Func_Reverse_Macro);
 	} else {
-		body << tag->GetName() << tag->GetSignature();
+		body << tag->GetName() << NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name | Normalize_Func_Reverse_Macro | Normalize_Func_Default_value );
 	}
 
 	if ( foo.m_isConst ) {

@@ -26,9 +26,100 @@
 #include <wx/tokenzr.h>
 #include <wx/ffile.h>
 #include "tags_options_data.h"
+#include <set>
 
-extern bool IsValidCppIndetifier(const wxString &id);
-extern bool IsCppKeyword(const wxString &word);
+static bool _IsValidCppIndetifier(const wxString &id)
+{
+	if (id.IsEmpty()) {
+		return false;
+	}
+	//first char can be only _A-Za-z
+	wxString first( id.Mid(0, 1) );
+	if (first.find_first_not_of(wxT("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")) != wxString::npos ) {
+		return false;
+	}
+	//make sure that rest of the id contains only a-zA-Z0-9_
+	if (id.find_first_not_of(wxT("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")) != wxString::npos) {
+		return false;
+	}
+	return true;
+}
+
+static bool _IsCppKeyword(const wxString &word)
+{
+	static std::set<wxString> words;
+
+	if(words.empty()) {
+		words.insert(wxT("auto"));
+		words.insert(wxT("break"));
+		words.insert(wxT("case"));
+		words.insert(wxT("char"));
+		words.insert(wxT("const"));
+		words.insert(wxT("continue"));
+		words.insert(wxT("default"));
+		words.insert(wxT("define"));
+		words.insert(wxT("defined"));
+		words.insert(wxT("do"));
+		words.insert(wxT("double"));
+		words.insert(wxT("elif"));
+		words.insert(wxT("else"));
+		words.insert(wxT("endif"));
+		words.insert(wxT("enum"));
+		words.insert(wxT("error"));
+		words.insert(wxT("extern"));
+		words.insert(wxT("float"));
+		words.insert(wxT("for"));
+		words.insert(wxT("goto"));
+		words.insert(wxT("if"));
+		words.insert(wxT("ifdef"));
+		words.insert(wxT("ifndef"));
+		words.insert(wxT("include"));
+		words.insert(wxT("int"));
+		words.insert(wxT("line"));
+		words.insert(wxT("long"));
+		words.insert(wxT("bool"));
+		words.insert(wxT("pragma"));
+		words.insert(wxT("register"));
+		words.insert(wxT("return"));
+		words.insert(wxT("short"));
+		words.insert(wxT("signed"));
+		words.insert(wxT("sizeof"));
+		words.insert(wxT("static"));
+		words.insert(wxT("struct"));
+		words.insert(wxT("switch"));
+		words.insert(wxT("typedef"));
+		words.insert(wxT("undef"));
+		words.insert(wxT("union"));
+		words.insert(wxT("unsigned"));
+		words.insert(wxT("void"));
+		words.insert(wxT("volatile"));
+		words.insert(wxT("while"));
+		words.insert(wxT("class"));
+		words.insert(wxT("namespace"));
+		words.insert(wxT("delete"));
+		words.insert(wxT("friend"));
+		words.insert(wxT("inline"));
+		words.insert(wxT("new"));
+		words.insert(wxT("operator"));
+		words.insert(wxT("overload"));
+		words.insert(wxT("protected"));
+		words.insert(wxT("private"));
+		words.insert(wxT("public"));
+		words.insert(wxT("this"));
+		words.insert(wxT("virtual"));
+		words.insert(wxT("template"));
+		words.insert(wxT("typename"));
+		words.insert(wxT("dynamic_cast"));
+		words.insert(wxT("static_cast"));
+		words.insert(wxT("const_cast"));
+		words.insert(wxT("reinterpret_cast"));
+		words.insert(wxT("using"));
+		words.insert(wxT("throw"));
+		words.insert(wxT("catch"));
+	}
+
+	return words.find(word) != words.end();
+}
 
 //---------------------------------------------------------
 
@@ -279,7 +370,7 @@ std::map<std::string, std::string> TagsOptionsData::GetTokensReversedMap() const
 		wxString k = item.AfterFirst(wxT('='));
 		wxString v = item.BeforeFirst(wxT('='));
 
-		if(IsValidCppIndetifier(k) && !IsCppKeyword(k)) {
+		if(_IsValidCppIndetifier(k) && !_IsCppKeyword(k)) {
 			tokens[k.mb_str(wxConvUTF8).data()] = v.mb_str(wxConvUTF8).data();
 		}
 	}
@@ -295,7 +386,7 @@ std::map<wxString,wxString> TagsOptionsData::GetTokensReversedWxMap() const
 		wxString k = item.AfterFirst(wxT('='));
 		wxString v = item.BeforeFirst(wxT('='));
 
-		if(IsValidCppIndetifier(k) && !IsCppKeyword(k)) {
+		if(_IsValidCppIndetifier(k) && !_IsCppKeyword(k)) {
 			tokens[k] = v;
 		}
 	}

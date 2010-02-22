@@ -57,10 +57,10 @@ static char *load_file(const char *fileName) {
 	}
 
 
-	fseek(fp, 0, SEEK_END); 		
-	len = ftell(fp); 				
-	fseek(fp, 0, SEEK_SET); 		
-	buf = (char *)malloc(len+1); 	
+	fseek(fp, 0, SEEK_END);
+	len = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	buf = (char *)malloc(len+1);
 
 
 	long bytes = fread(buf, sizeof(char), len, fp);
@@ -409,7 +409,7 @@ static vString *iFileGetLine (void)
 {
 	static list_t *replacements = (list_t *)0;
 	static int first = 1;
-	
+
 	vString *result = NULL;
 	int c;
 	if (File.line == NULL)
@@ -432,12 +432,12 @@ static vString *iFileGetLine (void)
 		}
 	} while (c != EOF);
 	Assert (result != NULL  ||  File.eof);
-	
+
 	/* try to load the file once */
 	if( first ) {
 		char *content = (char*)0;
 		char *file_name = getenv("CTAGS_REPLACEMENTS");
-		
+
 		first = 0;
 		if(file_name) {
 			/* open the file */
@@ -448,35 +448,35 @@ static vString *iFileGetLine (void)
 			}
 		}
 	}
-	
+
 	if( result && replacements && replacements->size ) {
-		
+
 		int first_loop = 1;
 		char *src = result->buffer;
 		char *new_str = src;
 		char *tmp = 0;
 		list_node_t *node = replacements->head;
-		
+
 		while( node ) {
 			tmp = string_replace(new_str, ((string_pair_t*)node->data)->key, ((string_pair_t*)node->data)->data);
 			if(!first_loop) {
 				free(new_str);
 			}
-			
+
 			new_str = tmp;
 			first_loop = 0;
-			
+
 			/* advance to next item in the list */
 			node = node->next;
 		}
-		
+
 		if(new_str != result->buffer) {
 			vStringClear(File.line);
 			vStringCatS(File.line, new_str);
 			free(new_str);
 		}
 	}
-	
+
 	return result;
 }
 
@@ -640,7 +640,7 @@ extern char *readSourceLines (vString* const vLine, fpos_t location, fpos_t endP
 	fsetpos (File.fp, &location);
 
 	vStringClear(vLine);
-	
+
 	while( 1 ){
 		result = readLine (tmpstr, File.fp);
 		if (result == NULL){
@@ -658,15 +658,14 @@ extern char *readSourceLines (vString* const vLine, fpos_t location, fpos_t endP
 	return vLine->buffer;
 }
 
-// ERAN IFRAH - Add support for return value 
+// ERAN IFRAH - Add support for return value
 extern int readChars (char *buffer, size_t bufferSize, fpos_t location, fpos_t endPos)
 {
 	fpos_t orignalPosition;
-	char *result;
 	size_t count     = 0;
 	long sizeToRead  = -1;
 
-#if defined(__WXMSW__) || defined(__APPLE__)
+#if defined(__WXMSW__) || defined(__APPLE__)||defined(__FreeBSD__)
 	if(location < 0)
 		return 0;
 #else
@@ -680,8 +679,8 @@ extern int readChars (char *buffer, size_t bufferSize, fpos_t location, fpos_t e
 	fsetpos (File.fp, &location);
 
 	memset(buffer, 0, bufferSize);
-	
-#if defined(__WXMSW__)|| defined(__APPLE__)
+
+#if defined(__WXMSW__) || defined(__APPLE__)||defined(__FreeBSD__)
 	sizeToRead = endPos - location + 1;
 #else
 	sizeToRead = endPos.__pos - location.__pos + 1;
@@ -691,21 +690,21 @@ extern int readChars (char *buffer, size_t bufferSize, fpos_t location, fpos_t e
 		fsetpos (File.fp, &orignalPosition);
 		return 0;
 	}
-	
-	if(sizeToRead >= bufferSize) {
+
+	if(sizeToRead >= (int)bufferSize) {
 		/* restore original file position */
 		fsetpos (File.fp, &orignalPosition);
 		return 0;
 	}
-		
+
 	count = fread(buffer, 1, sizeToRead, File.fp);
-	if(count != sizeToRead) {
+	if((int)count != sizeToRead) {
 		/* restore original file position */
 		fsetpos (File.fp, &orignalPosition);
 		/* free allocated buffer */
 		return 0;
 	}
-	
+
 	/* restore original file position */
 	fsetpos (File.fp, &orignalPosition);
 	return sizeToRead;

@@ -104,13 +104,17 @@ NewProjectBaseDlg::NewProjectBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_staticline = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	mainSizer->Add( m_staticline, 0, wxEXPAND | wxALL, 5 );
 	
-	m_sdbSizer = new wxStdDialogButtonSizer();
-	m_sdbSizerOK = new wxButton( this, wxID_OK );
-	m_sdbSizer->AddButton( m_sdbSizerOK );
-	m_sdbSizerCancel = new wxButton( this, wxID_CANCEL );
-	m_sdbSizer->AddButton( m_sdbSizerCancel );
-	m_sdbSizer->Realize();
-	mainSizer->Add( m_sdbSizer, 0, wxALIGN_CENTER_HORIZONTAL|wxBOTTOM, 5 );
+	wxBoxSizer* bSizer6;
+	bSizer6 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_button2 = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button2->SetDefault(); 
+	bSizer6->Add( m_button2, 0, wxALL, 5 );
+	
+	m_button3 = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer6->Add( m_button3, 0, wxALL, 5 );
+	
+	mainSizer->Add( bSizer6, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -125,7 +129,6 @@ NewProjectBaseDlg::NewProjectBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_textCtrlProjectPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
 	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnBrowseProjectPath ), NULL, this );
 	m_cbSeparateDir->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectNameChanged ), NULL, this );
-	m_sdbSizerOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnCreate ), NULL, this );
 }
 
 NewProjectBaseDlg::~NewProjectBaseDlg()
@@ -137,5 +140,4 @@ NewProjectBaseDlg::~NewProjectBaseDlg()
 	m_textCtrlProjectPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnBrowseProjectPath ), NULL, this );
 	m_cbSeparateDir->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectNameChanged ), NULL, this );
-	m_sdbSizerOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnCreate ), NULL, this );
 }

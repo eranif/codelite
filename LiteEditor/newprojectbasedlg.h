@@ -52,9 +52,8 @@ class NewProjectBaseDlg : public wxDialog
 		wxStaticText* m_stxtFullFileName;
 		wxTextCtrl* m_txtDescription;
 		wxStaticLine* m_staticline;
-		wxStdDialogButtonSizer* m_sdbSizer;
-		wxButton* m_sdbSizerOK;
-		wxButton* m_sdbSizerCancel;
+		wxButton* m_button2;
+		wxButton* m_button3;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCategorySelected( wxCommandEvent& event ) { event.Skip(); }
@@ -62,7 +61,6 @@ class NewProjectBaseDlg : public wxDialog
 		virtual void OnProjectNameChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnProjectPathUpdated( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnBrowseProjectPath( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnCreate( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:

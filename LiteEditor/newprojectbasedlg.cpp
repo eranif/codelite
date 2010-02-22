@@ -129,6 +129,7 @@ NewProjectBaseDlg::NewProjectBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_textCtrlProjectPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
 	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnBrowseProjectPath ), NULL, this );
 	m_cbSeparateDir->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectNameChanged ), NULL, this );
+	m_button2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnCreate ), NULL, this );
 }
 
 NewProjectBaseDlg::~NewProjectBaseDlg()
@@ -140,4 +141,5 @@ NewProjectBaseDlg::~NewProjectBaseDlg()
 	m_textCtrlProjectPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnBrowseProjectPath ), NULL, this );
 	m_cbSeparateDir->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectNameChanged ), NULL, this );
+	m_button2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnCreate ), NULL, this );
 }

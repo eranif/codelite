@@ -28,14 +28,14 @@
 
 BuildTabSettingsData::BuildTabSettingsData()
 		: m_skipWarnings(false)
-		, m_boldErrFont(true)
-		, m_boldWarnFont(true)
+		, m_boldErrFont(false)
+		, m_boldWarnFont(false)
 		, m_showBuildPane(0)
 		, m_autoHide(false)
-		, m_errorWarningStyle(EWS_Annotations)
+		, m_errorWarningStyle(EWS_Bookmarks)
 {
 	wxColour errColour(wxT("RED"));
-	wxColour wrnColour(wxT("GOLD"));
+	wxColour wrnColour(wxT("#AA9B49"));
 
 	m_errorColour = errColour.GetAsString(wxC2S_HTML_SYNTAX);
 	m_warnColour  = wrnColour.GetAsString(wxC2S_HTML_SYNTAX);

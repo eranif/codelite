@@ -500,7 +500,7 @@ void LEditor::SetProperties()
 #if defined(__WXMAC__)
 	// turning off these two greatly improves performance
 	// on Mac
-	SetTwoPhaseDraw(true);
+	SetTwoPhaseDraw(false);
 	SetBufferedDraw(false);
 
 #elif defined(__WXGTK__)
@@ -529,7 +529,7 @@ void LEditor::SetProperties()
 	//right click menu
 	UsePopUp(m_rightClickMenu ? false : true);
 
-#if 0
+#if defined(__WXMAC__)
 	IndicatorSetUnder(1, false);
 	IndicatorSetUnder(2, false);
 	IndicatorSetUnder(HYPERLINK_INDICATOR, false);

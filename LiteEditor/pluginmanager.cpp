@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "app.h"
 #include "environmentconfig.h"
 #include "macromanager.h"
 #include "build_settings_config.h"
@@ -103,7 +104,11 @@ void PluginManager::Load()
 	//does
 	LanguageST::Get()->SetTagsManager( GetTagsManager() );
 	TagsManagerST::Get()->SetLanguage( LanguageST::Get() );
-
+	
+	// Plugin loading is disabled?
+	if(((App*) GetTheApp())->GetLoadPlugins() == false)
+		return;
+		
 #ifdef __WXGTK__
 	wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
 #else

@@ -140,6 +140,7 @@ public:
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
 	{wxCMD_LINE_SWITCH, wxT("v"), wxT("version"), wxT("Print current version"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_SWITCH, wxT("h"), wxT("help"), wxT("Print usage"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+	{wxCMD_LINE_SWITCH, wxT("p"), wxT("no-plugins"), wxT("Start codelite without any plugins"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_OPTION, wxT("l"), wxT("line"), wxT("Open the file at a given line number"), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_OPTION, wxT("b"), wxT("basedir"),  wxT("Use this path as CodeLite installation path"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_PARAM,  NULL, NULL, wxT("Input file"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL },
@@ -149,6 +150,7 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
 	{wxCMD_LINE_SWITCH, "v", "version", "Print current version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_SWITCH, "h", "help", "Print usage", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+	{wxCMD_LINE_SWITCH, "p", "no-plugins", "Start codelite without any plugins", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_OPTION, "l", "line", "Open the file at a given line number", wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_OPTION, "b", "basedir",  "The base directory of CodeLite", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_PARAM,  NULL, NULL, "Input file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL },
@@ -172,6 +174,7 @@ extern void InitXmlResource();
 App::App(void)
 		: m_pMainFrame(NULL)
 		, m_singleInstance(NULL)
+		, m_loadPlugins(true)
 #ifdef __WXMSW__
 		, m_handler(NULL)
 #endif
@@ -240,6 +243,11 @@ bool App::OnInit()
 		// print usage
 		parser.Usage();
 		return false;
+	}
+	
+	if(parser.Found(wxT("p"))){
+		// Load codelite without plugins
+		SetLoadPlugins(false);
 	}
 
 	wxString newBaseDir(wxEmptyString);

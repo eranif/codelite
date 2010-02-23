@@ -228,11 +228,17 @@ void ContextCpp::OnDwellStart(wxScintillaEvent &event)
 	if (word.IsEmpty()) {
 		return;
 	}
-
+	
+	int foundPos(wxNOT_FOUND);
+	if(rCtrl.PreviousChar(word_start, foundPos) == wxT('~'))
+		word.Prepend(wxT("~"));
+	
 	//get the expression we are hovering over
 	wxString expr = GetExpression(end, false);
+	
 	// get the full text of the current page
 	wxString text = rCtrl.GetTextRange(0, pos);
+	
 	// now we are ready to process the scope and build our tips
 	std::vector<wxString> tips;
 	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
@@ -1721,8 +1727,8 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 	VALIDATE_WORKSPACE();
 
 	//get expression
-	int pos = rCtrl.GetCurrentPos();
-	int word_end = rCtrl.WordEndPosition(pos, true);
+	int pos        = rCtrl.GetCurrentPos();
+	int word_end   = rCtrl.WordEndPosition(pos, true);
 	int word_start = rCtrl.WordStartPosition(pos, true);
 
 	// get the scope
@@ -1730,7 +1736,11 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 
 	if (word.IsEmpty())
 		return;
-
+	
+	int foundPos(wxNOT_FOUND);
+	if(rCtrl.PreviousChar(word_start, foundPos) == wxT('~'))
+		word.Prepend(wxT("~"));
+		
 	std::vector<TagEntryPtr> tags;
 	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
 
@@ -2016,7 +2026,7 @@ void ContextCpp::ApplySettings()
 	rCtrl.CmdKeyClear('/', wxSCI_SCMOD_CTRL|wxSCI_SCMOD_SHIFT);
 
 	// update word characters to allow '~' as valid word character
-	rCtrl.SetWordChars(wxT("~_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"));
+	rCtrl.SetWordChars(wxT("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"));
 	
 	// Error
 	wxFont guiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

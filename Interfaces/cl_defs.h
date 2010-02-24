@@ -5,18 +5,18 @@
 // Use new toolbars where possible
 //-----------------------------------
 
-#if defined(__WXMSW__)||defined(__WXGTK__)
+#if defined(__WXMSW__)||defined(__WXMAC__)||defined(__WXGTK__)
 #    if wxABI_VERSION >= 20809
-#        define clToolBar          wxAuiToolBar          
+#        define clToolBar          wxAuiToolBar
 #        define clTB_DEFAULT_STYLE wxAUI_TB_DEFAULT_STYLE
 #        define USE_AUI_TOOLBAR    1
 #    else
-#        define clToolBar          wxToolBar             
+#        define clToolBar          wxToolBar
 #        define clTB_DEFAULT_STYLE wxTB_FLAT | wxTB_NODIVIDER
 #        define USE_AUI_TOOLBAR    0
 #    endif
-#else
-#    define clToolBar          wxToolBar             
+#else // !Mac !Win !Linux
+#    define clToolBar          wxToolBar
 #    define clTB_DEFAULT_STYLE wxTB_FLAT | wxTB_NODIVIDER
 #    define USE_AUI_TOOLBAR    0
 #endif

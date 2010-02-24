@@ -253,6 +253,8 @@ void GizmosPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 
 void GizmosPlugin::UnPlug()
 {
+	m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnGizmos   ), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(GizmosPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
 }
 
 void GizmosPlugin::OnNewPlugin(wxCommandEvent &e)

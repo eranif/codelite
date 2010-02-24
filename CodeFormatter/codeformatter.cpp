@@ -250,7 +250,10 @@ void CodeFormatter::HookPopupMenu(wxMenu *menu, MenuType type)
 
 void CodeFormatter::UnPlug()
 {
-	//nothing to do
+	m_mgr->GetTheApp()->Disconnect(XRCID("format_source"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CodeFormatter::OnFormat), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Disconnect(XRCID("formatter_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CodeFormatter::OnFormatOptions), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Disconnect(XRCID("format_source"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CodeFormatter::OnFormatUI), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Disconnect(XRCID("formatter_options"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI), NULL, (wxEvtHandler*)this);
 }
 
 IManager* CodeFormatter::GetManager()

@@ -3,6 +3,6 @@
 - Change the tip color selection to a lighter color (Windows)
 - Change 'toggle multi/single select' icon
 - Add option to customize the single toolbar
-- Apply patch to fix Mac OSX font dialog
 - Add new second tip to the code-completion box which shows the conent of the comment on top of the current tip
 - Refactoring: add an option to add 'add forward decl'
+- 'Highlight Word' does not work for wxAuiToolbar

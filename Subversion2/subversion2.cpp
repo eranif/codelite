@@ -94,11 +94,11 @@ Subversion2::~Subversion2()
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_set_as_view"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSelectAsView),      NULL, this);
 }
 
-wxToolBar *Subversion2::CreateToolBar(wxWindow *parent)
+clToolBar *Subversion2::CreateToolBar(wxWindow *parent)
 {
 	wxUnusedVar(parent);
 	// Create the toolbar to be used by the plugin
-	wxToolBar *tb(NULL);
+	clToolBar *tb(NULL);
 	return tb;
 }
 

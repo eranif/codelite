@@ -36,7 +36,7 @@ public:
 	CodeFormatter(IManager *manager);
 	virtual ~CodeFormatter();
 	void AstyleFormat(const wxString &input, const wxString &options, wxString &output);
-	virtual wxToolBar *CreateToolBar(wxWindow *parent);
+	virtual clToolBar *CreateToolBar(wxWindow *parent);
 	virtual void CreatePluginMenu(wxMenu *pluginsMenu);
 	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnPlug();

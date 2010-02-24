@@ -298,7 +298,7 @@ SymbolViewPlugin::ViewMode SymbolViewPlugin::GetViewMode() const
 //Abstract methods
 //--------------------------------------------
 
-wxToolBar *SymbolViewPlugin::CreateToolBar(wxWindow *parent)
+clToolBar *SymbolViewPlugin::CreateToolBar(wxWindow *parent)
 {
 	return NULL;
 }

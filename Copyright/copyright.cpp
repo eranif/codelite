@@ -89,7 +89,7 @@ Copyright::~Copyright()
 	m_topWin->Disconnect(XRCID("insert_prj_copyrights"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnProjectInsertCopyrights), NULL, this);
 }
 
-wxToolBar *Copyright::CreateToolBar(wxWindow *parent)
+clToolBar *Copyright::CreateToolBar(wxWindow *parent)
 {
 	// we dont need a toolbar for this plugin
 	return NULL;

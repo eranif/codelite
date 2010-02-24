@@ -91,14 +91,14 @@ Cscope::~Cscope()
 {
 }
 
-wxToolBar *Cscope::CreateToolBar(wxWindow *parent)
+clToolBar *Cscope::CreateToolBar(wxWindow *parent)
 {
 	//support both toolbars icon size
 	int size = m_mgr->GetToolbarIconSize();
 
-	wxToolBar *tb = NULL;
+	clToolBar *tb = NULL;
 	if (m_mgr->AllowToolbar()) {
-		tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		tb->SetToolBitmapSize(wxSize(size, size));
 
 		// Sample code that adds single button to the toolbar

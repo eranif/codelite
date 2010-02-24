@@ -69,10 +69,10 @@ QMakePlugin::~QMakePlugin()
 	delete m_conf;
 }
 
-wxToolBar *QMakePlugin::CreateToolBar(wxWindow *parent)
+clToolBar *QMakePlugin::CreateToolBar(wxWindow *parent)
 {
 	// Create the toolbar to be used by the plugin
-	wxToolBar *tb(NULL);
+	clToolBar *tb(NULL);
 
 	// You can use the below code a snippet:
 	// First, check that CodeLite allows plugin to register plugins
@@ -81,7 +81,7 @@ wxToolBar *QMakePlugin::CreateToolBar(wxWindow *parent)
 		int size = m_mgr->GetToolbarIconSize();
 
 		// Allocate new toolbar, which will be freed later by CodeLite
-		tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 
 		// Set the toolbar size
 		tb->SetToolBitmapSize(wxSize(size, size));

@@ -76,7 +76,7 @@ AbbreviationPlugin::~AbbreviationPlugin()
 {
 }
 
-wxToolBar *AbbreviationPlugin::CreateToolBar(wxWindow *parent)
+clToolBar *AbbreviationPlugin::CreateToolBar(wxWindow *parent)
 {
 	wxUnusedVar(parent);
 	return NULL;

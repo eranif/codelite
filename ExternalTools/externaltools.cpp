@@ -105,14 +105,14 @@ ExternalToolsPlugin::~ExternalToolsPlugin()
 	}
 }
 
-wxToolBar *ExternalToolsPlugin::CreateToolBar(wxWindow *parent)
+clToolBar *ExternalToolsPlugin::CreateToolBar(wxWindow *parent)
 {
 	//support both toolbars icon size
 	m_tb = NULL;
 	if (m_mgr->AllowToolbar()) {
 		int size = m_mgr->GetToolbarIconSize();
 
-		m_tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		m_tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		m_tb->SetToolBitmapSize(wxSize(size, size));
 
 		ExternalToolsData inData;

@@ -2222,7 +2222,7 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 		// show the dialog only if the signal is not sigtrap
 		// since sigtap might be triggered by user inserting a breakpoint
 		// into an already running debug session
-		bool     showDialog(false);
+		bool     showDialog(true);
 		if ( reason == DBG_RECV_SIGNAL_EXC_BAD_ACCESS ) {
 			signame = wxT ( "EXC_BAD_ACCESS" );
 			showDialog = true;
@@ -2233,7 +2233,7 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 			
 		} else if ( reason == DBG_RECV_SIGNAL_SIGTRAP ) {
 			signame = wxT ( "SIGTRAP" );
-			
+			showDialog = false;
 		}
 		
 		DebugMessage ( _("Program Received signal ") + signame + _("\n") );

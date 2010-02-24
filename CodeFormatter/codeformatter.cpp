@@ -98,14 +98,14 @@ CodeFormatter::~CodeFormatter()
 {
 }
 
-wxToolBar *CodeFormatter::CreateToolBar(wxWindow *parent)
+clToolBar *CodeFormatter::CreateToolBar(wxWindow *parent)
 {
-	wxToolBar *tb(NULL);
+	clToolBar *tb(NULL);
 	if (m_mgr->AllowToolbar()) {
 		//support both toolbars icon size
 		int size = m_mgr->GetToolbarIconSize();
 
-		tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		tb->SetToolBitmapSize(wxSize(size, size));
 
 		if (size == 24) {

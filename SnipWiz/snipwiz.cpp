@@ -146,7 +146,7 @@ SnipWiz::~SnipWiz()
 }
 //------------------------------------------------------------
 
-wxToolBar *SnipWiz::CreateToolBar( wxWindow *parent )
+clToolBar *SnipWiz::CreateToolBar( wxWindow *parent )
 {
 	return NULL;
 }

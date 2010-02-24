@@ -107,15 +107,15 @@ UnitTestPP::~UnitTestPP()
 {
 }
 
-wxToolBar *UnitTestPP::CreateToolBar(wxWindow *parent)
+clToolBar *UnitTestPP::CreateToolBar(wxWindow *parent)
 {
 	//support both toolbars icon size
-	wxToolBar *tb(NULL);
+	clToolBar *tb(NULL);
 
 	if (m_mgr->AllowToolbar()) {
 		int size = m_mgr->GetToolbarIconSize();
 
-		tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		tb->SetToolBitmapSize(wxSize(size, size));
 
 		if (size == 24) {

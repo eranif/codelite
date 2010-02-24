@@ -34,7 +34,7 @@ class AsyncExeCmd;
 
 class ExternalToolsPlugin : public IPlugin
 {
-	wxToolBar *   m_tb;
+	clToolBar *   m_tb;
 	wxEvtHandler* topWin;
 	AsyncExeCmd*  m_pipedProcess;
 	wxMenu*       m_parentMenu;
@@ -58,7 +58,7 @@ public:
 	//--------------------------------------------
 	//Abstract methods
 	//--------------------------------------------
-	virtual wxToolBar *CreateToolBar(wxWindow *parent);
+	virtual clToolBar *CreateToolBar(wxWindow *parent);
 	virtual void CreatePluginMenu(wxMenu *pluginsMenu);
 	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);

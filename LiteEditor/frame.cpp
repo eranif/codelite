@@ -116,6 +116,7 @@
 #include "options_dlg2.h"
 #include <wx/msgdlg.h>
 #include "tabgroupdlg.h"
+#include "cl_defs.h"
 
 // from auto-generated file svninfo.cpp:
 extern wxString CODELITE_VERSION_STR;
@@ -130,6 +131,11 @@ static int FrameTimerId = wxNewId();
 const wxEventType wxEVT_UPDATE_STATUS_BAR = XRCID("update_status_bar");
 const wxEventType wxEVT_LOAD_PERSPECTIVE  = XRCID("load_perspective");
 
+#define CHECK_SHUTDOWN() {\
+	if(ManagerST::Get()->IsShutdownInProgress()){\
+		return;\
+	}\
+}
 
 //----------------------------------------------------------------
 // Our main frame
@@ -870,15 +876,20 @@ wxString Frame::GetViewAsLanguageById(int id) const
 void Frame::CreateToolbars24()
 {
 	wxAuiPaneInfo info;
+	
+#if !USE_AUI_TOOLBAR
 	wxWindow *toolbar_parent (this);
 	if (PluginManager::Get()->AllowToolbar()) {
 		toolbar_parent = m_mainPanel;
 	}
+#else
+	wxWindow *toolbar_parent (m_mainPanel);
+#endif
 
 	//----------------------------------------------
 	//create the standard toolbar
 	//----------------------------------------------
-	wxToolBar *tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	clToolBar *tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 	tb->SetToolBitmapSize(wxSize(24, 24));
 
 	tb->AddTool(XRCID("new_file"), wxT("New"), wxXmlResource::Get()->LoadBitmap(wxT("page_new24")), wxT("New File"));
@@ -912,7 +923,7 @@ void Frame::CreateToolbars24()
 	//----------------------------------------------
 	if (PluginManager::Get()->AllowToolbar()) {
 		info = wxAuiPaneInfo();
-		tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 	tb->AddTool(wxID_FIND, wxT("Find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace24")), wxT("Find"));
@@ -935,7 +946,7 @@ void Frame::CreateToolbars24()
 	//create the build toolbar
 	//----------------------------------------------
 	if (PluginManager::Get()->AllowToolbar()) {
-		tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 
@@ -955,7 +966,7 @@ void Frame::CreateToolbars24()
 	//create the debugger toolbar
 	//----------------------------------------------
 	if (PluginManager::Get()->AllowToolbar()) {
-		tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 
@@ -980,7 +991,11 @@ void Frame::CreateToolbars24()
 		RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
 		RegisterToolbar(XRCID("show_debug_toolbar"), wxT("Debugger Toolbar"));
 	} else {
+#if !USE_AUI_TOOLBAR
 		SetToolBar(tb);
+#else
+		m_mgr.AddPane(tb, info.Name(wxT("Main Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Main Toolbar")).ToolbarPane().Top().Row(1));
+#endif
 	}
 }
 
@@ -989,12 +1004,16 @@ void Frame::CreateToolbars16()
 	//----------------------------------------------
 	//create the standard toolbar
 	//----------------------------------------------
+#if !USE_AUI_TOOLBAR
 	wxWindow *toolbar_parent (this);
 	if (PluginManager::Get()->AllowToolbar()) {
 		toolbar_parent = m_mainPanel;
 	}
+#else
+	wxWindow *toolbar_parent (m_mainPanel);
+#endif
 
-	wxToolBar *tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	clToolBar *tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 	wxAuiPaneInfo info;
 
 	tb->SetToolBitmapSize(wxSize(16, 16));
@@ -1031,7 +1050,7 @@ void Frame::CreateToolbars16()
 	info = wxAuiPaneInfo();
 
 	if (PluginManager::Get()->AllowToolbar()) {
-		tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 
@@ -1055,7 +1074,7 @@ void Frame::CreateToolbars16()
 		//----------------------------------------------
 		//create the build toolbar
 		//----------------------------------------------
-		tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 
@@ -1076,7 +1095,7 @@ void Frame::CreateToolbars16()
 	//create the debugger toolbar
 	//----------------------------------------------
 	if (PluginManager::Get()->AllowToolbar()) {
-		tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 
@@ -1100,7 +1119,11 @@ void Frame::CreateToolbars16()
 		RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
 		RegisterToolbar(XRCID("show_debug_toolbar"), wxT("Debugger Toolbar"));
 	} else {
+#if !USE_AUI_TOOLBAR
 		SetToolBar(tb);
+#else
+		m_mgr.AddPane(tb, info.Name(wxT("Main Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Main Toolbar")).ToolbarPane().Top().Row(1));
+#endif
 	}
 }
 
@@ -1224,6 +1247,8 @@ void Frame::DispatchCommandEvent(wxCommandEvent &event)
 
 void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
+	
 	if ( !IsEditorEvent(event) ) {
 		event.Skip();
 		return;
@@ -1246,6 +1271,8 @@ void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 
 void Frame::OnFileExistUpdateUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
+		
 	LEditor* editor = GetMainBook()->GetActiveEditor();
 	if ( !editor ) {
 		event.Enable(false);
@@ -1526,6 +1553,8 @@ void Frame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 
 void Frame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
+	
 	LEditor* editor = GetMainBook()->GetActiveEditor();
 	// This menu item is enabled only if the current editor belongs to a project
 	event.Enable(editor && ManagerST::Get()->IsWorkspaceOpen());
@@ -1533,6 +1562,7 @@ void Frame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 
 void Frame::OnWorkspaceOpen(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	event.Enable(ManagerST::Get()->IsWorkspaceOpen());
 }
 
@@ -1687,6 +1717,7 @@ void Frame::OnViewToolbar(wxCommandEvent &event)
 
 void Frame::OnViewToolbarUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	std::map<int, wxString>::iterator iter = m_toolbars.find(event.GetId());
 	if (iter != m_toolbars.end()) {
 		ViewPaneUI(iter->second, event);
@@ -1703,6 +1734,7 @@ void Frame::OnViewPane(wxCommandEvent &event)
 
 void Frame::OnViewPaneUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	std::map<int, wxString>::iterator iter = m_panes.find(event.GetId());
 	if (iter != m_panes.end()) {
 		ViewPaneUI(iter->second, event);
@@ -1725,6 +1757,7 @@ void Frame::ViewPane(const wxString &paneName, wxCommandEvent &event)
 
 void Frame::ViewPaneUI(const wxString &paneName, wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	wxAuiPaneInfo &info = m_mgr.GetPane(paneName);
 	if (info.IsOk()) {
 		event.Check(info.IsShown());
@@ -1910,12 +1943,14 @@ void Frame::OnRebuildProject(wxCommandEvent &event)
 
 void Frame::OnBuildProjectUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	event.Enable(enable);
 }
 
 void Frame::OnStopExecutedProgramUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	Manager *mgr = ManagerST::Get();
 	bool enable = mgr->IsProgramRunning();
 	event.Enable(enable);
@@ -1923,6 +1958,7 @@ void Frame::OnStopExecutedProgramUI(wxUpdateUIEvent &event)
 
 void Frame::OnStopBuildUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	Manager *mgr = ManagerST::Get();
 	bool enable = mgr->IsBuildInProgress();
 	event.Enable(enable);
@@ -1970,6 +2006,7 @@ void Frame::OnCleanProject(wxCommandEvent &event)
 
 void Frame::OnCleanProjectUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	event.Enable(enable);
 }
@@ -1987,6 +2024,7 @@ void Frame::OnExecuteNoDebug(wxCommandEvent &event)
 
 void Frame::OnExecuteNoDebugUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	event.Enable(ManagerST::Get()->GetActiveProjectName().IsEmpty() == false
 	             &&
 	             !ManagerST::Get()->IsBuildInProgress()
@@ -2314,6 +2352,7 @@ void Frame::OnBackwardForward(wxCommandEvent &event)
 
 void Frame::OnBackwardForwardUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	if (event.GetId() == wxID_FORWARD) {
 		event.Enable(NavMgr::Get()->CanNext());
 	} else if (event.GetId() == wxID_BACKWARD) {
@@ -2435,6 +2474,7 @@ void Frame::OnDebug(wxCommandEvent &e)
 
 void Frame::OnDebugUI(wxUpdateUIEvent &e)
 {
+	CHECK_SHUTDOWN();
 	e.Enable( !ManagerST::Get()->IsBuildInProgress() );
 }
 
@@ -2448,6 +2488,7 @@ void Frame::OnDebugRestart(wxCommandEvent &e)
 
 void Frame::OnDebugRestartUI(wxUpdateUIEvent &e)
 {
+	CHECK_SHUTDOWN();
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	e.Enable(dbgr && dbgr->IsRunning());
 }
@@ -2460,6 +2501,7 @@ void Frame::OnDebugStop(wxCommandEvent &e)
 
 void Frame::OnDebugStopUI(wxUpdateUIEvent &e)
 {
+	CHECK_SHUTDOWN();
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	e.Enable(dbgr && dbgr->IsRunning());
 }
@@ -2491,6 +2533,7 @@ void Frame::OnDebugCmd(wxCommandEvent &e)
 
 void Frame::OnDebugCmdUI(wxUpdateUIEvent &e)
 {
+	CHECK_SHUTDOWN();
 	if (e.GetId() == XRCID("pause_debugger") ||
 	        e.GetId() == XRCID("dbg_stepin") ||
 	        e.GetId() == XRCID("dbg_stepout") ||
@@ -2566,6 +2609,7 @@ void Frame::OnStartPageEvent(wxCommandEvent& e)
 
 void Frame::OnLoadLastSessionUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	event.Check(m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION);
 }
 
@@ -2585,6 +2629,7 @@ void Frame::OnLoadLastSession(wxCommandEvent &event)
 
 void Frame::OnShowWelcomePageUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	event.Enable(GetMainBook()->FindPage(wxT("Welcome!")) == NULL);
 }
 
@@ -2630,6 +2675,7 @@ void Frame::OnCompileFile(wxCommandEvent &e)
 
 void Frame::OnCompileFileUI(wxUpdateUIEvent &e)
 {
+	CHECK_SHUTDOWN();
 	e.Enable(false);
 	Manager *mgr = ManagerST::Get();
 	if (mgr->IsWorkspaceOpen() && !mgr->IsBuildInProgress()) {
@@ -2674,11 +2720,13 @@ void Frame::OnLoadWelcomePage(wxCommandEvent &event)
 
 void Frame::OnLoadWelcomePageUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	event.Check(m_frameGeneralInfo.GetFlags() & CL_SHOW_WELCOME_PAGE ? true : false);
 }
 
 void Frame::OnFileCloseUI(wxUpdateUIEvent &event)
 {
+	CHECK_SHUTDOWN();
 	event.Enable(GetMainBook()->GetCurrentPage() != NULL);
 }
 
@@ -2715,6 +2763,7 @@ void Frame::OnViewDisplayEOL(wxCommandEvent &e)
 
 void Frame::OnViewDisplayEOL_UI(wxUpdateUIEvent &e)
 {
+	CHECK_SHUTDOWN();
 	LEditor *editor = GetMainBook()->GetActiveEditor();
 	bool hasEditor = editor ? true : false;
 	if (!hasEditor) {
@@ -2765,6 +2814,7 @@ void Frame::OnCopyFilePathOnly(wxCommandEvent &event)
 
 void Frame::OnWorkspaceMenuUI(wxUpdateUIEvent &e)
 {
+	CHECK_SHUTDOWN();
 	if (ManagerST::Get()->IsWorkspaceOpen() == false) {
 		e.Enable(false);
 		return;
@@ -2822,6 +2872,7 @@ void Frame::OnShowNavBar(wxCommandEvent& e)
 
 void Frame::OnShowNavBarUI(wxUpdateUIEvent& e)
 {
+	CHECK_SHUTDOWN();
 	e.Check(GetMainBook()->IsNavBarShown());
 }
 
@@ -2974,6 +3025,7 @@ void Frame::SetStatusMessage(const wxString &msg, int col, int id)
 
 void Frame::OnFunctionCalltipUI(wxUpdateUIEvent& event)
 {
+	CHECK_SHUTDOWN();
 	LEditor* editor = GetMainBook()->GetActiveEditor();
 	event.Enable(editor ? true : false);
 }
@@ -2990,6 +3042,7 @@ void Frame::OnReloadWorkspace(wxCommandEvent& event)
 
 void Frame::OnReloadWorkspaceUI(wxUpdateUIEvent& event)
 {
+	CHECK_SHUTDOWN();
 	event.Enable(ManagerST::Get()->IsWorkspaceOpen());
 }
 
@@ -3028,6 +3081,7 @@ void Frame::RebuildProject(const wxString& projectName)
 
 void Frame::OnBatchBuildUI(wxUpdateUIEvent& e)
 {
+	CHECK_SHUTDOWN();
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && ManagerST::Get()->IsWorkspaceOpen();
 	e.Enable(enable);
 }
@@ -3087,6 +3141,7 @@ void Frame::OnBuildWorkspace(wxCommandEvent& e)
 
 void Frame::OnBuildWorkspaceUI(wxUpdateUIEvent& e)
 {
+	CHECK_SHUTDOWN();
 	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
 }
 
@@ -3114,6 +3169,7 @@ void Frame::OnCleanWorkspace(wxCommandEvent& e)
 
 void Frame::OnCleanWorkspaceUI(wxUpdateUIEvent& e)
 {
+	CHECK_SHUTDOWN();
 	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
 }
 
@@ -3125,6 +3181,7 @@ void Frame::OnReBuildWorkspace(wxCommandEvent& e)
 
 void Frame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)
 {
+	CHECK_SHUTDOWN();
 	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
 }
 
@@ -3136,6 +3193,7 @@ void Frame::OnDetachTab(wxCommandEvent &e)
 
 void Frame::OnDetachTabUI(wxUpdateUIEvent &e)
 {
+	CHECK_SHUTDOWN();
 	e.Enable(!GetMainBook()->IsDetached(GetMainBook()->GetCurrentPage()));
 }
 
@@ -3238,12 +3296,14 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 
 void Frame::OnQuickDebugUI(wxUpdateUIEvent& e)
 {
+	CHECK_SHUTDOWN();
 	IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
 	e.Enable(dbgr && !dbgr->IsRunning());
 }
 
 void Frame::OnShowWhitespaceUI(wxUpdateUIEvent& e)
 {
+	CHECK_SHUTDOWN();
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
 	if (e.GetId() == XRCID("whitepsace_invisible")) {
 		e.Check(options->GetShowWhitspaces() == 0);
@@ -3443,11 +3503,13 @@ void Frame::OnPreviousFiFMatch(wxCommandEvent& e)
 
 void Frame::OnNextFiFMatchUI(wxUpdateUIEvent& e)
 {
+	CHECK_SHUTDOWN();
 	e.Enable(GetOutputPane()->GetFindResultsTab()->GetPageCount() > 0);
 }
 
 void Frame::OnPreviousFiFMatchUI(wxUpdateUIEvent& e)
 {
+	CHECK_SHUTDOWN();
 	e.Enable(GetOutputPane()->GetFindResultsTab()->GetPageCount() > 0);
 }
 
@@ -3517,6 +3579,7 @@ void Frame::OnShowActiveProjectSettings(wxCommandEvent& e)
 
 void Frame::OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e)
 {
+	CHECK_SHUTDOWN();
 	wxArrayString projectList;
 	WorkspaceST::Get()->GetProjectList( projectList );
 	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && (projectList.IsEmpty() == false));

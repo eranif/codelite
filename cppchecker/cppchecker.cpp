@@ -100,10 +100,10 @@ CppCheckPlugin::~CppCheckPlugin()
 	m_mgr->GetTheApp()->Disconnect(wxEVT_WORKSPACE_CLOSED,            wxCommandEventHandler(CppCheckPlugin::OnWorkspaceClosed),NULL, this);
 }
 
-wxToolBar *CppCheckPlugin::CreateToolBar(wxWindow *parent)
+clToolBar *CppCheckPlugin::CreateToolBar(wxWindow *parent)
 {
 	// Create the toolbar to be used by the plugin
-	wxToolBar *tb(NULL);
+	clToolBar *tb(NULL);
 	return tb;
 }
 

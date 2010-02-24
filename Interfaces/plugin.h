@@ -27,9 +27,12 @@
 
 #include "imanager.h"
 #include "wx/toolbar.h"
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
 #include "wx/event.h"
 #include "wx/notebook.h"
 #include "plugindata.h"
+#include "cl_defs.h"
 #include "plugin_version.h"
 
 #ifdef _WIN32
@@ -285,7 +288,7 @@ public:
 	 * \param parent toolbar parent, usually this is the main frame
 	 * \return toolbar or NULL
 	 */
-	virtual wxToolBar *CreateToolBar(wxWindow *parent) = 0;
+	virtual clToolBar *CreateToolBar(wxWindow *parent) = 0;
 
 	/**
 	 * Every plugin can place a sub menu in the 'Plugins' Menu at the menu bar

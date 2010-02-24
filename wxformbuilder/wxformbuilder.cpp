@@ -86,7 +86,7 @@ wxFormBuilder::~wxFormBuilder()
 {
 }
 
-wxToolBar *wxFormBuilder::CreateToolBar(wxWindow *parent)
+clToolBar *wxFormBuilder::CreateToolBar(wxWindow *parent)
 {
 	return NULL;
 }

@@ -206,7 +206,7 @@ void PluginManager::Load()
 			m_plugins[plugin->GetShortName()] = plugin;
 
 			//load the toolbar
-			wxToolBar *tb = plugin->CreateToolBar( AllowToolbar() ? (wxWindow*)Frame::Get()->GetMainPanel() : (wxWindow*)Frame::Get() );
+			clToolBar *tb = plugin->CreateToolBar( AllowToolbar() ? (wxWindow*)Frame::Get()->GetMainPanel() : (wxWindow*)Frame::Get() );
 			if ( tb ) {
 				Frame::Get()->GetDockingManager().AddPane( tb, wxAuiPaneInfo().Name( plugin->GetShortName() ).LeftDockable( true ).RightDockable( true ).Caption( plugin->GetShortName() ).ToolbarPane().Top() );
 

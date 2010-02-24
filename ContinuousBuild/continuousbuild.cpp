@@ -71,10 +71,10 @@ ContinuousBuild::~ContinuousBuild()
 {
 }
 
-wxToolBar *ContinuousBuild::CreateToolBar(wxWindow *parent)
+clToolBar *ContinuousBuild::CreateToolBar(wxWindow *parent)
 {
 	// Create the toolbar to be used by the plugin
-	wxToolBar *tb(NULL);
+	clToolBar *tb(NULL);
 	return tb;
 }
 

@@ -23,7 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
-#include "open_resource_dialog.h" // New open resource 
+#include "open_resource_dialog.h" // New open resource
 #include <wx/busyinfo.h>
 #include "tags_parser_search_path_dlg.h"
 #include "includepathlocator.h"
@@ -488,10 +488,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED,       Frame::OnBuildEnded)
 	EVT_MENU   (XRCID("update_num_builders_count"),                Frame::OnUpdateNumberOfBuildProcesses)
 	EVT_MENU   (XRCID("goto_codelite_download_url"),               Frame::OnGotoCodeLiteDownloadPage)
-	
+
 	EVT_MENU   (XRCID("never_update_parser_paths"),                Frame::OnNeverUpdateParserPath)
 	EVT_MENU   (XRCID("update_parser_paths"),                      Frame::OnUpdateParserPath)
-	
+
 	EVT_SYMBOLTREE_ADD_ITEM(wxID_ANY,    Frame::OnAddSymbols)
 	EVT_SYMBOLTREE_DELETE_ITEM(wxID_ANY, Frame::OnDeleteSymbols)
 	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
@@ -876,7 +876,7 @@ wxString Frame::GetViewAsLanguageById(int id) const
 void Frame::CreateToolbars24()
 {
 	wxAuiPaneInfo info;
-	
+
 #if !USE_AUI_TOOLBAR
 	wxWindow *toolbar_parent (this);
 	if (PluginManager::Get()->AllowToolbar()) {
@@ -1248,7 +1248,7 @@ void Frame::DispatchCommandEvent(wxCommandEvent &event)
 void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 {
 	CHECK_SHUTDOWN();
-	
+
 	if ( !IsEditorEvent(event) ) {
 		event.Skip();
 		return;
@@ -1272,7 +1272,7 @@ void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 void Frame::OnFileExistUpdateUI(wxUpdateUIEvent &event)
 {
 	CHECK_SHUTDOWN();
-		
+
 	LEditor* editor = GetMainBook()->GetActiveEditor();
 	if ( !editor ) {
 		event.Enable(false);
@@ -1554,7 +1554,7 @@ void Frame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 void Frame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 {
 	CHECK_SHUTDOWN();
-	
+
 	LEditor* editor = GetMainBook()->GetActiveEditor();
 	// This menu item is enabled only if the current editor belongs to a project
 	event.Enable(editor && ManagerST::Get()->IsWorkspaceOpen());
@@ -1786,7 +1786,7 @@ void Frame::OnAddEnvironmentVariable(wxCommandEvent &event)
 	EnvVarsTableDlg dlg(this);
 	dlg.ShowModal();
 	SetEnvStatusMessage();
-	
+
 	if (ManagerST::Get()->IsWorkspaceOpen()) {
 		//mark all the projects as dirty
 		wxArrayString projects;
@@ -2039,7 +2039,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 	// add new version notification updater
 	long check(1);
 	long updatePaths(1);
-	
+
 	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"),   check);
 	EditorConfigST::Get()->GetLongValue(wxT("UpdateParserPaths"), updatePaths);
 	if ( check ) {
@@ -2054,14 +2054,14 @@ void Frame::OnTimer(wxTimerEvent &event)
 		if ( bs ) {
 			wxString jobs;
 			jobs << cpus;
-			
+
 			if ( bs->GetToolJobs() != jobs ) {
-				
+
 				ButtonDetails btn1;
 				btn1.buttonLabel = wxT("Update Number of Build Processes");
 				btn1.commandId   = XRCID("update_num_builders_count");
 				btn1.window      = this;
-				
+
 				GetMainBook()->ShowMessage(wxT("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), true, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_fix")), btn1);
 			}
 		}
@@ -2078,7 +2078,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 			wxArrayString excudePaths;
 			IncludePathLocator locator(PluginManager::Get());
 			locator.Locate( paths, excudePaths );
-			
+
 			if ( paths.IsEmpty() && updatePaths) {
 				GetMainBook()->ShowMessage(
 								wxT("CodeLite could not find any search paths set for the code completion parser\n")
@@ -2089,21 +2089,21 @@ void Frame::OnTimer(wxTimerEvent &event)
 			} else {
 				if(updatePaths) {
 					ButtonDetails btnYes, btnNo, btnNoNever;
-					
+
 					btnYes.buttonLabel = wxT("Update paths");
 					btnYes.commandId   = XRCID("update_parser_paths");
 					btnYes.isDefault   = true;
 					btnYes.window      = this;
-					
+
 					btnNo.buttonLabel = wxT("Not now");
 					btnNo.isDefault   = false;
 					btnNo.window      = NULL;
-					
+
 					btnNoNever.buttonLabel = wxT("No. And dont ask me again!");
 					btnNoNever.isDefault   = false;
 					btnNoNever.window      = this;
 					btnNoNever.commandId   = XRCID("never_update_parser_paths");
-					
+
 					GetMainBook()->ShowMessage(
 									wxT("Should CodeLite update your code completion parser search paths ? (since there are none..)"),
 									false, wxNullBitmap, btnYes, btnNo, btnNoNever);
@@ -2856,7 +2856,11 @@ void Frame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e)
 
 void Frame::OnHighlightWord(wxCommandEvent& event)
 {
-	if (event.IsChecked()) {
+	long highlightWord(1);
+
+	EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlightWord);
+
+	if ( !highlightWord ) {
 		GetMainBook()->HighlightWord(true);
 		EditorConfigST::Get()->SaveLongValue(wxT("highlight_word"), 1);
 	} else {
@@ -2926,20 +2930,20 @@ void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 	WebUpdateJobData *data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
 	if (data) {
 		if (data->IsUpToDate() == false) {
-			
+
 			m_codeliteDownloadPageURL = data->GetUrl();
 			ButtonDetails btn;
 			btn.buttonLabel = wxT("Download Now!");
 			btn.commandId   = XRCID("goto_codelite_download_url");
 			btn.isDefault   = true;
 			btn.window      = this;
-			
+
 			GetMainBook()->ShowMessage(wxT("A new version of CodeLite is available. Download it?"), true, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_software_update")), btn);
-		
+
 		} else {
 			if(!data->GetShowMessage()) {
 				wxLogMessage(wxString::Format(wxT("Info: CodeLite is up-to-date (or newer), version used: %d, version on site:%d"), data->GetCurrentVersion(), data->GetNewVersion()));
-				
+
 			} else {
 				// User initiated the version check request
 				GetMainBook()->ShowMessage(wxT("CodeLite is up-to-date"));
@@ -3274,7 +3278,7 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 			if (SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info))
 				// plugin stopped debugging
 				return;
-			
+
 			dbgr->SetIsRemoteDebugging(false);
 			dbgr->Start(dbgname, exepath, wd, bpList, cmds);
 
@@ -3353,9 +3357,9 @@ void Frame::OnShowFullScreen(wxCommandEvent& e)
 
 	if (IsFullScreen()) {
 		ShowFullScreen(false);
-		
+
 	} else {
-		
+
 		ShowFullScreen(true, wxFULLSCREEN_NOCAPTION|wxFULLSCREEN_NOBORDER);
 
 		// Re-apply the menu accelerators
@@ -3421,17 +3425,17 @@ void Frame::ReloadExternallyModifiedProjectFiles()
 
 	if (!project_modified && !workspace_modified)
 		return;
-	
+
 	ButtonDetails btn, noBtn;
 	btn.buttonLabel = wxT("Reload Workspace");
 	btn.commandId   = XRCID("reload_workspace");
 	btn.isDefault   = false;
 	btn.window      = this;
-	
+
 	noBtn.buttonLabel = wxT("&Don't reload");
 	noBtn.isDefault   = true;
 	noBtn.window      = NULL;
-	
+
 	GetMainBook()->ShowMessage(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), false, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_reload_workspace")), noBtn, btn);
 }
 
@@ -3525,13 +3529,13 @@ void Frame::OnFindResourceXXX(wxCommandEvent& e)
 
 	} else if(e.GetId() == XRCID("find_typedef")) {
 		searchType = OpenResourceDialog::TYPE_TYPEDEF;
-		
+
 	} else if(e.GetId() == XRCID("find_type")) {
 		searchType = OpenResourceDialog::TYPE_CLASS;
 	} else {
 		searchType = OpenResourceDialog::TYPE_WORKSPACE_FILE;
 	}
-	
+
 	OpenResourceDialog dlg(this, PluginManager::Get(), searchType);
 	if(dlg.ShowModal() == wxID_OK) {
 		OpenResourceDialog::OpenSelection(dlg.GetSelection(), PluginManager::Get());
@@ -3555,7 +3559,7 @@ void Frame::OnDatabaseUpgrade(wxCommandEvent& e)
 	btn.buttonLabel = wxT("Retag Workspace Now!");
 	btn.commandId   = XRCID("full_retag_workspace");
 	btn.window      = this;
-	
+
 	GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. This can be fixed by re-tagging your workspace\nWould you like to re-tag your workspace now?"), true, wxNullBitmap, btn);
 }
 
@@ -3658,7 +3662,7 @@ void Frame::OnUpdateNumberOfBuildProcesses(wxCommandEvent& e)
 	if(bs && cpus != wxNOT_FOUND) {
 		wxString jobs;
 		jobs << cpus;
-		
+
 		bs->SetToolJobs( jobs );
 		BuildSettingsConfigST::Get()->SetBuildSystem(bs);
 		wxLogMessage(wxT("Info: setting number of concurrent builder jobs to ") + jobs);
@@ -3689,10 +3693,10 @@ void Frame::OnUpdateParserPath(wxCommandEvent& e)
 	wxArrayString excudePaths;
 	IncludePathLocator locator(PluginManager::Get());
 	locator.Locate( paths, excudePaths );
-	
+
 	m_tagsOptionsData.SetParserSearchPaths ( paths       );
 	m_tagsOptionsData.SetParserExcludePaths( excudePaths );
-	
+
 	// Update the parser thread
 	ParseThreadST::Get()->SetSearchPaths( paths, excudePaths );
 	EditorConfigST::Get()->WriteObject( wxT("m_tagsOptionsData"), &m_tagsOptionsData );
@@ -3716,11 +3720,11 @@ void Frame::DoSuggestRestart()
 	btn1.menuCommand = false;
 	btn1.isDefault   = true;
 	btn1.window      = ManagerST::Get();
-	
+
 	// set button window to NULL
 	btn2.buttonLabel = wxT("Not now");
 	btn2.window      = NULL;
-	
+
 	GetMainBook()->ShowMessage(_("Some of the changes made requires a restart of CodeLite, Restart now?"), false, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_restart")), btn1, btn2);
 #endif
 }

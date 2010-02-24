@@ -8,7 +8,7 @@
 #if defined(__WXMSW__)||defined(__WXMAC__)||defined(__WXGTK__)
 #    if wxABI_VERSION >= 20809
 #        define clToolBar          wxAuiToolBar
-#        define clTB_DEFAULT_STYLE wxAUI_TB_DEFAULT_STYLE
+#        define clTB_DEFAULT_STYLE wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_OVERFLOW
 #        define USE_AUI_TOOLBAR    1
 #    else
 #        define clToolBar          wxToolBar

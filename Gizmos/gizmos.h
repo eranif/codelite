@@ -39,6 +39,7 @@ class GizmosPlugin : public IPlugin
 protected:
 	void CreateWxProject(NewWxProjectInfo &info);
 	void GizmosRemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
+	void DoPopupButtonMenu(wxPoint pt);
 
 public:
 	GizmosPlugin(IManager *manager);
@@ -66,6 +67,9 @@ public:
 
 	//event handlers
 	virtual void OnGizmos       (wxCommandEvent  &e);
+#if USE_AUI_TOOLBAR
+	virtual void OnGizmosAUI    (wxAuiToolBarEvent &e);
+#endif
 	virtual void OnGizmosUI     (wxUpdateUIEvent &e);
 };
 

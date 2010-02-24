@@ -177,6 +177,7 @@ clToolBar *GizmosPlugin::CreateToolBar(wxWindow *parent)
 		//support both toolbars icon size
 		int size = m_mgr->GetToolbarIconSize();
 
+
 		tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		tb->SetToolBitmapSize(wxSize(size, size));
 
@@ -185,6 +186,12 @@ clToolBar *GizmosPlugin::CreateToolBar(wxWindow *parent)
 		} else {
 			tb->AddTool(XRCID("gizmos_options"), wxT("Gizmos..."), wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("Open Gizmos quick menu"));
 		}
+
+		// When using AUI, make this toolitem a dropdown button
+#if USE_AUI_TOOLBAR
+		tb->SetToolDropDown(XRCID("gizmos_options"), true);
+		m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(GizmosPlugin::OnGizmosAUI), NULL, (wxEvtHandler*)this);
+#endif
 		tb->Realize();
 	}
 
@@ -935,26 +942,8 @@ void GizmosPlugin::OnGizmos(wxCommandEvent& e)
 {
 	// open a popup menu
 	wxUnusedVar(e);
-
-#ifdef __WXMSW__
-	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-#endif
-
-	wxMenu popupMenu;
-
-	std::map<wxString, int> options;
-	options[MI_NEW_CODELITE_PLUGIN] = ID_MI_NEW_CODELITE_PLUGIN;
-	options[MI_NEW_NEW_CLASS      ] = ID_MI_NEW_NEW_CLASS;
-	options[MI_NEW_WX_PROJECT     ] = ID_MI_NEW_WX_PROJECT;
-
-	std::map<wxString, int>::iterator iter = options.begin();
-	for (; iter != options.end(); iter++) {
-		int      id   = (*iter).second;
-		wxString text = (*iter).first;
-		wxMenuItem *item = new wxMenuItem(&popupMenu, id, text, text, wxITEM_NORMAL);
-		popupMenu.Append(item);
-	}
-	m_mgr->GetTheApp()->GetTopWindow()->PopupMenu(&popupMenu);
+	wxPoint pt;
+	DoPopupButtonMenu(pt);
 }
 
 void GizmosPlugin::OnGizmosUI(wxUpdateUIEvent& e)
@@ -992,3 +981,47 @@ void GizmosPlugin::GizmosRemoveDuplicates(std::vector<TagEntryPtr>& src, std::ve
 		target.push_back( iter->second );
 	}
 }
+
+void GizmosPlugin::DoPopupButtonMenu(wxPoint pt)
+{
+#ifdef __WXMSW__
+	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+#endif
+
+	wxMenu popupMenu;
+
+	std::map<wxString, int> options;
+	options[MI_NEW_CODELITE_PLUGIN] = ID_MI_NEW_CODELITE_PLUGIN;
+	options[MI_NEW_NEW_CLASS      ] = ID_MI_NEW_NEW_CLASS;
+	options[MI_NEW_WX_PROJECT     ] = ID_MI_NEW_WX_PROJECT;
+
+	std::map<wxString, int>::iterator iter = options.begin();
+	for (; iter != options.end(); iter++) {
+		int      id   = (*iter).second;
+		wxString text = (*iter).first;
+		wxMenuItem *item = new wxMenuItem(&popupMenu, id, text, text, wxITEM_NORMAL);
+		popupMenu.Append(item);
+	}
+	m_mgr->GetTheApp()->GetTopWindow()->PopupMenu(&popupMenu, pt);
+}
+
+#if USE_AUI_TOOLBAR
+void GizmosPlugin::OnGizmosAUI(wxAuiToolBarEvent& e)
+{
+    if (e.IsDropDownClicked())
+    {
+        wxAuiToolBar* tb = static_cast<wxAuiToolBar*>(e.GetEventObject());
+        tb->SetToolSticky(e.GetId(), true);
+
+		// line up our menu with the button
+        wxRect rect = tb->GetToolRect(e.GetId());
+        wxPoint pt = tb->ClientToScreen(rect.GetBottomLeft());
+        pt = m_mgr->GetTheApp()->GetTopWindow()->ScreenToClient(pt);
+
+		DoPopupButtonMenu(pt);
+		tb->SetToolSticky(e.GetId(), false);
+	}
+}
+#endif
+
+

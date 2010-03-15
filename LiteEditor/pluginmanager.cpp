@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "app.h"
+#include <wx/toolbook.h>
 #include "environmentconfig.h"
 #include "macromanager.h"
 #include "build_settings_config.h"
@@ -65,11 +66,13 @@ void PluginManager::UnLoad()
 		delete plugin;
 	}
 
+#if wxVERSION_NUMBER < 2900
 	std::list<clDynamicLibrary*>::iterator iter = m_dl.begin();
 	for ( ; iter != m_dl.end(); iter++ ) {
 		( *iter )->Detach();
 		delete ( *iter );
 	}
+#endif
 
 	m_dl.clear();
 	m_plugins.clear();
@@ -104,11 +107,11 @@ void PluginManager::Load()
 	//does
 	LanguageST::Get()->SetTagsManager( GetTagsManager() );
 	TagsManagerST::Get()->SetLanguage( LanguageST::Get() );
-	
+
 	// Plugin loading is disabled?
-	if(((App*) GetTheApp())->GetLoadPlugins() == false)
+	if (((App*) GetTheApp())->GetLoadPlugins() == false)
 		return;
-		
+
 #ifdef __WXGTK__
 	wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
 #else
@@ -127,17 +130,18 @@ void PluginManager::Load()
 				wxLogMessage( wxT( "Failed to load plugin's dll: " ) + fileName );
 				if (!dl->GetError().IsEmpty())
 					wxLogMessage(dl->GetError());
+#if wxVERSION_NUMBER < 2900
 				delete dl;
+#endif
 				continue;
 			}
 
 			bool success( false );
 			GET_PLUGIN_INFO_FUNC pfnGetPluginInfo = ( GET_PLUGIN_INFO_FUNC )dl->GetSymbol( wxT( "GetPluginInfo" ), &success );
 			if ( !success ) {
-//				wxLogMessage(wxT("Failed to find GetPluginInfo in dll: ") + fileName);
-//				if (!dl->GetError().IsEmpty())
-//					wxLogMessage(dl->GetError());
+#if wxVERSION_NUMBER < 2900
 				delete dl;
+#endif
 				continue;
 			}
 
@@ -158,7 +162,9 @@ void PluginManager::Load()
 				                              fileName.c_str(),
 				                              interface_version,
 				                              PLUGIN_INTERFACE_VERSION));
+#if wxVERSION_NUMBER < 2900
 				delete dl;
+#endif
 				continue;
 			}
 
@@ -169,7 +175,9 @@ void PluginManager::Load()
 				//new plugin?, add it and use the default enabled/disabled for this plugin
 				actualPlugins[pluginInfo.GetName()] = pluginInfo;
 				if (pluginInfo.GetEnabled() == false) {
+#if wxVERSION_NUMBER < 2900
 					delete dl;
+#endif
 					continue;
 				}
 			} else {
@@ -181,7 +189,9 @@ void PluginManager::Load()
 
 				actualPlugins[pluginInfo.GetName()] = pluginInfo;
 				if (pluginInfo.GetEnabled() == false) {
+#if wxVERSION_NUMBER < 2900
 					delete dl;
+#endif
 					continue;
 				}
 			}
@@ -197,7 +207,9 @@ void PluginManager::Load()
 				pluginInfo.SetEnabled(false);
 				actualPlugins[pluginInfo.GetName()] = pluginInfo;
 
+#if wxVERSION_NUMBER < 2900
 				delete dl;
+#endif
 				continue;
 			}
 
@@ -301,7 +313,7 @@ wxTreeCtrl *PluginManager::GetTree(TreeType type)
 	}
 }
 
-Notebook *PluginManager::GetOutputPaneNotebook()
+wxBookCtrlBase *PluginManager::GetOutputPaneNotebook()
 {
 	return Frame::Get()->GetOutputPane()->GetNotebook();
 }
@@ -393,7 +405,7 @@ wxApp* PluginManager::GetTheApp()
 void PluginManager::ReloadWorkspace()
 {
 	wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
-	Frame::Get()->AddPendingEvent( evt );
+	Frame::Get()->GetEventHandler()->AddPendingEvent( evt );
 }
 
 IPlugin* PluginManager::GetPlugin(const wxString& pluginName)
@@ -587,4 +599,9 @@ IEditor* PluginManager::NewEditor()
 IMacroManager* PluginManager::GetMacrosManager()
 {
 	return MacroManager::Instance();
+
+}
+bool PluginManager::IsShutdownInProgress() const
+{
+	return ManagerST::Get()->IsShutdownInProgress();
 }

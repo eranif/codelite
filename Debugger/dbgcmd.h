@@ -297,10 +297,12 @@ class DbgCmdCreateVarObj : public DbgCmdHandler
 {
 	wxString m_expression;
 	int      m_userReason;
-
+	DbgGdb * m_debugger;
+	
 public:
-	DbgCmdCreateVarObj(IDebuggerObserver *observer, const wxString &expression, int userReason)
+	DbgCmdCreateVarObj(IDebuggerObserver *observer, DbgGdb *gdb, const wxString &expression, int userReason)
 			: DbgCmdHandler(observer)
+			, m_debugger(gdb)
 			, m_expression(expression)
 			, m_userReason(userReason) {}
 
@@ -327,13 +329,16 @@ public:
 
 class DbgCmdEvalVarObj : public DbgCmdHandler
 {
-	wxString m_variable;
-	int      m_userReason;
+	wxString      m_variable;
+	int           m_userReason;
+	DisplayFormat m_displayFormat;
+	
 public:
-	DbgCmdEvalVarObj(IDebuggerObserver *observer, const wxString &variable, int userReason)
-			: DbgCmdHandler(observer)
-			, m_variable   (variable)
-			, m_userReason ( userReason ) {}
+	DbgCmdEvalVarObj(IDebuggerObserver *observer, const wxString &variable, DisplayFormat displayFormat, int userReason)
+			: DbgCmdHandler  (observer)
+			, m_variable     (variable)
+			, m_displayFormat(displayFormat)
+			, m_userReason   ( userReason ) {}
 
 	virtual ~DbgCmdEvalVarObj() {}
 

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include <wx/wupdlock.h>
 #include "open_resource_dialog.h" // New open resource
 #include <wx/busyinfo.h>
 #include "tags_parser_search_path_dlg.h"
@@ -53,8 +54,6 @@
 #include "dirsaver.h"
 #include "batchbuilddlg.h"
 #include "detachedpanesinfo.h"
-#include "custom_tab.h"
-#include "custom_tabcontainer.h"
 #include "dockablepanemenumanager.h"
 #include "dockablepane.h"
 #include "webupdatethread.h"
@@ -112,7 +111,7 @@
 #include "globals.h"
 #include "workspacetab.h"
 #include "fileexplorer.h"
-#include "custom_notebook.h"
+#include "notebook_ex.h"
 #include "options_dlg2.h"
 #include <wx/msgdlg.h>
 #include "tabgroupdlg.h"
@@ -433,15 +432,13 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	//-------------------------------------------------------
 	// Editor tab context menu
 	//-------------------------------------------------------
-	EVT_MENU(XRCID("close_other_tabs"),         Frame::OnCloseAllButThis)
-	EVT_MENU(XRCID("copy_file_name"),           Frame::OnCopyFilePath)
-	EVT_MENU(XRCID("copy_file_path"),           Frame::OnCopyFilePathOnly)
-	EVT_MENU(XRCID("detach_tab"),               Frame::OnDetachTab)
-	EVT_MENU(XRCID("open_shell_from_filepath"), Frame::OnOpenShellFromFilePath)
-
-	EVT_UPDATE_UI(XRCID("copy_file_name"),      Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("copy_file_path"),      Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("detach_tab"),          Frame::OnDetachTabUI)
+	EVT_MENU(XRCID("close_other_tabs"),                 Frame::OnCloseAllButThis)
+	EVT_MENU(XRCID("copy_file_name"),                   Frame::OnCopyFilePath)
+	EVT_MENU(XRCID("copy_file_path"),                   Frame::OnCopyFilePathOnly)
+	EVT_MENU(XRCID("open_shell_from_filepath"),         Frame::OnOpenShellFromFilePath)
+        
+	EVT_UPDATE_UI(XRCID("copy_file_name"),              Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("copy_file_path"),              Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("open_shell_from_filepath"),    Frame::OnFileExistUpdateUI)
 
 	//-----------------------------------------------------------------
@@ -633,7 +630,7 @@ void Frame::Initialize(bool loadLastSession)
 
 	//time to create the file explorer
 	wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("go_home"));
-	m_theFrame->GetFileExplorer()->ProcessEvent(e);
+	m_theFrame->GetFileExplorer()->GetEventHandler()->ProcessEvent(e);
 
 	//load last session?
 	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && loadLastSession) {
@@ -680,7 +677,7 @@ void Frame::CreateGUIControls(void)
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_ALLOW_ACTIVE_PANE);
 #endif
 
-// Mac only
+// Mac / Linux
 #if defined (__WXMAC__) || defined (__WXGTK__)
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,        wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,      DrawingUtils::GetPanelBgColour());
@@ -694,14 +691,22 @@ void Frame::CreateGUIControls(void)
 	DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"), wxT("2.0.2"));
 	WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
 
-	// On wx2.8.7, AUI dragging is broken but this happens only in debug build & on GTK
 #if defined (__WXGTK__) && defined (__WXDEBUG__)
 	m_mgr.SetFlags(wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_TRANSPARENT_DRAG|wxAUI_MGR_RECTANGLE_HINT);
+	
+#elif defined(__WXGTK__)
+	m_mgr.SetFlags(m_mgr.GetFlags() & ~wxAUI_MGR_TRANSPARENT_HINT);
+	m_mgr.SetFlags(m_mgr.GetFlags() |    wxAUI_MGR_VENETIAN_BLINDS_HINT);
+	
 #endif
-
+	
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_NONE);
+#ifdef __WXMAC__
+	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
+#else
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 1);
-	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 6);
+#endif
+	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
 
 	// Load the menubar from XRC and set this frame's menubar to it.
 	SetMenuBar(wxXmlResource::Get()->LoadMenuBar(wxT("main_menu")));
@@ -717,14 +722,15 @@ void Frame::CreateGUIControls(void)
 
 	m_outputPane = new OutputPane(m_mainPanel, wxT("Output View"));
 	wxAuiPaneInfo paneInfo;
-	m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(2).Position(1).CaptionVisible(false));
+	m_mgr.AddPane(m_outputPane, 
+					paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(0).Position(1).CaptionVisible(false).MinSize(-1, 100));
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
-
+	
 	// Add the explorer pane
 	m_workspacePane = new WorkspacePane(m_mainPanel, wxT("Workspace View"), &m_mgr);
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
 	              Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
-	              Left().BestSize(250, 300).Layer(2).Position(0).CloseButton(true));
+	              Left().BestSize(250, 300).Layer(1).Position(0).CloseButton(true));
 	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace View"));
 
 	//add the debugger locals tree, make it hidden by default
@@ -734,7 +740,7 @@ void Frame::CreateGUIControls(void)
 	RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
 
 	m_mainBook = new MainBook(m_mainPanel);
-	m_mgr.AddPane(m_mainBook, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(true));
+	m_mgr.AddPane(m_mainBook, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(false));
 	CreateRecentlyOpenedFilesMenu();
 
 	long show_nav(1);
@@ -810,10 +816,6 @@ void Frame::CreateGUIControls(void)
 	//load the tab right click menu
 	GetWorkspacePane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("workspace_view_right_click_menu")));
 	GetDebuggerPane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("debugger_view_right_click_menu")));
-
-	// construct the output view control bar
-	m_controlBar = new OutputViewControlBar(this, GetOutputPane()->GetNotebook(), &m_mgr, wxID_ANY);
-	mainSizer->Add(m_controlBar, 0, wxEXPAND);
 
 	m_mgr.Update();
 	SetAutoLayout (true);
@@ -1470,6 +1472,7 @@ void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
 void Frame::OnFileClose(wxCommandEvent &event)
 {
 	wxUnusedVar( event );
+	wxWindowUpdateLocker locker(this);
 	GetMainBook()->ClosePage(GetMainBook()->GetCurrentPage());
 }
 
@@ -1743,16 +1746,20 @@ void Frame::OnViewPaneUI(wxUpdateUIEvent &event)
 
 void Frame::ViewPane(const wxString &paneName, wxCommandEvent &event)
 {
-	wxAuiPaneInfo &info = m_mgr.GetPane(paneName);
-	if (info.IsOk()) {
-		if ( event.IsChecked() ) {
-			info.Show();
-		} else {
-			info.Hide();
+	if(paneName == wxT("Output View")) {
+		ManagerST::Get()->ToggleOutputPane( !event.IsChecked() );
+		
+	} else {
+		wxAuiPaneInfo &info = m_mgr.GetPane(paneName);
+		if (info.IsOk()) {
+			if ( event.IsChecked() ) {
+				info.Show();
+			} else {
+				info.Hide();
+			}
+			m_mgr.Update();
 		}
-		m_mgr.Update();
 	}
-
 }
 
 void Frame::ViewPaneUI(const wxString &paneName, wxUpdateUIEvent &event)
@@ -1848,6 +1855,8 @@ void Frame::OnBuildProject(wxCommandEvent &event)
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
 
+		SetStatusMessage(wxT("Build starting..."), 0);
+
 		wxString conf, projectName;
 		projectName = ManagerST::Get()->GetActiveProjectName();
 
@@ -1864,6 +1873,8 @@ void Frame::OnBuildProject(wxCommandEvent &event)
 		}
 		ManagerST::Get()->PushQueueCommand( info );
 		ManagerST::Get()->ProcessCommandQueue();
+
+		SetStatusMessage(wxT("Done"), 0);
 	}
 }
 
@@ -2405,11 +2416,21 @@ void Frame::OnImportMSVS(wxCommandEvent &e)
 	wxUnusedVar(e);
 	const wxString ALL(wxT("MS Visual Studio Solution File (*.sln)|*.sln|")
 	                   wxT("All Files (*)|*"));
-	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open MS Solution File"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
-	if (dlg->ShowModal() == wxID_OK) {
-		ManagerST::Get()->ImportMSVSSolution(dlg->GetPath());
+	wxFileDialog dlg(this, wxT("Open MS Solution File"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
+	if (dlg.ShowModal() == wxID_OK) {
+		
+		wxArrayString cmps;
+		BuildSettingsConfigCookie cookie;
+		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
+		while (cmp) {
+			cmps.Add(cmp->GetName());
+			cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
+		}
+
+		// Get the prefered compiler type
+		wxString compilerName = wxGetSingleChoice(wxT("Select the compiler to use:"), wxT("Choose compiler"), cmps);
+		ManagerST::Get()->ImportMSVSSolution(dlg.GetPath(), compilerName);
 	}
-	dlg->Destroy();
 }
 
 void Frame::OnDebug(wxCommandEvent &e)
@@ -2641,10 +2662,7 @@ void Frame::OnShowWelcomePage(wxCommandEvent &event)
 void Frame::CompleteInitialization()
 {
 	PluginManager::Get()->Load();
-
-	// Add buttons to the OutputControlBarView
-	m_controlBar->AddAllButtons();
-
+	
 	// Connect some system events
 	m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(Frame::OnDockablePaneClosed), NULL, this);
 	m_mgr.Connect(wxEVT_AUI_RENDER,     wxAuiManagerEventHandler(Frame::OnAuiManagerRender),   NULL, this);
@@ -2955,17 +2973,17 @@ void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 
 void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 {
-	size_t sel = GetWorkspacePane()->GetNotebook()->GetSelection();
-	CustomTab *t = GetWorkspacePane()->GetNotebook()->GetTabContainer()->IndexToTab(sel);
-	wxString text = t->GetText();
-	wxBitmap bmp = t->GetBmp();
-	wxWindow *page = t->GetWindow();
+	size_t     sel = GetWorkspacePane()->GetNotebook()->GetSelection();
+	wxWindow *page = GetWorkspacePane()->GetNotebook()->GetCurrentPage();
+	wxString  text = GetWorkspacePane()->GetNotebook()->GetPageText(sel);
+	wxBitmap  bmp;
 
+	DockablePane *pane = new DockablePane(m_mainPanel, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));
+	
 	// remove the page from the notebook
 	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
-
-	DockablePane *pane = new DockablePane(m_mainPanel, GetWorkspacePane()->GetNotebook(), page, text, bmp, wxSize(200, 200));
-	wxUnusedVar(pane);
+	pane->SetChild(page);
+	
 	wxUnusedVar(e);
 }
 
@@ -3015,7 +3033,7 @@ void Frame::OnDockablePaneClosed(wxAuiManagerEvent &e)
 	DockablePane *pane = dynamic_cast<DockablePane*>(e.GetPane()->window);
 	if (pane) {
 		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
-		pane->ProcessEvent(evt);
+		pane->GetEventHandler()->ProcessEvent(evt);
 	} else {
 		e.Skip();
 	}
@@ -3119,8 +3137,8 @@ void Frame::SetFrameTitle(LEditor* editor)
 		title << wxT("*");
 	}
 
-	LEditor *activeEditor = GetMainBook()->GetActiveEditor();
-	if (editor && activeEditor == editor) {
+	//LEditor *activeEditor = GetMainBook()->GetActiveEditor();
+	if (editor/* && activeEditor == editor*/) {
 		title << editor->GetFileName().GetFullName() << wxT(" ");
 		// by default display the full path as well
 		long value(1);
@@ -3151,17 +3169,17 @@ void Frame::OnBuildWorkspaceUI(wxUpdateUIEvent& e)
 
 void Frame::OnDetachDebuggerViewTab(wxCommandEvent& e)
 {
-	size_t sel = GetDebuggerPane()->GetNotebook()->GetSelection();
-	CustomTab *t = GetDebuggerPane()->GetNotebook()->GetTabContainer()->IndexToTab(sel);
-	wxString text = t->GetText();
-	wxBitmap bmp = t->GetBmp();
-	wxWindow *page = t->GetWindow();
-
+	size_t     sel = GetDebuggerPane()->GetNotebook()->GetSelection();
+	wxWindow *page = GetDebuggerPane()->GetNotebook()->GetCurrentPage();
+	wxString  text = GetDebuggerPane()->GetNotebook()->GetPageText(sel);
+	wxBitmap  bmp ;
+	
+	DockablePane *pane = new DockablePane(m_mainPanel, GetDebuggerPane()->GetNotebook(), text, bmp, wxSize(200, 200));
+	
 	// remove the page from the notebook
 	GetDebuggerPane()->GetNotebook()->RemovePage(sel, false);
-
-	DockablePane *pane = new DockablePane(m_mainPanel, GetDebuggerPane()->GetNotebook(), page, text, bmp, wxSize(200, 200));
-	wxUnusedVar(pane);
+	pane->SetChild(page);
+	
 	wxUnusedVar(e);
 }
 
@@ -3187,18 +3205,6 @@ void Frame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)
 {
 	CHECK_SHUTDOWN();
 	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
-}
-
-void Frame::OnDetachTab(wxCommandEvent &e)
-{
-	wxUnusedVar(e);
-	GetMainBook()->DetachPage(GetMainBook()->GetCurrentPage());
-}
-
-void Frame::OnDetachTabUI(wxUpdateUIEvent &e)
-{
-	CHECK_SHUTDOWN();
-	e.Enable(!GetMainBook()->IsDetached(GetMainBook()->GetCurrentPage()));
 }
 
 void Frame::OnOpenShellFromFilePath(wxCommandEvent& e)
@@ -3485,11 +3491,7 @@ void Frame::SaveLayoutAndSession()
 
 	// save the notebooks styles
 	EditorConfigST::Get()->SaveLongValue(wxT("MainBook"),      GetMainBook()->GetBookStyle());
-	EditorConfigST::Get()->SaveLongValue(wxT("DebuggerBook"),  GetDebuggerPane()->GetNotebook()->GetBookStyle());
-	EditorConfigST::Get()->SaveLongValue(wxT("OutputPane"),    GetOutputPane()->GetNotebook()->GetBookStyle());
-	EditorConfigST::Get()->SaveLongValue(wxT("WorkspaceView"), GetWorkspacePane()->GetNotebook()->GetBookStyle());
 	EditorConfigST::Get()->SaveLongValue(wxT("FindResults"),   GetOutputPane()->GetFindResultsTab()->GetBookStyle());
-
 	EditorConfigST::Get()->Save();
 }
 
@@ -3578,7 +3580,7 @@ void Frame::OnCheckForUpdate(wxCommandEvent& e)
 
 void Frame::OnShowActiveProjectSettings(wxCommandEvent& e)
 {
-	GetWorkspaceTab()->ProcessEvent( e );
+	GetWorkspaceTab()->GetEventHandler()->ProcessEvent( e );
 }
 
 void Frame::OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e)
@@ -3616,20 +3618,7 @@ void Frame::OnLoadPerspective(wxCommandEvent& e)
 			EditorConfigST::Get()->SetRevision(SvnRevision);
 		}
 	}
-
-	// Since of revision 3048, we need to manually force some of the changes
-	// to the "Output View" pane, otherwise users wont be able to see them
-	// unless they delete their codelite.layout file, which people usually
-	// dont do
-	GetDockingManager().GetPane(wxT("Output View")).Floatable(false);
-	GetDockingManager().GetPane(wxT("Output View")).Dockable(false);
-	GetDockingManager().GetPane(wxT("Output View")).CloseButton(false);
-	GetDockingManager().GetPane(wxT("Output View")).CaptionVisible(false);
-	GetDockingManager().GetPane(wxT("Output View")).Hide();
-	GetDockingManager().Update();
-
 	EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
-
 }
 
 void Frame::SetEnvStatusMessage()
@@ -3671,12 +3660,12 @@ void Frame::OnUpdateNumberOfBuildProcesses(wxCommandEvent& e)
 
 void Frame::OnWorkspaceEditorPreferences(wxCommandEvent& e)
 {
-	GetWorkspaceTab()->GetFileView()->ProcessEvent(e);
+	GetWorkspaceTab()->GetFileView()->GetEventHandler()->ProcessEvent(e);
 }
 
 void Frame::OnWorkspaceSettings(wxCommandEvent& e)
 {
-	GetWorkspaceTab()->GetFileView()->ProcessEvent(e);
+	GetWorkspaceTab()->GetFileView()->GetEventHandler()->ProcessEvent(e);
 }
 
 void Frame::OnGotoCodeLiteDownloadPage(wxCommandEvent& e)

@@ -32,7 +32,6 @@
 #include <wx/imaglist.h>
 #include <wx/treectrl.h>
 #include <wx/splitter.h>
-#include <wx/propgrid/propgrid.h>
 #include "plugin.h"
 #include "dockablepane.h"
 #include "windowstack.h"
@@ -142,7 +141,6 @@ private:
     wxChoice *m_viewChoice;       ///< User can select a view mode
     wxSplitterWindow *m_splitter; ///< For hiding/showing the properties pane
     WindowStack *m_viewStack;     ///< Shows current symbols for selected view mode
-    wxPropertyGrid *m_properties; ///< Shows properties of currently selected symbol
 	wxBoxSizer* m_choiceSizer;	  ///< Sizer for the drop button & the view mode
 
     wxArrayString m_viewModeNames;      ///< User-visible names for view modes
@@ -195,9 +193,7 @@ private:
     wxString GetSymbolsPath(IEditor *editor);
     void GetFiles(const wxFileName &path, wxArrayString &files);
     void GetPaths(const wxArrayString &files, std::multimap<wxString,wxString> &filePaths);
-    void InitSymbolProperties();
-    void ShowSymbolProperties();
-
+    
     //--------------------------------------------
     //Tree-related methods
     //--------------------------------------------
@@ -225,7 +221,6 @@ private:
     void OnLinkEditor(wxCommandEvent &e);
     void OnCollapseAll(wxCommandEvent &e);
     void OnGoHome(wxCommandEvent &e);
-    void OnShowProperties(wxCommandEvent &e);
     
     void OnStackChoiceUI(wxUpdateUIEvent &e);
     void OnCollapseAllUI(wxUpdateUIEvent &e);

@@ -48,7 +48,7 @@
 *   DATA DECLARATIONS
 */
 
-enum { NumTokens = 11 }; 
+enum { NumTokens = 11 };
 
 typedef enum eException {
 	ExceptionNone, ExceptionEOF, ExceptionFormattingError,
@@ -205,6 +205,8 @@ typedef struct sStatementInfo {
 	tokenInfo*	blockName;      /* name of current block */
 	memberInfo	member;         /* information regarding parent class/struct */
 	vString*	parentClasses;  /* parent classes */
+	boolean     isNamespacAlias;/* is this a namespace alias? */
+	char        namespaceAlias[256]; /* namespace alias */
 	struct sStatementInfo *parent;  /* statement we are nested within */
 } statementInfo;
 
@@ -764,6 +766,9 @@ static void reinitStatement (statementInfo *const st, const boolean partial)
 	st->gotName			= FALSE;
 	st->haveQualifyingName = FALSE;
 	st->tokenIndex		= 0;
+	st->isNamespacAlias = FALSE;
+
+	memset(st->namespaceAlias, 0, sizeof(st->namespaceAlias));
 
 	if (st->parent != NULL)
 		st->inFunction = st->parent->inFunction;
@@ -1030,8 +1035,7 @@ static void addOtherFields (tagEntryInfo* const tag, const tagType type,
 	}
 
 	/* Add typename info, type of the tag and name of struct/union/etc. */
-	if ((type == TAG_TYPEDEF || type == TAG_VARIABLE || type == TAG_MEMBER)
-			&& isContextualStatement(st))
+	if ((type == TAG_TYPEDEF || type == TAG_VARIABLE || type == TAG_MEMBER) && isContextualStatement(st))
 	{
 		char *p;
 
@@ -1058,6 +1062,11 @@ static void addOtherFields (tagEntryInfo* const tag, const tagType type,
 			p = vStringValue (typeRef);
 		}
 		tag->extensionFields.typeRef [1] = p;
+
+	} else if(st->isNamespacAlias == TRUE) {
+		tag->extensionFields.typeRef [0] = "namespace";
+		tag->extensionFields.typeRef [1] = st->namespaceAlias;
+
 	}
 }
 
@@ -1137,8 +1146,8 @@ static void makeTag (const tokenInfo *const token,
 	 */
 	isFileScope = (boolean) (isFileScope && ! isHeaderFile ());
 
-	if (isType (token, TOKEN_NAME)  &&  vStringLength (token->name) > 0  &&
-		includeTag (type, isFileScope))
+	if ((isType (token, TOKEN_NAME)  &&  vStringLength (token->name) > 0  && includeTag (type, isFileScope)) ||
+		st->isNamespacAlias == TRUE)
 	{
 		vString *scope = vStringNew ();
 		/* Use "typeRef" to store the typename from addOtherFields() until
@@ -1155,9 +1164,11 @@ static void makeTag (const tokenInfo *const token,
 		e.kindName		= tagName (type);
 		e.kind			= tagLetter (type);
 
-		findScopeHierarchy (scope, st);
+		if(st->isNamespacAlias == FALSE)
+			findScopeHierarchy (scope, st);
+
 		addOtherFields (&e, type, st, scope, typeRef);
-		
+
 		// ERAN IFRAH
 		e.statementStartPos = st->token[0]->filePosition;
 		e.tagNameFilePos    = token->filePosition;
@@ -1394,7 +1405,7 @@ static void skipToMatch (const char *const pair)
 				vStringPut (Signature, c);
 			}
 		}
-		
+
 		if (c == begin)
 		{
 			++matchLevel;
@@ -1535,7 +1546,7 @@ static void readPackageName (tokenInfo *const token, const int firstChar)
 static void readPackageOrNamespace (statementInfo *const st, const declType declaration)
 {
 	st->declaration = declaration;
-	
+
 	if (declaration == DECL_NAMESPACE && !isLanguage (Lang_csharp))
 	{
 		/* In C++ a namespace is specified one level at a time. */
@@ -1780,7 +1791,7 @@ static void processToken (tokenInfo *const token, statementInfo *const st)
 		case KEYWORD_VOLATILE:  st->declaration = DECL_BASE;            break;
 		case KEYWORD_VIRTUAL:   st->implementation = IMP_VIRTUAL;       break;
 		case KEYWORD_WCHAR_T:   st->declaration = DECL_BASE;            break;
-		
+
 		case KEYWORD_NAMESPACE: readPackageOrNamespace (st, DECL_NAMESPACE); break;
 		case KEYWORD_PACKAGE:   readPackageOrNamespace (st, DECL_PACKAGE);   break;
 
@@ -2396,6 +2407,31 @@ static void processColon (statementInfo *const st)
 /*  Skips over any initializing value which may follow an '=' character in a
  *  variable definition.
  */
+static int readNamespaceAlias (statementInfo *const st)
+{
+	int c;
+	size_t i=0;
+	memset(st->namespaceAlias, 0, sizeof(st->namespaceAlias));
+
+	/* read max of 255 chars */
+	for(i=0; i<255; i++)
+	{
+		c = skipToNonWhite ();
+
+		if (c == EOF)
+			longjmp (Exception, (int) ExceptionFormattingError);
+
+		if(c == ';')
+			break;
+
+		st->namespaceAlias[i] = c;
+	}
+	return c;
+}
+
+/*  Skips over any initializing value which may follow an '=' character in a
+ *  variable definition.
+ */
 static int skipInitializer (statementInfo *const st)
 {
 	boolean done = FALSE;
@@ -2463,6 +2499,23 @@ static void processInitializer (statementInfo *const st)
 	}
 }
 
+static void processNamespaceAlias (statementInfo *const st)
+{
+	int c = cppGetc ();
+
+	if (c != '=')
+	{
+		cppUngetc (c);
+		c = readNamespaceAlias (st);
+		st->assignment = TRUE;
+		if (c == ';')
+			setToken (st, TOKEN_SEMICOLON);
+
+		st->scope = SCOPE_GLOBAL;
+		st->isNamespacAlias = TRUE;
+	}
+}
+
 static void parseIdentifier (statementInfo *const st, const int c)
 {
 	tokenInfo *const token = activeToken (st);
@@ -2482,7 +2535,7 @@ static void parseJavaAnnotation (statementInfo *const st)
 	 * But watch out for "@interface"!
 	 */
 	tokenInfo *const token = activeToken (st);
-	
+
 	int c = skipToNonWhite ();
 	readIdentifier (token, c);
 	if (token->keyword == KEYWORD_INTERFACE)
@@ -2556,7 +2609,18 @@ static void nextToken (statementInfo *const st)
 			case ',': setToken (st, TOKEN_COMMA);               break;
 			case ':': processColon (st);                        break;
 			case ';': setToken (st, TOKEN_SEMICOLON);           break;
-			case '=': processInitializer (st);                  break;
+			case '=': {
+				if(st->token[0]->type == TOKEN_KEYWORD && strcmp(st->token[0]->name->buffer, "namespace") == 0) {
+					/* namespace alias */
+					processNamespaceAlias(st);
+
+				} else {
+					processInitializer (st);
+
+				}
+				break;
+
+			}
 			case '[': skipToMatch ("[]");                       break;
 			case '{': setToken (st, TOKEN_BRACE_OPEN);          break;
 			case '}': setToken (st, TOKEN_BRACE_CLOSE);         break;
@@ -2740,7 +2804,7 @@ static void tagCheck (statementInfo *const st)
 			else if (isType (prev, TOKEN_NAME))
 			{
 				if (isContextualKeyword (prev2))
-					makeTag (prev, st, TRUE, TAG_EXTERN_VAR);
+					makeTag (prev, st, TRUE, st->isNamespacAlias == TRUE ? TAG_NAMESPACE : TAG_EXTERN_VAR);
 				else
 					qualifyVariableTag (st, prev);
 			}

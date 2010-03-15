@@ -137,7 +137,7 @@ FindReplaceData LEditor::m_findReplaceData;
 std::map<wxString, int> LEditor::ms_bookmarkShapes;
 
 LEditor::LEditor(wxWindow* parent)
-		: wxScintilla                (parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1))
+		: wxScintilla                (parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxSTATIC_BORDER)
 		, m_rightClickMenu           (NULL)
 		, m_popupIsOn                (false)
 		, m_modifyTime               (0)
@@ -318,7 +318,7 @@ void LEditor::SetProperties()
 	SetXCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
 
 	caretSlop = 1;
-	caretZone = 2;
+	caretZone = 1;
 	caretStrict = 4;
 	caretEven = 8;
 	caretJumps = 0;
@@ -328,14 +328,11 @@ void LEditor::SetProperties()
 	SetCaretPeriod(options->GetCaretBlinkPeriod());
 	SetMarginLeft(1);
 
-
 	// Mark current line
 	SetCaretLineVisible(options->GetHighlightCaretLine());
 	SetCaretLineBackground(options->GetCaretLineColour());
-
-#if defined (__WXMSW__) || defined(__WXMAC__)
-	SetCaretLineBackgroundAlpha(30);
-#endif
+	SetCaretLineBackgroundAlpha(options->GetCaretLineAlpha());
+	MarkerSetAlpha(smt_bookmark, 30);
 
 	SetFoldFlags(options->GetUnderlineFoldLine() ? 16 : 0);
 
@@ -505,7 +502,7 @@ void LEditor::SetProperties()
 
 #elif defined(__WXGTK__)
 	SetTwoPhaseDraw(true);
-	SetBufferedDraw(false);
+	SetBufferedDraw(true);
 
 #else // MSW
 	SetTwoPhaseDraw(true);
@@ -800,17 +797,17 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	//update line number
 	wxString message;
 
-	int foldLevel = (GetFoldLevel(curLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+//	int foldLevel = (GetFoldLevel(curLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
 	message << wxT("Ln ")
 	<< curLine+1
 	<< wxT(",  Col ")
 	<< GetColumn(pos)
 	<< wxT(",  Pos ")
-	<< pos
-	<< wxT(",  Style ")
-	<< GetStyleAt(pos)
-	<< wxT(", Fold ")
-	<< foldLevel;
+	<< pos;
+//	<< wxT(",  Style ")
+//	<< GetStyleAt(pos)
+//	<< wxT(", Fold ")
+//	<< foldLevel;
 
 	// Always update the status bar with event, calling it directly causes performance degredation
 	DoSetStatusMessage(message, 1);
@@ -827,15 +824,13 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 		// remove indicators
 		SetIndicatorCurrent(2);
 		IndicatorClearRange(0, GetLength());
-
-//#ifdef __WXMAC__
-//		Refresh();
-//#endif
-//
+#ifdef __WXMAC__
+		Refresh();
+#endif
 	}
 
 	RecalcHorizontalScrollbar();
-
+	
 	//let the context handle this as well
 	m_context->OnSciUpdateUI(event);
 }
@@ -1650,7 +1645,7 @@ void LEditor::FindNext(const FindReplaceData &data)
 				Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
 				wxMessageBox(_("Can not find the string '") + data.GetFindString() + wxT("'"),
 				             wxT("CodeLite"),
-				             wxICON_WARNING);
+				             wxOK | wxICON_WARNING);
 			}
 		}
 	} else {
@@ -1789,13 +1784,41 @@ void LEditor::FoldAll()
 	}
 	bool expanded = GetFoldExpanded(lineSeek);
 
-	// Now go through the whole document, toggling folds that match the original one
 	int maxLine = GetLineCount();
-	for (int line = 0; line < maxLine; line++) {  // For every line
+	
+	// Some files, especially headers with #ifndef FOO_H, will collapse into one big fold
+	// So, if we're collapsing, skip any all-encompassing top level fold
+	bool SkipTopFold = false;
+	if (expanded) {
+		int topline = 0;
+		while( !(GetFoldLevel(topline) & wxSCI_FOLDLEVELHEADERFLAG)) {
+			// This line wasn't a fold-point, so inc until we find one
+			if ( ++topline >= maxLine) return;
+		}
+		int BottomOfFold = GetLastChild(topline, -1);
+		if (BottomOfFold >= maxLine || BottomOfFold == -1) return;
+		// We've found the bottom of the topmost fold-point. See if there's another fold below it
+		++BottomOfFold;
+		while( !(GetFoldLevel(BottomOfFold) & wxSCI_FOLDLEVELHEADERFLAG)) {
+			if ( ++BottomOfFold >= maxLine) {
+				// If we're here, the top fold must encompass the whole file, so set the flag
+				SkipTopFold = true;
+				break;
+			}
+		}
+	}
+
+	// Now go through the whole document, toggling folds that match the original one's level if we're collapsing
+	// or all collapsed folds if we're expanding (so that internal folds get expanded too).
+	// The (level & wxSCI_FOLDLEVELHEADERFLAG) means "If this level is a Fold start"
+	// (level & wxSCI_FOLDLEVELNUMBERMASK) returns a value for the 'indent' of the fold.
+	// This starts at wxSCI_FOLDLEVELBASE==1024. A sub fold-point == 1025, a subsub 1026...
+	for (int line = 0; line < maxLine; line++) {
 		int level = GetFoldLevel(line);
-		// The next statement means: If this level is a Fold start
+		// If we're skipping an all-encompassing fold, we use wxSCI_FOLDLEVELBASE+1
 		if ((level & wxSCI_FOLDLEVELHEADERFLAG) &&
-		        (wxSCI_FOLDLEVELBASE == (level & wxSCI_FOLDLEVELNUMBERMASK))) {
+			(expanded ? ((level & wxSCI_FOLDLEVELNUMBERMASK) == (wxSCI_FOLDLEVELBASE + SkipTopFold)) :
+					    ((level & wxSCI_FOLDLEVELNUMBERMASK) >= wxSCI_FOLDLEVELBASE ))) {
 			if ( GetFoldExpanded(line) == expanded ) ToggleFold( line );
 		}
 	}
@@ -2941,6 +2964,16 @@ wxString LEditor::GetSelection()
 	return wxScintilla::GetSelectedText();
 }
 
+int LEditor::GetSelectionStart()
+{
+	return wxScintilla::GetSelectionStart();
+}
+
+int LEditor::GetSelectionEnd()
+{
+	return wxScintilla::GetSelectionEnd();
+}
+
 void LEditor::ReplaceSelection(const wxString& text)
 {
 	wxScintilla::ReplaceSelection(text);
@@ -3130,7 +3163,7 @@ void LEditor::DoSetStatusMessage(const wxString& msg, int col)
 	e.SetEventObject(this);
 	e.SetString(msg);
 	e.SetInt(col);
-	Frame::Get()->AddPendingEvent(e);
+	Frame::Get()->GetEventHandler()->AddPendingEvent(e);
 }
 
 void LEditor::DoShowCalltip(int pos, const wxString& tip, calltip_type type, int hltPos, int hltLen)
@@ -3382,6 +3415,11 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 		}
 	} while ( again );
 
+#ifdef __WXGTK__
+	EnsureCaretVisible();
+	ScrollToColumn(0);
+#endif
+	
 	if (res && navmgr) {
 		navmgr->AddJump(jumpfrom, CreateBrowseRecord());
 	}

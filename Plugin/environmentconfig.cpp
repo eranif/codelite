@@ -28,6 +28,8 @@
 #include "wx/filename.h"
 #include "environmentconfig.h"
 #include "evnvarlist.h"
+#include "wx_xml_compatibility.h"
+
 EnvironmentConfig* EnvironmentConfig::ms_instance = 0;
 
 //------------------------------------------------------------------------------

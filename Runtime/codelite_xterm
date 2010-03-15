@@ -1,0 +1,19 @@
+#!/bin/bash 
+
+## A wrapper script around the xterm utility 
+## which allows codelite to export LD_LIBRARY_PATH into the exterm
+## shell
+if [ $# -ne 2 ]; then
+	echo "usage: codelite_xterm '<Title>' '<Program>'"
+	exit 1
+fi
+
+program_title=$1
+if [ "${LD_LIBRARY_PATH}" = "" ]; then
+	## LD_LIBRARY_PATH is not defined OR empty
+	## Run xterm without the bash wrapper
+	xterm -T "$program_title" -e $2 2> /dev/null
+else
+	xterm -T "$program_title" -e /bin/bash -c 'export LD_LIBRARY_PATH=$0;shift;$@' $LD_LIBRARY_PATH $@ 2> /dev/null
+fi
+

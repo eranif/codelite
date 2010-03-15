@@ -81,7 +81,12 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
 	mainSizer->Detach(m_sci);
 	vertSizer->Add(m_sci, 1, wxEXPAND | wxALL, 1);
 
+#ifdef __WXMAC__
+	mainSizer->Insert(0, vertSizer, 1, wxEXPAND | wxALL, 1);
+#else
 	mainSizer->Add(vertSizer, 1, wxEXPAND | wxALL, 1);
+#endif
+
 	mainSizer->Layout();
 }
 

@@ -87,9 +87,17 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
 		ffullpath.Replace(wxT("\\"), wxT("/"));
 		expandedString.Replace(wxT("$(CurrentFileFullPath)"), ffullpath);
 		expandedString.Replace(wxT("$(CurrentSelection)"), editor->GetSelection());
+		if(expandedString.Find(wxT("$(CurrentSelectionRange)")) != wxNOT_FOUND)
+		{
+			int start=editor->GetSelectionStart(),
+			    end  =editor->GetSelectionEnd();
+				
+			wxString output=wxString::Format(wxT("%i:%i"),start,end);
+			expandedString.Replace(wxT("$(CurrentSelectionRange)"), output);
+		}
 	}
 
-	//exapnd common macros
+	//exapand common macros
 	wxDateTime now = wxDateTime::Now();
 	expandedString.Replace(wxT("$(User)"), wxGetUserName());
 	expandedString.Replace(wxT("$(Date)"), now.FormatDate());

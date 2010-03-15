@@ -81,7 +81,11 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 	m_tb->RemoveTool ( XRCID ( "repeat_output" ) );
 	m_tb->Realize();
 
+#ifdef __WXMAC__
+	mainSizer->Insert(0, vertSizer, 1, wxEXPAND | wxALL, 1);
+#else
 	mainSizer->Add(vertSizer, 1, wxEXPAND | wxALL, 1);
+#endif
 	mainSizer->Layout();
 
 	m_sci->SetMarginMask(4, 7<<0x7 | wxSCI_MASK_FOLDERS);

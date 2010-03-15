@@ -56,17 +56,19 @@ AttachDbgProcDlg::AttachDbgProcDlg( wxWindow* parent )
 	m_listCtrlProcesses->InsertColumn(0, wxT("PID"));
 	m_listCtrlProcesses->InsertColumn(1, wxT("Name"));
 
-	RefreshProcessesList();
-	m_listCtrlProcesses->SetFocus();
+	RefreshProcessesList(wxEmptyString);
+	m_textCtrlFilter->SetFocus();
 	Centre();
 
 	WindowAttrManager::Load(this, wxT("AttachDbgProcDlg"), NULL);
 }
 
-void AttachDbgProcDlg::RefreshProcessesList(int colToSort)
+void AttachDbgProcDlg::RefreshProcessesList(wxString filter, int colToSort)
 {
 	m_listCtrlProcesses->Freeze();
 	m_listCtrlProcesses->DeleteAllItems();
+
+	filter.Trim().Trim(false);
 
 	//Populate the list with list of processes
 	std::vector<ProcessEntry> proclist;
@@ -74,28 +76,38 @@ void AttachDbgProcDlg::RefreshProcessesList(int colToSort)
 
 	if (colToSort == 0) {//sort by PID
 		std::sort(proclist.begin(), proclist.end(), PIDSorter());
-		
+
 	} else if (colToSort == 1) {//sort by name
 		std::sort(proclist.begin(), proclist.end(), NameSorter());
-		
-	}
 
-	for (size_t i=0; i<proclist.size(); i++) {
-		long item = AppendListCtrlRow(m_listCtrlProcesses);
-		ProcessEntry entry = proclist.at(i);
-		wxString spid;
-		bool selfPid = (entry.pid == (long)wxGetProcessId());
-		spid << entry.pid;
-		SetColumnText(m_listCtrlProcesses, item, 0, spid);
-		SetColumnText(m_listCtrlProcesses, item, 1, entry.name);
-		
-		if(selfPid) {
-			m_listCtrlProcesses->SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
-		}
 	}
 	
+	filter.MakeLower();
+	for (size_t i=0; i<proclist.size(); i++) {
+		
+		// Use case in-sensitive match for the filter
+		wxString entryName (proclist.at(i).name);
+		entryName.MakeLower();
+		
+		// Append only processes that matches the filter string
+		if ( filter.IsEmpty() || entryName.Contains(filter) ) {
+			long item = AppendListCtrlRow(m_listCtrlProcesses);
+			ProcessEntry entry = proclist.at(i);
+			wxString spid;
+			bool selfPid = (entry.pid == (long)wxGetProcessId());
+			spid << entry.pid;
+			SetColumnText(m_listCtrlProcesses, item, 0, spid);
+			SetColumnText(m_listCtrlProcesses, item, 1, entry.name);
+
+			if (selfPid) {
+				m_listCtrlProcesses->SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+			}
+		}
+
+	}
+
 	m_listCtrlProcesses->SetColumnWidth(0, 100);
-	m_listCtrlProcesses->SetColumnWidth(1, 200);
+	m_listCtrlProcesses->SetColumnWidth(1, 500);
 	m_listCtrlProcesses->Thaw();
 }
 
@@ -118,7 +130,7 @@ wxString AttachDbgProcDlg::GetProcessId() const
 
 void AttachDbgProcDlg::OnSortColumn( wxListEvent& event )
 {
-	RefreshProcessesList( event.m_col );
+	RefreshProcessesList( m_textCtrlFilter->GetValue(), event.m_col );
 }
 
 void AttachDbgProcDlg::OnItemActivated( wxListEvent& event )
@@ -147,4 +159,19 @@ void AttachDbgProcDlg::OnBtnAttachUI( wxUpdateUIEvent& event )
 AttachDbgProcDlg::~AttachDbgProcDlg()
 {
 	WindowAttrManager::Save(this, wxT("AttachDbgProcDlg"), NULL);
+}
+
+void AttachDbgProcDlg::OnFilter(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	RefreshProcessesList(m_textCtrlFilter->GetValue());
+}
+
+void AttachDbgProcDlg::OnRefresh(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	// Clear all filters and refresh the processes list
+	m_textCtrlFilter->Clear();
+	RefreshProcessesList(wxEmptyString);
+	m_textCtrlFilter->SetFocus();
 }

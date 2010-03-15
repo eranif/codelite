@@ -122,6 +122,9 @@ void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
     LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	if(!editor)
+		return;
+	
     int i = EditorItem(editor);
     if (i != wxNOT_FOUND && i == m_fileList->GetSelection())
         return;
@@ -147,6 +150,9 @@ void OpenWindowsPanel::OnEditorClosing(wxCommandEvent& e)
 {
     e.Skip();
     LEditor *editor = dynamic_cast<LEditor*>((IEditor*) e.GetClientData());
+	if(!editor)
+		return;
+		
     int i = EditorItem(editor);
     if (i != wxNOT_FOUND) {
         m_fileList->Freeze();

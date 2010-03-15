@@ -9,8 +9,7 @@
 #define __debuggersettingsbasedlg__
 
 #include <wx/gdicmn.h>
-#include <wx/listbook.h>
-#include <wx/listctrl.h>
+#include <wx/notebook.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
@@ -20,8 +19,8 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
+#include <wx/listctrl.h>
 #include <wx/button.h>
-#include <wx/notebook.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
 #include <wx/stattext.h>
@@ -44,7 +43,7 @@ class DebuggerSettingsBaseDlg : public wxDialog
 	protected:
 		wxNotebook* m_notebook2;
 		wxPanel* m_panel1;
-		wxListbook* m_book;
+		wxNotebook* m_book;
 		wxPanel* m_panel2;
 		wxListCtrl* m_listCtrl1;
 		wxButton* m_buttonNewType;

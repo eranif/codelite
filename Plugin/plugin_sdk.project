@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="plugin_sdk">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00020001N0011WinDebug_290000000000000001N0013WinRelease_29000000000000]]>
+    </Plugin>
+  </Plugins>
   <VirtualDirectory Name="src">
     <File Name="async_executable_cmd.cpp"/>
     <File Name="build_config.cpp"/>
@@ -174,32 +179,24 @@
       <File Name="open_resource_dialog.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
-      <File Name="custom_notebook.cpp"/>
-      <File Name="custom_notebook.h"/>
-      <File Name="custom_tab.cpp"/>
-      <File Name="custom_tab.h"/>
-      <File Name="custom_tabcontainer.cpp"/>
-      <File Name="custom_tabcontainer.h"/>
       <File Name="drawingutils.cpp"/>
       <File Name="drawingutils.h"/>
       <File Name="dropbutton.cpp"/>
       <File Name="dropbutton.h"/>
-      <File Name="notebooknavdialog.cpp"/>
-      <File Name="notebooknavdialog.h"/>
       <File Name="dockablepane.cpp"/>
       <File Name="dockablepane.h"/>
       <File Name="detachedpanesinfo.cpp"/>
       <File Name="detachedpanesinfo.h"/>
-      <File Name="closetab-active.xpm.alpha"/>
-      <File Name="closetab.xpm"/>
-      <File Name="closetab.xpm.alpha"/>
-      <File Name="closetab-active.xpm"/>
+      <File Name="notebook_ex_nav_dlg_base.h"/>
+      <File Name="fileclose.png"/>
+      <File Name="fileclose-pressed.png"/>
+      <File Name="notebook_ex.cpp"/>
+      <File Name="notebook_ex.h"/>
+      <File Name="notebook_ex_nav_dlg.cpp"/>
+      <File Name="notebook_ex_nav_dlg.h"/>
+      <File Name="notebook_ex_nav_dlg_base.cpp"/>
       <File Name="tabicons.h"/>
       <File Name="tabicons.cpp"/>
-      <File Name="notebookcustomdlgbase.h"/>
-      <File Name="notebookcustomdlg.cpp"/>
-      <File Name="notebookcustomdlg.h"/>
-      <File Name="notebookcustomdlgbase.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="TokenScanner">
@@ -225,6 +222,23 @@
   <VirtualDirectory Name="Images">
     <File Name="overlaytool.cpp"/>
     <File Name="overlaytool.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="formbuilder">
+    <File Name="renamefilebasedlg.fbp"/>
+    <File Name="openresourcedialogbase.fbp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Terminal">
+    <File Name="wxterminalbase.h"/>
+    <File Name="wxterminal.cpp"/>
+    <File Name="wxterminal.h"/>
+    <File Name="wxterminalbase.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="md5">
+    <File Name="wxmd5.cpp"/>
+    <File Name="wxmd5.h"/>
+    <File Name="md5.h"/>
+    <File Name="md5_global.h"/>
+    <File Name="md5c.c"/>
   </VirtualDirectory>
   <Settings Type="Static Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -333,6 +347,41 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
+    <Configuration Name="WinDebug_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);-g" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../sdk/wxflatnotebook/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="yes"/>
+      <General OutputFile="../lib/gcc_lib/libplugin_sdku.a" IntermediateDirectory="./WinDebug_29" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes)" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
@@ -378,25 +427,9 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <VirtualDirectory Name="formbuilder">
-    <File Name="renamefilebasedlg.fbp"/>
-    <File Name="openresourcedialogbase.fbp"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="Terminal">
-    <File Name="wxterminalbase.h"/>
-    <File Name="wxterminal.cpp"/>
-    <File Name="wxterminal.h"/>
-    <File Name="wxterminalbase.cpp"/>
-  </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <VirtualDirectory Name="md5">
-    <File Name="wxmd5.cpp"/>
-    <File Name="wxmd5.h"/>
-    <File Name="md5.h"/>
-    <File Name="md5_global.h"/>
-    <File Name="md5c.c"/>
-  </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

@@ -31,10 +31,13 @@
 #include "wx/arrstr.h"
 #include "dirsaver.h"
 #include "globals.h"
+#include "macros.h"
+#include "wx_xml_compatibility.h"
 
 const wxString Project::STATIC_LIBRARY = wxT("Static Library");
 const wxString Project::DYNAMIC_LIBRARY = wxT("Dynamic Library");
 const wxString Project::EXECUTABLE = wxT("Executable");
+
 
 Project::Project()
 		: m_tranActive(false)

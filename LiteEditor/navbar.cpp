@@ -36,8 +36,11 @@ NavBar::NavBar(wxWindow* parent)
 	long sashPos(150);
 	EditorConfigST::Get()->GetLongValue(wxT("NavBarSashPos"), sashPos);
 	m_splitter->SetSashPosition(sashPos);
-	
-//	m_splitter->UpdateSize();
+
+#ifdef __WXMAC__
+	m_scope->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+	m_func->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+#endif
 }
 
 NavBar::~NavBar()

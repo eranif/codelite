@@ -28,11 +28,13 @@
 #include "imanager.h"
 #include "wx/toolbar.h"
 #include <wx/pen.h>
+#include "cl_defs.h"
+#if USE_AUI_TOOLBAR
 #include <wx/aui/auibar.h>
+#endif
 #include "wx/event.h"
 #include "wx/notebook.h"
 #include "plugindata.h"
-#include "cl_defs.h"
 #include "plugin_version.h"
 
 #ifdef _WIN32
@@ -368,6 +370,11 @@ public:
 		wxUnusedVar( configName );
 	}
 };
+
+#define CHECK_CL_SHUTDOWN(){\
+	if(m_mgr->IsShutdownInProgress())\
+		return;\
+}
 
 //Every dll must contain at least this function
 typedef IPlugin*    (*GET_PLUGIN_CREATE_FUNC)            (IManager*);

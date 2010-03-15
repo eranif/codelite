@@ -119,8 +119,11 @@ wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 	long style = wxNB_DEFAULT;
 	m_lexersBook = new wxNotebook(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	sz->Add(m_lexersBook, 1, wxEXPAND | wxALL, 5);
-	m_lexersBook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-
+	m_lexersBook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));\
+	
+#ifdef __WXMAC__
+	m_lexersBook->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+#endif
 	LoadLexers(m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection());
 
 	m_startingTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
@@ -197,6 +200,6 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& e)
 	Frame::Get()->GetMainBook()->ApplySettingsChanges();
 	
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
-	Frame::Get()->AddPendingEvent(event);
+	Frame::Get()->GetEventHandler()->AddPendingEvent(event);
 	EndModal(wxID_OK);
 }

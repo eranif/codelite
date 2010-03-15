@@ -36,6 +36,8 @@
 #include "macros.h"
 #include "wx/regex.h"
 #include "globals.h"
+#include "macros.h"
+#include "wx_xml_compatibility.h"
 
 Workspace::Workspace()
 {

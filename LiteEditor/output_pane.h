@@ -29,7 +29,6 @@
 
 #include "shelltab.h"
 
-class Notebook;
 class FindResultsTab;
 class BuildTab;
 class ErrorsTab;
@@ -37,7 +36,6 @@ class ReplaceInFilesPanel;
 class ShellTab;
 class DebugTab;
 class TaskPanel;
-class OutputViewControlBar;
 
 /**
  * \ingroup LiteEditor
@@ -71,7 +69,7 @@ private:
 	wxString m_caption;
 	wxLog   *m_logTargetOld;
     
-	Notebook            *m_book;
+	wxBookCtrlBase      *m_book;
 	FindResultsTab      *m_findResultsTab;
 	ReplaceInFilesPanel *m_replaceResultsTab;
 	BuildTab            *m_buildWin;
@@ -81,13 +79,7 @@ private:
 	TaskPanel           *m_taskPanel;
 	
 	void CreateGUIControls();
-	
-	void OnPaint(wxPaintEvent &e);
-	void OnEraseBg(wxEraseEvent &e);
-	void OnSize(wxSizeEvent &e);
-    
-	DECLARE_EVENT_TABLE()
-	
+
 public:
 	/**
 	 * Constructor
@@ -101,8 +93,8 @@ public:
 	 */
 	virtual ~OutputPane();
 
-	Notebook       *GetNotebook()       { return m_book;    }
-	const wxString &GetCaption () const { return m_caption; }
+	wxBookCtrlBase       *GetNotebook()      { return m_book;    }
+	const wxString &     GetCaption () const { return m_caption; }
 	
 	FindResultsTab      *GetFindResultsTab   () { return m_findResultsTab;    }
 	ReplaceInFilesPanel *GetReplaceResultsTab() { return m_replaceResultsTab; }

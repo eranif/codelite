@@ -30,7 +30,7 @@ void SvnUpdateHandler::Process(const wxString& output)
 
 	// Reload any modified files
 	wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT);
-	GetPlugin()->GetManager()->GetTheApp()->GetTopWindow()->AddPendingEvent(e);
+	GetPlugin()->GetManager()->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(e);
 
 	// After 'Update' we usually want to do the following:
 	// Reload workspace (if a project file or the workspace were modified)
@@ -41,7 +41,7 @@ void SvnUpdateHandler::Process(const wxString& output)
 		// send an event to the main frame indicating that a re-tag is required
 		if( GetPlugin()->GetSettings().GetFlags() & SvnRetagWorkspace ) {
 			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
-			GetPlugin()->GetManager()->GetTheApp()->GetTopWindow()->AddPendingEvent(e);
+			GetPlugin()->GetManager()->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(e);
 		}
 	}
 
@@ -75,7 +75,7 @@ void SvnPatchHandler::Process(const wxString& output)
 	// send an event to the main frame indicating that a re-tag is required
 	if( GetPlugin()->GetSettings().GetFlags() & SvnRetagWorkspace ) {
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
-		GetPlugin()->GetManager()->GetTheApp()->GetTopWindow()->AddPendingEvent(e);
+		GetPlugin()->GetManager()->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(e);
 	}
 
 	// And finally, update the Subversion view

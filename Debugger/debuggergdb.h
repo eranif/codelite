@@ -123,7 +123,7 @@ public:
 	virtual bool ListChildren(const wxString &name, int userReason);
 	virtual bool CreateVariableObject(const wxString &expression, int userReason);
 	virtual bool DeleteVariableObject(const wxString &name);
-	virtual bool EvaluateVariableObject(const wxString &name, int userReason);
+	virtual bool EvaluateVariableObject(const wxString &name, DisplayFormat displayFormat, int userReason);
 
 	// Event handlers
 	DECLARE_EVENT_TABLE()

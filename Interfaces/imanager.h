@@ -26,13 +26,16 @@
 #ifndef IMANAGER_H
 #define IMANAGER_H
 
+#include <wx/aui/framemanager.h>
+#include <wx/toolbook.h>
 #include "ieditor.h"
 #include "iconfigtool.h"
 #include "ikeyboard.h"
 #include "wx/treectrl.h"
-#include "custom_notebook.h"
+#include "notebook_ex.h"
 #include "optionsconfig.h"
 #include "queuecommand.h"
+
 
 class TagsManager;
 class Workspace;
@@ -44,6 +47,7 @@ class BuildManager;
 class BuildSettingsConfig;
 class NavMgr;
 class IMacroManager;
+class wxAuiManager;
 
 //--------------------------
 //Auxulary class
@@ -134,7 +138,8 @@ public:
 	 * @return pointer to Notebook
 	 * @sa Notebook
 	 */
-	virtual Notebook *GetOutputPaneNotebook() = 0;
+	virtual wxBookCtrlBase* GetOutputPaneNotebook() = 0;
+	
 	/**
 	 * @brief return the startup directory of CodeLite which is also the base directory for searching installation files
 	 * @return a full path to the startup directory
@@ -315,7 +320,13 @@ public:
 	 * return true if a compilation is in process (either clean or build)
 	 */
 	virtual bool IsBuildInProgress() const = 0;
-
+	
+	/**
+	 * @brief return true if a shutdown is currently in progress
+	 * @return 
+	 */
+	virtual bool IsShutdownInProgress() const = 0;
+	
 	/**
 	 * return true if the last buid ended successfully
 	 */

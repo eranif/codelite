@@ -23,12 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
-#include "custom_tab.h"
 #include "globals.h"
 #include "ctags_manager.h"
 #include "frame.h"
+#include <wx/wupdlock.h>
 #include "manager.h"
-#include "custom_tabcontainer.h"
 #include "close_all_dlg.h"
 #include "filechecklist.h"
 #include "editor_config.h"
@@ -40,7 +39,6 @@ MainBook::MainBook(wxWindow *parent)
 		, m_navBar      (NULL)
 		, m_book        (NULL)
 		, m_quickFindBar(NULL)
-		, m_currentPage (NULL)
 {
 	CreateGuiControls();
 	ConnectEvents();
@@ -54,14 +52,11 @@ void MainBook::CreateGuiControls()
 	m_navBar = new NavBar(this);
 	sz->Add(m_navBar, 0, wxEXPAND);
 
-	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
+	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_PASS_FOCUS;
 	// load the notebook style from the configuration settings
-	EditorConfigST::Get()->GetLongValue(wxT("MainBook"), style);
-	style &= ~(wxVB_BORDER);
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-
-	m_book->GetTabContainer()->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainBook::OnMouseDClick), NULL, this);
 	m_book->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")));
+	
 	sz->Add(m_book, 1, wxEXPAND);
 
 	m_quickFindBar = new QuickFindBar(this);
@@ -75,18 +70,18 @@ void MainBook::CreateGuiControls()
 
 void MainBook::ConnectEvents()
 {
-	m_book->GetTabContainer()->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainBook::OnMouseDClick), NULL, this);
+	m_book->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainBook::OnMouseDClick), NULL, this);
 
-	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSING,  NotebookEventHandler(MainBook::OnPageClosing),  NULL, this);
-	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSED,   NotebookEventHandler(MainBook::OnPageClosed),   NULL, this);
-
-	wxTheApp->Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(MainBook::OnPaneClosed), NULL, this);
+	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSING,         NotebookEventHandler(MainBook::OnPageClosing),  NULL, this);
+	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSED,          NotebookEventHandler(MainBook::OnPageClosed),   NULL, this);
+	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,         NotebookEventHandler(MainBook::OnPageChanged),  NULL, this);
+	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED,       NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
+	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED,  NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
 
 	wxTheApp->Connect(wxEVT_WORKSPACE_LOADED,  wxCommandEventHandler(MainBook::OnWorkspaceLoaded),    NULL, this);
 	wxTheApp->Connect(wxEVT_PROJ_FILE_ADDED,   wxCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
 	wxTheApp->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
 	wxTheApp->Connect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
-
 }
 
 MainBook::~MainBook()
@@ -96,22 +91,18 @@ MainBook::~MainBook()
 void MainBook::OnMouseDClick(wxMouseEvent& e)
 {
 	wxUnusedVar(e);
-	NewEditor();
-}
-
-void MainBook::OnFocus(wxFocusEvent &e)
-{
-	// we use here DoSelectPage so the the selection wont change
-	if (!SelectPage(dynamic_cast<wxWindow*>(e.GetEventObject()))) {
-		e.Skip();
-	}
-	m_quickFindBar->SetEditor(GetActiveEditor());
-}
-
-void MainBook::OnPaneClosed(wxAuiManagerEvent &e)
-{
-	if (!DockPage(e.GetPane()->window)) {
-		e.Skip();
+	int where = m_book->HitTest(e.GetPosition());
+	if(where == wxNOT_FOUND) {
+		
+		// This seems to be working only under Mac/Linux...
+		NewEditor();
+		
+	} else {
+		
+		// Maximize the current editor
+		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("toggle_panes"));
+		evt.SetEventObject(this);
+		Frame::Get()->GetEventHandler()->AddPendingEvent(evt);
 	}
 }
 
@@ -137,10 +128,8 @@ void MainBook::OnPageClosed(NotebookEvent &e)
 	for (size_t i = 0; i < m_book->GetPageCount() && editor == NULL; i++) {
 		editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
 	}
-	for (std::set<wxWindow*>::iterator i = m_detachedTabs.begin(); i != m_detachedTabs.end() && editor == NULL; i++) {
-		editor = dynamic_cast<LEditor*>(*i);
-	}
-	if (editor == NULL) {
+	
+	if (m_book->GetPageCount() == 0) {
 		SendCmdEvent(wxEVT_ALL_EDITORS_CLOSED);
 		ShowQuickBar(false);
 	}
@@ -294,8 +283,11 @@ void MainBook::RestoreSession(SessionEntry &session)
 			}
 			continue;
 		}
+		
 		editor->ScrollToLine(ti.GetFirstVisibleLine());
 		editor->GotoLine(ti.GetCurrentLine());
+		editor->EnsureCaretVisible();
+		
 		const wxArrayString &astrBookmarks = ti.GetBookmarks();
 		for (size_t i = 0; i < astrBookmarks.GetCount(); i++) {
 			long nLine = 0;
@@ -324,12 +316,6 @@ void MainBook::GetAllEditors(std::vector<LEditor*> &editors)
 			editors.push_back(editor);
 		}
 	}
-	for (std::set<wxWindow*>::iterator i = m_detachedTabs.begin(); i != m_detachedTabs.end(); i++) {
-		LEditor *editor = dynamic_cast<LEditor*>(*i);
-		if (editor) {
-			editors.push_back(editor);
-		}
-	}
 }
 
 LEditor *MainBook::FindEditor(const wxString &fileName)
@@ -341,20 +327,6 @@ LEditor *MainBook::FindEditor(const wxString &fileName)
 
 	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
-		if (editor) {
-			wxString unixStyleFile(editor->GetFileName().GetFullPath());
-			wxString nativeFile   (editor->GetFileName().GetFullPath());
-#ifdef __WXMSW__
-			unixStyleFile.Replace(wxT("\\"), wxT("/"));
-#endif
-			if(nativeFile.CmpNoCase(fileName) == 0 || unixStyleFile.CmpNoCase(fileName) == 0) {
-				return editor;
-			}
-		}
-	}
-
-	for (std::set<wxWindow*>::iterator i = m_detachedTabs.begin(); i != m_detachedTabs.end(); i++) {
-		LEditor *editor = dynamic_cast<LEditor*>(*i);
 		if (editor) {
 			wxString unixStyleFile(editor->GetFileName().GetFullPath());
 			wxString nativeFile   (editor->GetFileName().GetFullPath());
@@ -379,11 +351,6 @@ wxWindow *MainBook::FindPage(const wxString &text)
 
 		if (m_book->GetPageText(i) == text)
 			return m_book->GetPage(i);
-	}
-
-	for (std::set<wxWindow*>::iterator i = m_detachedTabs.begin(); i != m_detachedTabs.end(); i++) {
-		if (Frame::Get()->GetDockingManager().GetPane(*i).caption == text)
-			return *i;
 	}
 	return NULL;
 }
@@ -417,6 +384,8 @@ static bool IsFileExists(const wxFileName &filename) {
 
 LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectName, int lineno, long position, bool addjump)
 {
+	wxWindowUpdateLocker locker(this);
+	
 	wxFileName fileName(file_name);
 	fileName.MakeAbsolute();
 
@@ -475,6 +444,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 
 	if (position != wxNOT_FOUND) {
 		editor->SetCaretAt(position);
+		
 	} else if (lineno != wxNOT_FOUND) {
 		editor->GotoLine(lineno);
 		editor->EnsureVisible(lineno);
@@ -485,6 +455,10 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 	} else {
 		SelectPage(editor);
 	}
+
+#ifdef __WXGTK__	
+	editor->ScrollToColumn(0);
+#endif
 
 	// Add this file to the history. Don't check for uniqueness:
 	// if it's already on the list, wxFileHistory will move it to the top
@@ -503,83 +477,37 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 
 bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp, bool selected)
 {
-	if (m_book->GetPageIndex(win) != Notebook::npos || m_detachedTabs.find(win) != m_detachedTabs.end())
+	if (m_book->GetPageIndex(win) != Notebook::npos)
 		return false;
 
 	long MaxBuffers(15);
 	EditorConfigST::Get()->GetLongValue(wxT("MaxOpenedTabs"), MaxBuffers);
-
-	if( (long)(m_book->GetPageCount() + m_detachedTabs.size()) >= MaxBuffers ) {
+	
+	wxWindowUpdateLocker locker(m_book);
+	
+	if( (long)(m_book->GetPageCount()) >= MaxBuffers ) {
 		// We have reached the limit of the number of open buffers
 		// Close the last used buffer
 		const wxArrayPtrVoid &arr = m_book->GetHistory();
 		if ( arr.GetCount() ) {
 			// We got at least one page, close the last used
-			CustomTab *tab = static_cast<CustomTab*>(arr.Item(arr.GetCount()-1));
-			ClosePage(tab->GetWindow());
+			wxWindow *tab = static_cast<wxWindow*>(arr.Item(arr.GetCount()-1));
+			ClosePage(tab);
 		}
 	}
 
-	win->Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(MainBook::OnFocus), NULL, this);
-
-	LEditor *editor = dynamic_cast<LEditor*>(win);
-
-	m_book->AddPage(win, text, editor ? editor->GetFileName().GetFullPath() : text, bmp, selected);
+	m_book->AddPage(win, text, selected);
 	return true;
 }
 
 bool MainBook::SelectPage(wxWindow *win)
 {
 	size_t index = m_book->GetPageIndex(win);
-	std::set<wxWindow*>::iterator i = m_detachedTabs.find(win);
-
-	if (index != Notebook::npos) {
+	if (index != Notebook::npos && m_book->GetSelection() != index) {
 		m_book->SetSelection(index);
-	} else  if (i != m_detachedTabs.end()) {
-		// anything to do?
-	} else if (win == NULL) {
-		// OK -- deselecting any page
-	} else
-		return false;
+	}
 
 	return DoSelectPage( win );
-}
-
-bool MainBook::DetachPage(wxWindow* win)
-{
-	if (IsDetached(win))
-		return true;
-	size_t pos = m_book->GetPageIndex(win);
-	if (pos == Notebook::npos)
-		return false;
-	wxAuiPaneInfo info = wxAuiPaneInfo().Name(m_book->GetPageText(pos)).Caption(m_book->GetPageText(pos))
-	                     .BestSize(win->GetSize()).Float();
-	info.FloatingPosition(50, 100);
-	m_book->RemovePage(pos, false);
-	Frame::Get()->GetDockingManager().AddPane(win, info);
-	m_detachedTabs.insert(win);
-	Frame::Get()->GetDockingManager().Update();
-	return true;
-}
-
-bool MainBook::DockPage(wxWindow* win)
-{
-	std::set<wxWindow*>::iterator i = m_detachedTabs.find(win);
-	if (i == m_detachedTabs.end())
-		return false;
-	m_detachedTabs.erase(i);
-	wxAuiPaneInfo info = Frame::Get()->GetDockingManager().GetPane(win);
-	Frame::Get()->GetDockingManager().DetachPane(win);
-	Frame::Get()->GetDockingManager().Update();
-
-	LEditor *editor = dynamic_cast<LEditor*>(win);
-	m_book->AddPage(win, info.caption, editor ? editor->GetFileName().GetFullPath() : info.caption);
-	return true;
-}
-
-bool MainBook::IsDetached(wxWindow* win)
-{
-	return m_detachedTabs.find(win) != m_detachedTabs.end();
 }
 
 bool MainBook::UserSelectFiles(std::vector<std::pair<wxFileName,bool> > &files, const wxString &title,
@@ -672,7 +600,6 @@ void MainBook::ReloadExternallyModified(bool prompt)
 
 bool MainBook::ClosePage(wxWindow *page)
 {
-	DockPage(page);
 	size_t pos = m_book->GetPageIndex(page);
 	return pos != Notebook::npos && m_book->DeletePage(pos);
 }
@@ -688,8 +615,9 @@ bool MainBook::CloseAllButThis(wxWindow *page)
 	}
 	bool res = CloseAll(true);
 	if (pos != Notebook::npos) {
-		LEditor *editor = dynamic_cast<LEditor*>(page);
-		m_book->AddPage(page, text, editor ? editor->GetFileName().GetFullPath() : text, wxNullBitmap, true);
+//		LEditor *editor = dynamic_cast<LEditor*>(page);
+//		m_book->AddPage(page, text, editor ? editor->GetFileName().GetFullPath() : text, wxNullBitmap, true);
+		m_book->AddPage(page, text, true);
 	}
 	return res;
 }
@@ -722,9 +650,6 @@ bool MainBook::CloseAll(bool cancellable)
 		}
 	}
 
-	while (!m_detachedTabs.empty()) {
-		DockPage(*m_detachedTabs.begin());
-	}
 	m_book->DeleteAllPages(ManagerST::Get()->IsShutdownInProgress() ? false : true);
 	return true;
 }
@@ -734,10 +659,6 @@ wxString MainBook::GetPageTitle(wxWindow *page)
 	size_t selection = m_book->GetPageIndex(page);
 	if (selection != Notebook::npos)
 		return m_book->GetPageText(selection);
-	std::set<wxWindow*>::iterator i = m_detachedTabs.find(page);
-	if (i != m_detachedTabs.end()) {
-		return Frame::Get()->GetDockingManager().GetPane(page).caption;
-	}
 	return wxEmptyString;
 }
 
@@ -745,21 +666,8 @@ void MainBook::SetPageTitle ( wxWindow *page, const wxString &name )
 {
 	size_t selection = m_book->GetPageIndex(page);
 	if (selection != Notebook::npos) {
-		LEditor *editor = dynamic_cast<LEditor*>(page);
-		m_book->SetPageText(selection, name, editor ? editor->GetFileName().GetFullPath() : wxT(""));
-	}
-
-	std::set<wxWindow*>::iterator i = m_detachedTabs.find(page);
-	if (i != m_detachedTabs.end()) {
-		wxAuiManager &mgr = Frame::Get()->GetDockingManager();
-		wxAuiPaneInfo &info = mgr.GetPane(page);
-		if (info.IsOk()) {
-			info.caption = info.name = name;
-			if (info.frame != NULL) {
-				info.frame->SetTitle(name);
-			}
-			mgr.Update();
-		}
+		//LEditor *editor = dynamic_cast<LEditor*>(page);
+		m_book->SetPageText(selection, name);
 	}
 }
 
@@ -844,7 +752,9 @@ void MainBook::MarkEditorReadOnly(LEditor* editor, bool ro)
 
 	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
 		if (editor == m_book->GetPage(i)) {
-			m_book->SetPageBitmap(i, ro ? wxXmlResource::Get()->LoadBitmap(wxT("read_only")) : wxNullBitmap );
+//			m_book->SetPageBitmap(i, ro ? wxXmlResource::Get()->LoadBitmap(wxT("read_only")) : wxNullBitmap );
+			
+			// TODO ::  Mark this editor as read only
 			break;
 		}
 	}
@@ -852,16 +762,15 @@ void MainBook::MarkEditorReadOnly(LEditor* editor, bool ro)
 
 long MainBook::GetBookStyle()
 {
-	return m_book->GetBookStyle();
+	return 0;
 }
 
 bool MainBook::DoSelectPage(wxWindow* win)
 {
-	m_currentPage = win;
-
 	LEditor *editor = dynamic_cast<LEditor*>(win);
 	if ( editor ) {
 		editor->SetActive();
+		m_quickFindBar->SetEditor( editor );
 	}
 
 	// FIXME: move special context-specific menu handling to the Context classes?
@@ -876,10 +785,8 @@ bool MainBook::DoSelectPage(wxWindow* win)
 	if (!editor) {
 		Frame::Get()->SetFrameTitle(NULL);
 		Frame::Get()->SetStatusMessage(wxEmptyString, 1); // clear line & column indicator
-		Frame::Get()->SetStatusMessage(wxEmptyString, 2); // clear end-of-line mode indicator
 		UpdateNavBar(NULL);
 	} else {
-		editor->SetActive();
 		if (editor->GetContext()->GetName() == wxT("C++")) {
 			if (Frame::Get()->GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {
 				Frame::Get()->GetMenuBar()->Append(wxXmlResource::Get()->LoadMenu(wxT("editor_right_click")), wxT("C++"));
@@ -894,4 +801,34 @@ bool MainBook::DoSelectPage(wxWindow* win)
 void MainBook::ShowMessage(const wxString &message, bool showHideButton, const wxBitmap &bmp, const ButtonDetails &btn1, const ButtonDetails &btn2, const ButtonDetails &btn3)
 {
 	m_messagePane->ShowMessage(message, showHideButton, bmp, btn1, btn2, btn3);
+}
+
+void MainBook::OnPageChanged(NotebookEvent& e)
+{
+	int newSel = e.GetSelection();
+	if(newSel != wxNOT_FOUND) {
+		LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage((size_t)newSel));
+		if(editor) {
+			SelectPage(editor);
+		}
+	}
+	e.Skip();
+}
+
+wxWindow* MainBook::GetCurrentPage()
+{
+	return m_book->GetCurrentPage();
+}
+
+
+void MainBook::OnClosePage(NotebookEvent& e)
+{
+	wxWindowUpdateLocker locker( this );
+	int where = e.GetSelection();
+	if(where == wxNOT_FOUND) {
+		return;
+	}
+	wxWindow *page = m_book->GetPage((size_t)where);
+	if(page)
+		ClosePage(page);
 }

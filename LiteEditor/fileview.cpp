@@ -1852,7 +1852,7 @@ void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
 		// send notification to the main frame to perform retag
 		if ( retagRequires ) {
 			wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
-			Frame::Get()->AddPendingEvent( event );
+			Frame::Get()->GetEventHandler()->AddPendingEvent( event );
 		}
 	}
 }

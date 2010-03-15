@@ -1,5 +1,5 @@
 /* XPM */
-char *closetab_active_xpm[] = {
+const char *closetab_active_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 36 1",
 ". c Black",

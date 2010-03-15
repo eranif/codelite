@@ -48,15 +48,14 @@ const wxString DebuggerPane::ASCII_VIEWER = wxT("Ascii Viewer");
 
 #define ADD_DEBUGGER_PAGE(win, name, bmp) \
 	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
-		new DockablePane(GetParent(), m_book, win, name, bmp, wxSize(200, 200));\
+		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));\
+		cp->SetChild(win);\
 	} else {\
-		m_book->AddPage(win, name, name, bmp, false);\
+		/*m_book->AddPage(win, name, name, bmp, false);*/\
+		m_book->AddPage(win, name, false);\
 	}
 
 BEGIN_EVENT_TABLE(DebuggerPane, wxPanel)
-	EVT_PAINT(DebuggerPane::OnPaint)
-	EVT_ERASE_BACKGROUND(DebuggerPane::OnEraseBg)
-	EVT_SIZE(DebuggerPane::OnSize)
 	EVT_BOOK_PAGE_CHANGED(wxID_ANY, DebuggerPane::OnPageChanged)
 END_EVENT_TABLE()
 
@@ -99,13 +98,17 @@ void DebuggerPane::CreateGUIControls()
 	int xx, yy;
 	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxWindow::GetTextExtent(wxT("Breakpoints"), &xx, &yy, NULL, NULL, &fnt);
-	m_book->SetFixedTabWidth(xx + 20 + 16); // Icon + Text
 
 	// load list of detached panes
 	wxArrayString detachedPanes;
 	DetachedPanesInfo dpi;
 	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
+	
+#ifndef __WXGTK__	
+	// FIXME:: On GTK we crash when try to recreate 
+	// the Windows detached
 	detachedPanes = dpi.GetPanes();
+#endif
 
 	m_localsTable = new LocalsTable(m_book);
 	ADD_DEBUGGER_PAGE(m_localsTable, LOCALS, wxXmlResource::Get()->LoadBitmap(wxT("locals_view")));
@@ -114,7 +117,7 @@ void DebuggerPane::CreateGUIControls()
 	m_watchesTable = new WatchesTable(m_book);
 	ADD_DEBUGGER_PAGE(m_watchesTable, WATCHES, wxXmlResource::Get()->LoadBitmap(wxT("watches")));
 
-	m_asciiViewer = new DebuggerAsciiViewer(this);
+	m_asciiViewer = new DebuggerAsciiViewer(m_book);
 	ADD_DEBUGGER_PAGE(m_asciiViewer, ASCII_VIEWER, wxXmlResource::Get()->LoadBitmap(wxT("text_view")));
 
 	m_frameList = new ListCtrlPanel(m_book);
@@ -151,23 +154,3 @@ void DebuggerPane::Clear()
 	GetMemoryView()->Clear();
 }
 
-void DebuggerPane::OnEraseBg(wxEraseEvent &e)
-{
-	wxUnusedVar(e);
-}
-
-void DebuggerPane::OnPaint(wxPaintEvent &e)
-{
-	wxUnusedVar(e);
-	wxBufferedPaintDC dc(this);
-	dc.SetPen( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
-	dc.SetBrush( *wxTRANSPARENT_BRUSH );
-
-	dc.DrawRectangle( wxRect(GetSize()) );
-}
-
-void DebuggerPane::OnSize(wxSizeEvent &e)
-{
-	Refresh();
-	e.Skip();
-}

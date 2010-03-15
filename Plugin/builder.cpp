@@ -24,10 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "builder.h"
-#include "macros.h"
 #include "build_settings_config.h"
 #include "workspace.h"
 #include "buildmanager.h"
+#include "macros.h"
 
 Builder::Builder(const wxString &name, const wxString &buildTool, const wxString &buildToolOptions)
 : m_name(name)

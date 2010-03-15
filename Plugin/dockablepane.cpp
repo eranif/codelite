@@ -27,7 +27,7 @@
 #include <wx/app.h>
 #include <wx/dcbuffer.h>
 #include <wx/xrc/xmlres.h>
-#include "custom_notebook.h"
+#include "notebook_ex.h"
 #include <wx/sizer.h>
 #include "dockablepane.h"
 
@@ -39,9 +39,9 @@ EVT_ERASE_BACKGROUND(DockablePane::OnEraseBg)
 EVT_PAINT(DockablePane::OnPaint)
 END_EVENT_TABLE()
 
-DockablePane::DockablePane(wxWindow* parent, Notebook* book, wxWindow* child, const wxString& title, const wxBitmap& bmp, wxSize size)
+DockablePane::DockablePane(wxWindow* parent, Notebook* book, const wxString& title, const wxBitmap& bmp, wxSize size)
 : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
-, m_child(child)
+, m_child(NULL)
 , m_book(book)
 , m_text(title)
 , m_bmp(bmp)
@@ -51,14 +51,10 @@ DockablePane::DockablePane(wxWindow* parent, Notebook* book, wxWindow* child, co
 
     Connect(XRCID("close_pane"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( DockablePane::ClosePane ));
 
-	m_child->Reparent(this);
-
-	sz->Add(m_child, 1, wxEXPAND|wxALL, 2);
-	sz->Layout();
 
     wxCommandEvent event(wxEVT_CMD_NEW_DOCKPANE);
 	event.SetClientData(this);
-	parent->AddPendingEvent(event);
+	parent->GetEventHandler()->AddPendingEvent(event);
 }
 
 DockablePane::~DockablePane()
@@ -75,12 +71,12 @@ void DockablePane::ClosePane(wxCommandEvent& e)
         sz->Detach(m_child);
 
         // now we can add it to the noteook (it will be automatically be reparented to the notebook)
-        m_book->AddPage(m_child, m_text, wxT(""), m_bmp, false);
+        m_book->AddPage(m_child, m_text, false);
 	}
 
 	wxCommandEvent event(wxEVT_CMD_DELETE_DOCKPANE);
 	event.SetClientData(this);
-	GetParent()->AddPendingEvent(event);
+	GetParent()->GetEventHandler()->AddPendingEvent(event);
 }
 
 void DockablePane::OnPaint(wxPaintEvent& e)
@@ -93,3 +89,12 @@ void DockablePane::OnPaint(wxPaintEvent& e)
 	dc.DrawRectangle(GetClientSize());
 }
 
+void DockablePane::SetChild(wxWindow *child)
+{
+	m_child = child;
+	m_child->Reparent(this);
+	
+	wxSizer *sz = GetSizer();
+	sz->Add(m_child, 1, wxEXPAND|wxALL, 2);
+	sz->Layout();
+}

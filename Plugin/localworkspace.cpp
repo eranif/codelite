@@ -30,11 +30,12 @@
 #include <wx/fontmap.h>
 #include <wx/utils.h>
 #include "xmlutils.h"
-#include "macros.h"
-
 #include "workspace.h"
 #include "project.h"
 #include "localworkspace.h"
+#include "macros.h"
+
+#include "wx_xml_compatibility.h"
 
 //-----------------------------------------------------------------------------
 

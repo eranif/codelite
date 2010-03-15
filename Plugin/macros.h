@@ -25,6 +25,7 @@
  #ifndef MACROS_H
 #define MACROS_H
 
+#include <wx/stdpaths.h>
 //-------------------------------------------------------
 // wxWidgets Connect macros
 //-------------------------------------------------------
@@ -94,9 +95,9 @@ const wxString SEARCH_IN_CURR_FILE_PROJECT = wxT("Current File's Project");
 
 // terminal macro
 #ifdef __WXGTK__
-const wxString TERMINAL_CMD         = wxT("xterm -sb -title '$(TITLE)' -e '$(CMD)'");
+#define TERMINAL_CMD  wxString::Format(wxT("%s/codelite_xterm '$(TITLE)' '$(CMD)'"), wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath().c_str())
 #elif defined(__WXMAC__)
-const wxString TERMINAL_CMD         = wxT("osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script with command \"$(CMD)\"' -e 'end tell'");
+#define TERMINAL_CMD  wxString::Format(wxT("%s/OpenTerm '$(CMD)'"), wxStandardPaths::Get().GetDataDir().c_str())
 #else
 const wxString TERMINAL_CMD         = wxT("");
 #endif
@@ -107,11 +108,11 @@ const wxString TERMINAL_CMD         = wxT("");
 #define PATH_SEP wxT("/")
 #endif
 
-#define viewAsMenuItemID  23500
-#define viewAsMenuItemMaxID  23500+100
+#define viewAsMenuItemID         23500
+#define viewAsMenuItemMaxID      23500+100
 
-#define viewAsSubMenuID 23499
-#define RecentFilesSubMenuID 23600
+#define viewAsSubMenuID          23499
+#define RecentFilesSubMenuID     23600
 #define RecentWorkspaceSubMenuID 23650
 
 #endif // MACROS_H

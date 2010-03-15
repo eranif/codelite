@@ -90,7 +90,7 @@ void MessagePane::DoShowCurrentMessage()
 	// no default button
 	if(msg.showHideButton) {
 		m_buttonClose->Show();
-		if(hasDefaultButton) {
+		if(!hasDefaultButton) {
 			m_buttonClose->SetDefault();
 			m_buttonClose->SetFocus();
 		}

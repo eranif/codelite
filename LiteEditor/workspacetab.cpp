@@ -343,6 +343,6 @@ void WorkspaceTab::OnToggleMultiSelection(wxCommandEvent& e)
 	int answer = wxMessageBox(_("Workspace reload is required\nWould you like to reload workspace now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL, this);
 	if ( answer == wxYES ) {
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
-		Frame::Get()->AddPendingEvent(e);
+		Frame::Get()->GetEventHandler()->AddPendingEvent(e);
 	}
 }

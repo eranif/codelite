@@ -137,6 +137,16 @@ public:
 	virtual void ReplaceSelection (const wxString& text) = 0;
 
 	/**
+	 * \brief return the selected text start position in bytes.
+	 */
+	virtual int GetSelectionStart() = 0;
+	
+	/**
+	 * \brief return the selected text end position in bytes.
+	 */
+	virtual int GetSelectionEnd() = 0;
+	
+	/**
 	 * \brief return the selected text.
 	 * \return the selected text, or wxEmptyString if no selection exist in the document
 	 */

@@ -8,28 +8,28 @@
   <KeyWords5>addpd addps addsd addss andpd andps andnpd andnps cmpeqpd cmpltpd cmplepd cmpunordpd cmpnepd cmpnltpd cmpnlepd cmpordpd cmpeqps cmpltps cmpleps cmpunordps cmpneps cmpnltps cmpnleps cmpordps cmpeqsd cmpltsd cmplesd cmpunordsd cmpnesd cmpnltsd cmpnlesd cmpordsd cmpeqss cmpltss cmpless cmpunordss cmpness cmpnltss cmpnless cmpordss comisd comiss cvtdq2pd cvtdq2ps cvtpd2dq cvtpd2pi cvtpd2ps cvtpi2pd cvtpi2ps cvtps2dq cvtps2pd cvtps2pi cvtss2sd cvtss2si cvtsd2si cvtsd2ss cvtsi2sd cvtsi2ss cvttpd2dq cvttpd2pi cvttps2dq cvttps2pi cvttsd2si cvttss2si divpd divps divsd divss fxrstor fxsave ldmxscr lfence mfence maskmovdqu maskmovdq maxpd maxps paxsd maxss minpd minps minsd minss movapd movaps movdq2q movdqa movdqu movhlps movhpd movhps movd movq movlhps movlpd movlps movmskpd movmskps movntdq movnti movntpd movntps movntq movq2dq movsd movss movupd movups mulpd mulps mulsd mulss orpd orps packssdw packsswb packuswb paddb paddsb paddw paddsw paddd paddsiw paddq paddusb paddusw pand pandn pause paveb pavgb pavgw pavgusb pdistib pextrw pcmpeqb pcmpeqw pcmpeqd pcmpgtb pcmpgtw pcmpgtd pf2id pf2iw pfacc pfadd pfcmpeq pfcmpge pfcmpgt pfmax pfmin pfmul pmachriw pmaddwd pmagw pmaxsw pmaxub pminsw pminub pmovmskb pmulhrwc pmulhriw pmulhrwa pmulhuw pmulhw pmullw pmuludq pmvzb pmvnzb pmvlzb pmvgezb pfnacc pfpnacc por prefetch prefetchw prefetchnta prefetcht0 prefetcht1 prefetcht2 pfrcp pfrcpit1 pfrcpit2 pfrsqit1 pfrsqrt pfsub pfsubr pi2fd pf2iw pinsrw psadbw pshufd pshufhw pshuflw pshufw psllw pslld psllq pslldq psraw psrad psrlw psrld psrlq psrldq psubb psubw psubd psubq psubsb psubsw psubusb psubusw psubsiw pswapd punpckhbw punpckhwd punpckhdq punpckhqdq punpcklbw punpcklwd punpckldq punpcklqdq pxor rcpps rcpss rsqrtps rsqrtss sfence shufpd shufps sqrtpd sqrtps sqrtsd sqrtss stmxcsr subpd subps subsd subss ucomisd ucomiss unpckhpd unpckhps unpcklpd unpcklps xorpd xorps</KeyWords5>
   <Extensions>*.asm;*.s;*.S</Extensions>
   <Properties>
-    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#0080C0" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="9"/>
-    <Property Id="2" Name="Number" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="3" Name="String" Bold="no" Face="" Colour="#3978C6" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="9"/>
-    <Property Id="4" Name="Operator" Bold="no" Face="" Colour="#400080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="5" Name="Identifier" Bold="no" Face="" Colour="#400080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="6" Name="CPU instruction" Bold="yes" Face="Courier New" Colour="#39601E" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="7" Name="Math instruction" Bold="no" Face="" Colour="#9595FF" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="8" Name="Register" Bold="no" Face="" Colour="#FF0080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="9" Name="Directive" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="10" Name="Directive No operand" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="11" Name="C++ comment" Bold="no" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="9"/>
-    <Property Id="12" Name="Character" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="13" Name="StringEol" Bold="no" Face="" Colour="#3978C6" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="9"/>
-    <Property Id="14" Name="Ext instruction" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" Size="9"/>
-    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#000000" BgColour="#C0C0C0" Italic="no" Underline="no" Size="9"/>
-    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
-    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#0080C0" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="-1"/>
+    <Property Id="2" Name="Number" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="3" Name="String" Bold="no" Face="" Colour="#3978C6" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="-1"/>
+    <Property Id="4" Name="Operator" Bold="no" Face="" Colour="#400080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="5" Name="Identifier" Bold="no" Face="" Colour="#400080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="6" Name="CPU instruction" Bold="yes" Face="Courier New" Colour="#39601E" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="7" Name="Math instruction" Bold="no" Face="" Colour="#9595FF" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="8" Name="Register" Bold="no" Face="" Colour="#FF0080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="9" Name="Directive" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="10" Name="Directive No operand" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="11" Name="C++ comment" Bold="no" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="-1"/>
+    <Property Id="12" Name="Character" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="13" Name="StringEol" Bold="no" Face="" Colour="#3978C6" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="-1"/>
+    <Property Id="14" Name="Ext instruction" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
   </Properties>
 </Lexer>

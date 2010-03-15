@@ -113,6 +113,7 @@ public:
 //------------------------------------------------------------------------------
 // CTAGS Manager
 //------------------------------------------------------------------------------
+
 BEGIN_EVENT_TABLE(TagsManager, wxEvtHandler)
 	EVT_TIMER(CtagsMgrTimerId, TagsManager::OnTimer)
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_FILETREE_EVENT, TagsManager::OnUpdateFileTreeEvent)
@@ -613,6 +614,13 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 
 	wxString scope;
 	wxString scopeName = GetLanguage()->GetScopeName(text, &additionlScopes);
+	
+	if( GetCtagsOptions().GetFlags() &  CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING ) {
+		// Do a deep scan for 'using namespace'
+		GetLanguage()->SetAdditionalScopes(additionlScopes, fileName.GetFullPath());
+		additionlScopes = GetLanguage()->GetAdditionalScopes();
+	}
+	
 	TagEntryPtr funcTag = FunctionFromFileLine(fileName, lineno);
 	if (funcTag) {
 		funcSig = funcTag->GetSignature();
@@ -1309,11 +1317,22 @@ bool TagsManager::GetDerivationList(const wxString &path, std::vector<wxString> 
 		wxStringTokenizer tok(ineheritsList, wxT(','));
 		while (tok.HasMoreTokens()) {
 			wxString inherits = tok.GetNextToken();
-			if (tag->GetScopeName() != wxT("<global>")) {
-				inherits = tag->GetScopeName() + wxT("::") + inherits;
+			wxString tagName = tag->GetName();
+			wxString tmpInhr = inherits;
+			
+			tagName.MakeLower();
+			tmpInhr.MakeLower();
+			
+			// Make sure that inherits != the current name or we will end up in an infinite loop
+			if(tmpInhr != tagName) {
+			
+				if (tag->GetScopeName() != wxT("<global>")) {
+					inherits = tag->GetScopeName() + wxT("::") + inherits;
+				}
+				derivationList.push_back(inherits);
+				GetDerivationList(inherits, derivationList);
+				
 			}
-			derivationList.push_back(inherits);
-			GetDerivationList(inherits, derivationList);
 		}
 	}
 	return true;
@@ -2294,16 +2313,6 @@ void TagsManager::DoGetFunctionTipForEmptyExpression(const wxString& word, const
 	GetFunctionTipFromTags(candidates, word, tips);
 }
 
-void TagsManager::CrawlerLock()
-{
-	m_crawlerLocker.Enter();
-}
-
-void TagsManager::CrawlerUnlock()
-{
-	m_crawlerLocker.Leave();
-}
-
 void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName, bool onlyPureVirtual, std::vector<TagEntryPtr> &protos)
 {
 	std::vector<TagEntryPtr> tags;
@@ -2400,4 +2409,10 @@ void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName
 void TagsManager::ClearTagsCache()
 {
 	m_workspaceDatabase->ClearCache();
+}
+
+void TagsManager::SetProjectPaths(const wxArrayString& paths)
+{
+	m_projectPaths.Clear();
+	m_projectPaths = paths;
 }

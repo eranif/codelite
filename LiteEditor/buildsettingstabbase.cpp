@@ -16,8 +16,6 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 3, 4, 0, 0 );
-	fgSizer1->AddGrowableCol( 1 );
-	fgSizer1->AddGrowableCol( 2 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 	
@@ -73,7 +71,9 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	m_checkBoxBoldWarnFont = new wxCheckBox( this, wxID_ANY, wxT("Bold"), wxDefaultPosition, wxDefaultSize, 0 );
 	
 	fgSizer1->Add( m_checkBoxBoldWarnFont, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
-	
+	fgSizer1->AddGrowableCol( 1 );
+	fgSizer1->AddGrowableCol( 2 );
+
 	bSizer1->Add( fgSizer1, 0, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer2;

@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __attachdbgprocdlg__
+#ifndef __attachdbgprocdlg__
 #define __attachdbgprocdlg__
 
 /**
@@ -38,7 +38,7 @@ class AttachDbgProcDlg : public AttachDbgProcBaseDlg
 	long m_selectedItem;
 
 public:
-	void RefreshProcessesList(int colToSort = -1);
+	void RefreshProcessesList(wxString filter, int colToSort = -1);
 
 	/** Constructor */
 	AttachDbgProcDlg( wxWindow* parent );
@@ -46,7 +46,9 @@ public:
 
 	wxString GetProcessId() const;
 	wxString GetExeName() const;
-	wxString GetDebugger() const{return m_choiceDebugger->GetStringSelection();}
+	wxString GetDebugger() const {
+		return m_choiceDebugger->GetStringSelection();
+	}
 
 	//events
 	virtual void OnSortColumn( wxListEvent& event );
@@ -54,6 +56,10 @@ public:
 	virtual void OnItemDeselected( wxListEvent& event );
 	virtual void OnItemSelected( wxListEvent& event );
 	virtual void OnBtnAttachUI( wxUpdateUIEvent& event );
+	virtual void OnFilter(wxCommandEvent& event);
+	virtual void OnRefresh(wxCommandEvent& event);
+
+
 };
 
 #endif // __attachdbgprocdlg__

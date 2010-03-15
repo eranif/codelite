@@ -1,5 +1,5 @@
 Name:           codelite
-Version:        2.2.0
+Version:        2.3.0
 Release:        1%{?dist}
 License:        GPLv2+
 Group:          Development/Tools
@@ -56,4 +56,5 @@ desktop-file-install  --delete-original                            \
 * Wed Jan 27 2010 Jess Portnoy <kernel01@gmail.com>
 - Reomved obsolete switch (--copy-generic-name-to-name)
   updated version number to 2.2.0
+  updated version number to 2.3.0
 

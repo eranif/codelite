@@ -23,11 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include <wx/toolbook.h>
+#include <wx/imaglist.h>
 #include "frame.h"
 #include "editor_config.h"
 #include <wx/dcbuffer.h>
 #include "output_pane.h"
-#include "custom_notebook.h"
 #include "findresultstab.h"
 #include "replaceinfilespanel.h"
 #include "buidltab.h"
@@ -35,21 +36,33 @@
 #include "shelltab.h"
 #include "taskpanel.h"
 
-const wxString OutputPane::FIND_IN_FILES_WIN = wxT("Find Results");
+const wxString OutputPane::FIND_IN_FILES_WIN = wxT("Search");
 const wxString OutputPane::BUILD_WIN         = wxT("Build");
 const wxString OutputPane::ERRORS_WIN        = wxT("Errors");
 const wxString OutputPane::OUTPUT_WIN        = wxT("Output");
 const wxString OutputPane::OUTPUT_DEBUG      = wxT("Debug");
-const wxString OutputPane::REPLACE_IN_FILES  = wxT("Replace Results");
+const wxString OutputPane::REPLACE_IN_FILES  = wxT("Replace");
 const wxString OutputPane::TASKS             = wxT("Tasks");
 const wxString OutputPane::TRACE_TAB         = wxT("Trace");
 
 
-BEGIN_EVENT_TABLE(OutputPane, wxPanel)
-	EVT_PAINT(OutputPane::OnPaint)
-	EVT_ERASE_BACKGROUND(OutputPane::OnEraseBg)
-	EVT_SIZE(OutputPane::OnSize)
-END_EVENT_TABLE()
+#if wxCHECK_VERSION(2, 9, 0)
+#    if defined(__WXMSW__)
+#        define USE_TOOLBOOK 0
+#        define BOOK_ORIENTATION wxBK_TOP
+#    else
+#        define USE_TOOLBOOK 0
+#        define BOOK_ORIENTATION wxBK_BOTTOM
+#    endif
+#else  // wx2.8
+#    if defined(__WXMSW__)||defined(__WXGTK__)
+#        define USE_TOOLBOOK 1
+#        define BOOK_ORIENTATION wxBK_RIGHT
+#    else
+#        define USE_TOOLBOOK 0
+#        define BOOK_ORIENTATION wxBK_BOTTOM
+#    endif
+#endif
 
 OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 300))
@@ -69,63 +82,65 @@ void OutputPane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
-	// load the notebook style from codelite settings file
-	long bookStyle = wxVB_TOP|wxVB_FIXED_WIDTH|wxVB_NO_TABS;
-//	EditorConfigST::Get()->GetLongValue(wxT("OutputPane"), bookStyle);
+#if USE_TOOLBOOK
+	m_book = new wxToolbook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, BOOK_ORIENTATION);
+#else
+	m_book = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, BOOK_ORIENTATION);
+#endif
 
-	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
+#if defined (__WXGTK__) && USE_TOOLBOOK
+	// Force the toolbar to use horizontal txt aligned to the bitmap
+	long style = ((wxToolbook*)m_book)->GetToolBar()->GetWindowStyleFlag();
+	style |= wxTB_HORZ_TEXT;
+	((wxToolbook*)m_book)->GetToolBar()->SetWindowStyleFlag(style);
+#endif
+
 	// Calculate the widthest tab (the one with the 'Workspcae' label)
 	int xx, yy;
 	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxWindow::GetTextExtent(REPLACE_IN_FILES, &xx, &yy, NULL, NULL, &fnt);
-	m_book->SetFixedTabWidth(xx + 16 + 20);
-
+	
+	wxImageList *imageList = new wxImageList(16, 16, true);
+	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("build")));
+	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("error")));
+	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
+	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
+	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("output_win")));
+	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
+	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
+	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("todo")));
+	m_book->AssignImageList( imageList );
+	
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 0);
 
 	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);
-	m_book->AddPage(m_buildWin, BUILD_WIN, BUILD_WIN, wxXmlResource::Get()->LoadBitmap(wxT("build")));
-
+	m_book->AddPage(m_buildWin, BUILD_WIN, true, 0);
+	
 	m_errorsWin = new ErrorsTab(m_buildWin, m_book, wxID_ANY, ERRORS_WIN);
-	m_book->AddPage(m_errorsWin, ERRORS_WIN, ERRORS_WIN, wxXmlResource::Get()->LoadBitmap(wxT("error")));
+	m_book->AddPage(m_errorsWin, ERRORS_WIN, false, 1);
 
 	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN, true);
-	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, FIND_IN_FILES_WIN, wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
-
+	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, false, 2);
+	
 	m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, REPLACE_IN_FILES);
-	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, REPLACE_IN_FILES, wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
-
+	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, false, 3);
+	
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
-	m_book->AddPage(m_outputWind, OUTPUT_WIN, OUTPUT_WIN, wxXmlResource::Get()->LoadBitmap(wxT("output_win")));
-
+	m_book->AddPage(m_outputWind, OUTPUT_WIN, false, 4);
+	
 	m_outputDebug = new DebugTab(m_book, wxID_ANY, OUTPUT_DEBUG);
-	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, OUTPUT_DEBUG, wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
-
-	wxTextCtrl *text = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
-	m_book->AddPage(text, TRACE_TAB, TRACE_TAB, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
+	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, false, 5);
+	
+	wxTextCtrl *text = new wxTextCtrl(m_book, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
+	m_book->AddPage(text, TRACE_TAB, false, 6);
+	
 	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
 
 	m_taskPanel = new TaskPanel(m_book, wxID_ANY, TASKS);
-	m_book->AddPage(m_taskPanel, TASKS, TASKS, wxXmlResource::Get()->LoadBitmap(wxT("todo")));
+	m_book->AddPage(m_taskPanel, TASKS, false, 7);
+
+#if USE_TOOLBOOK
+	((wxToolbook*)m_book)->GetToolBar()->Realize();
+#endif
 	mainSizer->Layout();
-}
-
-void OutputPane::OnEraseBg(wxEraseEvent &e)
-{
-	wxUnusedVar(e);
-}
-
-void OutputPane::OnPaint(wxPaintEvent &e)
-{
-	wxUnusedVar(e);
-
-	wxBufferedPaintDC dc(this);
-	dc.SetPen( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
-	dc.SetBrush( *wxTRANSPARENT_BRUSH );
-	dc.DrawRectangle( wxRect(GetSize()) );
-}
-
-void OutputPane::OnSize(wxSizeEvent &e)
-{
-	Refresh();
-	e.Skip();
 }

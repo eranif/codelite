@@ -132,8 +132,7 @@ BuildSystemPage::BuildSystemPage(wxWindow *parent, wxString name)
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 
 	wxFlexGridSizer* fgSizer4;
-	fgSizer4 = new wxFlexGridSizer( 2, 2, 0, 0 );
-	fgSizer4->AddGrowableCol( 1 );
+	fgSizer4 = new wxFlexGridSizer( 2, 0, 0 );
 	fgSizer4->SetFlexibleDirection( wxBOTH );
 	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
@@ -151,7 +150,7 @@ BuildSystemPage::BuildSystemPage(wxWindow *parent, wxString name)
 
 	m_staticText19 = new wxStaticText( this, wxID_ANY, wxT("No. of concurrent jobs:"), wxDefaultPosition, wxDefaultSize, 0);
 	fgSizer4->Add( m_staticText19, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-
+	
 	wxArrayString choices;
 	choices.Add(wxT("1"));
 	choices.Add(wxT("2"));
@@ -161,7 +160,8 @@ BuildSystemPage::BuildSystemPage(wxWindow *parent, wxString name)
 	//choices.Add(wxT("unspecified"));  // TODO: hops enable this and use to suppress -j opt switch
 	m_choiceJobs = new wxComboBox(this, wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, choices, wxCB_READONLY);
 	fgSizer4->Add( m_choiceJobs, 1, wxALL|wxEXPAND, 5);
-
+	fgSizer4->AddGrowableCol( 1 );
+	
 	bSizer6->Add( fgSizer4, 1, wxEXPAND, 5 );
 
 	this->SetSizer( bSizer6 );

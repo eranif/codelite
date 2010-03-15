@@ -99,6 +99,7 @@ struct DebuggerEvent {
 	wxString                      m_expression;    // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_ASCII_VIEWER, DBG_UR_WATCHMEMORY, DBG_UR_VARIABLEOBJ
 												   // DBG_UR_EVALVARIABLEOBJ
 	wxString                      m_evaluated;     // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY, DBG_UR_EVALVARIABLEOBJ
+	DisplayFormat                 m_displayFormat; // DBG_UR_EVALVARIABLEOBJ
 	StackEntryArray               m_stack;         // DBG_UR_UPDATE_STACK_LIST
 	std::vector<BreakpointInfo>   m_bpInfoList;    // DBG_UR_RECONCILE_BPTS
 	bool                          m_onlyIfLogging; // DBG_UR_ADD_LINE
@@ -117,6 +118,7 @@ struct DebuggerEvent {
 		, m_bpDebuggerId  (wxNOT_FOUND   )
 		, m_expression    (wxEmptyString )
 		, m_evaluated     (wxEmptyString )
+		, m_displayFormat (DBG_DF_NATURAL)
 		, m_onlyIfLogging (false         )
 		, m_userReason    (wxNOT_FOUND   )
 	{

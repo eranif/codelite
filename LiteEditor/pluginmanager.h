@@ -35,7 +35,7 @@
 #include "plugindata.h"
 #include "keyboardmanager.h"
 
-class Notebook;
+class wxBookCtrlBase;
 class EnvironmentConfig;
 class JobQueue;
 class BuildSettingsConfig;
@@ -75,7 +75,7 @@ public:
 	virtual IConfigTool *          GetConfigTool();
 	virtual TreeItemInfo           GetSelectedTreeItemInfo(TreeType type);
 	virtual wxTreeCtrl *           GetTree(TreeType type);
-	virtual Notebook *             GetOutputPaneNotebook();
+	virtual wxBookCtrlBase *       GetOutputPaneNotebook();
 	virtual Notebook *             GetWorkspacePaneNotebook();
 	virtual bool                   OpenFile(const wxString &fileName, const wxString &projectName = wxEmptyString, int lineno = wxNOT_FOUND);
 	virtual bool                   OpenFile(const BrowseRecord &rec);
@@ -120,6 +120,7 @@ public:
 	virtual NavMgr *               GetNavigationMgr();
 	virtual IEditor*               NewEditor();
 	virtual IMacroManager*         GetMacrosManager();
+	virtual bool                   IsShutdownInProgress() const;
 
 	//------------------------------------
 	//End of IManager interface

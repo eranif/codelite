@@ -87,9 +87,14 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
 	m_vertSizer->Add(m_sci,         1, wxEXPAND | wxALL, 1);
 	m_vertSizer->Add(m_inputSizer,  0, wxEXPAND | wxALL, 1);
 	m_vertSizer->Add(m_findBar,     0, wxEXPAND | wxALL, 1);
+	
+#ifdef __WXMAC__
+	mainSizer->Insert(0, m_vertSizer,     1, wxEXPAND | wxALL, 1);
+#else
 	mainSizer->Add(m_vertSizer,     1, wxEXPAND | wxALL, 1);
-	mainSizer->Layout();
+#endif
 
+	mainSizer->Layout();
 	InitStyle(m_sci);
 }
 

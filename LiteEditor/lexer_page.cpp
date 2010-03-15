@@ -102,7 +102,6 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 	}
 	wxStaticText *text(NULL);
 	wxGridBagSizer *gbz = new wxGridBagSizer(0, 5);
-	gbz->AddGrowableCol( 1 );
 	gbz->SetFlexibleDirection( wxBOTH );
 
 	text = new wxStaticText(this, wxID_ANY, wxT("Edit Keywords:"));
@@ -159,6 +158,7 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 
 	m_globalBgColourPicker = new wxColourPickerCtrl(this, wxID_ANY, wxColour(bgInitialColor), wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
 	gbz->Add( m_globalBgColourPicker, wxGBPosition(6, 1), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
+	gbz->AddGrowableCol( 1 );
 	bSizer7->Add(gbz, 0, wxEXPAND, 5);
 
 	sbSizer5->Add( bSizer7, 1, wxEXPAND, 5 );

@@ -17,9 +17,10 @@ protected:
 	wxEvtHandler *m_parent;
 	int           m_pid;
 	int           m_exitCode;
+	bool          m_hardKill;
 
 public:
-	IProcess(wxEvtHandler *parent) : m_parent(parent), m_pid(-1), m_exitCode(0) {}
+	IProcess(wxEvtHandler *parent) : m_parent(parent), m_pid(-1), m_exitCode(0), m_hardKill(false) {}
 	virtual ~IProcess() {}
 
 	// Read from process stdout - return immediately if no data is available
@@ -50,6 +51,13 @@ public:
 
 	int GetExitCode() const {
 		return m_exitCode;
+	}
+	
+	void SetHardKill(bool hardKill) {
+		this->m_hardKill = hardKill;
+	}
+	bool GetHardKill() const {
+		return m_hardKill;
 	}
 };
 

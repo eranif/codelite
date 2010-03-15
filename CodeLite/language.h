@@ -145,12 +145,8 @@ public:
 	const wxString& GetVisibleScope() const {
 		return m_visibleScope;
 	}
-	void SetAdditionalScopes(const std::vector<wxString>& additionalScopes) {
-		this->m_additionalScopes = additionalScopes;
-	}
-	const std::vector<wxString>& GetAdditionalScopes() const {
-		return m_additionalScopes;
-	}
+	void SetAdditionalScopes(const std::vector<wxString>& additionalScopes, const wxString &filename) ;
+	const std::vector<wxString>& GetAdditionalScopes() const ;
 	/**
 	 * Set the language specific auto completion delimeteres, for example: for C++ you should populate
 	 * the array with { . , -> , :: }

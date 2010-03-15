@@ -16,7 +16,11 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/string.h>
+#include <wx/statline.h>
+#include <wx/checkbox.h>
+#include <wx/stattext.h>
 #include <wx/sizer.h>
+#include <wx/panel.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -31,6 +35,13 @@ class NewQuickWatch : public wxDialog
 	
 	protected:
 		wxTreeCtrl* m_treeCtrl;
+		wxStaticLine* m_staticline1;
+		wxCheckBox* m_checkBoxShowMoreFormats;
+		wxPanel* m_panelExtra;
+		wxStaticText* m_staticText1;
+		wxStaticText* m_hexFormat;
+		wxStaticText* m_staticText2;
+		wxStaticText* m_binFormat;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCloseEvent( wxCloseEvent& event ) { event.Skip(); }
@@ -42,11 +53,12 @@ class NewQuickWatch : public wxDialog
 		virtual void OnItemExpanded( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnExpandItem( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnItemMenu( wxTreeEvent& event ) { event.Skip(); }
+		virtual void OnShowHexAndBinFormat( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		NewQuickWatch( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Display Variable"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCAPTION|wxRESIZE_BORDER|wxSTAY_ON_TOP );
+		NewQuickWatch( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Display Variable"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 435,180 ), long style = wxCAPTION|wxRESIZE_BORDER|wxSTAY_ON_TOP );
 		~NewQuickWatch();
 	
 };

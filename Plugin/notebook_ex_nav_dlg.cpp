@@ -23,13 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "wx/settings.h"
-#include "notebooknavdialog.h"
+#include "notebook_ex_nav_dlg.h"
 #include <wx/listctrl.h>
 #include <wx/listbox.h>
 #include <wx/image.h>
 #include "wx/sizer.h" 
-#include "custom_notebook.h"
-#include "custom_tab.h"
+#include "notebook_ex.h"
 
 NotebookNavDialog::NotebookNavDialog(wxWindow* parent)
 		: m_listBox(NULL)
@@ -72,7 +71,7 @@ void NotebookNavDialog::Create(wxWindow* parent)
 
 	// Connect events to the list box
 	m_listBox->Connect(wxID_ANY, wxEVT_KEY_UP, wxKeyEventHandler(NotebookNavDialog::OnKeyUp), NULL, this);
-	m_listBox->Connect(wxID_ANY, wxEVT_NAVIGATION_KEY, wxNavigationKeyEventHandler(NotebookNavDialog::OnNavigationKey), NULL, this);
+	Connect(wxID_ANY, wxEVT_NAVIGATION_KEY, wxNavigationKeyEventHandler(NotebookNavDialog::OnNavigationKey), NULL, this);
 	m_listBox->Connect(wxID_ANY, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(NotebookNavDialog::OnItemSelected), NULL, this);
 
 	SetBackgroundColour( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
@@ -108,8 +107,9 @@ void NotebookNavDialog::OnNavigationKey(wxNavigationKeyEvent &event)
 		else
 			itemToSelect = selected - 1;
 	}
-
-	m_listBox->SetSelection( itemToSelect );
+	
+	//if( m_listBox->GetCount() > itemToSelect && itemToSelect)
+		m_listBox->SetSelection( itemToSelect );
 }
 
 void NotebookNavDialog::PopulateListControl(Notebook *book)
@@ -117,14 +117,15 @@ void NotebookNavDialog::PopulateListControl(Notebook *book)
 	m_tabsIndex.clear();
 	const wxArrayPtrVoid &arr = book->GetHistory();
 	for (size_t i=0; i<arr.GetCount(); i++) {
-		CustomTab *tab = static_cast<CustomTab*>(arr.Item(i));
-		m_tabsIndex[m_listBox->Append( tab->GetText() )] = tab;
+		wxWindow *tab = static_cast<wxWindow*>(arr.Item(i));
+		m_tabsIndex[m_listBox->Append( book->GetPageText( book->GetPageIndex(tab) ) )] = tab;
 	}
 
 	// Select the next entry after the current selection
-	if (arr.GetCount() >= 0) {
+	if (arr.GetCount() > 0) {
 		m_listBox->SetSelection( 0 );
 	}
+	
 	wxNavigationKeyEvent dummy;
 	dummy.SetDirection(true);
 	OnNavigationKey(dummy);
@@ -140,9 +141,15 @@ void NotebookNavDialog::CloseDialog()
 {
 	m_selectedItem = m_listBox->GetSelection();
 	m_selTab = NULL;
-	std::map< int, CustomTab* >::iterator iter = m_tabsIndex.find(m_selectedItem);
+	std::map< int, wxWindow* >::iterator iter = m_tabsIndex.find(m_selectedItem);
 	if(iter != m_tabsIndex.end()){
 		m_selTab = iter->second;
+//		Notebook *bk = dynamic_cast<Notebook*>( GetParent() );
+//		if( bk ) {
+//			
+//			bk->SetSelection( bk->GetPageIndex(m_selTab), true );
+//			
+//		}
 	}
 	EndModal( wxID_OK );
 }

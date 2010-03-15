@@ -27,6 +27,7 @@
 #include "lexer_configuration.h"
 #include "xmlutils.h"
 #include "macros.h"
+#include "wx_xml_compatibility.h"
 
 static bool StringTolBool(const wxString &s) {
 	bool res = s.CmpNoCase(wxT("Yes")) == 0 ? true : false;

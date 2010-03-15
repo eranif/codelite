@@ -51,7 +51,7 @@ TemplateClassBaseDlg::TemplateClassBaseDlg( wxWindow* parent, wxWindowID id, con
 	sbSizer01 = new wxStaticBoxSizer( new wxStaticBox( ID_PANEL, wxID_ANY, wxT("Class") ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer1;
-	fgSizer1 = new wxFlexGridSizer( 3, 2, 0, 0 );
+	fgSizer1 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer1->AddGrowableCol( 1 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -82,7 +82,7 @@ TemplateClassBaseDlg::TemplateClassBaseDlg( wxWindow* parent, wxWindowID id, con
 	sbSizer02 = new wxStaticBoxSizer( new wxStaticBox( ID_PANEL, wxID_ANY, wxT("Files") ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 4, 3, 0, 0 );
+	fgSizer2 = new wxFlexGridSizer( 0, 3, 0, 0 );
 	fgSizer2->AddGrowableCol( 1 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );

@@ -23,15 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "wx/image.h"
-#include "custom_notebook.h"
+#include "notebook_ex.h"
 #include "drawingutils.h"
-#include "custom_tab.h"
 #include "windowstack.h"
 #include "wx/menu.h"
 #include "wx/settings.h"
 #include "wx/dcbuffer.h"
 #include "dropbutton.h"
-#include "custom_tabcontainer.h"
 
 #define PNAEL_BG_COLOUR DrawingUtils::GetPanelBgColour()
 

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -15,25 +15,20 @@ EditorSettingsFoldingBase::EditorSettingsFoldingBase( wxWindow* parent, wxWindow
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_displayMargin = new wxCheckBox( this, wxID_ANY, _("Display Folding Margin"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_displayMargin->SetValue(true);
-	
+	m_displayMargin->SetValue(true); 
 	mainSizer->Add( m_displayMargin, 0, wxALL, 5 );
 	
 	m_underlineFolded = new wxCheckBox( this, wxID_ANY, _("Underline Folded Line"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_underlineFolded->SetValue(true);
-	
+	m_underlineFolded->SetValue(true); 
 	mainSizer->Add( m_underlineFolded, 0, wxALL, 5 );
 	
 	m_foldPreprocessors = new wxCheckBox( this, wxID_ANY, _("Fold Preprocessors"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	mainSizer->Add( m_foldPreprocessors, 0, wxALL, 5 );
 	
 	m_foldCompact = new wxCheckBox( this, wxID_ANY, _("Fold Compact"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	mainSizer->Add( m_foldCompact, 0, wxALL, 5 );
 	
 	m_foldElse = new wxCheckBox( this, wxID_ANY, _("Fold At Else"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	mainSizer->Add( m_foldElse, 0, wxALL, 5 );
 	
 	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Fold Style"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -62,6 +57,12 @@ EditorSettingsFoldingBase::EditorSettingsFoldingBase( wxWindow* parent, wxWindow
 	this->Layout();
 	
 	// Connect Events
+	m_underlineFolded->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldingMarginUI ), NULL, this );
+	m_foldPreprocessors->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldingMarginUI ), NULL, this );
+	m_foldCompact->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldingMarginUI ), NULL, this );
+	m_foldElse->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldingMarginUI ), NULL, this );
+	m_staticText2->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldingMarginUI ), NULL, this );
+	m_foldStyle->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldingMarginUI ), NULL, this );
 	m_staticText21->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldColourUI ), NULL, this );
 	m_colourPicker->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldColourUI ), NULL, this );
 }
@@ -69,6 +70,12 @@ EditorSettingsFoldingBase::EditorSettingsFoldingBase( wxWindow* parent, wxWindow
 EditorSettingsFoldingBase::~EditorSettingsFoldingBase()
 {
 	// Disconnect Events
+	m_underlineFolded->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldingMarginUI ), NULL, this );
+	m_foldPreprocessors->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldingMarginUI ), NULL, this );
+	m_foldCompact->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldingMarginUI ), NULL, this );
+	m_foldElse->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldingMarginUI ), NULL, this );
+	m_staticText2->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldingMarginUI ), NULL, this );
+	m_foldStyle->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldingMarginUI ), NULL, this );
 	m_staticText21->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldColourUI ), NULL, this );
 	m_colourPicker->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldColourUI ), NULL, this );
 }

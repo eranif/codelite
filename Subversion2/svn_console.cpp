@@ -241,10 +241,12 @@ void SvnConsole::EnsureVisible()
 	}
 
 	// Select the Subversion tab
-	Notebook *book = m_plugin->GetManager()->GetOutputPaneNotebook();
-	size_t where = book->GetPageIndex(m_plugin->GetConsole());
-	if (where != Notebook::npos) {
-		book->SetSelection(where);
+	wxBookCtrlBase *book = m_plugin->GetManager()->GetOutputPaneNotebook();
+	
+	for(size_t i=0; i<book->GetPageCount(); i++) {
+		if(book->GetPage(i) == m_plugin->GetConsole()) {
+			book->SetSelection(i);
+		}
 	}
 }
 

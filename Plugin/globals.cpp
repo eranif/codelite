@@ -179,7 +179,6 @@ bool RemoveDirectory(const wxString &path)
 	} else {
 		cmd << wxT("\rm -fr ") << wxT("\"") << path << wxT("\"");
 	}
-	wxArrayString output;
 	return wxShell(cmd);
 }
 

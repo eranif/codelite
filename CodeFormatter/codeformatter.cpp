@@ -234,6 +234,7 @@ void CodeFormatter::OnFormatOptions(wxCommandEvent &e)
 
 void CodeFormatter::OnFormatUI(wxUpdateUIEvent &e)
 {
+	CHECK_CL_SHUTDOWN();
 	e.Enable(m_mgr->GetActiveEditor() != NULL);
 }
 

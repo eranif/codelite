@@ -41,9 +41,9 @@
  */
 class ConsoleFinder
 {
-	wxString m_ConsoleTty;
-	int m_nConsolePid;
-	wxString m_consoleCommand;
+	wxString  m_ConsoleTty;
+	int       m_nConsolePid;
+	wxString  m_consoleCommand;
 
 private:
 	int RunConsole(const wxString &title);

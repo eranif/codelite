@@ -5,4 +5,19 @@
 - Add option to customize the single toolbar
 - Add new second tip to the code-completion box which shows the conent of the comment on top of the current tip
 - Refactoring: add an option to add 'add forward decl'
-- 'Highlight Word' does not work for wxAuiToolbar
+
+2.9 Porting, known issues:
+==========================
+MSW: 
+Highlight colors are not working properly
+Open Resource dialog: it shows 3 columns when opening a workspace file
+
+------------------------------------
+
+
+Migration to native notebook open issues:
+-----------------------------------------
+
+2) Keyboard navigation does not work on Linux
+5) Remove Ouptut Control Bar code
+6) Find In Files notebook should have close button as well + mouse middle close tab

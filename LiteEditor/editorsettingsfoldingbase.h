@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -44,10 +44,12 @@ class EditorSettingsFoldingBase : public wxPanel
 		wxColourPickerCtrl* m_colourPicker;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnFoldColourUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnFoldingMarginUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnFoldColourUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	
 	public:
+		
 		EditorSettingsFoldingBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 366,224 ), long style = wxTAB_TRAVERSAL );
 		~EditorSettingsFoldingBase();
 	

@@ -7,20 +7,20 @@
   <KeyWords4></KeyWords4>
   <Extensions>*.bat;*.batch</Extensions>
   <Properties>
-    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="2" Name="Keyword" Bold="yes" Face="" Colour="#000080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="3" Name="Label line" Bold="no" Face="" Colour="#FFFFFF" BgColour="#808040" Italic="no" Underline="no" Size="9"/>
-    <Property Id="4" Name="Hide command character '@'" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="5" Name="External commands" Bold="yes" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="6" Name="Variable" Bold="no" Face="" Colour="#FF8040" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="7" Name="Opertator" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" Size="9"/>
-    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#000000" BgColour="#C0C0C0" Italic="no" Underline="no" Size="9"/>
-    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
-    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#8BBF86" Italic="no" Underline="no" Size="9"/>
-    <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#FF0000" Italic="no" Underline="no" Size="9"/>
-    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="2" Name="Keyword" Bold="yes" Face="" Colour="#000080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="3" Name="Label line" Bold="no" Face="" Colour="#FFFFFF" BgColour="#808040" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="4" Name="Hide command character '@'" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="5" Name="External commands" Bold="yes" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="6" Name="Variable" Bold="no" Face="" Colour="#FF8040" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="7" Name="Opertator" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
+    <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#8BBF86" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#FF0000" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
   </Properties>
 </Lexer>

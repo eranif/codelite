@@ -22,9 +22,11 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "configuration_mapping.h"
+
+#include "configuration_mapping.h"
 #include "xmlutils.h"
 #include "macros.h"
+#include "wx_xml_compatibility.h"
 
 BuildMatrix::BuildMatrix(wxXmlNode *node){
 	if(node){

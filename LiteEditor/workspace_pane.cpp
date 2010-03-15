@@ -32,7 +32,7 @@
 #include "manager.h"
 #include "frame.h"
 #include "cl_editor.h"
-#include "custom_notebook.h"
+#include "notebook_ex.h"
 #include "cpp_symbol_tree.h"
 #include "windowstack.h"
 #include "macros.h"
@@ -59,9 +59,10 @@ WorkspacePane::~WorkspacePane()
 
 #define ADD_WORKSPACE_PAGE(win, name) \
 	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
-		new DockablePane(GetParent(), m_book, win, name, wxNullBitmap, wxSize(200, 200));\
+		DockablePane *cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));\
+		cp->SetChild(win);\
 	} else {\
-		m_book->AddPage(win, name, name, wxNullBitmap, true);\
+		m_book->AddPage(win, name, true);\
 	}
 
 void WorkspacePane::CreateGUIControls()
@@ -71,41 +72,46 @@ void WorkspacePane::CreateGUIControls()
 
     // selected configuration:
 
-	mainSizer->Add(new wxStaticText(this, wxID_ANY, wxT("Selected Configuration:")), 0, wxEXPAND| wxTOP|wxLEFT|wxRIGHT, 5);
+	mainSizer->Add(new wxStaticText(this, wxID_ANY, wxT("Selected Configuration:")), 0, wxALIGN_CENTER_HORIZONTAL| wxALL, 2);
 
 	wxBoxSizer *hsz = new wxBoxSizer(wxHORIZONTAL);
-	mainSizer->Add(hsz, 0, wxEXPAND|wxALL, 5);
+	mainSizer->Add(hsz, 0, wxEXPAND|wxTOP|wxBOTTOM, 5);
 
 	wxArrayString choices;
 	m_workspaceConfig = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, choices);
 	m_workspaceConfig->Enable(false);
 	m_workspaceConfig->Append(OPEN_CONFIG_MGR_STR);
 	ConnectChoice(m_workspaceConfig, WorkspacePane::OnConfigurationManagerChoice);
-	hsz->Add(m_workspaceConfig, 1, wxEXPAND);
-
-	// add static line separator
-	wxStaticLine *line = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	mainSizer->Add(line, 0, wxEXPAND);
+	hsz->Add(m_workspaceConfig, 1, wxEXPAND| wxALL, 1);
+	
+#ifdef __WXMAC__
+	m_workspaceConfig->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+#endif
 
     // add notebook for tabs
-	long bookStyle = wxVB_LEFT|wxVB_FIXED_WIDTH;
-	EditorConfigST::Get()->GetLongValue(wxT("WorkspaceView"), bookStyle);
+	long bookStyle = wxVB_LEFT;
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
 
 	// Calculate the widthest tab (the one with the 'Workspcae' label)
 	int xx, yy;
 	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxWindow::GetTextExtent(wxT("Workspace"), &xx, &yy, NULL, NULL, &fnt);
-	m_book->SetFixedTabWidth(xx + 20);
 
-    m_book->SetAuiManager(m_mgr, m_caption);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
 
     // create tabs (possibly detached)
 	DetachedPanesInfo dpi;
 	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
-	wxArrayString detachedPanes = dpi.GetPanes();
-
+	
+	
+	wxArrayString detachedPanes;
+	
+#ifndef __WXGTK__	
+	// FIXME:: On GTK we crash when try to recreate 
+	// the Windows detached
+	detachedPanes = dpi.GetPanes();
+#endif
+	
 	m_workspaceTab = new WorkspaceTab(m_book, wxT("Workspace"));
 	ADD_WORKSPACE_PAGE(m_workspaceTab, m_workspaceTab->GetCaption());
 
@@ -304,12 +310,12 @@ void WorkspacePane::OnConfigurationManagerChoice(wxCommandEvent &event)
 	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
 	matrix->SetSelectedConfigurationName(selection);
 	ManagerST::Get()->SetWorkspaceBuildMatrix(matrix);
-	
+
 	// Set the focus to the active editor if any
 	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 	if(editor)
 		editor->SetActive();
-	
+
 }
 
 void WorkspacePane::OnConfigurationManager(wxCommandEvent& e)

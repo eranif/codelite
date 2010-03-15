@@ -200,34 +200,35 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 	wxArrayString arrFiles;
 
 	// Clear the results once
-	fcFileOpener::Instance()->ClearResults();
-	fcFileOpener::Instance()->ClearSearchPath();
+	{
+		wxCriticalSectionLocker locker( TagsManagerST::Get()->m_crawlerLocker );
+		
+		fcFileOpener::Instance()->ClearResults();
+		fcFileOpener::Instance()->ClearSearchPath();
 
-	for(size_t i=0; i<searchPaths.GetCount(); i++) {
-		const wxCharBuffer path = _C(searchPaths.Item(i));
-		DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Search Path: %s "), searchPaths.Item(i).c_str()) );
-		fcFileOpener::Instance()->AddSearchPath(path.data());
-	}
+		for(size_t i=0; i<searchPaths.GetCount(); i++) {
+			const wxCharBuffer path = _C(searchPaths.Item(i));
+			DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Search Path: %s "), searchPaths.Item(i).c_str()) );
+			fcFileOpener::Instance()->AddSearchPath(path.data());
+		}
 
-	for(size_t i=0; i<excludePaths.GetCount(); i++) {
-		const wxCharBuffer path = _C(excludePaths.Item(i));
-		DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Exclude Path: %s "), excludePaths.Item(i).c_str()) );
-		fcFileOpener::Instance()->AddExcludePath(path.data());
-	}
+		for(size_t i=0; i<excludePaths.GetCount(); i++) {
+			const wxCharBuffer path = _C(excludePaths.Item(i));
+			DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Exclude Path: %s "), excludePaths.Item(i).c_str()) );
+			fcFileOpener::Instance()->AddExcludePath(path.data());
+		}
 
-	// Before using the 'crawlerScan' we lock it, since it is not mt-safe
-	TagsManagerST::Get()->CrawlerLock();
-	for(size_t i=0; i<filteredFileList.GetCount(); i++) {
-		const wxCharBuffer cfile = filteredFileList.Item(i).mb_str(wxConvUTF8);
-		crawlerScan(cfile.data());
-		if( TestDestroy() ) {
-			TagsManagerST::Get()->CrawlerUnlock();
-			DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> received 'TestDestroy()'") ) );
-			return;
+		// Before using the 'crawlerScan' we lock it, since it is not mt-safe
+		for(size_t i=0; i<filteredFileList.GetCount(); i++) {
+			const wxCharBuffer cfile = filteredFileList.Item(i).mb_str(wxConvUTF8);
+			crawlerScan(cfile.data());
+			if( TestDestroy() ) {
+				DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> received 'TestDestroy()'") ) );
+				return;
+			}
 		}
 	}
-
-	TagsManagerST::Get()->CrawlerUnlock();
+	
 	std::set<std::string> *newSet = new std::set<std::string>(fcFileOpener::Instance()->GetResults());
 
 #ifdef PARSE_THREAD_DBG
@@ -382,27 +383,31 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
 	if ( !this->IsCrawlerEnabled() ) {
 		return;
 	}
+	
+	
+	{
+		wxCriticalSectionLocker locker( TagsManagerST::Get()->m_crawlerLocker );
+		
+		wxArrayString includePaths, excludePaths;
+		GetSearchPaths( includePaths, excludePaths );
 
-	wxArrayString includePaths, excludePaths;
-	GetSearchPaths( includePaths, excludePaths );
+		fcFileOpener::Instance()->ClearSearchPath();
+		for(size_t i=0; i<includePaths.GetCount(); i++) {
+			fcFileOpener::Instance()->AddSearchPath( includePaths.Item(i).mb_str(wxConvUTF8).data() );
+		}
 
-	fcFileOpener::Instance()->ClearSearchPath();
-	for(size_t i=0; i<includePaths.GetCount(); i++) {
-		fcFileOpener::Instance()->AddSearchPath( includePaths.Item(i).mb_str(wxConvUTF8).data() );
+		for(size_t i=0; i<excludePaths.GetCount(); i++) {
+			fcFileOpener::Instance()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
+		}
+
+		// Invoke the crawler
+		const wxCharBuffer cfile = filename.mb_str(wxConvUTF8);
+
+		// Before using the 'crawlerScan' we lock it, since it is not mt-safe
+		crawlerScan( cfile.data() );
+		
 	}
-
-	for(size_t i=0; i<excludePaths.GetCount(); i++) {
-		fcFileOpener::Instance()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
-	}
-
-	// Invoke the crawler
-	const wxCharBuffer cfile = filename.mb_str(wxConvUTF8);
-
-	// Before using the 'crawlerScan' we lock it, since it is not mt-safe
-	TagsManagerST::Get()->CrawlerLock();
-	crawlerScan( cfile.data() );
-	TagsManagerST::Get()->CrawlerUnlock();
-
+	
 	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
 	std::set<std::string>::iterator iter = fileSet.begin();
 	for (; iter != fileSet.end(); iter++ ) {

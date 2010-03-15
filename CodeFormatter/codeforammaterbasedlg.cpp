@@ -91,7 +91,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Indentation:") ), wxVERTICAL );
 	
 	wxGridSizer* gSizer1;
-	gSizer1 = new wxGridSizer( 5, 2, 0, 0 );
+	gSizer1 = new wxGridSizer( 0, 2, 0, 0 );
 	
 	m_checkBoxIndetClass = new wxCheckBox( m_panel3, wxID_ANY, wxT("Class"), wxDefaultPosition, wxDefaultSize, 0 );
 	
@@ -142,7 +142,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Formatting Options:") ), wxVERTICAL );
 	
 	wxGridSizer* gSizer2;
-	gSizer2 = new wxGridSizer( 2, 2, 0, 0 );
+	gSizer2 = new wxGridSizer( 0, 2, 0, 0 );
 	
 	m_checkBoxFormatBreakBlocks = new wxCheckBox( m_panel3, wxID_ANY, wxT("Break Blocks"), wxDefaultPosition, wxDefaultSize, 0 );
 	

@@ -13,6 +13,7 @@
 #include <wx/xrc/xmlres.h>
 #include "continousbuildconf.h"
 #include <wx/log.h>
+#include <wx/imaglist.h>
 
 #if 0
 #define PRINT_MESSAGE(x) wxPrintf(x);
@@ -50,6 +51,8 @@ EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  ContinuousBuild::OnBuildProcessOutp
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, ContinuousBuild::OnBuildProcessEnded)
 END_EVENT_TABLE()
 
+static const wxString CONT_BUILD = wxT("BuildQ");
+
 ContinuousBuild::ContinuousBuild(IManager *manager)
 		: IPlugin(manager)
 		, m_buildInProgress(false)
@@ -58,8 +61,11 @@ ContinuousBuild::ContinuousBuild(IManager *manager)
 	m_shortName = wxT("ContinuousBuild");
 	m_view = new ContinousBuildPane(m_mgr->GetOutputPaneNotebook(), m_mgr, this);
 
+	wxBookCtrlBase *book = m_mgr->GetOutputPaneNotebook();
+	int imgId = book->GetImageList()->Add(LoadBitmapFile(wxT("compfile.png")));
+	
 	// add our page to the output pane notebook
-	m_mgr->GetOutputPaneNotebook()->AddPage(m_view, wxT("Continuous Build"), wxT("Continuous Build"), LoadBitmapFile(wxT("compfile.png")), false);
+	book->AddPage(m_view, CONT_BUILD, false, imgId);
 
 	m_topWin = m_mgr->GetTheApp();
 	m_topWin->Connect(wxEVT_FILE_SAVED,               wxCommandEventHandler(ContinuousBuild::OnFileSaved),           NULL, this);
@@ -100,7 +106,7 @@ void ContinuousBuild::UnPlug()
 	// before this plugin is un-plugged we must remove the tab we added
 	for (size_t i=0; i<m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
 		if (m_view == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
-			m_mgr->GetOutputPaneNotebook()->RemovePage(i, false);
+			m_mgr->GetOutputPaneNotebook()->RemovePage(i);
 			m_view->Destroy();
 			break;
 		}

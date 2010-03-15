@@ -29,7 +29,7 @@
 #include <list>
 #include "wx/wxscintilla.h"
 
-#include "custom_notebook.h"
+#include "notebook_ex.h"
 #include "outputtabwindow.h"
 #include "search_thread.h"
 #include "findinfilesdlg.h"
@@ -59,6 +59,7 @@ protected:
 
 	virtual void OnPageClosed      (NotebookEvent    &e);
     virtual void OnPageChanged     (NotebookEvent    &e);
+	virtual void OnClosePage       (NotebookEvent    &e);
     virtual void OnFindInFiles     (wxCommandEvent   &e);
     virtual void OnSearchStart     (wxCommandEvent   &e);
     virtual void OnSearchMatch     (wxCommandEvent   &e);

@@ -7,29 +7,29 @@
   <KeyWords4></KeyWords4>
   <Extensions>*.cobra</Extensions>
   <Properties>
-    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="1" Name="CommentLine" Bold="no" Face="" Colour="#03A367" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="9"/>
-    <Property Id="2" Name="Number" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="3" Name="String" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="4" Name="Character" Bold="no" Face="" Colour="#611BD6" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="5" Name="Word" Bold="no" Face="" Colour="#495A25" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="6" Name="Triple" Bold="no" Face="" Colour="#206056" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="7" Name="DocString" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="8" Name="ClassName" Bold="no" Face="" Colour="#8E3C91" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="9" Name="Defname" Bold="no" Face="" Colour="#16691D" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#1F2687" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="12" Name="Comment Block" Bold="no" Face="" Colour="#3978C6" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="9"/>
-    <Property Id="13" Name="StringEOL" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="14" Name="Word2" Bold="no" Face="" Colour="#1C126D" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="15" Name="Decorator" Bold="no" Face="" Colour="#07782C" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" Size="9"/>
-    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#000000" BgColour="#C0C0C0" Italic="no" Underline="no" Size="9"/>
-    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
-    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
-    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="1" Name="CommentLine" Bold="no" Face="" Colour="#03A367" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="-1"/>
+    <Property Id="2" Name="Number" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="3" Name="String" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="4" Name="Character" Bold="no" Face="" Colour="#611BD6" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="5" Name="Word" Bold="no" Face="" Colour="#495A25" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="6" Name="Triple" Bold="no" Face="" Colour="#206056" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="7" Name="DocString" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="8" Name="ClassName" Bold="no" Face="" Colour="#8E3C91" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="9" Name="Defname" Bold="no" Face="" Colour="#16691D" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#1F2687" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="12" Name="Comment Block" Bold="no" Face="" Colour="#3978C6" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="-1"/>
+    <Property Id="13" Name="StringEOL" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="14" Name="Word2" Bold="no" Face="" Colour="#1C126D" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="15" Name="Decorator" Bold="no" Face="" Colour="#07782C" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
+    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
   </Properties>
 </Lexer>

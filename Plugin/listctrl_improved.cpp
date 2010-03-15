@@ -178,7 +178,7 @@ void ListCtrlImproved::OnLeftDown(wxMouseEvent& event)
 		wxCommandEvent evt(wxEVT_CMD_CHECKLIST_ITEM_CHECKED);
 		evt.SetEventObject(this);
 		evt.SetInt(item);
-		GetParent()->AddPendingEvent(evt);
+		GetParent()->GetEventHandler()->AddPendingEvent(evt);
 	}
 	event.Skip();
 }

@@ -25,7 +25,6 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/gbsizer.h>
 #include <wx/checklst.h>
 #include <wx/listctrl.h>
 #include <wx/statbox.h>
@@ -110,7 +109,6 @@ class ProjectConfigurationBasePanel : public wxPanel
 		wxCheckBox* m_checkCompilerNeeded;
 		wxStaticText* m_staticText331;
 		wxChoice* m_choiceCmpUseWithGlobalSettings;
-		
 		wxStaticLine* m_staticline7;
 		wxStaticText* m_staticText6;
 		wxTextCtrl* m_textCompilerOptions;
@@ -129,17 +127,16 @@ class ProjectConfigurationBasePanel : public wxPanel
 		wxCheckBox* m_checkLinkerNeeded;
 		wxStaticText* m_staticText3311;
 		wxChoice* m_choiceLnkUseWithGlobalSettings;
-		
 		wxStaticLine* m_staticline8;
 		wxStaticText* m_staticText10;
 		wxTextCtrl* m_textLinkerOptions;
+		wxButton* m_buttonLinkerOptions;
 		wxStaticText* m_staticText7;
 		wxTextCtrl* m_textLibraryPath;
-		wxButton* m_buttonLibraries;
+		wxButton* m_buttonLibraryPath;
 		wxStaticText* m_staticText8;
 		wxTextCtrl* m_textLibraries;
-		wxButton* m_buttonLibraryPath;
-		wxButton* m_buttonLinkerOptions;
+		wxButton* m_buttonLibraries;
 		wxPanel* m_panelDebugger;
 		wxStaticText* m_staticText321;
 		wxTextCtrl* m_textCtrlDebuggerPath;
@@ -159,7 +156,6 @@ class ProjectConfigurationBasePanel : public wxPanel
 		wxCheckBox* m_checkResourceNeeded;
 		wxStaticText* m_staticText33111;
 		wxChoice* m_choiceResUseWithGlobalSettings;
-		
 		wxStaticLine* m_staticline9;
 		wxStaticText* m_staticText221;
 		wxTextCtrl* m_textAddResCmpOptions;
@@ -219,9 +215,9 @@ class ProjectConfigurationBasePanel : public wxPanel
 		virtual void OnButtonAddPreprocessor( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnBrowsePreCmpHeader( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnCheckLinkerNeeded( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnAddLibrary( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnAddLibraryPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonAddLinkerOptions( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddLibraryPath( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddLibrary( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnSelectDebuggerPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDebuggingRemoteTarget( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnResourceCmpNeeded( wxCommandEvent& event ) { event.Skip(); }
@@ -278,13 +274,13 @@ class GlobalSettingsBasePanel : public wxPanel
 		wxPanel* m_linkerPage;
 		wxStaticText* m_staticText10;
 		wxTextCtrl* m_textLinkerOptions;
+		wxButton* m_buttonLinkerOptions;
 		wxStaticText* m_staticText7;
 		wxTextCtrl* m_textLibraryPath;
-		wxButton* m_buttonLibraries;
+		wxButton* m_buttonLibraryPath;
 		wxStaticText* m_staticText8;
 		wxTextCtrl* m_textLibraries;
-		wxButton* m_buttonLibraryPath;
-		wxButton* m_buttonLinkerOptions;
+		wxButton* m_buttonLibraries;
 		wxPanel* m_resourceCmpPage;
 		wxStaticText* m_staticText221;
 		wxTextCtrl* m_textAddResCmpOptions;
@@ -298,9 +294,9 @@ class GlobalSettingsBasePanel : public wxPanel
 		virtual void OnButtonAddCompilerOptions( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAddSearchPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonAddPreprocessor( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnAddLibrary( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnAddLibraryPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonAddLinkerOptions( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddLibraryPath( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddLibrary( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnResourceCmpAddOption( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnResourceCmpAddPath( wxCommandEvent& event ) { event.Skip(); }
 		

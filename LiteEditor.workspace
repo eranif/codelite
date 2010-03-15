@@ -29,7 +29,6 @@
   <Project Name="wxFormBuilder" Path="wxformbuilder/wxFormBuilder.project" Active="No"/>
   <Project Name="abbreviation" Path="abbreviation/abbreviation.project" Active="No"/>
   <Project Name="ContinuousBuild" Path="ContinuousBuild/ContinuousBuild.project" Active="No"/>
-  <Project Name="wxpropgrid" Path="sdk/wxpropgrid/wxpropgrid.project" Active="No"/>
   <Project Name="QMakePlugin" Path="QmakePlugin/QMakePlugin.project" Active="No"/>
   <Project Name="CppChecker" Path="cppchecker/CppChecker.project" Active="No"/>
   <Options/>
@@ -39,7 +38,6 @@
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
-      <Project Name="wxpropgrid" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
       <Project Name="SymbolView" ConfigName="WinReleaseUnicode"/>
@@ -64,7 +62,6 @@
     <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
-      <Project Name="wxpropgrid" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
       <Project Name="SymbolView" ConfigName="WinDebugUnicode"/>
@@ -89,7 +86,6 @@
     <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="no">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
-      <Project Name="wxpropgrid" ConfigName="ReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="ReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="ReleaseUnicode"/>
       <Project Name="Subversion2" ConfigName="ReleaseUnicode"/>
@@ -114,7 +110,6 @@
     <WorkspaceConfiguration Name="WinReleaseUnicode_NoPlugins" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
-      <Project Name="wxpropgrid" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
@@ -139,7 +134,6 @@
     <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
-      <Project Name="wxpropgrid" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
       <Project Name="Subversion2" ConfigName="WinDebugUnicode"/>
@@ -164,7 +158,6 @@
     <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="no">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
-      <Project Name="wxpropgrid" ConfigName="DebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="DebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="DebugUnicode"/>
       <Project Name="Subversion2" ConfigName="DebugUnicode"/>
@@ -185,6 +178,30 @@
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
       <Project Name="abbreviation" ConfigName="DebugUnicode"/>
       <Project Name="SymbolView" ConfigName="DebugUnicode"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="WinDebug_29" Selected="no">
+      <Project Name="wxsqlite3" ConfigName="WinDebug_29"/>
+      <Project Name="wxscintilla" ConfigName="WinDebug_29"/>
+      <Project Name="wxFormBuilder" ConfigName="WinDebug_29"/>
+      <Project Name="UnitTestPP" ConfigName="WinDebug_29"/>
+      <Project Name="SymbolView" ConfigName="WinDebug_29"/>
+      <Project Name="Subversion2" ConfigName="WinDebug_29"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="snipwiz" ConfigName="WinDebug_29"/>
+      <Project Name="QMakePlugin" ConfigName="WinDebug_29"/>
+      <Project Name="plugin_sdk" ConfigName="WinDebug_29"/>
+      <Project Name="LiteEditor" ConfigName="WinDebug_29"/>
+      <Project Name="Interfaces" ConfigName="Common"/>
+      <Project Name="Gizmos" ConfigName="WinDebug_29"/>
+      <Project Name="ExternalTools" ConfigName="WinDebug_29"/>
+      <Project Name="DebuggerGDB" ConfigName="WinDebug_29"/>
+      <Project Name="Cscope" ConfigName="WinDebug_29"/>
+      <Project Name="CppChecker" ConfigName="WinDebug_29"/>
+      <Project Name="Copyright" ConfigName="WinDebug_29"/>
+      <Project Name="ContinuousBuild" ConfigName="WinDebug_29"/>
+      <Project Name="CodeLite" ConfigName="WinDebug_29"/>
+      <Project Name="CodeFormatter" ConfigName="WinDebug_29"/>
+      <Project Name="abbreviation" ConfigName="WinDebug_29"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

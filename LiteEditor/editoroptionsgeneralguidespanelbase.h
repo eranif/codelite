@@ -17,9 +17,10 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/stattext.h>
-#include <wx/clrpicker.h>
 #include <wx/choice.h>
 #include <wx/sizer.h>
+#include <wx/clrpicker.h>
+#include <wx/slider.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -37,19 +38,24 @@ class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 		wxCheckBox* m_showIndentationGuideLines;
 		wxCheckBox* m_checkBoxMatchBraces;
 		wxCheckBox* m_checkBoxAutoCompleteBraces;
-		wxCheckBox* m_highlightCaretLine;
 		wxCheckBox* m_checkBoxAdjustScrollbarSize;
-		wxCheckBox* m_checkBoxHideChangeMarkerMargin;
 		wxCheckBox* m_checkBoxDisableSemicolonShift;
-		wxStaticText* m_staticText1;
-		wxColourPickerCtrl* m_caretLineColourPicker;
+		wxCheckBox* m_checkBoxHideChangeMarkerMargin;
+		
 		wxStaticText* m_staticText2;
 		wxChoice* m_whitespaceStyle;
 		wxStaticText* m_staticText4;
 		wxChoice* m_choiceEOL;
+		wxCheckBox* m_highlightCaretLine;
+		
+		wxStaticText* m_staticText1;
+		wxColourPickerCtrl* m_caretLineColourPicker;
+		wxStaticText* m_staticText41;
+		wxSlider* m_sliderCaretLineAlpha;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnHighlightCaretLine( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnhighlightCaretLineUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	
 	public:

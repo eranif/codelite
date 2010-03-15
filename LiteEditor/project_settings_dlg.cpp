@@ -561,7 +561,7 @@ void ProjectConfigurationPanel::SetSettingsModified()
 {
 	wxCommandEvent event(wxEVT_CL_PROJECT_SETTINGS_MODIFIED, GetId());
 	event.SetEventObject(this);
-	GetParent()->ProcessEvent(event);
+	GetParent()->GetEventHandler()->ProcessEvent(event);
 }
 
 void ProjectConfigurationPanel::DisableCustomBuildPage(bool disable)
@@ -1180,7 +1180,7 @@ void GlobalSettingsPanel::SetSettingsModified()
 {
 	wxCommandEvent event(wxEVT_CL_PROJECT_SETTINGS_MODIFIED, GetId());
 	event.SetEventObject(this);
-	GetParent()->ProcessEvent(event);
+	GetParent()->GetEventHandler()->ProcessEvent(event);
 }
 
 void GlobalSettingsPanel::ClearValues()
@@ -1324,7 +1324,7 @@ void ProjectConfigurationPanel::OnBrowsePreCmpHeader(wxCommandEvent& e)
 	if (p) {
 		projectPath = p->GetFileName().GetPath();
 	}
-	wxString preCmpHeader = wxFileSelector(wxT("Select file:"), projectPath, NULL);
+	wxString preCmpHeader = wxFileSelector(wxT("Select file:"), projectPath, wxT(""));
 	if (preCmpHeader.IsEmpty() == false) {
 		m_textCtrlPreCompiledHeader->SetValue( preCmpHeader );
 	}

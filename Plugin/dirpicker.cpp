@@ -53,7 +53,7 @@ DirPicker::~DirPicker()
 
 void DirPicker::OnText(wxCommandEvent &event)
 {
-	GetParent()->ProcessEvent(event);
+	GetParent()->GetEventHandler()->ProcessEvent(event);
 }
 
 void DirPicker::CreateControls()

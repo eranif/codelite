@@ -31,7 +31,7 @@
 #include "build_settings_config.h"
 #include "debuggermanager.h"
 #include "globals.h"
-
+#include "wx_xml_compatibility.h"
 
 const wxString BuildConfig::OVERWRITE_GLOBAL_SETTINGS = wxT("overwrite");
 const wxString BuildConfig::APPEND_TO_GLOBAL_SETTINGS = wxT("append");

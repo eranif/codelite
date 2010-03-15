@@ -41,7 +41,7 @@ ConsoleFinder::~ConsoleFinder()
 void ConsoleFinder::FreeConsole()
 {
 	if (m_nConsolePid) {
-		wxKill(m_nConsolePid, wxSIGKILL);
+		wxKill(m_nConsolePid, wxSIGKILL, NULL, wxKILL_CHILDREN);
 		m_nConsolePid = 0;
 	}
 }
@@ -61,7 +61,7 @@ int ConsoleFinder::RunConsole(const wxString &title)
 
 	wxLogMessage(wxString::Format(wxT("Launching console: %s"), cmd.c_str()));
 
-	m_nConsolePid = wxExecute(cmd, wxEXEC_ASYNC);
+	m_nConsolePid = wxExecute(cmd, wxEXEC_ASYNC|wxEXEC_MAKE_GROUP_LEADER);
 	if (m_nConsolePid <= 0) {
 		return -1;
 	}
@@ -145,13 +145,10 @@ wxString ConsoleFinder::GetConsoleName()
 {
 	wxString cmd;
 #ifdef __WXMSW__
-	wxChar *shell = wxGetenv(wxT("COMSPEC"));
-	if ( !shell ) {
-		shell = wxT("\\COMMAND.COM");
+	cmd = wxGetenv(wxT("COMSPEC"));
+	if ( cmd.IsEmpty() ) {
+		cmd = wxT("\\COMMAND.COM");
 	}
-
-	// just the shell
-	cmd = shell;
 #else //non-windows
 	//try to locate the default terminal
 	wxString terminal;

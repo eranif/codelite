@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : editoroptionsgeneralcodenavpanelbase.h              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 21 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -50,18 +25,19 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class EditorOptionsGeneralCodeNavPanelBase
 ///////////////////////////////////////////////////////////////////////////////
-class EditorOptionsGeneralCodeNavPanelBase : public wxPanel
+class EditorOptionsGeneralCodeNavPanelBase : public wxPanel 
 {
 	private:
-
+	
 	protected:
 		wxRadioButton* m_radioBoxNavigationMethodLeft;
 		wxRadioButton* m_radioBoxNavigationMethodMiddle;
-
+	
 	public:
+		
 		EditorOptionsGeneralCodeNavPanelBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~EditorOptionsGeneralCodeNavPanelBase();
-
+	
 };
 
 #endif //__editoroptionsgeneralcodenavpanelbase__

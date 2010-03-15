@@ -24,8 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "compiler.h"
 #include "xmlutils.h"
-#include "macros.h"
 #include <wx/log.h>
+#include "macros.h"
+#include "wx_xml_compatibility.h"
 
 Compiler::Compiler(wxXmlNode *node)
 {

@@ -70,7 +70,7 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 	rCtrl.SetStyleBits(rCtrl.GetStyleBitsNeeded());
 
 	// Define the styles for the editing margin
-	rCtrl.StyleSetBackground(CL_LINE_SAVED_STYLE,    wxColour(wxT("PALE GREEN")));
+	rCtrl.StyleSetBackground(CL_LINE_SAVED_STYLE,    wxColour(wxT("FOREST GREEN")));
 	rCtrl.StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
 
 	// by default indicators are set to be opaque rounded box
@@ -80,8 +80,8 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 #else
 	rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
 	rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
-	rCtrl.IndicatorSetAlpha(1, 70);
-	rCtrl.IndicatorSetAlpha(2, 70);
+	rCtrl.IndicatorSetAlpha(1, 80);
+	rCtrl.IndicatorSetAlpha(2, 80);
 #endif
 
 	bool tooltip(false);
@@ -108,23 +108,26 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 
 		} else if ( sp.GetId() == -2 ) {
 			// selection colour
-			rCtrl.SetSelForeground(true, sp.GetFgColour());
-			rCtrl.SetSelBackground(true, sp.GetBgColour());
+			if(sp.GetBgColour().IsEmpty() == false)
+				rCtrl.SetSelBackground(true, sp.GetBgColour());
+			
+			if(sp.GetFgColour().IsEmpty() == false)
+				rCtrl.SetSelForeground(true, sp.GetFgColour());
 
 		} else if ( sp.GetId() == -3 ) {
 			// caret colour
 			rCtrl.SetCaretForeground(sp.GetFgColour());
-
+			
 		} else {
-			int fontSize( sp.GetFontSize() );
+			int fontSize( size );
 
 			wxFont font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , bold ? wxBOLD : wxNORMAL, underline, face);
 			if (sp.GetId() == 0) { //default
 				rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
-				rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, (*iter).GetFontSize());
+				rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, size);
 				rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
 				rCtrl.StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
-				rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, (*iter).GetFontSize());
+				rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, size);
 				rCtrl.SetFoldMarginColour(true, (*iter).GetBgColour());
 				rCtrl.SetFoldMarginHiColour(true, (*iter).GetBgColour());
 
@@ -142,11 +145,25 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 					fontSize = font.GetPointSize();
 				}
 			}
-
+			
 			rCtrl.StyleSetFont(sp.GetId(), font);
 			rCtrl.StyleSetSize(sp.GetId(), fontSize);
-			rCtrl.StyleSetForeground(sp.GetId(), sp.GetFgColour());
-			rCtrl.StyleSetBackground(sp.GetId(), sp.GetBgColour());
+			
+			if(iter->GetId() == 33) {
+				// Set the line number colours only if requested
+				// otherwise, use default colours provided by scintilla
+				if(sp.GetBgColour().IsEmpty() == false)
+					rCtrl.StyleSetBackground(sp.GetId(), sp.GetBgColour());
+					
+				if(sp.GetFgColour().IsEmpty() == false)
+					rCtrl.StyleSetForeground(sp.GetId(), sp.GetFgColour());
+				else
+					rCtrl.StyleSetForeground(sp.GetId(), wxT("BLACK"));
+					
+			} else {
+				rCtrl.StyleSetForeground(sp.GetId(), sp.GetFgColour());
+				rCtrl.StyleSetBackground(sp.GetId(), sp.GetBgColour());
+			}
 		}
 	}
 

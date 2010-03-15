@@ -30,6 +30,7 @@
 #include "dirtraverser.h"
 #include <wx/ffile.h>
 #include "globals.h"
+#include "wx_xml_compatibility.h"
 
 //-------------------------------------------------------------------------------------------
 SimpleLongValue::SimpleLongValue()

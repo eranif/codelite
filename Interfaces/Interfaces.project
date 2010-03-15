@@ -67,6 +67,6 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug"/>
   <Dependencies Name="Common"/>
+  <Dependencies Name="Debug"/>
 </CodeLite_Project>

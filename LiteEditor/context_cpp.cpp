@@ -853,9 +853,12 @@ void ContextCpp::CompleteWord()
 	//get the full text of the current page
 	wxString text = rCtrl.GetTextRange(0, rCtrl.GetCurrentPos());
 	int lineNum = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
+	
+	DoSetProjectPaths();
 	if (mgr->WordCompletionCandidates(rCtrl.GetFileName(), lineNum, expr, text, word, candidates)) {
 		DisplayCompletionBox(candidates, word, false);
 	}
+	
 }
 
 void ContextCpp::DisplayCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl)
@@ -2565,7 +2568,7 @@ void ContextCpp::DoCodeComplete(long pos)
 		rCtrl.GetFunctionTip()->Activate(pt, rCtrl.GetCurrLineHeight(), rCtrl.StyleGetBackground(wxSCI_C_DEFAULT));
 		
 	} else {
-
+		DoSetProjectPaths();
 		if (TagsManagerST::Get()->AutoCompleteCandidates(rCtrl.GetFileName(), line, expr, text, candidates)) {
 			DisplayCompletionBox(candidates, wxEmptyString, showFullDecl);
 		}
@@ -2596,7 +2599,7 @@ void ContextCpp::GoHyperlink(int start, int end, int type, bool alt)
 		if (type == XRCID("find_tag")) {
 			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED,
 			                 alt ? XRCID("find_impl") : XRCID("find_decl"));
-			Frame::Get()->AddPendingEvent(e);
+			Frame::Get()->GetEventHandler()->AddPendingEvent(e);
 		}
 	}
 }
@@ -2802,4 +2805,17 @@ void ContextCpp::SemicolonShift()
 			}
 		}
 	}
+}
+void ContextCpp::DoSetProjectPaths()
+{
+	wxArrayString projects;
+	wxArrayString projectPaths;
+	ManagerST::Get()->GetProjectList(projects);
+	for(size_t i=0; i<projects.GetCount(); i++) {
+		ProjectPtr p = ManagerST::Get()->GetProject(projects.Item(i));
+		if(p) {
+			projectPaths.Add(p->GetFileName().GetPath());
+		}
+	}
+	TagsManagerST::Get()->SetProjectPaths( projectPaths );
 }

@@ -2,7 +2,7 @@
 #define SVNSETTINGSDATA_H
 
 #include "serialized_object.h" // Base class
-#include "custom_notebook.h"
+#include "notebook_ex.h"
 
 enum SvnSettingsDataFlags {
 	SvnAddFileToSvn        = 0x00000001,

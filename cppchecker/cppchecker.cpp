@@ -1,11 +1,12 @@
 #include <wx/app.h>
+#include <wx/imaglist.h>
 #include "imanager.h"
 #include "procutils.h"
 #include "cppcheckreportpage.h"
 #include "cppchecksettingsdlg.h"
 #include <wx/process.h>
 #include <wx/dir.h>
-#include "custom_notebook.h"
+#include "notebook_ex.h"
 #include "workspace.h"
 #include "project.h"
 #include "fileextmanager.h"
@@ -83,7 +84,11 @@ CppCheckPlugin::CppCheckPlugin(IManager *manager)
 	m_mgr->GetTheApp()->Connect(wxEVT_WORKSPACE_CLOSED,            wxCommandEventHandler(CppCheckPlugin::OnWorkspaceClosed),NULL, this);
 
 	m_view = new CppCheckReportPage(m_mgr->GetOutputPaneNotebook(), m_mgr, this);
-	m_mgr->GetOutputPaneNotebook()->AddPage(m_view, wxT("CppCheck"), wxT("CppCheck"), LoadBitmapFile(wxT("cppcheck.png")), false);
+	
+	wxBookCtrlBase *book = m_mgr->GetOutputPaneNotebook();
+	int imgId = book->GetImageList()->Add(LoadBitmapFile(wxT("cppcheck.png")));
+	
+	m_mgr->GetOutputPaneNotebook()->AddPage(m_view, wxT("CppCheck"), false, imgId);
 }
 
 CppCheckPlugin::~CppCheckPlugin()
@@ -186,7 +191,7 @@ void CppCheckPlugin::UnPlug()
 	// before this plugin is un-plugged we must remove the tab we added
 	for (size_t i=0; i<m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
 		if (m_view == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
-			m_mgr->GetOutputPaneNotebook()->RemovePage(i, false);
+			m_mgr->GetOutputPaneNotebook()->RemovePage(i);
 			m_view->Destroy();
 			break;
 		}
@@ -502,9 +507,9 @@ void CppCheckPlugin::SetTabVisible(bool clearContent)
 	}
 
 	// Set the focus to the CppCheck tab
-	Notebook *book = m_mgr->GetOutputPaneNotebook();
+	wxBookCtrlBase *book = m_mgr->GetOutputPaneNotebook();
 	if (book->GetPageText((size_t)book->GetSelection()) != wxT("CppCheck")) {
-		for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
+		for (size_t i=0; i<book->GetPageCount(); i++) {
 			if (book->GetPageText(i) == wxT("CppCheck")) {
 				book->SetSelection(i);
 				break;

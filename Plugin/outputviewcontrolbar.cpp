@@ -9,9 +9,7 @@
 #include <wx/image.h>
 #include <wx/menu.h>
 #include <wx/tokenzr.h>
-#include "custom_tab.h"
-#include "custom_notebook.h"
-#include "custom_tabcontainer.h"
+#include "notebook_ex.h"
 #include <wx/sizer.h>
 #include "drawingutils.h"
 #include <wx/dcbuffer.h>
@@ -19,6 +17,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/log.h>
 #include <wx/aui/framemanager.h>
+#include "notebook_ex.h"
 
 static unsigned char list_bits[] = {
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -32,6 +31,7 @@ static unsigned char list_bits[] = {
 #    define BAR_SPACER      6
 #    define DARK_FACTOR     2
 #elif defined(__WXGTK__)
+#include <gtk/gtk.h>
 #    define BUTTON_SPACER_X 4
 #    define BUTTON_SPACER_Y 3
 #    define BAR_SPACER      5
@@ -108,7 +108,7 @@ void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, 
 	button->SetState( selected ? OutputViewControlBarButton::Button_Pressed : OutputViewControlBarButton::Button_Normal );
 	m_buttons.push_back( button );
 #else
-	OutputViewControlBarToggleButton *button = new OutputViewControlBarToggleButton(this, text);
+	OutputViewControlBarToggleButton *button = new OutputViewControlBarToggleButton(this, text, bmp);
 	button->SetValue(selected);
 	m_buttons.push_back( button );
 #endif
@@ -237,7 +237,7 @@ void OutputViewControlBar::AddAllButtons()
 	if ( m_book ) {
 		for (size_t i=0; i<m_book->GetPageCount(); i++) {
 			wxString text = m_book->GetPageText(i);
-			wxBitmap bmp  = m_book->GetTabContainer()->IndexToTab(i)->GetBmp();
+			wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("fold_airplane")); /*  = m_book->GetTabContainer()->IndexToTab(i)->GetBmp()*/;
 
 			AddButton(text, bmp, m_book->GetSelection() == i, OutputViewControlBarButton::Button_Default);
 		}
@@ -418,7 +418,7 @@ void OutputViewControlBarButton::OnMouseLDown(wxMouseEvent& event)
 
 		wxCommandEvent e(EVENT_BUTTON_PRESSED);
 		e.SetEventObject(this);
-		GetParent()->AddPendingEvent( e );
+		GetParent()->GetEventHandler()->AddPendingEvent( e );
 
 	}
 }
@@ -598,12 +598,29 @@ void OutputViewControlBarButton::DoShowPopupMenu()
 	PopupMenu( &popupMenu, rr.x, rr.y );
 }
 
+#ifdef __WXGTK__
 BEGIN_EVENT_TABLE(OutputViewControlBarToggleButton, wxToggleButton)
 	EVT_TOGGLEBUTTON(wxID_ANY, OutputViewControlBarToggleButton::OnButtonToggled)
 END_EVENT_TABLE()
-OutputViewControlBarToggleButton::OutputViewControlBarToggleButton(wxWindow* parent, const wxString& label)
+OutputViewControlBarToggleButton::OutputViewControlBarToggleButton(wxWindow* parent, const wxString& label, const wxBitmap& bmp)
 		: wxToggleButton(parent, wxID_ANY, label, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT)
 {
+	// remove old label from the container
+	GList *l = gtk_container_get_children(GTK_CONTAINER(m_widget));
+	if(l) {
+		gtk_container_remove(GTK_CONTAINER(m_widget), GTK_WIDGET(l->data));
+	}
+	
+	GtkWidget *hbox   = gtk_hbox_new(TRUE, 3);
+	GtkWidget *glabel = gtk_label_new(label.mb_str(wxConvUTF8).data());
+	
+	gtk_box_pack_start(GTK_BOX(hbox), glabel, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_image_new_from_pixbuf(bmp.GetPixbuf()), FALSE, FALSE, 0);
+	
+	gtk_container_add(GTK_CONTAINER(m_widget), GTK_WIDGET(hbox));
+	gtk_widget_realize( m_widget );
+	
+	gtk_widget_show_all( hbox );
 }
 
 OutputViewControlBarToggleButton::~OutputViewControlBarToggleButton()
@@ -619,7 +636,7 @@ void OutputViewControlBarToggleButton::OnButtonToggled(wxCommandEvent& e)
 
 		wxCommandEvent e(EVENT_BUTTON_PRESSED);
 		e.SetEventObject(this);
-		GetParent()->AddPendingEvent( e );
+		GetParent()->GetEventHandler()->AddPendingEvent( e );
 	}
 }
 
@@ -628,42 +645,23 @@ void OutputViewControlBarToggleButton::DoShowPopupMenu()
 	wxRect rr = GetSize();
 	wxMenu popupMenu;
 
-#ifdef __WXMSW__
-	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-#endif
-
-	OutputViewControlBar *bar = (OutputViewControlBar *)GetParent();
+	OutputViewControlBar *bar = (OutputViewControlBar*)GetParent();
 	for (size_t i=0; i<bar->m_buttons.size(); i++) {
-#ifndef __WXGTK__
-		OutputViewControlBarButton *button = bar->m_buttons.at(i);
-#else
 		OutputViewControlBarToggleButton *button = bar->m_buttons.at(i);
-#endif
 		wxString text = button->GetText();
-#ifndef __WXGTK__
-		bool selected = button->GetState() == OutputViewControlBarButton::Button_Pressed;
-#else
 		bool selected = button->GetValue();
-#endif
 		wxMenuItem *item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(button->GetText().c_str()), text, text, wxITEM_CHECK);
 
 		//set the font
-#ifdef __WXMSW__
-		if (selected) {
-			font.SetWeight(wxBOLD);
-		}
-		item->SetFont(font);
-#endif
 		popupMenu.Append( item );
 
 		//mark the selected item
 		item->Check(selected);
 
 		//restore font
-#ifdef __WXMSW__
-		font.SetWeight(wxNORMAL);
-#endif
 	}
 	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewControlBar::OnMenuSelection), NULL, bar);
 	PopupMenu( &popupMenu, rr.x, rr.y );
 }
+
+#endif

@@ -41,14 +41,16 @@ struct VcProjectData
 };
 
 class VcImporter {
-	wxString m_fileName;
-	bool m_isOk;
-	wxFileInputStream *m_is;
-	wxTextInputStream *m_tis;
+	wxString                          m_fileName;
+	bool                              m_isOk;
+	wxFileInputStream *               m_is;
+	wxTextInputStream *               m_tis;
 	std::map<wxString, VcProjectData> m_projects;
+	wxString                          m_compiler;
+	wxString                          m_compilerLowercase;
 	
 public:
-	VcImporter(const wxString &fileName);
+	VcImporter(const wxString &fileName, const wxString &defaultCompiler);
 	virtual ~VcImporter();
 	bool Import(wxString &errMsg);
 

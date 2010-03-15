@@ -1,10 +1,13 @@
 #!/bin/sh
 
+## let the user an option to pass -9 or anything 
+## for "hard kills"
+
+sig_options=$2
+
 procs=`ps --ppid $1 | grep -v PID | awk '{print $1;}'`
 for p in $procs
 do
-	# Use SIGTERM by default
-	kill $p 2> /dev/null
+	kill $sig_options $p 2> /dev/null
 done
-kill $1 2> /dev/null
-
+kill $sig_options $1 2> /dev/null

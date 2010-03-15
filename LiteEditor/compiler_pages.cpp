@@ -136,9 +136,8 @@ CompilerPatternsBase::~CompilerPatternsBase()
 CompilerToolsBase::CompilerToolsBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
 {
 	wxFlexGridSizer* fgSizer4;
-	fgSizer4 = new wxFlexGridSizer( 3, 2, 0, 0 );
+	fgSizer4 = new wxFlexGridSizer( 7, 2, 0, 0 );
 	fgSizer4->AddGrowableCol( 1 );
-	fgSizer4->AddGrowableCol( 3 );
 	fgSizer4->SetFlexibleDirection( wxBOTH );
 	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -311,14 +310,14 @@ CompilerAdvanceBase::CompilerAdvanceBase( wxWindow* parent, wxWindowID id, const
 	m_staticText141->Wrap( -1 );
 	fgSizer3->Add( m_staticText141, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlGlobalIncludePath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlGlobalIncludePath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer3->Add( m_textCtrlGlobalIncludePath, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText16 = new wxStaticText( this, wxID_ANY, _("Libraries Path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText16->Wrap( -1 );
 	fgSizer3->Add( m_staticText16, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlGlobalLibPath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlGlobalLibPath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer3->Add( m_textCtrlGlobalLibPath, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer7->Add( fgSizer3, 0, wxEXPAND, 5 );
@@ -338,7 +337,7 @@ CompilerAdvanceBase::CompilerAdvanceBase( wxWindow* parent, wxWindowID id, const
 	bSizer8->Add( m_staticText19, 0, wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer2 = new wxFlexGridSizer( 3, 2, 0, 0 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -346,21 +345,21 @@ CompilerAdvanceBase::CompilerAdvanceBase( wxWindow* parent, wxWindowID id, const
 	m_staticText3->Wrap( -1 );
 	fgSizer2->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textObjectExtension = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textObjectExtension = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer2->Add( m_textObjectExtension, 1, wxALL|wxEXPAND, 5 );
 	
 	m_staticText24 = new wxStaticText( this, wxID_ANY, _("Depends extension:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText24->Wrap( -1 );
 	fgSizer2->Add( m_staticText24, 0, wxALL, 5 );
 	
-	m_textDependExtension = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textDependExtension = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer2->Add( m_textDependExtension, 0, wxALL, 5 );
 	
 	m_staticText25 = new wxStaticText( this, wxID_ANY, _("Preprocessed extension:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText25->Wrap( -1 );
 	fgSizer2->Add( m_staticText25, 0, wxALL, 5 );
 	
-	m_textPreprocessExtension = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textPreprocessExtension = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer2->Add( m_textPreprocessExtension, 0, wxALL, 5 );
 	
 	bSizer8->Add( fgSizer2, 0, wxALL|wxEXPAND, 0 );
@@ -485,7 +484,6 @@ CompilerOptionDlgBase::CompilerOptionDlgBase( wxWindow* parent, wxWindowID id, c
 	
 	wxFlexGridSizer* fgSizer7;
 	fgSizer7 = new wxFlexGridSizer( 2, 2, 0, 0 );
-	fgSizer7->AddGrowableCol( 1 );
 	fgSizer7->SetFlexibleDirection( wxBOTH );
 	fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -540,7 +538,7 @@ CompilerPatternDlgBase::CompilerPatternDlgBase( wxWindow* parent, wxWindowID id,
 	bSizerError = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer41;
-	fgSizer41 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer41 = new wxFlexGridSizer( 3, 2, 0, 0 );
 	fgSizer41->AddGrowableCol( 1 );
 	fgSizer41->SetFlexibleDirection( wxBOTH );
 	fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -552,7 +550,7 @@ CompilerPatternDlgBase::CompilerPatternDlgBase( wxWindow* parent, wxWindowID id,
 	m_textPattern = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_textPattern->SetValidator( wxTextValidator( wxFILTER_NONE, &m_pattern ) );
 	
-	fgSizer41->Add( m_textPattern, 0, wxEXPAND|wxALL, 5 );
+	fgSizer41->Add( m_textPattern, 1, wxEXPAND|wxALL, 5 );
 	
 	m_staticText6 = new wxStaticText( this, wxID_ANY, _("File Index in Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
@@ -572,7 +570,7 @@ CompilerPatternDlgBase::CompilerPatternDlgBase( wxWindow* parent, wxWindowID id,
 	
 	fgSizer41->Add( m_textLineNumber, 0, wxEXPAND|wxALL, 5 );
 	
-	bSizerError->Add( fgSizer41, 1, wxEXPAND, 5 );
+	bSizerError->Add( fgSizer41, 0, wxEXPAND, 5 );
 	
 	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizerError->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );

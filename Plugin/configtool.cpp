@@ -23,12 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "conffilelocator.h"
- #include "configtool.h"
+#include "configtool.h"
 #include "xmlutils.h"
 #include "serialized_object.h"
 #include "wx/filename.h"
 #include "wx/ffile.h"
 #include "editor_config.h"
+#include "wx_xml_compatibility.h"
 
 ConfigTool::ConfigTool()
 : m_fileName(wxEmptyString)

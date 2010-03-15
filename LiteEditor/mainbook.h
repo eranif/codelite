@@ -30,7 +30,7 @@
 #include "sessionmanager.h"
 #include "navbar.h"
 #include "quickfindbar.h"
-#include "custom_notebook.h"
+#include "notebook_ex.h"
 #include "filehistory.h"
 #include "message_pane.h"
 
@@ -42,9 +42,6 @@ private:
 	NavBar       *m_navBar;
 	Notebook     *m_book;
 	QuickFindBar *m_quickFindBar;
-    wxWindow     *m_currentPage;
-
-    std::set<wxWindow*> m_detachedTabs;
 	MessagePane  *m_messagePane;
 	
 private:
@@ -52,10 +49,11 @@ private:
     void ConnectEvents    ();
 
     void OnMouseDClick       (wxMouseEvent      &e);
-    void OnFocus             (wxFocusEvent      &e);
-    void OnPaneClosed        (wxAuiManagerEvent &e);
     void OnPageClosing       (NotebookEvent     &e);
     void OnPageClosed        (NotebookEvent     &e);
+	void OnPageChanged       (NotebookEvent     &e);
+	void OnClosePage         (NotebookEvent     &e);
+
     void OnProjectFileAdded  (wxCommandEvent    &e);
 	void OnProjectFileRemoved(wxCommandEvent    &e);
     void OnWorkspaceLoaded   (wxCommandEvent    &e);
@@ -87,7 +85,7 @@ public:
 	LEditor *FindEditor     (const wxString &fileName);
     bool     CloseEditor    (const wxString &fileName) { return ClosePage(FindEditor(fileName)); }
 
-    wxWindow *GetCurrentPage() { return m_currentPage; }
+    wxWindow *GetCurrentPage();
     wxWindow *FindPage      (const wxString &text);
 
     LEditor *NewEditor();
@@ -99,10 +97,6 @@ public:
 
     bool AddPage   (wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
     bool SelectPage(wxWindow *win);
-
-    bool DetachPage(wxWindow *win);
-    bool DockPage  (wxWindow *win);
-    bool IsDetached(wxWindow *win);
 
     bool UserSelectFiles(std::vector<std::pair<wxFileName,bool> > &files, const wxString &title, const wxString &caption,
                          bool cancellable = true);

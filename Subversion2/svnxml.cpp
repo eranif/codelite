@@ -27,6 +27,7 @@
 #include <wx/sstream.h>
 #include "xmlutils.h"
 #include <wx/log.h>
+#include "wx_xml_compatibility.h"
 
 SvnXML::SvnXML()
 {

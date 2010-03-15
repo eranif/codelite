@@ -28,6 +28,7 @@
 #include "serialized_object.h"
 
 #include <memory>
+#include "wx_xml_compatibility.h"
 
 namespace
 {

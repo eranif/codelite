@@ -133,7 +133,7 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 	case WXK_ESCAPE: {
 		wxCommandEvent cmd(wxEVT_COMMAND_BUTTON_CLICKED, m_closeButton->GetId());
 		cmd.SetEventObject(m_closeButton);
-		m_closeButton->AddPendingEvent(cmd);
+		m_closeButton->GetEventHandler()->AddPendingEvent(cmd);
 		break;
 	}
 	default:
@@ -153,7 +153,7 @@ void QuickFindBar::OnEnter(wxCommandEvent& e)
 	wxButton *btn = shift ? m_buttonFindPrevious : m_buttonFindNext;
 	wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, btn->GetId());
 	evt.SetEventObject(btn);
-	btn->AddPendingEvent(evt);
+	btn->GetEventHandler()->AddPendingEvent(evt);
 }
 
 void QuickFindBar::OnCopy(wxCommandEvent& e)

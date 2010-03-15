@@ -89,39 +89,44 @@ void FileExplorerTree::OnKeyDown(wxTreeEvent &e)
 void FileExplorerTree::OnDeleteNode(wxCommandEvent &e)
 {
 	wxTreeItemId item = GetSelection();
-	bool needRefresh = false;
-
 	if (item.IsOk()) {
 		wxString fp = GetFullPath(item).GetFullPath();
 		VdtcTreeItemBase *b = (VdtcTreeItemBase *)GetItemData(item);
+		
 		if (b && b->IsDir()) {
+			//////////////////////////////////////////////////
+			// Remove a folder 
+			//////////////////////////////////////////////////
+			
 			wxString msg;
-			msg << wxT("'") << GetItemText(item) << wxT("' is a directory. Are you sure you want to remove it and its content?");
-			if (wxMessageBox(msg, wxT("Remove Directory"), wxICON_WARNING|wxYES_NO|wxCANCEL) == wxYES) {
+			msg << _("'") << GetItemText(item) << _("' is a directory. Are you sure you want to remove it and its content?");
+			if (wxMessageBox(msg, _("Remove Directory"), wxICON_WARNING|wxYES_NO|wxCANCEL) == wxYES) {
 				if (!RemoveDirectory(fp)) {
-					wxMessageBox(_("Failed to remove directory"), wxT("Remove Directory"), wxICON_ERROR | wxOK);
+					wxMessageBox(_("Failed to remove directory"), _("Remove Directory"), wxICON_ERROR | wxOK);
+					
 				} else {
-					needRefresh = true;
+					wxTreeItemId parent = GetItemParent(item);
+					if (parent.IsOk()) {
+						// Select the parent, and call refresh.
+						// by making the parent the selected item,
+						// we force the refresh to take place on the parent node
+						SelectItem(parent);
+						wxCommandEvent dummy;
+						OnRefreshNode(dummy);
+					}
 				}
 			}
 		} else {
+			
+			//////////////////////////////////////////////////
+			// Remove a file
+			//////////////////////////////////////////////////
+			
 			if (wxRemoveFile(fp)) {
-				needRefresh = true;
-			}
-		}
-		if (needRefresh) {
-			wxTreeItemId parent = GetItemParent(item);
-			if (parent.IsOk()) {
-				//select the parent, and call refresh.
-				//by making the parent the selected item,
-				//we force the refresh to take place on the parent node
-				SelectItem(parent);
-				wxCommandEvent dummy;
-				OnRefreshNode(dummy);
+				Delete(item);
 			}
 		}
 	}
-
 	e.Skip();
 }
 
@@ -131,7 +136,7 @@ void FileExplorerTree::OnSearchNode(wxCommandEvent &e)
     if (item.IsOk()) {
         wxCommandEvent ff(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_in_files"));
         ff.SetString(GetFullPath(item).GetFullPath());
-        Frame::Get()->AddPendingEvent(ff);
+        Frame::Get()->GetEventHandler()->AddPendingEvent(ff);
     }
     e.Skip();
 }
@@ -196,7 +201,7 @@ void FileExplorerTree::OnTagNode(wxCommandEvent &e)
 		// send notification to the main frame to perform retag
 		if ( retagRequires ) {
 			wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
-			Frame::Get()->AddPendingEvent( event );
+			Frame::Get()->GetEventHandler()->AddPendingEvent( event );
 		}
 	}
 }

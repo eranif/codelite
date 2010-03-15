@@ -480,7 +480,7 @@ SvnInfoDialog::SvnInfoDialog( wxWindow* parent, wxWindowID id, const wxString& t
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer7;
-	fgSizer7 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer7 = new wxFlexGridSizer( 5, 2, 0, 0 );
 	fgSizer7->AddGrowableCol( 1 );
 	fgSizer7->SetFlexibleDirection( wxBOTH );
 	fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );

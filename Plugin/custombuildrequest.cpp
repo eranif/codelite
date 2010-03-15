@@ -26,7 +26,6 @@
 #include <wx/log.h>
 #include "buildmanager.h"
 #include "asyncprocess.h"
-#include "macros.h"
 #include "imanager.h"
 #include <wx/ffile.h>
 #include "environmentconfig.h"
@@ -37,6 +36,7 @@
 #include "custombuildrequest.h"
 #include "workspace.h"
 #include "plugin.h"
+#include "macros.h"
 
 CustomBuildRequest::CustomBuildRequest(wxEvtHandler *owner, const QueueCommand &buildInfo, const wxString &fileName)
 		: ShellCommand(owner, buildInfo)

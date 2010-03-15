@@ -159,9 +159,10 @@ bool wxScintilla::Create (wxWindow *parent,
                           const wxSize& size,
                           long style,
                           const wxString& name) {
-#ifdef __WXMAC__
+#if defined (__WXMAC__) || wxCHECK_VERSION(2, 9, 0)
     style |= wxVSCROLL | wxHSCROLL;
 #endif
+
     if (!wxControl::Create (parent, id, pos, size,
                             style | wxWANTS_CHARS | wxCLIP_CHILDREN,
                             wxDefaultValidator, name)) {

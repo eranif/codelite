@@ -25,57 +25,64 @@
 #ifndef __Notebook__
 #define __Notebook__
 
-#include "wx/panel.h"
-#include "wx/aui/framemanager.h"
+#include <wx/notebook.h>
 
+#ifdef __WXMAC__
 enum {
-	wxVB_LEFT                   = 0x00000001,
-	wxVB_RIGHT                  = 0x00000002,
-	wxVB_TOP                    = 0x00000004,
-	wxVB_BOTTOM                 = 0x00000008,
-	wxVB_HAS_X                  = 0x00000010,
-	wxVB_MOUSE_MIDDLE_CLOSE_TAB = 0x00000020,
-	wxVB_TAB_DECORATION         = 0x00000040,
-	wxVB_BG_GRADIENT            = 0x00000080,
-	wxVB_BORDER                 = 0x00000100,
-	wxVB_NODND                  = 0x00000200,
-	wxVB_NO_DROPBUTTON          = 0x00000400,
-	wxVB_FIXED_WIDTH            = 0x00000800,
-	wxVB_NO_TABS                = 0x00001000
+	wxVB_LEFT                   = wxNB_LEFT,
+	wxVB_RIGHT                  = wxNB_RIGHT,
+	wxVB_TOP                    = wxNB_TOP,
+	wxVB_BOTTOM                 = wxNB_BOTTOM,
+	wxVB_FIXED_WIDTH            = wxNB_FIXEDWIDTH,
+	wxVB_HAS_X                  = 0x00010000,
+	wxVB_MOUSE_MIDDLE_CLOSE_TAB = 0x00020000,
+	wxVB_NODND                  = 0x00040000,
+	wxVB_NO_TABS                = 0x00100000,
+	wxVB_PASS_FOCUS             = 0x00400000
 };
+#else
+enum {
+	wxVB_LEFT                   = wxNB_TOP,
+	wxVB_RIGHT                  = wxNB_TOP,
+	wxVB_TOP                    = wxNB_TOP,
+	wxVB_BOTTOM                 = wxNB_TOP,
+	wxVB_FIXED_WIDTH            = wxNB_FIXEDWIDTH,
+	wxVB_HAS_X                  = 0x00010000,
+	wxVB_MOUSE_MIDDLE_CLOSE_TAB = 0x00020000,
+	wxVB_NODND                  = 0x00040000,
+	wxVB_NO_TABS                = 0x00100000,
+	wxVB_PASS_FOCUS             = 0x00400000
+};	
+#endif
 
-class wxTabContainer;
-class CustomTab;
 class NotebookNavDialog;
 class wxMenu;
 
-class Notebook : public wxPanel
+class Notebook : public wxNotebook
 {
-	friend class wxTabContainer;
-
-	wxTabContainer *m_tabs;
-	long m_style;
-	wxAuiManager *m_aui;
-	wxString m_paneName;
 	NotebookNavDialog *m_popupWin;
-
+	wxMenu*            m_contextMenu;
+	wxArrayPtrVoid     m_history;
+	long               m_style;
+	size_t             m_leftDownTabIdx;
+	bool               m_notify;
+	
 public:
 	static const size_t npos = static_cast<size_t>(-1);
 
 protected:
-	void Initialize();
-
-	void OnRender(wxAuiManagerEvent &e);
-
+	void      Initialize();
+	void      PushPageHistory(wxWindow *page);
+	void      PopPageHistory(wxWindow *page);
+	wxWindow* GetPreviousSelection();
+	bool      HasCloseButton() {return m_style & wxVB_HAS_X;}
+	bool      HasCloseMiddle() {return m_style & wxVB_MOUSE_MIDDLE_CLOSE_TAB;}
+	void      DoShowMenuButton();
+	
 public:
 	Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
 	virtual ~Notebook();
-
-	/**
-	 * \brief select given tab by the actual tab object
-	 */
-	void SetSelection(CustomTab *tab);
-
+	
 	/**
 	 * \brief return the currently selected item index
 	 * \return the currently selected item, of the book is empty, return Notebook::npos
@@ -86,24 +93,16 @@ public:
 	 * \brief set page at given index to be the selected page. this function does not trigger an event
 	 * \param page
 	 */
-	void SetSelection(size_t page, bool notify = true);
+	void SetSelection(size_t page, bool notify = false);
 
 	/**
 	 * \brief add page to the book
 	 * \param win window to add, the window will be reparented to the book
 	 * \param text page's caption
-	 * \param bmp image
 	 * \param selected set the page as the selected page
 	 */
-	void AddPage(wxWindow *win, const wxString &text, const wxString &tooltip, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
-	void InsertPage(size_t index, wxWindow *win, const wxString &text, const wxString &tooltip, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
-
-	/**
-	 * \brief add page to the book
-	 * \param tab to be added
-	 */
-	void AddPage(CustomTab *tab);
-	void InsertPage(CustomTab* tab, size_t index);
+	bool AddPage(wxWindow *win, const wxString &text, bool selected = false, int imgid = wxNOT_FOUND);
+	bool InsertPage(size_t index, wxWindow *win, const wxString &text, bool selected = false, int imgid = wxNOT_FOUND);
 
 	/**
 	 * \brief return page at give position
@@ -111,16 +110,6 @@ public:
 	 * \return the page or NULL if index is out of bounds
 	 */
 	wxWindow *GetPage(size_t page);
-
-	/**
-	 * \brief return the number of pages are stored in the book
-	 */
-	size_t GetPageCount() const;
-
-	/**
-	 * \brief set the book orientation
-	 */
-	void SetOrientation(int orientation);
 
 	/**
 	 * \brief return the page caption
@@ -147,33 +136,9 @@ public:
 	bool DeleteAllPages(bool notify = false);
 
 	/**
-	 * \brief set an AUI manager for this book. This allows the book to automatically detect chanegs in
-	 * orientation so the book can adapt itself
-	 * \param manager AUI manager
-	 * \param containedPaneName the name of the cotainer name that contains our book
-	 */
-	void SetAuiManager(wxAuiManager *manager, const wxString &containedPaneName);
-
-	/**
 	 * \brief return the tabbing history for this notebook
 	 */
 	const wxArrayPtrVoid& GetHistory() const;
-
-	/**
-	 * \brief return the notebook style
-	 */
-	long GetBookStyle() const {
-		return m_style;
-	}
-
-	void SetBookStyle(long style);
-
-	/**
-	 * \brief return the tabs container control
-	 */
-	wxTabContainer *GetTabContainer() const {
-		return m_tabs;
-	}
 
 	/**
 	 *\param menu - right click menu object
@@ -205,35 +170,34 @@ public:
 	 * \param index page's index
 	 * \param text new text
 	 */
-	void SetPageText(size_t index, const wxString &text, const wxString &tooltip);
-
-	/**
-	 * @brief set the page bitmap at a given index
-	 * @param index page index
-	 * @param bmp bitmap to use
-	 */
-	void SetPageBitmap(size_t index, const wxBitmap &bmp);
-
-	/**
-	 * @brief set the size (x & y) of the bitmap used in the notebook
-	 * @param size the size
-	 */
-	void SetBitmapSize(int size);
-
-	/**
-	 * @brief set the fixed tab width
-	 * when setting it to Notebook::npos the wxVB_FIXED_WIDTH is ignored
-	 * @param size in pixels
-	 */
-	void SetFixedTabWidth(size_t size);
-
-	/**
-	 * @brief return the fixed tab width in pixels
-	 */
-	size_t GetFixedTabWidth() const;
-
-	DECLARE_EVENT_TABLE()
-	virtual void OnNavigationKey(wxNavigationKeyEvent &e);
+	bool SetPageText(size_t index, const wxString &text);
+	
+protected:
+	// Event handlers
+	void OnNavigationKey      (wxNavigationKeyEvent &e);
+	void OnLeftDown           (wxMouseEvent         &e);
+	void OnLeftUp             (wxMouseEvent         &e);
+	void OnLeaveWindow        (wxMouseEvent         &e);
+	void OnMouseMiddle        (wxMouseEvent         &e);
+	void OnKeyDown            (wxKeyEvent           &e);
+	void OnMenu               (wxContextMenuEvent   &e);
+	
+	// Used with wxChoicebook control
+	void OnHasPages           (wxUpdateUIEvent &e);
+	
+	// wxNotebook events
+	void OnIternalPageChanged (wxNotebookEvent &e);
+	void OnIternalPageChanging(wxNotebookEvent &e);
+	void OnInternalDeletePage (wxCommandEvent  &e);
+	
+	// wxChoicebook events
+	void OnFocus                (wxFocusEvent      &e);
+	
+protected:
+	void DoPageChangedEvent   (wxBookCtrlBaseEvent &e);
+	void DoPageChangingEvent  (wxBookCtrlBaseEvent &e);
+	bool DoNavigate();
+	
 };
 
 class NotebookEvent : public wxNotifyEvent
@@ -273,12 +237,16 @@ public:
 	size_t GetOldSelection() {
 		return oldsel;
 	}
+	
+	virtual wxEvent *Clone() const { return new NotebookEvent(*this); }
 };
 
 extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGED;
 extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGING;
 extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSING;
 extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED;
+extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED;
+extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_X_CLICKED; // Windows Only
 
 typedef void (wxEvtHandler::*NotebookEventFunction)(NotebookEvent&);
 

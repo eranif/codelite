@@ -52,6 +52,7 @@
 #include "wx/dir.h"
 #include <wx/stdpaths.h>
 #include "frame.h"
+#include "buidltab.h"
 
 #define __PERFORMANCE
 #include "performance.h"
@@ -60,7 +61,7 @@
 // Define the version string for this codelite
 //////////////////////////////////////////////
 extern wxChar *SvnRevision;
-wxString CODELITE_VERSION_STR = wxString::Format(wxT("v2.2.0.%s"), SvnRevision);
+wxString CODELITE_VERSION_STR = wxString::Format(wxT("v2.3.0.%s"), SvnRevision);
 
 #if defined(__WXMAC__)||defined(__WXGTK__)
 #include <signal.h> // sigprocmask
@@ -401,9 +402,12 @@ bool App::OnInit()
 			if(strWx.IsEmpty() == false) {
 				// we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
 				std::map<wxString, wxString> envs = vars.GetVariables(wxT("Default"));
-				if(envs.find(wxT("WXWIN")) == envs.end())
+				
+				if(envs.find(wxT("WXWIN")) == envs.end()) {
 					vars.AddVariable(wxT("Default"), wxT("WXWIN"), strWx);
-
+					vars.AddVariable(wxT("Default"), wxT("PATH"),  wxT("$(WXWIN)\\lib\\gcc_dll;$(PATH)"));
+				}
+				
 				if(envs.find(wxT("WXCFG")) == envs.end())
 					vars.AddVariable(wxT("Default"), wxT("WXCFG"), wxT("gcc_dll\\mswu"));
 
@@ -427,8 +431,11 @@ bool App::OnInit()
 	GeneralInfo inf;
 	cfg->ReadObject(wxT("GeneralInfo"), &inf);
 
-	bool showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
-	
+	bool showSplash(false);
+#ifndef __WXDEBUG__
+	showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
+#endif
+
 	m_splash = NULL;
 	if (showSplash) {
 		wxBitmap bitmap;
@@ -477,6 +484,15 @@ bool App::OnInit()
 
 	wxLogMessage(wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
 	wxLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStarupDirectory().c_str()));
+
+#ifdef __WXGTK__
+	// Needed on GTK
+	ManagerST::Get()->UpdateMenuAccelerators();
+	if(Frame::Get()->GetMainBook()->GetActiveEditor() == NULL) {
+		Frame::Get()->GetOutputPane()->GetBuildTab()->SetFocus();
+	}
+#endif
+
 	return TRUE;
 }
 

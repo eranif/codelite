@@ -37,7 +37,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_generalPage, wxID_ANY, wxT("General:") ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer31;
-	fgSizer31 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer31 = new wxFlexGridSizer( 5, 2, 0, 0 );
 	fgSizer31->SetFlexibleDirection( wxBOTH );
 	fgSizer31->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -69,6 +69,12 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	m_checkCppKeywordAssist = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Display completion box for language keywords"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer31->Add( m_checkCppKeywordAssist, 0, wxALL, 5 );
 	
+	m_checkBoxDeepUsingNamespaceResolving = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Scan all included files to locate 'using namespace' statements"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer31->Add( m_checkBoxDeepUsingNamespaceResolving, 0, wxALL, 5 );
+	
+	
+	fgSizer31->Add( 0, 0, 1, wxEXPAND, 5 );
+	
 	sbSizer2->Add( fgSizer31, 0, wxEXPAND, 5 );
 	
 	bSizer4->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
@@ -95,7 +101,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	sbSizer4->Add( m_checkColourProjTags, 0, wxALL|wxEXPAND, 5 );
 	
 	wxFlexGridSizer* fgSizer3;
-	fgSizer3 = new wxFlexGridSizer( 5, 3, 0, 0 );
+	fgSizer3 = new wxFlexGridSizer( 0, 3, 0, 0 );
 	fgSizer3->SetFlexibleDirection( wxBOTH );
 	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	

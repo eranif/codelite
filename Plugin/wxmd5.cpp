@@ -75,7 +75,11 @@ const wxString wxMD5::GetDigest()
 		MD5_CTX md5Context;
 		MD5Init(&md5Context);
 
+#if wxVERSION_NUMBER < 2900
 		MD5Update(&md5Context, (unsigned char*)(m_szText.c_str()), m_szText.Len());
+#else
+		MD5Update(&md5Context, (unsigned char*)m_szText.char_str().data(), m_szText.Len());
+#endif
 		MD5Final(m_arrDigest, &md5Context);
 
 		int j = 0;

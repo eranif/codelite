@@ -5,6 +5,7 @@
 %x incl
 %x c_comment
 %x cpp_comment
+%x using_namespace
 
 simple_escape [abfnrtv'"?\\]
 octal_escape  [0-7]{1,3}
@@ -14,6 +15,9 @@ escape_sequence [\\]({simple_escape}|{octal_escape}|{hex_escape})
 c_char [^'\\\n]|{escape_sequence}
 s_char [^"\\\n]|{escape_sequence}
 
+ns_name  [a-zA-Z][a-zA-Z:_]*
+using_ns "using "[ ]*"namespace"
+ns_alias "namespace "{ns_name}[ ]*"="[ ]*{ns_name}[ ]*";"
 
 %{
 // Avoid spam output
@@ -48,6 +52,14 @@ std::list<YY_BUFFER_STATE> include_stack;
 
 "L"?[']{c_char}+[']     {/* eat a string */}
 "L"?["]{s_char}*["]     {/* eat a string */}
+{using_ns}              {BEGIN(using_namespace);}
+<using_namespace>[a-zA-Z][a-zA-Z:_]* { /* got the namespace */
+	fcFileOpener::Instance()->AddNamespace(yytext);
+	BEGIN(INITIAL);
+}
+<using_namespace>;      {BEGIN(INITIAL);}
+<using_namespace>.      {}
+{ns_alias}              {fcFileOpener::Instance()->AddNamespaceAlias(yytext);}
 include                 {BEGIN(incl);}
 .                       {}
 <incl>\n                {BEGIN(INITIAL);}

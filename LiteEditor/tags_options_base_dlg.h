@@ -51,6 +51,8 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxCheckBox* m_checkDisplayTypeInfo;
 		wxCheckBox* m_checkDisplayFunctionTip;
 		wxCheckBox* m_checkCppKeywordAssist;
+		wxCheckBox* m_checkBoxDeepUsingNamespaceResolving;
+		
 		wxStaticText* m_staticText72;
 		wxSpinCtrl* m_spinCtrlMaxItemToColour;
 		wxCheckBox* m_checkColourLocalVars;

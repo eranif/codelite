@@ -25,6 +25,7 @@
 
 #include "build_system.h"
 #include "xmlutils.h"
+#include "wx_xml_compatibility.h"
 
 BuilderConfig::BuilderConfig(wxXmlNode *node) 
 : m_isActive(false)

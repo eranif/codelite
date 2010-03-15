@@ -22,10 +22,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "build_settings_config.h"
+
+#include "build_settings_config.h"
 #include "conffilelocator.h"
 #include "xmlutils.h"
 #include <wx/ffile.h>
+#include "wx_xml_compatibility.h"
+
 
 BuildSettingsConfig::BuildSettingsConfig()
 {

@@ -217,7 +217,8 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 	if (!m_gdbProcess) {
 		return false;
 	}
-
+	m_gdbProcess->SetHardKill(true);
+	
 	DoInitializeGdb(bpList, cmds);
 	m_observer->UpdateGotControl(DBG_END_STEPPING);
 	return true;
@@ -257,7 +258,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 	if (!m_gdbProcess) {
 		return false;
 	}
-
+	m_gdbProcess->SetHardKill(true);
 	DoInitializeGdb(bpList, cmds);
 	return true;
 }
@@ -853,6 +854,7 @@ void DbgGdb::OnProcessEnd(wxCommandEvent &e)
 
 	m_observer->UpdateGotControl(DBG_EXITED_NORMALLY);
 	m_gdbOutputArr.Clear();
+	m_consoleFinder.FreeConsole();
 	SetIsRemoteDebugging(false);
 }
 
@@ -1067,7 +1069,7 @@ bool DbgGdb::CreateVariableObject(const wxString& expression, int userReason)
 {
 	wxString cmd;
 	cmd << wxT("-var-create - * \"") << expression << wxT("\"");
-	return WriteCommand(cmd, new DbgCmdCreateVarObj(m_observer, expression, userReason));
+	return WriteCommand(cmd, new DbgCmdCreateVarObj(m_observer, this, expression, userReason));
 }
 
 bool DbgGdb::DeleteVariableObject(const wxString& name)
@@ -1077,11 +1079,25 @@ bool DbgGdb::DeleteVariableObject(const wxString& name)
 	return WriteCommand(cmd, NULL);
 }
 
-bool DbgGdb::EvaluateVariableObject(const wxString& name, int userReason)
+bool DbgGdb::EvaluateVariableObject(const wxString& name, DisplayFormat displayFormat, int userReason)
 {
 	wxString cmd;
+	wxString df;
+	switch(displayFormat) {
+		case DBG_DF_BINARY:      df = wxT("binary");      break;
+		case DBG_DF_DECIMAL:     df = wxT("decimal");     break;
+		case DBG_DF_HEXADECIMAL: df = wxT("hexadecimal"); break;
+		case DBG_DF_OCTAL:       df = wxT("octal");       break;
+		default:
+		case DBG_DF_NATURAL:     df = wxT("natural");     break;
+	}
+	
+	cmd << wxT("-var-set-format \"") << name << wxT("\" ") << df;
+	WriteCommand(cmd, NULL);
+	
+	cmd.Clear();
 	cmd << wxT("-var-evaluate-expression \"") << name << wxT("\"");
-	return WriteCommand(cmd, new DbgCmdEvalVarObj(m_observer, name, userReason));
+	return WriteCommand(cmd, new DbgCmdEvalVarObj(m_observer, name, displayFormat, userReason));
 }
 
 void DbgGdb::OnDataRead(wxCommandEvent& e)

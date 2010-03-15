@@ -204,7 +204,7 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 		if (wxMessageBox(wxString::Format(wxT("There are currently no UnitTest project in your workspace\nWould you like to create one now?")), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
 			// add new UnitTest project
 			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_project"));
-			m_mgr->GetTheApp()->GetTopWindow()->AddPendingEvent(event);
+			m_mgr->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
 		}
 		return;
 	}
@@ -270,7 +270,7 @@ void UnitTestPP::OnNewSimpleTest(wxCommandEvent& e)
 		if (wxMessageBox(wxString::Format(wxT("There are currently no UnitTest project in your workspace\nWould you like to create one now?")), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
 			// add new UnitTest project
 			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_project"));
-			m_mgr->GetTheApp()->GetTopWindow()->AddPendingEvent(event);
+			m_mgr->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
 		}
 		return;
 	}
@@ -373,6 +373,7 @@ void UnitTestPP::OnRunUnitTests(wxCommandEvent& e)
 
 void UnitTestPP::OnRunUnitTestsUI(wxUpdateUIEvent& e)
 {
+	CHECK_CL_SHUTDOWN();
 	bool activeProjIsUT(false);
 	if(m_mgr->GetWorkspace()) {
 		wxString errMsg;

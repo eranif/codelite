@@ -26,7 +26,7 @@
 #define DEBUGGERPANE_H
 
 #include "wx/panel.h"
-#include "custom_notebook.h"
+#include "notebook_ex.h"
 #include <wx/imaglist.h>
 
 class ListCtrlPanel;
@@ -64,7 +64,6 @@ private:
 
 private:
 	void CreateGUIControls();
-	void OnPageChanged(NotebookEvent &event);
 
 public:
 	DebuggerPane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr);
@@ -85,9 +84,7 @@ public:
 	void Clear();
 
 	DECLARE_EVENT_TABLE()
-	void OnEraseBg(wxEraseEvent &e);
-	void OnPaint(wxPaintEvent &e);
-	void OnSize(wxSizeEvent &e);
+	void OnPageChanged(NotebookEvent &event);
 };
 #endif //DEBUGGERPANE_H
 

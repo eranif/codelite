@@ -35,11 +35,15 @@
 		return false;\
 	}
 
-VcImporter::VcImporter(const wxString &fileName)
+VcImporter::VcImporter(const wxString &fileName, const wxString &defaultCompiler)
 		: m_fileName(fileName)
-		, m_is(NULL)
-		, m_tis(NULL)
+		, m_is      (NULL)
+		, m_tis     (NULL)
+		, m_compiler(defaultCompiler)
+		, m_compilerLowercase(defaultCompiler)
 {
+	m_compilerLowercase.MakeLower();
+	
 	wxFileName fn(m_fileName);
 	m_isOk = fn.FileExists();
 	if (m_isOk) {
@@ -247,15 +251,45 @@ void VcImporter::AddConfiguration(ProjectSettingsPtr settings, wxXmlNode *config
 	//get the include directories
 	le_conf->SetIncludePath(SplitString(XmlUtils::ReadString(cmpNode, wxT("AdditionalIncludeDirectories"))));
 	le_conf->SetPreprocessor(XmlUtils::ReadString(cmpNode, wxT("PreprocessorDefinitions")));
-
+	
+	// Select the best compiler for the import process (we select g++ by default)
+	le_conf->SetCompilerType(m_compiler);
+	
+	// Get the configuration type
+	long type = XmlUtils::ReadLong(config, wxT("ConfigurationType"), 1);
+	wxString projectType;
+	wxString errMsg;
+	switch (type) {
+	case 2: //dll
+		projectType = Project::DYNAMIC_LIBRARY;
+		break;
+	case 4:	//static library
+		projectType = Project::STATIC_LIBRARY;
+		break;
+	case 1:	//exe
+	default:
+		projectType = Project::EXECUTABLE;
+		break;
+	}
+	
+	le_conf->SetProjectType(projectType);
+	
 	//if project type is DLL or Executable, copy linker settings as well
-	if (	settings->GetProjectType(le_conf->GetName()) == Project::EXECUTABLE || settings->GetProjectType(le_conf->GetName()) == Project::DYNAMIC_LIBRARY) {
+	if (settings->GetProjectType(le_conf->GetName()) == Project::EXECUTABLE || settings->GetProjectType(le_conf->GetName()) == Project::DYNAMIC_LIBRARY) {
 		wxXmlNode *linkNode = XmlUtils::FindNodeByName(config, wxT("Tool"), wxT("VCLinkerTool"));
 		if (linkNode) {
-			le_conf->SetOutputFileName(XmlUtils::ReadString(linkNode, wxT("OutputFile")));
-			//read in the additional libraries & libpath
+			wxString outputFileName (XmlUtils::ReadString(linkNode, wxT("OutputFile")) );
+#ifndef __WXMSW__
+			outputFileName.Replace(wxT(".dll"), wxT(".so"));
+			outputFileName.Replace(wxT(".exe"), wxT(""));
+#endif
+
+			le_conf->SetOutputFileName(outputFileName);
+			
+			// read in the additional libraries & libpath
 			wxString libs = XmlUtils::ReadString(linkNode, wxT("AdditionalDependencies"));
-			//libs is a space delimited string
+			
+			// libs is a space delimited string
 			wxStringTokenizer tk(libs, wxT(" "));
 			libs.Empty();
 			while (tk.HasMoreTokens()) {
@@ -268,7 +302,22 @@ void VcImporter::AddConfiguration(ProjectSettingsPtr settings, wxXmlNode *config
 		// static library
 		wxXmlNode *libNode = XmlUtils::FindNodeByName(config, wxT("Tool"), wxT("VCLibrarianTool"));
 		if (libNode) {
-			le_conf->SetOutputFileName(XmlUtils::ReadString(libNode, wxT("OutputFile")));
+			
+			wxString outputFileName (XmlUtils::ReadString(libNode, wxT("OutputFile")) );
+			outputFileName.Replace(wxT("\\"), wxT("/"));
+			
+			wxString outputFileNameOnly = outputFileName.AfterLast(wxT('/'));
+			wxString outputFilePath     = outputFileName.BeforeLast(wxT('/'));
+			
+			if(m_compilerLowercase.Contains(wxT("gnu"))) {
+				if(outputFileNameOnly.StartsWith(wxT("lib")) == false) {
+					outputFileNameOnly.Prepend(wxT("lib"));
+				}
+				outputFileName.Clear();
+				outputFileName << outputFilePath << wxT("/") << outputFileNameOnly;
+				outputFileName.Replace(wxT(".lib"), wxT(".a"));
+			}
+			le_conf->SetOutputFileName(outputFileName);
 		}
 	}
 

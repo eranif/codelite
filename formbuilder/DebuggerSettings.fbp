@@ -78,7 +78,7 @@
             <event name="OnSetFocus"></event>
             <event name="OnSize"></event>
             <event name="OnUpdateUI"></event>
-            <object class="wxBoxSizer" expanded="0">
+            <object class="wxBoxSizer" expanded="1">
                 <property name="minimum_size"></property>
                 <property name="name">bSizer1</property>
                 <property name="orient">wxVERTICAL</property>
@@ -196,7 +196,7 @@
                                         <property name="border">5</property>
                                         <property name="flag">wxEXPAND | wxALL</property>
                                         <property name="proportion">1</property>
-                                        <object class="wxListbook" expanded="1">
+                                        <object class="wxNotebook" expanded="1">
                                             <property name="bg"></property>
                                             <property name="bitmapsize"></property>
                                             <property name="context_help"></property>
@@ -211,7 +211,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxLB_DEFAULT</property>
+                                            <property name="style">wxNB_LEFT</property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -231,14 +231,14 @@
                                             <event name="OnLeftDClick"></event>
                                             <event name="OnLeftDown"></event>
                                             <event name="OnLeftUp"></event>
-                                            <event name="OnListbookPageChanged"></event>
-                                            <event name="OnListbookPageChanging"></event>
                                             <event name="OnMiddleDClick"></event>
                                             <event name="OnMiddleDown"></event>
                                             <event name="OnMiddleUp"></event>
                                             <event name="OnMotion"></event>
                                             <event name="OnMouseEvents"></event>
                                             <event name="OnMouseWheel"></event>
+                                            <event name="OnNotebookPageChanged"></event>
+                                            <event name="OnNotebookPageChanging"></event>
                                             <event name="OnPaint"></event>
                                             <event name="OnRightDClick"></event>
                                             <event name="OnRightDown"></event>
@@ -333,7 +333,7 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pos"></property>
                                                     <property name="size"></property>
-                                                    <property name="style">wxLC_REPORT</property>
+                                                    <property name="style">wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES</property>
                                                     <property name="subclass"></property>
                                                     <property name="tooltip"></property>
                                                     <property name="validator_data_type"></property>
@@ -629,7 +629,7 @@
                 </object>
                 <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
-                    <property name="flag">wxALIGN_RIGHT</property>
+                    <property name="flag">wxALIGN_CENTER_HORIZONTAL</property>
                     <property name="proportion">0</property>
                     <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
@@ -808,7 +808,7 @@
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND | wxALL</property>
                     <property name="proportion">1</property>
-                    <object class="wxChoicebook" expanded="1">
+                    <object class="wxChoicebook" expanded="0">
                         <property name="bg"></property>
                         <property name="context_help"></property>
                         <property name="enabled">1</property>
@@ -860,7 +860,7 @@
                         <object class="choicebookpage" expanded="1">
                             <property name="label">General</property>
                             <property name="select">1</property>
-                            <object class="wxPanel" expanded="1">
+                            <object class="wxPanel" expanded="0">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
                                 <property name="enabled">1</property>
@@ -915,18 +915,11 @@
                                         <property name="border">5</property>
                                         <property name="flag">wxEXPAND</property>
                                         <property name="proportion">0</property>
-                                        <object class="wxFlexGridSizer" expanded="0">
-                                            <property name="cols">0</property>
-                                            <property name="flexible_direction">wxBOTH</property>
-                                            <property name="growablecols">1</property>
-                                            <property name="growablerows"></property>
-                                            <property name="hgap">0</property>
+                                        <object class="wxBoxSizer" expanded="1">
                                             <property name="minimum_size"></property>
-                                            <property name="name">fgSizer2</property>
-                                            <property name="non_flexible_grow_mode">wxFLEX_GROWMODE_SPECIFIED</property>
+                                            <property name="name">bSizer10</property>
+                                            <property name="orient">wxHORIZONTAL</property>
                                             <property name="permission">none</property>
-                                            <property name="rows">1</property>
-                                            <property name="vgap">0</property>
                                             <object class="sizeritem" expanded="1">
                                                 <property name="border">5</property>
                                                 <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
@@ -985,7 +978,7 @@
                                             <object class="sizeritem" expanded="1">
                                                 <property name="border">5</property>
                                                 <property name="flag">wxALL|wxEXPAND</property>
-                                                <property name="proportion">0</property>
+                                                <property name="proportion">1</property>
                                                 <object class="wxTextCtrl" expanded="1">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
@@ -1103,7 +1096,7 @@
                                         <property name="border">5</property>
                                         <property name="flag">wxEXPAND|wxALL</property>
                                         <property name="proportion">0</property>
-                                        <object class="wxStaticBoxSizer" expanded="0">
+                                        <object class="wxStaticBoxSizer" expanded="1">
                                             <property name="id">wxID_ANY</property>
                                             <property name="label">Options:</property>
                                             <property name="minimum_size"></property>
@@ -1905,7 +1898,7 @@
                         <object class="choicebookpage" expanded="1">
                             <property name="label">Startup Commands</property>
                             <property name="select">0</property>
-                            <object class="wxPanel" expanded="0">
+                            <object class="wxPanel" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
                                 <property name="enabled">1</property>

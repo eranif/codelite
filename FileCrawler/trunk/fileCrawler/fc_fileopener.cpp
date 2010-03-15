@@ -146,3 +146,8 @@ void fcFileOpener::normalize_path(std::string& path)
 		}
 	}
 }
+
+void fcFileOpener::AddNamespace(const char* ns)
+{
+	_namespaces.insert(ns);
+}

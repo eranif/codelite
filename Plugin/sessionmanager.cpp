@@ -28,6 +28,7 @@
 #include <wx/log.h>
 
 #include <memory>
+#include "wx_xml_compatibility.h"
 
 //Session entry
 SessionEntry::SessionEntry()

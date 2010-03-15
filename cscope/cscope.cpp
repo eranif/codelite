@@ -40,6 +40,7 @@
 #include "exelocator.h"
 #include "cscopetab.h"
 #include "cscopedbbuilderthread.h"
+#include <wx/imaglist.h>
 
 static Cscope* thePlugin = NULL;
 
@@ -78,7 +79,8 @@ Cscope::Cscope(IManager *manager)
 	m_topWindow = m_mgr->GetTheApp();
 
 	m_cscopeWin = new CscopeTab(m_mgr->GetOutputPaneNotebook(), m_mgr);
-	m_mgr->GetOutputPaneNotebook()->AddPage(m_cscopeWin, CSCOPE_NAME, CSCOPE_NAME, wxXmlResource::Get()->LoadBitmap(wxT("cscope")), false);
+	int imgId =  m_mgr->GetOutputPaneNotebook()->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("cscope")));
+	m_mgr->GetOutputPaneNotebook()->AddPage(m_cscopeWin, CSCOPE_NAME, false, imgId);
 
 	Connect(wxEVT_CSCOPE_THREAD_DONE, wxCommandEventHandler(Cscope::OnCScopeThreadEnded), NULL, this);
 	Connect(wxEVT_CSCOPE_THREAD_UPDATE_STATUS, wxCommandEventHandler(Cscope::OnCScopeThreadUpdateStatus), NULL, this);
@@ -197,7 +199,7 @@ void Cscope::UnPlug()
 	// before this plugin is un-plugged we must remove the tab we added
 	for (size_t i=0; i<m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
 		if (m_cscopeWin == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
-			m_mgr->GetOutputPaneNotebook()->RemovePage(i, false);
+			m_mgr->GetOutputPaneNotebook()->RemovePage(i);
 			m_cscopeWin->Destroy();
 			break;
 		}
@@ -320,7 +322,7 @@ void Cscope::DoCscopeCommand(const wxString &command, const wxString &findWhat, 
 	wxArrayString output;
 
 	//set the focus to the cscope tab
-	Notebook *book = m_mgr->GetOutputPaneNotebook();
+	wxBookCtrlBase *book = m_mgr->GetOutputPaneNotebook();
 
 	//make sure that the Output pane is visible
 	wxAuiManager *aui = m_mgr->GetDockingManager();
@@ -531,11 +533,13 @@ void Cscope::OnCScopeThreadUpdateStatus(wxCommandEvent &e)
 
 void Cscope::OnCscopeUI(wxUpdateUIEvent &e)
 {
+	CHECK_CL_SHUTDOWN();
 	bool isEditor = m_mgr->GetActiveEditor() ? true : false;
 	e.Enable(m_mgr->IsWorkspaceOpen() && isEditor);
 }
 
 void Cscope::OnWorkspaceOpenUI(wxUpdateUIEvent& e)
 {
+	CHECK_CL_SHUTDOWN();
 	e.Enable(m_mgr->IsWorkspaceOpen());
 }

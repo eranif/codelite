@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include <wx/toolbook.h>
 #include <wx/ffile.h>
 #include "globals.h"
 #include "plugin.h"
@@ -446,14 +447,19 @@ void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 	}
 	
 	AppendText ( BUILD_START_MSG );
-//	Frame::Get()->SetStatusMessage ( e.GetString(), 3, XRCID ( "build" ) );
     OutputPane *opane = Frame::Get()->GetOutputPane();
+	
+	wxWindow *win(NULL);
+	int sel =  opane->GetNotebook()->GetSelection();
+	if(sel != wxNOT_FOUND)
+		win = opane->GetNotebook()->GetPage((size_t)sel);
+	
 	if (m_showMe == BuildTabSettingsData::ShowOnEnd &&
             m_autoHide &&
-            ManagerST::Get()->IsPaneVisible(opane->GetCaption()) &&
-            (opane->GetNotebook()->GetCurrentPage() == this ||
-                opane->GetNotebook()->GetCurrentPage() == opane->GetErrorsTab())) {
-        // user prefers to see build/errors tabs only at end of unsuccessful build
+            ManagerST::Get()->IsPaneVisible(opane->GetCaption()) && 
+			(win == this || win == opane->GetErrorsTab())) 
+	{
+		// user prefers to see build/errors tabs only at end of unsuccessful build
         ManagerST::Get()->HidePane(opane->GetName());
     }
 	m_sw.Start();
@@ -624,8 +630,16 @@ wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno, wxMemor
 			wxString asciiTip;
 
 			for(size_t at=0; at<tmpTip.Length(); at++) {
-				if( isprint((char)tmpTip.GetChar(at) ) || tmpTip.GetChar(at) == wxT('\n') ) {
-					asciiTip.Append( tmpTip.GetChar(at) );
+	#if wxVERSION_NUMBER < 2900
+				wxChar c = tmpTip.GetChar(at);
+	#else
+				wxUniChar c = tmpTip.GetChar(at);
+				if ( !c.IsAscii() )	{
+					continue;
+				}
+	#endif
+				if( wxIsprint(c) || c == wxT('\n') ) {
+					asciiTip.Append(c);
 				}
 			}
 
@@ -712,31 +726,31 @@ void BuildTab::DoProcessLine(const wxString& text, int lineno)
 		// no more line info to get
 	} else {
 		
-		// Find error first
-		bool isError = false;
+		// Find *warnings* first
+		bool isWarning = false;
 		
 		CompilerPatterns cmpPatterns;
 		if(!GetCompilerPatterns(m_cmp->GetName(), cmpPatterns)) {
 			return;
 		}
 		
-		for(size_t i=0; i<cmpPatterns.errorsPatterns.size(); i++) {
-			CompiledPatternPtr cmpPatterPtr = cmpPatterns.errorsPatterns.at(i);
+		// If it is not an error, maybe it's a warning
+		for(size_t i=0; i<cmpPatterns.warningPatterns.size(); i++) {
+			CompiledPatternPtr cmpPatterPtr = cmpPatterns.warningPatterns.at(i);
 			if ( ExtractLineInfo(info, text, *(cmpPatterPtr->regex), cmpPatterPtr->fileIndex, cmpPatterPtr->lineIndex) ) {
-				info.linecolor = wxSCI_LEX_GCC_ERROR;
-				m_errorCount++;
-				isError = true;
+				info.linecolor = wxSCI_LEX_GCC_WARNING;
+				m_warnCount++;
+				isWarning = true;
 				break;
 			}
 		}
-		if (!isError) {
-			// If it is not an error, maybe it's a warning
-			for(size_t i=0; i<cmpPatterns.warningPatterns.size(); i++) {
-				CompiledPatternPtr cmpPatterPtr = cmpPatterns.warningPatterns.at(i);
+		
+		if ( !isWarning ) {
+			for(size_t i=0; i<cmpPatterns.errorsPatterns.size(); i++) {
+				CompiledPatternPtr cmpPatterPtr = cmpPatterns.errorsPatterns.at(i);
 				if ( ExtractLineInfo(info, text, *(cmpPatterPtr->regex), cmpPatterPtr->fileIndex, cmpPatterPtr->lineIndex) ) {
-					info.linecolor = wxSCI_LEX_GCC_WARNING;
-					m_warnCount++;
-					isError = true;
+					info.linecolor = wxSCI_LEX_GCC_ERROR;
+					m_errorCount++;
 					break;
 				}
 			}

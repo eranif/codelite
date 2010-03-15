@@ -1,4 +1,5 @@
 #include <wx/xrc/xmlres.h>
+#include "editor_config.h"
 #include "simpletable.h"
 #include "frame.h"
 #include "new_quick_watch_dlg.h"
@@ -16,6 +17,9 @@ class QWTreeData : public wxTreeItemData
 {
 public:
 	VariableObjChild _voc;
+	wxString         _hex;
+	wxString         _binary;
+	
 	QWTreeData(const VariableObjChild &voc) : _voc(voc) {}
 	virtual ~QWTreeData() {}
 };
@@ -28,9 +32,18 @@ END_EVENT_TABLE()
 DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
 		: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(500, 400) )
 		, m_leftWindow(false)
+		, m_showExtraFormats(0)
 {
 	Centre();
 	WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
+	EditorConfigST::Get()->GetLongValue(wxT("NewQuickWatchDlg_ShowExtraFormats"), m_showExtraFormats);
+	
+	if(!m_showExtraFormats && m_panelExtra->IsShown()) {
+		m_panelExtra->Hide();
+		GetSizer()->Layout();
+	}
+	m_checkBoxShowMoreFormats->SetValue(m_showExtraFormats ? true : false);
+	
 	m_timer  = new wxTimer(this, TIPTIMERID);
 	m_timer2 = new wxTimer(this, TIPTIMERID2);
 }
@@ -41,6 +54,7 @@ DisplayVariableDlg::~DisplayVariableDlg()
 	delete m_timer;
 	m_timer = NULL;
 	WindowAttrManager::Save(this, wxT("NewQuickWatchDlg"), NULL);
+	EditorConfigST::Get()->SaveLongValue(wxT("NewQuickWatchDlg_ShowExtraFormats"), m_showExtraFormats);
 }
 
 void DisplayVariableDlg::OnExpandItem( wxTreeEvent& event )
@@ -75,7 +89,14 @@ void DisplayVariableDlg::BuildTree(const VariableObjChildren& children, IDebugge
 	m_gdbId2Item.clear();
 	m_gdbId2ItemLeaf.clear();
 	m_treeCtrl->DeleteAllItems();
-	wxTreeItemId root = m_treeCtrl->AddRoot( m_variableName );
+	
+	VariableObjChild vob;
+	vob.gdbId = m_mainVariableObject;
+	vob.isAFake = false;
+	
+	wxTreeItemId root = m_treeCtrl->AddRoot( m_variableName, -1, -1, new QWTreeData(vob) );
+	m_debugger->EvaluateVariableObject(m_mainVariableObject, DBG_DF_HEXADECIMAL, DBG_UR_EVALVARIABLEOBJ);
+	m_debugger->EvaluateVariableObject(m_mainVariableObject, DBG_DF_BINARY,      DBG_UR_EVALVARIABLEOBJ);
 
 	if ( children.empty() ) return;
 	DoAddChildren( root, children );
@@ -109,6 +130,8 @@ void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChil
 
 	for (size_t i=0; i<children.size(); i++) {
 		VariableObjChild ch = children.at(i);
+
+		// Dont use ch.isAFake here since it will also returns true of inheritance
 		if ( ch.varName != wxT("public") && ch.varName != wxT("private") && ch.varName != wxT("protected") ) {
 			// Real node
 			wxTreeItemId child = m_treeCtrl->AppendItem(item, ch.varName, -1, -1, new QWTreeData(ch));
@@ -116,13 +139,22 @@ void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChil
 				// add fake node to this item, so it will have the [+] on the side
 				m_treeCtrl->AppendItem(child, wxT("<dummy>"));
 			}
+
 			// ask gdb for the value for this node
-			m_debugger->EvaluateVariableObject( ch.gdbId, DBG_USERR_QUICKWACTH );
+			
+			m_debugger->EvaluateVariableObject( ch.gdbId, DBG_DF_NATURAL,     DBG_USERR_QUICKWACTH );
+			if(m_showExtraFormats) {
+				m_debugger->EvaluateVariableObject( ch.gdbId, DBG_DF_BINARY,      DBG_USERR_QUICKWACTH );
+				m_debugger->EvaluateVariableObject( ch.gdbId, DBG_DF_HEXADECIMAL, DBG_USERR_QUICKWACTH );
+			}
 			m_gdbId2ItemLeaf[ch.gdbId] = child;
+			
 		} else {
-			// Fake node
+			
+			// Fake node, ask for expansion only if this node is visible
 			m_debugger->ListChildren(ch.gdbId, DBG_USERR_QUICKWACTH);
 			m_gdbId2Item[ch.gdbId] = item;
+			
 		}
 	}
 }
@@ -133,15 +165,39 @@ void DisplayVariableDlg::OnBtnCancel(wxCommandEvent& e)
 	e.Skip();
 }
 
-void DisplayVariableDlg::UpdateValue(const wxString& varname, const wxString& value)
+void DisplayVariableDlg::UpdateValue(const wxString& varname, const wxString& value, DisplayFormat displayFormat)
 {
+	wxTreeItemId nodeId;
 	std::map<wxString, wxTreeItemId>::iterator iter = m_gdbId2ItemLeaf.find(varname);
 	if ( iter != m_gdbId2ItemLeaf.end() ) {
 		wxTreeItemId item = iter->second;
-		if ( item.IsOk() ) {
+		if ( item.IsOk() && displayFormat == DBG_DF_NATURAL) {
 			wxString curtext = m_treeCtrl->GetItemText( item );
 			curtext << wxT(" = ") << value;
 			m_treeCtrl->SetItemText( item, curtext );
+
+		} else if ( item.IsOk() ) {
+			nodeId = item;
+		}
+	} else if(varname == m_mainVariableObject) {
+		
+		// Handle Root
+		nodeId = m_treeCtrl->GetRootItem();
+	}
+	
+	if(nodeId.IsOk()) {
+		QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(nodeId);
+		if(data) {
+			switch (displayFormat) {
+			case DBG_DF_HEXADECIMAL:
+				data->_hex = value;
+				break;
+			case DBG_DF_BINARY:
+				data->_binary = value;
+				break;
+			default:
+				break;
+			}
 		}
 	}
 }
@@ -161,6 +217,8 @@ void DisplayVariableDlg::DoCleanUp()
 	m_gdbId2ItemLeaf.clear();
 	m_mainVariableObject = wxT("");
 	m_variableName = wxT("");
+	m_hexFormat->SetLabel(wxT(""));
+	m_binFormat->SetLabel(wxT(""));
 }
 
 void DisplayVariableDlg::HideDialog()
@@ -201,9 +259,16 @@ void DisplayVariableDlg::OnLeftDown(wxMouseEvent& e)
 			m_treeCtrl->Expand( item );
 		}
 	}
+	
+	if(item.IsOk() && m_showExtraFormats && (flags & wxTREE_HITTEST_ONITEMLABEL )) {
+		QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(item);
+		if(data) {
+			m_hexFormat->SetLabel(data->_hex);
+			m_binFormat->SetLabel(data->_binary);
+		}
+	}
 	e.Skip();
 }
-
 
 void DisplayVariableDlg::OnItemExpanded(wxTreeEvent& event)
 {
@@ -340,26 +405,26 @@ void DisplayVariableDlg::OnMouseMove(wxMouseEvent& event)
 {
 	DebuggerInformation debuggerInfo;
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if(dbgr) {
+	if (dbgr) {
 		DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), debuggerInfo);
 	}
-	
-	if(debuggerInfo.autoExpandTipItems) {
+
+	if (debuggerInfo.autoExpandTipItems) {
 		int flags (0);
 		wxTreeItemId item = m_treeCtrl->HitTest(event.GetPosition(), flags);
-		if(item.IsOk() && (flags & wxTREE_HITTEST_ONITEMLABEL)) {
-			
-			if(item != m_hoveredItem) {
+		if (item.IsOk() && (flags & wxTREE_HITTEST_ONITEMLABEL)) {
+
+			if (item != m_hoveredItem) {
 				m_timer2->Stop();
 				m_hoveredItem = item;
 				m_timer2->Start(500, true);
 				return;
-				
-			} else 
+
+			} else
 				return;
-		
+
 		}
-		
+
 		m_hoveredItem = wxTreeItemId();
 		m_timer2->Stop();
 	}
@@ -367,9 +432,35 @@ void DisplayVariableDlg::OnMouseMove(wxMouseEvent& event)
 
 void DisplayVariableDlg::OnTimer2(wxTimerEvent& e)
 {
-	if(m_hoveredItem.IsOk() && m_treeCtrl->ItemHasChildren(m_hoveredItem) && m_treeCtrl->IsExpanded(m_hoveredItem) == false) {
+	if (m_hoveredItem.IsOk() && m_treeCtrl->ItemHasChildren(m_hoveredItem) && m_treeCtrl->IsExpanded(m_hoveredItem) == false) {
 		m_treeCtrl->SelectItem(m_hoveredItem);
 		m_treeCtrl->Expand(m_hoveredItem);
 	}
 	m_hoveredItem = wxTreeItemId();
+}
+
+void DisplayVariableDlg::OnShowHexAndBinFormat(wxCommandEvent& event)
+{
+	m_showExtraFormats = (long)event.IsChecked();
+	
+	if(!m_showExtraFormats && m_panelExtra->IsShown()) {
+		m_panelExtra->Hide();
+		GetSizer()->Layout();
+		
+	} else if(m_showExtraFormats && m_panelExtra->IsShown() == false) {
+		m_panelExtra->Show();
+		GetSizer()->Layout();
+	}
+	
+	if(m_showExtraFormats) {
+		wxTreeItemId item = m_treeCtrl->GetSelection();
+		if(item.IsOk()) {
+			QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(item);
+			if(data) {
+				m_hexFormat->SetLabel(data->_hex);
+				m_binFormat->SetLabel(data->_binary);
+			}
+		}
+	}
+	Refresh();
 }

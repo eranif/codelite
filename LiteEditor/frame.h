@@ -41,7 +41,7 @@
 #include "tags_options_dlg.h"
 #include <wx/html/htmlwin.h>
 #include "debuggerpane.h"
-#include "custom_notebook.h"
+#include "notebook_ex.h"
 #include "mainbook.h"
 
 // forward decls
@@ -54,7 +54,6 @@ class WorkspaceTab;
 class FileExplorer;
 class OutputTabWindow;
 class DockablePaneMenuManager;
-class OutputViewControlBar;
 
 //--------------------------------
 // Helper class
@@ -89,9 +88,9 @@ class Frame : public wxFrame
 	wxMenu *                              m_cppMenu;
 	bool                                  m_highlightWord;
 	DockablePaneMenuManager *             m_DPmenuMgr;
-	OutputViewControlBar *                m_controlBar;
 	wxPanel*                              m_mainPanel;
 	wxString                              m_codeliteDownloadPageURL;
+	
 public:
 	static Frame* Get();
 	static void Initialize(bool loadLastSession);
@@ -362,8 +361,6 @@ protected:
 	void OnHighlightWord(wxCommandEvent &event);
 	void OnShowNavBar(wxCommandEvent &e);
 	void OnShowNavBarUI(wxUpdateUIEvent &e);
-    void OnDetachTab(wxCommandEvent &e);
-    void OnDetachTabUI(wxUpdateUIEvent &e);
 	void OnOpenShellFromFilePath(wxCommandEvent &e);
 	void OnQuickDebug(wxCommandEvent &e);
 	void OnQuickDebugUI(wxUpdateUIEvent &e);

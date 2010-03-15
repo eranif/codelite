@@ -31,15 +31,14 @@
 
 class wxListBox;
 class Notebook;
-class CustomTab;
 
 class NotebookNavDialog : public wxDialog
 {
 protected:
-	wxListBox *m_listBox;
-	size_t m_selectedItem;
-	std::map< int, CustomTab* > m_tabsIndex;
-	CustomTab* m_selTab;
+	wxListBox *                m_listBox;
+	size_t                     m_selectedItem;
+	std::map< int, wxWindow* > m_tabsIndex;
+	wxWindow*                  m_selTab;
 	
 protected:
 	void CloseDialog();
@@ -68,7 +67,7 @@ public:
 	 */
 	void Create(wxWindow* parent);
 	
-	CustomTab *GetSelection(){return m_selTab;}
+	wxWindow *GetSelection(){return m_selTab;}
 	
 	/// Event handling
 	void OnKeyUp(wxKeyEvent &event);

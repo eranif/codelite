@@ -522,6 +522,8 @@ public:
 	virtual int GetCurrentLine();
 	virtual void ReplaceSelection(const wxString &text);
 	virtual wxString GetSelection();
+	virtual int GetSelectionStart();
+	virtual int GetSelectionEnd();
 	virtual void SelectText(int startPos, int len);
 
 	virtual void SetLexerName(const wxString &lexerName);

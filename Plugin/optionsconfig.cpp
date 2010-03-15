@@ -27,7 +27,7 @@
 #include <wx/fontmap.h>
 #include "xmlutils.h"
 #include "macros.h"
-
+#include "wx_xml_compatibility.h"
 
 OptionsConfig::OptionsConfig(wxXmlNode *node)
 		: m_displayFoldMargin(true)
@@ -68,49 +68,51 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_AppendLF(true)
 		, m_disableSmartIndent(false)
 		, m_disableSemicolonShift(false)
+		, m_caretLineAlpha(50)
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
-
 	if ( node ) {
-		m_displayFoldMargin = XmlUtils::ReadBool(node, wxT("DisplayFoldMargin"), m_displayFoldMargin);
-		m_underlineFoldLine = XmlUtils::ReadBool(node, wxT("UnderlineFoldedLine"), m_underlineFoldLine);
-		m_foldStyle = XmlUtils::ReadString(node, wxT("FoldStyle"), m_foldStyle);
-		m_displayBookmarkMargin = XmlUtils::ReadBool(node, wxT("DisplayBookmarkMargin"), m_displayBookmarkMargin);
-		m_bookmarkShape = XmlUtils::ReadString(node, wxT("BookmarkShape"),m_bookmarkShape);
-		m_bookmarkBgColour = XmlUtils::ReadString(node, wxT("BookmarkBgColour"), m_bookmarkBgColour.GetAsString(wxC2S_HTML_SYNTAX));
-		m_bookmarkFgColour = XmlUtils::ReadString(node, wxT("BookmarkFgColour"), m_bookmarkFgColour.GetAsString(wxC2S_HTML_SYNTAX));
-		m_highlightCaretLine = XmlUtils::ReadBool(node, wxT("HighlightCaretLine"), m_highlightCaretLine);
-		m_displayLineNumbers = XmlUtils::ReadBool(node, wxT("ShowLineNumber"), m_displayLineNumbers);
-		m_showIndentationGuidelines = XmlUtils::ReadBool(node, wxT("IndentationGuides"), m_showIndentationGuidelines);
-		m_caretLineColour = XmlUtils::ReadString(node, wxT("CaretLineColour"), m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
-		m_indentUsesTabs = XmlUtils::ReadBool(node, wxT("IndentUsesTabs"), m_indentUsesTabs);
-        m_indentWidth = XmlUtils::ReadLong(node, wxT("IndentWidth"), m_indentWidth);
-        m_tabWidth = XmlUtils::ReadLong(node, wxT("TabWidth"), m_tabWidth);
-		m_iconsSize = XmlUtils::ReadLong(node, wxT("ToolbarIconSize"), m_iconsSize);
-		m_showWhitspaces = XmlUtils::ReadLong(node, wxT("ShowWhitespaces"), m_showWhitspaces);
-		m_foldCompact = XmlUtils::ReadBool(node, wxT("FoldCompact"), m_foldCompact);
-		m_foldAtElse = XmlUtils::ReadBool(node, wxT("FoldAtElse"), m_foldAtElse);
-		m_foldPreprocessor = XmlUtils::ReadBool(node, wxT("FoldPreprocessor"), m_foldPreprocessor);
 		SetFileFontEncoding(XmlUtils::ReadString(node, wxT("FileFontEncoding"), wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8)));
-        m_edgeMode = XmlUtils::ReadLong(node, wxT("EdgeMode"), m_edgeMode);
-        m_edgeColumn = XmlUtils::ReadLong(node, wxT("EdgeColumn"), m_edgeColumn);
-        m_edgeColour = XmlUtils::ReadString(node, wxT("EdgeColour"), m_edgeColour.GetAsString(wxC2S_HTML_SYNTAX));
-		m_highlightMatchedBraces = XmlUtils::ReadBool(node, wxT("HighlightMatchedBraces"), m_highlightMatchedBraces);
-		m_autoAddMatchedBraces = XmlUtils::ReadBool(node, wxT("AutoAddMatchedBraces"), m_autoAddMatchedBraces);
-		m_foldBgColour = XmlUtils::ReadString(node, wxT("FoldBgColour"), m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
-		m_autoAdjustHScrollBarWidth = XmlUtils::ReadBool(node, wxT("AutoAdjustHScrollBarWidth"), m_autoAdjustHScrollBarWidth);
-		m_caretBlinkPeriod = XmlUtils::ReadLong(node, wxT("CaretBlinkPeriod"), m_caretBlinkPeriod);
-		m_caretWidth = XmlUtils::ReadLong(node, wxT("CaretWidth"), m_caretWidth);
-		m_programConsoleCommand = XmlUtils::ReadString(node, wxT("ConsoleCommand"), m_programConsoleCommand);
-		m_eolMode = XmlUtils::ReadString(node, wxT("EOLMode"), m_eolMode);
-		m_hideChangeMarkerMargin = XmlUtils::ReadBool(node, wxT("HideChangeMarkerMargin"));
-		m_hideOutpuPaneOnUserClick = XmlUtils::ReadBool(node, wxT("HideOutputPaneOnUserClick"));
-		m_hideOutputPaneNotIfDebug = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfDebug"));
-		m_showQuickFinder = XmlUtils::ReadBool(node, wxT("ShowQuickFinder"), m_showQuickFinder);
-		m_disableSmartIndent = XmlUtils::ReadBool(node, wxT("DisableSmartIndent"), m_disableSmartIndent);
-		m_disableSemicolonShift = XmlUtils::ReadBool(node, wxT("DisableSemicolonShift"), m_disableSemicolonShift);
-
+		
+		m_displayFoldMargin         = XmlUtils::ReadBool  (node, wxT("DisplayFoldMargin"),         m_displayFoldMargin);
+		m_underlineFoldLine         = XmlUtils::ReadBool  (node, wxT("UnderlineFoldedLine"),       m_underlineFoldLine);
+		m_foldStyle                 = XmlUtils::ReadString(node, wxT("FoldStyle"),                 m_foldStyle);
+		m_displayBookmarkMargin     = XmlUtils::ReadBool  (node, wxT("DisplayBookmarkMargin"),     m_displayBookmarkMargin);
+		m_bookmarkShape             = XmlUtils::ReadString(node, wxT("BookmarkShape"),             m_bookmarkShape);
+		m_bookmarkBgColour          = XmlUtils::ReadString(node, wxT("BookmarkBgColour"),          m_bookmarkBgColour.GetAsString(wxC2S_HTML_SYNTAX));
+		m_bookmarkFgColour          = XmlUtils::ReadString(node, wxT("BookmarkFgColour"),          m_bookmarkFgColour.GetAsString(wxC2S_HTML_SYNTAX));
+		m_highlightCaretLine        = XmlUtils::ReadBool  (node, wxT("HighlightCaretLine"),        m_highlightCaretLine);
+		m_displayLineNumbers        = XmlUtils::ReadBool  (node, wxT("ShowLineNumber"),            m_displayLineNumbers);
+		m_showIndentationGuidelines = XmlUtils::ReadBool  (node, wxT("IndentationGuides"),         m_showIndentationGuidelines);
+		m_caretLineColour           = XmlUtils::ReadString(node, wxT("CaretLineColour"),           m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
+		m_indentUsesTabs            = XmlUtils::ReadBool  (node, wxT("IndentUsesTabs"),            m_indentUsesTabs);
+        m_indentWidth               = XmlUtils::ReadLong  (node, wxT("IndentWidth"),               m_indentWidth);
+        m_tabWidth                  = XmlUtils::ReadLong  (node, wxT("TabWidth"),                  m_tabWidth);
+		m_iconsSize                 = XmlUtils::ReadLong  (node, wxT("ToolbarIconSize"),           m_iconsSize);
+		m_showWhitspaces            = XmlUtils::ReadLong  (node, wxT("ShowWhitespaces"),           m_showWhitspaces);
+		m_foldCompact               = XmlUtils::ReadBool  (node, wxT("FoldCompact"),               m_foldCompact);
+		m_foldAtElse                = XmlUtils::ReadBool  (node, wxT("FoldAtElse"),                m_foldAtElse);
+		m_foldPreprocessor          = XmlUtils::ReadBool  (node, wxT("FoldPreprocessor"),          m_foldPreprocessor);
+		m_edgeMode                  = XmlUtils::ReadLong  (node, wxT("EdgeMode"),                  m_edgeMode);
+        m_edgeColumn                = XmlUtils::ReadLong  (node, wxT("EdgeColumn"),                m_edgeColumn);
+        m_edgeColour                = XmlUtils::ReadString(node, wxT("EdgeColour"),                m_edgeColour.GetAsString(wxC2S_HTML_SYNTAX));
+		m_highlightMatchedBraces    = XmlUtils::ReadBool  (node, wxT("HighlightMatchedBraces"),    m_highlightMatchedBraces);
+		m_autoAddMatchedBraces      = XmlUtils::ReadBool  (node, wxT("AutoAddMatchedBraces"),      m_autoAddMatchedBraces);
+		m_foldBgColour              = XmlUtils::ReadString(node, wxT("FoldBgColour"),              m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
+		m_autoAdjustHScrollBarWidth = XmlUtils::ReadBool  (node, wxT("AutoAdjustHScrollBarWidth"), m_autoAdjustHScrollBarWidth);
+		m_caretBlinkPeriod          = XmlUtils::ReadLong  (node, wxT("CaretBlinkPeriod"),          m_caretBlinkPeriod);
+		m_caretWidth                = XmlUtils::ReadLong  (node, wxT("CaretWidth"),                m_caretWidth);
+		m_programConsoleCommand     = XmlUtils::ReadString(node, wxT("ConsoleCommand"),            m_programConsoleCommand);
+		m_eolMode                   = XmlUtils::ReadString(node, wxT("EOLMode"),                   m_eolMode);
+		m_hideChangeMarkerMargin    = XmlUtils::ReadBool  (node, wxT("HideChangeMarkerMargin"));
+		m_hideOutpuPaneOnUserClick  = XmlUtils::ReadBool  (node, wxT("HideOutputPaneOnUserClick"));
+		m_hideOutputPaneNotIfDebug  = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfDebug"));
+		m_showQuickFinder           = XmlUtils::ReadBool  (node, wxT("ShowQuickFinder"),           m_showQuickFinder);
+		m_disableSmartIndent        = XmlUtils::ReadBool  (node, wxT("DisableSmartIndent"),        m_disableSmartIndent);
+		m_disableSemicolonShift     = XmlUtils::ReadBool  (node, wxT("DisableSemicolonShift"),     m_disableSemicolonShift);
+		m_caretLineAlpha            = XmlUtils::ReadLong  (node, wxT("CaretLineAlpha"),            m_caretLineAlpha);
+		
 		// These hacks will likely be changed in the future. If so, we'll be able to remove the #include "editor_config.h" too
 		long trim(0); long appendLf(0);
 		EditorConfigST::Get()->GetLongValue(wxT("EditorTrimEmptyLines"), trim);
@@ -188,6 +190,10 @@ wxXmlNode *OptionsConfig::ToXml() const
 	tmp.clear();
     tmp << m_caretBlinkPeriod;
     n->AddProperty(wxT("CaretBlinkPeriod"), tmp);
+	
+	tmp.clear();
+    tmp << m_caretLineAlpha;
+    n->AddProperty(wxT("CaretLineAlpha"), tmp);
 
 	tmp.clear();
 	tmp = wxFontMapper::GetEncodingName(m_fileFontEncoding);

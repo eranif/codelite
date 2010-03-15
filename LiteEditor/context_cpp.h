@@ -146,7 +146,8 @@ private:
 	int           FindLineToAddInclude();
 	void          MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr> &tags);
 	void          DoOpenWorkspaceFile();
-
+	void          DoSetProjectPaths();
+	
 public:
 	void          DoMakeDoxyCommentString(DoxygenComment &dc);
 

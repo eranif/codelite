@@ -48,8 +48,7 @@
         <CustomPreBuild>crawler_lexer.cpp
 crawler_lexer.cpp: crawler.l
 	flex -L  -Pfc_ crawler.l
-	mv lex.fc_.c crawler_lexer.cpp
-</CustomPreBuild>
+	mv lex.fc_.c crawler_lexer.cpp</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">

@@ -78,6 +78,7 @@
 #include "clean_request.h"
 #include "buidltab.h"
 #include "manager.h"
+#include <wx/toolbook.h>
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
 
@@ -122,7 +123,8 @@ static wxArrayString DoGetTemplateTypes(const wxString& tmplDecl)
 	tmpstr.Trim().Trim(false);
 
 	for (size_t i=0; i<tmpstr.Length(); i++) {
-		switch (tmpstr.GetChar(i)) {
+		wxChar ch = tmpstr.GetChar(i);
+		switch (ch) {
 		case wxT(','):
 						if ( depth > 0 ) {
 					type << wxT(",");
@@ -301,7 +303,7 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 	TagsOptionsData tagsopt = TagsManagerST::Get()->GetCtagsOptions();
 	if ( tagsopt.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ) {
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
-		Frame::Get()->AddPendingEvent(e);
+		Frame::Get()->GetEventHandler()->AddPendingEvent(e);
 	}
 }
 
@@ -474,18 +476,27 @@ void Manager::AddProject ( const wxString & path )
 	SendCmdEvent ( wxEVT_PROJ_ADDED, ( void* ) &projectName );
 }
 
-void Manager::ImportMSVSSolution ( const wxString &path )
+void Manager::ImportMSVSSolution ( const wxString &path, const wxString &defaultCompiler )
 {
 	wxFileName fn ( path );
 	if ( fn.FileExists() == false ) {
 		return;
 	}
+	
+	// Show some messages to the user
+	wxBusyCursor busyCursor;
+	wxBusyInfo info(_("Importing MS solution..."), Frame::Get());
+	
 	wxString errMsg;
-	VcImporter importer ( path );
+	VcImporter importer ( path, defaultCompiler );
 	if ( importer.Import ( errMsg ) ) {
 		wxString wspfile;
 		wspfile << fn.GetPath() << wxT ( "/" ) << fn.GetName() << wxT ( ".workspace" );
 		OpenWorkspace ( wspfile );
+		
+		// Retag workspace
+		wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
+		Frame::Get()->GetEventHandler()->AddPendingEvent( event );
 	}
 }
 
@@ -1240,31 +1251,94 @@ bool Manager::IsPaneVisible ( const wxString& pane_name )
 	return false;
 }
 
+bool Manager::DoFindDockInfo(const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info)
+{
+	// search for the 'Output View' perspective
+	wxArrayString panes = wxStringTokenize(saved_perspective, wxT("|"), wxTOKEN_STRTOK);
+	for (size_t i=0; i<panes.GetCount(); i++) {
+		if ( panes.Item(i).StartsWith(dock_name) ) {
+			dock_info = panes.Item(i);
+			return true;
+		}
+	}
+	return false;
+}
+
+void Manager::ToggleOutputPane(bool hide)
+{
+	static wxString saved_dock_info;
+	wxAuiManager *aui = &Frame::Get()->GetDockingManager();
+	
+	if ( aui ) {
+		wxAuiPaneInfo &pane_info = aui->GetPane(wxT("Output View"));
+		wxString dock_info ( wxString::Format(wxT("dock_size(%d,%d,%d)"), pane_info.dock_direction, pane_info.dock_layer, pane_info.dock_row) );
+		if ( hide ) {
+			if ( pane_info.IsShown() ) {
+				Frame::Get()->Freeze();
+
+				DoFindDockInfo(aui->SavePerspective(), dock_info, saved_dock_info);
+				pane_info.Hide();
+
+				aui->Update();
+
+				Frame::Get()->Thaw();
+			}
+
+
+		} else {
+			// Show it
+			if ( pane_info.IsShown() == false ) {
+				Frame::Get()->Freeze();
+				
+				if ( saved_dock_info.IsEmpty() ) {
+					
+					pane_info.Show();
+					aui->Update();
+					
+				} else {
+					wxString auiPerspective = aui->SavePerspective();
+					if ( auiPerspective.Find(dock_info) == wxNOT_FOUND ) {
+						// the dock_info does not exist
+						auiPerspective << saved_dock_info << wxT("|");
+						aui->LoadPerspective(auiPerspective, false);
+						pane_info.Show();
+						aui->Update();
+					} else {
+						pane_info.Show();
+						aui->Update();
+					}
+				}
+				Frame::Get()->Thaw();
+			}
+		}
+	}
+}
+
+
+
 bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 {
 	// make the output pane visible
-	bool showedIt ( false );
-
-	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( wxT ( "Output View" ) );
-	if ( info.IsOk() && !info.IsShown() ) {
-		info.Show();
-		showedIt = true;
-		if ( commit ) {
-			Frame::Get()->GetDockingManager().Update();
-		}
-	}
-
+	ToggleOutputPane( false );
+	
 	// set the selection to focus win
 	OutputPane *pane = Frame::Get()->GetOutputPane();
-	int index = pane->GetNotebook()->GetPageIndex( focusWin );
-	if ( index != wxNOT_FOUND && ( size_t ) index != pane->GetNotebook()->GetSelection() ) {
+	int index(wxNOT_FOUND);
+	for(size_t i=0; i<pane->GetNotebook()->GetPageCount(); i++) {
+		if(pane->GetNotebook()->GetPageText(i) == focusWin) {
+			index = (int)i;
+			break;
+		}
+	}
+	
+	if ( index != wxNOT_FOUND && index != pane->GetNotebook()->GetSelection() ) {
 		wxWindow *focus = wxWindow::FindFocus();
 		pane->GetNotebook()->SetSelection ( ( size_t ) index );
 		if (focus) {
 			focus->SetFocus();
 		}
 	}
-	return showedIt;
+	return true;
 }
 
 void Manager::ShowDebuggerPane ( bool show )
@@ -2821,7 +2895,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	break;
 	case DBG_UR_EVALVARIABLEOBJ:
 		if (GetDisplayVariableDialog()->IsShown()) {
-			GetDisplayVariableDialog()->UpdateValue(event.m_expression, event.m_evaluated);
+			GetDisplayVariableDialog()->UpdateValue(event.m_expression, event.m_evaluated, event.m_displayFormat);
 		}
 		break;
 	case DBG_UR_INVALID:
@@ -2838,7 +2912,7 @@ void Manager::DbgRestoreWatches()
 			DebugMessage(wxT("Restoring watch: ") + m_dbgWatchExpressions.Item(i) + wxT("\n"));
 			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("add_watch"));
 			e.SetString(m_dbgWatchExpressions.Item(i));
-			Frame::Get()->GetDebuggerPane()->GetWatchesTable()->AddPendingEvent( e );
+			Frame::Get()->GetDebuggerPane()->GetWatchesTable()->GetEventHandler()->AddPendingEvent( e );
 		}
 	}
 }
@@ -2855,7 +2929,7 @@ void Manager::DoRestartCodeLite()
 	<< wxT("\"");
 
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("exit_app"));
-	Frame::Get()->ProcessEvent(event);
+	Frame::Get()->GetEventHandler()->ProcessEvent(event);
 
 	wxExecute(command, wxEXEC_ASYNC|wxEXEC_NOHIDE);
 
@@ -2864,7 +2938,7 @@ void Manager::DoRestartCodeLite()
 	command << wxStandardPaths::Get().GetExecutablePath();
 
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("exit_app"));
-	Frame::Get()->AddPendingEvent(event);
+	Frame::Get()->GetEventHandler()->AddPendingEvent(event);
 
 	wxExecute(command, wxEXEC_ASYNC|wxEXEC_NOHIDE);
 #endif

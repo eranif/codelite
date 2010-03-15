@@ -1037,7 +1037,7 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
 		}
 
 		if ( vo.gdbId.IsEmpty() == false  ) {
-
+			
 			e.m_updateReason = DBG_UR_VARIABLEOBJ;
 			e.m_variableObject = vo;
 			e.m_expression = m_expression;
@@ -1149,9 +1149,10 @@ bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
 		if ( display_line.IsEmpty() == false && display_line != wxT("{...}")) {
 			DebuggerEvent e;
 			e.m_updateReason = DBG_UR_EVALVARIABLEOBJ;
-			e.m_expression = m_variable;
-			e.m_evaluated = display_line;
-			e.m_userReason = m_userReason;
+			e.m_expression    = m_variable;
+			e.m_evaluated     = display_line;
+			e.m_userReason    = m_userReason;
+			e.m_displayFormat = m_displayFormat;
 			m_observer->DebuggerUpdate( e );
 		}
 		return true;

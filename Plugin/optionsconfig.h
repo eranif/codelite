@@ -74,6 +74,7 @@ protected:
 	bool           m_AppendLF;
 	bool           m_disableSmartIndent;
 	bool           m_disableSemicolonShift;
+	int            m_caretLineAlpha;
 
 public:
 	OptionsConfig() {}
@@ -331,6 +332,12 @@ public:
 	}
 	const wxString& GetEolMode() const {
 		return m_eolMode;
+	}
+	void SetCaretLineAlpha(int caretLineAlpha) {
+		this->m_caretLineAlpha = caretLineAlpha;
+	}
+	int GetCaretLineAlpha() const {
+		return m_caretLineAlpha;
 	}
 	/**
 	 * Return an XML representation of this object

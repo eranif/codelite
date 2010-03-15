@@ -2,6 +2,8 @@
 #include "globals.h"
 #include "xmlutils.h"
 #include <wx/tokenzr.h>
+#include "macros.h"
+#include "wx_xml_compatibility.h"
 
 BuildConfigCommon::BuildConfigCommon(wxXmlNode* node, wxString confType)
 : m_confType(confType)

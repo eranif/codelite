@@ -121,10 +121,13 @@ class TagsManager : public wxEvtHandler
 	friend class Singleton<TagsManager>;
 	friend class DirTraverser;
 	friend class Language;
-
+	
+public:
+	wxCriticalSection      m_crawlerLocker;
+	
+private:
 	ITagsStorage *                m_workspaceDatabase;
 	wxCriticalSection             m_cs;
-	wxCriticalSection             m_crawlerLocker;
 	wxFileName                    m_codeliteIndexerPath;
 	clProcess*                    m_codeliteIndexerProcess;
 	wxString                      m_ctagsCmd;
@@ -141,6 +144,7 @@ class TagsManager : public wxEvtHandler
 	bool                          m_enableCaching;
 	wxEvtHandler*                 m_evtHandler;
 	std::set<wxString>            m_CppIgnoreKeyWords;
+	wxArrayString                 m_projectPaths;
 public:
 
 	void SetLanguage(Language *lang);
@@ -280,7 +284,17 @@ public:
 	 * @return true if the file name extension matches the current running ctags file spec
 	 */
 	bool IsValidCtagsFile(const wxFileName &filename) const;
-
+	
+	/**
+	 * @brief set the project paths
+	 */
+	void SetProjectPaths(const wxArrayString &paths);
+	
+	/**
+	 * @return project file paths
+	 */
+	const wxArrayString& GetProjectPaths() const {return m_projectPaths;} 
+	
 	/**
 	 * Find symbols by name and scope.
 	 * @param name symbol name
@@ -683,12 +697,6 @@ public:
 	 * @brief clear the underlying caching mechanism
 	 */
 	void ClearTagsCache();
-	
-	/**
-	 * @brief lock/unlock the TagsManager locker
-	 */
-	void CrawlerLock();
-	void CrawlerUnlock();
 
 protected:
 	std::map<wxString, bool> m_typeScopeCache;

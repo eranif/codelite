@@ -62,6 +62,7 @@ void MacrosDlg::Initialize()
 	switch ( m_content ) {
 	case MacrosExternalTools:
 		AddMacro(wxT("$(CurrentSelection)"),      wxT("Expands to the selected text in the active editor"));
+		AddMacro(wxT("$(CurrentSelectionRange)"), wxT("Expands to the selected text range in bytes from beginning of file, eg. 150:200"));
 		AddMacro(wxT("$(ProjectOutputFile)"),     wxT("Expands to the project binary output file"));
 		// fall ...
 	case MacrosProject:

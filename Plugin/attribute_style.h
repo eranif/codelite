@@ -28,6 +28,15 @@
 #include "wx/string.h"
 #include "list"
 
+// Set default font size per-OS
+#if   defined(__WXGTK__)
+#    define FONT_SIZE 10
+#elif defined(__WXMSW__)
+#    define FONT_SIZE 10
+#else
+#    define FONT_SIZE 12
+#endif
+
 class StyleProperty
 {
 	int m_id;
@@ -86,7 +95,13 @@ public:
 
 	const wxString& GetFgColour() const { return m_fgColour; }
 	const wxString& GetBgColour() const { return m_bgColour; }
-	const long GetFontSize() const { return m_fontSize; }
+	
+	const long GetFontSize() const {
+		if(m_fontSize <= 0)
+			return FONT_SIZE;
+		return m_fontSize;
+	}
+	
 	const wxString& GetFaceName() const { return m_faceName; }
 	bool IsBold() const { return m_bold; }
 	const wxString& GetName() const { return m_name; }

@@ -196,7 +196,9 @@ clToolBar *GizmosPlugin::CreateToolBar(wxWindow *parent)
 	}
 
 	//Connect the events to us
+#if !USE_AUI_TOOLBAR
 	m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnGizmos   ), NULL, (wxEvtHandler*)this);
+#endif
 	m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(GizmosPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
 
 	m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnNewPlugin), NULL, (wxEvtHandler*)this);
@@ -369,12 +371,14 @@ void GizmosPlugin::DoCreateNewPlugin()
 
 void GizmosPlugin::OnNewPluginUI(wxUpdateUIEvent &e)
 {
+	CHECK_CL_SHUTDOWN();
 	//we enable the button only when workspace is opened
 	e.Enable(m_mgr->IsWorkspaceOpen());
 }
 
 void GizmosPlugin::OnNewClassUI(wxUpdateUIEvent &e)
 {
+	CHECK_CL_SHUTDOWN();
 	//we enable the button only when workspace is opened
 	e.Enable(m_mgr->IsWorkspaceOpen());
 }
@@ -603,6 +607,7 @@ void GizmosPlugin::DoCreateNewWxProject()
 
 void GizmosPlugin::OnNewWxProjectUI(wxUpdateUIEvent &e)
 {
+	CHECK_CL_SHUTDOWN();
 	//we enable the button only when workspace is opened
 	e.Enable(m_mgr->IsWorkspaceOpen());
 }
@@ -950,6 +955,7 @@ void GizmosPlugin::OnGizmos(wxCommandEvent& e)
 
 void GizmosPlugin::OnGizmosUI(wxUpdateUIEvent& e)
 {
+	CHECK_CL_SHUTDOWN();
 	e.Enable(m_mgr->IsWorkspaceOpen());
 }
 

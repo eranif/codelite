@@ -107,7 +107,8 @@ public:
 	/** Constructor */
 	SubversionView( wxWindow* parent, Subversion2 *plugin);
 	virtual ~SubversionView();
-
+	
+	void     DisconnectEvents();
 	void     UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString &conflictedFiles, const wxArrayString &unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles);
 	void     BuildTree();
 	void     BuildTree(const wxString &root);

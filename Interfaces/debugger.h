@@ -74,6 +74,14 @@ enum BreakpointOrigin {
 	BO_Other
 };
 
+enum DisplayFormat {
+	DBG_DF_NATURAL = 0,
+	DBG_DF_HEXADECIMAL,
+	DBG_DF_BINARY,
+	DBG_DF_DECIMAL,
+	DBG_DF_OCTAL
+};
+
 //-------------------------------------------------------
 // Data structures used by the debugger
 //-------------------------------------------------------
@@ -355,7 +363,8 @@ public:
 			, maxDisplayStringSize(200)
 			, resolveLocals     (false)
 			, autoExpandTipItems(true)
-	{}
+			{
+	}
 	virtual ~DebuggerInformation() {}
 
 	void Serialize(Archive &arch) {
@@ -479,7 +488,7 @@ public:
 		m_env = env;
 	}
 
-	void SetDebuggerInformation(const DebuggerInformation& info) {
+	virtual void SetDebuggerInformation(const DebuggerInformation& info) {
 		m_info = info;
 	}
 
@@ -731,7 +740,7 @@ public:
 	 * @brief evaluate variable object
 	 * @param name variable object
 	 */
-	virtual bool EvaluateVariableObject(const wxString &name, int userReason) = 0;
+	virtual bool EvaluateVariableObject(const wxString &name, DisplayFormat displayFormat, int userReason) = 0;
 };
 
 //-----------------------------------------------------------

@@ -115,6 +115,9 @@ void AbbreviationPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 
 void AbbreviationPlugin::UnPlug()
 {
+	m_topWindow->Disconnect(wxEVT_CCBOX_SELECTION_MADE, wxCommandEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
+	m_topWindow->Disconnect( XRCID("abbrev_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( AbbreviationPlugin::OnSettings ), NULL, this );
+	m_topWindow->Disconnect( XRCID("abbrev_show"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( AbbreviationPlugin::OnAbbreviations), NULL, this );
 }
 
 void AbbreviationPlugin::OnSettings(wxCommandEvent& e)

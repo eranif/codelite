@@ -33,13 +33,7 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID i
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
-	m_book = new wxListbook( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_DEFAULT );
-	#ifndef __WXGTK__ // Small icon style not supported in GTK
-	wxListView* m_bookListView = m_book->GetListView();
-	long m_bookFlags = m_bookListView->GetWindowStyleFlag();
-	m_bookFlags = ( m_bookFlags & ~wxLC_ICON ) | wxLC_SMALL_ICON;
-	m_bookListView->SetWindowStyleFlag( m_bookFlags );
-	#endif
+	m_book = new wxNotebook( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_LEFT );
 	
 	bSizer3->Add( m_book, 1, wxEXPAND | wxALL, 5 );
 	
@@ -54,7 +48,7 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID i
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_listCtrl1 = new wxListCtrl( m_panel2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+	m_listCtrl1 = new wxListCtrl( m_panel2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
 	bSizer5->Add( m_listCtrl1, 1, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer6;
@@ -92,7 +86,7 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID i
 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonCancel, 0, wxALL, 5 );
 	
-	bSizer1->Add( bSizer2, 0, wxALIGN_RIGHT, 5 );
+	bSizer1->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
@@ -129,23 +123,20 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
 	
-	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 1, 0, 0, 0 );
-	fgSizer2->AddGrowableCol( 1 );
-	fgSizer2->SetFlexibleDirection( wxBOTH );
-	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	wxBoxSizer* bSizer10;
+	bSizer10 = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_staticText1 = new wxStaticText( m_panel3, wxID_ANY, wxT("Debugger path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
-	fgSizer2->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer10->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrDbgPath = new wxTextCtrl( m_panel3, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer2->Add( m_textCtrDbgPath, 0, wxALL|wxEXPAND, 5 );
+	bSizer10->Add( m_textCtrDbgPath, 1, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowse = new wxButton( m_panel3, wxID_ANY, wxT("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer2->Add( m_buttonBrowse, 0, wxALL, 5 );
+	bSizer10->Add( m_buttonBrowse, 0, wxALL, 5 );
 	
-	bSizer8->Add( fgSizer2, 0, wxEXPAND, 5 );
+	bSizer8->Add( bSizer10, 0, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Options:") ), wxVERTICAL );

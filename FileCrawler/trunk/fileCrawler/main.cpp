@@ -9,7 +9,7 @@ std::string extract_path(const std::string &filePath);
 
 int main(int argc, char **argv)
 {
-/*//	fcFileOpener::Instance()->AddSearchPath("C:/MinGW-3.4.5/include");
+//	fcFileOpener::Instance()->AddSearchPath("C:/MinGW-3.4.5/include");
 //	fcFileOpener::Instance()->AddSearchPath("C:/wxWidgets-2.8.10/include");
 	fcFileOpener::Instance()->AddSearchPath("C:\\MinGW-4.4.0\\include");
 	fcFileOpener::Instance()->AddSearchPath("C:\\MinGW-4.4.0\\lib\\gcc\\mingw32\\4.4.0\\include\\c++");
@@ -37,6 +37,18 @@ int main(int argc, char **argv)
 //		for (; iter != fcFileOpener::Instance()->GetResults().end(); iter ++) {
 //			printf("%s\n", (*iter).c_str());
 //		}
-	}*/
+	}
+
+	std::set<std::string> ns = fcFileOpener::Instance()->GetNamespaces();
+	std::set<std::string>::iterator iter = ns.begin();
+	for(; iter != ns.end(); iter++) {
+		printf("Using namespace: %s\n", iter->c_str());
+	}
+
+	std::set<std::string> nsa = fcFileOpener::Instance()->GetNamespaceAliases();
+	iter = nsa.begin();
+	for(; iter != nsa.end(); iter++) {
+		printf("Namespace alias: %s\n", iter->c_str());
+	}
 	return 0;
 }

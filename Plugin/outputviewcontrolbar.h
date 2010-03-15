@@ -6,7 +6,8 @@
 #include <wx/window.h>
 #include <wx/bitmap.h>
 #include <vector>
-#include "custom_notebook.h"
+#include <wx/aui/framemanager.h>
+#include "notebook_ex.h"
 #include <wx/textctrl.h>
 
 //--------------------------------------------------------
@@ -23,7 +24,10 @@ extern wxString TYPE_HERE_TEXT;
 class wxAuiManager;
 class OutputViewControlBarButton;
 class Notebook;
+
+#ifdef __WXGTK__
 class OutputViewControlBarToggleButton;
+#endif
 
 //--------------------------------------------------------
 
@@ -34,11 +38,12 @@ class OutputViewControlBar : public wxPanel
 	OutputViewControlBarButton*              m_moreButton;
 
 public:
-#ifndef __WXGTK__
-	std::vector<OutputViewControlBarButton*>       m_buttons;
-#else
+#ifdef __WXGTK__
 	std::vector<OutputViewControlBarToggleButton*> m_buttons;
+#else
+	std::vector<OutputViewControlBarButton*>       m_buttons;
 #endif
+
 	OutputViewControlBar(wxWindow *win, Notebook *book, wxAuiManager *aui, wxWindowID id);
 
 	virtual ~OutputViewControlBar();
@@ -130,11 +135,12 @@ public:
 	virtual void OnMouseLDown     (wxMouseEvent &event);
 };
 
+#ifdef __WXGTK__
 class OutputViewControlBarToggleButton : public wxToggleButton
 {
 	void DoShowPopupMenu();
 public:
-	OutputViewControlBarToggleButton(wxWindow *parent, const wxString &label);
+	OutputViewControlBarToggleButton(wxWindow *parent, const wxString &label, const wxBitmap& bmp);
 	virtual ~OutputViewControlBarToggleButton();
 
 	void SetText(const wxString& text) {
@@ -148,5 +154,6 @@ public:
 	DECLARE_EVENT_TABLE()
 	void OnButtonToggled(wxCommandEvent &e);
 };
+#endif
 
 #endif // __auicontrolbar__

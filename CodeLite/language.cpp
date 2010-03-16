@@ -1105,19 +1105,14 @@ bool Language::FunctionFromPattern(TagEntryPtr tag, clFunction &foo)
 		return true;
 
 	} else if (fooList.size() == 0) {
-		//fail to parse the statement, assume we got a broken pattern
-		//(this can happen because ctags keeps only the first line of a function which was declared
-		//over multiple lines)
-		//do some work on the input buffer
-		wxString pat2(pattern);
+		// Fail to parse the statement, assume we got a broken pattern
+		// (this can happen because ctags keeps only the first line of a function which was declared
+		// over multiple lines)
+		// Manually construct the pattern from TagEntry
+		wxString pat2;
+		
+		pat2 << tag->GetReturnValue() << wxT(" ") << tag->GetName() << tag->GetSignature() << wxT(";");
 
-		if (pat2.EndsWith(wxT(";"))) {
-			pat2 = pat2.RemoveLast();
-		}
-		if (pat2.EndsWith(wxT(","))) {
-			pat2 = pat2.RemoveLast();
-		}
-		pat2 << wxT(");");
 		const wxCharBuffer patbuf1 = _C(pat2);
 		get_functions(patbuf1.data(), fooList, ignoreTokens);
 		if (fooList.size() == 1) {

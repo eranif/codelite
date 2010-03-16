@@ -2082,15 +2082,36 @@ void Frame::OnTimer(wxTimerEvent &event)
 
 		// Check that the user has some paths set in the parser
 		EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
-
-		if ( m_tagsOptionsData.GetParserSearchPaths().IsEmpty() ) {
+		
+		/////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////
+		
+		// There are 2 conditions that we check here:
+		// 1) if there are no search paths set
+		// 2) there are search paths, but some or all of them are no longer exist on the system
+		
+		bool isUpdatePathRequired (false);
+		bool allPathsExists       (true);
+		bool hasSearchPath        (true);
+		
+		hasSearchPath = m_tagsOptionsData.GetParserSearchPaths().IsEmpty() == false;
+		
+		for(size_t i=0; i<m_tagsOptionsData.GetParserSearchPaths().GetCount(); i++) {
+			if(wxFileName::DirExists(m_tagsOptionsData.GetParserSearchPaths().Item(i)) == false) {
+				allPathsExists = false;
+				break;
+			}
+		}
+		isUpdatePathRequired = (!allPathsExists || !hasSearchPath);
+		
+		if ( isUpdatePathRequired ) {
 			// Try to locate the paths automatically
 			wxArrayString paths;
 			wxArrayString excudePaths;
 			IncludePathLocator locator(PluginManager::Get());
 			locator.Locate( paths, excudePaths );
 
-			if ( paths.IsEmpty() && updatePaths) {
+			if ( !hasSearchPath && paths.IsEmpty() && updatePaths) {
 				GetMainBook()->ShowMessage(
 								wxT("CodeLite could not find any search paths set for the code completion parser\n")
 								wxT("This means that CodeLite will *NOT* be able to offer any code completion for non-workspace files (e.g. string.h).\n")
@@ -2116,12 +2137,16 @@ void Frame::OnTimer(wxTimerEvent &event)
 					btnNoNever.commandId   = XRCID("never_update_parser_paths");
 
 					GetMainBook()->ShowMessage(
-									wxT("Should CodeLite update your code completion parser search paths ? (since there are none..)"),
+									wxT("There seem to be a problem with your code completion parser search paths (there either non, or some are pointing to a non existing location on the disk)\n")
+									wxT("Can CodeLite fix your code completion parser search paths?"),
 									false, wxNullBitmap, btnYes, btnNo, btnNoNever);
 				}
 			}
 		}
 
+		/////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////
+		
 		//send initialization end event
 		SendCmdEvent(wxEVT_INIT_DONE);
 	}

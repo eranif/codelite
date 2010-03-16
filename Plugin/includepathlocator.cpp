@@ -88,7 +88,7 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 		// since we only support codelite's installation of MinGW, we know what to append
 		// to the include path
 		paths.Add(standardIncludeBase + wxT("\\include"));
-		standardIncludeBase << wxT("\\lib\\gcc\\mingw32\\4.4.0\\include\\c++");
+		standardIncludeBase << wxT("\\lib\\gcc\\mingw32\\4.4.1\\include\\c++");
 		paths.Add( standardIncludeBase );
 		excludePaths.Add( standardIncludeBase + wxT("\\debug") );
 	}

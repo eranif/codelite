@@ -132,7 +132,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_parserEnabled (true)
 		, m_maxItemToColour(1000)
 {
-	SetVersion(wxT("2.3"));
+	SetVersion(wxT("2.4"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =
@@ -154,6 +154,7 @@ wxT("__cdecl\n")
 wxT("__stdcall\n")
 wxT("WXDLLEXPORT\n")
 wxT("WXDLLIMPORT\n")
+wxT("__MINGW_ATTRIB_PURE\n")
 wxT("wxT\n")
 #if defined (__WXGTK__)
 	wxT("wxTopLevelWindowNative=wxTopLevelWindowGTK\n")

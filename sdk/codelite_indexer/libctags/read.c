@@ -681,9 +681,9 @@ extern int readChars (char *buffer, size_t bufferSize, fpos_t location, fpos_t e
 	memset(buffer, 0, bufferSize);
 
 #if defined(__WXMSW__) || defined(__APPLE__)||defined(__FreeBSD__)
-	sizeToRead = endPos - location + 1;
+	sizeToRead = endPos - location;
 #else
-	sizeToRead = endPos.__pos - location.__pos + 1;
+	sizeToRead = endPos.__pos - location.__pos;
 #endif
 	if(sizeToRead < 0) {
 		/* restore original file position */
@@ -701,7 +701,6 @@ extern int readChars (char *buffer, size_t bufferSize, fpos_t location, fpos_t e
 	if((int)count != sizeToRead) {
 		/* restore original file position */
 		fsetpos (File.fp, &orignalPosition);
-		/* free allocated buffer */
 		return 0;
 	}
 

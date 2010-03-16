@@ -75,7 +75,7 @@ public:
 	virtual IConfigTool *          GetConfigTool();
 	virtual TreeItemInfo           GetSelectedTreeItemInfo(TreeType type);
 	virtual wxTreeCtrl *           GetTree(TreeType type);
-	virtual wxBookCtrlBase *       GetOutputPaneNotebook();
+	virtual OutputPaneBook*        GetOutputPaneNotebook();
 	virtual Notebook *             GetWorkspacePaneNotebook();
 	virtual bool                   OpenFile(const wxString &fileName, const wxString &projectName = wxEmptyString, int lineno = wxNOT_FOUND);
 	virtual bool                   OpenFile(const BrowseRecord &rec);

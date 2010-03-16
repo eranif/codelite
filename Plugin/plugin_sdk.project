@@ -197,6 +197,7 @@
       <File Name="notebook_ex_nav_dlg_base.cpp"/>
       <File Name="tabicons.h"/>
       <File Name="tabicons.cpp"/>
+      <File Name="output_pane_book.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="TokenScanner">

@@ -668,7 +668,7 @@ void Frame::CreateGUIControls(void)
 	SetSizer(mainSizer);
 
 	mainSizer->Add(m_mainPanel, 1, wxEXPAND);
-
+	
 	// tell wxAuiManager to manage this frame
 	m_mgr.SetManagedWindow(m_mainPanel);
 	m_mgr.SetArtProvider(new CLAuiDockArt());
@@ -2691,7 +2691,13 @@ void Frame::CompleteInitialization()
 	// Connect some system events
 	m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(Frame::OnDockablePaneClosed), NULL, this);
 	m_mgr.Connect(wxEVT_AUI_RENDER,     wxAuiManagerEventHandler(Frame::OnAuiManagerRender),   NULL, this);
-
+	
+	
+	OutputViewControlBar* outputViewControlBar = new OutputViewControlBar(this, GetOutputPane()->GetNotebook(), &m_mgr, wxID_ANY);
+	outputViewControlBar->AddAllButtons();
+	
+	GetSizer()->Add(outputViewControlBar, 0, wxEXPAND);
+	Layout();
 	SetEnvStatusMessage();
 }
 

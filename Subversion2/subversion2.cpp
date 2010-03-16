@@ -234,11 +234,8 @@ void Subversion2::DoInitialize()
 			book->InsertPage(index, m_subversionView, svnCONSOLE_TEXT, false);
 	}
 
-	wxBookCtrlBase *outputBook = m_mgr->GetOutputPaneNotebook();
-	m_subversionConsole = new SvnConsole(outputBook, this);
-
-	int imgId = outputBook->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")));
-	outputBook->AddPage(m_subversionConsole, svnCONSOLE_TEXT, false, imgId);
+	m_subversionConsole = new SvnConsole(m_mgr->GetOutputPaneNotebook(), this);
+	m_mgr->GetOutputPaneNotebook()->AddPage(m_subversionConsole, svnCONSOLE_TEXT, false, wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")));
 
 	DoSetSSH();
 	// We need to perform a dummy call to svn so it will create all the default

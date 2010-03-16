@@ -27,7 +27,7 @@
 #define IMANAGER_H
 
 #include <wx/aui/framemanager.h>
-#include <wx/toolbook.h>
+#include "output_pane_book.h"
 #include "ieditor.h"
 #include "iconfigtool.h"
 #include "ikeyboard.h"
@@ -127,18 +127,20 @@ public:
 	 * @sa TreeType
 	 */
 	virtual wxTreeCtrl *GetTree(TreeType type) = 0;
+	
 	/**
 	 * @brief return a pointer to the workspace pane notebook (the one with the 'workspace' title)
 	 * @return pointer to Notebook
 	 * @sa Notebook
 	 */
 	virtual Notebook *GetWorkspacePaneNotebook() = 0;
+	
 	/**
 	 * @brief return a pointer to the output pane notebook (the one with the 'output' title)
 	 * @return pointer to Notebook
 	 * @sa Notebook
 	 */
-	virtual wxBookCtrlBase* GetOutputPaneNotebook() = 0;
+	virtual OutputPaneBook* GetOutputPaneNotebook() = 0;
 	
 	/**
 	 * @brief return the startup directory of CodeLite which is also the base directory for searching installation files

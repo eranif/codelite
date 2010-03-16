@@ -313,7 +313,7 @@ wxTreeCtrl *PluginManager::GetTree(TreeType type)
 	}
 }
 
-wxBookCtrlBase *PluginManager::GetOutputPaneNotebook()
+OutputPaneBook* PluginManager::GetOutputPaneNotebook()
 {
 	return Frame::Get()->GetOutputPane()->GetNotebook();
 }

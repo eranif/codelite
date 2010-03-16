@@ -36,6 +36,7 @@ class ReplaceInFilesPanel;
 class ShellTab;
 class DebugTab;
 class TaskPanel;
+class OutputPaneBook;
 
 /**
  * \ingroup LiteEditor
@@ -69,7 +70,7 @@ private:
 	wxString m_caption;
 	wxLog   *m_logTargetOld;
     
-	wxBookCtrlBase      *m_book;
+	OutputPaneBook      *m_book;
 	FindResultsTab      *m_findResultsTab;
 	ReplaceInFilesPanel *m_replaceResultsTab;
 	BuildTab            *m_buildWin;
@@ -93,7 +94,7 @@ public:
 	 */
 	virtual ~OutputPane();
 
-	wxBookCtrlBase       *GetNotebook()      { return m_book;    }
+	OutputPaneBook       *GetNotebook()      { return m_book;    }
 	const wxString &     GetCaption () const { return m_caption; }
 	
 	FindResultsTab      *GetFindResultsTab   () { return m_findResultsTab;    }

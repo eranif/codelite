@@ -107,7 +107,7 @@
                         <property name="validator_variable"></property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
-                        <property name="window_style"></property>
+                        <property name="window_style">wxSTATIC_BORDER</property>
                         <event name="OnButtonClick">OnHide</event>
                         <event name="OnChar"></event>
                         <event name="OnEnterWindow"></event>
@@ -135,8 +135,8 @@
                     </object>
                 </object>
                 <object class="sizeritem" expanded="1">
-                    <property name="border">5</property>
-                    <property name="flag">wxALIGN_CENTER_VERTICAL</property>
+                    <property name="border">1</property>
+                    <property name="flag">wxALIGN_CENTER_VERTICAL|wxLEFT</property>
                     <property name="proportion">0</property>
                     <object class="wxBitmapButton" expanded="1">
                         <property name="bg"></property>
@@ -168,7 +168,7 @@
                         <property name="validator_variable"></property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
-                        <property name="window_style"></property>
+                        <property name="window_style">wxSTATIC_BORDER</property>
                         <event name="OnButtonClick">OnToggleReplaceControls</event>
                         <event name="OnChar"></event>
                         <event name="OnEnterWindow"></event>
@@ -265,7 +265,7 @@
                         <property name="rows">2</property>
                         <property name="vgap">0</property>
                         <object class="sizeritem" expanded="1">
-                            <property name="border">5</property>
+                            <property name="border">2</property>
                             <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT</property>
                             <property name="proportion">0</property>
                             <object class="wxStaticText" expanded="1">
@@ -320,7 +320,7 @@
                             </object>
                         </object>
                         <object class="sizeritem" expanded="1">
-                            <property name="border">5</property>
+                            <property name="border">2</property>
                             <property name="flag">wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALL</property>
                             <property name="proportion">1</property>
                             <object class="wxTextCtrl" expanded="1">
@@ -379,7 +379,7 @@
                             </object>
                         </object>
                         <object class="sizeritem" expanded="1">
-                            <property name="border">5</property>
+                            <property name="border">2</property>
                             <property name="flag">wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALL</property>
                             <property name="proportion">0</property>
                             <object class="wxButton" expanded="1">
@@ -435,7 +435,7 @@
                             </object>
                         </object>
                         <object class="sizeritem" expanded="1">
-                            <property name="border">5</property>
+                            <property name="border">2</property>
                             <property name="flag">wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL</property>
                             <property name="proportion">0</property>
                             <object class="wxButton" expanded="1">
@@ -491,7 +491,7 @@
                             </object>
                         </object>
                         <object class="sizeritem" expanded="1">
-                            <property name="border">5</property>
+                            <property name="border">2</property>
                             <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT</property>
                             <property name="proportion">0</property>
                             <object class="wxStaticText" expanded="1">
@@ -546,7 +546,7 @@
                             </object>
                         </object>
                         <object class="sizeritem" expanded="1">
-                            <property name="border">5</property>
+                            <property name="border">2</property>
                             <property name="flag">wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT</property>
                             <property name="proportion">1</property>
                             <object class="wxTextCtrl" expanded="1">
@@ -605,7 +605,7 @@
                             </object>
                         </object>
                         <object class="sizeritem" expanded="1">
-                            <property name="border">5</property>
+                            <property name="border">2</property>
                             <property name="flag">wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT</property>
                             <property name="proportion">0</property>
                             <object class="wxButton" expanded="1">
@@ -673,8 +673,8 @@
                     </object>
                 </object>
                 <object class="sizeritem" expanded="1">
-                    <property name="border">5</property>
-                    <property name="flag">wxLEFT|wxEXPAND</property>
+                    <property name="border">2</property>
+                    <property name="flag">wxEXPAND|wxRIGHT|wxLEFT</property>
                     <property name="proportion">0</property>
                     <object class="wxStaticLine" expanded="1">
                         <property name="bg"></property>
@@ -735,8 +735,8 @@
                         <property name="orient">wxHORIZONTAL</property>
                         <property name="permission">public</property>
                         <object class="sizeritem" expanded="1">
-                            <property name="border">5</property>
-                            <property name="flag">wxRIGHT|wxLEFT</property>
+                            <property name="border">1</property>
+                            <property name="flag"></property>
                             <property name="proportion">0</property>
                             <object class="wxCheckBox" expanded="1">
                                 <property name="bg"></property>
@@ -791,7 +791,7 @@
                             </object>
                         </object>
                         <object class="sizeritem" expanded="1">
-                            <property name="border">5</property>
+                            <property name="border">1</property>
                             <property name="flag">wxRIGHT|wxLEFT</property>
                             <property name="proportion">0</property>
                             <object class="wxCheckBox" expanded="1">
@@ -847,7 +847,7 @@
                             </object>
                         </object>
                         <object class="sizeritem" expanded="1">
-                            <property name="border">5</property>
+                            <property name="border">1</property>
                             <property name="flag">wxRIGHT|wxLEFT</property>
                             <property name="proportion">0</property>
                             <object class="wxCheckBox" expanded="1">

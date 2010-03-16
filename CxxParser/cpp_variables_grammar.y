@@ -116,11 +116,11 @@ basic_type_name_inter:    LE_INT          { $$ = $1; }
                 |         LE_BOOL         { $$ = $1; }
                 ;
 
-basic_type_name:	LE_UNSIGNED basic_type_name_inter     { $$ = $1 + " " + $2; }
+basic_type_name:	LE_UNSIGNED basic_type_name_inter   { $$ = $1 + " " + $2; }
                 |	LE_SIGNED basic_type_name_inter     { $$ = $1 + " " + $2; }
                 |	LE_LONG LE_LONG                     { $$ = $1 + " " + $2; }
-                |	LE_LONG LE_INT                         { $$ = $1 + " " + $2; }
-                |	basic_type_name_inter                   { $$ = $1; }
+                |	LE_LONG LE_INT                      { $$ = $1 + " " + $2; }
+                |	basic_type_name_inter               { $$ = $1; }
                 ;
 
 /* ========================================================================*/
@@ -242,6 +242,7 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	gs_names.clear();
                             }
                         }
+						// Function arguments without identifier
                         | '(' variable_decl special_star_amp const_spec postfix3
                         {
                         	if(gs_vars && g_isUsedWithinFunc)
@@ -294,7 +295,7 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	curr_var.Reset();
                             	gs_names.clear();
                             }
-                        	if($4 == ",") {
+                        	if($5 == ",") {
                             	cl_scope_less(0);
                             }
                         }

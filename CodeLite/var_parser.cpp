@@ -935,7 +935,7 @@ case 31:
                             	curr_var.Reset();
                             	gs_names.clear();
                             }
-                        	if(yyvsp[-1] == ",") {
+                        	if(yyvsp[0] == ",") {
                             	cl_scope_less(0);
                             }
                         }

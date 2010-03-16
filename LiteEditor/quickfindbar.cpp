@@ -346,4 +346,5 @@ void QuickFindBar::DoShowControls()
 	m_showReplaceButton->SetBitmapLabel(bmp);
 	
 	GetParent()->GetSizer()->Layout();
+	Refresh();
 }

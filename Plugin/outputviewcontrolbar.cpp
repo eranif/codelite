@@ -1,6 +1,7 @@
 #include "outputviewcontrolbar.h"
 #include "globals.h"
 #include <wx/bmpbuttn.h>
+#include <wx/wupdlock.h>
 #include <wx/imaglist.h>
 #include <wx/button.h>
 #include <wx/frame.h>
@@ -63,7 +64,8 @@ void OutputViewControlBar::OnButtonClicked(wxCommandEvent& event)
 	
 	if(label.IsEmpty())
 		return;
-		
+	
+	wxWindowUpdateLocker locker( wxTheApp->GetTopWindow() );
 	DoMarkActive( label );
 	if(event.IsChecked())
 		DoTogglePane(false);

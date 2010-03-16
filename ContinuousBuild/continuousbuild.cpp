@@ -61,11 +61,8 @@ ContinuousBuild::ContinuousBuild(IManager *manager)
 	m_shortName = wxT("ContinuousBuild");
 	m_view = new ContinousBuildPane(m_mgr->GetOutputPaneNotebook(), m_mgr, this);
 
-	wxBookCtrlBase *book = m_mgr->GetOutputPaneNotebook();
-	int imgId = book->GetImageList()->Add(LoadBitmapFile(wxT("compfile.png")));
-	
 	// add our page to the output pane notebook
-	book->AddPage(m_view, CONT_BUILD, false, imgId);
+	m_mgr->GetOutputPaneNotebook()->AddPage(m_view, CONT_BUILD, false, LoadBitmapFile(wxT("compfile.png")));
 
 	m_topWin = m_mgr->GetTheApp();
 	m_topWin->Connect(wxEVT_FILE_SAVED,               wxCommandEventHandler(ContinuousBuild::OnFileSaved),           NULL, this);

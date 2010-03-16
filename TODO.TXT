@@ -1,9 +1,3 @@
-Code Completion issues
-----------------------
-
-- Tips does not preset the return value of multiple lines function decl
-- Tips for methods which have only protoypes are truncated (only last member)
-
 General
 -------
 
@@ -27,7 +21,4 @@ Open Resource dialog: it shows 3 columns when opening a workspace file
 Migration to native notebook open issues:
 -----------------------------------------
 
-- Keyboard navigation does not work on Linux
-- Remove Ouptut Control Bar code
 - Add new 'Message Center' class with tips
-- Add new tools in the main toolbar which allows toggling the output-view pane

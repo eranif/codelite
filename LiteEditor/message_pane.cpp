@@ -103,6 +103,7 @@ void MessagePane::DoShowCurrentMessage()
 		Show();
 	}
 	
+	m_staticTextMessage->Fit();
 	GetSizer()->Fit(this);
 	GetParent()->GetSizer()->Layout();
 	GetParent()->Refresh();

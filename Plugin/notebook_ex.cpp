@@ -37,6 +37,11 @@ static bool IsWindows()
 }
 #define DELETE_PAGE_INTERNAL 1234534
 
+#define X_IMG_NONE    -1
+#define X_IMG_NORMAL   0
+#define X_IMG_PRESSED  1
+#define X_IMG_DISABLED 2
+
 Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
 		: wxNotebook(parent, id, pos, size, style & wxNB_LEFT ? wxNB_LEFT : wxNB_DEFAULT)
 		, m_popupWin(NULL)
@@ -56,14 +61,15 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 	Connect(wxEVT_MIDDLE_DOWN,                    wxMouseEventHandler(Notebook::OnMouseMiddle),            NULL, this);
 	Connect(wxEVT_LEAVE_WINDOW,                   wxMouseEventHandler(Notebook::OnLeaveWindow),            NULL, this);
 	Connect(wxEVT_CONTEXT_MENU,                   wxContextMenuEventHandler(Notebook::OnMenu),             NULL, this);
-	
+
 	Connect(DELETE_PAGE_INTERNAL, wxEVT_COMMAND_MENU_SELECTED,          wxCommandEventHandler(Notebook::OnInternalDeletePage),   NULL, this);
-	
-#if defined(__WXMSW__)||defined(__WXGTK__)
-	wxImageList *imgList = new wxImageList(16, 16, true);
+
+#if defined(__WXMSW__)
+	wxImageList *imgList = new wxImageList(18, 18, true);
 
 	imgList->Add( wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close")));
 	imgList->Add( wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_pressed")));
+	imgList->Add( wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_disabled")));
 
 	AssignImageList(imgList);
 #endif
@@ -86,30 +92,30 @@ Notebook::~Notebook()
 bool Notebook::AddPage(wxWindow *win, const wxString &text, bool selected, int imgid)
 {
 	win->Reparent(this);
-	if (wxNotebook::AddPage(win, text, selected, (IsWindows() && HasCloseButton()) ? 0 : imgid)) {
-#ifdef __WXGTK__		
+	if (wxNotebook::AddPage(win, text, selected, (IsWindows() && HasCloseButton()) ? X_IMG_NORMAL : imgid)) {
+#ifdef __WXGTK__
 		win->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
-#endif		
+#endif
 		PushPageHistory(win);
-		
+
 #if 0
 	if(HasCloseButton()) {
 		GtkWidget *child = gtk_notebook_get_nth_page(GTK_NOTEBOOK(m_widget), GetPageCount()-1);
 		GtkWidget *label = gtk_notebook_get_tab_label(GTK_NOTEBOOK(m_widget), child);
-		
+
 		if(GTK_IS_HBOX(label)) {
 			GtkWidget *button;
-			
+
 			// Create a button, and place a close image on it
 			button = gtk_button_new();
 			gtk_box_pack_start(GTK_BOX(label), button, FALSE, FALSE, 0);
-			
+
 			// Create the image and add it to the button
 			GtkWidget* image = gtk_image_new_from_pixbuf(GetImageList()->GetBitmap(0).GetPixbuf());
 			gtk_container_add(GTK_CONTAINER(button), image);
 			gtk_widget_show_all(label);
 		}
-	}	
+	}
 #endif
 
 		return true;
@@ -125,13 +131,13 @@ void Notebook::SetSelection(size_t page, bool notify)
 {
 	if (page >= GetPageCount())
 		return;
-	
+
 	//wxLogMessage(wxT("Notebook::SetSelection called with index %d"), page);
-	
+
 	m_notify = notify;
 	wxNotebook::SetSelection(page);
 	m_notify = true;
-	
+
 	PushPageHistory(GetPage(page));
 }
 
@@ -163,17 +169,17 @@ bool Notebook::RemovePage(size_t page, bool notify)
 	}
 
 	wxWindow* win = GetPage(page);
-#ifdef __WXGTK__	
-	win->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);	
-#endif	
-	
+#ifdef __WXGTK__
+	win->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
+#endif
+
 	bool rc = wxNotebook::RemovePage(page);
 	if (rc) {
 		PopPageHistory(win);
 	}
-	
-#ifdef __WXGTK__	
-	// Unparent 
+
+#ifdef __WXGTK__
+	// Unparent
 	if(win->GetParent())
 		win->GetParent()->RemoveChild(win);
 #endif
@@ -193,7 +199,7 @@ bool Notebook::DeletePage(size_t page, bool notify)
 {
 	if (page >= GetPageCount())
 		return false;
-	
+
 	if (notify) {
 		//send event to noitfy that the page has changed
 		NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CLOSING, GetId());
@@ -207,16 +213,16 @@ bool Notebook::DeletePage(size_t page, bool notify)
 	}
 
 	wxWindow* win = GetPage(page);
-#ifdef __WXGTK__	
-	win->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);	
-#endif	
+#ifdef __WXGTK__
+	win->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
+#endif
 
 
 	bool rc = wxNotebook::DeletePage(page);
 	if (rc) {
 		PopPageHistory(win);
 	}
-	
+
 	if (rc && notify) {
 		//send event to noitfy that the page has been closed
 		NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CLOSED, GetId());
@@ -255,10 +261,10 @@ bool Notebook::InsertPage(size_t index, wxWindow* win, const wxString& text, boo
 {
 	win->Reparent(this);
 	if (wxNotebook::InsertPage(index, win, text, selected, (IsWindows() && HasCloseButton()) ? 0 : imgid)) {
-		
-#ifdef __WXGTK__	
+
+#ifdef __WXGTK__
 		win->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
-#endif	
+#endif
 		PushPageHistory(win);
 		return true;
 	}
@@ -372,8 +378,7 @@ void Notebook::OnLeftDown(wxMouseEvent &e)
 	if (where != wxNOT_FOUND) {
 #ifdef __WXMSW__
 		if (HasCloseButton() && (flags & wxBK_HITTEST_ONICON) && where == (int)curSel) {
-			// Windows only...
-			SetPageImage(where, 1);
+			SetPageImage(where, X_IMG_PRESSED);
 			m_leftDownTabIdx = where;
 		}
 #endif
@@ -392,7 +397,7 @@ void Notebook::OnLeftUp(wxMouseEvent &e)
 	bool sameTab = (size_t)where == m_leftDownTabIdx;
 
 	if (sameTab && pressed && onImage) {
-		
+
 		//send event to noitfy that the page is changing
 		NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED, GetId());
 		event.SetSelection   ( (int)where );
@@ -401,12 +406,12 @@ void Notebook::OnLeftUp(wxMouseEvent &e)
 		GetEventHandler()->AddPendingEvent(event);
 		m_leftDownTabIdx = npos;
 		return;
-		
+
 	} else if (!sameTab && pressed) {
-		SetPageImage( m_leftDownTabIdx, 0 );
+		SetPageImage( m_leftDownTabIdx, X_IMG_NORMAL );
 
 	} else if (sameTab && !onImage && pressed) {
-		SetPageImage( m_leftDownTabIdx, 0 );
+		SetPageImage( m_leftDownTabIdx, X_IMG_NORMAL );
 
 	}
 
@@ -420,7 +425,7 @@ void Notebook::OnLeaveWindow(wxMouseEvent &e)
 {
 #ifdef __WXMSW__
 	if (m_leftDownTabIdx != npos && GetPageImage((size_t)m_leftDownTabIdx) == 1 /* pressed */) {
-		SetPageImage( m_leftDownTabIdx, 0 );
+		SetPageImage( m_leftDownTabIdx, X_IMG_NORMAL );
 	}
 
 	m_leftDownTabIdx = npos;
@@ -448,6 +453,14 @@ void Notebook::OnMouseMiddle(wxMouseEvent &e)
 
 void Notebook::DoPageChangedEvent(wxBookCtrlBaseEvent& e)
 {
+	// Update icon
+	if(IsWindows() && HasCloseButton()) {
+		int selection = e.GetSelection();
+		for(size_t i=0; i<GetPageCount(); i++) {
+			SetPageImage(i, i == (size_t)selection ? X_IMG_NORMAL : X_IMG_DISABLED);
+		}
+	}
+
 	if (!m_notify) {
 		e.Skip();
 		return;
@@ -505,17 +518,17 @@ void Notebook::OnKeyDown(wxKeyEvent& e)
 bool Notebook::DoNavigate()
 {
 	if ( !m_popupWin && GetPageCount() > 0) {
-		
+
 		m_popupWin = new NotebookNavDialog( this );
 		m_popupWin->ShowModal();
-		
+
 		wxWindow *page = m_popupWin->GetSelection();
 		m_popupWin->Destroy();
 		m_popupWin = NULL;
-		
+
 		SetSelection( GetPageIndex(page), true );
-		
-		
+
+
 		return true;
 	}
 	return false;

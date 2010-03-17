@@ -202,7 +202,7 @@
 	<object class="wxBitmap" name="overlay_ok">res/ok.png</object>
 	<object class="wxBitmap" name="overlay_modified">res/modified.png</object>
 	<object class="wxBitmap" name="overlay_conflict">res/conflict.png</object>
-	
+
 	<!-- Message Pane icons -->
 	<object class="wxBitmap" name="message_pane_inf">res/MessagePane/message_pane_info.png</object>
 	<object class="wxBitmap" name="message_pane_restart">res/MessagePane/system_restart.png</object>
@@ -211,8 +211,9 @@
 	<object class="wxBitmap" name="message_pane_software_update">res/MessagePane/system_software_update.png</object>
 	<object class="wxBitmap" name="message_pane_reload_workspace">res/MessagePane/folder_home_reload.png</object>
 
-	<!-- Message Pane icons -->
+	<!-- Notebook icons -->
 	<object class="wxBitmap" name="tab_x_close">res/notebook/fileclose-blue.png</object>
 	<object class="wxBitmap" name="tab_x_close_pressed">res/notebook/fileclose-pressed-blue.png</object>
-	
+	<object class="wxBitmap" name="tab_x_close_disabled">res/notebook/fileclose-blue.png</object>
+
 </resource>

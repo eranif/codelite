@@ -2,6 +2,7 @@
 #define OutputPaneBook_H
 
 #include <wx/choicebk.h>
+#include <wx/bitmap.h>
 #include <wx/imaglist.h>
 #include <vector>
 #include <wx/sizer.h>

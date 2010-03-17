@@ -219,6 +219,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	//-------------------------------------------------------
 	// View menu
 	//-------------------------------------------------------
+	EVT_MENU(XRCID("restore_layout"),           Frame::OnRestoreDefaultLayout)
 	EVT_MENU(XRCID("word_wrap"),                Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("toggle_fold"),              Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("fold_all"),                 Frame::DispatchCommandEvent)
@@ -436,7 +437,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("copy_file_name"),                   Frame::OnCopyFilePath)
 	EVT_MENU(XRCID("copy_file_path"),                   Frame::OnCopyFilePathOnly)
 	EVT_MENU(XRCID("open_shell_from_filepath"),         Frame::OnOpenShellFromFilePath)
-        
+
 	EVT_UPDATE_UI(XRCID("copy_file_name"),              Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("copy_file_path"),              Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("open_shell_from_filepath"),    Frame::OnFileExistUpdateUI)
@@ -640,6 +641,9 @@ void Frame::Initialize(bool loadLastSession)
 	m_theFrame->SendSizeEvent();
 	m_theFrame->StartTimer();
 
+	// Keep the current layout before loading the perspective from the disk
+	m_theFrame->m_defaultLayout = m_theFrame->m_mgr.SavePerspective();
+
 	// After all the plugins / panes have been loaded,
 	// its time to re-load the perspective
 	wxCommandEvent evt(wxEVT_LOAD_PERSPECTIVE);
@@ -668,7 +672,7 @@ void Frame::CreateGUIControls(void)
 	SetSizer(mainSizer);
 
 	mainSizer->Add(m_mainPanel, 1, wxEXPAND);
-	
+
 	// tell wxAuiManager to manage this frame
 	m_mgr.SetManagedWindow(m_mainPanel);
 	m_mgr.SetArtProvider(new CLAuiDockArt());
@@ -693,13 +697,13 @@ void Frame::CreateGUIControls(void)
 
 #if defined (__WXGTK__) && defined (__WXDEBUG__)
 	m_mgr.SetFlags(wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_TRANSPARENT_DRAG|wxAUI_MGR_RECTANGLE_HINT);
-	
+
 #elif defined(__WXGTK__)
 	m_mgr.SetFlags(m_mgr.GetFlags() & ~wxAUI_MGR_TRANSPARENT_HINT);
 	m_mgr.SetFlags(m_mgr.GetFlags() |    wxAUI_MGR_VENETIAN_BLINDS_HINT);
-	
+
 #endif
-	
+
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_NONE);
 #ifdef __WXMAC__
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
@@ -722,10 +726,10 @@ void Frame::CreateGUIControls(void)
 
 	m_outputPane = new OutputPane(m_mainPanel, wxT("Output View"));
 	wxAuiPaneInfo paneInfo;
-	m_mgr.AddPane(m_outputPane, 
+	m_mgr.AddPane(m_outputPane,
 					paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(0).Position(1).CaptionVisible(false).MinSize(-1, 100));
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
-	
+
 	// Add the explorer pane
 	m_workspacePane = new WorkspacePane(m_mainPanel, wxT("Workspace View"), &m_mgr);
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
@@ -1748,7 +1752,7 @@ void Frame::ViewPane(const wxString &paneName, wxCommandEvent &event)
 {
 	if(paneName == wxT("Output View")) {
 		ManagerST::Get()->ToggleOutputPane( !event.IsChecked() );
-		
+
 	} else {
 		wxAuiPaneInfo &info = m_mgr.GetPane(paneName);
 		if (info.IsOk()) {
@@ -2082,20 +2086,20 @@ void Frame::OnTimer(wxTimerEvent &event)
 
 		// Check that the user has some paths set in the parser
 		EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
-		
+
 		/////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////
-		
+
 		// There are 2 conditions that we check here:
 		// 1) if there are no search paths set
 		// 2) there are search paths, but some or all of them are no longer exist on the system
-		
+
 		bool isUpdatePathRequired (false);
 		bool allPathsExists       (true);
 		bool hasSearchPath        (true);
-		
+
 		hasSearchPath = m_tagsOptionsData.GetParserSearchPaths().IsEmpty() == false;
-		
+
 		for(size_t i=0; i<m_tagsOptionsData.GetParserSearchPaths().GetCount(); i++) {
 			if(wxFileName::DirExists(m_tagsOptionsData.GetParserSearchPaths().Item(i)) == false) {
 				allPathsExists = false;
@@ -2103,7 +2107,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 			}
 		}
 		isUpdatePathRequired = (!allPathsExists || !hasSearchPath);
-		
+
 		if ( isUpdatePathRequired ) {
 			// Try to locate the paths automatically
 			wxArrayString paths;
@@ -2146,7 +2150,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 
 		/////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////
-		
+
 		//send initialization end event
 		SendCmdEvent(wxEVT_INIT_DONE);
 	}
@@ -2443,7 +2447,7 @@ void Frame::OnImportMSVS(wxCommandEvent &e)
 	                   wxT("All Files (*)|*"));
 	wxFileDialog dlg(this, wxT("Open MS Solution File"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
 	if (dlg.ShowModal() == wxID_OK) {
-		
+
 		wxArrayString cmps;
 		BuildSettingsConfigCookie cookie;
 		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
@@ -2687,15 +2691,15 @@ void Frame::OnShowWelcomePage(wxCommandEvent &event)
 void Frame::CompleteInitialization()
 {
 	PluginManager::Get()->Load();
-	
+
 	// Connect some system events
 	m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(Frame::OnDockablePaneClosed), NULL, this);
 	m_mgr.Connect(wxEVT_AUI_RENDER,     wxAuiManagerEventHandler(Frame::OnAuiManagerRender),   NULL, this);
-	
-	
+
+
 	OutputViewControlBar* outputViewControlBar = new OutputViewControlBar(this, GetOutputPane()->GetNotebook(), &m_mgr, wxID_ANY);
 	outputViewControlBar->AddAllButtons();
-	
+
 	GetSizer()->Add(outputViewControlBar, 0, wxEXPAND);
 	Layout();
 	SetEnvStatusMessage();
@@ -3010,11 +3014,11 @@ void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 	wxBitmap  bmp;
 
 	DockablePane *pane = new DockablePane(m_mainPanel, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));
-	
+
 	// remove the page from the notebook
 	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
 	pane->SetChild(page);
-	
+
 	wxUnusedVar(e);
 }
 
@@ -3204,13 +3208,13 @@ void Frame::OnDetachDebuggerViewTab(wxCommandEvent& e)
 	wxWindow *page = GetDebuggerPane()->GetNotebook()->GetCurrentPage();
 	wxString  text = GetDebuggerPane()->GetNotebook()->GetPageText(sel);
 	wxBitmap  bmp ;
-	
+
 	DockablePane *pane = new DockablePane(m_mainPanel, GetDebuggerPane()->GetNotebook(), text, bmp, wxSize(200, 200));
-	
+
 	// remove the page from the notebook
 	GetDebuggerPane()->GetNotebook()->RemovePage(sel, false);
 	pane->SetChild(page);
-	
+
 	wxUnusedVar(e);
 }
 
@@ -3630,6 +3634,8 @@ void Frame::StartTimer()
 
 void Frame::OnLoadPerspective(wxCommandEvent& e)
 {
+	wxWindowUpdateLocker locker(this);
+
 	long loadIt(1);
 	EditorConfigST::Get()->GetLongValue(wxT("LoadSavedPrespective"), loadIt);
 	if (loadIt) {
@@ -3747,4 +3753,12 @@ void Frame::DoSuggestRestart()
 
 	GetMainBook()->ShowMessage(_("Some of the changes made requires a restart of CodeLite, Restart now?"), false, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_restart")), btn1, btn2);
 #endif
+}
+
+void Frame::OnRestoreDefaultLayout(wxCommandEvent& e)
+{
+	wxWindowUpdateLocker locker(this);
+	wxLogMessage(wxT("Restoring layout"));
+	wxUnusedVar(e);
+	m_mgr.LoadPerspective(m_defaultLayout, true);
 }

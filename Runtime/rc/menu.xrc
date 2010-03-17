@@ -140,6 +140,10 @@
         <object class="wxMenu" name="view_menu">
             <label>&amp;View</label>
             <style>wxMENU_TEAROFF</style>
+			<object class="wxMenuItem" name="restore_layout">
+				<label>Restore Startup Layout</label>
+            </object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="word_wrap">
 				<label>Word W&amp;rap</label>
 				<checkable>1</checkable>
@@ -325,9 +329,9 @@
 			<object class="wxMenuItem" name="local_workspace_prefs">
 				<label>Workspace Editor Preferences...</label>
 			</object>
-			
+
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-			
+
             <object class="wxMenuItem" name="new_workspace">
                 <label>Create &amp;New Workspace...</label>
             </object>

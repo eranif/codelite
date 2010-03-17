@@ -90,7 +90,8 @@ class Frame : public wxFrame
 	DockablePaneMenuManager *             m_DPmenuMgr;
 	wxPanel*                              m_mainPanel;
 	wxString                              m_codeliteDownloadPageURL;
-	
+	wxString                              m_defaultLayout;
+
 public:
 	static Frame* Get();
 	static void Initialize(bool loadLastSession);
@@ -100,13 +101,13 @@ public:
 	}
 
 	wxPanel *GetMainPanel() {return m_mainPanel;}
-	
+
 	/**
 	 * @brief update the environment status message:
 	 * which displays to the user the current environment set used + the active builder
 	 */
 	void SetEnvStatusMessage();
-	
+
 	virtual ~Frame(void);
 	/**
 	 * @brief set frame option flag
@@ -291,11 +292,12 @@ private:
 	void CreateWelcomePage();
 	void ReloadExternallyModifiedProjectFiles();
 	void DoSuggestRestart();
-	
+
 protected:
 	//----------------------------------------------------
 	// event handlers
 	//----------------------------------------------------
+	void OnRestoreDefaultLayout(wxCommandEvent &e);
 	void OnIdle(wxIdleEvent &e);
     void OnBuildEnded(wxCommandEvent &event);
 	void OnQuit(wxCommandEvent& WXUNUSED(event));
@@ -422,7 +424,7 @@ protected:
 	void OnReBuildWorkspaceUI(wxUpdateUIEvent &e);
 	void OnUpdateParserPath(wxCommandEvent &e);
 	void OnNeverUpdateParserPath(wxCommandEvent &e);
-	
+
 	//EOL
 	void OnConvertEol(wxCommandEvent &e);
 	void OnViewDisplayEOL(wxCommandEvent &e);

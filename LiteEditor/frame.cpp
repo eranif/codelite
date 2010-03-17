@@ -2137,7 +2137,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 					btnNoNever.commandId   = XRCID("never_update_parser_paths");
 
 					GetMainBook()->ShowMessage(
-									wxT("There seem to be a problem with your code completion parser search paths (there either non, or some are pointing to a non existing location on the disk)\n")
+									wxT("There seem to be a problem with your code completion parser search paths (there either none, or some are pointing to an invalid location on the disk)\n")
 									wxT("Can CodeLite fix your code completion parser search paths?"),
 									false, wxNullBitmap, btnYes, btnNo, btnNoNever);
 				}

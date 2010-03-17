@@ -27,7 +27,6 @@ users to easily create, build and debug complex projects.
 %{__make} DESTDIR=$RPM_BUILD_ROOT install
 desktop-file-install  --delete-original                            \
    --vendor codelite                                               \
-#   --copy-generic-name-to-name                                    \
           --dir $RPM_BUILD_ROOT%{_datadir}/applications            \
                 $RPM_BUILD_ROOT%{_datadir}/applications/codelite.desktop
 %clean

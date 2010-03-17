@@ -228,17 +228,17 @@ void ContextCpp::OnDwellStart(wxScintillaEvent &event)
 	if (word.IsEmpty()) {
 		return;
 	}
-	
+
 	int foundPos(wxNOT_FOUND);
 	if(rCtrl.PreviousChar(word_start, foundPos) == wxT('~'))
 		word.Prepend(wxT("~"));
-	
+
 	//get the expression we are hovering over
 	wxString expr = GetExpression(end, false);
-	
+
 	// get the full text of the current page
 	wxString text = rCtrl.GetTextRange(0, pos);
-	
+
 	// now we are ready to process the scope and build our tips
 	std::vector<wxString> tips;
 	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
@@ -853,12 +853,12 @@ void ContextCpp::CompleteWord()
 	//get the full text of the current page
 	wxString text = rCtrl.GetTextRange(0, rCtrl.GetCurrentPos());
 	int lineNum = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
-	
+
 	DoSetProjectPaths();
 	if (mgr->WordCompletionCandidates(rCtrl.GetFileName(), lineNum, expr, text, word, candidates)) {
 		DisplayCompletionBox(candidates, word, false);
 	}
-	
+
 }
 
 void ContextCpp::DisplayCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl)
@@ -1295,7 +1295,7 @@ void ContextCpp::OnKeyDown(wxKeyEvent &event)
 		case WXK_UP:
 			ctrl.GetFunctionTip()->SelectPrev(DoGetCalltipParamterIndex());
 			return;
-		
+
 		case WXK_DOWN:
 			ctrl.GetFunctionTip()->SelectNext(DoGetCalltipParamterIndex());
 			return;
@@ -1739,11 +1739,11 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 
 	if (word.IsEmpty())
 		return;
-	
+
 	int foundPos(wxNOT_FOUND);
 	if(rCtrl.PreviousChar(word_start, foundPos) == wxT('~'))
 		word.Prepend(wxT("~"));
-		
+
 	std::vector<TagEntryPtr> tags;
 	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
 
@@ -2030,16 +2030,16 @@ void ContextCpp::ApplySettings()
 
 	// update word characters to allow '~' as valid word character
 	rCtrl.SetWordChars(wxT("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"));
-	
+
 	// Error
 	wxFont guiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	BuildTabSettingsData cmpColoursOptions;
-	
+
 	EditorConfigST::Get()->ReadObject ( wxT ( "build_tab_settings" ), &cmpColoursOptions);
 	rCtrl.StyleSetBackground(eAnnotationStyleError, DrawingUtils::LightColour(cmpColoursOptions.GetErrorColour(), 9.0));
 	rCtrl.StyleSetForeground(eAnnotationStyleError, cmpColoursOptions.GetErrorColour());
 	rCtrl.StyleSetFont(eAnnotationStyleError, guiFont);
-	
+
 	// Warning
 	rCtrl.StyleSetBackground(eAnnotationStyleWarning, DrawingUtils::LightColour(cmpColoursOptions.GetErrorColour(), 9.0));
 	rCtrl.StyleSetForeground(eAnnotationStyleWarning, cmpColoursOptions.GetWarnColour());
@@ -2561,12 +2561,12 @@ void ContextCpp::DoCodeComplete(long pos)
 		wxString word = rCtrl.GetTextRange(word_start, word_end);
 		rCtrl.GetFunctionTip()->Add( TagsManagerST::Get()->GetFunctionTip(rCtrl.GetFileName(), line, expr, text, word) );
 		rCtrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
-		
-		// In an ideal world, we would like our tooltip to be placed 
+
+		// In an ideal world, we would like our tooltip to be placed
 		// on top of the caret.
 		wxPoint pt = rCtrl.PointFromPosition(currentPosition);
 		rCtrl.GetFunctionTip()->Activate(pt, rCtrl.GetCurrLineHeight(), rCtrl.StyleGetBackground(wxSCI_C_DEFAULT));
-		
+
 	} else {
 		DoSetProjectPaths();
 		if (TagsManagerST::Get()->AutoCompleteCandidates(rCtrl.GetFileName(), line, expr, text, candidates)) {
@@ -2613,11 +2613,22 @@ void ContextCpp::DoOpenWorkspaceFile()
 	if (tmpName.Contains(wxT("..")))
 		tmpName = fileName.GetFullName();
 
+#ifdef __WXMSW__
+	// On windows, files are case in-sensitive
+	tmpName.MakeLower();
+#endif
+
 	std::vector<wxFileName> files, files2;
 	TagsManagerST::Get()->GetFiles(fileName.GetFullName(), files);
 	//filter out the all files that does not have an exact match
 	for (size_t i=0; i<files.size(); i++) {
 		wxString curFileName = files.at(i).GetFullPath();
+
+#ifdef __WXMSW__
+		// On windows, files are case in-sensitive
+		curFileName.MakeLower();
+#endif
+
 		curFileName.Replace(wxT("\\"), wxT("/"));
 		if (curFileName.EndsWith(tmpName)) {
 			files2.push_back(files.at(i));

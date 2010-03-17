@@ -34,8 +34,10 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 	ProcUtils::SafeExecuteCommand(cmd, out);
 
 	if (out.IsEmpty() == false ) {
+		
 		wxString qt_output (out.Item(0));
 		qt_output.Trim().Trim(false);
+		
 #if defined(__WXGTK__)||defined(__WXMAC__)
 		wxString pathQt4, pathQt3, pathQt;
 		pathQt4 << qt_output << wxFileName::GetPathSeparator() << wxT("include") << wxFileName::GetPathSeparator() << wxT("qt4");
@@ -43,28 +45,71 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 		pathQt  << qt_output << wxFileName::GetPathSeparator() << wxT("include");
 		
 		if (wxDir::Exists( pathQt4 )) {
-			paths.Add( pathQt4 + wxT("/QtCore") );
-			paths.Add( pathQt4 + wxT("/QtGui")  );
-			paths.Add( pathQt4 + wxT("/QtXml")  );
+			wxString tmpPath;
+			
+			tmpPath = pathQt4 + wxT("/QtCore");
+			if(wxFileName::DirExists(tmpPath))
+				paths.Add( tmpPath );
+				
+			tmpPath = pathQt4 + wxT("/QtGui");
+			if(wxFileName::DirExists(tmpPath))
+				paths.Add( tmpPath );
+			
+			tmpPath = pathQt4 + wxT("/QtXml");
+			if(wxFileName::DirExists(tmpPath))
+				paths.Add( tmpPath );
 
 		} else if (wxDir::Exists( pathQt3 ) ) {
-			paths.Add( pathQt3 + wxT("/QtCore") );
-			paths.Add( pathQt3 + wxT("/QtGui")  );
-			paths.Add( pathQt3 + wxT("/QtXml")  );
+			
+			wxString tmpPath;
+			
+			tmpPath = pathQt3 + wxT("/QtCore");
+			if(wxFileName::DirExists(tmpPath))
+				paths.Add( tmpPath );
+				
+			tmpPath = pathQt3 + wxT("/QtGui");
+			if(wxFileName::DirExists(tmpPath))
+				paths.Add( tmpPath );
+			
+			tmpPath = pathQt3 + wxT("/QtXml");
+			if(wxFileName::DirExists(tmpPath))
+				paths.Add( tmpPath );
 
 		} else if (wxDir::Exists( pathQt ) ) {
-			paths.Add( pathQt + wxT("/QtCore") );
-			paths.Add( pathQt + wxT("/QtGui")  );
-			paths.Add( pathQt + wxT("/QtXml")  );
+			
+			wxString tmpPath;
+			
+			tmpPath = pathQt + wxT("/QtCore");
+			if(wxFileName::DirExists(tmpPath))
+				paths.Add( tmpPath );
+				
+			tmpPath = pathQt + wxT("/QtGui");
+			if(wxFileName::DirExists(tmpPath))
+				paths.Add( pathQt );
+			
+			tmpPath = pathQt + wxT("/QtXml");
+			if(wxFileName::DirExists(tmpPath))
+				paths.Add( tmpPath );
 		}
 		
 #else // __WXMSW__
 		wxString pathWin;
 		pathWin << qt_output << wxFileName::GetPathSeparator() << wxT("include") << wxFileName::GetPathSeparator();
 		if (wxDir::Exists( pathWin )) {
-			paths.Add( pathWin + wxT("QtCore") );
-			paths.Add( pathWin + wxT("QtGui")  );
-			paths.Add( pathWin + wxT("QtXml")  );
+			
+			wxString tmpPath;
+			
+			tmpPath = pathWin + wxT("QtCore");
+			if(wxFileName::DirExists(tmpPath))
+				paths.Add( tmpPath );
+				
+			tmpPath = pathWin + wxT("QtGui");
+			if(wxFileName::DirExists(tmpPath))
+				paths.Add( tmpPath );
+			
+			tmpPath = pathWin + wxT("QtXml");
+			if(wxFileName::DirExists(tmpPath))
+				paths.Add( tmpPath );
 		}
 #endif
 	}

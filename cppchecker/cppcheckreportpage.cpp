@@ -1,4 +1,5 @@
 #include "cppcheckreportpage.h"
+#include <wx/tokenzr.h>
 #include "cppchecker.h"
 #include "plugin.h"
 #include <wx/regex.h>
@@ -99,12 +100,17 @@ void CppCheckReportPage::Clear()
 	m_outputText->SetReadOnly(false);
 	m_outputText->ClearAll();
 	m_outputText->SetReadOnly(true);
+
+	m_gauge->SetValue(0);
+	m_staticTextFile->SetLabel(wxEmptyString);
 	sErrorCount = 0;
 }
 
 void CppCheckReportPage::OnStopChecking(wxCommandEvent& event)
 {
 	m_plugin->StopAnalysis();
+	m_staticTextFile->SetLabel(wxT("Check Interrupted!"));
+	m_gauge->SetValue( m_gauge->GetRange() );
 }
 
 void CppCheckReportPage::OnClearReport(wxCommandEvent& event)
@@ -114,8 +120,43 @@ void CppCheckReportPage::OnClearReport(wxCommandEvent& event)
 
 void CppCheckReportPage::AppendLine(const wxString& line)
 {
+	wxString tmpLine (line);
+
+	// Locate status messages:
+	// 6/7 files checked 85% done
+	static wxRegEx reProgress(wxT("([0-9]+)/([0-9]+)( files checked )([0-9]+%)( done)"));
+	static wxRegEx reFileName(wxT("(Checking )([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)"));
+
+	// Locate the progress messages and update our progress bar
+	wxArrayString arrLines = wxStringTokenize(tmpLine, wxT("\n\r"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<arrLines.GetCount(); i++) {
+
+		if(reProgress.Matches(arrLines.Item(i))) {
+
+			// Get the current progress
+			wxString currentLine = reProgress.GetMatch(arrLines.Item(i), 1);
+
+			long fileNo(0);
+			currentLine.ToLong(&fileNo);
+
+			m_gauge->SetValue( fileNo );
+		}
+
+		if(reFileName.Matches(arrLines.Item(i))) {
+
+			// Get the file name
+			wxString filename = reFileName.GetMatch(arrLines.Item(i), 2);
+			m_staticTextFile->SetLabel(filename);
+		}
+	}
+
+	// Remove progress messages from the printed output
+	reProgress.ReplaceAll(&tmpLine, wxEmptyString);
+	tmpLine.Replace(wxT("\r"), wxT(""));
+	tmpLine.Replace(wxT("\n\n"), wxT("\n"));
+
 	m_outputText->SetReadOnly(false);
-	m_outputText->AppendText(line);
+	m_outputText->AppendText(tmpLine);
 	m_outputText->SetReadOnly(true);
 
 	m_outputText->ScrollToLine( m_outputText->GetLineCount() - 1);
@@ -191,4 +232,16 @@ void CppCheckReportPage::PrintStatusMessage()
 	statusLine << wxT("=====");
 
 	AppendLine( statusLine );
+	SetMessage( wxT("Done") );
+}
+
+void CppCheckReportPage::SetGaugeRange(int range)
+{
+	m_gauge->SetRange(range);
+	m_gauge->SetValue(1); // We are starting a test
+}
+
+void CppCheckReportPage::SetMessage(const wxString& msg)
+{
+	m_staticTextFile->SetLabel(msg);
 }

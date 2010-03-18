@@ -45,6 +45,8 @@ public:
 	size_t GetErrorCount() const;
 	void   AppendLine   (const wxString &line);
 	void   PrintStatusMessage();
+	void   SetGaugeRange(int range);
+	void   SetMessage(const wxString &msg);
 };
 
 #endif // __cppcheckreportpage__

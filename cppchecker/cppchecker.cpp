@@ -451,7 +451,7 @@ void CppCheckPlugin::DoStartTest()
 	RemoveExcludedFiles();
 	SetTabVisible(true);
 	m_view->Clear();
-
+	m_view->SetGaugeRange(m_filelist.GetCount());
 	// Start the test
 	DoProcess();
 }

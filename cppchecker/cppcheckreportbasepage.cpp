@@ -17,8 +17,22 @@ CppCheckReportBasePage::CppCheckReportBasePage( wxWindow* parent, wxWindowID id,
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxHORIZONTAL );
 	
+	wxBoxSizer* bSizer41;
+	bSizer41 = new wxBoxSizer( wxVERTICAL );
+	
 	m_outputText = new wxScintilla(this);
-	mainSizer->Add( m_outputText, 1, wxALL|wxEXPAND, 5 );
+	bSizer41->Add( m_outputText, 1, wxALL|wxEXPAND, 5 );
+	
+	m_staticTextFile = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextFile->Wrap( -1 );
+	bSizer41->Add( m_staticTextFile, 0, wxALL|wxEXPAND, 5 );
+	
+	m_gauge = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxDefaultSize, wxGA_HORIZONTAL|wxGA_SMOOTH );
+	m_gauge->SetMinSize( wxSize( -1,15 ) );
+	
+	bSizer41->Add( m_gauge, 0, wxEXPAND|wxALL, 5 );
+	
+	mainSizer->Add( bSizer41, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );

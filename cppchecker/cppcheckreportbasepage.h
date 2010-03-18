@@ -16,8 +16,10 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/string.h>
-#include <wx/button.h>
+#include <wx/stattext.h>
+#include <wx/gauge.h>
 #include <wx/sizer.h>
+#include <wx/button.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -32,6 +34,8 @@ class CppCheckReportBasePage : public wxPanel
 	
 	protected:
 		wxScintilla *m_outputText;
+		wxStaticText* m_staticTextFile;
+		wxGauge* m_gauge;
 		wxButton* m_buttonClear;
 		wxButton* m_buttonStop;
 		

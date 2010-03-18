@@ -114,7 +114,7 @@
 
 //Eran - START
 #define SCLEX_GCC            150
-#define SCLEX_CPPCHECK       151
+#define SCLEX_CPPCHECK       153
 #define SCLEX_GCC_DEFAULT      0
 #define SCLEX_GCC_ERROR        1
 #define SCLEX_GCC_WARNING      2

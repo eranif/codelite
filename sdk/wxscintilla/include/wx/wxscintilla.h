@@ -422,7 +422,7 @@
 
 //ERAN
 #define wxSCI_LEX_GCC            150
-#define wxSCI_LEX_CPPCHECK       151
+#define wxSCI_LEX_CPPCHECK       153
 #define wxSCI_LEX_GCC_DEFAULT      0
 #define wxSCI_LEX_GCC_ERROR        1
 #define wxSCI_LEX_GCC_WARNING      2

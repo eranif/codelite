@@ -72,11 +72,8 @@ CppCheckReportPage::CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheck
 	m_outputText->StyleSetFont ( wxSCI_LEX_GCC_MAKE_ENTER,   font );
 	m_outputText->StyleSetFont ( wxSCI_LEX_GCC_MAKE_LEAVING, font );
 
-	m_outputText->StyleSetHotSpot(wxSCI_LEX_GCC_WARNING, true);
-	m_outputText->StyleSetHotSpot(wxSCI_LEX_GCC_ERROR, true);
-
+	m_outputText->StyleSetHotSpot(wxSCI_LEX_GCC_FILE_LINK, true);
 	m_outputText->Colourise ( 0, m_outputText->GetLength() );
-
 
 	// Connect events
 	m_outputText->Connect(wxEVT_SCI_HOTSPOT_CLICK, wxScintillaEventHandler(CppCheckReportPage::OnOpenFile), NULL, this);

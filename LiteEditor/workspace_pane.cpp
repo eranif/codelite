@@ -57,13 +57,7 @@ WorkspacePane::~WorkspacePane()
 {
 }
 
-#define ADD_WORKSPACE_PAGE(win, name) \
-	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
-		DockablePane *cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));\
-		cp->SetChild(win);\
-	} else {\
-		m_book->AddPage(win, name, true);\
-	}
+#define IS_DETACHED(name) (detachedPanes.Index(name) != wxNOT_FOUND) ? true : false
 
 void WorkspacePane::CreateGUIControls()
 {
@@ -105,29 +99,57 @@ void WorkspacePane::CreateGUIControls()
 
 
 	wxArrayString detachedPanes;
-
-#ifndef __WXGTK__
-	// FIXME:: On GTK we crash when try to recreate
-	// the Windows detached
 	detachedPanes = dpi.GetPanes();
-#endif
+	
+	// Add the workspace tab
+	wxString  name;
+	
+	name = wxT("Workspace");
+	if(IS_DETACHED(name)) {
+		DockablePane *cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
+		m_workspaceTab = new WorkspaceTab(cp, name);
+		cp->SetChildNoReparent(m_workspaceTab);
+	} else {
+		m_workspaceTab = new WorkspaceTab(m_book, name);
+		m_book->AddPage(m_workspaceTab, name, true);
+	}
+	
+	// Add the explorer tab
+	name = wxT("Explorer");
+	if(IS_DETACHED(name)) {
+		DockablePane *cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
+		m_explorer = new FileExplorer(cp, name);
+		cp->SetChildNoReparent(m_explorer);
+	} else {
+		m_explorer = new FileExplorer(m_book, name);
+		m_book->AddPage(m_explorer, name, true);
+	}
 
-	m_workspaceTab = new WorkspaceTab(m_book, wxT("Workspace"));
-	ADD_WORKSPACE_PAGE(m_workspaceTab, m_workspaceTab->GetCaption());
+	// Add the Outline tab
+	name = wxT("Outline");
+	if(IS_DETACHED(name)) {
+		DockablePane *cp = new DockablePane(GetParent(), m_book,  name, wxNullBitmap, wxSize(200, 200));
+		m_winStack = new WindowStack(cp);
+		cp->SetChildNoReparent(m_winStack);
+	} else {
+		m_winStack = new WindowStack(m_book);
+		m_book->AddPage(m_winStack, name, true);
+	}
 
-	m_explorer = new FileExplorer(m_book, wxT("Explorer"));
-	ADD_WORKSPACE_PAGE(m_explorer, m_explorer->GetCaption());
-
-	m_winStack = new WindowStack(m_book, wxID_ANY);
-	ADD_WORKSPACE_PAGE(m_winStack, wxT("Outline"));
-
-	m_openWindowsPane = new OpenWindowsPanel(m_book, wxT("Tabs"));
-	ADD_WORKSPACE_PAGE(m_openWindowsPane, m_openWindowsPane->GetCaption());
-
+	// Add the Open Windows Panel (Tabs)
+	name = wxT("Tabs");
+	if(IS_DETACHED(name)) {
+		DockablePane *cp = new DockablePane(GetParent(), m_book,  name, wxNullBitmap, wxSize(200, 200));
+		m_openWindowsPane = new OpenWindowsPanel(cp, name);
+		cp->SetChildNoReparent(m_openWindowsPane);
+	} else {
+		m_openWindowsPane = new OpenWindowsPanel(m_book, name);
+		m_book->AddPage(m_openWindowsPane, name, true);
+	}
+	
 	if (m_book->GetPageCount() > 0) {
 		m_book->SetSelection((size_t)0);
 	}
-
 	m_mgr->Update();
 }
 

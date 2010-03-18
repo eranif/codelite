@@ -98,3 +98,11 @@ void DockablePane::SetChild(wxWindow *child)
 	sz->Add(m_child, 1, wxEXPAND|wxALL, 2);
 	sz->Layout();
 }
+
+void DockablePane::SetChildNoReparent(wxWindow* child)
+{
+	m_child = child;
+	wxSizer *sz = GetSizer();
+	sz->Add(m_child, 1, wxEXPAND|wxALL, 2);
+	sz->Layout();
+}

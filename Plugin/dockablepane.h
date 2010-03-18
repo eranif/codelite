@@ -52,5 +52,6 @@ public:
 	wxString GetName() {return m_text;}
     Notebook *GetBook() {return m_book;}
 	void      SetChild(wxWindow* child);
+	void      SetChildNoReparent(wxWindow* child);
 };
 #endif // __dockablepane__

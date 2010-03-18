@@ -46,14 +46,7 @@ const wxString DebuggerPane::THREADS      = wxT("Threads");
 const wxString DebuggerPane::MEMORY       = wxT("Memory");
 const wxString DebuggerPane::ASCII_VIEWER = wxT("Ascii Viewer");
 
-#define ADD_DEBUGGER_PAGE(win, name, bmp) \
-	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
-		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));\
-		cp->SetChild(win);\
-	} else {\
-		/*m_book->AddPage(win, name, name, bmp, false);*/\
-		m_book->AddPage(win, name, false);\
-	}
+#define IS_DETACHED(name) ( detachedPanes.Index(name) != wxNOT_FOUND ) ? true : false
 
 BEGIN_EVENT_TABLE(DebuggerPane, wxPanel)
 	EVT_BOOK_PAGE_CHANGED(wxID_ANY, DebuggerPane::OnPageChanged)
@@ -103,35 +96,103 @@ void DebuggerPane::CreateGUIControls()
 	wxArrayString detachedPanes;
 	DetachedPanesInfo dpi;
 	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
-	
-#ifndef __WXGTK__	
-	// FIXME:: On GTK we crash when try to recreate 
-	// the Windows detached
 	detachedPanes = dpi.GetPanes();
-#endif
 
-	m_localsTable = new LocalsTable(m_book);
-	ADD_DEBUGGER_PAGE(m_localsTable, LOCALS, wxXmlResource::Get()->LoadBitmap(wxT("locals_view")));
+	
+	wxString name;
+	wxBitmap bmp;
+	name = LOCALS;
+	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("locals_view"));
+	// Add the 'Locals View'
+	if( IS_DETACHED(name) ) {
+		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+		m_localsTable = new LocalsTable(cp);
+		cp->SetChildNoReparent(m_localsTable);
+		
+	} else {
+		m_localsTable = new LocalsTable(m_book);
+		m_book->AddPage(m_localsTable, name, false);
+	}
+	
+	// Add the 'watches View'
+	name = WATCHES;
+	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("watches"));
+	if( IS_DETACHED(name) ) {
+		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+		m_watchesTable = new WatchesTable(cp);
+		cp->SetChildNoReparent(m_watchesTable);
+		
+	} else {
+		m_watchesTable = new WatchesTable(m_book);
+		m_book->AddPage(m_watchesTable, name, false);
+	}
+	
+	
+	// Add the 'ASCII Viewer'
+	name = ASCII_VIEWER;
+	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("text_view"));
+	if( IS_DETACHED(name) ) {
+		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+		m_asciiViewer = new DebuggerAsciiViewer(cp);
+		cp->SetChildNoReparent(m_asciiViewer);
+		
+	} else {
+		m_asciiViewer = new DebuggerAsciiViewer(m_book);
+		m_book->AddPage(m_asciiViewer, name, false);
+	}
+	
+	// Add the 'Call Stack'
+	name = FRAMES;
+	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("frames"));
+	if( IS_DETACHED(name) ) {
+		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+		m_frameList = new ListCtrlPanel(cp);
+		cp->SetChildNoReparent(m_frameList);
+		
+	} else {
+		m_frameList = new ListCtrlPanel(m_book);
+		m_book->AddPage(m_frameList, name, false);
+	}
 
-	//add the watches view
-	m_watchesTable = new WatchesTable(m_book);
-	ADD_DEBUGGER_PAGE(m_watchesTable, WATCHES, wxXmlResource::Get()->LoadBitmap(wxT("watches")));
+	// Add the 'Breakpoints'
+	name = BREAKPOINTS;
+	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("breakpoint"));
+	if( IS_DETACHED(name) ) {
+		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+		m_breakpoints = new BreakpointDlg(cp);
+		cp->SetChildNoReparent(m_breakpoints);
+		
+	} else {
+		m_breakpoints = new BreakpointDlg(m_book);
+		m_book->AddPage(m_breakpoints, name, false);
+	}
+	
+	// Add the 'Breakpoints'
+	name = THREADS;
+	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("threads"));
+	if( IS_DETACHED(name) ) {
+		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+		m_threads = new ThreadListPanel(cp);
+		cp->SetChildNoReparent(m_threads);
+		
+	} else {
+		m_threads = new ThreadListPanel(m_book);
+		m_book->AddPage(m_threads, name, false);
+	}
 
-	m_asciiViewer = new DebuggerAsciiViewer(m_book);
-	ADD_DEBUGGER_PAGE(m_asciiViewer, ASCII_VIEWER, wxXmlResource::Get()->LoadBitmap(wxT("text_view")));
-
-	m_frameList = new ListCtrlPanel(m_book);
-	ADD_DEBUGGER_PAGE(m_frameList, FRAMES, wxXmlResource::Get()->LoadBitmap(wxT("frames")));
-
-	m_breakpoints = new BreakpointDlg(m_book);
-	ADD_DEBUGGER_PAGE(m_breakpoints, BREAKPOINTS, wxXmlResource::Get()->LoadBitmap(wxT("breakpoint")));
-
-	m_threads = new ThreadListPanel(m_book);
-	ADD_DEBUGGER_PAGE(m_threads, THREADS, wxXmlResource::Get()->LoadBitmap(wxT("threads")));
-
-	m_memory = new MemoryView(m_book);
-	ADD_DEBUGGER_PAGE(m_memory, MEMORY, wxXmlResource::Get()->LoadBitmap(wxT("memory_view")));
-
+	// Add the 'Memory View'
+	name = MEMORY;
+	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("memory_view"));
+	if( IS_DETACHED(name) ) {
+		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+		m_memory = new MemoryView(cp);
+		cp->SetChildNoReparent(m_memory);
+		
+	} else {
+		m_memory = new MemoryView(m_book);
+		m_book->AddPage(m_memory, name, false);
+	}
+	
 	m_initDone = true;
 }
 

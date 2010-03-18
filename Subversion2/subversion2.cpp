@@ -219,11 +219,10 @@ void Subversion2::DoInitialize()
 	// create tab (possibly detached)
 	Notebook *book = m_mgr->GetWorkspacePaneNotebook();
 	if( IsSubversionViewDetached() ) {
-		// Make the window child of the main panel (which is the parent of the notebook)
+		// Make the window child of the main panel (which is the grand parent of the notebook)
 		DockablePane *cp = new DockablePane(book->GetParent()->GetParent(), book, svnCONSOLE_TEXT, wxNullBitmap, wxSize(200, 200));
 		m_subversionView = new SubversionView(cp, this);
-		cp->SetChild(m_subversionView);
-		
+		cp->SetChildNoReparent(m_subversionView);
 		
 	} else {
 		m_subversionView = new SubversionView(book, this);
@@ -650,14 +649,10 @@ void Subversion2::EditSettings()
 
 bool Subversion2::IsSubversionViewDetached()
 {
-#ifdef __WXGTK__
-	return false;
-#else
 	DetachedPanesInfo dpi;
 	m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
 	wxArrayString detachedPanes = dpi.GetPanes();
 	return detachedPanes.Index(svnCONSOLE_TEXT) != wxNOT_FOUND;
-#endif
 }
 
 void Subversion2::OnSelectAsView(wxCommandEvent& event)

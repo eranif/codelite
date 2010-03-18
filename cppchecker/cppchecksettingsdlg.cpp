@@ -1,6 +1,5 @@
 #include "cppchecksettingsdlg.h"
 #include "windowattrmanager.h"
-#include "cppcheckjob.h"
 #include <wx/filedlg.h>
 
 CppCheckSettingsDialog::CppCheckSettingsDialog(wxWindow* parent, CppCheckSettings* settings, IConfigTool *conf)

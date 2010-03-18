@@ -2,6 +2,7 @@
 #define CPPCHECH_SETTINGS_DLG_H_INCLUDED
 
 #include "cppchecksettingsdlgbase.h"
+#include "cppcheck_settings.h"
 class IConfigTool;
 
 class CppCheckSettings;

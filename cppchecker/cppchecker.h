@@ -2,19 +2,16 @@
 #define __CppChecker__
 
 #include "plugin.h"
-#include "cppcheckjob.h"
-#include <wx/process.h>
+#include "asyncprocess.h"
+#include "cppcheck_settings.h"
 
-class clProcess;
 class wxMenuItem;
 class CppCheckReportPage;
-
-extern const wxEventType wxEVT_CPPCHECK_START_DAEMON;
 
 class CppCheckPlugin : public IPlugin
 {
 	wxString             m_cppcheckPath;
-	clProcess *          m_cppcheckProcess;
+	IProcess*            m_cppcheckProcess;
 	bool                 m_canRestart;
 	wxArrayString        m_filelist;
 	wxMenuItem*          m_explorerSepItem;
@@ -24,10 +21,11 @@ class CppCheckPlugin : public IPlugin
 	bool                 m_analysisInProgress;
 	size_t               m_fileCount;
 	CppCheckSettings     m_settings;
-#ifdef __WXMSW__
-	bool                 m_restartRequired;
-#endif // __WXMSW__
 	size_t               m_fileProcessed;
+
+protected:
+	wxString         DoGetCommand();
+	wxString         DoGenerateFileList();
 
 protected:
 	wxMenu *         CreateFileExplorerPopMenu();
@@ -36,52 +34,41 @@ protected:
 
 protected:
 	void             GetFileListFromDir( const wxString &root );
-	void             ProcessNextFromList();
 	void             RemoveExcludedFiles();
 	void             SetTabVisible(bool clearContent);
-	void             DoProcess(size_t count);
+	void             DoProcess();
 	void             DoStartTest();
 
 protected:
-	// Events
-	void OnStartDaemon          (wxCommandEvent &e);
 	/**
 	 * @brief handle the context meun activation from the file explorer
 	 * @param e
 	 */
 	void OnCheckFileExplorerItem(wxCommandEvent &e);
+
 	/**
 	 * @brief handle the context meun activation from the workspace
 	 * @param e
 	 */
 	void OnCheckWorkspaceItem(wxCommandEvent &e);
+
 	/**
 	 * @brief handle the context meun activation from the project
 	 * @param e
 	 */
 	void OnCheckProjectItem(wxCommandEvent &e);
+
 	/**
 	 * @brief handles the cppcheck process termination
 	 * @param e
 	 */
-	void OnCppCheckTerminated   (wxProcessEvent &e);
+	void OnCppCheckTerminated   (wxCommandEvent &e);
+
 	/**
-	 * @brief called by the worker thread when it wants to report a message (informative one)
+	 * @brief there is data to read from the process
 	 * @param e
 	 */
-	void OnStatusMessage        (wxCommandEvent &e);
-	/**
-	 * @brief Send by the worker thread when it has done compelted processing a file
-	 * the current behavior is to to process the next file on the list
-	 * @param e
-	 */
-	void OnCheckCompleted       (wxCommandEvent &e);
-	/**
-	 * @brief called by the worker thread, when a complete report for a file
-	 * is retrieved
-	 * @param e event
-	 */
-	void OnReport               (wxCommandEvent &e);
+	void OnCppCheckReadData     (wxCommandEvent &e);
 
 	/**
 	 * @brief handle the workspace closed event and clear the view
@@ -93,12 +80,6 @@ protected:
 	 * @param e event
 	 */
 	void OnSettingsItem         (wxCommandEvent &e);
-
-	/**
-	 * @brief launch the daemon
-	 */
-	bool StartCppCheckDaemon();
-
 public:
 	CppCheckPlugin(IManager *manager);
 	~CppCheckPlugin();
@@ -125,15 +106,15 @@ public:
 	/**
 	 * @brief return true if analysis currently running
 	 */
-	bool AnalysisInProgress() const {
-		return m_analysisInProgress;
-	}
+	bool AnalysisInProgress() const { return m_cppcheckProcess != NULL;}
 
 	/**
 	 * @brief return the progress
 	 * @return value between 0-100
 	 */
 	size_t GetProgress();
+
+	DECLARE_EVENT_TABLE()
 };
 
 #endif //CppChecker

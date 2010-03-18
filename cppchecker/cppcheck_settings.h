@@ -59,31 +59,4 @@ public:
 	wxString GetOptions() const;
 };
 
-class CppCheckJob : public Job
-{
-	wxString   m_filename;
-	wxString   m_reply;
-	IPlugin*   m_plugin;
-
-	const CppCheckSettings* m_settings;
-
-public:
-	CppCheckJob(IPlugin* plugin, const CppCheckSettings* settings);
-	virtual ~CppCheckJob();
-
-public:
-	void SendStatusMessage(const wxString &msg);
-	void SendCompleteEvent();
-	void SendFileReport   ();
-
-	virtual void Process(wxThread *thread);
-	wxString GetProcessId();
-
-	void SetFilename(const wxString& filename) {
-		this->m_filename = filename;
-	}
-	const wxString& GetFilename() const {
-		return m_filename;
-	}
-};
 #endif // __cppcheckjob__

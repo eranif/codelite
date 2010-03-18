@@ -21,32 +21,22 @@ class CppCheckReportPage : public CppCheckReportBasePage
 {
 	IManager*           m_mgr;
 	CppCheckPlugin*     m_plugin;
-	CppCheckTestResults m_results;
 
 protected:
 	// Handlers for CppCheckReportBasePage events.
 
-	void OnListCtrlItemActivated( wxListEvent& event );
 	void OnClearReport          ( wxCommandEvent& event );
 	void OnStopChecking         ( wxCommandEvent& event );
 	void OnStopCheckingUI       (wxUpdateUIEvent &event);
 	void OnClearReportUI        (wxUpdateUIEvent &event);
-	void OnSkipFile             ( wxCommandEvent& event );
-	void OnSkipFileUI           (wxUpdateUIEvent &event);
-protected:
-	void DoClearReport          ();
-	void ClearListCtrl          ();
+
 public:
 	/** Constructor */
 	CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheckPlugin* plugin);
 
-	void   AddResults   (const wxString &xmlOutput);
-	void   SetStatus    (const wxString& status);
-	void   FileSelected ( const wxString &filename );
 	void   Clear        ();
-	size_t GetErrorCount() {
-		return m_results.GetErrorCount();
-	}
+	size_t GetErrorCount() const {return 1; }
+	void   AppendLine   (const wxString &line);
 };
 
 #endif // __cppcheckreportpage__

@@ -198,7 +198,7 @@ createCodeLiteCppcheckMakefile ()
 	echo "" >> Makefile
 	echo "all: codelite_cppcheck" >> Makefile
 
-	createObjectList "network/*.cpp src/*.cpp utils/*.cpp" "codelite_cppcheck_objects"
+	createObjectList "cli/*.cpp lib/*.cpp" "codelite_cppcheck_objects"
 
 	for a_file in $files_list
 	do
@@ -747,7 +747,7 @@ createRules_sharedObject  "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Object
 # Then the binary, and indexer
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createCodeLiteIndexerMakefile "sdk/codelite_indexer/*.cpp sdk/codelite_indexer/network/*.cpp sdk/codelite_indexer/libctags/*.c sdk/codelite_indexer/libctags/*.cpp"
-createCodeLiteCppcheckMakefile "sdk/codelite_cppcheck/network/*.cpp sdk/codelite_cppcheck/src/*.cpp sdk/codelite_cppcheck/utils/*.cpp"
+createCodeLiteCppcheckMakefile "sdk/codelite_cppcheck/cli/*.cpp sdk/codelite_cppcheck/lib/*.cpp"
 createInstallTarget
 createUnInstallTarget
 

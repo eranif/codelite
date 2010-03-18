@@ -83,7 +83,7 @@ void WorkspacePane::CreateGUIControls()
 	m_workspaceConfig->Append(OPEN_CONFIG_MGR_STR);
 	ConnectChoice(m_workspaceConfig, WorkspacePane::OnConfigurationManagerChoice);
 	hsz->Add(m_workspaceConfig, 1, wxEXPAND| wxALL, 1);
-	
+
 #ifdef __WXMAC__
 	m_workspaceConfig->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
 #endif
@@ -97,21 +97,21 @@ void WorkspacePane::CreateGUIControls()
 	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxWindow::GetTextExtent(wxT("Workspace"), &xx, &yy, NULL, NULL, &fnt);
 
-	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
+	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 0);
 
     // create tabs (possibly detached)
 	DetachedPanesInfo dpi;
 	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
-	
-	
+
+
 	wxArrayString detachedPanes;
-	
-#ifndef __WXGTK__	
-	// FIXME:: On GTK we crash when try to recreate 
+
+#ifndef __WXGTK__
+	// FIXME:: On GTK we crash when try to recreate
 	// the Windows detached
 	detachedPanes = dpi.GetPanes();
 #endif
-	
+
 	m_workspaceTab = new WorkspaceTab(m_book, wxT("Workspace"));
 	ADD_WORKSPACE_PAGE(m_workspaceTab, m_workspaceTab->GetCaption());
 

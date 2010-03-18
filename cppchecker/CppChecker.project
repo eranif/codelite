@@ -7,44 +7,15 @@
   </Plugins>
   <VirtualDirectory Name="src">
     <File Name="cppchecker.cpp"/>
-    <File Name="cppcheckreportbasepage.cpp"/>
-    <File Name="cppcheckreportbasepage.h"/>
-    <File Name="cppcheckreportpage.cpp"/>
-    <File Name="cppcheckreportpage.h"/>
-    <File Name="cppcheckfilelistctrl.cpp"/>
-    <File Name="cppcheckfilelistctrl.h"/>
     <File Name="cppchecksettingsdlg.cpp"/>
     <File Name="cppchecksettingsdlg.h"/>
     <File Name="cppchecksettingsdlgbase.cpp"/>
     <File Name="cppchecksettingsdlgbase.h"/>
-    <File Name="cppchecktestresults.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="cppchecker.h"/>
-    <File Name="cppchecktestresults.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <VirtualDirectory Name="network">
-    <File Name="../sdk/codelite_cppcheck/network/np_connections_server.h"/>
-    <File Name="../sdk/codelite_cppcheck/network/cppcheck_net_macros.h"/>
-    <File Name="../sdk/codelite_cppcheck/network/cppchecker_net_reply.cpp"/>
-    <File Name="../sdk/codelite_cppcheck/network/cppchecker_net_reply.h"/>
-    <File Name="../sdk/codelite_cppcheck/network/cppchecker_protocol.cpp"/>
-    <File Name="../sdk/codelite_cppcheck/network/cppchecker_protocol.h"/>
-    <File Name="../sdk/codelite_cppcheck/network/cppchecker_request.cpp"/>
-    <File Name="../sdk/codelite_cppcheck/network/cppchecker_request.h"/>
-    <File Name="../sdk/codelite_cppcheck/network/named_pipe.cpp"/>
-    <File Name="../sdk/codelite_cppcheck/network/named_pipe.h"/>
-    <File Name="../sdk/codelite_cppcheck/network/named_pipe_client.cpp"/>
-    <File Name="../sdk/codelite_cppcheck/network/named_pipe_client.h"/>
-    <File Name="../sdk/codelite_cppcheck/network/named_pipe_server.cpp"/>
-    <File Name="../sdk/codelite_cppcheck/network/named_pipe_server.h"/>
-    <File Name="../sdk/codelite_cppcheck/network/np_connections_server.cpp"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="WorkerThread">
-    <File Name="cppcheckjob.cpp"/>
-    <File Name="cppcheckjob.h"/>
-  </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="cppcheckreportbasepage.fbp"/>
     <File Name="cppchecksettingsdlg.fbp"/>
@@ -295,6 +266,14 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <VirtualDirectory Name="UI">
+    <File Name="cppcheckreportbasepage.h"/>
+    <File Name="cppcheckreportbasepage.cpp"/>
+    <File Name="cppcheckreportpage.cpp"/>
+    <File Name="cppcheckreportpage.h"/>
+    <File Name="cppcheck_settings.cpp"/>
+    <File Name="cppcheck_settings.h"/>
+  </VirtualDirectory>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

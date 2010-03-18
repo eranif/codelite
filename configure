@@ -210,14 +210,14 @@ createCodeLiteCppcheckMakefile ()
 
 		if [ "$file_extension" = "c" ]; then
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "	\$(GCC) -c ${a_file} -I.  -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(GCC) -c ${a_file} -I.  -o ${configuration}/${a_file_no_ext}.o -Ilib" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "	\$(GCC) -I.  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo "	\$(GCC) -I.  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file} -Ilib" >> Makefile
 		else
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "	\$(CMP)  -c ${a_file} -I. -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(CMP)  -c ${a_file} -I. -o ${configuration}/${a_file_no_ext}.o -Ilib" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "	\$(CMP) -I. -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo "	\$(CMP) -I. -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file} -Ilib" >> Makefile
 		fi
 
 	done
@@ -469,16 +469,10 @@ createPluginMakefile()
 	  createVariables "yes"
 	fi
 
-	if [ "$plugin_name" = "CppCheck" ] ; then
-	  createObjectList "*.cpp ../sdk/codelite_cppcheck/network/*.cpp" "${plugin_name}Objects"
-	else
-	  createObjectList "*.cpp" "${plugin_name}Objects"
-	fi
-
+	createObjectList "*.cpp" "${plugin_name}Objects"
+	
 	createPluginTargets "${plugin_name}" "${post_install_path}"
-	if [ "$plugin_name" = "CppCheck" ] ; then
-	  createRules_sharedObject "*.cpp ../sdk/codelite_cppcheck/network/*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
-	elif [ "$plugin_name" = "Subversion2" ] ; then
+	if [ "$plugin_name" = "Subversion2" ] ; then
 	  createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT)"
 	else 
 	  createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"

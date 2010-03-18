@@ -266,7 +266,6 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="WinReleaseUnicode"/>
   <VirtualDirectory Name="UI">
     <File Name="cppcheckreportbasepage.h"/>
     <File Name="cppcheckreportbasepage.cpp"/>
@@ -276,4 +275,5 @@
     <File Name="cppcheck_settings.h"/>
   </VirtualDirectory>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

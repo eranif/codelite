@@ -23,6 +23,9 @@ class CppCheckReportPage : public CppCheckReportBasePage
 	CppCheckPlugin*     m_plugin;
 
 protected:
+	static int ColorLine ( int, const char *text, size_t &start, size_t &len );
+
+protected:
 	// Handlers for CppCheckReportBasePage events.
 
 	void OnClearReport          ( wxCommandEvent& event );
@@ -30,13 +33,18 @@ protected:
 	void OnStopCheckingUI       (wxUpdateUIEvent &event);
 	void OnClearReportUI        (wxUpdateUIEvent &event);
 
+	// Scintilla events
+	void OnOpenFile             (wxScintillaEvent &e);
+
 public:
 	/** Constructor */
 	CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheckPlugin* plugin);
+	virtual ~CppCheckReportPage();
 
 	void   Clear        ();
-	size_t GetErrorCount() const {return 1; }
+	size_t GetErrorCount() const;
 	void   AppendLine   (const wxString &line);
+	void   PrintStatusMessage();
 };
 
 #endif // __cppcheckreportpage__

@@ -63,5 +63,7 @@ wxString CppCheckSettings::GetOptions() const
 	if (UnusedFunctions()) {
 		options << wxT(" --enable=unusedFunctions ");
 	}
+
+	options << wxT(" --template gcc ");
 	return options;
 }

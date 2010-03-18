@@ -159,6 +159,7 @@
       <File Name="src/scintilla/src/LexSorcus.cxx"/>
       <File Name="src/scintilla/src/LexMarkdown.cxx"/>
       <File Name="src/scintilla/src/FontQuality.h"/>
+      <File Name="src/scintilla/src/LexCppCheck.cxx"/>
     </VirtualDirectory>
     <VirtualDirectory Name="include">
       <File Name="src/scintilla/include/Accessor.h"/>
@@ -362,6 +363,6 @@
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebug_29"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

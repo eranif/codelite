@@ -326,6 +326,8 @@ void CppCheckPlugin::OnCppCheckTerminated(wxCommandEvent& e)
 	m_filelist.Clear();
 	delete m_cppcheckProcess;
 	m_cppcheckProcess = NULL;
+
+	m_view->PrintStatusMessage();
 }
 
 /**
@@ -408,10 +410,6 @@ void CppCheckPlugin::SetTabVisible(bool clearContent)
 void CppCheckPlugin::StopAnalysis()
 {
 	// Clear the files queue
-	m_filelist.Clear();
-	m_fileCount = 0;
-	m_fileProcessed = 1;
-
 	if (m_cppcheckProcess) {
 		// terminate the m_cppcheckProcess
 		m_cppcheckProcess->Terminate();

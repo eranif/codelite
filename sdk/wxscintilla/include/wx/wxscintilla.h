@@ -422,6 +422,7 @@
 
 //ERAN
 #define wxSCI_LEX_GCC            150
+#define wxSCI_LEX_CPPCHECK       151
 #define wxSCI_LEX_GCC_DEFAULT      0
 #define wxSCI_LEX_GCC_ERROR        1
 #define wxSCI_LEX_GCC_WARNING      2
@@ -2114,10 +2115,10 @@ public:
 
     // Set the foreground colour of a style.
     void StyleSetForeground (int style, const wxColour& fore);
-	
+
 	// Get the background colour of a style
 	wxColour StyleGetBackground(int style);
-	
+
 	// Get the foreground colour of a style
 	wxColour StyleGetForeground(int style);
 

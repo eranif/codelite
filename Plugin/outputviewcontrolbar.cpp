@@ -98,6 +98,8 @@ void OutputViewControlBar::OnButtonClicked(wxCommandEvent& event)
 		DoTogglePane(false);
 	else
 		DoTogglePane(true);
+		
+	bool checked = event.IsChecked();
 #else
 
 	wxAuiToolBarItem *item = m_buttons->FindTool(event.GetId());

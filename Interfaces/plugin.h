@@ -28,6 +28,7 @@
 #include "imanager.h"
 #include "wx/toolbar.h"
 #include <wx/pen.h>
+#include "cl_aui_tb_are.h"
 #include "cl_defs.h"
 #if USE_AUI_TOOLBAR
 #include <wx/aui/auibar.h>

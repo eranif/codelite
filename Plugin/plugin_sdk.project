@@ -153,6 +153,8 @@
       <File Name="listctrl_improved.cpp"/>
       <File Name="cl_editor_tip_window.cpp"/>
       <File Name="cl_editor_tip_window.h"/>
+      <File Name="cl_aui_tb_are.h"/>
+      <File Name="cl_aui_tb_are.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="threebuttondlg.h"/>

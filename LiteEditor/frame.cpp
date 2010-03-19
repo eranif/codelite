@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
 #include <wx/wupdlock.h>
+#include "cl_aui_tb_are.h"
 #include "open_resource_dialog.h" // New open resource
 #include <wx/busyinfo.h>
 #include "tags_parser_search_path_dlg.h"
@@ -897,6 +898,10 @@ void Frame::CreateToolbars24()
 	//----------------------------------------------
 	clToolBar *tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 	tb->SetToolBitmapSize(wxSize(24, 24));
+	
+#if USE_AUI_TOOLBAR
+	tb->SetArtProvider(new CLMainAuiTBArt());
+#endif
 
 	tb->AddTool(XRCID("new_file"), wxT("New"), wxXmlResource::Get()->LoadBitmap(wxT("page_new24")), wxT("New File"));
 	tb->AddTool(XRCID("open_file"), wxT("Open"), wxXmlResource::Get()->LoadBitmap(wxT("folder24")), wxT("Open File"));
@@ -930,6 +935,9 @@ void Frame::CreateToolbars24()
 	if (PluginManager::Get()->AllowToolbar()) {
 		info = wxAuiPaneInfo();
 		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+#if USE_AUI_TOOLBAR
+		tb->SetArtProvider(new CLMainAuiTBArt());
+#endif		
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 	tb->AddTool(wxID_FIND, wxT("Find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace24")), wxT("Find"));
@@ -953,6 +961,9 @@ void Frame::CreateToolbars24()
 	//----------------------------------------------
 	if (PluginManager::Get()->AllowToolbar()) {
 		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+#if USE_AUI_TOOLBAR
+		tb->SetArtProvider(new CLMainAuiTBArt());
+#endif		
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 
@@ -973,6 +984,9 @@ void Frame::CreateToolbars24()
 	//----------------------------------------------
 	if (PluginManager::Get()->AllowToolbar()) {
 		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+#if USE_AUI_TOOLBAR
+		tb->SetArtProvider(new CLMainAuiTBArt());
+#endif		
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 
@@ -1020,6 +1034,9 @@ void Frame::CreateToolbars16()
 #endif
 
 	clToolBar *tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+#if USE_AUI_TOOLBAR
+		tb->SetArtProvider(new CLMainAuiTBArt());
+#endif		
 	wxAuiPaneInfo info;
 
 	tb->SetToolBitmapSize(wxSize(16, 16));
@@ -1057,6 +1074,9 @@ void Frame::CreateToolbars16()
 
 	if (PluginManager::Get()->AllowToolbar()) {
 		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+#if USE_AUI_TOOLBAR
+		tb->SetArtProvider(new CLMainAuiTBArt());
+#endif		
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 
@@ -1081,6 +1101,9 @@ void Frame::CreateToolbars16()
 		//create the build toolbar
 		//----------------------------------------------
 		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+#if USE_AUI_TOOLBAR
+		tb->SetArtProvider(new CLMainAuiTBArt());
+#endif	
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 
@@ -1102,6 +1125,9 @@ void Frame::CreateToolbars16()
 	//----------------------------------------------
 	if (PluginManager::Get()->AllowToolbar()) {
 		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+#if USE_AUI_TOOLBAR
+		tb->SetArtProvider(new CLMainAuiTBArt());
+#endif		
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 

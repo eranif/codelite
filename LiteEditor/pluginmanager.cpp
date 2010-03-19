@@ -220,6 +220,10 @@ void PluginManager::Load()
 			//load the toolbar
 			clToolBar *tb = plugin->CreateToolBar( AllowToolbar() ? (wxWindow*)Frame::Get()->GetMainPanel() : (wxWindow*)Frame::Get() );
 			if ( tb ) {
+#if USE_AUI_TOOLBAR
+				// When using AUI toolbars, use our own custom art-provider
+				tb->SetArtProvider(new CLMainAuiTBArt());
+#endif
 				Frame::Get()->GetDockingManager().AddPane( tb, wxAuiPaneInfo().Name( plugin->GetShortName() ).LeftDockable( true ).RightDockable( true ).Caption( plugin->GetShortName() ).ToolbarPane().Top() );
 
 				//Add menu entry at the 'View->Toolbars' menu for this toolbar

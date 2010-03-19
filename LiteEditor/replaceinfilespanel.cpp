@@ -67,7 +67,7 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 	wxButton *repl = new wxButton(this, XRCID("replace"), wxT("&Replace Marked"));
 	horzSizer->Add(repl, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
-	m_progress = new wxGauge(this, wxID_ANY, 1);
+	m_progress = new wxGauge(this, wxID_ANY, 1, wxDefaultPosition, wxSize(-1, 15), wxGA_HORIZONTAL);
 	horzSizer->Add(m_progress, 1, wxALIGN_CENTER_VERTICAL|wxALL|wxGA_SMOOTH, 5);
 
 	wxBoxSizer *vertSizer = new wxBoxSizer(wxVERTICAL);
@@ -82,9 +82,9 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 	m_tb->Realize();
 
 #ifdef __WXMAC__
-	mainSizer->Insert(0, vertSizer, 1, wxEXPAND | wxALL, 1);
+	mainSizer->Insert(0, vertSizer, 1, wxEXPAND);
 #else
-	mainSizer->Add(vertSizer, 1, wxEXPAND | wxALL, 1);
+	mainSizer->Add(vertSizer, 1, wxEXPAND);
 #endif
 	mainSizer->Layout();
 

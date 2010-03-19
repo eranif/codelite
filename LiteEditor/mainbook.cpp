@@ -861,15 +861,12 @@ void MainBook::OnSwapPages(NotebookEvent& e)
 		} else {
 			m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
 		}
-		
-		m_book->SetSelection(endPos, true);
-		
+
 	} else {
 
 		// we are moving our tab to the right
 		m_book->RemovePage((size_t)startPos, false);
 		m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
-		
-		m_book->SetSelection(endPos, true);
+
 	}
 }

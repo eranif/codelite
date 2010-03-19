@@ -50,6 +50,7 @@ const wxString DebuggerPane::ASCII_VIEWER = wxT("Ascii Viewer");
 
 BEGIN_EVENT_TABLE(DebuggerPane, wxPanel)
 	EVT_BOOK_PAGE_CHANGED(wxID_ANY, DebuggerPane::OnPageChanged)
+	EVT_BOOK_SWAP_PAGES  (wxID_ANY, DebuggerPane::OnSwapPages)
 END_EVENT_TABLE()
 
 DebuggerPane::DebuggerPane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr)
@@ -98,7 +99,7 @@ void DebuggerPane::CreateGUIControls()
 	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
 	detachedPanes = dpi.GetPanes();
 
-	
+
 	wxString name;
 	wxBitmap bmp;
 	name = LOCALS;
@@ -108,12 +109,12 @@ void DebuggerPane::CreateGUIControls()
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
 		m_localsTable = new LocalsTable(cp);
 		cp->SetChildNoReparent(m_localsTable);
-		
+
 	} else {
 		m_localsTable = new LocalsTable(m_book);
 		m_book->AddPage(m_localsTable, name, false);
 	}
-	
+
 	// Add the 'watches View'
 	name = WATCHES;
 	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("watches"));
@@ -121,13 +122,13 @@ void DebuggerPane::CreateGUIControls()
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
 		m_watchesTable = new WatchesTable(cp);
 		cp->SetChildNoReparent(m_watchesTable);
-		
+
 	} else {
 		m_watchesTable = new WatchesTable(m_book);
 		m_book->AddPage(m_watchesTable, name, false);
 	}
-	
-	
+
+
 	// Add the 'ASCII Viewer'
 	name = ASCII_VIEWER;
 	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("text_view"));
@@ -135,12 +136,12 @@ void DebuggerPane::CreateGUIControls()
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
 		m_asciiViewer = new DebuggerAsciiViewer(cp);
 		cp->SetChildNoReparent(m_asciiViewer);
-		
+
 	} else {
 		m_asciiViewer = new DebuggerAsciiViewer(m_book);
 		m_book->AddPage(m_asciiViewer, name, false);
 	}
-	
+
 	// Add the 'Call Stack'
 	name = FRAMES;
 	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("frames"));
@@ -148,7 +149,7 @@ void DebuggerPane::CreateGUIControls()
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
 		m_frameList = new ListCtrlPanel(cp);
 		cp->SetChildNoReparent(m_frameList);
-		
+
 	} else {
 		m_frameList = new ListCtrlPanel(m_book);
 		m_book->AddPage(m_frameList, name, false);
@@ -161,12 +162,12 @@ void DebuggerPane::CreateGUIControls()
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
 		m_breakpoints = new BreakpointDlg(cp);
 		cp->SetChildNoReparent(m_breakpoints);
-		
+
 	} else {
 		m_breakpoints = new BreakpointDlg(m_book);
 		m_book->AddPage(m_breakpoints, name, false);
 	}
-	
+
 	// Add the 'Breakpoints'
 	name = THREADS;
 	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("threads"));
@@ -174,7 +175,7 @@ void DebuggerPane::CreateGUIControls()
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
 		m_threads = new ThreadListPanel(cp);
 		cp->SetChildNoReparent(m_threads);
-		
+
 	} else {
 		m_threads = new ThreadListPanel(m_book);
 		m_book->AddPage(m_threads, name, false);
@@ -187,12 +188,12 @@ void DebuggerPane::CreateGUIControls()
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
 		m_memory = new MemoryView(cp);
 		cp->SetChildNoReparent(m_memory);
-		
+
 	} else {
 		m_memory = new MemoryView(m_book);
 		m_book->AddPage(m_memory, name, false);
 	}
-	
+
 	m_initDone = true;
 }
 
@@ -215,3 +216,37 @@ void DebuggerPane::Clear()
 	GetMemoryView()->Clear();
 }
 
+void DebuggerPane::OnSwapPages(NotebookEvent& e)
+{
+	int startPos = e.GetOldSelection();
+	int endPos   = e.GetSelection();
+
+	// Sanity
+	if(startPos < 0 || endPos < 0)
+		return;
+
+	// We are dropping on another tab, remove the source tab from its current location, and place it
+	// on the new location
+	wxWindow *page  = m_book->GetPage     ((size_t)startPos);
+	wxString  txt   = m_book->GetPageText ((size_t)startPos);
+	int       imgId = m_book->GetPageImage((size_t)startPos);
+
+	if(endPos > startPos) {
+
+		// we are moving our tab to the right
+		m_book->RemovePage(startPos, false);
+
+		if((size_t)endPos == m_book->GetPageCount()) {
+			m_book->AddPage(page, txt, true, imgId);
+		} else {
+			m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
+		}
+
+	} else {
+
+		// we are moving our tab to the right
+		m_book->RemovePage((size_t)startPos, false);
+		m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
+
+	}
+}

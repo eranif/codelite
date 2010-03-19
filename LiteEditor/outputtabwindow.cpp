@@ -175,19 +175,19 @@ void OutputTabWindow::CreateGUIControls()
 	              _("Repeat"));
 
 	m_tb->Realize();
-	
+
 #ifdef __WXMAC__
 	m_sci = new wxScintilla(this);
 	InitStyle(m_sci, wxSCI_LEX_CONTAINER, false);
-	mainSizer->Add(m_sci, 1, wxEXPAND | wxALL, 1);
-	mainSizer->Add(m_tb, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
-#else 
+	mainSizer->Add(m_sci, 1, wxEXPAND);
+	mainSizer->Add(m_tb, 0, wxEXPAND);
+#else
 	m_sci = new wxScintilla(this);
 	InitStyle(m_sci, wxSCI_LEX_CONTAINER, false);
-	mainSizer->Add(m_tb, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
-	mainSizer->Add(m_sci, 1, wxEXPAND | wxALL, 1);
+	mainSizer->Add(m_tb, 0, wxEXPAND);
+	mainSizer->Add(m_sci, 1, wxEXPAND);
 #endif
-	
+
 	mainSizer->Layout();
 }
 

@@ -249,7 +249,7 @@ extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSING;
 extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED;
 extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED;
 extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_X_CLICKED; // Windows Only
-extern const wxEventType wxEVT_COMMAND_BOOK_SWAP_PAGES;
+extern const wxEventType wxEVT_COMMAND_BOOK_SWAP_PAGES;     // Windows / Mac Only
 
 typedef void (wxEvtHandler::*NotebookEventFunction)(NotebookEvent&);
 
@@ -268,4 +268,12 @@ typedef void (wxEvtHandler::*NotebookEventFunction)(NotebookEvent&);
 #define EVT_BOOK_PAGE_CLOSED(winid, fn) \
 	wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_PAGE_CLOSED, winid, NotebookEventHandler(fn))
 
+#define EVT_BOOK_PAGE_MIDDLE_CLICKED(winid, fn) \
+	wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED, winid, NotebookEventHandler(fn))
+
+#define EVT_BOOK_PAGE_X_CLICKED(winid, fn) \
+	wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED, winid, NotebookEventHandler(fn))
+
+#define EVT_BOOK_SWAP_PAGES(winid, fn) \
+	wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_SWAP_PAGES, winid, NotebookEventHandler(fn))
 #endif // __Notebook__

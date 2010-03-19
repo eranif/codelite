@@ -21,6 +21,23 @@
 #include <wx/aui/framemanager.h>
 #include <wx/toolbar.h>
 
+class CLAuiTBArt : public wxAuiDefaultToolBarArt
+{
+public:
+	CLAuiTBArt(){};
+	virtual ~CLAuiTBArt(){}
+
+	virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
+	{
+		wxPen   p(DrawingUtils::GetPanelBgColour());
+		wxBrush b(DrawingUtils::GetPanelBgColour());
+
+		dc.SetPen(p);
+		dc.SetBrush(b);
+		dc.DrawRectangle(rect);
+	}
+};
+
 OutputViewControlBar::OutputViewControlBar(wxWindow* win, OutputPaneBook *book, wxAuiManager *aui, wxWindowID id)
 		: wxPanel  (win, id, wxDefaultPosition, wxSize(-1, -1))
 		, m_aui    (aui)
@@ -30,7 +47,13 @@ OutputViewControlBar::OutputViewControlBar(wxWindow* win, OutputPaneBook *book, 
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer( mainSizer );
 
+#if !OP_USE_AUI_TOOLBAR
 	m_buttons = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_HORZ_TEXT|wxTB_FLAT|wxTB_NODIVIDER);
+#else
+	m_buttons = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_HORZ_TEXT);
+	m_buttons->SetArtProvider(new CLAuiTBArt());
+#endif
+
 	if ( m_book ) {
 		m_book->Connect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED, wxChoicebookEventHandler(OutputViewControlBar::OnPageChanged), NULL, this);
 	}
@@ -49,31 +72,54 @@ OutputViewControlBar::~OutputViewControlBar()
 
 void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, bool selected)
 {
+#if !OP_USE_AUI_TOOLBAR
 	m_tools.push_back( m_buttons->AddTool(wxID_ANY, text, bmp, text, wxITEM_CHECK) );
+#else
+	m_buttons->AddTool(wxXmlResource::GetXRCID(text.c_str()), text, bmp, text, wxITEM_CHECK);
+#endif
 }
 
 void OutputViewControlBar::OnButtonClicked(wxCommandEvent& event)
 {
 	event.Skip();
 	wxString label;
-	
+#if !OP_USE_AUI_TOOLBAR
 	wxToolBarToolBase *item =  m_buttons->FindById(event.GetId());
 	if(item) {
 		label = item->GetLabel();
 	}
-	
+
 	if(label.IsEmpty())
 		return;
-	
+
 	wxWindowUpdateLocker locker( wxTheApp->GetTopWindow() );
 	DoMarkActive( label );
 	if(event.IsChecked())
 		DoTogglePane(false);
 	else
 		DoTogglePane(true);
-	
+#else
+
+	wxAuiToolBarItem *item = m_buttons->FindTool(event.GetId());
+	if(item) {
+		label = item->GetLabel();
+	}
+
+	if(label.IsEmpty())
+		return;
+
+	wxWindowUpdateLocker locker( wxTheApp->GetTopWindow() );
+	DoMarkActive( label );
+
+	bool checked = m_buttons->GetToolToggled(event.GetId());
+	if(checked)
+		DoTogglePane(false);
+	else
+		DoTogglePane(true);
+#endif
+
 	// Uncheck all the buttons except for the selected one
-	DoSetButtonState(event.IsChecked() ? event.GetId() : wxNOT_FOUND);
+	DoSetButtonState(checked ? event.GetId() : wxNOT_FOUND);
 }
 
 void OutputViewControlBar::DoTogglePane(bool hide)
@@ -127,12 +173,12 @@ void OutputViewControlBar::OnRender(wxAuiManagerEvent& event)
 	if ( m_aui && m_aui->GetPane(wxT("Output View")).IsShown() == false ) {
 		DoMarkActive( wxEmptyString );
 		DoSetButtonState(wxNOT_FOUND);
-		
+
 	} else if ( m_aui ) {
 		DoMarkActive ( m_book->GetPageText( m_book->GetSelection() ) );
 		DoSetButtonState( m_book->GetPageText( m_book->GetSelection() ) );
 	}
-	
+
 	event.Skip();
 }
 
@@ -153,7 +199,7 @@ void OutputViewControlBar::AddAllButtons()
 
 	if ( m_book ) {
 		for (size_t i=0; i<m_book->GetPageCount(); i++) {
-			
+
 			wxString text = m_book->GetPageText(i);
 			wxBitmap bmp  = m_book->GetBitmap(i);
 
@@ -170,10 +216,10 @@ void OutputViewControlBar::OnPageChanged(wxChoicebookEvent& event)
 	if ( cursel != wxNOT_FOUND ) {
 		wxString selectedPageText = m_book->GetPageText(cursel);
 		DoMarkActive( selectedPageText );
-		
+
 		DoSetButtonState( selectedPageText );
 	}
-	
+
 	event.Skip();
 }
 
@@ -212,26 +258,48 @@ void OutputViewControlBar::OnEditorFocus(wxCommandEvent& event)
 
 void OutputViewControlBar::DoSetButtonState(int btnId)
 {
+#if !OP_USE_AUI_TOOLBAR
 	for(size_t i=0; i<m_tools.size(); i++) {
 		if(m_tools.at(i)->GetId() == btnId) {
 			m_buttons->ToggleTool(m_tools.at(i)->GetId(), true);
-			
+
 		} else {
 			m_buttons->ToggleTool(m_tools.at(i)->GetId(), false);
-			
+
 		}
 	}
+#else
+
+	for(size_t i=0; i<m_buttons->GetToolCount(); i++) {
+		wxAuiToolBarItem *item = m_buttons->FindToolByIndex(i);
+		if(item && item->GetId() != wxNOT_FOUND) {
+			m_buttons->ToggleTool(item->GetId(), false);
+		}
+	}
+	if(btnId != wxNOT_FOUND)
+		m_buttons->ToggleTool(btnId, true);
+
+#endif
 }
 
 void OutputViewControlBar::DoSetButtonState(const wxString& label)
 {
+#if !OP_USE_AUI_TOOLBAR
 	for(size_t i=0; i<m_tools.size(); i++) {
 		if(m_tools.at(i)->GetLabel() == label) {
 			DoSetButtonState( m_tools.at(i)->GetId() );
 			return;
-			
+
 		}
 	}
-	
+#else
+	for(size_t i=0; i<m_buttons->GetToolCount(); i++) {
+		wxAuiToolBarItem *item = m_buttons->FindToolByIndex(i);
+		if(item && item->GetLabel() == label) {
+			DoSetButtonState( item->GetId() );
+			return;
+		}
+	}
+#endif
 	DoSetButtonState(wxNOT_FOUND);
 }

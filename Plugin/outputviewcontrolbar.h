@@ -13,19 +13,30 @@
 #include <wx/aui/framemanager.h>
 #include "output_pane_book.h"
 
+#if defined (__WXMSW__)||defined(__WXMAC__)
+#    define OP_USE_AUI_TOOLBAR 1
+#else
+#    define OP_USE_AUI_TOOLBAR 0
+#endif
 
 //--------------------------------------------------------
 class OutputViewControlBar : public wxPanel
 {
 	wxAuiManager *                  m_aui;
 	OutputPaneBook*                 m_book;
+
+#if !OP_USE_AUI_TOOLBAR
 	wxToolBar*                      m_buttons;
+#else
+	wxAuiToolBar*                   m_buttons;
+#endif
+
 	std::vector<wxToolBarToolBase*> m_tools;
-	
+
 protected:
 	void DoSetButtonState(int btnId);
 	void DoSetButtonState(const wxString &label);
-	
+
 public:
 	OutputViewControlBar(wxWindow *win, OutputPaneBook *book, wxAuiManager *aui, wxWindowID id);
 

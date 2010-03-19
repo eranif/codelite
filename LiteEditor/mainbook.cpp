@@ -836,37 +836,5 @@ void MainBook::OnClosePage(NotebookEvent& e)
 
 void MainBook::OnSwapPages(NotebookEvent& e)
 {
-	int startPos = e.GetOldSelection();
-	int endPos   = e.GetSelection();
-
-	// Sanity
-	if(startPos < 0 || endPos < 0)
-		return;
-
-	wxWindowUpdateLocker locker( this );
-
-	// We are dropping on another tab, remove the source tab from its current location, and place it
-	// on the new location
-	wxWindow *page  = m_book->GetPage     ((size_t)startPos);
-	wxString  txt   = m_book->GetPageText ((size_t)startPos);
-	int       imgId = m_book->GetPageImage((size_t)startPos);
-
-	if(endPos > startPos) {
-
-		// we are moving our tab to the right
-		m_book->RemovePage(startPos, false);
-
-		if((size_t)endPos == m_book->GetPageCount()) {
-			m_book->AddPage(page, txt, true, imgId);
-		} else {
-			m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
-		}
-
-	} else {
-
-		// we are moving our tab to the right
-		m_book->RemovePage((size_t)startPos, false);
-		m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
-
-	}
+	wxUnusedVar(e);
 }

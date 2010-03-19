@@ -168,7 +168,10 @@ void WorkspacePane::Connect()
 	wxTheApp->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,    wxCommandEventHandler(WorkspacePane::OnActiveEditorChanged), NULL, this);
 	wxTheApp->Connect(wxEVT_EDITOR_CLOSING,           wxCommandEventHandler(WorkspacePane::OnEditorClosing),       NULL, this);
 	wxTheApp->Connect(wxEVT_ALL_EDITORS_CLOSED,       wxCommandEventHandler(WorkspacePane::OnAllEditorsClosed),    NULL, this);
-
+	
+	// An internal event
+	wxTheApp->Connect(45634,                          wxCommandEventHandler(WorkspacePane::OnSetSelection),    NULL, this);
+	
 	m_book->Connect(wxEVT_COMMAND_BOOK_SWAP_PAGES,           NotebookEventHandler(WorkspacePane::OnSwapPages),     NULL, this);
     wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspacePane::OnConfigurationManager),   NULL, this);
     wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspacePane::OnConfigurationManagerUI), NULL, this);
@@ -387,4 +390,14 @@ void WorkspacePane::OnSwapPages(NotebookEvent& e)
 		m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
 
 	}
+	
+//	wxCommandEvent evt(45634);
+//	evt.SetInt(endPos);
+//	wxTheApp->AddPendingEvent(evt);
+}
+
+void WorkspacePane::OnSetSelection(wxCommandEvent& e)
+{
+	wxPrintf(wxT("onSetSelection %d\n"), e.GetInt());
+	m_book->SetSelection(e.GetInt());
 }

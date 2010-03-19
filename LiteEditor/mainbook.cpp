@@ -52,7 +52,7 @@ void MainBook::CreateGuiControls()
 	m_navBar = new NavBar(this);
 	sz->Add(m_navBar, 0, wxEXPAND);
 
-	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_PASS_FOCUS;
+	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_PASS_FOCUS|wxVB_NODND;
 	// load the notebook style from the configuration settings
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	m_book->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")));
@@ -861,12 +861,15 @@ void MainBook::OnSwapPages(NotebookEvent& e)
 		} else {
 			m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
 		}
-
+		
+		m_book->SetSelection(endPos, true);
+		
 	} else {
 
 		// we are moving our tab to the right
 		m_book->RemovePage((size_t)startPos, false);
 		m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
-
+		
+		m_book->SetSelection(endPos, true);
 	}
 }

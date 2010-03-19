@@ -103,7 +103,13 @@ bool Notebook::AddPage(wxWindow *win, const wxString &text, bool selected, int i
 		win->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
 #endif
 		PushPageHistory(win);
-
+		
+#if defined(__WXGTK__)
+		// Is Drag-N-Drop allowed?
+		if( (m_style & wxVB_NODND) == 0 ) {
+			GtkWidget *child = gtk_notebook_get_nth_page(GTK_NOTEBOOK(m_widget), GetPageCount()-1);
+			gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(m_widget), child, true);
+		}
 #if 0
 		if(HasCloseButton()) {
 			GtkWidget *child = gtk_notebook_get_nth_page(GTK_NOTEBOOK(m_widget), GetPageCount()-1);
@@ -122,6 +128,7 @@ bool Notebook::AddPage(wxWindow *win, const wxString &text, bool selected, int i
 				gtk_widget_show_all(label);
 			}
 		}
+#endif
 #endif
 		return true;
 	}
@@ -269,7 +276,13 @@ bool Notebook::InsertPage(size_t index, wxWindow* win, const wxString& text, boo
 
 #ifdef __WXGTK__
 		win->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
+		// Is Drag-N-Drop allowed?
+		if( (m_style & wxVB_NODND) == 0 ) {
+			GtkWidget *child = gtk_notebook_get_nth_page(GTK_NOTEBOOK(m_widget), index);
+			gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(m_widget), child, true);
+		}
 #endif
+
 		PushPageHistory(win);
 		return true;
 	}
@@ -398,25 +411,29 @@ void Notebook::OnLeftUp(wxMouseEvent &e)
 	long flags(0);
 	int where = HitTest( e.GetPosition(), &flags );
 
-	// Is Drag-N-Drop?
-	if(m_leftDownPos != wxPoint()) {
+#ifndef __WXGTK__
+	// Is Drag-N-Drop allowed?
+	if( (m_style & wxVB_NODND) == 0 ) {
+		if(m_leftDownPos != wxPoint()) {
 
-		if(m_leftDownTabIdx != Notebook::npos && where != wxNOT_FOUND && m_leftDownTabIdx != (size_t)where) {
+			if(m_leftDownTabIdx != Notebook::npos && where != wxNOT_FOUND && m_leftDownTabIdx != (size_t)where) {
 
-			e.Skip();
-			m_leftDownPos    = wxPoint();
+				e.Skip();
+				m_leftDownPos    = wxPoint();
 
-			// Notify parent to swap pages
-			NotebookEvent event(wxEVT_COMMAND_BOOK_SWAP_PAGES, GetId());
-			event.SetSelection   ( (int)where );   // The new location
-			event.SetOldSelection( (int)m_leftDownTabIdx ); // Old location
-			event.SetEventObject ( this );
-			GetEventHandler()->AddPendingEvent(event);
+				// Notify parent to swap pages
+				NotebookEvent event(wxEVT_COMMAND_BOOK_SWAP_PAGES, GetId());
+				event.SetSelection   ( (int)where );   // The new location
+				event.SetOldSelection( (int)m_leftDownTabIdx ); // Old location
+				event.SetEventObject ( this );
+				GetEventHandler()->AddPendingEvent(event);
 
-			m_leftDownTabIdx = npos;
-			return;
+				m_leftDownTabIdx = npos;
+				return;
+			}
 		}
 	}
+#endif
 
 #ifdef __WXMSW__
 	bool onImage = flags & wxNB_HITTEST_ONICON;
@@ -441,10 +458,8 @@ void Notebook::OnLeftUp(wxMouseEvent &e)
 		SetPageImage( m_leftDownTabIdx, X_IMG_NORMAL );
 
 	}
-
-	m_leftDownTabIdx = npos;
-
 #endif
+	m_leftDownTabIdx = npos;
 	e.Skip();
 }
 
@@ -454,10 +469,8 @@ void Notebook::OnLeaveWindow(wxMouseEvent &e)
 	if (m_leftDownTabIdx != npos && GetPageImage((size_t)m_leftDownTabIdx) == 1 /* pressed */) {
 		SetPageImage( m_leftDownTabIdx, X_IMG_NORMAL );
 	}
-
-	m_leftDownTabIdx = npos;
-
 #endif
+	m_leftDownTabIdx = npos;
 	m_leftDownPos = wxPoint();
 	e.Skip();
 }
@@ -596,10 +609,8 @@ void Notebook::OnMouseMove(wxMouseEvent& e)
 {
 	e.Skip();
 	if(m_leftDownPos != wxPoint() && e.LeftIsDown()) {
-		wxLogMessage(wxT("Still dragging..."));
 
 	} else if(m_leftDownPos != wxPoint() && !e.LeftIsDown()) {
-		wxLogMessage(wxT("Cancel dragging..."));
 		m_leftDownPos = wxPoint();
 	}
 }

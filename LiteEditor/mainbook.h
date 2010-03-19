@@ -43,7 +43,7 @@ private:
 	Notebook     *m_book;
 	QuickFindBar *m_quickFindBar;
 	MessagePane  *m_messagePane;
-	
+
 private:
     void CreateGuiControls();
     void ConnectEvents    ();
@@ -53,6 +53,7 @@ private:
     void OnPageClosed        (NotebookEvent     &e);
 	void OnPageChanged       (NotebookEvent     &e);
 	void OnClosePage         (NotebookEvent     &e);
+	void OnSwapPages         (NotebookEvent     &e);
 
     void OnProjectFileAdded  (wxCommandEvent    &e);
 	void OnProjectFileRemoved(wxCommandEvent    &e);
@@ -72,7 +73,7 @@ public:
 
 	void ShowQuickBar (bool s = true)       { m_quickFindBar->Show(s); }
 	void ShowMessage  (const wxString &message, bool showHideButton = true, const wxBitmap &bmp = wxNullBitmap, const ButtonDetails &btn1 = ButtonDetails(), const ButtonDetails &btn2 = ButtonDetails(), const ButtonDetails &btn3 = ButtonDetails());
-	
+
 	void ShowNavBar   (bool s = true);
 	void UpdateNavBar (LEditor *editor);
 	bool IsNavBarShown()                    { return m_navBar->IsShown(); }

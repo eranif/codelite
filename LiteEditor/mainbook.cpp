@@ -56,15 +56,15 @@ void MainBook::CreateGuiControls()
 	// load the notebook style from the configuration settings
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	m_book->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")));
-	
+
 	sz->Add(m_book, 1, wxEXPAND);
 
 	m_quickFindBar = new QuickFindBar(this);
 	sz->Add(m_quickFindBar, 0, wxTOP|wxBOTTOM|wxEXPAND);
-	
+
 	m_messagePane = new MessagePane(this);
 	sz->Insert(0, m_messagePane, 0, wxALL|wxEXPAND, 5, NULL);
-	
+
 	sz->Layout();
 }
 
@@ -77,6 +77,7 @@ void MainBook::ConnectEvents()
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,         NotebookEventHandler(MainBook::OnPageChanged),  NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED,       NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED,  NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
+	m_book->Connect(wxEVT_COMMAND_BOOK_SWAP_PAGES,           NotebookEventHandler(MainBook::OnSwapPages),    NULL, this);
 
 	wxTheApp->Connect(wxEVT_WORKSPACE_LOADED,  wxCommandEventHandler(MainBook::OnWorkspaceLoaded),    NULL, this);
 	wxTheApp->Connect(wxEVT_PROJ_FILE_ADDED,   wxCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
@@ -93,12 +94,12 @@ void MainBook::OnMouseDClick(wxMouseEvent& e)
 	wxUnusedVar(e);
 	int where = m_book->HitTest(e.GetPosition());
 	if(where == wxNOT_FOUND) {
-		
+
 		// This seems to be working only under Mac/Linux...
 		NewEditor();
-		
+
 	} else {
-		
+
 		// Maximize the current editor
 		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("toggle_panes"));
 		evt.SetEventObject(this);
@@ -128,7 +129,7 @@ void MainBook::OnPageClosed(NotebookEvent &e)
 	for (size_t i = 0; i < m_book->GetPageCount() && editor == NULL; i++) {
 		editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
 	}
-	
+
 	if (m_book->GetPageCount() == 0) {
 		SendCmdEvent(wxEVT_ALL_EDITORS_CLOSED);
 		ShowQuickBar(false);
@@ -283,11 +284,11 @@ void MainBook::RestoreSession(SessionEntry &session)
 			}
 			continue;
 		}
-		
+
 		editor->ScrollToLine(ti.GetFirstVisibleLine());
 		editor->GotoLine(ti.GetCurrentLine());
 		editor->EnsureCaretVisible();
-		
+
 		const wxArrayString &astrBookmarks = ti.GetBookmarks();
 		for (size_t i = 0; i < astrBookmarks.GetCount(); i++) {
 			long nLine = 0;
@@ -385,7 +386,7 @@ static bool IsFileExists(const wxFileName &filename) {
 LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectName, int lineno, long position, bool addjump)
 {
 	wxWindowUpdateLocker locker(this);
-	
+
 	wxFileName fileName(file_name);
 	fileName.MakeAbsolute();
 
@@ -417,7 +418,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		editor->Create(projName, fileName);
 		AddPage(editor, fileName.GetFullName());
 		editor->SetSyntaxHighlight();
-		
+
 		// mark the editor as read only if needed
 		MarkEditorReadOnly(editor, IsFileReadOnly(editor->GetFileName()));
 
@@ -444,7 +445,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 
 	if (position != wxNOT_FOUND) {
 		editor->SetCaretAt(position);
-		
+
 	} else if (lineno != wxNOT_FOUND) {
 		editor->GotoLine(lineno);
 		editor->EnsureVisible(lineno);
@@ -456,7 +457,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		SelectPage(editor);
 	}
 
-#ifdef __WXGTK__	
+#ifdef __WXGTK__
 	editor->ScrollToColumn(0);
 #endif
 
@@ -482,9 +483,9 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 
 	long MaxBuffers(15);
 	EditorConfigST::Get()->GetLongValue(wxT("MaxOpenedTabs"), MaxBuffers);
-	
+
 	wxWindowUpdateLocker locker(m_book);
-	
+
 	if( (long)(m_book->GetPageCount()) >= MaxBuffers ) {
 		// We have reached the limit of the number of open buffers
 		// Close the last used buffer
@@ -753,7 +754,7 @@ void MainBook::MarkEditorReadOnly(LEditor* editor, bool ro)
 	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
 		if (editor == m_book->GetPage(i)) {
 //			m_book->SetPageBitmap(i, ro ? wxXmlResource::Get()->LoadBitmap(wxT("read_only")) : wxNullBitmap );
-			
+
 			// TODO ::  Mark this editor as read only
 			break;
 		}
@@ -831,4 +832,41 @@ void MainBook::OnClosePage(NotebookEvent& e)
 	wxWindow *page = m_book->GetPage((size_t)where);
 	if(page)
 		ClosePage(page);
+}
+
+void MainBook::OnSwapPages(NotebookEvent& e)
+{
+	int startPos = e.GetOldSelection();
+	int endPos   = e.GetSelection();
+
+	// Sanity
+	if(startPos < 0 || endPos < 0)
+		return;
+
+	wxWindowUpdateLocker locker( this );
+
+	// We are dropping on another tab, remove the source tab from its current location, and place it
+	// on the new location
+	wxWindow *page  = m_book->GetPage     ((size_t)startPos);
+	wxString  txt   = m_book->GetPageText ((size_t)startPos);
+	int       imgId = m_book->GetPageImage((size_t)startPos);
+
+	if(endPos > startPos) {
+
+		// we are moving our tab to the right
+		m_book->RemovePage(startPos, false);
+
+		if((size_t)endPos == m_book->GetPageCount()) {
+			m_book->AddPage(page, txt, true, imgId);
+		} else {
+			m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
+		}
+
+	} else {
+
+		// we are moving our tab to the right
+		m_book->RemovePage((size_t)startPos, false);
+		m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
+
+	}
 }

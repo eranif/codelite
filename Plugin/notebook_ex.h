@@ -52,7 +52,7 @@ enum {
 	wxVB_NODND                  = 0x00040000,
 	wxVB_NO_TABS                = 0x00100000,
 	wxVB_PASS_FOCUS             = 0x00400000
-};	
+};
 #endif
 
 class NotebookNavDialog;
@@ -66,7 +66,8 @@ class Notebook : public wxNotebook
 	long               m_style;
 	size_t             m_leftDownTabIdx;
 	bool               m_notify;
-	
+	wxPoint            m_leftDownPos;
+
 public:
 	static const size_t npos = static_cast<size_t>(-1);
 
@@ -78,11 +79,11 @@ protected:
 	bool      HasCloseButton() {return m_style & wxVB_HAS_X;}
 	bool      HasCloseMiddle() {return m_style & wxVB_MOUSE_MIDDLE_CLOSE_TAB;}
 	void      DoShowMenuButton();
-	
+
 public:
 	Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
 	virtual ~Notebook();
-	
+
 	/**
 	 * \brief return the currently selected item index
 	 * \return the currently selected item, of the book is empty, return Notebook::npos
@@ -171,7 +172,7 @@ public:
 	 * \param text new text
 	 */
 	bool SetPageText(size_t index, const wxString &text);
-	
+
 protected:
 	// Event handlers
 	void OnNavigationKey      (wxNavigationKeyEvent &e);
@@ -179,25 +180,26 @@ protected:
 	void OnLeftUp             (wxMouseEvent         &e);
 	void OnLeaveWindow        (wxMouseEvent         &e);
 	void OnMouseMiddle        (wxMouseEvent         &e);
+	void OnMouseMove          (wxMouseEvent         &e);
 	void OnKeyDown            (wxKeyEvent           &e);
 	void OnMenu               (wxContextMenuEvent   &e);
-	
+
 	// Used with wxChoicebook control
 	void OnHasPages           (wxUpdateUIEvent &e);
-	
+
 	// wxNotebook events
 	void OnIternalPageChanged (wxNotebookEvent &e);
 	void OnIternalPageChanging(wxNotebookEvent &e);
 	void OnInternalDeletePage (wxCommandEvent  &e);
-	
+
 	// wxChoicebook events
 	void OnFocus                (wxFocusEvent      &e);
-	
+
 protected:
 	void DoPageChangedEvent   (wxBookCtrlBaseEvent &e);
 	void DoPageChangingEvent  (wxBookCtrlBaseEvent &e);
 	bool DoNavigate();
-	
+
 };
 
 class NotebookEvent : public wxNotifyEvent
@@ -237,7 +239,7 @@ public:
 	size_t GetOldSelection() {
 		return oldsel;
 	}
-	
+
 	virtual wxEvent *Clone() const { return new NotebookEvent(*this); }
 };
 
@@ -247,6 +249,7 @@ extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSING;
 extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED;
 extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED;
 extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_X_CLICKED; // Windows Only
+extern const wxEventType wxEVT_COMMAND_BOOK_SWAP_PAGES;
 
 typedef void (wxEvtHandler::*NotebookEventFunction)(NotebookEvent&);
 

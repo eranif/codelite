@@ -1,3 +1,4 @@
+#include <wx/app.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/choicebk.h>
 #include <wx/notebook.h>
@@ -23,6 +24,7 @@ const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSING         = XRCID("notebook_page
 const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED          = XRCID("notebook_page_closed");
 const wxEventType wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED  = XRCID("notebook_page_middle_clicked");
 const wxEventType wxEVT_COMMAND_BOOK_PAGE_X_CLICKED       = XRCID("notebook_page_x_btn_clicked");
+const wxEventType wxEVT_COMMAND_BOOK_SWAP_PAGES           = XRCID("notebook_swap_pages");
 
 /**
  * @brief helper method
@@ -51,6 +53,8 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 {
 	Initialize();
 
+	m_leftDownPos = wxPoint();
+
 	// Connect events
 	Connect(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,  wxNotebookEventHandler(Notebook::OnIternalPageChanged),  NULL, this);
 	Connect(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING, wxNotebookEventHandler(Notebook::OnIternalPageChanging), NULL, this);
@@ -59,6 +63,7 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 	Connect(wxEVT_LEFT_DOWN,                      wxMouseEventHandler(Notebook::OnLeftDown),               NULL, this);
 	Connect(wxEVT_LEFT_UP,                        wxMouseEventHandler(Notebook::OnLeftUp  ),               NULL, this);
 	Connect(wxEVT_MIDDLE_DOWN,                    wxMouseEventHandler(Notebook::OnMouseMiddle),            NULL, this);
+	Connect(wxEVT_MOTION,                         wxMouseEventHandler(Notebook::OnMouseMove),              NULL, this);
 	Connect(wxEVT_LEAVE_WINDOW,                   wxMouseEventHandler(Notebook::OnLeaveWindow),            NULL, this);
 	Connect(wxEVT_CONTEXT_MENU,                   wxContextMenuEventHandler(Notebook::OnMenu),             NULL, this);
 
@@ -83,6 +88,7 @@ Notebook::~Notebook()
 	Disconnect(wxEVT_LEFT_DOWN,                      wxMouseEventHandler(Notebook::OnLeftDown),               NULL, this);
 	Disconnect(wxEVT_LEFT_UP,                        wxMouseEventHandler(Notebook::OnLeftUp  ),               NULL, this);
 	Disconnect(wxEVT_MIDDLE_DOWN,                    wxMouseEventHandler(Notebook::OnMouseMiddle),            NULL, this);
+	Disconnect(wxEVT_MOTION,                         wxMouseEventHandler(Notebook::OnMouseMove),              NULL, this);
 	Disconnect(wxEVT_LEAVE_WINDOW,                   wxMouseEventHandler(Notebook::OnLeaveWindow),            NULL, this);
 	Disconnect(wxEVT_CONTEXT_MENU,                   wxContextMenuEventHandler(Notebook::OnMenu),             NULL, this);
 	Disconnect(wxEVT_SET_FOCUS,                      wxFocusEventHandler(Notebook::OnFocus),                  NULL, this);
@@ -99,25 +105,24 @@ bool Notebook::AddPage(wxWindow *win, const wxString &text, bool selected, int i
 		PushPageHistory(win);
 
 #if 0
-	if(HasCloseButton()) {
-		GtkWidget *child = gtk_notebook_get_nth_page(GTK_NOTEBOOK(m_widget), GetPageCount()-1);
-		GtkWidget *label = gtk_notebook_get_tab_label(GTK_NOTEBOOK(m_widget), child);
+		if(HasCloseButton()) {
+			GtkWidget *child = gtk_notebook_get_nth_page(GTK_NOTEBOOK(m_widget), GetPageCount()-1);
+			GtkWidget *label = gtk_notebook_get_tab_label(GTK_NOTEBOOK(m_widget), child);
 
-		if(GTK_IS_HBOX(label)) {
-			GtkWidget *button;
+			if(GTK_IS_HBOX(label)) {
+				GtkWidget *button;
 
-			// Create a button, and place a close image on it
-			button = gtk_button_new();
-			gtk_box_pack_start(GTK_BOX(label), button, FALSE, FALSE, 0);
+				// Create a button, and place a close image on it
+				button = gtk_button_new();
+				gtk_box_pack_start(GTK_BOX(label), button, FALSE, FALSE, 0);
 
-			// Create the image and add it to the button
-			GtkWidget* image = gtk_image_new_from_pixbuf(GetImageList()->GetBitmap(0).GetPixbuf());
-			gtk_container_add(GTK_CONTAINER(button), image);
-			gtk_widget_show_all(label);
+				// Create the image and add it to the button
+				GtkWidget* image = gtk_image_new_from_pixbuf(GetImageList()->GetBitmap(0).GetPixbuf());
+				gtk_container_add(GTK_CONTAINER(button), image);
+				gtk_widget_show_all(label);
+			}
 		}
-	}
 #endif
-
 		return true;
 	}
 	return false;
@@ -376,10 +381,12 @@ void Notebook::OnLeftDown(wxMouseEvent &e)
 	size_t curSel = GetSelection();
 	int where = HitTest( e.GetPosition(), &flags );
 	if (where != wxNOT_FOUND) {
+		// Keep the left-down position
+		m_leftDownPos    = e.GetPosition();
+		m_leftDownTabIdx = where;
 #ifdef __WXMSW__
 		if (HasCloseButton() && (flags & wxBK_HITTEST_ONICON) && where == (int)curSel) {
 			SetPageImage(where, X_IMG_PRESSED);
-			m_leftDownTabIdx = where;
 		}
 #endif
 	}
@@ -388,10 +395,30 @@ void Notebook::OnLeftDown(wxMouseEvent &e)
 
 void Notebook::OnLeftUp(wxMouseEvent &e)
 {
-#ifdef __WXMSW__
 	long flags(0);
 	int where = HitTest( e.GetPosition(), &flags );
 
+	// Is Drag-N-Drop?
+	if(m_leftDownPos != wxPoint()) {
+
+		if(m_leftDownTabIdx != Notebook::npos && where != wxNOT_FOUND && m_leftDownTabIdx != (size_t)where) {
+
+			e.Skip();
+			m_leftDownPos    = wxPoint();
+
+			// Notify parent to swap pages
+			NotebookEvent event(wxEVT_COMMAND_BOOK_SWAP_PAGES, GetId());
+			event.SetSelection   ( (int)where );   // The new location
+			event.SetOldSelection( (int)m_leftDownTabIdx ); // Old location
+			event.SetEventObject ( this );
+			GetEventHandler()->AddPendingEvent(event);
+
+			m_leftDownTabIdx = npos;
+			return;
+		}
+	}
+
+#ifdef __WXMSW__
 	bool onImage = flags & wxNB_HITTEST_ONICON;
 	bool pressed = m_leftDownTabIdx != npos && (GetPageImage((size_t)m_leftDownTabIdx) == 1);
 	bool sameTab = (size_t)where == m_leftDownTabIdx;
@@ -431,6 +458,7 @@ void Notebook::OnLeaveWindow(wxMouseEvent &e)
 	m_leftDownTabIdx = npos;
 
 #endif
+	m_leftDownPos = wxPoint();
 	e.Skip();
 }
 
@@ -562,4 +590,16 @@ void Notebook::OnInternalDeletePage(wxCommandEvent& e)
 	size_t pos = (size_t)e.GetInt();
 	if(pos != Notebook::npos)
 		DeletePage(pos, true);
+}
+
+void Notebook::OnMouseMove(wxMouseEvent& e)
+{
+	e.Skip();
+	if(m_leftDownPos != wxPoint() && e.LeftIsDown()) {
+		wxLogMessage(wxT("Still dragging..."));
+
+	} else if(m_leftDownPos != wxPoint() && !e.LeftIsDown()) {
+		wxLogMessage(wxT("Cancel dragging..."));
+		m_leftDownPos = wxPoint();
+	}
 }

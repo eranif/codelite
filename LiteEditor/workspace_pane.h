@@ -26,10 +26,10 @@
 #define WORKSPACE_PANE_H
 
 #include <wx/filename.h>
+#include "notebook_ex.h"
 #include <wx/panel.h>
 
 // Forward Declarations
-class Notebook;
 class FileViewTree;
 class WindowStack;
 class OpenWindowsPanel;
@@ -65,6 +65,7 @@ private:
     void OnActiveEditorChanged(wxCommandEvent &e);
     void OnEditorClosing      (wxCommandEvent &e);
     void OnAllEditorsClosed   (wxCommandEvent &e);
+	void OnSwapPages          (NotebookEvent  &e);
 
 	// Configuration mgr handlers
 	void OnConfigurationManager      (wxCommandEvent  &e);

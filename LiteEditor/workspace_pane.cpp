@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/app.h>
+#include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 #include "parse_thread.h"
 #include "editor_config.h"
@@ -100,10 +101,10 @@ void WorkspacePane::CreateGUIControls()
 
 	wxArrayString detachedPanes;
 	detachedPanes = dpi.GetPanes();
-	
+
 	// Add the workspace tab
 	wxString  name;
-	
+
 	name = wxT("Workspace");
 	if(IS_DETACHED(name)) {
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
@@ -113,7 +114,7 @@ void WorkspacePane::CreateGUIControls()
 		m_workspaceTab = new WorkspaceTab(m_book, name);
 		m_book->AddPage(m_workspaceTab, name, true);
 	}
-	
+
 	// Add the explorer tab
 	name = wxT("Explorer");
 	if(IS_DETACHED(name)) {
@@ -146,7 +147,7 @@ void WorkspacePane::CreateGUIControls()
 		m_openWindowsPane = new OpenWindowsPanel(m_book, name);
 		m_book->AddPage(m_openWindowsPane, name, true);
 	}
-	
+
 	if (m_book->GetPageCount() > 0) {
 		m_book->SetSelection((size_t)0);
 	}
@@ -168,6 +169,7 @@ void WorkspacePane::Connect()
 	wxTheApp->Connect(wxEVT_EDITOR_CLOSING,           wxCommandEventHandler(WorkspacePane::OnEditorClosing),       NULL, this);
 	wxTheApp->Connect(wxEVT_ALL_EDITORS_CLOSED,       wxCommandEventHandler(WorkspacePane::OnAllEditorsClosed),    NULL, this);
 
+	m_book->Connect(wxEVT_COMMAND_BOOK_SWAP_PAGES,           NotebookEventHandler(WorkspacePane::OnSwapPages),     NULL, this);
     wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspacePane::OnConfigurationManager),   NULL, this);
     wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspacePane::OnConfigurationManagerUI), NULL, this);
 }
@@ -348,4 +350,41 @@ void WorkspacePane::OnConfigurationManager(wxCommandEvent& e)
 
 	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
 	m_workspaceConfig->SetStringSelection(matrix->GetSelectedConfigurationName());
+}
+
+void WorkspacePane::OnSwapPages(NotebookEvent& e)
+{
+	int startPos = e.GetOldSelection();
+	int endPos   = e.GetSelection();
+
+	// Sanity
+	if(startPos < 0 || endPos < 0)
+		return;
+
+	wxWindowUpdateLocker locker( this );
+
+	// We are dropping on another tab, remove the source tab from its current location, and place it
+	// on the new location
+	wxWindow *page  = m_book->GetPage     ((size_t)startPos);
+	wxString  txt   = m_book->GetPageText ((size_t)startPos);
+	int       imgId = m_book->GetPageImage((size_t)startPos);
+
+	if(endPos > startPos) {
+
+		// we are moving our tab to the right
+		m_book->RemovePage(startPos, false);
+
+		if((size_t)endPos == m_book->GetPageCount()) {
+			m_book->AddPage(page, txt, true, imgId);
+		} else {
+			m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
+		}
+
+	} else {
+
+		// we are moving our tab to the right
+		m_book->RemovePage((size_t)startPos, false);
+		m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
+
+	}
 }

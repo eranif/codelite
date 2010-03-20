@@ -14,26 +14,21 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_closeButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( -1,-1 ), wxBU_AUTODRAW|wxSTATIC_BORDER );
-	m_closeButton->SetToolTip( _("Close Incremental Search Bar") );
+	m_toolBar1 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER );
+	m_toolBar1->SetToolSeparation( 2 );
+	m_toolBar1->AddTool( wxID_HIDE, _("tool"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Hide the Find Bar"), wxEmptyString );
+	m_toolBar1->AddTool( wxID_SHOW_REPLACE_CONTROLS, _("tool"), wxNullBitmap, wxNullBitmap, wxITEM_CHECK, _("Toggle 'Replace With' Controls"), wxEmptyString );
+	m_toolBar1->Realize();
 	
-	m_closeButton->SetToolTip( _("Close Incremental Search Bar") );
+	mainSizer->Add( m_toolBar1, 0, 0, 5 );
 	
-	mainSizer->Add( m_closeButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5 );
-	
-	m_showReplaceButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( -1,-1 ), wxBU_AUTODRAW|wxSTATIC_BORDER );
-	m_showReplaceButton->SetToolTip( _("Toggle Replace Controls") );
-	
-	m_showReplaceButton->SetToolTip( _("Toggle Replace Controls") );
-	
-	mainSizer->Add( m_showReplaceButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 1 );
-	
-	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
-	mainSizer->Add( m_staticline2, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+	m_staticline3 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
+	mainSizer->Add( m_staticline3, 0, wxEXPAND|wxRIGHT, 5 );
 	
 	wxFlexGridSizer* fgSizer1;
-	fgSizer1 = new wxFlexGridSizer( 2, 4, 0, 0 );
+	fgSizer1 = new wxFlexGridSizer( 0, 6, 0, 0 );
 	fgSizer1->AddGrowableCol( 1 );
+	fgSizer1->AddGrowableCol( 4 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 	
@@ -44,29 +39,29 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_findWhat = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2 );
 	m_findWhat->SetToolTip( _("Hit ENTER to search, or Shift + ENTER to search backward") );
 	
-	fgSizer1->Add( m_findWhat, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALL, 2 );
+	fgSizer1->Add( m_findWhat, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 2 );
 	
-	m_buttonFindNext = new wxButton( this, wxID_ANY, _("Next"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	m_buttonFindNext->SetDefault(); 
-	fgSizer1->Add( m_buttonFindNext, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALL, 2 );
+	m_toolBar2 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER ); 
+	m_toolBar2->AddTool( wxID_FIND_NEXT, _("tool"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Find Next Match"), wxEmptyString );
+	m_toolBar2->AddTool( wxID_FIND_PREVIOUS, _("tool"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Find Previous Match"), wxEmptyString );
+	m_toolBar2->Realize();
 	
-	m_buttonFindPrevious = new wxButton( this, wxID_ANY, _("Previous"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	fgSizer1->Add( m_buttonFindPrevious, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 2 );
+	fgSizer1->Add( m_toolBar2, 0, wxEXPAND, 5 );
 	
 	m_replaceStaticText = new wxStaticText( this, wxID_ANY, _("Replace with:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_replaceStaticText->Wrap( -1 );
 	fgSizer1->Add( m_replaceStaticText, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 2 );
 	
 	m_replaceWith = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2 );
-	fgSizer1->Add( m_replaceWith, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 2 );
+	fgSizer1->Add( m_replaceWith, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT|wxLEFT, 2 );
 	
-	m_replaceButton = new wxButton( this, wxID_ANY, _("Replace"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	fgSizer1->Add( m_replaceButton, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 2 );
+	m_toolBarReplace = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER ); 
+	m_toolBarReplace->AddTool( wxID_TOOL_REPLACE, _("tool"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Replace Selection"), wxEmptyString );
+	m_toolBarReplace->Realize();
 	
+	fgSizer1->Add( m_toolBarReplace, 0, wxEXPAND, 5 );
 	
-	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
-	
-	mainSizer->Add( fgSizer1, 1, 0, 0 );
+	mainSizer->Add( fgSizer1, 1, wxALIGN_CENTER_VERTICAL, 0 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
 	mainSizer->Add( m_staticline1, 0, wxEXPAND|wxRIGHT|wxLEFT, 2 );
@@ -89,20 +84,21 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	mainSizer->Fit( this );
 	
 	// Connect Events
-	m_closeButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnHide ), NULL, this );
-	m_showReplaceButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnToggleReplaceControls ), NULL, this );
+	this->Connect( wxID_HIDE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnHide ) );
+	this->Connect( wxID_SHOW_REPLACE_CONTROLS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnToggleReplaceControls ) );
+	this->Connect( wxID_SHOW_REPLACE_CONTROLS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnToggleReplaceControlsUI ) );
 	m_findWhat->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( QuickFindBarBase::OnKeyDown ), NULL, this );
 	m_findWhat->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( QuickFindBarBase::OnText ), NULL, this );
 	m_findWhat->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( QuickFindBarBase::OnEnter ), NULL, this );
-	m_buttonFindNext->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnNext ), NULL, this );
-	m_buttonFindNext->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnUpdateUI ), NULL, this );
-	m_buttonFindPrevious->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnPrev ), NULL, this );
-	m_buttonFindPrevious->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnUpdateUI ), NULL, this );
+	this->Connect( wxID_FIND_NEXT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnNext ) );
+	this->Connect( wxID_FIND_NEXT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnUpdateUI ) );
+	this->Connect( wxID_FIND_PREVIOUS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnPrev ) );
+	this->Connect( wxID_FIND_PREVIOUS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnUpdateUI ) );
 	m_replaceWith->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( QuickFindBarBase::OnKeyDown ), NULL, this );
 	m_replaceWith->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( QuickFindBarBase::OnReplaceEnter ), NULL, this );
 	m_replaceWith->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnReplaceUI ), NULL, this );
-	m_replaceButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnReplace ), NULL, this );
-	m_replaceButton->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnReplaceUI ), NULL, this );
+	this->Connect( wxID_TOOL_REPLACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnReplace ) );
+	this->Connect( wxID_TOOL_REPLACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnReplaceUI ) );
 	m_checkBoxCase->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnCheckBoxCase ), NULL, this );
 	m_checkBoxWord->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnCheckBoxWord ), NULL, this );
 	m_checkBoxRegex->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnCheckBoxRegex ), NULL, this );
@@ -111,20 +107,21 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 QuickFindBarBase::~QuickFindBarBase()
 {
 	// Disconnect Events
-	m_closeButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnHide ), NULL, this );
-	m_showReplaceButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnToggleReplaceControls ), NULL, this );
+	this->Disconnect( wxID_HIDE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnHide ) );
+	this->Disconnect( wxID_SHOW_REPLACE_CONTROLS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnToggleReplaceControls ) );
+	this->Disconnect( wxID_SHOW_REPLACE_CONTROLS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnToggleReplaceControlsUI ) );
 	m_findWhat->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( QuickFindBarBase::OnKeyDown ), NULL, this );
 	m_findWhat->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( QuickFindBarBase::OnText ), NULL, this );
 	m_findWhat->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( QuickFindBarBase::OnEnter ), NULL, this );
-	m_buttonFindNext->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnNext ), NULL, this );
-	m_buttonFindNext->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnUpdateUI ), NULL, this );
-	m_buttonFindPrevious->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnPrev ), NULL, this );
-	m_buttonFindPrevious->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnUpdateUI ), NULL, this );
+	this->Disconnect( wxID_FIND_NEXT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnNext ) );
+	this->Disconnect( wxID_FIND_NEXT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnUpdateUI ) );
+	this->Disconnect( wxID_FIND_PREVIOUS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnPrev ) );
+	this->Disconnect( wxID_FIND_PREVIOUS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnUpdateUI ) );
 	m_replaceWith->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( QuickFindBarBase::OnKeyDown ), NULL, this );
 	m_replaceWith->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( QuickFindBarBase::OnReplaceEnter ), NULL, this );
 	m_replaceWith->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnReplaceUI ), NULL, this );
-	m_replaceButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnReplace ), NULL, this );
-	m_replaceButton->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnReplaceUI ), NULL, this );
+	this->Disconnect( wxID_TOOL_REPLACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnReplace ) );
+	this->Disconnect( wxID_TOOL_REPLACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnReplaceUI ) );
 	m_checkBoxCase->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnCheckBoxCase ), NULL, this );
 	m_checkBoxWord->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnCheckBoxWord ), NULL, this );
 	m_checkBoxRegex->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnCheckBoxRegex ), NULL, this );

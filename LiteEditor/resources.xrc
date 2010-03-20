@@ -74,6 +74,13 @@
 	<object class="wxBitmap" name="edit_delete">res/edit_delete.png</object>
 	<object class="wxBitmap" name="eraser">res/eraser.png</object>
 
+	<!-- Quick Find Bar -->
+	<object class="wxBitmap" name="pencil">res/QuickFindBar/pencil.png</object>
+	<object class="wxBitmap" name="pane_close">res/QuickFindBar/fileclose-center.png</object>
+	<object class="wxBitmap" name="higlight">res/QuickFindBar/inktube.png</object>
+	<object class="wxBitmap" name="next">res/QuickFindBar/next.png</object>
+	<object class="wxBitmap" name="previous">res/QuickFindBar/previous.png</object>
+
 	<!-- Mimetype -->
 	<object class="wxBitmap" name="page_white_c">res/mimetype/page_white_c.png</object>
 	<object class="wxBitmap" name="page_white_cplusplus">res/mimetype/page_white_cplusplus.png</object>

@@ -10,16 +10,15 @@
 
 #include <wx/intl.h>
 
+#include <wx/string.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/bmpbuttn.h>
 #include <wx/gdicmn.h>
+#include <wx/toolbar.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/string.h>
-#include <wx/button.h>
 #include <wx/statline.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
@@ -29,6 +28,11 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
+#define wxID_HIDE 1000
+#define wxID_SHOW_REPLACE_CONTROLS 1001
+#define wxID_FIND_NEXT 1002
+#define wxID_FIND_PREVIOUS 1003
+#define wxID_TOOL_REPLACE 1004
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class QuickFindBarBase
@@ -38,17 +42,14 @@ class QuickFindBarBase : public wxPanel
 	private:
 	
 	protected:
-		wxBitmapButton* m_closeButton;
-		wxBitmapButton* m_showReplaceButton;
-		wxStaticLine* m_staticline2;
+		wxToolBar* m_toolBar1;
+		wxStaticLine* m_staticline3;
 		wxStaticText* m_staticTextFind;
 		wxTextCtrl* m_findWhat;
-		wxButton* m_buttonFindNext;
-		wxButton* m_buttonFindPrevious;
+		wxToolBar* m_toolBar2;
 		wxStaticText* m_replaceStaticText;
 		wxTextCtrl* m_replaceWith;
-		wxButton* m_replaceButton;
-		
+		wxToolBar* m_toolBarReplace;
 		wxStaticLine* m_staticline1;
 		wxCheckBox* m_checkBoxCase;
 		wxCheckBox* m_checkBoxWord;
@@ -57,6 +58,7 @@ class QuickFindBarBase : public wxPanel
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnHide( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnToggleReplaceControls( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnToggleReplaceControlsUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnKeyDown( wxKeyEvent& event ) { event.Skip(); }
 		virtual void OnText( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEnter( wxCommandEvent& event ) { event.Skip(); }
@@ -74,7 +76,7 @@ class QuickFindBarBase : public wxPanel
 	public:
 		wxBoxSizer* optionsSizer;
 		
-		QuickFindBarBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		QuickFindBarBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxSTATIC_BORDER|wxTAB_TRAVERSAL );
 		~QuickFindBarBase();
 	
 };

@@ -37,7 +37,19 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 		, m_flags(0)
 {
 	Hide();
-	m_closeButton->SetBitmapLabel(wxXmlResource::Get()->LoadBitmap(wxT("page_close16")));
+	m_toolBar1->SetToolBitmapSize(wxSize(16, 16));
+	m_toolBar1->FindById(wxID_HIDE)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("pane_close")));
+	m_toolBar1->FindById(wxID_SHOW_REPLACE_CONTROLS)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("pencil")));
+	m_toolBar1->Realize();
+
+	m_toolBar2->SetToolBitmapSize(wxSize(16, 16));
+	m_toolBar2->FindById(wxID_FIND_NEXT)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("next")));
+	m_toolBar2->FindById(wxID_FIND_PREVIOUS)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("previous")));
+	m_toolBar2->Realize();
+
+	m_toolBarReplace->SetToolBitmapSize(wxSize(16, 16));
+	m_toolBarReplace->FindById(wxID_TOOL_REPLACE)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
+	m_toolBarReplace->Realize();
 	DoShowControls();
 
 	GetSizer()->Fit(this);
@@ -57,7 +69,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 
 bool QuickFindBar::Show(bool show)
 {
-	if(!m_sci && show) return false;
+	if (!m_sci && show) return false;
 	return DoShow(show, wxEmptyString);
 }
 
@@ -118,9 +130,9 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 {
 	switch (e.GetKeyCode()) {
 	case WXK_ESCAPE: {
-		wxCommandEvent cmd(wxEVT_COMMAND_BUTTON_CLICKED, m_closeButton->GetId());
-		cmd.SetEventObject(m_closeButton);
-		m_closeButton->GetEventHandler()->AddPendingEvent(cmd);
+		wxCommandEvent cmd(wxEVT_COMMAND_TOOL_CLICKED, wxID_HIDE);
+		cmd.SetEventObject(m_toolBar1);
+		m_toolBar1->GetEventHandler()->AddPendingEvent(cmd);
 		break;
 	}
 	default:
@@ -136,11 +148,11 @@ void QuickFindBar::OnUpdateUI(wxUpdateUIEvent &e)
 void QuickFindBar::OnEnter(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
+
 	bool shift = wxGetKeyState(WXK_SHIFT);
-	wxButton *btn = shift ? m_buttonFindPrevious : m_buttonFindNext;
-	wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, btn->GetId());
-	evt.SetEventObject(btn);
-	btn->GetEventHandler()->AddPendingEvent(evt);
+	wxCommandEvent evt(wxEVT_COMMAND_TOOL_CLICKED, shift ? wxID_FIND_PREVIOUS : wxID_FIND_NEXT);
+	evt.SetEventObject(this);
+	GetEventHandler()->AddPendingEvent(evt);
 }
 
 void QuickFindBar::OnCopy(wxCommandEvent& e)
@@ -256,7 +268,7 @@ wxTextCtrl* QuickFindBar::GetFocusedControl()
 void QuickFindBar::OnReplaceEnter(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, m_replaceButton->GetId());
+	wxCommandEvent evt(wxEVT_COMMAND_TOOL_CLICKED, wxID_TOOL_REPLACE);
 	GetEventHandler()->AddPendingEvent(evt);
 }
 
@@ -264,13 +276,13 @@ void QuickFindBar::ShowReplaceControls(bool show)
 {
 	if ( show && !m_replaceWith->IsShown()) {
 		m_replaceWith->Show();
-		m_replaceButton->Show();
+		m_toolBarReplace->Show();
 		m_replaceStaticText->Show();
 		GetSizer()->Layout();
 
 	} else if ( !show && m_replaceWith->IsShown()) {
 		m_replaceWith->Show(false);
-		m_replaceButton->Show(false);
+		m_toolBarReplace->Show(false);
 		m_replaceStaticText->Show(false);
 		GetSizer()->Layout();
 
@@ -309,13 +321,13 @@ void QuickFindBar::OnCheckBoxWord(wxCommandEvent& event)
 
 int QuickFindBar::GetCloseButtonId()
 {
-	return m_closeButton->GetId();
+	return wxID_HIDE;
 }
 
 void QuickFindBar::OnToggleReplaceControls(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
-	long v(m_replaceButton->IsShown() ? 0 : 1);
+	long v(m_replaceWith->IsShown() ? 0 : 1);
 	EditorConfigST::Get()->SaveLongValue(wxT("QuickFindBarShowReplace"), v);
 	DoShowControls();
 }
@@ -327,11 +339,7 @@ void QuickFindBar::DoShowControls()
 	bool canShowToggleReplaceButton = m_sci && !m_sci->GetReadOnly();
 	bool showReplaceControls        = canShowToggleReplaceButton && v;
 
-	m_showReplaceButton->Show(canShowToggleReplaceButton);
 	ShowReplaceControls(showReplaceControls);
-	wxBitmap bmp = showReplaceControls ? wxXmlResource::Get()->LoadBitmap(wxT("expand")) : wxXmlResource::Get()->LoadBitmap(wxT("collapse"));
-	m_showReplaceButton->SetBitmapLabel(bmp);
-
 	Refresh();
 	GetParent()->GetSizer()->Layout();
 }
@@ -377,12 +385,12 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
 void QuickFindBar::OnFindNext(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	if(!m_sci || m_sci->GetLength() == 0)
+	if (!m_sci || m_sci->GetLength() == 0)
 		return;
 
 	// Highlighted text takes predencese over the current search string
 	wxString selectedText = m_sci->GetSelectedText();
-	if(selectedText.IsEmpty() == false)
+	if (selectedText.IsEmpty() == false)
 		m_findWhat->SetValue(selectedText);
 
 	DoSearch(true, false);
@@ -391,12 +399,12 @@ void QuickFindBar::OnFindNext(wxCommandEvent& e)
 void QuickFindBar::OnFindPrevious(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	if(!m_sci || m_sci->GetLength() == 0)
+	if (!m_sci || m_sci->GetLength() == 0)
 		return;
 
 	// Highlighted text takes predencese over the current search string
 	wxString selectedText = m_sci->GetSelectedText();
-	if(selectedText.IsEmpty() == false)
+	if (selectedText.IsEmpty() == false)
 		m_findWhat->SetValue(selectedText);
 
 	DoSearch(false, false);
@@ -405,7 +413,7 @@ void QuickFindBar::OnFindPrevious(wxCommandEvent& e)
 void QuickFindBar::OnFindNextCaret(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	if(!m_sci || m_sci->GetLength() == 0)
+	if (!m_sci || m_sci->GetLength() == 0)
 		return;
 
 	wxString selection( m_sci->GetSelectedText() );
@@ -416,11 +424,11 @@ void QuickFindBar::OnFindNextCaret(wxCommandEvent& e)
 		long end   = m_sci->WordEndPosition(pos, true);
 
 		selection = m_sci->GetTextRange(start, end);
-		if(selection.IsEmpty() == false)
+		if (selection.IsEmpty() == false)
 			m_sci->SetCurrentPos(start);
 	}
 
-	if(selection.IsEmpty())
+	if (selection.IsEmpty())
 		return;
 
 	m_findWhat->SetValue(selection);
@@ -430,7 +438,7 @@ void QuickFindBar::OnFindNextCaret(wxCommandEvent& e)
 void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	if(!m_sci || m_sci->GetLength() == 0)
+	if (!m_sci || m_sci->GetLength() == 0)
 		return;
 
 	wxString selection( m_sci->GetSelectedText() );
@@ -441,14 +449,31 @@ void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
 		long end   = m_sci->WordEndPosition(pos, true);
 
 		selection = m_sci->GetTextRange(start, end);
-		if(selection.IsEmpty() == false)
+		if (selection.IsEmpty() == false)
 			m_sci->SetCurrentPos(start);
 	}
 
-	if(selection.IsEmpty())
+	if (selection.IsEmpty())
 		return;
 
 	m_findWhat->SetValue(selection);
 	DoSearch(false, false);
 }
 
+
+void QuickFindBar::OnToggleReplaceControlsUI(wxUpdateUIEvent& event)
+{
+	if(!m_sci) {
+		event.Enable(false);
+	} else {
+		if(m_sci->GetReadOnly()) {
+			event.Enable(false);
+		} else if(m_replaceWith->IsShown()) {
+			event.Enable(true);
+			event.Check(true);
+		} else {
+			event.Enable(true);
+			event.Check(false);
+		}
+	}
+}

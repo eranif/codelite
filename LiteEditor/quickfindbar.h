@@ -61,6 +61,7 @@ protected:
 	void OnCheckBoxRegex( wxCommandEvent& event );
 	void OnCheckBoxWord ( wxCommandEvent& event );
 	void OnToggleReplaceControls( wxCommandEvent& event );
+	void OnToggleReplaceControlsUI(wxUpdateUIEvent& event);
 
 	void OnFindNext         (wxCommandEvent &e);
 	void OnFindPrevious     (wxCommandEvent &e);

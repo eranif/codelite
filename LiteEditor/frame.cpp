@@ -260,10 +260,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("find_typedef"),             Frame::OnFindResourceXXX   )
 	EVT_MENU(XRCID("find_resource"),            Frame::OnFindResourceXXX   )
 	EVT_MENU(XRCID("find_type"),                Frame::OnFindResourceXXX   )
-	EVT_MENU(XRCID("find_next"),                Frame::DispatchCommandEvent)
-	EVT_MENU(XRCID("find_previous"),            Frame::DispatchCommandEvent)
-	EVT_MENU(XRCID("find_next_at_caret"),       Frame::DispatchCommandEvent)
-	EVT_MENU(XRCID("find_previous_at_caret"),   Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("incremental_search"),       Frame::OnIncrementalSearch )
 	EVT_MENU(XRCID("find_symbol"),              Frame::OnQuickOutline      )
 	EVT_MENU(XRCID("goto_definition"),          Frame::DispatchCommandEvent)
@@ -898,7 +894,7 @@ void Frame::CreateToolbars24()
 	//----------------------------------------------
 	clToolBar *tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 	tb->SetToolBitmapSize(wxSize(24, 24));
-	
+
 #if USE_AUI_TOOLBAR
 	tb->SetArtProvider(new CLMainAuiTBArt());
 #endif
@@ -937,7 +933,7 @@ void Frame::CreateToolbars24()
 		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 #if USE_AUI_TOOLBAR
 		tb->SetArtProvider(new CLMainAuiTBArt());
-#endif		
+#endif
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 	tb->AddTool(wxID_FIND, wxT("Find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace24")), wxT("Find"));
@@ -963,7 +959,7 @@ void Frame::CreateToolbars24()
 		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 #if USE_AUI_TOOLBAR
 		tb->SetArtProvider(new CLMainAuiTBArt());
-#endif		
+#endif
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 
@@ -986,7 +982,7 @@ void Frame::CreateToolbars24()
 		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 #if USE_AUI_TOOLBAR
 		tb->SetArtProvider(new CLMainAuiTBArt());
-#endif		
+#endif
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 
@@ -1036,7 +1032,7 @@ void Frame::CreateToolbars16()
 	clToolBar *tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 #if USE_AUI_TOOLBAR
 		tb->SetArtProvider(new CLMainAuiTBArt());
-#endif		
+#endif
 	wxAuiPaneInfo info;
 
 	tb->SetToolBitmapSize(wxSize(16, 16));
@@ -1076,7 +1072,7 @@ void Frame::CreateToolbars16()
 		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 #if USE_AUI_TOOLBAR
 		tb->SetArtProvider(new CLMainAuiTBArt());
-#endif		
+#endif
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 
@@ -1103,7 +1099,7 @@ void Frame::CreateToolbars16()
 		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 #if USE_AUI_TOOLBAR
 		tb->SetArtProvider(new CLMainAuiTBArt());
-#endif	
+#endif
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 
@@ -1127,7 +1123,7 @@ void Frame::CreateToolbars16()
 		tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 #if USE_AUI_TOOLBAR
 		tb->SetArtProvider(new CLMainAuiTBArt());
-#endif		
+#endif
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 

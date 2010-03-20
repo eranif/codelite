@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : menumanager.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : menumanager.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "menumanager.h"
@@ -48,10 +48,6 @@ MenuManager::MenuManager(void)
 	PushHandler(new BraceMatchHandler(XRCID("match_brace")));
 	PushHandler(new FindReplaceHandler(wxID_FIND));
 	PushHandler(new FindReplaceHandler(wxID_REPLACE));
-	PushHandler(new FindReplaceHandler(XRCID("find_next")));
-	PushHandler(new FindReplaceHandler(XRCID("find_next_at_caret")));
-	PushHandler(new FindReplaceHandler(XRCID("find_previous_at_caret")));
-	PushHandler(new FindReplaceHandler(XRCID("find_previous")));
 	PushHandler(new GotoHandler(XRCID("goto_linenumber")));
 	PushHandler(new BookmarkHandler(XRCID("toggle_bookmark")));
 	PushHandler(new BookmarkHandler(XRCID("next_bookmark")));

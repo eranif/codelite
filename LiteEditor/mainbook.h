@@ -71,7 +71,8 @@ public:
 	void GetRecentlyOpenedFiles(wxArrayString &files);
 	FileHistory &GetRecentlyOpenedFilesClass() { return m_recentFiles; }
 
-	void ShowQuickBar (bool s = true)       { m_quickFindBar->Show(s); }
+	void ShowQuickBar (bool s = true)           { m_quickFindBar->Show(s); }
+	void ShowQuickBar (const wxString &findWhat){ m_quickFindBar->Show(findWhat);}
 	void ShowMessage  (const wxString &message, bool showHideButton = true, const wxBitmap &bmp = wxNullBitmap, const ButtonDetails &btn1 = ButtonDetails(), const ButtonDetails &btn2 = ButtonDetails(), const ButtonDetails &btn3 = ButtonDetails());
 
 	void ShowNavBar   (bool s = true);

@@ -268,10 +268,6 @@
                 <label>Go to Previous 'Find In File' Match</label>
             </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-			<object class="wxMenuItem" name="incremental_search">
-                <label>Incremental Search</label>
-            </object>
-			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="find_resource">
                 <label>Find &amp;Resource...</label>
             </object>

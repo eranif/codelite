@@ -50,7 +50,7 @@ find_in_files|Search|Find In Files...|Ctrl-Shift-F
 find_function|Search|Find Function...|Ctrl-Shift-U
 find_macro|Search|Find Macro...|Ctrl-Shift-M
 find_typedef|Search|Find Typedef...|Ctrl-Shift-P
-wxID_FIND|Search|Find...|Ctrl-K
+wxID_FIND|Search|Find...|Ctrl-F
 wxID_REPLACE|Search|Replace...|Ctrl-H
 find_next|Search|Find Next|F3
 find_next_at_caret|Search|Find Word At Caret|Ctrl-F3

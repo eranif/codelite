@@ -38,7 +38,7 @@ protected:
 	void DoSearch(bool fwd, bool incr);
 	wxTextCtrl *GetFocusedControl();
 	void DoShowControls();
-	
+
 	// General events
 	void OnCopy         (wxCommandEvent  &e);
 	void OnPaste        (wxCommandEvent  &e);
@@ -62,11 +62,19 @@ protected:
 	void OnCheckBoxWord ( wxCommandEvent& event );
 	void OnToggleReplaceControls( wxCommandEvent& event );
 
+	void OnFindNext         (wxCommandEvent &e);
+	void OnFindPrevious     (wxCommandEvent &e);
+	void OnFindNextCaret    (wxCommandEvent &e);
+	void OnFindPreviousCaret(wxCommandEvent &e);
+
+protected:
+	bool DoShow(bool s, const wxString &findWhat);
+
 public:
 	QuickFindBar(wxWindow *parent, wxWindowID id = wxID_ANY);
 	int GetCloseButtonId();
 	bool Show(bool s = true);
-
+	bool Show(const wxString &findWhat);
 	wxScintilla *GetEditor() {
 		return m_sci;
 	}

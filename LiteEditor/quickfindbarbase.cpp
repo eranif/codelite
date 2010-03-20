@@ -6,6 +6,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #include "quickfindbarbase.h"
+#include <wx/xrc/xmlres.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -13,76 +14,76 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 {
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	m_toolBar1 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER );
 	m_toolBar1->SetToolSeparation( 2 );
-	m_toolBar1->AddTool( wxID_HIDE, _("tool"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Hide the Find Bar"), wxEmptyString );
-	m_toolBar1->AddTool( wxID_SHOW_REPLACE_CONTROLS, _("tool"), wxNullBitmap, wxNullBitmap, wxITEM_CHECK, _("Toggle 'Replace With' Controls"), wxEmptyString );
+	m_toolBar1->AddTool( wxID_HIDE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pane_close")), wxXmlResource::Get()->LoadBitmap(wxT("pane_close")), wxITEM_NORMAL, _("Hide the Find Bar"), wxEmptyString );
+	m_toolBar1->AddTool( wxID_SHOW_REPLACE_CONTROLS, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pencil")), wxXmlResource::Get()->LoadBitmap(wxT("pencil")), wxITEM_CHECK, _("Toggle 'Replace With' Controls"), wxEmptyString );
 	m_toolBar1->Realize();
-	
+
 	mainSizer->Add( m_toolBar1, 0, 0, 5 );
-	
+
 	m_staticline3 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
 	mainSizer->Add( m_staticline3, 0, wxEXPAND|wxRIGHT, 5 );
-	
+
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 0, 6, 0, 0 );
 	fgSizer1->AddGrowableCol( 1 );
 	fgSizer1->AddGrowableCol( 4 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
-	
+
 	m_staticTextFind = new wxStaticText( this, wxID_ANY, _("Find:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextFind->Wrap( -1 );
 	fgSizer1->Add( m_staticTextFind, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 2 );
-	
+
 	m_findWhat = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2 );
 	m_findWhat->SetToolTip( _("Hit ENTER to search, or Shift + ENTER to search backward") );
-	
+
 	fgSizer1->Add( m_findWhat, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 2 );
-	
-	m_toolBar2 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER ); 
-	m_toolBar2->AddTool( wxID_FIND_NEXT, _("tool"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Find Next Match"), wxEmptyString );
-	m_toolBar2->AddTool( wxID_FIND_PREVIOUS, _("tool"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Find Previous Match"), wxEmptyString );
+
+	m_toolBar2 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER );
+	m_toolBar2->AddTool( wxID_FIND_NEXT, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("next")), wxXmlResource::Get()->LoadBitmap(wxT("next")), wxITEM_NORMAL, _("Find Next Match"), wxEmptyString );
+	m_toolBar2->AddTool( wxID_FIND_PREVIOUS, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("previous")), wxXmlResource::Get()->LoadBitmap(wxT("previous")), wxITEM_NORMAL, _("Find Previous Match"), wxEmptyString );
 	m_toolBar2->Realize();
-	
+
 	fgSizer1->Add( m_toolBar2, 0, wxEXPAND, 5 );
-	
+
 	m_replaceStaticText = new wxStaticText( this, wxID_ANY, _("Replace with:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_replaceStaticText->Wrap( -1 );
 	fgSizer1->Add( m_replaceStaticText, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 2 );
-	
+
 	m_replaceWith = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2 );
 	fgSizer1->Add( m_replaceWith, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT|wxLEFT, 2 );
-	
-	m_toolBarReplace = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER ); 
-	m_toolBarReplace->AddTool( wxID_TOOL_REPLACE, _("tool"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Replace Selection"), wxEmptyString );
+
+	m_toolBarReplace = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER );
+	m_toolBarReplace->AddTool( wxID_TOOL_REPLACE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("refresh16")), wxXmlResource::Get()->LoadBitmap(wxT("refresh16")), wxITEM_NORMAL, _("Replace Selection"), wxEmptyString );
 	m_toolBarReplace->Realize();
-	
+
 	fgSizer1->Add( m_toolBarReplace, 0, wxEXPAND, 5 );
-	
+
 	mainSizer->Add( fgSizer1, 1, wxALIGN_CENTER_VERTICAL, 0 );
-	
+
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
 	mainSizer->Add( m_staticline1, 0, wxEXPAND|wxRIGHT|wxLEFT, 2 );
-	
+
 	optionsSizer = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	m_checkBoxCase = new wxCheckBox( this, wxID_ANY, _("Case"), wxDefaultPosition, wxDefaultSize, 0 );
 	optionsSizer->Add( m_checkBoxCase, 0, 0, 1 );
-	
+
 	m_checkBoxWord = new wxCheckBox( this, wxID_ANY, _("Word"), wxDefaultPosition, wxDefaultSize, 0 );
 	optionsSizer->Add( m_checkBoxWord, 0, wxRIGHT|wxLEFT, 1 );
-	
+
 	m_checkBoxRegex = new wxCheckBox( this, wxID_ANY, _("Regexp"), wxDefaultPosition, wxDefaultSize, 0 );
 	optionsSizer->Add( m_checkBoxRegex, 0, wxRIGHT|wxLEFT, 1 );
-	
+
 	mainSizer->Add( optionsSizer, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 1 );
-	
+
 	this->SetSizer( mainSizer );
 	this->Layout();
 	mainSizer->Fit( this );
-	
+
 	// Connect Events
 	this->Connect( wxID_HIDE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnHide ) );
 	this->Connect( wxID_SHOW_REPLACE_CONTROLS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnToggleReplaceControls ) );

@@ -159,9 +159,12 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 				settingsChanged = true;
 			}
 		}
-		//update the project dependencies a
+		//update the project dependencies
 		bool modified = proj->IsModified();
-		proj->SetDependencies(depsArr, bld_conf_name);
+
+		// Update the dependencies only if needed
+		if(settingsChanged)
+			proj->SetDependencies(depsArr, bld_conf_name);
 
 		//the set settings functions marks the project as 'modified' this causes
 		//an unneeded makefile generation if the settings was not really modified
@@ -479,11 +482,11 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 	text << wxT("## Auto Generated makefile by CodeLite IDE") << wxT("\n");
 	text << wxT("## any manual changes will be erased      ") << wxT("\n");
 	text << wxT("##") << wxT("\n");
-	
+
 	// Create the makefile variables
 	CreateConfigsVariables(proj, bldConf, text);
 
-	
+
 	//----------------------------------------------------------
 	// copy environment variables to the makefile
 	// We put them after the 'hard-coeded' ones
@@ -494,7 +497,7 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
 	std::map<wxString, wxString> varMap = vars.GetVariables();
 	std::map<wxString, wxString>::const_iterator iter = varMap.begin();
-	
+
 	text << wxT("##") << wxT("\n");
 	text << wxT("## User defined environment variables") << wxT("\n");
 	text << wxT("##") << wxT("\n");
@@ -532,8 +535,8 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 	// Create a list of targets that should be built according to
 	// projects' file list
 	//-----------------------------------------------------------
-	CreateFileTargets(proj, confToBuild, text); 
-	CreateCleanTargets(proj, confToBuild, text); 	
+	CreateFileTargets(proj, confToBuild, text);
+	CreateCleanTargets(proj, confToBuild, text);
 
     //dump the content to a file
 	wxFFile output;
@@ -868,7 +871,7 @@ void BuilderGnuMake::CreateListMacros(ProjectPtr proj, const wxString &confToBui
 	// create a list of Sources
 	// CreateSrcList(proj, confToBuild, text);  // Not used/needed for multi-step build
 	// create a list of objects
-	CreateObjectList(proj, confToBuild, text); 
+	CreateObjectList(proj, confToBuild, text);
 }
 
 void BuilderGnuMake::CreateLinkTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text, wxString &targetName)
@@ -894,7 +897,7 @@ void BuilderGnuMake::CreateLinkTargets(const wxString &type, BuildConfigPtr bldC
 void BuilderGnuMake::CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text)
 {
 	text << wxT("\t@$(MakeDirCommand) $(@D)\n");
-	
+
 	if (type == Project::STATIC_LIBRARY) {
 		//create a static library
 		text << wxT("\t") << wxT("$(ArchiveTool) $(ArchiveOutputSwitch)$(OutputFile) $(Objects)\n");
@@ -1036,13 +1039,13 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("ObjectSwitch           :=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
 	text << wxT("ArchiveOutputSwitch    :=") << cmp->GetSwitch(wxT("ArchiveOutput")) << wxT("\n");
 	text << wxT("PreprocessOnlySwitch   :=") << cmp->GetSwitch(wxT("PreprocessOnly")) << wxT("\n");
-	
+
 	if (OS_WINDOWS) {
 		text << wxT("MakeDirCommand         :=") << wxT("makedir") << wxT("\n");
 	} else {
 		text << wxT("MakeDirCommand         :=") << wxT("mkdir -p") << wxT("\n");
 	}
-	
+
 	wxString buildOpts = bldConf->GetCompileOptions();
 	buildOpts.Replace(wxT(";"), wxT(" "));
 

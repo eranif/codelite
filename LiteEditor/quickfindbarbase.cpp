@@ -7,7 +7,34 @@
 
 #include "quickfindbarbase.h"
 #include <wx/xrc/xmlres.h>
-#include "cl_aui_tb_are.h"
+
+#include "cl_defs.h"
+
+#if USE_AUI_TOOLBAR
+
+#include <wx/pen.h>
+#include <wx/sizer.h>
+#include <wx/bitmap.h>
+#include <wx/aui/auibar.h>
+#include "drawingutils.h"
+
+class CLQuickFindTbArt : public wxAuiDefaultToolBarArt
+{
+public:
+	CLQuickFindTbArt()
+	{}
+	
+	virtual ~CLQuickFindTbArt()
+	{}
+
+	virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
+	{
+		wxColor col1 = DrawingUtils::GetPanelBgColour();
+		wxColor col2 = DrawingUtils::GetPanelBgColour();
+		DrawingUtils::PaintStraightGradientBox(dc, rect, col1, col2, true);
+	}
+};
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +45,7 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 
 	m_toolBar1 = new clToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 #if USE_AUI_TOOLBAR
-	m_toolBar1->SetArtProvider(new CLMainAuiTBArt());
+	m_toolBar1->SetArtProvider(new CLQuickFindTbArt());
 #endif
 	m_toolBar1->SetToolSeparation( 2 );
 	m_toolBar1->AddTool( wxID_HIDE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pane_close")), _("Hide the Find Bar"), wxITEM_NORMAL);
@@ -48,7 +75,7 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 
 	m_toolBar2 = new clToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 #if USE_AUI_TOOLBAR
-	m_toolBar2->SetArtProvider(new CLMainAuiTBArt());
+	m_toolBar2->SetArtProvider(new CLQuickFindTbArt());
 #endif
 
 	m_toolBar2->AddTool( wxID_FIND_NEXT, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("next")), _("Find Next Match"), wxITEM_NORMAL);
@@ -66,7 +93,7 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 
 	m_toolBarReplace = new clToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE );
 #if USE_AUI_TOOLBAR
-	m_toolBarReplace->SetArtProvider(new CLMainAuiTBArt());
+	m_toolBarReplace->SetArtProvider(new CLQuickFindTbArt());
 #endif
 	m_toolBarReplace->AddTool( wxID_TOOL_REPLACE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("refresh16")), _("Replace Selection"), wxITEM_NORMAL);
 	m_toolBarReplace->Realize();

@@ -1,4 +1,5 @@
 #include "outputviewcontrolbar.h"
+#include "cl_aui_tb_are.h"
 #include "globals.h"
 #include <wx/bmpbuttn.h>
 #include <wx/wupdlock.h>
@@ -21,23 +22,6 @@
 #include <wx/aui/framemanager.h>
 #include <wx/toolbar.h>
 
-class CLAuiTBArt : public wxAuiDefaultToolBarArt
-{
-public:
-	CLAuiTBArt(){};
-	virtual ~CLAuiTBArt(){}
-
-	virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
-	{
-		wxPen   p(DrawingUtils::GetPanelBgColour());
-		wxBrush b(DrawingUtils::GetPanelBgColour());
-
-		dc.SetPen(p);
-		dc.SetBrush(b);
-		dc.DrawRectangle(rect);
-	}
-};
-
 OutputViewControlBar::OutputViewControlBar(wxWindow* win, OutputPaneBook *book, wxAuiManager *aui, wxWindowID id)
 		: wxPanel  (win, id, wxDefaultPosition, wxSize(-1, -1))
 		, m_aui    (aui)
@@ -51,7 +35,7 @@ OutputViewControlBar::OutputViewControlBar(wxWindow* win, OutputPaneBook *book, 
 	m_buttons = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_HORZ_TEXT|wxTB_FLAT|wxTB_NODIVIDER);
 #else
 	m_buttons = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_HORZ_TEXT);
-	m_buttons->SetArtProvider(new CLAuiTBArt());
+	m_buttons->SetArtProvider(new CLMainAuiTBArt());
 #endif
 
 	if ( m_book ) {
@@ -98,7 +82,7 @@ void OutputViewControlBar::OnButtonClicked(wxCommandEvent& event)
 		DoTogglePane(false);
 	else
 		DoTogglePane(true);
-		
+
 	bool checked = event.IsChecked();
 #else
 

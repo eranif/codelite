@@ -450,7 +450,16 @@ void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
 
 void QuickFindBar::OnToggleReplaceControlsUI(wxUpdateUIEvent& event)
 {
+	if (ManagerST::Get()->IsShutdownInProgress()) {
+		event.Enable(false);
 
+	} else  if (!m_sci) {
+		event.Enable(false);
+
+	} else {
+		event.Enable(true);
+		event.Check(m_replaceWith->IsShown());
+	}
 }
 
 void QuickFindBar::DoMarkAll()

@@ -37,36 +37,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 		, m_flags(0)
 {
 	Hide();
-	m_toolBar1->SetToolBitmapSize(wxSize(16, 16));
-#if USE_AUI_TOOLBAR
-	m_toolBar1->FindTool(wxID_HIDE)->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("pane_close")));
-	m_toolBar1->FindTool(wxID_SHOW_REPLACE_CONTROLS)->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("pencil")));
-#else
-	m_toolBar1->FindById(wxID_HIDE)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("pane_close")));
-	m_toolBar1->FindById(wxID_SHOW_REPLACE_CONTROLS)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("pencil")));
-#endif
-	m_toolBar1->Realize();
-
-
-	m_toolBar2->SetToolBitmapSize(wxSize(16, 16));
-#if USE_AUI_TOOLBAR
-	m_toolBar2->FindTool(wxID_FIND_NEXT)->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("next")));
-	m_toolBar2->FindTool(wxID_FIND_PREVIOUS)->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("previous")));
-#else
-	m_toolBar2->FindById(wxID_FIND_NEXT)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("next")));
-	m_toolBar2->FindById(wxID_FIND_PREVIOUS)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("previous")));
-#endif
-
-	m_toolBar2->Realize();
-
-	m_toolBarReplace->SetToolBitmapSize(wxSize(16, 16));
-#if USE_AUI_TOOLBAR
-	m_toolBarReplace->FindTool(wxID_TOOL_REPLACE)->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
-#else
-	m_toolBarReplace->FindById(wxID_TOOL_REPLACE)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
-#endif
-
-	m_toolBarReplace->Realize();
 	DoShowControls();
 
 	GetSizer()->Fit(this);
@@ -480,21 +450,101 @@ void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
 
 void QuickFindBar::OnToggleReplaceControlsUI(wxUpdateUIEvent& event)
 {
-	if(ManagerST::Get()->IsShutdownInProgress()) {
+
+}
+
+void QuickFindBar::DoMarkAll()
+{
+	if (!m_sci)
+		return;
+
+	LEditor *editor = dynamic_cast<LEditor*>(m_sci);
+	if (!editor)
+		return;
+
+	wxString findWhat = m_findWhat->GetValue();
+
+	if (findWhat.IsEmpty()) {
+		return;
+	}
+
+	// Save the caret position
+	long savedPos = m_sci->GetCurrentPos();
+	size_t flags  = m_flags;
+
+	int pos(0);
+	int match_len(0);
+
+	// remove reverse search
+	flags &= ~ wxSD_SEARCH_BACKWARD;
+	int offset(0);
+
+	wxString txt = m_sci->GetText();
+	int fixed_offset(0);
+
+	editor->DelAllMarkers();
+
+	// set the active indicator to be 1
+	editor->SetIndicatorCurrent(1);
+
+	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len) ) {
+		editor->MarkerAdd(editor->LineFromPosition(fixed_offset + pos), smt_bookmark);
+
+		// add indicator as well
+		editor->IndicatorFillRange(fixed_offset + pos, match_len);
+		offset = pos + match_len;
+	}
+
+	// Restore the caret
+	editor->SetCurrentPos(savedPos);
+	editor->EnsureCaretVisible();
+}
+
+void QuickFindBar::OnHighlightMatches(wxCommandEvent& event)
+{
+	bool checked;
+#if USE_AUI_TOOLBAR
+	checked = m_toolBar2->GetToolToggled(wxID_HIGHLIGHT_MATCHES);
+#else
+	checked = event.IsChecked();
+#endif
+
+	if(checked) {
+		DoMarkAll();
+	} else {
+		if(m_sci) {
+			LEditor *editor = dynamic_cast<LEditor*>( m_sci );
+			if( editor ) {
+				editor->DelAllMarkers();
+			}
+		}
+	}
+}
+
+void QuickFindBar::OnHighlightMatchesUI(wxUpdateUIEvent& event)
+{
+	if (ManagerST::Get()->IsShutdownInProgress()) {
 		event.Enable(false);
 
-	} else  if(!m_sci) {
+	} else  if (!m_sci) {
+		event.Enable(false);
+
+	} else if ( m_findWhat->GetValue().IsEmpty() ) {
 		event.Enable(false);
 
 	} else {
-		if(m_sci->GetReadOnly()) {
+		LEditor *editor = dynamic_cast<LEditor*>( m_sci );
+		if( !editor ) {
 			event.Enable(false);
-		} else if(m_replaceWith->IsShown()) {
-			event.Enable(true);
-			event.Check(true);
+
 		} else {
+			// Check to see if there are any markers
+			int nLine = editor->LineFromPosition(0);
+			int mask = mmt_bookmarks;
+			int nFoundLine = editor->MarkerNext(nLine + 1, mask);
+
 			event.Enable(true);
-			event.Check(false);
+			event.Check(nFoundLine != wxNOT_FOUND);
 		}
 	}
 }

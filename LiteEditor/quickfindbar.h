@@ -36,6 +36,8 @@ class QuickFindBar : public QuickFindBarBase
 protected:
 	void ShowReplaceControls(bool show = true);
 	void DoSearch(bool fwd, bool incr);
+	void DoMarkAll();
+
 	wxTextCtrl *GetFocusedControl();
 	void DoShowControls();
 
@@ -62,6 +64,9 @@ protected:
 	void OnCheckBoxWord ( wxCommandEvent& event );
 	void OnToggleReplaceControls( wxCommandEvent& event );
 	void OnToggleReplaceControlsUI(wxUpdateUIEvent& event);
+	void OnHighlightMatches(wxCommandEvent& event);
+	void OnHighlightMatchesUI(wxUpdateUIEvent& event);
+
 
 	void OnFindNext         (wxCommandEvent &e);
 	void OnFindPrevious     (wxCommandEvent &e);

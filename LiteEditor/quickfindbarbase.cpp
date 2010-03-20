@@ -8,8 +8,6 @@
 #include "quickfindbarbase.h"
 #include <wx/xrc/xmlres.h>
 
-#include "cl_defs.h"
-
 #if USE_AUI_TOOLBAR
 
 #include <wx/pen.h>
@@ -23,7 +21,7 @@ class CLQuickFindTbArt : public wxAuiDefaultToolBarArt
 public:
 	CLQuickFindTbArt()
 	{}
-	
+
 	virtual ~CLQuickFindTbArt()
 	{}
 
@@ -80,6 +78,7 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 
 	m_toolBar2->AddTool( wxID_FIND_NEXT, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("next")), _("Find Next Match"), wxITEM_NORMAL);
 	m_toolBar2->AddTool( wxID_FIND_PREVIOUS, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("previous")), _("Find Previous Match"), wxITEM_NORMAL);
+	m_toolBar2->AddTool( wxID_HIGHLIGHT_MATCHES, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("higlight")), _("Highlight All Matcehs"), wxITEM_CHECK);
 	m_toolBar2->Realize();
 
 	fgSizer1->Add( m_toolBar2, 0, wxEXPAND, 5 );
@@ -138,6 +137,8 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_replaceWith->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnReplaceUI ), NULL, this );
 	this->Connect( wxID_TOOL_REPLACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnReplace ) );
 	this->Connect( wxID_TOOL_REPLACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnReplaceUI ) );
+	this->Connect( wxID_HIGHLIGHT_MATCHES, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnHighlightMatches ) );
+	this->Connect( wxID_HIGHLIGHT_MATCHES, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnHighlightMatchesUI ) );
 	m_checkBoxCase->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnCheckBoxCase ), NULL, this );
 	m_checkBoxWord->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnCheckBoxWord ), NULL, this );
 	m_checkBoxRegex->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnCheckBoxRegex ), NULL, this );
@@ -164,4 +165,6 @@ QuickFindBarBase::~QuickFindBarBase()
 	m_checkBoxCase->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnCheckBoxCase ), NULL, this );
 	m_checkBoxWord->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnCheckBoxWord ), NULL, this );
 	m_checkBoxRegex->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnCheckBoxRegex ), NULL, this );
+	this->Disconnect( wxID_HIGHLIGHT_MATCHES, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnHighlightMatches ) );
+	this->Disconnect( wxID_HIGHLIGHT_MATCHES, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnHighlightMatchesUI ) );
 }

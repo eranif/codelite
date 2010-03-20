@@ -26,6 +26,16 @@
 #include <wx/checkbox.h>
 #include <wx/panel.h>
 #include "cl_defs.h"
+
+//#ifdef USE_AUI_TOOLBAR
+//#undef USE_AUI_TOOLBAR
+//#undef clToolBar
+//#define clToolBar wxToolBar
+//#undef clTB_DEFAULT_STYLE
+//#define clTB_DEFAULT_STYLE 0
+//#define USE_AUI_TOOLBAR 0
+//#endif
+
 #if USE_AUI_TOOLBAR
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
@@ -37,6 +47,7 @@
 #define wxID_FIND_NEXT 1002
 #define wxID_FIND_PREVIOUS 1003
 #define wxID_TOOL_REPLACE 1004
+#define wxID_HIGHLIGHT_MATCHES 1005
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class QuickFindBarBase
@@ -63,6 +74,8 @@ class QuickFindBarBase : public wxPanel
 		virtual void OnHide( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnToggleReplaceControls( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnToggleReplaceControlsUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnHighlightMatches( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnHighlightMatchesUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnKeyDown( wxKeyEvent& event ) { event.Skip(); }
 		virtual void OnText( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEnter( wxCommandEvent& event ) { event.Skip(); }

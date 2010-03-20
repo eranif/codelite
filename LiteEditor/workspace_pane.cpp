@@ -67,13 +67,13 @@ void WorkspacePane::CreateGUIControls()
 
     // selected configuration:
 
-	mainSizer->Add(new wxStaticText(this, wxID_ANY, wxT("Selected Configuration:")), 0, wxALIGN_CENTER_HORIZONTAL| wxALL, 2);
-
 	wxBoxSizer *hsz = new wxBoxSizer(wxHORIZONTAL);
 	mainSizer->Add(hsz, 0, wxEXPAND|wxTOP|wxBOTTOM, 5);
 
 	wxArrayString choices;
 	m_workspaceConfig = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, choices);
+	m_workspaceConfig->SetToolTip(wxT("Select the workspace build configuration"));
+
 	m_workspaceConfig->Enable(false);
 	m_workspaceConfig->Append(OPEN_CONFIG_MGR_STR);
 	ConnectChoice(m_workspaceConfig, WorkspacePane::OnConfigurationManagerChoice);
@@ -168,10 +168,10 @@ void WorkspacePane::Connect()
 	wxTheApp->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,    wxCommandEventHandler(WorkspacePane::OnActiveEditorChanged), NULL, this);
 	wxTheApp->Connect(wxEVT_EDITOR_CLOSING,           wxCommandEventHandler(WorkspacePane::OnEditorClosing),       NULL, this);
 	wxTheApp->Connect(wxEVT_ALL_EDITORS_CLOSED,       wxCommandEventHandler(WorkspacePane::OnAllEditorsClosed),    NULL, this);
-	
+
 	// An internal event
 	wxTheApp->Connect(45634,                          wxCommandEventHandler(WorkspacePane::OnSetSelection),    NULL, this);
-	
+
 	m_book->Connect(wxEVT_COMMAND_BOOK_SWAP_PAGES,           NotebookEventHandler(WorkspacePane::OnSwapPages),     NULL, this);
     wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspacePane::OnConfigurationManager),   NULL, this);
     wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspacePane::OnConfigurationManagerUI), NULL, this);
@@ -390,7 +390,7 @@ void WorkspacePane::OnSwapPages(NotebookEvent& e)
 		m_book->InsertPage((size_t)endPos, page, txt, true, imgId);
 
 	}
-	
+
 //	wxCommandEvent evt(45634);
 //	evt.SetInt(endPos);
 //	wxTheApp->AddPendingEvent(evt);

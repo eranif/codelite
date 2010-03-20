@@ -7,6 +7,7 @@
 
 #include "quickfindbarbase.h"
 #include <wx/xrc/xmlres.h>
+#include "cl_aui_tb_are.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -15,10 +16,13 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_toolBar1 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER );
+	m_toolBar1 = new clToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+#if USE_AUI_TOOLBAR
+	m_toolBar1->SetArtProvider(new CLMainAuiTBArt());
+#endif
 	m_toolBar1->SetToolSeparation( 2 );
-	m_toolBar1->AddTool( wxID_HIDE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pane_close")), wxXmlResource::Get()->LoadBitmap(wxT("pane_close")), wxITEM_NORMAL, _("Hide the Find Bar"), wxEmptyString );
-	m_toolBar1->AddTool( wxID_SHOW_REPLACE_CONTROLS, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pencil")), wxXmlResource::Get()->LoadBitmap(wxT("pencil")), wxITEM_CHECK, _("Toggle 'Replace With' Controls"), wxEmptyString );
+	m_toolBar1->AddTool( wxID_HIDE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pane_close")), _("Hide the Find Bar"), wxITEM_NORMAL);
+	m_toolBar1->AddTool( wxID_SHOW_REPLACE_CONTROLS, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pencil")), _("Toggle 'Replace With' Controls"), wxITEM_CHECK);
 	m_toolBar1->Realize();
 
 	mainSizer->Add( m_toolBar1, 0, 0, 5 );
@@ -42,9 +46,13 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 
 	fgSizer1->Add( m_findWhat, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 2 );
 
-	m_toolBar2 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER );
-	m_toolBar2->AddTool( wxID_FIND_NEXT, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("next")), wxXmlResource::Get()->LoadBitmap(wxT("next")), wxITEM_NORMAL, _("Find Next Match"), wxEmptyString );
-	m_toolBar2->AddTool( wxID_FIND_PREVIOUS, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("previous")), wxXmlResource::Get()->LoadBitmap(wxT("previous")), wxITEM_NORMAL, _("Find Previous Match"), wxEmptyString );
+	m_toolBar2 = new clToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+#if USE_AUI_TOOLBAR
+	m_toolBar2->SetArtProvider(new CLMainAuiTBArt());
+#endif
+
+	m_toolBar2->AddTool( wxID_FIND_NEXT, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("next")), _("Find Next Match"), wxITEM_NORMAL);
+	m_toolBar2->AddTool( wxID_FIND_PREVIOUS, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("previous")), _("Find Previous Match"), wxITEM_NORMAL);
 	m_toolBar2->Realize();
 
 	fgSizer1->Add( m_toolBar2, 0, wxEXPAND, 5 );
@@ -56,8 +64,11 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_replaceWith = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2 );
 	fgSizer1->Add( m_replaceWith, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT|wxLEFT, 2 );
 
-	m_toolBarReplace = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER );
-	m_toolBarReplace->AddTool( wxID_TOOL_REPLACE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("refresh16")), wxXmlResource::Get()->LoadBitmap(wxT("refresh16")), wxITEM_NORMAL, _("Replace Selection"), wxEmptyString );
+	m_toolBarReplace = new clToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE );
+#if USE_AUI_TOOLBAR
+	m_toolBarReplace->SetArtProvider(new CLMainAuiTBArt());
+#endif
+	m_toolBarReplace->AddTool( wxID_TOOL_REPLACE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("refresh16")), _("Replace Selection"), wxITEM_NORMAL);
 	m_toolBarReplace->Realize();
 
 	fgSizer1->Add( m_toolBarReplace, 0, wxEXPAND, 5 );

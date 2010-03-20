@@ -6,9 +6,13 @@
 #include <wx/bitmap.h>
 #include <vector>
 #include <wx/choicebk.h>
-#include <wx/pen.h>
 #include <wx/sizer.h>
+#include "cl_defs.h"
+#if USE_AUI_TOOLBAR
+#include <wx/pen.h>
 #include <wx/aui/auibar.h>
+#endif
+
 #include <wx/toolbar.h>
 #include <wx/aui/framemanager.h>
 #include "output_pane_book.h"

@@ -38,17 +38,34 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 {
 	Hide();
 	m_toolBar1->SetToolBitmapSize(wxSize(16, 16));
+#if USE_AUI_TOOLBAR
+	m_toolBar1->FindTool(wxID_HIDE)->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("pane_close")));
+	m_toolBar1->FindTool(wxID_SHOW_REPLACE_CONTROLS)->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("pencil")));
+#else
 	m_toolBar1->FindById(wxID_HIDE)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("pane_close")));
 	m_toolBar1->FindById(wxID_SHOW_REPLACE_CONTROLS)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("pencil")));
+#endif
 	m_toolBar1->Realize();
 
+
 	m_toolBar2->SetToolBitmapSize(wxSize(16, 16));
+#if USE_AUI_TOOLBAR
+	m_toolBar2->FindTool(wxID_FIND_NEXT)->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("next")));
+	m_toolBar2->FindTool(wxID_FIND_PREVIOUS)->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("previous")));
+#else
 	m_toolBar2->FindById(wxID_FIND_NEXT)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("next")));
 	m_toolBar2->FindById(wxID_FIND_PREVIOUS)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("previous")));
+#endif
+
 	m_toolBar2->Realize();
 
 	m_toolBarReplace->SetToolBitmapSize(wxSize(16, 16));
+#if USE_AUI_TOOLBAR
+	m_toolBarReplace->FindTool(wxID_TOOL_REPLACE)->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
+#else
 	m_toolBarReplace->FindById(wxID_TOOL_REPLACE)->SetNormalBitmap(wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
+#endif
+
 	m_toolBarReplace->Realize();
 	DoShowControls();
 
@@ -463,8 +480,12 @@ void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
 
 void QuickFindBar::OnToggleReplaceControlsUI(wxUpdateUIEvent& event)
 {
-	if(!m_sci) {
+	if(ManagerST::Get()->IsShutdownInProgress()) {
 		event.Enable(false);
+
+	} else  if(!m_sci) {
+		event.Enable(false);
+
 	} else {
 		if(m_sci->GetReadOnly()) {
 			event.Enable(false);

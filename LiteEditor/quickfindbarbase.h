@@ -25,7 +25,11 @@
 #include <wx/sizer.h>
 #include <wx/checkbox.h>
 #include <wx/panel.h>
-
+#include "cl_defs.h"
+#if USE_AUI_TOOLBAR
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#endif
 ///////////////////////////////////////////////////////////////////////////
 
 #define wxID_HIDE 1000
@@ -37,24 +41,24 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class QuickFindBarBase
 ///////////////////////////////////////////////////////////////////////////////
-class QuickFindBarBase : public wxPanel 
+class QuickFindBarBase : public wxPanel
 {
 	private:
-	
+
 	protected:
-		wxToolBar* m_toolBar1;
+		clToolBar*    m_toolBar1;
 		wxStaticLine* m_staticline3;
 		wxStaticText* m_staticTextFind;
-		wxTextCtrl* m_findWhat;
-		wxToolBar* m_toolBar2;
+		wxTextCtrl*   m_findWhat;
+		clToolBar*    m_toolBar2;
 		wxStaticText* m_replaceStaticText;
-		wxTextCtrl* m_replaceWith;
-		wxToolBar* m_toolBarReplace;
+		wxTextCtrl*   m_replaceWith;
+		clToolBar*    m_toolBarReplace;
 		wxStaticLine* m_staticline1;
-		wxCheckBox* m_checkBoxCase;
-		wxCheckBox* m_checkBoxWord;
-		wxCheckBox* m_checkBoxRegex;
-		
+		wxCheckBox*   m_checkBoxCase;
+		wxCheckBox*   m_checkBoxWord;
+		wxCheckBox*   m_checkBoxRegex;
+
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnHide( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnToggleReplaceControls( wxCommandEvent& event ) { event.Skip(); }
@@ -71,14 +75,14 @@ class QuickFindBarBase : public wxPanel
 		virtual void OnCheckBoxCase( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnCheckBoxWord( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnCheckBoxRegex( wxCommandEvent& event ) { event.Skip(); }
-		
-	
+
+
 	public:
 		wxBoxSizer* optionsSizer;
-		
+
 		QuickFindBarBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxSTATIC_BORDER|wxTAB_TRAVERSAL );
 		~QuickFindBarBase();
-	
+
 };
 
 #endif //__quickfindbarbase__

@@ -96,7 +96,7 @@ clAuiTabArt::clAuiTabArt()
 	wxColour base_colour = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 2.0);
 
     m_base_colour = base_colour;
-    wxColor border_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+	wxColor border_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
 
     m_border_pen = wxPen(border_colour);
     m_base_colour_pen = wxPen(m_base_colour);
@@ -317,7 +317,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
         dc.DrawRectangle(r.x+1, r.y+1, r.width-1, r.height-4);
 
         // this white helps fill out the gradient at the top of the tab
-		float lightColour (5.0);
+		float lightColour (4.0);
 
         dc.SetPen(DrawingUtils::LightColour(m_base_colour, lightColour));
         dc.SetBrush(DrawingUtils::LightColour(m_base_colour, lightColour));
@@ -356,16 +356,17 @@ void clAuiTabArt::DrawTab(wxDC& dc,
         r.height--;
 
         // -- draw top gradient fill for glossy look
-        wxColor top_color = m_base_colour;
-        wxColor bottom_color = m_base_colour;
+		float lightColor(2.0);
+        wxColor top_color    = DrawingUtils::LightColour(m_base_colour, lightColor);
+        wxColor bottom_color = DrawingUtils::LightColour(m_base_colour, lightColor);
         dc.GradientFillLinear(r, bottom_color, top_color, wxNORTH);
 
         r.y += r.height;
         r.y--;
 
         // -- draw bottom fill for glossy look
-        top_color = m_base_colour;
-        bottom_color = m_base_colour;
+        top_color    = DrawingUtils::LightColour(m_base_colour, lightColor);
+        bottom_color = DrawingUtils::LightColour(m_base_colour, lightColor);
         dc.GradientFillLinear(r, top_color, bottom_color, wxSOUTH);
     }
 
@@ -424,6 +425,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
                           tab_width - (text_offset-tab_x) - close_button_width);
 
     // draw tab text
+	dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
     dc.DrawText(draw_text,
                 text_offset,
                 drawn_tab_yoff + (drawn_tab_height)/2 - (texty/2) - 1);

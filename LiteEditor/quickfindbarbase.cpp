@@ -46,7 +46,14 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_toolBar1->SetArtProvider(new CLQuickFindTbArt());
 #endif
 	m_toolBar1->SetToolSeparation( 2 );
+
+	// Use red theme on Linux
+#ifdef __WXMSW__
 	m_toolBar1->AddTool( wxID_HIDE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pane_close")), _("Hide the Find Bar"), wxITEM_NORMAL);
+#else
+	m_toolBar1->AddTool( wxID_HIDE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pane_close_red")), _("Hide the Find Bar"), wxITEM_NORMAL);
+#endif
+
 	m_toolBar1->AddTool( wxID_SHOW_REPLACE_CONTROLS, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pencil")), _("Toggle 'Replace With' Controls"), wxITEM_CHECK);
 	m_toolBar1->Realize();
 

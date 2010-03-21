@@ -81,9 +81,7 @@ bool Notebook::AddPage(wxWindow *win, const wxString &text, bool selected, const
 {
 	win->Reparent(this);
 	if(wxAuiNotebook::InsertPage(GetPageCount(), win, text, selected, bmp)){
-#ifdef __WXGTK__
 		win->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
-#endif
 		PushPageHistory(win);
 		return true;
 	}
@@ -94,9 +92,7 @@ bool Notebook::InsertPage(size_t index, wxWindow* win, const wxString& text, boo
 {
 	win->Reparent(this);
 	if(wxAuiNotebook::InsertPage(index, win, text, selected, bmp)){
-#ifdef __WXGTK__
 		win->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
-#endif
 		PushPageHistory(win);
 		return true;
 	}
@@ -106,26 +102,6 @@ bool Notebook::InsertPage(size_t index, wxWindow* win, const wxString& text, boo
 
 void Notebook::Initialize()
 {
-#if 0
-#if defined(__WXMSW__)
-	wxImageList *imgList = new wxImageList(18, 18, true);
-
-	imgList->Add( wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close")));
-	imgList->Add( wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_pressed")));
-	imgList->Add( wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_disabled")));
-
-	AssignImageList(imgList);
-
-#elif defined(__WXGTK__)
-	wxImageList *imgList = new wxImageList(16, 16, true);
-
-	imgList->Add( wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_red")));
-	imgList->Add( wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_pressed_red")));
-	imgList->Add( wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_disabled_red")));
-
-	AssignImageList(imgList);
-#endif
-#endif
 }
 
 void Notebook::SetSelection(size_t page, bool notify)
@@ -168,9 +144,7 @@ bool Notebook::RemovePage(size_t page, bool notify)
 	}
 
 	wxWindow* win = GetPage(page);
-#ifdef __WXGTK__
 	win->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
-#endif
 
 	bool rc = wxAuiNotebook::RemovePage(page);
 	if (rc) {
@@ -212,10 +186,7 @@ bool Notebook::DeletePage(size_t page, bool notify)
 	}
 
 	wxWindow* win = GetPage(page);
-#ifdef __WXGTK__
 	win->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
-#endif
-
 
 	bool rc = wxAuiNotebook::DeletePage(page);
 	if (rc) {

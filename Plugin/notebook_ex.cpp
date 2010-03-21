@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include "cl_aui_notebook_art.h"
 #include "drawingutils.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/choicebk.h>
@@ -33,34 +34,6 @@ const wxEventType wxEVT_COMMAND_BOOK_PAGE_X_CLICKED       = XRCID("notebook_page
 #define X_IMG_PRESSED  1
 #define X_IMG_DISABLED 2
 
-class clNotebookArt : public wxAuiDefaultTabArt
-{
-public:
-	clNotebookArt() : wxAuiDefaultTabArt()
-	{
-		m_base_colour       = DrawingUtils::GetPanelBgColour();
-		m_base_colour_pen   = wxPen(m_base_colour);
-		m_base_colour_brush = wxBrush(m_base_colour);
-		m_border_pen        = wxPen(m_base_colour);
-
-		m_active_close_bmp = wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close"));
-
-	//imgList->Add( wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_pressed")));
-	}
-
-	virtual ~clNotebookArt()
-	{
-	}
-
-    virtual void DrawBackground( wxDC& dc, wxWindow* wnd, const wxRect& rect)
-	{
-		wxColour col = DrawingUtils::GetPanelBgColour();
-		dc.SetPen(col);
-		dc.SetBrush(col);
-		dc.DrawRectangle(rect);
-	}
-};
-
 Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
 		: wxAuiNotebook(parent, id, pos, size, style | wxNO_BORDER | wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_SPLIT | wxAUI_NB_WINDOWLIST_BUTTON)
 		, m_popupWin(NULL)
@@ -86,7 +59,7 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 
 	Connect(DELETE_PAGE_INTERNAL, wxEVT_COMMAND_MENU_SELECTED,          wxCommandEventHandler(Notebook::OnInternalDeletePage),   NULL, this);
 
-	SetArtProvider(new clNotebookArt());
+	SetArtProvider(new clAuiTabArt());
 }
 
 Notebook::~Notebook()

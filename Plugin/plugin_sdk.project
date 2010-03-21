@@ -200,6 +200,8 @@
       <File Name="tabicons.h"/>
       <File Name="tabicons.cpp"/>
       <File Name="output_pane_book.h"/>
+      <File Name="cl_aui_notebook_art.cpp"/>
+      <File Name="cl_aui_notebook_art.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="TokenScanner">

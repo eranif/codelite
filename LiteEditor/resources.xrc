@@ -223,6 +223,7 @@
 	<object class="wxBitmap" name="tab_x_close">res/notebook/fileclose-blue.png</object>
 	<object class="wxBitmap" name="tab_x_close_pressed">res/notebook/fileclose-pressed-blue.png</object>
 	<object class="wxBitmap" name="tab_x_close_red">res/notebook/fileclose.png</object>
+	<object class="wxBitmap" name="tab_x_close_active">res/notebook/fileclose-highlight.png</object>
 	<object class="wxBitmap" name="tab_x_close_pressed_red">res/notebook/fileclose-pressed.png</object>
 	<object class="wxBitmap" name="tab_x_close_disabled">res/notebook/fileclose-blue.png</object>
 	<object class="wxBitmap" name="tab_x_close_disabled_red">res/notebook/fileclose.png</object>

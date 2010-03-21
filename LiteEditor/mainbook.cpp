@@ -83,7 +83,6 @@ void MainBook::ConnectEvents()
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,         NotebookEventHandler(MainBook::OnPageChanged),  NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED,       NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED,  NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
-	m_book->Connect(wxEVT_COMMAND_BOOK_SWAP_PAGES,           NotebookEventHandler(MainBook::OnSwapPages),    NULL, this);
 
 	wxTheApp->Connect(wxEVT_WORKSPACE_LOADED,  wxCommandEventHandler(MainBook::OnWorkspaceLoaded),    NULL, this);
 	wxTheApp->Connect(wxEVT_PROJ_FILE_ADDED,   wxCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
@@ -838,9 +837,4 @@ void MainBook::OnClosePage(NotebookEvent& e)
 	wxWindow *page = m_book->GetPage((size_t)where);
 	if(page)
 		ClosePage(page);
-}
-
-void MainBook::OnSwapPages(NotebookEvent& e)
-{
-	wxUnusedVar(e);
 }

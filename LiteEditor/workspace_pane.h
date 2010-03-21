@@ -65,9 +65,7 @@ private:
     void OnActiveEditorChanged(wxCommandEvent &e);
     void OnEditorClosing      (wxCommandEvent &e);
     void OnAllEditorsClosed   (wxCommandEvent &e);
-	void OnSwapPages          (NotebookEvent  &e);
-    void OnSetSelection       (wxCommandEvent &e);
-	
+
 	// Configuration mgr handlers
 	void OnConfigurationManager      (wxCommandEvent  &e);
 	void OnConfigurationManagerUI    (wxUpdateUIEvent &e);

@@ -25,12 +25,13 @@
 #ifndef __cscopedbbuilderthread__
 #define __cscopedbbuilderthread__
 
-
+#include <wx/string.h>
+#include <wx/gdicmn.h>
+#include "wx/thread.h"
+#include "wx/event.h"
 #include "cscopeentrydata.h"
 #include "singleton.h"
 #include "worker_thread.h"
-#include "wx/thread.h"
-#include "wx/event.h"
 #include <map>
 #include <vector>
 

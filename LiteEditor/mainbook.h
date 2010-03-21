@@ -53,7 +53,6 @@ private:
     void OnPageClosed        (NotebookEvent     &e);
 	void OnPageChanged       (NotebookEvent     &e);
 	void OnClosePage         (NotebookEvent     &e);
-	void OnSwapPages         (NotebookEvent     &e);
 
     void OnProjectFileAdded  (wxCommandEvent    &e);
 	void OnProjectFileRemoved(wxCommandEvent    &e);

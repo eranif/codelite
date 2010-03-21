@@ -25,6 +25,14 @@
 #ifndef PLUGIN_H
 #define PLUGIN_H
 
+// Windows headers define it
+#ifdef __WXMSW__
+#ifdef Yield
+#undef Yield
+#endif
+#endif
+
+#include <wx/app.h>
 #include "imanager.h"
 #include "wx/toolbar.h"
 #include <wx/pen.h>

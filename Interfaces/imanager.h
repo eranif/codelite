@@ -26,7 +26,6 @@
 #ifndef IMANAGER_H
 #define IMANAGER_H
 
-#include <wx/aui/framemanager.h>
 #include "output_pane_book.h"
 #include "ieditor.h"
 #include "iconfigtool.h"
@@ -35,6 +34,7 @@
 #include "notebook_ex.h"
 #include "optionsconfig.h"
 #include "queuecommand.h"
+#include <wx/aui/framemanager.h>
 
 
 class TagsManager;
@@ -127,21 +127,21 @@ public:
 	 * @sa TreeType
 	 */
 	virtual wxTreeCtrl *GetTree(TreeType type) = 0;
-	
+
 	/**
 	 * @brief return a pointer to the workspace pane notebook (the one with the 'workspace' title)
 	 * @return pointer to Notebook
 	 * @sa Notebook
 	 */
 	virtual Notebook *GetWorkspacePaneNotebook() = 0;
-	
+
 	/**
 	 * @brief return a pointer to the output pane notebook (the one with the 'output' title)
 	 * @return pointer to Notebook
 	 * @sa Notebook
 	 */
 	virtual OutputPaneBook* GetOutputPaneNotebook() = 0;
-	
+
 	/**
 	 * @brief return the startup directory of CodeLite which is also the base directory for searching installation files
 	 * @return a full path to the startup directory
@@ -198,7 +198,7 @@ public:
 	 * @param vdFullPath virtual directory full path in the form of <project>:vd1:vd2:...:vdN
 	 * @param paths an array of files to add
 	 * @return true on sucesss, false otherwise
-	 */	
+	 */
 	virtual bool AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths) = 0;
 
 	/**
@@ -322,13 +322,13 @@ public:
 	 * return true if a compilation is in process (either clean or build)
 	 */
 	virtual bool IsBuildInProgress() const = 0;
-	
+
 	/**
 	 * @brief return true if a shutdown is currently in progress
-	 * @return 
+	 * @return
 	 */
 	virtual bool IsShutdownInProgress() const = 0;
-	
+
 	/**
 	 * return true if the last buid ended successfully
 	 */
@@ -378,14 +378,14 @@ public:
      * @brief select a window in mainbook
      */
     virtual bool SelectPage(wxWindow *win) = 0;
-	
-	
+
+
 	/**
 	 * @brief open new editor "untitiled"
 	 * @return pointer to the editor
 	 */
 	virtual IEditor *NewEditor() = 0;
-	
+
 	/**
 	 * @brief return the macro manager
 	 */

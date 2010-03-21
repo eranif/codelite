@@ -25,40 +25,26 @@
 #ifndef __Notebook__
 #define __Notebook__
 
-#include <wx/notebook.h>
+#include <wx/wx.h>
+#include <wx/aui/auibook.h>
 
-#ifdef __WXMAC__
 enum {
-	wxVB_LEFT                   = wxNB_LEFT,
-	wxVB_RIGHT                  = wxNB_RIGHT,
-	wxVB_TOP                    = wxNB_TOP,
-	wxVB_BOTTOM                 = wxNB_BOTTOM,
-	wxVB_FIXED_WIDTH            = wxNB_FIXEDWIDTH,
-	wxVB_HAS_X                  = 0x00010000,
+	wxVB_LEFT                   = wxAUI_NB_LEFT,
+	wxVB_RIGHT                  = wxAUI_NB_RIGHT,
+	wxVB_TOP                    = wxAUI_NB_TOP,
+	wxVB_BOTTOM                 = wxAUI_NB_BOTTOM,
+	wxVB_FIXED_WIDTH            = wxAUI_NB_TAB_FIXED_WIDTH,
+	wxVB_HAS_X                  = wxAUI_NB_CLOSE_ON_ACTIVE_TAB,
 	wxVB_MOUSE_MIDDLE_CLOSE_TAB = 0x00020000,
 	wxVB_NODND                  = 0x00040000,
 	wxVB_NO_TABS                = 0x00100000,
 	wxVB_PASS_FOCUS             = 0x00400000
 };
-#else
-enum {
-	wxVB_LEFT                   = wxNB_TOP,
-	wxVB_RIGHT                  = wxNB_TOP,
-	wxVB_TOP                    = wxNB_TOP,
-	wxVB_BOTTOM                 = wxNB_TOP,
-	wxVB_FIXED_WIDTH            = wxNB_FIXEDWIDTH,
-	wxVB_HAS_X                  = 0x00010000,
-	wxVB_MOUSE_MIDDLE_CLOSE_TAB = 0x00020000,
-	wxVB_NODND                  = 0x00040000,
-	wxVB_NO_TABS                = 0x00100000,
-	wxVB_PASS_FOCUS             = 0x00400000
-};
-#endif
 
 class NotebookNavDialog;
 class wxMenu;
 
-class Notebook : public wxNotebook
+class Notebook : public wxAuiNotebook
 {
 	NotebookNavDialog *m_popupWin;
 	wxMenu*            m_contextMenu;
@@ -78,7 +64,6 @@ protected:
 	wxWindow* GetPreviousSelection();
 	bool      HasCloseButton() {return m_style & wxVB_HAS_X;}
 	bool      HasCloseMiddle() {return m_style & wxVB_MOUSE_MIDDLE_CLOSE_TAB;}
-	void      DoShowMenuButton();
 
 public:
 	Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
@@ -102,8 +87,8 @@ public:
 	 * \param text page's caption
 	 * \param selected set the page as the selected page
 	 */
-	bool AddPage(wxWindow *win, const wxString &text, bool selected = false, int imgid = wxNOT_FOUND);
-	bool InsertPage(size_t index, wxWindow *win, const wxString &text, bool selected = false, int imgid = wxNOT_FOUND);
+	bool AddPage(wxWindow *win, const wxString &text, bool selected = false, const wxBitmap &bmp = wxNullBitmap);
+	bool InsertPage(size_t index, wxWindow *win, const wxString &text, bool selected = false, const wxBitmap &bmp = wxNullBitmap);
 
 	/**
 	 * \brief return page at give position
@@ -176,28 +161,25 @@ public:
 protected:
 	// Event handlers
 	void OnNavigationKey      (wxNavigationKeyEvent &e);
-	void OnLeftDown           (wxMouseEvent         &e);
-	void OnLeftUp             (wxMouseEvent         &e);
-	void OnLeaveWindow        (wxMouseEvent         &e);
-	void OnMouseMiddle        (wxMouseEvent         &e);
-	void OnMouseMove          (wxMouseEvent         &e);
 	void OnKeyDown            (wxKeyEvent           &e);
-	void OnMenu               (wxContextMenuEvent   &e);
+	void OnMenu               (wxAuiNotebookEvent   &e);
+	void OnTabRightDown       (wxAuiNotebookEvent   &e);
+	void OnTabMiddle          (wxAuiNotebookEvent   &e);
 
-	// Used with wxChoicebook control
-	void OnHasPages           (wxUpdateUIEvent &e);
+	// wxAuiNotebook events
+	void OnInternalPageChanged (wxAuiNotebookEvent &e);
+	void OnInternalPageChanging(wxAuiNotebookEvent &e);
+	void OnInternalPageClosing (wxAuiNotebookEvent &e);
+	void OnInternalPageClosed  (wxAuiNotebookEvent &e);
 
-	// wxNotebook events
-	void OnIternalPageChanged (wxNotebookEvent &e);
-	void OnIternalPageChanging(wxNotebookEvent &e);
-	void OnInternalDeletePage (wxCommandEvent  &e);
+	void OnInternalDeletePage  (wxCommandEvent  &e);
 
 	// wxChoicebook events
 	void OnFocus                (wxFocusEvent      &e);
 
 protected:
-	void DoPageChangedEvent   (wxBookCtrlBaseEvent &e);
-	void DoPageChangingEvent  (wxBookCtrlBaseEvent &e);
+	void DoPageChangedEvent   (wxAuiNotebookEvent &e);
+	void DoPageChangingEvent  (wxAuiNotebookEvent &e);
 	bool DoNavigate();
 
 };
@@ -249,7 +231,6 @@ extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSING;
 extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED;
 extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED;
 extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_X_CLICKED; // Windows Only
-extern const wxEventType wxEVT_COMMAND_BOOK_SWAP_PAGES;     // Windows / Mac Only
 
 typedef void (wxEvtHandler::*NotebookEventFunction)(NotebookEvent&);
 

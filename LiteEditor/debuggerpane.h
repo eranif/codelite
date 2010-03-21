@@ -85,7 +85,6 @@ public:
 
 	DECLARE_EVENT_TABLE()
 	void OnPageChanged(NotebookEvent &event);
-	void OnSwapPages  (NotebookEvent     &e);
 };
 #endif //DEBUGGERPANE_H
 

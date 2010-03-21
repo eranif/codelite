@@ -67,14 +67,14 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 
 		// load the book style from the settings file
 		long bookStyle = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_NODND;
-		
+
 		m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
 
 		m_book->SetRightClickMenu( wxXmlResource::Get()->LoadMenu(wxT("find_in_files_right_click_menu")) );
 
 		m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(FindResultsTab::OnPageChanged), NULL, this);
 		m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSED , NotebookEventHandler(FindResultsTab::OnPageClosed) , NULL, this);
-		
+
 		m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED,      NotebookEventHandler(FindResultsTab::OnClosePage) , NULL, this);
 		m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED, NotebookEventHandler(FindResultsTab::OnClosePage) , NULL, this);
 
@@ -209,18 +209,24 @@ void FindResultsTab::OnPageChanged(NotebookEvent& e)
 {
 	// this function can't be called unless m_book != NULL
 	m_sci = dynamic_cast<wxScintilla*>(m_book->GetCurrentPage());
-	if(m_sci) 
+	if(m_sci)
 		m_tb->ToggleTool(XRCID("word_wrap_output"), m_sci->GetWrapMode() == wxSCI_WRAP_WORD);
 }
 
 void FindResultsTab::OnPageClosed(NotebookEvent& e)
 {
 	// this function can't be called unless m_book != NULL
-	ListMatchInfos::iterator itMatchInfo = m_matchInfo.begin();
-	for (size_t i = 0; i < e.GetSelection(); ++i) {
-		++itMatchInfo;
+	size_t sel = e.GetSelection();
+	if(sel != Notebook::npos) {
+		ListMatchInfos::iterator itMatchInfo = m_matchInfo.begin();
+		for (size_t i = 0; i < e.GetSelection(); ++i) {
+			++itMatchInfo;
+		}
+		m_matchInfo.erase(itMatchInfo);
+
+	} else if(m_book->GetPageCount()) {
+		m_matchInfo.clear();
 	}
-	m_matchInfo.erase(itMatchInfo);
 
 	// Create a page if there is no more
 	if (m_book->GetPageCount() == 0) {
@@ -577,18 +583,18 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxScintilla 
 	if (!result.GetFileName().IsEmpty()) {
 		LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(result.GetFileName(), wxEmptyString, result.GetLineNumber()-1);
 		if (editor && result.GetColumn() >= 0 && result.GetLen() >= 0) {
-			
+
 			int offset = editor->PositionFromLine(result.GetLineNumber()-1) + result.GetColumn();
-			
+
 			editor->SetCaretAt(offset);
 			editor->GotoLine(result.GetLineNumber()-1);
 			editor->EnsureCaretVisible();
 			editor->SetSelection(offset, offset + result.GetLen());
-			
+
 #ifdef __WXGTK__
 			editor->ScrollToColumn(0);
-#endif				
-			
+#endif
+
 			if ( sci ) {
 				// remove the previous marker and add the new one
 				sci->MarkerDeleteAll( 7 );
@@ -602,7 +608,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxScintilla 
 				sci->EnsureCaretVisible(   );
 #ifdef __WXGTK__
 				sci->ScrollToColumn(0);
-#endif				
+#endif
 			}
 		}
 	}

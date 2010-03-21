@@ -89,11 +89,10 @@ Notebook::~Notebook()
 bool Notebook::AddPage(wxWindow *win, const wxString &text, bool selected, int imgid)
 {
 	win->Reparent(this);
-	
-	int imageToInsert = (IsWindowsOrGTK() && HasCloseButton()) ? X_IMG_NORMAL : imgid;
-	wxLogMessage(wxT("adding page, imgId=%d, imageToInsert=%d"), imgid, imageToInsert);
 
-#ifdef __WXGTK__	
+	int imageToInsert = (IsWindowsOrGTK() && HasCloseButton()) ? X_IMG_NORMAL : imgid;
+
+#ifdef __WXGTK__
 	// Eran: I dont know what is wrong here, but it seems like the first page
 	// is adding 2 bitmaps...
 	if(GetPageCount() == 0 && HasCloseButton())
@@ -113,10 +112,9 @@ bool Notebook::AddPage(wxWindow *win, const wxString &text, bool selected, int i
 bool Notebook::InsertPage(size_t index, wxWindow* win, const wxString& text, bool selected, int imgid)
 {
 	win->Reparent(this);
-	
+
 	int imageToInsert = (IsWindowsOrGTK() && HasCloseButton()) ? X_IMG_NORMAL : imgid;
-	wxLogMessage(wxT("Inserting page, imgId=%d, imageToInsert=%d"), imgid, imageToInsert);
-	
+
 	if (wxNotebook::InsertPage(index, win, text, selected, imageToInsert)) {
 #ifdef __WXGTK__
 		win->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
@@ -139,7 +137,7 @@ void Notebook::Initialize()
 	imgList->Add( wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_disabled")));
 
 	AssignImageList(imgList);
-	
+
 #elif defined(__WXGTK__)
 	wxImageList *imgList = new wxImageList(16, 16, true);
 
@@ -384,11 +382,11 @@ void Notebook::OnLeftDown(wxMouseEvent &e)
 	size_t curSel = GetSelection();
 	int where = HitTest( e.GetPosition(), &flags );
 	if (where != wxNOT_FOUND) {
-		
+
 		// Keep the left-down position
 		m_leftDownPos    = e.GetPosition();
 		m_leftDownTabIdx = where;
-		
+
 #if defined(__WXMSW__)||defined(__WXGTK__)
 		if (HasCloseButton() && (flags & wxBK_HITTEST_ONICON) && where == (int)curSel) {
 			SetPageImage(where, X_IMG_PRESSED);

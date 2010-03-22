@@ -702,7 +702,7 @@ void Frame::CreateGUIControls(void)
 #endif
 
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_NONE);
-#ifdef __WXMAC__	
+#ifdef __WXMAC__
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
 #else
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 1);
@@ -814,10 +814,10 @@ void Frame::CreateGUIControls(void)
 	} else {
 		CreateToolbars24();
 	}
-	
+
 	GetWorkspacePane()->GetNotebook()->SetRightClickMenu( wxXmlResource::Get()->LoadMenu(wxT("workspace_view_rmenu")) );
 	GetDebuggerPane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu( wxT("debugger_view_rmenu") ) );
-	
+
 	m_mgr.Update();
 	SetAutoLayout (true);
 
@@ -1335,6 +1335,9 @@ void Frame::OnClose(wxCloseEvent& event)
 void Frame::LoadSession(const wxString &sessionName)
 {
 	SessionEntry session;
+
+	wxWindowUpdateLocker locker(this);
+
 	if (SessionManager::Get().FindSession(sessionName, session)) {
 		wxString wspFile = session.GetWorkspaceName();
 		if (wspFile.IsEmpty() == false && wspFile != wxT("Default")) {
@@ -1442,11 +1445,11 @@ void Frame::OnSwitchWorkspace(wxCommandEvent &event)
 	// now it is time to prompt user for new workspace to open
 	const wxString ALL(wxT("CodeLite Workspace files (*.workspace)|*.workspace|")
 	                   wxT("All Files (*)|*"));
-	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open Workspace"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE , wxDefaultPosition);
-	if (dlg->ShowModal() == wxID_OK) {
-		ManagerST::Get()->OpenWorkspace(dlg->GetPath());
+	wxFileDialog dlg(this, wxT("Open Workspace"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE , wxDefaultPosition);
+	if (dlg.ShowModal() == wxID_OK) {
+		wxWindowUpdateLocker locker(this);
+		ManagerST::Get()->OpenWorkspace(dlg.GetPath());
 	}
-	dlg->Destroy();
 }
 
 void Frame::OnCompleteWord(wxCommandEvent& event)
@@ -2396,6 +2399,7 @@ void Frame::OnRecentWorkspace(wxCommandEvent &event)
 		if ( file_name.EndsWith(wxT(".workspace")) == false ) {
 			file_name << wxT(".workspace");
 		}
+		wxWindowUpdateLocker locker(this);
 		ManagerST::Get()->OpenWorkspace( file_name );
 	}
 }
@@ -2666,15 +2670,21 @@ void Frame::OnStartPageEvent(wxCommandEvent& e)
 {
 	StartPageData *data = (StartPageData *)e.GetClientData();
 	if ( data->action == wxT("switch-workspace" )) {
+		wxWindowUpdateLocker locker(this);
 		ManagerST::Get()->OpenWorkspace(data->file_path);
+
 	} else if ( data->action == wxT("open-file" )) {
 		Frame::Get()->GetMainBook()->OpenFile(data->file_path, wxEmptyString);
+
 	} else if ( data->action == wxT("create-workspace" )) {
 		OnProjectNewWorkspace(e);
+
 	} else if ( data->action == wxT("import-msvs-solution" )) {
 		OnImportMSVS(e);
+
 	} else if ( data->action == wxT("open-workspace" )) {
 		OnSwitchWorkspace(e);
+
 	}
 	delete data;
 }
@@ -3041,7 +3051,7 @@ void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 
 	DockablePane *pane = new DockablePane(m_mainPanel, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));
 	page->Reparent(pane);
-	
+
 	// remove the page from the notebook
 	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
 	pane->SetChildNoReparent(page);
@@ -3238,7 +3248,7 @@ void Frame::OnDetachDebuggerViewTab(wxCommandEvent& e)
 
 	DockablePane *pane = new DockablePane(m_mainPanel, GetDebuggerPane()->GetNotebook(), text, bmp, wxSize(200, 200));
 	page->Reparent(pane);
-	
+
 	// remove the page from the notebook
 	GetDebuggerPane()->GetNotebook()->RemovePage(sel, false);
 	pane->SetChildNoReparent(page);

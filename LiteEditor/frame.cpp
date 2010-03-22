@@ -2718,6 +2718,10 @@ void Frame::CompleteInitialization()
 	m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(Frame::OnDockablePaneClosed), NULL, this);
 	m_mgr.Connect(wxEVT_AUI_RENDER,     wxAuiManagerEventHandler(Frame::OnAuiManagerRender),   NULL, this);
 
+#ifdef __WXMAC__
+	wxStaticLine *line = new wxStaticLine(this);
+	GetSizer()->Add(line, 0, wxEXPAND);
+#endif
 
 	OutputViewControlBar* outputViewControlBar = new OutputViewControlBar(this, GetOutputPane()->GetNotebook(), &m_mgr, wxID_ANY);
 	outputViewControlBar->AddAllButtons();

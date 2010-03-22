@@ -281,6 +281,9 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
 			}
 
 			m_book->AddPage(sci, label, true);
+#ifdef __WXMAC__
+			m_book->GetSizer()->Layout();
+#endif
 			size_t where = m_book->GetPageCount() - 1;
 
 			// keep the search data used for this tab

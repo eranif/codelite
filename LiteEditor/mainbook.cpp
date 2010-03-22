@@ -412,6 +412,12 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		wxLogMessage(wxT("File: ") + fileName.GetFullPath() + wxT(" does not exist!"));
 		return NULL;
 	} else {
+		// A Nice trick: hide the notebook, open the editor
+		// and then show it
+		bool hidden(false);
+		if(m_book->GetPageCount() == 0)
+			hidden = GetSizer()->Hide(m_book);
+				
 		editor = new LEditor(m_book);
 		editor->Create(projName, fileName);
 		AddPage(editor, fileName.GetFullName());
@@ -419,7 +425,11 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 
 		// mark the editor as read only if needed
 		MarkEditorReadOnly(editor, IsFileReadOnly(editor->GetFileName()));
-
+		
+		// SHow the notebook 
+		if(hidden)
+			GetSizer()->Show(m_book);
+		
 		if (position == wxNOT_FOUND && lineno == wxNOT_FOUND && editor->GetContext()->GetName() == wxT("C++")) {
 			// try to find something interesting in the file to put the caret at
 			// for now, just skip past initial blank lines and comments

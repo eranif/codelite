@@ -502,7 +502,7 @@ void LEditor::SetProperties()
 
 #elif defined(__WXGTK__)
 	SetTwoPhaseDraw(true);
-	SetBufferedDraw(true);
+	SetBufferedDraw(false);
 
 #else // MSW
 	SetTwoPhaseDraw(true);

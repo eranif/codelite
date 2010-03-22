@@ -86,7 +86,6 @@ clAuiTabArt::clAuiTabArt()
 {
 	m_normal_font = *wxNORMAL_FONT;
 	m_selected_font = *wxNORMAL_FONT;
-	m_selected_font.SetWeight(wxBOLD);
 	m_measuring_font = m_selected_font;
 
 	m_fixed_tab_width = 100;
@@ -94,7 +93,7 @@ clAuiTabArt::clAuiTabArt()
 
 	// the base_colour is too pale to use as our base colour,
 	// so darken it a bit --
-	wxColour base_colour = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 2.0);
+	wxColour base_colour = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 1.0);
 
 	m_base_colour = base_colour;
 	wxColor border_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
@@ -175,8 +174,8 @@ void clAuiTabArt::DrawBackground(wxDC& dc,
                                  const wxRect& rect)
 {
 	// draw background
-	wxColor top_color       = DrawingUtils::GetPanelBgColour();
-	wxColor bottom_color    = DrawingUtils::GetPanelBgColour();
+	wxColor top_color       = m_base_colour;
+	wxColor bottom_color    = m_base_colour;
 
 	wxRect r;
 
@@ -672,7 +671,6 @@ void clAuiTabArt::SetNormalFont(const wxFont& font)
 
 void clAuiTabArt::SetSelectedFont(const wxFont& font)
 {
-	m_selected_font = font;
 }
 
 void clAuiTabArt::SetMeasuringFont(const wxFont& font)

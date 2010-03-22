@@ -47,17 +47,20 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 	m_leftDownPos = wxPoint();
 
 	// Connect events
-	Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED,    wxAuiNotebookEventHandler(Notebook::OnInternalPageChanged),  NULL, this);
-	Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGING,   wxAuiNotebookEventHandler(Notebook::OnInternalPageChanging), NULL, this);
-	Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSED,     wxAuiNotebookEventHandler(Notebook::OnInternalPageClosed),   NULL, this);
-	Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE,      wxAuiNotebookEventHandler(Notebook::OnInternalPageClosing),  NULL, this);
-	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_DOWN, wxAuiNotebookEventHandler(Notebook::OnTabMiddle),            NULL, this);
-	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,  wxAuiNotebookEventHandler(Notebook::OnTabRightDown),         NULL, this);
+	Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED,       wxAuiNotebookEventHandler(Notebook::OnInternalPageChanged),  NULL, this);
+	Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGING,      wxAuiNotebookEventHandler(Notebook::OnInternalPageChanging), NULL, this);
+	Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSED,        wxAuiNotebookEventHandler(Notebook::OnInternalPageClosed),   NULL, this);
+	Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE,         wxAuiNotebookEventHandler(Notebook::OnInternalPageClosing),  NULL, this);
+	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_DOWN,    wxAuiNotebookEventHandler(Notebook::OnTabMiddle),            NULL, this);
+	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,     wxAuiNotebookEventHandler(Notebook::OnTabRightDown),         NULL, this);
+	Connect(wxEVT_SET_FOCUS,                              wxFocusEventHandler(Notebook::OnFocus),                      NULL, this);
+	Connect(wxEVT_NAVIGATION_KEY,                         wxNavigationKeyEventHandler(Notebook::OnNavigationKey),      NULL, this);
+	Connect(SHOW_POPUP_MENU, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Notebook::OnInternalMenu),             NULL, this);
 
-	Connect(wxEVT_SET_FOCUS,                      wxFocusEventHandler(Notebook::OnFocus),                  NULL, this);
-	Connect(wxEVT_NAVIGATION_KEY,                 wxNavigationKeyEventHandler(Notebook::OnNavigationKey),  NULL, this);
-
-	Connect(SHOW_POPUP_MENU, wxEVT_COMMAND_MENU_SELECTED,          wxCommandEventHandler(Notebook::OnInternalMenu),   NULL, this);
+	// On Linux, we disable the transparent drag since it will lead to crash when used with compiz / KDE4
+#ifdef __WXGTK__
+    m_mgr.SetFlags((m_mgr.GetFlags() | wxAUI_MGR_VENETIAN_BLINDS_HINT) & ~wxAUI_MGR_TRANSPARENT_HINT);
+#endif  //
 
 	SetArtProvider(new clAuiTabArt());
 }
@@ -438,23 +441,23 @@ void Notebook::OnTabMiddle(wxAuiNotebookEvent& e)
 void Notebook::OnTabRightDown(wxAuiNotebookEvent& e)
 {
 	if(m_contextMenu) {
-		
+
 		int where = e.GetSelection();
-		if(where != wxNOT_FOUND && where == GetSelection()) {
-			
+		if(where != wxNOT_FOUND && where == static_cast<int>(GetSelection())) {
+
 			// dont notify the user about changes
 			wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, SHOW_POPUP_MENU);
 			evt.SetEventObject(this);
 			GetEventHandler()->AddPendingEvent(evt);
-			
+
 		} else {
 			e.Skip();
-			
+
 		}
 	} else {
-		
+
 		e.Skip();
-		
+
 	}
 }
 

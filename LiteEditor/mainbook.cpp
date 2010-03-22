@@ -52,15 +52,10 @@ void MainBook::CreateGuiControls()
 	m_navBar = new NavBar(this);
 	sz->Add(m_navBar, 0, wxEXPAND);
 
-	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_PASS_FOCUS|wxVB_NODND;
+	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_PASS_FOCUS|wxVB_NODND | wxAUI_NB_WINDOWLIST_BUTTON;
 
 	// load the notebook style from the configuration settings
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-
-#ifdef __WXMAC__
-	// On Mac it provides more space
-	m_book->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
-#endif
 	m_book->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")));
 
 	sz->Add(m_book, 1, wxEXPAND);
@@ -478,7 +473,9 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 	}
 	
 #ifdef __WXMAC__
-	Refresh();
+	if(m_book->GetPageCount() == 1) {
+		m_book->GetSizer()->Layout();
+	}
 #endif
 	return editor;
 }

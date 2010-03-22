@@ -428,7 +428,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 		            close_button_width,
 		            tab_height);
 		IndentPressedBitmap(&rect, close_button_state);
-		dc.DrawBitmap(bmp, rect.x, rect.y, true);
+		dc.DrawBitmap(bmp, rect.x, rect.y-1, true);
 
 		*out_button_rect = rect;
 	}
@@ -498,7 +498,11 @@ wxSize clAuiTabArt::GetTabSize(wxDC& dc,
 	}
 
 	// add padding
+#ifdef __WXMAC__
 	tab_width += 16;
+#else
+	tab_width += 18;
+#endif
 	tab_height += 14;
 
 	if (m_flags & wxAUI_NB_TAB_FIXED_WIDTH) {
@@ -674,5 +678,5 @@ void clAuiTabArt::SetSelectedFont(const wxFont& font)
 
 void clAuiTabArt::SetMeasuringFont(const wxFont& font)
 {
-	m_measuring_font = font;
+//	m_measuring_font = font;
 }

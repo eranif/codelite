@@ -25,9 +25,9 @@ void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 	DrawingUtils::PaintStraightGradientBox(dc, rect, col1, col2, true);
 	
 #else // Mac
-	wxColor col1 = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR), 3.0);
-	wxColor col1 = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR), 4.0);
-	dc.GradientFillLinear(rect, col1, col2, wxSOUTH);
+	wxColor col1 = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR), 2.0);
+	wxColor col2 = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR), 6.0);
+	DrawingUtils::PaintStraightGradientBox(dc, rect, col1, col2, true);
 #endif
 }
 

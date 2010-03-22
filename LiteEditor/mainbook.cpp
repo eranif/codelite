@@ -367,6 +367,11 @@ LEditor *MainBook::NewEditor()
 	LEditor *editor = new LEditor(m_book);
 	editor->SetFileName(fileName);
 	AddPage(editor, fileName.GetFullName(), wxNullBitmap, true);
+	
+#ifdef __WXMAC__
+	m_book->GetSizer()->Layout();
+#endif
+
 	editor->SetActive();
 	return editor;
 }
@@ -512,6 +517,9 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 	}
 
 	m_book->AddPage(win, text, selected);
+#ifdef __WXMAC__
+	m_book->GetSizer()->Layout();
+#endif
 	return true;
 }
 
@@ -630,10 +638,13 @@ bool MainBook::CloseAllButThis(wxWindow *page)
 	}
 	bool res = CloseAll(true);
 	if (pos != Notebook::npos) {
-//		LEditor *editor = dynamic_cast<LEditor*>(page);
-//		m_book->AddPage(page, text, editor ? editor->GetFileName().GetFullPath() : text, wxNullBitmap, true);
 		m_book->AddPage(page, text, true);
 	}
+	
+#ifdef __WXMAC__
+	m_book->GetSizer()->Layout();
+#endif
+
 	return res;
 }
 

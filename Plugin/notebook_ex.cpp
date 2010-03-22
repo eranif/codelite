@@ -60,8 +60,12 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 	Connect(SHOW_POPUP_MENU, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Notebook::OnInternalMenu),             NULL, this);
 
 	// On Linux, we disable the transparent drag since it will lead to crash when used with compiz / KDE4
-#ifdef __WXGTK__
+#if defined (__WXGTK__) && defined (__WXDEBUG__)
+	m_mgr.SetFlags(wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_TRANSPARENT_DRAG|wxAUI_MGR_RECTANGLE_HINT);
+
+#elif defined(__WXGTK__)
     m_mgr.SetFlags((m_mgr.GetFlags() | wxAUI_MGR_VENETIAN_BLINDS_HINT) & ~wxAUI_MGR_TRANSPARENT_HINT);
+
 #endif  //
 
 	SetArtProvider(new clAuiTabArt());

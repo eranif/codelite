@@ -162,7 +162,6 @@ protected:
 	// Event handlers
 	void OnNavigationKey      (wxNavigationKeyEvent &e);
 	void OnKeyDown            (wxKeyEvent           &e);
-	void OnMenu               (wxAuiNotebookEvent   &e);
 	void OnTabRightDown       (wxAuiNotebookEvent   &e);
 	void OnTabMiddle          (wxAuiNotebookEvent   &e);
 
@@ -172,7 +171,7 @@ protected:
 	void OnInternalPageClosing (wxAuiNotebookEvent &e);
 	void OnInternalPageClosed  (wxAuiNotebookEvent &e);
 
-	void OnInternalDeletePage  (wxCommandEvent  &e);
+	void OnInternalMenu        (wxCommandEvent  &e);
 
 	// wxChoicebook events
 	void OnFocus                (wxFocusEvent      &e);

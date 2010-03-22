@@ -97,6 +97,11 @@ protected:
     wxFont m_selected_font;
     wxFont m_measuring_font;
     wxColour m_base_colour;
+	// Light colours by %
+    wxColour m_base_colour_2;
+    wxColour m_base_colour_3;
+    wxColour m_base_colour_4;
+	
     wxPen m_base_colour_pen;
     wxPen m_border_pen;
     wxBrush m_base_colour_brush;

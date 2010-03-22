@@ -27,7 +27,7 @@ const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED          = XRCID("notebook_page
 const wxEventType wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED  = XRCID("notebook_page_middle_clicked");
 const wxEventType wxEVT_COMMAND_BOOK_PAGE_X_CLICKED       = XRCID("notebook_page_x_btn_clicked");
 
-#define DELETE_PAGE_INTERNAL 1234534
+#define SHOW_POPUP_MENU 1234534
 
 #define X_IMG_NONE    -1
 #define X_IMG_NORMAL   0
@@ -37,6 +37,7 @@ const wxEventType wxEVT_COMMAND_BOOK_PAGE_X_CLICKED       = XRCID("notebook_page
 Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
 		: wxAuiNotebook(parent, id, pos, size, style | wxNO_BORDER | wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_SPLIT | wxAUI_NB_WINDOWLIST_BUTTON)
 		, m_popupWin(NULL)
+		, m_contextMenu(NULL)
 		, m_style(style)
 		, m_leftDownTabIdx(npos)
 		, m_notify (true)
@@ -51,13 +52,12 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSED,     wxAuiNotebookEventHandler(Notebook::OnInternalPageClosed),   NULL, this);
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE,      wxAuiNotebookEventHandler(Notebook::OnInternalPageClosing),  NULL, this);
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_DOWN, wxAuiNotebookEventHandler(Notebook::OnTabMiddle),            NULL, this);
-	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_UP,    wxAuiNotebookEventHandler(Notebook::OnMenu),                 NULL, this);
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,  wxAuiNotebookEventHandler(Notebook::OnTabRightDown),         NULL, this);
 
 	Connect(wxEVT_SET_FOCUS,                      wxFocusEventHandler(Notebook::OnFocus),                  NULL, this);
 	Connect(wxEVT_NAVIGATION_KEY,                 wxNavigationKeyEventHandler(Notebook::OnNavigationKey),  NULL, this);
 
-	Connect(DELETE_PAGE_INTERNAL, wxEVT_COMMAND_MENU_SELECTED,          wxCommandEventHandler(Notebook::OnInternalDeletePage),   NULL, this);
+	Connect(SHOW_POPUP_MENU, wxEVT_COMMAND_MENU_SELECTED,          wxCommandEventHandler(Notebook::OnInternalMenu),   NULL, this);
 
 	SetArtProvider(new clAuiTabArt());
 }
@@ -69,16 +69,16 @@ Notebook::~Notebook()
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSED,     wxAuiNotebookEventHandler(Notebook::OnInternalPageClosed),   NULL, this);
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE,      wxAuiNotebookEventHandler(Notebook::OnInternalPageClosing),  NULL, this);
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_DOWN, wxAuiNotebookEventHandler(Notebook::OnTabMiddle),            NULL, this);
-	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_UP,    wxAuiNotebookEventHandler(Notebook::OnMenu),                 NULL, this);
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,  wxAuiNotebookEventHandler(Notebook::OnTabRightDown),         NULL, this);
 
 	Disconnect(wxEVT_NAVIGATION_KEY,                 wxNavigationKeyEventHandler(Notebook::OnNavigationKey),  NULL, this);
 	Disconnect(wxEVT_SET_FOCUS,                      wxFocusEventHandler(Notebook::OnFocus),                  NULL, this);
-	Disconnect(DELETE_PAGE_INTERNAL, wxEVT_COMMAND_MENU_SELECTED,          wxCommandEventHandler(Notebook::OnInternalDeletePage),   NULL, this);
+	Disconnect(SHOW_POPUP_MENU, wxEVT_COMMAND_MENU_SELECTED,          wxCommandEventHandler(Notebook::OnInternalMenu),   NULL, this);
 }
 
 bool Notebook::AddPage(wxWindow *win, const wxString &text, bool selected, const wxBitmap& bmp)
 {
+	wxWindowUpdateLocker locker(this);
 	win->Reparent(this);
 	if(wxAuiNotebook::InsertPage(GetPageCount(), win, text, selected, bmp)){
 		win->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
@@ -150,12 +150,6 @@ bool Notebook::RemovePage(size_t page, bool notify)
 	if (rc) {
 		PopPageHistory(win);
 	}
-
-#ifdef __WXGTK__
-	// Unparent
-	if(win->GetParent())
-		win->GetParent()->RemoveChild(win);
-#endif
 
 	if (rc && notify) {
 		//send event to noitfy that the page has been closed
@@ -394,17 +388,6 @@ bool Notebook::DoNavigate()
 	return false;
 }
 
-void Notebook::OnMenu(wxAuiNotebookEvent& e)
-{
-	int where = e.GetSelection();
-	if(where != wxNOT_FOUND) {
-		SetSelection(where, false);
-		// dont notify the user about changes
-		PopupMenu(m_contextMenu);
-	} else
-		e.Skip();
-}
-
 void Notebook::OnFocus(wxFocusEvent& e)
 {
 	if( m_style & wxVB_PASS_FOCUS) {
@@ -414,14 +397,6 @@ void Notebook::OnFocus(wxFocusEvent& e)
 		}
 	}
 	e.Skip();
-}
-
-void Notebook::OnInternalDeletePage(wxCommandEvent& e)
-{
-	// Delete the current selection
-	size_t pos = (size_t)e.GetInt();
-	if(pos != Notebook::npos)
-		DeletePage(pos, true);
 }
 
 void Notebook::OnInternalPageClosing(wxAuiNotebookEvent& e)
@@ -462,10 +437,30 @@ void Notebook::OnTabMiddle(wxAuiNotebookEvent& e)
 
 void Notebook::OnTabRightDown(wxAuiNotebookEvent& e)
 {
-	int where = e.GetSelection();
-	if(where != wxNOT_FOUND) {
-		SetSelection(where, false);
-
-	} else
+	if(m_contextMenu) {
+		
+		int where = e.GetSelection();
+		if(where != wxNOT_FOUND && where == GetSelection()) {
+			
+			// dont notify the user about changes
+			wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, SHOW_POPUP_MENU);
+			evt.SetEventObject(this);
+			GetEventHandler()->AddPendingEvent(evt);
+			
+		} else {
+			e.Skip();
+			
+		}
+	} else {
+		
 		e.Skip();
+		
+	}
+}
+
+void Notebook::OnInternalMenu(wxCommandEvent& e)
+{
+	if(m_contextMenu) {
+		PopupMenu(m_contextMenu);
+	}
 }

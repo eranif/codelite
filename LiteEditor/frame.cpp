@@ -420,12 +420,12 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	//-------------------------------------------------------
 	// Workspace Pane tab context menu
 	//-------------------------------------------------------
-	//EVT_MENU(XRCID("detach_wv_tab"),            Frame::OnDetachWorkspaceViewTab)
+	EVT_MENU(XRCID("detach_wv_tab"),            Frame::OnDetachWorkspaceViewTab)
 
 	//-------------------------------------------------------
 	// Debugger Pane tab context menu
 	//-------------------------------------------------------
-	//EVT_MENU(XRCID("detach_dv_tab"),            Frame::OnDetachDebuggerViewTab)
+	EVT_MENU(XRCID("detach_debugger_tab"),      Frame::OnDetachDebuggerViewTab)
 
 	//-------------------------------------------------------
 	// Editor tab context menu
@@ -813,7 +813,10 @@ void Frame::CreateGUIControls(void)
 	} else {
 		CreateToolbars24();
 	}
-
+	
+	GetWorkspacePane()->GetNotebook()->SetRightClickMenu( wxXmlResource::Get()->LoadMenu(wxT("workspace_view_rmenu")) );
+	GetDebuggerPane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu( wxT("debugger_view_rmenu") ) );
+	
 	m_mgr.Update();
 	SetAutoLayout (true);
 
@@ -3032,6 +3035,7 @@ void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 	wxBitmap  bmp;
 
 	DockablePane *pane = new DockablePane(m_mainPanel, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));
+	page->Reparent(pane);
 	
 	// remove the page from the notebook
 	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
@@ -3228,10 +3232,11 @@ void Frame::OnDetachDebuggerViewTab(wxCommandEvent& e)
 	wxBitmap  bmp ;
 
 	DockablePane *pane = new DockablePane(m_mainPanel, GetDebuggerPane()->GetNotebook(), text, bmp, wxSize(200, 200));
-
+	page->Reparent(pane);
+	
 	// remove the page from the notebook
 	GetDebuggerPane()->GetNotebook()->RemovePage(sel, false);
-	pane->SetChild(page);
+	pane->SetChildNoReparent(page);
 
 	wxUnusedVar(e);
 }

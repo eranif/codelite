@@ -53,7 +53,7 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE,         wxAuiNotebookEventHandler(Notebook::OnInternalPageClosing),  NULL, this);
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_DOWN,    wxAuiNotebookEventHandler(Notebook::OnTabMiddle),            NULL, this);
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,     wxAuiNotebookEventHandler(Notebook::OnTabRightDown),         NULL, this);
-	Connect(wxEVT_SET_FOCUS,                              wxFocusEventHandler(Notebook::OnFocus),                      NULL, this);
+//	Connect(wxEVT_SET_FOCUS,                              wxFocusEventHandler(Notebook::OnFocus),                      NULL, this);
 	Connect(wxEVT_NAVIGATION_KEY,                         wxNavigationKeyEventHandler(Notebook::OnNavigationKey),      NULL, this);
 	Connect(SHOW_POPUP_MENU, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Notebook::OnInternalMenu),             NULL, this);
 
@@ -75,7 +75,7 @@ Notebook::~Notebook()
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,  wxAuiNotebookEventHandler(Notebook::OnTabRightDown),         NULL, this);
 
 	Disconnect(wxEVT_NAVIGATION_KEY,                 wxNavigationKeyEventHandler(Notebook::OnNavigationKey),  NULL, this);
-	Disconnect(wxEVT_SET_FOCUS,                      wxFocusEventHandler(Notebook::OnFocus),                  NULL, this);
+//	Disconnect(wxEVT_SET_FOCUS,                      wxFocusEventHandler(Notebook::OnFocus),                  NULL, this);
 	Disconnect(SHOW_POPUP_MENU, wxEVT_COMMAND_MENU_SELECTED,          wxCommandEventHandler(Notebook::OnInternalMenu),   NULL, this);
 }
 

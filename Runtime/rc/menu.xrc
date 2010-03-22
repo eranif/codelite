@@ -849,7 +849,21 @@
             <label>Workspace Settings...</label>
         </object>
     </object>
-
+	
+	<!-- Workspace view right click menu -->
+	<object class="wxMenu" name="workspace_view_rmenu">
+        <object class="wxMenuItem" name="detach_wv_tab">
+            <label>Detach</label>
+        </object>
+    </object>
+	
+	<!-- Workspace view right click menu -->
+	<object class="wxMenu" name="debugger_view_rmenu">
+        <object class="wxMenuItem" name="detach_debugger_tab">
+            <label>Detach</label>
+        </object>
+    </object>
+	
 	<object class="wxMenu" name="file_tree_file">
         <object class="wxMenuItem" name="compile_item">
             <label>Compile</label>

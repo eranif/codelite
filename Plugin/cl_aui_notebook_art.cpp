@@ -91,12 +91,10 @@ clAuiTabArt::clAuiTabArt()
 	m_fixed_tab_width = 100;
 	m_tab_ctrl_height = 0;
 
-	// the base_colour is too pale to use as our base colour,
-	// so darken it a bit --
-	wxColour base_colour = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 1.0);
+	wxColour base_colour = DrawingUtils::GetPanelBgColour();
 
 	m_base_colour = base_colour;
-	wxColor border_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+	wxColor border_colour = DrawingUtils::DarkColour(m_base_colour, 4.0);
 
 	m_border_pen = wxPen(border_colour);
 	m_base_colour_pen = wxPen(m_base_colour);
@@ -333,30 +331,31 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 		dc.GradientFillLinear(r, bottom_color, top_color, wxNORTH);
 	} else {
 		// draw inactive tab
-
+		wxColour shadeColour = DrawingUtils::DarkColour(m_base_colour, 2.0);
+		
 		wxRect r(tab_x, tab_y, tab_width, tab_height-2);
 
 		// start the gradent up a bit and leave the inside border inset
 		// by a pixel for a 3D look.  Only the top half of the inactive
 		// tab will have a slight gradient
-		r.x += 2;
+		r.x += 1;
 		r.y++;
-		r.width -= 3;
+		r.width -= 1;
 		r.height /= 2;
 		r.height--;
 
 		// -- draw top gradient fill for glossy look
 
-		wxColor top_color    = m_base_colour_2;
-		wxColor bottom_color = m_base_colour_2;
+		wxColor top_color    = shadeColour;
+		wxColor bottom_color = shadeColour;
 		dc.GradientFillLinear(r, bottom_color, top_color, wxNORTH);
 
 		r.y += r.height;
 		r.y--;
 
 		// -- draw bottom fill for glossy look
-		top_color    = m_base_colour_2;
-		bottom_color = m_base_colour_2;
+		top_color    = shadeColour;
+		bottom_color = shadeColour;
 		dc.GradientFillLinear(r, top_color, bottom_color, wxSOUTH);
 	}
 

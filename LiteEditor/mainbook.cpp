@@ -390,7 +390,7 @@ static bool IsFileExists(const wxFileName &filename) {
 
 LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectName, int lineno, long position, bool addjump)
 {
-	wxWindowUpdateLocker locker(this);
+	wxWindowUpdateLocker locker(Frame::Get());
 
 	wxFileName fileName(file_name);
 	fileName.MakeAbsolute();

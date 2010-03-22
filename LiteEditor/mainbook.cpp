@@ -476,6 +476,10 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		BrowseRecord jumpto = editor->CreateBrowseRecord();
 		NavMgr::Get()->AddJump(jumpfrom, jumpto);
 	}
+	
+#ifdef __WXMAC__
+	Refresh();
+#endif
 	return editor;
 }
 

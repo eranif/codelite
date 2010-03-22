@@ -283,7 +283,14 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 		border_points[3] = wxPoint(tab_x+tab_width-2, tab_y+tab_height-4);
 		border_points[4] = wxPoint(tab_x+tab_width,   tab_y+tab_height-6);
 		border_points[5] = wxPoint(tab_x+tab_width,   tab_y);
+
 	} else { //if (m_flags & wxAUI_NB_TOP) {}
+
+		if(page.active == false) {
+			tab_height -= 2;
+			tab_y      += 2;
+		}
+
 		border_points[0] = wxPoint(tab_x,             tab_y+tab_height-4);
 		border_points[1] = wxPoint(tab_x,             tab_y+2);
 		border_points[2] = wxPoint(tab_x+2,           tab_y);
@@ -332,7 +339,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 	} else {
 		// draw inactive tab
 		wxColour shadeColour = DrawingUtils::DarkColour(m_base_colour, 2.0);
-		
+
 		wxRect r(tab_x, tab_y, tab_width, tab_height-2);
 
 		// start the gradent up a bit and leave the inside border inset
@@ -475,15 +482,20 @@ wxSize clAuiTabArt::GetTabSize(wxDC& dc,
                                int close_button_state,
                                int* x_extent)
 {
-	wxCoord measured_textx, measured_texty, tmp;
+	static wxCoord measured_texty(wxNOT_FOUND);
+
+	wxCoord measured_textx;
+	wxCoord tmp;
 
 	dc.SetFont(m_measuring_font);
-	dc.GetTextExtent(caption, &measured_textx, &measured_texty);
+	dc.GetTextExtent(caption, &measured_textx, &tmp);
 
-	dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
+	// do it once
+	if(measured_texty == wxNOT_FOUND)
+		dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
 
 	// add padding around the text
-	wxCoord tab_width = measured_textx;
+	wxCoord tab_width  = measured_textx;
 	wxCoord tab_height = measured_texty;
 
 	// if the close button is showing, add space for it

@@ -367,7 +367,7 @@ LEditor *MainBook::NewEditor()
 	LEditor *editor = new LEditor(m_book);
 	editor->SetFileName(fileName);
 	AddPage(editor, fileName.GetFullName(), wxNullBitmap, true);
-	
+
 #ifdef __WXMAC__
 	m_book->GetSizer()->Layout();
 #endif
@@ -422,7 +422,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		bool hidden(false);
 		if(m_book->GetPageCount() == 0)
 			hidden = GetSizer()->Hide(m_book);
-				
+
 		editor = new LEditor(m_book);
 		editor->Create(projName, fileName);
 		AddPage(editor, fileName.GetFullName());
@@ -430,11 +430,11 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 
 		// mark the editor as read only if needed
 		MarkEditorReadOnly(editor, IsFileReadOnly(editor->GetFileName()));
-		
-		// SHow the notebook 
+
+		// SHow the notebook
 		if(hidden)
 			GetSizer()->Show(m_book);
-		
+
 		if (position == wxNOT_FOUND && lineno == wxNOT_FOUND && editor->GetContext()->GetName() == wxT("C++")) {
 			// try to find something interesting in the file to put the caret at
 			// for now, just skip past initial blank lines and comments
@@ -486,7 +486,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		BrowseRecord jumpto = editor->CreateBrowseRecord();
 		NavMgr::Get()->AddJump(jumpfrom, jumpto);
 	}
-	
+
 #ifdef __WXMAC__
 	if(m_book->GetPageCount() == 1) {
 		m_book->GetSizer()->Layout();
@@ -640,7 +640,7 @@ bool MainBook::CloseAllButThis(wxWindow *page)
 	if (pos != Notebook::npos) {
 		m_book->AddPage(page, text, true);
 	}
-	
+
 #ifdef __WXMAC__
 	m_book->GetSizer()->Layout();
 #endif
@@ -778,9 +778,10 @@ void MainBook::MarkEditorReadOnly(LEditor* editor, bool ro)
 
 	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
 		if (editor == m_book->GetPage(i)) {
-//			m_book->SetPageBitmap(i, ro ? wxXmlResource::Get()->LoadBitmap(wxT("read_only")) : wxNullBitmap );
-
-			// TODO ::  Mark this editor as read only
+			wxString text = m_book->GetPageText(i);
+			wxString textRO;
+			textRO << text << wxT(" [R/O]");
+			m_book->SetPageText(i, ro ? textRO : text);
 			break;
 		}
 	}

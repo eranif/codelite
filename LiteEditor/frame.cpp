@@ -803,6 +803,9 @@ void Frame::CreateGUIControls(void)
 	// set this frame as the event handler for any events
 	TagsManagerST::Get()->SetEvtHandler( this );
 
+	// We must do Layout() before loading the toolbars, otherwise they're broken in >=wxGTK-2.9
+	Layout();
+
 	//load windows perspective
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
 	if (options) {
@@ -836,8 +839,6 @@ void Frame::CreateGUIControls(void)
 	if ( fix ) {
 		UpdateBuildTools();
 	}
-
-	Layout();
 }
 
 void Frame::CreateViewAsSubMenu()

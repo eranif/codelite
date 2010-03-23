@@ -329,6 +329,8 @@ DebugTabPanel::DebugTabPanel( wxWindow* parent, wxWindowID id, const wxPoint& po
 
 	this->SetSizer( bSizer1 );
 	this->Layout();
+  // The next line is needed in >=wx2.9 to prevent this panel taking up most of its containing sizer :/
+  SetMinSize(m_checkBoxEnableLog->GetSize());
 
 	// Connect Events
 	m_checkBoxEnableLog->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( DebugTabPanel::OnEnableDbgLog ), NULL, this );

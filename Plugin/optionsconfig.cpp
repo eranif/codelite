@@ -63,7 +63,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_hideChangeMarkerMargin(false)
 		, m_hideOutpuPaneOnUserClick(false)
 		, m_hideOutputPaneNotIfDebug(true)
-		, m_showQuickFinder(true)
+		, m_findBarAtBottom(false)
 		, m_TrimLine(true)
 		, m_AppendLF(true)
 		, m_disableSmartIndent(false)
@@ -74,7 +74,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
 	if ( node ) {
 		SetFileFontEncoding(XmlUtils::ReadString(node, wxT("FileFontEncoding"), wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8)));
-		
+
 		m_displayFoldMargin         = XmlUtils::ReadBool  (node, wxT("DisplayFoldMargin"),         m_displayFoldMargin);
 		m_underlineFoldLine         = XmlUtils::ReadBool  (node, wxT("UnderlineFoldedLine"),       m_underlineFoldLine);
 		m_foldStyle                 = XmlUtils::ReadString(node, wxT("FoldStyle"),                 m_foldStyle);
@@ -108,11 +108,11 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_hideChangeMarkerMargin    = XmlUtils::ReadBool  (node, wxT("HideChangeMarkerMargin"));
 		m_hideOutpuPaneOnUserClick  = XmlUtils::ReadBool  (node, wxT("HideOutputPaneOnUserClick"));
 		m_hideOutputPaneNotIfDebug  = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfDebug"));
-		m_showQuickFinder           = XmlUtils::ReadBool  (node, wxT("ShowQuickFinder"),           m_showQuickFinder);
+		m_findBarAtBottom           = XmlUtils::ReadBool  (node, wxT("FindBarAtBottom"),           m_findBarAtBottom);
 		m_disableSmartIndent        = XmlUtils::ReadBool  (node, wxT("DisableSmartIndent"),        m_disableSmartIndent);
 		m_disableSemicolonShift     = XmlUtils::ReadBool  (node, wxT("DisableSemicolonShift"),     m_disableSemicolonShift);
 		m_caretLineAlpha            = XmlUtils::ReadLong  (node, wxT("CaretLineAlpha"),            m_caretLineAlpha);
-		
+
 		// These hacks will likely be changed in the future. If so, we'll be able to remove the #include "editor_config.h" too
 		long trim(0); long appendLf(0);
 		EditorConfigST::Get()->GetLongValue(wxT("EditorTrimEmptyLines"), trim);
@@ -151,7 +151,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("HideChangeMarkerMargin"),    BoolToString(m_hideChangeMarkerMargin));
 	n->AddProperty(wxT("HideOutputPaneOnUserClick"), BoolToString(m_hideOutpuPaneOnUserClick));
 	n->AddProperty(wxT("HideOutputPaneNotIfDebug"),	 BoolToString(m_hideOutputPaneNotIfDebug));
-	n->AddProperty(wxT("ShowQuickFinder"),           BoolToString(m_showQuickFinder));
+	n->AddProperty(wxT("FindBarAtBottom"),           BoolToString(m_findBarAtBottom));
 	n->AddProperty(wxT("DisableSmartIndent"),        BoolToString(m_disableSmartIndent));
 	n->AddProperty(wxT("DisableSemicolonShift"),     BoolToString(m_disableSemicolonShift));
 	n->AddProperty(wxT("ConsoleCommand"),            m_programConsoleCommand);
@@ -190,7 +190,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	tmp.clear();
     tmp << m_caretBlinkPeriod;
     n->AddProperty(wxT("CaretBlinkPeriod"), tmp);
-	
+
 	tmp.clear();
     tmp << m_caretLineAlpha;
     n->AddProperty(wxT("CaretLineAlpha"), tmp);

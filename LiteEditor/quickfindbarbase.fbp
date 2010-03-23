@@ -75,7 +75,7 @@
                 <property name="permission">none</property>
                 <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
-                    <property name="flag"></property>
+                    <property name="flag">wxALIGN_CENTER_VERTICAL</property>
                     <property name="proportion">0</property>
                     <object class="wxToolBar" expanded="0">
                         <property name="bg"></property>
@@ -229,7 +229,7 @@
                         <property name="vgap">0</property>
                         <object class="sizeritem" expanded="1">
                             <property name="border">2</property>
-                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT</property>
+                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                             <property name="proportion">0</property>
                             <object class="wxStaticText" expanded="1">
                                 <property name="bg"></property>
@@ -284,7 +284,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">2</property>
-                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT</property>
+                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</property>
                             <property name="proportion">1</property>
                             <object class="wxTextCtrl" expanded="1">
                                 <property name="bg"></property>
@@ -343,7 +343,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxEXPAND</property>
+                            <property name="flag">wxEXPAND|wxALIGN_CENTER_VERTICAL</property>
                             <property name="proportion">0</property>
                             <object class="wxToolBar" expanded="0">
                                 <property name="bg"></property>
@@ -428,7 +428,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">2</property>
-                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT</property>
+                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                             <property name="proportion">0</property>
                             <object class="wxStaticText" expanded="1">
                                 <property name="bg"></property>
@@ -483,7 +483,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">2</property>
-                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT|wxLEFT</property>
+                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</property>
                             <property name="proportion">1</property>
                             <object class="wxTextCtrl" expanded="1">
                                 <property name="bg"></property>
@@ -542,7 +542,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxEXPAND</property>
+                            <property name="flag">wxEXPAND|wxALIGN_CENTER_VERTICAL</property>
                             <property name="proportion">0</property>
                             <object class="wxToolBar" expanded="1">
                                 <property name="bg"></property>
@@ -668,7 +668,7 @@
                 </object>
                 <object class="sizeritem" expanded="1">
                     <property name="border">1</property>
-                    <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</property>
+                    <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxTOP</property>
                     <property name="proportion">0</property>
                     <object class="wxBoxSizer" expanded="0">
                         <property name="minimum_size"></property>

@@ -4,11 +4,13 @@
 #include <wx/pen.h>
 #include <wx/sizer.h>
 #include <wx/bitmap.h>
-#include <wx/aui/auibar.h>
 #include "drawingutils.h"
 #include "cl_defs.h"
 
 #if USE_AUI_TOOLBAR
+
+#include <wx/aui/auibar.h>
+
 class CLMainAuiTBArt : public wxAuiDefaultToolBarArt
 {
 public:

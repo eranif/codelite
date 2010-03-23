@@ -1588,7 +1588,7 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 					// popup a message
 					wxMessageBox(_("Can not find the string '") + m_findReplaceDlg->GetData().GetFindString() + wxT("'"),
 					             wxT("CodeLite"),
-					             wxICON_WARNING);
+					             wxICON_WARNING | wxOK);
 				}
 			}
 		}
@@ -2522,7 +2522,7 @@ void LEditor::DelBreakpoint(int lineno /*= -1*/)
 		message = _("Breakpoint deletion failed");
 	}
 
-	wxMessageBox(message, _("Breakpoint not deleted"), wxICON_ERROR);
+	wxMessageBox(message, _("Breakpoint not deleted"), wxICON_ERROR | wxOK);
 }
 
 void LEditor::ToggleBreakpoint(int lineno)

@@ -61,6 +61,7 @@ private:
 
 	bool AskUserToSave(LEditor *editor);
 	bool DoSelectPage (wxWindow *win  );
+	void DoPositionFindBar(int where);
 
 public:
 	MainBook(wxWindow *parent);
@@ -115,8 +116,7 @@ public:
 	void     SetPageTitle(wxWindow *page, const wxString &name);
 	long     GetBookStyle();
 
-    // TODO: replace these functions with event handlers
-	void ApplySettingsChanges   ();
+    void ApplySettingsChanges   ();
     void UnHighlightAll         ();
     void DelAllBreakpointMarkers();
     void SetViewEOL             (bool visible);

@@ -47,17 +47,13 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 #endif
 	m_toolBar1->SetToolSeparation( 2 );
 
-	// Use red theme on Linux
-#ifdef __WXMSW__
-	m_toolBar1->AddTool( wxID_HIDE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pane_close")), _("Hide the Find Bar"), wxITEM_NORMAL);
-#else
-	m_toolBar1->AddTool( wxID_HIDE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pane_close_red")), _("Hide the Find Bar"), wxITEM_NORMAL);
-#endif
+	// Use red theme buttons
+	m_toolBar1->AddTool( wxID_HIDE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_red")), _("Hide the Find Bar"), wxITEM_NORMAL);
 
 	m_toolBar1->AddTool( wxID_SHOW_REPLACE_CONTROLS, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pencil")), _("Toggle 'Replace With' Controls"), wxITEM_CHECK);
 	m_toolBar1->Realize();
 
-	mainSizer->Add( m_toolBar1, 0, 0, 5 );
+	mainSizer->Add( m_toolBar1, 0, wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_staticline3 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
 	mainSizer->Add( m_staticline3, 0, wxEXPAND|wxRIGHT, 5 );
@@ -71,12 +67,12 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 
 	m_staticTextFind = new wxStaticText( this, wxID_ANY, _("Find:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextFind->Wrap( -1 );
-	fgSizer1->Add( m_staticTextFind, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 2 );
+	fgSizer1->Add( m_staticTextFind, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
 	m_findWhat = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2 );
 	m_findWhat->SetToolTip( _("Hit ENTER to search, or Shift + ENTER to search backward") );
 
-	fgSizer1->Add( m_findWhat, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 2 );
+	fgSizer1->Add( m_findWhat, 1, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 2 );
 
 	m_toolBar2 = new clToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 #if USE_AUI_TOOLBAR
@@ -85,17 +81,17 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 
 	m_toolBar2->AddTool( wxID_FIND_NEXT, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("next")), _("Find Next Match"), wxITEM_NORMAL);
 	m_toolBar2->AddTool( wxID_FIND_PREVIOUS, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("previous")), _("Find Previous Match"), wxITEM_NORMAL);
-	m_toolBar2->AddTool( wxID_HIGHLIGHT_MATCHES, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("higlight")), _("Highlight All Matcehs"), wxITEM_CHECK);
+	m_toolBar2->AddTool( wxID_HIGHLIGHT_MATCHES, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("higlight")), _("Highlight All Matches"), wxITEM_CHECK);
 	m_toolBar2->Realize();
 
 	fgSizer1->Add( m_toolBar2, 0, wxEXPAND, 5 );
 
 	m_replaceStaticText = new wxStaticText( this, wxID_ANY, _("Replace with:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_replaceStaticText->Wrap( -1 );
-	fgSizer1->Add( m_replaceStaticText, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 2 );
+	fgSizer1->Add( m_replaceStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
 	m_replaceWith = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2 );
-	fgSizer1->Add( m_replaceWith, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT|wxLEFT, 2 );
+	fgSizer1->Add( m_replaceWith, 1, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 2 );
 
 	m_toolBarReplace = new clToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE );
 #if USE_AUI_TOOLBAR

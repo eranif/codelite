@@ -69,7 +69,7 @@ protected:
 	bool           m_hideChangeMarkerMargin;
 	bool           m_hideOutpuPaneOnUserClick;
 	bool           m_hideOutputPaneNotIfDebug;
-	bool           m_showQuickFinder;
+	bool           m_findBarAtBottom;
 	bool           m_TrimLine;
 	bool           m_AppendLF;
 	bool           m_disableSmartIndent;
@@ -109,11 +109,11 @@ public:
 	const bool& GetAppendLF() const {
 		return m_AppendLF;
 	}
-	void SetShowQuickFinder(const bool& showQuickFinder) {
-		this->m_showQuickFinder = showQuickFinder;
+	void SetFindBarAtBottom(const bool& findBarAtBottom) {
+		this->m_findBarAtBottom = findBarAtBottom;
 	}
-	const bool& GetShowQuickFinder() const {
-		return m_showQuickFinder;
+	const bool& GetFindBarAtBottom() const {
+		return m_findBarAtBottom;
 	}
 	void SetHideOutpuPaneOnUserClick(const bool& hideOutpuPaneOnUserClick) {
 		this->m_hideOutpuPaneOnUserClick = hideOutpuPaneOnUserClick;

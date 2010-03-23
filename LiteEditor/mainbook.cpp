@@ -61,7 +61,7 @@ void MainBook::CreateGuiControls()
 	sz->Add(m_book, 1, wxEXPAND);
 
 	m_quickFindBar = new QuickFindBar(this);
-	sz->Add(m_quickFindBar, 0, wxTOP|wxBOTTOM|wxEXPAND);
+	DoPositionFindBar(0);
 
 	m_messagePane = new MessagePane(this);
 	sz->Insert(0, m_messagePane, 0, wxALL|wxEXPAND, 5, NULL);
@@ -718,6 +718,9 @@ void MainBook::ApplySettingsChanges()
 	for (size_t i = 0; i < editors.size(); i++) {
 		editors[i]->SetSyntaxHighlight(editors[i]->GetContext()->GetName());
 	}
+
+	// Last: reposition the findBar
+	DoPositionFindBar(1);
 }
 
 void MainBook::UnHighlightAll()
@@ -872,4 +875,18 @@ void MainBook::OnClosePage(NotebookEvent& e)
 	wxWindow *page = m_book->GetPage((size_t)where);
 	if(page)
 		ClosePage(page);
+}
+
+void MainBook::DoPositionFindBar(int where)
+{
+	wxWindowUpdateLocker locker(this);
+	// the find bar is already placed on the MainBook, detach it
+	GetSizer()->Detach(m_quickFindBar);
+
+	bool placeAtBottom = EditorConfigST::Get()->GetOptions()->GetFindBarAtBottom();
+	if(placeAtBottom)
+		GetSizer()->Add(m_quickFindBar, 0, wxTOP|wxBOTTOM|wxEXPAND);
+	else
+		GetSizer()->Insert(where, m_quickFindBar, 0, wxTOP|wxBOTTOM|wxEXPAND);
+	GetSizer()->Layout();
 }

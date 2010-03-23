@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb  8 2009)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -36,10 +36,10 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase( wxWindow* pa
 	mainSizer->Add( sbSizer1, 0, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer2;
-	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Output Pane Control Bar:") ), wxVERTICAL );
+	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Find Bar:") ), wxVERTICAL );
 	
-	m_checkBoxShowQuickFinder = new wxCheckBox( this, wxID_ANY, _("Enable Quick Finder bar"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer2->Add( m_checkBoxShowQuickFinder, 0, wxALL|wxEXPAND, 5 );
+	m_checkBoxFindBarAtBottom = new wxCheckBox( this, wxID_ANY, _("Place the find bar at the bottom"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer2->Add( m_checkBoxFindBarAtBottom, 0, wxALL|wxEXPAND, 5 );
 	
 	mainSizer->Add( sbSizer2, 0, wxEXPAND, 5 );
 	

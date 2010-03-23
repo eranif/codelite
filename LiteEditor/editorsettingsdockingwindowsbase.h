@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb  8 2009)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -33,8 +33,8 @@ class EditorSettingsDockingWindowsBase : public wxPanel
 	protected:
 		wxCheckBox* m_checkBoxHideOutputPaneOnClick;
 		wxCheckBox* m_checkBoxHideOutputPaneNotIfDebug;
-		wxCheckBox* m_checkBoxShowQuickFinder;
-	
+		wxCheckBox* m_checkBoxFindBarAtBottom;
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnHideOutputPaneNotIfDebugUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		

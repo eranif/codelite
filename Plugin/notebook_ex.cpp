@@ -55,7 +55,7 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_DOWN,    wxAuiNotebookEventHandler(Notebook::OnTabMiddle),            NULL, this);
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,     wxAuiNotebookEventHandler(Notebook::OnTabRightDown),         NULL, this);
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK,          wxAuiNotebookEventHandler(Notebook::OnBgDclick),             NULL, this);
-	
+
 #ifdef __WXMSW__
 	Connect(wxEVT_SET_FOCUS,                              wxFocusEventHandler(Notebook::OnFocus),                      NULL, this);
 #endif
@@ -83,7 +83,7 @@ Notebook::~Notebook()
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_DOWN, wxAuiNotebookEventHandler(Notebook::OnTabMiddle),            NULL, this);
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,  wxAuiNotebookEventHandler(Notebook::OnTabRightDown),         NULL, this);
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK,       wxAuiNotebookEventHandler(Notebook::OnBgDclick),             NULL, this);
-	
+
 	Disconnect(wxEVT_NAVIGATION_KEY,                 wxNavigationKeyEventHandler(Notebook::OnNavigationKey),  NULL, this);
 #ifdef __WXMSW__
 	Disconnect(wxEVT_SET_FOCUS,                              wxFocusEventHandler(Notebook::OnFocus),                      NULL, this);
@@ -306,6 +306,9 @@ void Notebook::PushPageHistory(wxWindow *page)
 
 void Notebook::PopPageHistory(wxWindow *page)
 {
+	if( !page )
+		return;
+
 	int where = m_history.Index(page);
 	while (where != wxNOT_FOUND) {
 		wxWindow *tab = static_cast<wxWindow *>(m_history.Item(where));
@@ -386,7 +389,7 @@ void Notebook::OnKeyDown(wxKeyEvent& e)
 
 bool Notebook::DoNavigate()
 {
-	if ( !m_popupWin && GetPageCount() > 0) {
+	if ( !m_popupWin && GetPageCount() > 1) {
 
 		m_popupWin = new NotebookNavDialog( this );
 		m_popupWin->ShowModal();
@@ -425,6 +428,10 @@ void Notebook::OnInternalPageClosing(wxAuiNotebookEvent& e)
 
 	if (!event.IsAllowed()) {
 		e.Veto();
+
+	} else {
+		// This page is likely to be removed, remove it from the history
+		PopPageHistory( GetPage( static_cast<size_t>( GetSelection() ) ) );
 	}
 }
 
@@ -433,9 +440,10 @@ void Notebook::OnInternalPageClosed(wxAuiNotebookEvent& e)
 	e.Skip();
 
 	NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CLOSED, GetId());
-	event.SetSelection( (int)GetSelection() );
+	event.SetSelection( (int) GetSelection() );
 	event.SetEventObject( this );
 	GetEventHandler()->AddPendingEvent(event);
+
 }
 
 void Notebook::OnTabMiddle(wxAuiNotebookEvent& e)

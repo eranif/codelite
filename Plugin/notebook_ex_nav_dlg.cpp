@@ -1,33 +1,34 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : notebooknavdialog.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : notebooknavdialog.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "wx/settings.h"
+
+#include "wx/settings.h"
 #include "notebook_ex_nav_dlg.h"
 #include <wx/listctrl.h>
 #include <wx/listbox.h>
 #include <wx/image.h>
-#include "wx/sizer.h" 
+#include "wx/sizer.h"
 #include "notebook_ex.h"
 
 NotebookNavDialog::NotebookNavDialog(wxWindow* parent)
@@ -59,7 +60,7 @@ void NotebookNavDialog::Create(wxWindow* parent)
 	if (  !wxDialog::Create(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, style|wxBORDER_RAISED) )
 		return;
 	//SetTransparent(200);
-	
+
 	wxBoxSizer *sz = new wxBoxSizer( wxVERTICAL );
 	SetSizer( sz );
 
@@ -107,9 +108,8 @@ void NotebookNavDialog::OnNavigationKey(wxNavigationKeyEvent &event)
 		else
 			itemToSelect = selected - 1;
 	}
-	
-	//if( m_listBox->GetCount() > itemToSelect && itemToSelect)
-		m_listBox->SetSelection( itemToSelect );
+
+	m_listBox->SetSelection( itemToSelect );
 }
 
 void NotebookNavDialog::PopulateListControl(Notebook *book)
@@ -125,7 +125,7 @@ void NotebookNavDialog::PopulateListControl(Notebook *book)
 	if (arr.GetCount() > 0) {
 		m_listBox->SetSelection( 0 );
 	}
-	
+
 	wxNavigationKeyEvent dummy;
 	dummy.SetDirection(true);
 	OnNavigationKey(dummy);
@@ -144,12 +144,6 @@ void NotebookNavDialog::CloseDialog()
 	std::map< int, wxWindow* >::iterator iter = m_tabsIndex.find(m_selectedItem);
 	if(iter != m_tabsIndex.end()){
 		m_selTab = iter->second;
-//		Notebook *bk = dynamic_cast<Notebook*>( GetParent() );
-//		if( bk ) {
-//			
-//			bk->SetSelection( bk->GetPageIndex(m_selTab), true );
-//			
-//		}
 	}
 	EndModal( wxID_OK );
 }

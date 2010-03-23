@@ -77,7 +77,7 @@ void MainBook::ConnectEvents()
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED,       NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED,  NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_BG_DCLICK,            NotebookEventHandler(MainBook::OnMouseDClick),  NULL, this);
-	
+
 	wxTheApp->Connect(wxEVT_WORKSPACE_LOADED,  wxCommandEventHandler(MainBook::OnWorkspaceLoaded),    NULL, this);
 	wxTheApp->Connect(wxEVT_PROJ_FILE_ADDED,   wxCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
 	wxTheApp->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
@@ -92,7 +92,7 @@ MainBook::~MainBook()
 	m_book->Disconnect(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED,       NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
 	m_book->Disconnect(wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED,  NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
 	m_book->Disconnect(wxEVT_COMMAND_BOOK_BG_DCLICK,            NotebookEventHandler(MainBook::OnMouseDClick),  NULL, this);
-	
+
 	wxTheApp->Disconnect(wxEVT_WORKSPACE_LOADED,  wxCommandEventHandler(MainBook::OnWorkspaceLoaded),    NULL, this);
 	wxTheApp->Disconnect(wxEVT_PROJ_FILE_ADDED,   wxCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
 	wxTheApp->Disconnect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
@@ -627,8 +627,10 @@ bool MainBook::ClosePage(wxWindow *page)
 
 bool MainBook::CloseAllButThis(wxWindow *page)
 {
-	// TODO: handle case where page is detached
 	wxString text;
+
+	wxWindowUpdateLocker locker(this);
+
 	size_t pos = m_book->GetPageIndex(page);
 	if (pos != Notebook::npos) {
 		text = m_book->GetPageText(pos);
@@ -674,7 +676,21 @@ bool MainBook::CloseAll(bool cancellable)
 		}
 	}
 
-	m_book->DeleteAllPages(ManagerST::Get()->IsShutdownInProgress() ? false : true);
+	// Delete the files without notifications (it will be faster)
+	wxWindowUpdateLocker locker(this);
+	m_book->DeleteAllPages(false);
+
+	// Since we got no more editors opened,
+	// send a wxEVT_ALL_EDITORS_CLOSED event
+	SendCmdEvent(wxEVT_ALL_EDITORS_CLOSED);
+
+	// Update the quick-find-bar
+	m_quickFindBar->SetEditor(NULL);
+	ShowQuickBar(false);
+
+	// Update the frame's title
+	Frame::Get()->SetFrameTitle(NULL);
+
 	return true;
 }
 

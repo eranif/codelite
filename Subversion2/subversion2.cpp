@@ -189,9 +189,9 @@ void Subversion2::UnPlug()
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_ignore_file_pattern"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFilePattern), NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_set_as_view"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSelectAsView),      NULL, this);
 	GetManager()->GetTheApp()->Disconnect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, wxCommandEventHandler(Subversion2::OnGetCompileLine), NULL, this);
-	
+
 	m_subversionView->DisconnectEvents();
-	
+
 	// Remove the tab pined to the workspcae pane
 	size_t index(Notebook::npos);
 	SvnSettingsData ssd = GetSettings();
@@ -209,7 +209,7 @@ void Subversion2::UnPlug()
 			break;
 		}
 	}
-	
+
 	m_subversionView->Destroy();
 	m_subversionConsole->Destroy();
 }
@@ -223,7 +223,7 @@ void Subversion2::DoInitialize()
 		DockablePane *cp = new DockablePane(book->GetParent()->GetParent(), book, svnCONSOLE_TEXT, wxNullBitmap, wxSize(200, 200));
 		m_subversionView = new SubversionView(cp, this);
 		cp->SetChildNoReparent(m_subversionView);
-		
+
 	} else {
 		m_subversionView = new SubversionView(book, this);
 		size_t index = GetSettings().GetSvnTabIndex();
@@ -334,7 +334,7 @@ void Subversion2::OnRevert(wxCommandEvent& event)
 {
 	wxString command;
 	wxString loginString;
-	
+
 	command << GetSvnExeName(false) << loginString << wxT(" revert --recursive \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
 	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this, event.GetId(), this));
 }
@@ -447,12 +447,12 @@ void Subversion2::RecreateLocalSvnConfigFile()
 	ignorePatterns.Replace(wxT("\n"),   wxT(" "));
 	ignorePatterns.Replace(wxT("\t"),   wxT(" "));
 	ignorePatterns.Replace(wxT("\v"),   wxT(" "));
-	
+
 	wxString diffTool = GetSettings().GetExternalDiffViewer();
 	if(!(GetSettings().GetFlags() & SvnUseExternalDiff)) {
 		diffTool.Empty();
 	}
-	
+
 	wxFFile fp;
 	fp.Open(configFile.c_str(), wxT("w+b"));
 	if(fp.IsOpened()) {
@@ -464,13 +464,13 @@ void Subversion2::RecreateLocalSvnConfigFile()
 		fp.Write(wxT("store-passwords = no\n"));
 		fp.Write(wxT("\n"));
 		fp.Write(wxT("[helpers]\n"));
-		
+
 		if(diffTool.IsEmpty() == false) {
 			fp.Write(wxT("diff-cmd = "));
 			fp.Write(diffTool);
 			fp.Write(wxT("\n"));
 		}
-		
+
 		fp.Close();
 	}
 }
@@ -479,7 +479,7 @@ void Subversion2::DoGetSvnVersion()
 {
 	wxString command;
 	command << GetSvnExeName(false) << wxT(" --version ");
-	m_simpleCommand.Execute(command, wxT(""), new SvnVersionHandler(this, wxNOT_FOUND, NULL));
+	m_simpleCommand.Execute(command, wxT(""), new SvnVersionHandler(this, wxNOT_FOUND, NULL), this);
 }
 
 void Subversion2::Patch(bool dryRun, const wxString &workingDirectory, wxEvtHandler *owner, int id)
@@ -511,7 +511,7 @@ void Subversion2::Patch(bool dryRun, const wxString &workingDirectory, wxEvtHand
 		} else {
 			handler = new SvnPatchHandler(this, id, owner);
 		}
-		m_simpleCommand.Execute(command, workingDirectory, handler);
+		m_simpleCommand.Execute(command, workingDirectory, handler, this);
 	}
 }
 
@@ -545,10 +545,10 @@ bool Subversion2::LoginIfNeeded(wxCommandEvent& event, const wxString &workingDi
 
 	SvnInfo  svnInfo;
 	wxString repoUrl;
-	
+
 	if(event.GetInt() == LOGIN_REQUIRES_URL) {
 		repoUrl = event.GetString();
-		
+
 	} else {
 		DoGetSvnInfoSync( svnInfo, workingDirectory );
 		repoUrl = svnInfo.m_url;
@@ -690,7 +690,7 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
 
 	GetConsole()->EnsureVisible();
 	GetConsole()->AppendText(command + wxT("\n"));
-	m_blameCommand.Execute(command, wxT(""), new SvnBlameHandler(this, event.GetId(), this));
+	m_blameCommand.Execute(command, wxT(""), new SvnBlameHandler(this, event.GetId(), this), this);
 }
 
 void Subversion2::OnGetCompileLine(wxCommandEvent& event)

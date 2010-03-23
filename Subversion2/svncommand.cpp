@@ -1,4 +1,5 @@
 #include "svncommand.h"
+#include "environmentconfig.h"
 #include "subversion_strings.h"
 #include "svn_console.h"
 #include "globals.h"
@@ -12,6 +13,7 @@ END_EVENT_TABLE()
 SvnCommand::SvnCommand()
 		: m_process(NULL)
 		, m_handler(NULL)
+		, m_plugin (NULL)
 {
 }
 
@@ -20,7 +22,7 @@ SvnCommand::~SvnCommand()
 	ClearAll();
 }
 
-bool SvnCommand::Execute(const wxString& command, const wxString& workingDirectory, SvnCommandHandler *handler)
+bool SvnCommand::Execute(const wxString &command, const wxString &workingDirectory, SvnCommandHandler *handler, Subversion2 *plugin)
 {
 	// Dont run 2 commands at the same time
 	if(m_process) {
@@ -36,6 +38,12 @@ bool SvnCommand::Execute(const wxString& command, const wxString& workingDirecto
 	// Wrap the command in the OS Shell
 	wxString cmdShell (command);
 	WrapInShell(cmdShell);
+
+
+	// Apply the environment variables before executing the command
+	StringMap om;
+	om[wxT("LC_ALL")] = wxT("C");
+	EnvSetter env(plugin->GetManager()->GetEnv(), &om);
 
 	m_process = CreateAsyncProcess(this, command, workingDirectory);
 	if ( !m_process ) {

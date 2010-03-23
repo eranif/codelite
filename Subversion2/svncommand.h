@@ -6,6 +6,7 @@
 #include "asyncprocess.h"
 #include "processreaderthread.h"
 
+class Subversion2;
 class SvnCommand : public wxEvtHandler
 {
 	IProcess *         m_process;
@@ -13,6 +14,7 @@ class SvnCommand : public wxEvtHandler
 	wxString           m_workingDirectory;
 	SvnCommandHandler *m_handler;
 	wxString           m_output;
+	Subversion2*       m_plugin;
 
 protected:
 
@@ -26,11 +28,7 @@ public:
 	SvnCommand();
 	virtual ~SvnCommand();
 
-	bool Execute(const wxString &command, const wxString &workingDirectory, SvnCommandHandler *handler);
-
-	void SetProcess(IProcess* process) {
-		this->m_process = process;
-	}
+	bool Execute(const wxString &command, const wxString &workingDirectory, SvnCommandHandler *handler, Subversion2 *plugin);
 
 	void SetWorkingDirectory(const wxString& workingDirectory) {
 		this->m_workingDirectory = workingDirectory;

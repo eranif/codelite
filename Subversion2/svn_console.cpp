@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include "environmentconfig.h"
 #include <wx/textdlg.h>
 #include "svn_console.h"
 #include "subversion_strings.h"
@@ -128,13 +129,13 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 		if (m_handler->TestLoginRequired(m_output)) {
 			// re-issue the last command but this time with login dialog
 			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Authentication failed. Retrying...\n"));
-			
+
 			// If we got a URL use it
 			if(m_url.IsEmpty() == false)
 				m_handler->ProcessLoginRequiredForURL(m_url);
-			else 
+			else
 				m_handler->ProcessLoginRequired(m_workingDirectory);
-			
+
 		} else if (m_handler->TestVerificationFailed(m_output)) {
 			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Server certificate verification failed. Retrying...\n"));
 			m_handler->ProcessVerificationRequired();
@@ -154,7 +155,7 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 		delete m_process;
 		m_process = NULL;
 	}
-	
+
 	m_workingDirectory.Clear();
 	m_url.Clear();
 }
@@ -163,7 +164,7 @@ bool SvnConsole::ExecuteURL(const wxString& cmd, const wxString& url, SvnCommand
 {
 	if(!DoExecute(cmd, handler, wxT(""), printProcessOutput))
 		return false;
-	
+
 	m_url = url;
 	return true;
 }
@@ -172,7 +173,7 @@ bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, 
 {
 	if(!DoExecute(cmd, handler, workingDirectory, printProcessOutput))
 		return false;
-	
+
 	m_workingDirectory = workingDirectory;
 	return true;
 }
@@ -183,18 +184,18 @@ void SvnConsole::AppendText(const wxString& text)
 	m_sci->SetSelectionEnd(m_sci->GetLength());
 	m_sci->SetSelectionStart(m_sci->GetLength());
 	m_sci->SetCurrentPos(m_sci->GetLength());
-	
+
 	wxString noPasswordText(text);
-	
+
 	int where = noPasswordText.Find(wxT("--password "));
 	if(where != wxNOT_FOUND) {
 		where += wxStrlen(wxT("--password "));
 		wxString password = noPasswordText.Mid(where);
 		password = password.BeforeFirst(wxT(' '));
-		
+
 		noPasswordText.Replace(password, wxT("******"));
 	}
-		
+
 	m_sci->AppendText(noPasswordText);
 
 	m_sci->SetSelectionEnd(m_sci->GetLength());
@@ -242,7 +243,7 @@ void SvnConsole::EnsureVisible()
 
 	// Select the Subversion tab
 	wxBookCtrlBase *book = m_plugin->GetManager()->GetOutputPaneNotebook();
-	
+
 	for(size_t i=0; i<book->GetPageCount(); i++) {
 		if(book->GetPage(i) == m_plugin->GetConsole()) {
 			book->SetSelection(i);
@@ -274,7 +275,11 @@ bool SvnConsole::DoExecute(const wxString& cmd, SvnCommandHandler* handler, cons
 
 	// Wrap the command in the OS Shell
 	wxString cmdShell (cmd);
-	//WrapInShell(cmdShell);
+
+	// Apply the environment variables before executing the command
+	StringMap om;
+	om[wxT("LC_ALL")] = wxT("C");
+	EnvSetter env(m_plugin->GetManager()->GetEnv(), &om);
 
 	m_process = CreateAsyncProcess(this, cmdShell, workingDirectory);
 	if (!m_process) {

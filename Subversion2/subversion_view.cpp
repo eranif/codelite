@@ -31,7 +31,7 @@
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_UPDATE_UI(XRCID("svn_stop"),         SubversionView::OnStopUI)
 	EVT_UPDATE_UI(XRCID("clear_svn_output"), SubversionView::OnClearOuptutUI)
-	
+
 	EVT_MENU(XRCID("svn_link_editor"),        SubversionView::OnLinkEditor)
 	EVT_MENU(XRCID("svn_commit"),             SubversionView::OnCommit)
 	EVT_MENU(XRCID("svn_update"),             SubversionView::OnUpdate)
@@ -143,7 +143,7 @@ void SubversionView::CreatGUIControls()
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
 	tb->AddTool(XRCID("svn_link_editor"), wxT("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("svn_link_editor"), m_plugin->GetSettings().GetFlags() & SvnLinkEditor);
-	
+
 	tb->AddTool(XRCID("clear_svn_output"), wxT("Clear Svn Output Tab"), wxXmlResource::Get()->LoadBitmap(wxT("document_delete")), wxT("Clear Svn Output Tab"), wxITEM_NORMAL);
 	tb->AddTool(XRCID("svn_refresh"),      wxT("Refresh View"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_refresh" ) ), wxT ( "Refresh View" ) );
 	tb->AddSeparator();
@@ -188,7 +188,7 @@ void SubversionView::BuildTree(const wxString& root)
 	m_textCtrlRootDir->SetValue(root);
 	wxString command;
 	command << m_plugin->GetSvnExeName() << wxT("--xml -q status");
-	m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL));
+	m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL), m_plugin);
 }
 
 void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
@@ -533,7 +533,7 @@ void SubversionView::OnAdd(wxCommandEvent& event)
 void SubversionView::OnRevert(wxCommandEvent& event)
 {
 	wxString command;
-	
+
 	// Svn revert does not require login string
 	command << m_plugin->GetSvnExeName(false) << wxT(" revert --recursive ");
 
@@ -832,10 +832,10 @@ void SubversionView::OnCheckout(wxCommandEvent& event)
 	wxString loginString;
 	if(!m_plugin->LoginIfNeeded(event, m_textCtrlRootDir->GetValue(), loginString))
 		return;
-		
+
 	wxString command;
 	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
-	
+
 	SvnCheckoutDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_plugin);
 	if(dlg.ShowModal() == wxID_OK) {
 		command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" co ") << dlg.GetURL() << wxT(" \"") << dlg.GetTargetDir() << wxT("\"");
@@ -873,9 +873,9 @@ void SubversionView::OnLinkEditor(wxCommandEvent& event)
 		ssd.SetFlags(ssd.GetFlags() | SvnLinkEditor);
 	else
 		ssd.SetFlags(ssd.GetFlags() & ~SvnLinkEditor);
-	
+
 	m_plugin->SetSettings(ssd);
-	
+
 	DoLinkEditor();
 }
 
@@ -883,16 +883,16 @@ void SubversionView::DoLinkEditor()
 {
 	if(!(m_plugin->GetSettings().GetFlags() & SvnLinkEditor))
 		return;
-		
+
 	IEditor *editor = m_plugin->GetManager()->GetActiveEditor();
 	if(!editor)
 		return;
-	
+
 	wxString fullPath = editor->GetFileName().GetFullPath();
 	wxTreeItemId root = m_treeCtrl->GetRootItem();
 	if(root.IsOk() == false)
 		return;
-	
+
 	wxString basePath = m_textCtrlRootDir->GetValue();
 	wxTreeItemIdValue cookie;
 	wxTreeItemIdValue childCookie;

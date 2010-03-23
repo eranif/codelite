@@ -265,6 +265,7 @@ void OutputViewControlBar::DoSetButtonState(int btnId)
 	if(btnId != wxNOT_FOUND)
 		m_buttons->ToggleTool(btnId, true);
 
+	m_buttons->Refresh();
 #endif
 }
 

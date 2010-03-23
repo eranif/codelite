@@ -157,7 +157,7 @@ LEditor::LEditor(wxWindow* parent)
 	ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSCI_MARK_ROUNDRECT;
 	ms_bookmarkShapes[wxT("Small Arrow")]       = wxSCI_MARK_ARROW;
 	ms_bookmarkShapes[wxT("Circle")]            = wxSCI_MARK_CIRCLE;
-	
+
 	SetSyntaxHighlight();
 	CmdKeyClear(wxT('D'), wxSCI_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
 	Connect(wxEVT_SCI_DWELLSTART, wxScintillaEventHandler(LEditor::OnDwellStart), NULL, this);
@@ -193,11 +193,11 @@ void LEditor::SetSyntaxHighlight(const wxString &lexerName)
 	m_rightClickMenu->AppendSeparator(); // separates plugins
 
 	SetProperties();
-	
+
 	SetEOL();
 	m_context->SetActive();
 	m_context->ApplySettings();
-	
+
 	UpdateColours();
 }
 
@@ -209,7 +209,7 @@ void LEditor::SetSyntaxHighlight()
 	m_rightClickMenu->AppendSeparator(); // separates plugins
 
 	SetProperties();
-	
+
 	m_context->SetActive();
 	m_context->ApplySettings();
 	UpdateColours();
@@ -603,6 +603,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	static wxChar s_lastCharEntered = 0;
 
 	int pos = GetCurrentPos();
+	bool canShowCompletionBox(true);
 
 	// get the word and select it in the completion box
 	if (IsCompletionBoxShown()) {
@@ -612,7 +613,10 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		if ( word.IsEmpty() ) {
 			HideCompletionBox();
 		} else {
-			m_ccBox->SelectWord(word);
+			if(m_ccBox->SelectWord(word)) {
+				canShowCompletionBox = false;
+				HideCompletionBox();
+			}
 		}
 	}
 
@@ -629,13 +633,6 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 
 	wxChar matchChar (0);
 	switch ( event.GetKey() ) {
-//	case ',':
-//		if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
-//			// try to force the function tooltip
-//			ShowFunctionTipFromCurrentPos();
-//		}
-//		break;
-//
 	case ';':
 		if (!m_disableSemicolonShift)
 			m_context->SemicolonShift();
@@ -672,7 +669,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		// the tooltip is then cancelled
 		GetFunctionTip()->Remove();
 		break;
-		
+
 	case '}':
 		m_context->AutoIndent(event.GetKey());
 		break;
@@ -736,7 +733,9 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		}
 	}
 
-	if ( IsCompletionBoxShown() == false ) {
+	// Show the completion box if needed. canShowCompletionBox is set to false only if it was just dismissed
+	// at the top of this function
+	if ( IsCompletionBoxShown() == false && canShowCompletionBox) {
 		// display the keywords completion box only if user typed more than 2
 		// chars && the caret is placed at the end of that word
 		long startPos = WordStartPosition(pos, true);
@@ -830,7 +829,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	}
 
 	RecalcHorizontalScrollbar();
-	
+
 	//let the context handle this as well
 	m_context->OnSciUpdateUI(event);
 }
@@ -973,7 +972,7 @@ bool LEditor::SaveFileAs()
 		// update the tab title (again) since we really want to trigger an update to the file tooltip
 		Frame::Get()->GetMainBook()->SetPageTitle(this, m_fileName.GetFullName());
 		Frame::Get()->SetFrameTitle(this);
-		
+
 		// update syntax highlight
 		SetSyntaxHighlight();
 
@@ -1485,7 +1484,7 @@ void LEditor::SetActive()
 
 	SetFocus();
 	SetSCIFocus(true);
-	
+
 	m_context->SetActive();
 
 	wxScintillaEvent dummy;
@@ -1785,7 +1784,7 @@ void LEditor::FoldAll()
 	bool expanded = GetFoldExpanded(lineSeek);
 
 	int maxLine = GetLineCount();
-	
+
 	// Some files, especially headers with #ifndef FOO_H, will collapse into one big fold
 	// So, if we're collapsing, skip any all-encompassing top level fold
 	bool SkipTopFold = false;
@@ -2227,7 +2226,7 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 	//let the context process it as well
 	if(GetFunctionTip()->IsActive() && event.GetKeyCode() == WXK_ESCAPE)
 		GetFunctionTip()->Deactivate();
-		
+
 	if (IsCompletionBoxShown()) {
 		switch (event.GetKeyCode()) {
 		case WXK_NUMPAD_ENTER:
@@ -2269,7 +2268,9 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 					HideCompletionBox();
 				} else {
 					word.RemoveLast();
-					m_ccBox->SelectWord(word);
+					if(m_ccBox->SelectWord(word)) {
+						HideCompletionBox();
+					}
 				}
 			}
 			break;
@@ -2349,7 +2350,7 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 	// hide completion box
 	HideCompletionBox();
 	GetFunctionTip()->Deactivate();
-	
+
 	if ( ManagerST::Get()->GetDisplayVariableDialog()->IsShown() )
 		ManagerST::Get()->GetDisplayVariableDialog()->HideDialog();
 
@@ -3419,7 +3420,7 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 	EnsureCaretVisible();
 	ScrollToColumn(0);
 #endif
-	
+
 	if (res && navmgr) {
 		navmgr->AddJump(jumpfrom, CreateBrowseRecord());
 	}

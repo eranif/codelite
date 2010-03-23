@@ -168,7 +168,7 @@ void CCBox::Adjust()
 	Move(pt);
 }
 
-void CCBox::SelectWord(const wxString& word)
+bool CCBox::SelectWord(const wxString& word)
 {
 	bool fullMatch;
 	long item = m_listCtrl->FindMatch(word, fullMatch);
@@ -180,23 +180,23 @@ void CCBox::SelectWord(const wxString& word)
 
 		m_selectedItem = item;
 		SelectItem(m_selectedItem);
-		
+
 		if(fullMatch) {
 			// Incase we got a full match, insert the selection and release the completion box
 			InsertSelection();
-			Hide();
 
 			LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
 			if (editor) {
 				editor->SetActive();
 			}
 		}
-		
+
 	} else {
 		if (GetAutoHide()) {
 			Hide();
 		}
 	}
+	return fullMatch;
 }
 
 void CCBox::Next()
@@ -286,7 +286,7 @@ void CCBox::Show(const wxString& word)
 	m_listCtrl->SetItemCount(_tags.size());
 
 	m_selectedItem = 0;
-	
+
 	bool fullMatch;
 	m_selectedItem = m_listCtrl->FindMatch(word, fullMatch);
 	if ( m_selectedItem == wxNOT_FOUND && GetAutoHide() ) {
@@ -354,7 +354,7 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 					editor->SetCurrentPos(new_pos);
 					editor->SetSelectionStart(new_pos);
 					editor->SetSelectionEnd(new_pos);
-					
+
 					// remove the current tip that we just activated.
 					// if this was the last tip, it will also make it go away
 					editor->GetFunctionTip()->Remove();

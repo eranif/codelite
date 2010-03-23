@@ -48,7 +48,7 @@ class CCBox : public CCBoxBase
 	bool m_insertSingleChoice;
 	std::map<wxString, int> m_userImages;
 	wxEvtHandler *m_owner;
-	
+
 protected:
 	// Handlers for CCBoxBase events.
 	void OnItemActivated( wxListEvent& event );
@@ -77,10 +77,10 @@ public:
 		return false;
 	}
 
-	void SelectWord(const wxString &word);
+	bool SelectWord(const wxString &word);
 	void Next();
 	void Previous();
-	
+
 	//Setters
 	void SetAutoHide(const bool& autoHide) {
 		this->m_autoHide = autoHide;
@@ -95,7 +95,7 @@ public:
 	const bool& GetInsertSingleChoice() const {
 		return m_insertSingleChoice;
 	}
-	
+
 	/**
 	 * @brief register new user image fot TagEntry kind
 	 * @param kind the kind string that will be associated with the bitmap (TagEntry::GetKind())

@@ -38,17 +38,17 @@ wxListItemAttr* CCVirtualListCtrl::OnGetItemAttr(long item) const
 #if defined(__WXMSW__)
 	static wxListItemAttr attr;
 	static bool           first(true);
-	
+
 	if(first) {
 		first = false;
 		wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 		fnt.SetWeight(wxBOLD);
 		attr.SetFont(fnt);
 	}
-	
+
 	if (GetFirstSelected() == item) {
 		return &attr;
-		
+
 	} else
 		return NULL;
 #else // Mac
@@ -85,27 +85,48 @@ wxString CCVirtualListCtrl::OnGetItemText(long item, long column) const
 int CCVirtualListCtrl::FindMatch(const wxString& word, bool &fullMatch)
 {
 	fullMatch = false;
+	int  firstMatch(-1);
+	int  exactMatch(-1);
+	int  matchCount(0 );
 	// first try to match case sensetive
 	for (size_t i=0; i<m_tags.size(); i++) {
-		CCItemInfo info = m_tags.at(i);
 
-		wxString s1(word);
+		CCItemInfo info = m_tags.at(i);
 		wxString s2(info.displayName);
-		if (s2.StartsWith(s1)) {
-			if(s2 == s1) {
-				fullMatch = true;
+
+		if (s2.StartsWith(word)) {
+			matchCount++;
+			if(firstMatch == -1)
+				firstMatch = static_cast<int>(i);
+
+			if(s2 == word) {
+				exactMatch = static_cast<int>(i);
 			}
-			return static_cast<int>(i);
+		}
+	}
+
+	if(matchCount) {
+		if(matchCount == 1 && exactMatch != -1) {
+			// we have a single match, and it is a FULL match
+			fullMatch = true;
+			return exactMatch;
+
+		} else {
+			// More than one match or one match but not a FULL match
+			fullMatch = false;
+			return firstMatch;
+
 		}
 	}
 
 	// if we are here, it means we failed, try case insensitive
+	wxString s1(word);
+	s1.MakeLower();
+
 	for (size_t i=0; i<m_tags.size(); i++) {
 		CCItemInfo info = m_tags.at(i);
 
-		wxString s1(word);
 		wxString s2(info.displayName);
-		s1.MakeLower();
 		s2.MakeLower();
 		if (s2.StartsWith(s1)) {
 			return static_cast<int>(i);

@@ -230,7 +230,7 @@ void ContextCpp::OnDwellStart(wxScintillaEvent &event)
 	}
 
 	int foundPos(wxNOT_FOUND);
-	if(rCtrl.PreviousChar(word_start, foundPos) == wxT('~'))
+	if (rCtrl.PreviousChar(word_start, foundPos) == wxT('~'))
 		word.Prepend(wxT("~"));
 
 	//get the expression we are hovering over
@@ -323,7 +323,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 {
 	LEditor &rCtrl = GetCtrl();
 
-	if(rCtrl.GetDisableSmartIndent()) {
+	if (rCtrl.GetDisableSmartIndent()) {
 		/*ContextBase::AutoIndent(nChar);*/
 		return;
 	}
@@ -344,17 +344,20 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 
 		int      prevpos (wxNOT_FOUND);
 		int      foundPos(wxNOT_FOUND);
-		
+
 		wxString word;
 		wxChar ch = rCtrl.PreviousChar(curpos, prevpos );
 		word      = rCtrl.PreviousWord(curpos, foundPos);
-		
-		wxString lineStr = rCtrl.GetLine( line );
-		lineStr.Trim().Trim(false);
-		bool isPreProcessLine = lineStr.StartsWith(wxT("#"));
-		
+
+		bool isPreLinePreProcessLine(false);
+		if (line) {
+			wxString lineStr = rCtrl.GetLine( line - 1 );
+			lineStr.Trim().Trim(false);
+			isPreLinePreProcessLine = lineStr.StartsWith(wxT("#"));
+		}
+
 		// user hit ENTER after 'else'
-		if ( word == wxT("else") && !isPreProcessLine ) {
+		if ( word == wxT("else") && !isPreLinePreProcessLine ) {
 			int prevLine = rCtrl.LineFromPosition(prevpos);
 			rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
 			rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
@@ -437,7 +440,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 
 		int matchPos = wxNOT_FOUND;
 		wxChar previousChar = rCtrl.PreviousChar(rCtrl.PositionBefore(curpos), matchPos);
-		if(previousChar != wxT('{') && lineString == wxT("{")) {
+		if (previousChar != wxT('{') && lineString == wxT("{")) {
 			// indent this line accroding to the previous line
 			int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
 			rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line-1));
@@ -1745,7 +1748,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 		return;
 
 	int foundPos(wxNOT_FOUND);
-	if(rCtrl.PreviousChar(word_start, foundPos) == wxT('~'))
+	if (rCtrl.PreviousChar(word_start, foundPos) == wxT('~'))
 		word.Prepend(wxT("~"));
 
 	std::vector<TagEntryPtr> tags;
@@ -2826,9 +2829,9 @@ void ContextCpp::DoSetProjectPaths()
 	wxArrayString projects;
 	wxArrayString projectPaths;
 	ManagerST::Get()->GetProjectList(projects);
-	for(size_t i=0; i<projects.GetCount(); i++) {
+	for (size_t i=0; i<projects.GetCount(); i++) {
 		ProjectPtr p = ManagerST::Get()->GetProject(projects.Item(i));
-		if(p) {
+		if (p) {
 			projectPaths.Add(p->GetFileName().GetPath());
 		}
 	}

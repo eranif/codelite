@@ -49,9 +49,12 @@ void MainBook::CreateGuiControls()
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	SetSizer(sz);
 
+	m_messagePane = new MessagePane(this);
+	sz->Add(m_messagePane, 0, wxALL|wxEXPAND, 5, NULL);
+	
 	m_navBar = new NavBar(this);
 	sz->Add(m_navBar, 0, wxEXPAND);
-
+	
 	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_PASS_FOCUS|wxVB_NODND | wxAUI_NB_WINDOWLIST_BUTTON;
 
 	// load the notebook style from the configuration settings
@@ -61,11 +64,9 @@ void MainBook::CreateGuiControls()
 	sz->Add(m_book, 1, wxEXPAND);
 
 	m_quickFindBar = new QuickFindBar(this);
-	DoPositionFindBar(0);
+	DoPositionFindBar(2);
 
-	m_messagePane = new MessagePane(this);
-	sz->Insert(0, m_messagePane, 0, wxALL|wxEXPAND, 5, NULL);
-
+	
 	sz->Layout();
 }
 
@@ -687,7 +688,11 @@ bool MainBook::CloseAll(bool cancellable)
 	// Update the quick-find-bar
 	m_quickFindBar->SetEditor(NULL);
 	ShowQuickBar(false);
-
+	
+	// Clear the Navigation Bar if it is not empty
+	TagEntryPtr tag = NULL;
+	m_navBar->UpdateScope(tag);
+	
 	// Update the frame's title
 	Frame::Get()->SetFrameTitle(NULL);
 
@@ -720,7 +725,7 @@ void MainBook::ApplySettingsChanges()
 	}
 
 	// Last: reposition the findBar
-	DoPositionFindBar(1);
+	DoPositionFindBar(2);
 }
 
 void MainBook::UnHighlightAll()

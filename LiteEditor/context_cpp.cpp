@@ -344,13 +344,17 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 
 		int      prevpos (wxNOT_FOUND);
 		int      foundPos(wxNOT_FOUND);
+		
 		wxString word;
-
 		wxChar ch = rCtrl.PreviousChar(curpos, prevpos );
 		word      = rCtrl.PreviousWord(curpos, foundPos);
-
+		
+		wxString lineStr = rCtrl.GetLine( line );
+		lineStr.Trim().Trim(false);
+		bool isPreProcessLine = lineStr.StartsWith(wxT("#"));
+		
 		// user hit ENTER after 'else'
-		if ( word == wxT("else") ) {
+		if ( word == wxT("else") && !isPreProcessLine ) {
 			int prevLine = rCtrl.LineFromPosition(prevpos);
 			rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
 			rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
@@ -2401,11 +2405,11 @@ void ContextCpp::OnUserTypedXChars(const wxString &word)
 		std::vector<TagEntryPtr> tags;
 		MakeCppKeywordsTags(word, tags);
 		if ( tags.empty() == false ) {
-			GetCtrl().ShowCompletionBox(tags, 		// list of tags
-			                            word, 		// partial word
-			                            false, 		// dont show full declaration
-			                            true, 		// auto hide if there is no match in the list
-			                            false);		// do not automatically insert word if there is only single choice
+			GetCtrl().ShowCompletionBox(tags,   // list of tags
+			                            word,   // partial word
+			                            false,  // dont show full declaration
+			                            true,   // auto hide if there is no match in the list
+			                            false); // do not automatically insert word if there is only single choice
 		}
 	}
 }

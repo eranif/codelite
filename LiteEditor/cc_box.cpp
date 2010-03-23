@@ -170,7 +170,8 @@ void CCBox::Adjust()
 
 void CCBox::SelectWord(const wxString& word)
 {
-	long item = m_listCtrl->FindMatch(word);
+	bool fullMatch;
+	long item = m_listCtrl->FindMatch(word, fullMatch);
 	if (item != wxNOT_FOUND) {
 		// first unselect the current item
 		if (m_selectedItem != wxNOT_FOUND && m_selectedItem != item) {
@@ -179,6 +180,18 @@ void CCBox::SelectWord(const wxString& word)
 
 		m_selectedItem = item;
 		SelectItem(m_selectedItem);
+		
+		if(fullMatch) {
+			// Incase we got a full match, insert the selection and release the completion box
+			InsertSelection();
+			Hide();
+
+			LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
+			if (editor) {
+				editor->SetActive();
+			}
+		}
+		
 	} else {
 		if (GetAutoHide()) {
 			Hide();
@@ -273,8 +286,9 @@ void CCBox::Show(const wxString& word)
 	m_listCtrl->SetItemCount(_tags.size());
 
 	m_selectedItem = 0;
-
-	m_selectedItem = m_listCtrl->FindMatch(word);
+	
+	bool fullMatch;
+	m_selectedItem = m_listCtrl->FindMatch(word, fullMatch);
 	if ( m_selectedItem == wxNOT_FOUND && GetAutoHide() ) {
 		// return without calling wxWindow::Show
 		return;

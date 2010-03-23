@@ -52,7 +52,7 @@ public:
 	virtual int OnGetItemColumnImage(long item, long column) const;
 	virtual int OnGetItemImage(long item) const;
 	virtual wxString OnGetItemText(long item, long column) const;
-	int FindMatch(const wxString &word);
+	int FindMatch(const wxString &word, bool &fullMatch);
 	
 };
 #endif // __ccvirtuallistctrl__

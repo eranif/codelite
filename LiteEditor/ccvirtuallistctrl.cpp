@@ -82,8 +82,9 @@ wxString CCVirtualListCtrl::OnGetItemText(long item, long column) const
 	return info.displayName;
 }
 
-int CCVirtualListCtrl::FindMatch(const wxString& word)
+int CCVirtualListCtrl::FindMatch(const wxString& word, bool &fullMatch)
 {
+	fullMatch = false;
 	// first try to match case sensetive
 	for (size_t i=0; i<m_tags.size(); i++) {
 		CCItemInfo info = m_tags.at(i);
@@ -91,6 +92,9 @@ int CCVirtualListCtrl::FindMatch(const wxString& word)
 		wxString s1(word);
 		wxString s2(info.displayName);
 		if (s2.StartsWith(s1)) {
+			if(s2 == s1) {
+				fullMatch = true;
+			}
 			return static_cast<int>(i);
 		}
 	}

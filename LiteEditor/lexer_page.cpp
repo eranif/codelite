@@ -232,6 +232,7 @@ void LexerPage::OnFontChanged(wxFontPickerEvent &event)
 		iter->SetFontSize(f.GetPointSize());
 		iter->SetUnderlined(f.GetUnderlined());
 		iter->SetItalic(f.GetStyle() == wxITALIC);
+		
 	} else if (obj == m_globalFontPicker) {
 		wxFont f = event.GetFont();
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
@@ -259,19 +260,29 @@ void LexerPage::OnColourChanged(wxColourPickerEvent &event)
 			iter++;
 
 		iter->SetFgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
+		
 	} else if (obj == m_bgColourPicker) {
+		
 		wxColour colour = event.GetColour();
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
 		for (int i=0; i<m_selection; i++)
 			iter++;
 
 		iter->SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
+		
 	} else if (obj == m_globalBgColourPicker) {
+		
 		wxColour colour = event.GetColour();
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
 		for (; iter != m_propertyList.end(); iter++) {
+			
+			// Dont change the text selection using the global font picker
+			if(iter->GetName() == wxT("Text Selection"))
+				continue;
+			
 			iter->SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
 		}
+		
 		//update the style background colour as well
 		m_bgColourPicker->SetColour(colour);
 	}

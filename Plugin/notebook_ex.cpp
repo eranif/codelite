@@ -26,6 +26,7 @@ const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSING         = XRCID("notebook_page
 const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED          = XRCID("notebook_page_closed");
 const wxEventType wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED  = XRCID("notebook_page_middle_clicked");
 const wxEventType wxEVT_COMMAND_BOOK_PAGE_X_CLICKED       = XRCID("notebook_page_x_btn_clicked");
+const wxEventType wxEVT_COMMAND_BOOK_BG_DCLICK            = XRCID("notebook_page_bg_dclick");
 
 #define SHOW_POPUP_MENU 1234534
 
@@ -53,6 +54,8 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE,         wxAuiNotebookEventHandler(Notebook::OnInternalPageClosing),  NULL, this);
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_DOWN,    wxAuiNotebookEventHandler(Notebook::OnTabMiddle),            NULL, this);
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,     wxAuiNotebookEventHandler(Notebook::OnTabRightDown),         NULL, this);
+	Connect(wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK,          wxAuiNotebookEventHandler(Notebook::OnBgDclick),             NULL, this);
+	
 #ifdef __WXMSW__
 	Connect(wxEVT_SET_FOCUS,                              wxFocusEventHandler(Notebook::OnFocus),                      NULL, this);
 #endif
@@ -79,7 +82,8 @@ Notebook::~Notebook()
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE,      wxAuiNotebookEventHandler(Notebook::OnInternalPageClosing),  NULL, this);
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_DOWN, wxAuiNotebookEventHandler(Notebook::OnTabMiddle),            NULL, this);
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,  wxAuiNotebookEventHandler(Notebook::OnTabRightDown),         NULL, this);
-
+	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK,       wxAuiNotebookEventHandler(Notebook::OnBgDclick),             NULL, this);
+	
 	Disconnect(wxEVT_NAVIGATION_KEY,                 wxNavigationKeyEventHandler(Notebook::OnNavigationKey),  NULL, this);
 #ifdef __WXMSW__
 	Disconnect(wxEVT_SET_FOCUS,                              wxFocusEventHandler(Notebook::OnFocus),                      NULL, this);
@@ -474,4 +478,13 @@ void Notebook::OnInternalMenu(wxCommandEvent& e)
 	if(m_contextMenu) {
 		PopupMenu(m_contextMenu);
 	}
+}
+
+void Notebook::OnBgDclick(wxAuiNotebookEvent& e)
+{
+	NotebookEvent event(wxEVT_COMMAND_BOOK_BG_DCLICK, GetId());
+	event.SetSelection   ( wxNOT_FOUND );
+	event.SetOldSelection( wxNOT_FOUND );
+	event.SetEventObject ( this );
+	GetEventHandler()->AddPendingEvent(event);
 }

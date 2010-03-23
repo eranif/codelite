@@ -48,7 +48,7 @@ private:
     void CreateGuiControls();
     void ConnectEvents    ();
 
-    void OnMouseDClick       (wxMouseEvent      &e);
+    void OnMouseDClick       (NotebookEvent      &e);
     void OnPageClosing       (NotebookEvent     &e);
     void OnPageClosed        (NotebookEvent     &e);
 	void OnPageChanged       (NotebookEvent     &e);

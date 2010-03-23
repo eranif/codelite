@@ -71,14 +71,13 @@ void MainBook::CreateGuiControls()
 
 void MainBook::ConnectEvents()
 {
-	m_book->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainBook::OnMouseDClick), NULL, this);
-
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSING,         NotebookEventHandler(MainBook::OnPageClosing),  NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSED,          NotebookEventHandler(MainBook::OnPageClosed),   NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,         NotebookEventHandler(MainBook::OnPageChanged),  NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED,       NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED,  NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
-
+	m_book->Connect(wxEVT_COMMAND_BOOK_BG_DCLICK,            NotebookEventHandler(MainBook::OnMouseDClick),  NULL, this);
+	
 	wxTheApp->Connect(wxEVT_WORKSPACE_LOADED,  wxCommandEventHandler(MainBook::OnWorkspaceLoaded),    NULL, this);
 	wxTheApp->Connect(wxEVT_PROJ_FILE_ADDED,   wxCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
 	wxTheApp->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
@@ -87,24 +86,23 @@ void MainBook::ConnectEvents()
 
 MainBook::~MainBook()
 {
+	m_book->Disconnect(wxEVT_COMMAND_BOOK_PAGE_CLOSING,         NotebookEventHandler(MainBook::OnPageClosing),  NULL, this);
+	m_book->Disconnect(wxEVT_COMMAND_BOOK_PAGE_CLOSED,          NotebookEventHandler(MainBook::OnPageClosed),   NULL, this);
+	m_book->Disconnect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,         NotebookEventHandler(MainBook::OnPageChanged),  NULL, this);
+	m_book->Disconnect(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED,       NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
+	m_book->Disconnect(wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED,  NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
+	m_book->Disconnect(wxEVT_COMMAND_BOOK_BG_DCLICK,            NotebookEventHandler(MainBook::OnMouseDClick),  NULL, this);
+	
+	wxTheApp->Disconnect(wxEVT_WORKSPACE_LOADED,  wxCommandEventHandler(MainBook::OnWorkspaceLoaded),    NULL, this);
+	wxTheApp->Disconnect(wxEVT_PROJ_FILE_ADDED,   wxCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
+	wxTheApp->Disconnect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
+	wxTheApp->Disconnect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
 }
 
-void MainBook::OnMouseDClick(wxMouseEvent& e)
+void MainBook::OnMouseDClick(NotebookEvent& e)
 {
 	wxUnusedVar(e);
-	int where = m_book->HitTest(e.GetPosition());
-	if(where == wxNOT_FOUND) {
-
-		// This seems to be working only under Mac/Linux...
-		NewEditor();
-
-	} else {
-
-		// Maximize the current editor
-		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("toggle_panes"));
-		evt.SetEventObject(this);
-		Frame::Get()->GetEventHandler()->AddPendingEvent(evt);
-	}
+	NewEditor();
 }
 
 void MainBook::OnPageClosing(NotebookEvent &e)

@@ -1059,15 +1059,23 @@ void BreakptMgr::RefreshBreakpointsForEditor(LEditor* editor)
 
 bool BreakptMgr::IsDuplicate(const BreakpointInfo& bp, const std::vector<BreakpointInfo>& bpList)
 {
-	wxFileName bpFileName(bp.file);
-	bpFileName.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
-
+	wxString bpFile = bp.file;
+	if(bpFile.IsEmpty() == false) {
+		wxFileName bpFileName(bp.file);
+		bpFileName.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
+		bpFile = bpFileName.GetFullPath();
+	}
 	for(size_t i=0; i<bpList.size(); i++) {
-		wxFileName fn(bpList.at(i).file);
-		fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
+		if(bpList.at(i).file.IsEmpty() == false) {
+			wxFileName fn(bpList.at(i).file);
+			fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
 
-		if(fn.GetFullPath() == bpFileName.GetFullPath() && bp.lineno == bpList.at(i).lineno)
-			return true;
+			if(fn.GetFullPath() == bpFile && bp.lineno == bpList.at(i).lineno)
+				return true;
+		} else {
+			if(bpList.at(i).file == bpFile && bp.lineno == bpList.at(i).lineno)
+				return true;
+		}
 	}
 	return false;
 }

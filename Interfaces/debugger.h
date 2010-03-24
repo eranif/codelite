@@ -186,9 +186,11 @@ public:
 			origin(BI.origin)
 	{
 		// Normalize the file name
-		wxFileName fn(file);
-		fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
-		file = fn.GetFullPath();
+		if(file.IsEmpty() == false) {
+			wxFileName fn(file);
+			fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
+			file = fn.GetFullPath();
+		}
 	}
 
 	BreakpointInfo() : lineno(-1), regex(false), debugger_id(-1), bp_type(BP_type_break),
@@ -208,7 +210,7 @@ public:
 
 		bp_type = BP_type_break;
 		lineno = line;
-		file = fn.GetFullPath();
+		file = filename.IsEmpty() ? wxT("") : fn.GetFullPath();
 		internal_id = int_id;
 		debugger_id = ext_id;
 	}

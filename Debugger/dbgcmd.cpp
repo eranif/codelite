@@ -278,9 +278,6 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 					// This is an internal breakpoint ID
 					m_gdb->m_internalBpId = wxNOT_FOUND;
 
-					// Delete this breakpoints
-					m_gdb->RemoveBreak(id);
-
 					// Apply the breakpoints
 					m_gdb->SetBreakpoints();
 
@@ -849,10 +846,7 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
 		li.push_back( breakpoint );
 	}
 
-	// We now have a vector of bps, each containing its debugger_id and ignore-count.
-	// Pass the vector to the breakpoints manager to be reconciled
-	if( li.empty() == false )
-		m_observer->ReconcileBreakpoints(li);
+	m_observer->ReconcileBreakpoints(li);
 	return true;
 }
 

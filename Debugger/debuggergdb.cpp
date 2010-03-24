@@ -1025,7 +1025,7 @@ bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo> &bpList, const wx
 	} else if(setBreakpointsAfterMain && m_bpList.empty() == false) {
 		// Place an intermediate breakpoint at main, once this breakpoint is hit
 		// set all breakpoints and remove that breakpoint + continue
-		WriteCommand(wxT("-break-insert main"), new DbgFindMainBreakpointIdHandler(m_observer, this));
+		WriteCommand(wxT("-break-insert -t main"), new DbgFindMainBreakpointIdHandler(m_observer, this));
 
 	}
 

@@ -635,7 +635,8 @@ void ScintillaWX::AddToPopUp(const char *label, int cmd, bool enabled) {
 // For wxGTK we can put this text in the primary selection and then other apps
 // can paste with the middle button.
 void ScintillaWX::ClaimSelection() {
-#ifdef __WXGTK__
+
+#if defined(__WXGTK__) && wxCHECK_VERSION(2,9,0)
     // Put the selected text in the PRIMARY selection
     if (!sel.Empty()) {
         SelectionText st;

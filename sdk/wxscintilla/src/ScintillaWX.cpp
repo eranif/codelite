@@ -513,8 +513,8 @@ void ScintillaWX::Paste() {
     int   len  = 0;
     bool  rectangular = false;
 
-    if (wxTheClipboard->Open()) {
         wxTheClipboard->UsePrimarySelection(false);
+    if (wxTheClipboard->Open()) {
         wxCustomDataObject selData(wxDataFormat(wxString(wxT("application/x-cbrectdata"))));
         bool gotRectData = wxTheClipboard->GetData(selData);
 
@@ -562,8 +562,8 @@ void ScintillaWX::Paste() {
 
 void ScintillaWX::CopyToClipboard (const SelectionText& st) {
 #if wxUSE_CLIPBOARD
-	if (wxTheClipboard->Open()) {
         wxTheClipboard->UsePrimarySelection(false);
+	if (wxTheClipboard->Open()) {
         wxString text = wxTextBuffer::Translate (sci2wx(st.s, st.len-1));
 
         // composite object will hold "plain text" for pasting in other programs and a custom
@@ -590,6 +590,7 @@ void ScintillaWX::CopyToClipboard (const SelectionText& st) {
 
 
 bool ScintillaWX::CanPaste() {
+wxTheClipboard->UsePrimarySelection(false);
 #if wxUSE_CLIPBOARD
     bool canPaste = false;
     bool didOpen;
@@ -600,7 +601,6 @@ bool ScintillaWX::CanPaste() {
             wxTheClipboard->Open();
 
         if (wxTheClipboard->IsOpened()) {
-            wxTheClipboard->UsePrimarySelection(false);
             canPaste = wxTheClipboard->IsSupported(wxUSE_UNICODE ? wxDF_UNICODETEXT : wxDF_TEXT);
             if (didOpen)
                 wxTheClipboard->Close();
@@ -630,28 +630,24 @@ void ScintillaWX::AddToPopUp(const char *label, int cmd, bool enabled) {
         ((wxMenu*)popup.GetID())->Enable(cmd, enabled);
 }
 
-
-// This is called by the Editor base class whenever something is selected
+// [CHANGED]
+// This is called by the Editor base class whenever something is selected.
+// For wxGTK we can put this text in the primary selection and then other apps
+// can paste with the middle button.
 void ScintillaWX::ClaimSelection() {
-#if 0
-    // Until wxGTK is able to support using both the primary selection and the
-    // clipboard at the same time I think it causes more problems than it is
-    // worth to implement this method.  Selecting text should not clear the
-    // clipboard.  --Robin
 #ifdef __WXGTK__
     // Put the selected text in the PRIMARY selection
-    if (currentPos != anchor) {
+    if (!sel.Empty()) {
         SelectionText st;
         CopySelectionRange(&st);
-        if (wxTheClipboard->Open()) {
             wxTheClipboard->UsePrimarySelection(true);
+        if (wxTheClipboard->Open()) {
             wxString text = sci2wx(st.s, st.len);
             wxTheClipboard->SetData(new wxTextDataObject(text));
-            wxTheClipboard->UsePrimarySelection(false);
             wxTheClipboard->Close();
         }
+        wxTheClipboard->UsePrimarySelection(false);
     }
-#endif
 #endif
 }
 
@@ -945,12 +941,12 @@ void ScintillaWX::DoMiddleButtonUp(Point pt) {
     pdoc->BeginUndoAction();
     wxTextDataObject data;
     bool gotData = false;
-    if (wxTheClipboard->Open()) {
         wxTheClipboard->UsePrimarySelection(true);
+    if (wxTheClipboard->Open()) {
         gotData = wxTheClipboard->GetData(data);
-        wxTheClipboard->UsePrimarySelection(false);
         wxTheClipboard->Close();
     }
+    wxTheClipboard->UsePrimarySelection(false);
     if (gotData) {
         wxString text = wxTextBuffer::Translate (data.GetText(),
                                                  wxConvertEOLMode(pdoc->eolMode));

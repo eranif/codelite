@@ -104,6 +104,8 @@ class BreakptMgr
 		m_bps.clear();
 	}
 
+	bool IsDuplicate(const BreakpointInfo &bp, const std::vector<BreakpointInfo>& bpList);
+
 public:
 
 	BreakptMgr() {

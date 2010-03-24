@@ -28,12 +28,12 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID i
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	m_notebook2 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_notebook2 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_NOPAGETHEME );
 	m_panel1 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
-	m_book = new wxNotebook( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_LEFT );
+	m_book = new wxNotebook( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_NOPAGETHEME|wxNB_TOP );
 	
 	bSizer3->Add( m_book, 1, wxEXPAND | wxALL, 5 );
 	
@@ -142,7 +142,7 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Options:") ), wxVERTICAL );
 	
 	wxGridSizer* gSizer3;
-	gSizer3 = new wxGridSizer( 4, 1, 0, 0 );
+	gSizer3 = new wxGridSizer( 3, 2, 0, 0 );
 	
 	m_checkBoxEnablePendingBreakpoints = new wxCheckBox( m_panel3, wxID_ANY, wxT("Enable pending breakpoints"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer3->Add( m_checkBoxEnablePendingBreakpoints, 0, wxALL, 5 );
@@ -155,6 +155,12 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	m_checkBoxDebugAssert = new wxCheckBox( m_panel3, wxID_ANY, wxT("Break at assertion failure (MinGW only)"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer3->Add( m_checkBoxDebugAssert, 0, wxALL, 5 );
+	
+	m_checkBoxSetBreakpointsAfterMain = new wxCheckBox( m_panel3, wxID_ANY, wxT("Apply breakpoints after main function is hit"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer3->Add( m_checkBoxSetBreakpointsAfterMain, 0, wxALL, 5 );
+	
+	
+	gSizer3->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	sbSizer1->Add( gSizer3, 1, wxEXPAND|wxALL, 5 );
 	

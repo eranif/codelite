@@ -183,7 +183,13 @@ public:
 			conditions(BI.conditions),
 			at(BI.at),
 			what(BI.what),
-			origin(BI.origin) {}
+			origin(BI.origin)
+	{
+		// Normalize the file name
+		wxFileName fn(file);
+		fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
+		file = fn.GetFullPath();
+	}
 
 	BreakpointInfo() : lineno(-1), regex(false), debugger_id(-1), bp_type(BP_type_break),
 			ignore_number(0), is_enabled(true), is_temp(false), watchpoint_type(WP_watch), origin(BO_Other) {}
@@ -197,9 +203,12 @@ public:
 	}
 
 	void Create(wxString filename, int line, int int_id, int ext_id = -1) {
+		wxFileName fn(filename);
+		fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
+
 		bp_type = BP_type_break;
 		lineno = line;
-		file = filename;
+		file = fn.GetFullPath();
 		internal_id = int_id;
 		debugger_id = ext_id;
 	}
@@ -345,7 +354,7 @@ public:
 	int       maxDisplayStringSize;
 	bool      resolveLocals;
 	bool      autoExpandTipItems;
-
+	bool      applyBreakpointsAfterProgramStarted;
 public:
 	DebuggerInformation()
 			: name(wxEmptyString)
@@ -363,46 +372,50 @@ public:
 			, maxDisplayStringSize(200)
 			, resolveLocals     (false)
 			, autoExpandTipItems(true)
-			{
+			, applyBreakpointsAfterProgramStarted(false)
+	{
 	}
+
 	virtual ~DebuggerInformation() {}
 
 	void Serialize(Archive &arch) {
-		arch.Write(wxT("name"),                     name);
-		arch.Write(wxT("path"),                     path);
-		arch.Write(wxT("enableDebugLog"),           enableDebugLog);
-		arch.Write(wxT("enablePendingBreakpoints"), enablePendingBreakpoints);
-		arch.Write(wxT("breakAtWinMain"),           breakAtWinMain);
-		arch.Write(wxT("showTerminal"),             showTerminal);
-		arch.Write(wxT("consoleCommand"),           consoleCommand);
-		arch.Write(wxT("useRelativeFilePaths"),     useRelativeFilePaths);
-		arch.Write(wxT("catchThrow"),               catchThrow);
-		arch.Write(wxT("showTooltips"),             showTooltips);
-		arch.Write(wxT("debugAsserts"),             debugAsserts);
-		arch.WriteCData(wxT("startupCommands"),     startupCommands);
-		arch.Write(wxT("maxDisplayStringSize"),     maxDisplayStringSize);
-		arch.Write(wxT("resolveLocals"),            resolveLocals);
-		arch.Write(wxT("autoExpandTipItems"),       autoExpandTipItems);
+		arch.Write(wxT("name"),                                name);
+		arch.Write(wxT("path"),                                path);
+		arch.Write(wxT("enableDebugLog"),                      enableDebugLog);
+		arch.Write(wxT("enablePendingBreakpoints"),            enablePendingBreakpoints);
+		arch.Write(wxT("breakAtWinMain"),                      breakAtWinMain);
+		arch.Write(wxT("showTerminal"),                        showTerminal);
+		arch.Write(wxT("consoleCommand"),                      consoleCommand);
+		arch.Write(wxT("useRelativeFilePaths"),                useRelativeFilePaths);
+		arch.Write(wxT("catchThrow"),                          catchThrow);
+		arch.Write(wxT("showTooltips"),                        showTooltips);
+		arch.Write(wxT("debugAsserts"),                        debugAsserts);
+		arch.WriteCData(wxT("startupCommands"),                startupCommands);
+		arch.Write(wxT("maxDisplayStringSize"),                maxDisplayStringSize);
+		arch.Write(wxT("resolveLocals"),                       resolveLocals);
+		arch.Write(wxT("autoExpandTipItems"),                  autoExpandTipItems);
+		arch.Write(wxT("applyBreakpointsAfterProgramStarted"), applyBreakpointsAfterProgramStarted);
 	}
-	
+
 	void DeSerialize(Archive &arch) {
-		arch.Read(wxT("name"),                     name);
-		arch.Read(wxT("path"),                     path);
-		arch.Read(wxT("enableDebugLog"),           enableDebugLog);
-		arch.Read(wxT("enablePendingBreakpoints"), enablePendingBreakpoints);
-		arch.Read(wxT("breakAtWinMain"),           breakAtWinMain);
-		arch.Read(wxT("showTerminal"),             showTerminal);
-		arch.Read(wxT("consoleCommand"),           consoleCommand);
-		arch.Read(wxT("useRelativeFilePaths"),     useRelativeFilePaths);
-		arch.Read(wxT("catchThrow"),               catchThrow);
-		arch.Read(wxT("showTooltips"),             showTooltips);
-		arch.Read(wxT("debugAsserts"),             debugAsserts);
-		arch.ReadCData(wxT("startupCommands"),          startupCommands);
+		arch.Read(wxT("name"),                                name);
+		arch.Read(wxT("path"),                                path);
+		arch.Read(wxT("enableDebugLog"),                      enableDebugLog);
+		arch.Read(wxT("enablePendingBreakpoints"),            enablePendingBreakpoints);
+		arch.Read(wxT("breakAtWinMain"),                      breakAtWinMain);
+		arch.Read(wxT("showTerminal"),                        showTerminal);
+		arch.Read(wxT("consoleCommand"),                      consoleCommand);
+		arch.Read(wxT("useRelativeFilePaths"),                useRelativeFilePaths);
+		arch.Read(wxT("catchThrow"),                          catchThrow);
+		arch.Read(wxT("showTooltips"),                        showTooltips);
+		arch.Read(wxT("debugAsserts"),                        debugAsserts);
+		arch.ReadCData(wxT("startupCommands"),                startupCommands);
 		startupCommands.Trim();
-		
-		arch.Read(wxT("maxDisplayStringSize"),     maxDisplayStringSize);
-		arch.Read(wxT("resolveLocals"),            resolveLocals);
-		arch.Read(wxT("autoExpandTipItems"),       autoExpandTipItems);
+
+		arch.Read(wxT("maxDisplayStringSize"),                maxDisplayStringSize);
+		arch.Read(wxT("resolveLocals"),                       resolveLocals);
+		arch.Read(wxT("autoExpandTipItems"),                  autoExpandTipItems);
+		arch.Read(wxT("applyBreakpointsAfterProgramStarted"), applyBreakpointsAfterProgramStarted);
 	}
 };
 

@@ -1070,6 +1070,7 @@ void LEditor::UpdateBreakpoints()
 		if (line >= 0) {
 			for (size_t i=0; i<iter->second.size(); i++) {
 				iter->second.at(i).lineno = line + 1;
+				iter->second.at(i).origin = BO_Editor;
 			}
 		}
 

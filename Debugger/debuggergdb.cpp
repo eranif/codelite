@@ -89,7 +89,7 @@ IDebugger *CreateDebuggerGDB()
 {
 	static DbgGdb theGdbDebugger;
 	theGdbDebugger.SetName(wxT("GNU gdb debugger"));
-	
+
 	DebuggerInformation info;
 	info.name = theGdbDebugger.GetName();
 	theGdbDebugger.SetDebuggerInformation(info);
@@ -126,6 +126,7 @@ END_EVENT_TABLE()
 DbgGdb::DbgGdb()
 		: m_debuggeePid(wxNOT_FOUND)
 		, m_cliHandler (NULL)
+		, m_internalBpId(wxNOT_FOUND)
 {
 #ifdef __WXMSW__
 	Kernel32Dll = LoadLibrary(wxT("kernel32.dll"));
@@ -218,7 +219,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 		return false;
 	}
 	m_gdbProcess->SetHardKill(true);
-	
+
 	DoInitializeGdb(bpList, cmds);
 	m_observer->UpdateGotControl(DBG_END_STEPPING);
 	return true;
@@ -286,7 +287,7 @@ bool DbgGdb::Run(const wxString &args, const wxString &comm)
 	if ( !GetIsRemoteDebugging() ) {
 
 		// add handler for this command
-		return WriteCommand(wxT("-exec-run ") + args, new DbgCmdHandlerAsyncCmd(m_observer));
+		return WriteCommand(wxT("-exec-run ") + args, new DbgCmdHandlerAsyncCmd(m_observer, this));
 
 	} else {
 		// attach to the remote gdb server
@@ -294,7 +295,7 @@ bool DbgGdb::Run(const wxString &args, const wxString &comm)
 		//cmd << wxT("-target-select remote ") << comm << wxT(" ") << args;
 		cmd << wxT("target remote ") << comm << wxT(" ") << args;
 		return WriteCommand(cmd, new DbgCmdHandlerRemoteDebugging(m_observer, this));
-		
+
 	}
 }
 
@@ -318,7 +319,7 @@ bool DbgGdb::Stop()
 
 bool DbgGdb::Next()
 {
-	return WriteCommand(wxT("-exec-next"), new DbgCmdHandlerAsyncCmd(m_observer));
+	return WriteCommand(wxT("-exec-next"), new DbgCmdHandlerAsyncCmd(m_observer, this));
 }
 
 void DbgGdb::SetBreakpoints()
@@ -482,17 +483,17 @@ bool DbgGdb::SetCommands(const BreakpointInfo& bp)
 
 bool DbgGdb::Continue()
 {
-	return WriteCommand(wxT("-exec-continue"), new DbgCmdHandlerAsyncCmd(m_observer));
+	return WriteCommand(wxT("-exec-continue"), new DbgCmdHandlerAsyncCmd(m_observer, this));
 }
 
 bool DbgGdb::StepIn()
 {
-	return WriteCommand(wxT("-exec-step"), new DbgCmdHandlerAsyncCmd(m_observer));
+	return WriteCommand(wxT("-exec-step"), new DbgCmdHandlerAsyncCmd(m_observer, this));
 }
 
 bool DbgGdb::StepOut()
 {
-	return WriteCommand(wxT("-exec-finish"), new DbgCmdHandlerAsyncCmd(m_observer));
+	return WriteCommand(wxT("-exec-finish"), new DbgCmdHandlerAsyncCmd(m_observer, this));
 }
 
 bool DbgGdb::IsRunning()
@@ -611,7 +612,7 @@ void DbgGdb::Poke()
 	if (m_debuggeePid == wxNOT_FOUND) {
 		if (GetIsRemoteDebugging()) {
 			m_debuggeePid = m_gdbProcess->GetPid();
-			
+
 		} else {
 			std::vector<long> children;
 			ProcUtils::GetChildren(m_gdbProcess->GetPid(), children);
@@ -702,7 +703,7 @@ void DbgGdb::Poke()
 			}
 		} else if (line.StartsWith(wxT("^done")) || line.StartsWith(wxT("*stopped"))) {
 			//Unregistered command, use the default AsyncCommand handler to process the line
-			DbgCmdHandlerAsyncCmd cmd(m_observer);
+			DbgCmdHandlerAsyncCmd cmd(m_observer, this);
 			cmd.ProcessOutput(line);
 		} else {
 			//Unknow format, just log it
@@ -750,7 +751,7 @@ void DbgGdb::DoProcessAsyncCommand(wxString &line, wxString &id)
 		//asynchronous command was executed
 		//send event that we dont have the control anymore
 		m_observer->UpdateLostControl();
-		
+
 	} else if (line.StartsWith(wxT("*stopped"))) {
 		//get the stop reason,
 		if (line == wxT("*stopped")) {
@@ -975,10 +976,10 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
 	return true;
 }
 
-
+// Initialization stage
 bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds)
 {
-	//place breakpoint at first line
+	m_internalBpId = wxNOT_FOUND;
 #ifdef __WXMSW__
 	ExecuteCmd(wxT("set  new-console on"));
 #endif
@@ -1014,11 +1015,19 @@ bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo> &bpList, const wx
 
 	// keep the list of breakpoints
 	m_bpList = bpList;
-	
-	if(GetIsRemoteDebugging() == false) 
-		// When remote debugging, apply the breakpoints after we connect the 
+
+	bool setBreakpointsAfterMain(m_info.applyBreakpointsAfterProgramStarted);
+	if(GetIsRemoteDebugging() == false && !setBreakpointsAfterMain) {
+		// When remote debugging, apply the breakpoints after we connect the
 		// gdbserver
 		SetBreakpoints();
+
+	} else if(setBreakpointsAfterMain && m_bpList.empty() == false) {
+		// Place an intermediate breakpoint at main, once this breakpoint is hit
+		// set all breakpoints and remove that breakpoint + continue
+		WriteCommand(wxT("-break-insert main"), new DbgFindMainBreakpointIdHandler(m_observer, this));
+
+	}
 
 	if (m_info.breakAtWinMain) {
 		//try also to set breakpoint at WinMain
@@ -1091,10 +1100,10 @@ bool DbgGdb::EvaluateVariableObject(const wxString& name, DisplayFormat displayF
 		default:
 		case DBG_DF_NATURAL:     df = wxT("natural");     break;
 	}
-	
+
 	cmd << wxT("-var-set-format \"") << name << wxT("\" ") << df;
 	WriteCommand(cmd, NULL);
-	
+
 	cmd.Clear();
 	cmd << wxT("-var-evaluate-expression \"") << name << wxT("\"");
 	return WriteCommand(cmd, new DbgCmdEvalVarObj(m_observer, name, displayFormat, userReason));
@@ -1116,7 +1125,6 @@ void DbgGdb::OnDataRead(wxCommandEvent& e)
 		line.Trim().Trim(false);
 		if ( line.IsEmpty() == false ) {
 			m_gdbOutputArr.Add( line );
-			//wxPrintf(wxT("Debugger: %s\n"), line.c_str());
 		}
 	}
 
@@ -1140,4 +1148,9 @@ bool DbgGdb::DoGetNextLine(wxString& line)
 		return false;
 	}
 	return true;
+}
+
+void DbgGdb::SetInternalMainBpID(int bpId)
+{
+	m_internalBpId = bpId;
 }

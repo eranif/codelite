@@ -55,6 +55,7 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 #ifdef __WXMSW__
 		m_checkBoxDebugAssert->SetValue(info.debugAsserts);
 #endif
+		m_checkBoxSetBreakpointsAfterMain->SetValue(info.applyBreakpointsAfterProgramStarted);
 	}
 
 #ifndef __WXMSW__
@@ -150,23 +151,25 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		DebuggerMgr::Get().GetDebuggerInformation(page->m_title, info);
 
 		//populate the information and save it
-		info.enableDebugLog           = page->m_checkBoxEnableLog->GetValue();
-		info.enablePendingBreakpoints = page->m_checkBoxEnablePendingBreakpoints->GetValue();
-		info.path                     = page->m_textCtrDbgPath->GetValue();
-		info.name                     = page->m_title;
-		info.breakAtWinMain           = page->m_checkBreakAtWinMain->IsChecked();
-		info.showTerminal             = page->m_checkShowTerminal->IsChecked();
-		info.consoleCommand           = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
-		info.useRelativeFilePaths     = page->m_checkUseRelativePaths->IsChecked();
-		info.catchThrow               = page->m_catchThrow->IsChecked();
-		info.showTooltips             = page->m_showTooltips->IsChecked();
-		info.startupCommands          = page->m_textCtrlStartupCommands->GetValue();
-		info.maxDisplayStringSize     = page->m_spinCtrlNumElements->GetValue();
-		info.resolveLocals            = page->m_checkBoxExpandLocals->IsChecked();
+		info.enableDebugLog                      = page->m_checkBoxEnableLog->GetValue();
+		info.enablePendingBreakpoints            = page->m_checkBoxEnablePendingBreakpoints->GetValue();
+		info.path                                = page->m_textCtrDbgPath->GetValue();
+		info.name                                = page->m_title;
+		info.breakAtWinMain                      = page->m_checkBreakAtWinMain->IsChecked();
+		info.showTerminal                        = page->m_checkShowTerminal->IsChecked();
+		info.consoleCommand                      = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
+		info.useRelativeFilePaths                = page->m_checkUseRelativePaths->IsChecked();
+		info.catchThrow                          = page->m_catchThrow->IsChecked();
+		info.showTooltips                        = page->m_showTooltips->IsChecked();
+		info.startupCommands                     = page->m_textCtrlStartupCommands->GetValue();
+		info.maxDisplayStringSize                = page->m_spinCtrlNumElements->GetValue();
+		info.resolveLocals                       = page->m_checkBoxExpandLocals->IsChecked();
 #ifdef __WXMSW__
-		info.debugAsserts             = page->m_checkBoxDebugAssert->IsChecked();
+		info.debugAsserts                        = page->m_checkBoxDebugAssert->IsChecked();
 #endif
-		info.autoExpandTipItems       = page->m_checkBoxAutoExpand->IsChecked();
+		info.autoExpandTipItems                  = page->m_checkBoxAutoExpand->IsChecked();
+		info.applyBreakpointsAfterProgramStarted = page->m_checkBoxSetBreakpointsAfterMain->IsChecked();
+
 		DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
 	}
 

@@ -87,6 +87,8 @@ class DebuggerPageBase : public wxPanel
 		wxCheckBox* m_checkBreakAtWinMain;
 		wxCheckBox* m_catchThrow;
 		wxCheckBox* m_checkBoxDebugAssert;
+		wxCheckBox* m_checkBoxSetBreakpointsAfterMain;
+		
 		wxCheckBox* m_showTooltips;
 		wxCheckBox* m_checkBoxAutoExpand;
 		wxStaticText* m_staticText2;

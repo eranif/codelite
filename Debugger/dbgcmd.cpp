@@ -241,6 +241,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 	if (reason == wxT("end-stepping-range")) {
 		//just notify the container that we got control back from debugger
 		m_observer->UpdateGotControl(DBG_END_STEPPING);
+
 	} else if ((reason == wxT("breakpoint-hit")) || (reason == wxT("watchpoint-trigger"))) {
 		static wxRegEx reFuncName(wxT("func=\"([a-zA-Z!_0-9]+)\""));
 
@@ -262,6 +263,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 
 		// Notify the container that we got control back from debugger
 		m_observer->UpdateGotControl(DBG_BP_HIT);
+
 		// Now discover which bp was hit. Fortunately, that's in the next token: bkptno="12"
 		// Except that it no longer is in gdb 7.0. It's now: ..disp="keep",bkptno="12". So:
 		static wxRegEx reGetBreakNo(wxT("bkptno=\"([0-9]+)\""));
@@ -269,7 +271,28 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 			wxString number = reGetBreakNo.GetMatch(line, 1);
 			long id;
 			if (number.ToLong(&id)) {
-				m_observer->UpdateBpHit((int)id);
+				if(id != wxNOT_FOUND && m_gdb->m_internalBpId == id) {
+
+					m_observer->UpdateAddLine(wxString::Format(wxT("Internal breakpoint was hit (id=%d), Applying user breakpoints and continuing"), m_gdb->m_internalBpId));
+
+					// This is an internal breakpoint ID
+					m_gdb->m_internalBpId = wxNOT_FOUND;
+
+					// Delete this breakpoints
+					m_gdb->RemoveBreak(id);
+
+					// Apply the breakpoints
+					m_gdb->SetBreakpoints();
+
+					// Continue running
+					m_gdb->Continue();
+
+				} else {
+
+					// User breakpoint
+					m_observer->UpdateBpHit((int)id);
+
+				}
 			}
 		}
 
@@ -296,7 +319,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 
 		} else if (signame == wxT("SIGTRAP")) {
 			m_observer->UpdateGotControl(DBG_RECV_SIGNAL_SIGTRAP);
-			
+
 		} else {
 			//default
 			m_observer->UpdateGotControl(DBG_RECV_SIGNAL);
@@ -1037,7 +1060,7 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
 		}
 
 		if ( vo.gdbId.IsEmpty() == false  ) {
-			
+
 			e.m_updateReason = DBG_UR_VARIABLEOBJ;
 			e.m_variableObject = vo;
 			e.m_expression = m_expression;
@@ -1158,4 +1181,24 @@ bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
 		return true;
 	}
 	return false;
+}
+
+bool DbgFindMainBreakpointIdHandler::ProcessOutput(const wxString& line)
+{
+	// so the breakpoint ID will come in form of
+	// ^done,bkpt={number="2"....
+	static wxRegEx reBreak   (wxT("done,bkpt={number=\"([0-9]+)\""));
+	wxString number;
+	long     breakpointId(wxNOT_FOUND);
+
+	reBreak.Matches(line);
+	number = reBreak.GetMatch(line, 1);
+	if (number.IsEmpty() == false) {
+		if (number.ToLong(&breakpointId)) {
+			// for debugging purpose
+			m_observer->UpdateAddLine(wxString::Format(wxT("Storing internal breakpoint ID=%d"), breakpointId), true);
+			m_debugger->SetInternalMainBpID( breakpointId );
+		}
+	}
+	return true;
 }

@@ -62,6 +62,9 @@ class DbgGdb : public wxEvtHandler, public IDebugger
 	IProcess*                   m_gdbProcess;
 	wxArrayString               m_gdbOutputArr;
 
+public:
+	int                         m_internalBpId;
+
 protected:
 	void           RegisterHandler(const wxString &id, DbgCmdHandler *cmd);
 	DbgCmdHandler *PopHandler(const wxString &id);
@@ -70,7 +73,7 @@ protected:
 	bool           DoGetNextLine(wxString &line);
 	//wrapper for convinience
 	void DoProcessAsyncCommand(wxString &line, wxString &id);
-	
+
 protected:
 	bool               DoLocateGdbExecutable(const wxString &debuggerPath, wxString &dbgExeName);
 	bool               DoInitializeGdb      (const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds);
@@ -81,7 +84,7 @@ public:
 	bool WriteCommand  (const wxString &command, DbgCmdHandler *   cmd);
 	bool ExecCLICommand(const wxString &command, DbgCmdCLIHandler* cmd);
 	void SetBreakpoints();
-
+	void SetInternalMainBpID(int bpId);
 public:
 	DbgGdb();
 	virtual ~DbgGdb();

@@ -130,10 +130,13 @@ void BreakptMgr::GetBreakpoints(std::vector<BreakpointInfo> &li)
 unsigned int BreakptMgr::GetBreakpoints(std::vector<BreakpointInfo>& li, const wxString &fileName, const int lineno)
 {
 	li.clear();
+	wxFileName fn(fileName);
+	fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
+
 	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
 	for (; iter != m_bps.end(); iter++) {
 		BreakpointInfo b = *iter;
-		if ( (b.lineno == lineno) && (b.file == fileName) ) {
+		if ( (b.lineno == lineno) && (b.file == fn.GetFullPath()) ) {
 			li.push_back(b);
 		}
 	}
@@ -313,7 +316,7 @@ void BreakptMgr::DebuggerStopped()
 
 		// We collect all the breakpoints which their origin
 		// was the editor
-		if(bp.origin == BO_Editor) {
+		if(bp.file.IsEmpty() == false && bp.lineno != wxNOT_FOUND) {
 			newList.push_back(bp);
 		}
 	}
@@ -658,6 +661,10 @@ void BreakptMgr::ReconcileBreakpoints(const std::vector<BreakpointInfo>& li)
 	for (; li_iter != li.end(); ++li_iter) {
 		int index = FindBreakpointById(li_iter->debugger_id, m_bps);
 		if (index == wxNOT_FOUND) {
+
+			if(IsDuplicate(*li_iter, updated_bps))
+				continue;
+
 			// This will happen e.g. if a bp was auto-set on Main()
 			// If so, its internal_id will be invalid
 			BreakpointInfo bp = *li_iter;
@@ -1048,4 +1055,19 @@ void myDragImage::OnEndDrag(wxMouseEvent& event)
 void BreakptMgr::RefreshBreakpointsForEditor(LEditor* editor)
 {
 	DoRefreshFileBreakpoints( editor );
+}
+
+bool BreakptMgr::IsDuplicate(const BreakpointInfo& bp, const std::vector<BreakpointInfo>& bpList)
+{
+	wxFileName bpFileName(bp.file);
+	bpFileName.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
+
+	for(size_t i=0; i<bpList.size(); i++) {
+		wxFileName fn(bpList.at(i).file);
+		fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
+
+		if(fn.GetFullPath() == bpFileName.GetFullPath() && bp.lineno == bpList.at(i).lineno)
+			return true;
+	}
+	return false;
 }

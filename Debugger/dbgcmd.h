@@ -83,8 +83,13 @@ public:
  */
 class DbgCmdHandlerAsyncCmd : public DbgCmdHandler
 {
+	DbgGdb*  m_gdb;
+
 public:
-	DbgCmdHandlerAsyncCmd(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+	DbgCmdHandlerAsyncCmd(IDebuggerObserver *observer, DbgGdb* gdb)
+	: DbgCmdHandler(observer)
+	, m_gdb(gdb)
+	{}
 	virtual ~DbgCmdHandlerAsyncCmd() {}
 
 	virtual bool ProcessOutput(const wxString &line);
@@ -107,10 +112,10 @@ class DbgCmdHandlerBp : public DbgCmdHandler
 	const BreakpointInfo           m_bp;
 	std::vector< BreakpointInfo > *m_bplist;
 	int                            m_bpType; // BP_type_break by default
-	IDebugger*                     m_debugger;
+	DbgGdb*                        m_debugger;
 
 public:
-	DbgCmdHandlerBp(IDebuggerObserver *observer, IDebugger *debugger, BreakpointInfo bp, std::vector< BreakpointInfo > *bplist, int bptype = BP_type_break)
+	DbgCmdHandlerBp(IDebuggerObserver *observer, DbgGdb *debugger, BreakpointInfo bp, std::vector< BreakpointInfo > *bplist, int bptype = BP_type_break)
 			: DbgCmdHandler(observer)
 			, m_bp(bp)
 			, m_bplist(bplist)
@@ -298,7 +303,7 @@ class DbgCmdCreateVarObj : public DbgCmdHandler
 	wxString m_expression;
 	int      m_userReason;
 	DbgGdb * m_debugger;
-	
+
 public:
 	DbgCmdCreateVarObj(IDebuggerObserver *observer, DbgGdb *gdb, const wxString &expression, int userReason)
 			: DbgCmdHandler(observer)
@@ -332,7 +337,7 @@ class DbgCmdEvalVarObj : public DbgCmdHandler
 	wxString      m_variable;
 	int           m_userReason;
 	DisplayFormat m_displayFormat;
-	
+
 public:
 	DbgCmdEvalVarObj(IDebuggerObserver *observer, const wxString &variable, DisplayFormat displayFormat, int userReason)
 			: DbgCmdHandler  (observer)
@@ -341,6 +346,22 @@ public:
 			, m_userReason   ( userReason ) {}
 
 	virtual ~DbgCmdEvalVarObj() {}
+
+	virtual bool ProcessOutput(const wxString & line);
+};
+
+class DbgFindMainBreakpointIdHandler : public DbgCmdHandler
+{
+	DbgGdb * m_debugger;
+
+public:
+	DbgFindMainBreakpointIdHandler(IDebuggerObserver *observer, DbgGdb *debugger)
+			: DbgCmdHandler  (observer)
+			, m_debugger(debugger)
+			{}
+
+	virtual ~DbgFindMainBreakpointIdHandler()
+	{}
 
 	virtual bool ProcessOutput(const wxString & line);
 };

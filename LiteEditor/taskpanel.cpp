@@ -101,7 +101,7 @@ SearchData TaskPanel::DoGetSearchData()
     data.SetRegularExpression(true);
     data.SetMatchCase(false);
     data.SetMatchWholeWord(false);
-    data.SetUseEditorFontConfig(false);
+    data.SetEncoding(wxT("ISO-8859-1"));
     data.SetOwner(this);
 
 	wxString sfind;

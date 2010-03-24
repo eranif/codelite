@@ -21,6 +21,7 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/listbox.h>
+#include <wx/choice.h>
 #include <wx/checkbox.h>
 #include <wx/statbox.h>
 #include <wx/radiobut.h>
@@ -38,20 +39,28 @@ class FindInFilesDialogBase : public wxDialog
 	
 	protected:
 		wxComboBox* m_findString;
+		
 		DirPicker  *m_dirPicker;
 		wxButton* m_btnAddPath;
+		
+		
 		wxListBox* m_listPaths;
 		wxButton* m_btnRemovelPath;
 		wxButton* m_btnClearPaths;
 		wxComboBox* m_fileTypes;
+		
+		wxStaticText* m_staticText5;
+		wxChoice* m_choiceEncoding;
+		
+		wxStaticText* m_staticText7;
 		wxCheckBox* m_matchCase;
 		wxCheckBox* m_matchWholeWord;
 		wxCheckBox* m_regualrExpression;
-		wxCheckBox* m_fontEncoding;
 		wxCheckBox* m_printScope;
 		wxCheckBox* m_checkBoxSaveFilesBeforeSearching;
-		wxRadioButton* m_resInNewTab;
 		
+		wxStaticText* m_staticText6;
+		wxRadioButton* m_resInNewTab;
 		wxRadioButton* m_resInActiveTab;
 		
 		wxStaticLine* m_staticline1;

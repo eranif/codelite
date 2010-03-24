@@ -31,6 +31,7 @@
 #include <iostream>
 #include <wx/tokenzr.h>
 #include <wx/dir.h>
+#include <wx/fontmap.h>
 #include <wx/log.h>
 #include "dirtraverser.h"
 #include "macros.h"
@@ -223,12 +224,9 @@ void SearchThread::DoSearchFile(const wxString &fileName, const SearchData *data
 	fileData.Alloc(size);
 
 	// support for other encoding
-	if ( data->UseEditorFontConfig() ) {
-		wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
-		thefile.ReadAll(&fileData, fontEncConv);
-	} else {
-		thefile.ReadAll(&fileData, wxConvUTF8);
-	}
+	wxFontEncoding enc = wxFontMapper::GetEncodingFromName(data->GetEncoding().c_str());
+	wxCSConv fontEncConv(enc);
+	thefile.ReadAll(&fileData, fontEncConv);
 
 	wxStringTokenizer tkz(fileData, wxT("\n"), wxTOKEN_RET_EMPTY_ALL);
 

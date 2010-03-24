@@ -47,12 +47,13 @@ class SearchThread;
 class SearchData : public ThreadRequest
 {
 	wxArrayString m_rootDirs;
-	wxString m_findString;
-	size_t m_flags;
-	wxString m_validExt;
+	wxString      m_findString;
+	size_t        m_flags;
+	wxString      m_validExt;
 	wxArrayString m_files;
-	bool m_newTab;
+	bool          m_newTab;
 	wxEvtHandler *m_owner;
+	wxString      m_encoding;
 
 	friend class SearchThread;
 
@@ -85,18 +86,21 @@ public:
 		if (this == &rhs){
 			return *this;
 		}
+
 		m_findString = rhs.m_findString.c_str();
-		m_flags = rhs.m_flags;
-		m_validExt = rhs.m_validExt.c_str();
-		m_rootDirs = rhs.m_rootDirs;
+		m_flags      = rhs.m_flags;
+		m_validExt   = rhs.m_validExt.c_str();
+		m_rootDirs   = rhs.m_rootDirs;
+		m_newTab     = rhs.m_newTab;
+		m_owner      = rhs.m_owner;
+		m_encoding   = rhs.m_encoding.c_str();
 
 		m_files.clear();
+
 		for(size_t i=0; i<rhs.m_files.GetCount(); i++){
 			m_files.Add(rhs.m_files.Item(i).c_str());
 		}
 
-		m_newTab = rhs.m_newTab;
-		m_owner = rhs.m_owner;
 		return *this;
 	}
 
@@ -161,17 +165,17 @@ public:
 	void UseNewTab(bool useNewTab) {
 		m_newTab = useNewTab;
 	}
-	
+
 	bool UseNewTab() const {
 		return m_newTab;
 	}
 
-	bool UseEditorFontConfig() const {
-		return m_flags & wxSD_USE_EDITOR_ENCODING ? true : false;
+	void SetEncoding(const wxString &encoding) {
+		this->m_encoding = encoding.c_str();
 	}
 
-	void SetUseEditorFontConfig(bool use) {
-		SetOption(wxSD_USE_EDITOR_ENCODING, use);
+	const wxString &GetEncoding() const {
+		return this->m_encoding;
 	}
 
 	bool GetDisplayScope() const {

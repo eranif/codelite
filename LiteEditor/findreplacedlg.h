@@ -39,7 +39,7 @@ class wxStaticText;
 #define wxFRD_SEARCHUP                      0x00000008
 #define wxFRD_WRAPSEARCH                    0x00000010
 #define wxFRD_SELECTIONONLY                 0x00000020
-#define wxFRD_USEFONTENCODING               0x00000040
+/*#define wxFRD_USEFONTENCODING               0x00000040*/
 #define wxFRD_DISPLAYSCOPE                  0x00000080
 #define wxFRD_SAVE_BEFORE_SEARCH            0x00000100
 
@@ -69,6 +69,8 @@ class FindReplaceData : public SerializedObject
 	wxArrayString  m_findString;
 	size_t         m_flags;
 	wxArrayString  m_searchPaths;
+	wxString       m_encoding;
+	wxString       m_fileMask;
 
 private:
 	void TruncateArray(wxArrayString &arr, size_t maxSize);
@@ -94,6 +96,18 @@ public:
 		return m_replaceString;
 	}
 
+	void SetEncoding(const wxString& encoding) {
+		this->m_encoding = encoding;
+	}
+	void SetFileMask(const wxString& fileMask) {
+		this->m_fileMask = fileMask;
+	}
+	const wxString& GetEncoding() const {
+		return m_encoding;
+	}
+	const wxString& GetFileMask() const {
+		return m_fileMask;
+	}
 	/**
 	 * \brief return the first find string on the array
 	 */

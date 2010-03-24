@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "search_thread.h"
+#include <wx/tokenzr.h>
+#include <wx/fontmap.h>
 #include "dirpicker.h"
 #include "manager.h"
 #include "frame.h"
@@ -57,14 +59,43 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 	m_matchCase->SetValue(m_data.GetFlags() & wxFRD_MATCHCASE);
 	m_matchWholeWord->SetValue(m_data.GetFlags() & wxFRD_MATCHWHOLEWORD);
 	m_regualrExpression->SetValue(m_data.GetFlags() & wxFRD_REGULAREXPRESSION);
-	m_fontEncoding->SetValue(m_data.GetFlags() & wxFRD_USEFONTENCODING);
 	m_printScope->SetValue(m_data.GetFlags() & wxFRD_DISPLAYSCOPE);
 	m_checkBoxSaveFilesBeforeSearching->SetValue(m_data.GetFlags() & wxFRD_SAVE_BEFORE_SEARCH);
 
-	GetSizer()->Fit(this);
-	//GetSizer()->SetMinSize(wxSize(600, 300));
-	//GetSizer()->SetSizeHints(this);
+	// Set encoding
+	wxArrayString  astrEncodings;
+	wxFontEncoding fontEnc;
+	int            selection(0);
 
+	size_t iEncCnt = wxFontMapper::GetSupportedEncodingsCount();
+	for (size_t i = 0; i < iEncCnt; i++) {
+		fontEnc = wxFontMapper::GetEncoding(i);
+		if (wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
+			continue;
+		}
+		wxString encodingName = wxFontMapper::GetEncodingName(fontEnc);
+		size_t pos = astrEncodings.Add(encodingName);
+
+		if(data.GetEncoding() == encodingName)
+			selection = static_cast<int>(pos);
+	}
+
+	m_choiceEncoding->Append(astrEncodings);
+	if(m_choiceEncoding->IsEmpty() == false)
+		m_choiceEncoding->SetSelection(selection);
+
+	// Set the file mask
+	wxString mask = m_data.GetFileMask();
+	mask.Trim().Trim(false);
+	if(mask.IsEmpty() == false) {
+		m_fileTypes->Clear();
+		wxArrayString fileTypes = wxStringTokenize(mask, wxT("\n"), wxTOKEN_STRTOK);
+		for(size_t i=0; i<fileTypes.GetCount(); i++) {
+			m_fileTypes->Append(fileTypes.Item(i));
+		}
+	}
+
+	GetSizer()->Fit(this);
 	Centre();
 }
 
@@ -80,7 +111,6 @@ void FindInFilesDialog::SetSearchData(const SearchData &data)
 	flags |= data.IsMatchCase()         ? wxFRD_MATCHCASE         : 0;
 	flags |= data.IsMatchWholeWord()    ? wxFRD_MATCHWHOLEWORD    : 0;
 	flags |= data.IsRegularExpression() ? wxFRD_REGULAREXPRESSION : 0;
-	flags |= data.UseEditorFontConfig() ? wxFRD_USEFONTENCODING   : 0;
 	flags |= data.GetDisplayScope()     ? wxFRD_DISPLAYSCOPE      : 0;
 	m_data.SetFlags(flags);
 
@@ -88,7 +118,25 @@ void FindInFilesDialog::SetSearchData(const SearchData &data)
 	m_matchCase->SetValue(data.IsMatchCase());
 	m_matchWholeWord->SetValue(data.IsMatchWholeWord());
 	m_regualrExpression->SetValue(data.IsRegularExpression());
-	m_fontEncoding->SetValue(data.UseEditorFontConfig());
+
+	// Set encoding
+	int where = m_choiceEncoding->FindString(data.GetEncoding());
+
+	if(where != wxNOT_FOUND) {
+		m_choiceEncoding->SetSelection(where);
+
+	} else {
+		// try to locate the ISO-8859-1 encoding
+		where = m_choiceEncoding->FindString(wxT("ISO-8859-1"));
+		if(where != wxNOT_FOUND) {
+			m_choiceEncoding->SetSelection(where);
+
+		} else if(m_choiceEncoding->IsEmpty() == false) {
+			m_choiceEncoding->SetSelection(0);
+		}
+
+	}
+
 	m_printScope->SetValue(data.GetDisplayScope());
 	m_fileTypes->SetValue(data.GetExtensions());
 
@@ -144,8 +192,8 @@ SearchData FindInFilesDialog::DoGetSearchData()
 	data.SetMatchCase( (m_data.GetFlags() & wxFRD_MATCHCASE) != 0);
 	data.SetMatchWholeWord((m_data.GetFlags() & wxFRD_MATCHWHOLEWORD) != 0);
 	data.SetRegularExpression((m_data.GetFlags() & wxFRD_REGULAREXPRESSION) != 0);
-	data.SetUseEditorFontConfig((m_data.GetFlags() & wxFRD_USEFONTENCODING) != 0);
 	data.SetDisplayScope((m_data.GetFlags() & wxFRD_DISPLAYSCOPE) != 0);
+	data.SetEncoding(m_choiceEncoding->GetStringSelection());
 
 	wxArrayString rootDirs;
 	for (size_t i = 0; i < m_listPaths->GetCount(); ++i) {
@@ -198,6 +246,15 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 	findWhat = findWhat.Trim().Trim(false);
 
 	m_data.SetFindString( m_findString->GetValue() );
+	m_data.SetEncoding  ( m_choiceEncoding->GetStringSelection() );
+
+	wxString fileMask;
+	for(unsigned int i=0; i<m_fileTypes->GetCount(); i++) {
+		fileMask << m_fileTypes->GetString(i) << wxT("\n");
+	}
+	if(fileMask.IsEmpty() == false)
+		fileMask.RemoveLast();
+	m_data.SetFileMask( fileMask );
 
 	if (btnClicked == m_stop) {
 		SearchThreadST::Get()->StopSearch();
@@ -236,12 +293,6 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 			flags |= wxFRD_REGULAREXPRESSION;
 		} else {
 			flags &= ~(wxFRD_REGULAREXPRESSION);
-		}
-	} else if (btnClicked == m_fontEncoding) {
-		if (m_fontEncoding->IsChecked()) {
-			flags |= wxFRD_USEFONTENCODING;
-		} else {
-			flags &= ~(wxFRD_USEFONTENCODING);
 		}
 	} else if (btnClicked == m_printScope) {
 		if (m_printScope->IsChecked()) {

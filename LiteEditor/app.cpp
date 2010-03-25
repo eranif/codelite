@@ -382,11 +382,7 @@ bool App::OnInit()
 	EnvironmentConfig::Instance()->Load();
 	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
 
-	EnvMap defaultSet = vars.GetVariables(wxT("Default"));
-	if(defaultSet.Contains(wxT("CodeLiteDir")) == false) {
-		vars.AddVariable(wxT("Default"), wxT("CodeLiteDir"), ManagerST::Get()->GetInstallDir());
-	}
-
+	vars.InsertVariable(wxT("Default"), wxT("CodeLiteDir"), ManagerST::Get()->GetInstallDir());
 	EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
 
 	//---------------------------------------------------------

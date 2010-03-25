@@ -67,6 +67,18 @@ void EvnVarList::AddVariable(const wxString &setName, const wxString& name, cons
 	m_envVarSets[actualSetName] = currentValueStr;
 }
 
+void EvnVarList::InsertVariable(const wxString& setName, const wxString& name, const wxString& value)
+{
+	wxString actualSetName;
+
+	DoGetSetVariablesStr(setName, actualSetName);
+
+	EnvMap set = GetVariables(actualSetName);
+	set.Put(name, value);
+
+	m_envVarSets[actualSetName] = set.String();
+}
+
 EnvMap EvnVarList::GetVariables(const wxString& setName)
 {
 	EnvMap   variables;
@@ -170,4 +182,17 @@ bool EnvMap::Get(size_t index, wxString& key, wxString& val)
 bool EnvMap::Contains(const wxString& key)
 {
 	return m_keys.Index(key) != wxNOT_FOUND;
+}
+
+wxString EnvMap::String()
+{
+	wxString s;
+	for(size_t i=0; i<m_keys.GetCount(); i++){
+		s << m_keys.Item(i) << wxT("=") << m_values.Item(i) << wxT("\n");
+	}
+
+	if(s.IsEmpty() == false)
+		s.RemoveLast();
+
+	return s;
 }

@@ -43,6 +43,7 @@ public:
 	size_t   GetCount();
 	bool     Get(size_t index, wxString &key, wxString &val);
 	bool     Contains(const wxString &key);
+	wxString String();
 };
 
 class EvnVarList : public SerializedObject
@@ -72,9 +73,18 @@ public:
 		return m_envVarSets;
 	}
 
-	void   AddVariable(const wxString &setName, const wxString &name, const wxString &value);
-	EnvMap GetVariables(const wxString &setName = wxT(""));
-	bool   IsSetExist(const wxString &setName);
+	void   AddVariable        (const wxString &setName, const wxString &name, const wxString &value);
+
+	/**
+	 * \brief inser variable into the set. If a variable is already exist with this name, replace it
+	 * \param setName
+	 * \param name
+	 * \param value
+	 */
+	void   InsertVariable(const wxString &setName, const wxString &name, const wxString &value);
+
+	EnvMap GetVariables       (const wxString &setName = wxT(""));
+	bool   IsSetExist         (const wxString &setName);
 
 public:
 	virtual void DeSerialize(Archive &arch);

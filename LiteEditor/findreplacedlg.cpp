@@ -461,6 +461,7 @@ void FindReplaceData::Serialize(Archive& arch)
 	arch.Write(wxT("m_searchPaths"),   m_searchPaths);
 	arch.Write(wxT("m_encoding"),      m_encoding);
 	arch.Write(wxT("m_fileMask"),      m_fileMask);
+	arch.Write(wxT("m_selectedMask"),  m_selectedMask);
 }
 
 void FindReplaceData::DeSerialize(Archive& arch)
@@ -471,6 +472,7 @@ void FindReplaceData::DeSerialize(Archive& arch)
 	arch.Read(wxT("m_searchPaths"),   m_searchPaths);
 	arch.Read(wxT("m_encoding"),      m_encoding);
 	arch.Read(wxT("m_fileMask"),      m_fileMask);
+	arch.Read(wxT("m_selectedMask"),  m_selectedMask);
 
 	long max_value(10);
 	EditorConfigST::Get()->GetLongValue(wxT("MaxItemsInFindReplaceDialog"), max_value);

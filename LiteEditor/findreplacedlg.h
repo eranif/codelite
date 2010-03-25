@@ -70,7 +70,8 @@ class FindReplaceData : public SerializedObject
 	size_t         m_flags;
 	wxArrayString  m_searchPaths;
 	wxString       m_encoding;
-	wxString       m_fileMask;
+	wxArrayString  m_fileMask;
+	wxString       m_selectedMask;
 
 private:
 	void TruncateArray(wxArrayString &arr, size_t maxSize);
@@ -89,6 +90,12 @@ public:
 		m_flags = flags;
 	}
 
+	void SetSelectedMask(const wxString& selectedMask) {
+		this->m_selectedMask = selectedMask;
+	}
+	const wxString& GetSelectedMask() const {
+		return m_selectedMask;
+	}
 	wxArrayString &GetFindStringArr() {
 		return m_findString;
 	}
@@ -99,13 +106,13 @@ public:
 	void SetEncoding(const wxString& encoding) {
 		this->m_encoding = encoding;
 	}
-	void SetFileMask(const wxString& fileMask) {
+	void SetFileMask(const wxArrayString& fileMask) {
 		this->m_fileMask = fileMask;
 	}
 	const wxString& GetEncoding() const {
 		return m_encoding;
 	}
-	const wxString& GetFileMask() const {
+	const wxArrayString& GetFileMask() const {
 		return m_fileMask;
 	}
 	/**

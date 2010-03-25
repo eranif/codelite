@@ -85,14 +85,16 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 		m_choiceEncoding->SetSelection(selection);
 
 	// Set the file mask
-	wxString mask = m_data.GetFileMask();
-	mask.Trim().Trim(false);
-	if(mask.IsEmpty() == false) {
+	wxArrayString fileTypes = m_data.GetFileMask();
+	if(fileTypes.IsEmpty() == false) {
 		m_fileTypes->Clear();
-		wxArrayString fileTypes = wxStringTokenize(mask, wxT("\n"), wxTOKEN_STRTOK);
-		for(size_t i=0; i<fileTypes.GetCount(); i++) {
-			m_fileTypes->Append(fileTypes.Item(i));
-		}
+		m_fileTypes->Append(fileTypes);
+
+		int where = m_fileTypes->FindString(m_data.GetSelectedMask());
+		if(where == wxNOT_FOUND)
+			where = 0;
+
+		m_fileTypes->SetSelection(where);
 	}
 
 	GetSizer()->Fit(this);
@@ -248,13 +250,18 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 	m_data.SetFindString( m_findString->GetValue() );
 	m_data.SetEncoding  ( m_choiceEncoding->GetStringSelection() );
 
-	wxString fileMask;
-	for(unsigned int i=0; i<m_fileTypes->GetCount(); i++) {
-		fileMask << m_fileTypes->GetString(i) << wxT("\n");
+	wxString value = m_fileTypes->GetValue();
+	value.Trim().Trim(false);
+
+	wxArrayString fileMask = m_fileTypes->GetStrings();
+	if(!value.IsEmpty() && fileMask.Index(value) == wxNOT_FOUND) {
+		fileMask.Add(value);
+
 	}
-	if(fileMask.IsEmpty() == false)
-		fileMask.RemoveLast();
+
 	m_data.SetFileMask( fileMask );
+	if(value.IsEmpty() == false)
+		m_data.SetSelectedMask(value);
 
 	if (btnClicked == m_stop) {
 		SearchThreadST::Get()->StopSearch();

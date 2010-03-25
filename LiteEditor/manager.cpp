@@ -257,13 +257,13 @@ void Manager::OpenWorkspace ( const wxString &path )
 		wxMessageBox ( errMsg, wxT ( "Error" ), wxOK | wxICON_HAND );
 		return;
 	}
-	
+
 	// OpenWorkspace returned true, but errMsg is not empty
 	// this could only mean that we removed a fauly project
 	if(errMsg.IsEmpty() == false) {
 		Frame::Get()->GetMainBook()->ShowMessage(errMsg, true, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_warning")));
 	}
-	
+
 	DoSetupWorkspace ( path );
 }
 
@@ -482,18 +482,18 @@ void Manager::ImportMSVSSolution ( const wxString &path, const wxString &default
 	if ( fn.FileExists() == false ) {
 		return;
 	}
-	
+
 	// Show some messages to the user
 	wxBusyCursor busyCursor;
 	wxBusyInfo info(_("Importing MS solution..."), Frame::Get());
-	
+
 	wxString errMsg;
 	VcImporter importer ( path, defaultCompiler );
 	if ( importer.Import ( errMsg ) ) {
 		wxString wspfile;
 		wspfile << fn.GetPath() << wxT ( "/" ) << fn.GetName() << wxT ( ".workspace" );
 		OpenWorkspace ( wspfile );
-		
+
 		// Retag workspace
 		wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
 		Frame::Get()->GetEventHandler()->AddPendingEvent( event );
@@ -1268,7 +1268,7 @@ void Manager::ToggleOutputPane(bool hide)
 {
 	static wxString saved_dock_info;
 	wxAuiManager *aui = &Frame::Get()->GetDockingManager();
-	
+
 	if ( aui ) {
 		wxAuiPaneInfo &pane_info = aui->GetPane(wxT("Output View"));
 		wxString dock_info ( wxString::Format(wxT("dock_size(%d,%d,%d)"), pane_info.dock_direction, pane_info.dock_layer, pane_info.dock_row) );
@@ -1289,12 +1289,12 @@ void Manager::ToggleOutputPane(bool hide)
 			// Show it
 			if ( pane_info.IsShown() == false ) {
 				Frame::Get()->Freeze();
-				
+
 				if ( saved_dock_info.IsEmpty() ) {
-					
+
 					pane_info.Show();
 					aui->Update();
-					
+
 				} else {
 					wxString auiPerspective = aui->SavePerspective();
 					if ( auiPerspective.Find(dock_info) == wxNOT_FOUND ) {
@@ -1320,7 +1320,7 @@ bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 {
 	// make the output pane visible
 	ToggleOutputPane( false );
-	
+
 	// set the selection to focus win
 	OutputPane *pane = Frame::Get()->GetOutputPane();
 	int index(wxNOT_FOUND);
@@ -1330,7 +1330,7 @@ bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 			break;
 		}
 	}
-	
+
 	if ( index != wxNOT_FOUND && index != pane->GetNotebook()->GetSelection() ) {
 		wxWindow *focus = wxWindow::FindFocus();
 		pane->GetNotebook()->SetSelection ( ( size_t ) index );
@@ -2008,10 +2008,10 @@ void Manager::DbgStart ( long pid )
 
 	//set ourselves as the observer for the debugger class
 	dbgr->SetObserver ( this );
-	
+
 	// Set the 'Is remote debugging' flag'
 	dbgr->SetIsRemoteDebugging(bldConf && bldConf->GetIsDbgRemoteTarget() && PID == wxNOT_FOUND);
-	
+
 	// Loop through the open editors and let each editor
 	// a chance to update the debugger manager with any line
 	// changes (i.e. file was edited and breakpoints were moved)
@@ -2284,15 +2284,15 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 	//put us on top of the z-order window
 	Frame::Get()->Raise();
 	m_dbgCanInteract = true;
-	
+
 	switch ( reason ) {
 	case DBG_RECV_SIGNAL_SIGTRAP:         // DebugBreak()
 	case DBG_RECV_SIGNAL_EXC_BAD_ACCESS:  // SIGSEGV on Mac
 	case DBG_RECV_SIGNAL_SIGABRT:         // assert() ?
 	case DBG_RECV_SIGNAL_SIGSEGV: {       // program received signal sigsegv
-	
+
 		wxString signame = wxT ( "SIGSEGV" );
-		
+
 		// show the dialog only if the signal is not sigtrap
 		// since sigtap might be triggered by user inserting a breakpoint
 		// into an already running debug session
@@ -2300,16 +2300,16 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 		if ( reason == DBG_RECV_SIGNAL_EXC_BAD_ACCESS ) {
 			signame = wxT ( "EXC_BAD_ACCESS" );
 			showDialog = true;
-			
+
 		} else if ( reason == DBG_RECV_SIGNAL_SIGABRT ) {
 			signame = wxT ( "SIGABRT" );
 			showDialog = true;
-			
+
 		} else if ( reason == DBG_RECV_SIGNAL_SIGTRAP ) {
 			signame = wxT ( "SIGTRAP" );
 			showDialog = false;
 		}
-		
+
 		DebugMessage ( _("Program Received signal ") + signame + _("\n") );
 		if(showDialog) {
 			wxMessageDialog dlg( Frame::Get(), _("Program Received signal ") + signame + wxT("\n") +
@@ -2317,7 +2317,7 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 								 wxT("CodeLite"), wxICON_ERROR|wxOK );
 			dlg.ShowModal();
 		}
-		
+
 		//Print the stack trace
 		wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( wxT("Debugger") );
 		if ( info.IsShown() && showDialog ) {
@@ -3033,6 +3033,8 @@ bool Manager::UpdateParserPaths()
 void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 {
 	Frame::Get()->SetStatusMessage(wxT("Retagging..."), 0);
+
+	wxBusyCursor busyCursor;
 	std::set<std::string> *fileSet = (std::set<std::string>*)event.GetClientData();
 //	fprintf(stderr, "fileSet size=%d\n", fileSet->size());
 

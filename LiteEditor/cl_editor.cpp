@@ -152,6 +152,8 @@ LEditor::LEditor(wxWindow* parent)
 		, m_calltipType              (ct_none)
 		, m_reloadingFile            (false)
 		, m_functionTip              (NULL)
+		, m_lastCharEntered          (0)
+		, m_lastCharEnteredPos       (0)
 {
 	ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSCI_MARK_SMALLRECT;
 	ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSCI_MARK_ROUNDRECT;
@@ -600,8 +602,6 @@ void LEditor::OnSavePoint(wxScintillaEvent &event)
 
 void LEditor::OnCharAdded(wxScintillaEvent& event)
 {
-	static wxChar s_lastCharEntered = 0;
-
 	int pos = GetCurrentPos();
 	bool canShowCompletionBox(true);
 
@@ -613,7 +613,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		if ( word.IsEmpty() ) {
 			HideCompletionBox();
 		} else {
-			if(m_ccBox->SelectWord(word)) {
+			if (m_ccBox->SelectWord(word)) {
 				canShowCompletionBox = false;
 				HideCompletionBox();
 			}
@@ -674,34 +674,40 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		m_context->AutoIndent(event.GetKey());
 		break;
 	case '\n': {
-			// incase ENTER was hit immediatly after we inserted '{' into the code...
-			if ( s_lastCharEntered == wxT('{') && m_autoAddMatchedBrace && !m_disableSmartIndent) {
-				matchChar = '}';
-				InsertText(pos, matchChar);
-				BeginUndoAction();
-				//InsertText(pos, GetEolString());
-				CharRight();
+		long matchedPos(wxNOT_FOUND);
+		// incase ENTER was hit immediatly after we inserted '{' into the code...
+		if ( m_lastCharEntered == wxT('{')                         && // Last char entered was {
+			 m_autoAddMatchedBrace                                 && // auto-add-match-brace option is enabled
+			 !m_disableSmartIndent                                 && // the disable smart indent option is NOT enabled
+			 MatchBraceBack(wxT('}'), GetCurrentPos(), matchedPos) && // Insert it only if it match an open brace
+			 matchedPos == m_lastCharEnteredPos) {                    // and that open brace must be the one that we have inserted
 
-				m_context->AutoIndent(wxT('}'));
+			// Add closing brace only if the last char that was entered is the match for it
+			matchChar = '}';
+			InsertText(pos, matchChar);
+			BeginUndoAction();
+			CharRight();
 
-				InsertText(pos, GetEolString());
-				CharRight();
-				SetCaretAt(pos);
+			m_context->AutoIndent(wxT('}'));
 
-				m_context->AutoIndent(wxT('\n'));
+			InsertText(pos, GetEolString());
+			CharRight();
+			SetCaretAt(pos);
 
-				EndUndoAction();
-			} else {
+			m_context->AutoIndent(wxT('\n'));
 
-				m_context->AutoIndent(event.GetKey());
+			EndUndoAction();
 
-				// incase we are typing in a folded line, make sure it is visible
-				EnsureVisible(curLine+1);
-			}
+		} else {
 
+			m_context->AutoIndent(event.GetKey());
+
+			// incase we are typing in a folded line, make sure it is visible
+			EnsureVisible(curLine+1);
 		}
+	}
 
-		break;
+	break;
 	default:
 		break;
 	}
@@ -746,8 +752,12 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 
 	if ( event.GetKey() !=  13 ) {
 		// Dont store last character if it was \r
-		s_lastCharEntered = event.GetKey();
+		m_lastCharEntered    = event.GetKey();
+
+		// Since we already entered the character...
+		m_lastCharEnteredPos = PositionBefore( GetCurrentPos() );
 	}
+
 	event.Skip();
 }
 
@@ -1791,7 +1801,7 @@ void LEditor::FoldAll()
 	bool SkipTopFold = false;
 	if (expanded) {
 		int topline = 0;
-		while( !(GetFoldLevel(topline) & wxSCI_FOLDLEVELHEADERFLAG)) {
+		while ( !(GetFoldLevel(topline) & wxSCI_FOLDLEVELHEADERFLAG)) {
 			// This line wasn't a fold-point, so inc until we find one
 			if ( ++topline >= maxLine) return;
 		}
@@ -1799,7 +1809,7 @@ void LEditor::FoldAll()
 		if (BottomOfFold >= maxLine || BottomOfFold == -1) return;
 		// We've found the bottom of the topmost fold-point. See if there's another fold below it
 		++BottomOfFold;
-		while( !(GetFoldLevel(BottomOfFold) & wxSCI_FOLDLEVELHEADERFLAG)) {
+		while ( !(GetFoldLevel(BottomOfFold) & wxSCI_FOLDLEVELHEADERFLAG)) {
 			if ( ++BottomOfFold >= maxLine) {
 				// If we're here, the top fold must encompass the whole file, so set the flag
 				SkipTopFold = true;
@@ -1817,8 +1827,8 @@ void LEditor::FoldAll()
 		int level = GetFoldLevel(line);
 		// If we're skipping an all-encompassing fold, we use wxSCI_FOLDLEVELBASE+1
 		if ((level & wxSCI_FOLDLEVELHEADERFLAG) &&
-			(expanded ? ((level & wxSCI_FOLDLEVELNUMBERMASK) == (wxSCI_FOLDLEVELBASE + SkipTopFold)) :
-					    ((level & wxSCI_FOLDLEVELNUMBERMASK) >= wxSCI_FOLDLEVELBASE ))) {
+		        (expanded ? ((level & wxSCI_FOLDLEVELNUMBERMASK) == (wxSCI_FOLDLEVELBASE + SkipTopFold)) :
+		         ((level & wxSCI_FOLDLEVELNUMBERMASK) >= wxSCI_FOLDLEVELBASE ))) {
 			if ( GetFoldExpanded(line) == expanded ) ToggleFold( line );
 		}
 	}
@@ -1964,7 +1974,7 @@ bool LEditor::ReplaceAll()
 		txt.insert(posInChars, replaceWith);
 
 		// When not in 'selection only' update the editor buffer as well
-		if( !replaceInSelectionOnly ) {
+		if ( !replaceInSelectionOnly ) {
 			SetSelectionStart(pos);
 			SetSelectionEnd  (pos + match_len);
 			ReplaceSelection (replaceWith);
@@ -2225,7 +2235,7 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 void LEditor::OnKeyDown(wxKeyEvent &event)
 {
 	//let the context process it as well
-	if(GetFunctionTip()->IsActive() && event.GetKeyCode() == WXK_ESCAPE)
+	if (GetFunctionTip()->IsActive() && event.GetKeyCode() == WXK_ESCAPE)
 		GetFunctionTip()->Deactivate();
 
 	if (IsCompletionBoxShown()) {
@@ -2269,7 +2279,7 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 					HideCompletionBox();
 				} else {
 					word.RemoveLast();
-					if(m_ccBox->SelectWord(word)) {
+					if (m_ccBox->SelectWord(word)) {
 						HideCompletionBox();
 					}
 				}

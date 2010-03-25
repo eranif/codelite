@@ -133,7 +133,9 @@ class LEditor : public wxScintilla, public IEditor
 	bool                                        m_reloadingFile;
 	bool                                        m_disableSmartIndent;
 	bool                                        m_disableSemicolonShift;
-	clEditorTipWindow*                        m_functionTip;
+	clEditorTipWindow*                          m_functionTip;
+	wxChar                                      m_lastCharEntered;
+	int                                         m_lastCharEnteredPos;
 
 public:
 	static FindReplaceData &GetFindReplaceData() {

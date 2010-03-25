@@ -374,6 +374,23 @@ bool App::OnInit()
 		return false;
 	}
 
+	//---------------------------------------------------------
+	// Set environment variable for CodeLiteDir (make it first
+	// on the list so it can be used by other variables)
+	//---------------------------------------------------------
+	EvnVarList vars;
+	EnvironmentConfig::Instance()->Load();
+	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
+
+	EnvMap defaultSet = vars.GetVariables(wxT("Default"));
+	if(defaultSet.Contains(wxT("CodeLiteDir")) == false) {
+		vars.AddVariable(wxT("Default"), wxT("CodeLiteDir"), ManagerST::Get()->GetInstallDir());
+	}
+
+	EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
+
+	//---------------------------------------------------------
+
 #ifdef __WXMSW__
 
 	// Read registry values
@@ -550,6 +567,10 @@ void App::MSWReadRegistry()
 {
 #ifdef __WXMSW__
 
+	EvnVarList vars;
+	EnvironmentConfig::Instance()->Load();
+	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
+
 	/////////////////////////////////////////////////////////////////
 	// New way of registry:
 	// Read the registry INI file
@@ -574,10 +595,6 @@ void App::MSWReadRegistry()
 		registry.Read(wxT("wx"),         strWx);
 		registry.Read(wxT("mingw"),      strMingw);
 		registry.Read(wxT("unittestpp"), strUnitTestPP);
-
-		EvnVarList vars;
-		EnvironmentConfig::Instance()->Load();
-		EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
 
 		// Supprot for wxWidgets
 		if (strWx.IsEmpty() == false) {
@@ -646,9 +663,7 @@ void App::MSWReadRegistry()
 					rk.QueryValue(wxT("unittestpp"), strUnitTestPP);
 				}
 
-				EvnVarList vars;
-				EnvironmentConfig::Instance()->Load();
-				EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
+
 
 				if (strWx.IsEmpty() == false) {
 					// we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it

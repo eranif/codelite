@@ -254,8 +254,6 @@ public:
 	 */
 	BuildConfigPtr GetProjBuildConf(const wxString &projectName, const wxString &confName) const;
 
-	wxString ExpandVariables(const wxString &expression) const;
-
 	/**
 	 * \brief add project to the workspace build matrix. By default CodeLite will try to match the best project configuration
 	 * to the workspace configuration (i.e. Debug -> Debug, if no suitable match found, it will use the first one)

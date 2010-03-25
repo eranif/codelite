@@ -124,6 +124,8 @@
     <File Name="build_config_common.h"/>
     <File Name="includepathlocator.cpp"/>
     <File Name="includepathlocator.h"/>
+    <File Name="cl_registry.h"/>
+    <File Name="cl_registry.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ProcessControl">
     <File Name="pipedprocess.h"/>

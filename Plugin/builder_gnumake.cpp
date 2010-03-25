@@ -185,7 +185,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 	//iterate over the dependencies projects and generate makefile
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(false);
-	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
+	buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
 
 	// fix: replace all Windows like slashes to POSIX
 	buildTool.Replace(wxT("\\"), wxT("/"));
@@ -495,19 +495,17 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 	//----------------------------------------------------------
 	EvnVarList vars;
 	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
-	std::map<wxString, wxString> varMap = vars.GetVariables();
-	std::map<wxString, wxString>::const_iterator iter = varMap.begin();
+	EnvMap varMap = vars.GetVariables();
 
 	text << wxT("##") << wxT("\n");
 	text << wxT("## User defined environment variables") << wxT("\n");
 	text << wxT("##") << wxT("\n");
 
-	for (; iter != varMap.end(); iter++) {
-		wxString name = iter->first;
-		wxString value = iter->second;
+	for (size_t i=0; i<varMap.GetCount(); i++) {
+		wxString name, value;
+		varMap.Get(i, name, value);
 		text << name << wxT(":=") << value << wxT("") << wxT("\n");
 	}
-
 
 
 	CreateListMacros(proj, confToBuild, text); // list of srcs and list of objects
@@ -1173,7 +1171,7 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project, const wxString
 
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
-	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
+	buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
 
 	// fix: replace all Windows like slashes to POSIX
 	buildTool.Replace(wxT("\\"), wxT("/"));
@@ -1195,7 +1193,7 @@ wxString BuilderGnuMake::GetCleanCommand(const wxString &project, const wxString
 	Export(project, confToBuild, false, false, errMsg);
 
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
-	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
+	buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
 
 	// fix: replace all Windows like slashes to POSIX
 	buildTool.Replace(wxT("\\"), wxT("/"));
@@ -1263,7 +1261,7 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 	target << relPath << bldConf->GetIntermediateDirectory() << wxT("/") << fn.GetName() << cmp->GetObjectSuffix();
 
 	cmd = GetProjectMakeCommand(proj, confToBuild, target, false, false);
-	return EnvironmentConfig::Instance()->ExpandVariables(cmd);
+	return EnvironmentConfig::Instance()->ExpandVariables(cmd, true);
 }
 
 wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg)
@@ -1297,7 +1295,7 @@ wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString &project, const wxS
 	tareget << bldConf->GetIntermediateDirectory() << wxT("/") << fn.GetName() << cmp->GetPreprocessSuffix();
 	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" ") << tareget;
 
-	return EnvironmentConfig::Instance()->ExpandVariables(cmd);
+	return EnvironmentConfig::Instance()->ExpandVariables(cmd, true);
 }
 
 wxString BuilderGnuMake::GetCdCmd(const wxFileName &path1, const wxFileName &path2)
@@ -1372,7 +1370,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(const wxFileName& wspfile, const 
 	wxString basicMakeCommand;
 
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(false);
-	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
+	buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
 	basicMakeCommand << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\"");
 
 	makeCommand << wxT("\t") << GetCdCmd(wspfile, projectPath);
@@ -1410,7 +1408,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& 
 	wxString basicMakeCommand;
 
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
-	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
+	buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
 	basicMakeCommand << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\" ");
 
 	if( addCleanTarget ) {

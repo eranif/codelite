@@ -40,6 +40,7 @@ class App : public wxApp
 private: // Methods
 	bool CopySettings(const wxString &destDir, wxString& installPath);
 	bool CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir);
+	void MSWReadRegistry();
 
 #ifdef __WXMSW__
 	HINSTANCE m_handler;

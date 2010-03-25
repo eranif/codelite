@@ -74,18 +74,17 @@ Source: "C:\MinGW-4.4.1\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversi
 Source: "C:\MinGW-4.4.1\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
 Source: "..\Runtime\wxWidgets-2.8.10\*"; DestDir: "{code:GetWxInstallDir}"; Flags: recursesubdirs ; Components: wxWidgets_2_8_10
 Source: "..\UnitTest++\*"; DestDir: "{code:GetUnitTestPPInstallDir}"; Flags: recursesubdirs ; Components: UnitTestPP
-
+ 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}"
 Name: "{group}\{cm:UninstallProgram, CodeLite}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}" ;Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite "; WorkingDir: "{app}"; Filename: "{app}\CodeLite.exe"; Tasks: quicklaunchicon
 
-[Registry]
-Root: HKCR	; Subkey: "*\shell\Open With CodeLite\command"; ValueType: string; ValueName: ""; ValueData: "{app}\CodeLite.exe -b ""{app}"" ""%1"""
-Root: HKCU	; Subkey: "SOFTWARE\CodeLite\"; ValueType: string; ValueName: "mingw"; ValueData: "{code:GetMinGWInstallDir}"
-Root: HKCU	; Subkey: "SOFTWARE\CodeLite\"; ValueType: string; ValueName: "wx"; ValueData: "{code:GetWxInstallDir}"
-Root: HKCU	; Subkey: "SOFTWARE\CodeLite\"; ValueType: string; ValueName: "unittestpp"; ValueData: "{code:GetUnitTestPPInstallDir}"
+[INI]
+Filename: "{app}\registry.ini"; Section: "environment"; Key: "wx"; String: "{code:GetMinGWInstallDir}";
+Filename: "{app}\registry.ini"; Section: "environment"; Key: "mingw"; String: "{code:GetMinGWInstallDir}";
+Filename: "{app}\registry.ini"; Section: "environment"; Key: "unittestpp"; String: "{code:GetUnitTestPPInstallDir}";
 
 [Code]
 var

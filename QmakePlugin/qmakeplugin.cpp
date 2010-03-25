@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include "environmentconfig.h"
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/mimetype.h>
@@ -142,7 +143,7 @@ void QMakePlugin::UnPlug()
 	app->Disconnect(wxEVT_GET_PROJECT_CLEAN_CMD,    wxCommandEventHandler(QMakePlugin::OnGetCleanCommand),     NULL, this);
 	app->Disconnect(wxEVT_GET_IS_PLUGIN_MAKEFILE,   wxCommandEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
 	app->Disconnect(wxEVT_TREE_ITEM_FILE_ACTIVATED, wxCommandEventHandler(QMakePlugin::OnOpenFile),            NULL, this);
-	
+
 	app->Disconnect(XRCID("new_qmake_project"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QMakePlugin::OnNewQmakeBasedProject), NULL, (wxEvtHandler*)this);
 	app->Disconnect(XRCID("qmake_settings"), wxEVT_COMMAND_MENU_SELECTED,    wxCommandEventHandler(QMakePlugin::OnSettings), NULL, (wxEvtHandler*)this);
 }
@@ -360,9 +361,9 @@ wxString QMakePlugin::DoGetBuildCommand(const wxString &project, const wxString 
 	}
 
 	BuilderConfigPtr bsptr = m_mgr->GetBuildSettingsConfigManager()->GetBuilderConfig(wxT ( "GNU makefile for g++/gcc" ));
-	wxString buildTool   = bsptr->GetToolPath();
-	buildTool            = m_mgr->GetWorkspace()->ExpandVariables(buildTool);
-	wxString jobs        = bsptr->GetToolJobs();
+	wxString buildTool     = bsptr->GetToolPath();
+	buildTool              = m_mgr->GetEnv()->ExpandVariables(buildTool, true);
+	wxString jobs          = bsptr->GetToolJobs();
 
 	// fix: replace all Windows like slashes to POSIX
 	buildTool.Replace(wxT("\\"), wxT("/"));

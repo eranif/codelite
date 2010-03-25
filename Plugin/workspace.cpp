@@ -58,11 +58,6 @@ wxString Workspace::GetName() const
 	return wxEmptyString;
 }
 
-wxString Workspace::ExpandVariables(const wxString &expression) const
-{
-	return EnvironmentConfig::Instance()->ExpandVariables(expression);
-}
-
 void Workspace::CloseWorkspace()
 {
 	if (m_doc.IsOk()) {
@@ -114,23 +109,23 @@ bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
 		}
 		child = child->GetNext();
 	}
-	
+
 	// Delete the faulty projects
 	for(size_t i=0; i<removedChildren.size(); i++) {
 		wxXmlNode *ch = removedChildren.at(i);
 		ch->GetParent()->RemoveChild(ch);
 		delete ch;
 	}
-	
+
 	// Load the database
 	wxString dbfile = GetStringProperty(wxT("Database"), errMsg);
 	if ( dbfile.IsEmpty() ) {
 		errMsg = wxT("Missing 'Database' value in workspace '");
 		return false;
 	}
-	
+
 	errMsg = tmperr;
-	
+
 	// the database file names are relative to the workspace,
 	// convert them to absolute path
 	wxFileName fn(dbfile);
@@ -279,7 +274,7 @@ void Workspace::AddProjectToBuildMatrix(ProjectPtr prj)
 				prjBldConf = settings->GetNextBuildConfiguration(cookie);
 			}
 		}
-		
+
 		ConfigMappingEntry entry(prj->GetName(), matchConf->GetName());
 			prjList.push_back(entry);
 			(*iter)->SetConfigMappingList(prjList);

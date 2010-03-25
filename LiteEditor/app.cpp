@@ -24,8 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/socket.h>
+#include "cl_registry.h"
 #include "fileextmanager.h"
 #include <wx/splash.h>
+#include <wx/fileconf.h>
 #include "evnvarlist.h"
 #include "environmentconfig.h"
 #include "conffilelocator.h"
@@ -102,9 +104,9 @@ wxString MacGetBasePath()
 static wxBitmap clDrawSplashBitmap(const wxBitmap& bitmap, const wxString &mainTitle)
 {
 	wxBitmap bmp ( bitmap.GetWidth(), bitmap.GetHeight()  );
-    wxMemoryDC dcMem;
-	
-    dcMem.SelectObject( bmp );
+	wxMemoryDC dcMem;
+
+	dcMem.SelectObject( bmp );
 	dcMem.DrawBitmap  ( bitmap, 0, 0, true);
 
 	//write the main title & subtitle
@@ -119,7 +121,7 @@ static wxBitmap clDrawSplashBitmap(const wxBitmap& bitmap, const wxString &mainT
 
 	//draw shadow
 	dcMem.SetTextForeground(wxT("WHITE"));
-	
+
 	wxCoord textX = (bmpW - w)/2;
 	dcMem.DrawText(mainTitle, textX, 11);
 	dcMem.SelectObject(wxNullBitmap);
@@ -132,8 +134,7 @@ static wxBitmap clDrawSplashBitmap(const wxBitmap& bitmap, const wxString &mainT
 class clSplashScreen : public wxSplashScreen
 {
 public:
-	clSplashScreen(const wxBitmap& bmp) : wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 5000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE| wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP)
-	{
+	clSplashScreen(const wxBitmap& bmp) : wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 5000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE| wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP) {
 	}
 };
 
@@ -240,13 +241,13 @@ bool App::OnInit()
 		return false;
 	}
 
-	if(parser.Found(wxT("h"))){
+	if (parser.Found(wxT("h"))) {
 		// print usage
 		parser.Usage();
 		return false;
 	}
-	
-	if(parser.Found(wxT("p"))){
+
+	if (parser.Found(wxT("p"))) {
 		// Load codelite without plugins
 		SetLoadPlugins(false);
 	}
@@ -286,10 +287,10 @@ bool App::OnInit()
 #elif defined (__WXMAC__)
 	SetAppName(wxT("codelite"));
 	homeDir = wxStandardPaths::Get().GetUserDataDir();
-	
+
 	{
 		wxLogNull noLog;
-		
+
 		//Create the directory structure
 		wxMkdir(homeDir);
 		wxMkdir(homeDir + wxT("/lexers/"));
@@ -298,7 +299,7 @@ bool App::OnInit()
 		wxMkdir(homeDir + wxT("/rc/"));
 		wxMkdir(homeDir + wxT("/images/"));
 		wxMkdir(homeDir + wxT("/templates/"));
-		wxMkdir(homeDir + wxT("/config/"));	
+		wxMkdir(homeDir + wxT("/config/"));
 	}
 
 	wxString installPath( MacGetBasePath() );
@@ -314,13 +315,13 @@ bool App::OnInit()
 
 	// try to locate the menu/rc.xrc file
 	wxFileName fn(homeDir + wxT("/rc"), wxT("menu.xrc"));
-	if(!fn.FileExists()){
+	if (!fn.FileExists()) {
 		// we got wrong home directory
 		wxFileName appFn( wxAppBase::argv[0] );
 		homeDir = appFn.GetPath();
 	}
 
-	if(fnHomdDir.IsRelative()){
+	if (fnHomdDir.IsRelative()) {
 		fnHomdDir.MakeAbsolute();
 		homeDir = fnHomdDir.GetPath();
 	}
@@ -374,58 +375,10 @@ bool App::OnInit()
 	}
 
 #ifdef __WXMSW__
-	// Update PATH environment variable with the install directory and
-	// MinGW default installation (if exists)
-	wxString pathEnv;
-	if(wxGetEnv(wxT("PATH"), &pathEnv) == false){
-		wxLogMessage(_("WARNING: Failed to load environment variable PATH!"));
-	} else {
-		pathEnv << wxT(";") << homeDir << wxT(";");
 
-		// read the installation path of MinGW & WX
-		wxRegKey rk(wxT("HKEY_CURRENT_USER\\Software\\CodeLite"));
-		if(rk.Exists()) {
-			m_parserPaths.Clear();
-			wxString strWx, strMingw;
-			if(rk.HasValue(wxT("wx"))){
-				rk.QueryValue(wxT("wx"), strWx);
-			}
+	// Read registry values
+	MSWReadRegistry();
 
-			if(rk.HasValue(wxT("mingw"))){
-				rk.QueryValue(wxT("mingw"), strMingw);
-			}
-
-			EvnVarList vars;
-			EnvironmentConfig::Instance()->Load();
-			EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
-
-			if(strWx.IsEmpty() == false) {
-				// we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
-				std::map<wxString, wxString> envs = vars.GetVariables(wxT("Default"));
-				
-				if(envs.find(wxT("WXWIN")) == envs.end()) {
-					vars.AddVariable(wxT("Default"), wxT("WXWIN"), strWx);
-					vars.AddVariable(wxT("Default"), wxT("PATH"),  wxT("$(WXWIN)\\lib\\gcc_dll;$(PATH)"));
-				}
-				
-				if(envs.find(wxT("WXCFG")) == envs.end())
-					vars.AddVariable(wxT("Default"), wxT("WXCFG"), wxT("gcc_dll\\mswu"));
-
-				EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
-				wxSetEnv(wxT("WX_INCL_HOME"), strWx + wxT("\\include"));
-			}
-
-			if(strMingw.IsEmpty() == false) {
-				// Add the installation include paths
-				pathEnv << wxT(";") << strMingw << wxT("\\bin");
-				wxSetEnv(wxT("MINGW_INCL_HOME"), strMingw);
-			}
-		}
-
-		if(wxSetEnv(wxT("PATH"), pathEnv) == false){
-			wxLogMessage(_("WARNING: Failed to update environment variable PATH"));
-		}
-	}
 #endif
 
 	GeneralInfo inf;
@@ -446,7 +399,7 @@ bool App::OnInit()
 			m_splash = new clSplashScreen(splash);
 		}
 	}
-	
+
 	// Create the main application window (a dialog in this case)
 	// NOTE: Vertical dimension comprises the caption bar.
 	//       Horizontal dimension has to take into account the thin
@@ -462,9 +415,9 @@ bool App::OnInit()
 
 	long lineNumber(0);
 	parser.Found(wxT("l"), &lineNumber);
-	if(lineNumber > 0){
+	if (lineNumber > 0) {
 		lineNumber--;
-	}else{
+	} else {
 		lineNumber = 0;
 	}
 
@@ -488,7 +441,7 @@ bool App::OnInit()
 #ifdef __WXGTK__
 	// Needed on GTK
 	ManagerST::Get()->UpdateMenuAccelerators();
-	if(Frame::Get()->GetMainBook()->GetActiveEditor() == NULL) {
+	if (Frame::Get()->GetMainBook()->GetActiveEditor() == NULL) {
 		Frame::Get()->GetOutputPane()->GetBuildTab()->SetFocus();
 	}
 #endif
@@ -506,7 +459,7 @@ int App::OnExit()
 bool App::CopySettings(const wxString &destDir, wxString& installPath)
 {
 	wxLogNull noLog;
-	
+
 	///////////////////////////////////////////////////////////////////////////////////////////
 	// copy new settings from the global installation location which is currently located at
 	// /usr/local/share/codelite/ (Linux) or at codelite.app/Contents/SharedSupport
@@ -565,10 +518,10 @@ bool App::CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir
 
 				wxString file_name, tmp_file;
 				tmp_file 	<< ManagerST::Get()->GetStarupDirectory()
-							<< wxT("/ipc/command.msg.tmp");
+				<< wxT("/ipc/command.msg.tmp");
 
 				file_name 	<< ManagerST::Get()->GetStarupDirectory()
-							<< wxT("/ipc/command.msg");
+				<< wxT("/ipc/command.msg");
 
 				// write the content to a temporary file, once completed,
 				// rename the file to the actual file name
@@ -591,4 +544,151 @@ void App::MacOpenFile(const wxString& fileName)
 		Frame::Get()->GetMainBook()->OpenFile(fileName);
 		break;
 	}
+}
+
+void App::MSWReadRegistry()
+{
+#ifdef __WXMSW__
+
+	/////////////////////////////////////////////////////////////////
+	// New way of registry:
+	// Read the registry INI file
+	/////////////////////////////////////////////////////////////////
+
+	// Update PATH environment variable with the install directory and
+	// MinGW default installation (if exists)
+	wxString pathEnv;
+	wxGetEnv(wxT("PATH"), &pathEnv);
+	pathEnv << wxT(";") << ManagerST::Get()->GetInstallDir() << wxT(";");
+
+	// Load the registry file
+	wxString iniFile;
+	iniFile << ManagerST::Get()->GetInstallDir() << wxFileName::GetPathSeparator() << wxT("registry.ini");
+
+	if (wxFileName::FileExists(iniFile)) {
+		clRegistry::SetFilename(iniFile);
+		clRegistry registry;
+
+		m_parserPaths.Clear();
+		wxString strWx, strMingw, strUnitTestPP;
+		registry.Read(wxT("wx"),         strWx);
+		registry.Read(wxT("mingw"),      strMingw);
+		registry.Read(wxT("unittestpp"), strUnitTestPP);
+
+		EvnVarList vars;
+		EnvironmentConfig::Instance()->Load();
+		EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
+
+		// Supprot for wxWidgets
+		if (strWx.IsEmpty() == false) {
+			// we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
+			EnvMap envs = vars.GetVariables(wxT("Default"));
+
+			if (!envs.Contains(wxT("WXWIN"))) {
+				vars.AddVariable(wxT("Default"), wxT("WXWIN"), strWx);
+				vars.AddVariable(wxT("Default"), wxT("PATH"),  wxT("$(WXWIN)\\lib\\gcc_dll;$(PATH)"));
+			}
+
+			if (!envs.Contains(wxT("WXCFG")))
+				vars.AddVariable(wxT("Default"), wxT("WXCFG"), wxT("gcc_dll\\mswu"));
+
+			EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
+			wxSetEnv(wxT("WX_INCL_HOME"), strWx + wxT("\\include"));
+		}
+
+		// Support for UnitTest++
+		if (strUnitTestPP.IsEmpty() == false) {
+			// we have UnitTest++ installed on this machine
+			EnvMap envs = vars.GetVariables(wxT("Default"));
+
+			if (!envs.Contains(wxT("UNIT_TEST_PP_SRC_DIR")) ) {
+				vars.AddVariable(wxT("Default"), wxT("UNIT_TEST_PP_SRC_DIR"), strUnitTestPP);
+			}
+
+			EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
+		}
+
+		// Support for MinGW
+		if (strMingw.IsEmpty() == false) {
+			// Add the installation include paths
+			pathEnv << wxT(";") << strMingw << wxT("\\bin");
+			wxSetEnv(wxT("MINGW_INCL_HOME"), strMingw);
+		}
+
+		wxSetEnv(wxT("PATH"), pathEnv);
+
+	} else {
+
+		// Use the old way: read values from registry. This code is kept so people using
+		// SVN build of codelite can continue working with it until an official build is released
+		// Update PATH environment variable with the install directory and
+		// MinGW default installation (if exists)
+		wxString pathEnv;
+		if (wxGetEnv(wxT("PATH"), &pathEnv) == false) {
+			wxLogMessage(_("WARNING: Failed to load environment variable PATH!"));
+		} else {
+			pathEnv << wxT(";") << ManagerST::Get()->GetInstallDir() << wxT(";");
+
+			// read the installation path of MinGW & WX
+			wxRegKey rk(wxT("HKEY_CURRENT_USER\\Software\\CodeLite"));
+			if (rk.Exists()) {
+				m_parserPaths.Clear();
+				wxString strWx, strMingw, strUnitTestPP;
+				if (rk.HasValue(wxT("wx"))) {
+					rk.QueryValue(wxT("wx"), strWx);
+				}
+
+				if (rk.HasValue(wxT("mingw"))) {
+					rk.QueryValue(wxT("mingw"), strMingw);
+				}
+
+				if (rk.HasValue(wxT("unittestpp"))) {
+					rk.QueryValue(wxT("unittestpp"), strUnitTestPP);
+				}
+
+				EvnVarList vars;
+				EnvironmentConfig::Instance()->Load();
+				EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
+
+				if (strWx.IsEmpty() == false) {
+					// we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
+					EnvMap envs = vars.GetVariables(wxT("Default"));
+
+					if (envs.Contains(wxT("WXWIN")) == false) {
+						vars.AddVariable(wxT("Default"), wxT("WXWIN"), strWx);
+						vars.AddVariable(wxT("Default"), wxT("PATH"),  wxT("$(WXWIN)\\lib\\gcc_dll;$(PATH)"));
+					}
+
+					if (envs.Contains(wxT("WXCFG")) == false)
+						vars.AddVariable(wxT("Default"), wxT("WXCFG"), wxT("gcc_dll\\mswu"));
+
+					EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
+					wxSetEnv(wxT("WX_INCL_HOME"), strWx + wxT("\\include"));
+				}
+
+				if (strMingw.IsEmpty() == false) {
+					// Add the installation include paths
+					pathEnv << wxT(";") << strMingw << wxT("\\bin");
+					wxSetEnv(wxT("MINGW_INCL_HOME"), strMingw);
+				}
+
+				// Support for UnitTest++
+				if (strUnitTestPP.IsEmpty() == false) {
+					// we have UnitTest++ installed on this machine
+					EnvMap envs = vars.GetVariables(wxT("Default"));
+
+					if (!envs.Contains(wxT("UNIT_TEST_PP_SRC_DIR")) ) {
+						vars.AddVariable(wxT("Default"), wxT("UNIT_TEST_PP_SRC_DIR"), strUnitTestPP);
+					}
+
+					EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
+				}
+			}
+
+			if (wxSetEnv(wxT("PATH"), pathEnv) == false) {
+				wxLogMessage(_("WARNING: Failed to update environment variable PATH"));
+			}
+		}
+	}
+#endif
 }

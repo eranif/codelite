@@ -36,7 +36,7 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
 	wxString   errMsg;
 	wxString   expandedString(expression);
 	Workspace *workspace = manager->GetWorkspace();
-	
+
 	if ( workspace ) {
 		expandedString.Replace(wxT("$(WorkspaceName)"), workspace->GetName());
 		ProjectPtr proj = workspace->FindProjectByName(project, errMsg);
@@ -50,29 +50,29 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
 			if (bldConf) {
 				expandedString.Replace(wxT("$(ProjectOutputFile)"), bldConf->GetOutputFileName());
 			}
-			
+
 			expandedString.Replace(wxT("$(ProjectPath)"), proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			expandedString.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			expandedString.Replace(wxT("$(ProjectName)"), project_name);
-			
+
 			if (bldConf) {
 				expandedString.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
 				expandedString.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
 				expandedString.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
 			}
-			
+
 			if(expandedString.Find(wxT("$(ProjectFiles)")) != wxNOT_FOUND)
 				expandedString.Replace(wxT("$(ProjectFiles)"),   proj->GetFiles());
-			
+
 			if(expandedString.Find(wxT("$(ProjectFilesAbs)")) != wxNOT_FOUND)
 				expandedString.Replace(wxT("$(ProjectFilesAbs)"),proj->GetFiles(true));
-			
-			
+
+
 		}
 	}
-	
+
 	IEditor *editor = manager->GetActiveEditor();
-	
+
 	if (editor) {
 		wxFileName fn(editor->GetFileName());
 
@@ -91,7 +91,7 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
 		{
 			int start=editor->GetSelectionStart(),
 			    end  =editor->GetSelectionEnd();
-				
+
 			wxString output=wxString::Format(wxT("%i:%i"),start,end);
 			expandedString.Replace(wxT("$(CurrentSelectionRange)"), output);
 		}
@@ -102,11 +102,11 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
 	expandedString.Replace(wxT("$(User)"), wxGetUserName());
 	expandedString.Replace(wxT("$(Date)"), now.FormatDate());
 
-	if (workspace) {
-		expandedString.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
+	if (manager) {
+		expandedString.Replace(wxT("$(CodeLitePath)"), manager->GetInstallDirectory());
 	}
 
 	//call the environment & workspace variables expand function
-	expandedString = manager->GetEnv()->ExpandVariables(expandedString);
+	expandedString = manager->GetEnv()->ExpandVariables(expandedString, true);
 	return expandedString;
 }

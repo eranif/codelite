@@ -28,6 +28,7 @@
 #include <wx/xrc/xmlres.h>
 #include "dirtraverser.h"
 #include "imanager.h"
+#include "environmentconfig.h"
 #include <wx/dataobj.h>
 #include <wx/stdpaths.h>
 #include "drawingutils.h"
@@ -341,9 +342,7 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 	}
 
 	//call the environment & workspace variables expand function
-	if ( workspace ) {
-		output = workspace->ExpandVariables(output);
-	}
+	output = EnvironmentConfig::Instance()->ExpandVariables(output, true);
 	return output;
 }
 

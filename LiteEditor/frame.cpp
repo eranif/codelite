@@ -1175,7 +1175,7 @@ void Frame::UpdateBuildTools()
 
 	if ( tool.Contains ( wxT ( "$" ) ) ) {
 		//expand
-		tool = EnvironmentConfig::Instance()->ExpandVariables ( tool );
+		tool = EnvironmentConfig::Instance()->ExpandVariables ( tool, false );
 	}
 
 	if ( !ExeLocator::Locate ( tool, path ) ) {
@@ -3343,7 +3343,7 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 			// ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints(); TODO: Reimplement this when UpdateBreakpoints() updates only alterations, rather than delete/re-enter
 
 			wxString dbgname = dinfo.path;
-			dbgname = EnvironmentConfig::Instance()->ExpandVariables(dbgname);
+			dbgname = EnvironmentConfig::Instance()->ExpandVariables(dbgname, true);
 
 			// launch the debugger
 			dbgr->SetObserver(ManagerST::Get());

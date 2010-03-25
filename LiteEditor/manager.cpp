@@ -2004,7 +2004,7 @@ void Manager::DbgStart ( long pid )
 	}
 
 	wxString dbgname = dbginfo.path;
-	dbgname = EnvironmentConfig::Instance()->ExpandVariables ( dbgname );
+	dbgname = EnvironmentConfig::Instance()->ExpandVariables ( dbgname, true );
 
 	//set ourselves as the observer for the debugger class
 	dbgr->SetObserver ( this );

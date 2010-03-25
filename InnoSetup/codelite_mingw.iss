@@ -80,16 +80,15 @@ Name: "{group}\{cm:UninstallProgram, CodeLite}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}" ;Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite "; WorkingDir: "{app}"; Filename: "{app}\CodeLite.exe"; Tasks: quicklaunchicon
 
-[Registry]
-Root: HKCR	; Subkey: "*\shell\Open With CodeLite\command"; ValueType: string; ValueName: ""; ValueData: "{app}\CodeLite.exe -b ""{app}"" ""%1"""
-Root: HKCU	; Subkey: "SOFTWARE\CodeLite\"; ValueType: string; ValueName: "mingw"; ValueData: "{code:GetMinGWInstallDir}"
-Root: HKCU	; Subkey: "SOFTWARE\CodeLite\"; ValueType: string; ValueName: "unittestpp"; ValueData: "{code:GetUnitTestPPInstallDir}"
+[INI]
+Filename: "{app}\registry.ini"; Section: "environment"; Key: "mingw"; String: "{code:GetMinGWInstallDir}";
+Filename: "{app}\registry.ini"; Section: "environment"; Key: "unittestpp"; String: "{code:GetUnitTestPPInstallDir}";
 
 [Code]
 var
   MinGW_Page:      TInputDirWizardPage;
   UnitTestPP_Page: TInputDirWizardPage;
-  
+
 procedure CreateMinGWPage();
 begin
   MinGW_Page := CreateInputDirPage(wpSelectComponents,

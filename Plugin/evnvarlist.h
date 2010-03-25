@@ -26,7 +26,24 @@
 #define __evnvarlist__
 
 #include "serialized_object.h"
-#include <set>
+#include <wx/arrstr.h>
+
+class EnvMap
+{
+	wxArrayString m_keys;
+	wxArrayString m_values;
+
+public:
+	EnvMap();
+	~EnvMap();
+
+	void     Put(const wxString &key, const wxString &val);
+	bool     Get(const wxString& key, wxString& val);
+	void     Clear();
+	size_t   GetCount();
+	bool     Get(size_t index, wxString &key, wxString &val);
+	bool     Contains(const wxString &key);
+};
 
 class EvnVarList : public SerializedObject
 {
@@ -44,7 +61,7 @@ public:
 		if(activeSet != wxT("<Use Active Set>"))
 			this->m_activeSet = activeSet;
 	}
-	
+
 	const wxString& GetActiveSet() const {
 		return m_activeSet;
 	}
@@ -55,9 +72,10 @@ public:
 		return m_envVarSets;
 	}
 
-	void AddVariable(const wxString &setName, const wxString &name, const wxString &value);
-	std::map<wxString, wxString> GetVariables(const wxString &setName = wxT(""));
-	bool IsSetExist(const wxString &setName);
+	void   AddVariable(const wxString &setName, const wxString &name, const wxString &value);
+	EnvMap GetVariables(const wxString &setName = wxT(""));
+	bool   IsSetExist(const wxString &setName);
+
 public:
 	virtual void DeSerialize(Archive &arch);
 	virtual void Serialize  (Archive &arch);

@@ -236,7 +236,6 @@ void CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, Proje
 	bldConf->GetPostBuildCommands(postBuildCmds);
 
 	BuildManager *bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
-	Workspace *w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
 
 	// collect all enabled commands
 	BuildCommandList::iterator iter = preBuildCmds.begin();
@@ -298,7 +297,7 @@ void CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, Proje
 	}
 
 	wxString buildTool = bm->GetSelectedBuilder()->GetBuildToolCommand(true);
-	buildTool = w->ExpandVariables(buildTool);
+	buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
 
 	cmd.Clear();
 	cmd << buildTool << wxT(" \"") << fn << wxT("\"");

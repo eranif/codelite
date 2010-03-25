@@ -22,27 +22,36 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __environmentconfig__
+#ifndef __environmentconfig__
 #define __environmentconfig__
 
 #include "configurationtoolbase.h"
 #include "archive.h"
 #include "evnvarlist.h"
 
-class EnvironmentConfig : public ConfigurationToolBase {
+class EnvSetter;
+class EnvironmentConfig : public ConfigurationToolBase
+{
+	// Allow access to Apply/UnApply Env
+	friend class EnvSetter;
 
 	static EnvironmentConfig* ms_instance;
 	StringMap m_envSnapshot;
+	int       m_envApplied;
+
+protected:
+	wxString    DoExpandVariables(const wxString &in);
+	void        ApplyEnv(StringMap *overrideMap);
+	void        UnApplyEnv();
 
 public:
 	static EnvironmentConfig* Instance();
 	static void Release();
-	bool Load();
-	wxString ExpandVariables(const wxString &in);
-	void ApplyEnv(StringMap *overrideMap);
-	void UnApplyEnv();
-	EvnVarList GetSettings();
-	void       SetSettings(EvnVarList &vars);
+	bool        Load();
+	wxString    ExpandVariables(const wxString &in, bool applyEnvironment);
+	EvnVarList  GetSettings();
+	void        SetSettings(EvnVarList &vars);
+
 private:
 	EnvironmentConfig();
 	virtual ~EnvironmentConfig();
@@ -60,12 +69,12 @@ public:
 	}
 
 	EnvSetter(EnvironmentConfig *conf, StringMap *om = NULL) : m_env(conf) {
-		if(m_env) {
+		if (m_env) {
 			m_env->ApplyEnv(om);
 		}
 	}
 	~EnvSetter() {
-		if(m_env) {
+		if (m_env) {
 			m_env->UnApplyEnv();
 			m_env = NULL;
 		}

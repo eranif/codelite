@@ -14,6 +14,7 @@ xcopy templates\projects\* "%ProgramFiles%\CodeLite\templates\projects\" /E /I /
 xcopy templates\gizmos\* "%ProgramFiles%\CodeLite\templates\gizmos\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\qmake\* "%ProgramFiles%\CodeLite\templates\qmake\" /E /I /H /Y /EXCLUDE:excludes
 xcopy *.html "%ProgramFiles%\CodeLite\" /H /Y /EXCLUDE:excludes
+
 :: Copy the misc files
 copy codelite_indexer.exe "%ProgramFiles%\CodeLite\" /Y
 copy codelite_cppcheck.exe "%ProgramFiles%\CodeLite\" /Y
@@ -24,5 +25,4 @@ copy CodeLite.exe "%ProgramFiles%\CodeLite\" /Y
 copy patch.exe "%ProgramFiles%\CodeLite\" /Y
 copy astyle.sample "%ProgramFiles%\CodeLite\" /Y
 copy ..\sdk\wxconfig\wx-config.exe "%ProgramFiles%\CodeLite\" /Y
-:: copy ..\sdk\curl\lib\libcurl-4.dll "%ProgramFiles%\CodeLite\" /Y
-:: copy ..\sdk\curl\lib\libcurl-4.dll . /Y
+

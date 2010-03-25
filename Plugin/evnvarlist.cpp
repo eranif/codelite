@@ -67,10 +67,10 @@ void EvnVarList::AddVariable(const wxString &setName, const wxString& name, cons
 	m_envVarSets[actualSetName] = currentValueStr;
 }
 
-std::map<wxString,wxString> EvnVarList::GetVariables(const wxString& setName)
+EnvMap EvnVarList::GetVariables(const wxString& setName)
 {
-	std::map<wxString,wxString> variables;
-	wxString                    actualSetName;
+	EnvMap   variables;
+	wxString actualSetName;
 
 	wxString      currentValueStr = DoGetSetVariablesStr(setName, actualSetName);
 	wxArrayString currentValues   = wxStringTokenize(currentValueStr, wxT("\r\n"), wxTOKEN_STRTOK);
@@ -79,7 +79,7 @@ std::map<wxString,wxString> EvnVarList::GetVariables(const wxString& setName)
 		line.Trim().Trim(false);
 		wxString varname  = line.BeforeFirst(wxT('='));
 		wxString varvalue = line.AfterFirst(wxT('='));
-		variables[varname] = varvalue;
+		variables.Put(varname, varvalue);
 	}
 	return variables;
 }
@@ -110,4 +110,64 @@ wxString EvnVarList::DoGetSetVariablesStr(const wxString& setName, wxString& sel
 bool EvnVarList::IsSetExist(const wxString& setName)
 {
 	return m_envVarSets.find(setName) != m_envVarSets.end();
+}
+
+
+// Env Map helper class
+EnvMap::EnvMap()
+{
+}
+
+EnvMap::~EnvMap()
+{
+}
+
+bool EnvMap::Get(const wxString& key, wxString& val)
+{
+	int where = m_keys.Index(key);
+	if(where == wxNOT_FOUND)
+		return false;
+
+	val = m_values.Item(where);
+	return true;
+}
+
+void EnvMap::Put(const wxString& key, const wxString& val)
+{
+	int where = m_keys.Index(key);
+	if(where == wxNOT_FOUND) {
+		m_keys.Add(key);
+		m_values.Add(val);
+
+	} else {
+		m_keys.Item(where) = key;
+		m_values.Item(where) = val;
+
+	}
+}
+
+void EnvMap::Clear()
+{
+	m_keys.Clear();
+	m_values.Clear();
+}
+
+size_t EnvMap::GetCount()
+{
+	return m_keys.GetCount();
+}
+
+bool EnvMap::Get(size_t index, wxString& key, wxString& val)
+{
+	if(index >= m_keys.GetCount())
+		return false;
+
+	key = m_keys.Item(index);
+	val = m_values.Item(index);
+	return true;
+}
+
+bool EnvMap::Contains(const wxString& key)
+{
+	return m_keys.Index(key) != wxNOT_FOUND;
 }

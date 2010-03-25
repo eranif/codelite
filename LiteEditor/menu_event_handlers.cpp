@@ -39,32 +39,61 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 
 	if (event.GetId() == wxID_COPY) {
 		editor->Copy();
+
 	} else if (event.GetId() == wxID_CUT) {
 		editor->Cut();
+
 	} else if (event.GetId() == wxID_PASTE) {
 		editor->Paste();
+
 	} else if (event.GetId() == wxID_UNDO) {
 		editor->Undo();
+
 	} else if (event.GetId() == wxID_REDO) {
 		editor->Redo();
+
 	} else if (event.GetId() == wxID_SELECTALL) {
 		editor->SelectAll();
+
 	} else if (event.GetId() == wxID_DUPLICATE) {
 		editor->SelectionDuplicate();
+
 	} else if (event.GetId() == XRCID("delete_line_end")) {
 		editor->DelLineRight();
+
 	} else if (event.GetId() == XRCID("delete_line_start")) {
 		editor->DelLineLeft();
+
 	} else if (event.GetId() == XRCID("delete_line")) {
 		editor->LineDelete();
+
 	} else if (event.GetId() == XRCID("to_lower")) {
 		editor->LowerCase();
+
 	} else if (event.GetId() == XRCID("to_upper")) {
 		editor->UpperCase();
+
 	} else if (event.GetId() == XRCID("transpose_lines")) {
 		editor->LineTranspose();
+
 	} else if (event.GetId() == wxID_DELETE) {
 		editor->DeleteBack();
+
+	} else if (event.GetId() == XRCID("move_line_down")) {
+
+		int curline  = editor->GetCurrentLine();
+		int lastline = editor->LineFromPosition(editor->GetLength()-1);
+		// Dont transpose if we reached end of the document
+		if(curline == lastline)
+			return;
+
+		editor->LineDown();
+		editor->LineTranspose();
+
+	} else if (event.GetId() == XRCID("move_line_up")) {
+		editor->LineTranspose();
+		editor->LineUp();
+
 	}
 }
 

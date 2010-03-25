@@ -20,6 +20,8 @@ delete_line|Edit|Delete Line|Ctrl-L
 to_lower|Edit|Make Lowercase|
 to_upper |Edit|Make Uppercase|
 transpose_lines|Edit|Transpose Lines|Ctrl-T
+move_line_up|Edit|Move Line Up|Ctrl-PGUP
+move_line_down|Edit|Move Line Down|Ctrl-PGDN
 wxID_SELECTALL|Edit|Select All|Ctrl-A
 match_brace|Edit|Match Brace|Ctrl-]
 select_to_brace|Edit|Select to Brace|Ctrl-Shift-E

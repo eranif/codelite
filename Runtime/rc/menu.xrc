@@ -102,6 +102,12 @@
 			<object class="wxMenuItem" name="transpose_lines">
 				 <label>&amp;Transpose Lines</label>
 			 </object>
+			<object class="wxMenuItem" name="move_line_up">
+				 <label>Move Line Up</label>
+			 </object>
+			<object class="wxMenuItem" name="move_line_down">
+				 <label>Move Line Down</label>
+			 </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="to_upper">
 				 <label>Make Upper&amp;case</label>
@@ -849,21 +855,21 @@
             <label>Workspace Settings...</label>
         </object>
     </object>
-	
+
 	<!-- Workspace view right click menu -->
 	<object class="wxMenu" name="workspace_view_rmenu">
         <object class="wxMenuItem" name="detach_wv_tab">
             <label>Detach</label>
         </object>
     </object>
-	
+
 	<!-- Workspace view right click menu -->
 	<object class="wxMenu" name="debugger_view_rmenu">
         <object class="wxMenuItem" name="detach_debugger_tab">
             <label>Detach</label>
         </object>
     </object>
-	
+
 	<object class="wxMenu" name="file_tree_file">
         <object class="wxMenuItem" name="compile_item">
             <label>Compile</label>

@@ -199,6 +199,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("convert_eol_win"),          Frame::OnConvertEol)
 	EVT_MENU(XRCID("convert_eol_unix"),         Frame::OnConvertEol)
 	EVT_MENU(XRCID("convert_eol_mac"),          Frame::OnConvertEol)
+	EVT_MENU(XRCID("move_line_down"),           Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("move_line_up"),             Frame::DispatchCommandEvent)
 
 	EVT_UPDATE_UI(wxID_UNDO,                    Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(wxID_REDO,                    Frame::DispatchUpdateUIEvent)
@@ -216,6 +218,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("convert_eol_win"),     Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("convert_eol_unix"),    Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("convert_eol_mac"),     Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("move_line_down"),      Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("move_line_up"),        Frame::OnFileExistUpdateUI)
 
 	//-------------------------------------------------------
 	// View menu

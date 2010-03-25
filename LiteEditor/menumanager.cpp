@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "menumanager.h"
+#include "menumanager.h"
 #include "menu_event_handlers.h"
 #include "macros.h"
 
@@ -44,6 +44,8 @@ MenuManager::MenuManager(void)
 	PushHandler(new EditHandler(XRCID("to_upper")));
 	PushHandler(new EditHandler(XRCID("to_lower")));
 	PushHandler(new EditHandler(XRCID("swap_files")));
+	PushHandler(new EditHandler(XRCID("move_line_down")));
+	PushHandler(new EditHandler(XRCID("move_line_up")));
 	PushHandler(new BraceMatchHandler(XRCID("select_to_brace")));
 	PushHandler(new BraceMatchHandler(XRCID("match_brace")));
 	PushHandler(new FindReplaceHandler(wxID_FIND));
@@ -73,4 +75,17 @@ MenuManager::MenuManager(void)
 
 MenuManager::~MenuManager(void)
 {
+}
+
+void MenuManager::PushHandler(MenuEventHandlerPtr handler)
+{
+	m_handlers[handler->GetEventId()] = handler;
+}
+
+MenuEventHandlerPtr MenuManager::GetHandler(int id)
+{
+	HandlesrHash::iterator iter = m_handlers.find(id);
+	if ( iter != m_handlers.end() )
+		return iter->second;
+	return NULL;
 }

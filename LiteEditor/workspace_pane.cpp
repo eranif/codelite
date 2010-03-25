@@ -123,7 +123,7 @@ void WorkspacePane::CreateGUIControls()
 		cp->SetChildNoReparent(m_explorer);
 	} else {
 		m_explorer = new FileExplorer(m_book, name);
-		m_book->AddPage(m_explorer, name, true);
+		m_book->AddPage(m_explorer, name, false);
 	}
 
 	// Add the Outline tab
@@ -134,7 +134,7 @@ void WorkspacePane::CreateGUIControls()
 		cp->SetChildNoReparent(m_winStack);
 	} else {
 		m_winStack = new WindowStack(m_book);
-		m_book->AddPage(m_winStack, name, true);
+		m_book->AddPage(m_winStack, name, false);
 	}
 
 	// Add the Open Windows Panel (Tabs)
@@ -145,7 +145,7 @@ void WorkspacePane::CreateGUIControls()
 		cp->SetChildNoReparent(m_openWindowsPane);
 	} else {
 		m_openWindowsPane = new OpenWindowsPanel(m_book, name);
-		m_book->AddPage(m_openWindowsPane, name, true);
+		m_book->AddPage(m_openWindowsPane, name, false);
 	}
 
 	if (m_book->GetPageCount() > 0) {

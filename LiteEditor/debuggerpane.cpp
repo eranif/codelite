@@ -111,7 +111,7 @@ void DebuggerPane::CreateGUIControls()
 
 	} else {
 		m_localsTable = new LocalsTable(m_book);
-		m_book->AddPage(m_localsTable, name, false);
+		m_book->AddPage(m_localsTable, name, false, bmp);
 	}
 
 	// Add the 'watches View'
@@ -124,7 +124,7 @@ void DebuggerPane::CreateGUIControls()
 
 	} else {
 		m_watchesTable = new WatchesTable(m_book);
-		m_book->AddPage(m_watchesTable, name, false);
+		m_book->AddPage(m_watchesTable, name, false, bmp);
 	}
 
 
@@ -138,7 +138,7 @@ void DebuggerPane::CreateGUIControls()
 
 	} else {
 		m_asciiViewer = new DebuggerAsciiViewer(m_book);
-		m_book->AddPage(m_asciiViewer, name, false);
+		m_book->AddPage(m_asciiViewer, name, false, bmp);
 	}
 
 	// Add the 'Call Stack'
@@ -151,7 +151,7 @@ void DebuggerPane::CreateGUIControls()
 
 	} else {
 		m_frameList = new ListCtrlPanel(m_book);
-		m_book->AddPage(m_frameList, name, false);
+		m_book->AddPage(m_frameList, name, false, bmp);
 	}
 
 	// Add the 'Breakpoints'
@@ -164,7 +164,7 @@ void DebuggerPane::CreateGUIControls()
 
 	} else {
 		m_breakpoints = new BreakpointDlg(m_book);
-		m_book->AddPage(m_breakpoints, name, false);
+		m_book->AddPage(m_breakpoints, name, false, bmp);
 	}
 
 	// Add the 'Breakpoints'
@@ -177,7 +177,7 @@ void DebuggerPane::CreateGUIControls()
 
 	} else {
 		m_threads = new ThreadListPanel(m_book);
-		m_book->AddPage(m_threads, name, false);
+		m_book->AddPage(m_threads, name, false, bmp);
 	}
 
 	// Add the 'Memory View'
@@ -190,7 +190,7 @@ void DebuggerPane::CreateGUIControls()
 
 	} else {
 		m_memory = new MemoryView(m_book);
-		m_book->AddPage(m_memory, name, false);
+		m_book->AddPage(m_memory, name, false, bmp);
 	}
 
 	m_initDone = true;

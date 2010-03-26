@@ -349,7 +349,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 		r.y++;
 		r.width -= 1;
 		r.height /= 2;
-		r.height--;
+//		r.height;
 
 		// -- draw top gradient fill for glossy look
 

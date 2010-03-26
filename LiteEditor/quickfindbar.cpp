@@ -26,6 +26,7 @@
 #include "editor_config.h"
 #include <wx/statline.h>
 #include "manager.h"
+#include "frame.h"
 #include <wx/textctrl.h>
 #include <wx/wxscintilla.h>
 #include "stringsearcher.h"
@@ -77,6 +78,10 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 
 	if (!StringFindReplacer::Search(text, offset, find, flags, pos, len)) {
 		// wrap around and try again
+		wxString msg = fwd ? _("Reached end of document, continued from start")
+			               : _("Reached top of document, continued from bottom");
+		Frame::Get()->SetStatusMessage(msg, 0, XRCID("findnext"));
+
 		offset = fwd ? 0 : text.Len()-1;
 		if (!StringFindReplacer::Search(text, offset, find, flags, pos, len)) {
 			m_findWhat->SetBackgroundColour(wxT("PINK"));
@@ -87,10 +92,18 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	m_findWhat->Refresh();
 	m_sci->SetSelection(pos, pos+len);
+
+	// Ensure that the found string is visible (e.g. its line isn't folded away)
+	int line = m_sci->LineFromPosition(pos);
+	if ( line >= 0 ) m_sci->EnsureVisible(line);
 }
 
 void QuickFindBar::OnHide(wxCommandEvent &e)
 {
+
+	// Kill any "...continued from start" statusbar message
+	Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
+
 	Show(false);
 	e.Skip();
 }
@@ -375,7 +388,7 @@ void QuickFindBar::OnFindNext(wxCommandEvent& e)
 	if (!m_sci || m_sci->GetLength() == 0)
 		return;
 
-	// Highlighted text takes predencese over the current search string
+	// Highlighted text takes precedence over the current search string
 	wxString selectedText = m_sci->GetSelectedText();
 	if (selectedText.IsEmpty() == false)
 		m_findWhat->SetValue(selectedText);
@@ -389,7 +402,7 @@ void QuickFindBar::OnFindPrevious(wxCommandEvent& e)
 	if (!m_sci || m_sci->GetLength() == 0)
 		return;
 
-	// Highlighted text takes predencese over the current search string
+	// Highlighted text takes precedence over the current search string
 	wxString selectedText = m_sci->GetSelectedText();
 	if (selectedText.IsEmpty() == false)
 		m_findWhat->SetValue(selectedText);

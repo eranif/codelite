@@ -8,7 +8,7 @@
   <Description/>
   <VirtualDirectory Name="src">
     <File Name="main.cpp"/>
-    <File Name="Debug\test.txt"/>
+    <File Name="Debug/test.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Grammar">
     <File Name="gdb_result.l"/>
@@ -21,9 +21,10 @@
     <File Name="gdb_result_parser.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
+  <Dependencies Name="Debug"/>
   <Settings Type="Executable">
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g" Required="yes">
+      <Compiler Options="-g" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
@@ -42,6 +43,7 @@
         <Command Enabled="yes">copy gdb_result_parser.cpp ..\Debugger\.</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
+        <RebuildCommand/>
         <CleanCommand/>
         <BuildCommand/>
         <PreprocessFileCommand/>
@@ -65,7 +67,7 @@ gdb_result_lexer.cpp: gdb_result.l
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="" Required="yes">
+      <Compiler Options="" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
@@ -79,6 +81,7 @@ gdb_result_lexer.cpp: gdb_result.l
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
+        <RebuildCommand/>
         <CleanCommand/>
         <BuildCommand/>
         <PreprocessFileCommand/>
@@ -102,5 +105,4 @@ gdb_result_lexer.cpp: gdb_result.l
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="Debug"/>
 </CodeLite_Project>

@@ -103,6 +103,9 @@ nr_cols                                                    {RETURN_VAL(GDB_NR_CO
 hdr                                                        {RETURN_VAL(GDB_HDR);}
 body                                                       {RETURN_VAL(GDB_BODY);}
 bkpt                                                       {RETURN_VAL(GDB_BKPT);}
+stopped                                                    {RETURN_VAL(GDB_STOPPED);}
+time                                                       {RETURN_VAL(GDB_TIME);}
+reason                                                     {RETURN_VAL(GDB_REASON);}
 {identifier}                                               {RETURN_VAL(GDB_IDENTIFIER);}
 "^"                                                        {RETURN_VAL((int)*yytext);}
 "="                                                        {RETURN_VAL((int)*yytext);}

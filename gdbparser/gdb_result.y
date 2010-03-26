@@ -64,6 +64,9 @@ static std::vector<std::string>                         sg_locals;
 %token GDB_HDR
 %token GDB_BODY
 %token GDB_BKPT
+%token GDB_STOPPED
+%token GDB_TIME
+%token GDB_REASON
 %%
 
 parse: children_list
@@ -92,6 +95,8 @@ child_pattern :   '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN 
 				| '^' GDB_DONE ',' GDB_STACK_ARGS '=' list_open GDB_FRAME '=' list_open GDB_LEVEL '=' GDB_STRING ',' GDB_ARGS '=' list_open mac_locals list_close list_close list_close
 				/* ^done,BreakpointTable={nr_rows="3",nr_cols="6",hdr=[{width="7",alignment="-1",col_name="number",colhdr="Num"},{width="14",alignment="-1",col_name="type",colhdr="Type"},{width="4",alignment="-1",col_name="disp",colhdr="Disp"},{width="3",alignment="-1",col_name="enabled",colhdr="Enb"},{width="10",alignment="-1",col_name="addr",colhdr="Address"},{width="40",alignment="2",col_name="what",colhdr="What"}],body=[bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="0x77c35571",at="<msvcrt!_assert+11>",times="0",original-location="assert"},bkpt={number="2",type="breakpoint",disp="keep",enabled="y",addr="0x004014d4",func="main",file="C:/TestArea/WxConsole/consoleproj.cpp",fullname="C:/TestArea/WxConsole/consoleproj.cpp",line="63",times="0",original-location="main"},bkpt={number="3",type="breakpoint",disp="keep",enabled="y",addr="0x004014bb",func="main",file="C:/TestArea/WxConsole/consoleproj.cpp",fullname="C:/TestArea/WxConsole/consoleproj.cpp",line="61",times="1",original-location="*4199611"}]} */
 				| '^' GDB_DONE ',' GDB_BREAKPOINT_TABLE '=' list_open bpt_table_hdr bpt_table_body list_close
+				/* */
+				| stop_statement
 				;
 
 /* {nr_rows="3",nr_cols="6",hdr=[{width="7",alignment="-1",col_name="number",colhdr="Num"},{width="14",alignment="-1",col_name="type",colhdr="Type"},{width="4",alignment="-1",col_name="disp",colhdr="Disp"},{width="3",alignment="-1",col_name="enabled",colhdr="Enb"},{width="10",alignment="-1",col_name="addr",colhdr="Address"},{width="40",alignment="2",col_name="what",colhdr="What"}*/
@@ -152,6 +157,16 @@ child_attributes :  child_key '=' GDB_STRING { sg_attributes[$1] = $3; }
 				 |  child_key '=' GDB_STRING { sg_attributes[$1] = $3; } ',' child_attributes
 				 ;
 
+stop_statement : GDB_STOPPED ',' GDB_TIME '=' '{' child_attributes '}' ',' GDB_REASON '=' GDB_STRING {
+					sg_attributes["reason"] = $11;
+					sg_children.push_back( sg_attributes );
+				}
+				| GDB_STOPPED ',' GDB_REASON '=' GDB_STRING {
+					sg_attributes["reason"] = $5;
+					sg_children.push_back( sg_attributes );
+				}
+				;
+				
 child_key: GDB_NAME       {$$ = $1;}
 		 | GDB_NUMCHILD   {$$ = $1;}
 		 | GDB_TYPE       {$$ = $1;}

@@ -32,3 +32,6 @@
 #define GDB_HDR 288
 #define GDB_BODY 289
 #define GDB_BKPT 290
+#define GDB_STOPPED 291
+#define GDB_TIME 292
+#define GDB_REASON 293

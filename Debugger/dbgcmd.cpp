@@ -219,20 +219,26 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 	//completed:
 	//-exec-step, -exec-stepi
 	//-exec-next, -exec-nexti
-	wxStringTokenizer tkz(line, wxT(","));
-	if (tkz.HasMoreTokens()) {
-		tkz.NextToken();//skip *stopped
-	} else {
-		return false;
+
+	// Get the reason
+	std::vector<std::map<std::string, std::string> > children;
+	gdbParseListChildren(line.mb_str(wxConvUTF8).data(), children);
+
+
+	for (size_t i=0; i<children.size(); i++) {
+		std::map<std::string, std::string> attr = children.at(i);
+		std::map<std::string, std::string >::const_iterator iter;
+
+		iter = attr.find("reason");
+		if ( iter != attr.end() ) {
+			reason = wxString(iter->second.c_str(), wxConvUTF8);
+			wxRemoveQuotes( reason );
+			break;
+		}
 	}
-	//get the reason
-	if (tkz.HasMoreTokens()) {
-		reason = tkz.NextToken();
-		reason = reason.AfterFirst(wxT('"'));
-		reason = reason.BeforeLast(wxT('"'));
-	} else {
+
+	if(reason.IsEmpty())
 		return false;
-	}
 
 	//Note:
 	//This might look like a stupid if-else, since all taking

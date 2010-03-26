@@ -163,6 +163,7 @@ protected:
 	void OnNavigationKey      (wxNavigationKeyEvent &e);
 	void OnKeyDown            (wxKeyEvent           &e);
 	void OnTabRightDown       (wxAuiNotebookEvent   &e);
+	void OnTabRightUp          (wxAuiNotebookEvent   &e);
 	void OnTabMiddle          (wxAuiNotebookEvent   &e);
 
 	// wxAuiNotebook events

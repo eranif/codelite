@@ -362,7 +362,13 @@ LEditor *MainBook::NewEditor()
 	wxString fileNameStr(wxT("Untitled"));
 	fileNameStr << ++fileCounter;
 	wxFileName fileName(fileNameStr);
-
+	
+	// A Nice trick: hide the notebook, open the editor
+	// and then show it
+	bool hidden(false);
+	if(m_book->GetPageCount() == 0)
+		hidden = GetSizer()->Hide(m_book);
+	
 	LEditor *editor = new LEditor(m_book);
 	editor->SetFileName(fileName);
 	AddPage(editor, fileName.GetFullName(), wxNullBitmap, true);
@@ -370,7 +376,12 @@ LEditor *MainBook::NewEditor()
 #ifdef __WXMAC__
 	m_book->GetSizer()->Layout();
 #endif
+	
+	// SHow the notebook
+	if(hidden)
+		GetSizer()->Show(m_book);
 
+	
 	editor->SetActive();
 	return editor;
 }

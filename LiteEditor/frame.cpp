@@ -843,6 +843,13 @@ void Frame::CreateGUIControls(void)
 	if ( fix ) {
 		UpdateBuildTools();
 	}
+
+#if wxVERSION_NUMBER >= 2900
+	// This is needed in >=wxGTK-2.9, otherwise the auinotebook doesn't fully expand at first
+	SendSizeEvent(wxSEND_EVENT_POST);
+	// Ditto the workspace pane auinotebook
+	GetWorkspacePane()->SendSizeEvent(wxSEND_EVENT_POST);
+#endif
 }
 
 void Frame::CreateViewAsSubMenu()
@@ -1794,6 +1801,11 @@ void Frame::ViewPane(const wxString &paneName, wxCommandEvent &event)
 			m_mgr.Update();
 		}
 	}
+
+#if wxVERSION_NUMBER >= 2900
+	// This is needed in >=wxGTK-2.9, otherwise output pane doesn't fully expand, or on closing the auinotebook doesn't occupy its space
+	SendSizeEvent(wxSEND_EVENT_POST);
+#endif
 }
 
 void Frame::ViewPaneUI(const wxString &paneName, wxUpdateUIEvent &event)

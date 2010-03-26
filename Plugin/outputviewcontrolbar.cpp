@@ -150,8 +150,12 @@ void OutputViewControlBar::DoTogglePane(bool hide)
 				wxTheApp->GetTopWindow()->Thaw();
 			}
 		}
-
 	}
+
+#if wxVERSION_NUMBER >= 2900
+	// This is needed in >=wxGTK-2.9, otherwise output pane doesn't fully expand, or on closing the auinotebook doesn't occupy its space
+	wxTheApp->GetTopWindow()->SendSizeEvent(wxSEND_EVENT_POST);
+#endif
 }
 
 void OutputViewControlBar::OnRender(wxAuiManagerEvent& event)

@@ -185,6 +185,7 @@ void BuildTab::Clear()
 	m_errorCount = 0;
 	m_warnCount = 0;
 	m_cmp.Reset ( NULL );
+	m_baseDir.Clear();
 	Frame::Get()->GetOutputPane()->GetErrorsTab()->ClearLines();
 	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 	if ( editor ) {
@@ -234,16 +235,23 @@ bool BuildTab::ExtractLineInfo ( LineInfo &info, const wxString &text, const wxR
         // find the actual workspace file (if possible)
 		wxString filename = text.Mid( info.filestart, info.filelen).Trim().Trim(false);
 		wxFileName fn(filename);
-		
+
+		info.rawFilename = filename;
+
 		// Use the current base dir
-		wxString baseDir ( m_baseDir );
+		wxString baseDir;
+		if( m_baseDir.IsEmpty() == false ) {
+			// Use the last collected directory
+			baseDir = m_baseDir.Last();
+		}
+
 		if(baseDir.IsEmpty()) {
 			ProjectPtr project = ManagerST::Get()->GetProject(info.project);
 			if(project) {
 				baseDir = project->GetFileName().GetPath();
 			}
 		}
-		
+
 		fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG, baseDir);
 		info.filename = fn.GetFullPath();
 	}
@@ -291,7 +299,28 @@ void BuildTab::DoMarkAndOpenFile ( std::map<int,LineInfo>::iterator i, bool scro
 		filename.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
 	}
 
-	LEditor *editor = Frame::Get()->GetMainBook()->OpenFile ( filename.GetFullPath(), info.project, info.linenum );
+	// Make sure that the file actually exists
+	wxString file (filename.GetFullPath());
+	if(!filename.FileExists() && m_baseDir.IsEmpty() == false) {
+
+		// When using custom build + multicore, the messages of 'Entering directory' are printed randomly
+		// and may break the open file logic
+		// What we do here, is we loop over the m_baseDir and trying to locate a file that does actually exist
+		// using all the collected 'Entering directory' messages found so far.
+		// we start looping from the end of the array
+		for(size_t i=m_baseDir.GetCount()-1; i >= 0; i--) {
+			wxString tmpFilename = info.rawFilename;
+			wxFileName fn(tmpFilename);
+
+			fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG, m_baseDir.Item(i));
+			if(fn.FileExists()) {
+				file = fn.GetFullPath();
+				break;
+			}
+		}
+	}
+
+	LEditor *editor = Frame::Get()->GetMainBook()->OpenFile ( file, info.project, info.linenum );
     if (editor == NULL) {
 		return;
 	}
@@ -330,10 +359,10 @@ void BuildTab::MarkEditor ( LEditor *editor )
 	std::multimap<wxString,int>::iterator e = iters.second;
     if (b == m_fileMap.end())
         return;
-		
+
 	std::set<wxString> uniqueSet;
     for (; b != e; b++ ) {
-		
+
 		// get the line info related to the BuildTab's line number (b->second)
         std::map<int,LineInfo>::iterator i = m_lineInfo.find ( b->second ) ;
 
@@ -345,8 +374,8 @@ void BuildTab::MarkEditor ( LEditor *editor )
 
 			wxMemoryBuffer style_bytes;
 			LineInfo lineInfo = i->second;
-			
-			// For performance, dont add the exact same markers to the same line number/filename 
+
+			// For performance, dont add the exact same markers to the same line number/filename
 			// with the exact same tip
 			wxString tipMagic;
 			tipMagic << lineInfo.linenum << lineInfo.linetext;
@@ -358,11 +387,11 @@ void BuildTab::MarkEditor ( LEditor *editor )
 				// add it to the unique set
 				uniqueSet.insert(tipMagic);
 			}
-			
+
 			// format the tip
 			int line_number = lineInfo.linenum;
 			wxString tip = GetBuildToolTip(editor->GetFileName().GetFullPath(), line_number, style_bytes);
-						
+
 			// Set annotations
 			if ( line_number >= 0 && options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotations ) {
 				editor->AnnotationSetText (line_number, tip);
@@ -407,12 +436,12 @@ void BuildTab::OnRepeatOutputUI ( wxUpdateUIEvent& e )
 void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 {
 	e.Skip();
-	
+
 	m_building = true;
-	
+
 	// Clear all compiler parsing information
 	m_compilerParseInfo.clear();
-		
+
 	// Loop over all known compilers and cache the regular expressions
 	BuildSettingsConfigCookie cookie;
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
@@ -422,42 +451,42 @@ void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 		const Compiler::CmpListInfoPattern& warnPatterns = cmp->GetWarnPatterns();
 		Compiler::CmpListInfoPattern::const_iterator iter;
 		for (iter = errPatterns.begin(); iter != errPatterns.end(); iter++) {
-			
+
 			CompiledPatternPtr compiledPatternPtr(new CompiledPattern(new wxRegEx(iter->pattern), iter->fileNameIndex, iter->lineNumberIndex));
 			if(compiledPatternPtr->regex->IsValid()) {
 				cmpPatterns.errorsPatterns.push_back( compiledPatternPtr );
 			}
 		}
-		
+
 		for (iter = warnPatterns.begin(); iter != warnPatterns.end(); iter++) {
-			
+
 			CompiledPatternPtr compiledPatternPtr(new CompiledPattern(new wxRegEx(iter->pattern), iter->fileNameIndex, iter->lineNumberIndex));
 			if(compiledPatternPtr->regex->IsValid()) {
 				cmpPatterns.warningPatterns.push_back( compiledPatternPtr );
 			}
 		}
-		
+
 		m_compilerParseInfo[cmp->GetName()] = cmpPatterns;
 		cmp =  BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
 	}
-	
+
 	if ( e.GetEventType() != wxEVT_SHELL_COMMAND_STARTED_NOCLEAN ) {
 		// Reset output and counters
 		Clear();
 	}
-	
+
 	AppendText ( BUILD_START_MSG );
     OutputPane *opane = Frame::Get()->GetOutputPane();
-	
+
 	wxWindow *win(NULL);
 	int sel =  opane->GetNotebook()->GetSelection();
 	if(sel != wxNOT_FOUND)
 		win = opane->GetNotebook()->GetPage((size_t)sel);
-	
+
 	if (m_showMe == BuildTabSettingsData::ShowOnEnd &&
             m_autoHide &&
-            ManagerST::Get()->IsPaneVisible(opane->GetCaption()) && 
-			(win == this || win == opane->GetErrorsTab())) 
+            ManagerST::Get()->IsPaneVisible(opane->GetCaption()) &&
+			(win == this || win == opane->GetErrorsTab()))
 	{
 		// user prefers to see build/errors tabs only at end of unsuccessful build
         ManagerST::Get()->HidePane(opane->GetName());
@@ -521,7 +550,7 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 	}
 
 	MarkEditor ( Frame::Get()->GetMainBook()->GetActiveEditor() );
-	
+
 	// notify the plugins that the build had ended
 	PostCmdEvent(wxEVT_BUILD_ENDED);
 }
@@ -714,26 +743,28 @@ void BuildTab::DoProcessLine(const wxString& text, int lineno)
 	if ( text.StartsWith ( BUILD_START_MSG ) || text.StartsWith ( BUILD_END_MSG ) ) {
 		info.linecolor = wxSCI_LEX_GCC_BUILDING;
 	}
-	
+
 	// Check for makefile directory changes lines
 	if(text.Contains(wxT("Entering directory `"))) {
 		wxString currentDir = text.AfterFirst(wxT('`'));
 		currentDir = currentDir.BeforeLast(wxT('\''));
-		m_baseDir = currentDir;
+
+		// Collect the m_baseDir
+		m_baseDir.Add(currentDir);
 	}
-	
+
 	if ( info.linecolor == wxSCI_LEX_GCC_BUILDING || !m_cmp ) {
 		// no more line info to get
 	} else {
-		
+
 		// Find *warnings* first
 		bool isWarning = false;
-		
+
 		CompilerPatterns cmpPatterns;
 		if(!GetCompilerPatterns(m_cmp->GetName(), cmpPatterns)) {
 			return;
 		}
-		
+
 		// If it is not an error, maybe it's a warning
 		for(size_t i=0; i<cmpPatterns.warningPatterns.size(); i++) {
 			CompiledPatternPtr cmpPatterPtr = cmpPatterns.warningPatterns.at(i);
@@ -744,7 +775,7 @@ void BuildTab::DoProcessLine(const wxString& text, int lineno)
 				break;
 			}
 		}
-		
+
 		if ( !isWarning ) {
 			for(size_t i=0; i<cmpPatterns.errorsPatterns.size(); i++) {
 				CompiledPatternPtr cmpPatterPtr = cmpPatterns.errorsPatterns.at(i);

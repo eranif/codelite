@@ -83,6 +83,7 @@ private:
 		int      linecolor;
 		size_t   filestart;
 		size_t   filelen;
+		wxString rawFilename;
 	};
 
 private:
@@ -99,8 +100,8 @@ private:
 	wxStopWatch                          m_sw;                // times the entire build
 	static BuildTab *                    s_bt;                // self reference for ColorLine to access the m_line* maps
 	std::map<wxString, CompilerPatterns> m_compilerParseInfo;
-	wxString                             m_baseDir;
-	
+	wxArrayString                        m_baseDir;
+
 private:
 	static int  ColorLine(int, const char *text, size_t &start, size_t &len);
 	static void SetStyles(wxScintilla *sci);
@@ -138,7 +139,7 @@ public:
 	~BuildTab();
 
 	wxString GetBuildToolTip(const wxString &fileName, int lineno, wxMemoryBuffer &styleBits);
-	
+
 	bool GetBuildEndedSuccessfully() const {return m_errorCount == 0;}
 };
 #endif // __buidltab__

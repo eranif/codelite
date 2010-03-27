@@ -678,19 +678,21 @@ void Frame::CreateGUIControls(void)
 	m_mgr.SetManagedWindow(m_mainPanel);
 	m_mgr.SetArtProvider(new CLAuiDockArt());
 
-#ifndef __WXMSW__
+	// Mac / Linux
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_ALLOW_ACTIVE_PANE);
-#endif
+	wxColor col1 = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 5.0);
+	wxColor col2 = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 2.0);
 
-// Mac / Linux
-#if defined (__WXMAC__) || defined (__WXGTK__)
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,        wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,      DrawingUtils::GetPanelBgColour());
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,   wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTIONTEXT));
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_SASH_COLOUR,                  DrawingUtils::GetPanelBgColour());
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR,            DrawingUtils::GetPanelBgColour());
-#endif
+	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE,                   wxAUI_GRADIENT_VERTICAL);
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,   col2);
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR, col2);
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,            col1);
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,          col1);
+
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,       wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,     wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTIONTEXT));
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_SASH_COLOUR,                      DrawingUtils::GetPanelBgColour());
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR,                DrawingUtils::GetPanelBgColour());
 
 	//initialize debugger configuration tool
 	DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"), wxT("2.0.2"));
@@ -702,10 +704,8 @@ void Frame::CreateGUIControls(void)
 #elif defined(__WXGTK__)
 	m_mgr.SetFlags(m_mgr.GetFlags() & ~wxAUI_MGR_TRANSPARENT_HINT);
 	m_mgr.SetFlags(m_mgr.GetFlags() |    wxAUI_MGR_VENETIAN_BLINDS_HINT);
-
 #endif
 
-	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_NONE);
 #ifdef __WXMAC__
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
 #else

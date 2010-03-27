@@ -132,10 +132,10 @@ const wxEventType wxEVT_UPDATE_STATUS_BAR = XRCID("update_status_bar");
 const wxEventType wxEVT_LOAD_PERSPECTIVE  = XRCID("load_perspective");
 
 #define CHECK_SHUTDOWN() {\
-	if(ManagerST::Get()->IsShutdownInProgress()){\
-		return;\
-	}\
-}
+		if(ManagerST::Get()->IsShutdownInProgress()){\
+			return;\
+		}\
+	}
 
 //----------------------------------------------------------------
 // Our main frame
@@ -729,7 +729,7 @@ void Frame::CreateGUIControls(void)
 	m_outputPane = new OutputPane(m_mainPanel, wxT("Output View"));
 	wxAuiPaneInfo paneInfo;
 	m_mgr.AddPane(m_outputPane,
-					paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(0).Position(1).CaptionVisible(false).MinSize(-1, 100));
+	              paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(0).Position(0).CaptionVisible(false));
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
 
 	// Add the explorer pane
@@ -1043,7 +1043,7 @@ void Frame::CreateToolbars16()
 
 	clToolBar *tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 #if USE_AUI_TOOLBAR
-		tb->SetArtProvider(new CLMainAuiTBArt());
+	tb->SetArtProvider(new CLMainAuiTBArt());
 #endif
 	wxAuiPaneInfo info;
 
@@ -1532,7 +1532,8 @@ void Frame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 	wxString path = ManagerST::Get()->IsWorkspaceOpen() ? WorkspaceST::Get()->GetWorkspaceFileName().GetPath() : wxGetHomeDir();
 	dlg.SetComboPath(path);
 
-	std::vector<LEditor*> editors; wxArrayString filepaths;
+	std::vector<LEditor*> editors;
+	wxArrayString filepaths;
 	GetMainBook()->GetAllEditors(editors);
 	for (size_t i = 0; i < editors.size(); ++i) {
 		filepaths.Add(editors[i]->GetFileName().GetFullPath());
@@ -1679,9 +1680,9 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 		wxArrayString removedPaths;
 
 		// Compare the paths
-		for(size_t i=0; i<pathsBefore.GetCount(); i++) {
+		for (size_t i=0; i<pathsBefore.GetCount(); i++) {
 			int where = pathsAfter.Index(pathsBefore.Item(i));
-			if(where == wxNOT_FOUND) {
+			if (where == wxNOT_FOUND) {
 				removedPaths.Add( pathsBefore.Item(i) );
 			} else {
 				pathsAfter.RemoveAt((size_t)where);
@@ -1697,7 +1698,7 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 			// removed from the parser include path
 			ITagsStorage *db = TagsManagerST::Get()->GetDatabase();
 			db->Begin();
-			for(size_t i=0; i<removedPaths.GetCount(); i++) {
+			for (size_t i=0; i<removedPaths.GetCount(); i++) {
 				db->DeleteByFilePrefix     (wxFileName(), removedPaths.Item(i));
 				db->DeleteFromFilesByPrefix(wxFileName(), removedPaths.Item(i));
 				wxTheApp->Yield();
@@ -1729,7 +1730,7 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 			TagsManagerST::Get()->NotifyFileTree(newMarkFilesAsBold);
 		}
 
-		if(pathsAfter.IsEmpty() == false) {
+		if (pathsAfter.IsEmpty() == false) {
 			// a retagg is needed
 			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
 			AddPendingEvent(e);
@@ -1787,7 +1788,7 @@ void Frame::OnViewPaneUI(wxUpdateUIEvent &event)
 
 void Frame::ViewPane(const wxString &paneName, wxCommandEvent &event)
 {
-	if(paneName == wxT("Output View")) {
+	if (paneName == wxT("Output View")) {
 		ManagerST::Get()->ToggleOutputPane( !event.IsChecked() );
 
 	} else {
@@ -1886,7 +1887,7 @@ void Frame::OnBuildEnded(wxCommandEvent &event)
 		//occured during build process, if non, launch the output
 		m_buildAndRun = false;
 		if ( ManagerST::Get()->IsBuildEndedSuccessfully() ||
-		     wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION, this) == wxYES) {
+		        wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION, this) == wxYES) {
 			ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
 		}
 	}
@@ -2142,8 +2143,8 @@ void Frame::OnTimer(wxTimerEvent &event)
 
 		hasSearchPath = m_tagsOptionsData.GetParserSearchPaths().IsEmpty() == false;
 
-		for(size_t i=0; i<m_tagsOptionsData.GetParserSearchPaths().GetCount(); i++) {
-			if(wxFileName::DirExists(m_tagsOptionsData.GetParserSearchPaths().Item(i)) == false) {
+		for (size_t i=0; i<m_tagsOptionsData.GetParserSearchPaths().GetCount(); i++) {
+			if (wxFileName::DirExists(m_tagsOptionsData.GetParserSearchPaths().Item(i)) == false) {
 				allPathsExists = false;
 				break;
 			}
@@ -2159,13 +2160,13 @@ void Frame::OnTimer(wxTimerEvent &event)
 
 			if ( !hasSearchPath && paths.IsEmpty() && updatePaths) {
 				GetMainBook()->ShowMessage(
-								wxT("CodeLite could not find any search paths set for the code completion parser\n")
-								wxT("This means that CodeLite will *NOT* be able to offer any code completion for non-workspace files (e.g. string.h).\n")
-								wxT("To fix this, please set search paths for the parser\n")
-								wxT("This can be done from the main menu: Settings > Tags Settings > Include Files"));
+				    wxT("CodeLite could not find any search paths set for the code completion parser\n")
+				    wxT("This means that CodeLite will *NOT* be able to offer any code completion for non-workspace files (e.g. string.h).\n")
+				    wxT("To fix this, please set search paths for the parser\n")
+				    wxT("This can be done from the main menu: Settings > Tags Settings > Include Files"));
 
 			} else {
-				if(updatePaths) {
+				if (updatePaths) {
 					ButtonDetails btnYes, btnNo, btnNoNever;
 
 					btnYes.buttonLabel = wxT("Update paths");
@@ -2183,9 +2184,9 @@ void Frame::OnTimer(wxTimerEvent &event)
 					btnNoNever.commandId   = XRCID("never_update_parser_paths");
 
 					GetMainBook()->ShowMessage(
-									wxT("There seem to be a problem with your code completion parser search paths (there either none, or some are pointing to an invalid location on the disk)\n")
-									wxT("Can CodeLite fix your code completion parser search paths?"),
-									false, wxNullBitmap, btnYes, btnNo, btnNoNever);
+					    wxT("There seem to be a problem with your code completion parser search paths (there either none, or some are pointing to an invalid location on the disk)\n")
+					    wxT("Can CodeLite fix your code completion parser search paths?"),
+					    false, wxNullBitmap, btnYes, btnNo, btnNoNever);
 				}
 			}
 		}
@@ -3047,7 +3048,7 @@ void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 			GetMainBook()->ShowMessage(wxT("A new version of CodeLite is available. Download it?"), true, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_software_update")), btn);
 
 		} else {
-			if(!data->GetShowMessage()) {
+			if (!data->GetShowMessage()) {
 				wxLogMessage(wxString::Format(wxT("Info: CodeLite is up-to-date (or newer), version used: %d, version on site:%d"), data->GetCurrentVersion(), data->GetNewVersion()));
 
 			} else {
@@ -3566,7 +3567,8 @@ void Frame::SaveLayoutAndSession()
 	                       : wxString(wxT("Default"));
 	SessionEntry session;
 	session.SetWorkspaceName(sessionName);
-	wxArrayInt unused; GetMainBook()->SaveSession(session, unused);
+	wxArrayInt unused;
+	GetMainBook()->SaveSession(session, unused);
 	ManagerST::Get()->GetBreakpointsMgr()->SaveSession(session);
 	SessionManager::Get().Save(sessionName, session);
 	SessionManager::Get().SetLastWorkspaceName(sessionName);
@@ -3613,23 +3615,23 @@ void Frame::OnFindResourceXXX(wxCommandEvent& e)
 {
 	// Determine the search type
 	wxString searchType;
-	if(e.GetId() == XRCID("find_function")) {
+	if (e.GetId() == XRCID("find_function")) {
 		searchType = OpenResourceDialog::TYPE_FUNCTION;
 
-	} else if(e.GetId() == XRCID("find_macro")) {
+	} else if (e.GetId() == XRCID("find_macro")) {
 		searchType = OpenResourceDialog::TYPE_MACRO;
 
-	} else if(e.GetId() == XRCID("find_typedef")) {
+	} else if (e.GetId() == XRCID("find_typedef")) {
 		searchType = OpenResourceDialog::TYPE_TYPEDEF;
 
-	} else if(e.GetId() == XRCID("find_type")) {
+	} else if (e.GetId() == XRCID("find_type")) {
 		searchType = OpenResourceDialog::TYPE_CLASS;
 	} else {
 		searchType = OpenResourceDialog::TYPE_WORKSPACE_FILE;
 	}
 
 	OpenResourceDialog dlg(this, PluginManager::Get(), searchType);
-	if(dlg.ShowModal() == wxID_OK) {
+	if (dlg.ShowModal() == wxID_OK) {
 		OpenResourceDialog::OpenSelection(dlg.GetSelection(), PluginManager::Get());
 	}
 }
@@ -3637,7 +3639,7 @@ void Frame::OnFindResourceXXX(wxCommandEvent& e)
 void Frame::OnParsingThreadMessage(wxCommandEvent& e)
 {
 	wxString *msg = (wxString*) e.GetClientData();
-	if( msg ) {
+	if ( msg ) {
 		wxLogMessage( *msg );
 		delete msg;
 	}
@@ -3706,9 +3708,12 @@ void Frame::OnLoadPerspective(wxCommandEvent& e)
 
 		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == SvnRevision) {
 			m_mgr.LoadPerspective(pers);
+
 		} else {
 			EditorConfigST::Get()->SetRevision(SvnRevision);
 		}
+
+		UpdateAUI();
 	}
 	EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
 }
@@ -3721,7 +3726,7 @@ void Frame::SetEnvStatusMessage()
 	EvnVarList vars            = EnvironmentConfig::Instance()->GetSettings();
 
 	// Make sure that the environment set exist, if not, set it to the editor's set
-	if(vars.IsSetExist(activeSet) == false)
+	if (vars.IsSetExist(activeSet) == false)
 		activeSet = globalActiveSet;
 
 	vars.SetActiveSet(activeSet);
@@ -3740,7 +3745,7 @@ void Frame::OnUpdateNumberOfBuildProcesses(wxCommandEvent& e)
 {
 	int cpus = wxThread::GetCPUCount();
 	BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig(wxT("GNU makefile for g++/gcc"));
-	if(bs && cpus != wxNOT_FOUND) {
+	if (bs && cpus != wxNOT_FOUND) {
 		wxString jobs;
 		jobs << cpus;
 
@@ -3812,8 +3817,39 @@ void Frame::DoSuggestRestart()
 
 void Frame::OnRestoreDefaultLayout(wxCommandEvent& e)
 {
+	e.Skip();
 	wxWindowUpdateLocker locker(this);
 	wxLogMessage(wxT("Restoring layout"));
-	wxUnusedVar(e);
-	m_mgr.LoadPerspective(m_defaultLayout, true);
+
+	// Close all docking panes
+	wxAuiPaneInfoArray &panes = m_mgr.GetAllPanes();
+
+	for (size_t i = 0; i < panes.GetCount(); i++) {
+		wxAuiPaneInfo p = panes[i];
+
+		if (p.window) {
+			DockablePane *d = dynamic_cast<DockablePane*>(p.window);
+			if(d) {
+
+				wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
+				p.window->GetEventHandler()->AddPendingEvent(evt);
+
+			}
+		}
+
+	}
+
+	m_mgr.LoadPerspective(m_defaultLayout, false);
+	UpdateAUI();
+
+}
+void Frame::UpdateAUI()
+{
+	// Once loaded, update the output pane caption
+	wxAuiPaneInfo& paneInfo = m_mgr.GetPane(wxT("Output View"));
+
+	if (paneInfo.IsOk()) {
+		paneInfo.CaptionVisible(EditorConfigST::Get()->GetOptions()->GetOutputPaneDockable());
+		m_mgr.Update();
+	}
 }

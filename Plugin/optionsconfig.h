@@ -75,6 +75,7 @@ protected:
 	bool           m_disableSmartIndent;
 	bool           m_disableSemicolonShift;
 	int            m_caretLineAlpha;
+	bool           m_outputPaneDockable;
 
 public:
 	OptionsConfig() {}
@@ -85,6 +86,12 @@ public:
 	// Setters/Getters
 	//-------------------------------------
 
+	void SetOutputPaneDockable(bool outputPaneDockable) {
+		this->m_outputPaneDockable = outputPaneDockable;
+	}
+	bool GetOutputPaneDockable() const {
+		return m_outputPaneDockable;
+	}
 	bool GetDisableSemicolonShift() const {
 		return m_disableSemicolonShift;
 	}

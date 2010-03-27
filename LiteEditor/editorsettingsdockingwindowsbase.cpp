@@ -26,12 +26,14 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase( wxWindow* pa
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkBoxHideOutputPaneNotIfDebug = new wxCheckBox( this, wxID_ANY, _("...unless it's the 'Debug' tab showing"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxHideOutputPaneNotIfDebug->SetValue(true); 
 	m_checkBoxHideOutputPaneNotIfDebug->SetToolTip( _("Don't automatically close the Output Pane on an editor click if it's the Debug tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
 	
 	bSizer2->Add( m_checkBoxHideOutputPaneNotIfDebug, 0, wxALL, 5 );
 	
 	sbSizer1->Add( bSizer2, 0, wxLEFT, 25 );
+	
+	m_checkBoxOutputPaneCanDock = new wxCheckBox( this, wxID_ANY, _("Make the output pane dockable"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer1->Add( m_checkBoxOutputPaneCanDock, 0, wxALL|wxEXPAND, 5 );
 	
 	mainSizer->Add( sbSizer1, 0, wxEXPAND, 5 );
 	

@@ -100,6 +100,11 @@ public:
 		return m_DPmenuMgr;
 	}
 
+	/**
+	 * \brief update various AUI parameters like Output Pane View caption visible and other
+	 */
+	void UpdateAUI();
+
 	wxPanel *GetMainPanel() {return m_mainPanel;}
 
 	/**

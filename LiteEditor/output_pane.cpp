@@ -64,7 +64,7 @@ const wxString OutputPane::TRACE_TAB         = wxT("Trace");
 //#endif
 
 OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
-		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 300))
+		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 200))
 		, m_caption(caption)
 		, m_logTargetOld(NULL)
 {
@@ -87,30 +87,30 @@ void OutputPane::CreateGUIControls()
 	int xx, yy;
 	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxWindow::GetTextExtent(REPLACE_IN_FILES, &xx, &yy, NULL, NULL, &fnt);
-	
+
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 0);
 
 	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);
 	m_book->AddPage(m_buildWin, BUILD_WIN, true, wxXmlResource::Get()->LoadBitmap(wxT("build")));
-	
+
 	m_errorsWin = new ErrorsTab(m_buildWin, m_book, wxID_ANY, ERRORS_WIN);
 	m_book->AddPage(m_errorsWin, ERRORS_WIN, false, wxXmlResource::Get()->LoadBitmap(wxT("error")));
 
 	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN, true);
 	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, false, wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
-	
+
 	m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, REPLACE_IN_FILES);
 	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, false, wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
-	
+
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
 	m_book->AddPage(m_outputWind, OUTPUT_WIN, false, wxXmlResource::Get()->LoadBitmap(wxT("output_win")));
-	
+
 	m_outputDebug = new DebugTab(m_book, wxID_ANY, OUTPUT_DEBUG);
 	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, false, wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
-	
+
 	wxTextCtrl *text = new wxTextCtrl(m_book, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
 	m_book->AddPage(text, TRACE_TAB, false, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
-	
+
 	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
 
 	m_taskPanel = new TaskPanel(m_book, wxID_ANY, TASKS);

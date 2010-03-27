@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : dockablepane.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : dockablepane.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -36,16 +36,17 @@ extern const wxEventType wxEVT_CMD_DELETE_DOCKPANE;
 class DockablePane : public wxPanel {
 	wxWindow *m_child;
 	Notebook *m_book;
-	wxString m_text;
-	wxBitmap m_bmp;
-	
+	wxString  m_text;
+	wxBitmap  m_bmp;
+	bool      m_notifiedDestroyed;
+
 	void ClosePane(wxCommandEvent &e);
-	
+
 	void OnEraseBg(wxEraseEvent &e) { wxUnusedVar(e); }
 	void OnPaint(wxPaintEvent &e);
-	
+
 	DECLARE_EVENT_TABLE();
-	
+
 public:
 	DockablePane(wxWindow *parent, Notebook *book, const wxString &title, const wxBitmap &bmp = wxNullBitmap, wxSize size = wxDefaultSize);
 	virtual ~DockablePane();

@@ -147,7 +147,7 @@
             <label>&amp;View</label>
             <style>wxMENU_TEAROFF</style>
 			<object class="wxMenuItem" name="restore_layout">
-				<label>Restore Startup Layout</label>
+				<label>Restore Default Layout</label>
             </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="word_wrap">

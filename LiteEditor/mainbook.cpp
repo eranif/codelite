@@ -55,7 +55,7 @@ void MainBook::CreateGuiControls()
 	m_navBar = new NavBar(this);
 	sz->Add(m_navBar, 0, wxEXPAND);
 
-	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_PASS_FOCUS|wxVB_NODND | wxAUI_NB_WINDOWLIST_BUTTON;
+	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_PASS_FOCUS|wxVB_NODND | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_SCROLL_BUTTONS;
 
 	// load the notebook style from the configuration settings
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
@@ -65,7 +65,6 @@ void MainBook::CreateGuiControls()
 
 	m_quickFindBar = new QuickFindBar(this);
 	DoPositionFindBar(2);
-
 
 	sz->Layout();
 }
@@ -734,6 +733,8 @@ void MainBook::ApplySettingsChanges()
 	for (size_t i = 0; i < editors.size(); i++) {
 		editors[i]->SetSyntaxHighlight(editors[i]->GetContext()->GetName());
 	}
+
+	Frame::Get()->UpdateAUI();
 
 	// Last: reposition the findBar
 	DoPositionFindBar(2);

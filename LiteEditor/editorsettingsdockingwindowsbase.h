@@ -33,6 +33,7 @@ class EditorSettingsDockingWindowsBase : public wxPanel
 	protected:
 		wxCheckBox* m_checkBoxHideOutputPaneOnClick;
 		wxCheckBox* m_checkBoxHideOutputPaneNotIfDebug;
+		wxCheckBox* m_checkBoxOutputPaneCanDock;
 		wxCheckBox* m_checkBoxFindBarAtBottom;
 		
 		// Virtual event handlers, overide them in your derived class

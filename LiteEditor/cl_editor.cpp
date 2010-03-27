@@ -300,7 +300,6 @@ void LEditor::SetProperties()
 	SetMouseDwellTime(500);
 	SetProperty(wxT("fold"), wxT("1"));
 	SetProperty(wxT("fold.html"), wxT("1"));
-	SetProperty(wxT("styling.within.preprocessor"), wxT("1"));
 	SetProperty(wxT("fold.comment"), wxT("1"));
 
 	SetProperty(wxT("fold.at.else"), options->GetFoldAtElse() ? wxT("1") : wxT("0"));

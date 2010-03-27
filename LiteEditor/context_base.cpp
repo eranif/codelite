@@ -89,7 +89,9 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 	std::list<StyleProperty> styles;
     if (lexPtr) {
         styles = lexPtr->GetProperties();
+		rCtrl.SetProperty(wxT("styling.within.preprocessor"), lexPtr->GetStyleWithinPreProcessor() ? wxT("1") : wxT("0"));
     }
+
 	std::list<StyleProperty>::iterator iter = styles.begin();
 	for (; iter != styles.end(); iter++) {
 
@@ -110,14 +112,14 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 			// selection colour
 			if(sp.GetBgColour().IsEmpty() == false)
 				rCtrl.SetSelBackground(true, sp.GetBgColour());
-			
+
 			if(sp.GetFgColour().IsEmpty() == false)
 				rCtrl.SetSelForeground(true, sp.GetFgColour());
 
 		} else if ( sp.GetId() == -3 ) {
 			// caret colour
 			rCtrl.SetCaretForeground(sp.GetFgColour());
-			
+
 		} else {
 			int fontSize( size );
 
@@ -145,21 +147,22 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 					fontSize = font.GetPointSize();
 				}
 			}
-			
+
 			rCtrl.StyleSetFont(sp.GetId(), font);
 			rCtrl.StyleSetSize(sp.GetId(), fontSize);
-			
+			rCtrl.StyleSetEOLFilled(sp.GetId(), iter->GetEolFilled());
+
 			if(iter->GetId() == 33) {
 				// Set the line number colours only if requested
 				// otherwise, use default colours provided by scintilla
 				if(sp.GetBgColour().IsEmpty() == false)
 					rCtrl.StyleSetBackground(sp.GetId(), sp.GetBgColour());
-					
+
 				if(sp.GetFgColour().IsEmpty() == false)
 					rCtrl.StyleSetForeground(sp.GetId(), sp.GetFgColour());
 				else
 					rCtrl.StyleSetForeground(sp.GetId(), wxT("BLACK"));
-					
+
 			} else {
 				rCtrl.StyleSetForeground(sp.GetId(), sp.GetFgColour());
 				rCtrl.StyleSetBackground(sp.GetId(), sp.GetBgColour());

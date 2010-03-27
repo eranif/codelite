@@ -39,18 +39,19 @@
 
 class StyleProperty
 {
-	int m_id;
+	int      m_id;
 	wxString m_fgColour;
 	wxString m_bgColour;
-	long m_fontSize;
+	long     m_fontSize;
 	wxString m_name;
 	wxString m_faceName;
-	bool m_bold;
-	bool m_italic;
-	bool m_underlined;
+	bool     m_bold;
+	bool     m_italic;
+	bool     m_underlined;
+	bool     m_eolFilled;
 
 public:
-	StyleProperty(int id, const wxString& fgColour, const wxString& bgColour, const int fontSize, const wxString& name, const wxString& face, bool bold, bool italic, bool underline)
+	StyleProperty(int id, const wxString& fgColour, const wxString& bgColour, const int fontSize, const wxString& name, const wxString& face, bool bold, bool italic, bool underline, bool eolFilled)
 			: m_id(id)
 			, m_fgColour(fgColour)
 			, m_bgColour(bgColour)
@@ -59,7 +60,8 @@ public:
 			, m_faceName(face)
 			, m_bold(bold)
 			, m_italic(italic)
-			, m_underlined(underline) {
+			, m_underlined(underline)
+			, m_eolFilled(eolFilled) {
 	};
 
 	StyleProperty()
@@ -71,7 +73,8 @@ public:
 			, m_faceName(_T("Courier"))
 			, m_bold(false)
 			, m_italic(false)
-			, m_underlined(false) {
+			, m_underlined(false)
+			, m_eolFilled(false) {
 	};
 
 	StyleProperty(const StyleProperty& rhs) {
@@ -79,43 +82,82 @@ public:
 	};
 
 	StyleProperty& operator=(const StyleProperty& rhs) {
-		m_fgColour = rhs.m_fgColour;
-		m_bgColour = rhs.m_bgColour;
-		m_faceName = rhs.m_faceName;
-		m_bold = rhs.m_bold;
-		m_fontSize = rhs.m_fontSize;
-		m_name = rhs.m_name;
-		m_id = rhs.m_id;
-		m_italic = rhs.m_italic;
+		m_fgColour   = rhs.m_fgColour;
+		m_bgColour   = rhs.m_bgColour;
+		m_faceName   = rhs.m_faceName;
+		m_bold       = rhs.m_bold;
+		m_fontSize   = rhs.m_fontSize;
+		m_name       = rhs.m_name;
+		m_id         = rhs.m_id;
+		m_italic     = rhs.m_italic;
 		m_underlined = rhs.m_underlined;
+		m_eolFilled  = rhs.m_eolFilled;
 		return *this;
 	}
 
 	virtual ~StyleProperty() {}
 
-	const wxString& GetFgColour() const { return m_fgColour; }
-	const wxString& GetBgColour() const { return m_bgColour; }
-	
+	const wxString& GetFgColour() const {
+		return m_fgColour;
+	}
+	const wxString& GetBgColour() const {
+		return m_bgColour;
+	}
+
+	void SetEolFilled(bool eolFilled) {
+		this->m_eolFilled = eolFilled;
+	}
+	bool GetEolFilled() const {
+		return m_eolFilled;
+	}
 	const long GetFontSize() const {
-		if(m_fontSize <= 0)
+		if (m_fontSize <= 0)
 			return FONT_SIZE;
 		return m_fontSize;
 	}
-	
-	const wxString& GetFaceName() const { return m_faceName; }
-	bool IsBold() const { return m_bold; }
-	const wxString& GetName() const { return m_name; }
-	int GetId() const { return m_id; }
-	void SetBgColour(const wxString& colour) { m_bgColour = colour; }
-	void SetFgColour(const wxString& colour) { m_fgColour = colour; }
-	void SetFontSize(long size) { m_fontSize = size; }
-	void SetFaceName(const wxString& face){ m_faceName = face; }
-	void SetBold(bool bold) { m_bold = bold; }
-	void SetId(int id){m_id = id;}
-	void SetItalic(const bool& italic) {this->m_italic = italic;}
-	const bool& GetItalic() const {return m_italic;}
-	void SetUnderlined(const bool& underlined) {this->m_underlined = underlined;}
-	const bool& GetUnderlined() const {return m_underlined;}
+
+	const wxString& GetFaceName() const {
+		return m_faceName;
+	}
+	bool IsBold() const {
+		return m_bold;
+	}
+	const wxString& GetName() const {
+		return m_name;
+	}
+	int GetId() const {
+		return m_id;
+	}
+	void SetBgColour(const wxString& colour) {
+		m_bgColour = colour;
+	}
+	void SetFgColour(const wxString& colour) {
+		m_fgColour = colour;
+	}
+	void SetFontSize(long size) {
+		m_fontSize = size;
+	}
+	void SetFaceName(const wxString& face) {
+		m_faceName = face;
+	}
+	void SetBold(bool bold) {
+		m_bold = bold;
+	}
+	void SetId(int id) {
+		m_id = id;
+	}
+	void SetItalic(const bool& italic) {
+		this->m_italic = italic;
+	}
+	const bool& GetItalic() const {
+		return m_italic;
+	}
+	void SetUnderlined(const bool& underlined) {
+		this->m_underlined = underlined;
+	}
+	const bool& GetUnderlined() const {
+		return m_underlined;
+	}
 };
 
 typedef std::list<StyleProperty> StylePropertyList;

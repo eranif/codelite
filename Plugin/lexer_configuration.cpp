@@ -36,6 +36,7 @@ static bool StringTolBool(const wxString &s) {
 
 LexerConf::LexerConf(const wxString &fileName)
 : m_fileName(fileName)
+, m_styleWithinPreProcessor(true)
 {
 	m_fileName.MakeAbsolute();
 	m_doc.Load(m_fileName.GetFullPath());
@@ -67,6 +68,8 @@ void LexerConf::Parse(wxXmlNode *element)
 
 		// read the lexer name
 		m_name = element->GetPropVal(wxT("Name"), wxEmptyString);
+
+		m_styleWithinPreProcessor = element->GetPropVal(wxT("StylingWithinPreProcessor"), wxT("yes")) == wxT("yes") ? true : false;
 
 		// load key words
 		wxXmlNode *node = NULL;
@@ -122,21 +125,23 @@ void LexerConf::Parse(wxXmlNode *element)
 			{
 				if(prop->GetName() == wxT("Property")){
 					// Read the font attributes
-					wxString Name = XmlUtils::ReadString(prop, wxT("Name"), wxT("DEFAULT"));
-					wxString bold = XmlUtils::ReadString(prop, wxT("Bold"), wxT("no"));
-					wxString italic = XmlUtils::ReadString(prop, wxT("Italic"), wxT("no"));
+					wxString Name      = XmlUtils::ReadString(prop, wxT("Name"), wxT("DEFAULT"));
+					wxString bold      = XmlUtils::ReadString(prop, wxT("Bold"), wxT("no"));
+					wxString italic    = XmlUtils::ReadString(prop, wxT("Italic"), wxT("no"));
+					wxString eolFill   = XmlUtils::ReadString(prop, wxT("EolFilled"), wxT("no"));
 					wxString underline = XmlUtils::ReadString(prop, wxT("Underline"), wxT("no"));
 					wxString strikeout = XmlUtils::ReadString(prop, wxT("Strikeout"), wxT("no"));
-					wxString face = XmlUtils::ReadString(prop, wxT("Face"), wxT("Courier"));
-					wxString colour = XmlUtils::ReadString(prop, wxT("Colour"), wxT("black"));
-					wxString bgcolour = XmlUtils::ReadString(prop, wxT("BgColour"), wxT("white"));
-					long fontSize = XmlUtils::ReadLong(prop, wxT("Size"), 10);
-					long propId   = XmlUtils::ReadLong(prop, wxT("Id"), 0);
+					wxString face      = XmlUtils::ReadString(prop, wxT("Face"), wxT("Courier"));
+					wxString colour    = XmlUtils::ReadString(prop, wxT("Colour"), wxT("black"));
+					wxString bgcolour  = XmlUtils::ReadString(prop, wxT("BgColour"), wxT("white"));
+					long fontSize      = XmlUtils::ReadLong  (prop, wxT("Size"), 10);
+					long propId        = XmlUtils::ReadLong  (prop, wxT("Id"), 0);
 
 					StyleProperty property = StyleProperty(propId, colour, bgcolour, fontSize, Name, face,
 										StringTolBool(bold),
 										StringTolBool(italic),
-										StringTolBool(underline));
+										StringTolBool(underline),
+										StringTolBool(eolFill));
 					m_properties.push_back( property );
 				}
 				prop = prop->GetNext();
@@ -155,6 +160,7 @@ wxXmlNode *LexerConf::ToXml() const
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Lexer"));
 	//set the lexer name
 	node->AddProperty(wxT("Name"), GetName());
+	node->AddProperty(wxT("StylingWithinPreProcessor"), BoolToString(m_styleWithinPreProcessor));
 
 	wxString strId;
 	strId << GetLexerId();
@@ -203,6 +209,7 @@ wxXmlNode *LexerConf::ToXml() const
 		property->AddProperty(wxT("BgColour"), p.GetBgColour());
 		property->AddProperty(wxT("Italic"), BoolToString(p.GetItalic()));
 		property->AddProperty(wxT("Underline"), BoolToString(p.GetUnderlined()));
+		property->AddProperty(wxT("EolFilled"), BoolToString(p.GetEolFilled()));
 
 		wxString strSize;
 		strSize << p.GetFontSize();

@@ -48,11 +48,18 @@
 #include "free_text_dialog.h"
 #include <wx/gbsizer.h>
 
+#define ID_STYLE_WITHIN_PREPROCESSOR 3534
+#define ID_EOL_FILLED                3535
+
 ///////////////////////////////////////////////////////////////////////////
 BEGIN_EVENT_TABLE( LexerPage, wxPanel )
-	EVT_LISTBOX( wxID_ANY, LexerPage::OnItemSelected )
-	EVT_FONTPICKER_CHANGED(wxID_ANY, LexerPage::OnFontChanged)
-	EVT_COLOURPICKER_CHANGED(wxID_ANY, LexerPage::OnColourChanged)
+
+	EVT_LISTBOX             ( wxID_ANY,                    LexerPage::OnItemSelected )
+	EVT_FONTPICKER_CHANGED  (wxID_ANY,                     LexerPage::OnFontChanged)
+	EVT_COLOURPICKER_CHANGED(wxID_ANY,                     LexerPage::OnColourChanged)
+	EVT_CHECKBOX            (ID_EOL_FILLED,                LexerPage::OnEolFilled)
+	EVT_CHECKBOX            (ID_STYLE_WITHIN_PREPROCESSOR, LexerPage::OnStyleWithinPreprocessor)
+
 END_EVENT_TABLE()
 
 LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos, wxSize size, int style )
@@ -85,9 +92,11 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 
-	wxString initialColor = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString();
-	wxString bgInitialColor = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString();
-	wxFont initialFont = wxNullFont;
+	wxString initialColor     = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString();
+	wxString bgInitialColor   = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString();
+	wxFont   initialFont      = wxNullFont;
+	bool     initialEolFilled (false);
+	bool     initialStyleWithinPreProcessor (true);
 
 	if (m_propertyList.empty() == false) {
 		StyleProperty p;
@@ -99,7 +108,10 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 		wxString face = p.GetFaceName();
 		bool bold = p.IsBold();
 		initialFont = wxFont(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
+		initialEolFilled = p.GetEolFilled();
 	}
+	initialStyleWithinPreProcessor = m_lexer->GetStyleWithinPreProcessor();
+
 	wxStaticText *text(NULL);
 	wxGridBagSizer *gbz = new wxGridBagSizer(0, 5);
 	gbz->SetFlexibleDirection( wxBOTH );
@@ -143,21 +155,24 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 	m_bgColourPicker = new wxColourPickerCtrl(this, wxID_ANY, wxColour(bgInitialColor), wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
 	gbz->Add( m_bgColourPicker, wxGBPosition(3, 1), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
 
+	m_eolFilled = new wxCheckBox(this, ID_EOL_FILLED, _("EOL Filled"));
+	gbz->Add( m_eolFilled, wxGBPosition(4, 1), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
+
 	//globals settings for whole styles
 	wxStaticLine *line = new wxStaticLine(this);
-	gbz->Add(line, wxGBPosition(4, 0), wxGBSpan(1, 2), wxALL|wxEXPAND, 10);
+	gbz->Add(line, wxGBPosition(5, 0), wxGBSpan(1, 2), wxALL|wxEXPAND, 10);
 
 	text = new wxStaticText(this, wxID_ANY, wxT("Global font:"));
-	gbz->Add( text, wxGBPosition(5, 0), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
-
-	m_globalFontPicker = new wxFontPickerCtrl(this, wxID_ANY, initialFont, wxDefaultPosition, wxDefaultSize, wxFNTP_USEFONT_FOR_LABEL);
-	gbz->Add( m_globalFontPicker, wxGBPosition(5, 1), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
-
-	text = new wxStaticText(this, wxID_ANY, wxT("Global background colour:"));
 	gbz->Add( text, wxGBPosition(6, 0), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
 
+	m_globalFontPicker = new wxFontPickerCtrl(this, wxID_ANY, initialFont, wxDefaultPosition, wxDefaultSize, wxFNTP_USEFONT_FOR_LABEL);
+	gbz->Add( m_globalFontPicker, wxGBPosition(6, 1), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
+
+	text = new wxStaticText(this, wxID_ANY, wxT("Global background colour:"));
+	gbz->Add( text, wxGBPosition(7, 0), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
+
 	m_globalBgColourPicker = new wxColourPickerCtrl(this, wxID_ANY, wxColour(bgInitialColor), wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
-	gbz->Add( m_globalBgColourPicker, wxGBPosition(6, 1), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
+	gbz->Add( m_globalBgColourPicker, wxGBPosition(7, 1), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
 	gbz->AddGrowableCol( 1 );
 	bSizer7->Add(gbz, 0, wxEXPAND, 5);
 
@@ -168,6 +183,13 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 	hs->Add(m_fileSpec, 1, wxALL | wxEXPAND, 5);
 
 	bSizer6->Add( sbSizer5, 1, wxEXPAND, 5 );
+
+	if(m_lexer->GetName() == wxT("C++")) {
+		m_styleWithinPreProcessor = new wxCheckBox(this, ID_STYLE_WITHIN_PREPROCESSOR, _("Styling Within PreProcessor Line"));
+		bSizer6->Add( m_styleWithinPreProcessor, 0, wxALL|wxEXPAND, 5 );
+
+		m_styleWithinPreProcessor->SetValue(initialStyleWithinPreProcessor);
+	}
 
 	static_text = new wxStaticText( this, wxID_ANY, wxT("File Masking:"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add(static_text, 0, wxEXPAND | wxALL, 5);
@@ -207,11 +229,12 @@ void LexerPage::OnItemSelected(wxCommandEvent & event)
 			int size = p.GetFontSize();
 			wxString face = p.GetFaceName();
 			bool bold = p.IsBold();
-			
+
 			font = wxFont(size, wxFONTFAMILY_TELETYPE, p.GetItalic() ? wxITALIC : wxNORMAL, bold ? wxBOLD : wxNORMAL, p.GetUnderlined(), face);
 			m_fontPicker->SetSelectedFont(font);
 			m_bgColourPicker->SetColour(bgColour);
 			m_colourPicker->SetColour(colour);
+			m_eolFilled->SetValue( p.GetEolFilled() );
 		}
 	}
 }
@@ -232,7 +255,7 @@ void LexerPage::OnFontChanged(wxFontPickerEvent &event)
 		iter->SetFontSize(f.GetPointSize());
 		iter->SetUnderlined(f.GetUnderlined());
 		iter->SetItalic(f.GetStyle() == wxITALIC);
-		
+
 	} else if (obj == m_globalFontPicker) {
 		wxFont f = event.GetFont();
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
@@ -260,29 +283,29 @@ void LexerPage::OnColourChanged(wxColourPickerEvent &event)
 			iter++;
 
 		iter->SetFgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
-		
+
 	} else if (obj == m_bgColourPicker) {
-		
+
 		wxColour colour = event.GetColour();
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
 		for (int i=0; i<m_selection; i++)
 			iter++;
 
 		iter->SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
-		
+
 	} else if (obj == m_globalBgColourPicker) {
-		
+
 		wxColour colour = event.GetColour();
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
 		for (; iter != m_propertyList.end(); iter++) {
-			
+
 			// Dont change the text selection using the global font picker
 			if(iter->GetName() == wxT("Text Selection"))
 				continue;
-			
+
 			iter->SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
 		}
-		
+
 		//update the style background colour as well
 		m_bgColourPicker->SetColour(colour);
 	}
@@ -343,4 +366,20 @@ void LexerPage::OnText(wxCommandEvent& e)
 {
 	m_isModified = true;
 	e.Skip();
+}
+
+void LexerPage::OnEolFilled(wxCommandEvent& event)
+{
+	m_isModified = true;
+
+	std::list<StyleProperty>::iterator iter = m_propertyList.begin();
+	for (int i=0; i<m_selection; i++)
+		iter++;
+	iter->SetEolFilled(event.IsChecked());
+}
+
+void LexerPage::OnStyleWithinPreprocessor(wxCommandEvent& event)
+{
+	m_isModified = true;
+	m_lexer->SetStyleWithinPreProcessor(event.IsChecked());
 }

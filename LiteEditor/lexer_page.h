@@ -71,6 +71,8 @@ protected:
 	wxColourPickerCtrl* m_colourPicker;
 	wxColourPickerCtrl* m_bgColourPicker;
 	wxTextCtrl *m_fileSpec;
+	wxCheckBox *m_eolFilled;
+	wxCheckBox *m_styleWithinPreProcessor;
 
 	// Virtual event handlers, overide them in your derived class
 	virtual void OnItemSelected( wxCommandEvent& event );
@@ -82,13 +84,14 @@ protected:
 	virtual void OnEditKeyWordsButton3(wxCommandEvent &event);
 	virtual void OnEditKeyWordsButton4(wxCommandEvent &event);
 	virtual void OnText(wxCommandEvent &e);
-
+	virtual void OnEolFilled(wxCommandEvent &event);
+	virtual void OnStyleWithinPreprocessor(wxCommandEvent &event);
 	void EditKeyWords(int set);
 
 public:
 	LexerPage( wxWindow* parent, LexerConfPtr lexer, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 285,300 ), int style = wxTAB_TRAVERSAL );
 	void SaveSettings();
-	
+
 	const bool& GetIsModified() const {
 		return m_isModified;
 	}

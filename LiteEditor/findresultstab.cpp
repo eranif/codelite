@@ -143,12 +143,12 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 {
 	InitStyle(sci, wxSCI_LEX_FIF, true);
 	
+	wxColour fifFgColour = *wxBLUE;
+	
 #ifdef __WXGTK__
 	wxColour fifBgColour = DrawingUtils::GetPanelBgColour();
-	wxColour fifFgColour = *wxBLUE;
 #else
 	wxColour fifBgColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
-	wxColour fifFgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
 #endif
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, wxT("BLACK"));

@@ -429,8 +429,6 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		
 	} else {
 		
-		wxWindowUpdateLocker locker(Frame::Get());
-		
 		// A Nice trick: hide the notebook, open the editor
 		// and then show it
 		bool hidden(false);
@@ -439,9 +437,10 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 
 		editor = new LEditor(m_book);
 		editor->Create(projName, fileName);
-		AddPage(editor, fileName.GetFullName());
+		
+		AddPage(editor, fileName.GetFullName(), wxNullBitmap, true);
 		editor->SetSyntaxHighlight();
-
+		
 		// mark the editor as read only if needed
 		MarkEditorReadOnly(editor, IsFileReadOnly(editor->GetFileName()));
 

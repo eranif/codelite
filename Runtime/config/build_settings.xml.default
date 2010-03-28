@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<BuildSettings Version="2.0.4">
+<BuildSettings Version="2.0.5">
   <Compilers>
     <Compiler Name="gnu g++">
       <Switch Name="ArchiveOutput" Value=" "/>

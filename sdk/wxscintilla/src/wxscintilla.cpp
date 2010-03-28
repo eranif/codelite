@@ -3128,7 +3128,7 @@ void wxScintilla::OnPaint (wxPaintEvent& WXUNUSED(evt)) {
     wxBufferedPaintDC dc(this);
 #else
 	wxPaintDC dc(this);
-#endif	
+#endif
     m_swx->DoPaint (&dc, GetUpdateRegion().GetBox());
 }
 

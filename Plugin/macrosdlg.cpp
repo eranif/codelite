@@ -99,6 +99,7 @@ void MacrosDlg::Initialize()
 		AddMacro(wxT("$(ArchiveTool)"),            wxT("Expands to the archive tool (e.g. ar) name as set in the Tools tab"));
 		AddMacro(wxT("$(SharedObjectLinkerName)"), wxT("Expands to the shared object linker name as set in the Tools tab"));
 		AddMacro(wxT("$(ObjectSuffix)"),           wxT("Objects suffix (usually set to .o)"));
+		AddMacro(wxT("$(ObjectName)"),             wxT("The object name (without the suffix)"));
 		AddMacro(wxT("$(DependSuffix)"),           wxT("Objects suffix (usually set to .o.d)"));
 		AddMacro(wxT("$(PreprocessSuffix)"),       wxT("Objects suffix (usually set to .o.i)"));
 		AddMacro(wxT("$(IncludeSwitch)"),          wxT("The compiler include switch"));

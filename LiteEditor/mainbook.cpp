@@ -422,10 +422,15 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 	} else if (fileName.IsOk() == false) {
 		wxLogMessage(wxT("Invalid file name: ") + fileName.GetFullPath());
 		return NULL;
+		
 	} else if (!fileName.FileExists()) {
 		wxLogMessage(wxT("File: ") + fileName.GetFullPath() + wxT(" does not exist!"));
 		return NULL;
+		
 	} else {
+		
+		wxWindowUpdateLocker locker(Frame::Get());
+		
 		// A Nice trick: hide the notebook, open the editor
 		// and then show it
 		bool hidden(false);

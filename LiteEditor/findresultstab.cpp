@@ -142,8 +142,14 @@ void FindResultsTab::SaveFindInFilesData()
 void FindResultsTab::SetStyles(wxScintilla *sci)
 {
 	InitStyle(sci, wxSCI_LEX_FIF, true);
-
-	wxColour bgColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
+	
+#ifdef __WXGTK__
+	wxColour fifBgColour = DrawingUtils::GetPanelBgColour();
+	wxColour fifFgColour = *wxBLUE;
+#else
+	wxColour fifBgColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
+	wxColour fifFgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
+#endif
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, wxT("BLACK"));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
@@ -151,8 +157,8 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetForeground(wxSCI_LEX_FIF_PROJECT, wxT("BLACK"));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_PROJECT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE, wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
-	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, bgColour);
+	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE, fifFgColour);
+	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, fifBgColour);
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_FILE, true);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE_SHORT, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));

@@ -1511,3 +1511,15 @@ wxString BuilderGnuMake::DoGetCompilerMacro(const wxString& filename)
 	}
 	return compilerMacro;
 }
+
+wxString BuilderGnuMake::DoGetTargetPrefix(const wxFileName& filename)
+{
+	size_t        count = filename.GetDirCount();
+	wxArrayString dirs  = filename.GetDirs();
+	wxString      lastDir;
+
+	if(count) {
+		lastDir = dirs.Item(count-1);
+	}
+	return lastDir;
+}

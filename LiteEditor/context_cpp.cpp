@@ -1974,10 +1974,18 @@ void ContextCpp::ApplySettings()
 	LEditor &rCtrl = GetCtrl();
 	rCtrl.SetLexer((int)lexPtr->GetLexerId());
 
-	wxString keyWords = lexPtr->GetKeyWords(0);
+	wxString keyWords     = lexPtr->GetKeyWords(0);
+	wxString doxyKeyWords = lexPtr->GetKeyWords(2);
+
+	// C/C++ keywords
 	keyWords.Replace(wxT("\n"), wxT(" "));
 	keyWords.Replace(wxT("\r"), wxT(" "));
 	rCtrl.SetKeyWords(0, keyWords);
+
+	// Doxygen keywords
+	doxyKeyWords.Replace(wxT("\n"), wxT(" "));
+	doxyKeyWords.Replace(wxT("\r"), wxT(" "));
+	rCtrl.SetKeyWords(2, doxyKeyWords);
 
 	DoApplySettings( lexPtr );
 

@@ -365,3 +365,29 @@ wxColor DrawingUtils::GetPanelBgColour()
 	return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #endif
 }
+
+wxColor DrawingUtils::GetTextCtrlTextColour()
+{
+#ifdef __WXGTK__
+	static bool     intitialized(false);
+	static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	
+	if( !intitialized ) {
+		// try to get the background colour from a menu
+		GtkWidget *textCtrl = gtk_text_view_new();
+		GtkStyle   *def = gtk_rc_get_style( textCtrl );
+		if(!def)
+			def = gtk_widget_get_default_style();
+		
+		if(def) {
+			GdkColor col = def->text[GTK_STATE_NORMAL];
+			textColour = wxColour(col);
+		}
+		gtk_widget_destroy( textCtrl );
+		intitialized = true;
+	}
+	return textColour;
+#else
+	return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+#endif
+}

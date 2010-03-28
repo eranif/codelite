@@ -80,7 +80,7 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 
 	for(int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
 		sci->StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-		sci->StyleSetForeground(i, wxT("BLACK"));
+		sci->StyleSetForeground(i, DrawingUtils::GetTextCtrlTextColour());
 	}
 
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

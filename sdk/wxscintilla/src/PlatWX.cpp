@@ -454,6 +454,9 @@ void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated
 		// Draw outline rounded-rectangle incase we got a cornerSizer > 0
 		hdc->SetBrush(*wxTRANSPARENT_BRUSH);
 		hdc->SetPen(wxColour(cdo.GetRed(), cdo.GetGreen(), cdo.GetBlue()));
+#ifdef __WXGTK__
+		cornerSize = 0;
+#endif		
 		hdc->DrawRoundedRectangle(outlineRect, cornerSize);
 	}
 	// ERAN [END]

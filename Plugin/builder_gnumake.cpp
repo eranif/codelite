@@ -1271,7 +1271,10 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 
 wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg)
 {
-	// TODO: factor out common code with GetSingleFileCmd()
+	ProjectPtr     proj    = WorkspaceST::Get()->FindProjectByName(project, errMsg);
+	if (!proj) {
+		return wxEmptyString;
+	}
 
 	wxString cmd;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
@@ -1290,16 +1293,17 @@ wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString &project, const wxS
 	buildTool.Replace(wxT("\\"), wxT("/"));
 
 	//create the target
-	wxString tareget;
+	wxString target;
 	wxString objSuffix;
 	wxFileName fn(fileName);
 
 	wxString cmpType = bldConf->GetCompilerType();
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
 
-	tareget << bldConf->GetIntermediateDirectory() << wxT("/") << fn.GetName() << cmp->GetPreprocessSuffix();
-	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" ") << tareget;
+	wxString objNamePrefix = DoGetTargetPrefix(fn, proj->GetFileName().GetPath());
+	target << bldConf->GetIntermediateDirectory() << wxT("/") << objNamePrefix << fn.GetName() << cmp->GetPreprocessSuffix();
 
+	cmd = GetProjectMakeCommand(proj, confToBuild, target, false, false);
 	return EnvironmentConfig::Instance()->ExpandVariables(cmd, true);
 }
 

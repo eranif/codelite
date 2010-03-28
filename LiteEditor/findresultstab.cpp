@@ -143,20 +143,24 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 {
 	InitStyle(sci, wxSCI_LEX_FIF, true);
 
+	wxColour bgColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
+
 	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, wxT("BLACK"));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_PROJECT, wxT("BLACK"));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_PROJECT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE, wxT("BLUE"));
-	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE, wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, bgColour);
+	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_FILE, true);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE_SHORT, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE_SHORT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, wxT("BLACK"));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_MATCH, true);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_SCOPE, wxT("PURPLE"));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_SCOPE, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
@@ -175,8 +179,19 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetHotSpot(wxSCI_LEX_FIF_MATCH, true);
 	sci->StyleSetHotSpot(wxSCI_LEX_FIF_FILE,  true);
 
-	sci->MarkerDefine       (7, wxSCI_MARK_BACKGROUND);
-	sci->MarkerSetBackground(7, DrawingUtils::LightColour(wxT("BLUE"), 8));
+	sci->MarkerDefine       (7, wxSCI_MARK_ARROW);
+	sci->MarkerSetBackground(7, *wxBLACK);
+
+	sci->IndicatorSetForeground(1, wxT("FOREST GREEN"));
+
+	sci->SetMarginType(1, wxSCI_MARGIN_SYMBOL);
+	sci->SetMarginMask(4, wxSCI_MASK_FOLDERS);
+
+	sci->SetMarginWidth(0, 0);
+	sci->SetMarginWidth(1, 16);
+	sci->SetMarginWidth(2, 0);
+	sci->SetMarginWidth(3, 0);
+	sci->SetMarginWidth(4, 0);
 }
 
 size_t FindResultsTab::GetPageCount() const

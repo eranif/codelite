@@ -374,16 +374,16 @@ void SurfaceImpl::RoundedRectangle(PRectangle rc, ColourAllocated fore, ColourAl
     PenColour(fore);
     BrushColour(back);
 	wxRect rr = wxRectFromPRectangle(rc);
-	hdc->DrawRoundedRectangle(rr, 0);
+	hdc->DrawRoundedRectangle(rr, 1);
 }
 
 void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated fill, int alphaFill, ColourAllocated outline, int alphaOutline, int WXUNUSED(flags))
 {
 
 #ifdef wxHAVE_RAW_BITMAP
-    wxUnusedVar(cornerSize);
     int x, y;
     wxRect r = wxRectFromPRectangle(rc);
+	wxRect outlineRect (r);
 
     wxBitmap bmp(r.width, r.height, 32);
     wxAlphaPixelData pixData(bmp);
@@ -407,7 +407,7 @@ void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated
 			p.Green() = green * aFill / 0xff;
 			p.Blue()  = blue  * aFill / 0xff;
             p.Alpha() = alphaFill;
-            ++p; 
+            ++p;
         }
     }
 
@@ -426,29 +426,37 @@ void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated
 		p.Red()   = red   * aOutline / 0xff;
 		p.Green() = green * aOutline / 0xff;
 		p.Blue()  = blue  * aOutline / 0xff;
-        p.Alpha() = alphaOutline;        
+        p.Alpha() = alphaOutline;
         p.MoveTo(pixData, x, r.height-1);
 		p.Red()   = red   * aOutline / 0xff;
 		p.Green() = green * aOutline / 0xff;
 		p.Blue()  = blue  * aOutline / 0xff;
-        p.Alpha() = alphaOutline;        
+        p.Alpha() = alphaOutline;
     }
 	for (y=1; y<r.height-1; y++) {
         p.MoveTo(pixData, 0, y);
 		p.Red()   = red   * aOutline / 0xff;
 		p.Green() = green * aOutline / 0xff;
 		p.Blue()  = blue  * aOutline / 0xff;
-        p.Alpha() = alphaOutline;        
+        p.Alpha() = alphaOutline;
         p.MoveTo(pixData, r.width-1, y);
 		p.Red()   = red   * aOutline / 0xff;
 		p.Green() = green * aOutline / 0xff;
 		p.Blue()  = blue  * aOutline / 0xff;
-        p.Alpha() = alphaOutline;        
+        p.Alpha() = alphaOutline;
     }
-    
+
     // Draw the bitmap
     hdc->DrawBitmap(bmp, r.x, r.y, true);
 
+	// ERAN [START]
+	if (cornerSize) {
+		// Draw outline rounded-rectangle incase we got a cornerSizer > 0
+		hdc->SetBrush(*wxTRANSPARENT_BRUSH);
+		hdc->SetPen(wxColour(cdo.GetRed(), cdo.GetGreen(), cdo.GetBlue()));
+		hdc->DrawRoundedRectangle(outlineRect, cornerSize);
+	}
+	// ERAN [END]
 #else
     wxUnusedVar(cornerSize);
     wxUnusedVar(alphaFill);

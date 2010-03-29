@@ -1,5 +1,5 @@
 Name:           codelite
-Version:        2.3.0
+Version:        2.5.0
 Release:        1%{?dist}
 License:        GPLv2+
 Group:          Development/Tools
@@ -11,7 +11,7 @@ Requires: wxGTK xterm
 BuildRequires: wxGTK-devel
 
 %description
-CodeLite uses a sophisticated, yet intuitive interface which allows 
+CodeLite uses a sophisticated, yet intuitive interface which allows
 users to easily create, build and debug complex projects.
 
 %prep
@@ -20,7 +20,7 @@ users to easily create, build and debug complex projects.
 %build
 ./configure --prefix=%{_prefix} --plugins-dir=%{_libdir}/%{name} \
                --disable-debian --disable-desktop_icon --disable-make_symlink
-%{__make} 
+%{__make}
 
 %install
 %{__rm} -rf $RPM_BUILD_ROOT
@@ -34,7 +34,7 @@ desktop-file-install  --delete-original                            \
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS LICENSE COPYING 
+%doc AUTHORS LICENSE COPYING
 %{_bindir}/codelite
 %{_bindir}/codelite_indexer
 %{_bindir}/codelite_fix_files
@@ -55,5 +55,5 @@ desktop-file-install  --delete-original                            \
 * Wed Jan 27 2010 Jess Portnoy <kernel01@gmail.com>
 - Reomved obsolete switch (--copy-generic-name-to-name)
   updated version number to 2.2.0
-  updated version number to 2.3.0
+  updated version number to 2.5.0
 

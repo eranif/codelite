@@ -1405,6 +1405,7 @@ void Frame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
 	wxString filepath = dlg.GetListBox()->GetStringSelection();
 	wxString sessionFilepath = filepath.BeforeLast(wxT('.'));
 
+	wxWindowUpdateLocker locker(this);
 	TabGroupEntry session;
 	if (SessionManager::Get().FindSession(sessionFilepath, session, wxString(wxT(".tabgroup")), tabgroupTag) ) {
 		// We've 'loaded' the requested tabs. If required, delete any current ones

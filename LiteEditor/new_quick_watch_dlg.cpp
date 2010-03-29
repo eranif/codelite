@@ -19,7 +19,7 @@ public:
 	VariableObjChild _voc;
 	wxString         _hex;
 	wxString         _binary;
-	
+
 	QWTreeData(const VariableObjChild &voc) : _voc(voc) {}
 	virtual ~QWTreeData() {}
 };
@@ -37,13 +37,13 @@ DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
 	Centre();
 	WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
 	EditorConfigST::Get()->GetLongValue(wxT("NewQuickWatchDlg_ShowExtraFormats"), m_showExtraFormats);
-	
+
 	if(!m_showExtraFormats && m_panelExtra->IsShown()) {
 		m_panelExtra->Hide();
 		GetSizer()->Layout();
 	}
 	m_checkBoxShowMoreFormats->SetValue(m_showExtraFormats ? true : false);
-	
+
 	m_timer  = new wxTimer(this, TIPTIMERID);
 	m_timer2 = new wxTimer(this, TIPTIMERID2);
 }
@@ -89,11 +89,11 @@ void DisplayVariableDlg::BuildTree(const VariableObjChildren& children, IDebugge
 	m_gdbId2Item.clear();
 	m_gdbId2ItemLeaf.clear();
 	m_treeCtrl->DeleteAllItems();
-	
+
 	VariableObjChild vob;
 	vob.gdbId = m_mainVariableObject;
 	vob.isAFake = false;
-	
+
 	wxTreeItemId root = m_treeCtrl->AddRoot( m_variableName, -1, -1, new QWTreeData(vob) );
 	m_debugger->EvaluateVariableObject(m_mainVariableObject, DBG_DF_HEXADECIMAL, DBG_UR_EVALVARIABLEOBJ);
 	m_debugger->EvaluateVariableObject(m_mainVariableObject, DBG_DF_BINARY,      DBG_UR_EVALVARIABLEOBJ);
@@ -141,20 +141,20 @@ void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChil
 			}
 
 			// ask gdb for the value for this node
-			
+
 			m_debugger->EvaluateVariableObject( ch.gdbId, DBG_DF_NATURAL,     DBG_USERR_QUICKWACTH );
 			if(m_showExtraFormats) {
 				m_debugger->EvaluateVariableObject( ch.gdbId, DBG_DF_BINARY,      DBG_USERR_QUICKWACTH );
 				m_debugger->EvaluateVariableObject( ch.gdbId, DBG_DF_HEXADECIMAL, DBG_USERR_QUICKWACTH );
 			}
 			m_gdbId2ItemLeaf[ch.gdbId] = child;
-			
+
 		} else {
-			
+
 			// Fake node, ask for expansion only if this node is visible
 			m_debugger->ListChildren(ch.gdbId, DBG_USERR_QUICKWACTH);
 			m_gdbId2Item[ch.gdbId] = item;
-			
+
 		}
 	}
 }
@@ -180,11 +180,11 @@ void DisplayVariableDlg::UpdateValue(const wxString& varname, const wxString& va
 			nodeId = item;
 		}
 	} else if(varname == m_mainVariableObject) {
-		
+
 		// Handle Root
 		nodeId = m_treeCtrl->GetRootItem();
 	}
-	
+
 	if(nodeId.IsOk()) {
 		QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(nodeId);
 		if(data) {
@@ -229,16 +229,11 @@ void DisplayVariableDlg::HideDialog()
 
 void DisplayVariableDlg::OnKeyDown(wxKeyEvent& event)
 {
-	if ( event.GetKeyCode() == WXK_ESCAPE ) {
-		HideDialog();
-	} else {
-		event.Skip();
-	}
+	HideDialog();
 }
 
 void DisplayVariableDlg::ShowDialog(bool center)
 {
-	m_treeCtrl->SetFocus();
 	if ( center ) {
 		Centre();
 	} else {
@@ -246,6 +241,11 @@ void DisplayVariableDlg::ShowDialog(bool center)
 
 	}
 	wxDialog::Show();
+	// Pass the focus back to the main editor
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	if(editor) {
+		editor->SetActive();
+	}
 }
 
 void DisplayVariableDlg::OnLeftDown(wxMouseEvent& e)
@@ -259,7 +259,7 @@ void DisplayVariableDlg::OnLeftDown(wxMouseEvent& e)
 			m_treeCtrl->Expand( item );
 		}
 	}
-	
+
 	if(item.IsOk() && m_showExtraFormats && (flags & wxTREE_HITTEST_ONITEMLABEL )) {
 		QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(item);
 		if(data) {
@@ -442,16 +442,16 @@ void DisplayVariableDlg::OnTimer2(wxTimerEvent& e)
 void DisplayVariableDlg::OnShowHexAndBinFormat(wxCommandEvent& event)
 {
 	m_showExtraFormats = (long)event.IsChecked();
-	
+
 	if(!m_showExtraFormats && m_panelExtra->IsShown()) {
 		m_panelExtra->Hide();
 		GetSizer()->Layout();
-		
+
 	} else if(m_showExtraFormats && m_panelExtra->IsShown() == false) {
 		m_panelExtra->Show();
 		GetSizer()->Layout();
 	}
-	
+
 	if(m_showExtraFormats) {
 		wxTreeItemId item = m_treeCtrl->GetSelection();
 		if(item.IsOk()) {

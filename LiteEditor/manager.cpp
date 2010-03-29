@@ -2203,6 +2203,11 @@ void Manager::DbgUnMarkDebuggerLine()
 
 void Manager::DbgDoSimpleCommand ( int cmd )
 {
+	// Hide tooltip dialog if its ON
+	if(GetDisplayVariableDialog()->IsShown()) {
+		GetDisplayVariableDialog()->HideDialog();
+	}
+
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() ) {
 		switch ( cmd ) {

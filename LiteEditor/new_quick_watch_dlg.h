@@ -51,7 +51,6 @@ protected:
 	void OnMouseMove( wxMouseEvent& event );
 	void OnShowHexAndBinFormat(wxCommandEvent& event);
 
-
 	DECLARE_EVENT_TABLE()
 
 public:

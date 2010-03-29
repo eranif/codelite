@@ -2233,6 +2233,11 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 
 void LEditor::OnKeyDown(wxKeyEvent &event)
 {
+	// Hide tooltip dialog if its ON
+	if(ManagerST::Get()->GetDisplayVariableDialog()->IsShown()) {
+		ManagerST::Get()->GetDisplayVariableDialog()->HideDialog();
+	}
+
 	//let the context process it as well
 	if (GetFunctionTip()->IsActive() && event.GetKeyCode() == WXK_ESCAPE)
 		GetFunctionTip()->Deactivate();

@@ -43,6 +43,7 @@
       <CompilerOption Name="-O3">Optimize fully (for speed)</CompilerOption>
       <CompilerOption Name="-Os">Optimize generated code (for size)</CompilerOption>
       <CompilerOption Name="-fexpensive-optimizations">Expensive optimizations</CompilerOption>
+	  <CompilerOption Name="-fopenmp">Enable OpenMP (compilation).</CompilerOption>
       <LinkerOption Name="-s">Remove all symbol table and relocation information from the executable.</LinkerOption>
 	  <LinkerOption Name="-fopenmp">Enable OpenMP (linkage).</LinkerOption>
     </Compiler>
@@ -88,7 +89,8 @@
       <CompilerOption Name="-O3">Optimize fully (for speed)</CompilerOption>
       <CompilerOption Name="-Os">Optimize generated code (for size)</CompilerOption>
       <CompilerOption Name="-fexpensive-optimizations">Expensive optimizations</CompilerOption>
-      <LinkerOption Name="-s">Remove all symbol table and relocation information from the executable.</LinkerOption>
+	  <CompilerOption Name="-fopenmp">Enable OpenMP (compilation).</CompilerOption>
+	  <LinkerOption Name="-s">Remove all symbol table and relocation information from the executable.</LinkerOption>
 	  <LinkerOption Name="-fopenmp">Enable OpenMP (linkage).</LinkerOption>
     </Compiler>
     <Compiler Name="cobra" GenerateDependenciesFiles="no">

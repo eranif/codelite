@@ -170,6 +170,38 @@ static void massCopy(const wxString &sourceDir, const wxString &spec, const wxSt
 	}
 }
 
+#ifdef __WXGTK__
+//-------------------------------------------
+// Signal Handlers for GTK
+//-------------------------------------------
+static void WaitForDebugger(int signo) 
+{
+	wxString msg;
+	msg << wxT("codelite crashed: you may attach to it using gdb\n")
+		<< wxT("or let it crash silently..\n")
+		<< wxT("Attach debugger?\n");
+		
+	int rc = wxMessageBox(msg, wxT("CodeLite Crash Handler"), wxYES_NO|wxCENTER|wxICON_ERROR);
+	if(rc == wxYES) {
+		
+		// Launch a shell command with the following command:
+		// gdb -p <PID>
+		
+		char command[256];
+		memset (command, 0, sizeof(command));
+		sprintf(command, "xterm -T 'gdb' -e 'gdb -p %d'", getpid());
+		if(system (command) == 0) {
+			pause();
+			
+		} else {
+			// Go down without launching the debugger, ask the user to do it manually
+			wxMessageBox(wxString::Format(wxT("Failed to launch the debugger\nYou may still attach to codelite manually by typing this command in a terminal:\ngdb -p %d"), getpid()), wxT("CodeLite Crash Handler"), wxOK|wxCENTER|wxICON_ERROR);
+			pause();
+		}
+	}
+}
+#endif
+
 IMPLEMENT_APP(App)
 
 extern void InitXmlResource();
@@ -206,6 +238,11 @@ bool App::OnInit()
 	sigemptyset( &mask_set );
 	sigaddset(&mask_set, SIGPIPE);
 	sigprocmask(SIG_SETMASK, &mask_set, NULL);
+	
+	// Insall signal handlers
+	signal(SIGSEGV, WaitForDebugger);
+	signal(SIGABRT, WaitForDebugger);
+	
 #endif
 
 	wxSocketBase::Initialize();

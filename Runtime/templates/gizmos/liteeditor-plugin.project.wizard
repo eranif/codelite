@@ -17,7 +17,6 @@
         <IncludePath Value="$(CodeLitePath)/Plugin"/>
 		<IncludePath Value="$(CodeLitePath)/sqlite3"/>
 		<IncludePath Value="$(CodeLitePath)/sdk/wxsqlite3/include"/>
-		<IncludePath Value="$(CodeLitePath)/sdk/wxpropgrid/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
@@ -27,7 +26,6 @@
         <Library Value="libpluginu.a"/>
         <Library Value="libcodeliteud.a"/>
 		<Library Value="libwxsqlite3ud.a"/>
-		<Library Value="libwxpropgridud.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -51,17 +49,15 @@
         <IncludePath Value="$(CodeLitePath)/Plugin"/>
 		<IncludePath Value="$(CodeLitePath)/sqlite3"/>
 		<IncludePath Value="$(CodeLitePath)/sdk/wxsqlite3/include"/>
-		<IncludePath Value="$(CodeLitePath)/sdk/wxpropgrid/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
-		<LibraryPath Value="$(CodeLitePath)/lib"/>  
+		<LibraryPath Value="$(CodeLitePath)/lib"/>
         <Library Value="libpluginu.a"/>
         <Library Value="libcodeliteu.a"/>
 		<Library Value="libwxsqlite3u.a"/>
- 		<Library Value="libwxpropgridu.a"/>
        <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -85,7 +81,6 @@
         <IncludePath Value="$(CodeLitePath)/Plugin"/>
         <IncludePath Value="$(CodeLitePath)/sqlite3"/>
 		<IncludePath Value="$(CodeLitePath)/sdk/wxsqlite3/include"/>
-		<IncludePath Value="$(CodeLitePath)/sdk/wxpropgrid/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="_WIN32_WINNT=0x501"/>
@@ -96,7 +91,6 @@
         <Library Value="libplugin_sdkud.a"/>
         <Library Value="libCodeLiteud.a"/>
         <Library Value="libwxsqlite3ud.a"/>
-		<Library Value="libwxpropgridud.a"/>
         <Library Value="libsqlite3.a"/>
 		<Library Value="libwxmsw28ud.a"/>
       </Linker>
@@ -121,7 +115,6 @@
         <IncludePath Value="$(CodeLitePath)/Plugin"/>
         <IncludePath Value="$(CodeLitePath)/sqlite3"/>
 		<IncludePath Value="$(CodeLitePath)/sdk/wxsqlite3/include"/>
-		<IncludePath Value="$(CodeLitePath)/sdk/wxpropgrid/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="_WIN32_WINNT=0x501"/>
@@ -132,7 +125,6 @@
         <Library Value="libplugin_sdku.a"/>
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>
-		<Library Value="libwxpropgridu.a"/>
         <Library Value="libsqlite3.a"/>
         <Library Value="libwxmsw28u.a"/>
       </Linker>

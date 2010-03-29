@@ -31,7 +31,7 @@ DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
 {
 	Hide();
 	Centre();
-	WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
+	//WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
 	EditorConfigST::Get()->GetLongValue(wxT("NewQuickWatchDlg_ShowExtraFormats"), m_showExtraFormats);
 
 	if(!m_showExtraFormats && m_panelExtra->IsShown()) {

@@ -22,6 +22,7 @@ public:
 	std::map<wxString, wxTreeItemId> m_gdbId2ItemLeaf;
 	wxString                         m_mainVariableObject;
 	wxString                         m_variableName;
+	wxString                         m_expression;
 	wxTimer*                         m_timer;
 	wxTimer*                         m_timer2;
 	bool                             m_leftWindow;

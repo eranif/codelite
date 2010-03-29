@@ -2970,6 +2970,8 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 
 		GetDebuggerTip()->m_mainVariableObject = event.m_variableObject.gdbId;
 		GetDebuggerTip()->m_variableName       = event.m_expression;
+		GetDebuggerTip()->m_expression         = event.m_expression;
+
 		if ( event.m_evaluated.IsEmpty() == false ) {
 			GetDebuggerTip()->m_variableName << wxT(" = ") << event.m_evaluated;
 		}

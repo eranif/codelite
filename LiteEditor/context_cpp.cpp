@@ -1393,15 +1393,6 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 {
 	static wxRegEx reCppIndentifier(wxT("[a-zA-Z_][a-zA-Z0-9_]*"));
 
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-		if ( GetCtrl().GetDebuggerTip()->IsShown() ) {
-			// a 'Quick Show dialog' is already shown!
-			// dont show another tip
-			return;
-		}
-	}
-
 	wxPoint pt;
 	wxString word;
 	pt.x = event.GetX();
@@ -1446,6 +1437,18 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 		return;
 	}
 
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
+		if ( GetCtrl().GetDebuggerTip()->IsShown() && GetCtrl().GetDebuggerTip()->m_expression == word) {
+			// a 'Quick Show dialog' is already shown for this word
+			// dont show another tip
+			return;
+
+		} else {
+			GetCtrl().GetDebuggerTip()->HideDialog();
+
+		}
+	}
 	dbgr->CreateVariableObject( word, DBG_USERR_QUICKWACTH );
 }
 

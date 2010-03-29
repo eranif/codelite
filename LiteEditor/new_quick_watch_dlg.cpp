@@ -224,6 +224,7 @@ void DisplayVariableDlg::DoCleanUp()
 	m_gdbId2ItemLeaf.clear();
 	m_mainVariableObject = wxT("");
 	m_variableName = wxT("");
+	m_expression = wxT("");
 	m_hexFormat->SetLabel(wxT(""));
 	m_binFormat->SetLabel(wxT(""));
 

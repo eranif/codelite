@@ -74,7 +74,7 @@ protected:
 
      //--------------------------- Global State -----------------------------
 public:
-	DisplayVariableDlg * GetDisplayVariableDialog();
+	DisplayVariableDlg *GetDebuggerTip();
 
  	const wxString &GetStarupDirectory() const { return m_startupDir; }
  	void SetStarupDirectory(const wxString &path) { m_startupDir = path; }
@@ -381,9 +381,9 @@ public:
  	 * \return project execution command or wxEmptyString if the project does not exist
   	 */
  	wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd, bool considerPauseWhenExecuting = true);
-	
+
 	bool     DoFindDockInfo   (const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info);
-	
+
      //--------------------------- Top Level Pane Management -----------------------------
 public:
   	/**
@@ -405,13 +405,13 @@ public:
  	 * Show the debugger pane
   	 */
  	void ShowDebuggerPane(bool commit = true);
-	
+
 	/**
 	 * \brief toggle the output pane
 	 * \param hide show or hide
 	 */
 	void ToggleOutputPane(bool hide);
-	
+
   	/**
  	 * Show the workspace pane and set focus to focusWin
  	 * \param focusWin tab name to set the focus

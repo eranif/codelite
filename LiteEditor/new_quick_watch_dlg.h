@@ -28,9 +28,12 @@ public:
 	wxString                         m_fullpath;
 	wxTreeItemId                     m_hoveredItem;
 	long                             m_showExtraFormats;
+	wxCursor                         m_cursor;
+
 protected:
 	bool     IsFakeItem(const wxTreeItemId &item);
 	wxString DoGetItemPath(const wxTreeItemId &item);
+	void     DoAdjustPosition();
 
 protected:
 	// Handlers for NewQuickWatch events.
@@ -50,8 +53,6 @@ protected:
 	void OnMenuSelection(wxCommandEvent &e);
 	void OnMouseMove( wxMouseEvent& event );
 	void OnShowHexAndBinFormat(wxCommandEvent& event);
-
-	DECLARE_EVENT_TABLE()
 
 public:
 	/** Constructor */

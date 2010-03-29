@@ -9,9 +9,7 @@
 #include "debuggerobserver.h"
 #include <wx/log.h>
 #include "globals.h"
-
-#define TIPTIMERID  34347
-#define TIPTIMERID2 34348
+#include <wx/cursor.h>
 
 class QWTreeData : public wxTreeItemData
 {
@@ -24,16 +22,14 @@ public:
 	virtual ~QWTreeData() {}
 };
 
-BEGIN_EVENT_TABLE(DisplayVariableDlg, NewQuickWatch)
-	EVT_TIMER(TIPTIMERID,  DisplayVariableDlg::OnTimer)
-	EVT_TIMER(TIPTIMERID2, DisplayVariableDlg::OnTimer2)
-END_EVENT_TABLE()
-
 DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
-		: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(500, 400) )
+		: NewQuickWatch( parent, wxID_ANY, wxDefaultPosition, wxSize(400, 200), wxTAB_TRAVERSAL | wxBORDER_SIMPLE |wxSTAY_ON_TOP )
+		, m_debugger(NULL)
 		, m_leftWindow(false)
 		, m_showExtraFormats(0)
+		, m_cursor(wxNullCursor)
 {
+	Hide();
 	Centre();
 	WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
 	EditorConfigST::Get()->GetLongValue(wxT("NewQuickWatchDlg_ShowExtraFormats"), m_showExtraFormats);
@@ -44,15 +40,26 @@ DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
 	}
 	m_checkBoxShowMoreFormats->SetValue(m_showExtraFormats ? true : false);
 
-	m_timer  = new wxTimer(this, TIPTIMERID);
-	m_timer2 = new wxTimer(this, TIPTIMERID2);
+	m_timer  = new wxTimer(this);
+	m_timer2 = new wxTimer(this);
+
+	Connect(m_timer->GetId(),  wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer),  NULL, this);
+	Connect(m_timer2->GetId(), wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer2), NULL, this);
 }
 
 DisplayVariableDlg::~DisplayVariableDlg()
 {
+	Disconnect(m_timer->GetId(),  wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer),  NULL, this);
+	Disconnect(m_timer2->GetId(), wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer2), NULL, this);
+
 	m_timer->Stop();
 	delete m_timer;
 	m_timer = NULL;
+
+	m_timer2->Stop();
+	delete m_timer2;
+	m_timer2 = NULL;
+
 	WindowAttrManager::Save(this, wxT("NewQuickWatchDlg"), NULL);
 	EditorConfigST::Get()->SaveLongValue(wxT("NewQuickWatchDlg_ShowExtraFormats"), m_showExtraFormats);
 }
@@ -219,12 +226,26 @@ void DisplayVariableDlg::DoCleanUp()
 	m_variableName = wxT("");
 	m_hexFormat->SetLabel(wxT(""));
 	m_binFormat->SetLabel(wxT(""));
+
+	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
+	if(editor) {
+		editor->Disconnect(wxEVT_ENTER_WINDOW, wxMouseEventHandler(DisplayVariableDlg::OnMouseEnterWindow), NULL, this);
+		editor->Disconnect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(DisplayVariableDlg::OnMouseLeaveWindow), NULL, this);
+	}
 }
 
 void DisplayVariableDlg::HideDialog()
 {
 	DoCleanUp();
-	wxDialog::Show(false);
+#ifdef __WXMSW__
+
+	if(m_cursor.IsOk()) {
+		GetParent()->SetCursor( m_cursor );
+		m_cursor = wxNullCursor;
+	}
+
+#endif
+	wxPanel::Show(false);
 }
 
 void DisplayVariableDlg::OnKeyDown(wxKeyEvent& event)
@@ -234,18 +255,26 @@ void DisplayVariableDlg::OnKeyDown(wxKeyEvent& event)
 
 void DisplayVariableDlg::ShowDialog(bool center)
 {
-	if ( center ) {
-		Centre();
-	} else {
-		Move( wxGetMousePosition() );
-
-	}
-	wxDialog::Show();
 	// Pass the focus back to the main editor
-	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
 	if(editor) {
+		DoAdjustPosition();
+		wxPanel::Show();
 		editor->SetActive();
+
+		editor->Connect(wxEVT_ENTER_WINDOW, wxMouseEventHandler(DisplayVariableDlg::OnMouseEnterWindow), NULL, this);
+		editor->Connect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(DisplayVariableDlg::OnMouseLeaveWindow), NULL, this);
+
+	} else {
+		Centre();
+		wxPanel::Show();
 	}
+
+#ifdef __WXMSW__
+	m_cursor = GetParent()->GetCursor();
+	if(m_cursor.IsOk())
+		GetParent()->SetCursor( *wxSTANDARD_CURSOR );
+#endif
 }
 
 void DisplayVariableDlg::OnLeftDown(wxMouseEvent& e)
@@ -277,14 +306,14 @@ void DisplayVariableDlg::OnItemExpanded(wxTreeEvent& event)
 
 void DisplayVariableDlg::OnMouseLeaveWindow(wxMouseEvent& e)
 {
-	m_leftWindow = true;
-	m_timer->Start(500, true);
+	m_leftWindow = false;
 	e.Skip();
 }
 
 void DisplayVariableDlg::OnMouseEnterWindow(wxMouseEvent& e)
 {
-	m_leftWindow = false;
+	m_leftWindow = true;
+	m_timer->Start(500, true);
 	e.Skip();
 }
 
@@ -463,4 +492,32 @@ void DisplayVariableDlg::OnShowHexAndBinFormat(wxCommandEvent& event)
 		}
 	}
 	Refresh();
+}
+
+void DisplayVariableDlg::DoAdjustPosition()
+{
+	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
+	if(editor) {
+
+		wxPoint pt        = editor->ScreenToClient( ::wxGetMousePosition());
+		wxSize sz         = GetSize();
+		wxRect parentSize = GetParent()->GetClientRect();
+
+		// by default place the tip below the caret
+
+		if (pt.y + sz.y > parentSize.height) {
+			pt.y -= sz.y;
+
+		}
+
+		if(pt.x + sz.x > parentSize.width) {
+			// our tip can not fit into the screen, shift it left
+			pt.x -= ((pt.x + sz.x) - parentSize.width);
+
+			if(pt.x < 0)
+				pt.x = 0;
+		}
+
+		Move(pt);
+	}
 }

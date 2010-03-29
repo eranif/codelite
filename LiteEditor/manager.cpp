@@ -2204,8 +2204,8 @@ void Manager::DbgUnMarkDebuggerLine()
 void Manager::DbgDoSimpleCommand ( int cmd )
 {
 	// Hide tooltip dialog if its ON
-	if(GetDisplayVariableDialog()->IsShown()) {
-		GetDisplayVariableDialog()->HideDialog();
+	if(GetDebuggerTip() && GetDebuggerTip()->IsShown()) {
+		GetDebuggerTip()->HideDialog();
 	}
 
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -2886,21 +2886,21 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	case DBG_UR_LISTCHILDREN: {
 		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 		if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
-			if ( !GetDisplayVariableDialog()->IsShown() ) {
-				GetDisplayVariableDialog()->BuildTree( event.m_varObjChildren, dbgr );
-				GetDisplayVariableDialog()->m_mainVariableObject = event.m_expression;
-				GetDisplayVariableDialog()->ShowDialog( (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS) );
+			if ( GetDebuggerTip() && !GetDebuggerTip()->IsShown() ) {
+				GetDebuggerTip()->BuildTree( event.m_varObjChildren, dbgr );
+				GetDebuggerTip()->m_mainVariableObject = event.m_expression;
+				GetDebuggerTip()->ShowDialog( (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS) );
 
-			} else {
+			} else if(GetDebuggerTip()) {
 				// The dialog is shown
-				GetDisplayVariableDialog()->AddItems(event.m_expression, event.m_varObjChildren);
+				GetDebuggerTip()->AddItems(event.m_expression, event.m_varObjChildren);
 			}
 		}
 	}
 	break;
 	case DBG_UR_EVALVARIABLEOBJ:
-		if (GetDisplayVariableDialog()->IsShown()) {
-			GetDisplayVariableDialog()->UpdateValue(event.m_expression, event.m_evaluated, event.m_displayFormat);
+		if (GetDebuggerTip() && GetDebuggerTip()->IsShown()) {
+			GetDebuggerTip()->UpdateValue(event.m_expression, event.m_evaluated, event.m_displayFormat);
 		}
 		break;
 	case DBG_UR_INVALID:
@@ -2960,29 +2960,22 @@ void Manager::OnRestart(wxCommandEvent& event)
 	DoRestartCodeLite();
 }
 
-DisplayVariableDlg* Manager::GetDisplayVariableDialog()
-{
-	if (!m_displayVariableDlg) {
-		m_displayVariableDlg = new DisplayVariableDlg(Frame::Get());
-	}
-	return m_displayVariableDlg;
-}
-
 void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 {
 	/////////////////////////////////////////////
 	// Handle Tooltips
 	/////////////////////////////////////////////
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
-		GetDisplayVariableDialog()->m_mainVariableObject = event.m_variableObject.gdbId;
-		GetDisplayVariableDialog()->m_variableName       = event.m_expression;
+	if ( dbgr && dbgr->IsRunning() && DbgCanInteract() && GetDebuggerTip() ) {
+
+		GetDebuggerTip()->m_mainVariableObject = event.m_variableObject.gdbId;
+		GetDebuggerTip()->m_variableName       = event.m_expression;
 		if ( event.m_evaluated.IsEmpty() == false ) {
-			GetDisplayVariableDialog()->m_variableName << wxT(" = ") << event.m_evaluated;
+			GetDebuggerTip()->m_variableName << wxT(" = ") << event.m_evaluated;
 		}
 
 		if ( event.m_variableObject.typeName.IsEmpty() == false ) {
-			GetDisplayVariableDialog()->m_variableName << wxT(" [") << event.m_variableObject.typeName << wxT("] ");
+			GetDebuggerTip()->m_variableName << wxT(" [") << event.m_variableObject.typeName << wxT("] ");
 		}
 
 		if ( event.m_variableObject.numChilds > 0 ) {
@@ -2991,11 +2984,11 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 
 		} else {
 			// Simple type, no need for further calls, show the dialog
-			if ( !GetDisplayVariableDialog()->IsShown() ) {
-				GetDisplayVariableDialog()->BuildTree( event.m_varObjChildren, dbgr );
+			if ( !GetDebuggerTip()->IsShown() ) {
+				GetDebuggerTip()->BuildTree( event.m_varObjChildren, dbgr );
 				// If the reason for showing the dialog was the 'Watches' table being d-clicked,
 				// center the dialog
-				GetDisplayVariableDialog()->ShowDialog( (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS) );
+				GetDebuggerTip()->ShowDialog( (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS) );
 			}
 		}
 	}
@@ -3100,4 +3093,13 @@ void Manager::DoSaveAllFilesBeforeBuild()
 		return;
 	}
 	SendCmdEvent(wxEVT_FILE_SAVE_BY_BUILD_END);
+}
+
+DisplayVariableDlg* Manager::GetDebuggerTip()
+{
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	if(editor) {
+		return editor->GetDebuggerTip();
+	}
+	return NULL;
 }

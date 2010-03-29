@@ -49,6 +49,7 @@
 class wxFindReplaceDialog;
 class CCBox;
 class clEditorTipWindow;
+class DisplayVariableDlg;
 
 enum sci_annotation_styles {
 	eAnnotationStyleError = 128, eAnnotationStyleWarning
@@ -136,6 +137,7 @@ class LEditor : public wxScintilla, public IEditor
 	clEditorTipWindow*                          m_functionTip;
 	wxChar                                      m_lastCharEntered;
 	int                                         m_lastCharEnteredPos;
+	DisplayVariableDlg*                         m_debuggerTip;
 
 public:
 	static FindReplaceData &GetFindReplaceData() {
@@ -152,6 +154,11 @@ public:
 	clEditorTipWindow* GetFunctionTip() {
 		return m_functionTip;
 	}
+
+	DisplayVariableDlg *GetDebuggerTip() {
+		return m_debuggerTip;
+	}
+
 public:
 	/// Construct a LEditor object
 	LEditor(wxWindow* parent);

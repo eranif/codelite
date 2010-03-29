@@ -21,13 +21,11 @@
         <property name="skip_python_events">1</property>
         <property name="use_enum">0</property>
         <property name="use_microsoft_bom">0</property>
-        <object class="Dialog" expanded="1">
+        <object class="Panel" expanded="1">
             <property name="bg"></property>
-            <property name="center">wxBOTH</property>
             <property name="context_help"></property>
             <property name="enabled">1</property>
             <property name="event_handler">impl_virtual</property>
-            <property name="extra_style"></property>
             <property name="fg"></property>
             <property name="font"></property>
             <property name="hidden">0</property>
@@ -36,10 +34,8 @@
             <property name="minimum_size"></property>
             <property name="name">NewQuickWatch</property>
             <property name="pos"></property>
-            <property name="size">435,180</property>
-            <property name="style">wxCAPTION|wxRESIZE_BORDER|wxSTAY_ON_TOP</property>
+            <property name="size">400,200</property>
             <property name="subclass"></property>
-            <property name="title">Display Variable</property>
             <property name="tooltip"></property>
             <property name="validator_data_type"></property>
             <property name="validator_style">wxFILTER_NONE</property>
@@ -47,16 +43,10 @@
             <property name="validator_variable"></property>
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
-            <property name="window_style"></property>
-            <event name="OnActivate"></event>
-            <event name="OnActivateApp"></event>
+            <property name="window_style">wxSIMPLE_BORDER|wxTAB_TRAVERSAL|wxWANTS_CHARS</property>
             <event name="OnChar"></event>
-            <event name="OnClose">OnCloseEvent</event>
             <event name="OnEnterWindow"></event>
             <event name="OnEraseBackground"></event>
-            <event name="OnHibernate"></event>
-            <event name="OnIconize"></event>
-            <event name="OnIdle"></event>
             <event name="OnInitDialog"></event>
             <event name="OnKeyDown"></event>
             <event name="OnKeyUp"></event>
@@ -112,19 +102,19 @@
                         <property name="window_name"></property>
                         <property name="window_style">wxNO_BORDER</property>
                         <event name="OnChar"></event>
-                        <event name="OnEnterWindow">OnMouseEnterWindow</event>
+                        <event name="OnEnterWindow"></event>
                         <event name="OnEraseBackground"></event>
                         <event name="OnKeyDown">OnKeyDown</event>
                         <event name="OnKeyUp"></event>
                         <event name="OnKillFocus"></event>
-                        <event name="OnLeaveWindow">OnMouseLeaveWindow</event>
+                        <event name="OnLeaveWindow"></event>
                         <event name="OnLeftDClick"></event>
                         <event name="OnLeftDown">OnLeftDown</event>
                         <event name="OnLeftUp"></event>
                         <event name="OnMiddleDClick"></event>
                         <event name="OnMiddleDown"></event>
                         <event name="OnMiddleUp"></event>
-                        <event name="OnMotion">OnMouseMove</event>
+                        <event name="OnMotion"></event>
                         <event name="OnMouseEvents"></event>
                         <event name="OnMouseWheel"></event>
                         <event name="OnPaint"></event>

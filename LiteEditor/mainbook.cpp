@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include "new_quick_watch_dlg.h"
 #include "globals.h"
 #include "ctags_manager.h"
 #include "frame.h"
@@ -82,6 +83,7 @@ void MainBook::ConnectEvents()
 	wxTheApp->Connect(wxEVT_PROJ_FILE_ADDED,   wxCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
 	wxTheApp->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
 	wxTheApp->Connect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
+	wxTheApp->Connect(wxEVT_DEBUG_ENDED,       wxCommandEventHandler(MainBook::OnDebugEnded),         NULL, this);
 }
 
 MainBook::~MainBook()
@@ -97,6 +99,7 @@ MainBook::~MainBook()
 	wxTheApp->Disconnect(wxEVT_PROJ_FILE_ADDED,   wxCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
 	wxTheApp->Disconnect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
 	wxTheApp->Disconnect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
+	wxTheApp->Disconnect(wxEVT_DEBUG_ENDED,       wxCommandEventHandler(MainBook::OnDebugEnded),         NULL, this);
 }
 
 void MainBook::OnMouseDClick(NotebookEvent& e)
@@ -422,13 +425,13 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 	} else if (fileName.IsOk() == false) {
 		wxLogMessage(wxT("Invalid file name: ") + fileName.GetFullPath());
 		return NULL;
-		
+
 	} else if (!fileName.FileExists()) {
 		wxLogMessage(wxT("File: ") + fileName.GetFullPath() + wxT(" does not exist!"));
 		return NULL;
-		
+
 	} else {
-		
+
 		// A Nice trick: hide the notebook, open the editor
 		// and then show it
 		bool hidden(false);
@@ -437,10 +440,10 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 
 		editor = new LEditor(m_book);
 		editor->Create(projName, fileName);
-		
+
 		AddPage(editor, fileName.GetFullName(), wxNullBitmap, true);
 		editor->SetSyntaxHighlight();
-		
+
 		// mark the editor as read only if needed
 		MarkEditorReadOnly(editor, IsFileReadOnly(editor->GetFileName()));
 
@@ -907,4 +910,15 @@ void MainBook::DoPositionFindBar(int where)
 	else
 		GetSizer()->Insert(where, m_quickFindBar, 0, wxTOP|wxBOTTOM|wxEXPAND);
 	GetSizer()->Layout();
+}
+
+void MainBook::OnDebugEnded(wxCommandEvent& e)
+{
+	std::vector<LEditor*> editors;
+	GetAllEditors(editors);
+
+	for(size_t i=0; i<editors.size(); i++) {
+		editors.at(i)->GetDebuggerTip()->HideDialog();
+	}
+	e.Skip();
 }

@@ -508,7 +508,9 @@ void DisplayVariableDlg::DoAdjustPosition()
 
 		if (pt.y + sz.y > parentSize.height) {
 			pt.y -= sz.y;
-
+			
+			if(pt.y < 0)
+				pt.y = 0;
 		}
 
 		if(pt.x + sz.x > parentSize.width) {

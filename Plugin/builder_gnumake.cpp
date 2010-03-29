@@ -841,9 +841,11 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
 				relPath = rel_paths.at(i).GetPath(true, wxPATH_UNIX);
 				relPath.Trim().Trim(false);
 
-				wxString objectName     = objPrefix << abs_files[i].GetName() << wxT("$(ObjectSuffix)");
-				wxString dependFile     = objPrefix << abs_files[i].GetName() << wxT("$(DependSuffix)");
-				wxString preprocessFile = objPrefix << abs_files[i].GetName() << wxT("$(PreprocessSuffix)");
+				wxString objectName, dependFile, preprocessFile;
+
+				objectName     << objPrefix << abs_files[i].GetName() << wxT("$(ObjectSuffix)");
+				dependFile     << objPrefix << abs_files[i].GetName() << wxT("$(DependSuffix)");
+				preprocessFile << objPrefix << abs_files[i].GetName() << wxT("$(PreprocessSuffix)");
 
 				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName     << wxT("\n");
 				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile     << wxT("\n");

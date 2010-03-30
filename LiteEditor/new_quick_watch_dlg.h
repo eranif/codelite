@@ -29,7 +29,6 @@ public:
 	wxString                         m_fullpath;
 	wxTreeItemId                     m_hoveredItem;
 	long                             m_showExtraFormats;
-	bool                             m_passFocus;
 
 protected:
 	bool     IsFakeItem(const wxTreeItemId &item);
@@ -54,7 +53,6 @@ protected:
 	void OnMenuSelection(wxCommandEvent &e);
 	void OnMouseMove( wxMouseEvent& event );
 	void OnShowHexAndBinFormat(wxCommandEvent& event);
-	void OnSetFocus(wxFocusEvent& event);
 
 
 

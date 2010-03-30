@@ -565,8 +565,6 @@
     <File Name="breakpointpropertiesdlg.cpp"/>
     <File Name="breakpointpropertiesdlg.h"/>
     <File Name="breakpointsmgr.cpp"/>
-    <File Name="watchdlg.h"/>
-    <File Name="watchdlg.cpp"/>
   </VirtualDirectory>
   <Options/>
   <Dependencies Name="Unix">

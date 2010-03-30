@@ -17,10 +17,10 @@
 #include <wx/settings.h>
 #include <wx/string.h>
 #include <wx/statline.h>
-#include <wx/checkbox.h>
 #include <wx/stattext.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
+#include <wx/checkbox.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -34,21 +34,21 @@ class NewQuickWatch : public wxDialog
 	private:
 	
 	protected:
+		wxPanel* m_mainPanel;
 		wxTreeCtrl* m_treeCtrl;
 		wxStaticLine* m_staticline1;
-		wxCheckBox* m_checkBoxShowMoreFormats;
 		wxPanel* m_panelExtra;
 		wxStaticText* m_staticText1;
 		wxStaticText* m_hexFormat;
 		wxStaticText* m_staticText2;
 		wxStaticText* m_binFormat;
+		wxCheckBox* m_checkBoxShowMoreFormats;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnEnterWindow( wxMouseEvent& event ) { event.Skip(); }
 		virtual void OnKeyDown( wxKeyEvent& event ) { event.Skip(); }
 		virtual void OnLeaveWindow( wxMouseEvent& event ) { event.Skip(); }
 		virtual void OnLeftDown( wxMouseEvent& event ) { event.Skip(); }
-		virtual void OnSetFocus( wxFocusEvent& event ) { event.Skip(); }
 		virtual void OnItemExpanded( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnExpandItem( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnItemMenu( wxTreeEvent& event ) { event.Skip(); }

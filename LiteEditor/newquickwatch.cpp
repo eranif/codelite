@@ -16,18 +16,19 @@ NewQuickWatch::NewQuickWatch( wxWindow* parent, wxWindowID id, const wxString& t
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	m_treeCtrl = new wxTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxNO_BORDER );
+	m_mainPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer5;
+	bSizer5 = new wxBoxSizer( wxVERTICAL );
+	
+	m_treeCtrl = new wxTreeCtrl( m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxNO_BORDER );
 	m_treeCtrl->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
 	
-	mainSizer->Add( m_treeCtrl, 1, wxEXPAND, 0 );
+	bSizer5->Add( m_treeCtrl, 1, wxEXPAND, 0 );
 	
-	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	mainSizer->Add( m_staticline1, 0, wxEXPAND, 5 );
+	m_staticline1 = new wxStaticLine( m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer5->Add( m_staticline1, 0, wxEXPAND, 5 );
 	
-	m_checkBoxShowMoreFormats = new wxCheckBox( this, wxID_ANY, _("Show selected node in Hex and Bin format"), wxDefaultPosition, wxDefaultSize, 0 );
-	mainSizer->Add( m_checkBoxShowMoreFormats, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
-	
-	m_panelExtra = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panelExtra = new wxPanel( m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer1->AddGrowableCol( 1 );
@@ -61,7 +62,15 @@ NewQuickWatch::NewQuickWatch( wxWindow* parent, wxWindowID id, const wxString& t
 	m_panelExtra->SetSizer( fgSizer1 );
 	m_panelExtra->Layout();
 	fgSizer1->Fit( m_panelExtra );
-	mainSizer->Add( m_panelExtra, 0, wxEXPAND | wxALL, 5 );
+	bSizer5->Add( m_panelExtra, 0, wxEXPAND | wxALL, 5 );
+	
+	m_checkBoxShowMoreFormats = new wxCheckBox( m_mainPanel, wxID_ANY, _("Show selected node in Hex and Bin format"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer5->Add( m_checkBoxShowMoreFormats, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+	
+	m_mainPanel->SetSizer( bSizer5 );
+	m_mainPanel->Layout();
+	bSizer5->Fit( m_mainPanel );
+	mainSizer->Add( m_mainPanel, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -74,7 +83,6 @@ NewQuickWatch::NewQuickWatch( wxWindow* parent, wxWindowID id, const wxString& t
 	m_treeCtrl->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( NewQuickWatch::OnKeyDown ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( NewQuickWatch::OnLeaveWindow ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( NewQuickWatch::OnLeftDown ), NULL, this );
-	m_treeCtrl->Connect( wxEVT_SET_FOCUS, wxFocusEventHandler( NewQuickWatch::OnSetFocus ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_EXPANDED, wxTreeEventHandler( NewQuickWatch::OnItemExpanded ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler( NewQuickWatch::OnExpandItem ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( NewQuickWatch::OnItemMenu ), NULL, this );
@@ -88,7 +96,6 @@ NewQuickWatch::~NewQuickWatch()
 	m_treeCtrl->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( NewQuickWatch::OnKeyDown ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( NewQuickWatch::OnLeaveWindow ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( NewQuickWatch::OnLeftDown ), NULL, this );
-	m_treeCtrl->Disconnect( wxEVT_SET_FOCUS, wxFocusEventHandler( NewQuickWatch::OnSetFocus ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_EXPANDED, wxTreeEventHandler( NewQuickWatch::OnItemExpanded ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler( NewQuickWatch::OnExpandItem ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( NewQuickWatch::OnItemMenu ), NULL, this );

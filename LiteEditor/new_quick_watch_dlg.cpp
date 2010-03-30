@@ -27,7 +27,6 @@ DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
 		, m_debugger(NULL)
 		, m_leftWindow(false)
 		, m_showExtraFormats(0)
-		, m_passFocus(true)
 {
 	Hide();
 	Centre();
@@ -36,7 +35,7 @@ DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
 
 	if (!m_showExtraFormats && m_panelExtra->IsShown()) {
 		m_panelExtra->Hide();
-		GetSizer()->Layout();
+		m_mainPanel->GetSizer()->Layout();
 	}
 	m_checkBoxShowMoreFormats->SetValue(m_showExtraFormats ? true : false);
 
@@ -227,7 +226,6 @@ void DisplayVariableDlg::DoCleanUp()
 	m_expression = wxT("");
 	m_hexFormat->SetLabel(wxT(""));
 	m_binFormat->SetLabel(wxT(""));
-	m_passFocus = true;
 }
 
 void DisplayVariableDlg::HideDialog()
@@ -252,7 +250,13 @@ void DisplayVariableDlg::ShowDialog(bool center)
 		Centre();
 		wxDialog::Show();
 	}
-	m_passFocus = true;
+
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	if(editor) {
+		Frame::Get()->Raise();
+		editor->SetFocus();
+		editor->SetActive();
+	}
 }
 
 void DisplayVariableDlg::OnLeftDown(wxMouseEvent& e)
@@ -452,11 +456,11 @@ void DisplayVariableDlg::OnShowHexAndBinFormat(wxCommandEvent& event)
 
 	if (!m_showExtraFormats && m_panelExtra->IsShown()) {
 		m_panelExtra->Hide();
-		GetSizer()->Layout();
+		m_mainPanel->GetSizer()->Layout();
 
 	} else if (m_showExtraFormats && m_panelExtra->IsShown() == false) {
 		m_panelExtra->Show();
-		GetSizer()->Layout();
+		m_mainPanel->GetSizer()->Layout();
 	}
 
 	if (m_showExtraFormats) {
@@ -477,14 +481,3 @@ void DisplayVariableDlg::DoAdjustPosition()
 	Move( ::wxGetMousePosition() );
 }
 
-void DisplayVariableDlg::OnSetFocus(wxFocusEvent& event)
-{
-	// Pass the focus to the editor
-	event.Skip();
-	if(m_passFocus) {
-		m_passFocus = false;
-		LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
-		if (editor)
-			editor->SetActive();
-	}
-}

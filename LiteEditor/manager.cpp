@@ -78,7 +78,6 @@
 #include "clean_request.h"
 #include "buidltab.h"
 #include "manager.h"
-#include "watchdlg.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
 

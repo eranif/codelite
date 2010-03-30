@@ -1,4 +1,5 @@
 #include "qmakegenerator.h"
+#include "imacromanager.h"
 #include "build_settings_config.h"
 #include "compiler.h"
 #include "wxmd5.h"
@@ -71,7 +72,10 @@ bool QMakeProFileGenerator::Generate()
 	pro_file << wxT("##########################################\n");
 	pro_file << wxT("# User section\n");
 	pro_file << wxT("##########################################\n");
-	pro_file << wxT("\n") << bcpd.m_freeText << wxT("\n");
+
+	// Expands any macros available in the user free text
+	wxString expandedText = m_manager->GetMacrosManager()->Expand(bcpd.m_freeText, m_manager, p->GetName(), m_configuration);
+	pro_file << wxT("\n") << expandedText << wxT("\n");
 
 	// incase we are building library, set the template back the lib
 	wxString type = p->GetSettings()->GetProjectType( bldConf->GetName() );

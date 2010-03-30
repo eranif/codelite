@@ -9,7 +9,6 @@ General
 - Add new second tip to the code-completion box which shows the conent of the comment on top of the current tip
 - Refactoring: add an option to add 'add forward decl'
 - Refactoring: allow rename local variable
-- Debugger: 'auto-expand' is no longer working
 
 2.9 Porting, known issues:
 ==========================

@@ -49,6 +49,7 @@ class NewQuickWatch : public wxDialog
 		virtual void OnKeyDown( wxKeyEvent& event ) { event.Skip(); }
 		virtual void OnLeaveWindow( wxMouseEvent& event ) { event.Skip(); }
 		virtual void OnLeftDown( wxMouseEvent& event ) { event.Skip(); }
+		virtual void OnMouseMove( wxMouseEvent& event ) { event.Skip(); }
 		virtual void OnItemExpanded( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnExpandItem( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnItemMenu( wxTreeEvent& event ) { event.Skip(); }

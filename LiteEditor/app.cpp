@@ -191,14 +191,17 @@ static void WaitForDebugger(int signo)
 		memset (command, 0, sizeof(command));
 		sprintf(command, "xterm -T 'gdb' -e 'gdb -p %d'", getpid());
 		if(system (command) == 0) {
-			pause();
-			
+			signal(signo, SIG_DFL);
+			raise(signo);
 		} else {
 			// Go down without launching the debugger, ask the user to do it manually
 			wxMessageBox(wxString::Format(wxT("Failed to launch the debugger\nYou may still attach to codelite manually by typing this command in a terminal:\ngdb -p %d"), getpid()), wxT("CodeLite Crash Handler"), wxOK|wxCENTER|wxICON_ERROR);
 			pause();
 		}
 	}
+	
+	signal(signo, SIG_DFL);
+	raise(signo);
 }
 #endif
 

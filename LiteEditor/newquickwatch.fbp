@@ -179,7 +179,7 @@
                                     <event name="OnMiddleDClick"></event>
                                     <event name="OnMiddleDown"></event>
                                     <event name="OnMiddleUp"></event>
-                                    <event name="OnMotion"></event>
+                                    <event name="OnMotion">OnMouseMove</event>
                                     <event name="OnMouseEvents"></event>
                                     <event name="OnMouseWheel"></event>
                                     <event name="OnPaint"></event>

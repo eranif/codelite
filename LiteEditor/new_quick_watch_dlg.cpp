@@ -23,18 +23,18 @@ public:
 };
 
 DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
-		: NewQuickWatch( parent, wxID_ANY, wxDefaultPosition, wxSize(400, 200), wxTAB_TRAVERSAL | wxBORDER_SIMPLE |wxSTAY_ON_TOP )
+		: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(400, 200) )
 		, m_debugger(NULL)
 		, m_leftWindow(false)
 		, m_showExtraFormats(0)
-		, m_cursor(wxNullCursor)
+		, m_passFocus(true)
 {
 	Hide();
 	Centre();
-	//WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
+	WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
 	EditorConfigST::Get()->GetLongValue(wxT("NewQuickWatchDlg_ShowExtraFormats"), m_showExtraFormats);
 
-	if(!m_showExtraFormats && m_panelExtra->IsShown()) {
+	if (!m_showExtraFormats && m_panelExtra->IsShown()) {
 		m_panelExtra->Hide();
 		GetSizer()->Layout();
 	}
@@ -150,7 +150,7 @@ void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChil
 			// ask gdb for the value for this node
 
 			m_debugger->EvaluateVariableObject( ch.gdbId, DBG_DF_NATURAL,     DBG_USERR_QUICKWACTH );
-			if(m_showExtraFormats) {
+			if (m_showExtraFormats) {
 				m_debugger->EvaluateVariableObject( ch.gdbId, DBG_DF_BINARY,      DBG_USERR_QUICKWACTH );
 				m_debugger->EvaluateVariableObject( ch.gdbId, DBG_DF_HEXADECIMAL, DBG_USERR_QUICKWACTH );
 			}
@@ -186,15 +186,15 @@ void DisplayVariableDlg::UpdateValue(const wxString& varname, const wxString& va
 		} else if ( item.IsOk() ) {
 			nodeId = item;
 		}
-	} else if(varname == m_mainVariableObject) {
+	} else if (varname == m_mainVariableObject) {
 
 		// Handle Root
 		nodeId = m_treeCtrl->GetRootItem();
 	}
 
-	if(nodeId.IsOk()) {
+	if (nodeId.IsOk()) {
 		QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(nodeId);
-		if(data) {
+		if (data) {
 			switch (displayFormat) {
 			case DBG_DF_HEXADECIMAL:
 				data->_hex = value;
@@ -227,26 +227,13 @@ void DisplayVariableDlg::DoCleanUp()
 	m_expression = wxT("");
 	m_hexFormat->SetLabel(wxT(""));
 	m_binFormat->SetLabel(wxT(""));
-
-	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
-	if(editor) {
-		editor->Disconnect(wxEVT_ENTER_WINDOW, wxMouseEventHandler(DisplayVariableDlg::OnMouseEnterWindow), NULL, this);
-		editor->Disconnect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(DisplayVariableDlg::OnMouseLeaveWindow), NULL, this);
-	}
+	m_passFocus = true;
 }
 
 void DisplayVariableDlg::HideDialog()
 {
 	DoCleanUp();
-#ifdef __WXMSW__
-
-	if(m_cursor.IsOk()) {
-		GetParent()->SetCursor( m_cursor );
-		m_cursor = wxNullCursor;
-	}
-
-#endif
-	wxPanel::Show(false);
+	wxDialog::Show(false);
 }
 
 void DisplayVariableDlg::OnKeyDown(wxKeyEvent& event)
@@ -257,25 +244,15 @@ void DisplayVariableDlg::OnKeyDown(wxKeyEvent& event)
 void DisplayVariableDlg::ShowDialog(bool center)
 {
 	// Pass the focus back to the main editor
-	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
-	if(editor) {
+	if ( !center ) {
 		DoAdjustPosition();
-		wxPanel::Show();
-		editor->SetActive();
-
-		editor->Connect(wxEVT_ENTER_WINDOW, wxMouseEventHandler(DisplayVariableDlg::OnMouseEnterWindow), NULL, this);
-		editor->Connect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(DisplayVariableDlg::OnMouseLeaveWindow), NULL, this);
+		wxDialog::Show();
 
 	} else {
 		Centre();
-		wxPanel::Show();
+		wxDialog::Show();
 	}
-
-#ifdef __WXMSW__
-	m_cursor = GetParent()->GetCursor();
-	if(m_cursor.IsOk())
-		GetParent()->SetCursor( *wxSTANDARD_CURSOR );
-#endif
+	m_passFocus = true;
 }
 
 void DisplayVariableDlg::OnLeftDown(wxMouseEvent& e)
@@ -290,9 +267,9 @@ void DisplayVariableDlg::OnLeftDown(wxMouseEvent& e)
 		}
 	}
 
-	if(item.IsOk() && m_showExtraFormats && (flags & wxTREE_HITTEST_ONITEMLABEL )) {
+	if (item.IsOk() && m_showExtraFormats && (flags & wxTREE_HITTEST_ONITEMLABEL )) {
 		QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(item);
-		if(data) {
+		if (data) {
 			m_hexFormat->SetLabel(data->_hex);
 			m_binFormat->SetLabel(data->_binary);
 		}
@@ -305,16 +282,16 @@ void DisplayVariableDlg::OnItemExpanded(wxTreeEvent& event)
 	event.Skip();
 }
 
-void DisplayVariableDlg::OnMouseLeaveWindow(wxMouseEvent& e)
-{
-	m_leftWindow = false;
-	e.Skip();
-}
-
-void DisplayVariableDlg::OnMouseEnterWindow(wxMouseEvent& e)
+void DisplayVariableDlg::OnLeaveWindow(wxMouseEvent& e)
 {
 	m_leftWindow = true;
 	m_timer->Start(500, true);
+	e.Skip();
+}
+
+void DisplayVariableDlg::OnEnterWindow(wxMouseEvent& e)
+{
+	m_leftWindow = false;
 	e.Skip();
 }
 
@@ -473,20 +450,20 @@ void DisplayVariableDlg::OnShowHexAndBinFormat(wxCommandEvent& event)
 {
 	m_showExtraFormats = (long)event.IsChecked();
 
-	if(!m_showExtraFormats && m_panelExtra->IsShown()) {
+	if (!m_showExtraFormats && m_panelExtra->IsShown()) {
 		m_panelExtra->Hide();
 		GetSizer()->Layout();
 
-	} else if(m_showExtraFormats && m_panelExtra->IsShown() == false) {
+	} else if (m_showExtraFormats && m_panelExtra->IsShown() == false) {
 		m_panelExtra->Show();
 		GetSizer()->Layout();
 	}
 
-	if(m_showExtraFormats) {
+	if (m_showExtraFormats) {
 		wxTreeItemId item = m_treeCtrl->GetSelection();
-		if(item.IsOk()) {
+		if (item.IsOk()) {
 			QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(item);
-			if(data) {
+			if (data) {
 				m_hexFormat->SetLabel(data->_hex);
 				m_binFormat->SetLabel(data->_binary);
 			}
@@ -497,30 +474,17 @@ void DisplayVariableDlg::OnShowHexAndBinFormat(wxCommandEvent& event)
 
 void DisplayVariableDlg::DoAdjustPosition()
 {
-	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
-	if(editor) {
+	Move( ::wxGetMousePosition() );
+}
 
-		wxPoint pt        = editor->ScreenToClient( ::wxGetMousePosition());
-		wxSize sz         = GetSize();
-		wxRect parentSize = GetParent()->GetClientRect();
-
-		// by default place the tip below the caret
-
-		if (pt.y + sz.y > parentSize.height) {
-			pt.y -= sz.y;
-			
-			if(pt.y < 0)
-				pt.y = 0;
-		}
-
-		if(pt.x + sz.x > parentSize.width) {
-			// our tip can not fit into the screen, shift it left
-			pt.x -= ((pt.x + sz.x) - parentSize.width);
-
-			if(pt.x < 0)
-				pt.x = 0;
-		}
-
-		Move(pt);
+void DisplayVariableDlg::OnSetFocus(wxFocusEvent& event)
+{
+	// Pass the focus to the editor
+	event.Skip();
+	if(m_passFocus) {
+		m_passFocus = false;
+		LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+		if (editor)
+			editor->SetActive();
 	}
 }

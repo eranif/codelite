@@ -177,8 +177,7 @@ LEditor::LEditor(wxWindow* parent)
 
 	// Create the various tip windows
 	m_functionTip = new clEditorTipWindow(this);
-	m_debuggerTip = new DisplayVariableDlg(this);
-
+//	m_debuggerTip = new DisplayVariableDlg(this);
 	m_disableSmartIndent = GetOptions()->GetDisableSmartIndent();
 }
 
@@ -2238,8 +2237,8 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 void LEditor::OnKeyDown(wxKeyEvent &event)
 {
 	// Hide tooltip dialog if its ON
-	if(GetDebuggerTip()->IsShown()) {
-		GetDebuggerTip()->HideDialog();
+	if(ManagerST::Get()->GetDebuggerTip()->IsShown()) {
+		ManagerST::Get()->GetDebuggerTip()->HideDialog();
 	}
 
 	//let the context process it as well
@@ -2370,8 +2369,8 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 	HideCompletionBox();
 	GetFunctionTip()->Deactivate();
 
-	if ( GetDebuggerTip()->IsShown() )
-		GetDebuggerTip()->HideDialog();
+	if ( ManagerST::Get()->GetDebuggerTip()->IsShown() )
+		ManagerST::Get()->GetDebuggerTip()->HideDialog();
 
 #ifdef __WXMSW__
 	long value(0);

@@ -441,7 +441,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		editor = new LEditor(m_book);
 		editor->Create(projName, fileName);
 
-		AddPage(editor, fileName.GetFullName(), wxNullBitmap, true);
+		AddPage(editor, fileName.GetFullName());
 		editor->SetSyntaxHighlight();
 
 		// mark the editor as read only if needed
@@ -917,8 +917,6 @@ void MainBook::OnDebugEnded(wxCommandEvent& e)
 	std::vector<LEditor*> editors;
 	GetAllEditors(editors);
 
-	for(size_t i=0; i<editors.size(); i++) {
-		editors.at(i)->GetDebuggerTip()->HideDialog();
-	}
+	ManagerST::Get()->GetDebuggerTip()->HideDialog();
 	e.Skip();
 }

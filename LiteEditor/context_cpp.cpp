@@ -1439,13 +1439,13 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-		if ( GetCtrl().GetDebuggerTip()->IsShown() && GetCtrl().GetDebuggerTip()->m_expression == word) {
+		if ( ManagerST::Get()->GetDebuggerTip()->IsShown() && ManagerST::Get()->GetDebuggerTip()->m_expression == word) {
 			// a 'Quick Show dialog' is already shown for this word
 			// dont show another tip
 			return;
 
 		} else {
-			GetCtrl().GetDebuggerTip()->HideDialog();
+			ManagerST::Get()->GetDebuggerTip()->HideDialog();
 
 		}
 	}

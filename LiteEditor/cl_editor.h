@@ -137,7 +137,7 @@ class LEditor : public wxScintilla, public IEditor
 	clEditorTipWindow*                          m_functionTip;
 	wxChar                                      m_lastCharEntered;
 	int                                         m_lastCharEnteredPos;
-	DisplayVariableDlg*                         m_debuggerTip;
+//	DisplayVariableDlg*                         m_debuggerTip;
 
 public:
 	static FindReplaceData &GetFindReplaceData() {
@@ -155,9 +155,9 @@ public:
 		return m_functionTip;
 	}
 
-	DisplayVariableDlg *GetDebuggerTip() {
-		return m_debuggerTip;
-	}
+//	DisplayVariableDlg *GetDebuggerTip() {
+//		return m_debuggerTip;
+//	}
 
 public:
 	/// Construct a LEditor object

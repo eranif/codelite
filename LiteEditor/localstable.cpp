@@ -154,12 +154,11 @@ void LocalsTable::DoShowDetails(long item)
 		wxString name = GetColumnText(m_listTable, sel, LOCAL_NAME_COL);
 		if( dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() ) {
 
-			// FIXME: Fox this
-//			if ( ManagerST::Get()->GetDisplayVariableDialog()->IsShown() ) {
-//				ManagerST::Get()->GetDisplayVariableDialog()->HideDialog();
-//			}
-//
-//			dbgr->CreateVariableObject(name, DBG_USERR_LOCALS);
+			if ( ManagerST::Get()->GetDebuggerTip()->IsShown() ) {
+				ManagerST::Get()->GetDebuggerTip()->HideDialog();
+			}
+
+			dbgr->CreateVariableObject(name, DBG_USERR_LOCALS);
 		}
 	}
 }

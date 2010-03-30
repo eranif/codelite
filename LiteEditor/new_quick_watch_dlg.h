@@ -29,7 +29,7 @@ public:
 	wxString                         m_fullpath;
 	wxTreeItemId                     m_hoveredItem;
 	long                             m_showExtraFormats;
-	wxCursor                         m_cursor;
+	bool                             m_passFocus;
 
 protected:
 	bool     IsFakeItem(const wxTreeItemId &item);
@@ -46,14 +46,17 @@ protected:
 	void OnKeyDown(wxKeyEvent &event);
 	void DoCleanUp();
 	void OnLeftDown(wxMouseEvent &e);
-	void OnMouseLeaveWindow(wxMouseEvent &e);
-	void OnMouseEnterWindow(wxMouseEvent &e);
+	void OnLeaveWindow(wxMouseEvent &e);
+	void OnEnterWindow(wxMouseEvent &e);
 	void OnTimer(wxTimerEvent &e);
 	void OnTimer2(wxTimerEvent &e);
 	void OnItemMenu(wxTreeEvent& event);
 	void OnMenuSelection(wxCommandEvent &e);
 	void OnMouseMove( wxMouseEvent& event );
 	void OnShowHexAndBinFormat(wxCommandEvent& event);
+	void OnSetFocus(wxFocusEvent& event);
+
+
 
 public:
 	/** Constructor */

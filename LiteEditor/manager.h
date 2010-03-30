@@ -66,7 +66,7 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	std::list<QueueCommand> m_buildQueue;
 	wxArrayString           m_dbgWatchExpressions;
 	wxFileName              m_codeliteLauncher;
-	DisplayVariableDlg       *m_displayVariableDlg;
+	DisplayVariableDlg     *m_watchDlg;
 
 protected:
 	Manager(void);

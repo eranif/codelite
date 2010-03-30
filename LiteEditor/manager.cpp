@@ -78,7 +78,7 @@
 #include "clean_request.h"
 #include "buidltab.h"
 #include "manager.h"
-#include <wx/toolbook.h>
+#include "watchdlg.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
 
@@ -182,7 +182,7 @@ Manager::Manager ( void )
 		, m_useTipWin ( false )
 		, m_tipWinPos ( wxNOT_FOUND )
 		, m_frameLineno ( wxNOT_FOUND )
-		, m_displayVariableDlg (NULL)
+		, m_watchDlg (NULL)
 {
 	m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
 	Connect(wxEVT_CMD_RESTART_CODELITE,            wxCommandEventHandler(Manager::OnRestart),              NULL, this);
@@ -2119,9 +2119,9 @@ void Manager::DbgStart ( long pid )
 
 void Manager::DbgStop()
 {
-	if ( m_displayVariableDlg ) {
-		m_displayVariableDlg->Destroy();
-		m_displayVariableDlg = NULL;
+	if ( m_watchDlg ) {
+		m_watchDlg->Destroy();
+		m_watchDlg = NULL;
 	}
 
 	// remove all debugger markers
@@ -2965,32 +2965,39 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 	/////////////////////////////////////////////
 	// Handle Tooltips
 	/////////////////////////////////////////////
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if ( dbgr && dbgr->IsRunning() && DbgCanInteract() && GetDebuggerTip() ) {
 
-		GetDebuggerTip()->m_mainVariableObject = event.m_variableObject.gdbId;
-		GetDebuggerTip()->m_variableName       = event.m_expression;
-		GetDebuggerTip()->m_expression         = event.m_expression;
+	bool                useDialog   = (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS);
+	IDebugger *         dbgr        = DebuggerMgr::Get().GetActiveDebugger();
+	bool                canInteract = (dbgr && dbgr->IsRunning() && DbgCanInteract());
+	DisplayVariableDlg* view        = NULL;
+
+	if(canInteract) {
+
+		// Editor Tooltip
+		view = GetDebuggerTip();
+		view->m_mainVariableObject = event.m_variableObject.gdbId;
+		view->m_variableName       = event.m_expression;
+		view->m_expression         = event.m_expression;
 
 		if ( event.m_evaluated.IsEmpty() == false ) {
-			GetDebuggerTip()->m_variableName << wxT(" = ") << event.m_evaluated;
+			view->m_variableName << wxT(" = ") << event.m_evaluated;
 		}
 
 		if ( event.m_variableObject.typeName.IsEmpty() == false ) {
-			GetDebuggerTip()->m_variableName << wxT(" [") << event.m_variableObject.typeName << wxT("] ");
+			view->m_variableName << wxT(" [") << event.m_variableObject.typeName << wxT("] ");
 		}
 
 		if ( event.m_variableObject.numChilds > 0 ) {
 			// Complex type
 			dbgr->ListChildren(event.m_variableObject.gdbId, event.m_userReason);
 
-		} else {
+		} else  {
 			// Simple type, no need for further calls, show the dialog
-			if ( !GetDebuggerTip()->IsShown() ) {
-				GetDebuggerTip()->BuildTree( event.m_varObjChildren, dbgr );
+			if ( !view->IsShown() ) {
+				view->BuildTree( event.m_varObjChildren, dbgr );
 				// If the reason for showing the dialog was the 'Watches' table being d-clicked,
 				// center the dialog
-				GetDebuggerTip()->ShowDialog( (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS) );
+				view->ShowDialog( useDialog );
 			}
 		}
 	}
@@ -3099,9 +3106,9 @@ void Manager::DoSaveAllFilesBeforeBuild()
 
 DisplayVariableDlg* Manager::GetDebuggerTip()
 {
-	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
-	if(editor) {
-		return editor->GetDebuggerTip();
+	if(!m_watchDlg) {
+		m_watchDlg = new DisplayVariableDlg(Frame::Get());
 	}
-	return NULL;
+	return m_watchDlg;
 }
+

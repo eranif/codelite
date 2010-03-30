@@ -21,6 +21,7 @@
 #include <wx/stattext.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
+#include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class NewQuickWatch
 ///////////////////////////////////////////////////////////////////////////////
-class NewQuickWatch : public wxPanel 
+class NewQuickWatch : public wxDialog 
 {
 	private:
 	
@@ -43,8 +44,11 @@ class NewQuickWatch : public wxPanel
 		wxStaticText* m_binFormat;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnEnterWindow( wxMouseEvent& event ) { event.Skip(); }
 		virtual void OnKeyDown( wxKeyEvent& event ) { event.Skip(); }
+		virtual void OnLeaveWindow( wxMouseEvent& event ) { event.Skip(); }
 		virtual void OnLeftDown( wxMouseEvent& event ) { event.Skip(); }
+		virtual void OnSetFocus( wxFocusEvent& event ) { event.Skip(); }
 		virtual void OnItemExpanded( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnExpandItem( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnItemMenu( wxTreeEvent& event ) { event.Skip(); }
@@ -53,7 +57,7 @@ class NewQuickWatch : public wxPanel
 	
 	public:
 		
-		NewQuickWatch( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 400,200 ), long style = wxSIMPLE_BORDER|wxTAB_TRAVERSAL|wxWANTS_CHARS );
+		NewQuickWatch( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Display Variable"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxSTAY_ON_TOP );
 		~NewQuickWatch();
 	
 };

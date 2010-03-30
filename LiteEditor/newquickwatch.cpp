@@ -9,8 +9,10 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-NewQuickWatch::NewQuickWatch( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
+NewQuickWatch::NewQuickWatch( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
@@ -63,10 +65,16 @@ NewQuickWatch::NewQuickWatch( wxWindow* parent, wxWindowID id, const wxPoint& po
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
+	mainSizer->Fit( this );
+	
+	this->Centre( wxBOTH );
 	
 	// Connect Events
+	m_treeCtrl->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( NewQuickWatch::OnEnterWindow ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( NewQuickWatch::OnKeyDown ), NULL, this );
+	m_treeCtrl->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( NewQuickWatch::OnLeaveWindow ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( NewQuickWatch::OnLeftDown ), NULL, this );
+	m_treeCtrl->Connect( wxEVT_SET_FOCUS, wxFocusEventHandler( NewQuickWatch::OnSetFocus ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_EXPANDED, wxTreeEventHandler( NewQuickWatch::OnItemExpanded ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler( NewQuickWatch::OnExpandItem ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( NewQuickWatch::OnItemMenu ), NULL, this );
@@ -76,8 +84,11 @@ NewQuickWatch::NewQuickWatch( wxWindow* parent, wxWindowID id, const wxPoint& po
 NewQuickWatch::~NewQuickWatch()
 {
 	// Disconnect Events
+	m_treeCtrl->Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( NewQuickWatch::OnEnterWindow ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( NewQuickWatch::OnKeyDown ), NULL, this );
+	m_treeCtrl->Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( NewQuickWatch::OnLeaveWindow ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( NewQuickWatch::OnLeftDown ), NULL, this );
+	m_treeCtrl->Disconnect( wxEVT_SET_FOCUS, wxFocusEventHandler( NewQuickWatch::OnSetFocus ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_EXPANDED, wxTreeEventHandler( NewQuickWatch::OnItemExpanded ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler( NewQuickWatch::OnExpandItem ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( NewQuickWatch::OnItemMenu ), NULL, this );

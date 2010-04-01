@@ -23,6 +23,7 @@ copy makedir.exe "%ProgramFiles%\CodeLite\" /Y
 copy le_exec.exe "%ProgramFiles%\CodeLite\" /Y
 copy CodeLite.exe "%ProgramFiles%\CodeLite\" /Y
 copy patch.exe "%ProgramFiles%\CodeLite\" /Y
+copy rm.exe "%ProgramFiles%\CodeLite\" /Y
 copy astyle.sample "%ProgramFiles%\CodeLite\" /Y
 copy ..\sdk\wxconfig\wx-config.exe "%ProgramFiles%\CodeLite\" /Y
 

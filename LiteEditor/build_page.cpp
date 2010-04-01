@@ -63,16 +63,16 @@ BuildPage::BuildPage( wxWindow* parent, int id, wxPoint pos, wxSize size, int st
 	m_fixOnStartup = new wxCheckBox(this, wxID_ANY, wxT("Fix build tool path on startup"));
 	mainSizer->Add( m_fixOnStartup, 0, wxEXPAND | wxALL, 5 );
 
-	m_useFullPaths = new wxCheckBox(this, wxID_ANY, wxT("When compiling, pass absolute path of the file to the compiler"));
-	mainSizer->Add( m_useFullPaths, 0, wxEXPAND | wxALL, 5 );
+	m_generateAsteriskCleanTarget = new wxCheckBox(this, wxID_ANY, wxT("Use asterisk (*) for the clean target (e.g. rm -f *.o)"));
+	mainSizer->Add( m_generateAsteriskCleanTarget, 0, wxEXPAND | wxALL, 5 );
 
 	long fix(1);
 	EditorConfigST::Get()->GetLongValue(wxT("FixBuildToolOnStartup"), fix);
 	m_fixOnStartup->SetValue(fix ? true : false);
 
-	long use_full_path(1);
-	EditorConfigST::Get()->GetLongValue(wxT("GenerateFullPathMakefile"), use_full_path);
-	m_useFullPaths->SetValue(use_full_path ? true : false);
+	long asterisk(0);
+	EditorConfigST::Get()->GetLongValue(wxT("CleanTragetWithAsterisk"), asterisk);
+	m_generateAsteriskCleanTarget->SetValue(asterisk ? true : false);
 
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -99,19 +99,18 @@ wxPanel *BuildPage::CreateBuildSystemPage(const wxString &name)
 
 void BuildPage::Save()
 {
-	// save the "fix on startup" flag
-	EditorConfigST::Get()->SaveLongValue(wxT("FixBuildToolOnStartup"),    m_fixOnStartup->IsChecked() ? 1 : 0);
-	EditorConfigST::Get()->SaveLongValue(wxT("GenerateFullPathMakefile"), m_useFullPaths->IsChecked() ? 1 : 0);
+	EditorConfigST::Get()->SaveLongValue(wxT("FixBuildToolOnStartup"),    m_fixOnStartup->IsChecked()                ? 1 : 0);
+	EditorConfigST::Get()->SaveLongValue(wxT("CleanTragetWithAsterisk"),  m_generateAsteriskCleanTarget->IsChecked() ? 1 : 0);
 
 	// Save current page displayed as 'selected' builder
 	int sel = (int) m_bookBuildSystems->GetSelection();
-	
+
 	//wxLogMessage(wxString::Format( wxT("selection:%d"), sel ));
 	BuildSystemPage *page = dynamic_cast<BuildSystemPage*>(m_bookBuildSystems->GetPage(sel));
 	if (page) {
 		page->SetSelected();
 	}
-	
+
 	int count = (int)m_bookBuildSystems->GetPageCount();
 	for(int i=0; i<count; i++){
 		BuildSystemPage *page = dynamic_cast<BuildSystemPage*>(m_bookBuildSystems->GetPage(i));
@@ -150,7 +149,7 @@ BuildSystemPage::BuildSystemPage(wxWindow *parent, wxString name)
 
 	m_staticText19 = new wxStaticText( this, wxID_ANY, wxT("No. of concurrent jobs:"), wxDefaultPosition, wxDefaultSize, 0);
 	fgSizer4->Add( m_staticText19, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-	
+
 	wxArrayString choices;
 	choices.Add(wxT("1"));
 	choices.Add(wxT("2"));
@@ -161,7 +160,7 @@ BuildSystemPage::BuildSystemPage(wxWindow *parent, wxString name)
 	m_choiceJobs = new wxComboBox(this, wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, choices, wxCB_READONLY);
 	fgSizer4->Add( m_choiceJobs, 1, wxALL|wxEXPAND, 5);
 	fgSizer4->AddGrowableCol( 1 );
-	
+
 	bSizer6->Add( fgSizer4, 1, wxEXPAND, 5 );
 
 	this->SetSizer( bSizer6 );
@@ -181,7 +180,7 @@ void BuildSystemPage::Save()
 	builder->SetBuildToolOptions(m_textBuildToolOptions->GetValue());
 	builder->SetBuildToolJobs(m_choiceJobs->GetValue());
 	BuildManagerST::Get()->AddBuilder(builder);
-	
+
 	// Save the configuration
 	BuildSettingsConfigST::Get()->SaveBuilderConfig(builder);
 }

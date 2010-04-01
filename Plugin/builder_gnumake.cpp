@@ -770,6 +770,14 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
 	std::vector<wxFileName> abs_files, rel_paths;
 
+	// Can we use asterisk in the clean command?
+	long asterisk(0);
+	EditorConfigST::Get()->GetLongValue(wxT("CleanTragetWithAsterisk"), asterisk);
+
+	wxString imd = bldConf->GetIntermediateDirectory();
+	imd.Trim().Trim(false);
+	bool useAsterisk = ((imd.IsEmpty() == false) && asterisk);
+
 	// support for full path
 	PRINT_TIMESTAMP(wxT("Loading file list for clean...\n"));
 	proj->GetFiles(rel_paths, abs_files);
@@ -783,30 +791,36 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
 
 	wxString cwd = proj->GetFileName().GetPath();
 	if (OS_WINDOWS) {
-		//windows clean command
-		for (size_t i=0; i<abs_files.size(); i++) {
 
-			Compiler::CmpFileTypeInfo ft;
-			if (cmp->GetCmpFileType(abs_files[i].GetExt(), ft)) {
-				wxString objPrefix = DoGetTargetPrefix(abs_files.at(i), cwd);
+		// Windows clean command
+		if( !useAsterisk ) {
+			for (size_t i=0; i<abs_files.size(); i++) {
 
-				if (ft.kind == Compiler::CmpFileKindSource) {
+				Compiler::CmpFileTypeInfo ft;
+				if (cmp->GetCmpFileType(abs_files[i].GetExt(), ft)) {
+					wxString objPrefix = DoGetTargetPrefix(abs_files.at(i), cwd);
 
-					wxString objectName, dependFile, preprocessFile;
-					objectName     << objPrefix << abs_files[i].GetName() << wxT("$(ObjectSuffix)");
-					dependFile     << objPrefix << abs_files[i].GetName() << wxT("$(DependSuffix)");
-					preprocessFile << objPrefix << abs_files[i].GetName() << wxT("$(PreprocessSuffix)");
+					if (ft.kind == Compiler::CmpFileKindSource) {
 
-					text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName     << wxT("\n");
-					text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile     << wxT("\n");
-					text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << preprocessFile << wxT("\n");
+						wxString objectName, dependFile, preprocessFile;
+						objectName     << objPrefix << abs_files[i].GetName() << wxT("$(ObjectSuffix)");
+						dependFile     << objPrefix << abs_files[i].GetName() << wxT("$(DependSuffix)");
+						preprocessFile << objPrefix << abs_files[i].GetName() << wxT("$(PreprocessSuffix)");
 
-				} else if (ft.kind == Compiler::CmpFileKindResource && bldConf->IsResCompilerRequired()) {
-					wxString ofile = abs_files[i].GetFullName() + wxT("$(ObjectSuffix)");
-					text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << ofile << wxT("\n");
+						text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName     << wxT("\n");
+						text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile     << wxT("\n");
+						text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << preprocessFile << wxT("\n");
 
+					} else if (ft.kind == Compiler::CmpFileKindResource && bldConf->IsResCompilerRequired()) {
+						wxString ofile = abs_files[i].GetFullName() + wxT("$(ObjectSuffix)");
+						text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << ofile << wxT("\n");
+
+					}
 				}
 			}
+		} else {
+			// We can use asterisk (intermediat directory is not empty)
+			text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/*.*") << wxT("\n");
 		}
 
 		//delete the output file as well
@@ -830,27 +844,32 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
 		}
 	} else {
 		//on linux we dont really need resource compiler...
-		for (size_t i=0; i<abs_files.size(); i++) {
+		if(!useAsterisk) {
+			for (size_t i=0; i<abs_files.size(); i++) {
 
-			wxString objPrefix = DoGetTargetPrefix( abs_files.at(i), cwd );
+				wxString objPrefix = DoGetTargetPrefix( abs_files.at(i), cwd );
 
-			Compiler::CmpFileTypeInfo ft;
-			if (cmp->GetCmpFileType(abs_files[i].GetExt(), ft) && ft.kind == Compiler::CmpFileKindSource) {
+				Compiler::CmpFileTypeInfo ft;
+				if (cmp->GetCmpFileType(abs_files[i].GetExt(), ft) && ft.kind == Compiler::CmpFileKindSource) {
 
-				wxString relPath;
-				relPath = rel_paths.at(i).GetPath(true, wxPATH_UNIX);
-				relPath.Trim().Trim(false);
+					wxString relPath;
+					relPath = rel_paths.at(i).GetPath(true, wxPATH_UNIX);
+					relPath.Trim().Trim(false);
 
-				wxString objectName, dependFile, preprocessFile;
+					wxString objectName, dependFile, preprocessFile;
 
-				objectName     << objPrefix << abs_files[i].GetName() << wxT("$(ObjectSuffix)");
-				dependFile     << objPrefix << abs_files[i].GetName() << wxT("$(DependSuffix)");
-				preprocessFile << objPrefix << abs_files[i].GetName() << wxT("$(PreprocessSuffix)");
+					objectName     << objPrefix << abs_files[i].GetName() << wxT("$(ObjectSuffix)");
+					dependFile     << objPrefix << abs_files[i].GetName() << wxT("$(DependSuffix)");
+					preprocessFile << objPrefix << abs_files[i].GetName() << wxT("$(PreprocessSuffix)");
 
-				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName     << wxT("\n");
-				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile     << wxT("\n");
-				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << preprocessFile << wxT("\n");
+					text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName     << wxT("\n");
+					text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile     << wxT("\n");
+					text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << preprocessFile << wxT("\n");
+				}
 			}
+
+		} else {
+			text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/*.*") << wxT("\n");
 		}
 
 		//delete the output file as well

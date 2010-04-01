@@ -35,68 +35,6 @@ static PIPE_HANDLE createNamedPipe(const char* pipeName, SECURITY_ATTRIBUTES sa)
 	                        8192, 8192, 0,
 	                        &sa);
 }
-
-static PACL prepareNamedPipeAcl(SECURITY_DESCRIPTOR* sd, SECURITY_ATTRIBUTES* sa)
-{
-	DWORD req_acl_size;
-	char everyone_buf[32], owner_buf[32];
-	PSID sid_everyone, sid_owner;
-	SID_IDENTIFIER_AUTHORITY
-	siaWorld = SECURITY_WORLD_SID_AUTHORITY,
-	           siaCreator = SECURITY_CREATOR_SID_AUTHORITY;
-	PACL acl;
-
-	sid_everyone = (PSID)&everyone_buf;
-	sid_owner = (PSID)&owner_buf;
-
-	req_acl_size = sizeof(ACL) +
-	               (2 * ((sizeof(ACCESS_ALLOWED_ACE) - sizeof(DWORD)) + GetSidLengthRequired(1)));
-
-	acl = (PACL) malloc(req_acl_size);
-
-	if (acl == NULL) {
-		return NULL;
-	}
-
-	if (!InitializeSid(sid_everyone, &siaWorld, 1)) {
-		goto out_fail;
-	}
-	*GetSidSubAuthority(sid_everyone, 0) = SECURITY_WORLD_RID;
-
-	if (!InitializeSid(sid_owner, &siaCreator, 1)) {
-		goto out_fail;
-	}
-	*GetSidSubAuthority(sid_owner, 0) = SECURITY_CREATOR_OWNER_RID;
-
-	if (!InitializeAcl(acl, req_acl_size, ACL_REVISION)) {
-		goto out_fail;
-	}
-
-	if (!AddAccessAllowedAce(acl, ACL_REVISION, FILE_GENERIC_READ | FILE_GENERIC_WRITE, sid_everyone)) {
-		goto out_fail;
-	}
-
-	if (!AddAccessAllowedAce(acl, ACL_REVISION, FILE_ALL_ACCESS, sid_owner)) {
-		goto out_fail;
-	}
-
-	if (!InitializeSecurityDescriptor(sd, SECURITY_DESCRIPTOR_REVISION)) {
-		goto out_fail;
-	}
-
-	if (!SetSecurityDescriptorDacl(sd, TRUE, acl, FALSE)) {
-		goto out_fail;
-	}
-
-	sa->lpSecurityDescriptor = sd;
-
-	return acl;
-
-out_fail:
-	free(acl);
-	return NULL;
-
-}
 #endif
 
 clNamedPipeConnectionsServer::clNamedPipeConnectionsServer(const char* pipeName)
@@ -117,9 +55,6 @@ clNamedPipeConnectionsServer::~clNamedPipeConnectionsServer()
 PIPE_HANDLE clNamedPipeConnectionsServer::initNewInstance()
 {
 #ifdef __WXMSW__
-	PACL acl;
-	SECURITY_DESCRIPTOR  sd = {0};
-
 	SECURITY_ATTRIBUTES  sa = {0};
 	memset(&sa, 0, sizeof(sa));
 	sa.nLength = sizeof(sa);

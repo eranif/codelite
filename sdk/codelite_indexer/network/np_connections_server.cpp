@@ -13,6 +13,19 @@
 #endif
 
 #ifdef __WXMSW__
+class HandleLockerServer
+{
+	HANDLE m_event;
+public:
+	HandleLockerServer(HANDLE event) : m_event(event) {}
+	~HandleLockerServer() { 
+		if(m_event != INVALID_PIPE_HANDLE) 
+			CloseHandle(m_event); 
+	}
+};
+#endif
+
+#ifdef __WXMSW__
 static PIPE_HANDLE createNamedPipe(const char* pipeName, SECURITY_ATTRIBUTES sa)
 {
 	return CreateNamedPipe(	pipeName,
@@ -166,7 +179,9 @@ clNamedPipe *clNamedPipeConnectionsServer::waitForNewConnection( int timeout )
 	OVERLAPPED ov = {0};
 	HANDLE ev = CreateEvent(NULL, TRUE, TRUE, NULL);
 	ov.hEvent = ev;
-
+	
+	HandleLockerServer locker(ov.hEvent);
+	
 	bool fConnected = ConnectNamedPipe(hConn, &ov);
 	if (fConnected != 0) {
 		if(hConn != INVALID_PIPE_HANDLE) {

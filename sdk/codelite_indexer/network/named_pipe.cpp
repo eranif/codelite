@@ -7,6 +7,19 @@
 #  include <sys/time.h>
 #endif
 
+#ifdef __WXMSW__
+class HandleLocker 
+{
+	HANDLE m_event;
+public:
+	HandleLocker(HANDLE event) : m_event(event) {}
+	~HandleLocker() { 
+		if(m_event != INVALID_PIPE_HANDLE) 
+			CloseHandle(m_event); 
+	}
+};
+#endif
+
 clNamedPipe::clNamedPipe(const char* pipePath)
 		: _pipeHandle(INVALID_PIPE_HANDLE)
 		, _lastError(ZNP_OK)
@@ -26,7 +39,9 @@ bool clNamedPipe::write( const void* data, size_t dataLength, size_t *written, l
 
 	OVERLAPPED ov = {0};
 	ov.hEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-
+	
+	HandleLocker locker(ov.hEvent);
+	
 	DWORD actualWrote;
 	if (!WriteFile(_pipeHandle, data, (DWORD)dataLength, &actualWrote, &ov)) {
 		*written = static_cast<int>(actualWrote);
@@ -70,7 +85,8 @@ bool clNamedPipe::read( void* data, size_t dataLength,  size_t *read, long timeT
 
 	OVERLAPPED ov = {0};
 	ov.hEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-
+	HandleLocker locker( ov.hEvent );
+	
 	//start an asynch read on the named pipe
 	if (!ReadFile(_pipeHandle, data, (DWORD)dataLength, (LPDWORD) read, &ov)) {
 		int err = GetLastError();

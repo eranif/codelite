@@ -9,6 +9,7 @@
 #include "utils.h"
 #include <stdlib.h>
 #include <cstdio>
+#include <memory>
 
 WorkerThread::WorkerThread(eQueue<clNamedPipe*> *queue)
 		: m_queue(queue)
@@ -29,6 +30,7 @@ void WorkerThread::start()
 		}
 
 		if (conn) {
+			std::auto_ptr<clNamedPipe> p( conn );
 			// get request from the client
 			clIndexerRequest req;
 			if ( !clIndexerProtocol::ReadRequest(conn, req) ) {
@@ -93,8 +95,6 @@ void WorkerThread::start()
 				fprintf(stderr, "ERROR: Protocol error: failed to send reply for file %s\n", reply.getFileName().c_str());
 				break;
 			}
-			delete conn;
-
 		}
 	}
 	printf("INFO: WorkerThread: Going down\n");

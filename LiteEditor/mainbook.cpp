@@ -534,7 +534,9 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 
 	m_book->AddPage(win, text, selected);
 #ifdef __WXMAC__
-	m_book->GetSizer()->Layout();
+	if(m_book->GetPageCount() == 1) {
+		m_book->GetSizer()->Layout();
+	}
 #endif
 	return true;
 }

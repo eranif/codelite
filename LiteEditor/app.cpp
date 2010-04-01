@@ -241,10 +241,11 @@ bool App::OnInit()
 	sigemptyset( &mask_set );
 	sigaddset(&mask_set, SIGPIPE);
 	sigprocmask(SIG_SETMASK, &mask_set, NULL);
-	
+#ifdef __WXGTK__	
 	// Insall signal handlers
 	signal(SIGSEGV, WaitForDebugger);
 	signal(SIGABRT, WaitForDebugger);
+#endif
 	
 #endif
 

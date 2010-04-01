@@ -712,6 +712,9 @@ bool MainBook::CloseAll(bool cancellable)
 
 	// Update the frame's title
 	Frame::Get()->SetFrameTitle(NULL);
+	
+	// Remove context menu if needed
+	DoHandleFrameMenu(NULL);
 
 	return true;
 }
@@ -846,7 +849,10 @@ bool MainBook::DoSelectPage(wxWindow* win)
 			delete Frame::Get()->GetMenuBar()->Remove(idx);
 		}
 	}
-
+	
+	// Remove context menu if needed
+	DoHandleFrameMenu(editor);
+	
 	if (!editor) {
 		Frame::Get()->SetFrameTitle(NULL);
 		Frame::Get()->SetStatusMessage(wxEmptyString, 1); // clear line & column indicator
@@ -919,4 +925,16 @@ void MainBook::OnDebugEnded(wxCommandEvent& e)
 
 	ManagerST::Get()->GetDebuggerTip()->HideDialog();
 	e.Skip();
+}
+
+void MainBook::DoHandleFrameMenu(LEditor* editor)
+{
+	// Incase of no editor or an editor with context other than C++
+	// remove the context menu from the main frame
+	if (!editor || editor->GetContext()->GetName() != wxT("C++")) {
+		int idx = Frame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
+		if ( idx != wxNOT_FOUND ) {
+			delete Frame::Get()->GetMenuBar()->Remove(idx);
+		}
+	}
 }

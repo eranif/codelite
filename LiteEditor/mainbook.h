@@ -63,7 +63,8 @@ private:
 	bool AskUserToSave(LEditor *editor);
 	bool DoSelectPage (wxWindow *win  );
 	void DoPositionFindBar(int where);
-
+	void DoHandleFrameMenu(LEditor *editor);
+	
 public:
 	MainBook(wxWindow *parent);
 	~MainBook();
@@ -125,7 +126,7 @@ public:
     void ShowWhitespace         (int ws);
     void UpdateColours          ();
     void UpdateBreakpoints      ();
-	void MarkEditorReadOnly		(LEditor *editor, bool ro);
+	void MarkEditorReadOnly     (LEditor *editor, bool ro);
 };
 
 #endif //MAINBOOK_H

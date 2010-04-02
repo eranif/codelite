@@ -34,79 +34,79 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 	ProcUtils::SafeExecuteCommand(cmd, out);
 
 	if (out.IsEmpty() == false ) {
-		
+
 		wxString qt_output (out.Item(0));
 		qt_output.Trim().Trim(false);
-		
+
 #if defined(__WXGTK__)||defined(__WXMAC__)
 		wxString pathQt4, pathQt3, pathQt;
 		pathQt4 << qt_output << wxFileName::GetPathSeparator() << wxT("include") << wxFileName::GetPathSeparator() << wxT("qt4");
 		pathQt3 << qt_output << wxFileName::GetPathSeparator() << wxT("include") << wxFileName::GetPathSeparator() << wxT("qt3");
 		pathQt  << qt_output << wxFileName::GetPathSeparator() << wxT("include");
-		
+
 		if (wxDir::Exists( pathQt4 )) {
 			wxString tmpPath;
-			
+
 			tmpPath = pathQt4 + wxT("/QtCore");
 			if(wxFileName::DirExists(tmpPath))
 				paths.Add( tmpPath );
-				
+
 			tmpPath = pathQt4 + wxT("/QtGui");
 			if(wxFileName::DirExists(tmpPath))
 				paths.Add( tmpPath );
-			
+
 			tmpPath = pathQt4 + wxT("/QtXml");
 			if(wxFileName::DirExists(tmpPath))
 				paths.Add( tmpPath );
 
 		} else if (wxDir::Exists( pathQt3 ) ) {
-			
+
 			wxString tmpPath;
-			
+
 			tmpPath = pathQt3 + wxT("/QtCore");
 			if(wxFileName::DirExists(tmpPath))
 				paths.Add( tmpPath );
-				
+
 			tmpPath = pathQt3 + wxT("/QtGui");
 			if(wxFileName::DirExists(tmpPath))
 				paths.Add( tmpPath );
-			
+
 			tmpPath = pathQt3 + wxT("/QtXml");
 			if(wxFileName::DirExists(tmpPath))
 				paths.Add( tmpPath );
 
 		} else if (wxDir::Exists( pathQt ) ) {
-			
+
 			wxString tmpPath;
-			
+
 			tmpPath = pathQt + wxT("/QtCore");
 			if(wxFileName::DirExists(tmpPath))
 				paths.Add( tmpPath );
-				
+
 			tmpPath = pathQt + wxT("/QtGui");
 			if(wxFileName::DirExists(tmpPath))
 				paths.Add( pathQt );
-			
+
 			tmpPath = pathQt + wxT("/QtXml");
 			if(wxFileName::DirExists(tmpPath))
 				paths.Add( tmpPath );
 		}
-		
+
 #else // __WXMSW__
 		wxString pathWin;
 		pathWin << qt_output << wxFileName::GetPathSeparator() << wxT("include") << wxFileName::GetPathSeparator();
 		if (wxDir::Exists( pathWin )) {
-			
+
 			wxString tmpPath;
-			
+
 			tmpPath = pathWin + wxT("QtCore");
 			if(wxFileName::DirExists(tmpPath))
 				paths.Add( tmpPath );
-				
+
 			tmpPath = pathWin + wxT("QtGui");
 			if(wxFileName::DirExists(tmpPath))
 				paths.Add( tmpPath );
-			
+
 			tmpPath = pathWin + wxT("QtXml");
 			if(wxFileName::DirExists(tmpPath))
 				paths.Add( tmpPath );
@@ -133,9 +133,39 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 		// since we only support codelite's installation of MinGW, we know what to append
 		// to the include path
 		paths.Add(standardIncludeBase + wxT("\\include"));
-		standardIncludeBase << wxT("\\lib\\gcc\\mingw32\\4.4.1\\include\\c++");
-		paths.Add( standardIncludeBase );
-		excludePaths.Add( standardIncludeBase + wxT("\\debug") );
+		standardIncludeBase << wxT("\\lib\\gcc\\mingw32\\");
+
+		// Get the highest gcc version number
+		// 4.4.1\\include\\c++");
+
+		long          highestVersion(0);
+		wxString      sHighestVersion;
+		wxArrayString files;
+
+		if (wxDir::Exists( standardIncludeBase ) ) {
+			wxDir::GetAllFiles(standardIncludeBase, &files, wxEmptyString, wxDIR_DIRS|wxDIR_FILES);
+
+			//filter out all non-directories
+			for (size_t i=0; i<files.GetCount(); i++) {
+				wxFileName fn(files.Item(i));
+				wxString p = fn.GetPath().Mid( standardIncludeBase.Length() );
+				wxString tmp_p(p);
+				tmp_p.Replace(wxT("."), wxT(""));
+				long number(0);
+				tmp_p.ToLong( &number );
+				if (number && number > highestVersion) {
+					sHighestVersion = p.BeforeFirst(wxFileName::GetPathSeparator());
+					highestVersion  = number;
+				}
+			}
+
+			if (sHighestVersion.IsEmpty() == false) {
+				standardIncludeBase << sHighestVersion << wxT("\\include\\c++");
+				paths.Add( standardIncludeBase );
+				excludePaths.Add( standardIncludeBase + wxT("\\debug") );
+			}
+		}
+		///
 	}
 #else
 	// run wx-config and parse the output
@@ -187,5 +217,5 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 			}
 		}
 	}
-#endif	
+#endif
 }

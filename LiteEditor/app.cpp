@@ -63,7 +63,7 @@
 // Define the version string for this codelite
 //////////////////////////////////////////////
 extern wxChar *SvnRevision;
-wxString CODELITE_VERSION_STR = wxString::Format(wxT("v2.5.0.%s"), SvnRevision);
+wxString CODELITE_VERSION_STR = wxString::Format(wxT("v2.5.1.%s"), SvnRevision);
 
 #if defined(__WXMAC__)||defined(__WXGTK__)
 #include <signal.h> // sigprocmask
@@ -174,19 +174,19 @@ static void massCopy(const wxString &sourceDir, const wxString &spec, const wxSt
 //-------------------------------------------
 // Signal Handlers for GTK
 //-------------------------------------------
-static void WaitForDebugger(int signo) 
+static void WaitForDebugger(int signo)
 {
 	wxString msg;
 	msg << wxT("codelite crashed: you may attach to it using gdb\n")
 		<< wxT("or let it crash silently..\n")
 		<< wxT("Attach debugger?\n");
-		
+
 	int rc = wxMessageBox(msg, wxT("CodeLite Crash Handler"), wxYES_NO|wxCENTER|wxICON_ERROR);
 	if(rc == wxYES) {
-		
+
 		// Launch a shell command with the following command:
 		// gdb -p <PID>
-		
+
 		char command[256];
 		memset (command, 0, sizeof(command));
 		sprintf(command, "xterm -T 'gdb' -e 'gdb -p %d'", getpid());
@@ -199,7 +199,7 @@ static void WaitForDebugger(int signo)
 			pause();
 		}
 	}
-	
+
 	signal(signo, SIG_DFL);
 	raise(signo);
 }
@@ -241,12 +241,12 @@ bool App::OnInit()
 	sigemptyset( &mask_set );
 	sigaddset(&mask_set, SIGPIPE);
 	sigprocmask(SIG_SETMASK, &mask_set, NULL);
-#ifdef __WXGTK__	
+#ifdef __WXGTK__
 	// Insall signal handlers
 	signal(SIGSEGV, WaitForDebugger);
 	signal(SIGABRT, WaitForDebugger);
 #endif
-	
+
 #endif
 
 	wxSocketBase::Initialize();

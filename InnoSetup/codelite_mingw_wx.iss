@@ -74,7 +74,7 @@ Source: "C:\MinGW-4.4.1\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversi
 Source: "C:\MinGW-4.4.1\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
 Source: "..\Runtime\wxWidgets-2.8.10\*"; DestDir: "{code:GetWxInstallDir}"; Flags: recursesubdirs ; Components: wxWidgets_2_8_10
 Source: "..\UnitTest++\*"; DestDir: "{code:GetUnitTestPPInstallDir}"; Flags: recursesubdirs ; Components: UnitTestPP
- 
+
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}"
 Name: "{group}\{cm:UninstallProgram, CodeLite}"; Filename: "{uninstallexe}"
@@ -82,7 +82,7 @@ Name: "{userdesktop}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{a
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite "; WorkingDir: "{app}"; Filename: "{app}\CodeLite.exe"; Tasks: quicklaunchicon
 
 [INI]
-Filename: "{app}\registry.ini"; Section: "environment"; Key: "wx"; String: "{code:GetMinGWInstallDir}";
+Filename: "{app}\registry.ini"; Section: "environment"; Key: "wx"; String: "{code:GetWxInstallDir}";
 Filename: "{app}\registry.ini"; Section: "environment"; Key: "mingw"; String: "{code:GetMinGWInstallDir}";
 Filename: "{app}\registry.ini"; Section: "environment"; Key: "unittestpp"; String: "{code:GetUnitTestPPInstallDir}";
 
@@ -91,7 +91,7 @@ var
   MinGW_Page:      TInputDirWizardPage;
   Wx_Page:         TInputDirWizardPage;
   UnitTestPP_Page: TInputDirWizardPage;
-  
+
 procedure CreateMinGWPage();
 begin
   MinGW_Page := CreateInputDirPage(wpSelectComponents,
@@ -187,11 +187,11 @@ begin
     if IsComponentSelected('wxWidgets_2_8_10') = False then
       Result := True;
   end
-  
+
   if PageID = UnitTestPP_Page.ID then begin
     if IsComponentSelected('UnitTestPP') = False then
       Result := True;
   end
-  
+
 end;
 

@@ -521,7 +521,10 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 
 	wxWindowUpdateLocker locker(m_book);
 
-	if( (long)(m_book->GetPageCount()) >= MaxBuffers ) {
+	bool closeLastTab = (long)(m_book->GetPageCount()) >= MaxBuffers;
+	m_book->AddPage(win, text, closeLastTab ? true : selected);
+
+	if( closeLastTab ) {
 		// We have reached the limit of the number of open buffers
 		// Close the last used buffer
 		const wxArrayPtrVoid &arr = m_book->GetHistory();
@@ -532,7 +535,6 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 		}
 	}
 
-	m_book->AddPage(win, text, selected);
 #ifdef __WXMAC__
 	if(m_book->GetPageCount() == 1) {
 		m_book->GetSizer()->Layout();
@@ -714,7 +716,7 @@ bool MainBook::CloseAll(bool cancellable)
 
 	// Update the frame's title
 	Frame::Get()->SetFrameTitle(NULL);
-	
+
 	// Remove context menu if needed
 	DoHandleFrameMenu(NULL);
 
@@ -851,10 +853,10 @@ bool MainBook::DoSelectPage(wxWindow* win)
 			delete Frame::Get()->GetMenuBar()->Remove(idx);
 		}
 	}
-	
+
 	// Remove context menu if needed
 	DoHandleFrameMenu(editor);
-	
+
 	if (!editor) {
 		Frame::Get()->SetFrameTitle(NULL);
 		Frame::Get()->SetStatusMessage(wxEmptyString, 1); // clear line & column indicator

@@ -127,7 +127,6 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_BOOKMARKALL, LEditor::OnFindDialog)
 	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_CLOSE, LEditor::OnFindDialog)
 	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_CLEARBOOKMARKS, LEditor::OnFindDialog)
-	EVT_COMMAND                    (wxID_ANY, wxEVT_CMD_JOB_STATUS_VOID_PTR, LEditor::OnHighlightThread)
 	EVT_COMMAND                    (wxID_ANY, wxCMD_EVENT_REMOVE_MATCH_INDICATOR, LEditor::OnRemoveMatchInidicator)
 END_EVENT_TABLE()
 
@@ -2839,7 +2838,10 @@ void LEditor::DoHighlightWord()
 	}
 
 	// to make the code "smoother" we move the search task to different thread
-	StringHighlighterJob *j = new StringHighlighterJob(this, GetText().c_str(), word.c_str());
+	StringHighlighterJob *j = new StringHighlighterJob( Frame::Get()->GetMainBook(),
+														GetText().c_str(),
+														word.c_str(),
+														GetFileName().GetFullPath().c_str());
 	JobQueueSingleton::Instance()->PushJob( j );
 }
 
@@ -2861,24 +2863,6 @@ void LEditor::OnLeftDClick(wxScintillaEvent& event)
 		DoHighlightWord();
 	}
 	event.Skip();
-}
-
-void LEditor::OnHighlightThread(wxCommandEvent& e)
-{
-	// the search highlighter thread has completed the calculations, fetch the results and mark them in the editor
-	std::vector<std::pair<int, int> > *matches = (std::vector<std::pair<int, int> >*) e.GetClientData();
-
-	SetIndicatorCurrent(2);
-
-	// clear the old markers
-	IndicatorClearRange(0, GetLength());
-
-	for (size_t i=0; i<matches->size(); i++) {
-		std::pair<int, int> p = matches->at(i);
-		IndicatorFillRange(p.first, p.second);
-	}
-
-	delete matches;
 }
 
 bool LEditor::IsCompletionBoxShown()
@@ -3510,4 +3494,20 @@ bool LEditor::ReplaceAllExactMatch(const wxString& what, const wxString& replace
 void LEditor::SetLexerName(const wxString& lexerName)
 {
 	SetSyntaxHighlight(lexerName);
+}
+
+void LEditor::HighlightWord(StringHighlightOutput* highlightOutput)
+{
+	// the search highlighter thread has completed the calculations, fetch the results and mark them in the editor
+	std::vector<std::pair<int, int> > *matches = highlightOutput->matches;
+
+	SetIndicatorCurrent(2);
+
+	// clear the old markers
+	IndicatorClearRange(0, GetLength());
+
+	for (size_t i=0; i<matches->size(); i++) {
+		std::pair<int, int> p = matches->at(i);
+		IndicatorFillRange(p.first, p.second);
+	}
 }

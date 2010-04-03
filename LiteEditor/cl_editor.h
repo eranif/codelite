@@ -30,6 +30,7 @@
 #include <vector>
 #include <map>
 #include "entry.h"
+#include "stringhighlighterjob.h"
 #include "cl_calltip.h"
 #include "wx/filename.h"
 #include "findreplacedlg.h"
@@ -583,6 +584,7 @@ public:
 	}
 
 	wxString GetEolString();
+	void HighlightWord(StringHighlightOutput *highlightOutput);
 
 private:
 	void FillBPtoMarkerArray();
@@ -633,7 +635,6 @@ private:
 	void OnDbgCustomWatch(wxCommandEvent &event);
 	void OnDragStart(wxScintillaEvent &e);
 	void OnDragEnd(wxScintillaEvent &e);
-	void OnHighlightThread(wxCommandEvent &e);
 	void DoSetCaretAt(long pos);
 };
 

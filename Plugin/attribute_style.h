@@ -37,6 +37,12 @@
 #    define FONT_SIZE 12
 #endif
 
+// Special attributes IDs
+#define FOLD_MARGIN_ATTR_ID -1
+#define SEL_TEXT_ATTR_ID    -2
+#define CARET_ATTR_ID       -3
+#define LINE_NUMBERS_ATTR_ID 33
+
 class StyleProperty
 {
 	int      m_id;
@@ -49,9 +55,10 @@ class StyleProperty
 	bool     m_italic;
 	bool     m_underlined;
 	bool     m_eolFilled;
+	int      m_alpha;
 
 public:
-	StyleProperty(int id, const wxString& fgColour, const wxString& bgColour, const int fontSize, const wxString& name, const wxString& face, bool bold, bool italic, bool underline, bool eolFilled)
+	StyleProperty(int id, const wxString& fgColour, const wxString& bgColour, const int fontSize, const wxString& name, const wxString& face, bool bold, bool italic, bool underline, bool eolFilled, int alpha)
 			: m_id(id)
 			, m_fgColour(fgColour)
 			, m_bgColour(bgColour)
@@ -61,7 +68,8 @@ public:
 			, m_bold(bold)
 			, m_italic(italic)
 			, m_underlined(underline)
-			, m_eolFilled(eolFilled) {
+			, m_eolFilled(eolFilled)
+			, m_alpha(alpha) {
 	};
 
 	StyleProperty()
@@ -74,7 +82,8 @@ public:
 			, m_bold(false)
 			, m_italic(false)
 			, m_underlined(false)
-			, m_eolFilled(false) {
+			, m_eolFilled(false)
+			, m_alpha(0) {
 	};
 
 	StyleProperty(const StyleProperty& rhs) {
@@ -92,11 +101,18 @@ public:
 		m_italic     = rhs.m_italic;
 		m_underlined = rhs.m_underlined;
 		m_eolFilled  = rhs.m_eolFilled;
+		m_alpha      = rhs.m_alpha;
 		return *this;
 	}
 
 	virtual ~StyleProperty() {}
 
+	void SetAlpha(int alpha) {
+		this->m_alpha = alpha;
+	}
+	int GetAlpha() const {
+		return m_alpha;
+	}
 	const wxString& GetFgColour() const {
 		return m_fgColour;
 	}

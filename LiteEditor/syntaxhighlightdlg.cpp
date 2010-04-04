@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : syntaxhighlightdlg.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : syntaxhighlightdlg.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -71,7 +71,7 @@ void SyntaxHighlightDlg::OnButtonApply( wxCommandEvent& event )
 {
 	SaveChanges();
 	Frame::Get()->GetMainBook()->ApplySettingsChanges();
-	
+
 	m_startingTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
 	wxUnusedVar(event);
 }
@@ -105,7 +105,7 @@ wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 	}
 	wxStaticText *txt = new wxStaticText(page, wxID_ANY, wxT("Colouring scheme:"), wxDefaultPosition, wxDefaultSize, 0);
 	sz->Add(txt, 0, wxEXPAND|wxALL, 5);
-	
+
 	m_themes = new wxChoice(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, dirs, 0 );
 	sz->Add(m_themes, 0, wxEXPAND|wxALL, 5);
 
@@ -119,8 +119,8 @@ wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 	long style = wxNB_DEFAULT;
 	m_lexersBook = new wxNotebook(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	sz->Add(m_lexersBook, 1, wxEXPAND | wxALL, 5);
-	m_lexersBook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));\
-	
+	m_lexersBook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+
 #ifdef __WXMAC__
 	m_lexersBook->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
 #endif
@@ -147,7 +147,7 @@ void SyntaxHighlightDlg::LoadLexers(const wxString& theme)
 	//load all lexers
 	EditorConfigST::Get()->LoadLexers(false);
 
-	EditorConfig::ConstIterator iter = EditorConfigST::Get()->LexerBegin();
+	std::map<wxString, LexerConfPtr>::const_iterator iter = EditorConfigST::Get()->LexerBegin();
 	for (; iter != EditorConfigST::Get()->LexerEnd(); iter++) {
 		LexerConfPtr lexer = iter->second;
 		m_lexersBook->AddPage(CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), selected);
@@ -194,11 +194,11 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& e)
 	if(wxMessageBox(_("Are you sure you want to load all default syntax highlight settings and lose all your changes?"), wxT("CodeLite"), wxYES_NO|wxCANCEL|wxICON_QUESTION|wxCENTER, this) != wxYES){
 		return;
 	}
-	
+
 	// restore the default lexers
 	EditorConfigST::Get()->LoadLexers(true);
 	Frame::Get()->GetMainBook()->ApplySettingsChanges();
-	
+
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
 	Frame::Get()->GetEventHandler()->AddPendingEvent(event);
 	EndModal(wxID_OK);

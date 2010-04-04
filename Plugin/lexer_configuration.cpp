@@ -136,12 +136,15 @@ void LexerConf::Parse(wxXmlNode *element)
 					wxString bgcolour  = XmlUtils::ReadString(prop, wxT("BgColour"), wxT("white"));
 					long fontSize      = XmlUtils::ReadLong  (prop, wxT("Size"), 10);
 					long propId        = XmlUtils::ReadLong  (prop, wxT("Id"), 0);
+					long alpha         = XmlUtils::ReadLong  (prop, wxT("Alpha"), 50);
 
 					StyleProperty property = StyleProperty(propId, colour, bgcolour, fontSize, Name, face,
 										StringTolBool(bold),
 										StringTolBool(italic),
 										StringTolBool(underline),
-										StringTolBool(eolFill));
+										StringTolBool(eolFill),
+										alpha);
+
 					m_properties.push_back( property );
 				}
 				prop = prop->GetNext();
@@ -161,7 +164,6 @@ wxXmlNode *LexerConf::ToXml() const
 	//set the lexer name
 	node->AddProperty(wxT("Name"), GetName());
 	node->AddProperty(wxT("StylingWithinPreProcessor"), BoolToString(m_styleWithinPreProcessor));
-
 	wxString strId;
 	strId << GetLexerId();
 	node->AddProperty(wxT("Id"), strId);
@@ -199,7 +201,7 @@ wxXmlNode *LexerConf::ToXml() const
 		StyleProperty p = (*iter);
 		wxXmlNode *property = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Property"));
 
-		wxString strId;
+		strId.Clear();
 		strId << p.GetId();
 		property->AddProperty(wxT("Id"), strId);
 		property->AddProperty(wxT("Name"), p.GetName());
@@ -210,6 +212,10 @@ wxXmlNode *LexerConf::ToXml() const
 		property->AddProperty(wxT("Italic"), BoolToString(p.GetItalic()));
 		property->AddProperty(wxT("Underline"), BoolToString(p.GetUnderlined()));
 		property->AddProperty(wxT("EolFilled"), BoolToString(p.GetEolFilled()));
+
+		strId.Clear();
+		strId << p.GetAlpha();
+		property->AddProperty(wxT("Alpha"), strId);
 
 		wxString strSize;
 		strSize << p.GetFontSize();

@@ -32,21 +32,8 @@
 #ifndef __lexer_page__
 #define __lexer_page__
 
-// Define WX_GCH in order to support precompiled headers with GCC compiler.
-// You have to create the header "wx_pch.h" and include all files needed
-// for compile your gui inside it.
-// Then, compile it and place the file "wx_pch.h.gch" into the same
-// directory that "wx_pch.h".
-#ifdef WX_GCH
-#include <wx_pch.h>
-#else
-#include <wx/wx.h>
-#endif
-
-#include <wx/button.h>
 #include "lexer_configuration.h"
-#include <wx/clrpicker.h>
-#include <wx/fontpicker.h>
+#include "syntaxhighlightbasedlg.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -54,26 +41,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class LexerPage
 ///////////////////////////////////////////////////////////////////////////////
-class LexerPage : public wxPanel
+class LexerPage : public LexerPageBase
 {
-	LexerConfPtr m_lexer;
+	LexerConfPtr             m_lexer;
 	std::list<StyleProperty> m_propertyList;
-	int m_selection;
-	bool m_isModified;
-
-	DECLARE_EVENT_TABLE()
+	int                      m_selection;
+	bool                     m_isModified;
 
 protected:
-	wxListBox* m_properties;
-	wxFontPickerCtrl* m_fontPicker;
-	wxFontPickerCtrl* m_globalFontPicker;
-	wxColourPickerCtrl* m_globalBgColourPicker;
-	wxColourPickerCtrl* m_colourPicker;
-	wxColourPickerCtrl* m_bgColourPicker;
-	wxTextCtrl *m_fileSpec;
-	wxCheckBox *m_eolFilled;
-	wxCheckBox *m_styleWithinPreProcessor;
-
 	// Virtual event handlers, overide them in your derived class
 	virtual void OnItemSelected( wxCommandEvent& event );
 	virtual void OnFontChanged(wxFontPickerEvent &event);
@@ -86,7 +61,12 @@ protected:
 	virtual void OnText(wxCommandEvent &e);
 	virtual void OnEolFilled(wxCommandEvent &event);
 	virtual void OnStyleWithinPreprocessor(wxCommandEvent &event);
-	void EditKeyWords(int set);
+	virtual void OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event);
+	virtual void OnAlphaChanged(wxScrollEvent& event);
+	virtual void OnSelTextChanged(wxColourPickerEvent& event);
+
+
+	void         EditKeyWords(int set);
 
 public:
 	LexerPage( wxWindow* parent, LexerConfPtr lexer, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 285,300 ), int style = wxTAB_TRAVERSAL );

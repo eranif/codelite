@@ -101,22 +101,22 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 		bool          bold      = sp.IsBold();
 		bool          italic    = sp.GetItalic();
 		bool          underline = sp.GetUnderlined();
+		int           alpha     = sp.GetAlpha();
 
 		// handle special cases
-		if ( sp.GetId() == -1 ) {
+		if ( sp.GetId() == FOLD_MARGIN_ATTR_ID ) {
+
 			// fold margin foreground colour
 			rCtrl.SetFoldMarginColour(true, sp.GetBgColour());
 			rCtrl.SetFoldMarginHiColour(true, sp.GetFgColour());
 
-		} else if ( sp.GetId() == -2 ) {
+		} else if ( sp.GetId() == SEL_TEXT_ATTR_ID ) {
+
 			// selection colour
-			if(sp.GetBgColour().IsEmpty() == false)
-				rCtrl.SetSelBackground(true, sp.GetBgColour());
+			rCtrl.SetSelBackground(true, sp.GetBgColour());
+			rCtrl.SetSelAlpha(alpha);
 
-			if(sp.GetFgColour().IsEmpty() == false)
-				rCtrl.SetSelForeground(true, sp.GetFgColour());
-
-		} else if ( sp.GetId() == -3 ) {
+		} else if ( sp.GetId() == CARET_ATTR_ID ) {
 			// caret colour
 			rCtrl.SetCaretForeground(sp.GetFgColour());
 
@@ -152,7 +152,7 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 			rCtrl.StyleSetSize(sp.GetId(), fontSize);
 			rCtrl.StyleSetEOLFilled(sp.GetId(), iter->GetEolFilled());
 
-			if(iter->GetId() == 33) {
+			if(iter->GetId() == LINE_NUMBERS_ATTR_ID) {
 				// Set the line number colours only if requested
 				// otherwise, use default colours provided by scintilla
 				if(sp.GetBgColour().IsEmpty() == false)

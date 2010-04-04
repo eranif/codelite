@@ -87,11 +87,14 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 
 	// Update selected text properties
 	m_colourPickerSelTextBgColoour->SetColour( selTextProperties.GetBgColour() );
+	m_sliderSelTextAlpha->SetValue(selTextProperties.GetAlpha());
 
 	if (m_propertyList.empty()) {
 		m_fontPicker->Enable(false);
 		m_colourPicker->Enable(false);
 	}
+
+
 }
 
 void LexerPage::OnItemSelected(wxCommandEvent & event)

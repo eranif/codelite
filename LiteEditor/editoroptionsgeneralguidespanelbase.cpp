@@ -110,7 +110,7 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 	m_staticText41->Wrap( -1 );
 	fgSizer2->Add( m_staticText41, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_sliderCaretLineAlpha = new wxSlider( this, wxID_ANY, 50, 0, 255, wxDefaultPosition, wxDefaultSize, 0 );
+	m_sliderCaretLineAlpha = new wxSlider( this, wxID_ANY, 50, 0, 256, wxDefaultPosition, wxDefaultSize, wxSL_LABELS );
 	fgSizer2->Add( m_sliderCaretLineAlpha, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 	
 	bSizer1->Add( fgSizer2, 0, wxEXPAND|wxALL, 5 );

@@ -94,8 +94,6 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 	LoadImagesAndIndexes();
 	CreateGUIControls();
 	Connect();
-
-	m_mgr->GetWorkspacePaneNotebook()->AddPage(m_symView, wxT("Symbols"), wxT("Symbols"));
 }
 
 SymbolViewPlugin::~SymbolViewPlugin()
@@ -201,7 +199,23 @@ void SymbolViewPlugin::LoadImagesAndIndexes()
 
 void SymbolViewPlugin::CreateGUIControls()
 {
-	m_symView = new wxPanel(m_mgr->GetWorkspacePaneNotebook());
+	DetachedPanesInfo dpi;
+	m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
+	wxArrayString detachedPanes = dpi.GetPanes();
+	bool isDetached = detachedPanes.Index(wxT("Symbols")) != wxNOT_FOUND;
+	
+	Notebook *book = m_mgr->GetWorkspacePaneNotebook();
+	if( isDetached ) {
+		// Make the window child of the main panel (which is the grand parent of the notebook)
+		DockablePane *cp = new DockablePane(book->GetParent()->GetParent(), book, wxT("Symbols"), wxNullBitmap, wxSize(200, 200));
+		m_symView = new wxPanel(cp);
+		cp->SetChildNoReparent(m_symView);
+
+	} else {
+		m_symView = new wxPanel(book);
+		book->AddPage(m_symView, wxT("Symbols"), false);
+	}
+
 
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	m_symView->SetSizer(sz);
@@ -351,9 +365,6 @@ void SymbolViewPlugin::UnPlug()
 	size_t notepos = notebook->GetPageIndex(m_symView);
 	if (notepos != Notebook::npos) {
 		notebook->RemovePage(notepos, false);
-	} else {
-		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
-		m_symView->GetEventHandler()->ProcessEvent(e);
 	}
 
 	m_symView->Destroy();

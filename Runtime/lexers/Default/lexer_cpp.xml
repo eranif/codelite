@@ -31,7 +31,6 @@ subpage  subsection subsubsection test throw todo tparam typedef union until var
     <Property Id="18" Name="Doxygen keyword error" Bold="no" Italic="no" Underline="no" Face="" Colour="#800080" BgColour="#FFFFFF" Size="-1"/>
     <Property Id="16" Name="Workspace tags" Bold="no" Italic="no" Underline="no" Face="" Colour="#800080" BgColour="#FFFFFF" Size="-1"/>
     <Property Id="19" Name="Local variables" Bold="no" Italic="yes" Underline="no" Face="" Colour="#804000" BgColour="#FFFFFF" Size="-1"/>
-    <Property Id="20" Name="Disabled Code" Bold="no" Italic="no" Underline="no" Face="" Colour="grey" BgColour="#FFFFFF" Size="-1"/>
     <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
     <Property Id="-1" Name="Fold Margin" Bold="no" Italic="no" Underline="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
     <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>

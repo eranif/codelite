@@ -20,6 +20,7 @@
     <File Name="ASFormatter.cpp"/>
     <File Name="ASResource.cpp"/>
     <File Name="astyle.h"/>
+    <File Name="astyle_main.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Dialogs">
     <File Name="codeformatterdlg.h"/>

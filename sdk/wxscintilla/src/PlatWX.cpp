@@ -422,32 +422,37 @@ void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated
 	int aOutline = 0xff;
 #endif
 	for (x=1; x<r.width-1; x++) {
-        p.MoveTo(pixData, x, 0);
-		p.Red()   = red   * aOutline / 0xff;
-		p.Green() = green * aOutline / 0xff;
-		p.Blue()  = blue  * aOutline / 0xff;
-        p.Alpha() = alphaOutline;
-        p.MoveTo(pixData, x, r.height-1);
-		p.Red()   = red   * aOutline / 0xff;
-		p.Green() = green * aOutline / 0xff;
-		p.Blue()  = blue  * aOutline / 0xff;
-        p.Alpha() = alphaOutline;
+		p.MoveTo(pixData, x, 0);
+		if(p.m_ptr) {
+			p.Red()   = red   * aOutline / 0xff;
+			p.Green() = green * aOutline / 0xff;
+			p.Blue()  = blue  * aOutline / 0xff;
+			p.Alpha() = alphaOutline;
+			p.MoveTo(pixData, x, r.height-1);
+			p.Red()   = red   * aOutline / 0xff;
+			p.Green() = green * aOutline / 0xff;
+			p.Blue()  = blue  * aOutline / 0xff;
+			p.Alpha() = alphaOutline;
+		}
     }
 	for (y=1; y<r.height-1; y++) {
         p.MoveTo(pixData, 0, y);
-		p.Red()   = red   * aOutline / 0xff;
-		p.Green() = green * aOutline / 0xff;
-		p.Blue()  = blue  * aOutline / 0xff;
-        p.Alpha() = alphaOutline;
-        p.MoveTo(pixData, r.width-1, y);
-		p.Red()   = red   * aOutline / 0xff;
-		p.Green() = green * aOutline / 0xff;
-		p.Blue()  = blue  * aOutline / 0xff;
-        p.Alpha() = alphaOutline;
+		if(p.m_ptr) {
+			p.Red()   = red   * aOutline / 0xff;
+			p.Green() = green * aOutline / 0xff;
+			p.Blue()  = blue  * aOutline / 0xff;
+			p.Alpha() = alphaOutline;
+			p.MoveTo(pixData, r.width-1, y);
+			p.Red()   = red   * aOutline / 0xff;
+			p.Green() = green * aOutline / 0xff;
+			p.Blue()  = blue  * aOutline / 0xff;
+			p.Alpha() = alphaOutline;
+		}
     }
 
     // Draw the bitmap
-    hdc->DrawBitmap(bmp, r.x, r.y, true);
+	if(bmp.IsOk())
+		hdc->DrawBitmap(bmp, r.x, r.y, true);
 
 	// ERAN [START]
 	if (cornerSize) {
@@ -456,7 +461,7 @@ void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated
 		hdc->SetPen(wxColour(cdo.GetRed(), cdo.GetGreen(), cdo.GetBlue()));
 #ifdef __WXGTK__
 		cornerSize = 0;
-#endif		
+#endif
 		hdc->DrawRoundedRectangle(outlineRect, cornerSize);
 	}
 	// ERAN [END]

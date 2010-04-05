@@ -204,7 +204,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 		SetLastFunctionSignature(lastFuncSig     );
 		SetVisibleScope         (visibleScope    );
 		SetAdditionalScopes     (additionalScopes, fn.GetFullPath());
-		
+
 		//get next token using the tokenscanner object
 		m_tokenScanner->SetText(_C(statement));
 		Variable parent;
@@ -354,7 +354,15 @@ bool Language::ProcessExpression(const wxString& stmt,
 					}
 				}
 
+				// We call here to IsTypeAndScopeExists which will attempt to provide the best scope / type
+				// in cases there is a change in the scope we also need to update the templateHelper class
+				wxString newScope = typeScope;
 				GetTagsManager()->IsTypeAndScopeExists(typeName, typeScope);
+				if(newScope != typeScope && m_templateHelper.GetTemplateDeclaration().IsEmpty()) {
+					// We got no template declaration...
+					m_templateHelper.SetTypeScope( typeScope );
+					DoExtractTemplateDeclarationArgs();
+				}
 
 				int  retryCount(0);
 				bool cont(false);
@@ -1110,7 +1118,7 @@ bool Language::FunctionFromPattern(TagEntryPtr tag, clFunction &foo)
 		// over multiple lines)
 		// Manually construct the pattern from TagEntry
 		wxString pat2;
-		
+
 		pat2 << tag->GetReturnValue() << wxT(" ") << tag->GetName() << tag->GetSignature() << wxT(";");
 
 		const wxCharBuffer patbuf1 = _C(pat2);
@@ -1632,17 +1640,17 @@ wxString TemplateHelper::GetPath() const
 
 void Language::SetAdditionalScopes(const std::vector<wxString>& additionalScopes, const wxString &filename)
 {
-	
+
 	if( !(GetTagsManager()->GetCtagsOptions().GetFlags() &  CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING) ) {
 		this->m_additionalScopes = additionalScopes;
-		
+
 	} else {
 		this->m_additionalScopes.clear();
 		// do a deep scan of the entire include tree
 		wxArrayString includePaths = GetTagsManager()->GetProjectPaths();
 		{
 			wxCriticalSectionLocker locker( GetTagsManager()->m_crawlerLocker );
-			
+
 			fcFileOpener::Instance()->ClearResults();
 			fcFileOpener::Instance()->ClearSearchPath();
 			for(size_t i=0; i<includePaths.GetCount(); i++) {
@@ -1652,7 +1660,7 @@ void Language::SetAdditionalScopes(const std::vector<wxString>& additionalScopes
 			// Invoke the crawler
 			const wxCharBuffer cfile = filename.mb_str(wxConvUTF8);
 			crawlerScan( cfile.data() );
-			
+
 			std::set<std::string>::iterator iter = fcFileOpener::Instance()->GetNamespaces().begin();
 			for(; iter != fcFileOpener::Instance()->GetNamespaces().end(); iter++) {
 				this->m_additionalScopes.push_back( wxString(iter->c_str(), wxConvUTF8) );

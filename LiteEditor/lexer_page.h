@@ -67,6 +67,7 @@ protected:
 
 
 	void         EditKeyWords(int set);
+	std::list<StyleProperty>::iterator GetSelectedStyle();
 
 public:
 	LexerPage( wxWindow* parent, LexerConfPtr lexer, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 285,300 ), int style = wxTAB_TRAVERSAL );

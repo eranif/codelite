@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cl_editor.h"
+#include <wx/fontmap.h>
 #include "cl_editor_tip_window.h"
 #include "new_quick_watch_dlg.h"
 #include "buildtabsettingsdata.h"
@@ -1015,6 +1016,21 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	}
 #endif
 
+	// save the file using the user's defined encoding
+	wxCSConv fontEncConv(GetOptions()->GetFileFontEncoding());
+
+	// trim lines / append LF if needed
+	TrimText();
+
+	// BUG#2982452
+	// try to manually convert the text to make sure that the conversion does not fail
+	wxString theText = GetText();
+	const wxWX2MBbuf buf = theText.mb_str(fontEncConv);
+	if(!buf.data()) {
+		wxMessageBox(wxString::Format(wxT("Save file failed!\nCould not convert the file to the requested encoding '%s'"), wxFontMapper::GetEncodingName(GetOptions()->GetFileFontEncoding()).c_str()), wxT("CodeLite"), wxOK|wxICON_WARNING);
+		return false;
+	}
+
 	wxString tmp_file;
 	wxFFile file(fileName.GetFullPath().GetData(), wxT("wb"));
 	if (file.IsOpened() == false) {
@@ -1031,15 +1047,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 			return false;
 		}
 	}
-
-	// save the file using the user's defined encoding
-	wxCSConv fontEncConv(GetOptions()->GetFileFontEncoding());
-
-	// trim lines / append LF if needed
-	TrimText();
-
-	// write the content
-	file.Write(GetText(), fontEncConv);
+	file.Write(theText, fontEncConv);
 	file.Close();
 
 	// if the saving was done to a temporary file, override it

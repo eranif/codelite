@@ -132,9 +132,7 @@ void LexerPage::OnFontChanged(wxFontPickerEvent &event)
 	wxObject *obj = event.GetEventObject();
 	if (obj == m_fontPicker) {
 		wxFont f = event.GetFont();
-		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
-		for (int i=0; i<m_selection; i++)
-			iter++;
+		std::list<StyleProperty>::iterator iter = GetSelectedStyle();
 
 		iter->SetBold(f.GetWeight() == wxFONTWEIGHT_BOLD);
 		iter->SetFaceName(f.GetFaceName());
@@ -164,18 +162,13 @@ void LexerPage::OnColourChanged(wxColourPickerEvent &event)
 	wxObject *obj = event.GetEventObject();
 	if (obj == m_colourPicker) {
 		wxColour colour = event.GetColour();
-		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
-		for (int i=0; i<m_selection; i++)
-			iter++;
-
+		std::list<StyleProperty>::iterator iter = GetSelectedStyle();
 		iter->SetFgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
 
 	} else if (obj == m_bgColourPicker) {
 
 		wxColour colour = event.GetColour();
-		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
-		for (int i=0; i<m_selection; i++)
-			iter++;
+		std::list<StyleProperty>::iterator iter = GetSelectedStyle();
 
 		iter->SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
 
@@ -272,9 +265,7 @@ void LexerPage::OnEolFilled(wxCommandEvent& event)
 {
 	m_isModified = true;
 
-	std::list<StyleProperty>::iterator iter = m_propertyList.begin();
-	for (int i=0; i<m_selection; i++)
-		iter++;
+	std::list<StyleProperty>::iterator iter = GetSelectedStyle();
 	iter->SetEolFilled(event.IsChecked());
 }
 
@@ -286,9 +277,7 @@ void LexerPage::OnStyleWithinPreprocessor(wxCommandEvent& event)
 
 void LexerPage::OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event)
 {
-	std::list<StyleProperty>::iterator iter = m_propertyList.begin();
-	for (int i=0; i<m_selection; i++)
-		iter++;
+	std::list<StyleProperty>::iterator iter = GetSelectedStyle();
 
 	if (iter->GetName() == wxT("Preprocessor")) {
 		event.Enable(true);
@@ -307,4 +296,19 @@ void LexerPage::OnSelTextChanged(wxColourPickerEvent& event)
 {
 	event.Skip();
 	m_isModified = true;
+}
+
+std::list<StyleProperty>::iterator LexerPage::GetSelectedStyle()
+{
+	wxString styleName = m_properties->GetString(m_selection);
+	if(styleName.IsEmpty())
+		return m_propertyList.begin();
+
+	std::list<StyleProperty>::iterator iter = m_propertyList.begin();
+	for (; iter != m_propertyList.end(); iter++) {
+		if(iter->GetName() == styleName) {
+			return iter;
+		}
+	}
+	return m_propertyList.begin();
 }

@@ -152,7 +152,7 @@ TagsManager::~TagsManager()
 	wxCriticalSectionLocker locker(m_cs);
 	if (m_canDeleteCtags) {
 		if (m_codeliteIndexerProcess) m_codeliteIndexerProcess->Disconnect(m_codeliteIndexerProcess->GetUid(), wxEVT_END_PROCESS, wxProcessEventHandler(TagsManager::OnCtagsEnd), NULL, this);
-		
+
 		// terminate ctags process
 		if (m_codeliteIndexerProcess) m_codeliteIndexerProcess->Terminate();
 
@@ -325,13 +325,13 @@ clProcess *TagsManager::StartCtagsProcess()
 	// build the command, we surround ctags name with double quatations
 	wxString uid;
 	uid << wxGetProcessId();
-	
+
 	if(m_codeliteIndexerPath.FileExists() == false) {
 		wxLogMessage(wxT("ERROR: Could not locate indexer: %s"), m_codeliteIndexerPath.GetFullPath().c_str());
 		m_codeliteIndexerProcess = NULL;
 		return NULL;
 	}
-	
+
 	// concatenate the PID to identifies this channel to this instance of codelite
 	cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\" ") << uid << wxT(" --pid");
 	clProcess* process;
@@ -614,13 +614,13 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 
 	wxString scope;
 	wxString scopeName = GetLanguage()->GetScopeName(text, &additionlScopes);
-	
+
 	if( GetCtagsOptions().GetFlags() &  CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING ) {
 		// Do a deep scan for 'using namespace'
 		GetLanguage()->SetAdditionalScopes(additionlScopes, fileName.GetFullPath());
 		additionlScopes = GetLanguage()->GetAdditionalScopes();
 	}
-	
+
 	TagEntryPtr funcTag = FunctionFromFileLine(fileName, lineno);
 	if (funcTag) {
 		funcSig = funcTag->GetSignature();
@@ -681,7 +681,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno, const wxString& expr, const wxString& text, std::vector<TagEntryPtr>& candidates)
 {
 	PERF_START("AutoCompleteCandidates");
-	
+
 	candidates.clear();
 	wxString path;
 	wxString typeName, typeScope;
@@ -1281,7 +1281,7 @@ bool TagsManager::IsTypeAndScopeExists(wxString &typeName, wxString &scope)
 	if (iter != m_typeScopeCache.end()) {
 		return iter->second;
 	}
-	
+
 	// First try the fast query to save some time
 	if(m_workspaceDatabase->IsTypeAndScopeExistLimitOne(typeName, scope)) {
 		//wxLogMessage(wxT("Type Exist! Skipping!"));
@@ -1319,19 +1319,19 @@ bool TagsManager::GetDerivationList(const wxString &path, std::vector<wxString> 
 			wxString inherits = tok.GetNextToken();
 			wxString tagName = tag->GetName();
 			wxString tmpInhr = inherits;
-			
+
 			tagName.MakeLower();
 			tmpInhr.MakeLower();
-			
+
 			// Make sure that inherits != the current name or we will end up in an infinite loop
 			if(tmpInhr != tagName) {
-			
+
 				if (tag->GetScopeName() != wxT("<global>")) {
 					inherits = tag->GetScopeName() + wxT("::") + inherits;
 				}
 				derivationList.push_back(inherits);
 				GetDerivationList(inherits, derivationList);
-				
+
 			}
 		}
 	}
@@ -1375,7 +1375,7 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 
 			// add return value
 			tip.Clear();
-			
+
 			wxString retValue = t->GetReturnValue();
 			if(retValue.IsEmpty() == false) {
 				tip << retValue << wxT(" ");
@@ -1422,7 +1422,7 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 			// collect each signature only once, we do this by using
 			// map
 			tipsMap[tip] = t;
-			
+
 		} else if (t->IsClass()) {
 
 			// this tag is a class declaration that matches the word
@@ -1711,22 +1711,7 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
 		body << wxT("virtual ");
 	}
 
-	if (foo.m_retrunValusConst.empty() == false) {
-		body << _U(foo.m_retrunValusConst.c_str()) << wxT(" ");
-	}
-
-	if (foo.m_returnValue.m_typeScope.empty() == false) {
-		body << _U(foo.m_returnValue.m_typeScope.c_str()) << wxT("::");
-	}
-
-	if (foo.m_returnValue.m_type.empty() == false) {
-		body << _U(foo.m_returnValue.m_type.c_str());
-		if (foo.m_returnValue.m_templateDecl.empty() == false) {
-			body << wxT("<") << _U(foo.m_returnValue.m_templateDecl.c_str()) << wxT(">");
-		}
-		body << _U(foo.m_returnValue.m_starAmp.c_str());
-		body << wxT(" ");
-	}
+	body << tag->GetReturnValue() << wxT(" ");
 
 	if (flags & FunctionFormat_Impl) {
 		if (scope.IsEmpty()) {
@@ -1939,7 +1924,7 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
 {
 	std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetTokensMap();
 	std::map<std::string, std::string> reverseTokens;
-	
+
 	if(flags & Normalize_Func_Reverse_Macro)
 		reverseTokens = GetCtagsOptions().GetTokensReversedMap();
 
@@ -1993,7 +1978,7 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
 		if (v.m_rightSideConst.empty() == false) {
 			str_output << wxT(" ") << _U(v.m_rightSideConst.c_str());
 		}
-		
+
 		if (v.m_name.empty() == false && (flags & Normalize_Func_Name)) {
 			str_output << wxT(" ") << _U(v.m_name.c_str());
 		} else if ( v.m_isEllipsis ) {

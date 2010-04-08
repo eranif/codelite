@@ -91,10 +91,7 @@ void WorkerThread::Stop()
 	if( IsAlive() )
 		Delete();
 	
-	while( IsAlive() )
-	{
-		wxThread::Sleep( 5 );
-	}
+	wxThread::Wait();
 }
 
 void WorkerThread::Start(int priority)

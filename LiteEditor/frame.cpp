@@ -2575,17 +2575,17 @@ void Frame::OnDebugUI(wxUpdateUIEvent &e)
 
 void Frame::OnDebugRestart(wxCommandEvent &e)
 {
-	if (DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning()) {
-		OnDebugStop(e);
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
+		dbgr->Restart();
 	}
-	OnDebug(e);
 }
 
 void Frame::OnDebugRestartUI(wxUpdateUIEvent &e)
 {
 	CHECK_SHUTDOWN();
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	e.Enable(dbgr && dbgr->IsRunning());
+	e.Enable(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract());
 }
 
 void Frame::OnDebugStop(wxCommandEvent &e)

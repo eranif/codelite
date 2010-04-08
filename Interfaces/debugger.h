@@ -621,6 +621,11 @@ public:
 	 */
 	virtual bool Break(const BreakpointInfo& bp) = 0;
 	/**
+	 * @brief restart the debuggin session. (similar to 'run' command on GDB)
+	 * @return true on success false otherwise
+	 */
+	virtual bool Restart() = 0;
+	/**
 	 * \brief remove breakpoint by its ID
 	 */
 	virtual bool RemoveBreak(int bid) = 0;

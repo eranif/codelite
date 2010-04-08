@@ -52,8 +52,7 @@ class IProcess;
 
 WX_DECLARE_STRING_HASH_MAP(DbgCmdHandler*, HandlersMap);
 
-class DbgGdb : public wxEvtHandler, public IDebugger
-{
+class DbgGdb : public wxEvtHandler, public IDebugger {
 	HandlersMap                 m_handlers;
 	long                        m_debuggeePid;
 	ConsoleFinder               m_consoleFinder;
@@ -127,6 +126,12 @@ public:
 	virtual bool CreateVariableObject(const wxString &expression, int userReason);
 	virtual bool DeleteVariableObject(const wxString &name);
 	virtual bool EvaluateVariableObject(const wxString &name, DisplayFormat displayFormat, int userReason);
+
+	/**
+	 * @brief restart the debugger (execute 'run')
+	 * @return true on success, false otherwise
+	 */
+	virtual bool Restart();
 
 	// Event handlers
 	DECLARE_EVENT_TABLE()

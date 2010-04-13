@@ -308,7 +308,9 @@ void BuildTab::DoMarkAndOpenFile ( std::map<int,LineInfo>::iterator i, bool scro
 		// What we do here, is we loop over the m_baseDir and trying to locate a file that does actually exist
 		// using all the collected 'Entering directory' messages found so far.
 		// we start looping from the end of the array
-		for(size_t i=m_baseDir.GetCount()-1; i >= 0; i--) {
+
+		int itemCount = static_cast<int>( m_baseDir.GetCount() )-1;
+		for(int i=itemCount; i >= 0; i--) {
 			wxString tmpFilename = info.rawFilename;
 			wxFileName fn(tmpFilename);
 
@@ -322,7 +324,15 @@ void BuildTab::DoMarkAndOpenFile ( std::map<int,LineInfo>::iterator i, bool scro
 
 	LEditor *editor = Frame::Get()->GetMainBook()->OpenFile ( file, info.project, info.linenum );
     if (editor == NULL) {
-		return;
+
+		// failed to open the file, try using the name part of the file only
+		wxFileName fName = ManagerST::Get()->FindFile(filename.GetFullName());
+		if(fName.IsOk()) {
+			editor = Frame::Get()->GetMainBook()->OpenFile ( fName.GetFullPath(), info.project, info.linenum );
+		}
+
+		if(editor == NULL)
+			return;
 	}
 
     // mark the current error/warning line in the output tab

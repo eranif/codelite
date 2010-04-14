@@ -124,6 +124,11 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 	ProcessEventData *ped = (ProcessEventData *)event.GetClientData();
 	delete ped;
 
+	if ( m_process ) {
+		delete m_process;
+		m_process = NULL;
+	}
+
 	if (m_handler) {
 
 		if (m_handler->TestLoginRequired(m_output)) {
@@ -149,11 +154,6 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 
 		delete m_handler;
 		m_handler = NULL;
-	}
-
-	if ( m_process ) {
-		delete m_process;
-		m_process = NULL;
 	}
 
 	m_workingDirectory.Clear();
@@ -259,7 +259,7 @@ bool SvnConsole::DoExecute(const wxString& cmd, SvnCommandHandler* handler, cons
 	m_printProcessOutput = printProcessOutput;
 	if (m_process) {
 		// another process is already running...
-		//AppendText(svnANOTHER_PROCESS_RUNNING);
+		AppendText(svnANOTHER_PROCESS_RUNNING);
 		if (handler)
 			delete handler;
 		return false;

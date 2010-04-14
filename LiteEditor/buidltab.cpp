@@ -324,14 +324,14 @@ void BuildTab::DoMarkAndOpenFile ( std::map<int,LineInfo>::iterator i, bool scro
 
 	LEditor *editor = Frame::Get()->GetMainBook()->OpenFile ( file, info.project, info.linenum );
     if (editor == NULL) {
-
-		// failed to open the file, try using the name part of the file only
-		wxFileName fName = ManagerST::Get()->FindFile(filename.GetFullName());
-		if(fName.IsOk()) {
-			editor = Frame::Get()->GetMainBook()->OpenFile ( fName.GetFullPath(), info.project, info.linenum );
-		}
-
-		if(editor == NULL)
+//
+//		// failed to open the file, try using the name part of the file only
+//		wxFileName fName = ManagerST::Get()->FindFile(filename.GetFullName());
+//		if(fName.IsOk()) {
+//			editor = Frame::Get()->GetMainBook()->OpenFile ( fName.GetFullPath(), info.project, info.linenum );
+//		}
+//
+//		if(editor == NULL)
 			return;
 	}
 

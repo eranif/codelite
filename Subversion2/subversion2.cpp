@@ -52,8 +52,11 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 }
 
 Subversion2::Subversion2(IManager *manager)
-		: IPlugin          (manager)
-		, m_explorerSepItem(NULL)
+		: IPlugin           (manager)
+		, m_explorerSepItem (NULL)
+		, m_simpleCommand   (this)
+		, m_diffCommand     (this)
+		, m_blameCommand    (this)
 		, m_svnClientVersion(0.0)
 {
 	m_longName = wxT("Subversion plugin for codelite2.0 based on the svn command line tool");

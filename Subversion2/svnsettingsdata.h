@@ -10,7 +10,8 @@ enum SvnSettingsDataFlags {
 	SvnUseExternalDiff     = 0x00000004,
 	SvnExposeRevisionMacro = 0x00000008,
 	SvnRenameFileInRepo    = 0x00000010,
-	SvnLinkEditor          = 0x00000020
+	SvnLinkEditor          = 0x00000020,
+	SvnUsePosixLocale      = 0x00000040
 };
 
 class SvnSettingsData : public SerializedObject
@@ -32,7 +33,7 @@ public:
 			, m_externalDiffViewer(wxT(""))
 			, m_sshClient(wxT(""))
 			, m_sshClientArgs(wxT(""))
-			, m_flags(SvnAddFileToSvn|SvnRetagWorkspace)
+			, m_flags(SvnAddFileToSvn|SvnRetagWorkspace|SvnUsePosixLocale)
 			, m_revisionMacroName(wxT("SVN_REVISION"))
 			, m_svnTabIndex(Notebook::npos) {
 	}

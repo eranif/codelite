@@ -25,6 +25,7 @@ SvnPreferencesDialog::SvnPreferencesDialog( wxWindow* parent, Subversion2 *plugi
 	m_checkBoxUseExternalDiff->SetValue( ssd.GetFlags() & SvnUseExternalDiff );
 	m_checkBoxExposeRevisionMacro->SetValue( ssd.GetFlags() & SvnExposeRevisionMacro );
 	m_checkBoxRenameFile->SetValue( ssd.GetFlags() & SvnRenameFileInRepo );
+	m_checkBoxUsePosixLocale->SetValue( ssd.GetFlags() & SvnUsePosixLocale );
 
 	WindowAttrManager::Load(this, wxT("SvnPreferencesDialog"), m_plugin->GetManager()->GetConfigTool());
 
@@ -100,7 +101,7 @@ void SvnPreferencesDialog::OnButtonOK(wxCommandEvent& event)
 	ssd.SetSshClientArgs(m_textCtrlSshClientArgs->GetValue());
 	ssd.SetExecutable(m_textCtrlSvnExecutable->GetValue());
 	ssd.SetRevisionMacroName(m_textCtrlMacroName->GetValue());
-	
+
 	// Link Editor flag is not set via this dialog
 	// so read its current value before adding the other
 	// flags
@@ -126,6 +127,10 @@ void SvnPreferencesDialog::OnButtonOK(wxCommandEvent& event)
 
 	if (m_checkBoxRenameFile->IsChecked()) {
 		flags |= SvnRenameFileInRepo;
+	}
+
+	if (m_checkBoxUsePosixLocale->IsChecked()) {
+		flags |= SvnUsePosixLocale;
 	}
 
 	ssd.SetFlags(flags);

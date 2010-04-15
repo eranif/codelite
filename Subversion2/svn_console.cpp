@@ -279,7 +279,9 @@ bool SvnConsole::DoExecute(const wxString& cmd, SvnCommandHandler* handler, cons
 	// Apply the environment variables before executing the command
 	StringMap om;
 	om[wxT("LC_ALL")] = wxT("C");
-	EnvSetter env(m_plugin->GetManager()->GetEnv(), &om);
+
+	bool useOverrideMap = m_plugin->GetSettings().GetFlags() & SvnUsePosixLocale;
+	EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
 
 	m_process = CreateAsyncProcess(this, cmdShell, workingDirectory);
 	if (!m_process) {

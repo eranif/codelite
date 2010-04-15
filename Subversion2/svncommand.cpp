@@ -10,10 +10,10 @@ EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  SvnCommand::OnProcessOutput)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, SvnCommand::OnProcessTerminated)
 END_EVENT_TABLE()
 
-SvnCommand::SvnCommand()
+SvnCommand::SvnCommand(Subversion2* plugin)
 		: m_process(NULL)
 		, m_handler(NULL)
-		, m_plugin (NULL)
+		, m_plugin (plugin)
 {
 }
 
@@ -43,7 +43,10 @@ bool SvnCommand::Execute(const wxString &command, const wxString &workingDirecto
 	// Apply the environment variables before executing the command
 	StringMap om;
 	om[wxT("LC_ALL")] = wxT("C");
-	EnvSetter env(plugin->GetManager()->GetEnv(), &om);
+
+	bool useOverrideMap = m_plugin->GetSettings().GetFlags() & SvnUsePosixLocale;
+	EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
+
 
 	m_process = CreateAsyncProcess(this, command, workingDirectory);
 	if ( !m_process ) {

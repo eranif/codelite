@@ -54,6 +54,8 @@ END_EVENT_TABLE()
 SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
 		: SubversionPageBase( parent )
 		, m_plugin          ( plugin )
+		, m_simpleCommand   ( plugin )
+		, m_diffCommand     ( plugin )
 {
 	CreatGUIControls();
 	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_LOADED,      wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),     NULL, this);

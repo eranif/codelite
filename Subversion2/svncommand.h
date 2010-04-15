@@ -25,7 +25,7 @@ protected:
 	void OnProcessOutput    (wxCommandEvent &event);
 
 public:
-	SvnCommand();
+	SvnCommand(Subversion2* plugin);
 	virtual ~SvnCommand();
 
 	bool Execute(const wxString &command, const wxString &workingDirectory, SvnCommandHandler *handler, Subversion2 *plugin);

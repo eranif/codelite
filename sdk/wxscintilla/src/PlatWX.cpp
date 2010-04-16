@@ -386,6 +386,8 @@ void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated
 	wxRect outlineRect (r);
 
     wxBitmap bmp(r.width, r.height, 32);
+	if(bmp.IsOk() == false)
+		return;
     wxAlphaPixelData pixData(bmp);
     pixData.UseAlpha();
 	wxAlphaPixelData::Iterator p(pixData);

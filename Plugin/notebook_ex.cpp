@@ -85,7 +85,7 @@ Notebook::~Notebook()
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,  wxAuiNotebookEventHandler(Notebook::OnTabRightDown),         NULL, this);
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK,       wxAuiNotebookEventHandler(Notebook::OnBgDclick),             NULL, this);
 	Disconnect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_UP,    wxAuiNotebookEventHandler(Notebook::OnTabRightUp),           NULL, this);
-	
+
 	Disconnect(wxEVT_NAVIGATION_KEY,                 wxNavigationKeyEventHandler(Notebook::OnNavigationKey),  NULL, this);
 #ifdef __WXMSW__
 	Disconnect(wxEVT_SET_FOCUS,                              wxFocusEventHandler(Notebook::OnFocus),                      NULL, this);
@@ -380,13 +380,18 @@ void Notebook::DoPageChangingEvent(wxAuiNotebookEvent& e)
 
 void Notebook::OnKeyDown(wxKeyEvent& e)
 {
-	if (e.GetKeyCode() == WXK_TAB && e.m_controlDown ) {
-		if (DoNavigate())
+	if(e.m_controlDown) {
+		switch(e.GetKeyCode()) {
+		case WXK_TAB:
+		case WXK_PAGEDOWN:
+		case WXK_PAGEUP:
+			DoNavigate();
 			return;
-
-	} else {
-		e.Skip();
+		default:
+			break;
+		}
 	}
+	e.Skip();
 }
 
 bool Notebook::DoNavigate()
@@ -468,9 +473,9 @@ void Notebook::OnTabRightDown(wxAuiNotebookEvent& e)
 		if(where != wxNOT_FOUND && where == static_cast<int>(GetSelection())) {
 
 			PopupMenu(m_contextMenu);
-			
+
 		} else {
-			
+
 			e.Skip();
 
 		}

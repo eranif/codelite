@@ -1341,6 +1341,10 @@ void Frame::OnClose(wxCloseEvent& event)
 	SearchThreadST::Get()->StopSearch();
 
 	SaveLayoutAndSession();
+
+	// In case we got some data in the clipboard, flush it so it will be available
+	// after our process exits
+	wxTheClipboard->Flush();
 	event.Skip();
 }
 

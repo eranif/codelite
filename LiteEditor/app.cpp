@@ -251,7 +251,7 @@ bool App::OnInit()
 
 	wxSocketBase::Initialize();
 
-#if wxUSE_STACKWALKER
+#if wxUSE_ON_FATAL_EXCEPTION
 	//trun on fatal exceptions handler
 	wxHandleFatalExceptions(true);
 #endif

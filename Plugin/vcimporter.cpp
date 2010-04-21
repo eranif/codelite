@@ -43,7 +43,7 @@ VcImporter::VcImporter(const wxString &fileName, const wxString &defaultCompiler
 		, m_compilerLowercase(defaultCompiler)
 {
 	m_compilerLowercase.MakeLower();
-	
+
 	wxFileName fn(m_fileName);
 	m_isOk = fn.FileExists();
 	if (m_isOk) {
@@ -124,6 +124,9 @@ bool VcImporter::OnProject(const wxString &firstLine, wxString &errMsg)
 
 	pd.filepath = tk2.NextToken();
 	RemoveGershaim(pd.filepath);
+
+	// Make sure that the project path has a forward slash style
+	pd.filepath.Replace(wxT("\\"), wxT("/)"));
 
 	pd.id = tk2.NextToken();
 	RemoveGershaim(pd.id);
@@ -251,10 +254,10 @@ void VcImporter::AddConfiguration(ProjectSettingsPtr settings, wxXmlNode *config
 	//get the include directories
 	le_conf->SetIncludePath(SplitString(XmlUtils::ReadString(cmpNode, wxT("AdditionalIncludeDirectories"))));
 	le_conf->SetPreprocessor(XmlUtils::ReadString(cmpNode, wxT("PreprocessorDefinitions")));
-	
+
 	// Select the best compiler for the import process (we select g++ by default)
 	le_conf->SetCompilerType(m_compiler);
-	
+
 	// Get the configuration type
 	long type = XmlUtils::ReadLong(config, wxT("ConfigurationType"), 1);
 	wxString projectType;
@@ -271,9 +274,9 @@ void VcImporter::AddConfiguration(ProjectSettingsPtr settings, wxXmlNode *config
 		projectType = Project::EXECUTABLE;
 		break;
 	}
-	
+
 	le_conf->SetProjectType(projectType);
-	
+
 	//if project type is DLL or Executable, copy linker settings as well
 	if (settings->GetProjectType(le_conf->GetName()) == Project::EXECUTABLE || settings->GetProjectType(le_conf->GetName()) == Project::DYNAMIC_LIBRARY) {
 		wxXmlNode *linkNode = XmlUtils::FindNodeByName(config, wxT("Tool"), wxT("VCLinkerTool"));
@@ -285,10 +288,10 @@ void VcImporter::AddConfiguration(ProjectSettingsPtr settings, wxXmlNode *config
 #endif
 
 			le_conf->SetOutputFileName(outputFileName);
-			
+
 			// read in the additional libraries & libpath
 			wxString libs = XmlUtils::ReadString(linkNode, wxT("AdditionalDependencies"));
-			
+
 			// libs is a space delimited string
 			wxStringTokenizer tk(libs, wxT(" "));
 			libs.Empty();
@@ -302,13 +305,13 @@ void VcImporter::AddConfiguration(ProjectSettingsPtr settings, wxXmlNode *config
 		// static library
 		wxXmlNode *libNode = XmlUtils::FindNodeByName(config, wxT("Tool"), wxT("VCLibrarianTool"));
 		if (libNode) {
-			
+
 			wxString outputFileName (XmlUtils::ReadString(libNode, wxT("OutputFile")) );
 			outputFileName.Replace(wxT("\\"), wxT("/"));
-			
+
 			wxString outputFileNameOnly = outputFileName.AfterLast(wxT('/'));
 			wxString outputFilePath     = outputFileName.BeforeLast(wxT('/'));
-			
+
 			if(m_compilerLowercase.Contains(wxT("gnu"))) {
 				if(outputFileNameOnly.StartsWith(wxT("lib")) == false) {
 					outputFileNameOnly.Prepend(wxT("lib"));
@@ -351,6 +354,8 @@ void VcImporter::CreateFiles(wxXmlNode *parent, wxString vdPath, ProjectPtr proj
 			if (path.IsEmpty()) {
 				path = wxT("src");
 			}
+
+			fileName.Replace(wxT("\\"), wxT("/"));
 			proj->AddFile(fileName, path);
 		}
 		child = child->GetNext();

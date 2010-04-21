@@ -126,7 +126,7 @@ bool VcImporter::OnProject(const wxString &firstLine, wxString &errMsg)
 	RemoveGershaim(pd.filepath);
 
 	// Make sure that the project path has a forward slash style
-	pd.filepath.Replace(wxT("\\"), wxT("/)"));
+	pd.filepath.Replace(wxT("\\"), wxT("/"));
 
 	pd.id = tk2.NextToken();
 	RemoveGershaim(pd.id);

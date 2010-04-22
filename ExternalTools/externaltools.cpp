@@ -83,6 +83,7 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager *manager)
 	topWin = m_mgr->GetTheApp();
 
 	topWin->Connect(XRCID("stop_external_tool"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnStopExternalTool), NULL, (wxEvtHandler*)this);
+	topWin->Connect(34733,                       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnRecreateTB), NULL, (wxEvtHandler*)this);
 	topWin->Connect(XRCID("stop_external_tool"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnStopExternalToolUI), NULL, (wxEvtHandler*)this);
 
 	for (int i=0; i<MAX_TOOLS; i++) {
@@ -96,6 +97,7 @@ ExternalToolsPlugin::~ExternalToolsPlugin()
 {
 	topWin->Disconnect(XRCID("external_tools_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnSettings), NULL, (wxEvtHandler*)this);
 	topWin->Disconnect(XRCID("stop_external_tool"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnStopExternalTool), NULL, (wxEvtHandler*)this);
+	topWin->Disconnect(34733,                       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnRecreateTB), NULL, (wxEvtHandler*)this);
 	topWin->Disconnect(XRCID("stop_external_tool"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnStopExternalToolUI), NULL, (wxEvtHandler*)this);
 
 	for (int i=0; i<MAX_TOOLS; i++) {
@@ -200,9 +202,16 @@ void ExternalToolsPlugin::OnSettings(wxCommandEvent& e)
 		data.SetTools(dlg.GetTools());
 		m_mgr->GetConfigTool()->WriteObject(wxT("ExternalTools"), &data);
 
-		DoRecreateToolbar();
-		DoCreatePluginMenu();
+		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, 34733);
+		wxPostEvent(this, evt);
 	}
+}
+
+void ExternalToolsPlugin::OnRecreateTB(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	DoRecreateToolbar();
+	DoCreatePluginMenu();
 }
 
 void ExternalToolsPlugin::OnLaunchExternalTool(wxCommandEvent& e)

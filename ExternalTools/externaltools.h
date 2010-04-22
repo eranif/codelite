@@ -50,7 +50,7 @@ protected:
 	bool    IsRedirectedToolRunning();
 	void    OnProcessEnd(wxProcessEvent &event);
 	void    DoCreatePluginMenu();
-
+	void    OnRecreateTB(wxCommandEvent &e);
 public:
 	ExternalToolsPlugin(IManager *manager);
 	~ExternalToolsPlugin();

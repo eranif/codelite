@@ -41,6 +41,7 @@
 #include "openwindowspanel.h"
 #include "fileexplorer.h"
 #include "workspacetab.h"
+#include "tabgroupspane.h"
 #include "workspace_pane.h"
 
 #define OPEN_CONFIG_MGR_STR wxT("<Open Configuration Manager...>")
@@ -146,6 +147,17 @@ void WorkspacePane::CreateGUIControls()
 	} else {
 		m_openWindowsPane = new OpenWindowsPanel(m_book, name);
 		m_book->AddPage(m_openWindowsPane, name, false);
+	}
+
+	// Add the Tabgroups tab
+	name = wxT("Tabgroups");
+	if(IS_DETACHED(name)) {
+		DockablePane *cp = new DockablePane(GetParent(), m_book,  name, wxNullBitmap, wxSize(200, 200));
+		m_TabgroupsPane = new TabgroupsPane(cp, name);
+		cp->SetChildNoReparent(m_TabgroupsPane);
+	} else {
+		m_TabgroupsPane = new TabgroupsPane(m_book, name);
+		m_book->AddPage(m_TabgroupsPane, name, false);
 	}
 
 	if (m_book->GetPageCount() > 0) {

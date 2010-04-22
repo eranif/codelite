@@ -63,7 +63,6 @@ class SaveTabGroupDlg : public SaveTabGroupBaseDlg
 	virtual void OnCheckAllUpdateUI( wxUpdateUIEvent& event );
 	virtual void OnClearAll( wxCommandEvent& event );
 	virtual void OnClearAllUpdateUI( wxUpdateUIEvent& event );
-	virtual void OnBrowse( wxCommandEvent& WXUNUSED(event) );
 public:
 	SaveTabGroupDlg(wxWindow* parent, const wxArrayString& previousgroups);
 	virtual ~SaveTabGroupDlg();
@@ -74,19 +73,11 @@ public:
 		}
 	}
 
-	void SetComboPath(const wxString& path) {
-		m_comboPath->SetValue(path);
-	}
-
 	void SetTextName(const wxString& name) {
 		m_textName->SetValue(name);
 	}
 
 	bool GetChoices(wxArrayInt& intArr) const;
-
-	wxString GetComboPath() const {
-		return m_comboPath->GetValue();
-	}
 
 	wxString GetTabgroupName() const {
 		return m_textName->GetValue();

@@ -116,6 +116,8 @@
 #include "options_dlg2.h"
 #include <wx/msgdlg.h>
 #include "tabgroupdlg.h"
+#include "tabgroupmanager.h"
+#include "tabgroupspane.h"
 #include "cl_defs.h"
 
 // from auto-generated file svninfo.cpp:
@@ -836,6 +838,9 @@ void Frame::CreateGUIControls(void)
 	sessConfFile << ManagerST::Get()->GetStarupDirectory() << wxT("/config/sessions.xml");
 	SessionManager::Get().Load(sessConfFile);
 
+	// Now the session's loaded, it's safe to fill the tabgroups tab
+	GetWorkspacePane()->GetTabgroupsTab()->DisplayTabgroups();
+
 	//try to locate the build tools
 
 	long fix(1);
@@ -1264,8 +1269,41 @@ static bool IsEditorEvent(wxEvent &event)
 	return true;
 }
 
+static bool IsTabgrouppaneEvent(wxEvent &event)
+{
+	// Handle common edit events
+	// If we don't do this here, the tabgrouppane tree
+	// never sees these events
+
+	wxWindow *focusWin = wxWindow::FindFocus();
+	if ( focusWin ) {
+		switch (event.GetId()) {
+		case wxID_CUT:
+		case wxID_DELETE:
+		case wxID_COPY:
+		case wxID_PASTE: {
+			wxTreeCtrl* tree = dynamic_cast<wxTreeCtrl*>(focusWin);
+			if ( tree && tree->GetName() == wxT("tabgrouptree") && event.GetEventType() != wxEVT_UPDATE_UI ) {
+				// If it's the right type/id, send it to the tree
+				tree->GetEventHandler()->ProcessEvent(event);
+				return true;	// to signify it's been dealt with
+			}
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	return false;
+}
+
 void Frame::DispatchCommandEvent(wxCommandEvent &event)
 {
+	if ( IsTabgrouppaneEvent(event) ) {
+		// *Don't* skip the event here, or we'll get infinite recursion
+		return;
+	}
+
 	if ( !IsEditorEvent(event) ) {
 		event.Skip();
 		return;
@@ -1534,8 +1572,6 @@ void Frame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 	EditorConfigST::Get()->GetRecentItems( previousgroups, wxT("RecentTabgroups") );
 
 	SaveTabGroupDlg dlg(this, previousgroups);
-	wxString path = ManagerST::Get()->IsWorkspaceOpen() ? WorkspaceST::Get()->GetWorkspaceFileName().GetPath() : wxGetHomeDir();
-	dlg.SetComboPath(path);
 
 	std::vector<LEditor*> editors;
 	wxArrayString filepaths;
@@ -1560,14 +1596,7 @@ void Frame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 			}
 		}
 
-		path = dlg.GetComboPath();
-		if (path.IsEmpty() || !wxFileName::DirExists(path)) {
-			if ( wxMessageBox(_("Please enter a valid directory in which to save the tab group"), wxT("CodeLite"), wxICON_ERROR|wxOK|wxCANCEL, this) != wxOK ) {
-				return;
-			} else {
-				continue;
-			}
-		}
+		wxString path = TabGroupsManager::Get()->GetTabgroupDirectory();
 
 		if (path.Right(1) != wxFileName::GetPathSeparator()) {
 			path << wxFileName::GetPathSeparator();
@@ -1585,6 +1614,8 @@ void Frame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 			session.SetTabgroupName(path + sessionName);
 			GetMainBook()->SaveSession(session, intArr);
 			SessionManager::Get().Save(session.GetTabgroupName(), session, wxString(wxT(".tabgroup")), tabgroupTag);
+			// Add the new tabgroup to the tabgroup manager and pane
+			GetWorkspacePane()->GetTabgroupsTab()->AddNewTabgroupToTree(filepath);
 
 			// Remove any previous instance of this group from the history, then prepend it and save
 			int index = previousgroups.Index(filepath);

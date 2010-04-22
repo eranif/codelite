@@ -445,6 +445,10 @@
     <File Name="implparentvirtualfunctionsdata.h"/>
     <File Name="macromanager.h"/>
     <File Name="macromanager.cpp"/>
+    <File Name="tabgroupspane.h"/>
+    <File Name="tabgroupmanager.cpp"/>
+    <File Name="tabgroupmanager.h"/>
+    <File Name="tabgroupspane.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="code_parser.rc"/>

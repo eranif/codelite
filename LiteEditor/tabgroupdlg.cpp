@@ -85,13 +85,6 @@ void LoadTabGroupDlg::OnItemActivated( wxCommandEvent& WXUNUSED(event) )
 SaveTabGroupDlg::SaveTabGroupDlg(wxWindow* parent, const wxArrayString& previousgroups)
 		: SaveTabGroupBaseDlg(parent)
 {
-	for ( unsigned int n=0; n < previousgroups.GetCount(); ++n ) {
-		// Get the path from the filepath. Add if it's unique
-		wxString item = previousgroups.Item(n).BeforeLast(wxFileName::GetPathSeparator());
-		if ( !item.IsEmpty() && (m_comboPath->FindString(item, true)==wxNOT_FOUND) ) {
-			m_comboPath->Append(item);
-		}
-	}
 	WindowAttrManager::Load(this, wxT("SaveTabGroupDlg"), NULL);
 }
 
@@ -142,11 +135,3 @@ void SaveTabGroupDlg::OnClearAllUpdateUI( wxUpdateUIEvent& event )
 	event.Enable( m_ListTabs && m_ListTabs->GetCount() );
 }
 
-
-void SaveTabGroupDlg::OnBrowse( wxCommandEvent& event )
-{
-	wxString new_path = wxDirSelector(wxT("Select directory"), wxGetHomeDir(), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-	if (new_path.IsEmpty() == false) {
-		m_comboPath->SetValue(new_path);
-	}
-}

@@ -35,6 +35,7 @@ class WindowStack;
 class OpenWindowsPanel;
 class FileExplorer;
 class WorkspaceTab;
+class TabgroupsPane;
 
 class WorkspacePane : public wxPanel
 {
@@ -45,6 +46,7 @@ private:
 
 	Notebook         *m_book;
 	WindowStack      *m_winStack;
+	TabgroupsPane	 *m_TabgroupsPane;
 	OpenWindowsPanel *m_openWindowsPane;
 	FileExplorer     *m_explorer;
 	WorkspaceTab     *m_workspaceTab;
@@ -80,6 +82,7 @@ public:
 	Notebook       *GetNotebook     ()          { return m_book;         }
     WorkspaceTab   *GetWorkspaceTab ()          { return m_workspaceTab; }
 	FileExplorer   *GetFileExplorer ()          { return m_explorer;     }
+	TabgroupsPane  *GetTabgroupsTab()          { return m_TabgroupsPane;}
 };
 
 #endif // WORKSPACE_PANE_H

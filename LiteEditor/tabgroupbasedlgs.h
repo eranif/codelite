@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Dec 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -32,10 +32,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class LoadTabGroupBaseDlg
 ///////////////////////////////////////////////////////////////////////////////
-class LoadTabGroupBaseDlg : public wxDialog 
+class LoadTabGroupBaseDlg : public wxDialog
 {
 	private:
-	
+
 	protected:
 		wxStaticText* m_staticText1;
 		wxButton* m_buttonBrowse;
@@ -44,25 +44,26 @@ class LoadTabGroupBaseDlg : public wxDialog
 		wxStaticLine* m_staticline3;
 		wxButton* m_button6;
 		wxButton* m_button5;
-		
+
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnBrowse( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnItemActivated( wxCommandEvent& event ){ event.Skip(); }
-		
-	
+
+
 	public:
+
 		LoadTabGroupBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Load a tab group"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~LoadTabGroupBaseDlg();
-	
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class SaveTabGroupBaseDlg
 ///////////////////////////////////////////////////////////////////////////////
-class SaveTabGroupBaseDlg : public wxDialog 
+class SaveTabGroupBaseDlg : public wxDialog
 {
 	private:
-	
+
 	protected:
 		wxStaticText* m_staticText1;
 		wxCheckListBox* m_ListTabs;
@@ -77,19 +78,19 @@ class SaveTabGroupBaseDlg : public wxDialog
 		wxStaticLine* m_staticline11;
 		wxButton* m_button6;
 		wxButton* m_button5;
-		
+
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCheckAll( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnCheckAllUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnClearAll( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnClearAllUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnBrowse( wxCommandEvent& event ){ event.Skip(); }
-		
-	
+
+
 	public:
 		SaveTabGroupBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Save a tab group"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SaveTabGroupBaseDlg();
-	
+
 };
 
 #endif //__tabgroupbasedlgs__

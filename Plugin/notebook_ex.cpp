@@ -54,6 +54,7 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE,         wxAuiNotebookEventHandler(Notebook::OnInternalPageClosing),  NULL, this);
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_DOWN,    wxAuiNotebookEventHandler(Notebook::OnTabMiddle),            NULL, this);
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,     wxAuiNotebookEventHandler(Notebook::OnTabRightDown),         NULL, this);
+	Connect(wxEVT_COMMAND_AUINOTEBOOK_BUTTON,             wxAuiNotebookEventHandler(Notebook::OnTabButton),            NULL, this);
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_UP,       wxAuiNotebookEventHandler(Notebook::OnTabRightUp),           NULL, this);
 	Connect(wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK,          wxAuiNotebookEventHandler(Notebook::OnBgDclick),             NULL, this);
 
@@ -505,4 +506,14 @@ void Notebook::OnBgDclick(wxAuiNotebookEvent& e)
 void Notebook::OnTabRightUp(wxAuiNotebookEvent& e)
 {
 	e.Skip();
+}
+
+void Notebook::OnTabButton(wxAuiNotebookEvent& e)
+{
+	// Notebook button was clicked
+	NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED, GetId());
+	event.SetSelection   ( GetSelection() );
+	event.SetOldSelection( wxNOT_FOUND );
+	event.SetEventObject ( this );
+	GetEventHandler()->AddPendingEvent(event);
 }

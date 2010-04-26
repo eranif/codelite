@@ -163,8 +163,9 @@ protected:
 	void OnNavigationKey      (wxNavigationKeyEvent &e);
 	void OnKeyDown            (wxKeyEvent           &e);
 	void OnTabRightDown       (wxAuiNotebookEvent   &e);
-	void OnTabRightUp          (wxAuiNotebookEvent   &e);
+	void OnTabRightUp         (wxAuiNotebookEvent   &e);
 	void OnTabMiddle          (wxAuiNotebookEvent   &e);
+	void OnTabButton          (wxAuiNotebookEvent   &e);
 
 	// wxAuiNotebook events
 	void OnInternalPageChanged (wxAuiNotebookEvent &e);
@@ -259,7 +260,7 @@ typedef void (wxEvtHandler::*NotebookEventFunction)(NotebookEvent&);
 
 #define EVT_BOOK_SWAP_PAGES(winid, fn) \
 	wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_SWAP_PAGES, winid, NotebookEventHandler(fn))
-	
+
 #define EVT_BOOK_BG_DCLICK(winid, fn) \
 	wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_BG_DCLICK, winid, NotebookEventHandler(fn))
 #endif // __Notebook__

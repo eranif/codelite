@@ -41,6 +41,9 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
 		expandedString.Replace(wxT("$(WorkspaceName)"), workspace->GetName());
 		ProjectPtr proj = workspace->FindProjectByName(project, errMsg);
 		if (proj) {
+			wxString prjBuildWd;
+			wxString prjRunWd;
+
 			wxString project_name(proj->GetName());
 
 			//make sure that the project name does not contain any spaces
@@ -48,9 +51,17 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
 
 			BuildConfigPtr bldConf = workspace->GetProjBuildConf(proj->GetName(), confToBuild);
 			if (bldConf) {
+				bool isCustom = bldConf->IsCustomBuild();
 				expandedString.Replace(wxT("$(ProjectOutputFile)"), bldConf->GetOutputFileName());
+
+				// When custom build project, use the working directory set in the
+				// custom build tab, otherwise use the project file's path
+				prjBuildWd = isCustom ? bldConf->GetCustomBuildWorkingDir() : proj->GetFileName().GetPath();
+				prjRunWd   = bldConf->GetWorkingDirectory();
 			}
 
+			expandedString.Replace(wxT("$(ProjectWorkingDirectory)"),    prjBuildWd);
+			expandedString.Replace(wxT("$(ProjectRunWorkingDirectory)"), prjRunWd);
 			expandedString.Replace(wxT("$(ProjectPath)"), proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			expandedString.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			expandedString.Replace(wxT("$(ProjectName)"), project_name);

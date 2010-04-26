@@ -47,6 +47,7 @@
 #include "ieditor.h"
 #include <wx/tokenzr.h>
 #include <set>
+#include <wx/fontmap.h>
 
 static wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &confToBuild, const wxString &fileName);
 
@@ -144,14 +145,15 @@ wxString GetColumnText(wxListCtrl *list, long index, long column)
 	return list_item.GetText();
 }
 
-bool ReadFileWithConversion(const wxString &fileName, wxString &content)
+bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontEncoding encoding)
 {
 	wxLogNull noLog;
 	content.Clear();
 	wxFFile file(fileName, wxT("rb"));
 	if (file.IsOpened()) {
+		if (encoding == wxFONTENCODING_DEFAULT)
+			encoding = EditorConfigST::Get()->GetOptions()->GetFileFontEncoding();
 		// first try the user defined encoding (except for UTF8: the UTF8 builtin appears to be faster)
-		wxFontEncoding encoding = EditorConfigST::Get()->GetOptions()->GetFileFontEncoding();
 		if (encoding != wxFONTENCODING_UTF8) {
 			wxCSConv fontEncConv(encoding);
 			if (fontEncConv.IsOk()) {

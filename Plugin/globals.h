@@ -89,9 +89,10 @@ long AppendListCtrlRow(wxListCtrl *list);
  * \brief read file from disk using appropriate file conversion
  * \param fileName file name
  * \param content output string
+ * \param encoding
  * \return true on success, false otherwise
  */
-bool ReadFileWithConversion(const wxString &fileName, wxString &content);
+bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontEncoding encoding = wxFONTENCODING_DEFAULT);
 
 /**
  * \brief write file using UTF8 converter

@@ -403,8 +403,14 @@ void TabgroupsPane::OnEndDrag(wxTreeEvent& event) {
 		return;
 	}
 
-	// Are we doing a Move or a Copy/Paste? Use the Ctrl key to decide
-	if ( wxGetKeyState(WXK_CONTROL) )  {
+	// Are we doing a Move or a Copy/Paste? Use the Ctrl/Alt key to decide
+	wxKeyCode copykey =
+#ifdef __WXMAC__
+	WXK_ALT;		// Apparently the ALT key is used for this in Macs
+#else
+	WXK_CONTROL;
+#endif
+	if ( wxGetKeyState(copykey) )  {
 		CopyTabgroupItem(ItemSrc);
 	} else {
 		DeleteTabgroupItem(true, ItemSrc);

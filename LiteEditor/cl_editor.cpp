@@ -2082,7 +2082,7 @@ void LEditor::ReloadFile()
 	Frame::Get()->SetStatusMessage(wxT("Loading file..."), 0, XRCID("editor"));
 
 	wxString text;
-	ReadFileWithConversion(m_fileName.GetFullPath(), text);
+	ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding());
 	SetText( text );
 	m_modifyTime = GetFileLastModifiedTime();
 

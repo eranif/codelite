@@ -77,6 +77,7 @@
 #include "compile_request.h"
 #include "clean_request.h"
 #include "buidltab.h"
+#include "tabgroupmanager.h"
 #include "manager.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
@@ -218,6 +219,8 @@ Manager::~Manager ( void )
 		m_shellProcess = NULL;
 	}
 	delete m_breakptsmgr;
+
+	TabGroupsManager::Free();
 }
 
 

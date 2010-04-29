@@ -3519,3 +3519,24 @@ void LEditor::HighlightWord(StringHighlightOutput* highlightOutput)
 		IndicatorFillRange(p.first, p.second);
 	}
 }
+
+void LEditor::ChangeCase(bool toLower)
+{
+	bool hasSelection = (GetSelectedText().IsEmpty() == false);
+
+	if(hasSelection) {
+
+		// Simply change the case of the selection
+		toLower ? LowerCase() : UpperCase();
+
+	} else {
+
+		if(GetCurrentPos() >= GetLength())
+			return;
+
+		// Select the char
+		SelectText(GetCurrentPos(), 1);
+		toLower ? LowerCase() : UpperCase();
+		CharRight();
+	}
+}

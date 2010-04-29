@@ -68,10 +68,10 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 		editor->LineDelete();
 
 	} else if (event.GetId() == XRCID("to_lower")) {
-		editor->LowerCase();
+		editor->ChangeCase(true);
 
 	} else if (event.GetId() == XRCID("to_upper")) {
-		editor->UpperCase();
+		editor->ChangeCase(false);
 
 	} else if (event.GetId() == XRCID("transpose_lines")) {
 		editor->LineTranspose();
@@ -102,9 +102,11 @@ void EditHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event)
 	LEditor *editor = dynamic_cast<LEditor*>(owner);
 
 	if (event.GetId() == wxID_COPY || event.GetId() == XRCID("to_lower") || event.GetId() == XRCID("to_upper")) {
-		event.Enable(editor && ( editor->GetSelectionStart() - editor->GetSelectionEnd() != 0 ));
+		event.Enable(editor);
+
 	} else if (event.GetId() == wxID_CUT) {
 		event.Enable(editor && ( editor->GetSelectionStart() - editor->GetSelectionEnd() != 0 ));
+
 	} else if (event.GetId() == wxID_PASTE) {
 #ifdef __WXGTK__
 		event.Enable(editor);

@@ -2080,11 +2080,13 @@ void ContextCpp::AutoAddComment()
 	int curpos = rCtrl.GetCurrentPos();
 	int line = rCtrl.LineFromPosition(curpos);
 	int cur_style = rCtrl.GetStyleAt(curpos);
+    wxString text = rCtrl.GetLine(line-1).Trim(false);
 
 	bool dontadd = false;
 	switch (cur_style) {
 	case wxSCI_C_COMMENTLINE:
-		dontadd = rCtrl.GetLine(line-1).Trim().Trim(false) == wxT("//") || !data.GetContinueCppComment();
+    case wxSCI_C_COMMENTLINEDOC:
+		dontadd = ! text.StartsWith( wxT("//") ) || !data.GetContinueCppComment();
 		break;
 	case wxSCI_C_COMMENT:
 	case wxSCI_C_COMMENTDOC:
@@ -2102,9 +2104,38 @@ void ContextCpp::AutoAddComment()
 	wxString toInsert;
 	switch (cur_style) {
 	case wxSCI_C_COMMENTLINE:
-		if (rCtrl.GetStyleAt(rCtrl.PositionAfter(curpos)) != wxSCI_C_COMMENTLINE) {
-			toInsert = wxT("// ");
-		}
+    case wxSCI_C_COMMENTLINEDOC:
+        {
+            if ( text.StartsWith( wxT("//") ) )
+            {
+                // try to parse the comment text and indentation
+                unsigned i = (text.Length() > 2 && text[2] == wxT('!')) ? 3 : 2; // support "//!" for doxygen
+                i = text.find_first_not_of( wxT('/'), i );
+                i = text.find_first_not_of( wxT(" \t"), i );
+                if (i == wxString::npos)
+                    i = text.Length()-1;
+                // we want to avoid duplicating line-long comments such as those
+                // that sometime start a comment block; if there's something more on
+                // the line, after our match, then we can assume that we do not have
+                // a line-long comment; we do want to duplicate the comments on
+                // otherwise blank lines, however, to allow comment blocks with
+                // blank lines in the comment text, so we will still accept the
+                // match if it is less than half the typical line length
+                // (i.e. 80/2=40) (a guesstimate that it's not a line-long
+                // comment); otherwise, we'll use a default value
+                if ( i < text.Length()-1 || i < 40 )
+                {
+                    toInsert = text.substr(0,i);
+                }
+                else
+                {
+                    if (cur_style == wxSCI_C_COMMENTLINEDOC && i >= 3)
+                        toInsert = text.substr(0,3) + wxT(" ");
+                    else
+                        toInsert = wxT("// ");
+                }
+            }
+        }
 		break;
 	case wxSCI_C_COMMENT:
 	case wxSCI_C_COMMENTDOC:

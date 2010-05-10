@@ -118,6 +118,7 @@ basic_type_name_inter:    LE_INT          { $$ = $1; }
 
 basic_type_name:	LE_UNSIGNED basic_type_name_inter   { $$ = $1 + " " + $2; }
                 |	LE_SIGNED basic_type_name_inter     { $$ = $1 + " " + $2; }
+                |	LE_SHORT basic_type_name_inter      { $$ = $1 + " " + $2; }
                 |	LE_LONG LE_LONG                     { $$ = $1 + " " + $2; }
                 |	LE_LONG LE_INT                      { $$ = $1 + " " + $2; }
                 |	basic_type_name_inter               { $$ = $1; }

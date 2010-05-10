@@ -21,4 +21,4 @@
 //	TheList lst;
 //const MSG* const eran, ifrah;
 //const MSG* const ifrah2;
-(void*,void*, int,
+(short int i_1, short int i_2, short int i_3, short int i_4)

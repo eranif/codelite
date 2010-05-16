@@ -1,5 +1,6 @@
 <resource>
 	<object class="wxBitmap" name="findwhat">res/find_what.png</object>
+	<object class="wxBitmap" name="cc_private_members">res/16/encrypted.png</object>
 	<object class="wxBitmap" name="fold_airplane">res/outbox.png</object>
 	<object class="wxBitmap" name="read_only">res/lock.png</object>
 	<object class="wxBitmap" name="find_refresh">res/find_refresh.png</object>

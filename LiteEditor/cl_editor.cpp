@@ -2806,7 +2806,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 void LEditor::HideCompletionBox()
 {
 	if (IsCompletionBoxShown()) {
-		m_ccBox->Hide();
+		m_ccBox->HideCCBox();
 	}
 }
 

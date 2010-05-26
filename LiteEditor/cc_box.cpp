@@ -32,8 +32,8 @@
 #include "entry.h"
 #include "plugin.h"
 
-#define BOX_HEIGHT 200
-#define BOX_WIDTH  300
+#define BOX_HEIGHT 250
+#define BOX_WIDTH  400
 
 CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 		:
@@ -44,6 +44,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 		, m_insertSingleChoice(autoInsertSingleChoice)
 		, m_owner(NULL)
 {
+	m_constructing = true;
 	HideCCBox();
 
 	// load all the CC images
@@ -89,6 +90,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	m_listCtrl->SetFocus();
 	// return the focus to scintilla
 	parent->SetActive();
+	m_constructing = false;
 }
 
 void CCBox::OnItemActivated( wxListEvent& event )
@@ -252,12 +254,15 @@ void CCBox::Show(const wxString& word)
 
 	bool showPrivateMembers ( checkIt );
 
+	// Get the associated editor
+	LEditor *editor = dynamic_cast<LEditor*>(GetParent());
 	if (m_tags.empty() == false) {
 		for (; i<m_tags.size(); i++) {
 			TagEntryPtr tag = m_tags.at(i);
 			bool        isVisible = m_tags.at(i)->GetAccess() == wxT("private") || m_tags.at(i)->GetAccess() == wxT("protected");
+			bool        isInScope = (editor && (m_tags.at(i)->GetParent() == editor->GetContext()->GetCurrentScopeName()));
 			if (lastName != m_tags.at(i)->GetName()) {
-				if( (!isVisible && !showPrivateMembers) || (showPrivateMembers) ) {
+				if( (!isVisible && !showPrivateMembers) || (showPrivateMembers) || (isInScope) ) {
 
 					item.displayName =  tag->GetName();
 					item.imgId = GetImageId(*m_tags.at(i));
@@ -272,7 +277,7 @@ void CCBox::Show(const wxString& word)
 				//collect only declarations
 				if (m_tags.at(i)->GetKind() == wxT("prototype")) {
 
-					if( (!isVisible && !showPrivateMembers) || (showPrivateMembers) ) {
+					if( (!isVisible && !showPrivateMembers) || (showPrivateMembers) || (isInScope) ) {
 						item.displayName =  tag->GetName()+tag->GetSignature();
 						item.imgId = GetImageId(*m_tags.at(i));
 						_tags.push_back(item);
@@ -514,9 +519,13 @@ void CCBox::PreviousPage()
 
 void CCBox::HideCCBox()
 {
-	Hide();
-	bool checked  = m_toolBar1->FindById(TOOL_SHOW_PRIVATE_MEMBERS)->IsToggled();
-	EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_All_Members"), checked ? 1 : 0);
+	if( IsShown() ) {
+		Hide();
+		if( !m_constructing ) {
+			bool checked  = m_toolBar1->FindById(TOOL_SHOW_PRIVATE_MEMBERS)->IsToggled();
+			EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_All_Members"), checked ? 1 : 0);
+		}
+	}
 }
 
 void CCBox::OnShowPublicItems(wxCommandEvent& event)

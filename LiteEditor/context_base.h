@@ -107,6 +107,7 @@ public:
 	virtual void GotoDefinition(){}
 	virtual void GotoPreviousDefintion(){}
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl){return NULL;}
+	virtual wxString GetCurrentScopeName() {return wxEmptyString;}
 	virtual void SemicolonShift(){}
 
     // ctrl-click style navigation support

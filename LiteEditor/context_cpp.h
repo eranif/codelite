@@ -78,6 +78,7 @@ public:
 	virtual void GotoDefinition();
 	virtual void GotoPreviousDefintion();
 	virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl);
+	virtual wxString GetCurrentScopeName();
 	virtual void AutoIndent(const wxChar&);
 	virtual	bool IsCommentOrString(long pos);
 	virtual	bool IsComment(long pos);
@@ -147,7 +148,7 @@ private:
 	void          MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr> &tags);
 	void          DoOpenWorkspaceFile();
 	void          DoSetProjectPaths();
-	
+
 public:
 	void          DoMakeDoxyCommentString(DoxygenComment &dc);
 

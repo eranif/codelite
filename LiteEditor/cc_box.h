@@ -39,14 +39,15 @@ class LEditor;
 
 /** Implementing CCBoxBase */
 class CCBox : public CCBoxBase {
-	int m_selectedItem;
+	int                      m_selectedItem;
 	std::vector<TagEntryPtr> m_tags;
-	bool m_showFullDecl;
-	int m_height;
-	bool m_autoHide;
-	bool m_insertSingleChoice;
-	std::map<wxString, int> m_userImages;
-	wxEvtHandler *m_owner;
+	bool                     m_showFullDecl;
+	int                      m_height;
+	bool                     m_autoHide;
+	bool                     m_insertSingleChoice;
+	std::map<wxString, int>  m_userImages;
+	wxEvtHandler *           m_owner;
+	bool                     m_constructing;
 
 protected:
 	// Handlers for CCBoxBase events.

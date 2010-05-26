@@ -2879,3 +2879,12 @@ void ContextCpp::DoSetProjectPaths()
 	}
 	TagsManagerST::Get()->SetProjectPaths( projectPaths );
 }
+
+wxString ContextCpp::GetCurrentScopeName()
+{
+	TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(GetCtrl().GetFileName(), GetCtrl().GetCurrentLine()+1);
+	if(tag) {
+		return tag->GetParent();
+	}
+	return wxEmptyString;
+}

@@ -260,10 +260,11 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent &e)
 {
 	LoadFindInFilesData();
 
-	if (m_recv) {
+	if (m_searchInProgress) {
 		wxMessageBox(_("The search thread is currently busy"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 		return;
 	}
+
 	wxString rootDir = e.GetString();
 	if (!rootDir.IsEmpty()) {
 		m_find->SetRootDir(rootDir);

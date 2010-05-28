@@ -797,10 +797,12 @@ echo "abbreviation_install\\" >> Makefile
 echo "SymbolView_install\\" >> Makefile
 echo "ContinuousBuild_install\\" >> Makefile
 echo "QmakePlugin_install\\" >> Makefile
-echo "CppCheck_install\\" >> Makefile
 ## Mac only
 if [ "$os_name" = "Darwin" ]; then
-	echo "MacBundler_install\\" >> Makefile
+	echo "CppCheck_install\\" >> Makefile
+	echo "MacBundler_install" >> Makefile
+else
+	echo "CppCheck_install" >> Makefile
 fi
 echo "	@chmod 0644 \$(DESTDIR)$plugins_dir/*.so" >> Makefile
 echo "" >> Makefile

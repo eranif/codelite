@@ -34,6 +34,7 @@
   <Options/>
   <Project Name="Subversion2" Path="Subversion2/Subversion2.project" Active="No"/>
   <Project Name="SymbolView" Path="SymbolView/SymbolView.project" Active="No"/>
+  <Project Name="MacBundler" Path="MacBundler/MacBundler.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
@@ -46,6 +47,7 @@
       <Project Name="snipwiz" ConfigName="WinReleaseUnicode"/>
       <Project Name="QMakePlugin" ConfigName="WinReleaseUnicode"/>
       <Project Name="plugin_sdk" ConfigName="WinReleaseUnicode"/>
+      <Project Name="MacBundler" ConfigName="WinReleaseUnicode"/>
       <Project Name="LiteEditor" ConfigName="WinReleaseUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="WinReleaseUnicode"/>
@@ -70,6 +72,7 @@
       <Project Name="snipwiz" ConfigName="WinDebugUnicode"/>
       <Project Name="QMakePlugin" ConfigName="WinDebugUnicode"/>
       <Project Name="plugin_sdk" ConfigName="WinDebugUnicode"/>
+      <Project Name="MacBundler" ConfigName="WinDebugUnicode"/>
       <Project Name="LiteEditor" ConfigName="WinDebugUnicode"/>
       <Project Name="Interfaces" ConfigName="Debug"/>
       <Project Name="Gizmos" ConfigName="WinDebugUnicode"/>
@@ -106,8 +109,9 @@
       <Project Name="CodeFormatter" ConfigName="ReleaseUnicode"/>
       <Project Name="abbreviation" ConfigName="ReleaseUnicode"/>
       <Project Name="SymbolView" ConfigName="DebugUnicode"/>
+      <Project Name="MacBundler" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="WinReleaseUnicode_NoPlugins" Selected="no">
+    <WorkspaceConfiguration Name="WinReleaseUnicode_NoPlugins" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
@@ -130,8 +134,9 @@
       <Project Name="CppChecker" ConfigName="DebugUnicode"/>
       <Project Name="Subversion2" ConfigName="DebugUnicode"/>
       <Project Name="SymbolView" ConfigName="DebugUnicode"/>
+      <Project Name="MacBundler" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="no">
+    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
@@ -154,17 +159,20 @@
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="SymbolView" ConfigName="DebugUnicode"/>
+      <Project Name="MacBundler" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="no">
+    <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="DebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="DebugUnicode"/>
+      <Project Name="SymbolView" ConfigName="DebugUnicode"/>
       <Project Name="Subversion2" ConfigName="DebugUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="DebugUnicode"/>
       <Project Name="QMakePlugin" ConfigName="DebugUnicode"/>
       <Project Name="plugin_sdk" ConfigName="DebugUnicode"/>
+      <Project Name="MacBundler" ConfigName="DebugUnicode"/>
       <Project Name="LiteEditor" ConfigName="Unix"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="DebugUnicode"/>
@@ -177,9 +185,8 @@
       <Project Name="CodeLite" ConfigName="DebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
       <Project Name="abbreviation" ConfigName="DebugUnicode"/>
-      <Project Name="SymbolView" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="WinDebug_29" Selected="no">
+    <WorkspaceConfiguration Name="WinDebug_29" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebug_29"/>
       <Project Name="wxscintilla" ConfigName="WinDebug_29"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebug_29"/>
@@ -202,6 +209,7 @@
       <Project Name="CodeLite" ConfigName="WinDebug_29"/>
       <Project Name="CodeFormatter" ConfigName="WinDebug_29"/>
       <Project Name="abbreviation" ConfigName="WinDebug_29"/>
+      <Project Name="MacBundler" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

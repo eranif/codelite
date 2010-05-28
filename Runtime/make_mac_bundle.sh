@@ -99,6 +99,7 @@ cp ../lib/wxformbuilder.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/abbreviation.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/QmakePlugin.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/CppCheck.so ./CodeLite.app/Contents/SharedSupport/plugins/
+cp ../lib/MacBundler.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/libwxscintillau.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libpluginu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libcodeliteu.so ./CodeLite.app/Contents/MacOS/

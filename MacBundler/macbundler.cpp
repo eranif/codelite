@@ -268,9 +268,8 @@ public:
         file.AddLine(wxT( "    <string>English</string>\n" ));
         file.AddLine(wxT( "    <key>CFBundlePackageType</key>" ));
         file.AddLine(wxT( "    <string>APPL</string>\n" ));
-        //FIXME: whatwxT( to do with this one?
         file.AddLine(wxT( "    <key>CFBundleShortVersionString</key>" ));
-        file.AddLine(wxT( "    <string></string>\n" ));
+		file.AddLine(wxT( "    <string>" ) + m_version->GetValue()  + wxT("</string>\n"  ));
         file.AddLine(wxT( "</dict>"));
         file.AddLine(wxT( "</plist>"));
 

@@ -38,7 +38,12 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 	editor->HideCompletionBox();
 
 	if (event.GetId() == wxID_COPY) {
-		editor->Copy();
+		// if the selection is empty, copy the line content
+		if(editor->GetSelectedText().IsEmpty()) {
+			editor->LineCopy();
+		} else {
+			editor->Copy();
+		}
 
 	} else if (event.GetId() == wxID_CUT) {
 		editor->Cut();

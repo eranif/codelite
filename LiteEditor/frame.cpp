@@ -3081,7 +3081,7 @@ void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 			btn.isDefault   = true;
 			btn.window      = this;
 
-			GetMainBook()->ShowMessage(wxT("A new version of CodeLite is available. Download it?"), true, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_software_update")), btn);
+			GetMainBook()->ShowMessage(wxT("A new version of CodeLite is available. Would you like to download it?"), true, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_software_update")), btn);
 
 		} else {
 			if (!data->GetShowMessage()) {

@@ -405,6 +405,7 @@ extern void fileUngetc (int c)
 	File.ungetch = c;
 }
 
+extern char* regReplace(const char* src, const char* key, const char* value);
 static vString *iFileGetLine (void)
 {
 	static list_t *replacements = (list_t *)0;
@@ -458,14 +459,25 @@ static vString *iFileGetLine (void)
 		list_node_t *node = replacements->head;
 
 		while( node ) {
-			tmp = string_replace(new_str, ((string_pair_t*)node->data)->key, ((string_pair_t*)node->data)->data);
+			char *find_what    = ((string_pair_t*)node->data)->key;
+			char *replace_with = ((string_pair_t*)node->data)->data;
+			
+			if(find_what && strlen(find_what) > 3 && strncmp(find_what, "re:", 3) == 0) {
+				// regular expression search/replace
+				tmp = regReplace(new_str, find_what+3, replace_with);
+				
+			} else {
+				// normal searcn/replace
+				tmp = string_replace(new_str, find_what, replace_with);
+				
+			}
 			if(!first_loop) {
 				free(new_str);
 			}
 
 			new_str = tmp;
 			first_loop = 0;
-
+			
 			/* advance to next item in the list */
 			node = node->next;
 		}

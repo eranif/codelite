@@ -121,6 +121,7 @@
   <Dependencies Name="Debug_Unix"/>
   <Dependencies Name="Release_Unix"/>
   <Dependencies Name="Debug_Win"/>
+  <Dependencies Name="Release_Win"/>
   <Settings Type="Executable">
     <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g" Required="yes" PreCompiledHeader="">
@@ -153,13 +154,13 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Debug_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-Wall" Required="yes" PreCompiledHeader="">
+      <Compiler Options="-g;-Wall;$(shell wx-config --cflags --debug=yes)" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
         <IncludePath Value="libctags/"/>
         <Preprocessor Value="__WXMSW__"/>
         <Preprocessor Value="__DEBUG"/>
       </Compiler>
-      <Linker Options="" Required="yes"/>
+      <Linker Options="$(shell wx-config --libs --debug=yes)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="eran" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -216,12 +217,12 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;-s" Required="yes" PreCompiledHeader="">
+      <Compiler Options="-O2;-Wall;-s;$(shell wx-config --cflags --unicode)" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
         <IncludePath Value="libctags/"/>
         <Preprocessor Value="__WXMSW__"/>
       </Compiler>
-      <Linker Options="-O2;-s" Required="yes"/>
+      <Linker Options="-O2;-s;$(shell wx-config --libs --unicode)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="./Release/codelite_indexer" IntermediateDirectory="./Release" Command="C:\Development\C++\codelite\CL_trunk\sdk\codelite_indexer\Release\$(ProjectName)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -257,5 +258,4 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="Release_Win"/>
 </CodeLite_Project>

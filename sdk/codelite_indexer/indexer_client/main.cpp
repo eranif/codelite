@@ -32,16 +32,13 @@ int main(int argc, char **argv)
 	// build the request
 	req.setCmd(clIndexerRequest::CLI_PARSE_AND_SAVE);
 	std::vector<std::string> files;
-
-#ifdef __WXMSW__
-	files.push_back("C:\\Development\\C++\\codelite\\CL_trunk\\sdk\\codelite_indexer\\workerthread_test.h");
-#else
-	char *home = getenv("HOME");
-	std::string file_name;
-	file_name += home;
-	file_name += "/devl/codelite/sqlite3/sqlite3.h";
-	files.push_back(file_name);
-#endif
+	
+	char *testFile = getenv("TEST_FILE");
+	if( testFile == NULL ) {
+		printf("ERROR: Please set env variable TEST_FILE\n");
+		exit(-1);
+	}
+	files.push_back(testFile);
 
 	req.setFiles(files);
 	req.setCtagOptions("--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p  -IwxT,_T");

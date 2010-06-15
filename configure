@@ -303,9 +303,9 @@ createCodeLiteIndexerMakefile ()
 			echo "	\$(GCC) -DHAVE_CONFIG_H -I. -Ilibctags  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		else
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "	\$(CMP)  -c ${a_file} -DHAVE_CONFIG_H -I. -Ilibctags -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(CMP) `wx-config --cflags --unicode` -c ${a_file} -DHAVE_CONFIG_H -I. -Ilibctags -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "	\$(CMP) -DHAVE_CONFIG_H -I. -Ilibctags  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo "	\$(CMP) `wx-config --cflags --unicode` -DHAVE_CONFIG_H -I. -Ilibctags  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		fi
 
 	done
@@ -316,9 +316,9 @@ createCodeLiteIndexerMakefile ()
 
 	## On FreeBSD, -ldl is part og libc
 	if [ "$os_name" = "FreeBSD" ]; then
-		echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects) -lpthread " >> Makefile
+		echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects) -lpthread `wx-config --libs --unicode`" >> Makefile
 	else
-		echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects) -lpthread -ldl " >> Makefile
+		echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects) -lpthread -ldl `wx-config --libs --unicode`" >> Makefile
 	fi
 
 	echo >> Makefile

@@ -20,14 +20,14 @@ using namespace Scintilla;
 //////////////////////////////////////////////////
 // Colour methods to convert HSL <-> RGB
 //////////////////////////////////////////////////
-float __min(float x, float y, float z)
+float cl_min(float x, float y, float z)
 {
 	float m = x < y ? x : y;
 	m = m < z ? m : z;
 	return m;
 }
 
-float __max(float x, float y, float z)
+float cl_max(float x, float y, float z)
 {
 	float m = x > y ? x : y;
 	m = m > z ? m : z;
@@ -40,8 +40,8 @@ void RGB_2_HSL(float r, float g, float b, float *h, float *s, float *l)
 	float var_G = ( g / 255.0 );
 	float var_B = ( b / 255.0 );
 
-	float var_Min = __min( var_R, var_G, var_B );    //Min. value of RGB
-	float var_Max = __max( var_R, var_G, var_B );    //Max. value of RGB
+	float var_Min = cl_min( var_R, var_G, var_B );    //Min. value of RGB
+	float var_Max = cl_max( var_R, var_G, var_B );    //Max. value of RGB
 	float del_Max = var_Max - var_Min;             //Delta RGB value
 
 	*l = ( var_Max + var_Min ) / 2.0;
@@ -216,7 +216,7 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
     		Point(centreX - dimOn4, centreY + dimOn2),
     		Point(centreX + dimOn2 - dimOn4, centreY),
 		};
-		
+
 		if(foldLevel == 0){
 			long c = darkColour(back.allocated.AsLong(), foldLevel+1);
 			surface->RoundedRectangle(rcWhole, c, c);
@@ -265,7 +265,7 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
 
 		surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
                  		back.allocated, alloc);
-						
+
 	} else if (markType == SC_MARK_MINUS_IN_BOX) {
 		ColourDesired des;
 		des.Set(0, 0, 0);
@@ -288,10 +288,10 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
     		Point(centreX + armSize, centreY +1),
     		Point(centreX - armSize, centreY + 1),
 		};
-		
+
 		surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
                  		fore.allocated, alloc);
-	
+
 	} else if (markType == SC_MARK_PLUS_IN_BOX) {
 		ColourDesired des;
 		des.Set(0, 0, 0);
@@ -324,7 +324,7 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
 		};
 		surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
                  		fore.allocated, alloc);
-	
+
 	} else if (markType == SC_MARK_PLUS) {
 		Point pts[] = {
     		Point(centreX - armSize, centreY - 1),

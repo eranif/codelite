@@ -34,14 +34,14 @@
 //////////////////////////////////////////////////
 // Colour methods to convert HSL <-> RGB
 //////////////////////////////////////////////////
-static float __min(float x, float y, float z)
+static float cl_min(float x, float y, float z)
 {
 	float m = x < y ? x : y;
 	m = m < z ? m : z;
 	return m;
 }
 
-static float __max(float x, float y, float z)
+static float cl_max(float x, float y, float z)
 {
 	float m = x > y ? x : y;
 	m = m > z ? m : z;
@@ -54,8 +54,8 @@ static void RGB_2_HSL(float r, float g, float b, float *h, float *s, float *l)
 	float var_G = ( g / 255.0 );
 	float var_B = ( b / 255.0 );
 
-	float var_Min = __min( var_R, var_G, var_B );    //Min. value of RGB
-	float var_Max = __max( var_R, var_G, var_B );    //Max. value of RGB
+	float var_Min = cl_min( var_R, var_G, var_B );    //Min. value of RGB
+	float var_Max = cl_max( var_R, var_G, var_B );    //Max. value of RGB
 	float del_Max = var_Max - var_Min;             //Delta RGB value
 
 	*l = ( var_Max + var_Min ) / 2.0;
@@ -345,14 +345,14 @@ wxColor DrawingUtils::GetPanelBgColour()
 #ifdef __WXGTK__
 	static bool     intitialized(false);
 	static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-	
+
 	if( !intitialized ) {
 		// try to get the background colour from a menu
 		GtkWidget *menu = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		GtkStyle   *def = gtk_rc_get_style( menu );
 		if(!def)
 			def = gtk_widget_get_default_style();
-		
+
 		if(def) {
 			GdkColor col = def->bg[GTK_STATE_NORMAL];
 			bgColour = wxColour(col);
@@ -371,14 +371,14 @@ wxColor DrawingUtils::GetTextCtrlTextColour()
 #ifdef __WXGTK__
 	static bool     intitialized(false);
 	static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-	
+
 	if( !intitialized ) {
 		// try to get the background colour from a menu
 		GtkWidget *textCtrl = gtk_text_view_new();
 		GtkStyle   *def = gtk_rc_get_style( textCtrl );
 		if(!def)
 			def = gtk_widget_get_default_style();
-		
+
 		if(def) {
 			GdkColor col = def->text[GTK_STATE_NORMAL];
 			textColour = wxColour(col);

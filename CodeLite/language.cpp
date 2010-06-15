@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
 #include "crawler_include.h"
+#include <wx/regex.h>
 #include <wx/tokenzr.h>
 
 #include "language.h"
@@ -1105,6 +1106,9 @@ bool Language::FunctionFromPattern(TagEntryPtr tag, clFunction &foo)
 	TagsManager *mgr = GetTagsManager();
 	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetTokensMap();
 
+	// use the replacement table on the pattern before processing it
+	DoReplaceTokens(pattern, GetTagsManager()->GetCtagsOptions().GetTokensWxMap());
+
 	const wxCharBuffer patbuf = _C(pattern);
 	get_functions(patbuf.data(), fooList, ignoreTokens);
 	if (fooList.size() == 1) {
@@ -1120,6 +1124,9 @@ bool Language::FunctionFromPattern(TagEntryPtr tag, clFunction &foo)
 		wxString pat2;
 
 		pat2 << tag->GetReturnValue() << wxT(" ") << tag->GetName() << tag->GetSignature() << wxT(";");
+
+		// use the replacement table on the pattern before processing it
+		DoReplaceTokens(pat2, GetTagsManager()->GetCtagsOptions().GetTokensWxMap());
 
 		const wxCharBuffer patbuf1 = _C(pat2);
 		get_functions(patbuf1.data(), fooList, ignoreTokens);
@@ -1376,8 +1383,11 @@ bool Language::ResolveTemplate(wxString& typeName, wxString& typeScope, const wx
 void Language::DoFixFunctionUsingCtagsReturnValue(clFunction& foo, TagEntryPtr tag)
 {
 	if (foo.m_returnValue.m_name.empty()) {
+
 		// Use the CTAGS return value
 		wxString ctagsRetValue = tag->GetReturnValue();
+		DoReplaceTokens(ctagsRetValue, GetTagsManager()->GetCtagsOptions().GetTokensWxMap());
+
 		const wxCharBuffer cbuf = ctagsRetValue.mb_str(wxConvUTF8);
 		std::map<std::string, std::string> ignoreTokens = GetTagsManager()->GetCtagsOptions().GetTokensMap();
 
@@ -1385,6 +1395,31 @@ void Language::DoFixFunctionUsingCtagsReturnValue(clFunction& foo, TagEntryPtr t
 		get_variables(cbuf.data(), li, ignoreTokens, false);
 		if (li.size() == 1) {
 			foo.m_returnValue = *li.begin();
+		}
+	}
+}
+
+void Language::DoReplaceTokens(wxString &inStr, const std::map<wxString, wxString>& ignoreTokens)
+{
+	if(inStr.IsEmpty())
+		return;
+
+	std::map<wxString, wxString>::const_iterator iter = ignoreTokens.begin();
+	for(; iter != ignoreTokens.end(); iter++) {
+		wxString findWhat    = iter->first;
+		wxString replaceWith = iter->second;
+
+		if(findWhat.StartsWith(wxT("re:"))) {
+			findWhat.Remove(0, 3);
+			wxRegEx re(findWhat);
+			if(re.IsValid() && re.Matches(inStr)) {
+				re.ReplaceAll(&inStr, replaceWith);
+			}
+		} else {
+			// Simple replacement
+			if(inStr.Find(findWhat) != wxNOT_FOUND) {
+				inStr.Replace(findWhat, replaceWith);
+			}
 		}
 	}
 }

@@ -292,6 +292,7 @@ private:
 	void DoRemoveTempalteInitialization(wxString &str, wxArrayString &tmplInitList);
 	void DoResolveTemplateInitializationList(wxArrayString &tmpInitList);
 	void DoFixFunctionUsingCtagsReturnValue(clFunction &foo, TagEntryPtr tag);
+	void DoReplaceTokens(wxString &inStr, const std::map<wxString, wxString>& ignoreTokens);
 	void DoExtractTemplateDeclarationArgs();
 	void DoExtractTemplateDeclarationArgsFromScope();
 	void DoExtractTemplateDeclarationArgs(TagEntryPtr tag);

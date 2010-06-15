@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <wx/string.h>
 #include <wx/regex.h>
+#include <map>
 
 #ifdef __WXMSW__
 #    include <windows.h>
@@ -94,6 +95,7 @@ bool is_process_alive(long pid)
 #endif
 }
 
+static std::map<wxString, wxRegEx*> s_regexPool;
 
 extern "C" char* regReplace(const char* src, const char* key, const char* value)
 {
@@ -101,16 +103,29 @@ extern "C" char* regReplace(const char* src, const char* key, const char* value)
 	wxString replaceWith = wxString(value, wxConvUTF8);
 	wxString inputStr    = wxString(src,   wxConvUTF8);
 	
-	wxRegEx re(findWhat);
-	if(!re.IsValid()) {
+	
+	wxRegEx *re (NULL);
+	if(s_regexPool.find(findWhat) != s_regexPool.end()) {
+		re = s_regexPool.find(findWhat)->second;
+	}
+	
+	if(re == NULL) {
+		re = new wxRegEx(findWhat);
+	}
+	
+	if(!re->IsValid()) {
 		// invalid regular expression
 		// return a copy of the input string
+		delete re;
 		return strdup(src);
 	}
 	
+	// keep this instance
+	s_regexPool[findWhat] = re;
+	
 	// regex is valid, try to match
-	if(re.Matches(inputStr)) {
-		re.ReplaceAll(&inputStr, replaceWith);
+	if(re->Matches(inputStr)) {
+		re->ReplaceAll(&inputStr, replaceWith);
 	}
 	
 	return strdup( inputStr.mb_str(wxConvUTF8).data() );

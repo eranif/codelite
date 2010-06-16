@@ -53,7 +53,8 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 		}
 	}
 
-	m_properties->SetSelection(0);
+	if(m_properties->GetCount())
+		m_properties->SetSelection(0);
 
 	wxString initialColor     = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString();
 	wxString bgInitialColor   = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString();
@@ -266,7 +267,8 @@ void LexerPage::OnEolFilled(wxCommandEvent& event)
 	m_isModified = true;
 
 	std::list<StyleProperty>::iterator iter = GetSelectedStyle();
-	iter->SetEolFilled(event.IsChecked());
+	if(iter != m_propertyList.end())
+		iter->SetEolFilled(event.IsChecked());
 }
 
 void LexerPage::OnStyleWithinPreprocessor(wxCommandEvent& event)
@@ -278,12 +280,14 @@ void LexerPage::OnStyleWithinPreprocessor(wxCommandEvent& event)
 void LexerPage::OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event)
 {
 	std::list<StyleProperty>::iterator iter = GetSelectedStyle();
-
-	if (iter->GetName() == wxT("Preprocessor")) {
-		event.Enable(true);
-	} else {
+	if(iter == m_propertyList.end())
 		event.Enable(false);
-	}
+
+	else  if (iter->GetName() == wxT("Preprocessor"))
+		event.Enable(true);
+
+	else
+		event.Enable(false);
 }
 
 void LexerPage::OnAlphaChanged(wxScrollEvent& event)
@@ -300,6 +304,10 @@ void LexerPage::OnSelTextChanged(wxColourPickerEvent& event)
 
 std::list<StyleProperty>::iterator LexerPage::GetSelectedStyle()
 {
+	if(m_properties->GetCount() <= (size_t)m_selection || m_selection < 0) {
+		return m_propertyList.end();
+	}
+
 	wxString styleName = m_properties->GetString(m_selection);
 	if(styleName.IsEmpty())
 		return m_propertyList.begin();

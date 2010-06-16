@@ -150,6 +150,12 @@ void SyntaxHighlightDlg::LoadLexers(const wxString& theme)
 	std::map<wxString, LexerConfPtr>::const_iterator iter = EditorConfigST::Get()->LexerBegin();
 	for (; iter != EditorConfigST::Get()->LexerEnd(); iter++) {
 		LexerConfPtr lexer = iter->second;
+
+		wxString lexName = lexer->GetName();
+		lexName.Trim().Trim(false);
+		if(lexName.IsEmpty())
+			continue;
+
 		m_lexersBook->AddPage(CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), selected);
 		selected = false;
 	}

@@ -468,6 +468,10 @@ void EditorConfig::LoadLexers(bool loadDefault)
 		}
 
 		LexerConfPtr lexer(new LexerConf( fileToLoad ));
+
+		// Dont add empty lexers (with no name)
+		if(lexer->GetName().IsEmpty())
+			continue;
 		m_lexers[lexer->GetName()] = lexer;
 	}
 }

@@ -876,6 +876,12 @@ void Frame::CreateViewAsSubMenu()
 		EditorConfig::ConstIterator iter = EditorConfigST::Get()->LexerBegin();
 		for (; iter != EditorConfigST::Get()->LexerEnd(); iter++) {
 			LexerConfPtr lex = iter->second;
+			wxString lexName = lex->GetName();
+			lexName.Trim().Trim(false);
+
+			if(lexName.IsEmpty())
+				continue;
+
 			item = new wxMenuItem(submenu, minId, lex->GetName(), wxEmptyString, wxITEM_CHECK);
 			m_viewAsMap[minId] = lex->GetName();
 			minId++;

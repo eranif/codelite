@@ -91,7 +91,7 @@ void WorkspaceTab::CreateGUIControls()
 	long val (0);
 	if(EditorConfigST::Get()->GetLongValue(wxT("WspTreeMultipleSelection"), val) == false) {val = 0;}
 
-	tb->AddTool(XRCID("set_multi_selection"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("outline16")), wxT("Toggle Multiple / Single Selection"), wxITEM_CHECK);
+	tb->AddTool(XRCID("set_multi_selection"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("cursor")), wxT("Toggle Multiple / Single Selection"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("set_multi_selection"), val ? true : false);
 	tb->Realize();
 	sz->Add(tb, 0, wxEXPAND, 0);

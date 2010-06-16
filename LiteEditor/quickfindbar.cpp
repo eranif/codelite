@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
 #include "threebuttondlg.h"
+#include <wx/regex.h>
 #include "editor_config.h"
 #include <wx/statline.h>
 #include "manager.h"
@@ -248,6 +249,12 @@ void QuickFindBar::OnReplace(wxCommandEvent& e)
 	wxString find          = m_findWhat->GetValue();
 	wxString replaceWith   = m_replaceWith->GetValue();
 
+#ifndef __WXMAC__
+	int re_flags = wxRE_ADVANCED;
+#else
+	int re_flags = wxRE_DEFAULT;
+#endif
+
 	bool caseSearch        = m_flags & wxSD_MATCHCASE;
 	if ( !caseSearch ) {
 		selectionText.MakeLower();
@@ -258,11 +265,33 @@ void QuickFindBar::OnReplace(wxCommandEvent& e)
 		return;
 
 	// do we got a match?
-	if (selectionText != find)
+	if ((selectionText != find) && !(m_flags & wxSD_REGULAREXPRESSION)) {
 		DoSearch(true, true);
 
-	else {
+	} else if(m_flags & wxSD_REGULAREXPRESSION) {
+		// regular expression search
+		wxString selectedText = m_sci->GetSelectedText();
+
+		// handle back references (\1 \2 etc)
+		if( m_sci && selectedText.IsEmpty() == false) {
+
+			// search was regular expression search
+			// handle any back references
+			caseSearch == false ? re_flags |= wxRE_ICASE : re_flags;
+			wxRegEx re(find, re_flags);
+			if(re.IsValid() && re.Matches(selectedText)) {
+				re.Replace(&selectedText, replaceWith);
+			}
+
+			m_sci->ReplaceSelection(selectedText);
+		}
+
+		// and search again
+		DoSearch(true, true);
+	} else {
+		// Normal replacement
 		m_sci->ReplaceSelection(replaceWith);
+
 		// and search again
 		DoSearch(true, true);
 	}

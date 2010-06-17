@@ -121,10 +121,10 @@ class TagsManager : public wxEvtHandler
 	friend class Singleton<TagsManager>;
 	friend class DirTraverser;
 	friend class Language;
-	
+
 public:
 	wxCriticalSection      m_crawlerLocker;
-	
+
 private:
 	ITagsStorage *                m_workspaceDatabase;
 	wxCriticalSection             m_cs;
@@ -284,17 +284,17 @@ public:
 	 * @return true if the file name extension matches the current running ctags file spec
 	 */
 	bool IsValidCtagsFile(const wxFileName &filename) const;
-	
+
 	/**
 	 * @brief set the project paths
 	 */
 	void SetProjectPaths(const wxArrayString &paths);
-	
+
 	/**
 	 * @return project file paths
 	 */
-	const wxArrayString& GetProjectPaths() const {return m_projectPaths;} 
-	
+	const wxArrayString& GetProjectPaths() const {return m_projectPaths;}
+
 	/**
 	 * Find symbols by name and scope.
 	 * @param name symbol name
@@ -565,7 +565,7 @@ public:
 	 * @param partName name criterion (partial)
 	 */
 	void GetTagsByKind(std::vector<TagEntryPtr> &tags, const wxArrayString &kind, const wxString &partName = wxEmptyString);
-	
+
 	/**
 	 * @brief return list of tags by KIND
 	 * @param tags [output]
@@ -692,7 +692,7 @@ public:
 	 * @return tag tree, must be freed by caller
 	 */
 	TagTreePtr TreeFromTags(const wxString& tags, int &count);
-	
+
 	/**
 	 * @brief clear the underlying caching mechanism
 	 */
@@ -721,6 +721,7 @@ private:
 	 */
 	virtual ~TagsManager();
 
+public:
 	/**
 	 *
 	 * @param &path

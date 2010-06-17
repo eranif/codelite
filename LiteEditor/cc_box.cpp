@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "cc_box.h"
+#include "ctags_manager.h"
+#include <wx/wupdlock.h>
 #include "editor_config.h"
 #include "cl_editor_tip_window.h"
 #include "cl_editor.h"
@@ -33,7 +35,7 @@
 #include "plugin.h"
 
 #define BOX_HEIGHT 250
-#define BOX_WIDTH  400
+#define BOX_WIDTH  500
 
 CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 		:
@@ -237,6 +239,11 @@ void CCBox::SelectItem(long item)
 {
 	m_listCtrl->Select(item);
 	m_listCtrl->EnsureVisible(item);
+
+	TagEntry tag;
+	if(m_listCtrl->GetItemTagEntry(item, tag)) {
+		DoFormatDescriptionPage( tag );
+	}
 }
 
 void CCBox::Show(const wxString& word)
@@ -265,7 +272,8 @@ void CCBox::Show(const wxString& word)
 				if( (!isVisible && !showPrivateMembers) || (showPrivateMembers) || (isInScope) ) {
 
 					item.displayName =  tag->GetName();
-					item.imgId = GetImageId(*m_tags.at(i));
+					item.imgId       = GetImageId(*m_tags.at(i));
+					item.tag         = *m_tags.at(i);
 					_tags.push_back(item);
 
 					lastName = tag->GetName();
@@ -279,10 +287,10 @@ void CCBox::Show(const wxString& word)
 
 					if( (!isVisible && !showPrivateMembers) || (showPrivateMembers) || (isInScope) ) {
 						item.displayName =  tag->GetName()+tag->GetSignature();
-						item.imgId = GetImageId(*m_tags.at(i));
+						item.imgId       = GetImageId(*m_tags.at(i));
+						item.tag         = *m_tags.at(i);
 						_tags.push_back(item);
 					}
-
 				}
 			}
 		}
@@ -534,3 +542,83 @@ void CCBox::OnShowPublicItems(wxCommandEvent& event)
 	HideCCBox();
 }
 
+void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
+{
+	wxWindowUpdateLocker locker(m_richText);
+	m_richText->Clear();
+
+	// set the default font
+	wxFont defaultFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	wxFont codeFont    = wxFont(defaultFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxNORMAL);
+
+	wxFont boldFont;
+	m_richText->SetFont(defaultFont);
+	boldFont = defaultFont;
+	boldFont.SetWeight(wxBOLD);
+
+	wxTextAttr titleAttr;
+	titleAttr.SetFont(boldFont);
+
+	wxTextAttr codeAttr;
+	codeAttr.SetFont(codeFont);
+
+	m_richText->SetInsertionPointEnd();
+
+	if( tag.IsMethod() ) {
+
+		if(tag.IsConstructor())
+			DoWriteStyledText(wxT("[constructor]\n\n"), titleAttr);
+
+		else if( tag.IsDestructor())
+			DoWriteStyledText(wxT("[destructor]\n\n"), titleAttr);
+
+		DoWriteStyledText(wxT("Signature:\n"), titleAttr);
+
+		TagEntryPtr p(new TagEntry(tag));
+		DoWriteStyledText(TagsManagerST::Get()->FormatFunction(p, FunctionFormat_WithVirtual) + wxT("\n"), codeAttr);
+
+		DoWriteStyledText(wxT("File:\n"), titleAttr);
+		m_richText->AppendText(tag.GetFile() + wxT("\n\n"));
+
+		DoWriteStyledText(wxT("Line:\n"), titleAttr);
+		m_richText->AppendText(wxString::Format(wxT("%d\n"), tag.GetLine()));
+
+	} else if( tag.IsClass() ) {
+
+		DoWriteStyledText(wxT("Kind:\n"), titleAttr);
+		m_richText->AppendText(wxString::Format(wxT("%s\n\n"), tag.GetKind().c_str() ));
+
+		if(tag.GetInherits().IsEmpty() == false) {
+			DoWriteStyledText(wxT("Inherits:\n"), titleAttr);
+			m_richText->AppendText(tag.GetInherits() + wxT("\n\n"));
+		}
+
+		DoWriteStyledText(wxT("File:\n"), titleAttr);
+		m_richText->AppendText(tag.GetFile() + wxT("\n\n"));
+
+		DoWriteStyledText(wxT("Line:\n"), titleAttr);
+		m_richText->AppendText(wxString::Format(wxT("%d\n"), tag.GetLine()));
+
+	} else {
+
+		DoWriteStyledText(wxT("Kind:\n"), titleAttr);
+		m_richText->AppendText(wxString::Format(wxT("%s\n\n"), tag.GetKind().c_str() ));
+
+		DoWriteStyledText(wxT("Match Pattern:\n"), titleAttr);
+		m_richText->AppendText(tag.GetPattern() + wxT("\n\n"));
+
+		DoWriteStyledText(wxT("File:\n"), titleAttr);
+		m_richText->AppendText(tag.GetFile() + wxT("\n\n"));
+
+		DoWriteStyledText(wxT("Line:\n"), titleAttr);
+		m_richText->AppendText(wxString::Format(wxT("%d\n"), tag.GetLine()));
+	}
+}
+
+void CCBox::DoWriteStyledText(const wxString& text, const wxTextAttr& style)
+{
+	int start = m_richText->GetLastPosition();
+	m_richText->AppendText(text);
+	m_richText->SetStyle(start, m_richText->GetLastPosition(), style);
+
+}

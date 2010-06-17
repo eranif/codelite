@@ -2768,8 +2768,30 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 		m_ccBox = new CCBox(this);
 	}
 
+	if(tags.empty()) {
+		return;
+	}
+
 	m_ccBox->SetAutoHide(false);
 	m_ccBox->SetInsertSingleChoice(false);
+
+	// Show extra info pane for C++ tags
+	bool showExtInfoPane = (tags.at(0)->GetKind() == wxT("function")  ||
+							tags.at(0)->GetKind() == wxT("prototype") ||
+							tags.at(0)->GetKind() == wxT("class")     ||
+							tags.at(0)->GetKind() == wxT("struct")    ||
+							tags.at(0)->GetKind() == wxT("union")     ||
+							tags.at(0)->GetKind() == wxT("namespace") ||
+							tags.at(0)->GetKind() == wxT("member")    ||
+							tags.at(0)->GetKind() == wxT("variable")  ||
+							tags.at(0)->GetKind() == wxT("typedef")   ||
+							tags.at(0)->GetKind() == wxT("macro")     ||
+							tags.at(0)->GetKind() == wxT("enum")      ||
+							tags.at(0)->GetKind() == wxT("enumerator"));
+	if(showExtInfoPane) {
+		// it will be disabled automatically when the CC box is dissmissed
+		m_ccBox->EnableExtInfoPane();
+	}
 
 	// If the number of elements exceeds the maximum query result,
 	// alert the user
@@ -2789,8 +2811,30 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 		m_ccBox = new CCBox(this);
 	}
 
+	if(tags.empty()) {
+		return;
+	}
+
 	m_ccBox->SetAutoHide(autoHide);
 	m_ccBox->SetInsertSingleChoice(autoInsertSingleChoice);
+
+	// Show extra info pane for C++ tags
+	bool showExtInfoPane = (tags.at(0)->GetKind() == wxT("function")  ||
+							tags.at(0)->GetKind() == wxT("prototype") ||
+							tags.at(0)->GetKind() == wxT("class")     ||
+							tags.at(0)->GetKind() == wxT("struct")    ||
+							tags.at(0)->GetKind() == wxT("union")     ||
+							tags.at(0)->GetKind() == wxT("namespace") ||
+							tags.at(0)->GetKind() == wxT("member")    ||
+							tags.at(0)->GetKind() == wxT("variable")  ||
+							tags.at(0)->GetKind() == wxT("typedef")   ||
+							tags.at(0)->GetKind() == wxT("macro")     ||
+							tags.at(0)->GetKind() == wxT("enum")      ||
+							tags.at(0)->GetKind() == wxT("enumerator"));
+	if(showExtInfoPane) {
+		// it will be disabled automatically when the CC box is dissmissed
+		m_ccBox->EnableExtInfoPane();
+	}
 
 	// If the number of elements exceeds the maximum query result,
 	// alert the user

@@ -45,6 +45,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 		, m_autoHide(autoHide)
 		, m_insertSingleChoice(autoInsertSingleChoice)
 		, m_owner(NULL)
+		, m_hideExtInfoPane(true)
 {
 	m_constructing = true;
 	HideCCBox();
@@ -118,6 +119,10 @@ void CCBox::OnItemDeSelected( wxListEvent& event )
 void CCBox::OnItemSelected( wxListEvent& event )
 {
 	m_selectedItem = event.m_itemIndex;
+	TagEntry tag;
+	if(m_listCtrl->GetItemTagEntry(m_selectedItem, tag)) {
+		DoFormatDescriptionPage( tag );
+	}
 }
 
 void CCBox::Show(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl, wxEvtHandler *owner)
@@ -325,7 +330,18 @@ void CCBox::Show(const wxString& word)
 		m_selectedItem = 0;
 	}
 
-	SetSize(BOX_WIDTH, m_height);
+	// hide the extra info pane
+	int suggestedWidth (BOX_WIDTH);
+	if(m_hideExtInfoPane) {
+		if(m_richText->IsShown())
+			m_richText->Hide();
+		suggestedWidth /= 2;
+
+	} else if(!m_hideExtInfoPane && m_richText->IsShown() == false) {
+		m_richText->Show();
+	}
+
+	SetSize(suggestedWidth, m_height);
 	GetSizer()->Layout();
 	wxWindow::Show();
 
@@ -529,6 +545,7 @@ void CCBox::HideCCBox()
 {
 	if( IsShown() ) {
 		Hide();
+		m_hideExtInfoPane = true;
 		if( !m_constructing ) {
 			bool checked  = m_toolBar1->FindById(TOOL_SHOW_PRIVATE_MEMBERS)->IsToggled();
 			EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_All_Members"), checked ? 1 : 0);
@@ -621,4 +638,9 @@ void CCBox::DoWriteStyledText(const wxString& text, const wxTextAttr& style)
 	m_richText->AppendText(text);
 	m_richText->SetStyle(start, m_richText->GetLastPosition(), style);
 
+}
+
+void CCBox::EnableExtInfoPane()
+{
+	m_hideExtInfoPane = false;
 }

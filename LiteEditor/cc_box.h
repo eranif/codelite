@@ -48,6 +48,7 @@ class CCBox : public CCBoxBase {
 	std::map<wxString, int>  m_userImages;
 	wxEvtHandler *           m_owner;
 	bool                     m_constructing;
+	bool                     m_hideExtInfoPane;
 
 protected:
 	// Handlers for CCBoxBase events.
@@ -81,6 +82,7 @@ public:
 		return false;
 	}
 
+	void EnableExtInfoPane();
 	bool SelectWord(const wxString &word);
 	void Next();
 	void Previous();

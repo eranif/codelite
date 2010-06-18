@@ -2023,6 +2023,11 @@ void wxScintilla::LineCopy() {
     SendMsg (SCI_LINECOPY, 0, 0);
 }
 
+// Copy the line containing the caret.
+void wxScintilla::CopyAllowLine() {
+    SendMsg (SCI_COPYALLOWLINE, 0, 0);
+}
+
 // Move the caret inside current view if it's not there already.
 void wxScintilla::MoveCaretInsideView() {
     SendMsg (SCI_MOVECARETINSIDEVIEW, 0, 0);

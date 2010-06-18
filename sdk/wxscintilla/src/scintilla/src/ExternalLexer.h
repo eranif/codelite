@@ -42,7 +42,7 @@ public:
 		strncpy(name, languageName_, sizeof(name));
 		name[sizeof(name)-1] = '\0';
 		languageName = name;
-	};
+	}
 	virtual void Lex(unsigned int startPos, int lengthDoc, int initStyle,
 					WordList *keywordlists[], Accessor &styler) const;
 	virtual void Fold(unsigned int startPos, int lengthDoc, int initStyle,

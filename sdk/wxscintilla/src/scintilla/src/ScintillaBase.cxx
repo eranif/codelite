@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#include <string>
 #include <vector>
 
 #include "Platform.h"

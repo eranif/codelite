@@ -1220,6 +1220,22 @@ set void SetFontQuality=2611(int fontQuality,)
 # Retrieve the quality level for text.
 get int GetFontQuality=2612(,)
 
+# Scroll so that a display line is at the top of the display.
+set void SetFirstVisibleLine=2613(int lineDisplay,)
+
+enu MultiPaste=SC_MULTIPASTE_
+val SC_MULTIPASTE_ONCE=0
+val SC_MULTIPASTE_EACH=1
+
+# Change the effect of pasting when there are multiple selections.
+set void SetMultiPaste=2614(int multiPaste,)
+
+# Retrieve the effect of pasting when there are multiple selections..
+get int GetMultiPaste=2615(,)
+
+# Retrieve the value of a tag from a regular expression search.
+fun int GetTag=2616(int tagNumber, stringresult tagValue)
+
 # Make the target range start and end be the same as the selection range start and end.
 fun void TargetFromSelection=2287(,)
 
@@ -2890,6 +2906,7 @@ val SCE_CSS_PSEUDOELEMENT=18
 val SCE_CSS_EXTENDED_IDENTIFIER=19
 val SCE_CSS_EXTENDED_PSEUDOCLASS=20
 val SCE_CSS_EXTENDED_PSEUDOELEMENT=21
+val SCE_CSS_MEDIA=22
 # Lexical states for SCLEX_POV
 lex POV=SCLEX_POV SCE_POV_
 val SCE_POV_DEFAULT=0
@@ -3065,8 +3082,19 @@ val SCE_ERLANG_FUNCTION_NAME=8
 val SCE_ERLANG_CHARACTER=9
 val SCE_ERLANG_MACRO=10
 val SCE_ERLANG_RECORD=11
-val SCE_ERLANG_SEPARATOR=12
+val SCE_ERLANG_PREPROC=12
 val SCE_ERLANG_NODE_NAME=13
+val SCE_ERLANG_COMMENT_FUNCTION=14
+val SCE_ERLANG_COMMENT_MODULE=15
+val SCE_ERLANG_COMMENT_DOC=16
+val SCE_ERLANG_COMMENT_DOC_MACRO=17
+val SCE_ERLANG_ATOM_QUOTED=18
+val SCE_ERLANG_MACRO_QUOTED=19
+val SCE_ERLANG_RECORD_QUOTED=20
+val SCE_ERLANG_NODE_NAME_QUOTED=21
+val SCE_ERLANG_BIFS=22
+val SCE_ERLANG_MODULES=23
+val SCE_ERLANG_MODULES_ATT=24
 val SCE_ERLANG_UNKNOWN=31
 # Lexical states for SCLEX_OCTAVE are identical to MatLab
 lex Octave=SCLEX_OCTAVE SCE_MATLAB_
@@ -3361,7 +3389,7 @@ val SCE_ST_ASSIGN=14
 val SCE_ST_CHARACTER=15
 val SCE_ST_SPEC_SEL=16
 # Lexical states for SCLEX_FLAGSHIP (clipper)
-lex FlagShip=SCLEX_FLAGSHIP SCE_B_
+lex FlagShip=SCLEX_FLAGSHIP SCE_FS_
 val SCE_FS_DEFAULT=0
 val SCE_FS_COMMENT=1
 val SCE_FS_COMMENTLINE=2
@@ -3381,11 +3409,19 @@ val SCE_FS_IDENTIFIER=15
 val SCE_FS_DATE=16
 val SCE_FS_STRINGEOL=17
 val SCE_FS_CONSTANT=18
-val SCE_FS_ASM=19
-val SCE_FS_LABEL=20
-val SCE_FS_ERROR=21
-val SCE_FS_HEXNUMBER=22
-val SCE_FS_BINNUMBER=23
+val SCE_FS_WORDOPERATOR=19
+val SCE_FS_DISABLEDCODE=20
+val SCE_FS_DEFAULT_C=21
+val SCE_FS_COMMENTDOC_C=22
+val SCE_FS_COMMENTLINEDOC_C=23
+val SCE_FS_KEYWORD_C=24
+val SCE_FS_KEYWORD2_C=25
+val SCE_FS_NUMBER_C=26
+val SCE_FS_STRING_C=27
+val SCE_FS_PREPROCESSOR_C=28
+val SCE_FS_OPERATOR_C=29
+val SCE_FS_IDENTIFIER_C=30
+val SCE_FS_STRINGEOL_C=31
 # Lexical states for SCLEX_CSOUND
 lex Csound=SCLEX_CSOUND SCE_CSOUND_
 val SCE_CSOUND_DEFAULT=0
@@ -3412,7 +3448,6 @@ val SCE_INNO_KEYWORD=2
 val SCE_INNO_PARAMETER=3
 val SCE_INNO_SECTION=4
 val SCE_INNO_PREPROC=5
-val SCE_INNO_PREPROC_INLINE=6
 val SCE_INNO_INLINE_EXPANSION=6
 val SCE_INNO_COMMENT_PASCAL=7
 val SCE_INNO_KEYWORD_PASCAL=8

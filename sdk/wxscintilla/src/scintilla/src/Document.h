@@ -32,10 +32,10 @@ public:
 
 	Range(Position pos=0) :
 		start(pos), end(pos) {
-	};
+	}
 	Range(Position start_, Position end_) :
 		start(start_), end(end_) {
-	};
+	}
 
 	bool Valid() const {
 		return (start != invalidPosition) && (end != invalidPosition);
@@ -113,6 +113,24 @@ struct StyledText {
 	size_t StyleAt(size_t i) const {
 		return multipleStyles ? styles[i] : style;
 	}
+};
+
+class CaseFolder {
+public:
+	virtual ~CaseFolder() {
+	}
+	virtual size_t Fold(char *folded, size_t sizeFolded, const char *mixed, size_t lenMixed) = 0;
+};
+
+class CaseFolderTable : public CaseFolder {
+protected:
+	char mapping[256];
+public:
+	CaseFolderTable();
+	virtual ~CaseFolderTable();
+	virtual size_t Fold(char *folded, size_t sizeFolded, const char *mixed, size_t lenMixed);
+	void SetTranslation(char ch, char chTranslation);
+	void StandardASCII();
 };
 
 /**
@@ -225,10 +243,10 @@ public:
 	void DelCharBack(int pos);
 
 	char CharAt(int position) { return cb.CharAt(position); }
-	void GetCharRange(char *buffer, int position, int lengthRetrieve) {
+	void GetCharRange(char *buffer, int position, int lengthRetrieve) const {
 		cb.GetCharRange(buffer, position, lengthRetrieve);
 	}
-	char StyleAt(int position) { return cb.StyleAt(position); }
+	char StyleAt(int position) const { return cb.StyleAt(position); }
 	int GetMark(int line);
 	int AddMark(int line, int markerNum);
 	void AddMarkSet(int line, int valueSet);
@@ -243,7 +261,7 @@ public:
 	int VCHomePosition(int position) const;
 
 	int SetLevel(int line, int level);
-	int GetLevel(int line);
+	int GetLevel(int line) const;
 	void ClearLevels();
 	int GetLastChild(int lineParent, int level=-1);
 	int GetFoldParent(int line);
@@ -254,9 +272,10 @@ public:
 	int NextWordEnd(int pos, int delta);
 	int Length() const { return cb.Length(); }
 	void Allocate(int newSize) { cb.Allocate(newSize); }
-	long FindText(int minPos, int maxPos, const char *s,
-		bool caseSensitive, bool word, bool wordStart, bool regExp, int flags, int *length);
-	long FindText(int iMessage, unsigned long wParam, long lParam);
+	size_t ExtractChar(int pos, char *bytes);
+	bool MatchesWordOptions(bool word, bool wordStart, int pos, int length);
+	long FindText(int minPos, int maxPos, const char *search, bool caseSensitive, bool word,
+		bool wordStart, bool regExp, int flags, int *length, CaseFolder *pcf);
 	const char *SubstituteByPosition(const char *text, int *length);
 	int LinesTotal() const;
 
@@ -275,7 +294,7 @@ public:
 	void DecorationFillRange(int position, int value, int fillLength);
 
 	int SetLineState(int line, int state);
-	int GetLineState(int line);
+	int GetLineState(int line) const;
 	int GetMaxLineState();
 
 	StyledText MarginStyledText(int line);

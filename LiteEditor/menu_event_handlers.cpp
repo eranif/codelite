@@ -40,7 +40,8 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 	if (event.GetId() == wxID_COPY) {
 		// if the selection is empty, copy the line content
 		if(editor->GetSelectedText().IsEmpty()) {
-			editor->LineCopy();
+			editor->CopyAllowLine();
+
 		} else {
 			editor->Copy();
 		}

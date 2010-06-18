@@ -127,7 +127,7 @@ bool SelectionRange::Trim(SelectionRange range) {
 		} else if (start <= startRange) {
 			// Trim end
 			end = startRange;
-		} else { // 
+		} else { //
 			PLATFORM_ASSERT(end >= endRange);
 			// Trim start
 			start = endRange;
@@ -189,6 +189,14 @@ SelectionSegment Selection::Limits() const {
 			sr.Extend(ranges[i].caret);
 		}
 		return sr;
+	}
+}
+
+SelectionSegment Selection::LimitsForRectangularElseMain() const {
+	if (IsRectangular()) {
+		return Limits();
+	} else {
+		return SelectionSegment(ranges[mainRange].caret, ranges[mainRange].anchor);
 	}
 }
 
@@ -259,7 +267,7 @@ void Selection::TrimSelection(SelectionRange range) {
 	for (size_t i=0; i<ranges.size();) {
 		if ((i != mainRange) && (ranges[i].Trim(range))) {
 			// Trimmed to empty so remove
-			for (size_t j=i;j<ranges.size()-1;j++) {
+			for (size_t j=i; j<ranges.size()-1; j++) {
 				ranges[j] = ranges[j+1];
 				if (j == mainRange-1)
 					mainRange--;

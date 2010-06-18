@@ -2957,6 +2957,10 @@ public:
     // Copy the line containing the caret.
     void LineCopy();
 
+	// works the same as SCI_COPY except that if the selection is empty then the current line is copied.
+	// On Windows, an extra "MSDEVLineSelect" marker is added to the clipboard which is then used in SCI_PASTE  to paste the whole line before the current line.
+	void CopyAllowLine();
+
     // Move the caret inside current view if it's not there already.
     void MoveCaretInsideView();
 

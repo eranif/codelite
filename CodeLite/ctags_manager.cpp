@@ -1376,15 +1376,16 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 			// add return value
 			tip.Clear();
 
-			wxString retValue = t->GetReturnValue();
-			if(retValue.IsEmpty() == false) {
-				tip << retValue << wxT(" ");
+			wxString ret_value = GetFunctionReturnValueFromPattern(t);
+			if(ret_value.IsEmpty() == false) {
+				tip << ret_value << wxT(" ");
 
 			} else {
-				wxString ret_value = GetFunctionReturnValueFromPattern(t);
-				if (ret_value.IsEmpty() == false) {
-					tip << ret_value << wxT(" ");
+				wxString retValue = t->GetReturnValue();
+				if(retValue.IsEmpty() == false) {
+					tip << retValue << wxT(" ");
 				}
+
 			}
 			// add the scope
 			if (!t->IsScopeGlobal()) {
@@ -1397,6 +1398,9 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 			// method signature
 			tip << NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Name | Normalize_Func_Default_value);
 		}
+
+		// remove any extra spaces from the tip
+		while (tip.Replace(wxT("  "), wxT(" "))) {}
 
 		// prepend any comment if exists
 		tips.push_back(tip);
@@ -1711,7 +1715,17 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
 		body << wxT("virtual ");
 	}
 
-	body << tag->GetReturnValue() << wxT(" ");
+	wxString ret_value = GetFunctionReturnValueFromPattern(tag);
+	if(ret_value.IsEmpty() == false) {
+		body << ret_value << wxT(" ");
+
+	} else {
+		wxString retValue = tag->GetReturnValue();
+		if(retValue.IsEmpty() == false) {
+			body << retValue << wxT(" ");
+		}
+
+	}
 
 	if (flags & FunctionFormat_Impl) {
 		if (scope.IsEmpty()) {
@@ -1739,6 +1753,11 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
 		body << wxT(";\n");
 	}
 
+	// convert \t to spaces
+	body.Replace(wxT("\t"), wxT(" "));
+
+	// remove any extra spaces from the tip
+	while (body.Replace(wxT("  "), wxT(" "))) {}
 	return body;
 }
 

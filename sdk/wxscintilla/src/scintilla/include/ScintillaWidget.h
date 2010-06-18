@@ -14,7 +14,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+#include <gtk/gtk.h>
 #define SCINTILLA(obj)          GTK_CHECK_CAST (obj, scintilla_get_type (), ScintillaObject)
 #define SCINTILLA_CLASS(klass)  GTK_CHECK_CLASS_CAST (klass, scintilla_get_type (), ScintillaClass)
 #define IS_SCINTILLA(obj)       GTK_CHECK_TYPE (obj, scintilla_get_type ())

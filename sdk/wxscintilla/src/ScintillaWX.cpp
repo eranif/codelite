@@ -537,8 +537,18 @@ void ScintillaWX::Paste() {
         wxTheClipboard->Close();
     }
 
-    buf = (wxWX2MBbuf)wx2sci(textString);
+	// Check to see if the Copy() command inserted a '\r\n' at the begining of the textString
+	bool allowCopyLines(false);
+
+	buf = (wxWX2MBbuf)wx2sci(textString);
     len  = strlen(buf);
+
+	// Eran: Allow copy-line to be inserted at the begining of the next line instead
+	// of at the current caret position
+	if(len > 0 && buf.data()[len-1] == '\n') {
+		allowCopyLines = true;
+	}
+
     int newPos = 0;
     int caretMain = sel.MainCaret();
     if (rectangular) {
@@ -548,8 +558,26 @@ void ScintillaWX::Paste() {
         PasteRectangular (selStart, buf, len);
         newPos = pdoc->FindColumn (newLine, newCol);
     } else {
-        pdoc->InsertString (caretMain, buf, len);
-        newPos = caretMain + len;
+		bool allowCopyLineSuccess(false);
+		if(allowCopyLines) {
+			// copied text ends with \r\n OR \n
+			int lineNum = pdoc->LineFromPosition(caretMain);
+			if(lineNum != wxNOT_FOUND) {
+				int where = pdoc->LineStart(lineNum);
+				if(where != wxNOT_FOUND) {
+					pdoc->InsertString(where, buf, len);
+					newPos = where + len;
+
+					allowCopyLineSuccess = true;
+				}
+			}
+		}
+
+		if(!allowCopyLineSuccess) {
+			// Simple copy paste block
+			pdoc->InsertString (caretMain, buf, len);
+			newPos = caretMain + len;
+		}
     }
     SetEmptySelection (newPos);
 #endif // wxUSE_DATAOBJ

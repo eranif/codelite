@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version May  4 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -13,7 +13,7 @@
 CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
 {
 	wxBoxSizer* bSizer1;
-	bSizer1 = new wxBoxSizer( wxVERTICAL );
+	bSizer1 = new wxBoxSizer( wxHORIZONTAL );
 
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
@@ -22,7 +22,9 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	bSizer2->Add( m_listCtrl, 1, wxEXPAND|wxALL, 2 );
 
 	m_richText = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2|wxNO_BORDER );
-	bSizer2->Add( m_richText, 1, wxEXPAND, 5 );
+	m_richText->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
+
+	bSizer2->Add( m_richText, 1, wxEXPAND|wxALL, 2 );
 
 	bSizer1->Add( bSizer2, 1, wxEXPAND, 5 );
 
@@ -31,7 +33,7 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	m_toolBar1->AddTool( TOOL_SHOW_PRIVATE_MEMBERS, wxT("Show Protected / Private Items"), bmp, bmp, wxITEM_CHECK, wxT("Show Protected / Private Items"), wxEmptyString );
 	m_toolBar1->Realize();
 
-	bSizer1->Add( m_toolBar1, 0, wxEXPAND|wxRIGHT|wxLEFT, 2 );
+	bSizer1->Add( m_toolBar1, 0, wxEXPAND, 2 );
 
 	this->SetSizer( bSizer1 );
 	this->Layout();
@@ -52,4 +54,5 @@ CCBoxBase::~CCBoxBase()
 	m_listCtrl->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CCBoxBase::OnItemSelected ), NULL, this );
 	m_listCtrl->Disconnect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( CCBoxBase::OnKeyDown ), NULL, this );
 	this->Disconnect( TOOL_SHOW_PRIVATE_MEMBERS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( CCBoxBase::OnShowPublicItems ) );
+
 }

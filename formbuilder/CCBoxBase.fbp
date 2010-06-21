@@ -24,6 +24,7 @@
         <object class="Panel" expanded="1">
             <property name="bg"></property>
             <property name="context_help"></property>
+            <property name="context_menu">1</property>
             <property name="enabled">1</property>
             <property name="event_handler">impl_virtual</property>
             <property name="fg"></property>
@@ -71,7 +72,7 @@
             <object class="wxBoxSizer" expanded="1">
                 <property name="minimum_size"></property>
                 <property name="name">bSizer1</property>
-                <property name="orient">wxVERTICAL</property>
+                <property name="orient">wxHORIZONTAL</property>
                 <property name="permission">none</property>
                 <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
@@ -89,6 +90,7 @@
                             <object class="wxListCtrl" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
+                                <property name="context_menu">1</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>
@@ -156,12 +158,13 @@
                             </object>
                         </object>
                         <object class="sizeritem" expanded="1">
-                            <property name="border">5</property>
-                            <property name="flag">wxEXPAND</property>
+                            <property name="border">2</property>
+                            <property name="flag">wxEXPAND|wxALL</property>
                             <property name="proportion">1</property>
                             <object class="wxTextCtrl" expanded="1">
-                                <property name="bg"></property>
+                                <property name="bg">wxSYS_COLOUR_INFOBK</property>
                                 <property name="context_help"></property>
+                                <property name="context_menu">1</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>
@@ -218,12 +221,13 @@
                 </object>
                 <object class="sizeritem" expanded="1">
                     <property name="border">2</property>
-                    <property name="flag">wxEXPAND|wxRIGHT|wxLEFT</property>
+                    <property name="flag">wxEXPAND</property>
                     <property name="proportion">0</property>
                     <object class="wxToolBar" expanded="1">
                         <property name="bg"></property>
                         <property name="bitmapsize"></property>
                         <property name="context_help"></property>
+                        <property name="context_menu">1</property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>
                         <property name="font"></property>

@@ -599,12 +599,13 @@ private:
 	BPtoMarker GetMarkerForBreakpt(enum BreakpointType bp_type);
 	void SetProperties();
 	void DefineMarker(int marker, int markerType, wxColor fore, wxColor back);
-	void SetLineNumberWidth();
 	bool SaveToFile(const wxFileName &fileName);
 	void BraceMatch(const bool& bSelRegion);
 	void BraceMatch(long pos);
 	void DoHighlightWord();
 	void DoSetStatusMessage(const wxString &msg, int col);
+	bool IsOpenBrace (int position);
+	bool IsCloseBrace(int position);
 
 	// Conevert FindReplaceDialog flags to wxSD flags
 	size_t SearchFlags(const FindReplaceData &data);

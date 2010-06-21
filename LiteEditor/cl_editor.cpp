@@ -1419,28 +1419,43 @@ void LEditor::RecalcHorizontalScrollbar()
 //--------------------------------------------------------
 // Brace match
 //--------------------------------------------------------
+
+bool LEditor::IsCloseBrace(int position)
+{
+	return  GetCharAt(position) == '}' ||
+			GetCharAt(position) == ']' ||
+			GetCharAt(position) == ')';
+}
+
+bool LEditor::IsOpenBrace(int position)
+{
+	return  GetCharAt(position) == '{' ||
+			GetCharAt(position) == '[' ||
+			GetCharAt(position) == '(';
+}
+
 void LEditor::MatchBraceAndSelect(bool selRegion)
 {
 	// Get current position
 	long pos = GetCurrentPos();
 
-	if (GetCharAt(pos) == '{' && !m_context->IsCommentOrString(pos)) {
+	if (IsOpenBrace(pos) && !m_context->IsCommentOrString(pos)) {
 		BraceMatch(selRegion);
 		return;
 	}
 
-	if (GetCharAt(PositionBefore(pos)) == '{' && !m_context->IsCommentOrString(PositionBefore(pos))) {
+	if (IsOpenBrace(PositionBefore(pos)) && !m_context->IsCommentOrString(PositionBefore(pos))) {
 		SetCurrentPos(PositionBefore(pos));
 		BraceMatch(selRegion);
 		return;
 	}
 
-	if (GetCharAt(pos) == '}' && !m_context->IsCommentOrString(pos)) {
+	if (IsCloseBrace(pos) && !m_context->IsCommentOrString(pos)) {
 		BraceMatch(selRegion);
 		return;
 	}
 
-	if (GetCharAt(PositionBefore(pos)) == '}' && !m_context->IsCommentOrString(PositionBefore(pos))) {
+	if (IsCloseBrace(PositionBefore(pos)) && !m_context->IsCommentOrString(PositionBefore(pos))) {
 		SetCurrentPos(PositionBefore(pos));
 		BraceMatch(selRegion);
 		return;

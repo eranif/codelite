@@ -26,14 +26,14 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 
 	bSizer2->Add( m_richText, 1, wxEXPAND|wxALL, 2 );
 
-	bSizer1->Add( bSizer2, 1, wxEXPAND, 5 );
+	bSizer1->Add( bSizer2, 1, wxEXPAND, 2 );
 
 	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("cc_private_members"));
 	m_toolBar1 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_HORIZONTAL|wxSIMPLE_BORDER|wxTB_FLAT|wxTB_NODIVIDER );
 	m_toolBar1->AddTool( TOOL_SHOW_PRIVATE_MEMBERS, wxT("Show Protected / Private Items"), bmp, bmp, wxITEM_CHECK, wxT("Show Protected / Private Items"), wxEmptyString );
 	m_toolBar1->Realize();
 
-	bSizer1->Add( m_toolBar1, 0, wxEXPAND, 2 );
+	bSizer1->Add( m_toolBar1, 0, 0, 2 );
 
 	this->SetSizer( bSizer1 );
 	this->Layout();

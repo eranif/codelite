@@ -310,6 +310,7 @@ void CCBox::Show(const wxString& word)
 		if ( IsShown() ) {
 			HideCCBox();
 		}
+		m_hideExtInfoPane = true;
 		return;
 	}
 
@@ -323,6 +324,7 @@ void CCBox::Show(const wxString& word)
 	m_selectedItem = m_listCtrl->FindMatch(word, fullMatch);
 	if ( m_selectedItem == wxNOT_FOUND && GetAutoHide() ) {
 		// return without calling wxWindow::Show
+		m_hideExtInfoPane = true;
 		return;
 	}
 

@@ -24,7 +24,7 @@ createVariables()
 	is_so_lib=$1
 	additional_include_path=$2
 	additional_links=$3
-	
+
 	if [ "$os_name" = "Darwin" ]; then
 		if [ "$is_64bit" = "yes" ]; then
 			compiler_name=${compiler_name}" -m64 "
@@ -388,13 +388,13 @@ createRules_sharedObject ()
 	if [ "$os_name" = "Darwin" ]; then
 		shared_obj_switch=" -dynamiclib "
 	fi
-	
+
 	if [ "$rule_name" = "SDK" ]; then
 		echo "${rule_name}: \$(${object_list_name}) CodeLite " >> Makefile
-	else 
+	else
 		echo "${rule_name}: \$(${object_list_name})" >> Makefile
 	fi
-	
+
 	echo "	\$(CMP) -fPIC ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(PLUGIN_LINK_FLAGS) ${additional_link_libs}" >> Makefile
 	if [ $dont_copy != "dont_copy" ]; then
 		echo "	cp -f ${base_dir}/\$(OUTPUT_DIR)/${libname}.so ${runtime_path}/." >> Makefile
@@ -470,11 +470,11 @@ createPluginMakefile()
 	fi
 
 	createObjectList "*.cpp" "${plugin_name}Objects"
-	
+
 	createPluginTargets "${plugin_name}" "${post_install_path}"
 	if [ "$plugin_name" = "Subversion2" ] ; then
 	  createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT)"
-	else 
+	else
 	  createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
 	fi
 
@@ -654,7 +654,7 @@ if [ -z "$wxversionnumber" ]; then
 	echo "Is the wxWidgets development package installed?"
 	exit
 fi
- 
+
 wxMAJOR_VERSION=`echo $wxversionnumber | awk -F. '{print $1}'`
 wxMINOR_VERSION=`echo $wxversionnumber | awk -F. '{print $2}'`
 # Should we ever need it: wxRELEASE_NUMBER=`echo $wxversionnumber | awk -F. '{print $3}'`

@@ -827,8 +827,10 @@ echo "abbreviation_clean\\" >> Makefile
 echo "SymbolView_clean\\" >> Makefile
 echo "ContinuousBuild_clean\\" >> Makefile
 echo "QmakePlugin_clean\\" >> Makefile
-echo "CppCheck_clean\\" >> Makefile
-echo "MacBundler_clean" >> Makefile
+if [ "$os_name" = "Darwin" ]; then
+	echo "MacBundler_clean\\" >> Makefile
+fi
+echo "CppCheck_clean" >> Makefile
 echo "" >> Makefile
 
 ########################################################

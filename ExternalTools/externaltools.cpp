@@ -327,10 +327,11 @@ void ExternalToolsPlugin::OnStopExternalToolUI(wxUpdateUIEvent& e)
 
 void ExternalToolsPlugin::DoCreatePluginMenu()
 {
+	const int MENU_ID = 28374;
 	if ( m_parentMenu ) {
 		// destroy the old menu entries
-		if ( m_parentMenu->FindItem(58374) ) {
-			m_parentMenu->Destroy(58374);
+		if ( m_parentMenu->FindItem(MENU_ID) ) {
+			m_parentMenu->Destroy(MENU_ID);
 		}
 
 		wxMenu *menu = new wxMenu();
@@ -349,7 +350,7 @@ void ExternalToolsPlugin::DoCreatePluginMenu()
 			menu->Append(item);
 		}
 
-		m_parentMenu->Append(58374, wxT("External Tools"), menu);
+		m_parentMenu->Append(MENU_ID, wxT("External Tools"), menu);
 		topWin->Connect(XRCID("external_tools_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnSettings), NULL, (wxEvtHandler*)this);
 	}
 }

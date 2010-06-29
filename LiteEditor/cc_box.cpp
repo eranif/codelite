@@ -596,7 +596,7 @@ void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 			helpWin->AppendText(tag.GetInherits() + wxT("\n\n"));
 		}
 
-	} else {
+	} else if(tag.IsMacro() || tag.IsTypedef() || tag.IsContainer() || tag.GetKind() == wxT("member") || tag.GetKind() == wxT("variable")) {
 
 		helpWin->WriteTitle(wxT("Kind:\n"));
 		helpWin->AppendText(wxString::Format(wxT("%s\n\n"), tag.GetKind().c_str() ));
@@ -604,6 +604,9 @@ void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 		helpWin->WriteTitle(wxT("Match Pattern:\n"));
 		helpWin->AppendText(tag.GetPattern() + wxT("\n\n"));
 
+	} else {
+		// non valid tag entry
+		return;
 	}
 
 	// Append the file / line attributes

@@ -1050,9 +1050,17 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	file.Write(theText, fontEncConv);
 	file.Close();
 
+	// Incase the original file had executable permissions
+	// keep them
+	bool hasExePermissions = wxFileName::IsFileExecutable(fileName.GetFullPath());
+
 	// if the saving was done to a temporary file, override it
 	if (tmp_file.IsEmpty() == false) {
 		if (wxRenameFile(tmp_file, fileName.GetFullPath(), true) == false) {
+			if(hasExePermissions) {
+				::chmod(fileName.GetFullPath().mb_str(wxConvUTF8), 0755);
+			}
+
 			wxMessageBox(wxString::Format(wxT("Failed to override read-only file")), wxT("CodeLite"), wxOK|wxICON_WARNING);
 			return false;
 		}

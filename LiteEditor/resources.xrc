@@ -37,6 +37,7 @@
     <object class="wxBitmap" name="document_delete">res/clean.png</object>
     <object class="wxBitmap" name="build">res/rebuild.png</object>
     <object class="wxBitmap" name="find_results">res/16/find.png</object>
+	<object class="wxBitmap" name="cc_help">res/16/help_browser.png</object>
     <object class="wxBitmap" name="class_view">res/chart_organisation.png</object>
     <object class="wxBitmap" name="page_open">res/folder.png</object>
 	<object class="wxBitmap" name="word_wrap">res/wrap_arrow.png</object>

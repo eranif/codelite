@@ -53,17 +53,21 @@ static std::string         strComment;
 }
 
 <cpp_comment>\n {
-	pResults->addComment(strComment, inclf_lineno - 1, true);
+	pResults->addComment(strComment, cp_lineno - 1, true);
 	BEGIN(INITIAL);
 }
 <cpp_comment>. {strComment += yytext;} /* do nothing */
 
 <c_comment>"*/" {
 	strComment += "*/";
-	pResults->addComment(strComment, inclf_lineno, false);
+	pResults->addComment(strComment, cp_lineno, false);
 	BEGIN(INITIAL);
 }
 
+<c_comment>\r {}
+<c_comment>\v {}
+<c_comment>\t { strComment += " ";}
+<c_comment>\n { strComment += "\n";}
 <c_comment>.  { strComment += yytext;}
 
 <<EOF>> {
@@ -85,7 +89,7 @@ int yywrap() {
 int ParseComments(const char* filePath, CommentParseResult &comments)
 {
 	BEGIN INITIAL;
-	inclf_lineno = 1;
+	cp_lineno = 1;
 
 	FILE* fp = fopen(filePath, "r");
 	if ( fp == NULL ) {
@@ -94,8 +98,8 @@ int ParseComments(const char* filePath, CommentParseResult &comments)
 
 	pResults    = &comments;
 	yy_switch_to_buffer( yy_create_buffer(fp, YY_BUF_SIZE) );
-	inclf_in = fp;
-	int rc = inclf_lex();
+	cp_in = fp;
+	int rc = cp_lex();
 	yy_delete_buffer    ( YY_CURRENT_BUFFER    );
 
 	// Cleanup

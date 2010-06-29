@@ -49,8 +49,8 @@
         <CustomPostBuild/>
         <CustomPreBuild>comment_parser.cpp
 comment_parser.cpp: comment_parser.l
-	flex -L  -Pinclf_ comment_parser.l
-	mv lex.inclf_.c comment_parser.cpp
+	flex -L  -Pcp_ comment_parser.l
+	mv lex.cp_.c comment_parser.cpp
 </CustomPreBuild>
       </AdditionalRules>
     </Configuration>

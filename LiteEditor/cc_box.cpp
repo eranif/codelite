@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "cc_box.h"
+#include "codecompletionhelptab.h"
+#include "comment_parser.h"
 #include "ctags_manager.h"
 #include <wx/wupdlock.h>
 #include "editor_config.h"
@@ -33,9 +35,11 @@
 #include <wx/xrc/xmlres.h>
 #include "entry.h"
 #include "plugin.h"
+#include <wx/tooltip.h>
+#include <wx/tipwin.h>
 
 #define BOX_HEIGHT 250
-#define BOX_WIDTH  500
+#define BOX_WIDTH  350
 
 CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 		:
@@ -49,6 +53,8 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 {
 	m_constructing = true;
 	HideCCBox();
+
+	m_tooltip = new wxToolTip(wxT(""));
 
 	// load all the CC images
 	wxImageList *il = new wxImageList(16, 16, true);
@@ -310,7 +316,7 @@ void CCBox::Show(const wxString& word)
 		if ( IsShown() ) {
 			HideCCBox();
 		}
-		m_hideExtInfoPane = true;
+		DoHideCCHelpTab();
 		return;
 	}
 
@@ -324,7 +330,7 @@ void CCBox::Show(const wxString& word)
 	m_selectedItem = m_listCtrl->FindMatch(word, fullMatch);
 	if ( m_selectedItem == wxNOT_FOUND && GetAutoHide() ) {
 		// return without calling wxWindow::Show
-		m_hideExtInfoPane = true;
+		DoHideCCHelpTab();
 		return;
 	}
 
@@ -335,12 +341,10 @@ void CCBox::Show(const wxString& word)
 	// hide the extra info pane
 	int suggestedWidth (BOX_WIDTH);
 	if(m_hideExtInfoPane) {
-		if(m_richText->IsShown())
-			m_richText->Hide();
-		suggestedWidth /= 2;
+		editor->GetCCHelpTab()->Clear();
 
-	} else if(!m_hideExtInfoPane && m_richText->IsShown() == false) {
-		m_richText->Show();
+	} else if(!m_hideExtInfoPane) {
+		// TODO : Make sure that the 'CC Help' tab is selected
 	}
 
 	SetSize(suggestedWidth, m_height);
@@ -547,7 +551,7 @@ void CCBox::HideCCBox()
 {
 	if( IsShown() ) {
 		Hide();
-		m_hideExtInfoPane = true;
+		DoHideCCHelpTab();
 		if( !m_constructing ) {
 			bool checked  = m_toolBar1->FindById(TOOL_SHOW_PRIVATE_MEMBERS)->IsToggled();
 			EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_All_Members"), checked ? 1 : 0);
@@ -563,86 +567,77 @@ void CCBox::OnShowPublicItems(wxCommandEvent& event)
 
 void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 {
-	wxWindowUpdateLocker locker(m_richText);
-	m_richText->Clear();
+	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
+	wxWindowUpdateLocker locker(editor->GetCCHelpTab());
 
-	// set the default font
-	wxFont defaultFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	wxFont codeFont    = wxFont(defaultFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxNORMAL);
-
-	wxFont boldFont;
-	m_richText->SetFont(defaultFont);
-	boldFont = defaultFont;
-	boldFont.SetWeight(wxBOLD);
-
-	wxTextAttr titleAttr;
-	titleAttr.SetFont(boldFont);
-
-	wxTextAttr codeAttr;
-	codeAttr.SetFont(codeFont);
-
-	m_richText->SetInsertionPointEnd();
+	CodeCompletionHelpTab *helpWin = editor->GetCCHelpTab();
+	helpWin->Clear();
 
 	if( tag.IsMethod() ) {
 
 		if(tag.IsConstructor())
-			DoWriteStyledText(wxT("[constructor]\n\n"), titleAttr);
+			helpWin->WriteTitle(wxT("[constructor]\n"));
 
 		else if( tag.IsDestructor())
-			DoWriteStyledText(wxT("[destructor]\n\n"), titleAttr);
+			helpWin->WriteTitle(wxT("[destructor]\n"));
 
-		DoWriteStyledText(wxT("Signature:\n"), titleAttr);
+		helpWin->WriteTitle(wxT("Signature:\n"));
 
 		TagEntryPtr p(new TagEntry(tag));
-		DoWriteStyledText(TagsManagerST::Get()->FormatFunction(p, FunctionFormat_WithVirtual) + wxT("\n"), codeAttr);
-
-		DoWriteStyledText(wxT("File:\n"), titleAttr);
-		m_richText->AppendText(tag.GetFile() + wxT("\n\n"));
-
-		DoWriteStyledText(wxT("Line:\n"), titleAttr);
-		m_richText->AppendText(wxString::Format(wxT("%d\n"), tag.GetLine()));
+		helpWin->WriteCode(TagsManagerST::Get()->FormatFunction(p, FunctionFormat_WithVirtual) + wxT("\n"));
 
 	} else if( tag.IsClass() ) {
 
-		DoWriteStyledText(wxT("Kind:\n"), titleAttr);
-		m_richText->AppendText(wxString::Format(wxT("%s\n\n"), tag.GetKind().c_str() ));
+		helpWin->WriteTitle(wxT("Kind:\n"));
+		helpWin->AppendText(wxString::Format(wxT("%s\n\n"), tag.GetKind().c_str() ));
 
 		if(tag.GetInherits().IsEmpty() == false) {
-			DoWriteStyledText(wxT("Inherits:\n"), titleAttr);
-			m_richText->AppendText(tag.GetInherits() + wxT("\n\n"));
+			helpWin->WriteTitle(wxT("Inherits:\n"));
+			helpWin->AppendText(tag.GetInherits() + wxT("\n\n"));
 		}
-
-		DoWriteStyledText(wxT("File:\n"), titleAttr);
-		m_richText->AppendText(tag.GetFile() + wxT("\n\n"));
-
-		DoWriteStyledText(wxT("Line:\n"), titleAttr);
-		m_richText->AppendText(wxString::Format(wxT("%d\n"), tag.GetLine()));
 
 	} else {
 
-		DoWriteStyledText(wxT("Kind:\n"), titleAttr);
-		m_richText->AppendText(wxString::Format(wxT("%s\n\n"), tag.GetKind().c_str() ));
+		helpWin->WriteTitle(wxT("Kind:\n"));
+		helpWin->AppendText(wxString::Format(wxT("%s\n\n"), tag.GetKind().c_str() ));
 
-		DoWriteStyledText(wxT("Match Pattern:\n"), titleAttr);
-		m_richText->AppendText(tag.GetPattern() + wxT("\n\n"));
+		helpWin->WriteTitle(wxT("Match Pattern:\n"));
+		helpWin->AppendText(tag.GetPattern() + wxT("\n\n"));
 
-		DoWriteStyledText(wxT("File:\n"), titleAttr);
-		m_richText->AppendText(tag.GetFile() + wxT("\n\n"));
-
-		DoWriteStyledText(wxT("Line:\n"), titleAttr);
-		m_richText->AppendText(wxString::Format(wxT("%d\n"), tag.GetLine()));
 	}
-}
 
-void CCBox::DoWriteStyledText(const wxString& text, const wxTextAttr& style)
-{
-	int start = m_richText->GetLastPosition();
-	m_richText->AppendText(text);
-	m_richText->SetStyle(start, m_richText->GetLastPosition(), style);
+	// Append the file / line attributes
+	helpWin->WriteTitle(wxT("File / Line:\n"));
+	helpWin->WriteFileURL(wxString::Format(wxT("%s:%d"), tag.GetFile().c_str(), tag.GetLine()));
+	helpWin->AppendText(wxT("\n\n"));
 
+	// Add comment section
+	wxString filename (m_comments.getFilename().c_str(), wxConvUTF8);
+	if(filename != tag.GetFile()) {
+		m_comments.clear();
+		ParseComments(tag.GetFile().mb_str(wxConvUTF8).data(), m_comments);
+		m_comments.setFilename(tag.GetFile().mb_str(wxConvUTF8).data());
+	}
+
+	wxString tagComment;
+	std::string comment = m_comments.getCommentForLine(tag.GetLine()-1);
+	if(comment.empty() == false) {
+		helpWin->WriteTitle(wxT("Comment:\n"));
+		tagComment = wxString::Format(wxT("%s\n"), wxString(comment.c_str(), wxConvUTF8).c_str());
+		helpWin->AppendText(tagComment);
+
+	}
 }
 
 void CCBox::EnableExtInfoPane()
 {
 	m_hideExtInfoPane = false;
+}
+
+void CCBox::DoHideCCHelpTab()
+{
+	m_hideExtInfoPane = true;
+	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
+	CodeCompletionHelpTab *helpWin = editor->GetCCHelpTab();
+	helpWin->Clear();
 }

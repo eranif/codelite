@@ -51,6 +51,7 @@ class wxFindReplaceDialog;
 class CCBox;
 class clEditorTipWindow;
 class DisplayVariableDlg;
+class CodeCompletionHelpTab;
 
 enum sci_annotation_styles {
 	eAnnotationStyleError = 128, eAnnotationStyleWarning
@@ -156,9 +157,7 @@ public:
 		return m_functionTip;
 	}
 
-//	DisplayVariableDlg *GetDebuggerTip() {
-//		return m_debuggerTip;
-//	}
+	CodeCompletionHelpTab* GetCCHelpTab() ;
 
 public:
 	/// Construct a LEditor object

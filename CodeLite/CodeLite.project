@@ -86,6 +86,8 @@
     <File Name="typedef_parser.cpp"/>
     <File Name="scope_optimizer.h"/>
     <File Name="scope_optimizer.cpp"/>
+    <File Name="comment_parser.h"/>
+    <File Name="comment_parser.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="database">
     <File Name="comment.h"/>

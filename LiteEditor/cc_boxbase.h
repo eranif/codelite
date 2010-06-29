@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May  4 2010)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -15,12 +15,11 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/string.h>
-#include <wx/textctrl.h>
-#include <wx/sizer.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/toolbar.h>
+#include <wx/sizer.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -36,7 +35,6 @@ class CCBoxBase : public wxPanel
 
 	protected:
 		CCVirtualListCtrl* m_listCtrl;
-		wxTextCtrl* m_richText;
 		wxToolBar* m_toolBar1;
 
 		// Virtual event handlers, overide them in your derived class

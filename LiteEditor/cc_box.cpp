@@ -592,7 +592,24 @@ void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 		prefix << wxString::Format(wxT("%s\n"), tag.GetKind().c_str() );
 
 		prefix << wxT("Match Pattern: ");
-		prefix << tag.GetPattern() << wxT("\n");
+
+		// Prettify the match pattern
+		wxString matchPattern(tag.GetPattern());
+		matchPattern.Trim().Trim(false);
+
+		if(matchPattern.StartsWith(wxT("/^"))) {
+			matchPattern.Replace(wxT("/^"), wxT(""));
+		}
+
+		if(matchPattern.EndsWith(wxT("$/"))) {
+			matchPattern.Replace(wxT("$/"), wxT(""));
+		}
+
+		matchPattern.Replace(wxT("\t"), wxT(" "));
+		while(matchPattern.Replace(wxT("  "), wxT(" "))) {}
+
+		matchPattern.Trim().Trim(false);
+		prefix << matchPattern << wxT("\n");
 
 	} else {
 		// non valid tag entry
@@ -627,6 +644,12 @@ void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 
 	editor->CallTipCancel();
 	m_startPos == wxNOT_FOUND ? m_startPos = editor->GetCurrentPos() : m_startPos;
+
+	// if nothing to display skip this
+	prefix.Trim().Trim(false);
+	if(prefix.IsEmpty()) {
+		return;
+	}
 	editor->CallTipShowExt( m_startPos, prefix);
 }
 

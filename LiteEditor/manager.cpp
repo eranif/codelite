@@ -342,9 +342,19 @@ void Manager::CloseWorkspace()
 	wxSetWorkingDirectory ( GetStarupDirectory() );
 #endif
 
+	/////////////////////////////////////////////////////////////////
+	// set back the "Default" environment variable as the active set
+	/////////////////////////////////////////////////////////////////
+
+	EvnVarList vars = EnvironmentConfig::Instance()->GetSettings();
+	if(vars.IsSetExist(wxT("Default"))) {
+		vars.SetActiveSet(wxT("Default"));
+	}
+	EnvironmentConfig::Instance()->SetSettings(vars);
+	Frame::Get()->SetEnvStatusMessage();
+
 	UpdateParserPaths();
 	m_workspceClosing = false;
-
 }
 
 void Manager::AddToRecentlyOpenedWorkspaces ( const wxString &fileName )

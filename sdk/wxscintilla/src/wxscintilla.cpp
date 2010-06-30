@@ -162,7 +162,6 @@ bool wxScintilla::Create (wxWindow *parent,
 #if defined (__WXMAC__) || wxCHECK_VERSION(2, 9, 0)
     style |= wxVSCROLL | wxHSCROLL;
 #endif
-
     if (!wxControl::Create (parent, id, pos, size,
                             style | wxWANTS_CHARS | wxCLIP_CHILDREN,
                             wxDefaultValidator, name)) {
@@ -1435,6 +1434,13 @@ int wxScintilla::GetSearchFlags() {
 void wxScintilla::CallTipShow (int pos, const wxString& definition) {
     SendMsg (SCI_CALLTIPSHOW, pos, (long)(const char*)wx2sci(definition));
 }
+
+// ERAN IFRAH
+// Show a call tip containing a definition near position pos.
+void wxScintilla::CallTipShowExt (int pos, const wxString& definition) {
+    SendMsg (SCI_CALLTIPSHOWEXT, pos, (long)(const char*)wx2sci(definition));
+}
+// END
 
 // Remove the call tip from the screen.
 void wxScintilla::CallTipCancel() {

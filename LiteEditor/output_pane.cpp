@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
 #include "output_pane_book.h"
-#include "codecompletionhelptab.h"
 #include "frame.h"
 #include "editor_config.h"
 #include <wx/dcbuffer.h>
@@ -44,7 +43,6 @@ const wxString OutputPane::OUTPUT_DEBUG      = wxT("Debug");
 const wxString OutputPane::REPLACE_IN_FILES  = wxT("Replace");
 const wxString OutputPane::TASKS             = wxT("Tasks");
 const wxString OutputPane::TRACE_TAB         = wxT("Trace");
-const wxString OutputPane::CC_TAB            = wxT("CC Help");
 
 OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 200))
@@ -94,9 +92,6 @@ void OutputPane::CreateGUIControls()
 	wxTextCtrl *text = new wxTextCtrl(m_book, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
 	m_book->AddPage(text, TRACE_TAB, false, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
 	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
-
-	m_ccHelpTab = new CodeCompletionHelpTab(m_book);
-	m_book->AddPage(m_ccHelpTab, CC_TAB, false, wxXmlResource::Get()->LoadBitmap(wxT("cc_help")));
 
 	m_taskPanel = new TaskPanel(m_book, wxID_ANY, TASKS);
 	m_book->AddPage(m_taskPanel, TASKS, false, wxXmlResource::Get()->LoadBitmap(wxT("todo")));

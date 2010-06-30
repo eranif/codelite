@@ -23,7 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "cc_box.h"
-#include "codecompletionhelptab.h"
 #include "comment_parser.h"
 #include "ctags_manager.h"
 #include <wx/wupdlock.h>
@@ -39,7 +38,7 @@
 #include <wx/tipwin.h>
 
 #define BOX_HEIGHT 250
-#define BOX_WIDTH  350
+#define BOX_WIDTH  250
 
 CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 		:
@@ -50,6 +49,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 		, m_insertSingleChoice(autoInsertSingleChoice)
 		, m_owner(NULL)
 		, m_hideExtInfoPane(true)
+		, m_startPos(wxNOT_FOUND)
 {
 	m_constructing = true;
 	HideCCBox();
@@ -158,6 +158,7 @@ void CCBox::Adjust()
 	wxSize size = parent->GetClientSize();
 	int diff = size.y - pt.y;
 	m_height = BOX_HEIGHT;
+
 	if (diff < BOX_HEIGHT) {
 		pt.y -= BOX_HEIGHT;
 		pt.y -= hh;
@@ -181,6 +182,7 @@ void CCBox::Adjust()
 			pt.x = 0;
 		}
 	}
+	parent->m_ccPoint = pt;
 	Move(pt);
 }
 
@@ -340,13 +342,6 @@ void CCBox::Show(const wxString& word)
 
 	// hide the extra info pane
 	int suggestedWidth (BOX_WIDTH);
-	if(m_hideExtInfoPane) {
-		editor->GetCCHelpTab()->Clear();
-
-	} else if(!m_hideExtInfoPane) {
-		// TODO : Make sure that the 'CC Help' tab is selected
-	}
-
 	SetSize(suggestedWidth, m_height);
 	GetSizer()->Layout();
 	wxWindow::Show();
@@ -379,7 +374,7 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 			// in the middle, and trigger the function tooltip
 
 			if (word.Find(wxT("(")) == wxNOT_FOUND && triggerTip) {
-				// image id in range of 8-10 is function
+				// ima)ge id in range of 8-10 is function
 				editor->InsertText(editor->GetCurrentPos(), wxT("()"));
 				editor->CharRight();
 				int pos = editor->GetCurrentPos();
@@ -568,51 +563,41 @@ void CCBox::OnShowPublicItems(wxCommandEvent& event)
 void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 {
 	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
-	wxWindowUpdateLocker locker(editor->GetCCHelpTab());
-
-	CodeCompletionHelpTab *helpWin = editor->GetCCHelpTab();
-	helpWin->Clear();
+	wxString prefix;
 
 	if( tag.IsMethod() ) {
 
 		if(tag.IsConstructor())
-			helpWin->WriteTitle(wxT("[constructor]\n"));
+			prefix << wxT("[constructor]\n");
 
 		else if( tag.IsDestructor())
-			helpWin->WriteTitle(wxT("[destructor]\n"));
-
-		helpWin->WriteTitle(wxT("Signature:\n"));
+			prefix << wxT("[destructor]\n");
 
 		TagEntryPtr p(new TagEntry(tag));
-		helpWin->WriteCode(TagsManagerST::Get()->FormatFunction(p, FunctionFormat_WithVirtual) + wxT("\n"));
+		prefix << TagsManagerST::Get()->FormatFunction(p, FunctionFormat_WithVirtual|FunctionFormat_Arg_Per_Line) << wxT("\n");
 
 	} else if( tag.IsClass() ) {
 
-		helpWin->WriteTitle(wxT("Kind:\n"));
-		helpWin->AppendText(wxString::Format(wxT("%s\n\n"), tag.GetKind().c_str() ));
+		prefix << wxT("Kind: ");
+		prefix << wxString::Format(wxT("%s\n"), tag.GetKind().c_str() );
 
 		if(tag.GetInherits().IsEmpty() == false) {
-			helpWin->WriteTitle(wxT("Inherits:\n"));
-			helpWin->AppendText(tag.GetInherits() + wxT("\n\n"));
+			prefix << wxT("Inherits: ");
+			prefix << tag.GetInherits() << wxT("\n");
 		}
 
 	} else if(tag.IsMacro() || tag.IsTypedef() || tag.IsContainer() || tag.GetKind() == wxT("member") || tag.GetKind() == wxT("variable")) {
 
-		helpWin->WriteTitle(wxT("Kind:\n"));
-		helpWin->AppendText(wxString::Format(wxT("%s\n\n"), tag.GetKind().c_str() ));
+		prefix << wxT("Kind : ");
+		prefix << wxString::Format(wxT("%s\n"), tag.GetKind().c_str() );
 
-		helpWin->WriteTitle(wxT("Match Pattern:\n"));
-		helpWin->AppendText(tag.GetPattern() + wxT("\n\n"));
+		prefix << wxT("Match Pattern: ");
+		prefix << tag.GetPattern() << wxT("\n");
 
 	} else {
 		// non valid tag entry
 		return;
 	}
-
-	// Append the file / line attributes
-	helpWin->WriteTitle(wxT("File / Line:\n"));
-	helpWin->WriteFileURL(wxString::Format(wxT("%s:%d"), tag.GetFile().c_str(), tag.GetLine()));
-	helpWin->AppendText(wxT("\n\n"));
 
 	// Add comment section
 	wxString filename (m_comments.getFilename().c_str(), wxConvUTF8);
@@ -635,11 +620,14 @@ void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 	foundComment = !comment.empty();
 
 	if( foundComment ) {
-		helpWin->WriteTitle(wxT("Comment:\n"));
 		tagComment = wxString::Format(wxT("%s\n"), wxString(comment.c_str(), wxConvUTF8).c_str());
-		helpWin->AppendText(tagComment);
-
+		prefix << wxT("----------\n");
+		prefix << tagComment;
 	}
+
+	editor->CallTipCancel();
+	m_startPos == wxNOT_FOUND ? m_startPos = editor->GetCurrentPos() : m_startPos;
+	editor->CallTipShowExt( m_startPos, prefix);
 }
 
 void CCBox::EnableExtInfoPane()
@@ -650,7 +638,8 @@ void CCBox::EnableExtInfoPane()
 void CCBox::DoHideCCHelpTab()
 {
 	m_hideExtInfoPane = true;
+	m_startPos = wxNOT_FOUND;
 	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
-	CodeCompletionHelpTab *helpWin = editor->GetCCHelpTab();
-	helpWin->Clear();
+	if(editor)
+		editor->CallTipCancel();
 }

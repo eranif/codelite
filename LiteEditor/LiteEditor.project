@@ -504,8 +504,6 @@
     <File Name="debuggerasciiviewer.cpp"/>
     <File Name="localstable.cpp"/>
     <File Name="localstable.h"/>
-    <File Name="codecompletionhelptab.h"/>
-    <File Name="codecompletionhelptab.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

@@ -2604,6 +2604,9 @@ public:
     // Show a call tip containing a definition near position pos.
     void CallTipShow (int pos, const wxString& definition);
 
+	// CodeLite related: show call tip at given pos but 250pixles to the top / right
+	void CallTipShowExt (int pos, const wxString& definition);
+
     // Remove the call tip from the screen.
     void CallTipCancel();
 
@@ -3495,6 +3498,11 @@ protected:
     wxScrollBar* m_hScrollBar;
     bool m_lastKeyDownConsumed;
 
+	// ERAN IFRAH
+public:
+	wxPoint m_ccPoint;
+
+	// END
     friend class ScintillaWX;
     friend class Platform;
 

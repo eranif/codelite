@@ -75,12 +75,15 @@ enum NormalizeFuncFlag {
 	// variable default value
 	Normalize_Func_Default_value = 0x00000002,
 	// re-place back macros
-	Normalize_Func_Reverse_Macro = 0x00000004
+	Normalize_Func_Reverse_Macro = 0x00000004,
+	// Each argument is placed on a separate line
+	Normalize_Func_Arg_Per_Line  = 0x00000008
 };
 
 enum FunctionFormatFlag {
 	FunctionFormat_WithVirtual   = 0x00000001,
-	FunctionFormat_Impl          = 0x00000002
+	FunctionFormat_Impl          = 0x00000002,
+	FunctionFormat_Arg_Per_Line  = 0x00000004
 };
 
 class ITagsStorage;

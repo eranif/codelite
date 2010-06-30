@@ -51,7 +51,7 @@ class CCBox : public CCBoxBase {
 	bool                     m_constructing;
 	bool                     m_hideExtInfoPane;
 	CommentParseResult       m_comments;
-
+	int                      m_startPos;
 protected:
 	// Handlers for CCBoxBase events.
 	void OnItemActivated( wxListEvent& event );

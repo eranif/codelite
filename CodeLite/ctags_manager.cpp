@@ -1737,11 +1737,22 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
 		}
 	}
 
+	// Build the flags required by the NormalizeFunctionSig() method
+	size_t tmpFlags(0);
 	if ( flags & FunctionFormat_Impl ) {
-		body << tag->GetName() << NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name | Normalize_Func_Reverse_Macro);
+		tmpFlags |= Normalize_Func_Name | Normalize_Func_Reverse_Macro;
 	} else {
-		body << tag->GetName() << NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name | Normalize_Func_Reverse_Macro | Normalize_Func_Default_value );
+		tmpFlags |= Normalize_Func_Name | Normalize_Func_Reverse_Macro | Normalize_Func_Default_value;
 	}
+
+	if(flags & FunctionFormat_Arg_Per_Line)
+		tmpFlags |= Normalize_Func_Arg_Per_Line;
+
+	if(flags & FunctionFormat_Arg_Per_Line)
+		body << wxT("\n");
+
+	body << tag->GetName();
+	body << NormalizeFunctionSig( tag->GetSignature(), tmpFlags);
 
 	if ( foo.m_isConst ) {
 		body << wxT(" const");
@@ -1959,6 +1970,9 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
 	if (paramLen) {
 		paramLen->clear();
 	}
+	if(flags & Normalize_Func_Arg_Per_Line && li.size()) {
+		str_output << wxT("\n    ");
+	}
 
 	VariableList::iterator iter = li.begin();
 	for ( ; iter != li.end() ; iter++) {
@@ -2004,7 +2018,6 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
 			str_output << wxT(" ...");
 		}
 
-
 		if (v.m_arrayBrackets.empty() == false) {
 			str_output << wxT(" ") << _U(v.m_arrayBrackets.c_str());
 		}
@@ -2018,6 +2031,9 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
 			paramLen->push_back(std::pair<int, int>(start_offset, str_output.length() - start_offset));
 		}
 		str_output << wxT(", ");
+		if(flags & Normalize_Func_Arg_Per_Line && li.size()) {
+			str_output << wxT("\n    ");
+		}
 	}
 
 	if (li.empty() == false) {

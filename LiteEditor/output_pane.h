@@ -37,7 +37,6 @@ class ShellTab;
 class DebugTab;
 class TaskPanel;
 class OutputPaneBook;
-class CodeCompletionHelpTab;
 
 /**
  * \ingroup LiteEditor
@@ -66,7 +65,6 @@ public:
 	static const wxString REPLACE_IN_FILES;
 	static const wxString TASKS;
 	static const wxString TRACE_TAB;
-	static const wxString CC_TAB;
 
 private:
 	wxString m_caption;
@@ -80,7 +78,6 @@ private:
 	ShellTab              *m_outputWind;
 	DebugTab              *m_outputDebug;
 	TaskPanel             *m_taskPanel;
-	CodeCompletionHelpTab *m_ccHelpTab;
 
 	void CreateGUIControls();
 
@@ -106,7 +103,6 @@ public:
 	ErrorsTab             *GetErrorsTab        () { return m_errorsWin;         }
 	ShellTab              *GetOutputWindow     () { return m_outputWind;        }
 	DebugTab              *GetDebugWindow      () { return m_outputDebug;       }
-	CodeCompletionHelpTab *GetCCHelpTab        () { return m_ccHelpTab;         }
 };
 
 #endif // OUTPUT_PANE_H

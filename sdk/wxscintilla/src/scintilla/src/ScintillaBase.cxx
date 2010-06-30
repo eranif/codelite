@@ -409,6 +409,35 @@ int ScintillaBase::AutoCompleteGetCurrentText(char *buffer) {
 		*buffer = '\0';
 	return 0;
 }
+// ERAN IFRAH
+void  ScintillaBase::CallTipShowExt(Point pt, const char *defn)
+{
+	ac.Cancel();
+
+	// If container knows about STYLE_CALLTIP then use it in place of the
+	// STYLE_DEFAULT for the face name, size and character set. Also use it
+	// for the foreground and background colour.
+	int ctStyle = ct.UseStyleCallTip() ? STYLE_CALLTIP : STYLE_DEFAULT;
+	if (ct.UseStyleCallTip()) {
+		ct.SetForeBack(vs.styles[STYLE_CALLTIP].fore, vs.styles[STYLE_CALLTIP].back);
+	}
+	PRectangle rc = ct.CallTipStart(sel.MainCaret(), pt,
+		defn,
+		vs.styles[ctStyle].fontName,
+		vs.styles[ctStyle].sizeZoomed,
+		CodePage(),
+		vs.styles[ctStyle].characterSet,
+		wMain);
+
+	rc.left += 250;
+	rc.top  -= 250;
+
+	// Now display the window.
+	CreateCallTipWindow(rc);
+	ct.wCallTip.SetPositionRelative(rc, wMain);
+	ct.wCallTip.Show();
+}
+// END
 
 void ScintillaBase::CallTipShow(Point pt, const char *defn) {
 	ac.Cancel();
@@ -666,7 +695,11 @@ sptr_t ScintillaBase::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lPara
 		CallTipShow(LocationFromPosition(wParam),
 			reinterpret_cast<const char *>(lParam));
 		break;
-
+// ERAN IFRAH
+	case SCI_CALLTIPSHOWEXT:
+		CallTipShowExt(LocationFromPosition(wParam), reinterpret_cast<const char *>(lParam));
+		break;
+// END
 	case SCI_CALLTIPCANCEL:
 		ct.CallTipCancel();
 		break;

@@ -3607,5 +3607,3 @@ void LEditor::ChangeCase(bool toLower)
 		CharRight();
 	}
 }
-
-CodeCompletionHelpTab* LEditor::GetCCHelpTab(){	return Frame::Get()->GetOutputPane()->GetCCHelpTab();}

@@ -623,8 +623,18 @@ void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 	}
 
 	wxString tagComment;
+	bool     foundComment(false);
+
 	std::string comment = m_comments.getCommentForLine(tag.GetLine()-1);
-	if(comment.empty() == false) {
+	foundComment = !comment.empty();
+
+	// if we did not find a comment, try 2 lines up
+	if(!foundComment) {
+		comment = m_comments.getCommentForLine(tag.GetLine()-2);
+	}
+	foundComment = !comment.empty();
+
+	if( foundComment ) {
 		helpWin->WriteTitle(wxT("Comment:\n"));
 		tagComment = wxString::Format(wxT("%s\n"), wxString(comment.c_str(), wxConvUTF8).c_str());
 		helpWin->AppendText(tagComment);

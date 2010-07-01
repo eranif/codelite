@@ -21,6 +21,7 @@ NewQuickWatch::NewQuickWatch( wxWindow* parent, wxWindowID id, const wxString& t
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
 	
 	m_treeCtrl = new wxTreeCtrl( m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxNO_BORDER );
+	m_treeCtrl->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOTEXT ) );
 	m_treeCtrl->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
 	
 	bSizer5->Add( m_treeCtrl, 1, wxEXPAND, 0 );

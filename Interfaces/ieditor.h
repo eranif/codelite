@@ -34,6 +34,11 @@
 
 class NavMgr;
 
+enum {
+	Format_Text_Default          = 0x00000000,
+	Format_Text_Indent_Prev_Line = 0x00000001
+};
+
 //------------------------------------------------------------------
 // Defines the interface to the editor control
 //------------------------------------------------------------------
@@ -140,12 +145,12 @@ public:
 	 * \brief return the selected text start position in bytes.
 	 */
 	virtual int GetSelectionStart() = 0;
-	
+
 	/**
 	 * \brief return the selected text end position in bytes.
 	 */
 	virtual int GetSelectionEnd() = 0;
-	
+
 	/**
 	 * \brief return the selected text.
 	 * \return the selected text, or wxEmptyString if no selection exist in the document
@@ -251,11 +256,12 @@ public:
     virtual int WordEndPos (int pos, bool onlyWordCharacters) = 0;
 
 	/**
-	 * Insert text to the editor and keeping the current position line indentation
+	 * Prepend the indentation level found at line at 'pos' to each line in the input string
 	 * \param text text to enter
 	 * \param pos position to insert the text
+	 * \param flags set the formatting flags
 	 */
-	virtual wxString FormatTextKeepIndent(const wxString &text, int pos) = 0;
+	virtual wxString FormatTextKeepIndent(const wxString &text, int pos, size_t flags = 0) = 0;
 
 	/**
 	 * @brief creating a browsing record that can be stored in the navigation manager
@@ -278,6 +284,24 @@ public:
 	 * @param lexerName
 	 */
 	virtual void SetLexerName(const wxString &lexerName) = 0;
+
+	/**
+	 * @brief return the line numebr containing 'pos'
+	 * @param pos the position
+	 */
+	virtual int LineFromPos(int pos) = 0;
+	/**
+	 * @brief return the start pos of line nummber
+	 * @param line the line number
+	 * @return line nummber or 0 if the document is empty
+	 */
+	virtual int PosFromLine(int line) = 0;
+
+	/**
+	 * @brief return the END position of 'line'
+	 * @param line the line number
+	 */
+	virtual int LineEnd(int line) = 0;
 };
 
 #endif //IEDITOR_H

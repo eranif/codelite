@@ -1070,7 +1070,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	// keep the original file permissions
 	mode_t origPermissions = GTKGetFilePermissions(fileName.GetFullPath());
 #endif
-	
+
 	// if the saving was done to a temporary file, override it
 	if (tmp_file.IsEmpty() == false) {
 		if (wxRenameFile(tmp_file, fileName.GetFullPath(), true) == false) {
@@ -1080,16 +1080,16 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 			// override was successful, restore execute permissions
 #ifdef __WXGTK__
 			mode_t newFilePermissions = GTKGetFilePermissions(fileName.GetFullPath());
-			
+
 			if(origPermissions & S_IXUSR)
 				newFilePermissions |= S_IXUSR;
-				
+
 			if(origPermissions & S_IXGRP)
 				newFilePermissions |= S_IXGRP;
-				
+
 			if(origPermissions & S_IXOTH)
 				newFilePermissions |= S_IXOTH;
-			
+
 			::chmod(fileName.GetFullPath().mb_str(wxConvUTF8), newFilePermissions);
 #endif
 		}
@@ -2192,17 +2192,29 @@ void LEditor::InsertTextWithIndentation(const wxString &text, int lineno)
 	InsertText(PositionFromLine(lineno), textTag);
 }
 
-wxString LEditor::FormatTextKeepIndent(const wxString &text, int pos)
+wxString LEditor::FormatTextKeepIndent(const wxString &text, int pos, size_t flags)
 {
 	//keep the page idnetation level
 	wxString textToInsert(text);
-
-	int indentSize = GetIndent();
-	int indent = GetLineIndentation(LineFromPosition(pos));
-
 	wxString indentBlock;
+
+	int indentSize = 0;
+	int indent     = 0;
+
+	if(flags & Format_Text_Indent_Prev_Line) {
+		indentSize = GetIndent();
+		int foldLevel = (GetFoldLevel(LineFromPosition(pos)) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+		indent = foldLevel*indentSize;
+
+	} else {
+		indentSize = GetIndent();
+		indent     = GetLineIndentation(LineFromPosition(pos));
+	}
+
 	if (GetUseTabs()) {
-		indent = indent / indentSize;
+		if(indentSize)
+			indent = indent / indentSize;
+
 		for (int i=0; i<indent; i++) {
 			indentBlock << wxT("\t");
 		}
@@ -2213,7 +2225,6 @@ wxString LEditor::FormatTextKeepIndent(const wxString &text, int pos)
 	}
 
 	wxString eol = GetEolString();
-
 	textToInsert.Replace(wxT("\r"), wxT("\n"));
 	wxArrayString lines = wxStringTokenize(textToInsert, wxT("\n"), wxTOKEN_STRTOK);
 
@@ -2222,7 +2233,6 @@ wxString LEditor::FormatTextKeepIndent(const wxString &text, int pos)
 		textToInsert << indentBlock;
 		textToInsert << lines.Item(i) << eol;
 	}
-
 	return textToInsert;
 }
 
@@ -3635,4 +3645,20 @@ void LEditor::ChangeCase(bool toLower)
 		toLower ? LowerCase() : UpperCase();
 		CharRight();
 	}
+}
+
+int LEditor::LineFromPos(int pos)
+{
+	return wxScintilla::LineFromPosition(pos);
+}
+
+int LEditor::PosFromLine(int line)
+{
+	return wxScintilla::PositionFromLine(line);
+}
+
+int LEditor::LineEnd(int line)
+{
+	int pos = wxScintilla::PositionFromLine(line);
+	return pos + wxScintilla::LineLength(line);
 }

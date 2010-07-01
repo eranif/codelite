@@ -477,7 +477,10 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 	}
 
 	// convert the data into wxString
-	tags = wxString::From8BitData(reply.getTags().c_str());
+	tags = wxString(reply.getTags().c_str(), wxConvUTF8);
+	if(tags.empty()) {
+		tags = wxString::From8BitData(reply.getTags().c_str());
+	}
 }
 
 TagTreePtr TagsManager::TreeFromTags(const wxString& tags, int &count)

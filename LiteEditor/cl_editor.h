@@ -566,11 +566,32 @@ public:
 	virtual int WordEndPos (int pos, bool onlyWordCharacters);
 
 	/**
-	 * Insert text to the editor and keeping the indentation
+	 * Prepend the indentation level found at line at 'pos' to each line in the input string
 	 * \param text text to enter
 	 * \param pos position to insert the text
+	 * \param flags formatting flags
 	 */
-	virtual wxString FormatTextKeepIndent(const wxString &text, int pos);
+	virtual wxString FormatTextKeepIndent(const wxString &text, int pos, size_t flags = 0);
+
+
+	/**
+	 * @brief return the line numebr containing 'pos'
+	 * @param pos the position
+	 */
+	virtual int LineFromPos(int pos);
+
+	/**
+	 * @brief return the start pos of line nummber
+	 * @param line the line number
+	 * @return line nummber or 0 if the document is empty
+	 */
+	virtual int PosFromLine(int line);
+
+	/**
+	 * @brief return the END position of 'line'
+	 * @param line the line number
+	 */
+	virtual int LineEnd(int line);
 
 	//----------------------------------------------------------------------------
 	//----------------------------------------------------------------------------

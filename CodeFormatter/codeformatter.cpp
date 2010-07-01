@@ -147,19 +147,19 @@ void CodeFormatter::OnFormat(wxCommandEvent &e)
 {
 	IEditor *editor(NULL);
 	wxString fileToFormat = e.GetString();
-	
+
 	// If we got a file name in the event, use it instead of the active editor
 	if(fileToFormat.IsEmpty() == false) {
 		if(!m_mgr->OpenFile(fileToFormat)) {
 			return;
 		}
 	}
-	
+
 	// get the editor that requires formatting
 	editor = m_mgr->GetActiveEditor();
 	if (!editor)
 		return;
-	
+
 	m_mgr->SetStatusMessage(wxString::Format(wxT("Formatting: %s..."), editor->GetFileName().GetFullPath().c_str()), 0);
 	DoFormatFile(editor);
 	m_mgr->SetStatusMessage(wxT("Done"), 0);
@@ -181,7 +181,26 @@ void CodeFormatter::DoFormatFile(IEditor *editor)
 	options << (useTabs && tabWidth == indentWidth ? wxT(" -t") : wxT(" -s")) << indentWidth;
 
 	wxString output;
-	AstyleFormat(editor->GetEditorText(), options, output);
+	wxString inputString;
+	bool     formatSelectionOnly( editor->GetSelection().IsEmpty() == false );
+
+	if(formatSelectionOnly) {
+		// get the lines contained in the selection
+		int selStart   = editor->GetSelectionStart();
+		int selEnd     = editor->GetSelectionEnd();
+		int lineNumber = editor->LineFromPos(selStart);
+
+	    selStart  = editor->PosFromLine(lineNumber);
+		selEnd = editor->LineEnd( editor->LineFromPos(selEnd) );
+
+		editor->SelectText(selStart, selEnd - selStart);
+		inputString = editor->GetSelection();
+
+	} else {
+		inputString = editor->GetEditorText();
+	}
+
+	AstyleFormat(inputString, options, output);
 	if (output.IsEmpty() == false) {
 
 		// append new-line
@@ -195,8 +214,16 @@ void CodeFormatter::DoFormatFile(IEditor *editor)
 		}
 		output << eol;
 
-		editor->SetEditorText(output);
-		editor->SetCaretAt(curpos);
+		if( formatSelectionOnly ) {
+			// format the text (add the indentation)
+			output.Trim(false).Trim();
+			output = editor->FormatTextKeepIndent(output, editor->GetSelectionStart(), Format_Text_Indent_Prev_Line);
+			editor->ReplaceSelection(output);
+
+		} else {
+			editor->SetEditorText(output);
+			editor->SetCaretAt(curpos);
+		}
 	}
 }
 

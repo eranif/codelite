@@ -776,33 +776,70 @@ long ScintillaWX::WndProc(unsigned int iMessage, unsigned long wParam, long lPar
 		                                CodePage(),
 		                                vs.styles[ctStyle].characterSet,
 		                                wMain);
+		int tipHeight = rc.Height();
+		int tipWidth  = rc.Width();
 
 		// handle the Y axis
 		int h = rc.Height();
 		rc.top    = sci->m_ccPoint.y;
 		rc.bottom = rc.top + h;
 
-		rc.left   += 250;
-		rc.right  += 250;
+		// Adjust the X coordinates of the tip
+		rc.left   = sci->m_ccPoint.x + 250;
+		rc.right  = rc.left + tipWidth;
+		rc.top    = sci->m_ccPoint.y;
+		rc.bottom = rc.top + tipHeight;
 
 		// If the call-tip window would be out of the client
 		// space, adjust so it displays above the text.
-		PRectangle rcClient = GetClientRectangle();
-		if (rc.bottom > rcClient.bottom) {
-			int offset = rc.bottom - rcClient.bottom;
-			rc.top    -= offset;
-			rc.bottom -= offset;
+
+		// Convert the cilent position to screen position
+		// and perform all calculations based on screen size
+		// once done, convert the result back to client coords
+		static int ww(-1);
+		static int hh(-1);
+		if(hh == -1 || ww == -1)
+			::wxDisplaySize(&ww, &hh);
+
+		wxRect rr = wxRectFromPRectangle(rc);
+		wxPoint parentPt      = sci->ClientToScreen(rr.GetLeftTop());
+		wxPoint parentCCBoxPt = sci->ClientToScreen(sci->m_ccPoint);
+
+		rr.SetTopLeft( parentPt );
+
+		/////////////////////////////////////////////////////////
+		// Adjust the Y axis
+		/////////////////////////////////////////////////////////
+
+		if (rr.GetBottom() > hh) {
+			int offset = (rr.GetBottom()- hh);
+			rr.y -= offset;
+
+			if(rr.y < 0) {
+				rr.y     = 0;
+			}
 		}
 
-		if(rc.right > rcClient.right) {
-			int width = rc.Width();
-			rc.left  = (sci->m_ccPoint.x - width);
-			rc.right = (sci->m_ccPoint.x);
+		if(rr.GetRight() > ww) {
+			int fallbackX = rr.x;
+			rr.x  = parentCCBoxPt.x;
+			rr.x  -= tipWidth;
+
+			if(rr.x < 0) {
+				// moving the tip to the left is not good also
+				// fallback
+				rr.x = fallbackX;
+			}
 		}
+
+		// Convert the 'rr' into Client Coords
+		wxPoint clientPt = sci->ScreenToClient(rr.GetTopLeft());
+		rr.SetTopLeft( clientPt );
+		rc = PRectangle(rr.GetLeft(), rr.GetTop(), rr.GetRight()+1, rr.GetBottom()+1);
 
 		// Now display the window.
 		CreateCallTipWindow(rc);
-		ct.wCallTip.SetPosition(rc);
+		ct.wCallTip.SetPositionRelative(rc, wMain);
 		ct.wCallTip.Show();
 		break;
 	}

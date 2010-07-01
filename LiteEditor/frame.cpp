@@ -138,6 +138,13 @@ const wxEventType wxEVT_LOAD_PERSPECTIVE  = XRCID("load_perspective");
 			return;\
 		}\
 	}
+#ifdef __WXGTK__
+#    define FACTOR_1 0.0
+#    define FACTOR_2 0.0
+#else
+#    define FACTOR_1 2.0
+#    define FACTOR_2 2.0
+#endif
 
 //----------------------------------------------------------------
 // Our main frame
@@ -682,14 +689,16 @@ void Frame::CreateGUIControls(void)
 
 	// Mac / Linux
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_ALLOW_ACTIVE_PANE);
+	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE,                   wxAUI_GRADIENT_VERTICAL);
+	
+#ifndef __WXGTK__
 	wxColor col1 = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 5.0);
 	wxColor col2 = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 2.0);
-
-	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE,                   wxAUI_GRADIENT_VERTICAL);
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,   col2);
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR, col2);
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,            col1);
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,          col1);
+#endif
 
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,       wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,     wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTIONTEXT));

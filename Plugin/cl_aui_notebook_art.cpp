@@ -92,10 +92,14 @@ clAuiTabArt::clAuiTabArt()
 	m_tab_ctrl_height = 0;
 
 	wxColour base_colour = DrawingUtils::GetPanelBgColour();
-
 	m_base_colour = base_colour;
+	
+#ifdef __WXGTK__
+	wxColor border_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+#else
 	wxColor border_colour = DrawingUtils::DarkColour(m_base_colour, 4.0);
-
+#endif
+	
 	m_border_pen = wxPen(border_colour);
 	m_base_colour_pen = wxPen(m_base_colour);
 	m_base_colour_brush = wxBrush(m_base_colour);
@@ -338,8 +342,11 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 		dc.GradientFillLinear(r, bottom_color, top_color, wxNORTH);
 	} else {
 		// draw inactive tab
+#ifdef __WXGTK__
+		wxColour shadeColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+#else
 		wxColour shadeColour = DrawingUtils::DarkColour(m_base_colour, 2.0);
-
+#endif
 		wxRect r(tab_x, tab_y, tab_width, tab_height-2);
 
 		// start the gradent up a bit and leave the inside border inset

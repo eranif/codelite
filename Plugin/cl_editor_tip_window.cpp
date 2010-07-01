@@ -76,13 +76,15 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 			int x = DoGetTextLen(txtBefore);
 			int w = DoGetTextLen(txtInclude);
 			
-			
-			if ( DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK)) ) 
+			bool tipColorIsDark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+			if ( tipColorIsDark ) {
 				dc.SetBrush( *wxTRANSPARENT_BRUSH );
-			else 
+				dc.SetPen  (wxPen(wxT("YELLOW")) );	
+			} else {
 				dc.SetBrush( wxBrush( DrawingUtils::LightColour(wxT("BLUE"), 7)) );
-				
-			dc.SetPen  ( wxPen  ( DrawingUtils::LightColour(wxT("BLUE"), 7)) );
+				dc.SetPen  ( wxPen  ( DrawingUtils::LightColour(wxT("BLUE"), 7)) );	
+			}
+			
 #ifdef __WXGTK__
 			dc.DrawRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2));
 #else
@@ -94,7 +96,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 	
 	// Draw the Tip text
 	dc.SetFont(font);
-	dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 	dc.DrawText(m_tipText, wxPoint(TIP_SPACER, firstLineY));
 }
 

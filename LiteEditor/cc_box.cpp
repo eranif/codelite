@@ -632,15 +632,17 @@ void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 	wxString tagComment;
 	bool     foundComment(false);
 
-	std::string comment = m_comments.getCommentForLine(tag.GetLine()-1);
-	foundComment = !comment.empty();
-
-	// if we did not find a comment, try 2 lines up
-	if(!foundComment) {
-		comment = m_comments.getCommentForLine(tag.GetLine()-2);
+	std::string comment;
+	// search for comment in the current line, the line above it and 2 above it
+	// use the first match we got
+	for(size_t i=0; i<3; i++) {
+		comment = m_comments.getCommentForLine(tag.GetLine() - i);
+		if(comment.empty() == false) {
+			foundComment = true;
+			break;
+		}
 	}
-	foundComment = !comment.empty();
-
+	
 	if( foundComment ) {
 		tagComment = wxString::Format(wxT("%s\n"), wxString(comment.c_str(), wxConvUTF8).c_str());
 		prefix << wxT("----------\n");

@@ -994,6 +994,22 @@ bool LEditor::SaveFileAs()
 	return false;
 }
 
+#ifdef __WXGTK__
+//--------------------------------
+// GTK only get permissions method
+//--------------------------------
+mode_t GTKGetFilePermissions(const wxString &filename)
+{
+	// keep the original file permissions
+	struct stat b;
+	mode_t permissions(0);
+	if(stat(filename.mb_str(wxConvUTF8).data(), &b) == 0) {
+		permissions = b.st_mode;
+	}
+	return permissions;
+}
+#endif
+
 // an internal function that does the actual file writing to disk
 bool LEditor::SaveToFile(const wxFileName &fileName)
 {
@@ -1050,19 +1066,32 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	file.Write(theText, fontEncConv);
 	file.Close();
 
-	// Incase the original file had executable permissions
-	// keep them
-	bool hasExePermissions = wxFileName::IsFileExecutable(fileName.GetFullPath());
-
+#ifdef __WXGTK__
+	// keep the original file permissions
+	mode_t origPermissions = GTKGetFilePermissions(fileName.GetFullPath());
+#endif
+	
 	// if the saving was done to a temporary file, override it
 	if (tmp_file.IsEmpty() == false) {
 		if (wxRenameFile(tmp_file, fileName.GetFullPath(), true) == false) {
-			if(hasExePermissions) {
-				::chmod(fileName.GetFullPath().mb_str(wxConvUTF8), 0755);
-			}
-
 			wxMessageBox(wxString::Format(wxT("Failed to override read-only file")), wxT("CodeLite"), wxOK|wxICON_WARNING);
 			return false;
+		} else {
+			// override was successful, restore execute permissions
+#ifdef __WXGTK__
+			mode_t newFilePermissions = GTKGetFilePermissions(fileName.GetFullPath());
+			
+			if(origPermissions & S_IXUSR)
+				newFilePermissions |= S_IXUSR;
+				
+			if(origPermissions & S_IXGRP)
+				newFilePermissions |= S_IXGRP;
+				
+			if(origPermissions & S_IXOTH)
+				newFilePermissions |= S_IXOTH;
+			
+			::chmod(fileName.GetFullPath().mb_str(wxConvUTF8), newFilePermissions);
+#endif
 		}
 	}
 

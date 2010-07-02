@@ -255,6 +255,7 @@ void CCBox::Previous()
 
 void CCBox::SelectItem(long item)
 {
+	wxWindowUpdateLocker locker(this);
 	m_listCtrl->Select(item);
 	m_listCtrl->EnsureVisible(item);
 
@@ -262,6 +263,7 @@ void CCBox::SelectItem(long item)
 	if(m_listCtrl->GetItemTagEntry(item, tag)) {
 		DoFormatDescriptionPage( tag );
 	}
+
 }
 
 void CCBox::Show(const wxString& word)
@@ -642,7 +644,7 @@ void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 			break;
 		}
 	}
-	
+
 	if( foundComment ) {
 		tagComment = wxString::Format(wxT("%s\n"), wxString(comment.c_str(), wxConvUTF8).c_str());
 		prefix << wxT("----------\n");

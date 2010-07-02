@@ -2396,7 +2396,6 @@ void LEditor::OnLeaveWindow(wxMouseEvent& event)
 
 void LEditor::OnFocusLost(wxFocusEvent &event)
 {
-//    DoCancelCalltip();
 	event.Skip();
 }
 

@@ -51,6 +51,7 @@ CCBox::CCBox(bool autoHide, bool autoInsertSingleChoice)
 	, m_owner(NULL)
 	, m_hideExtInfoPane(true)
 	, m_startPos(wxNOT_FOUND)
+	, m_editor(NULL)
 {
 	m_constructing = true;
 	HideCCBox();
@@ -104,7 +105,7 @@ CCBox::CCBox(bool autoHide, bool autoInsertSingleChoice)
 			m_listCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		}
 	}
-	
+
 	m_listCtrl->SetFocus();
 	m_constructing = false;
 }
@@ -333,6 +334,7 @@ void CCBox::Show(const wxString& word)
 		if ( IsShown() ) {
 			HideCCBox();
 		}
+		DoReturnFocusToEditor();
 		DoHideCCHelpTab();
 		return;
 	}
@@ -348,6 +350,7 @@ void CCBox::Show(const wxString& word)
 	if ( m_selectedItem == wxNOT_FOUND && GetAutoHide() ) {
 		// return without calling wxWindow::Show
 		DoHideCCHelpTab();
+		DoReturnFocusToEditor();
 		return;
 	}
 
@@ -363,9 +366,7 @@ void CCBox::Show(const wxString& word)
 
 	SelectItem(m_selectedItem);
 
-	Frame::Get()->Raise();
-	GetEditor()->SetFocus();
-	GetEditor()->SetActive();
+	DoReturnFocusToEditor();
 
 }
 
@@ -706,5 +707,17 @@ void CCBox::OnFocus(wxFocusEvent& event)
 		Frame::Get()->Raise();
 		editor->SetFocus();
 		editor->SetActive();
+	} else {
+		event.Skip();
+	}
+}
+
+void CCBox::DoReturnFocusToEditor()
+{
+	Frame::Get()->Raise();
+	if(GetEditor())
+	{
+		GetEditor()->SetFocus();
+		GetEditor()->SetActive();
 	}
 }

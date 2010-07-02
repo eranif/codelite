@@ -680,6 +680,8 @@ bool MainBook::CloseAll(bool cancellable)
 	std::vector<LEditor*> editors;
 	GetAllEditors(editors);
 
+	LEditor::DestroyCCBox();
+
 	// filter list of editors for any that need to be saved
 	std::vector<std::pair<wxFileName, bool> > files;
 	size_t n = 0;
@@ -890,6 +892,7 @@ void MainBook::OnPageChanged(NotebookEvent& e)
 		LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage((size_t)newSel));
 		if(editor) {
 			SelectPage(editor);
+			editor->HideCompletionBox();
 		}
 	}
 	e.Skip();

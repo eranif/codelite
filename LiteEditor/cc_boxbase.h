@@ -8,21 +8,19 @@
 #ifndef __cc_boxbase__
 #define __cc_boxbase__
 
-#include <wx/string.h>
+#include <wx/listctrl.h>
 #include "ccvirtuallistctrl.h"
-#include <wx/dialog.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/listctrl.h>
+#include <wx/string.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/toolbar.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
-#include <wx/frame.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -31,12 +29,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class CCBoxBase
 ///////////////////////////////////////////////////////////////////////////////
-class CCBoxBase : public wxFrame
+class CCBoxBase : public wxPanel
 {
 	private:
 
 	protected:
-		wxPanel* m_mainPanel;
 		CCVirtualListCtrl* m_listCtrl;
 		wxToolBar* m_toolBar1;
 
@@ -45,13 +42,12 @@ class CCBoxBase : public wxFrame
 		virtual void OnItemDeSelected( wxListEvent& event ) { event.Skip(); }
 		virtual void OnItemSelected( wxListEvent& event ) { event.Skip(); }
 		virtual void OnKeyDown( wxListEvent& event ) { event.Skip(); }
-		virtual void OnFocus( wxFocusEvent& event ) { event.Skip(); }
 		virtual void OnShowPublicItems( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:
 
-		CCBoxBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxFRAME_FLOAT_ON_PARENT|wxSTAY_ON_TOP|wxFRAME_TOOL_WINDOW|wxRAISED_BORDER|wxTAB_TRAVERSAL );
+		CCBoxBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 486,300 ), long style = wxRAISED_BORDER|wxTAB_TRAVERSAL );
 		~CCBoxBase();
 
 };

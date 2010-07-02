@@ -132,9 +132,8 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 END_EVENT_TABLE()
 
 // Instantiate statics
-FindReplaceDialog*      LEditor::m_findReplaceDlg  = NULL;
-CCBox*                  LEditor::m_ccBox           = NULL;
-FindReplaceData         LEditor::m_findReplaceData;
+FindReplaceDialog* LEditor::m_findReplaceDlg = NULL;
+FindReplaceData LEditor::m_findReplaceData;
 std::map<wxString, int> LEditor::ms_bookmarkShapes;
 
 LEditor::LEditor(wxWindow* parent)
@@ -142,6 +141,7 @@ LEditor::LEditor(wxWindow* parent)
 		, m_rightClickMenu           (NULL)
 		, m_popupIsOn                (false)
 		, m_modifyTime               (0)
+		, m_ccBox                    (NULL)
 		, m_isVisible                (true)
 		, m_hyperLinkIndicatroStart  (wxNOT_FOUND)
 		, m_hyperLinkIndicatroEnd    (wxNOT_FOUND)
@@ -2396,6 +2396,7 @@ void LEditor::OnLeaveWindow(wxMouseEvent& event)
 
 void LEditor::OnFocusLost(wxFocusEvent &event)
 {
+//    DoCancelCalltip();
 	event.Skip();
 }
 
@@ -2826,7 +2827,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 {
 	if ( m_ccBox == NULL ) {
 		// create new completion box
-		m_ccBox = new CCBox(Frame::Get());
+		m_ccBox = new CCBox(this);
 	}
 
 	if(tags.empty()) {
@@ -2861,7 +2862,6 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 		this->DoSetStatusMessage(wxString::Format(wxT("Too many items were found. Narrow your search criteria (Displaying %d)"), tags.size()), 0);
 	}
 
-	m_ccBox->SetEditor(this);
 	m_ccBox->Adjust();
 	m_ccBox->Show(tags, word, false, owner);
 }
@@ -2870,7 +2870,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 {
 	if ( m_ccBox == NULL ) {
 		// create new completion box
-		m_ccBox = new CCBox(Frame::Get());
+		m_ccBox = new CCBox(this);
 	}
 
 	if(tags.empty()) {
@@ -2905,7 +2905,6 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 		this->DoSetStatusMessage(wxString::Format(wxT("Too many items were found. Narrow your search criteria (Displaying %d)"), tags.size()), 0);
 	}
 
-	m_ccBox->SetEditor(this);
 	m_ccBox->Adjust();
 	m_ccBox->Show(tags, word, showFullDecl, NULL);
 }
@@ -3138,7 +3137,7 @@ void LEditor::RegisterImageForKind(const wxString& kind, const wxBitmap& bmp)
 {
 	if ( m_ccBox == NULL ) {
 		// create new completion box
-		m_ccBox = new CCBox(Frame::Get());
+		m_ccBox = new CCBox(this);
 	}
 
 	m_ccBox->RegisterImageForKind(kind, bmp);
@@ -3662,12 +3661,4 @@ int LEditor::LineEnd(int line)
 {
 	int pos = wxScintilla::PositionFromLine(line);
 	return pos + wxScintilla::LineLength(line);
-}
-
-void LEditor::DestroyCCBox()
-{
-	if(m_ccBox) {
-		m_ccBox->Destroy();
-		m_ccBox = NULL;
-	}
 }

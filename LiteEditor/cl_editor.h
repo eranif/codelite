@@ -122,7 +122,7 @@ class LEditor : public wxScintilla, public IEditor
 	bool                                        m_popupIsOn;
 	time_t                                      m_modifyTime;
 	std::map<int, wxString>                     m_customCmds;
-	static CCBox *                              m_ccBox;
+	CCBox *                                     m_ccBox;
 	bool                                        m_isVisible;
 	int                                         m_hyperLinkIndicatroStart;
 	int                                         m_hyperLinkIndicatroEnd;
@@ -160,7 +160,6 @@ public:
 	/// Construct a LEditor object
 	LEditor(wxWindow* parent);
 
-	static void DestroyCCBox();
 	/// Default destructor
 	virtual ~LEditor();
 

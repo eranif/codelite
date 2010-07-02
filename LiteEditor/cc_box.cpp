@@ -660,6 +660,11 @@ void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 		return;
 	}
 	editor->CallTipShowExt( m_startPos, prefix);
+	int hightlightFrom = prefix.Find(tag.GetName());
+	if(hightlightFrom != wxNOT_FOUND) {
+		int highlightLen = tag.GetName().Length();
+		editor->CallTipSetHighlight(hightlightFrom, hightlightFrom + highlightLen);
+	}
 }
 
 void CCBox::EnableExtInfoPane()

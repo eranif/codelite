@@ -2826,7 +2826,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 {
 	if ( m_ccBox == NULL ) {
 		// create new completion box
-		m_ccBox = new CCBox(NULL);
+		m_ccBox = new CCBox(Frame::Get());
 	}
 
 	if(tags.empty()) {
@@ -2870,7 +2870,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 {
 	if ( m_ccBox == NULL ) {
 		// create new completion box
-		m_ccBox = new CCBox(this);
+		m_ccBox = new CCBox(Frame::Get());
 	}
 
 	if(tags.empty()) {
@@ -3138,7 +3138,7 @@ void LEditor::RegisterImageForKind(const wxString& kind, const wxBitmap& bmp)
 {
 	if ( m_ccBox == NULL ) {
 		// create new completion box
-		m_ccBox = new CCBox(this);
+		m_ccBox = new CCBox(Frame::Get());
 	}
 
 	m_ccBox->RegisterImageForKind(kind, bmp);

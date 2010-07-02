@@ -10,16 +10,16 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 	wxBoxSizer* bSizer1;
-	bSizer1 = new wxBoxSizer( wxHORIZONTAL );
+	bSizer1 = new wxBoxSizer( wxVERTICAL );
 
-	m_mainPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( 250,250 ), wxTAB_TRAVERSAL );
+	m_mainPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer7;
-	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
+	bSizer7 = new wxBoxSizer( wxVERTICAL );
 
 	m_listCtrl = new CCVirtualListCtrl( m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL );
 	bSizer7->Add( m_listCtrl, 1, wxEXPAND, 2 );
@@ -33,7 +33,8 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 	m_mainPanel->SetSizer( bSizer7 );
 	m_mainPanel->Layout();
-	bSizer1->Add( m_mainPanel, 1, wxEXPAND | wxALL, 2 );
+	bSizer7->Fit( m_mainPanel );
+	bSizer1->Add( m_mainPanel, 1, wxALL|wxEXPAND, 0 );
 
 	this->SetSizer( bSizer1 );
 	this->Layout();

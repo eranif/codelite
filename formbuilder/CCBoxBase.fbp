@@ -21,7 +21,7 @@
         <property name="skip_python_events">1</property>
         <property name="use_enum">0</property>
         <property name="use_microsoft_bom">0</property>
-        <object class="Dialog" expanded="1">
+        <object class="Frame" expanded="1">
             <property name="bg"></property>
             <property name="center"></property>
             <property name="context_help"></property>
@@ -36,8 +36,8 @@
             <property name="minimum_size"></property>
             <property name="name">CCBoxBase</property>
             <property name="pos"></property>
-            <property name="size">288,253</property>
-            <property name="style">wxSTAY_ON_TOP</property>
+            <property name="size">373,324</property>
+            <property name="style">wxFRAME_FLOAT_ON_PARENT|wxFRAME_NO_TASKBAR|wxFRAME_TOOL_WINDOW|wxRESIZE_BORDER|wxSTAY_ON_TOP</property>
             <property name="subclass"></property>
             <property name="title"></property>
             <property name="tooltip"></property>
@@ -47,7 +47,8 @@
             <property name="validator_variable"></property>
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
-            <property name="window_style">wxNO_BORDER|wxRAISED_BORDER</property>
+            <property name="window_style">wxTAB_TRAVERSAL</property>
+            <property name="xrc_skip_sizer">1</property>
             <event name="OnActivate"></event>
             <event name="OnActivateApp"></event>
             <event name="OnChar"></event>
@@ -57,7 +58,6 @@
             <event name="OnHibernate"></event>
             <event name="OnIconize"></event>
             <event name="OnIdle"></event>
-            <event name="OnInitDialog"></event>
             <event name="OnKeyDown"></event>
             <event name="OnKeyUp"></event>
             <event name="OnKillFocus"></event>
@@ -81,11 +81,11 @@
             <object class="wxBoxSizer" expanded="1">
                 <property name="minimum_size"></property>
                 <property name="name">bSizer1</property>
-                <property name="orient">wxHORIZONTAL</property>
+                <property name="orient">wxVERTICAL</property>
                 <property name="permission">none</property>
                 <object class="sizeritem" expanded="1">
-                    <property name="border">2</property>
-                    <property name="flag">wxEXPAND | wxALL</property>
+                    <property name="border">0</property>
+                    <property name="flag">wxALL|wxEXPAND</property>
                     <property name="proportion">1</property>
                     <object class="wxPanel" expanded="1">
                         <property name="bg"></property>
@@ -100,7 +100,7 @@
                         <property name="name">m_mainPanel</property>
                         <property name="permission">protected</property>
                         <property name="pos"></property>
-                        <property name="size">250,250</property>
+                        <property name="size">-1,-1</property>
                         <property name="subclass"></property>
                         <property name="tooltip"></property>
                         <property name="validator_data_type"></property>
@@ -136,7 +136,7 @@
                         <object class="wxBoxSizer" expanded="1">
                             <property name="minimum_size"></property>
                             <property name="name">bSizer7</property>
-                            <property name="orient">wxHORIZONTAL</property>
+                            <property name="orient">wxVERTICAL</property>
                             <property name="permission">none</property>
                             <object class="sizeritem" expanded="1">
                                 <property name="border">2</property>

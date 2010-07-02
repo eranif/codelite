@@ -779,15 +779,18 @@ long ScintillaWX::WndProc(unsigned int iMessage, unsigned long wParam, long lPar
 		int tipHeight = rc.Height();
 		int tipWidth  = rc.Width();
 
+		wxPoint ccBoxPtClientCoords = sci->ScreenToClient(sci->m_ccPoint);
+
 		// handle the Y axis
 		int h = rc.Height();
-		rc.top    = sci->m_ccPoint.y;
+		rc.top    = ccBoxPtClientCoords.y;
 		rc.bottom = rc.top + h;
 
 		// Adjust the X coordinates of the tip
-		rc.left   = sci->m_ccPoint.x + 250;
+
+		rc.left   = ccBoxPtClientCoords.x + 250;
 		rc.right  = rc.left + tipWidth;
-		rc.top    = sci->m_ccPoint.y;
+		rc.top    = ccBoxPtClientCoords.y;
 		rc.bottom = rc.top + tipHeight;
 
 		// If the call-tip window would be out of the client
@@ -803,7 +806,7 @@ long ScintillaWX::WndProc(unsigned int iMessage, unsigned long wParam, long lPar
 
 		wxRect rr = wxRectFromPRectangle(rc);
 		wxPoint parentPt      = sci->ClientToScreen(rr.GetLeftTop());
-		wxPoint parentCCBoxPt = sci->ClientToScreen(sci->m_ccPoint);
+		wxPoint parentCCBoxPt = sci->m_ccPoint;
 
 		rr.SetTopLeft( parentPt );
 

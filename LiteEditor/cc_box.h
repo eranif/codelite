@@ -53,7 +53,8 @@ class CCBox : public CCBoxBase {
 	CommentParseResult       m_comments;
 	int                      m_startPos;
 	bool                     m_isTipBgDark;
-	
+	LEditor*                 m_editor;
+
 protected:
 	// Handlers for CCBoxBase events.
 	void OnItemActivated( wxListEvent& event );
@@ -73,14 +74,17 @@ protected:
 
 public:
 	/** Constructor */
-	CCBox(LEditor* parent, bool autoHide = true, bool autoInsertSingleChoice = true);
+	CCBox(bool autoHide = true, bool autoInsertSingleChoice = true);
 
 	void HideCCBox();
 	void Show(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl, wxEvtHandler *owner = NULL);
 	void InsertSelection();
 
 	void Adjust();
-
+	void SetEditor(LEditor* editor);
+	LEditor *GetEditor() {
+		return m_editor;
+	}
 	// can this window have focus? (no)
 	bool AcceptsFocus() const {
 		return false;
@@ -114,6 +118,8 @@ public:
 	void RegisterImageForKind(const wxString &kind, const wxBitmap &bmp);
 	void NextPage();
 	void PreviousPage();
+	void OnFocus(wxFocusEvent& event);
+
 };
 
 #endif // __cc_box__

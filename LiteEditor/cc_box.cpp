@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "cc_box.h"
+#include "frame.h"
 #include "comment_parser.h"
 #include "ctags_manager.h"
 #include <wx/wupdlock.h>
@@ -40,21 +41,19 @@
 #define BOX_HEIGHT 250
 #define BOX_WIDTH  250
 
-CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
-		:
-		CCBoxBase(parent, wxID_ANY, wxDefaultPosition, wxSize(0, 0))
-		, m_showFullDecl(false)
-		, m_height(BOX_HEIGHT)
-		, m_autoHide(autoHide)
-		, m_insertSingleChoice(autoInsertSingleChoice)
-		, m_owner(NULL)
-		, m_hideExtInfoPane(true)
-		, m_startPos(wxNOT_FOUND)
+CCBox::CCBox(bool autoHide, bool autoInsertSingleChoice)
+	:
+	CCBoxBase(NULL, wxID_ANY)
+	, m_showFullDecl(false)
+	, m_height(BOX_HEIGHT)
+	, m_autoHide(autoHide)
+	, m_insertSingleChoice(autoInsertSingleChoice)
+	, m_owner(NULL)
+	, m_hideExtInfoPane(true)
+	, m_startPos(wxNOT_FOUND)
 {
 	m_constructing = true;
 	HideCCBox();
-
-	m_tooltip = new wxToolTip(wxT(""));
 
 	// load all the CC images
 	wxImageList *il = new wxImageList(16, 16, true);
@@ -100,17 +99,13 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 		m_listCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 		m_listCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 	} else {
-		// the tooltip colour is dark
-		parent->CallTipSetForegroundHighlight(wxT("YELLOW"));
-		
+
 		if( DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)) == false ) {
 			m_listCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		}
 	}
-
+	
 	m_listCtrl->SetFocus();
-	// return the focus to scintilla
-	parent->SetActive();
 	m_constructing = false;
 }
 
@@ -120,7 +115,7 @@ void CCBox::OnItemActivated( wxListEvent& event )
 	InsertSelection();
 	HideCCBox();
 
-	LEditor *editor = (LEditor*)GetParent();
+	LEditor *editor = (LEditor*)GetEditor();
 	if (editor) {
 		editor->SetActive();
 	}
@@ -158,44 +153,45 @@ void CCBox::Show(const std::vector<TagEntryPtr> &tags, const wxString &word, boo
 
 void CCBox::Adjust()
 {
-	LEditor *parent = (LEditor*)GetParent();
+	LEditor *parent = (LEditor*)GetEditor();
 
-	int point = parent->GetCurrentPos();
+	int point  = parent->GetCurrentPos();
 	wxPoint pt = parent->PointFromPosition(point);
+	wxPoint screenPt = parent->ClientToScreen(pt);
 
 	// add the line height
 	int hh = parent->GetCurrLineHeight();
-	pt.y += hh;
+	screenPt.y += hh;
 
-	wxSize size = parent->GetClientSize();
-	int diff = size.y - pt.y;
+	wxSize size = wxGetDisplaySize();
+	int diff = size.y - screenPt.y;
 	m_height = BOX_HEIGHT;
 
 	if (diff < BOX_HEIGHT) {
-		pt.y -= BOX_HEIGHT;
-		pt.y -= hh;
+		screenPt.y -= BOX_HEIGHT;
+		screenPt.y -= hh;
 
-		if (pt.y < 0) {
+		if (screenPt.y < 0) {
 			// the completion box is out of screen, resotre original size
-			pt.y += BOX_HEIGHT;
-			pt.y += hh;
+			screenPt.y += BOX_HEIGHT;
+			screenPt.y += hh;
 			m_height = diff;
 		}
 	}
 
 	// adjust the X axis
-	if (size.x - pt.x < BOX_WIDTH) {
+	if (size.x - screenPt.x < BOX_WIDTH) {
 		// the box is too wide to fit the screen
 		if (size.x > BOX_WIDTH) {
 			// the screen can contain the completion box
-			pt.x = size.x - BOX_WIDTH;
+			screenPt.x = size.x - BOX_WIDTH;
 		} else {
 			// this will provive the maximum visible area
-			pt.x = 0;
+			screenPt.x = 0;
 		}
 	}
-	parent->m_ccPoint = pt;
-	Move(pt);
+	parent->m_ccPoint = screenPt;
+	Move(screenPt);
 }
 
 bool CCBox::SelectWord(const wxString& word)
@@ -215,7 +211,7 @@ bool CCBox::SelectWord(const wxString& word)
 			// Incase we got a full match, insert the selection and release the completion box
 			InsertSelection();
 
-			LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
+			LEditor *editor = dynamic_cast<LEditor*>( GetEditor() );
 			if (editor) {
 				editor->SetActive();
 			}
@@ -283,13 +279,18 @@ void CCBox::Show(const wxString& word)
 	EditorConfigST::Get()->GetLongValue(wxT("CC_Show_All_Members"), checkIt);
 	m_toolBar1->ToggleTool(TOOL_SHOW_PRIVATE_MEMBERS, checkIt);
 
+	// the tooltip colour is dark
+	if(GetEditor() && m_isTipBgDark) {
+		GetEditor()->CallTipSetForegroundHighlight(wxT("YELLOW"));
+	}
+
 	CCItemInfo item;
 	m_listCtrl->DeleteAllItems();
 
 	bool showPrivateMembers ( checkIt );
 
 	// Get the associated editor
-	LEditor *editor = dynamic_cast<LEditor*>(GetParent());
+	LEditor *editor = dynamic_cast<LEditor*>(GetEditor());
 	if (m_tags.empty() == false) {
 		for (; i<m_tags.size(); i++) {
 			TagEntryPtr tag = m_tags.at(i);
@@ -361,6 +362,11 @@ void CCBox::Show(const wxString& word)
 	wxWindow::Show();
 
 	SelectItem(m_selectedItem);
+
+	Frame::Get()->Raise();
+	GetEditor()->SetFocus();
+	GetEditor()->SetActive();
+
 }
 
 void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
@@ -373,7 +379,7 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 		m_owner->ProcessEvent(e);
 
 	} else {
-		LEditor *editor = (LEditor*)GetParent();
+		LEditor *editor = (LEditor*)GetEditor();
 		int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
 
 		editor->SetSelection(insertPos, editor->GetCurrentPos());
@@ -576,7 +582,7 @@ void CCBox::OnShowPublicItems(wxCommandEvent& event)
 
 void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 {
-	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
+	LEditor *editor = dynamic_cast<LEditor*>( GetEditor() );
 	wxString prefix;
 
 	if( tag.IsMethod() ) {
@@ -683,7 +689,22 @@ void CCBox::DoHideCCHelpTab()
 {
 	m_hideExtInfoPane = true;
 	m_startPos = wxNOT_FOUND;
-	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
+	LEditor *editor = dynamic_cast<LEditor*>( GetEditor() );
 	if(editor)
 		editor->CallTipCancel();
+}
+
+void CCBox::SetEditor(LEditor* editor)
+{
+	m_editor = editor;
+}
+
+void CCBox::OnFocus(wxFocusEvent& event)
+{
+	LEditor *editor = GetEditor();
+	if(editor) {
+		Frame::Get()->Raise();
+		editor->SetFocus();
+		editor->SetActive();
+	}
 }

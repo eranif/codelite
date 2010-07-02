@@ -20,7 +20,7 @@
 #include <wx/icon.h>
 #include <wx/toolbar.h>
 #include <wx/sizer.h>
-#include <wx/panel.h>
+#include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class CCBoxBase
 ///////////////////////////////////////////////////////////////////////////////
-class CCBoxBase : public wxPanel
+class CCBoxBase : public wxDialog
 {
 	private:
 
@@ -43,11 +43,11 @@ class CCBoxBase : public wxPanel
 		virtual void OnItemSelected( wxListEvent& event ) { event.Skip(); }
 		virtual void OnKeyDown( wxListEvent& event ) { event.Skip(); }
 		virtual void OnShowPublicItems( wxCommandEvent& event ) { event.Skip(); }
-
+		virtual void OnFocus( wxFocusEvent& event ) { event.Skip(); }
 
 	public:
 
-		CCBoxBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 486,300 ), long style = wxRAISED_BORDER|wxTAB_TRAVERSAL );
+		CCBoxBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 376,292 ), long style = wxSTAY_ON_TOP|wxBORDER_SIMPLE );
 		~CCBoxBase();
 
 };

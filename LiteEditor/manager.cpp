@@ -213,7 +213,7 @@ Manager::~Manager ( void )
 	SearchThreadST::Free();
 	MenuManager::Free();
 	EnvironmentConfig::Release();
-
+	LEditor::DestroyCCBox();
 	if ( m_shellProcess ) {
 		delete m_shellProcess;
 		m_shellProcess = NULL;

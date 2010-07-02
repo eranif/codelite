@@ -52,6 +52,8 @@ class CCBox : public CCBoxBase {
 	bool                     m_hideExtInfoPane;
 	CommentParseResult       m_comments;
 	int                      m_startPos;
+	bool                     m_isTipBgDark;
+	
 protected:
 	// Handlers for CCBoxBase events.
 	void OnItemActivated( wxListEvent& event );

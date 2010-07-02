@@ -94,11 +94,18 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	m_listCtrl->AssignImageList(il, wxIMAGE_LIST_SMALL);
 	m_listCtrl->InsertColumn(0, wxT("Name"));
 
-	bool isDark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+	m_isTipBgDark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 
-	if ( !isDark ) {
+	if ( !m_isTipBgDark ) {
 		m_listCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 		m_listCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
+	} else {
+		// the tooltip colour is dark
+		parent->CallTipSetForegroundHighlight(wxT("YELLOW"));
+		
+		if( DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)) == false ) {
+			m_listCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		}
 	}
 
 	m_listCtrl->SetFocus();

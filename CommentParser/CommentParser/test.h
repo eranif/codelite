@@ -25,9 +25,12 @@
 //////////////////////////////////////////////////////////////////////////////
 # include "gizmos.h"
 # include <wx/app.h>
-// comment 1
-
-// comment 2
+int a;// comment 1
+int b;// comment 2
+/* C comment 
+ * 
+ * 
+ * */
 # include <wx/menu.h>
 # include <wx/log.h>
 # include <wx/msgdlg.h>

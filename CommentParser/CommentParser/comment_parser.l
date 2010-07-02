@@ -33,7 +33,8 @@ s_char [^"\\\n]|{escape_sequence}
 
 static CommentParseResult *pResults = NULL;
 static std::string         strComment;
-
+static std::string         strCppComment;
+static int                 iCppCommentLine = -1;
 %}
 
 %option yylineno
@@ -41,22 +42,50 @@ static std::string         strComment;
 %%
 
 "//" {
-	strComment.clear();
-	strComment += "//";
+	if(strCppComment.empty() == false) {
+		strCppComment += "\n";
+	}
+	strCppComment += "//";
+	iCppCommentLine = cp_lineno;
 	BEGIN(cpp_comment);
 }
 
 "/*" {
+	/* if we kept some C++ comment, it is time to flush it to the 
+	 * result output */
+	if(strCppComment.empty() == false && pResults) {
+		pResults->addComment(strCppComment, iCppCommentLine, false);
+		strCppComment.clear();
+		iCppCommentLine = -1;
+	}
 	strComment.clear();
 	strComment += "/*";
 	BEGIN(c_comment);
 }
+\n   {
+	/* if we kept some C++ comment, it is time to flush it to the 
+	 * result output */
+	if(strCppComment.empty() == false && pResults) {
+		pResults->addComment(strCppComment, iCppCommentLine, false);
+		strCppComment.clear();
+		iCppCommentLine = -1;
+	}
+}
+
+.    {
+	/* if we kept some C++ comment, it is time to flush it to the 
+	 * result output */
+	if(strCppComment.empty() == false && pResults) {
+		pResults->addComment(strCppComment, iCppCommentLine, false);
+		strCppComment.clear();
+		iCppCommentLine = -1;
+	}
+}
 
 <cpp_comment>\n {
-	pResults->addComment(strComment, cp_lineno - 1, true);
 	BEGIN(INITIAL);
 }
-<cpp_comment>. {strComment += yytext;} /* do nothing */
+<cpp_comment>. {strCppComment += yytext;} /* do nothing */
 
 <c_comment>"*/" {
 	strComment += "*/";
@@ -71,6 +100,12 @@ static std::string         strComment;
 <c_comment>.  { strComment += yytext;}
 
 <<EOF>> {
+	if(strCppComment.empty() == false && pResults) {
+		pResults->addComment(strCppComment, iCppCommentLine, false);
+		strCppComment.clear();
+		iCppCommentLine = -1;
+	}
+	
 	if ( YY_CURRENT_BUFFER->yy_input_file ) {
 		fclose( YY_CURRENT_BUFFER->yy_input_file );
 		YY_CURRENT_BUFFER->yy_input_file = NULL;
@@ -97,6 +132,10 @@ int ParseComments(const char* filePath, CommentParseResult &comments)
 	}
 
 	pResults    = &comments;
+	strComment.clear();
+	strCppComment.clear();
+	iCppCommentLine = -1;
+	
 	yy_switch_to_buffer( yy_create_buffer(fp, YY_BUF_SIZE) );
 	cp_in = fp;
 	int rc = cp_lex();
@@ -104,6 +143,9 @@ int ParseComments(const char* filePath, CommentParseResult &comments)
 
 	// Cleanup
 	pResults = NULL;
+	strComment.clear();
+	strCppComment.clear();
+	iCppCommentLine = -1;
 	return rc;
 }
 

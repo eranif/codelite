@@ -305,20 +305,20 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 	*yy_cp = '\0'; \
 	yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 11
-#define YY_END_OF_BUFFER 12
-static yyconst short int yy_acclist[26] =
+#define YY_NUM_RULES 13
+#define YY_END_OF_BUFFER 14
+static yyconst short int yy_acclist[31] =
     {   0,
-       12,   11,   11,   10,   11,    8,   10,   11,    9,   11,
-        7,   10,   11,    6,   10,   11,   10,   11,    4,   11,
-        3,   11,    2,    1,    5
+       14,    4,   13,    3,   13,    4,   13,   13,   12,   13,
+       10,   12,   13,   11,   13,    9,   12,   13,    8,   12,
+       13,   12,   13,    6,   13,    5,   13,    2,    1,    7
     } ;
 
-static yyconst short int yy_accept[25] =
+static yyconst short int yy_accept[27] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    2,
-        3,    4,    6,    9,   11,   14,   17,   19,   21,   23,
-       24,   25,   26,   26
+        4,    6,    8,    9,   11,   14,   16,   19,   22,   24,
+       26,   28,   29,   30,   31,   31
     } ;
 
 static yyconst int yy_ec[256] =
@@ -358,32 +358,32 @@ static yyconst int yy_meta[8] =
         1,    1,    1,    1,    1,    1,    1
     } ;
 
-static yyconst short int yy_base[26] =
+static yyconst short int yy_base[29] =
     {   0,
-       10,    9,    0,    0,    0,    0,   12,   11,   13,   18,
-        2,   18,   18,   18,   18,   18,    5,   18,   18,   18,
-       18,   18,   18,   10,    9
+        0,    5,    0,    0,   12,    0,   19,    8,   10,   23,
+       23,   14,   23,   23,   23,   23,   23,   23,    2,   23,
+       23,   23,   23,   23,   23,    3,    1,    0
     } ;
 
-static yyconst short int yy_def[26] =
+static yyconst short int yy_def[29] =
     {   0,
-       24,   24,   24,   24,   23,    5,   25,   25,   23,   23,
-       23,   23,   23,   23,   23,   23,   23,   23,   23,   23,
-       23,   23,    0,   23,   23
+       26,   26,   27,   27,   25,    5,   28,   28,   25,   25,
+       25,   25,   25,   25,   25,   25,   25,   25,   25,   25,
+       25,   25,   25,   25,    0,   25,   25,   25
     } ;
 
-static yyconst short int yy_nxt[26] =
+static yyconst short int yy_nxt[31] =
     {   0,
-       12,   13,   14,   15,   16,   17,   12,   20,   21,   18,
-       10,   22,   23,   19,   19,   11,   11,    9,   23,   23,
-       23,   23,   23,   23,   23
+       20,   13,   11,   10,   25,   25,   12,   11,   24,   25,
+       21,   12,   14,   15,   16,   17,   18,   19,   14,   22,
+       23,   21,    9,   25,   25,   25,   25,   25,   25,   25
     } ;
 
-static yyconst short int yy_chk[26] =
+static yyconst short int yy_chk[31] =
     {   0,
-        5,    5,    5,    5,    5,    5,    5,   11,   11,   25,
-       24,   17,    9,    8,    7,    2,    1,   23,   23,   23,
-       23,   23,   23,   23,   23
+       28,   27,    1,   26,    0,    0,    1,    2,   19,    9,
+        8,    2,    5,    5,    5,    5,    5,    5,    5,   12,
+       12,    7,   25,   25,   25,   25,   25,   25,   25,   25
     } ;
 
 static yy_state_type yy_state_buf[YY_BUF_SIZE + 2], *yy_state_ptr;
@@ -428,7 +428,8 @@ char *yytext;
 
 static CommentParseResult *pResults = NULL;
 static std::string         strComment;
-
+static std::string         strCppComment;
+static int                 iCppCommentLine = -1;
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -628,14 +629,14 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 24 )
+				if ( yy_current_state >= 26 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			*yy_state_ptr++ = yy_current_state;
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 18 );
+		while ( yy_base[yy_current_state] != 23 );
 
 yy_find_action:
 		yy_current_state = *--yy_state_ptr;
@@ -674,14 +675,24 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 {
-	strComment.clear();
-	strComment += "//";
+	if(strCppComment.empty() == false) {
+		strCppComment += "\n";
+	}
+	strCppComment += "//";
+	iCppCommentLine = cp_lineno;
 	BEGIN(cpp_comment);
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 {
+	/* if we kept some C++ comment, it is time to flush it to the 
+	 * result output */
+	if(strCppComment.empty() == false && pResults) {
+		pResults->addComment(strCppComment, iCppCommentLine, false);
+		strCppComment.clear();
+		iCppCommentLine = -1;
+	}
 	strComment.clear();
 	strComment += "/*";
 	BEGIN(c_comment);
@@ -690,15 +701,38 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 {
-	pResults->addComment(strComment, cp_lineno - 1, true);
-	BEGIN(INITIAL);
+	/* if we kept some C++ comment, it is time to flush it to the 
+	 * result output */
+	if(strCppComment.empty() == false && pResults) {
+		pResults->addComment(strCppComment, iCppCommentLine, false);
+		strCppComment.clear();
+		iCppCommentLine = -1;
+	}
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-{strComment += yytext;} /* do nothing */
+{
+	/* if we kept some C++ comment, it is time to flush it to the 
+	 * result output */
+	if(strCppComment.empty() == false && pResults) {
+		pResults->addComment(strCppComment, iCppCommentLine, false);
+		strCppComment.clear();
+		iCppCommentLine = -1;
+	}
+}
 	YY_BREAK
 case 5:
+YY_RULE_SETUP
+{
+	BEGIN(INITIAL);
+}
+	YY_BREAK
+case 6:
+YY_RULE_SETUP
+{strCppComment += yytext;} /* do nothing */
+	YY_BREAK
+case 7:
 YY_RULE_SETUP
 {
 	strComment += "*/";
@@ -706,23 +740,23 @@ YY_RULE_SETUP
 	BEGIN(INITIAL);
 }
 	YY_BREAK
-case 6:
-YY_RULE_SETUP
-{}
-	YY_BREAK
-case 7:
-YY_RULE_SETUP
-{}
-	YY_BREAK
 case 8:
 YY_RULE_SETUP
-{ strComment += " ";}
+{}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-{ strComment += "\n";}
+{}
 	YY_BREAK
 case 10:
+YY_RULE_SETUP
+{ strComment += " ";}
+	YY_BREAK
+case 11:
+YY_RULE_SETUP
+{ strComment += "\n";}
+	YY_BREAK
+case 12:
 YY_RULE_SETUP
 { strComment += yytext;}
 	YY_BREAK
@@ -731,6 +765,12 @@ case YY_STATE_EOF(incl):
 case YY_STATE_EOF(c_comment):
 case YY_STATE_EOF(cpp_comment):
 {
+	if(strCppComment.empty() == false && pResults) {
+		pResults->addComment(strCppComment, iCppCommentLine, false);
+		strCppComment.clear();
+		iCppCommentLine = -1;
+	}
+	
 	if ( YY_CURRENT_BUFFER->yy_input_file ) {
 		fclose( YY_CURRENT_BUFFER->yy_input_file );
 		YY_CURRENT_BUFFER->yy_input_file = NULL;
@@ -740,7 +780,7 @@ case YY_STATE_EOF(cpp_comment):
 	yyterminate();
 }
 	YY_BREAK
-case 11:
+case 13:
 YY_RULE_SETUP
 ECHO;
 	YY_BREAK
@@ -1030,7 +1070,7 @@ static yy_state_type yy_get_previous_state()
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 24 )
+			if ( yy_current_state >= 26 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1060,11 +1100,11 @@ yy_state_type yy_current_state;
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 24 )
+		if ( yy_current_state >= 26 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 23);
+	yy_is_jam = (yy_current_state == 25);
 	if ( ! yy_is_jam )
 		*yy_state_ptr++ = yy_current_state;
 
@@ -1642,6 +1682,10 @@ int ParseComments(const char* filePath, CommentParseResult &comments)
 	}
 
 	pResults    = &comments;
+	strComment.clear();
+	strCppComment.clear();
+	iCppCommentLine = -1;
+	
 	yy_switch_to_buffer( yy_create_buffer(fp, YY_BUF_SIZE) );
 	cp_in = fp;
 	int rc = cp_lex();
@@ -1649,6 +1693,9 @@ int ParseComments(const char* filePath, CommentParseResult &comments)
 
 	// Cleanup
 	pResults = NULL;
+	strComment.clear();
+	strCppComment.clear();
+	iCppCommentLine = -1;
 	return rc;
 }
 

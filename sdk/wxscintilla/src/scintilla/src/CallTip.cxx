@@ -229,17 +229,17 @@ void CallTip::PaintCT(Surface *surfaceWindow) {
 	offsetMain = insetX;    // initial alignment assuming no arrows
 	PaintContents(surfaceWindow, true);
 
-#ifndef __APPLE__
+//#ifndef __APPLE__
 	// OSX doesn't put borders on "help tags"
 	// Draw a raised border around the edges of the window
 	surfaceWindow->MoveTo(0, rcClientSize.bottom - 1);
 	surfaceWindow->PenColour(colourShade.allocated);
 	surfaceWindow->LineTo(rcClientSize.right - 1, rcClientSize.bottom - 1);
 	surfaceWindow->LineTo(rcClientSize.right - 1, 0);
-	surfaceWindow->PenColour(colourLight.allocated);
+	surfaceWindow->PenColour(colourShade.allocated);
 	surfaceWindow->LineTo(0, 0);
 	surfaceWindow->LineTo(0, rcClientSize.bottom - 1);
-#endif
+//#endif
 }
 
 void CallTip::MouseClick(Point pt) {

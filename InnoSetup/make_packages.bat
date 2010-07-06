@@ -1,16 +1,27 @@
 @ECHO OFF
 
 :: Check command arguments
-IF "%1"=="" GOTO USAGE
+IF "%1"=="/?" GOTO USAGE
+IF "%1"=="all" GOTO ALL
+
+:: Preare a development installer
+SET CODELITE_INSTALLER=codelite-devel
+"%ProgramFiles%\Inno Setup 5\iscc" lite_editor.iss /F%CODELITE_INSTALLER%
+
+GOTO END
+
+:ALL
+
+IF "%2"=="" GOTO USAGE
 
 :: Installer name for IDE only
-SET CODELITE_INSTALLER=codelite-2.5.3.%1
+SET CODELITE_INSTALLER=codelite-2.5.3.%2
 
 :: Installer name for IDE + MinGW
-SET CODELITE_INSTALLER_MINGW=codelite-2.5.3.%1-mingw4.4.1
+SET CODELITE_INSTALLER_MINGW=codelite-2.5.3.%2-mingw4.4.1
 
 :: Installer name for IDE + MinGW + WX2.8.10
-SET CODELITE_INSTALLER_MINGW_WX=codelite-2.5.3.%1-mingw4.4.1-wx2.8.10
+SET CODELITE_INSTALLER_MINGW_WX=codelite-2.5.3.%2-mingw4.4.1-wx2.8.10
 
 "%ProgramFiles%\Inno Setup 5\iscc" lite_editor.iss /F%CODELITE_INSTALLER%
 
@@ -21,6 +32,9 @@ SET CODELITE_INSTALLER_MINGW_WX=codelite-2.5.3.%1-mingw4.4.1-wx2.8.10
 GOTO END
 
 :USAGE
-echo Usage: make_packages.bat [revision_number]
+
+echo Usage:
+echo       make_packages.bat all [revision_number] - prepare a package for release
+echo       make_packages.bat                       - prepare a developement installer (used to test the installer)
 
 :END

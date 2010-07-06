@@ -24,6 +24,7 @@
         <object class="Panel" expanded="1">
             <property name="bg"></property>
             <property name="context_help"></property>
+            <property name="context_menu">1</property>
             <property name="enabled">1</property>
             <property name="event_handler">impl_virtual</property>
             <property name="fg"></property>
@@ -80,6 +81,7 @@
                     <object class="wxListCtrl" expanded="1">
                         <property name="bg"></property>
                         <property name="context_help"></property>
+                        <property name="context_menu">1</property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>
                         <property name="font"></property>
@@ -148,12 +150,13 @@
                 </object>
                 <object class="sizeritem" expanded="1">
                     <property name="border">2</property>
-                    <property name="flag"></property>
+                    <property name="flag">wxEXPAND</property>
                     <property name="proportion">0</property>
                     <object class="wxToolBar" expanded="1">
                         <property name="bg"></property>
                         <property name="bitmapsize"></property>
                         <property name="context_help"></property>
+                        <property name="context_menu">1</property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>
                         <property name="font"></property>
@@ -168,7 +171,7 @@
                         <property name="pos"></property>
                         <property name="separation">5</property>
                         <property name="size"></property>
-                        <property name="style">wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER</property>
+                        <property name="style">wxTB_FLAT|wxTB_VERTICAL</property>
                         <property name="subclass"></property>
                         <property name="tooltip"></property>
                         <property name="validator_data_type"></property>
@@ -211,6 +214,20 @@
                             <property name="tooltip">Show Only Public Items</property>
                             <event name="OnMenuSelection"></event>
                             <event name="OnToolClicked">OnShowPublicItems</event>
+                            <event name="OnToolEnter"></event>
+                            <event name="OnToolRClicked"></event>
+                            <event name="OnUpdateUI"></event>
+                        </object>
+                        <object class="tool" expanded="1">
+                            <property name="bitmap"></property>
+                            <property name="id">TOOL_SHOW_ITEM_COMMENTS</property>
+                            <property name="kind">wxITEM_CHECK</property>
+                            <property name="label">Show Item Comments</property>
+                            <property name="name">m_toolShowComments</property>
+                            <property name="statusbar"></property>
+                            <property name="tooltip">Show Item Comments</property>
+                            <event name="OnMenuSelection"></event>
+                            <event name="OnToolClicked"></event>
                             <event name="OnToolEnter"></event>
                             <event name="OnToolRClicked"></event>
                             <event name="OnUpdateUI"></event>

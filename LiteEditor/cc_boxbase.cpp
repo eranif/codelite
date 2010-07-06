@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version May  4 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -18,12 +18,15 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	m_listCtrl = new CCVirtualListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL );
 	bSizer1->Add( m_listCtrl, 1, wxEXPAND, 2 );
 
-	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("cc_private_members"));
-	m_toolBar1 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_HORIZONTAL|wxSIMPLE_BORDER|wxTB_FLAT|wxTB_NODIVIDER );
-	m_toolBar1->AddTool( TOOL_SHOW_PRIVATE_MEMBERS, wxT("Show Protected / Private Items"), bmp, bmp, wxITEM_CHECK, wxT("Show Protected / Private Items"), wxEmptyString );
+	wxBitmap bmp         = wxXmlResource::Get()->LoadBitmap(wxT("cc_private_members"));
+	wxBitmap commentsBmp =  wxXmlResource::Get()->LoadBitmap(wxT("note"));
+
+	m_toolBar1 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL|wxSIMPLE_BORDER|wxTB_NODIVIDER );
+	m_toolBar1->AddTool( TOOL_SHOW_PRIVATE_MEMBERS, wxT("Show Protected / Private Items"), bmp, bmp, wxITEM_CHECK, wxT("Show Only Public Items"), wxEmptyString );
+	m_toolBar1->AddTool( TOOL_SHOW_ITEM_COMMENTS, wxT("Show Item Comments"), commentsBmp, commentsBmp, wxITEM_CHECK, wxT("Show Item Comments"), wxEmptyString );
 	m_toolBar1->Realize();
 
-	bSizer1->Add( m_toolBar1, 0, 0, 2 );
+	bSizer1->Add( m_toolBar1, 0, wxEXPAND, 2 );
 
 	this->SetSizer( bSizer1 );
 	this->Layout();

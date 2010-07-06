@@ -53,6 +53,7 @@ class CCBox : public CCBoxBase {
 	CommentParseResult       m_comments;
 	int                      m_startPos;
 	bool                     m_isTipBgDark;
+	bool                     m_showItemComments;
 
 protected:
 	// Handlers for CCBoxBase events.

@@ -76,6 +76,7 @@
 	<object class="wxBitmap" name="edit_delete">res/edit_delete.png</object>
 	<object class="wxBitmap" name="eraser">res/eraser.png</object>
 	<object class="wxBitmap" name="cursor">res/cursor.png</object>
+	<object class="wxBitmap" name="note">res/16/note.png</object>
 
 	<!-- Quick Find Bar -->
 	<object class="wxBitmap" name="pencil">res/QuickFindBar/pencil.png</object>

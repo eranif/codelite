@@ -69,10 +69,8 @@ TagsOptionsDlg::~TagsOptionsDlg()
 void TagsOptionsDlg::InitValues()
 {
 	//initialize the CodeLite page
-	m_checkParseComments->SetValue                 (m_data.GetFlags() & CC_PARSE_COMMENTS ? true : false);
 	m_checkDisplayFunctionTip->SetValue            (m_data.GetFlags() & CC_DISP_FUNC_CALLTIP ? true : false);
 	m_checkDisplayTypeInfo->SetValue               (m_data.GetFlags() & CC_DISP_TYPE_INFO ? true : false);
-	m_checkDisplayComments->SetValue               (m_data.GetFlags() & CC_DISP_COMMENTS ? true : false);
 	m_checkFilesWithoutExt->SetValue               (m_data.GetFlags() & CC_PARSE_EXT_LESS_FILES ? true : false);
 	m_checkColourLocalVars->SetValue               (m_data.GetFlags() & CC_COLOUR_VARS ? true : false);
 	m_checkColourProjTags->SetValue                (m_data.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
@@ -99,7 +97,7 @@ void TagsOptionsDlg::InitValues()
 	m_spinCtrlMaxItemToColour->SetValue           (m_data.GetMaxItemToColour() );
 	m_textPrep->SetValue                          (m_data.GetTokens());
 	m_textTypes->SetValue                         (m_data.GetTypes());
-	
+
 	m_textFileSpec->SetValue(m_data.GetFileSpec());
 	m_comboBoxLang->Clear();
 	m_comboBoxLang->Append(m_data.GetLanguages());
@@ -132,10 +130,8 @@ void TagsOptionsDlg::OnButtonAdd(wxCommandEvent &event)
 void TagsOptionsDlg::CopyData()
 {
 	//save data to the interal member m_data
-	SetFlag(CC_DISP_COMMENTS,                       m_checkDisplayComments->IsChecked());
 	SetFlag(CC_DISP_FUNC_CALLTIP,                   m_checkDisplayFunctionTip->IsChecked());
 	SetFlag(CC_DISP_TYPE_INFO,                      m_checkDisplayTypeInfo->IsChecked());
-	SetFlag(CC_PARSE_COMMENTS,                      m_checkParseComments->IsChecked());
 	SetFlag(CC_PARSE_EXT_LESS_FILES,                m_checkFilesWithoutExt->IsChecked());
 	SetFlag(CC_COLOUR_VARS,                         m_checkColourLocalVars->IsChecked());
 	SetFlag(CC_CPP_KEYWORD_ASISST,                  m_checkCppKeywordAssist->IsChecked());
@@ -144,7 +140,7 @@ void TagsOptionsDlg::CopyData()
 	SetFlag(CC_MARK_TAGS_FILES_IN_BOLD,             m_checkBoxMarkTagsFilesInBold->IsChecked());
 	SetFlag(CC_RETAG_WORKSPACE_ON_STARTUP,          m_checkBoxretagWorkspaceOnStartup->IsChecked());
 	SetFlag(CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING, m_checkBoxDeepUsingNamespaceResolving->IsChecked());
-	
+
 	SetColouringFlag(CC_COLOUR_CLASS,      m_checkBoxClass->IsChecked());
 	SetColouringFlag(CC_COLOUR_ENUM,       m_checkBoxEnum->IsChecked());
 	SetColouringFlag(CC_COLOUR_FUNCTION,   m_checkBoxFunction->IsChecked());
@@ -159,7 +155,7 @@ void TagsOptionsDlg::CopyData()
 	SetColouringFlag(CC_COLOUR_MEMBER,     m_checkBoxMember->IsChecked());
 
 	m_data.SetFileSpec(m_textFileSpec->GetValue());
-	
+
 	m_data.SetTokens(m_textPrep->GetValue());
 	m_data.SetTypes(m_textTypes->GetValue());
 	m_data.SetLanguages(m_comboBoxLang->GetStrings());

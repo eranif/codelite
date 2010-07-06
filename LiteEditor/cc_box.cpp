@@ -50,6 +50,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 		, m_owner(NULL)
 		, m_hideExtInfoPane(true)
 		, m_startPos(wxNOT_FOUND)
+		, m_showItemComments(true)
 {
 	m_constructing = true;
 	HideCCBox();
@@ -283,10 +284,15 @@ void CCBox::Show(const wxString& word)
 	EditorConfigST::Get()->GetLongValue(wxT("CC_Show_All_Members"), checkIt);
 	m_toolBar1->ToggleTool(TOOL_SHOW_PRIVATE_MEMBERS, checkIt);
 
+	long showItemComments( 1 );
+	EditorConfigST::Get()->GetLongValue(wxT("CC_Show_Item_Commetns"), showItemComments);
+	m_toolBar1->ToggleTool(TOOL_SHOW_ITEM_COMMENTS, showItemComments);
+
 	CCItemInfo item;
 	m_listCtrl->DeleteAllItems();
 
 	bool showPrivateMembers ( checkIt );
+	m_showItemComments = showItemComments ? true : false;
 
 	// Get the associated editor
 	LEditor *editor = dynamic_cast<LEditor*>(GetParent());
@@ -562,8 +568,12 @@ void CCBox::HideCCBox()
 		Hide();
 		DoHideCCHelpTab();
 		if( !m_constructing ) {
-			bool checked  = m_toolBar1->FindById(TOOL_SHOW_PRIVATE_MEMBERS)->IsToggled();
+			bool checked;
+			checked = m_toolBar1->FindById(TOOL_SHOW_PRIVATE_MEMBERS)->IsToggled();
 			EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_All_Members"), checked ? 1 : 0);
+
+			checked = m_toolBar1->FindById(TOOL_SHOW_ITEM_COMMENTS)->IsToggled();
+			EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_Item_Commetns"), checked ? 1 : 0);
 		}
 	}
 }
@@ -576,6 +586,10 @@ void CCBox::OnShowPublicItems(wxCommandEvent& event)
 
 void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 {
+	if(m_showItemComments == false) {
+		return;
+	}
+
 	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
 	wxString prefix;
 

@@ -262,14 +262,15 @@ private:
 	 * m_tokenScanner member of this class
 	 * \param token next token
 	 * \param delim delimiter found
+	 * \param subscriptOperator subscript operator was found
 	 * \return true if token was found false otherwise
 	 */
-	bool NextToken(wxString &token, wxString &delim);
+	bool NextToken(wxString &token, wxString &delim, bool &subscriptOperator);
 
 	/**
-	 * \brief Attempt to fix template results
-	 * \param typeName the type name that was detected by the parser
-	 * \param typeScope the type scope
+	 * @brief Attempt to fix template results
+	 * @param typeName the type name that was detected by the parser
+	 * @param typeScope the type scope
 	 */
 	bool OnTemplates(wxString &typeName, wxString &typeScope);
 
@@ -280,12 +281,28 @@ private:
 	void DoSimpleTypedef(wxString &typeName, wxString &typeScope);
 
 	/**
-	 * \brief expand reference operator (->) overloading
-	 * \param typeName [input/output] the type name to check for the reference operator overloading
-	 * \param typeScope [input/output] its scope
-	 * \return true on success, false otherwise
+	 * @brief expand reference operator (->) overloading
+	 * @param typeName [input/output] the type name to check for the reference operator overloading
+	 * @param typeScope [input/output] its scope
+	 * @return true on success, false otherwise
 	 */
 	bool OnArrowOperatorOverloading(wxString &typeName, wxString &typeScope);
+
+	/**
+	 * @brief expand subscript operator
+	 * @param typeName [input/output] the type name to check for the reference operator overloading
+	 * @param typeScope [input/output] its scope
+	 * @return true on success, false otherwise
+	 */
+	bool OnSubscriptOperator(wxString &typeName, wxString &typeScope);
+
+	/**
+	 * @brief run the user defined types as they appear in the 'Types' replacement table
+	 * @param typeName
+	 * @param typeScope
+	 * @param typeMap
+	 */
+	void ExcuteUserTypes(wxString &typeName, wxString &typeScope, const std::map<wxString, wxString> &typeMap);
 
 	void ParseTemplateArgs             (const wxString &argListStr, wxArrayString &argsList);
 	void ParseTemplateInitList         (const wxString &argListStr, wxArrayString &argsList);

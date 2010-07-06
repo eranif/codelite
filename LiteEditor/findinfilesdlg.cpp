@@ -42,6 +42,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 	choices.Add(SEARCH_IN_PROJECT);
 	choices.Add(SEARCH_IN_WORKSPACE);
 	choices.Add(SEARCH_IN_CURR_FILE_PROJECT);
+	choices.Add(SEARCH_IN_CURRENT_FILE);
 	for (size_t i = 0; i < m_data.GetSearchPaths().GetCount(); ++i) {
 		choices.Add(m_data.GetSearchPaths().Item(i));
 	}
@@ -230,6 +231,12 @@ SearchData FindInFilesDialog::DoGetSearchData()
 				project = ManagerST::Get()->GetProjectNameByFile(activeFile.GetFullPath());
 			}
 			ManagerST::Get()->GetProjectFiles(project, files);
+
+		} else if ( rootDir == SEARCH_IN_CURRENT_FILE ) {
+			LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+			if(editor) {
+				files.Add(editor->GetFileName().GetFullPath());
+			}
 		}
 	}
 	data.SetFiles(files);
@@ -388,6 +395,7 @@ bool FindInFilesDialog::Show()
 void FindInFilesDialog::DoSaveSearchPaths()
 {
 	wxArrayString paths = m_dirPicker->GetValues();
+
 	int where = paths.Index(SEARCH_IN_PROJECT);
 	if (where != wxNOT_FOUND) {
 		paths.RemoveAt(where);
@@ -401,6 +409,10 @@ void FindInFilesDialog::DoSaveSearchPaths()
 		paths.RemoveAt(where);
 	}
 
+	where = paths.Index(SEARCH_IN_CURRENT_FILE);
+	if (where != wxNOT_FOUND) {
+		paths.RemoveAt(where);
+	}
 	m_data.SetSearchPaths(paths);
 }
 

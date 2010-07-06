@@ -125,13 +125,15 @@ void SearchThread::GetFiles(const SearchData *data, wxArrayString &files)
 	for (size_t i = 0; i < rootDirs.Count(); ++i) {
 		wxArrayString someFiles;
 		const wxString& rootDir = rootDirs.Item(i);
-		if (rootDir == SEARCH_IN_WORKSPACE || rootDir == SEARCH_IN_CURR_FILE_PROJECT || rootDir == SEARCH_IN_PROJECT) {
+		if (rootDir == SEARCH_IN_WORKSPACE || rootDir == SEARCH_IN_CURR_FILE_PROJECT || rootDir == SEARCH_IN_PROJECT || rootDir == SEARCH_IN_CURRENT_FILE) {
 			someFiles = data->GetFiles();
 			// filter files which does not match the criteria
 			FilterFiles(someFiles, data);
+
 		} else if (wxFile::Exists(rootDir)) {
 			// search root is actually a file...
 			someFiles.push_back(rootDir);
+
 		} else if (wxDir::Exists(rootDir)) {
 			// make sure it's really a dir (not a fifo, etc.)
 			DirTraverser traverser(data->GetExtensions());

@@ -122,6 +122,7 @@ translation_unit	:		/*empty*/
 						;
 
 external_decl			:	class_decl
+						|   dummy_case
 						|	enum_decl
 						|	union_decl
 						| 	function_decl
@@ -321,6 +322,12 @@ declare_throw: 	/*empty*/ {$$ = "";}
 			|	LE_THROW '(' template_parameter_list ')' {$$ = $3;}
 			;
 
+dummy_case : LE_CASE LE_IDENTIFIER 
+{
+	// eat up all tokens not including the ':'
+	consumeNotIncluding(':');
+}
+;
 /* functions */
 function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl nested_scope_specifier func_name '(' {consumeFuncArgList();} const_spec declare_throw '{'
 					{

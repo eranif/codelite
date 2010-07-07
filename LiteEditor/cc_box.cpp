@@ -673,8 +673,13 @@ void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 	}
 
 	if( foundComment ) {
-		tagComment = wxString::Format(wxT("%s\n"), wxString(comment.c_str(), wxConvUTF8).c_str());
-		prefix << wxT("----------\n");
+		wxString theComment(comment.c_str(), wxConvUTF8);
+		theComment.Trim(false);
+		tagComment = wxString::Format(wxT("%s\n"), theComment.c_str());
+		if(prefix.IsEmpty() == false) {
+			prefix.Trim().Trim(false);
+			prefix << wxT("\n\n@@LINE@@\n");
+		}
 		prefix << tagComment;
 	}
 

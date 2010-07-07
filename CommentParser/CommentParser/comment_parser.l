@@ -38,14 +38,13 @@ static int                 iCppCommentLine = -1;
 %}
 
 %option yylineno
-
+cpp_comment_start [//]{2,}
 %%
 
-"//" {
+{cpp_comment_start} {
 	if(strCppComment.empty() == false) {
 		strCppComment += "\n";
 	}
-	strCppComment += "//";
 	iCppCommentLine = cp_lineno;
 	BEGIN(cpp_comment);
 }
@@ -59,9 +58,21 @@ static int                 iCppCommentLine = -1;
 		iCppCommentLine = -1;
 	}
 	strComment.clear();
-	strComment += "/*";
 	BEGIN(c_comment);
 }
+
+"/*!" {
+	/* if we kept some C++ comment, it is time to flush it to the 
+	 * result output */
+	if(strCppComment.empty() == false && pResults) {
+		pResults->addComment(strCppComment, iCppCommentLine, false);
+		strCppComment.clear();
+		iCppCommentLine = -1;
+	}
+	strComment.clear();
+	BEGIN(c_comment);
+}
+
 \n   {
 	/* if we kept some C++ comment, it is time to flush it to the 
 	 * result output */
@@ -88,14 +99,35 @@ static int                 iCppCommentLine = -1;
 <cpp_comment>. {strCppComment += yytext;} /* do nothing */
 
 <c_comment>"*/" {
-	strComment += "*/";
 	pResults->addComment(strComment, cp_lineno, false);
 	BEGIN(INITIAL);
 }
 
 <c_comment>\r {}
 <c_comment>\v {}
-<c_comment>\t { strComment += " ";}
+<c_comment>[\t ] { 
+	if(strComment.empty() == false) {
+		if(strComment.at(strComment.length() -1) == '\n'){
+			// dont add indentation tabs
+		} else {
+			strComment += " ";
+		}
+	} else {
+		// empty comment: dont prepend whitespaces at start
+	}
+}
+<c_comment>"*" {
+	if(strComment.empty() == false) {
+		if(strComment.at(strComment.length() -1) == '\n'){
+			// dont add indentation tabs
+		} else {
+			strComment += "*";
+		}
+	} else {
+		// empty comment: dont prepend '*'
+	}
+}
+
 <c_comment>\n { strComment += "\n";}
 <c_comment>.  { strComment += yytext;}
 

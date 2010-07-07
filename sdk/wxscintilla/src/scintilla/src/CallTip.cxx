@@ -67,6 +67,23 @@ static bool IsArrowCharacter(char ch) {
 	return (ch == 0) || (ch == '\001') || (ch == '\002');
 }
 
+// ERAN IFRAH
+static bool IsDoxyKeyWord(const char* s, int &len) {
+	len = 0;
+	if(s[0] == '@' || s[0] == '\\') {
+		len = 1;
+		for(size_t i=0; i<strlen(s); i++) {
+			if(s[i] == ' ' || s[i] == '\t' || s[i] == '\n') {
+				break;
+			} else {
+				len++;
+			}
+		}
+	}
+	return len > 0;
+}
+// ERAN IFRAH - END
+
 // We ignore tabs unless a tab width has been set.
 bool CallTip::IsTabCharacter(char ch) const {
 	return (tabSize > 0) && (ch == '\t');
@@ -95,21 +112,48 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 	int maxEnd = 0;
 	const int numEnds = 10;
 	int ends[numEnds + 2];
+
+	// ERAN IFRAH
+	int doxyWordLen = 0;
 	for (int i=0;i<len;i++) {
-		if ((maxEnd < numEnds) &&
-		        (IsArrowCharacter(s[i]) || IsTabCharacter(s[i])) ) {
+		if ((maxEnd < numEnds) && (IsArrowCharacter(s[i]) || IsTabCharacter(s[i])) ) {
 			if (i > 0)
 				ends[maxEnd++] = i;
 			ends[maxEnd++] = i+1;
+		} else if((maxEnd < numEnds) && IsDoxyKeyWord(s+i, doxyWordLen)) {
+			// we found a doxygen word
+			if(i > 0)
+				ends[maxEnd++] = i;
+			ends[maxEnd++] = i + doxyWordLen;
+			i += len;
 		}
 	}
+
+	// If we find this magic string, we translate it into
+	// a horizontal line in the tip
+	bool isLine (false);
+	if(strncmp(s, "@@LINE@@", 8) == 0) {
+		isLine = true;
+	}
+	// ERAN IFRAH - END
+
 	ends[maxEnd++] = len;
 	int startSeg = 0;
 	int xEnd;
 	for (int seg = 0; seg<maxEnd; seg++) {
 		int endSeg = ends[seg];
 		if (endSeg > startSeg) {
-			if (IsArrowCharacter(s[startSeg])) {
+			// ERAN IFRAH
+			if(isLine) {
+				int ww = rcClient.Width();
+				rcClient.left  = x;
+				rcClient.right = rcClient.left + ww;
+				surface->PenColour(colourShade.allocated);
+				surface->MoveTo(0, rcClient.top);
+				surface->LineTo(rcClient.right, rcClient.top);
+				xEnd = rcClient.right;
+			// END
+			} else if (IsArrowCharacter(s[startSeg])) {
 				bool upArrow = s[startSeg] == '\001';
 				rcClient.left = x;
 				rcClient.right = rcClient.left + widthArrow;
@@ -150,14 +194,28 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 			} else if (IsTabCharacter(s[startSeg])) {
 				xEnd = NextTabPos(x);
 			} else {
+				// ERAN IFRAH
+				bool doxyHighlight = (s[startSeg] == '@' || s[startSeg] == '\\');
 				xEnd = x + surface->WidthText(font, s + startSeg, endSeg - startSeg);
-				if (draw) {
+				if (draw)
+				{
 					rcClient.left = x;
 					rcClient.right = xEnd;
-					surface->DrawTextTransparent(rcClient, font, ytext,
-										s+startSeg, endSeg - startSeg,
-					                             highlight ? colourSel.allocated : colourUnSel.allocated);
+					if(doxyHighlight) {
+
+						ColourDesired c(0, 0, 255);
+						ColourAllocated ca(c.AsLong());
+
+						surface->DrawTextTransparent(rcClient, font, ytext,
+						                             s+startSeg, endSeg - startSeg,
+						                             ca);
+					} else {
+						surface->DrawTextTransparent(rcClient, font, ytext,
+						                             s+startSeg, endSeg - startSeg,
+						                             highlight ? colourSel.allocated : colourUnSel.allocated);
+					}
 				}
+				// ERAN IFRAH - END
 			}
 			x = xEnd;
 			startSeg = endSeg;
@@ -229,7 +287,6 @@ void CallTip::PaintCT(Surface *surfaceWindow) {
 	offsetMain = insetX;    // initial alignment assuming no arrows
 	PaintContents(surfaceWindow, true);
 
-//#ifndef __APPLE__
 	// OSX doesn't put borders on "help tags"
 	// Draw a raised border around the edges of the window
 	surfaceWindow->MoveTo(0, rcClientSize.bottom - 1);
@@ -239,7 +296,6 @@ void CallTip::PaintCT(Surface *surfaceWindow) {
 	surfaceWindow->PenColour(colourShade.allocated);
 	surfaceWindow->LineTo(0, 0);
 	surfaceWindow->LineTo(0, rcClientSize.bottom - 1);
-//#endif
 }
 
 void CallTip::MouseClick(Point pt) {

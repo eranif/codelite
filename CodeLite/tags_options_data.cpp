@@ -125,7 +125,7 @@ static bool _IsCppKeyword(const wxString &word)
 
 TagsOptionsData::TagsOptionsData()
 		: SerializedObject()
-		, m_ccFlags       (CC_DISP_FUNC_CALLTIP | CC_LOAD_EXT_DB | CC_CPP_KEYWORD_ASISST | CC_COLOUR_VARS | CC_ACCURATE_SCOPE_RESOLVING)
+		, m_ccFlags       (CC_DISP_FUNC_CALLTIP | CC_LOAD_EXT_DB | CC_CPP_KEYWORD_ASISST | CC_COLOUR_VARS | CC_ACCURATE_SCOPE_RESOLVING | CC_PARSE_EXT_LESS_FILES)
 		, m_ccColourFlags (CC_COLOUR_DEFAULT)
 		, m_fileSpec(wxT  ("*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc"))
 		, m_minWordLen    (3)

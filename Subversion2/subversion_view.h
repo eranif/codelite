@@ -76,6 +76,7 @@ protected:
 	void OnFileAdded          (wxCommandEvent &event);
 	void OnSettings           (wxCommandEvent &event);
 	void OnActiveEditorChanged(wxCommandEvent &event);
+	void OnOpenFile           (wxCommandEvent &event);
 	
 	// Svn events
 	void OnCommit             (wxCommandEvent &event);

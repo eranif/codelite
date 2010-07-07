@@ -48,7 +48,7 @@ BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_MENU(XRCID("svn_ignore_file_pattern"),SubversionView::OnIgnoreFilePattern)
 	EVT_MENU(XRCID("svn_blame"),              SubversionView::OnBlame)
 	EVT_MENU(XRCID("svn_checkout"),           SubversionView::OnCheckout)
-
+	EVT_MENU(XRCID("svn_open_file"),          SubversionView::OnOpenFile)
 END_EVENT_TABLE()
 
 SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
@@ -390,6 +390,8 @@ void SubversionView::CreateSecondRootMenu(wxMenu* menu)
 
 void SubversionView::CreateFileMenu(wxMenu* menu)
 {
+	menu->Append(XRCID("svn_open_file"),  wxT("Open File..."));
+	menu->AppendSeparator();
 	menu->Append(XRCID("svn_commit"),  wxT("Commit"));
 	menu->Append(XRCID("svn_update"),  wxT("Update"));
 	menu->AppendSeparator();
@@ -795,27 +797,41 @@ void SubversionView::OnShowSvnInfo(wxCommandEvent& event)
 
 void SubversionView::OnItemActivated(wxTreeEvent& event)
 {
-	wxArrayTreeItemIds items;
-	wxArrayString      paths;
-	size_t count = m_treeCtrl->GetSelections(items);
-	for(size_t i=0; i<count; i++) {
-		wxTreeItemId item = items.Item(i);
-
-		if(item.IsOk() == false)
-			continue;
-
-		SvnTreeData *data = (SvnTreeData *)m_treeCtrl->GetItemData(item);
-		if (data && data->GetType() == SvnTreeData::SvnNodeTypeFile) {
-			paths.Add(m_textCtrlRootDir->GetValue() + wxFileName::GetPathSeparator() + data->GetFilepath());
-		}
+//	wxArrayTreeItemIds items;
+//	wxArrayString      paths;
+//	size_t count = m_treeCtrl->GetSelections(items);
+//	for(size_t i=0; i<count; i++) {
+//		wxTreeItemId item = items.Item(i);
+//
+//		if(item.IsOk() == false)
+//			continue;
+//
+//		SvnTreeData *data = (SvnTreeData *)m_treeCtrl->GetItemData(item);
+//		if (data && data->GetType() == SvnTreeData::SvnNodeTypeFile) {
+//			paths.Add(m_textCtrlRootDir->GetValue() + wxFileName::GetPathSeparator() + data->GetFilepath());
+//		}
+//	}
+//
+//	for(size_t i=0; i<paths.GetCount(); i++) {
+//
+//		if(wxFileName(paths.Item(i)).IsDir() == false)
+//			m_plugin->GetManager()->OpenFile(paths.Item(i));
+//
+//	}
+	wxString loginString;
+	if(m_plugin->LoginIfNeeded(event, m_textCtrlRootDir->GetValue(), loginString) == false) {
+		return;
 	}
+	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
+	wxString diffAgainst(wxT("BASE"));
 
-	for(size_t i=0; i<paths.GetCount(); i++) {
-
-		if(wxFileName(paths.Item(i)).IsDir() == false)
-			m_plugin->GetManager()->OpenFile(paths.Item(i));
-
+	// Simple diff
+	wxString command;
+	command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" diff -r") << diffAgainst << wxT(" ");
+	for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+		command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
 	}
+	m_plugin->GetConsole()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDiffHandler(m_plugin, event.GetId(), this), false);
 }
 
 void SubversionView::OnStopUI(wxUpdateUIEvent& event)
@@ -933,4 +949,31 @@ void SubversionView::DisconnectEvents()
 	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_PROJ_FILE_ADDED,  wxCommandEventHandler(SubversionView::OnFileAdded),                NULL, this);
 	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_FILE_RENAMED,     wxCommandEventHandler(SubversionView::OnFileRenamed),              NULL, this);
 	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
+}
+
+void SubversionView::OnOpenFile(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	
+	wxArrayTreeItemIds items;
+	wxArrayString      paths;
+	size_t count = m_treeCtrl->GetSelections(items);
+	for(size_t i=0; i<count; i++) {
+		wxTreeItemId item = items.Item(i);
+
+		if(item.IsOk() == false)
+			continue;
+
+		SvnTreeData *data = (SvnTreeData *)m_treeCtrl->GetItemData(item);
+		if (data && data->GetType() == SvnTreeData::SvnNodeTypeFile) {
+			paths.Add(m_textCtrlRootDir->GetValue() + wxFileName::GetPathSeparator() + data->GetFilepath());
+		}
+	}
+
+	for(size_t i=0; i<paths.GetCount(); i++) {
+
+		if(wxFileName(paths.Item(i)).IsDir() == false)
+			m_plugin->GetManager()->OpenFile(paths.Item(i));
+
+	}
 }

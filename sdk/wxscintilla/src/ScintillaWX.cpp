@@ -839,7 +839,7 @@ long ScintillaWX::WndProc(unsigned int iMessage, unsigned long wParam, long lPar
 		
 		if(sci->m_isTipBgDark) {
 			ct.colourDoxyHighlight = ColourAllocated( ColourDesired(0, 255, 0).AsLong() );
-			ct.colourDivider       = ColourAllocated(0);
+			ct.colourDivider       = ColourAllocated( ColourDesired(255, 255, 255).AsLong() );
 		}
 		
 		// Now display the window.

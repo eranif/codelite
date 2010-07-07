@@ -1422,8 +1422,19 @@ void Language::DoReplaceTokens(wxString &inStr, const std::map<wxString, wxStrin
 			}
 		} else {
 			// Simple replacement
-			if(inStr.Find(findWhat) != wxNOT_FOUND) {
-				inStr.Replace(findWhat, replaceWith);
+			int where = inStr.Find(findWhat);
+			if(where >= 0) {
+				if(inStr.Length() > static_cast<size_t>(where)) {
+					// Make sure that the next char is a non valid char otherwise this is not a complete word
+					if(inStr.Mid(where, 1).find_first_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890")) != wxString::npos) {
+						// the match is not a full word
+						continue;
+					} else {
+						inStr.Replace(findWhat, replaceWith);
+					}
+				} else {
+					inStr.Replace(findWhat, replaceWith);
+				}
 			}
 		}
 	}

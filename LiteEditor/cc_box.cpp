@@ -41,16 +41,16 @@
 #define BOX_WIDTH  250
 
 CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
-		:
-		CCBoxBase(parent, wxID_ANY, wxDefaultPosition, wxSize(0, 0))
-		, m_showFullDecl(false)
-		, m_height(BOX_HEIGHT)
-		, m_autoHide(autoHide)
-		, m_insertSingleChoice(autoInsertSingleChoice)
-		, m_owner(NULL)
-		, m_hideExtInfoPane(true)
-		, m_startPos(wxNOT_FOUND)
-		, m_showItemComments(true)
+	:
+	CCBoxBase(parent, wxID_ANY, wxDefaultPosition, wxSize(0, 0))
+	, m_showFullDecl(false)
+	, m_height(BOX_HEIGHT)
+	, m_autoHide(autoHide)
+	, m_insertSingleChoice(autoInsertSingleChoice)
+	, m_owner(NULL)
+	, m_hideExtInfoPane(true)
+	, m_startPos(wxNOT_FOUND)
+	, m_showItemComments(true)
 {
 	m_constructing = true;
 	HideCCBox();
@@ -586,11 +586,13 @@ void CCBox::OnShowPublicItems(wxCommandEvent& event)
 
 void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 {
+	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
+
 	if(m_showItemComments == false) {
+		editor->CallTipCancel();
 		return;
 	}
 
-	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
 	wxString prefix;
 
 	if( tag.IsMethod() ) {
@@ -700,4 +702,18 @@ void CCBox::DoHideCCHelpTab()
 	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
 	if(editor)
 		editor->CallTipCancel();
+}
+
+void CCBox::OnShowComments(wxCommandEvent& event)
+{
+	m_showItemComments = event.IsChecked();
+	if( m_showItemComments == false ) {
+		DoFormatDescriptionPage( TagEntry() );
+	} else {
+		TagEntry tag;
+		if(m_listCtrl->GetItemTagEntry(m_selectedItem, tag)) {
+			DoFormatDescriptionPage( tag );
+		}
+	}
+	event.Skip();
 }

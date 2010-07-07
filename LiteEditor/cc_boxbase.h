@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May  4 2010)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -44,6 +44,7 @@ class CCBoxBase : public wxPanel
 		virtual void OnItemSelected( wxListEvent& event ) { event.Skip(); }
 		virtual void OnKeyDown( wxListEvent& event ) { event.Skip(); }
 		virtual void OnShowPublicItems( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnShowComments( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:

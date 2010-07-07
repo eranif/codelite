@@ -3501,7 +3501,7 @@ protected:
 	// ERAN IFRAH
 public:
 	wxPoint m_ccPoint;
-
+	bool    m_isTipBgDark;
 	// END
     friend class ScintillaWX;
     friend class Platform;

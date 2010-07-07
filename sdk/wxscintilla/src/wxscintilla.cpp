@@ -149,6 +149,7 @@ wxScintilla::wxScintilla (wxWindow *parent,
                           long style,
                           const wxString& name) {
     m_swx = NULL;
+	m_isTipBgDark = false;
     Create (parent, id, pos, size, style, name);
 }
 

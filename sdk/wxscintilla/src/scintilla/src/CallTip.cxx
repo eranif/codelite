@@ -45,6 +45,14 @@ CallTip::CallTip() {
 	colourSel.desired = ColourDesired(0, 0, 0x80);
 	colourShade.desired = ColourDesired(0, 0, 0);
 	colourLight.desired = ColourDesired(0xc0, 0xc0, 0xc0);
+	
+	// ERAN IFRAH
+	ColourDesired c(0, 0, 255);
+	ColourAllocated ca(c.AsLong());
+	
+	colourDoxyHighlight = ca;
+	colourDivider = ColourAllocated(0);
+	// ERAN IFRAH - END
 }
 
 CallTip::~CallTip() {
@@ -148,7 +156,7 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 				int ww = rcClient.Width();
 				rcClient.left  = x;
 				rcClient.right = rcClient.left + ww;
-				surface->PenColour(colourShade.allocated);
+				surface->PenColour(colourDivider);
 				surface->MoveTo(0, rcClient.top);
 				surface->LineTo(rcClient.right, rcClient.top);
 				xEnd = rcClient.right;
@@ -202,13 +210,9 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 					rcClient.left = x;
 					rcClient.right = xEnd;
 					if(doxyHighlight) {
-
-						ColourDesired c(0, 0, 255);
-						ColourAllocated ca(c.AsLong());
-
 						surface->DrawTextTransparent(rcClient, font, ytext,
 						                             s+startSeg, endSeg - startSeg,
-						                             ca);
+						                             colourDoxyHighlight);
 					} else {
 						surface->DrawTextTransparent(rcClient, font, ytext,
 						                             s+startSeg, endSeg - startSeg,

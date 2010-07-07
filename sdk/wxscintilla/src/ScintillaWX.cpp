@@ -836,7 +836,12 @@ long ScintillaWX::WndProc(unsigned int iMessage, unsigned long wParam, long lPar
 		wxPoint clientPt = sci->ScreenToClient(rr.GetTopLeft());
 		rr.SetTopLeft( clientPt );
 		rc = PRectangle(rr.GetLeft(), rr.GetTop(), rr.GetRight()+1, rr.GetBottom()+1);
-
+		
+		if(sci->m_isTipBgDark) {
+			ct.colourDoxyHighlight = ColourAllocated( ColourDesired(0, 255, 0).AsLong() );
+			ct.colourDivider       = ColourAllocated(0);
+		}
+		
 		// Now display the window.
 		CreateCallTipWindow(rc);
 		ct.wCallTip.SetPositionRelative(rc, wMain);

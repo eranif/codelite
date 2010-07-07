@@ -46,6 +46,10 @@ public:
 	ColourPair colourSel;
 	ColourPair colourShade;
 	ColourPair colourLight;
+	// ERAN IFRAH
+	ColourAllocated colourDivider;
+	ColourAllocated colourDoxyHighlight;
+	// ERAN IFRAH - END
 	int codePage;
 	int clickPlace;
 

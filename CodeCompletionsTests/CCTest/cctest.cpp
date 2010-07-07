@@ -44,6 +44,13 @@ void testVectorOfStdString_OperatorMeruba()
 	CHECK_SIZE(tags.size(), 197);
 }
 
+void testStdSharedPtr()
+{
+	std::vector<TagEntryPtr> tags;
+	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_shared_ptr.h")), 10, wxT("p->"), LoadFile(wxT("../tests/test_shared_ptr.h")), tags);
+	CHECK_SIZE(tags.size(), 314);
+}
+
 int main(int argc, char **argv)
 {
 	//Initialize the wxWidgets library
@@ -58,5 +65,6 @@ int main(int argc, char **argv)
 	testVectorOfStdString();
 	testVectorOfStdString_OperatorMeruba();
 	testWxArrayString_OperatorMeruba();
+	testStdSharedPtr();
 	return 0;
 }

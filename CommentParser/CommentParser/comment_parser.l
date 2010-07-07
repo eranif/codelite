@@ -73,6 +73,8 @@ cpp_comment_start [//]{2,}
 	BEGIN(c_comment);
 }
 
+[\t \v] { /* skip whitespaces */}
+
 \n   {
 	/* if we kept some C++ comment, it is time to flush it to the 
 	 * result output */

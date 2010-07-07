@@ -305,21 +305,21 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 	*yy_cp = '\0'; \
 	yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 15
-#define YY_END_OF_BUFFER 16
-static yyconst short int yy_acclist[34] =
+#define YY_NUM_RULES 16
+#define YY_END_OF_BUFFER 17
+static yyconst short int yy_acclist[37] =
     {   0,
-       16,    5,   15,    4,   15,    5,   15,   15,   14,   15,
-       11,   14,   15,   13,   15,   10,   14,   15,    9,   14,
-       15,   12,   14,   15,    7,   15,    6,   15,    2,    1,
-        8,    3,    1
+       17,    6,   16,    4,    6,   16,    5,   16,    6,   16,
+       16,   15,   16,   12,   15,   16,   14,   16,   11,   15,
+       16,   10,   15,   16,   13,   15,   16,    8,   16,    7,
+       16,    2,    1,    9,    3,    1
     } ;
 
-static yyconst short int yy_accept[29] =
+static yyconst short int yy_accept[30] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    2,
-        4,    6,    8,    9,   11,   14,   16,   19,   22,   25,
-       27,   29,   30,   31,   32,   33,   34,   34
+        4,    7,    9,   11,   12,   14,   17,   19,   22,   25,
+       28,   30,   32,   33,   34,   35,   36,   37,   37
     } ;
 
 static yyconst int yy_ec[256] =
@@ -361,32 +361,32 @@ static yyconst int yy_meta[9] =
 
 static yyconst short int yy_base[31] =
     {   0,
-        0,    6,    0,    0,   14,    0,   24,   23,   25,   28,
-       28,   16,   28,   28,   28,   28,   28,   28,    5,   28,
-       28,    6,    3,   28,   28,    2,   28,    3,    1,    0
+        0,    0,    0,    0,    8,    0,   24,   23,   25,   28,
+       28,   28,   10,   28,   28,   28,   28,   28,   28,   16,
+       28,   28,   17,   14,   28,   28,   13,   28,   19,   18
     } ;
 
 static yyconst short int yy_def[31] =
     {   0,
-       28,   28,   29,   29,   27,    5,   30,   30,   27,   27,
-       27,   27,   27,   27,   27,   27,   27,   27,   27,   27,
-       27,   27,   27,   27,   27,   27,    0,   27,   27,   27
+       28,    1,   29,   29,   28,    5,   30,   30,   28,   28,
+       28,   28,   28,   28,   28,   28,   28,   28,   28,   28,
+       28,   28,   28,   28,   28,   28,   28,    0,   28,   28
     } ;
 
 static yyconst short int yy_nxt[37] =
     {   0,
-       20,   13,   11,   10,   27,   27,   27,   12,   11,   26,
-       26,   25,   24,   12,   14,   15,   16,   17,   18,   14,
-       19,   14,   22,   23,   27,   21,   21,    9,   27,   27,
-       27,   27,   27,   27,   27,   27
+       10,   11,   12,   11,   10,   10,   10,   13,   15,   16,
+       17,   18,   19,   15,   20,   15,   23,   24,   21,   14,
+       27,   27,   26,   25,   28,   22,   22,    9,   28,   28,
+       28,   28,   28,   28,   28,   28
     } ;
 
 static yyconst short int yy_chk[37] =
     {   0,
-       30,   29,    1,   28,    0,    0,    0,    1,    2,   26,
-       23,   22,   19,    2,    5,    5,    5,    5,    5,    5,
-        5,    5,   12,   12,    9,    8,    7,   27,   27,   27,
-       27,   27,   27,   27,   27,   27
+        1,    1,    1,    1,    1,    1,    1,    1,    5,    5,
+        5,    5,    5,    5,    5,    5,   13,   13,   30,   29,
+       27,   24,   23,   20,    9,    8,    7,   28,   28,   28,
+       28,   28,   28,   28,   28,   28
     } ;
 
 static yy_state_type yy_state_buf[YY_BUF_SIZE + 2], *yy_state_ptr;
@@ -632,7 +632,7 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 28 )
+				if ( yy_current_state >= 29 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -715,15 +715,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-{
-	/* if we kept some C++ comment, it is time to flush it to the 
-	 * result output */
-	if(strCppComment.empty() == false && pResults) {
-		pResults->addComment(strCppComment, iCppCommentLine, false);
-		strCppComment.clear();
-		iCppCommentLine = -1;
-	}
-}
+{ /* skip whitespaces */}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
@@ -740,29 +732,41 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 {
-	BEGIN(INITIAL);
+	/* if we kept some C++ comment, it is time to flush it to the 
+	 * result output */
+	if(strCppComment.empty() == false && pResults) {
+		pResults->addComment(strCppComment, iCppCommentLine, false);
+		strCppComment.clear();
+		iCppCommentLine = -1;
+	}
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-{strCppComment += yytext;} /* do nothing */
+{
+	BEGIN(INITIAL);
+}
 	YY_BREAK
 case 8:
+YY_RULE_SETUP
+{strCppComment += yytext;} /* do nothing */
+	YY_BREAK
+case 9:
 YY_RULE_SETUP
 {
 	pResults->addComment(strComment, cp_lineno, false);
 	BEGIN(INITIAL);
 }
 	YY_BREAK
-case 9:
-YY_RULE_SETUP
-{}
-	YY_BREAK
 case 10:
 YY_RULE_SETUP
 {}
 	YY_BREAK
 case 11:
+YY_RULE_SETUP
+{}
+	YY_BREAK
+case 12:
 YY_RULE_SETUP
 { 
 	if(strComment.empty() == false) {
@@ -776,7 +780,7 @@ YY_RULE_SETUP
 	}
 }
 	YY_BREAK
-case 12:
+case 13:
 YY_RULE_SETUP
 {
 	if(strComment.empty() == false) {
@@ -790,11 +794,11 @@ YY_RULE_SETUP
 	}
 }
 	YY_BREAK
-case 13:
+case 14:
 YY_RULE_SETUP
 { strComment += "\n";}
 	YY_BREAK
-case 14:
+case 15:
 YY_RULE_SETUP
 { strComment += yytext;}
 	YY_BREAK
@@ -818,7 +822,7 @@ case YY_STATE_EOF(cpp_comment):
 	yyterminate();
 }
 	YY_BREAK
-case 15:
+case 16:
 YY_RULE_SETUP
 ECHO;
 	YY_BREAK
@@ -1108,7 +1112,7 @@ static yy_state_type yy_get_previous_state()
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 28 )
+			if ( yy_current_state >= 29 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1138,11 +1142,11 @@ yy_state_type yy_current_state;
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 28 )
+		if ( yy_current_state >= 29 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 27);
+	yy_is_jam = (yy_current_state == 28);
 	if ( ! yy_is_jam )
 		*yy_state_ptr++ = yy_current_state;
 

@@ -280,6 +280,10 @@ void CCBox::Show(const wxString& word)
 	size_t i(0);
 	std::vector<CCItemInfo> _tags;
 
+	m_listCtrl->SetCursor( wxCursor(wxCURSOR_ARROW) );
+	m_toolBar1->SetCursor( wxCursor(wxCURSOR_ARROW) );
+	this->SetCursor( wxCursor(wxCURSOR_ARROW) );
+
 	long checkIt (0);
 	EditorConfigST::Get()->GetLongValue(wxT("CC_Show_All_Members"), checkIt);
 	m_toolBar1->ToggleTool(TOOL_SHOW_PRIVATE_MEMBERS, checkIt);

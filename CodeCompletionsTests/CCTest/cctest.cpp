@@ -1,6 +1,7 @@
 #include <wx/init.h>	//wxInitializer
 #include <wx/string.h>	//wxString
 #include <wx/ffile.h>
+#include <memory>
 
 // CodeLite includes
 #include <ctags_manager.h>
@@ -51,6 +52,13 @@ void testStdSharedPtr()
 	CHECK_SIZE(tags.size(), 314);
 }
 
+void testStdAutoPtr()
+{
+	std::vector<TagEntryPtr> tags;
+	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_auto_ptr.h")), 4, wxT("p->"), LoadFile(wxT("../tests/test_auto_ptr.h")), tags);
+	CHECK_SIZE(tags.size(), 314);
+}
+
 int main(int argc, char **argv)
 {
 	//Initialize the wxWidgets library
@@ -62,9 +70,10 @@ int main(int argc, char **argv)
 	TagsManagerST::Get()->OpenDatabase( fn );
 	
 	// Execute the tests
-	testVectorOfStdString();
-	testVectorOfStdString_OperatorMeruba();
-	testWxArrayString_OperatorMeruba();
-	testStdSharedPtr();
+//	testVectorOfStdString();
+//	testVectorOfStdString_OperatorMeruba();
+//	testWxArrayString_OperatorMeruba();
+//	testStdSharedPtr();
+	testStdAutoPtr();
 	return 0;
 }

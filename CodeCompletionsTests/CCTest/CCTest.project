@@ -8,10 +8,12 @@
   <VirtualDirectory Name="src">
     <File Name="cctest.cpp"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="include">	$(PCHFile)
-  </VirtualDirectory>
-  <VirtualDirectory Name="resources">
-    <File Name="resources.rc"/>
+  <VirtualDirectory Name="test_files">	$(PCHFile)
+  
+    <File Name="tests/test_wxarraystr.h"/>
+    <File Name="tests/test_auto_ptr.h"/>
+    <File Name="tests/test_shared_ptr.h"/>
+    <File Name="tests/test_vector_std_string.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Settings Type="Executable">
@@ -88,4 +90,8 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <VirtualDirectory Name="TestFramework">
+    <File Name="tester.h"/>
+    <File Name="tester.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

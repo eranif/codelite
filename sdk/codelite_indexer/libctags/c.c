@@ -2596,6 +2596,9 @@ static void parseGeneralToken (statementInfo *const st, const int c)
  */
 static void nextToken (statementInfo *const st)
 {
+	const tokenInfo *const prev  = prevToken (st, 1);
+	const tokenInfo *const prev2 = prevToken (st, 2);
+	const tokenInfo *const prev3 = prevToken (st, 3);
 	tokenInfo *token;
 	do
 	{
@@ -2604,7 +2607,33 @@ static void nextToken (statementInfo *const st)
 		{
 			case EOF: longjmp (Exception, (int) ExceptionEOF);  break;
 			case '(': analyzeParens (st);                       break;
-			case '<': processAngleBracket ();                   break;
+			case '<': {
+				if(prev->type == TOKEN_NAME && prev2->keyword == KEYWORD_CLASS && prev3->keyword == KEYWORD_TEMPLATE) {
+					/* we found a template instantiation */
+					CollectingSignature = TRUE;
+					
+					/* Keep the template instantiation list */
+					/* clear the Signature global buffer */
+					if(Signature->size) {
+						memset(Signature->buffer, 0, Signature->size);
+					}
+					Signature->length = 0;
+					vStringPut(Signature, '<');
+					processAngleBracket ();
+					
+					vStringCat(prev->name, Signature);
+					/* clear the Signature global buffer */
+					if(Signature->size) {
+						memset(Signature->buffer, 0, Signature->size);
+					}
+					Signature->length = 0;
+					CollectingSignature = FALSE;
+					
+				} else {
+					processAngleBracket ();
+				}
+				break;
+			}
 			case '*': st->haveQualifyingName = FALSE;           break;
 			case ',': setToken (st, TOKEN_COMMA);               break;
 			case ':': processColon (st);                        break;

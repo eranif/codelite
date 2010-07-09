@@ -765,14 +765,17 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 
 void TagsManager::RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
 {
+	std::map<int, TagEntryPtr> mapTags;
+
 	for (size_t i=0; i<src.size(); i++) {
-		if (i == 0) {
-			target.push_back(src.at(0));
-		} else {
-			if (src.at(i)->GetName() != target.at(target.size()-1)->GetName()) {
-				target.push_back(src.at(i));
-			}
+		if(mapTags.find(src[i]->GetId()) == mapTags.end()) {
+			mapTags[src[i]->GetId()] = src[i];
 		}
+	}
+
+	std::map<int, TagEntryPtr>::iterator iter = mapTags.begin();
+	for(; iter != mapTags.end(); iter++) {
+		target.push_back( iter->second );
 	}
 }
 

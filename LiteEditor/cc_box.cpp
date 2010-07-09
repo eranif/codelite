@@ -40,6 +40,11 @@
 #define BOX_HEIGHT 250
 #define BOX_WIDTH  250
 
+#ifndef wxScintillaEventHandler
+#define wxScintillaEventHandler(func) \
+	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
+#endif
+
 CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	:
 	CCBoxBase(parent, wxID_ANY, wxDefaultPosition, wxSize(0, 0))
@@ -101,7 +106,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 		m_listCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 		m_listCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 		parent->m_isTipBgDark = false;
-		
+
 	} else {
 		// the tooltip colour is dark
 		parent->CallTipSetForegroundHighlight(wxT("YELLOW"));
@@ -115,6 +120,13 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	// return the focus to scintilla
 	parent->SetActive();
 	m_constructing = false;
+
+	GetParent()->Connect(wxEVT_SCI_CALLTIP_CLICK, wxScintillaEventHandler(CCBox::OnTipClicked), NULL, this);
+}
+
+CCBox::~CCBox()
+{
+//	GetParent()->Disconnect(wxEVT_SCI_CALLTIP_CLICK, wxScintillaEventHandler(CCBox::OnTipClicked), NULL, this);
 }
 
 void CCBox::OnItemActivated( wxListEvent& event )
@@ -140,7 +152,7 @@ void CCBox::OnItemDeSelected( wxListEvent& event )
 void CCBox::OnItemSelected( wxListEvent& event )
 {
 	m_selectedItem = event.m_itemIndex;
-	TagEntry tag;
+	CCItemInfo tag;
 	if(m_listCtrl->GetItemTagEntry(m_selectedItem, tag)) {
 		DoFormatDescriptionPage( tag );
 	}
@@ -269,7 +281,7 @@ void CCBox::SelectItem(long item)
 	m_listCtrl->Select(item);
 	m_listCtrl->EnsureVisible(item);
 
-	TagEntry tag;
+	CCItemInfo tag;
 	if(m_listCtrl->GetItemTagEntry(item, tag)) {
 		DoFormatDescriptionPage( tag );
 	}
@@ -307,32 +319,34 @@ void CCBox::Show(const wxString& word)
 			TagEntryPtr tag = m_tags.at(i);
 			bool        isVisible = m_tags.at(i)->GetAccess() == wxT("private") || m_tags.at(i)->GetAccess() == wxT("protected");
 			bool        isInScope = (editor && (m_tags.at(i)->GetParent() == editor->GetContext()->GetCurrentScopeName()));
-			if (lastName != m_tags.at(i)->GetName()) {
-				if( (!isVisible && !showPrivateMembers) || (showPrivateMembers) || (isInScope) ) {
+			bool        collectIt = (!isVisible && !showPrivateMembers) || (showPrivateMembers) || (isInScope);
+
+			if(collectIt) {
+
+				if (item.displayName != m_tags.at(i)->GetName()) {// Starting a new group or it is first time
+					if( item.IsOk() ) {
+						// we got a group of tags stored in 'item' add it
+						// to the _tags before we continue
+						_tags.push_back(item);
+					}
+
+					// start a new group
+					item.Reset();
 
 					item.displayName =  tag->GetName();
 					item.imgId       = GetImageId(*m_tags.at(i));
 					item.tag         = *m_tags.at(i);
-					_tags.push_back(item);
+					item.listOfTags.push_back( *m_tags.at(i) );
 
-					lastName = tag->GetName();
-
-				}
-			}
-
-			if (m_showFullDecl) {
-				//collect only declarations
-				if (m_tags.at(i)->GetKind() == wxT("prototype")) {
-
-					if( (!isVisible && !showPrivateMembers) || (showPrivateMembers) || (isInScope) ) {
-						item.displayName =  tag->GetName()+tag->GetSignature();
-						item.imgId       = GetImageId(*m_tags.at(i));
-						item.tag         = *m_tags.at(i);
-						_tags.push_back(item);
-					}
+				} else {
+					item.listOfTags.push_back( *m_tags.at(i) );
 				}
 			}
 		}
+	}
+
+	if(item.IsOk()) {
+		_tags.push_back(item);
 	}
 
 	if (_tags.size() == 1 && m_insertSingleChoice) {
@@ -590,24 +604,38 @@ void CCBox::OnShowPublicItems(wxCommandEvent& event)
 	HideCCBox();
 }
 
-void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
+void CCBox::DoShowTagTip()
 {
 	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
-
-	if(m_showItemComments == false) {
-		editor->CallTipCancel();
+	if( !editor ) {
 		return;
 	}
 
+	if(m_currentItem.listOfTags.empty())
+		return;
+
+	if(m_currentItem.currentIndex >= (int)m_currentItem.listOfTags.size()) {
+		m_currentItem.currentIndex = 0;
+	}
+
+	if(m_currentItem.currentIndex < 0) {
+		m_currentItem.currentIndex = m_currentItem.listOfTags.size() - 1;
+	}
+
 	wxString prefix;
+	TagEntry tag = m_currentItem.listOfTags.at(m_currentItem.currentIndex);
+	if(m_currentItem.listOfTags.size() > 1) {
+		prefix << wxT("  \002 ") << m_currentItem.currentIndex+1 << wxT(" of ") << m_currentItem.listOfTags.size() << wxT("\001 ");
+		prefix << wxT("\n@@LINE@@\n");
+	}
 
 	if( tag.IsMethod() ) {
 
 		if(tag.IsConstructor())
-			prefix << wxT("[constructor]\n");
+			prefix << wxT("[Constructor]\n");
 
 		else if( tag.IsDestructor())
-			prefix << wxT("[destructor]\n");
+			prefix << wxT("[Destructor]\n");
 
 		TagEntryPtr p(new TagEntry(tag));
 		prefix << TagsManagerST::Get()->FormatFunction(p, FunctionFormat_WithVirtual|FunctionFormat_Arg_Per_Line) << wxT("\n");
@@ -701,6 +729,28 @@ void CCBox::DoFormatDescriptionPage(const TagEntry& tag)
 	}
 }
 
+void CCBox::DoFormatDescriptionPage(const CCItemInfo& item)
+{
+	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
+	if( !editor ) {
+		return;
+	}
+
+	if(m_showItemComments == false) {
+		editor->CallTipCancel();
+		return;
+	}
+
+	m_currentItem = item;
+	if(m_currentItem.listOfTags.empty()) {
+		editor->CallTipCancel();
+		return;
+	}
+
+	m_currentItem.currentIndex = 0;
+	DoShowTagTip();
+}
+
 void CCBox::EnableExtInfoPane()
 {
 	m_hideExtInfoPane = false;
@@ -710,6 +760,7 @@ void CCBox::DoHideCCHelpTab()
 {
 	m_hideExtInfoPane = true;
 	m_startPos = wxNOT_FOUND;
+	m_currentItem.Reset();
 	LEditor *editor = dynamic_cast<LEditor*>( GetParent() );
 	if(editor)
 		editor->CallTipCancel();
@@ -719,12 +770,24 @@ void CCBox::OnShowComments(wxCommandEvent& event)
 {
 	m_showItemComments = event.IsChecked();
 	if( m_showItemComments == false ) {
-		DoFormatDescriptionPage( TagEntry() );
+		DoFormatDescriptionPage( CCItemInfo() );
 	} else {
-		TagEntry tag;
+		CCItemInfo tag;
 		if(m_listCtrl->GetItemTagEntry(m_selectedItem, tag)) {
 			DoFormatDescriptionPage( tag );
 		}
 	}
 	event.Skip();
+}
+
+void CCBox::OnTipClicked(wxScintillaEvent& event)
+{
+	event.Skip();
+	if(event.GetPosition() == 1) {       // Up
+		m_currentItem.currentIndex++;
+		DoShowTagTip();
+	} else if(event.GetPosition() == 2) {// down
+		m_currentItem.currentIndex--;
+		DoShowTagTip();
+	}
 }

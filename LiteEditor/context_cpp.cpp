@@ -2606,7 +2606,7 @@ void ContextCpp::OnGotoNextFunction(wxCommandEvent& event)
 
 void ContextCpp::OnCallTipClick(wxScintillaEvent& e)
 {
-	wxUnusedVar(e);
+	e.Skip();
 }
 
 void ContextCpp::OnCalltipCancel()

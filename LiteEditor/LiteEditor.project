@@ -874,7 +874,7 @@ resources.cpp: resources.xrc
         <Library Value="libwxmsw28ud.a"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="../Runtime/CodeLite.exe" IntermediateDirectory="./Debug" Command="./CodeLite.exe" CommandArguments="-b . " WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="../Runtime/CodeLite.exe" IntermediateDirectory="./Debug" Command="./CodeLite.exe" CommandArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
         <StartupCommands/>

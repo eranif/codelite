@@ -29,15 +29,21 @@
 #include <vector>
 #include "entry.h"
 
-struct CCItemInfo {
-	int      imgId;
-	wxString displayName;
-	TagEntry tag;
+class CCItemInfo {
+public:
+	int                   imgId;
+	wxString              displayName;
+	TagEntry              tag;
+	std::vector<TagEntry> listOfTags;
+	int                   currentIndex;
 
+	CCItemInfo() : imgId(wxNOT_FOUND), displayName(wxT("")), currentIndex(0) {}
+	bool IsOk() const { return displayName.IsEmpty() == false; }
 	void Reset() {
 		imgId = wxNOT_FOUND;
 		displayName = wxEmptyString;
 		tag = TagEntry();
+		listOfTags.clear();
 	}
 };
 
@@ -50,7 +56,7 @@ public:
 public:
 
 	void SetItems(const std::vector<CCItemInfo> &tags) { m_tags = tags; }
-	bool GetItemTagEntry(int index, TagEntry &tag);
+	bool GetItemTagEntry(int index, CCItemInfo &tag);
 	virtual wxListItemAttr* OnGetItemAttr(long item) const;
 	virtual int OnGetItemColumnImage(long item, long column) const;
 	virtual int OnGetItemImage(long item) const;

@@ -136,12 +136,12 @@ int CCVirtualListCtrl::FindMatch(const wxString& word, bool &fullMatch)
 	return wxNOT_FOUND;
 }
 
-bool CCVirtualListCtrl::GetItemTagEntry(int index, TagEntry& tag)
+bool CCVirtualListCtrl::GetItemTagEntry(int index, CCItemInfo& tag)
 {
 	if(index < 0 || (size_t)index >= m_tags.size()) {
 		return false;
 	}
 
-	tag = m_tags.at(index).tag;
+	tag = m_tags.at(index);
 	return true;
 }

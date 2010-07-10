@@ -53,6 +53,13 @@ TEST_FUNC(testStdAutoPtr)
 	CHECK_SIZE(tags.size(), 314);
 }
 
+TEST_FUNC(testClFrame)
+{
+	std::vector<TagEntryPtr> tags;
+	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_cl_frame.h")), 4, wxT("Frame::Get()->"), LoadFile(wxT("../tests/test_cl_frame.h")), tags);
+	CHECK_SIZE(tags.size(), 950);
+}
+
 int main(int argc, char **argv)
 {
 	//Initialize the wxWidgets library

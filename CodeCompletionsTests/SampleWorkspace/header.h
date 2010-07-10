@@ -7,3 +7,4 @@
 #include <wx/arrstr.h>
 #include <wx/string.h>
 #include <memory>
+#include <LiteEditor/frame.h>

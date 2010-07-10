@@ -170,29 +170,29 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 	// Remove from this list all files which starts with one of the crawler search paths
 	wxArrayString searchPaths, excludePaths, filteredFileList;
 	GetSearchPaths( searchPaths, excludePaths );
-	
+
 	DEBUG_MESSAGE( wxString::Format(wxT("Initial workspace files count is %d"), req->_workspaceFiles.size()) ) ;
-	
+
 	for(size_t i=0; i<req->_workspaceFiles.size(); i++) {
 		wxString name(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
 		wxFileName fn(name);
 		fn.MakeAbsolute();
 
-		bool isFromSearchPath(false);
-		for(size_t j=0; j<searchPaths.GetCount(); j++) {
-			wxFileName p ( searchPaths.Item(j) + wxFileName::GetPathSeparator());
-			//DEBUG_MESSAGE( wxString::Format(wxT("Comparing %s vs %s"), fn.GetFullPath().c_str(), p.GetPath().c_str()));
-			if( fn.GetFullPath().StartsWith(p.GetPath()) ) {
-				//DEBUG_MESSAGE(wxT("Match was found for file, this file will NOT be parsed!"));
-				isFromSearchPath = true;
-				break;
-			}
-		}
+//		bool isFromSearchPath(false);
+//		for(size_t j=0; j<searchPaths.GetCount(); j++) {
+//			wxFileName p ( searchPaths.Item(j) + wxFileName::GetPathSeparator());
+//			//DEBUG_MESSAGE( wxString::Format(wxT("Comparing %s vs %s"), fn.GetFullPath().c_str(), p.GetPath().c_str()));
+//			if( fn.GetFullPath().StartsWith(p.GetPath()) ) {
+//				//DEBUG_MESSAGE(wxT("Match was found for file, this file will NOT be parsed!"));
+//				isFromSearchPath = true;
+//				break;
+//			}
+//		}
 
 		// this file is not part of the search paths
-		if( !isFromSearchPath ) {
-			filteredFileList.Add( fn.GetFullPath() );
-		}
+//		if( !isFromSearchPath ) {
+		filteredFileList.Add( fn.GetFullPath() );
+//		}
 	}
 
 	DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> Workspace files %d"), filteredFileList.GetCount()) );
@@ -202,7 +202,7 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 	// Clear the results once
 	{
 		wxCriticalSectionLocker locker( TagsManagerST::Get()->m_crawlerLocker );
-		
+
 		fcFileOpener::Instance()->ClearResults();
 		fcFileOpener::Instance()->ClearSearchPath();
 
@@ -228,7 +228,7 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 			}
 		}
 	}
-	
+
 	std::set<std::string> *newSet = new std::set<std::string>(fcFileOpener::Instance()->GetResults());
 
 #ifdef PARSE_THREAD_DBG
@@ -238,7 +238,7 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 		DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> %s"), fileN.c_str() ) );
 	}
 #endif
-	
+
 	// collect the results
 	wxCommandEvent event(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE);
 	event.SetClientData(newSet);
@@ -337,12 +337,12 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 	// If there is no event handler set to handle this comaprison
 	// results, then nothing more to be done
 	if (m_notifiedWindow ) {
-		
+
 		bool sendClearCacheEvent(false);
 		std::vector<std::pair<wxString, TagEntry> >  realModifiedItems;
-		
+
 		sendClearCacheEvent = (!deletedItems.empty() || !realModifiedItems.empty() || !newItems.empty());
-		
+
 		// send "end" event
 		wxCommandEvent e(wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS);
 		wxPostEvent(m_notifiedWindow, e);
@@ -355,7 +355,7 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 			SendEvent(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM, req->getFile(), goodNewItems);
 
 		if ( !modifiedItems.empty() ) {
-			
+
 			for (size_t i=0; i<modifiedItems.size(); i++) {
 				std::pair<wxString, TagEntry> p = modifiedItems.at(i);
 				if (!p.second.GetDifferOnByLineNumber()) {
@@ -366,7 +366,7 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 				SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, req->getFile(), realModifiedItems);
 			}
 		}
-		
+
 		if(sendClearCacheEvent) {
 			wxCommandEvent clearCacheEvent(wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE);
 			wxPostEvent(m_notifiedWindow, clearCacheEvent);
@@ -383,11 +383,11 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
 	if ( !this->IsCrawlerEnabled() ) {
 		return;
 	}
-	
-	
+
+
 	{
 		wxCriticalSectionLocker locker( TagsManagerST::Get()->m_crawlerLocker );
-		
+
 		wxArrayString includePaths, excludePaths;
 		GetSearchPaths( includePaths, excludePaths );
 
@@ -405,9 +405,9 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
 
 		// Before using the 'crawlerScan' we lock it, since it is not mt-safe
 		crawlerScan( cfile.data() );
-		
+
 	}
-	
+
 	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
 	std::set<std::string>::iterator iter = fileSet.begin();
 	for (; iter != fileSet.end(); iter++ ) {
@@ -450,7 +450,7 @@ void ParseThread::ParseAndStoreFiles(const wxArrayString& arrFiles, int initalCo
 
 		e.SetClientData(new wxString(message.c_str()));
 		m_notifiedWindow->AddPendingEvent( e );
-		
+
 		// if we added new symbols to the database, send an even to the main thread
 		// to clear the tags cache
 		if(totalSymbols) {

@@ -327,6 +327,7 @@ void CCBox::Show(const wxString& word)
 					if( item.IsOk() ) {
 						// we got a group of tags stored in 'item' add it
 						// to the _tags before we continue
+						DoFilterCompletionEntries(item);
 						_tags.push_back(item);
 					}
 
@@ -346,6 +347,7 @@ void CCBox::Show(const wxString& word)
 	}
 
 	if(item.IsOk()) {
+		DoFilterCompletionEntries(item);
 		_tags.push_back(item);
 	}
 
@@ -789,5 +791,44 @@ void CCBox::OnTipClicked(wxScintillaEvent& event)
 	} else if(event.GetPosition() == 2) {// down
 		m_currentItem.currentIndex--;
 		DoShowTagTip();
+	}
+}
+
+void CCBox::DoFilterCompletionEntries(CCItemInfo& item)
+{
+	std::map<wxString, TagEntry> impl, others;
+	// filter our some of the duplicate results
+	// (e.g. dont show prototpe + impl as 2 entries)
+	for(size_t i=0; i<item.listOfTags.size(); i++) {
+		TagEntry t = item.listOfTags[i];
+		if( !t.IsMethod() ) {
+			others[t.GetName()] = t;
+		} else if(t.IsFunction()) {
+			// Implementation
+			wxString normalizedSig = TagsManagerST::Get()->NormalizeFunctionSig(t.GetSignature(), 0);
+			impl[normalizedSig] = t;
+		} else {
+			// Prototype
+			wxString normalizedSig = TagsManagerST::Get()->NormalizeFunctionSig(t.GetSignature(), 0);
+			others[normalizedSig] = t;
+		}
+	}
+
+	// We separated the tags into 2 groups:
+	// 1) the function implementation
+	// 2) all the others
+	// remove the duplicate impl/decl (we drop the impl since usually they dont include comments)
+	std::map<wxString, TagEntry>::iterator iter = impl.begin();
+	for(; iter != impl.end(); iter++) {
+		if(others.find(iter->first) == others.end()) {
+			others[iter->first] = iter->second;
+		}
+	}
+
+	// repopulate the list with unique entries
+	item.listOfTags.clear();
+	iter = others.begin();
+	for(; iter != others.end(); iter++) {
+		item.listOfTags.push_back( iter->second );
 	}
 }

@@ -64,8 +64,8 @@ protected:
 	void OnItemSelected( wxListEvent& event );
 
 	void OnShowPublicItems(wxCommandEvent& event);
-
 	void OnShowComments(wxCommandEvent& event);
+	void OnTipClicked(wxScintillaEvent &event);
 
 protected:
 	// helper methods
@@ -76,9 +76,7 @@ protected:
 	void DoFormatDescriptionPage(const CCItemInfo& tag);
 	void DoShowTagTip();
 	void DoHideCCHelpTab();
-
-	// Event handlers
-	void OnTipClicked(wxScintillaEvent &event);
+	void DoFilterCompletionEntries(CCItemInfo& item);
 public:
 	/** Constructor */
 	CCBox(LEditor* parent, bool autoHide = true, bool autoInsertSingleChoice = true);

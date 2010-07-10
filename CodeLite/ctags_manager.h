@@ -535,7 +535,20 @@ public:
 	 * @param tags
 	 */
 	void TagsFromFileAndScope(const wxFileName &fileName, const wxString &scopeName, std::vector<TagEntryPtr> &tags);
-
+	
+	/**
+	 * @brief 
+	 * @param scope
+	 * @param tags
+	 */
+	virtual void GetSubscriptOperator(const wxString &scope, std::vector<TagEntryPtr> &tags) ;
+	/**
+	 * @brief 
+	 * @param scope
+	 * @param tags
+	 */
+	virtual void GetDereferenceOperator(const wxString &scope, std::vector<TagEntryPtr> &tags);
+	
 	/**
 	 * @brief return information about the current function based on file & line
 	 * @param fileName the current file name

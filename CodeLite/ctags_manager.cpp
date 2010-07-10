@@ -2442,3 +2442,52 @@ void TagsManager::SetProjectPaths(const wxArrayString& paths)
 	m_projectPaths.Clear();
 	m_projectPaths = paths;
 }
+
+void TagsManager::GetDereferenceOperator(const wxString& scope, std::vector<TagEntryPtr>& tags)
+{
+	std::vector<wxString> derivationList;
+
+	//add this scope as well to the derivation list
+	wxString _scopeName = DoReplaceMacros( scope );
+	derivationList.push_back(_scopeName);
+	GetDerivationList(_scopeName, derivationList);
+
+	//make enough room for max of 500 elements in the vector
+	for (size_t i=0; i<derivationList.size(); i++) {
+		wxString tmpScope(derivationList.at(i));
+		tmpScope = DoReplaceMacros(tmpScope);
+		
+		GetDatabase()->GetDereferenceOperator(tmpScope, tags);
+		if(tags.size()) {
+			
+			// No need to further check
+			break;
+			
+		}
+	}
+}
+
+void TagsManager::GetSubscriptOperator(const wxString& scope, std::vector<TagEntryPtr>& tags)
+{
+	std::vector<wxString> derivationList;
+
+	//add this scope as well to the derivation list
+	wxString _scopeName = DoReplaceMacros( scope );
+	derivationList.push_back(_scopeName);
+	GetDerivationList(_scopeName, derivationList);
+
+	//make enough room for max of 500 elements in the vector
+	for (size_t i=0; i<derivationList.size(); i++) {
+		wxString tmpScope(derivationList.at(i));
+		tmpScope = DoReplaceMacros(tmpScope);
+		
+		GetDatabase()->GetSubscriptOperator(scope, tags);
+		if(tags.size()) {
+			
+			// No need to further check
+			break;
+			
+		}
+	}
+}
+

@@ -162,6 +162,20 @@ public:
 	 * @param tags  [output]
 	 */
 	virtual void GetGlobalFunctions(std::vector<TagEntryPtr> &tags) = 0;
+	
+	/**
+	 * @brief 
+	 * @param scope
+	 * @param tags
+	 */
+	virtual void GetDereferenceOperator(const wxString &scope, std::vector<TagEntryPtr> &tags) = 0;
+	
+	/**
+	 * @brief 
+	 * @param scope
+	 * @param tags
+	 */
+	virtual void GetSubscriptOperator(const wxString &scope, std::vector<TagEntryPtr> &tags) = 0;
 
 	// -------------------------- Files Table -------------------------------------------
 

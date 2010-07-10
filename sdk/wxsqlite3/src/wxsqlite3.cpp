@@ -126,7 +126,7 @@ const wxSomething* wxERRMSG_NOLOADEXT     = wxTRANSLATE("Loadable extension supp
 inline wxString UTF8toWxString(const char* localValue)
 {
 #if wxUSE_UNICODE
-  return wxString(localValue, wxConvUTF8);
+  return wxString::From8BitData(localValue);
 #else
   return wxString(wxConvUTF8.cMB2WC(localValue), *wxConvCurrent);
 #endif

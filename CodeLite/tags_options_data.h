@@ -68,17 +68,24 @@ enum CodeCompletionColourOpts {
 
 class TagsOptionsData : public SerializedObject
 {
-	size_t           m_ccFlags;
-	size_t           m_ccColourFlags;
-	wxString         m_tokens;
-	wxString         m_types;
-	wxString         m_fileSpec;
-	wxArrayString    m_languages;
-	int              m_minWordLen;
-	wxArrayString    m_parserSearchPaths;
-	wxArrayString    m_parserExcludePaths;
-	bool             m_parserEnabled;
-	int              m_maxItemToColour;
+	size_t                       m_ccFlags;
+	size_t                       m_ccColourFlags;
+	wxString                     m_tokens;
+	wxString                     m_types;
+	wxString                     m_fileSpec;
+	wxArrayString                m_languages;
+	int                          m_minWordLen;
+	wxArrayString                m_parserSearchPaths;
+	wxArrayString                m_parserExcludePaths;
+	bool                         m_parserEnabled;
+	int                          m_maxItemToColour;
+	std::map<wxString, wxString> m_tokensWxMap;
+	std::map<wxString, wxString> m_tokensWxMapReversed;
+	
+protected:
+	void DoUpdateTokensWxMap();
+	void DoUpdateTokensWxMapReversed();
+	
 public:
 	TagsOptionsData();
 	virtual ~TagsOptionsData();
@@ -87,24 +94,22 @@ public:
 	void SetFlags(const size_t &flags) {
 		m_ccFlags = flags;
 	}
+	
 	void SetFileSpec(const wxString &filespec) {
 		m_fileSpec = filespec;
 	}
-	void SetPreprocessor(const wxString& tokens) {
-		m_tokens = tokens;
-	}
+
 	void SetLanguages(const wxArrayString &langs) {
 		m_languages = langs;
 	}
+	
 	void SetLanguageSelection(const wxString &lang);
 
 	const wxArrayString &GetLanguages() const {
 		return m_languages;
 	}
 
-	void SetTokens(const wxString& tokens) {
-		this->m_tokens = tokens;
-	}
+	void SetTokens(const wxString& tokens);
 	void SetTypes(const wxString& types) {
 		this->m_types = types;
 	}
@@ -114,12 +119,12 @@ public:
 	const wxString& GetTypes() const {
 		return m_types;
 	}
-	std::map<std::string, std::string> GetTokensMap() const;
 	
+	std::map<std::string, std::string> GetTokensMap() const;
 	std::map<std::string, std::string> GetTokensReversedMap() const;
-	std::map<wxString, wxString> GetTokensReversedWxMap() const;
-
-	std::map<wxString, wxString> GetTokensWxMap() const;
+	
+	const std::map<wxString, wxString>& GetTokensReversedWxMap() const;
+	const std::map<wxString, wxString>& GetTokensWxMap() const;
 
 	std::map<wxString, wxString> GetTypesMap() const;
 

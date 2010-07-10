@@ -267,6 +267,9 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	arch.Read     (wxT("m_maxItemToColour"),   m_maxItemToColour);
 
 	// since of build 3749, we *always* set CC_ACCURATE_SCOPE_RESOLVING to true
+	DoUpdateTokensWxMapReversed();
+	DoUpdateTokensWxMap();
+	
 	m_ccFlags |= CC_ACCURATE_SCOPE_RESOLVING;
 }
 
@@ -343,17 +346,9 @@ std::map<std::string,std::string> TagsOptionsData::GetTokensMap() const
 	return tokens;
 }
 
-std::map<wxString, wxString> TagsOptionsData::GetTokensWxMap() const
+const std::map<wxString, wxString>& TagsOptionsData::GetTokensWxMap() const
 {
-	std::map<wxString, wxString> tokens;
-	wxArrayString tokensArr = wxStringTokenize(m_tokens, wxT("\r\n"), wxTOKEN_STRTOK);
-	for (size_t i=0; i<tokensArr.GetCount(); i++) {
-		wxString item = tokensArr.Item(i).Trim().Trim(false);
-		wxString k = item.BeforeFirst(wxT('='));
-		wxString v = item.AfterFirst(wxT('='));
-		tokens[k] = v;
-	}
-	return tokens;
+	return m_tokensWxMap;
 }
 
 std::map<wxString,wxString> TagsOptionsData::GetTypesMap() const
@@ -385,18 +380,41 @@ std::map<std::string, std::string> TagsOptionsData::GetTokensReversedMap() const
 	return tokens;
 }
 
-std::map<wxString,wxString> TagsOptionsData::GetTokensReversedWxMap() const
+void TagsOptionsData::SetTokens(const wxString& tokens)
 {
-	std::map<wxString, wxString> tokens;
+	DoUpdateTokensWxMapReversed();
+	DoUpdateTokensWxMap();
+	
+	this->m_tokens = tokens;
+}
+
+void TagsOptionsData::DoUpdateTokensWxMap()
+{
+	m_tokensWxMap.clear();
+	wxArrayString tokensArr = wxStringTokenize(m_tokens, wxT("\r\n"), wxTOKEN_STRTOK);
+	for (size_t i=0; i<tokensArr.GetCount(); i++) {
+		wxString item = tokensArr.Item(i).Trim().Trim(false);
+		wxString k = item.BeforeFirst(wxT('='));
+		wxString v = item.AfterFirst(wxT('='));
+		m_tokensWxMap[k] = v;
+	}
+}
+
+void TagsOptionsData::DoUpdateTokensWxMapReversed()
+{
+	m_tokensWxMapReversed.clear();
 	wxArrayString typesArr = wxStringTokenize(m_tokens, wxT("\r\n"), wxTOKEN_STRTOK);
 	for (size_t i=0; i<typesArr.GetCount(); i++) {
 		wxString item = typesArr.Item(i).Trim().Trim(false);
 		wxString k = item.AfterFirst(wxT('='));
 		wxString v = item.BeforeFirst(wxT('='));
-
 		if(_IsValidCppIndetifier(k) && !_IsCppKeyword(k)) {
-			tokens[k] = v;
+			m_tokensWxMapReversed[k] = v;
 		}
 	}
-	return tokens;
 }
+const std::map<wxString,wxString>& TagsOptionsData::GetTokensReversedWxMap() const
+{
+	return m_tokensWxMapReversed;
+}
+

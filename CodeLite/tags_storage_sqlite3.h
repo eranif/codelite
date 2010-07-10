@@ -205,6 +205,20 @@ public:
 	void DeleteFromFiles        (const wxArrayString &files);
 
 	/**
+	 * @brief return list of tags of type 'dereference operator (->)' for a given scope
+	 * @param scope
+	 * @param tags [output]
+	 */
+	virtual void GetDereferenceOperator(const wxString& scope, std::vector<TagEntryPtr>& tags);
+	
+	/**
+	 * @brief return list of tags of type 'subscript operator' for a given scope
+	 * @param scope
+	 * @param tags [output]
+	 */
+	virtual void GetSubscriptOperator(const wxString& scope, std::vector<TagEntryPtr>& tags);
+
+	/**
 	 * Begin transaction.
 	 */
 	void Begin() {

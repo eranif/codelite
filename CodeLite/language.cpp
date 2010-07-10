@@ -1247,7 +1247,6 @@ void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &t
 bool Language::OnArrowOperatorOverloading(wxString &typeName, wxString &typeScope)
 {
 	bool ret(false);
-
 	//collect all functions of typename
 	std::vector< TagEntryPtr > tags;
 	wxString scope;
@@ -1255,36 +1254,21 @@ bool Language::OnArrowOperatorOverloading(wxString &typeName, wxString &typeScop
 		scope << typeName;
 	else
 		scope << typeScope << wxT("::") << typeName;
-
 	//this function will retrieve the ineherited tags as well
-	GetTagsManager()->TagsByScope(scope, tags);
-	if (tags.empty() == false) {
+	GetTagsManager()->GetDereferenceOperator(scope, tags);
+	if (tags.size() == 1) {
 		//loop over the tags and scan for operator -> overloading
-		for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
-			wxString pattern = tags.at(i)->GetPattern();
-			if (pattern.Contains(wxT("operator")) && pattern.Contains(wxT("->"))) {
-				//we found our overloading operator
-				//extract the 'real' type from the pattern
-				clFunction f;
-				if (FunctionFromPattern(tags.at(i), f)) {
-					typeName = _U(f.m_returnValue.m_type.c_str());
-
-					// first assume that the return value has the same scope like the parent (unless the return value has a scope)
-					typeScope = f.m_returnValue.m_typeScope.empty() ? scope : _U(f.m_returnValue.m_typeScope.c_str());
-
-					// Call the magic method that fixes typename/typescope
-					GetTagsManager()->IsTypeAndScopeExists(typeName, typeScope);
-
-					ret = true;
-					break;
-
-				} else {
-					//failed to extract the return value from the patterm
-					//fallback to the current behavior
-					break;
-				}
-			}
-		}
+		//we found our overloading operator
+		//extract the 'real' type from the pattern
+		clFunction f;
+		if (FunctionFromPattern(tags.at(0), f)) {
+			typeName = _U(f.m_returnValue.m_type.c_str());
+			// first assume that the return value has the same scope like the parent (unless the return value has a scope)
+			typeScope = f.m_returnValue.m_typeScope.empty() ? scope : _U(f.m_returnValue.m_typeScope.c_str());
+			// Call the magic method that fixes typename/typescope
+			GetTagsManager()->IsTypeAndScopeExists(typeName, typeScope);
+			ret = true;
+		} 
 	}
 	return ret;
 }
@@ -1736,29 +1720,19 @@ bool Language::OnSubscriptOperator(wxString& typeName, wxString& typeScope)
 	else
 		scope << typeScope << wxT("::") << typeName;
 	//this function will retrieve the ineherited tags as well
-	GetTagsManager()->TagsByScope(scope, tags);
-	if (tags.empty() == false) {
-		//loop over the tags and scan for operator -> overloading
-		for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
-			wxString pattern = tags.at(i)->GetPattern();
-			if (pattern.Contains(wxT("operator")) && pattern.Contains(wxT("[]"))) {
-				//we found our overloading operator
-				//extract the 'real' type from the pattern
-				clFunction f;
-				if (FunctionFromPattern(tags.at(i), f)) {
-					typeName = _U(f.m_returnValue.m_type.c_str());
-					// first assume that the return value has the same scope like the parent (unless the return value has a scope)
-					typeScope = f.m_returnValue.m_typeScope.empty() ? scope : _U(f.m_returnValue.m_typeScope.c_str());
-					// Call the magic method that fixes typename/typescope
-					GetTagsManager()->IsTypeAndScopeExists(typeName, typeScope);
-					ret = true;
-					break;
-				} else {
-					//failed to extract the return value from the patterm
-					//fallback to the current behavior
-					break;
-				}
-			}
+	GetTagsManager()->GetSubscriptOperator(scope, tags);
+	if (tags.size() == 1) {
+		//we found our overloading operator
+		//extract the 'real' type from the pattern
+		clFunction f;
+		if (FunctionFromPattern(tags.at(0), f)) {
+			typeName = _U(f.m_returnValue.m_type.c_str());
+			// first assume that the return value has the same scope like the parent (unless the return value has a scope)
+			typeScope = f.m_returnValue.m_typeScope.empty() ? scope : _U(f.m_returnValue.m_typeScope.c_str());
+			// Call the magic method that fixes typename/typescope
+			GetTagsManager()->IsTypeAndScopeExists(typeName, typeScope);
+			ret = true;
+			
 		}
 	}
 	return ret;

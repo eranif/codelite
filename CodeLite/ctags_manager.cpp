@@ -768,8 +768,12 @@ void TagsManager::RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<Ta
 	std::map<int, TagEntryPtr> mapTags;
 
 	for (size_t i=0; i<src.size(); i++) {
-		if(mapTags.find(src[i]->GetId()) == mapTags.end()) {
-			mapTags[src[i]->GetId()] = src[i];
+		const TagEntryPtr& t = src.at(i);
+		int tagId = t->GetId();
+		if(mapTags.find(tagId) == mapTags.end()) {
+			mapTags[tagId] = t;
+		} else {
+			tagId = -1;
 		}
 	}
 
@@ -2456,13 +2460,13 @@ void TagsManager::GetDereferenceOperator(const wxString& scope, std::vector<TagE
 	for (size_t i=0; i<derivationList.size(); i++) {
 		wxString tmpScope(derivationList.at(i));
 		tmpScope = DoReplaceMacros(tmpScope);
-		
+
 		GetDatabase()->GetDereferenceOperator(tmpScope, tags);
 		if(tags.size()) {
-			
+
 			// No need to further check
 			break;
-			
+
 		}
 	}
 }
@@ -2480,13 +2484,13 @@ void TagsManager::GetSubscriptOperator(const wxString& scope, std::vector<TagEnt
 	for (size_t i=0; i<derivationList.size(); i++) {
 		wxString tmpScope(derivationList.at(i));
 		tmpScope = DoReplaceMacros(tmpScope);
-		
+
 		GetDatabase()->GetSubscriptOperator(scope, tags);
 		if(tags.size()) {
-			
+
 			// No need to further check
 			break;
-			
+
 		}
 	}
 }

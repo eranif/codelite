@@ -796,33 +796,32 @@ void CCBox::OnTipClicked(wxScintillaEvent& event)
 
 void CCBox::DoFilterCompletionEntries(CCItemInfo& item)
 {
-	std::vector<TagEntry> impl, others;
-	bool foundDecl(false);
-	
+	std::map<wxString, TagEntry> uniqueList;
+
 	// filter our some of the duplicate results
 	// (e.g. dont show prototpe + impl as 2 entries)
 	for(size_t i=0; i<item.listOfTags.size(); i++) {
-		TagEntry t = item.listOfTags[i];
-		if( !t.IsMethod() ) {
-			others.push_back( t );
-			
-		} else if(t.IsFunction()) {
-			// Implementation
-			impl.push_back( t );
-			
+		const TagEntry& t = item.listOfTags.at(i);
+		const wxString& name = t.GetName();
+
+		if(t.IsMethod()) {
+			wxString signature = t.GetSignature();
+			if(t.IsFunction()) {
+				if(uniqueList.find(name + signature) == uniqueList.end())
+					uniqueList[name + signature] = t;
+
+			} else {
+				// override any existing item
+				uniqueList[name + signature] = t;
+			}
 		} else {
-			// Prototype
-			others.push_back( t );
-			foundDecl = true;
-			
+			uniqueList[name] = t;
 		}
 	}
-	
+
 	item.listOfTags.clear();
-	if(foundDecl) {
-		item.listOfTags = others;
-	} else {
-		impl.insert(impl.end(), others.begin(), others.end());
-		item.listOfTags = impl;
+	std::map<wxString, TagEntry>::iterator iter = uniqueList.begin();
+	for(; iter != uniqueList.end(); iter++ ) {
+		item.listOfTags.push_back( iter->second );
 	}
 }

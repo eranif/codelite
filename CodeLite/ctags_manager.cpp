@@ -672,9 +672,27 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 		else
 			scope << typeScope << wxT("::") << typeName;
 
-		std::vector<TagEntryPtr> tmpCandidates;
+		std::vector<TagEntryPtr> tmpCandidates, tmpCandidates1;
 		TagsByScope(scope, tmpCandidates);
-		RemoveDuplicates(tmpCandidates, candidates);
+
+		wxString partialName(word);
+		partialName.MakeLower();
+
+		if(partialName.IsEmpty() == false)
+		{
+			for(size_t i=0; i<tmpCandidates.size(); i++) {
+				wxString nm = tmpCandidates[i]->GetName();
+				nm.MakeLower();
+				if(nm.StartsWith(partialName)) {
+					tmpCandidates1.push_back( tmpCandidates.at(i) );
+				}
+			}
+			RemoveDuplicates(tmpCandidates1, candidates);
+		}
+		else
+		{
+			RemoveDuplicates(tmpCandidates, candidates);
+		}
 	}
 
 	PERF_END();

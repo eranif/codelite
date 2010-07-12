@@ -27,6 +27,7 @@
     <object class="wxBitmap" name="class">res/class.png</object>
     <object class="wxBitmap" name="typedef">res/typedef.xpm</object>
     <object class="wxBitmap" name="project">res/folder_development.png</object>
+	<object class="wxBitmap" name="active_project">res/folder_orange.png</object>
 	<object class="wxBitmap" name="globals">res/cube_green.png</object>
     <object class="wxBitmap" name="namespace">res/namespace.png</object>
     <object class="wxBitmap" name="struct">res/but_green_s.png</object>

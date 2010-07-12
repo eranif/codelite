@@ -278,7 +278,6 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	
 	m_notebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	wxSize m_notebookImageSize = wxSize( 32,32 );
-	int m_notebookIndex = 0;
 	wxImageList* m_notebookImages = new wxImageList( m_notebookImageSize.GetWidth(), m_notebookImageSize.GetHeight() );
 	m_notebook->AssignImageList( m_notebookImages );
 	wxBitmap m_notebookBitmap;

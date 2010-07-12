@@ -484,7 +484,7 @@ YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-void yyerror(char *s) {}
+void yyerror(const char *s) {}
 
 void func_consumeFuncArgList()
 {

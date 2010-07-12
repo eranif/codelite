@@ -270,7 +270,7 @@ void TabgroupsPane::OnItemRtClick(wxTreeEvent& event) {
 	}
 	TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
 
-	wxMenu menu(_("Tabgroup Menu"));
+	wxMenu menu; // Tabgroup Menu
 	if (data->GetType() == TGT_group) {
 		menu.Append(TGM_ID_Add, wxT("&Add a new item to this tabgroup"));
 		if (m_node) {

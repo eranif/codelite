@@ -146,6 +146,8 @@ FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_text" ) ) );      //5
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "workspace" ) ) );            //6
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "formbuilder" ) ) );          //7
+	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "active_project" ) ) );       //8
+
 	AssignImageList( images );
 
 	Connect( GetId(), wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEventHandler( FileViewTree::OnPopupMenu ) );
@@ -165,15 +167,13 @@ void FileViewTree::Create( wxWindow *parent, const wxWindowID id, const wxPoint&
 {
 	bool multi (false);
 	long val   (0);
-	if(EditorConfigST::Get()->GetLongValue(wxT("WspTreeMultipleSelection"), val) == false) {val = 0;}
+	if(EditorConfigST::Get()->GetLongValue(wxT("WspTreeMultipleSelection"), val) == false) {
+		val = 0;
+	}
 	val ? multi = true : multi = false;
 
-#ifndef __WXGTK__
-	style |= ( wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT );
-#else
-	style |= ( wxTR_HAS_BUTTONS );
-#endif
-	if (multi) style |= wxTR_MULTIPLE;
+	style |= ( wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_NO_LINES);
+	if (multi) style |= wxTR_MULTIPLE ;
 
 	wxTreeCtrl::Create( parent, id, pos, size, style );
 
@@ -191,7 +191,9 @@ void FileViewTree::BuildTree()
 {
 	bool multi (false);
 	long val   (0);
-	if(EditorConfigST::Get()->GetLongValue(wxT("WspTreeMultipleSelection"), val) == false) {val = 0;}
+	if(EditorConfigST::Get()->GetLongValue(wxT("WspTreeMultipleSelection"), val) == false) {
+		val = 0;
+	}
 	val ? multi = true : multi = false;
 
 	DeleteAllItems();
@@ -327,10 +329,10 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
 		}
 
 		wxTreeItemId hti = AppendItem(	parentHti,							// parent
-		                               node->GetData().GetDisplayName(),	// display name
-		                               GetIconIndex( node->GetData() ),		// item image index
-		                               GetIconIndex( node->GetData() ),		// selected item image
-		                               new FilewViewTreeItemData( node->GetData() ) );
+		                                node->GetData().GetDisplayName(),	// display name
+		                                GetIconIndex( node->GetData() ),		// item image index
+		                                GetIconIndex( node->GetData() ),		// selected item image
+		                                new FilewViewTreeItemData( node->GetData() ) );
 		m_itemsToSort[parentHti.m_pItem] = true;
 
 		// Set active project with bold
@@ -339,6 +341,9 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
 
 		if ( parentHti == GetRootItem() && displayName == activeProjectName) {
 			SetItemBold( hti );
+			SetItemImage(hti, 8);
+			SetItemImage(hti, 8, wxTreeItemIcon_Selected);
+			SetItemImage(hti, 8, wxTreeItemIcon_SelectedExpanded);
 		}
 
 		items[node->GetKey()] = hti;
@@ -553,7 +558,7 @@ void FileViewTree::OnExportMakefile( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName, errMsg;
-		BuilderPtr builder = BuildManagerST::Get()->GetSelectedBuilder(); // use current builder 
+		BuilderPtr builder = BuildManagerST::Get()->GetSelectedBuilder(); // use current builder
 		projectName = GetItemText( item );
 		if ( !builder->Export( projectName, wxEmptyString, false, true, errMsg ) ) {
 			wxMessageBox( errMsg, wxT( "CodeLite" ), wxICON_HAND );
@@ -598,10 +603,10 @@ bool FileViewTree::AddFilesToVirtualFolder(const wxString& vdFullPath, wxArraySt
 			ProjectItem projItem( path, fnFileName.GetFullName(), fnFileName.GetFullPath(), ProjectItem::TypeFile );
 
 			wxTreeItemId hti = AppendItem(	item,						// parent
-			                               projItem.GetDisplayName(),	// display name
-			                               GetIconIndex( projItem ),	// item image index
-			                               GetIconIndex( projItem ),	// selected item image
-			                               new FilewViewTreeItemData( projItem ) );
+			                                projItem.GetDisplayName(),	// display name
+			                                GetIconIndex( projItem ),	// item image index
+			                                GetIconIndex( projItem ),	// selected item image
+			                                new FilewViewTreeItemData( projItem ) );
 			wxUnusedVar( hti );
 		}
 
@@ -689,10 +694,10 @@ bool FileViewTree::AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &pa
 		ProjectItem projItem( path, fnFileName.GetFullName(), fnFileName.GetFullPath(), ProjectItem::TypeFile );
 
 		wxTreeItemId hti = AppendItem(	item,						// parent
-		                               projItem.GetDisplayName(),	// display name
-		                               GetIconIndex( projItem ),		// item image index
-		                               GetIconIndex( projItem ),		// selected item image
-		                               new FilewViewTreeItemData( projItem ) );
+		                                projItem.GetDisplayName(),	// display name
+		                                GetIconIndex( projItem ),		// item image index
+		                                GetIconIndex( projItem ),		// selected item image
+		                                new FilewViewTreeItemData( projItem ) );
 		wxUnusedVar( hti );
 	}
 
@@ -780,6 +785,9 @@ void FileViewTree::DoSetProjectActive( wxTreeItemId &item )
 				FilewViewTreeItemData *childData = static_cast<FilewViewTreeItemData*>( GetItemData( child ) );
 				if ( childData &&  childData->GetData().GetDisplayName() == curActiveProj ) {
 					SetItemBold( child, false );
+					SetItemImage(child, 0);
+					SetItemImage(child, 0, wxTreeItemIcon_Selected);
+					SetItemImage(child, 0, wxTreeItemIcon_SelectedExpanded);
 					break;
 				}
 				child = GetNextChild( GetRootItem(), cookie );
@@ -787,9 +795,11 @@ void FileViewTree::DoSetProjectActive( wxTreeItemId &item )
 
 			ManagerST::Get()->SetActiveProject( data->GetData().GetDisplayName() );
 			SetItemBold( item );
+			SetItemImage(item, 8);
+			SetItemImage(item, 8, wxTreeItemIcon_Selected);
+			SetItemImage(item, 8, wxTreeItemIcon_SelectedExpanded);
 		}
 	}
-
 }
 
 void FileViewTree::OnRemoveVirtualFolder( wxCommandEvent & WXUNUSED( event ) )
@@ -957,7 +967,7 @@ void FileViewTree::OnLocalPrefs( wxCommandEvent& event )
 	}
 
 	wxXmlNode* lwsnode = LocalWorkspaceST::Get()->GetLocalWorkspaceOptionsNode();
-    // Don't check lwsnode: it'll be NULL if there are currently no local workspace options
+	// Don't check lwsnode: it'll be NULL if there are currently no local workspace options
 
 	// Start by getting the global settings
 	OptionsConfigPtr higherOptions = EditorConfigST::Get()->GetOptions();
@@ -966,7 +976,7 @@ void FileViewTree::OnLocalPrefs( wxCommandEvent& event )
 	if (event.GetId() == XRCID("local_workspace_prefs")) {
 		EditorSettingsLocal dlg(higherOptions, lwsnode, pLevel_workspace, this);
 		if (dlg.ShowModal() == wxID_OK &&
-					LocalWorkspaceST::Get()->SetWorkspaceOptions(dlg.GetLocalOpts()) ) {
+		    LocalWorkspaceST::Get()->SetWorkspaceOptions(dlg.GetLocalOpts()) ) {
 			Frame::Get()->GetMainBook()->ApplySettingsChanges();
 			// Notify plugins that some settings have changed
 			PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
@@ -987,12 +997,12 @@ void FileViewTree::OnLocalPrefs( wxCommandEvent& event )
 
 	EditorSettingsLocal dlg(higherOptions, lpnode, pLevel_project, this);
 	if (dlg.ShowModal() == wxID_OK &&
-			LocalWorkspaceST::Get()->SetProjectOptions(dlg.GetLocalOpts(), GetItemText(item)) ) {
-			Frame::Get()->GetMainBook()->ApplySettingsChanges();
-			// Notify plugins that some settings have changed
-			PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
-		}
+	    LocalWorkspaceST::Get()->SetProjectOptions(dlg.GetLocalOpts(), GetItemText(item)) ) {
+		Frame::Get()->GetMainBook()->ApplySettingsChanges();
+		// Notify plugins that some settings have changed
+		PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
 	}
+}
 
 void FileViewTree::OnProjectProperties( wxCommandEvent & WXUNUSED( event ) )
 {
@@ -1037,7 +1047,7 @@ int FileViewTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& 
 {
 	// used for SortChildren, reroute to our sort routine
 	FilewViewTreeItemData *a = (FilewViewTreeItemData *)GetItemData(item1),
-	                           *b = (FilewViewTreeItemData *)GetItemData(item2);
+	                       *b = (FilewViewTreeItemData *)GetItemData(item2);
 	if (a && b)
 		return OnCompareItems(a,b);
 
@@ -1048,7 +1058,7 @@ int FileViewTree::OnCompareItems(const FilewViewTreeItemData *a, const FilewView
 {
 	// if dir and other is not, dir has preference
 	if (a->GetData().GetKind() == ProjectItem::TypeVirtualDirectory &&
-	        b->GetData().GetKind() == ProjectItem::TypeFile)
+	    b->GetData().GetKind() == ProjectItem::TypeFile)
 		return -1;
 	else if (b->GetData().GetKind() == ProjectItem::TypeVirtualDirectory &&
 	         a->GetData().GetKind() == ProjectItem::TypeFile)
@@ -1510,16 +1520,15 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 		/* always excluded by default */
 		wxString filepath = fn.GetPath();
 		if( filepath.Contains(wxT(".svn"))           || filepath.Contains(wxT(".cvs"))           ||
-			filepath.Contains(wxT(".arch-ids"))      || filepath.Contains(wxT("arch-inventory")) ||
-			filepath.Contains(wxT("autom4te.cache")) || filepath.Contains(wxT("BitKeeper"))      ||
-			filepath.Contains(wxT(".bzr"))           || filepath.Contains(wxT(".bzrignore"))     ||
-			filepath.Contains(wxT("CVS"))            || filepath.Contains(wxT(".cvsignore"))     ||
-			filepath.Contains(wxT("_darcs"))         || filepath.Contains(wxT(".deps"))          ||
-			filepath.Contains(wxT("EIFGEN"))         || filepath.Contains(wxT(".git"))           ||
-			filepath.Contains(wxT(".hg"))            || filepath.Contains(wxT("PENDING"))        ||
-			filepath.Contains(wxT("RCS"))            || filepath.Contains(wxT("RESYNC"))         ||
-			filepath.Contains(wxT("SCCS"))           || filepath.Contains(wxT("{arch}")))
-		{
+		    filepath.Contains(wxT(".arch-ids"))      || filepath.Contains(wxT("arch-inventory")) ||
+		    filepath.Contains(wxT("autom4te.cache")) || filepath.Contains(wxT("BitKeeper"))      ||
+		    filepath.Contains(wxT(".bzr"))           || filepath.Contains(wxT(".bzrignore"))     ||
+		    filepath.Contains(wxT("CVS"))            || filepath.Contains(wxT(".cvsignore"))     ||
+		    filepath.Contains(wxT("_darcs"))         || filepath.Contains(wxT(".deps"))          ||
+		    filepath.Contains(wxT("EIFGEN"))         || filepath.Contains(wxT(".git"))           ||
+		    filepath.Contains(wxT(".hg"))            || filepath.Contains(wxT("PENDING"))        ||
+		    filepath.Contains(wxT("RCS"))            || filepath.Contains(wxT("RESYNC"))         ||
+		    filepath.Contains(wxT("SCCS"))           || filepath.Contains(wxT("{arch}"))) {
 			continue;
 		}
 
@@ -1803,10 +1812,10 @@ bool FileViewTree::DoAddNewItem(wxTreeItemId& item, const wxString& filename, co
 	ProjectItem projItem( path, fnFileName.GetFullName(), fnFileName.GetFullPath(), ProjectItem::TypeFile );
 
 	wxTreeItemId hti = AppendItem(	item,						// parent
-	                               projItem.GetDisplayName(),	// display name
-	                               GetIconIndex( projItem ),		// item image index
-	                               GetIconIndex( projItem ),		// selected item image
-	                               new FilewViewTreeItemData( projItem ) );
+	                                projItem.GetDisplayName(),	// display name
+	                                GetIconIndex( projItem ),		// item image index
+	                                GetIconIndex( projItem ),		// selected item image
+	                                new FilewViewTreeItemData( projItem ) );
 	wxUnusedVar( hti );
 	SortItem(item);
 	Expand( item );
@@ -1844,7 +1853,7 @@ void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
 	bool retagRequires;
 	WorkspaceSettingsDlg dlg(Frame::Get(), LocalWorkspaceST::Get());
 	if(dlg.ShowModal() == wxID_OK) {
-		
+
 		Frame::Get()->SetEnvStatusMessage();
 		// Update the new paths
 		retagRequires = ManagerST::Get()->UpdateParserPaths();

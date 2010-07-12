@@ -189,14 +189,13 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 
 	sci->IndicatorSetForeground(1, wxT("FOREST GREEN"));
 
-	sci->SetMarginType(1, wxSCI_MARGIN_SYMBOL);
-	sci->SetMarginMask(4, wxSCI_MASK_FOLDERS);
-
 	sci->SetMarginWidth(0, 0);
 	sci->SetMarginWidth(1, 16);
 	sci->SetMarginWidth(2, 0);
 	sci->SetMarginWidth(3, 0);
 	sci->SetMarginWidth(4, 0);
+
+	sci->SetMarginSensitive(1, true);
 }
 
 size_t FindResultsTab::GetPageCount() const

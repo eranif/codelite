@@ -2820,6 +2820,13 @@ void Frame::OnAppActivated(wxActivateEvent &e)
 	if (m_theFrame && e.GetActive()) {
 		m_theFrame->ReloadExternallyModifiedProjectFiles();
 		m_theFrame->GetMainBook()->ReloadExternallyModified(true);
+	} else if(m_theFrame) {
+		LEditor *editor = GetMainBook()->GetActiveEditor();
+		if(editor) {
+			// we are loosing the focus
+			editor->CallTipCancel();
+			editor->HideCompletionBox();
+		}
 	}
 	e.Skip();
 }

@@ -30,11 +30,15 @@
 #ifdef __WXMAC__
 #    define CC_USES_POPUPWIN  0
 #else
-#    define CC_USES_POPUPWIN  0
+#    define CC_USES_POPUPWIN  1
 #endif
 
 #if CC_USES_POPUPWIN
+#ifdef __WXGTK__
+#	define CCBoxParent wxPopupWindow
+#else
 #    define CCBoxParent wxPopupTransientWindow
+#endif
 #    include <wx/popupwin.h>
 #else
 #    define CCBoxParent wxPanel

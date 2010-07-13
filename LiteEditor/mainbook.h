@@ -48,18 +48,18 @@ private:
     void CreateGuiControls();
     void ConnectEvents    ();
 
-    void OnMouseDClick       (NotebookEvent     &e);
-    void OnPageClosing       (NotebookEvent     &e);
-    void OnPageClosed        (NotebookEvent     &e);
-	void OnPageChanged       (NotebookEvent     &e);
-	void OnClosePage         (NotebookEvent     &e);
-
-    void OnProjectFileAdded  (wxCommandEvent    &e);
-	void OnProjectFileRemoved(wxCommandEvent    &e);
-    void OnWorkspaceLoaded   (wxCommandEvent    &e);
-    void OnWorkspaceClosed   (wxCommandEvent    &e);
-	void OnDebugEnded        (wxCommandEvent    &e);
-	void OnStringHighlight   (wxCommandEvent    &e);
+    void OnMouseDClick        (NotebookEvent     &e);
+    void OnPageClosing        (NotebookEvent     &e);
+    void OnPageClosed         (NotebookEvent     &e);
+	void OnPageChanged        (NotebookEvent     &e);
+	void OnClosePage          (NotebookEvent     &e);
+	void OnPageChanging       (NotebookEvent     &e);
+    void OnProjectFileAdded   (wxCommandEvent    &e);
+	void OnProjectFileRemoved (wxCommandEvent    &e);
+    void OnWorkspaceLoaded    (wxCommandEvent    &e);
+    void OnWorkspaceClosed    (wxCommandEvent    &e);
+	void OnDebugEnded         (wxCommandEvent    &e);
+	void OnStringHighlight    (wxCommandEvent    &e);
 
 	bool AskUserToSave(LEditor *editor);
 	bool DoSelectPage (wxWindow *win  );

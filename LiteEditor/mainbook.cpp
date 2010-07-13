@@ -75,6 +75,7 @@ void MainBook::ConnectEvents()
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSING,         NotebookEventHandler(MainBook::OnPageClosing),  NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSED,          NotebookEventHandler(MainBook::OnPageClosed),   NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,         NotebookEventHandler(MainBook::OnPageChanged),  NULL, this);
+	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGING,        NotebookEventHandler(MainBook::OnPageChanging), NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED,       NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED,  NotebookEventHandler(MainBook::OnClosePage),    NULL, this);
 	m_book->Connect(wxEVT_COMMAND_BOOK_BG_DCLICK,            NotebookEventHandler(MainBook::OnMouseDClick),  NULL, this);
@@ -960,4 +961,14 @@ void MainBook::OnStringHighlight(wxCommandEvent& e)
 		}
 		delete result;
 	}
+}
+
+void MainBook::OnPageChanging(NotebookEvent& e)
+{
+	LEditor *editor = GetActiveEditor();
+	if(editor) {
+		editor->HideCompletionBox();
+		editor->CallTipCancel();
+	}
+	e.Skip();
 }

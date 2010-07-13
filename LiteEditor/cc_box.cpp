@@ -203,8 +203,9 @@ void CCBox::Adjust()
 		pt.y -=      BOX_HEIGHT;
 		pt.y -=      lineHeight;
 	}
-
+#ifdef __WXMSW__
 	ccPoint = GetParent()->ScreenToClient(ccPoint);
+#endif
 	Move(ccPoint);
 	editor->m_ccPoint = pt;
 
@@ -415,8 +416,18 @@ void CCBox::Show(const wxString& word)
 
 #if CC_USES_POPUPWIN
 	m_mainPanel->GetSizer()->Fit(m_mainPanel);
-    m_mainPanel->GetSizer()->Fit(this);
+	m_mainPanel->GetSizer()->Fit(this);
+	
+
+#ifdef __WXGTK__
+	wxPopupWindow::Show();
+	Frame::Get()->Raise();
+	GetEditor()->SetFocus();
+	GetEditor()->SetSCIFocus(true);
+#else // Windows
 	wxPopupTransientWindow::Show();
+#endif
+
 #else
 	wxWindow::Show();
 #endif
@@ -867,3 +878,8 @@ LEditor* CCBox::GetEditor()
 	return m_editor;
 }
 
+
+void CCBox::OnKeyDown(wxListEvent& event)
+{
+	event.Skip();
+}

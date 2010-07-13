@@ -56,7 +56,6 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	, m_owner(NULL)
 	, m_hideExtInfoPane(true)
 	, m_startPos(wxNOT_FOUND)
-	, m_showItemComments(true)
 	, m_editor(parent)
 {
 	m_constructing = true;
@@ -126,7 +125,8 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 
 CCBox::~CCBox()
 {
-//	GetParent()->Disconnect(wxEVT_SCI_CALLTIP_CLICK, wxScintillaEventHandler(CCBox::OnTipClicked), NULL, this);
+	EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_Item_Commetns"), LEditor::m_ccShowItemsComments  ? 1 : 0);
+	EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_All_Members"),   LEditor::m_ccShowPrivateMembers ? 1 : 0);
 }
 
 void CCBox::OnItemActivated( wxListEvent& event )
@@ -208,6 +208,7 @@ void CCBox::Adjust()
 #endif
 	Move(ccPoint);
 	editor->m_ccPoint = pt;
+	editor->m_ccPoint.x += 2;
 
 #else
 	wxSize  size       = GetParent()->GetClientSize();
@@ -306,7 +307,6 @@ void CCBox::Previous()
 
 void CCBox::SelectItem(long item)
 {
-	wxWindowUpdateLocker locker(this);
 	m_listCtrl->Select(item);
 	m_listCtrl->EnsureVisible(item);
 
@@ -328,31 +328,40 @@ void CCBox::Show(const wxString& word)
 	this->SetCursor( wxCursor(wxCURSOR_ARROW) );
 
 	long checkIt (0);
-	EditorConfigST::Get()->GetLongValue(wxT("CC_Show_All_Members"), checkIt);
-	m_toolBar1->ToggleTool(TOOL_SHOW_PRIVATE_MEMBERS, checkIt);
+	if(LEditor::m_ccInitialized == false) {
+		if(EditorConfigST::Get()->GetLongValue(wxT("CC_Show_All_Members"), checkIt)) {
+			LEditor::m_ccShowPrivateMembers = (bool)checkIt;
+		}
 
-	long showItemComments( 1 );
-	EditorConfigST::Get()->GetLongValue(wxT("CC_Show_Item_Commetns"), showItemComments);
-	m_toolBar1->ToggleTool(TOOL_SHOW_ITEM_COMMENTS, showItemComments);
+		if(EditorConfigST::Get()->GetLongValue(wxT("CC_Show_Item_Commetns"), checkIt)) {
+			LEditor::m_ccShowItemsComments = (bool)checkIt;
+		}
+		LEditor::m_ccInitialized = true;
+	}
+
+	m_toolBar1->ToggleTool(TOOL_SHOW_PRIVATE_MEMBERS, LEditor::m_ccShowPrivateMembers);
+	m_toolBar1->ToggleTool(TOOL_SHOW_ITEM_COMMENTS,   LEditor::m_ccShowItemsComments);
 
 	CCItemInfo item;
+	wxWindowUpdateLocker locker(m_listCtrl);
 	m_listCtrl->DeleteAllItems();
-
-	bool showPrivateMembers ( checkIt );
-	m_showItemComments = showItemComments ? true : false;
 
 	// Get the associated editor
 	LEditor *editor = GetEditor();
+	wxString scopeName = editor->GetContext()->GetCurrentScopeName();
 	if (m_tags.empty() == false) {
+		_tags.reserve(m_tags.size());
 		for (; i<m_tags.size(); i++) {
-			TagEntryPtr tag = m_tags.at(i);
-			bool        isVisible = m_tags.at(i)->GetAccess() == wxT("private") || m_tags.at(i)->GetAccess() == wxT("protected");
-			bool        isInScope = (editor && (m_tags.at(i)->GetParent() == editor->GetContext()->GetCurrentScopeName()));
-			bool        collectIt = (!isVisible && !showPrivateMembers) || (showPrivateMembers) || (isInScope);
+
+			const TagEntryPtr& tag = m_tags.at(i);
+			wxString access = tag->GetAccess();
+			bool        isVisible = access == wxT("private") || access == wxT("protected");
+			bool        isInScope = (editor && (tag->GetParent() == scopeName));
+			bool        collectIt = (!isVisible && !LEditor::m_ccShowPrivateMembers) || (LEditor::m_ccShowPrivateMembers) || (isInScope);
 
 			if(collectIt) {
 
-				if (item.displayName != m_tags.at(i)->GetName()) {// Starting a new group or it is first time
+				if (item.displayName != tag->GetName()) {// Starting a new group or it is first time
 					if( item.IsOk() ) {
 						// we got a group of tags stored in 'item' add it
 						// to the _tags before we continue
@@ -364,12 +373,12 @@ void CCBox::Show(const wxString& word)
 					item.Reset();
 
 					item.displayName =  tag->GetName();
-					item.imgId       = GetImageId(*m_tags.at(i));
-					item.tag         = *m_tags.at(i);
-					item.listOfTags.push_back( *m_tags.at(i) );
+					item.imgId       = GetImageId(tag);
+					item.tag         = *tag;
+					item.listOfTags.push_back( *tag );
 
 				} else {
-					item.listOfTags.push_back( *m_tags.at(i) );
+					item.listOfTags.push_back( *tag );
 				}
 			}
 		}
@@ -417,7 +426,7 @@ void CCBox::Show(const wxString& word)
 #if CC_USES_POPUPWIN
 	m_mainPanel->GetSizer()->Fit(m_mainPanel);
 	m_mainPanel->GetSizer()->Fit(this);
-	
+
 
 #ifdef __WXGTK__
 	wxPopupWindow::Show();
@@ -504,59 +513,61 @@ void CCBox::InsertSelection()
 	DoInsertSelection(word);
 }
 
-int CCBox::GetImageId(const TagEntry &entry)
+int CCBox::GetImageId(TagEntryPtr entry)
 {
-	if (entry.GetKind() == wxT("class"))
+	wxString kind   = entry->GetKind();
+	wxString access = entry->GetAccess();
+	if (kind == wxT("class"))
 		return 0;
 
-	if (entry.GetKind() == wxT("struct"))
+	if (kind == wxT("struct"))
 		return 1;
 
-	if (entry.GetKind() == wxT("namespace"))
+	if (kind == wxT("namespace"))
 		return 2;
 
-	if (entry.GetKind() == wxT("variable"))
+	if (kind == wxT("variable"))
 		return 3;
 
-	if (entry.GetKind() == wxT("typedef"))
+	if (kind == wxT("typedef"))
 		return 4;
 
-	if (entry.GetKind() == wxT("member") && entry.GetAccess().Contains(wxT("private")))
+	if (kind == wxT("member") && access.Contains(wxT("private")))
 		return 5;
 
-	if (entry.GetKind() == wxT("member") && entry.GetAccess().Contains(wxT("public")))
+	if (kind == wxT("member") && access.Contains(wxT("public")))
 		return 6;
 
-	if (entry.GetKind() == wxT("member") && entry.GetAccess().Contains(wxT("protected")))
+	if (kind == wxT("member") && access.Contains(wxT("protected")))
 		return 7;
 
 	//member with no access? (maybe part of namespace??)
-	if (entry.GetKind() == wxT("member"))
+	if (kind == wxT("member"))
 		return 6;
 
-	if ((entry.GetKind() == wxT("function") || entry.GetKind() == wxT("prototype")) && entry.GetAccess().Contains(wxT("private")))
+	if ((kind == wxT("function") || kind == wxT("prototype")) && access.Contains(wxT("private")))
 		return 8;
 
-	if ((entry.GetKind() == wxT("function") || entry.GetKind() == wxT("prototype")) && (entry.GetAccess().Contains(wxT("public")) || entry.GetAccess().IsEmpty()))
+	if ((kind == wxT("function") || kind == wxT("prototype")) && (access.Contains(wxT("public")) || access.IsEmpty()))
 		return 9;
 
-	if ((entry.GetKind() == wxT("function") || entry.GetKind() == wxT("prototype")) && entry.GetAccess().Contains(wxT("protected")))
+	if ((kind == wxT("function") || kind == wxT("prototype")) && access.Contains(wxT("protected")))
 		return 10;
 
-	if (entry.GetKind() == wxT("macro"))
+	if (kind == wxT("macro"))
 		return 11;
 
-	if (entry.GetKind() == wxT("enum"))
+	if (kind == wxT("enum"))
 		return 12;
 
-	if (entry.GetKind() == wxT("enumerator"))
+	if (kind == wxT("enumerator"))
 		return 13;
 
-	if (entry.GetKind() == wxT("cpp_keyword"))
+	if (kind == wxT("cpp_keyword"))
 		return 17;
 
 	// try the user defined images
-	std::map<wxString, int>::iterator iter = m_userImages.find(entry.GetKind());
+	std::map<wxString, int>::iterator iter = m_userImages.find(kind);
 	if (iter != m_userImages.end()) {
 		return iter->second;
 	}
@@ -635,10 +646,10 @@ void CCBox::HideCCBox()
 		if( !m_constructing ) {
 			bool checked;
 			checked = m_toolBar1->FindById(TOOL_SHOW_PRIVATE_MEMBERS)->IsToggled();
-			EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_All_Members"), checked ? 1 : 0);
+			LEditor::m_ccShowPrivateMembers = checked ? 1 : 0;
 
 			checked = m_toolBar1->FindById(TOOL_SHOW_ITEM_COMMENTS)->IsToggled();
-			EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_Item_Commetns"), checked ? 1 : 0);
+			LEditor::m_ccShowItemsComments  = checked ? 1 : 0;
 		}
 	}
 }
@@ -781,7 +792,7 @@ void CCBox::DoFormatDescriptionPage(const CCItemInfo& item)
 		return;
 	}
 
-	if(m_showItemComments == false) {
+	if(LEditor::m_ccShowItemsComments == false) {
 		editor->CallTipCancel();
 		return;
 	}
@@ -813,8 +824,8 @@ void CCBox::DoHideCCHelpTab()
 
 void CCBox::OnShowComments(wxCommandEvent& event)
 {
-	m_showItemComments = event.IsChecked();
-	if( m_showItemComments == false ) {
+	LEditor::m_ccShowItemsComments = event.IsChecked();
+	if( LEditor::m_ccShowItemsComments == false ) {
 		DoFormatDescriptionPage( CCItemInfo() );
 	} else {
 		CCItemInfo tag;
@@ -863,6 +874,7 @@ void CCBox::DoFilterCompletionEntries(CCItemInfo& item)
 	}
 
 	item.listOfTags.clear();
+	item.listOfTags.reserve( uniqueList.size() );
 	std::map<wxString, TagEntry>::iterator iter = uniqueList.begin();
 	for(; iter != uniqueList.end(); iter++ ) {
 		item.listOfTags.push_back( iter->second );

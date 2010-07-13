@@ -132,9 +132,12 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 END_EVENT_TABLE()
 
 // Instantiate statics
-FindReplaceDialog* LEditor::m_findReplaceDlg = NULL;
-FindReplaceData LEditor::m_findReplaceData;
-std::map<wxString, int> LEditor::ms_bookmarkShapes;
+FindReplaceDialog*      LEditor::m_findReplaceDlg       = NULL ;
+FindReplaceData         LEditor::m_findReplaceData             ;
+std::map<wxString, int> LEditor::ms_bookmarkShapes             ;
+bool                    LEditor::m_ccShowPrivateMembers = true ;
+bool                    LEditor::m_ccShowItemsComments  = true ;
+bool                    LEditor::m_ccInitialized        = false;
 
 LEditor::LEditor(wxWindow* parent)
 		: wxScintilla                (parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxSTATIC_BORDER)

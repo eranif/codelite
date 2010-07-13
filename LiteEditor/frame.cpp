@@ -668,7 +668,7 @@ Frame* Frame::Get()
 void Frame::CreateGUIControls(void)
 {
 	this->Freeze();
-	
+
 #ifdef __WXMSW__
 	SetIcon(wxICON(aaaaa));
 #else
@@ -696,10 +696,10 @@ void Frame::CreateGUIControls(void)
 #ifndef __WXGTK__
 	wxColor col1 = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 5.0);
 	wxColor col2 = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 2.0);
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,   col2);
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR, col2);
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,            col1);
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,          col1);
+//	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,   col2);
+//	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR, col2);
+//	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,            col1);
+//	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,          col1);
 #endif
 
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,       wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
@@ -2806,12 +2806,12 @@ void Frame::CompleteInitialization()
 
 	OutputViewControlBar* outputViewControlBar = new OutputViewControlBar(this, GetOutputPane()->GetNotebook(), &m_mgr, wxID_ANY);
 	outputViewControlBar->AddAllButtons();
-	
-	
+
+
 	GetSizer()->Add(outputViewControlBar, 0, wxEXPAND);
 	Layout();
 	SetEnvStatusMessage();
-	
+
 	this->Thaw();
 }
 

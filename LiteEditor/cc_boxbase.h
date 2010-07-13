@@ -35,9 +35,11 @@
 
 #if CC_USES_POPUPWIN
 #ifdef __WXGTK__
-#	define CCBoxParent wxPopupWindow
+#    define CCBoxParent wxPopupWindow
+#    define CC_STYLE    wxBORDER_SIMPLE
 #else
 #    define CCBoxParent wxPopupTransientWindow
+#    define CC_STYLE    wxBORDER_SIMPLE
 #endif
 #    include <wx/popupwin.h>
 #else

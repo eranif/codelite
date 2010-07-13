@@ -138,7 +138,11 @@ class LEditor : public wxScintilla, public IEditor
 	clEditorTipWindow*                          m_functionTip;
 	wxChar                                      m_lastCharEntered;
 	int                                         m_lastCharEnteredPos;
-//	DisplayVariableDlg*                         m_debuggerTip;
+
+public:
+	static bool                                 m_ccShowPrivateMembers;
+	static bool                                 m_ccShowItemsComments;
+	static bool                                 m_ccInitialized;
 
 public:
 	static FindReplaceData &GetFindReplaceData() {

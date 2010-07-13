@@ -55,7 +55,6 @@ class CCBox : public CCBoxBase
 	CommentParseResult       m_comments;
 	int                      m_startPos;
 	bool                     m_isTipBgDark;
-	bool                     m_showItemComments;
 	CCItemInfo               m_currentItem;
 	LEditor*                 m_editor;
 
@@ -76,7 +75,7 @@ protected:
 
 protected:
 	// helper methods
-	int GetImageId(const TagEntry &entry);
+	int GetImageId(TagEntryPtr entry);
 	void SelectItem(long item);
 	void Show(const wxString &word);
 	void DoInsertSelection(const wxString &word, bool triggerTip = true);

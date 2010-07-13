@@ -12,7 +12,7 @@
 
 CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
 #if CC_USES_POPUPWIN
-	: CCBoxParent( parent )
+	: CCBoxParent( parent, CC_STYLE )
 #else
 	: wxPanel( parent, id, pos, size, style )
 #endif
@@ -21,7 +21,7 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	wxBoxSizer* topSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_mainPanel = new wxPanel(this);
 
-	m_listCtrl = new CCVirtualListCtrl( m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(BOX_WIDTH - 25, BOX_HEIGHT), wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL );
+	m_listCtrl = new CCVirtualListCtrl( m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(BOX_WIDTH - 25, BOX_HEIGHT), wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL|wxBORDER_NONE );
 
 	wxBitmap bmp         = wxXmlResource::Get()->LoadBitmap(wxT("cc_private_members"));
 	wxBitmap commentsBmp =  wxXmlResource::Get()->LoadBitmap(wxT("note"));

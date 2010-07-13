@@ -502,6 +502,7 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 #endif
 
 	// try the cache first
+	tags.reserve( 500 );
 	try {
 		wxSQLite3ResultSet ex_rs;
 		ex_rs = Query(sql);
@@ -1364,6 +1365,7 @@ bool TagsStorageSQLiteCache::DoGet(const wxString& key, std::vector<TagEntryPtr>
 
 void TagsStorageSQLiteCache::DoStore(const wxString& key, const std::vector<TagEntryPtr>& tags)
 {
+	m_cache[key].reserve(tags.size());
 	m_cache[key] = tags;
 }
 

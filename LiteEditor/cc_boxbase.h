@@ -27,31 +27,60 @@
 #define TOOL_SHOW_PRIVATE_MEMBERS 1000
 #define TOOL_SHOW_ITEM_COMMENTS 1001
 
+#ifdef __WXMAC__
+#    define CC_USES_POPUPWIN  0
+#else
+#    define CC_USES_POPUPWIN  0
+#endif
+
+#if CC_USES_POPUPWIN
+#    define CCBoxParent wxPopupTransientWindow
+#    include <wx/popupwin.h>
+#else
+#    define CCBoxParent wxPanel
+#endif
+
+#define BOX_HEIGHT 250
+#define BOX_WIDTH  250
+
 ///////////////////////////////////////////////////////////////////////////////
 /// Class CCBoxBase
 ///////////////////////////////////////////////////////////////////////////////
-class CCBoxBase : public wxPanel 
+class CCBoxBase : public CCBoxParent
 {
-	private:
-	
-	protected:
-		CCVirtualListCtrl* m_listCtrl;
-		wxToolBar* m_toolBar1;
-		
-		// Virtual event handlers, overide them in your derived class
-		virtual void OnItemActivated( wxListEvent& event ) { event.Skip(); }
-		virtual void OnItemDeSelected( wxListEvent& event ) { event.Skip(); }
-		virtual void OnItemSelected( wxListEvent& event ) { event.Skip(); }
-		virtual void OnKeyDown( wxListEvent& event ) { event.Skip(); }
-		virtual void OnShowPublicItems( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnShowComments( wxCommandEvent& event ) { event.Skip(); }
-		
-	
-	public:
-		
-		CCBoxBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 486,300 ), long style = wxRAISED_BORDER|wxTAB_TRAVERSAL );
-		~CCBoxBase();
-	
+private:
+
+protected:
+	CCVirtualListCtrl* m_listCtrl;
+	wxToolBar*         m_toolBar1;
+	wxPanel*           m_mainPanel;
+
+	// Virtual event handlers, overide them in your derived class
+	virtual void OnItemActivated( wxListEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnItemDeSelected( wxListEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnItemSelected( wxListEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnKeyDown( wxListEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnShowPublicItems( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnShowComments( wxCommandEvent& event ) {
+		event.Skip();
+	}
+
+
+public:
+
+	CCBoxBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 486,300 ), long style = wxRAISED_BORDER|wxTAB_TRAVERSAL );
+	~CCBoxBase();
+
 };
 
 #endif //__cc_boxbase__

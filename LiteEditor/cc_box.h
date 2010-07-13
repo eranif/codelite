@@ -56,6 +56,10 @@ class CCBox : public CCBoxBase {
 	bool                     m_isTipBgDark;
 	bool                     m_showItemComments;
 	CCItemInfo               m_currentItem;
+	LEditor*                 m_editor;
+
+protected:
+	LEditor*                 GetEditor();
 
 protected:
 	// Handlers for CCBoxBase events.

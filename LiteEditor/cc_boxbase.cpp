@@ -10,25 +10,34 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
+CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
+#if CC_USES_POPUPWIN
+	: CCBoxParent( parent )
+#else
+	: wxPanel( parent, id, pos, size, style )
+#endif
 {
-	wxBoxSizer* bSizer1;
-	bSizer1 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_listCtrl = new CCVirtualListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL );
-	bSizer1->Add( m_listCtrl, 1, wxEXPAND, 2 );
-	
+	SetSizeHints(BOX_WIDTH, BOX_HEIGHT);
+	wxBoxSizer* topSizer = new wxBoxSizer( wxHORIZONTAL );
+	m_mainPanel = new wxPanel(this);
+
+	m_listCtrl = new CCVirtualListCtrl( m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(BOX_WIDTH - 25, BOX_HEIGHT), wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL );
+
 	wxBitmap bmp         = wxXmlResource::Get()->LoadBitmap(wxT("cc_private_members"));
 	wxBitmap commentsBmp =  wxXmlResource::Get()->LoadBitmap(wxT("note"));
-	m_toolBar1 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL|wxSIMPLE_BORDER|wxTB_NODIVIDER );
+	m_toolBar1 = new wxToolBar( m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL|wxSIMPLE_BORDER|wxTB_NODIVIDER );
 	m_toolBar1->AddTool( TOOL_SHOW_PRIVATE_MEMBERS, wxT("Show Protected / Private Items"), bmp, bmp, wxITEM_CHECK, wxT("Show Only Public Items"), wxEmptyString );
 	m_toolBar1->AddTool( TOOL_SHOW_ITEM_COMMENTS, wxT("Show Item Comments"), commentsBmp, commentsBmp, wxITEM_CHECK, wxT("Show Item Comments"), wxEmptyString );
 	m_toolBar1->Realize();
-	
-	bSizer1->Add( m_toolBar1, 0, wxEXPAND, 2 );
-	
-	this->SetSizer( bSizer1 );
-	this->Layout();
+
+	topSizer->Add( m_listCtrl, 1, wxEXPAND, 2 );
+	topSizer->Add( m_toolBar1, 0, wxEXPAND, 2 );
+
+    m_mainPanel->SetAutoLayout( true );
+    m_mainPanel->SetSizer( topSizer );
+    topSizer->Fit(m_mainPanel);
+    topSizer->Fit(this);
+
 	// Connect Events
 	m_listCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CCBoxBase::OnItemActivated ), NULL, this );
 	m_listCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( CCBoxBase::OnItemDeSelected ), NULL, this );

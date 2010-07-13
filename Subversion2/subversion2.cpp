@@ -784,6 +784,6 @@ void Subversion2::DoSwitchURL(const wxString& workingDirectory, wxCommandEvent& 
 
 	wxString command;
 
-	command << GetSvnExeName(nonInteractive) << wxT(" switch ") << targetUrl;
+	command << GetSvnExeName(nonInteractive) << wxT(" switch ") << targetUrl << loginString;
 	GetConsole()->Execute(command, workingDirectory, new SvnDefaultCommandHandler(this, wxNOT_FOUND, NULL));
 }

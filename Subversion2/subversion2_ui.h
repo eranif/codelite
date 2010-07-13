@@ -306,4 +306,27 @@ class SvnLogDialog : public wxDialog
 	
 };
 
+///////////////////////////////////////////////////////////////////////////////
+/// Class DiffDialogBase
+///////////////////////////////////////////////////////////////////////////////
+class DiffDialogBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText25;
+		wxTextCtrl* m_textCtrlFromRev;
+		wxStaticText* m_staticText26;
+		wxTextCtrl* m_textCtrlToRev;
+		wxStaticLine* m_staticline6;
+		wxButton* m_button20;
+		wxButton* m_button19;
+	
+	public:
+		
+		DiffDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Diff..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~DiffDialogBase();
+	
+};
+
 #endif //__subversion2_ui__

@@ -53,6 +53,8 @@
     <File Name="svnblamedialog.cpp"/>
     <File Name="svnblameeditor.h"/>
     <File Name="svnblameeditor.cpp"/>
+    <File Name="diff_dialog.cpp"/>
+    <File Name="diff_dialog.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="subversion2.fbp"/>

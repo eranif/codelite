@@ -278,6 +278,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	
 	m_notebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	wxSize m_notebookImageSize = wxSize( 32,32 );
+	int m_notebookIndex = 0;
 	wxImageList* m_notebookImages = new wxImageList( m_notebookImageSize.GetWidth(), m_notebookImageSize.GetHeight() );
 	m_notebook->AssignImageList( m_notebookImages );
 	wxBitmap m_notebookBitmap;
@@ -708,5 +709,60 @@ SvnLogDialog::SvnLogDialog( wxWindow* parent, wxWindowID id, const wxString& tit
 }
 
 SvnLogDialog::~SvnLogDialog()
+{
+}
+
+DiffDialogBase::DiffDialogBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer25;
+	bSizer25 = new wxBoxSizer( wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer9;
+	fgSizer9 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer9->AddGrowableCol( 1 );
+	fgSizer9->SetFlexibleDirection( wxBOTH );
+	fgSizer9->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText25 = new wxStaticText( this, wxID_ANY, _("From Revision:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText25->Wrap( -1 );
+	fgSizer9->Add( m_staticText25, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlFromRev = new wxTextCtrl( this, wxID_ANY, _("BASE"), wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	fgSizer9->Add( m_textCtrlFromRev, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticText26 = new wxStaticText( this, wxID_ANY, _("To Revision:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText26->Wrap( -1 );
+	fgSizer9->Add( m_staticText26, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlToRev = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	fgSizer9->Add( m_textCtrlToRev, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer25->Add( fgSizer9, 1, wxEXPAND, 5 );
+	
+	m_staticline6 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer25->Add( m_staticline6, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer26;
+	bSizer26 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_button20 = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button20->SetDefault(); 
+	bSizer26->Add( m_button20, 0, wxALL, 5 );
+	
+	m_button19 = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer26->Add( m_button19, 0, wxALL, 5 );
+	
+	bSizer25->Add( bSizer26, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	this->SetSizer( bSizer25 );
+	this->Layout();
+	bSizer25->Fit( this );
+	
+	this->Centre( wxBOTH );
+}
+
+DiffDialogBase::~DiffDialogBase()
 {
 }

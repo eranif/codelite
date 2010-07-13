@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include "diff_dialog.h"
 #include "svn_checkout_dialog.h"
 #include "subversion2_ui.h"
 #include <wx/settings.h>
@@ -52,10 +53,10 @@ BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 END_EVENT_TABLE()
 
 SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
-		: SubversionPageBase( parent )
-		, m_plugin          ( plugin )
-		, m_simpleCommand   ( plugin )
-		, m_diffCommand     ( plugin )
+	: SubversionPageBase( parent )
+	, m_plugin          ( plugin )
+	, m_simpleCommand   ( plugin )
+	, m_diffCommand     ( plugin )
 {
 	CreatGUIControls();
 	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_LOADED,      wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),     NULL, this);
@@ -358,7 +359,7 @@ SvnTreeData::SvnNodeType SubversionView::DoGetSelectionType(const wxArrayTreeIte
 		}
 
 		if (type == SvnTreeData::SvnNodeTypeInvalid &&
-		        (data->GetType() == SvnTreeData::SvnNodeTypeFile || data->GetType() == SvnTreeData::SvnNodeTypeRoot)) {
+		    (data->GetType() == SvnTreeData::SvnNodeTypeFile || data->GetType() == SvnTreeData::SvnNodeTypeRoot)) {
 			type = data->GetType();
 			m_selectionInfo.m_selectionType = type;
 			m_selectionInfo.m_paths.Add(data->GetFilepath());
@@ -449,10 +450,10 @@ void SubversionView::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths
 			}
 
 			if (( data->GetType() == SvnTreeData::SvnNodeTypeAddedRoot    ||
-			        data->GetType() == SvnTreeData::SvnNodeTypeModifiedRoot ||
-			        data->GetType() == SvnTreeData::SvnNodeTypeDeletedRoot) &&
+			      data->GetType() == SvnTreeData::SvnNodeTypeModifiedRoot ||
+			      data->GetType() == SvnTreeData::SvnNodeTypeDeletedRoot) &&
 
-			        m_treeCtrl->ItemHasChildren(item)) {
+			    m_treeCtrl->ItemHasChildren(item)) {
 
 				DoGetPaths(item, paths);
 			}
@@ -577,15 +578,15 @@ void SubversionView::OnBranch(wxCommandEvent& event)
 		// Prepare the 'copy' command
 		bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
 		command
-		<< m_plugin->GetSvnExeName(nonInteractive)
-		<< loginString
-		<< wxT(" copy ")
-		<< dlg.GetSourceURL()
-		<< wxT(" ")
-		<< dlg.GetTargetURL()
-		<< wxT(" -m \"")
-		<< dlg.GetMessage()
-		<< wxT("\"");
+		        << m_plugin->GetSvnExeName(nonInteractive)
+		        << loginString
+		        << wxT(" copy ")
+		        << dlg.GetSourceURL()
+		        << wxT(" ")
+		        << dlg.GetTargetURL()
+		        << wxT(" -m \"")
+		        << dlg.GetMessage()
+		        << wxT("\"");
 
 		m_plugin->GetConsole()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin, event.GetId(), this));
 	}
@@ -618,15 +619,15 @@ void SubversionView::OnTag(wxCommandEvent& event)
 		bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
 		command.Clear();
 		command
-		<< m_plugin->GetSvnExeName(nonInteractive)
-		<< loginString
-		<< wxT(" copy ")
-		<< dlg.GetSourceURL()
-		<< wxT(" ")
-		<< dlg.GetTargetURL()
-		<< wxT(" -m \"")
-		<< dlg.GetMessage()
-		<< wxT("\"");
+		        << m_plugin->GetSvnExeName(nonInteractive)
+		        << loginString
+		        << wxT(" copy ")
+		        << dlg.GetSourceURL()
+		        << wxT(" ")
+		        << dlg.GetTargetURL()
+		        << wxT(" -m \"")
+		        << dlg.GetMessage()
+		        << wxT("\"");
 
 		m_plugin->GetConsole()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDefaultCommandHandler(m_plugin, event.GetId(), this));
 	}
@@ -678,20 +679,23 @@ void SubversionView::OnDiff(wxCommandEvent& event)
 
 	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
 
-	wxString diffAgainst(wxT("BASE"));
-	diffAgainst = wxGetTextFromUser(wxT("Insert base revision to diff against:"), wxT("Diff against"), wxT("BASE"), m_plugin->GetManager()->GetTheApp()->GetTopWindow());
-	if (diffAgainst.empty()) {
-		// user clicked 'Cancel'
-		return;
-	}
+	DiffDialog dlg(this, m_plugin->GetManager());
+	if(dlg.ShowModal() == wxID_OK) {
+		wxString from = dlg.GetFromRevision();
+		wxString to   = dlg.GetToRevision();
 
-	// Simple diff
-	wxString command;
-	command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" diff -r") << diffAgainst << wxT(" ");
-	for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
-		command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
+		if(to.IsEmpty() == false) {
+			to.Prepend(wxT(":"));
+		}
+
+		// Simple diff
+		wxString command;
+		command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" diff -r") << from << to << wxT(" ");
+		for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
+			command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
+		}
+		m_plugin->GetConsole()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDiffHandler(m_plugin, event.GetId(), this), false);
 	}
-	m_plugin->GetConsole()->Execute(command, m_textCtrlRootDir->GetValue(), new SvnDiffHandler(m_plugin, event.GetId(), this), false);
 }
 
 void SubversionView::OnPatch(wxCommandEvent& event)
@@ -740,7 +744,7 @@ void SubversionView::OnFileAdded(wxCommandEvent& event)
 			bool     addToSvn(false);
 			wxString command;
 			command << m_plugin->GetSvnExeName() << wxT(" add ");
-			for(size_t i=0; i<files->GetCount(); i++){
+			for(size_t i=0; i<files->GetCount(); i++) {
 
 				if(m_plugin->IsPathUnderSvn(files->Item(i))) {
 					command << wxT("\"") << files->Item(i) << wxT("\" ");
@@ -766,7 +770,7 @@ void SubversionView::OnFileRenamed(wxCommandEvent& event)
 		wxString oldName = files->Item(0);
 		wxString newName = files->Item(1);
 
-		if(m_plugin->IsPathUnderSvn(oldName) == false){
+		if(m_plugin->IsPathUnderSvn(oldName) == false) {
 			event.Skip();
 			return;
 		}

@@ -535,20 +535,20 @@ public:
 	 * @param tags
 	 */
 	void TagsFromFileAndScope(const wxFileName &fileName, const wxString &scopeName, std::vector<TagEntryPtr> &tags);
-	
+
 	/**
-	 * @brief 
+	 * @brief
 	 * @param scope
 	 * @param tags
 	 */
 	virtual void GetSubscriptOperator(const wxString &scope, std::vector<TagEntryPtr> &tags) ;
 	/**
-	 * @brief 
+	 * @brief
 	 * @param scope
 	 * @param tags
 	 */
 	virtual void GetDereferenceOperator(const wxString &scope, std::vector<TagEntryPtr> &tags);
-	
+
 	/**
 	 * @brief return information about the current function based on file & line
 	 * @param fileName the current file name
@@ -752,7 +752,8 @@ protected:
 
 protected:
 	void           DoFindByNameAndScope(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags);
-	void           RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
+	void           DoFilterDuplicatesByTagID(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
+	void           DoFilterDuplicatesBySignature(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
 	void           RemoveDuplicatesTips(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
 	void           GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &tags, size_t flags = PartialMatch);
 	void           GetLocalTags(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags, size_t flags = PartialMatch);

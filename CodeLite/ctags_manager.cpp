@@ -647,7 +647,8 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 			TagsByScopeAndName(additionlScopes.at(i), word, tmpCandidates);
 		}
 
-		RemoveDuplicates  (tmpCandidates, candidates);
+		DoFilterDuplicatesByTagID  (tmpCandidates, candidates);
+		DoFilterDuplicatesBySignature(candidates, candidates);
 
 	} else if( tmpExp == wxT("::") ) {
 		// Global scope only
@@ -655,7 +656,8 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 		// Collect all tags from the global scope which starts with 'My' (i.e. 'word')
 		std::vector<TagEntryPtr> tmpCandidates;
 		GetGlobalTags     (word, tmpCandidates);
-		RemoveDuplicates  (tmpCandidates, candidates);
+		DoFilterDuplicatesByTagID  (tmpCandidates, candidates);
+		DoFilterDuplicatesBySignature(candidates, candidates);
 
 	} else {
 		wxString typeName, typeScope, dummy;
@@ -687,11 +689,13 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 					tmpCandidates1.push_back( tmpCandidates.at(i) );
 				}
 			}
-			RemoveDuplicates(tmpCandidates1, candidates);
+			DoFilterDuplicatesByTagID(tmpCandidates1, candidates);
+			DoFilterDuplicatesBySignature(candidates, candidates);
 		}
 		else
 		{
-			RemoveDuplicates(tmpCandidates, candidates);
+			DoFilterDuplicatesByTagID(tmpCandidates, candidates);
+			DoFilterDuplicatesBySignature(candidates, candidates);
 		}
 	}
 
@@ -781,7 +785,49 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 	return candidates.empty() == false;
 }
 
-void TagsManager::RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
+void TagsManager::DoFilterDuplicatesBySignature(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
+{
+	// filter out all entries with the same signature (we do keep declaration overa an implenetation
+	// since usually the declaration contains more useful information)
+	std::map<wxString, TagEntryPtr> others, impls;
+
+	for (size_t i=0; i<src.size(); i++) {
+		const TagEntryPtr& t = src.at(i);
+		if(t->IsMethod()) {
+			wxString strippedSignature = NormalizeFunctionSig(t->GetSignature(), 0);
+			strippedSignature.Prepend( t->GetName() );
+
+			if(t->IsPrototype()) {
+				// keep declaration in the output map
+				others[strippedSignature] = t;
+			} else {
+				// keep the signature in a different map
+				impls[strippedSignature] = t;
+			}
+		} else {
+			// keep all other entries
+			others[t->GetName()] = t;
+		}
+
+	}
+
+	// unified the two multimaps
+	std::map<wxString, TagEntryPtr>::iterator iter = impls.begin();
+	for(; iter != impls.end(); iter++) {
+		if(others.find(iter->first) == others.end()) {
+			others[iter->first] = iter->second;
+		}
+	}
+
+	target.clear();
+	// convert the map into vector
+	iter = others.begin();
+	for(; iter != others.end(); iter++) {
+		target.push_back(iter->second);
+	}
+}
+
+void TagsManager::DoFilterDuplicatesByTagID(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
 {
 	std::map<int, TagEntryPtr> mapTags;
 
@@ -2512,4 +2558,3 @@ void TagsManager::GetSubscriptOperator(const wxString& scope, std::vector<TagEnt
 		}
 	}
 }
-

@@ -760,3 +760,30 @@ bool Subversion2::IsPathUnderSvn(const wxString& path)
 
 	return false;
 }
+
+void Subversion2::OnSwitchURL(wxCommandEvent& event)
+{
+	DoSwitchURL(DoGetFileExplorerItemPath(), event);
+}
+
+void Subversion2::DoSwitchURL(const wxString& workingDirectory, wxCommandEvent& event)
+{
+	SvnInfo svnInfo;
+	DoGetSvnInfoSync(svnInfo, workingDirectory);
+
+	wxString loginString;
+	if(LoginIfNeeded(event, workingDirectory, loginString) == false) {
+		return;
+	}
+	bool nonInteractive = GetNonInteractiveMode(event);
+
+	wxString targetUrl = wxGetTextFromUser(wxT("Enter new URL:"), wxT("Svn Switch..."));
+	if(targetUrl.IsEmpty()) {
+		return;
+	}
+
+	wxString command;
+
+	command << GetSvnExeName(nonInteractive) << wxT(" switch ") << targetUrl;
+	GetConsole()->Execute(command, workingDirectory, new SvnDefaultCommandHandler(this, wxNOT_FOUND, NULL));
+}

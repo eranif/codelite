@@ -54,7 +54,7 @@ protected:
 	SvnTreeData::SvnNodeType DoGetSelectionType(const wxArrayTreeItemIds &items);
 	void                     DoGetPaths(const wxTreeItemId &parent, wxArrayString &paths);
 	void                     DoLinkEditor();
-	
+
 protected:
 	// Menu management
 	void CreateFileMenu      (wxMenu *menu);
@@ -77,7 +77,7 @@ protected:
 	void OnSettings           (wxCommandEvent &event);
 	void OnActiveEditorChanged(wxCommandEvent &event);
 	void OnOpenFile           (wxCommandEvent &event);
-	
+
 	// Svn events
 	void OnCommit             (wxCommandEvent &event);
 	void OnUpdate             (wxCommandEvent &event);
@@ -98,7 +98,8 @@ protected:
 	void OnIgnoreFilePattern  (wxCommandEvent &event);
 	void OnBlame              (wxCommandEvent &event);
 	void OnLinkEditor         (wxCommandEvent &event);
-	
+	void OnSwitch             (wxCommandEvent &event);
+
 	DECLARE_EVENT_TABLE()
 
 	void OnStopUI         (wxUpdateUIEvent &event);
@@ -108,7 +109,7 @@ public:
 	/** Constructor */
 	SubversionView( wxWindow* parent, Subversion2 *plugin);
 	virtual ~SubversionView();
-	
+
 	void     DisconnectEvents();
 	void     UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString &conflictedFiles, const wxArrayString &unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles);
 	void     BuildTree();

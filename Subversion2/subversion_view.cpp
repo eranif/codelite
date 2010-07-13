@@ -50,6 +50,7 @@ BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_MENU(XRCID("svn_blame"),              SubversionView::OnBlame)
 	EVT_MENU(XRCID("svn_checkout"),           SubversionView::OnCheckout)
 	EVT_MENU(XRCID("svn_open_file"),          SubversionView::OnOpenFile)
+	EVT_MENU(XRCID("svn_switch"),             SubversionView::OnSwitch)
 END_EVENT_TABLE()
 
 SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
@@ -427,6 +428,9 @@ void SubversionView::CreateRootMenu(wxMenu* menu)
 
 	menu->Append(XRCID("svn_tag"),           wxT("Create Tag"));
 	menu->Append(XRCID("svn_branch"),        wxT("Create Branch"));
+	menu->AppendSeparator();
+
+	menu->Append(XRCID("svn_switch"),   wxT("Switch URL..."));
 	menu->AppendSeparator();
 
 	menu->Append(XRCID("svn_diff"),          wxT("Create Diff..."));
@@ -974,4 +978,8 @@ void SubversionView::OnOpenFile(wxCommandEvent& event)
 			m_plugin->GetManager()->OpenFile(paths.Item(i));
 
 	}
+}
+void SubversionView::OnSwitch(wxCommandEvent& event)
+{
+	m_plugin->DoSwitchURL(m_textCtrlRootDir->GetValue(), event);
 }

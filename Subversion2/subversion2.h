@@ -47,6 +47,7 @@ protected:
 	void OnIgnoreFile       (wxCommandEvent &event);
 	void OnIgnoreFilePattern(wxCommandEvent &event);
 	void OnSelectAsView     (wxCommandEvent &event);
+	void OnSwitchURL        (wxCommandEvent &event);
 
 	///////////////////////////////////////////////////////////
 	// IDE events
@@ -57,7 +58,7 @@ protected:
 	bool    IsSubversionViewDetached ();
 public:
 	void    DoGetSvnInfoSync         (SvnInfo& svnInfo, const wxString &workingDirectory);
-
+	void    DoSwitchURL              (const wxString &workingDirectory, wxCommandEvent &event);
 public:
 	Subversion2(IManager *manager);
 	~Subversion2();

@@ -6,6 +6,7 @@ DiffDialog::DiffDialog( wxWindow* parent, IManager *manager )
 	: DiffDialogBase( parent )
 	, m_manager(manager)
 {
+	m_textCtrlFromRev->SetFocus();
 	WindowAttrManager::Load(this, wxT("DiffDialog"), m_manager->GetConfigTool());
 }
 

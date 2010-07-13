@@ -667,6 +667,8 @@ Frame* Frame::Get()
 
 void Frame::CreateGUIControls(void)
 {
+	this->Freeze();
+	
 #ifdef __WXMSW__
 	SetIcon(wxICON(aaaaa));
 #else
@@ -2804,10 +2806,13 @@ void Frame::CompleteInitialization()
 
 	OutputViewControlBar* outputViewControlBar = new OutputViewControlBar(this, GetOutputPane()->GetNotebook(), &m_mgr, wxID_ANY);
 	outputViewControlBar->AddAllButtons();
-
+	
+	
 	GetSizer()->Add(outputViewControlBar, 0, wxEXPAND);
 	Layout();
 	SetEnvStatusMessage();
+	
+	this->Thaw();
 }
 
 void Frame::OnAppActivated(wxActivateEvent &e)

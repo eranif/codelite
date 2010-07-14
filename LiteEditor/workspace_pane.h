@@ -31,7 +31,6 @@
 
 // Forward Declarations
 class FileViewTree;
-class WindowStack;
 class OpenWindowsPanel;
 class FileExplorer;
 class WorkspaceTab;
@@ -45,28 +44,17 @@ private:
 	wxAuiManager     *m_mgr;
 
 	Notebook         *m_book;
-	WindowStack      *m_winStack;
-	TabgroupsPane	 *m_TabgroupsPane;
+	TabgroupsPane    *m_TabgroupsPane;
 	OpenWindowsPanel *m_openWindowsPane;
 	FileExplorer     *m_explorer;
 	WorkspaceTab     *m_workspaceTab;
 
 	void CreateGUIControls();
     void Connect();
-    void ShowCurrentOutline();
 
     // Workspace event handlers
     void OnWorkspaceConfig    (wxCommandEvent &e);
     void OnWorkspaceClosed    (wxCommandEvent &e);
-    void OnFileRetagged       (wxCommandEvent &e);
-    void OnProjectFileAdded   (wxCommandEvent &e);
-    void OnProjectFileRemoved (wxCommandEvent &e);
-    void OnSymbolsUpdated     (wxCommandEvent &e);
-    void OnSymbolsDeleted     (wxCommandEvent &e);
-    void OnSymbolsAdded       (wxCommandEvent &e);
-    void OnActiveEditorChanged(wxCommandEvent &e);
-    void OnEditorClosing      (wxCommandEvent &e);
-    void OnAllEditorsClosed   (wxCommandEvent &e);
 
 	// Configuration mgr handlers
 	void OnConfigurationManager      (wxCommandEvent  &e);

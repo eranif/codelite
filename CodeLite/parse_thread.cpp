@@ -177,22 +177,7 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 		wxString name(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
 		wxFileName fn(name);
 		fn.MakeAbsolute();
-
-//		bool isFromSearchPath(false);
-//		for(size_t j=0; j<searchPaths.GetCount(); j++) {
-//			wxFileName p ( searchPaths.Item(j) + wxFileName::GetPathSeparator());
-//			//DEBUG_MESSAGE( wxString::Format(wxT("Comparing %s vs %s"), fn.GetFullPath().c_str(), p.GetPath().c_str()));
-//			if( fn.GetFullPath().StartsWith(p.GetPath()) ) {
-//				//DEBUG_MESSAGE(wxT("Match was found for file, this file will NOT be parsed!"));
-//				isFromSearchPath = true;
-//				break;
-//			}
-//		}
-
-		// this file is not part of the search paths
-//		if( !isFromSearchPath ) {
 		filteredFileList.Add( fn.GetFullPath() );
-//		}
 	}
 
 	DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> Workspace files %d"), filteredFileList.GetCount()) );

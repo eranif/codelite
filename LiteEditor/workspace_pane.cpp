@@ -85,7 +85,7 @@ void WorkspacePane::CreateGUIControls()
 #endif
 
     // add notebook for tabs
-	long bookStyle = wxVB_LEFT | wxAUI_NB_SCROLL_BUTTONS;
+	long bookStyle = wxVB_LEFT | wxAUI_NB_WINDOWLIST_BUTTON;
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
 
 	// Calculate the widthest tab (the one with the 'Workspcae' label)
@@ -127,17 +127,6 @@ void WorkspacePane::CreateGUIControls()
 		m_book->AddPage(m_explorer, name, false);
 	}
 
-	// Add the Outline tab
-	name = wxT("Outline");
-	if(IS_DETACHED(name)) {
-		DockablePane *cp = new DockablePane(GetParent(), m_book,  name, wxNullBitmap, wxSize(200, 200));
-		m_winStack = new WindowStack(cp);
-		cp->SetChildNoReparent(m_winStack);
-	} else {
-		m_winStack = new WindowStack(m_book);
-		m_book->AddPage(m_winStack, name, false);
-	}
-
 	// Add the Open Windows Panel (Tabs)
 	name = wxT("Tabs");
 	if(IS_DETACHED(name)) {
@@ -171,132 +160,8 @@ void WorkspacePane::Connect()
 	wxTheApp->Connect(wxEVT_WORKSPACE_LOADED,         wxCommandEventHandler(WorkspacePane::OnWorkspaceConfig),     NULL, this);
 	wxTheApp->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(WorkspacePane::OnWorkspaceConfig),     NULL, this);
 	wxTheApp->Connect(wxEVT_WORKSPACE_CLOSED,         wxCommandEventHandler(WorkspacePane::OnWorkspaceClosed),     NULL, this);
-	wxTheApp->Connect(wxEVT_PROJ_FILE_ADDED,          wxCommandEventHandler(WorkspacePane::OnProjectFileAdded),    NULL, this);
-	wxTheApp->Connect(wxEVT_PROJ_FILE_REMOVED,        wxCommandEventHandler(WorkspacePane::OnProjectFileRemoved),  NULL, this);
-	wxTheApp->Connect(wxEVT_SYNBOL_TREE_UPDATE_ITEM,  wxCommandEventHandler(WorkspacePane::OnSymbolsUpdated),      NULL, this);
-	wxTheApp->Connect(wxEVT_SYNBOL_TREE_DELETE_ITEM,  wxCommandEventHandler(WorkspacePane::OnSymbolsDeleted),      NULL, this);
-	wxTheApp->Connect(wxEVT_SYNBOL_TREE_ADD_ITEM,     wxCommandEventHandler(WorkspacePane::OnSymbolsAdded),        NULL, this);
-	wxTheApp->Connect(wxEVT_FILE_RETAGGED,            wxCommandEventHandler(WorkspacePane::OnFileRetagged),        NULL, this);
-	wxTheApp->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,    wxCommandEventHandler(WorkspacePane::OnActiveEditorChanged), NULL, this);
-	wxTheApp->Connect(wxEVT_EDITOR_CLOSING,           wxCommandEventHandler(WorkspacePane::OnEditorClosing),       NULL, this);
-	wxTheApp->Connect(wxEVT_ALL_EDITORS_CLOSED,       wxCommandEventHandler(WorkspacePane::OnAllEditorsClosed),    NULL, this);
-
     wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspacePane::OnConfigurationManager),   NULL, this);
     wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspacePane::OnConfigurationManagerUI), NULL, this);
-}
-
-
-extern wxImageList* CreateSymbolTreeImages();
-
-void WorkspacePane::ShowCurrentOutline()
-{
-    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
-    if (!editor || editor->GetProjectName().IsEmpty()) {
-        m_winStack->SelectNone();
-        return;
-    }
-    wxString path = editor->GetFileName().GetFullPath();
-    if (m_winStack->GetSelectedKey() != path) {
-        m_winStack->Freeze();
-        if (m_winStack->Find(path) == NULL) {
-            CppSymbolTree *tree = new CppSymbolTree(m_winStack, wxID_ANY);
-            tree->SetSymbolsImages(CreateSymbolTreeImages());
-            tree->BuildTree(path);
-            m_winStack->Add(tree, path);
-        }
-        m_winStack->Select(path);
-        m_winStack->Thaw();
-    }
-}
-
-void WorkspacePane::OnActiveEditorChanged(wxCommandEvent& e)
-{
-    e.Skip();
-    ShowCurrentOutline();
-}
-
-void WorkspacePane::OnAllEditorsClosed(wxCommandEvent& e)
-{
-    e.Skip();
-    m_winStack->Clear();
-}
-
-void WorkspacePane::OnEditorClosing(wxCommandEvent& e)
-{
-    e.Skip();
-    IEditor *editor = (IEditor*) e.GetClientData();
-    if (editor && !editor->GetProjectName().IsEmpty()) {
-        m_winStack->Delete(editor->GetFileName().GetFullPath());
-    }
-}
-
-void WorkspacePane::OnFileRetagged(wxCommandEvent& e)
-{
-    e.Skip();
-    std::vector<wxFileName> *files = (std::vector<wxFileName>*) e.GetClientData();
-	if (files && !files->empty()) {
-        m_winStack->Freeze();
-        // toss out any out-of-date outlines
-        for (size_t i = 0; i < files->size(); i++) {
-            m_winStack->Delete(files->at(i).GetFullPath());
-        }
-        ShowCurrentOutline(); // in case active editor's file was one of them
-        m_winStack->Thaw();
-    }
-}
-
-void WorkspacePane::OnProjectFileAdded(wxCommandEvent& e)
-{
-    e.Skip();
-    ShowCurrentOutline(); // in case the active editor's file is now tagged
-}
-
-void WorkspacePane::OnProjectFileRemoved(wxCommandEvent& e)
-{
-    e.Skip();
-    wxArrayString *files = (wxArrayString*) e.GetClientData();
-	if (files && !files->IsEmpty()) {
-        for (size_t i = 0; i < files->Count(); i++) {
-            m_winStack->Delete(files->Item(i));
-        }
-        ShowCurrentOutline(); // in case active editor's file is no longer tagged
-    }
-}
-
-void WorkspacePane::OnSymbolsAdded(wxCommandEvent& e)
-{
-    e.Skip();
-    ParseThreadEventData *data = (ParseThreadEventData*) e.GetClientData();
-	if (data && !data->GetItems().empty()) {
-        CppSymbolTree *tree = (CppSymbolTree*) m_winStack->Find(data->GetFileName());
-        if (tree) {
-            tree->AddSymbols(data->GetItems());
-        }
-    }
-}
-
-void WorkspacePane::OnSymbolsDeleted(wxCommandEvent& e)
-{
-    e.Skip();
-    ParseThreadEventData *data = (ParseThreadEventData*) e.GetClientData();
-	if (data && !data->GetItems().empty()) {
-        CppSymbolTree *tree = (CppSymbolTree*) m_winStack->Find(data->GetFileName());
-        if (tree) {
-            tree->DeleteSymbols(data->GetItems());
-        }
-    }
-}
-
-void WorkspacePane::OnSymbolsUpdated(wxCommandEvent& e)
-{
-    e.Skip();
-    ParseThreadEventData *data = (ParseThreadEventData*) e.GetClientData();
-	if (data && !data->GetItems().empty()) {
-        CppSymbolTree *tree = (CppSymbolTree*) m_winStack->Find(data->GetFileName());
-        if (tree) {
-            tree->UpdateSymbols(data->GetItems());
-        }
-    }
 }
 
 void WorkspacePane::OnWorkspaceConfig(wxCommandEvent& e)
@@ -324,7 +189,6 @@ void WorkspacePane::OnWorkspaceClosed(wxCommandEvent& e)
     e.Skip();
     m_workspaceConfig->Clear();
     m_workspaceConfig->Enable(false);
-    m_winStack->Clear();
 }
 
 void WorkspacePane::OnConfigurationManagerUI(wxUpdateUIEvent& e)

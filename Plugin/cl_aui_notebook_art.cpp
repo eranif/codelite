@@ -93,13 +93,13 @@ clAuiTabArt::clAuiTabArt()
 
 	wxColour base_colour = DrawingUtils::GetPanelBgColour();
 	m_base_colour = base_colour;
-	
+
 #ifdef __WXGTK__
 	wxColor border_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
 #else
 	wxColor border_colour = DrawingUtils::DarkColour(m_base_colour, 4.0);
 #endif
-	
+
 	m_border_pen = wxPen(border_colour);
 	m_base_colour_pen = wxPen(m_base_colour);
 	m_base_colour_brush = wxBrush(m_base_colour);
@@ -520,9 +520,9 @@ wxSize clAuiTabArt::GetTabSize(wxDC& dc,
 #ifdef __WXMAC__
 	tab_width += 16;
 #else
-	tab_width += 18;
+	tab_width += 16;
 #endif
-	tab_height += 14;
+	tab_height += 12;
 
 	if (m_flags & wxAUI_NB_TAB_FIXED_WIDTH) {
 		tab_width = m_fixed_tab_width;

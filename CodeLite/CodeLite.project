@@ -54,7 +54,6 @@
     <File Name="tokenizer.h"/>
     <File Name="tree.h"/>
     <File Name="tree_node.h"/>
-    <File Name="unistd.h"/>
     <File Name="worker_thread.h"/>
     <File Name="cpp_lexer.h"/>
     <File Name="comment_creator.h"/>

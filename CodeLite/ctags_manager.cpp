@@ -1214,14 +1214,9 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, bool quickRet
 	DeleteFilesTags(strFiles);
 
 	// step 5: build the database
+	DoBuildDatabase(strFiles, *m_workspaceDatabase);
 
-	if (DoBuildDatabase(strFiles, *m_workspaceDatabase)) {
-
-		// update the last_retagged field in the database for these files
-		UpdateFilesRetagTimestamp(strFiles, m_workspaceDatabase);
-	}
-
-	// step 7: update the file tree
+	// step 6: update the file tree
 	UpdateFileTree(m_workspaceDatabase, true);
 }
 

@@ -1257,6 +1257,10 @@ bool TagsManager::DoBuildDatabase(const wxArrayString &files, ITagsStorage &db, 
 		parsing_result.tree = ParseSourceFile(curFile);
 
 		db.Store(parsing_result.tree, wxFileName(), false);
+		if(db.InsertFileEntry(curFile.GetFullPath(), (int)time(NULL)) == TagExist) {
+			db.UpdateFileEntry(curFile.GetFullPath(), (int)time(NULL));
+		}
+
 		if ( i % 50 == 0 ) {
 			// update the progress bar
 			if (!prgDlg.Update(i, wxT("Committing..."))) {

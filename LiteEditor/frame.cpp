@@ -3958,7 +3958,7 @@ void Frame::OnRetaggingProgress(wxCommandEvent& e)
 {
 	e.Skip();
 #if USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
-	if(e.GetInt() == 0) {
+	if(e.GetInt() == 1) {
 		// parsing started
 		gStopWatch.Start();
 	}

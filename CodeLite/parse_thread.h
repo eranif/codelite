@@ -87,7 +87,8 @@ public:
 public:
 	enum {
 		PR_FILESAVED,
-		PR_PARSEINCLUDES
+		PR_PARSEINCLUDES,
+		PR_PARSE_AND_STORE
 	};
 
 public:
@@ -188,8 +189,9 @@ private:
 	 */
 	void ParseIncludeFiles(const wxString &filename);
 
-	void ProcessSimple     (ParseRequest *req);
-	void ProcessIncludes   (ParseRequest *req);
+	void ProcessSimple        (ParseRequest *req);
+	void ProcessIncludes      (ParseRequest *req);
+	void ProcessParseAndStore (ParseRequest *req);
 	void GetFileListToParse(const wxString &filename, wxArrayString &arrFiles);
 	void ParseAndStoreFiles(const wxArrayString &arrFiles, int initalCount);
 
@@ -300,6 +302,8 @@ extern const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS;
 extern const wxEventType wxEVT_PARSE_THREAD_MESSAGE;
 extern const wxEventType wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE;
 extern const wxEventType wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE;
+extern const wxEventType wxEVT_PARSE_THREAD_RETAGGING_PROGRESS;
+extern const wxEventType wxEVT_PARSE_THREAD_RETAGGING_COMPLETED;
 
 typedef void (wxEvtHandler::*SymbolTreeEventFunction)(SymbolTreeEvent&);
 

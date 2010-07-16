@@ -389,6 +389,9 @@ protected:
 	void OnParsingThreadMessage       (wxCommandEvent  &e);
 	void OnDatabaseUpgrade            (wxCommandEvent  &e);
 	void OnClearTagsCache             (wxCommandEvent  &e);
+	void OnRetaggingCompelted         (wxCommandEvent  &e);
+	void OnRetaggingProgress          (wxCommandEvent  &e);
+
 	void OnRecentFile(wxCommandEvent &event);
 	void OnRecentWorkspace(wxCommandEvent &event);
 	void OnBackwardForward(wxCommandEvent &event);

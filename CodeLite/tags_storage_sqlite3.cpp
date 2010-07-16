@@ -163,9 +163,9 @@ void TagsStorageSQLite::RecreateDatabase()
 		wxString filename = m_fileName.GetFullPath();
 		if (wxRemoveFile(m_fileName.GetFullPath()) == false ) {
 
-			// faild to delete it, probably someone else got it opened as well
+			// re-open the database
 			m_fileName.Clear();
-			m_db->Open( filename ); // re-open the database
+			OpenDatabase( filename );
 
 			// and drop tables
 			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS TAGS"));

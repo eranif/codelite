@@ -95,6 +95,15 @@ void WorkspacePane::CreateGUIControls()
 
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 0);
 
+	// Add the parsing progress controls
+	m_staticText = new wxStaticText(this, wxID_ANY, wxT("Parsing workspace..."));
+	mainSizer->Add(m_staticText, 0, wxEXPAND|wxALL, 2);
+
+	m_parsingProgress = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1, 15), wxGA_HORIZONTAL|wxGA_SMOOTH);
+	mainSizer->Add(m_parsingProgress, 0, wxEXPAND|wxALL, 1);
+	m_parsingProgress->Hide();
+	m_staticText->Hide();
+
     // create tabs (possibly detached)
 	DetachedPanesInfo dpi;
 	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
@@ -226,3 +235,27 @@ void WorkspacePane::OnConfigurationManager(wxCommandEvent& e)
 	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
 	m_workspaceConfig->SetStringSelection(matrix->GetSelectedConfigurationName());
 }
+
+void WorkspacePane::ClearProgress()
+{
+	m_parsingProgress->SetValue(0);
+	m_parsingProgress->Hide();
+
+	m_staticText->SetLabel(wxT("Parsing workspace..."));
+	m_staticText->Hide();
+	Layout();
+}
+
+void WorkspacePane::UpdateProgress(int val)
+{
+	if(m_parsingProgress->IsShown() == false) {
+		m_parsingProgress->Show();
+		m_staticText->Show();
+		Layout();
+	}
+
+	m_staticText->SetLabel(wxString::Format(wxT("Parsing workspace: %d%% completed"), val));
+	m_parsingProgress->SetValue(val);
+	m_parsingProgress->Update();
+}
+

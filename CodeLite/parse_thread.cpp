@@ -52,17 +52,18 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
 			DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> received 'TestDestroy()'") ) );\
 			return;\
 		}\
-}
+	}
 
 const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS = XRCID("parse_thread_updated_symbols");
 const wxEventType wxEVT_PARSE_THREAD_MESSAGE              = XRCID("parse_thread_update_status_bar");
 const wxEventType wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE   = XRCID("parse_thread_scan_includes_done");
 const wxEventType wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE     = XRCID("parse_thread_clear_tags_cache");
-
+const wxEventType wxEVT_PARSE_THREAD_RETAGGING_PROGRESS   = XRCID("parse_thread_clear_retagging_progress");
+const wxEventType wxEVT_PARSE_THREAD_RETAGGING_COMPLETED  = XRCID("parse_thread_clear_retagging_compelted");
 
 ParseThread::ParseThread()
-		: WorkerThread()
-		, m_pDb              ( NULL )
+	: WorkerThread()
+	, m_pDb              ( NULL )
 {
 }
 
@@ -85,6 +86,9 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	default:
 	case ParseRequest::PR_FILESAVED:
 		ProcessSimple( req );
+		break;
+	case ParseRequest::PR_PARSE_AND_STORE:
+		ProcessParseAndStore( req );
 		break;
 	}
 }
@@ -443,6 +447,70 @@ void ParseThread::ParseAndStoreFiles(const wxArrayString& arrFiles, int initalCo
 			m_notifiedWindow->AddPendingEvent(clearCacheEvent);
 		}
 	}
+}
+
+void ParseThread::ProcessParseAndStore(ParseRequest* req)
+{
+	wxString      dbfile = req->getDbfile();
+
+	// convert the file to tags
+	size_t maxVal = req->_workspaceFiles.size();
+	if ( maxVal == 0 ) {
+		return;
+	}
+
+	// we report every 10%
+	size_t reportingPoint = maxVal / 10;
+
+	if ( !m_pDb ) {
+		m_pDb = new TagsStorageSQLite();
+	}
+	m_pDb->OpenDatabase( dbfile );
+
+	// We commit every 10 files
+	m_pDb->Begin();
+	for (size_t i=0; i<maxVal; i++) {
+		wxString   fileTags;
+		wxFileName curFile(wxString(req->_workspaceFiles.at(i).c_str(), wxConvUTF8));
+
+		// Send notification to the main window with our progress report
+		if(i % reportingPoint == 0 && m_notifiedWindow) {
+			wxCommandEvent retaggingProgressEvent(wxEVT_PARSE_THREAD_RETAGGING_PROGRESS);
+			retaggingProgressEvent.SetInt( (i / reportingPoint) * 10 );
+			m_notifiedWindow->AddPendingEvent(retaggingProgressEvent);
+		}
+
+		TagTreePtr tree = TagsManagerST::Get()->ParseSourceFile(curFile);
+		m_pDb->Store(tree, wxFileName(), false);
+		if(m_pDb->InsertFileEntry(curFile.GetFullPath(), (int)time(NULL)) == TagExist) {
+			m_pDb->UpdateFileEntry(curFile.GetFullPath(), (int)time(NULL));
+		}
+
+		if ( i % 50 == 0 ) {
+			// Commit what we got so far
+			m_pDb->Commit();
+			// Start a new transaction
+			m_pDb->Begin();
+		}
+	}
+
+	// Commit whats left
+	m_pDb->Commit();
+
+	/// Send notification to the main window with our progress report
+	if(m_notifiedWindow) {
+
+		wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
+		std::vector<std::string> *arrFiles = new std::vector<std::string>;
+		*arrFiles = req->_workspaceFiles;
+		retaggingCompletedEvent.SetClientData( arrFiles );
+
+		m_notifiedWindow->AddPendingEvent(retaggingCompletedEvent);
+	}
+
+	// Close the database
+	delete m_pDb;
+	m_pDb = NULL;
 }
 
 //--------------------------------------------------------------------------------------

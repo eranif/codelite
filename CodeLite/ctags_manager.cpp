@@ -1198,6 +1198,9 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, bool quickRet
 		strFiles.Add(files.at(i).GetFullPath());
 	}
 
+	if(strFiles.IsEmpty())
+		return;
+
 	// step 2: remove all files which do not need retag
 	if ( quickRetag )
 		DoFilterNonNeededFilesForRetaging(strFiles, m_workspaceDatabase);
@@ -1214,10 +1217,28 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, bool quickRet
 	DeleteFilesTags(strFiles);
 
 	// step 5: build the database
-	DoBuildDatabase(strFiles, *m_workspaceDatabase);
 
-	// step 6: update the file tree
+#if USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
+
+	// Expermintal code: perform the 'retag workspace' using the parser thread
+	// Put a request to the parsing thread
+	ParseRequest *req = new ParseRequest();
+	req->setDbFile( GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
+	req->setType  ( ParseRequest::PR_PARSE_AND_STORE );
+
+	req->_workspaceFiles.clear();
+	req->_workspaceFiles.reserve( strFiles.size() );
+	for(size_t i=0; i<strFiles.GetCount(); i++) {
+		req->_workspaceFiles.push_back( strFiles[i].mb_str(wxConvUTF8).data() );
+	}
+	ParseThreadST::Get()->Add ( req );
+
+#else
+	// step 5: build the database
+	DoBuildDatabase(strFiles, *m_workspaceDatabase);
 	UpdateFileTree(m_workspaceDatabase, true);
+
+#endif
 }
 
 bool TagsManager::DoBuildDatabase(const wxArrayString &files, ITagsStorage &db, const wxString *rootPath)
@@ -2556,4 +2577,11 @@ void TagsManager::GetSubscriptOperator(const wxString& scope, std::vector<TagEnt
 
 		}
 	}
+}
+
+void TagsManager::ClearAllCaches()
+{
+	m_cachedFile.Clear();
+	m_cachedFileFunctionsTags.clear();
+	m_workspaceDatabase->ClearCache();
 }

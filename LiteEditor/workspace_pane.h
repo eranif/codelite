@@ -35,6 +35,7 @@ class OpenWindowsPanel;
 class FileExplorer;
 class WorkspaceTab;
 class TabgroupsPane;
+class wxGauge;
 
 class WorkspacePane : public wxPanel
 {
@@ -42,7 +43,8 @@ private:
 	wxString          m_caption;
 	wxChoice         *m_workspaceConfig;
 	wxAuiManager     *m_mgr;
-
+	wxGauge          *m_parsingProgress;
+	wxStaticText     *m_staticText;
 	Notebook         *m_book;
 	TabgroupsPane    *m_TabgroupsPane;
 	OpenWindowsPanel *m_openWindowsPane;
@@ -64,6 +66,9 @@ private:
 public:
 	WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr);
 	~WorkspacePane();
+
+	void           UpdateProgress(int val);
+	void           ClearProgress ();
 
 	// Getters
 	const wxString &GetCaption      () const    { return m_caption;      }

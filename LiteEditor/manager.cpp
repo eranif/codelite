@@ -3097,10 +3097,13 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 	// -----------------------------------------------
 
 	TagsManagerST::Get()->RetagFiles ( projectFiles, event.GetInt() );
+
+#if !USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
 	long end   = sw.Time();
 	Frame::Get()->SetStatusMessage(wxT("Done"), 0);
 	wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), (end)/1000, projectFiles.size());
 	SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
+#endif
 
 	delete fileSet;
 }

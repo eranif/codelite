@@ -124,6 +124,8 @@
 extern wxString CODELITE_VERSION_STR;
 extern const wxChar *SvnRevision;
 
+static wxStopWatch gStopWatch;
+
 // from iconsextra.cpp:
 extern char *cubes_xpm[];
 extern unsigned char cubes_alpha[];
@@ -491,6 +493,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone   )
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_MESSAGE             , Frame::OnParsingThreadMessage)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE,     Frame::OnClearTagsCache)
+	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_RETAGGING_COMPLETED,  Frame::OnRetaggingCompelted)
+	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_RETAGGING_PROGRESS,   Frame::OnRetaggingProgress)
+
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR,                 Frame::OnSetStatusMessage)
 	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE,                   Frame::OnDatabaseUpgrade )
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED,       Frame::OnBuildEnded)
@@ -3915,4 +3920,49 @@ void Frame::UpdateAUI()
 		paneInfo.CaptionVisible(EditorConfigST::Get()->GetOptions()->GetOutputPaneDockable());
 		m_mgr.Update();
 	}
+}
+
+void Frame::OnRetaggingCompelted(wxCommandEvent& e)
+{
+	e.Skip();
+#if USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
+	SetStatusMessage(wxT("Done"), 0);
+	GetWorkspacePane()->ClearProgress();
+
+	// Clear all cached tags now that we got our database updated
+	TagsManagerST::Get()->ClearAllCaches();
+
+	// Send event notifying parsing completed
+	std::vector<std::string>* files = (std::vector<std::string>*) e.GetClientData();
+	if(files) {
+
+		// Print the parsing end time
+		wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), gStopWatch.Time()/1000, files->size());
+
+		wxArrayString taggedFiles;
+		for(size_t i=0; i<files->size(); i++) {
+			taggedFiles.Add( wxString(files->at(i).c_str(), wxConvUTF8) );
+		}
+
+		SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &taggedFiles );
+		delete files;
+
+	} else {
+
+		wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), gStopWatch.Time()/1000, 0);
+	}
+#endif
+}
+
+void Frame::OnRetaggingProgress(wxCommandEvent& e)
+{
+	e.Skip();
+#if USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
+	if(e.GetInt() == 0) {
+		// parsing started
+		gStopWatch.Start();
+	}
+
+	GetWorkspacePane()->UpdateProgress( e.GetInt() );
+#endif
 }

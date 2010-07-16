@@ -55,6 +55,9 @@ class Language;
 class wxTimer;
 class Language;
 
+// Change this macro if you dont want to use the parser thread for performing
+// the workspcae retag
+#define USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE 0
 
 #define TagsGlobal 0
 #define TagsGlobalGTK 1
@@ -165,6 +168,11 @@ public:
 	 * @brief clear the file cached
 	 */
 	void ClearCachedFile(const wxString &fileName);
+
+	/**
+	 * @brief clear all the cached tags information stored in this class
+	 */
+	void ClearAllCaches();
 
 	/**
 	 * @brief load fileName into cache, note that this call will clear perivous

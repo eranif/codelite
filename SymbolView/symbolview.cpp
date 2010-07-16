@@ -25,6 +25,7 @@
 
 #include <set>
 #include <wx/app.h>
+#include <wx/wupdlock.h>
 #include <wx/settings.h>
 #include <wx/menu.h>
 #include <wx/log.h>
@@ -203,7 +204,7 @@ void SymbolViewPlugin::CreateGUIControls()
 	m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
 	wxArrayString detachedPanes = dpi.GetPanes();
 	bool isDetached = detachedPanes.Index(wxT("Symbols")) != wxNOT_FOUND;
-	
+
 	Notebook *book = m_mgr->GetWorkspacePaneNotebook();
 	if( isDetached ) {
 		// Make the window child of the main panel (which is the grand parent of the notebook)
@@ -434,7 +435,7 @@ void SymbolViewPlugin::GetFiles(const wxFileName &path, wxArrayString &files)
 {
 	if (!m_mgr->IsWorkspaceOpen())
 		return;
-	
+
 	if(GetViewMode() == vmCurrentWorkspace) {
 		wxArrayString projectNames;
 		wxString      dummy;
@@ -443,7 +444,7 @@ void SymbolViewPlugin::GetFiles(const wxFileName &path, wxArrayString &files)
 			ProjectPtr project = m_mgr->GetWorkspace()->FindProjectByName(projectNames.Item(i), dummy);
 			if (!project)
 				continue;
-				
+
 			std::vector<wxFileName> projectFiles;
 			project->GetFiles(projectFiles, true);
 			for (size_t j = 0; j < projectFiles.size(); j++) {
@@ -468,7 +469,7 @@ void SymbolViewPlugin::GetFiles(const wxFileName &path, wxArrayString &files)
 				wxString file = fileName.GetFullPath();
 				if (fullPath == workspaceFileName || fullPath == projectFileName || fullPath == file) {
 					files.Add(file);
-					
+
 				} else if (path.GetExt() != wxT("h") && fileName.GetExt() == wxT("h")) {
 					// TODO: replace this code with a "real" solution based on actual file dependencies.
 					// for now, make sure .c or .cpp file also includes corresponding .h file.
@@ -480,7 +481,7 @@ void SymbolViewPlugin::GetFiles(const wxFileName &path, wxArrayString &files)
 				}
 			}
 		}
-		
+
 	}
 }
 
@@ -691,7 +692,7 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 
 	// get files to scan for tags
 	wxArrayString files;
-	
+
 	WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
 	GetFiles(viewStack->Find(tree), files);
 
@@ -702,7 +703,7 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 	std::vector<TagEntryPtr> tags;
 	if (!treetag) {
 		db->GetTagsByFilesAndScope(files, wxT("<global>"), tags);
-		
+
 	} else if (treetag->GetKind() != wxT("enum")) {
 		wxArrayString kinds;
 		kinds.Add(wxT("member"));
@@ -739,7 +740,7 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 		SetNodeData(tree, child, *tag);
 		count++;
 	}
-	
+
 	SortChildren();
 	return count;
 }
@@ -903,7 +904,7 @@ void SymbolViewPlugin::UpdateTrees(const wxArrayString &files, bool removeOld)
 	wxArrayString filesArr;
 	for (size_t i = 0; i < files.Count(); i++) {
 		filesArr.Add(files.Item(i));
-		
+
 		if (removeOld) {
 			for (File2TagRange range = m_fileTags.equal_range(files[i]); range.first != range.second; range.first++) {
 				wxTreeCtrl *tree = range.first->second.first;
@@ -919,18 +920,18 @@ void SymbolViewPlugin::UpdateTrees(const wxArrayString &files, bool removeOld)
 	GetPaths(files, treePaths);
 	std::vector<TagEntryPtr> tags;
 	m_mgr->GetTagsManager()->GetDatabase()->GetTagsByFiles(files, tags);
-	
+
 	// query database for current tags of retagged files.
 	// update or add new symbols and remove these from the to-delete list
 	for(size_t i=0; i<tags.size(); i++) {
-		
+
 		if (removeOld && UpdateSymbol(*tags.at(i))) {
 			tagsToDelete.erase(TagKey(tags.at(i)->GetFile(), tags.at(i)->Key()));
 		} else {
 			AddSymbol(*tags.at(i), treePaths);
 		}
 	}
-	
+
 	AddDeferredSymbols(treePaths);
 	SortChildren();
 
@@ -1215,6 +1216,7 @@ void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
 		for (size_t i = 0; i < files->size(); i++) {
 			filePaths.Add(files->at(i).GetFullPath());
 		}
+		wxWindowUpdateLocker locker(m_viewStack);
 		UpdateTrees(filePaths, true);
 	}
 	e.Skip();
@@ -1227,6 +1229,7 @@ void SymbolViewPlugin::OnProjectFileAdded(wxCommandEvent& e)
 {
 	wxArrayString *files = (wxArrayString*) e.GetClientData();
 	if (files && !files->IsEmpty()) {
+		wxWindowUpdateLocker locker(m_viewStack);
 		UpdateTrees(*files, false);
 	}
 	e.Skip();

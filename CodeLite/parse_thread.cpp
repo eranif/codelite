@@ -474,7 +474,7 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 		wxFileName curFile(wxString(req->_workspaceFiles.at(i).c_str(), wxConvUTF8));
 
 		// Send notification to the main window with our progress report
-		if(i % reportingPoint == 0 && m_notifiedWindow) {
+		if(reportingPoint > 0 && i % reportingPoint == 0 && m_notifiedWindow) {
 			wxCommandEvent retaggingProgressEvent(wxEVT_PARSE_THREAD_RETAGGING_PROGRESS);
 			retaggingProgressEvent.SetInt( (i / reportingPoint) * 10 );
 			m_notifiedWindow->AddPendingEvent(retaggingProgressEvent);

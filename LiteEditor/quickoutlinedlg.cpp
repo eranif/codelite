@@ -64,8 +64,11 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString &fileName, int
 
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
-	m_textFilter = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0|wxNO_BORDER );
+	m_textFilter = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0|wxNO_BORDER |wxTE_RICH2);
+	
 	m_textFilter->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
+	m_textFilter->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOTEXT ) );
+	
 	bSizer1->Add( m_textFilter, 0, wxALL|wxEXPAND, 5 );
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	m_staticline1->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
@@ -74,6 +77,7 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString &fileName, int
 	//build the outline view
 	m_treeOutline = new CppSymbolTree( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxNO_BORDER);
 	m_treeOutline->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
+	m_treeOutline->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOTEXT ) );
 	m_treeOutline->SetSymbolsImages(CreateSymbolTreeImages());
 
 	Connect(wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED, wxCommandEventHandler(QuickOutlineDlg::OnItemSelected), NULL, this);

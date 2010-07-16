@@ -57,7 +57,7 @@ class Language;
 
 // Change this macro if you dont want to use the parser thread for performing
 // the workspcae retag
-#define USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE 0
+#define USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE 1
 
 #define TagsGlobal 0
 #define TagsGlobalGTK 1

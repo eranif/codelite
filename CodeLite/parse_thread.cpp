@@ -454,13 +454,17 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 	wxString      dbfile = req->getDbfile();
 
 	// convert the file to tags
-	size_t maxVal = req->_workspaceFiles.size();
-	if ( maxVal == 0 ) {
+	double maxVal = (double)req->_workspaceFiles.size();
+	if ( maxVal == 0.0 ) {
 		return;
 	}
 
 	// we report every 10%
-	size_t reportingPoint = maxVal / 10;
+	double reportingPoint = maxVal / 100.0;
+	reportingPoint = ceil( reportingPoint );
+	if(reportingPoint == 0.0) {
+		reportingPoint = 1.0;
+	}
 
 	if ( !m_pDb ) {
 		m_pDb = new TagsStorageSQLite();
@@ -469,14 +473,33 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 
 	// We commit every 10 files
 	m_pDb->Begin();
+	double precent  (0.0);
+	double condition(0.0);
 	for (size_t i=0; i<maxVal; i++) {
+
+		// give a shutdown request a chance
+		if( TestDestroy() ) {
+			// Do an ordered shutdown:
+			// rollback any transaction
+			// and close the database
+			m_pDb->Rollback();
+			delete m_pDb;
+			m_pDb = NULL;
+			return;
+		}
+
 		wxString   fileTags;
 		wxFileName curFile(wxString(req->_workspaceFiles.at(i).c_str(), wxConvUTF8));
 
 		// Send notification to the main window with our progress report
-		if(reportingPoint > 0 && i % reportingPoint == 0 && m_notifiedWindow) {
+		if( reportingPoint > 0          &&
+			condition == reportingPoint &&
+			m_notifiedWindow) {
+
+			precent++;
+			condition = 0;
 			wxCommandEvent retaggingProgressEvent(wxEVT_PARSE_THREAD_RETAGGING_PROGRESS);
-			retaggingProgressEvent.SetInt( (i / reportingPoint) * 10 );
+			retaggingProgressEvent.SetInt( (int)precent );
 			m_notifiedWindow->AddPendingEvent(retaggingProgressEvent);
 		}
 
@@ -492,6 +515,8 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 			// Start a new transaction
 			m_pDb->Begin();
 		}
+
+		condition += 1.0;
 	}
 
 	// Commit whats left

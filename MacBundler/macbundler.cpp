@@ -637,53 +637,21 @@ void MacBundler::CreatePluginMenu(wxMenu *pluginsMenu)
 
 void MacBundler::HookPopupMenu(wxMenu *menu, MenuType type)
 {
-	if (type == MenuTypeEditor)
-    {
-	}
-    else if (type == MenuTypeFileExplorer)
-    {
-	}
-    else if (type == MenuTypeFileView_Workspace)
-    {
-	}
-    else if (type == MenuTypeFileView_Project)
-    {
-        //wxMessageBox("Hooking popup menu");
-        wxMenuItem* item = new wxMenuItem(menu, wxNewId(), _("Make this project output a bundle"),
-                                          wxEmptyString, wxITEM_NORMAL);
-        menu->Append(item);
-        m_popup_id = item->GetId();
-        m_mgr->GetTheApp()->Connect( item->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                                     wxCommandEventHandler(MacBundler::onBundleInvoked_selected), NULL, this );
-	}
-    else if (type == MenuTypeFileView_Folder)
-    {
-	}
-    else if (type == MenuTypeFileView_File)
-    {
+	if (type == MenuTypeFileView_Project) {
+		if (!menu->FindItem(XRCID("MACBUNDLER_PROJECT_MENU"))) {
+			menu->Append(XRCID("MACBUNDLER_PROJECT_MENU"),  _("Make this project output a bundle"), wxEmptyString, wxITEM_NORMAL);
+			m_mgr->GetTheApp()->Connect( XRCID("MACBUNDLER_PROJECT_MENU"), wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(MacBundler::onBundleInvoked_selected), NULL, this );
+		}
 	}
 }
 
 void MacBundler::UnHookPopupMenu(wxMenu *menu, MenuType type)
 {
-	if (type == MenuTypeEditor)
-    {
-	}
-    else if (type == MenuTypeFileExplorer)
-    {
-	}
-    else if (type == MenuTypeFileView_Workspace)
-    {
-	}
-    else if (type == MenuTypeFileView_Project)
-    {
-        delete menu->Remove(m_popup_id);
-	}
-    else if (type == MenuTypeFileView_Folder)
-    {
-	}
-    else if (type == MenuTypeFileView_File)
-    {
+	if (type == MenuTypeFileView_Project) {
+		wxMenuItem *item = menu->FindItem(XRCID("MACBUNDLER_PROJECT_MENU"));
+		if (item) {
+			menu->Destroy(item);
+		}
 	}
 }
 

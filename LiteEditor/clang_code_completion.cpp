@@ -24,8 +24,10 @@ END_EVENT_TABLE()
 ClangCodeCompletion* ClangCodeCompletion::ms_instance = 0;
 
 ClangCodeCompletion::ClangCodeCompletion()
-	: m_manager(NULL)
-	, m_process(NULL)
+	: m_manager         (NULL)
+	, m_process         (NULL)
+	, m_activationPos   (wxNOT_FOUND)
+	, m_activationEditor(NULL)
 {
 }
 
@@ -56,10 +58,17 @@ void ClangCodeCompletion::Release()
 
 void ClangCodeCompletion::CodeComplete(IEditor* editor)
 {
+	// TODO :: this code works but for now we disable it until we
+	// add an option in the UI for it
+#if 0
 	// Sanity:
 	if(!editor || !m_manager || !m_manager->GetWorkspace() || !m_manager->IsWorkspaceOpen())
 		return;
-
+	
+	// clang process is already running
+	if(m_process)
+		return;
+		
 	// First, we need to build the command line
 	// try to locate the basic include paths:
 	wxArrayString args = GetStandardIncludePathsArgs();
@@ -160,16 +169,16 @@ void ClangCodeCompletion::CodeComplete(IEditor* editor)
 		column -= (int)filterWord.Length();
 
 		// Create temp file
-		wxString tmpfileName;
-		tmpfileName << editor->GetFileName().GetPath(wxPATH_GET_SEPARATOR|wxPATH_GET_VOLUME) << editor->GetFileName().GetName() << wxT("_clang_tmp") << wxT(".cpp");
+		m_tmpfile.clear();
+		m_tmpfile << editor->GetFileName().GetPath(wxPATH_GET_SEPARATOR|wxPATH_GET_VOLUME) << editor->GetFileName().GetName() << wxT("_clang_tmp") << wxT(".cpp");
 
 		wxString command;
 
 		command << wxT("clang -w -fsyntax-only -Xclang -code-completion-at=");
 		FileExtManager::FileType type = FileExtManager::GetType(editor->GetFileName().GetFullPath());
 		if(type == FileExtManager::TypeSourceC || type == FileExtManager::TypeSourceCpp) {
-			if(!WriteFileWithBackup(tmpfileName, currentBuffer, false)) {
-				wxLogMessage(wxT("Failed to write temp file: %s"), tmpfileName.c_str());
+			if(!WriteFileWithBackup(m_tmpfile, currentBuffer, false)) {
+				wxLogMessage(wxT("Failed to write temp file: %s"), m_tmpfile.c_str());
 				return;
 			}
 			wxString completefileName;
@@ -179,7 +188,7 @@ void ClangCodeCompletion::CodeComplete(IEditor* editor)
 		} else {
 			wxString implFile;
 			implFile << wxT("#include <") << editor->GetFileName().GetFullName() << wxT(">\n");
-			if(!WriteFileWithBackup(tmpfileName, implFile, false)) {
+			if(!WriteFileWithBackup(m_tmpfile, implFile, false)) {
 				wxLogMessage(wxT("Failed to write temp file: %s"), implFile.c_str());
 				return;
 			}
@@ -196,20 +205,24 @@ void ClangCodeCompletion::CodeComplete(IEditor* editor)
 
 		command << argString;
 		if(m_process) {
-			delete m_process;
-			m_process = NULL;
-
-			m_output.Clear();
+			DoCleanUp();
 		}
-
-		wxLogMessage(wxT("Running: %s"), command.c_str());
+		
+		command.Replace(wxT("\n"), wxT(" "));
+		command.Replace(wxT("\r"), wxT(" "));
+		
 		m_process = CreateAsyncProcess(this, command, editor->GetFileName().GetPath(wxPATH_GET_SEPARATOR|wxPATH_GET_VOLUME));
 		if(! m_process ) {
 			wxLogMessage(wxT("Failed to start process: %s"), command.c_str());
 			return;
 		}
+		
+		m_activationEditor = editor;
+		m_activationPos    = lineStartPos + column - 1;
+		
 		gStopWatch.Start();
 	}
+#endif
 }
 
 wxArrayString ClangCodeCompletion::GetStandardIncludePathsArgs()
@@ -269,12 +282,16 @@ wxArrayString ClangCodeCompletion::GetStandardIncludePathsArgs()
 
 void ClangCodeCompletion::OnProcessTerminated(wxCommandEvent& e)
 {
-	//wxLogMessage(wxT("clang process ended after %d ms"), gStopWatch.Time());
-
 	ProcessEventData *ped = (ProcessEventData*) e.GetClientData();
 	delete ped;
-	delete m_process;
-	m_process = NULL;
+	
+	//wxLogMessage(wxT("clang process ended after %d ms"), gStopWatch.Time());
+	
+	// Parse the output
+	if(m_output.IsEmpty() == false) {
+		DoParseOutput();
+	}
+	DoCleanUp();
 }
 
 void ClangCodeCompletion::OnProcessOutput(wxCommandEvent& e)
@@ -285,4 +302,127 @@ void ClangCodeCompletion::OnProcessOutput(wxCommandEvent& e)
 		delete ped;
 	}
 	e.Skip();
+}
+
+void ClangCodeCompletion::DoParseOutput()
+{
+	// Sanity
+	if(m_output.IsEmpty() || !m_activationEditor || m_activationPos == wxNOT_FOUND)
+		return;
+		
+	wxArrayString entries = wxStringTokenize(m_output, wxT("\n\r"), wxTOKEN_STRTOK);
+	std::vector<TagEntryPtr> tags;
+	tags.reserve( entries.size() );
+	
+	for(size_t i=0; i<entries.GetCount(); i++) {
+		entries.Item(i).Trim().Trim(false);
+		if(entries.Item(i).IsEmpty())
+			continue;
+		
+		TagEntryPtr tag = ClangEntryToTagEntry( entries.Item(i) );
+		if(tag) {
+			tags.push_back( tag );
+		}
+		
+	}
+	
+	if(tags.empty() == false) {
+		int curline = m_activationEditor->GetCurrentLine();
+		int actline = m_activationEditor->LineFromPos(m_activationPos);
+		if(curline != actline)
+			return;
+		// we are still on the same line
+		
+		// We need to make sure that the caret is still infront of the completion char
+		if(m_activationEditor->GetCurrentPosition() < m_activationPos)
+			return;
+		
+		// Get the text between the current position and the activation pos and filter all results
+		// that dont match
+		wxString filter = m_activationEditor->GetTextRange(m_activationPos, m_activationEditor->GetCurrentPosition());
+		if(filter.IsEmpty() == false) {
+			filter.MakeLower();
+			
+			std::vector<TagEntryPtr> filteredTags;
+			filteredTags.reserve( tags.size() );
+			for(size_t i=0; i<tags.size(); i++) {
+				wxString n = tags.at(i)->GetName();
+				n.MakeLower();
+				
+				if(n.StartsWith(filter)) {
+					filteredTags.push_back(tags.at(i));
+				}
+			}
+			
+			if(filteredTags.empty() == false) {
+				m_activationEditor->ShowCompletionBox(filteredTags, filter, NULL);
+			}
+		} else {
+			m_activationEditor->ShowCompletionBox(tags, wxEmptyString, NULL);
+		}
+	}
+}
+
+TagEntryPtr ClangCodeCompletion::ClangEntryToTagEntry(const wxString& line)
+{
+	// an example of line:
+	// COMPLETION: OpenFile : [#bool#]OpenFile(<#class wxString const &fileName#>{#, <#class wxString const &projectName#>{#, <#int lineno#>#}#})
+	wxString tmp;
+	if(line.StartsWith(wxT("COMPLETION: "), &tmp) == false)
+		return NULL;
+	
+	if(line.Contains(wxT("(Hidden)")))
+		return NULL;
+	
+	// Next comes the name of the entry
+	wxString name = tmp.BeforeFirst(wxT(':'));
+	name.Trim().Trim(false);
+	
+	if(name.IsEmpty())
+		return NULL;
+	
+	TagEntry *t = new TagEntry();
+	TagEntryPtr tag(t);
+	tag->SetName( name );
+	
+	tmp = tmp.AfterFirst(wxT(':'));
+	tmp.Trim().Trim(false);
+	
+	// determine the kind
+	tag->SetKind(wxT("prototype")); // default
+	
+	if(tmp == name) {
+		// this a type (enum/typedef/internal class)
+		tag->SetKind(wxT("class"));
+	} else if(tmp.Contains(wxT("("))) {
+		// definitly a method, do nothing
+	} else {
+		tag->SetKind(wxT("member"));
+	}
+	
+	return tag;
+}
+
+void ClangCodeCompletion::DoCleanUp()
+{
+	delete m_process;
+	m_process = NULL;
+	
+	// remove the temporary file
+	if(m_tmpfile.IsEmpty() == false) {
+#ifndef __WXMSW__
+		::unlink( m_tmpfile.mb_str(wxConvUTF8).data() );
+#endif
+		wxRemoveFile( m_tmpfile );
+		m_tmpfile.Clear();
+	}
+	
+	m_output.Clear();
+	m_activationEditor = NULL;
+	m_activationPos    = wxNOT_FOUND;
+}
+
+void ClangCodeCompletion::CancelCodeComplete()
+{
+	DoCleanUp();
 }

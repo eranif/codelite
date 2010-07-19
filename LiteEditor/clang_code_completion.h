@@ -4,6 +4,7 @@
 #include <wx/event.h>
 #include "asyncprocess.h"
 #include <map>
+#include "entry.h"
 
 class IEditor;
 class IManager;
@@ -22,8 +23,11 @@ class ClangCodeCompletion : public wxEvtHandler
 	IManager *                  m_manager;
 	IProcess*                   m_process;
 	wxString                    m_output;
+	wxString                    m_tmpfile;
 	std::map<wxString,wxString> m_backticks;
-
+	int                         m_activationPos;
+	IEditor*                    m_activationEditor;
+	
 public:
 	static ClangCodeCompletion* Instance();
 	static void Release();
@@ -33,10 +37,14 @@ public:
 	 * @param editor
 	 */
 	void CodeComplete(IEditor *editor);
-
+	void CancelCodeComplete();
+	
 protected:
 	wxArrayString GetStandardIncludePathsArgs();
-
+	void DoParseOutput();
+	void DoCleanUp();
+	TagEntryPtr ClangEntryToTagEntry(const wxString &line);
+	
 protected:
 	DECLARE_EVENT_TABLE()
 	void OnProcessTerminated(wxCommandEvent &e);

@@ -29,6 +29,7 @@
 #include "frame.h"
 #include <wx/wupdlock.h>
 #include "manager.h"
+#include "clang_code_completion.h"
 #include "close_all_dlg.h"
 #include "filechecklist.h"
 #include "editor_config.h"
@@ -117,9 +118,12 @@ void MainBook::OnMouseDClick(NotebookEvent& e)
 void MainBook::OnPageClosing(NotebookEvent &e)
 {
 	LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(e.GetSelection()));
-	if (!editor) {
-		; // the page is not an editor
-	} else if (AskUserToSave(editor)) {
+	if (!editor)
+		return;
+	
+	ClangCodeCompletion::Instance()->CancelCodeComplete();
+		
+	if (AskUserToSave(editor)) {
 		SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
 	} else {
 		e.Veto();
@@ -706,6 +710,8 @@ bool MainBook::CloseAll(bool cancellable)
 
 	// Delete the files without notifications (it will be faster)
 	wxWindowUpdateLocker locker(this);
+	ClangCodeCompletion::Instance()->CancelCodeComplete();
+	
 	m_book->DeleteAllPages(false);
 
 	// Since we got no more editors opened,

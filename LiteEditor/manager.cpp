@@ -27,6 +27,7 @@
 #include "evnvarlist.h"
 #include "crawler_include.h"
 #include "renamefiledlg.h"
+#include "clang_code_completion.h"
 #include "localstable.h"
 #include "new_quick_watch_dlg.h"
 #include "debuggerconfigtool.h"
@@ -213,7 +214,8 @@ Manager::~Manager ( void )
 	SearchThreadST::Free();
 	MenuManager::Free();
 	EnvironmentConfig::Release();
-
+	ClangCodeCompletion::Release();
+	
 	if ( m_shellProcess ) {
 		delete m_shellProcess;
 		m_shellProcess = NULL;
@@ -233,6 +235,7 @@ bool Manager::IsWorkspaceOpen() const
 
 void Manager::CreateWorkspace ( const wxString &name, const wxString &path )
 {
+
 	// make sure that the workspace pane is visible
 	ShowWorkspacePane (Frame::Get()->GetWorkspaceTab()->GetCaption());
 

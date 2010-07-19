@@ -3,6 +3,7 @@
 #include "tester.h"
 #include <wx/ffile.h>
 #include <memory>
+#include <vector>
 
 // CodeLite includes
 #include <ctags_manager.h>

@@ -210,7 +210,7 @@ public:
 
 		bp_type = BP_type_break;
 		lineno = line;
-		file = filename.IsEmpty() ? wxT("") : fn.GetFullPath();
+		file = filename.IsEmpty() ? wxString() : fn.GetFullPath();
 		internal_id = int_id;
 		debugger_id = ext_id;
 	}

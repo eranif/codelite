@@ -118,6 +118,7 @@
 #include "tabgroupdlg.h"
 #include "tabgroupmanager.h"
 #include "tabgroupspane.h"
+#include "clang_code_completion.h"
 #include "cl_defs.h"
 
 // from auto-generated file svninfo.cpp:
@@ -839,6 +840,8 @@ void Frame::CreateGUIControls(void)
 	} else {
 		CreateToolbars24();
 	}
+
+	ClangCodeCompletion::Instance()->Initialize(PluginManager::Get());
 
 	GetWorkspacePane()->GetNotebook()->SetRightClickMenu( wxXmlResource::Get()->LoadMenu(wxT("workspace_view_rmenu")) );
 	GetDebuggerPane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu( wxT("debugger_view_rmenu") ) );

@@ -597,6 +597,14 @@ public:
 	 */
 	virtual int LineEnd(int line);
 
+	/**
+	 * @brief return text from a given pos -> endPos
+	 * @param startPos
+	 * @param endPos
+	 * @return
+	 */
+	virtual wxString GetTextRange(int startPos, int endPos);
+
 	//----------------------------------------------------------------------------
 	//----------------------------------------------------------------------------
 

@@ -3665,3 +3665,8 @@ int LEditor::LineEnd(int line)
 	int pos = wxScintilla::PositionFromLine(line);
 	return pos + wxScintilla::LineLength(line);
 }
+
+wxString LEditor::GetTextRange(int startPos, int endPos)
+{
+	return wxScintilla::GetTextRange(startPos, endPos);
+}

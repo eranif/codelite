@@ -302,6 +302,14 @@ public:
 	 * @param line the line number
 	 */
 	virtual int LineEnd(int line) = 0;
+
+	/**
+	 * @brief return text from a given pos -> endPos
+	 * @param startPos
+	 * @param endPos
+	 * @return
+	 */
+	virtual wxString GetTextRange(int startPos, int endPos) = 0;
 };
 
 #endif //IEDITOR_H

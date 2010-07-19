@@ -711,6 +711,10 @@
     <Project Name="Subversion2"/>
     <Project Name="SymbolView"/>
   </Dependencies>
+  <VirtualDirectory Name="ClangCodeCompletion">
+    <File Name="clang_code_completion.h"/>
+    <File Name="clang_code_completion.cpp"/>
+  </VirtualDirectory>
   <Settings Type="Executable">
     <Configuration Name="Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;$(shell pkg-config --cflags gtk+-2.0);-Wall;-fno-strict-aliasing" Required="yes" PreCompiledHeader="">

@@ -25,6 +25,7 @@
 
 
 #include "pluginmanager.h"
+#include "clang_code_completion.h"
 #include "drawingutils.h"
 #include "buildtabsettingsdata.h"
 #include "cl_editor_tip_window.h"
@@ -705,8 +706,10 @@ void ContextCpp::CompleteWord()
 	DoSetProjectPaths();
 	if (mgr->WordCompletionCandidates(rCtrl.GetFileName(), lineNum, expr, text, word, candidates)) {
 		DisplayCompletionBox(candidates, word, false);
+	} else {
+		// Incase code completion fails, use clang to complete
+		ClangCodeCompletion::Instance()->CodeComplete( &rCtrl );
 	}
-
 }
 
 void ContextCpp::DisplayCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl)
@@ -2461,9 +2464,10 @@ void ContextCpp::DoCodeComplete(long pos)
 		DoSetProjectPaths();
 		if (TagsManagerST::Get()->AutoCompleteCandidates(rCtrl.GetFileName(), line, expr, text, candidates)) {
 			DisplayCompletionBox(candidates, wxEmptyString, showFullDecl);
+		} else {
+			ClangCodeCompletion::Instance()->CodeComplete( &rCtrl );
 		}
 	}
-
 }
 
 int ContextCpp::GetHyperlinkRange(int pos, int &start, int &end)

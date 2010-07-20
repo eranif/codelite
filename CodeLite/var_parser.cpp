@@ -467,7 +467,7 @@ YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-void yyerror(const char *s) {}
+void yyerror(char *s) {}
 
 
 std::string var_consumBracketsContent(char openBrace)

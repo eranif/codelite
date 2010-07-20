@@ -1,11 +1,4 @@
-void B::Foo()
-{
-	switch(a) {
-	case wxT('a') : 
-	break;
-	}
-}
-
+vector<wxString, std::vector<std::map<int, long> > >
 
 
 

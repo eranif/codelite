@@ -589,7 +589,7 @@ YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-void yyerror(const char *s) {}
+void yyerror(char *s) {}
 
 void syncParser(){
 	//move lexer to the next ';' line or scope opening '{'

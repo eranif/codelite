@@ -731,13 +731,33 @@ case 25:
 {yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0];}
 break;
 case 26:
-{yyval = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] +yyvsp[0];}
+{
+							if(yyvsp[-3].empty()) {
+								yyval = yyvsp[-2] + yyvsp[-1] +yyvsp[0];
+								
+							} else {
+								yyval = yyvsp[-3] + " " + yyvsp[-2] + yyvsp[-1] +yyvsp[0];
+							}
+						}
 break;
 case 27:
-{yyval = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] +yyvsp[0];}
+{
+							if(yyvsp[-3].empty()) {
+								yyval = yyvsp[-2] + yyvsp[-1] +yyvsp[0];
+								
+							} else {
+								yyval = yyvsp[-3] + " " + yyvsp[-2] + yyvsp[-1] +yyvsp[0];
+							}
+						}
 break;
 case 28:
-{yyval = yyvsp[-6] + " " + yyvsp[-5] + " " + yyvsp[-4] +yyvsp[-3] + yyvsp[-2] + yyvsp[-1];}
+{
+							if(yyvsp[-6].empty()) {
+								yyval = yyvsp[-5] + yyvsp[-4] + yyvsp[-3] + yyvsp[-2] + yyvsp[-1] + " ";
+							} else {
+								yyval = yyvsp[-6] + " " + yyvsp[-5] + yyvsp[-4] + yyvsp[-3] + yyvsp[-2] + yyvsp[-1] + " ";
+							}
+						}
 break;
 case 29:
 {

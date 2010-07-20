@@ -135,11 +135,31 @@ parameter_list	: /* empty */		{$$ = "";}
 
 
 template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp
-						{$$ = $1 + " " + $2 + " " + $3 +$4;}
+						{
+							if($1.empty()) {
+								$$ = $2 + $3 +$4;
+								
+							} else {
+								$$ = $1 + " " + $2 + $3 +$4;
+							}
+						}
 					|  	const_spec nested_scope_specifier basic_type_name special_star_amp
-						{$$ = $1 + " " + $2 + " " + $3 +$4;}
+						{
+							if($1.empty()) {
+								$$ = $2 + $3 +$4;
+								
+							} else {
+								$$ = $1 + " " + $2 + $3 +$4;
+							}
+						}
 					|  	const_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>' special_star_amp
-						{$$ = $1 + " " + $2 + " " + $3 +$4 + $5 + $6;}
+						{
+							if($1.empty()) {
+								$$ = $2 + $3 + $4 + $5 + $6 + " ";
+							} else {
+								$$ = $1 + " " + $2 + $3 + $4 + $5 + $6 + " ";
+							}
+						}
 					;
 
 simple_expr	:	stmnt_starter special_cast '<' cast_type '>' '('

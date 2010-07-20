@@ -649,11 +649,6 @@ void Frame::Initialize(bool loadLastSession)
 	wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("go_home"));
 	m_theFrame->GetFileExplorer()->GetEventHandler()->ProcessEvent(e);
 
-	//load last session?
-	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && loadLastSession) {
-		m_theFrame->LoadSession(SessionManager::Get().GetLastSession());
-	}
-
 	m_theFrame->SendSizeEvent();
 	m_theFrame->StartTimer();
 
@@ -1414,8 +1409,6 @@ void Frame::OnClose(wxCloseEvent& event)
 void Frame::LoadSession(const wxString &sessionName)
 {
 	SessionEntry session;
-
-	wxWindowUpdateLocker locker(this);
 
 	if (SessionManager::Get().FindSession(sessionName, session)) {
 		wxString wspFile = session.GetWorkspaceName();
@@ -2262,6 +2255,12 @@ void Frame::OnTimer(wxTimerEvent &event)
 	//clear navigation queue
 	if (GetMainBook()->GetCurrentPage() == 0) {
 		NavMgr::Get()->Clear();
+	}
+
+	// Load last session?
+	if (m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION) {
+		wxWindowUpdateLocker locker(this);
+		LoadSession(SessionManager::Get().GetLastSession());
 	}
 	event.Skip();
 }
@@ -3762,8 +3761,6 @@ void Frame::StartTimer()
 
 void Frame::OnLoadPerspective(wxCommandEvent& e)
 {
-	wxWindowUpdateLocker locker(this);
-
 	long loadIt(1);
 	EditorConfigST::Get()->GetLongValue(wxT("LoadSavedPrespective"), loadIt);
 	if (loadIt) {
@@ -3777,6 +3774,7 @@ void Frame::OnLoadPerspective(wxCommandEvent& e)
 			ReadFileWithConversion(file_name, pers);
 		}
 
+		//wxWindowUpdateLocker locker(this);
 		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == SvnRevision) {
 			m_mgr.LoadPerspective(pers);
 

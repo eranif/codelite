@@ -473,8 +473,9 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 
 	// We commit every 10 files
 	m_pDb->Begin();
-	double precent  (0.0);
-	double condition(0.0);
+	int    precent               (0);
+	int    lastPercentageReported(0);
+
 	for (size_t i=0; i<maxVal; i++) {
 
 		// give a shutdown request a chance
@@ -488,16 +489,13 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 			return;
 		}
 
-		wxString   fileTags;
 		wxFileName curFile(wxString(req->_workspaceFiles.at(i).c_str(), wxConvUTF8));
 
 		// Send notification to the main window with our progress report
-		if( reportingPoint > 0          &&
-			condition == reportingPoint &&
-			m_notifiedWindow) {
+		precent = (int)((i / maxVal) * 100);
 
-			precent++;
-			condition = 0;
+		if( lastPercentageReported !=  precent) {
+			lastPercentageReported = precent;
 			wxCommandEvent retaggingProgressEvent(wxEVT_PARSE_THREAD_RETAGGING_PROGRESS);
 			retaggingProgressEvent.SetInt( (int)precent );
 			m_notifiedWindow->AddPendingEvent(retaggingProgressEvent);
@@ -515,8 +513,6 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 			// Start a new transaction
 			m_pDb->Begin();
 		}
-
-		condition += 1.0;
 	}
 
 	// Commit whats left

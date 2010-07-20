@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : webupdatethread.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : webupdatethread.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -74,29 +74,38 @@ void WebUpdateJob::Process(wxThread* thread)
 //	wxURL url(wxT("http://codelite.org/packages_test.txt"));
 	wxURL url(wxT("http://codelite.org/packages.txt"));
 	if (url.GetError() == wxURL_NOERR) {
-		
+
 		wxInputStream *in_stream = url.GetInputStream();
 		if (!in_stream) {
 			return;
 		}
+		bool shutdownRequest(false);
 
 		unsigned char buffer[DLBUFSIZE+1];
 		do {
-			
+
 			in_stream->Read(buffer, DLBUFSIZE);
 			size_t bytes_read = in_stream->LastRead();
 			if (bytes_read > 0) {
-				
+
 				buffer[bytes_read] = 0;
 				wxString buffRead((const char*)buffer, wxConvUTF8);
 				m_dataRead.Append(buffRead);
 			}
-			
+
+			// Check termination request from time to time
+			if(thread->TestDestroy()) {
+				shutdownRequest = true;
+				break;
+			}
+
 		} while ( !in_stream->Eof() );
-		
-		delete in_stream;
-		
-		ParseFile();
+
+
+		if(shutdownRequest == false) {
+			delete in_stream;
+			ParseFile();
+		}
 	}
 }
 
@@ -123,7 +132,7 @@ void WebUpdateJob::ParseFile()
 #elif defined(__WXMAC__)
 	packageName = wxT("MAC");
 #endif
-	
+
 	// diffrentiate between the 64bit and the 32bit packages
 #ifdef ON_64_BIT
 	packageName << wxT("_64");
@@ -135,7 +144,7 @@ void WebUpdateJob::ParseFile()
 		line = line.Trim().Trim(false);
 		if (line.StartsWith(wxT("#"))) {
 			//comment line
-			continue; 
+			continue;
 		}
 
 		// parse the line
@@ -146,7 +155,7 @@ void WebUpdateJob::ParseFile()
 				wxString url = tokens.Item(2).Trim().Trim(false);
 				wxString rev = tokens.Item(1).Trim().Trim(false);
 				wxString releaseNotesUrl = tokens.Item(3).Trim().Trim(false);
-				
+
 				long currev;
 				long webrev(0);
 

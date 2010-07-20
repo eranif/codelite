@@ -979,7 +979,10 @@ void SubversionView::OnOpenFile(wxCommandEvent& event)
 
 	}
 }
+
 void SubversionView::OnSwitch(wxCommandEvent& event)
 {
-	m_plugin->DoSwitchURL(m_textCtrlRootDir->GetValue(), event);
+	SvnInfo svnInfo;
+	m_plugin->DoGetSvnInfoSync(svnInfo, m_textCtrlRootDir->GetValue());
+	m_plugin->DoSwitchURL(m_textCtrlRootDir->GetValue(), svnInfo.m_sourceUrl, event);
 }

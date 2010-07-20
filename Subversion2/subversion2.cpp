@@ -763,10 +763,13 @@ bool Subversion2::IsPathUnderSvn(const wxString& path)
 
 void Subversion2::OnSwitchURL(wxCommandEvent& event)
 {
-	DoSwitchURL(DoGetFileExplorerItemPath(), event);
+	SvnInfo svnInfo;
+	wxString path = DoGetFileExplorerItemPath();
+	DoGetSvnInfoSync(svnInfo, path);
+	DoSwitchURL(DoGetFileExplorerItemPath(), svnInfo.m_sourceUrl, event);
 }
 
-void Subversion2::DoSwitchURL(const wxString& workingDirectory, wxCommandEvent& event)
+void Subversion2::DoSwitchURL(const wxString& workingDirectory, const wxString &sourceUrl, wxCommandEvent& event)
 {
 	SvnInfo svnInfo;
 	DoGetSvnInfoSync(svnInfo, workingDirectory);
@@ -777,7 +780,7 @@ void Subversion2::DoSwitchURL(const wxString& workingDirectory, wxCommandEvent& 
 	}
 	bool nonInteractive = GetNonInteractiveMode(event);
 
-	wxString targetUrl = wxGetTextFromUser(wxT("Enter new URL:"), wxT("Svn Switch..."));
+	wxString targetUrl = wxGetTextFromUser(wxT("Enter new URL:"), wxT("Svn Switch..."), sourceUrl);
 	if(targetUrl.IsEmpty()) {
 		return;
 	}

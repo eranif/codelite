@@ -58,7 +58,7 @@ protected:
 	bool    IsSubversionViewDetached ();
 public:
 	void    DoGetSvnInfoSync         (SvnInfo& svnInfo, const wxString &workingDirectory);
-	void    DoSwitchURL              (const wxString &workingDirectory, wxCommandEvent &event);
+	void    DoSwitchURL              (const wxString &workingDirectory, const wxString &sourceUrl, wxCommandEvent &event);
 public:
 	Subversion2(IManager *manager);
 	~Subversion2();

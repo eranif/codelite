@@ -2444,6 +2444,8 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 	if (!value) {
 		DoMarkHyperlink(event, false);
 	}
+	
+	SetActive();
 	PostCmdEvent(wxEVT_EDITOR_CLICKED, NULL);
 	event.Skip();
 }

@@ -63,11 +63,11 @@ bool Test##Name::Name()
 
 
 // Check values macros
-#define CHECK_SIZE(actualSize, expcSize) { if(actualSize == expcSize) {\
+#define CHECK_SIZE(actualSize, expcSize) { if(actualSize == (int)expcSize) {\
 			printf("%s: Successfull!\n", __FUNCTION__);\
 			return true;\
 		} else {\
-			printf("%s: ERROR: Expected size: %d, Actual Size:%d\n", __FUNCTION__, expcSize, actualSize);\
+			printf("%s: ERROR: Expected size: %d, Actual Size:%d\n", __FUNCTION__, (int)expcSize, (int)actualSize);\
 			return false;\
 		}\
 	}

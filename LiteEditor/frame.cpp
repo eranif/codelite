@@ -3756,7 +3756,7 @@ void Frame::OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e)
 
 void Frame::StartTimer()
 {
-	m_timer->Start(2500, true);
+	m_timer->Start(2000, true);
 }
 
 void Frame::OnLoadPerspective(wxCommandEvent& e)

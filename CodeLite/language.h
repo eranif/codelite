@@ -32,6 +32,7 @@
 #include "entry.h"
 #include <wx/filename.h>
 #include "expression_result.h"
+#include "parsedtoken.h"
 #include "variable.h"
 #include "function.h"
 #include "comment.h"
@@ -266,6 +267,16 @@ private:
 	 * \return true if token was found false otherwise
 	 */
 	bool NextToken(wxString &token, wxString &delim, bool &subscriptOperator);
+
+	/**
+	 * @brief construct a list of tokens based on an expression and a give scope
+	 * For example: parsing the expression: variable->GetName().AfterFirst()
+	 * will yield a list of 3 tokens
+	 * @param scopeName the current scope name of where the expression was found
+	 * @return ParsedToken ptr (allocated on the heap. Must be freed by calling to ParsedToke::DeleteTokens( head ) or NULL incase
+	 * parsing fails
+	 */
+	ParsedToken* ParseTokens(const wxString &scopeName);
 
 	/**
 	 * @brief Attempt to fix template results

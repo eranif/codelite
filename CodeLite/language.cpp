@@ -75,10 +75,10 @@ static wxString ScopeFromPath(const wxString &path)
 }
 
 Language::Language()
-		: m_expression(wxEmptyString)
-		, m_scanner(new CppScanner())
-		, m_tokenScanner(new CppScanner())
-		, m_tm(NULL)
+	: m_expression(wxEmptyString)
+	, m_scanner(new CppScanner())
+	, m_tokenScanner(new CppScanner())
+	, m_tm(NULL)
 {
 	// Initialise the braces map
 	m_braces['<'] = '>';
@@ -110,13 +110,92 @@ wxString Language::OptimizeScope(const wxString& srcString)
 	return scope;
 }
 
+ParsedToken* Language::ParseTokens(const wxString &scopeName)
+{
+	wxString token, delim;
+	bool     subscript;
+	ParsedToken* header(NULL);
+	ParsedToken* currentToken(header);
+
+	while( NextToken(token, delim, subscript) ) {
+
+		ParsedToken* pt = new ParsedToken;
+		pt->SetSubscriptOperator( subscript );
+		pt->SetName             ( token     );
+		pt->SetOperator         ( delim     );
+		pt->SetPrev             ( currentToken );
+
+		ExpressionResult result = ParseExpression(pt->GetName());
+		if(result.m_name.empty() && result.m_isGlobalScope == false) {
+			ParsedToken::DeleteTokens( header );
+			return NULL;
+		}
+
+		if (result.m_isGlobalScope && pt->GetOperator() != wxT("::")) {
+			ParsedToken::DeleteTokens( header );
+			return NULL;
+		}
+
+		if (result.m_isaType) {
+			pt->SetTypeScope(result.m_scope.empty() ? wxString(wxT("<global>")) : wxString::From8BitData(result.m_scope.c_str()));
+			pt->SetTypeName( wxString::From8BitData(result.m_name.c_str()) );
+
+		} else if (result.m_isGlobalScope) {
+			pt->SetTypeScope(wxT("<global>"));
+			pt->SetTypeName(wxT("<global>"));
+
+		} else if (result.m_isThis) {
+			//-----------------------------------------
+			// special handle for 'this' keyword
+			//-----------------------------------------
+
+			pt->SetTypeScope( result.m_scope.empty() ? wxString(wxT("<global>")) : wxString::From8BitData(result.m_scope.c_str()));
+			if (scopeName == wxT("<global>")) {
+				wxLogMessage(wxString::Format(wxT("'this' can not be used in the global scope")));
+				ParsedToken::DeleteTokens( header );
+				return NULL;
+			}
+
+			if (pt->GetOperator() == wxT("::")) {
+				wxLogMessage(wxString::Format(wxT("'this' can not be used with operator ::")));
+				ParsedToken::DeleteTokens( header );
+				return NULL;
+			}
+
+			if (result.m_isPtr && pt->GetOperator() == wxT(".")) {
+				wxLogMessage(wxString::Format(wxT("Did you mean to use '->' instead of '.' ?")));
+				ParsedToken::DeleteTokens( header );
+				return NULL;
+			}
+
+			if (!result.m_isPtr && pt->GetOperator() == wxT("->")) {
+				wxLogMessage(wxString::Format(wxT("Can not use '->' operator on a non pointer object")));
+				ParsedToken::DeleteTokens( header );
+				return NULL;
+			}
+			pt->SetTypeName( scopeName );
+		}
+
+		pt->SetIsTemplate( result.m_isTemplate );
+		pt->SetTemplateInitialization( wxString::From8BitData(result.m_templateInitList.c_str()) );
+
+		if(currentToken == NULL) {
+			header = pt;
+			currentToken = pt;
+		} else {
+			currentToken->SetNext( pt );
+			currentToken = pt;
+		}
+	}
+	return header;
+}
+
 bool Language::NextToken(wxString &token, wxString &delim, bool &subscriptOperator)
 {
 	int type(0);
 	int depth(0);
 	subscriptOperator = false;
-	while ( (type = m_tokenScanner->yylex()) != 0 )
-	{
+	while ( (type = m_tokenScanner->yylex()) != 0 ) {
 		switch (type) {
 		case CLCL:
 		case wxT('.'):
@@ -630,7 +709,7 @@ void Language::ParseTemplateArgs(const wxString &argListStr, wxArrayString &args
 			break;
 		}
 		case (int)'>':
-						cont = false;
+			cont = false;
 			break;
 		default:
 			break;
@@ -670,15 +749,15 @@ void Language::ParseTemplateInitList(const wxString &argListStr, wxArrayString &
 			break;
 		}
 		case (int)'>':
-						depth--;
+			depth--;
 			break;
 		case (int)'<':
-						depth++;
+			depth++;
 			break;
 		case (int)'*':
-					case (int)'&':
-							//ignore pointers & references
-							break;
+		case (int)'&':
+			//ignore pointers & references
+			break;
 		default:
 			if (depth == 1) {
 				typeName << _U(scanner.YYText());
@@ -1268,7 +1347,7 @@ bool Language::OnArrowOperatorOverloading(wxString &typeName, wxString &typeScop
 			// Call the magic method that fixes typename/typescope
 			GetTagsManager()->IsTypeAndScopeExists(typeName, typeScope);
 			ret = true;
-		} 
+		}
 	}
 	return ret;
 }
@@ -1308,13 +1387,13 @@ void Language::DoRemoveTempalteInitialization(wxString &str, wxArrayString &tmpl
 		token = _U(sc.YYText());
 		switch (type) {
 		case wxT('<'):
-						if (depth ==0) outputString.Clear();
+			if (depth ==0) outputString.Clear();
 			outputString << token;
 			depth++;
 			break;
 
 		case wxT('>'):
-						outputString << token;
+			outputString << token;
 			depth--;
 			break;
 
@@ -1732,7 +1811,7 @@ bool Language::OnSubscriptOperator(wxString& typeName, wxString& typeScope)
 			// Call the magic method that fixes typename/typescope
 			GetTagsManager()->IsTypeAndScopeExists(typeName, typeScope);
 			ret = true;
-			
+
 		}
 	}
 	return ret;

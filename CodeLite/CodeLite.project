@@ -31,6 +31,8 @@
     <File Name="cl_calltip.cpp"/>
     <File Name="performance.cpp"/>
     <File Name="fileextmanager.cpp"/>
+    <File Name="parsedtoken.h"/>
+    <File Name="parsedtoken.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

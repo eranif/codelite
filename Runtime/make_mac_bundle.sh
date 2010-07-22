@@ -117,7 +117,7 @@ cp ../lib/libpluginu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libcodeliteu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libwxsqlite3u.so ./CodeLite.app/Contents/MacOS/
 
-cp ../sdk/codelite_indexer/codelite_indexer   ./CodeLite.app/Contents/SharedSupport/
+cp ./codelite_indexer  ./CodeLite.app/Contents/SharedSupport/
 cp ../sdk/codelite_cppcheck/codelite_cppcheck ./CodeLite.app/Contents/SharedSupport/
 cp ./OpenTerm   ./CodeLite.app/Contents/SharedSupport/
 cp plugins/resources/*.*                      ./CodeLite.app/Contents/SharedSupport/plugins/resources/

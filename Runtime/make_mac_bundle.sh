@@ -22,10 +22,21 @@ fix_shared_object_depends() {
 			done
 	done
 }
+fix_codelite_indexer_deps() {
+
+	orig_path=`otool -L ./codelite_indexer  | grep libwx_* | awk '{print $1;}'`
+
+	## Loop over the files, and update the path of the wx library
+	for path in ${orig_path}
+	do
+		new_path=`echo ${path} | xargs basename`
+		install_name_tool -change ${path} @executable_path/${new_path} ./codelite_indexer
+		echo install_name_tool -change ${path} @executable_path/${new_path} ./codelite_indexer
+	done
+}
 
 ## extract the file name from the Makefile
 exe_name=`cat ../Makefile | grep ^EXE_NAME_NO_PATH | cut -d= -f2`
-
 ## Run install_name_tool on the executable to bundle
 ## libwx with the bundle
 
@@ -42,6 +53,7 @@ mkdir -p ./CodeLite.app/Contents/SharedSupport/config
 # fix the script
 echo "Running install_name_tool..."
 fix_shared_object_depends libwx_
+fix_codelite_indexer_deps
 ## copy the wx dlls to the exeutable path which under Mac is located at ./CodeLite.app/Contents/MacOS/
 for wx_file in ${orig_path}
 do

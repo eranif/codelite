@@ -30,8 +30,8 @@ fix_codelite_indexer_deps() {
 	for path in ${orig_path}
 	do
 		new_path=`echo ${path} | xargs basename`
-		install_name_tool -change ${path} @executable_path/${new_path} ./codelite_indexer
-		echo install_name_tool -change ${path} @executable_path/${new_path} ./codelite_indexer
+		install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite_indexer
+		echo install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite_indexer
 	done
 }
 

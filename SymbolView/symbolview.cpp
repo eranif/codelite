@@ -35,6 +35,7 @@
 #include "workspace.h"
 #include "ctags_manager.h"
 #include "symbolview.h"
+#include "fileextmanager.h"
 #include <wx/busyinfo.h>
 #include <wx/utils.h>
 #include <wx/xrc/xmlres.h>
@@ -474,9 +475,11 @@ void SymbolViewPlugin::GetFiles(const wxFileName &path, wxArrayString &files)
 					// TODO: replace this code with a "real" solution based on actual file dependencies.
 					// for now, make sure .c or .cpp file also includes corresponding .h file.
 					// FIXME: this only works if the .h file is in the same directory as the .c/.cpp file.
-					fileName.SetExt(path.GetExt());
-					if (fullPath.CmpNoCase(fileName.GetFullPath()) == 0) {
-						files.Add(file);
+					wxString otherFile;
+					if(FindSwappedFile(fileName, otherFile)) {
+						if (fullPath.CmpNoCase(otherFile) == 0) {
+							files.Add(file);
+						}
 					}
 				}
 			}
@@ -523,13 +526,11 @@ void SymbolViewPlugin::GetPaths(const wxArrayString &files, std::multimap<wxStri
 				filePaths.insert(std::make_pair(filePath, projectFileName));
 			}
 			if (fileName.GetExt() != wxT("h")) {
-				// TODO: replace this code with a "real" solution based on actual file dependencies.
-				// for now, make sure .h file also includes corresponding .c or .cpp file.
-				// FIXME: this only works if the .h file is in the same directory as the .c/.cpp file.
-				fileName.SetExt(wxT("h"));
-				wxString headerPath = fileName.GetFullPath();
-				if (fileset.find(headerPath) != fileset.end()) {
-					filePaths.insert(std::make_pair(headerPath, filePath));
+				wxString headerFile;
+				if(FindSwappedFile(fileName, headerFile)) {
+					if (fileset.find(headerFile) == fileset.end()) {
+						filePaths.insert(std::make_pair(headerFile, filePath));
+					}
 				}
 			}
 		}
@@ -1020,6 +1021,16 @@ bool SymbolViewPlugin::DoActivateSelection(wxTreeCtrl* tree)
 	TagTreeData *tag = (TagTreeData*) tree->GetItemData(id);
 	if (!tag)
 		return false;
+
+	bool     linkEditor    = m_tb->GetToolState(XRCID("link_editor"));
+	IEditor *currentEditor = m_mgr->GetActiveEditor();
+
+	if(linkEditor) {
+		// When link editor is enabled, dont allow opening items from the SymbolView tree which dont belong
+		// to the current file
+		if(GetViewMode() == vmCurrentFile && currentEditor && tag->GetFile() != currentEditor->GetFileName().GetFullPath())
+			return false;
+	}
 
 	if (tag->GetFile().IsEmpty() || !m_mgr->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1))
 		return false;
@@ -1524,3 +1535,57 @@ void SymbolViewPlugin::OnShowTagInSymView(wxCommandEvent& e)
     }
 }
 
+bool SymbolViewPlugin::FindSwappedFile(const wxFileName& rhs, wxString& lhs)
+{
+	wxFileName otherFile(rhs);
+	wxString ext = rhs.GetExt();
+	wxArrayString exts;
+
+	//replace the file extension
+	int fileType = FileExtManager::GetType(rhs.GetFullName());
+	switch(fileType) {
+	case FileExtManager::TypeSourceC:
+	case FileExtManager::TypeSourceCpp:
+		//try to find a header file
+		exts.Add(wxT("h"));
+		exts.Add(wxT("hpp"));
+		exts.Add(wxT("hxx"));
+		break;
+
+	case FileExtManager::TypeHeader:
+		exts.Add(wxT("cpp"));
+		exts.Add(wxT("cxx"));
+		exts.Add(wxT("cc"));
+		exts.Add(wxT("c"));
+		break;
+	default:
+		return false;
+	}
+
+	wxArrayString           projects;
+	wxString                errMsg;
+	std::vector<wxFileName> files;
+	m_mgr->GetWorkspace()->GetProjectList ( projects );
+	for ( size_t i=0; i<projects.GetCount(); i++ ) {
+		ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName( projects.Item ( i ), errMsg );
+		if(p)
+			p->GetFiles(files, true);
+	}
+
+	for (size_t j=0; j<exts.GetCount(); j++) {
+		otherFile.SetExt(exts.Item(j));
+		if (otherFile.FileExists()) {
+			//we got a match
+			lhs = otherFile.GetFullPath();
+			return true;
+		}
+
+		for (size_t i=0; i<files.size(); i++) {
+			if (files.at(i).GetFullName() == otherFile.GetFullName()) {
+				lhs = files.at(i).GetFullPath();
+				return true;
+			}
+		}
+	}
+	return false;
+}

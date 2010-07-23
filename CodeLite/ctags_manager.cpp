@@ -1421,7 +1421,11 @@ bool TagsManager::GetDerivationList(const wxString &path, std::vector<wxString> 
 			if(tmpInhr != tagName) {
 
 				if (tag->GetScopeName() != wxT("<global>")) {
-					inherits = tag->GetScopeName() + wxT("::") + inherits;
+					wxString inheritsScope = tag->GetScopeName();
+					IsTypeAndScopeExists(inherits, inheritsScope);
+					if(inheritsScope != wxT("<global>")) {
+						inherits << wxT("::") << inheritsScope;
+					}
 				}
 				derivationList.push_back(inherits);
 				GetDerivationList(inherits, derivationList);

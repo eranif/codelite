@@ -42,7 +42,7 @@ class SymbolViewPlugin : public IPlugin
     friend class TagTreeData;
 
 protected:
-	bool FindSwappedFile(const wxFileName& rhs, wxString &lhs);
+	bool FindSwappedFile(const wxFileName& rhs, wxString &lhs, const std::vector<wxFileName> &workspaceFiles);
 
 public:
     //--------------------------------------------

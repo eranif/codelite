@@ -476,7 +476,7 @@ void SymbolViewPlugin::GetFiles(const wxFileName &path, wxArrayString &files)
 					// for now, make sure .c or .cpp file also includes corresponding .h file.
 					// FIXME: this only works if the .h file is in the same directory as the .c/.cpp file.
 					wxString otherFile;
-					if(FindSwappedFile(fileName, otherFile)) {
+					if(FindSwappedFile(fileName, otherFile, projectFiles)) {
 						if (fullPath.CmpNoCase(otherFile) == 0) {
 							files.Add(file);
 						}
@@ -527,7 +527,7 @@ void SymbolViewPlugin::GetPaths(const wxArrayString &files, std::multimap<wxStri
 			}
 			if (fileName.GetExt() != wxT("h")) {
 				wxString headerFile;
-				if(FindSwappedFile(fileName, headerFile)) {
+				if(FindSwappedFile(fileName, headerFile, projectFiles)) {
 					if (fileset.find(headerFile) == fileset.end()) {
 						filePaths.insert(std::make_pair(headerFile, filePath));
 					}
@@ -1535,7 +1535,7 @@ void SymbolViewPlugin::OnShowTagInSymView(wxCommandEvent& e)
     }
 }
 
-bool SymbolViewPlugin::FindSwappedFile(const wxFileName& rhs, wxString& lhs)
+bool SymbolViewPlugin::FindSwappedFile(const wxFileName& rhs, wxString& lhs, const std::vector<wxFileName> &workspaceFiles)
 {
 	wxFileName otherFile(rhs);
 	wxString ext = rhs.GetExt();
@@ -1564,13 +1564,6 @@ bool SymbolViewPlugin::FindSwappedFile(const wxFileName& rhs, wxString& lhs)
 
 	wxArrayString           projects;
 	wxString                errMsg;
-	std::vector<wxFileName> files;
-	m_mgr->GetWorkspace()->GetProjectList ( projects );
-	for ( size_t i=0; i<projects.GetCount(); i++ ) {
-		ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName( projects.Item ( i ), errMsg );
-		if(p)
-			p->GetFiles(files, true);
-	}
 
 	for (size_t j=0; j<exts.GetCount(); j++) {
 		otherFile.SetExt(exts.Item(j));
@@ -1580,9 +1573,9 @@ bool SymbolViewPlugin::FindSwappedFile(const wxFileName& rhs, wxString& lhs)
 			return true;
 		}
 
-		for (size_t i=0; i<files.size(); i++) {
-			if (files.at(i).GetFullName() == otherFile.GetFullName()) {
-				lhs = files.at(i).GetFullPath();
+		for (size_t i=0; i<workspaceFiles.size(); i++) {
+			if (workspaceFiles.at(i).GetFullName() == otherFile.GetFullName()) {
+				lhs = workspaceFiles.at(i).GetFullPath();
 				return true;
 			}
 		}

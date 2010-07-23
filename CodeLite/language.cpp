@@ -279,6 +279,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 		PERF_BLOCK("GetScopeName") {
 			scopeName = GetScopeName(text, &additionalScopes);
 		}
+		additionalScopes.push_back( wxT("<global>") );
 
 		PERF_BLOCK("FunctionFromFileLine") {
 			TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);

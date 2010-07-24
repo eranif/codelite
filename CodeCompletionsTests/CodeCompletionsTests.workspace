@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Workspace Name="CodeCompletionsTests" Database="./CodeCompletionsTests.tags">
   <Project Name="CCTest" Path="CCTest/CCTest.project" Active="Yes"/>
-  <Project Name="sqlite3" Path="sqlite3/sqlite3.project"/>
+  <Project Name="sqlite3" Path="sqlite3/sqlite3.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="CCTest" ConfigName="Debug"/>
+      <Project Name="sqlite3" ConfigName="Debug"/>
       <Project Name="sqlite3" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="CCTest" ConfigName="Release"/>
       <Project Name="sqlite3" ConfigName="Release"/>
+      <Project Name="sqlite3" ConfigName="Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Debug_Unix" Selected="no">
       <Project Name="sqlite3" ConfigName="Debug"/>
       <Project Name="CCTest" ConfigName="Debug_Unix"/>
+      <Project Name="sqlite3" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release_Unix" Selected="yes">
       <Project Name="sqlite3" ConfigName="Release"/>
       <Project Name="CCTest" ConfigName="Release_Unix"/>
+      <Project Name="sqlite3" ConfigName="Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

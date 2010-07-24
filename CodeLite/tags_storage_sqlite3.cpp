@@ -816,7 +816,7 @@ int TagsStorageSQLite::InsertTagEntry(const TagEntry& tag)
 		statement.Bind(6,  tag.GetSignature());
 		statement.Bind(7,  tag.GetPattern());
 		statement.Bind(8,  tag.GetParent());
-		statement.Bind(9,  tag.GetInherits());
+		statement.Bind(9,  tag.GetInheritsAsString());
 		statement.Bind(10, tag.GetPath());
 		statement.Bind(11, tag.GetTyperef());
 		statement.Bind(12, tag.GetScope());
@@ -847,7 +847,7 @@ int TagsStorageSQLite::UpdateTagEntry(const TagEntry& tag)
 		statement.Bind(4,  tag.GetAccess());
 		statement.Bind(5,  tag.GetPattern());
 		statement.Bind(6,  tag.GetParent());
-		statement.Bind(7,  tag.GetInherits());
+		statement.Bind(7,  tag.GetInheritsAsString());
 		statement.Bind(8,  tag.GetTyperef());
 		statement.Bind(9,  tag.GetScope());
 		statement.Bind(10, tag.GetReturnValue());

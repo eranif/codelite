@@ -1,4 +1,4 @@
-vector<wxString, std::vector<std::map<int, long> > >
+std::vector<wxString>::iterator v;
 
 
 

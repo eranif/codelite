@@ -140,6 +140,11 @@
     <File Name="include_finder.h"/>
     <File Name="include_finder.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebug_29"/>
+  <Dependencies Name="WinDebugUnicode"/>
   <Settings Type="Static Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);" Required="yes" PreCompiledHeader="">
@@ -210,7 +215,7 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g" Required="yes" PreCompiledHeader="">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
@@ -318,9 +323,4 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="DebugUnicode"/>
-  <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinReleaseUnicode"/>
-  <Dependencies Name="WinDebug_29"/>
-  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

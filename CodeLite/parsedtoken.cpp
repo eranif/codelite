@@ -1,4 +1,5 @@
 #include "parsedtoken.h"
+#include "ctags_manager.h"
 
 ParsedToken::ParsedToken()
 	: m_isTemplate(false)
@@ -26,4 +27,110 @@ void ParsedToken::DeleteTokens(ParsedToken* head)
 
 		n = tmpPtr;
 	}
+}
+
+wxString ParsedToken::GetPath() const
+{
+	wxString path;
+	if (m_typeScope != wxT("<global>"))
+		path << m_typeScope << wxT("::");
+
+	path << m_type;
+	return path;
+}
+
+wxString ParsedToken::GetContextScope() const
+{
+	if(GetPrev() == NULL) {
+		// we are the first in chain, return the current scope name
+		return GetCurrentScopeName();
+	} else {
+		return GetPrev()->GetPath();
+	}
+}
+
+void ParsedToken::RemoveScopeFromType()
+{
+	//incase the realName already includes the scope, remove it from the typename
+	if (!GetTypeScope().IsEmpty() && GetTypeName().StartsWith(GetTypeScope() + wxT("::"))) {
+		wxString tt;
+		GetTypeName().StartsWith(GetTypeScope() + wxT("::"), &tt);
+		SetTypeName(tt);
+	}
+
+	// If the typeName already contains a scope in it, replace the
+	// scopename with it
+	if(GetTypeName().Contains(wxT("::"))) {
+		m_typeScope.Clear();
+		wxString tmpTypeName(m_type);
+		m_type      = tmpTypeName.AfterLast(wxT(':'));
+		m_typeScope = tmpTypeName.BeforeLast(wxT(':'));
+
+		if(m_typeScope.EndsWith(wxT(":"))) {
+			m_typeScope.Truncate(m_typeScope.Length() - 1);
+		}
+	}
+}
+
+bool ParsedToken::ResovleTemplate( TagsManager *lookup )
+{
+	wxString oldName = m_type;
+	if (!lookup->GetDatabase()->IsTypeAndScopeExistLimitOne(m_type, m_typeScope)) {
+
+		// Loop until the end of the chain and see if any of the context is template
+		ParsedToken *cur = this;
+		while( cur ) {
+			if( cur->GetIsTemplate() ) {
+				// our context is template
+				wxString newType = cur->TemplateToType( m_type );
+
+				if(newType != m_type) {
+					m_type = newType;
+					RemoveScopeFromType();
+					return true;
+				}
+			}
+			cur = cur->GetPrev();
+		}
+	}
+	return false;
+}
+
+wxString ParsedToken::TemplateToType(const wxString& templateArg)
+{
+	int where = m_templateArgList.Index(templateArg);
+	if (where != wxNOT_FOUND) {
+		// it exists, return the name in the templateInstantiation list
+		if (m_templateInitialization.GetCount() > (size_t)where && m_templateInitialization.Item(where) != templateArg)
+			return m_templateInitialization.Item(where);
+	}
+	return templateArg;
+}
+
+void ParsedToken::ResolveTemplateType(TagsManager* lookup)
+{
+	for(size_t i=0; i<m_templateInitialization.GetCount(); i++) {
+		if (!lookup->GetDatabase()->IsTypeAndScopeExistLimitOne(m_templateInitialization.Item(i), wxT("<global>"))) {
+
+			// Loop until the end of the chain and see if any of the context is template
+			ParsedToken *cur = this;
+			while( cur ) {
+				if( cur->GetIsTemplate() ) {
+					// our context is template
+					wxString newType = cur->TemplateToType( m_templateInitialization.Item(i) );
+
+					if(newType != m_templateInitialization.Item(i)) {
+						m_templateInitialization.Item(i) = newType;
+						break;
+					}
+				}
+				cur = cur->GetPrev();
+			}
+		}
+	}
+}
+
+bool ParsedToken::IsThis() const
+{
+	return m_name == wxT("this");
 }

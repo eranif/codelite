@@ -15,6 +15,7 @@ public:
 	std::string     m_type;		//as in 'int a;' -> type=int
 	std::string     m_typeScope;//as in 'std::string a;' -> typeScope = std, type=string
 	std::string     m_pattern;
+	std::string     m_completeType;
 	std::string     m_starAmp;
 	int             m_lineno;
 	bool            m_isConst;

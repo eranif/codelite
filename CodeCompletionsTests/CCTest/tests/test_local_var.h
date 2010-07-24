@@ -1,0 +1,2 @@
+const wxString& path;
+path.

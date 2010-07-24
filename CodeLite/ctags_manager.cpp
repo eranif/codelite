@@ -1407,12 +1407,11 @@ bool TagsManager::GetDerivationList(const wxString &path, std::vector<wxString> 
 	}
 
 	if (tag && tag->IsOk()) {
-		wxString ineheritsList = tag->GetInherits();
-		wxStringTokenizer tok(ineheritsList, wxT(','));
-		while (tok.HasMoreTokens()) {
-			wxString inherits = tok.GetNextToken();
-			wxString tagName = tag->GetName();
-			wxString tmpInhr = inherits;
+		wxArrayString ineheritsList = tag->GetInheritsAsArrayNoTemplates();
+		for(size_t i=0; i<ineheritsList.GetCount(); i++) {
+			wxString inherits = ineheritsList.Item(i);
+			wxString tagName  = tag->GetName();
+			wxString tmpInhr  = inherits;
 
 			tagName.MakeLower();
 			tmpInhr.MakeLower();
@@ -1421,15 +1420,10 @@ bool TagsManager::GetDerivationList(const wxString &path, std::vector<wxString> 
 			if(tmpInhr != tagName) {
 
 				if (tag->GetScopeName() != wxT("<global>")) {
-					wxString inheritsScope = tag->GetScopeName();
-					IsTypeAndScopeExists(inherits, inheritsScope);
-					if(inheritsScope != wxT("<global>")) {
-						inherits << wxT("::") << inheritsScope;
-					}
+					inherits = tag->GetScopeName() + wxT("::") + inherits;
 				}
 				derivationList.push_back(inherits);
 				GetDerivationList(inherits, derivationList);
-
 			}
 		}
 	}
@@ -1675,10 +1669,10 @@ wxString TagsManager::GetScopeName(const wxString &scope)
 bool TagsManager::ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope, wxString &oper, wxString &scopeTempalteInitiList)
 {
 	bool res = GetLanguage()->ProcessExpression(expr, scopeText, filename, lineno, typeName, typeScope, oper, scopeTempalteInitiList);
-	if (res && IsTypeAndScopeExists(typeName, typeScope) == false && scopeTempalteInitiList.empty() == false) {
-		// try to resolve it again
-		res = GetLanguage()->ResolveTemplate(typeName, typeScope, typeScope, scopeTempalteInitiList);
-	}
+//	if (res && IsTypeAndScopeExists(typeName, typeScope) == false && scopeTempalteInitiList.empty() == false) {
+//		// try to resolve it again
+//		res = GetLanguage()->ResolveTemplate(typeName, typeScope, typeScope, scopeTempalteInitiList);
+//	}
 	return res;
 }
 
@@ -2451,8 +2445,7 @@ void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName
 	// ========
 	// Compoze a list of all virtual functions from the direct parent(s)
 	// class (there could be a multiple inheritance...)
-	wxString      ineheritsList = classTag->GetInherits();
-	wxArrayString parents = wxStringTokenize(ineheritsList, wxT(","), wxTOKEN_STRTOK);
+	wxArrayString parents = classTag->GetInheritsAsArrayNoTemplates();
 	wxArrayString kind;
 
 	tags.clear();

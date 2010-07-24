@@ -260,8 +260,13 @@ static langType Lang_csharp;
 static langType Lang_java;
 static langType Lang_vera;
 static vString *Signature;
+// ERAN IFRAH
+static vString *ParentTempalateInitList;
+// ERAN IFRAH - END
+
 vString *QuotedString = NULL;
 static boolean CollectingSignature;
+static boolean CollectingParentTempalateInitialization = TRUE;
 
 /* Number used to uniquely identify anonymous structs and unions. */
 static int AnonymousID = 0;
@@ -1405,7 +1410,14 @@ static void skipToMatch (const char *const pair)
 				vStringPut (Signature, c);
 			}
 		}
-
+		
+		// ERAN IFRAH [PATCH - START]
+		// Collect template initialization
+		if(CollectingParentTempalateInitialization) {
+			vStringPut (ParentTempalateInitList, c);
+		}
+		// ERAN IFRAH [PATCH - START]
+		
 		if (c == begin)
 		{
 			++matchLevel;
@@ -1700,7 +1712,10 @@ static void readParents (statementInfo *const st, const int qualifier)
 	tokenInfo *const token = newToken ();
 	tokenInfo *const parent = newToken ();
 	int c;
-
+	// ERAN IFRAH - START
+	char *inherit = 0;
+	// ERAN IFRAH - END
+	
 	do
 	{
 		c = skipToNonWhite ();
@@ -1717,8 +1732,35 @@ static void readParents (statementInfo *const st, const int qualifier)
 		}
 		else if (c == qualifier)
 			vStringPut (parent->name, c);
-		else if (c == '<')
+		else if (c == '<') {
+			
+			// ERAN IFRAH - START
+			CollectingParentTempalateInitialization = TRUE;
+			
+			if(ParentTempalateInitList->size) {
+				memset(ParentTempalateInitList->buffer, 0, ParentTempalateInitList->size);
+			}
+			ParentTempalateInitList->length = 0;
+			
+			vStringPut(ParentTempalateInitList, '<');
 			skipToMatch ("<>");
+			if(ParentTempalateInitList->length) {
+				inherit = (char*)malloc(ParentTempalateInitList->length+1);
+				memcpy(inherit, ParentTempalateInitList->buffer, ParentTempalateInitList->length);
+				inherit[ParentTempalateInitList->length] = 0;
+			}
+			
+			if(inherit) {
+				vStringCatS(parent->name, inherit);
+				free(inherit);
+			}
+			
+			vStringClear(ParentTempalateInitList);
+			
+			CollectingParentTempalateInitialization = FALSE;
+			
+			// ERAN IFRAH - END
+		}
 		else if (isType (token, TOKEN_NAME))
 		{
 			addParentClass (st, parent);
@@ -1786,7 +1828,7 @@ static void processToken (tokenInfo *const token, statementInfo *const st)
 		case KEYWORD_THROWS:    discardTypeList (token);                break;
 		case KEYWORD_UNION:     st->declaration = DECL_UNION;           break;
 		case KEYWORD_UNSIGNED:  st->declaration = DECL_BASE;            break;
-		case KEYWORD_USING:     skipStatement (st);                     break;
+		case KEYWORD_USING:     skipStatement (st); reinitStatement(st, FALSE); break;
 		case KEYWORD_VOID:      st->declaration = DECL_BASE;            break;
 		case KEYWORD_VOLATILE:  st->declaration = DECL_BASE;            break;
 		case KEYWORD_VIRTUAL:   st->implementation = IMP_VIRTUAL;       break;
@@ -2908,7 +2950,11 @@ static boolean findCTags (const unsigned int passCount)
 	Assert (passCount < 3);
 	cppInit ((boolean) (passCount > 1), isLanguage (Lang_csharp));
 	Signature = vStringNew ();
-
+	
+	// ERAN IFRAH - START
+	ParentTempalateInitList = vStringNew();
+	// ERAN IFRAH - END
+	
 	exception = (exception_t) setjmp (Exception);
 	retry = FALSE;
 	if (exception == ExceptionNone)
@@ -2923,7 +2969,11 @@ static boolean findCTags (const unsigned int passCount)
 					getInputFileName ());
 		}
 	}
+	
 	vStringDelete (Signature);
+	// ERAN IFRAH - START
+	vStringDelete (ParentTempalateInitList);
+	// ERAN IFRAH - END
 	cppTerminate ();
 	return retry;
 }

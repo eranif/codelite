@@ -701,9 +701,9 @@ void CCBox::DoShowTagTip()
 		prefix << wxT("Kind: ");
 		prefix << wxString::Format(wxT("%s\n"), tag.GetKind().c_str() );
 
-		if(tag.GetInherits().IsEmpty() == false) {
+		if(tag.GetInheritsAsString().IsEmpty() == false) {
 			prefix << wxT("Inherits: ");
-			prefix << tag.GetInherits() << wxT("\n");
+			prefix << tag.GetInheritsAsString() << wxT("\n");
 		}
 
 	} else if(tag.IsMacro() || tag.IsTypedef() || tag.IsContainer() || tag.GetKind() == wxT("member") || tag.GetKind() == wxT("variable")) {

@@ -37,8 +37,11 @@ private:
  * @brief the test interface
  */
 class ITest {
+protected:
+	int m_testCount;
+	
 public:
-	ITest() {
+	ITest() : m_testCount(0) {
 		Tester::Instance()->AddTest(this);
 	}
 	virtual ~ITest(){}
@@ -50,33 +53,34 @@ public:
 ///////////////////////////////////////////////////////////
 
 #define TEST_FUNC(Name)                     \
-class Test##Name : public ITest {           \
+class Test_##Name : public ITest {          \
 public:                                     \
     virtual bool test();                    \
     virtual bool Name();                    \
 };                                          \
-Test##Name theTest##Name;                   \
-bool Test##Name::test() {                   \
-    return Name();                          \
+Test_##Name theTest##Name;                  \
+bool Test_##Name::test() {                  \
+	printf("---->\n");                      \
+	return Name();                          \
 }                                           \
-bool Test##Name::Name()
+bool Test_##Name::Name()
 
 
 // Check values macros
-#define CHECK_SIZE(actualSize, expcSize) { if(actualSize == (int)expcSize) {\
-			printf("%s: Successfull!\n", __FUNCTION__);\
-			return true;\
+#define CHECK_SIZE(actualSize, expcSize) {\
+		m_testCount++;\
+		if(actualSize == (int)expcSize) {\
+			printf("%-40s(%d): Successfull!\n", __FUNCTION__, m_testCount);\
 		} else {\
-			printf("%s: ERROR: Expected size: %d, Actual Size:%d\n", __FUNCTION__, (int)expcSize, (int)actualSize);\
+			printf("%-40s(%d): ERROR\n%s:%d: Expected size: %d, Actual Size:%d\n", __FUNCTION__, m_testCount, __FILE__, __LINE__, (int)expcSize, (int)actualSize);\
 			return false;\
 		}\
 	}
 
 #define CHECK_STRING(str, expcStr) { if(strcmp(str, expcStr) == 0) {\
-			printf("%s: Successfull!\n", __FUNCTION__);\
-			return true;\
+			printf("% -40s(%d): Successfull!\n", __FUNCTION__, m_testCount);\
 		} else {\
-			printf("%s: ERROR: Expected string: %s, Actual string:%s\n", __FUNCTION__, expcStr, str);\
+			printf("%-40s(%d): ERROR\n%s:%d: Expected string: %s, Actual string:%s\n", __FUNCTION__, m_testCount, __FILE__, __LINE__, expcStr, str);\
 			return false;\
 		}\
 	}

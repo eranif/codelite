@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 
 	req.setFiles(files);
 	req.setCtagOptions("--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p  -IwxT,_T");
-	for (size_t i=0; i<1; i++) {
+	for (size_t i=0; i<5000; i++) {
 		// connect to server
 		if(!client.connect()){
 			printf("ERROR: failed to connect to server\n");

@@ -1274,7 +1274,7 @@ static bool IsEditorEvent(wxEvent &event)
 		case wxID_CUT:
 		case wxID_SELECTALL:
 		case wxID_COPY:
-		case wxID_PASTE: 
+		case wxID_PASTE:
 #ifndef __WXGTK__
 		{
 			LEditor *ed = dynamic_cast<LEditor*>(focusWin);
@@ -2265,7 +2265,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 		wxWindowUpdateLocker locker(this);
 		LoadSession(SessionManager::Get().GetLastSession());
 	}
-	
+
 	// For some reason, under Linux we need to force the menu accelerator again
 	// otherwise some shortcuts are getting lose (e.g. Ctrl-/ to comment line)
 	ManagerST::Get()->UpdateMenuAccelerators();

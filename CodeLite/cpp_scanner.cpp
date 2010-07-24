@@ -43,7 +43,7 @@ CppScanner::CppScanner()
 
 CppScanner::~CppScanner(void)
 {
-	delete m_data;
+	free(m_data);
 }
 
 int CppScanner::LexerInput(char *buf, int max_size)
@@ -67,8 +67,7 @@ void CppScanner::SetText(const char* data)
 	// release previous buffer
 	Reset();
 
-	m_data = new char[strlen(data)+1];
-	strcpy(m_data, data);
+	m_data = strdup(data);
 	m_pcurr = m_data;
 }
 
@@ -76,7 +75,7 @@ void CppScanner::Reset()
 {
 	if(m_data)
 	{
-		delete [] m_data;
+		free(m_data);
 		m_data = NULL;
 		m_pcurr = NULL;
 		m_curr = 0;
@@ -86,4 +85,11 @@ void CppScanner::Reset()
 	yy_flush_buffer(yy_current_buffer);
 	m_comment = wxEmptyString;
 	yylineno = 1;
+}
+
+void CppScanner::Restart()
+{
+	char* p = strdup(m_data);
+	SetText( p );
+	free(p);
 }

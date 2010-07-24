@@ -823,7 +823,8 @@ case 28:
                                 {
                                     /*create new variable for every variable name found*/
                                 	var = curr_var;
-                                	var.m_pattern = "/^" + yyvsp[-5] + " " + yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] +  " " + yyvsp[-1] + " $/";
+                                	var.m_pattern      = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] ;
+                                	var.m_completeType = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] ;
                                 	var.m_name = gs_names.at(i);
                                 	gs_vars->push_back(var);
                                 }
@@ -838,8 +839,8 @@ case 29:
                             {
                             	Variable var;
                             	std::string pattern;
-                            	curr_var.m_pattern       = "/^";
-                            	curr_var.m_pattern       += yyvsp[-5] + " " + yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] + " " + yyvsp[0] + "$/";
+                            	curr_var.m_pattern       = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
+								curr_var.m_completeType  = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] ;
                             	curr_var.m_isPtr         = (yyvsp[-3].find("*") != (size_t)-1);
                             	curr_var.m_starAmp       = yyvsp[-3];
                             	curr_var.m_arrayBrackets = yyvsp[0];
@@ -864,8 +865,8 @@ case 30:
                             {
                             	Variable var;
                             	std::string pattern;
-                            	curr_var.m_pattern         = "/^";
-                            	curr_var.m_pattern        += yyvsp[-5] + " " + yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] + " " + yyvsp[0] + " $/";
+                            	curr_var.m_pattern         = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
+                            	curr_var.m_completeType    = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] ;
                             	curr_var.m_isPtr           = (yyvsp[-3].find("*") != (size_t)-1);
                             	curr_var.m_starAmp         = yyvsp[-3];
                             	curr_var.m_arrayBrackets   = yyvsp[0];
@@ -892,8 +893,8 @@ case 31:
                             {
                             	Variable var;
                             	std::string pattern;
-                            	curr_var.m_pattern       = "/^";
-                            	curr_var.m_pattern       += yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] + " $/";
+                            	curr_var.m_pattern       = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
+                            	curr_var.m_completeType  = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
                             	curr_var.m_isPtr         = (yyvsp[-2].find("*") != (size_t)-1);
                             	curr_var.m_starAmp       = yyvsp[-2];
 								curr_var.m_rightSideConst= yyvsp[-1];
@@ -921,11 +922,11 @@ case 32:
                             {
                             	Variable var;
                             	std::string pattern;
-                            	curr_var.m_pattern = "/^";
-                            	curr_var.m_pattern += yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] + "$/";
-                            	curr_var.m_isPtr = (yyvsp[-2].find("*") != (size_t)-1);
-                            	curr_var.m_starAmp = yyvsp[-2];
-                            	curr_var.m_lineno = cl_scope_lineno;
+                            	curr_var.m_pattern       = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
+                            	curr_var.m_completeType  = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
+                            	curr_var.m_isPtr         = (yyvsp[-2].find("*") != (size_t)-1);
+                            	curr_var.m_starAmp       = yyvsp[-2];
+                            	curr_var.m_lineno        = cl_scope_lineno;
 								curr_var.m_rightSideConst= yyvsp[-1];
 								if(curr_var.m_templateDecl.empty())
 									curr_var.m_templateDecl = s_templateInitList;
@@ -951,12 +952,12 @@ case 33:
                             {
                             	Variable var;
                             	std::string pattern;
-                            	curr_var.m_pattern = "/^";
-                            	curr_var.m_pattern += yyvsp[-2] + " " + yyvsp[-1] + " " + yyvsp[0] + " " + "$/";
-                            	curr_var.m_isPtr = false;
-                            	curr_var.m_starAmp = "";
-                            	curr_var.m_lineno = cl_scope_lineno;
-                            	curr_var.m_isEllipsis = true;
+                            	curr_var.m_pattern      = yyvsp[-2] + " " + yyvsp[-1] + " " + yyvsp[0];
+                            	curr_var.m_completeType = yyvsp[-1];
+                            	curr_var.m_isPtr        = false;
+                            	curr_var.m_starAmp      = "";
+                            	curr_var.m_lineno       = cl_scope_lineno;
+                            	curr_var.m_isEllipsis   = true;
 
                             	var = curr_var;
                             	gs_vars->push_back(var);
@@ -1004,10 +1005,15 @@ case 48:
 { yyval = yyvsp[0] + var_consumBracketsContent('[');}
 break;
 case 49:
-{yyval = yyvsp[-1]+ yyvsp[0]; }
+{
+					yyval = yyvsp[-1]+ yyvsp[0]; 
+				}
 break;
 case 50:
-{yyval = yyvsp[-4] ; s_templateInitList = yyvsp[-3] + yyvsp[-2] + yyvsp[-1];}
+{
+					yyval = yyvsp[-4] + yyvsp[-3] + yyvsp[-2] + yyvsp[-1] + yyvsp[0]; 
+					s_templateInitList = yyvsp[-3] + yyvsp[-2] + yyvsp[-1];
+				}
 break;
 case 51:
 {yyval = "";}

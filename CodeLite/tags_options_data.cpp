@@ -132,7 +132,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_parserEnabled (true)
 		, m_maxItemToColour(1000)
 {
-	SetVersion(wxT("2.5"));
+	SetVersion(wxT("2.6"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =
@@ -224,10 +224,10 @@ wxT("std::set::const_iterator=_Key\n")
 wxT("std::set::iterator=_Key\n")
 wxT("std::deque::reference=_Tp\n")
 wxT("std::deque::const_reference=_Tp\n")
-wxT("std::map::iterator=pair<typename _T1, typename _T2>\n")
-wxT("std::map::const_iterator=pair<typename _T1, typename _T2>\n")
-wxT("std::multimap::iterator=pair<typename _T1, typename _T2>\n")
-wxT("std::multimap::const_iterator=pair<typename _T1, typename _T2>");
+wxT("std::map::iterator=pair<_Key, _Tp>\n")
+wxT("std::map::const_iterator=pair<_Key,_Tp>\n")
+wxT("std::multimap::iterator=pair<_Key,_Tp>\n")
+wxT("std::multimap::const_iterator=pair<_Key,_Tp>");
 }
 
 TagsOptionsData::~TagsOptionsData()
@@ -269,7 +269,7 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	// since of build 3749, we *always* set CC_ACCURATE_SCOPE_RESOLVING to true
 	DoUpdateTokensWxMapReversed();
 	DoUpdateTokensWxMap();
-	
+
 	m_ccFlags |= CC_ACCURATE_SCOPE_RESOLVING;
 }
 
@@ -384,7 +384,7 @@ void TagsOptionsData::SetTokens(const wxString& tokens)
 {
 	DoUpdateTokensWxMapReversed();
 	DoUpdateTokensWxMap();
-	
+
 	this->m_tokens = tokens;
 }
 

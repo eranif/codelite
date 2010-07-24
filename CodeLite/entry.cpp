@@ -95,7 +95,7 @@ bool TagEntry::operator ==(const TagEntry& rhs)
 	    m_name == rhs.m_name &&
 	    m_path == rhs.m_path &&
 	    m_lineNumber == rhs.m_lineNumber &&
-	    GetInherits() == rhs.GetInherits() &&
+	    GetInheritsAsString() == rhs.GetInheritsAsString() &&
 	    GetAccess() == rhs.GetAccess() &&
 	    GetSignature() == rhs.GetSignature() &&
 	    GetTyperef() == rhs.GetTyperef();
@@ -107,7 +107,7 @@ bool TagEntry::operator ==(const TagEntry& rhs)
 	            m_pattern == rhs.m_pattern &&
 	            m_name == rhs.m_name &&
 	            m_path == rhs.m_path &&
-	            GetInherits() == rhs.GetInherits() &&
+	            GetInheritsAsString() == rhs.GetInheritsAsString() &&
 	            GetAccess() == rhs.GetAccess() &&
 	            GetSignature() == rhs.GetSignature() &&
 	            GetTyperef() == rhs.GetTyperef();
@@ -324,19 +324,19 @@ wxString TagEntry::NameFromTyperef(wxString &templateInitList)
 bool TagEntry::TypedefFromPattern(const wxString &tagPattern, const wxString &typedefName, wxString &name, wxString &templateInit)
 {
 	wxString pattern(tagPattern);
-	
+
 	pattern.StartsWith(wxT("/^"), &pattern);
 	const wxCharBuffer cdata = pattern.mb_str(wxConvUTF8);
-	
+
 	clTypedefList li;
 	get_typedefs(cdata.data(), li);
-	
+
 	if(li.size() == 1) {
 		clTypedef td = *li.begin();
 		templateInit = _U(td.m_realType.m_templateDecl.c_str());
 		if(td.m_realType.m_typeScope.empty() == false)
 			name << _U(td.m_realType.m_typeScope.c_str()) << wxT("::");
-			
+
 		name         << _U(td.m_realType.m_type.c_str());
 		return true;
 	}
@@ -529,4 +529,104 @@ bool TagEntry::IsScopeGlobal() const
 bool TagEntry::IsTypedef() const
 {
 	return GetKind() == wxT("typedef");
+}
+
+wxString TagEntry::GetInheritsAsString() const
+{
+	return GetExtField(_T("inherits"));
+}
+
+wxArrayString TagEntry::GetInheritsAsArrayNoTemplates() const
+{
+	// Parse the input string
+	wxString      inherits = GetInheritsAsString();
+	wxString      parent;
+	wxArrayString parentsArr;
+
+	int depth(0);
+	for(size_t i=0; i<inherits.Length(); i++) {
+		wxChar ch = inherits.GetChar(i);
+
+		switch(ch) {
+		case wxT('<'):
+			if(depth == 0 && parent.IsEmpty() == false) {
+				parent.Trim().Trim(false);
+				parentsArr.Add(parent);
+				parent.Clear();
+			}
+			depth++;
+			break;
+
+		case wxT('>'):
+			depth--;
+			break;
+
+		case wxT(','):
+			if(depth == 0 && parent.IsEmpty() == false) {
+				parent.Trim().Trim(false);
+				parentsArr.Add(parent);
+				parent.Clear();
+			}
+			break;
+
+		default:
+			if(depth == 0) {
+				parent << ch;
+			}
+			break;
+		}
+	}
+
+	if(parent.IsEmpty() == false) {
+		parent.Trim().Trim(false);
+		parentsArr.Add(parent);
+	}
+	return parentsArr;
+}
+
+wxArrayString TagEntry::GetInheritsAsArrayWithTemplates() const
+{
+	// Parse the input string
+	wxString      inherits = GetInheritsAsString();
+	wxString      parent;
+	wxArrayString parentsArr;
+
+	int depth(0);
+	for(size_t i=0; i<inherits.Length(); i++) {
+		wxChar ch = inherits.GetChar(i);
+
+		switch(ch) {
+		case wxT('<'):
+			depth++;
+			parent << ch;
+			break;
+
+		case wxT('>'):
+			depth--;
+			parent << ch;
+			break;
+
+		case wxT(','):
+			if(depth == 0 && parent.IsEmpty() == false) {
+				parent.Trim().Trim(false);
+				parentsArr.Add(parent);
+				parent.Clear();
+
+			} else if(depth != 0) {
+				parent << ch;
+
+			}
+			break;
+
+		default:
+			parent << ch;
+			break;
+		}
+	}
+
+	if(parent.IsEmpty() == false) {
+		parent.Trim().Trim(false);
+		parentsArr.Add(parent);
+	}
+	return parentsArr;
 }

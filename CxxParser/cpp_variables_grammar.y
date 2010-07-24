@@ -180,7 +180,8 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                                 {
                                     //create new variable for every variable name found
                                 	var = curr_var;
-                                	var.m_pattern = "/^" + $1 + " " + $2 + " " + $3 + " " + $4 +  " " + $5 + " $/";
+                                	var.m_pattern      = $2 + " " + $3 + " " + $4 ;
+                                	var.m_completeType = $2 + " " + $3 + " " + $4 ;
                                 	var.m_name = gs_names.at(i);
                                 	gs_vars->push_back(var);
                                 }
@@ -197,8 +198,8 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             {
                             	Variable var;
                             	std::string pattern;
-                            	curr_var.m_pattern       = "/^";
-                            	curr_var.m_pattern       += $1 + " " + $2 + " " + $3 + " " + $4 + " " + $5 + " " + $6 + "$/";
+                            	curr_var.m_pattern       = $2 + " " + $3 + " " + $4 + " " + $5;
+								curr_var.m_completeType  = $2 + " " + $3 + " " + $4 ;
                             	curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
                             	curr_var.m_starAmp       = $3;
                             	curr_var.m_arrayBrackets = $6;
@@ -222,8 +223,8 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             {
                             	Variable var;
                             	std::string pattern;
-                            	curr_var.m_pattern         = "/^";
-                            	curr_var.m_pattern        += $1 + " " + $2 + " " + $3 + " " + $4 + " " + $5 + " " + $6 + " $/";
+                            	curr_var.m_pattern         = $2 + " " + $3 + " " + $4 + " " + $5;
+                            	curr_var.m_completeType    = $2 + " " + $3 + " " + $4 ;
                             	curr_var.m_isPtr           = ($3.find("*") != (size_t)-1);
                             	curr_var.m_starAmp         = $3;
                             	curr_var.m_arrayBrackets   = $6;
@@ -250,8 +251,8 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             {
                             	Variable var;
                             	std::string pattern;
-                            	curr_var.m_pattern       = "/^";
-                            	curr_var.m_pattern       += $1 + " " + $2 + " " + $3 + " " + $4 + " $/";
+                            	curr_var.m_pattern       = $2 + " " + $3 + " " + $4;
+                            	curr_var.m_completeType  = $2 + " " + $3 + " " + $4;
                             	curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
                             	curr_var.m_starAmp       = $3;
 								curr_var.m_rightSideConst= $4;
@@ -278,11 +279,11 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             {
                             	Variable var;
                             	std::string pattern;
-                            	curr_var.m_pattern = "/^";
-                            	curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + $4 + "$/";
-                            	curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
-                            	curr_var.m_starAmp = $3;
-                            	curr_var.m_lineno = cl_scope_lineno;
+                            	curr_var.m_pattern       = $2 + " " + $3 + " " + $4;
+                            	curr_var.m_completeType  = $2 + " " + $3 + " " + $4;
+                            	curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
+                            	curr_var.m_starAmp       = $3;
+                            	curr_var.m_lineno        = cl_scope_lineno;
 								curr_var.m_rightSideConst= $4;
 								if(curr_var.m_templateDecl.empty())
 									curr_var.m_templateDecl = s_templateInitList;
@@ -307,12 +308,12 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             {
                             	Variable var;
                             	std::string pattern;
-                            	curr_var.m_pattern = "/^";
-                            	curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + "$/";
-                            	curr_var.m_isPtr = false;
-                            	curr_var.m_starAmp = "";
-                            	curr_var.m_lineno = cl_scope_lineno;
-                            	curr_var.m_isEllipsis = true;
+                            	curr_var.m_pattern      = $1 + " " + $2 + " " + $3;
+                            	curr_var.m_completeType = $2;
+                            	curr_var.m_isPtr        = false;
+                            	curr_var.m_starAmp      = "";
+                            	curr_var.m_lineno       = cl_scope_lineno;
+                            	curr_var.m_isEllipsis   = true;
 
                             	var = curr_var;
                             	gs_vars->push_back(var);
@@ -360,8 +361,15 @@ postfix: ';'
 applicable for C++, for cases where a function is declared as
 void scope::foo(){ ... }
 */
-scope_specifier	:	LE_IDENTIFIER LE_CLCL {$$ = $1+ $2; }
-                |	LE_IDENTIFIER  '<' parameter_list '>' LE_CLCL {$$ = $1 ; s_templateInitList = $2 + $3 + $4;}
+scope_specifier	: LE_IDENTIFIER LE_CLCL 
+				{
+					$$ = $1+ $2; 
+				}
+                | LE_IDENTIFIER  '<' parameter_list '>' LE_CLCL
+				{
+					$$ = $1 + $2 + $3 + $4 + $5; 
+					s_templateInitList = $2 + $3 + $4;
+				}
                 ;
 				
 nested_scope_specifier: /*empty*/ {$$ = "";}

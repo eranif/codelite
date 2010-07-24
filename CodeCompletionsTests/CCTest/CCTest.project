@@ -14,23 +14,36 @@
     
     
     
+    
+    
+    
+    
+    
+    
     <File Name="tests/test_wxarraystr.h"/>
     <File Name="tests/test_auto_ptr.h"/>
     <File Name="tests/test_shared_ptr.h"/>
     <File Name="tests/test_vector_std_string.h"/>
     <File Name="tests/test_cl_frame.h"/>
+    <File Name="tests/test_function_argument.h"/>
+    <File Name="tests/test_local_var.h"/>
+    <File Name="tests/test_template_typedef.h"/>
+    <File Name="tests/test_namespace.h"/>
+    <File Name="tests/iterators.h"/>
+    <File Name="tests/smart_ptr_of_template.h"/>
+    <File Name="tests/std_vec_tag_entry_ptr.h"/>
+    <File Name="tests/this_ptr.h"/>
+    <File Name="tests/simple_tests.h"/>
+    <File Name="tests/stl_map_static.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="TestFramework">
     <File Name="tester.h"/>
     <File Name="tester.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug_Unix">
-    <Project Name="sqlite3"/>
-  </Dependencies>
   <Settings Type="Executable">
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes )" Required="yes" PreCompiledHeader="">
+      <Compiler Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes );-Wall" Required="yes" PreCompiledHeader="">
         <IncludePath Value="$(CL_HOME)/CodeLite"/>
         <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
@@ -172,4 +185,5 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <Dependencies Name="Debug_Unix"/>
 </CodeLite_Project>

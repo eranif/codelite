@@ -449,9 +449,11 @@ bool Language::OnTypedef(ParsedToken *token)
 			wxArrayString scopeTempalteInitList;
 			ParseTemplateInitList(tmpInitList, scopeTempalteInitList);
 
-			if(scopeTempalteInitList.IsEmpty() == false)
+			if(scopeTempalteInitList.IsEmpty() == false) {
 				token->SetTemplateInitialization(scopeTempalteInitList);
-
+				token->SetIsTemplate(true);
+			}
+			
 			token->SetTypeName(realName);
 			token->SetTypeScope(tag->GetScope());
 

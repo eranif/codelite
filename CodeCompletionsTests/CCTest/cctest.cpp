@@ -23,6 +23,14 @@ wxString LoadFile(const wxString &filename)
 // Code Completion test cases
 /////////////////////////////////////////////////////////////////////////////
 
+TEST_FUNC(testTypedefs)
+{
+	std::vector<TagEntryPtr> tags;
+	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/typedef_tests.h")), 1, wxT("myStack.at(0)."), LoadFile(wxT("../tests/typedef_tests.h")), tags);
+	CHECK_SIZE(tags.size(), 5);
+	return true;
+}
+
 TEST_FUNC(testStlMapLeditor)
 {
 	// test map template with basic types

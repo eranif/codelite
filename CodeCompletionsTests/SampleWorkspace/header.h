@@ -20,3 +20,4 @@
 #include <CodeLite/lex.yy.cpp>
 #include <CodeLite/y.tab.h>
 #include <LiteEditor/cl_editor.h>
+#include <Interfaces/debugger.h>

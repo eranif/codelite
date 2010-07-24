@@ -20,6 +20,7 @@
     
     
     
+    
     <File Name="tests/test_wxarraystr.h"/>
     <File Name="tests/test_auto_ptr.h"/>
     <File Name="tests/test_shared_ptr.h"/>
@@ -35,6 +36,7 @@
     <File Name="tests/this_ptr.h"/>
     <File Name="tests/simple_tests.h"/>
     <File Name="tests/stl_map_static.h"/>
+    <File Name="tests/typedef_tests.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="TestFramework">

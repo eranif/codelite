@@ -27,7 +27,7 @@ TEST_FUNC(testInnerClassInheritance)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/inner_class_inheritance.h")), 3, wxT("td->"), LoadFile(wxT("../tests/inner_class_inheritance.h")), tags);
-	CHECK_SIZE(tags.size(), 30);
+	CHECK_SIZE(tags.size(), 87);
 	return true;
 }
 

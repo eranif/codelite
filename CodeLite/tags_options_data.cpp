@@ -273,14 +273,15 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	m_ccFlags |= CC_ACCURATE_SCOPE_RESOLVING;
 }
 
-wxString TagsOptionsData::ToString() const
+wxString TagsOptionsData::ToString()
 {
 	wxString options(wxEmptyString);
 
 	wxString file_name, file_content;
 	wxGetEnv(wxT("CTAGS_REPLACEMENTS"), &file_name);
 
-	std::map<wxString, wxString> tokensMap = GetTokensWxMap();
+	DoUpdateTokensWxMap();
+	std::map<wxString, wxString> tokensMap      = GetTokensWxMap();
 	std::map<wxString, wxString>::iterator iter = tokensMap.begin();
 
 	if(tokensMap.empty() == false) {

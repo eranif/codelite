@@ -81,11 +81,11 @@ class TagsOptionsData : public SerializedObject
 	int                          m_maxItemToColour;
 	std::map<wxString, wxString> m_tokensWxMap;
 	std::map<wxString, wxString> m_tokensWxMapReversed;
-	
+
 protected:
 	void DoUpdateTokensWxMap();
 	void DoUpdateTokensWxMapReversed();
-	
+
 public:
 	TagsOptionsData();
 	virtual ~TagsOptionsData();
@@ -94,7 +94,7 @@ public:
 	void SetFlags(const size_t &flags) {
 		m_ccFlags = flags;
 	}
-	
+
 	void SetFileSpec(const wxString &filespec) {
 		m_fileSpec = filespec;
 	}
@@ -102,7 +102,7 @@ public:
 	void SetLanguages(const wxArrayString &langs) {
 		m_languages = langs;
 	}
-	
+
 	void SetLanguageSelection(const wxString &lang);
 
 	const wxArrayString &GetLanguages() const {
@@ -119,10 +119,10 @@ public:
 	const wxString& GetTypes() const {
 		return m_types;
 	}
-	
+
 	std::map<std::string, std::string> GetTokensMap() const;
 	std::map<std::string, std::string> GetTokensReversedMap() const;
-	
+
 	const std::map<wxString, wxString>& GetTokensReversedWxMap() const;
 	const std::map<wxString, wxString>& GetTokensWxMap() const;
 
@@ -148,7 +148,7 @@ public:
 	void Serialize(Archive &arch);
 	void DeSerialize(Archive &arch);
 
-	wxString ToString() const;
+	wxString ToString();
 
 	void SetCcColourFlags(const size_t& ccColourFlags) {
 		this->m_ccColourFlags = ccColourFlags;

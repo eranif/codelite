@@ -1733,6 +1733,11 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 	if (dlg.ShowModal() == wxID_OK) {
 		m_tagsOptionsData = dlg.GetData();
 
+		// We call here to ToString() only because ToString() internally
+		// writes the content into the ctags.replacements file (used by
+		// codelite_indexer)
+		m_tagsOptionsData.ToString();
+
 		wxArrayString pathsAfter = m_tagsOptionsData.GetParserSearchPaths();
 		wxArrayString removedPaths;
 
@@ -2242,7 +2247,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 
 					GetMainBook()->ShowMessage(
 					    wxT("There seem to be a problem with your code completion parser search paths (there either none, or some are pointing to an invalid location on the disk)\n")
-					    wxT("Can CodeLite fix your code completion parser search paths?"),
+					    wxT("Should CodeLite fix your code completion parser search paths?"),
 					    false, wxNullBitmap, btnYes, btnNo, btnNoNever);
 				}
 			}
@@ -3122,7 +3127,7 @@ void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 			btn.isDefault   = true;
 			btn.window      = this;
 
-			GetMainBook()->ShowMessage(wxT("A new version of CodeLite is available. Would you like to download it?"), true, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_software_update")), btn);
+			GetMainBook()->ShowMessage(wxT("A new version of CodeLite is available"), true, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_software_update")), btn);
 
 		} else {
 			if (!data->GetShowMessage()) {
@@ -3730,7 +3735,7 @@ void Frame::OnDatabaseUpgrade(wxCommandEvent& e)
 	btn.buttonLabel = wxT("Retag Workspace Now!");
 	btn.commandId   = XRCID("full_retag_workspace");
 	btn.window      = this;
-
+	btn.isDefault   = true;
 	GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. This can be fixed by re-tagging your workspace\nWould you like to re-tag your workspace now?"), true, wxNullBitmap, btn);
 }
 

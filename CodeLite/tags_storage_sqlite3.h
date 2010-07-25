@@ -32,7 +32,7 @@
 #include "istorage.h"
 #include <wx/wxsqlite3.h>
 
-const wxString gTagsDatabaseVersion(wxT("CodeLite Version 2.3"));
+const wxString gTagsDatabaseVersion(wxT("CodeLite Version 2.6"));
 
 /**
 TagsDatabase is a wrapper around wxSQLite3 database with tags specific functions.
@@ -210,7 +210,7 @@ public:
 	 * @param tags [output]
 	 */
 	virtual void GetDereferenceOperator(const wxString& scope, std::vector<TagEntryPtr>& tags);
-	
+
 	/**
 	 * @brief return list of tags of type 'subscript operator' for a given scope
 	 * @param scope

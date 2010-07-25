@@ -1418,10 +1418,14 @@ bool TagsManager::GetDerivationList(const wxString &path, std::vector<wxString> 
 
 			// Make sure that inherits != the current name or we will end up in an infinite loop
 			if(tmpInhr != tagName) {
+				wxString possibleScope(wxT("<global>"));
+				// Correc the type/scope
+				IsTypeAndScopeExists(inherits, possibleScope);
 
-				if (tag->GetScopeName() != wxT("<global>")) {
-					inherits = tag->GetScopeName() + wxT("::") + inherits;
+				if (possibleScope != wxT("<global>")) {
+					inherits = possibleScope + wxT("::") + inherits;
 				}
+
 				derivationList.push_back(inherits);
 				GetDerivationList(inherits, derivationList);
 			}

@@ -1513,11 +1513,19 @@
 #define wxSCI_FS_DATE 16
 #define wxSCI_FS_STRINGEOL 17
 #define wxSCI_FS_CONSTANT 18
-#define wxSCI_FS_ASM 19
-#define wxSCI_FS_LABEL 20
-#define wxSCI_FS_ERROR 21
-#define wxSCI_FS_HEXNUMBER 22
-#define wxSCI_FS_BINNUMBER 23
+#define wxSCI_FS_WORDOPERATOR 19
+#define wxSCI_FS_DISABLEDCODE 20
+#define wxSCI_FS_DEFAULT_C 21
+#define wxSCI_FS_COMMENTDOC_C 22
+#define wxSCI_FS_COMMENTLINEDOC_C 23
+#define wxSCI_FS_KEYWORD_C 24
+#define wxSCI_FS_KEYWORD2_C 25
+#define wxSCI_FS_NUMBER_C 26
+#define wxSCI_FS_STRING_C 27
+#define wxSCI_FS_PREPROCESSOR_C 28
+#define wxSCI_FS_OPERATOR_C 29
+#define wxSCI_FS_IDENTIFIER_C 30
+#define wxSCI_FS_STRINGEOL_C 31
 
 // Lexical states for SCLEX_CSOUND
 #define wxSCI_CSOUND_DEFAULT 0

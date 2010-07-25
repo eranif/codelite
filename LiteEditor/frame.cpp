@@ -2229,26 +2229,11 @@ void Frame::OnTimer(wxTimerEvent &event)
 
 			} else {
 				if (updatePaths) {
-					ButtonDetails btnYes, btnNo, btnNoNever;
 
-					btnYes.buttonLabel = wxT("Update paths");
-					btnYes.commandId   = XRCID("update_parser_paths");
-					btnYes.isDefault   = true;
-					btnYes.window      = this;
+					wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("update_parser_paths"));
+					this->AddPendingEvent(evt);
+					GetMainBook()->ShowMessage( wxT("Code Completion search paths have been updated") );
 
-					btnNo.buttonLabel = wxT("Not now");
-					btnNo.isDefault   = false;
-					btnNo.window      = NULL;
-
-					btnNoNever.buttonLabel = wxT("No. And dont ask me again!");
-					btnNoNever.isDefault   = false;
-					btnNoNever.window      = this;
-					btnNoNever.commandId   = XRCID("never_update_parser_paths");
-
-					GetMainBook()->ShowMessage(
-					    wxT("There seem to be a problem with your code completion parser search paths (there either none, or some are pointing to an invalid location on the disk)\n")
-					    wxT("Should CodeLite fix your code completion parser search paths?"),
-					    false, wxNullBitmap, btnYes, btnNo, btnNoNever);
 				}
 			}
 		}
@@ -3731,12 +3716,9 @@ void Frame::OnParsingThreadMessage(wxCommandEvent& e)
 // TagsManager, prompt the user
 void Frame::OnDatabaseUpgrade(wxCommandEvent& e)
 {
-	ButtonDetails btn;
-	btn.buttonLabel = wxT("Retag Workspace Now!");
-	btn.commandId   = XRCID("full_retag_workspace");
-	btn.window      = this;
-	btn.isDefault   = true;
-	GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. This can be fixed by re-tagging your workspace\nWould you like to re-tag your workspace now?"), true, wxNullBitmap, btn);
+	wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("full_retag_workspace"));
+	this->AddPendingEvent(evt);
+	GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. CodeLite will perform a full retag of the workspace"));
 }
 
 void Frame::UpdateTagsOptions(const TagsOptionsData& tod)

@@ -41,6 +41,12 @@ wxString ParsedToken::GetPath() const
 
 wxString ParsedToken::GetContextScope() const
 {
+	if(GetCurrentScopeName() == GetName() && GetPrev() == NULL) {
+		// the scope name is equal the 'name'?
+		// copy ctor
+		return wxT("<global>");
+	}
+
 	if(GetPrev() == NULL) {
 		// we are the first in chain, return the current scope name
 		return GetCurrentScopeName();

@@ -147,22 +147,31 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 {
 #if defined (__WXMSW__) || defined (__WXGTK__)
 	//^done,line="36",file="a.cpp",fullname="C:/testbug1/a.cpp"
-	wxString strLine, fileName;
+
+	// By default we use the 'fullname' as our file name. however,
+	// if we are under Windows and the fullname contains the string '/cygdrive'
+	// we fallback to use the 'filename' since cygwin gdb report fullname in POSIX / Cygwin paths
+	// which can not be used by codelite
+	wxString strLine, fullName, filename;
 	wxStringTokenizer tkz(line, wxT(","));
 	if (tkz.HasMoreTokens()) {
 		//skip first
 		tkz.NextToken();
 	}
+	// line=
 	if (tkz.HasMoreTokens()) {
 		strLine = tkz.NextToken();
 	} else {
 		return false;
 	}
+	// file=
 	if (tkz.HasMoreTokens()) {
-		tkz.NextToken();//skip
+		filename = tkz.NextToken();
 	}
+
+	// fullname=
 	if (tkz.HasMoreTokens()) {
-		fileName = tkz.NextToken();
+		fullName = tkz.NextToken();
 	} else {
 		return false;
 	}
@@ -174,11 +183,19 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 	strLine.ToLong(&lineno);
 
 	//remove quotes
-	fileName = fileName.AfterFirst(wxT('"'));
-	fileName = fileName.BeforeLast(wxT('"'));
-	fileName.Replace(wxT("\\\\"), wxT("\\"));
+	fullName = fullName.AfterFirst(wxT('"'));
+	fullName = fullName.BeforeLast(wxT('"'));
+	fullName.Replace(wxT("\\\\"), wxT("\\"));
 
-	m_observer->UpdateFileLine(fileName, lineno);
+	if(fullName.Contains(wxT("/cygdrive"))){
+		// fallback to use file="<..>"
+		filename = filename.AfterFirst(wxT('"'));
+		filename = filename.BeforeLast(wxT('"'));
+		filename.Replace(wxT("\\\\"), wxT("\\"));
+		fullName = filename;
+	}
+
+	m_observer->UpdateFileLine(fullName, lineno);
 #else
 
 	// On Mac we use the stack info the

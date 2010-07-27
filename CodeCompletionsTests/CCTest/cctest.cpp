@@ -23,6 +23,14 @@ wxString LoadFile(const wxString &filename)
 // Code Completion test cases
 /////////////////////////////////////////////////////////////////////////////
 
+TEST_FUNC(testUsingNamespace)
+{
+	std::vector<TagEntryPtr> tags;
+	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/using_namespace.h")), 3, wxT("v.at(0)."), LoadFile(wxT("../tests/using_namespace.h")), tags);
+	CHECK_SIZE(tags.size(), 197);
+	return true;
+}
+
 TEST_FUNC(testInnerClassInheritance)
 {
 	std::vector<TagEntryPtr> tags;

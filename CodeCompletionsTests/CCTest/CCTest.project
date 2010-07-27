@@ -23,6 +23,7 @@
     
     
     
+    
     <File Name="tests/test_wxarraystr.h"/>
     <File Name="tests/test_auto_ptr.h"/>
     <File Name="tests/test_shared_ptr.h"/>
@@ -40,6 +41,7 @@
     <File Name="tests/stl_map_static.h"/>
     <File Name="tests/typedef_tests.h"/>
     <File Name="tests/inner_class_inheritance.h"/>
+    <File Name="tests/using_namespace.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="TestFramework">

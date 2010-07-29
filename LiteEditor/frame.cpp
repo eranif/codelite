@@ -1261,8 +1261,27 @@ void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
 // Helper method for the event handling
 //----------------------------------------------------
 
-static bool IsEditorEvent(wxEvent &event)
+bool Frame::IsEditorEvent(wxEvent &event)
 {
+#ifdef __WXGTK__
+	MainBook *mainBook   = GetMainBook();
+	if(!mainBook || !mainBook->GetActiveEditor())
+		return false;
+		
+	switch (event.GetId())
+	{
+	case wxID_CUT:
+	case wxID_SELECTALL:
+	case wxID_COPY:
+	case wxID_PASTE: {
+		return mainBook->GetActiveEditor()->IsFocused();
+	}
+	default:
+		break;
+	}
+	
+#else
+
 	// Handle common edit events
 	// if the focused window is *not* LEditor,
 	// and the focused windows is of type
@@ -1270,13 +1289,12 @@ static bool IsEditorEvent(wxEvent &event)
 	// Window handle the event
 	wxWindow *focusWin = wxWindow::FindFocus();
 	if ( focusWin ) {
-		switch (event.GetId()) {
+		switch (event.GetId())
+		{
 		case wxID_CUT:
 		case wxID_SELECTALL:
 		case wxID_COPY:
-		case wxID_PASTE:
-#ifndef __WXGTK__
-		{
+		case wxID_PASTE: {
 			LEditor *ed = dynamic_cast<LEditor*>(focusWin);
 			if ( !ed ) {
 				// let other controls handle it
@@ -1284,11 +1302,11 @@ static bool IsEditorEvent(wxEvent &event)
 			}
 			break;
 		}
-#endif
 		default:
 			break;
 		}
 	}
+#endif	
 	return true;
 }
 

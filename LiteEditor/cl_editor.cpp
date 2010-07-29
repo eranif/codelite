@@ -121,6 +121,7 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_LEFT_UP                    (LEditor::OnLeftUp)
 	EVT_LEAVE_WINDOW               (LEditor::OnLeaveWindow)
 	EVT_KILL_FOCUS                 (LEditor::OnFocusLost)
+	EVT_SET_FOCUS                  (LEditor::OnFocus)
 	EVT_SCI_DOUBLECLICK            (wxID_ANY, LEditor::OnLeftDClick)
 	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_FIND_NEXT, LEditor::OnFindDialog)
 	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_REPLACE, LEditor::OnFindDialog)
@@ -158,6 +159,7 @@ LEditor::LEditor(wxWindow* parent)
 		, m_functionTip              (NULL)
 		, m_lastCharEntered          (0)
 		, m_lastCharEnteredPos       (0)
+		, m_isFocused                (true)
 {
 	ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSCI_MARK_SMALLRECT;
 	ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSCI_MARK_ROUNDRECT;
@@ -2400,6 +2402,7 @@ void LEditor::OnLeaveWindow(wxMouseEvent& event)
 
 void LEditor::OnFocusLost(wxFocusEvent &event)
 {
+	m_isFocused = false;
 	event.Skip();
 }
 
@@ -3677,4 +3680,10 @@ void LEditor::OnSetActive(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	SetActive();
+}
+
+void LEditor::OnFocus(wxFocusEvent& event)
+{
+	m_isFocused = true;
+	event.Skip();
 }

@@ -1275,7 +1275,7 @@ static bool IsEditorEvent(wxEvent &event)
 		case wxID_SELECTALL:
 		case wxID_COPY:
 		case wxID_PASTE:
-#ifndef __WXGTK__
+//#ifndef __WXGTK__
 		{
 			LEditor *ed = dynamic_cast<LEditor*>(focusWin);
 			if ( !ed ) {
@@ -1284,7 +1284,7 @@ static bool IsEditorEvent(wxEvent &event)
 			}
 			break;
 		}
-#endif
+//#endif
 		default:
 			break;
 		}

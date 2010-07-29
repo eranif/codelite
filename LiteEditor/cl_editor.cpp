@@ -129,6 +129,7 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_CLOSE, LEditor::OnFindDialog)
 	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_CLEARBOOKMARKS, LEditor::OnFindDialog)
 	EVT_COMMAND                    (wxID_ANY, wxCMD_EVENT_REMOVE_MATCH_INDICATOR, LEditor::OnRemoveMatchInidicator)
+	EVT_COMMAND                    (wxID_ANY, wxCMD_EVENT_SET_EDITOR_ACTIVE,      LEditor::OnSetActive)
 END_EVENT_TABLE()
 
 // Instantiate statics
@@ -2399,7 +2400,6 @@ void LEditor::OnLeaveWindow(wxMouseEvent& event)
 
 void LEditor::OnFocusLost(wxFocusEvent &event)
 {
-//    DoCancelCalltip();
 	event.Skip();
 }
 
@@ -3671,4 +3671,10 @@ int LEditor::LineEnd(int line)
 wxString LEditor::GetTextRange(int startPos, int endPos)
 {
 	return wxScintilla::GetTextRange(startPos, endPos);
+}
+
+void LEditor::OnSetActive(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	SetActive();
 }

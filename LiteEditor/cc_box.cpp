@@ -43,6 +43,8 @@
 	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
 #endif
 
+const wxEventType wxCMD_EVENT_SET_EDITOR_ACTIVE = XRCID("wxCMD_EVENT_SET_EDITOR_ACTIVE");
+
 CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 #if CC_USES_POPUPWIN
 	: CCBoxBase(wxTheApp->GetTopWindow(), wxID_ANY, wxDefaultPosition, wxSize(0, 0))
@@ -134,11 +136,6 @@ void CCBox::OnItemActivated( wxListEvent& event )
 	m_selectedItem = event.m_itemIndex;
 	InsertSelection();
 	HideCCBox();
-
-	LEditor *editor = GetEditor();
-	if (editor) {
-		editor->SetActive();
-	}
 }
 
 void CCBox::OnItemDeSelected( wxListEvent& event )
@@ -651,6 +648,12 @@ void CCBox::HideCCBox()
 			checked = m_toolBar1->FindById(TOOL_SHOW_ITEM_COMMENTS)->IsToggled();
 			LEditor::m_ccShowItemsComments  = checked ? 1 : 0;
 		}
+	}
+	
+	if(GetEditor()) {
+		wxCommandEvent evt(wxCMD_EVENT_SET_EDITOR_ACTIVE, GetId());
+		evt.SetEventObject(this);
+		GetEditor()->AddPendingEvent( evt );
 	}
 }
 

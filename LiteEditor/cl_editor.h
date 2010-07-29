@@ -674,6 +674,7 @@ private:
 	void OnDragStart(wxScintillaEvent &e);
 	void OnDragEnd(wxScintillaEvent &e);
 	void DoSetCaretAt(long pos);
+	void OnSetActive(wxCommandEvent &e);
 };
 
 #endif // LITEEDITOR_EDITOR_H

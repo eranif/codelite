@@ -568,7 +568,7 @@ bool Subversion2::LoginIfNeeded(wxCommandEvent& event, const wxString &workingDi
 	}
 
 	if(db.GetLogin(repoUrl, user, password)) {
-		loginString << wxT(" --username ") << user << wxT(" --password ") << password << wxT(" ");
+		loginString << wxT(" --username ") << user << wxT(" --password \"") << password << wxT("\" ");
 		return true;
 	}
 
@@ -577,7 +577,7 @@ bool Subversion2::LoginIfNeeded(wxCommandEvent& event, const wxString &workingDi
 	if(loginFailed) {
 		SvnLoginDialog dlg(GetManager()->GetTheApp()->GetTopWindow());
 		if (dlg.ShowModal() == wxID_OK) {
-			loginString << wxT(" --username ") << dlg.GetUsername() << wxT(" --password ") << dlg.GetPassword() << wxT(" ");
+			loginString << wxT(" --username ") << dlg.GetUsername() << wxT(" --password \"") << dlg.GetPassword() << wxT("\" ");
 			// Store the user name and password
 			db.SetLogin(repoUrl, dlg.GetUsername(), dlg.GetPassword());
 			return true;

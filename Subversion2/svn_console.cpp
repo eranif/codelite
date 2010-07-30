@@ -187,11 +187,11 @@ void SvnConsole::AppendText(const wxString& text)
 
 	wxString noPasswordText(text);
 
-	int where = noPasswordText.Find(wxT("--password "));
+	int where = noPasswordText.Find(wxT("--password \""));
 	if(where != wxNOT_FOUND) {
-		where += wxStrlen(wxT("--password "));
+		where += wxStrlen(wxT("--password \""));
 		wxString password = noPasswordText.Mid(where);
-		password = password.BeforeFirst(wxT(' '));
+		password = password.BeforeFirst(wxT('"'));
 
 		noPasswordText.Replace(password, wxT("******"));
 	}

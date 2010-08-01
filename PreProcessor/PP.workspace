@@ -8,5 +8,8 @@
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="PP" ConfigName="Release"/>
     </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release_Windows" Selected="no">
+      <Project Name="PP" ConfigName="Release_Windows"/>
+    </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

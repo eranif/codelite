@@ -27,6 +27,8 @@ std::string ReplaceWordA(const std::string &str, const std::string &word, const 
 	std::string nextChar;
 	std::string currentWord;
 	std::string output;
+	
+	output.reserve( str.length() * 2 );
 
 	for(size_t i=0; i<str.length(); i++) {
 		// Look ahead
@@ -459,7 +461,7 @@ void PPTable::Clear()
 	m_table.clear();
 }
 
-wxString CLReplacePattern(const wxString& in, const wxString& pattern, const wxString& replaceWith)
+bool CLReplacePattern(const wxString& in, const wxString& pattern, const wxString& replaceWith, wxString &outStr)
 {
 	int where = pattern.Find(wxT("%0"));
 	if(where != wxNOT_FOUND) {
@@ -469,15 +471,15 @@ wxString CLReplacePattern(const wxString& in, const wxString& pattern, const wxS
 		wxString searchFor = pattern.BeforeFirst(wxT('('));
 		where = in.Find(searchFor);
 		if(where == wxNOT_FOUND) {
-			return in;
+			return false;
 		}
 
 		wxString      initList;
 		wxArrayString initListArr;
 		if(PPToken::readInitList(in, searchFor.Length() + where, initList, initListArr) == false)
-			return in;
-
-		wxString outStr(in);
+			return false;
+		
+		outStr = in;
 		// update the 'replacement' with the actual values ( replace %0..%n)
 		for(size_t i=0; i<initListArr.size(); i++) {
 			wxString placeHolder;
@@ -487,43 +489,46 @@ wxString CLReplacePattern(const wxString& in, const wxString& pattern, const wxS
 
 		outStr.Remove(where, searchFor.Length() + initList.Length());
 		outStr.insert(where, replacement);
-		return outStr;
+		return true;
 
 	} else {
 		if(in.Find(pattern) == wxNOT_FOUND) {
-			return in;
+			return false;
 		}
 		// simple replacement
-		return ReplaceWord(in, pattern, replaceWith);
+		outStr = ReplaceWord(in, pattern, replaceWith);
+		return outStr != in;
 	}
 }
 
-std::string CLReplacePatternA(const std::string& in, const std::string& pattern, const std::string& replaceWith)
+bool CLReplacePatternA(const std::string& in, const std::string& pattern, const std::string& replaceWith, std::string& outStr)
 {
-	size_t where = in.find("%0");
+	size_t where = pattern.find("%0");
 	if(where != std::string::npos) {
 		std::string replacement(replaceWith);
 
 		// a patterened expression
 		where = pattern.find('(');
 		if(where == std::string::npos)
-			return in;
+			return false;
 
 		std::string searchFor = pattern.substr(0, where);
-
+		where = in.find(searchFor);
+		if(where == std::string::npos)
+			return false;
+			
 		std::string              initList;
 		std::vector<std::string> initListArr;
 		if(PPToken::readInitList(in, searchFor.length() + where, initList, initListArr) == false)
-			return in;
+			return false;
 
-		std::string outStr(in);
         char placeHolder[4];
-
+		outStr = in;
 		// update the 'replacement' with the actual values ( replace %0..%n)
 		for(size_t i=0; i<initListArr.size(); i++) {
 
             memset(placeHolder, 0, sizeof(placeHolder));
-            sprintf(placeHolder, "%%%d", i);
+            sprintf(placeHolder, "%%%d", (int)i);
 
             // replace all occurances of the placeholder
             size_t pos = replacement.find(placeHolder);
@@ -532,16 +537,22 @@ std::string CLReplacePatternA(const std::string& in, const std::string& pattern,
                 pos = replacement.find(placeHolder);
             }
 		}
-
+		
+		where = outStr.find(searchFor);
+		if(where == std::string::npos)
+			return false;
+			
 		outStr.erase(where, searchFor.length() + initList.length());
 		outStr.insert(where, replacement);
-		return outStr;
+		return true;
 
 	} else {
 		if(in.find(pattern) == std::string::npos) {
-			return in;
+			return false;
 		}
+		
 		// simple replacement
-		return ReplaceWordA(in, pattern, replaceWith);
+		outStr = ReplaceWordA(in, pattern, replaceWith);
+		return outStr != in;
 	}
 }

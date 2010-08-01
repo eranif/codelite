@@ -5,22 +5,39 @@
 #include <wx/ffile.h>
 
 void testMacros();
-void searchAndReplace();
+void searchAndReplaceA();
+void searchAndReplaceW();
 
 int main(int argc, char **argv)
 {
     //testMacros();
-    searchAndReplace();
+	for(size_t i=0; i<500; i++)
+		searchAndReplaceW();
 	return 0;
 }
 
-void searchAndReplace()
+void searchAndReplaceW()
 {
-    std::string  inStr       = "if(wx_dynamic_cast(wxApp*, ptr)->OnInit()){";
+    wxString inStr       = wxT("if(wx_dynamic_cast(wxApp*, ptr)->OnInit()) if(wx_dynamic_cast(wxApp*, ptr)->OnInit())");
+    wxString pattern     = wxT("wx_dynamic_cast(%0, %1)");
+    wxString replaceWith = wxT("dynmaic_cast<%0>(%1)");
+    wxString output;
+	
+	output = inStr;
+	while(CLReplacePattern(output, pattern, replaceWith, output)) {
+		
+	}
+}
+
+void searchAndReplaceA()
+{
+    std::string  inStr       = "if(wx_dynamic_cast(wxApp*, ptr)->OnInit()) if(wx_dynamic_cast(wxApp*, ptr)->OnInit())";
     std::string  pattern     = "wx_dynamic_cast(%0, %1)";
     std::string  replaceWith = "dynmaic_cast<%0>(%1)";
-    std::string  output = CLReplacePatternA(inStr, pattern, replaceWith);
-    printf("%s\n", output.c_str());
+    std::string  output;
+	
+	output = inStr;
+	while(CLReplacePatternA(output, pattern, replaceWith, output)) {}
 }
 
 void testMacros()

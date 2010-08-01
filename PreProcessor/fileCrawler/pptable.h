@@ -18,7 +18,7 @@
  *
  * It also supports simple search and replace
  */
-wxString CLReplacePattern(const wxString &in, const wxString& pattern, const wxString& replacement);
+bool CLReplacePattern(const wxString &in, const wxString& pattern, const wxString& replacement, wxString &output);
 
 /**
  * @brief perform search and replace using CL pattern
@@ -32,7 +32,7 @@ wxString CLReplacePattern(const wxString &in, const wxString& pattern, const wxS
  *
  * It also supports simple search and replace
  */
-std::string CLReplacePatternA(const std::string& in, const std::string& pattern, const std::string& replacement);
+bool CLReplacePatternA(const std::string& in, const std::string& pattern, const std::string& replacement, std::string & output);
 
 struct PPToken {
     enum {

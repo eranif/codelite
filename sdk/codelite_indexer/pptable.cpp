@@ -555,12 +555,16 @@ bool CLReplacePatternA(const std::string& in, const std::string& pattern, const 
 		return true;
 
 	} else {
-		if(in.find(pattern) == std::string::npos) {
+		where = in.find(pattern);
+		if(where == std::string::npos) {
 			return false;
 		}
 		
+		outStr = in;
+		outStr.erase(where, pattern.length());
+		outStr.insert(where, replacement);
+		
 		// simple replacement
-		outStr = ReplaceWordA(in, pattern, replaceWith);
 		return outStr != in;
 	}
 }

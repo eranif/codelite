@@ -224,7 +224,7 @@
         <IncludePath Value="libctags/"/>
         <Preprocessor Value="__WXMSW__"/>
       </Compiler>
-      <Linker Options="-O2;-s;$(shell wx-config --libs --unicode)" Required="yes"/>
+      <Linker Options="-s;-O2;$(shell wx-config --libs --unicode)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="./Release/codelite_indexer" IntermediateDirectory="./Release" Command="C:\Development\C++\codelite\CL_trunk\sdk\codelite_indexer\Release\$(ProjectName)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">

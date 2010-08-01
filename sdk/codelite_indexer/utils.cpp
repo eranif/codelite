@@ -102,6 +102,6 @@ extern "C" char* clPatternReplace(const char* src, const char* key, const char* 
 	if(CLReplacePatternA(src, key, value, output)) {
 		return strdup( output.c_str());
 	}else{
-		return strdup(src);
+		return NULL;
 	}
 }

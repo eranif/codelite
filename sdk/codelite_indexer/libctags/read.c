@@ -478,6 +478,10 @@ char* ctagsReplacements(char* result)
 			char *replace_with = ((string_pair_t*)node->data)->data;
 			
 			tmp = clPatternReplace(new_str, find_what, replace_with);
+			if(tmp == NULL) {
+				node = node->next;
+				continue;
+			}
 			
 			if(!first_loop) {
 				free(new_str);

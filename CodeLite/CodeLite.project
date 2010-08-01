@@ -323,4 +323,14 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <VirtualDirectory Name="PreProcessing">
+    <File Name="pp.cpp"/>
+    <File Name="pp.l"/>
+    <File Name="pp.y"/>
+    <File Name="pp_include.h"/>
+    <File Name="pp_lexer.cpp"/>
+    <File Name="pp_lexer.h"/>
+    <File Name="pptable.cpp"/>
+    <File Name="pptable.h"/>
+  </VirtualDirectory>
 </CodeLite_Project>

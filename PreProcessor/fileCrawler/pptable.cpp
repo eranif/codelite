@@ -11,6 +11,57 @@ bool IsWordChar(const wxString &s, int strSize)
 	}
 }
 
+bool IsWordCharA(const std::string &s, int strSize)
+{
+	if(strSize) {
+		return s.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_") != std::string::npos;
+
+	} else {
+		return s.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_") != std::string::npos;
+	}
+}
+
+std::string ReplaceWordA(const std::string &str, const std::string &word, const std::string &replaceWith)
+{
+	std::string currChar;
+	std::string nextChar;
+	std::string currentWord;
+	std::string output;
+
+	for(size_t i=0; i<str.length(); i++) {
+		// Look ahead
+		if( str.length() > i + 1 ) {
+			nextChar = str[i+1];
+		} else {
+			// we are at the end of buffer
+			nextChar = '\0';
+		}
+
+		currChar = str[i];
+		if(!IsWordCharA( currChar, currentWord.length() )) {
+			output += str[i];
+			currentWord.clear();
+
+		} else {
+
+			currentWord += currChar;
+			if(IsWordCharA(nextChar, currentWord.length())) {
+				// do nothing
+
+			} else if( !IsWordCharA(nextChar, currentWord.length()) && currentWord == word ) {
+				output += replaceWith;
+				currentWord.clear();
+
+			} else {
+				output += currentWord;
+				currentWord.clear();
+			}
+
+		}
+	}
+	return output;
+}
+
 // Helper string find metho
 wxString ReplaceWord(const wxString &str, const wxString &word, const wxString &replaceWith)
 {
@@ -187,7 +238,7 @@ bool PPToken::readInitList(const std::string& in, size_t from, std::string& init
 	if(start == std::string::npos ) {
 		return false;
 	}
-	
+
 	// skip the open brace
 	tmpString = tmpString.substr(start+1);
 
@@ -466,22 +517,31 @@ std::string CLReplacePatternA(const std::string& in, const std::string& pattern,
 			return in;
 
 		std::string outStr(in);
+        char placeHolder[4];
+
 		// update the 'replacement' with the actual values ( replace %0..%n)
 		for(size_t i=0; i<initListArr.size(); i++) {
-			wxString placeHolder;
-			placeHolder << wxT("%") << i;
-			replacement.Replace(placeHolder, initListArr.Item(i));
+
+            memset(placeHolder, 0, sizeof(placeHolder));
+            sprintf(placeHolder, "%%%d", i);
+
+            // replace all occurances of the placeholder
+            size_t pos = replacement.find(placeHolder);
+            while( pos != std::string::npos ) {
+                replacement.replace(pos, strlen(placeHolder), initListArr[i].c_str());
+                pos = replacement.find(placeHolder);
+            }
 		}
 
-		outStr.Remove(where, searchFor.Length() + initList.Length());
+		outStr.erase(where, searchFor.length() + initList.length());
 		outStr.insert(where, replacement);
 		return outStr;
 
 	} else {
-		if(in.Find(pattern) == wxNOT_FOUND) {
+		if(in.find(pattern) == std::string::npos) {
 			return in;
 		}
 		// simple replacement
-		return ReplaceWord(in, pattern, replaceWith);
+		return ReplaceWordA(in, pattern, replaceWith);
 	}
 }

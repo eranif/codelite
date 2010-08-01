@@ -16,11 +16,11 @@ int main(int argc, char **argv)
 
 void searchAndReplace()
 {
-    wxString inStr       = wxT("if(wx_dynamic_cast(wxApp*, ptr)->OnInit()){");
-    wxString pattern     = wxT("wx_dynamic_cast(%0, %1)");
-    wxString replaceWith = wxT("dynmaic_cast<%0>(%1)");
-    wxString output = CLReplacePattern(inStr, pattern, replaceWith);
-    wxPrintf(wxT("%s\n"), output.c_str());
+    std::string  inStr       = "if(wx_dynamic_cast(wxApp*, ptr)->OnInit()){";
+    std::string  pattern     = "wx_dynamic_cast(%0, %1)";
+    std::string  replaceWith = "dynmaic_cast<%0>(%1)";
+    std::string  output = CLReplacePatternA(inStr, pattern, replaceWith);
+    printf("%s\n", output.c_str());
 }
 
 void testMacros()

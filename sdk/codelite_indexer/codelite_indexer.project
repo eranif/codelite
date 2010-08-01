@@ -21,6 +21,8 @@
     <File Name="workerthread.h"/>
     <File Name="utils.cpp"/>
     <File Name="utils.h"/>
+    <File Name="pptable.cpp"/>
+    <File Name="pptable.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ctags">
     <File Name="libctags/yacc.c"/>

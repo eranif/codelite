@@ -132,7 +132,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_parserEnabled (true)
 		, m_maxItemToColour(1000)
 {
-	SetVersion(wxT("2.6"));
+	SetVersion(wxT("2.8"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =

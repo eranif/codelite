@@ -501,11 +501,13 @@ bool CLReplacePattern(const wxString& in, const wxString& pattern, const wxStrin
 	}
 }
 
+std::string replacement;
+
 bool CLReplacePatternA(const std::string& in, const std::string& pattern, const std::string& replaceWith, std::string& outStr)
 {
 	size_t where = pattern.find("%0");
 	if(where != std::string::npos) {
-		std::string replacement(replaceWith);
+		replacement = replaceWith;
 
 		// a patterened expression
 		where = pattern.find('(');
@@ -533,7 +535,13 @@ bool CLReplacePatternA(const std::string& in, const std::string& pattern, const 
             // replace all occurances of the placeholder
             size_t pos = replacement.find(placeHolder);
             while( pos != std::string::npos ) {
-                replacement.replace(pos, strlen(placeHolder), initListArr[i].c_str());
+				
+				// if the replacement and replacee are the same skip it (or incase the replacement contains the replacee)
+				const std::string& init = initListArr[i];
+				if(init.find(placeHolder) != std::string::npos)
+					break;
+					
+                replacement.replace(pos, strlen(placeHolder), init.c_str());
                 pos = replacement.find(placeHolder);
             }
 		}

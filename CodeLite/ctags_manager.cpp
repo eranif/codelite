@@ -463,6 +463,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 	clIndexerReply reply;
 	try {
 		if (!clIndexerProtocol::ReadReply(&client, reply)) {
+			wxLogMessage(wxT("codelite_indexer is not responding - restarting it. Input file was:%s"), source.GetFullPath().c_str());
 			RestartCtagsProcess();
 			return;
 		}

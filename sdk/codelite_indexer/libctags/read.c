@@ -405,12 +405,10 @@ extern void fileUngetc (int c)
 	File.ungetch = c;
 }
 
-extern char* regReplace(const char* src, const char* key, const char* value);
+extern char* clPatternReplace(const char* src, const char* key, const char* value);
+extern char* ctagsReplacements(char* result);
 static vString *iFileGetLine (void)
 {
-	static list_t *replacements = (list_t *)0;
-	static int first = 1;
-
 	vString *result = NULL;
 	int c;
 	if (File.line == NULL)
@@ -433,7 +431,24 @@ static vString *iFileGetLine (void)
 		}
 	} while (c != EOF);
 	Assert (result != NULL  ||  File.eof);
+	
+	// replcae tokens
+	if(result && result->buffer) {
+		char* new_str = ctagsReplacements(result->buffer);
+		if(new_str && new_str != result->buffer) {
+			vStringClear(File.line);
+			vStringCatS(File.line, new_str);
+			free(new_str);
+		}
+	}
+	return result;
+}
 
+char* ctagsReplacements(char* result)
+{
+	static list_t *replacements = (list_t *)0;
+	static int first = 1;
+	
 	/* try to load the file once */
 	if( first ) {
 		char *content = (char*)0;
@@ -453,7 +468,7 @@ static vString *iFileGetLine (void)
 	if( result && replacements && replacements->size ) {
 
 		int first_loop = 1;
-		char *src = result->buffer;
+		char *src = result;
 		char *new_str = src;
 		char *tmp = 0;
 		list_node_t *node = replacements->head;
@@ -462,15 +477,8 @@ static vString *iFileGetLine (void)
 			char *find_what    = ((string_pair_t*)node->data)->key;
 			char *replace_with = ((string_pair_t*)node->data)->data;
 			
-			if(find_what && strlen(find_what) > 3 && strncmp(find_what, "re:", 3) == 0) {
-				// regular expression search/replace
-				tmp = regReplace(new_str, find_what+3, replace_with);
-				
-			} else {
-				// normal searcn/replace
-				tmp = string_replace(new_str, find_what, replace_with);
-				
-			}
+			tmp = clPatternReplace(new_str, find_what, replace_with);
+			
 			if(!first_loop) {
 				free(new_str);
 			}
@@ -482,14 +490,11 @@ static vString *iFileGetLine (void)
 			node = node->next;
 		}
 
-		if(new_str != result->buffer) {
-			vStringClear(File.line);
-			vStringCatS(File.line, new_str);
-			free(new_str);
+		if(new_str != result) {
+			return new_str;
 		}
 	}
-
-	return result;
+	return NULL;
 }
 
 /*  Do not mix use of fileReadLine () and fileGetc () for the same file.

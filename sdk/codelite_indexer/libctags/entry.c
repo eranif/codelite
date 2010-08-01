@@ -98,6 +98,7 @@ extern int truncate (const char *path, off_t length);
 extern int ftruncate (int fd, off_t length);
 #endif
 extern char *readSourceLines (vString* const vLine, fpos_t location, fpos_t endPos);
+extern char* ctagsReplacements(char* result);
 /*
 *   FUNCTION DEFINITIONS
 */
@@ -779,6 +780,7 @@ static int addExtensionFields (const tagEntryInfo *const tag)
 
 			if(readSourceLine(returnValue, tag->statementStartPos, NULL)) {
 				int  length = -1;
+				char *replaced = NULL;
 				/* remove the method name part of the string */
 				char *where = strstr(returnValue->buffer, tag->name);
 				if(where) {
@@ -791,7 +793,16 @@ static int addExtensionFields (const tagEntryInfo *const tag)
 				}
 				vStringStripLeading (returnValue);
 				vStringStripTrailing(returnValue);
-				length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, returnValue->buffer);
+				
+				replaced = ctagsReplacements(returnValue->buffer);
+				if(replaced) {
+					length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, replaced);
+					free(replaced);
+					
+				} else {
+					length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, returnValue->buffer);
+					
+				}
 			}
 
 			vStringDelete(returnValue);

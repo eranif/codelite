@@ -501,6 +501,26 @@ bool CLReplacePattern(const wxString& in, const wxString& pattern, const wxStrin
 	}
 }
 
+size_t find_string(const char* src, const char* what) 
+{
+	size_t len          = strlen(what);
+	size_t matches      = 0;
+	size_t srcLen       = strlen(src);
+	size_t cur(0);
+	
+	for(size_t i=0; i<srcLen; i++) {
+		if(src[i] == what[cur]) 
+			cur++;
+		else {
+			cur = 0;
+		}
+		if(cur == len)
+			return i - len;
+	}
+
+	return std::string::npos;
+}
+
 bool CLReplacePatternA(const std::string& in, const std::string& pattern, const std::string& replaceWith, std::string& outStr)
 {
 	size_t where = pattern.find("%0");

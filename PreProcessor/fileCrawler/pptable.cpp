@@ -533,6 +533,11 @@ bool CLReplacePatternA(const std::string& in, const std::string& pattern, const 
             // replace all occurances of the placeholder
             size_t pos = replacement.find(placeHolder);
             while( pos != std::string::npos ) {
+				
+				// if the replacement and replacee are the same skip it (or incase the replacement contains the replacee)
+				if(strstr(initListArr[i].c_str(), placeHolder))
+					break;
+					
                 replacement.replace(pos, strlen(placeHolder), initListArr[i].c_str());
                 pos = replacement.find(placeHolder);
             }

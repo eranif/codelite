@@ -1,59 +1,36 @@
 #ifndef lint
-static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
+static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #endif
-
-#include <stdlib.h>
-#include <string.h>
-
 #define YYBYACC 1
 #define YYMAJOR 1
 #define YYMINOR 9
-#define YYPATCH 20090221
-
-#define YYEMPTY        (-1)
-#define yyclearin      (yychar = YYEMPTY)
-#define yyerrok        (yyerrflag = 0)
-#define YYRECOVERING() (yyerrflag != 0)
-
-/* compatibility with bison */
-#ifdef YYPARSE_PARAM
-/* compatibility with FreeBSD */
-#ifdef YYPARSE_PARAM_TYPE
-#define YYPARSE_DECL() yyparse(YYPARSE_PARAM_TYPE YYPARSE_PARAM)
-#else
-#define YYPARSE_DECL() yyparse(void *YYPARSE_PARAM)
-#endif
-#else
-#define YYPARSE_DECL() yyparse(void)
-#endif /* YYPARSE_PARAM */
-
-extern int YYPARSE_DECL();
-
-static int yygrowstack(void);
-#define yyparse    pp_parse
-#define yylex      pp_lex
-#define yyerror    pp_error
-#define yychar     pp_char
-#define yyval      pp_val
-#define yylval     pp_lval
-#define yydebug    pp_debug
-#define yynerrs    pp_nerrs
-#define yyerrflag  pp_errflag
-#define yyss       pp_ss
-#define yyssp      pp_ssp
-#define yyvs       pp_vs
-#define yyvsp      pp_vsp
-#define yylhs      pp_lhs
-#define yylen      pp_len
-#define yydefred   pp_defred
-#define yydgoto    pp_dgoto
-#define yysindex   pp_sindex
-#define yyrindex   pp_rindex
-#define yygindex   pp_gindex
-#define yytable    pp_table
-#define yycheck    pp_check
-#define yyname     pp_name
-#define yyrule     pp_rule
+#define yyclearin (yychar=(-1))
+#define yyerrok (yyerrflag=0)
+#define YYRECOVERING (yyerrflag!=0)
+#define yyparse pp_parse
+#define yylex pp_lex
+#define yyerror pp_error
+#define yychar pp_char
+#define yyval pp_val
+#define yylval pp_lval
+#define yydebug pp_debug
+#define yynerrs pp_nerrs
+#define yyerrflag pp_errflag
+#define yyss pp_ss
+#define yyssp pp_ssp
+#define yyvs pp_vs
+#define yyvsp pp_vsp
+#define yylhs pp_lhs
+#define yylen pp_len
+#define yydefred pp_defred
+#define yydgoto pp_dgoto
+#define yysindex pp_sindex
+#define yyrindex pp_rindex
+#define yygindex pp_gindex
+#define yytable pp_table
+#define yycheck pp_check
+#define yyname pp_name
+#define yyrule pp_rule
 #define YYPREFIX "pp_"
 /* Copyright Eran Ifrah(c)*/
 /*************** Includes and Defines *****************************/
@@ -89,34 +66,34 @@ extern int in_if_1;
 #define PP_CPLUSPLUS 270
 #define PP_INCLUDE 271
 #define YYERRCODE 256
-static const short pp_lhs[] = {                          -1,
+short pp_lhs[] = {                                        -1,
     0,    0,    1,    1,    1,    1,    4,    2,    3,    5,
     5,    5,
 };
-static const short pp_len[] = {                           2,
+short pp_len[] = {                                         2,
     0,    2,    1,    1,    1,    1,    2,    3,    6,    0,
     1,    3,
 };
-static const short pp_defred[] = {                        1,
+short pp_defred[] = {                                      1,
     0,    6,    0,    0,    2,    3,    4,    5,    0,    7,
     8,    0,   11,    0,    0,    0,    9,   12,
 };
-static const short pp_dgoto[] = {                         1,
+short pp_dgoto[] = {                                       1,
     5,    6,    7,    8,   14,
 };
-static const short pp_sindex[] = {                        0,
+short pp_sindex[] = {                                      0,
  -249,    0, -265, -266,    0,    0,    0,    0,  -40,    0,
     0, -256,    0,  -39, -255, -253,    0,    0,
 };
-static const short pp_rindex[] = {                        0,
+short pp_rindex[] = {                                      0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,  -38,    0,    0,    0,    0,    0,    0,
 };
-static const short pp_gindex[] = {                        0,
+short pp_gindex[] = {                                      0,
     0,    0,    0,    0,    0,
 };
 #define YYTABLESIZE 227
-static const short pp_table[] = {                        12,
+short pp_table[] = {                                      12,
     9,   15,   10,   10,   16,   10,    2,    3,    4,   13,
     0,   17,   18,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -141,7 +118,7 @@ static const short pp_table[] = {                        12,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,   11,
 };
-static const short pp_check[] = {                        40,
+short pp_check[] = {                                      40,
   266,   41,   41,  270,   44,   44,  256,  257,  258,  266,
    -1,  267,  266,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -172,8 +149,7 @@ static const short pp_check[] = {                        40,
 #endif
 #define YYMAXTOKEN 271
 #if YYDEBUG
-static const char *pp_name[] = {
-
+char *pp_name[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,"'('","')'",0,0,"','",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -185,7 +161,7 @@ static const char *pp_name[] = {
 "PP_IDENTIFIER","PP_COMPLEX_REPLACEMENT","PP_IFNDEF","PP_ZERO","PP_CPLUSPLUS",
 "PP_INCLUDE",
 };
-static const char *pp_rule[] = {
+char *pp_rule[] = {
 "$accept : translation_unit",
 "translation_unit :",
 "translation_unit : translation_unit macros",
@@ -199,96 +175,47 @@ static const char *pp_rule[] = {
 "args_list :",
 "args_list : PP_IDENTIFIER",
 "args_list : args_list ',' PP_IDENTIFIER",
-
 };
 #endif
 #ifndef YYSTYPE
 typedef int YYSTYPE;
 #endif
-#if YYDEBUG
-#include <stdio.h>
-#endif
-
-/* define the initial stack-sizes */
 #ifdef YYSTACKSIZE
 #undef YYMAXDEPTH
-#define YYMAXDEPTH  YYSTACKSIZE
+#define YYMAXDEPTH YYSTACKSIZE
 #else
 #ifdef YYMAXDEPTH
 #define YYSTACKSIZE YYMAXDEPTH
 #else
 #define YYSTACKSIZE 500
-#define YYMAXDEPTH  500
+#define YYMAXDEPTH 500
 #endif
 #endif
-
-#define YYINITSTACKSIZE 500
-
-int      yydebug;
-int      yynerrs;
-int      yyerrflag;
-int      yychar;
-short   *yyssp;
+int yydebug;
+int yynerrs;
+int yyerrflag;
+int yychar;
+short *yyssp;
 YYSTYPE *yyvsp;
-YYSTYPE  yyval;
-YYSTYPE  yylval;
+YYSTYPE yyval;
+YYSTYPE yylval;
+short yyss[YYSTACKSIZE];
+YYSTYPE yyvs[YYSTACKSIZE];
+#define yystacksize YYSTACKSIZE
 
-/* variables for the parser stack */
-static short   *yyss;
-static short   *yysslim;
-static YYSTYPE *yyvs;
-static unsigned yystacksize;
-
-/* allocate initial stack or double stack size, up to YYMAXDEPTH */
-static int yygrowstack(void)
-{
-    int i;
-    unsigned newsize;
-    short *newss;
-    YYSTYPE *newvs;
-
-    if ((newsize = yystacksize) == 0)
-        newsize = YYINITSTACKSIZE;
-    else if (newsize >= YYMAXDEPTH)
-        return -1;
-    else if ((newsize *= 2) > YYMAXDEPTH)
-        newsize = YYMAXDEPTH;
-
-    i = yyssp - yyss;
-    newss = (yyss != 0)
-          ? (short *)realloc(yyss, newsize * sizeof(*newss))
-          : (short *)malloc(newsize * sizeof(*newss));
-    if (newss == 0)
-        return -1;
-
-    yyss  = newss;
-    yyssp = newss + i;
-    newvs = (yyvs != 0)
-          ? (YYSTYPE *)realloc(yyvs, newsize * sizeof(*newvs))
-          : (YYSTYPE *)malloc(newsize * sizeof(*newvs));
-    if (newvs == 0)
-        return -1;
-
-    yyvs = newvs;
-    yyvsp = newvs + i;
-    yystacksize = newsize;
-    yysslim = yyss + newsize - 1;
-    return 0;
-}
-
-#define YYABORT  goto yyabort
+#define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
-#define YYERROR  goto yyerrlab
-
+#define YYERROR goto yyerrlab
 int
-YYPARSE_DECL()
+yyparse()
 {
-    int yym, yyn, yystate;
+    register int yym, yyn, yystate;
 #if YYDEBUG
-    const char *yys;
+    register char *yys;
+    extern char *getenv();
 
-    if ((yys = getenv("YYDEBUG")) != 0)
+    if (yys = getenv("YYDEBUG"))
     {
         yyn = *yys;
         if (yyn >= '0' && yyn <= '9')
@@ -298,17 +225,14 @@ YYPARSE_DECL()
 
     yynerrs = 0;
     yyerrflag = 0;
-    yychar = YYEMPTY;
-    yystate = 0;
+    yychar = (-1);
 
-    if (yyss == NULL && yygrowstack()) goto yyoverflow;
     yyssp = yyss;
     yyvsp = yyvs;
-    yystate = 0;
-    *yyssp = 0;
+    *yyssp = yystate = 0;
 
 yyloop:
-    if ((yyn = yydefred[yystate]) != 0) goto yyreduce;
+    if (yyn = yydefred[yystate]) goto yyreduce;
     if (yychar < 0)
     {
         if ((yychar = yylex()) < 0) yychar = 0;
@@ -331,14 +255,13 @@ yyloop:
             printf("%sdebug: state %d, shifting to state %d\n",
                     YYPREFIX, yystate, yytable[yyn]);
 #endif
-        if (yyssp >= yysslim && yygrowstack())
+        if (yyssp >= yyss + yystacksize - 1)
         {
             goto yyoverflow;
         }
-        yystate = yytable[yyn];
-        *++yyssp = yytable[yyn];
+        *++yyssp = yystate = yytable[yyn];
         *++yyvsp = yylval;
-        yychar = YYEMPTY;
+        yychar = (-1);
         if (yyerrflag > 0)  --yyerrflag;
         goto yyloop;
     }
@@ -349,14 +272,16 @@ yyloop:
         goto yyreduce;
     }
     if (yyerrflag) goto yyinrecovery;
-
+#ifdef lint
+    goto yynewerror;
+#endif
+yynewerror:
     yyerror("syntax error");
-
+#ifdef lint
     goto yyerrlab;
-
+#endif
 yyerrlab:
     ++yynerrs;
-
 yyinrecovery:
     if (yyerrflag < 3)
     {
@@ -371,12 +296,11 @@ yyinrecovery:
                     printf("%sdebug: state %d, error recovery shifting\
  to state %d\n", YYPREFIX, *yyssp, yytable[yyn]);
 #endif
-                if (yyssp >= yysslim && yygrowstack())
+                if (yyssp >= yyss + yystacksize - 1)
                 {
                     goto yyoverflow;
                 }
-                yystate = yytable[yyn];
-                *++yyssp = yytable[yyn];
+                *++yyssp = yystate = yytable[yyn];
                 *++yyvsp = yylval;
                 goto yyloop;
             }
@@ -406,10 +330,9 @@ yyinrecovery:
                     YYPREFIX, yystate, yychar, yys);
         }
 #endif
-        yychar = YYEMPTY;
+        yychar = (-1);
         goto yyloop;
     }
-
 yyreduce:
 #if YYDEBUG
     if (yydebug)
@@ -417,25 +340,22 @@ yyreduce:
                 YYPREFIX, yystate, yyn, yyrule[yyn]);
 #endif
     yym = yylen[yyn];
-    if (yym)
-        yyval = yyvsp[1-yym];
-    else
-        memset(&yyval, 0, sizeof yyval);
+    yyval = yyvsp[1-yym];
     switch (yyn)
     {
 case 6:
-	{
+{
             /*wxPrintf(wxT("CodeLite: syntax error, unexpected token '%s' found\n"), pp_lval.c_str());*/
         }
 break;
 case 7:
-	{
+{
             if(in_if_1 == 0)
                 in_if_1 = 1;
         }
 break;
 case 8:
-	{
+{
             PPToken token;
             token.name = yyvsp[-1];
             token.flags = (PPToken::IsValid | PPToken::IsOverridable);
@@ -450,7 +370,7 @@ case 8:
         }
 break;
 case 9:
-	{
+{
             PPToken token;
             token.name = yyvsp[-4];
             token.replacement = g_definition;
@@ -464,10 +384,10 @@ case 9:
         }
 break;
 case 11:
-	{ yyval = yyvsp[0];           }
+{ yyval = yyvsp[0];           }
 break;
 case 12:
-	{ yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0]; }
+{ yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0]; }
 break;
     }
     yyssp -= yym;
@@ -511,20 +431,17 @@ break;
         printf("%sdebug: after reduction, shifting from state %d \
 to state %d\n", YYPREFIX, *yyssp, yystate);
 #endif
-    if (yyssp >= yysslim && yygrowstack())
+    if (yyssp >= yyss + yystacksize - 1)
     {
         goto yyoverflow;
     }
-    *++yyssp = (short) yystate;
+    *++yyssp = yystate;
     *++yyvsp = yyval;
     goto yyloop;
-
 yyoverflow:
     yyerror("yacc stack overflow");
-
 yyabort:
     return (1);
-
 yyaccept:
     return (0);
 }

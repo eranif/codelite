@@ -74,6 +74,7 @@ pp_parser.cpp: pp.y
       <PreBuild/>
       <PostBuild>
         <Command Enabled="yes">cp pp* ../../CodeLite</Command>
+        <Command Enabled="yes">cp pptable* ../../sdk/codelite_indexer</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -111,7 +112,9 @@ pp_parser.cpp: pp.y
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy pp* ..\..\CodeLite</Command>
+        <Command Enabled="yes">copy pp*.cpp ..\..\CodeLite</Command>
+        <Command Enabled="yes">copy pptable* ..\..\sdk\codelite_indexer</Command>
+        <Command Enabled="yes">copy pp*.h  ..\..\CodeLite</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

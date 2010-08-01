@@ -132,7 +132,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_parserEnabled (true)
 		, m_maxItemToColour(1000)
 {
-	SetVersion(wxT("2.8"));
+	SetVersion(wxT("2.8.1"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =
@@ -159,7 +159,7 @@ wxT("__MINGW_ATTRIB_PURE\n")
 wxT("__MINGW_ATTRIB_MALLOC\n")
 wxT("__GOMP_NOTHROW")
 wxT("wxT\n")
-wxT("SCI_NAMESPACE=0\n")
+wxT("SCI_SCOPE(%0)=%0\n")
 wxT("WINBASEAPI\n")
 wxT("WINAPI\n")
 wxT("__nonnull\n")
@@ -179,8 +179,8 @@ wxT("BEGIN_DECLARE_EVENT_TYPES()=enum {\n")
 wxT("END_DECLARE_EVENT_TYPES()=};\n")
 wxT("DECLARE_EVENT_TYPE\n")
 wxT("DECLARE_EXPORTED_EVENT_TYPE\n")
-wxT("WXUNUSED+\n")
-wxT("wxDEPRECATED\n")
+wxT("WXUNUSED(%0)=\n")
+wxT("wxDEPRECATED(%0)=%0\n")
 wxT("_T\n")
 wxT("ATTRIBUTE_PRINTF_1\n")
 wxT("ATTRIBUTE_PRINTF_2\n")
@@ -287,7 +287,7 @@ wxString TagsOptionsData::ToString()
 	if(tokensMap.empty() == false) {
 		options = wxT(" -I");
 		for(; iter != tokensMap.end(); iter++) {
-			if(iter->second.IsEmpty() == false) {
+			if(!iter->second.IsEmpty() || (iter->second.IsEmpty() && iter->first.Find(wxT("%0")) != wxNOT_FOUND)) {
 				// Key = Value pair. Place this one in the output file
 				file_content << iter->first << wxT("=") << iter->second << wxT("\n");
 			} else {
@@ -295,6 +295,7 @@ wxString TagsOptionsData::ToString()
 				options << wxT(",");
 			}
 		}
+
 		options.RemoveLast();
 		options += wxT(" ");
 	}

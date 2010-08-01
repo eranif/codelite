@@ -54,7 +54,7 @@ ns_alias "namespace "{ns_name}[ ]*"="[ ]*{ns_name}[ ]*";"
 #define YYSTYPE wxString
 extern wxString pp_lval;
 
-int return_to_state = INITIAL;
+int return_to_state = 0;
 int in_if_1         = 0;
 
 #define RET_VAL(x) {\

@@ -10,8 +10,11 @@ void searchAndReplaceA();
 void searchAndReplaceW();
 
 int main(int argc, char **argv) {
-	testMacros();
-	//searchAndReplaceA();
+	//testMacros();
+	for(size_t i=0; i<100; i++) {
+		//printf("searchAndReplaceA\n");
+		searchAndReplaceA();
+	}
 	return 0;
 }
 

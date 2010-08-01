@@ -501,31 +501,13 @@ bool CLReplacePattern(const wxString& in, const wxString& pattern, const wxStrin
 	}
 }
 
-size_t find_string(const char* src, const char* what) 
-{
-	size_t len          = strlen(what);
-	size_t matches      = 0;
-	size_t srcLen       = strlen(src);
-	size_t cur(0);
-	
-	for(size_t i=0; i<srcLen; i++) {
-		if(src[i] == what[cur]) 
-			cur++;
-		else {
-			cur = 0;
-		}
-		if(cur == len)
-			return i - len;
-	}
-
-	return std::string::npos;
-}
+std::string replacement;
 
 bool CLReplacePatternA(const std::string& in, const std::string& pattern, const std::string& replaceWith, std::string& outStr)
 {
 	size_t where = pattern.find("%0");
 	if(where != std::string::npos) {
-		std::string replacement(replaceWith);
+		replacement = replaceWith;
 
 		// a patterened expression
 		where = pattern.find('(');
@@ -555,10 +537,11 @@ bool CLReplacePatternA(const std::string& in, const std::string& pattern, const 
             while( pos != std::string::npos ) {
 				
 				// if the replacement and replacee are the same skip it (or incase the replacement contains the replacee)
-				if(strstr(initListArr[i].c_str(), placeHolder))
+				const std::string& init = initListArr[i];
+				if(init.find(placeHolder) != std::string::npos)
 					break;
 					
-                replacement.replace(pos, strlen(placeHolder), initListArr[i].c_str());
+                replacement.replace(pos, strlen(placeHolder), init.c_str());
                 pos = replacement.find(placeHolder);
             }
 		}

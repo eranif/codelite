@@ -62,6 +62,8 @@ protected:
 	void OnAddExcludePathUI      (wxUpdateUIEvent &e);
 	void OnRemoveExcludePath     (wxCommandEvent &e);
 	void OnRemoveExcludePathUI   (wxUpdateUIEvent &e);
+	void OnFileSelectedUI        (wxUpdateUIEvent& event);
+	void OnParse                 (wxCommandEvent& event);
 
 public:
 	TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data);

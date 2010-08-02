@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May  4 2010)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -27,6 +27,7 @@
 #include <wx/textctrl.h>
 #include <wx/combobox.h>
 #include <wx/statline.h>
+#include <wx/hyperlink.h>
 #include <wx/notebook.h>
 #include <wx/dialog.h>
 
@@ -85,10 +86,15 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxComboBox* m_comboBoxLang;
 		wxCheckBox* m_checkFilesWithoutExt;
 		wxStaticLine* m_staticline2;
+		wxStaticText* m_staticText92;
+		wxTextCtrl* m_textCtrlFilesList;
+		wxButton* m_buttonParse;
+		wxStaticLine* m_staticline21;
 		wxNotebook* m_notebook2;
 		wxPanel* m_panel4;
-		wxStaticText* m_staticText9;
 		wxTextCtrl* m_textPrep;
+		wxStaticText* m_staticText9;
+		wxHyperlinkCtrl* m_hyperlink1;
 		wxPanel* m_panel5;
 		wxStaticText* m_staticText91;
 		wxTextCtrl* m_textTypes;
@@ -110,12 +116,14 @@ class TagsOptionsBaseDlg : public wxDialog
 		virtual void OnRemoveExcludePathUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnClearAllExcludePaths( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClearAllExcludePathsUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnParse( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnFileSelectedUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Tags Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Tags Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 704,598 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~TagsOptionsBaseDlg();
 	
 };

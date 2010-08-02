@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May  4 2010)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -138,7 +138,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	m_generalPage->SetSizer( bSizer4 );
 	m_generalPage->Layout();
 	bSizer4->Fit( m_generalPage );
-	m_mainBook->AddPage( m_generalPage, wxT("General"), true );
+	m_mainBook->AddPage( m_generalPage, wxT("General"), false );
 	m_panelParser = new wxPanel( m_mainBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
@@ -243,27 +243,60 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	m_staticline2 = new wxStaticLine( m_ctagsPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer6->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
 	
+	wxBoxSizer* bSizer14;
+	bSizer14 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText92 = new wxStaticText( m_ctagsPage, wxID_ANY, wxT("CodeLite can suggest a list of 'Tokens' that will be added to the 'Tokens' table based on parsing the following header files \n(space separated list):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText92->Wrap( -1 );
+	bSizer14->Add( m_staticText92, 0, wxALL|wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer15;
+	bSizer15 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_textCtrlFilesList = new wxTextCtrl( m_ctagsPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	bSizer15->Add( m_textCtrlFilesList, 1, wxALL|wxEXPAND, 5 );
+	
+	m_buttonParse = new wxButton( m_ctagsPage, wxID_ANY, wxT("Parse!"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer15->Add( m_buttonParse, 0, wxALL, 5 );
+	
+	bSizer14->Add( bSizer15, 1, wxEXPAND, 5 );
+	
+	bSizer6->Add( bSizer14, 0, wxEXPAND, 5 );
+	
+	m_staticline21 = new wxStaticLine( m_ctagsPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer6->Add( m_staticline21, 0, wxEXPAND | wxALL, 5 );
+	
 	m_notebook2 = new wxNotebook( m_ctagsPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	m_panel4 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_panel4->SetToolTip( wxT("Specifies a list of identifiers which are to be specially handled while parsing C and C++ source files.\nWhen the identifiers listed are simple identifiers, these identifiers will be ignored during parsing of the source files.\nIf two identifiers are separated with the ’=’ character, the first identifiers is replaced by the second identifier for parsing purposes") );
+	m_panel4->SetToolTip( wxT("List here list of tokens to be pre-processed by codelite-indexer. \nUsually, you would like to add here macros which confuse the parser\nClick the below link to read more about this feature and the syntax supported.\n") );
 	
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
-	
-	wxStaticBoxSizer* sbSizer52;
-	sbSizer52 = new wxStaticBoxSizer( new wxStaticBox( m_panel4, wxID_ANY, wxEmptyString ), wxVERTICAL );
-	
-	m_staticText9 = new wxStaticText( m_panel4, wxID_ANY, wxT("Specify here a list of identifiers which are to be specially handled while parsing C and C++ source files.\nWhen the identifiers listed are simple identifiers, these identifiers will be ignored during parsing of the source files.\nIf two identifiers are separated with the ’=’ character, the first identifiers is replaced by the second identifier for parsing purposes"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText9->Wrap( -1 );
-	sbSizer52->Add( m_staticText9, 0, wxALL|wxEXPAND, 5 );
-	
-	bSizer5->Add( sbSizer52, 0, wxEXPAND|wxALL, 5 );
 	
 	m_textPrep = new wxTextCtrl( m_panel4, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2 );
 	m_textPrep->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
 	m_textPrep->SetMinSize( wxSize( 300,-1 ) );
 	
 	bSizer5->Add( m_textPrep, 1, wxEXPAND, 5 );
+	
+	wxStaticBoxSizer* sbSizer52;
+	sbSizer52 = new wxStaticBoxSizer( new wxStaticBox( m_panel4, wxID_ANY, wxEmptyString ), wxVERTICAL );
+	
+	m_staticText9 = new wxStaticText( m_panel4, wxID_ANY, wxT("List here list of tokens to be pre-processed by codelite-indexer. \nUsually, you would like to add here macros which confuse the parser\nClick the below link to read more about this feature and the syntax supported."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText9->Wrap( -1 );
+	m_staticText9->SetToolTip( wxT("List here list of tokens to be pre-processed by codelite-indexer. \nUsually, you would like to add here macros which confuse the parser\nClick the below link to read more about this feature and the syntax supported.\n") );
+	
+	sbSizer52->Add( m_staticText9, 0, wxALL|wxEXPAND, 5 );
+	
+	m_hyperlink1 = new wxHyperlinkCtrl( m_panel4, wxID_ANY, wxT("Macros Handling"), wxT("http://www.codelite.org/LiteEditor/MacrosHandling101"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	sbSizer52->Add( m_hyperlink1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	bSizer5->Add( sbSizer52, 0, wxEXPAND|wxALL, 5 );
+	
+	wxBoxSizer* bSizer131;
+	bSizer131 = new wxBoxSizer( wxHORIZONTAL );
+	
+	bSizer5->Add( bSizer131, 0, wxEXPAND, 5 );
 	
 	m_panel4->SetSizer( bSizer5 );
 	m_panel4->Layout();
@@ -318,7 +351,6 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
-	mainSizer->Fit( this );
 	
 	this->Centre( wxBOTH );
 	
@@ -347,6 +379,8 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	m_buttonRemoveExcludePath->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnRemoveExcludePathUI ), NULL, this );
 	m_buttonClearAllExcludPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnClearAllExcludePaths ), NULL, this );
 	m_buttonClearAllExcludPath->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnClearAllExcludePathsUI ), NULL, this );
+	m_buttonParse->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnParse ), NULL, this );
+	m_buttonParse->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnFileSelectedUI ), NULL, this );
 	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonOK ), NULL, this );
 }
 
@@ -377,6 +411,7 @@ TagsOptionsBaseDlg::~TagsOptionsBaseDlg()
 	m_buttonRemoveExcludePath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnRemoveExcludePathUI ), NULL, this );
 	m_buttonClearAllExcludPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnClearAllExcludePaths ), NULL, this );
 	m_buttonClearAllExcludPath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnClearAllExcludePathsUI ), NULL, this );
+	m_buttonParse->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnParse ), NULL, this );
+	m_buttonParse->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnFileSelectedUI ), NULL, this );
 	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonOK ), NULL, this );
-	
 }

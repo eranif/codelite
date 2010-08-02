@@ -81,6 +81,7 @@ class TagsOptionsData : public SerializedObject
 	int                          m_maxItemToColour;
 	std::map<wxString, wxString> m_tokensWxMap;
 	std::map<wxString, wxString> m_tokensWxMapReversed;
+	wxString                     m_macrosFiles;
 
 protected:
 	void DoUpdateTokensWxMap();
@@ -180,6 +181,12 @@ public:
 	}
 	int GetMaxItemToColour() const {
 		return m_maxItemToColour;
+	}
+	void SetMacrosFiles(const wxString& macrosFiles) {
+		this->m_macrosFiles = macrosFiles;
+	}
+	const wxString& GetMacrosFiles() const {
+		return m_macrosFiles;
 	}
 };
 

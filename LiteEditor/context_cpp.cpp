@@ -26,6 +26,7 @@
 
 #include "pluginmanager.h"
 #include "clang_code_completion.h"
+#include "fileextmanager.h"
 #include "drawingutils.h"
 #include "buildtabsettingsdata.h"
 #include "cl_editor_tip_window.h"
@@ -737,10 +738,12 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString &word)
 		std::vector<TagEntryPtr> tags;
 
 		for (size_t i=0; i<files.size(); i++) {
-			TagEntryPtr t(new TagEntry());
-			t->SetName(files.at(i).GetFullName());
-			t->SetKind(IsSource(files.at(i).GetExt()) ? wxT("FileCpp") : wxT("FileHeader"));
-			tags.push_back(t);
+			if(FileExtManager::GetType(files[i].GetFullName()) == FileExtManager::TypeHeader || FileExtManager::GetType(files[i].GetFullName()) == FileExtManager::TypeOther) {
+				TagEntryPtr t(new TagEntry());
+				t->SetName(files.at(i).GetFullName());
+				t->SetKind(IsSource(files.at(i).GetExt()) ? wxT("FileCpp") : wxT("FileHeader"));
+				tags.push_back(t);
+			}
 		}
 		GetCtrl().ShowCompletionBox(tags, fileName, false, true);
 	}

@@ -96,8 +96,7 @@ pp_lexer.cpp: pp.l
 pp_parser.cpp: pp.y
 	yacc -dl  -t -v -ppp_ pp.y
 	mv y.tab.c pp.cpp
-	mv y.tab.h pp_lexer.h
-</CustomPreBuild>
+	mv y.tab.h pp_lexer.h</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release_Windows" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -137,7 +136,8 @@ pp_lexer.cpp: pp.l
 pp_parser.cpp: pp.y
 	yacc -dl  -t -v -ppp_ pp.y
 	mv y.tab.c pp.cpp
-	mv y.tab.h pp_lexer.h</CustomPreBuild>
+	mv y.tab.h pp_lexer.h
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <GlobalSettings>

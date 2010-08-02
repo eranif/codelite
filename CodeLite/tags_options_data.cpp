@@ -131,8 +131,13 @@ TagsOptionsData::TagsOptionsData()
 		, m_minWordLen    (3)
 		, m_parserEnabled (true)
 		, m_maxItemToColour(1000)
+#ifdef __WXMSW__
+		, m_macrosFiles   (wxT("_mingw.h bits/c++config.h"))
+#else
+		, m_macrosFiles   (wxT("sys/cdefs.h bits/c++config.h"))
+#endif
 {
-	SetVersion(wxT("2.8.1"));
+	SetVersion(wxT("2.8.2"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =
@@ -157,7 +162,7 @@ wxT("WXDLLEXPORT\n")
 wxT("WXDLLIMPORT\n")
 wxT("__MINGW_ATTRIB_PURE\n")
 wxT("__MINGW_ATTRIB_MALLOC\n")
-wxT("__GOMP_NOTHROW")
+wxT("__GOMP_NOTHROW\n")
 wxT("wxT\n")
 wxT("SCI_SCOPE(%0)=%0\n")
 wxT("WINBASEAPI\n")
@@ -197,11 +202,9 @@ wxT("QT_END_HEADER\n")
 wxT("Q_REQUIRED_RESULT\n")
 wxT("Q_INLINE_TEMPLATE\n")
 wxT("Q_OUTOFLINE_TEMPLATE\n")
-wxT("_GLIBCXX_BEGIN_NAMESPACE(std)=namespace std{\n")
-wxT("_GLIBCXX_BEGIN_NAMESPACE(__gnu_cxx)=namespace __gnu_cxx{\n")
+wxT("_GLIBCXX_BEGIN_NAMESPACE(%0)=namespace %0{\n")
 wxT("_GLIBCXX_END_NAMESPACE=}\n")
-wxT("_GLIBCXX_BEGIN_NESTED_NAMESPACE(std, _GLIBCXX_STD)=namespace std{\n")
-wxT("_GLIBCXX_BEGIN_NESTED_NAMESPACE(std, _GLIBCXX_STD_D)=namespace std{\n")
+wxT("_GLIBCXX_BEGIN_NESTED_NAMESPACE(%0, %1)=namespace %0{\n")
 wxT("_GLIBCXX_END_NESTED_NAMESPACE=}\n")
 wxT("_GLIBCXX_STD=std\n")
 wxT("__const=const\n")
@@ -250,6 +253,7 @@ void TagsOptionsData::Serialize(Archive &arch)
 	arch.Write     (wxT("m_parserEnabled"),     m_parserEnabled);
 	arch.Write     (wxT("m_parserExcludePaths"),m_parserExcludePaths);
 	arch.Write     (wxT("m_maxItemToColour"),   m_maxItemToColour);
+	arch.Write     (wxT("m_macrosFiles"),       m_macrosFiles);
 }
 
 void TagsOptionsData::DeSerialize(Archive &arch)
@@ -265,6 +269,7 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	arch.Read     (wxT("m_parserEnabled"),     m_parserEnabled);
 	arch.Read     (wxT("m_parserExcludePaths"),m_parserExcludePaths);
 	arch.Read     (wxT("m_maxItemToColour"),   m_maxItemToColour);
+	arch.Read     (wxT("m_macrosFiles"),       m_macrosFiles);
 
 	// since of build 3749, we *always* set CC_ACCURATE_SCOPE_RESOLVING to true
 	DoUpdateTokensWxMapReversed();
@@ -285,18 +290,23 @@ wxString TagsOptionsData::ToString()
 	std::map<wxString, wxString>::iterator iter = tokensMap.begin();
 
 	if(tokensMap.empty() == false) {
-		options = wxT(" -I");
 		for(; iter != tokensMap.end(); iter++) {
 			if(!iter->second.IsEmpty() || (iter->second.IsEmpty() && iter->first.Find(wxT("%0")) != wxNOT_FOUND)) {
 				// Key = Value pair. Place this one in the output file
 				file_content << iter->first << wxT("=") << iter->second << wxT("\n");
 			} else {
+
+				if(options.IsEmpty())
+					options = wxT(" -I");
+
 				options << iter->first;
 				options << wxT(",");
 			}
 		}
 
-		options.RemoveLast();
+		if(options.IsEmpty() == false)
+			options.RemoveLast();
+
 		options += wxT(" ");
 	}
 

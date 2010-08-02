@@ -94,7 +94,7 @@ extern int pp_parse();
 <PP>else                    { if(in_if_1 == 1) in_if_1 = 0;RET_VAL(PP_ELSE);      }
 <PP>elif                    { if(in_if_1 == 1) in_if_1--;RET_VAL(PP_ELIF);        }
 <PP>endif                   { if(in_if_1) in_if_1--; RET_VAL(PP_ENDIF);           }
-<PP>include                 { RET_VAL(PP_INCLUDE);                                }
+<PP>include                 { BEGIN(incl); RET_VAL(PP_INCLUDE);                   }
 <PP>\n                      { BEGIN(INITIAL);                                     }
 <PP>.                       {}
 <ifdef_state>__cplusplus    { RET_VAL(PP_CPLUSPLUS);                              }
@@ -122,6 +122,8 @@ extern int pp_parse();
 <define_state_definition>\r          {}
 <define_state_definition>.           { _definition += yytext;}
 .                                    {}
+<incl>\n                             {BEGIN(INITIAL);}
+<incl>.                              {}
 
 <define_generic_c_comment>"*/" {
 	BEGIN(return_to_state);

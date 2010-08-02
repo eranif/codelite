@@ -41,6 +41,11 @@
 #include <wx/wx.h>
 #endif //WX_PRECOMP
 
+#include <wx/tokenzr.h>
+#include "pp_include.h"
+#include "pluginmanager.h"
+#include "pptable.h"
+#include "ieditor.h"
 #include "tags_options_dlg.h"
 #include "ctags_manager.h"
 #include "windowattrmanager.h"
@@ -51,8 +56,8 @@
 //---------------------------------------------------------
 
 TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data)
-		: TagsOptionsBaseDlg( parent )
-		, m_data(data)
+	: TagsOptionsBaseDlg( parent )
+	, m_data(data)
 {
 	m_colour_flags = m_data.GetCcColourFlags();
 	InitValues();
@@ -80,23 +85,24 @@ void TagsOptionsDlg::InitValues()
 	m_checkBoxretagWorkspaceOnStartup->SetValue    (m_data.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ? true : false);
 	m_checkBoxDeepUsingNamespaceResolving->SetValue(m_data.GetFlags() & CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING ? true : false);
 
-	m_checkBoxClass->SetValue                     (m_data.GetCcColourFlags() & CC_COLOUR_CLASS);
-	m_checkBoxEnum->SetValue                      (m_data.GetCcColourFlags() & CC_COLOUR_ENUM);
-	m_checkBoxFunction->SetValue                  (m_data.GetCcColourFlags() & CC_COLOUR_FUNCTION);
-	m_checkBoxMacro->SetValue                     (m_data.GetCcColourFlags() & CC_COLOUR_MACRO);
-	m_checkBoxNamespace->SetValue                 (m_data.GetCcColourFlags() & CC_COLOUR_NAMESPACE);
-	m_checkBoxPrototype->SetValue                 (m_data.GetCcColourFlags() & CC_COLOUR_PROTOTYPE);
-	m_checkBoxStruct->SetValue                    (m_data.GetCcColourFlags() & CC_COLOUR_STRUCT);
-	m_checkBoxTypedef->SetValue                   (m_data.GetCcColourFlags() & CC_COLOUR_TYPEDEF);
-	m_checkBoxUnion->SetValue                     (m_data.GetCcColourFlags() & CC_COLOUR_UNION);
-	m_checkBoxEnumerator->SetValue                (m_data.GetCcColourFlags() & CC_COLOUR_ENUMERATOR);
-	m_checkBoxMember->SetValue                    (m_data.GetCcColourFlags() & CC_COLOUR_MEMBER);
-	m_checkBoxVariable->SetValue                  (m_data.GetCcColourFlags() & CC_COLOUR_VARIABLE);
-	m_listBoxSearchPaths->Append                  (m_data.GetParserSearchPaths() );
-	m_listBoxSearchPaths1->Append                 (m_data.GetParserExcludePaths() );
-	m_spinCtrlMaxItemToColour->SetValue           (m_data.GetMaxItemToColour() );
-	m_textPrep->SetValue                          (m_data.GetTokens());
-	m_textTypes->SetValue                         (m_data.GetTypes());
+	m_checkBoxClass->SetValue                      (m_data.GetCcColourFlags() & CC_COLOUR_CLASS);
+	m_checkBoxEnum->SetValue                       (m_data.GetCcColourFlags() & CC_COLOUR_ENUM);
+	m_checkBoxFunction->SetValue                   (m_data.GetCcColourFlags() & CC_COLOUR_FUNCTION);
+	m_checkBoxMacro->SetValue                      (m_data.GetCcColourFlags() & CC_COLOUR_MACRO);
+	m_checkBoxNamespace->SetValue                  (m_data.GetCcColourFlags() & CC_COLOUR_NAMESPACE);
+	m_checkBoxPrototype->SetValue                  (m_data.GetCcColourFlags() & CC_COLOUR_PROTOTYPE);
+	m_checkBoxStruct->SetValue                     (m_data.GetCcColourFlags() & CC_COLOUR_STRUCT);
+	m_checkBoxTypedef->SetValue                    (m_data.GetCcColourFlags() & CC_COLOUR_TYPEDEF);
+	m_checkBoxUnion->SetValue                      (m_data.GetCcColourFlags() & CC_COLOUR_UNION);
+	m_checkBoxEnumerator->SetValue                 (m_data.GetCcColourFlags() & CC_COLOUR_ENUMERATOR);
+	m_checkBoxMember->SetValue                     (m_data.GetCcColourFlags() & CC_COLOUR_MEMBER);
+	m_checkBoxVariable->SetValue                   (m_data.GetCcColourFlags() & CC_COLOUR_VARIABLE);
+	m_listBoxSearchPaths->Append                   (m_data.GetParserSearchPaths() );
+	m_listBoxSearchPaths1->Append                  (m_data.GetParserExcludePaths() );
+	m_spinCtrlMaxItemToColour->SetValue            (m_data.GetMaxItemToColour() );
+	m_textPrep->SetValue                           (m_data.GetTokens());
+	m_textTypes->SetValue                          (m_data.GetTypes());
+	m_textCtrlFilesList->SetValue                  (m_data.GetMacrosFiles());
 
 	m_textFileSpec->SetValue(m_data.GetFileSpec());
 	m_comboBoxLang->Clear();
@@ -104,10 +110,14 @@ void TagsOptionsDlg::InitValues()
 	if ( m_data.GetLanguages().IsEmpty() == false ) {
 		wxString lan = m_data.GetLanguages().Item(0);
 		m_comboBoxLang->SetStringSelection(lan);
+
 	} else {
 		m_comboBoxLang->Append(wxT("c++"));
 		m_comboBoxLang->SetSelection(0);
+
 	}
+
+
 }
 
 void TagsOptionsDlg::OnButtonOK(wxCommandEvent &event)
@@ -163,6 +173,7 @@ void TagsOptionsDlg::CopyData()
 	m_data.SetParserSearchPaths( m_listBoxSearchPaths->GetStrings() );
 	m_data.SetParserExcludePaths( m_listBoxSearchPaths1->GetStrings() );
 	m_data.SetMaxItemToColour( m_spinCtrlMaxItemToColour->GetValue() );
+	m_data.SetMacrosFiles( m_textCtrlFilesList->GetValue() );
 
 }
 
@@ -193,7 +204,7 @@ void TagsOptionsDlg::OnAddSearchPath(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	wxString new_path = wxDirSelector(wxT("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-	if(new_path.IsEmpty() == false){
+	if(new_path.IsEmpty() == false) {
 		if(m_listBoxSearchPaths->GetStrings().Index(new_path) == wxNOT_FOUND) {
 			m_listBoxSearchPaths->Append(new_path);
 		}
@@ -234,7 +245,7 @@ void TagsOptionsDlg::OnAddExcludePath(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	wxString new_path = wxDirSelector(wxT("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-	if(new_path.IsEmpty() == false){
+	if(new_path.IsEmpty() == false) {
 		if(m_listBoxSearchPaths1->GetStrings().Index(new_path) == wxNOT_FOUND) {
 			m_listBoxSearchPaths1->Append(new_path);
 		}
@@ -271,3 +282,45 @@ void TagsOptionsDlg::OnRemoveExcludePathUI(wxUpdateUIEvent& e)
 	e.Enable(m_listBoxSearchPaths1->GetSelection() != wxNOT_FOUND);
 }
 
+void TagsOptionsDlg::OnFileSelectedUI(wxUpdateUIEvent& event)
+{
+	event.Enable( m_textCtrlFilesList->GetValue().IsEmpty() == false);
+}
+
+void TagsOptionsDlg::OnParse(wxCommandEvent& event)
+{
+	// Prepate list of files to work on
+	wxArrayString files = wxStringTokenize(m_textCtrlFilesList->GetValue(), wxT(" \t"), wxTOKEN_STRTOK);
+	wxArrayString searchPaths = m_listBoxSearchPaths->GetStrings();
+
+	wxArrayString fullpathsArr;
+
+	for(size_t i=0; i<files.size(); i++) {
+		wxString file = files[i].Trim().Trim(false);
+		if(file.IsEmpty())
+			continue;
+
+		for(size_t xx=0; xx<searchPaths.size(); xx++) {
+			wxString fullpath;
+			fullpath << searchPaths.Item(xx) << wxFileName::GetPathSeparator() << file;
+			wxFileName fn(fullpath);
+			if(fn.FileExists()) {
+				fullpathsArr.Add(fn.GetFullPath());
+				break;
+			}
+		}
+	}
+
+	// Clear the PreProcessor table
+	PPTable::Instance()->Clear();
+	for(size_t i=0; i<fullpathsArr.size(); i++)
+		PPScan( fullpathsArr.Item(i) );
+
+	// Open an editor and print out the results
+	IEditor * editor = PluginManager::Get()->NewEditor();
+	if(editor) {
+		editor->AppendText( PPTable::Instance()->Export() );
+		CopyData();
+		EndModal(wxID_OK);
+	}
+}

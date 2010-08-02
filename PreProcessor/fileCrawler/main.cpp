@@ -10,11 +10,11 @@ void searchAndReplaceA();
 void searchAndReplaceW();
 
 int main(int argc, char **argv) {
-	//testMacros();
-	for(size_t i=0; i<100; i++) {
-		//printf("searchAndReplaceA\n");
-		searchAndReplaceA();
-	}
+	testMacros();
+//	for(size_t i=0; i<100; i++) {
+//		//printf("searchAndReplaceA\n");
+//		searchAndReplaceA();
+//	}
 	return 0;
 }
 
@@ -72,7 +72,7 @@ void testMacros() {
 	//PPScan(wxT("C:/Users/eran/src/MinGW-4.4.1/lib/gcc/mingw32/4.4.1/include/c++/mingw32/bits/c++config.h"));
 	//PPScan(wxT("C:/Users/eran/src/wxWidgets-2.8.10/include/wx/defs.h"));
 	//PPScan(wxT("C:/Users/eran/src/MinGW-4.4.1/include/_mingw.h"));
-	PPScan(wxT("C:/Users/eran/src/wxWidgets-2.8.10/include/wx/dlimpexp.h"));
+	PPScan(wxT("C:/1.cpp"));
 
 	// Export it into codelite's format
 	wxString table = PPTable::Instance()->Export();

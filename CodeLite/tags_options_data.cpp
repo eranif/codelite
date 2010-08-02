@@ -137,7 +137,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_macrosFiles   (wxT("sys/cdefs.h bits/c++config.h"))
 #endif
 {
-	SetVersion(wxT("2.8.2"));
+	SetVersion(wxT("3.0"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =

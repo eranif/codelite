@@ -5,6 +5,23 @@
 #include <wx/fileconf.h>
 #include "editor_config.h"
 
+// Helper method
+static wxArrayString ExecCommand(const wxString &cmd)
+{
+	wxArrayString outputArr;
+#ifdef __WXMSW__	
+	ProcUtils::SafeExecuteCommand(cmd, outputArr);
+#else
+	wxArrayString o, e;
+	wxExecute(cmd, o, e);
+	outputArr = o;
+	for(size_t i=0; i<e.size(); i++)
+		outputArr.Add(e.Item(i));
+	
+#endif
+	return outputArr;
+}
+
 IncludePathLocator::IncludePathLocator(IManager *mgr)
 		: m_mgr(mgr)
 {
@@ -17,13 +34,10 @@ IncludePathLocator::~IncludePathLocator()
 void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePaths)
 {
 	// Common compiler paths - should be placed at top of the include path!
-
 	wxString tmpfile = wxFileName::CreateTempFileName(wxT("codelite"));
-
-	wxArrayString outputArr;
-	ProcUtils::SafeExecuteCommand(wxString::Format(wxT("cpp -x c++ -v %s"), tmpfile.c_str()), outputArr);
+	wxArrayString outputArr = ExecCommand(wxString::Format(wxT("cpp -x c++ -v %s"), tmpfile.c_str()));
 	wxRemoveFile(tmpfile);
-
+	
 	// Analyze the output
 	bool collect(false);
 	for(size_t i=0; i<outputArr.GetCount(); i++) {
@@ -60,7 +74,7 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 	// Run: qmake -query QT_INSTALL_PREFIX
 	wxString cmd;
 	cmd << qmake << wxT(" -query QT_INSTALL_PREFIX");
-	ProcUtils::SafeExecuteCommand(cmd, out);
+	out = ExecCommand(cmd);
 
 	if (out.IsEmpty() == false ) {
 
@@ -164,7 +178,7 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 #else
 	// run wx-config and parse the output
 	out.Clear();
-	ProcUtils::SafeExecuteCommand(wxT("wx-config --cxxflags"), out);
+	out = ExecCommand(wxT("wx-config --cxxflags"));
 	if (out.IsEmpty() == false) {
 		wxString line ( out.Item(0) );
 		int where = line.Find(wxT(" -I"));

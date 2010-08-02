@@ -5,6 +5,19 @@
 #include <map>
 #include <wx/ffile.h>
 #include <vector>
+#include <string>
+#include <list>
+
+struct CLReplacement {
+	bool                        is_compound;
+	bool                        is_ok;
+	std::string                 full_pattern;
+	std::string                 searchFor;
+	std::string                 replaceWith;
+	void construct(const std::string& pattern, const std::string& replacement);
+};
+
+typedef std::list<CLReplacement> CLReplacementList;
 
 /**
  * @brief perform search and replace using CL pattern
@@ -32,7 +45,7 @@ bool CLReplacePattern(const wxString &in, const wxString& pattern, const wxStrin
  *
  * It also supports simple search and replace
  */
-bool CLReplacePatternA(const std::string& in, const std::string& pattern, const std::string& replacement, std::string & output);
+bool CLReplacePatternA(const std::string& in, const CLReplacement& repl, std::string& outStr);
 
 struct PPToken {
     enum {

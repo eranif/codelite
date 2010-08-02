@@ -1,9 +1,11 @@
 #include "utils.h"
+#include <wx/tokenzr.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <wx/string.h>
 #include <wx/regex.h>
+#include <wx/arrstr.h>
 #include <map>
 #include "pptable.h"
 
@@ -96,12 +98,86 @@ bool is_process_alive(long pid)
 #endif
 }
 
-extern "C" char* clPatternReplace(const char* src, const char* key, const char* value)
-{
-	std::string output;
-	if(CLReplacePatternA(src, key, value, output)) {
-		return strdup( output.c_str());
-	}else{
-		return NULL;
+static char *load_file(const char *fileName) {
+	FILE *fp;
+	long len;
+	char *buf = NULL;
+
+	fp = fopen(fileName, "rb");
+	if (!fp) {
+		return 0;
 	}
+
+
+	fseek(fp, 0, SEEK_END);
+	len = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	buf = (char *)malloc(len+1);
+
+
+	long bytes = fread(buf, sizeof(char), len, fp);
+	if (bytes != len) {
+		fclose(fp);
+		free(buf);
+		return 0;
+	}
+
+	buf[len] = 0;	// make it null terminated string
+	fclose(fp);
+	return buf;
+}
+
+static CLReplacementList replacements;
+static int first = 1;
+
+extern "C" char* ctagsReplacements(char* result)
+{
+	
+	/**
+	 * try to load the file once 
+	 **/
+	 
+	if( first ) {
+		char *content = (char*)0;
+		char *file_name = getenv("CTAGS_REPLACEMENTS");
+
+		first = 0;
+		if(file_name) {
+			/* open the file */
+			content = load_file(file_name);
+			if(content) {
+				wxArrayString lines = wxStringTokenize(wxString::From8BitData(content), wxT("\n"), wxTOKEN_STRTOK);
+				free(content);
+				
+				for(size_t i=0; i<lines.GetCount(); i++) {
+					wxString pattern = lines.Item(i).BeforeFirst(wxT('='));
+					wxString replace = lines.Item(i).AfterFirst(wxT('='));
+					
+					pattern.Trim().Trim(false);
+					replace.Trim().Trim(false);
+					
+					CLReplacement repl;
+					repl.construct(pattern.To8BitData().data(), replace.To8BitData().data());
+					if(repl.is_ok) {
+						replacements.push_back( repl );
+					}
+				}
+			}
+		}
+	}
+
+	if( replacements.empty() == false ) {
+
+		std::string outStr = result;
+		CLReplacementList::iterator iter = replacements.begin();
+		for(; iter != replacements.end(); iter++) {
+			CLReplacePatternA(outStr, *iter, outStr);
+		}
+		
+		if(outStr == result)
+			return NULL;
+			
+		return strdup(outStr.c_str());
+	}
+	return NULL;
 }

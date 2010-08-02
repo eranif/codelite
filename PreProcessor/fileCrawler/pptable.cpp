@@ -287,7 +287,7 @@ bool PPToken::readInitList(const std::string& in, size_t from, std::string& init
 
 bool PPToken::readInitList(const wxString &in, int from, wxString& initList, wxArrayString& initListArr)
 {
-	if(in.Length() < from) {
+	if((int)in.Length() < from) {
 		return false;
 	}
 
@@ -298,7 +298,7 @@ bool PPToken::readInitList(const wxString &in, int from, wxString& initList, wxA
 	}
 	tmpString = tmpString.Mid(start+1);
 
-	for(size_t i=0; i<start; i++) {
+	for(size_t i=0; i<(size_t)start; i++) {
 		initList << wxT(" ");
 	}
 
@@ -503,64 +503,81 @@ bool CLReplacePattern(const wxString& in, const wxString& pattern, const wxStrin
 
 std::string replacement;
 
-bool CLReplacePatternA(const std::string& in, const std::string& pattern, const std::string& replaceWith, std::string& outStr)
+bool CLReplacePatternA(const std::string& in, const CLReplacement& repl, std::string& outStr)
 {
-	size_t where = pattern.find("%0");
-	if(where != std::string::npos) {
-		replacement = replaceWith;
-
-		// a patterened expression
-		where = pattern.find('(');
-		if(where == std::string::npos)
-			return false;
-
-		std::string searchFor = pattern.substr(0, where);
-		where = in.find(searchFor);
+	if(repl.is_compound) {
+		size_t where = in.find(repl.searchFor);
 		if(where == std::string::npos)
 			return false;
 			
 		std::string              initList;
 		std::vector<std::string> initListArr;
-		if(PPToken::readInitList(in, searchFor.length() + where, initList, initListArr) == false)
+		if(PPToken::readInitList(in, repl.searchFor.length() + where, initList, initListArr) == false)
 			return false;
 
-        char placeHolder[4];
-		outStr = in;
 		// update the 'replacement' with the actual values ( replace %0..%n)
+		replacement = repl.replaceWith;
+		char placeHolder[4];
 		for(size_t i=0; i<initListArr.size(); i++) {
-
+				
             memset(placeHolder, 0, sizeof(placeHolder));
             sprintf(placeHolder, "%%%d", (int)i);
 
-            // replace all occurances of the placeholder
-            size_t pos = replacement.find(placeHolder);
+			size_t pos = replacement.find(placeHolder);
+			const std::string& init = initListArr[i];
             while( pos != std::string::npos ) {
+				replacement.replace(pos, strlen(placeHolder), init.c_str());
 				
-				// if the replacement and replacee are the same skip it (or incase the replacement contains the replacee)
-				const std::string& init = initListArr[i];
-				if(init.find(placeHolder) != std::string::npos)
-					break;
-					
-                replacement.replace(pos, strlen(placeHolder), init.c_str());
-                pos = replacement.find(placeHolder);
+				// search for the next match
+                pos = replacement.find(placeHolder, pos + 1);
             }
 		}
 		
-		where = outStr.find(searchFor);
+		outStr = in;
+		where = outStr.find(repl.searchFor);
 		if(where == std::string::npos)
 			return false;
 			
-		outStr.erase(where, searchFor.length() + initList.length());
-		outStr.insert(where, replacement);
+		outStr.replace(where, repl.searchFor.length() + initList.length(), replacement);
 		return true;
 
 	} else {
-		if(in.find(pattern) == std::string::npos) {
+		size_t where = in.find(repl.searchFor);
+		if(where == std::string::npos) {
 			return false;
 		}
 		
+		outStr = in;
+		outStr.replace(where, repl.searchFor.length(), repl.replaceWith);
+		
 		// simple replacement
-		outStr = ReplaceWordA(in, pattern, replaceWith);
 		return outStr != in;
+	}
+}
+
+void CLReplacement::construct(const std::string& pattern, const std::string& replacement)
+{
+	is_ok = true;
+	full_pattern = pattern;
+	is_compound  = full_pattern.find("%0") != std::string::npos;
+	if(is_compound) {
+		// a patterened expression
+		replaceWith = replacement;
+		size_t where = pattern.find('(');
+		if(where == std::string::npos) {
+			is_ok = false;
+			return;
+		}
+		
+		searchFor = pattern.substr(0, where);
+		if(searchFor.empty()){
+			is_ok = false;
+			return;
+		}
+		
+	} else {
+		// simple Key=Value pair
+		replaceWith = replacement;
+		searchFor   = full_pattern;
 	}
 }

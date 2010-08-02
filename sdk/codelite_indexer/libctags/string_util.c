@@ -136,7 +136,7 @@ char* string_replace(const char* src, const char* from, const char* to)
 
 	return value;
 }
-
+#if 0
 list_t* string_split(const char* src, const char* delim)
 {
 	list_t *l;
@@ -171,3 +171,4 @@ list_t* string_split(const char* src, const char* delim)
 	return l;
 }
 
+#endif

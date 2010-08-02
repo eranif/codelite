@@ -46,35 +46,6 @@ extern void freeSourceFileResources (void)
 	vStringDelete (File.line);
 }
 
-static char *load_file(const char *fileName) {
-	FILE *fp;
-	long len;
-	char *buf = NULL;
-
-	fp = fopen(fileName, "rb");
-	if (!fp) {
-		return 0;
-	}
-
-
-	fseek(fp, 0, SEEK_END);
-	len = ftell(fp);
-	fseek(fp, 0, SEEK_SET);
-	buf = (char *)malloc(len+1);
-
-
-	long bytes = fread(buf, sizeof(char), len, fp);
-	if (bytes != len) {
-		fclose(fp);
-		free(buf);
-		return 0;
-	}
-
-	buf[len] = 0;	// make it null terminated string
-	fclose(fp);
-	return buf;
-}
-
 /*
  *   Source file access functions
  */
@@ -442,63 +413,6 @@ static vString *iFileGetLine (void)
 		}
 	}
 	return result;
-}
-
-char* ctagsReplacements(char* result)
-{
-	static list_t *replacements = (list_t *)0;
-	static int first = 1;
-	
-	/* try to load the file once */
-	if( first ) {
-		char *content = (char*)0;
-		char *file_name = getenv("CTAGS_REPLACEMENTS");
-
-		first = 0;
-		if(file_name) {
-			/* open the file */
-			content = load_file(file_name);
-			if(content) {
-				replacements = string_split(content, "=");
-				free(content);
-			}
-		}
-	}
-
-	if( result && replacements && replacements->size ) {
-
-		int first_loop = 1;
-		char *src = result;
-		char *new_str = src;
-		char *tmp = 0;
-		list_node_t *node = replacements->head;
-
-		while( node ) {
-			char *find_what    = ((string_pair_t*)node->data)->key;
-			char *replace_with = ((string_pair_t*)node->data)->data;
-			
-			tmp = clPatternReplace(new_str, find_what, replace_with);
-			if(tmp == NULL) {
-				node = node->next;
-				continue;
-			}
-			
-			if(!first_loop) {
-				free(new_str);
-			}
-
-			new_str = tmp;
-			first_loop = 0;
-			
-			/* advance to next item in the list */
-			node = node->next;
-		}
-
-		if(new_str != result) {
-			return new_str;
-		}
-	}
-	return NULL;
 }
 
 /*  Do not mix use of fileReadLine () and fileGetc () for the same file.

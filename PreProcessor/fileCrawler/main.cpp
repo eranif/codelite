@@ -54,14 +54,13 @@ void searchAndReplaceA() {
 		wxString content;
 		input.ReadAll(&content);
 		wxArrayString lines = wxStringTokenize(content, wxT("\n"), wxTOKEN_STRTOK);
+		CLReplacement repl;
+		repl.construct("WXUNUSED(%0)", "%0");
 		for(size_t i=0; i<lines.GetCount(); i++) {
+			
 			std::string  inStr       = lines.Item(i).mb_str(wxConvUTF8).data();
-			std::string  pattern     = "WXUNUSED(%0)";
-			std::string  replaceWith = "%0";
-			std::string  output;
-
-			output = inStr;
-			while(CLReplacePatternA(output, pattern, replaceWith, output)) {}
+			std::string output = inStr;
+			while(CLReplacePatternA(output, repl, output)) {}
 		}
 	}
 }

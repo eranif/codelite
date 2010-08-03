@@ -14,6 +14,7 @@
 %x define_state_signature
 %x define_state_definition
 %x define_generic_c_comment
+%x define_generic_cpp_comment
 %x ifdef_state
 
 %option yylineno
@@ -108,6 +109,13 @@ extern int pp_parse();
 <define_state>\n            { BEGIN(INITIAL);}
 <define_state>.             {}
 <define_state_2>[ \t]       {}
+<define_state_2>"/*"        { return_to_state = define_state_2; BEGIN(define_generic_c_comment);}
+<define_state_2>"//"        { 
+	BEGIN(define_generic_cpp_comment);
+	_definition.clear(); 
+	g_definition.Clear(); 
+	RET_VAL(PP_COMPLEX_REPLACEMENT);
+}
 <define_state_2>"("         { BEGIN(define_state_signature); RET_VAL(((int)'(')); }
 <define_state_2>\n          { BEGIN(INITIAL); _definition.clear(); g_definition.Clear(); RET_VAL(PP_COMPLEX_REPLACEMENT);}
 <define_state_2>.           { BEGIN(define_state_definition);   _definition = yytext;}
@@ -116,6 +124,11 @@ extern int pp_parse();
 <define_state_signature>")"          { BEGIN(define_state_definition); _definition.clear(); g_definition.Clear(); RET_VAL(((int)*yytext));}
 <define_state_signature>.            {}
 <define_state_definition>"/*"        { return_to_state = define_state_definition; BEGIN(define_generic_c_comment);}
+<define_state_definition>"//"        { 
+	BEGIN(define_generic_cpp_comment);
+	g_definition = wxString::From8BitData(_definition.c_str()); 
+	RET_VAL(PP_COMPLEX_REPLACEMENT);
+}
 <define_state_definition>\\\n        {}
 <define_state_definition>\n          { BEGIN(INITIAL); g_definition = wxString::From8BitData(_definition.c_str()); RET_VAL(PP_COMPLEX_REPLACEMENT);}
 <define_state_definition>\t          { _definition += " ";}
@@ -130,6 +143,11 @@ extern int pp_parse();
 }
 
 <define_generic_c_comment>.  {}
+
+<define_generic_cpp_comment>\n {
+	BEGIN(INITIAL);
+}
+<define_generic_cpp_comment>. {}
 
 <cpp_comment>\n {
 	BEGIN(INITIAL);

@@ -1,5 +1,6 @@
 #include "pptable.h"
 #include <wx/tokenzr.h>
+#include <set>
 
 bool IsWordChar(const wxString &s, int strSize)
 {
@@ -192,11 +193,30 @@ wxString PPToken::fullname()
 
 void PPToken::squeeze()
 {
+	std::set<wxString> alreadyReplacedMacros;
+	
 	// perform the squeeze 5 times max
 	for(size_t count=0; count < 5; count++) {
 		bool modified(false);
+		
 		// get list of possible macros in the replacement
-		wxArrayString words = TokenizeWords(replacement);
+		wxArrayString tmpWords = TokenizeWords(replacement);
+		wxArrayString words;
+		
+		// make sure that a word is not been replaced more than once
+		// this will avoid recursion
+		// an example (taken from qglobal.h of the Qt library):
+		//
+		// #define qDebug QT_NO_QDEBUG_MACRO
+		// #define QT_NO_QDEBUG_MACRO if(1); else qDebug
+		//
+		for(size_t i=0; i<tmpWords.size(); i++) {
+			if(alreadyReplacedMacros.find(tmpWords.Item(i)) == alreadyReplacedMacros.end()){
+				alreadyReplacedMacros.insert(tmpWords[i]);
+				words.Add(tmpWords[i]);
+			}
+		}
+		
 		for(size_t i=0; i<words.size(); i++) {
 			PPToken tok = PPTable::Instance()->Token(words.Item(i));
 			if(tok.flags & IsValid) {

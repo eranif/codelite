@@ -12,7 +12,8 @@ class CLAuiDockArt : public wxAuiDefaultDockArt
 public:
 	CLAuiDockArt();
 	virtual ~CLAuiDockArt();
-
+	
+	void DrawBackground(wxDC& dc, wxWindow* window, int oriantation, const wxRect& rect);
 	void DrawPaneButton(wxDC& dc, wxWindow *window, int button, int button_state, const wxRect& rect, wxAuiPaneInfo& pane);
 };
 #endif // __clauidockart__

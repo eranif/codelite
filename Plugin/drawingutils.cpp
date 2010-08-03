@@ -391,3 +391,55 @@ wxColor DrawingUtils::GetTextCtrlTextColour()
 	return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 #endif
 }
+
+wxColor DrawingUtils::GetMenuTextColour()
+{
+#ifdef __WXGTK__
+	static bool     intitialized(false);
+	static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT));
+
+	if( !intitialized ) {
+		// try to get the background colour from a menu
+		GtkWidget *menuBar = gtk_menu_new();
+		GtkStyle   *def = gtk_rc_get_style( menuBar );
+		if(!def)
+			def = gtk_widget_get_default_style();
+
+		if(def) {
+			GdkColor col = def->text[GTK_STATE_NORMAL];
+			textColour = wxColour(col);
+		}
+		gtk_widget_destroy( menuBar );
+		intitialized = true;
+	}
+	return textColour;
+#else
+	return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT);
+#endif
+}
+
+wxColor DrawingUtils::GetMenuBarBgColour()
+{
+#ifdef __WXGTK__
+	static bool     intitialized(false);
+	static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+
+	if( !intitialized ) {
+		// try to get the background colour from a menu
+		GtkWidget *menuBar = gtk_menu_bar_new();
+		GtkStyle   *def = gtk_rc_get_style( menuBar );
+		if(!def)
+			def = gtk_widget_get_default_style();
+
+		if(def) {
+			GdkColor col = def->bg[GTK_STATE_NORMAL];
+			textColour = wxColour(col);
+		}
+		gtk_widget_destroy( menuBar );
+		intitialized = true;
+	}
+	return textColour;
+#else
+	return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+#endif
+}

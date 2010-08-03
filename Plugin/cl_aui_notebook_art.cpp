@@ -91,7 +91,7 @@ clAuiTabArt::clAuiTabArt()
 	m_fixed_tab_width = 100;
 	m_tab_ctrl_height = 0;
 
-	wxColour base_colour = DrawingUtils::GetPanelBgColour();
+	wxColour base_colour = DrawingUtils::GetMenuBarBgColour();
 	m_base_colour = base_colour;
 
 #ifdef __WXGTK__
@@ -343,7 +343,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 	} else {
 		// draw inactive tab
 #ifdef __WXGTK__
-		wxColour shadeColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+		wxColour shadeColour = m_base_colour;
 #else
 		wxColour shadeColour = DrawingUtils::DarkColour(m_base_colour, 2.0);
 #endif
@@ -423,7 +423,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 	                                   tab_width - (text_offset-tab_x) - close_button_width);
 
 	// draw tab text
-	dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	dc.SetTextForeground( DrawingUtils::GetMenuTextColour());
 	dc.DrawText(draw_text,
 	            text_offset,
 	            drawn_tab_yoff + (drawn_tab_height)/2 - (texty/2) - 1);

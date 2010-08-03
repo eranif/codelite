@@ -1,6 +1,7 @@
 #include "clauidockart.h"
 #include <wx/image.h>
 #include <wx/dc.h>
+#include "drawingutils.h"
 
 #include "tabicons.h"
 
@@ -44,4 +45,18 @@ void CLAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
 		wxAuiDefaultDockArt::DrawPaneButton(dc, window, button, button_state, rect, pane);
 		break;
 	}
+}
+
+void CLAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int oriantation, const wxRect& rect)
+{
+    dc.SetPen(*wxTRANSPARENT_PEN);
+#ifdef __WXMAC__
+    // we have to clear first, otherwise we are drawing a light striped pattern
+    // over an already darker striped background
+    dc.SetBrush(*wxWHITE_BRUSH) ;
+    dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
+#else
+	dc.SetBrush( DrawingUtils::GetMenuBarBgColour() );
+#endif
+    dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
 }

@@ -14,7 +14,7 @@ void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
 #ifdef __WXGTK__
 
-	wxColour baseColour = DrawingUtils::GetPanelBgColour();
+	wxColour baseColour = DrawingUtils::GetMenuBarBgColour();
 	dc.SetPen(baseColour);
 	dc.SetBrush(baseColour);
 	dc.DrawRectangle(rect);

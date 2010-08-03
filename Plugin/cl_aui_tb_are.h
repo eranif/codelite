@@ -16,7 +16,8 @@ class CLMainAuiTBArt : public wxAuiDefaultToolBarArt
 public:
 	CLMainAuiTBArt();
 	virtual ~CLMainAuiTBArt();
-
+	
+    virtual void DrawGripper( wxDC& WXUNUSED(dc), wxWindow* WXUNUSED(wnd), const wxRect& WXUNUSED(rect)){};
 	virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect);
 };
 #endif

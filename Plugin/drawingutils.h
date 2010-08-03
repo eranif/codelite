@@ -35,6 +35,8 @@ public:
 	static wxColor DarkColour (const wxColour& color, float percent);
 	static wxColor GetPanelBgColour();
 	static wxColor GetTextCtrlTextColour();
+	static wxColor GetMenuTextColour();
+	static wxColor GetMenuBarBgColour();
 	
 	static void TruncateText(wxDC& dc, const wxString& text, const int &maxWidth, wxString& fixedText);
 	static void PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const wxColour& startColor, const wxColour& endColor, bool vertical);

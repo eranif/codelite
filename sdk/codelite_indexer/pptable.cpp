@@ -460,7 +460,7 @@ wxString PPTable::Export()
 			// macros with replacement but they are not in a form of a function
 			// we take only macros that thier replacement is not a number
 			long v(-1);
-			if(!replacement.ToLong(&v) && !replacement.ToLong(&v, 8) && !replacement.ToLong(&v, 16)) {
+			if(!replacement.ToLong(&v) && !replacement.ToLong(&v, 8) && !replacement.ToLong(&v, 16) && replacement.find(wxT('"')) == wxString::npos && !replacement.StartsWith(wxT("0x"))) {
 				table << iter->second.fullname() << wxT("=") << replacement << wxT("\n");
 			}
 		}

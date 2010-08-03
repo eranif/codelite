@@ -697,10 +697,6 @@ void Frame::CreateGUIControls(void)
 #ifndef __WXGTK__
 	wxColor col1 = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 5.0);
 	wxColor col2 = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 2.0);
-//	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,   col2);
-//	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR, col2);
-//	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,            col1);
-//	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,          col1);
 #endif
 
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,       wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
@@ -720,10 +716,10 @@ void Frame::CreateGUIControls(void)
 	m_mgr.SetFlags(m_mgr.GetFlags() |    wxAUI_MGR_VENETIAN_BLINDS_HINT);
 #endif
 
-#ifdef __WXMAC__
+#if defined(__WXMAC__)||defined(__WXGTK__)
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
 #else
-	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
+	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 1);
 #endif
 
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
@@ -1267,7 +1263,7 @@ bool Frame::IsEditorEvent(wxEvent &event)
 	MainBook *mainBook   = GetMainBook();
 	if(!mainBook || !mainBook->GetActiveEditor())
 		return false;
-		
+
 	switch (event.GetId())
 	{
 	case wxID_CUT:
@@ -1279,7 +1275,7 @@ bool Frame::IsEditorEvent(wxEvent &event)
 	default:
 		break;
 	}
-	
+
 #else
 
 	// Handle common edit events
@@ -1306,7 +1302,7 @@ bool Frame::IsEditorEvent(wxEvent &event)
 			break;
 		}
 	}
-#endif	
+#endif
 	return true;
 }
 

@@ -453,17 +453,17 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 		return;
 	}
 
+	
 	// send the request
 	if ( !clIndexerProtocol::SendRequest(&client, req) ) {
 		wxPrintf(wxT("Failed to send request to indexer ID [%d]\n"), wxGetProcessId());
 		return;
 	}
-
 	// read the reply
 	clIndexerReply reply;
 	try {
 		if (!clIndexerProtocol::ReadReply(&client, reply)) {
-			wxLogMessage(wxT("codelite_indexer is not responding - restarting it. Input file was:%s"), source.GetFullPath().c_str());
+			//wxLogMessage(wxT("codelite_indexer is not responding - restarting it. Input file was:%s"), source.GetFullPath().c_str());
 			RestartCtagsProcess();
 			return;
 		}

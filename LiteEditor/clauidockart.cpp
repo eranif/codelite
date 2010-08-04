@@ -55,6 +55,7 @@ void CLAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int oriantation, c
     // over an already darker striped background
     dc.SetBrush(*wxWHITE_BRUSH) ;
     dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
+	dc.SetBrush( DrawingUtils::GetPanelBgColour() );
 #else
 	dc.SetBrush( DrawingUtils::GetMenuBarBgColour() );
 #endif

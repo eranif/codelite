@@ -35,8 +35,17 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 {
 	// Common compiler paths - should be placed at top of the include path!
 	wxString tmpfile = wxFileName::CreateTempFileName(wxT("codelite"));
-	wxArrayString outputArr = ExecCommand(wxString::Format(wxT("cpp -x c++ -v %s"), tmpfile.c_str()));
-	wxRemoveFile(tmpfile);
+	wxString command;
+	
+#ifdef __WXMAC__
+	// Mac does not like the standard command
+	command = wxString::Format(wxT("cpp -v -x=c++ %s"), tmpfile.c_str());
+#else
+	command = wxString::Format(wxT("cpp -x c++ -v %s"), tmpfile.c_str());
+#endif
+
+	wxArrayString outputArr = ExecCommand( command );
+	wxRemoveFile( tmpfile );
 	
 	// Analyze the output
 	bool collect(false);
@@ -51,8 +60,15 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 		}
 
 		if(collect) {
-			outputArr.Item(i).Trim().Trim(false);
-			wxFileName includePath(outputArr.Item(i), wxT(""));
+			
+			wxString file = outputArr.Item(i).Trim().Trim(false);
+			
+			// on Mac, (framework directory) appears also, 
+			// but it is harmless to use it under all OSs
+			file.Replace(wxT("(framework directory)"), wxT(""));
+			file.Trim().Trim(false);
+			
+			wxFileName includePath(file, wxT(""));
 			includePath.Normalize();
 
 			paths.Add( includePath.GetPath() );

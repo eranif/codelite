@@ -65,9 +65,12 @@ void CLAuiDockArt::DrawGripper(wxDC& dc, wxWindow* window, const wxRect& rect, w
 #if defined(__WXMSW__)|| defined(__WXMAC__)
 	wxAuiDefaultDockArt::DrawGripper(dc, window, button, button_state, rect, pane);
 #else
-	wxUnusedVar(dc);
 	wxUnusedVar(window);
-	wxUnusedVar(rect);
 	wxUnusedVar(pane);
+	
+    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.SetBrush(DrawingUtils::GetPanelBgColour());
+    dc.DrawRectangle(rect.x, rect.y, rect.width,rect.height);
+	
 #endif
 }

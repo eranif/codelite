@@ -717,7 +717,7 @@ void Frame::CreateGUIControls(void)
 	m_mgr.SetFlags(m_mgr.GetFlags() |    wxAUI_MGR_VENETIAN_BLINDS_HINT);
 #endif
 
-#if defined(__WXMAC__)||defined(__WXGTK__)
+#if defined(__WXMAC__)
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
 #else
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 1);

@@ -55,9 +55,19 @@ void CLAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int oriantation, c
     // over an already darker striped background
     dc.SetBrush(*wxWHITE_BRUSH) ;
     dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
-	dc.SetBrush( DrawingUtils::GetPanelBgColour() );
-#else
-	dc.SetBrush( DrawingUtils::GetMenuBarBgColour() );
 #endif
+	dc.SetBrush( DrawingUtils::GetPanelBgColour() );
     dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
+}
+
+void CLAuiDockArt::DrawGripper(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
+{
+#if defined(__WXMSW__)|| defined(__WXMAC__)
+	wxAuiDefaultDockArt::DrawGripper(dc, window, button, button_state, rect, pane);
+#else
+	wxUnusedVar(dc);
+	wxUnusedVar(window);
+	wxUnusedVar(rect);
+	wxUnusedVar(pane);
+#endif
 }

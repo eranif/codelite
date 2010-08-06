@@ -5,7 +5,7 @@
 // Use new toolbars where possible
 //-----------------------------------
 
-#if defined(__WXMSW__)||defined(__WXMAC__)||defined(__WXGTK__)
+#if defined(__WXMSW__)||defined(__WXMAC__)
 #    if wxCHECK_VERSION(2, 8, 9)
 #        define clToolBar          wxAuiToolBar
 #        define clTB_DEFAULT_STYLE wxAUI_TB_DEFAULT_STYLE
@@ -20,6 +20,5 @@
 #    define clTB_DEFAULT_STYLE wxTB_FLAT | wxTB_NODIVIDER
 #    define USE_AUI_TOOLBAR    0
 #endif
-
 
 #endif // CL_DEFS_H

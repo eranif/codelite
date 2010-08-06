@@ -91,7 +91,7 @@ clAuiTabArt::clAuiTabArt()
 	m_fixed_tab_width = 100;
 	m_tab_ctrl_height = 0;
 
-	wxColour base_colour = DrawingUtils::GetMenuBarBgColour();
+	wxColour base_colour = DrawingUtils::GetPanelBgColour();
 	m_base_colour = base_colour;
 
 #ifdef __WXGTK__
@@ -422,7 +422,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 	                                   tab_width - (text_offset-tab_x) - close_button_width);
 
 	// draw tab text
-	dc.SetTextForeground( DrawingUtils::GetMenuTextColour());
+	dc.SetTextForeground( wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT) );
 	dc.DrawText(draw_text,
 	            text_offset,
 	            drawn_tab_yoff + (drawn_tab_height)/2 - (texty/2) - 1);

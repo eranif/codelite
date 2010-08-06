@@ -105,17 +105,17 @@ clToolBar *Cscope::CreateToolBar(wxWindow *parent)
 
 		// Sample code that adds single button to the toolbar
 		// and associates an image to it
-		BitmapLoader bitmapLoader(wxT("codelite-icons.zip"));
+		BitmapLoader *bitmapLoader = m_mgr->GetStdIcons();
 		if (size == 24) {
 			//use the large icons set
-			tb->AddTool(XRCID("cscope_find_symbol"),                       wxT("Find this C symbol"),                     bitmapLoader.LoadBitmap(wxT("toolbars/24/cscope/find_symbol")),                       wxT("Find this C symbol"));
-			tb->AddTool(XRCID("cscope_functions_calling_this_function"),   wxT("Find functions calling this function"),   bitmapLoader.LoadBitmap(wxT("toolbars/24/cscope/function_calling_this_function")),    wxT("Find functions calling this function"));
-			tb->AddTool(XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), bitmapLoader.LoadBitmap(wxT("toolbars/24/cscope/functions_called_by_this_function")), wxT("Find functions called by this function"));
+			tb->AddTool(XRCID("cscope_find_symbol"),                       wxT("Find this C symbol"),                     bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/find_symbol")),                       wxT("Find this C symbol"));
+			tb->AddTool(XRCID("cscope_functions_calling_this_function"),   wxT("Find functions calling this function"),   bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/function_calling_this_function")),    wxT("Find functions calling this function"));
+			tb->AddTool(XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/functions_called_by_this_function")), wxT("Find functions called by this function"));
 		} else {
 			//16
-			tb->AddTool(XRCID("cscope_find_symbol"),                       wxT("Find this C symbol"),                     bitmapLoader.LoadBitmap(wxT("toolbars/16/cscope/find_symbol")),                       wxT("Find this C symbol"));
-			tb->AddTool(XRCID("cscope_functions_calling_this_function"),   wxT("Find functions calling this function"),   bitmapLoader.LoadBitmap(wxT("toolbars/16/cscope/function_calling_this_function")),    wxT("Find functions calling this function"));
-			tb->AddTool(XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), bitmapLoader.LoadBitmap(wxT("toolbars/16/cscope/functions_called_by_this_function")), wxT("Find functions called by this function"));
+			tb->AddTool(XRCID("cscope_find_symbol"),                       wxT("Find this C symbol"),                     bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/find_symbol")),                       wxT("Find this C symbol"));
+			tb->AddTool(XRCID("cscope_functions_calling_this_function"),   wxT("Find functions calling this function"),   bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/function_calling_this_function")),    wxT("Find functions calling this function"));
+			tb->AddTool(XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/functions_called_by_this_function")), wxT("Find functions called by this function"));
 		}
 		tb->Realize();
 	}

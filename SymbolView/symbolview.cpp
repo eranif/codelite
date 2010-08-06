@@ -120,8 +120,8 @@ void SymbolViewPlugin::LoadImagesAndIndexes()
 	// ATTN: the order of the images in this list determines the sorting of tree children (along with the child names).
 	// That is why we sometimes reload the same image rather than just referring to the prior index.
 
-	m_image[wxT("workspace")]           = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("workspace")));
-	m_image[wxT("project")]             = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("project")));
+	m_image[wxT("workspace")]           = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("workspace/16/workspace")));
+	m_image[wxT("project")]             = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("workspace/16/project")));
 
 	m_image[wxT("h")]                   = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_h")));
 	m_image[wxT("hpp")]                 = m_image[wxT("h")];

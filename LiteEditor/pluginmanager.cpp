@@ -30,6 +30,7 @@
 #include "buildmanager.h"
 #include "jobqueue.h"
 #include "pluginmanager.h"
+#include "bitmap_loader.h"
 #include "pluginsdata.h"
 #include "pluginconfig.h"
 #include "optionsconfig.h"
@@ -608,4 +609,12 @@ IMacroManager* PluginManager::GetMacrosManager()
 bool PluginManager::IsShutdownInProgress() const
 {
 	return ManagerST::Get()->IsShutdownInProgress();
+}
+
+BitmapLoader* PluginManager::GetStdIcons()
+{
+	if(!m_bmpLoader) {
+		m_bmpLoader = new BitmapLoader(wxT("codelite-icons.zip"));
+	}
+	return m_bmpLoader;
 }

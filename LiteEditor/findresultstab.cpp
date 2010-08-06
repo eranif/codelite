@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include "bitmap_loader.h"
 #include <wx/wupdlock.h>
 #include "drawingutils.h"
 #include <wx/tokenzr.h>
@@ -32,6 +33,7 @@
 #include "ctags_manager.h"
 #include "cl_editor.h"
 #include "editor_config.h"
+#include "pluginmanager.h"
 #include "globals.h"
 #include "findresultstab.h"
 #include "search_thread.h"
@@ -94,8 +96,10 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 		SetStyles(m_sci);
 	}
 
+	BitmapLoader &loader = *(PluginManager::Get()->GetStdIcons());
+
 	wxTheApp->Connect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
-	m_tb->AddTool ( XRCID ( "stop_search" ), wxT ( "Stop current search" ), wxXmlResource::Get()->LoadBitmap ( wxT ( "stop_build16" ) ), wxT ( "Stop current search" ) );
+	m_tb->AddTool ( XRCID ( "stop_search" ), wxT ( "Stop current search" ), loader.LoadBitmap(wxT("toolbars/16/build/stop")), wxT ( "Stop current search" ) );
 	Connect( XRCID ( "stop_search" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler ( FindResultsTab::OnStopSearch  ), NULL, this );
 	Connect( XRCID ( "stop_search" ), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler( FindResultsTab::OnStopSearchUI), NULL, this );
 	m_tb->Realize();

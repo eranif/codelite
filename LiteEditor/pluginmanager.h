@@ -40,16 +40,17 @@ class EnvironmentConfig;
 class JobQueue;
 class BuildSettingsConfig;
 class BuildManager;
+class BitmapLoader;
 
 class PluginManager : public IManager
 {
-	std::map<wxString, IPlugin*> m_plugins;
+	std::map<wxString, IPlugin*>   m_plugins;
 	std::list< clDynamicLibrary* > m_dl;
 	std::map<wxString, PluginInfo> m_pluginsInfo;
-	KeyboardManager m_keyboardMgr;
-
+	KeyboardManager                m_keyboardMgr;
+	BitmapLoader    *              m_bmpLoader;
 private:
-	PluginManager() {}
+	PluginManager() : m_bmpLoader(NULL) {}
 	virtual ~PluginManager();
 
 public:
@@ -121,7 +122,7 @@ public:
 	virtual IEditor*               NewEditor();
 	virtual IMacroManager*         GetMacrosManager();
 	virtual bool                   IsShutdownInProgress() const;
-
+	virtual BitmapLoader*          GetStdIcons();
 	//------------------------------------
 	//End of IManager interface
 	//------------------------------------

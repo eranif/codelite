@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : virtualdirectoryselector.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : virtualdirectoryselector.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -27,6 +27,7 @@
 #include "workspace.h"
 #include <wx/xrc/xmlres.h>
 #include <deque>
+#include "bitmap_loader.h"
 #include "virtualdirectoryselector.h"
 #include "tree_node.h"
 #include <wx/imaglist.h>
@@ -62,7 +63,7 @@ wxString VirtualDirectorySelector::DoGetPath(wxTreeCtrl* tree, const wxTreeItemI
 	if (!item.IsOk()) {
 		return wxEmptyString;
 	}
-	
+
 	if(validateFolder) {
 		int imgId = tree->GetItemImage(item);
 		if (imgId != 1) { // not a virtual folder
@@ -102,9 +103,11 @@ wxString VirtualDirectorySelector::DoGetPath(wxTreeCtrl* tree, const wxTreeItemI
 void VirtualDirectorySelector::DoBuildTree()
 {
 	wxImageList *images = new wxImageList(16, 16);
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "workspace" ) ) );	//0
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "folder" ) ) );		//1
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "project" ) ) );	//2
+
+	BitmapLoader bmpLoader(wxT("codelite-icons.zip"));
+	images->Add( bmpLoader.LoadBitmap( wxT( "workspace/16/workspace" ) ) );//0
+	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "folder" ) ) );    //1
+	images->Add( bmpLoader.LoadBitmap( wxT( "workspace/16/project" ) ) );  //2
 	m_treeCtrl->AssignImageList(images);
 
 	if (m_workspace) {
@@ -187,10 +190,10 @@ bool VirtualDirectorySelector::SelectPath(const wxString& path)
 {
 	wxTreeItemId item = m_treeCtrl->GetRootItem();
 	wxArrayString tokens = wxStringTokenize(path, wxT(":"), wxTOKEN_STRTOK);
-	
+
 	for (size_t i=0; i<tokens.GetCount(); i++) {
 		if(item.IsOk() && m_treeCtrl->HasChildren(item)){
-			
+
 			// loop over the children of this node, and search for a match
 			wxTreeItemIdValue cookie;
 			wxTreeItemId child = m_treeCtrl->GetFirstChild(item, cookie);
@@ -203,7 +206,7 @@ bool VirtualDirectorySelector::SelectPath(const wxString& path)
 			}
 		}
 	}
-	
+
 	if(item.IsOk()){
 		m_treeCtrl->EnsureVisible(item);
 		m_treeCtrl->SelectItem(item);

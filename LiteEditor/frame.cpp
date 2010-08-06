@@ -933,7 +933,7 @@ void Frame::CreateToolbars24()
 	tb->SetArtProvider(new CLMainAuiTBArt());
 #endif
 
-	BitmapLoader bmpLoader(wxT("codelite-icons.zip"));
+	BitmapLoader &bmpLoader = *(PluginManager::Get()->GetStdIcons());
 	tb->AddTool(XRCID("new_file"),        wxT("New"),             bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_new")),     wxT("New File"));
 	tb->AddTool(XRCID("open_file"),       wxT("Open"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_open")),    wxT("Open File"));
 	tb->AddTool(XRCID("refresh_file"),    wxT("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_reload")),  wxT("Reload File"));
@@ -1070,7 +1070,7 @@ void Frame::CreateToolbars16()
 #endif
 	wxAuiPaneInfo info;
 
-	BitmapLoader bmpLoader(wxT("codelite-icons.zip"));
+	BitmapLoader &bmpLoader = *(PluginManager::Get()->GetStdIcons());
 
 	tb->SetToolBitmapSize(wxSize(16, 16));
 	tb->AddTool(XRCID("new_file"),        wxT("New"),             bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_new")),     wxT("New File"));

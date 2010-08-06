@@ -100,7 +100,7 @@ clToolBar *UnitTestPP::CreateToolBar(wxWindow *parent)
 		tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		tb->SetToolBitmapSize(wxSize(size, size));
 
-		BitmapLoader bitmapLoader(wxT("codelite-icons.zip"));
+		BitmapLoader &bitmapLoader = *m_mgr->GetStdIcons();
 
 		if (size == 24) {
 			tb->AddTool(XRCID("run_unit_tests"), wxT("Run Unit tests..."), bitmapLoader.LoadBitmap(wxT("toolbars/24/unittest++/run_as_unittest")), wxT("Run project as unit test project..."));

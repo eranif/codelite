@@ -7,6 +7,7 @@
 #include <wx/textdlg.h>
 #include "plugin.h"
 #include "procutils.h"
+#include "bitmap_loader.h"
 #include "svn_login_dialog.h"
 #include "svn_command_handlers.h"
 #include "svn_copy_dialog.h"
@@ -131,13 +132,13 @@ void SubversionView::CreatGUIControls()
 	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("files_unversioned")));
 
 	// File icons 6-13
-	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("project" ) ) ); // 6
+	imageList->Add( m_plugin->GetManager()->GetStdIcons()->LoadBitmap(wxT("workspace/16/project") ) ); // 6
 	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("folder" ) ) );  // 7
 	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("page_white_c" ) ) );//8
 	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus" ) ) );//9
 	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("page_white_h" ) ) );//10
 	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("page_white_text" ) ) );//11
-	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("workspace" ) ) );//12
+	imageList->Add( m_plugin->GetManager()->GetStdIcons()->LoadBitmap(wxT("workspace/16/workspace") ) );//12
 	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("formbuilder" ) ) );//13
 
 	m_treeCtrl->AssignImageList( imageList );

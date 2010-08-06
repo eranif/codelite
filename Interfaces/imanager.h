@@ -35,6 +35,7 @@
 #include "optionsconfig.h"
 #include "queuecommand.h"
 #include <wx/aui/framemanager.h>
+#include "bitmap_loader.h"
 
 
 class TagsManager;
@@ -390,6 +391,11 @@ public:
 	 * @brief return the macro manager
 	 */
 	virtual IMacroManager *GetMacrosManager() = 0;
+
+	/**
+	 * @brief return the default icons loader class
+	 */
+	virtual BitmapLoader* GetStdIcons() = 0;
 };
 
 

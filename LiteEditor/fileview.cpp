@@ -29,6 +29,7 @@
 #include "pluginmanager.h"
 #include "workspacesettingsdlg.h"
 #include "importfilesdialog.h"
+#include "bitmap_loader.h"
 #include "fileview.h"
 #include "frame.h"
 #include "nameanddescdlg.h"
@@ -137,16 +138,17 @@ FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint
 	Create( parent, id, pos, size, style );
 
 	// Initialise images map
+	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 	wxImageList *images = new wxImageList( 16, 16, true );
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "project" ) ) );              //0
+	images->Add( bmpLoader->LoadBitmap(wxT("workspace/16/project")) );                 //0
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "folder" ) ) );               //1
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_c" ) ) );         //2
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_cplusplus" ) ) ); //3
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_h" ) ) );         //4
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_text" ) ) );      //5
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "workspace" ) ) );            //6
+	images->Add( bmpLoader->LoadBitmap(wxT("workspace/16/workspace")) );               //6
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "formbuilder" ) ) );          //7
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "active_project" ) ) );       //8
+	images->Add( bmpLoader->LoadBitmap(wxT("workspace/16/project_active")) );          //8
 
 	AssignImageList( images );
 

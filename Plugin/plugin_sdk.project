@@ -229,6 +229,8 @@
   <VirtualDirectory Name="Images">
     <File Name="overlaytool.cpp"/>
     <File Name="overlaytool.h"/>
+    <File Name="bitmap_loader.cpp"/>
+    <File Name="bitmap_loader.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="renamefilebasedlg.fbp"/>

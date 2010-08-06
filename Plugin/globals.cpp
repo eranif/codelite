@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include <wx/wfstream.h>
 #include <wx/log.h>
 #include <wx/imaglist.h>
 #include <wx/xrc/xmlres.h>
@@ -48,6 +49,7 @@
 #include <wx/tokenzr.h>
 #include <set>
 #include <wx/fontmap.h>
+#include <wx/zipstrm.h>
 
 static wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &confToBuild, const wxString &fileName);
 
@@ -702,4 +704,31 @@ bool IsCppKeyword(const wxString& word)
 	}
 
 	return words.find(word) != words.end();
+}
+
+bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const wxString& targetDir) {
+	wxZipEntry *       entry(NULL);
+	wxFFileInputStream in(zipPath);
+	wxZipInputStream   zip(in);
+
+	wxString lowerCaseName(filename);
+	lowerCaseName.MakeLower();
+
+	entry = zip.GetNextEntry();
+	while ( entry ) {
+		wxString name = entry->GetName();
+		name.MakeLower();
+		if (name == lowerCaseName) {
+			wxString targetFile = wxString::Format(_("%s/%s"), targetDir.c_str(), name.c_str());
+			wxFFileOutputStream out(targetFile);
+			zip.Read(out);
+			out.Close();
+			delete entry;
+			return true;
+		}
+
+		delete entry;
+		entry = zip.GetNextEntry();
+	}
+	return false;
 }

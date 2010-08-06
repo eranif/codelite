@@ -117,7 +117,7 @@ bool IsValidCppIndetifier(const wxString &id);
 /**
  * \brief return true of word is a C++ keyword
  * \param word
- * \return 
+ * \return
  */
 bool IsCppKeyword(const wxString &word);
 
@@ -232,6 +232,15 @@ wxString clGetUserName();
  * @param lstImages wxImageList allocated on the heap for the projects
  */
 void GetProjectTemplateList( IManager *manager, std::list<ProjectPtr> &list, std::map<wxString,int> *imageMap = NULL, wxImageList **lstImages = NULL);
+
+/**
+ * @brief extract file from Zip and place it under targetDir
+ * @param zipPath path to the Zip file (fullpath)
+ * @param filename the file name to search in the archive
+ * @param targetDir where to place the extracted file
+ * @return true on success, false otherwise
+ */
+bool ExtractFileFromZip(const wxString &zipPath, const wxString& filename, const wxString &targetDir);
 
 #endif //GLOBALS_H
 

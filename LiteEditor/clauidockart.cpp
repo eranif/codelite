@@ -63,7 +63,7 @@ void CLAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int oriantation, c
 void CLAuiDockArt::DrawGripper(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
 {
 #if defined(__WXMSW__)|| defined(__WXMAC__)
-	wxAuiDefaultDockArt::DrawGripper(dc, window, button, button_state, rect, pane);
+	wxAuiDefaultDockArt::DrawGripper(dc, window, rect, pane);
 #else
 	wxUnusedVar(window);
 	wxUnusedVar(pane);

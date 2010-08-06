@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/app.h>
+#include "bitmap_loader.h"
 #include "unittestspage.h"
 #include "macros.h"
 #include "unittestdata.h"
@@ -99,11 +100,13 @@ clToolBar *UnitTestPP::CreateToolBar(wxWindow *parent)
 		tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		tb->SetToolBitmapSize(wxSize(size, size));
 
+		BitmapLoader bitmapLoader(wxT("codelite-icons.zip"));
+
 		if (size == 24) {
-			tb->AddTool(XRCID("run_unit_tests"), wxT("Run Unit tests..."), wxXmlResource::Get()->LoadBitmap(wxT("run_unit_test24")), wxT("Run project as unit test project..."));
+			tb->AddTool(XRCID("run_unit_tests"), wxT("Run Unit tests..."), bitmapLoader.LoadBitmap(wxT("toolbars/24/unittest++/run_as_unittest")), wxT("Run project as unit test project..."));
 
 		} else {
-			tb->AddTool(XRCID("run_unit_tests"), wxT("Run Unit tests..."), wxXmlResource::Get()->LoadBitmap(wxT("run_unit_test16")), wxT("Run project as unit test project..."));
+			tb->AddTool(XRCID("run_unit_tests"), wxT("Run Unit tests..."), bitmapLoader.LoadBitmap(wxT("toolbars/16/unittest++/run_as_unittest")), wxT("Run project as unit test project..."));
 		}
 		tb->Realize();
 	}

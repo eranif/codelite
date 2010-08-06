@@ -14,6 +14,7 @@ xcopy templates\projects\* "%ProgramFiles%\CodeLite\templates\projects\" /E /I /
 xcopy templates\gizmos\* "%ProgramFiles%\CodeLite\templates\gizmos\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\qmake\* "%ProgramFiles%\CodeLite\templates\qmake\" /E /I /H /Y /EXCLUDE:excludes
 xcopy *.html "%ProgramFiles%\CodeLite\" /H /Y /EXCLUDE:excludes
+xcopy codelite-icons.zip "%ProgramFiles%\CodeLite\" /H /Y /EXCLUDE:excludes
 
 :: Copy the misc files
 copy codelite_indexer.exe "%ProgramFiles%\CodeLite\" /Y

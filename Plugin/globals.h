@@ -238,9 +238,10 @@ void GetProjectTemplateList( IManager *manager, std::list<ProjectPtr> &list, std
  * @param zipPath path to the Zip file (fullpath)
  * @param filename the file name to search in the archive
  * @param targetDir where to place the extracted file
+ * @param targetFileName the path of the file that was actually extracted
  * @return true on success, false otherwise
  */
-bool ExtractFileFromZip(const wxString &zipPath, const wxString& filename, const wxString &targetDir);
+bool ExtractFileFromZip(const wxString &zipPath, const wxString& filename, const wxString &targetDir, wxString &targetFileName);
 
 #endif //GLOBALS_H
 

@@ -706,7 +706,7 @@ bool IsCppKeyword(const wxString& word)
 	return words.find(word) != words.end();
 }
 
-bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const wxString& targetDir) {
+bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const wxString& targetDir, wxString &targetFileName) {
 	wxZipEntry *       entry(NULL);
 	wxFFileInputStream in(zipPath);
 	wxZipInputStream   zip(in);
@@ -718,9 +718,12 @@ bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const
 	while ( entry ) {
 		wxString name = entry->GetName();
 		name.MakeLower();
+		name.Replace(wxT("\\"), wxT("/"));
+
 		if (name == lowerCaseName) {
-			wxString targetFile = wxString::Format(_("%s/%s"), targetDir.c_str(), name.c_str());
-			wxFFileOutputStream out(targetFile);
+			name.Replace(wxT("/"), wxT("_"));
+			targetFileName = wxString::Format(_("%s/%s"), targetDir.c_str(), name.c_str());
+			wxFFileOutputStream out(targetFileName);
 			zip.Read(out);
 			out.Close();
 			delete entry;

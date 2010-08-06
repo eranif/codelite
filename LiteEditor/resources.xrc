@@ -93,109 +93,29 @@
 	<!--
 		Toolbar bitmaps (24x24)
 	-->
-	<object class="wxBitmap" name="outline24">res/24/text_tree.png</object>
 	<object class="wxBitmap" name="configure_ext_tools24">res/24/external_tools24.png</object>
 	<object class="wxBitmap" name="ext_tool_default24">res/24/gear24.png</object>
 	<object class="wxBitmap" name="stop_external_tool24">res/24/process_stop.png</object>
-	<object class="wxBitmap" name="folder24">res/24/folder24.png</object>
-	<object class="wxBitmap" name="refresh24">res/24/refresh.png</object>
-	<object class="wxBitmap" name="reload24">res/24/revert.png</object>
-	<object class="wxBitmap" name="save_as24">res/24/save_as.png</object>
-	<object class="wxBitmap" name="cut24">res/24/cut.png</object>
-	<object class="wxBitmap" name="copy24">res/24/copy.png</object>
-	<object class="wxBitmap" name="paste24">res/24/paste.png</object>
-	<object class="wxBitmap" name="undo24">res/24/undo.png</object>
-	<object class="wxBitmap" name="redo24">res/24/redo.png</object>
-	<object class="wxBitmap" name="bookmark24">res/24/bookmark.png</object>
 	<object class="wxBitmap" name="class24">res/24/class24.png</object>
-	<object class="wxBitmap" name="page_close24">res/24/fileclose.png</object>
-	<object class="wxBitmap" name="page_new24">res/24/filenew.png</object>
-	<object class="wxBitmap" name="save_all24">res/24/save_all.png</object>
-	<object class="wxBitmap" name="page_save24">res/24/page_save.png</object>
 	<object class="wxBitmap" name="new_wx_project24">res/24/wx24.png</object>
 	<object class="wxBitmap" name="plugin24">res/24/plugin24.png</object>
 	<object class="wxBitmap" name="code_format_options24">res/24/formatter_settings.png</object>
 	<object class="wxBitmap" name="code_format24">res/24/formatter.png</object>
-	<object class="wxBitmap" name="build_active_project24">res/24/compfile.png</object>
-	<object class="wxBitmap" name="stop_build24">res/24/process_stop.png</object>
-	<object class="wxBitmap" name="execute24">res/24/gear_run.png</object>
-	<object class="wxBitmap" name="stop_executed_program24">res/24/gear_stop.png</object>
-	<object class="wxBitmap" name="clean24">res/24/emptytrash.png</object>
-	<object class="wxBitmap" name="find_in_files24">res/24/find.png</object>
-	<object class="wxBitmap" name="find_and_replace24">res/24/search.png</object>
-	<object class="wxBitmap" name="open_resource24">res/24/open_resource.png</object>
-	<object class="wxBitmap" name="open_type24">res/24/open_type.png</object>
-	<object class="wxBitmap" name="arrow_next24">res/24/next.png</object>
-	<object class="wxBitmap" name="arrow_back24">res/24/previous.png</object>
-	<object class="wxBitmap" name="debugger_start24">res/24/debugger_start.png</object>
-	<object class="wxBitmap" name="debugger_restart24">res/24/debugger_restart.png</object>
-	<object class="wxBitmap" name="debugger_stop24">res/24/debugger_stop.png</object>
-	<object class="wxBitmap" name="debugger_pause24">res/24/debugger_pause.png</object>
-	<object class="wxBitmap" name="debugger_stepin24">res/24/debugger_stepin.png</object>
-	<object class="wxBitmap" name="debugger_stepout24">res/24/debugger_stepout.png</object>
-	<object class="wxBitmap" name="debugger_next24">res/24/debugger_next.png</object>
-	<object class="wxBitmap" name="cscope_find_symbol24">res/24/func_find24.png</object>
-	<object class="wxBitmap" name="cscope_func_called24">res/24/func_calling24.png</object>
-	<object class="wxBitmap" name="cscope_func_calling24">res/24/func_called24.png</object>
-	<object class="wxBitmap" name="ref_analyzer24">res/24/ref_analyzer24.png</object>
-	<object class="wxBitmap" name="ref_analyzer_settings24">res/24/ref_anaylzer_settings24.png</object>
-	<object class="wxBitmap" name="arrow_green_right24">res/24/arrow_green_right24.png</object>
-	<object class="wxBitmap" name="highlight24">res/24/highlight.png</object>
-	<object class="wxBitmap" name="run_unit_test24">res/24/run_unit_test.png</object>
 
 	<!--
 		Toolbar bitmaps (16x16)
 	-->
-	<object class="wxBitmap" name="quickfinder16">res/16/quickfinder.png</object>
-	<object class="wxBitmap" name="outline16">res/16/text_tree.png</object>
 	<object class="wxBitmap" name="configure_ext_tools16">res/16/external_tools16.png</object>
 	<object class="wxBitmap" name="ext_tool_default16">res/16/gear16.png</object>
 	<object class="wxBitmap" name="stop_external_tool16">res/16/process_stop.png</object>
-	<object class="wxBitmap" name="folder16">res/16/folder24.png</object>
 	<object class="wxBitmap" name="refresh16">res/16/refresh.png</object>
-	<object class="wxBitmap" name="reload16">res/16/revert.png</object>
-	<object class="wxBitmap" name="save_as16">res/16/save_as.png</object>
-	<object class="wxBitmap" name="cut16">res/16/cut.png</object>
-	<object class="wxBitmap" name="copy16">res/16/copy.png</object>
-	<object class="wxBitmap" name="paste16">res/16/paste.png</object>
-	<object class="wxBitmap" name="undo16">res/16/undo.png</object>
-	<object class="wxBitmap" name="redo16">res/16/redo.png</object>
-	<object class="wxBitmap" name="bookmark16">res/16/bookmark.png</object>
 	<object class="wxBitmap" name="class16">res/16/class24.png</object>
-	<object class="wxBitmap" name="page_close16">res/16/fileclose.png</object>
-	<object class="wxBitmap" name="page_new16">res/16/filenew.png</object>
-	<object class="wxBitmap" name="save_all16">res/16/save_all.png</object>
-	<object class="wxBitmap" name="page_save16">res/16/page_save.png</object>
 	<object class="wxBitmap" name="new_wx_project16">res/16/wx24.png</object>
 	<object class="wxBitmap" name="plugin16">res/16/plugin24.png</object>
 	<object class="wxBitmap" name="code_format_options16">res/16/formatter_settings.png</object>
 	<object class="wxBitmap" name="code_format16">res/16/formatter.png</object>
-	<object class="wxBitmap" name="build_active_project16">res/16/compfile.png</object>
-	<object class="wxBitmap" name="stop_build16">res/16/process_stop.png</object>
-	<object class="wxBitmap" name="execute16">res/16/gear_run.png</object>
-	<object class="wxBitmap" name="stop_executed_program16">res/16/gear_stop.png</object>
-	<object class="wxBitmap" name="clean16">res/16/emptytrash.png</object>
-	<object class="wxBitmap" name="find_in_files16">res/16/find.png</object>
 	<object class="wxBitmap" name="find_and_replace16">res/16/search.png</object>
-	<object class="wxBitmap" name="open_resource16">res/16/open_resource.png</object>
-	<object class="wxBitmap" name="open_type16">res/16/open_type.png</object>
-	<object class="wxBitmap" name="arrow_next16">res/16/next.png</object>
-	<object class="wxBitmap" name="arrow_back16">res/16/previous.png</object>
-	<object class="wxBitmap" name="debugger_start16">res/16/debugger_start.png</object>
-	<object class="wxBitmap" name="debugger_restart16">res/16/debugger_restart.png</object>
-	<object class="wxBitmap" name="debugger_stop16">res/16/debugger_stop.png</object>
-	<object class="wxBitmap" name="debugger_pause16">res/16/debugger_pause.png</object>
-	<object class="wxBitmap" name="debugger_stepin16">res/16/debugger_stepin.png</object>
-	<object class="wxBitmap" name="debugger_stepout16">res/16/debugger_stepout.png</object>
-	<object class="wxBitmap" name="debugger_next16">res/16/debugger_next.png</object>
-	<object class="wxBitmap" name="cscope_find_symbol16">res/16/func_find24.png</object>
-	<object class="wxBitmap" name="cscope_func_called16">res/16/func_calling24.png</object>
-	<object class="wxBitmap" name="cscope_func_calling16">res/16/func_called24.png</object>
-	<object class="wxBitmap" name="ref_analyzer16">res/16/ref_analyzer24.png</object>
-	<object class="wxBitmap" name="ref_analyzer_settings16">res/16/ref_anaylzer_settings24.png</object>
 	<object class="wxBitmap" name="arrow_green_right16">res/16/arrow_right_green16.png</object>
-	<object class="wxBitmap" name="highlight16">res/16/highlight.png</object>
-	<object class="wxBitmap" name="run_unit_test16">res/16/run_unit_test.png</object>
 
 	<!-- Overlay icons -->
 	<object class="wxBitmap" name="overlay_ok">res/ok.png</object>

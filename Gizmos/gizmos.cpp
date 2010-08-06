@@ -51,13 +51,13 @@ enum {
 	ID_MI_NEW_NEW_CLASS
 };
 
-static GizmosPlugin* theGismos = NULL;
+static WizardsPlugin* theGismos = NULL;
 
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 {
 	if (theGismos == 0) {
-		theGismos = new GizmosPlugin(manager);
+		theGismos = new WizardsPlugin(manager);
 	}
 	return theGismos;
 }
@@ -66,9 +66,9 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 {
 	PluginInfo info;
 	info.SetAuthor(wxT("Eran Ifrah"));
-	info.SetName(wxT("Gizmos"));
-	info.SetDescription(wxT("Gizmos Plugin - a collection of useful wizards for C++:\nnew Class Wizard, new wxWidgets Wizard, new Plugin Wizard"));
-	info.SetVersion(wxT("v1.0"));
+	info.SetName(wxT("Wizards"));
+	info.SetDescription(wxT("Wizards Plugin - a collection of useful wizards for C++:\nnew Class Wizard, new wxWidgets Wizard, new Plugin Wizard"));
+	info.SetVersion(wxT("v1.1"));
 	return info;
 }
 
@@ -159,61 +159,61 @@ static void WriteNamespacesDeclaration(const wxArrayString& namespacesList, wxSt
 	}
 }
 
-GizmosPlugin::GizmosPlugin(IManager *manager)
+WizardsPlugin::WizardsPlugin(IManager *manager)
 		: IPlugin(manager)
 {
-	m_longName = wxT("Gizmos Plugin - a collection of useful utils for C++");
-	m_shortName = wxT("Gizmos");
+	m_longName = wxT("Wizards Plugin - a collection of useful utils for C++");
+	m_shortName = wxT("Wizards");
 }
 
-GizmosPlugin::~GizmosPlugin()
+WizardsPlugin::~WizardsPlugin()
 {
 }
 
-clToolBar *GizmosPlugin::CreateToolBar(wxWindow *parent)
+clToolBar *WizardsPlugin::CreateToolBar(wxWindow *parent)
 {
 	clToolBar *tb(NULL);
-	if (m_mgr->AllowToolbar()) {
-		//support both toolbars icon size
-		int size = m_mgr->GetToolbarIconSize();
-
-
-		tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
-		tb->SetToolBitmapSize(wxSize(size, size));
-
-		if (size == 24) {
-			tb->AddTool(XRCID("gizmos_options"), wxT("Gizmos..."), wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("Open Gizmos quick menu"));
-		} else {
-			tb->AddTool(XRCID("gizmos_options"), wxT("Gizmos..."), wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("Open Gizmos quick menu"));
-		}
-
-		// When using AUI, make this toolitem a dropdown button
-#if USE_AUI_TOOLBAR
-		tb->SetToolDropDown(XRCID("gizmos_options"), true);
-		m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(GizmosPlugin::OnGizmosAUI), NULL, (wxEvtHandler*)this);
-#endif
-		tb->Realize();
-	}
-
+//	if (m_mgr->AllowToolbar()) {
+//		//support both toolbars icon size
+//		int size = m_mgr->GetToolbarIconSize();
+//
+//
+//		tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+//		tb->SetToolBitmapSize(wxSize(size, size));
+//
+//		if (size == 24) {
+//			tb->AddTool(XRCID("gizmos_options"), wxT("Gizmos..."), wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("Open Gizmos quick menu"));
+//		} else {
+//			tb->AddTool(XRCID("gizmos_options"), wxT("Gizmos..."), wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("Open Gizmos quick menu"));
+//		}
+//
+//		// When using AUI, make this toolitem a dropdown button
+//#if USE_AUI_TOOLBAR
+//		tb->SetToolDropDown(XRCID("gizmos_options"), true);
+//		m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(WizardsPlugin::OnGizmosAUI), NULL, (wxEvtHandler*)this);
+//#endif
+//		tb->Realize();
+//	}
+//
 	//Connect the events to us
 #if !USE_AUI_TOOLBAR
-	m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnGizmos   ), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WizardsPlugin::OnGizmos   ), NULL, (wxEvtHandler*)this);
 #endif
-	m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(GizmosPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
 
-	m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnNewPlugin), NULL, (wxEvtHandler*)this);
-	m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GizmosPlugin::OnNewPluginUI), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WizardsPlugin::OnNewPlugin), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WizardsPlugin::OnNewPluginUI), NULL, (wxEvtHandler*)this);
 
 
-	m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnNewClass), NULL, (wxEvtHandler*)this);
-	m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GizmosPlugin::OnNewClassUI), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WizardsPlugin::OnNewClass), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WizardsPlugin::OnNewClassUI), NULL, (wxEvtHandler*)this);
 
-	m_mgr->GetTheApp()->Connect(ID_MI_NEW_WX_PROJECT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnNewWxProject), NULL, (wxEvtHandler*)this);
-	m_mgr->GetTheApp()->Connect(ID_MI_NEW_WX_PROJECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GizmosPlugin::OnNewWxProjectUI), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(ID_MI_NEW_WX_PROJECT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WizardsPlugin::OnNewWxProject), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(ID_MI_NEW_WX_PROJECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WizardsPlugin::OnNewWxProjectUI), NULL, (wxEvtHandler*)this);
 	return tb;
 }
 
-void GizmosPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
+void WizardsPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 {
 	wxMenu *menu = new wxMenu();
 	wxMenuItem *item(NULL);
@@ -223,10 +223,10 @@ void GizmosPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 	menu->Append(item);
 	item = new wxMenuItem(menu, ID_MI_NEW_WX_PROJECT, _("New wxWidgets Project Wizard..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-	pluginsMenu->Append(wxID_ANY, _("Gizmos"), menu);
+	pluginsMenu->Append(wxID_ANY, _("Wizards"), menu);
 }
 
-void GizmosPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
+void WizardsPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 {
 	if (type == MenuTypeFileView_Folder) {
 		//Create the popup menu for the virtual folders
@@ -242,7 +242,7 @@ void GizmosPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 	}
 }
 
-void GizmosPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
+void WizardsPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 {
 	if (type == MenuTypeFileView_Folder) {
 		std::vector<wxMenuItem*>::iterator iter = m_vdDynItems.begin();
@@ -253,19 +253,19 @@ void GizmosPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 	}
 }
 
-void GizmosPlugin::UnPlug()
+void WizardsPlugin::UnPlug()
 {
-	m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnGizmos   ), NULL, (wxEvtHandler*)this);
-	m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(GizmosPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WizardsPlugin::OnGizmos   ), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
 }
 
-void GizmosPlugin::OnNewPlugin(wxCommandEvent &e)
+void WizardsPlugin::OnNewPlugin(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	DoCreateNewPlugin();
 }
 
-void GizmosPlugin::DoCreateNewPlugin()
+void WizardsPlugin::DoCreateNewPlugin()
 {
 	//Load the wizard
 	PluginWizard *wiz = new PluginWizard(NULL, wxID_ANY);
@@ -369,27 +369,27 @@ void GizmosPlugin::DoCreateNewPlugin()
 	wiz->Destroy();
 }
 
-void GizmosPlugin::OnNewPluginUI(wxUpdateUIEvent &e)
+void WizardsPlugin::OnNewPluginUI(wxUpdateUIEvent &e)
 {
 	CHECK_CL_SHUTDOWN();
 	//we enable the button only when workspace is opened
 	e.Enable(m_mgr->IsWorkspaceOpen());
 }
 
-void GizmosPlugin::OnNewClassUI(wxUpdateUIEvent &e)
+void WizardsPlugin::OnNewClassUI(wxUpdateUIEvent &e)
 {
 	CHECK_CL_SHUTDOWN();
 	//we enable the button only when workspace is opened
 	e.Enable(m_mgr->IsWorkspaceOpen());
 }
 
-void GizmosPlugin::OnNewClass(wxCommandEvent &e)
+void WizardsPlugin::OnNewClass(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	DoCreateNewClass();
 }
 
-void GizmosPlugin::DoCreateNewClass()
+void WizardsPlugin::DoCreateNewClass()
 {
 	NewClassDlg *dlg = new NewClassDlg(NULL, m_mgr);
 	if (dlg->ShowModal() == wxID_OK) {
@@ -402,7 +402,7 @@ void GizmosPlugin::DoCreateNewClass()
 	dlg->Destroy();
 }
 
-void GizmosPlugin::CreateClass(const NewClassInfo &info)
+void WizardsPlugin::CreateClass(const NewClassInfo &info)
 {
 	wxString macro(info.blockGuard);
 	if( macro.IsEmpty() ) {
@@ -587,13 +587,13 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 		m_mgr->AddFilesToVirtualFolder(info.virtualDirectory, paths);
 }
 
-void GizmosPlugin::OnNewWxProject(wxCommandEvent &e)
+void WizardsPlugin::OnNewWxProject(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	DoCreateNewWxProject();
 }
 
-void GizmosPlugin::DoCreateNewWxProject()
+void WizardsPlugin::DoCreateNewWxProject()
 {
 	NewWxProjectDlg *dlg = new NewWxProjectDlg(NULL, m_mgr);
 	if (dlg->ShowModal() == wxID_OK) {
@@ -605,14 +605,14 @@ void GizmosPlugin::DoCreateNewWxProject()
 	dlg->Destroy();
 }
 
-void GizmosPlugin::OnNewWxProjectUI(wxUpdateUIEvent &e)
+void WizardsPlugin::OnNewWxProjectUI(wxUpdateUIEvent &e)
 {
 	CHECK_CL_SHUTDOWN();
 	//we enable the button only when workspace is opened
 	e.Enable(m_mgr->IsWorkspaceOpen());
 }
 
-void GizmosPlugin::CreateWxProject(NewWxProjectInfo &info)
+void WizardsPlugin::CreateWxProject(NewWxProjectInfo &info)
 {
 	//TODO:: Implement this ...
 	wxString basedir = m_mgr->GetStartupDirectory();
@@ -851,7 +851,7 @@ void GizmosPlugin::CreateWxProject(NewWxProjectInfo &info)
 	}
 }
 
-wxString GizmosPlugin::DoGetVirtualFuncImpl(const NewClassInfo &info)
+wxString WizardsPlugin::DoGetVirtualFuncImpl(const NewClassInfo &info)
 {
 	if (info.implAllVirtual == false && info.implAllPureVirtual == false)
 		return wxEmptyString;
@@ -895,7 +895,7 @@ wxString GizmosPlugin::DoGetVirtualFuncImpl(const NewClassInfo &info)
 	return impl;
 }
 
-wxString GizmosPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info)
+wxString WizardsPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info)
 {
 	if (info.implAllVirtual == false && info.implAllPureVirtual == false)
 		return wxEmptyString;
@@ -945,7 +945,7 @@ wxString GizmosPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info)
 	return decl;
 }
 
-void GizmosPlugin::OnGizmos(wxCommandEvent& e)
+void WizardsPlugin::OnGizmos(wxCommandEvent& e)
 {
 	// open a popup menu
 	wxUnusedVar(e);
@@ -953,13 +953,13 @@ void GizmosPlugin::OnGizmos(wxCommandEvent& e)
 	DoPopupButtonMenu(pt);
 }
 
-void GizmosPlugin::OnGizmosUI(wxUpdateUIEvent& e)
+void WizardsPlugin::OnGizmosUI(wxUpdateUIEvent& e)
 {
 	CHECK_CL_SHUTDOWN();
 	e.Enable(m_mgr->IsWorkspaceOpen());
 }
 
-void GizmosPlugin::GizmosRemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
+void WizardsPlugin::GizmosRemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
 {
 	std::map<wxString, TagEntryPtr> uniqueSet;
 	for (size_t i=0; i<src.size(); i++) {
@@ -990,7 +990,7 @@ void GizmosPlugin::GizmosRemoveDuplicates(std::vector<TagEntryPtr>& src, std::ve
 	}
 }
 
-void GizmosPlugin::DoPopupButtonMenu(wxPoint pt)
+void WizardsPlugin::DoPopupButtonMenu(wxPoint pt)
 {
 #ifdef __WXMSW__
 	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -1014,7 +1014,7 @@ void GizmosPlugin::DoPopupButtonMenu(wxPoint pt)
 }
 
 #if USE_AUI_TOOLBAR
-void GizmosPlugin::OnGizmosAUI(wxAuiToolBarEvent& e)
+void WizardsPlugin::OnGizmosAUI(wxAuiToolBarEvent& e)
 {
     if (e.IsDropDownClicked())
     {

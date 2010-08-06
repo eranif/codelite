@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef GIZMOS_H
+#ifndef GIZMOS_H
 #define GIZMOS_H
 
 #include "plugin.h"
@@ -30,7 +30,7 @@
 #include "newclassdlg.h"
 #include "newwxprojectinfo.h"
 
-class GizmosPlugin : public IPlugin
+class WizardsPlugin : public IPlugin
 {
 	void CreateClass(const NewClassInfo &info);
 	wxString DoGetVirtualFuncImpl(const NewClassInfo &info);
@@ -42,8 +42,8 @@ protected:
 	void DoPopupButtonMenu(wxPoint pt);
 
 public:
-	GizmosPlugin(IManager *manager);
-	~GizmosPlugin();
+	WizardsPlugin(IManager *manager);
+	~WizardsPlugin();
 
 	//--------------------------------------------
 	//Abstract methods

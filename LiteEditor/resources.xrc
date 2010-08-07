@@ -1,5 +1,4 @@
 <resource>
-	<object class="wxBitmap" name="cc_private_members">res/16/encrypted.png</object>
 	<object class="wxBitmap" name="fold_airplane">res/outbox.png</object>
 	<object class="wxBitmap" name="read_only">res/lock.png</object>
 	<object class="wxBitmap" name="find_refresh">res/find_refresh.png</object>
@@ -31,7 +30,6 @@
 	<object class="wxBitmap" name="folder">res/folder.png</object>
     <object class="wxBitmap" name="document_delete">res/clean.png</object>
     <object class="wxBitmap" name="build">res/rebuild.png</object>
-    <object class="wxBitmap" name="find_results">res/16/find.png</object>
     <object class="wxBitmap" name="class_view">res/chart_organisation.png</object>
 	<object class="wxBitmap" name="word_wrap">res/wrap_arrow.png</object>
 	<object class="wxBitmap" name="output_win">res/commandprompt.png</object>
@@ -93,29 +91,19 @@
 	<!--
 		Toolbar bitmaps (24x24)
 	-->
-	<object class="wxBitmap" name="configure_ext_tools24">res/24/external_tools24.png</object>
-	<object class="wxBitmap" name="ext_tool_default24">res/24/gear24.png</object>
-	<object class="wxBitmap" name="stop_external_tool24">res/24/process_stop.png</object>
 	<object class="wxBitmap" name="class24">res/24/class24.png</object>
 	<object class="wxBitmap" name="new_wx_project24">res/24/wx24.png</object>
-	<object class="wxBitmap" name="plugin24">res/24/plugin24.png</object>
 	<object class="wxBitmap" name="code_format_options24">res/24/formatter_settings.png</object>
 	<object class="wxBitmap" name="code_format24">res/24/formatter.png</object>
 
 	<!--
 		Toolbar bitmaps (16x16)
 	-->
-	<object class="wxBitmap" name="configure_ext_tools16">res/16/external_tools16.png</object>
-	<object class="wxBitmap" name="ext_tool_default16">res/16/gear16.png</object>
-	<object class="wxBitmap" name="stop_external_tool16">res/16/process_stop.png</object>
-	<object class="wxBitmap" name="refresh16">res/16/refresh.png</object>
 	<object class="wxBitmap" name="class16">res/16/class24.png</object>
 	<object class="wxBitmap" name="new_wx_project16">res/16/wx24.png</object>
 	<object class="wxBitmap" name="plugin16">res/16/plugin24.png</object>
 	<object class="wxBitmap" name="code_format_options16">res/16/formatter_settings.png</object>
 	<object class="wxBitmap" name="code_format16">res/16/formatter.png</object>
-	<object class="wxBitmap" name="find_and_replace16">res/16/search.png</object>
-	<object class="wxBitmap" name="arrow_green_right16">res/16/arrow_right_green16.png</object>
 
 	<!-- Overlay icons -->
 	<object class="wxBitmap" name="overlay_ok">res/ok.png</object>

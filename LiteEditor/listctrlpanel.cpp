@@ -25,6 +25,7 @@
  #include "listctrlpanel.h"
 #include "manager.h"
 #include "globals.h"
+#include "pluginmanager.h"
 
 #include <wx/xrc/xmlres.h>
 #include <wx/imaglist.h>
@@ -34,7 +35,7 @@ ListCtrlPanel::ListCtrlPanel ( wxWindow* parent )
 		: ListCtrlPanelBase ( parent )
 		, m_currLevel(0)
 {
-	const wxBitmap& currLevel = wxXmlResource::Get()->LoadBitmap(wxT("arrow_green_right16"));
+	const wxBitmap& currLevel = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/standard/forward"));
 	std::auto_ptr<wxImageList> imageList(new wxImageList(currLevel.GetWidth(), currLevel.GetHeight(), true));
 	imageList->Add(currLevel);
 	m_listCtrl->AssignImageList(imageList.release(), wxIMAGE_LIST_SMALL);

@@ -29,6 +29,7 @@
 #include "manager.h"
 #include "frame.h"
 #include "shelltab.h"
+#include "pluginmanager.h"
 
 
 BEGIN_EVENT_TABLE(ShellTab, OutputTabWindow)
@@ -55,7 +56,7 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
 {
 	m_inputSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	wxButton *btn = new wxBitmapButton(this, XRCID("show_find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace16")));
+	wxButton *btn = new wxBitmapButton(this, XRCID("show_find"), PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/search/find_and_replace")) );
 	m_inputSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 	btn->SetToolTip(wxT("Show QuickFind Bar"));
 

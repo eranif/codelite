@@ -27,6 +27,7 @@
 #include "frame.h"
 #include "editor_config.h"
 #include <wx/dcbuffer.h>
+#include "pluginmanager.h"
 #include "output_pane.h"
 #include "findresultstab.h"
 #include "replaceinfilespanel.h"
@@ -64,6 +65,8 @@ void OutputPane::CreateGUIControls()
 
 	m_book = new OutputPaneBook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_DEFAULT);
 
+	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
+
 	// Calculate the widthest tab (the one with the 'Workspcae' label)
 	int xx, yy;
 	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -75,16 +78,16 @@ void OutputPane::CreateGUIControls()
 	m_book->AddPage(m_buildWin, BUILD_WIN, true, wxXmlResource::Get()->LoadBitmap(wxT("build")));
 
 	m_errorsWin = new ErrorsTab(m_buildWin, m_book, wxID_ANY, ERRORS_WIN);
-	m_book->AddPage(m_errorsWin, ERRORS_WIN, false, wxXmlResource::Get()->LoadBitmap(wxT("error")));
+	m_book->AddPage(m_errorsWin, ERRORS_WIN, false, bmpLoader->LoadBitmap(wxT("output-pane/16/errors")));
 
 	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN, true);
-	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, false, wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
+	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")));
 
 	m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, REPLACE_IN_FILES);
-	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, false, wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
+	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find_and_repalce")) );
 
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
-	m_book->AddPage(m_outputWind, OUTPUT_WIN, false, wxXmlResource::Get()->LoadBitmap(wxT("output_win")));
+	m_book->AddPage(m_outputWind, OUTPUT_WIN, false, bmpLoader->LoadBitmap(wxT("output-pane/16/terminal")));
 
 	m_outputDebug = new DebugTab(m_book, wxID_ANY, OUTPUT_DEBUG);
 	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, false, wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
@@ -94,6 +97,6 @@ void OutputPane::CreateGUIControls()
 	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
 
 	m_taskPanel = new TaskPanel(m_book, wxID_ANY, TASKS);
-	m_book->AddPage(m_taskPanel, TASKS, false, wxXmlResource::Get()->LoadBitmap(wxT("todo")));
+	m_book->AddPage(m_taskPanel, TASKS, false, bmpLoader->LoadBitmap(wxT("output-pane/16/tasks")));
 	mainSizer->Layout();
 }

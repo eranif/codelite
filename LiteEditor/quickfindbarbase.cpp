@@ -7,6 +7,7 @@
 
 #include "quickfindbarbase.h"
 #include <wx/xrc/xmlres.h>
+#include "pluginmanager.h"
 
 #if USE_AUI_TOOLBAR
 
@@ -97,7 +98,8 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 #if USE_AUI_TOOLBAR
 	m_toolBarReplace->SetArtProvider(new CLQuickFindTbArt());
 #endif
-	m_toolBarReplace->AddTool( wxID_TOOL_REPLACE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("refresh16")), _("Replace Selection"), wxITEM_NORMAL);
+	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
+	m_toolBarReplace->AddTool( wxID_TOOL_REPLACE, _("tool"), bmpLoader->LoadBitmap(wxT("toolbars/16/search/find_and_repalce")) , _("Replace Selection"), wxITEM_NORMAL);
 	m_toolBarReplace->Realize();
 
 	fgSizer1->Add( m_toolBarReplace, 0, wxEXPAND, 5 );

@@ -153,7 +153,7 @@ void SubversionView::CreatGUIControls()
 	tb->AddTool(XRCID("svn_refresh"),      wxT("Refresh View"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_refresh" ) ), wxT ( "Refresh View" ) );
 	tb->AddSeparator();
 
-	tb->AddTool(XRCID("svn_stop"),         wxT("Stop current svn process"), wxXmlResource::Get()->LoadBitmap ( wxT ( "stop_build16" ) ), wxT ( "Stop current svn process" ) );
+	tb->AddTool(XRCID("svn_stop"),         wxT("Stop current svn process"), m_plugin->GetManager()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/build/stop")), wxT ( "Stop current svn process" ) );
 	tb->AddTool(XRCID("svn_cleanup"),      wxT("Svn Cleanup"), wxXmlResource::Get()->LoadBitmap ( wxT ( "eraser" ) ), wxT ( "Svn Cleanup" ) );
 
 	tb->AddSeparator();

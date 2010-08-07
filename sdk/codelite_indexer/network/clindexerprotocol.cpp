@@ -26,7 +26,7 @@ bool clIndexerProtocol::ReadReply(clNamedPipe* conn, clIndexerReply& reply)
 	}
 
 	if (actual_read != sizeof(buff_len)) {
-		fprintf(stderr, "ERROR: ReadReply: Protocol error: expected %zu bytes, got %zu. reason: %d\n",
+		fprintf(stderr, "ERROR: ReadReply: Protocol error: expected %u bytes, got %u. reason: %d\n",
 				sizeof(buff_len),
 				actual_read,
 				conn->getLastError());
@@ -45,7 +45,7 @@ bool clIndexerProtocol::ReadReply(clNamedPipe* conn, clIndexerReply& reply)
 	size_t bytes_read(0);
 	while (bytes_left > 0) {
 		if ( !conn->read(data+bytes_read, bytes_left, &actual_read, 10000) ) {
-			fprintf(stderr, "ERROR: Protocol error: expected %zu bytes, got %zu\n", buff_len, actual_read);
+			fprintf(stderr, "ERROR: Protocol error: expected %u bytes, got %u\n", buff_len, actual_read);
 			return false;
 		}
 		bytes_left -= actual_read;
@@ -77,7 +77,7 @@ bool clIndexerProtocol::ReadRequest(clNamedPipe* conn, clIndexerRequest& req)
 	}
 
 	if (actual_read != sizeof(buff_len)) {
-		fprintf(stderr, "ERROR: Protocol error: expected %zu bytes, got %zu\n", sizeof(buff_len), actual_read);
+		fprintf(stderr, "ERROR: Protocol error: expected %u bytes, got %u\n", sizeof(buff_len), actual_read);
 		return false;
 	}
 
@@ -88,7 +88,7 @@ bool clIndexerProtocol::ReadRequest(clNamedPipe* conn, clIndexerRequest& req)
 	size_t bytes_read(0);
 	while (bytes_left > 0) {
 		if ( !conn->read(data+bytes_read, bytes_left, &actual_read, -1) ) {
-			fprintf(stderr, "ERROR: [%s] Protocol error: expected %zu bytes, got %zu\n", __PRETTY_FUNCTION__, buff_len, actual_read);
+			fprintf(stderr, "ERROR: [%s] Protocol error: expected %u bytes, got %u\n", __PRETTY_FUNCTION__, buff_len, actual_read);
 			return false;
 		}
 		bytes_left -= actual_read;

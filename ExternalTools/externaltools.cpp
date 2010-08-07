@@ -29,6 +29,7 @@
 #include "async_executable_cmd.h"
 #include <wx/bitmap.h>
 #include "dirsaver.h"
+#include "cl_aui_tb_are.h"
 #include <wx/app.h>
 #include "workspace.h"
 #include "globals.h"
@@ -121,14 +122,16 @@ clToolBar *ExternalToolsPlugin::CreateToolBar(wxWindow *parent)
 		m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
 
 		if (size == 24) {
-			m_tb->AddTool(XRCID("external_tools_settings"), wxT("Configure external tools..."), wxXmlResource::Get()->LoadBitmap(wxT("configure_ext_tools24")), wxT("Configure external tools..."));
-			m_tb->AddTool(XRCID("stop_external_tool"), wxT("Stop external tool"), wxXmlResource::Get()->LoadBitmap(wxT("stop_external_tool24")), wxT("Stop external tool"));
+			m_tb->AddTool(XRCID("external_tools_settings"), wxT("Configure external tools..."), m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/24/external-tools/configure")), wxT("Configure external tools..."));
+			m_tb->AddTool(XRCID("stop_external_tool"),      wxT("Stop external tool"),          m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/24/build/stop")),               wxT("Stop external tool"));
 		} else {
-			m_tb->AddTool(XRCID("external_tools_settings"), wxT("Configure external tools..."), wxXmlResource::Get()->LoadBitmap(wxT("configure_ext_tools16")), wxT("Configure external tools..."));
-			m_tb->AddTool(XRCID("stop_external_tool"), wxT("Stop external tool"), wxXmlResource::Get()->LoadBitmap(wxT("stop_external_tool16")), wxT("Stop external tool"));
+			m_tb->AddTool(XRCID("external_tools_settings"), wxT("Configure external tools..."), m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/16/external-tools/configure") ), wxT("Configure external tools..."));
+			m_tb->AddTool(XRCID("stop_external_tool"),      wxT("Stop external tool"),          m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/16/build/stop")),                wxT("Stop external tool"));
 		}
 		m_tb->AddSeparator();
-
+#if USE_AUI_TOOLBAR
+		m_tb->SetArtProvider(new CLMainAuiTBArt());
+#endif
 		std::vector<ToolInfo> tools = inData.GetTools();
 		std::sort(tools.begin(), tools.end(), DecSort());
 
@@ -139,21 +142,21 @@ clToolBar *ExternalToolsPlugin::CreateToolBar(wxWindow *parent)
 			wxFileName icon16(ti.GetIcon16());
 
 			if (size == 24) {
-				wxBitmap bmp(wxXmlResource::Get()->LoadBitmap(wxT("ext_tool_default24")));
+				wxBitmap bmp( m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/24/external-tools/cog") ));
 				if (icon24.FileExists()) {
 					bmp.LoadFile(icon24.GetFullPath(), wxBITMAP_TYPE_PNG);
 					if (bmp.IsOk() == false) {
-						bmp = wxXmlResource::Get()->LoadBitmap(wxT("ext_tool_default24"));
+						bmp = m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/24/external-tools/cog") );
 					}
 				}
 				m_tb->AddTool(wxXmlResource::GetXRCID(ti.GetId().c_str()), ti.GetName(), bmp, ti.GetName());
 
 			} else if (size == 16) {
-				wxBitmap bmp(wxXmlResource::Get()->LoadBitmap(wxT("ext_tool_default16")));
+				wxBitmap bmp(m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/16/external-tools/cog") ));
 				if (icon16.FileExists()) {
 					bmp.LoadFile(icon16.GetFullPath(), wxBITMAP_TYPE_PNG);
 					if (bmp.IsOk() == false) {
-						bmp = wxXmlResource::Get()->LoadBitmap(wxT("ext_tool_default16"));
+						bmp = m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/16/external-tools/cog") );
 					}
 				}
 

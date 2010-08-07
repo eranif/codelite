@@ -153,9 +153,11 @@ TagsManager::~TagsManager()
 	if (m_canDeleteCtags) {
 		if (m_codeliteIndexerProcess) m_codeliteIndexerProcess->Disconnect(m_codeliteIndexerProcess->GetUid(), wxEVT_END_PROCESS, wxProcessEventHandler(TagsManager::OnCtagsEnd), NULL, this);
 
-		// terminate ctags process
-		if (m_codeliteIndexerProcess) m_codeliteIndexerProcess->Terminate();
-
+//		// terminate ctags process
+//		if (m_codeliteIndexerProcess) {
+//			m_codeliteIndexerProcess->Terminate();
+//		}
+//
 		std::list<clProcess*>::iterator it = m_gargabeCollector.begin();
 		for (; it != m_gargabeCollector.end(); it++) {
 			delete (*it);

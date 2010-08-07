@@ -766,7 +766,7 @@ void Frame::CreateGUIControls(void)
 		m_mainBook->ShowNavBar( false );
 	}
 
-	BuildSettingsConfigST::Get()->Load(wxT("2.0.5"));
+	BuildSettingsConfigST::Get()->Load(wxT("2.0.6"));
 
 	//load dialog properties
 	EditorConfigST::Get()->ReadObject(wxT("FindAndReplaceData"), &LEditor::GetFindReplaceData());

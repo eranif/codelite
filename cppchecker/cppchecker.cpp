@@ -84,7 +84,7 @@ CppCheckPlugin::CppCheckPlugin(IManager *manager)
 
 	m_view = new CppCheckReportPage(m_mgr->GetOutputPaneNotebook(), m_mgr, this);
 
-	wxBookCtrlBase *book = m_mgr->GetOutputPaneNotebook();
+//	wxBookCtrlBase *book = m_mgr->GetOutputPaneNotebook();
 	m_mgr->GetOutputPaneNotebook()->AddPage(m_view, wxT("CppCheck"), false, LoadBitmapFile(wxT("cppcheck.png")));
 }
 

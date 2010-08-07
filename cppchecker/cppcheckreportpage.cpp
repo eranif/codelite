@@ -174,7 +174,7 @@ int CppCheckReportPage::ColorLine ( int, const char *text, size_t &start, size_t
 	static wxRegEx gccPattern(wxT("^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)(:)([a-zA-Z ]*)"));
 
 	static int fileIndex     = 1;
-	static int lineIndex     = 3;
+//	static int lineIndex     = 3;
 	static int severityIndex = 4;
 
 	if(gccPattern.Matches(txt)) {

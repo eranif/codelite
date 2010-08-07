@@ -307,9 +307,9 @@ class DbgCmdCreateVarObj : public DbgCmdHandler
 public:
 	DbgCmdCreateVarObj(IDebuggerObserver *observer, DbgGdb *gdb, const wxString &expression, int userReason)
 			: DbgCmdHandler(observer)
-			, m_debugger(gdb)
 			, m_expression(expression)
-			, m_userReason(userReason) {}
+			, m_userReason(userReason)
+			, m_debugger(gdb) {}
 
 	virtual ~DbgCmdCreateVarObj() {}
 
@@ -342,8 +342,8 @@ public:
 	DbgCmdEvalVarObj(IDebuggerObserver *observer, const wxString &variable, DisplayFormat displayFormat, int userReason)
 			: DbgCmdHandler  (observer)
 			, m_variable     (variable)
-			, m_displayFormat(displayFormat)
-			, m_userReason   ( userReason ) {}
+			, m_userReason   ( userReason )
+			, m_displayFormat(displayFormat) {}
 
 	virtual ~DbgCmdEvalVarObj() {}
 

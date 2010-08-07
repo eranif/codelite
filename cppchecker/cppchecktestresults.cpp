@@ -2,6 +2,7 @@
 #include <wx/filename.h>
 #include <wx/sstream.h>
 #include "cppchecktestresults.h"
+#include "wx_xml_compatibility.h"
 
 CppCheckResult::~CppCheckResult()
 {

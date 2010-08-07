@@ -129,8 +129,9 @@ void PluginManager::Load()
 			wxString fileName( files.Item( i ) );
 			if ( !dl->Load( fileName ) ) {
 				wxLogMessage( wxT( "Failed to load plugin's dll: " ) + fileName );
-				if (!dl->GetError().IsEmpty())
+				if (!dl->GetError().IsEmpty()) {
 					wxLogMessage(dl->GetError());
+				}
 #if wxVERSION_NUMBER < 2900
 				delete dl;
 #endif
@@ -154,8 +155,9 @@ void PluginManager::Load()
 				interface_version = pfnInterfaceVersion();
 			} else {
 				wxLogMessage(wxT("Failed to find GetPluginInterfaceVersion() in dll: ") + fileName);
-				if (!dl->GetError().IsEmpty())
+				if (!dl->GetError().IsEmpty()) {
 					wxLogMessage(dl->GetError());
+			}
 			}
 
 			if ( interface_version != PLUGIN_INTERFACE_VERSION ) {
@@ -201,8 +203,9 @@ void PluginManager::Load()
 			GET_PLUGIN_CREATE_FUNC pfn = ( GET_PLUGIN_CREATE_FUNC )dl->GetSymbol( wxT( "CreatePlugin" ), &success );
 			if ( !success ) {
 				wxLogMessage(wxT("Failed to find CreatePlugin() in dll: ") + fileName);
-				if (!dl->GetError().IsEmpty())
+				if (!dl->GetError().IsEmpty()) {
 					wxLogMessage(dl->GetError());
+				}
 
 				//mark this plugin as not available
 				pluginInfo.SetEnabled(false);

@@ -548,14 +548,14 @@ int SymbolViewPlugin::SymTree::IsCtorOrDtor(const wxTreeItemId &id)
 	if (!id.IsOk() || GetRootItem() == id)
 		return 0;
 	TagTreeData *childtag = (TagTreeData*) GetItemData(id);
-	if (!childtag || childtag->GetKind() != wxT("function") && childtag->GetKind() != wxT("prototype"))
+	if (!childtag || ((childtag->GetKind() != wxT("function")) && (childtag->GetKind() != wxT("prototype"))))
 		return 0;
 
 	wxTreeItemId parent = GetItemParent(id);
 	if (!parent.IsOk())
 		return 0;
 	TagTreeData *parenttag = (TagTreeData*) GetItemData(parent);
-	if (!parenttag || parenttag->GetKind() != wxT("class") && parenttag->GetKind() != wxT("struct"))
+	if (!parenttag || ((parenttag->GetKind() != wxT("class")) && (parenttag->GetKind() != wxT("struct"))))
 		return 0;
 
 	wxString name = childtag->GetName();

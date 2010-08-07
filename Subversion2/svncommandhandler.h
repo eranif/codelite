@@ -108,14 +108,15 @@ public:
 			event.SetString(workingDirectory);
 			m_owner->AddPendingEvent(event);
 		} else {
-			if(m_commandId == wxNOT_FOUND) 
+			if(m_commandId == wxNOT_FOUND) {
 				wxLogMessage(wxT("svn: ProcessLoginRequired: passed m_commandId = wxNOT_FOUND"));
-			
-			else if(m_owner == NULL)
+			}
+			else if(m_owner == NULL) {
 				wxLogMessage(wxT("svn: ProcessLoginRequired: passed NULL m_owner"));
+			}
 		}
 	}
-	
+
 	/**
 	 * @brief the svn operation failed due to login error. Retry the last command but this
 	 * time, pop the login dialog
@@ -131,16 +132,18 @@ public:
 			// set the working directory where the svn was invoked from
 			event.SetString(url);
 			m_owner->AddPendingEvent(event);
-			
+
 		} else {
-			if(m_commandId == wxNOT_FOUND) 
+			if(m_commandId == wxNOT_FOUND){
 				wxLogMessage(wxT("svn: ProcessLoginRequired: passed m_commandId = wxNOT_FOUND"));
-			
-			else if(m_owner == NULL)
+
+			} else if(m_owner == NULL){
 				wxLogMessage(wxT("svn: ProcessLoginRequired: passed NULL m_owner"));
+
+			}
 		}
 	}
-	
+
 	/**
 	 * @brief the svn operation failed due to server certificate errorlogin error. Retry the last command but this
 	 * time, pop the login dialog

@@ -653,7 +653,7 @@ void CCBox::HideCCBox()
 	if(GetEditor()) {
 		wxCommandEvent evt(wxCMD_EVENT_SET_EDITOR_ACTIVE, GetId());
 		evt.SetEventObject(this);
-		GetEditor()->AddPendingEvent( evt );
+		GetEditor()->GetEventHandler()->AddPendingEvent( evt );
 	}
 }
 

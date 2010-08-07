@@ -1617,12 +1617,12 @@ void Manager::UpdateMenu ( wxMenu *menu, MenuItemDataMap &accelMap, std::vector<
 			}
 
 			//search this item in the accelMap
-			wxString labelText = StripAccelAndNemonics ( item->GetText() );
+			wxString labelText = StripAccelAndNemonics ( item->GetItemLabel() );
 			if ( accelMap.find ( labelText ) != accelMap.end() ) {
 				MenuItemData item_data = accelMap.find ( labelText )->second;
 
 				wxString txt;
-				txt << StripAccel ( item->GetText() );
+				txt << StripAccel ( item->GetItemLabel() );
 
 				//set the new accelerator
 				if ( item_data.accel.IsEmpty() == false ) {
@@ -1630,7 +1630,7 @@ void Manager::UpdateMenu ( wxMenu *menu, MenuItemDataMap &accelMap, std::vector<
 				}
 
 				txt.Replace ( wxT ( "_" ), wxT ( "&" ) );
-				item->SetText ( txt );
+				item->SetItemLabel ( txt );
 
 				wxAcceleratorEntry* a = wxAcceleratorEntry::Create ( txt );
 				if ( a ) {

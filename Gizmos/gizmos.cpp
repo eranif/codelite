@@ -153,7 +153,7 @@ static void WriteFile(const wxString &fileName, const wxString &content)
 
 static void WriteNamespacesDeclaration(const wxArrayString& namespacesList, wxString& buffer)
 {
-	for (int i = 0; i < namespacesList.Count(); i++)
+	for (unsigned int i = 0; i < namespacesList.Count(); i++)
 	{
 		buffer << wxT("namespace ") << namespacesList[i] << wxT("\n{\n\n");
 	}
@@ -511,7 +511,7 @@ void WizardsPlugin::CreateClass(const NewClassInfo &info)
 	header << wxT("};\n\n");
 
 	// Close namespaces
-	for (int i = 0; i < info.namespacesList.Count(); i++)
+	for (unsigned int i = 0; i < info.namespacesList.Count(); i++)
 	{
 		header << wxT("}\n\n");
 	}
@@ -569,7 +569,7 @@ void WizardsPlugin::CreateClass(const NewClassInfo &info)
 		cpp << DoGetVirtualFuncImpl(info);
 
 		// Close namespaces
-		for (int i = 0; i < info.namespacesList.Count(); i++)
+		for (unsigned int i = 0; i < info.namespacesList.Count(); i++)
 		{
 			cpp << wxT("}\n\n");
 		}

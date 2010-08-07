@@ -190,7 +190,7 @@ bool NewClassDlg::ValidateInput()
 		wxArrayString namespacesList;
 		this->GetNamespacesList(namespacesList);
 		//validate each namespace
-		for (int i = 0; i < namespacesList.Count(); i++) {
+		for (unsigned int i = 0; i < namespacesList.Count(); i++) {
 			if (!IsValidCppIndetifier (namespacesList[i])) {
 				wxString msg;
 				msg << wxT("'") << namespacesList[i] << wxT("' is not a valid C++ qualifier");
@@ -358,7 +358,7 @@ void NewClassDlg::GetNamespacesList(wxArrayString& namespacesArray)
 		return;
 
 	int prevPos = 0;
-	int pos = textNamespaces.find (wxT("::"), prevPos);
+	unsigned int pos = textNamespaces.find (wxT("::"), prevPos);
 
 	while (pos != wxString::npos) {
 		wxString token = textNamespaces.Mid(prevPos, pos-prevPos);

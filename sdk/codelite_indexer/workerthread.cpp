@@ -98,6 +98,7 @@ void WorkerThread::start()
 		}
 	}
 	printf("INFO: WorkerThread: Going down\n");
+	exit(-1);
 }
 
 // ---------------------------------------------
@@ -114,7 +115,13 @@ void IsAliveThread::start()
 #endif
 		if ( !is_process_alive(m_pid) ) {
 			fprintf(stderr, "INFO: parent process died, going down\n");
-			exit(0);
+			break;
 		}
 	}
+	
+#ifndef __WXMSW__
+	// Delete the local socket
+	::unlink(m_socket.c_str());
+	::remove(m_socket.c_str());
+#endif
 }

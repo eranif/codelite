@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 	WorkerThread  worker( &g_connectionQueue );
 
 	// start the 'is alive thread'
-	IsAliveThread isAliveThread( parent_pid  );
+	IsAliveThread isAliveThread( parent_pid, channel_name  );
 	worker.run();
 	if ( parent_pid ) {
 		isAliveThread.run();

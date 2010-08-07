@@ -24,9 +24,10 @@ public:
 // is alive thread
 // ---------------------------------------------
 class IsAliveThread : public eThread {
-	int m_pid;
+	int         m_pid;
+	std::string m_socket;
 public:
-	IsAliveThread(int pid) : m_pid(pid){}
+	IsAliveThread(int pid, const std::string &socketName) : m_pid(pid), m_socket(socketName) {}
 	~IsAliveThread(){}
 
 public:

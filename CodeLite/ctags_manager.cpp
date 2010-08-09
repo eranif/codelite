@@ -455,7 +455,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 		return;
 	}
 
-	
+
 	// send the request
 	if ( !clIndexerProtocol::SendRequest(&client, req) ) {
 		wxPrintf(wxT("Failed to send request to indexer ID [%d]\n"), wxGetProcessId());
@@ -832,21 +832,35 @@ void TagsManager::DoFilterDuplicatesBySignature(std::vector<TagEntryPtr>& src, s
 
 void TagsManager::DoFilterDuplicatesByTagID(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
 {
-	std::map<int, TagEntryPtr> mapTags;
+	std::map<int, TagEntryPtr>      mapTags;
+	std::map<wxString, TagEntryPtr> localTags;
 
 	for (size_t i=0; i<src.size(); i++) {
 		const TagEntryPtr& t = src.at(i);
 		int tagId = t->GetId();
-		if(mapTags.find(tagId) == mapTags.end()) {
+		if(t->GetParent() == wxT("<local>")){
+			if(localTags.find(t->GetName()) == localTags.end()) {
+				localTags[t->GetName()] = t;
+			}
+
+		} else if(mapTags.find(tagId) == mapTags.end()) {
 			mapTags[tagId] = t;
+
 		} else {
 			tagId = -1;
 		}
 	}
 
+	// Add the real entries (fetched from the database)
 	std::map<int, TagEntryPtr>::iterator iter = mapTags.begin();
 	for(; iter != mapTags.end(); iter++) {
 		target.push_back( iter->second );
+	}
+
+	// Add the locals (collected from the current scope)
+	std::map<wxString, TagEntryPtr>::iterator iter2 = localTags.begin();
+	for(; iter2 != localTags.end(); iter2++) {
+		target.push_back( iter2->second );
 	}
 }
 

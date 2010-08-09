@@ -453,7 +453,7 @@ bool Language::OnTypedef(ParsedToken *token)
 				token->SetTemplateInitialization(scopeTempalteInitList);
 				token->SetIsTemplate(true);
 			}
-			
+
 			token->SetTypeName(realName);
 			token->SetTypeScope(tag->GetScope());
 

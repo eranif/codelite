@@ -37,6 +37,7 @@
 #include "plugin.h"
 #include <wx/tooltip.h>
 #include <wx/tipwin.h>
+#include <wx/display.h>
 
 #ifndef wxScintillaEventHandler
 #define wxScintillaEventHandler(func) \
@@ -180,7 +181,21 @@ void CCBox::Adjust()
 	pt.y += lineHeight;
 
 #if CC_USES_POPUPWIN
-	wxSize  size       = ::wxGetDisplaySize();
+
+	wxSize  size = ::wxGetDisplaySize();
+
+	// FIX BUG#3032473: "CC box position and dual screen"
+	// Incase we are using multiple screens,
+	// re-calculate the width
+	unsigned displayCount = wxDisplay::GetCount();
+	if(displayCount > 1) {
+		size.x = 0;
+
+		for(unsigned i=0; i<displayCount; i++) {
+			wxDisplay display(i);
+			size.x += display.GetGeometry().width;
+		}
+	}
 
 	// the completion box is child of the main frame
 	wxPoint ccPoint = pt;
@@ -649,7 +664,7 @@ void CCBox::HideCCBox()
 			LEditor::m_ccShowItemsComments  = checked ? 1 : 0;
 		}
 	}
-	
+
 	if(GetEditor()) {
 		wxCommandEvent evt(wxCMD_EVENT_SET_EDITOR_ACTIVE, GetId());
 		evt.SetEventObject(this);

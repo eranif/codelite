@@ -145,15 +145,16 @@ void SubversionView::CreatGUIControls()
 
 	// Add toolbar
 	// Create the toolbar
+	BitmapLoader *bmpLdr = m_plugin->GetManager()->GetStdIcons();
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
 	tb->AddTool(XRCID("svn_link_editor"), wxT("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("svn_link_editor"), m_plugin->GetSettings().GetFlags() & SvnLinkEditor);
 
-	tb->AddTool(XRCID("clear_svn_output"), wxT("Clear Svn Output Tab"), wxXmlResource::Get()->LoadBitmap(wxT("document_delete")), wxT("Clear Svn Output Tab"), wxITEM_NORMAL);
-	tb->AddTool(XRCID("svn_refresh"),      wxT("Refresh View"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_refresh" ) ), wxT ( "Refresh View" ) );
+	tb->AddTool(XRCID("clear_svn_output"), wxT("Clear Svn Output Tab"), bmpLdr->LoadBitmap(wxT("output-pane/16/clear")), wxT("Clear Svn Output Tab"), wxITEM_NORMAL);
+	tb->AddTool(XRCID("svn_refresh"),      wxT("Refresh View"), bmpLdr->LoadBitmap ( wxT ( "output-pane/16/reload" ) ), wxT ( "Refresh View" ) );
 	tb->AddSeparator();
 
-	tb->AddTool(XRCID("svn_stop"),         wxT("Stop current svn process"), m_plugin->GetManager()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/build/stop")), wxT ( "Stop current svn process" ) );
+	tb->AddTool(XRCID("svn_stop"),         wxT("Stop current svn process"), bmpLdr->LoadBitmap(wxT("toolbars/16/build/stop")), wxT ( "Stop current svn process" ) );
 	tb->AddTool(XRCID("svn_cleanup"),      wxT("Svn Cleanup"), wxXmlResource::Get()->LoadBitmap ( wxT ( "eraser" ) ), wxT ( "Svn Cleanup" ) );
 
 	tb->AddSeparator();

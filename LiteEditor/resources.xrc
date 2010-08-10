@@ -4,8 +4,6 @@
 	<object class="wxBitmap" name="find_refresh">res/find_refresh.png</object>
 	<object class="wxBitmap" name="tags_selected">res/tags_selected.png</object>
 	<object class="wxBitmap" name="close_panel_push">res/close_panel_push.png</object>
-	<object class="wxBitmap" name="project_settings">res/folder_development_preferences.png</object>
-	<object class="wxBitmap" name="set_active">res/folder_development_popup.png</object>
 	<object class="wxBitmap" name="todo">res/todo.png</object>
 	<object class="wxBitmap" name="memory_view">res/memory_view.png</object>
 	<object class="wxBitmap" name="cpp_keyword">res/cpp_blue.png</object>
@@ -28,7 +26,6 @@
     <object class="wxBitmap" name="struct">res/but_green_s.png</object>
     <object class="wxBitmap" name="workspace">res/folder_home.png</object>
 	<object class="wxBitmap" name="folder">res/folder.png</object>
-    <object class="wxBitmap" name="document_delete">res/clean.png</object>
     <object class="wxBitmap" name="build">res/rebuild.png</object>
     <object class="wxBitmap" name="class_view">res/chart_organisation.png</object>
 	<object class="wxBitmap" name="word_wrap">res/wrap_arrow.png</object>

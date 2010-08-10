@@ -28,7 +28,7 @@
 #include "manager.h"
 #include "outputtabwindow.h"
 #include "output_pane.h"
-
+#include "pluginmanager.h"
 
 BEGIN_EVENT_TABLE(OutputTabWindow, wxPanel)
 	EVT_MENU(XRCID("scroll_on_output"),      OutputTabWindow::OnOutputScrolls)
@@ -145,6 +145,8 @@ void OutputTabWindow::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer(mainSizer);
 
+	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
+
 	//Create the toolbar
 	m_tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL|wxTB_NODIVIDER);
 
@@ -163,7 +165,7 @@ void OutputTabWindow::CreateGUIControls()
 
 	m_tb->AddTool(XRCID("clear_all_output"),
 	              wxT("Clear All"),
-	              wxXmlResource::Get()->LoadBitmap(wxT("document_delete")),
+	              bmpLoader->LoadBitmap(wxT("output-pane/16/clear")),
 	              wxT("Clear All"));
 
 	m_tb->AddTool(XRCID("collapse_all"), _("Fold All Results"),
@@ -171,7 +173,7 @@ void OutputTabWindow::CreateGUIControls()
 	              _("Fold All Results"));
 
 	m_tb->AddTool(XRCID("repeat_output"), _("Repeat"),
-	              wxXmlResource::Get()->LoadBitmap(wxT("find_refresh")),
+	               bmpLoader->LoadBitmap(wxT("output-pane/16/reload")),
 	              _("Repeat"));
 
 	m_tb->Realize();

@@ -26,6 +26,7 @@
 #include <wx/combobox.h>
 #include <wx/sizer.h>
 #include <wx/button.h>
+#include "pluginmanager.h"
 #include "project_settings_dlg.h"
 #include "globals.h"
 #include "manager.h"
@@ -83,8 +84,10 @@ void WorkspaceTab::CreateGUIControls()
 	tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
 	tb->AddTool(XRCID("go_home"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxT("Goto Active Project"), wxITEM_NORMAL);
 	tb->AddSeparator();
-	tb->AddTool(XRCID("project_properties"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("project_settings")), wxT("Open Active Project Settings..."), wxITEM_NORMAL);
-	tb->AddTool(XRCID("set_project_active"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("set_active")), wxT("Select Active Project"), wxITEM_NORMAL);
+
+	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
+	tb->AddTool(XRCID("project_properties"), wxEmptyString, bmpLoader->LoadBitmap(wxT("workspace/16/project_settings")),      wxT("Open Active Project Settings..."), wxITEM_NORMAL);
+	tb->AddTool(XRCID("set_project_active"), wxEmptyString, bmpLoader->LoadBitmap(wxT("workspace/16/project_select_active")), wxT("Select Active Project"),           wxITEM_NORMAL);
 	tb->AddSeparator();
 
 	// add the 'multiple/single' tree style

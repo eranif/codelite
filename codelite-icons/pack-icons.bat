@@ -1,6 +1,6 @@
 @ECHO OFF
 set CURRENT_DUR=%CD%
-set PATH=%PATH%;%ProrgramFiles%\7-Zip
+set PATH=%PATH%;%ProgramFiles%\7-Zip
 rmdir /S /Q ..\tmp
 svn export . ..\tmp --force
 cd ..\tmp

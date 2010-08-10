@@ -46,6 +46,7 @@
 #include "virtualdirtreectrl.h"
 #include "wx/xrc/xmlres.h"
 #include "globals.h"
+#include "bitmap_loader.h"
 #include "plugin.h"
 
 //#define __PERFORMANCE
@@ -628,8 +629,9 @@ VdtcTreeItemBase *wxVirtualDirTreeCtrl::AddDirItem(const wxString &name)
 
 void wxVirtualDirTreeCtrl::OnAssignIcons(wxImageList &icons)
 {
+	BitmapLoader bmpLoader(wxT("codelite-icons.zip"));
 	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("document_root")));       //0
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("folder")));              //1
+	icons.Add(bmpLoader.LoadBitmap(wxT("workspace/16/virtual_folder")));    //1
 	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_text")));     //2
 	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus")));//3
 	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_c")));        //4

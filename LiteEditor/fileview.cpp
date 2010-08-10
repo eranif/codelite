@@ -140,13 +140,13 @@ FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint
 	// Initialise images map
 	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 	wxImageList *images = new wxImageList( 16, 16, true );
-	images->Add( bmpLoader->LoadBitmap(wxT("workspace/16/project")) );                 //0
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "folder" ) ) );               //1
+	images->Add( bmpLoader->LoadBitmap(wxT("workspace/16/project")) );                //0
+	images->Add( bmpLoader->LoadBitmap(wxT("workspace/16/virtual_folder")) );         //1
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_c" ) ) );         //2
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_cplusplus" ) ) ); //3
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_h" ) ) );         //4
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_text" ) ) );      //5
-	images->Add( bmpLoader->LoadBitmap(wxT("workspace/16/workspace")) );               //6
+	images->Add( bmpLoader->LoadBitmap(wxT("workspace/16/workspace")) );              //6
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "formbuilder" ) ) );          //7
 	images->Add( bmpLoader->LoadBitmap(wxT("workspace/16/project_active")) );          //8
 

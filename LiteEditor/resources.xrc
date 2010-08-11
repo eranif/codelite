@@ -1,10 +1,6 @@
 <resource>
 	<object class="wxBitmap" name="fold_airplane">res/outbox.png</object>
 	<object class="wxBitmap" name="read_only">res/lock.png</object>
-	<object class="wxBitmap" name="find_refresh">res/find_refresh.png</object>
-	<object class="wxBitmap" name="tags_selected">res/tags_selected.png</object>
-	<object class="wxBitmap" name="close_panel_push">res/close_panel_push.png</object>
-	<object class="wxBitmap" name="todo">res/todo.png</object>
 	<object class="wxBitmap" name="memory_view">res/memory_view.png</object>
 	<object class="wxBitmap" name="cpp_keyword">res/cpp_blue.png</object>
 	<object class="wxBitmap" name="About">res/about_img.png</object>
@@ -19,17 +15,12 @@
     <object class="wxBitmap" name="enumerator">res/enumee.xpm</object>
     <object class="wxBitmap" name="class">res/class.png</object>
     <object class="wxBitmap" name="typedef">res/typedef.xpm</object>
-    <object class="wxBitmap" name="project">res/folder_development.png</object>
-	<object class="wxBitmap" name="active_project">res/folder_orange.png</object>
 	<object class="wxBitmap" name="globals">res/cube_green.png</object>
     <object class="wxBitmap" name="namespace">res/namespace.png</object>
     <object class="wxBitmap" name="struct">res/but_green_s.png</object>
-    <object class="wxBitmap" name="workspace">res/folder_home.png</object>
-	<object class="wxBitmap" name="folder">res/folder.png</object>
     <object class="wxBitmap" name="build">res/rebuild.png</object>
     <object class="wxBitmap" name="class_view">res/chart_organisation.png</object>
 	<object class="wxBitmap" name="word_wrap">res/wrap_arrow.png</object>
-	<object class="wxBitmap" name="output_win">res/commandprompt.png</object>
 	<object class="wxBitmap" name="debug_window">res/trace.png</object>
 	<object class="wxBitmap" name="debugger_tab">res/debug_windows.png</object>
 	<object class="wxBitmap" name="svn_info">res/help_about.png</object>
@@ -37,7 +28,6 @@
 	<object class="wxBitmap" name="svn_repo">res/svn_repo.png</object>
 	<object class="wxBitmap" name="svn_checkout">res/svn_checkout.png</object>
 	<object class="wxBitmap" name="svn_settings">res/configure.png</object>
-	<object class="wxBitmap" name="document_root">res/drive.png</object>
 	<object class="wxBitmap" name="locals_view">res/locals_view.png</object>
 	<object class="wxBitmap" name="watches">res/watches.png</object>
 	<object class="wxBitmap" name="frames">res/window_duplicate.png</object>
@@ -51,12 +41,7 @@
 	<object class="wxBitmap" name="colourise">res/package_utilities.png</object>
 	<object class="wxBitmap" name="collapse">res/collapse.png</object>
 	<object class="wxBitmap" name="gohome">res/gohome.png</object>
-	<object class="wxBitmap" name="project_conflict">res/messagebox_warning.png</object>
-	<object class="wxBitmap" name="files_unversioned">res/messagebox_info.png</object>
-	<object class="wxBitmap" name="error">res/mail_mark_important.png</object>
 	<object class="wxBitmap" name="text_view">res/view_text.png</object>
-	<object class="wxBitmap" name="edit_add">res/edit_add.png</object>
-	<object class="wxBitmap" name="edit_delete">res/edit_delete.png</object>
 	<object class="wxBitmap" name="eraser">res/eraser.png</object>
 	<object class="wxBitmap" name="cursor">res/cursor.png</object>
 	<object class="wxBitmap" name="note">res/16/note.png</object>
@@ -85,11 +70,6 @@
 	<object class="wxBitmap" name="plugin16">res/16/plugin24.png</object>
 	<object class="wxBitmap" name="code_format_options16">res/16/formatter_settings.png</object>
 	<object class="wxBitmap" name="code_format16">res/16/formatter.png</object>
-
-	<!-- Overlay icons -->
-	<object class="wxBitmap" name="overlay_ok">res/ok.png</object>
-	<object class="wxBitmap" name="overlay_modified">res/modified.png</object>
-	<object class="wxBitmap" name="overlay_conflict">res/conflict.png</object>
 
 	<!-- Message Pane icons -->
 	<object class="wxBitmap" name="message_pane_inf">res/MessagePane/message_pane_info.png</object>

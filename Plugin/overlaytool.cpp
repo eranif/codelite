@@ -1,3 +1,4 @@
+#if 0
 #include <wx/dcmemory.h>
 #include "overlaytool.h"
 #include <wx/xrc/xmlres.h>
@@ -92,3 +93,5 @@ OverlayTool& OverlayTool::Get()
 	static OverlayTool theTool;
 	return theTool;
 }
+
+#endif

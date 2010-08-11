@@ -1,6 +1,7 @@
 #ifndef __overlaytool__
 #define __overlaytool__
 
+#if 0
 #include <wx/bitmap.h>
 
 /**
@@ -27,4 +28,6 @@ public:
 	wxBitmap AddConflictIcon(wxBitmap& bmp);
 	wxBitmap AddModifiedIcon(wxBitmap& bmp);
 };
+#endif
+
 #endif // __overlaytool__

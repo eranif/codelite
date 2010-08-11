@@ -26,6 +26,7 @@
 #include "globals.h"
 #include "errorstab.h"
 #include "findresultstab.h"
+#include "pluginmanager.h"
 
 
 BEGIN_EVENT_TABLE ( ErrorsTab, OutputTabWindow )
@@ -39,12 +40,13 @@ ErrorsTab::ErrorsTab ( BuildTab *bt, wxWindow *parent, wxWindowID id, const wxSt
 		, m_bt ( bt )
 {
     m_autoAppear = false; // BuildTab controls this tab's auto-appearance
+	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 
 	m_tb->RemoveTool ( XRCID ( "repeat_output" ) );
-	m_tb->AddCheckTool ( XRCID ( "show_errors" ), wxT ( "Errors" ), wxXmlResource::Get()->LoadBitmap ( wxT ( "error" ) ), wxNullBitmap, wxT ( "Show build errors" ) );
+	m_tb->AddCheckTool ( XRCID ( "show_errors" ), wxT ( "Errors" ),     bmpLoader->LoadBitmap(wxT("status/16/error")), wxNullBitmap, wxT ( "Show build errors" ) );
 	m_tb->ToggleTool ( XRCID ( "show_errors" ), true );
 
-	m_tb->AddCheckTool ( XRCID ( "show_warnings" ), wxT ( "Warnings" ), wxXmlResource::Get()->LoadBitmap ( wxT ( "project_conflict" ) ), wxNullBitmap, wxT ( "Show build warnings" ) );
+	m_tb->AddCheckTool ( XRCID ( "show_warnings" ), wxT ( "Warnings" ), bmpLoader->LoadBitmap(wxT("status/16/warning")), wxNullBitmap, wxT ( "Show build warnings" ) );
 	m_tb->ToggleTool ( XRCID ( "show_warnings" ), true );
 	m_tb->Realize();
 

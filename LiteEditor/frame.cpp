@@ -2354,12 +2354,19 @@ wxString Frame::CreateWorkspaceTable()
 		html << wxT("<tr><td><font size=2 face=\"Verdana\">");
 		html << wxT("No workspaces found.") << wxT("</font></td></tr>");
 	} else {
-		wxColour lineCol(0xd0, 0xff, 0xff);
+		wxColour baseColour (232, 166, 101);
+		wxColour firstColour  = DrawingUtils::LightColour(baseColour, 6);
+		wxColour secondColour = DrawingUtils::LightColour(baseColour, 8);
 		for (int i=(int)files.GetCount(); i>0; --i) {
 			wxFileName fn( files.Item(i-1) );
 
-			lineCol.Set(lineCol.Red() == 0xff ? 0xd0 : 0xff, 0xff, 0xff);
-			lineCol = DrawingUtils::LightColour(lineCol, 1);
+			wxColour lineCol;
+			if( i % 2 ) {
+				lineCol = firstColour;
+			} else {
+				lineCol = secondColour;
+			}
+
 			html << wxT("<tr bgcolor=\"") << lineCol.GetAsString(wxC2S_HTML_SYNTAX)<< wxT("\">")
 			<< wxT("<td><font size=2 face=\"Verdana\">")
 			<< wxT("<a href=\"action:open-file:")
@@ -2388,13 +2395,18 @@ wxString Frame::CreateFilesTable()
 		html << wxT("<tr><td><font size=2 face=\"Verdana\">");
 		html << wxT("No files found.") << wxT("</font></td></tr>");
 	} else {
-		wxColour lineCol(0xd0, 0xff, 0xff);
+		wxColour baseColour (232, 166, 101);
+		wxColour firstColour  = DrawingUtils::LightColour(baseColour, 6);
+		wxColour secondColour = DrawingUtils::LightColour(baseColour, 8);
 		for (int i=(int)files.GetCount(); i>0; --i) {
 
 			wxFileName fn( files.Item(i-1) );
-			lineCol.Set(lineCol.Red() == 0xff ? 0xd0 : 0xff, 0xff, 0xff);
-
-			lineCol = DrawingUtils::LightColour(lineCol, 1);
+			wxColour lineCol;
+			if( i % 2 ) {
+				lineCol = firstColour;
+			} else {
+				lineCol = secondColour;
+			}
 			html << wxT("<tr bgcolor=\"") << lineCol.GetAsString(wxC2S_HTML_SYNTAX)<< wxT("\">")
 			<< wxT("<td><font size=2 face=\"Verdana\">")
 			<< wxT("<a href=\"action:open-file:")

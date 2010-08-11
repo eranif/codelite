@@ -630,22 +630,22 @@ VdtcTreeItemBase *wxVirtualDirTreeCtrl::AddDirItem(const wxString &name)
 void wxVirtualDirTreeCtrl::OnAssignIcons(wxImageList &icons)
 {
 	BitmapLoader bmpLoader(wxT("codelite-icons.zip"));
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("document_root")));       //0
-	icons.Add(bmpLoader.LoadBitmap(wxT("workspace/16/virtual_folder")));    //1
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_text")));     //2
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus")));//3
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_c")));        //4
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_h")));        //5
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("executable")));          //6
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("file_php")));            //7
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("shared_library")));      //8
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("pixmap")));              //9
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("shellscript")));         //10
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("compressed_file")));     //11
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("file_xml")));            //12
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("file_html")));           //13
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("makefile")));            //14
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("formbuilder")));         //15
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/hard_disk")));          //0
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/folder")));              //1
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/text")));                //2
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/cpp")));                 //3
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/c")));                   //4
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/h")));                   //5
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/exe")));                 //6
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/php")));                 //7
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/dll")));                 //8
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/bmp")));                 //9
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/script")));              //10
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/zip")));                 //11
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/xml")));                 //12
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/html")));                //13
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/makefile")));            //14
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/wxfb")));                //15
 }
 
 VdtcTreeItemBase *wxVirtualDirTreeCtrl::OnCreateTreeItem(int type, const wxString &name)

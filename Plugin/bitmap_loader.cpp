@@ -43,7 +43,13 @@ void BitmapLoader::doLoadManifest()
 			for(size_t i=0; i<entries.size(); i++) {
 				wxString entry = entries[i];
 				entry.Trim().Trim(false);
+
+				// empty?
 				if(entry.empty())
+					continue;
+
+				// comment?
+				if(entry.StartsWith(wxT(";")))
 					continue;
 
 				wxString key = entry.BeforeFirst(wxT('='));

@@ -69,22 +69,6 @@
 	<object class="wxBitmap" name="next">res/QuickFindBar/next.png</object>
 	<object class="wxBitmap" name="previous">res/QuickFindBar/previous.png</object>
 
-	<!-- Mimetype -->
-	<object class="wxBitmap" name="page_white_c">res/mimetype/page_white_c.png</object>
-	<object class="wxBitmap" name="page_white_cplusplus">res/mimetype/page_white_cplusplus.png</object>
-	<object class="wxBitmap" name="page_white_h">res/mimetype/page_white_h.png</object>
-	<object class="wxBitmap" name="page_white_text">res/mimetype/page_white_text.png</object>
-	<object class="wxBitmap" name="compressed_file">res/mimetype/application_x_compressed_tar.png</object>
-	<object class="wxBitmap" name="executable">res/mimetype/application_x_ms_dos_executable.png</object>
-	<object class="wxBitmap" name="file_php">res/mimetype/application_x_php.png</object>
-	<object class="wxBitmap" name="shared_library">res/mimetype/application_x_sharedlib.png</object>
-	<object class="wxBitmap" name="pixmap">res/mimetype/image_x_xpixmap.png</object>
-	<object class="wxBitmap" name="shellscript">res/mimetype/shellscript.png</object>
-	<object class="wxBitmap" name="file_xml">res/mimetype/xml.png</object>
-	<object class="wxBitmap" name="file_html">res/mimetype/application_x_mswinurl.png</object>
-	<object class="wxBitmap" name="makefile">res/mimetype/make.png</object>
-	<object class="wxBitmap" name="formbuilder">res/mimetype/formbuilder.png</object>
-
 	<!--
 		Toolbar bitmaps (24x24)
 	-->

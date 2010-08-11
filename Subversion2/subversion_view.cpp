@@ -123,23 +123,24 @@ void SubversionView::CreatGUIControls()
 {
 	// Assign the image list
 	wxImageList *imageList = new wxImageList(16, 16, true);
+	BitmapLoader *bmpLoader = m_plugin->GetManager()->GetStdIcons();
 
-	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder")));
-	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("error")));
-	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("edit_add")));
-	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("edit_delete")));
-	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")));
-	imageList->Add(wxXmlResource::Get()->LoadBitmap(wxT("files_unversioned")));
+	imageList->Add(bmpLoader->LoadBitmap(wxT("mime/16/folder" ) ));            // 0
+	imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/modified" ) ));    // 1
+	imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/new" ) ));         // 2
+	imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/deleted" ) ));     // 3
+	imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/conflict" ) ));    // 4
+	imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/unversioned" ) )); // 5
 
 	// File icons 6-13
-	imageList->Add( m_plugin->GetManager()->GetStdIcons()->LoadBitmap(wxT("workspace/16/project") ) ); // 6
-	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("folder" ) ) );  // 7
-	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("page_white_c" ) ) );//8
-	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus" ) ) );//9
-	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("page_white_h" ) ) );//10
-	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("page_white_text" ) ) );//11
-	imageList->Add( m_plugin->GetManager()->GetStdIcons()->LoadBitmap(wxT("workspace/16/workspace") ) );//12
-	imageList->Add( wxXmlResource::Get()->LoadBitmap(wxT("formbuilder" ) ) );//13
+	imageList->Add( bmpLoader->LoadBitmap(wxT("workspace/16/project") ) );     // 6
+	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/folder" ) ) );          // 7
+	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/c" ) ) );               // 8
+	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/cpp" ) ) );             // 9
+	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/h" ) ) );               // 10
+	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/text" ) ) );            // 11
+	imageList->Add( bmpLoader->LoadBitmap(wxT("workspace/16/workspace") ) );   // 12
+	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/wxfb" ) ) );            // 13
 
 	m_treeCtrl->AssignImageList( imageList );
 

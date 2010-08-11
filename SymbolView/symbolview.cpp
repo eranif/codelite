@@ -123,16 +123,16 @@ void SymbolViewPlugin::LoadImagesAndIndexes()
 	m_image[wxT("workspace")]           = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("workspace/16/workspace")));
 	m_image[wxT("project")]             = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("workspace/16/project")));
 
-	m_image[wxT("h")]                   = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_h")));
+	m_image[wxT("h")]                   = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/h")));
 	m_image[wxT("hpp")]                 = m_image[wxT("h")];
 
-	m_image[wxT("c")]                   = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_c")));
-	m_image[wxT("cpp")]                 = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus")));
+	m_image[wxT("c")]                   = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/c")));
+	m_image[wxT("cpp")]                 = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/cpp")));
 	m_image[wxT("cxx")]                 = m_image[wxT("cpp")];
 	m_image[wxT("c++")]                 = m_image[wxT("cpp")];
 	m_image[wxT("cc")]                  = m_image[wxT("cpp")];
 
-	m_image[wxT("file")]                = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_text")));
+	m_image[wxT("file")]                = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/text")));
 
 	m_image[wxT("class_view")]          = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("class_view")));
 	m_image[wxT("globals")]             = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("globals")));

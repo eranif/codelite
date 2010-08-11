@@ -40,6 +40,7 @@
 #endif //WX_PRECOMP
 
 #include "new_item_dlg.h"
+#include "pluginmanager.h"
 #include "windowattrmanager.h"
 #include "globals.h"
 #include "wx/xrc/xmlres.h"
@@ -68,10 +69,11 @@ NewItemDlg::NewItemDlg( wxWindow* parent, wxString cwd)
 
 	// Initialise images map
 	wxImageList *images = new wxImageList(16, 16, true);
-	images->Add(wxXmlResource::Get()->LoadBitmap(_T("page_white_c")));			//0
-	images->Add(wxXmlResource::Get()->LoadBitmap(_T("page_white_cplusplus")));	//1
-	images->Add(wxXmlResource::Get()->LoadBitmap(_T("page_white_h")));			//2
-	images->Add(wxXmlResource::Get()->LoadBitmap(_T("page_white_text")));		//3
+	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
+	images->Add(bmpLoader->LoadBitmap(wxT("mime/16/c")));     //0
+	images->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));   //1
+	images->Add(bmpLoader->LoadBitmap(wxT("mime/16/h")));     //2
+	images->Add(bmpLoader->LoadBitmap(wxT("mime/16/text")));  //3
 
 	m_fileType->AssignImageList( images,  wxIMAGE_LIST_SMALL );
 

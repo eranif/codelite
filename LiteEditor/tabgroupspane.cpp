@@ -34,6 +34,7 @@
 #include <wx/xml/xml.h>
 #include "wx_xml_compatibility.h"
 #include "editor_config.h"
+#include "pluginmanager.h"
 #include "frame.h"
 #include "tabgroupmanager.h"
 #include "tabgroupspane.h"
@@ -101,22 +102,23 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption) : wxPane
 	// Add icons to the tree
 	wxImageList *imgList = new wxImageList(16, 16, true);
 
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("document_root")));       //0
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder")));              //1
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_text")));     //2
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus")));//3
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_c")));        //4
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_h")));        //5
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("executable")));          //6
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("file_php")));            //7
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("shared_library")));      //8
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("pixmap")));              //9
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("shellscript")));         //10
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("compressed_file")));     //11
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("file_xml")));            //12
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("file_html")));           //13
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("makefile")));            //14
-	imgList->Add(wxXmlResource::Get()->LoadBitmap(wxT("formbuilder")));         //15
+	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/hard_disk")));   //0
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/folder")));      //1
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/text")));        //2
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));         //3
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/c")));           //4
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/h")));           //5
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/exe")));         //6
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/php")));         //7
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/dll")));         //8
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/bmp")));         //9
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/script")));      //10
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/zip")));         //11
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/xml")));         //12
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/html")));        //13
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/makefile")));    //14
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/wxfb")));        //15
 
 	m_tree->AssignImageList( imgList );
 	sz->Add(m_tree, 1, wxEXPAND);

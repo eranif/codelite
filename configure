@@ -585,6 +585,7 @@ createInstallTarget()
 	echo "	@cp -fpr Runtime/config/accelerators.conf.default \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
 	echo "	@cp -fpr Runtime/src/*.gz \$(DESTDIR)$prefix/share/codelite/src/" >> Makefile
 	echo "	@cp -fpr Runtime/codelite-icons.zip \$(DESTDIR)$prefix/share/codelite/" >> Makefile
+	echo "	@chmod 0666 \$(DESTDIR)$prefix/share/codelite/codelite-icons.zip" >> Makefile
 	if [ "$add_desktop_icon" = "yes" ] ; then
 	  if test -d $HOME/Desktop/ ; then
 	    echo "	@cp -fpr Runtime/codelite.desktop $HOME/Desktop/" >> Makefile

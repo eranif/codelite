@@ -166,12 +166,14 @@ cp -pr Runtime/*.html fakeroot/${PREFIX}/share/codelite/
 cp -pr Runtime/astyle.sample fakeroot/${PREFIX}/share/codelite/
 cp -pr Runtime/src/* fakeroot/${PREFIX}/share/codelite/src/
 cp -pr Runtime/images/*.png fakeroot/${PREFIX}/share/codelite/images/
+cp -pr Runtime/codelite-icons.zip fakeroot/${PREFIX}/share/codelite/
 
 cp -pr AUTHORS fakeroot/${PREFIX}/share/codelite/
 cp -pr COPYING fakeroot/${PREFIX}/share/codelite/
 
 chmod 0644 fakeroot/${PREFIX}/lib/codelite/debuggers/*.so
 chmod 0644 fakeroot/${PREFIX}/lib/codelite/*.so
+chmod 0666 fakeroot/${PREFIX}/share/codelite/codelite-icons.zip
 
 ## Clean all .svn files
 find fakeroot -name ".svn" | xargs rm -fr

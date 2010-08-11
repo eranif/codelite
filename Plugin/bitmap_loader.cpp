@@ -29,7 +29,7 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name)
 void BitmapLoader::doLoadManifest()
 {
 	wxString targetFile;
-	if(ExtractFileFromZip(m_zipPath.GetFullPath(), wxT("manifest.ini"), wxStandardPaths::Get().GetTempDir(), targetFile)) {
+	if(ExtractFileFromZip(m_zipPath.GetFullPath(), wxT("manifest.ini"), wxStandardPaths::Get().GetUserDataDir(), targetFile)) {
 		// we got the file extracted, read it
 		wxFileName manifest(targetFile);
 		wxFFile fp(manifest.GetFullPath(), wxT("r"));
@@ -74,16 +74,20 @@ void BitmapLoader::doLoadManifest()
 			fp.Close();
 			wxRemoveFile( manifest.GetFullPath() );
 		}
+		wxRemoveFile( targetFile );
 	}
 }
 
 wxBitmap BitmapLoader::doLoadBitmap(const wxString& filepath)
 {
 	wxString bitmapFile;
-	if(ExtractFileFromZip(m_zipPath.GetFullPath(), filepath, wxStandardPaths::Get().GetTempDir(), bitmapFile)) {
+	if(ExtractFileFromZip(m_zipPath.GetFullPath(), filepath, wxStandardPaths::Get().GetUserDataDir(), bitmapFile)) {
 		wxBitmap bmp;
-		if(bmp.LoadFile(bitmapFile, wxBITMAP_TYPE_PNG))
+		if(bmp.LoadFile(bitmapFile, wxBITMAP_TYPE_PNG)) {
+			wxRemoveFile(bitmapFile);
 			return bmp;
+		}
+		wxRemoveFile(bitmapFile);
 	}
 	return wxNullBitmap;
 }

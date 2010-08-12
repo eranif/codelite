@@ -335,7 +335,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	m_panel3->SetSizer( bSizer15 );
 	m_panel3->Layout();
 	bSizer15->Fit( m_panel3 );
-	m_notebook->AddPage( m_panel3, _("General"), true );
+	m_notebook->AddPage( m_panel3, _("General"), false );
 	m_panel4 = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer16;
 	bSizer16 = new wxBoxSizer( wxVERTICAL );
@@ -411,8 +411,11 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	wxBoxSizer* bSizer23;
 	bSizer23 = new wxBoxSizer( wxVERTICAL );
 	
+	wxStaticBoxSizer* sbSizer5;
+	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, _("Auto Revision:") ), wxVERTICAL );
+	
 	m_checkBoxExposeRevisionMacro = new wxCheckBox( m_panel6, wxID_ANY, _("Add revision number as preprocessor definition in the compilation line"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer23->Add( m_checkBoxExposeRevisionMacro, 0, wxALL|wxEXPAND, 5 );
+	sbSizer5->Add( m_checkBoxExposeRevisionMacro, 0, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer24;
 	bSizer24 = new wxBoxSizer( wxHORIZONTAL );
@@ -424,12 +427,14 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	m_textCtrlMacroName = new wxTextCtrl( m_panel6, wxID_ANY, _("SVN_REVISION"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer24->Add( m_textCtrlMacroName, 1, wxALL|wxEXPAND, 5 );
 	
-	bSizer23->Add( bSizer24, 0, wxEXPAND|wxALL, 5 );
+	sbSizer5->Add( bSizer24, 0, wxEXPAND|wxALL, 5 );
+	
+	bSizer23->Add( sbSizer5, 0, wxEXPAND|wxALL, 5 );
 	
 	m_panel6->SetSizer( bSizer23 );
 	m_panel6->Layout();
 	bSizer23->Fit( m_panel6 );
-	m_notebook->AddPage( m_panel6, _("Integration"), false );
+	m_notebook->AddPage( m_panel6, _("Integration"), true );
 	
 	bSizer12->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 	
@@ -764,5 +769,23 @@ DiffDialogBase::DiffDialogBase( wxWindow* parent, wxWindowID id, const wxString&
 }
 
 DiffDialogBase::~DiffDialogBase()
+{
+}
+
+ChangeLogPageBase::ChangeLogPageBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
+{
+	wxBoxSizer* bSizer27;
+	bSizer27 = new wxBoxSizer( wxVERTICAL );
+	
+	m_textCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_AUTO_URL|wxTE_DONTWRAP|wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrl->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
+	bSizer27->Add( m_textCtrl, 1, wxALL|wxEXPAND, 5 );
+	
+	this->SetSizer( bSizer27 );
+	this->Layout();
+}
+
+ChangeLogPageBase::~ChangeLogPageBase()
 {
 }

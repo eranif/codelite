@@ -329,4 +329,21 @@ class DiffDialogBase : public wxDialog
 	
 };
 
+///////////////////////////////////////////////////////////////////////////////
+/// Class ChangeLogPageBase
+///////////////////////////////////////////////////////////////////////////////
+class ChangeLogPageBase : public wxPanel 
+{
+	private:
+	
+	protected:
+		wxTextCtrl* m_textCtrl;
+	
+	public:
+		
+		ChangeLogPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		~ChangeLogPageBase();
+	
+};
+
 #endif //__subversion2_ui__

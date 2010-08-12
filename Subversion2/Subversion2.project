@@ -14,6 +14,7 @@
     <File Name="svn_command_handlers.cpp"/>
     <File Name="svn_console.cpp"/>
     <File Name="subversion_password_db.cpp"/>
+    <File Name="svn_local_properties.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="subversion2.h"/>
@@ -32,6 +33,7 @@
     <File Name="commitmessagescache.h"/>
     <File Name="commitmessagescache.cpp"/>
     <File Name="subversion_password_db.h"/>
+    <File Name="svn_local_properties.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="UI">
@@ -55,6 +57,8 @@
     <File Name="svnblameeditor.cpp"/>
     <File Name="diff_dialog.cpp"/>
     <File Name="diff_dialog.h"/>
+    <File Name="changelogpage.h"/>
+    <File Name="changelogpage.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="subversion2.fbp"/>

@@ -99,7 +99,7 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_toolBarReplace->SetArtProvider(new CLQuickFindTbArt());
 #endif
 	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
-	m_toolBarReplace->AddTool( wxID_TOOL_REPLACE, _("tool"), bmpLoader->LoadBitmap(wxT("toolbars/16/search/find_and_repalce")) , _("Replace Selection"), wxITEM_NORMAL);
+	m_toolBarReplace->AddTool( wxID_TOOL_REPLACE, _("tool"), bmpLoader->LoadBitmap(wxT("toolbars/16/search/find_and_replace")) , _("Replace Selection"), wxITEM_NORMAL);
 	m_toolBarReplace->Realize();
 
 	fgSizer1->Add( m_toolBarReplace, 0, wxEXPAND, 5 );

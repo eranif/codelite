@@ -972,7 +972,7 @@ void Frame::CreateToolbars24()
 	}
 
 	tb->AddTool(wxID_FIND,              wxT("Find"),                       bmpLoader.LoadBitmap(wxT("toolbars/24/search/find")),             wxT("Find"));
-	tb->AddTool(wxID_REPLACE,           wxT("Replace"),                    bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_and_repalce")), wxT("Replace"));
+	tb->AddTool(wxID_REPLACE,           wxT("Replace"),                    bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_and_replace")), wxT("Replace"));
 	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_in_files")),    wxT("Find In Files"));
 	tb->AddSeparator();
 	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_resource")),    wxT("Find Resource In Workspace"));
@@ -1113,7 +1113,7 @@ void Frame::CreateToolbars16()
 	}
 
 	tb->AddTool(wxID_FIND,              wxT("Find"),                       bmpLoader.LoadBitmap(wxT("toolbars/16/search/find")),             wxT("Find"));
-	tb->AddTool(wxID_REPLACE,           wxT("Replace"),                    bmpLoader.LoadBitmap(wxT("toolbars/16/search/find_and_repalce")), wxT("Replace"));
+	tb->AddTool(wxID_REPLACE,           wxT("Replace"),                    bmpLoader.LoadBitmap(wxT("toolbars/16/search/find_and_replace")), wxT("Replace"));
 	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/16/search/find_in_files")),    wxT("Find In Files"));
 	tb->AddSeparator();
 	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_resource")),    wxT("Find Resource In Workspace"));

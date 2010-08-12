@@ -56,7 +56,7 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
 {
 	m_inputSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	wxButton *btn = new wxBitmapButton(this, XRCID("show_find"), PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/search/find_and_replace")) );
+	wxButton *btn = new wxBitmapButton(this, XRCID("show_find"), PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/search/find")) );
 	m_inputSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 	btn->SetToolTip(wxT("Show QuickFind Bar"));
 

@@ -84,7 +84,7 @@ void OutputPane::CreateGUIControls()
 	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")));
 
 	m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, REPLACE_IN_FILES);
-	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find_and_repalce")) );
+	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find_and_replace")) );
 
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
 	m_book->AddPage(m_outputWind, OUTPUT_WIN, false, bmpLoader->LoadBitmap(wxT("output-pane/16/terminal")));

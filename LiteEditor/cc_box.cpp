@@ -27,6 +27,7 @@
 #include "comment_parser.h"
 #include "ctags_manager.h"
 #include <wx/wupdlock.h>
+#include "pluginmanager.h"
 #include "editor_config.h"
 #include "cl_editor_tip_window.h"
 #include "cl_editor.h"
@@ -93,9 +94,10 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("enumerator")));
 
 	//Initialise the file bitmaps
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus")));
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_h")));
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_text")));
+	BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
+	il->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));
+	il->Add(bmpLoader->LoadBitmap(wxT("mime/16/h")));
+	il->Add(bmpLoader->LoadBitmap(wxT("mime/16/text")));
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("cpp_keyword")));
 
 	// assign the image list and let the control take owner ship (i.e. delete it)

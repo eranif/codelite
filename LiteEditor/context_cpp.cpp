@@ -1864,9 +1864,10 @@ void ContextCpp::ApplySettings()
 		m_enumeratorBmp = wxXmlResource::Get()->LoadBitmap(wxT("enumerator"));
 
 		//Initialise the file bitmaps
-		m_cppFileBmp = wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus"));
-		m_hFileBmp = wxXmlResource::Get()->LoadBitmap(wxT("page_white_h"));
-		m_otherFileBmp = wxXmlResource::Get()->LoadBitmap(wxT("page_white_text"));
+		BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
+		m_cppFileBmp   = bmpLoader->LoadBitmap(wxT("mime/16/cpp"));
+		m_hFileBmp     = bmpLoader->LoadBitmap(wxT("mime/16/h"));
+		m_otherFileBmp = bmpLoader->LoadBitmap(wxT("mime/16/text"));
 	}
 
 	//register the images

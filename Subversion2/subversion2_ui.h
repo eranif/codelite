@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May  4 2010)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -72,6 +72,9 @@ class CommitDialogBase : public wxDialog
 	private:
 	
 	protected:
+		
+		wxStaticText* m_staticTextBugID;
+		wxTextCtrl* m_textCtrlBugID;
 		wxSplitterWindow* m_splitter1;
 		wxPanel* m_panel1;
 		wxStaticText* m_staticText2;
@@ -93,12 +96,12 @@ class CommitDialogBase : public wxDialog
 		
 		CommitDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Commit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~CommitDialogBase();
-		
 		void m_splitter1OnIdle( wxIdleEvent& )
 		{
 			m_splitter1->SetSashPosition( 0 );
 			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CommitDialogBase::m_splitter1OnIdle ), NULL, this );
 		}
+		
 	
 };
 
@@ -343,6 +346,30 @@ class ChangeLogPageBase : public wxPanel
 		
 		ChangeLogPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
 		~ChangeLogPageBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class SvnPropsBaseDlg
+///////////////////////////////////////////////////////////////////////////////
+class SvnPropsBaseDlg : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticTextURL;
+		wxStaticText* m_staticText27;
+		wxTextCtrl* m_textCtrlBugURL;
+		wxStaticText* m_staticText28;
+		wxTextCtrl* m_textCtrlBugMessage;
+		wxStaticLine* m_staticline7;
+		wxButton* m_button21;
+		wxButton* m_button22;
+	
+	public:
+		
+		SvnPropsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Properties..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~SvnPropsBaseDlg();
 	
 };
 

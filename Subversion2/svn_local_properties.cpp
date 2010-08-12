@@ -5,8 +5,11 @@
 #include <wx/ffile.h>
 #include <wx/filename.h>
 
-SubversionLocalProperties::SubversionLocalProperties(const wxString& directory)
-	: m_path(directory)
+wxString SubversionLocalProperties::BUG_TRACKER_URL     = wxT("bug_tracker_url");
+wxString SubversionLocalProperties::BUG_TRACKER_MESSAGE = wxT("bug_tracker_message");
+
+SubversionLocalProperties::SubversionLocalProperties(const wxString& url)
+	: m_url(url)
 {
 }
 
@@ -17,8 +20,9 @@ SubversionLocalProperties::~SubversionLocalProperties()
 wxString SubversionLocalProperties::ReadProperty(const wxString& propName)
 {
 	ReadProperties();
+
 	// find the relevant group
-	GroupTable::const_iterator iter = m_values.find(m_path);
+	GroupTable::const_iterator iter = m_values.find(m_url);
 	if(iter == m_values.end())
 		return wxT("");
 
@@ -33,14 +37,17 @@ void SubversionLocalProperties::WriteProperty(const wxString& name, const wxStri
 {
 	ReadProperties();
 
-	GroupTable::iterator iter = m_values.find(m_path);
+	GroupTable::iterator iter = m_values.find(m_url);
 	if(iter == m_values.end()) {
 		SimpleTable tb;
 		tb[name] = val;
-		m_values[m_path] = tb;
+		m_values[m_url] = tb;
 	} else {
-		m_values[m_path][name] = val;
+		m_values[m_url][name] = val;
 	}
+
+	// Update the properties
+	WriteProperties();
 }
 
 wxString SubversionLocalProperties::GetConfigFile()
@@ -103,6 +110,25 @@ void SubversionLocalProperties::ReadProperties()
 				m_values[group] = tb;
 			} else {
 				m_values[group][key] = value;
+			}
+		}
+	}
+}
+
+void SubversionLocalProperties::WriteProperties()
+{
+	wxFFile  fp(GetConfigFile(), wxT("wb"));
+	if(fp.IsOpened()) {
+		GroupTable::const_iterator iter = m_values.begin();
+		for(; iter != m_values.end(); iter++) {
+			SimpleTable tb          = iter->second;
+			wxString    sectionName = iter->first;
+
+			SimpleTable::const_iterator it = tb.begin();
+			fp.Write(wxString::Format(wxT("[%s]\n"), sectionName.c_str()));
+
+			for(; it != tb.end(); it++) {
+				fp.Write(wxString::Format(wxT("%s=%s\n"), it->first.c_str(), it->second.c_str()));
 			}
 		}
 	}

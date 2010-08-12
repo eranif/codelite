@@ -9,15 +9,20 @@ typedef std::map<wxString, SimpleTable> GroupTable;
 
 class SubversionLocalProperties
 {
-	wxString   m_path;
+	wxString   m_url;
 	GroupTable m_values;
+
+public:
+	static wxString BUG_TRACKER_URL;
+	static wxString BUG_TRACKER_MESSAGE;
 
 protected:
 	wxString GetConfigFile();
 	void     ReadProperties();
+	void     WriteProperties();
 
 public:
-	SubversionLocalProperties(const wxString &directory);
+	SubversionLocalProperties(const wxString &url);
 	virtual ~SubversionLocalProperties();
 
 	wxString ReadProperty (const wxString &propName);

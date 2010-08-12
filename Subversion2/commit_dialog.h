@@ -13,6 +13,7 @@ class Subversion2;
 class CommitDialog : public CommitDialogBase
 {
 	Subversion2 *m_plugin;
+	wxString     m_bugTrackerMessage;
 
 public:
 	static wxString NormalizeMessage(const wxString &message);
@@ -20,7 +21,7 @@ public:
 
 public:
 	/** Constructor */
-	CommitDialog( wxWindow* parent, const wxArrayString &paths, Subversion2 *plugin );
+	CommitDialog( wxWindow* parent, const wxArrayString &paths, const wxString &url, Subversion2 *plugin );
 	CommitDialog( wxWindow* parent, Subversion2 *plugin );
 	virtual ~CommitDialog();
 

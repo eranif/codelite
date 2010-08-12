@@ -6,6 +6,8 @@
 #include <wx/filedlg.h>
 #include <wx/textdlg.h>
 #include "plugin.h"
+#include "svn_local_properties.h"
+#include "svn_props_dialog.h"
 #include "procutils.h"
 #include "bitmap_loader.h"
 #include "svn_login_dialog.h"
@@ -52,6 +54,7 @@ BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_MENU(XRCID("svn_checkout"),           SubversionView::OnCheckout)
 	EVT_MENU(XRCID("svn_open_file"),          SubversionView::OnOpenFile)
 	EVT_MENU(XRCID("svn_switch"),             SubversionView::OnSwitch)
+	EVT_MENU(XRCID("svn_properties"),         SubversionView::OnProperties)
 END_EVENT_TABLE()
 
 SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
@@ -433,12 +436,15 @@ void SubversionView::CreateRootMenu(wxMenu* menu)
 	menu->Append(XRCID("svn_branch"),        wxT("Create Branch"));
 	menu->AppendSeparator();
 
-	menu->Append(XRCID("svn_switch"),   wxT("Switch URL..."));
+	menu->Append(XRCID("svn_switch"),        wxT("Switch URL..."));
 	menu->AppendSeparator();
 
 	menu->Append(XRCID("svn_diff"),          wxT("Create Diff..."));
 	menu->Append(XRCID("svn_patch"),         wxT("Apply Patch..."));
 	menu->Append(XRCID("svn_patch_dry_run"), wxT("Apply Patch - Dry Run..."));
+
+	menu->AppendSeparator();
+	menu->Append(XRCID("svn_properties"),    wxT("Properties..."));
 }
 
 void SubversionView::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths)
@@ -504,7 +510,10 @@ void SubversionView::OnCommit(wxCommandEvent& event)
 	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
 	command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" commit ");
 
-	CommitDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_selectionInfo.m_paths, m_plugin);
+	SvnInfo svnInfo;
+	m_plugin->DoGetSvnInfoSync(svnInfo, m_textCtrlRootDir->GetValue());
+
+	CommitDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_selectionInfo.m_paths, svnInfo.m_sourceUrl, m_plugin);
 	if (dlg.ShowModal() == wxID_OK) {
 		m_selectionInfo.m_paths = dlg.GetPaths();
 		if (m_selectionInfo.m_paths.IsEmpty())
@@ -988,4 +997,17 @@ void SubversionView::OnSwitch(wxCommandEvent& event)
 	SvnInfo svnInfo;
 	m_plugin->DoGetSvnInfoSync(svnInfo, m_textCtrlRootDir->GetValue());
 	m_plugin->DoSwitchURL(m_textCtrlRootDir->GetValue(), svnInfo.m_sourceUrl, event);
+}
+
+void SubversionView::OnProperties(wxCommandEvent& event)
+{
+	SvnInfo svnInfo;
+	m_plugin->DoGetSvnInfoSync(svnInfo, m_textCtrlRootDir->GetValue());
+
+	SvnPropsDlg dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), svnInfo.m_sourceUrl, m_plugin);
+	if(dlg.ShowModal() == wxID_OK) {
+		SubversionLocalProperties props(svnInfo.m_sourceUrl);
+		props.WriteProperty(SubversionLocalProperties::BUG_TRACKER_MESSAGE, dlg.GetBugTrackerMessage());
+		props.WriteProperty(SubversionLocalProperties::BUG_TRACKER_URL,     dlg.GetBugTrackerURL());
+	}
 }

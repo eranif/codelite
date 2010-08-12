@@ -3,6 +3,7 @@
 #include "windowattrmanager.h"
 #include "imanager.h"
 #include "subversion2.h"
+#include "svn_local_properties.h"
 
 class CommitMessageStringData : public wxClientData {
 	wxString m_data;
@@ -18,6 +19,12 @@ CommitDialog::CommitDialog(wxWindow* parent, Subversion2* plugin)
 , m_plugin(plugin)
 {
 	m_checkListFiles->Clear();
+
+	// Hide the bug tracker ID
+	m_textCtrlBugID->Clear();
+	m_textCtrlBugID->Hide();
+	m_staticTextBugID->Hide();
+
 	m_checkListFiles->Disable();
 	m_panel1->Disable();
 	wxArrayString lastMessages, previews;
@@ -31,13 +38,23 @@ CommitDialog::CommitDialog(wxWindow* parent, Subversion2* plugin)
 	WindowAttrManager::Load(this, wxT("CommitDialog"), m_plugin->GetManager()->GetConfigTool());
 }
 
-CommitDialog::CommitDialog( wxWindow* parent, const wxArrayString &paths, Subversion2 *plugin)
+CommitDialog::CommitDialog( wxWindow* parent, const wxArrayString &paths, const wxString &url, Subversion2 *plugin)
 		: CommitDialogBase( parent )
 		, m_plugin(plugin)
 {
 	for (size_t i=0; i<paths.GetCount(); i++) {
 		int index = m_checkListFiles->Append(paths.Item(i));
 		m_checkListFiles->Check((unsigned int)index);
+	}
+
+	SubversionLocalProperties props(url);
+	m_bugTrackerMessage = props.ReadProperty(SubversionLocalProperties::BUG_TRACKER_MESSAGE);
+
+	if(m_bugTrackerMessage.IsEmpty()) {
+		// Hide the bug tracker ID
+		m_textCtrlBugID->Clear();
+		m_textCtrlBugID->Hide();
+		m_staticTextBugID->Hide();
 	}
 
 	wxArrayString lastMessages, previews;
@@ -60,7 +77,20 @@ CommitDialog::~CommitDialog()
 
 wxString CommitDialog::GetMesasge()
 {
-	return NormalizeMessage(m_textCtrlMessage->GetValue());
+	wxString msg = NormalizeMessage(m_textCtrlMessage->GetValue());
+	if(m_textCtrlBugID->IsShown()) {
+		wxString bugTrackerMsg = m_bugTrackerMessage;
+		wxString bugId         = m_textCtrlBugID->GetValue();
+
+		bugId.Trim().Trim(false);
+		if(bugId.IsEmpty() == false) {
+			bugTrackerMsg.Trim().Trim(false);
+			bugTrackerMsg.Prepend(wxT("\n"));
+			bugTrackerMsg.Replace(wxT("$(BUGID)"), bugId);
+			msg << bugTrackerMsg;
+		}
+	}
+	return msg;
 }
 
 wxString CommitDialog::NormalizeMessage(const wxString& message)

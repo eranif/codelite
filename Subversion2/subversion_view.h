@@ -99,7 +99,7 @@ protected:
 	void OnBlame              (wxCommandEvent &event);
 	void OnLinkEditor         (wxCommandEvent &event);
 	void OnSwitch             (wxCommandEvent &event);
-
+	void OnProperties         (wxCommandEvent &event);
 	DECLARE_EVENT_TABLE()
 
 	void OnStopUI         (wxUpdateUIEvent &event);

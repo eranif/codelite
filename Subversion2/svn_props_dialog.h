@@ -19,8 +19,10 @@ public:
 	SvnPropsDlg( wxWindow* parent, const wxString& url, Subversion2 *plugin );
 	virtual ~SvnPropsDlg();
 
-	wxString GetBugTrackerMessage() const;
 	wxString GetBugTrackerURL() const;
+	wxString GetFRTrackerURL() const;
+	wxString GetBugMsg() const;
+	wxString GetFRMsg() const;
 
 };
 

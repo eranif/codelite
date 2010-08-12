@@ -15,6 +15,8 @@ class SubversionLocalProperties
 public:
 	static wxString BUG_TRACKER_URL;
 	static wxString BUG_TRACKER_MESSAGE;
+	static wxString FR_TRACKER_URL;
+	static wxString FR_TRACKER_MESSAGE;
 
 protected:
 	wxString GetConfigFile();

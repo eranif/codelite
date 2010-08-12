@@ -532,7 +532,10 @@ void Subversion2::OnLog(wxCommandEvent& event)
 
 		bool nonInteractive = GetNonInteractiveMode(event);
 		command << GetSvnExeName(nonInteractive) << loginString << wxT(" log -r") << dlg.m_from->GetValue() << wxT(":") << dlg.m_to->GetValue() << wxT(" \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
-		GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnLogHandler(this, dlg.m_compact->IsChecked(), event.GetId(), this), false);
+		GetConsole()->Execute(command,
+							  DoGetFileExplorerItemPath(),
+							  new SvnLogHandler(this, dlg.m_compact->IsChecked(), event.GetId(), this),
+							  false);
 	}
 }
 

@@ -13,7 +13,7 @@ class Subversion2;
 class CommitDialog : public CommitDialogBase
 {
 	Subversion2 *m_plugin;
-	wxString     m_bugTrackerMessage;
+	wxString     m_url;
 
 public:
 	static wxString NormalizeMessage(const wxString &message);

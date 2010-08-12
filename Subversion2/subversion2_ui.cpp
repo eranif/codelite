@@ -61,7 +61,14 @@ CommitDialogBase::CommitDialogBase( wxWindow* parent, wxWindowID id, const wxStr
 	
 	bugTrackerSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	m_staticTextBugID = new wxStaticText( this, wxID_ANY, _("Bug Tracker ID:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText32 = new wxStaticText( this, wxID_ANY, _("Feature Request ID:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText32->Wrap( -1 );
+	bugTrackerSizer->Add( m_staticText32, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlFrID = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bugTrackerSizer->Add( m_textCtrlFrID, 0, wxALL, 5 );
+	
+	m_staticTextBugID = new wxStaticText( this, wxID_ANY, _("Bug ID:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextBugID->Wrap( -1 );
 	bugTrackerSizer->Add( m_staticTextBugID, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -820,25 +827,46 @@ SvnPropsBaseDlg::SvnPropsBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	fgSizer10->SetFlexibleDirection( wxBOTH );
 	fgSizer10->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText27 = new wxStaticText( this, wxID_ANY, _("Bug Tracker URL Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText27 = new wxStaticText( this, wxID_ANY, _("Bug URL Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText27->Wrap( -1 );
 	fgSizer10->Add( m_staticText27, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlBugURL = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlBugURL = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	m_textCtrlBugURL->SetToolTip( _("Enter here the URL for the bug details.\nFor example: http://mytracker.com?bug_id=$(BUGID)") );
 	
 	fgSizer10->Add( m_textCtrlBugURL, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText28 = new wxStaticText( this, wxID_ANY, _("Message:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText28->Wrap( -1 );
-	fgSizer10->Add( m_staticText28, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_staticText33 = new wxStaticText( this, wxID_ANY, _("Bug Message Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText33->Wrap( -1 );
+	fgSizer10->Add( m_staticText33, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlBugMessage = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_textCtrlBugMessage->SetToolTip( _("Enter here the message that codeilte will prepend to the commit log\nFor example: bugfixes: $(BUGID)") );
+	m_textCtrlBugMsg = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	m_textCtrlBugMsg->SetToolTip( _("Enter here the message to add to the commit log. You may use the $(BUG_URL) and $(BUGID) macros.\nAn example: \"Fixed: BUG#$(BUGID), See $(BUG_URL) for more details\"") );
 	
-	fgSizer10->Add( m_textCtrlBugMessage, 0, wxALL|wxEXPAND, 5 );
+	fgSizer10->Add( m_textCtrlBugMsg, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer28->Add( fgSizer10, 1, wxEXPAND, 5 );
+	m_staticText31 = new wxStaticText( this, wxID_ANY, _("Feature URL Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText31->Wrap( -1 );
+	fgSizer10->Add( m_staticText31, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlFrURL = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	m_textCtrlFrURL->SetToolTip( _("Enter here the URL for the feature request details.\nFor example: http://mytracker.com?fr_id=$(FRID)") );
+	
+	fgSizer10->Add( m_textCtrlFrURL, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticText34 = new wxStaticText( this, wxID_ANY, _("Feature Message Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText34->Wrap( -1 );
+	fgSizer10->Add( m_staticText34, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlFrMsg = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	m_textCtrlFrMsg->SetToolTip( _("Enter here the message to add to the commit log. You may use the $(FR_URL) and $(FRID) macros.\nAn example: \"Implements FR#$(FRID), See $(FR_URL) for more details\"") );
+	
+	fgSizer10->Add( m_textCtrlFrMsg, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer28->Add( fgSizer10, 0, wxEXPAND, 5 );
+	
+	
+	bSizer28->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	m_staticline7 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer28->Add( m_staticline7, 0, wxEXPAND | wxALL, 5 );

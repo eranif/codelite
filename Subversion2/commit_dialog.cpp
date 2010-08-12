@@ -25,6 +25,10 @@ CommitDialog::CommitDialog(wxWindow* parent, Subversion2* plugin)
 	m_textCtrlBugID->Hide();
 	m_staticTextBugID->Hide();
 
+	m_textCtrlFrID->Clear();
+	m_staticText32->Hide();
+	m_textCtrlFrID->Hide();
+
 	m_checkListFiles->Disable();
 	m_panel1->Disable();
 	wxArrayString lastMessages, previews;
@@ -41,20 +45,11 @@ CommitDialog::CommitDialog(wxWindow* parent, Subversion2* plugin)
 CommitDialog::CommitDialog( wxWindow* parent, const wxArrayString &paths, const wxString &url, Subversion2 *plugin)
 		: CommitDialogBase( parent )
 		, m_plugin(plugin)
+		, m_url(url)
 {
 	for (size_t i=0; i<paths.GetCount(); i++) {
 		int index = m_checkListFiles->Append(paths.Item(i));
 		m_checkListFiles->Check((unsigned int)index);
-	}
-
-	SubversionLocalProperties props(url);
-	m_bugTrackerMessage = props.ReadProperty(SubversionLocalProperties::BUG_TRACKER_MESSAGE);
-
-	if(m_bugTrackerMessage.IsEmpty()) {
-		// Hide the bug tracker ID
-		m_textCtrlBugID->Clear();
-		m_textCtrlBugID->Hide();
-		m_staticTextBugID->Hide();
 	}
 
 	wxArrayString lastMessages, previews;
@@ -77,17 +72,60 @@ CommitDialog::~CommitDialog()
 
 wxString CommitDialog::GetMesasge()
 {
+	SubversionLocalProperties props(m_url);
 	wxString msg = NormalizeMessage(m_textCtrlMessage->GetValue());
+
+	// Append any bug URLs to the commit message
 	if(m_textCtrlBugID->IsShown()) {
-		wxString bugTrackerMsg = m_bugTrackerMessage;
+		wxString bugTrackerMsg = props.ReadProperty(SubversionLocalProperties::BUG_TRACKER_MESSAGE);
+		wxString bugTrackerUrl = props.ReadProperty(SubversionLocalProperties::BUG_TRACKER_URL);
 		wxString bugId         = m_textCtrlBugID->GetValue();
 
 		bugId.Trim().Trim(false);
 		if(bugId.IsEmpty() == false) {
-			bugTrackerMsg.Trim().Trim(false);
-			bugTrackerMsg.Prepend(wxT("\n"));
-			bugTrackerMsg.Replace(wxT("$(BUGID)"), bugId);
-			msg << bugTrackerMsg;
+			// Loop over the bug IDs and append message for each bug
+			wxArrayString bugs = wxStringTokenize(bugId, wxT(","), wxTOKEN_STRTOK);
+			for(size_t i=0; i<bugs.size(); i++) {
+
+				bugs[i].Trim().Trim(false);
+				if(bugs[i].IsEmpty())
+					continue;
+
+				wxString tmpMsg = bugTrackerMsg;
+				wxString tmpUrl = bugTrackerUrl;
+
+				tmpUrl.Replace(wxT("$(BUGID)"),  bugs[i]);
+				tmpMsg.Replace(wxT("$(BUG_URL)"), tmpUrl);
+				tmpMsg.Replace(wxT("$(BUGID)"),   bugs[i]);
+				msg << tmpMsg;
+			}
+		}
+	}
+
+	// Append any FR URLs to the commit message
+	if(m_textCtrlFrID->IsShown()) {
+		wxString frTrackerMsg = props.ReadProperty(SubversionLocalProperties::FR_TRACKER_MESSAGE);
+		wxString frTrackerUrl = props.ReadProperty(SubversionLocalProperties::FR_TRACKER_URL);
+		wxString frId         = m_textCtrlFrID->GetValue();
+
+		frId.Trim().Trim(false);
+		if(frId.IsEmpty() == false) {
+			// Loop over the bug IDs and append message for each bug
+			wxArrayString frs = wxStringTokenize(frId, wxT(","), wxTOKEN_STRTOK);
+			for(size_t i=0; i<frs.size(); i++) {
+
+				frs[i].Trim().Trim(false);
+				if(frs[i].IsEmpty())
+					continue;
+
+				wxString tmpMsg = frTrackerMsg;
+				wxString tmpUrl = frTrackerUrl;
+
+				tmpUrl.Replace(wxT("$(FRID)"),  frs[i]);
+				tmpMsg.Replace(wxT("$(FR_URL)"), tmpUrl);
+				tmpMsg.Replace(wxT("$(FRID)"),   frs[i]);
+				msg << tmpMsg;
+			}
 		}
 	}
 	return msg;

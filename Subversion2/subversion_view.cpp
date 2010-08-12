@@ -1007,7 +1007,9 @@ void SubversionView::OnProperties(wxCommandEvent& event)
 	SvnPropsDlg dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), svnInfo.m_sourceUrl, m_plugin);
 	if(dlg.ShowModal() == wxID_OK) {
 		SubversionLocalProperties props(svnInfo.m_sourceUrl);
-		props.WriteProperty(SubversionLocalProperties::BUG_TRACKER_MESSAGE, dlg.GetBugTrackerMessage());
+		props.WriteProperty(SubversionLocalProperties::BUG_TRACKER_MESSAGE, dlg.GetBugMsg());
 		props.WriteProperty(SubversionLocalProperties::BUG_TRACKER_URL,     dlg.GetBugTrackerURL());
+		props.WriteProperty(SubversionLocalProperties::FR_TRACKER_MESSAGE,  dlg.GetFRMsg());
+		props.WriteProperty(SubversionLocalProperties::FR_TRACKER_URL,      dlg.GetFRTrackerURL());
 	}
 }

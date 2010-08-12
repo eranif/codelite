@@ -73,6 +73,8 @@ class CommitDialogBase : public wxDialog
 	
 	protected:
 		
+		wxStaticText* m_staticText32;
+		wxTextCtrl* m_textCtrlFrID;
 		wxStaticText* m_staticTextBugID;
 		wxTextCtrl* m_textCtrlBugID;
 		wxSplitterWindow* m_splitter1;
@@ -360,8 +362,13 @@ class SvnPropsBaseDlg : public wxDialog
 		wxStaticText* m_staticTextURL;
 		wxStaticText* m_staticText27;
 		wxTextCtrl* m_textCtrlBugURL;
-		wxStaticText* m_staticText28;
-		wxTextCtrl* m_textCtrlBugMessage;
+		wxStaticText* m_staticText33;
+		wxTextCtrl* m_textCtrlBugMsg;
+		wxStaticText* m_staticText31;
+		wxTextCtrl* m_textCtrlFrURL;
+		wxStaticText* m_staticText34;
+		wxTextCtrl* m_textCtrlFrMsg;
+		
 		wxStaticLine* m_staticline7;
 		wxButton* m_button21;
 		wxButton* m_button22;

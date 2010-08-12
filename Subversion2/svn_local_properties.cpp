@@ -5,8 +5,10 @@
 #include <wx/ffile.h>
 #include <wx/filename.h>
 
-wxString SubversionLocalProperties::BUG_TRACKER_URL     = wxT("bug_tracker_url");
-wxString SubversionLocalProperties::BUG_TRACKER_MESSAGE = wxT("bug_tracker_message");
+wxString SubversionLocalProperties::BUG_TRACKER_URL           = wxT("bug_tracker_url");
+wxString SubversionLocalProperties::BUG_TRACKER_MESSAGE       = wxT("bug_tracker_message");
+wxString SubversionLocalProperties::FR_TRACKER_URL            = wxT("fr_tracker_url");
+wxString SubversionLocalProperties::FR_TRACKER_MESSAGE        = wxT("fr_tracker_message");
 
 SubversionLocalProperties::SubversionLocalProperties(const wxString& url)
 	: m_url(url)

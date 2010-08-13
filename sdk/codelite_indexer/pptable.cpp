@@ -12,20 +12,25 @@ bool IsWordChar(const wxString &s, int strSize)
 	}
 }
 
-bool IsWordCharA(const std::string &s, int strSize)
+bool IsWordCharA(char c, int strSize)
 {
 	if(strSize) {
-		return s.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_") != std::string::npos;
+		return ((c >= 97 && c <= 122) ||// a-z
+				(c >= 65 && c <= 90)  ||// A-Z
+				(c >= 48 && c <= 57)  ||// 0-9
+				(c == '_'));
 
 	} else {
-		return s.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_") != std::string::npos;
+		return ((c >= 97 && c <= 122) ||// a-z
+				(c >= 65 && c <= 90)  ||// A-Z
+				(c == '_'));
 	}
 }
 
 std::string ReplaceWordA(const std::string &str, const std::string &word, const std::string &replaceWith)
 {
-	std::string currChar;
-	std::string nextChar;
+	char        currChar;
+	char        nextChar;
 	std::string currentWord;
 	std::string output;
 	

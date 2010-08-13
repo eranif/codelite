@@ -33,7 +33,7 @@ std::string ReplaceWordA(const std::string &str, const std::string &word, const 
 	char        nextChar;
 	std::string currentWord;
 	std::string output;
-	
+
 	output.reserve( str.length() * 2 );
 
 	for(size_t i=0; i<str.length(); i++) {
@@ -199,15 +199,15 @@ wxString PPToken::fullname()
 void PPToken::squeeze()
 {
 	std::set<wxString> alreadyReplacedMacros;
-	
+
 	// perform the squeeze 5 times max
 	for(size_t count=0; count < 5; count++) {
 		bool modified(false);
-		
+
 		// get list of possible macros in the replacement
 		wxArrayString tmpWords = TokenizeWords(replacement);
 		wxArrayString words;
-		
+
 		// make sure that a word is not been replaced more than once
 		// this will avoid recursion
 		// an example (taken from qglobal.h of the Qt library):
@@ -221,7 +221,7 @@ void PPToken::squeeze()
 				words.Add(tmpWords[i]);
 			}
 		}
-		
+
 		for(size_t i=0; i<words.size(); i++) {
 			PPToken tok = PPTable::Instance()->Token(words.Item(i));
 			if(tok.flags & IsValid) {
@@ -503,7 +503,7 @@ bool CLReplacePattern(const wxString& in, const wxString& pattern, const wxStrin
 		wxArrayString initListArr;
 		if(PPToken::readInitList(in, searchFor.Length() + where, initList, initListArr) == false)
 			return false;
-		
+
 		outStr = in;
 		// update the 'replacement' with the actual values ( replace %0..%n)
 		for(size_t i=0; i<initListArr.size(); i++) {
@@ -534,7 +534,7 @@ bool CLReplacePatternA(const std::string& in, const CLReplacement& repl, std::st
 		size_t where = in.find(repl.searchFor);
 		if(where == std::string::npos)
 			return false;
-			
+
 		std::string              initList;
 		std::vector<std::string> initListArr;
 		if(PPToken::readInitList(in, repl.searchFor.length() + where, initList, initListArr) == false)
@@ -544,7 +544,7 @@ bool CLReplacePatternA(const std::string& in, const CLReplacement& repl, std::st
 		replacement = repl.replaceWith;
 		char placeHolder[4];
 		for(size_t i=0; i<initListArr.size(); i++) {
-				
+
             memset(placeHolder, 0, sizeof(placeHolder));
             sprintf(placeHolder, "%%%d", (int)i);
 
@@ -552,32 +552,32 @@ bool CLReplacePatternA(const std::string& in, const CLReplacement& repl, std::st
 			const std::string& init = initListArr[i];
             while( pos != std::string::npos ) {
 				replacement.replace(pos, strlen(placeHolder), init.c_str());
-				
+
 				// search for the next match
                 pos = replacement.find(placeHolder, pos + 1);
             }
 		}
-		
+
 		outStr = in;
 		where = outStr.find(repl.searchFor);
 		if(where == std::string::npos)
 			return false;
-			
+
 		outStr.replace(where, repl.searchFor.length() + initList.length(), replacement);
 		return true;
 
 	} else {
-		
+
 		size_t where = in.find(repl.searchFor);
 		if(where == std::string::npos) {
 			return false;
 		}
-		
+
 		outStr = ReplaceWordA(in, repl.searchFor, repl.replaceWith);
-		
+
 //		outStr = in;
 //		outStr.replace(where, repl.searchFor.length(), repl.replaceWith);
-		
+
 		// simple replacement
 		return outStr != in;
 	}
@@ -596,13 +596,13 @@ void CLReplacement::construct(const std::string& pattern, const std::string& rep
 			is_ok = false;
 			return;
 		}
-		
+
 		searchFor = pattern.substr(0, where);
 		if(searchFor.empty()){
 			is_ok = false;
 			return;
 		}
-		
+
 	} else {
 		// simple Key=Value pair
 		replaceWith = replacement;

@@ -74,6 +74,7 @@ wxString CommitDialog::GetMesasge()
 {
 	SubversionLocalProperties props(m_url);
 	wxString msg = NormalizeMessage(m_textCtrlMessage->GetValue());
+	msg << wxT("\n");
 
 	// Append any bug URLs to the commit message
 	if(m_textCtrlBugID->IsShown()) {

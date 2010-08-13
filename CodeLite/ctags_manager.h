@@ -49,17 +49,16 @@
 #endif
 
 /// Forward declaration
-class clProcess;
 class DirTraverser;
 class Language;
-class wxTimer;
 class Language;
+class IProcess;
 
 // Change this macro if you dont want to use the parser thread for performing
 // the workspcae retag
 #define USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE 1
 
-#define TagsGlobal 0
+#define TagsGlobal    0
 #define TagsGlobalGTK 1
 
 // send this event whenever the a tags file needs to be updated
@@ -133,17 +132,13 @@ public:
 
 private:
 	ITagsStorage *                m_workspaceDatabase;
-	wxCriticalSection             m_cs;
 	wxFileName                    m_codeliteIndexerPath;
-	clProcess*                    m_codeliteIndexerProcess;
+	IProcess*                     m_codeliteIndexerProcess;
 	wxString                      m_ctagsCmd;
 	wxStopWatch                   m_watch;
 	TagsOptionsData               m_tagsOptions;
-	std::map<int, clProcess*>     m_processes;
 	bool                          m_parseComments;
-	bool                          m_canDeleteCtags;
-	std::list<clProcess*>         m_gargabeCollector;
-	wxTimer*                      m_timer;
+	bool                          m_canRestartIndexer;
 	Language*                     m_lang;
 	std::vector<TagEntryPtr>      m_cachedFileFunctionsTags;
 	wxString                      m_cachedFile;
@@ -272,22 +267,14 @@ public:
 	void Delete(const wxFileName& path, const wxString& fileName);
 
 	/**
-	 * Start a ctags process on a filter mode.
-	 * By default, TagsManager will try to launch the ctags process using the following command line:
-	 * @code
-	 * ctags --fields=aKmSsni --filter=yes --filter-terminator="<<EOF>>\n"
-	 * @endcode
-	 *
-	 * It is possible to add a full path to ctags exectuable by calling the SetCtagsPath() function.
+	 * Start a codelite_indexer process
 	 */
-	clProcess *StartCtagsProcess();
+	void StartCodeLiteIndexer();
 
 	/**
 	 * Restart ctags process.
-	 * @param kind
-	 * @return
 	 */
-	void RestartCtagsProcess();
+	void RestartCodeLiteIndexer();
 
 	/**
 	 * Test if filename matches the current ctags file spec.
@@ -729,8 +716,7 @@ protected:
 	/**
 	 * Handler ctags process termination
 	 */
-	void OnCtagsEnd    (wxProcessEvent &event);
-	void OnTimer       (wxTimerEvent   &event);
+	void OnIndexerTerminated    (wxCommandEvent &event);
 
 	DECLARE_EVENT_TABLE()
 

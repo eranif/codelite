@@ -43,6 +43,7 @@ class SymbolViewPlugin : public IPlugin
 
 protected:
 	bool FindSwappedFile(const wxFileName& rhs, wxString &lhs, const std::vector<wxFileName> &workspaceFiles);
+	void DoClearSymbolView();
 
 public:
     //--------------------------------------------

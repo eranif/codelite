@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "processreaderthread.h"
 #include <wx/frame.h>
 #include <wx/app.h>
 #include <wx/sizer.h>
@@ -32,6 +33,7 @@
 #include "named_pipe_client.h"
 #include <set>
 #include "cl_indexer_request.h"
+#include "asyncprocess.h"
 #include "clindexerprotocol.h"
 #include "cl_indexer_reply.h"
 #include <wx/txtstrm.h>
@@ -115,25 +117,22 @@ public:
 //------------------------------------------------------------------------------
 
 BEGIN_EVENT_TABLE(TagsManager, wxEvtHandler)
-	EVT_TIMER(CtagsMgrTimerId, TagsManager::OnTimer)
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_FILETREE_EVENT, TagsManager::OnUpdateFileTreeEvent)
+	EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED,       TagsManager::OnIndexerTerminated)
 END_EVENT_TABLE()
 
 TagsManager::TagsManager()
 		: wxEvtHandler()
 		, m_codeliteIndexerPath(wxT("codelite_indexer"))
-		, m_codeliteIndexerProcess(NULL)
-		, m_canDeleteCtags(true)
-		, m_timer(NULL)
-		, m_lang(NULL)
-		, m_evtHandler(NULL)
+		, m_codeliteIndexerProcess (NULL)
+		, m_canRestartIndexer      (true)
+		, m_lang                   (NULL)
+		, m_evtHandler             (NULL)
 {
 	// Create databases
 	m_workspaceDatabase = new TagsStorageSQLite( );
 	m_workspaceDatabase->SetSingleSearchLimit( MAX_SEARCH_LIMIT );
 	m_ctagsCmd = wxT("  --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
-	m_timer = new wxTimer(this, CtagsMgrTimerId);
-	m_timer->Start(100);
 
 	// CPP keywords that are usually followed by open brace '('
 	m_CppIgnoreKeyWords.insert(wxT("while"));
@@ -145,47 +144,9 @@ TagsManager::TagsManager()
 TagsManager::~TagsManager()
 {
 	delete m_workspaceDatabase;
-	if (m_timer) {
-		delete m_timer;
-	}
-
-	wxCriticalSectionLocker locker(m_cs);
-	if (m_canDeleteCtags) {
-		if (m_codeliteIndexerProcess) m_codeliteIndexerProcess->Disconnect(m_codeliteIndexerProcess->GetUid(), wxEVT_END_PROCESS, wxProcessEventHandler(TagsManager::OnCtagsEnd), NULL, this);
-
-//		// terminate ctags process
-//		if (m_codeliteIndexerProcess) {
-//			m_codeliteIndexerProcess->Terminate();
-//		}
-//
-		std::list<clProcess*>::iterator it = m_gargabeCollector.begin();
-		for (; it != m_gargabeCollector.end(); it++) {
-			delete (*it);
-		}
-
-		if (m_gargabeCollector.empty() == false) {
-		}
-		m_gargabeCollector.clear();
-	}
-}
-
-void TagsManager::OnTimer(wxTimerEvent &event)
-{
-	//clean the garbage collector
-	wxUnusedVar(event);
-	{
-		wxCriticalSectionLocker locker(m_cs);
-		if (m_canDeleteCtags) {
-
-			std::list<clProcess*>::iterator it = m_gargabeCollector.begin();
-			for (; it != m_gargabeCollector.end(); it++) {
-				delete (*it);
-			}
-
-			if (m_gargabeCollector.empty() == false) {
-			}
-			m_gargabeCollector.clear();
-		}
+	if(m_codeliteIndexerProcess) {
+		m_canRestartIndexer = false;
+		delete m_codeliteIndexerProcess;
 	}
 }
 
@@ -205,36 +166,6 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
 	}
 
 	UpdateFileTree(m_workspaceDatabase, true);
-}
-
-// Currently not in use, maybe in the future??
-TagTreePtr TagsManager::ParseTagsFile(const wxFileName& fp)
-{
-	// Make this call threadsafe
-	wxCriticalSectionLocker locker(m_cs);
-
-
-	tagFileInfo info;
-	tagEntry entry;
-	wxString tagFileName = fp.GetFullPath();
-	const wxCharBuffer fileName = _C(tagFileName);
-
-	tagFile *const file = tagsOpen(fileName.data(), &info);
-	if ( !file ) {
-		return TagTreePtr( NULL );
-	}
-
-	// Load the records and build a language tree
-	TagEntry root;
-	root.SetName(wxT("<ROOT>"));
-
-	TagTreePtr tree( new TagTree(wxT("<ROOT>"), root) );
-	while (tagsNext (file, &entry) == TagSuccess) {
-		TagEntry tag( entry );
-		tree->AddEntry(tag);
-	}
-	tagsClose(file);
-	return tree;
 }
 
 TagTreePtr TagsManager::ParseSourceFile(const wxFileName& fp, std::vector<CommentPtr> *comments)
@@ -277,17 +208,11 @@ TagTreePtr TagsManager::ParseSourceFile2(const wxFileName& fp, const wxString &t
 
 void TagsManager::Store(TagTreePtr tree, const wxFileName& path)
 {
-	// Make this call threadsafe
-	wxCriticalSectionLocker locker(m_cs);
-
 	m_workspaceDatabase->Store(tree, path);
 }
 
 TagTreePtr TagsManager::Load(const wxFileName& fileName)
 {
-	// Make this call threadsafe
-	wxCriticalSectionLocker locker(m_cs);
-
 	TagTreePtr               tree;
 	std::vector<TagEntryPtr> tagsByFile;
 	m_workspaceDatabase->SelectTagsByFile(fileName.GetFullPath(), tagsByFile);
@@ -304,9 +229,6 @@ TagTreePtr TagsManager::Load(const wxFileName& fileName)
 
 void TagsManager::Delete(const wxFileName& path, const wxString& fileName)
 {
-	// Make this call threadsafe
-	wxCriticalSectionLocker locker(m_cs);
-
 	m_workspaceDatabase->DeleteByFileName(path, fileName);
 	UpdateFileTree(std::vector<wxFileName>(1, fileName), false);
 }
@@ -315,10 +237,10 @@ void TagsManager::Delete(const wxFileName& path, const wxString& fileName)
 // Process Handling of CTAGS
 //--------------------------------------------------------
 
-clProcess *TagsManager::StartCtagsProcess()
+void TagsManager::StartCodeLiteIndexer()
 {
-	// Make this call threadsafe
-	wxCriticalSectionLocker locker(m_cs);
+	if(!m_canRestartIndexer)
+		return;
 
 	// Run ctags process
 	wxString cmd;
@@ -331,93 +253,40 @@ clProcess *TagsManager::StartCtagsProcess()
 	if(m_codeliteIndexerPath.FileExists() == false) {
 		wxLogMessage(wxT("ERROR: Could not locate indexer: %s"), m_codeliteIndexerPath.GetFullPath().c_str());
 		m_codeliteIndexerProcess = NULL;
-		return NULL;
+		return;
 	}
 
 	// concatenate the PID to identifies this channel to this instance of codelite
 	cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\" ") << uid << wxT(" --pid");
-	clProcess* process;
-
-	process = new clProcess(wxNewId(), cmd);
-
-	// Launch it!
-	process->Start();
-	m_processes[process->GetPid()] = process;
-
-	if ( process->GetPid() <= 0 ) {
-		m_codeliteIndexerProcess = NULL;
-		return NULL;
-	}
-
-	// attach the termination event to the tags manager class
-	process->Connect(process->GetUid(), wxEVT_END_PROCESS, wxProcessEventHandler(TagsManager::OnCtagsEnd), NULL, this);
-	m_codeliteIndexerProcess = process;
-	return process;
+	m_codeliteIndexerProcess = CreateAsyncProcess(this, cmd);
 }
 
-void TagsManager::RestartCtagsProcess()
+void TagsManager::RestartCodeLiteIndexer()
 {
-	clProcess *oldProc(NULL);
-	oldProc = m_codeliteIndexerProcess;
-
-	if ( !oldProc ) {
-		return ;
+	if(m_codeliteIndexerProcess) {
+		m_codeliteIndexerProcess->Terminate();
 	}
 
-	// no need to call StartCtagsProcess(), since it will be called automatically
-	// by the termination handler OnCtagsEnd()
-	oldProc->Terminate();
+	// no need to call StartCodeLiteIndexer(), since it will be called automatically
+	// by the termination handler
 }
 
 void TagsManager::SetCodeLiteIndexerPath(const wxString& path)
 {
-	// Make this call threadsafe
-	wxCriticalSectionLocker locker(m_cs);
-
 	m_codeliteIndexerPath = wxFileName(path, wxT("codelite_indexer"));
 #ifdef __WXMSW__
 	m_codeliteIndexerPath.SetExt(wxT("exe"));
 #endif
 }
 
-void TagsManager::OnCtagsEnd(wxProcessEvent& event)
+void TagsManager::OnIndexerTerminated(wxCommandEvent& event)
 {
-	//-----------------------------------------------------------
-	// This event handler is a must if you wish to delete
-	// the process and prevent memory leaks
-	// In addition, I implemented here some kind of a watchdog
-	// mechanism: if ctags process terminated abnormally, it will
-	// be restarted automatically by this function (unless the
-	// termination of it was from OnClose() function, then we
-	// choose to ignore the restart)
-	//-----------------------------------------------------------
-
-	// Which ctags process died?
-	std::map<int, clProcess*>::iterator iter = m_processes.find(event.GetPid());
-	if ( iter != m_processes.end()) {
-		clProcess *proc = iter->second;
-		proc->Disconnect(proc->GetUid(), wxEVT_END_PROCESS, wxProcessEventHandler(TagsManager::OnCtagsEnd), NULL, this);
-		// start new process
-		StartCtagsProcess();
-
-		{
-			wxCriticalSectionLocker locker(m_cs);
-			// delete the one that just terminated
-			if (m_canDeleteCtags) {
-				delete proc;
-				//also delete all old ctags that might be in the garbage collector
-				std::list<clProcess*>::iterator it = m_gargabeCollector.begin();
-				for (; it != m_gargabeCollector.end(); it++) {
-					delete (*it);
-				}
-				m_gargabeCollector.clear();
-			} else
-				m_gargabeCollector.push_back(proc);
-		}
-
-		// remove it from the map
-		m_processes.erase(iter);
+	if(m_codeliteIndexerProcess) {
+		delete m_codeliteIndexerProcess;
+		m_codeliteIndexerProcess = NULL;
 	}
+
+	StartCodeLiteIndexer();
 }
 
 //---------------------------------------------------------------------
@@ -461,21 +330,16 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 		wxPrintf(wxT("Failed to send request to indexer ID [%d]\n"), wxGetProcessId());
 		return;
 	}
+
 	// read the reply
 	clIndexerReply reply;
 	try {
 		if (!clIndexerProtocol::ReadReply(&client, reply)) {
-			//wxLogMessage(wxT("codelite_indexer is not responding - restarting it. Input file was:%s"), source.GetFullPath().c_str());
-			RestartCtagsProcess();
+			RestartCodeLiteIndexer();
 			return;
 		}
 	} catch (std::bad_alloc &ex) {
 		tags.Clear();
-#ifdef __WXMSW__
-		wxLogMessage(wxString::Format(wxT("ERROR: failed to read reply from codelite_indexer for file %s: cought std::bad_alloc exception"), source.GetFullPath().c_str()));
-#else
-		wxPrintf(wxT("ERROR: failed to read reply: cought std::bad_alloc exception\n"));
-#endif
 		return;
 	}
 
@@ -1634,16 +1498,13 @@ DoxygenComment TagsManager::DoCreateDoxygenComment(TagEntryPtr tag, wxChar keyPr
 
 bool TagsManager::GetParseComments()
 {
-	//wxCriticalSectionLocker lock(m_cs);
 	return m_parseComments;
 }
 
 void TagsManager::SetCtagsOptions(const TagsOptionsData &options)
 {
 	m_tagsOptions = options;
-	RestartCtagsProcess();
-
-	wxCriticalSectionLocker locker(m_cs);
+	RestartCodeLiteIndexer();
 	m_parseComments = m_tagsOptions.GetFlags() & CC_PARSE_COMMENTS ? true : false;
 }
 

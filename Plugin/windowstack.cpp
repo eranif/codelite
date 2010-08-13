@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : windowstack.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : windowstack.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "windowstack.h"
@@ -58,7 +58,7 @@ void WindowStack::DoSelect(wxWindow *win, const wxString &key)
     m_mainSizer->Layout();
     Thaw();
 }
- 
+
 void WindowStack::Add(wxWindow *win, const wxString &key)
 {
 	if(!win || key.IsEmpty()){
@@ -90,12 +90,17 @@ void WindowStack::SelectNone()
 {
     DoSelect(NULL, wxEmptyString);
 }
-  
+
 void WindowStack::Clear()
 {
     SelectNone();
     m_selection = NULL;
     m_selectionKey.Clear();
+
+	std::map<wxString,wxWindow*>::iterator iter = m_windows.begin();
+	for (; iter != m_windows.end(); iter++) {
+        iter->second->Destroy();
+    }
     m_windows.clear();
 }
 
@@ -110,13 +115,13 @@ wxWindow* WindowStack::Remove(const wxString &key)
     if(!win){
         return NULL;
     }
-	
+
     if (m_selection == win) {
         SelectNone();
     }
-  
+
     m_windows.erase(iter);
-     
+
     return win;
 }
 
@@ -129,22 +134,22 @@ wxString WindowStack::Remove(wxWindow* win)
     return key;
 }
 
-void WindowStack::Delete(const wxString &key) 
+void WindowStack::Delete(const wxString &key)
 {
     wxWindow *win = Remove(key);
-    if (win) { 
-        win->Destroy(); 
+    if (win) {
+        win->Destroy();
     }
 }
 
-void WindowStack::Delete(wxWindow *win) 
+void WindowStack::Delete(wxWindow *win)
 {
     wxString key = Remove(win);
-    if (!key.IsEmpty()) { 
-        win->Destroy(); 
+    if (!key.IsEmpty()) {
+        win->Destroy();
     }
 }
-    
+
 wxWindow *WindowStack::Find(const wxString &key)
 {
 	std::map<wxString, wxWindow*>::iterator iter = m_windows.find(key);
@@ -154,7 +159,7 @@ wxWindow *WindowStack::Find(const wxString &key)
 	return iter->second;
 }
 
-wxString WindowStack::Find(wxWindow *win) 
+wxString WindowStack::Find(wxWindow *win)
 {
     for (std::map<wxString,wxWindow*>::iterator iter = m_windows.begin();
             iter != m_windows.end(); iter++) {

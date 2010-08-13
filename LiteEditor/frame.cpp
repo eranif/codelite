@@ -784,7 +784,7 @@ void Frame::CreateGUIControls(void)
 	tagsManager->SetCodeLiteIndexerPath(exePath.GetPath());
 	ManagerST::Get()->SetCodeLiteLauncherPath(exePath.GetPath());
 #endif
-	tagsManager->StartCtagsProcess();
+	tagsManager->StartCodeLiteIndexer();
 
 	//--------------------------------------------------------------------------------------
 	// Start the parsing thread, the parsing thread and the SymbolTree (or its derived)

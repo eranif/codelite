@@ -682,6 +682,11 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 {
 	int count = 0;
 
+	wxString activeFileName;
+	if(m_mgr->GetActiveEditor()) {
+		activeFileName = m_mgr->GetActiveEditor()->GetFileName().GetFullPath();
+	}
+
 	// root node gets special grouping children
 	if (id == tree->GetRootItem()) {
 		tree->m_globals = tree->AppendItem(id, wxT("Global Functions and Variables"), m_image[wxT("globals")]);
@@ -737,9 +742,20 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 			continue;
 		wxTreeItemId parent = id != tree->GetRootItem() ? id : GetParentForGlobalTag(tree, *tag);
 		// create child node, add our custom tag data to it, and set its appearance accordingly
-		wxTreeItemId child = tree->AppendItem(parent, wxEmptyString);
-		SetNodeData(tree, child, *tag);
-		count++;
+
+		// If the view mode is "Current File" but the tagEntry is NOT from
+		// the current tree, AND the current item is not a "parent" node
+		// dont show it
+		bool disableItem = (GetViewMode() == vmCurrentFile   &&
+							activeFileName != tag->GetFile() &&
+							!(tag->IsContainer() || tag->GetKind() == wxT("enum")) );
+		if(!disableItem) {
+
+			wxTreeItemId child = tree->AppendItem(parent, wxEmptyString);
+			SetNodeData(tree, child, *tag);
+			count++;
+
+		}
 	}
 
 	SortChildren();
@@ -1202,6 +1218,12 @@ void SymbolViewPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
  */
 void SymbolViewPlugin::OnWorkspaceClosed(wxCommandEvent& e)
 {
+	DoClearSymbolView();
+	e.Skip();
+}
+
+void SymbolViewPlugin::DoClearSymbolView()
+{
 	for (size_t i = 0; i < m_viewModeNames.Count(); i++) {
 		WindowStack *viewStack = (WindowStack*) m_viewStack->Find(m_viewModeNames[i]);
 		if (viewStack) {
@@ -1212,7 +1234,6 @@ void SymbolViewPlugin::OnWorkspaceClosed(wxCommandEvent& e)
 	// set the view mode to current file, this to avoid long waiting on opening next workspace
 	m_viewStack->Select(m_viewModeNames[vmCurrentFile]);
 	m_viewChoice->SetStringSelection(m_viewModeNames[vmCurrentFile]);
-	e.Skip();
 }
 
 /**
@@ -1221,14 +1242,32 @@ void SymbolViewPlugin::OnWorkspaceClosed(wxCommandEvent& e)
  */
 void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
 {
+	// Clear the plugin content
+
 	std::vector<wxFileName> *files = (std::vector<wxFileName>*) e.GetClientData();
 	if (files && !files->empty()) {
-		wxArrayString filePaths;
-		for (size_t i = 0; i < files->size(); i++) {
-			filePaths.Add(files->at(i).GetFullPath());
+
+		if(files->size() > 1) {
+			DoClearSymbolView();
+
+			// Tag only visible files
+			if(m_mgr->GetActiveEditor()) {
+				wxArrayString filePaths;
+				filePaths.Add(m_mgr->GetActiveEditor()->GetFileName().GetFullPath());
+
+				wxWindowUpdateLocker locker(m_viewStack);
+				UpdateTrees(filePaths, false);
+			}
+		} else {
+
+			wxArrayString filePaths;
+			for (size_t i = 0; i < files->size(); i++) {
+				filePaths.Add(files->at(i).GetFullPath());
+			}
+			wxWindowUpdateLocker locker(m_viewStack);
+			UpdateTrees(filePaths, true);
+
 		}
-		wxWindowUpdateLocker locker(m_viewStack);
-		UpdateTrees(filePaths, true);
 	}
 	e.Skip();
 }
@@ -1582,3 +1621,4 @@ bool SymbolViewPlugin::FindSwappedFile(const wxFileName& rhs, wxString& lhs, con
 	}
 	return false;
 }
+

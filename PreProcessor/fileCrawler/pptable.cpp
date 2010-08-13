@@ -562,13 +562,16 @@ bool CLReplacePatternA(const std::string& in, const CLReplacement& repl, std::st
 		return true;
 
 	} else {
+		
 		size_t where = in.find(repl.searchFor);
 		if(where == std::string::npos) {
 			return false;
 		}
 		
-		outStr = in;
-		outStr.replace(where, repl.searchFor.length(), repl.replaceWith);
+		outStr = ReplaceWordA(in, repl.searchFor, repl.replaceWith);
+		
+//		outStr = in;
+//		outStr.replace(where, repl.searchFor.length(), repl.replaceWith);
 		
 		// simple replacement
 		return outStr != in;

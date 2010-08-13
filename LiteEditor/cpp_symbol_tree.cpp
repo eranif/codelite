@@ -26,6 +26,7 @@
 #include "stringsearcher.h"
 #include "stringsearcher.h"
 #include "cl_editor.h"
+#include "pluginmanager.h"
 
 #include "cpp_symbol_tree.h"
 #include "manager.h"
@@ -44,14 +45,15 @@ wxImageList* CreateSymbolTreeImages()
 {
 	wxImageList *images = new wxImageList(16, 16, true);
 
-	images->Add(wxXmlResource::Get()->LoadBitmap(_T("project")));		   // 0
-	images->Add(wxXmlResource::Get()->LoadBitmap(_T("namespace")));	   // 1
-	images->Add(wxXmlResource::Get()->LoadBitmap(_T("globals")));		   // 2
-	images->Add(wxXmlResource::Get()->LoadBitmap(_T("class")));		   // 3
-	images->Add(wxXmlResource::Get()->LoadBitmap(_T("struct")));		   // 4
-	images->Add(wxXmlResource::Get()->LoadBitmap(_T("func_public")));	   // 5
+	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
+	images->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));               // 0
+	images->Add(wxXmlResource::Get()->LoadBitmap(_T("namespace")));       // 1
+	images->Add(wxXmlResource::Get()->LoadBitmap(_T("globals")));         // 2
+	images->Add(wxXmlResource::Get()->LoadBitmap(_T("class")));           // 3
+	images->Add(wxXmlResource::Get()->LoadBitmap(_T("struct")));          // 4
+	images->Add(wxXmlResource::Get()->LoadBitmap(_T("func_public")));     // 5
 	images->Add(wxXmlResource::Get()->LoadBitmap(_T("func_protected")));  // 6
-	images->Add(wxXmlResource::Get()->LoadBitmap(_T("func_private")));	   // 7
+	images->Add(wxXmlResource::Get()->LoadBitmap(_T("func_private")));    // 7
 	images->Add(wxXmlResource::Get()->LoadBitmap(_T("member_public")));   // 8
 	images->Add(wxXmlResource::Get()->LoadBitmap(_T("member_protected")));// 9
 	images->Add(wxXmlResource::Get()->LoadBitmap(_T("member_private")));  // 10
@@ -75,8 +77,7 @@ wxImageList* CreateSymbolTreeImages()
 	bmp = wxXmlResource::Get()->LoadBitmap(wxT("enumerator"));			//14
 	images->Add(bmp);
 
-	bmp = wxXmlResource::Get()->LoadBitmap(wxT("class_view"));			//15
-	images->Add(bmp);
+	images->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));
 	return images;
 }
 

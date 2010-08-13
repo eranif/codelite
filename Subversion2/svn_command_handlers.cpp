@@ -9,6 +9,7 @@
 #include "subversion_view.h"
 #include <wx/xrc/xmlres.h>
 #include "subversion2.h"
+#include "changelogpage.h"
 #include "imanager.h"
 #include "ieditor.h"
 
@@ -51,11 +52,11 @@ void SvnUpdateHandler::Process(const wxString& output)
 
 void SvnDiffHandler::Process(const wxString& output)
 {
-	// Open the changes inside the editor only if we are not using an external 
+	// Open the changes inside the editor only if we are not using an external
 	// diff viewer
 	if(GetPlugin()->GetSettings().GetFlags() & SvnUseExternalDiff)
 		return;
-	
+
 	IEditor *editor = GetPlugin()->GetManager()->NewEditor();
 	if(editor) {
 		// Set the lexer name to 'Diff'
@@ -114,10 +115,9 @@ void SvnLogHandler::Process(const wxString& output)
 		changeLog = Compact(changeLog);
 	}
 
-	IEditor *editor = GetPlugin()->GetManager()->NewEditor();
-	if(editor) {
-		editor->AppendText(changeLog);
-	}
+	ChangeLogPage *page = new ChangeLogPage(GetPlugin()->GetManager()->GetTheApp()->GetTopWindow(), GetPlugin());
+	page->AppendText( changeLog );
+	GetPlugin()->GetManager()->AddPage( page, wxT("Change Log") );
 }
 
 wxString SvnLogHandler::Compact(const wxString& message)

@@ -102,6 +102,7 @@ wxString CommitDialog::GetMesasge()
 		}
 	}
 
+
 	// Append any FR URLs to the commit message
 	if(m_textCtrlFrID->IsShown()) {
 		wxString frTrackerMsg = props.ReadProperty(SubversionLocalProperties::FR_TRACKER_MESSAGE);

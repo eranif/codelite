@@ -57,10 +57,12 @@ protected:
 	wxString GetCscopeExeName();
 	wxString DoCreateListFile(bool force);
 	void     DoCscopeCommand(const wxString &command, const wxString &findWhat, const wxString &endMsg);
-
+	void     DoFindSymbol(const wxString& word);
+	
 	//Event handlers
 	//------------------------------------------
 	void OnFindSymbol                      (wxCommandEvent &e);
+	void OnFindUserInsertedSymbol          (wxCommandEvent &e);
 	void OnFindGlobalDefinition            (wxCommandEvent &e);
 	void OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e);
 	void OnFindFunctionsCallingThisFunction(wxCommandEvent &e);

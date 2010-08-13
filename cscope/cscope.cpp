@@ -123,9 +123,10 @@ clToolBar *Cscope::CreateToolBar(wxWindow *parent)
 	// Command events
 	m_topWindow->Connect( XRCID("cscope_find_global_definition"),            wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindGlobalDefinition), NULL, (wxEvtHandler*)this );
 	m_topWindow->Connect( XRCID("cscope_create_db"),                         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnCreateDB), NULL, (wxEvtHandler*)this );
-	m_topWindow->Connect( XRCID("cscope_settings"),                         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnDoSettings), NULL, (wxEvtHandler*)this );
+	m_topWindow->Connect( XRCID("cscope_settings"),                          wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnDoSettings), NULL, (wxEvtHandler*)this );
 	m_topWindow->Connect( XRCID("cscope_functions_calling_this_function"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCallingThisFunction), NULL, (wxEvtHandler*)this);
 	m_topWindow->Connect( XRCID("cscope_find_symbol"),                       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindSymbol), NULL, (wxEvtHandler*)this);
+	m_topWindow->Connect( XRCID("cscope_find_user_symbol"),                  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindUserInsertedSymbol), NULL, (wxEvtHandler*)this );
 	m_topWindow->Connect( XRCID("cscope_functions_called_by_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFuncion), NULL, (wxEvtHandler*)this);
 
 	// UI events
@@ -134,6 +135,7 @@ clToolBar *Cscope::CreateToolBar(wxWindow *parent)
 	m_topWindow->Connect( XRCID("cscope_functions_calling_this_function"),   wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
 	m_topWindow->Connect( XRCID("cscope_find_global_definition"),            wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
 	m_topWindow->Connect( XRCID("cscope_find_symbol"),                       wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
+	m_topWindow->Connect( XRCID("cscope_find_user_symbol"),                  wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnWorkspaceOpenUI), NULL, (wxEvtHandler*)this);
 	return tb;
 }
 
@@ -141,16 +143,21 @@ void Cscope::CreatePluginMenu(wxMenu *pluginsMenu)
 {
 	wxMenu *menu = new wxMenu();
 	wxMenuItem *item(NULL);
-	item = new wxMenuItem(menu, XRCID("cscope_find_symbol"), wxT("Find this C symbol\tCtrl+0"), wxT("Find this C symbol"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_find_user_symbol"), wxT("Find ..."), wxT("Find ..."), wxITEM_NORMAL);
+	menu->Append(item);
+	
+	menu->AppendSeparator();
+	
+	item = new wxMenuItem(menu, XRCID("cscope_find_symbol"), wxT("Find selected text"), wxT("Find this C symbol"), wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("cscope_find_global_definition"), wxT("Find this global definition\tCtrl+1"), wxT("Find this C global definition"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_find_global_definition"), wxT("Find this global definition"), wxT("Find this C global definition"), wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function\tCtrl+2"), wxT("Find functions called by this function"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), wxT("Find functions called by this function"), wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("cscope_functions_calling_this_function"), wxT("Find functions calling this function\tCtrl+3"), wxT("Find functions calling this function"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_functions_calling_this_function"), wxT("Find functions calling this function"), wxT("Find functions calling this function"), wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
@@ -362,30 +369,13 @@ void Cscope::OnFindSymbol(wxCommandEvent &e)
 	if ( m_mgr->GetActiveEditor() == NULL ) {
 		return;
 	}
+	
 	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
 	if (word.IsEmpty()) {
 		return;
 	}
-
-	m_cscopeWin->Clear();
-	wxString list_file = DoCreateListFile(false);
-
-	// get the rebuild option
-	wxString rebuildOption = wxT("");
-	CScopeConfData settings;
-
-	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
-	if (!settings.GetRebuildOption())
-	{
-		rebuildOption = wxT(" -d");
-	}
-
-	//Do the actual search
-	wxString command;
-	wxString endMsg;
-	command << GetCscopeExeName() << rebuildOption << wxT(" -L -0 ") << word << wxT(" -i ") << list_file;
-	endMsg << wxT("cscope results for: find C symbol '") << word << wxT("'");
-	DoCscopeCommand(command, word, endMsg);
+	
+	DoFindSymbol(word);
 }
 
 void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
@@ -543,4 +533,37 @@ void Cscope::OnWorkspaceOpenUI(wxUpdateUIEvent& e)
 {
 	CHECK_CL_SHUTDOWN();
 	e.Enable(m_mgr->IsWorkspaceOpen());
+}
+
+void Cscope::OnFindUserInsertedSymbol(wxCommandEvent& e)
+{
+	CHECK_CL_SHUTDOWN();
+	
+	wxString word = wxGetTextFromUser(wxT("Find What:"), wxT("cscope: find symbol"), wxT(""), m_mgr->GetTheApp()->GetTopWindow());
+	if(word.IsEmpty())
+		return;
+	
+	DoFindSymbol( word );
+}
+
+void Cscope::DoFindSymbol(const wxString& word)
+{
+	m_cscopeWin->Clear();
+	wxString list_file = DoCreateListFile(false);
+
+	// get the rebuild option
+	wxString rebuildOption = wxT("");
+	CScopeConfData settings;
+
+	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+	if (!settings.GetRebuildOption()) {
+		rebuildOption = wxT(" -d");
+	}
+
+	//Do the actual search
+	wxString command;
+	wxString endMsg;
+	command << GetCscopeExeName() << rebuildOption << wxT(" -L -0 ") << word << wxT(" -i ") << list_file;
+	endMsg << wxT("cscope results for: find C symbol '") << word << wxT("'");
+	DoCscopeCommand(command, word, endMsg);
 }

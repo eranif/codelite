@@ -1263,8 +1263,9 @@ bool Frame::IsEditorEvent(wxEvent &event)
 {
 #ifdef __WXGTK__
 	MainBook *mainBook   = GetMainBook();
-	if(!mainBook || !mainBook->GetActiveEditor())
+	if(!mainBook || !mainBook->GetActiveEditor()) {
 		return false;
+	}
 
 	switch (event.GetId())
 	{
@@ -1272,7 +1273,8 @@ bool Frame::IsEditorEvent(wxEvent &event)
 	case wxID_SELECTALL:
 	case wxID_COPY:
 	case wxID_PASTE: {
-		return mainBook->GetActiveEditor()->IsFocused();
+		bool isFocused = mainBook->GetActiveEditor()->IsFocused();
+		return isFocused;
 	}
 	default:
 		break;
@@ -1308,41 +1310,8 @@ bool Frame::IsEditorEvent(wxEvent &event)
 	return true;
 }
 
-static bool IsTabgrouppaneEvent(wxEvent &event)
-{
-	// Handle common edit events
-	// If we don't do this here, the tabgrouppane tree
-	// never sees these events
-
-	wxWindow *focusWin = wxWindow::FindFocus();
-	if ( focusWin ) {
-		switch (event.GetId()) {
-		case wxID_CUT:
-		case wxID_DELETE:
-		case wxID_COPY:
-		case wxID_PASTE: {
-			wxTreeCtrl* tree = dynamic_cast<wxTreeCtrl*>(focusWin);
-			if ( tree && tree->GetName() == wxT("tabgrouptree") && event.GetEventType() != wxEVT_UPDATE_UI ) {
-				// If it's the right type/id, send it to the tree
-				tree->GetEventHandler()->ProcessEvent(event);
-				return true;	// to signify it's been dealt with
-			}
-			break;
-		}
-		default:
-			break;
-		}
-	}
-	return false;
-}
-
 void Frame::DispatchCommandEvent(wxCommandEvent &event)
 {
-	if ( IsTabgrouppaneEvent(event) ) {
-		// *Don't* skip the event here, or we'll get infinite recursion
-		return;
-	}
-
 	if ( !IsEditorEvent(event) ) {
 		event.Skip();
 		return;
@@ -1350,9 +1319,10 @@ void Frame::DispatchCommandEvent(wxCommandEvent &event)
 
 	// Do the default and pass this event to the Editor
 	LEditor* editor = GetMainBook()->GetActiveEditor();
-	if ( !editor )
+	if ( !editor ) {
 		return;
-
+	}
+	
 	if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
 		//keep the old id as int and override the value set in the event object
 		//to trick the event system

@@ -161,9 +161,7 @@ public:
 		return m_functionTip;
 	}
 	
-	bool IsFocused() const {
-		return m_isFocused;
-	}
+	bool IsFocused() const;
 	
 public:
 	/// Construct a LEditor object

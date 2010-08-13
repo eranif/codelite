@@ -3687,3 +3687,13 @@ void LEditor::OnFocus(wxFocusEvent& event)
 	m_isFocused = true;
 	event.Skip();
 }
+
+bool LEditor::IsFocused() const
+{
+#ifdef __WXGTK__
+	// Under GTK, when popup menu is ON, we will receive a "FocusKill" event
+	// which means that we lost the focus. So the IsFocused() method is using 
+	// either the m_isFocused flag or the m_popupIsOn flag	return m_isFocused || m_popupIsOn;
+#else
+	return m_isFocused;
+#endif}

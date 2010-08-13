@@ -18,7 +18,8 @@ void ChangeLogPage::AppendText(const wxString& text)
 
 void ChangeLogPage::OnURL(wxTextUrlEvent& event)
 {
-	if(event.GetMouseEvent().IsButton()) {
+	// we respond only for LeftUp event
+	if(event.GetMouseEvent().ButtonUp(wxMOUSE_BTN_LEFT)) {
 		int start = event.GetURLStart();
 		int end   = event.GetURLEnd();
 

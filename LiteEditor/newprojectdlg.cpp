@@ -119,9 +119,15 @@ void NewProjectDlg::OnCreate(wxCommandEvent &event)
 		Mkdir(fn.GetPath());
 	}
 
-	// dont allow whitespace in project name
-	if (m_txtProjName->GetValue().Find(wxT(" ")) != wxNOT_FOUND) {
-		wxMessageBox(_("Whitespace is not allowed in project name"), wxT("Error"), wxOK | wxICON_HAND | wxCENTER, this);
+	wxString projectName = m_txtProjName->GetValue();
+	projectName.Trim().Trim(false);
+	if(projectName.find_first_not_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")) != wxString::npos) {
+		wxMessageBox(_("Project name can only contain alpha numeric characters and/or the underscore '_'"), wxT("Error"), wxOK | wxICON_HAND | wxCENTER, this);
+		return;
+	}
+
+	if(projectName.IsEmpty()) {
+		wxMessageBox(_("Please provide a name for the project"), wxT("Error"), wxOK | wxICON_HAND | wxCENTER, this);
 		return;
 	}
 
@@ -153,8 +159,8 @@ void NewProjectDlg::OnCreate(wxCommandEvent &event)
 		}
 	}
 
-	m_projectData.m_name = m_txtProjName->GetValue();
-	m_projectData.m_path = fn.GetPath();
+	m_projectData.m_name    = m_txtProjName->GetValue();
+	m_projectData.m_path    = fn.GetPath();
 	m_projectData.m_cmpType = m_chCompiler->GetStringSelection();
 
 	EndModal(wxID_OK);
@@ -279,6 +285,6 @@ void NewProjectDlg::OnBrowseProjectPath(wxCommandEvent& event)
 void NewProjectDlg::OnProjectPathUpdated(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
-	
+
 	UpdateFullFileName();
 }

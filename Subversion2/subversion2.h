@@ -107,6 +107,7 @@ public:
 	bool LoginIfNeeded        (wxCommandEvent &event, const wxString &workingDirectory, wxString& loginString);
 	bool GetNonInteractiveMode(wxCommandEvent &event);
 	bool IsPathUnderSvn       (const wxString &path);
+	void ChangeLog            (const wxString &path, const wxString &fullpath, wxCommandEvent &event);
 
 protected:
 	void DoInitialize();

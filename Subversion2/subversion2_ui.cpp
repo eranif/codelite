@@ -802,10 +802,15 @@ ChangeLogPageBase::ChangeLogPageBase( wxWindow* parent, wxWindowID id, const wxP
 	
 	this->SetSizer( bSizer27 );
 	this->Layout();
+	
+	// Connect Events
+	m_textCtrl->Connect( wxEVT_COMMAND_TEXT_URL, wxTextUrlEventHandler( ChangeLogPageBase::OnURL ), NULL, this );
 }
 
 ChangeLogPageBase::~ChangeLogPageBase()
 {
+	// Disconnect Events
+	m_textCtrl->Disconnect( wxEVT_COMMAND_TEXT_URL, wxTextUrlEventHandler( ChangeLogPageBase::OnURL ), NULL, this );
 }
 
 SvnPropsBaseDlg::SvnPropsBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )

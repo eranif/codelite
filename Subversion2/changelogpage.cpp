@@ -15,3 +15,14 @@ void ChangeLogPage::AppendText(const wxString& text)
 {
 	m_textCtrl->AppendText(text);
 }
+
+void ChangeLogPage::OnURL(wxTextUrlEvent& event)
+{
+	if(event.GetMouseEvent().IsButton()) {
+		int start = event.GetURLStart();
+		int end   = event.GetURLEnd();
+
+		wxString url = m_textCtrl->GetRange(start, end);
+		wxLaunchDefaultBrowser(url);
+	}
+}

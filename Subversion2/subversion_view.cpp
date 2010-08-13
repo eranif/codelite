@@ -55,6 +55,7 @@ BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_MENU(XRCID("svn_open_file"),          SubversionView::OnOpenFile)
 	EVT_MENU(XRCID("svn_switch"),             SubversionView::OnSwitch)
 	EVT_MENU(XRCID("svn_properties"),         SubversionView::OnProperties)
+	EVT_MENU(XRCID("svn_log"),                SubversionView::OnLog)
 END_EVENT_TABLE()
 
 SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
@@ -442,6 +443,9 @@ void SubversionView::CreateRootMenu(wxMenu* menu)
 	menu->Append(XRCID("svn_diff"),          wxT("Create Diff..."));
 	menu->Append(XRCID("svn_patch"),         wxT("Apply Patch..."));
 	menu->Append(XRCID("svn_patch_dry_run"), wxT("Apply Patch - Dry Run..."));
+
+	menu->AppendSeparator();
+	menu->Append(XRCID("svn_log"),           wxT("Change Log..."));
 
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_properties"),    wxT("Properties..."));
@@ -1012,4 +1016,9 @@ void SubversionView::OnProperties(wxCommandEvent& event)
 		props.WriteProperty(SubversionLocalProperties::FR_TRACKER_MESSAGE,  dlg.GetFRMsg());
 		props.WriteProperty(SubversionLocalProperties::FR_TRACKER_URL,      dlg.GetFRTrackerURL());
 	}
+}
+
+void SubversionView::OnLog(wxCommandEvent& event)
+{
+	m_plugin->ChangeLog(m_textCtrlRootDir->GetValue(), m_textCtrlRootDir->GetValue(), event);
 }

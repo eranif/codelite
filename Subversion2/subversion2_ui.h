@@ -343,6 +343,10 @@ class ChangeLogPageBase : public wxPanel
 	
 	protected:
 		wxTextCtrl* m_textCtrl;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnURL( wxTextUrlEvent& event ) { event.Skip(); }
+		
 	
 	public:
 		

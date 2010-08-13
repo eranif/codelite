@@ -100,6 +100,7 @@ protected:
 	void OnLinkEditor         (wxCommandEvent &event);
 	void OnSwitch             (wxCommandEvent &event);
 	void OnProperties         (wxCommandEvent &event);
+	void OnLog                (wxCommandEvent &event);
 	DECLARE_EVENT_TABLE()
 
 	void OnStopUI         (wxUpdateUIEvent &event);

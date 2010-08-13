@@ -275,7 +275,7 @@
                 </object>
             </object>
         </object>
-        <object class="Dialog" expanded="1">
+        <object class="Dialog" expanded="0">
             <property name="bg"></property>
             <property name="center">wxBOTH</property>
             <property name="context_help"></property>
@@ -6640,7 +6640,7 @@
                 </object>
             </object>
         </object>
-        <object class="Panel" expanded="0">
+        <object class="Panel" expanded="1">
             <property name="bg"></property>
             <property name="context_help"></property>
             <property name="enabled">1</property>
@@ -6687,7 +6687,7 @@
             <event name="OnSetFocus"></event>
             <event name="OnSize"></event>
             <event name="OnUpdateUI"></event>
-            <object class="wxBoxSizer" expanded="0">
+            <object class="wxBoxSizer" expanded="1">
                 <property name="minimum_size"></property>
                 <property name="name">bSizer27</property>
                 <property name="orient">wxVERTICAL</property>
@@ -6747,13 +6747,13 @@
                         <event name="OnText"></event>
                         <event name="OnTextEnter"></event>
                         <event name="OnTextMaxLen"></event>
-                        <event name="OnTextURL"></event>
+                        <event name="OnTextURL">OnURL</event>
                         <event name="OnUpdateUI"></event>
                     </object>
                 </object>
             </object>
         </object>
-        <object class="Dialog" expanded="1">
+        <object class="Dialog" expanded="0">
             <property name="bg"></property>
             <property name="center">wxBOTH</property>
             <property name="context_help"></property>

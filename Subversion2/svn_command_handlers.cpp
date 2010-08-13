@@ -117,7 +117,7 @@ void SvnLogHandler::Process(const wxString& output)
 
 	ChangeLogPage *page = new ChangeLogPage(GetPlugin()->GetManager()->GetTheApp()->GetTopWindow(), GetPlugin());
 	page->AppendText( changeLog );
-	GetPlugin()->GetManager()->AddPage( page, wxT("Change Log") );
+	GetPlugin()->GetManager()->AddPage( page, wxT("Change Log"), wxNullBitmap, true );
 }
 
 wxString SvnLogHandler::Compact(const wxString& message)

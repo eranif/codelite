@@ -519,24 +519,7 @@ void Subversion2::Patch(bool dryRun, const wxString &workingDirectory, wxEvtHand
 
 void Subversion2::OnLog(wxCommandEvent& event)
 {
-	SvnLogDialog dlg(GetManager()->GetTheApp()->GetTopWindow());
-	dlg.m_to->SetValue(wxT("BASE"));
-	dlg.m_compact->SetValue(true);
-	dlg.m_from->SetFocus();
-	if(dlg.ShowModal() == wxID_OK) {
-		wxString command;
-		wxString loginString;
-		if(LoginIfNeeded(event, DoGetFileExplorerItemPath(), loginString) == false) {
-			return;
-		}
-
-		bool nonInteractive = GetNonInteractiveMode(event);
-		command << GetSvnExeName(nonInteractive) << loginString << wxT(" log -r") << dlg.m_from->GetValue() << wxT(":") << dlg.m_to->GetValue() << wxT(" \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
-		GetConsole()->Execute(command,
-							  DoGetFileExplorerItemPath(),
-							  new SvnLogHandler(this, dlg.m_compact->IsChecked(), event.GetId(), this),
-							  false);
-	}
+	ChangeLog(DoGetFileExplorerItemPath(), DoGetFileExplorerItemFullPath(), event);
 }
 
 bool Subversion2::GetNonInteractiveMode(wxCommandEvent& event)
@@ -792,4 +775,26 @@ void Subversion2::DoSwitchURL(const wxString& workingDirectory, const wxString &
 
 	command << GetSvnExeName(nonInteractive) << wxT(" switch ") << targetUrl << loginString;
 	GetConsole()->Execute(command, workingDirectory, new SvnDefaultCommandHandler(this, wxNOT_FOUND, NULL));
+}
+
+void Subversion2::ChangeLog(const wxString& path, const wxString &fullpath, wxCommandEvent &event)
+{
+	SvnLogDialog dlg(GetManager()->GetTheApp()->GetTopWindow());
+	dlg.m_to->SetValue(wxT("BASE"));
+	dlg.m_compact->SetValue(true);
+	dlg.m_from->SetFocus();
+	if(dlg.ShowModal() == wxID_OK) {
+		wxString command;
+		wxString loginString;
+		if(LoginIfNeeded(event, path, loginString) == false) {
+			return;
+		}
+
+		bool nonInteractive = GetNonInteractiveMode(event);
+		command << GetSvnExeName(nonInteractive) << loginString << wxT(" log -r") << dlg.m_from->GetValue() << wxT(":") << dlg.m_to->GetValue() << wxT(" \"") << fullpath << wxT("\"");
+		GetConsole()->Execute(command,
+							  path,
+							  new SvnLogHandler(this, dlg.m_compact->IsChecked(), event.GetId(), this),
+							  false);
+	}
 }

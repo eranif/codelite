@@ -12,6 +12,7 @@ public:
 	virtual ~ChangeLogPage();
 
 	void AppendText(const wxString &text);
+	void OnURL     (wxTextUrlEvent &event);
 };
 
 #endif // CHANGELOGPAGE_H

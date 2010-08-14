@@ -77,7 +77,7 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
 	vertSizer->Add(horzSizer, 0, wxEXPAND|wxTOP|wxBOTTOM);
 
 	// grab the base class scintilla and put our sizer in its place
-	wxSizer *mainSizer = GetSizer();
+	wxSizer *mainSizer = m_hSizer;
 	mainSizer->Detach(m_sci);
 	vertSizer->Add(m_sci, 1, wxEXPAND | wxALL, 1);
 

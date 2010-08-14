@@ -65,6 +65,10 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 		, m_recv(NULL)
 		, m_matchInfo(1)
 {
+	// Remove the 'find' tool
+	m_tb->RemoveTool ( XRCID ( "search_output" ) );
+	m_tb->Realize();
+	
 	if (useBook) {
 
 		// load the book style from the settings file
@@ -81,7 +85,7 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 		m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED, NotebookEventHandler(FindResultsTab::OnClosePage) , NULL, this);
 
 		// get rid of base class scintilla component
-		wxSizer *sz = GetSizer();
+		wxSizer *sz = m_hSizer;
 		sz->Detach(m_sci);
 		m_sci->Destroy();
 		m_sci = NULL;

@@ -37,8 +37,6 @@ BEGIN_EVENT_TABLE(ShellTab, OutputTabWindow)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE,    ShellTab::OnProcOutput)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDERRLINE, ShellTab::OnProcError)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED,      ShellTab::OnProcEnded)
-
-	EVT_BUTTON(XRCID("show_find"),    ShellTab::OnShowSearch)
 	EVT_BUTTON(XRCID("send_input"),   ShellTab::OnSendInput)
 	EVT_BUTTON(XRCID("stop_process"), ShellTab::OnStopProc)
 
@@ -51,17 +49,12 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
 		: OutputTabWindow(parent, id, name)
 		, m_inputSizer(NULL)
 		, m_input(NULL)
-		, m_findBar(NULL)
 		, m_cmd(NULL)
 {
 	m_inputSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	wxButton *btn = new wxBitmapButton(this, XRCID("show_find"), PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/search/find")) );
-	m_inputSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
-	btn->SetToolTip(wxT("Show QuickFind Bar"));
-
 	wxStaticText *text = new wxStaticText(this, wxID_ANY, wxT("Send:"));
-	m_inputSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_inputSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 0);
 
 	m_input = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxTE_PROCESS_ENTER);
 	m_input->SetMinSize(wxSize(200,-1));
@@ -69,25 +62,22 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
 	m_input->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ShellTab::OnKeyDown), NULL, this);
 
 	m_inputSizer->Add(m_input, 1, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
-
+	
+	wxButton *btn;
 	btn = new wxButton(this, XRCID("send_input"), wxT("Send"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	m_inputSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
 	btn = new wxButton(this, XRCID("stop_process"), wxT("Stop"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	m_inputSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
-	m_findBar = new QuickFindBar(this);
-	m_findBar->Connect(m_findBar->GetCloseButtonId(), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(ShellTab::OnShowInput), NULL, this);
-	m_findBar->SetEditor(m_sci);
 
 	// grab the base class scintilla and put our sizer in its place
-	wxSizer *mainSizer = GetSizer();
+	wxSizer *mainSizer = m_hSizer;
 	mainSizer->Detach(m_sci);
 
 	m_vertSizer = new wxBoxSizer(wxVERTICAL);
 	m_vertSizer->Add(m_sci,         1, wxEXPAND | wxALL, 1);
 	m_vertSizer->Add(m_inputSizer,  0, wxEXPAND | wxALL, 1);
-	m_vertSizer->Add(m_findBar,     0, wxEXPAND | wxALL, 1);
 
 #ifdef __WXMAC__
 	mainSizer->Insert(0, m_vertSizer,     1, wxEXPAND | wxALL, 1);
@@ -167,29 +157,6 @@ void ShellTab::OnProcEnded(wxCommandEvent& e)
 	}
 	AppendText(e.GetString());
 	m_cmd = NULL;
-}
-
-void ShellTab::OnShowInput(wxCommandEvent &e)
-{
-	Freeze();
-
-	m_findBar->Show(false);
-	m_inputSizer->Show(true);
-	GetSizer()->Layout();
-	m_input->SetFocus();
-
-	Thaw();
-}
-
-void ShellTab::OnShowSearch(wxCommandEvent& e)
-{
-	Freeze();
-
-	m_findBar->Show(true);
-	m_inputSizer->Show(false);
-	GetSizer()->Layout();
-
-	Thaw();
 }
 
 void ShellTab::OnSendInput(wxCommandEvent& e)

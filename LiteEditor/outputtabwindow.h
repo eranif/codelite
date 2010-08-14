@@ -33,16 +33,18 @@
 	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
 #endif
 
-
+class QuickFindBar;
 class OutputTabWindow : public wxPanel
 {
 protected:
-	wxString     m_name;
-    wxToolBar   *m_tb;
-	wxScintilla *m_sci;
-    bool         m_outputScrolls;
-    bool         m_autoAppear;
-
+	wxString      m_name;
+    wxToolBar   * m_tb;
+	wxScintilla * m_sci;
+    bool          m_outputScrolls;
+    bool          m_autoAppear;
+	QuickFindBar *m_findBar;
+	wxBoxSizer *  m_hSizer;
+	
     static void DefineMarker(wxScintilla *sci, int marker, int markerType, wxColor fore, wxColor back);
     static void InitStyle   (wxScintilla *sci, int lexer, bool folding);
 
@@ -54,6 +56,7 @@ protected:
 
 	//Event handlers
     virtual void OnOutputScrolls  (wxCommandEvent   &e);
+	virtual void OnSearchOutput   (wxCommandEvent   &e);
 	virtual void OnClearAll       (wxCommandEvent   &e);
 	virtual void OnWordWrap       (wxCommandEvent   &e);
 	virtual void OnCollapseAll    (wxCommandEvent   &e);
@@ -62,6 +65,7 @@ protected:
 
 
     virtual void OnOutputScrollsUI(wxUpdateUIEvent  &e);
+    virtual void OnSearchOutputUI (wxUpdateUIEvent  &e);
 	virtual void OnClearAllUI     (wxUpdateUIEvent  &e);
 	virtual void OnWordWrapUI     (wxUpdateUIEvent  &e);
 	virtual void OnCollapseAllUI  (wxUpdateUIEvent  &e);
@@ -71,7 +75,7 @@ protected:
 	virtual void OnHotspotClicked (wxScintillaEvent &e);
 	virtual void OnMarginClick    (wxScintillaEvent &e);
 	virtual void OnEditUI         (wxUpdateUIEvent  &e);
-
+	virtual void OnHideSearchBar  (wxCommandEvent   &e);
     DECLARE_EVENT_TABLE()
 
 public:

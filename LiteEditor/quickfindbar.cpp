@@ -520,7 +520,7 @@ void QuickFindBar::OnToggleReplaceControlsUI(wxUpdateUIEvent& event)
 	if (ManagerST::Get()->IsShutdownInProgress()) {
 		event.Enable(false);
 
-	} else  if (!m_sci) {
+	} else  if (!m_sci || m_sci->GetReadOnly()) {
 		event.Enable(false);
 
 	} else {

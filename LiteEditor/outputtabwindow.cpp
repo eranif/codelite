@@ -29,14 +29,17 @@
 #include "outputtabwindow.h"
 #include "output_pane.h"
 #include "pluginmanager.h"
+#include "quickfindbar.h"
 
 BEGIN_EVENT_TABLE(OutputTabWindow, wxPanel)
 	EVT_MENU(XRCID("scroll_on_output"),      OutputTabWindow::OnOutputScrolls)
+	EVT_MENU(XRCID("search_output"),         OutputTabWindow::OnSearchOutput)
 	EVT_MENU(XRCID("clear_all_output"),      OutputTabWindow::OnClearAll)
 	EVT_MENU(XRCID("word_wrap_output"),      OutputTabWindow::OnWordWrap)
 	EVT_MENU(XRCID("collapse_all"),          OutputTabWindow::OnCollapseAll)
 	EVT_MENU(XRCID("repeat_output"),         OutputTabWindow::OnRepeatOutput)
 	EVT_UPDATE_UI(XRCID("scroll_on_output"), OutputTabWindow::OnOutputScrollsUI)
+	EVT_UPDATE_UI(XRCID("search_output"),    OutputTabWindow::OnSearchOutputUI)
 	EVT_UPDATE_UI(XRCID("clear_all_output"), OutputTabWindow::OnClearAllUI)
 	EVT_UPDATE_UI(XRCID("word_wrap_output"), OutputTabWindow::OnWordWrapUI)
 	EVT_UPDATE_UI(XRCID("collapse_all"),     OutputTabWindow::OnCollapseAllUI)
@@ -54,6 +57,7 @@ OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString
 		, m_sci(NULL)
 		, m_outputScrolls(true)
 		, m_autoAppear(true)
+		, m_findBar(NULL)
 {
 	CreateGUIControls();
 	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),   NULL, this);
@@ -142,8 +146,23 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 
 void OutputTabWindow::CreateGUIControls()
 {
-	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
+	
+	m_hSizer = new wxBoxSizer(wxHORIZONTAL);
+	
+	
+	// Create the default scintilla control
+	m_sci = new wxScintilla(this);
+	InitStyle(m_sci, wxSCI_LEX_CONTAINER, false);
+	
+	// Add the find bar
+	m_findBar = new QuickFindBar(this);
+	m_findBar->Connect(m_findBar->GetCloseButtonId(), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(OutputTabWindow::OnHideSearchBar), NULL, this);
+	m_findBar->SetEditor(m_sci);
+	
+	mainSizer->Add(m_findBar, 0, wxEXPAND);
+	mainSizer->Add(m_hSizer, 1, wxEXPAND|wxALL, 0);
 
 	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 
@@ -167,7 +186,13 @@ void OutputTabWindow::CreateGUIControls()
 	              wxT("Clear All"),
 	              bmpLoader->LoadBitmap(wxT("output-pane/16/clear")),
 	              wxT("Clear All"));
-
+				  
+	m_tb->AddTool(XRCID("search_output"),
+	              wxT("Find..."),
+	              bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")),
+	              wxT("Find..."),
+				  wxITEM_CHECK);
+				  
 	m_tb->AddTool(XRCID("collapse_all"), _("Fold All Results"),
 	              wxXmlResource::Get()->LoadBitmap(wxT("fold_airplane")),
 	              _("Fold All Results"));
@@ -179,18 +204,16 @@ void OutputTabWindow::CreateGUIControls()
 	m_tb->Realize();
 
 #ifdef __WXMAC__
-	m_sci = new wxScintilla(this);
-	InitStyle(m_sci, wxSCI_LEX_CONTAINER, false);
-	mainSizer->Add(m_sci, 1, wxEXPAND);
-	mainSizer->Add(m_tb, 0, wxEXPAND);
+	m_hSizer->Add(m_sci, 1, wxEXPAND);
+	m_hSizer->Add(m_tb, 0, wxEXPAND);
 #else
-	m_sci = new wxScintilla(this);
-	InitStyle(m_sci, wxSCI_LEX_CONTAINER, false);
-	mainSizer->Add(m_tb, 0, wxEXPAND);
-	mainSizer->Add(m_sci, 1, wxEXPAND);
+	m_hSizer->Add(m_tb, 0, wxEXPAND);
+	m_hSizer->Add(m_sci, 1, wxEXPAND);
 #endif
-
-	mainSizer->Layout();
+	
+	// Hide the find bar by default
+	m_findBar->Hide();
+	m_hSizer->Layout();
 }
 
 void OutputTabWindow::Clear()
@@ -366,4 +389,28 @@ void OutputTabWindow::OnEdit(wxCommandEvent &e)
 	default:
 		break;
 	}
+}
+
+void OutputTabWindow::OnSearchOutput(wxCommandEvent& e)
+{
+	if(m_findBar->IsShown()) {
+		m_findBar->Hide();
+		
+	} else {
+		m_findBar->Show();
+		
+	}
+	GetSizer()->Layout();
+}
+
+void OutputTabWindow::OnSearchOutputUI(wxUpdateUIEvent& e)
+{
+	e.Enable(m_sci && m_sci->GetLength() > 0);
+	e.Check (m_findBar->IsShown());
+}
+
+void OutputTabWindow::OnHideSearchBar(wxCommandEvent& e)
+{
+	m_findBar->Hide();
+	GetSizer()->Layout();
 }

@@ -28,8 +28,6 @@
 #include "outputtabwindow.h"
 
 class AsyncExeCmd;
-class QuickFindBar;
-
 
 class ShellTab : public OutputTabWindow
 {
@@ -37,7 +35,6 @@ protected:
 	wxSizer      *m_inputSizer;
 	wxSizer      *m_vertSizer;
 	wxComboBox   *m_input;
-	QuickFindBar *m_findBar;
 	AsyncExeCmd  *m_cmd;
 
 	static  void InitStyle    (wxScintilla *sci);
@@ -49,12 +46,10 @@ protected:
 	virtual void OnProcError  (wxCommandEvent  &e);
 	virtual void OnProcEnded  (wxCommandEvent  &e);
 
-	virtual void OnShowInput  (wxCommandEvent  &e);
-	virtual void OnShowSearch (wxCommandEvent  &e);
 	virtual void OnSendInput  (wxCommandEvent  &e);
 	virtual void OnStopProc   (wxCommandEvent  &e);
 	virtual void OnKeyDown    (wxKeyEvent      &e);
-	virtual void OnEnter	  (wxCommandEvent  &e);
+	virtual void OnEnter      (wxCommandEvent  &e);
 	virtual void OnUpdateUI   (wxUpdateUIEvent &e);
 
 	DECLARE_EVENT_TABLE()

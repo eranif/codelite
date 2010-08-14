@@ -41,6 +41,7 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 {
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxHORIZONTAL );
+	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 
 	m_toolBar1 = new clToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 #if USE_AUI_TOOLBAR
@@ -49,9 +50,8 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_toolBar1->SetToolSeparation( 2 );
 
 	// Use red theme buttons
-	m_toolBar1->AddTool( wxID_HIDE, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_red")), _("Hide the Find Bar"), wxITEM_NORMAL);
-
-	m_toolBar1->AddTool( wxID_SHOW_REPLACE_CONTROLS, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("pencil")), _("Toggle 'Replace With' Controls"), wxITEM_CHECK);
+	m_toolBar1->AddTool( wxID_HIDE,                  _("tool"), bmpLoader->LoadBitmap(wxT("quickfindbar/16/close")),                 _("Hide the Find Bar"), wxITEM_NORMAL);
+	m_toolBar1->AddTool( wxID_SHOW_REPLACE_CONTROLS, _("tool"), bmpLoader->LoadBitmap(wxT("quickfindbar/16/show_replace_controls")), _("Toggle 'Replace With' Controls"), wxITEM_CHECK);
 	m_toolBar1->Realize();
 
 	mainSizer->Add( m_toolBar1, 0, wxALIGN_CENTER_VERTICAL, 5 );
@@ -80,9 +80,9 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_toolBar2->SetArtProvider(new CLQuickFindTbArt());
 #endif
 
-	m_toolBar2->AddTool( wxID_FIND_NEXT, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("next")), _("Find Next Match"), wxITEM_NORMAL);
-	m_toolBar2->AddTool( wxID_FIND_PREVIOUS, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("previous")), _("Find Previous Match"), wxITEM_NORMAL);
-	m_toolBar2->AddTool( wxID_HIGHLIGHT_MATCHES, _("tool"), wxXmlResource::Get()->LoadBitmap(wxT("higlight")), _("Highlight All Matches"), wxITEM_CHECK);
+	m_toolBar2->AddTool( wxID_FIND_NEXT,         _("tool"), bmpLoader->LoadBitmap(wxT("quickfindbar/16/find_next")), _("Find Next Match"),       wxITEM_NORMAL);
+	m_toolBar2->AddTool( wxID_FIND_PREVIOUS,     _("tool"), bmpLoader->LoadBitmap(wxT("quickfindbar/16/find_prev")), _("Find Previous Match"),   wxITEM_NORMAL);
+	m_toolBar2->AddTool( wxID_HIGHLIGHT_MATCHES, _("tool"), bmpLoader->LoadBitmap(wxT("quickfindbar/16/markall")),   _("Highlight All Matches"), wxITEM_CHECK);
 	m_toolBar2->Realize();
 
 	fgSizer1->Add( m_toolBar2, 0, wxEXPAND, 5 );
@@ -98,8 +98,9 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 #if USE_AUI_TOOLBAR
 	m_toolBarReplace->SetArtProvider(new CLQuickFindTbArt());
 #endif
-	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
-	m_toolBarReplace->AddTool( wxID_TOOL_REPLACE, _("tool"), bmpLoader->LoadBitmap(wxT("toolbars/16/search/find_and_replace")) , _("Replace Selection"), wxITEM_NORMAL);
+
+	wxButton *replaceButton = new wxButton(m_toolBarReplace, wxID_TOOL_REPLACE, _("Replace"));
+	m_toolBarReplace->AddControl( replaceButton );
 	m_toolBarReplace->Realize();
 
 	fgSizer1->Add( m_toolBarReplace, 0, wxEXPAND, 5 );
@@ -140,7 +141,7 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_replaceWith->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( QuickFindBarBase::OnKeyDown ), NULL, this );
 	m_replaceWith->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( QuickFindBarBase::OnReplaceEnter ), NULL, this );
 	m_replaceWith->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnReplaceUI ), NULL, this );
-	this->Connect( wxID_TOOL_REPLACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnReplace ) );
+	this->Connect( wxID_TOOL_REPLACE, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnReplace ) );
 	this->Connect( wxID_TOOL_REPLACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnReplaceUI ) );
 	this->Connect( wxID_HIGHLIGHT_MATCHES, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnHighlightMatches ) );
 	this->Connect( wxID_HIGHLIGHT_MATCHES, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnHighlightMatchesUI ) );

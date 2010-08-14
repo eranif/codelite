@@ -46,14 +46,6 @@
 	<object class="wxBitmap" name="cursor">res/cursor.png</object>
 	<object class="wxBitmap" name="note">res/16/note.png</object>
 
-	<!-- Quick Find Bar -->
-	<object class="wxBitmap" name="pencil">res/QuickFindBar/pencil.png</object>
-	<object class="wxBitmap" name="pane_close">res/QuickFindBar/fileclose-center.png</object>
-	<object class="wxBitmap" name="pane_close_red">res/QuickFindBar/fileclose-center-red.png</object>
-	<object class="wxBitmap" name="higlight">res/QuickFindBar/inktube.png</object>
-	<object class="wxBitmap" name="next">res/QuickFindBar/next.png</object>
-	<object class="wxBitmap" name="previous">res/QuickFindBar/previous.png</object>
-
 	<!--
 		Toolbar bitmaps (24x24)
 	-->

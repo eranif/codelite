@@ -1840,34 +1840,28 @@ void ContextCpp::ApplySettings()
 	DoApplySettings( lexPtr );
 
 	//create all images used by the cpp context
-	wxImage img;
 	if (m_classBmp.IsOk() == false) {
-		m_classBmp = wxXmlResource::Get()->LoadBitmap(wxT("class"));
-		m_structBmp = wxXmlResource::Get()->LoadBitmap(wxT("struct"));
-		m_namespaceBmp = wxXmlResource::Get()->LoadBitmap(wxT("namespace"));
-		m_variableBmp = wxXmlResource::Get()->LoadBitmap(wxT("member_public"));
-		m_tpyedefBmp = wxXmlResource::Get()->LoadBitmap(wxT("typedef"));
-		m_tpyedefBmp.SetMask(new wxMask(m_tpyedefBmp, wxColor(0, 128, 128)));
-
-		m_memberPrivateBmp = wxXmlResource::Get()->LoadBitmap(wxT("member_private"));
-		m_memberPublicBmp = wxXmlResource::Get()->LoadBitmap(wxT("member_public"));
-		m_memberProtectedeBmp = wxXmlResource::Get()->LoadBitmap(wxT("member_protected"));
-		m_functionPrivateBmp = wxXmlResource::Get()->LoadBitmap(wxT("func_private"));
-		m_functionPublicBmp = wxXmlResource::Get()->LoadBitmap(wxT("func_public"));
-		m_functionProtectedeBmp = wxXmlResource::Get()->LoadBitmap(wxT("func_protected"));
-		m_macroBmp = wxXmlResource::Get()->LoadBitmap(wxT("typedef"));
-		m_macroBmp.SetMask(new wxMask(m_macroBmp, wxColor(0, 128, 128)));
-
-		m_enumBmp = wxXmlResource::Get()->LoadBitmap(wxT("enum"));
-		m_enumBmp.SetMask(new wxMask(m_enumBmp, wxColor(0, 128, 128)));
-
-		m_enumeratorBmp = wxXmlResource::Get()->LoadBitmap(wxT("enumerator"));
 
 		//Initialise the file bitmaps
 		BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
-		m_cppFileBmp   = bmpLoader->LoadBitmap(wxT("mime/16/cpp"));
-		m_hFileBmp     = bmpLoader->LoadBitmap(wxT("mime/16/h"));
-		m_otherFileBmp = bmpLoader->LoadBitmap(wxT("mime/16/text"));
+
+		m_classBmp              = bmpLoader->LoadBitmap(wxT("cc/16/class"));
+		m_structBmp             = bmpLoader->LoadBitmap(wxT("cc/16/struct"));
+		m_namespaceBmp          = bmpLoader->LoadBitmap(wxT("cc/16/namespace"));
+		m_variableBmp           = bmpLoader->LoadBitmap(wxT("cc/16/member_public"));
+		m_tpyedefBmp            = bmpLoader->LoadBitmap(wxT("cc/16/typedef"));
+		m_memberPrivateBmp      = bmpLoader->LoadBitmap(wxT("cc/16/member_private"));
+		m_memberPublicBmp       = bmpLoader->LoadBitmap(wxT("cc/16/member_public"));
+		m_memberProtectedeBmp   = bmpLoader->LoadBitmap(wxT("cc/16/member_protected"));
+		m_functionPrivateBmp    = bmpLoader->LoadBitmap(wxT("cc/16/function_private"));
+		m_functionPublicBmp     = bmpLoader->LoadBitmap(wxT("cc/16/function_public"));
+		m_functionProtectedeBmp = bmpLoader->LoadBitmap(wxT("cc/16/function_protected"));
+		m_macroBmp              = bmpLoader->LoadBitmap(wxT("cc/16/typedef"));
+		m_enumBmp               = bmpLoader->LoadBitmap(wxT("cc/16/enum"));
+		m_enumeratorBmp         = bmpLoader->LoadBitmap(wxT("cc/16/enumerator"));
+		m_cppFileBmp            = bmpLoader->LoadBitmap(wxT("mime/16/cpp"));
+		m_hFileBmp              = bmpLoader->LoadBitmap(wxT("mime/16/h"));
+		m_otherFileBmp          = bmpLoader->LoadBitmap(wxT("mime/16/text"));
 	}
 
 	//register the images

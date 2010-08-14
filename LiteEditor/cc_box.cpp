@@ -68,33 +68,22 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	// load all the CC images
 	wxImageList *il = new wxImageList(16, 16, true);
 
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("class")));
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("struct")));
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("namespace")));
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("member_public")));
-
-	wxBitmap m_tpyedefBmp = wxXmlResource::Get()->LoadBitmap(wxT("typedef"));
-	m_tpyedefBmp.SetMask(new wxMask(m_tpyedefBmp, wxColor(0, 128, 128)));
-	il->Add(m_tpyedefBmp);
-
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("member_private")));
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("member_public")));
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("member_protected")));
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_private")));
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_public")));
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_protected")));
-	wxBitmap m_macroBmp = wxXmlResource::Get()->LoadBitmap(wxT("typedef"));
-	m_macroBmp.SetMask(new wxMask(m_macroBmp, wxColor(0, 128, 128)));
-	il->Add(m_macroBmp);
-
-	wxBitmap m_enumBmp = wxXmlResource::Get()->LoadBitmap(wxT("enum"));
-	m_enumBmp.SetMask(new wxMask(m_enumBmp, wxColor(0, 128, 128)));
-	il->Add(m_enumBmp);
-
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("enumerator")));
-
 	//Initialise the file bitmaps
-	BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
+	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/class")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/struct")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/namespace")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_public")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/typedef")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_private")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_public")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_protected")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_private")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_public")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_protected")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/typedef")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/enum")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/enumerator")));
 	il->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));
 	il->Add(bmpLoader->LoadBitmap(wxT("mime/16/h")));
 	il->Add(bmpLoader->LoadBitmap(wxT("mime/16/text")));

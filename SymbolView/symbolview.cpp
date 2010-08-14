@@ -119,68 +119,69 @@ void SymbolViewPlugin::LoadImagesAndIndexes()
 
 	// ATTN: the order of the images in this list determines the sorting of tree children (along with the child names).
 	// That is why we sometimes reload the same image rather than just referring to the prior index.
+	BitmapLoader *bmpLoader = m_mgr->GetStdIcons();
 
-	m_image[wxT("workspace")]           = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("workspace/16/workspace")));
-	m_image[wxT("project")]             = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("workspace/16/project")));
+	m_image[wxT("workspace")]           = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("workspace/16/workspace")));
+	m_image[wxT("project")]             = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("workspace/16/project")));
 
-	m_image[wxT("h")]                   = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/h")));
+	m_image[wxT("h")]                   = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("mime/16/h")));
 	m_image[wxT("hpp")]                 = m_image[wxT("h")];
 
-	m_image[wxT("c")]                   = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/c")));
-	m_image[wxT("cpp")]                 = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/cpp")));
+	m_image[wxT("c")]                   = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("mime/16/c")));
+	m_image[wxT("cpp")]                 = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));
 	m_image[wxT("cxx")]                 = m_image[wxT("cpp")];
 	m_image[wxT("c++")]                 = m_image[wxT("cpp")];
 	m_image[wxT("cc")]                  = m_image[wxT("cpp")];
 
-	m_image[wxT("file")]                = m_imagesList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/text")));
+	m_image[wxT("file")]                = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("mime/16/text")));
 
-	m_image[wxT("class_view")]          = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("class_view")));
-	m_image[wxT("globals")]             = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("globals")));
-	m_image[wxT("namespace")]           = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("namespace")));
+	m_image[wxT("class_view")]          = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/globals")));
+	m_image[wxT("globals")]             = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/globals")));
+	m_image[wxT("namespace")]           = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/namespace")));
 
-	m_image[wxT("macro")]               = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("typedef")), wxColor(0, 128, 128));
+	m_image[wxT("macro")]               = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/typedef")));
 	m_image[wxT("macro_protected")]     = m_image[wxT("macro")];
 	m_image[wxT("macro_public")]        = m_image[wxT("macro")];
 	m_image[wxT("macro_private")]       = m_image[wxT("macro")];
 
-	m_image[wxT("interface")]           = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("class")));
+	m_image[wxT("interface")]           = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/class")));
 	m_image[wxT("interface_public")]    = m_image[wxT("interface")];
 	m_image[wxT("interface_protected")] = m_image[wxT("interface")];
 	m_image[wxT("interface_private")]   = m_image[wxT("interface")];
 
-	m_image[wxT("class")]               = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("class")));
+	m_image[wxT("class")]               = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/class")));
 	m_image[wxT("class_public")]        = m_image[wxT("class")];
 	m_image[wxT("class_protected")]     = m_image[wxT("class")];
 	m_image[wxT("class_private")]       = m_image[wxT("class")];
 
-	m_image[wxT("struct")]              = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("struct")));
+	m_image[wxT("struct")]              = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/struct")));
 	m_image[wxT("struct_public")]       = m_image[wxT("struct")];
 	m_image[wxT("struct_protected")]    = m_image[wxT("struct")];
 	m_image[wxT("struct_private")]      = m_image[wxT("struct")];
 
-	m_image[wxT("union")]               = m_image[wxT("struct")];
+	m_image[wxT("union")]               = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/union")));
 	m_image[wxT("union_public")]        = m_image[wxT("union")];
 	m_image[wxT("union_protected")]     = m_image[wxT("union")];
 	m_image[wxT("union_private")]       = m_image[wxT("union")];
 
-	m_image[wxT("enum")]                = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("enum")), wxColor(0, 128, 128));
+	m_image[wxT("enum")]                = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/enum")));
 	m_image[wxT("enum_public")]         = m_image[wxT("enum")];
 	m_image[wxT("enum_protected")]      = m_image[wxT("enum")];
 	m_image[wxT("enum_private")]        = m_image[wxT("enum")];
 
-	m_image[wxT("typedef")]             = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("typedef")), wxColor(0, 128, 128));
+	m_image[wxT("typedef")]             = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/typedef")));
 	m_image[wxT("typedef_public")]      = m_image[wxT("typedef")];
 	m_image[wxT("typedef_protected")]   = m_image[wxT("typedef")];
 	m_image[wxT("typedef_private")]     = m_image[wxT("typedef")];
 
-	m_image[wxT("prototype_public")]    = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_public")));
-	m_image[wxT("prototype_protected")] = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_protected")));
-	m_image[wxT("prototype_private")]   = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_private")));
+	m_image[wxT("prototype_public")]    = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_public")));
+	m_image[wxT("prototype_protected")] = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_protected")));
+	m_image[wxT("prototype_private")]   = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_private")));
 	m_image[wxT("prototype")]           = m_image[wxT("prototype_public")];
 
-	m_image[wxT("function_public")]     = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_public")));
-	m_image[wxT("function_protected")]  = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_protected")));
-	m_image[wxT("function_private")]    = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_private")));
+	m_image[wxT("function_public")]     = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_public")));
+	m_image[wxT("function_protected")]  = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_protected")));
+	m_image[wxT("function_private")]    = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_private")));
 	m_image[wxT("function")]            = m_image[wxT("function_public")];
 
 	m_image[wxT("method_public")]       = m_image[wxT("function_public")];
@@ -188,15 +189,14 @@ void SymbolViewPlugin::LoadImagesAndIndexes()
 	m_image[wxT("method_private")]      = m_image[wxT("function_private")];
 	m_image[wxT("method")]              = m_image[wxT("method_public")];
 
-	m_image[wxT("member_public")]       = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("member_public")));
-	m_image[wxT("member_protected")]    = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("member_protected")));
-	m_image[wxT("member_private")]      = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("member_private")));
+	m_image[wxT("member_public")]       = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_public")));
+	m_image[wxT("member_protected")]    = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_protected")));
+	m_image[wxT("member_private")]      = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_private")));
 	m_image[wxT("member")]              = m_image[wxT("member_public")];
 	m_image[wxT("variable")]            = m_image[wxT("member_public")];
 
-	m_image[wxT("enumerator")]          = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("enumerator")));
-
-	m_image[wxT("default")]             = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("struct"))); // fallback for anything else
+	m_image[wxT("enumerator")]          = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/enumerator")));
+	m_image[wxT("default")]             = m_imagesList->Add(bmpLoader->LoadBitmap(wxT("cc/16/struct"))); // fallback for anything else
 }
 
 void SymbolViewPlugin::CreateGUIControls()

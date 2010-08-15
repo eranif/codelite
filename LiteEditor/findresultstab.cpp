@@ -66,9 +66,12 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 		, m_matchInfo(1)
 {
 	// Remove the 'find' tool
+#if 0
 	m_tb->RemoveTool ( XRCID ( "search_output" ) );
 	m_tb->Realize();
-	
+	m_findBar->SetEditor(NULL);
+#endif
+
 	if (useBook) {
 
 		// load the book style from the settings file
@@ -89,6 +92,7 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 		sz->Detach(m_sci);
 		m_sci->Destroy();
 		m_sci = NULL;
+		m_findBar->SetEditor(m_sci);
 #ifdef __WXMAC__
 		sz->Insert(0, m_book, 1, wxALL|wxEXPAND);
 #else
@@ -236,8 +240,10 @@ void FindResultsTab::OnPageChanged(NotebookEvent& e)
 {
 	// this function can't be called unless m_book != NULL
 	m_sci = dynamic_cast<wxScintilla*>(m_book->GetCurrentPage());
-	if(m_sci)
+	m_findBar->SetEditor(m_sci);
+	if(m_sci){
 		m_tb->ToggleTool(XRCID("word_wrap_output"), m_sci->GetWrapMode() == wxSCI_WRAP_WORD);
+	}
 }
 
 void FindResultsTab::OnPageClosed(NotebookEvent& e)
@@ -261,6 +267,7 @@ void FindResultsTab::OnPageClosed(NotebookEvent& e)
 	} else {
 		m_sci = dynamic_cast<wxScintilla*>(m_book->GetCurrentPage());
 	}
+	m_findBar->SetEditor(m_sci);
 }
 
 void FindResultsTab::OnFindInFiles(wxCommandEvent &e)

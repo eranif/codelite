@@ -893,7 +893,7 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 		// filter macros from the result
 		for (size_t i=0; i<tmp_tags.size(); i++) {
 			TagEntryPtr t = tmp_tags.at(i);
-			if (t->GetKind() != wxT("macro")) {
+			if (t->GetKind() != wxT("macro") && !t->IsConstructor()) {
 				tags.push_back(t);
 			}
 		}

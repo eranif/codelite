@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : jobqueue.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : jobqueue.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "jobqueue.h"
@@ -35,15 +35,9 @@ JobQueueWorker::JobQueueWorker(wxCriticalSection *cs, std::deque<Job*> *queue)
 JobQueueWorker::~JobQueueWorker()
 {
 }
-
 void JobQueueWorker::Stop()
 {
-	// Notify the thread to stop
-	// and wait for its termination
-	if ( IsAlive() )
-		Delete();
-
-	wxThread::Wait();
+	wxThread::Delete();
 }
 
 void JobQueueWorker::Start(int priority)
@@ -136,7 +130,7 @@ void JobQueue::Stop()
 	//first loop and stop all running threads
 	for(size_t i=0; i<m_threads.size(); i++){
 		JobQueueWorker *worker = m_threads.at(i);
-		//stop it 
+		//stop it
 		worker->Stop();
 		//delete it
 		delete worker;

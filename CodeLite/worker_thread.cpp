@@ -1,33 +1,33 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : worker_thread.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : worker_thread.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "worker_thread.h"
 
 WorkerThread::WorkerThread()
-: wxThread(wxTHREAD_JOINABLE) 
+: wxThread(wxTHREAD_JOINABLE)
 , m_notifiedWindow( NULL )
-{ 
+{
 }
 
 WorkerThread::~WorkerThread()
@@ -55,7 +55,7 @@ void* WorkerThread::Entry()
 			// Call user's implementation for processing request
 			ProcessRequest( request );
 			delete request;
-			
+
 			wxThread::Sleep(10);  // Allow other threads to work as well
 			request = NULL;
 			continue; // to avoid the sleep
@@ -86,18 +86,13 @@ ThreadRequest *WorkerThread::GetRequest()
 
 void WorkerThread::Stop()
 {
-	// Notify the thread to stop
-	// and wait for its termination
-	if( IsAlive() )
-		Delete();
-	
-	wxThread::Wait();
+	wxThread::Delete();
 }
 
 void WorkerThread::Start(int priority)
 {
 	Create();
 	SetPriority(priority);
-	Run();	 
+	Run();
 }
 

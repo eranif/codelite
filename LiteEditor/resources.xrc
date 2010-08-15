@@ -2,24 +2,9 @@
 	<object class="wxBitmap" name="fold_airplane">res/outbox.png</object>
 	<object class="wxBitmap" name="read_only">res/lock.png</object>
 	<object class="wxBitmap" name="memory_view">res/memory_view.png</object>
-	<object class="wxBitmap" name="cpp_keyword">res/cpp_blue.png</object>
 	<object class="wxBitmap" name="About">res/about_img.png</object>
-	<object class="wxBitmap" name="member_public">res/member_public.png</object>
 	<object class="wxBitmap" name="link_editor">res/link_editor.png</object>
-	<object class="wxBitmap" name="member_protected">res/member_protected.png</object>
-    <object class="wxBitmap" name="member_private">res/member_private.png</object>
-    <object class="wxBitmap" name="func_public">res/func_public.png</object>
-    <object class="wxBitmap" name="func_protected">res/func_protected.png</object>
-    <object class="wxBitmap" name="func_private">res/func_private.png</object>
-    <object class="wxBitmap" name="enum">res/enum.png</object>
-    <object class="wxBitmap" name="enumerator">res/enumee.xpm</object>
-    <object class="wxBitmap" name="class">res/class.png</object>
-    <object class="wxBitmap" name="typedef">res/typedef.xpm</object>
-	<object class="wxBitmap" name="globals">res/cube_green.png</object>
-    <object class="wxBitmap" name="namespace">res/namespace.png</object>
-    <object class="wxBitmap" name="struct">res/but_green_s.png</object>
     <object class="wxBitmap" name="build">res/rebuild.png</object>
-    <object class="wxBitmap" name="class_view">res/chart_organisation.png</object>
 	<object class="wxBitmap" name="word_wrap">res/wrap_arrow.png</object>
 	<object class="wxBitmap" name="debug_window">res/trace.png</object>
 	<object class="wxBitmap" name="debugger_tab">res/debug_windows.png</object>

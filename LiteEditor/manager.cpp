@@ -194,9 +194,13 @@ Manager::~Manager ( void )
 {
 	//stop background processes
 	DbgStop();
-	JobQueueSingleton::Instance()->Stop();
-	ParseThreadST::Get()->Stop();
-	SearchThreadST::Get()->Stop();
+
+	{
+		//wxLogNull noLog;
+		JobQueueSingleton::Instance()->Stop();
+		ParseThreadST::Get()->Stop();
+		SearchThreadST::Get()->Stop();
+	}
 
 	//free all plugins
 	PluginManager::Get()->UnLoad();
@@ -215,7 +219,7 @@ Manager::~Manager ( void )
 	MenuManager::Free();
 	EnvironmentConfig::Release();
 	ClangCodeCompletion::Release();
-	
+
 	if ( m_shellProcess ) {
 		delete m_shellProcess;
 		m_shellProcess = NULL;

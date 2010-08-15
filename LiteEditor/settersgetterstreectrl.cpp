@@ -1,6 +1,7 @@
 #include "settersgetterstreectrl.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/imaglist.h>
+#include "pluginmanager.h"
 
 // -------------------------------------------------------
 // Images
@@ -113,12 +114,13 @@ SettersGettersTreeCtrl::SettersGettersTreeCtrl(wxWindow* parent, wxWindowID id, 
 {
 	// Replace the default list image
 
+	BitmapLoader *bmploader = PluginManager::Get()->GetStdIcons();
 	//create an image list and assign it
 	wxImageList *il = new wxImageList(16, 16, true);
-	il->Add(wxBitmap(Checkbox_on_XPM));                              // 0
-	il->Add(wxBitmap(Checkbox_off_XPM));                             // 1
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("member_public"))); // 2
-	il->Add(wxBitmap(check_box_disabled_xpm));                       // 3
+	il->Add(wxBitmap(Checkbox_on_XPM));                         // 0
+	il->Add(wxBitmap(Checkbox_off_XPM));                        // 1
+	il->Add(bmploader->LoadBitmap(wxT("cc/16/member_public"))); // 2
+	il->Add(wxBitmap(check_box_disabled_xpm));                  // 3
 	//will be owned by the control
 	AssignImageList(il);
 }

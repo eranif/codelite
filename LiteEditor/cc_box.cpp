@@ -87,7 +87,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	il->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));
 	il->Add(bmpLoader->LoadBitmap(wxT("mime/16/h")));
 	il->Add(bmpLoader->LoadBitmap(wxT("mime/16/text")));
-	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("cpp_keyword")));
+	il->Add(bmpLoader->LoadBitmap(wxT("cc/16/cpp_keyword")));
 
 	// assign the image list and let the control take owner ship (i.e. delete it)
 	m_listCtrl->AssignImageList(il, wxIMAGE_LIST_SMALL);

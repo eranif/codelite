@@ -42,6 +42,7 @@
 #endif //WX_PRECOMP
 
 #include "quickoutlinedlg.h"
+#include "drawingutils.h"
 #include "cl_editor.h"
 #include "cpp_symbol_tree.h"
 #include "macros.h"
@@ -60,24 +61,26 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString &fileName, int
 		, m_fileName(fileName)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	this->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
+	wxColour bgCol = DrawingUtils::GetPanelBgColour();
+	wxColour fgCol = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
+	this->SetBackgroundColour( bgCol );
 
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	m_textFilter = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0|wxNO_BORDER |wxTE_RICH2);
-	
-	m_textFilter->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
-	m_textFilter->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOTEXT ) );
-	
+
+	m_textFilter->SetBackgroundColour( bgCol );
+	m_textFilter->SetForegroundColour( fgCol );
+
 	bSizer1->Add( m_textFilter, 0, wxALL|wxEXPAND, 5 );
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	m_staticline1->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
+	m_staticline1->SetBackgroundColour( bgCol );
 	bSizer1->Add( m_staticline1, 0, wxEXPAND|wxLEFT|wxRIGHT, 5 );
 
 	//build the outline view
 	m_treeOutline = new CppSymbolTree( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxNO_BORDER);
-	m_treeOutline->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
-	m_treeOutline->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOTEXT ) );
+	m_treeOutline->SetBackgroundColour( bgCol );
+	m_treeOutline->SetForegroundColour( fgCol );
 	m_treeOutline->SetSymbolsImages(CreateSymbolTreeImages());
 
 	Connect(wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED, wxCommandEventHandler(QuickOutlineDlg::OnItemSelected), NULL, this);
@@ -101,16 +104,16 @@ void QuickOutlineDlg::OnCharHook(wxKeyEvent &e)
 {
 	if (e.GetKeyCode() == WXK_ESCAPE) {
 		EndModal(wxID_CANCEL);
-		
+
 	} else if (e.GetKeyCode() == WXK_NUMPAD_ENTER || e.GetKeyCode() == WXK_RETURN) {
 		m_treeOutline->ActivateSelectedItem();
-		
+
 	} else if (e.GetKeyCode() == WXK_UP) {
 		m_treeOutline->AdvanceSelection(false);
-		
+
 	} else if (e.GetKeyCode() == WXK_DOWN) {
 		m_treeOutline->AdvanceSelection();
-		
+
 	} else {
 		e.Skip();
 	}

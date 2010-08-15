@@ -145,8 +145,23 @@ TagsManager::~TagsManager()
 {
 	delete m_workspaceDatabase;
 	if(m_codeliteIndexerProcess) {
+		
+		// Dont kill the indexer process, just terminate the 
+		// reader-thread (this is done by deleting the indexer object)
 		m_canRestartIndexer = false;
 		delete m_codeliteIndexerProcess;
+		
+#ifndef __WXMSW__
+		// Clear the socket file
+		std::stringstream s;
+		s << wxGetProcessId();
+
+		char channel_name[1024];
+		memset(channel_name, 0, sizeof(channel_name));
+		sprintf(channel_name, PIPE_NAME, s.str().c_str());
+		::unlink( channel_name );
+		::remove( channel_name );
+#endif
 	}
 }
 

@@ -779,6 +779,9 @@ void Subversion2::DoSwitchURL(const wxString& workingDirectory, const wxString &
 
 void Subversion2::ChangeLog(const wxString& path, const wxString &fullpath, wxCommandEvent &event)
 {
+	SvnInfo info;
+	DoGetSvnInfoSync(info, path);
+
 	SvnLogDialog dlg(GetManager()->GetTheApp()->GetTopWindow());
 	dlg.m_to->SetValue(wxT("BASE"));
 	dlg.m_compact->SetValue(true);
@@ -794,7 +797,7 @@ void Subversion2::ChangeLog(const wxString& path, const wxString &fullpath, wxCo
 		command << GetSvnExeName(nonInteractive) << loginString << wxT(" log -r") << dlg.m_from->GetValue() << wxT(":") << dlg.m_to->GetValue() << wxT(" \"") << fullpath << wxT("\"");
 		GetConsole()->Execute(command,
 							  path,
-							  new SvnLogHandler(this, dlg.m_compact->IsChecked(), event.GetId(), this),
+							  new SvnLogHandler(this, info.m_sourceUrl, dlg.m_compact->IsChecked(), event.GetId(), this),
 							  false);
 	}
 }

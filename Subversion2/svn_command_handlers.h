@@ -91,12 +91,19 @@ public:
 //----------------------------------------------------
 
 class SvnLogHandler : public SvnDefaultCommandHandler {
-	bool m_compact;
+	bool     m_compact;
+	wxString m_url;
+
 protected:
 	wxString Compact(const wxString &message);
 public:
-	SvnLogHandler(Subversion2 *plugin, bool compact, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner), m_compact(compact) {};
-	virtual ~SvnLogHandler(){};
+	SvnLogHandler(Subversion2 *plugin, const wxString &url, bool compact, int commandId, wxEvtHandler *owner)
+	: SvnDefaultCommandHandler(plugin, commandId, owner)
+	, m_compact(compact)
+	, m_url(url)
+	{}
+
+	virtual ~SvnLogHandler(){}
 
 public:
 	virtual void Process(const wxString &output);

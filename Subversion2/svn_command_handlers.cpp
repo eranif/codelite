@@ -116,6 +116,7 @@ void SvnLogHandler::Process(const wxString& output)
 	}
 
 	ChangeLogPage *page = new ChangeLogPage(GetPlugin()->GetManager()->GetTheApp()->GetTopWindow(), GetPlugin());
+	page->SetUrl(m_url);
 	page->AppendText( changeLog );
 	GetPlugin()->GetManager()->AddPage( page, wxT("Change Log"), wxNullBitmap, true );
 }

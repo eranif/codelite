@@ -54,6 +54,7 @@ void SubversionLocalProperties::WriteProperty(const wxString& name, const wxStri
 
 wxString SubversionLocalProperties::GetConfigFile()
 {
+	wxLogNull noLog;
 	// disable logging
 	wxString configDir(wxStandardPaths::Get().GetUserDataDir());
 	configDir << wxFileName::GetPathSeparator() << wxT("subversion");

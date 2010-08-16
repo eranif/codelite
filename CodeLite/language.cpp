@@ -205,6 +205,7 @@ bool Language::NextToken(wxString &token, wxString &delim, bool &subscriptOperat
 {
 	int type(0);
 	int depth(0);
+
 	subscriptOperator = false;
 	while ( (type = m_tokenScanner->yylex()) != 0 ) {
 		switch (type) {
@@ -226,15 +227,33 @@ bool Language::NextToken(wxString &token, wxString &delim, bool &subscriptOperat
 			depth++;
 			token << wxT(" ") << _U(m_tokenScanner->YYText());
 			break;
-		case wxT('<'):
 		case wxT('('):
+			if(token.IsEmpty()) {
+				// casting like expression, (type)->
+				// simply ignore the parenthessis
+				break;
+			}
+			// fall through
+		case wxT('<'):
 		case wxT('{'):
 			depth++;
 			token << wxT(" ") << _U(m_tokenScanner->YYText());
 			break;
+		case wxT(')'):
+			if(depth == 0) {
+				// ignore this closing brace
+				// since it might have been here because of an extra open brace at the beginig of token
+
+				// in cases like:
+				// ((wxString))::
+				// or:
+				// wxString str;
+				// ((str)).
+				break;
+			}
+			// fall through
 		case wxT('>'):
 		case wxT(']'):
-		case wxT(')'):
 		case wxT('}'):
 			depth--;
 			token << wxT(" ") << _U(m_tokenScanner->YYText());

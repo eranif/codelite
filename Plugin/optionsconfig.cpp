@@ -71,10 +71,10 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_caretLineAlpha(50)
 		, m_outputPaneDockable(false)
 {
-	//set the default font name to be UTF8
-	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
+	//set the default font name to be latin1 (ISO-8859-1)
+	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_ISO8859_1));
 	if ( node ) {
-		SetFileFontEncoding(XmlUtils::ReadString(node, wxT("FileFontEncoding"), wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8)));
+		SetFileFontEncoding(XmlUtils::ReadString(node, wxT("FileFontEncoding"), wxFontMapper::GetEncodingName(wxFONTENCODING_ISO8859_1)));
 
 		m_displayFoldMargin         = XmlUtils::ReadBool  (node, wxT("DisplayFoldMargin"),         m_displayFoldMargin);
 		m_underlineFoldLine         = XmlUtils::ReadBool  (node, wxT("UnderlineFoldedLine"),       m_underlineFoldLine);
@@ -210,7 +210,7 @@ void OptionsConfig::SetFileFontEncoding(const wxString& strFileFontEncoding)
 	this->m_fileFontEncoding = wxFontMapper::Get()->CharsetToEncoding(strFileFontEncoding, false);
 
 	if (wxFONTENCODING_SYSTEM == this->m_fileFontEncoding) {
-		this->m_fileFontEncoding = wxFONTENCODING_UTF8;
+		this->m_fileFontEncoding = wxFONTENCODING_ISO8859_1;
 	}
 }
 

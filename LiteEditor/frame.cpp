@@ -2218,7 +2218,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 				if (updatePaths) {
 
 					wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("update_parser_paths"));
-					this->AddPendingEvent(evt);
+					this->ProcessEvent(evt);
 					GetMainBook()->ShowMessage( wxT("Code Completion search paths have been updated") );
 
 				}

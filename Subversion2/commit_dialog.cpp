@@ -98,7 +98,7 @@ wxString CommitDialog::GetMesasge()
 				tmpUrl.Replace(wxT("$(BUGID)"),  bugs[i]);
 				tmpMsg.Replace(wxT("$(BUG_URL)"), tmpUrl);
 				tmpMsg.Replace(wxT("$(BUGID)"),   bugs[i]);
-				msg << tmpMsg;
+				msg << tmpMsg << wxT("\n");
 			}
 		}
 	}
@@ -126,7 +126,7 @@ wxString CommitDialog::GetMesasge()
 				tmpUrl.Replace(wxT("$(FRID)"),  frs[i]);
 				tmpMsg.Replace(wxT("$(FR_URL)"), tmpUrl);
 				tmpMsg.Replace(wxT("$(FRID)"),   frs[i]);
-				msg << tmpMsg;
+				msg << tmpMsg << wxT("\n");
 			}
 		}
 	}

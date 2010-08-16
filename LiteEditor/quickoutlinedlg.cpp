@@ -61,8 +61,14 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString &fileName, int
 		, m_fileName(fileName)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+#ifdef __WXGTK__
 	wxColour bgCol = DrawingUtils::GetPanelBgColour();
 	wxColour fgCol = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
+#else
+	wxColour bgCol = wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK   );
+	wxColour fgCol = wxSystemSettings::GetColour( wxSYS_COLOUR_INFOTEXT );
+#endif
+
 	this->SetBackgroundColour( bgCol );
 
 	wxBoxSizer* bSizer1;

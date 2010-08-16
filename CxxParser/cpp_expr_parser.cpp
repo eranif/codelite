@@ -766,7 +766,7 @@ case 29:
 						result.m_isaType = true;
 						result.m_name = yyvsp[-2];
 						result.m_isFunc = false;
-						printf("Rule 1\n");
+						/*printf("Rule 1\n");*/
 						/*result.Print();*/
 					}
 break;

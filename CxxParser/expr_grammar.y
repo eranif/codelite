@@ -169,7 +169,7 @@ simple_expr	:	stmnt_starter special_cast '<' cast_type '>' '('
 						result.m_isaType = true;
 						result.m_name = $4;
 						result.m_isFunc = false;
-						printf("Rule 1\n");
+						//printf("Rule 1\n");
 						//result.Print();
 					}
 				| stmnt_starter LE_THIS

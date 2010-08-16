@@ -91,10 +91,11 @@ class Frame : public wxFrame
 	wxPanel*                              m_mainPanel;
 	wxString                              m_codeliteDownloadPageURL;
 	wxString                              m_defaultLayout;
-	
+	bool                                  m_workspaceRetagIsRequired;
+
 protected:
 	bool IsEditorEvent(wxEvent &event);
-	
+
 public:
 	static Frame* Get();
 	static void Initialize(bool loadLastSession);

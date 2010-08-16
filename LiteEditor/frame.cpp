@@ -530,9 +530,10 @@ Frame* Frame::m_theFrame = NULL;
 
 Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
 		: wxFrame(pParent, id, title, pos, size, style)
-		, m_buildAndRun(false)
-		, m_cppMenu(NULL)
-		, m_highlightWord(false)
+		, m_buildAndRun             (false)
+		, m_cppMenu                 (NULL)
+		, m_highlightWord           (false)
+		, m_workspaceRetagIsRequired(false)
 {
 #if  defined(__WXGTK20__)
 	// A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -1322,7 +1323,7 @@ void Frame::DispatchCommandEvent(wxCommandEvent &event)
 	if ( !editor ) {
 		return;
 	}
-	
+
 	if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
 		//keep the old id as int and override the value set in the event object
 		//to trick the event system
@@ -2240,6 +2241,16 @@ void Frame::OnTimer(wxTimerEvent &event)
 	if (m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION) {
 		wxWindowUpdateLocker locker(this);
 		LoadSession(SessionManager::Get().GetLastSession());
+	}
+
+	// ReTag workspace database if needed (this can happen due to schema version changes)
+	// It is important to place the retag code here since the retag workspace should take place after
+	// the parser search patha have been updated (if needed)
+	if( m_workspaceRetagIsRequired ) {
+		m_workspaceRetagIsRequired = false;
+		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("full_retag_workspace"));
+		this->AddPendingEvent(evt);
+		GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. CodeLite will perform a full retag of the workspace"));
 	}
 
 	// For some reason, under Linux we need to force the menu accelerator again
@@ -3714,9 +3725,11 @@ void Frame::OnParsingThreadMessage(wxCommandEvent& e)
 // TagsManager, prompt the user
 void Frame::OnDatabaseUpgrade(wxCommandEvent& e)
 {
-	wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("full_retag_workspace"));
-	this->AddPendingEvent(evt);
-	GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. CodeLite will perform a full retag of the workspace"));
+	wxUnusedVar(e);
+	// turn ON the retag-required flag and perform it in the OnTimer() callback
+	// this is to allow codelite to update paths if needed *before* the retag is taking place
+	// (CC paths will be updated if needed in the OnTimer() callback)
+	m_workspaceRetagIsRequired = true;
 }
 
 void Frame::UpdateTagsOptions(const TagsOptionsData& tod)

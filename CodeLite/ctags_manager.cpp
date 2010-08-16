@@ -145,12 +145,12 @@ TagsManager::~TagsManager()
 {
 	delete m_workspaceDatabase;
 	if(m_codeliteIndexerProcess) {
-		
-		// Dont kill the indexer process, just terminate the 
+
+		// Dont kill the indexer process, just terminate the
 		// reader-thread (this is done by deleting the indexer object)
 		m_canRestartIndexer = false;
 		delete m_codeliteIndexerProcess;
-		
+
 #ifndef __WXMSW__
 		// Clear the socket file
 		std::stringstream s;
@@ -176,7 +176,7 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
 		// Send event to the main frame notifying it about database recreation
 		if( m_evtHandler ) {
 			wxCommandEvent event(wxEVT_TAGS_DB_UPGRADE);
-			m_evtHandler->AddPendingEvent( event );
+			m_evtHandler->ProcessEvent( event );
 		}
 	}
 

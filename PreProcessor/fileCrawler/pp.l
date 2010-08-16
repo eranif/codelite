@@ -108,7 +108,12 @@ extern int pp_parse();
 <define_state>\\[\n\r]{1,2} { /* continue define_state */}
 <define_state>\n            { BEGIN(INITIAL);}
 <define_state>.             {}
-<define_state_2>[ \t]       {}
+<define_state_2>[ \t]       {
+/* whitespaces are NOT allowed between the signature and the macro's name, 
+ * if we found a whitespace, handle this macro as a simple macro */
+ BEGIN(define_state_definition);   
+ _definition.clear();
+}
 <define_state_2>"/*"        { return_to_state = define_state_2; BEGIN(define_generic_c_comment);}
 <define_state_2>"//"        { 
 	BEGIN(define_generic_cpp_comment);
@@ -192,6 +197,18 @@ int PPScan( const wxString &filePath )
     }
 
     yy_delete_buffer    ( YY_CURRENT_BUFFER    );
+    yyterminate();
+	return rc;
+}
+
+int PPScanString( const wxString &inputString )
+{
+	BEGIN INITIAL;
+	yy_scan_string( inputString.To8BitData() );
+	pp_lineno = 1;
+	
+	int rc = pp_parse();
+    
     yyterminate();
 	return rc;
 }

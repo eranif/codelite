@@ -986,7 +986,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-{}
+{
+/* whitespaces are NOT allowed between the signature and the macro's name, 
+ * if we found a whitespace, handle this macro as a simple macro */
+ BEGIN(define_state_definition);   
+ _definition.clear();
+}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
@@ -2043,6 +2048,18 @@ int PPScan( const wxString &filePath )
     }
 
     yy_delete_buffer    ( YY_CURRENT_BUFFER    );
+    yyterminate();
+	return rc;
+}
+
+int PPScanString( const wxString &inputString )
+{
+	BEGIN INITIAL;
+	yy_scan_string( inputString.To8BitData() );
+	pp_lineno = 1;
+	
+	int rc = pp_parse();
+    
     yyterminate();
 	return rc;
 }

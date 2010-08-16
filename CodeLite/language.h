@@ -251,12 +251,13 @@ private:
 	/**
 	 * Return the next token and the delimiter found, the source string is taken from the
 	 * m_tokenScanner member of this class
-	 * \param token next token
-	 * \param delim delimiter found
-	 * \param subscriptOperator subscript operator was found
-	 * \return true if token was found false otherwise
+	 * @param token next token
+	 * @param delim delimiter found
+	 * @param subscriptOperator subscript operator was found
+	 * @param funcArgList the first argument list passed (e.g. MyCall(a)->, funcArgList will contain (a))
+	 * @return true if token was found false otherwise
 	 */
-	bool NextToken(wxString &token, wxString &delim, bool &subscriptOperator);
+	bool NextToken(wxString &token, wxString &delim, bool &subscriptOperator, wxString &funcArgList);
 
 	/**
 	 * @brief construct a list of tokens based on an expression and a give scope

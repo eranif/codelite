@@ -22,3 +22,5 @@
 #include <LiteEditor/cl_editor.h>
 #include <Interfaces/debugger.h>
 #include <SymbolView/symbolview.h>
+#include <wx/clipbrd.h>
+#include <wx/app.h>

@@ -112,18 +112,21 @@ wxString Language::OptimizeScope(const wxString& srcString)
 
 ParsedToken* Language::ParseTokens(const wxString &scopeName)
 {
-	wxString token, delim;
-	bool     subscript;
+	wxString     token;
+	wxString     delim;
+	bool         subscript;
 	ParsedToken* header(NULL);
 	ParsedToken* currentToken(header);
+	wxString     funcArgList;
 
-	while( NextToken(token, delim, subscript) ) {
+	while( NextToken(token, delim, subscript, funcArgList) ) {
 
 		ParsedToken* pt = new ParsedToken;
 		pt->SetSubscriptOperator( subscript    );
 		pt->SetOperator         ( delim        );
 		pt->SetPrev             ( currentToken );
 		pt->SetCurrentScopeName ( scopeName    );
+		pt->SetArgumentList     (funcArgList   );
 
 		ExpressionResult result = ParseExpression( token );
 		if(result.m_name.empty() && result.m_isGlobalScope == false) {
@@ -201,12 +204,15 @@ ParsedToken* Language::ParseTokens(const wxString &scopeName)
 	return header;
 }
 
-bool Language::NextToken(wxString &token, wxString &delim, bool &subscriptOperator)
+bool Language::NextToken(wxString &token, wxString &delim, bool &subscriptOperator, wxString &funcArgList)
 {
 	int type(0);
 	int depth(0);
+	bool collectingFuncArgList = true;
 
 	subscriptOperator = false;
+	funcArgList.Clear();
+
 	while ( (type = m_tokenScanner->yylex()) != 0 ) {
 		switch (type) {
 		case lexTHIS:
@@ -256,6 +262,12 @@ bool Language::NextToken(wxString &token, wxString &delim, bool &subscriptOperat
 		case wxT(']'):
 		case wxT('}'):
 			depth--;
+			if(depth == 0 && type == wxT(')')) {
+				// we have found closing brace, disable siganture collection
+				funcArgList << wxT(')');
+				collectingFuncArgList = false;
+			}
+
 			token << wxT(" ") << _U(m_tokenScanner->YYText());
 			break;
 		case IDENTIFIER: case wxT(','):  case lexDOUBLE:
@@ -268,6 +280,10 @@ bool Language::NextToken(wxString &token, wxString &delim, bool &subscriptOperat
 			break;
 		default:
 			break;
+		}
+
+		if(collectingFuncArgList && depth) {
+			funcArgList << wxString::From8BitData(m_tokenScanner->YYText());
 		}
 	}
 	return false;
@@ -791,6 +807,29 @@ bool Language::ProcessToken(TokenContainer *tokeContainer)
 					return DoCorrectUsingNamespaces(token, tags);
 				}
 			}
+
+			// Try macros
+			PPToken tok  = GetTagsManager()->GetDatabase()->GetMacro(token->GetName());
+			if(tok.flags & PPToken::IsValid) {
+				// we got a match in the macros DB
+				if(tok.flags & PPToken::IsFunctionLike) {
+					// Handle function like macros
+					wxString initList = token->GetArgumentList();
+					if(initList.StartsWith(wxT("("))) {
+						initList.Remove(0, 1);
+					}
+
+					if(initList.EndsWith(wxT(")"))) {
+						initList.RemoveLast();
+					}
+
+					wxArrayString initListArr = wxStringTokenize(initList, wxT(","), wxTOKEN_STRTOK);
+					tok.expandOnce(initListArr);
+				}
+
+				DoFixTokensFromVariable(tokeContainer, tok.replacement);
+				return false;
+			}
 		}
 		return false;
 
@@ -966,6 +1005,9 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 			// (they can be mixed). If all entries are of one of these types, test their return value,
 			// if all have the same return value, then we are ok
 			clFunction foo;
+			int        classMatches (0);
+			size_t     classMatchIdx(0);
+			
 			for (size_t i=0; i<tags.size(); i++) {
 				TagEntryPtr tag(tags.at(i));
 				if (!FunctionFromPattern(tag, foo)) {
@@ -978,7 +1020,27 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 					return true;
 				}
 			}
-
+			
+			// Dont give up yet!
+			// If in the list of matches there is a single entry of type class
+			// use it as our match
+			for (size_t i=0; i<tags.size(); i++) {
+				if(tags.at(i)->IsClass() || tags.at(i)->IsStruct()) {
+					classMatches++;
+					classMatchIdx = i;
+				}
+			}
+			
+			if(classMatches == 1) {
+				TagEntryPtr tag = tags.at(classMatchIdx);
+				tags.clear();
+				tags.push_back( tag );
+				
+				type      = tag->GetName();
+				typeScope = tag->GetScopeName();
+				return true;
+			}
+			
 			return false;
 		}
 	}

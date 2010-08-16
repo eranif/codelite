@@ -1,5 +1,5 @@
-#ifndef CRAWLER_INCLUDE_H
-#define CRAWLER_INCLUDE_H
+#ifndef PP_INCLUDE_H
+#define PP_INCLUDE_H
 
 #include <vector>
 #include <wx/string.h>
@@ -9,6 +9,10 @@
  * @param filePath
  * @return 
  */
-extern int PPScan( const wxString &filePath );
+extern int PPScan      ( const wxString &filePath );
+/**
+ * @brief scan input string
+ */
+extern int PPScanString( const wxString &inputString );
 
 #endif

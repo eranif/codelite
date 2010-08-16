@@ -17,6 +17,7 @@ class ParsedToken
 	wxString      m_name;
 	bool          m_subscriptOperator;
 	wxString      m_currentScopeName;
+	wxString      m_argumentList;
 	ParsedToken*  m_next;
 	ParsedToken*  m_prev;
 
@@ -106,6 +107,12 @@ public:
 		return m_templateInitialization;
 	}
 
+	void SetArgumentList(const wxString& argumentList) {
+		this->m_argumentList = argumentList;
+	}
+	const wxString& GetArgumentList() const {
+		return m_argumentList;
+	}
 	wxString GetContextScope() const;
 	wxString GetPath() const;
 	void     RemoveScopeFromType();
@@ -143,7 +150,8 @@ public:
 	wxString TemplateToType( const wxString &templateArg );
 };
 
-class TokenContainer {
+class TokenContainer
+{
 public:
 	ParsedToken *head;
 	ParsedToken *current;
@@ -151,7 +159,7 @@ public:
 	int          retries;
 
 public:
-	TokenContainer() : head(NULL), current(NULL), retries(0){}
+	TokenContainer() : head(NULL), current(NULL), retries(0) {}
 
 	bool Rewind() {
 		if(retries > 3)

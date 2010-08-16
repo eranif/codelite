@@ -32,49 +32,60 @@
 #include "istorage.h"
 #include <wx/wxsqlite3.h>
 
-const wxString gTagsDatabaseVersion(wxT("CodeLite Version 2.6"));
+const wxString gTagsDatabaseVersion(wxT("CodeLite Version 2.7"));
 
 /**
-TagsDatabase is a wrapper around wxSQLite3 database with tags specific functions.
-It allows caller to query and populate the SQLite database for tags with a set of convinient functions.
-this class is responsible for creating the schema for the CodeLite library.
-
-The tables are automatically created once a database is created
-
-Database tables:
-
-Table Name: TAGS
-
-|| Column Name || Type || Description
-|id            | Number | ID
-|Name          | String | Tag name is appears in ctags output file
-|File          | String | File that this tag was found in
-|Line          | Number | Line number
-|Kind          | String | Tag kind, can be one of: function, prototype, class, namespace, variable, member, enum, enumerator, macro, project, union, typedef
-|Access        | String | Can be one of public, private protected
-|Signature     | String | For functions, this column holds the function signature
-|Pattern       | String | pattern that can be used to located this tag in the file
-|Parent        | String | tag direct parent, can be its class parent (for members or functions), namespace or the literal "<global>"
-|Inherits      | String | If this class/struct inherits from other class, it will cotain the name of the base class
-|Path          | String | full name including path, (e.g. Project::ClassName::FunctionName
-|Typeref       | String | Special type of tag, that points to other Tag (i.e. typedef)
-
-Table Name: TAGS_VERSION
-
-|| Column Name || Type || Description
-| Version      | String | contains the current database schema
-
-Table Name: FILES
-
-|| Column Name || Type || Description
-| id           | Number | ID
-| file         | String | Full path of the file
-| last_retagged| Number | Timestamp for the last time this file was retagged
-*
-\date 08-22-2006
-\author Eran
-\ingroup CodeLite
-*/
+ * TagsDatabase is a wrapper around wxSQLite3 database with tags specific functions.
+ * It allows caller to query and populate the SQLite database for tags with a set of convinient functions.
+ * this class is responsible for creating the schema for the CodeLite library.
+ *
+ * The tables are automatically created once a database is created
+ *
+ * Database tables:
+ *
+ * Table Name: TAGS
+ *
+ * || Column Name || Type || Description
+ * |id            | Number | ID
+ * |Name          | String | Tag name is appears in ctags output file
+ * |File          | String | File that this tag was found in
+ * |Line          | Number | Line number
+ * |Kind          | String | Tag kind, can be one of: function, prototype, class, namespace, variable, member, enum, enumerator, macro, project, union, typedef
+ * |Access        | String | Can be one of public, private protected
+ * |Signature     | String | For functions, this column holds the function signature
+ * |Pattern       | String | pattern that can be used to located this tag in the file
+ * |Parent        | String | tag direct parent, can be its class parent (for members or functions), namespace or the literal "<global>"
+ * |Inherits      | String | If this class/struct inherits from other class, it will cotain the name of the base class
+ * |Path          | String | full name including path, (e.g. Project::ClassName::FunctionName
+ * |Typeref       | String | Special type of tag, that points to other Tag (i.e. typedef)
+ *
+ * Table Name: TAGS_VERSION
+ *
+ * || Column Name || Type || Description
+ * | Version      | String | contains the current database schema
+ *
+ * Table Name: FILES
+ *
+ * || Column Name || Type || Description
+ * | id           | Number | ID
+ * | file         | String | Full path of the file
+ * | last_retagged| Number | Timestamp for the last time this file was retagged
+ *
+ * Table Name: MACROS
+ *
+ * || Column Name   || Type || Description
+ * | id             | Number | ID
+ * | File           | String | The file where this macro was found
+ * | Line           | int    | The line number where this macro was found
+ * | Name           | String | The macro name
+ * | IsFunctionLike | int    | Contains 1 if this entry is "function" like macro, 0 otherwise
+ * | Replacement    | String | the replacement string (processed. i.e. %0..%N as placeholders for the arguments)
+ * | Signature      | String | For macro of type 'IsFunctionLike', contains the signature in the form of (%0,...%N)
+ *
+ * @date 08-22-2006
+ * @author Eran
+ * @ingroup CodeLite
+ */
 
 class TagsStorageSQLiteCache
 {
@@ -116,6 +127,7 @@ private:
 
 public:
 	static TagEntry *FromSQLite3ResultSet(wxSQLite3ResultSet &rs);
+	static void      PPTokenFromSQlite3ResultSet(wxSQLite3ResultSet &rs, PPToken &token);
 
 public:
 	/**
@@ -540,6 +552,19 @@ public:
 	 * @param tags
 	 */
 	virtual void GetTagsByFilesScopeTyperefAndKind(const wxArrayString &files, const wxArrayString &kinds, const wxString &scope, const wxString &typeref, std::vector<TagEntryPtr>& tags);
+
+	/**
+	 * @brief
+	 * @param name
+	 * @return
+	 */
+	virtual PPToken GetMacro(const wxString& name);
+
+	/**
+	 * @brief
+	 * @param table
+	 */
+	virtual void StoreMacros(const std::map<wxString, PPToken>& table);
 
 };
 

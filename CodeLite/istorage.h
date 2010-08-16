@@ -2,6 +2,7 @@
 #define ISTORAGE_H
 
 #include "comment.h"
+#include "pptable.h"
 /**
  * @class ITagsStorage defined the tags storage API used by codelite
  * @author eran
@@ -31,16 +32,16 @@ public:
 	virtual void SetUseCache(bool useCache) {
 		this->m_useCache = useCache;
 	}
-	
+
 	virtual bool GetUseCache() const {
 		return m_useCache;
 	}
-	
+
 	/**
 	 * @brief clear the storage cache
 	 */
 	virtual void ClearCache() = 0;
-	
+
 	/**
 	 * Return the currently opened database.
 	 * @return Currently open database
@@ -162,16 +163,16 @@ public:
 	 * @param tags  [output]
 	 */
 	virtual void GetGlobalFunctions(std::vector<TagEntryPtr> &tags) = 0;
-	
+
 	/**
-	 * @brief 
+	 * @brief
 	 * @param scope
 	 * @param tags
 	 */
 	virtual void GetDereferenceOperator(const wxString &scope, std::vector<TagEntryPtr> &tags) = 0;
-	
+
 	/**
-	 * @brief 
+	 * @brief
 	 * @param scope
 	 * @param tags
 	 */
@@ -383,7 +384,7 @@ public:
 	 * @param tags [output]
 	 */
 	virtual void GetTagsByScopesAndKind(const wxArrayString& scopes, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags) = 0;
-	
+
 	/**
 	 * @brief return tags by files / scope
 	 * @param files
@@ -400,7 +401,7 @@ public:
 	 */
 	virtual void GetTagsByFilesKindAndScope(const wxArrayString &files, const wxArrayString &kinds, const wxString &scope, std::vector<TagEntryPtr>& tags) = 0;
 	/**
-	 * @brief 
+	 * @brief
 	 * @param files
 	 * @param kinds
 	 * @param scope
@@ -414,6 +415,18 @@ public:
 	 * @param tags
 	 */
 	virtual void GetTagsByFiles(const wxArrayString &files, std::vector<TagEntryPtr>& tags) = 0;
+
+	/**
+	 * @brief return macro evaluation
+	 * @param name macro to search
+	 * @param evaluated the macro value
+	 */
+	virtual PPToken GetMacro(const wxString &name) = 0;
+
+	/**
+	 * @brief store macros table as they are produced from the PPTable
+	 */
+	virtual void StoreMacros(const std::map<wxString, PPToken>& table) = 0;
 };
 
 enum {
@@ -432,7 +445,7 @@ enum {
 class StorageCacheEnabler
 {
 	ITagsStorage *m_storage;
-	
+
 public:
 	StorageCacheEnabler(ITagsStorage *storage) : m_storage(storage)
 	{
@@ -440,7 +453,7 @@ public:
 			m_storage->SetUseCache(true);
 		}
 	}
-	
+
 	~StorageCacheEnabler()
 	{
 		if(m_storage) {

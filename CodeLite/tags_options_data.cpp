@@ -139,7 +139,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_macrosFiles   (wxT("sys/cdefs.h bits/c++config.h"))
 #endif
 {
-	SetVersion(wxT("3.0"));
+	SetVersion(wxT("3.0.1"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =
@@ -186,7 +186,7 @@ wxT("BEGIN_DECLARE_EVENT_TYPES()=enum {\n")
 wxT("END_DECLARE_EVENT_TYPES()=};\n")
 wxT("DECLARE_EVENT_TYPE\n")
 wxT("DECLARE_EXPORTED_EVENT_TYPE\n")
-wxT("WXUNUSED(%0)=\n")
+wxT("WXUNUSED(%0)=%0\n")
 wxT("wxDEPRECATED(%0)=%0\n")
 wxT("_T\n")
 wxT("ATTRIBUTE_PRINTF_1\n")

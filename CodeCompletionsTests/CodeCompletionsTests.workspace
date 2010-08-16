@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Workspace Name="CodeCompletionsTests" Database="./CodeCompletionsTests.tags">
   <Project Name="CCTest" Path="CCTest/CCTest.project" Active="Yes"/>
-  <Project Name="sqlite3" Path="sqlite3/sqlite3.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="CCTest" ConfigName="Debug"/>

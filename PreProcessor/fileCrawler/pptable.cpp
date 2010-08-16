@@ -376,6 +376,22 @@ void PPToken::expandOnce(const wxArrayString& initList)
 	}
 }
 
+wxString PPToken::signature() const
+{
+	wxString sig;
+	if(flags & IsFunctionLike) {
+		sig << wxT("(");
+		for(size_t i=0; i<args.size(); i++) {
+			sig << wxT("%") << i << wxT(",");
+		}
+		if(args.size()) {
+			sig.RemoveLast();
+		}
+		sig << wxT(")");
+	}
+	return sig;
+}
+
 ///////////////////////////////////////////////////
 
 PPTable* PPTable::ms_instance = 0;
@@ -477,7 +493,7 @@ void PPTable::Squeeze()
 {
 	std::map<wxString, PPToken>::iterator iter = m_table.begin();
 	for(; iter != m_table.end(); iter++) {
-		iter->second.squeeze();
+		m_table.at(iter->first).squeeze();
 	}
 }
 
@@ -609,3 +625,4 @@ void CLReplacement::construct(const std::string& pattern, const std::string& rep
 		searchFor   = full_pattern;
 	}
 }
+

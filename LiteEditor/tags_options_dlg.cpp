@@ -314,7 +314,7 @@ void TagsOptionsDlg::OnParse(wxCommandEvent& event)
 	// Clear the PreProcessor table
 	PPTable::Instance()->Clear();
 	for(size_t i=0; i<fullpathsArr.size(); i++)
-		PPScan( fullpathsArr.Item(i) );
+		PPScan( fullpathsArr.Item(i), true );
 
 	// Open an editor and print out the results
 	IEditor * editor = PluginManager::Get()->NewEditor();

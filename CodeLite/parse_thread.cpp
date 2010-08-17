@@ -506,7 +506,7 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 		}
 
 		TagTreePtr tree = TagsManagerST::Get()->ParseSourceFile(curFile);
-		PPScan( curFile.GetFullPath() );
+		PPScan( curFile.GetFullPath(), true );
 
 		m_pDb->Store(tree, wxFileName(), false);
 		if(m_pDb->InsertFileEntry(curFile.GetFullPath(), (int)time(NULL)) == TagExist) {

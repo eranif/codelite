@@ -9,7 +9,7 @@
  * @param filePath
  * @return 
  */
-extern int PPScan      ( const wxString &filePath );
+extern int PPScan      ( const wxString &filePath, bool forCC );
 /**
  * @brief scan input string
  */

@@ -49,6 +49,8 @@ extern void pp_error(char *st);
 extern int pp_lex();
 extern wxString g_definition;
 extern int in_if_1;
+extern bool g_forCC;
+
 /*************** Standard ytab.c continues here *********************/
 #define PP_DEFINE 257
 #define PP_IF 258
@@ -366,8 +368,19 @@ case 8:
             }
             
             token.replacement = g_definition;
-            PPTable::Instance()->Add( token );
-        }
+			
+			if(g_forCC) {
+				
+				if(!token.replacement.empty()) {
+					wxChar ch = token.replacement.at(0);
+					if( !(ch >= (int)wxT('0') && ch <= (int)wxT('9')) )
+						PPTable::Instance()->Add( token );
+				}
+				
+			} else {
+				PPTable::Instance()->Add( token );
+			}
+		}
 break;
 case 9:
 {

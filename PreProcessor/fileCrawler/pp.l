@@ -65,6 +65,7 @@ int in_if_1         = 0;
 
 std::string                _definition;
 wxString                   g_definition;
+bool                       g_forCC = false;
 
 extern int pp_parse();
 %}
@@ -175,7 +176,7 @@ int yywrap() {
 	return 1;
 }
 
-int PPScan( const wxString &filePath )
+int PPScan( const wxString &filePath, bool forCC )
 {
 	BEGIN INITIAL;
 	pp_lineno = 1;
@@ -188,8 +189,10 @@ int PPScan( const wxString &filePath )
 
 	yy_switch_to_buffer( yy_create_buffer(fp, YY_BUF_SIZE) );
 	pp_in = fp;
+	g_forCC = forCC;
 	int rc = pp_parse();
-    
+    g_forCC = false;
+	
     if ( YY_CURRENT_BUFFER->yy_input_file ) {
         fclose( YY_CURRENT_BUFFER->yy_input_file );
         YY_CURRENT_BUFFER->yy_input_file = NULL;

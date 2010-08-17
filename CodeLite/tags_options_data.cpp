@@ -131,15 +131,15 @@ TagsOptionsData::TagsOptionsData()
 		, m_minWordLen    (3)
 		, m_parserEnabled (true)
 		, m_maxItemToColour(1000)
-#ifdef __WXGTK__
+#ifdef __WXMSW__
 		, m_macrosFiles   (wxT("_mingw.h bits/c++config.h"))
 #elif defined(__WXMAC__)
-		, m_macrosFiles   (wxT("_mingw.h bits/c++config.h AvailabilityMacros.h"))
+		, m_macrosFiles   (wxT("sys/cdefs.h bits/c++config.h AvailabilityMacros.h"))
 #else
 		, m_macrosFiles   (wxT("sys/cdefs.h bits/c++config.h"))
 #endif
 {
-	SetVersion(wxT("3.0.1"));
+	SetVersion(wxT("3.0.2"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =

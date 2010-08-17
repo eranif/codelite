@@ -37,6 +37,7 @@
 #include <wx/xrc/xmlres.h>
 #include "wxformbuilder.h"
 #include <wx/xrc/xmlres.h>
+#include <wx/mimetype.h>
 
 static wxFormBuilder* thePlugin = NULL;
 
@@ -394,6 +395,13 @@ void wxFormBuilder::OnOpenFile(wxCommandEvent& e)
 			e.Skip();
 			return;
 		}
+#ifdef __WXGTK__
+		// Under Linux, use xdg-open
+		wxString cmd;
+		cmd << wxT("/bin/sh -c 'xdg-open \"") << fullpath.GetFullPath() << wxT("\"' 2> /dev/null");
+		wxExecute( cmd );
+		return;
+#else
 
 		wxMimeTypesManager *mgr = wxTheMimeTypesManager;
 		wxFileType *type = mgr->GetFileTypeFromExtension(fullpath.GetExt());
@@ -406,7 +414,9 @@ void wxFormBuilder::OnOpenFile(wxCommandEvent& e)
 				return;
 			}
 		}
+#endif		
 	}
+	
 	// we failed, call event.Skip()
 	e.Skip();
 }

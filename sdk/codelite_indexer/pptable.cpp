@@ -372,6 +372,13 @@ void PPToken::expandOnce(const wxArrayString& initList)
 	for(size_t i=0; i<args.size(); i++) {
 		wxString placeHolder;
 		placeHolder << wxT("%") << i;
+		
+		wxString replaceWith = initList.Item(i);
+		replaceWith.Trim().Trim(false);
+		
+		if(replaceWith.Contains(placeHolder))
+			continue;
+		
 		replacement.Replace(placeHolder, initList.Item(i));
 	}
 }

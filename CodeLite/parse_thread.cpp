@@ -320,6 +320,14 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 	///////////////////////////////////////////
 	m_pDb->InsertFileEntry(file, (int)time(NULL));
 
+	////////////////////////////////////////////////
+	// Parse and store the macros found in this file
+	////////////////////////////////////////////////
+	PPTable::Instance()->Clear();
+	PPScan( file, true );
+	m_pDb->StoreMacros( PPTable::Instance()->GetTable() );
+	PPTable::Instance()->Clear();
+
 	m_pDb->Commit();
 
 	// Parse the saved file to get a list of files to include

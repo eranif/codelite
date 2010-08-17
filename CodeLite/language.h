@@ -315,6 +315,7 @@ private:
 	wxArrayString DoExtractTemplateDeclarationArgs(TagEntryPtr tag);
 	void DoExtractTemplateInitListFromInheritance(TagEntryPtr tag, ParsedToken *token);
 	void DoExtractTemplateInitListFromInheritance(ParsedToken *token);
+	void DoExtractTemplateArgsFromSelf           (ParsedToken *token);
 	void DoFixTokensFromVariable(TokenContainer* tokeContainer, const wxString &variableDecl);
 
 	// Wrapper methods to help the transition from the [wxString,wxString] API into the new ParsedToken

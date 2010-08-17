@@ -24,3 +24,11 @@
 #include <SymbolView/symbolview.h>
 #include <wx/clipbrd.h>
 #include <wx/app.h>
+
+struct ST {
+	std::string name;
+};
+
+ST theStruct;
+
+#define EG(x) theStruct.x

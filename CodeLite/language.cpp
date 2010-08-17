@@ -366,11 +366,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 		ExcuteUserTypes(container.current, typeMap);
 
 		// We call here to IsTypeAndScopeExists which will attempt to provide the best scope / type
-		// in cases there is a change in the scope we also need to update the templateHelper class
-		wxString newScope = typeScope;
-
-
-		DoIsTypeAndScopeExist( container.current );
+		DoIsTypeAndScopeExist                   ( container.current );
 		DoExtractTemplateInitListFromInheritance( container.current );
 
 		if(container.current->GetIsTemplate() && container.current->GetTemplateArgList().IsEmpty()) {
@@ -859,6 +855,32 @@ bool Language::ProcessToken(TokenContainer *tokeContainer)
 				return false;
 
 			}
+		} else {
+			li.clear();
+
+			// if we are a "member" or " variable"
+			// try to locate the template initialization list
+			if(tags.at(0)->GetKind() == wxT("member") || tags.at(0)->GetKind() == wxT("variable")) {
+				const wxCharBuffer buf = _C(tags.at(0)->GetPattern());
+				get_variables(buf.data(), li, ignoreTokens, true);
+
+				// Search for a full match in the returned list
+				for (VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {
+					Variable var = (*iter);
+					wxString var_name = _U(var.m_name.c_str());
+					if (var_name == tags.at(0)->GetName()) {
+						ExpressionResult expRes = ParseExpression( _U(var.m_completeType.c_str()) );
+						if(expRes.m_isTemplate) {
+							token->SetIsTemplate            ( expRes.m_isTemplate );
+
+							wxArrayString argsList;
+							ParseTemplateInitList(wxString::From8BitData(expRes.m_templateInitList.c_str()), argsList );
+							token->SetTemplateInitialization( argsList );
+						}
+					}
+				}
+			}
+			// fall through...
 		}
 
 		// we got a match
@@ -1007,7 +1029,7 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 			clFunction foo;
 			int        classMatches (0);
 			size_t     classMatchIdx(0);
-			
+
 			for (size_t i=0; i<tags.size(); i++) {
 				TagEntryPtr tag(tags.at(i));
 				if (!FunctionFromPattern(tag, foo)) {
@@ -1020,7 +1042,7 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 					return true;
 				}
 			}
-			
+
 			// Dont give up yet!
 			// If in the list of matches there is a single entry of type class
 			// use it as our match
@@ -1030,17 +1052,17 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 					classMatchIdx = i;
 				}
 			}
-			
+
 			if(classMatches == 1) {
 				TagEntryPtr tag = tags.at(classMatchIdx);
 				tags.clear();
 				tags.push_back( tag );
-				
+
 				type      = tag->GetName();
 				typeScope = tag->GetScopeName();
 				return true;
 			}
-			
+
 			return false;
 		}
 	}
@@ -1832,5 +1854,20 @@ void Language::DoFixTokensFromVariable(TokenContainer* tokeContainer, const wxSt
 		tokeContainer->head    = newToken;
 		tokeContainer->current = newToken;
 		tokeContainer->SetRewind(true);
+	}
+}
+
+void Language::DoExtractTemplateArgsFromSelf(ParsedToken* token)
+{
+	// if it is already marked as template, dont change it
+	if(token->GetIsTemplate())
+		return;
+
+	std::vector<TagEntryPtr> tags;
+	GetTagsManager()->FindByPath(token->GetPath(), tags);
+	if (tags.size() == 1 && !tags.at(0)->IsTypedef()) {
+		// Not a typedef
+		token->SetTemplateArgList(DoExtractTemplateDeclarationArgs(tags.at(0)));
+		token->SetIsTemplate     ( token->GetTemplateArgList().IsEmpty() == false );
 	}
 }

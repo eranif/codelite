@@ -31,6 +31,9 @@ TEST_FUNC(testMacros)
 	
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("wxTheApp->"), LoadFile(wxT("../tests/simple_tests.h")), tags);
 	CHECK_SIZE(tags.size(), 120);
+	
+	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("EG(name)."), LoadFile(wxT("../tests/simple_tests.h")), tags);
+	CHECK_SIZE(tags.size(), 197);
 	return true;
 }
 
@@ -114,7 +117,7 @@ TEST_FUNC(testThis)
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/this_ptr.h")), 4, wxT("this->"), LoadFile(wxT("../tests/this_ptr.h")), tags);
 	
 #ifdef __WXMSW__
-	CHECK_SIZE(tags.size(), 1140);
+	CHECK_SIZE(tags.size(), 1141);
 #else
 	CHECK_SIZE(tags.size(), 952);
 #endif
@@ -206,7 +209,7 @@ TEST_FUNC(testClFrame)
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_cl_frame.h")), 4, wxT("Frame::Get()->"), LoadFile(wxT("../tests/test_cl_frame.h")), tags);
 #ifdef __WXMSW__
-	CHECK_SIZE(tags.size(), 1140);
+	CHECK_SIZE(tags.size(), 1141);
 #else
 	CHECK_SIZE(tags.size(), 952);
 #endif

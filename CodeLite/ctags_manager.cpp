@@ -55,6 +55,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/msgdlg.h>
 #include "code_completion_api.h"
+#include <wx/stdpaths.h>
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -273,7 +274,7 @@ void TagsManager::StartCodeLiteIndexer()
 
 	// concatenate the PID to identifies this channel to this instance of codelite
 	cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\" ") << uid << wxT(" --pid");
-	m_codeliteIndexerProcess = CreateAsyncProcess(this, cmd);
+	m_codeliteIndexerProcess = CreateAsyncProcess(this, cmd, wxStandardPaths::Get().GetUserDataDir());
 }
 
 void TagsManager::RestartCodeLiteIndexer()

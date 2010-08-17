@@ -19,5 +19,9 @@
       <Project Name="indexer_client" ConfigName="Release_Win"/>
       <Project Name="codelite_indexer" ConfigName="Release_Win"/>
     </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="ReleaseDebug_Win" Selected="no">
+      <Project Name="indexer_client" ConfigName="Release_Win"/>
+      <Project Name="codelite_indexer" ConfigName="ReleaseDebug_Win"/>
+    </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

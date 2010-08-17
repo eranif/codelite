@@ -9,6 +9,7 @@
 
 #ifdef __WXMSW__
 #define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s"
+HINSTANCE gHandler = NULL;
 #else
 #define PIPE_NAME "/tmp/codelite_indexer.%s.sock"
 #endif
@@ -17,10 +18,12 @@ static eQueue<clNamedPipe*> g_connectionQueue;
 
 int main(int argc, char **argv)
 {
-
 #ifdef __WXMSW__
 	// No windows crash dialogs
 	SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOGPFAULTERRORBOX|SEM_NOOPENFILEERRORBOX);
+	// as described in http://jrfonseca.dyndns.org/projects/gnu-win32/software/drmingw/
+	// load the exception handler dll so we will get Dr MinGW at runtime
+	gHandler = LoadLibrary("exchndl.dll");
 #endif
 
 	int  max_requests(5000);

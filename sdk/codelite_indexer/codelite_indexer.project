@@ -186,6 +186,38 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
+    <Configuration Name="ReleaseDebug_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-Wall;$(shell wx-config --cflags --unicode)" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="."/>
+        <IncludePath Value="libctags/"/>
+        <Preprocessor Value="__WXMSW__"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --libs --unicode)" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="./Release/codelite_indexer" IntermediateDirectory="./Release" Command="C:\Development\C++\codelite\CL_trunk\sdk\codelite_indexer\Release\$(ProjectName)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy Release\codelite_indexer.exe ..\..\Runtime\codelite_indexer.exe</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
     <Configuration Name="Release_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>

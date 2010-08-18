@@ -1,12 +1,13 @@
 #include "message_pane.h"
 #include <wx/msgdlg.h>
-#include <wx/xrc/xmlres.h>
 #include <wx/dcbuffer.h>
+#include "pluginmanager.h"
 
 MessagePane::MessagePane( wxWindow* parent )
 		: MessagePaneBase( parent )
 {
-	m_bitmap1->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("message_pane_inf")));
+	BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
+	m_bitmap1->SetBitmap(bmpLoader->LoadBitmap(wxT("messages/48/info")));
 	m_buttonAction->Hide();
 	Hide();
 }
@@ -33,7 +34,7 @@ void MessagePane::DoHide()
 		m_buttonAction->Hide();
 		m_buttonAction1->Hide();
 		m_buttonAction2->Hide();
-	
+
 		m_messages.Clear();
 		Hide();
 		GetParent()->GetSizer()->Layout();
@@ -48,13 +49,17 @@ void MessagePane::DoShowCurrentMessage()
 	m_buttonAction->Hide();
 	m_buttonAction1->Hide();
 	m_buttonAction2->Hide();
-	
+
 	bool hasDefaultButton (false);
-	if(msg.bmp.IsOk() == false)
-		m_bitmap1->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("message_pane_inf")));
-	else
+	if(msg.bmp.IsOk() == false) {
+		BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
+		m_bitmap1->SetBitmap(bmpLoader->LoadBitmap(wxT("messages/48/info")));
+
+	} else {
 		m_bitmap1->SetBitmap(msg.bmp);
-		
+
+	}
+
 	// display the buttons
 	if (msg.btn1.buttonLabel.IsEmpty() == false) {
 		m_buttonAction->SetLabel(msg.btn1.buttonLabel);
@@ -65,7 +70,7 @@ void MessagePane::DoShowCurrentMessage()
 			hasDefaultButton = true;
 		}
 	}
-	
+
 	if (msg.btn2.buttonLabel.IsEmpty() == false) {
 		m_buttonAction1->SetLabel(msg.btn2.buttonLabel);
 		m_buttonAction1->Show();
@@ -75,7 +80,7 @@ void MessagePane::DoShowCurrentMessage()
 			hasDefaultButton = true;
 		}
 	}
-	
+
 	if (msg.btn3.buttonLabel.IsEmpty() == false) {
 		m_buttonAction2->SetLabel(msg.btn3.buttonLabel);
 		m_buttonAction2->Show();
@@ -85,7 +90,7 @@ void MessagePane::DoShowCurrentMessage()
 			hasDefaultButton = true;
 		}
 	}
-	
+
 	// Show hide button if needed and make the default if there is
 	// no default button
 	if(msg.showHideButton) {
@@ -97,12 +102,12 @@ void MessagePane::DoShowCurrentMessage()
 	} else {
 		m_buttonClose->Hide();
 	}
-	
+
 	m_staticTextMessage->SetLabel(txt);
 	if (IsShown() == false) {
 		Show();
 	}
-	
+
 	m_staticTextMessage->Fit();
 	GetSizer()->Fit(this);
 	GetParent()->GetSizer()->Layout();

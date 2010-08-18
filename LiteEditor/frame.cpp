@@ -2169,7 +2169,8 @@ void Frame::OnTimer(wxTimerEvent &event)
 				btn1.commandId   = XRCID("update_num_builders_count");
 				btn1.window      = this;
 
-				GetMainBook()->ShowMessage(wxT("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), true, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_fix")), btn1);
+				GetMainBook()->ShowMessage(wxT("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), true,
+				PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/settings")), btn1);
 			}
 		}
 
@@ -3121,7 +3122,7 @@ void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 			btn.isDefault   = true;
 			btn.window      = this;
 
-			GetMainBook()->ShowMessage(wxT("A new version of CodeLite is available"), true, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_software_update")), btn);
+			GetMainBook()->ShowMessage(wxT("A new version of CodeLite is available"), true, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/software_upgrade")), btn);
 
 		} else {
 			if (!data->GetShowMessage()) {
@@ -3609,7 +3610,7 @@ void Frame::ReloadExternallyModifiedProjectFiles()
 	noBtn.isDefault   = true;
 	noBtn.window      = NULL;
 
-	GetMainBook()->ShowMessage(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), false, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_reload_workspace")), noBtn, btn);
+	GetMainBook()->ShowMessage(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), false, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/reload_workspace")), noBtn, btn);
 }
 
 void Frame::SaveLayoutAndSession()
@@ -3885,7 +3886,8 @@ void Frame::DoSuggestRestart()
 	btn2.buttonLabel = wxT("Not now");
 	btn2.window      = NULL;
 
-	GetMainBook()->ShowMessage(_("Some of the changes made requires a restart of CodeLite, Restart now?"), false, wxXmlResource::Get()->LoadBitmap(wxT("message_pane_restart")), btn1, btn2);
+	GetMainBook()->ShowMessage(_("Some of the changes made requires a restart of CodeLite, Restart now?"), false,
+								PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/restart")), btn1, btn2);
 #endif
 }
 

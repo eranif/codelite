@@ -29,32 +29,18 @@
 	<object class="wxBitmap" name="text_view">res/view_text.png</object>
 	<object class="wxBitmap" name="eraser">res/eraser.png</object>
 	<object class="wxBitmap" name="cursor">res/cursor.png</object>
-	<object class="wxBitmap" name="note">res/16/note.png</object>
 
 	<!--
 		Toolbar bitmaps (24x24)
 	-->
-	<object class="wxBitmap" name="class24">res/24/class24.png</object>
-	<object class="wxBitmap" name="new_wx_project24">res/24/wx24.png</object>
-	<object class="wxBitmap" name="code_format_options24">res/24/formatter_settings.png</object>
 	<object class="wxBitmap" name="code_format24">res/24/formatter.png</object>
+	<object class="wxBitmap" name="code_format_options24">res/24/formatter_settings.png</object>
 
 	<!--
 		Toolbar bitmaps (16x16)
 	-->
-	<object class="wxBitmap" name="class16">res/16/class24.png</object>
-	<object class="wxBitmap" name="new_wx_project16">res/16/wx24.png</object>
-	<object class="wxBitmap" name="plugin16">res/16/plugin24.png</object>
 	<object class="wxBitmap" name="code_format_options16">res/16/formatter_settings.png</object>
 	<object class="wxBitmap" name="code_format16">res/16/formatter.png</object>
-
-	<!-- Message Pane icons -->
-	<object class="wxBitmap" name="message_pane_inf">res/MessagePane/message_pane_info.png</object>
-	<object class="wxBitmap" name="message_pane_restart">res/MessagePane/system_restart.png</object>
-	<object class="wxBitmap" name="message_pane_fix">res/MessagePane/preferences_other.png</object>
-	<object class="wxBitmap" name="message_pane_warning">res/MessagePane/warning.png</object>
-	<object class="wxBitmap" name="message_pane_software_update">res/MessagePane/system_software_update.png</object>
-	<object class="wxBitmap" name="message_pane_reload_workspace">res/MessagePane/folder_home_reload.png</object>
 
 	<!-- Notebook icons -->
 	<object class="wxBitmap" name="tab_x_close">res/notebook/fileclose-blue.png</object>

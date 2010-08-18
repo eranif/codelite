@@ -1116,7 +1116,6 @@ wxString BuilderGnuMake::ParseIncludePath(const wxString &paths, const wxString 
 	while (tkz.HasMoreTokens()) {
 		wxString path(tkz.NextToken());
 		TrimString(path);
-		path = ExpandAllVariables(path, WorkspaceST::Get(), projectName, selConf, wxEmptyString);
 		path.Replace(wxT("\\"), wxT("/"));
 		incluedPath << wxT("\"$(IncludeSwitch)") << path << wxT("\" ");
 	}
@@ -1132,8 +1131,7 @@ wxString BuilderGnuMake::ParseLibPath(const wxString &paths, const wxString &pro
 	//prepend each include path with libpath switch
 	while (tkz.HasMoreTokens()) {
 		wxString path(tkz.NextToken());
-		TrimString(path);
-		path = ExpandAllVariables(path, WorkspaceST::Get(), projectName, selConf, wxEmptyString);
+		path.Trim().Trim(false);
 		path.Replace(wxT("\\"), wxT("/"));
 		libPath << wxT("\"$(LibraryPathSwitch)") << path << wxT("\" ");
 	}
@@ -1147,7 +1145,7 @@ wxString BuilderGnuMake::ParsePreprocessor(const wxString &prep)
 	//prepend each include path with libpath switch
 	while (tkz.HasMoreTokens()) {
 		wxString p(tkz.NextToken());
-		TrimString(p);
+		p.Trim().Trim(false);
 		preprocessor << wxT("$(PreprocessorSwitch)") << p << wxT(" ");
 	}
 	return preprocessor;
@@ -1286,7 +1284,9 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 	wxString objNamePrefix = DoGetTargetPrefix(fn, proj->GetFileName().GetPath());
 	target << bldConf->GetIntermediateDirectory() << wxT("/") << objNamePrefix << fn.GetName() << cmp->GetObjectSuffix();
 
-	cmd = GetProjectMakeCommand(proj, confToBuild, target, false, false);
+	target = ExpandAllVariables(target, WorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);
+	cmd    = GetProjectMakeCommand(proj, confToBuild, target, false, false);
+
 	return EnvironmentConfig::Instance()->ExpandVariables(cmd, true);
 }
 
@@ -1324,7 +1324,8 @@ wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString &project, const wxS
 	wxString objNamePrefix = DoGetTargetPrefix(fn, proj->GetFileName().GetPath());
 	target << bldConf->GetIntermediateDirectory() << wxT("/") << objNamePrefix << fn.GetName() << cmp->GetPreprocessSuffix();
 
-	cmd = GetProjectMakeCommand(proj, confToBuild, target, false, false);
+	target = ExpandAllVariables(target, WorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);
+	cmd    = GetProjectMakeCommand(proj, confToBuild, target, false, false);
 	return EnvironmentConfig::Instance()->ExpandVariables(cmd, true);
 }
 

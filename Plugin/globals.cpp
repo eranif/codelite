@@ -305,14 +305,26 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 			project_name.Replace(wxT(" "), wxT("_"));
 
 			BuildConfigPtr bldConf = workspace->GetProjBuildConf(proj->GetName(), confToBuild);
-			output.Replace(wxT("$(ProjectPath)"), proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+			output.Replace(wxT("$(ProjectPath)"),   proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			output.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-			output.Replace(wxT("$(ProjectName)"), project_name);
+			output.Replace(wxT("$(ProjectName)"),   project_name);
+
 			if (bldConf) {
-				output.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
 				output.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
-				output.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
+
+				// the IntermediateDirectory variable is special, since it can contains
+				// other variables in it.
+				wxString id(bldConf->GetIntermediateDirectory());
+
+				// Substitute all macros from $(IntermediateDirectory)
+				id.Replace(wxT("$(ProjectPath)"),   proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+				id.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+				id.Replace(wxT("$(ProjectName)"),   project_name);
+
+				output.Replace(wxT("$(IntermediateDirectory)"), id);
+				output.Replace(wxT("$(OutDir)"),                id);
 			}
+
 			if(output.Find(wxT("$(ProjectFiles)")) != wxNOT_FOUND)
 				output.Replace(wxT("$(ProjectFiles)"),   proj->GetFiles());
 

@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "ctags_manager.h"
+#include "pptable.h"
 
 #include "entry.h"
 #include <wx/tokenzr.h>
@@ -302,6 +304,62 @@ wxString TagEntry::TypeFromTyperef() const
 	return wxEmptyString;
 }
 
+static bool GetMacroArgList(CppScanner &scanner, wxArrayString& argList)
+{
+	int  depth(0);
+	int  type (0);
+	bool cont (true);
+	bool isOk (false);
+
+	wxString word;
+
+	while( cont ) {
+		type = scanner.yylex();
+		if(type == 0) {
+			// eof
+			break;
+		}
+
+		switch(type) {
+		case (int)'(':
+			isOk = true;
+			depth++;
+
+			if(word.empty() == false)
+				word << wxT("(");
+
+			break;
+
+		case (int)')':
+			depth--;
+			if(depth == 0) {
+				cont = false;
+				break;
+			} else {
+				word << wxT(")");
+			}
+			break;
+
+		case (int)',':
+			word.Trim().Trim(false);
+			if(!word.empty()) {
+				argList.Add( word );
+			}
+			word.clear();
+			break;
+
+		default:
+			word << wxString::From8BitData(scanner.YYText()) << wxT(" ");
+			break;
+		}
+	}
+
+	if(word.empty() == false) {
+		argList.Add( word );
+	}
+
+	return (depth == 0) && isOk;
+}
 
 wxString TagEntry::NameFromTyperef(wxString &templateInitList)
 {
@@ -314,10 +372,45 @@ wxString TagEntry::NameFromTyperef(wxString &templateInitList)
 	// incase our entry is a typedef, and it is not marked as typeref,
 	// try to get the real name from the pattern
 	if ( GetKind() == wxT("typedef")) {
+
+		wxString pat ( GetPattern() );
+		if(!GetPattern().Contains(wxT("typedef"))) {
+			// The pattern does not contain 'typedef' however this *is* a typedef
+			// try to see if this is a macro
+			pat.StartsWith(wxT("/^"), &pat);
+			pat.Trim().Trim(false);
+
+			// we take the first token
+			CppScanner scanner;
+			scanner.SetText( pat.To8BitData() );
+			int type = scanner.yylex();
+			if(type == IDENTIFIER) {
+				wxString token = wxString::From8BitData(scanner.YYText());
+
+				PPToken tok = TagsManagerST::Get()->GetDatabase()->GetMacro(token);
+				if(tok.flags & PPToken::IsValid) {
+					// we found a match!
+					if(tok.flags & PPToken::IsFunctionLike) {
+						wxArrayString argList;
+						if(GetMacroArgList(scanner, argList)) {
+							tok.expandOnce( argList );
+						}
+					}
+					pat = tok.replacement;
+					pat << wxT(";");
+
+					// Remove double spaces
+					while(pat.Replace(wxT("  "), wxT(" "))) {}
+				}
+			}
+		}
+
 		wxString name;
-		if (TypedefFromPattern(GetPattern(), GetName(),name, templateInitList))
+		if (TypedefFromPattern(pat, GetName(),name, templateInitList))
 			return name;
 	}
+
+
 	return wxEmptyString;
 }
 

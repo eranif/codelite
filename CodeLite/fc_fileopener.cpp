@@ -1,5 +1,7 @@
 #include "fc_fileopener.h"
 #include <cstdio>
+#include <cctype>
+#include <algorithm>
 
 fcFileOpener* fcFileOpener::ms_instance = 0;
 
@@ -98,8 +100,9 @@ std::string fcFileOpener::extract_path(const std::string &filePath)
 	if ( where == std::string::npos ) {
 		return "";
 	}
-
-	return path.substr(0, where);
+	
+	std::string p = path.substr(0, where);
+	return p;
 }
 
 FILE* fcFileOpener::try_open(const std::string &path, const std::string &name)
@@ -145,6 +148,11 @@ void fcFileOpener::normalize_path(std::string& path)
 			path[i] = '/';
 		}
 	}
+	
+#ifdef _WIN32
+	// Under Windows, make the path lowercase
+	std::transform(path.begin(), path.end(), path.begin(), tolower);
+#endif
 }
 
 void fcFileOpener::AddNamespace(const char* ns)

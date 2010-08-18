@@ -500,7 +500,7 @@ void PPTable::Squeeze()
 {
 	std::map<wxString, PPToken>::iterator iter = m_table.begin();
 	for(; iter != m_table.end(); iter++) {
-		m_table.at(iter->first).squeeze();
+		m_table[iter->first].squeeze();
 	}
 }
 

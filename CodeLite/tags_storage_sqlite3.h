@@ -128,10 +128,10 @@ public:
 		}
 
 		try {
-			m_statements.at(sql).Reset();
+			m_statements[sql].Reset();
 		} catch (...) {
 		}
-		return m_statements.at(sql);
+		return m_statements[sql];
 	}
 };
 

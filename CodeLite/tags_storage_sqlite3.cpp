@@ -43,7 +43,7 @@ static FILE* log_fp = NULL;
 TagsStorageSQLite::TagsStorageSQLite()
 	: ITagsStorage()
 {
-	m_db    = new wxSQLite3Database();
+	m_db    = new clSqliteDB();
 	SetUseCache(true);
 }
 
@@ -767,7 +767,7 @@ void TagsStorageSQLite::GetTagsByKindAndFile(const wxArrayString& kind, const wx
 int TagsStorageSQLite::DeleteFileEntry(const wxString& filename)
 {
 	try {
-		wxSQLite3Statement statement = m_db->PrepareStatement(wxT("DELETE FROM FILES WHERE FILE=?"));
+		wxSQLite3Statement &statement = m_db->GetPrepareStatement(wxT("DELETE FROM FILES WHERE FILE=?"));
 		statement.Bind(1, filename);
 		statement.ExecuteUpdate();
 
@@ -783,14 +783,12 @@ int TagsStorageSQLite::DeleteFileEntry(const wxString& filename)
 int TagsStorageSQLite::InsertFileEntry(const wxString& filename, int timestamp)
 {
 	try {
-		wxSQLite3Statement statement = m_db->PrepareStatement(wxT("INSERT INTO FILES VALUES(NULL, ?, ?)"));
+		wxSQLite3Statement &statement = m_db->GetPrepareStatement(wxT("INSERT OR REPLACE INTO FILES VALUES(NULL, ?, ?)"));
 		statement.Bind(1, filename);
 		statement.Bind(2, timestamp);
 		statement.ExecuteUpdate();
 
 	} catch (wxSQLite3Exception& exc) {
-		if (exc.ErrorCodeAsString(exc.GetErrorCode()) == wxT("SQLITE_CONSTRAINT"))
-			return TagExist;
 		return TagError;
 	}
 	return TagOk;
@@ -800,14 +798,12 @@ int TagsStorageSQLite::InsertFileEntry(const wxString& filename, int timestamp)
 int TagsStorageSQLite::UpdateFileEntry(const wxString& filename, int timestamp)
 {
 	try {
-		wxSQLite3Statement statement = m_db->PrepareStatement(wxT("UPDATE FILES SET last_retagged=? WHERE file=?"));
+		wxSQLite3Statement &statement = m_db->GetPrepareStatement(wxT("UPDATE OR REPLACE FILES SET last_retagged=? WHERE file=?"));
 		statement.Bind(1,  timestamp);
 		statement.Bind(2,  filename);
 		statement.ExecuteUpdate();
 
 	} catch (wxSQLite3Exception& exc) {
-		if (exc.ErrorCodeAsString(exc.GetErrorCode()) == wxT("SQLITE_CONSTRAINT"))
-			return TagExist;
 		return TagError;
 	}
 	return TagOk;
@@ -818,7 +814,7 @@ int TagsStorageSQLite::DeleteTagEntry(const wxString& kind, const wxString& sign
 	// Delete this record from database.
 	// Delete is done using the index
 	try {
-		wxSQLite3Statement statement = m_db->PrepareStatement(wxT("DELETE FROM TAGS WHERE Kind=? AND Signature=? AND Path=?"));
+		wxSQLite3Statement &statement = m_db->GetPrepareStatement(wxT("DELETE FROM TAGS WHERE Kind=? AND Signature=? AND Path=?"));
 		statement.Bind(1, kind);        // Kind
 		statement.Bind(2, signature);   // Signature
 		statement.Bind(3, path);        // Path
@@ -841,7 +837,7 @@ int TagsStorageSQLite::InsertTagEntry(const TagEntry& tag)
 	}
 
 	try {
-		wxSQLite3Statement statement = m_db->PrepareStatement(wxT("INSERT INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+		wxSQLite3Statement &statement = m_db->GetPrepareStatement(wxT("INSERT OR REPLACE INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 		statement.Bind(1,  tag.GetName());
 		statement.Bind(2,  tag.GetFile());
 		statement.Bind(3,  tag.GetLine());
@@ -857,14 +853,9 @@ int TagsStorageSQLite::InsertTagEntry(const TagEntry& tag)
 		statement.Bind(13, tag.GetReturnValue());
 		statement.ExecuteUpdate();
 	} catch (wxSQLite3Exception& exc) {
-
-		if (exc.ErrorCodeAsString(exc.GetErrorCode()) == wxT("SQLITE_CONSTRAINT"))
-			return TagExist;
-
 		return TagError;
 	}
 	return TagOk;
-
 }
 
 int TagsStorageSQLite::UpdateTagEntry(const TagEntry& tag)
@@ -873,7 +864,7 @@ int TagsStorageSQLite::UpdateTagEntry(const TagEntry& tag)
 		return TagOk;
 
 	try {
-		wxSQLite3Statement statement = m_db->PrepareStatement(wxT("UPDATE TAGS SET Name=?, File=?, Line=?, Access=?, Pattern=?, Parent=?, Inherits=?, Typeref=?, Scope=?, Return_Value=? WHERE Kind=? AND Signature=? AND Path=?"));
+		wxSQLite3Statement &statement = m_db->GetPrepareStatement(wxT("UPDATE OR REPLACE TAGS SET Name=?, File=?, Line=?, Access=?, Pattern=?, Parent=?, Inherits=?, Typeref=?, Scope=?, Return_Value=? WHERE Kind=? AND Signature=? AND Path=?"));
 		// update
 		statement.Bind(1,  tag.GetName());
 		statement.Bind(2,  tag.GetFile());
@@ -893,8 +884,6 @@ int TagsStorageSQLite::UpdateTagEntry(const TagEntry& tag)
 
 		statement.ExecuteUpdate();
 	} catch (wxSQLite3Exception& exc) {
-		if (exc.ErrorCodeAsString(exc.GetErrorCode()) == wxT("SQLITE_CONSTRAINT"))
-			return TagExist;
 		return TagError;
 	}
 	return TagOk;
@@ -1434,7 +1423,7 @@ PPToken TagsStorageSQLite::GetMacro(const wxString& name)
 void TagsStorageSQLite::StoreMacros(const std::map<wxString, PPToken>& table)
 {
 	try {
-		wxSQLite3Statement stmnt = m_db->PrepareStatement(wxT("insert or replace into MACROS values(NULL, ?, ?, ?, ?, ?, ?)"));
+		wxSQLite3Statement &stmnt = m_db->GetPrepareStatement(wxT("insert or replace into MACROS values(NULL, ?, ?, ?, ?, ?, ?)"));
 
 		std::map<wxString, PPToken>::const_iterator iter = table.begin();
 		for(; iter != table.end(); iter++) {

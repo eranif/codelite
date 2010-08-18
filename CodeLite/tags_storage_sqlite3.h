@@ -105,10 +105,40 @@ public:
 	void Clear();
 };
 
+class clSqliteDB : public wxSQLite3Database
+{
+	std::map<wxString, wxSQLite3Statement> m_statements;
+public:
+	clSqliteDB()
+	: wxSQLite3Database()
+	{
+	}
+
+	void Close()
+	{
+		wxSQLite3Database::Close();
+		m_statements.clear();
+	}
+
+	wxSQLite3Statement& GetPrepareStatement(const wxString& sql)
+	{
+		std::map<wxString, wxSQLite3Statement>::iterator iter = m_statements.find(sql);
+		if(iter == m_statements.end()) {
+			m_statements[sql] = wxSQLite3Database::PrepareStatement(sql);
+		}
+
+		try {
+			m_statements.at(sql).Reset();
+		} catch (...) {
+		}
+		return m_statements.at(sql);
+	}
+};
+
 class TagsStorageSQLite : public ITagsStorage
 {
-	wxSQLite3Database *    m_db;
-	TagsStorageSQLiteCache m_cache;
+	clSqliteDB             *m_db;
+	TagsStorageSQLiteCache  m_cache;
 
 private:
 	/**

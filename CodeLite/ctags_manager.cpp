@@ -1095,17 +1095,26 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, bool quickRet
 		strFiles.Add(files.at(i).GetFullPath());
 	}
 
-	if(strFiles.IsEmpty())
+	// If there are no files to tag - send the 'end' event
+	if (strFiles.IsEmpty()) {
+		wxFrame *frame = dynamic_cast<wxFrame*>( wxTheApp->GetTopWindow() );
+		if (frame) {
+			wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
+			frame->AddPendingEvent(retaggingCompletedEvent);
+		}
 		return;
+	}
 
 	// step 2: remove all files which do not need retag
 	if ( quickRetag )
 		DoFilterNonNeededFilesForRetaging(strFiles, m_workspaceDatabase);
 
+	// If there are no files to tag - send the 'end' event
 	if (strFiles.IsEmpty()) {
 		wxFrame *frame = dynamic_cast<wxFrame*>( wxTheApp->GetTopWindow() );
 		if (frame) {
-			frame->SetStatusText(wxT("All files are up-to-date"), 0);
+			wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
+			frame->AddPendingEvent(retaggingCompletedEvent);
 		}
 		return;
 	}
@@ -1114,28 +1123,17 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, bool quickRet
 	DeleteFilesTags(strFiles);
 
 	// step 5: build the database
-
-#if USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
-
 	// Expermintal code: perform the 'retag workspace' using the parser thread
 	// Put a request to the parsing thread
 	ParseRequest *req = new ParseRequest();
 	req->setDbFile( GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
 	req->setType  ( ParseRequest::PR_PARSE_AND_STORE );
-
 	req->_workspaceFiles.clear();
 	req->_workspaceFiles.reserve( strFiles.size() );
 	for(size_t i=0; i<strFiles.GetCount(); i++) {
 		req->_workspaceFiles.push_back( strFiles[i].mb_str(wxConvUTF8).data() );
 	}
 	ParseThreadST::Get()->Add ( req );
-
-#else
-	// step 5: build the database
-	DoBuildDatabase(strFiles, *m_workspaceDatabase);
-	UpdateFileTree(m_workspaceDatabase, true);
-
-#endif
 }
 
 bool TagsManager::DoBuildDatabase(const wxArrayString &files, ITagsStorage &db, const wxString *rootPath)

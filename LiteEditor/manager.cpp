@@ -174,16 +174,17 @@ static wxArrayString DoGetTemplateTypes(const wxString& tmplDecl)
 //---------------------------------------------------------------
 
 Manager::Manager ( void )
-		: m_shellProcess ( NULL )
-		, m_asyncExeCmd ( NULL )
-		, m_breakptsmgr( new BreakptMgr )
-		, m_isShutdown ( false )
+		: m_shellProcess    ( NULL )
+		, m_asyncExeCmd     ( NULL )
+		, m_breakptsmgr     ( new BreakptMgr )
+		, m_isShutdown      ( false )
 		, m_workspceClosing ( false )
-		, m_dbgCanInteract ( false )
-		, m_useTipWin ( false )
-		, m_tipWinPos ( wxNOT_FOUND )
-		, m_frameLineno ( wxNOT_FOUND )
-		, m_watchDlg (NULL)
+		, m_dbgCanInteract  ( false )
+		, m_useTipWin       ( false )
+		, m_tipWinPos       ( wxNOT_FOUND )
+		, m_frameLineno     ( wxNOT_FOUND )
+		, m_watchDlg        (NULL)
+		, m_retagInProgress (false)
 {
 	m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
 	Connect(wxEVT_CMD_RESTART_CODELITE,            wxCommandEventHandler(Manager::OnRestart),              NULL, this);
@@ -749,6 +750,8 @@ wxFileName Manager::FindFile ( const wxArrayString& files, const wxFileName &fn 
 
 void Manager::RetagWorkspace(bool quickRetag)
 {
+	SetRetagInProgress(true);
+
 	// in the case of re-tagging the entire workspace and full re-tagging is enabled
 	// it is faster to drop the tables instead of deleting
 	if ( !quickRetag )
@@ -1093,6 +1096,9 @@ void Manager::RetagProject ( const wxString &projectName, bool quickRetag )
 	ProjectPtr proj = GetProject ( projectName );
 	if ( !proj )
 		return;
+
+	SetRetagInProgress(true);
+
 	std::vector<wxFileName> projectFiles;
 	proj->GetFiles ( projectFiles, true );
 	TagsManagerST::Get()->RetagFiles ( projectFiles, quickRetag );

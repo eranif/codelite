@@ -49,41 +49,60 @@ class DisplayVariableDlg;
 
 class Manager : public wxEvtHandler, public IDebuggerObserver
 {
-  	friend class Singleton<Manager>;
+	friend class Singleton<Manager>;
 
- 	wxString                m_installDir;
- 	wxString                m_startupDir;
- 	FileHistory             m_recentWorkspaces;
- 	ShellCommand           *m_shellProcess;
- 	AsyncExeCmd            *m_asyncExeCmd;
- 	BreakptMgr             *m_breakptsmgr;
- 	bool                    m_isShutdown;
- 	bool                    m_workspceClosing;
- 	bool                    m_dbgCanInteract;
- 	bool                    m_useTipWin;
- 	long                    m_tipWinPos;
- 	int                     m_frameLineno;
+	wxString                m_installDir;
+	wxString                m_startupDir;
+	FileHistory             m_recentWorkspaces;
+	ShellCommand           *m_shellProcess;
+	AsyncExeCmd            *m_asyncExeCmd;
+	BreakptMgr             *m_breakptsmgr;
+	bool                    m_isShutdown;
+	bool                    m_workspceClosing;
+	bool                    m_dbgCanInteract;
+	bool                    m_useTipWin;
+	long                    m_tipWinPos;
+	int                     m_frameLineno;
 	std::list<QueueCommand> m_buildQueue;
 	wxArrayString           m_dbgWatchExpressions;
 	wxFileName              m_codeliteLauncher;
 	DisplayVariableDlg     *m_watchDlg;
+	bool                    m_retagInProgress;
 
 protected:
 	Manager(void);
 	virtual ~Manager(void);
 
-     //--------------------------- Global State -----------------------------
+	//--------------------------- Global State -----------------------------
 public:
 	DisplayVariableDlg *GetDebuggerTip();
 
- 	const wxString &GetStarupDirectory() const { return m_startupDir; }
- 	void SetStarupDirectory(const wxString &path) { m_startupDir = path; }
+	void SetRetagInProgress(bool retagInProgress) {
+		this->m_retagInProgress = retagInProgress;
+	}
+	bool GetRetagInProgress() const {
+		return m_retagInProgress;
+	}
+	const wxString &GetStarupDirectory() const {
+		return m_startupDir;
+	}
+	void SetStarupDirectory(const wxString &path) {
+		m_startupDir = path;
+	}
 
- 	const wxString &GetInstallDir() const { return m_installDir; }
- 	void SetInstallDir(const wxString &dir) { m_installDir = dir; }
+	const wxString &GetInstallDir() const {
+		return m_installDir;
+	}
+	void SetInstallDir(const wxString &dir) {
+		m_installDir = dir;
+	}
 
-	bool IsShutdownInProgress() const { return m_isShutdown; }
- 	void SetShutdownInProgress(bool b) { m_isShutdown = b; }
+	bool IsShutdownInProgress() const {
+		return m_isShutdown;
+	}
+	void SetShutdownInProgress(bool b) {
+		m_isShutdown = b;
+	}
 
 
 	void SetCodeLiteLauncherPath(const wxString &path);
@@ -91,18 +110,20 @@ public:
 protected:
 	void DoRestartCodeLite();
 
-	 //--------------------------- Workspace Loading -----------------------------
+	//--------------------------- Workspace Loading -----------------------------
 public:
- 	/*!
- 	 * \brief
- 	 * check if a workspace is open
- 	 *
- 	 * \returns
- 	 * true if a workspace is open
- 	 */
- 	bool IsWorkspaceOpen() const;
+	/*!
+	 * \brief
+	 * check if a workspace is open
+	 *
+	 * \returns
+	 * true if a workspace is open
+	 */
+	bool IsWorkspaceOpen() const;
 
-	const bool& IsWorkspaceClosing() const { return m_workspceClosing; }
+	const bool& IsWorkspaceClosing() const {
+		return m_workspceClosing;
+	}
 
 	/*!
 	 * \brief
@@ -148,7 +169,9 @@ public:
 	 * return the FileHistory object that holds the recently opened
 	 * workspace data
 	 */
-	FileHistory &GetRecentlyOpenedWorkspacesClass() { return m_recentWorkspaces; }
+	FileHistory &GetRecentlyOpenedWorkspacesClass() {
+		return m_recentWorkspaces;
+	}
 
 	/**
 	 * @brief update the C++ parser search / exclude paths with the global paths
@@ -162,7 +185,7 @@ protected:
 	void AddToRecentlyOpenedWorkspaces(const wxString &fileName);
 
 
-    //--------------------------- Workspace Projects Mgmt -----------------------------
+	//--------------------------- Workspace Projects Mgmt -----------------------------
 public:
 	/**
 	 * \brief create an empty project
@@ -224,7 +247,7 @@ public:
 	void SetWorkspaceBuildMatrix(BuildMatrixPtr matrix);
 
 
-    //--------------------------- Workspace Files Mgmt -----------------------------
+	//--------------------------- Workspace Files Mgmt -----------------------------
 public:
 	/**
 	 * return list of files in absolute path of the whole workspace
@@ -242,10 +265,10 @@ public:
 	 */
 	bool IsFileInWorkspace(const wxString &fileName);
 
-    /**
-     * Search for (non-absolute) file in the workspace
-     */
-    wxFileName FindFile(const wxString &fileName, const wxString &project = wxEmptyString);
+	/**
+	 * Search for (non-absolute) file in the workspace
+	 */
+	wxFileName FindFile(const wxString &fileName, const wxString &project = wxEmptyString);
 
 	/**
 	 * retag workspace
@@ -265,10 +288,10 @@ public:
 	void RetagFile(const wxString &filename);
 
 protected:
-    wxFileName FindFile ( const wxArrayString& files, const wxFileName &fn );
+	wxFileName FindFile ( const wxArrayString& files, const wxFileName &fn );
 
 
-    //--------------------------- Project Files Mgmt -----------------------------
+	//--------------------------- Project Files Mgmt -----------------------------
 public:
 	/**
 	 * Add new virtual directory to the workspace.
@@ -343,68 +366,68 @@ public:
 	wxString GetProjectNameByFile(const wxString &fullPathFileName);
 
 
-    //--------------------------- Project Settings Mgmt -----------------------------
+	//--------------------------- Project Settings Mgmt -----------------------------
 public:
-  	/**
- 	 * Return a project working directory
- 	 * \param project project name
-  	 */
- 	wxString GetProjectCwd(const wxString &project) const;
+	/**
+	 * Return a project working directory
+	 * \param project project name
+	 */
+	wxString GetProjectCwd(const wxString &project) const;
 
-  	/**
- 	 * Return project settings by name
- 	 * \param projectName project name
- 	 * \return project settings smart prt
-  	 */
- 	ProjectSettingsPtr GetProjectSettings(const wxString &projectName) const;
+	/**
+	 * Return project settings by name
+	 * \param projectName project name
+	 * \return project settings smart prt
+	 */
+	ProjectSettingsPtr GetProjectSettings(const wxString &projectName) const;
 
-  	/**
- 	 * Set project settings
- 	 * \param projectName project name
- 	 * \param settings settings to update
-  	 */
- 	void SetProjectSettings(const wxString &projectName, ProjectSettingsPtr settings);
+	/**
+	 * Set project settings
+	 * \param projectName project name
+	 * \param settings settings to update
+	 */
+	void SetProjectSettings(const wxString &projectName, ProjectSettingsPtr settings);
 
-  	/**
- 	 * Set project global settings
- 	 * \param projectName project name
- 	 * \param settings global settings to update
-  	 */
+	/**
+	 * Set project global settings
+	 * \param projectName project name
+	 * \param settings global settings to update
+	 */
 	void SetProjectGlobalSettings(const wxString &projectName, BuildConfigCommonPtr settings);
 
-  	/**
- 	 * \brief return the project excution command as it appears in the project settings
- 	 * \param projectName
- 	 * \param wd the working directory that the command should be running from
- 	 * \param considerPauseWhenExecuting when set to true (default) CodeLite will take into consideration the value set in the project
- 	 * settings 'Pause when execution ends'
- 	 * \return project execution command or wxEmptyString if the project does not exist
-  	 */
- 	wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd, bool considerPauseWhenExecuting = true);
+	/**
+	 * \brief return the project excution command as it appears in the project settings
+	 * \param projectName
+	 * \param wd the working directory that the command should be running from
+	 * \param considerPauseWhenExecuting when set to true (default) CodeLite will take into consideration the value set in the project
+	 * settings 'Pause when execution ends'
+	 * \return project execution command or wxEmptyString if the project does not exist
+	 */
+	wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd, bool considerPauseWhenExecuting = true);
 
 	bool     DoFindDockInfo   (const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info);
 
-     //--------------------------- Top Level Pane Management -----------------------------
+	//--------------------------- Top Level Pane Management -----------------------------
 public:
-  	/**
- 	 * \brief test if pane_name is resides in the wxAuiManager and is visible
- 	 * \param pane_name pane name to search for
- 	 * \return true on success (exist in the AUI manager and visible), false otherwise
-  	 */
- 	bool IsPaneVisible(const wxString &pane_name);
+	/**
+	 * \brief test if pane_name is resides in the wxAuiManager and is visible
+	 * \param pane_name pane name to search for
+	 * \return true on success (exist in the AUI manager and visible), false otherwise
+	 */
+	bool IsPaneVisible(const wxString &pane_name);
 
-  	/**
- 	 * Show output pane and set focus to focusWin
- 	 * \param focusWin tab name to set the focus
- 	 * \return return true if the output pane was hidden and this function forced it to appear. false if the window was already
- 	 * shown and nothing needed to be done
-  	 */
- 	bool ShowOutputPane(wxString focusWin = wxEmptyString, bool commit = true );
+	/**
+	 * Show output pane and set focus to focusWin
+	 * \param focusWin tab name to set the focus
+	 * \return return true if the output pane was hidden and this function forced it to appear. false if the window was already
+	 * shown and nothing needed to be done
+	 */
+	bool ShowOutputPane(wxString focusWin = wxEmptyString, bool commit = true );
 
-  	/**
- 	 * Show the debugger pane
-  	 */
- 	void ShowDebuggerPane(bool commit = true);
+	/**
+	 * Show the debugger pane
+	 */
+	void ShowDebuggerPane(bool commit = true);
 
 	/**
 	 * \brief toggle the output pane
@@ -412,25 +435,25 @@ public:
 	 */
 	void ToggleOutputPane(bool hide);
 
-  	/**
- 	 * Show the workspace pane and set focus to focusWin
- 	 * \param focusWin tab name to set the focus
-  	 */
- 	void ShowWorkspacePane(wxString focusWin = wxEmptyString, bool commit = true );
+	/**
+	 * Show the workspace pane and set focus to focusWin
+	 * \param focusWin tab name to set the focus
+	 */
+	void ShowWorkspacePane(wxString focusWin = wxEmptyString, bool commit = true );
 
-  	/**
- 	 * Hide pane
-  	 */
- 	void HidePane(const wxString &paneName, bool commit = true);
+	/**
+	 * Hide pane
+	 */
+	void HidePane(const wxString &paneName, bool commit = true);
 
-  	/**
- 	 * Hide/Show all panes. This function saves the current prespective and
- 	 * then hides all panes, when called again, all panes are restored
-  	 */
- 	void TogglePanes();
+	/**
+	 * Hide/Show all panes. This function saves the current prespective and
+	 * then hides all panes, when called again, all panes are restored
+	 */
+	void TogglePanes();
 
 
-    //--------------------------- Menu and Accelerator Mmgt -----------------------------
+	//--------------------------- Menu and Accelerator Mmgt -----------------------------
 public:
 	/**
 	 * \brief update the menu bar accelerators
@@ -461,7 +484,7 @@ protected:
 	void DumpMenu( wxMenu *menu, const wxString &label, wxString &content );
 
 
-    //--------------------------- Run Program (No Debug) -----------------------------
+	//--------------------------- Run Program (No Debug) -----------------------------
 public:
 	/**
 	 * return true a child program is running
@@ -482,9 +505,11 @@ protected:
 	void OnProcessEnd(wxProcessEvent &event);
 
 
-    //--------------------------- Debugger Support -----------------------------
+	//--------------------------- Debugger Support -----------------------------
 public:
-	BreakptMgr* GetBreakpointsMgr() { return m_breakptsmgr; }
+	BreakptMgr* GetBreakpointsMgr() {
+		return m_breakptsmgr;
+	}
 
 	void UpdateDebuggerPane();
 
@@ -501,12 +526,14 @@ public:
 	void DbgDoSimpleCommand(int cmd);
 	void DbgSetFrame(int frame, int lineno);
 	void DbgSetThread(long threadId);
-	bool DbgCanInteract() {	return m_dbgCanInteract; }
+	bool DbgCanInteract() {
+		return m_dbgCanInteract;
+	}
 	void DbgClearWatches();
 	void DbgRestoreWatches();
 
 	//---------------------------------------------------
-    // Internal implementaion for various debugger events
+	// Internal implementaion for various debugger events
 	//---------------------------------------------------
 
 	void UpdateAddLine              (const wxString &line, const bool OnlyIfLoggingOn = false);
@@ -524,7 +551,7 @@ public:
 	void DebuggerUpdate        ( const DebuggerEvent &event );
 	void DoShowQuickWatchDialog( const DebuggerEvent &event );
 
-    //--------------------------- Build Management -----------------------------
+	//--------------------------- Build Management -----------------------------
 public:
 	/**
 	 * return true if a compilation is in process (either clean or build)

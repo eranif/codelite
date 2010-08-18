@@ -346,6 +346,7 @@ protected:
 	void OnCloseWorkspace(wxCommandEvent &event);
 	void OnProjectAddProject(wxCommandEvent &event);
 	void OnWorkspaceOpen(wxUpdateUIEvent &event);
+	void OnRetagWorkspaceUI(wxUpdateUIEvent &event);
 	void OnAddEnvironmentVariable(wxCommandEvent &event);
 	void OnAdvanceSettings(wxCommandEvent &event);
 	void OnCtagsOptions(wxCommandEvent &event);

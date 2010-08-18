@@ -334,8 +334,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("close_workspace"),          Frame::OnWorkspaceOpen)
 	EVT_UPDATE_UI(XRCID("reload_workspace"),         Frame::OnReloadWorkspaceUI)
 	EVT_UPDATE_UI(XRCID("add_project"),              Frame::OnWorkspaceMenuUI)
-	EVT_UPDATE_UI(XRCID("retag_workspace"),          Frame::OnWorkspaceOpen)
-	EVT_UPDATE_UI(XRCID("full_retag_workspace"),     Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("retag_workspace"),          Frame::OnRetagWorkspaceUI)
+	EVT_UPDATE_UI(XRCID("full_retag_workspace"),     Frame::OnRetagWorkspaceUI)
 	EVT_UPDATE_UI(XRCID("project_properties"),       Frame::OnShowActiveProjectSettingsUI)
 
 	//-------------------------------------------------------
@@ -3954,9 +3954,10 @@ void Frame::OnRetaggingCompelted(wxCommandEvent& e)
 		delete files;
 
 	} else {
+		wxLogMessage(wxT("INFO: Retag workspace completed in 0 seconds (No files were retagged)"));
 
-		wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), gStopWatch.Time()/1000, 0);
 	}
+	ManagerST::Get()->SetRetagInProgress(false);
 #endif
 }
 
@@ -3971,4 +3972,10 @@ void Frame::OnRetaggingProgress(wxCommandEvent& e)
 
 	GetWorkspacePane()->UpdateProgress( e.GetInt() );
 #endif
+}
+
+void Frame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)
+{
+	CHECK_SHUTDOWN();
+	event.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress());
 }

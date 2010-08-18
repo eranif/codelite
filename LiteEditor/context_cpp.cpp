@@ -2265,20 +2265,14 @@ void ContextCpp::OnRetagFile(wxCommandEvent& e)
 
 void ContextCpp::RetagFile()
 {
+	if(ManagerST::Get()->GetRetagInProgress())
+		return;
+
 	LEditor &ctrl = GetCtrl();
 	ManagerST::Get()->RetagFile(ctrl.GetFileName().GetFullPath());
 
 	// incase this file is not cache this function does nothing
 	TagsManagerST::Get()->ClearCachedFile(ctrl.GetFileName().GetFullPath());
-
-//	// clear all the queries which holds reference to this file
-//	TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(ctrl.GetFileName().GetFullPath());
-//
-//	// clear also the swapped file
-//	wxString targetFile;
-//	if (FindSwappedFile(ctrl.GetFileName(), targetFile) && targetFile.IsEmpty() == false) {
-//		TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(targetFile);
-//	}
 }
 
 void ContextCpp::OnUserTypedXChars(const wxString &word)

@@ -4,6 +4,18 @@
 
 #define ACK_MAGIC 1975
 
+class CharDeleter {
+	char *m_ptr;
+public:
+	CharDeleter(char *p) : m_ptr(p) {}
+	~CharDeleter() {
+		if(m_ptr) {
+			delete [] m_ptr;
+			m_ptr = NULL;
+		}
+	}
+};
+
 clIndexerProtocol::clIndexerProtocol()
 {
 }
@@ -14,8 +26,6 @@ clIndexerProtocol::~clIndexerProtocol()
 
 bool clIndexerProtocol::ReadReply(clNamedPipe* conn, clIndexerReply& reply)
 {
-	std::auto_ptr<char> sp;
-
 	// first we read sizeof(size_t) to get the actual data size
 	size_t buff_len(0);
 	size_t actual_read(0);
@@ -39,7 +49,7 @@ bool clIndexerProtocol::ReadReply(clNamedPipe* conn, clIndexerReply& reply)
 	}
 
 	char *data = new char[buff_len];
-	sp.reset(data);
+	CharDeleter deleter(data);
 
 	int bytes_left(buff_len);
 	size_t bytes_read(0);
@@ -53,20 +63,11 @@ bool clIndexerProtocol::ReadReply(clNamedPipe* conn, clIndexerReply& reply)
 	}
 
 	reply.fromBinary(data);
-
-//#ifndef __WXMSW__
-//	// send confirmation to the to server that we got data
-//	// and it can close the connection
-//	size_t ack(ACK_MAGIC);
-//	conn->write(&ack, sizeof(ack), &actual_read, -1);
-//#endif
 	return true;
 }
 
 bool clIndexerProtocol::ReadRequest(clNamedPipe* conn, clIndexerRequest& req)
 {
-	std::auto_ptr<char> sp;
-
 	// first we read sizeof(size_t) to get the actual data size
 	size_t buff_len(0);
 	size_t actual_read(0);
@@ -81,8 +82,11 @@ bool clIndexerProtocol::ReadRequest(clNamedPipe* conn, clIndexerRequest& req)
 		return false;
 	}
 
+	if(buff_len == 0)
+		return false;
+
 	char *data = new char[buff_len];
-	sp.reset(data);
+	CharDeleter deleter(data);
 
 	int bytes_left(buff_len);
 	size_t bytes_read(0);
@@ -103,7 +107,7 @@ bool clIndexerProtocol::SendReply(clNamedPipe* conn, clIndexerReply& reply)
 {
 	size_t buff_size(0);
 	char *data = reply.toBinary(buff_size);
-	std::auto_ptr<char> sp(data);
+	CharDeleter deleter(data);
 
 	// send the reply size
 	size_t written(0);
@@ -130,23 +134,9 @@ bool clIndexerProtocol::SendReply(clNamedPipe* conn, clIndexerReply& reply)
 		bytes_left -= actual_written;
 		bytes_written += actual_written;
 	}
-//#ifndef __WXMSW__
-//	// to make sure that the message has been sent, we wait for the acknoldegment from the client
-//	size_t ack(0);
-//	size_t rr;
-//	conn->read(&ack, sizeof(ack), &rr, -1);
-//	if (ack == ACK_MAGIC) {
-//		// we are OK
-//		printf("INFO: Got ACK!\n");
-//		return true;
-//	} else {
-//		printf("ERROR: Did not got the ack!\n");
-//		return false;
-//	}
-//#else
+
 	// the above problem does not exist under Windows' NamedPipes
 	return true;
-//#endif
 }
 
 bool clIndexerProtocol::SendRequest(clNamedPipe* conn, clIndexerRequest& req)
@@ -155,7 +145,7 @@ bool clIndexerProtocol::SendRequest(clNamedPipe* conn, clIndexerRequest& req)
 	size_t written(0);
 
 	char *data = req.toBinary(size);
-	std::auto_ptr<char> sp(data);
+	CharDeleter deleter(data);
 
 	// write request
 	if (!conn->write((void*)&size, sizeof(size), &written, -1)) {

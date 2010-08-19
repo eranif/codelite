@@ -1407,7 +1407,17 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 		if (tags.at(i)->GetName() != word)
 			continue;
 
-		TagEntryPtr t = tags.at(i);
+		TagEntryPtr t;
+		TagEntryPtr curtag = tags.at(i);
+
+		// try to replace the current tag with a macro replacement.
+		// we dont temper with 'curtag' content since we dont want
+		// to modify cached items
+		t = curtag->ReplaceSimpleMacro();
+		if(!t) {
+			t = curtag;
+		}
+
 		wxString pat = t->GetPattern();
 
 		if ( t->IsMethod() ) {

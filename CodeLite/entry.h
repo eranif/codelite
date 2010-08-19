@@ -31,6 +31,9 @@
 #include <map>
 #include "smart_ptr.h"
 
+class TagEntry;
+typedef SmartPtr<TagEntry> TagEntryPtr;
+
 /**
  * TagEntry is a persistent object which is capable of storing and loading itself from
  * various inputs:
@@ -259,6 +262,8 @@ public:
 	//------------------------------------------
 	void Print();
 
+	TagEntryPtr ReplaceSimpleMacro();
+
 private:
 	/**
 	 * Update the path with full path (e.g. namespace::class)
@@ -268,5 +273,4 @@ private:
 	bool TypedefFromPattern(const wxString &tagPattern, const wxString &typedefName, wxString &name, wxString &templateInit);
 };
 
-typedef SmartPtr<TagEntry> TagEntryPtr;
 #endif // CODELITE_ENTRY_H

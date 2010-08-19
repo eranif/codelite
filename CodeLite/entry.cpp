@@ -723,3 +723,19 @@ wxArrayString TagEntry::GetInheritsAsArrayWithTemplates() const
 	}
 	return parentsArr;
 }
+
+TagEntryPtr TagEntry::ReplaceSimpleMacro()
+{
+	if(IsMacro()) {
+		PPToken tok = TagsManagerST::Get()->GetDatabase()->GetMacro( GetName() );
+		if(tok.flags & PPToken::IsValid && !(tok.flags & PPToken::IsFunctionLike)) {
+			std::vector<TagEntryPtr> tags;
+			TagsManagerST::Get()->FindByNameAndScope(tok.replacement, GetScopeName(), tags);
+			if(tags.size() == 1) {
+				// replace the current tag content with the new match
+				return tags.at(0);
+			}
+		}
+	}
+	return NULL;
+}

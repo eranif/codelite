@@ -76,6 +76,7 @@ protected:
 	bool           m_disableSemicolonShift;
 	int            m_caretLineAlpha;
 	bool           m_outputPaneDockable;
+	bool           m_caretUseCamelCase;
 
 public:
 	OptionsConfig() {}
@@ -86,6 +87,12 @@ public:
 	// Setters/Getters
 	//-------------------------------------
 
+	void SetCaretUseCamelCase(bool caretUseCamelCase) {
+		this->m_caretUseCamelCase = caretUseCamelCase;
+	}
+	bool GetCaretUseCamelCase() const {
+		return m_caretUseCamelCase;
+	}
 	void SetOutputPaneDockable(bool outputPaneDockable) {
 		this->m_outputPaneDockable = outputPaneDockable;
 	}

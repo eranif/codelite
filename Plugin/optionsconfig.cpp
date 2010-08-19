@@ -70,6 +70,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_disableSemicolonShift(false)
 		, m_caretLineAlpha(50)
 		, m_outputPaneDockable(false)
+		, m_caretUseCamelCase(false)
 {
 	//set the default font name to be wxFONTENCODING_UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
@@ -114,6 +115,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_disableSemicolonShift     = XmlUtils::ReadBool  (node, wxT("DisableSemicolonShift"),     m_disableSemicolonShift);
 		m_caretLineAlpha            = XmlUtils::ReadLong  (node, wxT("CaretLineAlpha"),            m_caretLineAlpha);
 		m_outputPaneDockable        = XmlUtils::ReadBool  (node, wxT("OutputPaneDockable"),        m_outputPaneDockable);
+		m_caretUseCamelCase         = XmlUtils::ReadBool  (node, wxT("m_caretUseCamelCase"),       m_caretUseCamelCase);
 
 		// These hacks will likely be changed in the future. If so, we'll be able to remove the #include "editor_config.h" too
 		long trim(0); long appendLf(0);
@@ -159,6 +161,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("OutputPaneDockable"),        BoolToString(m_outputPaneDockable));
 	n->AddProperty(wxT("ConsoleCommand"),            m_programConsoleCommand);
 	n->AddProperty(wxT("EOLMode"),                   m_eolMode);
+	n->AddProperty(wxT("m_caretUseCamelCase"),       BoolToString(m_caretUseCamelCase));
 
 	wxString tmp;
     tmp << m_indentWidth;

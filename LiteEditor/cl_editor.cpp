@@ -571,6 +571,27 @@ void LEditor::SetProperties()
 	IndicatorSetForeground(DEBUGGER_INDICATOR, wxT("GREY"));
 
 	CmdKeyClear(wxT('L'), wxSCI_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
+
+	// Set CamelCase caret movement
+	if(options->GetCaretUseCamelCase()) {
+		// selection
+		CmdKeyAssign(wxSCI_KEY_LEFT,  wxSCI_SCMOD_CTRL|wxSCI_SCMOD_SHIFT, wxSCI_CMD_WORDPARTLEFTEXTEND);
+		CmdKeyAssign(wxSCI_KEY_RIGHT, wxSCI_SCMOD_CTRL|wxSCI_SCMOD_SHIFT, wxSCI_CMD_WORDPARTRIGHTEXTEND);
+
+		// movement
+		CmdKeyAssign(wxSCI_KEY_LEFT,  wxSCI_SCMOD_CTRL ,                  wxSCI_CMD_WORDPARTLEFT);
+		CmdKeyAssign(wxSCI_KEY_RIGHT, wxSCI_SCMOD_CTRL,                   wxSCI_CMD_WORDPARTRIGHT);
+
+	} else {
+		// selection
+		CmdKeyAssign(wxSCI_KEY_LEFT,  wxSCI_SCMOD_CTRL|wxSCI_SCMOD_SHIFT, wxSCI_CMD_WORDLEFTEXTEND);
+		CmdKeyAssign(wxSCI_KEY_RIGHT, wxSCI_SCMOD_CTRL|wxSCI_SCMOD_SHIFT, wxSCI_CMD_WORDRIGHTEXTEND);
+
+		// movement
+		CmdKeyAssign(wxSCI_KEY_LEFT,  wxSCI_SCMOD_CTRL,                   wxSCI_CMD_WORDLEFT);
+		CmdKeyAssign(wxSCI_KEY_RIGHT, wxSCI_SCMOD_CTRL,                   wxSCI_CMD_WORDRIGHT);
+
+	}
 }
 
 void LEditor::OnSavePoint(wxScintillaEvent &event)
@@ -2447,7 +2468,7 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 	if (!value) {
 		DoMarkHyperlink(event, false);
 	}
-	
+
 	SetActive();
 	PostCmdEvent(wxEVT_EDITOR_CLICKED, NULL);
 	event.Skip();
@@ -3692,7 +3713,7 @@ bool LEditor::IsFocused() const
 {
 #ifdef __WXGTK__
 	// Under GTK, when popup menu is ON, we will receive a "FocusKill" event
-	// which means that we lost the focus. So the IsFocused() method is using 
+	// which means that we lost the focus. So the IsFocused() method is using
 	// either the m_isFocused flag or the m_popupIsOn flag	return m_isFocused || m_popupIsOn;
 #else
 	return m_isFocused;

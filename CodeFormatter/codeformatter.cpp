@@ -212,11 +212,12 @@ void CodeFormatter::DoFormatFile(IEditor *editor)
 		} else {
 			eol = wxT("\n");
 		}
-		output << eol;
+
+		if(!formatSelectionOnly)
+			output << eol;
 
 		if( formatSelectionOnly ) {
 			// format the text (add the indentation)
-			output.Trim(false).Trim();
 			output = editor->FormatTextKeepIndent(output, editor->GetSelectionStart(), Format_Text_Indent_Prev_Line);
 			editor->ReplaceSelection(output);
 

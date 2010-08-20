@@ -1181,26 +1181,6 @@ static void makeTag (const tokenInfo *const token,
 			e.hasTemplate = TRUE;
 		else
 			e.hasTemplate = FALSE;
-		
-		// Add the return value
-		if(type == TAG_PROTOTYPE || type == TAG_FUNCTION) {
-			int count     = 0;
-			unsigned int i= 0;
-			for(; i<st->tokenIndex; i++) {
-				size_t nextToeknLen = (strlen(st->token[i]->name->buffer) == 0) ? 3 : strlen(st->token[i]->name->buffer);
-				if(count + nextToeknLen >= (sizeof(e.return_value) - 2)) // -2 for NULL + space
-					break;
-				
-				if(st->token[i]->type == TOKEN_ARGS) {
-					count += sprintf(e.return_value + count, "();");
-				}
-				
-				if(strlen(st->token[i]->name->buffer) == 0)
-					continue;
-					
-				count += sprintf(e.return_value + count, "%s ", st->token[i]->name->buffer);
-			}
-		}
 		// ERAN IFRAH - END
 
 		makeTagEntry (&e);

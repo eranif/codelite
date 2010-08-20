@@ -60,6 +60,7 @@ class DbgGdb : public wxEvtHandler, public IDebugger {
 	DbgCmdCLIHandler*           m_cliHandler;
 	IProcess*                   m_gdbProcess;
 	wxArrayString               m_gdbOutputArr;
+	wxString                    m_gdbOutputIncompleteLine;
 
 public:
 	int                         m_internalBpId;

@@ -298,6 +298,9 @@ bool DbgGdb::Stop() {
 	EmptyQueue();
 	m_gdbOutputArr.Clear();
 	m_bpList.clear();
+
+	// Clear any bufferd output
+	m_gdbOutputIncompleteLine.Clear();
 	return true;
 }
 
@@ -1071,8 +1074,23 @@ void DbgGdb::OnDataRead( wxCommandEvent& e ) {
 	delete ped;
 
 	wxArrayString lines = wxStringTokenize( bufferRead, wxT( "\n" ), wxTOKEN_STRTOK );
+	if(lines.IsEmpty())
+		return;
+
+	// Prepend the partially saved line from previous iteration to the first line
+	// of this iteration
+	lines.Item(0).Prepend(m_gdbOutputIncompleteLine);
+	m_gdbOutputIncompleteLine.Clear();
+
+	// If the last line is in-complete, remove it from the array and keep it for next iteration
+	if(!bufferRead.EndsWith(wxT("\n"))) {
+		m_gdbOutputIncompleteLine = lines.Last();
+		lines.RemoveAt(lines.GetCount()-1);
+	}
+
 	for( size_t i=0; i<lines.GetCount(); i++ ) {
 		wxString line = lines.Item( i );
+
 		line.Replace( wxT( "(gdb)" ), wxT( "" ) );
 		line.Trim().Trim( false );
 		if ( line.IsEmpty() == false ) {

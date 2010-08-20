@@ -317,9 +317,10 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 				wxString id(bldConf->GetIntermediateDirectory());
 
 				// Substitute all macros from $(IntermediateDirectory)
-				id.Replace(wxT("$(ProjectPath)"),   proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-				id.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-				id.Replace(wxT("$(ProjectName)"),   project_name);
+				id.Replace(wxT("$(ProjectPath)"),       proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+				id.Replace(wxT("$(WorkspacePath)"),     workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+				id.Replace(wxT("$(ProjectName)"),       project_name);
+				id.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
 
 				output.Replace(wxT("$(IntermediateDirectory)"), id);
 				output.Replace(wxT("$(OutDir)"),                id);

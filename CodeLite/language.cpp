@@ -1159,7 +1159,7 @@ bool Language::FunctionFromPattern(TagEntryPtr tag, clFunction &foo)
 			bool dummyReturnValue(true);
 
 			// failed to parse function.
-			if (tag->GetReturnValue().IsEmpty() == false) {
+			if (tag->GetReturnValue().IsEmpty() == false && !(tag->IsConstructor() || tag->IsDestructor())) {
 				pat3 = pat_tag;
 				pat3.Prepend(tag->GetReturnValue() + wxT(" "));
 				dummyReturnValue = false;

@@ -49,7 +49,7 @@ TEST_FUNC(testInnerClassInheritance)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/inner_class_inheritance.h")), 3, wxT("td->"), LoadFile(wxT("../tests/inner_class_inheritance.h")), tags);
-	CHECK_SIZE(tags.size(), 87);
+	CHECK_SIZE(tags.size(), 88);
 	return true;
 }
 
@@ -96,7 +96,7 @@ TEST_FUNC(testTtp)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/smart_ptr_of_template.h")), 3, wxT("ttp->GetRoot()->GetData()."), LoadFile(wxT("../tests/smart_ptr_of_template.h")), tags);
-	CHECK_SIZE(tags.size(), 76);
+	CHECK_SIZE(tags.size(), 77);
 	
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/smart_ptr_of_template.h")), 3, wxT("ttp->GetRoot()->GetKey()."), LoadFile(wxT("../tests/smart_ptr_of_template.h")), tags);
 	CHECK_SIZE(tags.size(), 314);
@@ -117,7 +117,7 @@ TEST_FUNC(testThis)
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/this_ptr.h")), 4, wxT("this->"), LoadFile(wxT("../tests/this_ptr.h")), tags);
 	
 #ifdef __WXMSW__
-	CHECK_SIZE(tags.size(), 1141);
+	CHECK_SIZE(tags.size(), 1142);
 #else
 	CHECK_SIZE(tags.size(), 952);
 #endif
@@ -128,7 +128,7 @@ TEST_FUNC(testStdVectorOfTagEntryPtr)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/std_vec_tag_entry_ptr.h")), 3, wxT("tags.at(0)->"), LoadFile(wxT("../tests/std_vec_tag_entry_ptr.h")), tags);
-	CHECK_SIZE(tags.size(), 76);
+	CHECK_SIZE(tags.size(), 77);
 	
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/std_vec_tag_entry_ptr.h")), 3, wxT("tags.at(0)."), LoadFile(wxT("../tests/std_vec_tag_entry_ptr.h")), tags);
 	CHECK_SIZE(tags.size(), 14);
@@ -151,7 +151,7 @@ TEST_FUNC(testTemplateTypedef)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_template_typedef.h")), 3, wxT("ManagerST::Get()->"), LoadFile(wxT("../tests/test_template_typedef.h")), tags);
-	CHECK_SIZE(tags.size(), 202);
+	CHECK_SIZE(tags.size(), 205);
 	return true;
 }
 
@@ -209,7 +209,7 @@ TEST_FUNC(testClFrame)
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_cl_frame.h")), 4, wxT("Frame::Get()->"), LoadFile(wxT("../tests/test_cl_frame.h")), tags);
 #ifdef __WXMSW__
-	CHECK_SIZE(tags.size(), 1141);
+	CHECK_SIZE(tags.size(), 1142);
 #else
 	CHECK_SIZE(tags.size(), 952);
 #endif

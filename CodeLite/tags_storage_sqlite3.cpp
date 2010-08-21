@@ -1439,6 +1439,7 @@ void TagsStorageSQLite::StoreMacros(const std::map<wxString, PPToken>& table)
 			// macros with replacement.
 			// we take only macros that their replacement is not a number or a string
 			if(replac.find_first_of(wxT("0123456789")) != 0) {
+
 				stmnt.Bind(1, wxT("")); // File
 				stmnt.Bind(2, iter->second.line);
 				stmnt.Bind(3, iter->second.name);

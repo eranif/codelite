@@ -478,6 +478,10 @@ wxString PPTable::Export()
 		iter->second.squeeze();
 		wxString replacement = iter->second.replacement;
 		replacement.Trim().Trim(false);
+		
+		// remove extra whitespaces
+		while(replacement.Replace(wxT("  "), wxT(" "))){}
+		
 		if(replacement.IsEmpty()) {
 			table << iter->second.fullname() << wxT("\n");
 

@@ -172,9 +172,10 @@ typedef struct sMemberInfo {
 typedef struct sTokenInfo {
 	tokenType     type;
 	keywordId     keyword;
-	vString*      name;          /* the name of the token */
-	unsigned long lineNumber;    /* line number of tag */
-	fpos_t        filePosition;  /* file position of line containing name */
+	vString*      name;             /* the name of the token */
+	vString*      templateInitList; /* template initialization */
+	unsigned long lineNumber;       /* line number of tag */
+	fpos_t        filePosition;     /* file position of line containing name */
 } tokenInfo;
 
 typedef enum eImplementation {
@@ -266,7 +267,7 @@ static vString *ParentTempalateInitList;
 
 vString *QuotedString = NULL;
 static boolean CollectingSignature;
-static boolean CollectingParentTempalateInitialization = TRUE;
+static boolean CollectingTemplateArgs = TRUE;
 
 /* Number used to uniquely identify anonymous structs and unions. */
 static int AnonymousID = 0;
@@ -495,6 +496,7 @@ static void initToken (tokenInfo* const token)
 	token->lineNumber	= getSourceLineNumber ();
 	token->filePosition	= getInputFilePosition ();
 	vStringClear (token->name);
+	vStringClear (token->templateInitList);
 }
 
 static void advanceToken (statementInfo* const st)
@@ -536,6 +538,7 @@ static tokenInfo *newToken (void)
 {
 	tokenInfo *const token = xMalloc (1, tokenInfo);
 	token->name = vStringNew ();
+	token->templateInitList = vStringNew();
 	initToken (token);
 	return token;
 }
@@ -545,6 +548,7 @@ static void deleteToken (tokenInfo *const token)
 	if (token != NULL)
 	{
 		vStringDelete (token->name);
+		vStringDelete (token->templateInitList);
 		eFree (token);
 	}
 }
@@ -1143,6 +1147,19 @@ static void makeExtraTagEntry (const tagType type, tagEntryInfo *const e,
 	}
 }
 
+static void appendStringToReturnValue(const char* s, size_t len, tagEntryInfo* e, size_t *writtern)
+{
+	if((len + *writtern + 2) > sizeof(e->return_value)) {
+		// we dont have enough buffer to use
+		return;
+	}
+	
+	if(len == 0 || s == NULL)
+		return;
+		
+	*writtern += sprintf(e->return_value + *writtern, "%s ", s);
+}
+
 static void makeTag (const tokenInfo *const token,
 					 const statementInfo *const st,
 					 boolean isFileScope, const tagType type)
@@ -1181,6 +1198,27 @@ static void makeTag (const tokenInfo *const token,
 			e.hasTemplate = TRUE;
 		else
 			e.hasTemplate = FALSE;
+		
+		// If the matched tag is of type function/prototype
+		// add the return value
+		if(e.kind == 'p' || e.kind == 'f') {
+			size_t count = 0;
+			size_t i     = 0;
+			size_t bytes = 0;
+			
+			if(st->tokenIndex > 2)
+				count = st->tokenIndex - 2;
+			
+			for(; i<count; i++) {
+				if(st->token[i]->type == TOKEN_DOUBLE_COLON)
+					appendStringToReturnValue("::", 2, &e, &bytes);
+				else
+					appendStringToReturnValue(st->token[i]->name->buffer,             st->token[i]->name->length,             &e, &bytes);
+					
+				appendStringToReturnValue(st->token[i]->templateInitList->buffer, st->token[i]->templateInitList->length, &e, &bytes);
+			}
+		}
+		
 		// ERAN IFRAH - END
 
 		makeTagEntry (&e);
@@ -1413,7 +1451,7 @@ static void skipToMatch (const char *const pair)
 		
 		// ERAN IFRAH [PATCH - START]
 		// Collect template initialization
-		if(CollectingParentTempalateInitialization) {
+		if(CollectingTemplateArgs) {
 			vStringPut (ParentTempalateInitList, c);
 		}
 		// ERAN IFRAH [PATCH - START]
@@ -1735,7 +1773,7 @@ static void readParents (statementInfo *const st, const int qualifier)
 		else if (c == '<') {
 			
 			// ERAN IFRAH - START
-			CollectingParentTempalateInitialization = TRUE;
+			CollectingTemplateArgs = TRUE;
 			
 			if(ParentTempalateInitList->size) {
 				memset(ParentTempalateInitList->buffer, 0, ParentTempalateInitList->size);
@@ -1757,7 +1795,7 @@ static void readParents (statementInfo *const st, const int qualifier)
 			
 			vStringClear(ParentTempalateInitList);
 			
-			CollectingParentTempalateInitialization = FALSE;
+			CollectingTemplateArgs = FALSE;
 			
 			// ERAN IFRAH - END
 		}
@@ -2662,8 +2700,35 @@ static void nextToken (statementInfo *const st)
 					Signature->length = 0;
 					vStringPut(Signature, '<');
 					processAngleBracket ();
+					vStringTerminate(Signature);
 					
 					vStringCat(prev->name, Signature);
+					/* clear the Signature global buffer */
+					if(Signature->size) {
+						memset(Signature->buffer, 0, Signature->size);
+					}
+					Signature->length = 0;
+					CollectingSignature = FALSE;
+				} else if(prev->type == TOKEN_NAME && prev->keyword == KEYWORD_NONE) {
+					
+					/* we found a template instantiation */
+					CollectingSignature = TRUE;
+					
+					/* Keep the template instantiation list */
+					/* clear the Signature global buffer */
+					if(Signature->size) {
+						memset(Signature->buffer, 0, Signature->size);
+					}
+					Signature->length = 0;
+					vStringPut(Signature, '<');
+					processAngleBracket ();
+					
+					vStringTerminate(Signature);
+					
+					/* store the template initiailzation */
+					vStringClear(prev->templateInitList);
+					vStringCat(prev->templateInitList, Signature);
+					
 					/* clear the Signature global buffer */
 					if(Signature->size) {
 						memset(Signature->buffer, 0, Signature->size);

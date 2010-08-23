@@ -68,6 +68,7 @@ typedef struct sTagEntryInfo {
 	const char *name;                 /* name of the tag */
 	const char *kindName;             /* kind of tag */
 	char        kind;                 /* single character representation of kind */
+	char        return_value[1024];   /* template initialization list */
 	struct {
 		const char* access;
 		const char* fileScope;

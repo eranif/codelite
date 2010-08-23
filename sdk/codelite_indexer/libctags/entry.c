@@ -767,68 +767,80 @@ static int addExtensionFields (const tagEntryInfo *const tag)
 				tag->extensionFields.signature);
 
 	// ERAN IFRAH - Add support for return value
-	if(tag->kind == 'p' || tag->kind == 'f') {
-		/* tag is function (decl or impl) */
-#if defined(__WXMSW__)||defined(__APPLE__)||defined(__FreeBSD__)
-		int count = ((int)tag->tagNameFilePos - (int)tag->statementStartPos);
-#else
-		int count = (tag->tagNameFilePos.__pos - tag->statementStartPos.__pos);
-#endif
-		if(count == 0) {
-			/* entire declaration is set on a single line */
-			vString *returnValue = vStringNew();
-
-			if(readSourceLine(returnValue, tag->statementStartPos, NULL)) {
-				int  length = -1;
-				char *replaced = NULL;
-				/* remove the method name part of the string */
-				char *where = strstr(returnValue->buffer, tag->name);
-				if(where) {
-					length = (int)(where - returnValue->buffer);
-				}
-
-				if(length > 0 && length < returnValue->size) {
-					returnValue->length = length;
-					returnValue->buffer[length] = 0;
-				}
-				vStringStripLeading (returnValue);
-				vStringStripTrailing(returnValue);
-				
-				replaced = ctagsReplacements(returnValue->buffer);
-				if(replaced) {
-					length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, replaced);
-					free(replaced);
-					
-				} else {
-					length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, returnValue->buffer);
-					
-				}
-			}
-
-			vStringDelete(returnValue);
+	if((tag->kind == 'p' || tag->kind == 'f') && tag->return_value[0] != '\0') {
+		
+		char* replaced = ctagsReplacements((char*)tag->return_value);
+		if(replaced) {
+			length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, replaced);
+			free(replaced);
+			
 		} else {
-			// read return value pattern (up to 1024 chars)
-			char *returnValue = (char*)malloc(1024);
-			memset(returnValue, 0, 1024);
-
-			if(returnValue && readChars(returnValue, 1024, tag->statementStartPos, tag->tagNameFilePos)) {
-				int i=0;
-				for(; i<strlen(returnValue); i++){
-					/* replace all whitespaces into spaces */
-					if(returnValue[i] == '\n' || returnValue[i] == '\r' || returnValue[i] == '\t' || returnValue[i] == '\v'){
-						returnValue[i] = ' ';
-					}
-				}
-
-				/* remove the virtual part of the string (if any) */
-				length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, returnValue);
-			}
-
-			if(returnValue)
-				free(returnValue);
+			length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, tag->return_value);
+			
 		}
-		// ERAN IFRAH - Add support for return value - END
 	}
+	
+//		/* tag is function (decl or impl) */
+//#if defined(__WXMSW__)||defined(__APPLE__)||defined(__FreeBSD__)
+//		int count = ((int)tag->tagNameFilePos - (int)tag->statementStartPos);
+//#else
+//		int count = (tag->tagNameFilePos.__pos - tag->statementStartPos.__pos);
+//#endif
+//		if(count == 0) {
+//			/* entire declaration is set on a single line */
+//			vString *returnValue = vStringNew();
+//
+//			if(readSourceLine(returnValue, tag->statementStartPos, NULL)) {
+//				int  length = -1;
+//				char *replaced = NULL;
+//				/* remove the method name part of the string */
+//				char *where = strstr(returnValue->buffer, tag->name);
+//				if(where) {
+//					length = (int)(where - returnValue->buffer);
+//				}
+//
+//				if(length > 0 && length < returnValue->size) {
+//					returnValue->length = length;
+//					returnValue->buffer[length] = 0;
+//				}
+//				vStringStripLeading (returnValue);
+//				vStringStripTrailing(returnValue);
+//				
+//				replaced = ctagsReplacements(returnValue->buffer);
+//				if(replaced) {
+//					length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, replaced);
+//					free(replaced);
+//					
+//				} else {
+//					length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, returnValue->buffer);
+//					
+//				}
+//			}
+//
+//			vStringDelete(returnValue);
+//		} else {
+//			// read return value pattern (up to 1024 chars)
+//			char *returnValue = (char*)malloc(1024);
+//			memset(returnValue, 0, 1024);
+//
+//			if(returnValue && readChars(returnValue, 1024, tag->statementStartPos, tag->tagNameFilePos)) {
+//				int i=0;
+//				for(; i<strlen(returnValue); i++){
+//					/* replace all whitespaces into spaces */
+//					if(returnValue[i] == '\n' || returnValue[i] == '\r' || returnValue[i] == '\t' || returnValue[i] == '\v'){
+//						returnValue[i] = ' ';
+//					}
+//				}
+//
+//				/* remove the virtual part of the string (if any) */
+//				length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, returnValue);
+//			}
+//
+//			if(returnValue)
+//				free(returnValue);
+//		}
+		// ERAN IFRAH - Add support for return value - END
+	//}
 	return length;
 #undef sep
 }

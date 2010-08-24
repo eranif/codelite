@@ -2752,15 +2752,15 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 		}
 
 		//Comment?
-		int style = ctrl->GetStyleAt(pos);
-		if (style == wxSCI_C_COMMENT				||
-		        style == wxSCI_C_COMMENTLINE			||
-		        style == wxSCI_C_COMMENTDOC				||
-		        style == wxSCI_C_COMMENTLINEDOC			||
-		        style == wxSCI_C_COMMENTDOCKEYWORD		||
+		int style = ctrl->GetStyleAt(position);
+		if (style == wxSCI_C_COMMENT                    ||
+		        style == wxSCI_C_COMMENTLINE            ||
+		        style == wxSCI_C_COMMENTDOC             ||
+		        style == wxSCI_C_COMMENTLINEDOC         ||
+		        style == wxSCI_C_COMMENTDOCKEYWORD      ||
 		        style == wxSCI_C_COMMENTDOCKEYWORDERROR ||
-		        style == wxSCI_C_STRING					||
-		        style == wxSCI_C_STRINGEOL				||
+		        style == wxSCI_C_STRING                 ||
+		        style == wxSCI_C_STRINGEOL              ||
 		        style == wxSCI_C_CHARACTER) {
 			continue;
 		}

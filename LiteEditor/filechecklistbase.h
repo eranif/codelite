@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -43,14 +43,15 @@ class FileCheckListBase : public wxDialog
 		wxButton* m_cancelButton;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnFileSelected( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnFileCheckChanged( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnClearAll( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnCheckAll( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnFileSelected( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnFileCheckChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnClearAll( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnCheckAll( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
-		FileCheckListBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Select Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		
+		FileCheckListBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Select Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxSTAY_ON_TOP );
 		~FileCheckListBase();
 	
 };

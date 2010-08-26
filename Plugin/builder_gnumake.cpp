@@ -1148,6 +1148,9 @@ wxString BuilderGnuMake::ParsePreprocessor(const wxString &prep)
 		p.Trim().Trim(false);
 		preprocessor << wxT("$(PreprocessorSwitch)") << p << wxT(" ");
 	}
+
+	// if the macro contains # escape it
+	preprocessor.Replace(wxT("#"), wxT("\\#"));
 	return preprocessor;
 }
 

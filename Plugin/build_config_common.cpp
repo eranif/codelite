@@ -60,13 +60,13 @@ BuildConfigCommon::BuildConfigCommon(wxXmlNode* node, wxString confType)
 
 BuildConfigCommon::~BuildConfigCommon()
 {
-	
+
 }
 
 wxXmlNode *BuildConfigCommon::ToXml() const
 {
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, m_confType);
-	
+
 	//create the compile node
 	wxXmlNode *compile = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compiler"));
 	compile->AddProperty(wxT("Options"), m_compileOptions);
@@ -101,7 +101,7 @@ wxXmlNode *BuildConfigCommon::ToXml() const
 		option->AddProperty(wxT("Value"), m_libs.Item(i));
 		link->AddChild(option);
 	}
-	
+
 	//add the resource compiler node
 	wxXmlNode *resCmp = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("ResourceCompiler"));
 	resCmp->AddProperty(wxT("Options"), m_resCompileOptions);
@@ -153,6 +153,19 @@ wxString BuildConfigCommon::GetIncludePath() const
 
 wxString BuildConfigCommon::GetPreprocessor() const
 {
-	return ArrayToSmiColonString(m_preprocessor);
+	wxString asString;
+	for (size_t i=0; i<m_preprocessor.GetCount(); i++) {
+		wxString tmp = m_preprocessor.Item(i);
+		tmp.Trim().Trim(false);
+		if(tmp.IsEmpty())
+			continue;
+
+		asString << tmp << wxT(";");
+
+	}
+	if(asString.IsEmpty() == false)
+		asString.RemoveLast();
+
+	return asString;
 }
 

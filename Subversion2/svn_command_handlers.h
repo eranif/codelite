@@ -134,4 +134,5 @@ public:
 public:
 	virtual void Process(const wxString &output);
 };
+
 #endif // SVNCOMMITHANDLER_H

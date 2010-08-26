@@ -48,6 +48,8 @@ protected:
 	void OnIgnoreFilePattern(wxCommandEvent &event);
 	void OnSelectAsView     (wxCommandEvent &event);
 	void OnSwitchURL        (wxCommandEvent &event);
+	void OnLockFile         (wxCommandEvent &event);
+	void OnUnLockFile       (wxCommandEvent &event);
 
 	///////////////////////////////////////////////////////////
 	// IDE events
@@ -59,6 +61,8 @@ protected:
 public:
 	void    DoGetSvnInfoSync         (SvnInfo& svnInfo, const wxString &workingDirectory);
 	void    DoSwitchURL              (const wxString &workingDirectory, const wxString &sourceUrl, wxCommandEvent &event);
+	void    DoLockFile               (const wxString &workingDirectory, const wxArrayString &fullpaths, wxCommandEvent &event, bool lock);
+
 public:
 	Subversion2(IManager *manager);
 	~Subversion2();

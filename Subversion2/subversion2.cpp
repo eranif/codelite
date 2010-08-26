@@ -77,6 +77,8 @@ Subversion2::Subversion2(IManager *manager)
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_ignore_file"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFile),        NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_ignore_file_pattern"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFilePattern), NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_set_as_view"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSelectAsView),      NULL, this);
+	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_unlock"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnUnLockFile),        NULL, this);
+	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_lock"),                wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnLockFile),          NULL, this);
 
 	GetManager()->GetTheApp()->Connect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, wxCommandEventHandler(Subversion2::OnGetCompileLine), NULL, this);
 }
@@ -127,6 +129,14 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
 	menu->Append(item);
 
 	item = new wxMenuItem(menu, XRCID("svn_explorer_commit"), wxT("Commit"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
+	menu->AppendSeparator();
+
+	item = new wxMenuItem(menu, XRCID("svn_explorer_lock"), wxT("Lock file"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
+	item = new wxMenuItem(menu, XRCID("svn_explorer_unlock"), wxT("UnLock file"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
@@ -800,4 +810,44 @@ void Subversion2::ChangeLog(const wxString& path, const wxString &fullpath, wxCo
 							  new SvnLogHandler(this, info.m_sourceUrl, dlg.m_compact->IsChecked(), event.GetId(), this),
 							  false);
 	}
+}
+
+void Subversion2::OnLockFile(wxCommandEvent& event)
+{
+	wxArrayString paths;
+	paths.Add( DoGetFileExplorerItemFullPath() );
+	DoLockFile(DoGetFileExplorerItemPath(), paths, event, true);
+}
+
+void Subversion2::OnUnLockFile(wxCommandEvent& event)
+{
+	wxArrayString paths;
+	paths.Add( DoGetFileExplorerItemFullPath() );
+	DoLockFile(DoGetFileExplorerItemPath(), paths, event, false);
+}
+
+void Subversion2::DoLockFile(const wxString& workingDirectory, const wxArrayString &fullpaths, wxCommandEvent& event, bool lock)
+{
+	wxString command;
+	wxString loginString;
+
+	if(fullpaths.empty())
+		return;
+
+	if(LoginIfNeeded(event, workingDirectory, loginString) == false) {
+		return;
+	}
+
+	bool nonInteractive = GetNonInteractiveMode(event);
+	command << GetSvnExeName(nonInteractive) << loginString;
+	if(lock) {
+		command << wxT(" lock ") ;
+	} else {
+		command << wxT(" unlock ");
+	}
+
+	for(size_t i=0; i<fullpaths.size(); i++)
+		command << wxT("\"") << fullpaths.Item(i) << wxT("\" ");
+
+	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this, event.GetId(), this));
 }

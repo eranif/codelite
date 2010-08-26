@@ -101,6 +101,9 @@ protected:
 	void OnSwitch             (wxCommandEvent &event);
 	void OnProperties         (wxCommandEvent &event);
 	void OnLog                (wxCommandEvent &event);
+	void OnLock               (wxCommandEvent &event);
+	void OnUnLock             (wxCommandEvent &event);
+
 	DECLARE_EVENT_TABLE()
 
 	void OnStopUI         (wxUpdateUIEvent &event);
@@ -112,7 +115,7 @@ public:
 	virtual ~SubversionView();
 
 	void     DisconnectEvents();
-	void     UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString &conflictedFiles, const wxArrayString &unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles);
+	void     UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString &conflictedFiles, const wxArrayString &unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles, const wxArrayString& lockedFiles);
 	void     BuildTree();
 	void     BuildTree(const wxString &root);
 	wxString GetRootDir() const {return m_textCtrlRootDir->GetValue();}

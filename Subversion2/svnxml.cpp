@@ -37,7 +37,13 @@ SvnXML::~SvnXML()
 {
 }
 
-void SvnXML::GetFiles(const wxString &input, wxArrayString& modifiedFiles, wxArrayString &conflictedFiles, wxArrayString &unversionedFiles, wxArrayString& newFiles, wxArrayString& deletedFiles)
+void SvnXML::GetFiles(const wxString &input,
+					  wxArrayString  &modifiedFiles,
+					  wxArrayString  &conflictedFiles,
+					  wxArrayString  &unversionedFiles,
+					  wxArrayString  &newFiles,
+					  wxArrayString  &deletedFiles,
+					  wxArrayString  &lockedFiles)
 {
 	wxStringInputStream stream(input);
 	wxXmlDocument doc(stream);
@@ -74,9 +80,16 @@ void SvnXML::GetFiles(const wxString &input, wxArrayString& modifiedFiles, wxArr
 								if (item == wxT("unversioned")) {
                                     unversionedFiles.Add(path);
                                 }
+
+								wxXmlNode *lock = XmlUtils::FindFirstByTagName(status, wxT("lock"));
+								if(lock) {
+									// this item is locked
+									lockedFiles.Add(path);
+								}
                             }
                         }
 					}
+
 					child = child->GetNext();
 				}
 			}

@@ -56,6 +56,8 @@ BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_MENU(XRCID("svn_switch"),             SubversionView::OnSwitch)
 	EVT_MENU(XRCID("svn_properties"),         SubversionView::OnProperties)
 	EVT_MENU(XRCID("svn_log"),                SubversionView::OnLog)
+	EVT_MENU(XRCID("svn_lock"),               SubversionView::OnLock)
+	EVT_MENU(XRCID("svn_unlock"),             SubversionView::OnUnLock)
 END_EVENT_TABLE()
 
 SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
@@ -146,6 +148,9 @@ void SubversionView::CreatGUIControls()
 	imageList->Add( bmpLoader->LoadBitmap(wxT("workspace/16/workspace") ) );   // 12
 	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/wxfb" ) ) );            // 13
 
+	// lock files icon ID
+	imageList->Add( bmpLoader->LoadBitmap(wxT("subversion/16/locked" ) ) );    // 14
+
 	m_treeCtrl->AssignImageList( imageList );
 
 	// Add toolbar
@@ -225,7 +230,7 @@ void SubversionView::ClearAll()
 	m_treeCtrl->DeleteAllItems();
 }
 
-void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString& conflictedFiles, const wxArrayString& unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles)
+void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString& conflictedFiles, const wxArrayString& unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles, const wxArrayString& lockedFiles)
 {
 
 	wxWindowUpdateLocker locker( m_treeCtrl );
@@ -238,11 +243,12 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
 	if(root.IsOk() == false)
 		return;
 
-	DoAddNode(svnMODIFIED_FILES,    1, SvnTreeData::SvnNodeTypeModifiedRoot,    modifiedFiles);
-	DoAddNode(svnADDED_FILES,       2, SvnTreeData::SvnNodeTypeAddedRoot,       newFiles);
-	DoAddNode(svnDELETED_FILES,     3, SvnTreeData::SvnNodeTypeDeletedRoot,     deletedFiles);
-	DoAddNode(svnCONFLICTED_FILES,  4, SvnTreeData::SvnNodeTypeConflictRoot,    conflictedFiles);
-	DoAddNode(svnUNVERSIONED_FILES, 5, SvnTreeData::SvnNodeTypeUnversionedRoot, unversionedFiles);
+	DoAddNode(svnMODIFIED_FILES,    1,  SvnTreeData::SvnNodeTypeModifiedRoot,    modifiedFiles);
+	DoAddNode(svnADDED_FILES,       2,  SvnTreeData::SvnNodeTypeAddedRoot,       newFiles);
+	DoAddNode(svnDELETED_FILES,     3,  SvnTreeData::SvnNodeTypeDeletedRoot,     deletedFiles);
+	DoAddNode(svnCONFLICTED_FILES,  4,  SvnTreeData::SvnNodeTypeConflictRoot,    conflictedFiles);
+	DoAddNode(svnLOCKED_FILES,      14, SvnTreeData::SvnNodeTypeLockedRoot,      lockedFiles);
+	DoAddNode(svnUNVERSIONED_FILES, 5,  SvnTreeData::SvnNodeTypeUnversionedRoot, unversionedFiles);
 
 	if (m_treeCtrl->ItemHasChildren(root)) {
 		m_treeCtrl->Expand(root);
@@ -405,6 +411,11 @@ void SubversionView::CreateFileMenu(wxMenu* menu)
 	menu->Append(XRCID("svn_update"),  wxT("Update"));
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_revert"),  wxT("Revert"));
+
+	menu->AppendSeparator();
+	menu->Append(XRCID("svn_lock"),    wxT("Lock"));
+	menu->Append(XRCID("svn_unlock"),  wxT("Unlock"));
+
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_add"),     wxT("Add"));
 	menu->Append(XRCID("svn_delete"),  wxT("Delete"));
@@ -1022,3 +1033,24 @@ void SubversionView::OnLog(wxCommandEvent& event)
 {
 	m_plugin->ChangeLog(m_textCtrlRootDir->GetValue(), m_textCtrlRootDir->GetValue(), event);
 }
+
+void SubversionView::OnLock(wxCommandEvent& event)
+{
+	wxArrayString files;
+	for(size_t i=0; i<m_selectionInfo.m_paths.size(); i++) {
+		wxFileName fn(m_textCtrlRootDir->GetValue() + wxFileName::GetPathSeparator() + m_selectionInfo.m_paths.Item(i));
+		files.Add( fn.GetFullPath() );
+	}
+	m_plugin->DoLockFile(m_textCtrlRootDir->GetValue(), files, event, true);
+}
+
+void SubversionView::OnUnLock(wxCommandEvent& event)
+{
+	wxArrayString files;
+	for(size_t i=0; i<m_selectionInfo.m_paths.size(); i++) {
+		wxFileName fn(m_textCtrlRootDir->GetValue() + wxFileName::GetPathSeparator() + m_selectionInfo.m_paths.Item(i));
+		files.Add( fn.GetFullPath() );
+	}
+	m_plugin->DoLockFile(m_textCtrlRootDir->GetValue(), files, event, false);
+}
+

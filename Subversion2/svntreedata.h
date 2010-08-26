@@ -14,7 +14,8 @@ public:
 		SvnNodeTypeDeletedRoot,
 		SvnNodeTypeAddedRoot,
 		SvnNodeTypeConflictRoot,
-		SvnNodeTypeFile
+		SvnNodeTypeFile,
+		SvnNodeTypeLockedRoot
 	};
 
 	SvnNodeType m_type;

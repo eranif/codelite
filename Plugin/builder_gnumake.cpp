@@ -1150,6 +1150,8 @@ wxString BuilderGnuMake::ParsePreprocessor(const wxString &prep)
 	}
 
 	// if the macro contains # escape it
+	// But first remove any manual escaping done by the user
+	preprocessor.Replace(wxT("\\#"), wxT("#"));
 	preprocessor.Replace(wxT("#"), wxT("\\#"));
 	return preprocessor;
 }

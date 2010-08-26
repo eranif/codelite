@@ -4,15 +4,18 @@
 
 %{
 /*************** Includes and Defines *****************************/
-#include "string"
-#include "vector"
-#include "stdio.h"
-#include "map"
+#include <string>
+#include <vector>
+#include <stdio.h>
+#include <map>
+#include <string.h>
 
 #define YYDEBUG_LEXER_TEXT (cl_scope_lval)
 #define YYSTYPE std::string
 #define YYDEBUG 0        /* get the pretty debugging code to compile*/
+static std::string readInitializer(const char* delim);
 
+static std::string templateInitList;
 int cl_scope_parse();
 void cl_scope_error(char *string);
 void syncParser();
@@ -141,6 +144,7 @@ external_decl			:	class_decl
 /*templates*/
 template_arg		:	/* empty */	{ $$ = "";}
 						| template_specifiter LE_IDENTIFIER {$$ = $1 + " " + $2;}
+						| template_specifiter LE_IDENTIFIER '=' {$$ = $1 + " " + $2 + "=" + readInitializer(",>");}
 						;
 
 template_arg_list	:	template_arg	{ $$ = $1; }
@@ -152,7 +156,9 @@ template_specifiter	:	LE_CLASS	{ $$ = $1; }
 							;
 
 opt_template_qualifier	: /*empty*/
-							| LE_TEMPLATE '<' template_arg_list '>'	{ $$ = $1 + $2 + $3 + $4;}
+							| LE_TEMPLATE '<' template_arg_list '>' { 
+								$$ = $1 + $2 + $3 + $4;
+							}
 							;
 /*inheritance*/
 derivation_list			:	/*empty*/ {$$ = "";}
@@ -163,7 +169,7 @@ derivation_list			:	/*empty*/ {$$ = "";}
 parent_class				: 	access_specifier class_name opt_template_specifier {$$ = $1 + " " + $2 + $3;}
 							;
 class_name                  : LE_IDENTIFIER                    {$$ = $1;}
-							| class_name LE_CLCL LE_IDENTIFIER {$$ = $1 + $2 + $2;}
+							| class_name LE_CLCL LE_IDENTIFIER {$$ = $1 + $2 + $3;}
                             ;
 
 opt_template_specifier	: /*empty*/	{$$ = "";}
@@ -200,7 +206,6 @@ template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_sta
 
 using_namespace:	LE_USING LE_NAMESPACE nested_scope_specifier LE_IDENTIFIER ';'
 					{
-						//printf("Found using namespace %s\n", $3.c_str());
 						gs_additionlNS.push_back($3+$4);
 					}
 				;
@@ -209,13 +214,13 @@ using_namespace:	LE_USING LE_NAMESPACE nested_scope_specifier LE_IDENTIFIER ';'
 namespace_decl	:	stmnt_starter LE_NAMESPACE LE_IDENTIFIER '{'
 						{
 							currentScope.push_back($3);
-							printScopeName();
+							
 						}
 					|	stmnt_starter LE_NAMESPACE '{'
 						{
 							//anonymouse namespace
 							increaseScope();
-							printScopeName();
+							
 						}
 					;
 opt_class_qualifier 	: /*empty*/{$$ = "";}
@@ -267,7 +272,7 @@ class_keyword: 	LE_CLASS		{$$ = $1;}
 					;
 
 func_name: LE_IDENTIFIER {$$ = $1;}
-		 | LE_OPERATOR any_operator {$$ = $1;}
+		 | LE_OPERATOR any_operator {$$ = $1 + $2;}
 		 ;
 
 any_operator:
@@ -297,8 +302,8 @@ any_operator:
         | LE_GE
         | LE_EQ
         | LE_NE
-        | '(' ')'
-        | '[' ']'
+        | '(' ')' {$$ = $1 + $2;}
+        | '[' ']' {$$ = $1 + $2;}
         | LE_NEW
         | LE_DELETE
         | ','
@@ -531,29 +536,71 @@ void consumeDecl()
 
 void consumeTemplateDecl()
 {
-	int depth = 1;
-	while(depth > 0)
-	{
-		int ch = cl_scope_lex();
-		//printf("ch=%d\n", ch);
-		fflush(stdout);
-		if(ch ==0){
+	templateInitList.clear();
+	int dep = 0;
+	while( true ){
+		int c = cl_scope_lex();
+		if(c == 0){ // EOF?
 			break;
 		}
 
-		if(ch == '>')
-		{
-			depth--;
-			continue;
+		if(c == '>' && dep == 0){
+			templateInitList += cl_scope_text;
+			break;
+			
+		} else {
+			templateInitList += cl_scope_text;
+			templateInitList += " ";
 		}
-		else if(ch == '<')
-		{
-			depth ++ ;
-			continue;
+		
+		switch(c) {
+		case (int)'<':
+			dep++;
+			break;
+		case (int)'>':
+			dep--;
+			break;
+		default:
+			break;
 		}
 	}
+	
+	if(templateInitList.empty() == false)
+		templateInitList.insert(0, "<");
 }
 
+std::string readInitializer(const char* delim)
+{
+	std::string intializer;
+	int dep = 0;
+	while( true ){
+		int c = cl_scope_lex();
+		if(c == 0){ // EOF?
+			break;
+		}
+		
+		if(strchr(delim, (char)c) && dep == 0){
+			cl_scope_less(0);
+			break;
+			
+		} else {
+			intializer += cl_scope_text;
+			intializer += " ";
+		}
+		
+		switch(c) {
+		case (int)'<':
+			dep++;
+			break;
+		case (int)'>':
+			dep--;
+			break;
+		default:
+			break;
+		}
+	}
+	return intializer;
+}
 //swallow all tokens up to the first '{'
 void consumeNotIncluding(int ch){
 	while( true ){

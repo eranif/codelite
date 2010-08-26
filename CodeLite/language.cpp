@@ -273,9 +273,9 @@ bool Language::NextToken(wxString &token, wxString &delim, bool &subscriptOperat
 		case IDENTIFIER: case wxT(','):  case lexDOUBLE:
 		case lexINT:     case lexSTRUCT: case lexLONG:
 		case lexENUM:    case lexCHAR:   case UNION:
-		case lexCONST:   case lexFLOAT:  case lexSHORT:
-		case UNSIGNED:   case SIGNED:    case lexVOID:
-		case lexCLASS:   case TYPEDEFname:
+		case lexFLOAT:   case lexSHORT:  case UNSIGNED:
+		case SIGNED:     case lexVOID:   case lexCLASS:
+		case TYPEDEFname:
 			token << wxT(" ") << _U(m_tokenScanner->YYText());
 			break;
 		default:

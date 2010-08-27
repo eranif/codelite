@@ -85,7 +85,7 @@ void BreakpointDlg::OnDelete(wxCommandEvent &e)
 		ManagerST::Get()->GetBreakpointsMgr()->DelBreakpoint(id);
 		m_selectedItem = wxNOT_FOUND;
 
-		Frame::Get()->SetStatusMessage(wxT("Breakpoint successfully deleted"), 0);
+		clMainFrame::Get()->SetStatusMessage(wxT("Breakpoint successfully deleted"), 0);
 	}
 
 	Initialize();	// ReInitialise, as either a bp was deleted, or the data was corrupt
@@ -98,7 +98,7 @@ void BreakpointDlg::OnDeleteAll(wxCommandEvent &e)
 	m_selectedItem = wxNOT_FOUND;
 	Initialize();
 
-	Frame::Get()->SetStatusMessage(wxT("All Breakpoints deleted"), 0);
+	clMainFrame::Get()->SetStatusMessage(wxT("All Breakpoints deleted"), 0);
 }
 
 void BreakpointDlg::OnApplyPending(wxCommandEvent &e)
@@ -107,7 +107,7 @@ void BreakpointDlg::OnApplyPending(wxCommandEvent &e)
 	ManagerST::Get()->GetBreakpointsMgr()->ApplyPendingBreakpoints();
 	Initialize();
 
-	Frame::Get()->SetStatusMessage(wxT("Pending Breakpoints reapplied"), 0);
+	clMainFrame::Get()->SetStatusMessage(wxT("Pending Breakpoints reapplied"), 0);
 }
 
 void BreakpointDlg::OnItemSelected(wxListEvent &e)
@@ -128,7 +128,7 @@ void BreakpointDlg::OnItemActivated(wxListEvent &e)
 	long line_number;
 	line.ToLong(&line_number);
 
-	Frame::Get()->GetMainBook()->OpenFile(file, wxEmptyString, line_number-1);
+	clMainFrame::Get()->GetMainBook()->OpenFile(file, wxEmptyString, line_number-1);
 }
 
 void BreakpointDlg::OnItemRightClick(wxListEvent& e)

@@ -39,7 +39,7 @@ bool FileDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &file
 	wxUnusedVar(x);
 	wxUnusedVar(y);
 	for(size_t i=0; i<filenames.GetCount(); i++){
-		Frame::Get()->GetMainBook()->OpenFile(filenames.Item(i));
+		clMainFrame::Get()->GetMainBook()->OpenFile(filenames.Item(i));
 	}
 	return true;
 }

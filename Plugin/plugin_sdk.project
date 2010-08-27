@@ -206,14 +206,6 @@
       <File Name="cl_aui_notebook_art.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
-  <VirtualDirectory Name="TokenScanner">
-    <File Name="cpptoken.cpp"/>
-    <File Name="cpptoken.h"/>
-    <File Name="cppwordscanner.cpp"/>
-    <File Name="cppwordscanner.h"/>
-    <File Name="stringaccessor.cpp"/>
-    <File Name="stringaccessor.h"/>
-  </VirtualDirectory>
   <VirtualDirectory Name="JobQueue">
     <File Name="jobqueue.cpp"/>
     <File Name="jobqueue.h"/>

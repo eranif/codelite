@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : openwindowspanel.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : openwindowspanel.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
@@ -65,7 +65,7 @@ int OpenWindowsPanel::EditorItem(LEditor *editor)
 void OpenWindowsPanel::DoOpenSelectedItem(int item)
 {
 	MyStringClientData *data = dynamic_cast<MyStringClientData *>(m_fileList->GetClientObject(item));
-    Frame::Get()->GetMainBook()->OpenFile(data->GetData(), wxEmptyString);
+    clMainFrame::Get()->GetMainBook()->OpenFile(data->GetData(), wxEmptyString);
 }
 
 void OpenWindowsPanel::DoCloseSelectedItem(int item)
@@ -121,14 +121,14 @@ void OpenWindowsPanel::OnChar(wxKeyEvent& event)
 void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
-    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if(!editor)
 		return;
-	
+
     int i = EditorItem(editor);
     if (i != wxNOT_FOUND && i == m_fileList->GetSelection())
         return;
-        
+
     m_fileList->Freeze();
     if (i == wxNOT_FOUND) {
         wxString txt = editor->GetFileName().GetFullName();
@@ -152,7 +152,7 @@ void OpenWindowsPanel::OnEditorClosing(wxCommandEvent& e)
     LEditor *editor = dynamic_cast<LEditor*>((IEditor*) e.GetClientData());
 	if(!editor)
 		return;
-		
+
     int i = EditorItem(editor);
     if (i != wxNOT_FOUND) {
         m_fileList->Freeze();

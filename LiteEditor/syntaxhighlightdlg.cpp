@@ -49,7 +49,7 @@ void SyntaxHighlightDlg::OnButtonOK( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 	SaveChanges();
-	Frame::Get()->GetMainBook()->ApplySettingsChanges();
+	clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
 	// and close the dialog
 	EndModal(wxID_OK);
 }
@@ -70,7 +70,7 @@ void SyntaxHighlightDlg::OnButtonCancel( wxCommandEvent& event )
 void SyntaxHighlightDlg::OnButtonApply( wxCommandEvent& event )
 {
 	SaveChanges();
-	Frame::Get()->GetMainBook()->ApplySettingsChanges();
+	clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
 
 	m_startingTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
 	wxUnusedVar(event);
@@ -203,9 +203,9 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& e)
 
 	// restore the default lexers
 	EditorConfigST::Get()->LoadLexers(true);
-	Frame::Get()->GetMainBook()->ApplySettingsChanges();
+	clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
 
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
-	Frame::Get()->GetEventHandler()->AddPendingEvent(event);
+	clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
 	EndModal(wxID_OK);
 }

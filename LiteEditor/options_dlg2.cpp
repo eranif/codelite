@@ -103,7 +103,7 @@ void OptionsDlg2::DoSave()
 	// save the modifications to the disk
 	EditorConfigST::Get()->Save();
 
-	Frame::Get()->GetMainBook()->ApplySettingsChanges();
+	clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
 
 	// Notify plugins about settings changed
 	PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
@@ -126,7 +126,7 @@ void OptionsDlg2::Initialize()
 	AddSubPage(new EditorSettingsComments(m_treeBook),             wxT("Comments"));
 	AddSubPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), wxT("Doxygen"));
 	AddSubPage(new EditorOptionsGeneralCodeNavPanel(m_treeBook),   wxT("Quick Code Navigation"));
-	
+
 	AddPage(new EditorSettingsFolding(m_treeBook),        wxT("Folding"));
 	AddPage(new EditorSettingsBookmarksPanel(m_treeBook), wxT("Bookmarks & Breakpoints"));
 	AddPage(new EditorSettingsDialogs(m_treeBook),        wxT("Dialogs"));

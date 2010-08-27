@@ -242,7 +242,7 @@ void Manager::CreateWorkspace ( const wxString &name, const wxString &path )
 {
 
 	// make sure that the workspace pane is visible
-	ShowWorkspacePane (Frame::Get()->GetWorkspaceTab()->GetCaption());
+	ShowWorkspacePane (clMainFrame::Get()->GetWorkspaceTab()->GetCaption());
 
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->CreateWorkspace ( name, path, errMsg );
@@ -271,7 +271,7 @@ void Manager::OpenWorkspace ( const wxString &path )
 	// OpenWorkspace returned true, but errMsg is not empty
 	// this could only mean that we removed a fauly project
 	if(errMsg.IsEmpty() == false) {
-		Frame::Get()->GetMainBook()->ShowMessage(errMsg, true, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/error")));
+		clMainFrame::Get()->GetMainBook()->ShowMessage(errMsg, true, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/error")));
 	}
 
 	DoSetupWorkspace ( path );
@@ -294,26 +294,26 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 	wxBusyCursor cursor;
 	AddToRecentlyOpenedWorkspaces ( path );
 	SendCmdEvent ( wxEVT_WORKSPACE_LOADED );
-	if ( Frame::Get()->GetFrameGeneralInfo().GetFlags() & CL_LOAD_LAST_SESSION ) {
+	if ( clMainFrame::Get()->GetFrameGeneralInfo().GetFlags() & CL_LOAD_LAST_SESSION ) {
 		SessionEntry session;
 		if ( SessionManager::Get().FindSession ( path, session ) ) {
 			SessionManager::Get().SetLastWorkspaceName ( path );
-			Frame::Get()->GetMainBook()->RestoreSession(session);
+			clMainFrame::Get()->GetMainBook()->RestoreSession(session);
 			GetBreakpointsMgr()->LoadSession(session);
-			Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+			clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 		}
 	}
 
 	// Update the parser search paths
 	UpdateParserPaths();
-	Frame::Get()->SetEnvStatusMessage();
+	clMainFrame::Get()->SetEnvStatusMessage();
 
 	// send an event to the main frame indicating that a re-tag is required
 	// we do this only if the "smart retagging" is on
 	TagsOptionsData tagsopt = TagsManagerST::Get()->GetCtagsOptions();
 	if ( tagsopt.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ) {
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
-		Frame::Get()->GetEventHandler()->AddPendingEvent(e);
+		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 	}
 }
 
@@ -327,14 +327,14 @@ void Manager::CloseWorkspace()
 	//save the current session before closing
 	SessionEntry session;
 	session.SetWorkspaceName ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
-	wxArrayInt unused; Frame::Get()->GetMainBook()->SaveSession(session, unused);
+	wxArrayInt unused; clMainFrame::Get()->GetMainBook()->SaveSession(session, unused);
 	GetBreakpointsMgr()->SaveSession(session);
 	SessionManager::Get().Save ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session );
 
 	// Delete any breakpoints belong to the current workspace
 	GetBreakpointsMgr()->DelAllBreakpoints();
 	// Then remove them from the debugger pane, in case that's visible
-	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+	clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
 	// since we closed the workspace, we also need to set the 'LastActiveWorkspaceName' to be
 	// default
@@ -359,7 +359,7 @@ void Manager::CloseWorkspace()
 		vars.SetActiveSet(wxT("Default"));
 	}
 	EnvironmentConfig::Instance()->SetSettings(vars);
-	Frame::Get()->SetEnvStatusMessage();
+	clMainFrame::Get()->SetEnvStatusMessage();
 
 	UpdateParserPaths();
 	m_workspceClosing = false;
@@ -505,7 +505,7 @@ void Manager::ImportMSVSSolution ( const wxString &path, const wxString &default
 
 	// Show some messages to the user
 	wxBusyCursor busyCursor;
-	wxBusyInfo info(_("Importing MS solution..."), Frame::Get());
+	wxBusyInfo info(_("Importing MS solution..."), clMainFrame::Get());
 
 	wxString errMsg;
 	VcImporter importer ( path, defaultCompiler );
@@ -516,7 +516,7 @@ void Manager::ImportMSVSSolution ( const wxString &path, const wxString &default
 
 		// Retag workspace
 		wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
-		Frame::Get()->GetEventHandler()->AddPendingEvent( event );
+		clMainFrame::Get()->GetEventHandler()->AddPendingEvent( event );
 	}
 }
 
@@ -782,7 +782,7 @@ void Manager::RetagWorkspace(bool quickRetag)
 	parsingRequest->_quickRetag = quickRetag;
 	ParseThreadST::Get()->Add ( parsingRequest );
 
-	Frame::Get()->SetStatusMessage(wxT("Scanning for include files to parse..."), 0);
+	clMainFrame::Get()->SetStatusMessage(wxT("Scanning for include files to parse..."), 0);
 }
 
 void Manager::RetagFile ( const wxString& filename )
@@ -807,7 +807,7 @@ void Manager::RetagFile ( const wxString& filename )
 	ParseThreadST::Get()->Add ( req );
 
 	wxString msg = wxString::Format(wxT( "Re-tagging file %s..." ), absFile.GetFullName().c_str());
-	Frame::Get()->SetStatusMessage(msg, 0, XRCID("retag_file"));
+	clMainFrame::Get()->SetStatusMessage(msg, 0, XRCID("retag_file"));
 }
 
 //--------------------------- Project Files Mgmt -----------------------------
@@ -877,7 +877,7 @@ bool Manager::AddFileToProject ( const wxString &fileName, const wxString &vdFul
 	}
 
 	if ( openIt ) {
-		Frame::Get()->GetMainBook()->OpenFile ( fileName, project );
+		clMainFrame::Get()->GetMainBook()->OpenFile ( fileName, project );
 	}
 
 	TagTreePtr ttp;
@@ -946,12 +946,12 @@ bool Manager::RemoveFile ( const wxString &fileName, const wxString &vdFullPath 
 	wxFileName absPath ( fileName );
 	absPath.MakeAbsolute ( GetProjectCwd ( project ) );
 
-	Frame::Get()->GetMainBook()->ClosePage(absPath.GetFullPath());
+	clMainFrame::Get()->GetMainBook()->ClosePage(absPath.GetFullPath());
 
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->RemoveFile ( vdFullPath, fileName, errMsg );
 	if ( !res ) {
-		wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND, Frame::Get());
+		wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND, clMainFrame::Get());
 		return false;
 	}
 
@@ -1029,7 +1029,7 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 	// Prompt the user with the list of files which are about to be modified
 	wxFileName newFile(newName);
 	if(matches.empty() == false){
-		RenameFileDlg dlg(Frame::Get(), newFile.GetFullName(), matches);
+		RenameFileDlg dlg(clMainFrame::Get(), newFile.GetFullName(), matches);
 		if(dlg.ShowModal() == wxID_OK) {
 			matches.clear();
 			matches     = dlg.GetMatches();
@@ -1047,7 +1047,7 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 
 				replaceWith.Replace(strippedOldInc.GetFullName(), newFile.GetFullName());
 
-				LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(editorFileName, wxEmptyString, 0);
+				LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(editorFileName, wxEmptyString, 0);
 				if (editor && (editor->GetFileName().GetFullPath().CmpNoCase(editorFileName) == 0) ) {
 					editor->ReplaceAllExactMatch(findWhat, replaceWith);
 				}
@@ -1204,15 +1204,15 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 
 	//expand variables
 	wxString cmd = bldConf->GetCommand();
-	cmd = ExpandVariables ( cmd, GetProject ( projectName ), Frame::Get()->GetMainBook()->GetActiveEditor() );
+	cmd = ExpandVariables ( cmd, GetProject ( projectName ), clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
 
 	wxString cmdArgs = bldConf->GetCommandArguments();
-	cmdArgs = ExpandVariables ( cmdArgs, GetProject ( projectName ), Frame::Get()->GetMainBook()->GetActiveEditor() );
+	cmdArgs = ExpandVariables ( cmdArgs, GetProject ( projectName ), clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
 
 	//execute command & cmdArgs
 	wxString execLine ( cmd + wxT ( " " ) + cmdArgs );
 	wd = bldConf->GetWorkingDirectory();
-	wd = ExpandVariables ( wd, GetProject ( projectName ), Frame::Get()->GetMainBook()->GetActiveEditor() );
+	wd = ExpandVariables ( wd, GetProject ( projectName ), clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
 
 	//change directory to the working directory
 	if ( considerPauseWhenExecuting ) {
@@ -1269,7 +1269,7 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 
 bool Manager::IsPaneVisible ( const wxString& pane_name )
 {
-	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( pane_name );
+	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( pane_name );
 	if ( info.IsOk() && info.IsShown() ) {
 		return true;
 	}
@@ -1292,28 +1292,28 @@ bool Manager::DoFindDockInfo(const wxString &saved_perspective, const wxString &
 void Manager::ToggleOutputPane(bool hide)
 {
 	static wxString saved_dock_info;
-	wxAuiManager *aui = &Frame::Get()->GetDockingManager();
+	wxAuiManager *aui = &clMainFrame::Get()->GetDockingManager();
 
 	if ( aui ) {
 		wxAuiPaneInfo &pane_info = aui->GetPane(wxT("Output View"));
 		wxString dock_info ( wxString::Format(wxT("dock_size(%d,%d,%d)"), pane_info.dock_direction, pane_info.dock_layer, pane_info.dock_row) );
 		if ( hide ) {
 			if ( pane_info.IsShown() ) {
-				Frame::Get()->Freeze();
+				clMainFrame::Get()->Freeze();
 
 				DoFindDockInfo(aui->SavePerspective(), dock_info, saved_dock_info);
 				pane_info.Hide();
 
 				aui->Update();
 
-				Frame::Get()->Thaw();
+				clMainFrame::Get()->Thaw();
 			}
 
 
 		} else {
 			// Show it
 			if ( pane_info.IsShown() == false ) {
-				Frame::Get()->Freeze();
+				clMainFrame::Get()->Freeze();
 
 				if ( saved_dock_info.IsEmpty() ) {
 
@@ -1333,7 +1333,7 @@ void Manager::ToggleOutputPane(bool hide)
 						aui->Update();
 					}
 				}
-				Frame::Get()->Thaw();
+				clMainFrame::Get()->Thaw();
 			}
 		}
 	}
@@ -1347,7 +1347,7 @@ bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 	ToggleOutputPane( false );
 
 	// set the selection to focus win
-	OutputPane *pane = Frame::Get()->GetOutputPane();
+	OutputPane *pane = clMainFrame::Get()->GetOutputPane();
 	int index(wxNOT_FOUND);
 	for(size_t i=0; i<pane->GetNotebook()->GetPageCount(); i++) {
 		if(pane->GetNotebook()->GetPageText(i) == focusWin) {
@@ -1382,7 +1382,7 @@ void Manager::ShowDebuggerPane ( bool show )
 	if ( show ) {
 
 		for ( size_t i=0; i<dbgPanes.GetCount(); i++ ) {
-			wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( dbgPanes.Item ( i ) );
+			wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( dbgPanes.Item ( i ) );
 			// show all debugger related panes
 			if ( info.IsOk() && !info.IsShown() ) {
 				info.Show();
@@ -1393,30 +1393,30 @@ void Manager::ShowDebuggerPane ( bool show )
 
 		// hide all debugger related panes
 		for ( size_t i=0; i<dbgPanes.GetCount(); i++ ) {
-			wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( dbgPanes.Item ( i ) );
+			wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( dbgPanes.Item ( i ) );
 			// show all debugger related panes
 			if ( info.IsOk() && info.IsShown() ) {
 				info.Hide();
 			}
 		}
 	}
-	Frame::Get()->GetDockingManager().Update();
+	clMainFrame::Get()->GetDockingManager().Update();
 
 }
 
 void Manager::ShowWorkspacePane ( wxString focusWin, bool commit )
 {
 	// make the output pane visible
-	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( wxT ( "Workspace View" ) );
+	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( wxT ( "Workspace View" ) );
 	if ( info.IsOk() && !info.IsShown() ) {
 		info.Show();
 		if ( commit ) {
-			Frame::Get()->GetDockingManager().Update();
+			clMainFrame::Get()->GetDockingManager().Update();
 		}
 	}
 
 	// set the selection to focus win
-	Notebook *book = Frame::Get()->GetWorkspacePane()->GetNotebook();
+	Notebook *book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
 	int index = book->GetPageIndex ( focusWin );
 	if ( index != wxNOT_FOUND && ( size_t ) index != book->GetSelection() ) {
 		book->SetSelection ( ( size_t ) index );
@@ -1425,11 +1425,11 @@ void Manager::ShowWorkspacePane ( wxString focusWin, bool commit )
 
 void Manager::HidePane ( const wxString &paneName, bool commit )
 {
-	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( paneName );
+	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( paneName );
 	if ( info.IsOk() && info.IsShown() ) {
 		info.Hide();
 		if ( commit ) {
-			Frame::Get()->GetDockingManager().Update();
+			clMainFrame::Get()->GetDockingManager().Update();
 		}
 	}
 }
@@ -1443,7 +1443,7 @@ void Manager::TogglePanes()
 	static wxArrayString panes;
 
 	if ( !toggled ) {
-		savedLayout = Frame::Get()->GetDockingManager().SavePerspective();
+		savedLayout = clMainFrame::Get()->GetDockingManager().SavePerspective();
 		panes.Clear();
 		// create the list of panes to be tested
 		wxArrayString candidates;
@@ -1452,34 +1452,34 @@ void Manager::TogglePanes()
 		candidates.Add ( wxT ( "Debugger" ) );
 
 		// add the detached tabs list
-		wxArrayString dynamicPanes = Frame::Get()->GetDockablePaneMenuManager()->GetDeatchedPanesList();
+		wxArrayString dynamicPanes = clMainFrame::Get()->GetDockablePaneMenuManager()->GetDeatchedPanesList();
 		for ( size_t i=0; i<dynamicPanes.GetCount(); i++ ) {
 			candidates.Add ( dynamicPanes.Item ( i ) );
 		}
 
 		for ( size_t i=0; i<candidates.GetCount(); i++ ) {
 			wxAuiPaneInfo info;
-			info = Frame::Get()->GetDockingManager().GetPane ( candidates.Item ( i ) );
+			info = clMainFrame::Get()->GetDockingManager().GetPane ( candidates.Item ( i ) );
 			if ( info.IsOk() && info.IsShown() ) {
 				panes.Add ( candidates.Item ( i ) );
 			}
 		}
 
-		Frame::Get()->GetMainPanel()->Freeze();
+		clMainFrame::Get()->GetMainPanel()->Freeze();
 		// hide the matched panes
 		for ( size_t i=0; i<panes.GetCount(); i++ ) {
 			HidePane ( panes.Item ( i ), false );
 		}
 
 		//update changes
-		Frame::Get()->GetDockingManager().Update();
-		Frame::Get()->GetMainPanel()->Thaw();
+		clMainFrame::Get()->GetDockingManager().Update();
+		clMainFrame::Get()->GetMainPanel()->Thaw();
 		toggled = true;
 
 	} else {
-		Frame::Get()->GetMainPanel()->Freeze();
-		Frame::Get()->GetDockingManager().LoadPerspective(savedLayout);
-		Frame::Get()->GetMainPanel()->Thaw();
+		clMainFrame::Get()->GetMainPanel()->Freeze();
+		clMainFrame::Get()->GetDockingManager().LoadPerspective(savedLayout);
+		clMainFrame::Get()->GetMainPanel()->Thaw();
 
 		toggled = false;
 		savedLayout.Clear();
@@ -1513,7 +1513,7 @@ void Manager::UpdateMenuAccelerators()
 		}
 	}
 
-	wxMenuBar *bar = Frame::Get()->GetMenuBar();
+	wxMenuBar *bar = clMainFrame::Get()->GetMenuBar();
 
 	wxString content;
 	std::vector< wxAcceleratorEntry > accelVec;
@@ -1572,7 +1572,7 @@ void Manager::UpdateMenuAccelerators()
 	wxAcceleratorTable table ( accelVec.size(), entries );
 
 	//update the accelerator table
-	Frame::Get()->SetAcceleratorTable ( table );
+	clMainFrame::Get()->SetAcceleratorTable ( table );
 	delete [] entries;
 }
 
@@ -1766,7 +1766,7 @@ void Manager::ExecuteNoDebug ( const wxString &projectName )
 
 	//execute the command line
 	//the a sync command is a one time executable object,
-	m_asyncExeCmd = new AsyncExeCmd (Frame::Get()->GetOutputPane()->GetOutputWindow());
+	m_asyncExeCmd = new AsyncExeCmd (clMainFrame::Get()->GetOutputPane()->GetOutputWindow());
 
 	//execute the program:
 	//- no hiding the console
@@ -1805,8 +1805,8 @@ void Manager::OnProcessEnd ( wxProcessEvent &event )
 	m_asyncExeCmd = NULL;
 
 	//return the focus back to the editor
-	if ( Frame::Get()->GetMainBook()->GetActiveEditor() ) {
-		Frame::Get()->GetMainBook()->GetActiveEditor()->SetActive();
+	if ( clMainFrame::Get()->GetMainBook()->GetActiveEditor() ) {
+		clMainFrame::Get()->GetMainBook()->GetActiveEditor()->SetActive();
 	}
 }
 
@@ -1817,13 +1817,13 @@ static bool HideDebuggerPane = true;
 
 static void DebugMessage ( wxString msg )
 {
-	Frame::Get()->GetOutputPane()->GetDebugWindow()->AppendLine(msg);
+	clMainFrame::Get()->GetOutputPane()->GetDebugWindow()->AppendLine(msg);
 }
 
 void Manager::UpdateDebuggerPane()
 {
 	//Update the debugger pane
-	DebuggerPane *pane = Frame::Get()->GetDebuggerPane();
+	DebuggerPane *pane = clMainFrame::Get()->GetDebuggerPane();
 
 	if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetBreakpointView() ) || IsPaneVisible ( DebuggerPane::BREAKPOINTS) ) {
 		pane->GetBreakpointView()->Initialize();
@@ -1924,7 +1924,7 @@ void Manager::DbgStart ( long pid )
 #if defined(__WXGTK__)
 	wxString where;
 	if ( !ExeLocator::Locate ( wxT ( "xterm" ), where ) ) {
-		wxMessageBox ( _ ( "Failed to locate 'xterm' application required by CodeLite, please install it and try again!" ), wxT ( "CodeLite" ), wxOK|wxCENTER|wxICON_WARNING, Frame::Get() );
+		wxMessageBox ( _ ( "Failed to locate 'xterm' application required by CodeLite, please install it and try again!" ), wxT ( "CodeLite" ), wxOK|wxCENTER|wxICON_WARNING, clMainFrame::Get() );
 		return;
 	}
 #endif
@@ -2011,8 +2011,8 @@ void Manager::DbgStart ( long pid )
 		wd = bldConf->GetWorkingDirectory();
 
 		// Expand variables before passing them to the debugger
-		wd = ExpandVariables ( wd, proj, Frame::Get()->GetMainBook()->GetActiveEditor() );
-		exepath = ExpandVariables ( exepath, proj, Frame::Get()->GetMainBook()->GetActiveEditor() );
+		wd = ExpandVariables ( wd, proj, clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
+		exepath = ExpandVariables ( exepath, proj, clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
 	}
 
 	//get the debugger path to execute
@@ -2045,7 +2045,7 @@ void Manager::DbgStart ( long pid )
 	// actually add the breakpoint before Run() is called - this can
 	// be a problem when adding breakpoint to dll files.
 	if ( wxNOT_FOUND == pid ) {
-		Frame::Get()->GetMainBook()->UpdateBreakpoints();
+		clMainFrame::Get()->GetMainBook()->UpdateBreakpoints();
 	}
 
 	//We can now get all the gathered breakpoints from the manager
@@ -2089,14 +2089,14 @@ void Manager::DbgStart ( long pid )
 	// Now the debugger has been fed the breakpoints, re-Initialise the breakpt view,
 	// so that it uses debugger_ids instead of internal_ids
 	// Hmm. The above comment is probably no longer true; but it'll do no harm to Initialise() anyway
-	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+	clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
 	// Initialize the 'Locals' table. We do this for performane reason so we
 	// wont need to read from the XML each time perform 'next' step
-	Frame::Get()->GetDebuggerPane()->GetLocalsTable()->Initialize();
+	clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Initialize();
 
 	// let the active editor get the focus
-	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if ( editor ) {
 		editor->SetActive();
 	}
@@ -2133,7 +2133,7 @@ void Manager::DbgStart ( long pid )
 	}
 
 	// and finally make the debugger pane visible
-	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( wxT ( "Debugger" ) );
+	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( wxT ( "Debugger" ) );
 	if ( info.IsOk() && !info.IsShown() ) {
 		HideDebuggerPane = true;
 		ShowDebuggerPane ( true );
@@ -2156,18 +2156,18 @@ void Manager::DbgStop()
 	m_dbgCanInteract = false;
 
 	// Keep the current watches for the next debug session
-	m_dbgWatchExpressions = Frame::Get()->GetDebuggerPane()->GetWatchesTable()->GetExpressions();
+	m_dbgWatchExpressions = clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->GetExpressions();
 
 	//clear the debugger pane
-	Frame::Get()->GetDebuggerPane()->Clear();
+	clMainFrame::Get()->GetDebuggerPane()->Clear();
 
 	// Notify the breakpoint manager that the debugger has stopped
 	GetBreakpointsMgr()->DebuggerStopped();
 
-	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+	clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
 	// Clear the ascii viewer
-	Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->UpdateView(wxT(""), wxT(""));
+	clMainFrame::Get()->GetDebuggerPane()->GetAsciiViewer()->UpdateView(wxT(""), wxT(""));
 
 	// update toolbar state
 	UpdateStopped();
@@ -2207,13 +2207,13 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 
 	//try to open the file
 	wxFileName fn ( fileName );
-	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if ( editor && editor->GetFileName().GetFullPath().CmpNoCase(fn.GetFullPath()) == 0 && lineno > 0) {
 		editor->HighlightLine ( lineno   );
 		editor->GotoLine      ( lineno-1 );
 		editor->EnsureVisible ( lineno-1 );
-	} else if (Frame::Get()->GetMainBook()->OpenFile ( fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND) && lineno > 0) {
-		editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	} else if (clMainFrame::Get()->GetMainBook()->OpenFile ( fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND) && lineno > 0) {
+		editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 		if ( editor ) {
 			editor->HighlightLine ( lineno );
 		}
@@ -2223,7 +2223,7 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 void Manager::DbgUnMarkDebuggerLine()
 {
 	//remove all debugger markers from all editors
-	Frame::Get()->GetMainBook()->UnHighlightAll();
+	clMainFrame::Get()->GetMainBook()->UnHighlightAll();
 }
 
 void Manager::DbgDoSimpleCommand ( int cmd )
@@ -2259,7 +2259,7 @@ void Manager::DbgDoSimpleCommand ( int cmd )
 
 void Manager::DbgSetFrame ( int frame, int lineno )
 {
-	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( wxT ( "Debugger" ) );
+	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( wxT ( "Debugger" ) );
 	if ( info.IsShown() ) {
 		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 		if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
@@ -2312,7 +2312,7 @@ void Manager::UpdateFileLine ( const wxString &filename, int lineno )
 void Manager::UpdateGotControl ( DebuggerReasons reason )
 {
 	//put us on top of the z-order window
-	Frame::Get()->Raise();
+	clMainFrame::Get()->Raise();
 	m_dbgCanInteract = true;
 
 	switch ( reason ) {
@@ -2342,30 +2342,30 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 
 		DebugMessage ( _("Program Received signal ") + signame + _("\n") );
 		if(showDialog) {
-			wxMessageDialog dlg( Frame::Get(), _("Program Received signal ") + signame + wxT("\n") +
+			wxMessageDialog dlg( clMainFrame::Get(), _("Program Received signal ") + signame + wxT("\n") +
 								 _("Stack trace is available in the 'Call Stack' tab\n"),
 								 wxT("CodeLite"), wxICON_ERROR|wxOK );
 			dlg.ShowModal();
 		}
 
 		//Print the stack trace
-		wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( wxT("Debugger") );
+		wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( wxT("Debugger") );
 		if ( info.IsShown() && showDialog ) {
-			Frame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
+			clMainFrame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
 			UpdateDebuggerPane();
 		}
 	}
 	break;
 	case DBG_BP_ASSERTION_HIT: {
 
-		wxMessageDialog dlg( Frame::Get(), _("Assertion failed!\nStack trace is available in the 'Call Stack' tab\n"),
+		wxMessageDialog dlg( clMainFrame::Get(), _("Assertion failed!\nStack trace is available in the 'Call Stack' tab\n"),
 		                     wxT("CodeLite"), wxICON_ERROR|wxOK );
 		dlg.ShowModal();
 
 		//Print the stack trace
-		wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( wxT("Debugger") );
+		wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( wxT("Debugger") );
 		if ( info.IsShown() ) {
-			Frame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
+			clMainFrame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
 			UpdateDebuggerPane();
 		}
 	}
@@ -2403,8 +2403,8 @@ void Manager::UpdateLostControl()
 	DebugMessage ( _ ( "Continuing...\n" ) );
 
 	// Reset the debugger call-stack pane
-	Frame::Get()->GetDebuggerPane()->GetFrameListView()->Clear();
-	Frame::Get()->GetDebuggerPane()->GetFrameListView()->SetCurrentLevel(0);
+	clMainFrame::Get()->GetDebuggerPane()->GetFrameListView()->Clear();
+	clMainFrame::Get()->GetDebuggerPane()->GetFrameListView()->SetCurrentLevel(0);
 }
 
 void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name)
@@ -2478,7 +2478,7 @@ void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name
 	wxString output;
 	bool     get_tip (false);
 
-	Notebook * book = Frame::Get()->GetDebuggerPane()->GetNotebook();
+	Notebook * book = clMainFrame::Get()->GetDebuggerPane()->GetNotebook();
 	if ( book->GetPageText(book->GetSelection()) == DebuggerPane::ASCII_VIEWER || IsPaneVisible(DebuggerPane::ASCII_VIEWER) ) {
 		get_tip = true;
 	}
@@ -2490,7 +2490,7 @@ void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name
 
 void Manager::UpdateAsciiViewer(const wxString& expression, const wxString& tip)
 {
-	Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->UpdateView( expression, tip );
+	clMainFrame::Get()->GetDebuggerPane()->GetAsciiViewer()->UpdateView( expression, tip );
 }
 
 void Manager::UpdateRemoteTargetConnected(const wxString& line)
@@ -2601,7 +2601,7 @@ void Manager::RunCustomPreMakeCommand ( const wxString &project )
 	if ( m_shellProcess ) {
 		delete m_shellProcess;
 	}
-	m_shellProcess = new CompileRequest ( Frame::Get(),  //owner window
+	m_shellProcess = new CompileRequest ( clMainFrame::Get(),  //owner window
 	                                      info,
 	                                      wxEmptyString, //no file name (valid only for build file only)
 	                                      true );        //run premake step only
@@ -2642,10 +2642,10 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 	}
 	switch ( info.GetKind() ) {
 	case QueueCommand::Build:
-		m_shellProcess = new CompileRequest ( Frame::Get(), info, fileName, false, preprocessOnly );
+		m_shellProcess = new CompileRequest ( clMainFrame::Get(), info, fileName, false, preprocessOnly );
 		break;
 	case  QueueCommand::CustomBuild:
-		m_shellProcess = new CustomBuildRequest ( Frame::Get(), info, fileName );
+		m_shellProcess = new CustomBuildRequest ( clMainFrame::Get(), info, fileName );
 		break;
 	default:
 		m_shellProcess = NULL;
@@ -2657,7 +2657,7 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 bool Manager::IsBuildEndedSuccessfully() const
 {
 	// return the result of the last build
-	return Frame::Get()->GetOutputPane()->GetBuildTab()->GetBuildEndedSuccessfully();
+	return clMainFrame::Get()->GetOutputPane()->GetBuildTab()->GetBuildEndedSuccessfully();
 }
 
 void Manager::DoBuildProject ( const QueueCommand& buildInfo )
@@ -2680,7 +2680,7 @@ void Manager::DoBuildProject ( const QueueCommand& buildInfo )
 		delete m_shellProcess;
 	}
 
-	m_shellProcess = new CompileRequest ( Frame::Get(), buildInfo );
+	m_shellProcess = new CompileRequest ( clMainFrame::Get(), buildInfo );
 	m_shellProcess->Process(PluginManager::Get());
 }
 
@@ -2693,7 +2693,7 @@ void Manager::DoCleanProject ( const QueueCommand& buildInfo )
 	if ( m_shellProcess ) {
 		delete m_shellProcess;
 	}
-	m_shellProcess = new CleanRequest ( Frame::Get(), buildInfo );
+	m_shellProcess = new CleanRequest ( clMainFrame::Get(), buildInfo );
 	m_shellProcess->Process(PluginManager::Get());
 }
 
@@ -2718,7 +2718,7 @@ void Manager::DoCustomBuild ( const QueueCommand& buildInfo )
 	if ( m_shellProcess ) {
 		delete m_shellProcess;
 	}
-	m_shellProcess = new CustomBuildRequest ( Frame::Get(), buildInfo, wxEmptyString );
+	m_shellProcess = new CustomBuildRequest ( clMainFrame::Get(), buildInfo, wxEmptyString );
 	m_shellProcess->Process( PluginManager::Get() );
 }
 
@@ -2806,7 +2806,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		break;
 
 	case DBG_UR_LOCALS:
-		Frame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateLocals( event.m_locals );
+		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateLocals( event.m_locals );
 #ifdef __WXMAC__
 		{
 			for(size_t i=0; i<event.m_locals.size(); i++){
@@ -2820,7 +2820,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		break;
 
 	case DBG_UR_FUNC_ARGS:
-		Frame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateFuncArgs( event.m_locals );
+		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateFuncArgs( event.m_locals );
 #ifdef __WXMAC__
 		{
 			for(size_t i=0; i<event.m_locals.size(); i++){
@@ -2834,10 +2834,10 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		break;
 
 	case DBG_UR_EXPRESSION:
-		Frame::Get()->GetDebuggerPane()->GetWatchesTable()->UpdateExpression ( event.m_expression, event.m_evaluated );
+		clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->UpdateExpression ( event.m_expression, event.m_evaluated );
 		break;
 	case DBG_UR_UPDATE_STACK_LIST:
-		Frame::Get()->GetDebuggerPane()->GetFrameListView()->Update ( event.m_stack );
+		clMainFrame::Get()->GetDebuggerPane()->GetFrameListView()->Update ( event.m_stack );
 		break;
 
 	case DBG_UR_REMOTE_TARGET_CONNECTED:
@@ -2861,11 +2861,11 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		break;
 
 	case DBG_UR_LISTTHRAEDS:
-		Frame::Get()->GetDebuggerPane()->GetThreadsView()->PopulateList( event.m_threads );
+		clMainFrame::Get()->GetDebuggerPane()->GetThreadsView()->PopulateList( event.m_threads );
 		break;
 
 	case DBG_UR_WATCHMEMORY:
-		Frame::Get()->GetDebuggerPane()->GetMemoryView()->SetViewString( event.m_evaluated );
+		clMainFrame::Get()->GetDebuggerPane()->GetMemoryView()->SetViewString( event.m_evaluated );
 		break;
 	case DBG_UR_VARIABLEOBJ: {
 		if ( event.m_userReason == DBG_USERR_QUICKWACTH ) {
@@ -2903,7 +2903,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 			DoShowQuickWatchDialog( event );
 
 		} else if ( event.m_userReason == DBG_USERR_LOCALS_INLINE ) {
-			Frame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateInline( event );
+			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateInline( event );
 
 		}
 	}
@@ -2942,7 +2942,7 @@ void Manager::DbgRestoreWatches()
 			DebugMessage(wxT("Restoring watch: ") + m_dbgWatchExpressions.Item(i) + wxT("\n"));
 			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("add_watch"));
 			e.SetString(m_dbgWatchExpressions.Item(i));
-			Frame::Get()->GetDebuggerPane()->GetWatchesTable()->GetEventHandler()->AddPendingEvent( e );
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->GetEventHandler()->AddPendingEvent( e );
 		}
 	}
 }
@@ -2959,7 +2959,7 @@ void Manager::DoRestartCodeLite()
 	<< wxT("\"");
 
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("exit_app"));
-	Frame::Get()->GetEventHandler()->ProcessEvent(event);
+	clMainFrame::Get()->GetEventHandler()->ProcessEvent(event);
 
 	wxExecute(command, wxEXEC_ASYNC|wxEXEC_NOHIDE);
 
@@ -2968,7 +2968,7 @@ void Manager::DoRestartCodeLite()
 	command << wxStandardPaths::Get().GetExecutablePath();
 
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("exit_app"));
-	Frame::Get()->GetEventHandler()->AddPendingEvent(event);
+	clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
 
 	wxExecute(command, wxEXEC_ASYNC|wxEXEC_NOHIDE);
 #endif
@@ -3040,7 +3040,7 @@ bool Manager::UpdateParserPaths()
 
 	// Update the parser thread with the new paths
 	wxArrayString globalIncludePath, uniExcludePath;
-	TagsOptionsData tod = Frame::Get()->GetTagsOptions();
+	TagsOptionsData tod = clMainFrame::Get()->GetTagsOptions();
 	globalIncludePath   = tod.GetParserSearchPaths();
 	uniExcludePath      = tod.GetParserExcludePaths();
 
@@ -3064,7 +3064,7 @@ bool Manager::UpdateParserPaths()
 
 void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 {
-	Frame::Get()->SetStatusMessage(wxT("Retagging..."), 0);
+	clMainFrame::Get()->SetStatusMessage(wxT("Retagging..."), 0);
 
 	wxBusyCursor busyCursor;
 	std::set<std::string> *fileSet = (std::set<std::string>*)event.GetClientData();
@@ -3113,7 +3113,7 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 
 #if !USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
 	long end   = sw.Time();
-	Frame::Get()->SetStatusMessage(wxT("Done"), 0);
+	clMainFrame::Get()->SetStatusMessage(wxT("Done"), 0);
 	wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), (end)/1000, projectFiles.size());
 	SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
 #endif
@@ -3125,7 +3125,7 @@ void Manager::DoSaveAllFilesBeforeBuild()
 {
 	// Save all files before compiling, but dont saved new documents
 	SendCmdEvent(wxEVT_FILE_SAVE_BY_BUILD_START);
-	if (!Frame::Get()->GetMainBook()->SaveAll(false, false)) {
+	if (!clMainFrame::Get()->GetMainBook()->SaveAll(false, false)) {
 		SendCmdEvent(wxEVT_FILE_SAVE_BY_BUILD_END);
 		return;
 	}
@@ -3135,7 +3135,7 @@ void Manager::DoSaveAllFilesBeforeBuild()
 DisplayVariableDlg* Manager::GetDebuggerTip()
 {
 	if(!m_watchDlg) {
-		m_watchDlg = new DisplayVariableDlg(Frame::Get());
+		m_watchDlg = new DisplayVariableDlg(clMainFrame::Get());
 	}
 	return m_watchDlg;
 }

@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2008 by Eran Ifrah
-// file name            : app.h
+// file name            : cppwordscanner.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -22,54 +22,60 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef LITEEDITOR_APP_H
-#define LITEEDITOR_APP_H
+#ifndef __cppwordscanner__
+#define __cppwordscanner__
 
-#include "frame.h"
-class wxSplashScreen;
-class wxSingleInstanceChecker;
+#include <wx/arrstr.h>
+#include <vector>
+#include "cpptoken.h"
 
-class App : public wxApp
+class TextStates
 {
-	wxSplashScreen*          m_splash;
-	clMainFrame *                  m_pMainFrame;
-	wxSingleInstanceChecker *m_singleInstance;
-	wxArrayString            m_parserPaths;
-	bool                     m_loadPlugins;
-
-private: // Methods
-	bool CopySettings(const wxString &destDir, wxString& installPath);
-	bool CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir);
-	void MSWReadRegistry();
-
-#ifdef __WXMSW__
-	HINSTANCE m_handler;
-#endif
+public:
+	wxString         text;
+	std::vector<int> states;
+	int              pos;
 
 public:
-	App(void);
-	virtual ~App(void);
+	TextStates() : pos(wxNOT_FOUND) {}
 
-	void SetParserPaths(const wxArrayString& parserPaths) {
-		this->m_parserPaths = parserPaths;
-	}
-	const wxArrayString& GetParserPaths() const {
-		return m_parserPaths;
-	}
-	void SetLoadPlugins(bool loadPlugins) {
-		this->m_loadPlugins = loadPlugins;
-	}
-	bool GetLoadPlugins() const {
-		return m_loadPlugins;
-	}
-	void MacOpenFile(const wxString &fileName);
-
-protected:
-	virtual bool OnInit();
-	virtual int OnExit();
-	virtual void OnFatalException();
-
-private:
+	void   SetPosition(int pos);
+	wxChar Previous();
+	wxChar Next();
 };
 
-#endif // LITEEDITOR_APP_H
+class CppWordScanner
+{
+	wxSortedArrayString m_arr;
+	wxString            m_filename;
+	wxString            m_text;
+	int                 m_offset;
+
+public:
+	enum {
+		STATE_NORMAL = 0,
+		STATE_C_COMMENT,
+		STATE_CPP_COMMENT,
+		STATE_DQ_STRING,
+		STATE_SINGLE_STRING,
+		STATE_PRE_PROCESSING
+	};
+
+protected:
+	void doFind(const wxString &filter, CppTokensMap &l);
+	void doInit();
+
+public:
+	CppWordScanner(const wxString &file_name);
+	CppWordScanner(const wxString &file_name, const wxString &text, int offset);
+	~CppWordScanner();
+
+	void FindAll(CppTokensMap &l);
+	void Match(const wxString &word, CppTokensMap &l);
+	// we use std::vector<char> and NOT std::vector<char> since the specialization of vector<bool>
+	// is broken
+	TextStates states();
+};
+
+
+#endif // __cppwordscanner__

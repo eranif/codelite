@@ -25,6 +25,7 @@
 
 
 #include "pluginmanager.h"
+#include "refactorengine.h"
 #include "clang_code_completion.h"
 #include "fileextmanager.h"
 #include "drawingutils.h"
@@ -102,23 +103,6 @@ static bool IsHeader(const wxString &ext)
 struct SFileSort {
 	bool operator()(const wxFileName &one, const wxFileName &two) {
 		return two.GetFullName().Cmp(one.GetFullName()) > 0;
-	}
-};
-
-//----------------------------------------------------------------------------------
-
-struct RefactorSource {
-	wxString name;
-	wxString scope;
-	bool isClass;
-
-	RefactorSource() : name(wxEmptyString), scope(wxEmptyString), isClass(false) {
-	}
-
-	void Reset() {
-		name.clear();
-		scope.clear();
-		isClass = false;
 	}
 };
 
@@ -212,7 +196,7 @@ void ContextCpp::OnDwellStart(wxScintillaEvent &event)
 	VALIDATE_PROJECT(rCtrl);
 
 	//before we start, make sure we are the visible window
-	if (Frame::Get()->GetMainBook()->GetActiveEditor() != &rCtrl) {
+	if (clMainFrame::Get()->GetMainBook()->GetActiveEditor() != &rCtrl) {
 		event.Skip();
 		return;
 	}
@@ -812,7 +796,7 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 void ContextCpp::DoGotoSymbol(TagEntryPtr tag)
 {
 	if (tag) {
-		LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1);
+		LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1);
 		if (editor) {
 			editor->FindAndSelect(tag->GetPattern(), tag->GetName());
 		}
@@ -862,7 +846,7 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
 	bool userAnsweredBefore = EditorConfigST::Get()->GetLongValue(wxT("CreateSwappedFile"), res);
 	if (!userAnsweredBefore) {
 		// prompt the user with an "annoying" dialog
-		ThreeButtonDlg dlg(Frame::Get(), _("No matched file was found, would you like to create one?"), wxT("CodeLite"));
+		ThreeButtonDlg dlg(clMainFrame::Get(), _("No matched file was found, would you like to create one?"), wxT("CodeLite"));
 		res = dlg.ShowModal();
 		if (dlg.GetDontAskMeAgain() && res != wxID_CANCEL) {
 			// the user is not interested of creating file, so dont bot
@@ -928,7 +912,7 @@ bool ContextCpp::TryOpenFile(const wxFileName &fileName)
 	if (fileName.FileExists()) {
 		//we got a match
 		wxString proj = ManagerST::Get()->GetProjectNameByFile(fileName.GetFullPath());
-		return Frame::Get()->GetMainBook()->OpenFile(fileName.GetFullPath(), proj);
+		return clMainFrame::Get()->GetMainBook()->OpenFile(fileName.GetFullPath(), proj);
 	}
 
 	//ok, the file does not exist in the current directory, try to find elsewhere
@@ -939,7 +923,7 @@ bool ContextCpp::TryOpenFile(const wxFileName &fileName)
 	for (size_t i=0; i<files.size(); i++) {
 		if (files.at(i).GetFullName() == fileName.GetFullName()) {
 			wxString proj = ManagerST::Get()->GetProjectNameByFile(files.at(i).GetFullPath());
-			return Frame::Get()->GetMainBook()->OpenFile(files.at(i).GetFullPath(), proj);
+			return clMainFrame::Get()->GetMainBook()->OpenFile(files.at(i).GetFullPath(), proj);
 		}
 	}
 	return false;
@@ -1116,7 +1100,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 
 		if (wxMessageBox(msg, wxT("CodeLite"), wxYES_NO) == wxYES) {
 			wxString projectName = ManagerST::Get()->GetProjectNameByFile(tag->GetFile());
-			Frame::Get()->GetMainBook()->OpenFile(tag->GetFile(), projectName, tag->GetLine());
+			clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), projectName, tag->GetLine());
 		}
 		return;
 	}
@@ -1126,7 +1110,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 	//get the file name and line where to insert the setters getters
 	static SettersGettersDlg *s_dlg = NULL;
 	if (!s_dlg) {
-		s_dlg = new SettersGettersDlg(Frame::Get());
+		s_dlg = new SettersGettersDlg(clMainFrame::Get());
 	}
 
 	s_dlg->Init(tags, tag->GetFile(), lineno);
@@ -1215,14 +1199,14 @@ void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
 		DoUpdateCalltipHighlight();
 
 		// update navigation bar, but do this only if it visible
-		if ( !Frame::Get()->GetMainBook()->IsNavBarShown() )
+		if ( !clMainFrame::Get()->GetMainBook()->IsNavBarShown() )
 			return;
 
 		// we know that the position position has changed, make sure that the line
 		// number has changed also
 		if (ctrl.LineFromPosition(curpos) != lastLine) {
 			lastLine = ctrl.LineFromPosition(curpos);
-			Frame::Get()->GetMainBook()->UpdateNavBar(&ctrl);
+			clMainFrame::Get()->GetMainBook()->UpdateNavBar(&ctrl);
 
 		}
 	}
@@ -1524,7 +1508,7 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
 	}
 
 	// Restore this file to be the active one
-	Frame::Get()->GetMainBook()->OpenFile(GetCtrl().GetFileName().GetFullPath());
+	clMainFrame::Get()->GetMainBook()->OpenFile(GetCtrl().GetFileName().GetFullPath());
 }
 
 void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
@@ -1678,7 +1662,7 @@ void ContextCpp::DoFormatEditor(LEditor *editor)
 		// code formatter is available, format the current source file
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("format_source"));
 		e.SetString(editor->GetFileName().GetFullPath());
-		Frame::Get()->GetEventHandler()->ProcessEvent(e);
+		clMainFrame::Get()->GetEventHandler()->ProcessEvent(e);
 	}
 }
 
@@ -1692,7 +1676,7 @@ bool ContextCpp::OpenFileAppendAndFormat(const wxString& fileName, const wxStrin
 
 LEditor* ContextCpp::OpenFileAndAppend ( const wxString &fileName, const wxString &text )
 {
-	LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(fileName, wxEmptyString, 0);
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(fileName, wxEmptyString, 0);
 	if (!editor)
 		return NULL;
 
@@ -2010,109 +1994,29 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	VALIDATE_WORKSPACE();
 
 	LEditor &rCtrl = GetCtrl();
-	CppTokensMap l;
-
 	//get expression
-	int pos = rCtrl.GetCurrentPos();
-	int word_end = rCtrl.WordEndPosition(pos, true);
+	int pos        = rCtrl.GetCurrentPos();
 	int word_start = rCtrl.WordStartPosition(pos, true);
+	int word_end   = rCtrl.WordEndPosition(pos, true);
 
-	// get the scope
+	// Read the word that we want to refactor
 	wxString word = rCtrl.GetTextRange(word_start, word_end);
-	if (word.IsEmpty())
+	if(word.IsEmpty())
 		return;
 
-	// search to see if we are on a valid tag
-	RefactorSource source;
-	if (!ResolveWord(&rCtrl, word_start, word, &source)) {
-		// parsing of the initial expression failed, abort
-		return;
-	}
-
-	if (!Frame::Get()->GetMainBook()->SaveAll(true, false))
+	// Save all files before refactoring
+	if (!clMainFrame::Get()->GetMainBook()->SaveAll(true, false))
 		return;
 
-	wxLogMessage(wxT("Refactoring: ") + source.name + wxT(" of scope: ") + source.scope);
+	// Get list of files to modify
+	wxFileList files;
+	ManagerST::Get()->GetWorkspaceFiles(files, true);
 
-	// load all tokens, first we need to parse the workspace files...
-	BuildRefactorDatabase(word, l);
-	std::list<CppToken> tokens;
-
-	// incase no tokens were found (possibly cause of user pressing cancel
-	// abort this operation
-	l.findTokens(word, tokens);
-	if (tokens.empty()) {
-		return;
-	}
-
-	wxString msg;
-	msg << wxT("Found ") << tokens.size() << wxT(" instances of ") << word;
-	wxLogMessage(msg);
-
-	// create an empty hidden instance of LEditor
-	LEditor *editor = new LEditor(rCtrl.GetParent());
-	editor->Show(false);
-	editor->SetIsVisible(false);
-
-	// Get expressions for the CC to work with:
-	RefactorSource target;
-	std::list<CppToken> candidates;
-	std::list<CppToken> possibleCandidates;
-
-	wxProgressDialog* prgDlg = new wxProgressDialog (wxT("Parsing matches..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)tokens.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT);
-	prgDlg->GetSizer()->Fit(prgDlg);
-	prgDlg->Layout();
-	prgDlg->Centre();
-
-	std::list<CppToken>::iterator iter = tokens.begin();
-	int counter(0);
-
-	for (; iter != tokens.end(); iter++) {
-		CppToken token = *iter;
-		editor->Create(wxEmptyString, token.getFilename());
-		token.setLineNo( editor->LineFromPosition( (int)token.getOffset() ) + 1 );
-		token.setLine( editor->GetLine( token.getLineNo()-1 ) );
-
-		wxString msg;
-		wxFileName f(token.getFilename());
-		msg << wxT("Parsing expression ") << counter << wxT("/") << tokens.size() << wxT(" in file: ") << f.GetFullName();
-		if ( !prgDlg->Update(counter, msg) ) {
-			// user clicked 'Cancel'
-			prgDlg->Destroy();
-			editor->Destroy();
-			return;
-		}
-
-		counter++;
-
-		// reset the result
-		target.Reset();
-		if (ResolveWord(editor, token.getOffset(), word, &target)) {
-
-			if (target.name == source.name && target.scope == source.scope) {
-				// full match
-				candidates.push_back( token );
-			} else if (target.name == source.scope && !source.isClass) {
-				// source is function, and target is class
-				candidates.push_back( token );
-			} else if (target.name == source.name && source.isClass) {
-				// source is class, and target is ctor
-				candidates.push_back( token );
-			} else {
-				// add it to the possible match list
-				possibleCandidates.push_back( token );
-			}
-		} else {
-			// resolved word failed, add it to the possible list
-			possibleCandidates.push_back( token );
-		}
-	}
-
-	editor->Destroy();
-	prgDlg->Destroy();
+	// Invoke the RefactorEngine
+	RefactoringEngine::Instance()->RenameGlobalSymbol(word, rCtrl.GetFileName(), rCtrl.LineFromPosition(pos+1), word_start, files);
 
 	// display the refactor dialog
-	RenameSymbol *dlg = new RenameSymbol(&rCtrl, candidates, possibleCandidates, source.name);
+	RenameSymbol *dlg = new RenameSymbol(&rCtrl, RefactoringEngine::Instance()->GetCandidates(), RefactoringEngine::Instance()->GetPossibleCandidates(), word);
 	if (dlg->ShowModal() == wxID_OK) {
 		std::list<CppToken> matches;
 
@@ -2121,23 +2025,6 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 			ReplaceInFiles(dlg->GetWord(), matches);
 		}
 	}
-	dlg->Destroy();
-}
-
-void ContextCpp::BuildRefactorDatabase ( const wxString& word, CppTokensMap &l )
-{
-	wxArrayString projects;
-	ManagerST::Get()->GetProjectList ( projects );
-	std::vector<wxFileName> files;
-
-	for ( size_t i=0; i<projects.GetCount(); i++ ) {
-		ProjectPtr proj = ManagerST::Get()->GetProject ( projects.Item ( i ) );
-		if ( proj ) {
-			proj->GetFiles ( files, true );
-		}
-	}
-	RefactorIndexBuildJob job ( files, word.c_str() );
-	job.Parse ( word, l );
 }
 
 void ContextCpp::ReplaceInFiles ( const wxString &word, std::list<CppToken> &li )
@@ -2155,7 +2042,7 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, std::list<CppToken> &li 
 			off = 0;
 			file_name = token.getFilename();
 		}
-		LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(token.getFilename(), wxEmptyString, 0);
+		LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(token.getFilename(), wxEmptyString, 0);
 		if (editor != NULL && (editor->GetFileName().GetFullPath().CmpNoCase(token.getFilename()) == 0) ) {
 			editor->SetSelection ( token.getOffset(), token.getOffset()+token.getName().Len() );
 			if ( editor->GetSelectionStart() != editor->GetSelectionEnd() ) {
@@ -2164,88 +2051,6 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, std::list<CppToken> &li 
 			}
 		}
 	}
-}
-
-bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, RefactorSource *rs)
-{
-	std::vector<TagEntryPtr> tags;
-	// try to process the current expression
-	wxString expr = GetExpression(pos + word.Len(), false, ctrl);
-
-	// get the scope
-	//Optimize the text for large files
-	int line = ctrl->LineFromPosition(pos)+1;
-	wxString text = ctrl->GetTextRange(0, pos + word.Len());
-
-	// we simply collect declarations & implementations
-
-	//try implemetation first
-	bool found(false);
-	TagsManagerST::Get()->FindImplDecl(ctrl->GetFileName(), line, expr, word, text, tags, true, true);
-	if (tags.empty() == false) {
-		// try to see if we got a function and not class/struct
-
-		for (size_t i=0; i<tags.size(); i++) {
-			TagEntryPtr tag = tags.at(i);
-			// find first non class/struct tag
-			if (tag->GetKind() != wxT("class") && tag->GetKind() != wxT("struct")) {
-
-				// if there is no match, add it anyways
-				if (!found) {
-					rs->isClass = (tag->GetKind() == wxT("class") ||tag->GetKind() == wxT("struct"));
-					rs->name = tag->GetName();
-					rs->scope = tag->GetScope();
-					found = true;
-				} else if (rs->scope == wxT("<global>") && rs->isClass == false) {
-					// give predecense to <global> variables
-					rs->isClass = (tag->GetKind() == wxT("class") ||tag->GetKind() == wxT("struct"));
-					rs->name = tag->GetName();
-					rs->scope = tag->GetScope();
-					found = true;
-				}
-				found = true;
-			}
-		}
-
-		// if no match was found, keep the first result but keep searching
-		if ( !found ) {
-			TagEntryPtr tag = tags.at(0);
-			rs->scope = tag->GetScope();
-			rs->name = tag->GetName();
-			rs->isClass = (tag->GetKind() == wxT("class") ||tag->GetKind() == wxT("struct"));
-			found = true;
-		} else {
-			return true;
-		}
-	}
-
-	// Ok, the "implementation" search did not yield definite results, try declaration
-	tags.clear();
-	TagsManagerST::Get()->FindImplDecl(ctrl->GetFileName(), line, expr, word, text, tags, false, true);
-	if (tags.empty() == false) {
-		// try to see if we got a function and not class/struct
-		for (size_t i=0; i<tags.size(); i++) {
-			TagEntryPtr tag = tags.at(i);
-			// find first non class/struct tag
-			if (tag->GetKind() != wxT("class") && tag->GetKind() != wxT("struct")) {
-				rs->name = tag->GetName();
-				rs->scope = tag->GetScope();
-				return true;
-			}
-		}
-
-		// if no match was found, keep the first result but keep searching
-		if ( !found ) {
-			TagEntryPtr tag = tags.at(0);
-			rs->scope = tag->GetScope();
-			rs->name = tag->GetName();
-			rs->isClass = (tag->GetKind() == wxT("class") ||tag->GetKind() == wxT("struct"));
-		}
-		return true;
-	}
-
-	// if we got so far, CC failed to parse the expression
-	return false;
 }
 
 void ContextCpp::OnRetagFile(wxCommandEvent& e)
@@ -2485,7 +2290,7 @@ void ContextCpp::GoHyperlink(int start, int end, int type, bool alt)
 		if (type == XRCID("find_tag")) {
 			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED,
 			                 alt ? XRCID("find_impl") : XRCID("find_decl"));
-			Frame::Get()->GetEventHandler()->AddPendingEvent(e);
+			clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 		}
 	}
 }
@@ -2535,14 +2340,14 @@ void ContextCpp::DoOpenWorkspaceFile()
 
 
 	if (fileToOpen.IsEmpty() == false) {
-		Frame::Get()->GetMainBook()->OpenFile(fileToOpen);
+		clMainFrame::Get()->GetMainBook()->OpenFile(fileToOpen);
 	}
 }
 
 void ContextCpp::DoCreateFile(const wxFileName& fn)
 {
 	// get the file name from the user
-	wxString new_file = wxGetTextFromUser(_("New File Name:"), _("Create File"), fn.GetFullPath(), Frame::Get());
+	wxString new_file = wxGetTextFromUser(_("New File Name:"), _("Create File"), fn.GetFullPath(), clMainFrame::Get());
 	if (new_file.IsEmpty()) {
 		// user clicked cancel
 		return;
@@ -2557,7 +2362,7 @@ void ContextCpp::DoCreateFile(const wxFileName& fn)
 			vd.Prepend(p->GetName() + wxT(":"));
 
 			if (vd.IsEmpty() == false) {
-				Frame::Get()->GetWorkspaceTab()->GetFileView()->CreateAndAddFile(new_file, vd);
+				clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->CreateAndAddFile(new_file, vd);
 			}
 		}
 	} else {

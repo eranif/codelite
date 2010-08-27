@@ -97,7 +97,7 @@ void BreakptMgr::AddBreakpoint()
 	BreakptPropertiesDlg dlg(NULL);
 	dlg.SetTitle(_("Create a breakpoint or watchpoint"));
 
-	LEditor* const editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	LEditor* const editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	BreakpointInfo bp;
 	bp.Create(editor ? editor->GetFileName().GetFullPath() : wxString(), editor ? editor->GetCurrentLine() : -1, GetNextID());
 	dlg.EnterBPData(bp);
@@ -117,7 +117,7 @@ void BreakptMgr::AddBreakpoint()
 		} else {
 			msg = _("Breakpoint successfully added");
 		}
-		Frame::Get()->SetStatusMessage(msg, 0);
+		clMainFrame::Get()->SetStatusMessage(msg, 0);
 	}
 }
 
@@ -209,7 +209,7 @@ void BreakptMgr::DeleteAllBreakpointMarkers()
 	std::set<wxString> filenames = GetFilesWithBreakpointMarkers();
 	std::set<wxString>::iterator filenames_iter = filenames.begin();
 	for (; filenames_iter != filenames.end(); ++filenames_iter) {
-		LEditor* editor = Frame::Get()->GetMainBook()->FindEditor(*filenames_iter);
+		LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(*filenames_iter);
 		if (editor) {
 			editor->DelAllBreakpointMarkers();
 		}
@@ -219,7 +219,7 @@ void BreakptMgr::DeleteAllBreakpointMarkers()
 void BreakptMgr::RefreshBreakpointMarkers()
 {
 	std::vector<LEditor*> editors;
-	Frame::Get()->GetMainBook()->GetAllEditors( editors );
+	clMainFrame::Get()->GetMainBook()->GetAllEditors( editors );
 
 	for(size_t i=0; i<editors.size(); i++)
 		DoRefreshFileBreakpoints(editors.at(i));
@@ -499,7 +499,7 @@ void BreakptMgr::SetBreakpointDebuggerID(const int internal_id, const int debugg
 				m_bps.erase(iter);
 
 				// update the UI as well
-				Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+				clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 				RefreshBreakpointMarkers();
 				return;
 			}
@@ -511,7 +511,7 @@ void BreakptMgr::SetBreakpointDebuggerID(const int internal_id, const int debugg
 				m_pendingBreakpointsList.erase(m_pendingBreakpointsList.begin()+index);
 			}
 			// update the UI as well
-			Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+			clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 			return;
 		}
 	}
@@ -699,7 +699,7 @@ void BreakptMgr::ReconcileBreakpoints(const std::vector<BreakpointInfo>& li)
 
 	RefreshBreakpointMarkers();
 	// update the Breakpoints pane too
-	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+	clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 }
 
 	// When a a breakpoint is hit, see if it's got a command-list that needs faking
@@ -999,7 +999,7 @@ void BreakptMgr::DropBreakpoint(std::vector<BreakpointInfo>& BPs, int newline)
 
 	if (DelBreakpoint(bid)) {
 		AddBreakpoint(bp);
-		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+		clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 	}
 }
 

@@ -390,7 +390,7 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 				for (; iter != targets.end(); iter++) {
 					item = new wxMenuItem(customTargetsMenu, wxXmlResource::GetXRCID(iter->first.c_str()), iter->first, wxEmptyString, wxITEM_NORMAL);
 					customTargetsMenu->Append(item);
-					Frame::Get()->Connect(wxXmlResource::GetXRCID(iter->first.c_str()), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnBuildCustomTarget));
+					clMainFrame::Get()->Connect(wxXmlResource::GetXRCID(iter->first.c_str()), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnBuildCustomTarget));
 				}
 
 				// iterator over the menu items and search for 'Project Only' target
@@ -434,7 +434,7 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 		// disconnect events
 		std::map<wxString, wxString>::iterator iter = targets.begin();
 		for (; iter != targets.end(); iter++) {
-			Frame::Get()->Disconnect(wxXmlResource::GetXRCID(iter->first.c_str()), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnBuildCustomTarget));
+			clMainFrame::Get()->Disconnect(wxXmlResource::GetXRCID(iter->first.c_str()), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnBuildCustomTarget));
 		}
 	}
 }
@@ -544,7 +544,7 @@ void FileViewTree::DoItemActivated( wxTreeItemId &item, wxEvent &event )
 		if (SendCmdEvent(wxEVT_TREE_ITEM_FILE_ACTIVATED, &file_path)) {
 			return;
 		}
-		Frame::Get()->GetMainBook()->OpenFile( fn.GetFullPath(), project, -1 );
+		clMainFrame::Get()->GetMainBook()->OpenFile( fn.GetFullPath(), project, -1 );
 
 	} else if ( itemData->GetData().GetKind() == ProjectItem::TypeProject ) {
 		// make it active
@@ -759,7 +759,7 @@ void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )
 	wxString projName = path.BeforeFirst( wxT( ':' ) );
 	wxString projCwd = ManagerST::Get()->GetProjectCwd( projName );
 
-	NewItemDlg dlg(Frame::Get(), projCwd);
+	NewItemDlg dlg(clMainFrame::Get(), projCwd);
 	dlg.SetTitle(_("New Item"));
 	if ( dlg.ShowModal() == wxID_OK ) {
 		DoAddNewItem(item, dlg.GetFileName().GetFullPath(), path);
@@ -979,7 +979,7 @@ void FileViewTree::OnLocalPrefs( wxCommandEvent& event )
 		EditorSettingsLocal dlg(higherOptions, lwsnode, pLevel_workspace, this);
 		if (dlg.ShowModal() == wxID_OK &&
 		    LocalWorkspaceST::Get()->SetWorkspaceOptions(dlg.GetLocalOpts()) ) {
-			Frame::Get()->GetMainBook()->ApplySettingsChanges();
+			clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
 			// Notify plugins that some settings have changed
 			PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
 		}
@@ -1000,7 +1000,7 @@ void FileViewTree::OnLocalPrefs( wxCommandEvent& event )
 	EditorSettingsLocal dlg(higherOptions, lpnode, pLevel_project, this);
 	if (dlg.ShowModal() == wxID_OK &&
 	    LocalWorkspaceST::Get()->SetProjectOptions(dlg.GetLocalOpts(), GetItemText(item)) ) {
-		Frame::Get()->GetMainBook()->ApplySettingsChanges();
+		clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
 		// Notify plugins that some settings have changed
 		PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
 	}
@@ -1020,7 +1020,7 @@ void FileViewTree::OnProjectProperties( wxCommandEvent & WXUNUSED( event ) )
 	//open the project properties dialog
 	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
 	//find the project configuration name that matches the workspace selected configuration
-	ProjectSettingsDlg *dlg = new ProjectSettingsDlg( Frame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ),
+	ProjectSettingsDlg *dlg = new ProjectSettingsDlg( clMainFrame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ),
 	        projectName,
 	        title );
 	dlg->ShowModal();
@@ -1077,7 +1077,7 @@ void FileViewTree::OnSaveAsTemplate( wxCommandEvent & WXUNUSED( event ) )
 		wxString name = GetItemText( item );
 		ProjectPtr proj = ManagerST::Get()->GetProject( name );
 		if ( proj ) {
-			NameAndDescDlg dlg(Frame::Get(), PluginManager::Get(), name);
+			NameAndDescDlg dlg(clMainFrame::Get(), PluginManager::Get(), name);
 			if ( dlg.ShowModal() == wxID_OK ) {
 				wxString newName = dlg.GetName();
 				wxString desc  	 = dlg.GetDescription();
@@ -1104,7 +1104,7 @@ void FileViewTree::OnBuildOrder( wxCommandEvent &event )
 	wxUnusedVar( event );
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
-		DependenciesDlg dlg ( Frame::Get(), GetItemText( item ) );
+		DependenciesDlg dlg ( clMainFrame::Get(), GetItemText( item ) );
 		dlg.ShowModal();
 	}
 }
@@ -1491,7 +1491,7 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	wxArrayString     files;
 	wxArrayString     all_files;
 	wxString          filespec;
-	ImportFilesDialog dlg(Frame::Get());
+	ImportFilesDialog dlg(clMainFrame::Get());
 
 	if(dlg.ShowModal() != wxID_OK) {
 		return;
@@ -1735,7 +1735,7 @@ void FileViewTree::OnReBuild(wxCommandEvent& event)
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-		Frame::Get()->RebuildProject( projectName );
+		clMainFrame::Get()->RebuildProject( projectName );
 	}
 }
 
@@ -1853,17 +1853,17 @@ void FileViewTree::OnRebuildProjectOnly(wxCommandEvent& event)
 void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
 {
 	bool retagRequires;
-	WorkspaceSettingsDlg dlg(Frame::Get(), LocalWorkspaceST::Get());
+	WorkspaceSettingsDlg dlg(clMainFrame::Get(), LocalWorkspaceST::Get());
 	if(dlg.ShowModal() == wxID_OK) {
 
-		Frame::Get()->SetEnvStatusMessage();
+		clMainFrame::Get()->SetEnvStatusMessage();
 		// Update the new paths
 		retagRequires = ManagerST::Get()->UpdateParserPaths();
 
 		// send notification to the main frame to perform retag
 		if ( retagRequires ) {
 			wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
-			Frame::Get()->GetEventHandler()->AddPendingEvent( event );
+			clMainFrame::Get()->GetEventHandler()->AddPendingEvent( event );
 		}
 	}
 }

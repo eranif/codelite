@@ -120,9 +120,9 @@ void MainBook::OnPageClosing(NotebookEvent &e)
 	LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(e.GetSelection()));
 	if (!editor)
 		return;
-	
+
 	ClangCodeCompletion::Instance()->CancelCodeComplete();
-		
+
 	if (AskUserToSave(editor)) {
 		SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
 	} else {
@@ -569,7 +569,7 @@ bool MainBook::UserSelectFiles(std::vector<std::pair<wxFileName,bool> > &files, 
 	if (files.empty())
 		return true;
 
-	FileCheckList dlg(Frame::Get(), wxID_ANY, title);
+	FileCheckList dlg(clMainFrame::Get(), wxID_ANY, title);
 	dlg.SetCaption(caption);
 	dlg.SetFiles(files);
 	dlg.SetCancellable(cancellable);
@@ -711,7 +711,7 @@ bool MainBook::CloseAll(bool cancellable)
 	// Delete the files without notifications (it will be faster)
 	wxWindowUpdateLocker locker(this);
 	ClangCodeCompletion::Instance()->CancelCodeComplete();
-	
+
 	m_book->DeleteAllPages(false);
 
 	// Since we got no more editors opened,
@@ -727,7 +727,7 @@ bool MainBook::CloseAll(bool cancellable)
 	m_navBar->UpdateScope(tag);
 
 	// Update the frame's title
-	Frame::Get()->SetFrameTitle(NULL);
+	clMainFrame::Get()->SetFrameTitle(NULL);
 
 	// Remove context menu if needed
 	DoHandleFrameMenu(NULL);
@@ -760,7 +760,7 @@ void MainBook::ApplySettingsChanges()
 		editors[i]->SetSyntaxHighlight(editors[i]->GetContext()->GetName());
 	}
 
-	Frame::Get()->UpdateAUI();
+	clMainFrame::Get()->UpdateAUI();
 
 	// Last: reposition the findBar
 	DoPositionFindBar(2);
@@ -860,9 +860,9 @@ bool MainBook::DoSelectPage(wxWindow* win)
 	// FIXME: move special context-specific menu handling to the Context classes?
 	// it could be done inside the existing ContextXXX::SetActive() method.
 	if (!editor || editor->GetContext()->GetName() != wxT("C++")) {
-		int idx = Frame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
+		int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
 		if ( idx != wxNOT_FOUND ) {
-			delete Frame::Get()->GetMenuBar()->Remove(idx);
+			delete clMainFrame::Get()->GetMenuBar()->Remove(idx);
 		}
 	}
 
@@ -870,13 +870,13 @@ bool MainBook::DoSelectPage(wxWindow* win)
 	DoHandleFrameMenu(editor);
 
 	if (!editor) {
-		Frame::Get()->SetFrameTitle(NULL);
-		Frame::Get()->SetStatusMessage(wxEmptyString, 1); // clear line & column indicator
+		clMainFrame::Get()->SetFrameTitle(NULL);
+		clMainFrame::Get()->SetStatusMessage(wxEmptyString, 1); // clear line & column indicator
 		UpdateNavBar(NULL);
 	} else {
 		if (editor->GetContext()->GetName() == wxT("C++")) {
-			if (Frame::Get()->GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {
-				Frame::Get()->GetMenuBar()->Append(wxXmlResource::Get()->LoadMenu(wxT("editor_right_click")), wxT("C++"));
+			if (clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {
+				clMainFrame::Get()->GetMenuBar()->Append(wxXmlResource::Get()->LoadMenu(wxT("editor_right_click")), wxT("C++"));
 			}
 		}
 		SendCmdEvent(wxEVT_ACTIVE_EDITOR_CHANGED, (IEditor*)editor);
@@ -948,9 +948,9 @@ void MainBook::DoHandleFrameMenu(LEditor* editor)
 	// Incase of no editor or an editor with context other than C++
 	// remove the context menu from the main frame
 	if (!editor || editor->GetContext()->GetName() != wxT("C++")) {
-		int idx = Frame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
+		int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
 		if ( idx != wxNOT_FOUND ) {
-			delete Frame::Get()->GetMenuBar()->Remove(idx);
+			delete clMainFrame::Get()->GetMenuBar()->Remove(idx);
 		}
 	}
 }

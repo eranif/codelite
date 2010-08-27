@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : cpptoken.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : cpptoken.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef __cpptoken__
@@ -31,12 +31,10 @@
 
 class CppToken
 {
-	int m_id;
-	wxString name;		// the name of the token
-	size_t offset;		// file offset
+	int      m_id;
+	wxString name;    // the name of the token
+	size_t   offset;  // file offset
 	wxString filename;
-	wxString line;
-	int lineno;
 
 public:
 	CppToken();
@@ -75,23 +73,6 @@ public:
 	const int& getId() const {
 		return m_id;
 	}
-
-	void setLine(const wxString& line) {
-		this->line = line;
-	}
-	
-	const wxString& getLine() const {
-		return line;
-	}
-
-	void setLineNo(const int& lineno) {
-		this->lineno = lineno;
-	}
-	
-	const int getLineNo() const {
-		return lineno;
-	}
-
 	void print();
 };
 
@@ -119,12 +100,12 @@ public:
 	 * @param token token to add
 	 */
 	void addToken(const CppToken &token);
-	
+
 	/**
 	 * @brief clear all token
 	 */
 	void clear();
-	
+
 	/**
 	 * @brief return true if no tokens were found
 	 */

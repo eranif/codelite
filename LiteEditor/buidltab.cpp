@@ -186,8 +186,8 @@ void BuildTab::Clear()
 	m_warnCount = 0;
 	m_cmp.Reset ( NULL );
 	m_baseDir.Clear();
-	Frame::Get()->GetOutputPane()->GetErrorsTab()->ClearLines();
-	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->ClearLines();
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if ( editor ) {
 		editor->AnnotationClearAll();
 		editor->AnnotationSetVisible(0); // Hidden
@@ -322,7 +322,7 @@ void BuildTab::DoMarkAndOpenFile ( std::map<int,LineInfo>::iterator i, bool scro
 		}
 	}
 
-	LEditor *editor = Frame::Get()->GetMainBook()->OpenFile ( file, info.project, info.linenum );
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile ( file, info.project, info.linenum );
     if (editor == NULL) {
 //
 //		// failed to open the file, try using the name part of the file only
@@ -343,7 +343,7 @@ void BuildTab::DoMarkAndOpenFile ( std::map<int,LineInfo>::iterator i, bool scro
 		m_sci->ScrollToLine      ( i->first      );
 
     // mark it in the errors tab too
-    Frame::Get()->GetOutputPane()->GetErrorsTab()->MarkLine ( i->first );
+    clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->MarkLine ( i->first );
 }
 
 void BuildTab::MarkEditor ( LEditor *editor )
@@ -486,7 +486,7 @@ void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 	}
 
 	AppendText ( BUILD_START_MSG );
-    OutputPane *opane = Frame::Get()->GetOutputPane();
+    OutputPane *opane = clMainFrame::Get()->GetOutputPane();
 
 	wxWindow *win(NULL);
 	int sel =  opane->GetNotebook()->GetSelection();
@@ -541,25 +541,25 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 //	Frame::Get()->SetStatusMessage ( wxEmptyString, 3, XRCID ( "build" ) );
 
 	bool success = m_errorCount == 0 && ( m_skipWarnings || m_warnCount == 0 );
-	bool viewing = ManagerST::Get()->IsPaneVisible ( Frame::Get()->GetOutputPane()->GetCaption() ) &&
-	               ( Frame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() == this ||
-	                 Frame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() ==
-	                 Frame::Get()->GetOutputPane()->GetErrorsTab() );
+	bool viewing = ManagerST::Get()->IsPaneVisible ( clMainFrame::Get()->GetOutputPane()->GetCaption() ) &&
+	               ( clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() == this ||
+	                 clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() ==
+	                 clMainFrame::Get()->GetOutputPane()->GetErrorsTab() );
 
 	if ( !success ) {
 		if ( viewing ) {
 			std::map<int,LineInfo>::iterator i = GetNextBadLine();
 			m_sci->GotoLine ( i->first-1 ); // minus one line so user can type F4 to open the first error
 		} else {
-			ManagerST::Get()->ShowOutputPane ( Frame::Get()->GetOutputPane()->GetErrorsTab()->GetCaption() );
+			ManagerST::Get()->ShowOutputPane ( clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->GetCaption() );
 		}
 	} else if ( m_autoHide && viewing ) {
-		ManagerST::Get()->HidePane ( Frame::Get()->GetOutputPane()->GetCaption() );
+		ManagerST::Get()->HidePane ( clMainFrame::Get()->GetOutputPane()->GetCaption() );
 	} else if ( m_showMe == BuildTabSettingsData::ShowOnEnd && !m_autoHide ) {
 		ManagerST::Get()->ShowOutputPane ( m_name );
 	}
 
-	MarkEditor ( Frame::Get()->GetMainBook()->GetActiveEditor() );
+	MarkEditor ( clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
 
 	// notify the plugins that the build had ended
 	PostCmdEvent(wxEVT_BUILD_ENDED);
@@ -583,7 +583,7 @@ void BuildTab::OnConfigChanged ( wxCommandEvent &e )
 	const wxString *config = ( const wxString * ) e.GetClientData();
 	if ( config && *config == wxT ( "build_tab_settings" ) ) {
 		Initialize();
-		Frame::Get()->GetOutputPane()->GetErrorsTab()->OnRedisplayLines ( e );
+		clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->OnRedisplayLines ( e );
 	}
 }
 
@@ -601,9 +601,9 @@ void BuildTab::OnNextBuildError ( wxCommandEvent &e )
 		std::map<int,LineInfo>::iterator i = GetNextBadLine();
 		if ( i != m_lineInfo.end() ) {
 			wxString showpane = m_name;
-			if ( Frame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() ==
-			        Frame::Get()->GetOutputPane()->GetErrorsTab() ) {
-				showpane = Frame::Get()->GetOutputPane()->GetErrorsTab()->GetCaption();
+			if ( clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() ==
+			        clMainFrame::Get()->GetOutputPane()->GetErrorsTab() ) {
+				showpane = clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->GetCaption();
 			}
 			ManagerST::Get()->ShowOutputPane ( showpane );
 			DoMarkAndOpenFile ( i, true );
@@ -619,7 +619,7 @@ void BuildTab::OnNextBuildErrorUI ( wxUpdateUIEvent &e )
 void BuildTab::OnActiveEditorChanged ( wxCommandEvent &e )
 {
 	e.Skip();
-	MarkEditor ( Frame::Get()->GetMainBook()->GetActiveEditor() );
+	MarkEditor ( clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
 }
 
 void BuildTab::OnMouseDClick ( wxScintillaEvent &e )
@@ -804,7 +804,7 @@ void BuildTab::DoProcessLine(const wxString& text, int lineno)
         if (!info.filename.IsEmpty() && (info.linecolor == wxSCI_LEX_GCC_ERROR || info.linecolor == wxSCI_LEX_GCC_WARNING)) {
             m_fileMap.insert(std::make_pair(info.filename, lineno));
         }
-		Frame::Get()->GetOutputPane()->GetErrorsTab()->AppendLine ( lineno );
+		clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->AppendLine ( lineno );
 	}
 }
 

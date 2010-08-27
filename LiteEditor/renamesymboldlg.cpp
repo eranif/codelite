@@ -25,10 +25,27 @@
  #include "renamesymboldlg.h"
 #include "globals.h"
 
+class RenameSymbolData : public wxClientData
+{
+public:
+	CppToken m_token;
+
+public:
+	RenameSymbolData(const CppToken& token) : m_token(token) {}
+	~RenameSymbolData(){}
+};
+
 RenameSymbol::RenameSymbol( wxWindow* parent, const std::list<CppToken>& candidates, const std::list<CppToken> &possCandidates, const wxString& oldname/* = wxT("")*/  )
 		:
 		RenameSymbolBase( parent )
 {
+	// Initialize the columns
+	m_checkListCandidates->InsertColumn(0, wxT(" "));
+	m_checkListCandidates->InsertColumn(1, wxT("File"));
+	m_checkListCandidates->InsertColumn(2, wxT("Position"));
+	m_checkListCandidates->SetColumnWidth(0, 20);
+	m_checkListCandidates->SetColumnWidth(1, 200);
+
 	m_preview->SetReadOnly(true);
 
 	m_tokens.clear();
@@ -50,39 +67,29 @@ RenameSymbol::RenameSymbol( wxWindow* parent, const std::list<CppToken>& candida
 
 	m_textCtrlNewName->SetValue(oldname);
 	m_textCtrlNewName->SetFocus();
+
+	m_checkListCandidates->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( RenameSymbol::OnItemSelected ), NULL, this );
 }
 
-void RenameSymbol::OnItemSelected( wxCommandEvent& event )
+void RenameSymbol::OnItemSelected( wxListEvent& event )
 {
-	int index = event.GetSelection();
-	if ( index != wxNOT_FOUND ) {
-		DoSelectFile(m_tokens.at((size_t)index));
+	RenameSymbolData* data = (RenameSymbolData*)m_checkListCandidates->GetItemData(event.m_itemIndex);
+	if(data) {
+		DoSelectFile( data->m_token );
 	}
-}
-
-void RenameSymbol::OnItemDClicked( wxCommandEvent& event )
-{
-	wxUnusedVar(event);
-}
-
-void RenameSymbol::OnItemChecked( wxCommandEvent& event )
-{
-	event.Skip();
 }
 
 void RenameSymbol::AddMatch(const CppToken& token, bool check)
 {
-	wxString msg;
-	wxFileName fn(token.getFilename());
-	msg << token.getLine() << wxT(": At ") << fn.GetFullName() << wxString::Format( wxT(" line %u"), token.getLineNo() );
+	wxString relativeTo = WorkspaceST::Get()->GetWorkspaceFileName().GetPath();
+	wxFileName fn( token.getFilename() );
+	fn.MakeRelativeTo( relativeTo );
 
-	msg.Replace(wxT("\r\n"), wxT(" "));
-	msg.Replace(wxT("\n"), wxT(" "));
-	msg = msg.Trim().Trim(false);
-
-	int index = m_checkListCandidates->Append(msg);//, new CppToken(token));
-	m_checkListCandidates->Check((unsigned int)index, check);
-	m_checkListCandidates->Select(0);
+	long index = m_checkListCandidates->AppendRow();
+	m_checkListCandidates->SetTextColumn(index, 1, fn.GetFullPath());
+	m_checkListCandidates->SetTextColumn(index, 2, wxString::Format(wxT("%u"), token.getOffset()));
+	m_checkListCandidates->Check(index, check);
+	m_checkListCandidates->SetItemClientData(index, new RenameSymbolData(token));
 }
 
 void RenameSymbol::OnButtonOK(wxCommandEvent& e)
@@ -99,16 +106,20 @@ void RenameSymbol::OnButtonOK(wxCommandEvent& e)
 
 void RenameSymbol::GetMatches(std::list<CppToken>& matches)
 {
-	for (unsigned int i=0; i<m_checkListCandidates->GetCount(); i++) {
+	for (int i=0; i<m_checkListCandidates->GetItemCount(); i++) {
 		if (m_checkListCandidates->IsChecked(i)) {
-			matches.push_back(m_tokens.at(i));
+			matches.push_back( ((RenameSymbolData*) m_checkListCandidates->GetItemData(i))->m_token );
 		}
 	}
 }
 void RenameSymbol::DoSelectFile(const CppToken& token)
 {
 	m_preview->SetReadOnly(false);
-	m_preview->Create(wxEmptyString, token.getFilename());
+
+	// Recreate the editor only if needed
+	if(m_preview->GetFileName().GetFullPath() != token.getFilename())
+		m_preview->Create(wxEmptyString, token.getFilename());
+
 	m_preview->SetCaretAt(token.getOffset());
 	m_preview->SetSelection(token.getOffset(), token.getOffset()+token.getName().Len());
 	m_preview->SetReadOnly(true);

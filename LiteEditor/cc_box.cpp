@@ -433,7 +433,7 @@ void CCBox::Show(const wxString& word)
 
 #ifdef __WXGTK__
 	wxPopupWindow::Show();
-	Frame::Get()->Raise();
+	clMainFrame::Get()->Raise();
 	GetEditor()->SetFocus();
 	GetEditor()->SetSCIFocus(true);
 #else // Windows

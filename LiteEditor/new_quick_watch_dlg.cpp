@@ -251,9 +251,9 @@ void DisplayVariableDlg::ShowDialog(bool center)
 		wxDialog::Show();
 	}
 
-	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if(editor) {
-		Frame::Get()->Raise();
+		clMainFrame::Get()->Raise();
 		editor->SetFocus();
 		editor->SetActive();
 	}
@@ -404,9 +404,9 @@ void DisplayVariableDlg::OnMenuSelection(wxCommandEvent& e)
 	if (item.IsOk() && !IsFakeItem(item)) {
 		if (e.GetId() == XRCID("tip_add_watch")) {
 			wxString fullpath = DoGetItemPath(item);
-			Frame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(fullpath);
-			Frame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
-			Frame::Get()->GetDebuggerPane()->GetWatchesTable()->RefreshValues();
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(fullpath);
+			clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->RefreshValues();
 
 		} else if (e.GetId() == XRCID("tip_copy_value")) {
 			wxString itemText = m_treeCtrl->GetItemText(item);

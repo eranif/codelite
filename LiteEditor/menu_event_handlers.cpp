@@ -168,7 +168,7 @@ void FindReplaceHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &ev
 	}
 
 	if ( event.GetId() == wxID_FIND ) {
-		Frame::Get()->GetMainBook()->ShowQuickBar( editor->GetSelectedText() );
+		clMainFrame::Get()->GetMainBook()->ShowQuickBar( editor->GetSelectedText() );
 
 	} else if ( event.GetId() == wxID_REPLACE ) {
 		editor->DoFindAndReplace(true);
@@ -307,7 +307,7 @@ void ViewAsHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 		return;
 	}
 
-	wxString lexName = Frame::Get()->GetViewAsLanguageById(event.GetInt());
+	wxString lexName = clMainFrame::Get()->GetViewAsLanguageById(event.GetInt());
 	if (lexName.IsEmpty() == false) {
 		editor->SetSyntaxHighlight(lexName);
 	}
@@ -321,7 +321,7 @@ void ViewAsHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event
 	}
 
 	event.Enable(true);
-	wxString lexName = Frame::Get()->GetViewAsLanguageById(event.GetInt());
+	wxString lexName = clMainFrame::Get()->GetViewAsLanguageById(event.GetInt());
 	event.Check(editor->GetContext()->GetName() == lexName);
 }
 

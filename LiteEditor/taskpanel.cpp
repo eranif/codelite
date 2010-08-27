@@ -138,8 +138,8 @@ SearchData TaskPanel::DoGetSearchData()
 		ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
 	} else if (rootDir == SEARCH_IN_CURR_FILE_PROJECT) {
 		wxString project = ManagerST::Get()->GetActiveProjectName();
-		if (Frame::Get()->GetMainBook()->GetActiveEditor()) {
-			wxFileName activeFile = Frame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();
+		if (clMainFrame::Get()->GetMainBook()->GetActiveEditor()) {
+			wxFileName activeFile = clMainFrame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();
 			project = ManagerST::Get()->GetProjectNameByFile(activeFile.GetFullPath());
 		}
 		ManagerST::Get()->GetProjectFiles(project, files);

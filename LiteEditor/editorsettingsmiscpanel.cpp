@@ -36,7 +36,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 		, TreeBookNode<EditorSettingsMiscPanel>()
 		, m_restartRequired (false)
 {
-	GeneralInfo info = Frame::Get()->GetFrameGeneralInfo();
+	GeneralInfo info = clMainFrame::Get()->GetFrameGeneralInfo();
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
 	if (options->GetIconsSize() == 16) {
 		m_toolbarIconSize->SetSelection(0);
@@ -91,16 +91,16 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 void EditorSettingsMiscPanel::OnClearButtonClick( wxCommandEvent& )
 {
 	ManagerST::Get()->ClearWorkspaceHistory();
-	Frame::Get()->GetMainBook()->ClearFileHistory();
+	clMainFrame::Get()->GetMainBook()->ClearFileHistory();
 }
 
 void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 {
 
 	if (m_showSplashScreen->IsChecked()) {
-		Frame::Get()->SetFrameFlag(true, CL_SHOW_SPLASH);
+		clMainFrame::Get()->SetFrameFlag(true, CL_SHOW_SPLASH);
 	} else {
-		Frame::Get()->SetFrameFlag(false, CL_SHOW_SPLASH);
+		clMainFrame::Get()->SetFrameFlag(false, CL_SHOW_SPLASH);
 	}
 
 	EditorConfigST::Get()->SaveLongValue(wxT("SingleInstance"), m_singleAppInstance->IsChecked() ? 1 : 0);
@@ -147,7 +147,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)
 {
 	wxArrayString a1, a2;
-	Frame::Get()->GetMainBook()->GetRecentlyOpenedFiles(a1);
+	clMainFrame::Get()->GetMainBook()->GetRecentlyOpenedFiles(a1);
 	ManagerST::Get()->GetRecentlyOpenedWorkspaces(a2);
 	e.Enable(!a1.IsEmpty() && !a2.IsEmpty());
 }

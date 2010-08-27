@@ -88,7 +88,7 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 		if (!EditorConfigST::Get()->GetLongValue(wxT("FindNextWrapAroundAnswer"), res)) {
 			// First time we are prompting to the user, or the user never
 			// checked the checkbox 'dont ask me again'
-			ThreeButtonDlg dlg(Frame::Get(), msg, wxT("CodeLite"));
+			ThreeButtonDlg dlg(clMainFrame::Get(), msg, wxT("CodeLite"));
 			res = dlg.ShowModal();
 			if (dlg.GetDontAskMeAgain() && res != wxID_CANCEL) {
 				//save this answer
@@ -96,7 +96,7 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 			}
 		} else {
 			// The user doesn't want to be asked if it's OK to continue, but at least let him know he has
-			Frame::Get()->SetStatusMessage(msg, 0);
+			clMainFrame::Get()->SetStatusMessage(msg, 0);
 		}
 
 		if(res == wxID_OK) {
@@ -128,7 +128,7 @@ void QuickFindBar::OnHide(wxCommandEvent &e)
 {
 
 	// Kill any "...continued from start" statusbar message
-	Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
+	clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
 
 	Show(false);
 	e.Skip();

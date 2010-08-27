@@ -220,7 +220,7 @@ void WorkspacePane::OnConfigurationManagerChoice(wxCommandEvent &event)
 	ManagerST::Get()->SetWorkspaceBuildMatrix(matrix);
 
 	// Set the focus to the active editor if any
-	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if(editor)
 		editor->SetActive();
 

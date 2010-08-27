@@ -92,18 +92,18 @@ void FileExplorerTree::OnDeleteNode(wxCommandEvent &e)
 	if (item.IsOk()) {
 		wxString fp = GetFullPath(item).GetFullPath();
 		VdtcTreeItemBase *b = (VdtcTreeItemBase *)GetItemData(item);
-		
+
 		if (b && b->IsDir()) {
 			//////////////////////////////////////////////////
-			// Remove a folder 
+			// Remove a folder
 			//////////////////////////////////////////////////
-			
+
 			wxString msg;
 			msg << _("'") << GetItemText(item) << _("' is a directory. Are you sure you want to remove it and its content?");
 			if (wxMessageBox(msg, _("Remove Directory"), wxICON_WARNING|wxYES_NO|wxCANCEL) == wxYES) {
 				if (!RemoveDirectory(fp)) {
 					wxMessageBox(_("Failed to remove directory"), _("Remove Directory"), wxICON_ERROR | wxOK);
-					
+
 				} else {
 					wxTreeItemId parent = GetItemParent(item);
 					if (parent.IsOk()) {
@@ -117,11 +117,11 @@ void FileExplorerTree::OnDeleteNode(wxCommandEvent &e)
 				}
 			}
 		} else {
-			
+
 			//////////////////////////////////////////////////
 			// Remove a file
 			//////////////////////////////////////////////////
-			
+
 			if (wxRemoveFile(fp)) {
 				Delete(item);
 			}
@@ -136,7 +136,7 @@ void FileExplorerTree::OnSearchNode(wxCommandEvent &e)
     if (item.IsOk()) {
         wxCommandEvent ff(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_in_files"));
         ff.SetString(GetFullPath(item).GetFullPath());
-        Frame::Get()->GetEventHandler()->AddPendingEvent(ff);
+        clMainFrame::Get()->GetEventHandler()->AddPendingEvent(ff);
     }
     e.Skip();
 }
@@ -147,7 +147,7 @@ void FileExplorerTree::OnTagNode(wxCommandEvent &e)
     wxTreeItemId item = GetSelection();
     if (item.IsOk()) {
 
-		TagsOptionsData tod = Frame::Get()->GetTagsOptions();
+		TagsOptionsData tod = clMainFrame::Get()->GetTagsOptions();
         wxString path = GetFullPath(item).GetFullPath();
 		if ( path.EndsWith(wxT("\\")) || path.EndsWith(wxT("/")) )  {
 			path.RemoveLast();
@@ -160,7 +160,7 @@ void FileExplorerTree::OnTagNode(wxCommandEvent &e)
 				arr.Add( path );
 				tod.SetParserSearchPaths( arr );
 
-				Frame::Get()->UpdateTagsOptions( tod );
+				clMainFrame::Get()->UpdateTagsOptions( tod );
 				retagRequires = true;
 			}
 		} else if ( e.GetId() == XRCID("tags_add_global_exclude") ){
@@ -169,7 +169,7 @@ void FileExplorerTree::OnTagNode(wxCommandEvent &e)
 				arr.Add( path );
 				tod.SetParserExcludePaths( arr );
 
-				Frame::Get()->UpdateTagsOptions( tod );
+				clMainFrame::Get()->UpdateTagsOptions( tod );
 				retagRequires = true;
 			}
 		} else if ( e.GetId() == XRCID("tags_add_workspace_include") ){
@@ -201,7 +201,7 @@ void FileExplorerTree::OnTagNode(wxCommandEvent &e)
 		// send notification to the main frame to perform retag
 		if ( retagRequires ) {
 			wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
-			Frame::Get()->GetEventHandler()->AddPendingEvent( event );
+			clMainFrame::Get()->GetEventHandler()->AddPendingEvent( event );
 		}
 	}
 }
@@ -241,7 +241,7 @@ void FileExplorerTree::DoOpenItem(const wxTreeItemId &item)
 				return;
 			}
 
-			Frame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString);
+			clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString);
 		}
 	}
 }
@@ -250,7 +250,7 @@ void FileExplorerTree::DoOpenItemInTextEditor(const wxTreeItemId &item)
 {
 	if (item.IsOk()) {
 		wxFileName fn = GetFullPath(item);
-		Frame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString);
+		clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString);
 	}
 }
 

@@ -598,7 +598,7 @@ void FindResultsTab::NextMatch()
 		e.SetEventObject(this);
 		e.SetString(wxString::Format(wxT("Reached the end of 'find in files' search results list" )));
 		e.SetInt(0);
-		Frame::Get()->GetEventHandler()->AddPendingEvent(e);
+		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 	}
 }
 
@@ -632,14 +632,14 @@ void FindResultsTab::PrevMatch()
 		e.SetEventObject(this);
 		e.SetString(wxString::Format(wxT("Reached the begining of 'find in files' search results list" )));
 		e.SetInt(0);
-		Frame::Get()->GetEventHandler()->AddPendingEvent(e);
+		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 	}
 }
 
 void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxScintilla *sci, int markerLine)
 {
 	if (!result.GetFileName().IsEmpty()) {
-		LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(result.GetFileName(), wxEmptyString, result.GetLineNumber()-1);
+		LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(result.GetFileName(), wxEmptyString, result.GetLineNumber()-1);
 		if (editor && result.GetColumn() >= 0 && result.GetLen() >= 0) {
 
 			int offset = editor->PositionFromLine(result.GetLineNumber()-1) + result.GetColumn();

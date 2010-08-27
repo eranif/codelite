@@ -199,7 +199,7 @@ void WorkspaceTab::OnProjectSettings(wxCommandEvent& e)
 	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
 
 	//find the project configuration name that matches the workspace selected configuration
-	ProjectSettingsDlg dlg( Frame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ), projectName, title );
+	ProjectSettingsDlg dlg( clMainFrame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ), projectName, title );
 	dlg.ShowModal();
 
 	//mark this project as modified
@@ -271,7 +271,7 @@ void WorkspaceTab::OnMenuSelection(wxCommandEvent& e)
 
 void WorkspaceTab::OnShowFile(wxCommandEvent& e)
 {
-    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if (editor && !editor->GetProject().IsEmpty()) {
         m_fileView->ExpandToPath(editor->GetProject(), editor->GetFileName());
         ManagerST::Get()->ShowWorkspacePane(m_caption);
@@ -281,7 +281,7 @@ void WorkspaceTab::OnShowFile(wxCommandEvent& e)
 
 void WorkspaceTab::OnShowFileUI(wxUpdateUIEvent& e)
 {
-	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	e.Enable(editor && !editor->GetProject().IsEmpty());
 }
 
@@ -289,7 +289,7 @@ void WorkspaceTab::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
     if (m_isLinkedToEditor) {
-        LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+        LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
         if (editor && !editor->GetProject().IsEmpty()) {
             m_fileView->ExpandToPath(editor->GetProject(), editor->GetFileName());
         }
@@ -346,6 +346,6 @@ void WorkspaceTab::OnToggleMultiSelection(wxCommandEvent& e)
 	int answer = wxMessageBox(_("Workspace reload is required\nWould you like to reload workspace now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL, this);
 	if ( answer == wxYES ) {
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
-		Frame::Get()->GetEventHandler()->AddPendingEvent(e);
+		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 	}
 }

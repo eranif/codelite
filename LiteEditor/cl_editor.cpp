@@ -529,7 +529,7 @@ void LEditor::SetProperties()
 
 	SetLayoutCache(wxSCI_CACHE_DOCUMENT);
 
-	size_t frame_flags = Frame::Get()->GetFrameGeneralInfo().GetFlags();
+	size_t frame_flags = clMainFrame::Get()->GetFrameGeneralInfo().GetFlags();
 	SetViewEOL(frame_flags & CL_SHOW_EOL ? true : false);
 
 	//if no right click menu is provided by the context, use scintilla default
@@ -623,9 +623,9 @@ void LEditor::OnSavePoint(wxScintillaEvent &event)
 	}
 
 	title << GetFileName().GetFullName();
-	Frame::Get()->GetMainBook()->SetPageTitle(this, title);
-	if (Frame::Get()->GetMainBook()->GetActiveEditor() == this) {
-		Frame::Get()->SetFrameTitle(this);
+	clMainFrame::Get()->GetMainBook()->SetPageTitle(this, title);
+	if (clMainFrame::Get()->GetMainBook()->GetActiveEditor() == this) {
+		clMainFrame::Get()->SetFrameTitle(this);
 	}
 }
 
@@ -969,7 +969,7 @@ bool LEditor::SaveFile()
 			return false;
 
 		// if we managed to save the file, remove the 'read only' attribute
-		Frame::Get()->GetMainBook()->MarkEditorReadOnly(this, false);
+		clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, false);
 
 		wxString projName = GetProjectName();
 		if ( projName.Trim().Trim(false).IsEmpty() )
@@ -1009,13 +1009,13 @@ bool LEditor::SaveFileAs()
 		m_fileName = name;
 
 		// update the tab title (again) since we really want to trigger an update to the file tooltip
-		Frame::Get()->GetMainBook()->SetPageTitle(this, m_fileName.GetFullName());
-		Frame::Get()->SetFrameTitle(this);
+		clMainFrame::Get()->GetMainBook()->SetPageTitle(this, m_fileName.GetFullName());
+		clMainFrame::Get()->SetFrameTitle(this);
 
 		// update syntax highlight
 		SetSyntaxHighlight();
 
-		Frame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
+		clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
 		return true;
 	}
 	return false;
@@ -1127,7 +1127,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	SetSavePoint();
 
 	// update the tab title (remove the star from the file name)
-	Frame::Get()->GetMainBook()->SetPageTitle(this, fileName.GetFullName());
+	clMainFrame::Get()->GetMainBook()->SetPageTitle(this, fileName.GetFullName());
 
 	if (fileName.GetExt() != m_fileName.GetExt()) {
 		// new context is required
@@ -1240,7 +1240,7 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 
 		} else if (MarkerGet(line) & mmt_compiler) {
 			wxMemoryBuffer style_bytes;
-			tooltip = Frame::Get()->GetOutputPane()->GetBuildTab()->GetBuildToolTip(fname, line, style_bytes);
+			tooltip = clMainFrame::Get()->GetOutputPane()->GetBuildTab()->GetBuildToolTip(fname, line, style_bytes);
 			type = ct_compiler_msg;
 		}
 
@@ -1573,7 +1573,7 @@ void LEditor::BraceMatch(const bool& bSelRegion)
 
 void LEditor::SetActive()
 {
-	Frame::Get()->SetFrameTitle(this);
+	clMainFrame::Get()->SetFrameTitle(this);
 
 	// if the find and replace dialog is opened, set ourself
 	// as the event owners
@@ -1599,7 +1599,7 @@ void LEditor::DoFindAndReplace(bool isReplaceDlg)
 {
 	if ( m_findReplaceDlg == NULL ) {
 		// Create the dialog
-		m_findReplaceDlg = new FindReplaceDialog(Frame::Get(), m_findReplaceData);
+		m_findReplaceDlg = new FindReplaceDialog(clMainFrame::Get(), m_findReplaceData);
 		m_findReplaceDlg->SetEventOwner(this->GetEventHandler());
 	}
 
@@ -1725,7 +1725,7 @@ void LEditor::FindNext(const FindReplaceData &data)
 			// The user doesn't want to be asked if it's OK to continue, but at least let him know he has
 			wxString msg = dirDown ? _("Reached end of document, continued from start")
 			               : _("Reached top of document, continued from bottom");
-			Frame::Get()->SetStatusMessage(msg, 0, XRCID("findnext"));
+			clMainFrame::Get()->SetStatusMessage(msg, 0, XRCID("findnext"));
 		}
 
 		if (res == wxID_OK) {
@@ -1740,7 +1740,7 @@ void LEditor::FindNext(const FindReplaceData &data)
 				// restore the caret
 				DoSetCaretAt( saved_pos );
 				// Kill the "...continued from start" statusbar message
-				Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
+				clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
 				wxMessageBox(_("Can not find the string '") + data.GetFindString() + wxT("'"),
 				             wxT("CodeLite"),
 				             wxOK | wxICON_WARNING);
@@ -1749,7 +1749,7 @@ void LEditor::FindNext(const FindReplaceData &data)
 	} else {
 		// The string *was* found, without needing to restart from the top
 		// So cancel any previous statusbar restart message
-		Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
+		clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
 	}
 }
 
@@ -2158,7 +2158,7 @@ void LEditor::ReloadFile()
 	// get the pattern of the current file
 	int lineNumber = GetCurrentLine();
 
-	Frame::Get()->SetStatusMessage(wxT("Loading file..."), 0, XRCID("editor"));
+	clMainFrame::Get()->SetStatusMessage(wxT("Loading file..."), 0, XRCID("editor"));
 
 	wxString text;
 	ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding());
@@ -2182,10 +2182,10 @@ void LEditor::ReloadFile()
 	EnsureVisible(lineNumber);
 
 	// mark read only files
-	Frame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
+	clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
 
 	// try to locate the pattern on which the caret was prior to reloading the file
-	Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("editor"));
+	clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("editor"));
 
 	SetReloadingFile( false );
 	ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(this);
@@ -2573,20 +2573,20 @@ void LEditor::AddOtherBreakpointType(wxCommandEvent &event)
 void LEditor::OnIgnoreBreakpoint()
 {
 	if (ManagerST::Get()->GetBreakpointsMgr()->IgnoreByLineno(GetFileName().GetFullPath(), GetCurrentLine()+1)) {
-		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+		clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 	}
 }
 
 void LEditor::OnEditBreakpoint()
 {
 	ManagerST::Get()->GetBreakpointsMgr()->EditBreakpointByLineno(GetFileName().GetFullPath(), GetCurrentLine()+1);
-	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+	clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 }
 
 void LEditor::ToggleBreakpointEnablement()
 {
 	if (ManagerST::Get()->GetBreakpointsMgr()->ToggleEnabledStateByLineno(GetFileName().GetFullPath(), GetCurrentLine()+1)) {
-		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+		clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 	}
 }
 
@@ -2599,7 +2599,7 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,const wxString& conditions/*=wxT
 	if (!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp)) {
 		wxMessageBox(_("Failed to insert breakpoint"));
 	} else {
-		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+		clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 		wxString message( _("Breakpoint successfully added") ), prefix;
 		if (is_temp) {
 			prefix = _("Temporary ");
@@ -2619,7 +2619,7 @@ void LEditor::DelBreakpoint(int lineno /*= -1*/)
 	int result = ManagerST::Get()->GetBreakpointsMgr()->DelBreakpointByLineno(GetFileName().GetFullPath(), lineno);
 	switch (result) {
 	case true:
-		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+		clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 		DoSetStatusMessage(_("Breakpoint successfully deleted"), 0);
 		return;
 	case wxID_CANCEL:
@@ -2784,9 +2784,9 @@ void LEditor::OnDbgAddWatch(wxCommandEvent &event)
 			return;
 		}
 	}
-	Frame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(word);
-	Frame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
-	Frame::Get()->GetDebuggerPane()->GetWatchesTable()->RefreshValues();
+	clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(word);
+	clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
+	clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->RefreshValues();
 }
 
 void LEditor::OnDbgCustomWatch(wxCommandEvent &event)
@@ -2807,9 +2807,9 @@ void LEditor::OnDbgCustomWatch(wxCommandEvent &event)
 		wxString command = iter->second;
 		command.Replace(wxT("$(Variable)"), word);
 
-		Frame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(command);
-		Frame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
-		Frame::Get()->GetDebuggerPane()->GetWatchesTable()->RefreshValues();
+		clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(command);
+		clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
+		clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->RefreshValues();
 	}
 }
 
@@ -2981,7 +2981,7 @@ void LEditor::DoHighlightWord()
 	}
 
 	// to make the code "smoother" we move the search task to different thread
-	StringHighlighterJob *j = new StringHighlighterJob( Frame::Get()->GetMainBook(),
+	StringHighlighterJob *j = new StringHighlighterJob( clMainFrame::Get()->GetMainBook(),
 														GetText().c_str(),
 														word.c_str(),
 														GetFileName().GetFullPath().c_str());
@@ -3301,7 +3301,7 @@ void LEditor::DoSetStatusMessage(const wxString& msg, int col)
 	e.SetEventObject(this);
 	e.SetString(msg);
 	e.SetInt(col);
-	Frame::Get()->GetEventHandler()->AddPendingEvent(e);
+	clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 }
 
 void LEditor::DoShowCalltip(int pos, const wxString& tip, calltip_type type, int hltPos, int hltLen)

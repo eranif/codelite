@@ -1,24 +1,24 @@
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : context_diff.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : context_diff.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
@@ -84,11 +84,11 @@ int ContextDiff::GetHyperlinkRange(int pos, int& start, int& end)
 void ContextDiff::GoHyperlink(int start, int end, int type, bool alt)
 {
     LEditor &rCtrl = GetCtrl();
-    
+
     wxString text = rCtrl.GetTextRange(start, end);
     wxString fileName;
     int lineNum = wxNOT_FOUND;
-    
+
     if (type == XRCID("open_working_copy")) {
         fileName = text;
     } else if (type == XRCID("open_at_line")) {
@@ -103,7 +103,7 @@ void ContextDiff::GoHyperlink(int start, int end, int type, bool alt)
     }
     wxFileName fn = ManagerST::Get()->FindFile(fileName);
     if (fn.IsOk()) {
-        Frame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, lineNum);
+        clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, lineNum);
     }
 }
 

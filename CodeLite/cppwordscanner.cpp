@@ -23,84 +23,49 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/ffile.h>
-#include "globals.h"
 #include <wx/tokenzr.h>
 #include "cppwordscanner.h"
 #include "stringaccessor.h"
-//#include "tokendb.h"
-
-enum {
-	STATE_NORMAL = 0,
-	STATE_C_COMMENT,
-	STATE_CPP_COMMENT,
-	STATE_DQ_STRING,
-	STATE_SINGLE_STRING,
-	STATE_PRE_PROCESSING
-};
 
 CppWordScanner::CppWordScanner(const wxString &file_name)
-		: m_filename(file_name)
+	: m_filename(file_name)
+	, m_offset(0)
 {
-	wxString key_words =
-	    wxT("auto break case char const continue default define defined do double elif else endif enum error extern float"
-	        "for  goto if ifdef ifndef include int line long pragma register return short signed sizeof static struct switch"
-	        "typedef undef union unsigned void volatile while class namespace delete friend inline new operator overload"
-	        "protected private public this virtual template typename dynamic_cast static_cast const_cast reinterpret_cast"
-	        "using throw catch size_t");
-
-	//add this items into map
-	m_arr = wxStringTokenize(key_words, wxT(" "));
-	m_arr.Sort();
-#ifdef __WXGTK__
 	wxFFile thefile(file_name, wxT("rb"));
-	wxFileOffset size = thefile.Length();
-	wxString fileData;
-	fileData.Alloc(size);
-	thefile.ReadAll( &m_text );
-#else
-	ReadFileWithConversion(file_name, m_text);
-#endif
+	if(thefile.IsOpened()) {
+		wxFileOffset size = thefile.Length();
+		wxString fileData;
+		fileData.Alloc(size);
+		thefile.ReadAll( &m_text );
+	}
+	doInit();
+}
+
+CppWordScanner::CppWordScanner(const wxString& file_name, const wxString& text, int offset)
+	: m_filename(file_name)
+	, m_text    (text.c_str())
+	, m_offset  (offset)
+{
+	doInit();
 }
 
 CppWordScanner::~CppWordScanner()
 {
-//	m_db = NULL;
 }
 
 void CppWordScanner::FindAll(CppTokensMap &l)
 {
 	doFind(wxEmptyString, l);
-
-//	if (m_db) {
-//		m_db->BeginTransaction();
-//		m_db->DeleteByFile(m_filename);
-//		CppTokenList::iterator iter = l.begin();
-//		for (; iter != l.end(); iter++) {
-//			m_db->Store( (*iter) );
-//		}
-//		m_db->Commit();
-//	}
 }
 
 void CppWordScanner::Match(const wxString& word, CppTokensMap& l)
 {
 	doFind(word, l);
-//	if (m_db) {
-//		m_db->BeginTransaction();
-//		m_db->DeleteByFile(m_filename);
-//		CppTokenList::iterator iter = l.begin();
-//		for (; iter != l.end(); iter++) {
-//			m_db->Store( (*iter) );
-//		}
-//		m_db->Commit();
-//	}
 }
 
 void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l)
 {
 	int state(STATE_NORMAL);
-//	bool sol(true);
-
 	StringAccessor accessor(m_text);
 	CppToken token;
 
@@ -143,7 +108,7 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l)
 				// is valid C++ word?
 				token.append( ch );
 				if (token.getOffset() == wxString::npos) {
-					token.setOffset( i );
+					token.setOffset( i + m_offset );
 				}
 			} else {
 
@@ -190,7 +155,7 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l)
 			if (accessor.match("\\\"", i)) {
 				//escaped string
 				i++;
-			} else if(accessor.match("\\", i)){
+			} else if(accessor.match("\\", i)) {
 				i++;
 			} else if (accessor.match("\"", i)) {
 				state = STATE_NORMAL;
@@ -208,8 +173,161 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l)
 	}
 }
 
-//void CppWordScanner::SetDatabase(TokenDb* db)
-//{
-//	m_db = db;
-//}
-//
+void CppWordScanner::doInit()
+{
+	wxString key_words =
+	    wxT("auto break case char const continue default define defined do double elif else endif enum error extern float"
+	        "for  goto if ifdef ifndef include int line long pragma register return short signed sizeof static struct switch"
+	        "typedef undef union unsigned void volatile while class namespace delete friend inline new operator overload"
+	        "protected private public this virtual template typename dynamic_cast static_cast const_cast reinterpret_cast"
+	        "using throw catch size_t");
+
+	//add this items into map
+	m_arr = wxStringTokenize(key_words, wxT(" "));
+	m_arr.Sort();
+}
+
+TextStates CppWordScanner::states()
+{
+	TextStates bitmap;
+	bitmap.states.resize(m_text.size());
+
+	if(bitmap.states.size() == 0)
+		return bitmap;
+
+	bitmap.text = m_text;
+
+	int state(STATE_NORMAL);
+	StringAccessor accessor(m_text);
+
+	for (size_t i=0; i<m_text.size(); i++) {
+		switch (state) {
+
+		case STATE_NORMAL:
+			if (accessor.match("#", i)) {
+
+				if ( i == 0 ||                    // satrt of document
+				     accessor.match("\n", i-1)) { // we are at start of line
+					state = STATE_PRE_PROCESSING;
+				}
+			} else if (accessor.match("//", i)) {
+
+				// C++ comment, advance i
+				state = STATE_CPP_COMMENT;
+				bitmap.states[i] = STATE_CPP_COMMENT;
+				i++;
+
+			} else if (accessor.match("/*", i)) {
+
+				// C comment
+				state = STATE_C_COMMENT;
+				bitmap.states[i] = STATE_C_COMMENT;
+				i++;
+
+			} else if (accessor.match("'", i)) {
+
+				// single quoted string
+				state = STATE_SINGLE_STRING;
+
+			} else if (accessor.match("\"", i)) {
+
+				// dbouble quoted string
+				state = STATE_DQ_STRING;
+
+			}
+
+			break;
+		case STATE_PRE_PROCESSING:
+			//skip pre processor lines
+			if ( accessor.match("\n", i) && !accessor.match("\\", i-1) ) {
+				// no wrap
+				state = STATE_NORMAL;
+			}
+			break;
+		case STATE_C_COMMENT:
+			if ( accessor.match("*/", i)) {
+				bitmap.states[i] = state;
+				state = STATE_NORMAL;
+				i++;
+			}
+			break;
+		case STATE_CPP_COMMENT:
+			if ( accessor.match("\n", i)) {
+				state = STATE_NORMAL;
+			}
+			break;
+		case STATE_DQ_STRING:
+			if (accessor.match("\\\"", i)) {
+				//escaped string
+				bitmap.states[i] = STATE_DQ_STRING;
+				i++;
+			} else if(accessor.match("\\", i)) {
+				bitmap.states[i] = STATE_DQ_STRING;
+				i++;
+			} else if (accessor.match("\"", i)) {
+				state = STATE_NORMAL;
+			}
+			break;
+		case STATE_SINGLE_STRING:
+			if (accessor.match("\\'", i)) {
+				//escaped single string
+				bitmap.states[i] = STATE_SINGLE_STRING;
+				i++;
+			} else if (accessor.match("'", i)) {
+				state = STATE_NORMAL;
+			}
+			break;
+		}
+		bitmap.states[i] = state;
+	}
+	return bitmap;
+}
+
+wxChar TextStates::Next()
+{
+	if(text.Len() != states.size())
+		return 0;
+
+	if(pos == wxNOT_FOUND)
+		return 0;
+
+	// reached end of text
+	pos++;
+	while( pos < (int)text.Len() ) {
+		int st = states[pos];
+		if(st == CppWordScanner::STATE_NORMAL) {
+			return text[pos];
+		}
+		pos++;
+	}
+	return 0;
+}
+
+wxChar TextStates::Previous()
+{
+	if(text.Len() != states.size())
+		return 0;
+
+	if(pos == wxNOT_FOUND)
+		return 0;
+
+	// reached start of text
+	if(pos == 0)
+		return 0;
+
+	pos--;
+	while( pos ) {
+		int st = states[pos];
+		if(st == CppWordScanner::STATE_NORMAL) {
+			return text[pos];
+		}
+		pos--;
+	}
+	return 0;
+}
+
+void TextStates::SetPosition(int pos)
+{
+	this->pos = pos;
+}
+

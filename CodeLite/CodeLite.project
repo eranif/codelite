@@ -333,4 +333,14 @@
     <File Name="pptable.cpp"/>
     <File Name="pptable.h"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="RefactorEngine">
+    <File Name="refactorengine.h"/>
+    <File Name="refactorengine.cpp"/>
+    <File Name="stringaccessor.h"/>
+    <File Name="cpptoken.cpp"/>
+    <File Name="cpptoken.h"/>
+    <File Name="cppwordscanner.cpp"/>
+    <File Name="cppwordscanner.h"/>
+    <File Name="stringaccessor.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

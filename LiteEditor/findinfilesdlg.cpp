@@ -161,7 +161,7 @@ void FindInFilesDialog::SetRootDir(const wxString &rootDir)
 void FindInFilesDialog::DoSearchReplace()
 {
 	SearchData data = DoGetSearchData();
-	data.SetOwner(Frame::Get()->GetOutputPane()->GetReplaceResultsTab());
+	data.SetOwner(clMainFrame::Get()->GetOutputPane()->GetReplaceResultsTab());
 
 	DoSaveOpenFiles();
 	SearchThreadST::Get()->PerformSearch(data);
@@ -173,7 +173,7 @@ void FindInFilesDialog::DoSearchReplace()
 void FindInFilesDialog::DoSearch()
 {
 	SearchData data = DoGetSearchData();
-	data.SetOwner(Frame::Get()->GetOutputPane()->GetFindResultsTab());
+	data.SetOwner(clMainFrame::Get()->GetOutputPane()->GetFindResultsTab());
 
 	// check to see if we require to save the files
 	DoSaveOpenFiles();
@@ -225,15 +225,15 @@ SearchData FindInFilesDialog::DoGetSearchData()
 
 			wxString project = ManagerST::Get()->GetActiveProjectName();
 
-			if (Frame::Get()->GetMainBook()->GetActiveEditor()) {
+			if (clMainFrame::Get()->GetMainBook()->GetActiveEditor()) {
 				// use the active file's project
-				wxFileName activeFile = Frame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();
+				wxFileName activeFile = clMainFrame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();
 				project = ManagerST::Get()->GetProjectNameByFile(activeFile.GetFullPath());
 			}
 			ManagerST::Get()->GetProjectFiles(project, files);
 
 		} else if ( rootDir == SEARCH_IN_CURRENT_FILE ) {
-			LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+			LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 			if(editor) {
 				files.Add(editor->GetFileName().GetFullPath());
 			}
@@ -377,7 +377,7 @@ bool FindInFilesDialog::Show()
 		m_findString->Append(m_data.GetFindStringArr());
 		m_findString->SetValue(m_data.GetFindString());
 
-		LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+		LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 		if (editor) {
 			//if we have an open editor, and a selected text, make this text the search string
 			wxString selText = editor->GetSelectedText();
@@ -419,7 +419,7 @@ void FindInFilesDialog::DoSaveSearchPaths()
 void FindInFilesDialog::DoSaveOpenFiles()
 {
 	if (m_checkBoxSaveFilesBeforeSearching->IsChecked()) {
-		Frame::Get()->GetMainBook()->SaveAll(false, false);
+		clMainFrame::Get()->GetMainBook()->SaveAll(false, false);
 	}
 }
 

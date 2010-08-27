@@ -163,28 +163,11 @@ private:
 	bool FindSwappedFile(const wxFileName &rhs, wxString &lhs);
 
 	/**
-	 * \brief parse list of files and construct a token database that will be used for refactoring
-	 * \param word word to search
-	 * \param files list of files to parse
-	 */
-	void BuildRefactorDatabase(const wxString& word, CppTokensMap &l);
-
-	/**
 	 * \brief replace list of tokens representd by li with 'word'
 	 * \param li
 	 * \return
 	 */
 	void ReplaceInFiles(const wxString &word, std::list<CppToken> &li);
-
-	/**
-	 * \brief
-	 * \param ctrl
-	 * \param pos
-	 * \param word
-	 * \param rs
-	 * \return
-	 */
-	bool ResolveWord(LEditor *ctrl, int pos, const wxString &word, RefactorSource *rs);
 
 	/**
 	* \brief open file specified by the 'fileName' parameter and append 'text'

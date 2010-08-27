@@ -4,6 +4,7 @@
 #include <wx/ffile.h>
 #include <memory>
 #include <vector>
+#include <refactorengine.h>
 
 // CodeLite includes
 #include <ctags_manager.h>
@@ -234,15 +235,17 @@ int main(int argc, char **argv)
 	//Initialize the wxWidgets library
 	wxInitializer initializer;
 	
-	// Load the tags database that is used during the test.
-	wxFileName fn(wxT("../../SampleWorkspace/SampleWorkspace.tags"));
-	TagsManagerST::Get()->OpenDatabase( fn );
-	
-	// Execute the tests
-	Tester::Instance()->RunTests();
-	
-	Tester::Release();
-	TagsManagerST::Free();
-	LanguageST::Free();
+//	// Load the tags database that is used during the test.
+//	wxFileName fn(wxT("../../SampleWorkspace/SampleWorkspace.tags"));
+//	TagsManagerST::Get()->OpenDatabase( fn );
+//	
+//	// Execute the tests
+//	Tester::Instance()->RunTests();
+//	
+//	Tester::Release();
+//	TagsManagerST::Free();
+//	LanguageST::Free();
+
+	RefactorEngine::Instance()->RenameLocalSymbol(wxT("word"), wxFileName(wxT("C:\\Development\\C++\\codelite\\CodeLite\\ctags_manager.cpp")), -1, 13832);
 	return 0;
 }

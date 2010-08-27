@@ -67,10 +67,10 @@ struct StartPageData {
 	wxString action;
 };
 
-class Frame : public wxFrame
+class clMainFrame : public wxFrame
 {
 	MainBook *                            m_mainBook;
-	static Frame*                         m_theFrame;
+	static clMainFrame*                         m_theFrame;
 	wxAuiManager                          m_mgr;
 	OutputPane *                          m_outputPane;
 	WorkspacePane *                       m_workspacePane;
@@ -97,7 +97,7 @@ protected:
 	bool IsEditorEvent(wxEvent &event);
 
 public:
-	static Frame* Get();
+	static clMainFrame* Get();
 	static void Initialize(bool loadLastSession);
 
 	DockablePaneMenuManager *GetDockablePaneMenuManager() {
@@ -117,7 +117,7 @@ public:
 	 */
 	void SetEnvStatusMessage();
 
-	virtual ~Frame(void);
+	virtual ~clMainFrame(void);
 	/**
 	 * @brief set frame option flag
 	 * @param set
@@ -268,7 +268,7 @@ public:
 
 private:
 	// make our frame's constructor private
-	Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLIP_CHILDREN);
+	clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLIP_CHILDREN);
 	wxString CreateWorkspaceTable();
 	wxString CreateFilesTable();
 	void     StartTimer();

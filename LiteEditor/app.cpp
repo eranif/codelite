@@ -461,8 +461,8 @@ bool App::OnInit()
 	//       Horizontal dimension has to take into account the thin
 	//       hilighting border around the dialog (2 points in
 	//       Win 95).
-	Frame::Initialize( parser.GetParamCount() == 0 );
-	m_pMainFrame = Frame::Get();
+	clMainFrame::Initialize( parser.GetParamCount() == 0 );
+	m_pMainFrame = clMainFrame::Get();
 
 	// update the accelerators table
 	ManagerST::Get()->UpdateMenuAccelerators();
@@ -487,7 +487,7 @@ bool App::OnInit()
 		if (fn.GetExt() == wxT("workspace")) {
 			ManagerST::Get()->OpenWorkspace(fn.GetFullPath());
 		} else {
-			Frame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, lineNumber);
+			clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, lineNumber);
 		}
 	}
 
@@ -497,8 +497,8 @@ bool App::OnInit()
 #ifdef __WXGTK__
 	// Needed on GTK
 	ManagerST::Get()->UpdateMenuAccelerators();
-	if (Frame::Get()->GetMainBook()->GetActiveEditor() == NULL) {
-		Frame::Get()->GetOutputPane()->GetBuildTab()->SetFocus();
+	if (clMainFrame::Get()->GetMainBook()->GetActiveEditor() == NULL) {
+		clMainFrame::Get()->GetOutputPane()->GetBuildTab()->SetFocus();
 	}
 #endif
 
@@ -597,7 +597,7 @@ void App::MacOpenFile(const wxString& fileName)
 		ManagerST::Get()->OpenWorkspace(fileName);
 		break;
 	default:
-		Frame::Get()->GetMainBook()->OpenFile(fileName);
+		clMainFrame::Get()->GetMainBook()->OpenFile(fileName);
 		break;
 	}
 }

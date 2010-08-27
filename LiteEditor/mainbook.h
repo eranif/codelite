@@ -38,26 +38,27 @@ class MessagePane;
 class MainBook : public wxPanel
 {
 private:
-    FileHistory   m_recentFiles;
+	FileHistory   m_recentFiles;
 	NavBar       *m_navBar;
 	Notebook     *m_book;
 	QuickFindBar *m_quickFindBar;
 	MessagePane  *m_messagePane;
+	bool          m_useBuffereLimit;
 
 private:
-    void CreateGuiControls();
-    void ConnectEvents    ();
+	void CreateGuiControls();
+	void ConnectEvents    ();
 
-    void OnMouseDClick        (NotebookEvent     &e);
-    void OnPageClosing        (NotebookEvent     &e);
-    void OnPageClosed         (NotebookEvent     &e);
+	void OnMouseDClick        (NotebookEvent     &e);
+	void OnPageClosing        (NotebookEvent     &e);
+	void OnPageClosed         (NotebookEvent     &e);
 	void OnPageChanged        (NotebookEvent     &e);
 	void OnClosePage          (NotebookEvent     &e);
 	void OnPageChanging       (NotebookEvent     &e);
-    void OnProjectFileAdded   (wxCommandEvent    &e);
+	void OnProjectFileAdded   (wxCommandEvent    &e);
 	void OnProjectFileRemoved (wxCommandEvent    &e);
-    void OnWorkspaceLoaded    (wxCommandEvent    &e);
-    void OnWorkspaceClosed    (wxCommandEvent    &e);
+	void OnWorkspaceLoaded    (wxCommandEvent    &e);
+	void OnWorkspaceClosed    (wxCommandEvent    &e);
 	void OnDebugEnded         (wxCommandEvent    &e);
 	void OnStringHighlight    (wxCommandEvent    &e);
 
@@ -72,46 +73,59 @@ public:
 
 	void ClearFileHistory();
 	void GetRecentlyOpenedFiles(wxArrayString &files);
-	FileHistory &GetRecentlyOpenedFilesClass() { return m_recentFiles; }
+	FileHistory &GetRecentlyOpenedFilesClass() {
+		return m_recentFiles;
+	}
 
-	void ShowQuickBar (bool s = true)           { m_quickFindBar->Show(s); }
-	void ShowQuickBar (const wxString &findWhat){ m_quickFindBar->Show(findWhat);}
+	void ShowQuickBar (bool s = true)           {
+		m_quickFindBar->Show(s);
+	}
+	void ShowQuickBar (const wxString &findWhat) {
+		m_quickFindBar->Show(findWhat);
+	}
 	void ShowMessage  (const wxString &message, bool showHideButton = true, const wxBitmap &bmp = wxNullBitmap, const ButtonDetails &btn1 = ButtonDetails(), const ButtonDetails &btn2 = ButtonDetails(), const ButtonDetails &btn3 = ButtonDetails());
 
 	void ShowNavBar   (bool s = true);
 	void UpdateNavBar (LEditor *editor);
-	bool IsNavBarShown()                    { return m_navBar->IsShown(); }
+	bool IsNavBarShown()                    {
+		return m_navBar->IsShown();
+	}
 
-    void SaveSession   (SessionEntry &session, wxArrayInt& intArr);
-    void RestoreSession(SessionEntry &session);
+	void SaveSession   (SessionEntry &session, wxArrayInt& intArr);
+	void RestoreSession(SessionEntry &session);
 
-    LEditor *GetActiveEditor();
-    void     GetAllEditors  (std::vector<LEditor*> &editors);
+	LEditor *GetActiveEditor();
+	void     GetAllEditors  (std::vector<LEditor*> &editors);
 	LEditor *FindEditor     (const wxString &fileName);
-    bool     CloseEditor    (const wxString &fileName) { return ClosePage(FindEditor(fileName)); }
+	bool     CloseEditor    (const wxString &fileName) {
+		return ClosePage(FindEditor(fileName));
+	}
 
-    wxWindow *GetCurrentPage();
-    wxWindow *FindPage      (const wxString &text);
+	wxWindow *GetCurrentPage();
+	wxWindow *FindPage      (const wxString &text);
 
-    LEditor *NewEditor();
+	LEditor *NewEditor();
 
 	LEditor *OpenFile(const wxString &file_name, const wxString &projectName = wxEmptyString,
 	                  int lineno = wxNOT_FOUND, long position = wxNOT_FOUND, bool addjump = true);
-	LEditor *OpenFile(const BrowseRecord &rec)
-        { return OpenFile(rec.filename, rec.project, rec.lineno, rec.position, false); }
+	LEditor *OpenFile(const BrowseRecord &rec) {
+		return OpenFile(rec.filename, rec.project, rec.lineno, rec.position, false);
+	}
 
-    bool AddPage   (wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
-    bool SelectPage(wxWindow *win);
+	bool AddPage   (wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
+	bool SelectPage(wxWindow *win);
 
-    bool UserSelectFiles(std::vector<std::pair<wxFileName,bool> > &files, const wxString &title, const wxString &caption,
-                         bool cancellable = true);
+	bool UserSelectFiles(std::vector<std::pair<wxFileName,bool> > &files, const wxString &title, const wxString &caption,
+	                     bool cancellable = true);
 
 	bool SaveAll(bool askUser, bool includeUntitled);
 
-    void ReloadExternallyModified(bool prompt);
+	void ReloadExternallyModified(bool prompt);
 
-    bool ClosePage      (const wxString &text) { return ClosePage(FindPage(text)); }
-    bool ClosePage      (wxWindow *win);
+	bool ClosePage      (const wxString &text) {
+		return ClosePage(FindPage(text));
+	}
+	bool ClosePage      (wxWindow *win);
 	bool CloseAllButThis(wxWindow *win);
 	bool CloseAll       (bool cancellable);
 
@@ -119,15 +133,22 @@ public:
 	void     SetPageTitle(wxWindow *page, const wxString &name);
 	long     GetBookStyle();
 
-    void ApplySettingsChanges   ();
-    void UnHighlightAll         ();
-    void DelAllBreakpointMarkers();
-    void SetViewEOL             (bool visible);
-    void HighlightWord          (bool hl);
-    void ShowWhitespace         (int ws);
-    void UpdateColours          ();
-    void UpdateBreakpoints      ();
+	void ApplySettingsChanges   ();
+	void UnHighlightAll         ();
+	void DelAllBreakpointMarkers();
+	void SetViewEOL             (bool visible);
+	void HighlightWord          (bool hl);
+	void ShowWhitespace         (int ws);
+	void UpdateColours          ();
+	void UpdateBreakpoints      ();
 	void MarkEditorReadOnly     (LEditor *editor, bool ro);
+
+	void SetUseBuffereLimit(bool useBuffereLimit) {
+		this->m_useBuffereLimit = useBuffereLimit;
+	}
+	bool GetUseBuffereLimit() const {
+		return m_useBuffereLimit;
+	}
 };
 
 #endif //MAINBOOK_H

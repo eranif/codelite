@@ -2032,6 +2032,9 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, std::list<CppToken> &li 
 	int off = 0;
 	wxString file_name ( wxEmptyString );
 
+	// Disable the "Limit opened bufferes" feature for during replacements
+	clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(false);
+
 	for ( std::list<CppToken>::iterator iter = li.begin(); iter != li.end(); iter++ ) {
 		CppToken &token = *iter;
 		if ( file_name == token.getFilename() ) {
@@ -2057,6 +2060,9 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, std::list<CppToken> &li 
 			}
 		}
 	}
+
+	// re-enable the feature again
+	clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(true);
 }
 
 void ContextCpp::OnRetagFile(wxCommandEvent& e)

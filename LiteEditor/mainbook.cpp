@@ -37,10 +37,11 @@
 #include "message_pane.h"
 
 MainBook::MainBook(wxWindow *parent)
-		: wxPanel       (parent)
-		, m_navBar      (NULL)
-		, m_book        (NULL)
-		, m_quickFindBar(NULL)
+		: wxPanel          (parent)
+		, m_navBar         (NULL)
+		, m_book           (NULL)
+		, m_quickFindBar   (NULL)
+		, m_useBuffereLimit(true)
 {
 	CreateGuiControls();
 	ConnectEvents();
@@ -531,7 +532,7 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 
 	wxWindowUpdateLocker locker(m_book);
 
-	bool closeLastTab = (long)(m_book->GetPageCount()) >= MaxBuffers;
+	bool closeLastTab = ((long)(m_book->GetPageCount()) >= MaxBuffers) && GetUseBuffereLimit();
 	m_book->AddPage(win, text, closeLastTab ? true : selected);
 
 	if( closeLastTab ) {

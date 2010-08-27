@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/ffile.h>
 #include <wx/tokenzr.h>
+#include <wx/log.h>
 #include "cppwordscanner.h"
 #include "stringaccessor.h"
 
@@ -31,6 +32,9 @@ CppWordScanner::CppWordScanner(const wxString &file_name)
 	: m_filename(file_name)
 	, m_offset(0)
 {
+	// disable log
+	wxLogNull nolog;
+
 	wxFFile thefile(file_name, wxT("rb"));
 	if(thefile.IsOpened()) {
 		wxFileOffset size = thefile.Length();

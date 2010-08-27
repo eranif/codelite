@@ -4,6 +4,7 @@
 #include <wx/ffile.h>
 #include <memory>
 #include <vector>
+#include <cpptoken.h>
 #include <refactorengine.h>
 
 // CodeLite includes
@@ -208,7 +209,7 @@ TEST_FUNC(testStdSharedPtr)
 TEST_FUNC(testClFrame)
 {
 	std::vector<TagEntryPtr> tags;
-	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_cl_frame.h")), 4, wxT("Frame::Get()->"), LoadFile(wxT("../tests/test_cl_frame.h")), tags);
+	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_cl_frame.h")), 4, wxT("clMainFrame::Get()->"), LoadFile(wxT("../tests/test_cl_frame.h")), tags);
 #ifdef __WXMSW__
 	CHECK_SIZE(tags.size(), 1142);
 #else
@@ -246,6 +247,10 @@ int main(int argc, char **argv)
 //	TagsManagerST::Free();
 //	LanguageST::Free();
 
-	RefactorEngine::Instance()->RenameLocalSymbol(wxT("word"), wxFileName(wxT("C:\\Development\\C++\\codelite\\CodeLite\\ctags_manager.cpp")), -1, 13832);
+	// Search the provided input files for the symbol to rename and prepare
+	// a CppTokensMap
+	CppTokensMap l;
+	CppWordScanner tmpScanner(wxT("C:\\Development\\C++\\codelite\\LiteEditor\\context_cpp.cpp"));
+	tmpScanner.Match(wxT("clMainFrame"), l);
 	return 0;
 }

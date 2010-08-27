@@ -165,6 +165,10 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l)
 			if (accessor.match("\\'", i)) {
 				//escaped single string
 				i++;
+
+			} else if(accessor.match("\\", i)) {
+				i++;
+
 			} else if (accessor.match("'", i)) {
 				state = STATE_NORMAL;
 			}
@@ -273,6 +277,10 @@ TextStates CppWordScanner::states()
 				//escaped single string
 				bitmap.states[i] = STATE_SINGLE_STRING;
 				i++;
+			} else if(accessor.match("\\", i)) {
+				bitmap.states[i] = STATE_SINGLE_STRING;
+				i++;
+
 			} else if (accessor.match("'", i)) {
 				state = STATE_NORMAL;
 			}

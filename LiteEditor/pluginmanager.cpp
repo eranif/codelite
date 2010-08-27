@@ -110,7 +110,7 @@ void PluginManager::Load()
 	TagsManagerST::Get()->SetLanguage( LanguageST::Get() );
 
 	// Plugin loading is disabled?
-	if (((App*) GetTheApp())->GetLoadPlugins() == false)
+	if (((CodeLiteApp*) GetTheApp())->GetLoadPlugins() == false)
 		return;
 
 #ifdef __WXGTK__

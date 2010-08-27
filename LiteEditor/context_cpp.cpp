@@ -2042,8 +2042,14 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, std::list<CppToken> &li 
 			off = 0;
 			file_name = token.getFilename();
 		}
-		LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(token.getFilename(), wxEmptyString, 0);
-		if (editor != NULL && (editor->GetFileName().GetFullPath().CmpNoCase(token.getFilename()) == 0) ) {
+
+		// Open the file only once
+		LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+		if(!editor || editor->GetFileName().GetFullPath() != token.getFilename()) {
+			editor = clMainFrame::Get()->GetMainBook()->OpenFile(token.getFilename(), wxEmptyString, 0);
+		}
+
+		if (editor) {
 			editor->SetSelection ( token.getOffset(), token.getOffset()+token.getName().Len() );
 			if ( editor->GetSelectionStart() != editor->GetSelectionEnd() ) {
 				editor->ReplaceSelection ( word );

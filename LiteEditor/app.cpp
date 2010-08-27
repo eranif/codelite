@@ -205,10 +205,10 @@ static void WaitForDebugger(int signo)
 }
 #endif
 
-IMPLEMENT_APP(App)
+IMPLEMENT_APP(CodeLiteApp)
 
 extern void InitXmlResource();
-App::App(void)
+CodeLiteApp::CodeLiteApp(void)
 		: m_pMainFrame(NULL)
 		, m_singleInstance(NULL)
 		, m_loadPlugins(true)
@@ -218,7 +218,7 @@ App::App(void)
 {
 }
 
-App::~App(void)
+CodeLiteApp::~CodeLiteApp(void)
 {
 	wxImage::CleanUpHandlers();
 #ifdef __WXMSW__
@@ -233,7 +233,7 @@ App::~App(void)
 	wxAppBase::ExitMainLoop();
 }
 
-bool App::OnInit()
+bool CodeLiteApp::OnInit()
 {
 #if defined(__WXGTK__) || defined(__WXMAC__)
 //	block signal pipe
@@ -505,14 +505,14 @@ bool App::OnInit()
 	return TRUE;
 }
 
-int App::OnExit()
+int CodeLiteApp::OnExit()
 {
 	EditorConfigST::Free();
 	ConfFileLocator::Release();
 	return 0;
 }
 
-bool App::CopySettings(const wxString &destDir, wxString& installPath)
+bool CodeLiteApp::CopySettings(const wxString &destDir, wxString& installPath)
 {
 	wxLogNull noLog;
 
@@ -532,7 +532,7 @@ bool App::CopySettings(const wxString &destDir, wxString& installPath)
 	return true;
 }
 
-void App::OnFatalException()
+void CodeLiteApp::OnFatalException()
 {
 #if wxUSE_STACKWALKER
 	Manager *mgr = ManagerST::Get();
@@ -548,7 +548,7 @@ void App::OnFatalException()
 #endif
 }
 
-bool App::CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir)
+bool CodeLiteApp::CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir)
 {
 	// check for single instance
 	long singleInstance(1);
@@ -590,7 +590,7 @@ bool App::CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir
 	return true;
 }
 
-void App::MacOpenFile(const wxString& fileName)
+void CodeLiteApp::MacOpenFile(const wxString& fileName)
 {
 	switch (FileExtManager::GetType(fileName)) {
 	case FileExtManager::TypeWorkspace:
@@ -602,7 +602,7 @@ void App::MacOpenFile(const wxString& fileName)
 	}
 }
 
-void App::MSWReadRegistry()
+void CodeLiteApp::MSWReadRegistry()
 {
 #ifdef __WXMSW__
 

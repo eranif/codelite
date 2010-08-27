@@ -237,6 +237,9 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 	MatchInfo::iterator firstInFile = matchInfo.begin();
 
 	m_progress->SetRange(matchInfo.size());
+
+	// Disable the 'buffer limit' feature during replace
+	clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(false);
 	for (MatchInfo::iterator i = firstInFile; i != matchInfo.end(); i++) {
 		m_progress->SetValue(m_progress->GetValue()+1);
 		m_progress->Update();
@@ -300,6 +303,9 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 	}
 	m_progress->SetValue(0);
 	DoSaveResults(sci, firstInFile, matchInfo.end());
+
+	// Disable the 'buffer limit' feature during replace
+	clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(true);
 
 	// Step 2: Update the Replace pane
 

@@ -3,10 +3,7 @@ General
 
 - add build-errors-assistant
 - Add new 'scp' plugin
-- Change the tip color selection to a lighter color (Windows)
-- Change 'toggle multi/single select' icon
 - Add option to customize the single toolbar
-- Add new second tip to the code-completion box which shows the conent of the comment on top of the current tip
 - Refactoring: add an option to add 'add forward decl'
 - Refactoring: allow rename local variable
 
@@ -17,9 +14,3 @@ Highlight colors are not working properly
 Open Resource dialog: it shows 3 columns when opening a workspace file
 
 ------------------------------------
-
-
-Migration to native notebook open issues:
------------------------------------------
-
-- Add new 'Message Center' class with tips

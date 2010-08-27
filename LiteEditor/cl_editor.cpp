@@ -3474,6 +3474,8 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 
 	size_t flags = wxSD_MATCHCASE;
 
+	pattern.Trim();
+
 	FindReplaceData data;
 	data.SetFindString ( pattern );
 	data.SetFlags ( flags );

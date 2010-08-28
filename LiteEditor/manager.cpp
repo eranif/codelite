@@ -2949,11 +2949,11 @@ void Manager::DbgRestoreWatches()
 
 void Manager::DoRestartCodeLite()
 {
-	wxString command;
+	wxString restartCodeLiteCommand;
 #ifdef __WXMSW__
 	// the codelite_launcher application is located where the codelite executable is
 	// to properly shoutdown codelite. We first need to close the codelite_indexer process
-	command << wxT("\"") << m_codeliteLauncher.GetFullPath() << wxT("\" ")
+	restartCodeLiteCommand << wxT("\"") << m_codeliteLauncher.GetFullPath() << wxT("\" ")
 	<< wxT(" --name=\"")
 	<< wxStandardPaths::Get().GetExecutablePath()
 	<< wxT("\"");
@@ -2961,16 +2961,16 @@ void Manager::DoRestartCodeLite()
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("exit_app"));
 	clMainFrame::Get()->GetEventHandler()->ProcessEvent(event);
 
-	wxExecute(command, wxEXEC_ASYNC|wxEXEC_NOHIDE);
+	wxExecute(restartCodeLiteCommand, wxEXEC_ASYNC|wxEXEC_NOHIDE);
 
 #elif defined (__WXGTK__)
 	// The Shell is our friend
-	command << wxStandardPaths::Get().GetExecutablePath();
+	restartCodeLiteCommand << wxStandardPaths::Get().GetExecutablePath();
 
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("exit_app"));
 	clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
 
-	wxExecute(command, wxEXEC_ASYNC|wxEXEC_NOHIDE);
+	wxExecute(restartCodeLiteCommand, wxEXEC_ASYNC|wxEXEC_NOHIDE);
 #endif
 }
 

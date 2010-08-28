@@ -5,7 +5,10 @@ General
 - Add new 'scp' plugin
 - Add option to customize the single toolbar
 - Refactoring: add an option to add 'add forward decl'
-- Refactoring: allow rename local variable
+- Refactoring: refactor local variable:
+	add some progress indicator
+	add support for function arguments
+	highlight replacements
 
 2.9 Porting, known issues:
 ==========================

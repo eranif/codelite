@@ -29,12 +29,17 @@
 #include <vector>
 #include "cpptoken.h"
 
+struct ByteState {
+	short state;  // Holds the current byte state (one of CppWordScanner::STATE_*)
+	short depth;  // The current char depth
+};
+
 class TextStates
 {
 public:
-	wxString         text;
-	std::vector<int> states;
-	int              pos;
+	wxString               text;
+	std::vector<ByteState> states;
+	int                    pos;
 
 public:
 	TextStates() : pos(wxNOT_FOUND) {}
@@ -42,6 +47,22 @@ public:
 	void   SetPosition(int pos);
 	wxChar Previous();
 	wxChar Next();
+
+	/**
+	 * @brief return true if the current TextState is valid. The test is simple:
+	 * if the vector size and the text size are equal
+	 */
+	bool   IsOk() const {
+		return states.size() == text.Len();
+	}
+
+	/**
+	 * @brief return the current scope based on depth
+	 * this function searches for two points:
+	 * from pos upward until we find depth 0 and from pos downward until we find depth 0 (or EOF). It returns the text between those
+	 * two points
+	 */
+	wxString CurrentScope(int position, int& upperPt, int& lowerPt);
 };
 
 class CppWordScanner
@@ -62,7 +83,7 @@ public:
 	};
 
 protected:
-	void doFind(const wxString &filter, CppTokensMap &l);
+	void doFind(const wxString &filter, CppTokensMap &l, int from, int to);
 	void doInit();
 
 public:
@@ -72,6 +93,10 @@ public:
 
 	void FindAll(CppTokensMap &l);
 	void Match(const wxString &word, CppTokensMap &l);
+	/**
+	 * @brief same as Match(const wxString &word, CppTokensMap &l) however, search for matches only in a given range
+	 */
+	void Match(const wxString &word, CppTokensMap &l, int from, int to);
 	// we use std::vector<char> and NOT std::vector<char> since the specialization of vector<bool>
 	// is broken
 	TextStates states();

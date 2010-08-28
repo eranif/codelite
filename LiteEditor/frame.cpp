@@ -478,10 +478,11 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_MENU(XRCID("add_multi_impl"),           clMainFrame::OnCppContextMenu)
 	EVT_MENU(XRCID("add_virtual_impl"),         clMainFrame::OnCppContextMenu)
 	EVT_MENU(XRCID("add_pure_virtual_impl"),    clMainFrame::OnCppContextMenu)
-	EVT_MENU(XRCID("rename_function"),          clMainFrame::OnCppContextMenu)
+	EVT_MENU(XRCID("rename_symbol"),            clMainFrame::OnCppContextMenu)
 	EVT_MENU(XRCID("comment_selection"),        clMainFrame::OnCppContextMenu)
 	EVT_MENU(XRCID("comment_line"),             clMainFrame::OnCppContextMenu)
 	EVT_MENU(XRCID("retag_file"),               clMainFrame::OnCppContextMenu)
+	EVT_MENU(XRCID("rename_local_variable"),    clMainFrame::OnCppContextMenu)
 
 	//-----------------------------------------------------------------
 	// Hyperlinks

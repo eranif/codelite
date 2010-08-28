@@ -129,7 +129,8 @@ public:
 	virtual void OnAddImpl(wxCommandEvent &e);
 	virtual void OnAddMultiImpl(wxCommandEvent &e);
 	virtual void OnOverrideParentVritualFunctions(wxCommandEvent &e);
-	virtual void OnRenameFunction(wxCommandEvent &e);
+	virtual void OnRenameGlobalSymbol(wxCommandEvent &e);
+	virtual void OnRenameLocalSymbol (wxCommandEvent &e);
 	virtual void OnRetagFile(wxCommandEvent &e);
 	virtual void OnUserTypedXChars(const wxString &word);
 	virtual void OnCallTipClick(wxScintillaEvent &e);
@@ -167,7 +168,7 @@ private:
 	 * \param li
 	 * \return
 	 */
-	void ReplaceInFiles(const wxString &word, std::list<CppToken> &li);
+	void ReplaceInFiles(const wxString &word, const std::list<CppToken> &li);
 
 	/**
 	* \brief open file specified by the 'fileName' parameter and append 'text'

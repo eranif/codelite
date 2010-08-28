@@ -45,7 +45,7 @@ void RefactoringEngine::RenameGlobalSymbol(const wxString& symname, const wxFile
 	if(!DoResolveWord(states, fn, pos + symname.Len(), line, symname, &rs))
 		return;
 
-	wxProgressDialog* prgDlg = CreateProgressDialog(wxT("Gathering required information..."), (int)files.size());
+	wxProgressDialog* prgDlg = CreateProgressDialog(wxT("Stage 1/2: Gathering required information..."), (int)files.size());
 
 	// Search the provided input files for the symbol to rename and prepare
 	// a CppTokensMap
@@ -79,7 +79,7 @@ void RefactoringEngine::RenameGlobalSymbol(const wxString& symname, const wxFile
 	std::list<CppToken>::iterator iter = tokens.begin();
 	int counter(0);
 
-	prgDlg = CreateProgressDialog(wxT("Parsing matches..."), (int) tokens.size());
+	prgDlg = CreateProgressDialog(wxT("Stage 2/2: Parsing matches..."), (int) tokens.size());
 	std::map<wxString, TextStates> statesMap;
 	for (; iter != tokens.end(); iter++) {
 
@@ -131,15 +131,41 @@ void RefactoringEngine::RenameGlobalSymbol(const wxString& symname, const wxFile
 
 void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileName& fn, int line, int pos)
 {
-//	FILE* fp = fopen("bitmap.txt", "wb");
-//	for(size_t i=0; i<bitmap.size(); i++) {
-//		if(i % 21 == 20) {
-//			fprintf(fp, "\n");
-//		}
-//		fprintf(fp, "%d ", bitmap[i]);
-//	}
-//	fflush(fp);
-//	fclose(fp);
+	// Clear previous results
+	Clear();
+
+	// Load the file and get a state map + the text from the scanner
+	CppWordScanner scanner(fn.GetFullPath());
+
+	// get the current file states
+	TextStates states = scanner.states();
+
+	int from, to;
+	// get the local scope to search for variables
+	wxString localScope = states.CurrentScope(pos, from, to);
+
+	if(localScope.IsEmpty())
+		return;
+
+	// search for matches in the given range
+	CppTokensMap l;
+	scanner.Match(symname, l, from, to);
+
+	std::list<CppToken> tokens;
+	l.findTokens(symname, tokens);
+	if (tokens.empty())
+		return;
+
+	// Loop over the matches
+	// Incase we did manage to resolve the word, it means that it is NOT a local variable (DoResolveWord only wors for globals NOT for locals)
+	RefactorSource target;
+	std::list<CppToken>::iterator iter = tokens.begin();
+	for (; iter != tokens.end(); iter++) {
+		wxFileName f(iter->getFilename());
+		if (!DoResolveWord(states, wxFileName(iter->getFilename()), iter->getOffset(), line, symname, &target)) {
+			m_candidates.push_back( *iter );
+		}
+	}
 }
 
 bool RefactoringEngine::DoResolveWord(TextStates &states, const wxFileName& fn, int pos, int line, const wxString &word, RefactorSource *rs)

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/ffile.h>
+#include <wx/strconv.h>
 #include <wx/tokenzr.h>
 #include <wx/log.h>
 #include "cppwordscanner.h"
@@ -40,7 +41,9 @@ CppWordScanner::CppWordScanner(const wxString &file_name)
 		wxFileOffset size = thefile.Length();
 		wxString fileData;
 		fileData.Alloc(size);
-		thefile.ReadAll( &m_text );
+
+		wxCSConv fontEncConv(wxFONTENCODING_ISO8859_1);
+		thefile.ReadAll( &m_text, fontEncConv );
 	}
 	doInit();
 }
@@ -59,21 +62,36 @@ CppWordScanner::~CppWordScanner()
 
 void CppWordScanner::FindAll(CppTokensMap &l)
 {
-	doFind(wxEmptyString, l);
+	doFind(wxEmptyString, l, wxNOT_FOUND, wxNOT_FOUND);
 }
 
 void CppWordScanner::Match(const wxString& word, CppTokensMap& l)
 {
-	doFind(word, l);
+	// scan the entire text
+	doFind(word, l, wxNOT_FOUND, wxNOT_FOUND);
 }
 
-void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l)
+void CppWordScanner::Match(const wxString& word, CppTokensMap& l, int from, int to)
+{
+	// scan the entire text
+	doFind(word, l, from, to);
+}
+
+void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, int to)
 {
 	int state(STATE_NORMAL);
 	StringAccessor accessor(m_text);
 	CppToken token;
 
-	for (size_t i=0; i<m_text.size(); i++) {
+	// set the scan range
+	size_t f = (from == wxNOT_FOUND) ? 0             : from;
+	size_t t = (to   == wxNOT_FOUND) ? m_text.size() : to;
+
+	// sanity
+	if(f >= m_text.size() || t >= m_text.size())
+		return;
+
+	for (size_t i=f; i<t; i++) {
 		char ch = accessor.safeAt(i);
 
 		switch (state) {
@@ -206,6 +224,7 @@ TextStates CppWordScanner::states()
 	bitmap.text = m_text;
 
 	int state(STATE_NORMAL);
+	int depth(0);
 	StringAccessor accessor(m_text);
 
 	for (size_t i=0; i<m_text.size(); i++) {
@@ -222,14 +241,16 @@ TextStates CppWordScanner::states()
 
 				// C++ comment, advance i
 				state = STATE_CPP_COMMENT;
-				bitmap.states[i] = STATE_CPP_COMMENT;
+				bitmap.states[i].state = STATE_CPP_COMMENT;
+				bitmap.states[i].depth = depth;
 				i++;
 
 			} else if (accessor.match("/*", i)) {
 
 				// C comment
 				state = STATE_C_COMMENT;
-				bitmap.states[i] = STATE_C_COMMENT;
+				bitmap.states[i].state = STATE_C_COMMENT;
+				bitmap.states[i].depth = depth;
 				i++;
 
 			} else if (accessor.match("'", i)) {
@@ -242,6 +263,11 @@ TextStates CppWordScanner::states()
 				// dbouble quoted string
 				state = STATE_DQ_STRING;
 
+			} else if (accessor.match("{", i)) {
+				depth++;
+
+			} else if (accessor.match("}", i)) {
+				depth--;
 			}
 
 			break;
@@ -254,7 +280,8 @@ TextStates CppWordScanner::states()
 			break;
 		case STATE_C_COMMENT:
 			if ( accessor.match("*/", i)) {
-				bitmap.states[i] = state;
+				bitmap.states[i].state = state;
+				bitmap.states[i].depth = depth;
 				state = STATE_NORMAL;
 				i++;
 			}
@@ -267,10 +294,12 @@ TextStates CppWordScanner::states()
 		case STATE_DQ_STRING:
 			if (accessor.match("\\\"", i)) {
 				//escaped string
-				bitmap.states[i] = STATE_DQ_STRING;
+				bitmap.states[i].state = STATE_DQ_STRING;
+				bitmap.states[i].depth = depth;
 				i++;
 			} else if(accessor.match("\\", i)) {
-				bitmap.states[i] = STATE_DQ_STRING;
+				bitmap.states[i].state = STATE_DQ_STRING;
+				bitmap.states[i].depth = depth;
 				i++;
 			} else if (accessor.match("\"", i)) {
 				state = STATE_NORMAL;
@@ -279,10 +308,12 @@ TextStates CppWordScanner::states()
 		case STATE_SINGLE_STRING:
 			if (accessor.match("\\'", i)) {
 				//escaped single string
-				bitmap.states[i] = STATE_SINGLE_STRING;
+				bitmap.states[i].state = STATE_SINGLE_STRING;
+				bitmap.states[i].depth = depth;
 				i++;
 			} else if(accessor.match("\\", i)) {
-				bitmap.states[i] = STATE_SINGLE_STRING;
+				bitmap.states[i].state = STATE_SINGLE_STRING;
+				bitmap.states[i].depth = depth;
 				i++;
 
 			} else if (accessor.match("'", i)) {
@@ -290,9 +321,64 @@ TextStates CppWordScanner::states()
 			}
 			break;
 		}
-		bitmap.states[i] = state;
+		bitmap.states[i].state = state;
+		bitmap.states[i].depth = depth;
 	}
 	return bitmap;
+}
+
+wxString TextStates::CurrentScope(int position, int& upperPt, int& lowerPt)
+{
+	// Sanity
+	if(text.Len() != states.size())
+		return wxT("");
+
+	if(position < 0)
+		return wxT("");
+
+	if(position >= (int)text.Len())
+		return wxT("");
+
+	if(states[position].depth <= 0) {
+		// we are already at depth 0 (which means global scope)
+		return wxT("");
+	}
+
+	// Fact:
+	// The current depth is greater than 0
+
+	// Note that each call to 'Next' / 'Prev' updates the 'pos' member
+
+	// Step 1: search from this point upward until we find depth 0
+	SetPosition(position);
+
+	upperPt = position;
+	lowerPt = position;
+
+	wxChar ch = Previous();
+	while ( ch ) {
+		if(states[pos].depth == 0)
+			break;
+		ch = Previous();
+	}
+
+	upperPt = pos;
+
+	// Step 2: search from position downward
+	SetPosition(position);
+	ch = Next();
+	while ( ch ) {
+		if(states[pos].depth == 0)
+			break;
+		ch = Next();
+	}
+	lowerPt = pos;
+
+	if(lowerPt > upperPt) {
+		return text.Mid(upperPt, lowerPt - upperPt);
+	}
+
+	return wxT("");
 }
 
 wxChar TextStates::Next()
@@ -306,7 +392,7 @@ wxChar TextStates::Next()
 	// reached end of text
 	pos++;
 	while( pos < (int)text.Len() ) {
-		int st = states[pos];
+		int st = states[pos].state;
 		if(st == CppWordScanner::STATE_NORMAL) {
 			return text[pos];
 		}
@@ -329,7 +415,7 @@ wxChar TextStates::Previous()
 
 	pos--;
 	while( pos ) {
-		int st = states[pos];
+		int st = states[pos].state;
 		if(st == CppWordScanner::STATE_NORMAL) {
 			return text[pos];
 		}

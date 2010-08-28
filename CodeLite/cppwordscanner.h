@@ -30,8 +30,10 @@
 #include "cpptoken.h"
 
 struct ByteState {
-	short state;  // Holds the current byte state (one of CppWordScanner::STATE_*)
-	short depth;  // The current char depth
+	short state;   // Holds the current byte state (one of CppWordScanner::STATE_*)
+	short depth;   // The current char depth
+	short depthId; // The depth ID (there can be multiple blocks of the same depth in a given scope)
+	int   lineNo;  // the line number which holds this byte
 };
 
 class TextStates
@@ -39,10 +41,14 @@ class TextStates
 public:
 	wxString               text;
 	std::vector<ByteState> states;
+	std::vector<int>       lineToPos;
 	int                    pos;
+	int                    depthsID[512];
 
 public:
-	TextStates() : pos(wxNOT_FOUND) {}
+	TextStates() : pos(wxNOT_FOUND) {
+		memset(depthsID, 0, sizeof(depthsID));
+	}
 
 	void   SetPosition(int pos);
 	wxChar Previous();
@@ -56,13 +62,20 @@ public:
 		return states.size() == text.Len();
 	}
 
+	void SetState(size_t where, int state, int depth, int lineNo);
+
+	void IncDepthId(size_t where);
 	/**
-	 * @brief return the current scope based on depth
-	 * this function searches for two points:
-	 * from pos upward until we find depth 0 and from pos downward until we find depth 0 (or EOF). It returns the text between those
-	 * two points
+	 * @brief return the end of a given function
+	 * @param position function start position. This function searches for the first opening brace from position '{' and returns the position of the matching
+	 * closing brace '}'
 	 */
-	wxString CurrentScope(int position, int& upperPt, int& lowerPt);
+	int FunctionEndPos(int position);
+
+	/**
+	 * @brief convert line number to position
+	 */
+	int LineToPos(int lineNo);
 };
 
 class CppWordScanner

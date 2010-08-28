@@ -29,14 +29,14 @@
 #include "cppwordscanner.h"
 #include "stringaccessor.h"
 
-CppWordScanner::CppWordScanner(const wxString &file_name)
-	: m_filename(file_name)
+CppWordScanner::CppWordScanner(const wxString &fileName)
+	: m_filename(fileName)
 	, m_offset(0)
 {
 	// disable log
 	wxLogNull nolog;
 
-	wxFFile thefile(file_name, wxT("rb"));
+	wxFFile thefile(fileName, wxT("rb"));
 	if(thefile.IsOpened()) {
 		wxFileOffset size = thefile.Length();
 		wxString fileData;
@@ -48,8 +48,8 @@ CppWordScanner::CppWordScanner(const wxString &file_name)
 	doInit();
 }
 
-CppWordScanner::CppWordScanner(const wxString& file_name, const wxString& text, int offset)
-	: m_filename(file_name)
+CppWordScanner::CppWordScanner(const wxString& fileName, const wxString& text, int offset)
+	: m_filename(fileName)
 	, m_text    (text.c_str())
 	, m_offset  (offset)
 {
@@ -60,9 +60,9 @@ CppWordScanner::~CppWordScanner()
 {
 }
 
-void CppWordScanner::FindAll(CppTokensMap &l)
+void CppWordScanner::FindAll(CppTokensMap &tokensMap)
 {
-	doFind(wxEmptyString, l, wxNOT_FOUND, wxNOT_FOUND);
+	doFind(wxEmptyString, tokensMap, wxNOT_FOUND, wxNOT_FOUND);
 }
 
 void CppWordScanner::Match(const wxString& word, CppTokensMap& l)
@@ -88,7 +88,7 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
 	size_t t = (to   == wxNOT_FOUND) ? m_text.size() : to;
 
 	// sanity
-	if(f >= m_text.size() || t >= m_text.size())
+	if(f > m_text.size() || t > m_text.size())
 		return;
 
 	for (size_t i=f; i<t; i++) {
@@ -225,9 +225,17 @@ TextStates CppWordScanner::states()
 
 	int state(STATE_NORMAL);
 	int depth(0);
+	int lineNo(0);
+
 	StringAccessor accessor(m_text);
 
 	for (size_t i=0; i<m_text.size(); i++) {
+
+		// Keep track of line numbers
+		if(accessor.match("\n", i) && (state == STATE_NORMAL || state == STATE_PRE_PROCESSING || state == STATE_CPP_COMMENT || state == STATE_C_COMMENT)){
+			lineNo++;
+		}
+
 		switch (state) {
 
 		case STATE_NORMAL:
@@ -237,20 +245,19 @@ TextStates CppWordScanner::states()
 				     accessor.match("\n", i-1)) { // we are at start of line
 					state = STATE_PRE_PROCESSING;
 				}
+
 			} else if (accessor.match("//", i)) {
 
 				// C++ comment, advance i
 				state = STATE_CPP_COMMENT;
-				bitmap.states[i].state = STATE_CPP_COMMENT;
-				bitmap.states[i].depth = depth;
+				bitmap.SetState(i, STATE_CPP_COMMENT, depth, lineNo);
 				i++;
 
 			} else if (accessor.match("/*", i)) {
 
 				// C comment
 				state = STATE_C_COMMENT;
-				bitmap.states[i].state = STATE_C_COMMENT;
-				bitmap.states[i].depth = depth;
+				bitmap.SetState(i, STATE_C_COMMENT, depth, lineNo);
 				i++;
 
 			} else if (accessor.match("'", i)) {
@@ -264,10 +271,14 @@ TextStates CppWordScanner::states()
 				state = STATE_DQ_STRING;
 
 			} else if (accessor.match("{", i)) {
+				// entering new depth, increase the ID of the current depth
+				// so when we enter this depth again, it will have a unique ID
+				bitmap.IncDepthId(depth);
 				depth++;
 
 			} else if (accessor.match("}", i)) {
 				depth--;
+
 			}
 
 			break;
@@ -280,8 +291,7 @@ TextStates CppWordScanner::states()
 			break;
 		case STATE_C_COMMENT:
 			if ( accessor.match("*/", i)) {
-				bitmap.states[i].state = state;
-				bitmap.states[i].depth = depth;
+				bitmap.SetState(i, state, depth, lineNo);
 				state = STATE_NORMAL;
 				i++;
 			}
@@ -294,13 +304,13 @@ TextStates CppWordScanner::states()
 		case STATE_DQ_STRING:
 			if (accessor.match("\\\"", i)) {
 				//escaped string
-				bitmap.states[i].state = STATE_DQ_STRING;
-				bitmap.states[i].depth = depth;
+				bitmap.SetState(i, STATE_DQ_STRING, depth, lineNo);
 				i++;
+
 			} else if(accessor.match("\\", i)) {
-				bitmap.states[i].state = STATE_DQ_STRING;
-				bitmap.states[i].depth = depth;
+				bitmap.SetState(i, STATE_DQ_STRING, depth, lineNo);
 				i++;
+
 			} else if (accessor.match("\"", i)) {
 				state = STATE_NORMAL;
 			}
@@ -308,12 +318,10 @@ TextStates CppWordScanner::states()
 		case STATE_SINGLE_STRING:
 			if (accessor.match("\\'", i)) {
 				//escaped single string
-				bitmap.states[i].state = STATE_SINGLE_STRING;
-				bitmap.states[i].depth = depth;
+				bitmap.SetState(i, STATE_SINGLE_STRING, depth, lineNo);
 				i++;
 			} else if(accessor.match("\\", i)) {
-				bitmap.states[i].state = STATE_SINGLE_STRING;
-				bitmap.states[i].depth = depth;
+				bitmap.SetState(i, STATE_SINGLE_STRING, depth, lineNo);
 				i++;
 
 			} else if (accessor.match("'", i)) {
@@ -321,64 +329,56 @@ TextStates CppWordScanner::states()
 			}
 			break;
 		}
-		bitmap.states[i].state = state;
-		bitmap.states[i].depth = depth;
+		bitmap.SetState(i, state, depth, lineNo);
 	}
 	return bitmap;
 }
 
-wxString TextStates::CurrentScope(int position, int& upperPt, int& lowerPt)
+int TextStates::FunctionEndPos(int position)
 {
 	// Sanity
 	if(text.Len() != states.size())
-		return wxT("");
+		return wxNOT_FOUND;
 
 	if(position < 0)
-		return wxT("");
+		return wxNOT_FOUND;
 
 	if(position >= (int)text.Len())
-		return wxT("");
+		return wxNOT_FOUND;
 
-	if(states[position].depth <= 0) {
+	if(states[position].depth < 0) {
 		// we are already at depth 0 (which means global scope)
-		return wxT("");
+		return wxNOT_FOUND;
 	}
-
-	// Fact:
-	// The current depth is greater than 0
 
 	// Note that each call to 'Next' / 'Prev' updates the 'pos' member
+	int curdepth = states[position].depth;
 
-	// Step 1: search from this point upward until we find depth 0
+	// Step 1: search from this point downward until we find an opening brace (i.e. depth is equal to curdepth+1)
 	SetPosition(position);
 
-	upperPt = position;
-	lowerPt = position;
-
-	wxChar ch = Previous();
+	wxChar ch = Next();
 	while ( ch ) {
-		if(states[pos].depth == 0)
-			break;
-		ch = Previous();
-	}
-
-	upperPt = pos;
-
-	// Step 2: search from position downward
-	SetPosition(position);
-	ch = Next();
-	while ( ch ) {
-		if(states[pos].depth == 0)
+		if(states[pos].depth == curdepth + 1)
 			break;
 		ch = Next();
 	}
-	lowerPt = pos;
 
-	if(lowerPt > upperPt) {
-		return text.Mid(upperPt, lowerPt - upperPt);
+	// Step 2: Continue from the current position,
+	// but this time break when depth is curdepth
+
+	ch = Next();
+	while ( ch ) {
+		if(states[pos].depth == curdepth)
+			break;
+		ch = Next();
 	}
 
-	return wxT("");
+	if(pos > position) {
+		return pos;
+	}
+
+	return wxNOT_FOUND;
 }
 
 wxChar TextStates::Next()
@@ -429,3 +429,30 @@ void TextStates::SetPosition(int pos)
 	this->pos = pos;
 }
 
+void TextStates::SetState(size_t where, int state, int depth, int lineNo)
+{
+	states[where].depth   = depth;
+	states[where].depthId = depthsID[depth];
+	states[where].state   = state;
+	states[where].lineNo  = lineNo;
+
+	if(lineToPos.empty() || (int)lineToPos.size() - 1 < lineNo) {
+		lineToPos.push_back( where );
+	}
+}
+
+void TextStates::IncDepthId(size_t where)
+{
+	depthsID[where]++;
+}
+
+int TextStates::LineToPos(int lineNo)
+{
+	if(IsOk() == false)
+		return wxNOT_FOUND;
+
+	if(lineToPos.empty() || (int)lineToPos.size() < lineNo)
+		return wxNOT_FOUND;
+
+	return lineToPos[lineNo];
+}

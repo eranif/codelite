@@ -140,11 +140,20 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
 	// get the current file states
 	TextStates states = scanner.states();
 
-	int from, to;
-	// get the local scope to search for variables
-	wxString localScope = states.CurrentScope(pos, from, to);
+	// get the local by scanning from the current function's
+	TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(fn, line + 1);
+	if( !tag ) {
+		return;
+	}
 
-	if(localScope.IsEmpty())
+	// Get the line number of the function
+	int funcLine = tag->GetLine() - 1;
+
+	// Convert the line number to offset
+	int from = states.LineToPos     (funcLine);
+	int to   = states.FunctionEndPos(from);
+
+	if(to == wxNOT_FOUND)
 		return;
 
 	// search for matches in the given range

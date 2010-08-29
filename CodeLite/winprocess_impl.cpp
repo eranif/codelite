@@ -357,10 +357,7 @@ bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff)
 	DWORD dwRead;
 	DWORD dwMode;
 	DWORD dwTimeout;
-	char *chBuf = new char [65536+1];     //64K should be sufficient buffer
-	memset(chBuf, 0, 65536+1);
-
-	std::auto_ptr<char> sp(chBuf);
+	memset(m_buffer, 0, sizeof(m_buffer));
 
 	// Make the pipe to non-blocking mode
 	dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
@@ -370,15 +367,15 @@ bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff)
 	                        NULL,
 	                        &dwTimeout);
 
-	BOOL bRes = ReadFile( pipe, chBuf, 65536, &dwRead, NULL);
+	BOOL bRes = ReadFile( pipe, m_buffer, 65536, &dwRead, NULL);
 	if ( bRes ) {
 		wxString tmpBuff;
 		// Success read
-		chBuf[dwRead/sizeof(char)] = 0;
-		tmpBuff = wxString(chBuf, wxConvUTF8);
+		m_buffer[dwRead/sizeof(char)] = 0;
+		tmpBuff = wxString(m_buffer, wxConvUTF8);
 		if (tmpBuff.IsEmpty() && dwRead > 0) {
 			//conversion failed
-			tmpBuff = wxString::From8BitData(chBuf);
+			tmpBuff = wxString::From8BitData(m_buffer);
 		}
 		buff << tmpBuff;
 		return true;

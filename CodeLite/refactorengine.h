@@ -42,12 +42,12 @@ protected:
 private:
 	RefactoringEngine();
 	~RefactoringEngine();
-	bool DoResolveWord(TextStates &states,
-	                 const wxFileName& fn,
-	                 int pos,
-	                 int line,
-	                 const wxString &word,
-	                 RefactorSource *rs);
+	bool DoResolveWord(  TextStatesPtr states,
+						 const wxFileName& fn,
+						 int pos,
+						 int line,
+						 const wxString &word,
+						 RefactorSource *rs);
 
 public:
 	void SetCandidates(const std::list<CppToken>& candidates) {
@@ -62,7 +62,7 @@ public:
 	const std::list<CppToken>& GetPossibleCandidates() const {
 		return m_possibleCandidates;
 	}
-	wxString GetExpression(int pos, TextStates &states);
+	wxString GetExpression(int pos, TextStatesPtr states);
 
 	void Clear();
 	/**

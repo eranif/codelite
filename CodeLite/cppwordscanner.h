@@ -28,6 +28,7 @@
 #include <wx/arrstr.h>
 #include <vector>
 #include "cpptoken.h"
+#include "smart_ptr.h"
 
 struct ByteState {
 	short state;   // Holds the current byte state (one of CppWordScanner::STATE_*)
@@ -78,6 +79,8 @@ public:
 	int LineToPos(int lineNo);
 };
 
+typedef SmartPtr<TextStates> TextStatesPtr;
+
 class CppWordScanner
 {
 	wxSortedArrayString m_arr;
@@ -112,7 +115,7 @@ public:
 	void Match(const wxString &word, CppTokensMap &l, int from, int to);
 	// we use std::vector<char> and NOT std::vector<char> since the specialization of vector<bool>
 	// is broken
-	TextStates states();
+	TextStatesPtr states();
 };
 
 

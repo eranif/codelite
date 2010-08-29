@@ -42,7 +42,7 @@ CppWordScanner::CppWordScanner(const wxString &fileName)
 		wxString fileData;
 		fileData.Alloc(size);
 
-		wxCSConv fontEncConv(wxFONTENCODING_ISO8859_1);
+		wxCSConv fontEncConv(wxFONTENCODING_UTF8);
 		thefile.ReadAll( &m_text, fontEncConv );
 	}
 	doInit();
@@ -213,21 +213,22 @@ void CppWordScanner::doInit()
 	m_arr.Sort();
 }
 
-TextStates CppWordScanner::states()
+TextStatesPtr CppWordScanner::states()
 {
-	TextStates bitmap;
-	bitmap.states.resize(m_text.size());
+	TextStatesPtr bitmap (new TextStates());
+	bitmap->states.resize(m_text.size());
 
-	if(bitmap.states.size() == 0)
-		return bitmap;
+	if(bitmap->states.size() == 0) {
+		return NULL;
+	}
 
-	bitmap.text = m_text;
+	bitmap->text = m_text.c_str();
 
 	int state(STATE_NORMAL);
 	int depth(0);
 	int lineNo(0);
 
-	StringAccessor accessor(m_text);
+	StringAccessor accessor(m_text.c_str());
 
 	for (size_t i=0; i<m_text.size(); i++) {
 
@@ -250,14 +251,14 @@ TextStates CppWordScanner::states()
 
 				// C++ comment, advance i
 				state = STATE_CPP_COMMENT;
-				bitmap.SetState(i, STATE_CPP_COMMENT, depth, lineNo);
+				bitmap->SetState(i, STATE_CPP_COMMENT, depth, lineNo);
 				i++;
 
 			} else if (accessor.match("/*", i)) {
 
 				// C comment
 				state = STATE_C_COMMENT;
-				bitmap.SetState(i, STATE_C_COMMENT, depth, lineNo);
+				bitmap->SetState(i, STATE_C_COMMENT, depth, lineNo);
 				i++;
 
 			} else if (accessor.match("'", i)) {
@@ -273,7 +274,7 @@ TextStates CppWordScanner::states()
 			} else if (accessor.match("{", i)) {
 				// entering new depth, increase the ID of the current depth
 				// so when we enter this depth again, it will have a unique ID
-				bitmap.IncDepthId(depth);
+				bitmap->IncDepthId(depth);
 				depth++;
 
 			} else if (accessor.match("}", i)) {
@@ -291,7 +292,7 @@ TextStates CppWordScanner::states()
 			break;
 		case STATE_C_COMMENT:
 			if ( accessor.match("*/", i)) {
-				bitmap.SetState(i, state, depth, lineNo);
+				bitmap->SetState(i, state, depth, lineNo);
 				state = STATE_NORMAL;
 				i++;
 			}
@@ -304,11 +305,11 @@ TextStates CppWordScanner::states()
 		case STATE_DQ_STRING:
 			if (accessor.match("\\\"", i)) {
 				//escaped string
-				bitmap.SetState(i, STATE_DQ_STRING, depth, lineNo);
+				bitmap->SetState(i, STATE_DQ_STRING, depth, lineNo);
 				i++;
 
 			} else if(accessor.match("\\", i)) {
-				bitmap.SetState(i, STATE_DQ_STRING, depth, lineNo);
+				bitmap->SetState(i, STATE_DQ_STRING, depth, lineNo);
 				i++;
 
 			} else if (accessor.match("\"", i)) {
@@ -318,10 +319,10 @@ TextStates CppWordScanner::states()
 		case STATE_SINGLE_STRING:
 			if (accessor.match("\\'", i)) {
 				//escaped single string
-				bitmap.SetState(i, STATE_SINGLE_STRING, depth, lineNo);
+				bitmap->SetState(i, STATE_SINGLE_STRING, depth, lineNo);
 				i++;
 			} else if(accessor.match("\\", i)) {
-				bitmap.SetState(i, STATE_SINGLE_STRING, depth, lineNo);
+				bitmap->SetState(i, STATE_SINGLE_STRING, depth, lineNo);
 				i++;
 
 			} else if (accessor.match("'", i)) {
@@ -329,7 +330,7 @@ TextStates CppWordScanner::states()
 			}
 			break;
 		}
-		bitmap.SetState(i, state, depth, lineNo);
+		bitmap->SetState(i, state, depth, lineNo);
 	}
 	return bitmap;
 }
@@ -394,7 +395,9 @@ wxChar TextStates::Next()
 	while( pos < (int)text.Len() ) {
 		int st = states[pos].state;
 		if(st == CppWordScanner::STATE_NORMAL) {
-			return text[pos];
+			if(text.Len() > (size_t)pos)
+				return text.GetChar(pos);;
+			return 0;
 		}
 		pos++;
 	}
@@ -417,7 +420,9 @@ wxChar TextStates::Previous()
 	while( pos ) {
 		int st = states[pos].state;
 		if(st == CppWordScanner::STATE_NORMAL) {
-			return text[pos];
+			if(text.Len() > (size_t)pos)
+				return text.GetChar(pos);
+			return 0;
 		}
 		pos--;
 	}
@@ -431,10 +436,12 @@ void TextStates::SetPosition(int pos)
 
 void TextStates::SetState(size_t where, int state, int depth, int lineNo)
 {
-	states[where].depth   = depth;
-	states[where].depthId = depthsID[depth];
-	states[where].state   = state;
-	states[where].lineNo  = lineNo;
+	if(where < states.size()) {
+		states[where].depth   = depth;
+		states[where].depthId = depthsID[depth];
+		states[where].state   = state;
+		states[where].lineNo  = lineNo;
+	}
 
 	if(lineToPos.empty() || (int)lineToPos.size() - 1 < lineNo) {
 		lineToPos.push_back( where );

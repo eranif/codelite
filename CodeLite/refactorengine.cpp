@@ -38,7 +38,9 @@ void RefactoringEngine::RenameGlobalSymbol(const wxString& symname, const wxFile
 	CppWordScanner scanner(fn.GetFullPath());
 
 	// get the current file states
-	TextStates states = scanner.states();
+	TextStatesPtr states = scanner.states();
+	if(!states)
+		return;
 
 	// Attempt to understand the expression that the caret is currently located at (using line:pos:file)
 	RefactorSource rs;
@@ -75,12 +77,16 @@ void RefactoringEngine::RenameGlobalSymbol(const wxString& symname, const wxFile
 	if (tokens.empty())
 		return;
 
+	// sort the tokens
+	tokens.sort();
+
 	RefactorSource target;
 	std::list<CppToken>::iterator iter = tokens.begin();
 	int counter(0);
 
+	TextStatesPtr statesPtr(NULL);
+	wxString      statesPtrFileName;
 	prgDlg = CreateProgressDialog(wxT("Stage 2/2: Parsing matches..."), (int) tokens.size());
-	std::map<wxString, TextStates> statesMap;
 	for (; iter != tokens.end(); iter++) {
 
 		// TODO :: send an event here to report our progress
@@ -98,12 +104,17 @@ void RefactoringEngine::RenameGlobalSymbol(const wxString& symname, const wxFile
 		// reset the result
 		target.Reset();
 
-		if(statesMap.find(iter->getFilename()) == statesMap.end()) {
+		if(!statesPtr || statesPtrFileName != iter->getFilename()) {
+			// Create new statesPtr
 			CppWordScanner sc(iter->getFilename());
-			statesMap[iter->getFilename()] = sc.states();
+			statesPtr         = sc.states();
+			statesPtrFileName = iter->getFilename();
 		}
 
-		if (DoResolveWord(statesMap.find(iter->getFilename())->second, wxFileName(iter->getFilename()), iter->getOffset(), line, symname, &target)) {
+		if(!statesPtr)
+			continue;
+
+		if (DoResolveWord(statesPtr, wxFileName(iter->getFilename()), iter->getOffset(), line, symname, &target)) {
 
 			if (target.name == rs.name && target.scope == rs.scope) {
 				// full match
@@ -138,7 +149,11 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
 	CppWordScanner scanner(fn.GetFullPath());
 
 	// get the current file states
-	TextStates states = scanner.states();
+	TextStatesPtr states = scanner.states();
+	if( !states ) {
+		return;
+	}
+
 
 	// get the local by scanning from the current function's
 	TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(fn, line + 1);
@@ -150,8 +165,8 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
 	int funcLine = tag->GetLine() - 1;
 
 	// Convert the line number to offset
-	int from = states.LineToPos     (funcLine);
-	int to   = states.FunctionEndPos(from);
+	int from = states->LineToPos     (funcLine);
+	int to   = states->FunctionEndPos(from);
 
 	if(to == wxNOT_FOUND)
 		return;
@@ -177,7 +192,7 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
 	}
 }
 
-bool RefactoringEngine::DoResolveWord(TextStates &states, const wxFileName& fn, int pos, int line, const wxString &word, RefactorSource *rs)
+bool RefactoringEngine::DoResolveWord(TextStatesPtr states, const wxFileName& fn, int pos, int line, const wxString &word, RefactorSource *rs)
 {
 	std::vector<TagEntryPtr> tags;
 
@@ -186,7 +201,7 @@ bool RefactoringEngine::DoResolveWord(TextStates &states, const wxFileName& fn, 
 
 	// get the scope
 	// Optimize the text for large files
-	wxString text = states.text.Left(pos + 1);
+	wxString text = states->text.Left(pos + 1);
 
 	// we simply collect declarations & implementations
 
@@ -262,7 +277,7 @@ bool RefactoringEngine::DoResolveWord(TextStates &states, const wxFileName& fn, 
 	return false;
 }
 
-wxString RefactoringEngine::GetExpression(int pos, TextStates &states)
+wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
 {
 	bool     cont(true);
 	int      depth(0);
@@ -270,9 +285,9 @@ wxString RefactoringEngine::GetExpression(int pos, TextStates &states)
 	bool     prevColon(false);
 	wxString expression;
 
-	states.SetPosition(pos);
+	states->SetPosition(pos);
 	while (cont && depth >= 0) {
-		wxChar ch = states.Previous();
+		wxChar ch = states->Previous();
 
 		// eof?
 		if (ch == 0) {

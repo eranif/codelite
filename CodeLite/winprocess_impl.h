@@ -37,6 +37,7 @@ class WinProcessImpl : public IProcess
 {
 	ProcessReaderThread *m_thr;
 	HANDLE               m_hRead;
+	char                 m_buffer[65537];
 
 protected:
 	void StartReaderThread();
@@ -66,9 +67,9 @@ public:
 	// Clean the process resources and kill the process if it is
 	// still alive
 	virtual void Cleanup();
-	
+
 	virtual void Terminate();
-	
+
 private:
 	// Creating process related handles
 	HANDLE hChildStdinRd, hChildStdinWr, hChildStdinWrDup,

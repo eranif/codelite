@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __cpptoken__
+#ifndef __cpptoken__
 #define __cpptoken__
 
 #include <wx/string.h>
@@ -74,6 +74,11 @@ public:
 		return m_id;
 	}
 	void print();
+
+	// Provide lower-than operator so we can use std::list::sort method
+	bool operator < (const CppToken& rhs) {
+		return filename < rhs.filename;
+	}
 };
 
 class CppTokensMap

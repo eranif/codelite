@@ -239,23 +239,23 @@ int main(int argc, char **argv)
 	// Load the tags database that is used during the test.
 	wxFileName fn(wxT("../../SampleWorkspace/SampleWorkspace.tags"));
 	TagsManagerST::Get()->OpenDatabase( fn );
-//	
-//	// Execute the tests
-//	Tester::Instance()->RunTests();
-//	
-//	Tester::Release();
-//	TagsManagerST::Free();
-//	LanguageST::Free();
+	
+	// Execute the tests
+	Tester::Instance()->RunTests();
+	
+	Tester::Release();
+	TagsManagerST::Free();
+	LanguageST::Free();
 
 	// Search the provided input files for the symbol to rename and prepare
 	// a CppTokensMap
-	CppTokensMap l;
-	wxFileList files;
-	files.push_back(wxFileName(wxT("/home/eran/devl/codelite/Plugin/builder_gnumake.cpp")));
-	RefactoringEngine::Instance()->RenameGlobalSymbol(wxT("BuilderGnuMake"), 
-													  wxFileName(wxT("/home/eran/devl/codelite/Plugin/builder_gnumake.cpp")), 
-													  99,
-													  3226,
-													  files);
+//	CppTokensMap l;
+//	wxFileList files;
+//	files.push_back(wxFileName(wxT("/home/eran/devl/codelite/Plugin/builder_gnumake.cpp")));
+//	RefactoringEngine::Instance()->RenameGlobalSymbol(wxT("BuilderGnuMake"), 
+//													  wxFileName(wxT("/home/eran/devl/codelite/Plugin/builder_gnumake.cpp")), 
+//													  99,
+//													  3226,
+//													  files);
 	return 0;
 }

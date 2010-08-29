@@ -236,9 +236,9 @@ int main(int argc, char **argv)
 	//Initialize the wxWidgets library
 	wxInitializer initializer;
 	
-//	// Load the tags database that is used during the test.
-//	wxFileName fn(wxT("../../SampleWorkspace/SampleWorkspace.tags"));
-//	TagsManagerST::Get()->OpenDatabase( fn );
+	// Load the tags database that is used during the test.
+	wxFileName fn(wxT("../../SampleWorkspace/SampleWorkspace.tags"));
+	TagsManagerST::Get()->OpenDatabase( fn );
 //	
 //	// Execute the tests
 //	Tester::Instance()->RunTests();
@@ -250,7 +250,12 @@ int main(int argc, char **argv)
 	// Search the provided input files for the symbol to rename and prepare
 	// a CppTokensMap
 	CppTokensMap l;
-	CppWordScanner tmpScanner(wxT("C:\\Development\\C++\\codelite\\LiteEditor\\context_cpp.cpp"));
-	tmpScanner.Match(wxT("clMainFrame"), l);
+	wxFileList files;
+	files.push_back(wxFileName(wxT("/home/eran/devl/codelite/Plugin/builder_gnumake.cpp")));
+	RefactoringEngine::Instance()->RenameGlobalSymbol(wxT("BuilderGnuMake"), 
+													  wxFileName(wxT("/home/eran/devl/codelite/Plugin/builder_gnumake.cpp")), 
+													  99,
+													  3226,
+													  files);
 	return 0;
 }

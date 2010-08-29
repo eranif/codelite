@@ -42,7 +42,7 @@ CppWordScanner::CppWordScanner(const wxString &fileName)
 		wxString fileData;
 		fileData.Alloc(size);
 
-		wxCSConv fontEncConv(wxFONTENCODING_UTF8);
+		wxCSConv fontEncConv(wxFONTENCODING_ISO8859_1);
 		thefile.ReadAll( &m_text, fontEncConv );
 	}
 	doInit();
@@ -156,8 +156,8 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
 
 			break;
 		case STATE_PRE_PROCESSING:
-			//skip pre processor lines
-			if ( accessor.match("\n", i) && !accessor.match("\\", i-1) ) {
+			// if the char before the \n is \ (backslash) or \r\ (CR followed by backslash) remain in pre-processing state
+			if ( accessor.match("\n", i) && (!accessor.match("\\", i-1) && !accessor.match("\\\r", i-2)) ) {
 				// no wrap
 				state = STATE_NORMAL;
 			}
@@ -284,8 +284,8 @@ TextStatesPtr CppWordScanner::states()
 
 			break;
 		case STATE_PRE_PROCESSING:
-			//skip pre processor lines
-			if ( accessor.match("\n", i) && !accessor.match("\\", i-1) ) {
+			// if the char before the \n is \ (backslash) or \r\ (CR followed by backslash) remain in pre-processing state
+			if ( accessor.match("\n", i) && (!accessor.match("\\", i-1) && !accessor.match("\\\r", i-2)) ) {
 				// no wrap
 				state = STATE_NORMAL;
 			}
@@ -438,7 +438,9 @@ void TextStates::SetState(size_t where, int state, int depth, int lineNo)
 {
 	if(where < states.size()) {
 		states[where].depth   = depth;
-		states[where].depthId = depthsID[depth];
+		// Make sure that 'depth'is between the 0 and the number of elements 
+		// of depthsID array
+		states[where].depthId = (depth >= 0 && depth < (int)(sizeof(depthsID)/sizeof(depthsID[0])) ) ? depthsID[depth] : 0;
 		states[where].state   = state;
 		states[where].lineNo  = lineNo;
 	}

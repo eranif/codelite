@@ -738,7 +738,7 @@ public:
 	 * @param &derivationList
 	 * @return
 	 */
-	bool GetDerivationList(const wxString &path, std::vector<wxString> &derivationList);
+	bool GetDerivationList(const wxString &path, std::vector<wxString> &derivationList, std::set<wxString> &scannedInherits);
 
 protected:
 	// provide a default handler for the wxEVT_UPDATE_FILETREE_EVENT event

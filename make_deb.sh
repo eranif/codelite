@@ -53,7 +53,7 @@ generateDebianFiles()
 {
     cat > fakeroot/DEBIAN/control <<EOF
 Package: codelite
-Version: 2.6.0.${cur_rev}
+Version: 2.7.0.${cur_rev}
 Section: devel
 Priority: optional
 Architecture: ${arch}

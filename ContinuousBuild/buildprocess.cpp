@@ -16,7 +16,7 @@ bool BuildProcess::Execute(const wxString& cmd, const wxString &fileName, const 
 	if(m_process)
 		return false;
 
-	m_process = CreateAsyncProcess(evtHandler, cmd, workingDirectory);
+	m_process = CreateAsyncProcess(evtHandler, cmd, IProcessCreateDefault, workingDirectory);
 	if(!m_process)
 		return false;
 

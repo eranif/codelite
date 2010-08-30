@@ -283,7 +283,7 @@ bool SvnConsole::DoExecute(const wxString& cmd, SvnCommandHandler* handler, cons
 	bool useOverrideMap = m_plugin->GetSettings().GetFlags() & SvnUsePosixLocale;
 	EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
 
-	m_process = CreateAsyncProcess(this, cmdShell, workingDirectory);
+	m_process = CreateAsyncProcess(this, cmdShell, IProcessCreateDefault, workingDirectory);
 	if (!m_process) {
 		AppendText(wxT("Failed to launch Subversion client.\n"));
 		return false;

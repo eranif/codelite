@@ -243,7 +243,11 @@ bool DbgGdb::Start( const wxString &debuggerPath, const wxString &exeName, const
 	m_observer->UpdateAddLine( wxString::Format( wxT( "Current working dir: %s" ), wxGetCwd().c_str() ) );
 	m_observer->UpdateAddLine( wxString::Format( wxT( "Launching gdb from : %s" ), cwd.c_str() ) );
 	m_observer->UpdateAddLine( wxString::Format( wxT( "Starting debugger  : %s" ), cmd.c_str() ) );
-	m_gdbProcess = CreateAsyncProcess( this, cmd, cwd );
+	m_gdbProcess = CreateAsyncProcess( this,
+									   cmd,
+									   // show console?
+									   m_info.showTerminal ? IProcessCreateConsole : IProcessCreateDefault,
+									   cwd );
 	if ( !m_gdbProcess ) {
 		return false;
 	}

@@ -38,7 +38,7 @@ public:
 };
 
 /*static*/
-IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxString &errMsg, const wxString &workingDir)
+IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxString &errMsg, IProcessCreateFlags flags, const wxString &workingDir)
 {
 	SECURITY_ATTRIBUTES saAttr;
 	BOOL                fSuccess;
@@ -170,21 +170,23 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
 	siStartInfo.hStdError  = prc->hChildStderrWr;
 
 	// Set the window to hide
-	siStartInfo.wShowWindow = SW_HIDE;
+	siStartInfo.wShowWindow = flags & IProcessCreateConsole ? SW_SHOW : SW_HIDE;
+	DWORD creationFlags     = flags & IProcessCreateConsole ? CREATE_NEW_CONSOLE : CREATE_NO_WINDOW;
+
 	BOOL ret = CreateProcess( NULL,
 #if wxVERSION_NUMBER < 2900
 							  (WCHAR*)cmd.GetData(),
 #else
-							  cmd.wchar_str(),        // shell line execution command
+							  cmd.wchar_str(),   // shell line execution command
 #endif
-	                          NULL,                   // process security attributes
-	                          NULL,                   // primary thread security attributes
-	                          TRUE,                   // handles are inherited
-	                          CREATE_NO_WINDOW,       // creation flags
-	                          NULL,                   // use parent's environment
-	                          NULL,                   // CD to tmp dir
-	                          &siStartInfo,           // STARTUPINFO pointer
-	                          &prc->piProcInfo);      // receives PROCESS_INFORMATION
+	                          NULL,              // process security attributes
+	                          NULL,              // primary thread security attributes
+	                          TRUE,              // handles are inherited
+	                          creationFlags,     // creation flags
+	                          NULL,              // use parent's environment
+	                          NULL,              // CD to tmp dir
+	                          &siStartInfo,      // STARTUPINFO pointer
+	                          &prc->piProcInfo); // receives PROCESS_INFORMATION
 	if ( ret ) {
 		prc->dwProcessId = prc->piProcInfo.dwProcessId;
 	} else {

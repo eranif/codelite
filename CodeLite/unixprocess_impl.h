@@ -18,7 +18,7 @@ public:
 	UnixProcessImpl(wxEvtHandler *parent);
 	virtual ~UnixProcessImpl();
 
-	static IProcess *Execute(wxEvtHandler *parent, const wxString &cmd, const wxString &workingDirectory = wxEmptyString);
+	static IProcess *Execute(wxEvtHandler *parent, const wxString &cmd, IProcessCreateFlags flags, const wxString &workingDirectory = wxEmptyString);
 
 	void SetReadHandle(const int& readHandle) {
 		this->m_readHandle = readHandle;
@@ -39,7 +39,7 @@ public:
 	virtual bool Read(wxString& buff);
 	virtual bool Write(const wxString& buff);
 	virtual void Terminate();
-	
+
 };
 #endif //#if defined(__WXMAC )||defined(__WXGTK__)
 #endif // __unixprocessimpl__

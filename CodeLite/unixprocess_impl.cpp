@@ -1,8 +1,8 @@
 #include "unixprocess_impl.h"
- 
+
 #if defined(__WXMAC__)||defined(__WXGTK__)
 
-#include <wx/stdpaths.h> 
+#include <wx/stdpaths.h>
 #include <wx/filename.h>
 #include <unistd.h>
 #include <signal.h>
@@ -235,11 +235,11 @@ void UnixProcessImpl::Cleanup()
 		wxFileName script(exePath.GetPath(), wxT("codelite_kill_children "));
 		cmd << wxT("/bin/sh -f ") << script.GetFullPath();
 		cmd << GetPid();
-		
+
 		// If hard kill requested, pass -9
 		if(GetHardKill())
 			cmd << wxT(" -9");
-			
+
 		wxExecute(cmd, wxEXEC_ASYNC);
 	}
 
@@ -249,7 +249,7 @@ void UnixProcessImpl::Cleanup()
 
 #else
 	wxKill (GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM);
-	
+
 	// Perform process cleanup
 	int status(0);
 	waitpid(GetPid(), &status, 0);
@@ -306,8 +306,10 @@ bool UnixProcessImpl::Write(const wxString& buff)
 	return bytes == (int)tmpbuf.length();
 }
 
-IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, const wxString& workingDirectory)
+IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, IProcessCreateFlags flags, const wxString& workingDirectory)
 {
+	wxUnusedVar(flags);
+
 	make_argv(cmd);
 	if ( argc == 0 ) {
 		return NULL;
@@ -408,11 +410,11 @@ void UnixProcessImpl::Terminate()
 		wxFileName script(exePath.GetPath(), wxT("codelite_kill_children "));
 		cmd << wxT("/bin/sh -f ") << script.GetFullPath();
 		cmd << GetPid();
-		
+
 		// If hard kill requested, pass -9
 		if(GetHardKill())
 			cmd << wxT(" -9");
-		
+
 		wxExecute(cmd, wxEXEC_ASYNC);
 	}
 #else

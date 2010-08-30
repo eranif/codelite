@@ -9,12 +9,12 @@ class IProcess;
 #   include "unixprocess_impl.h"
 #endif
 
-IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, const wxString &workingDir)
+IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, IProcessCreateFlags flags, const wxString &workingDir)
 {
 #ifdef __WXMSW__
 	wxString errMsg;
-	return WinProcessImpl::Execute(parent, cmd, errMsg, workingDir);
+	return WinProcessImpl::Execute(parent, cmd, errMsg, flags, workingDir);
 #else
-	return UnixProcessImpl::Execute(parent, cmd, workingDir);
+	return UnixProcessImpl::Execute(parent, cmd, flags, workingDir);
 #endif
 }

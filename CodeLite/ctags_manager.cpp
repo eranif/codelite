@@ -150,7 +150,7 @@ TagsManager::~TagsManager()
 		// Dont kill the indexer process, just terminate the
 		// reader-thread (this is done by deleting the indexer object)
 		m_canRestartIndexer = false;
-		
+
 #ifndef __WXMSW__
 		m_codeliteIndexerProcess->Terminate();
 #endif
@@ -279,7 +279,7 @@ void TagsManager::StartCodeLiteIndexer()
 
 	// concatenate the PID to identifies this channel to this instance of codelite
 	cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\" ") << uid << wxT(" --pid");
-	m_codeliteIndexerProcess = CreateAsyncProcess(this, cmd, wxStandardPaths::Get().GetUserDataDir());
+	m_codeliteIndexerProcess = CreateAsyncProcess(this, cmd, IProcessCreateDefault, wxStandardPaths::Get().GetUserDataDir());
 }
 
 void TagsManager::RestartCodeLiteIndexer()
@@ -1320,20 +1320,20 @@ bool TagsManager::GetDerivationList(const wxString &path, std::vector<wxString> 
 			// Make sure that inherits != the current name or we will end up in an infinite loop
 			if(tmpInhr != tagName) {
 				wxString possibleScope(wxT("<global>"));
-				
+
 				// if the 'inherits' already contains a scope
 				// dont attempt to fix it
 				if(inherits.Contains(wxT("::")) == false) {
-					
+
 					// Correc the type/scope
 					IsTypeAndScopeExists(inherits, possibleScope);
 
 					if (possibleScope != wxT("<global>")) {
 						inherits = possibleScope + wxT("::") + inherits;
 					}
-					
+
 				}
-				
+
 				// Make sure that this parent was not scanned already
 				if(scannedInherits.find(inherits) == scannedInherits.end()) {
 					scannedInherits.insert(inherits);

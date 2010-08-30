@@ -285,7 +285,7 @@ void wxTerminal::DoProcessCommand(const wxString& command)
 
 		} else {
 			// real command
-			IProcess *cmdPrc = CreateAsyncProcess(this, cmdShell, m_workingDir);
+			IProcess *cmdPrc = CreateAsyncProcess(this, cmdShell, IProcessCreateDefault, m_workingDir);
 			if( cmdPrc ) {
 				m_process = cmdPrc;
 			} else {

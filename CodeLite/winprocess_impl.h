@@ -48,7 +48,7 @@ public:
 	virtual ~WinProcessImpl();
 
 	// Create process asynchronously and return a process object
-	static IProcess* Execute(wxEvtHandler *parent, const wxString& cmd, wxString &errMsg, const wxString &workingDir = wxEmptyString);
+	static IProcess* Execute(wxEvtHandler *parent, const wxString& cmd, wxString &errMsg, IProcessCreateFlags flags = IProcessCreateDefault,const wxString &workingDir = wxEmptyString);
 
 	/**
 	 * @brief read data from stdout, if no data is available, return

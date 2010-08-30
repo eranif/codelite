@@ -48,7 +48,7 @@ bool SvnCommand::Execute(const wxString &command, const wxString &workingDirecto
 	EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
 
 
-	m_process = CreateAsyncProcess(this, command, workingDirectory);
+	m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, workingDirectory);
 	if ( !m_process ) {
 		return false;
 	}

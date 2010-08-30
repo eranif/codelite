@@ -4,6 +4,11 @@
 #include <wx/string.h>
 #include <wx/event.h>
 
+enum IProcessCreateFlags {
+	IProcessCreateDefault = 0x0000000, // Default: create process with no console window
+	IProcessCreateConsole = 0x0000001  // Create with console window shown
+};
+
 /**
  * @class IProcess
  * @author eran
@@ -52,7 +57,7 @@ public:
 	int GetExitCode() const {
 		return m_exitCode;
 	}
-	
+
 	void SetHardKill(bool hardKill) {
 		this->m_hardKill = hardKill;
 	}
@@ -62,5 +67,5 @@ public:
 };
 
 // Help method
-IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, const wxString &workingDir = wxEmptyString);
+IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, IProcessCreateFlags flags = IProcessCreateDefault, const wxString &workingDir = wxEmptyString);
 #endif // I_PROCESS_H

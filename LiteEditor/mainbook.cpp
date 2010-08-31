@@ -530,7 +530,11 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 	long MaxBuffers(15);
 	EditorConfigST::Get()->GetLongValue(wxT("MaxOpenedTabs"), MaxBuffers);
 
+#ifndef __WXMAC__
+	// On Mac adding this locker causes wierd behaviors like not showing the file content or
+	// hiding the welcome page
 	wxWindowUpdateLocker locker(m_book);
+#endif
 
 	bool closeLastTab = ((long)(m_book->GetPageCount()) >= MaxBuffers) && GetUseBuffereLimit();
 	m_book->AddPage(win, text, closeLastTab ? true : selected);

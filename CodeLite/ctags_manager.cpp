@@ -2513,8 +2513,9 @@ void TagsManager::ClearAllCaches()
 CppToken TagsManager::FindLocalVariable(const wxFileName& fileName, int pos, int lineNumber, const wxString& word, const wxString& modifiedText)
 {
 	// Load the file and get a state map + the text from the scanner
-	TagEntryPtr   tag   (NULL);
-	TextStatesPtr states(NULL);
+	TagEntryPtr    tag   (NULL);
+	TextStatesPtr  states(NULL);
+	CppWordScanner scanner;
 
 	if(modifiedText.empty() == false) {
 		// Parse the modified text
@@ -2530,20 +2531,58 @@ CppToken TagsManager::FindLocalVariable(const wxFileName& fileName, int pos, int
 		}
 
 		// Construct a scanner based on the modified text
-		CppWordScanner scanner(fileName.GetFullPath(), modifiedText, 0);
+		scanner = CppWordScanner(fileName.GetFullPath(), modifiedText, 0);
 		states = scanner.states();
 
 	} else {
 		// get the local by scanning from the current function's
 		tag = FunctionFromFileLine(fileName, lineNumber + 1);
-		CppWordScanner scanner(fileName.GetFullPath());
+		scanner = CppWordScanner(fileName.GetFullPath());
 		states = scanner.states();
 	}
 
 	if(!tag || !states)
 		return CppToken();
 
-	return CppToken();
+	// Get the line number of the function
+	int funcLine = tag->GetLine() - 1;
+
+	// Convert the line number to offset
+	int from = states->LineToPos     (funcLine);
+	int to   = states->FunctionEndPos(from);
+
+	if(to == wxNOT_FOUND)
+		return CppToken();
+
+	// get list of variables from the given scope
+	VariableList vars;
+	std::map<std::string, std::string> ignoreMap;
+
+	get_variables(states->text.Mid(from, to-from).To8BitData().data(), vars, ignoreMap, false);
+	VariableList::iterator iter = vars.begin();
+	bool isLocalVar(false);
+	for(; iter != vars.end(); iter++) {
+		if(wxString::From8BitData(iter->m_name.c_str()) == word) {
+			// our 'word' is indeed a variable
+			isLocalVar = true;
+			break;
+		}
+	}
+
+	if (!isLocalVar)
+		return CppToken();
+
+	// search for matches in the given range
+	CppTokensMap l;
+	scanner.Match(word, l, from, to);
+
+	std::list<CppToken> tokens;
+	l.findTokens(word, tokens);
+	if (tokens.empty())
+		return CppToken();
+
+	// return the first match
+	return *tokens.begin();
 }
 
 void TagsManager::DoParseModifiedText(const wxString &text, std::vector<TagEntryPtr>& tags)

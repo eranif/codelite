@@ -158,16 +158,16 @@ BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 END_EVENT_TABLE()
 
 ContextCpp::ContextCpp(LEditor *container)
-		: ContextBase(container)
-		, m_rclickMenu(NULL)
+	: ContextBase(container)
+	, m_rclickMenu(NULL)
 {
 	Initialize();
 }
 
 
 ContextCpp::ContextCpp()
-		: ContextBase(wxT("C++"))
-		, m_rclickMenu(NULL)
+	: ContextBase(wxT("C++"))
+	, m_rclickMenu(NULL)
 {
 }
 
@@ -766,10 +766,21 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 	if (word.IsEmpty())
 		return NULL;
 
-//	TagsManagerST::Get()->FindLocalVariable(rCtrl.GetFileName(),                                      // file name
-//											word_start,                                               // the word start position
-//											rCtrl.LineFromPosition(word_start)+1,                     // current line
-//											word, rCtrl.GetModify() ? rCtrl.GetText() : wxString());  // pass the modified text or none if the file is already saved
+	// Test for local variable first
+	CppToken token = TagsManagerST::Get()->FindLocalVariable(
+	                     rCtrl.GetFileName(),                                      // file name
+	                     word_start,                                               // the word start position
+	                     rCtrl.LineFromPosition(word_start)+1,                     // current line
+	                     word, rCtrl.GetModify() ? rCtrl.GetText() : wxString());  // pass the modified text or none if the file is already saved
+	if(token.getOffset() != wxString::npos) {
+		// we got a match in the local scope, display it
+		LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(rCtrl.GetFileName().GetFullPath(),
+		                  rCtrl.GetProject(), 0, token.getOffset());
+		if (editor) {
+			editor->SetSelection(token.getOffset(), token.getOffset()+token.getName().length());
+		}
+		return NULL;
+	}
 
 	std::vector<TagEntryPtr> tags;
 	if (scoped) {
@@ -1345,9 +1356,9 @@ void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 	bool match(false);
 	for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
 		if (tags.at(i)->GetName() == word &&
-		        tags.at(i)->GetLine() == line &&
-		        tags.at(i)->GetKind() == wxT("function") &&
-		        tags.at(i)->GetScope() == scopeName) {
+		    tags.at(i)->GetLine() == line &&
+		    tags.at(i)->GetKind() == wxT("function") &&
+		    tags.at(i)->GetScope() == scopeName) {
 			//we got a match
 			tag = tags.at(i);
 			match = true;
@@ -1444,10 +1455,10 @@ bool ContextCpp::DoGetFunctionBody(long curPos, long &blockStartPos, long &block
 
 			switch (ch) {
 			case wxT('{'):
-							depth++;
+				depth++;
 				break;
 			case wxT('}'):
-							depth--;
+				depth--;
 				break;
 			}
 			content << ch;
@@ -1613,9 +1624,9 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 	bool match(false);
 	for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
 		if (tags.at(i)->GetName() == word &&
-		        tags.at(i)->GetLine() == line &&
-		        tags.at(i)->GetKind() == wxT("prototype") &&
-		        tags.at(i)->GetScope() == scopeName) {
+		    tags.at(i)->GetLine() == line &&
+		    tags.at(i)->GetKind() == wxT("prototype") &&
+		    tags.at(i)->GetScope() == scopeName) {
 			//we got a match
 			tag = tags.at(i);
 			match = true;
@@ -1913,12 +1924,12 @@ void ContextCpp::AutoAddComment()
 	int curpos = rCtrl.GetCurrentPos();
 	int line = rCtrl.LineFromPosition(curpos);
 	int cur_style = rCtrl.GetStyleAt(curpos);
-    wxString text = rCtrl.GetLine(line-1).Trim(false);
+	wxString text = rCtrl.GetLine(line-1).Trim(false);
 
 	bool dontadd = false;
 	switch (cur_style) {
 	case wxSCI_C_COMMENTLINE:
-    case wxSCI_C_COMMENTLINEDOC:
+	case wxSCI_C_COMMENTLINEDOC:
 		dontadd = ! text.StartsWith( wxT("//") ) || !data.GetContinueCppComment();
 		break;
 	case wxSCI_C_COMMENT:
@@ -1937,39 +1948,34 @@ void ContextCpp::AutoAddComment()
 	wxString toInsert;
 	switch (cur_style) {
 	case wxSCI_C_COMMENTLINE:
-    case wxSCI_C_COMMENTLINEDOC:
-        {
-            if ( text.StartsWith( wxT("//") ) )
-            {
-                // try to parse the comment text and indentation
-                unsigned i = (text.Length() > 2 && text[2] == wxT('!')) ? 3 : 2; // support "//!" for doxygen
-                i = text.find_first_not_of( wxT('/'), i );
-                i = text.find_first_not_of( wxT(" \t"), i );
-                if (i == wxString::npos)
-                    i = text.Length()-1;
-                // we want to avoid duplicating line-long comments such as those
-                // that sometime start a comment block; if there's something more on
-                // the line, after our match, then we can assume that we do not have
-                // a line-long comment; we do want to duplicate the comments on
-                // otherwise blank lines, however, to allow comment blocks with
-                // blank lines in the comment text, so we will still accept the
-                // match if it is less than half the typical line length
-                // (i.e. 80/2=40) (a guesstimate that it's not a line-long
-                // comment); otherwise, we'll use a default value
-                if ( i < text.Length()-1 || i < 40 )
-                {
-                    toInsert = text.substr(0,i);
-                }
-                else
-                {
-                    if (cur_style == wxSCI_C_COMMENTLINEDOC && i >= 3)
-                        toInsert = text.substr(0,3) + wxT(" ");
-                    else
-                        toInsert = wxT("// ");
-                }
-            }
-        }
-		break;
+	case wxSCI_C_COMMENTLINEDOC: {
+		if ( text.StartsWith( wxT("//") ) ) {
+			// try to parse the comment text and indentation
+			unsigned i = (text.Length() > 2 && text[2] == wxT('!')) ? 3 : 2; // support "//!" for doxygen
+			i = text.find_first_not_of( wxT('/'), i );
+			i = text.find_first_not_of( wxT(" \t"), i );
+			if (i == wxString::npos)
+				i = text.Length()-1;
+			// we want to avoid duplicating line-long comments such as those
+			// that sometime start a comment block; if there's something more on
+			// the line, after our match, then we can assume that we do not have
+			// a line-long comment; we do want to duplicate the comments on
+			// otherwise blank lines, however, to allow comment blocks with
+			// blank lines in the comment text, so we will still accept the
+			// match if it is less than half the typical line length
+			// (i.e. 80/2=40) (a guesstimate that it's not a line-long
+			// comment); otherwise, we'll use a default value
+			if ( i < text.Length()-1 || i < 40 ) {
+				toInsert = text.substr(0,i);
+			} else {
+				if (cur_style == wxSCI_C_COMMENTLINEDOC && i >= 3)
+					toInsert = text.substr(0,3) + wxT(" ");
+				else
+					toInsert = wxT("// ");
+			}
+		}
+	}
+	break;
 	case wxSCI_C_COMMENT:
 	case wxSCI_C_COMMENTDOC:
 		if (rCtrl.GetStyleAt(rCtrl.PositionBefore(rCtrl.PositionBefore(curpos))) == cur_style) {
@@ -2488,28 +2494,28 @@ int ContextCpp::DoGetCalltipParamterIndex()
 
 			switch (ch) {
 			case wxT(','):
-							if (depth == 0) index++;
+				if (depth == 0) index++;
 				break;
 			case wxT('{'):
-						case wxT('}'):
-							case wxT(';'):
-									// error?
-									exit_loop = true;
+			case wxT('}'):
+			case wxT(';'):
+				// error?
+				exit_loop = true;
 				break;
 			case wxT('('):
-						case wxT('<'):
-							case wxT('['):
-									depth++;
+			case wxT('<'):
+			case wxT('['):
+				depth++;
 				break;
 			case wxT('>'):
-							if ( ch_before == wxT('-') ) {
-						// operator noting to do
-						break;
-					}
+				if ( ch_before == wxT('-') ) {
+					// operator noting to do
+					break;
+				}
 				// fall through
 			case wxT(')'):
-						case wxT(']'):
-								depth--;
+			case wxT(']'):
+				depth--;
 				break;
 			default:
 				break;
@@ -2611,45 +2617,45 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 		//Comment?
 		int style = ctrl->GetStyleAt(position);
 		if (style == wxSCI_C_COMMENT                    ||
-		        style == wxSCI_C_COMMENTLINE            ||
-		        style == wxSCI_C_COMMENTDOC             ||
-		        style == wxSCI_C_COMMENTLINEDOC         ||
-		        style == wxSCI_C_COMMENTDOCKEYWORD      ||
-		        style == wxSCI_C_COMMENTDOCKEYWORDERROR ||
-		        style == wxSCI_C_STRING                 ||
-		        style == wxSCI_C_STRINGEOL              ||
-		        style == wxSCI_C_CHARACTER) {
+		    style == wxSCI_C_COMMENTLINE            ||
+		    style == wxSCI_C_COMMENTDOC             ||
+		    style == wxSCI_C_COMMENTLINEDOC         ||
+		    style == wxSCI_C_COMMENTDOCKEYWORD      ||
+		    style == wxSCI_C_COMMENTDOCKEYWORDERROR ||
+		    style == wxSCI_C_STRING                 ||
+		    style == wxSCI_C_STRINGEOL              ||
+		    style == wxSCI_C_CHARACTER) {
 			continue;
 		}
 
 		switch (ch) {
 		case wxT(';'):
-						// dont include this token
-						at = ctrl->PositionAfter(at);
+			// dont include this token
+			at = ctrl->PositionAfter(at);
 			cont = false;
 			prevColon = false;
 			break;
 		case wxT('-'):
-						if (prevGt) {
-					prevGt = false;
-					//if previous char was '>', we found an arrow so reduce the depth
-					//which was increased
-					depth--;
-				} else {
-					if (depth <= 0) {
-						//dont include this token
-						at =ctrl->PositionAfter(at);
-						cont = false;
-					}
+			if (prevGt) {
+				prevGt = false;
+				//if previous char was '>', we found an arrow so reduce the depth
+				//which was increased
+				depth--;
+			} else {
+				if (depth <= 0) {
+					//dont include this token
+					at =ctrl->PositionAfter(at);
+					cont = false;
 				}
+			}
 			prevColon = false;
 			break;
 		case wxT(' '):
-					case wxT('\n'):
-						case wxT('\v'):
-							case wxT('\t'):
-								case wxT('\r'):
-										prevGt = false;
+		case wxT('\n'):
+		case wxT('\v'):
+		case wxT('\t'):
+		case wxT('\r'):
+			prevGt = false;
 			prevColon = false;
 			if (depth <= 0) {
 				cont = false;
@@ -2657,14 +2663,14 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 			}
 			break;
 		case wxT('{'):
-					case wxT('='):
-							prevGt = false;
+		case wxT('='):
+			prevGt = false;
 			prevColon = false;
 			cont = false;
 			break;
 		case wxT('('):
-					case wxT('['):
-							depth--;
+		case wxT('['):
+			depth--;
 			prevGt = false;
 			prevColon = false;
 			if (depth < 0) {
@@ -2674,16 +2680,16 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 			}
 			break;
 		case wxT(','):
-					case wxT('*'):
-						case wxT('&'):
-							case wxT('!'):
-								case wxT('~'):
-									case wxT('+'):
-										case wxT('^'):
-											case wxT('|'):
-												case wxT('%'):
-													case wxT('?'):
-															prevGt = false;
+		case wxT('*'):
+		case wxT('&'):
+		case wxT('!'):
+		case wxT('~'):
+		case wxT('+'):
+		case wxT('^'):
+		case wxT('|'):
+		case wxT('%'):
+		case wxT('?'):
+			prevGt = false;
 			prevColon = false;
 			if (depth <= 0) {
 
@@ -2693,12 +2699,12 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 			}
 			break;
 		case wxT('>'):
-						prevGt = true;
+			prevGt = true;
 			prevColon = false;
 			depth++;
 			break;
 		case wxT('<'):
-						prevGt = false;
+			prevGt = false;
 			prevColon = false;
 			depth--;
 			if (depth < 0) {
@@ -2709,8 +2715,8 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 			}
 			break;
 		case wxT(')'):
-					case wxT(']'):
-							prevGt = false;
+		case wxT(']'):
+			prevGt = false;
 			prevColon = false;
 			depth++;
 			break;

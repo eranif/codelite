@@ -103,6 +103,7 @@ protected:
 	void doInit();
 
 public:
+	CppWordScanner() {}
 	CppWordScanner(const wxString &file_name);
 	CppWordScanner(const wxString &file_name, const wxString &text, int offset);
 	~CppWordScanner();

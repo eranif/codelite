@@ -203,7 +203,7 @@ void CppWordScanner::doInit()
 {
 	wxString key_words =
 	    wxT("auto break case char const continue default define defined do double elif else endif enum error extern float"
-	        "for  goto if ifdef ifndef include int line long pragma register return short signed sizeof static struct switch"
+	        "for  goto if ifdef ifndef include int long pragma register return short signed sizeof static struct switch"
 	        "typedef undef union unsigned void volatile while class namespace delete friend inline new operator overload"
 	        "protected private public this virtual template typename dynamic_cast static_cast const_cast reinterpret_cast"
 	        "using throw catch size_t");
@@ -438,7 +438,7 @@ void TextStates::SetState(size_t where, int state, int depth, int lineNo)
 {
 	if(where < states.size()) {
 		states[where].depth   = depth;
-		// Make sure that 'depth'is between the 0 and the number of elements 
+		// Make sure that 'depth'is between the 0 and the number of elements
 		// of depthsID array
 		states[where].depthId = (depth >= 0 && depth < (int)(sizeof(depthsID)/sizeof(depthsID[0])) ) ? depthsID[depth] : 0;
 		states[where].state   = state;

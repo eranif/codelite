@@ -770,30 +770,33 @@ bool Language::ProcessToken(TokenContainer *tokeContainer)
 		return true;
 	}
 
+	// Since locals should take precedence over globals/memebers
+	// we test the local scope first
+	if ( token->GetPrev() == NULL)
+	{
+		// We are the first token in the chain
+		// examine the local scope
+		const wxCharBuffer buf  = _C(GetVisibleScope()         );
+		const wxCharBuffer buf2 = _C(GetLastFunctionSignature() + wxT(";"));
+		get_variables(buf.data(), li, ignoreTokens, false);
+		get_variables(buf2.data(), li, ignoreTokens, true);
+
+		// Search for a full match in the returned list
+		for (VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {
+			Variable var = (*iter);
+			wxString var_name = _U(var.m_name.c_str());
+			if (var_name == token->GetName()) {
+				DoFixTokensFromVariable(tokeContainer, wxString::From8BitData(var.m_completeType.c_str()));
+				return false;
+			}
+		}
+	}
+
+	// Try the lookup tables
 	bool hasMatch = DoSearchByNameAndScope(token->GetName(), token->GetContextScope(), tags, type, typeScope);
 	if ( !hasMatch ) {
 		if ( token->GetPrev() == NULL) {
-			// We are the first token in the chain
-			// examine the local scope
-			const wxCharBuffer buf  = _C(GetVisibleScope()         );
-			const wxCharBuffer buf2 = _C(GetLastFunctionSignature() + wxT(";"));
-
-			get_variables(buf.data(), li, ignoreTokens, false);
-			get_variables(buf2.data(), li, ignoreTokens, true);
-
-			// Search for a full match in the returned list
-			for (VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {
-				Variable var = (*iter);
-				wxString var_name = _U(var.m_name.c_str());
-				if (var_name == token->GetName()) {
-
-					DoFixTokensFromVariable(tokeContainer, wxString::From8BitData(var.m_completeType.c_str()));
-					return false;
-
-				}
-			}
-
-			// failed to find it in the local scope
+			// failed to find it in the local scope and in the lookup table
 			// try the additional scopes
 			for (size_t i=0; i<GetAdditionalScopes().size(); i++) {
 				tags.clear();

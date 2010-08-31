@@ -1735,7 +1735,29 @@ void FileViewTree::OnReBuild(wxCommandEvent& event)
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-		clMainFrame::Get()->RebuildProject( projectName );
+
+		wxString conf;
+		// get the selected configuration to be built
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+		if (bldConf) {
+			conf = bldConf->GetName();
+		}
+
+		// Custom build supports the 'Rebuild' target
+		if(bldConf && bldConf->IsCustomBuild()){
+			QueueCommand buildInfo(projectName, conf, false, QueueCommand::ReBuild);
+			if (bldConf && bldConf->IsCustomBuild()) {
+				buildInfo.SetKind(QueueCommand::CustomBuild);
+				buildInfo.SetCustomBuildTarget(wxT("Rebuild"));
+			}
+
+			ManagerST::Get()->PushQueueCommand(buildInfo);
+			ManagerST::Get()->ProcessCommandQueue();
+
+		} else {
+			clMainFrame::Get()->RebuildProject( projectName );
+
+		}
 	}
 }
 

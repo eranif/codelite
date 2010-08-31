@@ -766,6 +766,11 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 	if (word.IsEmpty())
 		return NULL;
 
+//	TagsManagerST::Get()->FindLocalVariable(rCtrl.GetFileName(),                                      // file name
+//											word_start,                                               // the word start position
+//											rCtrl.LineFromPosition(word_start)+1,                     // current line
+//											word, rCtrl.GetModify() ? rCtrl.GetText() : wxString());  // pass the modified text or none if the file is already saved
+
 	std::vector<TagEntryPtr> tags;
 	if (scoped) {
 		// get tags that make sense in current scope and expression

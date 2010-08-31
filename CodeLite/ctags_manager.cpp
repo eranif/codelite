@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
 #include "processreaderthread.h"
+#include "cppwordscanner.h"
 #include <wx/frame.h>
 #include <wx/app.h>
 #include <wx/sizer.h>
@@ -94,8 +95,6 @@ struct tagParseResult {
 	wxString fileName;
 };
 
-static int CtagsMgrTimerId = wxNewId();
-
 //------------------------------------------------------------------------------
 // Progress dialog
 //------------------------------------------------------------------------------
@@ -103,8 +102,7 @@ class MyProgress : public wxProgressDialog
 {
 public:
 	MyProgress(const wxString &title, size_t count) :
-		wxProgressDialog(title, wxT(""), (int) count, NULL, wxPD_APP_MODAL|wxPD_AUTO_HIDE|wxPD_CAN_ABORT|wxPD_SMOOTH )
-	{
+		wxProgressDialog(title, wxT(""), (int) count, NULL, wxPD_APP_MODAL|wxPD_AUTO_HIDE|wxPD_CAN_ABORT|wxPD_SMOOTH ) {
 		SetSize(500, -1);
 		Centre();
 	}
@@ -123,12 +121,12 @@ BEGIN_EVENT_TABLE(TagsManager, wxEvtHandler)
 END_EVENT_TABLE()
 
 TagsManager::TagsManager()
-		: wxEvtHandler()
-		, m_codeliteIndexerPath(wxT("codelite_indexer"))
-		, m_codeliteIndexerProcess (NULL)
-		, m_canRestartIndexer      (true)
-		, m_lang                   (NULL)
-		, m_evtHandler             (NULL)
+	: wxEvtHandler()
+	, m_codeliteIndexerPath(wxT("codelite_indexer"))
+	, m_codeliteIndexerProcess (NULL)
+	, m_canRestartIndexer      (true)
+	, m_lang                   (NULL)
+	, m_evtHandler             (NULL)
 {
 	// Create databases
 	m_workspaceDatabase = new TagsStorageSQLite( );
@@ -568,8 +566,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 		wxString partialName(word);
 		partialName.MakeLower();
 
-		if(partialName.IsEmpty() == false)
-		{
+		if(partialName.IsEmpty() == false) {
 			for(size_t i=0; i<tmpCandidates.size(); i++) {
 				wxString nm = tmpCandidates[i]->GetName();
 				nm.MakeLower();
@@ -579,9 +576,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 			}
 			DoFilterDuplicatesByTagID(tmpCandidates1, candidates);
 			DoFilterDuplicatesBySignature(candidates, candidates);
-		}
-		else
-		{
+		} else {
 			DoFilterDuplicatesByTagID(tmpCandidates, candidates);
 			DoFilterDuplicatesBySignature(candidates, candidates);
 		}
@@ -723,7 +718,7 @@ void TagsManager::DoFilterDuplicatesByTagID(std::vector<TagEntryPtr>& src, std::
 	for (size_t i=0; i<src.size(); i++) {
 		const TagEntryPtr& t = src.at(i);
 		int tagId = t->GetId();
-		if(t->GetParent() == wxT("<local>")){
+		if(t->GetParent() == wxT("<local>")) {
 			if(localTags.find(t->GetName()) == localTags.end()) {
 				localTags[t->GetName()] = t;
 			}
@@ -862,7 +857,14 @@ void TagsManager::GetHoverTip(const wxFileName &fileName, int lineno, const wxSt
 	}
 }
 
-void TagsManager::FindImplDecl(const wxFileName &fileName, int lineno, const wxString & expr, const wxString &word, const wxString & text, std::vector<TagEntryPtr> &tags, bool imp, bool workspaceOnly)
+void TagsManager::FindImplDecl(const wxFileName &fileName,
+                               int lineno,
+                               const wxString & expr,
+                               const wxString &word,
+                               const wxString & text,
+                               std::vector<TagEntryPtr> &tags,
+                               bool imp,
+                               bool workspaceOnly)
 {
 	wxString path;
 	wxString typeName, typeScope, tmp;
@@ -1888,8 +1890,7 @@ void TagsManager::GetFunctions(std::vector< TagEntryPtr > &tags, const wxString 
 void TagsManager::GetAllTagsNames(wxArrayString &tagsList)
 {
 	size_t kind = GetCtagsOptions().GetCcColourFlags();
-	if (kind == CC_COLOUR_ALL)
-	{
+	if (kind == CC_COLOUR_ALL) {
 		m_workspaceDatabase->GetAllTagsNames(tagsList);
 		return;
 	}
@@ -2412,7 +2413,7 @@ void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName
 	// Collect a list of function prototypes from the class
 	tags.clear();
 	GetDatabase()->GetTagsByScopeAndKind(scopeName, kind, tags);
-	for(size_t i=0; i<tags.size(); i++){
+	for(size_t i=0; i<tags.size(); i++) {
 		TagEntryPtr t   = tags.at(i);
 		wxString    sig = NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Reverse_Macro);
 		sig.Prepend(t->GetName());
@@ -2507,4 +2508,67 @@ void TagsManager::ClearAllCaches()
 	m_cachedFile.Clear();
 	m_cachedFileFunctionsTags.clear();
 	m_workspaceDatabase->ClearCache();
+}
+
+CppToken TagsManager::FindLocalVariable(const wxFileName& fileName, int pos, int lineNumber, const wxString& word, const wxString& modifiedText)
+{
+	// Load the file and get a state map + the text from the scanner
+	TagEntryPtr   tag   (NULL);
+	TextStatesPtr states(NULL);
+
+	if(modifiedText.empty() == false) {
+		// Parse the modified text
+		std::vector<TagEntryPtr> tags;
+		DoParseModifiedText(modifiedText, tags);
+
+		// It is safe to assume that the tags are sorted by line number
+		// Loop over the tree and search for the a function closest to the given line number
+		for(size_t i=0; i<tags.size() && tags[i]->GetLine() <= lineNumber; i++) {
+			if(tags[i]->IsFunction()) {
+				tag = tags[i];
+			}
+		}
+
+		// Construct a scanner based on the modified text
+		CppWordScanner scanner(fileName.GetFullPath(), modifiedText, 0);
+		states = scanner.states();
+
+	} else {
+		// get the local by scanning from the current function's
+		tag = FunctionFromFileLine(fileName, lineNumber + 1);
+		CppWordScanner scanner(fileName.GetFullPath());
+		states = scanner.states();
+	}
+
+	if(!tag || !states)
+		return CppToken();
+
+	return CppToken();
+}
+
+void TagsManager::DoParseModifiedText(const wxString &text, std::vector<TagEntryPtr>& tags)
+{
+	wxFFile fp;
+	wxString fileName = wxFileName::CreateTempFileName(wxT("codelite_mod_file_"), &fp);
+	if(fp.IsOpened()) {
+		fp.Write(text);
+		fp.Close();
+		wxString tagsStr;
+		SourceToTags(wxFileName(fileName), tagsStr);
+
+		// Create tags from the string
+		wxArrayString tagsLines = wxStringTokenize(tagsStr, wxT("\n"), wxTOKEN_STRTOK);
+		for(size_t i=0; i<tagsLines.GetCount(); i++) {
+			wxString line = tagsLines.Item(i).Trim().Trim(false);
+			if (line.IsEmpty())
+				continue;
+
+			TagEntryPtr tag(new TagEntry());
+			tag->FromLine(line);
+
+			tags.push_back(tag);
+		}
+		// Delete the modified file
+		wxRemoveFile( fileName );
+	}
 }

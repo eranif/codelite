@@ -34,6 +34,7 @@
 #include "tree.h"
 #include "entry.h"
 #include "tags_storage_sqlite3.h"
+#include "cpptoken.h"
 #include <wx/thread.h>
 #include "singleton.h"
 #include "cl_calltip.h"
@@ -458,6 +459,16 @@ public:
 	void FindImplDecl(const wxFileName &fileName, int lineno, const wxString & expr, const wxString &word,  const wxString &text, std::vector<TagEntryPtr> &tags, bool impl = true, bool workspaceOnly = false);
 
 	/**
+	 * @brief return a CppToken poiting to the offset of a local variable
+	 * @param fileName file name to search in
+	 * @param pos the position pointing to the *start* of the variable to search
+	 * @param word the variable name to search
+	 * @param modifiedText if the file is modified and not saved, user can pass the unmodified text here to override the file's content
+	 * @return CppToken. Check CppToken::getOffset() != wxString::npos to make sure that this is a valid token
+	 */
+	CppToken FindLocalVariable(const wxFileName& fileName, int pos, int lineNumber, const wxString &word, const wxString &modifiedText = wxEmptyString);
+
+	/**
 	 * @brief get the scope name. CodeLite assumes that the caret is placed at the end of the 'scope'
 	 * @param scope the input string
 	 * @return scope name or '<global>' if non found
@@ -712,6 +723,8 @@ public:
 protected:
 	std::map<wxString, bool> m_typeScopeCache;
 	std::map<wxString, bool> m_typeScopeContainerCache;
+
+	void DoParseModifiedText(const wxString &text, std::vector<TagEntryPtr>& tags);
 
 	/**
 	 * Handler ctags process termination

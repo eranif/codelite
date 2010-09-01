@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "dirsaver.h"
 #include "precompiled_header.h"
+#include <wx/stdpaths.h>
 #include "editor_config.h"
 #include <wx/xml/xml.h>
 #include "xmlutils.h"
@@ -73,7 +74,8 @@ void SimpleStringValue::DeSerialize(Archive &arch)
 //-------------------------------------------------------------------------------------------
 
 EditorConfig::EditorConfig()
-		: m_transcation(false)
+	: m_transcation(false)
+	, m_activeThemeLexers(NULL)
 {
 	m_doc = new wxXmlDocument();
 }
@@ -81,6 +83,11 @@ EditorConfig::EditorConfig()
 EditorConfig::~EditorConfig()
 {
 	delete m_doc;
+	std::map<wxString, LexersInfo*>::iterator iter = m_lexers.begin();
+	for(; iter != m_lexers.end(); iter++) {
+		delete iter->second;
+	}
+	m_lexers.clear();
 }
 
 bool EditorConfig::DoLoadDefaultSettings()
@@ -95,12 +102,12 @@ bool EditorConfig::DoLoadDefaultSettings()
 		wxFFile file(m_fileName.GetFullPath(), wxT("a"));
 		wxString content;
 		content << wxT("<CodeLite Revision=\"")
-		<< m_svnRevision
-		<< wxT("\"")
-		<< wxT(" Version=\"")
-		<< m_version
-		<< wxT("\">")
-		<< wxT("</CodeLite>");
+		        << m_svnRevision
+		        << wxT("\"")
+		        << wxT(" Version=\"")
+		        << m_version
+		        << wxT("\">")
+		        << wxT("</CodeLite>");
 
 		if (file.IsOpened()) {
 			file.Write(content);
@@ -113,13 +120,26 @@ bool EditorConfig::DoLoadDefaultSettings()
 bool EditorConfig::Load()
 {
 	//first try to load the user's settings
-	m_fileName = wxFileName(wxT("config/codelite.xml"));
-	m_fileName.MakeAbsolute();
+	m_fileName = wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/codelite.xml");
+	wxString localFileName = m_fileName.GetFullPath();
+
+	{
+		// Make sure that the directory exists
+		wxLogNull noLog;
+		wxMkdir(m_fileName.GetPath());
+		wxMkdir(wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("lexers"));
+	}
+
 	bool userSettingsLoaded(false);
 	bool loadSuccess       (false);
 
 	if (!m_fileName.FileExists()) {
 		loadSuccess = DoLoadDefaultSettings();
+
+		if (loadSuccess) {
+			// Copy the content of the default codelite.xml file into the user's local file
+			wxCopyFile(m_fileName.GetFullPath(), localFileName);
+		}
 
 	} else {
 		userSettingsLoaded = true;
@@ -145,16 +165,33 @@ bool EditorConfig::Load()
 	LoadLexers(false);
 
 	// make sure that the file name is set to .xml and not .default
-	m_fileName.SetFullName(wxT("codelite.xml"));
+	m_fileName = wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/codelite.xml");
 	return true;
 }
 
 void EditorConfig::SaveLexers()
 {
-	std::map<wxString, LexerConfPtr>::iterator iter = m_lexers.begin();
+	std::map<wxString, LexersInfo*>::iterator iter = m_lexers.begin();
 	for (; iter != m_lexers.end(); iter++) {
-		iter->second->Save();
+		wxFileName fn(iter->second->filename);
+		wxString userLexer( wxStandardPaths::Get().GetUserDataDir() +
+		                    wxFileName::GetPathSeparator() +
+		                    wxT("lexers") +
+		                    wxFileName::GetPathSeparator() +
+		                    fn.GetFullName());
+
+		wxXmlDocument doc;
+		wxXmlNode *node = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("Lexers"));
+		node->AddProperty(wxT("Theme"), iter->second->theme);
+		doc.SetRoot( node );
+
+		std::map<wxString, LexerConfPtr>::iterator it = iter->second->lexers.begin();
+		for(; it != iter->second->lexers.end(); it++) {
+			node->AddChild(it->second->ToXml());
+		}
+		doc.Save( userLexer );
 	}
+
 	wxString nodeName = wxT("Lexers");
 	SendCmdEvent(wxEVT_EDITOR_CONFIG_CHANGED, (void*) &nodeName);
 }
@@ -170,75 +207,21 @@ wxXmlNode* EditorConfig::GetLexerNode(const wxString& lexerName)
 
 LexerConfPtr EditorConfig::GetLexer(const wxString &lexerName)
 {
-	if (m_lexers.find(lexerName) == m_lexers.end()) {
+	std::map<wxString, LexerConfPtr>::const_iterator iter = m_activeThemeLexers->lexers.find(lexerName);
+	if(iter == m_activeThemeLexers->lexers.end())
 		return NULL;
-	}
 
-	return m_lexers.find(lexerName)->second;
+	return iter->second;
 }
-
-//long EditorConfig::LoadNotebookStyle(const wxString &nbName)
-//{
-//	long style = wxNOT_FOUND;
-//	wxXmlNode *layoutNode = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Layout"));
-//	if (!layoutNode) {
-//		return style;
-//	}
-//
-//	wxXmlNode *child = layoutNode->GetChildren();
-//	while ( child ) {
-//		if ( child->GetName() == wxT("Notebook") ) {
-//			if (child->GetPropVal(wxT("Name"), wxEmptyString) == nbName) {
-//				wxString strStyle = child->GetPropVal(wxT("Style"), wxEmptyString);
-//				strStyle.ToLong(&style);
-//				break;
-//			}
-//		}
-//		child = child->GetNext();
-//	}
-//	return style;
-//}
-//
-//void EditorConfig::SaveNotebookStyle(const wxString &nbName, long style)
-//{
-//	wxXmlNode *layoutNode = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Layout"));
-//	if ( !layoutNode ) {
-//		return;
-//	}
-//
-//	wxXmlNode *child = layoutNode->GetChildren();
-//	while ( child ) {
-//		if ( child->GetName() == wxT("Notebook") ) {
-//			if (child->GetPropVal(wxT("Name"), wxEmptyString) == nbName) {
-//				wxString strStyle;
-//				strStyle << style;
-//				XmlUtils::UpdateProperty(child, wxT("Style"), strStyle);
-//				DoSave();
-//				return;
-//			}
-//		}
-//		child = child->GetNext();
-//	}
-//
-//	wxXmlNode *newChild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Notebook"));
-//	newChild->AddProperty(wxT("Name"), nbName);
-//
-//	wxString strStyle;
-//	strStyle << style;
-//	newChild->AddProperty(wxT("Style"), strStyle);
-//	layoutNode->AddChild(newChild);
-//	DoSave();
-//}
-//
 
 EditorConfig::ConstIterator EditorConfig::LexerEnd()
 {
-	return m_lexers.end();
+	return m_activeThemeLexers->lexers.end();
 }
 
 EditorConfig::ConstIterator EditorConfig::LexerBegin()
 {
-	return m_lexers.begin();
+	return m_activeThemeLexers->lexers.begin();
 }
 
 OptionsConfigPtr EditorConfig::GetOptions() const
@@ -309,7 +292,7 @@ void EditorConfig::GetRecentItems(wxArrayString &files, const wxString nodeName)
 {
 	if (nodeName.IsEmpty()) {
 		return;
-}
+	}
 	//find the root node
 	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), nodeName);
 	if (node) {
@@ -430,49 +413,80 @@ void EditorConfig::LoadLexers(bool loadDefault)
 	//when this function is called, the working directory is located at the
 	//startup directory
 	DirSaver ds;
-	wxSetWorkingDirectory(m_fileName.GetPath());
+	wxSetWorkingDirectory(m_installDir + wxFileName::GetPathSeparator() + wxT("lexers"));
 
 	wxString cwd = wxGetCwd();
 
-	//load all lexer configuration files
-	DirTraverser traverser(wxT("*.xml"));
-	wxString path_( cwd + wxT("/../lexers/") + theme + wxT("/") );
-	if (wxDir::Exists(path_) == false) {
-		//the directory does not exist
-		//fallback to 'Default'
-		theme = wxT("Default");
-		SaveStringValue(wxT("LexerTheme"), wxT("Default"));
-		path_ = cwd + wxT("/../lexers/") + theme + wxT("/");
-	}
+	// load all lexer configuration files
+	wxArrayString files;
+	wxDir::GetAllFiles(cwd, &files,wxT("*.xml"), wxDIR_FILES);
+	wxString path_( cwd + wxFileName::GetPathSeparator() );
 
-	wxDir dir(path_);
-	dir.Traverse(traverser);
-
-	wxArrayString files = traverser.GetFiles();
 	m_lexers.clear();
-	for (size_t i=0; i<files.GetCount(); i++) {
 
+	LexersInfo *pLexersInfo = NULL;
+	m_lexers.clear();
+
+	for (size_t i=0; i<files.GetCount(); i++) {
 		wxString fileToLoad( files.Item(i) );
 
 		//try to locate a file with the same name but with the user extension
 		wxFileName fn(files.Item(i));
-		wxString userLexer( fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) + fn.GetName() +  wxT(".") + clGetUserName() + wxT("_xml"));
+
+		wxString userLexer( wxStandardPaths::Get().GetUserDataDir() +
+		                    wxFileName::GetPathSeparator() +
+		                    wxT("lexers") +
+		                    wxFileName::GetPathSeparator() +
+		                    fn.GetFullName());
 		if ( wxFileName::FileExists( userLexer ) ) {
 			if (!loadDefault) {
 				fileToLoad = userLexer;
+
 			} else {
 				// backup the old file
-				wxRenameFile(userLexer, userLexer + wxT(".orig"));
 				wxRemoveFile(userLexer);
 			}
 		}
 
-		LexerConfPtr lexer(new LexerConf( fileToLoad ));
+		// Load the lexers
+		wxXmlDocument doc(fileToLoad);
+		if(doc.IsOk()) {
+			// we found our lexers XML file
+			wxXmlNode* root = doc.GetRoot();
+			if(root) {
+				wxString themeName    = root->GetPropVal(wxT("Theme"), wxT("Default"));
+				pLexersInfo           = new LexersInfo;
+				pLexersInfo->filename = fileToLoad;
+				pLexersInfo->theme    = themeName;
 
-		// Dont add empty lexers (with no name)
-		if(lexer->GetName().IsEmpty())
-			continue;
-		m_lexers[lexer->GetName()] = lexer;
+				wxXmlNode *child = root->GetChildren();
+				while(child) {
+					LexerConfPtr lexer(new LexerConf());
+					lexer->FromXml( child );
+
+					if(!lexer->GetName().IsEmpty()) {
+						pLexersInfo->lexers[lexer->GetName()] = lexer;
+					}
+					child = child->GetNext();
+				}
+				m_lexers[themeName] = pLexersInfo;
+			}
+		}
+	}
+
+	// Set the selected theme
+	if(m_lexers.find(theme) == m_lexers.end()) {
+		// the requested theme does not exist, we use the first that we can find
+		if(m_lexers.empty()) {
+			// Create an empty theme lexers map
+			m_activeThemeLexers = new LexersInfo;
+			return;
+		}
+		m_activeThemeLexers = m_lexers.begin()->second;
+
+	} else {
+		m_activeThemeLexers = m_lexers.find(theme)->second;
+
 	}
 }
 
@@ -523,3 +537,7 @@ void SimpleRectValue::Serialize(Archive& arch)
 	arch.Write(wxT("Size"), m_rect.GetSize());
 }
 
+void EditorConfig::SetInstallDir(const wxString& instlDir)
+{
+	m_installDir = instlDir;
+}

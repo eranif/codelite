@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include <wx/stdpaths.h>
 #include "environmentconfig.h"
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
@@ -50,7 +51,8 @@ QMakePlugin::QMakePlugin(IManager *manager)
 {
 	m_longName = wxT("Qt's QMake integration with CodeLite");
 	m_shortName = wxT("QMakePlugin");
-	m_conf = new QmakeConf(m_mgr->GetStartupDirectory() + wxT("/config/qmake.ini"));
+
+	m_conf = new QmakeConf(wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/qmake.ini"));
 
 	//Connect items
 	wxApp *app = m_mgr->GetTheApp();

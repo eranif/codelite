@@ -848,7 +848,7 @@ void clMainFrame::CreateGUIControls(void)
 	DebuggerMgr::Get().LoadDebuggers();
 
 	wxString sessConfFile;
-	sessConfFile << ManagerST::Get()->GetStarupDirectory() << wxT("/config/sessions.xml");
+	sessConfFile << wxStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
 	SessionManager::Get().Load(sessConfFile);
 
 	// Now the session's loaded, it's safe to fill the tabgroups tab
@@ -3616,8 +3616,10 @@ void clMainFrame::ReloadExternallyModifiedProjectFiles()
 
 void clMainFrame::SaveLayoutAndSession()
 {
-	//save the perspective
-	WriteFileUTF8(ManagerST::Get()->GetStarupDirectory() + wxT("/config/codelite.layout"), m_mgr.SavePerspective());
+	// Save the perspective
+	wxFileName userFileName   (wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config") + wxFileName::GetPathSeparator() + wxT("codelite.layout"));
+	WriteFileUTF8(userFileName.GetFullPath(), m_mgr.SavePerspective());
+
 	EditorConfigST::Get()->SaveLexers();
 
 	//save general information
@@ -3772,13 +3774,18 @@ void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 	EditorConfigST::Get()->GetLongValue(wxT("LoadSavedPrespective"), loadIt);
 	if (loadIt) {
 
-		//locate the layout file
-		wxString file_name(ManagerST::Get()->GetStarupDirectory() + wxT("/config/codelite.layout"));
+		// locate the layout file
+		wxFileName defaultfileName(ManagerST::Get()->GetInstallDir() + wxFileName::GetPathSeparator() + wxT("config") + wxFileName::GetPathSeparator() + wxT("codelite.layout"));
+		wxFileName userFileName   (wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config") + wxFileName::GetPathSeparator() + wxT("codelite.layout"));
 		wxString pers(wxEmptyString);
 
-		if (wxFileName(file_name).FileExists()) {
+		if (userFileName.FileExists()) {
 			//load this file
-			ReadFileWithConversion(file_name, pers);
+			ReadFileWithConversion(userFileName.GetFullPath(), pers);
+
+		} else if(defaultfileName.FileExists()) {
+			ReadFileWithConversion(defaultfileName.GetFullPath(), pers);
+
 		}
 
 		//wxWindowUpdateLocker locker(this);
@@ -3787,6 +3794,7 @@ void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 
 		} else {
 			EditorConfigST::Get()->SetRevision(SvnRevision);
+			EditorConfigST::Get()->SetInstallDir(ManagerST::Get()->GetInstallDir());
 		}
 
 		UpdateAUI();

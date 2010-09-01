@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : keyboardmanager.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : keyboardmanager.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -42,7 +42,7 @@ bool KeyboardManager::AddAccelerator(MenuItemDataMap &accelMap, const MenuItemDa
 	if ( menuItemData.accel.IsEmpty() == false && IsDuplicate(accelMap, menuItemData.accel) ) {
 		return false;
 	}
-	
+
 	accelMap[menuItemData.action] = menuItemData;
 	return true;
 }
@@ -71,7 +71,7 @@ bool KeyboardManager::IsDuplicate(const MenuItemDataMap& accelMap, const wxStrin
 {
 	// search the list for similar accelerator
 	MenuItemDataMap::const_iterator iter = accelMap.begin();
-	
+
 	for(; iter != accelMap.end(); iter ++){
 		MenuItemData mid = iter->second;
 		if(Compare(accelerator, mid.accel)){
@@ -107,10 +107,8 @@ void KeyboardManager::Update(const MenuItemDataMap& accelMap)
 		content << mid.accel;
 		content << wxT("\n");
 	}
-	
-	wxString fileName = ManagerST::Get()->GetStarupDirectory();
-	fileName << wxT("/config/accelerators.conf");
-	
+
+	wxString fileName = wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/accelerators.conf");
 	wxFFile file;
 	if (!file.Open(fileName, wxT("w+b"))) {
 		return;
@@ -118,7 +116,7 @@ void KeyboardManager::Update(const MenuItemDataMap& accelMap)
 
 	file.Write(content);
 	file.Close();
-	
+
 	//apply changes
 	ManagerST::Get()->UpdateMenuAccelerators();
 }

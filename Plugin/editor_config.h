@@ -92,6 +92,13 @@ public:
 	}
 };
 
+typedef std::map<wxString, LexerConfPtr> ThemeLexersMap;
+struct LexersInfo {
+	ThemeLexersMap lexers;
+	wxString       filename;
+	wxString       theme;
+};
+
 /**
  * \ingroup LiteEditor
  * \brief EditorConfig a singleton class that manages the liteeditor.xml configuration file
@@ -106,13 +113,15 @@ public:
 class EditorConfig : public IConfigTool
 {
 	friend class Singleton<EditorConfig>;
-	wxXmlDocument*                   m_doc;
-	wxFileName                       m_fileName;
-	std::map<wxString, LexerConfPtr> m_lexers;
-	bool                             m_transcation;
-	wxString                         m_svnRevision;
-	wxString                         m_version;
-	
+	wxXmlDocument*                      m_doc;
+	wxFileName                          m_fileName;
+	std::map<wxString, LexersInfo*>     m_lexers;
+	bool                                m_transcation;
+	wxString                            m_svnRevision;
+	wxString                            m_version;
+	wxString                            m_installDir;
+	LexersInfo*                         m_activeThemeLexers;
+
 private:
 	bool DoSave() const;
 	bool DoLoadDefaultSettings();
@@ -229,6 +238,7 @@ public:
 	 * Set the current configuration revision
 	 */
 	void SetRevision(const wxString &rev);
+	void SetInstallDir(const wxString &instlDir);
 
 	/**
 	 * \brief convinience methods to store a single long value

@@ -1558,9 +1558,11 @@ void Manager::UpdateMenuAccelerators()
 	}
 
 	if ( content.IsEmpty() == false ) {
-		wxFFile f ( GetStarupDirectory() + wxT ( "/config/accelerators.conf" ), wxT ( "w+b" ) );
-		f.Write ( content );
-		f.Close();
+		wxFFile f (wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/accelerators.conf"));
+		if(f.IsOpened()) {
+			f.Write ( content );
+			f.Close();
+		}
 	}
 
 	//update the accelerator table of the main frame
@@ -1660,7 +1662,7 @@ void Manager::UpdateMenu ( wxMenu *menu, MenuItemDataMap &accelMap, std::vector<
 void Manager::GetDefaultAcceleratorMap ( MenuItemDataMap& accelMap )
 {
 	//use the default settings
-	wxString fileName = GetStarupDirectory() + wxT ( "/config/accelerators.conf.default" );
+	wxString fileName = GetInstallDir() + wxT ( "/config/accelerators.conf.default" );
 	wxArrayString files;
 	files.Add ( fileName );
 
@@ -1669,7 +1671,7 @@ void Manager::GetDefaultAcceleratorMap ( MenuItemDataMap& accelMap )
 #ifdef __WXGTK__
 	wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
 #else
-	wxString pluginsDir(ManagerST::Get()->GetInstallDir() + wxT( "/plugins" ));
+	wxString pluginsDir(GetInstallDir() + wxT( "/plugins" ));
 #endif
 
 	wxDir::GetAllFiles ( pluginsDir + wxT ( "/resources/" ), &files, wxT ( "*.accelerators" ), wxDIR_FILES );
@@ -1686,22 +1688,23 @@ void Manager::GetAcceleratorMap ( MenuItemDataMap& accelMap )
 void Manager::DoGetAccelFiles ( wxArrayString& files )
 {
 	//try to locate the user's settings
-	wxString fileName ( GetStarupDirectory() + wxT ( "/config/accelerators.conf" ) );
-	if ( !wxFileName::FileExists ( GetStarupDirectory() + wxT ( "/config/accelerators.conf" ) ) ) {
+	wxFileName fileName ( wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/accelerators.conf") );
+	if ( !fileName.FileExists() ) {
 
 		//use the default settings
-		fileName = GetStarupDirectory() + wxT ( "/config/accelerators.conf.default" );
-		files.Add ( fileName );
+		fileName = wxFileName(GetInstallDir() + wxT("/config/accelerators.conf.default"));
+		files.Add ( fileName.GetFullPath() );
+
 #ifdef __WXGTK__
-		wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
+		wxString pluginsDir = wxString::From8BitData(PLUGINS_DIR);
 #else
-		wxString pluginsDir(ManagerST::Get()->GetInstallDir() + wxT( "/plugins" ));
+		wxString pluginsDir(GetInstallDir() + wxT( "/plugins" ));
 #endif
 		// append the content of all '*.accelerators' from the plugins
 		// resources table
 		wxDir::GetAllFiles (pluginsDir + wxT ( "/resources/" ), &files, wxT ( "*.accelerators" ), wxDIR_FILES );
 	} else {
-		files.Add ( fileName );
+		files.Add ( fileName.GetFullPath() );
 	}
 }
 

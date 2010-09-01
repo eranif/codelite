@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "pluginmanager.h"
+#include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
 #include "globals.h"
 #include <wx/ffile.h>
@@ -168,8 +169,8 @@ void AccelTableDlg::OnButtonOk(wxCommandEvent &e)
 		content << wxT("\n");
 	}
 
-	wxString fileName = ManagerST::Get()->GetStarupDirectory();
-	fileName << wxT("/config/accelerators.conf");
+	wxString fileName;
+	fileName = wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/accelerators.conf");
 
 	wxFFile file;
 	if (!file.Open(fileName, wxT("w+b"))) {

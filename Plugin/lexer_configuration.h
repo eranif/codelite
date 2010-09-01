@@ -37,21 +37,19 @@ class LexerConf
 	int               m_lexerId;
 	wxString          m_name;
 	wxString          m_extension;
-	wxXmlDocument     m_doc;
-	wxFileName        m_fileName;
 	wxString          m_keyWords[10];
 	bool              m_styleWithinPreProcessor;
 
-private:
-	// Parse lexer object from xml node
-	void Parse(wxXmlNode *node);
 
+public:
 	// Return an xml representation from this object
 	wxXmlNode *ToXml() const;
 
+	// Parse lexer object from xml node
+	void FromXml(wxXmlNode *node);
+
 public:
-	void Save();
-	LexerConf(const wxString &fileName);
+	LexerConf();
 	virtual ~LexerConf();
 
 	/**

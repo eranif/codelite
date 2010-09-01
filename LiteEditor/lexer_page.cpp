@@ -210,7 +210,6 @@ void LexerPage::SaveSettings()
 
 		m_lexer->SetProperties( m_propertyList );
 		m_lexer->SetFileSpec( m_fileSpec->GetValue() );
-		m_lexer->Save();
 		m_isModified = false;
 	}
 }

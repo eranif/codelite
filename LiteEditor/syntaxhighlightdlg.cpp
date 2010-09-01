@@ -188,6 +188,9 @@ void SyntaxHighlightDlg::SaveChanges()
 			page->SaveSettings();
 		}
 	}
+
+	// Save all lexers once
+	EditorConfigST::Get()->SaveLexers();
 }
 
 SyntaxHighlightDlg::~SyntaxHighlightDlg()

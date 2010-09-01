@@ -406,6 +406,7 @@ bool CodeLiteApp::OnInit()
 
 	//read the last frame size from the configuration file
 	// Initialise editor configuration files
+	EditorConfigST::Get()->SetInstallDir( mgr->GetInstallDir() );
 	EditorConfig *cfg = EditorConfigST::Get();
 	if ( !cfg->Load() ) {
 		wxLogMessage(wxT("Failed to load configuration file: ") + wxGetCwd() + wxT("/config/codelite.xml"), wxT("CodeLite"), wxICON_ERROR | wxOK);
@@ -528,7 +529,6 @@ bool CodeLiteApp::CopySettings(const wxString &destDir, wxString& installPath)
 	wxCopyFile(installPath + wxT("/index.html"), destDir + wxT("/index.html"));
 	wxCopyFile(installPath + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
 	wxCopyFile(installPath + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
-	wxCopyFile(installPath + wxT("/config/accelerators.conf.default"), destDir + wxT("/config/accelerators.conf.default"));
 	return true;
 }
 

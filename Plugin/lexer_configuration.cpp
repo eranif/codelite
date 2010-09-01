@@ -34,36 +34,14 @@ static bool StringTolBool(const wxString &s) {
 	return res;
 }
 
-LexerConf::LexerConf(const wxString &fileName)
-: m_fileName(fileName)
-, m_styleWithinPreProcessor(true)
+LexerConf::LexerConf()
+	: m_styleWithinPreProcessor(true)
 {
-	m_fileName.MakeAbsolute();
-	m_doc.Load(m_fileName.GetFullPath());
-	if(m_doc.GetRoot()){
-		Parse(m_doc.GetRoot());
-	}
 }
 
-void LexerConf::Save()
+void LexerConf::FromXml(wxXmlNode *element)
 {
-	//replace the root node with the new xml representation for this object
-	m_doc.SetRoot(ToXml());
-
-	if(m_doc.IsOk()){
-		//we never save to the default file, but rather we create our own copy of it
-		wxString userExt( clGetUserName() + wxT("_xml"));
-		if(m_fileName.GetExt() != userExt) {
-			m_fileName.SetExt( userExt );
-		}
-
-		m_doc.Save(m_fileName.GetFullPath());
-	}
-}
-
-void LexerConf::Parse(wxXmlNode *element)
-{
-	if( element ){
+	if( element ) {
 		m_lexerId = XmlUtils::ReadLong(element, wxT("Id"), 0);
 
 		// read the lexer name
@@ -74,35 +52,35 @@ void LexerConf::Parse(wxXmlNode *element)
 		// load key words
 		wxXmlNode *node = NULL;
 		node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords0"));
-		if( node ){
+		if( node ) {
 			m_keyWords[0] = node->GetNodeContent();
 			m_keyWords[0].Replace(wxT("\n"), wxT(" "));
 			m_keyWords[0].Replace(wxT("\r"), wxT(" "));
 		}
 
 		node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords1"));
-		if( node ){
+		if( node ) {
 			m_keyWords[1] = node->GetNodeContent();
 			m_keyWords[1].Replace(wxT("\n"), wxT(" "));
 			m_keyWords[1].Replace(wxT("\r"), wxT(" "));
 		}
 
 		node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords2"));
-		if( node ){
+		if( node ) {
 			m_keyWords[2] = node->GetNodeContent();
 			m_keyWords[2].Replace(wxT("\n"), wxT(" "));
 			m_keyWords[2].Replace(wxT("\r"), wxT(" "));
 		}
 
 		node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords3"));
-		if( node ){
+		if( node ) {
 			m_keyWords[3] = node->GetNodeContent();
 			m_keyWords[3].Replace(wxT("\n"), wxT(" "));
 			m_keyWords[3].Replace(wxT("\r"), wxT(" "));
 		}
 
 		node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords4"));
-		if( node ){
+		if( node ) {
 			m_keyWords[4] = node->GetNodeContent();
 			m_keyWords[4].Replace(wxT("\n"), wxT(" "));
 			m_keyWords[4].Replace(wxT("\r"), wxT(" "));
@@ -110,20 +88,18 @@ void LexerConf::Parse(wxXmlNode *element)
 
 		// load extensions
 		node = XmlUtils::FindFirstByTagName(element, wxT("Extensions"));
-		if( node ){
+		if( node ) {
 			m_extension = node->GetNodeContent();
 		}
 
 		// load properties
 		// Search for <properties>
 		node = XmlUtils::FindFirstByTagName(element, wxT("Properties"));
-		if( node )
-		{
+		if( node ) {
 			// We found the element, read the attributes
 			wxXmlNode* prop = node->GetChildren();
-			while( prop )
-			{
-				if(prop->GetName() == wxT("Property")){
+			while( prop ) {
+				if(prop->GetName() == wxT("Property")) {
 					// Read the font attributes
 					wxString Name      = XmlUtils::ReadString(prop, wxT("Name"), wxT("DEFAULT"));
 					wxString bold      = XmlUtils::ReadString(prop, wxT("Bold"), wxT("no"));
@@ -139,11 +115,11 @@ void LexerConf::Parse(wxXmlNode *element)
 					long alpha         = XmlUtils::ReadLong  (prop, wxT("Alpha"), 50);
 
 					StyleProperty property = StyleProperty(propId, colour, bgcolour, fontSize, Name, face,
-										StringTolBool(bold),
-										StringTolBool(italic),
-										StringTolBool(underline),
-										StringTolBool(eolFill),
-										alpha);
+					                                       StringTolBool(bold),
+					                                       StringTolBool(italic),
+					                                       StringTolBool(underline),
+					                                       StringTolBool(eolFill),
+					                                       alpha);
 
 					m_properties.push_back( property );
 				}
@@ -197,7 +173,7 @@ wxXmlNode *LexerConf::ToXml() const
 	//set the properties
 	wxXmlNode *properties = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Properties"));
 	std::list<StyleProperty>::const_iterator iter = m_properties.begin();
-	for(; iter != m_properties.end(); iter ++){
+	for(; iter != m_properties.end(); iter ++) {
 		StyleProperty p = (*iter);
 		wxXmlNode *property = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Property"));
 

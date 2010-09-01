@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lexers Theme="DarkTheme">
+<Lexer Name="Assembly" Id="34">
+  <KeyWords0>aaa aad aam aas adc add and call cbw clc cld cli cmc cmp cmps cmpsb cmpsw cwd daa das dec div esc hlt idiv imul in inc int into iret ja jae jb jbe jc jcxz je jg jge jl jle jmp jna jnae jnb jnbe jnc jne jng jnge jnl jnle jno jnp jns jnz jo jp jpe jpo js jz lahf lds lea les lods lodsb lodsw loop loope loopew loopne loopnew loopnz loopnzw loopw loopz loopzw mov movs movsb movsw mul neg nop not or out pop popf push pushf rcl rcr ret retf retn rol ror sahf sal sar sbb scas scasb scasw shl shr stc std sti stos stosb stosw sub test wait xchg xlat xlatb xor bound enter ins insb insw leave outs outsb outsw popa pusha pushw arpl lar lsl sgdt sidt sldt smsw str verr verw clts lgdt lidt lldt lmsw ltr bsf bsr bt btc btr bts cdq cmpsd cwde insd iretd iretdf iretf jecxz lfs lgs lodsd loopd looped loopned loopnzd loopzd lss movsd movsx movzx outsd popad popfd pushad pushd pushfd scasd seta setae setb setbe setc sete setg setge setl setle setna setnae setnb setnbe setnc setne setng setnge setnl setnle setno setnp setns setnz seto setp setpe setpo sets setz shld shrd stosd bswap cmpxchg invd invlpg wbinvd xadd lock rep repe repne repnz repz cflush cpuid emms femms cmovo cmovno cmovb cmovc cmovnae cmovae cmovnb cmovnc cmove cmovz cmovne cmovnz cmovbe cmovna cmova cmovnbe cmovs cmovns cmovp cmovpe cmovnp cmovpo cmovl cmovnge cmovge cmovnl cmovle cmovng cmovg cmovnle cmpxchg486 cmpxchg8b loadall loadall286 ibts icebp int1 int3 int01 int03 iretw popaw popfw pushaw pushfw rdmsr rdpmc rdshr rdtsc rsdc rsldt rsm rsts salc smi smint smintold svdc svldt svts syscall sysenter sysexit sysret ud0 ud1 ud2 umov xbts wrmsr wrshr</KeyWords0>
+  <KeyWords1>f2xm1 fabs fadd faddp fbld fbstp fchs fclex fcom fcomp fcompp fdecstp fdisi fdiv fdivp fdivr fdivrp feni ffree fiadd ficom ficomp fidiv fidivr fild fimul fincstp finit fist fistp fisub fisubr fld fld1 fldcw fldenv fldenvw fldl2e fldl2t fldlg2 fldln2 fldpi fldz fmul fmulp fnclex fndisi fneni fninit fnop fnsave fnsavew fnstcw fnstenv fnstenvw fnstsw fpatan fprem fptan frndint frstor frstorw fsave fsavew fscale fsqrt fst fstcw fstenv fstenvw fstp fstsw fsub fsubp fsubr fsubrp ftst fwait fxam fxch fxtract fyl2x fyl2xp1 fsetpm fcos fldenvd fnsaved fnstenvd fprem1 frstord fsaved fsin fsincos fstenvd fucom fucomp fucompp fcomi fcomip ffreep fcmovb fcmove fcmovbe fcmovu fcmovnb fcmovne fcmovnbe fcmovnu</KeyWords1>
+  <KeyWords2>ah al ax bh bl bp bx ch cl cr0 cr2 cr3 cr4 cs cx dh di dl dr0 dr1 dr2 dr3 dr6 dr7 ds dx eax ebp ebx ecx edi edx es esi esp fs gs si sp ss st tr3 tr4 tr5 tr6 tr7 st0 st1 st2 st3 st4 st5 st6 st7 mm0 mm1 mm2 mm3 mm4 mm5 mm6 mm7 xmm0 xmm1 xmm2 xmm3 xmm4 xmm5 xmm6 xmm7</KeyWords2>
+  <KeyWords3>.186 .286 .286c .286p .287 .386 .386c .386p .387 .486 .486p .8086 .8087 .alpha .break .code .const .continue .cref .data .data? .dosseg .else .elseif .endif .endw .err .err1 .err2 .errb .errdef .errdif .errdifi .erre .erridn .erridni .errnb .errndef .errnz .exit .fardata .fardata? .if .lall .lfcond .list .listall .listif .listmacro .listmacroall .model .no87 .nocref .nolist .nolistif .nolistmacro .radix .repeat .sall .seq .sfcond .stack .startup .tfcond .type .until .untilcxz .while .xall .xcref .xlist alias align assume catstr comm comment db dd df dosseg dq dt dup dw echo else elseif elseif1 elseif2 elseifb elseifdef elseifdif elseifdifi elseife elseifidn elseifidni elseifnb elseifndef end endif endm endp ends eq equ even exitm extern externdef extrn for forc ge goto group gt high highword if if1 if2 ifb ifdef ifdif ifdifi ife ifidn ifidni ifnb ifndef include includelib instr invoke irp irpc label le length lengthof local low lowword lroffset lt macro mask mod .msfloat name ne offset opattr option org %out page popcontext proc proto ptr public purge pushcontext record repeat rept seg segment short size sizeof sizestr struc struct substr subtitle subttl textequ this title type typedef union while width db dw dd dq dt resb resw resd resq rest incbin equ times %define %idefine %xdefine %xidefine %undef %assign %iassign %strlen %substr %macro %imacro %endmacro %rotate .nolist %if %elif %else %endif %ifdef %ifndef %elifdef %elifndef %ifmacro %ifnmacro %elifmacro %elifnmacro %ifctk %ifnctk %elifctk %elifnctk %ifidn %ifnidn %elifidn %elifnidn %ifidni %ifnidni %elifidni %elifnidni %ifid %ifnid %elifid %elifnid %ifstr %ifnstr %elifstr %elifnstr %ifnum %ifnnum %elifnum %elifnnum %error %rep %endrep %exitrep %include %push %pop %repl struct endstruc istruc at iend align alignb %arg %stacksize %local %line bits use16 use32 section absolute extern global common cpu org section group import export</KeyWords3>
+  <KeyWords4>$ ? @b @f addr basic byte c carry? dword far far16 fortran fword near near16 overflow? parity? pascal qword real4 real8 real10 sbyte sdword sign? stdcall sword syscall tbyte vararg word zero? flat near32 far32 abs all assumes at casemap common compact cpu dotname emulator epilogue error export expr16 expr32 farstack flat forceframe huge language large listing ljmp loadds m510 medium memory nearstack nodotname noemulator nokeyword noljmp nom510 none nonunique nooldmacros nooldstructs noreadonly noscoped nosignextend nothing notpublic oldmacros oldstructs os_dos para private prologue radix readonly req scoped setif2 smallstack tiny use16 use32 uses a16 a32 o16 o32 byte word dword nosplit $ $$ seq wrt flat large small .text .data .bss near far %0 %1 %2 %3 %4 %5 %6 %7 %8 %9</KeyWords4>
+  <KeyWords5>addpd addps addsd addss andpd andps andnpd andnps cmpeqpd cmpltpd cmplepd cmpunordpd cmpnepd cmpnltpd cmpnlepd cmpordpd cmpeqps cmpltps cmpleps cmpunordps cmpneps cmpnltps cmpnleps cmpordps cmpeqsd cmpltsd cmplesd cmpunordsd cmpnesd cmpnltsd cmpnlesd cmpordsd cmpeqss cmpltss cmpless cmpunordss cmpness cmpnltss cmpnless cmpordss comisd comiss cvtdq2pd cvtdq2ps cvtpd2dq cvtpd2pi cvtpd2ps cvtpi2pd cvtpi2ps cvtps2dq cvtps2pd cvtps2pi cvtss2sd cvtss2si cvtsd2si cvtsd2ss cvtsi2sd cvtsi2ss cvttpd2dq cvttpd2pi cvttps2dq cvttps2pi cvttsd2si cvttss2si divpd divps divsd divss fxrstor fxsave ldmxscr lfence mfence maskmovdqu maskmovdq maxpd maxps paxsd maxss minpd minps minsd minss movapd movaps movdq2q movdqa movdqu movhlps movhpd movhps movd movq movlhps movlpd movlps movmskpd movmskps movntdq movnti movntpd movntps movntq movq2dq movsd movss movupd movups mulpd mulps mulsd mulss orpd orps packssdw packsswb packuswb paddb paddsb paddw paddsw paddd paddsiw paddq paddusb paddusw pand pandn pause paveb pavgb pavgw pavgusb pdistib pextrw pcmpeqb pcmpeqw pcmpeqd pcmpgtb pcmpgtw pcmpgtd pf2id pf2iw pfacc pfadd pfcmpeq pfcmpge pfcmpgt pfmax pfmin pfmul pmachriw pmaddwd pmagw pmaxsw pmaxub pminsw pminub pmovmskb pmulhrwc pmulhriw pmulhrwa pmulhuw pmulhw pmullw pmuludq pmvzb pmvnzb pmvlzb pmvgezb pfnacc pfpnacc por prefetch prefetchw prefetchnta prefetcht0 prefetcht1 prefetcht2 pfrcp pfrcpit1 pfrcpit2 pfrsqit1 pfrsqrt pfsub pfsubr pi2fd pf2iw pinsrw psadbw pshufd pshufhw pshuflw pshufw psllw pslld psllq pslldq psraw psrad psrlw psrld psrlq psrldq psubb psubw psubd psubq psubsb psubsw psubusb psubusw psubsiw pswapd punpckhbw punpckhwd punpckhdq punpckhqdq punpcklbw punpcklwd punpckldq punpcklqdq pxor rcpps rcpss rsqrtps rsqrtss sfence shufpd shufps sqrtpd sqrtps sqrtsd sqrtss stmxcsr subpd subps subsd subss ucomisd ucomiss unpckhpd unpckhps unpcklpd unpcklps xorpd xorps</KeyWords5>
+  <Extensions>*.asm;*.s;*.S</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#0080C0" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="9"/>
+    <Property Id="2" Name="Number" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="3" Name="String" Bold="no" Face="" Colour="#3978C6" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="9"/>
+    <Property Id="4" Name="Operator" Bold="no" Face="" Colour="#400080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="5" Name="Identifier" Bold="no" Face="" Colour="#400080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="6" Name="CPU instruction" Bold="yes" Face="Courier New" Colour="#39601E" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="7" Name="Math instruction" Bold="no" Face="" Colour="#9595FF" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="8" Name="Register" Bold="no" Face="" Colour="#FF0080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="9" Name="Directive" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="10" Name="Directive No operand" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="11" Name="C++ comment" Bold="no" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="9"/>
+    <Property Id="12" Name="Character" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="13" Name="StringEol" Bold="no" Face="" Colour="#3978C6" BgColour="#FFFFFF" Italic="yes" Underline="no" Size="9"/>
+    <Property Id="14" Name="Ext instruction" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#000000" BgColour="#C0C0C0" Italic="no" Underline="no" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="Batch" Id="12">
+  <KeyWords0>rem set if exist errorlevel for in do break call chcp cd chdir choice cls country ctty date del erase dir echo exit goto loadfix loadhigh mkdir md move path pause prompt rename ren rmdir rd shift time type ver verify vol com con lpt nul color copy defined else not start off</KeyWords0>
+  <KeyWords1></KeyWords1>
+  <KeyWords2></KeyWords2>
+  <KeyWords3></KeyWords3>
+  <KeyWords4></KeyWords4>
+  <Extensions>*.bat;*.batch</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#008040" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
+    <Property Id="2" Name="Keyword" Bold="yes" Face="" Colour="#0080FF" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
+    <Property Id="3" Name="Label line" Bold="no" Face="" Colour="#FFFFFF" BgColour="#8000FF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="4" Name="Hide command character '@'" Bold="no" Face="" Colour="#808080" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
+    <Property Id="5" Name="External commands" Bold="yes" Face="" Colour="#FF8040" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
+    <Property Id="6" Name="Variable" Bold="no" Face="" Colour="#FFFF80" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
+    <Property Id="7" Name="Opertator" Bold="no" Face="" Colour="#8080FF" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#C0C0C0" Italic="no" Underline="no" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0080C0" Italic="no" Underline="no" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#008080" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Italic="no" Underline="no" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="Cobra" Id="2">
+  <KeyWords0>abstract adds all and any as assert base body bool branch break callable catch char class const continue cue decimal def do dynamic each else end ensure enum event every except expect extend extern fake false finally float for from get has if ignore implements implies import in inherits inlined inout int interface internal invariant is listen lock mixin must namespace new nil nonvirtual not number objc of old or out override partial pass passthrough post print private pro protected public raise ref require return same set shared sig stop struct success test this throw to to? trace true try uint use using var vari virtual where while yield</KeyWords0>
+  <KeyWords1></KeyWords1>
+  <KeyWords2></KeyWords2>
+  <KeyWords3></KeyWords3>
+  <KeyWords4></KeyWords4>
+  <Extensions>*.cobra;cob</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="1" Name="CommentLine" Bold="no" Face="" Colour="#03A367" BgColour="#101010" Italic="yes" Underline="no" Size="9"/>
+    <Property Id="2" Name="Number" Bold="no" Face="" Colour="#FF8080" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="3" Name="String" Bold="no" Face="" Colour="#FF80C0" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="4" Name="Character" Bold="no" Face="" Colour="#808080" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="5" Name="KeyWord0" Bold="no" Face="" Colour="#FF8040" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="6" Name="Triple" Bold="no" Face="" Colour="#206056" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="7" Name="DocString" Bold="no" Face="" Colour="#800000" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="8" Name="ClassName" Bold="no" Face="" Colour="#FFFF80" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="9" Name="Defname" Bold="no" Face="" Colour="#16691D" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#E0E0E0" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#8080FF" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="12" Name="Comment Block" Bold="no" Face="" Colour="#3978C6" BgColour="#101010" Italic="yes" Underline="no" Size="9"/>
+    <Property Id="13" Name="StringEOL" Bold="no" Face="" Colour="#800000" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="14" Name="KeyWord1" Bold="no" Face="" Colour="#0080C0" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="15" Name="Directive" Bold="no" Face="" Colour="#07782C" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#80FFFF" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#101010" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="C++" Id="3">
+  <KeyWords0>and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast continue default delete do double dynamic_cast else enum explicit export extern false float for friend goto if inline int long mutable namespace        new not not_eq operator or or_eq private protected public register reinterpret_cast return short signed Sizeof static        static_cast struct switch template this throw true try typedef typeid typename union unsigned using virtual void volatile wchar_t while xor xor_eq  assert exit abort NULL</KeyWords0>
+  <KeyWords1></KeyWords1>
+  <KeyWords2>a addindex addtogroup anchor arg attention author b brief bug c callgraph callergraph category class code cond copybrief copydetails copydoc
+date def defgroup deprecated details dir  dontinclude dot dotfile e else elseif em endcode endcond enddot endhtmlonly endif endlatexonly endlink endmanonly endmsc endverbatim
+endxmlonly  enum example exception extends  file fn headerfile hideinitializer htmlinclude htmlonly if ifnot image implements include includelineno ingroup internal invariant
+interface  latexonly li line link mainpage manonly memberof msc n name namespace nosubgrouping note overload p package page par paragraph param post pre private privatesection property
+protected  protectedsection protocol public publicsection ref relates relatesalso remarks return retval sa section see showinitializer since skip skipline struct
+subpage  subsection subsubsection test throw todo tparam typedef union until var verbatim verbinclude version warning weakgroup xmlonly xrefitem
+  </KeyWords2>
+  <KeyWords3></KeyWords3>
+  <KeyWords4></KeyWords4>
+  <Extensions>*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Common C style comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="2" Name="Common C++ style comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="3" Name="Doxygen C style comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="4" Name="Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="9"/>
+    <Property Id="5" Name="C++ keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
+    <Property Id="6" Name="String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="7" Name="Character" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="9"/>
+    <Property Id="8" Name="Uuid" Bold="no" Face="" Colour="#8000FF" BgColour="#000000" Size="9"/>
+    <Property Id="9" Name="Preprocessor" Bold="no" Face="" Colour="#804040" BgColour="#000000" Size="9"/>
+    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="12" Name="Open string" Bold="no" Face="" Colour="#000000" BgColour="#FF8000" Size="9"/>
+    <Property Id="15" Name="Doxygen C++ style comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="17" Name="Doxygen keyword" Bold="no" Face="" Colour="#8080FF" BgColour="#000000" Size="9"/>
+    <Property Id="18" Name="Doxygen keyword error" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>
+    <Property Id="16" Name="Workspace tags" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>
+    <Property Id="19" Name="Local variables" Bold="no" Face="" Colour="#804000" BgColour="#000000" Size="9"/>
+    <Property Id="20" Name="Disabled Code" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#000000" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="Text" Id="1">
+  <KeyWords0/>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions/>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#000000" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="Diff" Id="16">
+  <KeyWords0/>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.diff;*.patch;Diff;*.Diff</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="2" Name="Command" Bold="no" Face="" Colour="#00FFFF" BgColour="#000000" Size="9"/>
+    <Property Id="3" Name="Header" Bold="no" Face="" Colour="#804040" BgColour="#000000" Size="9"/>
+    <Property Id="4" Name="Position" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="9"/>
+    <Property Id="5" Name="Line Deleted" Bold="no" Face="" Colour="#FF0000" BgColour="#000000" Size="9"/>
+    <Property Id="6" Name="Line Added" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#000000" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="Html" Id="4">
+  <KeyWords0>a abbr acronym address applet area b base basefont                                    bdo big blockquote body br button caption center                                    cite code col colgroup dd del dfn dir div dl dt em                                    fieldset font form frame frameset h1 h2 h3 h4 h5 h6                                    head hr html i iframe img input ins isindex kbd label                                    legend li link map menu meta noframes noscript                                    object ol optgroup option p param pre q s samp                                    script select small span strike strong style sub sup                                    table tbody td textarea tfoot th thead title tr tt u ul                                    var xml xmlns xml:lang                                    abbr accept-charset accept accesskey action align alink                                    alt archive axis background bgcolor border                                    cellpadding cellspacing char charoff charset checked cite                                    class classid clear codebase codetype color cols colspan                                    compact content coords                                    data datafld dataformatas datapagesize datasrc datetime                                    declare defer dir disabled enctype event                                    face for frame frameborder                                    headers height href hreflang hspace http-equiv                                    id ismap label lang language leftmargin link longdesc                                    marginwidth marginheight maxlength media method multiple                                    name nohref noresize noshade nowrap                                    object onblur onchange onclick ondblclick onfocus                                    onkeydown onkeypress onkeyup onload onmousedown                                    onmousemove onmouseover onmouseout onmouseup                                    onreset onselect onsubmit onunload                                    profile prompt readonly rel rev rows rowspan rules                                    scheme scope selected shape size span src standby start style                                    summary tabindex target text title topmargin type usemap                                    valign value valuetype version vlink vspace width                                    text password checkbox radio submit reset                                    file hidden image                                    article aside calendar canvas card command commandset datagrid datatree                                    footer gauge header m menubar menulabel nav progress section switch tabbo                                    active command contenteditable ping                                    public !doctype</KeyWords0>
+  <KeyWords1>abstract boolean break byte case catch char class const                             continue debugger default delete do double	else enum export                             extends false final finally float for function goto if implements                             import in	instanceof int interface long native new null package                             private protected public return short static super	switch                             synchronized this throw throws transient true try typeof var                             void volatile while with</KeyWords1>
+  <KeyWords2>addressof alias and as attribute base begin binary boolean byref byte byval call case compare                             const currency date decimal declare defbool defbyte defint deflng defcur defsng defdbl defdec                             defdate defstr defobj defvar dim do double each else elseif empty end enum eqv erase error                             event exit explicit false for friend function get gosub goto if imp implements in input integer                             is len let lib like load lock long loop lset me mid midb mod new next not nothing null object                             on option optional or paramarray preserve print private property public raiseevent randomize                             redim rem resume return rset seek select set single static step stop string sub then time to                             true type typeof unload until variant wend while with withevents xor</KeyWords2>
+  <KeyWords3>and assert break class continue def del elif                             else except exec finally for from global if import in is lambda None                             not or pass print raise return try while yield</KeyWords3>
+  <KeyWords4>and array as bool boolean break case cfunction class const continue declare                              default die directory do double echo else elseif empty enddeclare endfor                              endforeach endif endswitch endwhile eval exit extends false float for                              foreach function global if include include_once int integer isset list new                              null object old_function or parent print real require require_once resource                              return static stdclass string switch true unset use var while xor __class__                              __file__ __function__ __line__ __sleep __wakeup</KeyWords4>
+  <Extensions>*.htm;*.html;*.xhtml;*.phtml;*.js;*.php;*.php3;*.inc</Extensions>
+  <Properties>
+    <Property Id="32" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="0" Name="Whitespace" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Tags" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
+    <Property Id="2" Name="Unknown tags" Bold="no" Face="" Colour="#808040" BgColour="#000000" Size="10"/>
+    <Property Id="3" Name="Attributes" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
+    <Property Id="4" Name="Unknown attributes" Bold="no" Face="" Colour="#FF0000" BgColour="#000000" Size="10"/>
+    <Property Id="5" Name="Numbers" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
+    <Property Id="6" Name="Double quoted Strings" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
+    <Property Id="7" Name="Single quoted Strings" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
+    <Property Id="8" Name="Other inside tag" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="10"/>
+    <Property Id="9" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="10" Name="Entities" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="10"/>
+    <Property Id="11" Name="XML style tag ends /&gt;" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
+    <Property Id="12" Name="XML identifier start &lt; ?" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
+    <Property Id="13" Name="XML identifier end ?&gt;" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
+    <Property Id="14" Name="Script" Bold="no" Face="" Colour="#C0C0C0" BgColour="#505050" Size="10"/>
+    <Property Id="15" Name="ASP &lt;% ... %&gt;" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="16" Name="ASP &lt;% ... %&gt;" Bold="no" Face="" Colour="#000000" BgColour="#505050" Size="10"/>
+    <Property Id="17" Name="CDATA Section" Bold="no" Face="" Colour="#800000" BgColour="#FF8080" Size="10"/>
+    <Property Id="18" Name="PHP/Unknown Section Block" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="10"/>
+    <Property Id="19" Name="Unquoted values" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
+    <Property Id="20" Name="JSP Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="21" Name="SGML tags" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
+    <Property Id="22" Name="SGML command" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
+    <Property Id="23" Name="SGML 1st param" Bold="no" Face="" Colour="#008080" BgColour="#000000" Size="10"/>
+    <Property Id="24" Name="SGML double string" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
+    <Property Id="25" Name="SGML single string" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
+    <Property Id="26" Name="SGML error" Bold="no" Face="" Colour="#FF0000" BgColour="#000000" Size="10"/>
+    <Property Id="27" Name="SGML special (#xxxx type)" Bold="no" Face="" Colour="#008040" BgColour="#000000" Size="10"/>
+    <Property Id="28" Name="SGML entity" Bold="no" Face="" Colour="#808040" BgColour="#000000" Size="10"/>
+    <Property Id="29" Name="SGML comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="31" Name="SGML block" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
+    <Property Id="34" Name="Matched Operators" Bold="no" Face="" Colour="#FFFF00" BgColour="#000000" Size="10"/>
+    <Property Id="35" Name="Matched Operators 2" Bold="no" Face="" Colour="#FFFF00" BgColour="#000000" Size="10"/>
+    <Property Id="40" Name="JS Start" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
+    <Property Id="41" Name="JS Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
+    <Property Id="42" Name="JS Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="43" Name="JS Line Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="44" Name="JS Doc comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="45" Name="JS Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
+    <Property Id="46" Name="JS Word" Bold="no" Face="" Colour="#0080C0" BgColour="#000000" Size="10"/>
+    <Property Id="47" Name="JS Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
+    <Property Id="48" Name="JS Double quoted string" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
+    <Property Id="49" Name="JS Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
+    <Property Id="50" Name="JS Symbols" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="10"/>
+    <Property Id="51" Name="JavaScript EOL" Bold="no" Face="" Colour="#808040" BgColour="#000000" Size="10"/>
+    <Property Id="52" Name="JavaScript RegEx" Bold="no" Face="" Colour="#8000FF" BgColour="#000000" Size="10"/>
+    <Property Id="55" Name="ASP JS Start" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
+    <Property Id="56" Name="ASP JS Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
+    <Property Id="57" Name="ASP JS Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="58" Name="ASP JS Line Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="59" Name="ASP JS Doc comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="60" Name="ASP JS Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
+    <Property Id="61" Name="ASP JS Word" Bold="no" Face="" Colour="#0080C0" BgColour="#000000" Size="10"/>
+    <Property Id="62" Name="ASP JS Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
+    <Property Id="63" Name="ASP JS Double quoted string" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
+    <Property Id="64" Name="ASP JS Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
+    <Property Id="65" Name="ASP JS Symbols" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="10"/>
+    <Property Id="66" Name="ASP JavaScript EOL" Bold="no" Face="" Colour="#808040" BgColour="#000000" Size="10"/>
+    <Property Id="67" Name="ASP JavaScript RegEx" Bold="no" Face="" Colour="#8000FF" BgColour="#000000" Size="10"/>
+    <Property Id="70" Name="VBS Start" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
+    <Property Id="71" Name="VBS Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
+    <Property Id="72" Name="VBS Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="73" Name="VBS Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
+    <Property Id="74" Name="VBS KeyWord" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
+    <Property Id="75" Name="VBS String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
+    <Property Id="76" Name="VBS Identifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
+    <Property Id="77" Name="VBS Unterminated string" Bold="no" Face="" Colour="#000000" BgColour="#FF8000" Size="10"/>
+    <Property Id="80" Name="ASP VBS Start" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
+    <Property Id="81" Name="ASP VBS Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
+    <Property Id="82" Name="ASP VBS Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="83" Name="ASP VBS Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
+    <Property Id="84" Name="ASP VBS KeyWord" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
+    <Property Id="85" Name="ASP VBS String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
+    <Property Id="86" Name="ASP VBS Identifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
+    <Property Id="87" Name="ASP VBS Unterminated string" Bold="no" Face="" Colour="#000000" BgColour="#FF8000" Size="10"/>
+    <Property Id="90" Name="Embedded Python" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
+    <Property Id="91" Name="Embedded Python 2" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
+    <Property Id="92" Name="Embedded Python Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="93" Name="Embedded Python Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
+    <Property Id="94" Name="Embedded Python String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
+    <Property Id="95" Name="Embedded Python Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
+    <Property Id="96" Name="Embedded Python Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
+    <Property Id="97" Name="Embedded Python Triple quotes" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
+    <Property Id="98" Name="Embedded Python Triple double quotes" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
+    <Property Id="99" Name="Embedded Python Class Name definition" Bold="no" Face="" Colour="#808040" BgColour="#000000" Size="10"/>
+    <Property Id="100" Name="Embedded Python Function or method Name definition" Bold="no" Face="" Colour="#0080C0" BgColour="#000000" Size="10"/>
+    <Property Id="101" Name="Embedded Python Operators" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="10"/>
+    <Property Id="102" Name="Embedded Python Identifiers" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
+    <Property Id="105" Name="ASP Python" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
+    <Property Id="106" Name="ASP Python 2" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
+    <Property Id="107" Name="ASP Python Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="108" Name="ASP Python Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
+    <Property Id="109" Name="ASP Python String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
+    <Property Id="110" Name="ASP Python Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
+    <Property Id="111" Name="ASP Python Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
+    <Property Id="112" Name="ASP Python Triple quotes" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
+    <Property Id="113" Name="ASP Python Triple double quotes" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
+    <Property Id="114" Name="ASP Python Class Name definition" Bold="no" Face="" Colour="#808040" BgColour="#000000" Size="10"/>
+    <Property Id="115" Name="ASP Python Function or method Name definition" Bold="no" Face="" Colour="#0080C0" BgColour="#000000" Size="10"/>
+    <Property Id="116" Name="ASP Python Operators" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="10"/>
+    <Property Id="117" Name="ASP Python Identifiers" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
+    <Property Id="104" Name="PHP Complex Variable" Bold="no" Face="" Colour="#804040" BgColour="#000000" Size="10"/>
+    <Property Id="118" Name="PHP Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
+    <Property Id="119" Name="PHP HString" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
+    <Property Id="120" Name="PHP Simple String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
+    <Property Id="121" Name="PHP Word" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
+    <Property Id="122" Name="PHP Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
+    <Property Id="123" Name="PHP Variable" Bold="no" Face="" Colour="#808000" BgColour="#000000" Size="10"/>
+    <Property Id="124" Name="PHP Multiline comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="125" Name="PHP single line Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
+    <Property Id="126" Name="PHP HString Variable" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="10"/>
+    <Property Id="127" Name="PHP Operator" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="10"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="InnoSetup" Id="76">
+  <KeyWords0>code components custommessages dirs files icons ini installdelete langoptions languages messages registry run setup types tasks uninstalldelete uninstallrun _istool</KeyWords0>
+  <KeyWords1>  allowcancelduringinstall allownoicons allowrootdirectory allowuncpath   alwaysrestart alwaysshowcomponentslist alwaysshowdironreadypage   alwaysshowgrouponreadypage alwaysusepersonalgroup appcomments appcontact   appcopyright appenddefaultdirname appenddefaultgroupname appid appmodifypath   appmutex appname apppublisher apppublisherurl appreadmefile appsupporturl   appupdatesurl appvername appversion architecturesallowed   architecturesinstallin64bitmode backcolor backcolor2 backcolordirection   backsolid changesassociations changesenvironment compression copyrightfontname   copyrightfontsize createappdir createuninstallregkey defaultdirname   defaultgroupname defaultuserinfoname defaultuserinfoorg defaultuserinfoserial   dialogfontname dialogfontsize direxistswarning disabledirpage   disablefinishedpage disableprogramgrouppage disablereadymemo disablereadypage   disablestartupprompt diskclustersize diskslicesize diskspanning   enablesdirdoesntexistwarning encryption extradiskspacerequired   flatcomponentslist infoafterfile infobeforefile internalcompresslevel   languagedetectionmethod languagecodepage languageid languagename licensefile   mergeduplicatefiles minversion onlybelowversion outputbasefilename outputdir   outputmanifestfile password privilegesrequired reservebytes   restartifneededbyrun setupiconfile showcomponentsizes showlanguagedialog   showtaskstreelines slicesperdisk solidcompression sourcedir timestamprounding   timestampsinutc titlefontname titlefontsize touchdate touchtime uninstallable   uninstalldisplayicon uninstalldisplayname uninstallfilesdir uninstalllogmode   uninstallrestartcomputer updateuninstalllogappname usepreviousappdir   usepreviousgroup useprevioussetuptype useprevioustasks useprevioususerinfo   userinfopage usesetupldr versioninfocompany versioninfocopyright   versioninfodescription versioninfotextversion versioninfoversion   welcomefontname welcomefontsize windowshowcaption windowstartmaximized   windowresizable windowvisible wizardimagebackcolor wizardimagefile   wizardimagestretch wizardsmallimagefile   </KeyWords1>
+  <KeyWords2>  afterinstall attribs beforeinstall check comment components copymode   description destdir destname excludes extradiskspacerequired filename flags   fontinstall groupdescription hotkey infoafterfile infobeforefile iconfilename   iconindex key languages licensefile messagesfile minversion name   onlybelowversion parameters permissions root runonceid section source   statusmsg string subkey tasks type types valuedata valuename valuetype   workingdir   </KeyWords2>
+  <KeyWords3>  append define dim else emit endif endsub error expr file for if ifdef ifexist   ifndef ifnexist include insert pragma sub undef   </KeyWords3>
+  <KeyWords4>  begin break case const continue do downto else end except finally for function   if of procedure repeat then to try until uses var while with   </KeyWords4>
+  <Extensions>*.iss</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="2" Name="Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
+    <Property Id="3" Name="Parameter" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
+    <Property Id="4" Name="Section" Bold="no" Face="" Colour="#779BBF" BgColour="#303030" Size="9"/>
+    <Property Id="5" Name="Preprocessor" Bold="no" Face="" Colour="#804040" BgColour="#000000" Size="9"/>
+    <Property Id="6" Name="Preprocessor (inline)" Bold="no" Face="" Colour="#804040" BgColour="#000000" Size="9"/>
+    <Property Id="7" Name="Pascal comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="8" Name="Pascal keyword" Bold="no" Face="" Colour="#0080C0" BgColour="#000000" Size="9"/>
+    <Property Id="9" Name="User defined keyword" Bold="no" Face="" Colour="#0080C0" BgColour="#000000" Size="9"/>
+    <Property Id="10" Name="Double quoted string" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="11" Name="Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#000000" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="Java" Id="3">
+  <KeyWords0>	abstract assert boolean break byte case catch char class const continue default do double else extends final         	finally float for future generic goto if implements import inner instanceof int interface long native new null outer         	package private protected public rest return short static super switch synchronized this throw throws transient try         	var void volatile while       </KeyWords0>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.java</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="2" Name="Single line comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="3" Name="C style comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="4" Name="Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="9"/>
+    <Property Id="5" Name="Java keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
+    <Property Id="6" Name="String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="7" Name="Character" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="9"/>
+    <Property Id="8" Name="Uuid" Bold="no" Face="" Colour="#8000FF" BgColour="#000000" Size="9"/>
+    <Property Id="9" Name="Preprocessor" Bold="no" Face="" Colour="#804040" BgColour="#000000" Size="9"/>
+    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="12" Name="Open string" Bold="no" Face="" Colour="#000000" BgColour="#FF8000" Size="9"/>
+    <Property Id="15" Name="Doxygen single line comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="17" Name="Doxygen keyword" Bold="no" Face="" Colour="#8080FF" BgColour="#000000" Size="9"/>
+    <Property Id="18" Name="Doxygen keyword error" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>
+    <Property Id="19" Name="Global class" Bold="no" Face="" Colour="#0080C0" BgColour="#000000" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#000000" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="Lua" Id="15">
+  <KeyWords0>if elseif else then end do while nil true false in for and or function local not repeat return until</KeyWords0>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.lua;*.glua;*.gluaw;</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="2" Name="Comment Line" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="3" Name="Comment Doc" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="4" Name="Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="9"/>
+    <Property Id="5" Name="Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
+    <Property Id="6" Name="String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="7" Name="Character" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="9"/>
+    <Property Id="8" Name="String Literal" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="9" Name="Preprocessor" Bold="no" Face="" Colour="#804040" BgColour="#000000" Size="9"/>
+    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#000000" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="Makefile" Id="11">
+  <KeyWords0/>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.mk;makefile;Makefile;*.mak;*.make</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="2" Name="Preprocessor" Bold="no" Face="" Colour="#804040" BgColour="#000000" Size="9"/>
+    <Property Id="3" Name="Identifier" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
+    <Property Id="4" Name="Operator" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="5" Name="Target" Bold="no" Face="" Colour="#FF0000" BgColour="#000000" Size="9"/>
+    <Property Id="9" Name="ID End Of Line" Bold="no" Face="" Colour="#FF0000" BgColour="#000000" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#000000" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="Perl" Id="6">
+  <KeyWords0>NULL __FILE__ __LINE__ __PACKAGE__ __DATA__ __END__ AUTOLOAD BEGIN CORE DESTROY END EQ GE GT INIT LE LT NE         			CHECK abs accept alarm and atan2 bind binmode bless caller chdir chmod chomp chop chown chr chroot close closedir 			cmp connect continue cos crypt dbmclose dbmopen defined delete die do dump each else elsif endgrent endhostent         			endnetent endprotoent endpwent endservent eof eq eval exec exists exit exp fcntl fileno flock for foreach fork format         			formline ge getc getgrent getgrgid getgrnam gethostbyaddr gethostbyname gethostent getlogin getnetbyaddr getnetbyname         			getnetent getpeername getpgrp getppid getpriority getprotobyname getprotobynumber getprotoent getpwent getpwnam getpwuid         			getservbyname getservbyport getservent getsockname getsockopt glob gmtime goto grep gt hex if index int ioctl join keys         			kill last lc lcfirst le length link listen local localtime lock log lstat lt map mkdir msgctl msgget msgrcv msgsnd my ne         			next no not oct open opendir or ord our pack package pipe pop pos print printf prototype push quotemeta qu rand read readdir         			readline readlink readpipe recv redo ref rename require reset return reverse rewinddir rindex rmdir scalar seek seekdir         			select semctl semget semop send setgrent sethostent setnetent setpgrp setpriority setprotoent setpwent setservent setsockopt         			shift shmctl shmget shmread shmwrite shutdown sin sleep socket socketpair sort splice split sprintf sqrt srand system         			syswrite tell telldir tie tied time times truncate uc ucfirst umask undef unless unlink unpack unshift untie until use        			utime values vec wait waitpid wantarray warn while write xor 			</KeyWords0>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.pl;*.pm</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Perl Error" Bold="no" Face="" Colour="#FF0000" BgColour="#000000" Size="9"/>
+    <Property Id="2" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="3" Name="POD" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="4" Name="Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="9"/>
+    <Property Id="5" Name="Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
+    <Property Id="6" Name="String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="7" Name="Char" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="9"/>
+    <Property Id="8" Name="Punctuation" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="9" Name="Preprocessor" Bold="no" Face="" Colour="#804040" BgColour="#000000" Size="9"/>
+    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="11" Name="Idientifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="12" Name="Scalar" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="13" Name="Array" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="14" Name="Hash" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="15" Name="SymbolTable" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>
+    <Property Id="16" Name="VariableIndexer" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="9"/>
+    <Property Id="17" Name="Regex" Bold="no" Face="" Colour="#8000FF" BgColour="#000000" Size="9"/>
+    <Property Id="18" Name="RegSubst" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>
+    <Property Id="19" Name="LongQuote" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="20" Name="BackTicks" Bold="no" Face="" Colour="#808000" BgColour="#000000" Size="9"/>
+    <Property Id="21" Name="DataSection" Bold="no" Face="" Colour="#8080FF" BgColour="#000000" Size="9"/>
+    <Property Id="22" Name="HereDelim" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="9"/>
+    <Property Id="23" Name="HereQ" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="24" Name="HereQQ" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="25" Name="HereQX" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="26" Name="StringQ" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="27" Name="StringQQ" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="28" Name="StringQX" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="29" Name="StringQR" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="30" Name="StringQW" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="31" Name="PODVerb" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#000000" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="Properties" Id="9">
+  <KeyWords0/>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.ini;*.properties;*.desktop</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="2" Name="Section" Bold="no" Face="" Colour="#779BBF" BgColour="#303030" Size="9"/>
+    <Property Id="3" Name="Assignment" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="4" Name="Defval" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="9"/>
+    <Property Id="5" Name="Key" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="Python" Id="2">
+  <KeyWords0>and assert break class continue def del elif else except exec finally for from global if import in is lambda None not or pass print raise return try while yield</KeyWords0>
+  <KeyWords1></KeyWords1>
+  <KeyWords2></KeyWords2>
+  <KeyWords3></KeyWords3>
+  <KeyWords4></KeyWords4>
+  <Extensions>*.py;waf;wscript;wscript_build</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="1" Name="CommentLine" Bold="no" Face="" Colour="#03A367" BgColour="#101010" Italic="yes" Underline="no" Size="9"/>
+    <Property Id="2" Name="Number" Bold="no" Face="" Colour="#FF8080" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="3" Name="String" Bold="no" Face="" Colour="#FF80C0" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="4" Name="Character" Bold="no" Face="" Colour="#808080" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="5" Name="Word" Bold="no" Face="" Colour="#FF8040" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="6" Name="Triple" Bold="no" Face="" Colour="#206056" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="7" Name="Triple" Bold="no" Face="" Colour="#800000" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="8" Name="ClassName" Bold="no" Face="" Colour="#FFFF80" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="9" Name="Defname" Bold="no" Face="" Colour="#16691D" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#E0E0E0" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#8080FF" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="12" Name="Comment Block" Bold="no" Face="" Colour="#3978C6" BgColour="#101010" Italic="yes" Underline="no" Size="9"/>
+    <Property Id="13" Name="StringEOL" Bold="no" Face="" Colour="#800000" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="14" Name="Word2" Bold="no" Face="" Colour="#0080C0" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="15" Name="Decorator" Bold="no" Face="" Colour="#07782C" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#80FFFF" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#101010" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Italic="no" Underline="no" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Italic="no" Underline="no" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="Script" Id="62">
+  <KeyWords0>echo cp rm ls chmod if then fi done touch for in do while switch else cd pwd  cat mkdir rmdir grep awk print printf xargs find mv gzip tar bzip zip gunzip</KeyWords0>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.bash;*.sh;.tcsh;.bashrc;*.ksh;configure</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Error" Bold="no" Face="" Colour="red" BgColour="#000000" Size="9"/>
+    <Property Id="2" Name="Comment Line" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="3" Name="Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="9"/>
+    <Property Id="4" Name="Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
+    <Property Id="5" Name="String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="6" Name="Character" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="9"/>
+    <Property Id="7" Name="Opertator" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="8" Name="Identifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="9" Name="Scalar" Bold="no" Face="" Colour="#804040" BgColour="#000000" Size="9"/>
+    <Property Id="10" Name="Param" Bold="no" Face="" Colour="#8080FF" BgColour="#000000" Size="9"/>
+    <Property Id="11" Name="Backticks" Bold="no" Face="" Colour="#808000" BgColour="#000000" Size="9"/>
+    <Property Id="12" Name="Here Delimiter" Bold="no" Face="" Colour="#008080" BgColour="#000000" Size="9"/>
+    <Property Id="13" Name="Here Q" Bold="no" Face="" Colour="#008080" BgColour="#000000" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#000000" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+  </Properties>
+</Lexer>
+<Lexer Name="XML" Id="5">
+  <KeyWords0/>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.xml;*xrc;*.project;*.workspace;*.plist</Extensions>
+  <Properties>
+    <Property Id="32" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="0" Name="Whitespace" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Tags" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="2" Name="Unknown Tags" Bold="no" Face="" Colour="#808040" BgColour="#000000" Size="9"/>
+    <Property Id="3" Name="Attributes" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
+    <Property Id="4" Name="Unknown Attributes" Bold="no" Face="" Colour="#FF0000" BgColour="#000000" Size="9"/>
+    <Property Id="5" Name="Numbers" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="9"/>
+    <Property Id="6" Name="Double quoted strings" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="7" Name="Single quoted strings" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="9"/>
+    <Property Id="8" Name="Other inside tag" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="9" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="10" Name="Entities" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>
+    <Property Id="11" Name="XML style tag ends " Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="12" Name="XML identifier start " Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="9"/>
+    <Property Id="13" Name="XML identifier end '?&gt;'" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="9"/>
+    <Property Id="14" Name="CDATA" Bold="no" Face="" Colour="#800000" BgColour="#FF8080" Size="9"/>
+    <Property Id="15" Name="Question" Bold="no" Face="" Colour="#800000" BgColour="#000000" Size="9"/>
+    <Property Id="16" Name="Unquoted Value" Bold="no" Face="" Colour="#4A7550" BgColour="#000000" Size="9"/>
+    <Property Id="17" Name="SGML tags " Bold="no" Face="" Colour="#000080" BgColour="#ECECFF" Size="9"/>
+    <Property Id="18" Name="SGML command" Bold="no" Face="" Colour="#000080" BgColour="#ECECFF" Size="9"/>
+    <Property Id="19" Name="SGML 1st param" Bold="no" Face="" Colour="#008000" BgColour="#ECECFF" Size="9"/>
+    <Property Id="20" Name="SGML double string" Bold="no" Face="" Colour="#663300" BgColour="#ECECFF" Size="9"/>
+    <Property Id="21" Name="SGML single string" Bold="no" Face="" Colour="#804000" BgColour="#ECECFF" Size="9"/>
+    <Property Id="22" Name="SGML error" Bold="no" Face="" Colour="#800000" BgColour="#FF8080" Size="9"/>
+    <Property Id="23" Name="SGML special (#xxxx type)" Bold="no" Face="" Colour="#00A8F9" BgColour="#ECECFF" Size="9"/>
+    <Property Id="24" Name="SGML entity" Bold="no" Face="" Colour="#606060" BgColour="#ECECFF" Size="9"/>
+    <Property Id="25" Name="SGML comment" Bold="no" Face="" Colour="#808040" BgColour="#ECECFF" Size="9"/>
+    <Property Id="26" Name="SGML block" Bold="no" Face="" Colour="#0000FF" BgColour="#CCCCE6" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="#000000" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+  </Properties>
+</Lexer>
+</Lexers>

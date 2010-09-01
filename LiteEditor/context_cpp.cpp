@@ -766,22 +766,6 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 	if (word.IsEmpty())
 		return NULL;
 
-	// Test for local variable first
-	CppToken token = TagsManagerST::Get()->FindLocalVariable(
-	                     rCtrl.GetFileName(),                                      // file name
-	                     word_start,                                               // the word start position
-	                     rCtrl.LineFromPosition(word_start)+1,                     // current line
-	                     word, rCtrl.GetModify() ? rCtrl.GetText() : wxString());  // pass the modified text or none if the file is already saved
-	if(token.getOffset() != wxString::npos) {
-		// we got a match in the local scope, display it
-		LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(rCtrl.GetFileName().GetFullPath(),
-		                  rCtrl.GetProject(), 0, token.getOffset());
-		if (editor) {
-			editor->SetSelection(token.getOffset(), token.getOffset()+token.getName().length());
-		}
-		return NULL;
-	}
-
 	std::vector<TagEntryPtr> tags;
 	if (scoped) {
 		// get tags that make sense in current scope and expression
@@ -799,8 +783,25 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 		// get all tags that match the name (ignore scope)
 		TagsManagerST::Get()->FindSymbol(word, tags);
 	}
-	if (tags.empty())
-		return NULL;
+	
+	if (tags.empty()) {
+		// Test for local variable first
+		CppToken token = TagsManagerST::Get()->FindLocalVariable(
+							 rCtrl.GetFileName(),                                      // file name
+							 word_start,                                               // the word start position
+							 rCtrl.LineFromPosition(word_start)+1,                     // current line
+							 word, rCtrl.GetModify() ? rCtrl.GetText() : wxString());  // pass the modified text or none if the file is already saved
+		if(token.getOffset() != wxString::npos) {
+			// we got a match in the local scope, display it
+			LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(rCtrl.GetFileName().GetFullPath(),
+							  rCtrl.GetProject(), 0, token.getOffset());
+			if (editor) {
+				editor->SetSelection(token.getOffset(), token.getOffset()+token.getName().length());
+			}
+			return NULL;
+		}
+		
+	}
 
 	if (tags.size() == 1) // only one tag found
 		return tags[0];

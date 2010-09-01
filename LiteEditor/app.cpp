@@ -524,7 +524,6 @@ bool CodeLiteApp::CopySettings(const wxString &destDir, wxString& installPath)
 	CopyDir(installPath + wxT("/templates/"), destDir + wxT("/templates/"));
 	CopyDir(installPath + wxT("/lexers/"), destDir + wxT("/lexers/"));
 	massCopy  (installPath + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));
-	wxCopyFile(installPath + wxT("/config/codelite.xml.default"), destDir + wxT("/config/codelite.xml.default"));
 	wxCopyFile(installPath + wxT("/rc/menu.xrc"), destDir + wxT("/rc/menu.xrc"));
 	wxCopyFile(installPath + wxT("/index.html"), destDir + wxT("/index.html"));
 	wxCopyFile(installPath + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));

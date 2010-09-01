@@ -93,27 +93,13 @@ EditorConfig::~EditorConfig()
 bool EditorConfig::DoLoadDefaultSettings()
 {
 	//try to load the default settings
-	m_fileName = wxFileName(wxT("config/codelite.xml.default"));
+	m_fileName = wxFileName(m_installDir + wxT("/config/codelite.xml.default"));
 	m_fileName.MakeAbsolute();
 
 	if ( !m_fileName.FileExists() ) {
-		//create a new empty file with this name so the load function will not
-		//fail
-		wxFFile file(m_fileName.GetFullPath(), wxT("a"));
-		wxString content;
-		content << wxT("<CodeLite Revision=\"")
-		        << m_svnRevision
-		        << wxT("\"")
-		        << wxT(" Version=\"")
-		        << m_version
-		        << wxT("\">")
-		        << wxT("</CodeLite>");
-
-		if (file.IsOpened()) {
-			file.Write(content);
-			file.Close();
-		}
+		return false;
 	}
+	
 	return m_doc->Load(m_fileName.GetFullPath());
 }
 

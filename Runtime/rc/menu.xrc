@@ -585,12 +585,16 @@
             <label>Goto Implementation</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        <object class="wxMenuItem" name="go_to_function_start">
-            <label>Goto Begining of Current Function</label>
-        </object>
-		<object class="wxMenuItem" name="go_to_next_function">
-            <label>Goto Begining of Next Function</label>
-        </object>
+		<object class="wxMenu" name="editor_search">
+			<label>Navigation</label>
+			<style>wxMENU_TEAROFF</style>
+			<object class="wxMenuItem" name="go_to_function_start">
+				<label>Goto Begining of Current Function</label>
+			</object>
+			<object class="wxMenuItem" name="go_to_next_function">
+				<label>Goto Begining of Next Function</label>
+			</object>
+		</object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenu" name="code_gen_refactoring">
 			<label>Code Generation / Refactoring</label>
@@ -600,6 +604,13 @@
 			</object>
 			<object class="wxMenuItem" name="setters_getters">
 				<label>Generate Setters/Getters...</label>
+			</object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+			<object class="wxMenuItem" name="comment_selection">
+				<label>Comment Selection</label>
+			</object>
+			<object class="wxMenuItem" name="comment_line">
+				<label>Toggle Line Comment</label>
 			</object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="move_impl">
@@ -628,44 +639,31 @@
 			</object>
 		</object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-		<object class="wxMenuItem" name="comment_selection">
-            <label>Comment Selection</label>
-        </object>
-        <object class="wxMenuItem" name="comment_line">
-            <label>Toggle Line Comment</label>
-        </object>
-        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-		<object class="wxMenuItem" name="retag_file">
-            <label>Re-Tag File</label>
-        </object>
+		<object class="wxMenuItem" name="wxID_COPY">
+			<label>Copy</label>
+		</object>
+		<object class="wxMenuItem" name="wxID_PASTE">
+			<label>Paste</label>
+		</object>
+
+		<object class="wxMenuItem" name="wxID_UNDO">
+			<label>Undo</label>
+		</object>
+		<object class="wxMenuItem" name="wxID_REDO">
+			<label>Redo</label>
+		</object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        <object class="wxMenu" name="standard_editing">
-			<label>Edit</label>
-			<style>wxMENU_TEAROFF</style>
-            <object class="wxMenuItem" name="wxID_UNDO">
-                <label>Undo</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_REDO">
-                <label>Redo</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="wxID_CUT">
-                <label>Cut</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_COPY">
-                <label>Copy</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_PASTE">
-                <label>Paste</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_DELETE">
-                <label>Delete</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="wxID_SELECTALL">
-                <label>Select All</label>
-            </object>
-        </object>
+		<object class="wxMenuItem" name="wxID_CUT">
+			<label>Cut</label>
+		</object>
+		<object class="wxMenuItem" name="wxID_DELETE">
+			<label>Delete</label>
+		</object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="wxID_SELECTALL">
+			<label>Select All</label>
+		</object>
+
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="toggle_bookmark">
             <label>Toggle Bookmark</label>
@@ -673,6 +671,10 @@
 
         <object class="wxMenuItem" name="insert_breakpoint">
             <label>Toggle Breakpoint</label>
+        </object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="retag_file">
+            <label>Re-Tag File</label>
         </object>
     </object>
 

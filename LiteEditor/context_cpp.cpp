@@ -800,7 +800,7 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 			}
 			return NULL;
 		}
-
+		return NULL;
 	}
 
 	if (tags.size() == 1) // only one tag found

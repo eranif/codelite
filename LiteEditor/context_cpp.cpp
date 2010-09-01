@@ -783,7 +783,7 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 		// get all tags that match the name (ignore scope)
 		TagsManagerST::Get()->FindSymbol(word, tags);
 	}
-	
+
 	if (tags.empty()) {
 		// Test for local variable first
 		CppToken token = TagsManagerST::Get()->FindLocalVariable(
@@ -800,7 +800,7 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 			}
 			return NULL;
 		}
-		
+
 	}
 
 	if (tags.size() == 1) // only one tag found
@@ -2061,6 +2061,9 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
 
 	// Invoke the RefactorEngine
 	RefactoringEngine::Instance()->RenameGlobalSymbol(word, rCtrl.GetFileName(), rCtrl.LineFromPosition(pos+1), word_start, files);
+
+	if(RefactoringEngine::Instance()->GetCandidates().empty() && RefactoringEngine::Instance()->GetPossibleCandidates().empty())
+		return;
 
 	// display the refactor dialog
 	RenameSymbol *dlg = new RenameSymbol(&rCtrl, RefactoringEngine::Instance()->GetCandidates(), RefactoringEngine::Instance()->GetPossibleCandidates(), word);

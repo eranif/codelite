@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version May  4 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -22,6 +22,7 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 0, 3, 0, 0 );
 	fgSizer1->AddGrowableCol( 1 );
+	fgSizer1->AddGrowableRow( 2 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -76,7 +77,7 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	
 	bSizer9->Add( m_btnClearPaths, 0, wxEXPAND|wxALL, 5 );
 	
-	fgSizer1->Add( bSizer9, 0, 0, 5 );
+	fgSizer1->Add( bSizer9, 0, wxEXPAND, 5 );
 	
 	wxStaticText* m_staticText3;
 	m_staticText3 = new wxStaticText( this, wxID_ANY, _("File Mask:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -111,42 +112,64 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	m_staticText7->Wrap( -1 );
 	fgSizer1->Add( m_staticText7, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	wxStaticBoxSizer* sbSizer1;
-	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxVERTICAL );
+	m_notebook1 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_panel1 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer6;
+	bSizer6 = new wxBoxSizer( wxVERTICAL );
 	
-	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 0, 2, 0, 0 );
-	fgSizer2->SetFlexibleDirection( wxBOTH );
-	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	wxFlexGridSizer* fgSizer3;
+	fgSizer3 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer3->SetFlexibleDirection( wxBOTH );
+	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_matchCase = new wxCheckBox( this, wxID_ANY, _("&Match case"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_matchCase = new wxCheckBox( m_panel1, wxID_ANY, _("&Match case"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_matchCase->SetToolTip( _("Toggle case sensitive search") );
 	
-	fgSizer2->Add( m_matchCase, 0, wxALL|wxEXPAND, 5 );
+	fgSizer3->Add( m_matchCase, 0, wxALL|wxEXPAND, 5 );
 	
-	m_matchWholeWord = new wxCheckBox( this, wxID_ANY, _("Match &whole word"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_matchWholeWord = new wxCheckBox( m_panel1, wxID_ANY, _("Match &whole word"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_matchWholeWord->SetToolTip( _("Toggle whole word search") );
 	
-	fgSizer2->Add( m_matchWholeWord, 0, wxALL|wxEXPAND, 5 );
+	fgSizer3->Add( m_matchWholeWord, 0, wxALL|wxEXPAND, 5 );
 	
-	m_regualrExpression = new wxCheckBox( this, wxID_ANY, _("Regular &expression"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_regualrExpression = new wxCheckBox( m_panel1, wxID_ANY, _("Regular &expression"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_regualrExpression->SetToolTip( _("The 'Find What' field is a regular expression") );
 	
-	fgSizer2->Add( m_regualrExpression, 0, wxALL|wxEXPAND, 5 );
+	fgSizer3->Add( m_regualrExpression, 0, wxALL|wxEXPAND, 5 );
 	
-	m_printScope = new wxCheckBox( this, wxID_ANY, _("Display the C++ scope of the match"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_printScope->SetToolTip( _("Display the class + function name for the matches") );
-	
-	fgSizer2->Add( m_printScope, 0, wxALL, 5 );
-	
-	m_checkBoxSaveFilesBeforeSearching = new wxCheckBox( this, wxID_ANY, _("&Save modified files before searching"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxSaveFilesBeforeSearching = new wxCheckBox( m_panel1, wxID_ANY, _("&Save modified files before searching"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxSaveFilesBeforeSearching->SetToolTip( _("Save any modified files before search starts") );
 	
-	fgSizer2->Add( m_checkBoxSaveFilesBeforeSearching, 0, wxALL|wxEXPAND, 5 );
+	fgSizer3->Add( m_checkBoxSaveFilesBeforeSearching, 0, wxALL|wxEXPAND, 5 );
 	
-	sbSizer1->Add( fgSizer2, 0, wxEXPAND, 5 );
+	bSizer6->Add( fgSizer3, 1, wxEXPAND, 5 );
 	
-	fgSizer1->Add( sbSizer1, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+	m_panel1->SetSizer( bSizer6 );
+	m_panel1->Layout();
+	bSizer6->Fit( m_panel1 );
+	m_notebook1->AddPage( m_panel1, _("General"), true );
+	m_panel2 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer7;
+	bSizer7 = new wxBoxSizer( wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer4;
+	fgSizer4 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer4->SetFlexibleDirection( wxBOTH );
+	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_printScope = new wxCheckBox( m_panel2, wxID_ANY, _("Display the C++ scope of the match"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_printScope->SetToolTip( _("Display the class + function name for the matches") );
+	
+	fgSizer4->Add( m_printScope, 0, wxALL, 5 );
+	
+	bSizer7->Add( fgSizer4, 1, wxEXPAND, 5 );
+	
+	m_panel2->SetSizer( bSizer7 );
+	m_panel2->Layout();
+	bSizer7->Fit( m_panel2 );
+	m_notebook1->AddPage( m_panel2, _("C++"), false );
+	
+	fgSizer1->Add( m_notebook1, 1, wxEXPAND|wxALL, 5 );
 	
 	
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
@@ -165,12 +188,12 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	m_resInActiveTab = new wxRadioButton( this, wxID_ANY, _("Active tab (overwrite last search)"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_resInActiveTab, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
-	fgSizer1->Add( gSizer1, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
+	fgSizer1->Add( gSizer1, 0, wxTOP|wxBOTTOM, 5 );
 	
 	
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	bSizer91->Add( fgSizer1, 0, wxEXPAND|wxALL, 5 );
+	bSizer91->Add( fgSizer1, 1, wxEXPAND|wxALL, 5 );
 	
 	bSizer1->Add( bSizer91, 1, wxEXPAND, 5 );
 	
@@ -217,8 +240,8 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	m_matchCase->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_matchWholeWord->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_regualrExpression->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
-	m_printScope->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_checkBoxSaveFilesBeforeSearching->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
+	m_printScope->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_find->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_find->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FindInFilesDialogBase::OnFindWhatUI ), NULL, this );
 	m_replaceAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
@@ -239,12 +262,13 @@ FindInFilesDialogBase::~FindInFilesDialogBase()
 	m_matchCase->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_matchWholeWord->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_regualrExpression->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
-	m_printScope->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_checkBoxSaveFilesBeforeSearching->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
+	m_printScope->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_find->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_find->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FindInFilesDialogBase::OnFindWhatUI ), NULL, this );
 	m_replaceAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_replaceAll->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FindInFilesDialogBase::OnFindWhatUI ), NULL, this );
 	m_stop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_cancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
+	
 }

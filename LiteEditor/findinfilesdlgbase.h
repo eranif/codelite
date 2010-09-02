@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version May  4 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -23,7 +23,11 @@
 #include <wx/listbox.h>
 #include <wx/choice.h>
 #include <wx/checkbox.h>
-#include <wx/statbox.h>
+#include <wx/panel.h>
+#include <wx/bitmap.h>
+#include <wx/image.h>
+#include <wx/icon.h>
+#include <wx/notebook.h>
 #include <wx/radiobut.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
@@ -53,11 +57,14 @@ class FindInFilesDialogBase : public wxDialog
 		wxChoice* m_choiceEncoding;
 		
 		wxStaticText* m_staticText7;
+		wxNotebook* m_notebook1;
+		wxPanel* m_panel1;
 		wxCheckBox* m_matchCase;
 		wxCheckBox* m_matchWholeWord;
 		wxCheckBox* m_regualrExpression;
-		wxCheckBox* m_printScope;
 		wxCheckBox* m_checkBoxSaveFilesBeforeSearching;
+		wxPanel* m_panel2;
+		wxCheckBox* m_printScope;
 		
 		wxStaticText* m_staticText6;
 		wxRadioButton* m_resInNewTab;

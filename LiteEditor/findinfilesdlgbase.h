@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May  4 2010)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -65,6 +65,8 @@ class FindInFilesDialogBase : public wxDialog
 		wxCheckBox* m_checkBoxSaveFilesBeforeSearching;
 		wxPanel* m_panel2;
 		wxCheckBox* m_printScope;
+		wxCheckBox* m_checkBoxSkipMatchesFoundInComments;
+		wxCheckBox* m_checkBoxSkipMatchesFoundInStrings;
 		
 		wxStaticText* m_staticText6;
 		wxRadioButton* m_resInNewTab;

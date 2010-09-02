@@ -160,6 +160,11 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
 			if ( accessor.match("\n", i) && (!accessor.match("\\", i-1) && !accessor.match("\\\r", i-2)) ) {
 				// no wrap
 				state = STATE_NORMAL;
+
+			} else if ( accessor.match("//", i)) {
+				// C++ comment, advance i
+				state = STATE_CPP_COMMENT;
+				i++;
 			}
 			break;
 		case STATE_C_COMMENT:
@@ -288,6 +293,12 @@ TextStatesPtr CppWordScanner::states()
 			if ( accessor.match("\n", i) && (!accessor.match("\\", i-1) && !accessor.match("\\\r", i-2)) ) {
 				// no wrap
 				state = STATE_NORMAL;
+
+			} else if ( accessor.match("//", i)) {
+				// C++ comment, advance i
+				state = STATE_CPP_COMMENT;
+				bitmap->SetState(i, STATE_CPP_COMMENT, depth, lineNo);
+				i++;
 			}
 			break;
 		case STATE_C_COMMENT:
@@ -460,7 +471,7 @@ int TextStates::LineToPos(int lineNo)
 	if(IsOk() == false)
 		return wxNOT_FOUND;
 
-	if(lineToPos.empty() || (int)lineToPos.size() < lineNo)
+	if(lineToPos.empty() || (int)lineToPos.size() < lineNo || lineNo < 0)
 		return wxNOT_FOUND;
 
 	return lineToPos[lineNo];

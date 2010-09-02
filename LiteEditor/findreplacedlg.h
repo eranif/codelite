@@ -33,15 +33,16 @@ class wxCheckBox;
 class wxButton;
 class wxStaticText;
 
-#define wxFRD_MATCHCASE                     0x00000001
-#define wxFRD_MATCHWHOLEWORD                0x00000002
-#define wxFRD_REGULAREXPRESSION             0x00000004
-#define wxFRD_SEARCHUP                      0x00000008
-#define wxFRD_WRAPSEARCH                    0x00000010
-#define wxFRD_SELECTIONONLY                 0x00000020
-/*#define wxFRD_USEFONTENCODING               0x00000040*/
-#define wxFRD_DISPLAYSCOPE                  0x00000080
-#define wxFRD_SAVE_BEFORE_SEARCH            0x00000100
+#define wxFRD_MATCHCASE             0x00000001
+#define wxFRD_MATCHWHOLEWORD        0x00000002
+#define wxFRD_REGULAREXPRESSION     0x00000004
+#define wxFRD_SEARCHUP              0x00000008
+#define wxFRD_WRAPSEARCH            0x00000010
+#define wxFRD_SELECTIONONLY         0x00000020
+#define wxFRD_DISPLAYSCOPE          0x00000080
+#define wxFRD_SAVE_BEFORE_SEARCH    0x00000100
+#define wxFRD_SKIP_COMMENTS         0x00000200
+#define wxFRD_SKIP_STRINGS          0x00000400
 
 #define FIND_DLG 0
 #define REPLACE_DLG 1
@@ -77,10 +78,11 @@ private:
 	void TruncateArray(wxArrayString &arr, size_t maxSize);
 
 public:
-	FindReplaceData()
-			: m_flags(0) {}
+	FindReplaceData() : m_flags(0)
+	{}
 
-	virtual ~FindReplaceData() {}
+	virtual ~FindReplaceData()
+	{}
 
 	// Setters/Getters
 	const size_t GetFlags() const {

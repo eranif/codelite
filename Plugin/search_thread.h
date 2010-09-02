@@ -32,6 +32,7 @@
 #include "singleton.h"
 #include "wx/event.h"
 #include "wx/filename.h"
+#include "cppwordscanner.h"
 #include <wx/regex.h>
 #include "worker_thread.h"
 #include "stringsearcher.h"
@@ -193,6 +194,25 @@ public:
 		return m_owner;
 	}
 
+	bool HasCppOptions() const {
+		return (m_flags | wxSD_SKIP_COMMENTS) || (m_flags | wxSD_SKIP_STRINGS);
+	}
+
+	void SetSkipComments(bool d) {
+		SetOption(wxSD_SKIP_COMMENTS, d);
+	}
+
+	void SetSkipStrings(bool d) {
+		SetOption(wxSD_SKIP_STRINGS, d);
+	}
+
+	bool GetSkipComments() const {
+		return (m_flags & wxSD_SKIP_COMMENTS);
+	}
+
+	bool GetSkipStrings() const {
+		return (m_flags & wxSD_SKIP_STRINGS);
+	}
 };
 
 //------------------------------------------
@@ -464,10 +484,10 @@ private:
 	void DoSearchFile(const wxString &fileName, const SearchData *data);
 
 	// Perform search on a line
-	void DoSearchLine(const wxString &line, const int lineNum, const wxString &fileName, const SearchData *data);
+	void DoSearchLine(const wxString &line, const int lineNum, const wxString &fileName, const SearchData *data, TextStatesPtr statesPtr);
 
 	// Perform search on a line using regular expression
-	void DoSearchLineRE(const wxString &line, const int lineNum, const wxString &fileName, const SearchData *data);
+	void DoSearchLineRE(const wxString &line, const int lineNum, const wxString &fileName, const SearchData *data, TextStatesPtr statesPtr);
 
 	// Send an event to the notified window
 	void SendEvent(wxEventType type, wxEvtHandler *owner);

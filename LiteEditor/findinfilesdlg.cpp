@@ -62,6 +62,8 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 	m_regualrExpression->SetValue(m_data.GetFlags() & wxFRD_REGULAREXPRESSION);
 	m_printScope->SetValue(m_data.GetFlags() & wxFRD_DISPLAYSCOPE);
 	m_checkBoxSaveFilesBeforeSearching->SetValue(m_data.GetFlags() & wxFRD_SAVE_BEFORE_SEARCH);
+	m_checkBoxSkipMatchesFoundInComments->SetValue(m_data.GetFlags() & wxFRD_SKIP_COMMENTS);
+	m_checkBoxSkipMatchesFoundInStrings->SetValue(m_data.GetFlags() & wxFRD_SKIP_STRINGS);
 
 	// Set encoding
 	wxArrayString  astrEncodings;
@@ -106,53 +108,6 @@ FindInFilesDialog::~FindInFilesDialog()
 {
 }
 
-void FindInFilesDialog::SetSearchData(const SearchData &data)
-{
-	m_data.SetFindString(data.GetFindString());
-
-	size_t flags = 0;
-	flags |= data.IsMatchCase()         ? wxFRD_MATCHCASE         : 0;
-	flags |= data.IsMatchWholeWord()    ? wxFRD_MATCHWHOLEWORD    : 0;
-	flags |= data.IsRegularExpression() ? wxFRD_REGULAREXPRESSION : 0;
-	flags |= data.GetDisplayScope()     ? wxFRD_DISPLAYSCOPE      : 0;
-	m_data.SetFlags(flags);
-
-	m_findString->SetValue(data.GetFindString());
-	m_matchCase->SetValue(data.IsMatchCase());
-	m_matchWholeWord->SetValue(data.IsMatchWholeWord());
-	m_regualrExpression->SetValue(data.IsRegularExpression());
-
-	// Set encoding
-	int where = m_choiceEncoding->FindString(data.GetEncoding());
-
-	if(where != wxNOT_FOUND) {
-		m_choiceEncoding->SetSelection(where);
-
-	} else {
-		// try to locate the ISO-8859-1 encoding
-		where = m_choiceEncoding->FindString(wxT("ISO-8859-1"));
-		if(where != wxNOT_FOUND) {
-			m_choiceEncoding->SetSelection(where);
-
-		} else if(m_choiceEncoding->IsEmpty() == false) {
-			m_choiceEncoding->SetSelection(0);
-		}
-
-	}
-
-	m_printScope->SetValue(data.GetDisplayScope());
-	m_fileTypes->SetValue(data.GetExtensions());
-
-	m_listPaths->Clear();
-	const wxArrayString& rootDirs = data.GetRootDirs();
-	for (size_t i = 0; i < rootDirs.Count(); ++i) {
-		m_listPaths->Append(rootDirs.Item(i));
-	}
-	if (rootDirs.IsEmpty() == false) {
-		m_dirPicker->SetPath(rootDirs.Item(0));
-	}
-}
-
 void FindInFilesDialog::SetRootDir(const wxString &rootDir)
 {
 	m_dirPicker->SetPath(rootDir);
@@ -191,12 +146,14 @@ SearchData FindInFilesDialog::DoGetSearchData()
 		findStr = m_findString->GetValue();
 	}
 
-	data.SetFindString(findStr);
-	data.SetMatchCase( (m_data.GetFlags() & wxFRD_MATCHCASE) != 0);
-	data.SetMatchWholeWord((m_data.GetFlags() & wxFRD_MATCHWHOLEWORD) != 0);
+	data.SetFindString       (findStr);
+	data.SetMatchCase        ( (m_data.GetFlags() & wxFRD_MATCHCASE) != 0);
+	data.SetMatchWholeWord   ((m_data.GetFlags() & wxFRD_MATCHWHOLEWORD) != 0);
 	data.SetRegularExpression((m_data.GetFlags() & wxFRD_REGULAREXPRESSION) != 0);
-	data.SetDisplayScope((m_data.GetFlags() & wxFRD_DISPLAYSCOPE) != 0);
-	data.SetEncoding(m_choiceEncoding->GetStringSelection());
+	data.SetDisplayScope     ((m_data.GetFlags() & wxFRD_DISPLAYSCOPE) != 0);
+	data.SetEncoding         (m_choiceEncoding->GetStringSelection());
+	data.SetSkipComments     (m_data.GetFlags() & wxFRD_SKIP_COMMENTS);
+	data.SetSkipStrings      (m_data.GetFlags() & wxFRD_SKIP_STRINGS);
 
 	wxArrayString rootDirs;
 	for (size_t i = 0; i < m_listPaths->GetCount(); ++i) {
@@ -319,6 +276,19 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 			flags |= wxFRD_SAVE_BEFORE_SEARCH;
 		} else {
 			flags &= ~(wxFRD_SAVE_BEFORE_SEARCH);
+		}
+	} else if (btnClicked == m_checkBoxSkipMatchesFoundInComments) {
+		if(m_checkBoxSkipMatchesFoundInComments->IsChecked()){
+			flags |= wxFRD_SKIP_COMMENTS;
+		} else {
+			flags &= ~wxFRD_SKIP_COMMENTS;
+		}
+
+	} else if (btnClicked == m_checkBoxSkipMatchesFoundInStrings) {
+		if(m_checkBoxSkipMatchesFoundInStrings->IsChecked()){
+			flags |= wxFRD_SKIP_STRINGS;
+		} else {
+			flags &= ~wxFRD_SKIP_STRINGS;
 		}
 	}
 

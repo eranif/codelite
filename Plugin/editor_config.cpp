@@ -99,7 +99,7 @@ bool EditorConfig::DoLoadDefaultSettings()
 	if ( !m_fileName.FileExists() ) {
 		return false;
 	}
-	
+
 	return m_doc->Load(m_fileName.GetFullPath());
 }
 
@@ -526,4 +526,14 @@ void SimpleRectValue::Serialize(Archive& arch)
 void EditorConfig::SetInstallDir(const wxString& instlDir)
 {
 	m_installDir = instlDir;
+}
+
+wxArrayString EditorConfig::GetLexersThemes()
+{
+	wxArrayString themes;
+	std::map<wxString, LexersInfo*>::iterator iter = m_lexers.begin();
+	for(; iter != m_lexers.end(); iter++) {
+		themes.Add( iter->first );
+	}
+	return themes;
 }

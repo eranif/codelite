@@ -82,31 +82,31 @@ wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	page->SetSizer(sz);
 
-	wxArrayString themesArr;
-
-	wxString path = ManagerST::Get()->GetStarupDirectory();
-	path << wxT("/lexers/");
-
-	wxArrayString files;
-	wxArrayString dirs;
-	wxDir::GetAllFiles(path, &files, wxEmptyString, wxDIR_DIRS | wxDIR_FILES);
-	//filter out all non-directories
-	wxFileName base_path( path );
-	for (size_t i=0; i<files.GetCount(); i++) {
-		wxFileName fn( files.Item(i) );
-		wxString new_path( fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) );
-		if (new_path != base_path.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR)) {
-			fn.MakeRelativeTo(base_path.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-			new_path = fn.GetPath();
-			if (dirs.Index(new_path) == wxNOT_FOUND) {
-				dirs.Add(new_path);
-			}
-		}
-	}
+//	wxArrayString themesArr;
+//
+//	wxString path = ManagerST::Get()->GetStarupDirectory();
+//	path << wxT("/lexers/");
+//
+//	wxArrayString files;
+//	wxArrayString dirs;
+//	wxDir::GetAllFiles(path, &files, wxEmptyString, wxDIR_DIRS | wxDIR_FILES);
+//	//filter out all non-directories
+//	wxFileName base_path( path );
+//	for (size_t i=0; i<files.GetCount(); i++) {
+//		wxFileName fn( files.Item(i) );
+//		wxString new_path( fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) );
+//		if (new_path != base_path.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR)) {
+//			fn.MakeRelativeTo(base_path.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+//			new_path = fn.GetPath();
+//			if (dirs.Index(new_path) == wxNOT_FOUND) {
+//				dirs.Add(new_path);
+//			}
+//		}
+//	}
 	wxStaticText *txt = new wxStaticText(page, wxID_ANY, wxT("Colouring scheme:"), wxDefaultPosition, wxDefaultSize, 0);
 	sz->Add(txt, 0, wxEXPAND|wxALL, 5);
 
-	m_themes = new wxChoice(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, dirs, 0 );
+	m_themes = new wxChoice(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, EditorConfigST::Get()->GetLexersThemes(), 0 );
 	sz->Add(m_themes, 0, wxEXPAND|wxALL, 5);
 
 	if (m_themes->IsEmpty() == false) {

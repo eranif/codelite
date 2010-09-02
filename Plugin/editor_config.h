@@ -130,6 +130,8 @@ public:
 
 	//load lexers again, based on the active theme
 	void LoadLexers(bool loadDefault);
+	wxArrayString GetLexersThemes();
+
 	void Init(const wxChar *revision, const wxChar* version) {
 		this->m_svnRevision  = revision;
 		this->m_version      = version;

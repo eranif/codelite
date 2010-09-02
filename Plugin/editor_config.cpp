@@ -424,6 +424,7 @@ void EditorConfig::LoadLexers(bool loadDefault)
 		                    wxT("lexers") +
 		                    wxFileName::GetPathSeparator() +
 		                    fn.GetFullName());
+							
 		if ( wxFileName::FileExists( userLexer ) ) {
 			if (!loadDefault) {
 				fileToLoad = userLexer;
@@ -433,7 +434,8 @@ void EditorConfig::LoadLexers(bool loadDefault)
 				wxRemoveFile(userLexer);
 			}
 		}
-
+		
+		
 		// Load the lexers
 		wxXmlDocument doc(fileToLoad);
 		if(doc.IsOk()) {

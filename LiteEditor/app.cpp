@@ -525,7 +525,6 @@ bool CodeLiteApp::CopySettings(const wxString &destDir, wxString& installPath)
 	// /usr/local/share/codelite/ (Linux) or at codelite.app/Contents/SharedSupport
 	///////////////////////////////////////////////////////////////////////////////////////////
 	CopyDir(installPath + wxT("/templates/"), destDir + wxT("/templates/"));
-	CopyDir(installPath + wxT("/lexers/"), destDir + wxT("/lexers/"));
 	massCopy  (installPath + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));
 	wxCopyFile(installPath + wxT("/rc/menu.xrc"), destDir + wxT("/rc/menu.xrc"));
 	wxCopyFile(installPath + wxT("/index.html"), destDir + wxT("/index.html"));

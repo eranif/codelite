@@ -307,8 +307,6 @@ bool CodeLiteApp::OnInit()
 		wxLogNull noLog;
 		wxMkdir(homeDir);
 		wxMkdir(homeDir + wxT("/lexers/"));
-		wxMkdir(homeDir + wxT("/lexers/Default"));
-		wxMkdir(homeDir + wxT("/lexers/BlackTheme"));
 		wxMkdir(homeDir + wxT("/rc/"));
 		wxMkdir(homeDir + wxT("/images/"));
 		wxMkdir(homeDir + wxT("/templates/"));
@@ -336,8 +334,6 @@ bool CodeLiteApp::OnInit()
 		//Create the directory structure
 		wxMkdir(homeDir);
 		wxMkdir(homeDir + wxT("/lexers/"));
-		wxMkdir(homeDir + wxT("/lexers/Default"));
-		wxMkdir(homeDir + wxT("/lexers/BlackTheme"));
 		wxMkdir(homeDir + wxT("/rc/"));
 		wxMkdir(homeDir + wxT("/images/"));
 		wxMkdir(homeDir + wxT("/templates/"));
@@ -406,6 +402,13 @@ bool CodeLiteApp::OnInit()
 
 	//read the last frame size from the configuration file
 	// Initialise editor configuration files
+#ifdef __WXMSW__
+	{
+		wxLogNull noLog;
+		wxMkdir(wxStandardPaths::Get().GetUserDataDir());
+	}
+#endif
+
 	EditorConfigST::Get()->SetInstallDir( mgr->GetInstallDir() );
 	EditorConfig *cfg = EditorConfigST::Get();
 	if ( !cfg->Load() ) {

@@ -195,7 +195,7 @@ public:
 	}
 
 	bool HasCppOptions() const {
-		return (m_flags | wxSD_SKIP_COMMENTS) || (m_flags | wxSD_SKIP_STRINGS);
+		return (m_flags & wxSD_SKIP_COMMENTS) || (m_flags & wxSD_SKIP_STRINGS);
 	}
 
 	void SetSkipComments(bool d) {

@@ -7,7 +7,6 @@ General
 - Refactoring: add an option to add 'add forward decl'
 - Refactoring: refactor local variable:
 	add some progress indicator
-	add support for function arguments
 	highlight replacements
 
 2.9 Porting, known issues:

@@ -1107,7 +1107,7 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, bool quickRet
 		wxFrame *frame = dynamic_cast<wxFrame*>( wxTheApp->GetTopWindow() );
 		if (frame) {
 			wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
-			frame->AddPendingEvent(retaggingCompletedEvent);
+			frame->GetEventHandler()->AddPendingEvent(retaggingCompletedEvent);
 		}
 		return;
 	}
@@ -1121,7 +1121,7 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, bool quickRet
 		wxFrame *frame = dynamic_cast<wxFrame*>( wxTheApp->GetTopWindow() );
 		if (frame) {
 			wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
-			frame->AddPendingEvent(retaggingCompletedEvent);
+			frame->GetEventHandler()->AddPendingEvent(retaggingCompletedEvent);
 		}
 		return;
 	}

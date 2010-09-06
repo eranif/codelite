@@ -46,7 +46,9 @@ OutputViewControlBar::OutputViewControlBar(wxWindow* win, OutputPaneBook *book, 
 	if ( m_aui ) {
 		m_aui->Connect(wxEVT_AUI_RENDER, wxAuiManagerEventHandler(OutputViewControlBar::OnRender), NULL, this);
 	}
-	wxTheApp->Connect ( wxEVT_EDITOR_CLICKED         , wxCommandEventHandler ( OutputViewControlBar::OnEditorFocus          ), NULL, this );
+	wxTheApp->Connect ( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputViewControlBar::OnEditorFocus  ), NULL, this );
+	wxTheApp->Connect ( wxEVT_BUILD_STARTED  , wxCommandEventHandler ( OutputViewControlBar::OnBuildStarted ), NULL, this );
+	wxTheApp->Connect ( wxEVT_BUILD_ENDED    , wxCommandEventHandler ( OutputViewControlBar::OnBuildEnded   ), NULL, this );
 	mainSizer->Add(m_buttons, 1, wxEXPAND);
 	mainSizer->Layout();
 }

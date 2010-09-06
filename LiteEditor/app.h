@@ -38,9 +38,10 @@ class CodeLiteApp : public wxApp
 	bool                     m_loadPlugins;
 
 private: // Methods
-	bool CopySettings(const wxString &destDir, wxString& installPath);
-	bool CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir);
-	void MSWReadRegistry();
+	bool     CopySettings(const wxString &destDir, wxString& installPath);
+	bool     CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir);
+	void     MSWReadRegistry();
+	wxString DoFindMenuFile(const wxString& installDirectory);
 
 #ifdef __WXMSW__
 	HINSTANCE m_handler;

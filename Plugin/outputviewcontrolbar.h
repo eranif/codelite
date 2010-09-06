@@ -36,6 +36,7 @@ class OutputViewControlBar : public wxPanel
 #endif
 
 	std::vector<wxToolBarToolBase*> m_tools;
+	bool                            m_buildInProgress;
 
 protected:
 	void DoSetButtonState(int btnId);
@@ -53,6 +54,8 @@ public:
 	void OnPageChanged          (wxChoicebookEvent   &event);
 	void OnRender               (wxAuiManagerEvent   &event);
 	void OnEditorFocus          (wxCommandEvent      &event);
+	void OnBuildStarted         (wxCommandEvent      &event);
+	void OnBuildEnded           (wxCommandEvent      &event);
 
 protected:
 	void        DoTogglePane     (bool hide = true);

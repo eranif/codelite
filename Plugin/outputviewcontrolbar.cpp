@@ -23,10 +23,11 @@
 #include <wx/toolbar.h>
 
 OutputViewControlBar::OutputViewControlBar(wxWindow* win, OutputPaneBook *book, wxAuiManager *aui, wxWindowID id)
-		: wxPanel  (win, id, wxDefaultPosition, wxSize(-1, -1))
-		, m_aui    (aui)
-		, m_book   (book)
-		, m_buttons(NULL)
+		: wxPanel          (win, id, wxDefaultPosition, wxSize(-1, -1))
+		, m_aui            (aui)
+		, m_book           (book)
+		, m_buttons        (NULL)
+		, m_buildInProgress(false)
 {
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer( mainSizer );
@@ -241,6 +242,11 @@ void OutputViewControlBar::OnEditorFocus(wxCommandEvent& event)
 			}
 		}
 
+		// avoid auto-hiding when build is in progress
+		if(m_buildInProgress) {
+			return;
+		}
+
 		// and hide the output view
 		DoTogglePane(true);
 	}
@@ -294,3 +300,16 @@ void OutputViewControlBar::DoSetButtonState(const wxString& label)
 #endif
 	DoSetButtonState(wxNOT_FOUND);
 }
+
+void OutputViewControlBar::OnBuildEnded(wxCommandEvent& event)
+{
+	m_buildInProgress = false;
+	event.Skip();
+}
+
+void OutputViewControlBar::OnBuildStarted(wxCommandEvent& event)
+{
+	m_buildInProgress = true;
+	event.Skip();
+}
+

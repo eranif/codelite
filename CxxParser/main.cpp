@@ -22,11 +22,11 @@ void testColorLocals()
 
 int main()
 {
-	char *buf = loadFile("test.h");
+	char *buf = loadFile("../Debug/test.h");
 
 	//print the scope name
-	//testScopeParser(buf);
-	testVarParser(buf);
+	testScopeParser(buf);
+	//testVarParser(buf);
 	//testExprParser(buf);
 	//testFuncParser(buf);
 	//testTypedefParser(buf);

@@ -14,6 +14,9 @@
 #define YYSTYPE std::string
 #define YYDEBUG 0        /* get the pretty debugging code to compile*/
 static std::string readInitializer(const char* delim);
+static void readClassName();
+
+static std::string className;
 
 static std::string templateInitList;
 int cl_scope_parse();
@@ -92,6 +95,10 @@ extern void cl_scope_less(int count);
 %token  LE_CONST_CAST
 %token  LE_REINTERPRET_CAST
 
+%token LE_DECLSPEC
+%token LE_DLLIMPORT
+%token LE_DLLIEXPORT
+
 %start   translation_unit
 
 %%
@@ -135,8 +142,8 @@ external_decl			:	class_decl
 						| 	scope_increaer
 						|  	question_expression
 						| 	error {
-//								printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_scope_text, cl_scope_lineno);
-//								syncParser();
+								//printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_scope_text, cl_scope_lineno);
+								//syncParser();
 							}
 						;
 
@@ -160,26 +167,26 @@ opt_template_qualifier	: /*empty*/
 								$$ = $1 + $2 + $3 + $4;
 							}
 							;
-/*inheritance*/
-derivation_list			:	/*empty*/ {$$ = "";}
-							|	parent_class {$$ = $1;}
-							| 	derivation_list ',' parent_class {$$ = $1 + $2 + $3;}
-							;
+///*inheritance*/
+//derivation_list			:	/*empty*/ {$$ = "";}
+//							|	parent_class {$$ = $1;}
+//							| 	derivation_list ',' parent_class {$$ = $1 + $2 + $3;}
+//							;
 
-parent_class				: 	access_specifier class_name opt_template_specifier {$$ = $1 + " " + $2 + $3;}
+//parent_class				: 	access_specifier class_name opt_template_specifier {$$ = $1 + " " + $2 + $3;}
 							;
-class_name                  : LE_IDENTIFIER                    {$$ = $1;}
-							| class_name LE_CLCL LE_IDENTIFIER {$$ = $1 + $2 + $3;}
+//class_name                  : LE_IDENTIFIER                    {$$ = $1;}
+//							| class_name LE_CLCL LE_IDENTIFIER {$$ = $1 + $2 + $3;}
                             ;
 
-opt_template_specifier	: /*empty*/	{$$ = "";}
-							| '<' template_parameter_list '>' {$$ = $1 + $2 + $3;}
-							;
+//opt_template_specifier	: /*empty*/	{$$ = "";}
+//							| '<' template_parameter_list '>' {$$ = $1 + $2 + $3;}
+//							;
 
-access_specifier			:	/*empty*/	{$$ = "";}
-							|	LE_PUBLIC {$$ = $1;}
-							| 	LE_PRIVATE {$$ = $1;}
-							| 	LE_PROTECTED {$$ = $1;}
+//access_specifier			:	/*empty*/	{$$ = "";}
+//							|	LE_PUBLIC {$$ = $1;}
+//							| 	LE_PRIVATE {$$ = $1;}
+//							| 	LE_PROTECTED {$$ = $1;}
 							;
 
 /* the following rules are for template parameters no declarations! */
@@ -223,23 +230,15 @@ namespace_decl	:	stmnt_starter LE_NAMESPACE LE_IDENTIFIER '{'
 							
 						}
 					;
-opt_class_qualifier 	: /*empty*/{$$ = "";}
-							| LE_MACRO {$$ = $1;}
-							;
-
 /* the class rule itself */
-class_decl	:	stmnt_starter opt_template_qualifier class_keyword opt_class_qualifier LE_IDENTIFIER '{'
+class_decl	:	stmnt_starter opt_template_qualifier class_keyword
 				{
+					readClassName();
 					//increase the scope level
-					currentScope.push_back($5);
-					printScopeName();
-				}
-
-				| 	stmnt_starter opt_template_qualifier class_keyword opt_class_qualifier LE_IDENTIFIER ':' derivation_list '{'
-				{
-					//increase the scope level
-					currentScope.push_back($5);
-					printScopeName();
+					if(className.empty() == false) {
+						currentScope.push_back( className );
+						printScopeName();
+					}
 				}
 				;
 
@@ -267,9 +266,9 @@ question_expression : '?'
 							consumeNotIncluding(';');
 						}
 
-class_keyword: 	LE_CLASS		{$$ = $1;}
-					|	LE_STRUCT	{$$ = $1;}
-					;
+class_keyword: 	LE_CLASS	{$$ = $1;}
+			 |	LE_STRUCT	{$$ = $1;}
+			 ;
 
 func_name: LE_IDENTIFIER {$$ = $1;}
 		 | LE_OPERATOR any_operator {$$ = $1 + $2;}
@@ -461,32 +460,6 @@ void consumeInitializationList(){
 	}
 }
 
-//swallow all tokens up to the first '{'
-void consumeBody (){
-	std::string cs = "{";
-	int depth = 1;
-	while( true ) {
-		int ch = cl_scope_lex();
-		if(ch == 0){
-			break;
-		}
-
-		cs += cl_scope_text;
-		cs += " ";
-
-		if(ch == '{'){
-			depth++;
-		}else if(ch == '}'){
-			depth--;
-			if(depth == 0){
-				cl_scope_less(0);
-				break;
-			}
-		}
-	}
-	printf("Consumed body: [%s]\n", cs.c_str());
-}
-
 void consumeFuncArgList(){
 	int depth = 1;
 	while(depth > 0){
@@ -502,6 +475,62 @@ void consumeFuncArgList(){
 		else if(ch == '('){
 			depth ++ ;
 			continue;
+		}
+	}
+}
+
+void readClassName()
+{
+#define NEXT_TOK()          c = cl_scope_lex(); if(c == 0) {className.clear(); return;}
+#define BREAK_IF_NOT(x)     if(c != (int)x) {className.clear(); break;}
+#define BREAK_IF_NOT2(x, y) if(c != (int)x && c != (int)y) break;
+#define BREAK_IF(x)         if(c == (int)x) break;
+
+	className.clear();
+	
+	// look ahead and see if we can see another 
+	while( true ){
+		int c = cl_scope_lex();
+		if(c == 0){ // EOF?
+			className.clear();
+			break;
+		}
+		
+		if(c == LE_IDENTIFIER) {
+			className = cl_scope_text;
+		
+		} else if(c == LE_DECLSPEC && className.empty()) {
+			// found decl sepc
+			
+			// Next token is '('
+			NEXT_TOK();
+			BREAK_IF_NOT('(');
+			
+			// Next token is LE_DLLIMPORT or LE_DLLEXPORT
+			NEXT_TOK();
+			BREAK_IF_NOT2(LE_DLLIEXPORT, LE_DLLIMPORT);
+			
+			// Next token should be closing brace
+			NEXT_TOK();
+			BREAK_IF_NOT(')');
+			
+		} else if( (c == '{') && (!className.empty()) ){
+			// The following is the class content
+			break;
+			
+		} else if( c == ':' && !className.empty() ) {
+			// we got the class name, and we found ':'
+			// read all tokens up until the first open brace
+			while (true) {
+				NEXT_TOK();
+				if( c == (int)'{') {
+					return;
+				}
+			}
+		} else {
+			className.clear();
+			break;
+			
 		}
 	}
 }

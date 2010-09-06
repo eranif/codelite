@@ -36,7 +36,7 @@
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="test_suite">
-    <File Name="Release/test.h"/>
+    <File Name="Debug/test.h"/>
   </VirtualDirectory>
   <Dependencies Name="Release"/>
   <Settings Type="Executable">

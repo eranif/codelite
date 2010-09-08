@@ -611,8 +611,13 @@ createUnInstallTarget()
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/include/UnitTest++/" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/lib/libUnitTest++.a" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/share/codelite" >> Makefile
+	# Avoid deleting /usr/lib
+	if [ "$non_plugins_dir" != "/usr/lib" ] && [ "$non_plugins_dir" != "/usr/lib/" ] ; then
 	echo "	@\$(RM) -fr  \$(DESTDIR)$non_plugins_dir/" >> Makefile
+	fi
+	if [ "$plugins_dir" != "/usr/lib" ] && [ "$plugins_dir" != "/usr/lib/" ] ; then
 	echo "	@\$(RM) -fr  \$(DESTDIR)$plugins_dir/" >> Makefile
+    fi
     # Check write permission for /usr/share/applications, in case we're using a 'local' prefix and not doing sudo
 	echo "	@if test -w \$(DESTDIR)$prefix/share/applications ; then \\" >> Makefile
 	    echo "	  \$(RM) -fr \$(DESTDIR)$prefix/share/applications/codelite.desktop; \\" >> Makefile
@@ -698,9 +703,12 @@ do
 			value=`echo $1 | cut -d= -f2`
 
 			if [ "$key" = "--prefix" ]; then
-				prefix=$value
+				prefix="$value"
+				# Make plugins_dir a subdir of this by default, though it may be altered below
+				plugins_dir="$value""/lib/codelite"
+
 			elif [ "$key" = "--plugins-dir" ]; then
-				plugins_dir=$value
+				plugins_dir="$value"
 			fi
 		fi
 	shift

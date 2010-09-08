@@ -690,8 +690,7 @@ void SubversionView::OnResolve(wxCommandEvent& event)
 		return;
 	}
 
-	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
-	command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" resolved ");
+	command << m_plugin->GetSvnExeName(false) << loginString << wxT(" resolved ");
 
 	// Concatenate list of files to be updated
 	for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {

@@ -318,6 +318,17 @@ void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const
 				}
 			}
 
+			result.SetMatchState(CppWordScanner::STATE_NORMAL);
+			if(canAdd && statesPtr && position != wxNOT_FOUND && data->GetColourComments()) {
+				// set the match state
+				if(statesPtr->states.size() > (size_t)position) {
+					short state = statesPtr->states.at(position).state;
+					if(state == CppWordScanner::STATE_C_COMMENT || state == CppWordScanner::STATE_CPP_COMMENT) {
+						result.SetMatchState(state);
+					}
+				}
+			}
+
 			if(canAdd) {
 				m_results.push_back(result);
 				m_summary.SetNumMatchesFound(m_summary.GetNumMatchesFound() + 1);
@@ -419,6 +430,17 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const w
 					short state = statesPtr->states.at(position).state;
 					if(state == CppWordScanner::STATE_DQ_STRING || state == CppWordScanner::STATE_SINGLE_STRING) {
 						canAdd = false;
+					}
+				}
+			}
+
+			result.SetMatchState(CppWordScanner::STATE_NORMAL);
+			if(canAdd && statesPtr && position != wxNOT_FOUND && data->GetColourComments()) {
+				// set the match state
+				if(statesPtr->states.size() > (size_t)position) {
+					short state = statesPtr->states.at(position).state;
+					if(state == CppWordScanner::STATE_C_COMMENT || state == CppWordScanner::STATE_CPP_COMMENT) {
+						result.SetMatchState(state);
 					}
 				}
 			}

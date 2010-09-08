@@ -43,6 +43,7 @@ class wxStaticText;
 #define wxFRD_SAVE_BEFORE_SEARCH    0x00000100
 #define wxFRD_SKIP_COMMENTS         0x00000200
 #define wxFRD_SKIP_STRINGS          0x00000400
+#define wxFRD_COLOUR_COMMENTS       0x00000800
 
 #define FIND_DLG 0
 #define REPLACE_DLG 1

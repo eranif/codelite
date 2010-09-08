@@ -124,13 +124,14 @@
 #define SCLEX_GCC_MAKE_ENTER   6
 #define SCLEX_GCC_MAKE_LEAVING 7
 
-#define SCLEX_FIF 151
-#define SCLEX_FIF_DEFAULT 0
-#define SCLEX_FIF_FILE	  1
-#define SCLEX_FIF_MATCH	  2
-#define SCLEX_FIF_FILE_SHORT  3
-#define SCLEX_FIF_PROJECT 4
-#define SCLEX_FIF_SCOPE 5
+#define SCLEX_FIF               151
+#define SCLEX_FIF_DEFAULT       0
+#define SCLEX_FIF_FILE          1
+#define SCLEX_FIF_MATCH         2
+#define SCLEX_FIF_FILE_SHORT    3
+#define SCLEX_FIF_PROJECT       4
+#define SCLEX_FIF_SCOPE         5
+#define SCLEX_FIF_MATCH_COMMENT 6
 
 #define SCLEX_SVN 152
 #define SCLEX_SVN_DEFAULT   0

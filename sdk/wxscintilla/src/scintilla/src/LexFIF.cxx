@@ -39,6 +39,7 @@ static void ColouriseFifDoc(unsigned int pos, int length, int /*initStyle*/,
         if (firstchar == -1) {
             firstchar = styler[pos]; // first char of each line
         }
+		// check for the 'Line number style'
         if (styler[pos] == ':' && firstchar == ' ') {
             if (length > 1 && styler[pos+1] == ' ') {
                 // include the following space
@@ -50,6 +51,25 @@ static void ColouriseFifDoc(unsigned int pos, int length, int /*initStyle*/,
             if (length > 1 && styler[pos+1] == '[') {
                 firstchar = '[';
             }
+		// check for comment section marked with .<spaces> Number :
+        } else if (styler[pos] == ':' && firstchar == '.') {
+            if (length > 1 && styler[pos+1] == ' ') {
+                // include the following space
+                pos++;
+                length--;
+            }
+            styler.ColourTo(pos, SCLEX_FIF_FILE_SHORT);
+            // Continue from pos until EOL and set the style
+			// to SCLEX_FIF_MATCH_COMMENT
+			while( length > 0) {
+				pos++;
+				length--;
+				if(AtEOL(styler, pos))
+					break;
+			}
+			styler.ColourTo(pos, SCLEX_FIF_MATCH_COMMENT);
+			firstchar = -1;
+
 		} else if (styler[pos] == ']' && firstchar == '['){
             if (length > 1 && styler[pos+1] == ' ') {
                 // include the following space

@@ -36,7 +36,8 @@ enum {
 	wxSD_USE_EDITOR_ENCODING = 0x00000010,
 	wxSD_PRINT_SCOPE         = 0x00000020,
 	wxSD_SKIP_COMMENTS       = 0x00000040,
-	wxSD_SKIP_STRINGS        = 0x00000080
+	wxSD_SKIP_STRINGS        = 0x00000080,
+	wxSD_COLOUR_COMMENTS     = 0x00000100
 };
 
 class StringFindReplacer

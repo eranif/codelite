@@ -67,6 +67,7 @@ class FindInFilesDialogBase : public wxDialog
 		wxCheckBox* m_printScope;
 		wxCheckBox* m_checkBoxSkipMatchesFoundInComments;
 		wxCheckBox* m_checkBoxSkipMatchesFoundInStrings;
+		wxCheckBox* m_checkBoxHighlighStringComments;
 		
 		wxStaticText* m_staticText6;
 		wxRadioButton* m_resInNewTab;
@@ -86,6 +87,7 @@ class FindInFilesDialogBase : public wxDialog
 		virtual void OnClearPaths( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClearPathsUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnUseDiffColourForCommentsUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnFindWhatUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	

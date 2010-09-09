@@ -236,6 +236,7 @@ class SearchResult : public wxObject {
 	int      m_columnInChars;
 	int      m_lenInChars;
 	short    m_matchState;
+	wxString m_scope;
 
 public:
 	//ctor-dtor, copy constructor and assignment operator
@@ -261,6 +262,7 @@ public:
 		m_columnInChars = rhs.m_columnInChars;
 		m_lenInChars    = rhs.m_lenInChars;
 		m_matchState    = rhs.m_matchState;
+		m_scope         = rhs.m_scope.c_str();
 		return *this;
 	}
 
@@ -338,6 +340,13 @@ public:
 	}
 	short GetMatchState() const {
 		return m_matchState;
+	}
+
+	void SetScope(const wxString& scope) {
+		this->m_scope = scope.c_str();
+	}
+	const wxString& GetScope() const {
+		return m_scope;
 	}
 	// return a foramtted message
 	wxString GetMessage() const {

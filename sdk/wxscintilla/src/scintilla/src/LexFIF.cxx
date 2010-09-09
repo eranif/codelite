@@ -70,7 +70,7 @@ static void ColouriseFifDoc(unsigned int pos, int length, int /*initStyle*/,
 			styler.ColourTo(pos, SCLEX_FIF_MATCH_COMMENT);
 			firstchar = -1;
 
-		} else if (styler[pos] == ']' && firstchar == '['){
+		} else if (styler[pos] == '{' && firstchar == '}'){
             if (length > 1 && styler[pos+1] == ' ') {
                 // include the following space
                 pos++;

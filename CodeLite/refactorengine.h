@@ -110,13 +110,23 @@ public:
 	void RenameGlobalSymbol(const wxString &symname, const wxFileName& fn, int line, int pos, const wxFileList& files);
 
 	/**
-	 * @brief NOT IMPLEMENTED YET
+	 * @param rename local variable
 	 * @param symname symbol we want to rename
 	 * @param fn the current file name (full path)
 	 * @param line the line where our symbol appears
 	 * @param pos the position of the symbol (this should be pointing to the *start* of the symbol)
 	 */
 	void RenameLocalSymbol (const wxString &symname, const wxFileName& fn, int line, int pos);
+
+	/**
+	 * @brief find usages of given symbol in a list of files
+	 * @param symname symbol to search for
+	 * @param fn active file open which holds the context of the symbol
+	 * @param line the line where the symbol exists
+	 * @param pos the position of the symbol (this should be pointing to the *start* of the symbol)
+	 * @param files list of files to search in
+	 */
+	void FindUsage(const wxString &symname, const wxFileName& fn, int line, int pos, const wxFileList& files);
 };
 
 #endif // REFACTORENGINE_H

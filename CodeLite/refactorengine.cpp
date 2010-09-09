@@ -405,3 +405,112 @@ wxProgressDialog* RefactoringEngine::CreateProgressDialog(const wxString& title,
 	prgDlg->Update(0, title);
 	return prgDlg;
 }
+
+void RefactoringEngine::FindUsage(const wxString& symname, const wxFileName& fn, int line, int pos, const wxFileList& files)
+{
+	// Clear previous results
+	Clear();
+
+	// Container for the results found in the 'files'
+	CppTokensMap l;
+
+	// Load the file and get a state map + the text from the scanner
+	CppWordScanner scanner(fn.GetFullPath());
+
+	// get the current file states
+	TextStatesPtr states = scanner.states();
+	if(!states)
+		return;
+
+	// Attempt to understand the expression that the caret is currently located at (using line:pos:file)
+	RefactorSource rs;
+	if(!DoResolveWord(states, fn, pos + symname.Len(), line, symname, &rs))
+		return;
+
+	wxProgressDialog* prgDlg = CreateProgressDialog(wxT("Stage 1/2: Gathering required information..."), (int)files.size());
+
+	// Search the provided input files for the symbol to rename and prepare
+	// a CppTokensMap
+	for (size_t i=0; i<files.size(); i++) {
+		wxFileName curfile = files.at(i);
+
+		wxString msg;
+		msg << wxT("Parsing: ") << curfile.GetFullName();
+		// update the progress bar
+		if (!prgDlg->Update(i, msg)){
+			prgDlg->Destroy();
+			Clear();
+			return;
+		}
+
+		CppWordScanner tmpScanner(curfile.GetFullPath());
+		tmpScanner.Match(symname, l);
+	}
+	prgDlg->Destroy();
+
+	// load all tokens, first we need to parse the workspace files...
+	std::list<CppToken> tokens;
+
+	// incase no tokens were found (possibly cause of user pressing cancel
+	// abort this operation
+	l.findTokens(symname, tokens);
+	if (tokens.empty())
+		return;
+
+	// sort the tokens
+	tokens.sort();
+
+	RefactorSource target;
+	std::list<CppToken>::iterator iter = tokens.begin();
+	int counter(0);
+
+	TextStatesPtr statesPtr(NULL);
+	wxString      statesPtrFileName;
+	prgDlg = CreateProgressDialog(wxT("Stage 2/2: Parsing matches..."), (int) tokens.size());
+	for (; iter != tokens.end(); iter++) {
+
+		// TODO :: send an event here to report our progress
+		wxFileName f(iter->getFilename());
+		wxString   msg;
+		msg << wxT("Parsing expression ") << counter << wxT("/") << tokens.size() << wxT(" in file: ") << f.GetFullName();
+		if ( !prgDlg->Update(counter, msg) ) {
+			// user clicked 'Cancel'
+			Clear();
+			prgDlg->Destroy();
+			return;
+		}
+
+		counter++;
+		// reset the result
+		target.Reset();
+
+		if(!statesPtr || statesPtrFileName != iter->getFilename()) {
+			// Create new statesPtr
+			CppWordScanner sc(iter->getFilename());
+			statesPtr         = sc.states();
+			statesPtrFileName = iter->getFilename();
+		}
+
+		if(!statesPtr)
+			continue;
+
+		if (DoResolveWord(statesPtr, wxFileName(iter->getFilename()), iter->getOffset(), line, symname, &target)) {
+
+			if (target.name == rs.name && target.scope == rs.scope) {
+				// full match
+				m_candidates.push_back( *iter );
+
+			} else if (target.name == rs.scope && !rs.isClass) {
+				// source is function, and target is class
+				m_candidates.push_back( *iter );
+
+			} else if (target.name == rs.name && rs.isClass) {
+				// source is class, and target is ctor
+				m_candidates.push_back( *iter );
+
+			}
+		}
+	}
+
+	prgDlg->Destroy();
+}

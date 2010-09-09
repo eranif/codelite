@@ -78,8 +78,6 @@ void TabgroupManager::SetTabgroupDirectory()
 
 void TabgroupManager::LoadKnownTabgroups()
 {
-	TransferKnownTabgroupsToTabgroupDir(GetTabgroupDirectory());	// Transitional code
-
 	wxArrayString Tabgrpfiles;
 	// Load tabgroups from the tabgroup dir
 	wxDir::GetAllFiles ( GetTabgroupDirectory(), &Tabgrpfiles, wxT("*.tabgroup"), wxDIR_FILES );
@@ -177,49 +175,4 @@ wxXmlNode* TabgroupManager::DoDeleteTabgroupItem(wxXmlDocument& doc, const wxStr
 
 	return NULL;
 }
-
-
-	//***************** April 2010: Transitional code. Remove sometime ****************************//
-
-#include "editor_config.h"
-void TabgroupManager::TransferKnownTabgroupsToTabgroupDir(const wxString& TabgrpPath)
-{
-	// First transfer any 'recent tabgroups' to the new tabgroup dir
-	wxArrayString previousgroups, newpreviousgroups;
-	EditorConfigST::Get()->GetRecentItems( previousgroups, wxT("RecentTabgroups") );
-
-	// Check each previous item 1) still exists, and 2) isn't already in the new-style tabgroups dir
-	for (int n = (int)previousgroups.GetCount()-1; n >= 0; --n) {
-		wxFileName previousitem(previousgroups.Item(n));
-		if (!previousitem.FileExists() ) {
-			previousgroups.RemoveAt(n);
-		} else {
-			// This is the what the tabgroup filepath would be in the new regime. See if it exists; if not, transfer it
-			wxFileName newstyleitem(TabgrpPath, previousitem.GetFullName());
-			if (!newstyleitem.FileExists() ) {
-				wxRenameFile(previousitem.GetFullPath(), newstyleitem.GetFullPath());
-			}
-			newpreviousgroups.Add(newstyleitem.GetFullPath());
-		}
-	}
-	EditorConfigST::Get()->SetRecentItems( newpreviousgroups, wxT("RecentTabgroups") ); // Store the new filepaths
-
-	// Now look in each recent workspace, in case any tabgroups are lurking there
-	wxArrayString RecentWorkspaces;
-	EditorConfigST::Get()->GetRecentItems( RecentWorkspaces, wxT("RecentWorkspaces") );
-	for (size_t n = 0; n < RecentWorkspaces.GetCount(); ++n) {
-		previousgroups.Clear(); newpreviousgroups.Clear();
-		wxFileName workspace(RecentWorkspaces.Item(n));
-		wxDir::GetAllFiles ( workspace.GetPath(), &previousgroups, wxT("*.tabgroup"), wxDIR_FILES );
-		for (size_t i = 0; i < previousgroups.GetCount(); ++i) {
-			wxFileName previousitem(previousgroups.Item(i));
-			wxFileName newstyleitem(TabgrpPath, previousitem.GetFullName());
-			if (!newstyleitem.FileExists() ) {
-				wxCopyFile(previousitem.GetFullPath(), newstyleitem.GetFullPath());
-			}
-		}
-	}
-}
-	//********************** /Transitional code *************************************//
-
 

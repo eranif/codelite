@@ -3384,6 +3384,9 @@ void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
 		wxString filepath = editor->GetFileName().GetPath();
 		DirSaver ds;
 		wxSetWorkingDirectory(filepath);
+		
+		// Apply the environment variabels before opening the shell
+		EnvSetter setter;
 		if (!ProcUtils::Shell()) {
 			wxLogMessage(wxString::Format(wxT("Failed to open shell at '%s'"), filepath.c_str()));
 		}

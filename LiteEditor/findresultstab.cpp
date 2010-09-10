@@ -169,10 +169,6 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetForeground(wxSCI_LEX_FIF_PROJECT, wxT("BLACK"));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_PROJECT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE, fifFgColour);
-	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, fifBgColour);
-	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_FILE, true);
-
 	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE_SHORT, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE_SHORT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
@@ -180,6 +176,10 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_MATCH, true);
 
+	sci->StyleSetForeground(wxSCI_LEX_FIF_SCOPE, wxT("GREY"));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_SCOPE, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_SCOPE, false);
+	
 	wxColour fgColour(wxT("GREEN"));
 
 	LexerConfPtr cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
@@ -198,7 +198,6 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH_COMMENT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_MATCH_COMMENT, true);
 
-	
 	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE, DrawingUtils::GetTextCtrlTextColour());
 	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, fifBgColour);
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_FILE, true);
@@ -408,32 +407,13 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
 
 	MatchInfo& matchInfo = GetMatchInfo(m);
 	for (SearchResultList::iterator iter = res->begin(); iter != res->end(); iter++) {
-		SearchData d = GetSearchData(m_recv);
-		if (!d.GetDisplayScope() && (matchInfo.empty() || matchInfo.rbegin()->second.GetFileName() != iter->GetFileName())) {
+		if (matchInfo.empty() || matchInfo.rbegin()->second.GetFileName() != iter->GetFileName()) {
 			wxFileName fn(iter->GetFileName());
 			fn.MakeRelativeTo();
 			
 			AppendText(fn.GetFullPath() + wxT("\n"));
 		}
 				
-		// Print the scope name
-		if (d.GetDisplayScope()) {
-			TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(iter->GetFileName(), iter->GetLineNumber());
-			wxString scopeName (wxT("Global Scope"));
-			if(tag) {
-				scopeName = tag->GetPath();
-			}
-			
-			wxFileName fn(iter->GetFileName());
-			fn.MakeRelativeTo();
-	
-			iter->SetScope(scopeName);
-			if (matchInfo.empty() || matchInfo.rbegin()->second.GetScope() != iter->GetScope()) {
-				AppendText(wxString::Format(wxT("{ %s | %s }\n"), fn.GetFullPath().c_str(), iter->GetScope().c_str()));
-			}
-			
-		}
-		
 		int lineno = m_recv->GetLineCount()-1;
 		matchInfo.insert(std::make_pair(lineno, *iter));
 		wxString text = iter->GetPattern();
@@ -447,7 +427,20 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
 			linenum = wxString::Format(wxT(".%4u: "), iter->GetLineNumber());
 		else
 			linenum = wxString::Format(wxT(" %4u: "), iter->GetLineNumber());
-
+		
+		SearchData d = GetSearchData(m_recv);
+		// Print the scope name
+		if (d.GetDisplayScope()) {
+			TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(iter->GetFileName(), iter->GetLineNumber());
+			wxString scopeName (wxT("global"));
+			if(tag) {
+				scopeName = tag->GetPath();
+			}
+			
+			linenum << wxT("[ ") << scopeName << wxT(" ] ");
+			iter->SetScope(scopeName);
+		}
+		
 		delta += linenum.Length();
 		AppendText(linenum + text + wxT("\n"));
 		m_recv->IndicatorFillRange(m_sci->PositionFromLine(lineno)+iter->GetColumn()+delta, iter->GetLen());

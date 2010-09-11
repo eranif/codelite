@@ -43,7 +43,18 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase( wxWindow* pa
 	m_checkBoxFindBarAtBottom = new wxCheckBox( this, wxID_ANY, _("Place the find bar at the bottom"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer2->Add( m_checkBoxFindBarAtBottom, 0, wxALL|wxEXPAND, 5 );
 	
-	mainSizer->Add( sbSizer2, 0, wxEXPAND, 5 );
+	mainSizer->Add( sbSizer2, 0, wxEXPAND|wxTOP, 10 );
+	
+	wxStaticBoxSizer* sbSizer11;
+	sbSizer11 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Debug Pane:") ), wxVERTICAL );
+	
+	m_checkBoxShowDebugOnRun = new wxCheckBox( this, wxID_ANY, _("Show 'Debug' tab on Start Debugger"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxShowDebugOnRun->SetValue(true); 
+	m_checkBoxShowDebugOnRun->SetToolTip( _("When starting the debugger, if the Debug tab is not visible, checking this will make it visible") );
+	
+	sbSizer11->Add( m_checkBoxShowDebugOnRun, 0, wxALL, 5 );
+	
+	mainSizer->Add( sbSizer11, 0, wxEXPAND|wxTOP, 10 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();

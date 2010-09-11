@@ -76,6 +76,7 @@ protected:
 	bool           m_disableSemicolonShift;
 	int            m_caretLineAlpha;
 	bool           m_outputPaneDockable;
+	bool           m_showDebugOnRun;
 	bool           m_caretUseCamelCase;
 
 public:
@@ -98,6 +99,12 @@ public:
 	}
 	bool GetOutputPaneDockable() const {
 		return m_outputPaneDockable;
+	}
+	void SetShowDebugOnRun(bool showDebugOnRun) {
+		this->m_showDebugOnRun = showDebugOnRun;
+	}
+	bool GetShowDebugOnRun() const {
+		return m_showDebugOnRun;
 	}
 	bool GetDisableSemicolonShift() const {
 		return m_disableSemicolonShift;

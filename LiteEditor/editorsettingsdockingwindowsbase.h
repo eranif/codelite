@@ -35,6 +35,7 @@ class EditorSettingsDockingWindowsBase : public wxPanel
 		wxCheckBox* m_checkBoxHideOutputPaneNotIfDebug;
 		wxCheckBox* m_checkBoxOutputPaneCanDock;
 		wxCheckBox* m_checkBoxFindBarAtBottom;
+		wxCheckBox* m_checkBoxShowDebugOnRun;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnHideOutputPaneNotIfDebugUI( wxUpdateUIEvent& event ) { event.Skip(); }

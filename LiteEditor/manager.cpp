@@ -2108,8 +2108,11 @@ void Manager::DbgStart ( long pid )
 	DebugMessage ( output );
 	DebugMessage ( _ ( "Debug session started successfully!\n" ) );
 
-	// set the debug tab as active
-	ShowOutputPane(OutputPane::OUTPUT_DEBUG);
+	// if showing debug tab on run, then we always show it
+	if (EditorConfigST::Get()->GetOptions()->GetShowDebugOnRun()) {
+		ShowOutputPane(OutputPane::OUTPUT_DEBUG);
+	}
+	// else, we leave it as it currently is (displayed or not)
 
 	if ( dbgr->GetIsRemoteDebugging() ) {
 

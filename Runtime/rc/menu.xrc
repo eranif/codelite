@@ -586,13 +586,17 @@
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenu" name="editor_search">
-			<label>Navigation</label>
+			<label>Search</label>
 			<style>wxMENU_TEAROFF</style>
 			<object class="wxMenuItem" name="go_to_function_start">
 				<label>Goto Begining of Current Function</label>
 			</object>
 			<object class="wxMenuItem" name="go_to_next_function">
 				<label>Goto Begining of Next Function</label>
+			</object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+			<object class="wxMenuItem" name="find_references">
+				<label>Find References...</label>
 			</object>
 		</object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>

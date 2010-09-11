@@ -126,7 +126,7 @@ public:
 	 * @param pos the position of the symbol (this should be pointing to the *start* of the symbol)
 	 * @param files list of files to search in
 	 */
-	void FindUsage(const wxString &symname, const wxFileName& fn, int line, int pos, const wxFileList& files);
+	void FindReferences(const wxString &symname, const wxFileName& fn, int line, int pos, const wxFileList& files);
 };
 
 #endif // REFACTORENGINE_H

@@ -406,7 +406,7 @@ wxProgressDialog* RefactoringEngine::CreateProgressDialog(const wxString& title,
 	return prgDlg;
 }
 
-void RefactoringEngine::FindUsage(const wxString& symname, const wxFileName& fn, int line, int pos, const wxFileList& files)
+void RefactoringEngine::FindReferences(const wxString& symname, const wxFileName& fn, int line, int pos, const wxFileList& files)
 {
 	// Clear previous results
 	Clear();
@@ -494,8 +494,12 @@ void RefactoringEngine::FindUsage(const wxString& symname, const wxFileName& fn,
 		if(!statesPtr)
 			continue;
 
-		if (DoResolveWord(statesPtr, wxFileName(iter->getFilename()), iter->getOffset(), line, symname, &target)) {
-
+		if (DoResolveWord(statesPtr, wxFileName(iter->getFilename()), iter->getOffset(), iter->getLineNumber(), symname, &target)) {
+			
+			// set the line number
+			if(statesPtr->states.size() > iter->getOffset())
+				iter->setLineNumber( statesPtr->states[iter->getOffset()].lineNo );
+			
 			if (target.name == rs.name && target.scope == rs.scope) {
 				// full match
 				m_candidates.push_back( *iter );

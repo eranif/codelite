@@ -29,6 +29,7 @@
 #include "clang_code_completion.h"
 #include "fileextmanager.h"
 #include "drawingutils.h"
+#include "findusagetab.h"
 #include "buildtabsettingsdata.h"
 #include "cl_editor_tip_window.h"
 #include "implement_parent_virtual_functions.h"
@@ -153,6 +154,7 @@ BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 	EVT_MENU(XRCID("add_include_file"),             ContextCpp::OnAddIncludeFile)
 	EVT_MENU(XRCID("rename_symbol"),                ContextCpp::OnRenameGlobalSymbol)
 	EVT_MENU(XRCID("rename_local_variable"),        ContextCpp::OnRenameLocalSymbol)
+	EVT_MENU(XRCID("find_references"),              ContextCpp::OnFindReferences)
 
 	EVT_MENU(XRCID("retag_file"), ContextCpp::OnRetagFile)
 END_EVENT_TABLE()
@@ -2750,4 +2752,34 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 		expression += wxT(" ");
 	}
 	return expression;
+}
+
+void ContextCpp::OnFindReferences(wxCommandEvent& e)
+{
+	VALIDATE_WORKSPACE();
+
+	LEditor &rCtrl = GetCtrl();
+	//get expression
+	int pos        = rCtrl.GetCurrentPos();
+	int word_start = rCtrl.WordStartPosition(pos, true);
+	int word_end   = rCtrl.WordEndPosition(pos, true);
+
+	// Read the word that we want to refactor
+	wxString word = rCtrl.GetTextRange(word_start, word_end);
+	if(word.IsEmpty())
+		return;
+
+	// Save all files before 'find usage'
+	if (!clMainFrame::Get()->GetMainBook()->SaveAll(true, false))
+		return;
+
+	// Get list of files to search in
+	wxFileList files;
+	ManagerST::Get()->GetWorkspaceFiles(files, true);
+
+	// Invoke the RefactorEngine
+	RefactoringEngine::Instance()->FindReferences(word, rCtrl.GetFileName(), rCtrl.LineFromPosition(pos+1), word_start, files);
+	
+	// Show the results
+	clMainFrame::Get()->GetOutputPane()->GetShowUsageTab()->ShowUsage( RefactoringEngine::Instance()->GetCandidates(), word);
 }

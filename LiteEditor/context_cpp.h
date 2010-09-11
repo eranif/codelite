@@ -131,6 +131,7 @@ public:
 	virtual void OnOverrideParentVritualFunctions(wxCommandEvent &e);
 	virtual void OnRenameGlobalSymbol(wxCommandEvent &e);
 	virtual void OnRenameLocalSymbol (wxCommandEvent &e);
+	virtual void OnFindReferences (wxCommandEvent &e);
 	virtual void OnRetagFile(wxCommandEvent &e);
 	virtual void OnUserTypedXChars(const wxString &word);
 	virtual void OnCallTipClick(wxScintillaEvent &e);

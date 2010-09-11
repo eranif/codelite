@@ -37,6 +37,7 @@ class ShellTab;
 class DebugTab;
 class TaskPanel;
 class OutputPaneBook;
+class FindUsageTab;
 
 /**
  * \ingroup LiteEditor
@@ -65,7 +66,8 @@ public:
 	static const wxString REPLACE_IN_FILES;
 	static const wxString TASKS;
 	static const wxString TRACE_TAB;
-
+	static const wxString SHOW_USAGE;
+	
 private:
 	wxString m_caption;
 	wxLog   *m_logTargetOld;
@@ -78,7 +80,8 @@ private:
 	ShellTab              *m_outputWind;
 	DebugTab              *m_outputDebug;
 	TaskPanel             *m_taskPanel;
-
+	FindUsageTab          *m_showUsageTab;
+	
 	void CreateGUIControls();
 
 public:
@@ -103,6 +106,7 @@ public:
 	ErrorsTab             *GetErrorsTab        () { return m_errorsWin;         }
 	ShellTab              *GetOutputWindow     () { return m_outputWind;        }
 	DebugTab              *GetDebugWindow      () { return m_outputDebug;       }
+	FindUsageTab          *GetShowUsageTab     () { return m_showUsageTab;      }
 };
 
 #endif // OUTPUT_PANE_H

@@ -37,6 +37,7 @@ void CppToken::reset()
 	name.clear();
 	offset = wxString::npos;
 	m_id = wxNOT_FOUND;
+	lineNumber = wxString::npos;
 	filename.clear();
 }
 

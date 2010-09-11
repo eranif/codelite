@@ -505,6 +505,8 @@
     <File Name="debuggerasciiviewer.cpp"/>
     <File Name="localstable.cpp"/>
     <File Name="localstable.h"/>
+    <File Name="findusagetab.h"/>
+    <File Name="findusagetab.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

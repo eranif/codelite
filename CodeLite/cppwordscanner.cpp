@@ -82,7 +82,8 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
 	int state(STATE_NORMAL);
 	StringAccessor accessor(m_text);
 	CppToken token;
-
+	int lineNo(0);
+	
 	// set the scan range
 	size_t f = (from == wxNOT_FOUND) ? 0             : from;
 	size_t t = (to   == wxNOT_FOUND) ? m_text.size() : to;
@@ -93,7 +94,12 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
 
 	for (size_t i=f; i<t; i++) {
 		char ch = accessor.safeAt(i);
-
+		
+		// Keep track of line numbers
+		if(accessor.match("\n", i) && (state == STATE_NORMAL || state == STATE_PRE_PROCESSING || state == STATE_CPP_COMMENT || state == STATE_C_COMMENT)){
+			lineNo++;
+		}
+		
 		switch (state) {
 
 		case STATE_NORMAL:
@@ -146,6 +152,7 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
 							// filter out non matching words
 							if (filter.empty() || filter == token.getName()) {
 								token.setFilename(m_filename);
+								token.setLineNumber(lineNo);
 								l.addToken(token);
 							}
 						}

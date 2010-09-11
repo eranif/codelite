@@ -202,8 +202,8 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, fifBgColour);
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_FILE, true);
 	
-	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, wxT("WHITE"));
-	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, wxT("DARK GREY"));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetTextCtrlTextColour());
+	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	sci->StyleSetEOLFilled(wxSCI_LEX_FIF_DEFAULT, true);
 	
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

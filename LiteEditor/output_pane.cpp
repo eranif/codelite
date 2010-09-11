@@ -30,6 +30,7 @@
 #include "pluginmanager.h"
 #include "output_pane.h"
 #include "findresultstab.h"
+#include "findusagetab.h"
 #include "replaceinfilespanel.h"
 #include "buidltab.h"
 #include "errorstab.h"
@@ -44,6 +45,7 @@ const wxString OutputPane::OUTPUT_DEBUG      = wxT("Debug");
 const wxString OutputPane::REPLACE_IN_FILES  = wxT("Replace");
 const wxString OutputPane::TASKS             = wxT("Tasks");
 const wxString OutputPane::TRACE_TAB         = wxT("Trace");
+const wxString OutputPane::SHOW_USAGE        = wxT("References");
 
 OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 200))
@@ -85,6 +87,9 @@ void OutputPane::CreateGUIControls()
 
 	m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, REPLACE_IN_FILES);
 	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find_and_replace")) );
+
+	m_showUsageTab = new FindUsageTab(m_book, SHOW_USAGE);
+	m_book->AddPage(m_showUsageTab, SHOW_USAGE, false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")) );
 
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
 	m_book->AddPage(m_outputWind, OUTPUT_WIN, false, bmpLoader->LoadBitmap(wxT("output-pane/16/terminal")));

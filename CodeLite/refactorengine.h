@@ -63,7 +63,8 @@ public:
 	static RefactoringEngine* Instance();
 protected:
 	wxProgressDialog *CreateProgressDialog(const wxString &title, int maxValue);
-
+	void DoFindReferences(const wxString &symname, const wxFileName& fn, int line, int pos, const wxFileList& files, bool onlyDefiniteMatches);
+	
 private:
 	RefactoringEngine();
 	~RefactoringEngine();

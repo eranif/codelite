@@ -2802,7 +2802,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		//in some cases we don't physically reposition the file+line position, such as during updates made by user actions (like add watch)
 		//but since this app uses a debugger refresh to update newly added watch values, it automatically repositions the editor always.
 		//this isn't always desirable behavior, so we pass a parameter indicating for certain operations if an override was used
-		UpdateFileLine(event.m_file, event.m_line, ManagerST::Get()->GetRepositionEditor());
+		UpdateFileLine(event.m_file, event.m_line, /*ManagerST::Get()->GetRepositionEditor()*/true);
 		//raise the flag for the next call, as this "override" is only used once per consumption
 		ManagerST::Get()->SetRepositionEditor(true);
 		break;

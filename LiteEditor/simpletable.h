@@ -77,7 +77,7 @@ public:
 	void UpdateExpression(const wxString &expr, const wxString &value);
 	wxArrayString GetExpressions();
 	void Clear();
-	void RefreshValues();
+	void RefreshValues(bool repositionEditor = true);
 	wxString GetDisplayFormat();
 };
 

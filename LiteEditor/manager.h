@@ -68,6 +68,7 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	wxFileName              m_codeliteLauncher;
 	DisplayVariableDlg     *m_watchDlg;
 	bool                    m_retagInProgress;
+	bool					m_repositionEditor;	//flag used for debugging, should editor be repositioned after user updates like "add watch"
 
 protected:
 	Manager(void);
@@ -102,6 +103,13 @@ public:
 	}
 	void SetShutdownInProgress(bool b) {
 		m_isShutdown = b;
+	}
+
+	bool GetRepositionEditor() const {
+		return m_repositionEditor;
+	}
+	void SetRepositionEditor(bool b) {
+		m_repositionEditor = b;
 	}
 
 
@@ -537,7 +545,7 @@ public:
 	//---------------------------------------------------
 
 	void UpdateAddLine              (const wxString &line, const bool OnlyIfLoggingOn = false);
-	void UpdateFileLine             (const wxString &file, int lineno);
+	void UpdateFileLine             (const wxString &file, int lineno, bool repositionEditor = true);
 	void UpdateGotControl           (DebuggerReasons reason);
 	void UpdateLostControl          ();
 	void UpdateRemoteTargetConnected(const wxString &line);

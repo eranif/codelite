@@ -112,7 +112,7 @@ void WatchesTable::OnNewWatch(wxCommandEvent &event)
 	wxString expr = wxGetTextFromUser(wxT("Expression to watch:"), wxT("New watch"));
 	if (expr.IsEmpty() == false) {
 		AddExpression(expr);
-		RefreshValues();
+		RefreshValues(false);
 	}
 }
 
@@ -172,8 +172,11 @@ void WatchesTable::AddExpression(const wxString &expr)
 	m_listTable->SetColumnWidth(1, 600);
 }
 
-void WatchesTable::RefreshValues()
+void WatchesTable::RefreshValues(bool repositionEditor)
 {
+	//indicate in the global manager if we want to actually reposition the editor's position after the dbgr->QueryFileLine() refresh
+	ManagerST::Get()->SetRepositionEditor(repositionEditor);
+	
 	//ask the debugger to update the table
 	//to trigger the update for the table we issue a simple
 	//file line update request from the debugger
@@ -273,7 +276,7 @@ void WatchesTable::OnMenuDerefExpr(wxCommandEvent &event)
 		wxString curvalue = GetColumnText(m_selectedId, 0);
 		curvalue.Prepend(wxT("*"));
 		SetColumnText(m_selectedId, 0, curvalue);
-		RefreshValues();
+		RefreshValues(false);
 	}
 }
 
@@ -285,7 +288,7 @@ void WatchesTable::OnMenuEditExpr(wxCommandEvent &event)
 		wxString newValue = wxGetTextFromUser(wxT("Edit expression:"), wxT("Edit"), curvalue);
 		if (newValue.IsEmpty() == false) {
 			SetColumnText(m_selectedId, 0, newValue);
-			RefreshValues();
+			RefreshValues(false);
 		}
 	}
 }
@@ -326,7 +329,7 @@ void WatchesTable::OnDisplayFormat(wxCommandEvent& event)
 	wxUnusedVar(event);
 
 	// refresh the table
-	RefreshValues();
+	RefreshValues(false);
 }
 
 wxString WatchesTable::GetDisplayFormat()
@@ -339,7 +342,7 @@ void WatchesTable::OnNewWatch_Iternal(wxCommandEvent& event)
 	wxString expr = event.GetString();
 	if( expr.empty() == false ){
 		AddExpression(expr);
-		RefreshValues();
+		RefreshValues(false);
 	}
 }
 

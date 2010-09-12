@@ -183,8 +183,9 @@ Manager::Manager ( void )
 		, m_useTipWin       ( false )
 		, m_tipWinPos       ( wxNOT_FOUND )
 		, m_frameLineno     ( wxNOT_FOUND )
-		, m_watchDlg        (NULL)
-		, m_retagInProgress (false)
+		, m_watchDlg        ( NULL )
+		, m_retagInProgress ( false )
+		, m_repositionEditor( true )
 {
 	m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
 	Connect(wxEVT_CMD_RESTART_CODELITE,            wxCommandEventHandler(Manager::OnRestart),              NULL, this);
@@ -2302,7 +2303,7 @@ void Manager::UpdateAddLine ( const wxString &line, const bool OnlyIfLoggingOn /
 	DebugMessage ( line + wxT ( "\n" ) );
 }
 
-void Manager::UpdateFileLine ( const wxString &filename, int lineno )
+void Manager::UpdateFileLine ( const wxString &filename, int lineno, bool repositionEditor )
 {
 	wxString fileName = filename;
 	long lineNumber = lineno;
@@ -2311,7 +2312,9 @@ void Manager::UpdateFileLine ( const wxString &filename, int lineno )
 		m_frameLineno = wxNOT_FOUND;
 	}
 
-	DbgMarkDebuggerLine ( fileName, lineNumber );
+	if (repositionEditor)
+		DbgMarkDebuggerLine ( fileName, lineNumber );
+	
 	UpdateDebuggerPane();
 }
 
@@ -2796,7 +2799,12 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		break;
 
 	case DBG_UR_FILE_LINE:
-		UpdateFileLine(event.m_file, event.m_line);
+		//in some cases we don't physically reposition the file+line position, such as during updates made by user actions (like add watch)
+		//but since this app uses a debugger refresh to update newly added watch values, it automatically repositions the editor always.
+		//this isn't always desirable behavior, so we pass a parameter indicating for certain operations if an override was used
+		UpdateFileLine(event.m_file, event.m_line, ManagerST::Get()->GetRepositionEditor());
+		//raise the flag for the next call, as this "override" is only used once per consumption
+		ManagerST::Get()->SetRepositionEditor(true);
 		break;
 
 	case DBG_UR_ADD_LINE:

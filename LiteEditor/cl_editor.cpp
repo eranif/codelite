@@ -960,7 +960,7 @@ void LEditor::DefineMarker(int marker, int markerType, wxColor fore, wxColor bac
 bool LEditor::SaveFile()
 {
 	if (this->GetModify()) {
-		if (GetFileName().GetFullName().Find(wxT("Untitled")) != -1 || GetFileName().GetFullName().IsEmpty()) {
+		if (GetFileName().FileExists() == false) {
 			return SaveFileAs();
 		}
 
@@ -2149,7 +2149,7 @@ void LEditor::ReloadFile()
 	HideCompletionBox();
 	DoCancelCalltip();
 
-	if (m_fileName.GetFullPath().IsEmpty() == true || m_fileName.GetFullPath().StartsWith(wxT("Untitled"))) {
+	if (m_fileName.GetFullPath().IsEmpty() == true || !m_fileName.FileExists()) {
 		SetEOLMode(GetEOLByOS());
 		SetReloadingFile( false );
 		return;

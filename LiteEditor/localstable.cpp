@@ -150,15 +150,27 @@ void LocalsTable::DoShowDetails(long item)
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	long sel = m_listTable->GetFirstSelected();
-	if( sel != wxNOT_FOUND ){
+	if( sel != wxNOT_FOUND && dbgr ){
 		wxString name = GetColumnText(m_listTable, sel, LOCAL_NAME_COL);
+		wxString type = GetColumnText(m_listTable, sel, LOCAL_TYPE_COL);
+		wxString expression(name);
+		
+		// Look to see if the 'type' matches any of the PreDefined types, if it does 
+		// and the flag 'Evaluate Locals...' is also set to ON, replace the variable
+		// object with the PreDefined expression using 'name' as $(Variable)
+		if(dbgr->GetDebuggerInformation().resolveLocals) {
+			wxString preDefinedType = DoExpandPreDefinedType(type, name);
+			if(preDefinedType.IsEmpty() == false)
+				expression = preDefinedType;
+		}
+		
 		if( dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() ) {
 
 			if ( ManagerST::Get()->GetDebuggerTip()->IsShown() ) {
 				ManagerST::Get()->GetDebuggerTip()->HideDialog();
 			}
 
-			dbgr->CreateVariableObject(name, DBG_USERR_LOCALS);
+			dbgr->CreateVariableObject(expression, DBG_USERR_LOCALS);
 		}
 	}
 }
@@ -193,9 +205,27 @@ wxString LocalsTable::GetRealType(const wxString& gdbType)
 	realType.Replace(wxT("*"), wxT(""));
 	realType.Replace(wxT("const"), wxT(""));
 	realType.Replace(wxT("&"), wxT(""));
-
-	realType.Trim().Trim(false);
-	return realType;
+	
+	// remove any template initialization:
+	int depth(0);
+	wxString noTemplateType;
+	for(size_t i=0; i<realType.Length(); i++) {
+		switch(realType.GetChar(i)) {
+		case wxT('<'):
+			depth++;
+			break;
+		case wxT('>'):
+			depth--;
+			break;
+		default:
+			if(depth == 0)
+				noTemplateType << realType.GetChar(i);
+			break;
+		}
+	}
+	
+	noTemplateType.Trim().Trim(false);
+	return noTemplateType;
 }
 
 long LocalsTable::DoGetIdxByVar(const LocalVariable& var, const wxString& kind)
@@ -216,22 +246,17 @@ bool LocalsTable::DoShowInline(const LocalVariable& var, long item)
 	if( dbgr && dbgr->GetDebuggerInformation().resolveLocals == false) {
 		return false;
 	}
-
-	wxString realType = GetRealType( var.type );
-	for(size_t i=0; i<m_dbgCmds.size(); i++) {
-		DebuggerCmdData dcd = m_dbgCmds.at(i);
-		if(dcd.GetName() == realType) {
-			// Create variable object for this variable
-			// and display the content
-			wxString expression = dcd.GetCommand();
-			expression.Replace(wxT("$(Variable)"), var.name);
-			if( dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() ) {
-				dbgr->CreateVariableObject(expression, DBG_USERR_LOCALS_INLINE);
-				m_expression2Idx[expression] = item;
-				return true;
-			}
-		}
+	
+	wxString preDefinedType = DoExpandPreDefinedType(var.type, var.name);
+	if(preDefinedType.IsEmpty())
+		return false;
+	
+	if( dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() ) {
+		dbgr->CreateVariableObject(preDefinedType, DBG_USERR_LOCALS_INLINE);
+		m_expression2Idx[preDefinedType] = item;
+		return true;
 	}
+	
 	return false;
 }
 
@@ -248,4 +273,20 @@ void LocalsTable::UpdateInline(const DebuggerEvent& event)
 	if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
 		dbgr->DeleteVariableObject(event.m_variableObject.gdbId);
 	}
+}
+
+wxString LocalsTable::DoExpandPreDefinedType(const wxString& expr, const wxString& name)
+{
+	wxString realType = GetRealType( expr );
+	for(size_t i=0; i<m_dbgCmds.size(); i++) {
+		DebuggerCmdData dcd = m_dbgCmds.at(i);
+		if(dcd.GetName() == realType) {
+			// Create variable object for this variable
+			// and display the content
+			wxString expression = dcd.GetCommand();
+			expression.Replace(wxT("$(Variable)"), name);
+			return expression;
+		}
+	}
+	return wxT("");
 }

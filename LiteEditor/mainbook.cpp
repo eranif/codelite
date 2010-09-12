@@ -193,7 +193,7 @@ void MainBook::OnWorkspaceClosed(wxCommandEvent &e)
 
 bool MainBook::AskUserToSave(LEditor *editor)
 {
-	if (!editor || !editor->GetModify())
+	if (!editor || !editor->GetModify() || editor->GetFileName().FileExists() == false)
 		return true;
 
 	// unsaved changes
@@ -594,8 +594,10 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 	for (size_t i = 0; i < editors.size(); i++) {
 		if (!editors[i]->GetModify())
 			continue;
-		if (!includeUntitled && editors[i]->GetFileName().GetFullPath().StartsWith(wxT("Untitled")))
+			
+		if (!includeUntitled && !editors[i]->GetFileName().FileExists())
 			continue; //don't save new documents that have not been saved to disk yet
+			
 		files.push_back(std::make_pair(editors[i]->GetFileName(), true));
 		editors[n++] = editors[i];
 	}

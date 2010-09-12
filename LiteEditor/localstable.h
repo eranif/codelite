@@ -14,11 +14,12 @@ public:
 	static wxString GetRealType (const wxString &gdbType);
 
 protected:
-	void     DoShowDetails (long item);
-	long     DoGetIdxByName(const wxString      &name);
-	long     DoGetIdxByVar (const LocalVariable &var, const wxString &kind);
-	bool     DoShowInline  (const LocalVariable &var, long item);
-
+	void     DoShowDetails         (long item);
+	long     DoGetIdxByName        (const wxString      &name);
+	long     DoGetIdxByVar         (const LocalVariable &var, const wxString &kind);
+	bool     DoShowInline          (const LocalVariable &var, long item);
+	wxString DoExpandPreDefinedType(const wxString& type, const wxString &name);
+	
 public:
 	LocalsTable(wxWindow *parent);
 	virtual ~LocalsTable();

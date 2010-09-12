@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Debuggers Version="2.0.2">
+<Debuggers Version="2.0.4">
   <ArchiveObject Name="GNU gdb debugger">
     <wxString Value="GNU gdb debugger" Name="name"/>
     <wxString Value="" Name="path"/>
@@ -14,11 +14,11 @@
     <bool Value="0" Name="debugAsserts"/>
     <CData Name="startupCommands"/>
     <int Value="200" Name="maxDisplayStringSize"/>
-    <bool Value="0" Name="resolveLocals"/>
+    <bool Value="1" Name="resolveLocals"/>
     <bool Value="1" Name="autoExpandTipItems"/>
   </ArchiveObject>
   <ArchiveObject Name="DebuggerCommands">
-    <long Value="4" Name="size"/>
+    <long Value="6" Name="size"/>
     <SerializedObject Name="DebuggerCmd0">
       <wxString Value="string" Name="m_name"/>
       <wxString Value="$(Variable)._M_dataplus._M_p" Name="m_command"/>
@@ -37,6 +37,16 @@
     <SerializedObject Name="DebuggerCmd3">
       <wxString Value="wstring" Name="m_name"/>
       <wxString Value="$(Variable)._M_dataplus._M_p" Name="m_command"/>
+      <wxString Value="print" Name="m_dbgCommand"/>
+    </SerializedObject>
+    <SerializedObject Name="DebuggerCmd4">
+      <wxString Value="vector" Name="m_name"/>
+      <wxString Value="*($(Variable)._M_impl._M_start)@$(Variable).size()" Name="m_command"/>
+      <wxString Value="print" Name="m_dbgCommand"/>
+    </SerializedObject>
+    <SerializedObject Name="DebuggerCmd5">
+      <wxString Value="wxArrayString" Name="m_name"/>
+      <wxString Value="*($(Variable).m_pItems)@$(Variable).m_nCount" Name="m_command"/>
       <wxString Value="print" Name="m_dbgCommand"/>
     </SerializedObject>
   </ArchiveObject>

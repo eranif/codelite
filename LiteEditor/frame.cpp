@@ -709,7 +709,7 @@ void clMainFrame::CreateGUIControls(void)
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR,                DrawingUtils::GetPanelBgColour());
 
 	//initialize debugger configuration tool
-	DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"), wxT("2.0.2"));
+	DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"), wxT("2.0.4"));
 	WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
 
 #if defined (__WXGTK__) && defined (__WXDEBUG__)

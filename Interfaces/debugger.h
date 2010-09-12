@@ -372,7 +372,7 @@ public:
 			, debugAsserts(false)
 			, startupCommands(wxEmptyString)
 			, maxDisplayStringSize(200)
-			, resolveLocals     (false)
+			, resolveLocals     (true)
 			, autoExpandTipItems(true)
 			, applyBreakpointsAfterProgramStarted(false)
 	{

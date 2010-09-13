@@ -65,25 +65,62 @@ public:
 	}
 };
 
-class DebuggerSettingsData : public SerializedObject
+typedef std::vector<DebuggerCmdData> DebuggerCmdDataVec;
+
+class DebuggerPreDefinedTypes : public SerializedObject
 {
-	std::vector<DebuggerCmdData> m_cmds;
+	DebuggerCmdDataVec m_cmds;
+	wxString           m_name;
+	bool               m_active;
 public:
-	DebuggerSettingsData();
-	virtual ~DebuggerSettingsData();
 
-	void Serialize(Archive &arhc);
-	void DeSerialize(Archive &arhc);
+	DebuggerPreDefinedTypes();
+	virtual ~DebuggerPreDefinedTypes();
 
-	//Setters
-	void SetCmds(const std::vector<DebuggerCmdData>& cmds) {
+	void Serialize(Archive &arch);
+	void DeSerialize(Archive &arch);
+
+	void SetCmds(const DebuggerCmdDataVec& cmds) {
 		this->m_cmds = cmds;
 	}
 
-	//Getters
-	const std::vector<DebuggerCmdData>& GetCmds() const {
+	const DebuggerCmdDataVec& GetCmds() const {
 		return m_cmds;
 	}
+	void SetName(const wxString& name) {
+		this->m_name = name;
+	}
+	const wxString& GetName() const {
+		return m_name;
+	}
+
+	void SetActive(bool active) {
+		this->m_active = active;
+	}
+	bool IsActive() const {
+		return m_active;
+	}
+};
+
+class DebuggerSettingsPreDefMap : public SerializedObject
+{
+	std::map<wxString, DebuggerPreDefinedTypes> m_cmds;
+	
+public:
+
+	DebuggerSettingsPreDefMap();
+	virtual ~DebuggerSettingsPreDefMap();
+
+	void Serialize(Archive &arch);
+	void DeSerialize(Archive &arch);
+
+	void SePreDefinedTypesMap(const std::map<wxString, DebuggerPreDefinedTypes>& cmds) {
+		this->m_cmds = cmds;
+	}
+	const std::map<wxString, DebuggerPreDefinedTypes>& GePreDefinedTypesMap() const {
+		return m_cmds;
+	}
+	DebuggerPreDefinedTypes GetActiveSet() const;
 };
 
 #endif //DEBUGGER_SETTINGS_H

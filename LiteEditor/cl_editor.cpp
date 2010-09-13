@@ -3569,10 +3569,12 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 
 wxMenu* LEditor::DoCreateDebuggerWatchMenu(const wxString &word)
 {
-	DebuggerSettingsData data;
+	DebuggerSettingsPreDefMap data;
 	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
-	std::vector<DebuggerCmdData> cmds = data.GetCmds();
-
+	
+	DebuggerPreDefinedTypes preDefTypes = data.GetActiveSet();
+	DebuggerCmdDataVec      cmds        = preDefTypes.GetCmds();
+	
 	wxMenu*      menu = new wxMenu();
 	wxMenuItem *item(NULL);
 	wxString    menuItemText;
@@ -3584,7 +3586,6 @@ wxMenu* LEditor::DoCreateDebuggerWatchMenu(const wxString &word)
 		item = new wxMenuItem(menu, wxNewId(), menuItemText);
 		menu->Prepend(item);
 		Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgCustomWatch), NULL, this);
-//		m_dynItems.push_back(item);
 		m_customCmds[item->GetId()] = cmd.GetCommand();
 	}
 

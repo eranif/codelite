@@ -22,8 +22,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "debuggersettingsdlg.h"
+#include "debuggersettingsdlg.h"
 #include "windowattrmanager.h"
+#include "debugger_predefined_types_page.h"
 #include "editor_config.h"
 #include "debuggermanager.h"
 #include "macros.h"
@@ -34,11 +35,11 @@
 
 //-------------------------------------------------------------------
 DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
-		: DebuggerPageBase(parent)
-		, m_title(title)
+	: DebuggerPageBase(parent)
+	, m_title(title)
 {
 	DebuggerInformation info;
-	if(DebuggerMgr::Get().GetDebuggerInformation(m_title, info)){
+	if(DebuggerMgr::Get().GetDebuggerInformation(m_title, info)) {
 		m_textCtrDbgPath->SetValue(info.path);
 		m_checkBoxEnableLog->SetValue(info.enableDebugLog);
 		m_checkBoxEnablePendingBreakpoints->SetValue(info.enablePendingBreakpoints);
@@ -94,8 +95,7 @@ void DebuggerPage::OnDebugAssert(wxCommandEvent& e)
 //-------------------------------------------------------------------
 
 DebuggerSettingsDlg::DebuggerSettingsDlg( wxWindow* parent )
-		:DebuggerSettingsBaseDlg( parent )
-		, m_selectedItem(wxNOT_FOUND)
+	:DebuggerSettingsBaseDlg( parent )
 {
 	//fill the notebook with the available debuggers
 	Initialize();
@@ -104,7 +104,6 @@ DebuggerSettingsDlg::DebuggerSettingsDlg( wxWindow* parent )
 	// center the dialog
 	Centre();
 
-	m_listCtrl1->SetFocus();
 	GetSizer()->Fit(this);
 	WindowAttrManager::Load(this, wxT("DbgSettingsDlg"), NULL);
 }
@@ -118,25 +117,14 @@ void DebuggerSettingsDlg::Initialize()
 		m_book->AddPage(new DebuggerPage(m_book, debuggers.Item(i)), debuggers.Item(i), true);
 	}
 
-	m_listCtrl1->InsertColumn(0, wxT("Type"));
-	m_listCtrl1->InsertColumn(1, wxT("Expression"));
-	m_listCtrl1->InsertColumn(2, wxT("Debugger Command"));
-
 	//add items from the saved items
-	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &m_data);
+	DebuggerSettingsPreDefMap data;
+	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
 
-	//Populate the list with the items from the configuration file
-	std::vector<DebuggerCmdData> cmds = m_data.GetCmds();
-	for (size_t i=0; i<cmds.size(); i++) {
-		DebuggerCmdData cmd = cmds.at(i);
-
-		long item = AppendListCtrlRow(m_listCtrl1);
-		SetColumnText(m_listCtrl1, item, 0, cmd.GetName());
-		SetColumnText(m_listCtrl1, item, 1, cmd.GetCommand());
-		SetColumnText(m_listCtrl1, item, 2, cmd.GetDbgCommand());
+	std::map<wxString, DebuggerPreDefinedTypes>::const_iterator iter = data.GePreDefinedTypesMap().begin();
+	for(; iter != data.GePreDefinedTypesMap().end(); iter++) {
+		m_notebookPreDefTypes->AddPage(new PreDefinedTypesPage(m_notebookPreDefTypes, iter->second), iter->first, iter->second.IsActive());
 	}
-	m_listCtrl1->SetColumnWidth(0, 100);
-	m_listCtrl1->SetColumnWidth(1, 200);
 }
 
 void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
@@ -174,19 +162,21 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 	}
 
 	//copy the commands the serialized object m_data
-	int count = m_listCtrl1->GetItemCount();
-	std::vector<DebuggerCmdData> cmdArr;
-	for(int i=0; i<count; i++){
-		DebuggerCmdData cmd;
-		cmd.SetName      ( GetColumnText(m_listCtrl1, i, 0) );
-		cmd.SetCommand   ( GetColumnText(m_listCtrl1, i, 1) );
-		cmd.SetDbgCommand( GetColumnText(m_listCtrl1, i, 2) );
-		cmdArr.push_back(cmd);
+	DebuggerSettingsPreDefMap preDefMap;
+	std::map<wxString, DebuggerPreDefinedTypes> typesMap;
+
+	for(size_t i=0; i<m_notebookPreDefTypes->GetPageCount(); i++) {
+		PreDefinedTypesPage *page = dynamic_cast<PreDefinedTypesPage*>(m_notebookPreDefTypes->GetPage(i));
+		if(page) {
+			DebuggerPreDefinedTypes types = page->GetPreDefinedTypes();
+			types.SetActive( i == (size_t)m_notebookPreDefTypes->GetSelection() );
+			typesMap[types.GetName()] = types;
+		}
 	}
-	m_data.SetCmds(cmdArr);
+	preDefMap.SePreDefinedTypesMap(typesMap);
 
 	//save the debugger commands
-	DebuggerConfigTool::Get()->WriteObject(wxT("DebuggerCommands"), &m_data);
+	DebuggerConfigTool::Get()->WriteObject(wxT("DebuggerCommands"), &preDefMap);
 	EndModal(wxID_OK);
 }
 
@@ -196,109 +186,75 @@ void DebuggerSettingsDlg::OnButtonCancel(wxCommandEvent &e)
 	EndModal(wxID_CANCEL);
 }
 
-void DebuggerSettingsDlg::OnNewShortcut(wxCommandEvent &e)
-{
-	wxUnusedVar(e);
-	DbgCommandDlg *dlg = new DbgCommandDlg(this);
-	if (dlg->ShowModal() == wxID_OK) {
-		//add new command to the table
-		wxString name       = dlg->GetName();
-		wxString expression = dlg->GetExpression();
-		wxString dbgCmd     = dlg->GetDbgCommand();
-		long item;
-		wxListItem info;
-
-		//make sure that the expression does not exist
-		int count = m_listCtrl1->GetItemCount();
-		for(int i=0; i<count; i++){
-			wxString existingName = GetColumnText(m_listCtrl1, i, 0);
-			if(name == existingName){
-				dlg->Destroy();
-				wxMessageBox(_("Debugger type with the same name already exist"), wxT("CodeLite"), wxOK | wxICON_INFORMATION);
-				return;
-			}
-		}
-
-		// Set the item display name
-		info.SetColumn(0);
-		item = m_listCtrl1->InsertItem(info);
-
-		SetColumnText(m_listCtrl1, item, 0, name       );
-		SetColumnText(m_listCtrl1, item, 1, expression );
-		SetColumnText(m_listCtrl1, item, 2, dbgCmd);
-
-		m_listCtrl1->SetColumnWidth(0, 100);
-		m_listCtrl1->SetColumnWidth(1, 200);
-		m_listCtrl1->SetColumnWidth(1, 200);
-	}
-	dlg->Destroy();
-}
-
-void DebuggerSettingsDlg::OnItemSelected(wxListEvent &e)
-{
-	m_selectedItem = e.m_itemIndex;
-}
-
-void DebuggerSettingsDlg::OnItemDeselected(wxListEvent &e)
-{
-
-	wxUnusedVar(e);
-	m_selectedItem = wxNOT_FOUND;
-}
-
-void DebuggerSettingsDlg::OnEditShortcut(wxCommandEvent &e)
-{
-	wxUnusedVar(e);
-	DoEditItem();
-}
-
-void DebuggerSettingsDlg::OnDeleteShortcut(wxCommandEvent &e)
-{
-	wxUnusedVar(e);
-	DoDeleteItem();
-}
-
-void DebuggerSettingsDlg::OnItemActivated(wxListEvent &e)
-{
-	m_selectedItem = e.m_itemIndex;
-	DoEditItem();
-}
-
-void DebuggerSettingsDlg::DoEditItem()
-{
-	//Edit the selection
-	if (m_selectedItem == wxNOT_FOUND) {
-		return;
-	}
-
-	//popup edit dialog
-	DbgCommandDlg dlg(this);
-
-	wxString name  = GetColumnText(m_listCtrl1, m_selectedItem, 0);
-	wxString expr  = GetColumnText(m_listCtrl1, m_selectedItem, 1);
-	wxString dbgCmd= GetColumnText(m_listCtrl1, m_selectedItem, 2);
-
-	dlg.SetName(name);
-	dlg.SetExpression(expr);
-	dlg.SetDbgCommand(dbgCmd);
-
-	if (dlg.ShowModal() == wxID_OK) {
-		SetColumnText(m_listCtrl1, m_selectedItem, 0, dlg.GetName());
-		SetColumnText(m_listCtrl1, m_selectedItem, 1, dlg.GetExpression());
-		SetColumnText(m_listCtrl1, m_selectedItem, 2, dlg.GetDbgCommand());
-	}
-}
-
-void DebuggerSettingsDlg::DoDeleteItem()
-{
-	if (m_selectedItem == wxNOT_FOUND) {
-		return;
-	}
-	m_listCtrl1->DeleteItem(m_selectedItem);
-	m_selectedItem = wxNOT_FOUND;
-}
-
 DebuggerSettingsDlg::~DebuggerSettingsDlg()
 {
 	WindowAttrManager::Save(this, wxT("DbgSettingsDlg"), NULL);
+}
+
+void DebuggerSettingsDlg::OnDeleteSet(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	int sel = m_notebookPreDefTypes->GetSelection();
+	if(sel == wxNOT_FOUND)
+		return;
+	
+	wxString name = m_notebookPreDefTypes->GetPageText((size_t)sel);
+	if(wxMessageBox(wxString::Format(wxT("You are about to delete 'PreDefined Types' set '%s'\nContinue ?"), name.c_str()),
+					wxT("Confirm deleting 'PreDefined Types' set"),
+					wxYES_NO|wxCENTER|wxICON_QUESTION, 
+					this) == wxYES) {
+		m_notebookPreDefTypes->DeletePage((size_t)sel);
+	}
+}
+
+void DebuggerSettingsDlg::OnDeleteSetUI(wxUpdateUIEvent& event)
+{
+	int sel = m_notebookPreDefTypes->GetSelection();
+	event.Enable(sel != wxNOT_FOUND && m_notebookPreDefTypes->GetPageText((size_t)sel) != wxT("Default"));
+}
+
+void DebuggerSettingsDlg::OnNewSet(wxCommandEvent& event)
+{
+	NewPreDefinedSetDlg dlg(this);
+	dlg.m_checkBoxMakeActive->SetValue(false);
+	
+	wxArrayString copyFromArr;
+	// Make sure that a set with this name does not already exists
+	copyFromArr.Add(wxT("None"));
+	for(size_t i=0; i<m_notebookPreDefTypes->GetPageCount(); i++) {
+		copyFromArr.Add(m_notebookPreDefTypes->GetPageText((size_t)i));
+	}
+	dlg.m_choiceCopyFrom->Append(copyFromArr);
+	dlg.m_choiceCopyFrom->SetSelection(0);
+	dlg.m_textCtrlName->SetFocus();
+	
+	if(dlg.ShowModal() == wxID_OK) {
+		wxString newName = dlg.m_textCtrlName->GetValue();
+		newName.Trim().Trim(false);
+		if(newName.IsEmpty())
+			return;
+			
+		// Make sure that a set with this name does not already exists
+		for(size_t i=0; i<m_notebookPreDefTypes->GetPageCount(); i++) {
+			if(m_notebookPreDefTypes->GetPageText((size_t)i) == newName) {
+				wxMessageBox(wxT("A set with this name already exist"), wxT("Name Already Exists"), wxICON_WARNING|wxOK|wxCENTER);
+				return;
+			}
+		}
+		
+		DebuggerPreDefinedTypes initialValues;
+		wxString copyFrom = dlg.m_choiceCopyFrom->GetStringSelection();
+		if(copyFrom != wxT("None")) {
+			for(size_t i=0; i<m_notebookPreDefTypes->GetPageCount(); i++)
+			{
+				PreDefinedTypesPage *page = dynamic_cast<PreDefinedTypesPage*>(m_notebookPreDefTypes->GetPage(i));
+				if(page && m_notebookPreDefTypes->GetPageText(i) == copyFrom) {
+					initialValues = page->GetPreDefinedTypes();
+					break;
+				}
+			}
+		}
+		
+		m_notebookPreDefTypes->AddPage(new PreDefinedTypesPage(m_notebookPreDefTypes, initialValues), newName, dlg.m_checkBoxMakeActive->IsChecked());
+	}
 }

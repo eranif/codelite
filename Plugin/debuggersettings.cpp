@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "debuggersettings.h"
+#include "debuggersettings.h"
 
 DebuggerCmdData::DebuggerCmdData()
 {
@@ -52,20 +52,23 @@ void DebuggerCmdData::Serialize(Archive &arch)
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
 
-DebuggerSettingsData::DebuggerSettingsData()
+DebuggerPreDefinedTypes::DebuggerPreDefinedTypes()
+	: m_name(wxT("Default"))
+	, m_active(true)
 {
 }
 
-DebuggerSettingsData::~DebuggerSettingsData()
+DebuggerPreDefinedTypes::~DebuggerPreDefinedTypes()
 {
 }
 
-void DebuggerSettingsData::DeSerialize(Archive &arch)
+void DebuggerPreDefinedTypes::DeSerialize(Archive &arch)
 {
 	size_t size(0);
-	arch.Read(wxT("size"), size);
-
-	for(size_t i=0; i<size; i++){
+	arch.Read(wxT("m_name"),   m_name);
+	arch.Read(wxT("m_active"), m_active);
+	arch.Read(wxT("size"),     size);
+	for(size_t i=0; i<size; i++) {
 		wxString cmdname;
 		cmdname << wxT("DebuggerCmd") << i;
 		DebuggerCmdData cmdData;
@@ -74,13 +77,79 @@ void DebuggerSettingsData::DeSerialize(Archive &arch)
 	}
 }
 
-void DebuggerSettingsData::Serialize(Archive &arch)
+void DebuggerPreDefinedTypes::Serialize(Archive &arch)
 {
 	size_t size = m_cmds.size();
-	arch.Write(wxT("size"), size);
-	for(size_t i=0; i<m_cmds.size(); i++){
+	arch.Write(wxT("m_name"),   m_name);
+	arch.Write(wxT("m_active"), m_active);
+	arch.Write(wxT("size"),     size);
+
+	for(size_t i=0; i<m_cmds.size(); i++) {
 		wxString cmdname;
 		cmdname << wxT("DebuggerCmd") << i;
 		arch.Write(cmdname, &m_cmds.at(i));
 	}
+}
+
+//-----------------------------------------------------------------
+//-----------------------------------------------------------------
+//-----------------------------------------------------------------
+
+DebuggerSettingsPreDefMap::DebuggerSettingsPreDefMap()
+{
+}
+
+DebuggerSettingsPreDefMap::~DebuggerSettingsPreDefMap()
+{
+}
+
+void DebuggerSettingsPreDefMap::Serialize(Archive& arch)
+{
+	arch.Write(wxT("size"), m_cmds.size());
+	std::map<wxString, DebuggerPreDefinedTypes>::const_iterator iter = m_cmds.begin();
+	size_t i(0);
+	for(; iter != m_cmds.end(); iter++, i++) {
+		wxString cmdname;
+		cmdname << wxT("PreDefinedSet") << i;
+		arch.Write(cmdname, (SerializedObject*)&(iter->second));
+	}
+}
+
+void DebuggerSettingsPreDefMap::DeSerialize(Archive& arch)
+{
+	size_t count(0);
+	arch.Read(wxT("size"), count);
+	m_cmds.clear();
+
+	for(size_t i=0; i<count; i++) {
+		wxString cmdname;
+		cmdname << wxT("PreDefinedSet") << i;
+		DebuggerPreDefinedTypes preDefSet;
+		arch.Read(cmdname, &preDefSet);
+		m_cmds[preDefSet.GetName()] = preDefSet;
+	}
+}
+
+DebuggerPreDefinedTypes DebuggerSettingsPreDefMap::GetActiveSet() const
+{
+	std::map<wxString, DebuggerPreDefinedTypes>::const_iterator iter = m_cmds.begin();
+	for(; iter != m_cmds.end(); iter++) {
+		if(iter->second.IsActive())
+			return iter->second;
+	}
+
+	// no match, search for the one with the name 'Default'
+	iter = m_cmds.begin();
+	for(; iter != m_cmds.end(); iter++) {
+		if(iter->second.GetName() == wxT("Default"))
+			return iter->second;
+	}
+
+	// still no match
+	// return the first entry
+	if(m_cmds.empty() == false)
+		return m_cmds.begin()->second;
+
+	// no entries at all?
+	return DebuggerPreDefinedTypes();
 }

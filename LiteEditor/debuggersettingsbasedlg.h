@@ -19,16 +19,17 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/listctrl.h>
 #include <wx/button.h>
+#include <wx/choicebk.h>
+#include <wx/statbox.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
-#include <wx/statbox.h>
 #include <wx/spinctrl.h>
-#include <wx/choicebk.h>
+#include <wx/listctrl.h>
+#include <wx/choice.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -44,22 +45,19 @@ class DebuggerSettingsBaseDlg : public wxDialog
 		wxNotebook* m_notebook2;
 		wxPanel* m_panel1;
 		wxNotebook* m_book;
-		wxPanel* m_panel2;
-		wxListCtrl* m_listCtrl1;
-		wxButton* m_buttonNewType;
-		wxButton* m_buttonEdit;
-		wxButton* m_buttonDelete;
+		wxPanel* m_panel6;
+		wxButton* m_buttonNewSet;
+		wxButton* m_buttonDeleteSet;
+		wxChoicebook* m_notebookPreDefTypes;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonOK;
 		wxButton* m_buttonCancel;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnItemActivated( wxListEvent& event ) { event.Skip(); }
-		virtual void OnItemDeselected( wxListEvent& event ) { event.Skip(); }
-		virtual void OnItemSelected( wxListEvent& event ) { event.Skip(); }
-		virtual void OnNewShortcut( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnEditShortcut( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnDeleteShortcut( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnNewSet( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDeleteSet( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDeleteSetUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnPageChanged( wxChoicebookEvent& event ) { event.Skip(); }
 		virtual void OnButtonCancel( wxCommandEvent& event ) { event.Skip(); }
 		
 	
@@ -110,6 +108,62 @@ class DebuggerPageBase : public wxPanel
 		
 		DebuggerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~DebuggerPageBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class PreDefinedTypesPageBase
+///////////////////////////////////////////////////////////////////////////////
+class PreDefinedTypesPageBase : public wxPanel 
+{
+	private:
+	
+	protected:
+		wxPanel* m_panel2;
+		wxListCtrl* m_listCtrl1;
+		wxButton* m_buttonNewType;
+		wxButton* m_buttonEdit;
+		wxButton* m_buttonDelete;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnItemActivated( wxListEvent& event ) { event.Skip(); }
+		virtual void OnItemDeselected( wxListEvent& event ) { event.Skip(); }
+		virtual void OnItemSelected( wxListEvent& event ) { event.Skip(); }
+		virtual void OnNewShortcut( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnEditShortcut( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDeleteShortcut( wxCommandEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		PreDefinedTypesPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		~PreDefinedTypesPageBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class NewPreDefinedSetDlg
+///////////////////////////////////////////////////////////////////////////////
+class NewPreDefinedSetDlg : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText3;
+		wxStaticText* m_staticText4;
+		
+		
+		wxStaticLine* m_staticline2;
+		wxButton* m_button9;
+		wxButton* m_button10;
+	
+	public:
+		wxTextCtrl* m_textCtrlName;
+		wxChoice* m_choiceCopyFrom;
+		wxCheckBox* m_checkBoxMakeActive;
+		
+		NewPreDefinedSetDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Create a new 'PreDefined Types' set..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~NewPreDefinedSetDlg();
 	
 };
 

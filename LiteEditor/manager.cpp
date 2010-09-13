@@ -2438,10 +2438,10 @@ void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name
 	wxString dbg_command(wxT("print"));
 	wxString expression_type;
 
-	//wxLogMessage(word + wxT(" resolved into: ") + type);
-	DebuggerSettingsData data;
+	DebuggerSettingsPreDefMap data;
 	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
-	std::vector<DebuggerCmdData> cmds = data.GetCmds();
+	DebuggerPreDefinedTypes preDefTypes = data.GetActiveSet();
+	DebuggerCmdDataVec      cmds        = preDefTypes.GetCmds();
 
 	expression << wxT("/^");
 	expression << type_name;

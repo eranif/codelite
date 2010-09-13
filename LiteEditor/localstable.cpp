@@ -194,9 +194,11 @@ void LocalsTable::Clear()
 void LocalsTable::Initialize()
 {
 	// Read the debugger defined commands
-	DebuggerSettingsData data;
+	DebuggerSettingsPreDefMap data;
 	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
-	m_dbgCmds = data.GetCmds();
+	
+	DebuggerPreDefinedTypes preDefTypes = data.GetActiveSet();
+	m_dbgCmds                           = preDefTypes.GetCmds();
 }
 
 wxString LocalsTable::GetRealType(const wxString& gdbType)

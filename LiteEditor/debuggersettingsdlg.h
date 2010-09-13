@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __debuggersettingsdlg__
+#ifndef __debuggersettingsdlg__
 #define __debuggersettingsdlg__
 
 /**
@@ -55,23 +55,14 @@ public:
 /** Implementing DebuggerSettingsBaseDlg */
 class DebuggerSettingsDlg : public DebuggerSettingsBaseDlg
 {
-	long m_selectedItem;
-	DebuggerSettingsData m_data;
-
 protected:
 	void Initialize();
 	void OnOk(wxCommandEvent &e);
-	void OnNewShortcut(wxCommandEvent &e);
-	void OnDeleteShortcut(wxCommandEvent &e);
-	void OnEditShortcut(wxCommandEvent &e);
-	void OnItemSelected(wxListEvent &e);
-	void OnItemDeselected(wxListEvent &e);
-	void OnItemActivated(wxListEvent &e);
 	void OnButtonCancel(wxCommandEvent &e);
 
-private:
-	void DoEditItem();
-	void DoDeleteItem();
+	void OnDeleteSet(wxCommandEvent& event);
+	void OnDeleteSetUI(wxUpdateUIEvent& event);
+	void OnNewSet(wxCommandEvent& event);
 
 public:
 	/** Constructor */

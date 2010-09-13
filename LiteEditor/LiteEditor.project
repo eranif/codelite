@@ -47,6 +47,8 @@
       <File Name="newquickwatch.h"/>
       <File Name="new_quick_watch_dlg.h"/>
       <File Name="new_quick_watch_dlg.cpp"/>
+      <File Name="debugger_predefined_types_page.h"/>
+      <File Name="debugger_predefined_types_page.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Misc">
       <File Name="simpletable.cpp"/>

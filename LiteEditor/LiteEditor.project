@@ -835,7 +835,7 @@ resources.cpp: resources.xrc
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="../Runtime/codelite" IntermediateDirectory="./ReleaseUnicode" Command="/home/eran/devl/codelite/Runtime/codelite" CommandArguments="" WorkingDirectory="/home/eran/devl/codelite/Runtime" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/codelite" IntermediateDirectory="./ReleaseUnicode" Command="/usr/bin/codelite" CommandArguments="--no-plugins" WorkingDirectory="" PauseExecWhenProcTerminates="no"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
         <StartupCommands/>

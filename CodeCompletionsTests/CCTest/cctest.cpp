@@ -6,6 +6,7 @@
 #include <vector>
 #include <cpptoken.h>
 #include <refactorengine.h>
+#include <cppwordscanner.h>
 
 // CodeLite includes
 #include <ctags_manager.h>
@@ -236,19 +237,22 @@ int main(int argc, char **argv)
 	//Initialize the wxWidgets library
 	wxInitializer initializer;
 	
-	// Load the tags database that is used during the test.
-	wxFileName fn(wxT("../../SampleWorkspace/SampleWorkspace.tags"));
-	TagsManagerST::Get()->OpenDatabase( fn );
-	
-	// Execute the tests
-	Tester::Instance()->RunTests();
-	
-	Tester::Release();
-	TagsManagerST::Free();
-	LanguageST::Free();
+//	// Load the tags database that is used during the test.
+//	wxFileName fn(wxT("../../SampleWorkspace/SampleWorkspace.tags"));
+//	TagsManagerST::Get()->OpenDatabase( fn );
+//	
+//	// Execute the tests
+//	Tester::Instance()->RunTests();
+//	
+//	Tester::Release();
+//	TagsManagerST::Free();
+//	LanguageST::Free();
 
 	// Search the provided input files for the symbol to rename and prepare
 	// a CppTokensMap
+	CppWordScanner sc(wxT("/home/eran/devl/wxGTK-2.8.10/src/tiff/tif_ojpeg.c"));
+	TextStatesPtr stats = sc.states();
+	
 //	CppTokensMap l;
 //	wxFileList files;
 //	files.push_back(wxFileName(wxT("/home/eran/devl/codelite/Plugin/builder_gnumake.cpp")));

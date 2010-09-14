@@ -287,9 +287,6 @@ TextStatesPtr CppWordScanner::states()
 				state = STATE_DQ_STRING;
 
 			} else if (accessor.match("{", i)) {
-				// entering new depth, increase the ID of the current depth
-				// so when we enter this depth again, it will have a unique ID
-				bitmap->IncDepthId(depth);
 				depth++;
 
 			} else if (accessor.match("}", i)) {
@@ -459,9 +456,6 @@ void TextStates::SetState(size_t where, int state, int depth, int lineNo)
 {
 	if(where < states.size()) {
 		states[where].depth   = depth;
-		// Make sure that 'depth'is between the 0 and the number of elements
-		// of depthsID array
-		states[where].depthId = (depth >= 0 && depth < (int)(sizeof(depthsID)/sizeof(depthsID[0])) ) ? depthsID[depth] : 0;
 		states[where].state   = state;
 		states[where].lineNo  = lineNo;
 	}
@@ -469,11 +463,6 @@ void TextStates::SetState(size_t where, int state, int depth, int lineNo)
 	if(lineToPos.empty() || (int)lineToPos.size() - 1 < lineNo) {
 		lineToPos.push_back( where );
 	}
-}
-
-void TextStates::IncDepthId(size_t where)
-{
-	depthsID[where]++;
 }
 
 int TextStates::LineToPos(int lineNo)
@@ -484,5 +473,5 @@ int TextStates::LineToPos(int lineNo)
 	if(lineToPos.empty() || (int)lineToPos.size() < lineNo || lineNo < 0)
 		return wxNOT_FOUND;
 
-	return lineToPos[lineNo];
+	return lineToPos.at(lineNo);
 }

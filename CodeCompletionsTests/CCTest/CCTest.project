@@ -2,7 +2,7 @@
 <CodeLite_Project Name="CCTest">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+      <![CDATA[00040001N0005Debug0000000000000001N0010Debug_Unix0000000000000001N0007Release0000000000000001N0012Release_Unix000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
@@ -10,6 +10,7 @@
   </VirtualDirectory>
   <VirtualDirectory Name="test_files">	$(PCHFile)
   
+    
     
     
     
@@ -51,6 +52,15 @@
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix"/>
   <Settings Type="Executable">
+    <GlobalSettings>
+      <Compiler Options="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes );-Wall" Required="yes" PreCompiledHeader="">
         <IncludePath Value="$(CL_HOME)/CodeLite"/>
@@ -191,14 +201,5 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
-    <GlobalSettings>
-      <Compiler Options="">
-        <IncludePath Value="."/>
-      </Compiler>
-      <Linker Options="">
-        <LibraryPath Value="."/>
-      </Linker>
-      <ResourceCompiler Options=""/>
-    </GlobalSettings>
   </Settings>
 </CodeLite_Project>

@@ -44,13 +44,17 @@ public:
 	std::vector<ByteState> states;
 	std::vector<int>       lineToPos;
 	int                    pos;
-	int                    depthsID[512];
 
 public:
-	TextStates() : pos(wxNOT_FOUND) {
-		memset(depthsID, 0, sizeof(depthsID));
+	TextStates() 
+	: pos(wxNOT_FOUND) 
+	{
 	}
-
+	
+	virtual ~TextStates()
+	{
+	}
+	
 	void   SetPosition(int pos);
 	wxChar Previous();
 	wxChar Next();
@@ -65,7 +69,6 @@ public:
 
 	void SetState(size_t where, int state, int depth, int lineNo);
 
-	void IncDepthId(size_t where);
 	/**
 	 * @brief return the end of a given function
 	 * @param position function start position. This function searches for the first opening brace from position '{' and returns the position of the matching

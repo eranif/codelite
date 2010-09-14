@@ -221,7 +221,10 @@ void CppWordScanner::doInit()
 	        "using throw catch size_t");
 
 	//add this items into map
-	m_arr = wxStringTokenize(key_words, wxT(" "));
+	wxArrayString tmpArr = wxStringTokenize(key_words, wxT(" "));
+	for(size_t i=0; i<tmpArr.GetCount(); i++) {
+		m_arr.Add(tmpArr.Item(i).c_str());
+	}
 	m_arr.Sort();
 }
 

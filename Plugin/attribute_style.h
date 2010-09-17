@@ -114,17 +114,12 @@ public:
 	int GetAlpha() const {
 		return m_alpha;
 	}
-	
+
 	wxString GetFgColour() const {
-		if(wxColour(m_fgColour).IsOk() == false)
-			return wxT("BLACK");
 		return m_fgColour;
 	}
-	
+
 	wxString GetBgColour() const {
-		if(wxColour(m_bgColour).IsOk() == false)
-			return wxT("WHITE");
-			
 		return m_bgColour;
 	}
 

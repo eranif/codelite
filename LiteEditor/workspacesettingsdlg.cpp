@@ -31,13 +31,19 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *lo
 
 	// select the current workspace active set name
 	wxString activeEnvSet;
-	int where = m_choiceEnvSets->FindString(localWorkspace->GetActiveEnvironmentSet());
+	wxString tmpSet = localWorkspace->GetActiveEnvironmentSet();
+	
+	if(tmpSet == wxT("<Use Active Set>")){
+		tmpSet = USE_GLOBAL_SETTINGS;
+	}
+	
+	int where = m_choiceEnvSets->FindString(tmpSet);
 	if (where == wxNOT_FOUND) {
 		activeEnvSet = activePage;
 		m_choiceEnvSets->SetSelection(useActiveSetIndex);
 
 	} else {
-		activeEnvSet = localWorkspace->GetActiveEnvironmentSet();
+		activeEnvSet = tmpSet;
 		m_choiceEnvSets->SetSelection(where);
 	}
 

@@ -190,6 +190,8 @@ Manager::Manager ( void )
 	m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
 	Connect(wxEVT_CMD_RESTART_CODELITE,            wxCommandEventHandler(Manager::OnRestart),              NULL, this);
 	Connect(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, wxCommandEventHandler(Manager::OnIncludeFilesScanDone), NULL, this);
+	
+	wxTheApp->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
 }
 
 Manager::~Manager ( void )
@@ -307,7 +309,7 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 
 	// Update the parser search paths
 	UpdateParserPaths();
-	clMainFrame::Get()->SetEnvStatusMessage();
+	clMainFrame::Get()->SelectBestEnvSet();
 
 	// send an event to the main frame indicating that a re-tag is required
 	// we do this only if the "smart retagging" is on
@@ -360,7 +362,7 @@ void Manager::CloseWorkspace()
 		vars.SetActiveSet(wxT("Default"));
 	}
 	EnvironmentConfig::Instance()->SetSettings(vars);
-	clMainFrame::Get()->SetEnvStatusMessage();
+	clMainFrame::Get()->SelectBestEnvSet();
 
 	UpdateParserPaths();
 	m_workspceClosing = false;
@@ -585,6 +587,7 @@ void Manager::SetActiveProject ( const wxString &name )
 {
 	WorkspaceST::Get()->SetActiveProject ( WorkspaceST::Get()->GetActiveProjectName(), false );
 	WorkspaceST::Get()->SetActiveProject ( name, true );
+	clMainFrame::Get()->SelectBestEnvSet();
 }
 
 BuildMatrixPtr Manager::GetWorkspaceBuildMatrix() const
@@ -2531,6 +2534,9 @@ bool Manager::IsBuildInProgress() const
 
 void Manager::StopBuild()
 {
+	// Mark this build as 'interrupted'
+	clMainFrame::Get()->GetOutputPane()->GetBuildTab()->SetBuildInterrupted(true);
+	
 	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		m_shellProcess->Stop();
 	}
@@ -3011,6 +3017,24 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 	DisplayVariableDlg* view        = NULL;
 
 	if(canInteract) {
+		// First see if this type has a user-defined alternative
+		// If so, don't do anything here, just create a new  for the u-d type
+		// That'll bring us back here, but with the correct data
+		DebuggerSettingsPreDefMap data;
+		DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
+		DebuggerPreDefinedTypes preDefTypes = data.GetActiveSet();
+		
+		wxString preDefinedType = 
+			preDefTypes.GetPreDefinedTypeForTypename(event.m_variableObject.typeName, event.m_expression);
+		if (!preDefinedType.IsEmpty()) {
+			dbgr->CreateVariableObject( preDefinedType, DBG_USERR_QUICKWACTH );
+#ifdef __WXMAC__
+			if(!event.m_variableObject.gdbId.IsEmpty()) {
+				dbgr->DeleteVariableObject(event.m_variableObject.gdbId);
+			}
+#endif
+			return;
+		}
 
 		// Editor Tooltip
 		view = GetDebuggerTip();
@@ -3154,3 +3178,8 @@ DisplayVariableDlg* Manager::GetDebuggerTip()
 	return m_watchDlg;
 }
 
+void Manager::OnProjectSettingsModified(wxCommandEvent& event)
+{
+	// Get the project settings
+	clMainFrame::Get()->SelectBestEnvSet();
+}

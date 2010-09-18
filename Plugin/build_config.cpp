@@ -113,7 +113,17 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 				child = child->GetNext();
 			}
 		}
-
+		
+		SetEnvVarSet(USE_WORKSPACE_ENV_VAR_SET);
+		SetDbgEnvSet(USE_GLOBAL_SETTINGS);
+		
+		// read the environment page
+		wxXmlNode *envNode = XmlUtils::FindFirstByTagName(node, wxT("Environment"));
+		if (envNode) {
+			SetEnvVarSet( XmlUtils::ReadString(envNode, wxT("EnvVarSetName")) );
+			SetDbgEnvSet( XmlUtils::ReadString(envNode, wxT("DbgSetName")) );
+		}
+		
 		wxXmlNode *customBuild = XmlUtils::FindFirstByTagName(node, wxT("CustomBuild"));
 		if (customBuild) {
 			m_enableCustomBuild = XmlUtils::ReadBool(customBuild, wxT("Enabled"), false);
@@ -200,7 +210,10 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		m_debuggerStartupCmds = wxEmptyString;
 		m_debuggerPostRemoteConnectCmds = wxEmptyString;
 		m_isDbgRemoteTarget = false;
-
+		
+		SetEnvVarSet(wxT("<Use Workspace Settings>"));
+		SetDbgEnvSet(wxT("<Use Global Settings>")   );
+		
 		BuildSettingsConfigCookie cookie;
 		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
 		if (cmp) {
@@ -272,6 +285,11 @@ wxXmlNode *BuildConfig::ToXml() const
 	debugger->AddProperty(wxT("RemoteHostPort"), m_dbgHostPort);
 	debugger->AddProperty(wxT("DebuggerPath"), m_debuggerPath);
 
+	wxXmlNode *envNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Environment"));
+	envNode->AddProperty(wxT("EnvVarSetName"),  GetEnvVarSet());
+	envNode->AddProperty(wxT("DbgSetName"),     GetDbgEnvSet());
+	node->AddChild(envNode);
+	
 	wxXmlNode *dbgStartupCommands = new wxXmlNode(debugger, wxXML_ELEMENT_NODE, wxT("StartupCommands"));
 	XmlUtils::SetNodeContent(dbgStartupCommands, m_debuggerStartupCmds);
 

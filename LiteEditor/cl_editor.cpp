@@ -390,7 +390,7 @@ void LEditor::SetProperties()
 	SetMarginWidth(NUMBER_MARGIN_ID, options->GetDisplayLineNumbers() ? pixelWidth : 0);
 
 	// Show the fold margin
-	SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? 12 : 0);	// Fold margin
+	SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? 16 : 0);	// Fold margin
 
 	// Mark fold margin & symbols margins as sensetive
 	SetMarginSensitive(FOLD_MARGIN_ID, true);

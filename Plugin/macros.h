@@ -94,6 +94,9 @@ const wxString SEARCH_IN_PROJECT           = wxT("Active Project");
 const wxString SEARCH_IN_CURR_FILE_PROJECT = wxT("Current File's Project");
 const wxString SEARCH_IN_CURRENT_FILE      = wxT("Current File");
 
+const wxString USE_WORKSPACE_ENV_VAR_SET   = wxT("<Use Defaults>");
+const wxString USE_GLOBAL_SETTINGS         = wxT("<Use Defaults>");
+
 // terminal macro
 #ifdef __WXGTK__
 #define TERMINAL_CMD  wxString::Format(wxT("%s/codelite_xterm '$(TITLE)' '$(CMD)'"), wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath().c_str())

@@ -191,6 +191,8 @@ void WorkspacePane::OnWorkspaceConfig(wxCommandEvent& e)
 	}
 	m_workspaceConfig->Append(OPEN_CONFIG_MGR_STR);
 	m_workspaceConfig->Thaw();
+	
+	clMainFrame::Get()->SelectBestEnvSet();
 }
 
 void WorkspacePane::OnWorkspaceClosed(wxCommandEvent& e)

@@ -1878,7 +1878,7 @@ void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
 	WorkspaceSettingsDlg dlg(clMainFrame::Get(), LocalWorkspaceST::Get());
 	if(dlg.ShowModal() == wxID_OK) {
 
-		clMainFrame::Get()->SetEnvStatusMessage();
+		clMainFrame::Get()->SelectBestEnvSet();
 		// Update the new paths
 		retagRequires = ManagerST::Get()->UpdateParserPaths();
 

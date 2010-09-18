@@ -77,7 +77,7 @@ protected:
 	//--------------------------- Global State -----------------------------
 public:
 	DisplayVariableDlg *GetDebuggerTip();
-
+	
 	void SetRetagInProgress(bool retagInProgress) {
 		this->m_retagInProgress = retagInProgress;
 	}
@@ -253,7 +253,11 @@ public:
 	 * Set or update the workspace build matrix
 	 */
 	void SetWorkspaceBuildMatrix(BuildMatrixPtr matrix);
-
+	
+	/**
+	 * @brief user modified the project settings dialog
+	 */
+	void OnProjectSettingsModified(wxCommandEvent &event);
 
 	//--------------------------- Workspace Files Mgmt -----------------------------
 public:

@@ -410,7 +410,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 	if (number.IsEmpty() == false) {
 		if (number.ToLong(&breakpointId)) {
 			// for debugging purpose
-			m_observer->UpdateAddLine(wxString::Format(wxT("Storing debugger breakpoint Id=%d"), breakpointId), true);
+			m_observer->UpdateAddLine(wxString::Format(wxT("Storing debugger breakpoint Id=%ld"), breakpointId), true);
 		}
 	}
 
@@ -422,7 +422,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 	wxString msg;
 	switch (m_bpType) {
 	case BP_type_break:
-		msg = wxString::Format(_("Successfully set breakpoint %d at: "), breakpointId);
+		msg = wxString::Format(_("Successfully set breakpoint %ld at: "), breakpointId);
 		break;
 	case BP_type_condbreak:
 		msg = wxString::Format(_("Successfully set conditional breakpoint %d at: "), breakpointId);

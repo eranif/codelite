@@ -91,6 +91,53 @@ void DebuggerPreDefinedTypes::Serialize(Archive &arch)
 	}
 }
 
+
+wxString GetRealType(const wxString& gdbType)
+{
+	wxString realType ( gdbType );
+	realType.Replace(wxT("*"), wxT(""));
+	realType.Replace(wxT("const"), wxT(""));
+	realType.Replace(wxT("&"), wxT(""));
+	
+	// remove any template initialization:
+	int depth(0);
+	wxString noTemplateType;
+	for(size_t i=0; i<realType.Length(); i++) {
+		switch((wxChar)realType.GetChar(i)) {
+		case wxT('<'):
+			depth++;
+			break;
+		case wxT('>'):
+			depth--;
+			break;
+		default:
+			if(depth == 0)
+				noTemplateType << realType.GetChar(i);
+			break;
+		}
+	}
+	
+	noTemplateType.Trim().Trim(false);
+	return noTemplateType;
+}
+
+
+wxString DebuggerPreDefinedTypes::GetPreDefinedTypeForTypename(const wxString& expr, const wxString& name)
+{
+	wxString realType = GetRealType( expr );
+	for(size_t i=0; i<m_cmds.size(); i++) {
+		DebuggerCmdData dcd = m_cmds.at(i);
+		if(dcd.GetName() == realType) {
+			// Create variable object for this variable
+			// and display the content
+			wxString expression = dcd.GetCommand();
+			expression.Replace(wxT("$(Variable)"), name);
+			return expression;
+		}
+	}
+	return wxT("");
+}
+
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
@@ -153,3 +200,17 @@ DebuggerPreDefinedTypes DebuggerSettingsPreDefMap::GetActiveSet() const
 	// no entries at all?
 	return DebuggerPreDefinedTypes();
 }
+
+bool DebuggerSettingsPreDefMap::IsSetExist(const wxString& name)
+{
+	return m_cmds.find(name) != m_cmds.end();
+}
+
+void DebuggerSettingsPreDefMap::SetActive(const wxString& name)
+{
+	std::map<wxString, DebuggerPreDefinedTypes>::iterator iter = m_cmds.begin();
+	for(; iter != m_cmds.end(); iter++) {
+		m_cmds[iter->first].SetActive(iter->first == name ? true : false);
+	}
+}
+

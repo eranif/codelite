@@ -53,13 +53,14 @@ extern void SetGccColourFunction ( int ( *colorfunc ) ( int, const char*, size_t
 BuildTab *BuildTab::s_bt;
 
 BuildTab::BuildTab ( wxWindow *parent, wxWindowID id, const wxString &name )
-		: OutputTabWindow ( parent, id, name )
-		, m_showMe ( BuildTabSettingsData::ShowOnStart )
-		, m_autoHide ( false )
-		, m_skipWarnings ( true )
-		, m_building ( false )
-		, m_errorCount ( 0 )
-		, m_warnCount ( 0 )
+		: OutputTabWindow   ( parent, id, name )
+		, m_showMe          ( BuildTabSettingsData::ShowOnStart )
+		, m_autoHide        ( false )
+		, m_skipWarnings    ( true )
+		, m_building        ( false )
+		, m_errorCount      ( 0 )
+		, m_warnCount       ( 0 )
+		, m_buildInterrupted(false)
 {
 	m_tb->RemoveTool ( XRCID ( "repeat_output" ) );
 
@@ -184,6 +185,7 @@ void BuildTab::Clear()
     m_fileMap.clear();
 	m_errorCount = 0;
 	m_warnCount = 0;
+	m_buildInterrupted = false;
 	m_cmp.Reset ( NULL );
 	m_baseDir.Clear();
 	clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->ClearLines();
@@ -535,6 +537,12 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 		term << wxString::Format ( wxT ( ", total time: %02d:%02d:%02d seconds" ), hours, minutes, sec );
 
 	}
+	if(m_buildInterrupted) {
+		wxString InterruptedMsg;
+		InterruptedMsg << wxT("(Build Cancelled)\n") << wxT("\n");
+		AppendText ( InterruptedMsg );
+	}
+	
 	term << wxT ( '\n' );
 	AppendText ( term );
 

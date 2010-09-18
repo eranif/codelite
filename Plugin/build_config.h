@@ -49,13 +49,13 @@ class WXDLLIMPEXP_LE_SDK BuildCommand
 
 public:
 	BuildCommand()
-			: m_command(wxEmptyString)
-			, m_enabled(false) {
+		: m_command(wxEmptyString)
+		, m_enabled(false) {
 	}
 
 	BuildCommand(const wxString &command, bool enabled)
-			: m_command(command)
-			, m_enabled(enabled) {}
+		: m_command(command)
+		, m_enabled(enabled) {}
 
 	~BuildCommand() {}
 
@@ -75,7 +75,7 @@ public:
 
 typedef std::list<BuildCommand> BuildCommandList;
 
-class WXDLLIMPEXP_LE_SDK BuildConfig : public ConfObject
+class BuildConfig : public ConfObject
 {
 public:
 	static const wxString OVERWRITE_GLOBAL_SETTINGS;
@@ -83,46 +83,46 @@ public:
 	static const wxString PREPEND_GLOBAL_SETTINGS;
 
 private:
-	BuildConfigCommon m_commonConfig;
-
-	wxString m_name;
-	BuildCommandList m_preBuildCommands;
-	BuildCommandList m_postBuildCommands;
-	bool m_compilerRequired;
-	bool m_linkerRequired;
-	bool m_enableCustomBuild;
-
-	wxString m_outputFile;
-	wxString m_intermediateDirectory;
-	wxString m_command;
-	wxString m_commandArguments;
-	wxString m_workingDirectory;
-	wxString m_compilerType;
-	wxString m_projectType;
-	wxString m_customBuildCmd;
-	wxString m_customCleanCmd;
-	wxString m_customRebuildCmd;
-	bool m_isResCmpNeeded;
-	wxString m_debuggerType;
-	wxString m_customPostBuildRule;
-	wxString m_customPreBuildRule;
-	wxString m_customBuildWorkingDir;
-	bool m_pauseWhenExecEnds;
-	wxString m_toolName;
-	wxString m_makeGenerationCommand;
-	wxString m_singleFileBuildCommand;
-	wxString m_preprocessFileCommand;
-	wxString m_debuggerStartupCmds;
-	wxString m_debuggerPostRemoteConnectCmds;
-	bool m_isDbgRemoteTarget;
-	wxString m_dbgHostName;
-	wxString m_dbgHostPort;
+	BuildConfigCommon            m_commonConfig;
+	wxString                     m_name;
+	BuildCommandList             m_preBuildCommands;
+	BuildCommandList             m_postBuildCommands;
+	bool                         m_compilerRequired;
+	bool                         m_linkerRequired;
+	bool                         m_enableCustomBuild;
+	wxString                     m_outputFile;
+	wxString                     m_intermediateDirectory;
+	wxString                     m_command;
+	wxString                     m_commandArguments;
+	wxString                     m_workingDirectory;
+	wxString                     m_compilerType;
+	wxString                     m_projectType;
+	wxString                     m_customBuildCmd;
+	wxString                     m_customCleanCmd;
+	wxString                     m_customRebuildCmd;
+	bool                         m_isResCmpNeeded;
+	wxString                     m_debuggerType;
+	wxString                     m_customPostBuildRule;
+	wxString                     m_customPreBuildRule;
+	wxString                     m_customBuildWorkingDir;
+	bool                         m_pauseWhenExecEnds;
+	wxString                     m_toolName;
+	wxString                     m_makeGenerationCommand;
+	wxString                     m_singleFileBuildCommand;
+	wxString                     m_preprocessFileCommand;
+	wxString                     m_debuggerStartupCmds;
+	wxString                     m_debuggerPostRemoteConnectCmds;
+	bool                         m_isDbgRemoteTarget;
+	wxString                     m_dbgHostName;
+	wxString                     m_dbgHostPort;
 	std::map<wxString, wxString> m_customTargets;
-	wxString m_debuggerPath;
-	wxString m_buildCmpWithGlobalSettings;
-	wxString m_buildLnkWithGlobalSettings;
-	wxString m_buildResWithGlobalSettings;
-	wxString m_precompiledHeader;
+	wxString                     m_debuggerPath;
+	wxString                     m_buildCmpWithGlobalSettings;
+	wxString                     m_buildLnkWithGlobalSettings;
+	wxString                     m_buildResWithGlobalSettings;
+	wxString                     m_precompiledHeader;
+	wxString                     m_envVarSet;
+	wxString                     m_dbgEnvSet;
 
 public:
 	BuildConfig(wxXmlNode *node);
@@ -423,6 +423,19 @@ public:
 	}
 	const wxString& GetPrecompiledHeader() const {
 		return m_precompiledHeader;
+	}
+
+	void SetDbgEnvSet(const wxString& dbgEnvSet) {
+		this->m_dbgEnvSet = dbgEnvSet;
+	}
+	void SetEnvVarSet(const wxString& envVarSet) {
+		this->m_envVarSet = envVarSet;
+	}
+	const wxString& GetDbgEnvSet() const {
+		return m_dbgEnvSet;
+	}
+	const wxString& GetEnvVarSet() const {
+		return m_envVarSet;
 	}
 };
 

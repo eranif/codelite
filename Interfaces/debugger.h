@@ -320,7 +320,7 @@ public:
 		arch.Read(wxT("Count"), bt_count);
 
 		for (size_t i=0; i<bt_count; i++) {
-			wxString name = wxString::Format(wxT("Breakpoint%d"), i);
+			wxString name = wxString::Format(wxT("Breakpoint%u"), (unsigned int)i);
 			BreakpointInfo bkpt;
 			arch.Read(name, (SerializedObject*)&bkpt);
 			m_breakpoints.push_back( bkpt );
@@ -331,7 +331,7 @@ public:
 
 		arch.Write(wxT("Count"), (size_t)m_breakpoints.size());
 		for (size_t i=0; i<m_breakpoints.size(); i++) {
-			wxString name = wxString::Format(wxT("Breakpoint%d"), i);
+			wxString name = wxString::Format(wxT("Breakpoint%u"), (unsigned int)i);
 			arch.Write(name, (SerializedObject*)&m_breakpoints.at(i));
 		}
 

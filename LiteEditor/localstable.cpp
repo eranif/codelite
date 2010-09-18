@@ -159,7 +159,7 @@ void LocalsTable::DoShowDetails(long item)
 		// and the flag 'Evaluate Locals...' is also set to ON, replace the variable
 		// object with the PreDefined expression using 'name' as $(Variable)
 		if(dbgr->GetDebuggerInformation().resolveLocals) {
-			wxString preDefinedType = DoExpandPreDefinedType(type, name);
+			wxString preDefinedType = m_preDefTypes.GetPreDefinedTypeForTypename(type, name);
 			if(preDefinedType.IsEmpty() == false)
 				expression = preDefinedType;
 		}
@@ -197,37 +197,7 @@ void LocalsTable::Initialize()
 	DebuggerSettingsPreDefMap data;
 	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
 	
-	DebuggerPreDefinedTypes preDefTypes = data.GetActiveSet();
-	m_dbgCmds                           = preDefTypes.GetCmds();
-}
-
-wxString LocalsTable::GetRealType(const wxString& gdbType)
-{
-	wxString realType ( gdbType );
-	realType.Replace(wxT("*"), wxT(""));
-	realType.Replace(wxT("const"), wxT(""));
-	realType.Replace(wxT("&"), wxT(""));
-	
-	// remove any template initialization:
-	int depth(0);
-	wxString noTemplateType;
-	for(size_t i=0; i<realType.Length(); i++) {
-		switch(realType.GetChar(i)) {
-		case wxT('<'):
-			depth++;
-			break;
-		case wxT('>'):
-			depth--;
-			break;
-		default:
-			if(depth == 0)
-				noTemplateType << realType.GetChar(i);
-			break;
-		}
-	}
-	
-	noTemplateType.Trim().Trim(false);
-	return noTemplateType;
+	m_preDefTypes = data.GetActiveSet();
 }
 
 long LocalsTable::DoGetIdxByVar(const LocalVariable& var, const wxString& kind)
@@ -249,7 +219,7 @@ bool LocalsTable::DoShowInline(const LocalVariable& var, long item)
 		return false;
 	}
 	
-	wxString preDefinedType = DoExpandPreDefinedType(var.type, var.name);
+	wxString preDefinedType = m_preDefTypes.GetPreDefinedTypeForTypename(var.type, var.name);
 	if(preDefinedType.IsEmpty())
 		return false;
 	
@@ -277,18 +247,3 @@ void LocalsTable::UpdateInline(const DebuggerEvent& event)
 	}
 }
 
-wxString LocalsTable::DoExpandPreDefinedType(const wxString& expr, const wxString& name)
-{
-	wxString realType = GetRealType( expr );
-	for(size_t i=0; i<m_dbgCmds.size(); i++) {
-		DebuggerCmdData dcd = m_dbgCmds.at(i);
-		if(dcd.GetName() == realType) {
-			// Create variable object for this variable
-			// and display the content
-			wxString expression = dcd.GetCommand();
-			expression.Replace(wxT("$(Variable)"), name);
-			return expression;
-		}
-	}
-	return wxT("");
-}

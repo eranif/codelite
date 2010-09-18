@@ -101,7 +101,8 @@ private:
 	static BuildTab *                    s_bt;                // self reference for ColorLine to access the m_line* maps
 	std::map<wxString, CompilerPatterns> m_compilerParseInfo;
 	wxArrayString                        m_baseDir;
-
+	bool                                 m_buildInterrupted;
+	
 private:
 	static int  ColorLine(int, const char *text, size_t &start, size_t &len);
 	static void SetStyles(wxScintilla *sci);
@@ -140,6 +141,7 @@ public:
 
 	wxString GetBuildToolTip(const wxString &fileName, int lineno, wxMemoryBuffer &styleBits);
 
-	bool GetBuildEndedSuccessfully() const {return m_errorCount == 0;}
+	bool GetBuildEndedSuccessfully() const {return m_errorCount == 0 && !m_buildInterrupted;}
+	void SetBuildInterrupted(bool b) { m_buildInterrupted = b; }
 };
 #endif // __buidltab__

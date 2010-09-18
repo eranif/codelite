@@ -100,6 +100,8 @@ public:
 	bool IsActive() const {
 		return m_active;
 	}
+	
+	wxString GetPreDefinedTypeForTypename(const wxString& expr, const wxString& name);
 };
 
 class DebuggerSettingsPreDefMap : public SerializedObject
@@ -120,7 +122,14 @@ public:
 	const std::map<wxString, DebuggerPreDefinedTypes>& GePreDefinedTypesMap() const {
 		return m_cmds;
 	}
+	
+	
+	/**
+	 * @brief return the active set, in this context it means return the one with the name 'Default'
+	 */
 	DebuggerPreDefinedTypes GetActiveSet() const;
+	bool                    IsSetExist(const wxString &name);
+	void                    SetActive(const wxString &name);
 };
 
 #endif //DEBUGGER_SETTINGS_H

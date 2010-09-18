@@ -107,9 +107,9 @@ static void StripString( wxString &string ) {
 }
 
 static wxString MakeId() {
-	static size_t counter( 0 );
+	static unsigned int counter( 0 );
 	wxString newId;
-	newId.Printf( wxT( "%08d" ), ++counter );
+	newId.Printf( wxT( "%08u" ), ++counter );
 	return newId;
 }
 
@@ -483,7 +483,7 @@ bool DbgGdb::IsRunning() {
 
 bool DbgGdb::Interrupt() {
 	if ( m_debuggeePid > 0 ) {
-		m_observer->UpdateAddLine( wxString::Format( wxT( "Interrupting debugee process: %d" ), m_debuggeePid ) );
+		m_observer->UpdateAddLine( wxString::Format( wxT( "Interrupting debugee process: %ld" ), m_debuggeePid ) );
 
 #ifdef __WXMSW__
 		if ( DebugBreakProcessFunc ) {

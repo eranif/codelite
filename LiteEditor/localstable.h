@@ -8,17 +8,14 @@
 
 class LocalsTable : public LocalsTableBase {
 
-	std::vector<DebuggerCmdData> m_dbgCmds;
+	DebuggerPreDefinedTypes m_preDefTypes;
 	std::map<wxString, long>     m_expression2Idx;
-public:
-	static wxString GetRealType (const wxString &gdbType);
 
 protected:
 	void     DoShowDetails         (long item);
 	long     DoGetIdxByName        (const wxString      &name);
 	long     DoGetIdxByVar         (const LocalVariable &var, const wxString &kind);
 	bool     DoShowInline          (const LocalVariable &var, long item);
-	wxString DoExpandPreDefinedType(const wxString& type, const wxString &name);
 	
 public:
 	LocalsTable(wxWindow *parent);

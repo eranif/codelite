@@ -163,6 +163,11 @@ class ProjectConfigurationBasePanel : public wxPanel
 		wxStaticText* m_staticText23;
 		wxTextCtrl* m_textAddResCmpPath;
 		wxButton* m_buttonAddResCmpPath;
+		wxPanel* m_panelEnv;
+		wxStaticText* m_staticText44;
+		wxChoice* m_choiceEnv;
+		wxStaticText* m_staticText45;
+		wxChoice* m_choiceDbgEnv;
 		wxPanel* m_preBuildPage;
 		wxStaticText* m_staticText11;
 		wxStaticLine* m_staticline2;

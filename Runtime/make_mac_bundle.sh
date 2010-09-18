@@ -79,7 +79,7 @@ cp -r lexers ./CodeLite.app/Contents/SharedSupport/
 cp astyle.sample ./CodeLite.app/Contents/SharedSupport/
 cp index.html ./CodeLite.app/Contents/SharedSupport/
 cp svnreport.html ./CodeLite.app/Contents/SharedSupport/
-cp icon.icns ./CodeLite.app/Contents/Resources/
+cp *.icns ./CodeLite.app/Contents/Resources/
 cp -pr src/*.gz ./CodeLite.app/Contents/Resources/
 cp -pr codelite-icons.zip ./CodeLite.app/Contents/SharedSupport/
 

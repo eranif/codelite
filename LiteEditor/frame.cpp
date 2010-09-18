@@ -1890,7 +1890,7 @@ void clMainFrame::OnAddEnvironmentVariable(wxCommandEvent &event)
 	wxUnusedVar(event);
 	EnvVarsTableDlg dlg(this);
 	dlg.ShowModal();
-	SetEnvStatusMessage();
+	SelectBestEnvSet();
 
 	if (ManagerST::Get()->IsWorkspaceOpen()) {
 		//mark all the projects as dirty
@@ -1927,7 +1927,7 @@ void clMainFrame::OnAdvanceSettings(wxCommandEvent &event)
 			}
 		}
 	}
-	SetEnvStatusMessage();
+	SelectBestEnvSet();
 }
 
 void clMainFrame::OnBuildEnded(wxCommandEvent &event)
@@ -2826,7 +2826,7 @@ void clMainFrame::CompleteInitialization()
 
 	GetSizer()->Add(outputViewControlBar, 0, wxEXPAND);
 	Layout();
-	SetEnvStatusMessage();
+	SelectBestEnvSet();
 
 	this->Thaw();
 }
@@ -3806,20 +3806,71 @@ void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 	EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
 }
 
-void clMainFrame::SetEnvStatusMessage()
+void clMainFrame::SelectBestEnvSet()
 {
+	///////////////////////////////////////////////////
+	// Select the environment variables set to use
+	///////////////////////////////////////////////////
+	
 	// Set the workspace's environment variable set to the active one
-	wxString   activeSet       = LocalWorkspaceST::Get()->GetActiveEnvironmentSet();
-	wxString   globalActiveSet = EnvironmentConfig::Instance()->GetSettings().GetActiveSet();
-	EvnVarList vars            = EnvironmentConfig::Instance()->GetSettings();
-
-	// Make sure that the environment set exist, if not, set it to the editor's set
-	if (vars.IsSetExist(activeSet) == false)
-		activeSet = globalActiveSet;
-
-	vars.SetActiveSet(activeSet);
+	wxString   projectSetName;
+	wxString   projectDbgSetName;
+	
+	// First, if the project has an environment which is not '<Use Defaults>' use it
+	if(ManagerST::Get()->IsWorkspaceOpen()) {
+		wxString activeProj = WorkspaceST::Get()->GetActiveProjectName();
+		ProjectPtr p = ManagerST::Get()->GetProject( activeProj );
+		if(p) {
+			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(activeProj, wxEmptyString);
+			if(buildConf) {
+				if( buildConf->GetEnvVarSet() != USE_WORKSPACE_ENV_VAR_SET && 
+					buildConf->GetEnvVarSet() != wxT("<Use Workspace Settings>") /* backward support */) {
+					projectSetName    = buildConf->GetEnvVarSet();
+				}
+				
+				if( buildConf->GetDbgEnvSet() != USE_GLOBAL_SETTINGS) {
+					projectDbgSetName = buildConf->GetDbgEnvSet();
+				}
+			}
+		}
+	}
+	
+	
+	wxString   workspaceSetName = LocalWorkspaceST::Get()->GetActiveEnvironmentSet();
+	wxString   globalActiveSet  = wxT("Default");
+	wxString   activeSetName;
+	EvnVarList vars             = EnvironmentConfig::Instance()->GetSettings();
+	
+	// By default, use the global one
+	activeSetName = globalActiveSet;
+	
+	if(!projectSetName.IsEmpty() && vars.IsSetExist(projectSetName)) {
+		activeSetName = projectSetName;
+		
+	} else if (!workspaceSetName.IsEmpty() && vars.IsSetExist(workspaceSetName)) {
+		activeSetName = workspaceSetName;
+	}
+	
+	vars.SetActiveSet(activeSetName);
 	EnvironmentConfig::Instance()->SetSettings(vars);
-	SetStatusMessage(wxString::Format(wxT("Env: '%s', Builder: '%s'"), activeSet.c_str(), BuildSettingsConfigST::Get()->GetSelectedBuildSystem().c_str()), 2);
+	
+	///////////////////////////////////////////////////
+	// Select the debugger PreDefined Types settings
+	///////////////////////////////////////////////////
+	DebuggerSettingsPreDefMap preDefTypeMap;
+	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &preDefTypeMap);
+	
+	wxString dbgSetName = wxT("Default");
+	if(!projectDbgSetName.IsEmpty() && preDefTypeMap.IsSetExist(projectDbgSetName)) {
+		dbgSetName = projectDbgSetName;
+	}
+	
+	preDefTypeMap.SetActive(dbgSetName);
+	DebuggerConfigTool::Get()->WriteObject(wxT("DebuggerCommands"), &preDefTypeMap);
+	
+	SetStatusMessage(wxString::Format(wxT("Env: %s, Dbg: %s"), 
+					 activeSetName.c_str(), 
+					 preDefTypeMap.GetActiveSet().GetName().c_str()), 2);
 }
 
 void clMainFrame::OnClearTagsCache(wxCommandEvent& e)

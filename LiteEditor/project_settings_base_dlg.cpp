@@ -524,6 +524,40 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_resourceCmpPage->Layout();
 	bSizer151->Fit( m_resourceCmpPage );
 	m_notebook->AddPage( m_resourceCmpPage, wxT("Resources"), false );
+	m_panelEnv = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer34;
+	bSizer34 = new wxBoxSizer( wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer12;
+	fgSizer12 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer12->AddGrowableCol( 1 );
+	fgSizer12->SetFlexibleDirection( wxBOTH );
+	fgSizer12->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText44 = new wxStaticText( m_panelEnv, wxID_ANY, wxT("Environment variable set to use:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText44->Wrap( -1 );
+	fgSizer12->Add( m_staticText44, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxArrayString m_choiceEnvChoices;
+	m_choiceEnv = new wxChoice( m_panelEnv, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceEnvChoices, 0 );
+	m_choiceEnv->SetSelection( 0 );
+	fgSizer12->Add( m_choiceEnv, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticText45 = new wxStaticText( m_panelEnv, wxID_ANY, wxT("Debugger 'PreDefined Types' set to use:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText45->Wrap( -1 );
+	fgSizer12->Add( m_staticText45, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxArrayString m_choiceDbgEnvChoices;
+	m_choiceDbgEnv = new wxChoice( m_panelEnv, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceDbgEnvChoices, 0 );
+	m_choiceDbgEnv->SetSelection( 0 );
+	fgSizer12->Add( m_choiceDbgEnv, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	bSizer34->Add( fgSizer12, 1, wxEXPAND|wxALL, 5 );
+	
+	m_panelEnv->SetSizer( bSizer34 );
+	m_panelEnv->Layout();
+	bSizer34->Fit( m_panelEnv );
+	m_notebook->AddPage( m_panelEnv, wxT("Environment"), false );
 	m_preBuildPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
@@ -777,6 +811,8 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_textAddResCmpOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_buttonAddResCmpOptions->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnResourceCmpAddOption ), NULL, this );
 	m_buttonAddResCmpPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnResourceCmpAddPath ), NULL, this );
+	m_choiceEnv->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_choiceDbgEnv->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_checkListPreBuildCommands->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_checkListPreBuildCommands->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_buttonNewPreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnNewPreBuildCommand ), NULL, this );
@@ -849,6 +885,8 @@ ProjectConfigurationBasePanel::~ProjectConfigurationBasePanel()
 	m_textAddResCmpOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_buttonAddResCmpOptions->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnResourceCmpAddOption ), NULL, this );
 	m_buttonAddResCmpPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnResourceCmpAddPath ), NULL, this );
+	m_choiceEnv->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_choiceDbgEnv->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_checkListPreBuildCommands->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_checkListPreBuildCommands->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_buttonNewPreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnNewPreBuildCommand ), NULL, this );

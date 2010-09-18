@@ -57,7 +57,7 @@ int ConsoleFinder::RunConsole(const wxString &title)
 
 	cmd = GetConsoleCommand();
 	cmd.Replace(wxT("$(TITLE)"), title);
-	cmd.Replace(wxT("$(CMD)"), wxString::Format(wxT("sleep %d"), 80000 + wxGetProcessId()));
+	cmd.Replace(wxT("$(CMD)"), wxString::Format(wxT("sleep %lu"), 80000 + wxGetProcessId()));
 
 	wxLogMessage(wxString::Format(wxT("Launching console: %s"), cmd.c_str()));
 
@@ -99,7 +99,7 @@ wxString ConsoleFinder::GetConsoleTty(int ConsolePid)
 	ConsPidStr << ConsPid;
 	//find task with our unique sleep time
 	wxString uniqueSleepTimeStr;
-	uniqueSleepTimeStr << wxT("sleep ") << wxString::Format(wxT("%d"),80000 + ::wxGetProcessId());
+	uniqueSleepTimeStr << wxT("sleep ") << wxString::Format(wxT("%lu"),80000 + ::wxGetProcessId());
 	// search the output of "ps pid" command
 	int knt = psOutput.GetCount();
 	for (int i=knt-1; i>-1; --i) {

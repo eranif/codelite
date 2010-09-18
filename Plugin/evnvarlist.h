@@ -27,6 +27,7 @@
 
 #include "serialized_object.h"
 #include <wx/arrstr.h>
+#include "macros.h"
 
 class EnvMap
 {
@@ -59,7 +60,7 @@ public:
 	virtual ~EvnVarList();
 
 	void SetActiveSet(const wxString& activeSet) {
-		if(activeSet != wxT("<Use Active Set>"))
+		if(activeSet != wxT("<Use Active Set>") && activeSet != USE_GLOBAL_SETTINGS)
 			this->m_activeSet = activeSet;
 	}
 

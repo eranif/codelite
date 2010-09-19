@@ -384,24 +384,24 @@ void ProjectConfigurationPanel::CopyValues(const wxString &confName)
 	}
 
 	m_checkBoxPauseWhenExecEnds->SetValue(buildConf->GetPauseWhenExecEnds());
-	
+
 	///////////////////////////////////////////////////////////////////////////
 	// Set the environment page
 	///////////////////////////////////////////////////////////////////////////
 	m_choiceEnv->Clear();
-	const std::map<wxString, wxString>& envSets = EnvironmentConfig::Instance()->GetSettings().GetEnvVarSets();
+	std::map<wxString, wxString> envSets = EnvironmentConfig::Instance()->GetSettings().GetEnvVarSets();
 	std::map<wxString, wxString>::const_iterator iterI = envSets.begin();
 	int useActiveSetIndex = m_choiceEnv->Append(USE_WORKSPACE_ENV_VAR_SET);
-	
+
 	for (; iterI != envSets.end(); iterI++) {
 		m_choiceEnv->Append(iterI->first);
 	}
 	int selEnv = m_choiceEnv->FindString( buildConf->GetEnvVarSet() );
 	m_choiceEnv->SetSelection(selEnv == wxNOT_FOUND ? useActiveSetIndex : selEnv);
-	
+
 	m_choiceDbgEnv->Clear();
 	useActiveSetIndex = m_choiceDbgEnv->Append(USE_GLOBAL_SETTINGS);
-	
+
 	DebuggerSettingsPreDefMap data;
 	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
 	const std::map<wxString, DebuggerPreDefinedTypes>& preDefTypes = data.GePreDefinedTypesMap();
@@ -409,13 +409,13 @@ void ProjectConfigurationPanel::CopyValues(const wxString &confName)
 	for(; iterB != preDefTypes.end(); iterB++) {
 		m_choiceDbgEnv->Append(iterB->first);
 	}
-	
+
 	int selDbg = m_choiceDbgEnv->FindString( buildConf->GetDbgEnvSet() );
 	m_choiceDbgEnv->SetSelection(selEnv == wxNOT_FOUND ? useActiveSetIndex : selDbg);
-	
+
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
-	
+
 	SelectChoiceWithGlobalSettings(m_choiceCmpUseWithGlobalSettings, buildConf->GetBuildCmpWithGlobalSettings());
 	SelectChoiceWithGlobalSettings(m_choiceLnkUseWithGlobalSettings, buildConf->GetBuildLnkWithGlobalSettings());
 	SelectChoiceWithGlobalSettings(m_choiceResUseWithGlobalSettings, buildConf->GetBuildResWithGlobalSettings());
@@ -487,7 +487,7 @@ void ProjectConfigurationPanel::SaveValues(const wxString &confName)
 	buildConf->SetPrecompiledHeader(m_textCtrlPreCompiledHeader->GetValue());
 	buildConf->SetDbgEnvSet(m_choiceDbgEnv->GetStringSelection());
 	buildConf->SetEnvVarSet(m_choiceEnv->GetStringSelection());
-	
+
 	//set the pre-build step
 	wxString rules = m_textPreBuildRule->GetValue();
 	wxString deps = m_textDeps->GetValue();

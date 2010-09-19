@@ -542,7 +542,7 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 		InterruptedMsg << wxT("(Build Cancelled)\n") << wxT("\n");
 		AppendText ( InterruptedMsg );
 	}
-	
+
 	term << wxT ( '\n' );
 	AppendText ( term );
 
@@ -561,8 +561,9 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 		} else {
 			ManagerST::Get()->ShowOutputPane ( clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->GetCaption() );
 		}
-	} else if ( m_autoHide && viewing ) {
+	} else if ( m_autoHide && viewing && !m_buildInterrupted) {
 		ManagerST::Get()->HidePane ( clMainFrame::Get()->GetOutputPane()->GetCaption() );
+
 	} else if ( m_showMe == BuildTabSettingsData::ShowOnEnd && !m_autoHide ) {
 		ManagerST::Get()->ShowOutputPane ( m_name );
 	}

@@ -60,12 +60,12 @@ class WorkspaceTab : public wxPanel
     void OnActiveEditorChanged  (wxCommandEvent  &e);
     void OnEditorClosing        (wxCommandEvent  &e);
 
-
 public:
 	WorkspaceTab(wxWindow *parent, const wxString &caption);
 	~WorkspaceTab();
 
 	FileViewTree   *GetFileView()       { return m_fileView; }
     const wxString &GetCaption () const { return m_caption;  }
+    void FreezeThaw(bool freeze = true);
 };
 #endif // __workspacetab__

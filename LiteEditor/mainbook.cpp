@@ -309,7 +309,13 @@ void MainBook::RestoreSession(SessionEntry &session)
 			}
 		}
 	}
-	SelectPage(m_book->GetPage(sel));
+	// We can't just use SelectPane() here.
+	// Notebook::DoPageChangedEvent has posted events to us,
+	// which have the effect of selecting back to page 0
+	// So post ourselves an event, so that it arrives after that one
+	NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CHANGED, GetId());
+	event.SetSelection(sel);
+	m_book->GetEventHandler()->AddPendingEvent(event);
 }
 
 LEditor *MainBook::GetActiveEditor()

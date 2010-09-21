@@ -711,10 +711,7 @@ void BreakptMgr::BreakpointHit(int id)
 	}
 
 	BreakpointInfo bp = m_bps.at(index);
-	if (bp.commandlist.IsEmpty()) {
-		return;
-	}
-
+	if (! bp.commandlist.IsEmpty()) {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
 		// A likely command, presumably at the end of the command-list, is 'continue' or 'cont'
@@ -735,6 +732,18 @@ void BreakptMgr::BreakpointHit(int id)
 		if (needsCont) {
 			dbgr->Continue();
 		}
+	}
+}
+
+	if (bp.bp_type == BP_type_tempbreak) {
+		// If this is a temporary bp, remove it from m_bps now it's been hit
+		// Otherwise it will be treated as a 'Pending' bp, the button will be displayed
+		// and, if clicked, the bp will be resurrected.
+		int index = FindBreakpointById(id, m_bps);
+		if (index != wxNOT_FOUND) {
+			m_bps.erase(m_bps.begin()+index);
+		}
+
 	}
 }
 

@@ -59,18 +59,22 @@ Priority: optional
 Architecture: ${arch}
 Essential: no
 Depends: libwxgtk2.8-0, libgtk2.0-0
+Recommends: gdb
+Conflicts: codelite-plugins
 Installed-Size: ${inst_size}
 Maintainer: Eran Ifrah [eran.ifrah@gmail.com]
-Description: CodeLite is a powerful open-source, cross platform code editor for the C/C++ programming languages (regularly tested on Windows XP sp2, Ubuntu 8.04 Hardy Heron, Fedora Core 9 and Debian lenny/sid).
+Description: A powerful open-source, cross platform code editor
+     Codelite is designed for the C/C++ programming languages, and is regularly tested
+     on Ubuntu lucid and Debian lenny/squeeze.
 		 CodeLite is distributed under the terms of the GPL license.
-		 CodeLite uses a sophisticated, yet intuitive interface which allows user easily to
+		 CodeLite uses a sophisticated yet intuitive interface, which allows user easily to
 		 create and build complex projects.
 
 EOF
     cat > fakeroot/DEBIAN/postinst <<EOF
 #!/bin/sh
 echo "Running postinst step..."
-rm -rf \${HOME}/.codelite/config/liteeditor.xml
+
 ## Menu updating
 if [ "\$1" = "configure" ] && [ -x "\`which update-menus 2>/dev/null\`" ]; then
     update-menus

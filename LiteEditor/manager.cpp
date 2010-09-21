@@ -301,7 +301,9 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 		SessionEntry session;
 		if ( SessionManager::Get().FindSession ( path, session ) ) {
 			SessionManager::Get().SetLastWorkspaceName ( path );
+			clMainFrame::Get()->GetWorkspaceTab()->FreezeThaw(true);	// Undo any workspace/editor link while loading
 			clMainFrame::Get()->GetMainBook()->RestoreSession(session);
+			clMainFrame::Get()->GetWorkspaceTab()->FreezeThaw(false);
 			GetBreakpointsMgr()->LoadSession(session);
 			clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 		}

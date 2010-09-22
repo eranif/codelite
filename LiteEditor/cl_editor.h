@@ -652,6 +652,7 @@ private:
 
 	DECLARE_EVENT_TABLE()
 	void OnRemoveMatchInidicator(wxCommandEvent &e);
+	void OnSetCaretAt(wxCommandEvent &e);
 	void OnSavePoint(wxScintillaEvent &event);
 	void OnCharAdded(wxScintillaEvent& event);
 	void OnMarginClick(wxScintillaEvent& event);

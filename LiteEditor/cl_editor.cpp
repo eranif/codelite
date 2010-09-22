@@ -100,6 +100,7 @@ extern const char *ConditionalBreakpt[];
 extern const char *ConditionalBreakptDisabled[];
 
 const wxEventType wxCMD_EVENT_REMOVE_MATCH_INDICATOR = XRCID("remove_match_indicator");
+const wxEventType wxCMD_EVENT_SET_CARET_AT           = XRCID("set_caret_at");
 
 extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 
@@ -130,6 +131,7 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_CLOSE, LEditor::OnFindDialog)
 	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_CLEARBOOKMARKS, LEditor::OnFindDialog)
 	EVT_COMMAND                    (wxID_ANY, wxCMD_EVENT_REMOVE_MATCH_INDICATOR, LEditor::OnRemoveMatchInidicator)
+	EVT_COMMAND                    (wxID_ANY, wxCMD_EVENT_SET_CARET_AT,           LEditor::OnSetCaretAt)
 	EVT_COMMAND                    (wxID_ANY, wxCMD_EVENT_SET_EDITOR_ACTIVE,      LEditor::OnSetActive)
 END_EVENT_TABLE()
 
@@ -2404,13 +2406,13 @@ void LEditor::OnLeftUp(wxMouseEvent& event)
 	if (!value) {
 		DoQuickJump(event, false);
 	}
+	
+	PostCmdEvent(wxEVT_EDITOR_CLICKED);
 	event.Skip();
 }
 
 void LEditor::OnLeaveWindow(wxMouseEvent& event)
 {
-//    DoCancelCalltip();
-
 	m_hyperLinkIndicatroStart = wxNOT_FOUND;
 	m_hyperLinkIndicatroEnd = wxNOT_FOUND;
 	m_hyperLinkType = wxID_NONE;
@@ -2469,8 +2471,14 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 		DoMarkHyperlink(event, false);
 	}
 	
-	SendCmdEvent(wxEVT_EDITOR_CLICKED);
+	int pos = PositionFromPoint( wxPoint(event.GetX(), event.GetY()) );
 	SetActive();
+	
+	// Post event to reposition the caret location
+	wxCommandEvent e(wxCMD_EVENT_SET_CARET_AT);
+	e.SetInt( pos );
+	ProcessEvent( e );
+	
 	event.Skip();
 }
 
@@ -3721,3 +3729,11 @@ bool LEditor::IsFocused() const
 #else
 	return m_isFocused;
 #endif}
+
+void LEditor::OnSetCaretAt(wxCommandEvent& e)
+{
+	int pos = e.GetInt();
+	if(pos != wxNOT_FOUND) {
+		SetCaretAt(pos);
+	}
+}

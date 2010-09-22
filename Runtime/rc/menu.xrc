@@ -108,6 +108,9 @@
 			<object class="wxMenuItem" name="move_line_down">
 				 <label>Move Line Down</label>
 			 </object>
+			<object class="wxMenuItem" name="center_line">
+				 <label>Center &amp;Line in Editor</label>
+			 </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="to_upper">
 				 <label>Make Upper&amp;case</label>

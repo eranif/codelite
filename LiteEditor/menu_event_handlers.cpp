@@ -99,6 +99,21 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 	} else if (event.GetId() == XRCID("move_line_up")) {
 		editor->LineTranspose();
 		editor->LineUp();
+		
+	} else if (event.GetId() == XRCID("center_line")) {
+		int here    = editor->GetCurrentLine();
+		int top     = editor->GetFirstVisibleLine();
+		int count   = editor->LinesOnScreen();
+		int center  = top + (count / 2);
+		if (here < center) {
+			for (int lnIterator = 0; lnIterator < center - here; lnIterator++)
+				editor->LineScrollUp();   //roll up until we get to center
+				
+		} else if (here > center) {
+			for (int lnIterator = 0; lnIterator < here - center; lnIterator++)
+				editor->LineScrollDown(); //roll down until we get to center
+				
+		}
 
 	}
 }

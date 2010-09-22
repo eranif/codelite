@@ -2342,7 +2342,7 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 	//let the context process it as well
 	if (GetFunctionTip()->IsActive() && event.GetKeyCode() == WXK_ESCAPE)
 		GetFunctionTip()->Deactivate();
-
+	
 	if (IsCompletionBoxShown()) {
 		switch (event.GetKeyCode()) {
 		case WXK_NUMPAD_ENTER:

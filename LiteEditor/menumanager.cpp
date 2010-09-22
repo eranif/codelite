@@ -46,6 +46,7 @@ MenuManager::MenuManager(void)
 	PushHandler(new EditHandler(XRCID("swap_files")));
 	PushHandler(new EditHandler(XRCID("move_line_down")));
 	PushHandler(new EditHandler(XRCID("move_line_up")));
+	PushHandler(new EditHandler(XRCID("center_line")));
 	PushHandler(new BraceMatchHandler(XRCID("select_to_brace")));
 	PushHandler(new BraceMatchHandler(XRCID("match_brace")));
 	PushHandler(new FindReplaceHandler(wxID_FIND));

@@ -370,6 +370,7 @@ protected:
 	void OnDebugAttach(wxCommandEvent &event);
 	void OnCopyFilePath(wxCommandEvent &event);
 	void OnCopyFilePathOnly(wxCommandEvent &event);
+	void OnCopyFileName(wxCommandEvent &event);
 	void OnHighlightWord(wxCommandEvent &event);
 	void OnShowNavBar(wxCommandEvent &e);
 	void OnShowNavBarUI(wxUpdateUIEvent &e);

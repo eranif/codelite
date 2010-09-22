@@ -452,6 +452,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_MENU(XRCID("close_other_tabs"),                 clMainFrame::OnCloseAllButThis)
 	EVT_MENU(XRCID("copy_file_name"),                   clMainFrame::OnCopyFilePath)
 	EVT_MENU(XRCID("copy_file_path"),                   clMainFrame::OnCopyFilePathOnly)
+	EVT_MENU(XRCID("copy_file_name_only"),              clMainFrame::OnCopyFileName)
 	EVT_MENU(XRCID("open_shell_from_filepath"),         clMainFrame::OnOpenShellFromFilePath)
 
 	EVT_UPDATE_UI(XRCID("copy_file_name"),              clMainFrame::OnFileExistUpdateUI)
@@ -2963,6 +2964,25 @@ void clMainFrame::OnViewDisplayEOL_UI(wxUpdateUIEvent &e)
 	e.Check(m_frameGeneralInfo.GetFlags() & CL_SHOW_EOL ? true : false);
 }
 
+void clMainFrame::OnCopyFileName(wxCommandEvent& event)
+{
+	LEditor *editor = GetMainBook()->GetActiveEditor();
+	if (editor) {
+		wxString fileName = editor->GetFileName().GetFullName();
+#if wxUSE_CLIPBOARD
+		if (wxTheClipboard->Open()) {
+			wxTheClipboard->UsePrimarySelection(false);
+			if (!wxTheClipboard->SetData(new wxTextDataObject(fileName))) {
+				//wxPrintf(wxT("Failed to insert data %s to clipboard"), textToCopy.GetData());
+			}
+			wxTheClipboard->Close();
+		} else {
+			wxPrintf(wxT("Failed to open the clipboard"));
+		}
+#endif
+	}
+}
+
 void clMainFrame::OnCopyFilePath(wxCommandEvent &event)
 {
 	LEditor *editor = GetMainBook()->GetActiveEditor();
@@ -4047,3 +4067,4 @@ void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)
 	CHECK_SHUTDOWN();
 	event.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress());
 }
+

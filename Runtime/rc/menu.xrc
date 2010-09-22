@@ -564,6 +564,9 @@
             <label>Show In Explorer</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="copy_file_name_only">
+            <label>Copy File Name to Clipboard</label>
+        </object>
 		<object class="wxMenuItem" name="copy_file_name">
             <label>Copy Full Path to Clipboard</label>
         </object>

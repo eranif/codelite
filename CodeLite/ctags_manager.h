@@ -752,7 +752,14 @@ public:
 	 * @return
 	 */
 	bool GetDerivationList(const wxString &path, std::vector<wxString> &derivationList, std::set<wxString> &scannedInherits);
-
+	
+	/**
+	 * @brief return true if the file is binary (by searching for NULL chars)
+	 * @param filepath file to examine
+	 * @return return true if the file is binary
+	 */
+	bool IsBinaryFile(const wxString &filepath);
+	
 protected:
 	// provide a default handler for the wxEVT_UPDATE_FILETREE_EVENT event
 	void OnUpdateFileTreeEvent(wxCommandEvent &e);

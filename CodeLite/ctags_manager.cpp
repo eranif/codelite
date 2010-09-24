@@ -2611,3 +2611,32 @@ void TagsManager::DoParseModifiedText(const wxString &text, std::vector<TagEntry
 		wxRemoveFile( fileName );
 	}
 }
+
+
+
+bool TagsManager::IsBinaryFile(const wxString& filepath)
+{
+	FILE *fp = fopen(filepath.To8BitData(), "rb");
+	if(fp) {
+		
+		char      buffer[1];
+		int       textLen(0);
+		const int maxTextToExamine(4096);
+		
+		// examine up to maxTextToExamine first chars in the file and search for '\0'
+		while( fread(buffer, sizeof(char), sizeof(buffer), fp) == 1 && textLen < maxTextToExamine) {
+			textLen++;
+			// if we found a NULL, return true
+			if(buffer[0] == 0) {
+				fclose(fp);
+				return true;
+			}
+		}
+		
+		fclose(fp);
+		return false;
+	} 
+	
+	// if we could not open it, return true
+	return true;
+}

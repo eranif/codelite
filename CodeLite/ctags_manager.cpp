@@ -25,6 +25,7 @@
 #include "precompiled_header.h"
 #include "processreaderthread.h"
 #include "cppwordscanner.h"
+#include "fileextmanager.h"
 #include <wx/frame.h>
 #include <wx/app.h>
 #include <wx/sizer.h>
@@ -367,6 +368,13 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 	if(tags.empty()) {
 		tags = wxString::From8BitData(reply.getTags().c_str());
 	}
+	
+#if 0
+	wxFFile fff(wxStandardPaths::Get().GetUserDataDir() + wxT("\\tmp_tags"), wxT("w+"));
+	if(fff.IsOpened()) {
+		fff.Write(tags);
+	}
+#endif
 }
 
 TagTreePtr TagsManager::TreeFromTags(const wxString& tags, int &count)
@@ -2612,10 +2620,14 @@ void TagsManager::DoParseModifiedText(const wxString &text, std::vector<TagEntry
 	}
 }
 
-
-
 bool TagsManager::IsBinaryFile(const wxString& filepath)
 {
+	// If the file is a C++ file, avoid testing the content return false based on the extension
+	FileExtManager::FileType type = FileExtManager::GetType(filepath);
+	if(type == FileExtManager::TypeHeader || type == FileExtManager::TypeSourceC || type == FileExtManager::TypeSourceCpp)
+		   return false;
+	
+	// examine the file based on the content of the first 4K (max) bytes
 	FILE *fp = fopen(filepath.To8BitData(), "rb");
 	if(fp) {
 		

@@ -237,13 +237,18 @@ void ContextCpp::OnDwellStart(wxScintillaEvent &event)
 	// display a tooltip
 	wxString tooltip;
 	if (tips.size() > 0) {
+		
 		tooltip << tips[0];
 		for ( size_t i=1; i<tips.size(); i++ )
 			tooltip << wxT("\n") << tips[i];
-
+		
 		// cancel any old calltip and display the new one
 		rCtrl.DoCancelCalltip();
-		rCtrl.DoShowCalltip(event.GetPosition(), tooltip, ct_function_hover);
+		
+		tooltip.Trim().Trim(false);
+		if(tooltip.IsEmpty() == false) { 
+			rCtrl.DoShowCalltip(event.GetPosition(), tooltip, ct_function_hover);
+		}
 	}
 }
 

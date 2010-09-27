@@ -235,20 +235,33 @@ void OutputViewControlBar::OnEditorFocus(wxCommandEvent& event)
 
 	if (EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
 
-		// Optionally don't hide the Debug pane: it's irritating during a debug session, you click to set a breakpoint...
-		if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfDebug()) {
-			// Find if it's 'Debug' that's visible
-			int cursel = m_book->GetSelection();
-			if ( cursel != wxNOT_FOUND && m_book->GetPageText(cursel) == wxT("Debug") ) {
+		// Optionally don't hide the various panes (sometimes it's irritating, you click to do something and...)
+		int cursel(m_book->GetSelection());
+		if (cursel != wxNOT_FOUND) {
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfBuild() && m_book->GetPageText(cursel) == wxT("Build") )
 				return;
-			}
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfErrors() && m_book->GetPageText(cursel) == wxT("Errors") )
+				return;
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfSearch() && m_book->GetPageText(cursel) == wxT("Search") )
+				return;
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfReplace() && m_book->GetPageText(cursel) == wxT("Replace") )
+				return;
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfReferences() && m_book->GetPageText(cursel) == wxT("References") )
+				return;
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfOutput() && m_book->GetPageText(cursel) == wxT("Output") )
+				return;
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfDebug() && m_book->GetPageText(cursel) == wxT("Debug") )
+				return;
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfTrace() && m_book->GetPageText(cursel) == wxT("Trace") )
+				return;
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfTasks() && m_book->GetPageText(cursel) == wxT("Tasks") )
+				return;
 		}
 
 		// avoid auto-hiding when build is in progress
-		if(m_buildInProgress) {
+		if (m_buildInProgress)
 			return;
-		}
-
+		
 		// and hide the output view
 		DoTogglePane(true);
 	}

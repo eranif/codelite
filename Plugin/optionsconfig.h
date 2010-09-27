@@ -68,7 +68,15 @@ protected:
 	wxString       m_eolMode;
 	bool           m_hideChangeMarkerMargin;
 	bool           m_hideOutpuPaneOnUserClick;
+	bool           m_hideOutputPaneNotIfBuild;
+	bool           m_hideOutputPaneNotIfErrors;
+	bool           m_hideOutputPaneNotIfSearch;
+	bool           m_hideOutputPaneNotIfReplace;
+	bool           m_hideOutputPaneNotIfReferences;
+	bool           m_hideOutputPaneNotIfOutput;
 	bool           m_hideOutputPaneNotIfDebug;
+	bool           m_hideOutputPaneNotIfTrace;
+	bool           m_hideOutputPaneNotIfTasks;
 	bool           m_findBarAtBottom;
 	bool           m_TrimLine;
 	bool           m_AppendLF;
@@ -142,11 +150,59 @@ public:
 	const bool& GetHideOutpuPaneOnUserClick() const {
 		return m_hideOutpuPaneOnUserClick;
 	}
+	void SetHideOutputPaneNotIfBuild(const bool& HideOutpuPaneNotIfBuild) {
+		this->m_hideOutputPaneNotIfBuild = HideOutpuPaneNotIfBuild;
+	}
+	const bool& GetHideOutputPaneNotIfBuild() const {
+		return m_hideOutputPaneNotIfBuild;
+	}
+	void SetHideOutputPaneNotIfErrors(const bool& HideOutpuPaneNotIfErrors) {
+		this->m_hideOutputPaneNotIfErrors = HideOutpuPaneNotIfErrors;
+	}
+	const bool& GetHideOutputPaneNotIfErrors() const {
+		return m_hideOutputPaneNotIfErrors;
+	}
+	void SetHideOutputPaneNotIfSearch(const bool& HideOutpuPaneNotIfSearch) {
+		this->m_hideOutputPaneNotIfSearch = HideOutpuPaneNotIfSearch;
+	}
+	const bool& GetHideOutputPaneNotIfSearch() const {
+		return m_hideOutputPaneNotIfSearch;
+	}
+	void SetHideOutputPaneNotIfReplace(const bool& HideOutpuPaneNotIfReplace) {
+		this->m_hideOutputPaneNotIfReplace = HideOutpuPaneNotIfReplace;
+	}
+	const bool& GetHideOutputPaneNotIfReplace() const {
+		return m_hideOutputPaneNotIfReplace;
+	}
+	void SetHideOutputPaneNotIfReferences(const bool& HideOutpuPaneNotIfReferences) {
+		this->m_hideOutputPaneNotIfReferences = HideOutpuPaneNotIfReferences;
+	}
+	const bool& GetHideOutputPaneNotIfReferences() const {
+		return m_hideOutputPaneNotIfReferences;
+	}
+	void SetHideOutputPaneNotIfOutput(const bool& HideOutpuPaneNotIfOutput) {
+		this->m_hideOutputPaneNotIfOutput = HideOutpuPaneNotIfOutput;
+	}
+	const bool& GetHideOutputPaneNotIfOutput() const {
+		return m_hideOutputPaneNotIfOutput;
+	}
 	void SetHideOutputPaneNotIfDebug(const bool& HideOutpuPaneNotIfDebug) {
 		this->m_hideOutputPaneNotIfDebug = HideOutpuPaneNotIfDebug;
 	}
 	const bool& GetHideOutputPaneNotIfDebug() const {
 		return m_hideOutputPaneNotIfDebug;
+	}
+	void SetHideOutputPaneNotIfTrace(const bool& HideOutpuPaneNotIfTrace) {
+		this->m_hideOutputPaneNotIfTrace= HideOutpuPaneNotIfTrace;
+	}
+	const bool& GetHideOutputPaneNotIfTrace() const {
+		return m_hideOutputPaneNotIfTrace;
+	}
+	void SetHideOutputPaneNotIfTasks(const bool& HideOutpuPaneNotIfTasks) {
+		this->m_hideOutputPaneNotIfTasks= HideOutpuPaneNotIfTasks;
+	}
+	const bool& GetHideOutputPaneNotIfTasks() const {
+		return m_hideOutputPaneNotIfTasks;
 	}
 	void SetHideChangeMarkerMargin(bool hideChangeMarkerMargin) {
 		this->m_hideChangeMarkerMargin = hideChangeMarkerMargin;

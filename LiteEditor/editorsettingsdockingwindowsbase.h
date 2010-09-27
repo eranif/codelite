@@ -32,7 +32,15 @@ class EditorSettingsDockingWindowsBase : public wxPanel
 	
 	protected:
 		wxCheckBox* m_checkBoxHideOutputPaneOnClick;
+		wxCheckBox* m_checkBoxHideOutputPaneNotIfBuild;
+		wxCheckBox* m_checkBoxHideOutputPaneNotIfErrors;
+		wxCheckBox* m_checkBoxHideOutputPaneNotIfSearch;
+		wxCheckBox* m_checkBoxHideOutputPaneNotIfReplace;
+		wxCheckBox* m_checkBoxHideOutputPaneNotIfReferences;
+		wxCheckBox* m_checkBoxHideOutputPaneNotIfOutput;
 		wxCheckBox* m_checkBoxHideOutputPaneNotIfDebug;
+		wxCheckBox* m_checkBoxHideOutputPaneNotIfTrace;
+		wxCheckBox* m_checkBoxHideOutputPaneNotIfTasks;
 		wxCheckBox* m_checkBoxOutputPaneCanDock;
 		wxCheckBox* m_checkBoxFindBarAtBottom;
 		wxCheckBox* m_checkBoxShowDebugOnRun;

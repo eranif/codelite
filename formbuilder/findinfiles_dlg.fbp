@@ -290,7 +290,7 @@
                                     <property name="border">5</property>
                                     <property name="flag">wxEXPAND</property>
                                     <property name="proportion">1</property>
-                                    <object class="wxBoxSizer" expanded="0">
+                                    <object class="wxBoxSizer" expanded="1">
                                         <property name="minimum_size"></property>
                                         <property name="name">bSizer10</property>
                                         <property name="orient">wxHORIZONTAL</property>
@@ -670,7 +670,7 @@
                                     <property name="proportion">1</property>
                                     <object class="wxComboBox" expanded="1">
                                         <property name="bg"></property>
-                                        <property name="choices">&quot;*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc&quot; &quot;*.*&quot;</property>
+                                        <property name="choices">&quot;*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc;*.mm;*.m;*.xrc&quot; &quot;*.*&quot;</property>
                                         <property name="context_help"></property>
                                         <property name="enabled">1</property>
                                         <property name="fg"></property>

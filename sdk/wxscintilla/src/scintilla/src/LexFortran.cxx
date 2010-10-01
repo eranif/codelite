@@ -205,7 +205,7 @@ static void ColouriseFortranDoc(unsigned int startPos, int length, int initStyle
 		/***************************************/
 		// Determine if a new state should be entered.
 		if (sc.state == SCE_F_DEFAULT) {
-			if (sc.ch == '!') {
+			if (sc.ch == '!' || tolower(sc.ch) == 'c') {
                 if (sc.MatchIgnoreCase("!dec$") || sc.MatchIgnoreCase("!dir$") ||
                     sc.MatchIgnoreCase("!ms$") || sc.chNext == '$') {
 					sc.SetState(SCE_F_PREPROCESSOR);

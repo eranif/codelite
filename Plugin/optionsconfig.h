@@ -86,6 +86,7 @@ protected:
 	bool           m_outputPaneDockable;
 	bool           m_showDebugOnRun;
 	bool           m_caretUseCamelCase;
+	bool           m_dontTrimCaretLine;
 
 public:
 	OptionsConfig() {}
@@ -415,6 +416,9 @@ public:
 	}
 	int GetCaretLineAlpha() const {
 		return m_caretLineAlpha;
+	}
+	bool GetDontTrimCaretLine() const {
+		return m_dontTrimCaretLine;
 	}
 	/**
 	 * Return an XML representation of this object

@@ -140,11 +140,18 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
     	m_caretUseCamelCase             = XmlUtils::ReadBool  (node, wxT("m_caretUseCamelCase"),       m_caretUseCamelCase);
 
         // These hacks will likely be changed in the future. If so, we'll be able to remove the #include "editor_config.h" too
-    	long trim(0); long appendLf(0);
+    	long trim             (0); 
+		long appendLf         (0);
+		long dontTrimCaretLine(0);
     	EditorConfigST::Get()->GetLongValue(wxT("EditorTrimEmptyLines"), trim);
     	m_TrimLine = (trim > 0);
+		
     	EditorConfigST::Get()->GetLongValue(wxT("EditorAppendLf"), appendLf);
     	m_AppendLF = (appendLf > 0);
+		
+		EditorConfigST::Get()->GetLongValue(wxT("DontTrimCaretLine"), dontTrimCaretLine);
+    	m_dontTrimCaretLine = (dontTrimCaretLine > 0);
+		
     }
 }
 

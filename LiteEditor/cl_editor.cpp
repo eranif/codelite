@@ -3222,9 +3222,10 @@ void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
 
 void LEditor::TrimText()
 {
-	bool trim = GetOptions()->GetTrimLine();
-	bool appendLf = GetOptions()->GetAppendLF();
-
+	bool trim              = GetOptions()->GetTrimLine();
+	bool appendLf          = GetOptions()->GetAppendLF();
+	bool dontTrimCaretLine = GetOptions()->GetDontTrimCaretLine();
+	
 	if (!trim && !appendLf) {
 		return;
 	}
@@ -3234,19 +3235,28 @@ void LEditor::TrimText()
 
 	if (trim) {
 		int maxLines = GetLineCount();
+		int currLine = GetCurrentLine();
 		for (int line = 0; line < maxLines; line++) {
-			int lineStart = PositionFromLine(line);
-			int lineEnd = GetLineEndPosition(line);
-			int i = lineEnd-1;
-			wxChar ch = (wxChar)(GetCharAt(i));
-			while ((i >= lineStart) && ((ch == _T(' ')) || (ch == _T('\t')))) {
-				i--;
-				ch = (wxChar)(GetCharAt(i));
-			}
-			if (i < (lineEnd-1)) {
-				SetTargetStart(i+1);
-				SetTargetEnd(lineEnd);
-				ReplaceTarget(_T(""));
+			
+			// We can trim in the following cases:
+			// 1) line is is NOT the caret line OR
+			// 2) line is the caret line, however dontTrimCaretLine is FALSE
+			bool canTrim = ((line != currLine) || (line == currLine && !dontTrimCaretLine));
+			
+			if ( canTrim ) {
+				int lineStart = PositionFromLine(line);
+				int lineEnd = GetLineEndPosition(line);
+				int i = lineEnd-1;
+				wxChar ch = (wxChar)(GetCharAt(i));
+				while ((i >= lineStart) && ((ch == _T(' ')) || (ch == _T('\t')))) {
+					i--;
+					ch = (wxChar)(GetCharAt(i));
+				}
+				if (i < (lineEnd-1)) {
+					SetTargetStart(i+1);
+					SetTargetEnd(lineEnd);
+					ReplaceTarget(_T(""));
+				}
 			}
 		}
 	}

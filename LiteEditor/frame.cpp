@@ -4031,7 +4031,7 @@ void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
 	if(files) {
 
 		// Print the parsing end time
-		wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), gStopWatch.Time()/1000, files->size());
+		wxLogMessage(wxT("INFO: Retag workspace completed in %ld seconds (%lu files were scanned)"), gStopWatch.Time()/1000, (unsigned long)files->size());
 
 		std::vector<wxFileName> taggedFiles;
 		for(size_t i=0; i<files->size(); i++) {

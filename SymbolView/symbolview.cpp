@@ -101,6 +101,8 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 SymbolViewPlugin::~SymbolViewPlugin()
 {
 	thePlugin = NULL;
+	m_imagesList->RemoveAll();
+	delete m_imagesList;
 }
 
 

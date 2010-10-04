@@ -39,6 +39,7 @@ enum CodeCompletionOpts {
 	CC_COLOUR_VARS                         = 0x00000080,
 	CC_COLOUR_WORKSPACE_TAGS               = 0x00000100,
 	CC_CPP_KEYWORD_ASISST                  = 0x00000200,
+	CC_WORD_ASSIST                         = 0x00000400,
 	CC_DISABLE_AUTO_PARSING                = 0x00000800,
 	CC_MARK_TAGS_FILES_IN_BOLD             = 0x00001000,
 	CC_RETAG_WORKSPACE_ON_STARTUP          = 0x00004000,

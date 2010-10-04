@@ -776,6 +776,13 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		if (GetWordAtCaret().Len() >= 2 && pos - startPos >= 2 ) {
 			m_context->OnUserTypedXChars(GetWordAtCaret());
 		}
+
+		if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_WORD_ASSIST) {
+			if (GetWordAtCaret().Len() >= TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen() &&
+					pos - startPos >= TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen() ) {
+				CompleteWord();
+			}
+		}
 	}
 
 	if ( event.GetKey() !=  13 ) {
@@ -2339,7 +2346,7 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 	//let the context process it as well
 	if (GetFunctionTip()->IsActive() && event.GetKeyCode() == WXK_ESCAPE)
 		GetFunctionTip()->Deactivate();
-	
+
 	if (IsCompletionBoxShown()) {
 		switch (event.GetKeyCode()) {
 		case WXK_NUMPAD_ENTER:
@@ -2403,7 +2410,7 @@ void LEditor::OnLeftUp(wxMouseEvent& event)
 	if (!value) {
 		DoQuickJump(event, false);
 	}
-	
+
 	PostCmdEvent(wxEVT_EDITOR_CLICKED);
 	event.Skip();
 }
@@ -2467,7 +2474,7 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 	if (!value) {
 		DoMarkHyperlink(event, false);
 	}
-	
+
 	SetActive();
 	event.Skip();
 }
@@ -3225,7 +3232,7 @@ void LEditor::TrimText()
 	bool trim              = GetOptions()->GetTrimLine();
 	bool appendLf          = GetOptions()->GetAppendLF();
 	bool dontTrimCaretLine = GetOptions()->GetDontTrimCaretLine();
-	
+
 	if (!trim && !appendLf) {
 		return;
 	}
@@ -3237,12 +3244,12 @@ void LEditor::TrimText()
 		int maxLines = GetLineCount();
 		int currLine = GetCurrentLine();
 		for (int line = 0; line < maxLines; line++) {
-			
+
 			// We can trim in the following cases:
 			// 1) line is is NOT the caret line OR
 			// 2) line is the caret line, however dontTrimCaretLine is FALSE
 			bool canTrim = ((line != currLine) || (line == currLine && !dontTrimCaretLine));
-			
+
 			if ( canTrim ) {
 				int lineStart = PositionFromLine(line);
 				int lineEnd = GetLineEndPosition(line);
@@ -3579,10 +3586,10 @@ wxMenu* LEditor::DoCreateDebuggerWatchMenu(const wxString &word)
 {
 	DebuggerSettingsPreDefMap data;
 	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
-	
+
 	DebuggerPreDefinedTypes preDefTypes = data.GetActiveSet();
 	DebuggerCmdDataVec      cmds        = preDefTypes.GetCmds();
-	
+
 	wxMenu*      menu = new wxMenu();
 	wxMenuItem *item(NULL);
 	wxString    menuItemText;

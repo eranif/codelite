@@ -80,6 +80,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkColourLocalVars->SetValue               (m_data.GetFlags() & CC_COLOUR_VARS ? true : false);
 	m_checkColourProjTags->SetValue                (m_data.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
 	m_checkCppKeywordAssist->SetValue              (m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
+	m_checkWordAssist->SetValue                    (m_data.GetFlags() & CC_WORD_ASSIST ? true : false);
 	m_checkDisableParseOnSave->SetValue            (m_data.GetFlags() & CC_DISABLE_AUTO_PARSING ? true : false);
 	m_checkBoxMarkTagsFilesInBold->SetValue        (m_data.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
 	m_checkBoxretagWorkspaceOnStartup->SetValue    (m_data.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ? true : false);
@@ -100,6 +101,7 @@ void TagsOptionsDlg::InitValues()
 	m_listBoxSearchPaths->Append                   (m_data.GetParserSearchPaths() );
 	m_listBoxSearchPaths1->Append                  (m_data.GetParserExcludePaths() );
 	m_spinCtrlMaxItemToColour->SetValue            (m_data.GetMaxItemToColour() );
+	m_sliderMinWordLen->SetValue                   (m_data.GetMinWordLen() );
 	m_textPrep->SetValue                           (m_data.GetTokens());
 	m_textTypes->SetValue                          (m_data.GetTypes());
 	m_textCtrlFilesList->SetValue                  (m_data.GetMacrosFiles());
@@ -145,6 +147,7 @@ void TagsOptionsDlg::CopyData()
 	SetFlag(CC_PARSE_EXT_LESS_FILES,                m_checkFilesWithoutExt->IsChecked());
 	SetFlag(CC_COLOUR_VARS,                         m_checkColourLocalVars->IsChecked());
 	SetFlag(CC_CPP_KEYWORD_ASISST,                  m_checkCppKeywordAssist->IsChecked());
+	SetFlag(CC_WORD_ASSIST,                         m_checkWordAssist->IsChecked());
 	SetFlag(CC_DISABLE_AUTO_PARSING,                m_checkDisableParseOnSave->IsChecked());
 	SetFlag(CC_COLOUR_WORKSPACE_TAGS,               m_checkColourProjTags->IsChecked());
 	SetFlag(CC_MARK_TAGS_FILES_IN_BOLD,             m_checkBoxMarkTagsFilesInBold->IsChecked());
@@ -173,6 +176,7 @@ void TagsOptionsDlg::CopyData()
 	m_data.SetParserSearchPaths( m_listBoxSearchPaths->GetStrings() );
 	m_data.SetParserExcludePaths( m_listBoxSearchPaths1->GetStrings() );
 	m_data.SetMaxItemToColour( m_spinCtrlMaxItemToColour->GetValue() );
+	m_data.SetMinWordLen( m_sliderMinWordLen->GetValue() );
 	m_data.SetMacrosFiles( m_textCtrlFilesList->GetValue() );
 
 }
@@ -323,4 +327,9 @@ void TagsOptionsDlg::OnParse(wxCommandEvent& event)
 		CopyData();
 		EndModal(wxID_OK);
 	}
+}
+
+void TagsOptionsDlg::OnAutoShowWordAssitUI(wxUpdateUIEvent& event)
+{
+	event.Enable(m_checkWordAssist->IsChecked());
 }

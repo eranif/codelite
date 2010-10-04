@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version May  4 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -17,6 +17,7 @@
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/stattext.h>
+#include <wx/slider.h>
 #include <wx/spinctrl.h>
 #include <wx/panel.h>
 #include <wx/bitmap.h>
@@ -52,6 +53,10 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxCheckBox* m_checkCppKeywordAssist;
 		wxCheckBox* m_checkBoxDeepUsingNamespaceResolving;
 		
+		wxCheckBox* m_checkWordAssist;
+		
+		wxStaticText* m_staticTextMinWordLen;
+		wxSlider* m_sliderMinWordLen;
 		wxStaticText* m_staticText72;
 		wxSpinCtrl* m_spinCtrlMaxItemToColour;
 		wxCheckBox* m_checkColourLocalVars;
@@ -103,6 +108,7 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxButton* m_buttonCancel;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnAutoShowWordAssitUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnColourWorkspaceUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnAddSearchPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAddSearchPathUI( wxUpdateUIEvent& event ) { event.Skip(); }
@@ -123,7 +129,7 @@ class TagsOptionsBaseDlg : public wxDialog
 	
 	public:
 		
-		TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Tags Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 704,598 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Tags Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 840,596 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~TagsOptionsBaseDlg();
 	
 };

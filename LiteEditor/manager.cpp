@@ -323,15 +323,16 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 	
 	// Load the tags file content (we load the file and then destroy it) this way the file is forced into
 	// the file system cache and will prevent hangs when first using the tagging system
-//	if(TagsManagerST::Get()->GetDatabase()) {
-//		wxFileName dbfn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
-//		wxFFile dbFile(dbfn.GetFullPath(), wxT("rb"));
-//		if(dbFile.IsOpened()) {
-//			wxString fileContent;
-//			wxCSConv fontEncConv(wxFONTENCODING_ISO8859_1);
-//			dbFile.ReadAll(&fileContent, fontEncConv);
-//		}
-//	}
+	if(TagsManagerST::Get()->GetDatabase()) {
+		wxFileName dbfn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
+		wxFFile dbFile(dbfn.GetFullPath(), wxT("rb"));
+		if(dbFile.IsOpened()) {
+			wxString fileContent;
+			wxCSConv fontEncConv(wxFONTENCODING_ISO8859_1);
+			dbFile.ReadAll(&fileContent, fontEncConv);
+			dbFile.Close();
+		}
+	}
 }
 
 void Manager::CloseWorkspace()

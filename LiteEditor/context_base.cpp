@@ -113,13 +113,18 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 		} else if ( sp.GetId() == SEL_TEXT_ATTR_ID ) {
 
 			// selection colour
-			rCtrl.SetSelBackground(true, sp.GetBgColour());
-			rCtrl.SetSelAlpha(alpha);
-
+			if(wxColour(sp.GetBgColour()).IsOk()) {
+				rCtrl.SetSelBackground(true, sp.GetBgColour());
+				rCtrl.SetSelAlpha(alpha);
+			}
+			
 		} else if ( sp.GetId() == CARET_ATTR_ID ) {
+			
 			// caret colour
-			rCtrl.SetCaretForeground(sp.GetFgColour());
-
+			if(wxColour(sp.GetFgColour()).IsOk()) {
+				rCtrl.SetCaretForeground(sp.GetFgColour());
+			}
+			
 		} else {
 			int fontSize( size );
 

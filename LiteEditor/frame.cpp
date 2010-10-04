@@ -568,7 +568,7 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
 	SearchThreadST::Get()->Start(WXTHREAD_MIN_PRIORITY);
 
 	// start the job queue
-	JobQueueSingleton::Instance()->Start(5);
+	JobQueueSingleton::Instance()->Start(6);
 
 	// the single instance job is a presisstent job, so the pool will contain only 4 available threads
 	JobQueueSingleton::Instance()->PushJob(new SingleInstanceThreadJob(this, ManagerST::Get()->GetStarupDirectory()));

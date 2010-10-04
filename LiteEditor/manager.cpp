@@ -32,6 +32,7 @@
 #include "new_quick_watch_dlg.h"
 #include "debuggerconfigtool.h"
 #include "debuggersettings.h"
+#include "dbcontentcacher.h"
 #include "debuggerasciiviewer.h"
 
 #include <vector>
@@ -190,6 +191,7 @@ Manager::Manager ( void )
 	m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
 	Connect(wxEVT_CMD_RESTART_CODELITE,            wxCommandEventHandler(Manager::OnRestart),              NULL, this);
 	Connect(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, wxCommandEventHandler(Manager::OnIncludeFilesScanDone), NULL, this);
+	Connect(wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED,  wxCommandEventHandler(Manager::OnDbContentCacherLoaded), NULL, this);
 	
 	wxTheApp->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
 }
@@ -325,13 +327,7 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 	// the file system cache and will prevent hangs when first using the tagging system
 	if(TagsManagerST::Get()->GetDatabase()) {
 		wxFileName dbfn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
-		wxFFile dbFile(dbfn.GetFullPath(), wxT("rb"));
-		if(dbFile.IsOpened()) {
-			wxString fileContent;
-			wxCSConv fontEncConv(wxFONTENCODING_ISO8859_1);
-			dbFile.ReadAll(&fileContent, fontEncConv);
-			dbFile.Close();
-		}
+		JobQueueSingleton::Instance()->PushJob( new DbContentCacher(this, dbfn.GetFullPath().c_str()) );
 	}
 }
 
@@ -3198,3 +3194,9 @@ void Manager::OnProjectSettingsModified(wxCommandEvent& event)
 	// Get the project settings
 	clMainFrame::Get()->SelectBestEnvSet();
 }
+
+void Manager::OnDbContentCacherLoaded(wxCommandEvent& event)
+{
+	wxLogMessage(event.GetString());
+}
+

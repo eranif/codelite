@@ -451,6 +451,8 @@
     <File Name="tabgroupmanager.cpp"/>
     <File Name="tabgroupmanager.h"/>
     <File Name="tabgroupspane.cpp"/>
+    <File Name="dbcontentcacher.h"/>
+    <File Name="dbcontentcacher.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="code_parser.rc"/>

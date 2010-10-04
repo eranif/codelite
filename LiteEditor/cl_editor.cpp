@@ -778,7 +778,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		}
 
 		if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_WORD_ASSIST) {
-			if (GetWordAtCaret().Len() >= TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen() &&
+			if (GetWordAtCaret().Len() == (size_t)TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen() &&
 					pos - startPos >= TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen() ) {
 				CompleteWord();
 			}
@@ -2869,7 +2869,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	}
 
 	m_ccBox->SetAutoHide(false);
-	m_ccBox->SetInsertSingleChoice(false);
+	m_ccBox->SetInsertSingleChoice(true);
 
 	// Show extra info pane for C++ tags
 	bool showExtInfoPane = (tags.at(0)->GetKind() == wxT("function")  ||

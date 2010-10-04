@@ -292,7 +292,9 @@ public:
 	 * @param event
 	 */
 	void OnIncludeFilesScanDone(wxCommandEvent &event);
-
+	
+	void OnDbContentCacherLoaded(wxCommandEvent &event);
+	
 	/**
 	 * \brief retag a given file
 	 * \param filename

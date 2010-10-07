@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May  4 2010)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -16,20 +16,20 @@
 #include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
-#include <wx/stattext.h>
-#include <wx/slider.h>
-#include <wx/spinctrl.h>
 #include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
+#include <wx/stattext.h>
+#include <wx/spinctrl.h>
+#include <wx/slider.h>
+#include <wx/notebook.h>
 #include <wx/listbox.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
 #include <wx/combobox.h>
 #include <wx/statline.h>
 #include <wx/hyperlink.h>
-#include <wx/notebook.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -45,18 +45,16 @@ class TagsOptionsBaseDlg : public wxDialog
 	protected:
 		wxNotebook* m_mainBook;
 		wxPanel* m_generalPage;
+		wxNotebook* m_notebook3;
+		wxPanel* m_panel8;
 		wxCheckBox* m_checkBoxMarkTagsFilesInBold;
-		wxCheckBox* m_checkDisableParseOnSave;
-		wxCheckBox* m_checkBoxretagWorkspaceOnStartup;
 		wxCheckBox* m_checkDisplayTypeInfo;
 		wxCheckBox* m_checkDisplayFunctionTip;
 		wxCheckBox* m_checkCppKeywordAssist;
+		wxCheckBox* m_checkBoxretagWorkspaceOnStartup;
+		wxCheckBox* m_checkDisableParseOnSave;
 		wxCheckBox* m_checkBoxDeepUsingNamespaceResolving;
-		
-		wxCheckBox* m_checkWordAssist;
-		
-		wxStaticText* m_staticTextMinWordLen;
-		wxSlider* m_sliderMinWordLen;
+		wxPanel* m_panel6;
 		wxStaticText* m_staticText72;
 		wxSpinCtrl* m_spinCtrlMaxItemToColour;
 		wxCheckBox* m_checkColourLocalVars;
@@ -73,6 +71,11 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxCheckBox* m_checkBoxNamespace;
 		wxCheckBox* m_checkBoxMember;
 		wxCheckBox* m_checkBoxVariable;
+		wxPanel* m_panel7;
+		wxCheckBox* m_checkWordAssist;
+		
+		wxStaticText* m_staticTextMinWordLen;
+		wxSlider* m_sliderMinWordLen;
 		wxPanel* m_panelParser;
 		wxStaticText* m_staticText7;
 		wxListBox* m_listBoxSearchPaths;
@@ -108,8 +111,8 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxButton* m_buttonCancel;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnAutoShowWordAssitUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnColourWorkspaceUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnAutoShowWordAssitUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnAddSearchPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAddSearchPathUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnRemoveSearchPath( wxCommandEvent& event ) { event.Skip(); }

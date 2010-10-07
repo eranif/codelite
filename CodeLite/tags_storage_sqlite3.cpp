@@ -374,7 +374,16 @@ void TagsStorageSQLite::GetFiles(const wxString &partialName, std::vector<FileEn
 
 			wxFileName fileName(fe->GetFile());
 			wxString match = match_path ? fileName.GetFullPath() : fileName.GetFullName();
-			if (match.StartsWith(partialName)) {
+			
+			// Under Windows, all files are stored as lower case in the 
+			// database (see fc_fileopener.cpp normalize_path method
+#ifdef __WXMSW__
+			wxString lowerCasePartialName (partialName);
+			lowerCasePartialName.MakeLower();
+#else
+			wxString lowerCasePartialName (partialName);
+#endif
+			if (match.StartsWith(lowerCasePartialName)) {
 				files.push_back(fe);
 			}
 		}

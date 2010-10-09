@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Oct  3 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -173,8 +173,9 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	m_checkWordAssist = new wxCheckBox( m_panel7, wxID_ANY, wxT("Auto-Display wordcompletion-box on typing"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer4->Add( m_checkWordAssist, 0, wxALL, 5 );
 	
-	
-	fgSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
+	m_checkAutoInsertSingleChoice = new wxCheckBox( m_panel7, wxID_ANY, wxT("Auto-Insert single match"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkAutoInsertSingleChoice->SetValue(true); 
+	fgSizer4->Add( m_checkAutoInsertSingleChoice, 0, wxALL, 5 );
 	
 	m_staticTextMinWordLen = new wxStaticText( m_panel7, wxID_ANY, wxT("Minimum number of chars to type to show wordcompletion-box:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextMinWordLen->Wrap( -1 );
@@ -477,4 +478,5 @@ TagsOptionsBaseDlg::~TagsOptionsBaseDlg()
 	m_buttonParse->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnParse ), NULL, this );
 	m_buttonParse->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnFileSelectedUI ), NULL, this );
 	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonOK ), NULL, this );
+	
 }

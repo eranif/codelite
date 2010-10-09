@@ -35,6 +35,7 @@ enum CodeCompletionOpts {
 	CC_DISP_TYPE_INFO                      = 0x00000004,
 	CC_DISP_FUNC_CALLTIP                   = 0x00000008,
 	CC_LOAD_EXT_DB                         = 0x00000010,
+	CC_AUTO_INSERT_SINGLE_CHOICE           = 0x00000020,
 	CC_PARSE_EXT_LESS_FILES                = 0x00000040,
 	CC_COLOUR_VARS                         = 0x00000080,
 	CC_COLOUR_WORKSPACE_TAGS               = 0x00000100,

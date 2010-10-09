@@ -81,6 +81,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkColourProjTags->SetValue                (m_data.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
 	m_checkCppKeywordAssist->SetValue              (m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
 	m_checkWordAssist->SetValue                    (m_data.GetFlags() & CC_WORD_ASSIST ? true : false);
+	m_checkAutoInsertSingleChoice->SetValue        (m_data.GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE ? true : false);
 	m_checkDisableParseOnSave->SetValue            (m_data.GetFlags() & CC_DISABLE_AUTO_PARSING ? true : false);
 	m_checkBoxMarkTagsFilesInBold->SetValue        (m_data.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
 	m_checkBoxretagWorkspaceOnStartup->SetValue    (m_data.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ? true : false);
@@ -148,6 +149,7 @@ void TagsOptionsDlg::CopyData()
 	SetFlag(CC_COLOUR_VARS,                         m_checkColourLocalVars->IsChecked());
 	SetFlag(CC_CPP_KEYWORD_ASISST,                  m_checkCppKeywordAssist->IsChecked());
 	SetFlag(CC_WORD_ASSIST,                         m_checkWordAssist->IsChecked());
+	SetFlag(CC_AUTO_INSERT_SINGLE_CHOICE,           m_checkAutoInsertSingleChoice->IsChecked());
 	SetFlag(CC_DISABLE_AUTO_PARSING,                m_checkDisableParseOnSave->IsChecked());
 	SetFlag(CC_COLOUR_WORKSPACE_TAGS,               m_checkColourProjTags->IsChecked());
 	SetFlag(CC_MARK_TAGS_FILES_IN_BOLD,             m_checkBoxMarkTagsFilesInBold->IsChecked());

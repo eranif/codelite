@@ -2869,7 +2869,10 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	}
 
 	m_ccBox->SetAutoHide(false);
-	m_ccBox->SetInsertSingleChoice(true);
+	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE)
+		m_ccBox->SetInsertSingleChoice(true);
+	else
+		m_ccBox->SetInsertSingleChoice(false);
 
 	// Show extra info pane for C++ tags
 	bool showExtInfoPane = (tags.at(0)->GetKind() == wxT("function")  ||
@@ -2912,7 +2915,10 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	}
 
 	m_ccBox->SetAutoHide(autoHide);
-	m_ccBox->SetInsertSingleChoice(autoInsertSingleChoice);
+	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE)
+		m_ccBox->SetInsertSingleChoice(true);
+	else
+		m_ccBox->SetInsertSingleChoice(false);
 
 	// Show extra info pane for C++ tags
 	bool showExtInfoPane = (tags.at(0)->GetKind() == wxT("function")  ||

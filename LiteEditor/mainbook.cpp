@@ -949,9 +949,6 @@ void MainBook::DoPositionFindBar(int where)
 
 void MainBook::OnDebugEnded(wxCommandEvent& e)
 {
-	std::vector<LEditor*> editors;
-	GetAllEditors(editors);
-
 	ManagerST::Get()->GetDebuggerTip()->HideDialog();
 	e.Skip();
 }

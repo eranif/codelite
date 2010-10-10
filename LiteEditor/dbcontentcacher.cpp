@@ -30,7 +30,7 @@ void DbContentCacher::Process(wxThread* thread)
 	
 	if (m_parent) {
 		wxCommandEvent e(wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED);
-		e.SetString(wxString::Format(wxT("Symbols file loaded into OS file system cache (%d seconds)"), sw.Time()/1000).c_str());
+		e.SetString(wxString::Format(wxT("Symbols file loaded into OS file system cache (%ld seconds)"), sw.Time()/1000).c_str());
 		m_parent->AddPendingEvent(e);
 	}
 }

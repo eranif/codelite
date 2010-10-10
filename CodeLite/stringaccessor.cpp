@@ -37,7 +37,18 @@ char StringAccessor::safeAt(size_t pos)
 	if( pos >= m_str.size() ) {
 		return 0;
 	}
+
+#if wxVERSION_NUMBER < 2900
 	return m_str.at(pos);
+#else
+	char c;
+	wxUniChar uc = m_str.at(pos);
+	if (uc.GetAsChar(&c)) {
+		return c; 
+	} else {
+		return 0;
+	}
+#endif
 }
 
 bool StringAccessor::isWordChar(char ch)

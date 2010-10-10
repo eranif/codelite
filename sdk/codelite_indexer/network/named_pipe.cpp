@@ -8,14 +8,14 @@
 #endif
 
 #ifdef __WXMSW__
-class HandleLocker 
+class HandleLocker
 {
 	HANDLE m_event;
 public:
 	HandleLocker(HANDLE event) : m_event(event) {}
-	~HandleLocker() { 
-		if(m_event != INVALID_PIPE_HANDLE) 
-			CloseHandle(m_event); 
+	~HandleLocker() {
+		if(m_event != INVALID_PIPE_HANDLE)
+			CloseHandle(m_event);
 	}
 };
 #endif
@@ -39,9 +39,9 @@ bool clNamedPipe::write( const void* data, size_t dataLength, size_t *written, l
 
 	OVERLAPPED ov = {0};
 	ov.hEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-	
+
 	HandleLocker locker(ov.hEvent);
-	
+
 	DWORD actualWrote;
 	if (!WriteFile(_pipeHandle, data, (DWORD)dataLength, &actualWrote, &ov)) {
 		*written = static_cast<int>(actualWrote);
@@ -86,7 +86,7 @@ bool clNamedPipe::read( void* data, size_t dataLength,  size_t *read, long timeT
 	OVERLAPPED ov = {0};
 	ov.hEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
 	HandleLocker locker( ov.hEvent );
-	
+
 	//start an asynch read on the named pipe
 	if (!ReadFile(_pipeHandle, data, (DWORD)dataLength, (LPDWORD) read, &ov)) {
 		int err = GetLastError();
@@ -117,10 +117,10 @@ bool clNamedPipe::read( void* data, size_t dataLength,  size_t *read, long timeT
 	fd_set rset;
 	FD_ZERO(&rset);
 	FD_SET(_pipeHandle, &rset);
-	
+
 	struct timeval tv;
 	struct timeval *ptv = NULL;
-	
+
 	if (timeToLive > 0) {
 		tv.tv_sec = timeToLive / 1000;
 		tv.tv_usec = (timeToLive % 1000)*1000;
@@ -133,16 +133,20 @@ bool clNamedPipe::read( void* data, size_t dataLength,  size_t *read, long timeT
 		setLastError(ZNP_TIMEOUT);
 		return false;
 	} else if(rc < 0){
-		// error 
+		// error
 		setLastError(ZNP_UNKNOWN);
 		return false;
 	} else {
 		// read the data
 		*read = ::read(_pipeHandle, data, dataLength);
-		if(*recv < 0){
+		if(*read < 0){
 			setLastError(ZNP_READ_ERROR);
 			return false;
-		} 
+
+		} else if(*read == 0) {
+			setLastError(ZNP_CONN_CLOSED);
+			return false;
+		}
 		return true;
 	}
 #endif

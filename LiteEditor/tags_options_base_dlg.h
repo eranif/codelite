@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Oct  3 2010)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -73,9 +73,10 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxCheckBox* m_checkBoxVariable;
 		wxPanel* m_panel7;
 		wxCheckBox* m_checkWordAssist;
-		wxCheckBox* m_checkAutoInsertSingleChoice;
+		
 		wxStaticText* m_staticTextMinWordLen;
 		wxSlider* m_sliderMinWordLen;
+		wxCheckBox* m_checkAutoInsertSingleChoice;
 		wxPanel* m_panelParser;
 		wxStaticText* m_staticText7;
 		wxListBox* m_listBoxSearchPaths;

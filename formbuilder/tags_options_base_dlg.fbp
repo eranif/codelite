@@ -25,7 +25,6 @@
             <property name="bg"></property>
             <property name="center">wxBOTH</property>
             <property name="context_help"></property>
-            <property name="context_menu">1</property>
             <property name="enabled">1</property>
             <property name="event_handler">impl_virtual</property>
             <property name="extra_style"></property>
@@ -92,7 +91,6 @@
                         <property name="bg"></property>
                         <property name="bitmapsize"></property>
                         <property name="context_help"></property>
-                        <property name="context_menu">1</property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>
                         <property name="font"></property>
@@ -146,7 +144,6 @@
                             <object class="wxPanel" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
-                                <property name="context_menu">1</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>
@@ -203,7 +200,6 @@
                                             <property name="bg"></property>
                                             <property name="bitmapsize"></property>
                                             <property name="context_help"></property>
-                                            <property name="context_menu">1</property>
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="font"></property>
@@ -257,7 +253,6 @@
                                                 <object class="wxPanel" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -338,7 +333,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -353,7 +347,7 @@
                                                                                 <property name="size"></property>
                                                                                 <property name="style"></property>
                                                                                 <property name="subclass"></property>
-                                                                                <property name="tooltip"></property>
+                                                                                <property name="tooltip">Mark files and dirs in file explorer that contribute tags in bold</property>
                                                                                 <property name="validator_data_type"></property>
                                                                                 <property name="validator_style">wxFILTER_NONE</property>
                                                                                 <property name="validator_type">wxDefaultValidator</property>
@@ -395,7 +389,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -410,7 +403,7 @@
                                                                                 <property name="size"></property>
                                                                                 <property name="style"></property>
                                                                                 <property name="subclass"></property>
-                                                                                <property name="tooltip"></property>
+                                                                                <property name="tooltip">Display information about the hovered text</property>
                                                                                 <property name="validator_data_type"></property>
                                                                                 <property name="validator_style">wxFILTER_NONE</property>
                                                                                 <property name="validator_type">wxDefaultValidator</property>
@@ -452,7 +445,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -467,7 +459,7 @@
                                                                                 <property name="size"></property>
                                                                                 <property name="style"></property>
                                                                                 <property name="subclass"></property>
-                                                                                <property name="tooltip"></property>
+                                                                                <property name="tooltip">Display function argument list after typing an open brace &apos;(&apos;</property>
                                                                                 <property name="validator_data_type"></property>
                                                                                 <property name="validator_style">wxFILTER_NONE</property>
                                                                                 <property name="validator_type">wxDefaultValidator</property>
@@ -509,7 +501,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -524,7 +515,7 @@
                                                                                 <property name="size"></property>
                                                                                 <property name="style"></property>
                                                                                 <property name="subclass"></property>
-                                                                                <property name="tooltip"></property>
+                                                                                <property name="tooltip">When enabled, codelite will auto show the code completion box for C/C++ keywords after typing 2 chars</property>
                                                                                 <property name="validator_data_type"></property>
                                                                                 <property name="validator_style">wxFILTER_NONE</property>
                                                                                 <property name="validator_type">wxDefaultValidator</property>
@@ -594,7 +585,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -609,7 +599,7 @@
                                                                                 <property name="size"></property>
                                                                                 <property name="style"></property>
                                                                                 <property name="subclass"></property>
-                                                                                <property name="tooltip"></property>
+                                                                                <property name="tooltip">Retag workspace once loaded</property>
                                                                                 <property name="validator_data_type"></property>
                                                                                 <property name="validator_style">wxFILTER_NONE</property>
                                                                                 <property name="validator_type">wxDefaultValidator</property>
@@ -651,7 +641,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -666,7 +655,7 @@
                                                                                 <property name="size"></property>
                                                                                 <property name="style"></property>
                                                                                 <property name="subclass"></property>
-                                                                                <property name="tooltip"></property>
+                                                                                <property name="tooltip">Do not trigger file parsing after saving a file</property>
                                                                                 <property name="validator_data_type"></property>
                                                                                 <property name="validator_style">wxFILTER_NONE</property>
                                                                                 <property name="validator_type">wxDefaultValidator</property>
@@ -708,7 +697,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -723,7 +711,7 @@
                                                                                 <property name="size"></property>
                                                                                 <property name="style"></property>
                                                                                 <property name="subclass"></property>
-                                                                                <property name="tooltip"></property>
+                                                                                <property name="tooltip">Allways search for &apos;using namespace&apos; statements in all included files</property>
                                                                                 <property name="validator_data_type"></property>
                                                                                 <property name="validator_style">wxFILTER_NONE</property>
                                                                                 <property name="validator_type">wxDefaultValidator</property>
@@ -771,7 +759,6 @@
                                                 <object class="wxPanel" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -848,7 +835,6 @@
                                                                             <object class="wxStaticText" expanded="0">
                                                                                 <property name="bg"></property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -904,7 +890,6 @@
                                                                             <object class="wxSpinCtrl" expanded="0">
                                                                                 <property name="bg"></property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -967,7 +952,6 @@
                                                                         <property name="bg"></property>
                                                                         <property name="checked">0</property>
                                                                         <property name="context_help"></property>
-                                                                        <property name="context_menu">1</property>
                                                                         <property name="enabled">1</property>
                                                                         <property name="fg"></property>
                                                                         <property name="font"></property>
@@ -1024,7 +1008,6 @@
                                                                         <property name="bg"></property>
                                                                         <property name="checked">0</property>
                                                                         <property name="context_help"></property>
-                                                                        <property name="context_menu">1</property>
                                                                         <property name="enabled">1</property>
                                                                         <property name="fg"></property>
                                                                         <property name="font"></property>
@@ -1097,7 +1080,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1154,7 +1136,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1211,7 +1192,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1268,7 +1248,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1325,7 +1304,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1382,7 +1360,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1439,7 +1416,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1496,7 +1472,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1553,7 +1528,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1610,7 +1584,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1667,7 +1640,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1724,7 +1696,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1787,7 +1758,6 @@
                                                 <object class="wxPanel" expanded="1">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -1852,7 +1822,7 @@
                                                                     <property name="border">5</property>
                                                                     <property name="flag">wxEXPAND|wxALL</property>
                                                                     <property name="proportion">0</property>
-                                                                    <object class="wxFlexGridSizer" expanded="0">
+                                                                    <object class="wxFlexGridSizer" expanded="1">
                                                                         <property name="cols">2</property>
                                                                         <property name="flexible_direction">wxBOTH</property>
                                                                         <property name="growablecols">1</property>
@@ -1872,7 +1842,6 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1887,7 +1856,7 @@
                                                                                 <property name="size"></property>
                                                                                 <property name="style"></property>
                                                                                 <property name="subclass"></property>
-                                                                                <property name="tooltip"></property>
+                                                                                <property name="tooltip">When enabled, codelite will auto show the code completion box after N chars were typed</property>
                                                                                 <property name="validator_data_type"></property>
                                                                                 <property name="validator_style">wxFILTER_NONE</property>
                                                                                 <property name="validator_type">wxDefaultValidator</property>
@@ -1923,59 +1892,12 @@
                                                                         </object>
                                                                         <object class="sizeritem" expanded="1">
                                                                             <property name="border">5</property>
-                                                                            <property name="flag">wxALL</property>
-                                                                            <property name="proportion">0</property>
-                                                                            <object class="wxCheckBox" expanded="1">
-                                                                                <property name="bg"></property>
-                                                                                <property name="checked">1</property>
-                                                                                <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
-                                                                                <property name="enabled">1</property>
-                                                                                <property name="fg"></property>
-                                                                                <property name="font"></property>
-                                                                                <property name="hidden">0</property>
-                                                                                <property name="id">wxID_ANY</property>
-                                                                                <property name="label">Auto-Insert single match</property>
-                                                                                <property name="maximum_size"></property>
-                                                                                <property name="minimum_size"></property>
-                                                                                <property name="name">m_checkAutoInsertSingleChoice</property>
+                                                                            <property name="flag">wxEXPAND</property>
+                                                                            <property name="proportion">1</property>
+                                                                            <object class="spacer" expanded="1">
+                                                                                <property name="height">0</property>
                                                                                 <property name="permission">protected</property>
-                                                                                <property name="pos"></property>
-                                                                                <property name="size"></property>
-                                                                                <property name="style"></property>
-                                                                                <property name="subclass"></property>
-                                                                                <property name="tooltip"></property>
-                                                                                <property name="validator_data_type"></property>
-                                                                                <property name="validator_style">wxFILTER_NONE</property>
-                                                                                <property name="validator_type">wxDefaultValidator</property>
-                                                                                <property name="validator_variable"></property>
-                                                                                <property name="window_extra_style"></property>
-                                                                                <property name="window_name"></property>
-                                                                                <property name="window_style"></property>
-                                                                                <event name="OnChar"></event>
-                                                                                <event name="OnCheckBox"></event>
-                                                                                <event name="OnEnterWindow"></event>
-                                                                                <event name="OnEraseBackground"></event>
-                                                                                <event name="OnKeyDown"></event>
-                                                                                <event name="OnKeyUp"></event>
-                                                                                <event name="OnKillFocus"></event>
-                                                                                <event name="OnLeaveWindow"></event>
-                                                                                <event name="OnLeftDClick"></event>
-                                                                                <event name="OnLeftDown"></event>
-                                                                                <event name="OnLeftUp"></event>
-                                                                                <event name="OnMiddleDClick"></event>
-                                                                                <event name="OnMiddleDown"></event>
-                                                                                <event name="OnMiddleUp"></event>
-                                                                                <event name="OnMotion"></event>
-                                                                                <event name="OnMouseEvents"></event>
-                                                                                <event name="OnMouseWheel"></event>
-                                                                                <event name="OnPaint"></event>
-                                                                                <event name="OnRightDClick"></event>
-                                                                                <event name="OnRightDown"></event>
-                                                                                <event name="OnRightUp"></event>
-                                                                                <event name="OnSetFocus"></event>
-                                                                                <event name="OnSize"></event>
-                                                                                <event name="OnUpdateUI"></event>
+                                                                                <property name="width">0</property>
                                                                             </object>
                                                                         </object>
                                                                         <object class="sizeritem" expanded="0">
@@ -1985,7 +1907,6 @@
                                                                             <object class="wxStaticText" expanded="0">
                                                                                 <property name="bg"></property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -2000,7 +1921,7 @@
                                                                                 <property name="size"></property>
                                                                                 <property name="style"></property>
                                                                                 <property name="subclass"></property>
-                                                                                <property name="tooltip"></property>
+                                                                                <property name="tooltip">Number of chars to type before showing the code completion box</property>
                                                                                 <property name="validator_data_type"></property>
                                                                                 <property name="validator_style">wxFILTER_NONE</property>
                                                                                 <property name="validator_type">wxDefaultValidator</property>
@@ -2041,7 +1962,6 @@
                                                                             <object class="wxSlider" expanded="0">
                                                                                 <property name="bg"></property>
                                                                                 <property name="context_help"></property>
-                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -2057,7 +1977,7 @@
                                                                                 <property name="size"></property>
                                                                                 <property name="style">wxSL_AUTOTICKS|wxSL_HORIZONTAL|wxSL_LABELS</property>
                                                                                 <property name="subclass"></property>
-                                                                                <property name="tooltip"></property>
+                                                                                <property name="tooltip">Number of chars to type before showing the code completion box</property>
                                                                                 <property name="validator_data_type"></property>
                                                                                 <property name="validator_style">wxFILTER_NONE</property>
                                                                                 <property name="validator_type">wxDefaultValidator</property>
@@ -2111,6 +2031,62 @@
                                                                                 <event name="OnUpdateUI">OnAutoShowWordAssitUI</event>
                                                                             </object>
                                                                         </object>
+                                                                        <object class="sizeritem" expanded="1">
+                                                                            <property name="border">5</property>
+                                                                            <property name="flag">wxALL</property>
+                                                                            <property name="proportion">0</property>
+                                                                            <object class="wxCheckBox" expanded="1">
+                                                                                <property name="bg"></property>
+                                                                                <property name="checked">1</property>
+                                                                                <property name="context_help"></property>
+                                                                                <property name="enabled">1</property>
+                                                                                <property name="fg"></property>
+                                                                                <property name="font"></property>
+                                                                                <property name="hidden">0</property>
+                                                                                <property name="id">wxID_ANY</property>
+                                                                                <property name="label">Auto-Insert single match</property>
+                                                                                <property name="maximum_size"></property>
+                                                                                <property name="minimum_size"></property>
+                                                                                <property name="name">m_checkAutoInsertSingleChoice</property>
+                                                                                <property name="permission">protected</property>
+                                                                                <property name="pos"></property>
+                                                                                <property name="size"></property>
+                                                                                <property name="style"></property>
+                                                                                <property name="subclass"></property>
+                                                                                <property name="tooltip">When there is only a single match dont show the code completion box but rather insert the match</property>
+                                                                                <property name="validator_data_type"></property>
+                                                                                <property name="validator_style">wxFILTER_NONE</property>
+                                                                                <property name="validator_type">wxDefaultValidator</property>
+                                                                                <property name="validator_variable"></property>
+                                                                                <property name="window_extra_style"></property>
+                                                                                <property name="window_name"></property>
+                                                                                <property name="window_style"></property>
+                                                                                <event name="OnChar"></event>
+                                                                                <event name="OnCheckBox"></event>
+                                                                                <event name="OnEnterWindow"></event>
+                                                                                <event name="OnEraseBackground"></event>
+                                                                                <event name="OnKeyDown"></event>
+                                                                                <event name="OnKeyUp"></event>
+                                                                                <event name="OnKillFocus"></event>
+                                                                                <event name="OnLeaveWindow"></event>
+                                                                                <event name="OnLeftDClick"></event>
+                                                                                <event name="OnLeftDown"></event>
+                                                                                <event name="OnLeftUp"></event>
+                                                                                <event name="OnMiddleDClick"></event>
+                                                                                <event name="OnMiddleDown"></event>
+                                                                                <event name="OnMiddleUp"></event>
+                                                                                <event name="OnMotion"></event>
+                                                                                <event name="OnMouseEvents"></event>
+                                                                                <event name="OnMouseWheel"></event>
+                                                                                <event name="OnPaint"></event>
+                                                                                <event name="OnRightDClick"></event>
+                                                                                <event name="OnRightDown"></event>
+                                                                                <event name="OnRightUp"></event>
+                                                                                <event name="OnSetFocus"></event>
+                                                                                <event name="OnSize"></event>
+                                                                                <event name="OnUpdateUI"></event>
+                                                                            </object>
+                                                                        </object>
                                                                     </object>
                                                                 </object>
                                                             </object>
@@ -2130,7 +2106,6 @@
                             <object class="wxPanel" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
-                                <property name="context_menu">1</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>
@@ -2198,7 +2173,6 @@
                                                 <object class="wxStaticText" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -2266,7 +2240,6 @@
                                                     <property name="bg"></property>
                                                     <property name="choices"></property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -2331,7 +2304,6 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
-                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -2388,7 +2360,6 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
-                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -2445,7 +2416,6 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
-                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -2518,7 +2488,6 @@
                                                 <object class="wxStaticText" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -2586,7 +2555,6 @@
                                                     <property name="bg"></property>
                                                     <property name="choices"></property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -2651,7 +2619,6 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
-                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -2708,7 +2675,6 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
-                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -2765,7 +2731,6 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
-                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -2829,7 +2794,6 @@
                             <object class="wxPanel" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
-                                <property name="context_menu">1</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>
@@ -2901,7 +2865,6 @@
                                                 <object class="wxStaticText" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -2957,7 +2920,6 @@
                                                 <object class="wxTextCtrl" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -3017,7 +2979,6 @@
                                                 <object class="wxStaticText" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -3074,7 +3035,6 @@
                                                     <property name="bg"></property>
                                                     <property name="choices">&quot;C++&quot; &quot;Java&quot;</property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -3135,7 +3095,6 @@
                                             <property name="bg"></property>
                                             <property name="checked">0</property>
                                             <property name="context_help"></property>
-                                            <property name="context_menu">1</property>
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="font"></property>
@@ -3191,7 +3150,6 @@
                                         <object class="wxStaticLine" expanded="0">
                                             <property name="bg"></property>
                                             <property name="context_help"></property>
-                                            <property name="context_menu">1</property>
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="font"></property>
@@ -3254,7 +3212,6 @@
                                                 <object class="wxStaticText" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -3319,7 +3276,6 @@
                                                         <object class="wxTextCtrl" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
-                                                            <property name="context_menu">1</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
                                                             <property name="font"></property>
@@ -3379,7 +3335,6 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
-                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -3440,7 +3395,6 @@
                                         <object class="wxStaticLine" expanded="0">
                                             <property name="bg"></property>
                                             <property name="context_help"></property>
-                                            <property name="context_menu">1</property>
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="font"></property>
@@ -3495,7 +3449,6 @@
                                             <property name="bg"></property>
                                             <property name="bitmapsize"></property>
                                             <property name="context_help"></property>
-                                            <property name="context_menu">1</property>
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="font"></property>
@@ -3549,7 +3502,6 @@
                                                 <object class="wxPanel" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -3605,7 +3557,6 @@
                                                             <object class="wxTextCtrl" expanded="0">
                                                                 <property name="bg"></property>
                                                                 <property name="context_help"></property>
-                                                                <property name="context_menu">1</property>
                                                                 <property name="enabled">1</property>
                                                                 <property name="fg"></property>
                                                                 <property name="font">,90,90,-1,76,0</property>
@@ -3677,7 +3628,6 @@
                                                                     <object class="wxStaticText" expanded="0">
                                                                         <property name="bg"></property>
                                                                         <property name="context_help"></property>
-                                                                        <property name="context_menu">1</property>
                                                                         <property name="enabled">1</property>
                                                                         <property name="fg"></property>
                                                                         <property name="font"></property>
@@ -3733,7 +3683,6 @@
                                                                     <object class="wxHyperlinkCtrl" expanded="0">
                                                                         <property name="bg"></property>
                                                                         <property name="context_help"></property>
-                                                                        <property name="context_menu">1</property>
                                                                         <property name="enabled">1</property>
                                                                         <property name="fg"></property>
                                                                         <property name="font"></property>
@@ -3809,7 +3758,6 @@
                                                 <object class="wxPanel" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -3877,7 +3825,6 @@
                                                                     <object class="wxStaticText" expanded="0">
                                                                         <property name="bg"></property>
                                                                         <property name="context_help"></property>
-                                                                        <property name="context_menu">1</property>
                                                                         <property name="enabled">1</property>
                                                                         <property name="fg"></property>
                                                                         <property name="font"></property>
@@ -3935,7 +3882,6 @@
                                                             <object class="wxTextCtrl" expanded="0">
                                                                 <property name="bg"></property>
                                                                 <property name="context_help"></property>
-                                                                <property name="context_menu">1</property>
                                                                 <property name="enabled">1</property>
                                                                 <property name="fg"></property>
                                                                 <property name="font">,90,90,-1,76,0</property>
@@ -4005,7 +3951,6 @@
                     <object class="wxStaticLine" expanded="1">
                         <property name="bg"></property>
                         <property name="context_help"></property>
-                        <property name="context_menu">1</property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>
                         <property name="font"></property>
@@ -4068,7 +4013,6 @@
                             <object class="wxButton" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
-                                <property name="context_menu">1</property>
                                 <property name="default">1</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>
@@ -4125,7 +4069,6 @@
                             <object class="wxButton" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
-                                <property name="context_menu">1</property>
                                 <property name="default">0</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>

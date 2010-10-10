@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Oct  3 2010)
+// C++ code generated with wxFormBuilder (version Aug 25 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -45,15 +45,23 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	gSizer1 = new wxGridSizer( 2, 2, 0, 0 );
 	
 	m_checkBoxMarkTagsFilesInBold = new wxCheckBox( m_panel8, wxID_ANY, wxT("Mark files and dirs in file explorer that contribute tags in bold"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxMarkTagsFilesInBold->SetToolTip( wxT("Mark files and dirs in file explorer that contribute tags in bold") );
+	
 	gSizer1->Add( m_checkBoxMarkTagsFilesInBold, 0, wxALL, 5 );
 	
 	m_checkDisplayTypeInfo = new wxCheckBox( m_panel8, wxID_ANY, wxT("Display type info tooltips"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkDisplayTypeInfo->SetToolTip( wxT("Display information about the hovered text") );
+	
 	gSizer1->Add( m_checkDisplayTypeInfo, 0, wxALL, 5 );
 	
 	m_checkDisplayFunctionTip = new wxCheckBox( m_panel8, wxID_ANY, wxT("Display function calltip"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkDisplayFunctionTip->SetToolTip( wxT("Display function argument list after typing an open brace '('") );
+	
 	gSizer1->Add( m_checkDisplayFunctionTip, 0, wxALL, 5 );
 	
 	m_checkCppKeywordAssist = new wxCheckBox( m_panel8, wxID_ANY, wxT("Display completion box for language keywords"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkCppKeywordAssist->SetToolTip( wxT("When enabled, codelite will auto show the code completion box for C/C++ keywords after typing 2 chars") );
+	
 	gSizer1->Add( m_checkCppKeywordAssist, 0, wxALL, 5 );
 	
 	sbSizer2->Add( gSizer1, 1, wxEXPAND|wxALL, 5 );
@@ -67,12 +75,18 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	gSizer2 = new wxGridSizer( 2, 2, 0, 0 );
 	
 	m_checkBoxretagWorkspaceOnStartup = new wxCheckBox( m_panel8, wxID_ANY, wxT("Retag workspace on workspace startup"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxretagWorkspaceOnStartup->SetToolTip( wxT("Retag workspace once loaded") );
+	
 	gSizer2->Add( m_checkBoxretagWorkspaceOnStartup, 0, wxALL, 5 );
 	
 	m_checkDisableParseOnSave = new wxCheckBox( m_panel8, wxID_ANY, wxT("Disable auto parsing of saved files"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkDisableParseOnSave->SetToolTip( wxT("Do not trigger file parsing after saving a file") );
+	
 	gSizer2->Add( m_checkDisableParseOnSave, 0, wxALL, 5 );
 	
 	m_checkBoxDeepUsingNamespaceResolving = new wxCheckBox( m_panel8, wxID_ANY, wxT("Scan all included files to locate 'using namespace' statements"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxDeepUsingNamespaceResolving->SetToolTip( wxT("Allways search for 'using namespace' statements in all included files") );
+	
 	gSizer2->Add( m_checkBoxDeepUsingNamespaceResolving, 0, wxALL, 5 );
 	
 	sbSizer15->Add( gSizer2, 1, wxEXPAND, 5 );
@@ -171,18 +185,29 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_checkWordAssist = new wxCheckBox( m_panel7, wxID_ANY, wxT("Auto-Display wordcompletion-box on typing"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkWordAssist->SetToolTip( wxT("When enabled, codelite will auto show the code completion box after N chars were typed") );
+	
 	fgSizer4->Add( m_checkWordAssist, 0, wxALL, 5 );
 	
-	m_checkAutoInsertSingleChoice = new wxCheckBox( m_panel7, wxID_ANY, wxT("Auto-Insert single match"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkAutoInsertSingleChoice->SetValue(true); 
-	fgSizer4->Add( m_checkAutoInsertSingleChoice, 0, wxALL, 5 );
+	
+	fgSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	m_staticTextMinWordLen = new wxStaticText( m_panel7, wxID_ANY, wxT("Minimum number of chars to type to show wordcompletion-box:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextMinWordLen->Wrap( -1 );
+	m_staticTextMinWordLen->SetToolTip( wxT("Number of chars to type before showing the code completion box") );
+	
 	fgSizer4->Add( m_staticTextMinWordLen, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_sliderMinWordLen = new wxSlider( m_panel7, wxID_ANY, 3, 1, 25, wxDefaultPosition, wxDefaultSize, wxSL_AUTOTICKS|wxSL_HORIZONTAL|wxSL_LABELS );
+	m_sliderMinWordLen->SetToolTip( wxT("Number of chars to type before showing the code completion box") );
+	
 	fgSizer4->Add( m_sliderMinWordLen, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	
+	m_checkAutoInsertSingleChoice = new wxCheckBox( m_panel7, wxID_ANY, wxT("Auto-Insert single match"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkAutoInsertSingleChoice->SetValue(true); 
+	m_checkAutoInsertSingleChoice->SetToolTip( wxT("When there is only a single match dont show the code completion box but rather insert the match") );
+	
+	fgSizer4->Add( m_checkAutoInsertSingleChoice, 0, wxALL, 5 );
 	
 	sbSizer7->Add( fgSizer4, 0, wxEXPAND|wxALL, 5 );
 	
@@ -478,5 +503,4 @@ TagsOptionsBaseDlg::~TagsOptionsBaseDlg()
 	m_buttonParse->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnParse ), NULL, this );
 	m_buttonParse->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnFileSelectedUI ), NULL, this );
 	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonOK ), NULL, this );
-	
 }

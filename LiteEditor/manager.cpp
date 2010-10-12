@@ -1024,6 +1024,12 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 	std::vector<IncludeStatement> includes, matches;
 
 	for(size_t i=0; i<workspaceFiles.GetCount(); i++) {
+		// Dont attempt to scan binary files
+		// Skip binary files
+		if(TagsManagerST::Get()->IsBinaryFile(workspaceFiles.Item(i))) {
+			continue;
+		}
+		
 		IncludeFinder(workspaceFiles.Item(i).mb_str(wxConvUTF8).data(), includes);
 	}
 

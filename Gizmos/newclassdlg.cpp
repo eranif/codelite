@@ -358,7 +358,7 @@ void NewClassDlg::GetNamespacesList(wxArrayString& namespacesArray)
 		return;
 
 	int prevPos = 0;
-	unsigned int pos = textNamespaces.find (wxT("::"), prevPos);
+	size_t pos = textNamespaces.find (wxT("::"), prevPos);
 
 	while (pos != wxString::npos) {
 		wxString token = textNamespaces.Mid(prevPos, pos-prevPos);

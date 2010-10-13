@@ -38,5 +38,13 @@ public:
 	 * \param files
 	 */
 	void GetFiles(wxArrayString &files);
+
+	/**
+	 * \brief add files to the designated menu, first removing any extension
+	 */
+	void AddFilesToMenuWithoutExt();
+
+protected:
+	void AddFilesToMenuWithoutExt(wxMenu* menu);
 };
 #endif //FILE_HISTORY_H

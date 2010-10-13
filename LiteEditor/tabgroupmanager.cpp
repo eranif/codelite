@@ -128,7 +128,8 @@ bool TabgroupManager::DoAddItemToTabgroup(wxXmlDocument& doc, wxXmlNode* node, c
 		if (nextnode) {
 			return TabInfoArrayNode->InsertChild(node, nextnode);
 		} else {
-			return TabInfoArrayNode->AddChild(node);
+			TabInfoArrayNode->AddChild(node);
+			return true;
 		}
 #endif
 	} else {

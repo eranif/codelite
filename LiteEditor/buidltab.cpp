@@ -534,7 +534,7 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 		long sec = elapsed % 60;
 		long hours = elapsed / 3600;
 		long minutes = ( elapsed % 3600 ) / 60;
-		term << wxString::Format ( wxT ( ", total time: %02d:%02d:%02d seconds" ), hours, minutes, sec );
+		term << wxString::Format ( wxT ( ", total time: %02ld:%02ld:%02ld seconds" ), hours, minutes, sec );
 
 	}
 	if(m_buildInterrupted) {

@@ -2452,12 +2452,19 @@ void clMainFrame::CreateRecentlyOpenedWorkspacesMenu()
 
 		if (submenu) {
 			for (size_t i=0; i<files.GetCount(); i++) {
-				hs.AddFileToHistory(files.Item(i).BeforeLast(wxT('.')));
+				hs.AddFileToHistory(files.Item(i));
 			}
 			//set this menu as the recent file menu
 			hs.SetBaseId(RecentWorkspaceSubMenuID+1);
 			hs.UseMenu(submenu);
-			hs.AddFilesToMenu();
+			// Clear any stale items
+			wxMenuItemList items = submenu->GetMenuItems();
+			wxMenuItemList::reverse_iterator lriter = items.rbegin();
+			for (; lriter != items.rend(); ++lriter) {
+				submenu->Delete(*lriter);
+			}
+			// Add entries without their .workspace extension
+			hs.AddFilesToMenuWithoutExt();
 		}
 	}
 }

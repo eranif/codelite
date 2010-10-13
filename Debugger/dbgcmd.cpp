@@ -425,21 +425,21 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 		msg = wxString::Format(_("Successfully set breakpoint %ld at: "), breakpointId);
 		break;
 	case BP_type_condbreak:
-		msg = wxString::Format(_("Successfully set conditional breakpoint %d at: "), breakpointId);
+		msg = wxString::Format(_("Successfully set conditional breakpoint %ld at: "), breakpointId);
 		break;
 	case BP_type_tempbreak:
-		msg = wxString::Format(_("Successfully set temporary breakpoint %d at: "), breakpointId);
+		msg = wxString::Format(_("Successfully set temporary breakpoint %ld at: "), breakpointId);
 		break;
 	case BP_type_watchpt:
 		switch (m_bp.watchpoint_type) {
 		case WP_watch:
-			msg = wxString::Format(_("Successfully set watchpoint %d watching: "), breakpointId);
+			msg = wxString::Format(_("Successfully set watchpoint %ld watching: "), breakpointId);
 			break;
 		case WP_rwatch:
-			msg = wxString::Format(_("Successfully set read watchpoint %d watching: "), breakpointId);
+			msg = wxString::Format(_("Successfully set read watchpoint %ld watching: "), breakpointId);
 			break;
 		case WP_awatch:
-			msg = wxString::Format(_("Successfully set read/write watchpoint %d watching: "), breakpointId);
+			msg = wxString::Format(_("Successfully set read/write watchpoint %ld watching: "), breakpointId);
 			break;
 		}
 	}
@@ -1213,7 +1213,7 @@ bool DbgFindMainBreakpointIdHandler::ProcessOutput(const wxString& line)
 	if (number.IsEmpty() == false) {
 		if (number.ToLong(&breakpointId)) {
 			// for debugging purpose
-			m_observer->UpdateAddLine(wxString::Format(wxT("Storing internal breakpoint ID=%d"), breakpointId), true);
+			m_observer->UpdateAddLine(wxString::Format(wxT("Storing internal breakpoint ID=%ld"), breakpointId), true);
 			m_debugger->SetInternalMainBpID( breakpointId );
 		}
 	}

@@ -383,25 +383,17 @@ void Manager::AddToRecentlyOpenedWorkspaces ( const wxString &fileName )
 {
 	// Add this workspace to the history. Don't check for uniqueness:
 	// if it's already on the list, wxFileHistory will move it to the top
-	wxString short_name;
-	if ( fileName.EndsWith(wxT(".workspace"), &short_name) ) {
-		m_recentWorkspaces.AddFileToHistory ( short_name );
-
-	} else {
 		m_recentWorkspaces.AddFileToHistory ( fileName );
-	}
 
 	//sync between the history object and the configuration file
 	wxArrayString files;
 	m_recentWorkspaces.GetFiles ( files );
-
-	for ( size_t i=0; i<files.GetCount(); i++ ) {
-		if (files.Item(i).EndsWith(wxT(".workspace")) == false) {
-			files.Item(i).Append(wxT(".workspace"));
-		}
-	}
-
 	EditorConfigST::Get()->SetRecentItems( files, wxT("RecentWorkspaces") );
+
+	// The above call to AddFileToHistory() rewrote the Recent Workspaces menu
+	// Unfortunately it rewrote it with path/to/foo.workspace, and we'd prefer
+	// not to display the extension. So reload it again the way we like it :)
+	clMainFrame::Get()->CreateRecentlyOpenedWorkspacesMenu();
 }
 
 void Manager::ClearWorkspaceHistory()

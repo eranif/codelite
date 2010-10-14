@@ -69,12 +69,16 @@ bool clNamedPipe::write( const void* data, size_t dataLength, size_t *written, l
 	*written = static_cast<int>(actualWrote);
 	return true;
 #else
-	*written = ::write(_pipeHandle, data, dataLength);
-	if (*written < 0) {
+	int dataSent(0);
+	dataSent = ::write(_pipeHandle, data, dataLength);
+	if (dataSent < 0) {
 		setLastError(ZNP_WRITE_ERROR);
 		return false;
 	}
+	
+	*written = dataSent;
 	return true;
+	
 #endif
 }
 
@@ -132,21 +136,26 @@ bool clNamedPipe::read( void* data, size_t dataLength,  size_t *read, long timeT
 		// timeout
 		setLastError(ZNP_TIMEOUT);
 		return false;
+		
 	} else if(rc < 0){
 		// error
 		setLastError(ZNP_UNKNOWN);
 		return false;
+		
 	} else {
 		// read the data
-		*read = ::read(_pipeHandle, data, dataLength);
-		if(*read < 0){
+		int dataRead (0);
+		dataRead = ::read(_pipeHandle, data, dataLength);
+		if(dataRead < 0){
 			setLastError(ZNP_READ_ERROR);
 			return false;
 
-		} else if(*read == 0) {
+		} else if(dataRead == 0) {
 			setLastError(ZNP_CONN_CLOSED);
 			return false;
 		}
+		
+		*read = dataRead;
 		return true;
 	}
 #endif

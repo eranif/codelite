@@ -66,9 +66,15 @@ public:
  */
 class DbgCmdHandlerGetLine : public DbgCmdHandler
 {
+	DbgGdb*  m_gdb;
 public:
-	DbgCmdHandlerGetLine(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
-	virtual ~DbgCmdHandlerGetLine() {}
+	DbgCmdHandlerGetLine(IDebuggerObserver *observe, DbgGdb* gdbr)
+	: DbgCmdHandler(observe)
+	, m_gdb(gdbr)
+	{}
+
+	virtual ~DbgCmdHandlerGetLine()
+	{}
 
 	virtual bool ProcessOutput(const wxString &line);
 };

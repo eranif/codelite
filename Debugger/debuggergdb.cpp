@@ -505,10 +505,10 @@ bool DbgGdb::Interrupt() {
 
 bool DbgGdb::QueryFileLine() {
 #if defined (__WXMSW__) || defined (__WXGTK__)
-	return WriteCommand( wxT( "-file-list-exec-source-file" ), new DbgCmdHandlerGetLine( m_observer ) );
+	return WriteCommand( wxT( "-file-list-exec-source-file" ), new DbgCmdHandlerGetLine( m_observer, this ) );
 #else
 	//Mac
-	return WriteCommand( wxT( "-stack-list-frames 0 0" ), new DbgCmdHandlerGetLine( m_observer ) );
+	return WriteCommand( wxT( "-stack-list-frames 0 0" ), new DbgCmdHandlerGetLine( m_observer, this ) );
 #endif
 }
 

@@ -57,6 +57,7 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 		m_checkBoxDebugAssert->SetValue(info.debugAsserts);
 #endif
 		m_checkBoxSetBreakpointsAfterMain->SetValue(info.applyBreakpointsAfterProgramStarted);
+		m_textCtrlCygwinPathCommand->SetValue(info.cygwinPathCommand);
 	}
 
 #ifndef __WXMSW__
@@ -157,6 +158,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 #endif
 		info.autoExpandTipItems                  = page->m_checkBoxAutoExpand->IsChecked();
 		info.applyBreakpointsAfterProgramStarted = page->m_checkBoxSetBreakpointsAfterMain->IsChecked();
+		info.cygwinPathCommand                   = page->m_textCtrlCygwinPathCommand->GetValue();
 
 		DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
 	}
@@ -197,12 +199,12 @@ void DebuggerSettingsDlg::OnDeleteSet(wxCommandEvent& event)
 	int sel = m_notebookPreDefTypes->GetSelection();
 	if(sel == wxNOT_FOUND)
 		return;
-	
+
 	wxString name = m_notebookPreDefTypes->GetPageText((size_t)sel);
 	if(wxMessageBox(wxString::Format(wxT("You are about to delete 'PreDefined Types' set '%s'\nContinue ?"), name.c_str()),
-					wxT("Confirm deleting 'PreDefined Types' set"),
-					wxYES_NO|wxCENTER|wxICON_QUESTION, 
-					this) == wxYES) {
+	                wxT("Confirm deleting 'PreDefined Types' set"),
+	                wxYES_NO|wxCENTER|wxICON_QUESTION,
+	                this) == wxYES) {
 		m_notebookPreDefTypes->DeletePage((size_t)sel);
 	}
 }
@@ -217,7 +219,7 @@ void DebuggerSettingsDlg::OnNewSet(wxCommandEvent& event)
 {
 	NewPreDefinedSetDlg dlg(this);
 	dlg.m_checkBoxMakeActive->SetValue(false);
-	
+
 	wxArrayString copyFromArr;
 	// Make sure that a set with this name does not already exists
 	copyFromArr.Add(wxT("None"));
@@ -227,13 +229,13 @@ void DebuggerSettingsDlg::OnNewSet(wxCommandEvent& event)
 	dlg.m_choiceCopyFrom->Append(copyFromArr);
 	dlg.m_choiceCopyFrom->SetSelection(0);
 	dlg.m_textCtrlName->SetFocus();
-	
+
 	if(dlg.ShowModal() == wxID_OK) {
 		wxString newName = dlg.m_textCtrlName->GetValue();
 		newName.Trim().Trim(false);
 		if(newName.IsEmpty())
 			return;
-			
+
 		// Make sure that a set with this name does not already exists
 		for(size_t i=0; i<m_notebookPreDefTypes->GetPageCount(); i++) {
 			if(m_notebookPreDefTypes->GetPageText((size_t)i) == newName) {
@@ -241,12 +243,11 @@ void DebuggerSettingsDlg::OnNewSet(wxCommandEvent& event)
 				return;
 			}
 		}
-		
+
 		DebuggerPreDefinedTypes initialValues;
 		wxString copyFrom = dlg.m_choiceCopyFrom->GetStringSelection();
 		if(copyFrom != wxT("None")) {
-			for(size_t i=0; i<m_notebookPreDefTypes->GetPageCount(); i++)
-			{
+			for(size_t i=0; i<m_notebookPreDefTypes->GetPageCount(); i++) {
 				PreDefinedTypesPage *page = dynamic_cast<PreDefinedTypesPage*>(m_notebookPreDefTypes->GetPage(i));
 				if(page && m_notebookPreDefTypes->GetPageText(i) == copyFrom) {
 					initialValues = page->GetPreDefinedTypes();
@@ -254,7 +255,14 @@ void DebuggerSettingsDlg::OnNewSet(wxCommandEvent& event)
 				}
 			}
 		}
-		
+
 		m_notebookPreDefTypes->AddPage(new PreDefinedTypesPage(m_notebookPreDefTypes, initialValues), newName, dlg.m_checkBoxMakeActive->IsChecked());
 	}
+}
+
+void DebuggerPage::OnWindowsUI(wxUpdateUIEvent& event)
+{
+	// enabloe the Cygwin/MinGW part only when under Windows
+	static bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
+	event.Enable(OS_WINDOWS);
 }

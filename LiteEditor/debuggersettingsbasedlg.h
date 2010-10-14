@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -63,7 +63,7 @@ class DebuggerSettingsBaseDlg : public wxDialog
 	
 	public:
 		
-		DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Debugger Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 537,451 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Debugger Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~DebuggerSettingsBaseDlg();
 	
 };
@@ -84,9 +84,11 @@ class DebuggerPageBase : public wxPanel
 		wxCheckBox* m_checkBoxEnablePendingBreakpoints;
 		wxCheckBox* m_checkBreakAtWinMain;
 		wxCheckBox* m_catchThrow;
-		wxCheckBox* m_checkBoxDebugAssert;
 		wxCheckBox* m_checkBoxSetBreakpointsAfterMain;
 		
+		wxCheckBox* m_checkBoxDebugAssert;
+		wxStaticText* m_staticText5;
+		wxTextCtrl* m_textCtrlCygwinPathCommand;
 		wxCheckBox* m_showTooltips;
 		wxCheckBox* m_checkBoxAutoExpand;
 		wxStaticText* m_staticText2;
@@ -102,6 +104,7 @@ class DebuggerPageBase : public wxPanel
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnBrowse( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDebugAssert( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnWindowsUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	
 	public:

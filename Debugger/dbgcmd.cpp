@@ -29,6 +29,7 @@
 #include "gdb_result_parser.h"
 #include <wx/regex.h>
 #include "gdb_parser_incl.h"
+#include "procutils.h"
 
 #define GDB_LEX()\
 	{\
@@ -143,6 +144,10 @@ static void ParseStackEntry(const wxString &line, StackEntry &entry)
 	}
 }
 
+// Keep a cache of all file paths converted from
+// Cygwin path into native path
+static std::map<wxString, wxString> g_fileCache;
+
 bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 {
 #if defined (__WXMSW__) || defined (__WXGTK__)
@@ -186,14 +191,53 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 	fullName = fullName.AfterFirst(wxT('"'));
 	fullName = fullName.BeforeLast(wxT('"'));
 	fullName.Replace(wxT("\\\\"), wxT("\\"));
+	fullName.Trim().Trim(false);
 
-	if(fullName.Contains(wxT("/cygdrive"))){
+#ifdef __WXMSW__
+	if(fullName.StartsWith(wxT("/"))){
 		// fallback to use file="<..>"
 		filename = filename.AfterFirst(wxT('"'));
 		filename = filename.BeforeLast(wxT('"'));
 		filename.Replace(wxT("\\\\"), wxT("\\"));
+
+		filename.Trim().Trim(false);
 		fullName = filename;
+
+		// FIXME: change cypath => fullName
+		if(fullName.StartsWith(wxT("/"))){
+
+			if(g_fileCache.find(fullName) != g_fileCache.end()) {
+				fullName = g_fileCache.find(fullName)->second;
+
+			} else {
+
+				// file attribute also contains cygwin path
+				wxString cygwinConvertPath = m_gdb->GetDebuggerInformation().cygwinPathCommand;
+				cygwinConvertPath.Trim().Trim(false);
+				if( !cygwinConvertPath.IsEmpty() ) {
+					// we got a conversion command from the user, use it
+					cygwinConvertPath.Replace(wxT("$(File)"), wxString::Format(wxT("%s"), fullName.c_str()));
+					wxArrayString cmdOutput;
+					ProcUtils::SafeExecuteCommand(cygwinConvertPath, cmdOutput);
+					if(cmdOutput.IsEmpty() == false) {
+						cmdOutput.Item(0).Trim().Trim(false);
+						wxString convertedPath = cmdOutput.Item(0);
+
+						// Keep the file in the cache ( regardless of the validity of the result)
+						g_fileCache[fullName] = convertedPath;
+
+						// if the convertedPath does exists on the disk,
+						// replace the file name with it
+						if(wxFileName::FileExists(convertedPath)) {
+							fullName = convertedPath;
+						}
+					}
+				}
+
+			}
+		}
 	}
+#endif
 
 	m_observer->UpdateFileLine(fullName, lineno);
 #else

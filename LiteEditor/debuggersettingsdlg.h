@@ -47,6 +47,9 @@ class DebuggerPage : public DebuggerPageBase
 protected:
 	void OnBrowse     (wxCommandEvent &e);
 	void OnDebugAssert(wxCommandEvent &e);
+
+	virtual void OnWindowsUI(wxUpdateUIEvent& event);
+
 public:
 	DebuggerPage(wxWindow *parent, wxString title);
 	virtual ~DebuggerPage();

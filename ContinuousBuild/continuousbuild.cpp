@@ -143,7 +143,7 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 		PRINT_MESSAGE(wxT("No workspace opened!\n"));
 		return;
 	}
-		
+
 
 	// Filter non source files
 	FileExtManager::FileType type = FileExtManager::GetType(fileName);
@@ -164,7 +164,7 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 		PRINT_MESSAGE(wxT("Project name is empty\n"));
 		return;
 	}
-	
+
 	wxString errMsg;
 	ProjectPtr project = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
 	if(!project){
@@ -205,7 +205,10 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 		}
 		return;
 	}
-	
+
+	wxCommandEvent event(wxEVT_SHELL_COMMAND_STARTED);
+	m_mgr->GetOutputPaneNotebook()->GetEventHandler()->AddPendingEvent(event);
+
 	PRINT_MESSAGE(wxString::Format(wxT("cmd:%s\n"), cmd.c_str()));
 	if(!m_buildProcess.Execute(cmd, fileName, project->GetFileName().GetPath(), this))
 		return;
@@ -225,9 +228,11 @@ void ContinuousBuild::OnBuildProcessEnded(wxCommandEvent& e)
 	delete ped;
 
 	m_view->RemoveFile(m_buildProcess.GetFileName());
-	wxLogMessage(wxT("Process terminated with exit code %d"), exitCode);
-	if(exitCode != 0) {
 
+	wxCommandEvent event(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+	m_mgr->GetOutputPaneNotebook()->GetEventHandler()->AddPendingEvent(event);
+
+	if(exitCode != 0) {
 		m_view->AddFailedFile(m_buildProcess.GetFileName());
 	}
 
@@ -275,7 +280,12 @@ void ContinuousBuild::OnStopIgnoreFileSaved(wxCommandEvent& e)
 void ContinuousBuild::OnBuildProcessOutput(wxCommandEvent& e)
 {
 	ProcessEventData *ped = (ProcessEventData*)e.GetClientData();
-	wxLogMessage(ped->GetData());
+
+	wxCommandEvent event(wxEVT_SHELL_COMMAND_ADDLINE);
+	event.SetString(ped->GetData());
+    m_mgr->GetOutputPaneNotebook()->GetEventHandler()->AddPendingEvent(event);
+
+	//m_mgr->AddBuildOuptut(ped->GetData(), false);
 	delete ped;
 }
 

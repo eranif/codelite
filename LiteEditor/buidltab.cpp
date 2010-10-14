@@ -447,8 +447,6 @@ void BuildTab::OnRepeatOutputUI ( wxUpdateUIEvent& e )
 
 void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 {
-	e.Skip();
-
 	m_building = true;
 
 	// Clear all compiler parsing information
@@ -511,7 +509,7 @@ void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 
 void BuildTab::OnBuildAddLine ( wxCommandEvent &e )
 {
-	e.Skip();
+//	e.Skip();
 	AppendText ( e.GetString() );
 //    if (e.GetInt() == QueueCommand::CustomBuild && e.GetString().Contains(BUILD_PROJECT_PREFIX) && !m_lineInfo.empty()) {
 //        // try to show more specific progress in custom builds
@@ -523,8 +521,6 @@ void BuildTab::OnBuildAddLine ( wxCommandEvent &e )
 
 void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 {
-	e.Skip();
-
 	m_building = false;
 	AppendText (BUILD_END_MSG);
 
@@ -756,6 +752,27 @@ void BuildTab::DoProcessLine(const wxString& text, int lineno)
 		// consider this line part of the currently building project
 		info.project       = m_lineInfo.rbegin()->second.project;
 		info.configuration = m_lineInfo.rbegin()->second.configuration;
+	}
+
+	if(info.project.IsEmpty()) {
+		// we still dont have a valid project, use the active project name + the current
+		// build configuration
+		ManagerST::Get()->GetActiveProjectAndConf(info.project, info.configuration);
+		ProjectPtr proj = ManagerST::Get()->GetProject ( info.project );
+		if ( proj ) {
+			ProjectSettingsPtr settings = proj->GetSettings();
+			if ( settings ) {
+				BuildConfigPtr bldConf = settings->GetBuildConfiguration ( info.configuration );
+				if ( !bldConf ) {
+					// no buildconf matching the named conf, so use first buildconf instead
+					ProjectSettingsCookie cookie;
+					bldConf = settings->GetFirstBuildConfiguration ( cookie );
+				}
+				if ( bldConf ) {
+					m_cmp = BuildSettingsConfigST::Get()->GetCompiler ( bldConf->GetCompilerType() );
+				}
+			}
+		}
 	}
 
 	// check for start-of-build or end-of-build messages

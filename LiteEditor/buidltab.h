@@ -102,7 +102,7 @@ private:
 	std::map<wxString, CompilerPatterns> m_compilerParseInfo;
 	wxArrayString                        m_baseDir;
 	bool                                 m_buildInterrupted;
-	
+
 private:
 	static int  ColorLine(int, const char *text, size_t &start, size_t &len);
 	static void SetStyles(wxScintilla *sci);
@@ -131,7 +131,8 @@ private:
 	void OnRepeatOutputUI     (wxUpdateUIEvent  &e);
 	void OnNextBuildErrorUI   (wxUpdateUIEvent  &e);
 	void OnMouseDClick        (wxScintillaEvent &e);
-protected:
+
+public:
 	void Clear();
 	void AppendText(const wxString &text);
 

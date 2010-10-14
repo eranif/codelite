@@ -77,7 +77,7 @@ protected:
 	//--------------------------- Global State -----------------------------
 public:
 	DisplayVariableDlg *GetDebuggerTip();
-	
+
 	void SetRetagInProgress(bool retagInProgress) {
 		this->m_retagInProgress = retagInProgress;
 	}
@@ -253,7 +253,7 @@ public:
 	 * Set or update the workspace build matrix
 	 */
 	void SetWorkspaceBuildMatrix(BuildMatrixPtr matrix);
-	
+
 	/**
 	 * @brief user modified the project settings dialog
 	 */
@@ -292,9 +292,9 @@ public:
 	 * @param event
 	 */
 	void OnIncludeFilesScanDone(wxCommandEvent &event);
-	
+
 	void OnDbContentCacherLoaded(wxCommandEvent &event);
-	
+
 	/**
 	 * \brief retag a given file
 	 * \param filename
@@ -626,6 +626,13 @@ public:
 	 */
 	bool IsBuildEndedSuccessfully() const;
 
+	/**
+	 * @brief return the currently active project && configuration
+	 * @param project [output]
+	 * @param conf [output]
+	 */
+	void GetActiveProjectAndConf(wxString &project, wxString& conf);
+	
 protected:
 	void DoBuildProject(const QueueCommand &buildInfo);
 	void DoCleanProject(const QueueCommand &buildInfo);

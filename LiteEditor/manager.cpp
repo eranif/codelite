@@ -192,7 +192,7 @@ Manager::Manager ( void )
 	Connect(wxEVT_CMD_RESTART_CODELITE,            wxCommandEventHandler(Manager::OnRestart),              NULL, this);
 	Connect(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, wxCommandEventHandler(Manager::OnIncludeFilesScanDone), NULL, this);
 	Connect(wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED,  wxCommandEventHandler(Manager::OnDbContentCacherLoaded), NULL, this);
-	
+
 	wxTheApp->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
 }
 
@@ -322,7 +322,7 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
 		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 	}
-	
+
 	// Load the tags file content (we load the file and then destroy it) this way the file is forced into
 	// the file system cache and will prevent hangs when first using the tagging system
 	if(TagsManagerST::Get()->GetDatabase()) {
@@ -1021,7 +1021,7 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 		if(TagsManagerST::Get()->IsBinaryFile(workspaceFiles.Item(i))) {
 			continue;
 		}
-		
+
 		IncludeFinder(workspaceFiles.Item(i).mb_str(wxConvUTF8).data(), includes);
 	}
 
@@ -2326,7 +2326,7 @@ void Manager::UpdateFileLine ( const wxString &filename, int lineno, bool reposi
 
 	if (repositionEditor)
 		DbgMarkDebuggerLine ( fileName, lineNumber );
-	
+
 	UpdateDebuggerPane();
 }
 
@@ -2545,7 +2545,7 @@ void Manager::StopBuild()
 {
 	// Mark this build as 'interrupted'
 	clMainFrame::Get()->GetOutputPane()->GetBuildTab()->SetBuildInterrupted(true);
-	
+
 	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		m_shellProcess->Stop();
 	}
@@ -3032,8 +3032,8 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 		DebuggerSettingsPreDefMap data;
 		DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
 		DebuggerPreDefinedTypes preDefTypes = data.GetActiveSet();
-		
-		wxString preDefinedType = 
+
+		wxString preDefinedType =
 			preDefTypes.GetPreDefinedTypeForTypename(event.m_variableObject.typeName, event.m_expression);
 		if (!preDefinedType.IsEmpty()) {
 			dbgr->CreateVariableObject( preDefinedType, DBG_USERR_QUICKWACTH );
@@ -3198,3 +3198,20 @@ void Manager::OnDbContentCacherLoaded(wxCommandEvent& event)
 	wxLogMessage(event.GetString());
 }
 
+void Manager::GetActiveProjectAndConf(wxString& project, wxString& conf)
+{
+	if(!IsWorkspaceOpen()) {
+		project.Clear();
+		conf.Clear();
+		return;
+	}
+
+	project = GetActiveProjectName();
+	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+	if(!matrix) {
+		return;
+	}
+
+	wxString workspaceConf = matrix->GetSelectedConfigurationName();
+	matrix->GetProjectSelectedConf(workspaceConf, project);
+}

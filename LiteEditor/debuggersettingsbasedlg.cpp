@@ -123,25 +123,25 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
 	
+	m_notebook3 = new wxNotebook( m_panel3, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_panel6 = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	wxBoxSizer* bSizer16;
+	bSizer16 = new wxBoxSizer( wxVERTICAL );
+	
 	wxBoxSizer* bSizer10;
 	bSizer10 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText1 = new wxStaticText( m_panel3, wxID_ANY, wxT("Debugger path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( m_panel6, wxID_ANY, wxT("Debugger path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	bSizer10->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrDbgPath = new wxTextCtrl( m_panel3, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
-	bSizer10->Add( m_textCtrDbgPath, 1, wxALL|wxEXPAND, 5 );
+	m_textCtrDbgPath = new wxTextCtrl( m_panel6, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	bSizer10->Add( m_textCtrDbgPath, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 	
-	m_buttonBrowse = new wxButton( m_panel3, wxID_ANY, wxT("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer10->Add( m_buttonBrowse, 0, wxALL, 5 );
+	m_buttonBrowse = new wxButton( m_panel6, wxID_ANY, wxT("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer10->Add( m_buttonBrowse, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 	
-	bSizer8->Add( bSizer10, 0, wxEXPAND, 5 );
-	
-	m_notebook3 = new wxNotebook( m_panel3, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-	m_panel6 = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer16;
-	bSizer16 = new wxBoxSizer( wxVERTICAL );
+	bSizer16->Add( bSizer10, 0, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, wxT("Options:") ), wxVERTICAL );
@@ -163,7 +163,7 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	sbSizer1->Add( gSizer3, 0, wxEXPAND, 5 );
 	
-	bSizer16->Add( sbSizer1, 0, wxEXPAND|wxBOTTOM, 5 );
+	bSizer16->Add( sbSizer1, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 	
 	wxStaticBoxSizer* sbSizer4;
 	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, wxT("Debugger Tooltip:") ), wxVERTICAL );
@@ -179,7 +179,7 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	sbSizer4->Add( gSizer31, 0, wxEXPAND, 5 );
 	
-	bSizer16->Add( sbSizer4, 0, wxEXPAND|wxBOTTOM, 5 );
+	bSizer16->Add( sbSizer4, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 	
 	wxStaticBoxSizer* sbSizer3;
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, wxT("Display:") ), wxHORIZONTAL );
@@ -208,12 +208,12 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	sbSizer3->Add( fgSizer21, 0, wxEXPAND, 5 );
 	
-	bSizer16->Add( sbSizer3, 0, wxEXPAND, 5 );
+	bSizer16->Add( sbSizer3, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 	
 	m_panel6->SetSizer( bSizer16 );
 	m_panel6->Layout();
 	bSizer16->Fit( m_panel6 );
-	m_notebook3->AddPage( m_panel6, wxT("General"), false );
+	m_notebook3->AddPage( m_panel6, wxT("General"), true );
 	m_panel7 = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer17;
 	bSizer17 = new wxBoxSizer( wxVERTICAL );
@@ -235,7 +235,7 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	sbSizer2->Add( gSizer2, 0, wxEXPAND, 5 );
 	
-	bSizer17->Add( sbSizer2, 0, wxEXPAND|wxBOTTOM, 5 );
+	bSizer17->Add( sbSizer2, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 	
 	wxStaticBoxSizer* sbSizer6;
 	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( m_panel7, wxID_ANY, wxT("MinGW / Cygwin:") ), wxVERTICAL );
@@ -250,16 +250,16 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_staticText5->Wrap( -1 );
 	m_staticText5->SetToolTip( wxT("Set here the command to use in order to convert cygwin paths into native Windows paths (use $(File) as a place holder for the file name)") );
 	
-	gSizer5->Add( m_staticText5, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	gSizer5->Add( m_staticText5, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 	
 	m_textCtrlCygwinPathCommand = new wxTextCtrl( m_panel7, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	m_textCtrlCygwinPathCommand->SetToolTip( wxT("Set here the command to use in order to convert cygwin paths into native Windows paths (use $(File) as a place holder for the file name)") );
 	
-	gSizer5->Add( m_textCtrlCygwinPathCommand, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	gSizer5->Add( m_textCtrlCygwinPathCommand, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 	
 	sbSizer6->Add( gSizer5, 0, wxEXPAND, 5 );
 	
-	bSizer17->Add( sbSizer6, 0, wxEXPAND, 5 );
+	bSizer17->Add( sbSizer6, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 	
 	m_panel7->SetSizer( bSizer17 );
 	m_panel7->Layout();
@@ -388,7 +388,7 @@ NewPreDefinedSetDlg::NewPreDefinedSetDlg( wxWindow* parent, wxWindowID id, const
 	m_staticText3->Wrap( -1 );
 	fgSizer2->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer2->Add( m_textCtrlName, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Copy Values From:"), wxDefaultPosition, wxDefaultSize, 0 );

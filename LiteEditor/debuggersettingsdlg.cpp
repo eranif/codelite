@@ -105,8 +105,8 @@ DebuggerSettingsDlg::DebuggerSettingsDlg( wxWindow* parent )
 	// center the dialog
 	Centre();
 
-	GetSizer()->Fit(this);
 	WindowAttrManager::Load(this, wxT("DbgSettingsDlg"), NULL);
+	GetSizer()->Fit(this);
 }
 
 void DebuggerSettingsDlg::Initialize()

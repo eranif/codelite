@@ -78,11 +78,11 @@ class DebuggerPageBase : public wxPanel
 	protected:
 		wxChoicebook* m_choicebook3;
 		wxPanel* m_panel3;
+		wxNotebook* m_notebook3;
+		wxPanel* m_panel6;
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textCtrDbgPath;
 		wxButton* m_buttonBrowse;
-		wxNotebook* m_notebook3;
-		wxPanel* m_panel6;
 		wxCheckBox* m_checkBreakAtWinMain;
 		wxCheckBox* m_catchThrow;
 		wxCheckBox* m_checkBoxSetBreakpointsAfterMain;

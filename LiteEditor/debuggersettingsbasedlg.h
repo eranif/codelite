@@ -76,28 +76,30 @@ class DebuggerPageBase : public wxPanel
 	private:
 	
 	protected:
-		wxChoicebook* m_choicebook1;
+		wxChoicebook* m_choicebook3;
 		wxPanel* m_panel3;
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textCtrDbgPath;
 		wxButton* m_buttonBrowse;
-		wxCheckBox* m_checkBoxEnablePendingBreakpoints;
+		wxNotebook* m_notebook3;
+		wxPanel* m_panel6;
 		wxCheckBox* m_checkBreakAtWinMain;
 		wxCheckBox* m_catchThrow;
 		wxCheckBox* m_checkBoxSetBreakpointsAfterMain;
-		
-		wxCheckBox* m_checkBoxDebugAssert;
-		wxStaticText* m_staticText5;
-		wxTextCtrl* m_textCtrlCygwinPathCommand;
+		wxCheckBox* m_checkBoxEnablePendingBreakpoints;
 		wxCheckBox* m_showTooltips;
 		wxCheckBox* m_checkBoxAutoExpand;
 		wxStaticText* m_staticText2;
 		wxSpinCtrl* m_spinCtrlNumElements;
 		wxCheckBox* m_checkBoxExpandLocals;
 		
+		wxPanel* m_panel7;
 		wxCheckBox* m_checkBoxEnableLog;
 		wxCheckBox* m_checkShowTerminal;
 		wxCheckBox* m_checkUseRelativePaths;
+		wxCheckBox* m_checkBoxDebugAssert;
+		wxStaticText* m_staticText5;
+		wxTextCtrl* m_textCtrlCygwinPathCommand;
 		wxPanel* m_panel4;
 		wxTextCtrl* m_textCtrlStartupCommands;
 		

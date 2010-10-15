@@ -849,7 +849,7 @@
                                 <event name="OnSetFocus"></event>
                                 <event name="OnSize"></event>
                                 <event name="OnUpdateUI"></event>
-                                <object class="wxBoxSizer" expanded="0">
+                                <object class="wxBoxSizer" expanded="1">
                                     <property name="minimum_size"></property>
                                     <property name="name">bSizer8</property>
                                     <property name="orient">wxVERTICAL</property>
@@ -1038,11 +1038,11 @@
                                             </object>
                                         </object>
                                     </object>
-                                    <object class="sizeritem" expanded="0">
+                                    <object class="sizeritem" expanded="1">
                                         <property name="border">5</property>
-                                        <property name="flag">wxEXPAND | wxALL</property>
+                                        <property name="flag">wxEXPAND</property>
                                         <property name="proportion">1</property>
-                                        <object class="wxNotebook" expanded="0">
+                                        <object class="wxNotebook" expanded="1">
                                             <property name="bg"></property>
                                             <property name="bitmapsize"></property>
                                             <property name="context_help"></property>
@@ -1093,11 +1093,11 @@
                                             <event name="OnSetFocus"></event>
                                             <event name="OnSize"></event>
                                             <event name="OnUpdateUI"></event>
-                                            <object class="notebookpage" expanded="0">
+                                            <object class="notebookpage" expanded="1">
                                                 <property name="bitmap"></property>
                                                 <property name="label">General</property>
-                                                <property name="select">0</property>
-                                                <object class="wxPanel" expanded="0">
+                                                <property name="select">1</property>
+                                                <object class="wxPanel" expanded="1">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
                                                     <property name="context_menu">1</property>
@@ -1120,7 +1120,7 @@
                                                     <property name="validator_variable"></property>
                                                     <property name="window_extra_style"></property>
                                                     <property name="window_name"></property>
-                                                    <property name="window_style">wxTAB_TRAVERSAL</property>
+                                                    <property name="window_style"></property>
                                                     <event name="OnChar"></event>
                                                     <event name="OnEnterWindow"></event>
                                                     <event name="OnEraseBackground"></event>
@@ -1144,16 +1144,16 @@
                                                     <event name="OnSetFocus"></event>
                                                     <event name="OnSize"></event>
                                                     <event name="OnUpdateUI"></event>
-                                                    <object class="wxBoxSizer" expanded="0">
+                                                    <object class="wxBoxSizer" expanded="1">
                                                         <property name="minimum_size"></property>
                                                         <property name="name">bSizer16</property>
                                                         <property name="orient">wxVERTICAL</property>
                                                         <property name="permission">none</property>
-                                                        <object class="sizeritem" expanded="0">
+                                                        <object class="sizeritem" expanded="1">
                                                             <property name="border">5</property>
-                                                            <property name="flag">wxALL|wxEXPAND</property>
+                                                            <property name="flag">wxEXPAND|wxBOTTOM</property>
                                                             <property name="proportion">0</property>
-                                                            <object class="wxStaticBoxSizer" expanded="0">
+                                                            <object class="wxStaticBoxSizer" expanded="1">
                                                                 <property name="id">wxID_ANY</property>
                                                                 <property name="label">Options:</property>
                                                                 <property name="minimum_size"></property>
@@ -1163,7 +1163,7 @@
                                                                 <event name="OnUpdateUI"></event>
                                                                 <object class="sizeritem" expanded="0">
                                                                     <property name="border">5</property>
-                                                                    <property name="flag">wxEXPAND|wxALL</property>
+                                                                    <property name="flag">wxEXPAND</property>
                                                                     <property name="proportion">0</property>
                                                                     <object class="wxGridSizer" expanded="0">
                                                                         <property name="cols">1</property>
@@ -1405,11 +1405,11 @@
                                                                 </object>
                                                             </object>
                                                         </object>
-                                                        <object class="sizeritem" expanded="0">
+                                                        <object class="sizeritem" expanded="1">
                                                             <property name="border">5</property>
-                                                            <property name="flag">wxALL|wxEXPAND</property>
+                                                            <property name="flag">wxEXPAND|wxBOTTOM</property>
                                                             <property name="proportion">0</property>
-                                                            <object class="wxStaticBoxSizer" expanded="0">
+                                                            <object class="wxStaticBoxSizer" expanded="1">
                                                                 <property name="id">wxID_ANY</property>
                                                                 <property name="label">Debugger Tooltip:</property>
                                                                 <property name="minimum_size"></property>
@@ -1419,7 +1419,7 @@
                                                                 <event name="OnUpdateUI"></event>
                                                                 <object class="sizeritem" expanded="0">
                                                                     <property name="border">5</property>
-                                                                    <property name="flag">wxEXPAND|wxALL</property>
+                                                                    <property name="flag">wxEXPAND</property>
                                                                     <property name="proportion">0</property>
                                                                     <object class="wxGridSizer" expanded="0">
                                                                         <property name="cols">1</property>
@@ -1549,7 +1549,7 @@
                                                         </object>
                                                         <object class="sizeritem" expanded="0">
                                                             <property name="border">5</property>
-                                                            <property name="flag">wxALL|wxEXPAND</property>
+                                                            <property name="flag">wxEXPAND</property>
                                                             <property name="proportion">0</property>
                                                             <object class="wxStaticBoxSizer" expanded="0">
                                                                 <property name="id">wxID_ANY</property>
@@ -1561,7 +1561,7 @@
                                                                 <event name="OnUpdateUI"></event>
                                                                 <object class="sizeritem" expanded="0">
                                                                     <property name="border">5</property>
-                                                                    <property name="flag">wxEXPAND|wxALL</property>
+                                                                    <property name="flag">wxEXPAND</property>
                                                                     <property name="proportion">0</property>
                                                                     <object class="wxFlexGridSizer" expanded="0">
                                                                         <property name="cols">2</property>
@@ -1765,11 +1765,11 @@
                                                     </object>
                                                 </object>
                                             </object>
-                                            <object class="notebookpage" expanded="0">
+                                            <object class="notebookpage" expanded="1">
                                                 <property name="bitmap"></property>
                                                 <property name="label">Misc</property>
                                                 <property name="select">0</property>
-                                                <object class="wxPanel" expanded="0">
+                                                <object class="wxPanel" expanded="1">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
                                                     <property name="context_menu">1</property>
@@ -1816,16 +1816,16 @@
                                                     <event name="OnSetFocus"></event>
                                                     <event name="OnSize"></event>
                                                     <event name="OnUpdateUI"></event>
-                                                    <object class="wxBoxSizer" expanded="0">
+                                                    <object class="wxBoxSizer" expanded="1">
                                                         <property name="minimum_size"></property>
                                                         <property name="name">bSizer17</property>
                                                         <property name="orient">wxVERTICAL</property>
                                                         <property name="permission">none</property>
-                                                        <object class="sizeritem" expanded="0">
+                                                        <object class="sizeritem" expanded="1">
                                                             <property name="border">5</property>
-                                                            <property name="flag">wxALL|wxEXPAND</property>
+                                                            <property name="flag">wxEXPAND|wxBOTTOM</property>
                                                             <property name="proportion">0</property>
-                                                            <object class="wxStaticBoxSizer" expanded="0">
+                                                            <object class="wxStaticBoxSizer" expanded="1">
                                                                 <property name="id">wxID_ANY</property>
                                                                 <property name="label"></property>
                                                                 <property name="minimum_size"></property>
@@ -1835,7 +1835,7 @@
                                                                 <event name="OnUpdateUI"></event>
                                                                 <object class="sizeritem" expanded="0">
                                                                     <property name="border">5</property>
-                                                                    <property name="flag">wxEXPAND|wxALL</property>
+                                                                    <property name="flag">wxEXPAND</property>
                                                                     <property name="proportion">0</property>
                                                                     <object class="wxGridSizer" expanded="0">
                                                                         <property name="cols">1</property>
@@ -2020,11 +2020,11 @@
                                                                 </object>
                                                             </object>
                                                         </object>
-                                                        <object class="sizeritem" expanded="0">
+                                                        <object class="sizeritem" expanded="1">
                                                             <property name="border">5</property>
-                                                            <property name="flag">wxALL|wxEXPAND</property>
+                                                            <property name="flag">wxEXPAND</property>
                                                             <property name="proportion">0</property>
-                                                            <object class="wxStaticBoxSizer" expanded="0">
+                                                            <object class="wxStaticBoxSizer" expanded="1">
                                                                 <property name="id">wxID_ANY</property>
                                                                 <property name="label">MinGW / Cygwin:</property>
                                                                 <property name="minimum_size"></property>

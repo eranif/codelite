@@ -161,9 +161,9 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_checkBoxEnablePendingBreakpoints = new wxCheckBox( m_panel6, wxID_ANY, wxT("Enable pending breakpoints"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer3->Add( m_checkBoxEnablePendingBreakpoints, 0, wxALL, 5 );
 	
-	sbSizer1->Add( gSizer3, 0, wxEXPAND|wxALL, 5 );
+	sbSizer1->Add( gSizer3, 0, wxEXPAND, 5 );
 	
-	bSizer16->Add( sbSizer1, 0, wxALL|wxEXPAND, 5 );
+	bSizer16->Add( sbSizer1, 0, wxEXPAND|wxBOTTOM, 5 );
 	
 	wxStaticBoxSizer* sbSizer4;
 	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, wxT("Debugger Tooltip:") ), wxVERTICAL );
@@ -177,9 +177,9 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_checkBoxAutoExpand = new wxCheckBox( m_panel6, wxID_ANY, wxT("Auto expand items under the cursor"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer31->Add( m_checkBoxAutoExpand, 0, wxEXPAND|wxALL, 5 );
 	
-	sbSizer4->Add( gSizer31, 0, wxEXPAND|wxALL, 5 );
+	sbSizer4->Add( gSizer31, 0, wxEXPAND, 5 );
 	
-	bSizer16->Add( sbSizer4, 0, wxALL|wxEXPAND, 5 );
+	bSizer16->Add( sbSizer4, 0, wxEXPAND|wxBOTTOM, 5 );
 	
 	wxStaticBoxSizer* sbSizer3;
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, wxT("Display:") ), wxHORIZONTAL );
@@ -206,9 +206,9 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	fgSizer21->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	sbSizer3->Add( fgSizer21, 0, wxEXPAND|wxALL, 5 );
+	sbSizer3->Add( fgSizer21, 0, wxEXPAND, 5 );
 	
-	bSizer16->Add( sbSizer3, 0, wxALL|wxEXPAND, 5 );
+	bSizer16->Add( sbSizer3, 0, wxEXPAND, 5 );
 	
 	m_panel6->SetSizer( bSizer16 );
 	m_panel6->Layout();
@@ -233,9 +233,9 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_checkUseRelativePaths = new wxCheckBox( m_panel7, wxID_ANY, wxT("Use file name only for breakpoints (NO full paths)"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkUseRelativePaths, 0, wxALL, 5 );
 	
-	sbSizer2->Add( gSizer2, 0, wxEXPAND|wxALL, 5 );
+	sbSizer2->Add( gSizer2, 0, wxEXPAND, 5 );
 	
-	bSizer17->Add( sbSizer2, 0, wxALL|wxEXPAND, 5 );
+	bSizer17->Add( sbSizer2, 0, wxEXPAND|wxBOTTOM, 5 );
 	
 	wxStaticBoxSizer* sbSizer6;
 	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( m_panel7, wxID_ANY, wxT("MinGW / Cygwin:") ), wxVERTICAL );
@@ -259,14 +259,14 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	sbSizer6->Add( gSizer5, 0, wxEXPAND, 5 );
 	
-	bSizer17->Add( sbSizer6, 0, wxALL|wxEXPAND, 5 );
+	bSizer17->Add( sbSizer6, 0, wxEXPAND, 5 );
 	
 	m_panel7->SetSizer( bSizer17 );
 	m_panel7->Layout();
 	bSizer17->Fit( m_panel7 );
 	m_notebook3->AddPage( m_panel7, wxT("Misc"), false );
 	
-	bSizer8->Add( m_notebook3, 1, wxEXPAND | wxALL, 5 );
+	bSizer8->Add( m_notebook3, 1, wxEXPAND, 5 );
 	
 	m_panel3->SetSizer( bSizer8 );
 	m_panel3->Layout();

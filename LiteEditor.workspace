@@ -111,7 +111,7 @@
       <Project Name="SymbolView" ConfigName="DebugUnicode"/>
       <Project Name="MacBundler" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="WinReleaseUnicode_NoPlugins" Selected="yes">
+    <WorkspaceConfiguration Name="WinReleaseUnicode_NoPlugins" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
@@ -136,7 +136,7 @@
       <Project Name="SymbolView" ConfigName="DebugUnicode"/>
       <Project Name="MacBundler" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="yes">
+    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
@@ -161,7 +161,7 @@
       <Project Name="SymbolView" ConfigName="DebugUnicode"/>
       <Project Name="MacBundler" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="yes">
+    <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="no">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="DebugUnicode"/>
@@ -186,7 +186,7 @@
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
       <Project Name="abbreviation" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="WinDebug_29" Selected="yes">
+    <WorkspaceConfiguration Name="WinDebug_29" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebug_29"/>
       <Project Name="wxscintilla" ConfigName="WinDebug_29"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebug_29"/>

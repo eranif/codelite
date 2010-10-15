@@ -23,6 +23,7 @@ public:
 	{
 		// Hide the tabs
 		GetControlSizer()->Hide((size_t)0);
+		GetControlSizer()->Layout();
 		
 		AssignImageList( new wxImageList(16, 16, true) );
 		Layout();

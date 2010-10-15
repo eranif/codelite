@@ -47,7 +47,6 @@ static void ColouriseSvnDoc(
 
 	unsigned int linePos = 0;
 	unsigned int startLine = startPos;
-	int offset(0);
 
 	for (unsigned int i = startPos; i < startPos + length; i++) {
 		lineBuffer[linePos++] = styler[i];

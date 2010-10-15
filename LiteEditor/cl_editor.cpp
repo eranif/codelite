@@ -868,7 +868,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 		// remove indicators
 		SetIndicatorCurrent(2);
 		IndicatorClearRange(0, GetLength());
-#ifdef __WXMAC__
+#if defined(__WXMAC__) || (wxVERSION_NUMBER >= 2900)
 		Refresh();
 #endif
 	}
@@ -2461,6 +2461,10 @@ void LEditor::OnMiddleDown(wxMouseEvent& event)
 
 void LEditor::OnLeftDown(wxMouseEvent &event)
 {
+#if wxVERSION_NUMBER >= 2900
+	HighlightWord(false);
+#endif
+
 	// hide completion box
 	HideCompletionBox();
 	GetFunctionTip()->Deactivate();

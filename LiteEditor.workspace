@@ -211,5 +211,30 @@
       <Project Name="abbreviation" ConfigName="WinDebug_29"/>
       <Project Name="MacBundler" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="WinRelease_29" Selected="no">
+      <Project Name="wxsqlite3" ConfigName="WinRelease_29"/>
+      <Project Name="wxscintilla" ConfigName="WinRelease_29"/>
+      <Project Name="wxFormBuilder" ConfigName="WinRelease_29"/>
+      <Project Name="UnitTestPP" ConfigName="WinRelease_29"/>
+      <Project Name="SymbolView" ConfigName="WinRelease_29"/>
+      <Project Name="Subversion2" ConfigName="WinRelease_29"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="snipwiz" ConfigName="WinRelease_29"/>
+      <Project Name="QMakePlugin" ConfigName="WinRelease_29"/>
+      <Project Name="plugin_sdk" ConfigName="WinRelease_29"/>
+      <Project Name="MacBundler" ConfigName="WinReleaseUnicode"/>
+      <Project Name="LiteEditor" ConfigName="WinRelease_29"/>
+      <Project Name="Interfaces" ConfigName="Common"/>
+      <Project Name="Gizmos" ConfigName="WinRelease_29"/>
+      <Project Name="ExternalTools" ConfigName="WinRelease_29"/>
+      <Project Name="DebuggerGDB" ConfigName="WinRelease_29"/>
+      <Project Name="Cscope" ConfigName="WinRelease_29"/>
+      <Project Name="CppChecker" ConfigName="WinRelease_29"/>
+      <Project Name="Copyright" ConfigName="WinRelease_29"/>
+      <Project Name="ContinuousBuild" ConfigName="WinRelease_29"/>
+      <Project Name="CodeLite" ConfigName="WinRelease_29"/>
+      <Project Name="CodeFormatter" ConfigName="WinRelease_29"/>
+      <Project Name="abbreviation" ConfigName="WinRelease_29"/>
+    </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

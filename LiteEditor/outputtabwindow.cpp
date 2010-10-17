@@ -106,8 +106,13 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 	sci->IndicatorSetUnder(1, true);
 	sci->IndicatorSetUnder(2, true);
 
+#if wxVERSION_NUMBER <= 2900
 	sci->IndicatorSetAlpha(1, 70);
 	sci->IndicatorSetAlpha(2, 70);
+#else
+	sci->IndicatorSetAlpha(1, wxSCI_ALPHA_NOALPHA);
+	sci->IndicatorSetAlpha(2, wxSCI_ALPHA_NOALPHA);
+#endif
 
 	sci->SetHotspotActiveUnderline (true);
 	sci->SetHotspotActiveForeground(true, wxT("BLUE"));

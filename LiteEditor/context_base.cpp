@@ -80,8 +80,16 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 #else
 	rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
 	rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
+	
+#if wxVERSION_NUMBER <= 2900
 	rCtrl.IndicatorSetAlpha(1, 80);
 	rCtrl.IndicatorSetAlpha(2, 80);
+#else
+	rCtrl.IndicatorSetAlpha(1, wxSCI_ALPHA_NOALPHA);
+	rCtrl.IndicatorSetAlpha(2, wxSCI_ALPHA_NOALPHA);
+#endif
+
+
 #endif
 
 	bool tooltip(false);

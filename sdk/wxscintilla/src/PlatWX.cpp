@@ -380,7 +380,7 @@ void SurfaceImpl::RoundedRectangle(PRectangle rc, ColourAllocated fore, ColourAl
 void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated fill, int alphaFill, ColourAllocated outline, int alphaOutline, int WXUNUSED(flags))
 {
 
-#ifdef wxHAVE_RAW_BITMAP
+#if defined(wxHAVE_RAW_BITMAP) && wxVERSION_NUMBER <= 2900
     int x, y;
     wxRect r = wxRectFromPRectangle(rc);
 	wxRect outlineRect (r);

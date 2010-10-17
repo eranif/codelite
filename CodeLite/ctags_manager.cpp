@@ -1421,7 +1421,7 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 
 		// BUG#3082954: limit the size of the 'match pattern' to a reasonable size (200 chars)
 		tip = WrapLines(tip);
-		
+
 		// prepend any comment if exists
 		tips.push_back(tip);
 	}
@@ -2658,26 +2658,31 @@ bool TagsManager::IsBinaryFile(const wxString& filepath)
 wxString TagsManager::WrapLines(const wxString& str)
 {
 	wxString wrappedString;
-	
+
 	int curLineBytes(0);
 	wxString::const_iterator iter = str.begin();
 	for(; iter != str.end(); iter++) {
 		if(*iter == wxT('\t')) {
 			wrappedString << wxT(" ");
+
+		} else if(*iter == wxT('\n')) {
+			wrappedString << wxT("\n");
+			curLineBytes = 0;
 			
 		} else if(*iter == wxT('\r')) {
 			// Skip it
+
 		} else {
 			wrappedString << *iter;
 		}
 		curLineBytes++;
-		
+
 		if(curLineBytes == MAX_TIP_LINE_SIZE) {
-			
+
 			// Wrap the lines
 			if(wrappedString.IsEmpty() == false && wrappedString.Last() != wxT('\n')) {
 				wrappedString << wxT("\n");
-				
+
 			}
 			curLineBytes = 0;
 		}

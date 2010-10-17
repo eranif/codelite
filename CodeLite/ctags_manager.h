@@ -59,6 +59,9 @@ class IProcess;
 // the workspcae retag
 #define USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE 1
 
+// BUG#3082954
+#define MAX_MATCH_PATTERN_SIZE 200
+
 #define TagsGlobal    0
 #define TagsGlobalGTK 1
 
@@ -752,14 +755,14 @@ public:
 	 * @return
 	 */
 	bool GetDerivationList(const wxString &path, std::vector<wxString> &derivationList, std::set<wxString> &scannedInherits);
-	
+
 	/**
 	 * @brief return true if the file is binary (by searching for NULL chars)
 	 * @param filepath file to examine
 	 * @return return true if the file is binary
 	 */
 	bool IsBinaryFile(const wxString &filepath);
-	
+
 protected:
 	// provide a default handler for the wxEVT_UPDATE_FILETREE_EVENT event
 	void OnUpdateFileTreeEvent(wxCommandEvent &e);

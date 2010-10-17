@@ -368,7 +368,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 	if(tags.empty()) {
 		tags = wxString::From8BitData(reply.getTags().c_str());
 	}
-	
+
 #if 0
 	wxFFile fff(wxStandardPaths::Get().GetUserDataDir() + wxT("\\tmp_tags"), wxT("w+"));
 	if(fff.IsOpened()) {
@@ -1385,7 +1385,6 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 		tip.erase(0, tip.find_first_not_of(trimString));
 		tip.erase(tip.find_last_not_of(trimString)+1);
 		tip.Replace(wxT("\t"), wxT(" "));
-		while (tip.Replace(wxT("  "), wxT(" "))) {}
 
 		// create a proper tooltip from the stripped pattern
 		TagEntryPtr t= tags.at(i);
@@ -1420,6 +1419,12 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 		// remove any extra spaces from the tip
 		while (tip.Replace(wxT("  "), wxT(" "))) {}
 
+		// BUG#3082954: limit the size of the 'match pattern' to a reasonable size (200 chars)
+		if(tip.Len() > MAX_MATCH_PATTERN_SIZE) {
+			tip = tip.Left(MAX_MATCH_PATTERN_SIZE);
+			tip << wxT("...");
+		}
+		
 		// prepend any comment if exists
 		tips.push_back(tip);
 	}
@@ -2626,15 +2631,15 @@ bool TagsManager::IsBinaryFile(const wxString& filepath)
 	FileExtManager::FileType type = FileExtManager::GetType(filepath);
 	if(type == FileExtManager::TypeHeader || type == FileExtManager::TypeSourceC || type == FileExtManager::TypeSourceCpp)
 		   return false;
-	
+
 	// examine the file based on the content of the first 4K (max) bytes
 	FILE *fp = fopen(filepath.To8BitData(), "rb");
 	if(fp) {
-		
+
 		char      buffer[1];
 		int       textLen(0);
 		const int maxTextToExamine(4096);
-		
+
 		// examine up to maxTextToExamine first chars in the file and search for '\0'
 		while( fread(buffer, sizeof(char), sizeof(buffer), fp) == 1 && textLen < maxTextToExamine) {
 			textLen++;
@@ -2644,11 +2649,11 @@ bool TagsManager::IsBinaryFile(const wxString& filepath)
 				return true;
 			}
 		}
-		
+
 		fclose(fp);
 		return false;
-	} 
-	
+	}
+
 	// if we could not open it, return true
 	return true;
 }

@@ -738,6 +738,12 @@ void CCBox::DoShowTagTip()
 		while(matchPattern.Replace(wxT("  "), wxT(" "))) {}
 
 		matchPattern.Trim().Trim(false);
+
+		// BUG#3082954: limit the size of the 'match pattern' to a reasonable size (200 chars)
+		if(matchPattern.Len() > MAX_MATCH_PATTERN_SIZE) {
+			matchPattern = matchPattern.Left(MAX_MATCH_PATTERN_SIZE);
+			matchPattern << wxT("...");
+		}
 		prefix << matchPattern << wxT("\n");
 
 	} else {

@@ -697,8 +697,23 @@ void clMainFrame::CreateGUIControls(void)
 	m_mgr.SetManagedWindow(m_mainPanel);
 	m_mgr.SetArtProvider(new CLAuiDockArt());
 
-	// Mac / Linux
-	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_ALLOW_ACTIVE_PANE | wxAUI_MGR_LIVE_RESIZE);
+	// Set the manager flags
+	unsigned int auiMgrFlags (m_mgr.GetFlags());
+#ifdef __WXGTK__
+	auiMgrFlags |= wxAUI_MGR_ALLOW_ACTIVE_PANE;
+	auiMgrFlags &= ~wxAUI_MGR_TRANSPARENT_HINT; // This crashes under Linux with KDE & Compiz
+	auiMgrFlags |= wxAUI_MGR_VENETIAN_BLINDS_HINT;
+
+#ifdef __WXDEBUG__
+	auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_TRANSPARENT_DRAG|wxAUI_MGR_RECTANGLE_HINT
+#endif
+
+#else
+	auiMgrFlags |= wxAUI_MGR_ALLOW_ACTIVE_PANE;
+	auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
+#endif
+
+	m_mgr.SetFlags( auiMgrFlags );
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_VERTICAL);
 
 #ifndef __WXGTK__
@@ -714,14 +729,6 @@ void clMainFrame::CreateGUIControls(void)
 	//initialize debugger configuration tool
 	DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"), wxT("2.7.0"));
 	WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
-
-#if defined (__WXGTK__) && defined (__WXDEBUG__)
-	m_mgr.SetFlags(wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_TRANSPARENT_DRAG|wxAUI_MGR_RECTANGLE_HINT);
-
-#elif defined(__WXGTK__)
-	m_mgr.SetFlags(m_mgr.GetFlags() & ~wxAUI_MGR_TRANSPARENT_HINT);
-	m_mgr.SetFlags(m_mgr.GetFlags() |    wxAUI_MGR_VENETIAN_BLINDS_HINT);
-#endif
 
 #if defined(__WXMAC__)
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);

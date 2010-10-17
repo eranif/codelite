@@ -60,7 +60,7 @@ class IProcess;
 #define USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE 1
 
 // BUG#3082954
-#define MAX_MATCH_PATTERN_SIZE 200
+#define MAX_TIP_LINE_SIZE 100
 
 #define TagsGlobal    0
 #define TagsGlobalGTK 1
@@ -762,7 +762,13 @@ public:
 	 * @return return true if the file is binary
 	 */
 	bool IsBinaryFile(const wxString &filepath);
-
+	
+	/**
+	 * @brief given an input string 'str', wrap the string so each line will
+	 * not be longer than MAX_TIP_LINE_SIZE bytes
+	 */
+	wxString WrapLines(const wxString &str);
+	
 protected:
 	// provide a default handler for the wxEVT_UPDATE_FILETREE_EVENT event
 	void OnUpdateFileTreeEvent(wxCommandEvent &e);

@@ -57,6 +57,8 @@ OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString
 		, m_sci(NULL)
 		, m_outputScrolls(true)
 		, m_autoAppear(true)
+		, m_autoAppearErrors(false)
+		, m_errorsFirstLine(false)
 		, m_findBar(NULL)
 {
 	CreateGUIControls();

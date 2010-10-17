@@ -38,6 +38,8 @@ class BuildTabSettingsData : public SerializedObject
 	bool     m_boldWarnFont;
 	bool     m_showBuildPane;
 	bool     m_autoHide;
+	bool     m_autoShow;
+	bool     m_errorsFirstLine;
 	int      m_errorWarningStyle;
 
 private:
@@ -123,11 +125,26 @@ public:
 		return m_autoHide;
 	}
 
+	void SetAutoShow(const bool& autoShow) {
+		this->m_autoShow = autoShow;
+	}
+	const bool& GetAutoShow() const {
+		return m_autoShow;
+	}
+
+	void SetErrorsFirstLine(const bool& errorsFirstLine) {
+		this->m_errorsFirstLine = errorsFirstLine;
+	}
+	const bool& GetErrorsFirstLine() const {
+		return m_errorsFirstLine;
+	}
+
 	void SetErrorWarningStyle(const int& errorWarningStyle) {
 		this->m_errorWarningStyle = errorWarningStyle;
 	}
 	const int& GetErrorWarningStyle() const {
 		return m_errorWarningStyle;
 	}
+
 };
 #endif // __buildtabsettingsdata__

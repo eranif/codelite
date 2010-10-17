@@ -42,6 +42,8 @@ protected:
 	wxScintilla * m_sci;
     bool          m_outputScrolls;
     bool          m_autoAppear;
+    bool          m_autoAppearErrors;
+    bool          m_errorsFirstLine;
 	QuickFindBar *m_findBar;
 	wxBoxSizer *  m_hSizer;
 	

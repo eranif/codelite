@@ -42,8 +42,11 @@ BuildTabSetting::BuildTabSetting( wxWindow* parent )
 	m_checkBoxBoldWarnFont->SetValue(options.GetBoldWarnFont());
     m_radioBoxShowBuildTab->Select(options.GetShowBuildPane());
 	m_checkBoxAutoHide->SetValue(options.GetAutoHide());
+	m_checkBoxAutoShow->SetValue(options.GetAutoShow());
+	m_checkBoxErrorsFirstLine->SetValue(options.GetErrorsFirstLine());
 	m_checkBoxDisplayAnnotations->SetValue(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotations);
 	m_checkBoxDisplayMarkers->SetValue(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks);
+	m_checkBoxErrorsFirstLine->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( BuildTabSetting::OnNotifyUI ), NULL, this );
 }
 
 void BuildTabSetting::Save()
@@ -58,6 +61,8 @@ void BuildTabSetting::Save()
 	options.SetBoldWarnFont(m_checkBoxBoldWarnFont->IsChecked());
     options.SetShowBuildPane(m_radioBoxShowBuildTab->GetSelection());
 	options.SetAutoHide(m_checkBoxAutoHide->IsChecked());
+	options.SetAutoShow(m_checkBoxAutoShow->IsChecked());
+	options.SetErrorsFirstLine(m_checkBoxErrorsFirstLine->IsChecked());
 
 	int flag (BuildTabSettingsData::EWS_NoMarkers);
 	if ( m_checkBoxDisplayAnnotations->IsChecked() ) {
@@ -69,4 +74,9 @@ void BuildTabSetting::Save()
 
 	options.SetErrorWarningStyle( flag );
 	EditorConfigST::Get()->WriteObject(wxT("build_tab_settings"), &options);
+}
+
+void BuildTabSetting::OnNotifyUI(wxUpdateUIEvent& event)
+{
+	event.Enable( m_checkBoxAutoShow->IsChecked() );
 }

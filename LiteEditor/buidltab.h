@@ -92,6 +92,7 @@ private:
 	std::multimap<wxString,int>          m_fileMap;
 	int                                  m_showMe;
 	bool                                 m_autoHide;
+	bool                                 m_autoShow;
 	bool                                 m_skipWarnings;
 	bool                                 m_building;
 	int                                  m_errorCount;

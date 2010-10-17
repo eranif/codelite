@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -16,6 +16,8 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 3, 4, 0, 0 );
+	fgSizer1->AddGrowableCol( 1 );
+	fgSizer1->AddGrowableCol( 2 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 	
@@ -52,8 +54,7 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	fgSizer1->Add( m_colourPickerErrorFg, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxBoldErrFont = new wxCheckBox( this, wxID_ANY, wxT("Bold"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxBoldErrFont->SetValue(true);
-	
+	m_checkBoxBoldErrFont->SetValue(true); 
 	fgSizer1->Add( m_checkBoxBoldErrFont, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Compiler warnings colour:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -69,23 +70,31 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	fgSizer1->Add( m_colourPickerWarningsFg, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxBoldWarnFont = new wxCheckBox( this, wxID_ANY, wxT("Bold"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	fgSizer1->Add( m_checkBoxBoldWarnFont, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
-	fgSizer1->AddGrowableCol( 1 );
-	fgSizer1->AddGrowableCol( 2 );
-
+	
 	bSizer1->Add( fgSizer1, 0, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer2;
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("General:") ), wxVERTICAL );
 	
 	m_checkBoxSkipeWarnings = new wxCheckBox( this, wxID_ANY, wxT("When using the menu to jump to errors, skip warnings"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	sbSizer2->Add( m_checkBoxSkipeWarnings, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxAutoHide = new wxCheckBox( this, wxID_ANY, wxT("Automatically hide the build pane when there are no errors nor warnings"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	sbSizer2->Add( m_checkBoxAutoHide, 0, wxALL|wxEXPAND, 5 );
+	
+	m_checkBoxAutoShow = new wxCheckBox( this, wxID_ANY, wxT("Always show error pane after build"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer2->Add( m_checkBoxAutoShow, 0, wxALL, 5 );
+	
+	wxFlexGridSizer* fgSizer2;
+	fgSizer2 = new wxFlexGridSizer( 1, 1, 0, 0 );
+	fgSizer2->SetFlexibleDirection( wxBOTH );
+	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_checkBoxErrorsFirstLine = new wxCheckBox( this, wxID_ANY, wxT("Show from beginning of errors list"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer2->Add( m_checkBoxErrorsFirstLine, 0, wxALL, 5 );
+	
+	sbSizer2->Add( fgSizer2, 1, wxALIGN_LEFT|wxEXPAND|wxLEFT|wxRIGHT, 30 );
 	
 	bSizer1->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
 	
@@ -99,19 +108,23 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Errors / warnings markers:") ), wxVERTICAL );
 	
 	m_checkBoxDisplayAnnotations = new wxCheckBox( this, wxID_ANY, wxT("Compiler errors / warnings shown in text annotations"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	sbSizer1->Add( m_checkBoxDisplayAnnotations, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxDisplayMarkers = new wxCheckBox( this, wxID_ANY, wxT("Compiler errors / warnings marked with bookmarks"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	sbSizer1->Add( m_checkBoxDisplayMarkers, 0, wxALL, 5 );
 	
 	bSizer1->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	
+	// Connect Events
+	m_checkBoxErrorsFirstLine->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( BuildTabSettingsBase::OnUpdateUI ), NULL, this );
 }
 
 BuildTabSettingsBase::~BuildTabSettingsBase()
 {
+	// Disconnect Events
+	m_checkBoxErrorsFirstLine->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( BuildTabSettingsBase::OnUpdateUI ), NULL, this );
+	
 }

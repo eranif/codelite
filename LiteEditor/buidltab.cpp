@@ -56,6 +56,7 @@ BuildTab::BuildTab ( wxWindow *parent, wxWindowID id, const wxString &name )
 		: OutputTabWindow   ( parent, id, name )
 		, m_showMe          ( BuildTabSettingsData::ShowOnStart )
 		, m_autoHide        ( false )
+		, m_autoShow        ( false )
 		, m_skipWarnings    ( true )
 		, m_building        ( false )
 		, m_errorCount      ( 0 )
@@ -121,11 +122,15 @@ void BuildTab::Initialize()
 	BuildTabSettingsData options;
 	EditorConfigST::Get()->ReadObject ( wxT ( "build_tab_settings" ), &options );
 
-	m_showMe       = options.GetShowBuildPane();
-	m_autoHide     = options.GetAutoHide();
-	m_skipWarnings = options.GetSkipWarnings();
+	m_showMe			= options.GetShowBuildPane();
+	m_autoHide			= options.GetAutoHide();
+	m_autoShow			= options.GetAutoShow();
+	m_skipWarnings		= options.GetSkipWarnings();
+    m_autoAppear		= (m_showMe == BuildTabSettingsData::ShowOnStart);
+	m_autoAppearErrors	= m_autoShow;
+	m_errorsFirstLine	= options.GetErrorsFirstLine();
 
-    m_autoAppear   = (m_showMe == BuildTabSettingsData::ShowOnStart);
+    m_autoAppear		= (m_showMe == BuildTabSettingsData::ShowOnStart);
 
 	SetStyles ( m_sci );
 }
@@ -547,22 +552,32 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 	bool success = m_errorCount == 0 && ( m_skipWarnings || m_warnCount == 0 );
 	bool viewing = ManagerST::Get()->IsPaneVisible ( clMainFrame::Get()->GetOutputPane()->GetCaption() ) &&
 	               ( clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() == this ||
-	                 clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() ==
-	                 clMainFrame::Get()->GetOutputPane()->GetErrorsTab() );
+					 clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() ==
+							clMainFrame::Get()->GetOutputPane()->GetErrorsTab() );
 
-	if ( !success ) {
-		if ( viewing ) {
+	if ( !success || m_autoAppearErrors ) {
+		if ( !m_autoAppearErrors && viewing ) {
 			std::map<int,LineInfo>::iterator i = GetNextBadLine();
 			m_sci->GotoLine ( i->first-1 ); // minus one line so user can type F4 to open the first error
+
 		} else {
 			ManagerST::Get()->ShowOutputPane ( clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->GetCaption() );
+			if (m_errorsFirstLine)
+				clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->m_sci->GotoLine(0);
+			else
+				clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->m_sci->GotoLine(
+					clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->m_sci->GetLineCount() );
+
 		}
+
 	} else if ( m_autoHide && viewing && !m_buildInterrupted) {
 		ManagerST::Get()->HidePane ( clMainFrame::Get()->GetOutputPane()->GetCaption() );
 
 	} else if ( m_showMe == BuildTabSettingsData::ShowOnEnd && !m_autoHide ) {
 		ManagerST::Get()->ShowOutputPane ( m_name );
+
 	}
+
 
 	MarkEditor ( clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
 

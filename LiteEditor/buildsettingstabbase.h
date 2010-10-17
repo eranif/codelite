@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -46,12 +46,19 @@ class BuildTabSettingsBase : public wxPanel
 		wxCheckBox* m_checkBoxBoldWarnFont;
 		wxCheckBox* m_checkBoxSkipeWarnings;
 		wxCheckBox* m_checkBoxAutoHide;
+		wxCheckBox* m_checkBoxAutoShow;
+		wxCheckBox* m_checkBoxErrorsFirstLine;
 		wxRadioBox* m_radioBoxShowBuildTab;
 		wxCheckBox* m_checkBoxDisplayAnnotations;
 		wxCheckBox* m_checkBoxDisplayMarkers;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		
 	
 	public:
-		BuildTabSettingsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 566,356 ), long style = wxTAB_TRAVERSAL );
+		
+		BuildTabSettingsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 720,550 ), long style = wxTAB_TRAVERSAL );
 		~BuildTabSettingsBase();
 	
 };

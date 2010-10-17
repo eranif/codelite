@@ -32,6 +32,8 @@ BuildTabSettingsData::BuildTabSettingsData()
 		, m_boldWarnFont(false)
 		, m_showBuildPane(0)
 		, m_autoHide(false)
+		, m_autoShow(false)
+		, m_errorsFirstLine(false)
 		, m_errorWarningStyle(EWS_Bookmarks)
 {
 	wxColour errColour(wxT("RED"));
@@ -58,6 +60,8 @@ void BuildTabSettingsData::Serialize(Archive &arch)
 	arch.Write(wxT("m_boldErrFont"),       m_boldErrFont);
 	arch.Write(wxT("m_boldWarnFont"),      m_boldWarnFont);
 	arch.Write(wxT("m_autoHide"),          m_autoHide);
+	arch.Write(wxT("m_autoShow"),          m_autoShow);
+	arch.Write(wxT("m_errorsFirstLine"),   m_errorsFirstLine);
 	arch.Write(wxT("m_showBuildPane"),     m_showBuildPane);
 	arch.Write(wxT("m_errorWarningStyle"), m_errorWarningStyle);
 }
@@ -72,6 +76,8 @@ void BuildTabSettingsData::DeSerialize(Archive &arch)
 	arch.Read(wxT("m_boldErrFont"),       m_boldErrFont);
 	arch.Read(wxT("m_boldWarnFont"),      m_boldWarnFont);
 	arch.Read(wxT("m_autoHide"),          m_autoHide);
+	arch.Read(wxT("m_autoShow"),          m_autoShow);
+	arch.Read(wxT("m_errorsFirstLine"),   m_errorsFirstLine);
 	arch.Read(wxT("m_showBuildPane"),     m_showBuildPane);
 	arch.Read(wxT("m_errorWarningStyle"), m_errorWarningStyle);
 }

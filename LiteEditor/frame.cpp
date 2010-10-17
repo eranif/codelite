@@ -3641,6 +3641,19 @@ void clMainFrame::ReloadExternallyModifiedProjectFiles()
 	if (!project_modified && !workspace_modified)
 		return;
 
+	// See if there's a saved 'Always do this' preference re reloading
+	long pref;
+	if (EditorConfigST::Get()->GetLongValue(wxT("ReloadWorkspaceWhenAltered"), pref)) {
+		if (pref == 1) { // 1 means never reload
+			return;
+		} else if (pref == 2) { // 2 means always reload
+			wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
+			GetEventHandler()->AddPendingEvent(evt); // Lands in OnReloadWorkspace()
+			return;
+		}
+	}
+
+	// No preference (or it's 'Always ask') so ask
 	ButtonDetails btn, noBtn;
 	btn.buttonLabel = wxT("Reload Workspace");
 	btn.commandId   = XRCID("reload_workspace");
@@ -3651,7 +3664,9 @@ void clMainFrame::ReloadExternallyModifiedProjectFiles()
 	noBtn.isDefault   = true;
 	noBtn.window      = NULL;
 
-	GetMainBook()->ShowMessage(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), false, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/reload_workspace")), noBtn, btn);
+	CheckboxDetails cb(wxT("ReloadWorkspaceWhenAltered"));
+
+	GetMainBook()->ShowMessage(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), false, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/reload_workspace")), noBtn, btn, ButtonDetails(), cb);
 }
 
 void clMainFrame::SaveLayoutAndSession()

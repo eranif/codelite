@@ -25,6 +25,26 @@ public:
 	{}
 };
 
+class CheckboxDetails
+{
+	wxString      configLabel;	// If the user wants no more notification spam, store the preference using this label
+	bool		  showSpamCheck;
+	
+public:
+	CheckboxDetails() : showSpamCheck(false)
+	{}	
+	CheckboxDetails(const wxString& label) : configLabel(label), showSpamCheck(true)
+	{}
+	~CheckboxDetails()
+	{}
+	wxString GetLabel() const {
+		return configLabel;
+	}
+	bool GetShowCheckbox() const {
+		return showSpamCheck; 
+	}
+};
+
 class MessageDetails
 {
 public:
@@ -33,6 +53,7 @@ public:
 	ButtonDetails btn1;
 	ButtonDetails btn2;
 	ButtonDetails btn3;
+	CheckboxDetails check;
 	bool          showHideButton;
 	
 public:
@@ -79,12 +100,14 @@ protected:
 	void DoShowNextMessage();
 	void DoShowCurrentMessage();
 	void DoPostEvent(ButtonDetails btn);
+	void SavePreferenceIfNeeded(const MessageDetails msg, int choice);
 	
 public:
 	/** Constructor */
 	MessagePane( wxWindow* parent );
 
-	void ShowMessage(const wxString &message, bool showHideButton = true, const wxBitmap &bmp = wxNullBitmap, const ButtonDetails& btn1 = ButtonDetails(), const ButtonDetails& btn2 = ButtonDetails(), const ButtonDetails& btn3 = ButtonDetails());
+	void ShowMessage(const wxString &message, bool showHideButton = true, const wxBitmap &bmp = wxNullBitmap, const ButtonDetails& btn1 = ButtonDetails(),
+						 const ButtonDetails& btn2 = ButtonDetails(), const ButtonDetails& btn3 = ButtonDetails(), const CheckboxDetails& chkbox = CheckboxDetails());
 };
 
 #endif // __message_pane__

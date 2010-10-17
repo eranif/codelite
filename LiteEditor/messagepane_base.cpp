@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Jun 23 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -52,6 +52,11 @@ MessagePaneBase::MessagePaneBase( wxWindow* parent, wxWindowID id, const wxPoint
 	m_staticTextMessage->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOBK ) );
 	
 	bSizer3->Add( m_staticTextMessage, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	m_DontAnnoyMeCheck = new wxCheckBox( m_panel1, wxID_ANY, _("Don't ask in future, just do this automatically"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DontAnnoyMeCheck->SetToolTip( _("If you don't want to be spammed by this message again, tick the box. You can change your mind in Settings > Global Editor Preferences > Dialogs") );
+	
+	bSizer3->Add( m_DontAnnoyMeCheck, 0, wxALL, 5 );
 	
 	bSizer2->Add( bSizer3, 1, wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -112,4 +117,5 @@ MessagePaneBase::~MessagePaneBase()
 	m_buttonAction->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnActionButton ), NULL, this );
 	m_buttonAction1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnActionButton1 ), NULL, this );
 	m_buttonAction2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MessagePaneBase::OnActionButton2 ), NULL, this );
+	
 }

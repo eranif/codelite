@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Jun 23 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -20,6 +20,7 @@
 #include <wx/settings.h>
 #include <wx/string.h>
 #include <wx/stattext.h>
+#include <wx/checkbox.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/statline.h>
@@ -41,6 +42,7 @@ class MessagePaneBase : public wxPanel
 		wxPanel* m_panel1;
 		wxStaticText* m_staticText2;
 		wxStaticText* m_staticTextMessage;
+		wxCheckBox* m_DontAnnoyMeCheck;
 		wxStaticLine* m_staticline3;
 		wxButton* m_buttonClose;
 		wxButton* m_buttonAction;

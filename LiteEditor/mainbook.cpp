@@ -898,9 +898,9 @@ bool MainBook::DoSelectPage(wxWindow* win)
 	return true;
 }
 
-void MainBook::ShowMessage(const wxString &message, bool showHideButton, const wxBitmap &bmp, const ButtonDetails &btn1, const ButtonDetails &btn2, const ButtonDetails &btn3)
+void MainBook::ShowMessage(const wxString &message, bool showHideButton, const wxBitmap &bmp, const ButtonDetails &btn1, const ButtonDetails &btn2, const ButtonDetails &btn3, const CheckboxDetails &cb)
 {
-	m_messagePane->ShowMessage(message, showHideButton, bmp, btn1, btn2, btn3);
+	m_messagePane->ShowMessage(message, showHideButton, bmp, btn1, btn2, btn3, cb);
 }
 
 void MainBook::OnPageChanged(NotebookEvent& e)

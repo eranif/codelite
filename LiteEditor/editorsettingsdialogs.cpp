@@ -34,12 +34,14 @@ EditorSettingsDialogs::EditorSettingsDialogs( wxWindow* parent )
 	long findNextWrapAround(0);
 	long buildBeforeDebug(0);
 	long createSwappedFile(0);
+	long reloadAlteredWorkspace(0);
 
 	bAdjustCPUNumber = EditorConfigST::Get()->GetLongValue(wxT("AdjustCPUNumber"), adjustCpuNumber);
 	bReplaceWrapAroundAnswer = EditorConfigST::Get()->GetLongValue(wxT("ReplaceWrapAroundAnswer"), replaceWrapAround);
 	bFindNextWrapAroundAnswer = EditorConfigST::Get()->GetLongValue(wxT("FindNextWrapAroundAnswer"), findNextWrapAround);
 	bBuildBeforeDebug = EditorConfigST::Get()->GetLongValue(wxT("BuildBeforeDebug"), buildBeforeDebug);
 	bCreateSwappedFile = EditorConfigST::Get()->GetLongValue(wxT("CreateSwappedFile"), createSwappedFile);
+	bReloadAlteredWorkspace = EditorConfigST::Get()->GetLongValue(wxT("ReloadWorkspaceWhenAltered"), reloadAlteredWorkspace);
 
 	// the value stored is 0 / 1
 	if (bAdjustCPUNumber) {
@@ -69,6 +71,14 @@ EditorSettingsDialogs::EditorSettingsDialogs( wxWindow* parent )
 		m_checkListAnswers->Check((unsigned int)CreateSwappedFile_idx, createSwappedFile == wxID_OK);
 	}
 
+	// reloadAlteredWorkspace may be 0 (ask each time) 1 (never reload) or 2 (always reload)
+	// Only show the item if it's currently set to one of the auto-responses, so it'll always start unticked
+	if (bReloadAlteredWorkspace && (reloadAlteredWorkspace > 0)) {
+		ReloadAlteredWorkspace_idx = m_checkListAnswers->Append(wxT("Always offer to Reload an externally-modified workspace"));
+	} else {
+		ReloadAlteredWorkspace_idx = wxNOT_FOUND;
+	}
+
 }
 
 EditorSettingsDialogs::~EditorSettingsDialogs()
@@ -92,4 +102,8 @@ void EditorSettingsDialogs::Save(OptionsConfigPtr)
 
 	if(bCreateSwappedFile)
 		EditorConfigST::Get()->SaveLongValue(wxT("CreateSwappedFile"), m_checkListAnswers->IsChecked(CreateSwappedFile_idx) ? wxID_OK : wxID_NO);
+
+	// We only want to change this one if the box became unticked
+	if(bReloadAlteredWorkspace && (ReloadAlteredWorkspace_idx != wxNOT_FOUND) && m_checkListAnswers->IsChecked(ReloadAlteredWorkspace_idx))
+		EditorConfigST::Get()->SaveLongValue(wxT("ReloadWorkspaceWhenAltered"), 0);
 }

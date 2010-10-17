@@ -2,6 +2,7 @@
 #include <wx/msgdlg.h>
 #include <wx/dcbuffer.h>
 #include "pluginmanager.h"
+#include "editor_config.h"
 
 MessagePane::MessagePane( wxWindow* parent )
 		: MessagePaneBase( parent )
@@ -34,6 +35,7 @@ void MessagePane::DoHide()
 		m_buttonAction->Hide();
 		m_buttonAction1->Hide();
 		m_buttonAction2->Hide();
+		m_DontAnnoyMeCheck->Hide();
 
 		m_messages.Clear();
 		Hide();
@@ -49,6 +51,7 @@ void MessagePane::DoShowCurrentMessage()
 	m_buttonAction->Hide();
 	m_buttonAction1->Hide();
 	m_buttonAction2->Hide();
+	m_DontAnnoyMeCheck->Hide();
 
 	bool hasDefaultButton (false);
 	if(msg.bmp.IsOk() == false) {
@@ -108,19 +111,25 @@ void MessagePane::DoShowCurrentMessage()
 		Show();
 	}
 
+	// Show the NoSpam checkbox if needed
+	m_DontAnnoyMeCheck->Show(msg.check.GetShowCheckbox());
+	//Uncheck it, otherwise it will remember a stale 'tick' that the user subsequently reverted
+	m_DontAnnoyMeCheck->SetValue(0);
+
 	m_staticTextMessage->Fit();
 	GetSizer()->Fit(this);
 	GetParent()->GetSizer()->Layout();
 	GetParent()->Refresh();
 }
 
-void MessagePane::ShowMessage(const wxString &message, bool showHideButton, const wxBitmap &bmp, const ButtonDetails& btn1, const ButtonDetails& btn2, const ButtonDetails& btn3)
+void MessagePane::ShowMessage(const wxString &message, bool showHideButton, const wxBitmap &bmp, const ButtonDetails& btn1, const ButtonDetails& btn2, const ButtonDetails& btn3, const CheckboxDetails& chkbox)
 {
 	MessageDetails msg;
 	msg.message        = message;
 	msg.btn1           = btn1;
 	msg.btn2           = btn2;
 	msg.btn3           = btn3;
+	msg.check          = chkbox;
 	msg.bmp            = bmp;
 	msg.showHideButton = showHideButton;
 	m_messages.PushMessage(msg);
@@ -130,6 +139,7 @@ void MessagePane::ShowMessage(const wxString &message, bool showHideButton, cons
 void MessagePane::OnActionButton(wxCommandEvent& event)
 {
 	MessageDetails msg = m_messages.CurrentMessage();
+	SavePreferenceIfNeeded(msg, 0);
 	DoPostEvent(msg.btn1);
 	DoShowNextMessage();
 }
@@ -203,6 +213,7 @@ void MessagePane::OnPaint(wxPaintEvent& event)
 void MessagePane::OnActionButton1(wxCommandEvent& event)
 {
 	MessageDetails msg = m_messages.CurrentMessage();
+	SavePreferenceIfNeeded(msg, 1);
 	DoPostEvent(msg.btn2);
 	DoShowNextMessage();
 }
@@ -210,6 +221,7 @@ void MessagePane::OnActionButton1(wxCommandEvent& event)
 void MessagePane::OnActionButton2(wxCommandEvent& event)
 {
 	MessageDetails msg = m_messages.CurrentMessage();
+	SavePreferenceIfNeeded(msg, 2);
 	DoPostEvent(msg.btn3);
 	DoShowNextMessage();
 }
@@ -223,6 +235,17 @@ void MessagePane::DoPostEvent(ButtonDetails btn)
 		} else {
 			wxCommandEvent evt(btn.commandId);
 			btn.window->AddPendingEvent(evt);
+		}
+	}
+}
+
+void MessagePane::SavePreferenceIfNeeded(const MessageDetails msg, int choice)
+{
+	// If the checkbox is both shown (to cater for random ticks) and checked, save the preference
+	if (m_DontAnnoyMeCheck->IsShown() && m_DontAnnoyMeCheck->IsChecked()) {
+		wxString label = msg.check.GetLabel();
+		if (!label.IsEmpty()) {
+			EditorConfigST::Get()->SaveLongValue(label, choice+1); // +1 to skip the Hide button
 		}
 	}
 }

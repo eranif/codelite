@@ -44,12 +44,14 @@ class EditorSettingsDialogs
 	bool bFindNextWrapAroundAnswer;
 	bool bBuildBeforeDebug;
 	bool bCreateSwappedFile;
+	bool bReloadAlteredWorkspace;
 
 	int AdjustCPUNumber_idx;
 	int ReplaceWrapAroundAnswer_idx;
 	int FindNextWrapAroundAnswer_idx;
 	int BuildBeforeDebug_idx;
 	int CreateSwappedFile_idx;
+	int ReloadAlteredWorkspace_idx;
 
 public:
 	/** Constructor */

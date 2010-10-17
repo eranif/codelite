@@ -189,7 +189,7 @@ void CustomBuildRequest::Process(IManager *manager)
 	// in case our configuration includes post/pre build commands
 	// we generate a makefile to include them as well and we update
 	// the build command
-	DoUpdateCommand(manager, cmd, proj, bldConf);
+	DoUpdateCommand(manager, cmd, proj, bldConf, isClean);
 
 #ifdef __WXMSW__
 	// Windows CD command requires the paths to be backslashe
@@ -228,7 +228,7 @@ void CustomBuildRequest::Process(IManager *manager)
 	}
 }
 
-void CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf)
+void CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf, bool isClean)
 {
 	BuildCommandList preBuildCmds, postBuildCmds;
 	wxArrayString pre, post;
@@ -265,7 +265,7 @@ void CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, Proje
 	makefile << wxT(".PHONY: all\n");
 	makefile << wxT("all:\n");
 
-	if (pre.IsEmpty() == false) {
+	if (pre.IsEmpty() == false && !isClean) {
 		makefile << wxT("\t@echo Executing Pre Build commands ...\n");
 		for (size_t i=0; i<pre.GetCount(); i++) {
 			makefile << wxT("\t@") << pre.Item(i) << wxT("\n");
@@ -276,7 +276,7 @@ void CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, Proje
 	// add the command
 	makefile << wxT("\t@") << cmd << wxT("\n");
 
-	if (post.IsEmpty() == false) {
+	if (post.IsEmpty() == false && !isClean) {
 		makefile << wxT("\t@echo Executing Post Build commands ...\n");
 		for (size_t i=0; i<post.GetCount(); i++) {
 			makefile << wxT("\t@") << post.Item(i) << wxT("\n");

@@ -34,7 +34,7 @@ class CustomBuildRequest : public ShellCommand
 	wxString m_fileName;
 
 protected:
-	void DoUpdateCommand(IManager *manager, wxString &cmd, ProjectPtr proj, BuildConfigPtr bldConf);
+	void DoUpdateCommand(IManager *manager, wxString &cmd, ProjectPtr proj, BuildConfigPtr bldConf, bool isClean);
 
 public:
 	CustomBuildRequest(wxEvtHandler *owner, const QueueCommand &buildInfo, const wxString &fileName);

@@ -26,8 +26,9 @@
 #define ITEMLOCATOR_H
 
 #include "wx/string.h"
+#include "codelite_exports.h"
 
-class ExeLocator 
+class WXDLLIMPEXP_SDK ExeLocator 
 {
 public:
 	ExeLocator (){}

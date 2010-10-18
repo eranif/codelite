@@ -30,6 +30,7 @@
 #include <wx/string.h>
 #include <map>
 #include "smart_ptr.h"
+#include "codelite_exports.h"
 
 class TagEntry;
 typedef SmartPtr<TagEntry> TagEntryPtr;
@@ -48,7 +49,7 @@ typedef SmartPtr<TagEntry> TagEntryPtr;
  * \date 11-11-2006
  * \author Eran
  */
-class TagEntry
+class WXDLLIMPEXP_CL TagEntry
 {
 	wxString                     m_path;		///< Tag full path
 	wxString                     m_file;		///< File this tag is found

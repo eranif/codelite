@@ -1,28 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2009 by Eran Ifrah
-// file name            : pptable.h
-//
-// -------------------------------------------------------------------------
-// A
-//              _____           _      _     _ _
-//             /  __ \         | |    | |   (_) |
-//             | /  \/ ___   __| | ___| |    _| |_ ___
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
-//              \____/\___/ \__,_|\___\_____/_|\__\___|
-//
-//                                                  F i l e
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 #ifndef PPTABLE_H
 #define PPTABLE_H
 
@@ -33,7 +8,21 @@
 #include <string>
 #include <list>
 
-struct CLReplacement {
+
+#ifndef WXDLLIMPEXP_CL
+
+#ifdef WXMAKINGDLL_CL
+#    define WXDLLIMPEXP_CL __declspec(dllexport)
+#elif defined(WXUSINGDLL_CL)
+#    define WXDLLIMPEXP_CL __declspec(dllimport)
+#else // not making nor using DLL
+#    define WXDLLIMPEXP_CL
+#endif
+
+#endif
+
+
+struct WXDLLIMPEXP_CL CLReplacement {
 	bool                        is_compound;
 	bool                        is_ok;
 	std::string                 full_pattern;
@@ -72,7 +61,7 @@ bool CLReplacePattern(const wxString &in, const wxString& pattern, const wxStrin
  */
 bool CLReplacePatternA(const std::string& in, const CLReplacement& repl, std::string& outStr);
 
-struct PPToken {
+struct WXDLLIMPEXP_CL PPToken {
 	enum {
 		IsFunctionLike = 0x00000001,
 		IsValid        = 0x00000002,
@@ -101,10 +90,8 @@ struct PPToken {
 	void squeeze();
 };
 
-class PPTable
+class WXDLLIMPEXP_CL PPTable
 {
-
-	static PPTable*             ms_instance;
 	std::map<wxString, PPToken> m_table;
 
 public:

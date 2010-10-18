@@ -36,6 +36,7 @@
 #include <wx/regex.h>
 #include "worker_thread.h"
 #include "stringsearcher.h"
+#include "codelite_exports.h"
 
 class wxEvtHandler;
 class SearchResult;
@@ -45,7 +46,7 @@ class SearchThread;
 // The searched data class to be passed to the search thread
 //----------------------------------------------------------
 
-class SearchData : public ThreadRequest {
+class WXDLLIMPEXP_SDK SearchData : public ThreadRequest {
 	wxArrayString m_rootDirs;
 	wxString      m_findString;
 	size_t        m_flags;
@@ -225,7 +226,7 @@ public:
 //------------------------------------------
 // class containing the search result
 //------------------------------------------
-class SearchResult : public wxObject {
+class WXDLLIMPEXP_SDK SearchResult : public wxObject {
 	wxString m_pattern;
 	int      m_lineNumber;
 	int      m_column;
@@ -367,7 +368,7 @@ public:
 typedef std::list<SearchResult> SearchResultList;
 
 
-class SearchSummary : public wxObject {
+class WXDLLIMPEXP_SDK SearchSummary : public wxObject {
 	int m_fileScanned;
 	int m_matchesFound;
 	int m_elapsed;
@@ -429,8 +430,8 @@ public:
 // The search thread
 //----------------------------------------------------------
 
-class SearchThread : public WorkerThread {
-	friend class Singleton<SearchThread>;
+class WXDLLIMPEXP_SDK SearchThread : public WorkerThread {
+	friend class SearchThreadST;
 	wxString m_wordChars;
 	std::map<wxChar, bool> m_wordCharsMap; //< Internal
 	SearchResultList m_results;
@@ -524,11 +525,16 @@ private:
 
 };
 
-typedef Singleton<SearchThread> SearchThreadST;
+class WXDLLIMPEXP_SDK SearchThreadST
+{
+public:
+	static SearchThread* Get();
+	static void Free();
+};
 
-extern const wxEventType wxEVT_SEARCH_THREAD_MATCHFOUND;
-extern const wxEventType wxEVT_SEARCH_THREAD_SEARCHEND;
-extern const wxEventType wxEVT_SEARCH_THREAD_SEARCHCANCELED;
-extern const wxEventType wxEVT_SEARCH_THREAD_SEARCHSTARTED;
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SEARCH_THREAD_MATCHFOUND;
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SEARCH_THREAD_SEARCHEND;
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SEARCH_THREAD_SEARCHCANCELED;
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SEARCH_THREAD_SEARCHSTARTED;
 
 #endif // SEARCH_THREAD_H

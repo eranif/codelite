@@ -30,10 +30,11 @@
 #include "asyncprocess.h"
 #include <wx/string.h>
 #include <Windows.h>
+#include "codelite_exports.h"
 
 class ProcessReaderThread;
 
-class WinProcessImpl : public IProcess
+class WXDLLIMPEXP_CL WinProcessImpl : public IProcess
 {
 	ProcessReaderThread *m_thr;
 	HANDLE               m_hRead;

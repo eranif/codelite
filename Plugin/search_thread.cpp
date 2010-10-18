@@ -545,3 +545,20 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 		}
 	}
 }
+
+static SearchThread* gs_SearchThread = NULL;
+void SearchThreadST::Free()
+{
+	if(gs_SearchThread) {
+		delete gs_SearchThread;
+	}
+	gs_SearchThread = NULL;
+}
+
+SearchThread* SearchThreadST::Get()
+{
+	if(gs_SearchThread == NULL)
+		gs_SearchThread = new SearchThread;
+	return gs_SearchThread;
+}
+

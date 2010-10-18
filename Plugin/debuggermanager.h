@@ -28,6 +28,7 @@
 #include "map"
 #include "list"
 #include "vector"
+#include "codelite_exports.h"
 #include "wx/string.h"
 #include "debugger.h"
 #include "wx/arrstr.h"
@@ -37,7 +38,7 @@
 class EnvironmentConfig;
 class BreakptMgr;
 
-class DebuggerMgr
+class WXDLLIMPEXP_SDK DebuggerMgr
 {
 	std::map<wxString, IDebugger*>   m_debuggers;
 	wxString                         m_baseDir;
@@ -48,7 +49,6 @@ class DebuggerMgr
 private:
 	DebuggerMgr();
 	virtual ~DebuggerMgr();
-	static DebuggerMgr *ms_instance;
 
 public:
 	/**

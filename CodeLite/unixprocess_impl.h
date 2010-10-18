@@ -29,8 +29,9 @@
 #if defined(__WXMAC__)||defined(__WXGTK__)
 #include "asyncprocess.h"
 #include "processreaderthread.h"
+#include "codelite_exports.h"
 
-class UnixProcessImpl : public IProcess
+class WXDLLIMPEXP_CL UnixProcessImpl : public IProcess
 {
 	int                  m_readHandle;
 	int                  m_writeHandle;

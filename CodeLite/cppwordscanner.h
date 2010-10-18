@@ -29,6 +29,7 @@
 #include <vector>
 #include "cpptoken.h"
 #include "smart_ptr.h"
+#include "codelite_exports.h"
 
 struct ByteState {
 	short state;   // Holds the current byte state (one of CppWordScanner::STATE_*)
@@ -37,7 +38,7 @@ struct ByteState {
 	int   lineNo;  // the line number which holds this byte
 };
 
-class TextStates
+class WXDLLIMPEXP_CL TextStates
 {
 public:
 	wxString               text;
@@ -84,7 +85,7 @@ public:
 
 typedef SmartPtr<TextStates> TextStatesPtr;
 
-class CppWordScanner
+class WXDLLIMPEXP_CL CppWordScanner
 {
 	wxSortedArrayString m_arr;
 	wxString            m_filename;

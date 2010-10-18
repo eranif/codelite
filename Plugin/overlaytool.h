@@ -3,6 +3,7 @@
 
 #if 0
 #include <wx/bitmap.h>
+#include "codelite_exports.h"
 
 /**
  * @class OverlayTool a simple tool which allows creating new images with overlay icons
@@ -11,7 +12,7 @@
  * @file overlaytool.h
  * @brief
  */
-class OverlayTool {
+class WXDLLIMPEXP_SDK OverlayTool {
 
 	static wxBitmap ms_bmpOK;
 	static wxBitmap ms_bmpConflict;

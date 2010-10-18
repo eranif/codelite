@@ -27,6 +27,7 @@
 
 #include "wx/string.h"
 #include "builder.h"
+#include "codelite_exports.h"
 #include "singleton.h"
 #include "compiler.h"
 #include "wx/xml/xml.h"
@@ -35,7 +36,7 @@
 
 // Cookie class for the editor to provide reentrance operations
 // on various methods (such as iteration)
-class BuildSettingsConfigCookie {
+class WXDLLIMPEXP_SDK BuildSettingsConfigCookie {
 public:
 	wxXmlNode *child;
 	wxXmlNode *parent;
@@ -48,7 +49,7 @@ public:
 /**
  * \class BuildSettingsConfig the build system configuration
  */
-class BuildSettingsConfig
+class WXDLLIMPEXP_SDK BuildSettingsConfig
 {
 	wxXmlDocument *m_doc;
 	wxFileName m_fileName;
@@ -122,6 +123,11 @@ public:
 	 wxString GetSelectedBuildSystem(); 
 };
 
-typedef Singleton<BuildSettingsConfig> BuildSettingsConfigST;
+class WXDLLIMPEXP_SDK BuildSettingsConfigST
+{
+public:
+	static BuildSettingsConfig* Get();
+	static void Free();
+};
 
 #endif //BUILD_CONFIG_SETTINGS_H

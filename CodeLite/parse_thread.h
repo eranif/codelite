@@ -34,6 +34,7 @@
 #include "worker_thread.h"
 #include "procutils.h"
 #include "tag_tree.h"
+#include "codelite_exports.h"
 
 class TagsStorageSQLite;
 
@@ -73,7 +74,7 @@ public:
  * @file parse_thread.h
  * @brief a class representing a parsing request
  */
-class ParseRequest : public ThreadRequest
+class WXDLLIMPEXP_CL ParseRequest : public ThreadRequest
 {
 	wxString      _file;
 	wxString      _dbfile;
@@ -136,9 +137,9 @@ public:
  * @file parse_thread.h
  * @brief
  */
-class ParseThread : public WorkerThread
+class WXDLLIMPEXP_CL ParseThread : public WorkerThread
 {
-	friend class Singleton<ParseThread>;
+	friend class ParseThreadST;
 	TagsStorageSQLite*               m_pDb;
 	wxStopWatch                 m_watch;
 	wxArrayString               m_searchPaths;
@@ -197,12 +198,17 @@ private:
 
 };
 
-typedef Singleton<ParseThread> ParseThreadST;
+class WXDLLIMPEXP_CL ParseThreadST 
+{
+public:
+	static void Free();
+	static ParseThread* Get();
+};
 
 /**
  * Holds information about events associated with SymbolTree object.
  */
-class SymbolTreeEvent : public wxNotifyEvent
+class WXDLLIMPEXP_CL SymbolTreeEvent : public wxNotifyEvent
 {
 	std::vector<std::pair<wxString, TagEntry> >  m_items;
 	wxString m_project;
@@ -298,12 +304,12 @@ DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_CL, wxEVT_COMMAND_SYMBOL_TREE_DELETE_PRO
 
 END_DECLARE_EVENT_TYPES()
 
-extern const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS;
-extern const wxEventType wxEVT_PARSE_THREAD_MESSAGE;
-extern const wxEventType wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE;
-extern const wxEventType wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE;
-extern const wxEventType wxEVT_PARSE_THREAD_RETAGGING_PROGRESS;
-extern const wxEventType wxEVT_PARSE_THREAD_RETAGGING_COMPLETED;
+extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS;
+extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_MESSAGE;
+extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE;
+extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE;
+extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_RETAGGING_PROGRESS;
+extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_RETAGGING_COMPLETED;
 
 typedef void (wxEvtHandler::*SymbolTreeEventFunction)(SymbolTreeEvent&);
 

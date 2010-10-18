@@ -33,7 +33,7 @@ enum SettersGetters {
 	SG_REMOVE_M_PREFIX
 };
 
-class SettersGettersData : public SerializedObject
+class WXDLLIMPEXP_CL SettersGettersData : public SerializedObject
 {
 	size_t m_flags;
 public:

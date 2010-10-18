@@ -33,8 +33,9 @@
 #include "workspace.h"
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
+#include "codelite_exports.h"
 
-class BuilderGnuMakeOneStep : public BuilderGnuMake
+class WXDLLIMPEXP_SDK BuilderGnuMakeOneStep : public BuilderGnuMake
 {
 public:
 	BuilderGnuMakeOneStep();

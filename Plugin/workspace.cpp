@@ -699,3 +699,21 @@ time_t Workspace::GetFileLastModifiedTime() const
 {
 	return GetFileModificationTime(GetWorkspaceFileName());
 }
+
+// Singelton access
+static Workspace* gs_Workspace = NULL;
+void WorkspaceST::Free()
+{
+	if(gs_Workspace) {
+		delete gs_Workspace;
+	}
+	gs_Workspace = NULL;
+}
+
+Workspace* WorkspaceST::Get()
+{
+	if(gs_Workspace == NULL)
+		gs_Workspace = new Workspace;
+	return gs_Workspace;
+}
+

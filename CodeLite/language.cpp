@@ -1874,3 +1874,14 @@ void Language::DoExtractTemplateArgsFromSelf(ParsedToken* token)
 		token->SetIsTemplate     ( token->GetTemplateArgList().IsEmpty() == false );
 	}
 }
+
+void LanguageST::Free()
+{
+}
+
+Language* LanguageST::Get()
+{
+	static Language theLang;
+	return &theLang;
+}
+

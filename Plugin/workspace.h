@@ -35,24 +35,17 @@
 #include "configuration_mapping.h"
 #include "optionsconfig.h"
 #include "localworkspace.h"
+#include "codelite_exports.h"
 
-
-#ifdef WXMAKINGDLL_LE_SDK
-#    define WXDLLIMPEXP_LE_SDK WXEXPORT
-#elif defined(WXUSINGDLL_LE_SDK)
-#    define WXDLLIMPEXP_LE_SDK WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_LE_SDK
-#endif // WXMAKINGDLL_LE_SDK
 
 /*!
  * \brief
  * Workspace manager class
  *
  */
-class WXDLLIMPEXP_LE_SDK Workspace
+class WXDLLIMPEXP_SDK Workspace
 {
-	friend class Singleton<Workspace>;
+	friend class WorkspaceST;
 	wxXmlDocument m_doc;
 	wxFileName m_fileName;
 	std::map<wxString, ProjectPtr> m_projects;
@@ -293,6 +286,11 @@ private:
 	bool SaveXmlFile();
 };
 
-typedef Singleton<Workspace> WorkspaceST;
+class WXDLLIMPEXP_SDK WorkspaceST
+{
+public:
+	static Workspace* Get();
+	static void Free();
+};
 
 #endif // WORKSPACE_H

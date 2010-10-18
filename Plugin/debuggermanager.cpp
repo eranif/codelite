@@ -31,7 +31,7 @@
 #include "debuggerconfigtool.h"
 
 //---------------------------------------------------------
-DebuggerMgr *DebuggerMgr::ms_instance = NULL;
+static DebuggerMgr *ms_instance = NULL;
 
 DebuggerMgr::DebuggerMgr()
 {

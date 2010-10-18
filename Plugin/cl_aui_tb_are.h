@@ -6,12 +6,13 @@
 #include <wx/bitmap.h>
 #include "drawingutils.h"
 #include "cl_defs.h"
+#include "codelite_exports.h"
 
 #if USE_AUI_TOOLBAR
 
 #include <wx/aui/auibar.h>
 
-class CLMainAuiTBArt : public wxAuiDefaultToolBarArt
+class WXDLLIMPEXP_SDK CLMainAuiTBArt : public wxAuiDefaultToolBarArt
 {
 public:
 	CLMainAuiTBArt();

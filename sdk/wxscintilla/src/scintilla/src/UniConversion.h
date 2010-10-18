@@ -4,8 +4,20 @@
  **/
 // Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
+#ifdef WXDLLIMPEXP_SCI
+#undef WXDLLIMPEXP_SCI
+#endif
 
-unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
+#include <wx/string.h>
+#ifdef WXMAKINGDLL_SCI
+	#define WXDLLIMPEXP_SCI WXEXPORT
+#elif defined(WXUSINGDLL_SCI)
+	#define WXDLLIMPEXP_SCI WXIMPORT
+#else // not making nor using DLL
+	#define WXDLLIMPEXP_SCI
+#endif
+
+WXDLLIMPEXP_SCI unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 void UTF8FromUTF16(const wchar_t *uptr, unsigned int tlen, char *putf, unsigned int len);
 unsigned int UTF8CharLength(unsigned char ch);
 unsigned int UTF16Length(const char *s, unsigned int len);

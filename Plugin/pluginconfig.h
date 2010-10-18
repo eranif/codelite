@@ -25,8 +25,9 @@
  #ifndef __pluginconfig__
 #define __pluginconfig__
 #include "configtool.h"
+#include "codelite_exports.h"
 
-class PluginConfig : public ConfigTool {
+class WXDLLIMPEXP_SDK PluginConfig : public ConfigTool {
 
 	static PluginConfig* ms_instance;
 

@@ -3,12 +3,13 @@
 
 #include <wx/listctrl.h>
 #include <wx/bitmap.h>
+#include "codelite_exports.h"
 
 enum {
 	wxLC_COLOUR_BACKGROUND = 0x00010000
 };
 
-class ListCtrlImproved : public wxListCtrl {
+class WXDLLIMPEXP_SDK ListCtrlImproved : public wxListCtrl {
 
 	wxBitmap m_checkedBmp;
 	wxBitmap m_uncheckedBmp;

@@ -31,6 +31,7 @@
 #include <wx/string.h>
 #include <list>
 #include <map>
+#include "codelite_exports.h"
 
 #ifndef WXDLLIMPEXP_LE_SDK
 #ifdef WXMAKINGDLL_LE_SDK
@@ -75,7 +76,7 @@ public:
 
 typedef std::list<BuildCommand> BuildCommandList;
 
-class BuildConfig : public ConfObject
+class WXDLLIMPEXP_SDK BuildConfig : public ConfObject
 {
 public:
 	static const wxString OVERWRITE_GLOBAL_SETTINGS;

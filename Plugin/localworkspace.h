@@ -29,6 +29,7 @@
 #include <wx/filename.h>
 #include "singleton.h"
 #include "optionsconfig.h"
+#include "codelite_exports.h"
 
 
 // Denotes whether we're dealing with preferences at a global, workspace, project or (maybe one day) file level
@@ -59,7 +60,7 @@ public:
 	}
 };
 
-class LocalOptionsConfig
+class WXDLLIMPEXP_SDK LocalOptionsConfig
 {
 	validVar<bool>     m_localdisplayFoldMargin;
 	validVar<bool>     m_localdisplayBookmarkMargin;
@@ -265,10 +266,10 @@ public:
 	wxXmlNode *ToXml(wxXmlNode* parent = NULL, const wxString& nodename = wxT("Options")) const;
 };
 
-class LocalWorkspace
+class WXDLLIMPEXP_SDK LocalWorkspace
 {
 private:
-	friend class Singleton<LocalWorkspace>;
+	friend class LocalWorkspaceST;
 	wxXmlDocument m_doc;
 	wxFileName m_fileName;
 
@@ -331,6 +332,11 @@ public:
 };
 
 
-typedef Singleton<LocalWorkspace> LocalWorkspaceST;
+class WXDLLIMPEXP_SDK LocalWorkspaceST
+{
+public:
+	static LocalWorkspace* Get();
+	static void Free();
+};
 
 #endif // __localoptions__

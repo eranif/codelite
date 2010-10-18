@@ -27,8 +27,9 @@
 
 #include "wx/dc.h"
 #include "wx/colour.h"
+#include "codelite_exports.h"
 
-class DrawingUtils
+class WXDLLIMPEXP_SDK DrawingUtils
 {
 public:
 	static wxColor LightColour(const wxColour& color, float percent);

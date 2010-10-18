@@ -4,7 +4,20 @@
 #include <string>
 #include "variable.h"
 
-class clTypedef
+#ifndef WXDLLIMPEXP_CL
+
+#ifdef WXMAKINGDLL_CL
+#    define WXDLLIMPEXP_CL __declspec(dllexport)
+#elif defined(WXUSINGDLL_CL)
+#    define WXDLLIMPEXP_CL __declspec(dllimport)
+#else // not making nor using DLL
+#    define WXDLLIMPEXP_CL
+#endif
+
+#endif
+
+
+class WXDLLIMPEXP_CL clTypedef
 {
 public:
 	std::string m_name;

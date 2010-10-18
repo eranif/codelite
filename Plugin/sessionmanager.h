@@ -29,6 +29,7 @@
 #include "serialized_object.h"
 #include "wx/xml/xml.h"
 #include <vector>
+#include "codelite_exports.h"
 
 namespace
 {
@@ -44,7 +45,7 @@ namespace
  * \author Eran
  * \date 09/25/07
  */
-class SessionEntry : public SerializedObject {
+class WXDLLIMPEXP_SDK SessionEntry : public SerializedObject {
 protected:
 	int m_selectedTab;
 	wxArrayString m_tabs;
@@ -79,7 +80,7 @@ public:
  * \class TabGroupEntry
  * \brief TabGroupEntry serialises a named group of tabs
  */
-class TabGroupEntry : public SessionEntry 
+class WXDLLIMPEXP_SDK TabGroupEntry : public SessionEntry 
 {
 	wxString m_tabgroupName;
 
@@ -99,7 +100,7 @@ public:
  * \author Eran
  * \date 09/25/07
  */
-class SessionManager {
+class WXDLLIMPEXP_SDK SessionManager {
 	wxXmlDocument m_doc;
 	wxFileName m_fileName;
 

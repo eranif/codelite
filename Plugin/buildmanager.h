@@ -29,6 +29,7 @@
 #include <list>
 #include "wx/string.h"
 #include "singleton.h"
+#include "codelite_exports.h"
 #include "builder.h"
 
 //class BuildManager;
@@ -49,9 +50,9 @@
  * \author Eran
  *
  */
-class BuildManager {
+class WXDLLIMPEXP_SDK BuildManager {
 
-	friend class Singleton<BuildManager>;
+	friend class BuildManagerST;
 	std::map<wxString, BuilderPtr> m_builders;
 
 public:
@@ -69,7 +70,12 @@ public:
 	BuilderPtr GetSelectedBuilder();
 };
 
-typedef Singleton<BuildManager> BuildManagerST;
+class WXDLLIMPEXP_SDK BuildManagerST
+{
+public:
+	static BuildManager* Get();
+	static void Free();
+};
 
 #endif // BUILDMANAGER_H
 

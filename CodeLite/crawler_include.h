@@ -1,34 +1,21 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2009 by Eran Ifrah
-// file name            : crawler_include.h
-//
-// -------------------------------------------------------------------------
-// A
-//              _____           _      _     _ _
-//             /  __ \         | |    | |   (_) |
-//             | /  \/ ___   __| | ___| |    _| |_ ___
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
-//              \____/\___/ \__,_|\___\_____/_|\__\___|
-//
-//                                                  F i l e
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 #ifndef CRAWLER_INCLUDE_H
 #define CRAWLER_INCLUDE_H
 
 #include <vector>
 #include "fc_fileopener.h"
 
-extern int crawlerScan        ( const char* filePath );
+#ifndef WXDLLIMPEXP_CL
+
+#ifdef WXMAKINGDLL_CL
+#    define WXDLLIMPEXP_CL __declspec(dllexport)
+#elif defined(WXUSINGDLL_CL)
+#    define WXDLLIMPEXP_CL __declspec(dllimport)
+#else // not making nor using DLL
+#    define WXDLLIMPEXP_CL
+#endif
+
+#endif
+
+extern WXDLLIMPEXP_CL int crawlerScan        ( const char* filePath );
 
 #endif

@@ -28,8 +28,9 @@
 #include <wx/string.h>
 #include <list>
 #include <map>
+#include "codelite_exports.h"
 
-class CppToken
+class WXDLLIMPEXP_CL CppToken
 {
 	int      m_id;
 	wxString name;    // the name of the token
@@ -91,7 +92,7 @@ public:
 	}
 };
 
-class CppTokensMap
+class WXDLLIMPEXP_CL CppTokensMap
 {
 	std::map<wxString, std::list<CppToken>* > m_tokens;
 

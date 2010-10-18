@@ -26,8 +26,9 @@
 #define __progressctrl__
 
 #include <wx/panel.h>
+#include "codelite_exports.h"
 
-class ProgressCtrl : public wxPanel {
+class WXDLLIMPEXP_SDK ProgressCtrl : public wxPanel {
 	
 	wxString m_msg;
 	size_t m_maxRange;

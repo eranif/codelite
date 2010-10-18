@@ -27,6 +27,7 @@
 
 #include "wx/panel.h"
 #include "wx/button.h"
+#include "codelite_exports.h"
 #include "wx/textctrl.h"
 #include "wx/combobox.h"
 
@@ -38,7 +39,7 @@ enum {
 /**
  * This control allows the user to select a directory. with a text control on its right side
  */
-class DirPicker : public wxPanel {
+class WXDLLIMPEXP_SDK DirPicker : public wxPanel {
 	wxTextCtrl *m_path;
 	wxComboBox *m_combo;
 

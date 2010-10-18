@@ -26,8 +26,9 @@
 #define DEBUGGERCONFIGTOOL_H
 
 #include "configtool.h"
+#include "codelite_exports.h"
 
-class DebuggerConfigTool : public ConfigTool {
+class WXDLLIMPEXP_SDK DebuggerConfigTool : public ConfigTool {
 private:
 	DebuggerConfigTool();
 public:	

@@ -28,8 +28,9 @@
 
 #include <vector>
 #include <string>
+#include "codelite_exports.h"
 
-class IncludeStatement {
+class WXDLLIMPEXP_CL IncludeStatement {
 public:
 	std::string file;
 	int         line;
@@ -37,6 +38,6 @@ public:
 	std::string pattern;
 };
 
-extern int IncludeFinder( const char* filePath, std::vector<IncludeStatement> &includes );
+extern WXDLLIMPEXP_CL int IncludeFinder( const char* filePath, std::vector<IncludeStatement> &includes );
 
 #endif

@@ -28,8 +28,9 @@
 #include "wx/string.h"
 #include "entry.h"
 #include "comment_creator.h"
+#include "codelite_exports.h"
 
-class CppCommentCreator : public CommentCreator
+class WXDLLIMPEXP_CL CppCommentCreator : public CommentCreator
 {
 	TagEntryPtr m_tag;
 public:

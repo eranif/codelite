@@ -28,6 +28,7 @@
 #include <wx/log.h>
 #include "cppwordscanner.h"
 #include "stringaccessor.h"
+#include "dirsaver.h"
 
 CppWordScanner::CppWordScanner(const wxString &fileName)
 	: m_filename(fileName)

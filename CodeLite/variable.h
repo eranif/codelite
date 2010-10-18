@@ -5,7 +5,19 @@
 #include "list"
 #include <stdio.h>
 
-class Variable
+#ifndef WXDLLIMPEXP_CL
+
+#ifdef WXMAKINGDLL_CL
+#    define WXDLLIMPEXP_CL __declspec(dllexport)
+#elif defined(WXUSINGDLL_CL)
+#    define WXDLLIMPEXP_CL __declspec(dllimport)
+#else // not making nor using DLL
+#    define WXDLLIMPEXP_CL
+#endif
+
+#endif
+
+class WXDLLIMPEXP_CL Variable
 {
 public:
 	std::string     m_name;

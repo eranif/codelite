@@ -28,6 +28,7 @@
 #include "fileextmanager.h"
 #include <wx/frame.h>
 #include <wx/app.h>
+#include "codelite_exports.h"
 #include <wx/sizer.h>
 #include <wx/log.h>
 #include "parse_thread.h"
@@ -42,7 +43,6 @@
 #include <wx/file.h>
 #include <algorithm>
 #include <wx/progdlg.h>
-#include "dirtraverser.h"
 #include "wx/tokenzr.h"
 #include "wx/filename.h"
 #include <wx/wfstream.h>
@@ -58,6 +58,7 @@
 #include <wx/msgdlg.h>
 #include "code_completion_api.h"
 #include <wx/stdpaths.h>
+
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -99,7 +100,7 @@ struct tagParseResult {
 //------------------------------------------------------------------------------
 // Progress dialog
 //------------------------------------------------------------------------------
-class MyProgress : public wxProgressDialog
+class WXDLLIMPEXP_CL MyProgress : public wxProgressDialog
 {
 public:
 	MyProgress(const wxString &title, size_t count) :
@@ -111,6 +112,19 @@ public:
 	virtual ~MyProgress()
 	{}
 };
+
+//////////////////////////////////////
+// Adapter class to TagsManager
+//////////////////////////////////////
+void TagsManagerST::Free()
+{
+}
+
+TagsManager* TagsManagerST::Get()
+{
+	static TagsManager theTagsManager;
+	return &theTagsManager;
+}
 
 //------------------------------------------------------------------------------
 // CTAGS Manager
@@ -2688,4 +2702,9 @@ wxString TagsManager::WrapLines(const wxString& str)
 		}
 	}
 	return wrappedString;
+}
+
+void TagsManager::GetVariables(const std::string& in, VariableList& li, const std::map<std::string, std::string>& ignoreMap, bool isUsedWithinFunc)
+{
+	get_variables(in, li, ignoreMap, isUsedWithinFunc);
 }

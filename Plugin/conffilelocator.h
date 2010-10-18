@@ -26,8 +26,9 @@
 #ifndef __conffilelocator__
 #define __conffilelocator__
 #include <wx/string.h>
+#include "codelite_exports.h"
 
-class ConfFileLocator {
+class WXDLLIMPEXP_SDK ConfFileLocator {
 
 	static ConfFileLocator* ms_instance;
 	wxString m_installPath;

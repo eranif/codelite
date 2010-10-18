@@ -6,7 +6,6 @@
 #include <wx/tokenzr.h>
 #include <wx/aui/framemanager.h>
 #include <wx/xrc/xmlres.h>
-#include "processreaderthread.cpp"
 #include "globals.h"
 #include "processreaderthread.h"
 #include "subversion2.h"

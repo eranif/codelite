@@ -24,8 +24,9 @@
 #endif
 
 #include "wx/string.h"
+#include "codelite_exports.h"
 
-class wxMD5
+class WXDLLIMPEXP_SDK wxMD5
 {
 public:
 	wxMD5();

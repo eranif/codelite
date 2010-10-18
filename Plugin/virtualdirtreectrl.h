@@ -45,6 +45,7 @@
 #include <wx/filesys.h>
 #include <wx/imaglist.h>
 #include <map>
+#include "codelite_exports.h"
 
 enum
 {
@@ -281,8 +282,8 @@ WX_DEFINE_ARRAY(VdtcTreeItemBase *, VdtcTreeItemBaseArray);
 */
 
 
-extern const wxEventType wxVDTC_ROOT_CHANGED;
-class wxVirtualDirTreeCtrl : public wxTreeCtrl
+extern WXDLLIMPEXP_SDK const wxEventType wxVDTC_ROOT_CHANGED;
+class WXDLLIMPEXP_SDK wxVirtualDirTreeCtrl : public wxTreeCtrl
 {
 private:
 	/** File extensions list */

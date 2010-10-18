@@ -2,7 +2,7 @@
 <CodeLite_Project Name="plugin_sdk">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00020001N0011WinDebug_290000000000000001N0013WinRelease_29000000000000]]>
+      <![CDATA[00030001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0013WinRelease_29000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
@@ -246,232 +246,97 @@
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
-  <Settings Type="Static Library">
-    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);$(shell pkg-config --cflags gtk+-2.0)" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../Interfaces"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include/"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Options=" " Required="yes"/>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../lib/gcc_lib/libplugin_sdkud.a" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName/>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2;$(shell pkg-config --cflags gtk+-2.0);-fPIC" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../Interfaces"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include/"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-        <Preprocessor Value="ON_64_BIT"/>
-      </Compiler>
-      <Linker Options=" " Required="yes"/>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../lib/gcc_lib/libplugin_sdku.a" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../Interfaces"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Options="" Required="yes"/>
-      <ResourceCompiler Options="" Required="yes"/>
-      <General OutputFile="../lib/gcc_lib/libplugin_sdkud.a" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName/>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="WinDebug_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);-g" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../Interfaces"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Options="" Required="yes"/>
-      <ResourceCompiler Options="" Required="yes"/>
-      <General OutputFile="../lib/gcc_lib/libplugin_sdku.a" IntermediateDirectory="./WinDebug_29" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes)" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../Interfaces"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Options="" Required="yes"/>
-      <ResourceCompiler Options="" Required="yes"/>
-      <General OutputFile="../lib/gcc_lib/libplugin_sdku.a" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="WinRelease_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../Interfaces"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Options="" Required="yes"/>
-      <ResourceCompiler Options="" Required="yes"/>
-      <General OutputFile="../lib/gcc_lib/libplugin_sdku.a" IntermediateDirectory="./WinRelease_29" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
+  <Dependencies Name="WinRelease_29"/>
+  <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="">
         <IncludePath Value="."/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="WXMAKINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_SCI"/>
       </Compiler>
       <Linker Options="">
         <LibraryPath Value="."/>
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
+    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../Interfaces"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --libs --debug=yes --unicode=yes)" Required="yes">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libwxsqlite3ud.dll"/>
+        <Library Value="libCodeLiteud.dll"/>
+        <Library Value="libwxscintillaud.dll"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="yes"/>
+      <General OutputFile="../lib/gcc_lib/libplugin_sdkud.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes)" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../Interfaces"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --libs --debug=no --unicode=yes);-s" Required="yes">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libcodeliteu.dll"/>
+        <Library Value="libwxsqlite3u.dll"/>
+        <Library Value="libwxscintillau.dll"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="yes"/>
+      <General OutputFile="../lib/gcc_lib/libplugin_sdku.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
   </Settings>
-  <Dependencies Name="WinRelease_29"/>
 </CodeLite_Project>

@@ -26,8 +26,9 @@
 #define __commentconfigdata__
 
 #include "serialized_object.h"
+#include "codelite_exports.h"
 
-class CommentConfigData : public SerializedObject
+class WXDLLIMPEXP_SDK CommentConfigData : public SerializedObject
 {
 	bool m_addStarOnCComment;
 	bool m_continueCppComment;

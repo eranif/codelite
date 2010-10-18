@@ -25,9 +25,10 @@
 #ifndef __plugindata__
 #define __plugindata__
 #include "serialized_object.h"
+#include "codelite_exports.h"
 #include "plugin_version.h"
 
-class PluginInfo : public SerializedObject
+class WXDLLIMPEXP_SDK PluginInfo : public SerializedObject
 {
 
 	bool enabled;

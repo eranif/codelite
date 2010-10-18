@@ -28,8 +28,9 @@
 
 #include "serialized_object.h"
 #include <wx/arrstr.h>
+#include "codelite_exports.h"
 
-class DetachedPanesInfo : public SerializedObject
+class WXDLLIMPEXP_SDK DetachedPanesInfo : public SerializedObject
 {
 	wxArrayString m_panes;
 public:

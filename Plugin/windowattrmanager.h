@@ -28,6 +28,7 @@
 
 #include <wx/window.h>
 #include "iconfigtool.h"
+#include "codelite_exports.h"
 
 /**
  * @class WindowAttrManager
@@ -36,7 +37,7 @@
  * @file windowattrmanager.h
  * @brief a helper class that helps restoring wxWindow size and position
  */
-class WindowAttrManager {
+class WXDLLIMPEXP_SDK WindowAttrManager {
 public:
 	/**
 	 * @brief write windows' size and position to the disk

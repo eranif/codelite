@@ -25,6 +25,7 @@
  #ifndef CLEAN_REQUEST_H
 #define CLEAN_REQUEST_H
 #include "shell_command.h"
+#include "codelite_exports.h"
 
 /**
  * \class CleanRequest
@@ -32,7 +33,7 @@
  * \author Eran
  * \date 07/22/07
  */
-class CleanRequest : public ShellCommand {
+class WXDLLIMPEXP_SDK CleanRequest : public ShellCommand {
 public:
 	/**
 	 * Construct a compilation clean request. The compiler thread will clean the selected project and all

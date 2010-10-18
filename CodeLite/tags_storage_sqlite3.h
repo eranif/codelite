@@ -31,6 +31,7 @@
 #include "fileentry.h"
 #include "istorage.h"
 #include <wx/wxsqlite3.h>
+#include "codelite_exports.h"
 
 const wxString gTagsDatabaseVersion(wxT("CodeLite Version 2.7"));
 
@@ -105,7 +106,7 @@ public:
 	void Clear();
 };
 
-class clSqliteDB : public wxSQLite3Database
+class WXDLLIMPEXP_CL clSqliteDB : public wxSQLite3Database
 {
 	std::map<wxString, wxSQLite3Statement> m_statements;
 public:
@@ -135,7 +136,7 @@ public:
 	}
 };
 
-class TagsStorageSQLite : public ITagsStorage
+class WXDLLIMPEXP_CL TagsStorageSQLite : public ITagsStorage
 {
 	clSqliteDB             *m_db;
 	TagsStorageSQLiteCache  m_cache;

@@ -25,17 +25,10 @@
  #ifndef DIRTRAVERSER_H
 #define DIRTRAVERSER_H
 
+#include "codelite_exports.h"
 #include <wx/dir.h>
 #include <wx/arrstr.h>
 #include <map>
-
-#ifdef WXMAKINGDLL_CODELITE
-#    define WXDLLIMPEXP_CL WXEXPORT
-#elif defined(WXUSINGDLL_CODELITE)
-#    define WXDLLIMPEXP_CL WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_CL
-#endif // 
 
 /**
  * A helper class that help us recurse into sub-directories.
@@ -63,6 +56,7 @@ public:
 	 * Construct a DirTraverser with a given file spec
 	 */
 	DirTraverser(const wxString &filespec, bool includExtLessFiles = false);
+	virtual ~DirTraverser();
 	
 	/**
 	 * This function is called once a file is found. The traverse of the directories 

@@ -4,7 +4,7 @@
 #include <wx/arrstr.h>
 #include "imanager.h"
 
-class IncludePathLocator : public wxEvtHandler {
+class WXDLLIMPEXP_SDK IncludePathLocator : public wxEvtHandler {
 	IManager *m_mgr;
 public:
 	IncludePathLocator(IManager *mgr);

@@ -28,18 +28,9 @@
 #include "configuration_object.h"
 #include <wx/arrstr.h>
 #include <wx/string.h>
+#include "codelite_exports.h"
 
-#ifndef WXDLLIMPEXP_LE_SDK
-#ifdef WXMAKINGDLL_LE_SDK
-#    define WXDLLIMPEXP_LE_SDK WXEXPORT
-#elif defined(WXUSINGDLL_LE_SDK)
-#    define WXDLLIMPEXP_LE_SDK WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_LE_SDK
-#endif // WXMAKINGDLL_LE_SDK
-#endif
-
-class WXDLLIMPEXP_LE_SDK BuildConfigCommon : public ConfObject
+class WXDLLIMPEXP_SDK BuildConfigCommon : public ConfObject
 {
 	wxArrayString m_includePath;
 	wxString m_compileOptions;

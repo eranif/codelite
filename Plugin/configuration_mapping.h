@@ -29,18 +29,9 @@
 #include "wx/xml/xml.h"
 #include "list"
 #include "smart_ptr.h"
+#include "codelite_exports.h"
 
-#ifndef WXDLLIMPEXP_LE_SDK
-#ifdef WXMAKINGDLL_LE_SDK
-#    define WXDLLIMPEXP_LE_SDK WXEXPORT
-#elif defined(WXUSINGDLL_LE_SDK)
-#    define WXDLLIMPEXP_LE_SDK WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_LE_SDK
-#endif // WXMAKINGDLL_LE_SDK
-#endif 
-
-class WXDLLIMPEXP_LE_SDK ConfigMappingEntry {
+class WXDLLIMPEXP_SDK ConfigMappingEntry {
 public:
 	wxString m_project;
 	wxString m_name;
@@ -58,7 +49,7 @@ public:
 	{}
 };
 
-class WXDLLIMPEXP_LE_SDK WorkspaceConfiguration {
+class WXDLLIMPEXP_SDK WorkspaceConfiguration {
 public:
 	typedef std::list<ConfigMappingEntry> ConfigMappingList;
 
@@ -84,7 +75,7 @@ public:
 
 typedef SmartPtr<WorkspaceConfiguration> WorkspaceConfigurationPtr;
 
-class WXDLLIMPEXP_LE_SDK BuildMatrix {
+class WXDLLIMPEXP_SDK BuildMatrix {
 	std::list<WorkspaceConfigurationPtr> m_configurationList;
 
 protected:

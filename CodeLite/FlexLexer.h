@@ -64,6 +64,7 @@
 //	#define yyFlexLexer zzFlexLexer
 //	#include <FlexLexer.h>
 //	...
+#include "codelite_exports.h"
 
 #ifndef CODELITE_FLEX_LEXER_H
 // Never included before - need to define base class.
@@ -79,7 +80,7 @@ namespace flex
 struct yy_buffer_state;
 typedef int yy_state_type;
 
-class FlexLexer {
+class WXDLLIMPEXP_CL FlexLexer {
 public:
 	virtual ~FlexLexer()	{ }
 
@@ -134,7 +135,7 @@ protected:
 // yyFlexLexer, as discussed in the flex man page.
 #define yyFlexLexerOnce
 
-class yyFlexLexer : public FlexLexer {
+class WXDLLIMPEXP_CL yyFlexLexer : public FlexLexer {
 public:
 	/// arg_yyin and arg_yyout default to the cin and cout, but we
 	/// only make that assignment when initializing in yylex().

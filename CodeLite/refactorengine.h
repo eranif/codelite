@@ -32,6 +32,7 @@
 #include <list>
 #include "cppwordscanner.h"
 #include "cpptoken.h"
+#include "codelite_exports.h"
 
 typedef std::vector<wxFileName> wxFileList;
 class wxProgressDialog;
@@ -54,7 +55,7 @@ struct RefactorSource {
 
 //-----------------------------------------------------------------------------------
 
-class RefactoringEngine
+class WXDLLIMPEXP_CL RefactoringEngine
 {
 	std::list<CppToken> m_candidates;
 	std::list<CppToken> m_possibleCandidates;

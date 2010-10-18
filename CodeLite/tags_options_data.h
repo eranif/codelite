@@ -25,6 +25,7 @@
 #ifndef TAGS_OPTIONS_DATA_H
 #define TAGS_OPTIONS_DATA_H
 
+#include "codelite_exports.h"
 #include "serialized_object.h"
 #include "wx/filename.h"
 #include <map>
@@ -68,7 +69,7 @@ enum CodeCompletionColourOpts {
 	CC_COLOUR_ENUM | CC_COLOUR_PROTOTYPE
 };
 
-class TagsOptionsData : public SerializedObject
+class WXDLLIMPEXP_CL TagsOptionsData : public SerializedObject
 {
 	size_t                       m_ccFlags;
 	size_t                       m_ccColourFlags;

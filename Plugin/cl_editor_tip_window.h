@@ -5,8 +5,9 @@
 #include <wx/bitmap.h>
 #include <vector>
 #include "cl_calltip.h"
+#include "codelite_exports.h"
 
-class clEditorTipWindow : public wxPanel {
+class WXDLLIMPEXP_SDK clEditorTipWindow : public wxPanel {
 public:
 	struct TipInfo {
 		clCallTipPtr tip;

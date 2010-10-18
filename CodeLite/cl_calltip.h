@@ -28,6 +28,7 @@
 #include "tokenizer.h"
 #include "smart_ptr.h"
 #include "entry.h"
+#include "codelite_exports.h"
 
 struct clTipInfo {
 	wxString str;
@@ -44,7 +45,7 @@ struct clTipInfo {
  * \date 09-18-2006
  * \author Eran
  */
-class clCallTip
+class WXDLLIMPEXP_CL clCallTip
 {
 
 	std::vector<clTipInfo> m_tips;

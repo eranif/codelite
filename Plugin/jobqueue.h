@@ -28,6 +28,7 @@
 #include <wx/thread.h>
 #include <deque>
 #include <vector>
+#include "codelite_exports.h"
 
 class Job;
 
@@ -39,7 +40,7 @@ class Job;
  * @brief a thread class used internally by JobQueue
  * @sa JobQueue 
  */
-class JobQueueWorker : public wxThread
+class WXDLLIMPEXP_SDK JobQueueWorker : public wxThread
 {
 	wxCriticalSection *m_cs;
 	std::deque<Job*> *m_queue;
@@ -148,7 +149,7 @@ public:
  * @file jobqueue.h
  * @brief a wrapper around the JobQueue class that provides the functionality of singleton
  */
-class JobQueueSingleton 
+class WXDLLIMPEXP_SDK JobQueueSingleton 
 {
 private:
 	static JobQueue *ms_instance;

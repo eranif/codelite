@@ -29,6 +29,7 @@
 #include "browse_record.h"
 #include "ieditor.h"
 #include "imanager.h"
+#include "codelite_exports.h"
 
 /**
  * @class NavMgr
@@ -36,7 +37,7 @@
  * @author Eran
  * @date 08/10/07
  */
-class NavMgr
+class WXDLLIMPEXP_SDK NavMgr
 {
 	std::vector<BrowseRecord> m_jumps;
 	size_t m_cur;

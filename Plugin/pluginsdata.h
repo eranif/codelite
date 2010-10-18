@@ -26,9 +26,10 @@
 #define __pluginsdata__
 
 #include "plugindata.h"
+#include "codelite_exports.h"
 #include "map"
 
-class PluginsData : public SerializedObject
+class WXDLLIMPEXP_SDK PluginsData : public SerializedObject
 {
 	std::map< wxString, PluginInfo > m_info;
 

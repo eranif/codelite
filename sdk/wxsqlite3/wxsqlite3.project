@@ -2,7 +2,7 @@
 <CodeLite_Project Name="wxsqlite3">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00020001N0011WinDebug_290000000000000001N0013WinRelease_29000000000000]]>
+      <![CDATA[00050001N0012DebugUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_29000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="Source Files">
@@ -32,117 +32,22 @@
   <Dependencies Name="WinDebug_29">
     <Project Name="sqlite3"/>
   </Dependencies>
-  <Settings Type="Static Library">
-    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="./sqlite3/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Options=" " Required="yes"/>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../../lib/gcc_lib/libwxsqlite3ud.a" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName/>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;;-fPIC" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="./sqlite3/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Options=" " Required="yes"/>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../../lib/gcc_lib/libwxsqlite3u.a" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+  <Dependencies Name="WinRelease_29">
+    <Project Name="sqlite3"/>
+  </Dependencies>
+  <Settings Type="Dynamic Library">
+    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="./sqlite3/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
       </Compiler>
-      <Linker Options=" " Required="yes"/>
+      <Linker Options=" $(shell wx-config --libs --debug=yes --unicode=yes);" Required="yes">
+        <LibraryPath Value="../../lib/gcc_lib/"/>
+        <Library Value="libsqlite3.a"/>
+      </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../../lib/gcc_lib/libwxsqlite3ud.a" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName/>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="WinDebug_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);-g" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="./sqlite3/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Options=" " Required="yes"/>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../../lib/gcc_lib/libwxsqlite3u.a" IntermediateDirectory="./WinDebug_29" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../../lib/gcc_lib/libwxsqlite3ud.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -165,50 +70,18 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2" Required="yes" PreCompiledHeader="">
+    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="./sqlite3/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
       </Compiler>
-      <Linker Options=" " Required="yes"/>
+      <Linker Options=" $(shell wx-config --libs --debug=no --unicode=yes);-s" Required="yes">
+        <LibraryPath Value="../../lib/gcc_lib"/>
+        <Library Value="libsqlite3.a"/>
+      </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../../lib/gcc_lib/libwxsqlite3u.a" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="WinRelease_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="./sqlite3/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Options=" " Required="yes"/>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../../lib/gcc_lib/libwxsqlite3u.a" IntermediateDirectory="./WinRelease_29" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../../lib/gcc_lib/libwxsqlite3u.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -234,6 +107,9 @@
     <GlobalSettings>
       <Compiler Options="">
         <IncludePath Value="."/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXMAKINGDLL_WXSQLITE3"/>
       </Compiler>
       <Linker Options="">
         <LibraryPath Value="."/>
@@ -241,7 +117,4 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="WinRelease_29">
-    <Project Name="sqlite3"/>
-  </Dependencies>
 </CodeLite_Project>

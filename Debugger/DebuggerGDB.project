@@ -2,7 +2,7 @@
 <CodeLite_Project Name="DebuggerGDB">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00020001N0011WinDebug_290000000000000001N0013WinRelease_29000000000000]]>
+      <![CDATA[00030001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0013WinRelease_29000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="Source Files">
@@ -26,91 +26,23 @@
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinRelease_29"/>
   <Settings Type="Dynamic Library">
-    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" Required="yes" PreCompiledHeader="">
+    <GlobalSettings>
+      <Compiler Options="">
         <IncludePath Value="."/>
-        <IncludePath Value="../Interfaces"/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../Plugin"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
-        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+        <Preprocessor Value="_WIN32_WINNT=0x501"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
-        <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libplugin_sdkud.a"/>
-        <Library Value="libCodeLiteud.a"/>
-        <Library Value="libwxsqlite3ud.a"/>
-        <Library Value="libsqlite3.a"/>
+      <Linker Options="">
+        <LibraryPath Value="."/>
       </Linker>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../Runtime/debuggers/Debugger.so" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2;-fPIC" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="../Interfaces"/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../Plugin"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
-        <Preprocessor Value="ON_64_BIT"/>
-      </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);" Required="yes">
-        <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libplugin_sdku.a"/>
-        <Library Value="libCodeLiteu.a"/>
-        <Library Value="libwxsqlite3u.a"/>
-        <Library Value="libsqlite3.a"/>
-      </Linker>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../Runtime/debuggers/Debugger.so" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
@@ -119,55 +51,16 @@
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="_WIN32_WINNT=0x501"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
       <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libplugin_sdkud.a"/>
-        <Library Value="libcodeliteud.a"/>
-        <Library Value="libwxmsw28ud.a"/>
+        <Library Value="libplugin_sdkud.dll"/>
+        <Library Value="libcodeliteud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="../Runtime/debuggers/Debugger.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory="./WinDebugUnicode" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName/>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="WinDebug_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);-g" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="../Interfaces"/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../Plugin"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-        <Preprocessor Value="_WIN32_WINNT=0x501"/>
-      </Compiler>
-      <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
-        <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libplugin_sdku.a"/>
-        <Library Value="libcodeliteu.a"/>
-        <Library Value="libwxmsw29ud.a"/>
-      </Linker>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../Runtime/debuggers/Debugger.dll" IntermediateDirectory="./WinDebug_29" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -196,15 +89,11 @@
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-        <Preprocessor Value="_WIN32_WINNT=0x501"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-s" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libplugin_sdku.a"/>
-        <Library Value="libcodeliteu.a"/>
-        <Library Value="libwxmsw28u.a"/>
+        <Library Value="libplugin_sdku.dll"/>
+        <Library Value="libcodeliteu.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="../Runtime/debuggers/Debugger.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
@@ -230,55 +119,5 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="WinRelease_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="../Interfaces"/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../Plugin"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-        <Preprocessor Value="_WIN32_WINNT=0x501"/>
-      </Compiler>
-      <Linker Options="$(shell wx-config --debug=no --libs --unicode=yes);" Required="yes">
-        <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libplugin_sdku.a"/>
-        <Library Value="libcodeliteu.a"/>
-        <Library Value="libwxmsw29u.a"/>
-      </Linker>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../Runtime/debuggers/Debugger.dll" IntermediateDirectory="./WinRelease_29" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <GlobalSettings>
-      <Compiler Options="">
-        <IncludePath Value="."/>
-      </Compiler>
-      <Linker Options="">
-        <LibraryPath Value="."/>
-      </Linker>
-      <ResourceCompiler Options=""/>
-    </GlobalSettings>
   </Settings>
-  <Dependencies Name="WinRelease_29"/>
 </CodeLite_Project>

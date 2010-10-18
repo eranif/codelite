@@ -27,16 +27,10 @@
 
 #include "configuration_object.h"
 #include "smart_ptr.h"
+#include "codelite_exports.h"
 #include <map>
 #include <list>
 
-#ifdef WXMAKINGDLL_LE_SDK
-#    define WXDLLIMPEXP_LE_SDK WXEXPORT
-#elif defined(WXUSINGDLL_LE_SDK)
-#    define WXDLLIMPEXP_LE_SDK WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_LE_SDK
-#endif // WXMAKINGDLL_LE_SDK
 
 /**
  * \ingroup LiteEditor
@@ -49,7 +43,7 @@
  *
  * \author Eran
  */
-class WXDLLIMPEXP_LE_SDK Compiler : public ConfObject
+class WXDLLIMPEXP_SDK Compiler : public ConfObject
 {
 public:
 	enum CmpFileKind {

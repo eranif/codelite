@@ -28,9 +28,10 @@
 
 #include <wx/listctrl.h>
 #include "entry.h"
+#include "codelite_exports.h"
 #include <vector>
 
-class OpenTypeVListCtrl : public wxListView {
+class WXDLLIMPEXP_SDK OpenTypeVListCtrl : public wxListView {
 	std::vector<TagEntryPtr> m_tags;
 	
 public:

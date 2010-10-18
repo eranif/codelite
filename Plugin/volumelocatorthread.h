@@ -30,11 +30,12 @@
 
 #include "wx/thread.h"
 #include "wx/event.h"
+#include "codelite_exports.h"
 
 #if wxUSE_FSVOLUME
 #define wxEVT_THREAD_VOLUME_COMPLETED 3453
 
-class VolumeLocatorThread : public wxThread
+class WXDLLIMPEXP_SDK VolumeLocatorThread : public wxThread
 {
 	wxEvtHandler *m_owner;
 

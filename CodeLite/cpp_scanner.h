@@ -27,8 +27,9 @@
 
 #include "FlexLexer.h"
 #include "smart_ptr.h"
+#include "codelite_exports.h"
 
-class CppScanner : public flex::yyFlexLexer
+class WXDLLIMPEXP_CL CppScanner : public flex::yyFlexLexer
 {
 public:
 	CppScanner();

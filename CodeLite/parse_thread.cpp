@@ -621,3 +621,14 @@ void ParseRequest::setFile(const wxString& file)
 ParseRequest::~ParseRequest()
 {
 }
+
+
+void ParseThreadST::Free()
+{
+}
+
+ParseThread* ParseThreadST::Get()
+{
+	static ParseThread theParseThread;
+	return &theParseThread;
+}

@@ -59,6 +59,8 @@
 // attribute for any ticks not counted by inner blocks (so you know how much time you're missing from profiled
 //  subfunctions).
 
+#include "codelite_exports.h"
+
 #ifdef __PERFORMANCE
     #ifdef __WXMSW__ 
         //Uncomment this to globally disable all profiling
@@ -71,11 +73,11 @@
 
 #ifdef __PERFORMANCE
 
-    extern void PERF_START(const char* func_name);
-    extern void PERF_END();
-	extern void PERF_OUTPUT(const char* path);
+    extern WXDLLIMPEXP_CL void PERF_START(const char* func_name);
+    extern WXDLLIMPEXP_CL void PERF_END();
+	extern WXDLLIMPEXP_CL void PERF_OUTPUT(const char* path);
 	
-    struct PERF_CLASS {
+    struct WXDLLIMPEXP_CL PERF_CLASS {
         PERF_CLASS(const char *name) : count(0) { PERF_START(name); }
         ~PERF_CLASS()                           { PERF_END();       }
             

@@ -29,8 +29,9 @@
 #include "wx/string.h"
 #include "smart_ptr.h"
 #include "list"
+#include "codelite_exports.h"
 
-class BuilderConfig
+class WXDLLIMPEXP_SDK  BuilderConfig
 {
 	wxString m_name;
 	wxString m_toolPath;

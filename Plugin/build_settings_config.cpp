@@ -204,3 +204,19 @@ wxString BuildSettingsConfig::GetSelectedBuildSystem() {
 	return active;
 }
 
+static BuildSettingsConfig* gs_buildSettingsInstance = NULL;
+void BuildSettingsConfigST::Free()
+{
+	if(gs_buildSettingsInstance) {
+		delete gs_buildSettingsInstance;
+		gs_buildSettingsInstance = NULL;
+	}
+}
+
+BuildSettingsConfig* BuildSettingsConfigST::Get()
+{
+	if(gs_buildSettingsInstance == NULL)
+		gs_buildSettingsInstance = new BuildSettingsConfig;
+	return gs_buildSettingsInstance;
+}
+

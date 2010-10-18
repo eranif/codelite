@@ -32,14 +32,7 @@
 #include <wx/string.h>
 #include <vector>
 #include <wx/arrstr.h>
-
-#ifdef WXMAKINGDLL_CODELITE
-#    define WXDLLIMPEXP_CL WXEXPORT
-#elif defined(WXUSINGDLL_CODELITE)
-#    define WXDLLIMPEXP_CL WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_CL
-#endif
+#include "codelite_exports.h"
 
 /**
  * StringTokenizer helps you to break a string up into a number of tokens. 

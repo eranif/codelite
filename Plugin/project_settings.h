@@ -28,6 +28,7 @@
 #include "build_config.h"
 #include "wx/string.h"
 #include <map>
+#include "codelite_exports.h"
 
 /**
  * \ingroup SDK
@@ -58,7 +59,7 @@ public:
  * \author Eran
  *
  */
-class ProjectSettings : public ConfObject {
+class WXDLLIMPEXP_SDK ProjectSettings : public ConfObject {
 	std::map<wxString, BuildConfigPtr> m_configs;
 	BuildConfigCommonPtr               m_globalSettings;
 	wxString                           m_projectType;

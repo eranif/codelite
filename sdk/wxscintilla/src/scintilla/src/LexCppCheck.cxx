@@ -27,11 +27,23 @@
 using namespace Scintilla;
 #endif
 
+#ifdef WXDLLIMPEXP_SCI
+#undef WXDLLIMPEXP_SCI
+#endif
+
+#ifdef WXMAKINGDLL_SCI
+	#define WXDLLIMPEXP_SCI WXEXPORT
+#elif defined(WXUSINGDLL_SCI)
+	#define WXDLLIMPEXP_SCI WXIMPORT
+#else // not making nor using DLL
+	#define WXDLLIMPEXP_SCI
+#endif
+
 typedef int (*CPPCHECK_COLOUR_FUNC_PTR)(int, const char*, size_t&, size_t&);
 
 static CPPCHECK_COLOUR_FUNC_PTR s_cppcheckColourFunc = NULL;
 
-void SetCppCheckColourFunction(CPPCHECK_COLOUR_FUNC_PTR func)
+WXDLLIMPEXP_SCI void SetCppCheckColourFunction(CPPCHECK_COLOUR_FUNC_PTR func)
 {
 	s_cppcheckColourFunc = func;
 }

@@ -28,13 +28,14 @@
 
 #include <wx/menu.h>
 #include <map>
+#include "codelite_exports.h"
 
 class wxAuiManager;
 
 //extern const wxEventType wxEVT_CMD_HIDE_PANE;
 //extern const wxEventType wxEVT_CMD_SHOW_PANE;
 //
-class DockablePaneMenuManager : public wxEvtHandler {
+class WXDLLIMPEXP_SDK DockablePaneMenuManager : public wxEvtHandler {
 	wxMenuBar *m_mb;
 	std::map<int, wxString> m_id2nameMap;
 	wxAuiManager *m_aui;

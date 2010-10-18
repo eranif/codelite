@@ -6,8 +6,9 @@
 #include <wx/imaglist.h>
 #include <vector>
 #include <wx/sizer.h>
+#include "codelite_exports.h"
 
-class OutputPaneBook : public wxChoicebook
+class WXDLLIMPEXP_SDK OutputPaneBook : public wxChoicebook
 {
 	std::vector<wxBitmap> m_bmps;
 protected:

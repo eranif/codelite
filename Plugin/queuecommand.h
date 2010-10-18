@@ -27,8 +27,9 @@
 #define __queuecommand__
 
 #include <wx/string.h>
+#include "codelite_exports.h"
 
-class QueueCommand
+class WXDLLIMPEXP_SDK QueueCommand
 {
 	wxString m_project;
 	wxString m_configuration;

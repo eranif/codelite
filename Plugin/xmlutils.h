@@ -27,9 +27,10 @@
 
 #include "wx/xml/xml.h"
 #include "serialized_object.h"
+#include "codelite_exports.h"
 
 /// A collection of XML utils
-class XmlUtils {
+class WXDLLIMPEXP_SDK XmlUtils {
 public:
 	/// Find a child node by name by iterating the parent children. NULL if no childs exist
 	/// \param parent  the parent node whom to be searched

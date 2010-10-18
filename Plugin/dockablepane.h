@@ -28,12 +28,13 @@
 
 #include <wx/panel.h>
 #include <wx/toolbar.h>
+#include "codelite_exports.h"
 class Notebook;
 
-extern const wxEventType wxEVT_CMD_NEW_DOCKPANE;
-extern const wxEventType wxEVT_CMD_DELETE_DOCKPANE;
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_CMD_NEW_DOCKPANE;
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_CMD_DELETE_DOCKPANE;
 
-class DockablePane : public wxPanel {
+class WXDLLIMPEXP_SDK DockablePane : public wxPanel {
 	wxWindow *m_child;
 	Notebook *m_book;
 	wxString  m_text;

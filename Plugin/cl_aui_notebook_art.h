@@ -3,10 +3,11 @@
 
 #include <wx/aui/auibook.h>
 #include <wx/pen.h>
+#include "codelite_exports.h"
 
 // -- GUI helper classes and functions --
 
-class wxAuiCommandCapture : public wxEvtHandler
+class WXDLLIMPEXP_SDK wxAuiCommandCapture : public wxEvtHandler
 {
 public:
 
@@ -31,7 +32,7 @@ private:
     int m_last_id;
 };
 
-class clAuiTabArt : public wxAuiTabArt
+class WXDLLIMPEXP_SDK clAuiTabArt : public wxAuiTabArt
 {
 
 public:

@@ -4,8 +4,9 @@
 #include <wx/filename.h>
 #include <wx/bitmap.h>
 #include <map>
+#include "codelite_exports.h"
 
-class BitmapLoader {
+class WXDLLIMPEXP_SDK BitmapLoader {
 	wxFileName m_zipPath;
 	std::map<wxString, wxBitmap> m_toolbarsBitmaps;
 	std::map<wxString, wxString> m_manifest;

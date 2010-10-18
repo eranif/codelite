@@ -27,12 +27,13 @@
 
 #include <vector>
 #include "wx/panel.h"
+#include "codelite_exports.h"
 #include "wx/bitmap.h"
 
 class wxTabContainer;
 class WindowStack;
 
-class DropButtonBase : public wxPanel
+class WXDLLIMPEXP_SDK DropButtonBase : public wxPanel
 {
 protected:
     enum ButtonState {
@@ -61,7 +62,7 @@ public:
 	DECLARE_EVENT_TABLE()
 };
 
-class StackButton : public DropButtonBase
+class WXDLLIMPEXP_SDK StackButton : public DropButtonBase
 {
 private:
     std::vector<wxString> m_windowKeys;

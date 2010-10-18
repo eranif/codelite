@@ -28,14 +28,15 @@
 #include "project.h"
 #include "queuecommand.h"
 #include "wx/event.h"
+#include "codelite_exports.h"
 
 class IManager;
 class IProcess;
 
-extern const wxEventType wxEVT_SHELL_COMMAND_ADDLINE;
-extern const wxEventType wxEVT_SHELL_COMMAND_STARTED;
-extern const wxEventType wxEVT_SHELL_COMMAND_PROCESS_ENDED;
-extern const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN;
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SHELL_COMMAND_ADDLINE;
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SHELL_COMMAND_STARTED;
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SHELL_COMMAND_PROCESS_ENDED;
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN;
 
 /**
  * \class CompilerAction
@@ -43,7 +44,7 @@ extern const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN;
  * \author Eran
  * \date 07/22/07
  */
-class ShellCommand : public wxEvtHandler
+class WXDLLIMPEXP_SDK ShellCommand : public wxEvtHandler
 {
 protected:
 	IProcess*     m_proc;

@@ -539,3 +539,21 @@ wxArrayString EditorConfig::GetLexersThemes()
 	}
 	return themes;
 }
+
+static EditorConfig* gs_EditorConfig = NULL;
+void EditorConfigST::Free()
+{
+	if(gs_EditorConfig) {
+		delete gs_EditorConfig;
+		gs_EditorConfig = NULL;
+	}
+}
+
+EditorConfig* EditorConfigST::Get()
+{
+	if(gs_EditorConfig == NULL) {
+		gs_EditorConfig = new EditorConfig;
+	}
+	return gs_EditorConfig;
+}
+

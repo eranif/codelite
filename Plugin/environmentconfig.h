@@ -30,12 +30,11 @@
 #include "evnvarlist.h"
 
 class EnvSetter;
-class EnvironmentConfig : public ConfigurationToolBase
+class WXDLLIMPEXP_SDK EnvironmentConfig : public ConfigurationToolBase
 {
 	// Allow access to Apply/UnApply Env
 	friend class EnvSetter;
-
-	static EnvironmentConfig* ms_instance;
+	
 	StringMap m_envSnapshot;
 	int       m_envApplied;
 

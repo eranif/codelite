@@ -28,8 +28,9 @@
 
 #include "shell_command.h"
 #include "build_config.h"
+#include "codelite_exports.h"
 
-class CustomBuildRequest : public ShellCommand
+class WXDLLIMPEXP_SDK CustomBuildRequest : public ShellCommand
 {
 	wxString m_fileName;
 

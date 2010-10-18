@@ -27,13 +27,14 @@
 
 #include "builder.h"
 #include "workspace.h"
+#include "codelite_exports.h"
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
 /*
  * Build using a generated (Gnu) Makefile - this is made as a traditional multistep build :
  *  sources -> (preprocess) -> compile -> link -> exec/lib.
  */
-class BuilderGnuMake : public Builder
+class WXDLLIMPEXP_SDK BuilderGnuMake : public Builder
 {
 public:
 	BuilderGnuMake();

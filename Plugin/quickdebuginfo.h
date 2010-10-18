@@ -29,7 +29,9 @@
 #include <wx/arrstr.h>
 #include <wx/string.h>
 #include "serialized_object.h"
-class QuickDebugInfo : public SerializedObject
+#include "codelite_exports.h"
+
+class WXDLLIMPEXP_SDK QuickDebugInfo : public SerializedObject
 {
 
 	wxString m_exePath;

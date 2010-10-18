@@ -31,6 +31,7 @@
 #include "map"
 #include "project_settings.h"
 #include "project.h"
+#include "codelite_exports.h"
 
 struct VcProjectData
 {
@@ -40,7 +41,7 @@ struct VcProjectData
 	wxArrayString deps;
 };
 
-class VcImporter {
+class WXDLLIMPEXP_SDK VcImporter {
 	wxString                          m_fileName;
 	bool                              m_isOk;
 	wxFileInputStream *               m_is;

@@ -26,6 +26,7 @@
 #define CONFIGTOOL_H
 
 #include "wx/xml/xml.h"
+#include "codelite_exports.h"
 
 class SerializedObject;
 
@@ -35,7 +36,7 @@ class SerializedObject;
  * \author Eran
  * \date 11/18/07
  */
-class ConfigTool
+class WXDLLIMPEXP_SDK ConfigTool
 {
 	wxXmlDocument m_doc;
 	wxString m_fileName;

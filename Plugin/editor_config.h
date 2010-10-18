@@ -34,8 +34,9 @@
 #include "map"
 #include "serialized_object.h"
 #include "plugin.h"
+#include "codelite_exports.h"
 
-class SimpleLongValue : public SerializedObject
+class WXDLLIMPEXP_SDK SimpleLongValue : public SerializedObject
 {
 	long m_value;
 public:
@@ -55,7 +56,7 @@ public:
 	}
 };
 
-class SimpleStringValue : public SerializedObject
+class WXDLLIMPEXP_SDK SimpleStringValue : public SerializedObject
 {
 	wxString m_value;
 public:
@@ -73,7 +74,7 @@ public:
 	}
 };
 
-class SimpleRectValue : public SerializedObject
+class WXDLLIMPEXP_SDK SimpleRectValue : public SerializedObject
 {
 	wxRect m_rect;
 
@@ -110,9 +111,9 @@ struct LexersInfo {
  *
  * \author Eran
  */
-class EditorConfig : public IConfigTool
+class WXDLLIMPEXP_SDK EditorConfig : public IConfigTool
 {
-	friend class Singleton<EditorConfig>;
+	friend class EditorConfigST;
 	wxXmlDocument*                      m_doc;
 	wxFileName                          m_fileName;
 	std::map<wxString, LexersInfo*>     m_lexers;
@@ -278,5 +279,10 @@ private:
 	wxXmlNode *GetLexerNode(const wxString& lexer);
 };
 
-typedef Singleton<EditorConfig> EditorConfigST;
+class WXDLLIMPEXP_SDK EditorConfigST
+{
+public:
+	static EditorConfig* Get();
+	static void Free();
+};
 #endif // LITEEDITOR_EDITOR_CONFIG_H

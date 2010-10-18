@@ -28,8 +28,9 @@
 
 #include <wx/string.h>
 #include <map>
+#include "codelite_exports.h"
 
-class FileExtManager {
+class WXDLLIMPEXP_CL FileExtManager {
 
 public:
 	enum FileType {

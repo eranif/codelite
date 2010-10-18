@@ -28,6 +28,7 @@
 #include <wx/string.h>
 #include "smart_ptr.h"
 #include "tree.h"
+#include "codelite_exports.h"
 #include "entry.h"
 
 typedef TreeNode<wxString, TagEntry> TagNode;
@@ -40,7 +41,7 @@ typedef TreeNode<wxString, TagEntry> TagNode;
  * \author eran
  *
  */
-class TagTree : public Tree<wxString, TagEntry>
+class WXDLLIMPEXP_CL TagTree : public Tree<wxString, TagEntry>
 {
 public:
 	/**

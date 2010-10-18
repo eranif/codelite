@@ -27,8 +27,9 @@
 
 #include "wx/process.h"
 #include "wx/string.h"
+#include "codelite_exports.h"
 
-class PipedProcess : public wxProcess
+class WXDLLIMPEXP_SDK PipedProcess : public wxProcess
 {
 	long m_pid;
 	wxString m_cmd;

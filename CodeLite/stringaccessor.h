@@ -26,8 +26,9 @@
 #define __stringaccessor__
 
 #include <wx/string.h>
+#include "codelite_exports.h"
 
-class StringAccessor {
+class WXDLLIMPEXP_CL StringAccessor {
 	wxString m_str;
 	
 public:

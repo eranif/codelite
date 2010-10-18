@@ -26,6 +26,7 @@
 #define __stringsearcher__
 
 #include <wx/string.h>
+#include "codelite_exports.h"
 
 // Possible search data options:
 enum {
@@ -40,7 +41,7 @@ enum {
 	wxSD_COLOUR_COMMENTS     = 0x00000100
 };
 
-class StringFindReplacer
+class WXDLLIMPEXP_SDK StringFindReplacer
 {
 
 protected:

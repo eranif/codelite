@@ -32,19 +32,9 @@
 #include <wx/gdicmn.h>
 #include <vector>
 #include <map>
+#include "codelite_exports.h"
 
 class wxXmlNode;
-
-#ifndef WXDLLIMPEXP_CL
-#ifdef WXMAKINGDLL_CODELITE
-#    define WXDLLIMPEXP_CL WXEXPORT
-#elif defined(WXUSINGDLL_CODELITE)
-#    define WXDLLIMPEXP_CL WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_CL
-#endif // WXMAKINGDLL_CODELITE
-#endif // WXDLLIMPEXP_CL
-
 class SerializedObject;
 class TabInfo;
 class BreakpointInfo;

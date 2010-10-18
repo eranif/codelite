@@ -28,15 +28,8 @@
 #include "ctags_manager.h"
 #include "parse_thread.h"
 #include "wx/filename.h"
+#include "codelite_exports.h"
 #include "map"
-
-#ifdef WXMAKINGDLL_CODELITE
-#    define WXDLLIMPEXP_CL WXEXPORT
-#elif defined(WXUSINGDLL_CODELITE)
-#    define WXDLLIMPEXP_CL WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_CL
-#endif // WXMAKINGDLL_CODELITE
 
 /**
  * Class MyTreeItemData, a user defined class which keeps the full name of a tree item.

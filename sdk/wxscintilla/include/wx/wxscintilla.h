@@ -1883,7 +1883,7 @@ struct SCNotification;
 #endif // end [CHANGED]
 
 #ifndef SWIG
-extern const wxChar* wxSCINameStr;
+extern WXDLLIMPEXP_SCI const wxChar* wxSCINameStr;
 class  WXDLLIMPEXP_SCI wxScintilla;
 class  WXDLLIMPEXP_SCI wxScintillaEvent;
 #endif

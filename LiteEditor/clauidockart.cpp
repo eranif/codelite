@@ -3,7 +3,10 @@
 #include <wx/dc.h>
 #include "drawingutils.h"
 
-#include "tabicons.h"
+#include "closetab-active.xpm"
+#include "closetab-active.xpm.alpha"
+#include "closetab.xpm"
+#include "closetab.xpm.alpha"
 
 CLAuiDockArt::CLAuiDockArt()
 {

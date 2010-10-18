@@ -26,9 +26,10 @@
 #define __job__
 
 #include <wx/event.h>
+#include "codelite_exports.h"
 
-extern const wxEventType wxEVT_CMD_JOB_STATUS;
-extern const wxEventType wxEVT_CMD_JOB_STATUS_VOID_PTR;
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_CMD_JOB_STATUS;
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_CMD_JOB_STATUS_VOID_PTR;
 
 /**
  * \class Job
@@ -38,7 +39,7 @@ extern const wxEventType wxEVT_CMD_JOB_STATUS_VOID_PTR;
  * \brief this class defines the interface to a job used by the JobQueue
  * To use the JobQueue, you should inherit from Job, and implement the Porcess() pure virtual function
  */
-class Job
+class WXDLLIMPEXP_SDK Job
 {
 protected:
 	wxEvtHandler *m_parent;

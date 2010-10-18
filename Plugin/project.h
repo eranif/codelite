@@ -28,8 +28,10 @@
 #include "wx/treectrl.h"
 #include "wx/string.h"
 #include <wx/xml/xml.h>
+#include "codelite_exports.h"
 #include "wx/filename.h"
 #include <tree.h>
+#include "codelite_exports.h"
 #include "smart_ptr.h"
 #include <list>
 #include "serialized_object.h"
@@ -37,17 +39,6 @@
 #include "optionsconfig.h"
 #include "localworkspace.h"
 
-//incase we are using DLL build of wxWdigets, we need to make this class to export its
-//classes
-#ifndef WXDLLIMPEXP_LE_SDK
-#ifdef WXMAKINGDLL_LE_SDK
-#    define WXDLLIMPEXP_LE_SDK WXEXPORT
-#elif defined(WXUSINGDLL_LE_SDK)
-#    define WXDLLIMPEXP_LE_SDK WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_LE_SDK
-#endif // WXMAKINGDLL_LE_SDK
-#endif
 
 struct VisualWorkspaceNode {
 	wxString name;
@@ -63,7 +54,7 @@ struct VisualWorkspaceNode {
  *
  * \author Eran
  */
-class WXDLLIMPEXP_LE_SDK ProjectItem
+class WXDLLIMPEXP_SDK ProjectItem
 {
 public:
 	// The visible items
@@ -169,7 +160,7 @@ typedef SmartPtr<Project> ProjectPtr;
  * \bug
  *
  */
-class WXDLLIMPEXP_LE_SDK Project
+class WXDLLIMPEXP_SDK Project
 {
 public:
 	static const wxString STATIC_LIBRARY;
@@ -512,7 +503,7 @@ private:
 	bool SaveXmlFile();
 };
 
-class ProjectData
+class WXDLLIMPEXP_SDK ProjectData
 {
 public:
 	wxString m_name;	//< project name
@@ -532,7 +523,7 @@ public:
  * \author Eran
  *
  */
-class FilewViewTreeItemData : public wxTreeItemData
+class WXDLLIMPEXP_SDK FilewViewTreeItemData : public wxTreeItemData
 {
 	ProjectItem m_item;
 public:

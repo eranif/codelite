@@ -99,3 +99,19 @@ BuilderPtr BuildManager::GetSelectedBuilder()
 	
 	return defaultBuilder;
 }
+static BuildManager* gs_BuildManager = NULL;
+void BuildManagerST::Free()
+{
+	if(gs_BuildManager) {
+		delete gs_BuildManager;
+		gs_BuildManager = NULL;
+	}
+}
+
+BuildManager* BuildManagerST::Get()
+{
+	if(gs_BuildManager == NULL)
+		gs_BuildManager = new BuildManager;
+	return gs_BuildManager;
+}
+

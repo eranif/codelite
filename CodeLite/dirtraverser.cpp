@@ -22,7 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "dirtraverser.h"
+#include "dirtraverser.h"
 #include "wx/tokenzr.h"
 #include "wx/filename.h"
 #include "wx/log.h"
@@ -74,4 +74,8 @@ wxDirTraverseResult DirTraverser::OnDir(const wxString &dirname)
 		}
 	}
 	return wxDIR_CONTINUE;
+}
+
+DirTraverser::~DirTraverser()
+{
 }

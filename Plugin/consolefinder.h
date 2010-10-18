@@ -26,6 +26,7 @@
 #define CONSOLEFINDER_H
 
 #include "precompiled_header.h"
+#include "codelite_exports.h"
 
 /**
  * \ingroup SDK
@@ -39,7 +40,7 @@
  * \author Eran
  *
  */
-class ConsoleFinder
+class WXDLLIMPEXP_SDK ConsoleFinder
 {
 	wxString  m_ConsoleTty;
 	int       m_nConsolePid;

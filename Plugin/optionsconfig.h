@@ -31,8 +31,9 @@
 #include "wx/colour.h"
 #include "wx/font.h"
 #include "configuration_object.h"
+#include "codelite_exports.h"
 
-class OptionsConfig : public ConfObject
+class WXDLLIMPEXP_SDK OptionsConfig : public ConfObject
 {
 protected:
 	bool           m_displayFoldMargin;

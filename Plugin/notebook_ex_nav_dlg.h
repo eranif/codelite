@@ -27,12 +27,13 @@
 
 #include <wx/dialog.h>
 #include <map>
+#include "codelite_exports.h"
 #include <wx/bitmap.h>
 
 class wxListBox;
 class Notebook;
 
-class NotebookNavDialog : public wxDialog
+class WXDLLIMPEXP_SDK NotebookNavDialog : public wxDialog
 {
 protected:
 	wxListBox *                m_listBox;

@@ -29,8 +29,9 @@
 #include <vector>
 #include "wx/panel.h"
 #include "wx/sizer.h"
+#include "codelite_exports.h"
 
-class WindowStack : public wxPanel {
+class WXDLLIMPEXP_SDK WindowStack : public wxPanel {
     std::map<wxString, wxWindow*> m_windows;
     wxBoxSizer *m_mainSizer;
     wxWindow *m_selection;

@@ -8,7 +8,21 @@
 #include <string>
 #include <list>
 
-struct CLReplacement {
+
+#ifndef WXDLLIMPEXP_CL
+
+#ifdef WXMAKINGDLL_CL
+#    define WXDLLIMPEXP_CL __declspec(dllexport)
+#elif defined(WXUSINGDLL_CL)
+#    define WXDLLIMPEXP_CL __declspec(dllimport)
+#else // not making nor using DLL
+#    define WXDLLIMPEXP_CL
+#endif
+
+#endif
+
+
+struct WXDLLIMPEXP_CL CLReplacement {
 	bool                        is_compound;
 	bool                        is_ok;
 	std::string                 full_pattern;
@@ -47,7 +61,7 @@ bool CLReplacePattern(const wxString &in, const wxString& pattern, const wxStrin
  */
 bool CLReplacePatternA(const std::string& in, const CLReplacement& repl, std::string& outStr);
 
-struct PPToken {
+struct WXDLLIMPEXP_CL PPToken {
 	enum {
 		IsFunctionLike = 0x00000001,
 		IsValid        = 0x00000002,
@@ -76,10 +90,8 @@ struct PPToken {
 	void squeeze();
 };
 
-class PPTable
+class WXDLLIMPEXP_CL PPTable
 {
-
-	static PPTable*             ms_instance;
 	std::map<wxString, PPToken> m_table;
 
 public:

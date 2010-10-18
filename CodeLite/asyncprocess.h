@@ -28,6 +28,7 @@
 
 #include <wx/string.h>
 #include <wx/event.h>
+#include "codelite_exports.h"
 
 enum IProcessCreateFlags {
 	IProcessCreateDefault = 0x0000000, // Default: create process with no console window
@@ -41,7 +42,7 @@ enum IProcessCreateFlags {
  * @file i_process.h
  * @brief
  */
-class IProcess
+class WXDLLIMPEXP_CL IProcess
 {
 protected:
 	wxEvtHandler *m_parent;
@@ -92,5 +93,5 @@ public:
 };
 
 // Help method
-IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, IProcessCreateFlags flags = IProcessCreateDefault, const wxString &workingDir = wxEmptyString);
+WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, IProcessCreateFlags flags = IProcessCreateDefault, const wxString &workingDir = wxEmptyString);
 #endif // I_PROCESS_H

@@ -28,15 +28,7 @@
 #include <deque>
 #include "wx/thread.h"
 #include "wx/event.h"
-
-
-#ifdef WXMAKINGDLL_CODELITE
-#    define WXDLLIMPEXP_CL WXEXPORT
-#elif defined(WXUSINGDLL_CODELITE)
-#    define WXDLLIMPEXP_CL WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_CL
-#endif // WXMAKINGDLL_CODELITE
+#include "codelite_exports.h"
 
 
 /**

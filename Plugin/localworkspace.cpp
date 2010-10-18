@@ -423,3 +423,20 @@ void LocalWorkspace::SetActiveEnvironmentSet(const wxString& setName)
 	SaveXmlFile();
 }
 
+static LocalWorkspace* gs_LocalWorkspace = NULL;
+void LocalWorkspaceST::Free()
+{
+	if(gs_LocalWorkspace) {
+		delete gs_LocalWorkspace;
+		gs_LocalWorkspace = NULL;
+	}
+}
+
+LocalWorkspace* LocalWorkspaceST::Get()
+{
+	if(gs_LocalWorkspace == NULL) {
+		gs_LocalWorkspace = new LocalWorkspace();
+	}
+	return gs_LocalWorkspace;
+}
+

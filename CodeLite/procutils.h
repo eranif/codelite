@@ -30,6 +30,7 @@
 #include <map>
 #include <vector>
 #include <wx/process.h>
+#include "codelite_exports.h"
 
 #ifdef __WXMSW__
 #include <windows.h>
@@ -43,7 +44,7 @@ struct ProcessEntry {
 	long pid;
 };
 
-class ProcUtils
+class WXDLLIMPEXP_CL ProcUtils
 {
 public:
 	ProcUtils();

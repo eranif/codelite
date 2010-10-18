@@ -26,8 +26,9 @@
 #define COMPILE_REQUEST_H
 
 #include "shell_command.h"
+#include "codelite_exports.h"
 
-class CompileRequest : public ShellCommand {
+class WXDLLIMPEXP_SDK CompileRequest : public ShellCommand {
 	wxString m_fileName;
 	bool     m_premakeOnly;
     bool     m_preprocessOnly;

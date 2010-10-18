@@ -28,6 +28,7 @@
 #include <deque>
 #include "wx/thread.h"
 #include "wx/event.h"
+#include "codelite_exports.h"
 
 class IProcess;
 /**
@@ -37,7 +38,7 @@ class IProcess;
  * @file i_process.h
  * @brief
  */
-class ProcessEventData
+class WXDLLIMPEXP_CL ProcessEventData
 {
 	wxString  m_data;
 	IProcess *m_process;
@@ -71,7 +72,7 @@ public:
  * Worker Thread class
  * usually user should define the ProcessRequest method
  */
-class ProcessReaderThread : public wxThread
+class WXDLLIMPEXP_CL ProcessReaderThread : public wxThread
 {
 protected:
 	wxEvtHandler *   m_notifiedWindow;
@@ -126,7 +127,7 @@ public:
 	}
 };
 
-extern const wxEventType wxEVT_PROC_DATA_READ;
-extern const wxEventType wxEVT_PROC_TERMINATED;
+extern WXDLLIMPEXP_CL const wxEventType wxEVT_PROC_DATA_READ;
+extern WXDLLIMPEXP_CL const wxEventType wxEVT_PROC_TERMINATED;
 
 #endif // _ProcessReaderThread_H_

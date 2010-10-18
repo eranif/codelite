@@ -1753,7 +1753,7 @@ void ContextCpp::OnFileSaved()
 			const wxCharBuffer patbuf = _C(rCtrl.GetText());
 
 			// collect list of variables
-			get_variables( patbuf.data(), var_list, ignoreTokens, false);
+			TagsManagerST::Get()->GetVariables( patbuf.data(), var_list, ignoreTokens, false);
 
 		}
 
@@ -1774,7 +1774,7 @@ void ContextCpp::OnFileSaved()
 				wxString sig = tags.at(i)->GetSignature();
 				const wxCharBuffer cb = _C(sig);
 				VariableList vars_list;
-				get_variables(cb.data(), vars_list, ignoreTokens, true);
+				TagsManagerST::Get()->GetVariables(cb.data(), vars_list, ignoreTokens, true);
 				VariableList::iterator it = vars_list.begin();
 				for (; it != vars_list.end(); it++ ) {
 					Variable var = *it;

@@ -37,6 +37,7 @@
 #include "function.h"
 #include "comment.h"
 #include <vector>
+#include "codelite_exports.h"
 
 enum SearchFlags {
 	PartialMatch        = 1,
@@ -87,9 +88,9 @@ public:
 	wxString GetPath() const ;
 };
 
-class Language
+class WXDLLIMPEXP_CL Language
 {
-	friend class Singleton<Language>;
+	friend class LanguageST;
 
 private:
 	std::map<char, char>    m_braces;
@@ -324,6 +325,11 @@ private:
 	bool DoCorrectUsingNamespaces( ParsedToken *token, std::vector<TagEntryPtr> tags );
 };
 
-typedef Singleton<Language> LanguageST;
+class WXDLLIMPEXP_CL LanguageST 
+{
+public:
+	static void Free();
+	static Language* Get();
+};
 
 #endif // CODELITE_LANGUAGE_H

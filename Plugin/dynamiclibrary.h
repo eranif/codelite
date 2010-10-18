@@ -26,9 +26,10 @@
 #define __dynamiclibrary__
 
 #include "wx/dynlib.h"
+#include "codelite_exports.h"
 #include "wx/string.h"
 
-class clDynamicLibrary {
+class WXDLLIMPEXP_SDK clDynamicLibrary {
 
 #if defined (__WXMSW__)
 	wxDynamicLibrary m_lib;

@@ -26,10 +26,11 @@
 #define __configurationtoolbase__
 
 #include "wx/xml/xml.h"
+#include "codelite_exports.h"
 
 class SerializedObject;
 
-class ConfigurationToolBase {
+class WXDLLIMPEXP_SDK ConfigurationToolBase {
 protected:
 	wxXmlDocument m_doc;
 	wxString m_fileName;

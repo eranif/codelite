@@ -4,8 +4,9 @@
 #include <wx/string.h>
 #include <wx/ffile.h>
 #include <map>
+#include "codelite_exports.h"
 
-class clRegistry {
+class WXDLLIMPEXP_SDK clRegistry {
 	static wxString              m_filename;
 	wxFFile                      m_fp;
 	std::map<wxString, wxString> m_entries;

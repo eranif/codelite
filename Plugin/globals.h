@@ -28,6 +28,7 @@
 #include <wx/string.h>
 #include <wx/colour.h>
 #include <wx/arrstr.h>
+#include "codelite_exports.h"
 
 #include "workspace.h"
 
@@ -41,7 +42,7 @@ class IManager;
  * \param clientData any user data. Must NOT be freed by the handler
  * \return same as wxTheApp->ProcessEvent()
  */
-bool SendCmdEvent(int eventId, void *clientData = NULL);
+WXDLLIMPEXP_SDK bool SendCmdEvent(int eventId, void *clientData = NULL);
 
 /**
  * @brief send command event to the application (wxTheApp),
@@ -50,14 +51,14 @@ bool SendCmdEvent(int eventId, void *clientData = NULL);
  * @param str this string will be available by the handlers by calling event.GetString()
  * @return same as wxTheApp->ProcessEvent()
  */
-bool SendCmdEvent(int eventId, void *clientData, const wxString &str);
+WXDLLIMPEXP_SDK bool SendCmdEvent(int eventId, void *clientData, const wxString &str);
 
 /**
  * \brief post command event to the application (wxTheApp),
  * \param eventId
  * \param clientData allocated data on the heap. Must be freed by the handler
  */
-void PostCmdEvent(int eventId, void *clientData = NULL);
+WXDLLIMPEXP_SDK void PostCmdEvent(int eventId, void *clientData = NULL);
 
 /**
  * \brief set column text
@@ -67,7 +68,7 @@ void PostCmdEvent(int eventId, void *clientData = NULL);
  * \param rText the text
  * \param imgId image id
  */
-void SetColumnText (wxListCtrl *list, long indx, long column, const wxString &rText, int imgId = wxNOT_FOUND );
+WXDLLIMPEXP_SDK void SetColumnText (wxListCtrl *list, long indx, long column, const wxString &rText, int imgId = wxNOT_FOUND );
 
 /**
  * \brief return column's text
@@ -76,14 +77,14 @@ void SetColumnText (wxListCtrl *list, long indx, long column, const wxString &rT
  * \param column the column ID
  * \return the column's text
  */
-wxString GetColumnText(wxListCtrl *list, long index, long column);
+WXDLLIMPEXP_SDK wxString GetColumnText(wxListCtrl *list, long index, long column);
 
 /**
  * \brief append row to list control
  * \param list the list
  * \return new row index
  */
-long AppendListCtrlRow(wxListCtrl *list);
+WXDLLIMPEXP_SDK long AppendListCtrlRow(wxListCtrl *list);
 
 /**
  * \brief read file from disk using appropriate file conversion
@@ -92,7 +93,7 @@ long AppendListCtrlRow(wxListCtrl *list);
  * \param encoding
  * \return true on success, false otherwise
  */
-bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontEncoding encoding = wxFONTENCODING_DEFAULT);
+WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontEncoding encoding = wxFONTENCODING_DEFAULT);
 
 /**
  * \brief write file using UTF8 converter
@@ -100,31 +101,31 @@ bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontE
  * \param content file's conent
  * \return true on success, false otherwise
  */
-bool WriteFileUTF8(const wxString &fileName, const wxString &content);
+WXDLLIMPEXP_SDK bool WriteFileUTF8(const wxString &fileName, const wxString &content);
 
 /**
  * \brief delete directory using shell command
  * \param path directory path
  * \return true on success, false otherwise
  */
-bool RemoveDirectory(const wxString &path);
+WXDLLIMPEXP_SDK bool RemoveDirectory(const wxString &path);
 
 /**
  * \brief return true of id is a valid cpp identifier
  */
-bool IsValidCppIndetifier(const wxString &id);
+WXDLLIMPEXP_SDK bool IsValidCppIndetifier(const wxString &id);
 
 /**
  * \brief return true of word is a C++ keyword
  * \param word
  * \return
  */
-bool IsCppKeyword(const wxString &word);
+WXDLLIMPEXP_SDK bool IsCppKeyword(const wxString &word);
 
 /**
  * \brief return true of id is a valid cpp file
  */
-bool IsValidCppFile(const wxString &id);
+WXDLLIMPEXP_SDK bool IsValidCppFile(const wxString &id);
 
 /**
  * [DEPRECATED] DONT USE THIS METHOD ANYMORE - USE IMacroManager
@@ -132,7 +133,7 @@ bool IsValidCppFile(const wxString &id);
  * the return value is same as input. The variable is expanded
  * in the project context
  */
-wxString ExpandVariables(const wxString &expression, ProjectPtr proj, IEditor *editor);
+WXDLLIMPEXP_SDK wxString ExpandVariables(const wxString &expression, ProjectPtr proj, IEditor *editor);
 
 /**
  * * [DEPRECATED] DONT USE THIS METHOD ANYMORE - USE IMacroManager
@@ -142,7 +143,7 @@ wxString ExpandVariables(const wxString &expression, ProjectPtr proj, IEditor *e
  * \param fileName file name, to help expand the $(CurrentFile) macro family
  * \return an expanded string. If a macro is unknown it is replaced by empty string
  */
-wxString ExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &selConf, const wxString &fileName);
+WXDLLIMPEXP_SDK wxString ExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &selConf, const wxString &fileName);
 
 /**
  * \brief copy entire directory content (recursievly) from source to target
@@ -150,13 +151,13 @@ wxString ExpandAllVariables(const wxString &expression, Workspace *workspace, co
  * \param target target path
  * \return true on success, false otherwise
  */
-bool CopyDir(const wxString& src, const wxString& target);
+WXDLLIMPEXP_SDK bool CopyDir(const wxString& src, const wxString& target);
 
 /**
  * \brief create a directory
  * \param path directory path
  */
-void Mkdir(const wxString &path);
+WXDLLIMPEXP_SDK void Mkdir(const wxString &path);
 
 /**
  * \brief write file content with optinal backup
@@ -165,13 +166,13 @@ void Mkdir(const wxString &path);
  * \param backup
  * \return true on success, false otherwise
  */
-bool WriteFileWithBackup(const wxString &file_name, const wxString &content, bool backup);
+WXDLLIMPEXP_SDK bool WriteFileWithBackup(const wxString &file_name, const wxString &content, bool backup);
 
 /**
  * \brief copy text to the clipboard
  * \return true on success false otherwise
  */
-bool CopyToClipboard(const wxString &text);
+WXDLLIMPEXP_SDK bool CopyToClipboard(const wxString &text);
 
 /**
  * \brief make colour lighter
@@ -179,51 +180,51 @@ bool CopyToClipboard(const wxString &text);
  * \param level
  * \return modified colour
  */
-wxColour MakeColourLighter(wxColour color, float level);
+WXDLLIMPEXP_SDK wxColour MakeColourLighter(wxColour color, float level);
 
 /**
  * @brief return true if filename is readonly false otherwise
  */
-bool IsFileReadOnly(const wxFileName &filename);
+WXDLLIMPEXP_SDK bool IsFileReadOnly(const wxFileName &filename);
 
 /**
  * \brief fill an array with a semi-colon separated string
  * \param arr [out] the array to fill
  * \param str the string to split
  */
-void FillFromSmiColonString(wxArrayString &arr, const wxString &str);
+WXDLLIMPEXP_SDK void FillFromSmiColonString(wxArrayString &arr, const wxString &str);
 
 /**
  * \brief return a string semi-colon separated of the given array
  */
-wxString ArrayToSmiColonString(const wxArrayString &array);
+WXDLLIMPEXP_SDK wxString ArrayToSmiColonString(const wxArrayString &array);
 
 /**
  * \brief Remove all semi colons of the given string
  */
-void StripSemiColons(wxString &str);
+WXDLLIMPEXP_SDK void StripSemiColons(wxString &str);
 
 /**
  * \brief Normalize the given path (change all \ by /)
  */
-wxString NormalizePath(const wxString &path);
+WXDLLIMPEXP_SDK wxString NormalizePath(const wxString &path);
 
 /**
  * \brief Returns the file modification time in seconds after the epoch.
  */
-time_t GetFileModificationTime(const wxString &filename);
-time_t GetFileModificationTime(const wxFileName &filename);
+WXDLLIMPEXP_SDK time_t GetFileModificationTime(const wxString &filename);
+WXDLLIMPEXP_SDK time_t GetFileModificationTime(const wxFileName &filename);
 
 /**
  * @brief wrap a given command in the shell command (e.g. cmd /c "command")
  */
-void WrapInShell(wxString &cmd);
+WXDLLIMPEXP_SDK void WrapInShell(wxString &cmd);
 
 /**
  * @brief return the current user name without any special characters
  * @return
  */
-wxString clGetUserName();
+WXDLLIMPEXP_SDK wxString clGetUserName();
 
 /**
  * @brief return list of projects available based on the installed tempaltes
@@ -231,7 +232,7 @@ wxString clGetUserName();
  * @param imageMap when provided, returns the image index (set in the lstImages) mapped to the project type
  * @param lstImages wxImageList allocated on the heap for the projects
  */
-void GetProjectTemplateList( IManager *manager, std::list<ProjectPtr> &list, std::map<wxString,int> *imageMap = NULL, wxImageList **lstImages = NULL);
+WXDLLIMPEXP_SDK void GetProjectTemplateList( IManager *manager, std::list<ProjectPtr> &list, std::map<wxString,int> *imageMap = NULL, wxImageList **lstImages = NULL);
 
 /**
  * @brief extract file from Zip and place it under targetDir
@@ -241,7 +242,7 @@ void GetProjectTemplateList( IManager *manager, std::list<ProjectPtr> &list, std
  * @param targetFileName the path of the file that was actually extracted
  * @return true on success, false otherwise
  */
-bool ExtractFileFromZip(const wxString &zipPath, const wxString& filename, const wxString &targetDir, wxString &targetFileName);
+WXDLLIMPEXP_SDK bool ExtractFileFromZip(const wxString &zipPath, const wxString& filename, const wxString &targetDir, wxString &targetFileName);
 
 #endif //GLOBALS_H
 

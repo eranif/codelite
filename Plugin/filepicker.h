@@ -27,13 +27,14 @@
 
 #include "wx/panel.h"
 #include "wx/button.h"
+#include "codelite_exports.h"
 #include "wx/textctrl.h"
 #include "wx/filedlg.h"
 
 /**
  * This control allows the user to select a directory. with a text control on its right side
  */
-class FilePicker : public wxPanel {
+class WXDLLIMPEXP_SDK FilePicker : public wxPanel {
 	wxTextCtrl *m_path;
 	wxButton *m_button;
 	wxString m_buttonCaption;

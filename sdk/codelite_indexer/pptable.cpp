@@ -147,6 +147,8 @@ wxArrayString TokenizeWords(const wxString &str)
 	return outputArr;
 }
 
+static PPTable* ms_instance = NULL;
+	
 void PPToken::processArgs(const wxString &argsList)
 {
 	args = wxStringTokenize(argsList, wxT(","), wxTOKEN_STRTOK);
@@ -401,8 +403,6 @@ wxString PPToken::signature() const
 
 ///////////////////////////////////////////////////
 
-PPTable* PPTable::ms_instance = 0;
-
 PPTable::PPTable()
 {
 }
@@ -413,7 +413,7 @@ PPTable::~PPTable()
 
 PPTable* PPTable::Instance()
 {
-	if(ms_instance == 0) {
+	if(ms_instance == NULL) {
 		ms_instance = new PPTable();
 	}
 	return ms_instance;
@@ -424,7 +424,7 @@ void PPTable::Release()
 	if(ms_instance) {
 		delete ms_instance;
 	}
-	ms_instance = 0;
+	ms_instance = NULL;
 }
 
 PPToken PPTable::Token(const wxString& name)

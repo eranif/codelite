@@ -30,7 +30,8 @@
 #include "evnvarlist.h"
 #include "wx_xml_compatibility.h"
 #include <wx/log.h>
-EnvironmentConfig* EnvironmentConfig::ms_instance = 0;
+
+static EnvironmentConfig* ms_instance = NULL;
 
 //------------------------------------------------------------------------------
 

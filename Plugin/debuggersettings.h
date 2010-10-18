@@ -27,8 +27,9 @@
 
 #include "serialized_object.h"
 #include "vector"
+#include "codelite_exports.h"
 
-class DebuggerCmdData : public SerializedObject
+class WXDLLIMPEXP_SDK DebuggerCmdData : public SerializedObject
 {
 	wxString m_name;
 	wxString m_command;
@@ -67,7 +68,7 @@ public:
 
 typedef std::vector<DebuggerCmdData> DebuggerCmdDataVec;
 
-class DebuggerPreDefinedTypes : public SerializedObject
+class WXDLLIMPEXP_SDK DebuggerPreDefinedTypes : public SerializedObject
 {
 	DebuggerCmdDataVec m_cmds;
 	wxString           m_name;
@@ -104,7 +105,7 @@ public:
 	wxString GetPreDefinedTypeForTypename(const wxString& expr, const wxString& name);
 };
 
-class DebuggerSettingsPreDefMap : public SerializedObject
+class WXDLLIMPEXP_SDK DebuggerSettingsPreDefMap : public SerializedObject
 {
 	std::map<wxString, DebuggerPreDefinedTypes> m_cmds;
 	

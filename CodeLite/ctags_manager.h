@@ -44,6 +44,7 @@
 #include "extdbdata.h"
 #include "language.h"
 #include <set>
+#include "codelite_exports.h"
 
 #ifdef USE_TRACE
 #include <wx/stopwatch.h>
@@ -66,8 +67,8 @@ class IProcess;
 #define TagsGlobalGTK 1
 
 // send this event whenever the a tags file needs to be updated
-extern const wxEventType wxEVT_UPDATE_FILETREE_EVENT;
-extern const wxEventType wxEVT_TAGS_DB_UPGRADE;
+extern WXDLLIMPEXP_CL const wxEventType wxEVT_UPDATE_FILETREE_EVENT;
+extern WXDLLIMPEXP_CL const wxEventType wxEVT_TAGS_DB_UPGRADE;
 
 struct DoxygenComment {
 	wxString name;
@@ -124,10 +125,10 @@ class ITagsStorage;
  * @author Eran
  *
  */
-class TagsManager : public wxEvtHandler
+class WXDLLIMPEXP_CL TagsManager : public wxEvtHandler
 {
 	// Members
-	friend class Singleton<TagsManager>;
+	friend class TagsManagerST;
 	friend class DirTraverser;
 	friend class Language;
 
@@ -769,6 +770,8 @@ public:
 	 */
 	wxString WrapLines(const wxString &str);
 	
+	void GetVariables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap, bool isUsedWithinFunc);
+	
 protected:
 	// provide a default handler for the wxEVT_UPDATE_FILETREE_EVENT event
 	void OnUpdateFileTreeEvent(wxCommandEvent &e);
@@ -795,6 +798,10 @@ protected:
 };
 
 /// create the singleton typedef
-typedef Singleton<TagsManager> TagsManagerST;
+class WXDLLIMPEXP_CL TagsManagerST {
+public:
+	static TagsManager* Get();
+	static void         Free();
+};
 
 #endif // CODELITE_CTAGS_MANAGER_H

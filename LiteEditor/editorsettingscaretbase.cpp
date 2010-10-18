@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -36,10 +36,26 @@ EditorSettingsCaretBase::EditorSettingsCaretBase( wxWindow* parent, wxWindowID i
 	m_spinCtrlCaretWidth = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 10, 1 );
 	fgSizer1->Add( m_spinCtrlCaretWidth, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
-	mainSizer->Add( fgSizer1, 0, wxEXPAND, 5 );
+	mainSizer->Add( fgSizer1, 0, wxEXPAND|wxALL, 5 );
+	
+	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	mainSizer->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
+	
+	wxFlexGridSizer* fgSizer2;
+	fgSizer2 = new wxFlexGridSizer( 0, 1, 0, 0 );
+	fgSizer2->SetFlexibleDirection( wxBOTH );
+	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_checkBoxScrollBeyondLastLine = new wxCheckBox( this, wxID_ANY, _("Allow caret to scroll beyond end of file"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer2->Add( m_checkBoxScrollBeyondLastLine, 0, wxALL|wxEXPAND, 5 );
+	
+	m_checkBoxAdjustScrollbarSize = new wxCheckBox( this, wxID_ANY, _("Auto just horizontal scrollbar width"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer2->Add( m_checkBoxAdjustScrollbarSize, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxCaretUseCamelCase = new wxCheckBox( this, wxID_ANY, _("Caret jumps between word segments marked by capitalisation (CamelCase) or undescores"), wxDefaultPosition, wxDefaultSize, 0 );
-	mainSizer->Add( m_checkBoxCaretUseCamelCase, 0, wxALL|wxEXPAND, 5 );
+	fgSizer2->Add( m_checkBoxCaretUseCamelCase, 0, wxALL|wxEXPAND, 5 );
+	
+	mainSizer->Add( fgSizer2, 0, wxEXPAND|wxALL, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();

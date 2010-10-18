@@ -32,6 +32,7 @@
 OptionsConfig::OptionsConfig(wxXmlNode *node)
         : m_displayFoldMargin(true)
         , m_underlineFoldLine(false)
+		, m_scrollBeyondLastLine(false)
         , m_foldStyle(wxT("Arrows with Background Colour"))
         , m_displayBookmarkMargin(true)
         , m_bookmarkShape(wxT("Small Arrow"))
@@ -121,6 +122,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
     	m_programConsoleCommand         = XmlUtils::ReadString(node, wxT("ConsoleCommand"),            m_programConsoleCommand);
     	m_eolMode                       = XmlUtils::ReadString(node, wxT("EOLMode"),                   m_eolMode);
     	m_hideChangeMarkerMargin        = XmlUtils::ReadBool  (node, wxT("HideChangeMarkerMargin"));
+    	m_scrollBeyondLastLine          = XmlUtils::ReadBool  (node, wxT("ScrollBeyondLastLine"));
     	m_hideOutpuPaneOnUserClick      = XmlUtils::ReadBool  (node, wxT("HideOutputPaneOnUserClick"));
     	m_hideOutputPaneNotIfBuild      = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfBuild"));
     	m_hideOutputPaneNotIfErrors     = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfErrors"));
@@ -182,6 +184,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("FoldBgColour"),                  m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
 	n->AddProperty(wxT("AutoAdjustHScrollBarWidth"),     BoolToString(m_autoAdjustHScrollBarWidth));
 	n->AddProperty(wxT("HideChangeMarkerMargin"),        BoolToString(m_hideChangeMarkerMargin));
+	n->AddProperty(wxT("ScrollBeyondLastLine"),          BoolToString(m_scrollBeyondLastLine));
 	n->AddProperty(wxT("HideOutputPaneOnUserClick"),     BoolToString(m_hideOutpuPaneOnUserClick));
 	n->AddProperty(wxT("HideOutputPaneNotIfBuild"),      BoolToString(m_hideOutputPaneNotIfBuild));
 	n->AddProperty(wxT("HideOutputPaneNotIfErrors"),     BoolToString(m_hideOutputPaneNotIfErrors));

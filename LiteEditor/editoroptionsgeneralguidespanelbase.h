@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -19,6 +19,7 @@
 #include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/sizer.h>
+#include <wx/statline.h>
 #include <wx/clrpicker.h>
 #include <wx/slider.h>
 #include <wx/panel.h>
@@ -38,14 +39,13 @@ class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 		wxCheckBox* m_showIndentationGuideLines;
 		wxCheckBox* m_checkBoxMatchBraces;
 		wxCheckBox* m_checkBoxAutoCompleteBraces;
-		wxCheckBox* m_checkBoxAdjustScrollbarSize;
 		wxCheckBox* m_checkBoxDisableSemicolonShift;
 		wxCheckBox* m_checkBoxHideChangeMarkerMargin;
-		
 		wxStaticText* m_staticText2;
 		wxChoice* m_whitespaceStyle;
 		wxStaticText* m_staticText4;
 		wxChoice* m_choiceEOL;
+		wxStaticLine* m_staticline1;
 		wxCheckBox* m_highlightCaretLine;
 		
 		wxStaticText* m_staticText1;

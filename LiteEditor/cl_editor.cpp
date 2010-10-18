@@ -348,6 +348,8 @@ void LEditor::SetProperties()
 
 	SetFoldFlags(options->GetUnderlineFoldLine() ? 16 : 0);
 
+	SetEndAtLastLine(!options->GetScrollBeyondLastLine());
+
 	//------------------------------------------
 	// Margin settings
 	//------------------------------------------

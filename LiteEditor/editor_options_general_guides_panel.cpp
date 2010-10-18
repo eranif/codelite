@@ -36,8 +36,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel( wxWindow* pare
 	m_checkBoxMatchBraces->SetValue(options->GetHighlightMatchedBraces());
 	m_showIndentationGuideLines->SetValue(options->GetShowIndentationGuidelines());
 	m_checkBoxAutoCompleteBraces->SetValue(options->GetAutoAddMatchedBraces());
-	m_checkBoxAdjustScrollbarSize->SetValue(options->GetAutoAdjustHScrollBarWidth());
-
+	
 	m_highlightCaretLine->SetValue(options->GetHighlightCaretLine());
 	m_caretLineColourPicker->SetColour(options->GetCaretLineColour());
 	m_choiceEOL->SetStringSelection(options->GetEolMode());
@@ -69,7 +68,6 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
 	options->SetHighlightMatchedBraces(m_checkBoxMatchBraces->IsChecked());
 	options->SetShowIndentationGuidelines( m_showIndentationGuideLines->IsChecked() );
 	options->SetHighlightCaretLine( m_highlightCaretLine->IsChecked() );
-	options->SetAutoAdjustHScrollBarWidth(m_checkBoxAdjustScrollbarSize->IsChecked());
 	options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
 	options->SetAutoAddMatchedBraces(m_checkBoxAutoCompleteBraces->IsChecked());
 	options->SetEolMode(m_choiceEOL->GetStringSelection());

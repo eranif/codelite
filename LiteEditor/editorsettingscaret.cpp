@@ -9,6 +9,8 @@ EditorSettingsCaret::EditorSettingsCaret( wxWindow* parent )
     m_spinCtrlBlinkPeriod->SetValue(options->GetCaretBlinkPeriod());
 	m_spinCtrlCaretWidth->SetValue(options->GetCaretWidth());
 	m_checkBoxCaretUseCamelCase->SetValue(options->GetCaretUseCamelCase());
+	m_checkBoxScrollBeyondLastLine->SetValue( options->GetScrollBeyondLastLine() );
+	m_checkBoxAdjustScrollbarSize->SetValue(options->GetAutoAdjustHScrollBarWidth());
 }
 
 void EditorSettingsCaret::Save(OptionsConfigPtr options)
@@ -16,4 +18,6 @@ void EditorSettingsCaret::Save(OptionsConfigPtr options)
 	options->SetCaretBlinkPeriod(m_spinCtrlBlinkPeriod->GetValue());
 	options->SetCaretWidth(m_spinCtrlCaretWidth->GetValue());
 	options->SetCaretUseCamelCase(m_checkBoxCaretUseCamelCase->IsChecked());
+	options->SetScrollBeyondLastLine(m_checkBoxScrollBeyondLastLine->IsChecked());
+	options->SetAutoAdjustHScrollBarWidth(m_checkBoxAdjustScrollbarSize->IsChecked());
 }

@@ -119,7 +119,7 @@ void OptionsDlg2::Initialize()
 	AddSubPage(new EditorOptionsGeneralGuidesPanel(m_treeBook),      wxT("Guides"), true);
 	AddSubPage(new EditorOptionsGeneralIndentationPanel(m_treeBook), wxT("Indentation"));
 	AddSubPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook), wxT("Right Margin Indicator"));
-	AddSubPage(new EditorSettingsCaret(m_treeBook),                  wxT("Caret"));
+	AddSubPage(new EditorSettingsCaret(m_treeBook),                  wxT("Caret & Scrolling"));
 	AddSubPage(new EditorOptionsGeneralSavePanel(m_treeBook),        wxT("Save Options"));
 
 	m_treeBook->AddPage(0, wxT("C++"));

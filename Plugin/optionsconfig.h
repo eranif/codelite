@@ -38,6 +38,7 @@ class WXDLLIMPEXP_SDK OptionsConfig : public ConfObject
 protected:
 	bool           m_displayFoldMargin;
 	bool           m_underlineFoldLine;
+	bool           m_scrollBeyondLastLine;
 	wxString       m_foldStyle;
 	bool           m_displayBookmarkMargin;
 	wxString       m_bookmarkShape;
@@ -220,6 +221,9 @@ public:
 	bool GetUnderlineFoldLine() const {
 		return m_underlineFoldLine;
 	}
+	bool GetScrollBeyondLastLine() const {
+		return m_scrollBeyondLastLine;
+	}
 	wxString GetFoldStyle() const {
 		return m_foldStyle;
 	}
@@ -254,6 +258,9 @@ public:
 	}
 	void SetUnderlineFoldLine(bool b) {
 		m_underlineFoldLine = b;
+	}
+	void SetScrollBeyondLastLine(bool b) {
+		m_scrollBeyondLastLine = b;
 	}
 	void SetFoldStyle(wxString s) {
 		m_foldStyle = s;

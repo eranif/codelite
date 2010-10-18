@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -18,6 +18,7 @@
 #include <wx/settings.h>
 #include <wx/spinctrl.h>
 #include <wx/sizer.h>
+#include <wx/statline.h>
 #include <wx/checkbox.h>
 #include <wx/panel.h>
 
@@ -36,6 +37,9 @@ class EditorSettingsCaretBase : public wxPanel
 		wxSpinCtrl* m_spinCtrlBlinkPeriod;
 		wxStaticText* m_staticText3;
 		wxSpinCtrl* m_spinCtrlCaretWidth;
+		wxStaticLine* m_staticline1;
+		wxCheckBox* m_checkBoxScrollBeyondLastLine;
+		wxCheckBox* m_checkBoxAdjustScrollbarSize;
 		wxCheckBox* m_checkBoxCaretUseCamelCase;
 	
 	public:

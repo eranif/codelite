@@ -449,6 +449,7 @@ void BreakptMgr::DelAllBreakpoints()
 	// Delete all markers before clearing m_bps, otherwise we won't know which files they were in
 	DeleteAllBreakpointMarkers();
 	m_bps.clear();
+	m_pendingBreakpointsList.clear();	// Delete any pending bps too
 }
 
 // Toggle a breakpoint's enabled state

@@ -69,12 +69,13 @@ void BreakpointDlg::Initialize()
 	// Since any change results in Initialize() being rerun, we can do updateUI here
 	m_buttonEdit->Enable(hasitems);
 	m_buttonDelete->Enable(hasitems);
-	m_buttonDeleteAll->Enable(hasitems);
 	// The 'Apply Pending' button is more complicated: it should be hidden,
 	// unless there are pending bps to apply,and the debugger is running
+	bool pending = ManagerST::Get()->GetBreakpointsMgr()->PendingBreakpointsExist();
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	m_buttonApplyPending->Show( ManagerST::Get()->GetBreakpointsMgr()->PendingBreakpointsExist()
-																		&& dbgr && dbgr->IsRunning() );
+	m_buttonApplyPending->Show( pending	&& dbgr && dbgr->IsRunning() );
+	// Enable DeleteAll if there are either bps or pending bps
+	m_buttonDeleteAll->Enable(hasitems || pending);
 }
 
 void BreakpointDlg::OnDelete(wxCommandEvent &e)

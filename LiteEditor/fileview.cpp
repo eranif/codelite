@@ -717,9 +717,45 @@ void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 	if ( !item.IsOk() ) {
 		return;
 	}
+
 	const wxString ALL(	wxT("All Files (*)|*|")
 	                    wxT( "C/C++ Source Files (*.c;*.cpp;*.cxx;*.cc)|*.c;*.cpp;*.cxx;*.cc|" )
 	                    wxT( "C/C++ Header Files (*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc)|*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc" ) );
+
+	// There are 3 possibilities:
+	//	1) A standard situation, with the project and files all in subdir of the codelite dir.
+	//	   In this case, the existing files inside the virtual dir will have a name but no path, so use the project's path
+	//	2) Non-standard, with the project in one path, and files elsewhere
+	//	   In this case, the existing files inside the virtual dir will have a filepath, & we can get the path from this
+	//	   as it's unlikely that people will want to mix files with different paths in one virtual dir
+	//	3) Either 1 or 2, but with start_path already holding a recently-used path
+
+	// To make life easier for people in situation 2), try to find a valid path for the wxFileDialog from the virtual dir
+	if (ItemHasChildren(item)) {
+		wxTreeItemIdValue cookie;
+		wxTreeItemId child = GetFirstChild(item, cookie);
+		do { // Find the first file in the virtual dir (assuming there is one)
+			if (child.IsOk()) {
+				FilewViewTreeItemData *childData = static_cast<FilewViewTreeItemData*>( GetItemData( child ) );
+				if (childData && childData->GetData().GetKind() == ProjectItem::TypeFile) {
+					// We're only interested in files here, not child virtual dirs
+					wxFileName fn(childData->GetData().GetFile());
+					fn.MakeAbsolute();
+					if (!fn.FileExists()) {
+						continue;
+					}
+					wxString path = fn.GetPath();
+					if (!path.IsEmpty()) {
+						start_path = path;
+					}
+					// Break whether or not we've found a valid path. If not, trying harder is unlikely to help
+					break;
+				}
+			}
+			child = GetNextChild(item, cookie);
+		} while (child.IsOk());
+	}
+
 	wxString vdPath = GetItemPath( item );
 	wxString project;
 	project = vdPath.BeforeFirst( wxT( ':' ) );

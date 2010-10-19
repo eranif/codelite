@@ -24,6 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "evnvarlist.h"
 #include <wx/tokenzr.h>
+#include <wx/log.h>
+
 EvnVarList::EvnVarList()
 : m_activeSet(wxT("Default"))
 {
@@ -87,12 +89,24 @@ EnvMap EvnVarList::GetVariables(const wxString& setName)
 	wxString      currentValueStr = DoGetSetVariablesStr(setName, actualSetName);
 	wxArrayString currentValues   = wxStringTokenize(currentValueStr, wxT("\r\n"), wxTOKEN_STRTOK);
 	for(size_t i=0; i<currentValues.GetCount(); i++){
-		wxString line = currentValues.Item(i);
-		line.Trim().Trim(false);
-		wxString varname  = line.BeforeFirst(wxT('='));
-		wxString varvalue = line.AfterFirst(wxT('='));
+		wxString entry = currentValues.Item(i);
+
+		// remove any comment from the line
+		int where = entry.Find(wxT("#"));
+		if (where != wxNOT_FOUND) {
+			entry = entry.Left(where);
+		}
+
+		entry.Trim().Trim(false);
+		if(entry.IsEmpty()) {
+			continue;
+		}
+
+		wxString varname  = entry.BeforeFirst(wxT('='));
+		wxString varvalue = entry.AfterFirst(wxT('='));
 		variables.Put(varname, varvalue);
 	}
+
 	return variables;
 }
 

@@ -31,12 +31,9 @@ static wxString Reverse(const wxString &str)
 {
 	// reverse the string content
 	wxString tmp;
-	tmp.reserve(str.size());
-	
 	for (int i=(int)str.length()-1; i>=0; i--) {
-		tmp << *(str.begin() + i);
+		tmp << str.GetChar(i);
 	}
-	
 	return tmp;
 }
 

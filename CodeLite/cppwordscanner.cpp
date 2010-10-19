@@ -143,10 +143,8 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
 
 				if (token.getName().empty() == false) {
 
-					wxChar firstChar = *token.getName().begin();
-					if ((int)firstChar >= 48 && (int)firstChar <= 57) {
+					if ((int)token.getName().GetChar(0) >= 48 && (int)token.getName().GetChar(0) <= 57) {
 						token.reset();
-						
 					} else {
 						//dont add C++ key words
 						if (m_arr.Index(token.getName()) == wxNOT_FOUND) {
@@ -417,7 +415,7 @@ wxChar TextStates::Next()
 		int st = states[pos].state;
 		if(st == CppWordScanner::STATE_NORMAL) {
 			if(text.Len() > (size_t)pos)
-				return *(text.begin() + pos);
+				return text.GetChar(pos);;
 			return 0;
 		}
 		pos++;
@@ -442,7 +440,7 @@ wxChar TextStates::Previous()
 		int st = states[pos].state;
 		if(st == CppWordScanner::STATE_NORMAL) {
 			if(text.Len() > (size_t)pos)
-				return *(text.begin() + pos);
+				return text.GetChar(pos);
 			return 0;
 		}
 		pos--;

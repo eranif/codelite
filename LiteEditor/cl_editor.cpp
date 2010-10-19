@@ -340,11 +340,9 @@ void LEditor::SetProperties()
 	// Mark current line
 	SetCaretLineVisible(options->GetHighlightCaretLine());
 	SetCaretLineBackground(options->GetCaretLineColour());
-	
-#if wxVERSION_NUMBER <= 2900
+
 	SetCaretLineBackgroundAlpha(options->GetCaretLineAlpha());
 	MarkerSetAlpha(smt_bookmark, 30);
-#endif
 
 	SetFoldFlags(options->GetUnderlineFoldLine() ? 16 : 0);
 

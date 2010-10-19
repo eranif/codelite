@@ -232,11 +232,22 @@ void SearchThread::DoSearchFile(const wxString &fileName, const SearchData *data
 	thefile.ReadAll(&fileData, fontEncConv);
 
 	wxStringTokenizer tkz(fileData, wxT("\n"), wxTOKEN_RET_EMPTY_ALL);
-
+	
+	// take a wild guess and see if we really need to construct 
+	// a TextStatesPtr object (it is quite an expensive operation)
+	bool shouldCreateStates (true);
+	if(data->IsMatchCase() && !data->IsRegularExpression()) {
+		shouldCreateStates = (fileData.Find(data->GetFindString()) != wxNOT_FOUND);
+		
+	} else if(!data->IsRegularExpression()) {
+		// !data->IsMatchCase()
+		shouldCreateStates = (fileData.MakeLower().Find(data->GetFindString()) != wxNOT_FOUND); 
+	}
+	
 	// Incase one of the C++ options is enabled,
 	// create a text states object
 	TextStatesPtr states(NULL);
-	if(data->HasCppOptions()) {
+	if(data->HasCppOptions() && shouldCreateStates) {
 		CppWordScanner scanner(wxEmptyString, fileData, 0);
 		states = scanner.states();
 	}
@@ -350,7 +361,7 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const w
 	wxString modLine = line;
 
 	if ( !data->IsMatchCase() ) {
-		modLine = modLine.MakeLower();
+		// Input line was already MadeLower()
 		findString = findString.MakeLower();
 	}
 

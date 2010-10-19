@@ -41,13 +41,14 @@ char StringAccessor::safeAt(size_t pos)
 #if wxVERSION_NUMBER < 2900
 	return m_str.at(pos);
 #else
-	char c;
-	wxUniChar uc = m_str.at(pos);
-	if (uc.GetAsChar(&c)) {
-		return c; 
-	} else {
-		return 0;
-	}
+//	char c;
+	return *(m_str.begin() + pos);
+//	wxUniChar uc = ;
+//	if (uc.GetAsChar(&c)) {
+//		return c; 
+//	} else {
+//		return 0;
+//	}
 #endif
 }
 

@@ -10,6 +10,7 @@
 #include "wx/sizer.h"
 #include <wx/log.h>
 #include <wx/wupdlock.h>
+#include <set>
 
 #ifdef __WXMSW__
 #    include <wx/button.h>
@@ -275,6 +276,90 @@ size_t Notebook::GetPageIndex(const wxString& text)
 		}
 	}
 	return Notebook::npos;
+}
+
+// wxAuiNotebook provides an array of its contained pages, accessible with GetPages()
+// However it doesn't update this array when the tab-order is altered using D'n'D
+// So, if serialise used GetPages(), the user would lose his preferred order of tabs.
+// GetEditorsInOrder() works around the problem
+void Notebook::GetEditorsInOrder(std::vector<wxWindow*> &editors)
+{
+	editors.clear();
+	if (GetPageCount() == 0) {
+		return;
+	}
+	std::vector<wxWindow*> all_pages;// Use a vector here: it's more hassle than a set, but retains the order
+
+	// wxAuiNotebook stores its wxAuiTabCtrls in an internal class wxTabFrame, defined in the cpp file, and so unavailable
+	// The only way I can see to acquire them is to FindTab() on every page to find its wxAuiTabCtrl. Yuck!
+	std::set<wxAuiTabCtrl*> ctrls;
+	for (size_t pg = 0; pg < GetPageCount(); ++pg) {
+		wxAuiTabCtrl* ctrl;
+		int ctrl_idx;
+		wxWindow* win = GetPage(pg);
+		if (win && FindTab(win, &ctrl, &ctrl_idx)) {
+			ctrls.insert(ctrl);
+			all_pages.push_back(win);	// Store in the all-pages vector: we may need it later
+		}
+	}
+
+	// For every tabctrl that we found, iterate through its tabs using TabHitTest()
+	// This is the only way to get their current order within the tabcrl, afaict
+	std::set<wxAuiTabCtrl*>::const_iterator it;
+	for (it = ctrls.begin(); it != ctrls.end(); ++it) {
+		wxAuiTabCtrl* ctrl = *it;
+		// Aim for the centre of the tab ;)
+		int y = ctrl->GetRect().height / 2;
+		// 2 is arbitrary, to ensure we're within the first tab but shouldn't overshoot
+		int x_offset = ctrl->GetArtProvider()->GetIndentSize() + 2;
+		wxWindow* previouspage = NULL;
+
+		// The elegant way to do this would be to add the width of each tab to the cumulative width
+		// However the value produced by GetArtProvider() is consistently too large,
+		// so eventually we overshoot a tab (or the whole ctrl!)
+		// Instead, keep hit-testing every 10 x-pixels until the page changes
+		do {
+			wxWindow* page;
+			int x = 0;
+			do {
+				page = NULL;
+				x += 10;	// Another arbitrary value, but it's unlikely that there'll be a tab smaller than this
+				bool hit = ctrl->TabHitTest(x_offset+x, y, &page);
+				// If there's space between tabs, we might be hittesting this, returning hit==false
+				// Therefore ignore misses if we're still within the width of ctrl
+				if (!hit && x_offset+x >= ctrl->GetRect().width) {
+					break;
+				}
+			}
+			 while ((!page) || page == previouspage);
+
+			if (!page) {
+				// We've reached the end of the tabctrl
+				previouspage = NULL;
+				break;
+			}
+			editors.push_back(page);
+			// Remove it from the pages-not-yet-found vector
+			for (size_t p=0; p < all_pages.size(); ++p) {
+				if (page == *(all_pages.begin()+p)) {
+					all_pages.erase(all_pages.begin()+p);
+					break;
+				}
+				wxCHECK_RET(p+1 < all_pages.size(), wxT("Trying to erase a page not in the vector"));
+			}
+
+			x_offset += x;
+			previouspage = page;
+		}
+		 while (x_offset < ctrl->GetRect().width);	// Continue until we reach the end of the visible ctrl
+	}
+
+	// If there are pages the hittest missed, they *might* be detached pages, or hitttest failure
+	// but they're most likely to be scrolled-off-the-screen tabs.
+	// I'd guess these are more likely to be from the beginning of the tabctrl, so prepend them to the vector
+	if (!all_pages.empty()) {
+		editors.insert(editors.begin(), all_pages.begin(), all_pages.end());
+	}
 }
 
 bool Notebook::SetPageText(size_t index, const wxString &text)

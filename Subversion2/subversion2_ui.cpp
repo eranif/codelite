@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -46,6 +46,7 @@ SubversionPageBase::~SubversionPageBase()
 	m_buttonChangeRootDir->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SubversionPageBase::OnChangeRootDir ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( SubversionPageBase::OnItemActivated ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( SubversionPageBase::OnTreeMenu ), NULL, this );
+	
 }
 
 CommitDialogBase::CommitDialogBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
@@ -65,14 +66,18 @@ CommitDialogBase::CommitDialogBase( wxWindow* parent, wxWindowID id, const wxStr
 	m_staticText32->Wrap( -1 );
 	bugTrackerSizer->Add( m_staticText32, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlFrID = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlFrID = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	m_textCtrlFrID->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
 	bugTrackerSizer->Add( m_textCtrlFrID, 0, wxALL, 5 );
 	
 	m_staticTextBugID = new wxStaticText( this, wxID_ANY, _("Bug ID:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextBugID->Wrap( -1 );
 	bugTrackerSizer->Add( m_staticTextBugID, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlBugID = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlBugID = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	m_textCtrlBugID->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
 	bugTrackerSizer->Add( m_textCtrlBugID, 0, wxALL, 5 );
 	
 	bSizer3->Add( bugTrackerSizer, 0, wxEXPAND, 5 );
@@ -104,6 +109,8 @@ CommitDialogBase::CommitDialogBase( wxWindow* parent, wxWindowID id, const wxStr
 	bSizer6->Add( m_staticText1, 0, wxALL|wxEXPAND, 5 );
 	
 	m_textCtrlMessage = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlMessage->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
 	bSizer6->Add( m_textCtrlMessage, 1, wxEXPAND, 5 );
 	
 	m_panel2->SetSizer( bSizer6 );
@@ -150,6 +157,7 @@ CommitDialogBase::~CommitDialogBase()
 {
 	// Disconnect Events
 	m_choiceMessages->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( CommitDialogBase::OnChoiceMessage ), NULL, this );
+	
 }
 
 SvnCopyDialogBase::SvnCopyDialogBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
@@ -169,14 +177,14 @@ SvnCopyDialogBase::SvnCopyDialogBase( wxWindow* parent, wxWindowID id, const wxS
 	m_staticText3->Wrap( -1 );
 	fgSizer1->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlSourceURL = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlSourceURL = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer1->Add( m_textCtrlSourceURL, 1, wxALL|wxEXPAND, 5 );
 	
 	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Target URL:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	fgSizer1->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlTargetURL = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlTargetURL = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer1->Add( m_textCtrlTargetURL, 1, wxALL|wxEXPAND, 5 );
 	
 	bSizer7->Add( fgSizer1, 0, wxEXPAND, 5 );
@@ -249,7 +257,7 @@ SvnLoginDialogBase::SvnLoginDialogBase( wxWindow* parent, wxWindowID id, const w
 	m_staticText6->Wrap( -1 );
 	fgSizer2->Add( m_staticText6, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlUsername = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlUsername = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	m_textCtrlUsername->SetMinSize( wxSize( 300,-1 ) );
 	
 	fgSizer2->Add( m_textCtrlUsername, 0, wxALL|wxEXPAND, 5 );
@@ -261,7 +269,7 @@ SvnLoginDialogBase::SvnLoginDialogBase( wxWindow* parent, wxWindowID id, const w
 	m_textCtrlPassword = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD|wxTE_RICH2 );
 	fgSizer2->Add( m_textCtrlPassword, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer10->Add( fgSizer2, 1, wxEXPAND, 5 );
+	bSizer10->Add( fgSizer2, 0, wxEXPAND, 5 );
 	
 	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer10->Add( m_staticline4, 0, wxEXPAND | wxALL, 5 );
@@ -276,7 +284,7 @@ SvnLoginDialogBase::SvnLoginDialogBase( wxWindow* parent, wxWindowID id, const w
 	m_button7 = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer11->Add( m_button7, 0, wxALL, 5 );
 	
-	bSizer10->Add( bSizer11, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	bSizer10->Add( bSizer11, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
 	this->SetSizer( bSizer10 );
 	this->Layout();
@@ -317,7 +325,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	m_staticTextExe->Wrap( -1 );
 	fgSizer3->Add( m_staticTextExe, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlSvnExecutable = new wxTextCtrl( m_panel3, wxID_ANY, _("svn"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlSvnExecutable = new wxTextCtrl( m_panel3, wxID_ANY, _("svn"), wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer3->Add( m_textCtrlSvnExecutable, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowse = new wxButton( m_panel3, wxID_ANY, _("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -355,7 +363,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	m_panel3->SetSizer( bSizer15 );
 	m_panel3->Layout();
 	bSizer15->Fit( m_panel3 );
-	m_notebook->AddPage( m_panel3, _("General"), false );
+	m_notebook->AddPage( m_panel3, _("General"), true );
 	m_panel4 = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer16;
 	bSizer16 = new wxBoxSizer( wxVERTICAL );
@@ -454,7 +462,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	m_panel6->SetSizer( bSizer23 );
 	m_panel6->Layout();
 	bSizer23->Fit( m_panel6 );
-	m_notebook->AddPage( m_panel6, _("Integration"), true );
+	m_notebook->AddPage( m_panel6, _("Integration"), false );
 	
 	bSizer12->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 	
@@ -500,6 +508,7 @@ SvnPreferencesDialogBase::~SvnPreferencesDialogBase()
 	m_staticText29->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnAddRevisionMacroUI ), NULL, this );
 	m_textCtrlMacroName->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnAddRevisionMacroUI ), NULL, this );
 	m_button8->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnPreferencesDialogBase::OnButtonOK ), NULL, this );
+	
 }
 
 SvnInfoDialog::SvnInfoDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
@@ -627,7 +636,7 @@ SvnCheckoutDialogBase::SvnCheckoutDialogBase( wxWindow* parent, wxWindowID id, c
 	m_staticText25->Wrap( -1 );
 	fgSizer8->Add( m_staticText25, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrl20 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl20 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer8->Add( m_textCtrl20, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowseDir = new wxButton( this, wxID_ANY, _("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -672,6 +681,7 @@ SvnCheckoutDialogBase::~SvnCheckoutDialogBase()
 	m_buttonBrowseDir->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnCheckoutDialogBase::OnBrowseDirectory ), NULL, this );
 	m_button14->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnCheckoutDialogBase::OnOK ), NULL, this );
 	m_button14->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnCheckoutDialogBase::OnOkUI ), NULL, this );
+	
 }
 
 SvnLogDialog::SvnLogDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
@@ -811,6 +821,7 @@ ChangeLogPageBase::~ChangeLogPageBase()
 {
 	// Disconnect Events
 	m_textCtrl->Disconnect( wxEVT_COMMAND_TEXT_URL, wxTextUrlEventHandler( ChangeLogPageBase::OnURL ), NULL, this );
+	
 }
 
 SvnPropsBaseDlg::SvnPropsBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )

@@ -27,6 +27,7 @@
 
 #include <wx/wx.h>
 #include <wx/aui/auibook.h>
+#include <vector>
 #include "codelite_exports.h"
 
 enum {
@@ -158,6 +159,12 @@ public:
 	 * \param text new text
 	 */
 	bool SetPageText(size_t index, const wxString &text);
+
+	/**
+	 * \brief tries to get a list of displayed editors, in display order
+	 * \param vector in which to return the editors
+	 */
+	void GetEditorsInOrder(std::vector<wxWindow*> &editors);
 
 protected:
 	// Event handlers

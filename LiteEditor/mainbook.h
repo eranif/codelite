@@ -95,7 +95,7 @@ public:
 	void RestoreSession(SessionEntry &session);
 
 	LEditor *GetActiveEditor();
-	void     GetAllEditors  (std::vector<LEditor*> &editors);
+	void     GetAllEditors  (std::vector<LEditor*> &editors, bool retain_order = false);
 	LEditor *FindEditor     (const wxString &fileName);
 	bool     CloseEditor    (const wxString &fileName) {
 		return ClosePage(FindEditor(fileName));

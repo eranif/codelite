@@ -256,7 +256,8 @@ void MainBook::ShowNavBar(bool s)
 void MainBook::SaveSession(SessionEntry &session, wxArrayInt& intArr)
 {
 	std::vector<LEditor*> editors;
-	GetAllEditors(editors);
+	bool retain_order(true);
+	GetAllEditors(editors, retain_order);
 
 	session.SetSelectedTab(0);
 	std::vector<TabInfo> vTabInfoArr;
@@ -326,13 +327,25 @@ LEditor *MainBook::GetActiveEditor()
 	return dynamic_cast<LEditor*>(GetCurrentPage());
 }
 
-void MainBook::GetAllEditors(std::vector<LEditor*> &editors)
+void MainBook::GetAllEditors(std::vector<LEditor*> &editors, bool retain_order /*= false*/)
 {
 	editors.clear();
+	if (!retain_order) {
+		// Most of the time we don't care about the order the tabs are stored in
 	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
 		if (editor) {
 			editors.push_back(editor);
+		}
+	}
+	} else {
+		std::vector<wxWindow*> windows;
+		m_book->GetEditorsInOrder(windows);
+		for (size_t i = 0; i < windows.size(); i++) {
+			LEditor *editor = dynamic_cast<LEditor*>(windows.at(i));
+			if (editor) {
+				editors.push_back(editor);
+			}
 		}
 	}
 }

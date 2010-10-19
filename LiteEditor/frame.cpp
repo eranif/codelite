@@ -1595,7 +1595,8 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 
 	std::vector<LEditor*> editors;
 	wxArrayString filepaths;
-	GetMainBook()->GetAllEditors(editors);
+	bool retain_order(true);
+	GetMainBook()->GetAllEditors(editors, retain_order);	// We'll want the order of intArr to match the order in MainBook::SaveSession
 	for (size_t i = 0; i < editors.size(); ++i) {
 		filepaths.Add(editors[i]->GetFileName().GetFullPath());
 	}

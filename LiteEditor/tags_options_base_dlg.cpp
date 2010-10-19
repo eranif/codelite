@@ -179,7 +179,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	sbSizer7 = new wxStaticBoxSizer( new wxStaticBox( m_panel7, wxID_ANY, wxT("Automatic Word Completion:") ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer4;
-	fgSizer4 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer4 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer4->AddGrowableCol( 1 );
 	fgSizer4->SetFlexibleDirection( wxBOTH );
 	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );

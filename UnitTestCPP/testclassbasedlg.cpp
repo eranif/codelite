@@ -38,7 +38,7 @@ TestClassBaseDlg::TestClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStr
 	bSizer1->Add( fgSizer1, 0, wxEXPAND, 5 );
 	
 	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer2 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer2->AddGrowableCol( 1 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );

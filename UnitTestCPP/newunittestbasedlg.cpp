@@ -17,7 +17,7 @@ NewUnitTestBaseDlg::NewUnitTestBaseDlg( wxWindow* parent, wxWindowID id, const w
 	bSizer19 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer6;
-	fgSizer6 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer6 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer6->AddGrowableCol( 1 );
 	fgSizer6->SetFlexibleDirection( wxBOTH );
 	fgSizer6->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );

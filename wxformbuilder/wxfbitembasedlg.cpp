@@ -42,7 +42,7 @@ wxFBItemBaseDlg::wxFBItemBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer1;
-	fgSizer1 = new wxFlexGridSizer( 2, 3, 0, 0 );
+	fgSizer1 = new wxFlexGridSizer( 0, 3, 0, 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	

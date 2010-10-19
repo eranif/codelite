@@ -75,7 +75,7 @@ QmakeSettingsTabBase::QmakeSettingsTabBase( wxWindow* parent, wxWindowID id, con
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer2 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer2->AddGrowableCol( 1 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );

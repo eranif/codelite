@@ -42,7 +42,7 @@ EditCmpFileInfoBase::EditCmpFileInfoBase( wxWindow* parent, wxWindowID id, const
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer1;
-	fgSizer1 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer1 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer1->AddGrowableCol( 1 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );

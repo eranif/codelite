@@ -56,6 +56,7 @@ DebuggerPageMisc::DebuggerPageMisc(wxWindow* parent, const wxString &title)
 	m_checkBoxDebugAssert->SetValue(false);
 	m_checkBoxDebugAssert->Enable(false);
 	m_textCtrlCygwinPathCommand->Enable(false);
+	m_staticText5->Enable(false);
 #endif
 }
 

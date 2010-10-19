@@ -272,6 +272,11 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 	return true;
 }
 
+void DbgCmdHandlerAsyncCmd::UpdateGotControl(DebuggerReasons reason)
+{
+	m_observer->UpdateGotControl(reason);
+}
+
 bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 {
 	wxString reason;
@@ -307,7 +312,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 	//for future use to allow different handling for every case
 	if (reason == wxT("end-stepping-range")) {
 		//just notify the container that we got control back from debugger
-		m_observer->UpdateGotControl(DBG_END_STEPPING);
+		UpdateGotControl(DBG_END_STEPPING);
 
 	} else if ((reason == wxT("breakpoint-hit")) || (reason == wxT("watchpoint-trigger"))) {
 		static wxRegEx reFuncName(wxT("func=\"([a-zA-Z!_0-9]+)\""));
@@ -324,12 +329,9 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 			        func_name == wxT("__assert")          // Cygwin
 			   ) {
 				// assertion caught
-				m_observer->UpdateGotControl(DBG_BP_ASSERTION_HIT);
+				UpdateGotControl(DBG_BP_ASSERTION_HIT);
 			}
 		}
-
-		// Notify the container that we got control back from debugger
-		m_observer->UpdateGotControl(DBG_BP_HIT);
 
 		// Now discover which bp was hit. Fortunately, that's in the next token: bkptno="12"
 		// Except that it no longer is in gdb 7.0. It's now: ..disp="keep",bkptno="12". So:
@@ -353,11 +355,18 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 
 				} else {
 
-					// User breakpoint
+					// Notify the container that we got control back from debugger
+					UpdateGotControl(DBG_BP_HIT); // User breakpoint
 					m_observer->UpdateBpHit((int)id);
 
 				}
+			} else {
+				// In case of failure, pass control to user
+				UpdateGotControl(DBG_BP_HIT);
 			}
+		} else {
+			// In case of failure, pass control to user
+			UpdateGotControl(DBG_BP_HIT);
 		}
 
 
@@ -373,26 +382,26 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 		}
 
 		if (signame == wxT("SIGSEGV")) {
-			m_observer->UpdateGotControl(DBG_RECV_SIGNAL_SIGSEGV);
+			UpdateGotControl(DBG_RECV_SIGNAL_SIGSEGV);
 
 		} else if (signame == wxT("EXC_BAD_ACCESS")) {
-			m_observer->UpdateGotControl(DBG_RECV_SIGNAL_EXC_BAD_ACCESS);
+			UpdateGotControl(DBG_RECV_SIGNAL_EXC_BAD_ACCESS);
 
 		} else if (signame == wxT("SIGABRT")) {
-			m_observer->UpdateGotControl(DBG_RECV_SIGNAL_SIGABRT);
+			UpdateGotControl(DBG_RECV_SIGNAL_SIGABRT);
 
 		} else if (signame == wxT("SIGTRAP")) {
-			m_observer->UpdateGotControl(DBG_RECV_SIGNAL_SIGTRAP);
+			UpdateGotControl(DBG_RECV_SIGNAL_SIGTRAP);
 
 		} else {
 			//default
-			m_observer->UpdateGotControl(DBG_RECV_SIGNAL);
+			UpdateGotControl(DBG_RECV_SIGNAL);
 		}
 	} else if (reason == wxT("exited-normally") || reason == wxT("exited")) {
 		m_observer->UpdateAddLine(_("Program exited normally."));
 
 		//debugee program exit normally
-		m_observer->UpdateGotControl(DBG_EXITED_NORMALLY);
+		UpdateGotControl(DBG_EXITED_NORMALLY);
 
 	} else if (reason == wxT("function-finished")) {
 		wxString message;
@@ -406,10 +415,10 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 		}
 
 		//debugee program exit normally
-		m_observer->UpdateGotControl(DBG_FUNC_FINISHED);
+		UpdateGotControl(DBG_FUNC_FINISHED);
 	} else {
 		//by default return control to program
-		m_observer->UpdateGotControl(DBG_UNKNOWN);
+		UpdateGotControl(DBG_UNKNOWN);
 	}
 	return true;
 }

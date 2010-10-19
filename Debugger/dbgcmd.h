@@ -98,6 +98,7 @@ public:
 	{}
 	virtual ~DbgCmdHandlerAsyncCmd() {}
 
+	void UpdateGotControl(DebuggerReasons reason);
 	virtual bool ProcessOutput(const wxString &line);
 };
 

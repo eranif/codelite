@@ -78,8 +78,6 @@
       <File Name="replaceinfilespanel.h"/>
       <File Name="replaceinfilespanel.cpp"/>
       <File Name="dialogspagebase.h"/>
-      <File Name="dialogspage.cpp"/>
-      <File Name="dialogspage.h"/>
       <File Name="dialogspagebase.cpp"/>
       <File Name="syntaxhighlightdlg.h"/>
       <File Name="syntaxhighlightbasedlg.cpp"/>

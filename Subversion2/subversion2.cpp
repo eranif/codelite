@@ -512,9 +512,9 @@ void Subversion2::Patch(bool dryRun, const wxString &workingDirectory, wxEvtHand
 
 		// execute the command
 		wxString command;
-		command << wxT("patch -p0 ");
+		command << wxT("patch -l -p0 ");
 		if(dryRun)
-			command << wxT(" --dry-run ");
+			command << wxT(" --dry-run  ");
 		command << wxT(" -i \"") << patchFile << wxT("\"");
 
 		SvnCommandHandler *handler(NULL);

@@ -211,7 +211,7 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 
 		// Before using the 'crawlerScan' we lock it, since it is not mt-safe
 		for(size_t i=0; i<filteredFileList.GetCount(); i++) {
-			
+
 			// Skip binary files
 			if(TagsManagerST::Get()->IsBinaryFile(filteredFileList.Item(i))) {
 				DEBUG_MESSAGE( wxString::Format(wxT("Skipping binary file %s"), filteredFileList.Item(i).c_str()) );
@@ -248,13 +248,13 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 {
 	wxString      dbfile = req->getDbfile();
 	wxString      file   = req->getFile();
-	
+
 	// Skip binary file
 	if(TagsManagerST::Get()->IsBinaryFile(file)) {
 		DEBUG_MESSAGE( wxString::Format(wxT("Skipping binary file %s"), file.c_str()) );
 		return;
 	}
-	
+
 	// convert the file to tags
 	TagsManager *tagmgr = TagsManagerST::Get();
 
@@ -414,13 +414,13 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
 
 		// Invoke the crawler
 		const wxCharBuffer cfile = filename.mb_str(wxConvUTF8);
-		
+
 		// Skip binary files
 		if(TagsManagerST::Get()->IsBinaryFile(filename)) {
 			DEBUG_MESSAGE( wxString::Format(wxT("Skipping binary file %s"), filename.c_str()) );
 			return;
 		}
-		
+
 		// Before using the 'crawlerScan' we lock it, since it is not mt-safe
 		crawlerScan( cfile.data() );
 
@@ -521,13 +521,13 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 		}
 
 		wxFileName curFile(wxString(req->_workspaceFiles.at(i).c_str(), wxConvUTF8));
-		
+
 		// Skip binary files
 		if(TagsManagerST::Get()->IsBinaryFile(curFile.GetFullPath())) {
 			DEBUG_MESSAGE( wxString::Format(wxT("Skipping binary file %s"), curFile.GetFullPath().c_str()) );
 			continue;
 		}
-		
+
 		// Send notification to the main window with our progress report
 		precent = (int)((i / maxVal) * 100);
 
@@ -622,13 +622,20 @@ ParseRequest::~ParseRequest()
 {
 }
 
+// Adaptor to the parse thread 
+static ParseThread* gs_theParseThread = NULL;
 
 void ParseThreadST::Free()
 {
+	if(gs_theParseThread) {
+		delete gs_theParseThread;
+	}
+	gs_theParseThread = NULL;
 }
 
 ParseThread* ParseThreadST::Get()
 {
-	static ParseThread theParseThread;
-	return &theParseThread;
+	if(gs_theParseThread == NULL)
+		gs_theParseThread = new ParseThread;
+	return gs_theParseThread;
 }

@@ -116,14 +116,22 @@ public:
 //////////////////////////////////////
 // Adapter class to TagsManager
 //////////////////////////////////////
+static TagsManager* gs_TagsManager = NULL;
+
 void TagsManagerST::Free()
 {
+	if(gs_TagsManager) {
+		delete gs_TagsManager;
+	}
+	gs_TagsManager = NULL;
 }
 
 TagsManager* TagsManagerST::Get()
 {
-	static TagsManager theTagsManager;
-	return &theTagsManager;
+	if(gs_TagsManager == NULL)
+		gs_TagsManager = new TagsManager();
+
+	return gs_TagsManager;
 }
 
 //------------------------------------------------------------------------------
@@ -2682,7 +2690,7 @@ wxString TagsManager::WrapLines(const wxString& str)
 		} else if(*iter == wxT('\n')) {
 			wrappedString << wxT("\n");
 			curLineBytes = 0;
-			
+
 		} else if(*iter == wxT('\r')) {
 			// Skip it
 

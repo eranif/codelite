@@ -136,5 +136,30 @@
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Win_wxWidgets_29" Selected="no">
+      <Project Name="wxsqlite3" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="wxscintilla" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="wxFormBuilder" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="UnitTestPP" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="SymbolView" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="Subversion2" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="snipwiz" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="QMakePlugin" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="plugin_sdk" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="MacBundler" ConfigName="WinReleaseUnicode"/>
+      <Project Name="LiteEditor" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="Interfaces" ConfigName="Common"/>
+      <Project Name="Gizmos" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="ExternalTools" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="DebuggerGDB" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="Cscope" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="CppChecker" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="Copyright" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="ContinuousBuild" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="CodeLite" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="CodeFormatter" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="abbreviation" ConfigName="Win_wxWidgets_29"/>
+    </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

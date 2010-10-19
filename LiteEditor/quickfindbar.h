@@ -78,6 +78,7 @@ protected:
 
 public:
 	QuickFindBar(wxWindow *parent, wxWindowID id = wxID_ANY);
+	virtual ~QuickFindBar();
 	int GetCloseButtonId();
 	bool Show(bool s = true);
 	bool Show(const wxString &findWhat);

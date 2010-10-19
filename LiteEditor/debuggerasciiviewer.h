@@ -21,6 +21,7 @@ class DebuggerAsciiViewer : public DebuggerAsciiViewerBase
 public:
 	/** Constructor */
 	DebuggerAsciiViewer( wxWindow* parent     );
+	virtual ~DebuggerAsciiViewer();
 	void UpdateView    (const wxString &expr, const wxString &value);
 };
 

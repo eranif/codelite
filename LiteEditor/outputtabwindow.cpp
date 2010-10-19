@@ -70,7 +70,10 @@ OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString
 
 OutputTabWindow::~OutputTabWindow()
 {
-}
+	wxTheApp->Disconnect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),   NULL, this);
+	wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),   NULL, this);
+	wxTheApp->Disconnect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
+	wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);}
 
 void OutputTabWindow::DefineMarker(wxScintilla *sci, int marker, int markerType, wxColor fore, wxColor back)
 {

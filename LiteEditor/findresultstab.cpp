@@ -121,6 +121,7 @@ FindResultsTab::~FindResultsTab()
 		delete m_find;
 		m_find = NULL;
 	}
+	wxTheApp->Disconnect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
 }
 
 MatchInfo& FindResultsTab::GetMatchInfo(size_t idx)

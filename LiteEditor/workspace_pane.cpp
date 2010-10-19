@@ -57,6 +57,11 @@ WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiMan
 
 WorkspacePane::~WorkspacePane()
 {
+	wxTheApp->Disconnect(wxEVT_WORKSPACE_LOADED,         wxCommandEventHandler(WorkspacePane::OnWorkspaceConfig),     NULL, this);
+	wxTheApp->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(WorkspacePane::OnWorkspaceConfig),     NULL, this);
+	wxTheApp->Disconnect(wxEVT_WORKSPACE_CLOSED,         wxCommandEventHandler(WorkspacePane::OnWorkspaceClosed),     NULL, this);
+    wxTheApp->Disconnect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspacePane::OnConfigurationManager),   NULL, this);
+    wxTheApp->Disconnect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspacePane::OnConfigurationManagerUI), NULL, this);
 }
 
 #define IS_DETACHED(name) (detachedPanes.Index(name) != wxNOT_FOUND) ? true : false

@@ -124,3 +124,11 @@ void DebuggerAsciiViewer::OnEdit(wxCommandEvent& e)
 		break;
 	}
 }
+
+DebuggerAsciiViewer::~DebuggerAsciiViewer()
+{
+	wxTheApp->Disconnect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit),   NULL, this);
+	wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit),   NULL, this);
+	wxTheApp->Disconnect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
+	wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
+}

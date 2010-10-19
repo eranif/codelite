@@ -55,6 +55,9 @@ OutputViewControlBar::OutputViewControlBar(wxWindow* win, OutputPaneBook *book, 
 
 OutputViewControlBar::~OutputViewControlBar()
 {
+	wxTheApp->Disconnect ( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputViewControlBar::OnEditorFocus  ), NULL, this );
+	wxTheApp->Disconnect ( wxEVT_BUILD_STARTED  , wxCommandEventHandler ( OutputViewControlBar::OnBuildStarted ), NULL, this );
+	wxTheApp->Disconnect ( wxEVT_BUILD_ENDED    , wxCommandEventHandler ( OutputViewControlBar::OnBuildEnded   ), NULL, this );
 }
 
 void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, bool selected)

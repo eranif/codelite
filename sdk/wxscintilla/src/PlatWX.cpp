@@ -388,13 +388,17 @@ void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated
     wxBitmap bmp(r.width, r.height, 32);
 	if(bmp.IsOk() == false)
 		return;
-
+	
+	ColourDesired cdo;
 #if wxVERSION_NUMBER >= 2900
 	{
 #endif
 
     wxAlphaPixelData pixData(bmp);
+#if wxVERSION_NUMBER <= 2900
     pixData.UseAlpha();
+#endif
+
 	wxAlphaPixelData::Iterator p(pixData);
 
     // Set the fill pixels
@@ -419,7 +423,7 @@ void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated
     }
 
     // Set the outline pixels
-    ColourDesired cdo(outline.AsLong());
+    cdo.Set(outline.AsLong());
     red   = cdo.GetRed();
     green = cdo.GetGreen();
     blue  = cdo.GetBlue();

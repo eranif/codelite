@@ -47,6 +47,10 @@ OpenWindowsPanel::~OpenWindowsPanel()
 	}
     // clear list now, or wxGTK seems to crash on exit
     m_fileList->Clear();
+	
+    wxTheApp->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
+    wxTheApp->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OpenWindowsPanel::OnEditorClosing), NULL, this);
+    wxTheApp->Disconnect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
 }
 
 int OpenWindowsPanel::EditorItem(LEditor *editor)

@@ -108,6 +108,42 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
+    <Configuration Name="Win_wxWidgets_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="./sqlite3/include"/>
+      </Compiler>
+      <Linker Options=" $(shell wx-config --libs --debug=yes --unicode=yes);" Required="yes">
+        <LibraryPath Value="../../lib/gcc_lib/"/>
+        <Library Value="libsqlite3.a"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../../lib/gcc_lib/libwxsqlite3ud.dll" IntermediateDirectory="./WinDbg_29" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy ..\..\lib\gcc_lib\libwxsqlite3ud.dll ..\..\Runtime</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
     <GlobalSettings>
       <Compiler Options="">
         <IncludePath Value="."/>
@@ -121,4 +157,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <Dependencies Name="Win_wxWidgets_29">
+    <Project Name="sqlite3"/>
+  </Dependencies>
 </CodeLite_Project>

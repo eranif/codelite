@@ -139,7 +139,6 @@ void WorkspaceTab::ConnectEvents()
 
     wxTheApp->Connect(XRCID("show_in_workspace"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnShowFile),   NULL, this);
     wxTheApp->Connect(XRCID("show_in_workspace"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspaceTab::OnShowFileUI), NULL, this);
-
     wxTheApp->Connect(wxEVT_WORKSPACE_LOADED,      wxCommandEventHandler(WorkspaceTab::OnWorkspaceLoaded),     NULL, this);
     wxTheApp->Connect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(WorkspaceTab::OnWorkspaceClosed),     NULL, this);
     wxTheApp->Connect(wxEVT_PROJ_ADDED,            wxCommandEventHandler(WorkspaceTab::OnProjectAdded),        NULL, this);

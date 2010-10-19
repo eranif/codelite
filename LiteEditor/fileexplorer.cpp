@@ -54,6 +54,10 @@ FileExplorer::FileExplorer(wxWindow *parent, const wxString &caption)
 
 FileExplorer::~FileExplorer()
 {
+    wxTheApp->Disconnect(XRCID("show_in_explorer"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorer::OnShowFile), NULL, this);
+    wxTheApp->Disconnect(XRCID("show_in_explorer"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FileExplorer::OnShowFileUI), NULL, this);
+    wxTheApp->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(FileExplorer::OnWorkspaceLoaded), NULL, this);
+    wxTheApp->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(FileExplorer::OnActiveEditorChanged), NULL, this);
 }
 
 void FileExplorer::CreateGUIControls()

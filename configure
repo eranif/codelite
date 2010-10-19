@@ -17,7 +17,6 @@ createVariables()
 {
 	## set the compiler name
 	#  Note the lack of -fPIC. Only use this for .so libs; strange and random bugs occur otherwise
-s
   # See if there's an alternative preference for the compilers
   if [ -z "$CXX" ]; then
 	compiler_name="g++ "

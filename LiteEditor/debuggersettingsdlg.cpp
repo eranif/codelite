@@ -33,30 +33,22 @@
 #include "dbgcommanddlg.h"
 #include "debuggerconfigtool.h"
 
-//-------------------------------------------------------------------
-DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
-	: DebuggerPageBase(parent)
+///////////////////////////////////////////////////
+// Misc Page
+///////////////////////////////////////////////////
+
+DebuggerPageMisc::DebuggerPageMisc(wxWindow* parent, const wxString &title)
+	: DbgPageMiscBase(parent)
 	, m_title(title)
 {
 	DebuggerInformation info;
-	if(DebuggerMgr::Get().GetDebuggerInformation(m_title, info)) {
-		m_textCtrDbgPath->SetValue(info.path);
+	if(DebuggerMgr::Get().GetDebuggerInformation(title, info)) {
 		m_checkBoxEnableLog->SetValue(info.enableDebugLog);
-		m_checkBoxEnablePendingBreakpoints->SetValue(info.enablePendingBreakpoints);
-		m_checkBreakAtWinMain->SetValue(info.breakAtWinMain);
 		m_checkShowTerminal->SetValue(info.showTerminal);
 		m_checkUseRelativePaths->SetValue(info.useRelativeFilePaths);
-		m_catchThrow->SetValue(info.catchThrow);
-		m_spinCtrlNumElements->SetValue(info.maxDisplayStringSize);
-		m_showTooltips->SetValue(info.showTooltips);
-		m_checkBoxAutoExpand->SetValue(info.autoExpandTipItems);
-		m_textCtrlStartupCommands->SetValue( info.startupCommands );
-
-		m_checkBoxExpandLocals->SetValue(info.resolveLocals);
 #ifdef __WXMSW__
 		m_checkBoxDebugAssert->SetValue(info.debugAsserts);
 #endif
-		m_checkBoxSetBreakpointsAfterMain->SetValue(info.applyBreakpointsAfterProgramStarted);
 		m_textCtrlCygwinPathCommand->SetValue(info.cygwinPathCommand);
 	}
 
@@ -64,7 +56,58 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 	m_checkBoxDebugAssert->SetValue(false);
 	m_checkBoxDebugAssert->Enable(false);
 #endif
+}
 
+DebuggerPageMisc::~DebuggerPageMisc()
+{
+}
+
+void DebuggerPageMisc::OnDebugAssert(wxCommandEvent& event)
+{
+}
+
+void DebuggerPageMisc::OnWindowsUI(wxUpdateUIEvent& event)
+{
+}
+
+///////////////////////////////////////////////////
+// Startup Commands Page
+///////////////////////////////////////////////////
+
+DebuggerPageStartupCmds::DebuggerPageStartupCmds(wxWindow* parent, const wxString& title)
+	: DbgPageStartupCmdsBase(parent)
+	, m_title(title)
+{
+	DebuggerInformation info;
+	if(DebuggerMgr::Get().GetDebuggerInformation(title, info)) {
+		m_textCtrlStartupCommands->SetValue(info.startupCommands);
+	}
+}
+
+DebuggerPageStartupCmds::~DebuggerPageStartupCmds()
+{
+}
+
+///////////////////////////////////////////////////
+// General Page
+///////////////////////////////////////////////////
+
+DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
+	: DbgPageGeneralBase(parent)
+	, m_title(title)
+{
+	DebuggerInformation info;
+	if(DebuggerMgr::Get().GetDebuggerInformation(m_title, info)) {
+		m_textCtrDbgPath->SetValue(info.path);
+		m_checkBoxEnablePendingBreakpoints->SetValue(info.enablePendingBreakpoints);
+		m_checkBreakAtWinMain->SetValue(info.breakAtWinMain);
+		m_catchThrow->SetValue(info.catchThrow);
+		m_spinCtrlNumElements->SetValue(info.maxDisplayStringSize);
+		m_showTooltips->SetValue(info.showTooltips);
+		m_checkBoxAutoExpand->SetValue(info.autoExpandTipItems);
+		m_checkBoxExpandLocals->SetValue(info.resolveLocals);
+		m_checkBoxSetBreakpointsAfterMain->SetValue(info.applyBreakpointsAfterProgramStarted);
+	}
 }
 
 DebuggerPage::~DebuggerPage()
@@ -93,31 +136,19 @@ void DebuggerPage::OnDebugAssert(wxCommandEvent& e)
 	}
 }
 
-//-------------------------------------------------------------------
-
-DebuggerSettingsDlg::DebuggerSettingsDlg( wxWindow* parent )
-	:DebuggerSettingsBaseDlg( parent )
+void DebuggerPage::OnWindowsUI(wxUpdateUIEvent& event)
 {
-	//fill the notebook with the available debuggers
-	Initialize();
-	ConnectButton(m_buttonOK, DebuggerSettingsDlg::OnOk);
-
-	// center the dialog
-	Centre();
-
-	WindowAttrManager::Load(this, wxT("DbgSettingsDlg"), NULL);
-	GetSizer()->Fit(this);
+	// enabloe the Cygwin/MinGW part only when under Windows
+	static bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
+	event.Enable(OS_WINDOWS);
 }
 
-void DebuggerSettingsDlg::Initialize()
+///////////////////////////////////////////////////
+// PreDefined types Page
+///////////////////////////////////////////////////
+DbgPagePreDefTypes::DbgPagePreDefTypes(wxWindow* parent)
+: DbgPagePreDefTypesBase(parent)
 {
-	DebuggerMgr &mgr = DebuggerMgr::Get();
-	wxArrayString debuggers = mgr.GetAvailableDebuggers();
-	for (size_t i=0; i<debuggers.GetCount(); i++) {
-		//create page per-debugger
-		m_book->AddPage(new DebuggerPage(m_book, debuggers.Item(i)), debuggers.Item(i), true);
-	}
-
 	//add items from the saved items
 	DebuggerSettingsPreDefMap data;
 	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
@@ -128,41 +159,12 @@ void DebuggerSettingsDlg::Initialize()
 	}
 }
 
-void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
+DbgPagePreDefTypes::~DbgPagePreDefTypes()
 {
-	wxUnusedVar(e);
-	//go over the debuggers and set the debugger path
-	for (size_t i=0; i<(size_t)m_book->GetPageCount(); i++) {
-		DebuggerPage *page =  (DebuggerPage *)m_book->GetPage(i);
+}
 
-		//find the debugger
-		DebuggerInformation info;
-		DebuggerMgr::Get().GetDebuggerInformation(page->m_title, info);
-
-		//populate the information and save it
-		info.enableDebugLog                      = page->m_checkBoxEnableLog->GetValue();
-		info.enablePendingBreakpoints            = page->m_checkBoxEnablePendingBreakpoints->GetValue();
-		info.path                                = page->m_textCtrDbgPath->GetValue();
-		info.name                                = page->m_title;
-		info.breakAtWinMain                      = page->m_checkBreakAtWinMain->IsChecked();
-		info.showTerminal                        = page->m_checkShowTerminal->IsChecked();
-		info.consoleCommand                      = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
-		info.useRelativeFilePaths                = page->m_checkUseRelativePaths->IsChecked();
-		info.catchThrow                          = page->m_catchThrow->IsChecked();
-		info.showTooltips                        = page->m_showTooltips->IsChecked();
-		info.startupCommands                     = page->m_textCtrlStartupCommands->GetValue();
-		info.maxDisplayStringSize                = page->m_spinCtrlNumElements->GetValue();
-		info.resolveLocals                       = page->m_checkBoxExpandLocals->IsChecked();
-#ifdef __WXMSW__
-		info.debugAsserts                        = page->m_checkBoxDebugAssert->IsChecked();
-#endif
-		info.autoExpandTipItems                  = page->m_checkBoxAutoExpand->IsChecked();
-		info.applyBreakpointsAfterProgramStarted = page->m_checkBoxSetBreakpointsAfterMain->IsChecked();
-		info.cygwinPathCommand                   = page->m_textCtrlCygwinPathCommand->GetValue();
-
-		DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
-	}
-
+void DbgPagePreDefTypes::Save()
+{
 	//copy the commands the serialized object m_data
 	DebuggerSettingsPreDefMap preDefMap;
 	std::map<wxString, DebuggerPreDefinedTypes> typesMap;
@@ -171,7 +173,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		PreDefinedTypesPage *page = dynamic_cast<PreDefinedTypesPage*>(m_notebookPreDefTypes->GetPage(i));
 		if(page) {
 			DebuggerPreDefinedTypes types = page->GetPreDefinedTypes();
-			types.SetActive( i == (size_t)m_notebookPreDefTypes->GetSelection() );
+			types.SetActive( i == (size_t) m_notebookPreDefTypes->GetSelection() );
 			typesMap[types.GetName()] = types;
 		}
 	}
@@ -179,21 +181,9 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 
 	//save the debugger commands
 	DebuggerConfigTool::Get()->WriteObject(wxT("DebuggerCommands"), &preDefMap);
-	EndModal(wxID_OK);
 }
 
-void DebuggerSettingsDlg::OnButtonCancel(wxCommandEvent &e)
-{
-	wxUnusedVar(e);
-	EndModal(wxID_CANCEL);
-}
-
-DebuggerSettingsDlg::~DebuggerSettingsDlg()
-{
-	WindowAttrManager::Save(this, wxT("DbgSettingsDlg"), NULL);
-}
-
-void DebuggerSettingsDlg::OnDeleteSet(wxCommandEvent& event)
+void DbgPagePreDefTypes::OnDeleteSet(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
 	int sel = m_notebookPreDefTypes->GetSelection();
@@ -209,13 +199,13 @@ void DebuggerSettingsDlg::OnDeleteSet(wxCommandEvent& event)
 	}
 }
 
-void DebuggerSettingsDlg::OnDeleteSetUI(wxUpdateUIEvent& event)
+void DbgPagePreDefTypes::OnDeleteSetUI(wxUpdateUIEvent& event)
 {
 	int sel = m_notebookPreDefTypes->GetSelection();
 	event.Enable(sel != wxNOT_FOUND && m_notebookPreDefTypes->GetPageText((size_t)sel) != wxT("Default"));
 }
 
-void DebuggerSettingsDlg::OnNewSet(wxCommandEvent& event)
+void DbgPagePreDefTypes::OnNewSet(wxCommandEvent& event)
 {
 	NewPreDefinedSetDlg dlg(this);
 	dlg.m_checkBoxMakeActive->SetValue(false);
@@ -260,9 +250,114 @@ void DebuggerSettingsDlg::OnNewSet(wxCommandEvent& event)
 	}
 }
 
-void DebuggerPage::OnWindowsUI(wxUpdateUIEvent& event)
+///////////////////////////////////////////////////
+// Container dialog Page
+///////////////////////////////////////////////////
+DebuggerSettingsDlg::DebuggerSettingsDlg( wxWindow* parent )
+	:DebuggerSettingsBaseDlg( parent )
 {
-	// enabloe the Cygwin/MinGW part only when under Windows
-	static bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
-	event.Enable(OS_WINDOWS);
+	//fill the notebook with the available debuggers
+	Initialize();
+	ConnectButton(m_buttonOK, DebuggerSettingsDlg::OnOk);
+
+	// center the dialog
+	Centre();
+
+	WindowAttrManager::Load(this, wxT("DbgSettingsDlg"), NULL);
+	GetSizer()->Fit(this);
+}
+
+void DebuggerSettingsDlg::Initialize()
+{
+	DebuggerMgr &mgr = DebuggerMgr::Get();
+	wxArrayString debuggers = mgr.GetAvailableDebuggers();
+	for (size_t i=0; i<debuggers.GetCount(); i++) {
+
+		//create page per-debugger
+		m_notebook2->AddPage(0, debuggers.Item(i), false);
+
+		// for each debugger, add page
+		m_notebook2->AddSubPage(new DebuggerPage           (m_notebook2, debuggers.Item(i)), wxT("General"),          true);
+		m_notebook2->AddSubPage(new DebuggerPageMisc       (m_notebook2, debuggers.Item(i)), wxT("Misc"),             false);
+		m_notebook2->AddSubPage(new DebuggerPageStartupCmds(m_notebook2, debuggers.Item(i)), wxT("Startup Commands"), false);
+	}
+
+	m_notebook2->AddPage(new DbgPagePreDefTypes(m_notebook2), wxT("Pre Defined Types"), false);
+}
+
+void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	//go over the debuggers and set the debugger path
+	for (size_t i=0; i<(size_t) m_notebook2->GetPageCount(); i++) {
+		wxWindow *win = m_notebook2->GetPage(i);
+		if( !win )
+			continue;
+
+		DebuggerPage *page =  dynamic_cast<DebuggerPage*>(win);
+		if(page) {
+			//find the debugger
+			DebuggerInformation info;
+			DebuggerMgr::Get().GetDebuggerInformation(page->m_title, info);
+
+			//populate the information and save it
+			info.enablePendingBreakpoints            = page->m_checkBoxEnablePendingBreakpoints->GetValue();
+			info.path                                = page->m_textCtrDbgPath->GetValue();
+			info.name                                = page->m_title;
+			info.breakAtWinMain                      = page->m_checkBreakAtWinMain->IsChecked();
+			info.consoleCommand                      = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
+			info.catchThrow                          = page->m_catchThrow->IsChecked();
+			info.showTooltips                        = page->m_showTooltips->IsChecked();
+			info.maxDisplayStringSize                = page->m_spinCtrlNumElements->GetValue();
+			info.resolveLocals                       = page->m_checkBoxExpandLocals->IsChecked();
+			info.autoExpandTipItems                  = page->m_checkBoxAutoExpand->IsChecked();
+			info.applyBreakpointsAfterProgramStarted = page->m_checkBoxSetBreakpointsAfterMain->IsChecked();
+			DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
+
+		}
+
+		DebuggerPageMisc *miscPage =  dynamic_cast<DebuggerPageMisc*>(win);
+		if(miscPage) {
+			//find the debugger
+			DebuggerInformation info;
+			DebuggerMgr::Get().GetDebuggerInformation(miscPage->m_title, info);
+
+			//populate the information and save it
+			info.enableDebugLog                      = miscPage->m_checkBoxEnableLog->GetValue();
+			info.showTerminal                        = miscPage->m_checkShowTerminal->IsChecked();
+			info.useRelativeFilePaths                = miscPage->m_checkUseRelativePaths->IsChecked();
+#ifdef __WXMSW__
+			info.debugAsserts                        = miscPage->m_checkBoxDebugAssert->IsChecked();
+#endif
+			info.cygwinPathCommand                   = miscPage->m_textCtrlCygwinPathCommand->GetValue();
+			DebuggerMgr::Get().SetDebuggerInformation(miscPage->m_title, info);
+		}
+
+		DebuggerPageStartupCmds *suCmds =  dynamic_cast<DebuggerPageStartupCmds*>(win);
+		if(suCmds) {
+			//find the debugger
+			DebuggerInformation info;
+			DebuggerMgr::Get().GetDebuggerInformation(suCmds->m_title, info);
+			info.startupCommands = suCmds->m_textCtrlStartupCommands->GetValue();
+			DebuggerMgr::Get().SetDebuggerInformation(suCmds->m_title, info);
+		}
+
+		DbgPagePreDefTypes *pd = dynamic_cast<DbgPagePreDefTypes*>( win );
+		if(pd) {
+			pd->Save();
+		}
+	}
+
+	EndModal(wxID_OK);
+}
+
+void DebuggerSettingsDlg::OnButtonCancel(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	EndModal(wxID_CANCEL);
+}
+
+DebuggerSettingsDlg::~DebuggerSettingsDlg()
+{
+	WindowAttrManager::Save(this, wxT("DbgSettingsDlg"), NULL);
 }

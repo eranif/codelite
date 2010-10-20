@@ -83,7 +83,7 @@ protected:
 	void OnButtonDeleteUI( wxUpdateUIEvent& event );
 	void OnListItemDeSelected(wxListEvent &e);
 	void OnButtonOK(wxCommandEvent &e);
-	void OnCheckEnterFileNameManually(wxCommandEvent &e);
+	void OnUseUnderscores(wxCommandEvent &e);
 	bool ValidateInput();
 	void OnTextEnter(wxCommandEvent &e);
 	void OnCheckImpleAllVirtualFunctions(wxCommandEvent &e);
@@ -91,7 +91,9 @@ protected:
 	void OnBrowseVD(wxCommandEvent &e);
 	void OnBrowseNamespace(wxCommandEvent &e);
 	void OnCheckInline(wxCommandEvent &e);
-
+	
+	wxString doSpliteByCaptilization(const wxString &str);
+	
 public:
 	/** Constructor */
 	NewClassDlg( wxWindow* parent, IManager *mgr );

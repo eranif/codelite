@@ -41,8 +41,6 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 		, m_selectedItem(wxNOT_FOUND)
 		, m_mgr(mgr)
 {
-	m_bmp->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("new_class_title")));
-
 	//set two columns to our list
 	m_listCtrl1->InsertColumn(0, wxT("Name"));
 	m_listCtrl1->InsertColumn(1, wxT("Access"));
@@ -260,37 +258,28 @@ void NewClassDlg::GetNewClassInfo(NewClassInfo &info)
 
 wxString NewClassDlg::GetClassFile()
 {
-	if(m_checkBoxEnterFileName->IsChecked()) {
-		return m_textCtrlFileName->GetValue();
-	} else {
-		wxString fileName(m_textClassName->GetValue());
-		fileName.MakeLower();
-		return fileName;
-	}
-}
-
-void NewClassDlg::OnCheckEnterFileNameManually(wxCommandEvent &e)
-{
-	if(e.IsChecked()) {
-		m_textCtrlFileName->Enable(true);
-		m_textCtrlFileName->SetFocus();
-		m_textCtrlFileName->SelectAll();
-
-	} else {
-		wxString file_name( m_textClassName->GetValue() );
-		file_name.MakeLower();
-		m_textCtrlFileName->SetValue( file_name );
-		m_textCtrlFileName->Enable(false);
-	}
+	return m_textCtrlFileName->GetValue();
 }
 
 void NewClassDlg::OnTextEnter(wxCommandEvent &e)
 {
-	if(m_checkBoxEnterFileName->IsChecked() == false) {
-		wxString file_name( m_textClassName->GetValue() );
-		file_name.MakeLower();
-		m_textCtrlFileName->SetValue( file_name );
+	wxString file_name( m_textClassName->GetValue() );
+	if(m_checkBoxUseUnderscores->IsChecked()) {
+		file_name = doSpliteByCaptilization(m_textClassName->GetValue());
 	}
+	
+	file_name.MakeLower();
+	m_textCtrlFileName->SetValue( file_name );
+}
+
+void NewClassDlg::OnUseUnderscores(wxCommandEvent& e)
+{
+	wxString file_name( m_textClassName->GetValue() );
+	if(e.IsChecked()) {
+		file_name = doSpliteByCaptilization(file_name);
+	}
+	file_name.MakeLower();
+	m_textCtrlFileName->SetValue( file_name );
 }
 
 void NewClassDlg::OnCheckImpleAllVirtualFunctions(wxCommandEvent &e)
@@ -384,4 +373,39 @@ void NewClassDlg::OnCheckInline(wxCommandEvent &e)
 		if (!m_checkBox6->IsEnabled())
 			m_checkBox6->Enable (true);
 	}
+}
+
+wxString NewClassDlg::doSpliteByCaptilization(const wxString& str)
+{
+	if(str.IsEmpty())
+		return wxT("");
+		
+	wxString output;
+	int cur  = 0;
+	int prev = 0;
+	
+	wxString::const_iterator iter = str.begin();
+	for(; iter != str.end(); iter++) {
+		int cur = (int)(*iter);
+		if(prev == 0) {
+			// we dont have a valid 'prev' yet
+			output << *iter;
+			prev = cur;
+			continue;
+		}
+		
+		if(!isalpha(cur) || !isalpha(prev)) {
+			prev = cur;
+			output << *iter;
+			continue;
+		}
+		
+		if(isupper(cur) && islower(prev)) {
+			output << wxT("_") << *iter ;
+		} else {
+			output << *iter;
+		}
+		prev = cur;
+	}
+	return output;
 }

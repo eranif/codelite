@@ -64,6 +64,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 	m_checkBoxSkipMatchesFoundInComments->SetValue(m_data.GetFlags() & wxFRD_SKIP_COMMENTS);
 	m_checkBoxSkipMatchesFoundInStrings->SetValue(m_data.GetFlags() & wxFRD_SKIP_STRINGS);
 	m_checkBoxHighlighStringComments->SetValue(m_data.GetFlags() & wxFRD_COLOUR_COMMENTS);
+	
 	// Set encoding
 	wxArrayString  astrEncodings;
 	wxFontEncoding fontEnc;
@@ -201,7 +202,7 @@ SearchData FindInFilesDialog::DoGetSearchData() {
 	}
 	data.SetFiles(files);
 
-	data.UseNewTab(m_resInNewTab->GetValue());
+	data.UseNewTab(m_checkBoxSeparateTab->IsChecked());
 	data.SetExtensions(m_fileTypes->GetValue());
 	return data;
 }

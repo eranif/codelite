@@ -267,7 +267,7 @@ void NewClassDlg::OnTextEnter(wxCommandEvent &e)
 	if(m_checkBoxUseUnderscores->IsChecked()) {
 		file_name = doSpliteByCaptilization(m_textClassName->GetValue());
 	}
-	
+
 	file_name.MakeLower();
 	m_textCtrlFileName->SetValue( file_name );
 }
@@ -379,33 +379,37 @@ wxString NewClassDlg::doSpliteByCaptilization(const wxString& str)
 {
 	if(str.IsEmpty())
 		return wxT("");
-		
+
 	wxString output;
-	int cur  = 0;
-	int prev = 0;
-	
-	wxString::const_iterator iter = str.begin();
-	for(; iter != str.end(); iter++) {
-		int cur = (int)(*iter);
-		if(prev == 0) {
-			// we dont have a valid 'prev' yet
-			output << *iter;
-			prev = cur;
+	bool lastWasLower(true);
+
+	for(int i=str.length()-1; i >= 0; i--) {
+
+		int cur  = (int)str[i];
+		int prev = i > 0 ? (int)str[i-1] : 0;
+
+		if(!isalpha(cur)) {
+			output.Prepend((wxChar)cur);
 			continue;
 		}
-		
-		if(!isalpha(cur) || !isalpha(prev)) {
-			prev = cur;
-			output << *iter;
-			continue;
-		}
-		
-		if(isupper(cur) && islower(prev)) {
-			output << wxT("_") << *iter ;
+
+		if(isupper(cur) && lastWasLower) {
+			output.Prepend((wxChar)cur);
+			output.Prepend(wxT('_'));
+
 		} else {
-			output << *iter;
+			output.Prepend((wxChar)cur);
 		}
-		prev = cur;
+
+		lastWasLower = islower(cur);
+	}
+
+	// replace any double underscores with single one
+	while(output.Replace(wxT("__"), wxT("_"))) {}
+
+	// remove any underscore from the start of the word
+	if(output.StartsWith(wxT("_"))) {
+		output.Remove(0, 1);
 	}
 	return output;
 }

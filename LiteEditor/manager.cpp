@@ -1769,6 +1769,7 @@ void Manager::ExecuteNoDebug ( const wxString &projectName )
 	wxString wd;
 
 	// we call it here once for the 'wd'
+	EnvSetter env1;
 	wxString execLine = GetProjectExecutionCommand ( projectName, wd, true );
 	ProjectPtr proj = GetProject ( projectName );
 
@@ -2025,8 +2026,11 @@ void Manager::DbgStart ( long pid )
 		args = bldConf->GetCommandArguments();
 		exepath.Prepend ( wxT ( "\"" ) );
 		exepath.Append ( wxT ( "\"" ) );
+		
+		// Apply environment variables
+		EnvSetter env;
 		wd = bldConf->GetWorkingDirectory();
-
+		
 		// Expand variables before passing them to the debugger
 		wd = ExpandVariables ( wd, proj, clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
 		exepath = ExpandVariables ( exepath, proj, clMainFrame::Get()->GetMainBook()->GetActiveEditor() );

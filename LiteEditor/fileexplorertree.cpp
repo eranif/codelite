@@ -30,6 +30,7 @@
 #include "ctags_manager.h"
 #include "wx/xrc/xmlres.h"
 #include "pluginmanager.h"
+#include "environmentconfig.h"
 #include "globals.h"
 #include "dirsaver.h"
 #include "procutils.h"
@@ -350,7 +351,10 @@ void FileExplorerTree::OnOpenShell(wxCommandEvent &event)
 
 		DirSaver ds;
 		wxSetWorkingDirectory(fullpath.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-
+		
+		// Apply the environment before launching the console
+		EnvSetter env;
+		
 		if (!ProcUtils::Shell()) {
 			wxMessageBox(_("Failed to load shell terminal"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 			return;

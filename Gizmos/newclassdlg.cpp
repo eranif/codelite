@@ -35,12 +35,26 @@
 #include "globals.h"
 #include "wx/dir.h"
 #include "workspace.h"
+#include "editor_config.h"
+#include "new_class_dlg_data.h"
 
 NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 		: NewClassBaseDlg( parent )
 		, m_selectedItem(wxNOT_FOUND)
 		, m_mgr(mgr)
 {
+
+	NewClassDlgData data;
+	EditorConfigST::Get()->ReadObject(wxT("NewClassDlgData"), &data);
+
+	m_checkBoxCopyable->SetValue       ( data.GetFlags() & NewClassDlgData::NonCopyable);
+	m_checkBoxImplPureVirtual->SetValue( data.GetFlags() & NewClassDlgData::ImplAllPureVirtualFuncs);
+	m_checkBoxImplVirtual->SetValue    ( data.GetFlags() & NewClassDlgData::ImplAllVirtualFuncs);
+	m_checkBoxInline->SetValue         ( data.GetFlags() & NewClassDlgData::FileIniline);
+	m_checkBoxSingleton->SetValue      ( data.GetFlags() & NewClassDlgData::Singleton);
+	m_checkBoxUseUnderscores->SetValue ( data.GetFlags() & NewClassDlgData::UseUnderscores);
+	m_checkBoxVirtualDtor->SetValue    ( data.GetFlags() & NewClassDlgData::VirtualDtor);
+
 	//set two columns to our list
 	m_listCtrl1->InsertColumn(0, wxT("Name"));
 	m_listCtrl1->InsertColumn(1, wxT("Access"));
@@ -167,6 +181,35 @@ void NewClassDlg::OnButtonOK(wxCommandEvent &e)
 	if (!ValidateInput()) {
 		return;
 	}
+
+	// Save the check boxes ticked
+	size_t flags(0);
+
+	if(m_checkBoxCopyable->IsChecked())
+		flags |= NewClassDlgData::NonCopyable;
+
+	if(m_checkBoxImplPureVirtual->IsChecked())
+		flags |= NewClassDlgData::ImplAllPureVirtualFuncs;
+
+	if(m_checkBoxImplVirtual->IsChecked())
+		flags |= NewClassDlgData::ImplAllVirtualFuncs;
+
+	if(m_checkBoxInline->IsChecked())
+		flags |= NewClassDlgData::FileIniline;
+
+	if(m_checkBoxSingleton->IsChecked())
+		flags |= NewClassDlgData::Singleton;
+
+	if(m_checkBoxUseUnderscores->IsChecked())
+		flags |= NewClassDlgData::UseUnderscores;
+
+	if(m_checkBoxVirtualDtor->IsChecked())
+		flags |= NewClassDlgData::VirtualDtor;
+
+	NewClassDlgData data;
+	data.SetFlags( flags );
+	EditorConfigST::Get()->WriteObject(wxT("NewClassDlgData"), &data);
+
 	EndModal(wxID_OK);
 }
 
@@ -367,11 +410,11 @@ void NewClassDlg::OnCheckInline(wxCommandEvent &e)
 	// Inline implementation conflict with singleton implementation
 	// so disable the relative checkbox
 	if (e.IsChecked()) {
-		if (m_checkBox6->IsEnabled())
-			m_checkBox6->Enable (false);
+		if (m_checkBoxSingleton->IsEnabled())
+			m_checkBoxSingleton->Enable (false);
 	} else {
-		if (!m_checkBox6->IsEnabled())
-			m_checkBox6->Enable (true);
+		if (!m_checkBoxSingleton->IsEnabled())
+			m_checkBoxSingleton->Enable (true);
 	}
 }
 

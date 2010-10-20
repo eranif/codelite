@@ -91,9 +91,9 @@ protected:
 	void OnBrowseVD(wxCommandEvent &e);
 	void OnBrowseNamespace(wxCommandEvent &e);
 	void OnCheckInline(wxCommandEvent &e);
-	
+
 	wxString doSpliteByCaptilization(const wxString &str);
-	
+
 public:
 	/** Constructor */
 	NewClassDlg( wxWindow* parent, IManager *mgr );
@@ -102,7 +102,7 @@ public:
 	void GetNewClassInfo(NewClassInfo &info);
 
 	void GetInheritance(std::vector< ClassParentInfo > &inheritVec);
-	bool IsSingleton() {return m_checkBox6->GetValue();}
+	bool IsSingleton() {return m_checkBoxSingleton->GetValue();}
 	wxString GetClassName(){return m_textClassName->GetValue();}
 	wxString GetClassNamespace() const {return m_textCtrlNamespace->GetValue();}
 	wxString GetClassPath();

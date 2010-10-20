@@ -66,7 +66,7 @@ class NewClassBaseDlg : public wxDialog
 		wxButton* m_buttonDelInheritance;
 		wxCheckBox* m_checkBoxCopyable;
 		wxCheckBox* m_checkBoxImplVirtual;
-		wxCheckBox* m_checkBox6;
+		wxCheckBox* m_checkBoxSingleton;
 		wxCheckBox* m_checkBoxImplPureVirtual;
 		wxCheckBox* m_checkBoxVirtualDtor;
 		wxStaticLine* m_staticline5;

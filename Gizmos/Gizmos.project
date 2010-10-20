@@ -10,6 +10,8 @@
     <File Name="gizmos.cpp"/>
     <File Name="newplugindata.cpp"/>
     <File Name="newplugindata.h"/>
+    <File Name="new_class_dlg_data.h"/>
+    <File Name="new_class_dlg_data.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Wizard">
     <File Name="pluginwizard_page1.cpp"/>

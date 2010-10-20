@@ -1743,7 +1743,7 @@
                                 <property name="label">This is a singleton class</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
-                                <property name="name">m_checkBox6</property>
+                                <property name="name">m_checkBoxSingleton</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
                                 <property name="size"></property>

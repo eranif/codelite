@@ -170,8 +170,8 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	m_checkBoxImplVirtual = new wxCheckBox( this, wxID_ANY, wxT("Implement all virtual functions"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_checkBoxImplVirtual, 0, wxALL, 5 );
 	
-	m_checkBox6 = new wxCheckBox( this, wxID_ANY, wxT("This is a singleton class"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer2->Add( m_checkBox6, 0, wxALL, 5 );
+	m_checkBoxSingleton = new wxCheckBox( this, wxID_ANY, wxT("This is a singleton class"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer2->Add( m_checkBoxSingleton, 0, wxALL, 5 );
 	
 	m_checkBoxImplPureVirtual = new wxCheckBox( this, wxID_ANY, wxT("Implement all pure virtual functions"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_checkBoxImplPureVirtual, 0, wxALL, 5 );

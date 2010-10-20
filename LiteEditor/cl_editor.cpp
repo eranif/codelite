@@ -2916,7 +2916,10 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 		// create new completion box
 		m_ccBox = new CCBox( this );
 	}
-
+	
+	// hide any previous occurance of the completion box
+	HideCompletionBox();
+	
 	if(tags.empty()) {
 		return;
 	}

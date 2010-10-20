@@ -3,10 +3,19 @@
 :: Check command arguments
 IF "%1"=="/?" GOTO USAGE
 IF "%1"=="all" GOTO ALL
+IF "%1"=="win7" GOTO WIN7
 
 :: Preare a development installer
 SET CODELITE_INSTALLER=codelite-devel
 "%ProgramFiles%\Inno Setup 5\iscc" lite_editor.iss /F%CODELITE_INSTALLER%
+
+GOTO END
+
+:WIN7
+
+:: Preare a development installer for Windows 7
+SET CODELITE_INSTALLER=codelite-devel
+"%ProgramFiles%\Inno Setup 5\iscc" lite_editor_win7.iss /F%CODELITE_INSTALLER%
 
 GOTO END
 

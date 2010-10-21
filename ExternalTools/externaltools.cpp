@@ -182,12 +182,6 @@ void ExternalToolsPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 	wxUnusedVar(type);
 }
 
-void ExternalToolsPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	wxUnusedVar(menu);
-	wxUnusedVar(type);
-}
-
 void ExternalToolsPlugin::UnPlug()
 {
 }

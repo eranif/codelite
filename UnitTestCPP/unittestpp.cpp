@@ -149,16 +149,6 @@ void UnitTestPP::HookPopupMenu(wxMenu *menu, MenuType type)
 	}
 }
 
-void UnitTestPP::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	if (type == MenuTypeEditor) {
-		wxMenuItem *item = menu->FindItem(XRCID("UNITTESTPP_EDITOR_POPUP"));
-		if (item) {
-			menu->Destroy(item);
-		}
-	}
-}
-
 void UnitTestPP::UnPlug()
 {
 }

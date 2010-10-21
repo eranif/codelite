@@ -176,16 +176,6 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
 	return menu;
 }
 
-void Subversion2::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	wxMenuItem *item = menu->FindItem(XRCID("SUBVERSION_EXPLORER_POPUP"));
-	if (item) {
-		menu->Destroy(item);
-		menu->Destroy(m_explorerSepItem);
-		m_explorerSepItem = NULL;
-	}
-}
-
 void Subversion2::UnPlug()
 {
 	GetManager()->GetTheApp()->Disconnect(XRCID("subversion2_settings"),             wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSettings),          NULL, this);

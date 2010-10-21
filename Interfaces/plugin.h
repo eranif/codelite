@@ -325,17 +325,6 @@ public:
 	};
 
 	/**
-	 * @brief un hook previosly hooked popup menu
-	 * @param menu the parent of our hooked menu
-	 * @param type the parent's type
-	 * @sa MenuType
-	 */
-	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type) {
-		wxUnusedVar(type);
-		wxUnusedVar(menu);
-	};
-
-	/**
 	 * @brief load image file from /path/to/install/plugins/resources/
 	 * @param name file name (name+extension)
 	 * @return Bitmap of wxNullBitmap if no match was found

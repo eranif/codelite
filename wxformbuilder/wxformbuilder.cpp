@@ -128,25 +128,6 @@ void wxFormBuilder::HookPopupMenu(wxMenu *menu, MenuType type)
 	}
 }
 
-void wxFormBuilder::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	if (type == MenuTypeFileView_Folder) {
-		wxMenuItem *item = menu->FindItem(XRCID("WXFB_POPUP"));
-		if (item) {
-			menu->Destroy(item);
-			menu->Destroy(m_separatorItem);
-			m_separatorItem = NULL;
-		}
-	} else if (type == MenuTypeFileView_File) {
-		if ( m_openWithWxFbItem && m_openWithWxFbSepItem ) {
-			menu->Destroy(m_openWithWxFbItem);
-			m_openWithWxFbItem = NULL;
-			menu->Destroy(m_openWithWxFbSepItem);
-			m_openWithWxFbSepItem = NULL;
-		}
-	}
-}
-
 void wxFormBuilder::UnPlug()
 {
 }
@@ -414,9 +395,9 @@ void wxFormBuilder::OnOpenFile(wxCommandEvent& e)
 				return;
 			}
 		}
-#endif		
+#endif
 	}
-	
+
 	// we failed, call event.Skip()
 	e.Skip();
 }

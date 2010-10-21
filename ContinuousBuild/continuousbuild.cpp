@@ -92,12 +92,6 @@ void ContinuousBuild::HookPopupMenu(wxMenu *menu, MenuType type)
 	wxUnusedVar(type);
 }
 
-void ContinuousBuild::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	wxUnusedVar(type);
-	wxUnusedVar(menu);
-}
-
 void ContinuousBuild::UnPlug()
 {
 	// before this plugin is un-plugged we must remove the tab we added

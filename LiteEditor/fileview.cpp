@@ -416,11 +416,6 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 
 	PopupMenu( menu );
 
-	if (ManagerST::Get()->IsBuildInProgress() == false) {
-		//let the plugins remove their hooked content
-		PluginManager::Get()->UnHookPopupMenu( menu, type );
-	}
-
 	//remove the custom makefile hooked menu items
 	for (size_t i=0; i<dynItems.size(); i++) {
 		menu->Destroy(dynItems.at(i));

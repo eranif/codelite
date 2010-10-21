@@ -127,7 +127,6 @@ public:
     virtual clToolBar *CreateToolBar(wxWindow *parent);
     virtual void CreatePluginMenu(wxMenu *pluginsMenu);
     virtual void HookPopupMenu(wxMenu *menu, MenuType type);
-    virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
     virtual void UnPlug();
 
     //--------------------------------------------

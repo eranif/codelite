@@ -645,18 +645,7 @@ void MacBundler::HookPopupMenu(wxMenu *menu, MenuType type)
 	}
 }
 
-void MacBundler::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	if (type == MenuTypeFileView_Project) {
-		wxMenuItem *item = menu->FindItem(XRCID("MACBUNDLER_PROJECT_MENU"));
-		if (item) {
-			menu->Destroy(item);
-		}
-	}
-}
-
 void MacBundler::UnPlug()
 {
-	//TODO:: perform the unplug action for this plugin
 }
 

@@ -213,15 +213,17 @@ void FileExplorerTree::OnContextMenu(wxTreeEvent &event)
 	if (item.IsOk()) {
 		SelectItem(item);
 		if (m_rclickMenu) {
+
+			// let the plugins hook their content. HookPopupMenu can work only once
+			// further calls are harmless
+			PluginManager::Get()->HookPopupMenu(m_rclickMenu, MenuTypeFileExplorer);
+
             wxMenuItem *tagItem = m_rclickMenu->FindChildItem(XRCID("tag_node"));
             if (tagItem) {
                 tagItem->Enable(IsDirNode(item));
             }
-			//let the plugins hook their content
-			PluginManager::Get()->HookPopupMenu(m_rclickMenu, MenuTypeFileExplorer);
+
 			PopupMenu(m_rclickMenu);
-			//let the plugins remove their hooked content
-			PluginManager::Get()->UnHookPopupMenu(m_rclickMenu, MenuTypeFileExplorer);
 		}
 	}
 }
@@ -351,10 +353,10 @@ void FileExplorerTree::OnOpenShell(wxCommandEvent &event)
 
 		DirSaver ds;
 		wxSetWorkingDirectory(fullpath.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-		
+
 		// Apply the environment before launching the console
 		EnvSetter env;
-		
+
 		if (!ProcUtils::Shell()) {
 			wxMessageBox(_("Failed to load shell terminal"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 			return;

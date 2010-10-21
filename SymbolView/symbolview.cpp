@@ -329,22 +329,6 @@ void SymbolViewPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 	} else if (type == MenuTypeFileView_File) {
 	}
 }
-
-void SymbolViewPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	if (type == MenuTypeEditor) {
-        wxMenuItem *item = menu->FindItem(XRCID("show_tag_in_symview"));
-        if (item) {
-            menu->Destroy(item);
-        }
-	} else if (type == MenuTypeFileExplorer) {
-	} else if (type == MenuTypeFileView_Workspace) {
-	} else if (type == MenuTypeFileView_Project) {
-	} else if (type == MenuTypeFileView_Folder) {
-	} else if (type == MenuTypeFileView_File) {
-	}
-}
-
 void SymbolViewPlugin::UnPlug()
 {
 	if (!m_symView)

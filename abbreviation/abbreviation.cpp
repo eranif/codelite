@@ -107,12 +107,6 @@ void AbbreviationPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 	wxUnusedVar(type);
 }
 
-void AbbreviationPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	wxUnusedVar(menu);
-	wxUnusedVar(type);
-}
-
 void AbbreviationPlugin::UnPlug()
 {
 	m_topWindow->Disconnect(wxEVT_CCBOX_SELECTION_MADE, wxCommandEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);

@@ -139,6 +139,7 @@ class LEditor : public wxScintilla, public IEditor
 	wxChar                                      m_lastCharEntered;
 	int                                         m_lastCharEnteredPos;
 	bool                                        m_isFocused;
+	bool                                        m_pluginInitializedRMenu;
 	
 public:
 	static bool                                 m_ccShowPrivateMembers;
@@ -160,9 +161,9 @@ public:
 	clEditorTipWindow* GetFunctionTip() {
 		return m_functionTip;
 	}
-	
+
 	bool IsFocused() const;
-	
+
 public:
 	/// Construct a LEditor object
 	LEditor(wxWindow* parent);

@@ -34,6 +34,7 @@
 #include "dynamiclibrary.h"
 #include "plugindata.h"
 #include "keyboardmanager.h"
+#include <set>
 
 class wxBookCtrlBase;
 class EnvironmentConfig;
@@ -49,8 +50,10 @@ class PluginManager : public IManager
 	std::map<wxString, PluginInfo> m_pluginsInfo;
 	KeyboardManager                m_keyboardMgr;
 	BitmapLoader    *              m_bmpLoader;
+	std::set<MenuType>             m_menusToBeHooked;
+
 private:
-	PluginManager() : m_bmpLoader(NULL) {}
+	PluginManager();
 	virtual ~PluginManager();
 
 public:
@@ -129,8 +132,7 @@ public:
 
 	// (Un)Hook the contect menus
 	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
-	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
-
+	
 	// (Un)Hook the project settings tab
 	virtual void HookProjectSettingsTab  (wxNotebook *book, const wxString &projectName, const wxString &configName);
 	virtual void UnHookProjectSettingsTab(wxNotebook *book, const wxString &projectName, const wxString &configName);

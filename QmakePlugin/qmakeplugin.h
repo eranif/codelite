@@ -28,7 +28,6 @@ public:
 	virtual clToolBar *CreateToolBar     (wxWindow *parent);
 	virtual void CreatePluginMenu        (wxMenu *pluginsMenu);
 	virtual void HookPopupMenu           (wxMenu *menu, MenuType type);
-	virtual void UnHookPopupMenu         (wxMenu *menu, MenuType type);
 	virtual void HookProjectSettingsTab  (wxNotebook *book, const wxString &projectName, const wxString &configName);
 	virtual void UnHookProjectSettingsTab(wxNotebook *book, const wxString &projectName, const wxString &configName);
 	virtual void UnPlug                  ();

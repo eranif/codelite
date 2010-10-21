@@ -159,6 +159,7 @@ LEditor::LEditor(wxWindow* parent)
 		, m_lastCharEntered          (0)
 		, m_lastCharEnteredPos       (0)
 		, m_isFocused                (true)
+		, m_pluginInitializedRMenu   (false)
 {
 	ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSCI_MARK_SMALLRECT;
 	ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSCI_MARK_ROUNDRECT;
@@ -2322,13 +2323,13 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 		m_popupIsOn = true;
 
 		//let the plugins hook their content
-		PluginManager::Get()->HookPopupMenu(m_rightClickMenu, MenuTypeEditor);
+		if(!m_pluginInitializedRMenu) {
+			PluginManager::Get()->HookPopupMenu(m_rightClickMenu, MenuTypeEditor);
+			m_pluginInitializedRMenu = true;
+		}
 
 		//Popup the menu
 		PopupMenu(m_rightClickMenu);
-
-		//let the plugins remove their hooked content
-		PluginManager::Get()->UnHookPopupMenu(m_rightClickMenu, MenuTypeEditor);
 
 		m_popupIsOn = false;
 
@@ -2916,10 +2917,10 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 		// create new completion box
 		m_ccBox = new CCBox( this );
 	}
-	
+
 	// hide any previous occurance of the completion box
 	HideCompletionBox();
-	
+
 	if(tags.empty()) {
 		return;
 	}

@@ -129,12 +129,6 @@ void QMakePlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 	wxUnusedVar( type );
 }
 
-void QMakePlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	wxUnusedVar( menu );
-	wxUnusedVar( type );
-}
-
 void QMakePlugin::UnPlug()
 {
 	wxApp *app = m_mgr->GetTheApp();

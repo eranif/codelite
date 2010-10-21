@@ -155,44 +155,6 @@ void Copyright::HookPopupMenu(wxMenu *menu, MenuType type)
 	}
 }
 
-void Copyright::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	if (type == MenuTypeEditor) {
-		wxMenuItem *item = menu->FindItem(XRCID("insert_copyrights"));
-		if (item) {
-			menu->Destroy( item );
-		}
-	} else if (type == MenuTypeFileExplorer) {
-		//TODO::Unhook  items for the file explorer context menu
-	} else if (type == MenuTypeFileView_Workspace) {
-
-		wxMenuItem *item = menu->FindItem(XRCID("batch_insert_copyrights"));
-		if (item) {
-			menu->Destroy( item );
-		}
-
-		if (m_workspaceSepItem) {
-			menu->Destroy( m_workspaceSepItem );
-			m_workspaceSepItem = NULL;
-		}
-
-	} else if (type == MenuTypeFileView_Project) {
-		wxMenuItem *item = menu->FindItem(XRCID("insert_prj_copyrights"));
-		if (item) {
-			menu->Destroy( item );
-		}
-
-		if (m_projectSepItem) {
-			menu->Destroy( m_projectSepItem );
-			m_projectSepItem = NULL;
-		}
-	} else if (type == MenuTypeFileView_Folder) {
-		//TODO::Unhook  items for the file view/Virtual folder context menu
-	} else if (type == MenuTypeFileView_File) {
-		//TODO::Unhook  items for the file view/file context menu
-	}
-}
-
 void Copyright::UnPlug()
 {
 	//TODO:: perform the unplug action for this plugin

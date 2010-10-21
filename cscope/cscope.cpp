@@ -145,9 +145,9 @@ void Cscope::CreatePluginMenu(wxMenu *pluginsMenu)
 	wxMenuItem *item(NULL);
 	item = new wxMenuItem(menu, XRCID("cscope_find_user_symbol"), wxT("Find ..."), wxT("Find ..."), wxITEM_NORMAL);
 	menu->Append(item);
-	
+
 	menu->AppendSeparator();
-	
+
 	item = new wxMenuItem(menu, XRCID("cscope_find_symbol"), wxT("Find selected text"), wxT("Find this C symbol"), wxITEM_NORMAL);
 	menu->Append(item);
 
@@ -181,21 +181,6 @@ void Cscope::HookPopupMenu(wxMenu *menu, MenuType type)
 	}
 }
 
-void Cscope::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	if (type == MenuTypeEditor) {
-		wxMenuItem *item = menu->FindItem(XRCID("CSCOPE_EDITOR_POPUP"));
-		if (item) {
-			menu->Destroy(item);
-			m_topWindow->Disconnect(XRCID("cscope_find_symbol"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindSymbol), NULL, (wxEvtHandler*)this);
-			m_topWindow->Disconnect(XRCID("cscope_find_global_definition"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindGlobalDefinition), NULL, (wxEvtHandler*)this);
-			m_topWindow->Disconnect(XRCID("cscope_functions_called_by_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFuncion), NULL, (wxEvtHandler*)this);
-			m_topWindow->Disconnect(XRCID("cscope_functions_calling_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCallingThisFunction), NULL, (wxEvtHandler*)this);
-			m_topWindow->Disconnect(XRCID("cscope_create_db"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnCreateDB), NULL, (wxEvtHandler*)this);
-		}
-	}
-}
-
 void Cscope::UnPlug()
 {
 	m_topWindow->Disconnect( XRCID("cscope_functions_called_by_this_function"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
@@ -203,6 +188,12 @@ void Cscope::UnPlug()
 	m_topWindow->Disconnect( XRCID("cscope_functions_calling_this_function"),   wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
 	m_topWindow->Disconnect( XRCID("cscope_find_global_definition"),            wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
 	m_topWindow->Disconnect( XRCID("cscope_find_symbol"),                       wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
+	
+	m_topWindow->Disconnect(XRCID("cscope_find_symbol"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindSymbol), NULL, (wxEvtHandler*)this);
+	m_topWindow->Disconnect(XRCID("cscope_find_global_definition"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindGlobalDefinition), NULL, (wxEvtHandler*)this);
+	m_topWindow->Disconnect(XRCID("cscope_functions_called_by_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFuncion), NULL, (wxEvtHandler*)this);
+	m_topWindow->Disconnect(XRCID("cscope_functions_calling_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCallingThisFunction), NULL, (wxEvtHandler*)this);
+	m_topWindow->Disconnect(XRCID("cscope_create_db"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnCreateDB), NULL, (wxEvtHandler*)this);
 
 	// before this plugin is un-plugged we must remove the tab we added
 	for (size_t i=0; i<m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
@@ -369,12 +360,12 @@ void Cscope::OnFindSymbol(wxCommandEvent &e)
 	if ( m_mgr->GetActiveEditor() == NULL ) {
 		return;
 	}
-	
+
 	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
 	if (word.IsEmpty()) {
 		return;
 	}
-	
+
 	DoFindSymbol(word);
 }
 
@@ -538,11 +529,11 @@ void Cscope::OnWorkspaceOpenUI(wxUpdateUIEvent& e)
 void Cscope::OnFindUserInsertedSymbol(wxCommandEvent& e)
 {
 	CHECK_CL_SHUTDOWN();
-	
+
 	wxString word = wxGetTextFromUser(wxT("Find What:"), wxT("cscope: find symbol"), wxT(""), m_mgr->GetTheApp()->GetTopWindow());
 	if(word.IsEmpty())
 		return;
-	
+
 	DoFindSymbol( word );
 }
 

@@ -242,17 +242,6 @@ void WizardsPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 	}
 }
 
-void WizardsPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	if (type == MenuTypeFileView_Folder) {
-		std::vector<wxMenuItem*>::iterator iter = m_vdDynItems.begin();
-		for (; iter != m_vdDynItems.end(); iter++) {
-			menu->Destroy(*iter);
-		}
-		m_vdDynItems.clear();
-	}
-}
-
 void WizardsPlugin::UnPlug()
 {
 	m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WizardsPlugin::OnGizmos   ), NULL, (wxEvtHandler*)this);

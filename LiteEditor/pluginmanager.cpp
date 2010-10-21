@@ -84,6 +84,17 @@ PluginManager::~PluginManager()
 {
 }
 
+PluginManager::PluginManager()
+	: m_bmpLoader(NULL)
+{
+	m_menusToBeHooked.insert(MenuTypeFileExplorer);
+	m_menusToBeHooked.insert(MenuTypeFileView_Workspace);
+	m_menusToBeHooked.insert(MenuTypeFileView_Project);
+	m_menusToBeHooked.insert(MenuTypeFileView_Folder);
+	m_menusToBeHooked.insert(MenuTypeFileView_File);
+	m_menusToBeHooked.insert(MenuTypeEditor);
+}
+
 void PluginManager::Load()
 {
 	wxString ext;
@@ -282,17 +293,25 @@ IConfigTool* PluginManager::GetConfigTool()
 
 void PluginManager::HookPopupMenu( wxMenu *menu, MenuType type )
 {
-	std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
-	for ( ; iter != m_plugins.end(); iter++ ) {
-		iter->second->HookPopupMenu( menu, type );
-	}
-}
+	// Hook each menu once!
+	std::set<MenuType>::iterator it = m_menusToBeHooked.find(type);
+	if(it != m_menusToBeHooked.end()) {
+		// Call 'HookPopupMenu'
+		std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
+		for ( ; iter != m_plugins.end(); iter++ ) {
+			iter->second->HookPopupMenu( menu, type );
+		}
 
-void PluginManager::UnHookPopupMenu( wxMenu *menu, MenuType type )
-{
-	std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
-	for ( ; iter != m_plugins.end(); iter++ ) {
-		iter->second->UnHookPopupMenu( menu, type );
+		// remove this menu entry from the set to avoid
+		// further hooking
+		if(type != MenuTypeEditor) {
+
+			// Dont remove the MenuTypeEditor from the set, since there can be multiple
+			// instances of that menu (each editor holds a copy of the menu)
+			// LEditor itself will make sure to call this method only once
+			m_menusToBeHooked.erase(it);
+
+		}
 	}
 }
 

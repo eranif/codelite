@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : snipwiz.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : snipwiz.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -45,7 +45,7 @@ class wxMenuItem;
 class SnipWiz : public IPlugin
 {
 	std::vector<wxMenuItem*> m_vdDynItems;
-	
+
 public:
 	/// returns StringDB
 	swStringDb* GetStringDb() {	return &m_StringDb; }
@@ -59,7 +59,6 @@ public:
 	virtual clToolBar *CreateToolBar( wxWindow *parent );
 	virtual void CreatePluginMenu( wxMenu *pluginsMenu );
 	virtual void HookPopupMenu( wxMenu *menu, MenuType type );
-	virtual void UnHookPopupMenu( wxMenu *menu, MenuType type );
 	virtual void UnPlug();
 	// event handler
 	void OnMenuSnippets( wxCommandEvent &e );

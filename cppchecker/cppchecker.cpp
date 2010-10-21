@@ -141,40 +141,6 @@ void CppCheckPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 	}
 }
 
-void CppCheckPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	if (type == MenuTypeEditor) {
-		//TODO::Unhook items for the editor context menu
-	} else if (type == MenuTypeFileExplorer) {
-
-		wxMenuItem *item = menu->FindItem(XRCID("CPPCHECK_EXPLORER_POPUP"));
-		if (item) {
-			menu->Destroy(item);
-			menu->Destroy(m_explorerSepItem);
-			m_explorerSepItem = NULL;
-		}
-
-	} else if (type == MenuTypeFileView_Workspace) {
-
-		wxMenuItem *item = menu->FindItem(XRCID("CPPCHECK_WORKSPACE_POPUP"));
-		if (item) {
-			menu->Destroy(item);
-			menu->Destroy(m_workspaceSepItem);
-			m_workspaceSepItem = NULL;
-		}
-
-	} else if (type == MenuTypeFileView_Project) {
-
-		wxMenuItem *item = menu->FindItem(XRCID("CPPCHECK_PROJECT_POPUP"));
-		if (item) {
-			menu->Destroy(item);
-			menu->Destroy(m_projectSepItem);
-			m_projectSepItem = NULL;
-		}
-
-	}
-}
-
 void CppCheckPlugin::UnPlug()
 {
 	// before this plugin is un-plugged we must remove the tab we added

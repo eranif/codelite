@@ -196,24 +196,6 @@ void SnipWiz::HookPopupMenu( wxMenu *menu, MenuType type )
 
 //------------------------------------------------------------
 
-void SnipWiz::UnHookPopupMenu( wxMenu *menu, MenuType type )
-{
-	if ( type == MenuTypeEditor ) {
-		wxMenuItem *item = menu->FindItem( IDM_BASE );
-		if ( item ) {
-			menu->Destroy( item );
-		}
-	} else if (type == MenuTypeFileView_Folder) {
-		std::vector<wxMenuItem*>::iterator iter = m_vdDynItems.begin();
-		for (; iter != m_vdDynItems.end(); iter++) {
-			menu->Destroy(*iter);
-		}
-		m_vdDynItems.clear();
-	}
-}
-
-//------------------------------------------------------------
-
 void SnipWiz::UnPlug()
 {
 	m_topWin->Disconnect( IDM_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnSettings ), NULL, this );

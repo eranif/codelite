@@ -2306,8 +2306,8 @@ void clMainFrame::OnQuickOutline(wxCommandEvent &event)
 						wxT(""), 
 						wxDefaultPosition, 
 						wxSize(400, 400), 
-#if wxVERSION_NUMBER <= 2900
-						wxDEFAULT_DIALOG_STYLE | wxNO_BORDER
+#if wxVERSION_NUMBER < 2900
+						wxNO_BORDER
 #else
 						wxDEFAULT_DIALOG_STYLE 
 #endif

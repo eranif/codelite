@@ -97,7 +97,9 @@ Notebook::~Notebook()
 
 bool Notebook::AddPage(wxWindow *win, const wxString &text, bool selected, const wxBitmap& bmp)
 {
+#if wxVERSION_NUMBER <= 2900
 	wxWindowUpdateLocker locker(this);
+#endif
 	win->Reparent(this);
 	if(wxAuiNotebook::InsertPage(GetPageCount(), win, text, selected, bmp)){
 		win->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);

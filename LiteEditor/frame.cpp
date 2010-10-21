@@ -2300,10 +2300,21 @@ void clMainFrame::OnQuickOutline(wxCommandEvent &event)
 	if (GetMainBook()->GetActiveEditor()->GetProject().IsEmpty())
 		return;
 
-	QuickOutlineDlg *dlg = new QuickOutlineDlg(this, GetMainBook()->GetActiveEditor()->GetFileName().GetFullPath());
-	if (dlg->ShowModal() == wxID_OK) {
-	}
-	dlg->Destroy();
+	QuickOutlineDlg dlg(this, 
+						GetMainBook()->GetActiveEditor()->GetFileName().GetFullPath(), 
+						wxID_ANY, 
+						wxT(""), 
+						wxDefaultPosition, 
+						wxSize(400, 400), 
+#if wxVERSION_NUMBER <= 2900
+						wxDEFAULT_DIALOG_STYLE | wxNO_BORDER
+#else
+						wxDEFAULT_DIALOG_STYLE 
+#endif
+						);
+
+	dlg.ShowModal();
+	
 #ifdef __WXMAC__
 	LEditor *editor = GetMainBook()->GetActiveEditor();
 	if (editor) {

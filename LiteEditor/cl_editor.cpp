@@ -811,10 +811,13 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	int beforeBefore = SafeGetChar(PositionBefore(PositionBefore(pos)));
 	int charCurrnt = SafeGetChar(pos);
 
-	wxString sel_text = GetSelectedText();
-	SetHighlightGuide(0);
+	bool hasSelection = (GetSelectionStart() != GetSelectionEnd());
+	
+	if(GetHighlightGuide() != wxNOT_FOUND)
+		SetHighlightGuide(0);
+		
 	if (m_hightlightMatchedBraces) {
-		if ( sel_text.IsEmpty() == false) {
+		if ( hasSelection ) {
 			wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
 		} else if ( (charCurrnt == '<'   && charAfter  == '<')  ||  //<<
 		            (charCurrnt == '<'   && charBefore == '<')  ||  //<<
@@ -845,17 +848,12 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	//update line number
 	wxString message;
 
-//	int foldLevel = (GetFoldLevel(curLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
 	message << wxT("Ln ")
 	<< curLine+1
 	<< wxT(",  Col ")
 	<< GetColumn(pos)
 	<< wxT(",  Pos ")
 	<< pos;
-//	<< wxT(",  Style ")
-//	<< GetStyleAt(pos)
-//	<< wxT(", Fold ")
-//	<< foldLevel;
 
 	// Always update the status bar with event, calling it directly causes performance degredation
 	DoSetStatusMessage(message, 1);
@@ -868,13 +866,16 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 		IndicatorClearRange(end, GetTextLength()-end);
 	}
 
-	if (sel_text.IsEmpty()) {
+	if ( !hasSelection ) {
 		// remove indicators
 		SetIndicatorCurrent(2);
-		IndicatorClearRange(0, GetLength());
-#if defined(__WXMAC__) || (wxVERSION_NUMBER >= 2900)
+		int last = IndicatorEnd(2, 0);
+		if(last != wxNOT_FOUND) {
+			IndicatorClearRange(0, GetLength());	
+#if defined(__WXMAC__) || (wxVERSION_NUMBER >= 2900 && defined(__WXMSW__))
 		Refresh();
 #endif
+		}
 	}
 
 	RecalcHorizontalScrollbar();

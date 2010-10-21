@@ -56,8 +56,13 @@ NotebookNavDialog::~NotebookNavDialog()
 
 void NotebookNavDialog::Create(wxWindow* parent)
 {
-	long style = 0;
-	if (  !wxDialog::Create(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, style|wxBORDER_RAISED) )
+#if wxVERSION_NUMBER < 2900	
+	long style = wxBORDER_RAISED;
+#else
+	long style = wxDEFAULT_DIALOG_STYLE;
+#endif
+
+	if (  !wxDialog::Create(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, style) )
 		return;
 	//SetTransparent(200);
 
@@ -73,6 +78,11 @@ void NotebookNavDialog::Create(wxWindow* parent)
 	// Connect events to the list box
 	m_listBox->Connect(wxID_ANY, wxEVT_KEY_UP, wxKeyEventHandler(NotebookNavDialog::OnKeyUp), NULL, this);
 	Connect(wxID_ANY, wxEVT_NAVIGATION_KEY, wxNavigationKeyEventHandler(NotebookNavDialog::OnNavigationKey), NULL, this);
+	
+#if wxVERSION_NUMBER >= 2900	
+	m_listBox->Connect(wxID_ANY, wxEVT_NAVIGATION_KEY, wxNavigationKeyEventHandler(NotebookNavDialog::OnNavigationKey), NULL, this);
+#endif
+
 	m_listBox->Connect(wxID_ANY, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(NotebookNavDialog::OnItemSelected), NULL, this);
 
 	SetBackgroundColour( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );

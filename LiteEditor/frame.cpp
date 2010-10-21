@@ -3185,7 +3185,7 @@ void clMainFrame::OnNewVersionAvailable(wxCommandEvent& e)
 
 		} else {
 			if (!data->GetShowMessage()) {
-				wxLogMessage(wxString::Format(wxT("Info: CodeLite is up-to-date (or newer), version used: %d, version on site:%d"), data->GetCurrentVersion(), data->GetNewVersion()));
+				wxLogMessage(wxString::Format(wxT("Info: CodeLite is up-to-date (or newer), version used: %d, version on site:%d"), (int)data->GetCurrentVersion(), (int)data->GetNewVersion()));
 
 			} else {
 				// User initiated the version check request

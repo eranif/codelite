@@ -22,9 +22,10 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "stringaccessor.h"
+#include "stringaccessor.h"
+
 StringAccessor::StringAccessor(const wxString &str)
-: m_str(str)
+: m_str(str.c_str())
 {
 }
 
@@ -38,28 +39,16 @@ char StringAccessor::safeAt(size_t pos)
 		return 0;
 	}
 
-#if wxVERSION_NUMBER < 2900
 	return m_str.at(pos);
-#else
-//	char c;
-	return *(m_str.begin() + pos);
-//	wxUniChar uc = ;
-//	if (uc.GetAsChar(&c)) {
-//		return c; 
-//	} else {
-//		return 0;
-//	}
-#endif
 }
 
 bool StringAccessor::isWordChar(char ch)
 {
 	int ascii_value = (int)ch;
-	if( (ascii_value >= 48 && ascii_value <= 57)  	|| 	// 0-9
-		(ascii_value >= 65 && ascii_value <= 90)  	|| 	// A-Z
-		(ascii_value >= 97 && ascii_value <= 122) 	|| 	// a-z
-//		(ascii_value == 126) 						||  // ~
-		(ascii_value == 95))							// _
+	if( (ascii_value >= 48 && ascii_value <= 57)  || // 0-9
+		(ascii_value >= 65 && ascii_value <= 90)  || // A-Z
+		(ascii_value >= 97 && ascii_value <= 122) || // a-z
+		(ascii_value == 95))                         // _
 	{
 		return true;
 	}

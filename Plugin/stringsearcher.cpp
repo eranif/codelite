@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "stringsearcher.h"
 #include <wx/regex.h>
+#include <algorithm>
 
 extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 
@@ -117,14 +118,14 @@ bool StringFindReplacer::DoRESearch(const wxString& input, int startOffset, cons
 
 bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, const wxString& find_what, size_t flags, int& pos, int& matchLen)
 {
-	wxString str = GetString(input, startOffset, flags & wxSD_SEARCH_BACKWARD ? true : false);
+	std::wstring str = GetString(input, startOffset, flags & wxSD_SEARCH_BACKWARD ? true : false).c_str();
 	size_t init_size = str.length();
 
-	if (str.IsEmpty()) {
+	if (str.empty()) {
 		return false;
 	}
 
-	wxString find_str(find_what);
+	std::wstring find_str(find_what);
 	size_t offset(0);
 
 	// incase we are scanning backwared, revert the strings
@@ -137,60 +138,57 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 
 	bool matchCase = flags & wxSD_MATCHCASE ? true : false;
 	if ( !matchCase ) {
-		find_str.MakeLower();
-		str.MakeLower();
+		std::transform(find_str.begin(), find_str.end(), find_str.begin(), towlower);
+		std::transform(str.begin(), str.end(), str.begin(), towlower);
 	}
 
-	pos = str.Find(find_str);
+	size_t upos = str.find(find_str);
 
-	while ( pos != wxNOT_FOUND ) {
+	while ( upos != std::wstring::npos ) {
 		if (flags & wxSD_MATCHWHOLEWORD) {
 			// full word match
-			// test that the characeter at pos - 1 & the character at pos + find_str.Len() are not
+			// test that the characeter at upos - 1 & the character at upos + find_str.Len() are not
 			// valid word char [a-zA-Z0-9_]
-			if (pos - 1 > 0) {
-				wxString str_before(str.GetChar(pos-1));
-
-				if (str_before.find_first_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")) != wxString::npos) {
-
+			if (upos - 1 > 0) {
+				if(isalpha(str[upos-1]) || (int)str[upos] == (int)'_') {
 					// remove the part that already been scanned
 					// and search again
-					str = str.Mid(pos+find_what.Len());
-					offset += pos+find_what.Len();
-					pos = str.Find(find_str);
+					str = str.substr(upos+find_what.length());
+					offset += upos+find_what.Len();
+					upos = str.find(find_str);
 					continue;
 				}
 			}
-			int charAfterOff = pos + find_str.Len();
-			if (charAfterOff < (int)str.Len()) {
-				wxString str_after(str.GetChar(charAfterOff));
-
-				if ( str_after.find_first_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")) != wxString::npos) {
+			int charAfterOff = upos + find_str.length();
+			if (charAfterOff < (int)str.length()) {
+				if(isalpha(str[charAfterOff]) || (int)str[charAfterOff] == (int)'_') {
 					// remove the part that already been scanned
 					// and search again
-					str = str.Mid(pos+find_what.Len());
-					offset += pos+find_what.Len();
-					pos = str.Find(find_str);
+					str = str.substr(upos+find_what.length());
+					offset += upos+find_what.length();
+					upos = str.find(find_str);
 					continue;
 				}
 			}
 
-			matchLen = (int)find_str.Len();
+			matchLen = (int)find_str.length();
 			// mirror the result as well
 			if (flags & wxSD_SEARCH_BACKWARD) {
-				pos = (init_size - (pos + offset + matchLen));
+				upos = (init_size - (upos + offset + matchLen));
 			} else {
-				pos += offset;
+				upos += offset;
 			}
+			pos = (int)upos;
 			return true;
 		} else {
 			// we got a match
-			matchLen = (int)find_str.Len();
+			matchLen = (int)find_str.length();
 			if (flags & wxSD_SEARCH_BACKWARD) {
-				pos = (init_size - (pos + offset + matchLen));
+				upos = (init_size - (upos + offset + matchLen));
 			} else {
-				pos += offset;
+				upos += offset;
 			}
+			pos = (int)upos;
 			return true;
 		}
 	}

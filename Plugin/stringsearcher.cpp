@@ -25,18 +25,19 @@
 #include "stringsearcher.h"
 #include <wx/regex.h>
 #include <algorithm>
+#include <string>
 
 extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 
-static wxString Reverse(const wxString &str)
+static std::wstring Reverse(const std::wstring &str)
 {
 	// reverse the string content
-	wxString tmp;
+	std::wstring tmp;
 	tmp.reserve( str.length() );
 	
-	wxString::const_reverse_iterator riter = str.rbegin();
+	std::wstring::const_reverse_iterator riter = str.rbegin();
 	for(; riter != str.rend(); riter++) {
-		tmp << *riter;
+		tmp += *riter;
 	}
 	return tmp;
 }
@@ -118,7 +119,12 @@ bool StringFindReplacer::DoRESearch(const wxString& input, int startOffset, cons
 
 bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, const wxString& find_what, size_t flags, int& pos, int& matchLen)
 {
+#if wxVERSION_NUMBER >= 2900	
+	std::wstring str = GetString(input, startOffset, flags & wxSD_SEARCH_BACKWARD ? true : false).c_str().AsWChar();
+#else
 	std::wstring str = GetString(input, startOffset, flags & wxSD_SEARCH_BACKWARD ? true : false).c_str();
+#endif
+
 	size_t init_size = str.length();
 
 	if (str.empty()) {
@@ -149,7 +155,7 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 			// full word match
 			// test that the characeter at upos - 1 & the character at upos + find_str.Len() are not
 			// valid word char [a-zA-Z0-9_]
-			if (upos - 1 > 0) {
+			if (upos > 1) {
 				if(isalpha(str[upos-1]) || (int)str[upos] == (int)'_') {
 					// remove the part that already been scanned
 					// and search again

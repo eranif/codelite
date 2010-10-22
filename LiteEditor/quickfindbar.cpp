@@ -38,6 +38,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 		: QuickFindBarBase(parent, id)
 		, m_sci(NULL)
 		, m_flags(0)
+		, m_lastTextPtr(NULL)
 {
 	Hide();
 	DoShowControls();
@@ -61,14 +62,30 @@ bool QuickFindBar::Show(bool show)
 	return DoShow(show, wxEmptyString);
 }
 
+wchar_t* QuickFindBar::DoGetSearchStringPtr()
+{
+	wxString text = m_sci->GetText();
+	wchar_t *pinput (NULL);
+	if(m_lastText == text && m_lastTextPtr){
+		pinput = m_lastTextPtr;
+		
+	} else {
+		m_lastText    = text;
+		m_lastTextPtr = const_cast<wchar_t*>(m_lastText.c_str().AsWChar());
+		pinput        = m_lastTextPtr;
+	}
+	return pinput;
+}
+
 void QuickFindBar::DoSearch(bool fwd, bool incr)
 {
 	if (!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty())
 		return;
 
 	wxString find = m_findWhat->GetValue();
-	wxString text = m_sci->GetText();
-
+	wchar_t* pinput = DoGetSearchStringPtr();
+	if(!pinput)
+		return;
 	int start = -1, stop = -1;
 	m_sci->GetSelection(&start, &stop);
 
@@ -76,7 +93,7 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 	int flags = m_flags | (fwd ? 0 : wxSD_SEARCH_BACKWARD);
 	int pos = 0, len = 0;
 
-	if (!StringFindReplacer::Search(text, offset, find, flags, pos, len)) {
+	if (!StringFindReplacer::Search(pinput, offset, find, flags, pos, len)) {
 
 		// wrap around and try again
 		wxString msg = fwd ? _("Reached end of document, continued from start") : _("Reached top of document, continued from bottom");
@@ -99,8 +116,8 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 
 		if(res == wxID_OK) {
 
-			offset = fwd ? 0 : text.Len()-1;
-			if (!StringFindReplacer::Search(text, offset, find, flags, pos, len)) {
+			offset = fwd ? 0 : wxStrlen(pinput) - 1;
+			if (!StringFindReplacer::Search(pinput, offset, find, flags, pos, len)) {
 				m_findWhat->SetBackgroundColour(wxT("PINK"));
 				m_findWhat->Refresh();
 				return;
@@ -553,7 +570,10 @@ void QuickFindBar::DoMarkAll()
 	flags &= ~ wxSD_SEARCH_BACKWARD;
 	int offset(0);
 
-	wxString txt = m_sci->GetText();
+	wchar_t* pinput = DoGetSearchStringPtr();
+	if(!pinput)
+		return;
+	
 	int fixed_offset(0);
 
 	editor->DelAllMarkers();
@@ -561,7 +581,7 @@ void QuickFindBar::DoMarkAll()
 	// set the active indicator to be 1
 	editor->SetIndicatorCurrent(1);
 
-	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len) ) {
+	while ( StringFindReplacer::Search(pinput, offset, findWhat, flags, pos, match_len) ) {
 		editor->MarkerAdd(editor->LineFromPosition(fixed_offset + pos), smt_bookmark);
 
 		// add indicator as well

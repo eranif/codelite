@@ -7,6 +7,7 @@
 #include <cpptoken.h>
 #include <refactorengine.h>
 #include <cppwordscanner.h>
+#include <stringsearcher.h>
 
 // CodeLite includes
 #include <ctags_manager.h>
@@ -229,6 +230,40 @@ TEST_FUNC(testVectorOfStdString)
 	return true;
 }
 
+void testCC()
+{
+	// Load the tags database that is used during the test.
+	wxFileName fn(wxT("../../SampleWorkspace/SampleWorkspace.tags"));
+	TagsManagerST::Get()->OpenDatabase( fn );
+	
+	// Execute the tests
+	Tester::Instance()->RunTests();
+	
+	Tester::Release();
+	TagsManagerST::Free();
+	LanguageST::Free();	
+}
+
+void testStringSearcher()
+{
+	int      pos(0);
+	int      match_len(0);
+	wxString m_word  = wxT("clMainFrame");
+	size_t   offset = 0;
+	wxString m_str = LoadFile(wxT("/home/eran/devl/codelite/LiteEditor/frame.cpp"));
+	
+	const wchar_t* pin   = m_str.c_str().AsWChar();
+	const wchar_t* pword = m_word.c_str().AsWChar();
+	while ( StringFindReplacer::Search(pin, offset, pword, wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD, pos, match_len) ) {
+		// add result
+		std::pair<int, int> match;
+		match.first = pos;
+		match.second = match_len;
+
+		offset = pos + match_len;
+	}	
+}
+
 /**
  * @brief call the test framework
  */
@@ -237,29 +272,6 @@ int main(int argc, char **argv)
 	//Initialize the wxWidgets library
 	wxInitializer initializer;
 	
-//	// Load the tags database that is used during the test.
-//	wxFileName fn(wxT("../../SampleWorkspace/SampleWorkspace.tags"));
-//	TagsManagerST::Get()->OpenDatabase( fn );
-//	
-//	// Execute the tests
-//	Tester::Instance()->RunTests();
-//	
-//	Tester::Release();
-//	TagsManagerST::Free();
-//	LanguageST::Free();
-
-	// Search the provided input files for the symbol to rename and prepare
-	// a CppTokensMap
-	CppWordScanner sc(wxT("/home/eran/devl/wxGTK-2.8.10/src/tiff/tif_ojpeg.c"));
-	TextStatesPtr stats = sc.states();
-	
-//	CppTokensMap l;
-//	wxFileList files;
-//	files.push_back(wxFileName(wxT("/home/eran/devl/codelite/Plugin/builder_gnumake.cpp")));
-//	RefactoringEngine::Instance()->RenameGlobalSymbol(wxT("BuilderGnuMake"), 
-//													  wxFileName(wxT("/home/eran/devl/codelite/Plugin/builder_gnumake.cpp")), 
-//													  99,
-//													  3226,
-//													  files);
+	testStringSearcher();
 	return 0;
 }

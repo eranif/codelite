@@ -156,7 +156,18 @@ void PPToken::processArgs(const wxString &argsList)
 	// replace all occurances of 'arg' with %1, %2 etc
 	for(size_t i=0; i<args.GetCount(); i++) {
 		wxString replaceWith = wxString::Format(wxT("%%%d"), (int)i);
+#if wxVERSION_NUMBER < 2900
 		replacement = ReplaceWord(replacement, args.Item(i), replaceWith);
+#else
+		std::string res = ReplaceWordA(replacement.To8BitData().data(), args.Item(i).To8BitData().data(), replaceWith.To8BitData().data());
+		if(res.empty()) {
+			replacement.clear();
+			
+		} else {
+			replacement = wxString::From8BitData(res.c_str());
+			
+		}
+#endif
 	}
 }
 

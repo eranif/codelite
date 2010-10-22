@@ -56,10 +56,15 @@ void StringHighlighterJob::Process(wxThread* thread)
 
 	results->filename = m_filename.c_str();
 	results->matches  = new std::vector<std::pair<int, int> >;
-	
+
+#if wxVERSION_NUMBER >= 2900
 	const wchar_t* pin = m_str.c_str().AsWChar();
 	const wchar_t* pwo = m_word.c_str().AsWChar();
-	
+#else
+	const wchar_t* pin = m_str.c_str();
+	const wchar_t* pwo = m_word.c_str();
+#endif
+
 	while ( StringFindReplacer::Search(pin, offset, pwo, wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD, pos, match_len) ) {
 		// add result
 		std::pair<int, int> match;

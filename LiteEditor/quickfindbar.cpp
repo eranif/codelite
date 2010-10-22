@@ -71,7 +71,11 @@ wchar_t* QuickFindBar::DoGetSearchStringPtr()
 		
 	} else {
 		m_lastText    = text;
+#if wxVERSION_NUMBER >= 2900
 		m_lastTextPtr = const_cast<wchar_t*>(m_lastText.c_str().AsWChar());
+#else
+		m_lastTextPtr = const_cast<wchar_t*>(m_lastText.c_str());
+#endif
 		pinput        = m_lastTextPtr;
 	}
 	return pinput;

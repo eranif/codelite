@@ -117,16 +117,18 @@ wxArrayString TokenizeWords(const wxString &str)
 	wxString nextChar;
 	wxString currentWord;
 	wxArrayString outputArr;
-	for(size_t i=0; i<str.Length(); i++) {
+	
+	wxString::const_iterator iter = str.begin();
+	for(; iter != str.end(); iter++) {
 		// Look ahead
-		if( str.Length() > i + 1 ) {
-			nextChar = str[i+1];
+		if( (iter + 1) != str.end() ) {
+			 nextChar = *(iter+1);
 		} else {
 			// we are at the end of buffer
 			nextChar = wxT('\0');
 		}
 
-		currChar = str[i];
+		currChar = *iter;
 		if(!IsWordChar( currChar, currentWord.Length() )) {
 			currentWord.Clear();
 

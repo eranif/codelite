@@ -19,6 +19,7 @@
 #include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/panel.h>
+#include "treelistctrl.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -31,7 +32,7 @@ class SimpleTableBase : public wxPanel
 	private:
 
 	protected:
-		wxListCtrl* m_listTable;
+		wxTreeListCtrl* m_listTable;
 		wxButton* m_button1;
 		wxButton* m_button2;
 		wxButton* m_button3;
@@ -39,13 +40,12 @@ class SimpleTableBase : public wxPanel
 		wxChoice* m_choiceDisplayFormat;
 
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnListEditLabelBegin( wxListEvent& event ){ event.Skip(); }
-		virtual void OnListEditLabelEnd( wxListEvent& event ){ event.Skip(); }
-		virtual void OnItemActivated( wxListEvent& event ){ event.Skip(); }
-		virtual void OnItemDeSelected( wxListEvent& event ){ event.Skip(); }
-		virtual void OnItemRightClick( wxListEvent& event ){ event.Skip(); }
-		virtual void OnItemSelected( wxListEvent& event ){ event.Skip(); }
-		virtual void OnListKeyDown( wxListEvent& event ){ event.Skip(); }
+		virtual void OnListEditLabelBegin( wxTreeEvent& event ){ event.Skip(); }
+		virtual void OnListEditLabelEnd( wxTreeEvent& event ){ event.Skip(); }
+		virtual void OnItemRightClick( wxTreeEvent& event ){ event.Skip(); }
+		virtual void OnListKeyDown( wxTreeEvent& event ){ event.Skip(); }
+		virtual void OnItemExpanding( wxTreeEvent& event ){ event.Skip(); }
+		
 		virtual void OnNewWatch( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnNewWatchUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnDeleteWatch( wxCommandEvent& event ){ event.Skip(); }

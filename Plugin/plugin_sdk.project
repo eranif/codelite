@@ -157,6 +157,8 @@
       <File Name="cl_editor_tip_window.h"/>
       <File Name="cl_aui_tb_are.h"/>
       <File Name="cl_aui_tb_are.cpp"/>
+      <File Name="treelistctrl.h"/>
+      <File Name="treelistctrl.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="threebuttondlg.h"/>

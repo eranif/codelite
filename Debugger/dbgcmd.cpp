@@ -1239,14 +1239,16 @@ bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
 
 		wxString display_line = wxGdbFixValue( v );
 		display_line.Trim().Trim(false);
-		if ( display_line.IsEmpty() == false && display_line != wxT("{...}")) {
-			DebuggerEvent e;
-			e.m_updateReason = DBG_UR_EVALVARIABLEOBJ;
-			e.m_expression    = m_variable;
-			e.m_evaluated     = display_line;
-			e.m_userReason    = m_userReason;
-			e.m_displayFormat = m_displayFormat;
-			m_observer->DebuggerUpdate( e );
+		if ( display_line.IsEmpty() == false ) {
+			if(m_userReason == DBG_USERR_WATCHTABLE || display_line != wxT("{...}")) {
+				DebuggerEvent e;
+				e.m_updateReason = DBG_UR_EVALVARIABLEOBJ;
+				e.m_expression    = m_variable;
+				e.m_evaluated     = display_line;
+				e.m_userReason    = m_userReason;
+				e.m_displayFormat = m_displayFormat;
+				m_observer->DebuggerUpdate( e );
+			}
 		}
 		return true;
 	}

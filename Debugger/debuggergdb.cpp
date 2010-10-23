@@ -1060,7 +1060,13 @@ bool DbgGdb::EvaluateVariableObject( const wxString& name, DisplayFormat display
 		df = wxT( "natural" );
 		break;
 	}
-
+	
+	// Make sure that the variable object value is up-to-date
+	cmd.Clear();
+	cmd << wxT( "-var-update \"" ) << name << wxT( "\" " );
+	WriteCommand( cmd, NULL );
+	
+	cmd.Clear();
 	cmd << wxT( "-var-set-format \"" ) << name << wxT( "\" " ) << df;
 	WriteCommand( cmd, NULL );
 

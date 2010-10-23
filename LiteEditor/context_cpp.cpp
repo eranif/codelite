@@ -1249,7 +1249,11 @@ void ContextCpp::OnDbgDwellEnd(wxScintillaEvent &event)
 void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 {
 	static wxRegEx reCppIndentifier(wxT("[a-zA-Z_][a-zA-Z0-9_]*"));
-
+	
+	// the tip is already up
+	if(ManagerST::Get()->GetDebuggerTip() && ManagerST::Get()->GetDebuggerTip()->IsShown())
+		return;
+	
 	wxPoint pt;
 	wxString word;
 	pt.x = event.GetX();

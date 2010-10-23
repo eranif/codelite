@@ -909,16 +909,12 @@
     </object>
 
 	<object class="wxMenu" name="dbg_watch_rmenu">
-		<object class="wxMenuItem" name="copy_expr">
-            <label>Copy Expression</label>
+		<object class="wxMenuItem" name="copy_both">
+            <label>Copy</label>
         </object>
 		<object class="wxMenuItem" name="copy_value">
-            <label>Copy Value</label>
+            <label>Copy Value Only</label>
         </object>
-		<object class="wxMenuItem" name="copy_both">
-            <label>Copy Both</label>
-        </object>
-
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="edit_expr">
             <label>Edit</label>
@@ -929,13 +925,6 @@
         </object>
         <object class="wxMenuItem" name="del_expr_all">
             <label>Delete All</label>
-        </object>
-        <object class="wxMenuItem" name="expand_expr">
-            <label>Expand</label>
-        </object>
-        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        <object class="wxMenuItem" name="dereference_expr">
-            <label>Dereference</label>
         </object>
 	</object>
 

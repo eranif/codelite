@@ -16,8 +16,9 @@ SimpleTableBase::SimpleTableBase( wxWindow* parent, wxWindowID id, const wxPoint
 
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_listTable = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_EDIT_LABELS|wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
+	
+	long treeStyle = wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS;
+	m_listTable = new wxTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
 	bSizer3->Add( m_listTable, 1, wxEXPAND|wxALL, 1 );
 
 	wxBoxSizer* bSizer4;
@@ -55,13 +56,12 @@ SimpleTableBase::SimpleTableBase( wxWindow* parent, wxWindowID id, const wxPoint
 	this->Layout();
 
 	// Connect Events
-	m_listTable->Connect( wxEVT_COMMAND_LIST_BEGIN_LABEL_EDIT, wxListEventHandler( SimpleTableBase::OnListEditLabelBegin ), NULL, this );
-	m_listTable->Connect( wxEVT_COMMAND_LIST_END_LABEL_EDIT, wxListEventHandler( SimpleTableBase::OnListEditLabelEnd ), NULL, this );
-	m_listTable->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( SimpleTableBase::OnItemActivated ), NULL, this );
-	m_listTable->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( SimpleTableBase::OnItemDeSelected ), NULL, this );
-	m_listTable->Connect( wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK, wxListEventHandler( SimpleTableBase::OnItemRightClick ), NULL, this );
-	m_listTable->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( SimpleTableBase::OnItemSelected ), NULL, this );
-	m_listTable->Connect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( SimpleTableBase::OnListKeyDown ), NULL, this );
+	m_listTable->Connect( wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler( SimpleTableBase::OnListEditLabelBegin ), NULL, this );
+	m_listTable->Connect( wxEVT_COMMAND_TREE_END_LABEL_EDIT,   wxTreeEventHandler( SimpleTableBase::OnListEditLabelEnd ), NULL, this );
+	m_listTable->Connect( wxEVT_COMMAND_TREE_ITEM_MENU,        wxTreeEventHandler( SimpleTableBase::OnItemRightClick ), NULL, this );
+	m_listTable->Connect( wxEVT_COMMAND_TREE_KEY_DOWN,         wxTreeEventHandler( SimpleTableBase::OnListKeyDown ), NULL, this );
+	m_listTable->Connect( wxEVT_COMMAND_TREE_ITEM_EXPANDING,   wxTreeEventHandler( SimpleTableBase::OnItemExpanding ), NULL, this );
+	
 	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SimpleTableBase::OnNewWatch ), NULL, this );
 	m_button1->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SimpleTableBase::OnNewWatchUI ), NULL, this );
 	m_button2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SimpleTableBase::OnDeleteWatch ), NULL, this );
@@ -74,13 +74,12 @@ SimpleTableBase::SimpleTableBase( wxWindow* parent, wxWindowID id, const wxPoint
 SimpleTableBase::~SimpleTableBase()
 {
 	// Disconnect Events
-	m_listTable->Disconnect( wxEVT_COMMAND_LIST_BEGIN_LABEL_EDIT, wxListEventHandler( SimpleTableBase::OnListEditLabelBegin ), NULL, this );
-	m_listTable->Disconnect( wxEVT_COMMAND_LIST_END_LABEL_EDIT, wxListEventHandler( SimpleTableBase::OnListEditLabelEnd ), NULL, this );
-	m_listTable->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( SimpleTableBase::OnItemActivated ), NULL, this );
-	m_listTable->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( SimpleTableBase::OnItemDeSelected ), NULL, this );
-	m_listTable->Disconnect( wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK, wxListEventHandler( SimpleTableBase::OnItemRightClick ), NULL, this );
-	m_listTable->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( SimpleTableBase::OnItemSelected ), NULL, this );
-	m_listTable->Disconnect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( SimpleTableBase::OnListKeyDown ), NULL, this );
+	m_listTable->Disconnect( wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler( SimpleTableBase::OnListEditLabelBegin ), NULL, this );
+	m_listTable->Disconnect( wxEVT_COMMAND_TREE_END_LABEL_EDIT,   wxTreeEventHandler( SimpleTableBase::OnListEditLabelEnd ), NULL, this );
+	m_listTable->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU,        wxTreeEventHandler( SimpleTableBase::OnItemRightClick ), NULL, this );
+	m_listTable->Disconnect( wxEVT_COMMAND_TREE_KEY_DOWN,         wxTreeEventHandler( SimpleTableBase::OnListKeyDown ), NULL, this );
+	m_listTable->Disconnect( wxEVT_COMMAND_TREE_ITEM_EXPANDING,   wxTreeEventHandler( SimpleTableBase::OnItemExpanding ), NULL, this );
+	
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SimpleTableBase::OnNewWatch ), NULL, this );
 	m_button1->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SimpleTableBase::OnNewWatchUI ), NULL, this );
 	m_button2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SimpleTableBase::OnDeleteWatch ), NULL, this );

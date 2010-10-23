@@ -1865,13 +1865,7 @@ void Manager::UpdateDebuggerPane()
 		}
 
 		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == pane->GetWatchesTable() ) || IsPaneVisible ( DebuggerPane::WATCHES ) ) {
-
-			//update the watches table
-			wxArrayString expressions = pane->GetWatchesTable()->GetExpressions();
-			wxString format = pane->GetWatchesTable()->GetDisplayFormat();
-			for ( size_t i=0; i<expressions.GetCount(); i++ ) {
-				dbgr->EvaluateExpressionToString ( expressions.Item ( i ), format );
-			}
+			pane->GetWatchesTable()->RefreshValues();
 
 		}
 		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetFrameListView() ) || IsPaneVisible ( DebuggerPane::FRAMES ) ) {
@@ -2162,8 +2156,6 @@ void Manager::DbgStart ( long pid )
 		HideDebuggerPane = true;
 		ShowDebuggerPane ( true );
 	}
-
-	DbgRestoreWatches();
 }
 
 void Manager::DbgStop()
@@ -2340,7 +2332,7 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 	//put us on top of the z-order window
 	clMainFrame::Get()->Raise();
 	m_dbgCanInteract = true;
-
+	
 	switch ( reason ) {
 	case DBG_RECV_SIGNAL_SIGTRAP:         // DebugBreak()
 	case DBG_RECV_SIGNAL_EXC_BAD_ACCESS:  // SIGSEGV on Mac
@@ -2405,6 +2397,8 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 		if ( dbgr && dbgr->IsRunning() ) {
 			dbgr->QueryFileLine();
 			dbgr->BreakList();
+			// Apply all previous watches
+			DbgRestoreWatches();
 		}
 	}
 	break;
@@ -2868,8 +2862,9 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		break;
 
 	case DBG_UR_EXPRESSION:
-		clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->UpdateExpression ( event.m_expression, event.m_evaluated );
+		//clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->UpdateExpression ( event.m_expression, event.m_evaluated );
 		break;
+		
 	case DBG_UR_UPDATE_STACK_LIST:
 		clMainFrame::Get()->GetDebuggerPane()->GetFrameListView()->Update ( event.m_stack );
 		break;
@@ -2902,6 +2897,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		clMainFrame::Get()->GetDebuggerPane()->GetMemoryView()->SetViewString( event.m_evaluated );
 		break;
 	case DBG_UR_VARIABLEOBJ: {
+		// CreateVariableObject callback
 		if ( event.m_userReason == DBG_USERR_QUICKWACTH ) {
 
 			if ( dbgInfo.showTooltips ) {
@@ -2931,7 +2927,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 			UpdateTypeReolsved( expression, event.m_variableObject.typeName );
 		} else if ( event.m_userReason == DBG_USERR_WATCHTABLE ) {
 			// Double clicked on the 'Watches' table
-			DoShowQuickWatchDialog( event );
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnCreateVariableObject(event);
 
 		} else if ( event.m_userReason == DBG_USERR_LOCALS ) {
 			DoShowQuickWatchDialog( event );
@@ -2943,23 +2939,38 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	}
 	break;
 	case DBG_UR_LISTCHILDREN: {
-		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-		if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
-			if ( GetDebuggerTip() && !GetDebuggerTip()->IsShown() ) {
-				GetDebuggerTip()->BuildTree( event.m_varObjChildren, dbgr );
-				GetDebuggerTip()->m_mainVariableObject = event.m_expression;
-				GetDebuggerTip()->ShowDialog( (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS) );
+		
+		if(event.m_userReason == QUERY_NUM_CHILDS || event.m_userReason == LIST_WATCH_CHILDS) {
+			// Watch table
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnListChildren( event );
+			
+		} else {
+			// Tooltip
+			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+			if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
+				if ( GetDebuggerTip() && !GetDebuggerTip()->IsShown() ) {
+					GetDebuggerTip()->BuildTree( event.m_varObjChildren, dbgr );
+					GetDebuggerTip()->m_mainVariableObject = event.m_expression;
+					GetDebuggerTip()->ShowDialog( (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS) );
 
-			} else if(GetDebuggerTip()) {
-				// The dialog is shown
-				GetDebuggerTip()->AddItems(event.m_expression, event.m_varObjChildren);
+				} else if(GetDebuggerTip()) {
+					// The dialog is shown
+					GetDebuggerTip()->AddItems(event.m_expression, event.m_varObjChildren);
+				}
 			}
+			
 		}
 	}
 	break;
 	case DBG_UR_EVALVARIABLEOBJ:
-		if (GetDebuggerTip() && GetDebuggerTip()->IsShown()) {
+		
+		// EvaluateVariableObject callback
+		if(event.m_userReason == DBG_USERR_WATCHTABLE) {
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnEvaluateVariableObject( event );
+			
+		} else if (GetDebuggerTip() && GetDebuggerTip()->IsShown()) {
 			GetDebuggerTip()->UpdateValue(event.m_expression, event.m_evaluated, event.m_displayFormat);
+			
 		}
 		break;
 	case DBG_UR_INVALID:
@@ -2976,8 +2987,9 @@ void Manager::DbgRestoreWatches()
 			DebugMessage(wxT("Restoring watch: ") + m_dbgWatchExpressions.Item(i) + wxT("\n"));
 			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("add_watch"));
 			e.SetString(m_dbgWatchExpressions.Item(i));
-			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->GetEventHandler()->AddPendingEvent( e );
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->GetEventHandler()->ProcessEvent( e );
 		}
+		m_dbgWatchExpressions.Clear();
 	}
 }
 

@@ -535,6 +535,7 @@ void WatchesTable::OnItemExpanding(wxTreeEvent& event)
 			}
 
 			if(gdbId.IsEmpty() == false) {
+				dbgr->UpdateVariableObject(gdbId);
 				dbgr->ListChildren(gdbId, LIST_WATCH_CHILDS);
 				m_listChildItemId[gdbId] = event.GetItem();
 			}

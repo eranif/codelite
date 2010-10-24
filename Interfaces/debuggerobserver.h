@@ -74,6 +74,7 @@ enum DebuggerUpdateReason
 	DBG_UR_LISTTHRAEDS,             // Threads list is available
 	DBG_UR_LISTCHILDREN,            // Children list for a variable object is available
 	DBG_UR_VARIABLEOBJ,             // Variable object was created
+	DBG_UR_VARIABLEOBJCREATEERR,    // Variable object create error
 	DBG_UR_EVALVARIABLEOBJ,         // Variable object has be evaluated
 	DBG_UR_FRAMEINFO                // Frame information
 };

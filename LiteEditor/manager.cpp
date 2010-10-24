@@ -2903,6 +2903,12 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	case DBG_UR_WATCHMEMORY:
 		clMainFrame::Get()->GetDebuggerPane()->GetMemoryView()->SetViewString( event.m_evaluated );
 		break;
+		
+	case DBG_UR_VARIABLEOBJCREATEERR: 
+		if(event.m_userReason == DBG_USERR_WATCHTABLE) {
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnCreateVariableObject( event );
+		}
+		break;
 	case DBG_UR_VARIABLEOBJ: {
 		// CreateVariableObject callback
 		if ( event.m_userReason == DBG_USERR_QUICKWACTH ) {

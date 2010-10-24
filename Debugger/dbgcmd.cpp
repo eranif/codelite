@@ -1087,6 +1087,16 @@ bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
 bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
 {
 	DebuggerEvent e;
+	
+	if(line.StartsWith(wxT("^error"))) {
+		// Notify the observer we failed to create variable object
+		e.m_updateReason = DBG_UR_VARIABLEOBJCREATEERR; // failed to create variable object
+		e.m_expression   = m_expression;                // the variable object expression
+		e.m_userReason   = m_userReason;
+		m_observer->DebuggerUpdate( e );
+		return true;
+	}
+	
 	// Variable object was created
 	// Output sample:
 	// ^done,name="var1",numchild="2",value="{...}",type="ChildClass",thread-id="1",has_more="0"

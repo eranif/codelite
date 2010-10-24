@@ -335,8 +335,17 @@ public:
 			: DbgCmdHandler(observer)
 			, m_expression(expression)
 			, m_userReason(userReason)
-			, m_debugger(gdb) {}
-
+			, m_debugger(gdb) 
+	{
+	}
+	
+	/**
+	 * @brief we want to handle error ourselves
+	 */
+	virtual bool WantsErrors() const {
+		return true;
+	}
+	
 	virtual ~DbgCmdCreateVarObj() {}
 
 	virtual bool ProcessOutput(const wxString & line);

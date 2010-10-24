@@ -39,9 +39,15 @@ class WatchData : public wxTreeItemData
 	wxString          m_expression;
 	bool              m_isFirst;
 	wxString          m_gdbId;
-
+	bool              m_isOk;
 public:
 
+	void SetIsOk(bool isOk) {
+		this->m_isOk = isOk;
+	}
+	bool GetIsOk() const {
+		return m_isOk;
+	}
 	void SetExpression(const wxString& expression) {
 		this->m_expression = expression;
 	}
@@ -74,7 +80,9 @@ public:
 	WatchData(const wxString& expr)
 		: m_voc(NULL)
 		, m_expression(expr)
-		, m_isFirst(false) {
+		, m_isFirst(false)
+		, m_isOk(true)
+	{
 	}
 
 	virtual ~WatchData() {
@@ -102,13 +110,13 @@ WatchesTable::WatchesTable( wxWindow* parent )
 	Connect(XRCID("copy_value"),        wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuCopyValue), NULL, this);
 	Connect(XRCID("add_watch"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnNewWatch_Internal), NULL, this);
 	Connect(XRCID("copy_both"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuCopyBoth), NULL, this);
-	
+
 	Connect(XRCID("watches_df_natural"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuDisplayFormat), NULL, this);
 	Connect(XRCID("watches_df_hex"),    wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuDisplayFormat), NULL, this);
 	Connect(XRCID("watches_df_bin"),    wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuDisplayFormat), NULL, this);
 	Connect(XRCID("watches_df_octal"),  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuDisplayFormat), NULL, this);
 	Connect(XRCID("watches_df_decimal"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuDisplayFormat), NULL, this);
-	
+
 	// UI events
 	Connect(XRCID("edit_expr"),wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WatchesTable::OnMenuEditExprUI), NULL, this);
 	Connect(XRCID("del_expr"),wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WatchesTable::OnDeleteWatchUI), NULL, this);
@@ -140,7 +148,7 @@ void WatchesTable::InitTable()
 	m_listTable->AddColumn(wxT("Expression"), 150);
 	m_listTable->AddColumn(wxT("Value"),      1000);
 	m_listTable->AddRoot(wxT("Watches"));
-	
+
 	m_listTable->SetColumnEditable(0);
 }
 
@@ -264,7 +272,7 @@ void WatchesTable::RefreshValues(bool repositionEditor)
 	IDebugger *dbgr = DoGetDebugger();
 	if(!dbgr)
 		return;
-	
+
 	// update all variable objects
 	dbgr->UpdateVariableObject(wxT("*"));
 	DoRefreshItemRecursively(dbgr, root);
@@ -289,15 +297,23 @@ void WatchesTable::DoRefreshItem(IDebugger* dbgr, const wxTreeItemId& item)
 {
 	if(!dbgr || !item.IsOk())
 		return;
-	
+
 	if(m_listTable->GetItemText(item, 1) == wxT("{...}"))
 		return;
-		
+
 	WatchData* data = static_cast<WatchData*>(m_listTable->GetItemData(item));
 	if(data && data->GetIsFirst()) {
-		dbgr->EvaluateVariableObject(data->GetGdbId(), DBG_USERR_WATCHTABLE);
-		m_gdbIdToTreeId[data->GetGdbId()] = item;
 		
+		if(data->GetIsOk()) {
+			dbgr->EvaluateVariableObject(data->GetGdbId(), DBG_USERR_WATCHTABLE);
+			m_gdbIdToTreeId[data->GetGdbId()] = item;
+		
+		} else {
+			// try to re-create this variable object
+			dbgr->CreateVariableObject(data->GetExpression(), DBG_USERR_WATCHTABLE);
+			m_exprToItemId[data->GetExpression()] = item;
+		}
+
 	} else if(data && data->GetVoc()) {
 		// re-evaluate the item value
 		dbgr->EvaluateVariableObject(data->GetVoc()->gdbId, DBG_USERR_WATCHTABLE);
@@ -430,26 +446,29 @@ void WatchesTable::OnEvaluateVariableObject(const DebuggerEvent& event)
 void WatchesTable::OnCreateVariableObject(const DebuggerEvent& event)
 {
 	wxString expr = event.m_expression;
-
 	std::map<wxString, wxTreeItemId>::iterator iter = m_exprToItemId.find(expr);
 	if( iter != m_exprToItemId.end() ) {
+
 		// set the variable object
 		WatchData* data = static_cast<WatchData*>(m_listTable->GetItemData(iter->second));
 		if(data) {
 			data->SetExpression( expr );
 			data->SetIsFirst(true);
 			data->SetGdbId(event.m_variableObject.gdbId);
+			data->SetIsOk( event.m_updateReason == DBG_UR_VARIABLEOBJ );
 
-			// refresh this item only
-			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-			if(dbgr && ManagerST::Get()->DbgCanInteract())
-				DoRefreshItem(dbgr, iter->second);
-			
-			// Query the debugger to see if this node has a children
-			// In case it does, we add a dummy node so we will get the [+] sign
-			dbgr->ListChildren(data->GetGdbId(), QUERY_NUM_CHILDS);
-			m_listChildItemId[data->GetGdbId()] = iter->second;
+			if(data->GetIsOk()) {
+				// refresh this item only
+				IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+				if(dbgr && ManagerST::Get()->DbgCanInteract())
+					DoRefreshItem(dbgr, iter->second);
+				// Query the debugger to see if this node has a children
+				// In case it does, we add a dummy node so we will get the [+] sign
+				dbgr->ListChildren(data->GetGdbId(), QUERY_NUM_CHILDS);
+				m_listChildItemId[data->GetGdbId()] = iter->second;
+			}
 		}
+
 		m_exprToItemId.erase(iter);
 	}
 }
@@ -633,20 +652,20 @@ void WatchesTable::OnMenuDisplayFormat(wxCommandEvent& event)
 	DisplayFormat df = DBG_DF_NATURAL;
 	if(event.GetId() == XRCID("watches_df_natural")) {
 		df = DBG_DF_NATURAL;
-		
+
 	} else if(event.GetId() == XRCID("watches_df_hex")) {
 		df = DBG_DF_HEXADECIMAL;
-		
+
 	} else if(event.GetId() == XRCID("watches_df_bin")) {
 		df = DBG_DF_BINARY;
-		
+
 	} else if(event.GetId() == XRCID("watches_df_octal")) {
 		df = DBG_DF_OCTAL;
-		
+
 	} else if(event.GetId() == XRCID("watches_df_decimal")) {
 		df = DBG_DF_DECIMAL;
 	}
-	
+
 	wxTreeItemId item = m_listTable->GetSelection();
 	IDebugger *  dbgr = DoGetDebugger();
 	if(!dbgr || !item.IsOk()) {

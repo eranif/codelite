@@ -1327,13 +1327,15 @@ bool DbgVarObjUpdate::ProcessOutput(const wxString& line)
 	std::string cbuffer = line.mb_str(wxConvUTF8).data();
 	std::vector< std::map<std::string, std::string > > children;
 	gdbParseListChildren(cbuffer, children);
+
 	for(size_t i=0; i<children.size(); i++) {
 		wxString name     = ExtractGdbChild(children.at(i), wxT("name"));
 		wxString in_scope = ExtractGdbChild(children.at(i), wxT("in_scope"));
 		if(in_scope == wxT("false")) {
-			VariableObjChild voc;
-			voc.gdbId = name;
-			e.m_varObjChildren.push_back(voc);
+			e.m_varObjUpdateInfo.removeIds.Add(name);
+
+		} else if(in_scope == wxT("true")) {
+			e.m_varObjUpdateInfo.refreshIds.Add(name);
 		}
 	}
 	e.m_updateReason = DBG_UR_VAROBJUPDATE;

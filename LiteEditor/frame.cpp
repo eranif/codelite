@@ -30,6 +30,7 @@
 #include <wx/busyinfo.h>
 #include "tags_parser_search_path_dlg.h"
 #include "includepathlocator.h"
+#include "localstable.h"
 #include "outputviewcontrolbar.h"
 #include "clauidockart.h"
 
@@ -598,7 +599,7 @@ clMainFrame::~clMainFrame(void)
 	wxTheApp->Disconnect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	wxTheApp->Disconnect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
-	
+
 	delete m_timer;
 	ManagerST::Free();
 	delete m_DPmenuMgr;
@@ -2300,21 +2301,21 @@ void clMainFrame::OnQuickOutline(wxCommandEvent &event)
 	if (GetMainBook()->GetActiveEditor()->GetProject().IsEmpty())
 		return;
 
-	QuickOutlineDlg dlg(this, 
-						GetMainBook()->GetActiveEditor()->GetFileName().GetFullPath(), 
-						wxID_ANY, 
-						wxT(""), 
-						wxDefaultPosition, 
-						wxSize(400, 400), 
+	QuickOutlineDlg dlg(this,
+						GetMainBook()->GetActiveEditor()->GetFileName().GetFullPath(),
+						wxID_ANY,
+						wxT(""),
+						wxDefaultPosition,
+						wxSize(400, 400),
 #if wxVERSION_NUMBER < 2900
 						wxNO_BORDER
 #else
-						wxDEFAULT_DIALOG_STYLE 
+						wxDEFAULT_DIALOG_STYLE
 #endif
 						);
 
 	dlg.ShowModal();
-	
+
 #ifdef __WXMAC__
 	LEditor *editor = GetMainBook()->GetActiveEditor();
 	if (editor) {
@@ -2683,6 +2684,7 @@ void clMainFrame::OnDebugRestart(wxCommandEvent &e)
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
+		GetDebuggerPane()->GetLocalsTable()->Clear();
 		dbgr->Restart();
 	}
 }

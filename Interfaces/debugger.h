@@ -136,6 +136,12 @@ struct LocalVariable {
 	~LocalVariable() {}
 };
 
+struct VariableObjectUpdateInfo
+{
+	wxArrayString removeIds;
+	wxArrayString refreshIds;
+};
+
 typedef std::vector<VariableObjChild> VariableObjChildren;
 typedef std::vector<StackEntry>       StackEntryArray;
 typedef std::vector<ThreadEntry>      ThreadEntryArray;

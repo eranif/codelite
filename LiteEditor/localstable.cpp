@@ -12,17 +12,17 @@ class LocalsData : public wxTreeItemData
 public:
 	wxString _gdbId;
 	size_t   _kind;
-	
+
 public:
-	LocalsData() 
-	: _kind(LocalsTable::Locals) 
+	LocalsData()
+	: _kind(LocalsTable::Locals)
 	{}
-	
-	LocalsData(const wxString &gdbId) 
-	: _gdbId(gdbId) 
+
+	LocalsData(const wxString &gdbId)
+	: _gdbId(gdbId)
 	{}
-	
-	virtual ~LocalsData() 
+
+	virtual ~LocalsData()
 	{}
 };
 
@@ -56,6 +56,10 @@ void LocalsTable::Clear()
 			m_listTable->DeleteChildren(root);
 		}
 	}
+
+	m_listChildItemId.clear();
+	m_createVarItemId.clear();
+	m_gdbIdToTreeId.clear();
 }
 
 void LocalsTable::Initialize()
@@ -76,10 +80,10 @@ void LocalsTable::OnCreateVariableObj(const DebuggerEvent& event)
 		// set the variable object
 		LocalsData* data = static_cast<LocalsData*>(m_listTable->GetItemData(iter->second));
 		if(data) {
-			
+
 			data->_gdbId = event.m_variableObject.gdbId;
 			data->_kind  = LocalsTable::VariableObject;
-			
+
 			// refresh this item only
 			IDebugger *dbgr = DoGetDebugger();
 			if(dbgr)
@@ -115,8 +119,9 @@ void LocalsTable::OnEvaluateVariableObj(const DebuggerEvent& event)
 			itemColor = redColour;
 
 		m_listTable->SetItemText(iter->second, 1, value);
-		m_listTable->SetItemTextColour(iter->second, itemColor);
+		//m_listTable->SetItemTextColour(iter->second, itemColor);
 
+		// keep the red items IDs in the array
 		m_gdbIdToTreeId.erase(iter);
 	}
 }
@@ -172,9 +177,11 @@ void LocalsTable::OnListChildren(const DebuggerEvent& event)
 
 void LocalsTable::OnVariableObjUpdate(const DebuggerEvent& event)
 {
-	VariableObjChildren children = event.m_varObjChildren;
-	for(size_t i=0; i<children.size(); i++) {
-		wxString gdbId = children[i].gdbId;
+	VariableObjectUpdateInfo updateInfo = event.m_varObjUpdateInfo;
+
+	// remove all obsolete items
+	for(size_t i=0; i<updateInfo.removeIds.GetCount(); i++) {
+		wxString    gdbId = updateInfo.removeIds.Item(i);
 		wxTreeItemId item = DoFindItemByGdbId(gdbId);
 		if(item.IsOk()) {
 			DoDeleteWatch(item);
@@ -182,10 +189,11 @@ void LocalsTable::OnVariableObjUpdate(const DebuggerEvent& event)
 		}
 	}
 
+	// refresh the values of the items that requires that
 	IDebugger* dbgr = DoGetDebugger();
 	if(dbgr) {
-		DoRefreshItemRecursively(dbgr, m_listTable->GetRootItem());
-		
+		wxArrayString itemsToRefresh = event.m_varObjUpdateInfo.refreshIds;
+		DoRefreshItemRecursively(dbgr, m_listTable->GetRootItem(), itemsToRefresh);
 	}
 }
 
@@ -295,7 +303,7 @@ void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved
 				// not a variable object entry, remove it
 				itemsToRemove.push_back(item);
 			}
-			
+
 		} else {
 			itemsNotRemoved.Add( m_listTable->GetItemText(item) );
 		}
@@ -313,9 +321,6 @@ void LocalsTable::DoRefreshItem(IDebugger* dbgr, const wxTreeItemId& item)
 	if(!dbgr || !item.IsOk())
 		return;
 
-	if(m_listTable->GetItemText(item, 1) == wxT("{...}"))
-		return;
-
 	LocalsData* data = static_cast<LocalsData*>(m_listTable->GetItemData(item));
 	if(data && data->_gdbId.IsEmpty() == false) {
 
@@ -325,16 +330,27 @@ void LocalsTable::DoRefreshItem(IDebugger* dbgr, const wxTreeItemId& item)
 	}
 }
 
-void LocalsTable::DoRefreshItemRecursively(IDebugger *dbgr, const wxTreeItemId &item)
+void LocalsTable::DoRefreshItemRecursively(IDebugger *dbgr, const wxTreeItemId &item, wxArrayString &itemsToRefresh)
 {
+	if(itemsToRefresh.IsEmpty())
+		return;
+
 	wxTreeItemIdValue cookieOne;
 	wxTreeItemId exprItem = m_listTable->GetFirstChild(item, cookieOne);
 	while( exprItem.IsOk() ) {
 
-		DoRefreshItem(dbgr, exprItem);
+		LocalsData* data = static_cast<LocalsData*>(m_listTable->GetItemData(exprItem));
+		if(data) {
+			int where = itemsToRefresh.Index(data->_gdbId);
+			if(where != wxNOT_FOUND) {
+				dbgr->EvaluateVariableObject(data->_gdbId, DBG_USERR_LOCALS);
+				m_gdbIdToTreeId[data->_gdbId] = exprItem;
+				itemsToRefresh.RemoveAt((size_t)where);
+			}
+		}
 
 		if(m_listTable->HasChildren(exprItem)) {
-			DoRefreshItemRecursively(dbgr, exprItem);
+			DoRefreshItemRecursively(dbgr, exprItem, itemsToRefresh);
 		}
 		exprItem = m_listTable->GetNextChild(item, cookieOne);
 	}

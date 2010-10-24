@@ -74,8 +74,16 @@ public:
 		this->m_gdbId = gdbId;
 	}
 	const wxString& GetGdbId() const {
-		return m_gdbId;
+		if(GetIsFirst() && GetIsOk()) {
+			return m_gdbId;
+
+		} else if(m_voc) {
+			return m_voc->gdbId;
+		}
+		static wxString emptyString(wxT(""));
+		return emptyString;
 	}
+
 public:
 	WatchData(const wxString& expr)
 		: m_voc(NULL)
@@ -275,20 +283,49 @@ void WatchesTable::RefreshValues(bool repositionEditor)
 
 	// update all variable objects
 	dbgr->UpdateVariableObject(wxT("*"), DBG_USERR_WATCHTABLE);
-	DoRefreshItemRecursively(dbgr, root);
+
+	// Loop over the top level entries and search for items that has no gdbId
+	// for those items, create a variable object
+	wxTreeItemIdValue cookieOne;
+	wxTreeItemId item = m_listTable->GetFirstChild(root, cookieOne);
+	while( item.IsOk() ) {
+
+		WatchData* data = static_cast<WatchData*>(m_listTable->GetItemData(item));
+		if(data && data->GetGdbId().IsEmpty()) {
+			data->SetExpression(m_listTable->GetItemText(item));
+			data->SetIsFirst(true);
+			data->SetIsOk(false);
+			dbgr->CreateVariableObject(data->GetExpression(), DBG_USERR_WATCHTABLE);
+			m_exprToItemId[data->GetExpression()] = item;
+		}
+
+		item = m_listTable->GetNextChild(root, cookieOne);
+	}
 }
 
-void WatchesTable::DoRefreshItemRecursively(IDebugger *dbgr, const wxTreeItemId &item)
+void WatchesTable::DoRefreshItemRecursively(IDebugger *dbgr, const wxTreeItemId &item, wxArrayString &itemsToRefresh)
 {
+	if(itemsToRefresh.IsEmpty())
+		return;
+
 	wxTreeItemIdValue cookieOne;
 	wxTreeItemId exprItem = m_listTable->GetFirstChild(item, cookieOne);
 	while( exprItem.IsOk() ) {
 
-		DoRefreshItem(dbgr, exprItem);
+		WatchData* data = static_cast<WatchData*>(m_listTable->GetItemData(exprItem));
+		if(data && data->GetGdbId().IsEmpty() == false) {
+			int where = itemsToRefresh.Index(data->GetGdbId());
+			if(where != wxNOT_FOUND) {
+				dbgr->EvaluateVariableObject(data->GetGdbId(), DBG_USERR_WATCHTABLE);
+				m_gdbIdToTreeId[data->GetGdbId()] = exprItem;
+				itemsToRefresh.RemoveAt((size_t)where);
+			}
+		}
 
 		if(m_listTable->HasChildren(exprItem)) {
-			DoRefreshItemRecursively(dbgr, exprItem);
+			DoRefreshItemRecursively(dbgr, exprItem, itemsToRefresh);
 		}
+
 		exprItem = m_listTable->GetNextChild(item, cookieOne);
 	}
 }
@@ -296,9 +333,6 @@ void WatchesTable::DoRefreshItemRecursively(IDebugger *dbgr, const wxTreeItemId 
 void WatchesTable::DoRefreshItem(IDebugger* dbgr, const wxTreeItemId& item)
 {
 	if(!dbgr || !item.IsOk())
-		return;
-
-	if(m_listTable->GetItemText(item, 1) == wxT("{...}"))
 		return;
 
 	WatchData* data = static_cast<WatchData*>(m_listTable->GetItemData(item));
@@ -437,7 +471,7 @@ void WatchesTable::OnEvaluateVariableObject(const DebuggerEvent& event)
 			itemColor = redColour;
 
 		m_listTable->SetItemText(iter->second, 1, value);
-		m_listTable->SetItemTextColour(iter->second, itemColor);
+		//m_listTable->SetItemTextColour(iter->second, itemColor);
 
 		m_gdbIdToTreeId.erase(iter);
 	}
@@ -557,7 +591,7 @@ void WatchesTable::OnItemExpanding(wxTreeEvent& event)
 				dbgr->UpdateVariableObject(gdbId, DBG_USERR_WATCHTABLE);
 				dbgr->ListChildren(gdbId, LIST_WATCH_CHILDS);
 				m_listChildItemId[gdbId] = event.GetItem();
-				
+
 			}
 		}
 	}
@@ -637,6 +671,12 @@ void WatchesTable::OnMenuEditExprUI(wxUpdateUIEvent& event)
 
 void WatchesTable::OnListEditLabelBegin(wxTreeEvent& event)
 {
+	if(event.GetItem().IsOk()) {
+		if(m_listTable->GetItemParent(event.GetItem()) != m_listTable->GetRootItem()) {
+			event.Veto();
+			return;
+		}
+	}
 	event.Skip();
 }
 
@@ -695,4 +735,16 @@ wxTreeItemId WatchesTable::DoFindItemByGdbId(const wxString& gdbId)
 		item = m_listTable->GetNextChild(root, cookieOne);
 	}
 	return wxTreeItemId();
+}
+
+void WatchesTable::OnUpdateVariableObject(const DebuggerEvent& event)
+{
+	if(event.m_varObjUpdateInfo.refreshIds.IsEmpty())
+		return;
+
+	wxArrayString itemsToRefresh = event.m_varObjUpdateInfo.refreshIds;
+	IDebugger *dbgr = DoGetDebugger();
+	if(dbgr) {
+		DoRefreshItemRecursively(dbgr, m_listTable->GetRootItem(), itemsToRefresh);
+	}
 }

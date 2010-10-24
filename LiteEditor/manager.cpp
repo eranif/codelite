@@ -2832,6 +2832,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		// notify the 'Locals' view to remove all
 		// out-of-scope variable objects
 		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->OnVariableObjUpdate(event);
+		clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnUpdateVariableObject(event);
 		break;
 
 	case DBG_UR_ADD_LINE:

@@ -88,29 +88,29 @@ enum UserReason {
 };
 
 struct DebuggerEvent {
-	DebuggerUpdateReason          m_updateReason;  // Event reason - the reason why this event was sent
-												   // ==================================================
-												   // Available when the following UpdateReason are set:
-												   // ==================================================
-	DebuggerReasons               m_controlReason; // DBG_UR_GOT_CONTROL
-	wxString                      m_file;          // DBG_UR_FILE_LINE
-	int                           m_line;          // DBG_UR_FILE_LINE
-	wxString                      m_text;          // DBG_UR_ADD_LINE, DBG_UR_REMOTE_TARGET_CONNECTED, DBG_UR_ASCII_VIEWER
-	int                           m_bpInternalId;  // DBG_UR_BP_ADDED
-	int                           m_bpDebuggerId;  // DBG_UR_BP_ADDED, DBG_UR_BP_HIT
-	LocalVariables                m_locals;        // DBG_UR_LOCALS
-	wxString                      m_expression;    // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_ASCII_VIEWER, DBG_UR_WATCHMEMORY, DBG_UR_VARIABLEOBJ
-												   // DBG_UR_EVALVARIABLEOBJ
-	wxString                      m_evaluated;     // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY, DBG_UR_EVALVARIABLEOBJ
-	StackEntryArray               m_stack;         // DBG_UR_UPDATE_STACK_LIST
-	std::vector<BreakpointInfo>   m_bpInfoList;    // DBG_UR_RECONCILE_BPTS
-	bool                          m_onlyIfLogging; // DBG_UR_ADD_LINE
-	ThreadEntryArray              m_threads;       // DBG_UR_LISTTHRAEDS
-	VariableObjChildren           m_varObjChildren;// DBG_UR_LISTCHILDREN, DBG_UR_VAROBJUPDATE
-	VariableObject                m_variableObject;// DBG_UR_VARIABLEOBJ
-	int                           m_userReason;    // User reason as provided in the calling API which triggered the DebuggerUpdate call
-	StackEntry                    m_frameInfo;     // DBG_UR_FRAMEINFO
-
+	DebuggerUpdateReason          m_updateReason;     // Event reason - the reason why this event was sent
+												      // ==================================================
+												      // Available when the following UpdateReason are set:
+												      // ==================================================
+	DebuggerReasons               m_controlReason;    // DBG_UR_GOT_CONTROL
+	wxString                      m_file;             // DBG_UR_FILE_LINE
+	int                           m_line;             // DBG_UR_FILE_LINE
+	wxString                      m_text;             // DBG_UR_ADD_LINE, DBG_UR_REMOTE_TARGET_CONNECTED, DBG_UR_ASCII_VIEWER
+	int                           m_bpInternalId;     // DBG_UR_BP_ADDED
+	int                           m_bpDebuggerId;     // DBG_UR_BP_ADDED, DBG_UR_BP_HIT
+	LocalVariables                m_locals;           // DBG_UR_LOCALS
+	wxString                      m_expression;       // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_ASCII_VIEWER, DBG_UR_WATCHMEMORY, DBG_UR_VARIABLEOBJ
+												      // DBG_UR_EVALVARIABLEOBJ
+	wxString                      m_evaluated;        // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY, DBG_UR_EVALVARIABLEOBJ
+	StackEntryArray               m_stack;            // DBG_UR_UPDATE_STACK_LIST
+	std::vector<BreakpointInfo>   m_bpInfoList;       // DBG_UR_RECONCILE_BPTS
+	bool                          m_onlyIfLogging;    // DBG_UR_ADD_LINE
+	ThreadEntryArray              m_threads;          // DBG_UR_LISTTHRAEDS
+	VariableObjChildren           m_varObjChildren;   // DBG_UR_LISTCHILDREN
+	VariableObject                m_variableObject;   // DBG_UR_VARIABLEOBJ
+	int                           m_userReason;       // User reason as provided in the calling API which triggered the DebuggerUpdate call
+	StackEntry                    m_frameInfo;        // DBG_UR_FRAMEINFO
+	VariableObjectUpdateInfo      m_varObjUpdateInfo; // DBG_UR_VAROBJUPDATE
 	DebuggerEvent()
 		: m_updateReason  (DBG_UR_INVALID)
 		, m_controlReason (DBG_UNKNOWN   )

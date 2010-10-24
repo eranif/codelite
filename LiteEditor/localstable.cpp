@@ -11,11 +11,19 @@ class LocalsData : public wxTreeItemData
 {
 public:
 	wxString _gdbId;
-
+	size_t   _kind;
+	
 public:
-	LocalsData() {}
-	LocalsData(const wxString &gdbId) : _gdbId(gdbId) {}
-	virtual ~LocalsData() {}
+	LocalsData() 
+	: _kind(LocalsTable::Locals) 
+	{}
+	
+	LocalsData(const wxString &gdbId) 
+	: _gdbId(gdbId) 
+	{}
+	
+	virtual ~LocalsData() 
+	{}
 };
 
 LocalsTable::LocalsTable(wxWindow *parent)
@@ -32,35 +40,12 @@ LocalsTable::~LocalsTable()
 
 void LocalsTable::UpdateLocals(const LocalVariables& locals)
 {
-	wxTreeItemId root = m_listTable->GetRootItem();
-	if(!root.IsOk())
-		return;
-
-	wxArrayString itemsNotRemoved;
-	// remove the non-variable objects and return a list
-	// of all the variable objects (at the top level)
-	DoClearNonVariableObjectEntries(itemsNotRemoved);
-	for(size_t i=0; i<locals.size(); i++) {
-
-		if(itemsNotRemoved.Index(locals[i].name) == wxNOT_FOUND) {
-			// New entry
-			wxTreeItemId item = m_listTable->AppendItem(root, locals[i].name, -1, -1, new LocalsData());
-			m_listTable->SetItemText(item, 1, locals[i].value);
-
-			m_listTable->AppendItem(item, wxT("<dummy>"));
-			m_listTable->Collapse(item);
-
-		}
-	}
-
-	IDebugger* dbgr = DoGetDebugger();
-	if(dbgr && itemsNotRemoved.IsEmpty() == false) {
-		dbgr->UpdateVariableObject(wxT("*"), DBG_USERR_LOCALS);
-	}
+	DoUpdateLocals(locals, LocalsTable::Locals);
 }
 
 void LocalsTable::UpdateFuncArgs(const LocalVariables& args)
 {
+	DoUpdateLocals(args, LocalsTable::FuncArgs);
 }
 
 void LocalsTable::Clear()
@@ -91,8 +76,10 @@ void LocalsTable::OnCreateVariableObj(const DebuggerEvent& event)
 		// set the variable object
 		LocalsData* data = static_cast<LocalsData*>(m_listTable->GetItemData(iter->second));
 		if(data) {
+			
 			data->_gdbId = event.m_variableObject.gdbId;
-
+			data->_kind  = LocalsTable::VariableObject;
+			
 			// refresh this item only
 			IDebugger *dbgr = DoGetDebugger();
 			if(dbgr)
@@ -294,7 +281,7 @@ void LocalsTable::OnItemExpanding(wxTreeEvent& event)
 	}
 }
 
-void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved)
+void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved, size_t flags)
 {
 	wxTreeItemIdValue cookie;
 	std::vector<wxTreeItemId> itemsToRemove;
@@ -303,8 +290,12 @@ void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved
 	while( item.IsOk() ) {
 		wxString gdbId = DoGetGdbId(item);
 		if(gdbId.IsEmpty()) {
-			// not a variable object entry, remove it
-			itemsToRemove.push_back(item);
+			LocalsData* data = static_cast<LocalsData*>( m_listTable->GetItemData(item) );
+			if(data && (data->_kind & flags)) {
+				// not a variable object entry, remove it
+				itemsToRemove.push_back(item);
+			}
+			
 		} else {
 			itemsNotRemoved.Add( m_listTable->GetItemText(item) );
 		}
@@ -365,3 +356,33 @@ wxTreeItemId LocalsTable::DoFindItemByGdbId(const wxString& gdbId)
 	return wxTreeItemId();
 }
 
+
+void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
+{
+	wxTreeItemId root = m_listTable->GetRootItem();
+	if(!root.IsOk())
+		return;
+
+	wxArrayString itemsNotRemoved;
+	// remove the non-variable objects and return a list
+	// of all the variable objects (at the top level)
+	DoClearNonVariableObjectEntries(itemsNotRemoved, kind);
+	for(size_t i=0; i<locals.size(); i++) {
+
+		if(itemsNotRemoved.Index(locals[i].name) == wxNOT_FOUND) {
+			// New entry
+			wxTreeItemId item = m_listTable->AppendItem(root, locals[i].name, -1, -1, new LocalsData());
+			m_listTable->SetItemText(item, 1, locals[i].value);
+
+			m_listTable->AppendItem(item, wxT("<dummy>"));
+			m_listTable->Collapse(item);
+
+		}
+	}
+
+	IDebugger* dbgr = DoGetDebugger();
+	if(dbgr && itemsNotRemoved.IsEmpty() == false) {
+		dbgr->UpdateVariableObject(wxT("*"), DBG_USERR_LOCALS);
+	}
+
+}

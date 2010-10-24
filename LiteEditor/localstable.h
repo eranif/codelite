@@ -16,18 +16,27 @@ class LocalsTable : public LocalsTableBase
 	std::map<wxString, wxTreeItemId> m_listChildItemId;
 	std::map<wxString, wxTreeItemId> m_createVarItemId;
 	std::map<wxString, wxTreeItemId> m_gdbIdToTreeId;
-
+	
+public:
+	enum {
+		Locals         = 0x00000001,
+		FuncArgs       = 0x00000002,
+		VariableObject = 0x00000004
+	};
+	
 protected:
 	IDebugger*    DoGetDebugger();
 	wxString      DoGetGdbId(const wxTreeItemId& item);
 	void          DoDeleteWatch(const wxTreeItemId& item);
-	void          DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved);
+	void          DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved, size_t flags);
 	void          DoRefreshItem(IDebugger *dbgr, const wxTreeItemId &item);
 	void          DoRefreshItemRecursively(IDebugger *dbgr, const wxTreeItemId &item);
 	wxTreeItemId  DoFindItemByGdbId(const wxString& gdbId);
+	void          DoUpdateLocals  (const LocalVariables& locals, size_t kind);
 	
-	void OnItemExpanding(wxTreeEvent& event);
-
+	// Events
+	void          OnItemExpanding(wxTreeEvent& event);
+	
 public:
 	LocalsTable(wxWindow *parent);
 	virtual ~LocalsTable();

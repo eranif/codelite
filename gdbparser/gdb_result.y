@@ -67,6 +67,7 @@ static std::vector<std::string>                         sg_locals;
 %token GDB_STOPPED
 %token GDB_TIME
 %token GDB_REASON
+%token GDB_CHANGELIST
 %%
 
 parse: children_list
@@ -101,16 +102,29 @@ child_pattern :   '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN 
 				 * func="main",
 				 * file="C:/TestArea/TestConsole/AnotherConsole/main.cpp",
 				 * fullname="C:/TestArea/TestConsole/AnotherConsole/main.cpp",
-				 * line="33"} 
+				 * line="33"}
 				 **/
 				| '^' GDB_DONE ',' GDB_FRAME '=' list_open child_attributes list_close
 				{
 					sg_children.push_back( sg_attributes );
 					sg_attributes.clear();
 				}
+				/*
+				 * ^done,changelist=[{name="var2",in_scope="false",type_changed="false",has_more="0"},{name="var1",in_scope="true"}]
+				 */
 				/* */
+				| '^' GDB_DONE ',' GDB_CHANGELIST '=' list_open change_set list_close
 				| stop_statement
 				;
+
+change_set:    list_open child_attributes list_close
+				{
+					sg_children.push_back( sg_attributes );
+					sg_attributes.clear();
+				}
+             | list_open child_attributes list_close {sg_children.push_back( sg_attributes ); sg_attributes.clear(); } ',' change_set
+			 ;
+
 
 /* {nr_rows="3",nr_cols="6",hdr=[{width="7",alignment="-1",col_name="number",colhdr="Num"},{width="14",alignment="-1",col_name="type",colhdr="Type"},{width="4",alignment="-1",col_name="disp",colhdr="Disp"},{width="3",alignment="-1",col_name="enabled",colhdr="Enb"},{width="10",alignment="-1",col_name="addr",colhdr="Address"},{width="40",alignment="2",col_name="what",colhdr="What"}*/
 bpt_table_hdr : GDB_NR_ROWS '=' GDB_STRING ',' GDB_NR_COLS '=' GDB_STRING ',' GDB_HDR '=' list_open bpt_hdr_table_description list_close
@@ -179,7 +193,7 @@ stop_statement : GDB_STOPPED ',' GDB_TIME '=' '{' child_attributes '}' ',' GDB_R
 					sg_children.push_back( sg_attributes );
 				}
 				;
-				
+
 child_key: GDB_NAME       {$$ = $1;}
 		 | GDB_NUMCHILD   {$$ = $1;}
 		 | GDB_TYPE       {$$ = $1;}

@@ -541,8 +541,8 @@ bool DbgGdb::Interrupt()
 bool DbgGdb::QueryFileLine()
 {
 
-	if(!WriteCommand(wxT("-stack-info-frame"), new DbgCmdHandlerStackInfo(m_observer, this)))
-		return false;
+//	if(!WriteCommand(wxT("-stack-info-frame"), new DbgCmdHandlerStackInfo(m_observer, this)))
+//		return false;
 
 #if defined (__WXMSW__) || defined (__WXGTK__)
 	return WriteCommand( wxT( "-file-list-exec-source-file" ), new DbgCmdHandlerGetLine( m_observer, this ) );
@@ -1219,9 +1219,9 @@ bool DbgGdb::SetVariableObbjectDisplayFormat(const wxString& name, DisplayFormat
 	return WriteCommand( cmd, NULL );
 }
 
-bool DbgGdb::UpdateVariableObject(const wxString& name)
+bool DbgGdb::UpdateVariableObject(const wxString& name, int userReason)
 {
 	wxString cmd;
 	cmd << wxT( "-var-update \"" ) << name << wxT( "\" " );
-	return WriteCommand( cmd, NULL );
+	return WriteCommand( cmd, new DbgVarObjUpdate(m_observer, this, name, userReason) );
 }

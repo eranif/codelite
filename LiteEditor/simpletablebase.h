@@ -43,7 +43,7 @@ class SimpleTableBase : public wxPanel
 		virtual void OnItemRightClick( wxTreeEvent& event ){ event.Skip(); }
 		virtual void OnListKeyDown( wxTreeEvent& event ){ event.Skip(); }
 		virtual void OnItemExpanding( wxTreeEvent& event ){ event.Skip(); }
-		
+
 		virtual void OnNewWatch( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnNewWatchUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnDeleteWatch( wxCommandEvent& event ){ event.Skip(); }
@@ -66,13 +66,10 @@ class LocalsTableBase : public wxPanel
 	private:
 
 	protected:
-		wxListView* m_listTable;
-		wxChoice* m_choiceExpand;
+		wxTreeListCtrl* m_listTable;
 
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnItemActivated( wxListEvent& event ){ event.Skip(); }
-		virtual void OnItemSelected( wxListEvent& event ){ event.Skip(); }
-
+		virtual void OnItemExpanding( wxTreeEvent& event ){ event.Skip(); }
 
 	public:
 		LocalsTableBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );

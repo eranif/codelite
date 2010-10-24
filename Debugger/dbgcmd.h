@@ -335,17 +335,17 @@ public:
 			: DbgCmdHandler(observer)
 			, m_expression(expression)
 			, m_userReason(userReason)
-			, m_debugger(gdb) 
+			, m_debugger(gdb)
 	{
 	}
-	
+
 	/**
 	 * @brief we want to handle error ourselves
 	 */
 	virtual bool WantsErrors() const {
 		return true;
 	}
-	
+
 	virtual ~DbgCmdCreateVarObj() {}
 
 	virtual bool ProcessOutput(const wxString & line);
@@ -398,5 +398,26 @@ public:
 	{}
 
 	virtual bool ProcessOutput(const wxString & line);
+};
+
+class DbgVarObjUpdate : public DbgCmdHandler
+{
+	wxString m_variableName;
+	DbgGdb * m_debugger;
+	int      m_userReason;
+
+public:
+	DbgVarObjUpdate(IDebuggerObserver *observer, DbgGdb *debugger, const wxString &name, int userReason)
+			: DbgCmdHandler  (observer)
+			, m_debugger(debugger)
+			, m_variableName(name)
+			, m_userReason(userReason)
+			{}
+
+	virtual ~DbgVarObjUpdate()
+	{}
+
+	virtual bool ProcessOutput(const wxString & line);
+
 };
 #endif //DBGCMD_H

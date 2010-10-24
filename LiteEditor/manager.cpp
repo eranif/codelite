@@ -2020,11 +2020,11 @@ void Manager::DbgStart ( long pid )
 		args = bldConf->GetCommandArguments();
 		exepath.Prepend ( wxT ( "\"" ) );
 		exepath.Append ( wxT ( "\"" ) );
-		
+
 		// Apply environment variables
 		EnvSetter env;
 		wd = bldConf->GetWorkingDirectory();
-		
+
 		// Expand variables before passing them to the debugger
 		wd = ExpandVariables ( wd, proj, clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
 		exepath = ExpandVariables ( exepath, proj, clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
@@ -2209,10 +2209,10 @@ void Manager::DbgStop()
 	dbgr->Stop();
 	DebuggerMgr::Get().SetActiveDebugger ( wxEmptyString );
 	DebugMessage ( _ ( "Debug session ended\n" ) );
-	
+
 	// Clear the current stack frame information
 	m_dbgCurrentFrame = StackEntry();
-	
+
 	// notify plugins that the debugger stopped
 	SendCmdEvent(wxEVT_DEBUG_ENDED);
 }
@@ -2335,7 +2335,7 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 	//put us on top of the z-order window
 	clMainFrame::Get()->Raise();
 	m_dbgCanInteract = true;
-	
+
 	switch ( reason ) {
 	case DBG_RECV_SIGNAL_SIGTRAP:         // DebugBreak()
 	case DBG_RECV_SIGNAL_EXC_BAD_ACCESS:  // SIGSEGV on Mac
@@ -2823,11 +2823,17 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		//raise the flag for the next call, as this "override" is only used once per consumption
 		ManagerST::Get()->SetRepositionEditor(true);
 		break;
-	
+
 	case DBG_UR_FRAMEINFO:
 		m_dbgCurrentFrame = event.m_frameInfo;
 		break;
-		
+
+	case DBG_UR_VAROBJUPDATE:
+		// notify the 'Locals' view to remove all
+		// out-of-scope variable objects
+		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->OnVariableObjUpdate(event);
+		break;
+
 	case DBG_UR_ADD_LINE:
 		UpdateAddLine(event.m_text, event.m_onlyIfLogging);
 		break;
@@ -2871,7 +2877,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	case DBG_UR_EXPRESSION:
 		//clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->UpdateExpression ( event.m_expression, event.m_evaluated );
 		break;
-		
+
 	case DBG_UR_UPDATE_STACK_LIST:
 		clMainFrame::Get()->GetDebuggerPane()->GetFrameListView()->Update ( event.m_stack );
 		break;
@@ -2903,8 +2909,8 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	case DBG_UR_WATCHMEMORY:
 		clMainFrame::Get()->GetDebuggerPane()->GetMemoryView()->SetViewString( event.m_evaluated );
 		break;
-		
-	case DBG_UR_VARIABLEOBJCREATEERR: 
+
+	case DBG_UR_VARIABLEOBJCREATEERR:
 		if(event.m_userReason == DBG_USERR_WATCHTABLE) {
 			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnCreateVariableObject( event );
 		}
@@ -2943,20 +2949,21 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnCreateVariableObject(event);
 
 		} else if ( event.m_userReason == DBG_USERR_LOCALS ) {
-			DoShowQuickWatchDialog( event );
-
-		} else if ( event.m_userReason == DBG_USERR_LOCALS_INLINE ) {
-			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateInline( event );
+			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->OnCreateVariableObj(event);
 
 		}
 	}
 	break;
 	case DBG_UR_LISTCHILDREN: {
-		
+
 		if(event.m_userReason == QUERY_NUM_CHILDS || event.m_userReason == LIST_WATCH_CHILDS) {
 			// Watch table
 			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnListChildren( event );
-			
+
+		} else if(event.m_userReason == QUERY_LOCALS_CHILDS || event.m_userReason == LIST_LOCALS_CHILDS) {
+			// Locals table
+			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->OnListChildren( event );
+
 		} else {
 			// Tooltip
 			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -2971,19 +2978,22 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 					GetDebuggerTip()->AddItems(event.m_expression, event.m_varObjChildren);
 				}
 			}
-			
+
 		}
 	}
 	break;
 	case DBG_UR_EVALVARIABLEOBJ:
-		
+
 		// EvaluateVariableObject callback
 		if(event.m_userReason == DBG_USERR_WATCHTABLE) {
 			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnEvaluateVariableObject( event );
-			
+
+		} else if(event.m_userReason == DBG_USERR_LOCALS) {
+			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->OnEvaluateVariableObj( event );
+
 		} else if (GetDebuggerTip() && GetDebuggerTip()->IsShown()) {
 			GetDebuggerTip()->UpdateValue(event.m_expression, event.m_evaluated);
-			
+
 		}
 		break;
 	case DBG_UR_INVALID:

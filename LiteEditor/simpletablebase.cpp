@@ -16,7 +16,7 @@ SimpleTableBase::SimpleTableBase( wxWindow* parent, wxWindowID id, const wxPoint
 
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	long treeStyle = wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS;
 	m_listTable = new wxTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
 	bSizer3->Add( m_listTable, 1, wxEXPAND|wxALL, 1 );
@@ -46,7 +46,7 @@ SimpleTableBase::SimpleTableBase( wxWindow* parent, wxWindowID id, const wxPoint
 	m_listTable->Connect( wxEVT_COMMAND_TREE_ITEM_MENU,        wxTreeEventHandler( SimpleTableBase::OnItemRightClick ), NULL, this );
 	m_listTable->Connect( wxEVT_COMMAND_TREE_KEY_DOWN,         wxTreeEventHandler( SimpleTableBase::OnListKeyDown ), NULL, this );
 	m_listTable->Connect( wxEVT_COMMAND_TREE_ITEM_EXPANDING,   wxTreeEventHandler( SimpleTableBase::OnItemExpanding ), NULL, this );
-	
+
 	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SimpleTableBase::OnNewWatch ), NULL, this );
 	m_button1->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SimpleTableBase::OnNewWatchUI ), NULL, this );
 	m_button2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SimpleTableBase::OnDeleteWatch ), NULL, this );
@@ -63,7 +63,7 @@ SimpleTableBase::~SimpleTableBase()
 	m_listTable->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU,        wxTreeEventHandler( SimpleTableBase::OnItemRightClick ), NULL, this );
 	m_listTable->Disconnect( wxEVT_COMMAND_TREE_KEY_DOWN,         wxTreeEventHandler( SimpleTableBase::OnListKeyDown ), NULL, this );
 	m_listTable->Disconnect( wxEVT_COMMAND_TREE_ITEM_EXPANDING,   wxTreeEventHandler( SimpleTableBase::OnItemExpanding ), NULL, this );
-	
+
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SimpleTableBase::OnNewWatch ), NULL, this );
 	m_button1->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SimpleTableBase::OnNewWatchUI ), NULL, this );
 	m_button2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SimpleTableBase::OnDeleteWatch ), NULL, this );
@@ -80,28 +80,21 @@ LocalsTableBase::LocalsTableBase( wxWindow* parent, wxWindowID id, const wxPoint
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_listTable = new wxListView( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
+	long treeStyle = wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_HAS_BUTTONS;
+	m_listTable = new wxTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle );
 	bSizer3->Add( m_listTable, 1, wxEXPAND|wxALL, 1 );
 
 	bSizer1->Add( bSizer3, 1, wxEXPAND, 5 );
-
-	wxString m_choiceExpandChoices[] = { wxT("Select an entry to explore it in the 'Display Variable' dialog"), wxT("Double click an entry to explore it in the 'Display Variable' dialog") };
-	int m_choiceExpandNChoices = sizeof( m_choiceExpandChoices ) / sizeof( wxString );
-	m_choiceExpand = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceExpandNChoices, m_choiceExpandChoices, 0 );
-	m_choiceExpand->SetSelection( 1 );
-	bSizer1->Add( m_choiceExpand, 0, wxALL|wxEXPAND, 5 );
 
 	this->SetSizer( bSizer1 );
 	this->Layout();
 
 	// Connect Events
-	m_listTable->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( LocalsTableBase::OnItemActivated ), NULL, this );
-	m_listTable->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( LocalsTableBase::OnItemSelected ), NULL, this );
+	m_listTable->Connect( wxEVT_COMMAND_TREE_ITEM_EXPANDING,   wxTreeEventHandler( LocalsTableBase::OnItemExpanding ), NULL, this );
 }
 
 LocalsTableBase::~LocalsTableBase()
 {
 	// Disconnect Events
-	m_listTable->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( LocalsTableBase::OnItemActivated ), NULL, this );
-	m_listTable->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( LocalsTableBase::OnItemSelected ), NULL, this );
+	m_listTable->Connect( wxEVT_COMMAND_TREE_ITEM_EXPANDING,   wxTreeEventHandler( LocalsTableBase::OnItemExpanding ), NULL, this );
 }

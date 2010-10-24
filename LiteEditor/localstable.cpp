@@ -7,188 +7,69 @@
 #include "new_quick_watch_dlg.h"
 #include <set>
 
-#define LOCAL_NAME_COL      0
-#define LOCAL_TYPE_COL      1
-#define LOCAL_VALUE_COL     2
-#define LOCAL_KIND_COL      3
+class LocalsData : public wxTreeItemData
+{
+public:
+	wxString _gdbId;
 
-static const wxString sKindLocalVariable   (wxT("Local Variable"));
-static const wxString sKindFunctionArgument(wxT("Function Argument"));
+public:
+	LocalsData() {}
+	LocalsData(const wxString &gdbId) : _gdbId(gdbId) {}
+	virtual ~LocalsData() {}
+};
 
 LocalsTable::LocalsTable(wxWindow *parent)
-		: LocalsTableBase(parent)
+	: LocalsTableBase(parent)
 {
-	m_listTable->InsertColumn(LOCAL_NAME_COL, wxT("Name"));
-	m_listTable->InsertColumn(LOCAL_TYPE_COL, wxT("Type"));
-	m_listTable->InsertColumn(LOCAL_VALUE_COL, wxT("Value"));
-	m_listTable->InsertColumn(LOCAL_KIND_COL, wxT("Kind"));
-
-	m_listTable->SetColumnWidth(LOCAL_NAME_COL, 200);
-	m_listTable->SetColumnWidth(LOCAL_TYPE_COL, 200);
-	m_listTable->SetColumnWidth(LOCAL_VALUE_COL, 200);
-	m_listTable->SetColumnWidth(LOCAL_KIND_COL, 200);
+	m_listTable->AddColumn(wxT("Name"), 150);
+	m_listTable->AddColumn(wxT("Value"), 1000);
+	m_listTable->AddRoot(wxT("Locals"));
 }
 
 LocalsTable::~LocalsTable()
 {
 }
 
-void LocalsTable::OnItemActivated(wxListEvent& event)
-{
-	if ( m_choiceExpand->GetSelection() == 1 ) {
-		DoShowDetails( event.m_itemIndex );
-	}
-}
-
-void LocalsTable::OnItemSelected(wxListEvent& event)
-{
-	if ( m_choiceExpand->GetSelection() == 0 ) {
-		DoShowDetails( event.m_itemIndex );
-	}
-	event.Skip();
-}
-
 void LocalsTable::UpdateLocals(const LocalVariables& locals)
 {
-	bool evaluatingLocals = true;
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if( dbgr && dbgr->GetDebuggerInformation().resolveLocals == false) {
-		evaluatingLocals = false;
+	wxTreeItemId root = m_listTable->GetRootItem();
+	if(!root.IsOk())
+		return;
+
+	wxArrayString itemsNotRemoved;
+	DoClearNonVariableObjectEntries(itemsNotRemoved);
+	for(size_t i=0; i<locals.size(); i++) {
+
+		if(itemsNotRemoved.Index(locals[i].name) == wxNOT_FOUND) {
+			// New entry
+			wxTreeItemId item = m_listTable->AppendItem(root, locals[i].name, -1, -1, new LocalsData());
+			m_listTable->SetItemText(item, 1, locals[i].value);
+
+			m_listTable->AppendItem(item, wxT("<dummy>"));
+			m_listTable->Collapse(item);
+
+		}
 	}
 
-	LocalVariables vars = locals;
-	// locate all items that were modified
-	// this feature is disabled when 'Locals' resolving is enabled
-	// due to the async nature of the debugger
-	if( !evaluatingLocals ) {
-		for(size_t i=0; i<vars.size(); i++){
-			LocalVariable &var = vars.at(i);
-			wxString      oldValue;
 
-			// try to locate this variable in the table
-			long idx = DoGetIdxByVar(var, sKindLocalVariable);
-			if ( idx != wxNOT_FOUND ) {
-				oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
-				var.updated = (oldValue != var.value);
-			}
-		}
-
-	}
-
-	wxWindowUpdateLocker locker ( this );
-	Clear();
-
-	for(size_t i=0; i<vars.size(); i++) {
-		LocalVariable &var = vars.at(i);
-		long idx = AppendListCtrlRow(m_listTable);
-		SetColumnText(m_listTable, idx, LOCAL_NAME_COL,  var.name  );
-		SetColumnText(m_listTable, idx, LOCAL_TYPE_COL,  var.type  );
-		SetColumnText(m_listTable, idx, LOCAL_KIND_COL,  sKindLocalVariable );
-		// If this variable has an "inline" value, dont display the row data
-		if ( !DoShowInline(var, idx) ) {
-			SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
-			if ( var.updated && evaluatingLocals == false ) {
-				m_listTable->SetItemTextColour(idx, wxT("RED"));
-			}
-		}
+	IDebugger* dbgr = DoGetDebugger();
+	if(dbgr) {
+		dbgr->UpdateVariableObject(wxT("*"), DBG_USERR_LOCALS);
 	}
 }
-
 
 void LocalsTable::UpdateFuncArgs(const LocalVariables& args)
 {
-	bool evaluatingLocals = true;
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if( dbgr && dbgr->GetDebuggerInformation().resolveLocals == false) {
-		evaluatingLocals = false;
-	}
-	LocalVariables vars = args;
-
-	// locate all items that were modified
-	// this feature is disabled when 'Locals' resolving is enabled
-	// due to the async nature of the debugger
-	if( !evaluatingLocals ) {
-		for(size_t i=0; i<vars.size(); i++){
-			LocalVariable &var = vars.at(i);
-			wxString      oldValue;
-
-			// try to locate this variable in the table
-			long idx = DoGetIdxByVar(var, sKindFunctionArgument);
-			if ( idx != wxNOT_FOUND ) {
-				oldValue = GetColumnText(m_listTable, idx, LOCAL_VALUE_COL);
-				var.updated = (oldValue != var.value);
-			}
-		}
-	}
-
-	wxWindowUpdateLocker locker ( this );
-
-	// Delete all function arguments from the table
-	for(int i=0; i<m_listTable->GetItemCount(); i++){
-		if(GetColumnText(m_listTable, i, LOCAL_KIND_COL) == sKindFunctionArgument) {
-			m_listTable->DeleteItem(i);
-		}
-	}
-
-	for(size_t i=0; i<vars.size(); i++) {
-		LocalVariable &var = vars.at(i);
-		long idx = AppendListCtrlRow(m_listTable);
-		SetColumnText(m_listTable, idx, LOCAL_NAME_COL,  var.name  );
-		SetColumnText(m_listTable, idx, LOCAL_TYPE_COL,  var.type  );
-		SetColumnText(m_listTable, idx, LOCAL_KIND_COL,  sKindFunctionArgument );
-
-		if ( !DoShowInline(var, idx) ) {
-			SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, var.value );
-			if ( var.updated && evaluatingLocals == false ) {
-				m_listTable->SetItemTextColour(idx, wxT("RED"));
-			}
-		}
-	}
-}
-
-void LocalsTable::DoShowDetails(long item)
-{
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	long sel = m_listTable->GetFirstSelected();
-	if( sel != wxNOT_FOUND && dbgr ){
-		wxString name = GetColumnText(m_listTable, sel, LOCAL_NAME_COL);
-		wxString type = GetColumnText(m_listTable, sel, LOCAL_TYPE_COL);
-		wxString expression(name);
-		
-		// Look to see if the 'type' matches any of the PreDefined types, if it does 
-		// and the flag 'Evaluate Locals...' is also set to ON, replace the variable
-		// object with the PreDefined expression using 'name' as $(Variable)
-		if(dbgr->GetDebuggerInformation().resolveLocals) {
-			wxString preDefinedType = m_preDefTypes.GetPreDefinedTypeForTypename(type, name);
-			if(preDefinedType.IsEmpty() == false)
-				expression = preDefinedType;
-		}
-		
-		if( dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() ) {
-
-			if ( ManagerST::Get()->GetDebuggerTip()->IsShown() ) {
-				ManagerST::Get()->GetDebuggerTip()->HideDialog();
-			}
-
-			dbgr->CreateVariableObject(expression, DBG_USERR_LOCALS);
-		}
-	}
-}
-
-long LocalsTable::DoGetIdxByName(const wxString& name)
-{
-	for( int i=0; i<m_listTable->GetItemCount(); i++){
-		if(GetColumnText(m_listTable, i, LOCAL_NAME_COL) == name) {
-			return i;
-		}
-	}
-	return wxNOT_FOUND;
 }
 
 void LocalsTable::Clear()
 {
-	m_listTable->DeleteAllItems();
-	m_expression2Idx.clear();
+	wxTreeItemId root = m_listTable->GetRootItem();
+	if(root.IsOk()) {
+		if(m_listTable->HasChildren(root)) {
+			m_listTable->DeleteChildren(root);
+		}
+	}
 }
 
 void LocalsTable::Initialize()
@@ -196,54 +77,290 @@ void LocalsTable::Initialize()
 	// Read the debugger defined commands
 	DebuggerSettingsPreDefMap data;
 	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
-	
+
 	m_preDefTypes = data.GetActiveSet();
 }
 
-long LocalsTable::DoGetIdxByVar(const LocalVariable& var, const wxString& kind)
+void LocalsTable::OnCreateVariableObj(const DebuggerEvent& event)
 {
-	for( int i=0; i<m_listTable->GetItemCount(); i++){
-		if( GetColumnText(m_listTable, i, LOCAL_NAME_COL) == var.name &&
-			GetColumnText(m_listTable, i, LOCAL_KIND_COL) == kind)
-		{
-			return i;
+	wxString expr = event.m_expression;
+	std::map<wxString, wxTreeItemId>::iterator iter = m_createVarItemId.find(expr);
+	if( iter != m_createVarItemId.end() ) {
+
+		// set the variable object
+		LocalsData* data = static_cast<LocalsData*>(m_listTable->GetItemData(iter->second));
+		if(data) {
+			data->_gdbId = event.m_variableObject.gdbId;
+
+			// refresh this item only
+			IDebugger *dbgr = DoGetDebugger();
+			if(dbgr)
+				DoRefreshItem(dbgr, iter->second);
+
+			dbgr->UpdateVariableObject(data->_gdbId, DBG_USERR_LOCALS);
+			dbgr->ListChildren(data->_gdbId, LIST_LOCALS_CHILDS);
+			m_listChildItemId[data->_gdbId] = iter->second;
+
+		}
+		m_createVarItemId.erase(iter);
+	}
+}
+
+void LocalsTable::OnEvaluateVariableObj(const DebuggerEvent& event)
+{
+	wxString gdbId = event.m_expression;
+	wxString value = event.m_evaluated;
+
+	std::map<wxString, wxTreeItemId>::iterator iter = m_gdbIdToTreeId.find(gdbId);
+	if( iter != m_gdbIdToTreeId.end() ) {
+
+		wxColour defColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
+		wxColour redColour = *wxRED;
+		wxColour itemColor;
+
+		wxString newValue = value;
+		wxString curValue = m_listTable->GetItemText(iter->second, 1);
+
+		if(newValue == curValue || curValue.IsEmpty())
+			itemColor = defColour;
+		else
+			itemColor = redColour;
+
+		m_listTable->SetItemText(iter->second, 1, value);
+		m_listTable->SetItemTextColour(iter->second, itemColor);
+
+		m_gdbIdToTreeId.erase(iter);
+	}
+}
+
+void LocalsTable::OnListChildren(const DebuggerEvent& event)
+{
+	wxString gdbId = event.m_expression;
+	std::map<wxString, wxTreeItemId>::iterator iter = m_listChildItemId.find(gdbId);
+	if(iter == m_listChildItemId.end())
+		return;
+
+	wxTreeItemId item = iter->second;
+	m_listChildItemId.erase(iter);
+
+	switch(event.m_userReason) {
+	case LIST_LOCALS_CHILDS:
+		if(event.m_varObjChildren.empty() == false) {
+			for(size_t i=0; i<event.m_varObjChildren.size(); i++) {
+
+				IDebugger *dbgr = DoGetDebugger();
+				if(!dbgr)
+					return;
+
+				VariableObjChild ch = event.m_varObjChildren.at(i);
+				if(ch.varName == wxT("public") || ch.varName == wxT("private") || ch.varName == wxT("protected")) {
+					// not really a node...
+					// ask for information about this node children
+					dbgr->ListChildren(ch.gdbId, LIST_LOCALS_CHILDS);
+					m_listChildItemId[ch.gdbId] = item;
+
+				} else {
+
+					LocalsData *data = new LocalsData();
+					data->_gdbId = ch.gdbId;
+					wxTreeItemId child = m_listTable->AppendItem(item, ch.varName, -1, -1, data);
+
+					// Add a dummy node
+					if(child.IsOk() && ch.numChilds > 0) {
+						m_listTable->AppendItem(child, wxT("<dummy>"));
+					}
+
+					// refresh this item only
+					dbgr->EvaluateVariableObject(data->_gdbId, DBG_USERR_LOCALS);
+					// ask the value for this node
+					m_gdbIdToTreeId[data->_gdbId] = child;
+
+				}
+			}
+		}
+		break;
+	}
+}
+
+void LocalsTable::OnVariableObjUpdate(const DebuggerEvent& event)
+{
+	VariableObjChildren children = event.m_varObjChildren;
+	for(size_t i=0; i<children.size(); i++) {
+		wxString gdbId = children[i].gdbId;
+		wxTreeItemId item = DoFindItemByGdbId(gdbId);
+		if(item.IsOk()) {
+			DoDeleteWatch(item);
+			m_listTable->Delete(item);
 		}
 	}
-	return wxNOT_FOUND;
+
+	IDebugger* dbgr = DoGetDebugger();
+	if(dbgr) {
+		DoRefreshItemRecursively(dbgr, m_listTable->GetRootItem());
+		
+	}
 }
 
-bool LocalsTable::DoShowInline(const LocalVariable& var, long item)
+IDebugger* LocalsTable::DoGetDebugger()
 {
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if( dbgr && dbgr->GetDebuggerInformation().resolveLocals == false) {
-		return false;
-	}
-	
-	wxString preDefinedType = m_preDefTypes.GetPreDefinedTypeForTypename(var.type, var.name);
-	if(preDefinedType.IsEmpty())
-		return false;
-	
-	if( dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() ) {
-		dbgr->CreateVariableObject(preDefinedType, DBG_USERR_LOCALS_INLINE);
-		m_expression2Idx[preDefinedType] = item;
-		return true;
-	}
-	
-	return false;
+	if(!ManagerST::Get()->DbgCanInteract())
+		return NULL;
+
+	IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	return dbgr;
 }
 
-void LocalsTable::UpdateInline(const DebuggerEvent& event)
+wxString LocalsTable::DoGetGdbId(const wxTreeItemId& item)
 {
-	wxString key = event.m_expression;
-	std::map<wxString, long>::iterator iter = m_expression2Idx.find(key);
-	if(iter != m_expression2Idx.end()){
-		long idx = iter->second;
-		SetColumnText(m_listTable, idx, LOCAL_VALUE_COL, event.m_evaluated);
+	wxString gdbId;
+	if(!item.IsOk())
+		return gdbId;
+
+	LocalsData *data = (LocalsData*) m_listTable->GetItemData(item);
+	if(data) {
+		return data->_gdbId;
+	}
+	return gdbId;
+}
+
+void LocalsTable::DoDeleteWatch(const wxTreeItemId& item)
+{
+	IDebugger *dbgr = DoGetDebugger();
+	if(!dbgr || !item.IsOk()) {
+		return;
 	}
 
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-		dbgr->DeleteVariableObject(event.m_variableObject.gdbId);
+	wxString gdbId = DoGetGdbId(item);
+	if(gdbId.IsEmpty() == false) {
+		dbgr->DeleteVariableObject(gdbId);
 	}
+
+#ifdef __WXMAC__
+
+	// Mac's GDB does not delete all the children of the variable object
+	// instead we will do it manually
+
+	if(m_listTable->HasChildren(item)) {
+		// Delete this item children
+		wxTreeItemIdValue cookie;
+		wxTreeItemId child = m_listTable->GetFirstChild(item, cookie);
+		while(child.IsOk()) {
+			gdbId = DoGetGdbId(child);
+			if(gdbId.IsEmpty() == false) {
+				dbgr->DeleteVariableObject(gdbId);
+			}
+
+			if(m_listTable->HasChildren(child)) {
+				DoDeleteWatch(child);
+			}
+
+			child = m_listTable->GetNextChild(item, cookie);
+		}
+	}
+#endif
+
+}
+
+void LocalsTable::OnItemExpanding(wxTreeEvent& event)
+{
+	wxTreeItemIdValue cookie;
+	wxTreeItemId child = m_listTable->GetFirstChild(event.GetItem(), cookie);
+
+	IDebugger *dbgr = DoGetDebugger();
+	if(!dbgr || !event.GetItem()) {
+		// dont allow the expansion of this item
+		event.Veto();
+		return;
+	}
+
+	if(child.IsOk() && m_listTable->GetItemText(child) == wxT("<dummy>")) {
+
+		// a dummy node, replace it with the real node content
+		m_listTable->Delete(child);
+
+		wxString gdbId = DoGetGdbId(event.GetItem());
+		if(gdbId.IsEmpty() == false) {
+			dbgr->UpdateVariableObject(gdbId, DBG_USERR_LOCALS);
+			dbgr->ListChildren(gdbId, LIST_LOCALS_CHILDS);
+			m_listChildItemId[gdbId] = event.GetItem();
+
+		} else {
+			// first time
+			// create a variable object
+			dbgr->CreateVariableObject(m_listTable->GetItemText(event.GetItem()), DBG_USERR_LOCALS);
+			m_createVarItemId[m_listTable->GetItemText(event.GetItem())] = event.GetItem();
+		}
+	}
+}
+
+void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved)
+{
+	wxTreeItemIdValue cookie;
+	std::vector<wxTreeItemId> itemsToRemove;
+
+	wxTreeItemId item = m_listTable->GetFirstChild(m_listTable->GetRootItem(), cookie);
+	while( item.IsOk() ) {
+		wxString gdbId = DoGetGdbId(item);
+		if(gdbId.IsEmpty()) {
+			// not a variable object entry, remove it
+			itemsToRemove.push_back(item);
+		} else {
+			itemsNotRemoved.Add( m_listTable->GetItemText(item) );
+		}
+		item = m_listTable->GetNextChild(m_listTable->GetRootItem(), cookie);
+	}
+
+	for(size_t i=0; i<itemsToRemove.size(); i++) {
+		m_listTable->Delete( itemsToRemove[i] );
+	}
+}
+
+
+void LocalsTable::DoRefreshItem(IDebugger* dbgr, const wxTreeItemId& item)
+{
+	if(!dbgr || !item.IsOk())
+		return;
+
+	if(m_listTable->GetItemText(item, 1) == wxT("{...}"))
+		return;
+
+	LocalsData* data = static_cast<LocalsData*>(m_listTable->GetItemData(item));
+	if(data && data->_gdbId.IsEmpty() == false) {
+
+		dbgr->EvaluateVariableObject(data->_gdbId, DBG_USERR_LOCALS);
+		m_gdbIdToTreeId[data->_gdbId] = item;
+
+	}
+}
+
+void LocalsTable::DoRefreshItemRecursively(IDebugger *dbgr, const wxTreeItemId &item)
+{
+	wxTreeItemIdValue cookieOne;
+	wxTreeItemId exprItem = m_listTable->GetFirstChild(item, cookieOne);
+	while( exprItem.IsOk() ) {
+
+		DoRefreshItem(dbgr, exprItem);
+
+		if(m_listTable->HasChildren(exprItem)) {
+			DoRefreshItemRecursively(dbgr, exprItem);
+		}
+		exprItem = m_listTable->GetNextChild(item, cookieOne);
+	}
+}
+
+wxTreeItemId LocalsTable::DoFindItemByGdbId(const wxString& gdbId)
+{
+	wxTreeItemId root = m_listTable->GetRootItem();
+	wxTreeItemIdValue cookieOne;
+	wxTreeItemId item = m_listTable->GetFirstChild(root, cookieOne);
+	while( item.IsOk() ) {
+
+		wxString id = DoGetGdbId(item);
+		if(id.IsEmpty() == false && id == gdbId)
+			return item;
+
+		item = m_listTable->GetNextChild(root, cookieOne);
+	}
+	return wxTreeItemId();
 }
 

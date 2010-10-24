@@ -6,28 +6,53 @@
 #include "debuggerobserver.h"
 #include "debuggersettings.h"
 
-class LocalsTable : public LocalsTableBase {
+#define LIST_LOCALS_CHILDS  600
+#define QUERY_LOCALS_CHILDS 601
 
-	DebuggerPreDefinedTypes m_preDefTypes;
-	std::map<wxString, long>     m_expression2Idx;
+class LocalsTable : public LocalsTableBase
+{
+
+	DebuggerPreDefinedTypes          m_preDefTypes;
+	std::map<wxString, wxTreeItemId> m_listChildItemId;
+	std::map<wxString, wxTreeItemId> m_createVarItemId;
+	std::map<wxString, wxTreeItemId> m_gdbIdToTreeId;
 
 protected:
-	void     DoShowDetails         (long item);
-	long     DoGetIdxByName        (const wxString      &name);
-	long     DoGetIdxByVar         (const LocalVariable &var, const wxString &kind);
-	bool     DoShowInline          (const LocalVariable &var, long item);
+	IDebugger*    DoGetDebugger();
+	wxString      DoGetGdbId(const wxTreeItemId& item);
+	void          DoDeleteWatch(const wxTreeItemId& item);
+	void          DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved);
+	void          DoRefreshItem(IDebugger *dbgr, const wxTreeItemId &item);
+	void          DoRefreshItemRecursively(IDebugger *dbgr, const wxTreeItemId &item);
+	wxTreeItemId  DoFindItemByGdbId(const wxString& gdbId);
 	
+	void OnItemExpanding(wxTreeEvent& event);
+
 public:
 	LocalsTable(wxWindow *parent);
 	virtual ~LocalsTable();
 
 public:
-	virtual void OnItemActivated( wxListEvent& event );
-	virtual void OnItemSelected( wxListEvent& event );
+	/**
+	 * @brief callback to IDebugger::CreateVariableObject
+	 * @param event
+	 */
+	void OnCreateVariableObj  (const DebuggerEvent& event);
+	/**
+	 * @brief callback to IDebugger::EvaluateVariableObj
+	 */
+	void OnEvaluateVariableObj(const DebuggerEvent& event);
+	/**
+	 * @brief callback to IDebugger::ListChildren
+	 */
+	void OnListChildren       (const DebuggerEvent& event);
+	/**
+	 * @brief called to IDEbugger::UpdateVariableObject
+	 */
+	void OnVariableObjUpdate  (const DebuggerEvent& event);
 
-	void UpdateLocals  (const LocalVariables &locals);
-	void UpdateFuncArgs(const LocalVariables &args  );
-	void UpdateInline  (const DebuggerEvent &event  );
+	void UpdateLocals  (const LocalVariables& locals);
+	void UpdateFuncArgs(const LocalVariables& args);
 	void Clear         ();
 	void Initialize    ();
 };

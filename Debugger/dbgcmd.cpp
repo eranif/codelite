@@ -152,10 +152,10 @@ wxString ExtractGdbChild(const std::map<std::string, std::string >& attr, const 
 	}
 	wxString val = wxString(iter->second.c_str(), wxConvUTF8);
 	val.Trim().Trim(false);
-	
+
 	wxRemoveQuotes( val );
 	val = wxGdbFixValue(val);
-	
+
 	return val;
 }
 
@@ -1087,7 +1087,7 @@ bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
 bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
 {
 	DebuggerEvent e;
-	
+
 	if(line.StartsWith(wxT("^error"))) {
 		// Notify the observer we failed to create variable object
 		e.m_updateReason = DBG_UR_VARIABLEOBJCREATEERR; // failed to create variable object
@@ -1096,7 +1096,7 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
 		m_observer->DebuggerUpdate( e );
 		return true;
 	}
-	
+
 	// Variable object was created
 	// Output sample:
 	// ^done,name="var1",numchild="2",value="{...}",type="ChildClass",thread-id="1",has_more="0"
@@ -1307,16 +1307,38 @@ bool DbgCmdHandlerStackInfo::ProcessOutput(const wxString& line)
 	std::vector< std::map<std::string, std::string > > children;
 	gdbParseListChildren(cbuffer, children);
 	if(!children.empty()) {
-		
+
 		e.m_frameInfo.level    = ExtractGdbChild(children.at(0), wxT("level"));
 		e.m_frameInfo.address  = ExtractGdbChild(children.at(0), wxT("addr"));
 		e.m_frameInfo.file     = ExtractGdbChild(children.at(0), wxT("file"));
 		e.m_frameInfo.function = ExtractGdbChild(children.at(0), wxT("func"));
 		e.m_frameInfo.line     = ExtractGdbChild(children.at(0), wxT("line"));
-		
+
 		e.m_updateReason = DBG_UR_FRAMEINFO;
 		m_observer->DebuggerUpdate( e );
-		
+
 	}
+	return true;
+}
+
+bool DbgVarObjUpdate::ProcessOutput(const wxString& line)
+{
+	DebuggerEvent e;
+	std::string cbuffer = line.mb_str(wxConvUTF8).data();
+	std::vector< std::map<std::string, std::string > > children;
+	gdbParseListChildren(cbuffer, children);
+	for(size_t i=0; i<children.size(); i++) {
+		wxString name     = ExtractGdbChild(children.at(i), wxT("name"));
+		wxString in_scope = ExtractGdbChild(children.at(i), wxT("in_scope"));
+		if(in_scope == wxT("false")) {
+			VariableObjChild voc;
+			voc.gdbId = name;
+			e.m_varObjChildren.push_back(voc);
+		}
+	}
+	e.m_updateReason = DBG_UR_VAROBJUPDATE;
+	e.m_expression   = m_variableName;
+	e.m_userReason   = m_userReason;
+	m_observer->DebuggerUpdate( e );
 	return true;
 }

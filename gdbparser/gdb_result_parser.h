@@ -35,3 +35,4 @@
 #define GDB_STOPPED 291
 #define GDB_TIME 292
 #define GDB_REASON 293
+#define GDB_CHANGELIST 294

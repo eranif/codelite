@@ -765,21 +765,21 @@ public:
 	 * @param name variable object
 	 */
 	virtual bool EvaluateVariableObject(const wxString &name, int userReason) = 0;
-	
+
 	/**
 	 * @brief set the display format of a variable object
 	 * @param name
 	 * @param displayFormat
-	 * @return 
+	 * @return
 	 */
 	virtual bool SetVariableObbjectDisplayFormat(const wxString &name, DisplayFormat displayFormat) = 0;
-	
+
 	/**
 	 * @brief update the variable object content
 	 * @param name
-	 * @return 
+	 * @return
 	 */
-	virtual bool UpdateVariableObject(const wxString& name) = 0;
+	virtual bool UpdateVariableObject(const wxString& name, int userReason) = 0;
 };
 
 //-----------------------------------------------------------

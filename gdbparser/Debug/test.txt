@@ -1,1 +1,1 @@
-^done,frame={level="0",addr="0x0040143f",func="main",file="C:/TestArea/TestConsole/AnotherConsole/main.cpp",fullname="C:/TestArea/TestConsole/AnotherConsole/main.cpp",line="33"}
+^done,changelist=[{name="var2",in_scope="false",type_changed="false",has_more="0"},{name="var1",in_scope="true"}]

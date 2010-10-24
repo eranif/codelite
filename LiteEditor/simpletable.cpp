@@ -274,7 +274,7 @@ void WatchesTable::RefreshValues(bool repositionEditor)
 		return;
 
 	// update all variable objects
-	dbgr->UpdateVariableObject(wxT("*"));
+	dbgr->UpdateVariableObject(wxT("*"), DBG_USERR_WATCHTABLE);
 	DoRefreshItemRecursively(dbgr, root);
 }
 
@@ -303,11 +303,11 @@ void WatchesTable::DoRefreshItem(IDebugger* dbgr, const wxTreeItemId& item)
 
 	WatchData* data = static_cast<WatchData*>(m_listTable->GetItemData(item));
 	if(data && data->GetIsFirst()) {
-		
+
 		if(data->GetIsOk()) {
 			dbgr->EvaluateVariableObject(data->GetGdbId(), DBG_USERR_WATCHTABLE);
 			m_gdbIdToTreeId[data->GetGdbId()] = item;
-		
+
 		} else {
 			// try to re-create this variable object
 			dbgr->CreateVariableObject(data->GetExpression(), DBG_USERR_WATCHTABLE);
@@ -554,7 +554,7 @@ void WatchesTable::OnItemExpanding(wxTreeEvent& event)
 			}
 
 			if(gdbId.IsEmpty() == false) {
-				dbgr->UpdateVariableObject(gdbId);
+				dbgr->UpdateVariableObject(gdbId, DBG_USERR_WATCHTABLE);
 				dbgr->ListChildren(gdbId, LIST_WATCH_CHILDS);
 				m_listChildItemId[gdbId] = event.GetItem();
 			}
@@ -675,7 +675,7 @@ void WatchesTable::OnMenuDisplayFormat(wxCommandEvent& event)
 	wxString gdbId = DoGetGdbId(item);
 	if(gdbId.IsEmpty() == false) {
 		dbgr->SetVariableObbjectDisplayFormat(gdbId, df);
-		dbgr->UpdateVariableObject(gdbId);
+		dbgr->UpdateVariableObject(gdbId, DBG_USERR_WATCHTABLE);
 		DoRefreshItem(dbgr, item);
 	}
 }

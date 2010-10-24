@@ -106,6 +106,7 @@ bkpt                                                       {RETURN_VAL(GDB_BKPT)
 stopped                                                    {RETURN_VAL(GDB_STOPPED);}
 time                                                       {RETURN_VAL(GDB_TIME);}
 reason                                                     {RETURN_VAL(GDB_REASON);}
+changelist                                                 {RETURN_VAL(GDB_CHANGELIST);}
 {identifier}                                               {RETURN_VAL(GDB_IDENTIFIER);}
 "^"                                                        {RETURN_VAL((int)*yytext);}
 "="                                                        {RETURN_VAL((int)*yytext);}

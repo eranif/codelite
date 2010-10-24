@@ -76,6 +76,7 @@ enum DebuggerUpdateReason
 	DBG_UR_VARIABLEOBJ,             // Variable object was created
 	DBG_UR_VARIABLEOBJCREATEERR,    // Variable object create error
 	DBG_UR_EVALVARIABLEOBJ,         // Variable object has be evaluated
+	DBG_UR_VAROBJUPDATE,            // An update to variable object
 	DBG_UR_FRAMEINFO                // Frame information
 };
 
@@ -105,11 +106,11 @@ struct DebuggerEvent {
 	std::vector<BreakpointInfo>   m_bpInfoList;    // DBG_UR_RECONCILE_BPTS
 	bool                          m_onlyIfLogging; // DBG_UR_ADD_LINE
 	ThreadEntryArray              m_threads;       // DBG_UR_LISTTHRAEDS
-	VariableObjChildren           m_varObjChildren;// DBG_UR_LISTCHILDREN
+	VariableObjChildren           m_varObjChildren;// DBG_UR_LISTCHILDREN, DBG_UR_VAROBJUPDATE
 	VariableObject                m_variableObject;// DBG_UR_VARIABLEOBJ
 	int                           m_userReason;    // User reason as provided in the calling API which triggered the DebuggerUpdate call
 	StackEntry                    m_frameInfo;     // DBG_UR_FRAMEINFO
-	
+
 	DebuggerEvent()
 		: m_updateReason  (DBG_UR_INVALID)
 		, m_controlReason (DBG_UNKNOWN   )

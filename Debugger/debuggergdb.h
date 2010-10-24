@@ -129,7 +129,7 @@ public:
 	virtual bool DeleteVariableObject(const wxString &name);
 	virtual bool EvaluateVariableObject(const wxString &name, int userReason);
 	virtual bool SetVariableObbjectDisplayFormat(const wxString& name, DisplayFormat displayFormat);
-	virtual bool UpdateVariableObject(const wxString& name);
+	virtual bool UpdateVariableObject(const wxString& name, int userReason);
 
 	/**
 	 * @brief restart the debugger (execute 'run')

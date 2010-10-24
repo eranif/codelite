@@ -73,15 +73,16 @@ protected:
 	void OnNewWatch_Internal(wxCommandEvent &event);
 
 protected:
-	void       InitTable();
-	void       DoRefreshItemRecursively(IDebugger *dbgr, const wxTreeItemId &item);
-	void       DoRefreshItem(IDebugger *dbgr, const wxTreeItemId &item);
-	void       DoShowMoreDetails(const wxTreeItemId &item);
-	void       DoDeleteWatch(const wxTreeItemId& item);
-	IDebugger* DoGetDebugger();
-	wxString   DoGetGdbId(const wxTreeItemId& item);
-	void       DoUpdateExpression(const wxTreeItemId& item, const wxString &newExpr);
-
+	void         InitTable();
+	void         DoRefreshItemRecursively(IDebugger *dbgr, const wxTreeItemId &item);
+	void         DoRefreshItem(IDebugger *dbgr, const wxTreeItemId &item);
+	void         DoShowMoreDetails(const wxTreeItemId &item);
+	void         DoDeleteWatch(const wxTreeItemId& item);
+	IDebugger*   DoGetDebugger();
+	wxString     DoGetGdbId(const wxTreeItemId& item);
+	void         DoUpdateExpression(const wxTreeItemId& item, const wxString &newExpr);
+	wxTreeItemId DoFindItemByGdbId(const wxString& gdbId);
+	
 public:
 	/**
 	 * @brief a callback called from the global manager when the debugger responded to our
@@ -103,7 +104,7 @@ public:
 	 * @param event
 	 */
 	void OnListChildren( const DebuggerEvent &event );
-
+	
 public:
 	/** Constructor */
 	WatchesTable( wxWindow* parent );

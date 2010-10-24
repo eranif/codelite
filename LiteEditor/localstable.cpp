@@ -37,6 +37,8 @@ void LocalsTable::UpdateLocals(const LocalVariables& locals)
 		return;
 
 	wxArrayString itemsNotRemoved;
+	// remove the non-variable objects and return a list
+	// of all the variable objects (at the top level)
 	DoClearNonVariableObjectEntries(itemsNotRemoved);
 	for(size_t i=0; i<locals.size(); i++) {
 
@@ -51,9 +53,8 @@ void LocalsTable::UpdateLocals(const LocalVariables& locals)
 		}
 	}
 
-
 	IDebugger* dbgr = DoGetDebugger();
-	if(dbgr) {
+	if(dbgr && itemsNotRemoved.IsEmpty() == false) {
 		dbgr->UpdateVariableObject(wxT("*"), DBG_USERR_LOCALS);
 	}
 }

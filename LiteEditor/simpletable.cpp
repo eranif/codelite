@@ -557,6 +557,7 @@ void WatchesTable::OnItemExpanding(wxTreeEvent& event)
 				dbgr->UpdateVariableObject(gdbId, DBG_USERR_WATCHTABLE);
 				dbgr->ListChildren(gdbId, LIST_WATCH_CHILDS);
 				m_listChildItemId[gdbId] = event.GetItem();
+				
 			}
 		}
 	}
@@ -678,4 +679,20 @@ void WatchesTable::OnMenuDisplayFormat(wxCommandEvent& event)
 		dbgr->UpdateVariableObject(gdbId, DBG_USERR_WATCHTABLE);
 		DoRefreshItem(dbgr, item);
 	}
+}
+
+wxTreeItemId WatchesTable::DoFindItemByGdbId(const wxString& gdbId)
+{
+	wxTreeItemId root = m_listTable->GetRootItem();
+	wxTreeItemIdValue cookieOne;
+	wxTreeItemId item = m_listTable->GetFirstChild(root, cookieOne);
+	while( item.IsOk() ) {
+
+		wxString id = DoGetGdbId(item);
+		if(id.IsEmpty() == false && id == gdbId)
+			return item;
+
+		item = m_listTable->GetNextChild(root, cookieOne);
+	}
+	return wxTreeItemId();
 }

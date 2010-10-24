@@ -1022,7 +1022,10 @@ void wxEditTextCtrl::EndEdit(bool isCancelled) {
 
 bool wxEditTextCtrl::Destroy() {
     Hide();
+#if wxVERSION_NUMBER < 2900
+	// I don't think this is needed any longer in >=2.9 (and it doesn't compile)
     wxTheApp->GetTraits()->ScheduleForDestroy(this);
+#endif
     return true;
 }
 
@@ -3727,7 +3730,7 @@ void wxTreeListMainWindow::OnChar (wxKeyEvent &event) {
         default:
             if (event.GetKeyCode() >= (int)' ') {
                 if (!m_findTimer->IsRunning()) m_findStr.Clear();
-                m_findStr.Append (event.GetKeyCode());
+                m_findStr << event.GetKeyCode();
                 m_findTimer->Start (FIND_TIMER_TICKS, wxTIMER_ONE_SHOT);
                 wxTreeItemId prev = m_curItem? (wxTreeItemId*)m_curItem: (wxTreeItemId*)NULL;
                 while (true) {
@@ -4185,7 +4188,7 @@ void wxTreeListMainWindow::OnIdle (wxIdleEvent &WXUNUSED(event)) {
 
 void wxTreeListMainWindow::OnScroll (wxScrollWinEvent& event) {
     // FIXME
-#if defined(__WXGTK__) && !defined(__WXUNIVERSAL__)
+#if defined(__WXGTK__) && !defined(__WXUNIVERSAL__) && wxVERSION_NUMBER < 2900
     wxScrolledWindow::OnScroll(event);
 #else
     HandleOnScroll( event );

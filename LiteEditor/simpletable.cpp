@@ -403,26 +403,8 @@ void WatchesTable::DoUpdateExpression(const wxTreeItemId& item, const wxString &
 	}
 
 	DoDeleteWatch(item);
-	if(m_listTable->HasChildren(item)) {
-		m_listTable->Collapse(item);
-		m_listTable->DeleteChildren(item);
-	}
-
-	// update the expression
-	m_listTable->SetItemText(item, newExpr);
-
-	// remove any data associate with the item
-	WatchData *data = (WatchData*)m_listTable->GetItemData(item);
-	if(data) {
-		delete data;
-	}
-	m_listTable->SetItemData(item, new WatchData(newExpr));
-
-	// reset the previous value
-	m_listTable->SetItemText(item, 1, wxT(""));
-
-	dbgr->CreateVariableObject(newExpr, DBG_USERR_WATCHTABLE);
-	m_exprToItemId[newExpr] = item;
+	m_listTable->Delete(item);
+	AddExpression(newExpr);
 }
 
 void WatchesTable::OnMenuCopyBoth(wxCommandEvent& event)

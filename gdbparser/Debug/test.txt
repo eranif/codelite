@@ -1,1 +1,1 @@
-*stopped,time={wallclock="0.00097",user="0.00033",system="0.00052",start="1269602365.656218",end="1269602365.657183"},reason="exited-normally"
+^done,frame={level="0",addr="0x0040143f",func="main",file="C:/TestArea/TestConsole/AnotherConsole/main.cpp",fullname="C:/TestArea/TestConsole/AnotherConsole/main.cpp",line="33"}

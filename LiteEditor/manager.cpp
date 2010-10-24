@@ -2209,7 +2209,10 @@ void Manager::DbgStop()
 	dbgr->Stop();
 	DebuggerMgr::Get().SetActiveDebugger ( wxEmptyString );
 	DebugMessage ( _ ( "Debug session ended\n" ) );
-
+	
+	// Clear the current stack frame information
+	m_dbgCurrentFrame = StackEntry();
+	
 	// notify plugins that the debugger stopped
 	SendCmdEvent(wxEVT_DEBUG_ENDED);
 }
@@ -2820,7 +2823,11 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		//raise the flag for the next call, as this "override" is only used once per consumption
 		ManagerST::Get()->SetRepositionEditor(true);
 		break;
-
+	
+	case DBG_UR_FRAMEINFO:
+		m_dbgCurrentFrame = event.m_frameInfo;
+		break;
+		
 	case DBG_UR_ADD_LINE:
 		UpdateAddLine(event.m_text, event.m_onlyIfLogging);
 		break;
@@ -2969,7 +2976,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnEvaluateVariableObject( event );
 			
 		} else if (GetDebuggerTip() && GetDebuggerTip()->IsShown()) {
-			GetDebuggerTip()->UpdateValue(event.m_expression, event.m_evaluated, event.m_displayFormat);
+			GetDebuggerTip()->UpdateValue(event.m_expression, event.m_evaluated);
 			
 		}
 		break;

@@ -48,7 +48,8 @@ DBG_BREAK_PROC_FUNC_PTR DebugBreakProcessFunc = NULL;
 HINSTANCE Kernel32Dll = NULL;
 
 // define a dummy control handler
-BOOL CtrlHandler( DWORD fdwCtrlType ) {
+BOOL CtrlHandler( DWORD fdwCtrlType )
+{
 	wxUnusedVar( fdwCtrlType );
 
 	// return FALSE so other process in our group are allowed to process this event
@@ -59,6 +60,13 @@ BOOL CtrlHandler( DWORD fdwCtrlType ) {
 #if defined(__WXGTK__) || defined (__WXMAC__)
 #include <sys/types.h>
 #include <signal.h>
+#endif
+
+#if 0
+#    define DBG_LOG 1
+static wxFFile gfp(wxT("debugger.log"), wxT("w+"));
+#else
+#    define DBG_LOG 0
 #endif
 
 //Using the running image of child Thread 46912568064384 (LWP 7051).
@@ -73,7 +81,8 @@ static wxRegEx reConnectionRefused( wxT( "[0-9a-zA-Z/\\\\-\\_]*:[0-9]+: No conne
 #else
 static wxRegEx reConnectionRefused( wxT( "[0-9a-zA-Z/\\\\-\\_]*:[0-9]+: Connection refused." ) );
 #endif
-DebuggerInfo GetDebuggerInfo() {
+DebuggerInfo GetDebuggerInfo()
+{
 	DebuggerInfo info = {
 		wxT( "GNU gdb debugger" ),
 		wxT( "CreateDebuggerGDB" ),
@@ -83,7 +92,8 @@ DebuggerInfo GetDebuggerInfo() {
 	return info;
 }
 
-IDebugger *CreateDebuggerGDB() {
+IDebugger *CreateDebuggerGDB()
+{
 	static DbgGdb theGdbDebugger;
 	theGdbDebugger.SetName( wxT( "GNU gdb debugger" ) );
 
@@ -94,7 +104,8 @@ IDebugger *CreateDebuggerGDB() {
 }
 
 // Removes MI additional characters from string
-static void StripString( wxString &string ) {
+static void StripString( wxString &string )
+{
 	string.Replace( wxT( "\\n\"" ), wxT( "\"" ) );
 	string = string.AfterFirst( wxT( '"' ) );
 	string = string.BeforeLast( wxT( '"' ) );
@@ -106,7 +117,8 @@ static void StripString( wxString &string ) {
 	string = string.Trim();
 }
 
-static wxString MakeId() {
+static wxString MakeId()
+{
 	static unsigned int counter( 0 );
 	wxString newId;
 	newId.Printf( wxT( "%08u" ), ++counter );
@@ -121,7 +133,8 @@ END_EVENT_TABLE()
 DbgGdb::DbgGdb()
 	: m_debuggeePid( wxNOT_FOUND )
 	, m_cliHandler ( NULL )
-	, m_internalBpId( wxNOT_FOUND ) {
+	, m_internalBpId( wxNOT_FOUND )
+{
 #ifdef __WXMSW__
 	Kernel32Dll = LoadLibrary( wxT( "kernel32.dll" ) );
 	if ( Kernel32Dll ) {
@@ -138,7 +151,8 @@ DbgGdb::DbgGdb()
 #endif
 }
 
-DbgGdb::~DbgGdb() {
+DbgGdb::~DbgGdb()
+{
 #ifdef __WXMSW__
 	if ( Kernel32Dll ) {
 		FreeLibrary( Kernel32Dll );
@@ -147,11 +161,13 @@ DbgGdb::~DbgGdb() {
 #endif
 }
 
-void DbgGdb::RegisterHandler( const wxString &id, DbgCmdHandler *cmd ) {
+void DbgGdb::RegisterHandler( const wxString &id, DbgCmdHandler *cmd )
+{
 	m_handlers[id] = cmd;
 }
 
-DbgCmdHandler *DbgGdb::PopHandler( const wxString &id ) {
+DbgCmdHandler *DbgGdb::PopHandler( const wxString &id )
+{
 	HandlersMap::iterator it = m_handlers.find( id );
 	if ( it == m_handlers.end() ) {
 		return NULL;
@@ -161,7 +177,8 @@ DbgCmdHandler *DbgGdb::PopHandler( const wxString &id ) {
 	return cmd;
 }
 
-void DbgGdb::EmptyQueue() {
+void DbgGdb::EmptyQueue()
+{
 	HandlersMap::iterator iter = m_handlers.begin();
 	while ( iter != m_handlers.end() ) {
 		delete iter->second;
@@ -170,7 +187,8 @@ void DbgGdb::EmptyQueue() {
 	m_handlers.clear();
 }
 
-bool DbgGdb::Start( const wxString &debuggerPath, const wxString & exeName, int pid, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds ) {
+bool DbgGdb::Start( const wxString &debuggerPath, const wxString & exeName, int pid, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds )
+{
 	wxString dbgExeName;
 	if ( ! DoLocateGdbExecutable( debuggerPath, dbgExeName ) ) {
 		return false;
@@ -214,7 +232,8 @@ bool DbgGdb::Start( const wxString &debuggerPath, const wxString & exeName, int 
 	return true;
 }
 
-bool DbgGdb::Start( const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds ) {
+bool DbgGdb::Start( const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds )
+{
 
 	wxString dbgExeName;
 	if ( ! DoLocateGdbExecutable( debuggerPath, dbgExeName ) ) {
@@ -244,10 +263,10 @@ bool DbgGdb::Start( const wxString &debuggerPath, const wxString &exeName, const
 	m_observer->UpdateAddLine( wxString::Format( wxT( "Launching gdb from : %s" ), cwd.c_str() ) );
 	m_observer->UpdateAddLine( wxString::Format( wxT( "Starting debugger  : %s" ), cmd.c_str() ) );
 	m_gdbProcess = CreateAsyncProcess( this,
-									   cmd,
-									   // show console?
-									   m_info.showTerminal ? IProcessCreateConsole : IProcessCreateDefault,
-									   cwd );
+	                                   cmd,
+	                                   // show console?
+	                                   m_info.showTerminal ? IProcessCreateConsole : IProcessCreateDefault,
+	                                   cwd );
 	if ( !m_gdbProcess ) {
 		return false;
 	}
@@ -256,7 +275,8 @@ bool DbgGdb::Start( const wxString &debuggerPath, const wxString &exeName, const
 	return true;
 }
 
-bool DbgGdb::WriteCommand( const wxString &command, DbgCmdHandler *handler ) {
+bool DbgGdb::WriteCommand( const wxString &command, DbgCmdHandler *handler )
+{
 	wxString cmd;
 	wxString id = MakeId( );
 	cmd << id << command;
@@ -268,11 +288,13 @@ bool DbgGdb::WriteCommand( const wxString &command, DbgCmdHandler *handler ) {
 	return true;
 }
 
-bool DbgGdb::Start( const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds ) {
+bool DbgGdb::Start( const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds )
+{
 	return Start( wxT( "gdb" ), exeName, cwd, bpList, cmds );
 }
 
-bool DbgGdb::Run( const wxString &args, const wxString &comm ) {
+bool DbgGdb::Run( const wxString &args, const wxString &comm )
+{
 	if ( !GetIsRemoteDebugging() ) {
 
 		// add handler for this command
@@ -288,7 +310,8 @@ bool DbgGdb::Run( const wxString &args, const wxString &comm ) {
 	}
 }
 
-bool DbgGdb::Stop() {
+bool DbgGdb::Stop()
+{
 	if ( m_gdbProcess ) {
 		delete m_gdbProcess;
 		m_gdbProcess = NULL;
@@ -308,11 +331,13 @@ bool DbgGdb::Stop() {
 	return true;
 }
 
-bool DbgGdb::Next() {
+bool DbgGdb::Next()
+{
 	return WriteCommand( wxT( "-exec-next" ), new DbgCmdHandlerAsyncCmd( m_observer, this ) );
 }
 
-void DbgGdb::SetBreakpoints() {
+void DbgGdb::SetBreakpoints()
+{
 	for ( size_t i=0; i< m_bpList.size(); i++ ) {
 		// Without the 'unnecessary' cast in the next line, bpinfo.bp_type is seen as (e.g.) 4 instead of BP_type_tempbreak, ruining switch statments :/
 		BreakpointInfo bpinfo = ( BreakpointInfo )m_bpList.at( i );
@@ -320,7 +345,8 @@ void DbgGdb::SetBreakpoints() {
 	}
 }
 
-bool DbgGdb::Break( const BreakpointInfo& bp ) {
+bool DbgGdb::Break( const BreakpointInfo& bp )
+{
 	wxFileName fn( bp.file );
 
 	// by default, use full paths for the file name when setting breakpoints
@@ -414,7 +440,8 @@ bool DbgGdb::Break( const BreakpointInfo& bp ) {
 	return WriteCommand( gdbCommand, new DbgCmdHandlerBp( m_observer, this, bp, &m_bpList, bp.bp_type ) );
 }
 
-bool DbgGdb::SetIgnoreLevel( const int bid, const int ignorecount ) {
+bool DbgGdb::SetIgnoreLevel( const int bid, const int ignorecount )
+{
 	if ( bid == -1 ) {	// Sanity check
 		return false;
 	}
@@ -424,7 +451,8 @@ bool DbgGdb::SetIgnoreLevel( const int bid, const int ignorecount ) {
 	return WriteCommand( command, NULL );
 }
 
-bool DbgGdb::SetEnabledState( const int bid, const bool enable ) {
+bool DbgGdb::SetEnabledState( const int bid, const bool enable )
+{
 	if ( bid == -1 ) {	// Sanity check
 		return false;
 	}
@@ -437,7 +465,8 @@ bool DbgGdb::SetEnabledState( const int bid, const bool enable ) {
 	return WriteCommand( command, NULL );
 }
 
-bool DbgGdb::SetCondition( const BreakpointInfo& bp ) {
+bool DbgGdb::SetCondition( const BreakpointInfo& bp )
+{
 	if ( bp.debugger_id == -1 ) {	// Sanity check
 		return false;
 	}
@@ -447,7 +476,8 @@ bool DbgGdb::SetCondition( const BreakpointInfo& bp ) {
 	return WriteCommand( command, new DbgCmdSetConditionHandler( m_observer, bp ) );
 }
 
-bool DbgGdb::SetCommands( const BreakpointInfo& bp ) {
+bool DbgGdb::SetCommands( const BreakpointInfo& bp )
+{
 	if ( bp.debugger_id == -1 ) {	// Sanity check
 		return false;
 	}
@@ -465,23 +495,28 @@ bool DbgGdb::SetCommands( const BreakpointInfo& bp ) {
 	return WriteCommand( command, NULL );
 }
 
-bool DbgGdb::Continue() {
+bool DbgGdb::Continue()
+{
 	return WriteCommand( wxT( "-exec-continue" ), new DbgCmdHandlerAsyncCmd( m_observer, this ) );
 }
 
-bool DbgGdb::StepIn() {
+bool DbgGdb::StepIn()
+{
 	return WriteCommand( wxT( "-exec-step" ), new DbgCmdHandlerAsyncCmd( m_observer, this ) );
 }
 
-bool DbgGdb::StepOut() {
+bool DbgGdb::StepOut()
+{
 	return WriteCommand( wxT( "-exec-finish" ), new DbgCmdHandlerAsyncCmd( m_observer, this ) );
 }
 
-bool DbgGdb::IsRunning() {
+bool DbgGdb::IsRunning()
+{
 	return m_gdbProcess != NULL;
 }
 
-bool DbgGdb::Interrupt() {
+bool DbgGdb::Interrupt()
+{
 	if ( m_debuggeePid > 0 ) {
 		m_observer->UpdateAddLine( wxString::Format( wxT( "Interrupting debugee process: %ld" ), m_debuggeePid ) );
 
@@ -503,7 +538,12 @@ bool DbgGdb::Interrupt() {
 	return false;
 }
 
-bool DbgGdb::QueryFileLine() {
+bool DbgGdb::QueryFileLine()
+{
+
+	if(!WriteCommand(wxT("-stack-info-frame"), new DbgCmdHandlerStackInfo(m_observer, this)))
+		return false;
+
 #if defined (__WXMSW__) || defined (__WXGTK__)
 	return WriteCommand( wxT( "-file-list-exec-source-file" ), new DbgCmdHandlerGetLine( m_observer, this ) );
 #else
@@ -512,7 +552,8 @@ bool DbgGdb::QueryFileLine() {
 #endif
 }
 
-bool DbgGdb::QueryLocals() {
+bool DbgGdb::QueryLocals()
+{
 	bool res = WriteCommand( wxT( "-stack-list-locals 2" ), new DbgCmdHandlerLocals( m_observer ) );
 	if ( !res ) {
 		return false;
@@ -520,27 +561,38 @@ bool DbgGdb::QueryLocals() {
 	return WriteCommand( wxT( "-stack-list-arguments 2 0 0 " ), new DbgCmdHandlerFuncArgs( m_observer ) );
 }
 
-bool DbgGdb::ExecuteCmd( const wxString &cmd ) {
+bool DbgGdb::ExecuteCmd( const wxString &cmd )
+{
 	if( m_gdbProcess ) {
 		if ( m_info.enableDebugLog ) {
+#if DBG_LOG
+			if(gfp.IsOpened()) {
+				gfp.Write(wxString::Format( wxT( "DEBUG>>%s\n" ), cmd.c_str() ));
+				gfp.Flush();
+			}
+#else
 			m_observer->UpdateAddLine( wxString::Format( wxT( "DEBUG>>%s" ), cmd.c_str() ) );
+#endif
 		}
 		return m_gdbProcess->Write( cmd );
 	}
 	return false;
 }
 
-bool DbgGdb::RemoveAllBreaks() {
+bool DbgGdb::RemoveAllBreaks()
+{
 	return ExecuteCmd( wxT( "delete" ) );
 }
 
-bool DbgGdb::RemoveBreak( int bid ) {
+bool DbgGdb::RemoveBreak( int bid )
+{
 	wxString command;
 	command << wxT( "-break-delete " ) << bid;
 	return WriteCommand( command, NULL );
 }
 
-bool DbgGdb::FilterMessage( const wxString &msg ) {
+bool DbgGdb::FilterMessage( const wxString &msg )
+{
 	wxString tmpmsg ( msg );
 	StripString( tmpmsg );
 	tmpmsg.Trim().Trim( false );
@@ -572,7 +624,8 @@ bool DbgGdb::FilterMessage( const wxString &msg ) {
 	return false;
 }
 
-void DbgGdb::Poke() {
+void DbgGdb::Poke()
+{
 	static wxRegEx reCommand( wxT( "^([0-9]{8})" ) );
 
 	//poll the debugger output
@@ -614,7 +667,14 @@ void DbgGdb::Poke() {
 			if ( line.IsEmpty() == false && !tmpline.StartsWith( wxT( ">" ) ) ) {
 				wxString strdebug( wxT( "DEBUG>>" ) );
 				strdebug << line;
+#if DBG_LOG
+				if(gfp.IsOpened()) {
+					gfp.Write(strdebug);
+					gfp.Flush();
+				}
+#else
 				m_observer->UpdateAddLine( strdebug );
+#endif
 			}
 		}
 
@@ -686,7 +746,8 @@ void DbgGdb::Poke() {
 	}
 }
 
-void DbgGdb::DoProcessAsyncCommand( wxString &line, wxString &id ) {
+void DbgGdb::DoProcessAsyncCommand( wxString &line, wxString &id )
+{
 	if ( line.StartsWith( wxT( "^error" ) ) ) {
 
 		// the command was error, for example:
@@ -753,7 +814,8 @@ void DbgGdb::DoProcessAsyncCommand( wxString &line, wxString &id ) {
 	}
 }
 
-bool DbgGdb::EvaluateExpressionToString( const wxString &expression, const wxString &format ) {
+bool DbgGdb::EvaluateExpressionToString( const wxString &expression, const wxString &format )
+{
 	static int counter( 0 );
 	wxString watchName( wxT( "watch_num_" ) );
 	watchName << ++counter;
@@ -789,27 +851,32 @@ bool DbgGdb::EvaluateExpressionToString( const wxString &expression, const wxStr
 	return DeleteVariableObject( watchName );
 }
 
-bool DbgGdb::ListFrames() {
+bool DbgGdb::ListFrames()
+{
 	return WriteCommand( wxT( "-stack-list-frames" ), new DbgCmdStackList( m_observer ) );
 }
 
-bool DbgGdb::SetFrame( int frame ) {
+bool DbgGdb::SetFrame( int frame )
+{
 	wxString command;
 	command << wxT( "frame " ) << frame;
 	return WriteCommand( command, new DbgCmdSelectFrame( m_observer ) );
 }
 
-bool DbgGdb::ListThreads() {
+bool DbgGdb::ListThreads()
+{
 	return ExecCLICommand( wxT( "info threads" ), new DbgCmdListThreads( m_observer ) );
 }
 
-bool DbgGdb::SelectThread( long threadId ) {
+bool DbgGdb::SelectThread( long threadId )
+{
 	wxString command;
 	command << wxT( "-thread-select " ) << threadId;
 	return WriteCommand( command, NULL );
 }
 
-void DbgGdb::OnProcessEnd( wxCommandEvent &e ) {
+void DbgGdb::OnProcessEnd( wxCommandEvent &e )
+{
 	ProcessEventData *ped = ( ProcessEventData * )e.GetClientData();
 	delete ped;
 
@@ -824,20 +891,23 @@ void DbgGdb::OnProcessEnd( wxCommandEvent &e ) {
 	SetIsRemoteDebugging( false );
 }
 
-bool DbgGdb::GetAsciiViewerContent( const wxString &dbgCommand, const wxString& expression ) {
+bool DbgGdb::GetAsciiViewerContent( const wxString &dbgCommand, const wxString& expression )
+{
 	wxString cmd;
 	cmd << dbgCommand << wxT( " " ) << expression;
 
 	return ExecCLICommand( cmd, new DbgCmdGetTipHandler( m_observer, expression ) );
 }
 
-bool DbgGdb::ResolveType( const wxString& expression ) {
+bool DbgGdb::ResolveType( const wxString& expression )
+{
 	wxString cmd;
 	cmd << wxT( "-var-create - * \"" ) << expression << wxT( "\"" );
 	return WriteCommand( cmd, new DbgCmdResolveTypeHandler( expression, this ) );
 }
 
-bool DbgGdb::WatchMemory( const wxString& address, size_t count ) {
+bool DbgGdb::WatchMemory( const wxString& address, size_t count )
+{
 	// make the line per WORD size
 	int divider ( sizeof( unsigned long ) );
 	int factor( ( int )( count/divider ) );
@@ -852,7 +922,8 @@ bool DbgGdb::WatchMemory( const wxString& address, size_t count ) {
 	return WriteCommand( cmd, new DbgCmdWatchMemory( m_observer, address, count ) );
 }
 
-bool DbgGdb::SetMemory( const wxString& address, size_t count, const wxString& hex_value ) {
+bool DbgGdb::SetMemory( const wxString& address, size_t count, const wxString& hex_value )
+{
 	wxString cmd;
 	wxString hexCommaDlimArr;
 	wxArrayString hexArr = wxStringTokenize( hex_value, wxT( " " ), wxTOKEN_STRTOK );
@@ -867,16 +938,19 @@ bool DbgGdb::SetMemory( const wxString& address, size_t count, const wxString& h
 	return ExecuteCmd( cmd );
 }
 
-void DbgGdb::SetDebuggerInformation( const DebuggerInformation& info ) {
+void DbgGdb::SetDebuggerInformation( const DebuggerInformation& info )
+{
 	IDebugger::SetDebuggerInformation( info );
 	m_consoleFinder.SetConsoleCommand( info.consoleCommand );
 }
 
-void DbgGdb::BreakList() {
+void DbgGdb::BreakList()
+{
 	( void )WriteCommand( wxT( "-break-list" ), new DbgCmdBreakList( m_observer ) );
 }
 
-bool DbgGdb::DoLocateGdbExecutable( const wxString& debuggerPath, wxString& dbgExeName ) {
+bool DbgGdb::DoLocateGdbExecutable( const wxString& debuggerPath, wxString& dbgExeName )
+{
 	if ( m_gdbProcess ) {
 		//dont allow second instance of the debugger
 		return false;
@@ -935,7 +1009,8 @@ bool DbgGdb::DoLocateGdbExecutable( const wxString& debuggerPath, wxString& dbgE
 }
 
 // Initialization stage
-bool DbgGdb::DoInitializeGdb( const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds ) {
+bool DbgGdb::DoInitializeGdb( const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds )
+{
 	m_internalBpId = wxNOT_FOUND;
 #ifdef __WXMSW__
 	ExecuteCmd( wxT( "set  new-console on" ) );
@@ -993,7 +1068,8 @@ bool DbgGdb::DoInitializeGdb( const std::vector<BreakpointInfo> &bpList, const w
 	return true;
 }
 
-bool DbgGdb::ExecCLICommand( const wxString& command, DbgCmdCLIHandler* handler ) {
+bool DbgGdb::ExecCLICommand( const wxString& command, DbgCmdCLIHandler* handler )
+{
 	wxString cmd;
 	wxString id = MakeId( );
 	cmd << id << command;
@@ -1010,72 +1086,49 @@ bool DbgGdb::ExecCLICommand( const wxString& command, DbgCmdCLIHandler* handler 
 }
 
 
-void DbgGdb::SetCliHandler( DbgCmdCLIHandler* handler ) {
+void DbgGdb::SetCliHandler( DbgCmdCLIHandler* handler )
+{
 	if( m_cliHandler ) {
 		delete m_cliHandler;
 	}
 	m_cliHandler = handler;
 }
 
-DbgCmdCLIHandler* DbgGdb::GetCliHandler() {
+DbgCmdCLIHandler* DbgGdb::GetCliHandler()
+{
 	return m_cliHandler;
 }
 
-bool DbgGdb::ListChildren( const wxString& name, int userReason ) {
+bool DbgGdb::ListChildren( const wxString& name, int userReason )
+{
 	wxString cmd;
 	cmd << wxT( "-var-list-children \"" ) << name << wxT( "\"" );
 	return WriteCommand( cmd, new DbgCmdListChildren( m_observer, name, userReason ) );
 }
 
-bool DbgGdb::CreateVariableObject( const wxString& expression, int userReason ) {
+bool DbgGdb::CreateVariableObject( const wxString& expression, int userReason )
+{
 	wxString cmd;
 	cmd << wxT( "-var-create - * \"" ) << expression << wxT( "\"" );
 	return WriteCommand( cmd, new DbgCmdCreateVarObj( m_observer, this, expression, userReason ) );
 }
 
-bool DbgGdb::DeleteVariableObject( const wxString& name ) {
+bool DbgGdb::DeleteVariableObject( const wxString& name )
+{
 	wxString cmd;
 	cmd << wxT( "-var-delete \"" ) << name << wxT( "\"" );
 	return WriteCommand( cmd, NULL );
 }
 
-bool DbgGdb::EvaluateVariableObject( const wxString& name, DisplayFormat displayFormat, int userReason ) {
+bool DbgGdb::EvaluateVariableObject( const wxString& name, int userReason )
+{
 	wxString cmd;
-	wxString df;
-	switch( displayFormat ) {
-	case DBG_DF_BINARY:
-		df = wxT( "binary" );
-		break;
-	case DBG_DF_DECIMAL:
-		df = wxT( "decimal" );
-		break;
-	case DBG_DF_HEXADECIMAL:
-		df = wxT( "hexadecimal" );
-		break;
-	case DBG_DF_OCTAL:
-		df = wxT( "octal" );
-		break;
-	default:
-	case DBG_DF_NATURAL:
-		df = wxT( "natural" );
-		break;
-	}
-	
-	// Make sure that the variable object value is up-to-date
-	cmd.Clear();
-	cmd << wxT( "-var-update \"" ) << name << wxT( "\" " );
-	WriteCommand( cmd, NULL );
-	
-	cmd.Clear();
-	cmd << wxT( "-var-set-format \"" ) << name << wxT( "\" " ) << df;
-	WriteCommand( cmd, NULL );
-
-	cmd.Clear();
 	cmd << wxT( "-var-evaluate-expression \"" ) << name << wxT( "\"" );
-	return WriteCommand( cmd, new DbgCmdEvalVarObj( m_observer, name, displayFormat, userReason ) );
+	return WriteCommand( cmd, new DbgCmdEvalVarObj( m_observer, name, userReason ) );
 }
 
-void DbgGdb::OnDataRead( wxCommandEvent& e ) {
+void DbgGdb::OnDataRead( wxCommandEvent& e )
+{
 	// Data arrived from the debugger
 	ProcessEventData *ped = ( ProcessEventData * )e.GetClientData();
 
@@ -1114,7 +1167,8 @@ void DbgGdb::OnDataRead( wxCommandEvent& e ) {
 	}
 }
 
-bool DbgGdb::DoGetNextLine( wxString& line ) {
+bool DbgGdb::DoGetNextLine( wxString& line )
+{
 	line.Clear();
 	if ( m_gdbOutputArr.IsEmpty() ) {
 		return false;
@@ -1129,10 +1183,45 @@ bool DbgGdb::DoGetNextLine( wxString& line ) {
 	return true;
 }
 
-void DbgGdb::SetInternalMainBpID( int bpId ) {
+void DbgGdb::SetInternalMainBpID( int bpId )
+{
 	m_internalBpId = bpId;
 }
 
-bool DbgGdb::Restart() {
+bool DbgGdb::Restart()
+{
 	return WriteCommand( wxT( "-exec-run " ) , new DbgCmdHandlerAsyncCmd( m_observer, this ) );
+}
+
+bool DbgGdb::SetVariableObbjectDisplayFormat(const wxString& name, DisplayFormat displayFormat)
+{
+	wxString df, cmd;
+	switch( displayFormat ) {
+	case DBG_DF_BINARY:
+		df = wxT( "binary" );
+		break;
+	case DBG_DF_DECIMAL:
+		df = wxT( "decimal" );
+		break;
+	case DBG_DF_HEXADECIMAL:
+		df = wxT( "hexadecimal" );
+		break;
+	case DBG_DF_OCTAL:
+		df = wxT( "octal" );
+		break;
+	default:
+	case DBG_DF_NATURAL:
+		df = wxT( "natural" );
+		break;
+	}
+
+	cmd << wxT( "-var-set-format \"" ) << name << wxT( "\" " ) << df;
+	return WriteCommand( cmd, NULL );
+}
+
+bool DbgGdb::UpdateVariableObject(const wxString& name)
+{
+	wxString cmd;
+	cmd << wxT( "-var-update \"" ) << name << wxT( "\" " );
+	return WriteCommand( cmd, NULL );
 }

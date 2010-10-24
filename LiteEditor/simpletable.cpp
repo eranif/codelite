@@ -91,19 +91,24 @@ public:
 WatchesTable::WatchesTable( wxWindow* parent )
 	: SimpleTableBase( parent )
 	, m_selectedId(wxNOT_FOUND)
-	, m_displayFormat(DBG_DF_NATURAL)
 {
 	InitTable();
 
 	//Load the right click menu
 	m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("dbg_watch_rmenu"));
-	Connect(XRCID("del_expr"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnDeleteWatch), NULL, this);
-	Connect(XRCID("del_expr_all"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnDeleteAll), NULL, this);
-	Connect(XRCID("edit_expr"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuEditExpr), NULL, this);
-	Connect(XRCID("copy_value"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuCopyValue), NULL, this);
-	Connect(XRCID("add_watch"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnNewWatch_Internal), NULL, this);
-	Connect(XRCID("copy_both"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuCopyBoth), NULL, this);
-
+	Connect(XRCID("del_expr"),          wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnDeleteWatch), NULL, this);
+	Connect(XRCID("del_expr_all"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnDeleteAll), NULL, this);
+	Connect(XRCID("edit_expr"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuEditExpr), NULL, this);
+	Connect(XRCID("copy_value"),        wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuCopyValue), NULL, this);
+	Connect(XRCID("add_watch"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnNewWatch_Internal), NULL, this);
+	Connect(XRCID("copy_both"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuCopyBoth), NULL, this);
+	
+	Connect(XRCID("watches_df_natural"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuDisplayFormat), NULL, this);
+	Connect(XRCID("watches_df_hex"),    wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuDisplayFormat), NULL, this);
+	Connect(XRCID("watches_df_bin"),    wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuDisplayFormat), NULL, this);
+	Connect(XRCID("watches_df_octal"),  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuDisplayFormat), NULL, this);
+	Connect(XRCID("watches_df_decimal"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WatchesTable::OnMenuDisplayFormat), NULL, this);
+	
 	// UI events
 	Connect(XRCID("edit_expr"),wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WatchesTable::OnMenuEditExprUI), NULL, this);
 	Connect(XRCID("del_expr"),wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WatchesTable::OnDeleteWatchUI), NULL, this);
@@ -256,10 +261,12 @@ void WatchesTable::RefreshValues(bool repositionEditor)
 		return;
 
 	// Obtain the debugger and make sure that we can interact with it
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if(!dbgr || !ManagerST::Get()->DbgCanInteract())
+	IDebugger *dbgr = DoGetDebugger();
+	if(!dbgr)
 		return;
-
+	
+	// update all variable objects
+	dbgr->UpdateVariableObject(wxT("*"));
 	DoRefreshItemRecursively(dbgr, root);
 }
 
@@ -282,15 +289,18 @@ void WatchesTable::DoRefreshItem(IDebugger* dbgr, const wxTreeItemId& item)
 {
 	if(!dbgr || !item.IsOk())
 		return;
-
+	
+	if(m_listTable->GetItemText(item, 1) == wxT("{...}"))
+		return;
+		
 	WatchData* data = static_cast<WatchData*>(m_listTable->GetItemData(item));
 	if(data && data->GetIsFirst()) {
-		dbgr->EvaluateVariableObject(data->GetGdbId(), m_displayFormat, DBG_USERR_WATCHTABLE);
+		dbgr->EvaluateVariableObject(data->GetGdbId(), DBG_USERR_WATCHTABLE);
 		m_gdbIdToTreeId[data->GetGdbId()] = item;
-
+		
 	} else if(data && data->GetVoc()) {
 		// re-evaluate the item value
-		dbgr->EvaluateVariableObject(data->GetVoc()->gdbId, m_displayFormat, DBG_USERR_WATCHTABLE);
+		dbgr->EvaluateVariableObject(data->GetVoc()->gdbId, DBG_USERR_WATCHTABLE);
 		m_gdbIdToTreeId[data->GetVoc()->gdbId] = item;
 	}
 }
@@ -381,29 +391,6 @@ void WatchesTable::OnMenuCopyValue(wxCommandEvent& event)
 	}
 }
 
-void WatchesTable::OnDisplayFormat(wxCommandEvent& event)
-{
-	wxString selection = m_choiceDisplayFormat->GetStringSelection();
-	if(selection == wxT("natural")) {
-		m_displayFormat = DBG_DF_NATURAL;
-
-	} else if(selection == wxT("hexadecimal")) {
-		m_displayFormat = DBG_DF_HEXADECIMAL;
-
-	} else if(selection == wxT("binary")) {
-		m_displayFormat = DBG_DF_BINARY;
-
-	} else if(selection == wxT("octal")) {
-		m_displayFormat = DBG_DF_OCTAL;
-
-	} else if(selection == wxT("decimal")) {
-		m_displayFormat = DBG_DF_DECIMAL;
-
-	} else {
-		m_displayFormat = DBG_DF_NATURAL;
-	}
-}
-
 void WatchesTable::OnNewWatch_Internal(wxCommandEvent& event)
 {
 	wxString expr = event.GetString();
@@ -457,7 +444,7 @@ void WatchesTable::OnCreateVariableObject(const DebuggerEvent& event)
 			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 			if(dbgr && ManagerST::Get()->DbgCanInteract())
 				DoRefreshItem(dbgr, iter->second);
-
+			
 			// Query the debugger to see if this node has a children
 			// In case it does, we add a dummy node so we will get the [+] sign
 			dbgr->ListChildren(data->GetGdbId(), QUERY_NUM_CHILDS);
@@ -509,7 +496,7 @@ void WatchesTable::OnListChildren(const DebuggerEvent& event)
 					}
 
 					// refresh this item only
-					dbgr->EvaluateVariableObject(data->GetGdbId(), m_displayFormat, DBG_USERR_WATCHTABLE);
+					dbgr->EvaluateVariableObject(data->GetGdbId(), DBG_USERR_WATCHTABLE);
 					// ask the value for this node
 					m_gdbIdToTreeId[data->GetGdbId()] = child;
 
@@ -638,4 +625,37 @@ void WatchesTable::OnListEditLabelEnd(wxTreeEvent& event)
 		DoUpdateExpression(event.GetItem(), event.GetLabel());
 	}
 	event.Skip();
+}
+
+void WatchesTable::OnMenuDisplayFormat(wxCommandEvent& event)
+{
+	DisplayFormat df = DBG_DF_NATURAL;
+	if(event.GetId() == XRCID("watches_df_natural")) {
+		df = DBG_DF_NATURAL;
+		
+	} else if(event.GetId() == XRCID("watches_df_hex")) {
+		df = DBG_DF_HEXADECIMAL;
+		
+	} else if(event.GetId() == XRCID("watches_df_bin")) {
+		df = DBG_DF_BINARY;
+		
+	} else if(event.GetId() == XRCID("watches_df_octal")) {
+		df = DBG_DF_OCTAL;
+		
+	} else if(event.GetId() == XRCID("watches_df_decimal")) {
+		df = DBG_DF_DECIMAL;
+	}
+	
+	wxTreeItemId item = m_listTable->GetSelection();
+	IDebugger *  dbgr = DoGetDebugger();
+	if(!dbgr || !item.IsOk()) {
+		return;
+	}
+
+	wxString gdbId = DoGetGdbId(item);
+	if(gdbId.IsEmpty() == false) {
+		dbgr->SetVariableObbjectDisplayFormat(gdbId, df);
+		dbgr->UpdateVariableObject(gdbId);
+		DoRefreshItem(dbgr, item);
+	}
 }

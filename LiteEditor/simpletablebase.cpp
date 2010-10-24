@@ -37,21 +37,6 @@ SimpleTableBase::SimpleTableBase( wxWindow* parent, wxWindowID id, const wxPoint
 
 	bSizer1->Add( bSizer3, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* bSizer2;
-	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_staticTextDisplayText = new wxStaticText( this, wxID_ANY, wxT("Display Format:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticTextDisplayText->Wrap( -1 );
-	bSizer2->Add( m_staticTextDisplayText, 0, wxALL, 5 );
-
-	wxString m_choiceDisplayFormatChoices[] = { wxT("natural"), wxT("hexadecimal"), wxT("binary"), wxT("octal"), wxT("decimal") };
-	int m_choiceDisplayFormatNChoices = sizeof( m_choiceDisplayFormatChoices ) / sizeof( wxString );
-	m_choiceDisplayFormat = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceDisplayFormatNChoices, m_choiceDisplayFormatChoices, 0 );
-	m_choiceDisplayFormat->SetSelection( 0 );
-	bSizer2->Add( m_choiceDisplayFormat, 0, 0, 5 );
-
-	bSizer1->Add( bSizer2, 0, 0, 5 );
-
 	this->SetSizer( bSizer1 );
 	this->Layout();
 
@@ -68,7 +53,6 @@ SimpleTableBase::SimpleTableBase( wxWindow* parent, wxWindowID id, const wxPoint
 	m_button2->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SimpleTableBase::OnDeleteWatchUI ), NULL, this );
 	m_button3->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SimpleTableBase::OnDeleteAll ), NULL, this );
 	m_button3->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SimpleTableBase::OnDeleteAllUI ), NULL, this );
-	m_choiceDisplayFormat->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( SimpleTableBase::OnDisplayFormat ), NULL, this );
 }
 
 SimpleTableBase::~SimpleTableBase()
@@ -86,7 +70,6 @@ SimpleTableBase::~SimpleTableBase()
 	m_button2->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SimpleTableBase::OnDeleteWatchUI ), NULL, this );
 	m_button3->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SimpleTableBase::OnDeleteAll ), NULL, this );
 	m_button3->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SimpleTableBase::OnDeleteAllUI ), NULL, this );
-	m_choiceDisplayFormat->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( SimpleTableBase::OnDisplayFormat ), NULL, this );
 }
 
 LocalsTableBase::LocalsTableBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )

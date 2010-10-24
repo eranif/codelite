@@ -68,7 +68,8 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	wxFileName              m_codeliteLauncher;
 	DisplayVariableDlg     *m_watchDlg;
 	bool                    m_retagInProgress;
-	bool					m_repositionEditor;	//flag used for debugging, should editor be repositioned after user updates like "add watch"
+	bool                    m_repositionEditor; //flag used for debugging, should editor be repositioned after user updates like "add watch"
+	StackEntry              m_dbgCurrentFrame;
 
 protected:
 	Manager(void);

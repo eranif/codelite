@@ -36,8 +36,6 @@ class SimpleTableBase : public wxPanel
 		wxButton* m_button1;
 		wxButton* m_button2;
 		wxButton* m_button3;
-		wxStaticText* m_staticTextDisplayText;
-		wxChoice* m_choiceDisplayFormat;
 
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnListEditLabelBegin( wxTreeEvent& event ){ event.Skip(); }
@@ -52,7 +50,6 @@ class SimpleTableBase : public wxPanel
 		virtual void OnDeleteWatchUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnDeleteAll( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnDeleteAllUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void OnDisplayFormat( wxCommandEvent& event ){ event.Skip(); }
 
 
 	public:

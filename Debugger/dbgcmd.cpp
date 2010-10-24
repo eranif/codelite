@@ -144,6 +144,21 @@ static void ParseStackEntry(const wxString &line, StackEntry &entry)
 	}
 }
 
+wxString ExtractGdbChild(const std::map<std::string, std::string >& attr, const wxString &name)
+{
+	std::map<std::string, std::string >::const_iterator iter = attr.find(name.mb_str(wxConvUTF8).data());
+	if(iter == attr.end()) {
+		return wxT("");
+	}
+	wxString val = wxString(iter->second.c_str(), wxConvUTF8);
+	val.Trim().Trim(false);
+	
+	wxRemoveQuotes( val );
+	val = wxGdbFixValue(val);
+	
+	return val;
+}
+
 // Keep a cache of all file paths converted from
 // Cygwin path into native path
 static std::map<wxString, wxString> g_fileCache;
@@ -1246,7 +1261,6 @@ bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
 				e.m_expression    = m_variable;
 				e.m_evaluated     = display_line;
 				e.m_userReason    = m_userReason;
-				e.m_displayFormat = m_displayFormat;
 				m_observer->DebuggerUpdate( e );
 			}
 		}
@@ -1271,6 +1285,28 @@ bool DbgFindMainBreakpointIdHandler::ProcessOutput(const wxString& line)
 			m_observer->UpdateAddLine(wxString::Format(wxT("Storing internal breakpoint ID=%ld"), breakpointId), true);
 			m_debugger->SetInternalMainBpID( breakpointId );
 		}
+	}
+	return true;
+}
+
+bool DbgCmdHandlerStackInfo::ProcessOutput(const wxString& line)
+{
+	DebuggerEvent e;
+	std::string cbuffer = line.mb_str(wxConvUTF8).data();
+
+	std::vector< std::map<std::string, std::string > > children;
+	gdbParseListChildren(cbuffer, children);
+	if(!children.empty()) {
+		
+		e.m_frameInfo.level    = ExtractGdbChild(children.at(0), wxT("level"));
+		e.m_frameInfo.address  = ExtractGdbChild(children.at(0), wxT("addr"));
+		e.m_frameInfo.file     = ExtractGdbChild(children.at(0), wxT("file"));
+		e.m_frameInfo.function = ExtractGdbChild(children.at(0), wxT("func"));
+		e.m_frameInfo.line     = ExtractGdbChild(children.at(0), wxT("line"));
+		
+		e.m_updateReason = DBG_UR_FRAMEINFO;
+		m_observer->DebuggerUpdate( e );
+		
 	}
 	return true;
 }

@@ -28,7 +28,6 @@ public:
 	bool                             m_leftWindow;
 	wxString                         m_fullpath;
 	wxTreeItemId                     m_hoveredItem;
-	long                             m_showExtraFormats;
 
 protected:
 	bool     IsFakeItem(const wxTreeItemId &item);
@@ -52,7 +51,6 @@ protected:
 	void OnItemMenu(wxTreeEvent& event);
 	void OnMenuSelection(wxCommandEvent &e);
 	void OnMouseMove( wxMouseEvent& event );
-	void OnShowHexAndBinFormat(wxCommandEvent& event);
 
 
 
@@ -62,7 +60,7 @@ public:
 	virtual ~DisplayVariableDlg();
 
 	void AddItems   ( const wxString &varname, const VariableObjChildren &children);
-	void UpdateValue( const wxString &varname, const wxString &value, DisplayFormat displayFormat);
+	void UpdateValue( const wxString &varname, const wxString &value);
 	void BuildTree  (const VariableObjChildren &children, IDebugger *debugger);
 	void HideDialog ();
 	void ShowDialog (bool center);

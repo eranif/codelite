@@ -926,6 +926,25 @@
         <object class="wxMenuItem" name="del_expr_all">
             <label>Delete All</label>
         </object>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenu" name="display_format">
+			<label>Display Foramt</label>
+			<object class="wxMenuItem" name="watches_df_natural">
+				<label>Natural</label>
+			</object>
+			<object class="wxMenuItem" name="watches_df_hex">
+				<label>Hexadecimal</label>
+			</object>
+			<object class="wxMenuItem" name="watches_df_bin">
+				<label>Binary</label>
+			</object>
+			<object class="wxMenuItem" name="watches_df_octal">
+				<label>Octal</label>
+			</object>
+			<object class="wxMenuItem" name="watches_df_decimal">
+				<label>Decimal</label>
+			</object>
+		</object>
 	</object>
 
 	//File explorer

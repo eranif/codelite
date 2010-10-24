@@ -80,6 +80,25 @@ public:
 };
 
 /**
+ * @class DbgCmdHandlerStackInfo
+ * handles the -stack-info-frame command
+ */
+class DbgCmdHandlerStackInfo : public DbgCmdHandler
+{
+	DbgGdb*  m_gdb;
+public:
+	DbgCmdHandlerStackInfo(IDebuggerObserver *observe, DbgGdb* gdbr)
+	: DbgCmdHandler(observe)
+	, m_gdb(gdbr)
+	{}
+
+	virtual ~DbgCmdHandlerStackInfo()
+	{}
+
+	virtual bool ProcessOutput(const wxString &line);
+};
+
+/**
  * this handler, handles the following commands:
  * -exec-run
  * -exec-continue
@@ -343,14 +362,13 @@ class DbgCmdEvalVarObj : public DbgCmdHandler
 {
 	wxString      m_variable;
 	int           m_userReason;
-	DisplayFormat m_displayFormat;
 
 public:
-	DbgCmdEvalVarObj(IDebuggerObserver *observer, const wxString &variable, DisplayFormat displayFormat, int userReason)
+	DbgCmdEvalVarObj(IDebuggerObserver *observer, const wxString &variable, int userReason)
 			: DbgCmdHandler  (observer)
 			, m_variable     (variable)
 			, m_userReason   ( userReason )
-			, m_displayFormat(displayFormat) {}
+	{}
 
 	virtual ~DbgCmdEvalVarObj() {}
 

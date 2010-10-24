@@ -97,7 +97,7 @@ char *loadFile(const char *fileName)
 
 	fp = fopen(fileName, "rb");
 	if (!fp) {
-		printf("failed to open file 'test.h': %s\n", strerror(errno));
+		printf("failed to open file 'test.txt': %s\n", strerror(errno));
 		return NULL;
 	}
 

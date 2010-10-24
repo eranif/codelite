@@ -42,14 +42,13 @@ class IDebugger;
 /** Implementing SimpleTableBase */
 class WatchesTable : public SimpleTableBase
 {
-	long m_selectedId;
+	long    m_selectedId;
 	wxMenu *m_rclickMenu;
 
 	// Items awating update on their values
 	std::map<wxString, wxTreeItemId> m_gdbIdToTreeId;
 	std::map<wxString, wxTreeItemId> m_exprToItemId;
 	std::map<wxString, wxTreeItemId> m_listChildItemId;
-	DisplayFormat                    m_displayFormat;
 
 protected:
 	// Handlers for SimpleTableBase events.
@@ -60,18 +59,17 @@ protected:
 	void OnListEditLabelEnd(wxTreeEvent& event);
 
 	// Menu events
-	void OnNewWatch(wxCommandEvent &event);
-	void OnNewWatchUI(wxUpdateUIEvent &event);
-	void OnDeleteAll(wxCommandEvent &event);
-	void OnDeleteAllUI(wxUpdateUIEvent &event);
-	void OnDeleteWatch(wxCommandEvent &event);
-	void OnDeleteWatchUI(wxUpdateUIEvent &event);
-	void OnMenuEditExpr(wxCommandEvent &event);
-	void OnMenuEditExprUI(wxUpdateUIEvent &event);
-	void OnMenuCopyValue(wxCommandEvent &event);
-	void OnMenuCopyBoth(wxCommandEvent &event);
-
-	void OnDisplayFormat(wxCommandEvent &event);
+	void OnNewWatch         (wxCommandEvent &event);
+	void OnNewWatchUI       (wxUpdateUIEvent &event);
+	void OnDeleteAll        (wxCommandEvent &event);
+	void OnDeleteAllUI      (wxUpdateUIEvent &event);
+	void OnDeleteWatch      (wxCommandEvent &event);
+	void OnDeleteWatchUI    (wxUpdateUIEvent &event);
+	void OnMenuEditExpr     (wxCommandEvent &event);
+	void OnMenuEditExprUI   (wxUpdateUIEvent &event);
+	void OnMenuCopyValue    (wxCommandEvent &event);
+	void OnMenuCopyBoth     (wxCommandEvent &event);
+	void OnMenuDisplayFormat(wxCommandEvent &event);
 	void OnNewWatch_Internal(wxCommandEvent &event);
 
 protected:

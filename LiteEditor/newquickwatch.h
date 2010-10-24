@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -17,10 +17,8 @@
 #include <wx/settings.h>
 #include <wx/string.h>
 #include <wx/statline.h>
-#include <wx/stattext.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
-#include <wx/checkbox.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -37,12 +35,6 @@ class NewQuickWatch : public wxDialog
 		wxPanel* m_mainPanel;
 		wxTreeCtrl* m_treeCtrl;
 		wxStaticLine* m_staticline1;
-		wxPanel* m_panelExtra;
-		wxStaticText* m_staticText1;
-		wxStaticText* m_hexFormat;
-		wxStaticText* m_staticText2;
-		wxStaticText* m_binFormat;
-		wxCheckBox* m_checkBoxShowMoreFormats;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnEnterWindow( wxMouseEvent& event ) { event.Skip(); }
@@ -53,7 +45,6 @@ class NewQuickWatch : public wxDialog
 		virtual void OnItemExpanded( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnExpandItem( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnItemMenu( wxTreeEvent& event ) { event.Skip(); }
-		virtual void OnShowHexAndBinFormat( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:

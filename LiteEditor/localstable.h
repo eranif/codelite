@@ -12,7 +12,9 @@
 class LocalsTable : public DebuggerTreeListCtrlBase
 {
 
-	DebuggerPreDefinedTypes          m_preDefTypes;
+	DebuggerPreDefinedTypes m_preDefTypes;
+	bool                    m_resolveLocals;
+	
 protected:
 	void          DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved, size_t flags);
 	void          DoUpdateLocals  (const LocalVariables& locals, size_t kind);

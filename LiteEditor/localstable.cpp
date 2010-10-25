@@ -40,6 +40,13 @@ void LocalsTable::Initialize()
 	DebuggerSettingsPreDefMap data;
 	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
 
+	DebuggerInformation info;
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if(dbgr) {
+		DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), info);
+		m_resolveLocals = info.resolveLocals;
+	}
+
 	m_preDefTypes = data.GetActiveSet();
 }
 
@@ -151,7 +158,22 @@ void LocalsTable::OnItemExpanding(wxTreeEvent& event)
 		return;
 	}
 
-	if(child.IsOk() && m_listTable->GetItemText(child) == wxT("<dummy>")) {
+	size_t childCount = m_listTable->GetChildrenCount(event.GetItem());
+	if(childCount > 1) {
+		// make sure there is no <dummy> node and continue
+		wxTreeItemIdValue cookieOne;
+		wxTreeItemId dummyItem = m_listTable->GetFirstChild(event.GetItem(), cookieOne);
+		while( dummyItem.IsOk() )
+		{
+			if(m_listTable->GetItemText(dummyItem) == wxT("<dummy>")) {
+				m_listTable->Delete(dummyItem);
+				event.Skip();
+				return;
+			}
+			dummyItem = m_listTable->GetNextChild(event.GetItem(), cookieOne);
+		}
+
+	} else if (child.IsOk() && m_listTable->GetItemText(child) == wxT("<dummy>")) {
 
 		// a dummy node, replace it with the real node content
 		m_listTable->Delete(child);
@@ -203,24 +225,65 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 	if(!root.IsOk())
 		return;
 
+	IDebugger* dbgr = DoGetDebugger();
 	wxArrayString itemsNotRemoved;
 	// remove the non-variable objects and return a list
 	// of all the variable objects (at the top level)
 	DoClearNonVariableObjectEntries(itemsNotRemoved, kind);
 	for(size_t i=0; i<locals.size(); i++) {
 
-		if(itemsNotRemoved.Index(locals[i].name) == wxNOT_FOUND) {
-			// New entry
-			wxTreeItemId item = m_listTable->AppendItem(root, locals[i].name, -1, -1, new DbgTreeItemData());
-			m_listTable->SetItemText(item, 1, locals[i].value);
+		// try to replace the
+		wxString newVarName;
+		if(m_resolveLocals) {
+			newVarName = m_preDefTypes.GetPreDefinedTypeForTypename(locals[i].type, locals[i].name);
+		}
 
-			m_listTable->AppendItem(item, wxT("<dummy>"));
-			m_listTable->Collapse(item);
+		if(newVarName.IsEmpty() == false) {
+			if(newVarName.Contains(wxT("@"))) {
+
+				// using GDB special array print,
+				// we need to delete this variable object and re-create it
+				// otherwise its content wont be updated
+				int where = itemsNotRemoved.Index(newVarName);
+				if(where != wxNOT_FOUND)
+					itemsNotRemoved.RemoveAt(where);
+
+				wxTreeItemId treeItem = DoFindItemByExpression(newVarName);
+				if(treeItem.IsOk()) {
+					DoDeleteWatch(treeItem);
+					m_listTable->Delete(treeItem);
+				}
+			}
+
+			// replace the local with a variable object
+			// but make sure we dont enter a duplicate item
+			if(itemsNotRemoved.Index(newVarName) == wxNOT_FOUND) {
+				// this type has a pre-defined type, use it instead
+				wxTreeItemId item = m_listTable->AppendItem(root, newVarName, -1, -1, new DbgTreeItemData());
+				m_listTable->AppendItem(item, wxT("<dummy>"));
+				m_listTable->Collapse(item);
+
+				if(dbgr) {
+					dbgr->CreateVariableObject(newVarName, m_DBG_USERR);
+					m_createVarItemId[newVarName] = item;
+				}
+			}
+
+		} else {
+
+			if(itemsNotRemoved.Index(locals[i].name) == wxNOT_FOUND) {
+				// New entry
+				wxTreeItemId item = m_listTable->AppendItem(root, locals[i].name, -1, -1, new DbgTreeItemData());
+				m_listTable->SetItemText(item, 1, locals[i].value);
+
+				m_listTable->AppendItem(item, wxT("<dummy>"));
+				m_listTable->Collapse(item);
+
+			}
 
 		}
 	}
 
-	IDebugger* dbgr = DoGetDebugger();
 	if(dbgr && itemsNotRemoved.IsEmpty() == false) {
 		dbgr->UpdateVariableObject(wxT("*"), m_DBG_USERR);
 	}

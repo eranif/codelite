@@ -128,6 +128,7 @@ public:
 	virtual wxString     DoGetGdbId              (const wxTreeItemId& item);
 	virtual wxTreeItemId DoFindItemByGdbId       (const wxString& gdbId);
 	virtual void         DoDeleteWatch           (const wxTreeItemId& item);
+	virtual wxTreeItemId DoFindItemByExpression  (const wxString &expr);
 };
 
 #endif //__simpletablebase__

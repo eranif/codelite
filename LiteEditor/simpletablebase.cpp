@@ -260,3 +260,17 @@ void DebuggerTreeListCtrlBase::DoDeleteWatch(const wxTreeItemId& item)
 #endif
 
 }
+
+wxTreeItemId DebuggerTreeListCtrlBase::DoFindItemByExpression(const wxString& expr)
+{
+	wxTreeItemId root = m_listTable->GetRootItem();
+	wxTreeItemIdValue cookieOne;
+	wxTreeItemId item = m_listTable->GetFirstChild(root, cookieOne);
+	while( item.IsOk() ) {
+
+		if(m_listTable->GetItemText(item) == expr)
+			return item;
+		item = m_listTable->GetNextChild(root, cookieOne);
+	}
+	return wxTreeItemId();
+}

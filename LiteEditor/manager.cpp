@@ -2987,7 +2987,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 
 		// EvaluateVariableObject callback
 		if(event.m_userReason == DBG_USERR_WATCHTABLE) {
-			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnEvaluateVariableObject( event );
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnEvaluateVariableObj(event );
 
 		} else if(event.m_userReason == DBG_USERR_LOCALS) {
 			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->OnEvaluateVariableObj( event );

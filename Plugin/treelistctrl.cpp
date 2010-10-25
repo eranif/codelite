@@ -3965,7 +3965,7 @@ wxLogMessage("OnMouse: LMR down=<%d, %d, %d> up=<%d, %d, %d> LDblClick=<%d> drag
 
     // set focus if window clicked
     if (event.LeftDown() || event.MiddleDown() || event.RightDown()) SetFocus();
-
+/*
     // tooltip change ?
     if (item != m_toolTipItem) {
 
@@ -3996,7 +3996,7 @@ wxLogMessage("OnMouse: LMR down=<%d, %d, %d> up=<%d, %d, %d> LDblClick=<%d> drag
             }
         }
     }
-
+*/
 
 // ----------  HANDLE SIMPLE-CLICKS  (selection change, contextual menu) ----------
     if (mayClick) {

@@ -29,86 +29,18 @@
 #include "debuggermanager.h"
 #include "globals.h"
 #include "debugger.h"
+#include "simpletablebase.h"
 
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 
-class WatchData : public wxTreeItemData
-{
-	VariableObjChild* m_voc;
-	wxString          m_expression;
-	bool              m_isFirst;
-	wxString          m_gdbId;
-	bool              m_isOk;
-public:
-
-	void SetIsOk(bool isOk) {
-		this->m_isOk = isOk;
-	}
-	bool GetIsOk() const {
-		return m_isOk;
-	}
-	void SetExpression(const wxString& expression) {
-		this->m_expression = expression;
-	}
-
-	void SetVoc(const VariableObjChild& voc) {
-		this->m_voc = new VariableObjChild(voc);
-	}
-
-	const wxString& GetExpression() const {
-		return m_expression;
-	}
-
-	VariableObjChild* GetVoc() {
-		return m_voc;
-	}
-
-	void SetIsFirst(bool isFirst) {
-		this->m_isFirst = isFirst;
-	}
-	bool GetIsFirst() const {
-		return m_isFirst;
-	}
-	void SetGdbId(const wxString& gdbId) {
-		this->m_gdbId = gdbId;
-	}
-	const wxString& GetGdbId() const {
-		if(GetIsFirst() && GetIsOk()) {
-			return m_gdbId;
-
-		} else if(m_voc) {
-			return m_voc->gdbId;
-		}
-		static wxString emptyString(wxT(""));
-		return emptyString;
-	}
-
-public:
-	WatchData(const wxString& expr)
-		: m_voc(NULL)
-		, m_expression(expr)
-		, m_isFirst(false)
-		, m_isOk(true)
-	{
-	}
-
-	virtual ~WatchData() {
-		if(m_voc) {
-			delete m_voc;
-		}
-		m_expression.clear();
-		m_voc = NULL;
-	}
-};
-
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
 WatchesTable::WatchesTable( wxWindow* parent )
-	: SimpleTableBase( parent )
-	, m_selectedId(wxNOT_FOUND)
+	: DebuggerTreeListCtrlBase( parent )
 {
 	InitTable();
+	m_DBG_USERR        = DBG_USERR_WATCHTABLE;
+	m_QUERY_NUM_CHILDS = QUERY_NUM_CHILDS;
+	m_LIST_CHILDS      = LIST_WATCH_CHILDS;
 
 	//Load the right click menu
 	m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("dbg_watch_rmenu"));
@@ -156,8 +88,6 @@ void WatchesTable::InitTable()
 	m_listTable->AddColumn(wxT("Expression"), 150);
 	m_listTable->AddColumn(wxT("Value"),      1000);
 	m_listTable->AddRoot(wxT("Watches"));
-
-	m_listTable->SetColumnEditable(0);
 }
 
 void WatchesTable::OnListKeyDown( wxTreeEvent& event )
@@ -261,9 +191,9 @@ void WatchesTable::AddExpression(const wxString &expr)
 
 	// Append the new item and call the debugger to create a new variable object for this
 	// expression
-	wxTreeItemId item = m_listTable->AppendItem(root, expr, -1, -1, new WatchData(expr));
-	dbgr->CreateVariableObject(expr, DBG_USERR_WATCHTABLE);
-	m_exprToItemId[expr] = item;
+	wxTreeItemId item = m_listTable->AppendItem(root, expr, -1, -1, new DbgTreeItemData());
+	dbgr->CreateVariableObject(expr, m_DBG_USERR);
+	m_createVarItemId[expr] = item;
 }
 
 void WatchesTable::RefreshValues(bool repositionEditor)
@@ -281,8 +211,11 @@ void WatchesTable::RefreshValues(bool repositionEditor)
 	if(!dbgr)
 		return;
 
+	// rese tree items colour to black
+	DoResetItemColour(root);
+
 	// update all variable objects
-	dbgr->UpdateVariableObject(wxT("*"), DBG_USERR_WATCHTABLE);
+	dbgr->UpdateVariableObject(wxT("*"), m_DBG_USERR);
 
 	// Loop over the top level entries and search for items that has no gdbId
 	// for those items, create a variable object
@@ -290,73 +223,14 @@ void WatchesTable::RefreshValues(bool repositionEditor)
 	wxTreeItemId item = m_listTable->GetFirstChild(root, cookieOne);
 	while( item.IsOk() ) {
 
-		WatchData* data = static_cast<WatchData*>(m_listTable->GetItemData(item));
-		if(data && data->GetGdbId().IsEmpty()) {
-			data->SetExpression(m_listTable->GetItemText(item));
-			data->SetIsFirst(true);
-			data->SetIsOk(false);
-			dbgr->CreateVariableObject(data->GetExpression(), DBG_USERR_WATCHTABLE);
-			m_exprToItemId[data->GetExpression()] = item;
+		DbgTreeItemData* data = static_cast<DbgTreeItemData*>(m_listTable->GetItemData(item));
+		if(data && data->_gdbId.IsEmpty()) {
+			dbgr->CreateVariableObject(m_listTable->GetItemText(item), m_DBG_USERR);
+			m_createVarItemId[m_listTable->GetItemText(item)] = item;
 		}
 
 		item = m_listTable->GetNextChild(root, cookieOne);
 	}
-}
-
-void WatchesTable::DoRefreshItemRecursively(IDebugger *dbgr, const wxTreeItemId &item, wxArrayString &itemsToRefresh)
-{
-	if(itemsToRefresh.IsEmpty())
-		return;
-
-	wxTreeItemIdValue cookieOne;
-	wxTreeItemId exprItem = m_listTable->GetFirstChild(item, cookieOne);
-	while( exprItem.IsOk() ) {
-
-		WatchData* data = static_cast<WatchData*>(m_listTable->GetItemData(exprItem));
-		if(data && data->GetGdbId().IsEmpty() == false) {
-			int where = itemsToRefresh.Index(data->GetGdbId());
-			if(where != wxNOT_FOUND) {
-				dbgr->EvaluateVariableObject(data->GetGdbId(), DBG_USERR_WATCHTABLE);
-				m_gdbIdToTreeId[data->GetGdbId()] = exprItem;
-				itemsToRefresh.RemoveAt((size_t)where);
-			}
-		}
-
-		if(m_listTable->HasChildren(exprItem)) {
-			DoRefreshItemRecursively(dbgr, exprItem, itemsToRefresh);
-		}
-
-		exprItem = m_listTable->GetNextChild(item, cookieOne);
-	}
-}
-
-void WatchesTable::DoRefreshItem(IDebugger* dbgr, const wxTreeItemId& item)
-{
-	if(!dbgr || !item.IsOk())
-		return;
-
-	WatchData* data = static_cast<WatchData*>(m_listTable->GetItemData(item));
-	if(data && data->GetIsFirst()) {
-
-		if(data->GetIsOk()) {
-			dbgr->EvaluateVariableObject(data->GetGdbId(), DBG_USERR_WATCHTABLE);
-			m_gdbIdToTreeId[data->GetGdbId()] = item;
-
-		} else {
-			// try to re-create this variable object
-			dbgr->CreateVariableObject(data->GetExpression(), DBG_USERR_WATCHTABLE);
-			m_exprToItemId[data->GetExpression()] = item;
-		}
-
-	} else if(data && data->GetVoc()) {
-		// re-evaluate the item value
-		dbgr->EvaluateVariableObject(data->GetVoc()->gdbId, DBG_USERR_WATCHTABLE);
-		m_gdbIdToTreeId[data->GetVoc()->gdbId] = item;
-	}
-}
-
-void WatchesTable::UpdateExpression(const wxString &expr, const wxString &value)
-{
 }
 
 wxArrayString WatchesTable::GetExpressions()
@@ -432,60 +306,39 @@ void WatchesTable::OnNewWatch_Internal(wxCommandEvent& event)
 	}
 }
 
-void WatchesTable::OnEvaluateVariableObject(const DebuggerEvent& event)
-{
-	wxString gdbId = event.m_expression;
-	wxString value = event.m_evaluated;
-
-	std::map<wxString, wxTreeItemId>::iterator iter = m_gdbIdToTreeId.find(gdbId);
-	if( iter != m_gdbIdToTreeId.end() ) {
-
-		wxColour defColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
-		wxColour redColour = *wxRED;
-		wxColour itemColor;
-
-		wxString newValue = value;
-		wxString curValue = m_listTable->GetItemText(iter->second, 1);
-
-		if(newValue == curValue || curValue.IsEmpty())
-			itemColor = defColour;
-		else
-			itemColor = redColour;
-
-		m_listTable->SetItemText(iter->second, 1, value);
-		//m_listTable->SetItemTextColour(iter->second, itemColor);
-
-		m_gdbIdToTreeId.erase(iter);
-	}
-}
-
 void WatchesTable::OnCreateVariableObject(const DebuggerEvent& event)
 {
 	wxString expr = event.m_expression;
-	std::map<wxString, wxTreeItemId>::iterator iter = m_exprToItemId.find(expr);
-	if( iter != m_exprToItemId.end() ) {
+	IDebugger *dbgr = DoGetDebugger();
+	std::map<wxString, wxTreeItemId>::iterator iter = m_createVarItemId.find(expr);
+	if( iter != m_createVarItemId.end() ) {
+		wxTreeItemId item = iter->second;
+		m_createVarItemId.erase(iter);
 
-		// set the variable object
-		WatchData* data = static_cast<WatchData*>(m_listTable->GetItemData(iter->second));
-		if(data) {
-			data->SetExpression( expr );
-			data->SetIsFirst(true);
-			data->SetGdbId(event.m_variableObject.gdbId);
-			data->SetIsOk( event.m_updateReason == DBG_UR_VARIABLEOBJ );
+		if(event.m_variableObject.gdbId.IsEmpty() == false) {
+			// set the variable object
+			DbgTreeItemData* data = static_cast<DbgTreeItemData*>(m_listTable->GetItemData(item));
+			if(data) {
+				data->_gdbId = event.m_variableObject.gdbId;
 
-			if(data->GetIsOk()) {
 				// refresh this item only
-				IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-				if(dbgr && ManagerST::Get()->DbgCanInteract())
-					DoRefreshItem(dbgr, iter->second);
+				if(dbgr)
+					DoRefreshItem(dbgr, item, true);
+
 				// Query the debugger to see if this node has a children
 				// In case it does, we add a dummy node so we will get the [+] sign
-				dbgr->ListChildren(data->GetGdbId(), QUERY_NUM_CHILDS);
-				m_listChildItemId[data->GetGdbId()] = iter->second;
+				dbgr->ListChildren(data->_gdbId, m_QUERY_NUM_CHILDS);
+				m_listChildItemId[data->_gdbId] = item;
+			}
+
+		} else {
+
+			if(dbgr) {
+				// the refresh will create the item again if it has no gdbId
+				DoRefreshItem(dbgr, item, true);
 			}
 		}
 
-		m_exprToItemId.erase(iter);
 	}
 }
 
@@ -499,12 +352,11 @@ void WatchesTable::OnListChildren(const DebuggerEvent& event)
 	wxTreeItemId item = iter->second;
 	m_listChildItemId.erase(iter);
 
-	switch(event.m_userReason) {
-	case QUERY_NUM_CHILDS:
+	if(event.m_userReason == m_QUERY_NUM_CHILDS) {
 		if(event.m_varObjChildren.empty() == false)
 			m_listTable->AppendItem(item, wxT("<dummy>"));
-		break;
-	case LIST_WATCH_CHILDS:
+
+	} else if(event.m_userReason == m_LIST_CHILDS) {
 		if(event.m_varObjChildren.empty() == false) {
 			for(size_t i=0; i<event.m_varObjChildren.size(); i++) {
 				IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -515,14 +367,13 @@ void WatchesTable::OnListChildren(const DebuggerEvent& event)
 				if(ch.varName == wxT("public") || ch.varName == wxT("private") || ch.varName == wxT("protected")) {
 					// not really a node...
 					// ask for information about this node children
-					dbgr->ListChildren(ch.gdbId, LIST_WATCH_CHILDS);
+					dbgr->ListChildren(ch.gdbId, m_LIST_CHILDS);
 					m_listChildItemId[ch.gdbId] = item;
 
 				} else {
 
-					WatchData *data = new WatchData(wxT(""));
-					data->SetGdbId(ch.gdbId);
-					data->SetVoc(ch);
+					DbgTreeItemData *data = new DbgTreeItemData();
+					data->_gdbId = ch.gdbId;
 					wxTreeItemId child = m_listTable->AppendItem(item, ch.varName, -1, -1, data);
 
 					// Add a dummy node
@@ -531,14 +382,13 @@ void WatchesTable::OnListChildren(const DebuggerEvent& event)
 					}
 
 					// refresh this item only
-					dbgr->EvaluateVariableObject(data->GetGdbId(), DBG_USERR_WATCHTABLE);
+					dbgr->EvaluateVariableObject(data->_gdbId, m_DBG_USERR);
 					// ask the value for this node
-					m_gdbIdToTreeId[data->GetGdbId()] = child;
+					m_gdbIdToTreeId[data->_gdbId] = child;
 
 				}
 			}
 		}
-		break;
 	}
 }
 
@@ -558,90 +408,15 @@ void WatchesTable::OnItemExpanding(wxTreeEvent& event)
 		// a dummy node, replace it with the real node content
 		m_listTable->Delete(child);
 
-		WatchData *data = (WatchData*) m_listTable->GetItemData(event.GetItem());
+		DbgTreeItemData *data = (DbgTreeItemData*) m_listTable->GetItemData(event.GetItem());
 		if(data) {
-			wxString gdbId;
-			if(data->GetIsFirst()) {
-				gdbId = data->GetGdbId();
-
-			} else if (data->GetVoc()) {
-				gdbId = data->GetVoc()->gdbId;
-
-			}
-
-			if(gdbId.IsEmpty() == false) {
-				dbgr->UpdateVariableObject(gdbId, DBG_USERR_WATCHTABLE);
-				dbgr->ListChildren(gdbId, LIST_WATCH_CHILDS);
-				m_listChildItemId[gdbId] = event.GetItem();
-
+			if(data->_gdbId.IsEmpty() == false) {
+				dbgr->UpdateVariableObject(data->_gdbId, m_DBG_USERR);
+				dbgr->ListChildren(data->_gdbId, m_LIST_CHILDS);
+				m_listChildItemId[data->_gdbId] = event.GetItem();
 			}
 		}
 	}
-}
-
-void WatchesTable::DoDeleteWatch(const wxTreeItemId& item)
-{
-	IDebugger *dbgr = DoGetDebugger();
-	if(!dbgr || !item.IsOk()) {
-		return;
-	}
-
-	wxString gdbId = DoGetGdbId(item);
-	if(gdbId.IsEmpty() == false) {
-		dbgr->DeleteVariableObject(gdbId);
-	}
-
-#ifdef __WXMAC__
-
-	// Mac's GDB does not delete all the children of the variable object
-	// instead we will do it manually
-
-	if(m_listTable->HasChildren(item)) {
-		// Delete this item children
-		wxTreeItemIdValue cookie;
-		wxTreeItemId child = m_listTable->GetFirstChild(item, cookie);
-		while(child.IsOk()) {
-			gdbId = DoGetGdbId(child);
-			if(gdbId.IsEmpty() == false) {
-				dbgr->DeleteVariableObject(gdbId);
-			}
-
-			if(m_listTable->HasChildren(child)) {
-				DoDeleteWatch(child);
-			}
-
-			child = m_listTable->GetNextChild(item, cookie);
-		}
-	}
-#endif
-
-}
-
-IDebugger* WatchesTable::DoGetDebugger()
-{
-	if(!ManagerST::Get()->DbgCanInteract())
-		return NULL;
-
-	IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	return dbgr;
-}
-
-wxString WatchesTable::DoGetGdbId(const wxTreeItemId& item)
-{
-	wxString gdbId;
-	if(!item.IsOk())
-		return gdbId;
-
-	WatchData *data = (WatchData*) m_listTable->GetItemData(item);
-	if(data) {
-		if(data->GetIsFirst()) {
-			gdbId = data->GetGdbId();
-
-		} else if (data->GetVoc()) {
-			gdbId = data->GetVoc()->gdbId;
-		}
-	}
-	return gdbId;
 }
 
 void WatchesTable::OnMenuEditExprUI(wxUpdateUIEvent& event)
@@ -698,25 +473,9 @@ void WatchesTable::OnMenuDisplayFormat(wxCommandEvent& event)
 	wxString gdbId = DoGetGdbId(item);
 	if(gdbId.IsEmpty() == false) {
 		dbgr->SetVariableObbjectDisplayFormat(gdbId, df);
-		dbgr->UpdateVariableObject(gdbId, DBG_USERR_WATCHTABLE);
-		DoRefreshItem(dbgr, item);
+		dbgr->UpdateVariableObject(gdbId, m_DBG_USERR);
+		DoRefreshItem(dbgr, item, true);
 	}
-}
-
-wxTreeItemId WatchesTable::DoFindItemByGdbId(const wxString& gdbId)
-{
-	wxTreeItemId root = m_listTable->GetRootItem();
-	wxTreeItemIdValue cookieOne;
-	wxTreeItemId item = m_listTable->GetFirstChild(root, cookieOne);
-	while( item.IsOk() ) {
-
-		wxString id = DoGetGdbId(item);
-		if(id.IsEmpty() == false && id == gdbId)
-			return item;
-
-		item = m_listTable->GetNextChild(root, cookieOne);
-	}
-	return wxTreeItemId();
 }
 
 void WatchesTable::OnUpdateVariableObject(const DebuggerEvent& event)

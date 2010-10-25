@@ -27,6 +27,7 @@
 
 #include <wx/string.h>
 #include "codelite_exports.h"
+#include <string>
 
 class WXDLLIMPEXP_CL StringAccessor {
 	std::wstring m_str;

@@ -305,7 +305,7 @@ void LocalsTable::UpdateFrameInfo()
 		Clear();
 		m_curStackInfo = ManagerST::Get()->DbgGetCurrentFrameInfo();
 		clMainFrame::Get()->GetOutputPane()->GetDebugWindow()->AppendLine(
-																			wxString::Format(wxT("INFO: Scope=%s depth=%d\n"),
+																			wxString::Format(wxT("Current scope is\"%s\" depth: %d\n"),
 																			m_curStackInfo.func.c_str(),
 																			m_curStackInfo.depth)
 																		 );

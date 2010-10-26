@@ -178,6 +178,7 @@ void DebuggerTreeListCtrlBase::Clear()
 	m_listChildItemId.clear();
 	m_createVarItemId.clear();
 	m_gdbIdToTreeId.clear();
+	m_curStackInfo.Clear();
 }
 
 void DebuggerTreeListCtrlBase::DoRefreshItem(IDebugger* dbgr, const wxTreeItemId& item, bool forceCreate)

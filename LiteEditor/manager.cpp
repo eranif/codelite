@@ -2357,6 +2357,9 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 	case DBG_RECV_SIGNAL_SIGABRT:         // assert() ?
 	case DBG_RECV_SIGNAL_SIGSEGV: {       // program received signal sigsegv
 
+		// Clear the 'Locals' view
+		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Clear();
+
 		wxString signame = wxT ( "SIGSEGV" );
 
 		// show the dialog only if the signal is not sigtrap
@@ -2393,6 +2396,8 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 	}
 	break;
 	case DBG_BP_ASSERTION_HIT: {
+		// Clear the 'Locals' view
+		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Clear();
 
 		wxMessageDialog dlg( clMainFrame::Get(), _("Assertion failed!\nStack trace is available in the 'Call Stack' tab\n"),
 		                     wxT("CodeLite"), wxICON_ERROR|wxOK );
@@ -2406,18 +2411,20 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 		}
 	}
 	break;
-	case DBG_END_STEPPING:	// finished one of the following: next/step/nexti/stepi
+	case DBG_BP_HIT:        // breakpoint reached
+		// Clear the 'Locals' view
+		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Clear();
+		// fall through...
+	case DBG_END_STEPPING:  // finished one of the following: next/step/nexti/stepi
 	case DBG_FUNC_FINISHED:
-	case DBG_UNKNOWN:		// the most common reason: temporary breakpoint
-	case DBG_BP_HIT: { 		// breakpoint reached
+	case DBG_UNKNOWN:       // the most common reason: temporary breakpoint
 		if ( dbgr && dbgr->IsRunning() ) {
 			dbgr->QueryFileLine();
 			dbgr->BreakList();
 			// Apply all previous watches
 			DbgRestoreWatches();
 		}
-	}
-	break;
+		break;
 	case DBG_DBGR_KILLED:
 		m_dbgCanInteract = false;
 		break;

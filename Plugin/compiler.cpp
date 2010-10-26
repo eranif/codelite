@@ -31,16 +31,16 @@
 Compiler::Compiler(wxXmlNode *node)
 {
     // ensure all relevant entries exist in switches map (makes sure they show up in build settings dlg)
-    m_switches[wxT("Include")]        = wxEmptyString;
-    m_switches[wxT("Debug")]          = wxEmptyString;
-    m_switches[wxT("Preprocessor")]   = wxEmptyString;
-    m_switches[wxT("Library")]        = wxEmptyString;
-    m_switches[wxT("LibraryPath")]    = wxEmptyString;
-    m_switches[wxT("Source")]         = wxEmptyString;
-    m_switches[wxT("Output")]         = wxEmptyString;
-    m_switches[wxT("Object")]         = wxEmptyString;
-    m_switches[wxT("ArchiveOutput")]  = wxEmptyString;
-    m_switches[wxT("PreprocessOnly")] = wxEmptyString;
+    m_switches[wxT("Include")]             = wxEmptyString;
+    m_switches[wxT("Debug")]               = wxEmptyString;
+    m_switches[wxT("Preprocessor")]        = wxEmptyString;
+    m_switches[wxT("Library")]             = wxEmptyString;
+    m_switches[wxT("LibraryPath")]         = wxEmptyString;
+    m_switches[wxT("Source")]              = wxEmptyString;
+    m_switches[wxT("Output")]              = wxEmptyString;
+    m_switches[wxT("Object")]              = wxEmptyString;
+    m_switches[wxT("ArchiveOutput")]       = wxEmptyString;
+    m_switches[wxT("PreprocessOnly")]      = wxEmptyString;
 
     // ensure all relevant entries exist in tools map (makes sure they show up in build settings dlg)
     m_tools[wxT("LinkerName")]             = wxEmptyString;
@@ -157,12 +157,13 @@ Compiler::Compiler(wxXmlNode *node)
 		m_objectSuffix                    = wxT(".o");
 		m_preprocessSuffix                = wxT(".i");
 
-		CmpInfoPattern pattern;
-		pattern.pattern         = wxT("^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)( error)");
+		CmpInfoPattern pattern;       
+		pattern.pattern         = wxT("^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal error)|(error)|(undefined reference))");
 		pattern.fileNameIndex   = wxT("1");
 		pattern.lineNumberIndex = wxT("3");
 		m_errorPatterns.push_back(pattern);
-		pattern.pattern         = wxT("^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning:)");
+		
+		pattern.pattern         = wxT("([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning)");
 		pattern.fileNameIndex   = wxT("1");
 		pattern.lineNumberIndex = wxT("3");
 		m_warningPatterns.push_back(pattern);

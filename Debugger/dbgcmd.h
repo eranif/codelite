@@ -83,16 +83,16 @@ public:
  * @class DbgCmdHandlerStackInfo
  * handles the -stack-info-frame command
  */
-class DbgCmdHandlerStackInfo : public DbgCmdHandler
+class DbgCmdHandlerStackDepth : public DbgCmdHandler
 {
 	DbgGdb*  m_gdb;
 public:
-	DbgCmdHandlerStackInfo(IDebuggerObserver *observe, DbgGdb* gdbr)
+	DbgCmdHandlerStackDepth(IDebuggerObserver *observe, DbgGdb* gdbr)
 	: DbgCmdHandler(observe)
 	, m_gdb(gdbr)
 	{}
 
-	virtual ~DbgCmdHandlerStackInfo()
+	virtual ~DbgCmdHandlerStackDepth()
 	{}
 
 	virtual bool ProcessOutput(const wxString &line);
@@ -117,7 +117,7 @@ public:
 	{}
 	virtual ~DbgCmdHandlerAsyncCmd() {}
 
-	void UpdateGotControl(DebuggerReasons reason);
+	void UpdateGotControl(DebuggerReasons reason, const wxString &func);
 	virtual bool ProcessOutput(const wxString &line);
 };
 

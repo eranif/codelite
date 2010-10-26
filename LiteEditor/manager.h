@@ -47,6 +47,45 @@ extern const wxEventType wxEVT_CMD_RESTART_CODELITE;
 
 class DisplayVariableDlg;
 
+class DbgStackInfo
+{
+public:
+	size_t   depth;
+	wxString func;
+
+public:
+	DbgStackInfo()
+	: depth(wxString::npos)
+	, func(wxT(""))
+	{}
+
+	~DbgStackInfo()
+	{
+		Clear();
+	}
+
+	void Clear()
+	{
+		func.Clear();
+		depth = wxString::npos;
+	}
+
+	bool operator==(const DbgStackInfo& rhs)
+	{
+		return func == rhs.func && depth == rhs.depth;
+	}
+
+	bool operator!=(const DbgStackInfo& rhs)
+	{
+		return func != rhs.func || depth != rhs.depth;
+	}
+
+	bool IsValid() const
+	{
+		return !func.IsEmpty() && depth != wxString::npos;
+	}
+};
+
 class Manager : public wxEvtHandler, public IDebuggerObserver
 {
 	friend class Singleton<Manager>;
@@ -69,7 +108,7 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	DisplayVariableDlg     *m_watchDlg;
 	bool                    m_retagInProgress;
 	bool                    m_repositionEditor; //flag used for debugging, should editor be repositioned after user updates like "add watch"
-	StackEntry              m_dbgCurrentFrame;
+	DbgStackInfo            m_dbgCurrentFrameInfo;
 
 protected:
 	Manager(void);
@@ -534,18 +573,17 @@ public:
 	// Debugging API
 	//---------------------------------------------------
 
-	void DbgStart(long pid = wxNOT_FOUND);
-	void DbgStop();
-	void DbgMarkDebuggerLine(const wxString &fileName, int lineno);
-	void DbgUnMarkDebuggerLine();
-	void DbgDoSimpleCommand(int cmd);
-	void DbgSetFrame(int frame, int lineno);
-	void DbgSetThread(long threadId);
-	bool DbgCanInteract() {
-		return m_dbgCanInteract;
-	}
-	void DbgClearWatches();
-	void DbgRestoreWatches();
+	void         DbgStart(long pid = wxNOT_FOUND);
+	void         DbgStop();
+	void         DbgMarkDebuggerLine(const wxString &fileName, int lineno);
+	void         DbgUnMarkDebuggerLine();
+	void         DbgDoSimpleCommand(int cmd);
+	void         DbgSetFrame(int frame, int lineno);
+	void         DbgSetThread(long threadId);
+	bool         DbgCanInteract() { return m_dbgCanInteract;}
+	void         DbgClearWatches();
+	void         DbgRestoreWatches();
+	DbgStackInfo DbgGetCurrentFrameInfo() {return m_dbgCurrentFrameInfo; }
 
 	//---------------------------------------------------
 	// Internal implementaion for various debugger events
@@ -633,7 +671,7 @@ public:
 	 * @param conf [output]
 	 */
 	void GetActiveProjectAndConf(wxString &project, wxString& conf);
-	
+
 protected:
 	void DoBuildProject(const QueueCommand &buildInfo);
 	void DoCleanProject(const QueueCommand &buildInfo);

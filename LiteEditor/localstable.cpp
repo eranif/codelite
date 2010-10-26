@@ -6,6 +6,7 @@
 #include "manager.h"
 #include "new_quick_watch_dlg.h"
 #include <set>
+#include "frame.h"
 
 LocalsTable::LocalsTable(wxWindow *parent)
 	: DebuggerTreeListCtrlBase(parent, wxID_ANY, false)
@@ -26,7 +27,6 @@ LocalsTable::~LocalsTable()
 
 void LocalsTable::UpdateLocals(const LocalVariables& locals)
 {
-	DoResetItemColour(m_listTable->GetRootItem());
 	DoUpdateLocals(locals, DbgTreeItemData::Locals);
 }
 
@@ -49,6 +49,7 @@ void LocalsTable::Initialize()
 	}
 
 	m_preDefTypes = data.GetActiveSet();
+	m_curStackInfo.Clear();
 }
 
 void LocalsTable::OnCreateVariableObj(const DebuggerEvent& event)
@@ -63,10 +64,10 @@ void LocalsTable::OnCreateVariableObj(const DebuggerEvent& event)
 
 			data->_gdbId = event.m_variableObject.gdbId;
 			data->_kind  = DbgTreeItemData::VariableObject;
-			
+
 			// variable object's type name is extracted from the event.m_variableObject.typeName
 			m_listTable->SetItemText(iter->second, 2, event.m_variableObject.typeName);
-			
+
 			// refresh this item only
 			IDebugger *dbgr = DoGetDebugger();
 			if(dbgr)
@@ -197,7 +198,7 @@ void LocalsTable::OnItemExpanding(wxTreeEvent& event)
 	}
 }
 
-void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved, size_t flags)
+void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved, size_t flags, std::map<wxString, wxString> &oldValues)
 {
 	wxTreeItemIdValue cookie;
 	std::vector<wxTreeItemId> itemsToRemove;
@@ -219,6 +220,7 @@ void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved
 	}
 
 	for(size_t i=0; i<itemsToRemove.size(); i++) {
+		oldValues[m_listTable->GetItemText(itemsToRemove[i])] = m_listTable->GetItemText(itemsToRemove[i], 1);
 		m_listTable->Delete( itemsToRemove[i] );
 	}
 }
@@ -233,7 +235,9 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 	wxArrayString itemsNotRemoved;
 	// remove the non-variable objects and return a list
 	// of all the variable objects (at the top level)
-	DoClearNonVariableObjectEntries(itemsNotRemoved, kind);
+
+	std::map<wxString, wxString> oldValues;
+	DoClearNonVariableObjectEntries(itemsNotRemoved, kind, oldValues);
 	for(size_t i=0; i<locals.size(); i++) {
 
 		// try to replace the
@@ -280,7 +284,12 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 				wxTreeItemId item = m_listTable->AppendItem(root, locals[i].name, -1, -1, new DbgTreeItemData());
 				m_listTable->SetItemText(item, 1, locals[i].value);
 				m_listTable->SetItemText(item, 2, locals[i].type);
-				
+
+				std::map<wxString, wxString>::iterator iter = oldValues.find(locals[i].name);
+				if(iter != oldValues.end() && iter->second != locals[i].value) {
+					m_listTable->SetItemTextColour(item, *wxRED);
+				}
+
 				m_listTable->AppendItem(item, wxT("<dummy>"));
 				m_listTable->Collapse(item);
 
@@ -288,9 +297,17 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 
 		}
 	}
+}
 
-	if(dbgr && itemsNotRemoved.IsEmpty() == false) {
-		dbgr->UpdateVariableObject(wxT("*"), m_DBG_USERR);
+void LocalsTable::UpdateFrameInfo()
+{
+	if(ManagerST::Get()->DbgGetCurrentFrameInfo().IsValid() && ManagerST::Get()->DbgGetCurrentFrameInfo() != m_curStackInfo) {
+		Clear();
+		m_curStackInfo = ManagerST::Get()->DbgGetCurrentFrameInfo();
+		clMainFrame::Get()->GetOutputPane()->GetDebugWindow()->AppendLine(
+																			wxString::Format(wxT("INFO: Scope=%s depth=%d\n"),
+																			m_curStackInfo.func.c_str(),
+																			m_curStackInfo.depth)
+																		 );
 	}
-
 }

@@ -15,6 +15,7 @@
 #include "treelistctrl.h"
 #include <map>
 #include "debugger.h"
+#include "manager.h"
 #include "debuggerobserver.h"
 
 ///////////////////////////////////////////////////////////////////////////
@@ -63,6 +64,7 @@ protected:
 	std::map<wxString, wxTreeItemId> m_gdbIdToTreeId;
 	std::map<wxString, wxTreeItemId> m_listChildItemId;
 	std::map<wxString, wxTreeItemId> m_createVarItemId;
+	DbgStackInfo                     m_curStackInfo;
 
 protected:
 	int                              m_DBG_USERR;
@@ -120,7 +122,7 @@ public:
 	// Common to both Locals / Watches
 	//////////////////////////////////////////////
 	virtual IDebugger*   DoGetDebugger           ();
-	virtual void         DoResetItemColour       (const wxTreeItemId& item);
+	virtual void         DoResetItemColour       (const wxTreeItemId& item, size_t itemKind);
 	virtual void         OnEvaluateVariableObj   (const DebuggerEvent& event);
 	virtual void         DoRefreshItemRecursively(IDebugger *dbgr, const wxTreeItemId &item, wxArrayString &itemsToRefresh);
 	virtual void         Clear                   ();
@@ -129,6 +131,7 @@ public:
 	virtual wxTreeItemId DoFindItemByGdbId       (const wxString& gdbId);
 	virtual void         DoDeleteWatch           (const wxTreeItemId& item);
 	virtual wxTreeItemId DoFindItemByExpression  (const wxString &expr);
+	virtual void         ResetTableColors        ();
 };
 
 #endif //__simpletablebase__

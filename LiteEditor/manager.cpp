@@ -175,18 +175,18 @@ static wxArrayString DoGetTemplateTypes(const wxString& tmplDecl)
 //---------------------------------------------------------------
 
 Manager::Manager ( void )
-		: m_shellProcess    ( NULL )
-		, m_asyncExeCmd     ( NULL )
-		, m_breakptsmgr     ( new BreakptMgr )
-		, m_isShutdown      ( false )
-		, m_workspceClosing ( false )
-		, m_dbgCanInteract  ( false )
-		, m_useTipWin       ( false )
-		, m_tipWinPos       ( wxNOT_FOUND )
-		, m_frameLineno     ( wxNOT_FOUND )
-		, m_watchDlg        ( NULL )
-		, m_retagInProgress ( false )
-		, m_repositionEditor( true )
+		: m_shellProcess         ( NULL )
+		, m_asyncExeCmd          ( NULL )
+		, m_breakptsmgr          ( new BreakptMgr )
+		, m_isShutdown           ( false )
+		, m_workspceClosing      ( false )
+		, m_dbgCanInteract       ( false )
+		, m_useTipWin            ( false )
+		, m_tipWinPos            ( wxNOT_FOUND )
+		, m_frameLineno          ( wxNOT_FOUND )
+		, m_watchDlg             ( NULL )
+		, m_retagInProgress      ( false )
+		, m_repositionEditor     ( true )
 {
 	m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
 	Connect(wxEVT_CMD_RESTART_CODELITE,            wxCommandEventHandler(Manager::OnRestart),              NULL, this);
@@ -1993,7 +1993,11 @@ void Manager::DbgStart ( long pid )
 	startup_info.debugger = dbgr;
 
 	if ( dbgr->IsRunning() ) {
+
 		//debugger is already running, so issue a 'cont' command
+		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->ResetTableColors();
+		clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->ResetTableColors();
+
 		dbgr->Continue();
 		dbgr->QueryFileLine();
 		return;
@@ -2199,6 +2203,7 @@ void Manager::DbgStop()
 		return;
 	}
 
+	m_dbgCurrentFrameInfo.Clear();
 	if ( !dbgr->IsRunning() ) {
 		return;
 	}
@@ -2209,9 +2214,6 @@ void Manager::DbgStop()
 	dbgr->Stop();
 	DebuggerMgr::Get().SetActiveDebugger ( wxEmptyString );
 	DebugMessage ( _ ( "Debug session ended\n" ) );
-
-	// Clear the current stack frame information
-	m_dbgCurrentFrame = StackEntry();
 
 	// notify plugins that the debugger stopped
 	SendCmdEvent(wxEVT_DEBUG_ENDED);
@@ -2259,12 +2261,18 @@ void Manager::DbgDoSimpleCommand ( int cmd )
 			dbgr->Interrupt();
 			break;
 		case DBG_NEXT:
+			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->ResetTableColors();
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->ResetTableColors();
 			dbgr->Next();
 			break;
 		case DBG_STEPIN:
+			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->ResetTableColors();
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->ResetTableColors();
 			dbgr->StepIn();
 			break;
 		case DBG_STEPOUT:
+			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->ResetTableColors();
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->ResetTableColors();
 			dbgr->StepOut();
 			break;
 		case DBG_SHOW_CURSOR:
@@ -2336,6 +2344,13 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 	clMainFrame::Get()->Raise();
 	m_dbgCanInteract = true;
 
+	//query the current line and file
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+
+	if(dbgr && dbgr->IsRunning()) {
+		dbgr->UpdateVariableObject(wxT("*"), DBG_USERR_LOCALS); // the reason is not really matter here
+	}
+
 	switch ( reason ) {
 	case DBG_RECV_SIGNAL_SIGTRAP:         // DebugBreak()
 	case DBG_RECV_SIGNAL_EXC_BAD_ACCESS:  // SIGSEGV on Mac
@@ -2395,8 +2410,6 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 	case DBG_FUNC_FINISHED:
 	case DBG_UNKNOWN:		// the most common reason: temporary breakpoint
 	case DBG_BP_HIT: { 		// breakpoint reached
-		//query the current line and file
-		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 		if ( dbgr && dbgr->IsRunning() ) {
 			dbgr->QueryFileLine();
 			dbgr->BreakList();
@@ -2808,6 +2821,8 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	switch ( event.m_updateReason ) {
 
 	case DBG_UR_GOT_CONTROL:
+		// keep the current functin name
+		m_dbgCurrentFrameInfo.func = event.m_frameInfo.function;
 		UpdateGotControl(event.m_controlReason);
 		break;
 
@@ -2824,9 +2839,14 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		ManagerST::Get()->SetRepositionEditor(true);
 		break;
 
-	case DBG_UR_FRAMEINFO:
-		m_dbgCurrentFrame = event.m_frameInfo;
+	case DBG_UR_FRAMEDEPTH:
+	{
+		long frameDepth(0);
+		event.m_frameInfo.level.ToLong(&frameDepth);
+		m_dbgCurrentFrameInfo.depth = frameDepth;
+		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateFrameInfo();
 		break;
+	}
 
 	case DBG_UR_VAROBJUPDATE:
 		// notify the 'Locals' view to remove all

@@ -93,16 +93,20 @@ IDebugger* DebuggerTreeListCtrlBase::DoGetDebugger()
 	return dbgr;
 }
 
-void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item)
+void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item, size_t itemKind)
 {
 	wxTreeItemIdValue cookieOne;
 	wxTreeItemId child = m_listTable->GetFirstChild(item, cookieOne);
 	while( child.IsOk() ) {
+		DbgTreeItemData *data = (DbgTreeItemData *) m_listTable->GetItemData(child);
 
-		m_listTable->SetItemTextColour(child, *wxBLACK);
+		bool resetColor = ((itemKind == 0) || (data && (data->_kind & itemKind)));
+		if(resetColor) {
+			m_listTable->SetItemTextColour(child, *wxBLACK);
+		}
 
 		if(m_listTable->HasChildren(child)) {
-			DoResetItemColour(child);
+			DoResetItemColour(child, itemKind);
 		}
 		child = m_listTable->GetNextChild(item, cookieOne);
 	}
@@ -273,4 +277,9 @@ wxTreeItemId DebuggerTreeListCtrlBase::DoFindItemByExpression(const wxString& ex
 		item = m_listTable->GetNextChild(root, cookieOne);
 	}
 	return wxTreeItemId();
+}
+
+void DebuggerTreeListCtrlBase::ResetTableColors()
+{
+	DoResetItemColour(m_listTable->GetRootItem(), 0);
 }

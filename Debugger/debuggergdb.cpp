@@ -541,15 +541,15 @@ bool DbgGdb::Interrupt()
 bool DbgGdb::QueryFileLine()
 {
 
-//	if(!WriteCommand(wxT("-stack-info-frame"), new DbgCmdHandlerStackInfo(m_observer, this)))
-//		return false;
-
 #if defined (__WXMSW__) || defined (__WXGTK__)
-	return WriteCommand( wxT( "-file-list-exec-source-file" ), new DbgCmdHandlerGetLine( m_observer, this ) );
+	if(!WriteCommand( wxT( "-file-list-exec-source-file" ), new DbgCmdHandlerGetLine( m_observer, this ) ))
+		return false;
 #else
 	//Mac
-	return WriteCommand( wxT( "-stack-list-frames 0 0" ), new DbgCmdHandlerGetLine( m_observer, this ) );
+	if(!WriteCommand( wxT( "-stack-list-frames 0 0" ), new DbgCmdHandlerGetLine( m_observer, this ) ))
+		return false;
 #endif
+	return WriteCommand( wxT( "-stack-info-depth" ), new DbgCmdHandlerStackDepth( m_observer, this ) );
 }
 
 bool DbgGdb::QueryLocals()

@@ -77,7 +77,7 @@ enum DebuggerUpdateReason
 	DBG_UR_VARIABLEOBJCREATEERR,    // Variable object create error
 	DBG_UR_EVALVARIABLEOBJ,         // Variable object has be evaluated
 	DBG_UR_VAROBJUPDATE,            // An update to variable object
-	DBG_UR_FRAMEINFO                // Frame information
+	DBG_UR_FRAMEDEPTH                // Frame information
 };
 
 enum UserReason {
@@ -156,10 +156,11 @@ public:
 	 * @param reason the reason why the debugger gave the control to the plugin.
 	 * @sa DebuggerReasons
 	 */
-	void UpdateGotControl(DebuggerReasons reason) {
+	void UpdateGotControl(DebuggerReasons reason, const wxString &func = wxEmptyString) {
 		DebuggerEvent e;
 		e.m_updateReason  = DBG_UR_GOT_CONTROL;
 		e.m_controlReason = reason;
+		e.m_frameInfo.function = func;
 		DebuggerUpdate( e );
 	}
 

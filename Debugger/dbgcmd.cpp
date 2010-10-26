@@ -31,6 +31,8 @@
 #include "gdb_parser_incl.h"
 #include "procutils.h"
 
+static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
+
 #define GDB_LEX()\
 	{\
 		type = gdb_result_lex();\
@@ -287,9 +289,9 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 	return true;
 }
 
-void DbgCmdHandlerAsyncCmd::UpdateGotControl(DebuggerReasons reason)
+void DbgCmdHandlerAsyncCmd::UpdateGotControl(DebuggerReasons reason, const wxString &func)
 {
-	m_observer->UpdateGotControl(reason);
+	m_observer->UpdateGotControl(reason, func);
 }
 
 bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
@@ -305,21 +307,35 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 	std::vector<std::map<std::string, std::string> > children;
 	gdbParseListChildren(line.mb_str(wxConvUTF8).data(), children);
 
+	wxString func;
+	bool foundFunc, foundReason;
 
+	foundFunc   = false;
+	foundReason = false;
 	for (size_t i=0; i<children.size(); i++) {
 		std::map<std::string, std::string> attr = children.at(i);
 		std::map<std::string, std::string >::const_iterator iter;
 
 		iter = attr.find("reason");
-		if ( iter != attr.end() ) {
+		if ( !foundReason && iter != attr.end() ) {
+			foundReason = true;
 			reason = wxString(iter->second.c_str(), wxConvUTF8);
 			wxRemoveQuotes( reason );
-			break;
 		}
+
+		if(foundReason)
+			break;
 	}
 
 	if(reason.IsEmpty())
 		return false;
+
+	int where = line.Find(wxT("func=\""));
+	if(where != wxNOT_FOUND) {
+		func = line.Mid(where + 6);
+		func = func.BeforeFirst(wxT('"'));
+		foundFunc = true;
+	}
 
 	//Note:
 	//This might look like a stupid if-else, since all taking
@@ -327,24 +343,17 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 	//for future use to allow different handling for every case
 	if (reason == wxT("end-stepping-range")) {
 		//just notify the container that we got control back from debugger
-		UpdateGotControl(DBG_END_STEPPING);
+		UpdateGotControl(DBG_END_STEPPING, func);
 
 	} else if ((reason == wxT("breakpoint-hit")) || (reason == wxT("watchpoint-trigger"))) {
-		static wxRegEx reFuncName(wxT("func=\"([a-zA-Z!_0-9]+)\""));
 
 		// Incase we break due to assertion, notify the observer with different break code
-#ifdef __WXMSW__
-		if ( reFuncName.Matches(line) )
-#else // Mac / Linux
-		if ( false )
-#endif
-		{
-			wxString func_name = reFuncName.GetMatch(line, 1);
-			if ( func_name == wxT("msvcrt!_assert") || // MinGW
-			        func_name == wxT("__assert")          // Cygwin
+		if ( func.IsEmpty() && IS_WINDOWNS ) {
+			if ( func == wxT("msvcrt!_assert") || // MinGW
+				 func == wxT("__assert")       // Cygwin
 			   ) {
 				// assertion caught
-				UpdateGotControl(DBG_BP_ASSERTION_HIT);
+				UpdateGotControl(DBG_BP_ASSERTION_HIT, func);
 			}
 		}
 
@@ -371,17 +380,17 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 				} else {
 
 					// Notify the container that we got control back from debugger
-					UpdateGotControl(DBG_BP_HIT); // User breakpoint
+					UpdateGotControl(DBG_BP_HIT, func); // User breakpoint
 					m_observer->UpdateBpHit((int)id);
 
 				}
 			} else {
 				// In case of failure, pass control to user
-				UpdateGotControl(DBG_BP_HIT);
+				UpdateGotControl(DBG_BP_HIT, func);
 			}
 		} else {
 			// In case of failure, pass control to user
-			UpdateGotControl(DBG_BP_HIT);
+			UpdateGotControl(DBG_BP_HIT, func);
 		}
 
 
@@ -397,26 +406,26 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 		}
 
 		if (signame == wxT("SIGSEGV")) {
-			UpdateGotControl(DBG_RECV_SIGNAL_SIGSEGV);
+			UpdateGotControl(DBG_RECV_SIGNAL_SIGSEGV, func);
 
 		} else if (signame == wxT("EXC_BAD_ACCESS")) {
-			UpdateGotControl(DBG_RECV_SIGNAL_EXC_BAD_ACCESS);
+			UpdateGotControl(DBG_RECV_SIGNAL_EXC_BAD_ACCESS, func);
 
 		} else if (signame == wxT("SIGABRT")) {
-			UpdateGotControl(DBG_RECV_SIGNAL_SIGABRT);
+			UpdateGotControl(DBG_RECV_SIGNAL_SIGABRT, func);
 
 		} else if (signame == wxT("SIGTRAP")) {
-			UpdateGotControl(DBG_RECV_SIGNAL_SIGTRAP);
+			UpdateGotControl(DBG_RECV_SIGNAL_SIGTRAP, func);
 
 		} else {
 			//default
-			UpdateGotControl(DBG_RECV_SIGNAL);
+			UpdateGotControl(DBG_RECV_SIGNAL, func);
 		}
 	} else if (reason == wxT("exited-normally") || reason == wxT("exited")) {
 		m_observer->UpdateAddLine(_("Program exited normally."));
 
 		//debugee program exit normally
-		UpdateGotControl(DBG_EXITED_NORMALLY);
+		UpdateGotControl(DBG_EXITED_NORMALLY, func);
 
 	} else if (reason == wxT("function-finished")) {
 		wxString message;
@@ -430,10 +439,10 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 		}
 
 		//debugee program exit normally
-		UpdateGotControl(DBG_FUNC_FINISHED);
+		UpdateGotControl(DBG_FUNC_FINISHED, func);
 	} else {
 		//by default return control to program
-		UpdateGotControl(DBG_UNKNOWN);
+		UpdateGotControl(DBG_UNKNOWN, func);
 	}
 	return true;
 }
@@ -699,7 +708,12 @@ bool DbgCmdStackList::ProcessOutput(const wxString &line)
 bool DbgCmdSelectFrame::ProcessOutput(const wxString &line)
 {
 	wxUnusedVar(line);
-	m_observer->UpdateGotControl(DBG_END_STEPPING);
+
+	DebuggerEvent e;
+	e.m_updateReason  = DBG_UR_GOT_CONTROL;
+	e.m_controlReason = DBG_END_STEPPING;
+	e.m_frameInfo.function = wxEmptyString;
+	m_observer->DebuggerUpdate( e );
 	return true;
 }
 
@@ -1156,6 +1170,11 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
 
 		if ( vo.gdbId.IsEmpty() == false  ) {
 
+			// set frozeness of the variable object
+			//wxString cmd;
+			//cmd << wxT("-var-set-frozen ") << vo.gdbId << wxT(" 0");
+			//m_debugger->WriteCommand(cmd, NULL);
+
 			e.m_updateReason = DBG_UR_VARIABLEOBJ;
 			e.m_variableObject = vo;
 			e.m_expression = m_expression;
@@ -1299,24 +1318,18 @@ bool DbgFindMainBreakpointIdHandler::ProcessOutput(const wxString& line)
 	return true;
 }
 
-bool DbgCmdHandlerStackInfo::ProcessOutput(const wxString& line)
+bool DbgCmdHandlerStackDepth::ProcessOutput(const wxString& line)
 {
 	DebuggerEvent e;
-	std::string cbuffer = line.mb_str(wxConvUTF8).data();
-
-	std::vector< std::map<std::string, std::string > > children;
-	gdbParseListChildren(cbuffer, children);
-	if(!children.empty()) {
-
-		e.m_frameInfo.level    = ExtractGdbChild(children.at(0), wxT("level"));
-		e.m_frameInfo.address  = ExtractGdbChild(children.at(0), wxT("addr"));
-		e.m_frameInfo.file     = ExtractGdbChild(children.at(0), wxT("file"));
-		e.m_frameInfo.function = ExtractGdbChild(children.at(0), wxT("func"));
-		e.m_frameInfo.line     = ExtractGdbChild(children.at(0), wxT("line"));
-
-		e.m_updateReason = DBG_UR_FRAMEINFO;
-		m_observer->DebuggerUpdate( e );
-
+	long frameLevel(-1);
+	static wxRegEx reFrameDepth(wxT("depth=\"([0-9]+)\""));
+	if(reFrameDepth.Matches(line)) {
+		wxString strFrameDepth = reFrameDepth.GetMatch(line, 1);
+		if(strFrameDepth.ToLong(&frameLevel) && frameLevel != -1) {
+			e.m_updateReason = DBG_UR_FRAMEDEPTH;
+			e.m_frameInfo.level = strFrameDepth;
+			m_observer->DebuggerUpdate( e );
+		}
 	}
 	return true;
 }

@@ -213,10 +213,7 @@ void WatchesTable::RefreshValues(bool repositionEditor)
 		return;
 
 	// rese tree items colour to black
-	DoResetItemColour(root);
-
-	// update all variable objects
-	dbgr->UpdateVariableObject(wxT("*"), m_DBG_USERR);
+	DoResetItemColour(root, 0);
 
 	// Loop over the top level entries and search for items that has no gdbId
 	// for those items, create a variable object
@@ -321,7 +318,7 @@ void WatchesTable::OnCreateVariableObject(const DebuggerEvent& event)
 			DbgTreeItemData* data = static_cast<DbgTreeItemData*>(m_listTable->GetItemData(item));
 			if(data) {
 				data->_gdbId = event.m_variableObject.gdbId;
-				
+
 				// set the type
 				m_listTable->SetItemText(item, 2, event.m_variableObject.typeName);
 				// refresh this item only

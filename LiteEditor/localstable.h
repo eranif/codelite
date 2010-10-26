@@ -14,9 +14,9 @@ class LocalsTable : public DebuggerTreeListCtrlBase
 
 	DebuggerPreDefinedTypes m_preDefTypes;
 	bool                    m_resolveLocals;
-	
+
 protected:
-	void          DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved, size_t flags);
+	void          DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved, size_t flags, std::map<wxString, wxString> &oldValues);
 	void          DoUpdateLocals  (const LocalVariables& locals, size_t kind);
 
 	// Events
@@ -42,6 +42,8 @@ public:
 	void OnVariableObjUpdate  (const DebuggerEvent& event);
 
 	void UpdateLocals  (const LocalVariables& locals);
+	void UpdateFrameInfo();
+	
 	void UpdateFuncArgs(const LocalVariables& args);
 	void Initialize    ();
 };

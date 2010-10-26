@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -246,6 +246,7 @@ class CompilerOptionDlgBase : public wxDialog
 		wxTextCtrl* m_textCtrl18;
 		wxStaticText* m_staticText27;
 		wxTextCtrl* m_textCtrl19;
+		
 		wxStaticLine* m_staticline4;
 		wxButton* m_buttonOK;
 		wxButton* m_buttonCancel;
@@ -254,7 +255,7 @@ class CompilerOptionDlgBase : public wxDialog
 		wxString m_sName; 
 		wxString m_sHelp; 
 		
-		CompilerOptionDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 256,140 ), long style = wxDEFAULT_DIALOG_STYLE );
+		CompilerOptionDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~CompilerOptionDlgBase();
 	
 };
@@ -273,6 +274,7 @@ class CompilerPatternDlgBase : public wxDialog
 		wxTextCtrl* m_textFileIndex;
 		wxStaticText* m_staticText7;
 		wxTextCtrl* m_textLineNumber;
+		
 		wxStaticLine* m_staticline5;
 		wxButton* m_buttonOK;
 		wxButton* m_buttonCancel;
@@ -286,7 +288,7 @@ class CompilerPatternDlgBase : public wxDialog
 		wxString m_fileIdx; 
 		wxString m_lineIdx; 
 		
-		CompilerPatternDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 348,160 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		CompilerPatternDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~CompilerPatternDlgBase();
 	
 };

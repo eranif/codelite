@@ -53,6 +53,8 @@ class BuildTabSetting;
 
 class ICompilerSubPage {
 public:
+	ICompilerSubPage(){}
+	virtual ~ICompilerSubPage(){}
 	virtual void Save(CompilerPtr cmp) = 0;
 };
 

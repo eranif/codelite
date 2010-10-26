@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -131,6 +131,7 @@ CompilerPatternsBase::~CompilerPatternsBase()
 	m_btnDelWarnPattern->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CompilerPatternsBase::OnWarningPatternSelectedUI ), NULL, this );
 	m_btnUpdateWarnPattern->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternsBase::OnBtnUpdateWarnPattern ), NULL, this );
 	m_btnUpdateWarnPattern->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CompilerPatternsBase::OnWarningPatternSelectedUI ), NULL, this );
+	
 }
 
 CompilerToolsBase::CompilerToolsBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -228,6 +229,7 @@ CompilerSwitchesBase::~CompilerSwitchesBase()
 	// Disconnect Events
 	m_listSwitches->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerSwitchesBase::OnItemActivated ), NULL, this );
 	m_listSwitches->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CompilerSwitchesBase::OnItemSelected ), NULL, this );
+	
 }
 
 CompilerFileTypesBase::CompilerFileTypesBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -278,6 +280,7 @@ CompilerFileTypesBase::~CompilerFileTypesBase()
 	m_listCtrlFileTypes->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CompilerFileTypesBase::OnFileTypeSelected ), NULL, this );
 	m_buttonNewFileType->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerFileTypesBase::OnNewFileType ), NULL, this );
 	m_buttonDeleteFileType->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerFileTypesBase::OnDeleteFileType ), NULL, this );
+	
 }
 
 CompilerAdvanceBase::CompilerAdvanceBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -423,6 +426,7 @@ CompilerCompilerOptionsBase::~CompilerCompilerOptionsBase()
 	m_listCompilerOptions->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CompilerCompilerOptionsBase::OnCompilerOptionSelected ), NULL, this );
 	m_buttonCompilerOption->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerCompilerOptionsBase::OnNewCompilerOption ), NULL, this );
 	m_buttonDeleteCompilerOption->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerCompilerOptionsBase::OnDeleteCompilerOption ), NULL, this );
+	
 }
 
 CompilerLinkerOptionsBase::CompilerLinkerOptionsBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -473,6 +477,7 @@ CompilerLinkerOptionsBase::~CompilerLinkerOptionsBase()
 	m_listLinkerOptions->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CompilerLinkerOptionsBase::OnLinkerOptionSelected ), NULL, this );
 	m_buttonLinkerOption->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerLinkerOptionsBase::OnNewLinkerOption ), NULL, this );
 	m_buttonDeleteLinkerOption->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerLinkerOptionsBase::OnDeleteLinkerOption ), NULL, this );
+	
 }
 
 CompilerOptionDlgBase::CompilerOptionDlgBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
@@ -483,7 +488,8 @@ CompilerOptionDlgBase::CompilerOptionDlgBase( wxWindow* parent, wxWindowID id, c
 	bSizer23 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer7;
-	fgSizer7 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer7 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer7->AddGrowableCol( 1 );
 	fgSizer7->SetFlexibleDirection( wxBOTH );
 	fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -505,7 +511,10 @@ CompilerOptionDlgBase::CompilerOptionDlgBase( wxWindow* parent, wxWindowID id, c
 	
 	fgSizer7->Add( m_textCtrl19, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer23->Add( fgSizer7, 1, wxEXPAND, 5 );
+	bSizer23->Add( fgSizer7, 0, wxEXPAND|wxALL, 5 );
+	
+	
+	bSizer23->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer23->Add( m_staticline4, 0, wxEXPAND | wxALL, 5 );
@@ -524,6 +533,7 @@ CompilerOptionDlgBase::CompilerOptionDlgBase( wxWindow* parent, wxWindowID id, c
 	
 	this->SetSizer( bSizer23 );
 	this->Layout();
+	bSizer23->Fit( this );
 }
 
 CompilerOptionDlgBase::~CompilerOptionDlgBase()
@@ -538,7 +548,7 @@ CompilerPatternDlgBase::CompilerPatternDlgBase( wxWindow* parent, wxWindowID id,
 	bSizerError = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer41;
-	fgSizer41 = new wxFlexGridSizer( 3, 2, 0, 0 );
+	fgSizer41 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer41->AddGrowableCol( 1 );
 	fgSizer41->SetFlexibleDirection( wxBOTH );
 	fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -572,6 +582,9 @@ CompilerPatternDlgBase::CompilerPatternDlgBase( wxWindow* parent, wxWindowID id,
 	
 	bSizerError->Add( fgSizer41, 0, wxEXPAND, 5 );
 	
+	
+	bSizerError->Add( 0, 0, 1, wxEXPAND, 5 );
+	
 	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizerError->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );
 	
@@ -585,10 +598,11 @@ CompilerPatternDlgBase::CompilerPatternDlgBase( wxWindow* parent, wxWindowID id,
 	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer24->Add( m_buttonCancel, 0, wxALL, 5 );
 	
-	bSizerError->Add( bSizer24, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	bSizerError->Add( bSizer24, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
 	this->SetSizer( bSizerError );
 	this->Layout();
+	bSizerError->Fit( this );
 	
 	// Connect Events
 	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternDlgBase::OnSubmit ), NULL, this );
@@ -598,4 +612,5 @@ CompilerPatternDlgBase::~CompilerPatternDlgBase()
 {
 	// Disconnect Events
 	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPatternDlgBase::OnSubmit ), NULL, this );
+	
 }

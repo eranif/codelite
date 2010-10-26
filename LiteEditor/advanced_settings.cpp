@@ -131,7 +131,7 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	Centre();
 	this->Layout();
 	GetSizer()->Fit(this);
-
+	m_buttonOK->SetDefault();
 	m_compilersNotebook->SetFocus();
 	WindowAttrManager::Load(this, wxT("BuildSettingsDlg"), NULL);
 }

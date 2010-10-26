@@ -2191,6 +2191,7 @@ void LEditor::ReloadFile()
 
 	GotoLine(lineNumber);
 	EnsureVisible(lineNumber);
+	EnsureCaretVisible();
 
 	// mark read only files
 	clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));

@@ -364,6 +364,15 @@ void Notebook::GetEditorsInOrder(std::vector<wxWindow*> &editors)
 	}
 }
 
+size_t Notebook::GetVisibleEditorIndex()
+{
+	wxAuiTabCtrl* ctrl = GetActiveTabCtrl();
+	if (ctrl) {
+		return ctrl->GetIdxFromWindow(GetCurrentPage());
+	}
+	return Notebook::npos;
+}
+
 bool Notebook::SetPageText(size_t index, const wxString &text)
 {
 	if (index >= GetPageCount())

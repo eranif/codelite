@@ -154,6 +154,12 @@ public:
 	size_t GetPageIndex(const wxString &text);
 
 	/**
+	 * \brief returns the index within its tabctrl of the selected editor
+	 * \return page index, or Notebook::npos if page does not exist in the notebook
+	 */
+	size_t GetVisibleEditorIndex();
+
+	/**
 	 * \brief set the text for page at a given index
 	 * \param index page's index
 	 * \param text new text

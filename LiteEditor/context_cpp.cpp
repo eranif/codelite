@@ -938,7 +938,8 @@ bool ContextCpp::TryOpenFile(const wxFileName &fileName)
 	if (fileName.FileExists()) {
 		//we got a match
 		wxString proj = ManagerST::Get()->GetProjectNameByFile(fileName.GetFullPath());
-		return clMainFrame::Get()->GetMainBook()->OpenFile(fileName.GetFullPath(), proj);
+		return clMainFrame::Get()->GetMainBook()->OpenFile(fileName.GetFullPath(),
+								proj, wxNOT_FOUND, wxNOT_FOUND, (enum OF_extra)(OF_PlaceNextToCurrent | OF_AddJump));
 	}
 
 	//ok, the file does not exist in the current directory, try to find elsewhere
@@ -949,7 +950,8 @@ bool ContextCpp::TryOpenFile(const wxFileName &fileName)
 	for (size_t i=0; i<files.size(); i++) {
 		if (files.at(i).GetFullName() == fileName.GetFullName()) {
 			wxString proj = ManagerST::Get()->GetProjectNameByFile(files.at(i).GetFullPath());
-			return clMainFrame::Get()->GetMainBook()->OpenFile(files.at(i).GetFullPath(), proj);
+			return clMainFrame::Get()->GetMainBook()->OpenFile(files.at(i).GetFullPath(),
+								proj, wxNOT_FOUND, wxNOT_FOUND, (enum OF_extra)(OF_PlaceNextToCurrent | OF_AddJump));
 		}
 	}
 	return false;

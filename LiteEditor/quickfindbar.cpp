@@ -138,9 +138,13 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 	m_findWhat->Refresh();
 	m_sci->SetSelection(pos, pos+len);
 
-	// Ensure that the found string is visible (e.g. its line isn't folded away)
+	// Ensure that the found string is visible (i.e. its line isn't folded away)
+	// and that the user can see it without having to scroll
 	int line = m_sci->LineFromPosition(pos);
-	if ( line >= 0 ) m_sci->EnsureVisible(line);
+	if ( line >= 0 ) {
+		m_sci->EnsureVisible(line);
+		m_sci->EnsureCaretVisible();
+	}
 }
 
 void QuickFindBar::OnHide(wxCommandEvent &e)

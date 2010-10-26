@@ -210,7 +210,7 @@ void GotoHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 	}
 
 	wxString msg;
-	msg.Printf(wxT("Go to line number (1 - %ld):"), editor->GetLineCount());
+	msg.Printf(wxT("Go to line number (1 - %d):"), editor->GetLineCount());
 
 	while ( 1 ) {
 		wxTextEntryDialog dlg(editor, msg, wxT("Go To Line"));
@@ -236,6 +236,7 @@ void GotoHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 			if (line > 0) {
 				editor->GotoLine(line - 1);
 				editor->EnsureVisible(line - 1);
+				editor->EnsureCaretVisible();
 				break;
 			} else {
 				editor->GotoLine(0);

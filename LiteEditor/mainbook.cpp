@@ -430,7 +430,7 @@ static bool IsFileExists(const wxFileName &filename) {
 #endif
 }
 
-LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectName, int lineno, long position, bool addjump)
+LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectName, int lineno, long position, enum OF_extra extra/*=OF_AddJump*/)
 {
 	wxFileName fileName(file_name);
 	fileName.MakeAbsolute();
@@ -471,7 +471,13 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		editor = new LEditor(m_book);
 		editor->Create(projName, fileName);
 
+		// If we're here from 'Swap Header/Implementation file', insert the new page next door
+		size_t sel = m_book->GetVisibleEditorIndex();
+		if ((extra & OF_PlaceNextToCurrent) && (sel != Notebook::npos)) {
+			AddPage(editor, fileName.GetFullName(), wxNullBitmap, false, sel+1);
+		} else {
 		AddPage(editor, fileName.GetFullName());
+		}
 		editor->SetSyntaxHighlight();
 
 		// mark the editor as read only if needed
@@ -528,7 +534,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 	m_recentFiles.GetFiles ( files );
 	EditorConfigST::Get()->SetRecentItems( files, wxT("RecentFiles") );
 
-	if (addjump) {
+	if (extra & OF_AddJump) {
 		BrowseRecord jumpto = editor->CreateBrowseRecord();
 		NavMgr::Get()->AddJump(jumpfrom, jumpto);
 	}
@@ -541,7 +547,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 	return editor;
 }
 
-bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp, bool selected)
+bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp, bool selected, size_t insert_at_index /*=wxNOT_FOUND*/)
 {
 	if (m_book->GetPageIndex(win) != Notebook::npos)
 		return false;
@@ -556,7 +562,11 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 #endif
 
 	bool closeLastTab = ((long)(m_book->GetPageCount()) >= MaxBuffers) && GetUseBuffereLimit();
+	if ((insert_at_index == (size_t)wxNOT_FOUND) || (insert_at_index >= m_book->GetPageCount())) {
 	m_book->AddPage(win, text, closeLastTab ? true : selected);
+	} else {
+		m_book->InsertPage(insert_at_index, win, text, closeLastTab ? true : selected);
+	}
 
 	if( closeLastTab ) {
 		// We have reached the limit of the number of open buffers

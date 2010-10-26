@@ -86,7 +86,8 @@ void WatchesTable::Clear()
 void WatchesTable::InitTable()
 {
 	m_listTable->AddColumn(wxT("Expression"), 150);
-	m_listTable->AddColumn(wxT("Value"),      1000);
+	m_listTable->AddColumn(wxT("Value"),      500);
+	m_listTable->AddColumn(wxT("Type"),       200);
 	m_listTable->AddRoot(wxT("Watches"));
 }
 
@@ -320,7 +321,9 @@ void WatchesTable::OnCreateVariableObject(const DebuggerEvent& event)
 			DbgTreeItemData* data = static_cast<DbgTreeItemData*>(m_listTable->GetItemData(item));
 			if(data) {
 				data->_gdbId = event.m_variableObject.gdbId;
-
+				
+				// set the type
+				m_listTable->SetItemText(item, 2, event.m_variableObject.typeName);
 				// refresh this item only
 				if(dbgr)
 					DoRefreshItem(dbgr, item, true);

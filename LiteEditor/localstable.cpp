@@ -11,7 +11,8 @@ LocalsTable::LocalsTable(wxWindow *parent)
 	: DebuggerTreeListCtrlBase(parent, wxID_ANY, false)
 {
 	m_listTable->AddColumn(wxT("Name"), 150);
-	m_listTable->AddColumn(wxT("Value"), 1000);
+	m_listTable->AddColumn(wxT("Value"), 500);
+	m_listTable->AddColumn(wxT("Type"), 200);
 	m_listTable->AddRoot(wxT("Locals"));
 
 	m_DBG_USERR        = DBG_USERR_LOCALS;
@@ -62,7 +63,10 @@ void LocalsTable::OnCreateVariableObj(const DebuggerEvent& event)
 
 			data->_gdbId = event.m_variableObject.gdbId;
 			data->_kind  = DbgTreeItemData::VariableObject;
-
+			
+			// variable object's type name is extracted from the event.m_variableObject.typeName
+			m_listTable->SetItemText(iter->second, 2, event.m_variableObject.typeName);
+			
 			// refresh this item only
 			IDebugger *dbgr = DoGetDebugger();
 			if(dbgr)
@@ -275,7 +279,8 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 				// New entry
 				wxTreeItemId item = m_listTable->AppendItem(root, locals[i].name, -1, -1, new DbgTreeItemData());
 				m_listTable->SetItemText(item, 1, locals[i].value);
-
+				m_listTable->SetItemText(item, 2, locals[i].type);
+				
 				m_listTable->AppendItem(item, wxT("<dummy>"));
 				m_listTable->Collapse(item);
 

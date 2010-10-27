@@ -46,7 +46,7 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
 	{
 		wxBoxSizer* bSizer4;
 		bSizer4 = new wxBoxSizer( wxVERTICAL );
-		m_button1 = new wxButton( this, wxID_ANY, wxT("Refresh"), wxDefaultPosition, wxDefaultSize, 0 );
+		m_button1 = new wxButton( this, wxID_REFRESH, wxT("Refresh"), wxDefaultPosition, wxDefaultSize, 0 );
 		bSizer4->Add( m_button1, 0, wxALL|wxEXPAND, 5 );
 		bSizer3->Add( bSizer4, 0, wxEXPAND, 5 );
 	}

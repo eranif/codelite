@@ -87,7 +87,7 @@ void RenameSymbol::AddMatch(const CppToken& token, bool check)
 
 	long index = m_checkListCandidates->AppendRow();
 	m_checkListCandidates->SetTextColumn(index, 1, fn.GetFullPath());
-	m_checkListCandidates->SetTextColumn(index, 2, wxString::Format(wxT("%u"), token.getOffset()));
+	m_checkListCandidates->SetTextColumn(index, 2, wxString::Format(wxT("%u"), (unsigned int)token.getOffset()));
 	m_checkListCandidates->Check(index, check);
 	m_checkListCandidates->SetItemClientData(index, new RenameSymbolData(token));
 }

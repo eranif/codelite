@@ -20,7 +20,7 @@ static void writeString(wxString &str, const wxString &srcToWrite) {
 	if(srcToWrite.IsEmpty()) {
 		str << wxT("0000");
 	} else {
-		str << wxString::Format(wxT("%04d"), srcToWrite.Length()) << srcToWrite;
+		str << wxString::Format(wxT("%04u"), (unsigned int)srcToWrite.Len()) << srcToWrite;
 	}
 }
 
@@ -52,7 +52,7 @@ QmakePluginData::~QmakePluginData()
 wxString QmakePluginData::ToString()
 {
 	wxString serializedStr (wxEmptyString);
-	serializedStr << wxString::Format(wxT("%04d"), m_pluginsData.size());
+	serializedStr << wxString::Format(wxT("%04u"), (unsigned int)m_pluginsData.size());
 	std::map<wxString, BuildConfPluginData>::iterator iter = m_pluginsData.begin();
 	for(; iter != m_pluginsData.end(); iter++){
 		writeString( serializedStr, iter->second.m_enabled ? wxT("Y") : wxT("N"));

@@ -7,6 +7,7 @@
 #include "new_quick_watch_dlg.h"
 #include <set>
 #include "frame.h"
+#include "drawingutils.h"
 
 LocalsTable::LocalsTable(wxWindow *parent)
 	: DebuggerTreeListCtrlBase(parent, wxID_ANY, false)
@@ -168,8 +169,7 @@ void LocalsTable::OnItemExpanding(wxTreeEvent& event)
 		// make sure there is no <dummy> node and continue
 		wxTreeItemIdValue cookieOne;
 		wxTreeItemId dummyItem = m_listTable->GetFirstChild(event.GetItem(), cookieOne);
-		while( dummyItem.IsOk() )
-		{
+		while( dummyItem.IsOk() ) {
 			if(m_listTable->GetItemText(dummyItem) == wxT("<dummy>")) {
 				m_listTable->Delete(dummyItem);
 				event.Skip();
@@ -230,7 +230,9 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 	wxTreeItemId root = m_listTable->GetRootItem();
 	if(!root.IsOk())
 		return;
-
+	
+	wxColour rootItemColour = DrawingUtils::LightColour(wxT("LIGHT GRAY"), 3.0);
+	
 	IDebugger* dbgr = DoGetDebugger();
 	wxArrayString itemsNotRemoved;
 	// remove the non-variable objects and return a list
@@ -268,6 +270,9 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 			if(itemsNotRemoved.Index(newVarName) == wxNOT_FOUND) {
 				// this type has a pre-defined type, use it instead
 				wxTreeItemId item = m_listTable->AppendItem(root, newVarName, -1, -1, new DbgTreeItemData());
+				m_listTable->SetItemBackgroundColour(item, rootItemColour);
+				
+				
 				m_listTable->AppendItem(item, wxT("<dummy>"));
 				m_listTable->Collapse(item);
 
@@ -282,6 +287,8 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 			if(itemsNotRemoved.Index(locals[i].name) == wxNOT_FOUND) {
 				// New entry
 				wxTreeItemId item = m_listTable->AppendItem(root, locals[i].name, -1, -1, new DbgTreeItemData());
+				m_listTable->SetItemBackgroundColour(item, rootItemColour);
+				
 				m_listTable->SetItemText(item, 1, locals[i].value);
 				m_listTable->SetItemText(item, 2, locals[i].type);
 
@@ -305,9 +312,23 @@ void LocalsTable::UpdateFrameInfo()
 		Clear();
 		m_curStackInfo = ManagerST::Get()->DbgGetCurrentFrameInfo();
 		clMainFrame::Get()->GetOutputPane()->GetDebugWindow()->AppendLine(
-																			wxString::Format(wxT("Current scope is\"%s\" depth: %d\n"),
-																			m_curStackInfo.func.c_str(),
-																			m_curStackInfo.depth)
-																		 );
+		    wxString::Format(wxT("Current scope is now set to: \"%s\", depth: %d\n"),
+		                     m_curStackInfo.func.c_str(),
+		                     m_curStackInfo.depth)
+		);
 	}
+}
+
+void LocalsTable::OnRefresh(wxCommandEvent& event)
+{
+	IDebugger* dbgr = DoGetDebugger();
+	if(dbgr) {
+		Clear();
+		dbgr->QueryLocals();
+	}
+}
+
+void LocalsTable::OnRefreshUI(wxUpdateUIEvent& event)
+{
+	event.Enable(DoGetDebugger() != NULL);
 }

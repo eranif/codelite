@@ -1342,9 +1342,10 @@ bool DbgVarObjUpdate::ProcessOutput(const wxString& line)
 	gdbParseListChildren(cbuffer, children);
 
 	for(size_t i=0; i<children.size(); i++) {
-		wxString name     = ExtractGdbChild(children.at(i), wxT("name"));
-		wxString in_scope = ExtractGdbChild(children.at(i), wxT("in_scope"));
-		if(in_scope == wxT("false")) {
+		wxString name         = ExtractGdbChild(children.at(i), wxT("name"));
+		wxString in_scope     = ExtractGdbChild(children.at(i), wxT("in_scope"));
+		wxString type_changed = ExtractGdbChild(children.at(i), wxT("type_changed"));
+		if(in_scope == wxT("false") || type_changed == wxT("true")) {
 			e.m_varObjUpdateInfo.removeIds.Add(name);
 
 		} else if(in_scope == wxT("true")) {

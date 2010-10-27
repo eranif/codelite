@@ -42,6 +42,14 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
 		bSizer4->Add( m_button3, 0, wxALL|wxEXPAND, 5 );
 		bSizer3->Add( bSizer4, 0, wxEXPAND, 5 );
 	}
+	else 
+	{
+		wxBoxSizer* bSizer4;
+		bSizer4 = new wxBoxSizer( wxVERTICAL );
+		m_button1 = new wxButton( this, wxID_ANY, wxT("Refresh"), wxDefaultPosition, wxDefaultSize, 0 );
+		bSizer4->Add( m_button1, 0, wxALL|wxEXPAND, 5 );
+		bSizer3->Add( bSizer4, 0, wxEXPAND, 5 );
+	}
 
 	bSizer1->Add( bSizer3, 1, wxEXPAND, 5 );
 
@@ -62,6 +70,9 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
 		m_button2->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnDeleteWatchUI ), NULL, this );
 		m_button3->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerTreeListCtrlBase::OnDeleteAll ), NULL, this );
 		m_button3->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnDeleteAllUI ), NULL, this );
+	} else {
+		m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerTreeListCtrlBase::OnRefresh ), NULL, this );
+		m_button1->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnRefreshUI ), NULL, this );
 	}
 }
 
@@ -81,6 +92,9 @@ DebuggerTreeListCtrlBase::~DebuggerTreeListCtrlBase()
 		m_button2->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnDeleteWatchUI ), NULL, this );
 		m_button3->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerTreeListCtrlBase::OnDeleteAll ), NULL, this );
 		m_button3->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnDeleteAllUI ), NULL, this );
+	} else {
+		m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerTreeListCtrlBase::OnRefresh ), NULL, this );
+		m_button1->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnRefreshUI ), NULL, this );
 	}
 }
 

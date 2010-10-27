@@ -549,7 +549,8 @@ bool DbgGdb::QueryFileLine()
 	if(!WriteCommand( wxT( "-stack-list-frames 0 0" ), new DbgCmdHandlerGetLine( m_observer, this ) ))
 		return false;
 #endif
-	return WriteCommand( wxT( "-stack-info-depth" ), new DbgCmdHandlerStackDepth( m_observer, this ) );
+	//return WriteCommand( wxT( "-stack-info-depth" ), new DbgCmdHandlerStackDepth( m_observer, this ) );
+	return true;
 }
 
 bool DbgGdb::QueryLocals()
@@ -1109,7 +1110,7 @@ bool DbgGdb::ListChildren( const wxString& name, int userReason )
 bool DbgGdb::CreateVariableObject( const wxString& expression, int userReason )
 {
 	wxString cmd;
-	cmd << wxT( "-var-create - * \"" ) << expression << wxT( "\"" );
+	cmd << wxT( "-var-create - @ \"" ) << expression << wxT( "\"" );
 	return WriteCommand( cmd, new DbgCmdCreateVarObj( m_observer, this, expression, userReason ) );
 }
 

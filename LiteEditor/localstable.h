@@ -20,7 +20,9 @@ protected:
 	void          DoUpdateLocals  (const LocalVariables& locals, size_t kind);
 
 	// Events
-	void          OnItemExpanding(wxTreeEvent& event);
+	void OnItemExpanding(wxTreeEvent& event);
+	void OnRefresh(wxCommandEvent& event);
+	void OnRefreshUI(wxUpdateUIEvent& event);
 
 public:
 	LocalsTable(wxWindow *parent);
@@ -43,7 +45,7 @@ public:
 
 	void UpdateLocals  (const LocalVariables& locals);
 	void UpdateFrameInfo();
-	
+
 	void UpdateFuncArgs(const LocalVariables& args);
 	void Initialize    ();
 };

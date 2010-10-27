@@ -107,8 +107,12 @@ protected:
 	virtual void OnDeleteAllUI( wxUpdateUIEvent& event ) {
 		event.Skip();
 	}
-
-
+	virtual void OnRefresh( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnRefreshUI( wxUpdateUIEvent& event ) {
+		event.Skip();
+	}
 public:
 	DebuggerTreeListCtrlBase( wxWindow* parent,
 	                          wxWindowID id = wxID_ANY,

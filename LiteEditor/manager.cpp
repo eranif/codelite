@@ -2851,7 +2851,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		long frameDepth(0);
 		event.m_frameInfo.level.ToLong(&frameDepth);
 		m_dbgCurrentFrameInfo.depth = frameDepth;
-		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateFrameInfo();
+		//clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateFrameInfo();
 		break;
 	}
 

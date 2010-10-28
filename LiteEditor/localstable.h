@@ -20,10 +20,13 @@ protected:
 	void          DoUpdateLocals  (const LocalVariables& locals, size_t kind);
 
 	// Events
-	void OnItemExpanding(wxTreeEvent& event);
-	void OnRefresh(wxCommandEvent& event);
-	void OnRefreshUI(wxUpdateUIEvent& event);
-
+	void OnItemExpanding (wxTreeEvent& event);
+	void OnRefresh       (wxCommandEvent& event);
+	void OnRefreshUI     (wxUpdateUIEvent& event);
+	void OnItemRightClick(wxTreeEvent& event);
+	void OnEditValue     (wxCommandEvent &event);
+	void OnEditValueUI   (wxUpdateUIEvent &event);
+	
 public:
 	LocalsTable(wxWindow *parent);
 	virtual ~LocalsTable();
@@ -48,5 +51,7 @@ public:
 
 	void UpdateFuncArgs(const LocalVariables& args);
 	void Initialize    ();
+
+	DECLARE_EVENT_TABLE();
 };
 #endif // __localstable__

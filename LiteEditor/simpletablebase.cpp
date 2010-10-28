@@ -42,7 +42,7 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
 		bSizer4->Add( m_button3, 0, wxALL|wxEXPAND, 5 );
 		bSizer3->Add( bSizer4, 0, wxEXPAND, 5 );
 	}
-	else 
+	else
 	{
 		wxBoxSizer* bSizer4;
 		bSizer4 = new wxBoxSizer( wxVERTICAL );
@@ -297,4 +297,36 @@ wxTreeItemId DebuggerTreeListCtrlBase::DoFindItemByExpression(const wxString& ex
 void DebuggerTreeListCtrlBase::ResetTableColors()
 {
 	DoResetItemColour(m_listTable->GetRootItem(), 0);
+}
+
+wxString DebuggerTreeListCtrlBase::GetItemPath(const wxTreeItemId &item)
+{
+	wxArrayString pathArr;
+	if(item.IsOk() == false)
+		return wxT("");
+
+	DbgTreeItemData* data = (DbgTreeItemData*) m_listTable->GetItemData(item);
+	if(data && data->_gdbId.IsEmpty()) {
+		// not a variable object item
+		return m_listTable->GetItemText(item);
+	}
+
+	wxTreeItemId parent = item;
+	while(parent.IsOk() && m_listTable->GetRootItem() != parent) {
+		DbgTreeItemData* itemData = (DbgTreeItemData*) m_listTable->GetItemData(parent);
+		if(itemData && !itemData->_isFake) {
+			pathArr.Add(m_listTable->GetItemText(parent));
+		}
+		parent = m_listTable->GetItemParent(parent);
+	}
+
+	if(pathArr.IsEmpty())
+		return wxT("");
+
+	wxString itemPath;
+	for(int i=(int)pathArr.GetCount()-1; i>=0; i--) {
+		itemPath << pathArr.Item(i) << wxT(".");
+	}
+	itemPath.RemoveLast();
+	return itemPath;
 }

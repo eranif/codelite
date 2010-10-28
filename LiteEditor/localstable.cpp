@@ -6,8 +6,14 @@
 #include "manager.h"
 #include "new_quick_watch_dlg.h"
 #include <set>
+#include <wx/xrc/xmlres.h>
 #include "frame.h"
 #include "drawingutils.h"
+
+BEGIN_EVENT_TABLE(LocalsTable, DebuggerTreeListCtrlBase)
+EVT_MENU(XRCID("Change_Value"), LocalsTable::OnEditValue)
+EVT_UPDATE_UI(XRCID("Change_Value"), LocalsTable::OnEditValueUI)
+END_EVENT_TABLE()
 
 LocalsTable::LocalsTable(wxWindow *parent)
 	: DebuggerTreeListCtrlBase(parent, wxID_ANY, false)
@@ -111,7 +117,9 @@ void LocalsTable::OnListChildren(const DebuggerEvent& event)
 				} else {
 
 					DbgTreeItemData *data = new DbgTreeItemData();
-					data->_gdbId = ch.gdbId;
+					data->_gdbId  = ch.gdbId;
+					data->_isFake = ch.isAFake;
+
 					wxTreeItemId child = m_listTable->AppendItem(item, ch.varName, -1, -1, data);
 
 					// Add a dummy node
@@ -230,9 +238,9 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 	wxTreeItemId root = m_listTable->GetRootItem();
 	if(!root.IsOk())
 		return;
-	
+
 	wxColour rootItemColour = DrawingUtils::LightColour(wxT("LIGHT GRAY"), 3.0);
-	
+
 	IDebugger* dbgr = DoGetDebugger();
 	wxArrayString itemsNotRemoved;
 	// remove the non-variable objects and return a list
@@ -271,8 +279,8 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 				// this type has a pre-defined type, use it instead
 				wxTreeItemId item = m_listTable->AppendItem(root, newVarName, -1, -1, new DbgTreeItemData());
 				m_listTable->SetItemBackgroundColour(item, rootItemColour);
-				
-				
+
+
 				m_listTable->AppendItem(item, wxT("<dummy>"));
 				m_listTable->Collapse(item);
 
@@ -288,7 +296,7 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 				// New entry
 				wxTreeItemId item = m_listTable->AppendItem(root, locals[i].name, -1, -1, new DbgTreeItemData());
 				m_listTable->SetItemBackgroundColour(item, rootItemColour);
-				
+
 				m_listTable->SetItemText(item, 1, locals[i].value);
 				m_listTable->SetItemText(item, 2, locals[i].type);
 
@@ -331,4 +339,45 @@ void LocalsTable::OnRefresh(wxCommandEvent& event)
 void LocalsTable::OnRefreshUI(wxUpdateUIEvent& event)
 {
 	event.Enable(DoGetDebugger() != NULL);
+}
+
+void LocalsTable::OnItemRightClick(wxTreeEvent& event)
+{
+	wxMenu menu;
+	menu.Append(XRCID("Change_Value"), wxT("Change value..."), wxT(""), wxITEM_NORMAL);
+	PopupMenu( &menu );
+}
+
+void LocalsTable::OnEditValue(wxCommandEvent& event)
+{
+	wxTreeItemId selectedItem = m_listTable->GetSelection();
+	if(selectedItem.IsOk() == false)
+		return;
+
+	wxString itemPath = GetItemPath(selectedItem);
+	wxString newValue = wxGetTextFromUser(wxString::Format(wxT("Insert new value for '%s':"), itemPath.c_str()),
+										  wxT("Edit expression"));
+	if(newValue.IsEmpty())
+		return;
+
+	IDebugger *debugger = DoGetDebugger();
+	if(debugger) {
+		debugger->AssignValue(itemPath, newValue);
+
+		Clear();
+		debugger->QueryLocals();
+	}
+}
+
+void LocalsTable::OnEditValueUI(wxUpdateUIEvent& event)
+{
+	IDebugger *debugger = DoGetDebugger();
+	wxTreeItemId selectedItem = m_listTable->GetSelection();
+	if(selectedItem.IsOk() == false) {
+		event.Enable(false);
+
+	} else {
+		DbgTreeItemData *data = (DbgTreeItemData*) m_listTable->GetItemData(selectedItem);
+		event.Enable(debugger && data && (data->_gdbId.IsEmpty() || !data->_isFake));
+	}
 }

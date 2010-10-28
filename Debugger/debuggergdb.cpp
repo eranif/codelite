@@ -1226,3 +1226,10 @@ bool DbgGdb::UpdateVariableObject(const wxString& name, int userReason)
 	cmd << wxT( "-var-update \"" ) << name << wxT( "\" " );
 	return WriteCommand( cmd, new DbgVarObjUpdate(m_observer, this, name, userReason) );
 }
+
+void DbgGdb::AssignValue(const wxString& expression, const wxString& newValue)
+{
+	wxString cmd;
+	cmd << wxT("set ") << expression << wxT("=") << newValue;
+	ExecuteCmd(cmd);
+}

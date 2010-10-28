@@ -742,6 +742,14 @@ public:
 	 */
 	virtual void BreakList() = 0;
 
+	/**
+	 * @brief assign new value to expression
+	 * @param expression expression
+	 * @param newValue new value
+	 * this method does not produce any output
+	 */
+	virtual void AssignValue(const wxString &expression, const wxString &newValue) = 0;
+	
 	// ----------------------------------------------------------------------------------------
 	// Variable object manipulation (GDB only)
 	// If you wish to implement a debugger other than

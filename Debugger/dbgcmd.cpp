@@ -1219,6 +1219,8 @@ static VariableObjChild FromParserOutput(const std::map<std::string, std::string
 		} else if ( type.Contains(wxT("class ")) || type.Contains(wxT("struct "))) {
 			child.isAFake = true;
 		}
+	} else {
+		child.isAFake = true;
 	}
 
 	iter = attr.find("numchild");

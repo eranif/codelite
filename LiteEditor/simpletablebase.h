@@ -25,6 +25,7 @@ class DbgTreeItemData : public wxTreeItemData
 public:
 	wxString _gdbId;
 	size_t   _kind;
+	bool     _isFake;
 
 public:
 	enum {
@@ -37,10 +38,12 @@ public:
 public:
 	DbgTreeItemData()
 	: _kind(Locals)
+	, _isFake(false)
 	{}
 
 	DbgTreeItemData(const wxString &gdbId)
 	: _gdbId(gdbId)
+	, _isFake(false)
 	{}
 
 	virtual ~DbgTreeItemData()
@@ -113,6 +116,7 @@ protected:
 	virtual void OnRefreshUI( wxUpdateUIEvent& event ) {
 		event.Skip();
 	}
+
 public:
 	DebuggerTreeListCtrlBase( wxWindow* parent,
 	                          wxWindowID id = wxID_ANY,
@@ -136,6 +140,7 @@ public:
 	virtual void         DoDeleteWatch           (const wxTreeItemId& item);
 	virtual wxTreeItemId DoFindItemByExpression  (const wxString &expr);
 	virtual void         ResetTableColors        ();
+	virtual wxString     GetItemPath             (const wxTreeItemId &item);
 };
 
 #endif //__simpletablebase__

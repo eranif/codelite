@@ -1884,16 +1884,16 @@ bool wxTreeListMainWindow::Create (wxTreeListCtrl *parent,
                                    const wxValidator &validator,
                                    const wxString& name) {
 
-#ifdef __WXMAC__
-    if (style & wxTR_HAS_BUTTONS) style |= wxTR_MAC_BUTTONS;
-    if (style & wxTR_HAS_BUTTONS) style &= ~wxTR_HAS_BUTTONS;
-    style &= ~wxTR_LINES_AT_ROOT;
-    style |= wxTR_NO_LINES;
-
-    int major,minor;
-    wxGetOsVersion( &major, &minor );
-    if (major < 10) style |= wxTR_ROW_LINES;
-#endif
+//#ifdef __WXMAC__
+//    if (style & wxTR_HAS_BUTTONS) style |= wxTR_MAC_BUTTONS;
+//    if (style & wxTR_HAS_BUTTONS) style &= ~wxTR_HAS_BUTTONS;
+//    style &= ~wxTR_LINES_AT_ROOT;
+//    style |= wxTR_NO_LINES;
+//
+//    int major,minor;
+//    wxGetOsVersion( &major, &minor );
+//    if (major < 10) style |= wxTR_ROW_LINES;
+//#endif
 
     wxScrolledWindow::Create (parent, id, pos, size, style|wxHSCROLL|wxVSCROLL, name);
 

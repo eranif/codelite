@@ -1,13 +1,19 @@
+
+#define USE_CLI_EVENTS 1
+
 #include <wx/init.h>	//wxInitializer
 #include <wx/string.h>	//wxString
 #include "tester.h"
 #include <wx/ffile.h>
+#include <wx/event.h>
 #include <memory>
 #include <vector>
 #include <cpptoken.h>
 #include <refactorengine.h>
 #include <cppwordscanner.h>
 #include <stringsearcher.h>
+#include <parse_thread.h>
+#include <wx/tokenzr.h>
 
 // CodeLite includes
 #include <ctags_manager.h>
@@ -21,6 +27,29 @@ wxString LoadFile(const wxString &filename)
 		return content;
 	}
 	return wxEmptyString;
+}
+
+class EventHandler : public wxEvtHandler
+{
+public:
+	void OnParsingDone(wxCommandEvent &e);
+	void OnParsingDoneProg(wxCommandEvent &e);
+	DECLARE_EVENT_TABLE();
+};
+
+BEGIN_EVENT_TABLE(EventHandler, wxEvtHandler)
+EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_RETAGGING_PROGRESS, EventHandler::OnParsingDoneProg)
+EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_RETAGGING_PROGRESS, EventHandler::OnParsingDone)
+END_EVENT_TABLE()
+
+void EventHandler::OnParsingDone(wxCommandEvent &e)
+{
+	wxPrintf(wxT("Parsing completed\n"));
+}
+
+void EventHandler::OnParsingDoneProg(wxCommandEvent &e)
+{
+	wxPrintf(wxT("[%%%d] completed\n"), e.GetInt());
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -246,6 +275,7 @@ void testCC()
 
 void testStringSearcher()
 {
+#if wxVERSION_NUMBER >= 2900	
 	int      pos(0);
 	int      match_len(0);
 	wxString m_word  = wxT("clMainFrame");
@@ -262,6 +292,52 @@ void testStringSearcher()
 
 		offset = pos + match_len;
 	}	
+#endif
+
+}
+
+void testRetagWorkspace()
+{
+	// load the workspace file list
+	wxArrayString inclPath;
+	wxArrayString exclPath;
+	std::vector<wxFileName> files;
+	
+	wxFileName fn(wxT("../workspace_file.list"));
+	wxString content = LoadFile(fn.GetFullPath());
+	
+	wxArrayString lines = wxStringTokenize(content, wxT("\n"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<lines.GetCount(); i++) {
+		wxString fname = lines.Item(i).Trim().Trim(false);
+		if(fname.IsEmpty())
+			continue;
+		files.push_back(lines.Item(i));
+	}
+	
+	inclPath.Add(wxT("/usr/include/c++/4.4"));
+    inclPath.Add(wxT("/usr/include/c++/4.4/x86_64-linux-gnu"));
+    inclPath.Add(wxT("/usr/include/c++/4.4/backward"));
+    inclPath.Add(wxT("/usr/local/include"));
+    inclPath.Add(wxT("/usr/lib/gcc/x86_64-linux-gnu/4.4.3/include"));
+    inclPath.Add(wxT("/usr/lib/gcc/x86_64-linux-gnu/4.4.3/include-fixed"));
+    inclPath.Add(wxT("/usr/include"));
+    inclPath.Add(wxT("/usr/include/qt4/QtCore"));
+    inclPath.Add(wxT("/usr/include/qt4/QtGui"));
+    inclPath.Add(wxT("/usr/include/qt4/QtXml"));
+    inclPath.Add(wxT("/home/eran/wx29/include/wx-2.9"));
+	
+	// Set the search paths and start the parser thread
+	ParseThreadST::Get()->SetSearchPaths(inclPath, exclPath);
+	ParseThreadST::Get()->SetNotifyWindow(NULL);
+	
+	ParseThreadST::Get()->Start();
+	
+	// Perform a full retagging
+	TagsManagerST::Get()->SetCodeLiteIndexerPath(wxT("/usr/bin"));
+	TagsManagerST::Get()->StartCodeLiteIndexer();
+	TagsManagerST::Get()->OpenDatabase(wxFileName(wxT("test.tags")));
+	TagsManagerST::Get()->RetagFiles(files, false);
+	wxSleep(100);
 }
 
 /**
@@ -271,7 +347,7 @@ int main(int argc, char **argv)
 {
 	//Initialize the wxWidgets library
 	wxInitializer initializer;
-	
-	testStringSearcher();
+	testRetagWorkspace();
+	//testStringSearcher();
 	return 0;
 }

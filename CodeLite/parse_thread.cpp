@@ -531,11 +531,14 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 		// Send notification to the main window with our progress report
 		precent = (int)((i / maxVal) * 100);
 
-		if( lastPercentageReported !=  precent) {
+		if( m_notifiedWindow && lastPercentageReported !=  precent) {
 			lastPercentageReported = precent;
 			wxCommandEvent retaggingProgressEvent(wxEVT_PARSE_THREAD_RETAGGING_PROGRESS);
 			retaggingProgressEvent.SetInt( (int)precent );
 			m_notifiedWindow->AddPendingEvent(retaggingProgressEvent);
+			
+		} else if(lastPercentageReported !=  precent) {
+			wxPrintf(wxT("parsing: %%%d completed\n"), precent);
 		}
 
 		TagTreePtr tree = TagsManagerST::Get()->ParseSourceFile(curFile);
@@ -574,8 +577,11 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 		std::vector<std::string> *arrFiles = new std::vector<std::string>;
 		*arrFiles = req->_workspaceFiles;
 		retaggingCompletedEvent.SetClientData( arrFiles );
-
 		m_notifiedWindow->AddPendingEvent(retaggingCompletedEvent);
+		
+	} else {
+		wxPrintf(wxT("parsing: done\n"), precent);
+		
 	}
 
 	// Close the database

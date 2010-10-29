@@ -1241,6 +1241,6 @@ bool DbgGdb::UpdateVariableObject(const wxString& name, int userReason)
 void DbgGdb::AssignValue(const wxString& expression, const wxString& newValue)
 {
 	wxString cmd;
-	cmd << wxT("set ") << expression << wxT("=") << newValue;
+	cmd << wxT("set variable ") << expression << wxT("=") << newValue;
 	ExecuteCmd(cmd);
 }

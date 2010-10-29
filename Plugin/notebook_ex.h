@@ -28,6 +28,7 @@
 #include <wx/wx.h>
 #include <wx/aui/auibook.h>
 #include <vector>
+#include <set>
 #include "codelite_exports.h"
 
 enum {
@@ -171,7 +172,13 @@ public:
 	 * \param vector in which to return the editors
 	 */
 	void GetEditorsInOrder(std::vector<wxWindow*> &editors);
-
+	
+	
+	/**
+	 * @brief return a set of the used wxAuiTabControl in the notebook
+	 */
+	std::set<wxAuiTabCtrl*> GetAllTabControls();
+	
 protected:
 	// Event handlers
 	void OnNavigationKey      (wxNavigationKeyEvent &e);

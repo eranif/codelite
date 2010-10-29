@@ -1339,6 +1339,16 @@ bool DbgCmdHandlerStackDepth::ProcessOutput(const wxString& line)
 bool DbgVarObjUpdate::ProcessOutput(const wxString& line)
 {
 	DebuggerEvent e;
+	
+	if(line.StartsWith(wxT("^error"))) {
+		// Notify the observer we failed to create variable object
+		e.m_updateReason = DBG_UR_VARIABLEOBJUPDATEERR; // failed to create variable object
+		e.m_expression   = m_variableName;              // the variable object expression
+		e.m_userReason   = m_userReason;
+		m_observer->DebuggerUpdate( e );
+		return false; // let the default loop to handle this as well by passing DBG_CMD_ERR to the observer
+	}
+
 	std::string cbuffer = line.mb_str(wxConvUTF8).data();
 	std::vector< std::map<std::string, std::string > > children;
 	gdbParseListChildren(cbuffer, children);

@@ -613,3 +613,18 @@ void Notebook::OnTabButton(wxAuiNotebookEvent& e)
 	event.SetEventObject ( this );
 	GetEventHandler()->AddPendingEvent(event);
 }
+
+std::set<wxAuiTabCtrl*> Notebook::GetAllTabControls()
+{
+	// The only way I can see to acquire them is to FindTab() on every page to find its wxAuiTabCtrl. Yuck!
+	std::set<wxAuiTabCtrl*> ctrls;
+	for (size_t pg = 0; pg < GetPageCount(); ++pg) {
+		wxAuiTabCtrl* ctrl;
+		int ctrl_idx;
+		wxWindow* win = GetPage(pg);
+		if (win && FindTab(win, &ctrl, &ctrl_idx)) {
+			ctrls.insert(ctrl);
+		}
+	}
+	return ctrls;
+}

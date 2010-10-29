@@ -125,7 +125,7 @@ public:
 	virtual void SetDebuggerInformation(const DebuggerInformation &info);
 	virtual void BreakList();
 	virtual bool ListChildren(const wxString &name, int userReason);
-	virtual bool CreateVariableObject(const wxString &expression, int userReason);
+	virtual bool CreateVariableObject(const wxString &expression, bool persistent, int userReason);
 	virtual bool DeleteVariableObject(const wxString &name);
 	virtual bool EvaluateVariableObject(const wxString &name, int userReason);
 	virtual bool SetVariableObbjectDisplayFormat(const wxString& name, DisplayFormat displayFormat);

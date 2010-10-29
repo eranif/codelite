@@ -132,6 +132,7 @@ public:
 	virtual IDebugger*   DoGetDebugger           ();
 	virtual void         DoResetItemColour       (const wxTreeItemId& item, size_t itemKind);
 	virtual void         OnEvaluateVariableObj   (const DebuggerEvent& event);
+	virtual void         OnCreateVariableObjError(const DebuggerEvent& event);
 	virtual void         DoRefreshItemRecursively(IDebugger *dbgr, const wxTreeItemId &item, wxArrayString &itemsToRefresh);
 	virtual void         Clear                   ();
 	virtual void         DoRefreshItem           (IDebugger *dbgr, const wxTreeItemId &item, bool forceCreate);

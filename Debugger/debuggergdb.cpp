@@ -755,9 +755,10 @@ void DbgGdb::DoProcessAsyncCommand( wxString &line, wxString &id )
 		// finish in the outer most frame
 		// print the error message and remove the command from the queue
 		DbgCmdHandler *handler = PopHandler( id );
-
+		bool errorProcessed (false);
+		
 		if ( handler && handler->WantsErrors() ) {
-			handler->ProcessOutput( line );
+			errorProcessed = handler->ProcessOutput( line );
 		}
 
 		if ( handler ) {
@@ -765,9 +766,12 @@ void DbgGdb::DoProcessAsyncCommand( wxString &line, wxString &id )
 		}
 
 		StripString( line );
+		
 		//We also need to pass the control back to the program
-		m_observer->UpdateGotControl( DBG_CMD_ERROR );
-
+		if (!errorProcessed) {
+			m_observer->UpdateGotControl( DBG_CMD_ERROR );
+		}
+		
 		if ( !FilterMessage( line ) && m_info.enableDebugLog ) {
 			m_observer->UpdateAddLine( line );
 		}
@@ -1107,10 +1111,17 @@ bool DbgGdb::ListChildren( const wxString& name, int userReason )
 	return WriteCommand( cmd, new DbgCmdListChildren( m_observer, name, userReason ) );
 }
 
-bool DbgGdb::CreateVariableObject( const wxString& expression, int userReason )
+bool DbgGdb::CreateVariableObject(const wxString &expression, bool persistent, int userReason)
 {
 	wxString cmd;
-	cmd << wxT( "-var-create - @ \"" ) << expression << wxT( "\"" );
+	cmd << wxT( "-var-create - ");
+	
+	if(persistent) {
+		cmd << wxT("* ");
+	} else {
+		cmd << wxT("@ ");
+	}
+	cmd << wxT("\"") << expression << wxT( "\"" );
 	return WriteCommand( cmd, new DbgCmdCreateVarObj( m_observer, this, expression, userReason ) );
 }
 

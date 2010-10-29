@@ -200,7 +200,7 @@ void LocalsTable::OnItemExpanding(wxTreeEvent& event)
 		} else {
 			// first time
 			// create a variable object
-			dbgr->CreateVariableObject(m_listTable->GetItemText(event.GetItem()), m_DBG_USERR);
+			dbgr->CreateVariableObject(m_listTable->GetItemText(event.GetItem()), false, m_DBG_USERR);
 			m_createVarItemId[m_listTable->GetItemText(event.GetItem())] = event.GetItem();
 		}
 	}
@@ -290,7 +290,7 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 				m_listTable->Collapse(item);
 
 				if(dbgr) {
-					dbgr->CreateVariableObject(newVarName, m_DBG_USERR);
+					dbgr->CreateVariableObject(newVarName, false, m_DBG_USERR);
 					m_createVarItemId[newVarName] = item;
 				}
 			}

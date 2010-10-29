@@ -193,7 +193,7 @@ void WatchesTable::AddExpression(const wxString &expr)
 	// Append the new item and call the debugger to create a new variable object for this
 	// expression
 	wxTreeItemId item = m_listTable->AppendItem(root, expr, -1, -1, new DbgTreeItemData());
-	dbgr->CreateVariableObject(expr, m_DBG_USERR);
+	dbgr->CreateVariableObject(expr, true, m_DBG_USERR);
 	m_createVarItemId[expr] = item;
 }
 
@@ -223,7 +223,7 @@ void WatchesTable::RefreshValues(bool repositionEditor)
 
 		DbgTreeItemData* data = static_cast<DbgTreeItemData*>(m_listTable->GetItemData(item));
 		if(data && data->_gdbId.IsEmpty()) {
-			dbgr->CreateVariableObject(m_listTable->GetItemText(item), m_DBG_USERR);
+			dbgr->CreateVariableObject(m_listTable->GetItemText(item), true, m_DBG_USERR);
 			m_createVarItemId[m_listTable->GetItemText(item)] = item;
 		}
 

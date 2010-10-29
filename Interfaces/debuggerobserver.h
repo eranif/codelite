@@ -77,7 +77,8 @@ enum DebuggerUpdateReason
 	DBG_UR_VARIABLEOBJCREATEERR,    // Variable object create error
 	DBG_UR_EVALVARIABLEOBJ,         // Variable object has be evaluated
 	DBG_UR_VAROBJUPDATE,            // An update to variable object
-	DBG_UR_FRAMEDEPTH                // Frame information
+	DBG_UR_FRAMEDEPTH,              // Frame information
+	DBG_UR_VARIABLEOBJUPDATEERR     // Variable object update error
 };
 
 enum UserReason {

@@ -418,6 +418,7 @@ public:
 	{}
 
 	virtual bool ProcessOutput(const wxString & line);
+	virtual bool WantsErrors() { return true; }
 
 };
 #endif //DBGCMD_H

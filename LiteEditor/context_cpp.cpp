@@ -1312,7 +1312,7 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 
 		}
 	}
-	dbgr->CreateVariableObject( word, DBG_USERR_QUICKWACTH );
+	dbgr->CreateVariableObject( word, false, DBG_USERR_QUICKWACTH );
 }
 
 int ContextCpp::FindLineToAddInclude()

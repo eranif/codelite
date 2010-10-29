@@ -764,9 +764,10 @@ public:
 
 	/**
 	 * @brief create variable object from a given expression
-	 * @param expression
+	 * @param expression the expression to create a variable object for
+	 * @param persistent make a presistent watch, else create a floating watch which is not bound to the creation frame 
 	 */
-	virtual bool CreateVariableObject(const wxString &expression, int userReason) = 0;
+	virtual bool CreateVariableObject(const wxString &expression, bool persistent, int userReason) = 0;
 
 	/**
 	 * @brief delete variable object

@@ -560,13 +560,16 @@ protected:
 
 
 	//--------------------------- Debugger Support -----------------------------
+protected:
+	void DoUpdateDebuggerTabControl(wxAuiTabCtrl* tabControl);
+	
 public:
 	BreakptMgr* GetBreakpointsMgr() {
 		return m_breakptsmgr;
 	}
 
 	void UpdateDebuggerPane();
-
+	
 	void SetMemory(const wxString &address, size_t count, const wxString &hex_value);
 
 	//---------------------------------------------------

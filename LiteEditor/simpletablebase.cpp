@@ -216,7 +216,14 @@ void DebuggerTreeListCtrlBase::DoRefreshItem(IDebugger* dbgr, const wxTreeItemId
 	} else if(data && forceCreate) {
 
 		// try to re-create this variable object
-		dbgr->CreateVariableObject(m_listTable->GetItemText(item), m_DBG_USERR);
+		if(m_withButtons) { 
+			// HACK: m_withButton is set to true when we are in the context of 
+			// the 'Watches' table
+			dbgr->CreateVariableObject(m_listTable->GetItemText(item), true, m_DBG_USERR);
+		} else {
+			dbgr->CreateVariableObject(m_listTable->GetItemText(item), false, m_DBG_USERR);
+		}
+		
 		m_createVarItemId[m_listTable->GetItemText(item)] = item;
 	}
 }
@@ -337,4 +344,21 @@ wxString DebuggerTreeListCtrlBase::GetItemPath(const wxTreeItemId &item)
 	}
 	itemPath.RemoveLast();
 	return itemPath;
+}
+
+void DebuggerTreeListCtrlBase::OnCreateVariableObjError(const DebuggerEvent& event)
+{
+	// failed to create a variable object!
+	// remove this expression from the table
+	wxTreeItemId root = m_listTable->GetRootItem();
+	wxTreeItemIdValue cookieOne;
+	wxTreeItemId item = m_listTable->GetFirstChild(root, cookieOne);
+	while( item.IsOk() ) {
+
+		if(event.m_expression == m_listTable->GetItemText(item)) {
+			m_listTable->Delete(item);
+			break;
+		}
+		item = m_listTable->GetNextChild(root, cookieOne);
+	}
 }

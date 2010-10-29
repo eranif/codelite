@@ -128,25 +128,25 @@ static wxArrayString DoGetTemplateTypes(const wxString& tmplDecl)
 		wxChar ch = tmpstr.GetChar(i);
 		switch (ch) {
 		case wxT(','):
-						if ( depth > 0 ) {
-					type << wxT(",");
-				} else {
-					type.Trim().Trim(false);
-					if ( type.Contains(wxT("std::basic_string<char")) ) {
-						type = wxT("string");
-					} else if ( type.Contains(wxT("std::basic_string<wchar_t")) ) {
-						type = wxT("wstring");
-					}
-					types.Add( type );
-					type.Empty();
+			if ( depth > 0 ) {
+				type << wxT(",");
+			} else {
+				type.Trim().Trim(false);
+				if ( type.Contains(wxT("std::basic_string<char")) ) {
+					type = wxT("string");
+				} else if ( type.Contains(wxT("std::basic_string<wchar_t")) ) {
+					type = wxT("wstring");
 				}
+				types.Add( type );
+				type.Empty();
+			}
 			break;
 		case wxT('<'):
-						depth ++;
+			depth ++;
 			type << wxT("<");
 			break;
 		case wxT('>'):
-						depth--;
+			depth--;
 			type << wxT(">");
 			break;
 		default:
@@ -175,18 +175,18 @@ static wxArrayString DoGetTemplateTypes(const wxString& tmplDecl)
 //---------------------------------------------------------------
 
 Manager::Manager ( void )
-		: m_shellProcess         ( NULL )
-		, m_asyncExeCmd          ( NULL )
-		, m_breakptsmgr          ( new BreakptMgr )
-		, m_isShutdown           ( false )
-		, m_workspceClosing      ( false )
-		, m_dbgCanInteract       ( false )
-		, m_useTipWin            ( false )
-		, m_tipWinPos            ( wxNOT_FOUND )
-		, m_frameLineno          ( wxNOT_FOUND )
-		, m_watchDlg             ( NULL )
-		, m_retagInProgress      ( false )
-		, m_repositionEditor     ( true )
+	: m_shellProcess         ( NULL )
+	, m_asyncExeCmd          ( NULL )
+	, m_breakptsmgr          ( new BreakptMgr )
+	, m_isShutdown           ( false )
+	, m_workspceClosing      ( false )
+	, m_dbgCanInteract       ( false )
+	, m_useTipWin            ( false )
+	, m_tipWinPos            ( wxNOT_FOUND )
+	, m_frameLineno          ( wxNOT_FOUND )
+	, m_watchDlg             ( NULL )
+	, m_retagInProgress      ( false )
+	, m_repositionEditor     ( true )
 {
 	m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
 	Connect(wxEVT_CMD_RESTART_CODELITE,            wxCommandEventHandler(Manager::OnRestart),              NULL, this);
@@ -342,7 +342,8 @@ void Manager::CloseWorkspace()
 	//save the current session before closing
 	SessionEntry session;
 	session.SetWorkspaceName ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
-	wxArrayInt unused; clMainFrame::Get()->GetMainBook()->SaveSession(session, unused);
+	wxArrayInt unused;
+	clMainFrame::Get()->GetMainBook()->SaveSession(session, unused);
 	GetBreakpointsMgr()->SaveSession(session);
 	SessionManager::Get().Save ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session );
 
@@ -384,7 +385,7 @@ void Manager::AddToRecentlyOpenedWorkspaces ( const wxString &fileName )
 {
 	// Add this workspace to the history. Don't check for uniqueness:
 	// if it's already on the list, wxFileHistory will move it to the top
-		m_recentWorkspaces.AddFileToHistory ( fileName );
+	m_recentWorkspaces.AddFileToHistory ( fileName );
 
 	//sync between the history object and the configuration file
 	wxArrayString files;
@@ -985,7 +986,7 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 	f.Add(origName);
 	f.Add(newName);
 
-	if(!SendCmdEvent(wxEVT_FILE_RENAMED, (void*)&f)){
+	if(!SendCmdEvent(wxEVT_FILE_RENAMED, (void*)&f)) {
 		// rename the file on filesystem
 		wxLogNull noLog;
 		wxRenameFile(origName, newName);
@@ -1042,7 +1043,7 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 
 	// Prompt the user with the list of files which are about to be modified
 	wxFileName newFile(newName);
-	if(matches.empty() == false){
+	if(matches.empty() == false) {
 		RenameFileDlg dlg(clMainFrame::Get(), newFile.GetFullName(), matches);
 		if(dlg.ShowModal() == wxID_OK) {
 			matches.clear();
@@ -1742,8 +1743,8 @@ void Manager::DumpMenu ( wxMenu *menu, const wxString &label, wxString &content 
 		}
 		//dump the content of this menu item
 		content << item->GetId() << wxT ( "|" )
-		<< label << wxT ( "|" )
-		<< wxMenuItem::GetLabelText(item->GetItemLabel()) << wxT ( "|" );
+		        << label << wxT ( "|" )
+		        << wxMenuItem::GetLabelText(item->GetItemLabel()) << wxT ( "|" );
 		if ( item->GetAccel() ) {
 			content << item->GetAccel()->ToString();
 		}
@@ -1840,16 +1841,39 @@ static void DebugMessage ( wxString msg )
 
 void Manager::UpdateDebuggerPane()
 {
+	DebuggerPane *pane = clMainFrame::Get()->GetDebuggerPane();
+	std::set<wxAuiTabCtrl*> tabControls = pane->GetNotebook()->GetAllTabControls();
+	std::set<wxAuiTabCtrl*>::iterator iter = tabControls.begin();
+
+	for(; iter != tabControls.end(); iter++) {
+		DoUpdateDebuggerTabControl(*iter);
+	}
+}
+
+void Manager::DoUpdateDebuggerTabControl(wxAuiTabCtrl* tabControl)
+{
 	//Update the debugger pane
 	DebuggerPane *pane = clMainFrame::Get()->GetDebuggerPane();
-
-	if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetBreakpointView() ) || IsPaneVisible ( DebuggerPane::BREAKPOINTS) ) {
+	
+	wxWindow* curpage = NULL;
+	int activePageId = tabControl->GetActivePage();
+	
+	// sanity
+	if(activePageId == wxNOT_FOUND)
+		return;
+	
+	// make sure that the debugger pane is visible
+	if(!IsPaneVisible ( wxT ( "Debugger" ) ))
+		return;
+	
+	curpage = tabControl->GetPage((size_t)activePageId).window;
+	if ( curpage == ( wxWindow* ) pane->GetBreakpointView() || IsPaneVisible ( DebuggerPane::BREAKPOINTS) ) {
 		pane->GetBreakpointView()->Initialize();
 	}
 
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
-
+		
 		//--------------------------------------------------------------------
 		// Lookup the selected tab in the debugger notebook and update it
 		// once this is done, we need to go through the list of detached panes
@@ -1857,44 +1881,36 @@ void Manager::UpdateDebuggerPane()
 		// updated
 		//--------------------------------------------------------------------
 
-		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == pane->GetLocalsTable() ) || IsPaneVisible ( DebuggerPane::LOCALS ) ) {
+		if ( curpage == pane->GetLocalsTable() || IsPaneVisible ( DebuggerPane::LOCALS ) ) {
 
 			//update the locals tree
 			dbgr->QueryLocals();
 
 		}
 
-		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == pane->GetWatchesTable() ) || IsPaneVisible ( DebuggerPane::WATCHES ) ) {
+		if ( curpage == pane->GetWatchesTable() || IsPaneVisible ( DebuggerPane::WATCHES ) ) {
 			pane->GetWatchesTable()->RefreshValues();
 
 		}
-		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetFrameListView() ) || IsPaneVisible ( DebuggerPane::FRAMES ) ) {
+		if ( curpage == ( wxWindow* ) pane->GetFrameListView() || IsPaneVisible ( DebuggerPane::FRAMES ) ) {
 
 			//update the stack call
 			dbgr->ListFrames();
 
 		}
-		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetBreakpointView() ) || IsPaneVisible ( DebuggerPane::BREAKPOINTS ) ) {
+		if ( curpage == ( wxWindow* ) pane->GetBreakpointView() || IsPaneVisible ( DebuggerPane::BREAKPOINTS ) ) {
 
 			// update the breakpoint view
 			pane->GetBreakpointView()->Initialize();
 
 		}
-		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetThreadsView() ) || IsPaneVisible ( DebuggerPane::THREADS ) ) {
+		if ( curpage == ( wxWindow* ) pane->GetThreadsView() || IsPaneVisible ( DebuggerPane::THREADS ) ) {
 
 			// update the thread list
 			dbgr->ListThreads();
 		}
 
-//		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetAsciiViewer() ) || IsPaneVisible ( DebuggerPane::ASCII_VIEWER ) ) {
-//
-//			// re-evaluate the expression
-//			pane->GetAsciiViewer()->SetDebugger( dbgr );
-//			pane->GetAsciiViewer()->UpdateView();
-//
-//		}
-
-		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetMemoryView() ) || IsPaneVisible ( DebuggerPane::MEMORY ) ) {
+		if ( curpage == ( wxWindow* ) pane->GetMemoryView() || IsPaneVisible ( DebuggerPane::MEMORY ) ) {
 
 			// Update the memory view tab
 			MemoryView *memView = pane->GetMemoryView();
@@ -2386,8 +2402,8 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 		DebugMessage ( _("Program Received signal ") + signame + _("\n") );
 		if(showDialog) {
 			wxMessageDialog dlg( clMainFrame::Get(), _("Program Received signal ") + signame + wxT("\n") +
-								 _("Stack trace is available in the 'Call Stack' tab\n"),
-								 wxT("CodeLite"), wxICON_ERROR|wxOK );
+			                     _("Stack trace is available in the 'Call Stack' tab\n"),
+			                     wxT("CodeLite"), wxICON_ERROR|wxOK );
 			dlg.ShowModal();
 		}
 
@@ -2850,8 +2866,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		ManagerST::Get()->SetRepositionEditor(true);
 		break;
 
-	case DBG_UR_FRAMEDEPTH:
-	{
+	case DBG_UR_FRAMEDEPTH: {
 		long frameDepth(0);
 		event.m_frameInfo.level.ToLong(&frameDepth);
 		m_dbgCurrentFrameInfo.depth = frameDepth;
@@ -2882,7 +2897,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateLocals( event.m_locals );
 #ifdef __WXMAC__
 		{
-			for(size_t i=0; i<event.m_locals.size(); i++){
+			for(size_t i=0; i<event.m_locals.size(); i++) {
 				LocalVariable v = event.m_locals.at(i);
 				if(v.gdbId.IsEmpty() == false) {
 					dbgr->DeleteVariableObject(v.gdbId);
@@ -2896,7 +2911,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateFuncArgs( event.m_locals );
 #ifdef __WXMAC__
 		{
-			for(size_t i=0; i<event.m_locals.size(); i++){
+			for(size_t i=0; i<event.m_locals.size(); i++) {
 				LocalVariable v = event.m_locals.at(i);
 				if(v.gdbId.IsEmpty() == false) {
 					dbgr->DeleteVariableObject(v.gdbId);
@@ -2942,11 +2957,18 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		clMainFrame::Get()->GetDebuggerPane()->GetMemoryView()->SetViewString( event.m_evaluated );
 		break;
 
+	case DBG_UR_VARIABLEOBJUPDATEERR:
+		// Variable object update fail!
+		break;
+
 	case DBG_UR_VARIABLEOBJCREATEERR:
-		if(event.m_userReason == DBG_USERR_WATCHTABLE) {
-			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnCreateVariableObject( event );
+		// Variable creation error, remove it from the relevant table
+		if(/*event.m_userReason == DBG_USERR_LOCALS || */event.m_userReason == DBG_USERR_WATCHTABLE) {
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnCreateVariableObjError( event );
+			//clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->OnCreateVariableObjError( event );
 		}
 		break;
+
 	case DBG_UR_VARIABLEOBJ: {
 		// CreateVariableObject callback
 		if ( event.m_userReason == DBG_USERR_QUICKWACTH ) {
@@ -2965,9 +2987,9 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 			wxString expression ( event.m_expression );
 			if ( event.m_variableObject.isPtr && !event.m_expression.StartsWith(wxT("*")) ) {
 				if ( event.m_variableObject.typeName.Contains(wxT("char *"))    ||
-				        event.m_variableObject.typeName.Contains(wxT("wchar_t *")) ||
-				        event.m_variableObject.typeName.Contains(wxT("QChar *"))   ||
-				        event.m_variableObject.typeName.Contains(wxT("wxChar *"))) {
+				     event.m_variableObject.typeName.Contains(wxT("wchar_t *")) ||
+				     event.m_variableObject.typeName.Contains(wxT("QChar *"))   ||
+				     event.m_variableObject.typeName.Contains(wxT("wxChar *"))) {
 					// dont de-reference
 				} else {
 					expression.Prepend(wxT("(*"));
@@ -3055,9 +3077,9 @@ void Manager::DoRestartCodeLite()
 	// the codelite_launcher application is located where the codelite executable is
 	// to properly shoutdown codelite. We first need to close the codelite_indexer process
 	restartCodeLiteCommand << wxT("\"") << m_codeliteLauncher.GetFullPath() << wxT("\" ")
-	<< wxT(" --name=\"")
-	<< wxStandardPaths::Get().GetExecutablePath()
-	<< wxT("\"");
+	                       << wxT(" --name=\"")
+	                       << wxStandardPaths::Get().GetExecutablePath()
+	                       << wxT("\"");
 
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("exit_app"));
 	clMainFrame::Get()->GetEventHandler()->ProcessEvent(event);
@@ -3106,9 +3128,9 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 		DebuggerPreDefinedTypes preDefTypes = data.GetActiveSet();
 
 		wxString preDefinedType =
-			preDefTypes.GetPreDefinedTypeForTypename(event.m_variableObject.typeName, event.m_expression);
+		    preDefTypes.GetPreDefinedTypeForTypename(event.m_variableObject.typeName, event.m_expression);
 		if (!preDefinedType.IsEmpty()) {
-			dbgr->CreateVariableObject( preDefinedType, DBG_USERR_QUICKWACTH );
+			dbgr->CreateVariableObject( preDefinedType, false, DBG_USERR_QUICKWACTH );
 #ifdef __WXMAC__
 			if(!event.m_variableObject.gdbId.IsEmpty()) {
 				dbgr->DeleteVariableObject(event.m_variableObject.gdbId);
@@ -3165,13 +3187,13 @@ bool Manager::UpdateParserPaths()
 
 	// Add the global search paths to the local workspace
 	// include paths (the order does matter)
-	for(size_t i=0; i<globalIncludePath.GetCount(); i++){
+	for(size_t i=0; i<globalIncludePath.GetCount(); i++) {
 		if(localIncludePaths.Index(globalIncludePath.Item(i)) == wxNOT_FOUND) {
 			localIncludePaths.Add( globalIncludePath.Item(i) );
 		}
 	}
 
-	for(size_t i=0; i<localExcludePaths.GetCount(); i++){
+	for(size_t i=0; i<localExcludePaths.GetCount(); i++) {
 		if(uniExcludePath.Index(localExcludePaths.Item(i)) == wxNOT_FOUND) {
 			uniExcludePath.Add( localExcludePaths.Item(i) );
 		}

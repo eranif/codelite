@@ -1999,7 +1999,7 @@ void Manager::DbgStart ( long pid )
 		clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->ResetTableColors();
 
 		dbgr->Continue();
-		dbgr->QueryFileLine();
+		//dbgr->QueryFileLine();
 		return;
 	}
 
@@ -2348,6 +2348,10 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 
 	if(dbgr && dbgr->IsRunning()) {
+		// in case we got an error, try and clear the Locals view
+		if(reason == DBG_CMD_ERROR) {
+			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Clear();
+		}
 		dbgr->UpdateVariableObject(wxT("*"), DBG_USERR_LOCALS); // the reason is not really matter here
 	}
 

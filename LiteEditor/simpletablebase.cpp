@@ -185,6 +185,14 @@ void DebuggerTreeListCtrlBase::Clear()
 	wxTreeItemId root = m_listTable->GetRootItem();
 	if(root.IsOk()) {
 		if(m_listTable->HasChildren(root)) {
+			wxTreeItemIdValue cookie;
+			wxTreeItemId item = m_listTable->GetFirstChild(root, cookie);
+			
+			while(item.IsOk()) {
+				DoDeleteWatch(item);
+				item = m_listTable->GetNextChild(root, cookie);
+			}
+			
 			m_listTable->DeleteChildren(root);
 		}
 	}

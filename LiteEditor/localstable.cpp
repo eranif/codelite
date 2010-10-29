@@ -265,19 +265,24 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 				int where = itemsNotRemoved.Index(newVarName);
 				if(where != wxNOT_FOUND)
 					itemsNotRemoved.RemoveAt(where);
-
-				wxTreeItemId treeItem = DoFindItemByExpression(newVarName);
-				if(treeItem.IsOk()) {
-					DoDeleteWatch(treeItem);
-					m_listTable->Delete(treeItem);
-				}
 			}
-
+			
+			wxTreeItemId treeItem = DoFindItemByExpression(newVarName);
+			if(treeItem.IsOk()) {
+				// an item with this expression already exists, skip it
+				continue; 
+			}
+			
 			// replace the local with a variable object
 			// but make sure we dont enter a duplicate item
 			if(itemsNotRemoved.Index(newVarName) == wxNOT_FOUND) {
 				// this type has a pre-defined type, use it instead
-				wxTreeItemId item = m_listTable->AppendItem(root, newVarName, -1, -1, new DbgTreeItemData());
+				
+				// Mark this item as VariableObject so incase another call
+				// is made to this function, it wont get deleted by mistake
+				DbgTreeItemData *data = new DbgTreeItemData();
+				data->_kind = DbgTreeItemData::VariableObject;
+				wxTreeItemId item = m_listTable->AppendItem(root, newVarName, -1, -1, data);
 				m_listTable->SetItemBackgroundColour(item, rootItemColour);
 
 
@@ -363,9 +368,17 @@ void LocalsTable::OnEditValue(wxCommandEvent& event)
 	IDebugger *debugger = DoGetDebugger();
 	if(debugger) {
 		debugger->AssignValue(itemPath, newValue);
+		
+		// refresh the item
+		DbgTreeItemData* data = (DbgTreeItemData*) m_listTable->GetItemData(selectedItem);
+		if(data && data->_gdbId.IsEmpty()) {
+			m_listTable->Delete(selectedItem);
+			debugger->QueryLocals();
+			
+		} else {
+			debugger->UpdateVariableObject(data->_gdbId, m_DBG_USERR);
 
-		Clear();
-		debugger->QueryLocals();
+		}
 	}
 }
 

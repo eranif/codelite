@@ -1,4 +1,4 @@
-<resource>
+<resource version="2.0">
     <object class="wxMenuBar" name="main_menu">
         <object class="wxMenu" name="file_tool_or_menuitem">
             <label>&amp;File</label>
@@ -714,7 +714,18 @@
         </object>
 	</object>
     <!-- File Tree -->
-
+	
+	<!-- Workspace View Context menu where there is no
+	     workspace opened -->
+	<object class="wxMenu" name="file_view_empty">
+		<object class="wxMenuItem" name="new_workspace">
+            <label>Create new workspace...</label>
+        </object>
+        <object class="wxMenuItem" name="switch_to_workspace">
+            <label>Switch to workspace...</label>
+        </object>
+	</object>
+	
     <!-- Folder Menu -->
     <object class="wxMenu" name="file_tree_folder">
         <label>Project</label>

@@ -60,72 +60,69 @@ IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 static const wxString gsCustomTargetsMenu(wxT("Custom Build Targets"));
 
 BEGIN_EVENT_TABLE( FileViewTree, wxTreeCtrl )
-	EVT_TREE_BEGIN_DRAG( wxID_ANY, FileViewTree::OnItemBeginDrag )
-	EVT_TREE_END_DRAG( wxID_ANY, FileViewTree::OnItemEndDrag )
+	EVT_TREE_BEGIN_DRAG(wxID_ANY, FileViewTree::OnItemBeginDrag )
+	EVT_TREE_END_DRAG  (wxID_ANY, FileViewTree::OnItemEndDrag   )
+	EVT_TREE_ITEM_MENU (wxID_ANY, FileViewTree::OnPopupMenu     )
+	
+	EVT_MENU( XRCID( "local_workspace_prefs" ),        FileViewTree::OnLocalPrefs )
+	EVT_MENU( XRCID( "local_workspace_settings" ),     FileViewTree::OnLocalWorkspaceSettings )
+	EVT_MENU( XRCID( "remove_project" ),               FileViewTree::OnRemoveProject )
+	EVT_MENU( XRCID( "set_as_active" ),                FileViewTree::OnSetActive )
+	EVT_MENU( XRCID( "new_item" ),                     FileViewTree::OnNewItem )
+	EVT_MENU( XRCID( "add_existing_item" ),            FileViewTree::OnAddExistingItem )
+	EVT_MENU( XRCID( "new_virtual_folder" ),           FileViewTree::OnNewVirtualFolder )
+	EVT_MENU( XRCID( "remove_virtual_folder" ),        FileViewTree::OnRemoveVirtualFolder )
+	EVT_MENU( XRCID( "local_project_prefs" ),          FileViewTree::OnLocalPrefs )
+	EVT_MENU( XRCID( "project_properties" ),           FileViewTree::OnProjectProperties )
+	EVT_MENU( XRCID( "sort_item" ),                    FileViewTree::OnSortItem )
+	EVT_MENU( XRCID( "remove_item" ),                  FileViewTree::OnRemoveItem )
+	EVT_MENU( XRCID( "export_makefile" ),              FileViewTree::OnExportMakefile )
+	EVT_MENU( XRCID( "save_as_template" ),             FileViewTree::OnSaveAsTemplate )
+	EVT_MENU( XRCID( "build_order" ),                  FileViewTree::OnBuildOrder )
+	EVT_MENU( XRCID( "clean_project" ),                FileViewTree::OnClean )
+	EVT_MENU( XRCID( "build_project" ),                FileViewTree::OnBuild )
+	EVT_MENU( XRCID( "rebuild_project" ),              FileViewTree::OnReBuild )
+	EVT_MENU( XRCID( "generate_makefile" ),            FileViewTree::OnRunPremakeStep )
+	EVT_MENU( XRCID( "stop_build" ),                   FileViewTree::OnStopBuild )
+	EVT_MENU( XRCID( "retag_project" ),                FileViewTree::OnRetagProject )
+	EVT_MENU( XRCID( "build_project_only" ),           FileViewTree::OnBuildProjectOnly )
+	EVT_MENU( XRCID( "clean_project_only" ),           FileViewTree::OnCleanProjectOnly )
+	EVT_MENU( XRCID( "rebuild_project_only" ),         FileViewTree::OnRebuildProjectOnly)
+	EVT_MENU( XRCID( "import_directory" ),             FileViewTree::OnImportDirectory )
+	EVT_MENU( XRCID( "compile_item" ),                 FileViewTree::OnCompileItem )
+	EVT_MENU( XRCID( "preprocess_item" ),              FileViewTree::OnPreprocessItem )
+	EVT_MENU( XRCID( "rename_item" ),                  FileViewTree::OnRenameItem )
+	EVT_MENU( XRCID( "rename_virtual_folder" ),        FileViewTree::OnRenameVirtualFolder )
+	
+	EVT_UPDATE_UI( XRCID( "remove_project" ),          FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "set_as_active" ),           FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "new_item" ),                FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "add_existing_item" ),       FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "new_virtual_folder" ),      FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "remove_virtual_folder" ),   FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "project_properties" ),      FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "sort_item" ),               FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "remove_item" ),             FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "export_makefile" ),         FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "save_as_template" ),        FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "build_order" ),             FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "clean_project" ),           FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "build_project" ),           FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "rebuild_project" ),         FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "retag_project" ),           FileViewTree::OnRetagInProgressUI)
+	EVT_UPDATE_UI( XRCID( "retag_workspace" ),         FileViewTree::OnRetagInProgressUI)
+	EVT_UPDATE_UI( XRCID( "build_project_only" ),      FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "clean_project_only" ),      FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "rebuild_project_only" ),    FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "import_directory" ),        FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "compile_item" ),            FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "preprocess_item" ),         FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "rename_item" ),             FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "generate_makefile" ),       FileViewTree::OnBuildInProgress)
+	EVT_UPDATE_UI( XRCID( "local_workspace_settings" ),FileViewTree::OnBuildInProgress)
 END_EVENT_TABLE()
 FileViewTree::FileViewTree()
 {
-}
-
-void FileViewTree::ConnectEvents()
-{
-	Connect( XRCID( "local_workspace_prefs" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnLocalPrefs ), NULL, this );
-	Connect( XRCID( "local_workspace_settings" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnLocalWorkspaceSettings ), NULL, this );
-
-	Connect( XRCID( "remove_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRemoveProject ), NULL, this );
-	Connect( XRCID( "set_as_active" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnSetActive ), NULL, this );
-	Connect( XRCID( "new_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnNewItem ), NULL, this );
-	Connect( XRCID( "add_existing_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnAddExistingItem ), NULL, this );
-	Connect( XRCID( "new_virtual_folder" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnNewVirtualFolder ), NULL, this );
-	Connect( XRCID( "remove_virtual_folder" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRemoveVirtualFolder ), NULL, this );
-	Connect( XRCID( "local_project_prefs" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnLocalPrefs ), NULL, this );
-	Connect( XRCID( "project_properties" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnProjectProperties ), NULL, this );
-	Connect( XRCID( "sort_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnSortItem ), NULL, this );
-	Connect( XRCID( "remove_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRemoveItem ), NULL, this );
-	Connect( XRCID( "export_makefile" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnExportMakefile ), NULL, this );
-	Connect( XRCID( "save_as_template" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnSaveAsTemplate ), NULL, this );
-	Connect( XRCID( "build_order" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnBuildOrder ), NULL, this );
-	Connect( XRCID( "clean_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnClean ), NULL, this );
-	Connect( XRCID( "build_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnBuild ), NULL, this );
-	Connect( XRCID( "rebuild_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnReBuild ), NULL, this );
-	Connect( XRCID( "generate_makefile" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRunPremakeStep ), NULL, this );
-	Connect( XRCID( "stop_build" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnStopBuild ), NULL, this );
-	Connect( XRCID( "retag_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRetagProject ), NULL, this );
-	Connect( XRCID( "build_project_only" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnBuildProjectOnly ), NULL, this );
-	Connect( XRCID( "clean_project_only" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnCleanProjectOnly ), NULL, this );
-	Connect( XRCID( "rebuild_project_only" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRebuildProjectOnly), NULL, this );
-	Connect( XRCID( "import_directory" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnImportDirectory ), NULL, this );
-	Connect( XRCID( "compile_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnCompileItem ), NULL, this );
-	Connect( XRCID( "preprocess_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnPreprocessItem ), NULL, this );
-	Connect( XRCID( "rename_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRenameItem ), NULL, this );
-	Connect( XRCID( "rename_virtual_folder" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRenameVirtualFolder ), NULL, this );
-
-	Connect( XRCID( "remove_project" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "set_as_active" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "new_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "add_existing_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "new_virtual_folder" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "remove_virtual_folder" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "project_properties" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "sort_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "remove_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "export_makefile" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "save_as_template" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "build_order" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "clean_project" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "build_project" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "rebuild_project" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "retag_project" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnRetagInProgressUI ), NULL, this );
-	Connect( XRCID( "retag_workspace" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnRetagInProgressUI ), NULL, this );
-	Connect( XRCID( "build_project_only" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "clean_project_only" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "rebuild_project_only" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "import_directory" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "compile_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "preprocess_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "rename_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "generate_makefile" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
-	Connect( XRCID( "local_workspace_settings" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 }
 
 void FileViewTree::OnBuildInProgress( wxUpdateUIEvent &event )
@@ -152,7 +149,6 @@ FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint
 
 	AssignImageList( images );
 
-	Connect( GetId(), wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEventHandler( FileViewTree::OnPopupMenu ) );
 	Connect( GetId(), wxEVT_LEFT_DCLICK, wxMouseEventHandler( FileViewTree::OnMouseDblClick ) );
 	Connect( GetId(), wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler( FileViewTree::OnItemActivated ) );
 }
@@ -163,6 +159,7 @@ FileViewTree::~FileViewTree()
 	delete m_projectMenu;
 	delete m_fileMenu;
 	delete m_workspaceMenu;
+	delete m_emptyTreeMenu;
 }
 
 void FileViewTree::Create( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
@@ -182,11 +179,11 @@ void FileViewTree::Create( wxWindow *parent, const wxWindowID id, const wxPoint&
 	BuildTree();
 
 	// Load the popup menu
-	m_folderMenu = wxXmlResource::Get()->LoadMenu( wxT( "file_tree_folder" ) );
-	m_projectMenu = wxXmlResource::Get()->LoadMenu( wxT( "file_tree_project" ) );
-	m_fileMenu = wxXmlResource::Get()->LoadMenu( wxT( "file_tree_file" ) );
+	m_folderMenu    = wxXmlResource::Get()->LoadMenu( wxT( "file_tree_folder" ) );
+	m_projectMenu   = wxXmlResource::Get()->LoadMenu( wxT( "file_tree_project" ) );
+	m_fileMenu      = wxXmlResource::Get()->LoadMenu( wxT( "file_tree_file" ) );
 	m_workspaceMenu = wxXmlResource::Get()->LoadMenu( wxT( "workspace_popup_menu" ) );
-	ConnectEvents();
+	m_emptyTreeMenu = wxXmlResource::Get()->LoadMenu( wxT( "file_view_empty" ) );
 }
 
 void FileViewTree::BuildTree()
@@ -462,6 +459,8 @@ void FileViewTree::OnPopupMenu( wxTreeEvent &event )
 				break;
 			}
 		}
+	} else {
+		PopupMenu( m_emptyTreeMenu );
 	}
 }
 

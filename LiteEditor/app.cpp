@@ -40,6 +40,7 @@
 
 #include "xmlutils.h"
 #include "editor_config.h"
+#include "wx_xml_compatibility.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/sysopt.h>
 #include "manager.h"
@@ -377,7 +378,7 @@ bool CodeLiteApp::OnInit()
 	// into one giant XRC file if you wanted, but then they become more
 	// diffcult to manage, and harder to reuse in later projects.
 	// The menubar
-	if (!wxXmlResource::Get()->Load( DoFindMenuFile(ManagerST::Get()->GetInstallDir()) ) )
+	if (!wxXmlResource::Get()->Load( DoFindMenuFile(ManagerST::Get()->GetInstallDir(), wxT("2.0")) ) )
 		return false;
 
 	// keep the startup directory
@@ -748,24 +749,24 @@ void CodeLiteApp::MSWReadRegistry()
 #endif
 }
 
-wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory)
+wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxString &requiredVersion)
 {
+	wxString defaultMenuFile = installDirectory + wxFileName::GetPathSeparator() + wxT("rc") + wxFileName::GetPathSeparator() + wxT("menu.xrc");
 	wxFileName menuFile(wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("rc") + wxFileName::GetPathSeparator() + wxT("menu.xrc"));
 	if(menuFile.FileExists()) {
+		// if we find the user's file menu, check that it has the required version
+		{
+			wxLogNull noLog;
+			wxXmlDocument doc;
+			if(doc.Load(menuFile.GetFullPath())) {
+				wxString version = doc.GetRoot()->GetPropVal(wxT("version"), wxT("1.0"));
+				if(version != requiredVersion) {
+					return defaultMenuFile;
+				}
+			}
+		}
 		return menuFile.GetFullPath();
 	}
-	return installDirectory + wxFileName::GetPathSeparator() + wxT("rc") + wxFileName::GetPathSeparator() + wxT("menu.xrc");
+	return defaultMenuFile;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 

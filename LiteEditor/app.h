@@ -41,7 +41,7 @@ private: // Methods
 	bool     CopySettings(const wxString &destDir, wxString& installPath);
 	bool     CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir);
 	void     MSWReadRegistry();
-	wxString DoFindMenuFile(const wxString& installDirectory);
+	wxString DoFindMenuFile(const wxString& installDirectory, const wxString &requiredVersion);
 
 #ifdef __WXMSW__
 	HINSTANCE m_handler;

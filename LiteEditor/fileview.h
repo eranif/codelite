@@ -46,7 +46,8 @@ class FileViewTree : public wxTreeCtrl
 	wxMenu *m_projectMenu;
 	wxMenu *m_fileMenu;
 	wxMenu *m_workspaceMenu;
-
+	wxMenu *m_emptyTreeMenu;
+	
 	std::map<void*, bool> m_itemsToSort;
 	wxArrayTreeItemIds m_draggedItems;
 
@@ -168,7 +169,6 @@ private:
 	// Build project node
 	void BuildProjectNode(const wxString &projectName);
 	int GetIconIndex(const ProjectItem &item);
-	void ConnectEvents();
 	wxString GetItemPath(wxTreeItemId &item);
 
 	bool DoAddNewItem(wxTreeItemId &item, const wxString &filename, const wxString &vdFullpath);

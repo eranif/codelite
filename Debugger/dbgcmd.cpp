@@ -211,7 +211,7 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 	fullName.Trim().Trim(false);
 
 #ifdef __WXMSW__
-	if(fullName.StartsWith(wxT("/"))){
+	if(fullName.StartsWith(wxT("/"))) {
 		// fallback to use file="<..>"
 		filename = filename.AfterFirst(wxT('"'));
 		filename = filename.BeforeLast(wxT('"'));
@@ -221,7 +221,7 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 		fullName = filename;
 
 		// FIXME: change cypath => fullName
-		if(fullName.StartsWith(wxT("/"))){
+		if(fullName.StartsWith(wxT("/"))) {
 
 			if(g_fileCache.find(fullName) != g_fileCache.end()) {
 				fullName = g_fileCache.find(fullName)->second;
@@ -350,7 +350,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 		// Incase we break due to assertion, notify the observer with different break code
 		if ( func.IsEmpty() && IS_WINDOWNS ) {
 			if ( func == wxT("msvcrt!_assert") || // MinGW
-				 func == wxT("__assert")       // Cygwin
+			     func == wxT("__assert")       // Cygwin
 			   ) {
 				// assertion caught
 				UpdateGotControl(DBG_BP_ASSERTION_HIT, func);
@@ -821,9 +821,9 @@ bool DbgCmdResolveTypeHandler::ProcessOutput(const wxString& line)
 }
 
 DbgCmdResolveTypeHandler::DbgCmdResolveTypeHandler(const wxString &expression, DbgGdb* debugger)
-		: DbgCmdHandler(debugger->GetObserver())
-		, m_debugger   (debugger)
-		, m_expression (expression)
+	: DbgCmdHandler(debugger->GetObserver())
+	, m_debugger   (debugger)
+	, m_expression (expression)
 {}
 
 bool DbgCmdCLIHandler::ProcessOutput(const wxString& line)
@@ -1189,47 +1189,22 @@ static VariableObjChild FromParserOutput(const std::map<std::string, std::string
 {
 	VariableObjChild child;
 	std::map<std::string, std::string >::const_iterator iter;
-	wxString type;
 
-	iter = attr.find("type");
-	if ( iter != attr.end() ) {
-		type = wxString(iter->second.c_str(), wxConvUTF8);
-		wxRemoveQuotes( type );
+	child.type         = ExtractGdbChild(attr, wxT("type"));
+	child.gdbId        = ExtractGdbChild(attr, wxT("name"));
+	wxString numChilds = ExtractGdbChild(attr, wxT("numchild"));
+	
+	if(numChilds.IsEmpty() == false) {
+		child.numChilds = wxAtoi(numChilds);
 	}
 
-	iter = attr.find("name");
-	if ( iter != attr.end() ) {
-		child.gdbId = wxString(iter->second.c_str(), wxConvUTF8);
-		wxRemoveQuotes( child.gdbId );
-
-	}
-
-	iter = attr.find("exp");
-	if ( iter != attr.end() ) {
-		child.varName = wxString(iter->second.c_str(), wxConvUTF8);
-		wxRemoveQuotes( child.varName );
-
-		// type == exp -> a fake node
-		if ( type == child.varName ) {
-			child.isAFake = true;
-
-		} else if ( child.varName == wxT("public") || child.varName == wxT("private") || child.varName == wxT("protected") ) {
-			child.isAFake = true;
-
-		} else if ( type.Contains(wxT("class ")) || type.Contains(wxT("struct "))) {
-			child.isAFake = true;
-		}
-	} else {
+	child.varName      = ExtractGdbChild(attr, wxT("exp"));
+	if(child.varName.IsEmpty()                                                                                     ||
+		child.type == child.varName                                                                                ||
+		( child.varName == wxT("public") || child.varName == wxT("private") || child.varName == wxT("protected") ) ||
+		( child.type.Contains(wxT("class ")) || child.type.Contains(wxT("struct ")))) {
+			
 		child.isAFake = true;
-	}
-
-	iter = attr.find("numchild");
-	if ( iter != attr.end() ) {
-		if ( iter->second.empty() == false ) {
-			wxString numChilds (iter->second.c_str(), wxConvUTF8);
-			wxRemoveQuotes( numChilds );
-			child.numChilds = wxAtoi(numChilds);
-		}
 	}
 
 	// For primitive types, we also get the value
@@ -1339,7 +1314,7 @@ bool DbgCmdHandlerStackDepth::ProcessOutput(const wxString& line)
 bool DbgVarObjUpdate::ProcessOutput(const wxString& line)
 {
 	DebuggerEvent e;
-	
+
 	if(line.StartsWith(wxT("^error"))) {
 		// Notify the observer we failed to create variable object
 		e.m_updateReason = DBG_UR_VARIABLEOBJUPDATEERR; // failed to create variable object

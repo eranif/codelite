@@ -121,7 +121,8 @@ void LocalsTable::OnListChildren(const DebuggerEvent& event)
 					data->_isFake = ch.isAFake;
 
 					wxTreeItemId child = m_listTable->AppendItem(item, ch.varName, -1, -1, data);
-
+					m_listTable->SetItemText(child, 2, ch.type);
+					
 					// Add a dummy node
 					if(child.IsOk() && ch.numChilds > 0) {
 						m_listTable->AppendItem(child, wxT("<dummy>"));

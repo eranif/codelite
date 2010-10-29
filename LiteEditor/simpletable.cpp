@@ -193,6 +193,9 @@ void WatchesTable::AddExpression(const wxString &expr)
 	// Append the new item and call the debugger to create a new variable object for this
 	// expression
 	wxTreeItemId item = m_listTable->AppendItem(root, expr, -1, -1, new DbgTreeItemData());
+	wxColour rootItemColour = DrawingUtils::LightColour(wxT("LIGHT GRAY"), 3.0);
+	m_listTable->SetItemBackgroundColour(item, rootItemColour);
+	
 	dbgr->CreateVariableObject(expr, true, m_DBG_USERR);
 	m_createVarItemId[expr] = item;
 }
@@ -375,7 +378,8 @@ void WatchesTable::OnListChildren(const DebuggerEvent& event)
 					DbgTreeItemData *data = new DbgTreeItemData();
 					data->_gdbId = ch.gdbId;
 					wxTreeItemId child = m_listTable->AppendItem(item, ch.varName, -1, -1, data);
-
+					m_listTable->SetItemText(child, 2, ch.type);
+					
 					// Add a dummy node
 					if(child.IsOk() && ch.numChilds > 0) {
 						m_listTable->AppendItem(child, wxT("<dummy>"));

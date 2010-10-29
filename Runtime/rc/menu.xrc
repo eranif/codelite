@@ -939,7 +939,7 @@
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenu" name="display_format">
-			<label>Display Foramt</label>
+			<label>Display Format</label>
 			<object class="wxMenuItem" name="watches_df_natural">
 				<label>Natural</label>
 			</object>

@@ -86,9 +86,9 @@
                 <property name="permission">none</property>
                 <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
-                    <property name="flag">wxEXPAND</property>
+                    <property name="flag">wxEXPAND|wxTOP|wxBOTTOM</property>
                     <property name="proportion">0</property>
-                    <object class="wxFlexGridSizer" expanded="0">
+                    <object class="wxFlexGridSizer" expanded="1">
                         <property name="cols">3</property>
                         <property name="flexible_direction">wxBOTH</property>
                         <property name="growablecols">1</property>
@@ -912,11 +912,11 @@
                                 <event name="OnUpdateUI"></event>
                             </object>
                         </object>
-                        <object class="sizeritem" expanded="0">
+                        <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT</property>
+                            <property name="flag">wxEXPAND|wxALL</property>
                             <property name="proportion">0</property>
-                            <object class="wxNotebook" expanded="0">
+                            <object class="wxNotebook" expanded="1">
                                 <property name="bg"></property>
                                 <property name="bitmapsize"></property>
                                 <property name="context_help"></property>
@@ -1025,7 +1025,7 @@
                                             <property name="permission">none</property>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">5</property>
-                                                <property name="flag">wxEXPAND</property>
+                                                <property name="flag">wxEXPAND|wxALL</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxFlexGridSizer" expanded="0">
                                                     <property name="cols">1</property>
@@ -1637,8 +1637,8 @@
                             </object>
                         </object>
                         <object class="sizeritem" expanded="0">
-                            <property name="border">5</property>
-                            <property name="flag">wxEXPAND</property>
+                            <property name="border">10</property>
+                            <property name="flag">wxEXPAND|wxBOTTOM</property>
                             <property name="proportion">0</property>
                             <object class="spacer" expanded="0">
                                 <property name="height">0</property>
@@ -1652,7 +1652,7 @@
                     <property name="border">5</property>
                     <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxALL</property>
                     <property name="proportion">0</property>
-                    <object class="wxBoxSizer" expanded="0">
+                    <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
                         <property name="name">bSizer2</property>
                         <property name="orient">wxVERTICAL</property>

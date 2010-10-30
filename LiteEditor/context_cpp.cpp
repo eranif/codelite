@@ -2080,12 +2080,21 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
 
 	// display the refactor dialog
 	RenameSymbol *dlg = new RenameSymbol(&rCtrl, RefactoringEngine::Instance()->GetCandidates(), RefactoringEngine::Instance()->GetPossibleCandidates(), word);
-	if (dlg->ShowModal() == wxID_OK) {
+	while (dlg->ShowModal() == wxID_OK) {
 		std::list<CppToken> matches;
 
 		dlg->GetMatches( matches );
 		if (matches.empty() == false) {
+			if (dlg->GetWord() == word) {
+				int answer = wxMessageBox(_("The replacement symbol is the same as the original. Try again?"), wxT("CodeLite"), wxICON_QUESTION | wxYES_NO, dlg);
+				if (answer == wxYES) {
+					continue;
+				}
+				return;
+			}
+			
 			ReplaceInFiles(dlg->GetWord(), matches);
+			return;
 		}
 	}
 }
@@ -2094,10 +2103,20 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, const std::list<CppToken
 {
 	int off = 0;
 	wxString fileName ( wxEmptyString );
+	bool success(false);
 
-	// Disable the "Limit opened bufferes" feature for during replacements
+	// Disable the "Limit opened buffers" feature for during replacements
 	clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(false);
 
+	// Try to maintain as far as possible the editor and line within it that the user started from.
+	// Otherwise a different editor may be selected, and the original one will have scrolled to the last replacement
+	int current_line = wxSCI_INVALID_POSITION;
+	LEditor* current = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+	if (current) {
+		current_line = current->GetCurrentLine();
+	}
+
+	LEditor* previous = NULL;
 	for ( std::list<CppToken>::const_iterator iter = li.begin(); iter != li.end(); iter++ ) {
 		CppToken cppToken = *iter;
 		if ( fileName == cppToken.getFilename() ) {
@@ -2113,6 +2132,14 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, const std::list<CppToken
 		LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 		if(!editor || editor->GetFileName().GetFullPath() != cppToken.getFilename()) {
 			editor = clMainFrame::Get()->GetMainBook()->OpenFile(cppToken.getFilename(), wxEmptyString, 0);
+			// We've loaded a new editor, so start a new bulk undo action for it
+			// (this can only be done per editor, not per refactor :( )
+			// First end any previous one
+			if (previous) {
+				previous->EndUndoAction();
+			}
+			editor->BeginUndoAction();
+			previous = editor;
 		}
 
 		if (editor) {
@@ -2120,12 +2147,29 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, const std::list<CppToken
 			if ( editor->GetSelectionStart() != editor->GetSelectionEnd() ) {
 				editor->ReplaceSelection ( word );
 				off += word.Len() - cppToken.getName().Len();
+				success = true;	// Flag that there's been at least one replacement
 			}
+		}
+	}
+
+	// The last editor won't have this done otherwise
+	if (previous) {
+		previous->EndUndoAction();
+			}
+
+	if (current) {
+		clMainFrame::Get()->GetMainBook()->SelectPage(current);
+		if (current_line != wxSCI_INVALID_POSITION) {
+			current->GotoLine(current_line);
 		}
 	}
 
 	// re-enable the feature again
 	clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(true);
+
+	if (success) {
+		clMainFrame::Get()->SetStatusMessage(_("Symbol renamed"), 0);
+	}
 }
 
 void ContextCpp::OnRetagFile(wxCommandEvent& e)

@@ -142,7 +142,7 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	m_checkBoxSeparateTab->SetValue(true); 
 	fgSizer3->Add( m_checkBoxSeparateTab, 0, wxALL, 5 );
 	
-	bSizer6->Add( fgSizer3, 0, wxEXPAND, 5 );
+	bSizer6->Add( fgSizer3, 0, wxEXPAND|wxALL, 5 );
 	
 	m_panel1->SetSizer( bSizer6 );
 	m_panel1->Layout();
@@ -178,12 +178,12 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	bSizer7->Fit( m_panel2 );
 	m_notebook1->AddPage( m_panel2, _("C++"), false );
 	
-	fgSizer41->Add( m_notebook1, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	fgSizer41->Add( m_notebook1, 0, wxEXPAND|wxALL, 5 );
 	
 	
-	fgSizer41->Add( 0, 0, 0, wxEXPAND, 5 );
+	fgSizer41->Add( 0, 0, 0, wxEXPAND|wxBOTTOM, 10 );
 	
-	bSizer1->Add( fgSizer41, 0, wxEXPAND, 5 );
+	bSizer1->Add( fgSizer41, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 	
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );

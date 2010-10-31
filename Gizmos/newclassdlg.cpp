@@ -429,8 +429,6 @@ wxString NewClassDlg::doSpliteByCaptilization(const wxString& str)
 	for(int i=str.length()-1; i >= 0; i--) {
 
 		int cur  = (int)str[i];
-		int prev = i > 0 ? (int)str[i-1] : 0;
-
 		if(!isalpha(cur)) {
 			output.Prepend((wxChar)cur);
 			continue;

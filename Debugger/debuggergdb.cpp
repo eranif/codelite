@@ -298,7 +298,12 @@ bool DbgGdb::Run( const wxString &args, const wxString &comm )
 	if ( !GetIsRemoteDebugging() ) {
 
 		// add handler for this command
-		return WriteCommand( wxT( "-exec-run " ) + args, new DbgCmdHandlerAsyncCmd( m_observer, this ) );
+		wxString setArgsCommands;
+		setArgsCommands << wxT("-exec-arguments ") << args;
+		if(!WriteCommand(setArgsCommands, NULL))
+			return false;
+		
+		return WriteCommand( wxT( "-exec-run " ), new DbgCmdHandlerAsyncCmd( m_observer, this ) );
 
 	} else {
 		// attach to the remote gdb server

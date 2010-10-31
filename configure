@@ -425,7 +425,7 @@ createRules_sharedObject ()
 		echo "${rule_name}: \$(${object_list_name})" >> Makefile
 	fi
 
-	echo "	\$(CMP) -fPIC ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(PLUGIN_LINK_FLAGS) ${additional_link_libs}" >> Makefile
+	echo "	\$(CMP) -fPIC ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(PLUGIN_LINK_FLAGS) ${additional_link_libs} -lutil" >> Makefile
 	if [ $dont_copy != "dont_copy" ]; then
 		echo "	cp -f ${base_dir}/\$(OUTPUT_DIR)/${libname}.so ${runtime_path}/." >> Makefile
 	fi

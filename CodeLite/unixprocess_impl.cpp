@@ -11,6 +11,13 @@
 #include <errno.h>
 #include <sys/wait.h>
 
+#ifdef __WXGTK__
+#    include <pty.h>
+#    include <utmp.h>
+#else
+#    include <util.h>
+#endif
+
 static char  **argv;
 static int    argc = 0;
 
@@ -315,48 +322,23 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, IP
 		return NULL;
 	}
 
-	int filedes[2];
-	int filedes2[2];
-
-	// create a pipe
-	int d;
-	d = pipe(filedes);
-	d = pipe(filedes2);
-
-	wxUnusedVar (d);
-
-	int stdin_pipe_write = filedes[1];
-	int stdin_pipe_read  = filedes[0];
-
-	int stdout_pipe_write = filedes2[1];
-	int stdout_pipe_read  = filedes2[0];
-
 	// fork the child process
 	wxString curdir = wxGetCwd();
-
+	
+	// Prentend that we are a terminal...
+	int master, slave;
+	openpty(&master, &slave, NULL, NULL, NULL);
+	
 	int rc = fork();
 	if ( rc == 0 ) {
-		// Set process group to child process' pid.  Then killing -pid
-		// of the parent will kill the process and all of its children.
-//		setsid();
-
+		login_tty(slave);
+		close(master); // close the un-needed master end
+		
+		// at this point, slave is used as stdin/stdout/stderr
 		// Child process
 		if(workingDirectory.IsEmpty() == false) {
 			wxSetWorkingDirectory( workingDirectory );
 		}
-//		wxPrintf(wxT("My current WD is: %s\n"), wxGetCwd().c_str());
-
-		int stdin_file  = fileno( stdin  );
-		int stdout_file = fileno( stdout );
-		int stderr_file = fileno( stderr );
-
-		// Replace stdin/out with our pipe ends
-		dup2 ( stdin_pipe_read,  stdin_file );
-		close( stdin_pipe_write );
-
-		dup2 ( stdout_pipe_write, stdout_file);
-		dup2 ( stdout_pipe_write, stderr_file);
-		close( stdout_pipe_read );
 
 		// execute the process
 		execvp(argv[0], argv);
@@ -374,16 +356,15 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, IP
 
 	} else {
 		// Parent
-
+		close(slave);
+		
 		// restore the working directory
 		wxSetWorkingDirectory(curdir);
 
 		UnixProcessImpl *proc = new UnixProcessImpl(parent);
-		proc->SetReadHandle  (stdout_pipe_read);
-		proc->SetWriteHandler(stdin_pipe_write);
+		proc->SetReadHandle  (master);
+		proc->SetWriteHandler(master);
 
-		close ( stdin_pipe_read   );
-		close ( stdout_pipe_write );
 		proc->SetPid( rc );
 		proc->StartReaderThread();
 		return proc;

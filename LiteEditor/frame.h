@@ -103,6 +103,13 @@ public:
 	DockablePaneMenuManager *GetDockablePaneMenuManager() {
 		return m_DPmenuMgr;
 	}
+//--------------------- debuger---------------------------------
+	/**
+	 * @brief launch TTY
+	 */
+	wxString StartTTY(const wxString &title);
+
+//---------------------------------------------------------------
 
 	/**
 	 * \brief update various AUI parameters like Output Pane View caption visible and other

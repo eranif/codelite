@@ -225,7 +225,6 @@ void UnixProcessImpl::Cleanup()
 	close(GetReadHandle());
 	close(GetWriteHandle());
 
-
 	if ( m_thr ) {
 		// Stop the reader thread
 		m_thr->Stop();
@@ -234,32 +233,33 @@ void UnixProcessImpl::Cleanup()
 	}
 
 #ifdef __WXGTK__
-
-	// Kill the child process
-	if ( IsAlive() ) {
-		wxString cmd;
-		wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
-		wxFileName script(exePath.GetPath(), wxT("codelite_kill_children "));
-		cmd << wxT("/bin/sh -f ") << script.GetFullPath();
-		cmd << GetPid();
-
-		// If hard kill requested, pass -9
-		if(GetHardKill())
-			cmd << wxT(" -9");
-
-		wxExecute(cmd, wxEXEC_ASYNC);
+	if(GetPid() != wxNOT_FOUND)
+	{
+		// Kill the child process
+		if ( IsAlive() ) {
+			wxString cmd;
+			wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+			wxFileName script(exePath.GetPath(), wxT("codelite_kill_children "));
+			cmd << wxT("/bin/sh -f ") << script.GetFullPath();
+			cmd << GetPid();
+			// If hard kill requested, pass -9
+			if(GetHardKill())
+				cmd << wxT(" -9");
+			wxExecute(cmd, wxEXEC_ASYNC);
+		}
+		// Perform process cleanup
+		int status(0);
+		waitpid(GetPid(), &status, 0);
 	}
 
-	// Perform process cleanup
-	int status(0);
-	waitpid(GetPid(), &status, 0);
-
 #else
-	wxKill (GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM);
-
-	// Perform process cleanup
-	int status(0);
-	waitpid(GetPid(), &status, 0);
+	if(GetPid() != wxNOT_FOUND)
+	{
+		wxKill (GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM);
+		// Perform process cleanup
+		int status(0);
+		waitpid(GetPid(), &status, 0);
+	}
 #endif
 
 }
@@ -299,7 +299,9 @@ bool UnixProcessImpl::Read(wxString& buff)
 		}
 		// Process terminated
 		int status(0);
-		waitpid(GetPid(), &status, 0);
+		if(GetPid() != wxNOT_FOUND) {
+			waitpid(GetPid(), &status, 0);
+		}
 		m_exitCode = WEXITSTATUS(status);
 		return false;
 	}
@@ -324,16 +326,16 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, IP
 
 	// fork the child process
 	wxString curdir = wxGetCwd();
-	
+
 	// Prentend that we are a terminal...
 	int master, slave;
 	openpty(&master, &slave, NULL, NULL, NULL);
-	
+
 	int rc = fork();
 	if ( rc == 0 ) {
 		login_tty(slave);
 		close(master); // close the un-needed master end
-		
+
 		// at this point, slave is used as stdin/stdout/stderr
 		// Child process
 		if(workingDirectory.IsEmpty() == false) {
@@ -357,7 +359,7 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, IP
 	} else {
 		// Parent
 		close(slave);
-		
+
 		// restore the working directory
 		wxSetWorkingDirectory(curdir);
 

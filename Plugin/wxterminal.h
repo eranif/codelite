@@ -29,24 +29,21 @@ public:
 class wxTerminal : public wxTerminalBase
 {
 protected:
-	wxTerminalHistory   m_history;
-	int                 m_commandStart;
 	IProcess*           m_process;
-	int                 m_inferiorEnd;
 	wxString            m_workingDir;
 	wxTextAttr          m_defaultStyle;
 	wxTextAttr          m_promptStyle;
 	bool                m_exitWhenProcessDies;
 	bool                m_exitOnKey;
-	wxString            m_promptFormat;
+
+#if defined(__WXGTK__)||defined(__WXMAC__)
+	wxString             m_tty;
+	IProcess *           m_dummyProcess;
+	int                  m_slave;
+#endif
 
 protected:
-	wxString DoGetLastLine();
 	void     DoProcessCommand(const wxString &command);
-	void     DoInsertLine(const wxString& value);
-	void     DoWritePrompt();
-	bool     CheckForCD( const wxString &command, wxString &path );
-	void     DoFixSelection();
 	void     DoCtrlC();
 
 protected:
@@ -62,15 +59,17 @@ protected:
 public:
 	/** Constructor */
 	wxTerminal( wxWindow* parent );
+	virtual ~wxTerminal();
 
-	// API
-	void     Execute             (const wxString &command, bool exitWhenDone = false);
-	void     KillInferior        ();
-	void     SetReadOnly         (bool readOnly);
-	void     SetWorkingDirectory (const wxString &workingDirectory);
-	bool     IsRunning           ();
-	void     Clear               ();
-	void     SetPromptFormat     (const wxString &promptFormat);
+	void      Execute     (const wxString &command, bool exitWhenDone = false, const wxString &workingDir = wxT(""));
+	void      KillInferior();
+	bool      IsRunning   ();
+	void      Clear();
+#if defined(__WXGTK__)||defined(__WXMAC__)
+	wxString  StartTTY();
+	wxString  GetTTY() const { return m_tty; }
+	void      StopTTY();
+#endif
 };
 
 #endif // __wxterminal__

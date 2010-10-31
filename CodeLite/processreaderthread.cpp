@@ -54,7 +54,6 @@ void* ProcessReaderThread::Entry()
 			wxString buff;
 			if(m_process->Read( buff )) {
 				if( buff.IsEmpty() == false ) {
-
 					// we got some data, send event to parent
 					wxCommandEvent e(wxEVT_PROC_DATA_READ);
 					ProcessEventData *ed = new ProcessEventData();
@@ -84,7 +83,9 @@ void* ProcessReaderThread::Entry()
 #if defined(__WXGTK__)||defined(__WXMAC__)
 				// Perform process cleanup
 				int status(0);
-				waitpid(m_process->GetPid(), &status, 0);
+				if(m_process->GetPid() != wxNOT_FOUND) {
+					waitpid(m_process->GetPid(), &status, 0);
+				}
 #endif
 				break;
 			}

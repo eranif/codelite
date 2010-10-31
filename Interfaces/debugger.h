@@ -559,7 +559,7 @@ public:
 	 * \param cmds list of commands that will be passed to the debugger at startup
 	 * \return true on success, false otherwise
 	 */
-	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds) = 0;
+	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString &ttyName) = 0;
 
 	/**
 	 * \brief start the debugger. this method is for convinience and uses the default debugger path
@@ -569,7 +569,7 @@ public:
 	 * \param cmds list of commands that will be passed to the debugger at startup
 	 * \return true on success, false otherwise
 	 */
-	virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds) = 0;
+	virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString &ttyName) = 0;
 
 	/**
 	 * \brief use this method when attempting to attach a running process
@@ -578,9 +578,10 @@ public:
 	  * \param pid the running instance process ID
 	 * \param bpList list of breakpoints to set
 	 * \param cmds list of commands that will be passed to the debugger at startup
+	 * \param ttyName [Gtk/Mac] provide a tty for redireting all inferior output 
 	 * \return
 	 */
-	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds) = 0;
+	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString &ttyName) = 0;
 
 	/**
 	 * \brief Run the program under the debugger. This method must be called *after* Start() has been called
@@ -750,7 +751,7 @@ public:
 	 * this method does not produce any output
 	 */
 	virtual void AssignValue(const wxString &expression, const wxString &newValue) = 0;
-	
+
 	// ----------------------------------------------------------------------------------------
 	// Variable object manipulation (GDB only)
 	// If you wish to implement a debugger other than
@@ -766,7 +767,7 @@ public:
 	/**
 	 * @brief create variable object from a given expression
 	 * @param expression the expression to create a variable object for
-	 * @param persistent make a presistent watch, else create a floating watch which is not bound to the creation frame 
+	 * @param persistent make a presistent watch, else create a floating watch which is not bound to the creation frame
 	 */
 	virtual bool CreateVariableObject(const wxString &expression, bool persistent, int userReason) = 0;
 

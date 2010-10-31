@@ -228,6 +228,11 @@ enum {
 	// clientData is NULL
 	wxEVT_DEBUG_ENDED,
 
+	// set when the editor gains or loses
+	// the control over the debugger
+	wxEVT_DEBUG_EDITOR_LOST_CONTROL,
+	wxEVT_DEBUG_EDITOR_GOT_CONTROL,
+	
 	/**
 	 ** Build events (additional)
 	 **/

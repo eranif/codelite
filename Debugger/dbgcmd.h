@@ -409,8 +409,8 @@ class DbgVarObjUpdate : public DbgCmdHandler
 public:
 	DbgVarObjUpdate(IDebuggerObserver *observer, DbgGdb *debugger, const wxString &name, int userReason)
 			: DbgCmdHandler  (observer)
-			, m_debugger(debugger)
 			, m_variableName(name)
+			, m_debugger(debugger)
 			, m_userReason(userReason)
 			{}
 

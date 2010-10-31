@@ -31,12 +31,14 @@
 #include "processreaderthread.h"
 #include "codelite_exports.h"
 
+class wxTerminal;
 class WXDLLIMPEXP_CL UnixProcessImpl : public IProcess
 {
 	int                  m_readHandle;
 	int                  m_writeHandle;
 	ProcessReaderThread *m_thr;
 
+	friend class wxTerminal;
 private:
 	void StartReaderThread();
 

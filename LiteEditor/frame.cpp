@@ -31,6 +31,7 @@
 #include "tags_parser_search_path_dlg.h"
 #include "includepathlocator.h"
 #include "localstable.h"
+#include "console_frame.h"
 #include "outputviewcontrolbar.h"
 #include "clauidockart.h"
 
@@ -3517,8 +3518,18 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
 				// plugin stopped debugging
 				return;
 
+			wxString tty;
+#ifndef __WXMSW__
+			wxString title;
+			title << wxT("Debugging: ") << exepath << wxT(" ") << dlg->GetArguments();
+			tty = StartTTY(title);
+			if(tty.IsEmpty()) {
+				wxMessageBox(wxT("Could not start TTY console for debugger!"), wxT("codelite"), wxOK|wxCENTER|wxICON_ERROR);
+			}
+#endif
+
 			dbgr->SetIsRemoteDebugging(false);
-			dbgr->Start(dbgname, exepath, wd, bpList, cmds);
+			dbgr->Start(dbgname, exepath, wd, bpList, cmds, tty);
 
 			// notify plugins that the debugger just started
 			SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);
@@ -4120,3 +4131,10 @@ void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)
 	event.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress());
 }
 
+wxString clMainFrame::StartTTY(const wxString &title)
+{
+	ConsoleFrame *console = new ConsoleFrame(this);
+	console->SetTitle(title);
+	console->Show();
+	return console->StartTTY();
+}

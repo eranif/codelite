@@ -1854,18 +1854,18 @@ void Manager::DoUpdateDebuggerTabControl(wxAuiTabCtrl* tabControl)
 {
 	//Update the debugger pane
 	DebuggerPane *pane = clMainFrame::Get()->GetDebuggerPane();
-	
+
 	wxWindow* curpage = NULL;
 	int activePageId = tabControl->GetActivePage();
-	
+
 	// sanity
 	if(activePageId == wxNOT_FOUND)
 		return;
-	
+
 	// make sure that the debugger pane is visible
 	if(!IsPaneVisible ( wxT ( "Debugger" ) ))
 		return;
-	
+
 	curpage = tabControl->GetPage((size_t)activePageId).window;
 	if ( curpage == ( wxWindow* ) pane->GetBreakpointView() || IsPaneVisible ( DebuggerPane::BREAKPOINTS) ) {
 		pane->GetBreakpointView()->Initialize();
@@ -1873,7 +1873,7 @@ void Manager::DoUpdateDebuggerTabControl(wxAuiTabCtrl* tabControl)
 
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
-		
+
 		//--------------------------------------------------------------------
 		// Lookup the selected tab in the debugger notebook and update it
 		// once this is done, we need to go through the list of detached panes
@@ -2097,12 +2097,15 @@ void Manager::DbgStart ( long pid )
 		// plugin stopped debugging
 		return;
 
+	wxString title;
+	title << wxT("Debugging: ") << exepath << wxT(" ") << args;
+
 	// read
 	wxArrayString dbg_cmds;
 	if ( pid == wxNOT_FOUND ) {
 		//it is now OK to start the debugger...
 		dbg_cmds = wxStringTokenize ( bldConf->GetDebuggerStartupCmds(), wxT ( "\n" ), wxTOKEN_STRTOK );
-		if ( !dbgr->Start ( dbgname, exepath, wd, bps, dbg_cmds ) ) {
+		if ( !dbgr->Start ( dbgname, exepath, wd, bps, dbg_cmds, clMainFrame::Get()->StartTTY(title) ) ) {
 			wxString errMsg;
 			errMsg << _ ( "Failed to initialize debugger: " ) << dbgname << _ ( "\n" );
 			DebugMessage ( errMsg );
@@ -2110,7 +2113,7 @@ void Manager::DbgStart ( long pid )
 		}
 	} else {
 		//Attach to process...
-		if ( !dbgr->Start ( dbgname, exepath, PID, bps, dbg_cmds ) ) {
+		if ( !dbgr->Start ( dbgname, exepath, PID, bps, dbg_cmds, clMainFrame::Get()->StartTTY(title) ) ) {
 			wxString errMsg;
 			errMsg << _ ( "Failed to initialize debugger: " ) << dbgname << _ ( "\n" );
 			DebugMessage ( errMsg );
@@ -2221,6 +2224,8 @@ void Manager::DbgStop()
 
 	m_dbgCurrentFrameInfo.Clear();
 	if ( !dbgr->IsRunning() ) {
+		// notify plugins that the debugger stopped
+		SendCmdEvent(wxEVT_DEBUG_ENDED);
 		return;
 	}
 
@@ -2360,6 +2365,8 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 	clMainFrame::Get()->Raise();
 	m_dbgCanInteract = true;
 
+	SendCmdEvent(wxEVT_DEBUG_EDITOR_GOT_CONTROL);
+
 	//query the current line and file
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 
@@ -2468,6 +2475,8 @@ void Manager::UpdateLostControl()
 	// Reset the debugger call-stack pane
 	clMainFrame::Get()->GetDebuggerPane()->GetFrameListView()->Clear();
 	clMainFrame::Get()->GetDebuggerPane()->GetFrameListView()->SetCurrentLevel(0);
+
+	SendCmdEvent(wxEVT_DEBUG_EDITOR_LOST_CONTROL);
 }
 
 void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name)

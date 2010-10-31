@@ -187,7 +187,12 @@ void DbgGdb::EmptyQueue()
 	m_handlers.clear();
 }
 
-bool DbgGdb::Start( const wxString &debuggerPath, const wxString & exeName, int pid, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds )
+bool DbgGdb::Start( const wxString &debuggerPath,
+                    const wxString & exeName,
+					int pid,
+					const std::vector<BreakpointInfo> &bpList,
+					const wxArrayString &cmds,
+					const wxString &ttyName)
 {
 	wxString dbgExeName;
 	if ( ! DoLocateGdbExecutable( debuggerPath, dbgExeName ) ) {
@@ -197,14 +202,7 @@ bool DbgGdb::Start( const wxString &debuggerPath, const wxString & exeName, int 
 	wxString cmd;
 
 #if defined (__WXGTK__) || defined (__WXMAC__)
-	//On GTK and other platforms, open a new terminal and direct all
-	//debugee process into it
-	wxString ptyName;
-	if ( !m_consoleFinder.FindConsole( wxT( "CodeLite: gdb" ), ptyName ) ) {
-		wxLogMessage( wxT( "Failed to allocate console for debugger" ) );
-		return false;
-	}
-	cmd << dbgExeName << wxT( " --tty=" ) << ptyName << wxT( " --interpreter=mi " );
+	cmd << dbgExeName << wxT( " --tty=" ) << ttyName << wxT( " --interpreter=mi " );
 #else
 	cmd << dbgExeName << wxT( " --interpreter=mi " );
 	cmd << ProcUtils::GetProcessNameByPid( pid ) << wxT( " " );
@@ -232,7 +230,12 @@ bool DbgGdb::Start( const wxString &debuggerPath, const wxString & exeName, int 
 	return true;
 }
 
-bool DbgGdb::Start( const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds )
+bool DbgGdb::Start( const wxString &debuggerPath,
+					const wxString &exeName,
+					const wxString &cwd,
+					const std::vector<BreakpointInfo> &bpList,
+					const wxArrayString &cmds,
+					const wxString &ttyName)
 {
 
 	wxString dbgExeName;
@@ -242,14 +245,7 @@ bool DbgGdb::Start( const wxString &debuggerPath, const wxString &exeName, const
 
 	wxString cmd;
 #if defined (__WXGTK__) || defined (__WXMAC__)
-	//On GTK and other platforms, open a new terminal and direct all
-	//debugee process into it
-	wxString ptyName;
-	if ( !m_consoleFinder.FindConsole( exeName, ptyName ) ) {
-		wxLogMessage( wxT( "Failed to allocate console for debugger, do u have Xterm installed?" ) );
-		return false;
-	}
-	cmd << dbgExeName << wxT( " --tty=" ) << ptyName << wxT( " --interpreter=mi " ) << exeName;
+	cmd << dbgExeName << wxT( " --tty=" ) << ttyName << wxT( " --interpreter=mi " ) << exeName;
 #else
 	cmd << dbgExeName << wxT( " --interpreter=mi " ) << exeName;
 #endif
@@ -288,9 +284,9 @@ bool DbgGdb::WriteCommand( const wxString &command, DbgCmdHandler *handler )
 	return true;
 }
 
-bool DbgGdb::Start( const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds )
+bool DbgGdb::Start( const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString& ttyName )
 {
-	return Start( wxT( "gdb" ), exeName, cwd, bpList, cmds );
+	return Start( wxT( "gdb" ), exeName, cwd, bpList, cmds, ttyName );
 }
 
 bool DbgGdb::Run( const wxString &args, const wxString &comm )
@@ -302,7 +298,7 @@ bool DbgGdb::Run( const wxString &args, const wxString &comm )
 		setArgsCommands << wxT("-exec-arguments ") << args;
 		if(!WriteCommand(setArgsCommands, NULL))
 			return false;
-		
+
 		return WriteCommand( wxT( "-exec-run " ), new DbgCmdHandlerAsyncCmd( m_observer, this ) );
 
 	} else {
@@ -761,7 +757,7 @@ void DbgGdb::DoProcessAsyncCommand( wxString &line, wxString &id )
 		// print the error message and remove the command from the queue
 		DbgCmdHandler *handler = PopHandler( id );
 		bool errorProcessed (false);
-		
+
 		if ( handler && handler->WantsErrors() ) {
 			errorProcessed = handler->ProcessOutput( line );
 		}
@@ -771,12 +767,12 @@ void DbgGdb::DoProcessAsyncCommand( wxString &line, wxString &id )
 		}
 
 		StripString( line );
-		
+
 		//We also need to pass the control back to the program
 		if (!errorProcessed) {
 			m_observer->UpdateGotControl( DBG_CMD_ERROR );
 		}
-		
+
 		if ( !FilterMessage( line ) && m_info.enableDebugLog ) {
 			m_observer->UpdateAddLine( line );
 		}
@@ -1120,7 +1116,7 @@ bool DbgGdb::CreateVariableObject(const wxString &expression, bool persistent, i
 {
 	wxString cmd;
 	cmd << wxT( "-var-create - ");
-	
+
 	if(persistent) {
 		cmd << wxT("* ");
 	} else {

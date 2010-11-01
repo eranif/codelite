@@ -8,6 +8,7 @@
 #include <wx/app.h>
 #include "console_frame.h"
 #include "plugin.h"
+#include "windowattrmanager.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -27,6 +28,8 @@ ConsoleFrame::ConsoleFrame( wxWindow* parent, wxWindowID id, const wxString& tit
 
 	this->Centre( wxBOTH );
 
+	WindowAttrManager::Load(this, wxT("console_frame"), NULL);
+
 	// Connect Events
 	this->Connect( wxEVT_CLOSE_WINDOW,                 wxCloseEventHandler( ConsoleFrame::OnClose ) );
 	wxTheApp->Connect(wxEVT_DEBUG_ENDED,               wxCommandEventHandler(ConsoleFrame::OnDebuggerEnded), NULL, this);
@@ -41,6 +44,8 @@ ConsoleFrame::~ConsoleFrame()
 	wxTheApp->Disconnect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(ConsoleFrame::OnDebuggerEnded), NULL, this);
 	wxTheApp->Disconnect(wxEVT_DEBUG_EDITOR_GOT_CONTROL,  wxCommandEventHandler(ConsoleFrame::OnEditorGotControl), NULL, this);
 	wxTheApp->Disconnect(wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEventHandler(ConsoleFrame::OnEditorLostControl), NULL, this);
+	WindowAttrManager::Save(this, wxT("console_frame"), NULL);
+
 }
 
 wxString ConsoleFrame::StartTTY()

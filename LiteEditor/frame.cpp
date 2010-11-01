@@ -4133,8 +4133,12 @@ void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)
 
 wxString clMainFrame::StartTTY(const wxString &title)
 {
+#ifndef __WXMSW__
 	ConsoleFrame *console = new ConsoleFrame(this);
 	console->SetTitle(title);
 	console->Show();
 	return console->StartTTY();
+#else
+	return wxT("");
+#endif
 }

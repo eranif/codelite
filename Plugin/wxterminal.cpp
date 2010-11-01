@@ -50,7 +50,6 @@ wxTerminal::wxTerminal( wxWindow* parent )
 #if defined(__WXMAC__) || defined(__WXGTK__)
 	, m_dummyProcess(NULL)
 #endif
-
 {
 	m_defaultStyle.SetFont( m_textCtrl->GetFont() );
 	m_defaultStyle.SetTextColour( wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT)  );
@@ -82,6 +81,7 @@ void wxTerminal::OnURL( wxTextUrlEvent& event )
 
 void wxTerminal::OnKey(wxKeyEvent& event)
 {
+#ifndef __WXMSW__
 	if(m_dummyProcess) {
 		switch(event.GetKeyCode()) {
 		case WXK_NUMPAD_ENTER:
@@ -94,6 +94,7 @@ void wxTerminal::OnKey(wxKeyEvent& event)
 		}
 		}
 	}
+#endif
 	event.Skip();
 }
 

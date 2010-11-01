@@ -57,11 +57,14 @@ void SvnDiffHandler::Process(const wxString& output)
 	if(GetPlugin()->GetSettings().GetFlags() & SvnUseExternalDiff)
 		return;
 
+	wxString compactMsg (output);
+	compactMsg.Replace(wxT("\r"), wxT(""));
+
 	IEditor *editor = GetPlugin()->GetManager()->NewEditor();
 	if(editor) {
 		// Set the lexer name to 'Diff'
 		editor->SetLexerName(wxT("Diff"));
-		editor->AppendText(output);
+		editor->AppendText(compactMsg);
 	}
 }
 

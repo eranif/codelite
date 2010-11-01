@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Debuggers Version="2.7.0">
+<Debuggers Version="2.8.0">
   <ArchiveObject Name="GNU gdb debugger">
     <wxString Value="GNU gdb debugger" Name="name"/>
     <wxString Value="" Name="path"/>
@@ -23,7 +23,7 @@
     <SerializedObject Name="PreDefinedSet0">
       <wxString Value="Default" Name="m_name"/>
       <bool Value="1" Name="m_active"/>
-      <long Value="6" Name="size"/>
+      <long Value="4" Name="size"/>
       <SerializedObject Name="DebuggerCmd0">
         <wxString Value="std::string" Name="m_name"/>
         <wxString Value="$(Variable)._M_dataplus._M_p" Name="m_command"/>
@@ -44,21 +44,11 @@
         <wxString Value="$(Variable)._M_dataplus._M_p" Name="m_command"/>
         <wxString Value="print" Name="m_dbgCommand"/>
       </SerializedObject>
-      <SerializedObject Name="DebuggerCmd4">
-        <wxString Value="std::vector" Name="m_name"/>
-        <wxString Value="*($(Variable)._M_impl._M_start)@$(Variable).size()" Name="m_command"/>
-        <wxString Value="print" Name="m_dbgCommand"/>
-      </SerializedObject>
-      <SerializedObject Name="DebuggerCmd5">
-        <wxString Value="wxArrayString" Name="m_name"/>
-        <wxString Value="*($(Variable).m_pItems)@$(Variable).m_nCount" Name="m_command"/>
-        <wxString Value="print" Name="m_dbgCommand"/>
-      </SerializedObject>
     </SerializedObject>
     <SerializedObject Name="PreDefinedSet1">
       <wxString Value="wxWidgets-29" Name="m_name"/>
       <bool Value="0" Name="m_active"/>
-      <long Value="6" Name="size"/>
+      <long Value="4" Name="size"/>
       <SerializedObject Name="DebuggerCmd0">
         <wxString Value="std::string" Name="m_name"/>
         <wxString Value="$(Variable)._M_dataplus._M_p" Name="m_command"/>
@@ -77,16 +67,6 @@
       <SerializedObject Name="DebuggerCmd3">
         <wxString Value="std::wstring" Name="m_name"/>
         <wxString Value="$(Variable)._M_dataplus._M_p" Name="m_command"/>
-        <wxString Value="print" Name="m_dbgCommand"/>
-      </SerializedObject>
-      <SerializedObject Name="DebuggerCmd4">
-        <wxString Value="std::vector" Name="m_name"/>
-        <wxString Value="*($(Variable)._M_impl._M_start)@$(Variable).size()" Name="m_command"/>
-        <wxString Value="print" Name="m_dbgCommand"/>
-      </SerializedObject>
-      <SerializedObject Name="DebuggerCmd5">
-        <wxString Value="wxArrayString" Name="m_name"/>
-        <wxString Value="*($(Variable).m_pItems)@$(Variable).m_nCount" Name="m_command"/>
         <wxString Value="print" Name="m_dbgCommand"/>
       </SerializedObject>
     </SerializedObject>

@@ -117,7 +117,10 @@ void wxTerminal::OnReadProcessOutput(wxCommandEvent& event)
 {
 	ProcessEventData *ped = (ProcessEventData *)event.GetClientData();
 	m_textCtrl->SetInsertionPointEnd();
-	m_textCtrl->AppendText(ped->GetData());
+	
+	wxString s;
+	s = ped->GetData();
+	m_textCtrl->AppendText(s);
 	m_textCtrl->SetSelection(m_textCtrl->GetLastPosition(), m_textCtrl->GetLastPosition());
 	delete ped;
 }
@@ -210,7 +213,8 @@ wxString wxTerminal::StartTTY()
 		return wxT("");
 
 	// disable ECHO
-	struct termios termio;	tcgetattr(master, &termio);	termio.c_lflag = ICANON;	tcsetattr(master, TCSANOW, &termio);
+	struct termios termio;	tcgetattr(master, &termio);	termio.c_lflag = ICANON;
+	termio.c_oflag = ONOCR | ONLRET;	tcsetattr(master, TCSANOW, &termio);
 
 	m_tty = wxString(__name, wxConvUTF8);
 

@@ -12,8 +12,10 @@
 
 //-------------------------------------------------------------
 BEGIN_EVENT_TABLE(SvnConsole, SvnShellBase)
-	EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  SvnConsole::OnReadProcessOutput)
-	EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, SvnConsole::OnProcessEnd       )
+	EVT_COMMAND      (wxID_ANY, wxEVT_PROC_DATA_READ,  SvnConsole::OnReadProcessOutput)
+	EVT_COMMAND      (wxID_ANY, wxEVT_PROC_TERMINATED, SvnConsole::OnProcessEnd       )
+	EVT_SCI_UPDATEUI (wxID_ANY, SvnConsole::OnUpdateUI)
+	EVT_SCI_CHARADDED(wxID_ANY, SvnConsole::OnCharAdded)
 END_EVENT_TABLE()
 
 SvnConsole::SvnConsole(wxWindow *parent, Subversion2* plugin)
@@ -22,10 +24,12 @@ SvnConsole::SvnConsole(wxWindow *parent, Subversion2* plugin)
 		, m_process(NULL)
 		, m_plugin (plugin)
 		, m_printProcessOutput(true)
+		, m_inferiorEnd(0)
 {
 	m_sci->SetLexer(wxSCI_LEX_SVN);
 	m_sci->StyleClearAll();
-
+	m_sci->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SvnConsole::OnKeyDown), NULL, this);
+	
 	for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
 		m_sci->StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 		m_sci->StyleSetForeground(i, *wxBLACK);
@@ -78,7 +82,7 @@ SvnConsole::SvnConsole(wxWindow *parent, Subversion2* plugin)
 	m_sci->StyleSetFont ( wxSCI_LEX_SVN_CONFLICT, font );
 	m_sci->StyleSetFont ( wxSCI_LEX_SVN_DELETED,  font );
 
-	m_sci->SetReadOnly(true);
+	//m_sci->SetReadOnly(true);
 }
 
 SvnConsole::~SvnConsole()
@@ -91,29 +95,19 @@ void SvnConsole::OnReadProcessOutput(wxCommandEvent& event)
 	if (ped) {
 		m_output.Append(ped->GetData().c_str());
 	}
-
+	
 	wxString s (ped->GetData());
 	s.MakeLower();
 
 	if (m_printProcessOutput)
 		AppendText( ped->GetData() );
-
-	if (s.Contains(wxT("(r)eject, accept (t)emporarily or accept (p)ermanently"))) {
-		AppendText( wxT("\n(Answering 'p')\n") );
-		m_process->Write(wxT("p"));
-
-		wxString message;
-		message << wxT(" ***********************************************\n");
-		message << wxT(" * MESSAGE:                                    *\n");
-		message << wxT(" * Terminating SVN process.                    *\n");
-		message << wxT(" * Please run cleanup from the Subversion View,*\n");
-		message << wxT(" * And re-try again                            *\n");
-		message << wxT(" ***********************************************\n");
-
-		wxThread::Sleep(100);
-		AppendText( message );
-		m_process->Terminate();
-
+	
+	if(s.Contains(wxT("password for"))) {
+		m_output.Clear();
+		wxString pass = wxGetPasswordFromUser(ped->GetData(), wxT("Subversion"));
+		if(!pass.IsEmpty() && m_process) {
+			m_process->Write(pass);
+		}
 	}
 	delete ped;
 }
@@ -129,32 +123,15 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 	}
 
 	if (m_handler) {
-
-		if (m_handler->TestLoginRequired(m_output)) {
-			// re-issue the last command but this time with login dialog
-			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Authentication failed. Retrying...\n"));
-
-			// If we got a URL use it
-			if(m_url.IsEmpty() == false)
-				m_handler->ProcessLoginRequiredForURL(m_url);
-			else
-				m_handler->ProcessLoginRequired(m_workingDirectory);
-
-		} else if (m_handler->TestVerificationFailed(m_output)) {
-			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Server certificate verification failed. Retrying...\n"));
-			m_handler->ProcessVerificationRequired();
-
-		} else {
-			// command ended successfully, invoke the "success" callback
-			m_handler->Process(m_output);
-			AppendText(wxT("-----\n"));
-		}
-
-
+		// command ended successfully, invoke the "success" callback
+		m_handler->Process(m_output);
+		AppendText(wxT("-----\n"));
+		
 		delete m_handler;
 		m_handler = NULL;
 	}
-
+	
+	m_output.Clear();
 	m_workingDirectory.Clear();
 	m_url.Clear();
 }
@@ -179,36 +156,26 @@ bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, 
 
 void SvnConsole::AppendText(const wxString& text)
 {
-	m_sci->SetReadOnly(false);
+	// Make sure that the carete is at the end
 	m_sci->SetSelectionEnd(m_sci->GetLength());
 	m_sci->SetSelectionStart(m_sci->GetLength());
 	m_sci->SetCurrentPos(m_sci->GetLength());
-
-	wxString noPasswordText(text);
-
-	int where = noPasswordText.Find(wxT("--password \""));
-	if(where != wxNOT_FOUND) {
-		where += wxStrlen(wxT("--password \""));
-		wxString password = noPasswordText.Mid(where);
-		password = password.BeforeFirst(wxT('"'));
-
-		noPasswordText.Replace(password, wxT("******"));
-	}
-
-	m_sci->AppendText(noPasswordText);
-
+	
+	// Append the text
+	m_sci->AppendText(text);
+	
 	m_sci->SetSelectionEnd(m_sci->GetLength());
 	m_sci->SetSelectionStart(m_sci->GetLength());
 	m_sci->SetCurrentPos(m_sci->GetLength());
+	
 	m_sci->EnsureCaretVisible();
-	m_sci->SetReadOnly(true);
+	m_inferiorEnd = m_sci->GetLength();
 }
 
 void SvnConsole::Clear()
 {
-	m_sci->SetReadOnly(false);
 	m_sci->ClearAll();
-	m_sci->SetReadOnly(true);
+	m_inferiorEnd = 0;
 }
 
 void SvnConsole::Stop()
@@ -288,4 +255,43 @@ bool SvnConsole::DoExecute(const wxString& cmd, SvnCommandHandler* handler, cons
 		return false;
 	}
 	return true;
+}
+
+void SvnConsole::OnCharAdded(wxScintillaEvent& event)
+{
+	if(event.GetKey() == '\n') {
+		// an enter was inserted
+		// take the last inserted line and send it to the m_process
+		wxString line = m_sci->GetTextRange(m_inferiorEnd, m_sci->GetLength());
+		line.Trim();
+		
+		if(m_process) {
+			m_process->Write(line);
+		}
+	}
+	event.Skip();
+}
+
+void SvnConsole::OnUpdateUI(wxScintillaEvent& event)
+{
+	if(m_sci->GetCurrentPos() < m_inferiorEnd) {
+		m_sci->SetCurrentPos(m_inferiorEnd);
+		m_sci->SetSelectionStart(m_inferiorEnd);
+		m_sci->SetSelectionEnd(m_inferiorEnd);
+		m_sci->EnsureCaretVisible();
+	}
+	event.Skip();
+}
+
+void SvnConsole::OnKeyDown(wxKeyEvent& event)
+{
+	switch(event.GetKeyCode()) {
+	case WXK_DELETE:
+	case WXK_NUMPAD_DELETE:
+	case WXK_BACK:
+		if(m_sci->GetCurrentPos() < m_inferiorEnd) {
+			return;
+		}
+	}
+	event.Skip();
 }

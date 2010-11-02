@@ -41,11 +41,15 @@ class SvnConsole : public SvnShellBase
 	bool               m_printProcessOutput;
 	wxString           m_workingDirectory;
 	wxString           m_url;
-
+	int                m_inferiorEnd;
+	
 protected:
 	DECLARE_EVENT_TABLE()
 	virtual void OnReadProcessOutput(wxCommandEvent& event);
 	virtual void OnProcessEnd       (wxCommandEvent& event);
+	virtual void OnCharAdded        (wxScintillaEvent& event);
+	virtual void OnUpdateUI         (wxScintillaEvent& event);
+	virtual void OnKeyDown          (wxKeyEvent &event);
 	
 	bool DoExecute(const wxString &cmd, SvnCommandHandler *handler, const wxString &workingDirectory, bool printProcessOutput);
 public:

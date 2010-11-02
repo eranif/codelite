@@ -391,14 +391,14 @@ wxString Subversion2::GetSvnExeName(bool nonInteractive)
 		executeable << ssd.GetExecutable() << wxT(" ");
 	}
 
-	if(nonInteractive)
-		executeable << wxT(" --non-interactive ");
+//	if(nonInteractive)
+//		executeable << wxT(" --non-interactive ");
 
 	// --trust-server-cert was introduced in version >=1.6
 	// but it also requires --non-interactive mode enabled
-	if(GetSvnClientVersion() >= 1.6 && nonInteractive) {
-		executeable << wxT(" --trust-server-cert ");
-	}
+//	if(GetSvnClientVersion() >= 1.6 && nonInteractive) {
+//		executeable << wxT(" --trust-server-cert ");
+//	}
 
 	executeable << wxT(" --config-dir \"") << GetUserConfigDir() << wxT("\" ");
 	return executeable;
@@ -461,9 +461,9 @@ void Subversion2::RecreateLocalSvnConfigFile()
 		fp.Write(wxT("[miscellany]\n"));
 		fp.Write(wxT("global-ignores = "));
 		fp.Write(ignorePatterns);
-		fp.Write(wxT("\n\n[auth]\n"));
-		fp.Write(wxT("password-stores =\n"));
-		fp.Write(wxT("store-passwords = no\n"));
+		//fp.Write(wxT("\n\n[auth]\n"));
+		//fp.Write(wxT("password-stores =\n"));
+		//fp.Write(wxT("store-passwords = no\n"));
 		fp.Write(wxT("\n"));
 		fp.Write(wxT("[helpers]\n"));
 
@@ -530,47 +530,47 @@ bool Subversion2::GetNonInteractiveMode(wxCommandEvent& event)
 bool Subversion2::LoginIfNeeded(wxCommandEvent& event, const wxString &workingDirectory, wxString& loginString)
 {
 	RecreateLocalSvnConfigFile();
-
-	SvnInfo  svnInfo;
-	wxString repoUrl;
-
-	if(event.GetInt() == LOGIN_REQUIRES_URL) {
-		repoUrl = event.GetString();
-
-	} else {
-		DoGetSvnInfoSync( svnInfo, workingDirectory );
-		repoUrl = svnInfo.m_url;
-	}
-
-	bool loginFailed = (event.GetInt() == LOGIN_REQUIRES) || (event.GetInt() == LOGIN_REQUIRES_URL);
-
-	SubversionPasswordDb db;
-	wxString user, password;
-
-	if(loginFailed) {
-		// if we got here, it means that we already tried to login with either user prompt / using the stored password
-		// to prevent an endless loop, remove the old entry from the password db
-		db.DeleteLogin(repoUrl);
-	}
-
-	if(db.GetLogin(repoUrl, user, password)) {
-		loginString << wxT(" --username ") << user << wxT(" --password \"") << password << wxT("\" ");
-		return true;
-	}
-
-	// Use the root URL as the key for the login here
-	loginString.Empty();
-	if(loginFailed) {
-		SvnLoginDialog dlg(GetManager()->GetTheApp()->GetTopWindow());
-		if (dlg.ShowModal() == wxID_OK) {
-			loginString << wxT(" --username ") << dlg.GetUsername() << wxT(" --password \"") << dlg.GetPassword() << wxT("\" ");
-			// Store the user name and password
-			db.SetLogin(repoUrl, dlg.GetUsername(), dlg.GetPassword());
-			return true;
-		} else {
-			return false;
-		}
-	}
+//
+//	SvnInfo  svnInfo;
+//	wxString repoUrl;
+//
+//	if(event.GetInt() == LOGIN_REQUIRES_URL) {
+//		repoUrl = event.GetString();
+//
+//	} else {
+//		DoGetSvnInfoSync( svnInfo, workingDirectory );
+//		repoUrl = svnInfo.m_url;
+//	}
+//
+//	bool loginFailed = (event.GetInt() == LOGIN_REQUIRES) || (event.GetInt() == LOGIN_REQUIRES_URL);
+//
+//	SubversionPasswordDb db;
+//	wxString user, password;
+//
+//	if(loginFailed) {
+//		// if we got here, it means that we already tried to login with either user prompt / using the stored password
+//		// to prevent an endless loop, remove the old entry from the password db
+//		db.DeleteLogin(repoUrl);
+//	}
+//
+//	if(db.GetLogin(repoUrl, user, password)) {
+//		loginString << wxT(" --username ") << user << wxT(" --password \"") << password << wxT("\" ");
+//		return true;
+//	}
+//
+//	// Use the root URL as the key for the login here
+//	loginString.Empty();
+//	if(loginFailed) {
+//		SvnLoginDialog dlg(GetManager()->GetTheApp()->GetTopWindow());
+//		if (dlg.ShowModal() == wxID_OK) {
+//			loginString << wxT(" --username ") << dlg.GetUsername() << wxT(" --password \"") << dlg.GetPassword() << wxT("\" ");
+//			// Store the user name and password
+//			db.SetLogin(repoUrl, dlg.GetUsername(), dlg.GetPassword());
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
 	return true;
 }
 

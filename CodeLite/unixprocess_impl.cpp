@@ -359,7 +359,11 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, IP
 	} else {
 		// Parent
 		close(slave);
-
+		
+		// disable ECHO
+		struct termios termio;		tcgetattr(master, &termio);		termio.c_lflag = ICANON;
+		termio.c_oflag = ONOCR | ONLRET;		tcsetattr(master, TCSANOW, &termio);
+		
 		// restore the working directory
 		wxSetWorkingDirectory(curdir);
 

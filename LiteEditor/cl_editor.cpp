@@ -1807,7 +1807,10 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 	if ( StringFindReplacer::Search(GetText(), offset, findWhat, flags, pos, match_len) ) {
 
 		int line = LineFromPosition(pos);
-		if ( line >= 0 ) EnsureVisible(line);
+		if ( line >= 0 ) {
+			EnsureVisible(line);
+			EnsureCaretVisible();
+		}
 		if ( flags & wxSD_SEARCH_BACKWARD ) {
 			SetSelection(pos + match_len, pos);
 		} else {

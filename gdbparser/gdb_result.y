@@ -128,7 +128,13 @@ change_set:    list_open child_attributes list_close
 
 /* {nr_rows="3",nr_cols="6",hdr=[{width="7",alignment="-1",col_name="number",colhdr="Num"},{width="14",alignment="-1",col_name="type",colhdr="Type"},{width="4",alignment="-1",col_name="disp",colhdr="Disp"},{width="3",alignment="-1",col_name="enabled",colhdr="Enb"},{width="10",alignment="-1",col_name="addr",colhdr="Address"},{width="40",alignment="2",col_name="what",colhdr="What"}*/
 bpt_table_hdr : GDB_NR_ROWS '=' GDB_STRING ',' GDB_NR_COLS '=' GDB_STRING ',' GDB_HDR '=' list_open bpt_hdr_table_description list_close
+			  | GDB_HDR '=' list_open comma_separated_strings list_close
 			  ;
+
+comma_separated_strings: GDB_STRING
+						| GDB_STRING ',' comma_separated_strings
+						;
+
 /** breakpoint related
  */
 bpt_hdr_table_description : list_open bpt_table_description_attr list_close
@@ -141,6 +147,7 @@ bpt_table_description_attr  : GDB_IDENTIFIER '=' GDB_STRING
 
 /* body=[bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="0x77c35571",at="<msvcrt!_assert+11>",times="0",original-location="assert"},bkpt={number="2",type="breakpoint",disp="keep",enabled="y",addr="0x004014d4",func="main",file="C:/TestArea/WxConsole/consoleproj.cpp",fullname="C:/TestArea/WxConsole/consoleproj.cpp",line="63",times="0",original-location="main"},bkpt={number="3",type="breakpoint",disp="keep",enabled="y",addr="0x004014bb",func="main",file="C:/TestArea/WxConsole/consoleproj.cpp",fullname="C:/TestArea/WxConsole/consoleproj.cpp",line="61",times="1",original-location="*4199611"}]*/
 bpt_table_body : ',' GDB_BODY '=' list_open breakpoints list_close
+			   | ',' breakpoints
 			   ;
 
 breakpoints : GDB_BKPT '=' list_open child_attributes list_close { sg_children.push_back( sg_attributes ); sg_attributes.clear();}

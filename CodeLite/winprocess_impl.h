@@ -39,10 +39,12 @@ class WXDLLIMPEXP_CL WinProcessImpl : public IProcess
 	ProcessReaderThread *m_thr;
 	HANDLE               m_hRead;
 	char                 m_buffer[65537];
+	IProcessCreateFlags  m_flags;
 
 protected:
 	void StartReaderThread();
 	bool DoReadFromPipe(HANDLE pipe, wxString &buff);
+	bool DoReadFromConsoleBuffer(HANDLE handle, wxString &buff);
 
 public:
 	WinProcessImpl(wxEvtHandler *parent);
@@ -62,21 +64,25 @@ public:
 	// Write to the process stdin
 	virtual bool Write(const wxString& buff);
 
+	virtual bool WriteToConsole(const wxString& buff);
+
 	// Return true if the process is still alive
 	virtual bool IsAlive();
 
 	// Clean the process resources and kill the process if it is
 	// still alive
 	virtual void Cleanup();
-
 	virtual void Terminate();
+
+protected:
+	bool RedirectHandle(DWORD id, SECURITY_ATTRIBUTES &saAttr, HANDLE& hSavedHandle, HANDLE& hChildRd, HANDLE& hChildRdDup, HANDLE& hChildWrite, long flags);
 
 private:
 	// Creating process related handles
 	HANDLE hChildStdinRd, hChildStdinWr, hChildStdinWrDup,
-	hChildStdoutRd, hChildStdoutWr, hChildStdoutRdDup,
-	hChildStderrRd, hChildStderrWr, hChildStderrRdDup,
-	hSaveStdin, hSaveStdout, hSaveStderr;
+	       hChildStdoutRd, hChildStdoutWr, hChildStdoutRdDup,
+	       hChildStderrRd, hChildStderrWr, hChildStderrRdDup,
+	       hSaveStdin, hSaveStdout, hSaveStderr;
 
 	// Child process id & information
 	DWORD dwProcessId;

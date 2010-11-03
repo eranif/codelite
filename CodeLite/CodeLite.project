@@ -167,6 +167,7 @@
     <File Name="stringaccessor.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Required="yes" PreCompiledHeader="">
@@ -286,6 +287,7 @@
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="WXMAKINGDLL_CL"/>
         <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="_WIN32_WINNT=0x0501"/>
       </Compiler>
       <Linker Options="">
         <LibraryPath Value="."/>
@@ -293,5 +295,4 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="Win_wxWidgets_29"/>
 </CodeLite_Project>

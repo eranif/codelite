@@ -378,6 +378,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="WXMAKINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_SCI"/>
+        <Preprocessor Value="_WIN32_WINNT=0x0501"/>
       </Compiler>
       <Linker Options="">
         <LibraryPath Value="."/>

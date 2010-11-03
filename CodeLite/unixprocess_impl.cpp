@@ -208,10 +208,10 @@ static void make_argv(const wxString &cmd)
 }
 
 UnixProcessImpl::UnixProcessImpl(wxEvtHandler *parent)
-		: IProcess(parent)
-		, m_readHandle  (-1)
-		, m_writeHandle (-1)
-		, m_thr         (NULL)
+	: IProcess(parent)
+	, m_readHandle  (-1)
+	, m_writeHandle (-1)
+	, m_thr         (NULL)
 {
 }
 
@@ -233,8 +233,7 @@ void UnixProcessImpl::Cleanup()
 	}
 
 #ifdef __WXGTK__
-	if(GetPid() != wxNOT_FOUND)
-	{
+	if(GetPid() != wxNOT_FOUND) {
 		// Kill the child process
 		if ( IsAlive() ) {
 			wxString cmd;
@@ -253,8 +252,7 @@ void UnixProcessImpl::Cleanup()
 	}
 
 #else
-	if(GetPid() != wxNOT_FOUND)
-	{
+	if(GetPid() != wxNOT_FOUND) {
 		wxKill (GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM);
 		// Perform process cleanup
 		int status(0);
@@ -359,11 +357,14 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, IP
 	} else {
 		// Parent
 		close(slave);
-		
+
 		// disable ECHO
-		struct termios termio;		tcgetattr(master, &termio);		termio.c_lflag = ICANON;
-		termio.c_oflag = ONOCR | ONLRET;		tcsetattr(master, TCSANOW, &termio);
-		
+		struct termios termio;
+		tcgetattr(master, &termio);
+		termio.c_lflag = ICANON;
+		termio.c_oflag = ONOCR | ONLRET;
+		tcsetattr(master, TCSANOW, &termio);
+
 		// restore the working directory
 		wxSetWorkingDirectory(curdir);
 
@@ -407,6 +408,16 @@ void UnixProcessImpl::Terminate()
 #else
 	wxKill (GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM);
 #endif
+}
+
+bool UnixProcessImpl::WriteToConsole(const wxString& buff)
+{
+	wxString tmpbuf = buff;
+	tmpbuf.Trim().Trim(false);
+
+	tmpbuf << wxT("\n");
+	int bytes = write(GetWriteHandle(), tmpbuf.mb_str(wxConvUTF8).data(), tmpbuf.Length());
+	return bytes == (int)tmpbuf.length();
 }
 
 #endif //#if defined(__WXMAC )||defined(__WXGTK__)

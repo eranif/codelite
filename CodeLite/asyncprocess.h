@@ -31,8 +31,9 @@
 #include "codelite_exports.h"
 
 enum IProcessCreateFlags {
-	IProcessCreateDefault = 0x0000000, // Default: create process with no console window
-	IProcessCreateConsole = 0x0000001  // Create with console window shown
+	IProcessCreateDefault             = 0x0000001, // Default: create process with no console window
+	IProcessCreateConsole             = 0x0000002, // Create with console window shown
+	IProcessCreateWithHiddenConsole   = 0x0000004  // Create process with a hidden console
 };
 
 /**
@@ -59,6 +60,12 @@ public:
 
 	// Write to the process stdin
 	virtual bool Write(const wxString& buff) = 0;
+
+	/**
+	 * @brief this method is mostly needed on MSW where writing a password
+	 * is done directly on the console buffer rather than its stdin
+	 */
+	virtual bool WriteToConsole(const wxString &buff) = 0;
 
 	// Return true if the process is still alive
 	virtual bool IsAlive() = 0;

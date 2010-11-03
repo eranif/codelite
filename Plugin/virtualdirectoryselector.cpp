@@ -106,7 +106,7 @@ void VirtualDirectorySelector::DoBuildTree()
 
 	BitmapLoader bmpLoader(wxT("codelite-icons.zip"));
 	images->Add( bmpLoader.LoadBitmap( wxT( "workspace/16/workspace" ) ) );//0
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "folder" ) ) );    //1
+	images->Add( bmpLoader.LoadBitmap( wxT( "workspace/16/virtual_folder" ) ) );    //1
 	images->Add( bmpLoader.LoadBitmap( wxT( "workspace/16/project" ) ) );  //2
 	m_treeCtrl->AssignImageList(images);
 

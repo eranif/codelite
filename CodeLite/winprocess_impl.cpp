@@ -29,12 +29,33 @@
 #include <wx/filefn.h>
 #include <memory>
 #include "procutils.h"
+#include "smart_ptr.h"
 
 class MyDirGuard {
 	wxString _d;
 public:
 	MyDirGuard() : _d( wxGetCwd() ){}
 	~MyDirGuard(){ wxSetWorkingDirectory(_d);}
+};
+
+class ConsoleAttacher
+{
+public:
+	bool isAttached;
+
+public:
+	ConsoleAttacher(long pid)
+	{
+		isAttached = AttachConsole(pid);
+	}
+
+	~ConsoleAttacher()
+	{
+		if(isAttached) {
+			FreeConsole();
+		}
+		isAttached = false;
+	}
 };
 
 /*static*/
@@ -56,6 +77,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
 	saAttr.bInheritHandle = TRUE;
 	saAttr.lpSecurityDescriptor = NULL;
 	WinProcessImpl *prc = new WinProcessImpl(parent);
+	prc->m_flags = flags;
 
 	// The steps for redirecting child process's STDOUT:
 	//     1. Save current STDOUT, to be restored later.
@@ -173,6 +195,11 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
 	siStartInfo.wShowWindow = flags & IProcessCreateConsole ? SW_SHOW : SW_HIDE;
 	DWORD creationFlags     = flags & IProcessCreateConsole ? CREATE_NEW_CONSOLE : CREATE_NO_WINDOW;
 
+	if(flags & IProcessCreateWithHiddenConsole) {
+		siStartInfo.wShowWindow = SW_HIDE;
+		creationFlags           = CREATE_NEW_CONSOLE;
+	}
+
 	BOOL ret = CreateProcess( NULL,
 #if wxVERSION_NUMBER < 2900
 							  (WCHAR*)cmd.GetData(),
@@ -276,7 +303,7 @@ bool WinProcessImpl::Write(const wxString& buff)
 
 	wxString tmpCmd = buff;
 	tmpCmd = tmpCmd.Trim().Trim(false);
-	tmpCmd += wxT("\n");
+	tmpCmd += wxT("\r\n");
 
 	strcpy(chBuf, tmpCmd.mb_str());
 
@@ -402,4 +429,52 @@ void WinProcessImpl::Terminate()
 	}
 }
 
+bool WinProcessImpl::WriteToConsole(const wxString& buff)
+{
+	wxString pass(buff);
+	pass.Trim().Trim(false);
+
+	// To write password, we need to attach to the child process console
+	if( !(m_flags & (IProcessCreateWithHiddenConsole | IProcessCreateConsole)) )
+		return false;
+
+	ConsoleAttacher ca(GetPid());
+	if(ca.isAttached == false)
+		return false;
+
+	HANDLE hStdIn = ::CreateFile(L"CONIN$",
+	                             GENERIC_WRITE | GENERIC_READ,
+	                             FILE_SHARE_READ | FILE_SHARE_WRITE,
+	                             NULL,
+	                             OPEN_EXISTING,
+	                             0,
+	                             0);
+	if(hStdIn == INVALID_HANDLE_VALUE) {
+		return false;
+	}
+
+	pass += wxT("\r\n");
+	SmartPtr<INPUT_RECORD> pKeyEvents(new INPUT_RECORD[pass.Len()]);
+
+	for(size_t i=0; i<pass.Len(); i++) {
+		(pKeyEvents.Get())[i].EventType                        = KEY_EVENT;
+		(pKeyEvents.Get())[i].Event.KeyEvent.bKeyDown          = TRUE;
+		(pKeyEvents.Get())[i].Event.KeyEvent.wRepeatCount      = 1;
+		(pKeyEvents.Get())[i].Event.KeyEvent.wVirtualKeyCode   = LOBYTE(::VkKeyScan(pass[i]));
+		(pKeyEvents.Get())[i].Event.KeyEvent.wVirtualScanCode  = 0;
+		(pKeyEvents.Get())[i].Event.KeyEvent.uChar.UnicodeChar = pass[i];
+		(pKeyEvents.Get())[i].Event.KeyEvent.dwControlKeyState = 0;
+	}
+
+	DWORD dwTextWritten;
+	if(::WriteConsoleInput(hStdIn,
+	                       pKeyEvents.Get(),
+	                       pass.Len(),
+	                       &dwTextWritten) == FALSE) {
+		CloseHandle(hStdIn);
+		return false;
+	}
+	CloseHandle(hStdIn);
+	return true;
+}
 #endif //__WXMSW__

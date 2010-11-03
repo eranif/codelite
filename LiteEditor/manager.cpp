@@ -2374,8 +2374,9 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 		// in case we got an error, try and clear the Locals view
 		if(reason == DBG_CMD_ERROR) {
 			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Clear();
+		} else {
+			dbgr->UpdateVariableObject(wxT("*"), DBG_USERR_LOCALS); // the reason is not really matter here
 		}
-		dbgr->UpdateVariableObject(wxT("*"), DBG_USERR_LOCALS); // the reason is not really matter here
 	}
 
 	switch ( reason ) {

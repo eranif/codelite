@@ -4137,6 +4137,12 @@ wxString clMainFrame::StartTTY(const wxString &title)
 	ConsoleFrame *console = new ConsoleFrame(this);
 	console->SetTitle(title);
 	console->Show();
+	
+	wxAuiPaneInfo paneInfo;
+	paneInfo.Name(wxT("Debugger Console")).Float().Caption(wxT("Debugger Console"));
+	m_mgr.AddPane(console, paneInfo);
+	m_mgr.Update();
+	
 	return console->StartTTY();
 #else
 	return wxT("");

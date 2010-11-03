@@ -38,6 +38,13 @@ public:
 	~MyDirGuard(){ wxSetWorkingDirectory(_d);}
 };
 
+/**
+ * @class ConsoleAttacher
+ * @date 11/03/10
+ * @brief a helper class to attach this process to a process' console
+ * this allows us to write directly into that process console-input-buffer
+ * One should check isAttached once this object is constructed
+ */
 class ConsoleAttacher
 {
 public:

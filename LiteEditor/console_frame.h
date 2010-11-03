@@ -25,20 +25,19 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class ConsoleFrame
 ///////////////////////////////////////////////////////////////////////////////
-class ConsoleFrame : public wxFrame
+class ConsoleFrame : public wxPanel
 {
 private:
 	wxTerminal *m_terminal;
 protected:
 
 	// Virtual event handlers, overide them in your derived class
-	virtual void OnClose( wxCloseEvent& event );
 	virtual void OnDebuggerEnded(wxCommandEvent &e);
 	virtual void OnEditorGotControl(wxCommandEvent &e);
 	virtual void OnEditorLostControl(wxCommandEvent &e);
 public:
 
-	ConsoleFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxFRAME_TOOL_WINDOW|wxRESIZE_BORDER|wxSTAY_ON_TOP|wxTAB_TRAVERSAL|wxFRAME_FLOAT_ON_PARENT );
+	ConsoleFrame( wxWindow* parent, wxWindowID id = wxID_ANY );
 	~ConsoleFrame();
 
 	wxString StartTTY();

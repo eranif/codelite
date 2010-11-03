@@ -9,14 +9,14 @@
 #include "console_frame.h"
 #include "plugin.h"
 #include "windowattrmanager.h"
+#include "globals.h"
+#include "frame.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
-ConsoleFrame::ConsoleFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style )
-: wxFrame( parent, id, title, pos, size, style|wxFRAME_FLOAT_ON_PARENT )
+ConsoleFrame::ConsoleFrame( wxWindow* parent, wxWindowID id )
+: wxPanel( parent, id)
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 
@@ -26,12 +26,7 @@ ConsoleFrame::ConsoleFrame( wxWindow* parent, wxWindowID id, const wxString& tit
 	this->SetSizer( bSizer1 );
 	this->Layout();
 
-	this->Centre( wxBOTH );
-
-	WindowAttrManager::Load(this, wxT("console_frame"), NULL);
-
 	// Connect Events
-	this->Connect( wxEVT_CLOSE_WINDOW,                 wxCloseEventHandler( ConsoleFrame::OnClose ) );
 	wxTheApp->Connect(wxEVT_DEBUG_ENDED,               wxCommandEventHandler(ConsoleFrame::OnDebuggerEnded), NULL, this);
 	wxTheApp->Connect(wxEVT_DEBUG_EDITOR_GOT_CONTROL,  wxCommandEventHandler(ConsoleFrame::OnEditorGotControl), NULL, this);
 	wxTheApp->Connect(wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEventHandler(ConsoleFrame::OnEditorLostControl), NULL, this);
@@ -40,12 +35,9 @@ ConsoleFrame::ConsoleFrame( wxWindow* parent, wxWindowID id, const wxString& tit
 ConsoleFrame::~ConsoleFrame()
 {
 	// Disconnect Events
-	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( ConsoleFrame::OnClose ) );
 	wxTheApp->Disconnect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(ConsoleFrame::OnDebuggerEnded), NULL, this);
 	wxTheApp->Disconnect(wxEVT_DEBUG_EDITOR_GOT_CONTROL,  wxCommandEventHandler(ConsoleFrame::OnEditorGotControl), NULL, this);
 	wxTheApp->Disconnect(wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEventHandler(ConsoleFrame::OnEditorLostControl), NULL, this);
-	WindowAttrManager::Save(this, wxT("console_frame"), NULL);
-
 }
 
 wxString ConsoleFrame::StartTTY()
@@ -58,20 +50,27 @@ wxString ConsoleFrame::StartTTY()
 #endif
 }
 
-void ConsoleFrame::OnClose(wxCloseEvent& event)
-{
-	event.Skip();
-}
-
 void ConsoleFrame::OnDebuggerEnded(wxCommandEvent& e)
 {
 #ifndef __WXMSW__
-	this->Close();
+
+	// Save the debug perspective
+	wxString debugPrespective(wxStandardPaths::Get().GetUserDataDir() + wxT("/config/debug.layout"));
+	WriteFileWithBackup(debugPrespective, clMainFrame::Get()->GetDockingManager().SavePerspective(), false);
+
+	clMainFrame::Get()->GetDockingManager().DetachPane(this);
+	Destroy();
+	clMainFrame::Get()->GetDockingManager().Update();
 #endif
+	e.Skip();
 }
 
 void ConsoleFrame::OnEditorGotControl(wxCommandEvent& e)
 {
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+	if(editor) {
+		editor->SetActive();
+	}
 	e.Skip();
 }
 

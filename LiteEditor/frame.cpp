@@ -3230,6 +3230,7 @@ void clMainFrame::OnNewDetachedPane(wxCommandEvent &e)
 
 void clMainFrame::OnDestroyDetachedPane(wxCommandEvent& e)
 {
+	wxPrintf(wxT("OnDestroyDetachedPane called\n"));
 	DockablePane *pane = (DockablePane*)(e.GetClientData());
 	if (pane) {
 		m_mgr.DetachPane(pane);
@@ -4134,17 +4135,33 @@ void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)
 wxString clMainFrame::StartTTY(const wxString &title)
 {
 #ifndef __WXMSW__
-	ConsoleFrame *console = new ConsoleFrame(this);
-	console->SetTitle(title);
-	console->Show();
-	
+
+	// try to locate the debug prespective
+	wxString content;
+	wxString debugPrespective(wxStandardPaths::Get().GetUserDataDir() + wxT("/config/debug.layout"));
+	wxFileName fn(debugPrespective);
+	if(fn.FileExists()) {
+		ReadFileWithConversion(fn.GetFullPath(), content);
+	}
+
+	// Create a new TTY Console and place it in the AUI
+	ConsoleFrame *console = new ConsoleFrame(m_mainPanel);
 	wxAuiPaneInfo paneInfo;
-	paneInfo.Name(wxT("Debugger Console")).Float().Caption(wxT("Debugger Console"));
+	paneInfo.Name(wxT("Debugger Console")).Float().Caption(title).Dockable().FloatingSize(200, 300);
 	m_mgr.AddPane(console, paneInfo);
-	m_mgr.Update();
-	
+
+	if(content.IsEmpty()) {
+		m_mgr.Update();
+
+	} else {
+		m_mgr.LoadPerspective(content);
+	}
+
 	return console->StartTTY();
+
 #else
+
 	return wxT("");
+
 #endif
 }

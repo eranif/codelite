@@ -107,6 +107,11 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	bSizer94 = new wxBoxSizer( wxVERTICAL );
 
 	m_notebook = new wxTreebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	long treeStyle = m_notebook->GetTreeCtrl()->GetWindowStyle();
+	treeStyle |= wxTR_FULL_ROW_HIGHLIGHT;
+	treeStyle |= wxTR_NO_LINES;
+	m_notebook->GetTreeCtrl()->SetWindowStyle( treeStyle );
+	
 	m_generalPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer19;
 	bSizer19 = new wxBoxSizer( wxVERTICAL );

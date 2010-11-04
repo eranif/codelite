@@ -498,7 +498,7 @@ public:
     void EditLabel (const wxTreeItemId& item, int column);
 
     // virtual mode
-    virtual wxString OnGetItemText( wxTreeItemData* item, long column ) const;
+    virtual const wxString& OnGetItemText( wxTreeItemData* item, long column ) const;
 
     // sorting
     // this function is called to compare 2 items and should return -1, 0

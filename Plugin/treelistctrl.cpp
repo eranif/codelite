@@ -82,6 +82,7 @@ const wxChar* wxTreeListCtrlNameStr = _T("treelistctrl");
 
 static wxTreeListColumnInfo wxInvalidTreeListColumnInfo;
 
+static wxString g_emptyString = wxEmptyString;
 
 // ---------------------------------------------------------------------------
 // private classes
@@ -309,10 +310,10 @@ public:
     // ---------
 
     // retrieve item's label
-    wxString GetItemText (const wxTreeItemId& item) const
+    const wxString& GetItemText (const wxTreeItemId& item) const
     { return GetItemText (item, GetMainColumn()); }
-    wxString GetItemText (const wxTreeItemId& item, int column) const;
-    wxString GetItemText (wxTreeItemData* item, int column) const;
+    const wxString& GetItemText (const wxTreeItemId& item, int column) const;
+    const wxString& GetItemText (wxTreeItemData* item, int column) const;
 
     // get one of the images associated with the item (normal by default)
     int GetItemImage (const wxTreeItemId& item,
@@ -764,18 +765,18 @@ public:
     // trivial accessors
     wxArrayTreeListItems& GetChildren() { return m_children; }
 
-    const wxString GetText() const
+    const wxString& GetText() const
     {
         return GetText(0);
     }
-    const wxString GetText (int column) const
+    const wxString& GetText (int column) const
     {
         if(m_text.GetCount() > 0)
         {
             if( IsVirtual() )   return m_owner->GetItemText( m_data, column );
             else                return m_text[column];
         }
-        return wxEmptyString;
+        return g_emptyString;
     }
 
     int GetImage (wxTreeItemIcon which = wxTreeItemIcon_Normal) const
@@ -4373,15 +4374,15 @@ void wxTreeListMainWindow::SetItemText (const wxTreeItemId& itemId, int column,
     RefreshLine (item);
 }
 
-wxString wxTreeListMainWindow::GetItemText (const wxTreeItemId& itemId,
+const wxString& wxTreeListMainWindow::GetItemText (const wxTreeItemId& itemId,
                                             int column) const {
-    wxCHECK_MSG (itemId.IsOk(), _T(""), _T("invalid tree item") );
+    wxCHECK_MSG (itemId.IsOk(), g_emptyString, _T("invalid tree item") );
 
     if( IsVirtual() )   return m_owner->OnGetItemText(((wxTreeListItem*) itemId.m_pItem)->GetData(),column);
     else                return ((wxTreeListItem*) itemId.m_pItem)->GetText (column);
 }
 
-wxString wxTreeListMainWindow::GetItemText (wxTreeItemData* item,
+const wxString& wxTreeListMainWindow::GetItemText (wxTreeItemData* item,
 int column) const {
    wxASSERT_MSG( IsVirtual(), _T("can be used only with virtual control") );
    return m_owner->OnGetItemText(item,column);
@@ -5035,9 +5036,10 @@ wxSize wxTreeListCtrl::DoGetBestSize() const
     return wxSize (200,200); // but it should be specified values! FIXME
 }
 
-wxString wxTreeListCtrl::OnGetItemText( wxTreeItemData* WXUNUSED(item), long WXUNUSED(column)) const
+const wxString& wxTreeListCtrl::OnGetItemText( wxTreeItemData* WXUNUSED(item), long WXUNUSED(column)) const
 {
-    return wxEmptyString;
+	static wxString sEmptyString = wxT("");
+    return sEmptyString;
 }
 
 void wxTreeListCtrl::SetToolTip(const wxString& tip) {

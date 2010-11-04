@@ -161,7 +161,7 @@ mac_locals  : GDB_VAROBJ '=' '{' child_attributes '}'
 				sg_children.push_back( sg_attributes );
 				sg_attributes.clear();
 			}
-			| GDB_VAROBJ '=' '{' child_attributes '}' {sg_children.push_back( sg_attributes ); sg_attributes.clear(); } ',' mac_locals
+			| mac_locals ',' GDB_VAROBJ '=' '{' child_attributes '}' {sg_children.push_back( sg_attributes ); sg_attributes.clear(); }
 			;
 
 locals      : '{' child_attributes '}'
@@ -169,7 +169,7 @@ locals      : '{' child_attributes '}'
 				sg_children.push_back( sg_attributes );
 				sg_attributes.clear();
 			}
-			| '{' child_attributes '}' {sg_children.push_back( sg_attributes ); sg_attributes.clear(); } ',' locals
+			| locals ',' '{' child_attributes '}' {sg_children.push_back( sg_attributes ); sg_attributes.clear(); }
 			;
 
 list_open :  '['
@@ -184,11 +184,15 @@ children     : GDB_CHILD '=' '{' child_attributes '}' {
 					sg_children.push_back( sg_attributes );
 					sg_attributes.clear();
 				}
-             | GDB_CHILD '=' '{' child_attributes '}' {sg_children.push_back( sg_attributes ); sg_attributes.clear(); } ',' children
+             | children ',' GDB_CHILD '=' '{' child_attributes '}' {sg_children.push_back( sg_attributes ); sg_attributes.clear(); }
 			 ;
 
-child_attributes :  child_key '=' GDB_STRING { sg_attributes[$1] = $3; }
-				 |  child_key '=' GDB_STRING { sg_attributes[$1] = $3; } ',' child_attributes
+child_attributes :  child_key '=' GDB_STRING {
+						if(!$3.empty()) {
+							sg_attributes[$1] = $3;
+						}
+					}
+				 |  child_key '=' GDB_STRING { sg_attributes[$1] = $3;} ',' child_attributes
 				 ;
 
 stop_statement : GDB_STOPPED ',' GDB_TIME '=' '{' child_attributes '}' ',' GDB_REASON '=' GDB_STRING {

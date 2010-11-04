@@ -15,7 +15,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 ConsoleFrame::ConsoleFrame( wxWindow* parent, wxWindowID id )
-: wxPanel( parent, id)
+: wxPanel( parent, id, wxDefaultPosition, wxSize(300, 200))
 {
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );

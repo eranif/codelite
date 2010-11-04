@@ -4044,7 +4044,11 @@ void clMainFrame::DoSuggestRestart()
 void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 {
 	e.Skip();
+	
+#ifndef __WXMAC__
 	wxWindowUpdateLocker locker(this);
+#endif
+
 	wxLogMessage(wxT("Restoring layout"));
 
 	// Close all docking panes
@@ -4064,7 +4068,14 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 		}
 
 	}
-
+	
+	// Delete the debugger layout
+	wxString debugPrespective(wxStandardPaths::Get().GetUserDataDir() + wxT("/config/debug.layout"));
+	wxFileName fn(debugPrespective);
+	if(fn.FileExists()) {
+		wxRemoveFile(debugPrespective);
+	}
+	
 	m_mgr.LoadPerspective(m_defaultLayout, false);
 	UpdateAUI();
 
@@ -4150,13 +4161,16 @@ wxString clMainFrame::StartTTY(const wxString &title)
 	paneInfo.Name(wxT("Debugger Console")).Float().Caption(title).Dockable().FloatingSize(300, 200).CloseButton(false);
 	m_mgr.AddPane(console, paneInfo);
 
-	if(content.IsEmpty()) {
-		m_mgr.Update();
-
-	} else {
-		m_mgr.LoadPerspective(content);
+	if(!content.IsEmpty()) {
+		m_mgr.LoadPerspective(content, false);
 	}
-
+	
+	wxAuiPaneInfo &info = m_mgr.GetPane(wxT("Debugger Console"));
+	if(info.IsShown() == false) {
+		info.Show();
+	}
+	
+	m_mgr.Update();
 	return console->StartTTY();
 
 #else

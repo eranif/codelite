@@ -132,10 +132,10 @@ public:
 
 	// (Un)Hook the contect menus
 	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
-	
+
 	// (Un)Hook the project settings tab
-	virtual void HookProjectSettingsTab  (wxNotebook *book, const wxString &projectName, const wxString &configName);
-	virtual void UnHookProjectSettingsTab(wxNotebook *book, const wxString &projectName, const wxString &configName);
+	virtual void HookProjectSettingsTab  (wxBookCtrlBase *book, const wxString &projectName, const wxString &configName);
+	virtual void UnHookProjectSettingsTab(wxBookCtrlBase *book, const wxString &projectName, const wxString &configName);
 };
 
 #endif //PLUGINMANAGER_H

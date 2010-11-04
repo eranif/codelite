@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -98,6 +98,7 @@ ProjectSettingsBaseDlg::~ProjectSettingsBaseDlg()
 	m_buttonHelp->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonHelp ), NULL, this );
 	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonOK ), NULL, this );
 	m_buttonApply->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonApply ), NULL, this );
+	
 }
 
 ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -105,7 +106,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	wxBoxSizer* bSizer94;
 	bSizer94 = new wxBoxSizer( wxVERTICAL );
 	
-	m_notebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_notebook = new wxListbook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_DEFAULT );
 	m_generalPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer19;
 	bSizer19 = new wxBoxSizer( wxVERTICAL );
@@ -157,7 +158,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText15->Wrap( -1 );
 	fgSizer3->Add( m_staticText15, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textOutputFilePicker = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textOutputFilePicker = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer3->Add( m_textOutputFilePicker, 0, wxALL|wxEXPAND, 5 );
 	
 	
@@ -167,7 +168,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText16->Wrap( -1 );
 	fgSizer3->Add( m_staticText16, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlItermediateDir = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlItermediateDir = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer3->Add( m_textCtrlItermediateDir, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowseIM_WD = new wxButton( m_generalPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -199,7 +200,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText18->Wrap( -1 );
 	fgSizer6->Add( m_staticText18, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCommand = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCommand = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer6->Add( m_textCommand, 1, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowseProgram = new wxButton( m_generalPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -209,7 +210,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText19->Wrap( -1 );
 	fgSizer6->Add( m_staticText19, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCommandArguments = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCommandArguments = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer6->Add( m_textCommandArguments, 1, wxALL|wxEXPAND, 5 );
 	
 	
@@ -219,7 +220,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText20->Wrap( -1 );
 	fgSizer6->Add( m_staticText20, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlCommandWD = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlCommandWD = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer6->Add( m_textCtrlCommandWD, 1, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowseCommandWD = new wxButton( m_generalPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -238,7 +239,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_generalPage->SetSizer( bSizer19 );
 	m_generalPage->Layout();
 	bSizer19->Fit( m_generalPage );
-	m_notebook->AddPage( m_generalPage, wxT("General"), true );
+	m_notebook->AddPage( m_generalPage, wxT("General"), false );
 	m_compilerPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* compilerPageSizer;
 	compilerPageSizer = new wxBoxSizer( wxVERTICAL );
@@ -273,17 +274,17 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText6->Wrap( -1 );
 	fgSizer8->Add( m_staticText6, 0, wxALL, 5 );
 	
-	m_textCompilerOptions = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCompilerOptions = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer8->Add( m_textCompilerOptions, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonCompilerOptions = new wxButton( m_compilerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer8->Add( m_buttonCompilerOptions, 0, wxALL, 5 );
 	
-	m_staticText4 = new wxStaticText( m_compilerPage, wxID_ANY, wxT("Additional Search Path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( m_compilerPage, wxID_ANY, wxT("Include Paths:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	fgSizer8->Add( m_staticText4, 0, wxALL, 5 );
 	
-	m_textAdditionalSearchPath = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textAdditionalSearchPath = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer8->Add( m_textAdditionalSearchPath, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonAddSearchPath = new wxButton( m_compilerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -293,7 +294,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText171->Wrap( -1 );
 	fgSizer8->Add( m_staticText171, 0, wxALL, 5 );
 	
-	m_textPreprocessor = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textPreprocessor = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer8->Add( m_textPreprocessor, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonAddPreprocessor = new wxButton( m_compilerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -314,7 +315,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	wxBoxSizer* bSizer33;
 	bSizer33 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_textCtrlPreCompiledHeader = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlPreCompiledHeader = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	bSizer33->Add( m_textCtrlPreCompiledHeader, 1, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowsePreCompiledHeader = new wxButton( m_compilerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -362,17 +363,17 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText10->Wrap( -1 );
 	fgSizer9->Add( m_staticText10, 0, wxALL, 5 );
 	
-	m_textLinkerOptions = new wxTextCtrl( m_linkerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textLinkerOptions = new wxTextCtrl( m_linkerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer9->Add( m_textLinkerOptions, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonLinkerOptions = new wxButton( m_linkerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer9->Add( m_buttonLinkerOptions, 0, wxALL, 5 );
 	
-	m_staticText7 = new wxStaticText( m_linkerPage, wxID_ANY, wxT("Library Path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7 = new wxStaticText( m_linkerPage, wxID_ANY, wxT("Library Paths:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText7->Wrap( -1 );
 	fgSizer9->Add( m_staticText7, 0, wxALL, 5 );
 	
-	m_textLibraryPath = new wxTextCtrl( m_linkerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textLibraryPath = new wxTextCtrl( m_linkerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer9->Add( m_textLibraryPath, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonLibraryPath = new wxButton( m_linkerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -382,7 +383,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText8->Wrap( -1 );
 	fgSizer9->Add( m_staticText8, 0, wxALL, 5 );
 	
-	m_textLibraries = new wxTextCtrl( m_linkerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textLibraries = new wxTextCtrl( m_linkerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer9->Add( m_textLibraries, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonLibraries = new wxButton( m_linkerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -408,7 +409,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	fgSizer62->SetFlexibleDirection( wxBOTH );
 	fgSizer62->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_textCtrlDebuggerPath = new wxTextCtrl( m_panelDebugger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlDebuggerPath = new wxTextCtrl( m_panelDebugger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	m_textCtrlDebuggerPath->SetToolTip( wxT("You may override the global debugger executable path, by selecting another one here.\nLeave this field empty if you want to use the one set in the global debugger settings") );
 	
 	fgSizer62->Add( m_textCtrlDebuggerPath, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
@@ -434,14 +435,14 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText31->Wrap( -1 );
 	fgSizer61->Add( m_staticText31, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrl1DbgHost = new wxTextCtrl( m_panelDebugger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl1DbgHost = new wxTextCtrl( m_panelDebugger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer61->Add( m_textCtrl1DbgHost, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText32 = new wxStaticText( m_panelDebugger, wxID_ANY, wxT("Port:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText32->Wrap( -1 );
 	fgSizer61->Add( m_staticText32, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlDbgPort = new wxTextCtrl( m_panelDebugger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlDbgPort = new wxTextCtrl( m_panelDebugger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer61->Add( m_textCtrlDbgPort, 0, wxALL, 5 );
 	
 	bSizer192->Add( fgSizer61, 0, wxRIGHT|wxLEFT|wxEXPAND, 15 );
@@ -453,14 +454,18 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText301->Wrap( -1 );
 	bSizer192->Add( m_staticText301, 0, wxALL, 5 );
 	
-	m_textCtrlDbgCmds = new wxTextCtrl( m_panelDebugger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2 );
+	m_textCtrlDbgCmds = new wxTextCtrl( m_panelDebugger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_DONTWRAP|wxTE_MULTILINE|wxTE_RICH2 );
+	m_textCtrlDbgCmds->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
 	bSizer192->Add( m_textCtrlDbgCmds, 1, wxALL|wxEXPAND, 5 );
 	
 	m_staticText311 = new wxStaticText( m_panelDebugger, wxID_ANY, wxT("Enter here any commands that should be passed to the debugger after attaching the remote target:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText311->Wrap( -1 );
 	bSizer192->Add( m_staticText311, 0, wxALL|wxEXPAND, 5 );
 	
-	m_textCtrlDbgPostConnectCmds = new wxTextCtrl( m_panelDebugger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2 );
+	m_textCtrlDbgPostConnectCmds = new wxTextCtrl( m_panelDebugger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_DONTWRAP|wxTE_MULTILINE|wxTE_RICH2 );
+	m_textCtrlDbgPostConnectCmds->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
 	bSizer192->Add( m_textCtrlDbgPostConnectCmds, 1, wxALL|wxEXPAND, 5 );
 	
 	m_panelDebugger->SetSizer( bSizer192 );
@@ -502,17 +507,17 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText221->Wrap( -1 );
 	fgSizer4->Add( m_staticText221, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textAddResCmpOptions = new wxTextCtrl( m_resourceCmpPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textAddResCmpOptions = new wxTextCtrl( m_resourceCmpPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer4->Add( m_textAddResCmpOptions, 0, wxEXPAND|wxALL, 5 );
 	
 	m_buttonAddResCmpOptions = new wxButton( m_resourceCmpPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer4->Add( m_buttonAddResCmpOptions, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 	
-	m_staticText23 = new wxStaticText( m_resourceCmpPage, wxID_ANY, wxT("Additional Search Path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText23 = new wxStaticText( m_resourceCmpPage, wxID_ANY, wxT("Include Paths:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText23->Wrap( -1 );
 	fgSizer4->Add( m_staticText23, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textAddResCmpPath = new wxTextCtrl( m_resourceCmpPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textAddResCmpPath = new wxTextCtrl( m_resourceCmpPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer4->Add( m_textAddResCmpPath, 0, wxEXPAND|wxALL, 5 );
 	
 	m_buttonAddResCmpPath = new wxButton( m_resourceCmpPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -601,7 +606,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_preBuildPage->SetSizer( bSizer8 );
 	m_preBuildPage->Layout();
 	bSizer8->Fit( m_preBuildPage );
-	m_notebook->AddPage( m_preBuildPage, wxT("PreBuild"), false );
+	m_notebook->AddPage( m_preBuildPage, wxT("Pre Build"), false );
 	m_postBuildPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer81;
 	bSizer81 = new wxBoxSizer( wxVERTICAL );
@@ -645,7 +650,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_postBuildPage->SetSizer( bSizer81 );
 	m_postBuildPage->Layout();
 	bSizer81->Fit( m_postBuildPage );
-	m_notebook->AddPage( m_postBuildPage, wxT("PostBuild"), false );
+	m_notebook->AddPage( m_postBuildPage, wxT("Post Build"), false );
 	m_customBuildPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer15;
 	bSizer15 = new wxBoxSizer( wxVERTICAL );
@@ -663,7 +668,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText33->Wrap( -1 );
 	bSizer23->Add( m_staticText33, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlCustomBuildWD = new wxTextCtrl( m_customBuildPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlCustomBuildWD = new wxTextCtrl( m_customBuildPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	bSizer23->Add( m_textCtrlCustomBuildWD, 1, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowseCustomBuildWD = new wxButton( m_customBuildPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -740,14 +745,18 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_staticText25->Wrap( -1 );
 	fgSizer5->Add( m_staticText25, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textDeps = new wxTextCtrl( m_customMakefileStep, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textDeps = new wxTextCtrl( m_customMakefileStep, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	m_textDeps->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
 	fgSizer5->Add( m_textDeps, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText26 = new wxStaticText( m_customMakefileStep, wxID_ANY, wxT("Rule action:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText26->Wrap( -1 );
 	fgSizer5->Add( m_staticText26, 0, wxALL, 5 );
 	
-	m_textPreBuildRule = new wxTextCtrl( m_customMakefileStep, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textPreBuildRule = new wxTextCtrl( m_customMakefileStep, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_DONTWRAP|wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textPreBuildRule->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
 	fgSizer5->Add( m_textPreBuildRule, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer16->Add( fgSizer5, 1, wxEXPAND, 5 );
@@ -764,12 +773,19 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_customMakefileStep->SetSizer( bSizer16 );
 	m_customMakefileStep->Layout();
 	bSizer16->Fit( m_customMakefileStep );
-	m_notebook->AddPage( m_customMakefileStep, wxT("Custom makefile steps"), false );
+	m_notebook->AddPage( m_customMakefileStep, wxT("Custom Makefile Rules"), true );
+	#ifndef __WXGTK__ // Small icon style not supported in GTK
+	wxListView* m_notebookListView = m_notebook->GetListView();
+	long m_notebookFlags = m_notebookListView->GetWindowStyleFlag();
+	m_notebookFlags = ( m_notebookFlags & ~wxLC_ICON ) | wxLC_SMALL_ICON;
+	m_notebookListView->SetWindowStyleFlag( m_notebookFlags );
+	#endif
 	
 	bSizer94->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 	
 	this->SetSizer( bSizer94 );
 	this->Layout();
+	bSizer94->Fit( this );
 	
 	// Connect Events
 	m_choiceProjectTypes->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
@@ -915,6 +931,7 @@ ProjectConfigurationBasePanel::~ProjectConfigurationBasePanel()
 	m_textCtrlMakefileGenerationCmd->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_textDeps->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_textPreBuildRule->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	
 }
 
 GlobalSettingsBasePanel::GlobalSettingsBasePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -1095,4 +1112,5 @@ GlobalSettingsBasePanel::~GlobalSettingsBasePanel()
 	m_buttonAddResCmpOptions->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnResourceCmpAddOption ), NULL, this );
 	m_textAddResCmpPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_buttonAddResCmpPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnResourceCmpAddPath ), NULL, this );
+	
 }

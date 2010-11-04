@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -28,6 +28,7 @@
 #include <wx/checklst.h>
 #include <wx/listctrl.h>
 #include <wx/statbox.h>
+#include <wx/listbook.h>
 #include <wx/notebook.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -76,7 +77,7 @@ class ProjectConfigurationBasePanel : public wxPanel
 	private:
 	
 	protected:
-		wxNotebook* m_notebook;
+		wxListbook* m_notebook;
 		wxPanel* m_generalPage;
 		wxStaticText* m_staticText22;
 		wxChoice* m_choiceProjectTypes;
@@ -252,7 +253,7 @@ class ProjectConfigurationBasePanel : public wxPanel
 	
 	public:
 		
-		ProjectConfigurationBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 596,424 ), long style = wxTAB_TRAVERSAL );
+		ProjectConfigurationBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~ProjectConfigurationBasePanel();
 	
 };

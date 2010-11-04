@@ -14,7 +14,7 @@ class QMakePlugin : public IPlugin
 
 protected:
 	QMakeTab * DoGetQmakeTab     (const wxString &config);
-	void       DoUnHookAllTabs   (wxNotebook *book);
+	void       DoUnHookAllTabs   (wxBookCtrlBase *book);
 	bool       DoGetData         (const wxString &project, const wxString &conf, QmakePluginData::BuildConfPluginData &bcpd);
 	wxString   DoGetBuildCommand (const wxString &project, const wxString &config, bool projectOnly);
 
@@ -28,8 +28,8 @@ public:
 	virtual clToolBar *CreateToolBar     (wxWindow *parent);
 	virtual void CreatePluginMenu        (wxMenu *pluginsMenu);
 	virtual void HookPopupMenu           (wxMenu *menu, MenuType type);
-	virtual void HookProjectSettingsTab  (wxNotebook *book, const wxString &projectName, const wxString &configName);
-	virtual void UnHookProjectSettingsTab(wxNotebook *book, const wxString &projectName, const wxString &configName);
+	virtual void HookProjectSettingsTab  (wxBookCtrlBase *book, const wxString &projectName, const wxString &configName);
+	virtual void UnHookProjectSettingsTab(wxBookCtrlBase *book, const wxString &projectName, const wxString &configName);
 	virtual void UnPlug                  ();
 
 	// event handlers

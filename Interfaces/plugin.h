@@ -232,7 +232,7 @@ enum {
 	// the control over the debugger
 	wxEVT_DEBUG_EDITOR_LOST_CONTROL,
 	wxEVT_DEBUG_EDITOR_GOT_CONTROL,
-	
+
 	/**
 	 ** Build events (additional)
 	 **/
@@ -356,7 +356,7 @@ public:
 	 * @param notebook the parent
 	 * @param configName the associated configuration name
 	 */
-	virtual void HookProjectSettingsTab(wxNotebook *notebook, const wxString &projectName, const wxString &configName) {
+	virtual void HookProjectSettingsTab(wxBookCtrlBase *notebook, const wxString &projectName, const wxString &configName) {
 		wxUnusedVar( notebook );
 		wxUnusedVar( projectName );
 		wxUnusedVar( configName );
@@ -367,7 +367,7 @@ public:
 	 * @param notebook the parent
 	 * @param configName the associated configuration name
 	 */
-	virtual void UnHookProjectSettingsTab(wxNotebook *notebook, const wxString &projectName, const wxString &configName) {
+	virtual void UnHookProjectSettingsTab(wxBookCtrlBase *notebook, const wxString &projectName, const wxString &configName) {
 		wxUnusedVar( notebook );
 		wxUnusedVar( projectName );
 		wxUnusedVar( configName );

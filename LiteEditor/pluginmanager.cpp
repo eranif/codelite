@@ -602,7 +602,7 @@ NavMgr* PluginManager::GetNavigationMgr()
 	return NavMgr::Get();
 }
 
-void PluginManager::HookProjectSettingsTab(wxNotebook* book, const wxString &projectName, const wxString &configName)
+void PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString &projectName, const wxString &configName)
 {
 	std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
 	for ( ; iter != m_plugins.end(); iter++ ) {
@@ -610,7 +610,7 @@ void PluginManager::HookProjectSettingsTab(wxNotebook* book, const wxString &pro
 	}
 }
 
-void PluginManager::UnHookProjectSettingsTab(wxNotebook* book, const wxString &projectName, const wxString &configName)
+void PluginManager::UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString &projectName, const wxString &configName)
 {
 	std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
 	for ( ; iter != m_plugins.end(); iter++ ) {

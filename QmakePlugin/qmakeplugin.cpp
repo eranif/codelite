@@ -144,7 +144,7 @@ void QMakePlugin::UnPlug()
 	app->Disconnect(XRCID("qmake_settings"), wxEVT_COMMAND_MENU_SELECTED,    wxCommandEventHandler(QMakePlugin::OnSettings), NULL, (wxEvtHandler*)this);
 }
 
-void QMakePlugin::HookProjectSettingsTab(wxNotebook* book, const wxString &projectName, const wxString &configName)
+void QMakePlugin::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString &projectName, const wxString &configName)
 {
 	if ( !book ) return;
 
@@ -159,7 +159,7 @@ void QMakePlugin::HookProjectSettingsTab(wxNotebook* book, const wxString &proje
 	book->AddPage(page, wxT("QMake"), true, wxNOT_FOUND);
 }
 
-void QMakePlugin::UnHookProjectSettingsTab(wxNotebook* book, const wxString &projectName, const wxString &configName)
+void QMakePlugin::UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString &projectName, const wxString &configName)
 {
 	wxUnusedVar( configName );
 	DoUnHookAllTabs(book);
@@ -191,7 +191,7 @@ QMakeTab* QMakePlugin::DoGetQmakeTab(const wxString& config)
 	return iter->second;
 }
 
-void QMakePlugin::DoUnHookAllTabs(wxNotebook* book)
+void QMakePlugin::DoUnHookAllTabs(wxBookCtrlBase* book)
 {
 	if ( !book ) {
 		return;

@@ -28,8 +28,8 @@
 #include <wx/checklst.h>
 #include <wx/listctrl.h>
 #include <wx/statbox.h>
-#include <wx/listbook.h>
 #include <wx/notebook.h>
+#include <wx/treebook.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -37,10 +37,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class ProjectSettingsBaseDlg
 ///////////////////////////////////////////////////////////////////////////////
-class ProjectSettingsBaseDlg : public wxDialog 
+class ProjectSettingsBaseDlg : public wxDialog
 {
 	private:
-	
+
 	protected:
 		wxStaticText* m_staticText21;
 		wxChoice* m_choiceConfigurationType;
@@ -53,44 +53,44 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxButton* m_buttonOK;
 		wxButton* m_buttonCancel;
 		wxButton* m_buttonApply;
-		
+
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnConfigurationTypeSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonConfigurationManager( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonHelp( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonApply( wxCommandEvent& event ) { event.Skip(); }
-		
-	
+
+
 	public:
-		
+
 		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 734,502 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~ProjectSettingsBaseDlg();
-	
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class ProjectConfigurationBasePanel
 ///////////////////////////////////////////////////////////////////////////////
-class ProjectConfigurationBasePanel : public wxPanel 
+class ProjectConfigurationBasePanel : public wxPanel
 {
 	private:
-	
+
 	protected:
-		wxListbook* m_notebook;
+		wxTreebook* m_notebook;
 		wxPanel* m_generalPage;
 		wxStaticText* m_staticText22;
 		wxChoice* m_choiceProjectTypes;
-		
+
 		wxStaticText* m_staticText191;
 		wxChoice* m_choiceCompilerType;
-		
+
 		wxStaticText* m_staticText231;
 		wxChoice* m_choiceDebugger;
-		
+
 		wxStaticText* m_staticText15;
 		wxTextCtrl* m_textOutputFilePicker;
-		
+
 		wxStaticText* m_staticText16;
 		wxTextCtrl* m_textCtrlItermediateDir;
 		wxButton* m_buttonBrowseIM_WD;
@@ -101,7 +101,7 @@ class ProjectConfigurationBasePanel : public wxPanel
 		wxButton* m_buttonBrowseProgram;
 		wxStaticText* m_staticText19;
 		wxTextCtrl* m_textCommandArguments;
-		
+
 		wxStaticText* m_staticText20;
 		wxTextCtrl* m_textCtrlCommandWD;
 		wxButton* m_buttonBrowseCommandWD;
@@ -209,7 +209,7 @@ class ProjectConfigurationBasePanel : public wxPanel
 		wxStaticText* m_staticText26;
 		wxTextCtrl* m_textPreBuildRule;
 		wxStaticText* m_staticText24;
-		
+
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCmdEvtVModified( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnBrowseIntermediateDir( wxCommandEvent& event ) { event.Skip(); }
@@ -249,22 +249,22 @@ class ProjectConfigurationBasePanel : public wxPanel
 		virtual void OnDeleteTarget( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDeleteTargetUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnChoiceMakefileTool( wxCommandEvent& event ) { event.Skip(); }
-		
-	
+
+
 	public:
-		
+
 		ProjectConfigurationBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~ProjectConfigurationBasePanel();
-	
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class GlobalSettingsBasePanel
 ///////////////////////////////////////////////////////////////////////////////
-class GlobalSettingsBasePanel : public wxPanel 
+class GlobalSettingsBasePanel : public wxPanel
 {
 	private:
-	
+
 	protected:
 		wxNotebook* m_notebook;
 		wxPanel* m_compilerPage;
@@ -294,7 +294,7 @@ class GlobalSettingsBasePanel : public wxPanel
 		wxStaticText* m_staticText23;
 		wxTextCtrl* m_textAddResCmpPath;
 		wxButton* m_buttonAddResCmpPath;
-		
+
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCmdEvtVModified( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonAddCompilerOptions( wxCommandEvent& event ) { event.Skip(); }
@@ -305,13 +305,13 @@ class GlobalSettingsBasePanel : public wxPanel
 		virtual void OnAddLibrary( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnResourceCmpAddOption( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnResourceCmpAddPath( wxCommandEvent& event ) { event.Skip(); }
-		
-	
+
+
 	public:
-		
+
 		GlobalSettingsBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
 		~GlobalSettingsBasePanel();
-	
+
 };
 
 #endif //__project_settings_base_dlg__

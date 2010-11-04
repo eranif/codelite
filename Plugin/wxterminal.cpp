@@ -46,7 +46,7 @@ wxTerminal::wxTerminal( wxWindow* parent )
 	, m_process(NULL)
 	, m_exitWhenProcessDies(false)
 	, m_exitOnKey(false)
-
+	, m_inferiorEnd(0)
 #if defined(__WXMAC__) || defined(__WXGTK__)
 	, m_dummyProcess(NULL)
 #endif
@@ -81,6 +81,34 @@ void wxTerminal::OnURL( wxTextUrlEvent& event )
 
 void wxTerminal::OnKey(wxKeyEvent& event)
 {
+	long curPos = m_textCtrl->GetInsertionPoint();
+	if(curPos < m_inferiorEnd) {
+		int keyCode = event.GetKeyCode();
+		// Dont allow any key down when
+		switch(keyCode) {
+		case WXK_UP:
+		case WXK_DOWN:
+		case WXK_LEFT:
+		case WXK_RIGHT:
+		case WXK_NUMPAD_UP:
+		case WXK_NUMPAD_DOWN:
+		case WXK_NUMPAD_LEFT:
+		case WXK_NUMPAD_RIGHT:
+			event.Skip();
+			break;
+
+		case WXK_RETURN:
+		case WXK_NUMPAD_ENTER:
+			event.Skip();
+			break;
+
+		default:
+			break;
+		}
+		
+		return;
+	}
+
 #ifndef __WXMSW__
 	if(m_dummyProcess) {
 		switch(event.GetKeyCode()) {
@@ -117,11 +145,12 @@ void wxTerminal::OnReadProcessOutput(wxCommandEvent& event)
 {
 	ProcessEventData *ped = (ProcessEventData *)event.GetClientData();
 	m_textCtrl->SetInsertionPointEnd();
-	
+
 	wxString s;
 	s = ped->GetData();
 	m_textCtrl->AppendText(s);
 	m_textCtrl->SetSelection(m_textCtrl->GetLastPosition(), m_textCtrl->GetLastPosition());
+	m_inferiorEnd = m_textCtrl->GetLastPosition();
 	delete ped;
 }
 

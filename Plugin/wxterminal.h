@@ -36,6 +36,7 @@ protected:
 	wxTextAttr          m_promptStyle;
 	bool                m_exitWhenProcessDies;
 	bool                m_exitOnKey;
+	long                m_inferiorEnd;
 
 #if defined(__WXGTK__)||defined(__WXMAC__)
 	wxString             m_tty;

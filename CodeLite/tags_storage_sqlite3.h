@@ -121,18 +121,19 @@ public:
 		m_statements.clear();
 	}
 
-	wxSQLite3Statement& GetPrepareStatement(const wxString& sql)
+	wxSQLite3Statement GetPrepareStatement(const wxString& sql)
 	{
-		std::map<wxString, wxSQLite3Statement>::iterator iter = m_statements.find(sql);
-		if(iter == m_statements.end()) {
-			m_statements[sql] = wxSQLite3Database::PrepareStatement(sql);
-		}
-
-		try {
-			m_statements[sql].Reset();
-		} catch (...) {
-		}
-		return m_statements[sql];
+		return wxSQLite3Database::PrepareStatement(sql);
+//		std::map<wxString, wxSQLite3Statement>::iterator iter = m_statements.find(sql);
+//		if(iter == m_statements.end()) {
+//			m_statements[sql] = wxSQLite3Database::PrepareStatement(sql);
+//		}
+//
+//		try {
+//			m_statements[sql].Reset();
+//		} catch (...) {
+//		}
+//		return m_statements[sql];
 	}
 };
 

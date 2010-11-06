@@ -374,8 +374,8 @@ void TagsStorageSQLite::GetFiles(const wxString &partialName, std::vector<FileEn
 
 			wxFileName fileName(fe->GetFile());
 			wxString match = match_path ? fileName.GetFullPath() : fileName.GetFullName();
-			
-			// Under Windows, all files are stored as lower case in the 
+
+			// Under Windows, all files are stored as lower case in the
 			// database (see fc_fileopener.cpp normalize_path method
 #ifdef __WXMSW__
 			wxString lowerCasePartialName (partialName);
@@ -776,7 +776,7 @@ void TagsStorageSQLite::GetTagsByKindAndFile(const wxArrayString& kind, const wx
 int TagsStorageSQLite::DeleteFileEntry(const wxString& filename)
 {
 	try {
-		wxSQLite3Statement &statement = m_db->GetPrepareStatement(wxT("DELETE FROM FILES WHERE FILE=?"));
+		wxSQLite3Statement statement = m_db->GetPrepareStatement(wxT("DELETE FROM FILES WHERE FILE=?"));
 		statement.Bind(1, filename);
 		statement.ExecuteUpdate();
 
@@ -792,7 +792,7 @@ int TagsStorageSQLite::DeleteFileEntry(const wxString& filename)
 int TagsStorageSQLite::InsertFileEntry(const wxString& filename, int timestamp)
 {
 	try {
-		wxSQLite3Statement &statement = m_db->GetPrepareStatement(wxT("INSERT OR REPLACE INTO FILES VALUES(NULL, ?, ?)"));
+		wxSQLite3Statement statement = m_db->GetPrepareStatement(wxT("INSERT OR REPLACE INTO FILES VALUES(NULL, ?, ?)"));
 		statement.Bind(1, filename);
 		statement.Bind(2, timestamp);
 		statement.ExecuteUpdate();
@@ -807,7 +807,7 @@ int TagsStorageSQLite::InsertFileEntry(const wxString& filename, int timestamp)
 int TagsStorageSQLite::UpdateFileEntry(const wxString& filename, int timestamp)
 {
 	try {
-		wxSQLite3Statement &statement = m_db->GetPrepareStatement(wxT("UPDATE OR REPLACE FILES SET last_retagged=? WHERE file=?"));
+		wxSQLite3Statement statement = m_db->GetPrepareStatement(wxT("UPDATE OR REPLACE FILES SET last_retagged=? WHERE file=?"));
 		statement.Bind(1,  timestamp);
 		statement.Bind(2,  filename);
 		statement.ExecuteUpdate();
@@ -823,7 +823,7 @@ int TagsStorageSQLite::DeleteTagEntry(const wxString& kind, const wxString& sign
 	// Delete this record from database.
 	// Delete is done using the index
 	try {
-		wxSQLite3Statement &statement = m_db->GetPrepareStatement(wxT("DELETE FROM TAGS WHERE Kind=? AND Signature=? AND Path=?"));
+		wxSQLite3Statement statement = m_db->GetPrepareStatement(wxT("DELETE FROM TAGS WHERE Kind=? AND Signature=? AND Path=?"));
 		statement.Bind(1, kind);        // Kind
 		statement.Bind(2, signature);   // Signature
 		statement.Bind(3, path);        // Path
@@ -846,7 +846,7 @@ int TagsStorageSQLite::InsertTagEntry(const TagEntry& tag)
 	}
 
 	try {
-		wxSQLite3Statement &statement = m_db->GetPrepareStatement(wxT("INSERT OR REPLACE INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+		wxSQLite3Statement statement = m_db->GetPrepareStatement(wxT("INSERT OR REPLACE INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 		statement.Bind(1,  tag.GetName());
 		statement.Bind(2,  tag.GetFile());
 		statement.Bind(3,  tag.GetLine());
@@ -873,7 +873,7 @@ int TagsStorageSQLite::UpdateTagEntry(const TagEntry& tag)
 		return TagOk;
 
 	try {
-		wxSQLite3Statement &statement = m_db->GetPrepareStatement(wxT("UPDATE OR REPLACE TAGS SET Name=?, File=?, Line=?, Access=?, Pattern=?, Parent=?, Inherits=?, Typeref=?, Scope=?, Return_Value=? WHERE Kind=? AND Signature=? AND Path=?"));
+		wxSQLite3Statement statement = m_db->GetPrepareStatement(wxT("UPDATE OR REPLACE TAGS SET Name=?, File=?, Line=?, Access=?, Pattern=?, Parent=?, Inherits=?, Typeref=?, Scope=?, Return_Value=? WHERE Kind=? AND Signature=? AND Path=?"));
 		// update
 		statement.Bind(1,  tag.GetName());
 		statement.Bind(2,  tag.GetFile());
@@ -1432,7 +1432,7 @@ PPToken TagsStorageSQLite::GetMacro(const wxString& name)
 void TagsStorageSQLite::StoreMacros(const std::map<wxString, PPToken>& table)
 {
 	try {
-		wxSQLite3Statement &stmnt = m_db->GetPrepareStatement(wxT("insert or replace into MACROS values(NULL, ?, ?, ?, ?, ?, ?)"));
+		wxSQLite3Statement stmnt = m_db->GetPrepareStatement(wxT("insert or replace into MACROS values(NULL, ?, ?, ?, ?, ?, ?)"));
 
 		std::map<wxString, PPToken>::const_iterator iter = table.begin();
 		for(; iter != table.end(); iter++) {

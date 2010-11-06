@@ -203,7 +203,7 @@ void QMakePlugin::DoUnHookAllTabs(wxBookCtrlBase* book)
 			if (book->GetPage(i) == iter->second) {
 				book->RemovePage(i);
 				iter->second->Destroy();
-				m_pages[iter->first] = NULL;
+				m_pages.erase(iter);
 				break;
 			}
 		}

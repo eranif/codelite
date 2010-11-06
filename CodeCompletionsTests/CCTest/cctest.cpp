@@ -61,10 +61,10 @@ TEST_FUNC(testMacros)
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("wxTheClipboard->"), LoadFile(wxT("../tests/simple_tests.h")), tags);
 	CHECK_SIZE(tags.size(), 48);
-	
+
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("wxTheApp->"), LoadFile(wxT("../tests/simple_tests.h")), tags);
 	CHECK_SIZE(tags.size(), 120);
-	
+
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("EG(name)."), LoadFile(wxT("../tests/simple_tests.h")), tags);
 	CHECK_SIZE(tags.size(), 197);
 	return true;
@@ -101,7 +101,7 @@ TEST_FUNC(testStlMapLeditor)
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/stl_map_static.h")), 2, wxT("ms_bookmarkShapes.find(0)->first."), LoadFile(wxT("../tests/stl_map_static.h")), tags);
 	CHECK_SIZE(tags.size(), 314);
-	
+
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/stl_map_static.h")), 2, wxT("ms_bookmarkShapes.find(wxT(\"value\"))->first."), LoadFile(wxT("../tests/stl_map_static.h")), tags);
 	CHECK_SIZE(tags.size(), 314);
 
@@ -118,7 +118,7 @@ TEST_FUNC(testMapWithBasicTypes)
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 2, wxT("mm.find()->first."), LoadFile(wxT("../tests/simple_tests.h")), tags);
 	CHECK_SIZE(tags.size(), 314);
-	
+
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 2, wxT("mm.find()->second."), LoadFile(wxT("../tests/simple_tests.h")), tags);
 	CHECK_SIZE(tags.size(), 0);
 	return true;
@@ -130,7 +130,7 @@ TEST_FUNC(testTtp)
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/smart_ptr_of_template.h")), 3, wxT("ttp->GetRoot()->GetData()."), LoadFile(wxT("../tests/smart_ptr_of_template.h")), tags);
 	CHECK_SIZE(tags.size(), 77);
-	
+
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/smart_ptr_of_template.h")), 3, wxT("ttp->GetRoot()->GetKey()."), LoadFile(wxT("../tests/smart_ptr_of_template.h")), tags);
 	CHECK_SIZE(tags.size(), 314);
 	return true;
@@ -148,7 +148,7 @@ TEST_FUNC(testThis)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/this_ptr.h")), 4, wxT("this->"), LoadFile(wxT("../tests/this_ptr.h")), tags);
-	
+
 #ifdef __WXMSW__
 	CHECK_SIZE(tags.size(), 1142);
 #else
@@ -162,7 +162,7 @@ TEST_FUNC(testStdVectorOfTagEntryPtr)
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/std_vec_tag_entry_ptr.h")), 3, wxT("tags.at(0)->"), LoadFile(wxT("../tests/std_vec_tag_entry_ptr.h")), tags);
 	CHECK_SIZE(tags.size(), 77);
-	
+
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/std_vec_tag_entry_ptr.h")), 3, wxT("tags.at(0)."), LoadFile(wxT("../tests/std_vec_tag_entry_ptr.h")), tags);
 	CHECK_SIZE(tags.size(), 14);
 	return true;
@@ -173,7 +173,7 @@ TEST_FUNC(testIterators)
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/iterators.h")), 3, wxT("mapIter->first."), LoadFile(wxT("../tests/iterators.h")), tags);
 	CHECK_SIZE(tags.size(), 314);
-	
+
 	tags.clear();
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/iterators.h")), 3, wxT("vecIter->"), LoadFile(wxT("../tests/iterators.h")), tags);
 	CHECK_SIZE(tags.size(), 314);
@@ -246,7 +246,7 @@ TEST_FUNC(testClFrame)
 #else
 	CHECK_SIZE(tags.size(), 952);
 #endif
-	
+
 	return true;
 }
 
@@ -264,24 +264,24 @@ void testCC()
 	// Load the tags database that is used during the test.
 	wxFileName fn(wxT("../../SampleWorkspace/SampleWorkspace.tags"));
 	TagsManagerST::Get()->OpenDatabase( fn );
-	
+
 	// Execute the tests
 	Tester::Instance()->RunTests();
-	
+
 	Tester::Release();
 	TagsManagerST::Free();
-	LanguageST::Free();	
+	LanguageST::Free();
 }
 
 void testStringSearcher()
 {
-#if wxVERSION_NUMBER >= 2900	
+#if wxVERSION_NUMBER >= 2900
 	int      pos(0);
 	int      match_len(0);
 	wxString m_word  = wxT("clMainFrame");
 	size_t   offset = 0;
 	wxString m_str = LoadFile(wxT("/home/eran/devl/codelite/LiteEditor/frame.cpp"));
-	
+
 	const wchar_t* pin   = m_str.c_str().AsWChar();
 	const wchar_t* pword = m_word.c_str().AsWChar();
 	while ( StringFindReplacer::Search(pin, offset, pword, wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD, pos, match_len) ) {
@@ -291,7 +291,7 @@ void testStringSearcher()
 		match.second = match_len;
 
 		offset = pos + match_len;
-	}	
+	}
 #endif
 
 }
@@ -302,10 +302,10 @@ void testRetagWorkspace()
 	wxArrayString inclPath;
 	wxArrayString exclPath;
 	std::vector<wxFileName> files;
-	
+
 	wxFileName fn(wxT("../workspace_file.list"));
 	wxString content = LoadFile(fn.GetFullPath());
-	
+
 	wxArrayString lines = wxStringTokenize(content, wxT("\n"), wxTOKEN_STRTOK);
 	for(size_t i=0; i<lines.GetCount(); i++) {
 		wxString fname = lines.Item(i).Trim().Trim(false);
@@ -313,7 +313,7 @@ void testRetagWorkspace()
 			continue;
 		files.push_back(lines.Item(i));
 	}
-	
+
 	inclPath.Add(wxT("/usr/include/c++/4.4"));
     inclPath.Add(wxT("/usr/include/c++/4.4/x86_64-linux-gnu"));
     inclPath.Add(wxT("/usr/include/c++/4.4/backward"));
@@ -325,19 +325,27 @@ void testRetagWorkspace()
     inclPath.Add(wxT("/usr/include/qt4/QtGui"));
     inclPath.Add(wxT("/usr/include/qt4/QtXml"));
     inclPath.Add(wxT("/home/eran/wx29/include/wx-2.9"));
-	
+
 	// Set the search paths and start the parser thread
 	ParseThreadST::Get()->SetSearchPaths(inclPath, exclPath);
 	ParseThreadST::Get()->SetNotifyWindow(NULL);
-	
+
 	ParseThreadST::Get()->Start();
-	
+
 	// Perform a full retagging
 	TagsManagerST::Get()->SetCodeLiteIndexerPath(wxT("/usr/bin"));
 	TagsManagerST::Get()->StartCodeLiteIndexer();
 	TagsManagerST::Get()->OpenDatabase(wxFileName(wxT("test.tags")));
 	TagsManagerST::Get()->RetagFiles(files, false);
-	wxSleep(100);
+
+	char line [100];
+	gets(line);
+
+	ParseThreadST::Get()->Stop();
+	ParseThreadST::Free();
+	TagsManagerST::Free();
+	LanguageST::Free();
+
 }
 
 /**

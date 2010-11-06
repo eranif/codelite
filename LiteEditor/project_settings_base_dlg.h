@@ -403,7 +403,6 @@ class PSCustomBuildBasePage : public wxPanel
 		wxTextCtrl* m_textCtrlCustomBuildWD;
 		wxButton* m_buttonBrowseCustomBuildWD;
 		wxListCtrl* m_listCtrlTargets;
-		wxStaticLine* m_staticline13;
 		wxButton* m_buttonNewCustomTarget;
 		wxButton* m_buttonEditCustomTarget;
 		wxButton* m_buttonDeleteCustomTarget;

@@ -861,7 +861,7 @@
                                             </object>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">5</property>
-                                                <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxButton" expanded="0">
                                                     <property name="bg"></property>
@@ -880,7 +880,7 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pos"></property>
                                                     <property name="size"></property>
-                                                    <property name="style">wxBU_EXACTFIT</property>
+                                                    <property name="style"></property>
                                                     <property name="subclass"></property>
                                                     <property name="tooltip"></property>
                                                     <property name="validator_data_type"></property>
@@ -1034,7 +1034,7 @@
                                             </object>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">5</property>
-                                                <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxButton" expanded="0">
                                                     <property name="bg"></property>
@@ -1053,7 +1053,7 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pos"></property>
                                                     <property name="size"></property>
-                                                    <property name="style">wxBU_EXACTFIT</property>
+                                                    <property name="style"></property>
                                                     <property name="subclass"></property>
                                                     <property name="tooltip"></property>
                                                     <property name="validator_data_type"></property>
@@ -1207,7 +1207,7 @@
                                             </object>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">5</property>
-                                                <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxButton" expanded="0">
                                                     <property name="bg"></property>
@@ -1226,7 +1226,7 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pos"></property>
                                                     <property name="size"></property>
-                                                    <property name="style">wxBU_EXACTFIT</property>
+                                                    <property name="style"></property>
                                                     <property name="subclass"></property>
                                                     <property name="tooltip"></property>
                                                     <property name="validator_data_type"></property>
@@ -1457,7 +1457,7 @@
                                             </object>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">5</property>
-                                                <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxButton" expanded="0">
                                                     <property name="bg"></property>
@@ -1476,7 +1476,7 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pos"></property>
                                                     <property name="size"></property>
-                                                    <property name="style">wxBU_EXACTFIT</property>
+                                                    <property name="style"></property>
                                                     <property name="subclass"></property>
                                                     <property name="tooltip"></property>
                                                     <property name="validator_data_type"></property>
@@ -1630,7 +1630,7 @@
                                             </object>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">5</property>
-                                                <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxButton" expanded="0">
                                                     <property name="bg"></property>
@@ -1649,7 +1649,7 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pos"></property>
                                                     <property name="size"></property>
-                                                    <property name="style">wxBU_EXACTFIT</property>
+                                                    <property name="style"></property>
                                                     <property name="subclass"></property>
                                                     <property name="tooltip"></property>
                                                     <property name="validator_data_type"></property>
@@ -1803,7 +1803,7 @@
                                             </object>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">5</property>
-                                                <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxButton" expanded="0">
                                                     <property name="bg"></property>
@@ -1822,7 +1822,7 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pos"></property>
                                                     <property name="size"></property>
-                                                    <property name="style">wxBU_EXACTFIT</property>
+                                                    <property name="style"></property>
                                                     <property name="subclass"></property>
                                                     <property name="tooltip"></property>
                                                     <property name="validator_data_type"></property>
@@ -2053,7 +2053,7 @@
                                             </object>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">5</property>
-                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT</property>
+                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxButton" expanded="0">
                                                     <property name="bg"></property>
@@ -2072,7 +2072,7 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pos"></property>
                                                     <property name="size"></property>
-                                                    <property name="style">wxBU_EXACTFIT</property>
+                                                    <property name="style"></property>
                                                     <property name="subclass"></property>
                                                     <property name="tooltip"></property>
                                                     <property name="validator_data_type"></property>
@@ -2226,7 +2226,7 @@
                                             </object>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">5</property>
-                                                <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxButton" expanded="0">
                                                     <property name="bg"></property>
@@ -2245,7 +2245,7 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pos"></property>
                                                     <property name="size"></property>
-                                                    <property name="style">wxBU_EXACTFIT</property>
+                                                    <property name="style"></property>
                                                     <property name="subclass"></property>
                                                     <property name="tooltip"></property>
                                                     <property name="validator_data_type"></property>
@@ -3016,7 +3016,7 @@
                                         <property name="border">5</property>
                                         <property name="colspan">1</property>
                                         <property name="column">2</property>
-                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="row">4</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxButton" expanded="0">
@@ -3036,7 +3036,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -3257,7 +3257,7 @@
                                         <property name="border">5</property>
                                         <property name="colspan">1</property>
                                         <property name="column">2</property>
-                                        <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="row">6</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxButton" expanded="0">
@@ -3277,7 +3277,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -3561,7 +3561,7 @@
                                         <property name="border">5</property>
                                         <property name="colspan">1</property>
                                         <property name="column">2</property>
-                                        <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="row">8</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxButton" expanded="0">
@@ -3581,7 +3581,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -4174,7 +4174,7 @@
                                         <property name="border">5</property>
                                         <property name="colspan">1</property>
                                         <property name="column">2</property>
-                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="row">2</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxButton" expanded="0">
@@ -4194,7 +4194,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -4356,7 +4356,7 @@
                                         <property name="border">5</property>
                                         <property name="colspan">1</property>
                                         <property name="column">2</property>
-                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="row">3</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxButton" expanded="0">
@@ -4376,7 +4376,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -4538,7 +4538,7 @@
                                         <property name="border">5</property>
                                         <property name="colspan">1</property>
                                         <property name="column">2</property>
-                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="row">4</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxButton" expanded="0">
@@ -4558,7 +4558,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -4777,7 +4777,7 @@
                                         <property name="border">5</property>
                                         <property name="colspan">1</property>
                                         <property name="column">2</property>
-                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="row">6</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxButton" expanded="0">
@@ -4797,7 +4797,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -5322,7 +5322,7 @@
                                         <property name="border">5</property>
                                         <property name="colspan">1</property>
                                         <property name="column">2</property>
-                                        <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="row">2</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxButton" expanded="0">
@@ -5342,7 +5342,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -5504,7 +5504,7 @@
                                         <property name="border">5</property>
                                         <property name="colspan">1</property>
                                         <property name="column">2</property>
-                                        <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="row">3</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxButton" expanded="0">
@@ -5524,7 +5524,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -5686,7 +5686,7 @@
                                         <property name="border">5</property>
                                         <property name="colspan">1</property>
                                         <property name="column">2</property>
-                                        <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="row">4</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxButton" expanded="0">
@@ -5706,7 +5706,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -5992,7 +5992,7 @@
                                     </object>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">5</property>
-                                        <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="proportion">0</property>
                                         <object class="wxButton" expanded="0">
                                             <property name="bg"></property>
@@ -6011,7 +6011,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -7183,7 +7183,7 @@
                                         <property name="border">5</property>
                                         <property name="colspan">1</property>
                                         <property name="column">2</property>
-                                        <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="row">2</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxButton" expanded="0">
@@ -7203,7 +7203,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -7365,7 +7365,7 @@
                                         <property name="border">5</property>
                                         <property name="colspan">1</property>
                                         <property name="column">2</property>
-                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="row">3</property>
                                         <property name="rowspan">1</property>
                                         <object class="wxButton" expanded="0">
@@ -7385,7 +7385,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -8720,7 +8720,7 @@
                                     </object>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">5</property>
-                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
                                         <property name="proportion">0</property>
                                         <object class="wxButton" expanded="0">
                                             <property name="bg"></property>
@@ -8739,7 +8739,7 @@
                                             <property name="permission">protected</property>
                                             <property name="pos"></property>
                                             <property name="size"></property>
-                                            <property name="style">wxBU_EXACTFIT</property>
+                                            <property name="style"></property>
                                             <property name="subclass"></property>
                                             <property name="tooltip"></property>
                                             <property name="validator_data_type"></property>
@@ -8869,60 +8869,6 @@
                                             <property name="name">bSizer221</property>
                                             <property name="orient">wxVERTICAL</property>
                                             <property name="permission">none</property>
-                                            <object class="sizeritem" expanded="0">
-                                                <property name="border">5</property>
-                                                <property name="flag">wxEXPAND | wxALL</property>
-                                                <property name="proportion">0</property>
-                                                <object class="wxStaticLine" expanded="0">
-                                                    <property name="bg"></property>
-                                                    <property name="context_help"></property>
-                                                    <property name="context_menu">1</property>
-                                                    <property name="enabled">1</property>
-                                                    <property name="fg"></property>
-                                                    <property name="font"></property>
-                                                    <property name="hidden">0</property>
-                                                    <property name="id">wxID_ANY</property>
-                                                    <property name="maximum_size"></property>
-                                                    <property name="minimum_size"></property>
-                                                    <property name="name">m_staticline13</property>
-                                                    <property name="permission">protected</property>
-                                                    <property name="pos"></property>
-                                                    <property name="size"></property>
-                                                    <property name="style">wxLI_HORIZONTAL</property>
-                                                    <property name="subclass"></property>
-                                                    <property name="tooltip"></property>
-                                                    <property name="validator_data_type"></property>
-                                                    <property name="validator_style">wxFILTER_NONE</property>
-                                                    <property name="validator_type">wxDefaultValidator</property>
-                                                    <property name="validator_variable"></property>
-                                                    <property name="window_extra_style"></property>
-                                                    <property name="window_name"></property>
-                                                    <property name="window_style"></property>
-                                                    <event name="OnChar"></event>
-                                                    <event name="OnEnterWindow"></event>
-                                                    <event name="OnEraseBackground"></event>
-                                                    <event name="OnKeyDown"></event>
-                                                    <event name="OnKeyUp"></event>
-                                                    <event name="OnKillFocus"></event>
-                                                    <event name="OnLeaveWindow"></event>
-                                                    <event name="OnLeftDClick"></event>
-                                                    <event name="OnLeftDown"></event>
-                                                    <event name="OnLeftUp"></event>
-                                                    <event name="OnMiddleDClick"></event>
-                                                    <event name="OnMiddleDown"></event>
-                                                    <event name="OnMiddleUp"></event>
-                                                    <event name="OnMotion"></event>
-                                                    <event name="OnMouseEvents"></event>
-                                                    <event name="OnMouseWheel"></event>
-                                                    <event name="OnPaint"></event>
-                                                    <event name="OnRightDClick"></event>
-                                                    <event name="OnRightDown"></event>
-                                                    <event name="OnRightUp"></event>
-                                                    <event name="OnSetFocus"></event>
-                                                    <event name="OnSize"></event>
-                                                    <event name="OnUpdateUI"></event>
-                                                </object>
-                                            </object>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">5</property>
                                                 <property name="flag">wxALL</property>

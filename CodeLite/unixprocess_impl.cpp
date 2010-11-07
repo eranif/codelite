@@ -248,7 +248,7 @@ void UnixProcessImpl::Cleanup()
 		}
 		// Perform process cleanup
 		int status(0);
-		waitpid(GetPid(), &status, 0);
+		waitpid(GetPid(), &status, WNOHANG);
 	}
 
 #else
@@ -256,7 +256,7 @@ void UnixProcessImpl::Cleanup()
 		wxKill (GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM);
 		// Perform process cleanup
 		int status(0);
-		waitpid(GetPid(), &status, 0);
+		waitpid(GetPid(), &status, WNOHANG);
 	}
 #endif
 
@@ -298,7 +298,7 @@ bool UnixProcessImpl::Read(wxString& buff)
 		// Process terminated
 		int status(0);
 		if(GetPid() != wxNOT_FOUND) {
-			waitpid(GetPid(), &status, 0);
+			waitpid(GetPid(), &status, WNOHANG);
 		}
 		m_exitCode = WEXITSTATUS(status);
 		return false;

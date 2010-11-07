@@ -84,7 +84,7 @@ void* ProcessReaderThread::Entry()
 				// Perform process cleanup
 				int status(0);
 				if(m_process->GetPid() != wxNOT_FOUND) {
-					waitpid(m_process->GetPid(), &status, 0);
+					waitpid(m_process->GetPid(), &status, WNOHANG);
 				}
 #endif
 				break;

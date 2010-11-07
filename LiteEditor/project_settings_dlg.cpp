@@ -86,7 +86,7 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 	}
 	BuildTree();
 	LoadValues(m_configName);
-	
+
 	m_treebook->SetFocus();
 	GetSizer()->Fit(this);
 	Centre();
@@ -98,10 +98,10 @@ void ProjectSettingsDlg::BuildTree()
 	PSGeneralPage *gp = new PSGeneralPage(m_treebook, m_projectName, this);
 	m_treebook->AddPage(0, wxT("Common Settings"));
 	m_treebook->AddSubPage(gp,                                                       wxT("General"),               true);
-	m_treebook->AddSubPage(new PSEnvironmentPage(m_treebook, this),                  wxT("Environment"),           false);
-	m_treebook->AddSubPage(new PSDebuggerPage(m_treebook, this),                     wxT("Debugger"),              false);
 	m_treebook->AddSubPage(new PSCompilerPage(m_treebook, m_projectName, this, gp),  wxT("Compiler"),              false);
 	m_treebook->AddSubPage(new PSLinkerPage(m_treebook, this, gp),                   wxT("Linker"),                false);
+	m_treebook->AddSubPage(new PSEnvironmentPage(m_treebook, this),                  wxT("Environment"),           false);
+	m_treebook->AddSubPage(new PSDebuggerPage(m_treebook, this),                     wxT("Debugger"),              false);
 	m_treebook->AddSubPage(new PSResourcesPage(m_treebook, this),                    wxT("Resources"),             false);
 
 	m_treebook->AddPage(0, wxT("Pre / Post Build Commands"));
@@ -223,12 +223,12 @@ void ProjectSettingsDlg::OnConfigurationChanged(wxCommandEvent& event)
 			ClearValues();
 		}
 	}
-	
+
 	m_configName = event.GetString();
-	
+
 	wxWindowUpdateLocker locker(this);
 	LoadValues(m_configName);
-	
+
 	m_treebook->SetFocus();
 }
 

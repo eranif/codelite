@@ -18,6 +18,9 @@ CLAuiDockArt::CLAuiDockArt()
 	img2.SetAlpha(closetab_active_alpha, true);
 	m_bmp_close_active = wxBitmap(img2);
 
+	m_gripper_brush    = wxBrush(DrawingUtils::GetPanelBgColour());
+	m_background_brush = wxBrush(DrawingUtils::GetPanelBgColour());
+	m_gripper_pen3     = wxPen  (DrawingUtils::GetPanelBgColour());
 }
 
 CLAuiDockArt::~CLAuiDockArt()
@@ -50,30 +53,35 @@ void CLAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
 	}
 }
 
-void CLAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int oriantation, const wxRect& rect)
+void CLAuiDockArt::DrawBorder(wxDC& dc, wxWindow *WXUNUSED(window), const wxRect& _rect, wxAuiPaneInfo& pane)
 {
-    dc.SetPen(*wxTRANSPARENT_PEN);
-#ifdef __WXMAC__
-    // we have to clear first, otherwise we are drawing a light striped pattern
-    // over an already darker striped background
-    dc.SetBrush(*wxWHITE_BRUSH) ;
-    dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
-#endif
-	dc.SetBrush( DrawingUtils::GetPanelBgColour() );
-    dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
-}
+    dc.SetPen(m_border_pen);
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
 
-void CLAuiDockArt::DrawGripper(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
-{
-#if defined(__WXMSW__)|| defined(__WXMAC__)
-	wxAuiDefaultDockArt::DrawGripper(dc, window, rect, pane);
-#else
-	wxUnusedVar(window);
-	wxUnusedVar(pane);
-	
-    dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(DrawingUtils::GetPanelBgColour());
-    dc.DrawRectangle(rect.x, rect.y, rect.width,rect.height);
-	
-#endif
+    wxRect rect = _rect;
+    int i, border_width = GetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE);
+	wxPen lightColor = DrawingUtils::LightColour(DrawingUtils::GetPanelBgColour(), 2.0);
+    if (pane.IsToolbar())
+    {
+        for (i = 0; i < border_width; ++i)
+        {
+            dc.SetPen(lightColor);
+            dc.DrawLine(rect.x, rect.y, rect.x+rect.width, rect.y);
+            dc.DrawLine(rect.x, rect.y, rect.x, rect.y+rect.height);
+            dc.SetPen(m_border_pen);
+            dc.DrawLine(rect.x, rect.y+rect.height-1,
+                        rect.x+rect.width, rect.y+rect.height-1);
+            dc.DrawLine(rect.x+rect.width-1, rect.y,
+                        rect.x+rect.width-1, rect.y+rect.height);
+            rect.Deflate(1);
+        }
+    }
+    else
+    {
+        for (i = 0; i < border_width; ++i)
+        {
+            dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
+            rect.Deflate(1);
+        }
+    }
 }

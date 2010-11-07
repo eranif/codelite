@@ -712,8 +712,8 @@ void clMainFrame::CreateGUIControls(void)
 	unsigned int auiMgrFlags (m_mgr.GetFlags());
 #ifdef __WXGTK__
 	auiMgrFlags |= wxAUI_MGR_ALLOW_ACTIVE_PANE;
-	auiMgrFlags &= ~wxAUI_MGR_TRANSPARENT_HINT; // This crashes under Linux with KDE & Compiz
-	auiMgrFlags |= wxAUI_MGR_VENETIAN_BLINDS_HINT;
+	//auiMgrFlags &= ~wxAUI_MGR_TRANSPARENT_HINT; // This crashes under Linux with KDE & Compiz
+	//auiMgrFlags |= wxAUI_MGR_VENETIAN_BLINDS_HINT;
 
 #ifdef __WXDEBUG__
 	auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_TRANSPARENT_DRAG|wxAUI_MGR_RECTANGLE_HINT;
@@ -4044,7 +4044,7 @@ void clMainFrame::DoSuggestRestart()
 void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 {
 	e.Skip();
-	
+
 #ifndef __WXMAC__
 	wxWindowUpdateLocker locker(this);
 #endif
@@ -4068,14 +4068,14 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 		}
 
 	}
-	
+
 	// Delete the debugger layout
 	wxString debugPrespective(wxStandardPaths::Get().GetUserDataDir() + wxT("/config/debug.layout"));
 	wxFileName fn(debugPrespective);
 	if(fn.FileExists()) {
 		wxRemoveFile(debugPrespective);
 	}
-	
+
 	m_mgr.LoadPerspective(m_defaultLayout, false);
 	UpdateAUI();
 
@@ -4164,12 +4164,12 @@ wxString clMainFrame::StartTTY(const wxString &title)
 	if(!content.IsEmpty()) {
 		m_mgr.LoadPerspective(content, false);
 	}
-	
+
 	wxAuiPaneInfo &info = m_mgr.GetPane(wxT("Debugger Console"));
 	if(info.IsShown() == false) {
 		info.Show();
 	}
-	
+
 	m_mgr.Update();
 	return console->StartTTY();
 

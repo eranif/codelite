@@ -33,11 +33,11 @@ void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 }
 void CLMainAuiTBArt::DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
-#ifdef __WXGTK__
+#if 0
 	// dont draw anything
 #else
 	wxAuiDefaultToolBarArt::DrawGripper(dc, wnd, rect);
-#endif	
+#endif
 }
 
 #endif

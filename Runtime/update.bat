@@ -6,7 +6,7 @@ xcopy debuggers\*.dll "%ProgramFiles%\CodeLite\debuggers\" /E /I /H /Y /EXCLUDE:
 xcopy images\* "%ProgramFiles%\CodeLite\images\" /E /I /H /Y /EXCLUDE:excludes
 xcopy lexers\*.xml "%ProgramFiles%\CodeLite\lexers\" /E /I /H /Y /EXCLUDE:excludes
 xcopy plugins\*.dll "%ProgramFiles%\CodeLite\plugins\" /E /I /H /Y /EXCLUDE:excludes
-xcopy *.dll "%ProgramFiles%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+xcopy lib*.dll "%ProgramFiles%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 xcopy plugins\resources\*.* "%ProgramFiles%\CodeLite\plugins\resources\" /E /I /H /Y /EXCLUDE:excludes
 xcopy rc\*.xrc "%ProgramFiles%\CodeLite\rc\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\ "%ProgramFiles%\CodeLite\templates\" /E /I /H /Y /EXCLUDE:excludes

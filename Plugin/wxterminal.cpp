@@ -105,7 +105,7 @@ void wxTerminal::OnKey(wxKeyEvent& event)
 		default:
 			break;
 		}
-		
+
 		return;
 	}
 
@@ -168,7 +168,7 @@ void wxTerminal::DoCtrlC()
 #else
 	int status(0);
 	wxKill(m_process->GetPid(), wxSIGKILL, NULL, wxKILL_CHILDREN);
-	waitpid(m_process->GetPid(), &status, 0);
+//	waitpid(m_process->GetPid(), &status, 0);
 #endif
 }
 

@@ -296,7 +296,7 @@ bool WinProcessImpl::Read(wxString& buff)
 	if(!success) {
 		DWORD dwExitCode;
 		if (GetExitCodeProcess(piProcInfo.hProcess, &dwExitCode)) {
-			m_exitCode = (int)dwExitCode;
+			SetProcessExitCode(GetPid(), (int)dwExitCode);
 		}
 	}
 	return success;

@@ -72,21 +72,20 @@ void* ProcessReaderThread::Entry()
 				wxCommandEvent e(wxEVT_PROC_TERMINATED);
 				ProcessEventData *ed = new ProcessEventData();
 				ed->SetProcess( m_process );
-				ed->SetExitCode(m_process->GetExitCode());
-
 				e.SetClientData( ed );
+				
 				if ( m_notifiedWindow ) {
 					m_notifiedWindow->AddPendingEvent( e );
 				} else {
 					delete ed;
 				}
-#if defined(__WXGTK__)||defined(__WXMAC__)
-				// Perform process cleanup
-				int status(0);
-				if(m_process->GetPid() != wxNOT_FOUND) {
-					waitpid(m_process->GetPid(), &status, WNOHANG);
-				}
-#endif
+//#if defined(__WXGTK__)||defined(__WXMAC__)
+//				// Perform process cleanup
+//				int status(0);
+//				if(m_process->GetPid() != wxNOT_FOUND) {
+//					waitpid(m_process->GetPid(), &status, WNOHANG);
+//				}
+//#endif
 				break;
 			}
 		}

@@ -56,6 +56,7 @@
 #include <wx/stdpaths.h>
 #include "frame.h"
 #include "buidltab.h"
+#include "asyncprocess.h" // IProcess
 
 #define __PERFORMANCE
 #include "performance.h"
@@ -67,6 +68,7 @@ extern wxChar *SvnRevision;
 wxString CODELITE_VERSION_STR = wxString::Format(wxT("v2.8.0.%s"), SvnRevision);
 
 #if defined(__WXMAC__)||defined(__WXGTK__)
+#include <sys/wait.h>
 #include <signal.h> // sigprocmask
 #endif
 
@@ -206,6 +208,28 @@ static void WaitForDebugger(int signo)
 }
 #endif
 
+#if defined(__WXGTK__) || defined(__WXMAC__)
+static void ChildTerminatedSingalHandler(int signo)
+{
+	int status;
+	while( true ) {
+		pid_t pid = waitpid(-1, &status, WNOHANG);
+		if(pid > 0) {
+			// waitpid succeeded
+			IProcess::SetProcessExitCode(pid, WEXITSTATUS(status));
+
+		} else {
+			break;
+
+		}
+	}
+
+	// reinstall the handler
+	signal(SIGCHLD, ChildTerminatedSingalHandler);
+}
+
+#endif
+
 IMPLEMENT_APP(CodeLiteApp)
 
 extern void InitXmlResource();
@@ -237,11 +261,15 @@ CodeLiteApp::~CodeLiteApp(void)
 bool CodeLiteApp::OnInit()
 {
 #if defined(__WXGTK__) || defined(__WXMAC__)
-//	block signal pipe
+	// block signal pipe
 	sigset_t mask_set;
 	sigemptyset( &mask_set );
 	sigaddset(&mask_set, SIGPIPE);
 	sigprocmask(SIG_SETMASK, &mask_set, NULL);
+
+	// Handle sigchld
+	signal(SIGCHLD, ChildTerminatedSingalHandler);
+
 #ifdef __WXGTK__
 	// Insall signal handlers
 	signal(SIGSEGV, WaitForDebugger);

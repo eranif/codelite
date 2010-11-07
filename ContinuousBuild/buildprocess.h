@@ -23,6 +23,13 @@ public:
 	const wxString& GetFileName() const {
 		return m_fileName;
 	}
+
+	int GetPid() const {
+		if(m_process) {
+			return m_process->GetPid();
+		}
+		return wxNOT_FOUND;
+	}
 };
 
 #endif // BUILDPROCESS_H

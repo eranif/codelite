@@ -247,17 +247,17 @@ void UnixProcessImpl::Cleanup()
 			wxExecute(cmd, wxEXEC_ASYNC);
 		}
 		// Perform process cleanup
-		int status(0);
-		waitpid(GetPid(), &status, WNOHANG);
+//		int status(0);
+//		waitpid(GetPid(), &status, WNOHANG);
 	}
 
 #else
-	if(GetPid() != wxNOT_FOUND) {
-		wxKill (GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM);
-		// Perform process cleanup
-		int status(0);
-		waitpid(GetPid(), &status, WNOHANG);
-	}
+//	if(GetPid() != wxNOT_FOUND) {
+//		wxKill (GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM);
+//		// Perform process cleanup
+//		int status(0);
+//		waitpid(GetPid(), &status, WNOHANG);
+//	}
 #endif
 
 }
@@ -296,11 +296,7 @@ bool UnixProcessImpl::Read(wxString& buff)
 			return true;
 		}
 		// Process terminated
-		int status(0);
-		if(GetPid() != wxNOT_FOUND) {
-			waitpid(GetPid(), &status, WNOHANG);
-		}
-		m_exitCode = WEXITSTATUS(status);
+		// the exit code will be set in the sigchld event handler
 		return false;
 	}
 }

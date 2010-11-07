@@ -29,6 +29,7 @@
 #include <wx/string.h>
 #include <wx/event.h>
 #include "codelite_exports.h"
+#include <map>
 
 enum IProcessCreateFlags {
 	IProcessCreateDefault             = 0x0000001, // Default: create process with no console window
@@ -46,14 +47,21 @@ enum IProcessCreateFlags {
 class WXDLLIMPEXP_CL IProcess
 {
 protected:
-	wxEvtHandler *m_parent;
-	int           m_pid;
-	int           m_exitCode;
-	bool          m_hardKill;
+	wxEvtHandler *            m_parent;
+	int                       m_pid;
+	bool                      m_hardKill;
+	static std::map<int, int> m_exitCodeMap;
+	static wxCriticalSection  m_cs;
 
 public:
-	IProcess(wxEvtHandler *parent) : m_parent(parent), m_pid(-1), m_exitCode(0), m_hardKill(false) {}
+	IProcess(wxEvtHandler *parent) : m_parent(parent), m_pid(-1), m_hardKill(false) {}
 	virtual ~IProcess() {}
+
+	// Handle process exit code. This is done this way this
+	// under Linux / Mac the exit code is returned only after the signal child has been
+	// handled by codelite
+	static void SetProcessExitCode(int pid, int exitCode);
+	static bool GetProcessExitCode(int pid, int &exitCode);
 
 	// Read from process stdout - return immediately if no data is available
 	virtual bool Read(wxString& buff) = 0;
@@ -85,10 +93,6 @@ public:
 
 	int GetPid() const {
 		return m_pid;
-	}
-
-	int GetExitCode() const {
-		return m_exitCode;
 	}
 
 	void SetHardKill(bool hardKill) {

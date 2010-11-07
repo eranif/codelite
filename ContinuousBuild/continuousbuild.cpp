@@ -218,15 +218,16 @@ void ContinuousBuild::OnBuildProcessEnded(wxCommandEvent& e)
 {
 	// remove the file from the UI
 	ProcessEventData *ped = (ProcessEventData*)e.GetClientData();
-	int exitCode = ped->GetExitCode();
 	delete ped;
 
+	int pid = m_buildProcess.GetPid();
 	m_view->RemoveFile(m_buildProcess.GetFileName());
 
 	wxCommandEvent event(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
 	m_mgr->GetOutputPaneNotebook()->GetEventHandler()->AddPendingEvent(event);
 
-	if(exitCode != 0) {
+	int exitCode(-1);
+	if(IProcess::GetProcessExitCode(pid, exitCode) && exitCode != 0) {
 		m_view->AddFailedFile(m_buildProcess.GetFileName());
 	}
 

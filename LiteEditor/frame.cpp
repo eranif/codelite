@@ -712,8 +712,8 @@ void clMainFrame::CreateGUIControls(void)
 	unsigned int auiMgrFlags (m_mgr.GetFlags());
 #ifdef __WXGTK__
 	auiMgrFlags |= wxAUI_MGR_ALLOW_ACTIVE_PANE;
-	//auiMgrFlags &= ~wxAUI_MGR_TRANSPARENT_HINT; // This crashes under Linux with KDE & Compiz
-	//auiMgrFlags |= wxAUI_MGR_VENETIAN_BLINDS_HINT;
+	auiMgrFlags &= ~wxAUI_MGR_TRANSPARENT_HINT; // This crashes under Linux with KDE & Compiz
+	auiMgrFlags |= wxAUI_MGR_RECTANGLE_HINT;
 
 #ifdef __WXDEBUG__
 	auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_TRANSPARENT_DRAG|wxAUI_MGR_RECTANGLE_HINT;

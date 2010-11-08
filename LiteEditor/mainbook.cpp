@@ -1011,3 +1011,12 @@ void MainBook::OnPageChanging(NotebookEvent& e)
 	}
 	e.Skip();
 }
+
+void MainBook::SetViewWordWrap(bool b)
+{
+	std::vector<LEditor*> editors;
+	GetAllEditors(editors);
+	for (size_t i = 0; i < editors.size(); i++) {
+		editors[i]->SetWrapMode(b ? wxSCI_WRAP_WORD : wxSCI_WRAP_NONE);
+	}
+}

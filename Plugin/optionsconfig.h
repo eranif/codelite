@@ -89,6 +89,7 @@ protected:
 	bool           m_showDebugOnRun;
 	bool           m_caretUseCamelCase;
 	bool           m_dontTrimCaretLine;
+	bool           m_wordWrap;
 
 public:
 	OptionsConfig() {}
@@ -427,6 +428,13 @@ public:
 	}
 	bool GetDontTrimCaretLine() const {
 		return m_dontTrimCaretLine;
+	}
+
+	bool GetWordWrap() const {
+		return m_wordWrap;
+	}
+	void SetWordWrap(bool wordWrap) {
+		this->m_wordWrap = wordWrap;
 	}
 	/**
 	 * Return an XML representation of this object

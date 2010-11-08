@@ -242,7 +242,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	// View menu
 	//-------------------------------------------------------
 	EVT_MENU(XRCID("restore_layout"),           clMainFrame::OnRestoreDefaultLayout)
-	EVT_MENU(XRCID("word_wrap"),                clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("word_wrap"),                clMainFrame::OnViewWordWrap)
 	EVT_MENU(XRCID("toggle_fold"),              clMainFrame::DispatchCommandEvent)
 	EVT_MENU(XRCID("fold_all"),                 clMainFrame::DispatchCommandEvent)
 	EVT_MENU(XRCID("display_eol"),              clMainFrame::OnViewDisplayEOL)
@@ -4178,4 +4178,30 @@ wxString clMainFrame::StartTTY(const wxString &title)
 	return wxT("");
 
 #endif
+}
+
+void clMainFrame::OnViewWordWrap(wxCommandEvent& e)
+{
+	CHECK_SHUTDOWN();
+	
+	OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
+	opts->SetWordWrap(e.IsChecked());
+	EditorConfigST::Get()->SetOptions(opts);
+	
+	GetMainBook()->SetViewWordWrap(e.IsChecked());
+}
+
+void clMainFrame::OnViewWordWrapUI(wxUpdateUIEvent& e)
+{
+	CHECK_SHUTDOWN();
+	LEditor *editor = GetMainBook()->GetActiveEditor();
+	bool hasEditor = editor ? true : false;
+	if (!hasEditor) {
+		e.Enable(false);
+		return;
+	}
+	
+	OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
+	e.Enable(true);
+	e.Check(opts->GetWordWrap());
 }

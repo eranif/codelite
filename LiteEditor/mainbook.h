@@ -140,6 +140,7 @@ public:
 	void UnHighlightAll         ();
 	void DelAllBreakpointMarkers();
 	void SetViewEOL             (bool visible);
+	void SetViewWordWrap        (bool b);
 	void HighlightWord          (bool hl);
 	void ShowWhitespace         (int ws);
 	void UpdateColours          ();

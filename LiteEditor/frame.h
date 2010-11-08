@@ -453,6 +453,8 @@ protected:
 	//EOL
 	void OnConvertEol(wxCommandEvent &e);
 	void OnViewDisplayEOL(wxCommandEvent &e);
+	void OnViewWordWrap(wxCommandEvent &e);
+	void OnViewWordWrapUI(wxUpdateUIEvent &e);
 	void OnViewDisplayEOL_UI(wxUpdateUIEvent &e);
 
 	//Docking windows events

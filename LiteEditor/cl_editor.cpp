@@ -304,7 +304,8 @@ void LEditor::SetProperties()
 		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
 		SetHighlightGuide(0);
 	}
-
+	
+	SetWrapMode(options->GetWordWrap() ? wxSCI_WRAP_WORD : wxSCI_WRAP_NONE);
 	SetViewWhiteSpace(options->GetShowWhitspaces());
 	SetMouseDwellTime(500);
 	SetProperty(wxT("fold"), wxT("1"));

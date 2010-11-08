@@ -30,9 +30,9 @@
 #include "ScintillaWidget.h"
 #ifdef SCI_LEXER
 #include "SciLexer.h"
-#include "PropSet.h"
+#include "ILexer.h"
+#include "LexAccessor.h"
 #include "Accessor.h"
-#include "KeyWords.h"
 #endif
 #include "ContractionState.h"
 #include "SVector.h"
@@ -51,7 +51,7 @@
 #include "Selection.h"
 #include "PositionCache.h"
 #include "Editor.h"
-#include "SString.h"
+//#include "SString.h"
 #include "PropSetSimple.h"
 #include "ScintillaBase.h"
 #include <wx/wx.h>

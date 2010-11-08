@@ -163,7 +163,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	int lineWidthMaxSeen;
 	bool verticalScrollBarVisible;
 	bool endAtLastLine;
-	bool caretSticky;
+	int caretSticky;
 	bool multipleSelection;
 	bool additionalSelectionTyping;
 	int multiPasteMode;
@@ -222,7 +222,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	PRectangle rcPaint;
 	bool paintingAllText;
 	StyleNeeded styleNeeded;
-
+	
 	int modEventMask;
 
 	SelectionText drag;
@@ -435,6 +435,8 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	void NotifyModified(Document *document, DocModification mh, void *userData);
 	void NotifyDeleted(Document *document, void *userData);
 	void NotifyStyleNeeded(Document *doc, void *userData, int endPos);
+	void NotifyLexerChanged(Document *doc, void *userData);
+	void NotifyErrorOccurred(Document *doc, void *userData, int status);
 	void NotifyMacroRecord(unsigned int iMessage, uptr_t wParam, sptr_t lParam);
 
 	void PageMove(int direction, Selection::selTypes sel=Selection::noSel, bool stuttered = false);
@@ -517,7 +519,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	bool PositionIsHotspot(int position);
 	bool PointIsHotspot(Point pt);
 	void SetHotSpotRange(Point *pt);
-	void GetHotSpotRange(int& hsStart, int& hsEnd);
+	void GetHotSpotRange(int &hsStart, int &hsEnd);
 
 	int CodePage() const;
 	virtual bool ValidCodePage(int /* codePage */) const { return true; }

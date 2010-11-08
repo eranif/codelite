@@ -123,7 +123,7 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 
 	// ERAN IFRAH
 	int doxyWordLen = 0;
-	for (int i=0;i<len;i++) {
+	for (int i=0; i<len; i++) {
 		if ((maxEnd < numEnds) && (IsArrowCharacter(s[i]) || IsTabCharacter(s[i])) ) {
 			if (i > 0)
 				ends[maxEnd++] = i;
@@ -135,7 +135,7 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 			ends[maxEnd++] = i + doxyWordLen;
 			i += len;
 		}
-	}
+		}
 
 	// If we find this magic string, we translate it into
 	// a horizontal line in the tip
@@ -214,11 +214,11 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 						                             s+startSeg, endSeg - startSeg,
 						                             colourDoxyHighlight);
 					} else {
-						surface->DrawTextTransparent(rcClient, font, ytext,
-						                             s+startSeg, endSeg - startSeg,
-						                             highlight ? colourSel.allocated : colourUnSel.allocated);
-					}
+					surface->DrawTextTransparent(rcClient, font, ytext,
+										s+startSeg, endSeg - startSeg,
+					                             highlight ? colourSel.allocated : colourUnSel.allocated);
 				}
+			}
 				// ERAN IFRAH - END
 			}
 			x = xEnd;
@@ -314,7 +314,7 @@ PRectangle CallTip::CallTipStart(int pos, Point pt, const char *defn,
                                  const char *faceName, int size,
                                  int codePage_, int characterSet, Window &wParent) {
 	clickPlace = 0;
-		delete []val;
+	delete []val;
 	val = 0;
 	val = new char[strlen(defn) + 1];
 	strcpy(val, defn);

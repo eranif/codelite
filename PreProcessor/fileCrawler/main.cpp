@@ -8,13 +8,13 @@
 void testMacros();
 void searchAndReplaceA();
 void searchAndReplaceW();
+void testTokens();
+
+extern int PPLex(const wxString &file);
 
 int main(int argc, char **argv) {
+	//testTokens();
 	testMacros();
-//	for(size_t i=0; i<100; i++) {
-//		//printf("searchAndReplaceA\n");
-//		searchAndReplaceA();
-//	}
 	return 0;
 }
 
@@ -73,11 +73,23 @@ void testMacros() {
 	//PPScan(wxT("C:/Users/eran/src/wxWidgets-2.8.10/include/wx/defs.h"));
 	//PPScan(wxT("C:/Users/eran/src/MinGW-4.4.1/include/_mingw.h"));
 	//PPScan(wxT("C:\\Qt\\2009.02\\qt\\src\\corelib\\global\\qglobal.h"));
-	PPScan(wxT("C:\\wxWidgets-2.8.10\\include\\wx\\clipbrd.h"), true);
+	PPScan(wxT("../test.h"), true);
 	
 	// Export it into codelite's format
 	wxString table = PPTable::Instance()->Export();
+	
+	const std::set<wxString>& namesUsed = PPTable::Instance()->GetNamesUsed();
+	std::set<wxString>::const_iterator itName = namesUsed.begin();
+	for (; itName != namesUsed.end(); ++itName) {
+		fp.Write(*itName + wxT(" "));
+	}
+	fp.Write(wxString(wxT("\n\n")));
 
 	fp.Write(table);
 	fp.Close();
+}
+
+void testTokens()
+{
+	PPLex(wxT("../test.h"));
 }

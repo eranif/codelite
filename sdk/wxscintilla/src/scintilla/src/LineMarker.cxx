@@ -132,7 +132,7 @@ void LineMarker::SetXPM(const char *textForm) {
 	markType = SC_MARK_PIXMAP;
 }
 
-void LineMarker::SetXPM(const char * const *linesForm) {
+void LineMarker::SetXPM(const char *const *linesForm) {
 	delete pxpm;
 	pxpm = new XPM(linesForm);
 	markType = SC_MARK_PIXMAP;
@@ -527,7 +527,7 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
 		filler.bottom = filler.top + 2;
 		surface->FillRectangle(filler, c);
 
-	} else {// SC_MARK_FULLRECT
+	} else { // SC_MARK_FULLRECT
 		surface->FillRectangle(rcWhole, darkColour(back.allocated.AsLong(), foldLevel));
 	}
 }

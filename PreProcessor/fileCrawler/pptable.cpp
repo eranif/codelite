@@ -469,6 +469,14 @@ void PPTable::Add(const PPToken& token)
 	}
 }
 
+void PPTable::AddUsed(const wxString& name)
+{
+	if(name.IsEmpty()) {
+		return;
+	}
+	m_namesUsed.insert(name);
+}
+
 void PPTable::Print(wxFFile &fp)
 {
 	std::map<wxString, PPToken>::iterator iter = m_table.begin();
@@ -524,6 +532,11 @@ void PPTable::Squeeze()
 void PPTable::Clear()
 {
 	m_table.clear();
+}
+
+void PPTable::ClearNamesUsed()
+{
+	m_namesUsed.clear();
 }
 
 bool CLReplacePattern(const wxString& in, const wxString& pattern, const wxString& replaceWith, wxString &outStr)

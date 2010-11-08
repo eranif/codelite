@@ -1,18 +1,18 @@
 General
 -------
 
+High priority:
+--------------
+
+- cygwin is not supported well (depends files are using full path)
+- goto impl/ decl looks broken when using with class decorator... /
+
 - add build-errors-assistant
 - Add new 'scp' plugin
 - Add option to customize the single toolbar
 - Refactoring: add an option to add 'add forward decl'
-- Refactoring: refactor local variable:
-	add some progress indicator
-	highlight replacements
+
 
 2.9 Porting, known issues:
 ==========================
-MSW:
-Highlight colors are not working properly
-Open Resource dialog: it shows 3 columns when opening a workspace file
-
 ------------------------------------

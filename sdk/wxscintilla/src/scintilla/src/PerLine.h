@@ -11,7 +11,7 @@
 #ifdef SCI_NAMESPACE
 namespace Scintilla {
 #endif
-	
+
 /**
  * This holds the marker identifier and the marker type to display.
  * MarkerHandleNumbers are members of lists.
@@ -56,7 +56,7 @@ public:
 	int MarkValue(int line);
 	int AddMark(int line, int marker, int lines);
 	void MergeMarkers(int pos);
-	void DeleteMark(int line, int markerNum, bool all);
+	bool DeleteMark(int line, int markerNum, bool all);
 	void DeleteMarkFromHandle(int markerHandle);
 	int LineFromHandle(int markerHandle);
 };

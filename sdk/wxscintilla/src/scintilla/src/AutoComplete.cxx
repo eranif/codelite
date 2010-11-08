@@ -8,10 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "Platform.h"
 
-#include "CharClassify.h"
+#include "CharacterSet.h"
 #include "AutoComplete.h"
 
 #ifdef SCI_NAMESPACE
@@ -47,8 +48,8 @@ bool AutoComplete::Active() const {
 	return active;
 }
 
-void AutoComplete::Start(Window &parent, int ctrlID, 
-	int position, Point location, int startLen_, 
+void AutoComplete::Start(Window &parent, int ctrlID,
+	int position, Point location, int startLen_,
 	int lineHeight, bool unicodeMode) {
 	if (active) {
 		Cancel();

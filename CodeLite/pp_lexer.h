@@ -13,3 +13,10 @@
 #define PP_ZERO 269
 #define PP_CPLUSPLUS 270
 #define PP_INCLUDE 271
+#define PP_AND 272
+#define PP_OR 273
+#define PP_EQUAL 274
+#define PP_NEQUAL 275
+#define PP_INT 276
+#define PP_LOWERTHAN 277
+#define PP_GREATERTHAN 278

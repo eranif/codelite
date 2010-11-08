@@ -432,13 +432,13 @@
 #define wxSCI_LEX_GCC_MAKE_ENTER   6
 #define wxSCI_LEX_GCC_MAKE_LEAVING 7
 
-#define wxSCI_LEX_FIF                151
-#define wxSCI_LEX_FIF_DEFAULT        0
-#define wxSCI_LEX_FIF_FILE           1
-#define wxSCI_LEX_FIF_MATCH          2
-#define wxSCI_LEX_FIF_FILE_SHORT     3
-#define wxSCI_LEX_FIF_PROJECT        4
-#define wxSCI_LEX_FIF_SCOPE          5
+#define wxSCI_LEX_FIF 151
+#define wxSCI_LEX_FIF_DEFAULT 0
+#define wxSCI_LEX_FIF_FILE	  1
+#define wxSCI_LEX_FIF_MATCH	  2
+#define wxSCI_LEX_FIF_FILE_SHORT	3
+#define wxSCI_LEX_FIF_PROJECT 4
+#define wxSCI_LEX_FIF_SCOPE 5
 #define wxSCI_LEX_FIF_MATCH_COMMENT  6
 
 #define wxSCI_LEX_SVN 152

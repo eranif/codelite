@@ -315,7 +315,12 @@ void LEditor::SetProperties()
 	SetProperty(wxT("fold.at.else"), options->GetFoldAtElse() ? wxT("1") : wxT("0"));
 	SetProperty(wxT("fold.preprocessor"), options->GetFoldPreprocessor() ? wxT("1") : wxT("0"));
 	SetProperty(wxT("fold.compact"), options->GetFoldCompact() ? wxT("1") : wxT("0"));
-
+	
+	// disable pre-processing (for now)
+	// TODO: make this configurable
+	SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
+	SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
+	
 	// Fold and comments as well
 	SetProperty(wxT("fold.comment"), wxT("1"));
 	SetModEventMask (wxSCI_MOD_DELETETEXT | wxSCI_MOD_INSERTTEXT  | wxSCI_PERFORMED_UNDO  | wxSCI_PERFORMED_REDO | wxSCI_MOD_BEFOREDELETE );

@@ -76,7 +76,7 @@ unsigned int UTF8CharLength(unsigned char ch) {
 unsigned int UTF16Length(const char *s, unsigned int len) {
 	unsigned int ulen = 0;
 	unsigned int charLen;
-	for (unsigned int i=0;i<len;) {
+	for (unsigned int i=0; i<len;) {
 		unsigned char ch = static_cast<unsigned char>(s[i]);
 		if (ch < 0x80) {
 			charLen = 1;

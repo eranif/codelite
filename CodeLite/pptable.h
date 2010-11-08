@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <list>
+#include <set>
 
 
 #ifndef WXDLLIMPEXP_CL
@@ -93,6 +94,7 @@ struct WXDLLIMPEXP_CL PPToken {
 class WXDLLIMPEXP_CL PPTable
 {
 	std::map<wxString, PPToken> m_table;
+	std::set<wxString>          m_namesUsed;
 
 public:
 	static PPTable* Instance();
@@ -106,13 +108,19 @@ public:
 	PPToken   Token(const wxString &name);
 	bool      Contains(const wxString &name);
 	void      Add  (const PPToken& token);
+	void      AddUsed(const wxString& name);
 	void      Print(wxFFile &fp);
 	wxString  Export();
 	void      Clear();
+	void      ClearNamesUsed();
 	void      Squeeze();
 
 	const std::map<wxString, PPToken>& GetTable() const {
 		return m_table;
+	}
+	
+	const std::set<wxString>& GetNamesUsed() const {
+		return m_namesUsed;
 	}
 };
 #endif // PPTABLE_H

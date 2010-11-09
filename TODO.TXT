@@ -6,13 +6,11 @@ High priority:
 
 - cygwin is not supported well (depends files are using full path)
 - goto impl/ decl looks broken when using with class decorator... /
+- project 'Environment' <Use Defaults> should force to use the 'Default' environment variable set
+
+Optinal:
+--------
 
 - add build-errors-assistant
-- Add new 'scp' plugin
 - Add option to customize the single toolbar
 - Refactoring: add an option to add 'add forward decl'
-
-
-2.9 Porting, known issues:
-==========================
-------------------------------------

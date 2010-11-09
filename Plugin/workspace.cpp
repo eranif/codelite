@@ -386,14 +386,20 @@ bool Workspace::AddProject(const wxString & path, wxString &errMsg)
 		return false;
 	}
 
-	// Try first to find this project in the workspace
-	ProjectPtr proj = FindProjectByName(fn.GetName(), errMsg);
+	// Load the project into
+	ProjectPtr newProject(new Project());
+	if ( !newProject->Load(path) ) {
+		errMsg = wxT("Corrupted project file '");
+		errMsg << path << wxT("'");
+		return false;
+	}
+
+	// Try first to find a project with similar name in the workspace
+	ProjectPtr proj = FindProjectByName(newProject->GetName(), errMsg);
 	if ( !proj ) {
-		errMsg.Empty();
-		bool res = DoAddProject(path, errMsg);
-		if ( !res ) {
-			return false;
-		}
+
+		// No project could be find, add it to the workspace
+		DoAddProject(newProject);
 
 		// Add an entry to the workspace filewxFileName tmp(path);
 		fn.MakeRelativeTo(m_fileName.GetPath());
@@ -409,27 +415,37 @@ bool Workspace::AddProject(const wxString & path, wxString &errMsg)
 			return false;
 		}
 
-		AddProjectToBuildMatrix(FindProjectByName(fn.GetName(), errMsg));
+		AddProjectToBuildMatrix( newProject );
 		return true;
-	}
 
-	errMsg = wxT("A project with this name already exist in the workspace");
-	return false;
+	} else {
+		errMsg = wxString::Format(wxT("A project with a similar name '%s' already exists in the workspace"), proj->GetName().c_str());
+		return false;
+	}
 }
 
 
-bool Workspace::DoAddProject(const wxString &path, wxString &errMsg)
+ProjectPtr Workspace::DoAddProject(ProjectPtr proj)
+{
+	if(!proj)
+		return NULL;
+
+	m_projects[proj->GetName()] = proj;
+	return proj;
+}
+
+ProjectPtr Workspace::DoAddProject(const wxString &path, wxString &errMsg)
 {
 	// Add the project
 	ProjectPtr proj(new Project());
 	if ( !proj->Load(path) ) {
 		errMsg = wxT("Corrupted project file '");
 		errMsg << path << wxT("'");
-		return false;
+		return NULL;
 	}
 	// Add an entry to the projects map
 	m_projects[proj->GetName()] = proj;
-	return true;
+	return proj;
 }
 
 bool Workspace::RemoveProject(const wxString &name, wxString &errMsg)
@@ -716,4 +732,3 @@ Workspace* WorkspaceST::Get()
 		gs_Workspace = new Workspace;
 	return gs_Workspace;
 }
-

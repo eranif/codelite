@@ -279,8 +279,9 @@ private:
 	 * \param path project file path
 	 * \param errMsg [output] incase an error, report the error to the caller
 	 */
-	bool DoAddProject(const wxString &path, wxString &errMsg);
-
+	ProjectPtr DoAddProject(const wxString &path, wxString &errMsg);
+	ProjectPtr DoAddProject(ProjectPtr proj);
+	
 	void RemoveProjectFromBuildMatrix(ProjectPtr prj);
 
 	bool SaveXmlFile();

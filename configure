@@ -100,7 +100,7 @@ createVariables()
 	if [ "$os_name" = "FreeBSD" ]; then
 		echo "LINK_FLAGS += -lkvm" >> Makefile
 	fi
-	echo "INCLUDES := \$(INCLUDES) -I. -I${base_dir}/sdk/codelite_indexer/network -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxscintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/src -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite " >> Makefile
+	echo "INCLUDES := \$(INCLUDES) -I. -I${base_dir}/sdk/codelite_indexer/network -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxscintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/src -I${base_dir}/sdk/wxscintilla/src/scintilla/lexlib -I${base_dir}/sdk/wxscintilla/src/scintilla/lexers -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite " >> Makefile
 	echo "" >> Makefile
 	echo "" >> Makefile
 }

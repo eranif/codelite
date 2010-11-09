@@ -496,7 +496,10 @@ void readClassName()
 			break;
 		}
 		
-		if(c == LE_IDENTIFIER) {
+		if(c == LE_MACRO) {
+			continue;
+			
+		} else if(c == LE_IDENTIFIER) {
 			className = cl_scope_text;
 		
 		} else if(c == LE_DECLSPEC && className.empty()) {

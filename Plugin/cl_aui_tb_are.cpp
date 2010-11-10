@@ -12,32 +12,27 @@ CLMainAuiTBArt::~CLMainAuiTBArt()
 
 void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
-#ifdef __WXGTK__
-
-	wxColour baseColour = DrawingUtils::GetMenuBarBgColour();
-	dc.SetPen(baseColour);
-	dc.SetBrush(baseColour);
-	dc.DrawRectangle(rect);
-
-#elif defined(__WXMSW__)
-	wxColor col1 = DrawingUtils::GetPanelBgColour();
-	wxColor col2 = DrawingUtils::DarkColour(col1, 2.0);
+	static wxColor col1, col2;
+	if(col1.IsOk() == false) {
+		col1 = DrawingUtils::GetPanelBgColour();
+	}
+	if(col2.IsOk() == false) {
+		col2 = DrawingUtils::DarkColour(col1, 2.0);
+	}
+	
+#if defined(__WXMSW__)
 	DrawingUtils::PaintStraightGradientBox(dc, rect, col1, col2, true);
 
 #else // Mac
-	wxColour baseColour = DrawingUtils::GetPanelBgColour();
-	dc.SetPen(baseColour);
-	dc.SetBrush(baseColour);
+	dc.SetPen  (col1);
+	dc.SetBrush(col1);
 	dc.DrawRectangle(rect);
 #endif
 }
+
 void CLMainAuiTBArt::DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
-#if 0
-	// dont draw anything
-#else
 	wxAuiDefaultToolBarArt::DrawGripper(dc, wnd, rect);
-#endif
 }
 
 #endif

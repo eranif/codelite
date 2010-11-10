@@ -303,8 +303,13 @@ private:
 	 */
 	void DispatchCommandEvent(wxCommandEvent &event);
 	void DispatchUpdateUIEvent(wxUpdateUIEvent &event);
+	
+	/// Toolbar management
 	void CreateToolbars24();
 	void CreateToolbars16();
+	void CreateNativeToolbar24();
+	void CreateNativeToolbar16();
+	
 	void ViewPaneUI(const wxString &paneName, wxUpdateUIEvent&event);
 	void ViewPane(const wxString &paneName, wxCommandEvent &event);
 	void CreateViewAsSubMenu();

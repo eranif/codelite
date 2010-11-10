@@ -217,7 +217,7 @@ static void ChildTerminatedSingalHandler(int signo)
 		if(pid > 0) {
 			// waitpid succeeded
 			IProcess::SetProcessExitCode(pid, WEXITSTATUS(status));
-
+			
 		} else {
 			break;
 
@@ -423,10 +423,14 @@ bool CodeLiteApp::OnInit()
 	// set the CTAGS_REPLACEMENT environment variable
 	wxSetEnv(wxT("CTAGS_REPLACEMENTS"), ManagerST::Get()->GetStarupDirectory() + wxT("/ctags.replacements"));
 
-	//show splashscreen here
+	// show splashscreen here
 	long style = wxSIMPLE_BORDER;
 #if defined (__WXMSW__) || defined (__WXGTK__)
 	style |= wxFRAME_NO_TASKBAR;
+	
+#else // Mac
+	wxUnusedVar(style);
+	
 #endif
 
 	//read the last frame size from the configuration file

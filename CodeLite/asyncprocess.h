@@ -50,8 +50,6 @@ protected:
 	wxEvtHandler *            m_parent;
 	int                       m_pid;
 	bool                      m_hardKill;
-	static std::map<int, int> m_exitCodeMap;
-	static wxCriticalSection  m_cs;
 
 public:
 	IProcess(wxEvtHandler *parent) : m_parent(parent), m_pid(-1), m_hardKill(false) {}

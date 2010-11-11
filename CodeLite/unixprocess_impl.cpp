@@ -10,6 +10,7 @@
 #include <sys/select.h>
 #include <errno.h>
 #include <sys/wait.h>
+#include <string.h>
 
 #ifdef __WXGTK__
 #    include <pty.h>
@@ -23,6 +24,7 @@ static int    argc = 0;
 
 // ----------------------------------------------
 #define ISBLANK(ch) ((ch) == ' ' || (ch) == '\t')
+#define BUFF_SIZE  1024*64
 
 /*  Routines imported from standard C runtime libraries. */
 
@@ -207,6 +209,41 @@ static void make_argv(const wxString &cmd)
 	}
 }
 
+#define BUFF_STATE_NORMAL 0
+#define BUFF_STATE_IN_ESC 1
+
+static void RemoveTerminalColoring(char *buffer)
+{
+	char *saved_buff = buffer;
+	char tmpbuf[BUFF_SIZE+1];
+	memset(tmpbuf, 0, sizeof(tmpbuf));
+	
+	short state = BUFF_STATE_NORMAL;
+	size_t i(0);
+	
+	while(*buffer != 0) {
+		switch (state) {
+		case BUFF_STATE_NORMAL:
+			if(*buffer == 0x1B) { // found ESC char
+				state = BUFF_STATE_IN_ESC;
+				
+			} else {
+				tmpbuf[i] = *buffer;
+				i++;
+			}
+			break;
+		case BUFF_STATE_IN_ESC:
+			if(*buffer == 'm') { // end of color sequence
+				state = BUFF_STATE_NORMAL;
+			}
+			break;
+		}
+		buffer++;
+	}
+	memset(saved_buff, 0, BUFF_SIZE);
+	memcpy(saved_buff, tmpbuf, strlen(tmpbuf));
+}
+
 UnixProcessImpl::UnixProcessImpl(wxEvtHandler *parent)
 	: IProcess(parent)
 	, m_readHandle  (-1)
@@ -283,10 +320,16 @@ bool UnixProcessImpl::Read(wxString& buff)
 		return true;
 	} else if ( rc > 0 ) {
 		// there is something to read
-		char buffer[1024*64]; // our read buffer
+		char buffer[BUFF_SIZE+1]; // our read buffer
 		memset(buffer, 0, sizeof(buffer));
 		if(read(GetReadHandle(), buffer, sizeof(buffer)) > 0) {
 			buff.Empty();
+			buffer[BUFF_SIZE] = 0; // allways place a terminator
+			
+			// Remove coloring chars from the incomnig buffer
+			// colors are marked with ESC and terminates with lower case 'm'
+			RemoveTerminalColoring(buffer);
+			
 			buff.Append( wxString(buffer, wxConvUTF8) );
 			return true;
 		}

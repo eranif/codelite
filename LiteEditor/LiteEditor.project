@@ -483,6 +483,8 @@
     <File Name="../Runtime/config/codelite.xml.default"/>
     <File Name="../Runtime/config/codelite.xml.default.mac"/>
     <File Name="../codelite-icons/manifest.ini"/>
+    <File Name="../InnoSetup/codelite_mingw.iss"/>
+    <File Name="../InnoSetup/codelite_mingw_wx.iss"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Docking Windows">
     <File Name="output_pane.cpp"/>

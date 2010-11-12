@@ -4,19 +4,23 @@
 EditorSettingsDockingWindows::EditorSettingsDockingWindows( wxWindow* parent )
 		: EditorSettingsDockingWindowsBase( parent )
 {
-	m_checkBoxHideOutputPaneOnClick->SetValue(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick());
-	m_checkBoxHideOutputPaneNotIfBuild->SetValue(EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfBuild());
-	m_checkBoxHideOutputPaneNotIfErrors->SetValue(EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfErrors());
-	m_checkBoxHideOutputPaneNotIfSearch->SetValue(EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfSearch());
-	m_checkBoxHideOutputPaneNotIfReplace->SetValue(EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfReplace());
-	m_checkBoxHideOutputPaneNotIfReferences->SetValue(EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfReferences());
-	m_checkBoxHideOutputPaneNotIfOutput->SetValue(EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfOutput());
-	m_checkBoxHideOutputPaneNotIfDebug->SetValue(EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfDebug());
-	m_checkBoxHideOutputPaneNotIfTrace->SetValue(EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfTrace());
-	m_checkBoxHideOutputPaneNotIfTasks->SetValue(EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfTasks());
-	m_checkBoxFindBarAtBottom->SetValue(EditorConfigST::Get()->GetOptions()->GetFindBarAtBottom());
-	m_checkBoxOutputPaneCanDock->SetValue(EditorConfigST::Get()->GetOptions()->GetOutputPaneDockable());
-	m_checkBoxShowDebugOnRun->SetValue(EditorConfigST::Get()->GetOptions()->GetShowDebugOnRun());
+	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+	
+	m_checkBoxHideOutputPaneOnClick->SetValue        (options->GetHideOutpuPaneOnUserClick());
+	m_checkBoxHideOutputPaneNotIfBuild->SetValue     (options->GetHideOutputPaneNotIfBuild());
+	m_checkBoxHideOutputPaneNotIfErrors->SetValue    (options->GetHideOutputPaneNotIfErrors());
+	m_checkBoxHideOutputPaneNotIfSearch->SetValue    (options->GetHideOutputPaneNotIfSearch());
+	m_checkBoxHideOutputPaneNotIfReplace->SetValue   (options->GetHideOutputPaneNotIfReplace());
+	m_checkBoxHideOutputPaneNotIfReferences->SetValue(options->GetHideOutputPaneNotIfReferences());
+	m_checkBoxHideOutputPaneNotIfOutput->SetValue    (options->GetHideOutputPaneNotIfOutput());
+	m_checkBoxHideOutputPaneNotIfDebug->SetValue     (options->GetHideOutputPaneNotIfDebug());
+	m_checkBoxHideOutputPaneNotIfTrace->SetValue     (options->GetHideOutputPaneNotIfTrace());
+	m_checkBoxHideOutputPaneNotIfTasks->SetValue     (options->GetHideOutputPaneNotIfTasks());
+	m_checkBoxFindBarAtBottom->SetValue              (options->GetFindBarAtBottom());
+	m_checkBoxOutputPaneCanDock->SetValue            (options->GetOutputPaneDockable());
+	m_checkBoxShowDebugOnRun->SetValue               (options->GetShowDebugOnRun());
+	m_radioBoxHint->SetSelection                     (options->GetDockingStyle());
+	
 	m_checkBoxHideOutputPaneNotIfDebug->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI ), NULL, this );
 }
 
@@ -35,6 +39,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
 	options->SetFindBarAtBottom( m_checkBoxFindBarAtBottom->IsChecked() );
 	options->SetOutputPaneDockable( m_checkBoxOutputPaneCanDock->IsChecked() );
 	options->SetShowDebugOnRun( m_checkBoxShowDebugOnRun->IsChecked() );
+	options->SetDockingStyle( m_radioBoxHint->GetSelection() );
 }
 
 void EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)

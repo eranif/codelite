@@ -86,6 +86,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         , m_showDebugOnRun(true)
         , m_caretUseCamelCase(false)
 		, m_wordWrap(false)
+		, m_dockingStyle(0)
 {
     //set the default font name to be wxFONTENCODING_UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
@@ -142,7 +143,8 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
     	m_showDebugOnRun                = XmlUtils::ReadBool  (node, wxT("ShowDebugOnRun"),            m_showDebugOnRun);
     	m_caretUseCamelCase             = XmlUtils::ReadBool  (node, wxT("m_caretUseCamelCase"),       m_caretUseCamelCase);
     	m_wordWrap                      = XmlUtils::ReadBool  (node, wxT("m_wordWrap"),                m_wordWrap);
-
+		m_dockingStyle                  = XmlUtils::ReadLong  (node, wxT("m_dockingStyle"),            m_dockingStyle);
+		
         // These hacks will likely be changed in the future. If so, we'll be able to remove the #include "editor_config.h" too
     	long trim             (0); 
 		long appendLf         (0);
@@ -206,6 +208,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("EOLMode"),                       m_eolMode);
 	n->AddProperty(wxT("m_caretUseCamelCase"),           BoolToString(m_caretUseCamelCase));
 	n->AddProperty(wxT("m_wordWrap"),                    BoolToString(m_wordWrap));
+	n->AddProperty(wxT("m_dockingStyle"),                wxString::Format(wxT("%d"), m_dockingStyle));
 	
 	wxString tmp;
     tmp << m_indentWidth;

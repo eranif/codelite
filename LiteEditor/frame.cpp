@@ -708,25 +708,9 @@ void clMainFrame::CreateGUIControls(void)
 	m_mgr.SetManagedWindow(m_mainPanel);
 	m_mgr.SetArtProvider(new CLAuiDockArt());
 
-	// Set the manager flags
-	unsigned int auiMgrFlags (m_mgr.GetFlags());
-#ifdef __WXGTK__
-	auiMgrFlags |= wxAUI_MGR_ALLOW_ACTIVE_PANE;
-	auiMgrFlags &= ~wxAUI_MGR_TRANSPARENT_HINT; // This crashes under Linux with KDE & Compiz
-	auiMgrFlags |= wxAUI_MGR_RECTANGLE_HINT;
-
-#ifdef __WXDEBUG__
-	auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_TRANSPARENT_DRAG|wxAUI_MGR_RECTANGLE_HINT;
-#endif
-
-#else
-	auiMgrFlags |= wxAUI_MGR_ALLOW_ACTIVE_PANE;
-	auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
-#endif
-
-	m_mgr.SetFlags( auiMgrFlags );
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_VERTICAL);
-
+	SetAUIManagerFlags();
+	
 #ifndef __WXGTK__
 	wxColor col1 = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 5.0);
 	wxColor col2 = DrawingUtils::DarkColour(DrawingUtils::GetPanelBgColour(), 2.0);
@@ -4229,10 +4213,38 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 
 	m_mgr.LoadPerspective(m_defaultLayout, false);
 	UpdateAUI();
-
 }
+
+void clMainFrame::SetAUIManagerFlags()
+{
+	// Set the manager flags
+	unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_ACTIVE_PANE |
+							   wxAUI_MGR_ALLOW_FLOATING    |
+							   wxAUI_MGR_TRANSPARENT_DRAG;
+							   
+	int dockingStyle = EditorConfigST::Get()->GetOptions()->GetDockingStyle();
+	switch(dockingStyle) {
+	case 0: // Transparent hint
+		auiMgrFlags |= wxAUI_MGR_TRANSPARENT_HINT;
+		break;
+	case 1: // Rectangle 
+		auiMgrFlags |= wxAUI_MGR_RECTANGLE_HINT;
+		break;
+	case 2: // Venetians blinds hint
+		auiMgrFlags |= wxAUI_MGR_VENETIAN_BLINDS_HINT;
+		break;
+	}
+
+#ifndef __WXGTK__
+	auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
+#endif
+
+	m_mgr.SetFlags( auiMgrFlags );
+}
+
 void clMainFrame::UpdateAUI()
 {
+	SetAUIManagerFlags();
 	// Once loaded, update the output pane caption
 	wxAuiPaneInfo& paneInfo = m_mgr.GetPane(wxT("Output View"));
 
@@ -4356,3 +4368,4 @@ void clMainFrame::OnViewWordWrapUI(wxUpdateUIEvent& e)
 	e.Enable(true);
 	e.Check(opts->GetWordWrap());
 }
+

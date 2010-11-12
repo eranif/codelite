@@ -115,7 +115,12 @@ public:
 	 * \brief update various AUI parameters like Output Pane View caption visible and other
 	 */
 	void UpdateAUI();
-
+	
+	/**
+	 * @brief set the AUI manager flags as dictated from the configuration
+	 */
+	void SetAUIManagerFlags();
+	
 	wxPanel *GetMainPanel() {return m_mainPanel;}
 
 	/**

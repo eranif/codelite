@@ -39,7 +39,7 @@
 #    define CC_STYLE    wxBORDER_SIMPLE
 #else
 #    define CCBoxParent wxPopupTransientWindow
-#    define CC_STYLE    wxBORDER_SIMPLE
+#    define CC_STYLE    wxBORDER_RAISED
 #endif
 #    include <wx/popupwin.h>
 #else

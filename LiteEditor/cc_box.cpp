@@ -96,17 +96,12 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	m_isTipBgDark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 
 	if ( !m_isTipBgDark ) {
-		m_listCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-		m_listCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 		GetEditor()->m_isTipBgDark = false;
 
 	} else {
 		// the tooltip colour is dark
 		GetEditor()->CallTipSetForegroundHighlight(wxT("YELLOW"));
 		GetEditor()->m_isTipBgDark = true;
-		if( DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)) == false ) {
-			m_listCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-		}
 	}
 
 	m_listCtrl->SetFocus();

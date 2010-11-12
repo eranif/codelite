@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -74,7 +74,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase( wxWindow* pa
 	
 	fgSizer1->Add( m_checkBoxHideOutputPaneNotIfTasks, 0, wxALL, 5 );
 	
-	sbSizer1->Add( fgSizer1, 0, wxALIGN_LEFT|wxRIGHT|wxLEFT|wxEXPAND, 20 );
+	sbSizer1->Add( fgSizer1, 0, wxALIGN_LEFT|wxEXPAND|wxRIGHT|wxLEFT, 20 );
 	
 	m_checkBoxOutputPaneCanDock = new wxCheckBox( this, wxID_ANY, _("Make the output pane dockable"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_checkBoxOutputPaneCanDock, 0, wxALL|wxEXPAND, 5 );
@@ -99,6 +99,17 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase( wxWindow* pa
 	sbSizer11->Add( m_checkBoxShowDebugOnRun, 0, wxALL, 5 );
 	
 	mainSizer->Add( sbSizer11, 0, wxEXPAND|wxALL, 5 );
+	
+	wxBoxSizer* bSizer2;
+	bSizer2 = new wxBoxSizer( wxVERTICAL );
+	
+	wxString m_radioBoxHintChoices[] = { _("Transparent hint"), _("Rectangle hint"), _("Venetian blinds hints") };
+	int m_radioBoxHintNChoices = sizeof( m_radioBoxHintChoices ) / sizeof( wxString );
+	m_radioBoxHint = new wxRadioBox( this, wxID_ANY, _("Docking Style:"), wxDefaultPosition, wxDefaultSize, m_radioBoxHintNChoices, m_radioBoxHintChoices, 1, wxRA_SPECIFY_COLS );
+	m_radioBoxHint->SetSelection( 0 );
+	bSizer2->Add( m_radioBoxHint, 0, wxALL|wxEXPAND, 5 );
+	
+	mainSizer->Add( bSizer2, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -128,4 +139,5 @@ EditorSettingsDockingWindowsBase::~EditorSettingsDockingWindowsBase()
 	m_checkBoxHideOutputPaneNotIfDebug->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI ), NULL, this );
 	m_checkBoxHideOutputPaneNotIfTrace->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI ), NULL, this );
 	m_checkBoxHideOutputPaneNotIfTasks->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI ), NULL, this );
+	
 }

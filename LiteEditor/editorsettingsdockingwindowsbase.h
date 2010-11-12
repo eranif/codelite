@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -18,6 +18,7 @@
 #include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+#include <wx/radiobox.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -44,6 +45,7 @@ class EditorSettingsDockingWindowsBase : public wxPanel
 		wxCheckBox* m_checkBoxOutputPaneCanDock;
 		wxCheckBox* m_checkBoxFindBarAtBottom;
 		wxCheckBox* m_checkBoxShowDebugOnRun;
+		wxRadioBox* m_radioBoxHint;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnHideOutputPaneNotIfDebugUI( wxUpdateUIEvent& event ) { event.Skip(); }

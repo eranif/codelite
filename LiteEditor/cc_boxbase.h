@@ -17,10 +17,13 @@
 #include <wx/string.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
+#include <wx/pen.h>
 #include <wx/icon.h>
 #include <wx/toolbar.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
+#include <wx/aui/auibar.h>
+#include "cl_defs.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -47,7 +50,7 @@
 #endif
 
 #define BOX_HEIGHT 250
-#define BOX_WIDTH  250
+#define BOX_WIDTH  400
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class CCBoxBase
@@ -58,7 +61,7 @@ private:
 
 protected:
 	CCVirtualListCtrl* m_listCtrl;
-	wxToolBar*         m_toolBar1;
+	clToolBar*         m_toolBar1;
 	wxPanel*           m_mainPanel;
 
 	// Virtual event handlers, overide them in your derived class

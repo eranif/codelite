@@ -785,7 +785,7 @@ long ScintillaWX::WndProc(unsigned int iMessage, unsigned long wParam, long lPar
 		rc.bottom = rc.top + h;
 
 		// Adjust the X coordinates of the tip
-		rc.left   = sci->m_ccPoint.x + 250;
+		rc.left   = sci->m_ccPoint.x + 400;
 		rc.right  = rc.left + tipWidth;
 		rc.top    = sci->m_ccPoint.y;
 		rc.bottom = rc.top + tipHeight;

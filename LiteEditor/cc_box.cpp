@@ -643,10 +643,10 @@ void CCBox::HideCCBox()
 		DoHideCCHelpTab();
 		if( !m_constructing ) {
 			bool checked;
-			checked = m_toolBar1->FindById(TOOL_SHOW_PRIVATE_MEMBERS)->IsToggled();
+			checked = m_toolBar1->GetToolToggled(TOOL_SHOW_PRIVATE_MEMBERS);
 			LEditor::m_ccShowPrivateMembers = checked ? 1 : 0;
 
-			checked = m_toolBar1->FindById(TOOL_SHOW_ITEM_COMMENTS)->IsToggled();
+			checked = m_toolBar1->GetToolToggled(TOOL_SHOW_ITEM_COMMENTS);
 			LEditor::m_ccShowItemsComments  = checked ? 1 : 0;
 		}
 	}

@@ -5,11 +5,15 @@
 //-------------------------------------------------------------
 
 #include <wx/image.h>
-#include <wx/dcclient.h>
 #include "drawingutils.h"
 #include <wx/settings.h>
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/dcclient.h>
+
+#ifdef __WXMSW__
+#include <wx/msw/uxtheme.h>
+#endif
 
 // these functions live in dockart.cpp -- they'll eventually
 // be moved to a new utility cpp file
@@ -100,12 +104,34 @@ clAuiTabArt::clAuiTabArt()
 	wxColor border_colour = DrawingUtils::DarkColour(m_base_colour, 4.0);
 #endif
 
-	m_border_pen = wxPen(border_colour);
 	m_base_colour_pen = wxPen(m_base_colour);
 	m_base_colour_brush = wxBrush(m_base_colour);
 	m_base_colour_2 = DrawingUtils::LightColour(m_base_colour, 2.0);
 	m_base_colour_3 = DrawingUtils::LightColour(m_base_colour, 3.0);
-	m_base_colour_4 = DrawingUtils::LightColour(m_base_colour, 4.0);
+	
+	// used for drawing active tab gradient
+#ifdef __WXMSW__
+	if(wxUxThemeEngine::GetIfActive()) {
+		m_border_pen                 = wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION));
+		m_base_colour_4              = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION), 4.0);
+		m_colour_gradient_active_tab = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
+		m_shade_colour               = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1.0);
+		m_bottom_rect_colour         = DrawingUtils::LightColour(m_colour_gradient_active_tab, 2.0);
+		
+	} else {
+		m_border_pen                 = wxPen(border_colour);
+		m_base_colour_4              = DrawingUtils::LightColour(m_base_colour, 4.0);
+		m_colour_gradient_active_tab = m_base_colour;
+		m_shade_colour               = DrawingUtils::DarkColour(m_base_colour, 2.0);
+		m_bottom_rect_colour         = m_base_colour;
+	}
+#else
+	m_border_pen                 = wxPen(border_colour);
+	m_base_colour_4              = DrawingUtils::LightColour(m_base_colour, 4.0);
+	m_colour_gradient_active_tab = m_base_colour;
+	m_shade_colour               = m_base_colour;
+	m_bottom_rect_colour         = m_base_colour;
+#endif
 
 	m_active_close_bmp   = wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_active"));
 	m_disabled_close_bmp = wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_red"));
@@ -201,7 +227,7 @@ void clAuiTabArt::DrawBackground(wxDC& dc,
 	// TODO: else if (m_flags &wxAUI_NB_LEFT) {}
 	// TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
 	else { //for wxAUI_NB_TOP
-		dc.SetBrush(m_base_colour_brush);
+		dc.SetBrush(m_bottom_rect_colour);
 		dc.DrawRectangle(-1, y-4, w+2, 4);
 	}
 }
@@ -337,15 +363,12 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 		
 		// draw gradient background
 		wxColor top_color = m_base_colour_4;
-		wxColor bottom_color = m_base_colour;
+		wxColor bottom_color = m_bottom_rect_colour;
 		dc.GradientFillLinear(r, bottom_color, top_color, wxNORTH);
 	} else {
 		// draw inactive tab
-#ifdef __WXGTK__
-		wxColour shadeColour = m_base_colour;
-#else
-		wxColour shadeColour = DrawingUtils::DarkColour(m_base_colour, 2.0);
-#endif
+		
+
 		wxRect r(tab_x, tab_y, tab_width, tab_height-2);
 
 		// start the gradent up a bit and leave the inside border inset
@@ -359,16 +382,16 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 
 		// -- draw top gradient fill for glossy look
 
-		wxColor top_color    = shadeColour;
-		wxColor bottom_color = shadeColour;
+		wxColor top_color    = m_shade_colour;
+		wxColor bottom_color = m_shade_colour;
 		dc.GradientFillLinear(r, bottom_color, top_color, wxNORTH);
 
 		r.y += r.height;
 		r.y--;
 
 		// -- draw bottom fill for glossy look
-		top_color    = shadeColour;
-		bottom_color = shadeColour;
+		top_color    = m_shade_colour;
+		bottom_color = m_shade_colour;
 		dc.GradientFillLinear(r, top_color, bottom_color, wxSOUTH);
 	}
 
@@ -385,7 +408,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 		// TODO: else if (m_flags &wxAUI_NB_LEFT) {}
 		// TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
 		else //for wxAUI_NB_TOP
-			dc.SetPen(m_base_colour_pen);
+			dc.SetPen(m_bottom_rect_colour);
 		dc.DrawLine(border_points[0].x+1,
 		            border_points[0].y,
 		            border_points[5].x,

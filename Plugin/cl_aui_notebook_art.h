@@ -102,6 +102,9 @@ protected:
     wxColour m_base_colour_2;
     wxColour m_base_colour_3;
     wxColour m_base_colour_4;
+	wxColour m_colour_gradient_active_tab;
+	wxColour m_shade_colour;
+	wxColour m_bottom_rect_colour;
 	
     wxPen m_base_colour_pen;
     wxPen m_border_pen;

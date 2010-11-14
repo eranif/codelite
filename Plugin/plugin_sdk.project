@@ -249,7 +249,23 @@
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinRelease_29"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
   <Settings Type="Dynamic Library">
+    <GlobalSettings>
+      <Compiler Options="">
+        <IncludePath Value="."/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="WXMAKINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_SCI"/>
+        <Preprocessor Value="_WIN32_WINNT=0x0501"/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
@@ -265,7 +281,7 @@
         <Library Value="libwxscintillaud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="yes"/>
-      <General OutputFile="../lib/gcc_lib/libplugin_sdkud.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../lib/gcc_lib/libplugin_sdkud.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -305,7 +321,7 @@
         <Library Value="libwxscintillau.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="yes"/>
-      <General OutputFile="../lib/gcc_lib/libplugin_sdku.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../lib/gcc_lib/libplugin_sdku.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -345,7 +361,7 @@
         <Library Value="libwxscintillaud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="yes"/>
-      <General OutputFile="../lib/gcc_lib/libplugin_sdkud.dll" IntermediateDirectory="./WinDbg_29" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../lib/gcc_lib/libplugin_sdkud.dll" IntermediateDirectory="./WinDbg_29" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -370,21 +386,5 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
-    <GlobalSettings>
-      <Compiler Options="">
-        <IncludePath Value="."/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-        <Preprocessor Value="WXUSINGDLL_CL"/>
-        <Preprocessor Value="WXMAKINGDLL_SDK"/>
-        <Preprocessor Value="WXUSINGDLL_SCI"/>
-        <Preprocessor Value="_WIN32_WINNT=0x0501"/>
-      </Compiler>
-      <Linker Options="">
-        <LibraryPath Value="."/>
-      </Linker>
-      <ResourceCompiler Options=""/>
-    </GlobalSettings>
   </Settings>
-  <Dependencies Name="Win_wxWidgets_29"/>
 </CodeLite_Project>

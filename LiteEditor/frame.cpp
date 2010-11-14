@@ -708,18 +708,25 @@ void clMainFrame::CreateGUIControls(void)
 	m_mgr.SetManagedWindow(m_mainPanel);
 	m_mgr.SetArtProvider(new CLAuiDockArt());
 	SetAUIManagerFlags();
-	
+
 	wxColour frameColor = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+	wxColour frameColor2;
 	if(DrawingUtils::IsDark(frameColor)) {
 		m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR, wxT("WHITE"));
 	} else {
 		m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
 	}
-	
+
+#ifdef __WXMSW__
+	frameColor2 = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
+#else
+	frameColor2 = DrawingUtils::LightColour(frameColor, 2.0);
+#endif
+
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,     wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTIONTEXT));
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,   frameColor);
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,            wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION));
+	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,            frameColor2);
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_SASH_COLOUR,                      DrawingUtils::GetPanelBgColour());
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR,                DrawingUtils::GetPanelBgColour());
 
@@ -845,7 +852,7 @@ void clMainFrame::CreateGUIControls(void)
 	} else {
 		CreateToolbars24();
 	}
-	
+
 	ClangCodeCompletion::Instance()->Initialize(PluginManager::Get());
 
 	GetWorkspacePane()->GetNotebook()->SetRightClickMenu( wxXmlResource::Get()->LoadMenu(wxT("workspace_view_rmenu")) );
@@ -1118,7 +1125,7 @@ void clMainFrame::CreateNativeToolbar16()
 	tb->AddTool(XRCID("execute_no_debug"),          wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/execute")),      wxT("Run Active Project"));
 	tb->AddTool(XRCID("stop_executed_program"),     wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/execute_stop")), wxT("Stop Running Program"));
 	tb->AddSeparator();
-	
+
 	//----------------------------------------------
 	//create the debugger toolbar
 	//----------------------------------------------
@@ -1192,7 +1199,7 @@ void clMainFrame::CreateNativeToolbar24()
 	tb->AddTool(XRCID("execute_no_debug"),          wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/execute")),      wxT("Run Active Project"));
 	tb->AddTool(XRCID("stop_executed_program"),     wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/execute_stop")), wxT("Stop Running Program"));
 	tb->AddSeparator();
-	
+
 	//----------------------------------------------
 	//create the debugger toolbar
 	//----------------------------------------------
@@ -3367,7 +3374,6 @@ void clMainFrame::OnNewDetachedPane(wxCommandEvent &e)
 
 void clMainFrame::OnDestroyDetachedPane(wxCommandEvent& e)
 {
-	wxPrintf(wxT("OnDestroyDetachedPane called\n"));
 	DockablePane *pane = (DockablePane*)(e.GetClientData());
 	if (pane) {
 		m_mgr.DetachPane(pane);
@@ -4223,13 +4229,13 @@ void clMainFrame::SetAUIManagerFlags()
 	unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_ACTIVE_PANE |
 							   wxAUI_MGR_ALLOW_FLOATING    |
 							   wxAUI_MGR_TRANSPARENT_DRAG;
-							   
+
 	int dockingStyle = EditorConfigST::Get()->GetOptions()->GetDockingStyle();
 	switch(dockingStyle) {
 	case 0: // Transparent hint
 		auiMgrFlags |= wxAUI_MGR_TRANSPARENT_HINT;
 		break;
-	case 1: // Rectangle 
+	case 1: // Rectangle
 		auiMgrFlags |= wxAUI_MGR_RECTANGLE_HINT;
 		break;
 	case 2: // Venetians blinds hint
@@ -4348,11 +4354,11 @@ wxString clMainFrame::StartTTY(const wxString &title)
 void clMainFrame::OnViewWordWrap(wxCommandEvent& e)
 {
 	CHECK_SHUTDOWN();
-	
+
 	OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
 	opts->SetWordWrap(e.IsChecked());
 	EditorConfigST::Get()->SetOptions(opts);
-	
+
 	GetMainBook()->SetViewWordWrap(e.IsChecked());
 }
 
@@ -4365,7 +4371,7 @@ void clMainFrame::OnViewWordWrapUI(wxUpdateUIEvent& e)
 		e.Enable(false);
 		return;
 	}
-	
+
 	OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
 	e.Enable(true);
 	e.Check(opts->GetWordWrap());

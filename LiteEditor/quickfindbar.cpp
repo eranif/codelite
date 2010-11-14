@@ -467,8 +467,10 @@ void QuickFindBar::OnFindNext(wxCommandEvent& e)
 
 	// Highlighted text takes precedence over the current search string
 	wxString selectedText = m_sci->GetSelectedText();
-	if (selectedText.IsEmpty() == false)
+	if (selectedText.IsEmpty() == false) {
 		m_findWhat->SetValue(selectedText);
+		m_findWhat->SelectAll();
+	}
 
 	DoSearch(true, false);
 }
@@ -481,8 +483,10 @@ void QuickFindBar::OnFindPrevious(wxCommandEvent& e)
 
 	// Highlighted text takes precedence over the current search string
 	wxString selectedText = m_sci->GetSelectedText();
-	if (selectedText.IsEmpty() == false)
+	if (selectedText.IsEmpty() == false) {
 		m_findWhat->SetValue(selectedText);
+		m_findWhat->SelectAll();
+	}
 
 	DoSearch(false, false);
 }

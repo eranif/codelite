@@ -15,19 +15,7 @@ createRevisionFile()
 
 createVariables()
 {
-	## set the compiler name
 	#  Note the lack of -fPIC. Only use this for .so libs; strange and random bugs occur otherwise
-  # See if there's an alternative preference for the compilers
-  if [ -z "$CXX" ]; then
-	compiler_name="g++ "
-  else
-    compiler_name="$CXX "
-  fi
-  if [ -z "$CC" ]; then
-	c_compiler_name="gcc "
-  else
-    c_compiler_name="$CC "
-  fi
 
 	## set the executable name
 	exe_name="Runtime/codelite"
@@ -36,19 +24,27 @@ createVariables()
 	additional_include_path=$2
 	additional_links=$3
 
+	# is_64bit will probably hold yes or no, but could also contain data from an environmental variable
+	compiler_extras="$is_64bit"
+	c_compiler_extras="$is_64bit"
+
+	# If it wasn't overridden, implement the normal behaviour
 	if [ "$os_name" = "Darwin" ]; then
 		if [ "$is_64bit" = "yes" ]; then
-			compiler_name=${compiler_name}" -m64 "
-			c_compiler_name=${c_compiler_name}" -m64 "
-		else
-			compiler_name=${compiler_name}" -m32 "
-			c_compiler_name=${c_compiler_name}" -m32 "
-		fi
+			compiler_extras="-m64 -DON_64_BIT "
+			c_compiler_extras="-m64 -DON_64_BIT "
+		elif [ "$is_64bit" = "no" ]; then
+			compiler_extras="-m32 "
+			c_compiler_extras="-m32 "
 	fi
-
+	else # Not darwin
 	if [ "$is_64bit" = "yes" ]; then
-		compiler_name=${compiler_name}" -DON_64_BIT "
-		c_compiler_name=${c_compiler_name}" -DON_64_BIT "
+			compiler_extras="-DON_64_BIT "
+			c_compiler_extras="-DON_64_BIT "
+		elif [ "$is_64bit" = "no" ]; then
+			compiler_extras=""	# Otherwise the word 'no' will be used!
+			c_compiler_extras=""
+		fi
 	fi
 
 	## If the non-plugin .so libs aren't installed with the plugin ones, add their dir to the rpath
@@ -75,8 +71,10 @@ createVariables()
 
 	echo "OPT=${optimization}" >> Makefile
 	echo "DEBUG=${debug_flag}" >> Makefile
-	echo "CMP=${compiler_name} \$(DEBUG) \$(OPT) " >> Makefile
-	echo "GCC=${c_compiler_name}" >> Makefile
+	echo "CXX=${compiler_name}" >> Makefile
+	echo "CMP=\$(CXX) ${compiler_extras} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "CC=${c_compiler_name}" >> Makefile
+	echo "GCC=\$(CC) ${c_compiler_extras}" >> Makefile
 	echo "EXE_NAME=${exe_name}" >> Makefile
 	echo "EXE_NAME_NO_PATH=${exe_name1}" >> Makefile
 	echo "OBJ_DIR=${objects_dir}" >> Makefile
@@ -184,21 +182,16 @@ createCodeLiteCppcheckMakefile ()
 	## remove old Makefile
 	rm -fr Makefile
 
-	# See if there's an alternative preference for the compilers
-	if [ -z "$CXX" ]; then
-	compiler_name="g++ "
-	else
-		compiler_name="$CXX "
-	fi
-	if [ -z "$CC" ]; then
-	c_compiler_name="gcc "
-	else
-		c_compiler_name="$CC "
-	fi
-
+	# is_64bit will probably hold yes or no, but could also contain data from an environmental variable
 	if [ "$is_64bit" = "yes" ]; then
-		compiler_name=${compiler_name}" -DON_64_BIT "
-		c_compiler_name=${c_compiler_name}" -DON_64_BIT "
+		cppchkcompiler_extras="-DON_64_BIT "
+		c_cppchkcompiler_extras="-DON_64_BIT "
+	elif [ "$is_64bit" = "no" ]; then
+		cppchkcompiler_extras=""	# Otherwise the word 'no' will be used!
+		c_cppchkcompiler_extras=""
+	else	# User-provided data
+		cppchkcompiler_extras="$is_64bit"
+		c_cppchkcompiler_extras="$is_64bit"
 	fi
 
 	if [ "$enable_debug" = "yes" ]; then
@@ -213,8 +206,10 @@ createCodeLiteCppcheckMakefile ()
 
 	echo "OPT=${optimization}" >> Makefile
 	echo "DEBUG=${debug_flag}" >> Makefile
-	echo "CMP=${compiler_name} \$(DEBUG) \$(OPT) " >> Makefile
-	echo "GCC=${c_compiler_name} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "CXX=${compiler_name}" >> Makefile
+	echo "CMP=\$(CXX) ${cppchkcompiler_extras} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "CC=${c_compiler_name}" >> Makefile
+	echo "GCC=\$(CC) ${c_cppchkcompiler_extras} \$(DEBUG) \$(OPT) " >> Makefile
 	echo "" >> Makefile
 	echo "all: codelite_cppcheck" >> Makefile
 
@@ -282,23 +277,18 @@ createCodeLiteIndexerMakefile ()
 	## remove old Makefile
 	rm -fr Makefile
 
-	# See if there's an alternative preference for the compilers
-	if [ -z "$CXX" ]; then
-	compiler_name="g++ "
-	else
-		compiler_name="$CXX "
-	fi
-	if [ -z "$CC" ]; then
-	c_compiler_name="gcc "
-	else
-		c_compiler_name="$CC "
+	# is_64bit will probably hold yes or no, but could also contain data from an environmental variable
+	if [ "$is_64bit" = "yes" ]; then
+		indexercompiler_extras="-DON_64_BIT "
+		c_indexercompiler_extras="-DON_64_BIT "
+	elif [ "$is_64bit" = "no" ]; then
+		indexercompiler_extras=""	# Otherwise the word 'no' will be used!
+		c_indexercompiler_extras=""
+	else	# User-provided data
+		indexercompiler_extras="$is_64bit"
+		c_indexercompiler_extras="$is_64bit"
 	fi
 
-	if [ "$is_64bit" = "yes" ]; then
-		compiler_name=${compiler_name}" -DON_64_BIT "
-		c_compiler_name=${c_compiler_name}" -DON_64_BIT "
-	fi
-	## set the executable name
 	if [ "$enable_debug" = "yes" ]; then
 		debug_flag=" -g "
 		configuration="Debug"
@@ -311,8 +301,10 @@ createCodeLiteIndexerMakefile ()
 
 	echo "OPT=${optimization}" >> Makefile
 	echo "DEBUG=${debug_flag}" >> Makefile
-	echo "CMP=${compiler_name} \$(DEBUG) \$(OPT) " >> Makefile
-	echo "GCC=${c_compiler_name} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "CXX=${compiler_name}" >> Makefile
+	echo "CMP=\$(CXX) ${indexercompiler_extras} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "CC=${c_compiler_name}" >> Makefile
+	echo "GCC=\$(CC) ${c_indexercompiler_extras} \$(DEBUG) \$(OPT) " >> Makefile
 	echo "" >> Makefile
 	echo "all: codelite_indexer" >> Makefile
 
@@ -666,6 +658,9 @@ Show_Help_and_Exit()
 	echo "  --enable-debug          create a debug build (the default is disable)"
 	echo "  --help                  show this help"
 	echo "To build with alternative C++ or C compilers, specify them in the environmental variables CXX and/or CC"
+	echo "Either do: CXX=\"foo\" ./configure --<etc>"
+	echo "Or in that shell earlier, do: export CXX=\"foo\""
+	echo "Similarly you can put build flags e.g. \"-arch i386\" in the environmental variable ARCH_FLAGS"
 	exit
 }
 
@@ -711,6 +706,23 @@ sed s@%%PREFIX%%@$prefix@g Runtime/codelite.desktop.template >> Runtime/codelite
 is_64bit="no"
 if [ "$arch" = "x86_64" ] || [ "$arch" = "ia64" ]; then
 	is_64bit="yes"
+fi
+# Now we've set it, override it if the user wishes
+if [ -n "$ARCH_FLAGS" ]; then
+	is_64bit="$ARCH_FLAGS"
+fi
+
+## set the compiler name
+# See if there's an alternative preference for the compilers
+if [ -z "$CXX" ]; then
+	compiler_name="g++ "
+else
+	compiler_name="$CXX "
+fi
+if [ -z "$CC" ]; then
+	c_compiler_name="gcc "
+else
+	c_compiler_name="$CC "
 fi
 
 ## Process any arguments that were supplied

@@ -112,7 +112,7 @@ clAuiTabArt::clAuiTabArt()
 	// used for drawing active tab gradient
 #ifdef __WXMSW__
 	if(wxUxThemeEngine::GetIfActive()) {
-		m_border_pen                 = wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION));
+		m_border_pen                 = wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
 		m_base_colour_4              = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION), 4.0);
 		m_colour_gradient_active_tab = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
 		m_shade_colour               = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1.0);

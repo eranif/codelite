@@ -25,6 +25,7 @@ protected:
 	void OnBrowseIntermediateDir( wxCommandEvent& event );
 	void OnBrowseProgram( wxCommandEvent& event );
 	void OnBrowseCommandWD( wxCommandEvent& event );
+	void OnUseDebugArgsUI(wxUpdateUIEvent& event);
 
 public:
 

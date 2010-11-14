@@ -39,6 +39,7 @@ const wxString BuildConfig::PREPEND_GLOBAL_SETTINGS   = wxT("prepend");
 
 BuildConfig::BuildConfig(wxXmlNode *node)
 : m_commonConfig(node)
+, m_useSeparateDebugArgs(false)
 {
 	if ( node ) {
 		m_name = XmlUtils::ReadString(node, wxT("Name"));
@@ -177,13 +178,16 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 
 		wxXmlNode *general = XmlUtils::FindFirstByTagName(node, wxT("General"));
 		if (general) {
-			m_outputFile = XmlUtils::ReadString(general, wxT("OutputFile"));
+			m_outputFile            = XmlUtils::ReadString(general, wxT("OutputFile"));
 			m_intermediateDirectory = XmlUtils::ReadString(general, wxT("IntermediateDirectory"), wxT("."));
-			m_command = XmlUtils::ReadString(general, wxT("Command"));
-			m_commandArguments = XmlUtils::ReadString(general, wxT("CommandArguments"));
-			m_workingDirectory = XmlUtils::ReadString(general, wxT("WorkingDirectory"), wxT("."));
-			m_pauseWhenExecEnds = XmlUtils::ReadBool(general, wxT("PauseExecWhenProcTerminates"), true);
+			m_command               = XmlUtils::ReadString(general, wxT("Command"));
+			m_commandArguments      = XmlUtils::ReadString(general, wxT("CommandArguments"));
+			m_workingDirectory      = XmlUtils::ReadString(general, wxT("WorkingDirectory"), wxT("."));
+			m_pauseWhenExecEnds     = XmlUtils::ReadBool  (general, wxT("PauseExecWhenProcTerminates"), true);
+			m_useSeparateDebugArgs  = XmlUtils::ReadBool  (general, wxT("UseSeparateDebugArgs"), false);
+			m_debugArgs             = XmlUtils::ReadString(general, wxT("DebugArguments"));
 		}
+		
 	} else {
 
 		//create default project settings
@@ -210,6 +214,8 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		m_debuggerStartupCmds = wxEmptyString;
 		m_debuggerPostRemoteConnectCmds = wxEmptyString;
 		m_isDbgRemoteTarget = false;
+		m_useSeparateDebugArgs = false;
+		m_debugArgs = wxEmptyString;
 		
 		SetEnvVarSet(wxT("<Use Workspace Settings>"));
 		SetDbgEnvSet(wxT("<Use Global Settings>")   );
@@ -275,6 +281,8 @@ wxXmlNode *BuildConfig::ToXml() const
 	general->AddProperty(wxT("IntermediateDirectory"), m_intermediateDirectory);
 	general->AddProperty(wxT("Command"), m_command );
 	general->AddProperty(wxT("CommandArguments"), m_commandArguments);
+	general->AddProperty(wxT("UseSeparateDebugArgs"), BoolToString(m_useSeparateDebugArgs));
+	general->AddProperty(wxT("DebugArguments"),   m_debugArgs);
 	general->AddProperty(wxT("WorkingDirectory"), m_workingDirectory);
 	general->AddProperty(wxT("PauseExecWhenProcTerminates"), BoolToString(m_pauseWhenExecEnds));
 	node->AddChild(general);

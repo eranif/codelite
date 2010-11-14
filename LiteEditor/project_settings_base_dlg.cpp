@@ -327,7 +327,7 @@ PSGeneralPageBase::PSGeneralPageBase( wxWindow* parent, wxWindowID id, const wxP
 	m_textOutputFilePicker = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	gbSizer1->Add( m_textOutputFilePicker, wxGBPosition( 3, 1 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND, 5 );
 	
-	m_staticText16 = new wxStaticText( m_generalPage, wxID_ANY, wxT("Intermediate Directory:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText16 = new wxStaticText( m_generalPage, wxID_ANY, wxT("Intermediate Folder:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText16->Wrap( -1 );
 	gbSizer1->Add( m_staticText16, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -355,22 +355,37 @@ PSGeneralPageBase::PSGeneralPageBase( wxWindow* parent, wxWindowID id, const wxP
 	
 	m_staticText19 = new wxStaticText( m_generalPage, wxID_ANY, wxT("Program Arguments:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText19->Wrap( -1 );
-	gbSizer1->Add( m_staticText19, wxGBPosition( 7, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	gbSizer1->Add( m_staticText19, wxGBPosition( 8, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCommandArguments = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
-	gbSizer1->Add( m_textCommandArguments, wxGBPosition( 7, 1 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	gbSizer1->Add( m_textCommandArguments, wxGBPosition( 8, 1 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_staticText20 = new wxStaticText( m_generalPage, wxID_ANY, wxT("Working Directory:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxUseDebugArgs = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Use separate debug agruments"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxUseDebugArgs->SetToolTip( wxT("When enabled, codelite will use the arguments specified in the 'Debug Arguments' when running the program under debugger. \nOtherwise, codelite will use the arguments speicified in the 'Program Arguments' field") );
+	
+	gbSizer1->Add( m_checkBoxUseDebugArgs, wxGBPosition( 9, 0 ), wxGBSpan( 1, 3 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_staticText44 = new wxStaticText( m_generalPage, wxID_ANY, wxT("Debug Arguments:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText44->Wrap( -1 );
+	gbSizer1->Add( m_staticText44, wxGBPosition( 10, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlDebugArgs = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer1->Add( m_textCtrlDebugArgs, wxGBPosition( 10, 1 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND, 5 );
+	
+	m_staticText20 = new wxStaticText( m_generalPage, wxID_ANY, wxT("Working Folder:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText20->Wrap( -1 );
-	gbSizer1->Add( m_staticText20, wxGBPosition( 8, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	gbSizer1->Add( m_staticText20, wxGBPosition( 7, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlCommandWD = new wxTextCtrl( m_generalPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
-	gbSizer1->Add( m_textCtrlCommandWD, wxGBPosition( 8, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	gbSizer1->Add( m_textCtrlCommandWD, wxGBPosition( 7, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_buttonBrowseCommandWD = new wxButton( m_generalPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer1->Add( m_buttonBrowseCommandWD, wxGBPosition( 8, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer1->Add( m_buttonBrowseCommandWD, wxGBPosition( 7, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	bSizer19->Add( gbSizer1, 0, wxEXPAND, 5 );
+	
+	m_staticline11 = new wxStaticLine( m_generalPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer19->Add( m_staticline11, 0, wxEXPAND | wxALL, 5 );
 	
 	wxBoxSizer* bSizer17;
 	bSizer17 = new wxBoxSizer( wxVERTICAL );
@@ -378,7 +393,7 @@ PSGeneralPageBase::PSGeneralPageBase( wxWindow* parent, wxWindowID id, const wxP
 	m_checkBoxPauseWhenExecEnds = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Pause when execution ends"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer17->Add( m_checkBoxPauseWhenExecEnds, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer19->Add( bSizer17, 0, wxEXPAND, 5 );
+	bSizer19->Add( bSizer17, 0, 0, 5 );
 	
 	m_generalPage->SetSizer( bSizer19 );
 	m_generalPage->Layout();
@@ -401,6 +416,9 @@ PSGeneralPageBase::PSGeneralPageBase( wxWindow* parent, wxWindowID id, const wxP
 	m_textCommand->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
 	m_buttonBrowseProgram->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSGeneralPageBase::OnBrowseProgram ), NULL, this );
 	m_textCommandArguments->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
+	m_staticText44->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSGeneralPageBase::OnUseDebugArgsUI ), NULL, this );
+	m_textCtrlDebugArgs->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlDebugArgs->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSGeneralPageBase::OnUseDebugArgsUI ), NULL, this );
 	m_textCtrlCommandWD->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
 	m_buttonBrowseCommandWD->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSGeneralPageBase::OnBrowseCommandWD ), NULL, this );
 	m_checkBoxPauseWhenExecEnds->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
@@ -420,6 +438,9 @@ PSGeneralPageBase::~PSGeneralPageBase()
 	m_textCommand->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
 	m_buttonBrowseProgram->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSGeneralPageBase::OnBrowseProgram ), NULL, this );
 	m_textCommandArguments->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
+	m_staticText44->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSGeneralPageBase::OnUseDebugArgsUI ), NULL, this );
+	m_textCtrlDebugArgs->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlDebugArgs->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSGeneralPageBase::OnUseDebugArgsUI ), NULL, this );
 	m_textCtrlCommandWD->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
 	m_buttonBrowseCommandWD->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSGeneralPageBase::OnBrowseCommandWD ), NULL, this );
 	m_checkBoxPauseWhenExecEnds->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );

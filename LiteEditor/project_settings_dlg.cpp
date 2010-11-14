@@ -89,8 +89,16 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 
 	m_treebook->SetFocus();
 	GetSizer()->Fit(this);
+	
+	wxSize sz = GetSize();
 	Centre();
 	WindowAttrManager::Load(this, wxT("ProjectSettingsDlg"), NULL);
+	
+	// Make sure that all the controls are visible
+	wxSize newSize = GetSize();
+	if(newSize.x <= sz.x && newSize.y <= sz.y) {
+		GetSizer()->Fit(this);
+	}
 }
 
 void ProjectSettingsDlg::BuildTree()

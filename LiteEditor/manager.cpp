@@ -2037,7 +2037,14 @@ void Manager::DbgStart ( long pid )
 
 	if ( pid == wxNOT_FOUND ) {
 		exepath = bldConf->GetCommand();
-		args = bldConf->GetCommandArguments();
+		
+		// Get the debugging arguments.
+		if(bldConf->GetUseSeparateDebugArgs()) {
+			args = bldConf->GetDebugArgs();
+		} else {
+			args = bldConf->GetCommandArguments();
+		}
+		
 		exepath.Prepend ( wxT ( "\"" ) );
 		exepath.Append ( wxT ( "\"" ) );
 

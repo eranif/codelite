@@ -26,8 +26,8 @@
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/notebook.h>
-#include <wx/gbsizer.h>
 #include <wx/checkbox.h>
+#include <wx/gbsizer.h>
 #include <wx/checklst.h>
 #include <wx/listctrl.h>
 #include <wx/statbox.h>
@@ -150,9 +150,13 @@ class PSGeneralPageBase : public wxPanel
 		wxButton* m_buttonBrowseProgram;
 		wxStaticText* m_staticText19;
 		wxTextCtrl* m_textCommandArguments;
+		wxCheckBox* m_checkBoxUseDebugArgs;
+		wxStaticText* m_staticText44;
+		wxTextCtrl* m_textCtrlDebugArgs;
 		wxStaticText* m_staticText20;
 		wxTextCtrl* m_textCtrlCommandWD;
 		wxButton* m_buttonBrowseCommandWD;
+		wxStaticLine* m_staticline11;
 		wxCheckBox* m_checkBoxPauseWhenExecEnds;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -160,6 +164,7 @@ class PSGeneralPageBase : public wxPanel
 		virtual void OnCmdEvtVModified( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnBrowseIntermediateDir( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnBrowseProgram( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnUseDebugArgsUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnBrowseCommandWD( wxCommandEvent& event ) { event.Skip(); }
 		
 	

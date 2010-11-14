@@ -124,6 +124,8 @@ private:
 	wxString                     m_precompiledHeader;
 	wxString                     m_envVarSet;
 	wxString                     m_dbgEnvSet;
+	bool                         m_useSeparateDebugArgs;
+	wxString                     m_debugArgs;
 
 public:
 	BuildConfig(wxXmlNode *node);
@@ -144,6 +146,18 @@ public:
 		return m_compilerType;
 	}
 
+	void SetDebugArgs(const wxString& debugArgs) {
+		this->m_debugArgs = debugArgs;
+	}
+	void SetUseSeparateDebugArgs(bool useSeparateDebugArgs) {
+		this->m_useSeparateDebugArgs = useSeparateDebugArgs;
+	}
+	const wxString& GetDebugArgs() const {
+		return m_debugArgs;
+	}
+	bool GetUseSeparateDebugArgs() const {
+		return m_useSeparateDebugArgs;
+	}
 	void SetCompilerType(const wxString &cmpType) {
 		m_compilerType = cmpType;
 	}

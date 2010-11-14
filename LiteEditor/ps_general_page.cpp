@@ -89,7 +89,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
 	m_textCommand->SetValue(buildConf->GetCommand());
 	m_textCommandArguments->SetValue(buildConf->GetCommandArguments());
 	m_textCtrlCommandWD->SetValue(buildConf->GetWorkingDirectory());
-	
+
 	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
 	wxString projType = projSettingsPtr->GetProjectType(buildConf->GetName());
 	int sel = m_choiceProjectTypes->FindString(projType);
@@ -133,7 +133,9 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
 	}
 
 	m_checkBoxPauseWhenExecEnds->SetValue(buildConf->GetPauseWhenExecEnds());
-	
+	m_checkBoxUseDebugArgs->SetValue(buildConf->GetUseSeparateDebugArgs());
+	m_textCtrlDebugArgs->SetValue(buildConf->GetDebugArgs());
+
 }
 
 void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
@@ -148,7 +150,8 @@ void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettin
 	buildConf->SetDebuggerType(m_choiceDebugger->GetStringSelection());
 	buildConf->SetPauseWhenExecEnds(m_checkBoxPauseWhenExecEnds->IsChecked());
 	buildConf->SetProjectType(m_choiceProjectTypes->GetStringSelection());
-	
+	buildConf->SetUseSeparateDebugArgs(m_checkBoxUseDebugArgs->IsChecked());
+	buildConf->SetDebugArgs(m_textCtrlDebugArgs->GetValue());
 }
 
 void PSGeneralPage::Clear()
@@ -159,4 +162,9 @@ void PSGeneralPage::Clear()
 	m_textCommandArguments->Clear();
 	m_textCtrlCommandWD->Clear();
 	m_checkBoxPauseWhenExecEnds->SetValue(true);
+}
+
+void PSGeneralPage::OnUseDebugArgsUI(wxUpdateUIEvent& event)
+{
+	event.Enable(m_checkBoxUseDebugArgs->IsChecked());
 }

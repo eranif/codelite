@@ -416,6 +416,7 @@ PSGeneralPageBase::PSGeneralPageBase( wxWindow* parent, wxWindowID id, const wxP
 	m_textCommand->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
 	m_buttonBrowseProgram->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSGeneralPageBase::OnBrowseProgram ), NULL, this );
 	m_textCommandArguments->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
+	m_checkBoxUseDebugArgs->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
 	m_staticText44->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSGeneralPageBase::OnUseDebugArgsUI ), NULL, this );
 	m_textCtrlDebugArgs->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlDebugArgs->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSGeneralPageBase::OnUseDebugArgsUI ), NULL, this );
@@ -438,6 +439,7 @@ PSGeneralPageBase::~PSGeneralPageBase()
 	m_textCommand->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
 	m_buttonBrowseProgram->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSGeneralPageBase::OnBrowseProgram ), NULL, this );
 	m_textCommandArguments->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
+	m_checkBoxUseDebugArgs->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
 	m_staticText44->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSGeneralPageBase::OnUseDebugArgsUI ), NULL, this );
 	m_textCtrlDebugArgs->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlDebugArgs->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSGeneralPageBase::OnUseDebugArgsUI ), NULL, this );

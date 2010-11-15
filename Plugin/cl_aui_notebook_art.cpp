@@ -117,6 +117,8 @@ clAuiTabArt::clAuiTabArt()
 		m_colour_gradient_active_tab = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
 		m_shade_colour               = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 3.0);
 		m_bottom_rect_colour         = DrawingUtils::LightColour(m_colour_gradient_active_tab, 2.0);
+		m_active_close_bmp           = wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close"));
+		m_disabled_close_bmp         = wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close"));
 		
 	} else {
 		m_border_pen                 = wxPen(border_colour);
@@ -124,6 +126,8 @@ clAuiTabArt::clAuiTabArt()
 		m_colour_gradient_active_tab = m_base_colour;
 		m_shade_colour               = DrawingUtils::DarkColour(m_base_colour, 2.0);
 		m_bottom_rect_colour         = m_base_colour;
+		m_active_close_bmp           = wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_active"));
+		m_disabled_close_bmp         = wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_red"));
 	}
 #else
 	m_border_pen                 = wxPen(border_colour);
@@ -131,10 +135,10 @@ clAuiTabArt::clAuiTabArt()
 	m_colour_gradient_active_tab = m_base_colour;
 	m_shade_colour               = m_base_colour;
 	m_bottom_rect_colour         = m_base_colour;
+	m_active_close_bmp           = wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_active"));
+	m_disabled_close_bmp         = wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_red"));
 #endif
 
-	m_active_close_bmp   = wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_active"));
-	m_disabled_close_bmp = wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_red"));
 
 	m_active_left_bmp = wxAuiBitmapFromBits(left_bits, 16, 16, *wxBLACK);
 	m_disabled_left_bmp = wxAuiBitmapFromBits(left_bits, 16, 16, wxColour(128,128,128));

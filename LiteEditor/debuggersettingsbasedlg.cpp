@@ -289,7 +289,7 @@ DbgPageGeneralBase::DbgPageGeneralBase( wxWindow* parent, wxWindowID id, const w
 
 	fgSizer21->Add( m_spinCtrlNumElements, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_checkBoxExpandLocals = new wxCheckBox( m_panel6, wxID_ANY, wxT("Use the 'PreDefiend types for the 'Locals' view"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxExpandLocals = new wxCheckBox( m_panel6, wxID_ANY, wxT("Use 'PreDefined types for the 'Locals' view"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer21->Add( m_checkBoxExpandLocals, 0, wxALL|wxEXPAND, 5 );
 
 

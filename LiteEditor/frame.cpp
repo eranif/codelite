@@ -3684,9 +3684,13 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
 			// so that it uses debugger_ids instead of internal_ids
 			clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
-			// and finally make sure that the debugger pane is visiable
+			// and finally make sure that the debugger pane is visible
+			wxAuiPaneInfo &info = GetDockingManager().GetPane ( wxT ( "Debugger" ) );
+			if ( info.IsOk() && !info.IsShown() ) {
+				ManagerST::Get()->SetDebuggerPaneOriginallyVisible(false);
 			ManagerST::Get()->ShowDebuggerPane();
 		}
+	}
 	}
 	dlg->Destroy();
 }

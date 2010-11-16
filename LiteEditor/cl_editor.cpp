@@ -2023,13 +2023,16 @@ void LEditor::FindNextMarker()
 		GotoLine(nFoundLine);
 	} else {
 		//We reached the last marker, try again from top
-		int nLine = LineFromPosition(0);
-		int nFoundLine = MarkerNext(nLine, mask);
+		nLine = LineFromPosition(0);
+		nFoundLine = MarkerNext(nLine, mask);
 		if (nFoundLine >= 0) {
 			GotoLine(nFoundLine);
 		}
 	}
-	if (nFoundLine >= 0) EnsureVisible(nFoundLine);
+	if (nFoundLine >= 0) {
+		EnsureVisible(nFoundLine);
+		EnsureCaretVisible();
+	}
 }
 
 void LEditor::FindPrevMarker()
@@ -2043,13 +2046,16 @@ void LEditor::FindPrevMarker()
 	} else {
 		//We reached first marker, try again from button
 		int nFileSize = GetLength();
-		int nLine = LineFromPosition(nFileSize);
-		int nFoundLine = MarkerPrevious(nLine, mask);
+		nLine = LineFromPosition(nFileSize);
+		nFoundLine = MarkerPrevious(nLine, mask);
 		if (nFoundLine >= 0) {
 			GotoLine(nFoundLine);
 		}
 	}
-	if (nFoundLine >= 0) EnsureVisible(nFoundLine);
+	if (nFoundLine >= 0) {
+		EnsureVisible(nFoundLine);
+		EnsureCaretVisible();
+	}
 }
 
 bool LEditor::ReplaceAll()

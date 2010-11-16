@@ -562,6 +562,7 @@ protected:
 	//--------------------------- Debugger Support -----------------------------
 protected:
 	void DoUpdateDebuggerTabControl(wxAuiTabCtrl* tabControl);
+	bool DebuggerPaneWasShown;
 	
 public:
 	BreakptMgr* GetBreakpointsMgr() {
@@ -572,6 +573,19 @@ public:
 	
 	void SetMemory(const wxString &address, size_t count, const wxString &hex_value);
 
+	/**
+	 * Stores the debugger pane status when the debug session started
+	 */
+	void SetDebuggerPaneOriginallyVisible(bool shown) {
+		DebuggerPaneWasShown = shown;
+	}
+
+	/**
+	 * Returns true if the debugger pane was already shown when the debug session started
+	 */
+	bool GetDebuggerPaneOriginallyVisible() const {
+		return DebuggerPaneWasShown;
+	}
 	//---------------------------------------------------
 	// Debugging API
 	//---------------------------------------------------

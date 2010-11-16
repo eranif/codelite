@@ -1832,8 +1832,6 @@ void Manager::OnProcessEnd ( wxProcessEvent &event )
 
 //--------------------------- Debugger Support -----------------------------
 
-static bool HideDebuggerPane = true;
-
 static void DebugMessage ( wxString msg )
 {
 	clMainFrame::Get()->GetOutputPane()->GetDebugWindow()->AppendLine(msg);
@@ -2019,6 +2017,12 @@ void Manager::DbgStart ( long pid )
 		return;
 	}
 
+	// Is the debugger-pane is already visible? If so, don't close it again when the session is over
+	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( wxT ( "Debugger" ) );
+	if ( info.IsOk() ) {
+		SetDebuggerPaneOriginallyVisible(info.IsShown());
+	}
+
 	//set the debugger information
 	DebuggerInformation dinfo;
 	DebuggerMgr::Get().GetDebuggerInformation ( debuggerName, dinfo );
@@ -2180,10 +2184,9 @@ void Manager::DbgStart ( long pid )
 		dbgr->Run ( args, wxEmptyString );
 	}
 
-	// and finally make the debugger pane visible
-	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( wxT ( "Debugger" ) );
-	if ( info.IsOk() && !info.IsShown() ) {
-		HideDebuggerPane = true;
+	// and finally double-check the debugger pane visible
+	wxAuiPaneInfo &info2 = clMainFrame::Get()->GetDockingManager().GetPane ( wxT ( "Debugger" ) );
+	if ( info2.IsOk() && !info2.IsShown() ) {
 		ShowDebuggerPane ( true );
 	}
 }
@@ -2219,8 +2222,7 @@ void Manager::DbgStop()
 	UpdateStopped();
 
 	// and finally, hide the debugger pane (if we caused it to appear)
-	if ( HideDebuggerPane ) {
-		HideDebuggerPane = false;
+	if (! GetDebuggerPaneOriginallyVisible()) {
 		ShowDebuggerPane ( false );
 	}
 

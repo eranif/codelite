@@ -388,13 +388,21 @@ bool BreakptMgr::DelBreakpoint(const int id)
 
 int BreakptMgr::DelBreakpointByLineno(const wxString& file, const int lineno)
 {
-	wxString msg(_("Select the breakpoint to be deleted"));
-	int bid = GetDesiredBreakpointIfMultiple(file, lineno, msg);
-	if (bid == wxID_CANCEL || bid == BP_type_none) {
-		return bid;
+	std::vector<BreakpointInfo> allOnLine; // Start by finding all on the line
+	if ( ! GetBreakpoints(allOnLine, file, lineno) ) {
+		return BP_type_none;
 	}
-
-	return (DelBreakpoint(bid) == true ? true : -1); // Use -1 as an arbitrary failed-to-delete flag
+	
+	for(size_t i=0; i<allOnLine.size(); i++) {
+		BreakpointInfo bp = allOnLine[i];
+		int bpId = (bp.debugger_id == -1 ? bp.internal_id : bp.debugger_id );
+		
+		if(bpId == wxID_CANCEL || bpId == BP_type_none)
+			continue;
+			
+		DelBreakpoint(bpId);
+	}
+	return true;
 }
 
 void BreakptMgr::ApplyPendingBreakpoints()

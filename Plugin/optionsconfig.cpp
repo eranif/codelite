@@ -29,6 +29,10 @@
 #include "macros.h"
 #include "wx_xml_compatibility.h"
 
+#ifdef __WXMSW__
+#include <wx/msw/uxtheme.h>
+#endif
+
 OptionsConfig::OptionsConfig(wxXmlNode *node)
         : m_displayFoldMargin(true)
         , m_underlineFoldLine(false)
@@ -88,6 +92,16 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_wordWrap(false)
 		, m_dockingStyle(0)
 {
+	m_mswTheme = false;
+#ifdef __WXMSW__
+	int major, minor;
+	wxGetOsVersion(&major, &minor);
+
+	if(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */) {
+		m_mswTheme = true;
+	}
+#endif
+
     //set the default font name to be wxFONTENCODING_UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
 	if ( node ) {
@@ -144,6 +158,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
     	m_caretUseCamelCase             = XmlUtils::ReadBool  (node, wxT("m_caretUseCamelCase"),       m_caretUseCamelCase);
     	m_wordWrap                      = XmlUtils::ReadBool  (node, wxT("m_wordWrap"),                m_wordWrap);
 		m_dockingStyle                  = XmlUtils::ReadLong  (node, wxT("m_dockingStyle"),            m_dockingStyle);
+		m_mswTheme                      = XmlUtils::ReadBool  (node, wxT("m_mswTheme"),                m_mswTheme);
 		
         // These hacks will likely be changed in the future. If so, we'll be able to remove the #include "editor_config.h" too
     	long trim             (0); 
@@ -209,7 +224,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("m_caretUseCamelCase"),           BoolToString(m_caretUseCamelCase));
 	n->AddProperty(wxT("m_wordWrap"),                    BoolToString(m_wordWrap));
 	n->AddProperty(wxT("m_dockingStyle"),                wxString::Format(wxT("%d"), m_dockingStyle));
-	
+	n->AddProperty(wxT("m_mswTheme"),                    BoolToString(m_mswTheme));
 	wxString tmp;
     tmp << m_indentWidth;
     n->AddProperty(wxT("IndentWidth"), tmp);

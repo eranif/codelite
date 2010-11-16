@@ -31,10 +31,14 @@
 #include "wx/wxprec.h"
 #include <wx/fontmap.h>
 
+#ifdef __WXMSW__
+#include <wx/msw/uxtheme.h>
+#endif
+
 EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
-		: EditorSettingsMiscBasePanel( parent )
-		, TreeBookNode<EditorSettingsMiscPanel>()
-		, m_restartRequired (false)
+	: EditorSettingsMiscBasePanel( parent )
+	, TreeBookNode<EditorSettingsMiscPanel>()
+	, m_restartRequired (false)
 {
 	GeneralInfo info = clMainFrame::Get()->GetFrameGeneralInfo();
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
@@ -43,7 +47,8 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 	} else {
 		m_toolbarIconSize->SetSelection(1);
 	}
-
+	
+	m_checkBoxEnableMSWTheme->SetValue(options->GetMswTheme());
 	m_useSingleToolbar->SetValue(!PluginManager::Get()->AllowToolbar());
 
 	wxArrayString astrEncodings;
@@ -102,7 +107,15 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 	} else {
 		clMainFrame::Get()->SetFrameFlag(false, CL_SHOW_SPLASH);
 	}
-
+	
+	// Set the theme support.
+	// This option requires a restart of codelite
+	bool oldEnableMSWTheme = options->GetMswTheme();
+	options->SetMswTheme(m_checkBoxEnableMSWTheme->IsChecked());
+	if(oldEnableMSWTheme != m_checkBoxEnableMSWTheme->IsChecked()) {
+		m_restartRequired = true;
+	}
+	
 	EditorConfigST::Get()->SaveLongValue(wxT("SingleInstance"), m_singleAppInstance->IsChecked() ? 1 : 0);
 	EditorConfigST::Get()->SaveLongValue(wxT("CheckNewVersion"), m_versionCheckOnStartup->IsChecked() ? 1 : 0);
 	EditorConfigST::Get()->SaveLongValue(wxT("ShowFullPathInFrameTitle"), m_fullFilePath->IsChecked() ? 1 : 0);
@@ -150,4 +163,20 @@ void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)
 	clMainFrame::Get()->GetMainBook()->GetRecentlyOpenedFiles(a1);
 	ManagerST::Get()->GetRecentlyOpenedWorkspaces(a2);
 	e.Enable(!a1.IsEmpty() && !a2.IsEmpty());
+}
+
+void EditorSettingsMiscPanel::OnEnableThemeUI(wxUpdateUIEvent& event)
+{
+#ifdef __WXMSW__
+	int major, minor;
+	wxGetOsVersion(&major, &minor);
+
+	if(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */) {
+		event.Enable(true);
+	} else {
+		event.Enable(false);
+	}
+#else
+	event.Enable(false);
+#endif
 }

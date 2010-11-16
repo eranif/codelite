@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -35,6 +35,7 @@ class EditorSettingsMiscBasePanel : public wxPanel
 	protected:
 		wxChoice* m_toolbarIconSize;
 		wxCheckBox* m_useSingleToolbar;
+		wxCheckBox* m_checkBoxEnableMSWTheme;
 		wxStaticLine* m_staticline3;
 		wxStaticText* m_staticText1;
 		wxChoice* m_fileEncoding;
@@ -52,6 +53,7 @@ class EditorSettingsMiscBasePanel : public wxPanel
 		wxSpinCtrl* m_spinCtrlMaxOpenTabs;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnEnableThemeUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnClearButtonClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClearUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		

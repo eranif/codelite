@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -21,7 +21,10 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	bSizer1->Add( m_toolbarIconSize, 0, wxALL|wxEXPAND, 5 );
 	
 	m_useSingleToolbar = new wxCheckBox( this, wxID_ANY, wxT("Use single toolbar"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_useSingleToolbar, 0, wxALL, 5 );
+	bSizer1->Add( m_useSingleToolbar, 0, wxALL|wxEXPAND, 5 );
+	
+	m_checkBoxEnableMSWTheme = new wxCheckBox( this, wxID_ANY, wxT("Enable Windows(R) theme for Vista / Windows 7"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer1->Add( m_checkBoxEnableMSWTheme, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticline3 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline3, 0, wxEXPAND | wxALL, 5 );
@@ -97,6 +100,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	this->Layout();
 	
 	// Connect Events
+	m_checkBoxEnableMSWTheme->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsMiscBasePanel::OnEnableThemeUI ), NULL, this );
 	m_clearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditorSettingsMiscBasePanel::OnClearButtonClick ), NULL, this );
 	m_clearButton->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsMiscBasePanel::OnClearUI ), NULL, this );
 }
@@ -104,6 +108,8 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 EditorSettingsMiscBasePanel::~EditorSettingsMiscBasePanel()
 {
 	// Disconnect Events
+	m_checkBoxEnableMSWTheme->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsMiscBasePanel::OnEnableThemeUI ), NULL, this );
 	m_clearButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditorSettingsMiscBasePanel::OnClearButtonClick ), NULL, this );
 	m_clearButton->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsMiscBasePanel::OnClearUI ), NULL, this );
+	
 }

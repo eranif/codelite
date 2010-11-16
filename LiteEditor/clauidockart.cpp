@@ -1,8 +1,9 @@
 #include "clauidockart.h"
 #include <wx/image.h>
 #include <wx/dc.h>
+#include <wx/settings.h>
 #include "drawingutils.h"
-
+#include "editor_config.h"
 #include "closetab-active.xpm"
 #include "closetab-active.xpm.alpha"
 #include "closetab.xpm"
@@ -17,6 +18,10 @@ CLAuiDockArt::CLAuiDockArt()
 	wxImage img2(closetab_active_xpm);
 	img2.SetAlpha(closetab_active_alpha, true);
 	m_bmp_close_active = wxBitmap(img2);
+
+	if(EditorConfigST::Get()->GetOptions()->GetMswTheme()) {
+		m_border_pen = wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+	}
 
 	m_gripper_brush    = wxBrush(DrawingUtils::GetPanelBgColour());
 	m_background_brush = wxBrush(DrawingUtils::GetPanelBgColour());

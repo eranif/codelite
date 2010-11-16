@@ -1,4 +1,5 @@
 #include "cl_aui_notebook_art.h"
+#include "editor_config.h"
 
 //-------------------------------------------------------------
 // The following code was copy as is from wxWidgets source tree
@@ -10,10 +11,7 @@
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/dcclient.h>
-
-#ifdef __WXMSW__
-#include <wx/msw/uxtheme.h>
-#endif
+#include "optionsconfig.h"
 
 // these functions live in dockart.cpp -- they'll eventually
 // be moved to a new utility cpp file
@@ -111,10 +109,7 @@ clAuiTabArt::clAuiTabArt()
 	
 	// used for drawing active tab gradient
 #ifdef __WXMSW__
-	int major, minor;
-	wxGetOsVersion(&major, &minor);
-	
-	if(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */) {
+	if(EditorConfigST::Get()->GetOptions()->GetMswTheme()) {
 		m_border_pen                 = wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
 		m_base_colour_4              = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION), 4.0);
 		m_colour_gradient_active_tab = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
@@ -141,7 +136,6 @@ clAuiTabArt::clAuiTabArt()
 	m_active_close_bmp           = wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_active"));
 	m_disabled_close_bmp         = wxXmlResource::Get()->LoadBitmap(wxT("tab_x_close_red"));
 #endif
-
 
 	m_active_left_bmp = wxAuiBitmapFromBits(left_bits, 16, 16, *wxBLACK);
 	m_disabled_left_bmp = wxAuiBitmapFromBits(left_bits, 16, 16, wxColour(128,128,128));

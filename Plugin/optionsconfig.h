@@ -33,7 +33,8 @@
 #include "configuration_object.h"
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK OptionsConfig : public ConfObject {
+class WXDLLIMPEXP_SDK OptionsConfig : public ConfObject
+{
 protected:
 	bool           m_displayFoldMargin;
 	bool           m_underlineFoldLine;
@@ -90,6 +91,7 @@ protected:
 	bool           m_dontTrimCaretLine;
 	bool           m_wordWrap;
 	int            m_dockingStyle;
+	bool           m_mswTheme;
 
 public:
 	OptionsConfig() {}
@@ -100,6 +102,12 @@ public:
 	// Setters/Getters
 	//-------------------------------------
 
+	void SetMswTheme(bool mswTheme) {
+		this->m_mswTheme = mswTheme;
+	}
+	bool GetMswTheme() const {
+		return m_mswTheme;
+	}
 	void SetDockingStyle(int dockingStyle) {
 		this->m_dockingStyle = dockingStyle;
 	}

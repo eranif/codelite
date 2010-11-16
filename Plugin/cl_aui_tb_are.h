@@ -14,12 +14,15 @@
 
 class WXDLLIMPEXP_SDK CLMainAuiTBArt : public wxAuiDefaultToolBarArt
 {
+	bool m_mswWithThemeEnabled;
+	
 public:
 	CLMainAuiTBArt();
 	virtual ~CLMainAuiTBArt();
 
     virtual void DrawGripper( wxDC& dc, wxWindow* wnd, const wxRect& rect);
 	virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect);
+	virtual void DrawSeparator(wxDC& dc, wxWindow* wnd, const wxRect& rect);
 };
 #endif
 

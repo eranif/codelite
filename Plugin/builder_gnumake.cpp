@@ -730,7 +730,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 				wxString compilerMacro = DoGetCompilerMacro(rel_paths.at(i).GetFullPath(wxPATH_UNIX));
 				if (generateDependenciesFiles) {
 					text << dependFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
-					text << wxT("\t") << wxT("@") << compilerMacro << wxT(" $(CmpOptions) $(IncludePath) -MT") << objectName <<wxT(" -MF") << dependFile << wxT(" -MM \"") << absFileName << wxT("\"\n\n");
+					text << wxT("\t") << wxT("@") << compilerMacro << wxT(" $(CmpOptions) $(IncludePath) -MG -MP -MT") << objectName <<wxT(" -MF") << dependFile << wxT(" -MM \"") << absFileName << wxT("\"\n\n");
 				}
 
 				if (supportPreprocessOnlyFiles) {

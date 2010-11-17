@@ -1028,17 +1028,15 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 	}
 
 	// Filter non-relevant matches
-	wxString oldName ( origName ) ;
-	oldName.Replace(wxT("\\"), wxT("/"));
+	wxFileName oldName (origName);
 	for(size_t i=0; i<includes.size(); i++) {
 
 		wxString   inclName (includes.at(i).file.c_str(), wxConvUTF8);
 		wxFileName inclFn   ( inclName );
 
-		if(oldName.EndsWith(inclFn.GetFullName())) {
+		if(oldName.GetFullName() == inclFn.GetFullName()) {
 			matches.push_back(includes.at(i));
 		}
-
 	}
 
 	// Prompt the user with the list of files which are about to be modified

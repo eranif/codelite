@@ -78,7 +78,8 @@ enum DebuggerUpdateReason
 	DBG_UR_EVALVARIABLEOBJ,         // Variable object has be evaluated
 	DBG_UR_VAROBJUPDATE,            // An update to variable object
 	DBG_UR_FRAMEDEPTH,              // Frame information
-	DBG_UR_VARIABLEOBJUPDATEERR     // Variable object update error
+	DBG_UR_VARIABLEOBJUPDATEERR,    // Variable object update error
+	DBG_UR_FUNCTIONFINISHED         // Function execution finished, there might be a return value to display in the Locals view
 };
 
 enum UserReason {
@@ -101,7 +102,7 @@ struct DebuggerEvent {
 	int                           m_bpDebuggerId;     // DBG_UR_BP_ADDED, DBG_UR_BP_HIT
 	LocalVariables                m_locals;           // DBG_UR_LOCALS
 	wxString                      m_expression;       // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_ASCII_VIEWER, DBG_UR_WATCHMEMORY, DBG_UR_VARIABLEOBJ
-												      // DBG_UR_EVALVARIABLEOBJ
+												      // DBG_UR_EVALVARIABLEOBJ, DBG_UR_FUNCTIONFINISHED
 	wxString                      m_evaluated;        // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY, DBG_UR_EVALVARIABLEOBJ
 	StackEntryArray               m_stack;            // DBG_UR_UPDATE_STACK_LIST
 	std::vector<BreakpointInfo>   m_bpInfoList;       // DBG_UR_RECONCILE_BPTS

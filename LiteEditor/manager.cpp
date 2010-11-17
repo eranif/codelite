@@ -2947,7 +2947,11 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	case DBG_UR_UPDATE_STACK_LIST:
 		clMainFrame::Get()->GetDebuggerPane()->GetFrameListView()->Update ( event.m_stack );
 		break;
-
+		
+	case DBG_UR_FUNCTIONFINISHED:
+		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateFuncReturnValue( event.m_expression );
+		break;
+		
 	case DBG_UR_REMOTE_TARGET_CONNECTED:
 		UpdateRemoteTargetConnected( event.m_text );
 		break;

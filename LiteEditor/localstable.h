@@ -49,7 +49,8 @@ public:
 	void UpdateLocals  (const LocalVariables& locals);
 	void UpdateFrameInfo();
 
-	void UpdateFuncArgs(const LocalVariables& args);
+	void UpdateFuncArgs       (const LocalVariables& args);
+	void UpdateFuncReturnValue(const wxString& retValueGdbId);
 	void Initialize    ();
 
 	DECLARE_EVENT_TABLE();

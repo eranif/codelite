@@ -201,8 +201,16 @@ void LocalsTable::OnItemExpanding(wxTreeEvent& event)
 		} else {
 			// first time
 			// create a variable object
-			dbgr->CreateVariableObject(m_listTable->GetItemText(event.GetItem()), false, m_DBG_USERR);
-			m_createVarItemId[m_listTable->GetItemText(event.GetItem())] = event.GetItem();
+			wxString expres = m_listTable->GetItemText(event.GetItem());
+			DbgTreeItemData *data  = (DbgTreeItemData *)m_listTable->GetItemData(event.GetItem());
+			if(data && data->_kind == DbgTreeItemData::FuncRetValue) {
+				expres = data->_retValueGdbValue;
+			}
+			
+			dbgr->CreateVariableObject(expres,                                       // the expression
+									   data->_kind == DbgTreeItemData::FuncRetValue, // bound to creation frame?
+									   m_DBG_USERR);                                 // user reason
+			m_createVarItemId[expres] = event.GetItem();
 		}
 	}
 }
@@ -394,4 +402,42 @@ void LocalsTable::OnEditValueUI(wxUpdateUIEvent& event)
 		DbgTreeItemData *data = (DbgTreeItemData*) m_listTable->GetItemData(selectedItem);
 		event.Enable(debugger && data && (data->_gdbId.IsEmpty() || !data->_isFake));
 	}
+}
+
+void LocalsTable::UpdateFuncReturnValue(const wxString& retValueGdbId)
+{
+	wxTreeItemId root = m_listTable->GetRootItem();
+	if(!root.IsOk())
+		return;
+
+	wxColour rootItemColour = DrawingUtils::LightColour(wxT("LIGHT GRAY"), 3.0);
+
+	wxArrayString itemsNotRemoved;
+	// remove the non-variable objects and return a list
+	// of all the variable objects (at the top level)
+	wxTreeItemId item = DoFindItemByExpression(wxT("Function Returned"));
+	if(item.IsOk()) {
+		DoDeleteWatch(item);
+	}
+	m_listTable->Delete(item);
+	
+	
+	DbgTreeItemData *data = new DbgTreeItemData();
+	data->_kind             = DbgTreeItemData::FuncRetValue;
+	data->_retValueGdbValue = retValueGdbId;
+	
+	item = m_listTable->AppendItem(root, wxT("Function Returned"), -1, -1, data);
+	m_listTable->SetItemBackgroundColour(item, rootItemColour);
+
+	m_listTable->SetItemText(item, 1, retValueGdbId);
+	m_listTable->SetItemText(item, 2, wxT(""));
+	m_listTable->SetItemTextColour(item, *wxRED);
+	
+	m_listTable->AppendItem(item, wxT("<dummy>"));
+	m_listTable->Collapse(item);
+	
+	// fake an expanding
+	wxTreeEvent evt;
+	evt.SetItem(item);
+	OnItemExpanding(evt);
 }

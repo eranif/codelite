@@ -428,18 +428,27 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 		UpdateGotControl(DBG_EXITED_NORMALLY, func);
 
 	} else if (reason == wxT("function-finished")) {
-		wxString message;
-		int where = line.Find(wxT("return-value"));
-		if (where != wxNOT_FOUND) {
-			message = line.Mid(where+12);
-			message = message.AfterFirst(wxT('"'));
-			message = message.BeforeFirst(wxT('"'));
-			message.Prepend(_("Function returned with value: "));
-			m_observer->UpdateAddLine(message);
-		}
-
+		
 		//debugee program exit normally
 		UpdateGotControl(DBG_FUNC_FINISHED, func);
+		
+		// We finished an execution of a function.
+		// Return to the caller the gdb-result-var since we might want
+		// to create a variable object out of it
+		wxString gdbVar;
+		int where = line.Find(wxT("gdb-result-var"));
+		if (where != wxNOT_FOUND) {
+			
+			gdbVar = line.Mid(where+14);
+			gdbVar = gdbVar.AfterFirst(wxT('"'));
+			gdbVar = gdbVar.BeforeFirst(wxT('"'));
+			
+			DebuggerEvent evt;
+			evt.m_updateReason = DBG_UR_FUNCTIONFINISHED;
+			evt.m_expression   = gdbVar;
+			m_observer->DebuggerUpdate(evt);
+		}
+		
 	} else {
 		//by default return control to program
 		UpdateGotControl(DBG_UNKNOWN, func);

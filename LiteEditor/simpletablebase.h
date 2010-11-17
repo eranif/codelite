@@ -26,13 +26,15 @@ public:
 	wxString _gdbId;
 	size_t   _kind;
 	bool     _isFake;
-
+	wxString _retValueGdbValue;
+	
 public:
 	enum {
 		Locals         = 0x00000001,
 		FuncArgs       = 0x00000002,
 		VariableObject = 0x00000004,
-		Watch          = 0x00000010
+		Watch          = 0x00000010,
+		FuncRetValue   = 0x00000020
 	};
 
 public:

@@ -299,7 +299,7 @@ bool DbgGdb::Run( const wxString &args, const wxString &comm )
 		if(!WriteCommand(setArgsCommands, NULL))
 			return false;
 
-		return WriteCommand( wxT( "-exec-run " ), new DbgCmdHandlerAsyncCmd( m_observer, this ) );
+		return WriteCommand( wxT( "-exec-run " ), new DbgCmdHandlerExecRun( m_observer, this ) );
 
 	} else {
 		// attach to the remote gdb server
@@ -634,26 +634,6 @@ void DbgGdb::Poke()
 	wxString line;
 	if ( !m_gdbProcess || m_gdbOutputArr.IsEmpty() ) {
 		return;
-	}
-
-	if ( m_debuggeePid == wxNOT_FOUND ) {
-		if ( GetIsRemoteDebugging() ) {
-			m_debuggeePid = m_gdbProcess->GetPid();
-
-		} else {
-			std::vector<long> children;
-			ProcUtils::GetChildren( m_gdbProcess->GetPid(), children );
-			std::sort( children.begin(), children.end() );
-			if ( children.empty() == false ) {
-				m_debuggeePid = children.at( 0 );
-			}
-
-			if ( m_debuggeePid != wxNOT_FOUND ) {
-				wxString msg;
-				msg << wxT( "Debuggee process ID: " ) << m_debuggeePid;
-				m_observer->UpdateAddLine( msg );
-			}
-		}
 	}
 
 	while ( DoGetNextLine( line ) ) {
@@ -1203,7 +1183,7 @@ void DbgGdb::SetInternalMainBpID( int bpId )
 
 bool DbgGdb::Restart()
 {
-	return WriteCommand( wxT( "-exec-run " ) , new DbgCmdHandlerAsyncCmd( m_observer, this ) );
+	return WriteCommand( wxT( "-exec-run " ) , new DbgCmdHandlerExecRun( m_observer, this ) );
 }
 
 bool DbgGdb::SetVariableObbjectDisplayFormat(const wxString& name, DisplayFormat displayFormat)
@@ -1244,4 +1224,27 @@ void DbgGdb::AssignValue(const wxString& expression, const wxString& newValue)
 	wxString cmd;
 	cmd << wxT("set variable ") << expression << wxT("=") << newValue;
 	ExecuteCmd(cmd);
+}
+
+void DbgGdb::GetDebugeePID()
+{
+	if ( m_debuggeePid == wxNOT_FOUND ) {
+		if ( GetIsRemoteDebugging() ) {
+			m_debuggeePid = m_gdbProcess->GetPid();
+
+		} else {
+			std::vector<long> children;
+			ProcUtils::GetChildren( m_gdbProcess->GetPid(), children );
+			std::sort( children.begin(), children.end() );
+			if ( children.empty() == false ) {
+				m_debuggeePid = children.at( 0 );
+			}
+
+			if ( m_debuggeePid != wxNOT_FOUND ) {
+				wxString msg;
+				msg << wxT( "Debuggee process ID: " ) << m_debuggeePid;
+				m_observer->UpdateAddLine( msg );
+			}
+		}
+	}
 }

@@ -86,6 +86,8 @@ public:
 	bool ExecCLICommand(const wxString &command, DbgCmdCLIHandler* cmd);
 	void SetBreakpoints();
 	void SetInternalMainBpID(int bpId);
+	void GetDebugeePID();
+	
 public:
 	DbgGdb();
 	virtual ~DbgGdb();

@@ -302,6 +302,9 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 	//completed:
 	//-exec-step, -exec-stepi
 	//-exec-next, -exec-nexti
+	
+	// try and get the debugee PID
+	m_gdb->GetDebugeePID();
 
 	// Get the reason
 	std::vector<std::map<std::string, std::string> > children;
@@ -1353,4 +1356,26 @@ bool DbgVarObjUpdate::ProcessOutput(const wxString& line)
 	e.m_userReason   = m_userReason;
 	m_observer->DebuggerUpdate( e );
 	return true;
+}
+
+bool DbgCmdHandlerExecRun::ProcessOutput(const wxString& line)
+{
+	if(line.StartsWith(wxT("^error"))) {
+		// ^error,msg="..."
+		wxString errmsg = line.Mid(11); // skip |^error,msg=| (11 chars)
+		errmsg.Replace(wxT("\\\""), wxT("\""));
+		errmsg.Replace(wxT("\\n"), wxT("\n"));
+		
+		// exec-run failed, notify about it
+		DebuggerEvent e;
+		e.m_updateReason  = DBG_UR_GOT_CONTROL;
+		e.m_controlReason = DBG_EXIT_WITH_ERROR;
+		e.m_text          = errmsg;
+		m_observer->DebuggerUpdate(e);
+		return true;
+		
+	} else {
+		return DbgCmdHandlerAsyncCmd::ProcessOutput(line);
+		
+	}
 }

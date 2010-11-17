@@ -2368,12 +2368,14 @@ void Manager::UpdateFileLine ( const wxString &filename, int lineno, bool reposi
 	UpdateDebuggerPane();
 }
 
-void Manager::UpdateGotControl ( DebuggerReasons reason )
+void Manager::UpdateGotControl ( const DebuggerEvent &e )
 {
 	//put us on top of the z-order window
 	clMainFrame::Get()->Raise();
 	m_dbgCanInteract = true;
-
+	
+	int reason = e.m_controlReason;
+	
 	SendCmdEvent(wxEVT_DEBUG_EDITOR_GOT_CONTROL);
 
 	//query the current line and file
@@ -2462,9 +2464,20 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 			DbgRestoreWatches();
 		}
 		break;
+
 	case DBG_DBGR_KILLED:
 		m_dbgCanInteract = false;
 		break;
+		
+	case DBG_EXIT_WITH_ERROR:
+	{
+		wxMessageBox(wxString::Format(_("Debugger exited with the following error string:\n%s"), 
+					 e.m_text.c_str()), 
+					 wxT("CodeLite"), 
+					 wxOK|wxICON_ERROR);
+		// fall through
+	}
+	
 	case DBG_EXITED_NORMALLY:
 		//debugging finished, stop the debugger process
 		DbgStop();
@@ -2869,7 +2882,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	case DBG_UR_GOT_CONTROL:
 		// keep the current functin name
 		m_dbgCurrentFrameInfo.func = event.m_frameInfo.function;
-		UpdateGotControl(event.m_controlReason);
+		UpdateGotControl(event);
 		break;
 
 	case DBG_UR_LOST_CONTROL:

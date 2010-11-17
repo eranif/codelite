@@ -108,6 +108,7 @@ public:
  */
 class DbgCmdHandlerAsyncCmd : public DbgCmdHandler
 {
+protected:
 	DbgGdb*  m_gdb;
 
 public:
@@ -119,6 +120,18 @@ public:
 
 	void UpdateGotControl(DebuggerReasons reason, const wxString &func);
 	virtual bool ProcessOutput(const wxString &line);
+};
+
+class DbgCmdHandlerExecRun : public DbgCmdHandlerAsyncCmd
+{
+public:
+	DbgCmdHandlerExecRun(IDebuggerObserver *observer, DbgGdb* gdb)
+	: DbgCmdHandlerAsyncCmd(observer, gdb)
+	{}
+	
+	virtual ~DbgCmdHandlerExecRun() {}
+	virtual bool ProcessOutput(const wxString &line);
+	virtual bool WantsErrors() const {return true;}
 };
 
 class DbgCmdHandlerRemoteDebugging : public DbgCmdHandler

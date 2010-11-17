@@ -608,7 +608,7 @@ public:
 
 	void UpdateAddLine              (const wxString &line, const bool OnlyIfLoggingOn = false);
 	void UpdateFileLine             (const wxString &file, int lineno, bool repositionEditor = true);
-	void UpdateGotControl           (DebuggerReasons reason);
+	void UpdateGotControl           (const DebuggerEvent &e);
 	void UpdateLostControl          ();
 	void UpdateRemoteTargetConnected(const wxString &line);
 	void UpdateTypeReolsved         (const wxString &expression, const wxString &type);

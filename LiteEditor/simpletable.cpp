@@ -178,7 +178,7 @@ void WatchesTable::AddExpression(const wxString &expr)
 	if(!dbgr || !ManagerST::Get()->DbgCanInteract())
 		return;
 
-	if(m_listTable->HasChildren(root)) {
+	/*if(m_listTable->HasChildren(root)) {
 		wxTreeItemIdValue cookie;
 		wxTreeItemId item = m_listTable->GetFirstChild(root, cookie);
 		while(item.IsOk()) {
@@ -188,7 +188,7 @@ void WatchesTable::AddExpression(const wxString &expr)
 			}
 			item = m_listTable->GetNextChild(root, cookie);
 		}
-	}
+	}*/
 
 	// Append the new item and call the debugger to create a new variable object for this
 	// expression

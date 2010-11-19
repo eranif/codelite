@@ -822,7 +822,7 @@
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="../Runtime/codelite" IntermediateDirectory="./ReleaseUnicode" Command="/home/eran/devl/codelite/Runtime/codelite" CommandArguments="" WorkingDirectory="/home/eran/devl/codelite/Runtime" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/codelite" IntermediateDirectory="./ReleaseUnicode" Command="/home/eran/devl/codelite/Runtime/codelite" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="/home/eran/devl/codelite/Runtime" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -869,7 +869,7 @@ resources.cpp: resources.xrc
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="../Runtime/codelite" IntermediateDirectory="./ReleaseUnicode" Command="/usr/bin/codelite" CommandArguments="--no-plugins" WorkingDirectory="" PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="../Runtime/codelite" IntermediateDirectory="./ReleaseUnicode" Command="/usr/bin/codelite" CommandArguments="--no-plugins" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -914,7 +914,7 @@ resources.cpp: resources.xrc
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="Default"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -963,7 +963,7 @@ svninfo.cpp:
         <Library Value="libwxsqlite3u.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="Release" Command="./codelite.exe" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="Release" Command="./codelite.exe" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="Default"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -1008,7 +1008,7 @@ resources.cpp: resources.xrc
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="./WinDbg29" Command="./codelite.exe" CommandArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="./WinDbg29" Command="./codelite.exe" CommandArguments="-b . --no-plugins" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>

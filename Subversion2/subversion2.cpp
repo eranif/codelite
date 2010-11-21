@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include <algorithm>
 #include <wx/filefn.h>
 #include "globals.h"
 #include "subversion_password_db.h"
@@ -28,6 +29,25 @@
 #include "svn_patch_dlg.h"
 
 static Subversion2* thePlugin = NULL;
+
+static void replaceAll(wxString& str, const wxString& findWhat, const wxString &replaceWith)
+{
+	std::string s            = str.To8BitData().data();
+	std::string find_what    = findWhat.To8BitData().data();
+	std::string replace_with = replaceWith.To8BitData().data();
+	
+	size_t where = s.find(find_what);
+	while( where != std::string::npos ) {
+		
+		s.erase (where, find_what.length());
+		s.insert(where, replace_with);
+		
+		where = s.find(find_what, where + replace_with.length());
+	}
+	
+	str.Clear();
+	str = wxString::From8BitData(s.c_str());
+}
 
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
@@ -490,6 +510,8 @@ void Subversion2::Patch(bool dryRun, const wxString &workingDirectory, wxEvtHand
 {
 	PatchDlg dlg(GetManager()->GetTheApp()->GetTopWindow());
 	if (dlg.ShowModal() == wxID_OK) {
+		wxBusyCursor cursor;
+		
 		wxString patchFile;
 		patchFile               = dlg.m_filePicker->GetPath();
 		int eolPolicy           = dlg.m_radioBoxEOLPolicy->GetSelection();
@@ -501,12 +523,11 @@ void Subversion2::Patch(bool dryRun, const wxString &workingDirectory, wxEvtHand
 			if (ReadFileWithConversion(patchFile, fileContent)) {
 				switch(eolPolicy) {
 				case 1: // Windows EOL
-					fileContent.Replace(wxT("\r\n"), wxT("\n"));
-					fileContent.Replace(wxT("\n"), wxT("\r\n"));
+					replaceAll(fileContent, wxT("\r"), wxT(""));
+					replaceAll(fileContent, wxT("\n"), wxT("\r\n"));
 					break;
-				
 				case 2: // Convert to UNIX style
-					fileContent.Replace(wxT("\r\n"), wxT("\n"));
+					replaceAll(fileContent, wxT("\r\n"), wxT("\n"));
 					break;
 				}
 				

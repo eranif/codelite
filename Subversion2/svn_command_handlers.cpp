@@ -74,7 +74,11 @@ void SvnPatchHandler::Process(const wxString& output)
 	GetPlugin()->GetConsole()->EnsureVisible();
 	GetPlugin()->GetConsole()->AppendText(output);
 	GetPlugin()->GetConsole()->AppendText(wxT("-----\n"));
-
+	
+	if(delFileWhenDone) {
+		wxRemoveFile(patchFile);
+	}
+	
 	// Retag workspace only if no conflict were found
 	// send an event to the main frame indicating that a re-tag is required
 	if( GetPlugin()->GetSettings().GetFlags() & SvnRetagWorkspace ) {
@@ -92,6 +96,11 @@ void SvnPatchDryRunHandler::Process(const wxString& output)
 	GetPlugin()->GetConsole()->AppendText(wxT("===== APPLYING PATCH - DRY RUN =====\n"));
 	GetPlugin()->GetConsole()->AppendText(output);
 	GetPlugin()->GetConsole()->AppendText(wxT("===== OUTPUT END =====\n"));
+	
+	if(delFileWhenDone) {
+		// delete the patch file
+		wxRemoveFile(patchFile);
+	}
 }
 
 void SvnVersionHandler::Process(const wxString& output)

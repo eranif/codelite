@@ -909,3 +909,53 @@ SvnPropsBaseDlg::SvnPropsBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 SvnPropsBaseDlg::~SvnPropsBaseDlg()
 {
 }
+
+PatchDlgBase::PatchDlgBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer31;
+	bSizer31 = new wxBoxSizer( wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer11;
+	fgSizer11 = new wxFlexGridSizer( 0, 1, 0, 0 );
+	fgSizer11->AddGrowableCol( 0 );
+	fgSizer11->SetFlexibleDirection( wxBOTH );
+	fgSizer11->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_filePicker = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("Patch files (*.patch;*.diff)|*.patch;*.diff|All Files (*)|*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
+	fgSizer11->Add( m_filePicker, 0, wxALL|wxEXPAND, 5 );
+	
+	wxString m_radioBoxEOLPolicyChoices[] = { _("Do not change EOL, apply patch as it is"), _("Change to Windows style (CRLF)"), _("Change to UNIX style (LF)") };
+	int m_radioBoxEOLPolicyNChoices = sizeof( m_radioBoxEOLPolicyChoices ) / sizeof( wxString );
+	m_radioBoxEOLPolicy = new wxRadioBox( this, wxID_ANY, _("Change patch line endings (EOL):"), wxDefaultPosition, wxDefaultSize, m_radioBoxEOLPolicyNChoices, m_radioBoxEOLPolicyChoices, 1, wxRA_SPECIFY_COLS );
+	m_radioBoxEOLPolicy->SetSelection( 0 );
+	fgSizer11->Add( m_radioBoxEOLPolicy, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer31->Add( fgSizer11, 1, wxEXPAND|wxALL, 5 );
+	
+	m_staticline8 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer31->Add( m_staticline8, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer32;
+	bSizer32 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer32->Add( m_buttonCancel, 0, wxALL, 5 );
+	
+	m_buttonOK = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK->SetDefault(); 
+	bSizer32->Add( m_buttonOK, 0, wxALL, 5 );
+	
+	bSizer31->Add( bSizer32, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+	
+	this->SetSizer( bSizer31 );
+	this->Layout();
+	bSizer31->Fit( this );
+	
+	this->Centre( wxBOTH );
+}
+
+PatchDlgBase::~PatchDlgBase()
+{
+}

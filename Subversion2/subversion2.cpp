@@ -1,5 +1,6 @@
 #include <wx/app.h>
 #include <wx/filefn.h>
+#include "globals.h"
 #include "subversion_password_db.h"
 #include "svnxml.h"
 #include <wx/tokenzr.h>
@@ -24,6 +25,7 @@
 #include <wx/menu.h>
 #include <wx/filedlg.h>
 #include <wx/imaglist.h>
+#include "svn_patch_dlg.h"
 
 static Subversion2* thePlugin = NULL;
 
@@ -486,34 +488,58 @@ void Subversion2::DoGetSvnVersion()
 
 void Subversion2::Patch(bool dryRun, const wxString &workingDirectory, wxEvtHandler *owner, int id)
 {
-// open a file selector to select the patch file
-	const wxString ALL(	wxT("Patch files (*.patch;*.diff)|*.patch;*.diff|")
-	                    wxT("All Files (*)|*"));
-
-
-	wxString patchFile = wxFileSelector(wxT("Select Patch File:"),
-										wxT(""),
-										wxT(""),
-										wxT(""),
-										ALL,
-										0,
-										GetManager()->GetTheApp()->GetTopWindow());
-	if (patchFile.IsEmpty() == false) {
-
-		// execute the command
-		wxString command;
-		command << wxT("patch -l -p0 ");
-		if(dryRun)
-			command << wxT(" --dry-run  ");
-		command << wxT(" -i \"") << patchFile << wxT("\"");
-
-		SvnCommandHandler *handler(NULL);
-		if(dryRun) {
-			handler = new SvnPatchDryRunHandler(this, id, owner);
-		} else {
-			handler = new SvnPatchHandler(this, id, owner);
+	PatchDlg dlg(GetManager()->GetTheApp()->GetTopWindow());
+	if (dlg.ShowModal() == wxID_OK) {
+		wxString patchFile;
+		patchFile               = dlg.m_filePicker->GetPath();
+		int eolPolicy           = dlg.m_radioBoxEOLPolicy->GetSelection();
+		bool removeFileWhenDone = false;
+		
+		if(eolPolicy != 0) {
+			// Read the file
+			wxString fileContent;
+			if (ReadFileWithConversion(patchFile, fileContent)) {
+				switch(eolPolicy) {
+				case 1: // Windows EOL
+					fileContent.Replace(wxT("\r\n"), wxT("\n"));
+					fileContent.Replace(wxT("\n"), wxT("\r\n"));
+					break;
+				
+				case 2: // Convert to UNIX style
+					fileContent.Replace(wxT("\r\n"), wxT("\n"));
+					break;
+				}
+				
+				// Write the content to a new file
+				wxFFile fileTemp;
+				wxString tmpFile = wxFileName::CreateTempFileName(wxT("clsvn"), &fileTemp);
+				if(fileTemp.IsOpened()) {
+					if(fileTemp.Write(fileContent)){
+						fileTemp.Close();
+						removeFileWhenDone = true;
+						patchFile = tmpFile;
+					}
+				}
+			}
 		}
-		m_simpleCommand.Execute(command, workingDirectory, handler, this);
+		
+		if (patchFile.IsEmpty() == false) {
+
+			// execute the command
+			wxString command;
+			command << wxT("patch -l -p0 ");
+			if(dryRun)
+				command << wxT(" --dry-run  ");
+			command << wxT(" -i \"") << patchFile << wxT("\"");
+
+			SvnCommandHandler *handler(NULL);
+			if(dryRun) {
+				handler = new SvnPatchDryRunHandler(this, id, owner, removeFileWhenDone, patchFile);
+			} else {
+				handler = new SvnPatchHandler(this, id, owner, removeFileWhenDone, patchFile);
+			}
+			m_simpleCommand.Execute(command, workingDirectory, handler, this);
+		}
 	}
 }
 

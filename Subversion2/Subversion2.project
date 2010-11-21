@@ -61,6 +61,8 @@
     <File Name="changelogpage.cpp"/>
     <File Name="svn_props_dialog.h"/>
     <File Name="svn_props_dialog.cpp"/>
+    <File Name="svn_patch_dlg.cpp"/>
+    <File Name="svn_patch_dlg.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="subversion2.fbp"/>

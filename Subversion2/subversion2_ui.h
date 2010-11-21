@@ -35,6 +35,8 @@
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
 #include <wx/combobox.h>
+#include <wx/filepicker.h>
+#include <wx/radiobox.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -381,6 +383,27 @@ class SvnPropsBaseDlg : public wxDialog
 		
 		SvnPropsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Properties..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SvnPropsBaseDlg();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class PatchDlgBase
+///////////////////////////////////////////////////////////////////////////////
+class PatchDlgBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticLine* m_staticline8;
+		wxButton* m_buttonCancel;
+		wxButton* m_buttonOK;
+	
+	public:
+		wxFilePickerCtrl* m_filePicker;
+		wxRadioBox* m_radioBoxEOLPolicy;
+		
+		PatchDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select patch file:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~PatchDlgBase();
 	
 };
 

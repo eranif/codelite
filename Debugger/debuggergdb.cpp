@@ -1047,9 +1047,10 @@ bool DbgGdb::DoInitializeGdb( const std::vector<BreakpointInfo> &bpList, const w
 
 	}
 
-	if ( m_info.breakAtWinMain ) {
-		//try also to set breakpoint at WinMain
-		WriteCommand( wxT( "-break-insert main" ), NULL );
+	if ( m_info.breakAtWinMain && !setBreakpointsAfterMain ) {
+		// Set a breakpoint at WinMain
+		// Use a temporary one, so that it isn't duplicated in future sessions
+		WriteCommand( wxT( "-break-insert -t main" ), NULL );
 	}
 	return true;
 }

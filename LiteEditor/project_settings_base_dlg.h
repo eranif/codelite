@@ -169,6 +169,7 @@ class PSGeneralPageBase : public wxPanel
 		
 	
 	public:
+		wxGridBagSizer* m_gbSizer1;
 		
 		PSGeneralPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSGeneralPageBase();
@@ -185,6 +186,7 @@ class PSCompilerPageBase : public wxPanel
 	protected:
 		wxPanel* m_compilerPage;
 		wxCheckBox* m_checkCompilerNeeded;
+		wxGridBagSizer* m_gbSizer2;
 		wxStaticText* m_staticText331;
 		wxChoice* m_choiceCmpUseWithGlobalSettings;
 		wxStaticLine* m_staticline7;
@@ -230,6 +232,7 @@ class PSLinkPageBase : public wxPanel
 	protected:
 		wxPanel* m_linkerPage;
 		wxCheckBox* m_checkLinkerNeeded;
+		wxGridBagSizer* m_gbSizer3;
 		wxStaticText* m_staticText3311;
 		wxChoice* m_choiceLnkUseWithGlobalSettings;
 		wxStaticLine* m_staticline8;
@@ -307,6 +310,7 @@ class PSResourcesPageBase : public wxPanel
 	protected:
 		wxPanel* m_resourceCmpPage;
 		wxCheckBox* m_checkResourceNeeded;
+		wxGridBagSizer* m_gbSizer4;
 		wxStaticText* m_staticText33111;
 		wxChoice* m_choiceResUseWithGlobalSettings;
 		wxStaticLine* m_staticline9;

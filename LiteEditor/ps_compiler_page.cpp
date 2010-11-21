@@ -17,6 +17,9 @@ PSCompilerPage::PSCompilerPage( wxWindow* parent, const wxString &projectName, P
 	m_choiceCmpUseWithGlobalSettings->AppendString(OVERWRITE_GLOBAL_SETTINGS);
 	m_choiceCmpUseWithGlobalSettings->AppendString(PREPEND_GLOBAL_SETTINGS);
 	m_choiceCmpUseWithGlobalSettings->Select(0);
+	// We do this here rather than in wxFB to avoid failure and an assert in >wx2.8
+	m_gbSizer2->AddGrowableCol(1);
+
 }
 
 void PSCompilerPage::OnCheckCompilerNeeded( wxCommandEvent& event )

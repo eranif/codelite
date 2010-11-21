@@ -8,6 +8,8 @@ PSResourcesPage::PSResourcesPage( wxWindow* parent, ProjectSettingsDlg *dlg )
 	m_choiceResUseWithGlobalSettings->AppendString(OVERWRITE_GLOBAL_SETTINGS);
 	m_choiceResUseWithGlobalSettings->AppendString(PREPEND_GLOBAL_SETTINGS);
 	m_choiceResUseWithGlobalSettings->Select(0);
+	// We do this here rather than in wxFB to avoid failure and an assert in >wx2.8
+	m_gbSizer4->AddGrowableCol(1);
 }
 
 void PSResourcesPage::OnResourceCmpNeeded( wxCommandEvent& event )

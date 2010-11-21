@@ -121,6 +121,9 @@ void ProjectSettingsDlg::BuildTree()
 	m_treebook->AddSubPage(new PSCustomMakefileRulesPage(m_treebook, this),          wxT("Custom Makefile Rules"), false);
 
 	m_treebook->AddPage(new GlobalSettingsPanel(m_treebook, m_projectName, this), wxT("Global Settings"), false);
+
+	// We do this here rather than in wxFB to avoid failure and an assert in >wx2.8
+	gp->m_gbSizer1->AddGrowableCol(1);
 }
 
 ProjectSettingsDlg::~ProjectSettingsDlg()

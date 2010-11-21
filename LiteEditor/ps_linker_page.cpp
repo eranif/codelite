@@ -12,6 +12,8 @@ PSLinkerPage::PSLinkerPage( wxWindow* parent, ProjectSettingsDlg *dlg, PSGeneral
 	m_choiceLnkUseWithGlobalSettings->AppendString(OVERWRITE_GLOBAL_SETTINGS);
 	m_choiceLnkUseWithGlobalSettings->AppendString(PREPEND_GLOBAL_SETTINGS);
 	m_choiceLnkUseWithGlobalSettings->Select(0);
+	// We do this here rather than in wxFB to avoid failure and an assert in >wx2.8
+	m_gbSizer3->AddGrowableCol(1);
 }
 
 void PSLinkerPage::OnCheckLinkerNeeded( wxCommandEvent& event )

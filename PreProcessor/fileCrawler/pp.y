@@ -20,6 +20,7 @@ extern int pp_lex();
 extern wxString g_definition;
 extern int in_if_1;
 extern bool g_forCC;
+extern wxString g_filename;
 
 // Static
 static std::vector<wxString> g_tmpMacros;
@@ -82,8 +83,9 @@ if_cplusplus : PP_IF PP_CPLUSPLUS
 define_simple_macros: PP_DEFINE PP_IDENTIFIER PP_COMPLEX_REPLACEMENT 
         {
             PPToken token;
-            token.name = $2;
-            token.flags = (PPToken::IsValid | PPToken::IsOverridable);
+			token.fileName = g_filename;
+            token.name     = $2;
+            token.flags    = (PPToken::IsValid | PPToken::IsOverridable);
             
             if(in_if_1) {
                 // the token was found in a '#if 1' block - dont allow overriding it
@@ -109,9 +111,10 @@ define_simple_macros: PP_DEFINE PP_IDENTIFIER PP_COMPLEX_REPLACEMENT
 define_func_like_macros: PP_DEFINE PP_IDENTIFIER '(' args_list ')' PP_COMPLEX_REPLACEMENT
         {
             PPToken token;
-            token.name = $2;
+			token.fileName    = g_filename;
+            token.name        = $2;
             token.replacement = g_definition;
-            token.flags = (PPToken::IsFunctionLike | PPToken::IsValid | PPToken::IsOverridable);
+            token.flags       = (PPToken::IsFunctionLike | PPToken::IsValid | PPToken::IsOverridable);
             if(in_if_1) {
                 // the token was found in a '#if 1' block - dont allow overriding it
                 token.flags &= ~(PPToken::IsOverridable);

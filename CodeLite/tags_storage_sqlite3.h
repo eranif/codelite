@@ -33,7 +33,7 @@
 #include <wx/wxsqlite3.h>
 #include "codelite_exports.h"
 
-const wxString gTagsDatabaseVersion(wxT("CodeLite Version 2.7"));
+const wxString gTagsDatabaseVersion(wxT("CodeLite Version 2.9"));
 
 /**
  * TagsDatabase is a wrapper around wxSQLite3 database with tags specific functions.
@@ -554,12 +554,14 @@ public:
 	virtual void GetAllTagsNames(wxArrayString& names);
 
 	virtual void GetTagsNames(const wxArrayString& kind, wxArrayString& names);
+	
 	/**
 	 * @brief
 	 * @param files
 	 * @param tags
 	 */
 	virtual void GetTagsByFiles(const wxArrayString &files, std::vector<TagEntryPtr>& tags);
+	
 	/**
 	 * @brief
 	 * @param files
@@ -598,6 +600,10 @@ public:
 	 */
 	virtual void StoreMacros(const std::map<wxString, PPToken>& table);
 
+	/**
+	 * @copydoc ITagStorage::GetMacrosDefined
+	 */
+	virtual void GetMacrosDefined(const std::set<std::string>& files, const std::set<wxString>& usedMacros, wxArrayString& defMacros);
 };
 
 #endif // CODELITE_TAGS_DATABASE_H

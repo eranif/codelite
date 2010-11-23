@@ -668,6 +668,7 @@ int in_if_1         = 0;
 std::string                _definition;
 wxString                   g_definition;
 bool                       g_forCC = false;
+wxString                   g_filename;
 
 extern int pp_parse();
 
@@ -2137,6 +2138,8 @@ int yywrap() {
 
 int PPScan( const wxString &filePath, bool forCC )
 {
+	g_filename = filePath;
+	
 	BEGIN INITIAL;
 	pp_lineno = 1;
 	FILE* fp = fopen(filePath.To8BitData(), "r");
@@ -2165,6 +2168,8 @@ int PPScan( const wxString &filePath, bool forCC )
 
 int PPLex( const wxString &filePath)
 {
+	g_filename = filePath;
+	
 	BEGIN INITIAL;
 	pp_lineno = 1;
 	FILE* fp = fopen(filePath.To8BitData(), "r");

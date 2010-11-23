@@ -50,6 +50,7 @@ extern int pp_lex();
 extern wxString g_definition;
 extern int in_if_1;
 extern bool g_forCC;
+extern wxString g_filename;
 
 /* Static*/
 static std::vector<wxString> g_tmpMacros;
@@ -428,8 +429,9 @@ break;
 case 15:
 {
             PPToken token;
-            token.name = yyvsp[-1];
-            token.flags = (PPToken::IsValid | PPToken::IsOverridable);
+			token.fileName = g_filename;
+            token.name     = yyvsp[-1];
+            token.flags    = (PPToken::IsValid | PPToken::IsOverridable);
             
             if(in_if_1) {
                 /* the token was found in a '#if 1' block - dont allow overriding it*/
@@ -454,9 +456,10 @@ break;
 case 16:
 {
             PPToken token;
-            token.name = yyvsp[-4];
+			token.fileName    = g_filename;
+            token.name        = yyvsp[-4];
             token.replacement = g_definition;
-            token.flags = (PPToken::IsFunctionLike | PPToken::IsValid | PPToken::IsOverridable);
+            token.flags       = (PPToken::IsFunctionLike | PPToken::IsValid | PPToken::IsOverridable);
             if(in_if_1) {
                 /* the token was found in a '#if 1' block - dont allow overriding it*/
                 token.flags &= ~(PPToken::IsOverridable);

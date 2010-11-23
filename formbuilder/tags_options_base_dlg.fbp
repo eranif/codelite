@@ -12,7 +12,7 @@
         <property name="file">tags_options_base_dlg</property>
         <property name="first_id">1000</property>
         <property name="help_provider">none</property>
-        <property name="internationalize">0</property>
+        <property name="internationalize">1</property>
         <property name="name">tags_options_dlg</property>
         <property name="namespace"></property>
         <property name="path">../LiteEditor</property>
@@ -25,6 +25,7 @@
             <property name="bg"></property>
             <property name="center">wxBOTH</property>
             <property name="context_help"></property>
+            <property name="context_menu">1</property>
             <property name="enabled">1</property>
             <property name="event_handler">impl_virtual</property>
             <property name="extra_style"></property>
@@ -91,6 +92,7 @@
                         <property name="bg"></property>
                         <property name="bitmapsize"></property>
                         <property name="context_help"></property>
+                        <property name="context_menu">1</property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>
                         <property name="font"></property>
@@ -144,6 +146,7 @@
                             <object class="wxPanel" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
+                                <property name="context_menu">1</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>
@@ -200,6 +203,7 @@
                                             <property name="bg"></property>
                                             <property name="bitmapsize"></property>
                                             <property name="context_help"></property>
+                                            <property name="context_menu">1</property>
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="font"></property>
@@ -253,6 +257,7 @@
                                                 <object class="wxPanel" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -333,6 +338,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -389,6 +395,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -445,6 +452,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -501,6 +509,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -585,6 +594,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -641,6 +651,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -697,6 +708,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -759,6 +771,7 @@
                                                 <object class="wxPanel" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -835,6 +848,7 @@
                                                                             <object class="wxStaticText" expanded="0">
                                                                                 <property name="bg"></property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -890,6 +904,7 @@
                                                                             <object class="wxSpinCtrl" expanded="0">
                                                                                 <property name="bg"></property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -952,6 +967,7 @@
                                                                         <property name="bg"></property>
                                                                         <property name="checked">0</property>
                                                                         <property name="context_help"></property>
+                                                                        <property name="context_menu">1</property>
                                                                         <property name="enabled">1</property>
                                                                         <property name="fg"></property>
                                                                         <property name="font"></property>
@@ -1000,6 +1016,63 @@
                                                                         <event name="OnUpdateUI"></event>
                                                                     </object>
                                                                 </object>
+                                                                <object class="sizeritem" expanded="1">
+                                                                    <property name="border">5</property>
+                                                                    <property name="flag">wxALL|wxEXPAND</property>
+                                                                    <property name="proportion">0</property>
+                                                                    <object class="wxCheckBox" expanded="1">
+                                                                        <property name="bg"></property>
+                                                                        <property name="checked">0</property>
+                                                                        <property name="context_help"></property>
+                                                                        <property name="context_menu">1</property>
+                                                                        <property name="enabled">1</property>
+                                                                        <property name="fg"></property>
+                                                                        <property name="font"></property>
+                                                                        <property name="hidden">0</property>
+                                                                        <property name="id">wxID_ANY</property>
+                                                                        <property name="label">Colour macro blocks with gray text colour when the macro is not defined</property>
+                                                                        <property name="maximum_size"></property>
+                                                                        <property name="minimum_size"></property>
+                                                                        <property name="name">m_checkBoxColourMacroBlocks</property>
+                                                                        <property name="permission">protected</property>
+                                                                        <property name="pos"></property>
+                                                                        <property name="size"></property>
+                                                                        <property name="style"></property>
+                                                                        <property name="subclass"></property>
+                                                                        <property name="tooltip"></property>
+                                                                        <property name="validator_data_type"></property>
+                                                                        <property name="validator_style">wxFILTER_NONE</property>
+                                                                        <property name="validator_type">wxDefaultValidator</property>
+                                                                        <property name="validator_variable"></property>
+                                                                        <property name="window_extra_style"></property>
+                                                                        <property name="window_name"></property>
+                                                                        <property name="window_style"></property>
+                                                                        <event name="OnChar"></event>
+                                                                        <event name="OnCheckBox"></event>
+                                                                        <event name="OnEnterWindow"></event>
+                                                                        <event name="OnEraseBackground"></event>
+                                                                        <event name="OnKeyDown"></event>
+                                                                        <event name="OnKeyUp"></event>
+                                                                        <event name="OnKillFocus"></event>
+                                                                        <event name="OnLeaveWindow"></event>
+                                                                        <event name="OnLeftDClick"></event>
+                                                                        <event name="OnLeftDown"></event>
+                                                                        <event name="OnLeftUp"></event>
+                                                                        <event name="OnMiddleDClick"></event>
+                                                                        <event name="OnMiddleDown"></event>
+                                                                        <event name="OnMiddleUp"></event>
+                                                                        <event name="OnMotion"></event>
+                                                                        <event name="OnMouseEvents"></event>
+                                                                        <event name="OnMouseWheel"></event>
+                                                                        <event name="OnPaint"></event>
+                                                                        <event name="OnRightDClick"></event>
+                                                                        <event name="OnRightDown"></event>
+                                                                        <event name="OnRightUp"></event>
+                                                                        <event name="OnSetFocus"></event>
+                                                                        <event name="OnSize"></event>
+                                                                        <event name="OnUpdateUI"></event>
+                                                                    </object>
+                                                                </object>
                                                                 <object class="sizeritem" expanded="0">
                                                                     <property name="border">5</property>
                                                                     <property name="flag">wxALL|wxEXPAND</property>
@@ -1008,6 +1081,7 @@
                                                                         <property name="bg"></property>
                                                                         <property name="checked">0</property>
                                                                         <property name="context_help"></property>
+                                                                        <property name="context_menu">1</property>
                                                                         <property name="enabled">1</property>
                                                                         <property name="fg"></property>
                                                                         <property name="font"></property>
@@ -1080,6 +1154,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1136,6 +1211,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1192,6 +1268,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1248,6 +1325,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1304,6 +1382,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1360,6 +1439,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1416,6 +1496,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1472,6 +1553,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1528,6 +1610,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1584,6 +1667,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1640,6 +1724,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1696,6 +1781,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1758,6 +1844,7 @@
                                                 <object class="wxPanel" expanded="1">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -1842,6 +1929,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">0</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1907,6 +1995,7 @@
                                                                             <object class="wxStaticText" expanded="0">
                                                                                 <property name="bg"></property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -1962,6 +2051,7 @@
                                                                             <object class="wxSlider" expanded="0">
                                                                                 <property name="bg"></property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -2039,6 +2129,7 @@
                                                                                 <property name="bg"></property>
                                                                                 <property name="checked">1</property>
                                                                                 <property name="context_help"></property>
+                                                                                <property name="context_menu">1</property>
                                                                                 <property name="enabled">1</property>
                                                                                 <property name="fg"></property>
                                                                                 <property name="font"></property>
@@ -2106,6 +2197,7 @@
                             <object class="wxPanel" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
+                                <property name="context_menu">1</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>
@@ -2173,6 +2265,7 @@
                                                 <object class="wxStaticText" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -2240,6 +2333,7 @@
                                                     <property name="bg"></property>
                                                     <property name="choices"></property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -2304,6 +2398,7 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
+                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -2360,6 +2455,7 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
+                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -2416,6 +2512,7 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
+                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -2488,6 +2585,7 @@
                                                 <object class="wxStaticText" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -2555,6 +2653,7 @@
                                                     <property name="bg"></property>
                                                     <property name="choices"></property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -2619,6 +2718,7 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
+                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -2675,6 +2775,7 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
+                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -2731,6 +2832,7 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
+                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -2794,6 +2896,7 @@
                             <object class="wxPanel" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
+                                <property name="context_menu">1</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>
@@ -2865,6 +2968,7 @@
                                                 <object class="wxStaticText" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -2920,6 +3024,7 @@
                                                 <object class="wxTextCtrl" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -2979,6 +3084,7 @@
                                                 <object class="wxStaticText" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -3035,6 +3141,7 @@
                                                     <property name="bg"></property>
                                                     <property name="choices">&quot;C++&quot; &quot;Java&quot;</property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -3095,6 +3202,7 @@
                                             <property name="bg"></property>
                                             <property name="checked">0</property>
                                             <property name="context_help"></property>
+                                            <property name="context_menu">1</property>
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="font"></property>
@@ -3150,6 +3258,7 @@
                                         <object class="wxStaticLine" expanded="0">
                                             <property name="bg"></property>
                                             <property name="context_help"></property>
+                                            <property name="context_menu">1</property>
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="font"></property>
@@ -3212,6 +3321,7 @@
                                                 <object class="wxStaticText" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -3276,6 +3386,7 @@
                                                         <object class="wxTextCtrl" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
+                                                            <property name="context_menu">1</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
                                                             <property name="font"></property>
@@ -3335,6 +3446,7 @@
                                                         <object class="wxButton" expanded="0">
                                                             <property name="bg"></property>
                                                             <property name="context_help"></property>
+                                                            <property name="context_menu">1</property>
                                                             <property name="default">0</property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>
@@ -3395,6 +3507,7 @@
                                         <object class="wxStaticLine" expanded="0">
                                             <property name="bg"></property>
                                             <property name="context_help"></property>
+                                            <property name="context_menu">1</property>
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="font"></property>
@@ -3449,6 +3562,7 @@
                                             <property name="bg"></property>
                                             <property name="bitmapsize"></property>
                                             <property name="context_help"></property>
+                                            <property name="context_menu">1</property>
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="font"></property>
@@ -3502,6 +3616,7 @@
                                                 <object class="wxPanel" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -3557,6 +3672,7 @@
                                                             <object class="wxTextCtrl" expanded="0">
                                                                 <property name="bg"></property>
                                                                 <property name="context_help"></property>
+                                                                <property name="context_menu">1</property>
                                                                 <property name="enabled">1</property>
                                                                 <property name="fg"></property>
                                                                 <property name="font">,90,90,-1,76,0</property>
@@ -3628,6 +3744,7 @@
                                                                     <object class="wxStaticText" expanded="0">
                                                                         <property name="bg"></property>
                                                                         <property name="context_help"></property>
+                                                                        <property name="context_menu">1</property>
                                                                         <property name="enabled">1</property>
                                                                         <property name="fg"></property>
                                                                         <property name="font"></property>
@@ -3683,6 +3800,7 @@
                                                                     <object class="wxHyperlinkCtrl" expanded="0">
                                                                         <property name="bg"></property>
                                                                         <property name="context_help"></property>
+                                                                        <property name="context_menu">1</property>
                                                                         <property name="enabled">1</property>
                                                                         <property name="fg"></property>
                                                                         <property name="font"></property>
@@ -3758,6 +3876,7 @@
                                                 <object class="wxPanel" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
+                                                    <property name="context_menu">1</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg"></property>
                                                     <property name="font"></property>
@@ -3825,6 +3944,7 @@
                                                                     <object class="wxStaticText" expanded="0">
                                                                         <property name="bg"></property>
                                                                         <property name="context_help"></property>
+                                                                        <property name="context_menu">1</property>
                                                                         <property name="enabled">1</property>
                                                                         <property name="fg"></property>
                                                                         <property name="font"></property>
@@ -3882,6 +4002,7 @@
                                                             <object class="wxTextCtrl" expanded="0">
                                                                 <property name="bg"></property>
                                                                 <property name="context_help"></property>
+                                                                <property name="context_menu">1</property>
                                                                 <property name="enabled">1</property>
                                                                 <property name="fg"></property>
                                                                 <property name="font">,90,90,-1,76,0</property>
@@ -3951,6 +4072,7 @@
                     <object class="wxStaticLine" expanded="1">
                         <property name="bg"></property>
                         <property name="context_help"></property>
+                        <property name="context_menu">1</property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>
                         <property name="font"></property>
@@ -4013,6 +4135,7 @@
                             <object class="wxButton" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
+                                <property name="context_menu">1</property>
                                 <property name="default">1</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>
@@ -4069,6 +4192,7 @@
                             <object class="wxButton" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
+                                <property name="context_menu">1</property>
                                 <property name="default">0</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>

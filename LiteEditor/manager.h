@@ -333,6 +333,12 @@ public:
 	 */
 	void OnIncludeFilesScanDone(wxCommandEvent &event);
 
+	/**
+	 * @brief the parser thread has completed to scan for interresting macros
+	 * @param event
+	 */
+	void OnInterrestingMacrosFound(wxCommandEvent& e);
+	
 	void OnDbContentCacherLoaded(wxCommandEvent &event);
 
 	/**
@@ -340,6 +346,12 @@ public:
 	 * \param filename
 	 */
 	void RetagFile(const wxString &filename);
+	
+	/**
+	 * \brief Launch the ParseThread to update the preprocessor vizualisation
+	 * \param filename
+	 */
+	void UpdatePreprocessorFile(const wxFileName& filename);
 
 protected:
 	wxFileName FindFile ( const wxArrayString& files, const wxFileName &fn );

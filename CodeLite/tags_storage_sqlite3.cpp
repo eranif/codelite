@@ -115,6 +115,9 @@ void TagsStorageSQLite::CreateSchema()
 		sql = wxT("create  table if not exists MACROS (ID INTEGER PRIMARY KEY AUTOINCREMENT, file string, line integer, name string, is_function_like int, replacement string, signature string);");
 		m_db->ExecuteUpdate(sql);
 
+		sql = wxT("create  table if not exists SIMPLE_MACROS (ID INTEGER PRIMARY KEY AUTOINCREMENT, file string, name string);");
+		m_db->ExecuteUpdate(sql);
+
 		// create unuque index on Files' file column
 		sql = wxT("CREATE UNIQUE INDEX IF NOT EXISTS FILES_NAME on FILES(file)");
 		m_db->ExecuteUpdate(sql);
@@ -146,6 +149,9 @@ void TagsStorageSQLite::CreateSchema()
 		m_db->ExecuteUpdate(sql);
 
 		sql = wxT("CREATE INDEX IF NOT EXISTS MACROS_NAME on MACROS(name);");
+		m_db->ExecuteUpdate(sql);
+
+		sql = wxT("CREATE INDEX IF NOT EXISTS SIMPLE_MACROS_FILE on SIMPLE_MACROS(file);");
 		m_db->ExecuteUpdate(sql);
 
 		sql = wxT("create table if not exists tags_version (version string primary key);");
@@ -184,6 +190,7 @@ void TagsStorageSQLite::RecreateDatabase()
 			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS VARIABLES"));
 			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS FILES"));
 			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS MACROS"));
+			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS SIMPLE_MACROS"));
 
 			// drop indexes
 			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS FILES_NAME"));
@@ -197,6 +204,7 @@ void TagsStorageSQLite::RecreateDatabase()
 			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS tags_version_uniq"));
 			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS MACROS_UNIQ"));
 			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS MACROS_NAME"));
+			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS SIMPLE_MACROS_FILE"));
 
 			// Recreate the schema
 			CreateSchema();
@@ -1432,7 +1440,8 @@ PPToken TagsStorageSQLite::GetMacro(const wxString& name)
 void TagsStorageSQLite::StoreMacros(const std::map<wxString, PPToken>& table)
 {
 	try {
-		wxSQLite3Statement stmnt = m_db->GetPrepareStatement(wxT("insert or replace into MACROS values(NULL, ?, ?, ?, ?, ?, ?)"));
+		wxSQLite3Statement stmntCC     = m_db->GetPrepareStatement(wxT("insert or replace into MACROS values(NULL, ?, ?, ?, ?, ?, ?)"));
+		wxSQLite3Statement stmntSimple = m_db->GetPrepareStatement(wxT("insert or replace into SIMPLE_MACROS values(NULL, ?, ?)"));
 
 		std::map<wxString, PPToken>::const_iterator iter = table.begin();
 		for(; iter != table.end(); iter++) {
@@ -1442,25 +1451,71 @@ void TagsStorageSQLite::StoreMacros(const std::map<wxString, PPToken>& table)
 			// Since we are using the MACROS table mainly for the replacement
 			// field, dont insert into the database entries which dont have
 			// a replacement
-			if(replac.IsEmpty())
-				continue;
-
-			// macros with replacement.
 			// we take only macros that their replacement is not a number or a string
-			if(replac.find_first_of(wxT("0123456789")) != 0) {
-
-				stmnt.Bind(1, wxT("")); // File
-				stmnt.Bind(2, iter->second.line);
-				stmnt.Bind(3, iter->second.name);
-				stmnt.Bind(4, iter->second.flags & PPToken::IsFunctionLike ? 1 : 0);
-				stmnt.Bind(5, replac);
-				stmnt.Bind(6, iter->second.signature());
-				stmnt.ExecuteUpdate();
-				stmnt.Reset();
+			if(replac.IsEmpty() || replac.find_first_of(wxT("0123456789")) == 0) {
+				// Insert it into the SIMPLE_MACRO instead
+				stmntSimple.Bind(1, iter->second.fileName);
+				stmntSimple.Bind(2, iter->second.name);
+				stmntSimple.ExecuteUpdate();
+				stmntSimple.Reset();
+			}
+			else {
+				// macros with replacement.
+				stmntCC.Bind(1, iter->second.fileName);
+				stmntCC.Bind(2, iter->second.line);
+				stmntCC.Bind(3, iter->second.name);
+				stmntCC.Bind(4, iter->second.flags & PPToken::IsFunctionLike ? 1 : 0);
+				stmntCC.Bind(5, replac);
+				stmntCC.Bind(6, iter->second.signature());
+				stmntCC.ExecuteUpdate();
+				stmntCC.Reset();
 			}
 		}
 
 	} catch (wxSQLite3Exception &exc) {
 		wxUnusedVar(exc);
+	}
+}
+
+void TagsStorageSQLite::GetMacrosDefined(const std::set<std::string>& files, const std::set<wxString>& usedMacros, wxArrayString& defMacros)
+{
+	if (files.empty() || usedMacros.empty()) {
+		return;
+	}
+	
+	// Create the file list SQL string, used for IN operator
+	wxString sFileList;
+	for (std::set<std::string>::const_iterator itFile = files.begin(); itFile != files.end(); ++itFile) {
+		sFileList << wxT("'") << wxString::From8BitData(itFile->c_str()) << wxT("',");
+	}
+	sFileList.RemoveLast();
+	
+	// Create the used macros list SQL string, used for IN operator
+	wxString sMacroList;
+	for (std::set<wxString>::const_iterator itUsedMacro = usedMacros.begin(); itUsedMacro != usedMacros.end(); ++itUsedMacro) {
+		sMacroList << wxT("'") << *itUsedMacro << wxT("',");
+	}
+	sMacroList.RemoveLast();
+	
+	try {
+		// Step 1 : Retrieve defined macros in MACROS table
+		wxString req;
+		req << wxT("select name from MACROS where file in (") << sFileList << wxT(")")
+			<< wxT(" and name in (") << sMacroList << wxT(")");
+		wxSQLite3ResultSet res = m_db->ExecuteQuery(req);
+		while (res.NextRow()) {
+			defMacros.push_back(res.GetString(0));
+		}
+		
+		// Step 2 : Retrieve defined macros in SIMPLE_MACROS table
+		req.Clear();
+		req << wxT("select name from SIMPLE_MACROS where file in (") << sFileList << wxT(")") 
+			<< wxT(" and name in (") << sMacroList << wxT(")");
+		res = m_db->ExecuteQuery(req);
+		while (res.NextRow()) {
+			defMacros.push_back(res.GetString(0));
+		}
+	} catch (wxSQLite3Exception &exc) {
+		wxLogError(exc.GetMessage());
 	}
 }

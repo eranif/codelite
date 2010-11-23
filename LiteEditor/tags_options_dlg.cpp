@@ -86,7 +86,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkBoxMarkTagsFilesInBold->SetValue        (m_data.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
 	m_checkBoxretagWorkspaceOnStartup->SetValue    (m_data.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ? true : false);
 	m_checkBoxDeepUsingNamespaceResolving->SetValue(m_data.GetFlags() & CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING ? true : false);
-
+	
 	m_checkBoxClass->SetValue                      (m_data.GetCcColourFlags() & CC_COLOUR_CLASS);
 	m_checkBoxEnum->SetValue                       (m_data.GetCcColourFlags() & CC_COLOUR_ENUM);
 	m_checkBoxFunction->SetValue                   (m_data.GetCcColourFlags() & CC_COLOUR_FUNCTION);
@@ -99,6 +99,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkBoxEnumerator->SetValue                 (m_data.GetCcColourFlags() & CC_COLOUR_ENUMERATOR);
 	m_checkBoxMember->SetValue                     (m_data.GetCcColourFlags() & CC_COLOUR_MEMBER);
 	m_checkBoxVariable->SetValue                   (m_data.GetCcColourFlags() & CC_COLOUR_VARIABLE);
+	m_checkBoxColourMacroBlocks->SetValue          (m_data.GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS);
 	m_listBoxSearchPaths->Append                   (m_data.GetParserSearchPaths() );
 	m_listBoxSearchPaths1->Append                  (m_data.GetParserExcludePaths() );
 	m_spinCtrlMaxItemToColour->SetValue            (m_data.GetMaxItemToColour() );
@@ -156,19 +157,20 @@ void TagsOptionsDlg::CopyData()
 	SetFlag(CC_RETAG_WORKSPACE_ON_STARTUP,          m_checkBoxretagWorkspaceOnStartup->IsChecked());
 	SetFlag(CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING, m_checkBoxDeepUsingNamespaceResolving->IsChecked());
 
-	SetColouringFlag(CC_COLOUR_CLASS,      m_checkBoxClass->IsChecked());
-	SetColouringFlag(CC_COLOUR_ENUM,       m_checkBoxEnum->IsChecked());
-	SetColouringFlag(CC_COLOUR_FUNCTION,   m_checkBoxFunction->IsChecked());
-	SetColouringFlag(CC_COLOUR_MACRO,      m_checkBoxMacro->IsChecked());
-	SetColouringFlag(CC_COLOUR_NAMESPACE,  m_checkBoxNamespace->IsChecked());
-	SetColouringFlag(CC_COLOUR_PROTOTYPE,  m_checkBoxPrototype->IsChecked());
-	SetColouringFlag(CC_COLOUR_STRUCT,     m_checkBoxStruct->IsChecked());
-	SetColouringFlag(CC_COLOUR_TYPEDEF,    m_checkBoxTypedef->IsChecked());
-	SetColouringFlag(CC_COLOUR_UNION,      m_checkBoxUnion->IsChecked());
-	SetColouringFlag(CC_COLOUR_ENUMERATOR, m_checkBoxEnumerator->IsChecked());
-	SetColouringFlag(CC_COLOUR_VARIABLE,   m_checkBoxVariable->IsChecked());
-	SetColouringFlag(CC_COLOUR_MEMBER,     m_checkBoxMember->IsChecked());
-
+	SetColouringFlag(CC_COLOUR_CLASS,        m_checkBoxClass->IsChecked());
+	SetColouringFlag(CC_COLOUR_ENUM,         m_checkBoxEnum->IsChecked());
+	SetColouringFlag(CC_COLOUR_FUNCTION,     m_checkBoxFunction->IsChecked());
+	SetColouringFlag(CC_COLOUR_MACRO,        m_checkBoxMacro->IsChecked());
+	SetColouringFlag(CC_COLOUR_NAMESPACE,    m_checkBoxNamespace->IsChecked());
+	SetColouringFlag(CC_COLOUR_PROTOTYPE,    m_checkBoxPrototype->IsChecked());
+	SetColouringFlag(CC_COLOUR_STRUCT,       m_checkBoxStruct->IsChecked());
+	SetColouringFlag(CC_COLOUR_TYPEDEF,      m_checkBoxTypedef->IsChecked());
+	SetColouringFlag(CC_COLOUR_UNION,        m_checkBoxUnion->IsChecked());
+	SetColouringFlag(CC_COLOUR_ENUMERATOR,   m_checkBoxEnumerator->IsChecked());
+	SetColouringFlag(CC_COLOUR_VARIABLE,     m_checkBoxVariable->IsChecked());
+	SetColouringFlag(CC_COLOUR_MEMBER,       m_checkBoxMember->IsChecked());
+	SetColouringFlag(CC_COLOUR_MACRO_BLOCKS, m_checkBoxColourMacroBlocks->IsChecked());
+	
 	m_data.SetFileSpec(m_textFileSpec->GetValue());
 
 	m_data.SetTokens(m_textPrep->GetValue());

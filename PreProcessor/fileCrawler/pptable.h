@@ -62,6 +62,9 @@ bool CLReplacePattern(const wxString &in, const wxString& pattern, const wxStrin
  */
 bool CLReplacePatternA(const std::string& in, const CLReplacement& repl, std::string& outStr);
 
+/**
+ * 
+ */
 struct WXDLLIMPEXP_CL PPToken {
 	enum {
 		IsFunctionLike = 0x00000001,
@@ -74,6 +77,7 @@ struct WXDLLIMPEXP_CL PPToken {
 	wxString        replacement;    // un processed replacement
 	wxArrayString   args;           // for function like macros, contains the argument's names
 	size_t          flags;          // PP token flags
+	wxString        fileName;
 
 	PPToken() : line(0), flags(IsOverridable)
 	{}
@@ -87,8 +91,9 @@ struct WXDLLIMPEXP_CL PPToken {
 	void print(wxFFile &fp);
 	static bool readInitList(const wxString &in, int from, wxString& initList, wxArrayString &initListArr);
 	static bool readInitList(const std::string &in, size_t from, std::string& initList, std::vector<std::string> &initListArr);
-	wxString fullname();
 	void squeeze();
+	wxString fullname() const;
+	
 };
 
 class WXDLLIMPEXP_CL PPTable

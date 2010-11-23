@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -7,6 +7,8 @@
 
 #ifndef __tags_options_base_dlg__
 #define __tags_options_base_dlg__
+
+#include <wx/intl.h>
 
 #include <wx/string.h>
 #include <wx/checkbox.h>
@@ -58,6 +60,7 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxStaticText* m_staticText72;
 		wxSpinCtrl* m_spinCtrlMaxItemToColour;
 		wxCheckBox* m_checkColourLocalVars;
+		wxCheckBox* m_checkBoxColourMacroBlocks;
 		wxCheckBox* m_checkColourProjTags;
 		wxCheckBox* m_checkBoxClass;
 		wxCheckBox* m_checkBoxStruct;
@@ -133,7 +136,7 @@ class TagsOptionsBaseDlg : public wxDialog
 	
 	public:
 		
-		TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Tags Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 840,596 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Tags Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 840,596 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~TagsOptionsBaseDlg();
 	
 };

@@ -933,6 +933,7 @@ void MainBook::OnPageChanged(NotebookEvent& e)
 		LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage((size_t)newSel));
 		if(editor) {
 			SelectPage(editor);
+			ManagerST::Get()->UpdatePreprocessorFile(editor->GetFileName().GetFullPath());
 		}
 	}
 	e.Skip();

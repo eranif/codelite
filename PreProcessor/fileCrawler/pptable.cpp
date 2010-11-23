@@ -194,7 +194,7 @@ void PPToken::print(wxFFile &fp)
 #endif
 }
 
-wxString PPToken::fullname()
+wxString PPToken::fullname() const
 {
 	wxString fullname;
 	fullname << name;

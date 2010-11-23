@@ -2195,6 +2195,11 @@ void LEditor::ReloadFile()
 	SetText( text );
 	m_modifyTime = GetFileLastModifiedTime();
 
+//	if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_IF_DEFS) {
+		// Colour undefined sections in "grey" text colour
+//		ManagerST::Get()->UpdatePreprocessorFile(m_fileName.GetFullPath());
+//	}
+
 	SetSavePoint();
 	EmptyUndoBuffer();
 
@@ -2860,7 +2865,10 @@ void LEditor::UpdateColours()
 			SetKeyWords(4, wxEmptyString);
 		}
 	}
-
+	
+	wxString newValue = TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS ? wxString(wxT("1")) : wxString(wxT("0"));
+	SetProperty(wxT("lexer.cpp.track.preprocessor"),  newValue);
+	SetProperty(wxT("lexer.cpp.update.preprocessor"), newValue);
 	Colourise(0, wxSCI_INVALID_POSITION);
 }
 

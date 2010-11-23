@@ -444,7 +444,6 @@ public:
 	/**
 	 * @brief return macro evaluation
 	 * @param name macro to search
-	 * @param evaluated the macro value
 	 */
 	virtual PPToken GetMacro(const wxString &name) = 0;
 
@@ -452,6 +451,16 @@ public:
 	 * @brief store macros table as they are produced from the PPTable
 	 */
 	virtual void StoreMacros(const std::map<wxString, PPToken>& table) = 0;
+
+	/**
+	 * @brief return the macros defined by some files.
+	 * The macro return must match the given used macros.
+	 * 
+	 * @param files The files which define the macros we are looking for
+	 * @param usedMacros The macros wee are looking for
+	 * @param defMacros [out] The real defined macros
+	 */
+	virtual void GetMacrosDefined(const std::set<std::string>& files, const std::set<wxString>& usedMacros, wxArrayString& defMacros) = 0;
 };
 
 enum {

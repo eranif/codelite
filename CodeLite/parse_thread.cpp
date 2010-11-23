@@ -62,6 +62,7 @@ const wxEventType wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE   = XRCID("parse_thread_
 const wxEventType wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE     = XRCID("parse_thread_clear_tags_cache");
 const wxEventType wxEVT_PARSE_THREAD_RETAGGING_PROGRESS   = XRCID("parse_thread_clear_retagging_progress");
 const wxEventType wxEVT_PARSE_THREAD_RETAGGING_COMPLETED  = XRCID("parse_thread_clear_retagging_compelted");
+const wxEventType wxEVT_PARSE_THREAD_INTERESTING_MACROS   = XRCID("parse_thread_interesting_macros_found");
 
 ParseThread::ParseThread()
 	: WorkerThread()
@@ -91,6 +92,9 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 		break;
 	case ParseRequest::PR_PARSE_AND_STORE:
 		ProcessParseAndStore( req );
+		break;
+	case ParseRequest::PR_GET_INTERRESTING_MACROS:
+		ProcessInterrestingMacros( req );
 		break;
 	}
 }
@@ -173,60 +177,7 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 {
 	DEBUG_MESSAGE( wxString::Format(wxT("ProcessIncludes -> started")) ) ;
 
-	// Remove from this list all files which starts with one of the crawler search paths
-	wxArrayString searchPaths, excludePaths, filteredFileList;
-	GetSearchPaths( searchPaths, excludePaths );
-
-	DEBUG_MESSAGE( wxString::Format(wxT("Initial workspace files count is %d"), req->_workspaceFiles.size()) ) ;
-
-	for(size_t i=0; i<req->_workspaceFiles.size(); i++) {
-		wxString name(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
-		wxFileName fn(name);
-		fn.MakeAbsolute();
-		filteredFileList.Add( fn.GetFullPath() );
-	}
-
-	DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> Workspace files %d"), filteredFileList.GetCount()) );
-
-	wxArrayString arrFiles;
-
-	// Clear the results once
-	{
-		wxCriticalSectionLocker locker( TagsManagerST::Get()->m_crawlerLocker );
-
-		fcFileOpener::Instance()->ClearResults();
-		fcFileOpener::Instance()->ClearSearchPath();
-
-		for(size_t i=0; i<searchPaths.GetCount(); i++) {
-			const wxCharBuffer path = _C(searchPaths.Item(i));
-			DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Search Path: %s "), searchPaths.Item(i).c_str()) );
-			fcFileOpener::Instance()->AddSearchPath(path.data());
-		}
-
-		for(size_t i=0; i<excludePaths.GetCount(); i++) {
-			const wxCharBuffer path = _C(excludePaths.Item(i));
-			DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Exclude Path: %s "), excludePaths.Item(i).c_str()) );
-			fcFileOpener::Instance()->AddExcludePath(path.data());
-		}
-
-		// Before using the 'crawlerScan' we lock it, since it is not mt-safe
-		for(size_t i=0; i<filteredFileList.GetCount(); i++) {
-
-			// Skip binary files
-			if(TagsManagerST::Get()->IsBinaryFile(filteredFileList.Item(i))) {
-				DEBUG_MESSAGE( wxString::Format(wxT("Skipping binary file %s"), filteredFileList.Item(i).c_str()) );
-				continue;
-			}
-
-			const wxCharBuffer cfile = filteredFileList.Item(i).mb_str(wxConvUTF8);
-			crawlerScan(cfile.data());
-			if( TestDestroy() ) {
-				DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> received 'TestDestroy()'") ) );
-				return;
-			}
-		}
-	}
-
+	FindIncludedFiles(req);
 	std::set<std::string> *newSet = new std::set<std::string>(fcFileOpener::Instance()->GetResults());
 
 #ifdef PARSE_THREAD_DBG
@@ -542,7 +493,7 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 		}
 
 		TagTreePtr tree = TagsManagerST::Get()->ParseSourceFile(curFile);
-		PPScan( curFile.GetFullPath(), true );
+		PPScan( curFile.GetFullPath(), false );
 
 		m_pDb->Store(tree, wxFileName(), false);
 		if(m_pDb->InsertFileEntry(curFile.GetFullPath(), (int)time(NULL)) == TagExist) {
@@ -588,6 +539,119 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 	delete m_pDb;
 	m_pDb = NULL;
 }
+
+void ParseThread::FindIncludedFiles(ParseRequest *req)
+{
+	wxArrayString searchPaths, excludePaths, filteredFileList;
+	GetSearchPaths( searchPaths, excludePaths );
+
+	DEBUG_MESSAGE( wxString::Format(wxT("Initial workspace files count is %d"), req->_workspaceFiles.size()) ) ;
+
+	for(size_t i=0; i<req->_workspaceFiles.size(); i++) {
+		wxString name(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
+		wxFileName fn(name);
+		fn.MakeAbsolute();
+		filteredFileList.Add( fn.GetFullPath() );
+	}
+
+	DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::FindIncludedFiles -> Workspace files %d"), filteredFileList.GetCount()) );
+
+	wxArrayString arrFiles;
+
+	// Clear the results once
+	{
+		// Before using the 'crawlerScan' we lock it, since it is not mt-safe
+		wxCriticalSectionLocker locker( TagsManagerST::Get()->m_crawlerLocker );
+
+		fcFileOpener::Instance()->ClearResults();
+		fcFileOpener::Instance()->ClearSearchPath();
+
+		for(size_t i=0; i<searchPaths.GetCount(); i++) {
+			const wxCharBuffer path = _C(searchPaths.Item(i));
+			DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Search Path: %s "), searchPaths.Item(i).c_str()) );
+			fcFileOpener::Instance()->AddSearchPath(path.data());
+		}
+
+		for(size_t i=0; i<excludePaths.GetCount(); i++) {
+			const wxCharBuffer path = _C(excludePaths.Item(i));
+			DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Exclude Path: %s "), excludePaths.Item(i).c_str()) );
+			fcFileOpener::Instance()->AddExcludePath(path.data());
+		}
+
+		for(size_t i=0; i<filteredFileList.GetCount(); i++) {
+			const wxCharBuffer cfile = filteredFileList.Item(i).mb_str(wxConvUTF8);
+			crawlerScan(cfile.data());
+			if( TestDestroy() ) {
+				DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::FindIncludedFiles -> received 'TestDestroy()'") ) );
+				return;
+			}
+		}
+	}
+}
+
+void ParseThread::ProcessInterrestingMacros(ParseRequest *req)
+{
+	if ( !m_pDb ) {
+		m_pDb = new TagsStorageSQLite();
+	}
+	m_pDb->OpenDatabase(req->getDbfile());
+
+	wxFileName fnCurrentFile(req->getFile());
+	fnCurrentFile.MakeAbsolute();
+	const wxString sCurrentFile = fnCurrentFile.GetFullPath();
+
+	// -------------------------------------------
+	// Step 1 : Retrieve all included files
+	// -------------------------------------------
+	FindIncludedFiles(req);
+	const std::set<std::string>& incFiles = fcFileOpener::Instance()->GetResults();
+	
+	// Add include files in native format
+	std::set<std::string> searchFiles;
+	std::set<std::string>::const_iterator itIncFile = incFiles.begin();
+	for (; itIncFile != incFiles.end(); ++itIncFile) {
+		wxFileName fn(wxString::From8BitData(itIncFile->c_str()));
+		searchFiles.insert(fn.GetFullPath().mb_str(wxConvUTF8).data());
+	}
+	
+	// Add project files
+	const std::vector<std::string>& projFiles = req->_workspaceFiles;
+	for (std::vector<std::string>::const_iterator itProjFile = projFiles.begin(); itProjFile != projFiles.end(); ++itProjFile) {
+		searchFiles.insert(*itProjFile);
+	}
+	
+	// Remove the current file
+	searchFiles.erase(sCurrentFile.mb_str(wxConvUTF8).data());
+	
+	// -------------------------------------------
+	// Step 2 : Retrive PP macros used in the given files
+	// -------------------------------------------
+	PPTable::Instance()->ClearNamesUsed();
+	PPScan(sCurrentFile, false);
+
+	// -------------------------------------------
+	// Step 3 : Keep only macros available in both included 
+	//    files and given files
+	// -------------------------------------------
+	wxArrayString defMacros;
+	m_pDb->GetMacrosDefined(searchFiles, PPTable::Instance()->GetNamesUsed(), defMacros);
+	wxString macros;
+	for (wxArrayString::const_iterator itMacro = defMacros.begin(); itMacro != defMacros.end(); ++itMacro) {
+		macros << *itMacro << wxT(" ");
+	}
+	if (!macros.empty()) {
+		macros.RemoveLast();
+	}
+
+	// Send back the informations
+	InterrestingMacrosEventData* pMacrosData = new InterrestingMacrosEventData;
+	pMacrosData->SetFileName( sCurrentFile );
+	pMacrosData->SetMacros( macros );
+	wxCommandEvent event(wxEVT_PARSE_THREAD_INTERESTING_MACROS);
+	event.SetClientData(pMacrosData);
+	wxPostEvent(req->_evtHandler, event);
+}
+
 
 //--------------------------------------------------------------------------------------
 // Parse Request Class

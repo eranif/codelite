@@ -291,6 +291,20 @@ bool CodeLiteApp::OnInit()
 	m_handler = LoadLibrary(wxT("exchndl.dll"));
 #endif
 
+	m_locale.Init();                                   		// Initialise the catalog we'll be using
+
+#if defined (__WXGTK__)
+	// Cater for a --prefix= build. This gets added automatically to the search path for catalogues.
+	// So hack in the standard ones too, otherwise wxstd.mo will be missed
+	wxLocale::AddCatalogLookupPathPrefix(wxT("/usr/share/locale"));
+	wxLocale::AddCatalogLookupPathPrefix(wxT("/usr/local/share/locale"));
+#endif
+
+	if ( ! m_locale.AddCatalog(wxT("codelite")) )
+	  m_locale.AddCatalog(wxT("CodeLite"));              	// Hedge bets re our spelling
+
+	m_locale.AddCatalog(wxT("wxstd"));                   	// Load the standard wxWidgets catalogue too: it'll help if there isn't a CodeLite one for a language
+
 	// Init resources and add the PNG handler
 	wxSystemOptions::SetOption(_T("msw.remap"), 0);
 	wxXmlResource::Get()->InitAllHandlers();

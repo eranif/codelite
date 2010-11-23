@@ -36,7 +36,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor(wxT("eran"));
 	info.SetName(wxT("ContinuousBuild"));
-	info.SetDescription(wxT("Continuous build plugin which compiles files on save and report errors"));
+	info.SetDescription(_("Continuous build plugin which compiles files on save and report errors"));
 	info.SetVersion(wxT("v1.0"));
 	return info;
 }
@@ -57,7 +57,7 @@ ContinuousBuild::ContinuousBuild(IManager *manager)
 		: IPlugin(manager)
 		, m_buildInProgress(false)
 {
-	m_longName = wxT("Continuous build plugin which compiles files on save and report errors");
+	m_longName = _("Continuous build plugin which compiles files on save and report errors");
 	m_shortName = wxT("ContinuousBuild");
 	m_view = new ContinousBuildPane(m_mgr->GetOutputPaneNotebook(), m_mgr, this);
 
@@ -208,7 +208,7 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 		return;
 
 	// Set some messages
-	m_mgr->SetStatusMessage(wxString::Format(wxT("Compiling %s..."), wxFileName(fileName).GetFullName().c_str()), 0);
+	m_mgr->SetStatusMessage(wxString::Format(wxT("%s %s..."), _("Compiling"), wxFileName(fileName).GetFullName().c_str()), 0);
 
 	// Add this file to the UI queue
 	m_view->AddFile(fileName);

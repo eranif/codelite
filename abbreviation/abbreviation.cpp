@@ -50,7 +50,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor(wxT("Eran Ifrah"));
 	info.SetName(wxT("abbreviation"));
-	info.SetDescription(wxT("Abbreviation plugin"));
+	info.SetDescription(_("Abbreviation plugin"));
 	info.SetVersion(wxT("v1.0"));
 	return info;
 }
@@ -64,7 +64,7 @@ AbbreviationPlugin::AbbreviationPlugin(IManager *manager)
 		: IPlugin(manager)
 		, m_topWindow(NULL)
 {
-	m_longName = wxT("Abbreviation plugin");
+	m_longName = _("Abbreviation plugin");
 	m_shortName = wxT("abbreviation");
 	m_topWindow = m_mgr->GetTheApp();
 	m_topWindow->Connect(wxEVT_CCBOX_SELECTION_MADE, wxCommandEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
@@ -87,11 +87,11 @@ void AbbreviationPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 	wxMenu *menu = new wxMenu();
 	wxMenuItem *item( NULL );
 
-	item = new wxMenuItem(menu, XRCID("abbrev_show"), wxT( "Show Abbreviations" ), wxT( "Show Abbreviations" ), wxITEM_NORMAL );
+	item = new wxMenuItem(menu, XRCID("abbrev_show"), _( "Show Abbreviations" ), _( "Show Abbreviations" ), wxITEM_NORMAL );
 	menu->Append( item );
 
 	menu->AppendSeparator();
-	item = new wxMenuItem(menu, XRCID("abbrev_settings"), wxT( "Settings..." ), wxT( "Settings..." ), wxITEM_NORMAL );
+	item = new wxMenuItem(menu, XRCID("abbrev_settings"), _( "Settings..." ), _( "Settings..." ), wxITEM_NORMAL );
 	menu->Append( item );
 
 
@@ -216,7 +216,7 @@ void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
 		while (reVarPattern.Matches(text)) {
 			// add result
 			wxString v = reVarPattern.GetMatch(text);
-			wxString replaceWith = wxGetTextFromUser(wxString::Format(wxT("Enter replacement for '%s':"), v.c_str()), wxT("CodeLite"));
+			wxString replaceWith = wxGetTextFromUser(wxString::Format(_("Enter replacement for '%s':"), v.c_str()), _("CodeLite"));
 			text.Replace(v, replaceWith);
 		}
 

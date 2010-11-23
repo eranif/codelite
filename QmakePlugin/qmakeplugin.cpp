@@ -117,7 +117,7 @@ void QMakePlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 	item = new wxMenuItem(menu, XRCID("qmake_settings"), _("Settings..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
-	pluginsMenu->Append(wxID_ANY, _("QMake"), menu);
+	pluginsMenu->Append(wxID_ANY, wxT("QMake"), menu);
 
 	m_mgr->GetTheApp()->Connect(XRCID("new_qmake_project"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QMakePlugin::OnNewQmakeBasedProject), NULL, (wxEvtHandler*)this);
 	m_mgr->GetTheApp()->Connect(XRCID("qmake_settings"), wxEVT_COMMAND_MENU_SELECTED,    wxCommandEventHandler(QMakePlugin::OnSettings), NULL, (wxEvtHandler*)this);

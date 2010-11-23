@@ -61,7 +61,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor(wxT("Eran Ifrah, patched by Stefan Roesch"));
 	info.SetName(CSCOPE_NAME);
-	info.SetDescription(wxT("CScope Integration for CodeLite"));
+	info.SetDescription(_("CScope Integration for CodeLite"));
 	info.SetVersion(wxT("v1.1"));
 	return info;
 }
@@ -75,7 +75,7 @@ Cscope::Cscope(IManager *manager)
 		: IPlugin(manager)
 		, m_topWindow(NULL)
 {
-	m_longName = wxT("Cscope Integration for CodeLite");
+	m_longName = _("Cscope Integration for CodeLite");
 	m_shortName = CSCOPE_NAME;
 	m_topWindow = m_mgr->GetTheApp();
 
@@ -108,14 +108,14 @@ clToolBar *Cscope::CreateToolBar(wxWindow *parent)
 		BitmapLoader *bitmapLoader = m_mgr->GetStdIcons();
 		if (size == 24) {
 			//use the large icons set
-			tb->AddTool(XRCID("cscope_find_symbol"),                       wxT("Find this C symbol"),                     bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/find_symbol")),                       wxT("Find this C symbol"));
-			tb->AddTool(XRCID("cscope_functions_calling_this_function"),   wxT("Find functions calling this function"),   bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/function_calling_this_function")),    wxT("Find functions calling this function"));
-			tb->AddTool(XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/functions_called_by_this_function")), wxT("Find functions called by this function"));
+			tb->AddTool(XRCID("cscope_find_symbol"),                       _("Find this C symbol"),                     bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/find_symbol")),                       _("Find this C symbol"));
+			tb->AddTool(XRCID("cscope_functions_calling_this_function"),   _("Find functions calling this function"),   bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/function_calling_this_function")),    _("Find functions calling this function"));
+			tb->AddTool(XRCID("cscope_functions_called_by_this_function"), _("Find functions called by this function"), bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/functions_called_by_this_function")), _("Find functions called by this function"));
 		} else {
 			//16
-			tb->AddTool(XRCID("cscope_find_symbol"),                       wxT("Find this C symbol"),                     bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/find_symbol")),                       wxT("Find this C symbol"));
-			tb->AddTool(XRCID("cscope_functions_calling_this_function"),   wxT("Find functions calling this function"),   bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/function_calling_this_function")),    wxT("Find functions calling this function"));
-			tb->AddTool(XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/functions_called_by_this_function")), wxT("Find functions called by this function"));
+			tb->AddTool(XRCID("cscope_find_symbol"),                       _("Find this C symbol"),                     bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/find_symbol")),                       _("Find this C symbol"));
+			tb->AddTool(XRCID("cscope_functions_calling_this_function"),   _("Find functions calling this function"),   bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/function_calling_this_function")),    _("Find functions calling this function"));
+			tb->AddTool(XRCID("cscope_functions_called_by_this_function"), _("Find functions called by this function"), bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/functions_called_by_this_function")), _("Find functions called by this function"));
 		}
 		tb->Realize();
 	}
@@ -143,31 +143,31 @@ void Cscope::CreatePluginMenu(wxMenu *pluginsMenu)
 {
 	wxMenu *menu = new wxMenu();
 	wxMenuItem *item(NULL);
-	item = new wxMenuItem(menu, XRCID("cscope_find_user_symbol"), wxT("Find ..."), wxT("Find ..."), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_find_user_symbol"), _("Find ..."), _("Find ..."), wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
 
-	item = new wxMenuItem(menu, XRCID("cscope_find_symbol"), wxT("Find selected text"), wxT("Find this C symbol"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_find_symbol"), _("Find selected text"), _("Find this C symbol"), wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("cscope_find_global_definition"), wxT("Find this global definition"), wxT("Find this C global definition"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_find_global_definition"), _("Find this global definition"), _("Find this C global definition"), wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), wxT("Find functions called by this function"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_functions_called_by_this_function"), _("Find functions called by this function"), _("Find functions called by this function"), wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("cscope_functions_calling_this_function"), wxT("Find functions calling this function"), wxT("Find functions calling this function"), wxITEM_NORMAL);
-	menu->Append(item);
-
-	menu->AppendSeparator();
-
-	item = new wxMenuItem(menu, XRCID("cscope_create_db"), wxT("Create CScope database"), wxT("Create/Recreate the cscope database"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_functions_calling_this_function"), _("Find functions calling this function"), _("Find functions calling this function"), wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
 
-	item = new wxMenuItem(menu, XRCID("cscope_settings"), wxT("CScope settings"), wxT("Configure cscope"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_create_db"), _("Create CScope database"), _("Create/Recreate the cscope database"), wxITEM_NORMAL);
+	menu->Append(item);
+
+	menu->AppendSeparator();
+
+	item = new wxMenuItem(menu, XRCID("cscope_settings"), _("CScope settings"), _("Configure cscope"), wxITEM_NORMAL);
 	menu->Append(item);
 
 	pluginsMenu->Append(wxID_ANY, CSCOPE_NAME, menu);
@@ -216,21 +216,21 @@ wxMenu *Cscope::CreateEditorPopMenu()
 	wxMenu* menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
-	item = new wxMenuItem(menu, XRCID("cscope_find_symbol"), wxT("&Find this C symbol"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_find_symbol"), _("&Find this C symbol"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("cscope_find_global_definition"), wxT("Find this &global definition"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_find_global_definition"), _("Find this &global definition"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("cscope_functions_called_by_this_function"), wxT("Find functions &called by this function"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_functions_called_by_this_function"), _("Find functions &called by this function"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("cscope_functions_calling_this_function"), wxT("Fi&nd functions calling this function"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_functions_calling_this_function"), _("Fi&nd functions calling this function"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
 
-	item = new wxMenuItem(menu, XRCID("cscope_create_db"), wxT("Create CScope database"), wxT("Create/Recreate the cscope database"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cscope_create_db"), _("Create CScope database"), _("Create/Recreate the cscope database"), wxITEM_NORMAL);
 	menu->Append(item);
 
 	//connect the events
@@ -260,7 +260,7 @@ wxString Cscope::DoCreateListFile(bool force)
 		wxString err_msg;
 		std::vector< wxFileName > files;
 		std::vector< wxFileName > tmpfiles;
-		m_cscopeWin->SetMessage(wxT("Creating file list..."), 5);
+		m_cscopeWin->SetMessage(_("Creating file list..."), 5);
 
 		if (settings.GetScanScope() == SCOPE_ENTIRE_WORKSPACE) {
 			for (size_t i=0; i< projects.GetCount(); i++) {
@@ -530,7 +530,7 @@ void Cscope::OnFindUserInsertedSymbol(wxCommandEvent& e)
 {
 	CHECK_CL_SHUTDOWN();
 
-	wxString word = wxGetTextFromUser(wxT("Find What:"), wxT("cscope: find symbol"), wxT(""), m_mgr->GetTheApp()->GetTopWindow());
+	wxString word = wxGetTextFromUser(_("Find What:"), _("cscope: find symbol"), wxT(""), m_mgr->GetTheApp()->GetTopWindow());
 	if(word.IsEmpty())
 		return;
 

@@ -735,7 +735,7 @@ bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const
 
 		if (name == lowerCaseName) {
 			name.Replace(wxT("/"), wxT("_"));
-			targetFileName = wxString::Format(_("%s/%s"), targetDir.c_str(), name.c_str());
+			targetFileName = wxString::Format(wxT("%s/%s"), targetDir.c_str(), name.c_str());
 			wxFFileOutputStream out(targetFileName);
 			zip.Read(out);
 			out.Close();

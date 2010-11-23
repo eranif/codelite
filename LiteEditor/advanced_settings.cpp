@@ -68,10 +68,10 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_staticText1 = new wxStaticText( m_compilersPage, wxID_ANY, wxT("Create New Compiler:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( m_compilersPage, wxID_ANY, _("Create New Compiler:"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_staticText1, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	m_buttonNewCompiler = new wxButton( m_compilersPage, wxID_ANY, wxT("New..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonNewCompiler = new wxButton( m_compilersPage, wxID_ANY, _("New..."), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_buttonNewCompiler, 0, wxALL|wxALIGN_RIGHT, 5 );
 
 	bSizer5->Add( bSizer4, 0, wxALIGN_RIGHT|wxEXPAND, 5 );
@@ -85,7 +85,7 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	m_compilersPage->SetSizer( bSizer5 );
 	m_compilersPage->Layout();
 	bSizer5->Fit( m_compilersPage );
-	m_notebook->AddPage( m_compilersPage, wxT("Compilers"), true );
+	m_notebook->AddPage( m_compilersPage, _("Compilers"), true );
 
 	mainSizer->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 
@@ -95,19 +95,19 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	wxBoxSizer* btnSizer;
 	btnSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_buttonOK = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_buttonOK, 0, wxALL, 5 );
 
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_buttonCancel, 0, wxALL, 5 );
 
 	mainSizer->Add( btnSizer, 0, wxALIGN_RIGHT, 5 );
 
 	m_buildSettings = new BuildTabSetting(m_notebook);
-	m_notebook->AddPage(m_buildSettings, wxT("Build Output Appearance"), false);
+	m_notebook->AddPage(m_buildSettings, _("Build Output Appearance"), false);
 
 	m_buildPage = new BuildPage(m_notebook);
-	m_notebook->AddPage(m_buildPage, wxT("Build Systems"), false);
+	m_notebook->AddPage(m_buildPage, _("Build Systems"), false);
 
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -163,7 +163,7 @@ AdvancedDlg::~AdvancedDlg()
 void AdvancedDlg::OnButtonNewClicked(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, wxT("Enter New Compiler Name:"), wxT("New Compiler"));
+	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, _("Enter New Compiler Name:"), _("New Compiler"));
 	if (dlg->ShowModal() == wxID_OK) {
 		wxString name = dlg->GetValue();
 		TrimString(name);
@@ -248,7 +248,7 @@ void AdvancedDlg::SaveCompilers()
 bool AdvancedDlg::CreateDefaultNewCompiler ( const wxString &name )
 {
 	if ( BuildSettingsConfigST::Get()->IsCompilerExist ( name ) ) {
-		wxMessageBox ( _ ( "A compiler with this name already exist" ), wxT ( "Error" ), wxOK | wxICON_HAND );
+		wxMessageBox ( _( "A compiler with this name already exist" ), _( "Error" ), wxOK | wxICON_HAND );
 		return false;
 	}
 
@@ -298,7 +298,7 @@ void AdvancedDlg::AddCompiler(CompilerPtr cmp, bool selected)
 
 bool AdvancedDlg::DeleteCompiler ( const wxString &name )
 {
-	if ( wxMessageBox ( _ ( "Remove Compiler?" ), wxT ( "Confirm" ), wxYES_NO | wxICON_QUESTION ) == wxYES ) {
+	if ( wxMessageBox ( _( "Remove Compiler?" ), _( "Confirm" ), wxYES_NO | wxICON_QUESTION ) == wxYES ) {
 		BuildSettingsConfigST::Get()->DeleteCompiler ( name );
 		return true;
 	}

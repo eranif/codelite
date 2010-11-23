@@ -83,7 +83,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor( wxT( "Frank Lichtner" ) );
 	info.SetName( plugName );
-	info.SetDescription( wxT( "A small tool to add expandable code snippets and template classes" ) );
+	info.SetDescription( _( "A small tool to add expandable code snippets and template classes" ) );
 	info.SetVersion( wxT( "v1.0" ) );
 	return info;
 }
@@ -157,9 +157,9 @@ void SnipWiz::CreatePluginMenu( wxMenu *pluginsMenu )
 	wxMenu *menu = new wxMenu();
 	wxMenuItem *item( NULL );
 
-	item = new wxMenuItem( menu, IDM_SETTINGS, wxT( "Settings..." ), wxT( "Settings..." ), wxITEM_NORMAL );
+	item = new wxMenuItem( menu, IDM_SETTINGS, _( "Settings..." ), _( "Settings..." ), wxITEM_NORMAL );
 	menu->Append( item );
-	item = new wxMenuItem( menu, IDM_CLASS_WIZ, wxT( "Template class..." ), wxT( "Template class..." ), wxITEM_NORMAL );
+	item = new wxMenuItem( menu, IDM_CLASS_WIZ, _( "Template class..." ), _( "Template class..." ), wxITEM_NORMAL );
 	menu->Append( item );
 
 	pluginsMenu->Append( wxID_ANY, plugName, menu );
@@ -188,7 +188,7 @@ void SnipWiz::HookPopupMenu( wxMenu *menu, MenuType type )
 		menu->Prepend(item);
 		m_vdDynItems.push_back(item);
 
-		item = new wxMenuItem(menu, IDM_CLASS_WIZ, wxT("New Class from Template..."), wxEmptyString, wxITEM_NORMAL);
+		item = new wxMenuItem(menu, IDM_CLASS_WIZ, _("New Class from Template..."), wxEmptyString, wxITEM_NORMAL);
 		menu->Prepend(item);
 		m_vdDynItems.push_back(item);
 	}
@@ -218,10 +218,10 @@ void SnipWiz::OnMenuExpandSwitch( wxCommandEvent& e )
 	wxString var = editor->GetSelection();
 	if ( !var.IsEmpty() )
 		isSelection = true;
-	var = ::wxGetTextFromUser( wxT( "Enter identifier name" ), wxT( "switch(...)" ), var );
+	var = ::wxGetTextFromUser( _( "Enter identifier name" ), _( "switch(...)" ), var );
 	if ( var.IsEmpty() )
 		return;
-	long count = ::wxGetNumberFromUser( wxT( "Enter number of cases" ), wxT( "Cases:" ), wxT( "switch(...)" ), 1, 1, 20 );
+	long count = ::wxGetNumberFromUser( _( "Enter number of cases" ), _( "Cases:" ), _( "switch(...)" ), 1, 1, 20 );
 	if ( count < 1 )
 		return;
 
@@ -356,11 +356,11 @@ wxMenu* SnipWiz::CreateSubMenu()
 
 	wxMenuItem *item( NULL );
 	if ( !m_clipboard.IsEmpty() ) {
-		item = new wxMenuItem( parentMenu, IDM_PASTE, wxT( "Paste buffer" ), wxT( "Paste buffer" ), wxITEM_NORMAL );
+		item = new wxMenuItem( parentMenu, IDM_PASTE, _( "Paste buffer" ), _( "Paste buffer" ), wxITEM_NORMAL );
 		parentMenu->Append( item );
 		parentMenu->AppendSeparator();
 	}
-	item = new wxMenuItem( parentMenu, IDM_EXP_SWITCH, wxT( "switch{...}" ), wxT( "switch{...}" ), wxITEM_NORMAL );
+	item = new wxMenuItem( parentMenu, IDM_EXP_SWITCH, _( "switch{...}" ), _( "switch{...}" ), wxITEM_NORMAL );
 	parentMenu->Append( item );
 	parentMenu->AppendSeparator();
 

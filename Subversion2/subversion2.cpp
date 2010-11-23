@@ -124,7 +124,7 @@ void Subversion2::CreatePluginMenu(wxMenu *pluginsMenu)
 	wxMenuItem *item(NULL);
 	item = new wxMenuItem(menu, XRCID("subversion2_settings"), _("Subversion Options"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-	pluginsMenu->Append(wxID_ANY, _("Subversion2"), menu);
+	pluginsMenu->Append(wxID_ANY, wxT("Subversion2"), menu);
 }
 
 void Subversion2::HookPopupMenu(wxMenu *menu, MenuType type)

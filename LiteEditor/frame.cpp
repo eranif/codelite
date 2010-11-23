@@ -612,7 +612,7 @@ clMainFrame::~clMainFrame(void)
 void clMainFrame::Initialize(bool loadLastSession)
 {
 	//set the revision number in the frame title
-	wxString title(wxT("CodeLite - Revision: "));
+	wxString title(_("CodeLite - Revision: "));
 	title << SvnRevision;
 
 	//initialize the environment variable configuration manager
@@ -754,24 +754,24 @@ void clMainFrame::CreateGUIControls(void)
 	// Add docking windows
 	//---------------------------------------------
 
-	m_outputPane = new OutputPane(m_mainPanel, wxT("Output View"));
+	m_outputPane = new OutputPane(m_mainPanel, _("Output View"));
 	wxAuiPaneInfo paneInfo;
 	m_mgr.AddPane(m_outputPane,
-	              paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(0).Position(0).CaptionVisible(false).MinSize(200, 200));
-	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
+	              paneInfo.Name(wxT("Output View")).Caption(_("Output View")).Bottom().Layer(0).Position(0).CaptionVisible(false).MinSize(200, 200));
+	RegisterDockWindow(XRCID("output_pane"), _("Output View"));
 
 	// Add the explorer pane
-	m_workspacePane = new WorkspacePane(m_mainPanel, wxT("Workspace View"), &m_mgr);
+	m_workspacePane = new WorkspacePane(m_mainPanel, _("Workspace View"), &m_mgr);
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
 	              Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
 	              Left().BestSize(250, 300).Layer(1).Position(0).CloseButton(true));
-	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace View"));
+	RegisterDockWindow(XRCID("workspace_pane"), _("Workspace View"));
 
 	//add the debugger locals tree, make it hidden by default
-	m_debuggerPane = new DebuggerPane(m_mainPanel, wxT("Debugger"), &m_mgr);
+	m_debuggerPane = new DebuggerPane(m_mainPanel, _("Debugger"), &m_mgr);
 	m_mgr.AddPane(m_debuggerPane,
 	              wxAuiPaneInfo().Name(m_debuggerPane->GetCaption()).Caption(m_debuggerPane->GetCaption()).Bottom().Layer(1).Position(1).CloseButton(true).Hide());
-	RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
+	RegisterDockWindow(XRCID("debugger_pane"), _("Debugger"));
 
 	m_mainBook = new MainBook(m_mainPanel);
 	m_mgr.AddPane(m_mainBook, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(false));
@@ -826,8 +826,8 @@ void clMainFrame::CreateGUIControls(void)
 	SetStatusBar(statusBar);
 	m_status.resize(3);
 	GetStatusBar()->SetFieldsCount(m_status.size());
-	SetStatusMessage(wxT("Ready"), 0);
-	SetStatusMessage(wxT("Done"), m_status.size()-1);
+	SetStatusMessage(_("Ready"), 0);
+	SetStatusMessage(_("Done"), m_status.size()-1);
 
 	// update ctags options
 	TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
@@ -954,30 +954,30 @@ void clMainFrame::CreateToolbars24()
 #endif
 
 	BitmapLoader &bmpLoader = *(PluginManager::Get()->GetStdIcons());
-	tb->AddTool(XRCID("new_file"),        wxT("New"),             bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_new")),     wxT("New File"));
-	tb->AddTool(XRCID("open_file"),       wxT("Open"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_open")),    wxT("Open File"));
-	tb->AddTool(XRCID("refresh_file"),    wxT("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_reload")),  wxT("Reload File"));
+	tb->AddTool(XRCID("new_file"),        _("New"),             bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_new")),     _("New File"));
+	tb->AddTool(XRCID("open_file"),       _("Open"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_open")),    _("Open File"));
+	tb->AddTool(XRCID("refresh_file"),    _("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_reload")),  _("Reload File"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("save_file"),       wxT("Save"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save")),    wxT("Save"));
-	tb->AddTool(XRCID("save_file_as"),    wxT("Save As"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save_as")), wxT("Save As"));
+	tb->AddTool(XRCID("save_file"),       _("Save"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save")),    _("Save"));
+	tb->AddTool(XRCID("save_file_as"),    _("Save As"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save_as")), _("Save As"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("close_file"),      wxT("Close"),           bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_close")),   wxT("Close File"));
+	tb->AddTool(XRCID("close_file"),      _("Close"),           bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_close")),   _("Close File"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_CUT,                 wxT("Cut"),             bmpLoader.LoadBitmap(wxT("toolbars/24/standard/cut")),          wxT("Cut"));
-	tb->AddTool(wxID_COPY,                wxT("Copy"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/copy")),         wxT("Copy"));
-	tb->AddTool(wxID_PASTE,               wxT("Paste"),           bmpLoader.LoadBitmap(wxT("toolbars/24/standard/paste")),        wxT("Paste"));
+	tb->AddTool(wxID_CUT,                 _("Cut"),             bmpLoader.LoadBitmap(wxT("toolbars/24/standard/cut")),          _("Cut"));
+	tb->AddTool(wxID_COPY,                _("Copy"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/copy")),         _("Copy"));
+	tb->AddTool(wxID_PASTE,               _("Paste"),           bmpLoader.LoadBitmap(wxT("toolbars/24/standard/paste")),        _("Paste"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_UNDO,                wxT("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/undo")),         wxT("Undo"));
-	tb->AddTool(wxID_REDO,                wxT("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/redo")),         wxT("Redo"));
-	tb->AddTool(wxID_BACKWARD,            wxT("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/24/standard/back")),         wxT("Backward"));
-	tb->AddTool(wxID_FORWARD,             wxT("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/forward")),      wxT("Forward"));
+	tb->AddTool(wxID_UNDO,                _("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/undo")),         _("Undo"));
+	tb->AddTool(wxID_REDO,                _("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/redo")),         _("Redo"));
+	tb->AddTool(wxID_BACKWARD,            _("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/24/standard/back")),         _("Backward"));
+	tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/forward")),      _("Forward"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("toggle_bookmark"), wxT("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/bookmark")),     wxT("Toggle Bookmark"));
+	tb->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/bookmark")),     _("Toggle Bookmark"));
 
 
 	if (PluginManager::Get()->AllowToolbar()) {
 		tb->Realize();
-		m_mgr.AddPane(tb, wxAuiPaneInfo().Name(wxT("Standard Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Standard")).ToolbarPane().Top());
+		m_mgr.AddPane(tb, wxAuiPaneInfo().Name(wxT("Standard Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Standard")).ToolbarPane().Top());
 	}
 	//----------------------------------------------
 	//create the search toolbar
@@ -991,20 +991,20 @@ void clMainFrame::CreateToolbars24()
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 
-	tb->AddTool(wxID_FIND,              wxT("Find"),                       bmpLoader.LoadBitmap(wxT("toolbars/24/search/find")),             wxT("Find"));
-	tb->AddTool(wxID_REPLACE,           wxT("Replace"),                    bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_and_replace")), wxT("Replace"));
-	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_in_files")),    wxT("Find In Files"));
+	tb->AddTool(wxID_FIND,              _("Find"),                       bmpLoader.LoadBitmap(wxT("toolbars/24/search/find")),             _("Find"));
+	tb->AddTool(wxID_REPLACE,           _("Replace"),                    bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_and_replace")), _("Replace"));
+	tb->AddTool(XRCID("find_in_files"), _("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_in_files")),    _("Find In Files"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_resource")),    wxT("Find Resource In Workspace"));
-	tb->AddTool(XRCID("find_type"),     wxT("Find Type In Workspace"),     bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_type")),        wxT("Find Type In Workspace"));
+	tb->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_resource")),    _("Find Resource In Workspace"));
+	tb->AddTool(XRCID("find_type"),     _("Find Type In Workspace"),     bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_type")),        _("Find Type In Workspace"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("highlight_word"), wxT("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/24/search/mark_word")),        wxT("Highlight Word"), wxITEM_CHECK);
+	tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/24/search/mark_word")),        _("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
 	tb->AddSeparator();
 
 	if (PluginManager::Get()->AllowToolbar()) {
 		tb->Realize();
-		m_mgr.AddPane(tb, info.Name(wxT("Search Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Search")).ToolbarPane().Top());
+		m_mgr.AddPane(tb, info.Name(wxT("Search Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Search")).ToolbarPane().Top());
 	}
 	//----------------------------------------------
 	//create the build toolbar
@@ -1017,17 +1017,17 @@ void clMainFrame::CreateToolbars24()
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 
-	tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/build")),        wxT("Build Active Project"));
-	tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/stop")),         wxT("Stop Current Build"));
-	tb->AddTool(XRCID("clean_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/clean")),        wxT("Clean Active Project"));
+	tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/build")),        _("Build Active Project"));
+	tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/stop")),         _("Stop Current Build"));
+	tb->AddTool(XRCID("clean_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/clean")),        _("Clean Active Project"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("execute_no_debug"),          wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/execute")),      wxT("Run Active Project"));
-	tb->AddTool(XRCID("stop_executed_program"),     wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/execute_stop")), wxT("Stop Running Program"));
+	tb->AddTool(XRCID("execute_no_debug"),          wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/execute")),      _("Run Active Project"));
+	tb->AddTool(XRCID("stop_executed_program"),     wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/execute_stop")), _("Stop Running Program"));
 
 	if (PluginManager::Get()->AllowToolbar()) {
 		tb->Realize();
 		info = wxAuiPaneInfo();
-		m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Build")).ToolbarPane().Top().Row(1));
+		m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Build")).ToolbarPane().Top().Row(1));
 	}
 
 	//----------------------------------------------
@@ -1041,21 +1041,21 @@ void clMainFrame::CreateToolbars24()
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 
-	tb->AddTool(XRCID("start_debugger"),   wxT("Start / Continue debugger"), bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/start")),             wxT("Start / Continue debugger"));
-	tb->AddTool(XRCID("stop_debugger"),    wxT("Stop debugger"),             bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/stop")),              wxT("Stop debugger"));
-	tb->AddTool(XRCID("pause_debugger"),   wxT("Pause debugger"),            bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/interrupt")),         wxT("Pause debugger"));
-	tb->AddTool(XRCID("restart_debugger"), wxT("Restart debugger"),          bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/restart")),           wxT("Restart debugger"));
+	tb->AddTool(XRCID("start_debugger"),   _("Start or Continue debugger"), bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/start")),            _("Start or Continue debugger"));
+	tb->AddTool(XRCID("stop_debugger"),    _("Stop debugger"),             bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/stop")),              _("Stop debugger"));
+	tb->AddTool(XRCID("pause_debugger"),   _("Pause debugger"),            bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/interrupt")),         _("Pause debugger"));
+	tb->AddTool(XRCID("restart_debugger"), _("Restart debugger"),          bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/restart")),           _("Restart debugger"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("show_cursor"),      wxT("Show Current Line"),         bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/show_current_line")), wxT("Show Current Line"));
+	tb->AddTool(XRCID("show_cursor"),      _("Show Current Line"),         bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/show_current_line")), _("Show Current Line"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("dbg_stepin"),       wxT("Step Into"),                 bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_in")),           wxT("Step In"));
-	tb->AddTool(XRCID("dbg_next"),         wxT("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/next")),              wxT("Next"));
-	tb->AddTool(XRCID("dbg_stepout"),      wxT("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_out")),          wxT("Step Out"));
+	tb->AddTool(XRCID("dbg_stepin"),       _("Step Into"),                 bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_in")),           _("Step In"));
+	tb->AddTool(XRCID("dbg_next"),         _("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/next")),              _("Next"));
+	tb->AddTool(XRCID("dbg_stepout"),      _("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_out")),          _("Step Out"));
 	tb->Realize();
 
 	if (PluginManager::Get()->AllowToolbar()) {
 		info = wxAuiPaneInfo();
-		m_mgr.AddPane(tb, info.Name(wxT("Debugger Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Debug")).ToolbarPane().Top().Row(1));
+		m_mgr.AddPane(tb, info.Name(wxT("Debugger Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Debug")).ToolbarPane().Top().Row(1));
 
 		RegisterToolbar(XRCID("show_std_toolbar"), wxT("Standard Toolbar"));
 		RegisterToolbar(XRCID("show_search_toolbar"), wxT("Search Toolbar"));
@@ -1065,7 +1065,7 @@ void clMainFrame::CreateToolbars24()
 #if !USE_AUI_TOOLBAR
 		SetToolBar(tb);
 #else
-		m_mgr.AddPane(tb, info.Name(wxT("Main Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Main Toolbar")).ToolbarPane().Top().Row(1));
+		m_mgr.AddPane(tb, info.Name(wxT("Main Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Main Toolbar")).ToolbarPane().Top().Row(1));
 #endif
 	}
 }
@@ -1078,39 +1078,39 @@ void clMainFrame::CreateNativeToolbar16()
 	BitmapLoader &bmpLoader = *(PluginManager::Get()->GetStdIcons());
 
 	tb->SetToolBitmapSize(wxSize(16, 16));
-	tb->AddTool(XRCID("new_file"),        wxT("New"),             bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_new")),     wxT("New File"));
-	tb->AddTool(XRCID("open_file"),       wxT("Open"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_open")),    wxT("Open File"));
-	tb->AddTool(XRCID("refresh_file"),    wxT("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_reload")),  wxT("Reload File"));
+	tb->AddTool(XRCID("new_file"),        _("New"),             bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_new")),     _("New File"));
+	tb->AddTool(XRCID("open_file"),       _("Open"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_open")),    _("Open File"));
+	tb->AddTool(XRCID("refresh_file"),    _("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_reload")),  _("Reload File"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("save_file"),       wxT("Save"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save")),    wxT("Save"));
-	tb->AddTool(XRCID("save_file_as"),    wxT("Save As"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save_as")), wxT("Save As"));
+	tb->AddTool(XRCID("save_file"),       _("Save"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save")),    _("Save"));
+	tb->AddTool(XRCID("save_file_as"),    _("Save As"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save_as")), _("Save As"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("close_file"),      wxT("Close"),           bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_close")),   wxT("Close File"));
+	tb->AddTool(XRCID("close_file"),      _("Close"),           bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_close")),   _("Close File"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_CUT,                 wxT("Cut"),             bmpLoader.LoadBitmap(wxT("toolbars/16/standard/cut")),          wxT("Cut"));
-	tb->AddTool(wxID_COPY,                wxT("Copy"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/copy")),         wxT("Copy"));
-	tb->AddTool(wxID_PASTE,               wxT("Paste"),           bmpLoader.LoadBitmap(wxT("toolbars/16/standard/paste")),        wxT("Paste"));
+	tb->AddTool(wxID_CUT,                 _("Cut"),             bmpLoader.LoadBitmap(wxT("toolbars/16/standard/cut")),          _("Cut"));
+	tb->AddTool(wxID_COPY,                _("Copy"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/copy")),         _("Copy"));
+	tb->AddTool(wxID_PASTE,               _("Paste"),           bmpLoader.LoadBitmap(wxT("toolbars/16/standard/paste")),        _("Paste"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_UNDO,                wxT("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/undo")),         wxT("Undo"));
-	tb->AddTool(wxID_REDO,                wxT("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/redo")),         wxT("Redo"));
-	tb->AddTool(wxID_BACKWARD,            wxT("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/16/standard/back")),         wxT("Backward"));
-	tb->AddTool(wxID_FORWARD,             wxT("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/forward")),      wxT("Forward"));
+	tb->AddTool(wxID_UNDO,                _("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/undo")),         _("Undo"));
+	tb->AddTool(wxID_REDO,                _("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/redo")),         _("Redo"));
+	tb->AddTool(wxID_BACKWARD,            _("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/16/standard/back")),         _("Backward"));
+	tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/forward")),      _("Forward"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("toggle_bookmark"), wxT("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/16/standard/bookmark")),     wxT("Toggle Bookmark"));
+	tb->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/16/standard/bookmark")),     _("Toggle Bookmark"));
 
 
 	//----------------------------------------------
 	//create the search toolbar
 	//----------------------------------------------
 	tb->AddSeparator();
-	tb->AddTool(wxID_FIND,              wxT("Find"),                       bmpLoader.LoadBitmap(wxT("toolbars/16/search/find")),             wxT("Find"));
-	tb->AddTool(wxID_REPLACE,           wxT("Replace"),                    bmpLoader.LoadBitmap(wxT("toolbars/16/search/find_and_replace")), wxT("Replace"));
-	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/16/search/find_in_files")),    wxT("Find In Files"));
+	tb->AddTool(wxID_FIND,              _("Find"),                       bmpLoader.LoadBitmap(wxT("toolbars/16/search/find")),             _("Find"));
+	tb->AddTool(wxID_REPLACE,           _("Replace"),                    bmpLoader.LoadBitmap(wxT("toolbars/16/search/find_and_replace")), _("Replace"));
+	tb->AddTool(XRCID("find_in_files"), _("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/16/search/find_in_files")),    _("Find In Files"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_resource")),    wxT("Find Resource In Workspace"));
-	tb->AddTool(XRCID("find_type"),     wxT("Find Type In Workspace"),     bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_type")),        wxT("Find Type In Workspace"));
+	tb->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_resource")),    _("Find Resource In Workspace"));
+	tb->AddTool(XRCID("find_type"),     _("Find Type In Workspace"),     bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_type")),        _("Find Type In Workspace"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("highlight_word"), wxT("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/16/search/mark_word")),        wxT("Highlight Word"), wxITEM_CHECK);
+	tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/16/search/mark_word")),        _("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
 	tb->AddSeparator();
 
@@ -1118,27 +1118,27 @@ void clMainFrame::CreateNativeToolbar16()
 	//----------------------------------------------
 	//create the build toolbar
 	//----------------------------------------------
-	tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/build")),        wxT("Build Active Project"));
-	tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/stop")),         wxT("Stop Current Build"));
-	tb->AddTool(XRCID("clean_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/clean")),        wxT("Clean Active Project"));
+	tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/build")),        _("Build Active Project"));
+	tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/stop")),         _("Stop Current Build"));
+	tb->AddTool(XRCID("clean_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/clean")),        _("Clean Active Project"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("execute_no_debug"),          wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/execute")),      wxT("Run Active Project"));
-	tb->AddTool(XRCID("stop_executed_program"),     wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/execute_stop")), wxT("Stop Running Program"));
+	tb->AddTool(XRCID("execute_no_debug"),          wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/execute")),      _("Run Active Project"));
+	tb->AddTool(XRCID("stop_executed_program"),     wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/execute_stop")), _("Stop Running Program"));
 	tb->AddSeparator();
 
 	//----------------------------------------------
 	//create the debugger toolbar
 	//----------------------------------------------
-	tb->AddTool(XRCID("start_debugger"),   wxT("Start / Continue debugger"), bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/start")),             wxT("Start / Continue debugger"));
-	tb->AddTool(XRCID("stop_debugger"),    wxT("Stop debugger"),             bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/stop")),              wxT("Stop debugger"));
-	tb->AddTool(XRCID("pause_debugger"),   wxT("Pause debugger"),            bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/interrupt")),         wxT("Pause debugger"));
-	tb->AddTool(XRCID("restart_debugger"), wxT("Restart debugger"),          bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/restart")),           wxT("Restart debugger"));
+	tb->AddTool(XRCID("start_debugger"),   _("Start or Continue debugger"), bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/start")),            _("Start or Continue debugger"));
+	tb->AddTool(XRCID("stop_debugger"),    _("Stop debugger"),             bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/stop")),              _("Stop debugger"));
+	tb->AddTool(XRCID("pause_debugger"),   _("Pause debugger"),            bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/interrupt")),         _("Pause debugger"));
+	tb->AddTool(XRCID("restart_debugger"), _("Restart debugger"),          bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/restart")),           _("Restart debugger"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("show_cursor"),      wxT("Show Current Line"),         bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/show_current_line")), wxT("Show Current Line"));
+	tb->AddTool(XRCID("show_cursor"),      _("Show Current Line"),         bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/show_current_line")), _("Show Current Line"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("dbg_stepin"),       wxT("Step Into"),                 bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/step_in")),           wxT("Step In"));
-	tb->AddTool(XRCID("dbg_next"),         wxT("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/next")),              wxT("Next"));
-	tb->AddTool(XRCID("dbg_stepout"),      wxT("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/step_out")),          wxT("Step Out"));
+	tb->AddTool(XRCID("dbg_stepin"),       _("Step Into"),                 bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/step_in")),           _("Step In"));
+	tb->AddTool(XRCID("dbg_next"),         _("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/next")),              _("Next"));
+	tb->AddTool(XRCID("dbg_stepout"),      _("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/step_out")),          _("Step Out"));
 
 	tb->Realize();
 	SetToolBar(tb);
@@ -1153,66 +1153,66 @@ void clMainFrame::CreateNativeToolbar24()
 	BitmapLoader &bmpLoader = *(PluginManager::Get()->GetStdIcons());
 
 	tb->SetToolBitmapSize(wxSize(16, 16));
-	tb->AddTool(XRCID("new_file"),        wxT("New"),             bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_new")),     wxT("New File"));
-	tb->AddTool(XRCID("open_file"),       wxT("Open"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_open")),    wxT("Open File"));
-	tb->AddTool(XRCID("refresh_file"),    wxT("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_reload")),  wxT("Reload File"));
+	tb->AddTool(XRCID("new_file"),        _("New"),             bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_new")),     _("New File"));
+	tb->AddTool(XRCID("open_file"),       _("Open"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_open")),    _("Open File"));
+	tb->AddTool(XRCID("refresh_file"),    _("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_reload")),  _("Reload File"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("save_file"),       wxT("Save"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save")),    wxT("Save"));
-	tb->AddTool(XRCID("save_file_as"),    wxT("Save As"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save_as")), wxT("Save As"));
+	tb->AddTool(XRCID("save_file"),       _("Save"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save")),    _("Save"));
+	tb->AddTool(XRCID("save_file_as"),    _("Save As"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save_as")), _("Save As"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("close_file"),      wxT("Close"),           bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_close")),   wxT("Close File"));
+	tb->AddTool(XRCID("close_file"),      _("Close"),           bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_close")),   _("Close File"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_CUT,                 wxT("Cut"),             bmpLoader.LoadBitmap(wxT("toolbars/24/standard/cut")),          wxT("Cut"));
-	tb->AddTool(wxID_COPY,                wxT("Copy"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/copy")),         wxT("Copy"));
-	tb->AddTool(wxID_PASTE,               wxT("Paste"),           bmpLoader.LoadBitmap(wxT("toolbars/24/standard/paste")),        wxT("Paste"));
+	tb->AddTool(wxID_CUT,                 _("Cut"),             bmpLoader.LoadBitmap(wxT("toolbars/24/standard/cut")),          _("Cut"));
+	tb->AddTool(wxID_COPY,                _("Copy"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/copy")),         _("Copy"));
+	tb->AddTool(wxID_PASTE,               _("Paste"),           bmpLoader.LoadBitmap(wxT("toolbars/24/standard/paste")),        _("Paste"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_UNDO,                wxT("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/undo")),         wxT("Undo"));
-	tb->AddTool(wxID_REDO,                wxT("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/redo")),         wxT("Redo"));
-	tb->AddTool(wxID_BACKWARD,            wxT("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/24/standard/back")),         wxT("Backward"));
-	tb->AddTool(wxID_FORWARD,             wxT("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/forward")),      wxT("Forward"));
+	tb->AddTool(wxID_UNDO,                _("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/undo")),         _("Undo"));
+	tb->AddTool(wxID_REDO,                _("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/redo")),         _("Redo"));
+	tb->AddTool(wxID_BACKWARD,            _("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/24/standard/back")),         _("Backward"));
+	tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/forward")),      _("Forward"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("toggle_bookmark"), wxT("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/bookmark")),     wxT("Toggle Bookmark"));
+	tb->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/bookmark")),     _("Toggle Bookmark"));
 
 
 	//----------------------------------------------
 	//create the search toolbar
 	//----------------------------------------------
 	tb->AddSeparator();
-	tb->AddTool(wxID_FIND,              wxT("Find"),                       bmpLoader.LoadBitmap(wxT("toolbars/24/search/find")),             wxT("Find"));
-	tb->AddTool(wxID_REPLACE,           wxT("Replace"),                    bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_and_replace")), wxT("Replace"));
-	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_in_files")),    wxT("Find In Files"));
+	tb->AddTool(wxID_FIND,              _("Find"),                       bmpLoader.LoadBitmap(wxT("toolbars/24/search/find")),             _("Find"));
+	tb->AddTool(wxID_REPLACE,           _("Replace"),                    bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_and_replace")), _("Replace"));
+	tb->AddTool(XRCID("find_in_files"), _("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_in_files")),    _("Find In Files"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_resource")),    wxT("Find Resource In Workspace"));
-	tb->AddTool(XRCID("find_type"),     wxT("Find Type In Workspace"),     bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_type")),        wxT("Find Type In Workspace"));
+	tb->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_resource")),    _("Find Resource In Workspace"));
+	tb->AddTool(XRCID("find_type"),     _("Find Type In Workspace"),     bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_type")),        _("Find Type In Workspace"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("highlight_word"), wxT("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/24/search/mark_word")),        wxT("Highlight Word"), wxITEM_CHECK);
+	tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/24/search/mark_word")),        _("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
 	tb->AddSeparator();
 
 	//----------------------------------------------
 	//create the build toolbar
 	//----------------------------------------------
-	tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/build")),        wxT("Build Active Project"));
-	tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/stop")),         wxT("Stop Current Build"));
-	tb->AddTool(XRCID("clean_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/clean")),        wxT("Clean Active Project"));
+	tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/build")),        _("Build Active Project"));
+	tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/stop")),         _("Stop Current Build"));
+	tb->AddTool(XRCID("clean_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/clean")),        _("Clean Active Project"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("execute_no_debug"),          wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/execute")),      wxT("Run Active Project"));
-	tb->AddTool(XRCID("stop_executed_program"),     wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/execute_stop")), wxT("Stop Running Program"));
+	tb->AddTool(XRCID("execute_no_debug"),          wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/execute")),      _("Run Active Project"));
+	tb->AddTool(XRCID("stop_executed_program"),     wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/execute_stop")), _("Stop Running Program"));
 	tb->AddSeparator();
 
 	//----------------------------------------------
 	//create the debugger toolbar
 	//----------------------------------------------
-	tb->AddTool(XRCID("start_debugger"),   wxT("Start / Continue debugger"), bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/start")),             wxT("Start / Continue debugger"));
-	tb->AddTool(XRCID("stop_debugger"),    wxT("Stop debugger"),             bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/stop")),              wxT("Stop debugger"));
-	tb->AddTool(XRCID("pause_debugger"),   wxT("Pause debugger"),            bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/interrupt")),         wxT("Pause debugger"));
-	tb->AddTool(XRCID("restart_debugger"), wxT("Restart debugger"),          bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/restart")),           wxT("Restart debugger"));
+	tb->AddTool(XRCID("start_debugger"),   _("Start or Continue debugger"), bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/start")),            _("Start or Continue debugger"));
+	tb->AddTool(XRCID("stop_debugger"),    _("Stop debugger"),             bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/stop")),              _("Stop debugger"));
+	tb->AddTool(XRCID("pause_debugger"),   _("Pause debugger"),            bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/interrupt")),         _("Pause debugger"));
+	tb->AddTool(XRCID("restart_debugger"), _("Restart debugger"),          bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/restart")),           _("Restart debugger"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("show_cursor"),      wxT("Show Current Line"),         bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/show_current_line")), wxT("Show Current Line"));
+	tb->AddTool(XRCID("show_cursor"),      _("Show Current Line"),         bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/show_current_line")), _("Show Current Line"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("dbg_stepin"),       wxT("Step Into"),                 bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_in")),           wxT("Step In"));
-	tb->AddTool(XRCID("dbg_next"),         wxT("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/next")),              wxT("Next"));
-	tb->AddTool(XRCID("dbg_stepout"),      wxT("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_out")),          wxT("Step Out"));
+	tb->AddTool(XRCID("dbg_stepin"),       _("Step Into"),                 bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_in")),           _("Step In"));
+	tb->AddTool(XRCID("dbg_next"),         _("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/next")),              _("Next"));
+	tb->AddTool(XRCID("dbg_stepout"),      _("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_out")),          _("Step Out"));
 
 	tb->Realize();
 	SetToolBar(tb);
@@ -1241,30 +1241,30 @@ void clMainFrame::CreateToolbars16()
 	BitmapLoader &bmpLoader = *(PluginManager::Get()->GetStdIcons());
 
 	tb->SetToolBitmapSize(wxSize(16, 16));
-	tb->AddTool(XRCID("new_file"),        wxT("New"),             bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_new")),     wxT("New File"));
-	tb->AddTool(XRCID("open_file"),       wxT("Open"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_open")),    wxT("Open File"));
-	tb->AddTool(XRCID("refresh_file"),    wxT("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_reload")),  wxT("Reload File"));
+	tb->AddTool(XRCID("new_file"),        _("New"),             bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_new")),     _("New File"));
+	tb->AddTool(XRCID("open_file"),       _("Open"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_open")),    _("Open File"));
+	tb->AddTool(XRCID("refresh_file"),    _("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_reload")),  _("Reload File"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("save_file"),       wxT("Save"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save")),    wxT("Save"));
-	tb->AddTool(XRCID("save_file_as"),    wxT("Save As"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save_as")), wxT("Save As"));
+	tb->AddTool(XRCID("save_file"),       _("Save"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save")),    _("Save"));
+	tb->AddTool(XRCID("save_file_as"),    _("Save As"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save_as")), _("Save As"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("close_file"),      wxT("Close"),           bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_close")),   wxT("Close File"));
+	tb->AddTool(XRCID("close_file"),      _("Close"),           bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_close")),   _("Close File"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_CUT,                 wxT("Cut"),             bmpLoader.LoadBitmap(wxT("toolbars/16/standard/cut")),          wxT("Cut"));
-	tb->AddTool(wxID_COPY,                wxT("Copy"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/copy")),         wxT("Copy"));
-	tb->AddTool(wxID_PASTE,               wxT("Paste"),           bmpLoader.LoadBitmap(wxT("toolbars/16/standard/paste")),        wxT("Paste"));
+	tb->AddTool(wxID_CUT,                 _("Cut"),             bmpLoader.LoadBitmap(wxT("toolbars/16/standard/cut")),          _("Cut"));
+	tb->AddTool(wxID_COPY,                _("Copy"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/copy")),         _("Copy"));
+	tb->AddTool(wxID_PASTE,               _("Paste"),           bmpLoader.LoadBitmap(wxT("toolbars/16/standard/paste")),        _("Paste"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_UNDO,                wxT("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/undo")),         wxT("Undo"));
-	tb->AddTool(wxID_REDO,                wxT("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/redo")),         wxT("Redo"));
-	tb->AddTool(wxID_BACKWARD,            wxT("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/16/standard/back")),         wxT("Backward"));
-	tb->AddTool(wxID_FORWARD,             wxT("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/forward")),      wxT("Forward"));
+	tb->AddTool(wxID_UNDO,                _("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/undo")),         _("Undo"));
+	tb->AddTool(wxID_REDO,                _("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/redo")),         _("Redo"));
+	tb->AddTool(wxID_BACKWARD,            _("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/16/standard/back")),         _("Backward"));
+	tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/forward")),      _("Forward"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("toggle_bookmark"), wxT("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/16/standard/bookmark")),     wxT("Toggle Bookmark"));
+	tb->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/16/standard/bookmark")),     _("Toggle Bookmark"));
 
 
 	if (PluginManager::Get()->AllowToolbar()) {
 		tb->Realize();
-		m_mgr.AddPane(tb, wxAuiPaneInfo().Name(wxT("Standard Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Standard")).ToolbarPane().Top());
+		m_mgr.AddPane(tb, wxAuiPaneInfo().Name(wxT("Standard Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Standard")).ToolbarPane().Top());
 	}
 
 	//----------------------------------------------
@@ -1280,21 +1280,21 @@ void clMainFrame::CreateToolbars16()
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 
-	tb->AddTool(wxID_FIND,              wxT("Find"),                       bmpLoader.LoadBitmap(wxT("toolbars/16/search/find")),             wxT("Find"));
-	tb->AddTool(wxID_REPLACE,           wxT("Replace"),                    bmpLoader.LoadBitmap(wxT("toolbars/16/search/find_and_replace")), wxT("Replace"));
-	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/16/search/find_in_files")),    wxT("Find In Files"));
+	tb->AddTool(wxID_FIND,              _("Find"),                       bmpLoader.LoadBitmap(wxT("toolbars/16/search/find")),             _("Find"));
+	tb->AddTool(wxID_REPLACE,           _("Replace"),                    bmpLoader.LoadBitmap(wxT("toolbars/16/search/find_and_replace")), _("Replace"));
+	tb->AddTool(XRCID("find_in_files"), _("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/16/search/find_in_files")),    _("Find In Files"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_resource")),    wxT("Find Resource In Workspace"));
-	tb->AddTool(XRCID("find_type"),     wxT("Find Type In Workspace"),     bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_type")),        wxT("Find Type In Workspace"));
+	tb->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_resource")),    _("Find Resource In Workspace"));
+	tb->AddTool(XRCID("find_type"),     _("Find Type In Workspace"),     bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_type")),        _("Find Type In Workspace"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("highlight_word"), wxT("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/16/search/mark_word")),        wxT("Highlight Word"), wxITEM_CHECK);
+	tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/16/search/mark_word")),        _("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
 	tb->AddSeparator();
 
 
 	if (PluginManager::Get()->AllowToolbar()) {
 		tb->Realize();
-		m_mgr.AddPane(tb, info.Name(wxT("Search Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Search")).ToolbarPane().Top());
+		m_mgr.AddPane(tb, info.Name(wxT("Search Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Search")).ToolbarPane().Top());
 
 		//----------------------------------------------
 		//create the build toolbar
@@ -1306,17 +1306,17 @@ void clMainFrame::CreateToolbars16()
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 
-	tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/build")),        wxT("Build Active Project"));
-	tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/stop")),         wxT("Stop Current Build"));
-	tb->AddTool(XRCID("clean_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/clean")),        wxT("Clean Active Project"));
+	tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/build")),        _("Build Active Project"));
+	tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/stop")),         _("Stop Current Build"));
+	tb->AddTool(XRCID("clean_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/clean")),        _("Clean Active Project"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("execute_no_debug"),          wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/execute")),      wxT("Run Active Project"));
-	tb->AddTool(XRCID("stop_executed_program"),     wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/execute_stop")), wxT("Stop Running Program"));
+	tb->AddTool(XRCID("execute_no_debug"),          wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/execute")),      _("Run Active Project"));
+	tb->AddTool(XRCID("stop_executed_program"),     wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/execute_stop")), _("Stop Running Program"));
 
 	if (PluginManager::Get()->AllowToolbar()) {
 		tb->Realize();
 		info = wxAuiPaneInfo();
-		m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Build")).ToolbarPane().Top().Row(1));
+		m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Build")).ToolbarPane().Top().Row(1));
 	}
 
 	//----------------------------------------------
@@ -1330,21 +1330,21 @@ void clMainFrame::CreateToolbars16()
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 
-	tb->AddTool(XRCID("start_debugger"),   wxT("Start / Continue debugger"), bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/start")),             wxT("Start / Continue debugger"));
-	tb->AddTool(XRCID("stop_debugger"),    wxT("Stop debugger"),             bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/stop")),              wxT("Stop debugger"));
-	tb->AddTool(XRCID("pause_debugger"),   wxT("Pause debugger"),            bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/interrupt")),         wxT("Pause debugger"));
-	tb->AddTool(XRCID("restart_debugger"), wxT("Restart debugger"),          bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/restart")),           wxT("Restart debugger"));
+	tb->AddTool(XRCID("start_debugger"),   _("Start / Continue debugger"), bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/start")),             _("Start / Continue debugger"));
+	tb->AddTool(XRCID("stop_debugger"),    _("Stop debugger"),             bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/stop")),              _("Stop debugger"));
+	tb->AddTool(XRCID("pause_debugger"),   _("Pause debugger"),            bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/interrupt")),         _("Pause debugger"));
+	tb->AddTool(XRCID("restart_debugger"), _("Restart debugger"),          bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/restart")),           _("Restart debugger"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("show_cursor"),      wxT("Show Current Line"),         bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/show_current_line")), wxT("Show Current Line"));
+	tb->AddTool(XRCID("show_cursor"),      _("Show Current Line"),         bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/show_current_line")), _("Show Current Line"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("dbg_stepin"),       wxT("Step Into"),                 bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/step_in")),           wxT("Step In"));
-	tb->AddTool(XRCID("dbg_next"),         wxT("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/next")),              wxT("Next"));
-	tb->AddTool(XRCID("dbg_stepout"),      wxT("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/step_out")),          wxT("Step Out"));
+	tb->AddTool(XRCID("dbg_stepin"),       _("Step Into"),                 bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/step_in")),           _("Step In"));
+	tb->AddTool(XRCID("dbg_next"),         _("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/next")),              _("Next"));
+	tb->AddTool(XRCID("dbg_stepout"),      _("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/step_out")),          _("Step Out"));
 
 	tb->Realize();
 	if (PluginManager::Get()->AllowToolbar()) {
 		info = wxAuiPaneInfo();
-		m_mgr.AddPane(tb, info.Name(wxT("Debugger Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Debug")).ToolbarPane().Top().Row(1));
+		m_mgr.AddPane(tb, info.Name(wxT("Debugger Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Debug")).ToolbarPane().Top().Row(1));
 		RegisterToolbar(XRCID("show_std_toolbar"), wxT("Standard Toolbar"));
 		RegisterToolbar(XRCID("show_search_toolbar"), wxT("Search Toolbar"));
 		RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
@@ -1353,7 +1353,7 @@ void clMainFrame::CreateToolbars16()
 #if !USE_AUI_TOOLBAR
 		SetToolBar(tb);
 #else
-		m_mgr.AddPane(tb, info.Name(wxT("Main Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Main Toolbar")).ToolbarPane().Top().Row(1));
+		m_mgr.AddPane(tb, info.Name(wxT("Main Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Main Toolbar")).ToolbarPane().Top().Row(1));
 #endif
 	}
 }
@@ -1649,9 +1649,9 @@ void clMainFrame::OnFileReload(wxCommandEvent &event)
 		if ( editor->GetModify() ) {
 			// Ask user if he really wants to lose all changes
 			wxString msg;
-			msg << wxT("The file '") << editor->GetFileName().GetFullName() << wxT("' has been altered.\n");
-			msg << wxT("Are you sure you want to lose all changes?");
-			if ( wxMessageBox(msg, wxT("Confirm"), wxYES_NO, this) != wxYES ) {
+			msg << _("The file") << wxT(" '") << editor->GetFileName().GetFullName() << wxT(" '") << _("has been altered.") << wxT("\n");
+			msg << _("Are you sure you want to lose all changes?");
+			if ( wxMessageBox(msg, _("Confirm"), wxYES_NO, this) != wxYES ) {
 				return;
 			}
 		}
@@ -1675,7 +1675,7 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent &event)
 	// now it is time to prompt user for new workspace to open
 	const wxString ALL(wxT("CodeLite Workspace files (*.workspace)|*.workspace|")
 	                   wxT("All Files (*)|*"));
-	wxFileDialog dlg(this, wxT("Open Workspace"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE , wxDefaultPosition);
+	wxFileDialog dlg(this, _("Open Workspace"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE , wxDefaultPosition);
 	if (dlg.ShowModal() == wxID_OK) {
 		wxWindowUpdateLocker locker(this);
 		ManagerST::Get()->OpenWorkspace(dlg.GetPath());
@@ -1712,7 +1712,7 @@ void clMainFrame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
 	const wxString ALL(	wxT("All Files (*)|*"));
 	static wxString s_openPath(wxEmptyString);
 
-	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open File"), s_openPath, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE, wxDefaultPosition);
+	wxFileDialog *dlg = new wxFileDialog(this, _("Open File"), s_openPath, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE, wxDefaultPosition);
 	if (dlg->ShowModal() == wxID_OK) {
 		wxArrayString paths;
 		dlg->GetPaths(paths);
@@ -1801,7 +1801,7 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 			previousgroups.Insert(filepath, 0);
 			EditorConfigST::Get()->SetRecentItems( previousgroups, wxT("RecentTabgroups") );
 
-			SetStatusMessage(wxT("Tab group saved"), 0);
+			SetStatusMessage(_("Tab group saved"), 0);
 		}
 
 		return;
@@ -1856,7 +1856,7 @@ void clMainFrame::OnProjectAddProject(wxCommandEvent &event)
 	// Prompt user for project path
 	const wxString ALL(	wxT("CodeLite Projects (*.project)|*.project|")
 	                    wxT("All Files (*)|*"));
-	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open Project"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST , wxDefaultPosition);
+	wxFileDialog *dlg = new wxFileDialog(this, _("Open Project"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST , wxDefaultPosition);
 	if (dlg->ShowModal() == wxID_OK) {
 		// Open it
 		ManagerST::Get()->AddProject(dlg->GetPath());
@@ -2104,7 +2104,7 @@ void clMainFrame::OnBuildEnded(wxCommandEvent &event)
 		//occured during build process, if non, launch the output
 		m_buildAndRun = false;
 		if ( ManagerST::Get()->IsBuildEndedSuccessfully() ||
-		        wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION, this) == wxYES) {
+		        wxMessageBox(_("Build ended with errors. Continue?"), _("Confirm"), wxYES_NO| wxICON_QUESTION, this) == wxYES) {
 			ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
 		}
 	}
@@ -2119,7 +2119,7 @@ void clMainFrame::OnBuildProject(wxCommandEvent &event)
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
 
-		SetStatusMessage(wxT("Build starting..."), 0);
+		SetStatusMessage(_("Build starting..."), 0);
 
 		wxString conf, projectName;
 		projectName = ManagerST::Get()->GetActiveProjectName();
@@ -2138,7 +2138,7 @@ void clMainFrame::OnBuildProject(wxCommandEvent &event)
 		ManagerST::Get()->PushQueueCommand( info );
 		ManagerST::Get()->ProcessCommandQueue();
 
-		SetStatusMessage(wxT("Done"), 0);
+		SetStatusMessage(_("Done"), 0);
 	}
 }
 
@@ -2170,7 +2170,7 @@ void clMainFrame::OnBuildCustomTarget(wxCommandEvent& event)
 			}
 
 			if (targetName.IsEmpty()) {
-				wxLogMessage(wxString::Format(wxT("Failed to find Custom Build Target for event ID=%d"), event.GetId()));
+				wxLogMessage(wxString::Format(wxT("%s=%d"), _("Failed to find Custom Build Target for event ID"), event.GetId()));
 				return;
 			}
 
@@ -2333,11 +2333,11 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 			if ( bs->GetToolJobs() != jobs ) {
 
 				ButtonDetails btn1;
-				btn1.buttonLabel = wxT("Update Number of Build Processes");
+				btn1.buttonLabel = _("Update Number of Build Processes");
 				btn1.commandId   = XRCID("update_num_builders_count");
 				btn1.window      = this;
 
-				GetMainBook()->ShowMessage(wxT("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), true,
+				GetMainBook()->ShowMessage(_("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), true,
 				PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/settings")), btn1);
 			}
 		}
@@ -2378,17 +2378,17 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 
 			if ( !hasSearchPath && paths.IsEmpty() && updatePaths) {
 				GetMainBook()->ShowMessage(
-				    wxT("CodeLite could not find any search paths set for the code completion parser\n")
-				    wxT("This means that CodeLite will *NOT* be able to offer any code completion for non-workspace files (e.g. string.h).\n")
-				    wxT("To fix this, please set search paths for the parser\n")
-				    wxT("This can be done from the main menu: Settings > Tags Settings > Include Files"));
+				    wxString(_("CodeLite could not find any search paths set for the code completion parser\n")) +
+				     wxString(_("This means that CodeLite will *NOT* be able to offer any code completion for non-workspace files (e.g. string.h).\n")) +
+				     wxString(_("To fix this, please set search paths for the parser\n")) +
+				     wxString(_("This can be done from the main menu: Settings > Tags Settings > Include Files")));
 
 			} else {
 				if (updatePaths) {
 
 					wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("update_parser_paths"));
 					this->ProcessEvent(evt);
-					GetMainBook()->ShowMessage( wxT("Code Completion search paths have been updated") );
+					GetMainBook()->ShowMessage( _("Code Completion search paths have been updated") );
 
 				}
 			}
@@ -2419,7 +2419,7 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 		m_workspaceRetagIsRequired = false;
 		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("full_retag_workspace"));
 		this->AddPendingEvent(evt);
-		GetMainBook()->ShowMessage(wxT("Your workspace symbols file does not match the current version of CodeLite. CodeLite will perform a full retag of the workspace"));
+		GetMainBook()->ShowMessage(_("Your workspace symbols file does not match the current version of CodeLite. CodeLite will perform a full retag of the workspace"));
 	}
 
 	// For some reason, under Linux we need to force the menu accelerator again
@@ -2513,7 +2513,7 @@ wxString clMainFrame::CreateWorkspaceTable()
 	html << wxT("<table width=100% border=0 bgcolor=\"") << bgclr.GetAsString(wxC2S_HTML_SYNTAX) << wxT("\">");
 	if (files.GetCount() == 0) {
 		html << wxT("<tr><td><font size=2 face=\"Verdana\">");
-		html << wxT("No workspaces found.") << wxT("</font></td></tr>");
+		html << _("No workspaces found.") << wxT("</font></td></tr>");
 	} else {
 		wxColour baseColour (232, 166, 101);
 		wxColour firstColour  = DrawingUtils::LightColour(baseColour, 6);
@@ -2554,7 +2554,7 @@ wxString clMainFrame::CreateFilesTable()
 	html << wxT("<table width=100% border=0 bgcolor=\"") << bgclr.GetAsString(wxC2S_HTML_SYNTAX) << wxT("\">");
 	if (files.GetCount() == 0) {
 		html << wxT("<tr><td><font size=2 face=\"Verdana\">");
-		html << wxT("No files found.") << wxT("</font></td></tr>");
+		html << _("No files found.") << wxT("</font></td></tr>");
 	} else {
 		wxColour baseColour (232, 166, 101);
 		wxColour firstColour  = DrawingUtils::LightColour(baseColour, 6);
@@ -2734,7 +2734,7 @@ void clMainFrame::CreateWelcomePage()
 	content.Replace(wxT("$(ACTIVE_CAPTION_TEXT)"), active_caption_txt.GetAsString());
 
 	welcomePage->SetPage(content);
-	GetMainBook()->AddPage(welcomePage, wxT("Welcome!"), wxNullBitmap, true);
+	GetMainBook()->AddPage(welcomePage, _("Welcome!"), wxNullBitmap, true);
 }
 
 void clMainFrame::OnImportMSVS(wxCommandEvent &e)
@@ -2742,7 +2742,7 @@ void clMainFrame::OnImportMSVS(wxCommandEvent &e)
 	wxUnusedVar(e);
 	const wxString ALL(wxT("MS Visual Studio Solution File (*.sln)|*.sln|")
 	                   wxT("All Files (*)|*"));
-	wxFileDialog dlg(this, wxT("Open MS Solution File"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
+	wxFileDialog dlg(this, _("Open MS Solution File"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
 	if (dlg.ShowModal() == wxID_OK) {
 
 		wxArrayString cmps;
@@ -2754,7 +2754,7 @@ void clMainFrame::OnImportMSVS(wxCommandEvent &e)
 		}
 
 		// Get the prefered compiler type
-		wxString compilerName = wxGetSingleChoice(wxT("Select the compiler to use:"), wxT("Choose compiler"), cmps);
+		wxString compilerName = wxGetSingleChoice(_("Select the compiler to use:"), _("Choose compiler"), cmps);
 		ManagerST::Get()->ImportMSVSSolution(dlg.GetPath(), compilerName);
 	}
 }
@@ -2771,7 +2771,7 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
 	} else if (mgr->IsWorkspaceOpen()) {
 
 		if (WorkspaceST::Get()->GetActiveProjectName().IsEmpty()) {
-			wxLogMessage(wxT("Attempting to debug workspace with no active project? Ignoring."));
+			wxLogMessage(_("Attempting to debug workspace with no active project? Ignoring."));
 			return;
 		}
 
@@ -2781,7 +2781,7 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
 
 		if (!EditorConfigST::Get()->GetLongValue(wxT("BuildBeforeDebug"), build_first)) {
 			// value does not exist in the configuration file, prompt the user
-			ThreeButtonDlg *dlg = new ThreeButtonDlg(this, wxT("Would you like to build the project before debugging it?"), wxT("CodeLite"));
+			ThreeButtonDlg *dlg = new ThreeButtonDlg(this, _("Would you like to build the project before debugging it?"), _("CodeLite"));
 			build_first = dlg->ShowModal();
 			answer = dlg->GetDontAskMeAgain();
 			dlg->Destroy();
@@ -3295,7 +3295,7 @@ void clMainFrame::OnSingleInstanceOpenFiles(wxCommandEvent& e)
 			// if file is workspace, load it
 			if (fn.GetExt() == wxT("workspace")) {
 				if ( ManagerST::Get()->IsWorkspaceOpen() ) {
-					if (wxMessageBox(_("Close this workspace, and load workspace '") + fn.GetFullName() + wxT("'"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO, this) == wxNO) {
+					if (wxMessageBox(_("Close this workspace, and load workspace '") + fn.GetFullName() + wxT("'"), _("CodeLite"), wxICON_QUESTION|wxYES_NO, this) == wxNO) {
 						continue;
 					}
 				}
@@ -3323,20 +3323,20 @@ void clMainFrame::OnNewVersionAvailable(wxCommandEvent& e)
 
 			m_codeliteDownloadPageURL = data->GetUrl();
 			ButtonDetails btn;
-			btn.buttonLabel = wxT("Download Now!");
+			btn.buttonLabel = _("Download Now!");
 			btn.commandId   = XRCID("goto_codelite_download_url");
 			btn.isDefault   = true;
 			btn.window      = this;
 
-			GetMainBook()->ShowMessage(wxT("A new version of CodeLite is available"), true, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/software_upgrade")), btn);
+			GetMainBook()->ShowMessage(_("A new version of CodeLite is available"), true, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/software_upgrade")), btn);
 
 		} else {
 			if (!data->GetShowMessage()) {
-				wxLogMessage(wxString::Format(wxT("Info: CodeLite is up-to-date (or newer), version used: %d, version on site:%d"), (int)data->GetCurrentVersion(), (int)data->GetNewVersion()));
+				wxLogMessage(wxString::Format(_("Info: CodeLite is up-to-date (or newer), version used: %d, version on site:%d"), (int)data->GetCurrentVersion(), (int)data->GetNewVersion()));
 
 			} else {
 				// User initiated the version check request
-				GetMainBook()->ShowMessage(wxT("CodeLite is up-to-date"));
+				GetMainBook()->ShowMessage(_("CodeLite is up-to-date"));
 			}
 		}
 		delete data;
@@ -3522,7 +3522,7 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
 		title << wxT("- ");
 	}
 
-	title << wxT("CodeLite - Revision: ");
+	title << _("CodeLite - Revision: ");
 	title << SvnRevision;
 	SetTitle(title);
 }
@@ -3665,10 +3665,10 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
 			wxString tty;
 #ifndef __WXMSW__
 			wxString title;
-			title << wxT("Debugging: ") << exepath << wxT(" ") << dlg->GetArguments();
+			title << _("Debugging: ") << exepath << wxT(" ") << dlg->GetArguments();
 			tty = StartTTY(title);
 			if(tty.IsEmpty()) {
-				wxMessageBox(wxT("Could not start TTY console for debugger!"), wxT("codelite"), wxOK|wxCENTER|wxICON_ERROR);
+				wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"), wxOK|wxCENTER|wxICON_ERROR);
 			}
 #endif
 
@@ -3837,12 +3837,12 @@ void clMainFrame::ReloadExternallyModifiedProjectFiles()
 
 	// No preference (or it's 'Always ask') so ask
 	ButtonDetails btn, noBtn;
-	btn.buttonLabel = wxT("Reload Workspace");
+	btn.buttonLabel = _("Reload Workspace");
 	btn.commandId   = XRCID("reload_workspace");
 	btn.isDefault   = false;
 	btn.window      = this;
 
-	noBtn.buttonLabel = wxT("&Don't reload");
+	noBtn.buttonLabel = _("&Don't reload");
 	noBtn.isDefault   = true;
 	noBtn.window      = NULL;
 
@@ -4110,7 +4110,7 @@ void clMainFrame::OnClearTagsCache(wxCommandEvent& e)
 {
 	e.Skip();
 	TagsManagerST::Get()->ClearTagsCache();
-	SetStatusMessage(wxT("Tags cache cleared"), 0);
+	SetStatusMessage(_("Tags cache cleared"), 0);
 }
 
 void clMainFrame::OnUpdateNumberOfBuildProcesses(wxCommandEvent& e)
@@ -4173,14 +4173,14 @@ void clMainFrame::DoSuggestRestart()
 #else
 	// On Winodws & GTK we offer auto-restart
 	ButtonDetails btn1, btn2;
-	btn1.buttonLabel = wxT("Restart Now!");
+	btn1.buttonLabel = _("Restart Now!");
 	btn1.commandId   = wxEVT_CMD_RESTART_CODELITE;
 	btn1.menuCommand = false;
 	btn1.isDefault   = true;
 	btn1.window      = ManagerST::Get();
 
 	// set button window to NULL
-	btn2.buttonLabel = wxT("Not now");
+	btn2.buttonLabel = _("Not now");
 	btn2.window      = NULL;
 
 	GetMainBook()->ShowMessage(_("Some of the changes made requires a restart of CodeLite, Restart now?"), false,
@@ -4270,7 +4270,7 @@ void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
 {
 	e.Skip();
 #if USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
-	SetStatusMessage(wxT("Done"), 0);
+	SetStatusMessage(_("Done"), 0);
 	GetWorkspacePane()->ClearProgress();
 
 	// Clear all cached tags now that we got our database updated
@@ -4281,8 +4281,7 @@ void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
 	if(files) {
 
 		// Print the parsing end time
-		wxLogMessage(wxT("INFO: Retag workspace completed in %ld seconds (%lu files were scanned)"), gStopWatch.Time()/1000, (unsigned long)files->size());
-
+		wxLogMessage(_("INFO: Retag workspace completed in %ld seconds (%lu files were scanned)"), gStopWatch.Time()/1000, (unsigned long)files->size());
 		std::vector<wxFileName> taggedFiles;
 		for(size_t i=0; i<files->size(); i++) {
 			taggedFiles.push_back( wxFileName(wxString(files->at(i).c_str(), wxConvUTF8)) );
@@ -4292,7 +4291,7 @@ void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
 		delete files;
 
 	} else {
-		wxLogMessage(wxT("INFO: Retag workspace completed in 0 seconds (No files were retagged)"));
+		wxLogMessage(_("INFO: Retag workspace completed in 0 seconds (No files were retagged)"));
 
 	}
 	ManagerST::Get()->SetRetagInProgress(false);

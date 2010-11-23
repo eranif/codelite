@@ -253,7 +253,7 @@ void Manager::CreateWorkspace ( const wxString &name, const wxString &path )
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->CreateWorkspace ( name, path, errMsg );
 	if ( !res ) {
-		wxMessageBox(errMsg, wxT("Error"), wxOK | wxICON_HAND);
+		wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND);
 		return;
 	}
 
@@ -430,7 +430,7 @@ void Manager::CreateProject ( ProjectData &data )
 	           false,
 	           errMsg );
 	if ( !res ) {
-		wxMessageBox(errMsg, wxT("Error"), wxOK | wxICON_HAND);
+		wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND);
 		return;
 	}
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName ( data.m_name, errMsg );
@@ -494,7 +494,7 @@ void Manager::AddProject ( const wxString & path )
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->AddProject ( path, errMsg );
 	if ( !res ) {
-		wxMessageBox(errMsg, wxT("Error"), wxOK | wxICON_HAND);
+		wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND);
 		return;
 	}
 
@@ -539,7 +539,7 @@ bool Manager::RemoveProject ( const wxString &name )
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->RemoveProject ( name, errMsg );
 	if ( !res ) {
-		wxMessageBox(errMsg, wxT("Error"), wxOK | wxICON_HAND);
+		wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND);
 		return false;
 	}
 
@@ -791,7 +791,7 @@ void Manager::RetagWorkspace(bool quickRetag)
 	parsingRequest->_quickRetag = quickRetag;
 	ParseThreadST::Get()->Add ( parsingRequest );
 
-	clMainFrame::Get()->SetStatusMessage(wxT("Scanning for include files to parse..."), 0);
+	clMainFrame::Get()->SetStatusMessage(_("Scanning for include files to parse..."), 0);
 }
 
 void Manager::RetagFile ( const wxString& filename )
@@ -826,7 +826,7 @@ void Manager::AddVirtualDirectory ( const wxString &virtualDirFullPath )
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->CreateVirtualDirectory ( virtualDirFullPath, errMsg );
 	if ( !res ) {
-		wxMessageBox(errMsg, wxT("Error"), wxOK | wxICON_HAND);
+		wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND);
 		return;
 	}
 }
@@ -852,7 +852,7 @@ void Manager::RemoveVirtualDirectory ( const wxString &virtualDirFullPath )
 	//and finally, remove the virtual dir from the workspace
 	bool res = WorkspaceST::Get()->RemoveVirtualDirectory ( virtualDirFullPath, errMsg );
 	if ( !res ) {
-		wxMessageBox(errMsg, wxT("Error"), wxOK | wxICON_HAND);
+		wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND);
 		return;
 	}
 
@@ -1089,7 +1089,7 @@ bool Manager::MoveFileToVD ( const wxString &fileName, const wxString &srcVD, co
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->RemoveFile ( srcVD, fileName, errMsg );
 	if ( !res ) {
-		wxMessageBox(errMsg, wxT("Error"), wxOK | wxICON_HAND);
+		wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND);
 		return false;
 	}
 	SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*) &files);
@@ -1383,7 +1383,7 @@ void Manager::ShowDebuggerPane ( bool show )
 {
 	// make the output pane visible
 	wxArrayString dbgPanes;
-	dbgPanes.Add ( wxT ( "Debugger" ) );
+	dbgPanes.Add ( _("Debugger") );
 	dbgPanes.Add ( DebuggerPane::LOCALS );
 	dbgPanes.Add ( DebuggerPane::FRAMES );
 	dbgPanes.Add ( DebuggerPane::WATCHES );
@@ -1420,7 +1420,7 @@ void Manager::ShowDebuggerPane ( bool show )
 void Manager::ShowWorkspacePane ( wxString focusWin, bool commit )
 {
 	// make the output pane visible
-	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( wxT ( "Workspace View" ) );
+	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(_("Workspace View"));
 	if ( info.IsOk() && !info.IsShown() ) {
 		info.Show();
 		if ( commit ) {
@@ -1460,9 +1460,9 @@ void Manager::TogglePanes()
 		panes.Clear();
 		// create the list of panes to be tested
 		wxArrayString candidates;
-		candidates.Add ( wxT ( "Output View" ) );
-		candidates.Add ( wxT ( "Workspace View" ) );
-		candidates.Add ( wxT ( "Debugger" ) );
+		candidates.Add ( _("Output View") );
+		candidates.Add ( _("Workspace View") );
+		candidates.Add ( _("Debugger") );
 
 		// add the detached tabs list
 		wxArrayString dynamicPanes = clMainFrame::Get()->GetDockablePaneMenuManager()->GetDeatchedPanesList();
@@ -1859,7 +1859,7 @@ void Manager::DoUpdateDebuggerTabControl(wxAuiTabCtrl* tabControl)
 		return;
 
 	// make sure that the debugger pane is visible
-	if(!IsPaneVisible ( wxT ( "Debugger" ) ))
+	if(!IsPaneVisible ( _("Debugger") ))
 		return;
 
 	curpage = tabControl->GetPage((size_t)activePageId).window;
@@ -1948,7 +1948,7 @@ void Manager::DbgStart ( long pid )
 #if defined(__WXGTK__)
 	wxString where;
 	if ( !ExeLocator::Locate ( wxT ( "xterm" ), where ) ) {
-		wxMessageBox ( _ ( "Failed to locate 'xterm' application required by CodeLite, please install it and try again!" ), wxT ( "CodeLite" ), wxOK|wxCENTER|wxICON_WARNING, clMainFrame::Get() );
+		wxMessageBox ( _( "Failed to locate 'xterm' application required by CodeLite, please install it and try again!" ), wxT ( "CodeLite" ), wxOK|wxCENTER|wxICON_WARNING, clMainFrame::Get() );
 		return;
 	}
 #endif
@@ -1997,9 +1997,9 @@ void Manager::DbgStart ( long pid )
 	if ( !dbgr ) {
 		//No debugger available,
 		wxString message;
-		message << wxT ( "Failed to launch debugger '" ) << debuggerName << wxT ( "': debugger not loaded\n" );
-		message << wxT ( "Make sure that you have an open workspace and that the active project is of type 'Executable'" );
-		wxMessageBox ( message, wxT ( "CodeLite" ), wxOK|wxICON_WARNING );
+		message << _( "Failed to launch debugger '" ) << debuggerName << _( "': debugger not loaded\n" );
+		message << _( "Make sure that you have an open workspace and that the active project is of type 'Executable'" );
+		wxMessageBox ( message,_("CodeLite"), wxOK|wxICON_WARNING );
 		return;
 	}
 	startup_info.debugger = dbgr;
@@ -2016,7 +2016,7 @@ void Manager::DbgStart ( long pid )
 	}
 
 	// Is the debugger-pane is already visible? If so, don't close it again when the session is over
-	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( wxT ( "Debugger" ) );
+	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(_("Debugger"));
 	if ( info.IsOk() ) {
 		SetDebuggerPaneOriginallyVisible(info.IsShown());
 	}
@@ -2107,7 +2107,7 @@ void Manager::DbgStart ( long pid )
 		return;
 
 	wxString title;
-	title << wxT("Debugging: ") << exepath << wxT(" ") << args;
+	title << _("Debugging: ") << exepath << wxT(" ") << args;
 
 	// read
 	wxArrayString dbg_cmds;
@@ -2116,7 +2116,7 @@ void Manager::DbgStart ( long pid )
 		dbg_cmds = wxStringTokenize ( bldConf->GetDebuggerStartupCmds(), wxT ( "\n" ), wxTOKEN_STRTOK );
 		if ( !dbgr->Start ( dbgname, exepath, wd, bps, dbg_cmds, clMainFrame::Get()->StartTTY(title) ) ) {
 			wxString errMsg;
-			errMsg << _ ( "Failed to initialize debugger: " ) << dbgname << _ ( "\n" );
+			errMsg << _("Failed to initialize debugger: ") << dbgname << wxT("\n");
 			DebugMessage ( errMsg );
 			return;
 		}
@@ -2124,7 +2124,7 @@ void Manager::DbgStart ( long pid )
 		//Attach to process...
 		if ( !dbgr->Start ( dbgname, exepath, PID, bps, dbg_cmds, clMainFrame::Get()->StartTTY(title) ) ) {
 			wxString errMsg;
-			errMsg << _ ( "Failed to initialize debugger: " ) << dbgname << _ ( "\n" );
+			errMsg << _( "Failed to initialize debugger: " ) << dbgname << wxT( "\n" );
 			DebugMessage ( errMsg );
 			return;
 		}
@@ -2150,7 +2150,7 @@ void Manager::DbgStart ( long pid )
 
 	// mark that we are waiting for the first GotControl()
 	DebugMessage ( output );
-	DebugMessage ( _ ( "Debug session started successfully!\n" ) );
+	DebugMessage ( _( "Debug session started successfully!\n" ) );
 
 	// if showing debug tab on run, then we always show it
 	if (EditorConfigST::Get()->GetOptions()->GetShowDebugOnRun()) {
@@ -2183,7 +2183,7 @@ void Manager::DbgStart ( long pid )
 	}
 
 	// and finally double-check the debugger pane visible
-	wxAuiPaneInfo &info2 = clMainFrame::Get()->GetDockingManager().GetPane ( wxT ( "Debugger" ) );
+	wxAuiPaneInfo &info2 = clMainFrame::Get()->GetDockingManager().GetPane(_("Debugger"));
 	if ( info2.IsOk() && !info2.IsShown() ) {
 		ShowDebuggerPane ( true );
 	}
@@ -2241,7 +2241,7 @@ void Manager::DbgStop()
 
 	dbgr->Stop();
 	DebuggerMgr::Get().SetActiveDebugger ( wxEmptyString );
-	DebugMessage ( _ ( "Debug session ended\n" ) );
+	DebugMessage ( _( "Debug session ended\n" ) );
 
 	// notify plugins that the debugger stopped
 	SendCmdEvent(wxEVT_DEBUG_ENDED);
@@ -2314,7 +2314,7 @@ void Manager::DbgDoSimpleCommand ( int cmd )
 
 void Manager::DbgSetFrame ( int frame, int lineno )
 {
-	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( wxT ( "Debugger" ) );
+	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane (_("Debugger"));
 	if ( info.IsShown() ) {
 		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 		if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
@@ -2416,16 +2416,16 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 			showDialog = false;
 		}
 
-		DebugMessage ( _("Program Received signal ") + signame + _("\n") );
+		DebugMessage ( _("Program Received signal ") + signame + wxT("\n") );
 		if(showDialog) {
 			wxMessageDialog dlg( clMainFrame::Get(), _("Program Received signal ") + signame + wxT("\n") +
 			                     _("Stack trace is available in the 'Call Stack' tab\n"),
-			                     wxT("CodeLite"), wxICON_ERROR|wxOK );
+			                     _("CodeLite"), wxICON_ERROR|wxOK );
 			dlg.ShowModal();
 		}
 
 		//Print the stack trace
-		wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( wxT("Debugger") );
+		wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(_("Debugger"));
 		if ( info.IsShown() && showDialog ) {
 			clMainFrame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
 			UpdateDebuggerPane();
@@ -2437,11 +2437,11 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Clear();
 
 		wxMessageDialog dlg( clMainFrame::Get(), _("Assertion failed!\nStack trace is available in the 'Call Stack' tab\n"),
-		                     wxT("CodeLite"), wxICON_ERROR|wxOK );
+		                     _("CodeLite"), wxICON_ERROR|wxOK );
 		dlg.ShowModal();
 
 		//Print the stack trace
-		wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( wxT("Debugger") );
+		wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(_("Debugger"));
 		if ( info.IsShown() ) {
 			clMainFrame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
 			UpdateDebuggerPane();
@@ -2471,7 +2471,7 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 	{
 		wxMessageBox(wxString::Format(_("Debugger exited with the following error string:\n%s"), 
 					 e.m_text.c_str()), 
-					 wxT("CodeLite"), 
+					 _("CodeLite"), 
 					 wxOK|wxICON_ERROR);
 		// fall through
 	}
@@ -2491,7 +2491,7 @@ void Manager::UpdateLostControl()
 	//hide the marker
 	DbgUnMarkDebuggerLine();
 	m_dbgCanInteract = false;
-	DebugMessage ( _ ( "Continuing...\n" ) );
+	DebugMessage ( _( "Continuing...\n" ) );
 
 	// Reset the debugger call-stack pane
 	clMainFrame::Get()->GetDebuggerPane()->GetFrameListView()->Clear();
@@ -2715,7 +2715,7 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 	//If a debug session is running, stop it.
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() ) {
-		if ( wxMessageBox ( _ ( "This would terminate the current debug session, continue?" ),
+		if ( wxMessageBox ( _( "This would terminate the current debug session, continue?" ),
 		                    wxT ( "Confirm" ), wxICON_QUESTION|wxYES_NO|wxCANCEL ) != wxYES )
 			return;
 		DbgStop();
@@ -2766,7 +2766,7 @@ void Manager::DoBuildProject ( const QueueCommand& buildInfo )
 	//If a debug session is running, stop it.
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() ) {
-		if ( wxMessageBox ( _ ( "This would terminate the current debug session, continue?" ),
+		if ( wxMessageBox ( _( "This would terminate the current debug session, continue?" ),
 		                    wxT ( "Confirm" ), wxICON_QUESTION|wxYES_NO|wxCANCEL ) != wxYES )
 			return;
 		DbgStop();
@@ -2805,7 +2805,7 @@ void Manager::DoCustomBuild ( const QueueCommand& buildInfo )
 	//If a debug session is running, stop it.
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() ) {
-		if ( wxMessageBox ( _ ( "This would terminate the current debug session, continue?" ),
+		if ( wxMessageBox ( _( "This would terminate the current debug session, continue?" ),
 		                    wxT ( "Confirm" ), wxICON_QUESTION|wxYES_NO|wxCANCEL ) != wxYES )
 			return;
 		DbgStop();
@@ -3239,7 +3239,7 @@ bool Manager::UpdateParserPaths()
 
 void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 {
-	clMainFrame::Get()->SetStatusMessage(wxT("Retagging..."), 0);
+	clMainFrame::Get()->SetStatusMessage(_("Retagging..."), 0);
 
 	wxBusyCursor busyCursor;
 	std::set<std::string> *fileSet = (std::set<std::string>*)event.GetClientData();
@@ -3288,7 +3288,7 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 
 #if !USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
 	long end   = sw.Time();
-	clMainFrame::Get()->SetStatusMessage(wxT("Done"), 0);
+	clMainFrame::Get()->SetStatusMessage(_("Done"), 0);
 	wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), (end)/1000, projectFiles.size());
 	SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
 #endif

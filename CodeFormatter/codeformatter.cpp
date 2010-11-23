@@ -77,7 +77,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor(wxT("Eran Ifrah"));
 	info.SetName(wxT("CodeFormatter"));
-	info.SetDescription(wxT("Source Code Formatter based on the open source AStyle tool"));
+	info.SetDescription(_("Source Code Formatter based on the open source AStyle tool"));
 	info.SetVersion(wxT("v1.0"));
 	return info;
 }
@@ -90,7 +90,7 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 CodeFormatter::CodeFormatter(IManager *manager)
 		: IPlugin(manager)
 {
-	m_longName = wxT("Source Code Formatter (AStyle)");
+	m_longName = _("Source Code Formatter (AStyle)");
 	m_shortName = wxT("CodeFormatter");
 }
 
@@ -109,12 +109,12 @@ clToolBar *CodeFormatter::CreateToolBar(wxWindow *parent)
 		tb->SetToolBitmapSize(wxSize(size, size));
 
 		if (size == 24) {
-			tb->AddTool(XRCID("format_source"), wxT("Format Source"), wxXmlResource::Get()->LoadBitmap(wxT("code_format24")), wxT("Format Source Code"));
-			tb->AddTool(XRCID("formatter_options"), wxT("Format Options"), wxXmlResource::Get()->LoadBitmap(wxT("code_format_options24")), wxT("Source Code Formatter Options..."));
+			tb->AddTool(XRCID("format_source"), _("Format Source"), wxXmlResource::Get()->LoadBitmap(wxT("code_format24")), _("Format Source Code"));
+			tb->AddTool(XRCID("formatter_options"), _("Format Options"), wxXmlResource::Get()->LoadBitmap(wxT("code_format_options24")), _("Source Code Formatter Options..."));
 		} else {
 			//16
-			tb->AddTool(XRCID("format_source"), wxT("Format Source"), wxXmlResource::Get()->LoadBitmap(wxT("code_format16")), wxT("Format Source Code"));
-			tb->AddTool(XRCID("formatter_options"), wxT("Format Options"), wxXmlResource::Get()->LoadBitmap(wxT("code_format_options16")), wxT("Source Code Formatter Options..."));
+			tb->AddTool(XRCID("format_source"), _("Format Source"), wxXmlResource::Get()->LoadBitmap(wxT("code_format16")), _("Format Source Code"));
+			tb->AddTool(XRCID("formatter_options"), _("Format Options"), wxXmlResource::Get()->LoadBitmap(wxT("code_format_options16")), _("Source Code Formatter Options..."));
 		}
 
 #if defined (__WXMAC__)
@@ -135,12 +135,12 @@ void CodeFormatter::CreatePluginMenu(wxMenu *pluginsMenu)
 {
 	wxMenu *menu = new wxMenu();
 	wxMenuItem *item(NULL);
-	item = new wxMenuItem(menu, XRCID("format_source"), wxT("Format Current Source"), wxT("Format Current Source"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("format_source"), _("Format Current Source"), _("Format Current Source"), wxITEM_NORMAL);
 	menu->Append(item);
 	menu->AppendSeparator();
-	item = new wxMenuItem(menu, XRCID("formatter_options"), wxT("Options..."), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("formatter_options"), _("Options..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-	pluginsMenu->Append(wxID_ANY, wxT("Source Code Formatter"), menu);
+	pluginsMenu->Append(wxID_ANY, _("Source Code Formatter"), menu);
 }
 
 void CodeFormatter::OnFormat(wxCommandEvent &e)
@@ -160,9 +160,9 @@ void CodeFormatter::OnFormat(wxCommandEvent &e)
 	if (!editor)
 		return;
 
-	m_mgr->SetStatusMessage(wxString::Format(wxT("Formatting: %s..."), editor->GetFileName().GetFullPath().c_str()), 0);
+	m_mgr->SetStatusMessage(wxString::Format(wxT("%s: %s..."), _("Formatting"), editor->GetFileName().GetFullPath().c_str()), 0);
 	DoFormatFile(editor);
-	m_mgr->SetStatusMessage(wxT("Done"), 0);
+	m_mgr->SetStatusMessage(_("Done"), 0);
 }
 
 void CodeFormatter::DoFormatFile(IEditor *editor)

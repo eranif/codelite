@@ -86,7 +86,7 @@ void BreakpointDlg::OnDelete(wxCommandEvent &e)
 		ManagerST::Get()->GetBreakpointsMgr()->DelBreakpoint(id);
 		m_selectedItem = wxNOT_FOUND;
 
-		clMainFrame::Get()->SetStatusMessage(wxT("Breakpoint successfully deleted"), 0);
+		clMainFrame::Get()->SetStatusMessage(_("Breakpoint successfully deleted"), 0);
 	}
 
 	Initialize();	// ReInitialise, as either a bp was deleted, or the data was corrupt
@@ -99,7 +99,7 @@ void BreakpointDlg::OnDeleteAll(wxCommandEvent &e)
 	m_selectedItem = wxNOT_FOUND;
 	Initialize();
 
-	clMainFrame::Get()->SetStatusMessage(wxT("All Breakpoints deleted"), 0);
+	clMainFrame::Get()->SetStatusMessage(_("All Breakpoints deleted"), 0);
 }
 
 void BreakpointDlg::OnApplyPending(wxCommandEvent &e)
@@ -108,7 +108,7 @@ void BreakpointDlg::OnApplyPending(wxCommandEvent &e)
 	ManagerST::Get()->GetBreakpointsMgr()->ApplyPendingBreakpoints();
 	Initialize();
 
-	clMainFrame::Get()->SetStatusMessage(wxT("Pending Breakpoints reapplied"), 0);
+	clMainFrame::Get()->SetStatusMessage(_("Pending Breakpoints reapplied"), 0);
 }
 
 void BreakpointDlg::OnItemSelected(wxListEvent &e)
@@ -182,14 +182,14 @@ void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
 
 		wxString type;
 		if (iter->is_temp) {
-			type = wxT("Temp. ");
+			type = _("Temp. ");
 		}
-		type += ((iter->bp_type==BP_type_watchpt) ? wxT("Watchpoint") : wxT("Breakpoint"));
+		type += ((iter->bp_type==BP_type_watchpt) ? _("Watchpoint") : _("Breakpoint"));
 		SetColumnText(this, item, col_type, type, wxNOT_FOUND);
 
 		wxString disabled;
 		if (!iter->is_enabled) {
-			disabled = wxT("disabled");
+			disabled = _("disabled");
 		}
 		SetColumnText(this, item, col_enabled, disabled  );
 		SetColumnText(this, item, col_at,      iter->at  );

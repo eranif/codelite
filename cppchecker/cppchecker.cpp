@@ -38,7 +38,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor(wxT("Eran Ifrah & Jérémie (jfouche)"));
 	info.SetName(wxT("CppChecker"));
-	info.SetDescription(wxT("CppCheker integration for CodeLite IDE"));
+	info.SetDescription(_("CppCheker integration for CodeLite IDE"));
 	info.SetVersion(wxT("v1.0"));
 	return info;
 }
@@ -68,7 +68,7 @@ CppCheckPlugin::CppCheckPlugin(IManager *manager)
 {
 	FileExtManager::Init();
 
-	m_longName = wxT("CppCheck intergration for CodeLite IDE");
+	m_longName = _("CppCheck intergration for CodeLite IDE");
 	m_shortName = wxT("CppCheck");
 
 	// Load settings
@@ -110,7 +110,7 @@ void CppCheckPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 	wxMenu* menu = new wxMenu();
 	wxMenuItem* item = new wxMenuItem(menu, XRCID("cppcheck_settings_item"), _("Settings"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-	pluginsMenu->Append(wxID_ANY, _("CppCheck"), menu);
+	pluginsMenu->Append(wxID_ANY, wxT("CppCheck"), menu);
 }
 
 void CppCheckPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
@@ -121,21 +121,21 @@ void CppCheckPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 
 		if (!menu->FindItem(XRCID("CPPCHECK_EXPLORER_POPUP"))) {
 			m_explorerSepItem = menu->PrependSeparator();
-			menu->Prepend(XRCID("CPPCHECK_EXPLORER_POPUP"), wxT("CppCheck"), CreateFileExplorerPopMenu());
+			menu->Prepend(XRCID("CPPCHECK_EXPLORER_POPUP"), _("CppCheck"), CreateFileExplorerPopMenu());
 		}
 
 	} else if (type == MenuTypeFileView_Workspace) {
 
 		if (!menu->FindItem(XRCID("CPPCHECK_WORKSPACE_POPUP"))) {
 			m_workspaceSepItem = menu->PrependSeparator();
-			menu->Prepend(XRCID("CPPCHECK_WORKSPACE_POPUP"), wxT("CppCheck"), CreateWorkspacePopMenu());
+			menu->Prepend(XRCID("CPPCHECK_WORKSPACE_POPUP"), _("CppCheck"), CreateWorkspacePopMenu());
 		}
 
 	} else if (type == MenuTypeFileView_Project) {
 
 		if (!menu->FindItem(XRCID("CPPCHECK_PROJECT_POPUP"))) {
 			m_projectSepItem = menu->PrependSeparator();
-			menu->Prepend(XRCID("CPPCHECK_PROJECT_POPUP"), wxT("CppCheck"), CreateProjectPopMenu());
+			menu->Prepend(XRCID("CPPCHECK_PROJECT_POPUP"), _("CppCheck"), CreateProjectPopMenu());
 		}
 
 	}
@@ -154,7 +154,7 @@ void CppCheckPlugin::UnPlug()
 
 	// terminate the cppcheck daemon
 	if ( m_cppcheckProcess ) {
-		wxLogMessage(wxT("CppCheckPlugin: Terminating cppcheck daemon..."));
+		wxLogMessage(_("CppCheckPlugin: Terminating cppcheck daemon..."));
 		delete m_cppcheckProcess;
 		m_cppcheckProcess = NULL;
 	}
@@ -167,7 +167,7 @@ wxMenu* CppCheckPlugin::CreateFileExplorerPopMenu()
 	wxMenu* menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
-	item = new wxMenuItem(menu, XRCID("cppcheck_fileexplorer_item"), wxT("Run CppCheck"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cppcheck_fileexplorer_item"), _("Run CppCheck"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	return menu;
@@ -179,7 +179,7 @@ wxMenu* CppCheckPlugin::CreateProjectPopMenu()
 	wxMenu* menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
-	item = new wxMenuItem(menu, XRCID("cppcheck_project_item"), wxT("Run CppCheck"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cppcheck_project_item"), _("Run CppCheck"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	return menu;
@@ -190,7 +190,7 @@ wxMenu* CppCheckPlugin::CreateWorkspacePopMenu()
 	wxMenu* menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
-	item = new wxMenuItem(menu, XRCID("cppcheck_workspace_item"), wxT("Run CppCheck"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("cppcheck_workspace_item"), _("Run CppCheck"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	return menu;
@@ -199,7 +199,7 @@ wxMenu* CppCheckPlugin::CreateWorkspacePopMenu()
 void CppCheckPlugin::OnCheckFileExplorerItem(wxCommandEvent& e)
 {
 	if ( m_cppcheckProcess ) {
-		wxLogMessage(wxT("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
+		wxLogMessage(_("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
 		return;
 	}
 
@@ -215,7 +215,7 @@ void CppCheckPlugin::OnCheckFileExplorerItem(wxCommandEvent& e)
 void CppCheckPlugin::OnCheckWorkspaceItem(wxCommandEvent& e)
 {
 	if ( m_cppcheckProcess ) {
-		wxLogMessage(wxT("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
+		wxLogMessage(_("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
 		return;
 	}
 
@@ -253,7 +253,7 @@ void CppCheckPlugin::OnCheckWorkspaceItem(wxCommandEvent& e)
 void CppCheckPlugin::OnCheckProjectItem(wxCommandEvent& e)
 {
 	if ( m_cppcheckProcess ) {
-		wxLogMessage(wxT("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
+		wxLogMessage(_("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
 		return;
 	}
 
@@ -330,7 +330,7 @@ void CppCheckPlugin::GetFileListFromDir(const wxString& root)
 void CppCheckPlugin::DoProcess()
 {
 	wxString command = DoGetCommand();
-	wxLogMessage(wxT("Starting cppcheck: %s"), command.c_str());
+	wxLogMessage(_("Starting cppcheck: %s"), command.c_str());
 
 	m_cppcheckProcess = CreateAsyncProcess(this, command);
 	if (!m_cppcheckProcess ) {

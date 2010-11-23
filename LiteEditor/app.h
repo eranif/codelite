@@ -32,10 +32,11 @@ class wxSingleInstanceChecker;
 class CodeLiteApp : public wxApp
 {
 	wxSplashScreen*          m_splash;
-	clMainFrame *                  m_pMainFrame;
+	clMainFrame *            m_pMainFrame;
 	wxSingleInstanceChecker *m_singleInstance;
 	wxArrayString            m_parserPaths;
 	bool                     m_loadPlugins;
+	wxLocale				 m_locale;
 
 private: // Methods
 	bool     CopySettings(const wxString &destDir, wxString& installPath);

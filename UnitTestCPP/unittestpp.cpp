@@ -66,7 +66,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor(wxT("Eran Ifrah"));
 	info.SetName(wxT("UnitTestPP"));
-	info.SetDescription(wxT("A Unit test plugin based on the UnitTest++ framework"));
+	info.SetDescription(_("A Unit test plugin based on the UnitTest++ framework"));
 	info.SetVersion(wxT("v1.0"));
 	return info;
 }
@@ -80,7 +80,7 @@ UnitTestPP::UnitTestPP(IManager *manager)
 		: IPlugin(manager)
 		, m_proc(NULL)
 {
-	m_longName = wxT("A Unit test plugin based on the UnitTest++ framework");
+	m_longName = _("A Unit test plugin based on the UnitTest++ framework");
 	m_shortName = wxT("UnitTestPP");
 	m_topWindow = m_mgr->GetTheApp();
 }
@@ -103,10 +103,10 @@ clToolBar *UnitTestPP::CreateToolBar(wxWindow *parent)
 		BitmapLoader &bitmapLoader = *m_mgr->GetStdIcons();
 
 		if (size == 24) {
-			tb->AddTool(XRCID("run_unit_tests"), wxT("Run Unit tests..."), bitmapLoader.LoadBitmap(wxT("toolbars/24/unittest++/run_as_unittest")), wxT("Run project as unit test project..."));
+			tb->AddTool(XRCID("run_unit_tests"), _("Run Unit tests..."), bitmapLoader.LoadBitmap(wxT("toolbars/24/unittest++/run_as_unittest")), _("Run project as unit test project..."));
 
 		} else {
-			tb->AddTool(XRCID("run_unit_tests"), wxT("Run Unit tests..."), bitmapLoader.LoadBitmap(wxT("toolbars/16/unittest++/run_as_unittest")), wxT("Run project as unit test project..."));
+			tb->AddTool(XRCID("run_unit_tests"), _("Run Unit tests..."), bitmapLoader.LoadBitmap(wxT("toolbars/16/unittest++/run_as_unittest")), _("Run project as unit test project..."));
 		}
 		tb->Realize();
 	}
@@ -124,15 +124,15 @@ void UnitTestPP::CreatePluginMenu(wxMenu *pluginsMenu)
 	wxMenu* menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
-	item = new wxMenuItem(menu, XRCID("unittestpp_new_simple_test"), wxT("Create new &test..."), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("unittestpp_new_simple_test"), _("Create new &test..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("unittestpp_new_class_test"), wxT("Create tests for &class..."), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("unittestpp_new_class_test"), _("Create tests for &class..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
 
-	item = new wxMenuItem(menu, XRCID("run_unit_tests"), wxT("Run Project as UnitTest++ and report"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("run_unit_tests"), _("Run Project as UnitTest++ and report"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	pluginsMenu->Append(wxID_ANY, wxT("UnitTest++"), menu);
@@ -145,7 +145,7 @@ void UnitTestPP::CreatePluginMenu(wxMenu *pluginsMenu)
 void UnitTestPP::HookPopupMenu(wxMenu *menu, MenuType type)
 {
 	if (type == MenuTypeEditor) {
-		menu->Append(XRCID("UNITTESTPP_EDITOR_POPUP"), wxT("UnitTest++"), CreateEditorPopMenu());
+		menu->Append(XRCID("UNITTESTPP_EDITOR_POPUP"), _("UnitTest++"), CreateEditorPopMenu());
 	}
 }
 
@@ -161,10 +161,10 @@ wxMenu *UnitTestPP::CreateEditorPopMenu()
 	wxMenu* menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
-	item = new wxMenuItem(menu, XRCID("unittestpp_new_simple_test"), wxT("Create new &test..."), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("unittestpp_new_simple_test"), _("Create new &test..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("unittestpp_new_class_test"), wxT("Create tests for &class..."), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("unittestpp_new_class_test"), _("Create tests for &class..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	return menu;
@@ -175,7 +175,7 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 	wxUnusedVar(e);
 
 	if (GetUnitTestProjects().empty()) {
-		if (wxMessageBox(wxString::Format(wxT("There are currently no UnitTest project in your workspace\nWould you like to create one now?")), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
+		if (wxMessageBox(wxString::Format(_("There are currently no UnitTest project in your workspace\nWould you like to create one now?")), _("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
 			// add new UnitTest project
 			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_project"));
 			m_mgr->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
@@ -241,7 +241,7 @@ void UnitTestPP::OnNewSimpleTest(wxCommandEvent& e)
 	wxUnusedVar(e);
 
 	if (GetUnitTestProjects().empty()) {
-		if (wxMessageBox(wxString::Format(wxT("There are currently no UnitTest project in your workspace\nWould you like to create one now?")), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
+		if (wxMessageBox(wxString::Format(_("There are currently no UnitTest project in your workspace\nWould you like to create one now?")), _("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
 			// add new UnitTest project
 			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_project"));
 			m_mgr->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
@@ -294,7 +294,7 @@ void UnitTestPP::DoCreateSimpleTest(const wxString& name, const wxString &projec
 	ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
 	if (!proj) {
 		// no such project!
-		wxMessageBox(wxT("Could not find the target project"), wxT("CodeLite"), wxOK|wxICON_ERROR);
+		wxMessageBox(_("Could not find the target project"), _("CodeLite"), wxOK|wxICON_ERROR);
 		return;
 	}
 
@@ -431,7 +431,7 @@ IEditor *UnitTestPP::DoAddTestFile(const wxString& filename, const wxString &pro
 		// the file does not exist!
 		wxFFile file(filename, wxT("wb"));
 		if ( !file.IsOpened() ) {
-			wxMessageBox(wxString::Format(wxT("Could not create target file '%s'"), filename.c_str()), wxT("CodeLite"), wxICON_WARNING|wxOK);
+			wxMessageBox(wxString::Format(wxT("Could not create target file '%s'"), filename.c_str()), _("CodeLite"), wxICON_WARNING|wxOK);
 			return NULL;
 		}
 

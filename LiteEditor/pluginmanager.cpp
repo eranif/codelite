@@ -263,9 +263,9 @@ void PluginManager::Load()
 
 			//let the plugin plug its menu in the 'Plugins' menu at the menu bar
 			//the create menu will be placed as a sub menu of the 'Plugin' menu
-			int idx = clMainFrame::Get()->GetMenuBar()->FindMenu( wxT( "Plugins" ) );
-			if ( idx != wxNOT_FOUND ) {
-				wxMenu *pluginsMenu = clMainFrame::Get()->GetMenuBar()->GetMenu( idx );
+			wxMenu* pluginsMenu = NULL;
+			wxMenuItem* menuitem = clMainFrame::Get()->GetMenuBar()->FindItem( XRCID("manage_plugins"), &pluginsMenu );
+			if ( menuitem && pluginsMenu ) {
 				plugin->CreatePluginMenu( pluginsMenu );
 			}
 

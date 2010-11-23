@@ -1020,7 +1020,7 @@ bool LEditor::SaveFileAs()
 		// get the path
 		wxFileName name(dlg.GetPath());
 		if ( !SaveToFile(name) ) {
-			wxMessageBox(_("Failed to save file"), wxT("Error"), wxOK | wxICON_ERROR);
+			wxMessageBox(_("Failed to save file"), _("Error"), wxOK | wxICON_ERROR);
 			return false;
 		}
 		m_fileName = name;
@@ -1062,11 +1062,13 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	DWORD dwAttrs = GetFileAttributes(fileName.GetFullPath().c_str());
 	if (dwAttrs != INVALID_FILE_ATTRIBUTES) {
 		if (dwAttrs & FILE_ATTRIBUTE_READONLY) {
-			if (wxMessageBox(wxString::Format(wxT("'%s' has read-only attribute set\nWould you like CodeLite to try and remove it?"), fileName.GetFullPath().c_str()), wxT("CodeLite"),
+			if (wxMessageBox(wxString::Format(wxT("'%s' \n%s"), fileName.GetFullPath().c_str(),
+						_("has the read-only attribute set"), _("Would you like CodeLite to try and remove it?")), _("CodeLite"),
 			                 wxYES_NO|wxICON_QUESTION|wxCENTER) == wxYES) {
 				// try to clear the read-only flag from the file
 				if ( SetFileAttributes(fileName.GetFullPath().c_str(), dwAttrs & ~(FILE_ATTRIBUTE_READONLY)) == FALSE ) {
-					wxMessageBox(wxString::Format(wxT("Failed to open file '%s' for write"), fileName.GetFullPath().c_str()), wxT("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
+					wxMessageBox(wxString::Format(wxT("%s '%s' %s"), _("Failed to open file"), fileName.GetFullPath().c_str(), _("for write")), 
+																		_("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
 					return false;
 				}
 			} else {
@@ -1087,7 +1089,8 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	wxString theText = GetText();
 	const wxWX2MBbuf buf = theText.mb_str(fontEncConv);
 	if(!buf.data()) {
-		wxMessageBox(wxString::Format(wxT("Save file failed!\nCould not convert the file to the requested encoding '%s'"), wxFontMapper::GetEncodingName(GetOptions()->GetFileFontEncoding()).c_str()), wxT("CodeLite"), wxOK|wxICON_WARNING);
+		wxMessageBox(wxString::Format(wxT("%s\n%s '%s'"), _("Save file failed!"),_("Could not convert the file to the requested encoding"),  
+							wxFontMapper::GetEncodingName(GetOptions()->GetFileFontEncoding()).c_str()), _("CodeLite"), wxOK|wxICON_WARNING);
 		return false;
 	}
 
@@ -1095,12 +1098,13 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	wxFFile file(fileName.GetFullPath().GetData(), wxT("wb"));
 	if (file.IsOpened() == false) {
 		// Nothing to be done
-		if (wxMessageBox(wxString::Format(wxT("Failed to open file '%s' for write, Override it?"), fileName.GetFullPath().GetData()), wxT("CodeLite"), wxYES_NO|wxICON_WARNING) == wxYES) {
+		if (wxMessageBox(wxString::Format(wxT("%s '%s' %s, %s"), _("Failed to open file"), fileName.GetFullPath().GetData(), _("for write"), _("Override it?")),
+												_("CodeLite"), wxYES_NO|wxICON_WARNING) == wxYES) {
 			// try to override it
 			time_t curt = GetFileModificationTime(fileName.GetFullPath());
 			tmp_file << fileName.GetFullPath() << curt;
 			if (file.Open(tmp_file.c_str(), wxT("wb")) == false) {
-				wxMessageBox(wxString::Format(wxT("Failed to open file '%s' for write"), tmp_file.c_str()), wxT("CodeLite"), wxOK|wxICON_WARNING);
+				wxMessageBox(wxString::Format(wxT("%s '%s' %s"), _("Failed to open file"), tmp_file.c_str(), _("for write")), _("CodeLite"), wxOK|wxICON_WARNING);
 				return false;
 			}
 		} else {
@@ -1118,7 +1122,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	// if the saving was done to a temporary file, override it
 	if (tmp_file.IsEmpty() == false) {
 		if (wxRenameFile(tmp_file, fileName.GetFullPath(), true) == false) {
-			wxMessageBox(wxString::Format(wxT("Failed to override read-only file")), wxT("CodeLite"), wxOK|wxICON_WARNING);
+			wxMessageBox(wxString::Format(_("Failed to override read-only file")), _("CodeLite"), wxOK|wxICON_WARNING);
 			return false;
 		} else {
 			// override was successful, restore execute permissions
@@ -1670,13 +1674,13 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 
 			wxString msg;
 			if ( dirDown ) {
-				msg << wxT("CodeLite reached the end of the document, Search again from the start?");
+				msg << _("CodeLite reached the end of the document, Search again from the start?");
 			} else {
-				msg << wxT("CodeLite reached the end of the document, Search again from the bottom?");
+				msg << _("CodeLite reached the end of the document, Search again from the bottom?");
 			}
 
 			if (!conf->GetLongValue(wxT("ReplaceWrapAroundAnswer"), res)) {
-				ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, msg, wxT("CodeLite"));
+				ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, msg, _("CodeLite"));
 				res = dlg->ShowModal();
 				if (dlg->GetDontAskMeAgain() && res != wxID_CANCEL) {
 					//save this answer
@@ -1702,7 +1706,7 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 
 					// popup a message
 					wxMessageBox(_("Can not find the string '") + m_findReplaceDlg->GetData().GetFindString() + wxT("'"),
-					             wxT("CodeLite"),
+					             _("CodeLite"),
 					             wxICON_WARNING | wxOK);
 				}
 			}
@@ -1731,7 +1735,7 @@ void LEditor::FindNext(const FindReplaceData &data)
 		}
 
 		if (!conf->GetLongValue(wxT("FindNextWrapAroundAnswer"), res)) {
-			ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, msg, wxT("CodeLite"));
+			ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, msg, _("CodeLite"));
 			res = dlg->ShowModal();
 			if (dlg->GetDontAskMeAgain() && res != wxID_CANCEL) {
 				//save this answer
@@ -1759,7 +1763,7 @@ void LEditor::FindNext(const FindReplaceData &data)
 				// Kill the "...continued from start" statusbar message
 				clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
 				wxMessageBox(_("Can not find the string '") + data.GetFindString() + wxT("'"),
-				             wxT("CodeLite"),
+				             _("CodeLite"),
 				             wxOK | wxICON_WARNING);
 			}
 		}
@@ -2184,7 +2188,7 @@ void LEditor::ReloadFile()
 	// get the pattern of the current file
 	int lineNumber = GetCurrentLine();
 
-	clMainFrame::Get()->SetStatusMessage(wxT("Loading file..."), 0, XRCID("editor"));
+	clMainFrame::Get()->SetStatusMessage(_("Loading file..."), 0, XRCID("editor"));
 
 	wxString text;
 	ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding());
@@ -2591,7 +2595,7 @@ void LEditor::AddOtherBreakpointType(wxCommandEvent &event)
 
 	wxString conditions;
 	if (event.GetId() == XRCID("insert_cond_breakpoint")) {
-		conditions = wxGetTextFromUser(wxT("Enter the condition statement"), wxT("Create Conditional Breakpoint"));
+		conditions = wxGetTextFromUser(_("Enter the condition statement"), _("Create Conditional Breakpoint"));
 		if (conditions.IsEmpty()) {
 			return;
 		}
@@ -2765,10 +2769,10 @@ void LEditor::AddDebuggerContextMenu(wxMenu *menu)
 	//---------------------------------------------
 	// Add custom commands
 	//---------------------------------------------
-	menu->Prepend(XRCID("debugger_watches"), wxT("More Watches"), DoCreateDebuggerWatchMenu(word));
+	menu->Prepend(XRCID("debugger_watches"), _("More Watches"), DoCreateDebuggerWatchMenu(word));
 
 	menuItemText.Clear();
-	menuItemText << wxT("Add Watch '") << word << wxT("'");
+	menuItemText << _("Add Watch") << wxT(" '") << word << wxT("'");
 	item = new wxMenuItem(menu, wxNewId(), menuItemText);
 	menu->Prepend(item);
 	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgAddWatch), NULL, this);
@@ -2921,7 +2925,8 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	// alert the user
 	int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
 	if ( tags.size() >= (size_t) limit ) {
-		this->DoSetStatusMessage(wxString::Format(wxT("Too many items were found. Narrow your search criteria (Displaying %d)"), tags.size()), 0);
+		this->DoSetStatusMessage(wxString::Format(wxT("%s. %s (%s %d)"),
+				_("Too many items were found"), _("Narrow your search criteria"), _("Displaying"), tags.size()), 0);
 	}
 
 	m_ccBox->Adjust();
@@ -2970,7 +2975,8 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	// alert the user
 	int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
 	if ( tags.size() >= (size_t) limit ) {
-		this->DoSetStatusMessage(wxString::Format(wxT("Too many items were found. Narrow your search criteria (Displaying %d)"), tags.size()), 0);
+		this->DoSetStatusMessage(wxString::Format(wxT("%s. %s (%s %d)"),
+				_("Too many items were found"), _("Narrow your search criteria"), _("Displaying"), tags.size()), 0);
 	}
 
 	m_ccBox->Adjust();
@@ -3631,7 +3637,7 @@ wxMenu* LEditor::DoCreateDebuggerWatchMenu(const wxString &word)
 	for (size_t i=0; i<cmds.size(); i++) {
 		DebuggerCmdData cmd = cmds.at(i);
 		menuItemText.Clear();
-		menuItemText << wxT("Watch '") << word << wxT("' as '") << cmd.GetName() << wxT("'");
+		menuItemText << _("Watch") << wxT(" '") << word << wxT("' ") << _("as") << wxT(" '") << cmd.GetName() << wxT("'");
 		item = new wxMenuItem(menu, wxNewId(), menuItemText);
 		menu->Prepend(item);
 		Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgCustomWatch), NULL, this);

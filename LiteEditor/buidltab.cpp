@@ -540,18 +540,18 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 	m_building = false;
 	AppendText (BUILD_END_MSG);
 
-	wxString term = wxString::Format ( wxT ( "%d errors, %d warnings" ), m_errorCount, m_warnCount );
+	wxString term = wxString::Format ( wxT ( "%d %s, %d %s" ), m_errorCount, _("errors"), m_warnCount, _("warnings") );
 	long elapsed = m_sw.Time() / 1000;
 	if ( elapsed > 10 ) {
 		long sec = elapsed % 60;
 		long hours = elapsed / 3600;
 		long minutes = ( elapsed % 3600 ) / 60;
-		term << wxString::Format ( wxT ( ", total time: %02ld:%02ld:%02ld seconds" ), hours, minutes, sec );
+		term << wxString::Format ( wxT ( ", %s: %02ld:%02ld:%02ld %s" ), _("total time"), hours, minutes, sec, _("seconds") );
 
 	}
 	if(m_buildInterrupted) {
 		wxString InterruptedMsg;
-		InterruptedMsg << wxT("(Build Cancelled)\n") << wxT("\n");
+		InterruptedMsg << _("(Build Cancelled)") << wxT("\n\n");
 		AppendText ( InterruptedMsg );
 	}
 

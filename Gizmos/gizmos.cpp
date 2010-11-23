@@ -223,7 +223,7 @@ void WizardsPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 	menu->Append(item);
 	item = new wxMenuItem(menu, ID_MI_NEW_WX_PROJECT, _("New wxWidgets Project Wizard..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-	pluginsMenu->Append(wxID_ANY, _("Wizards"), menu);
+	pluginsMenu->Append(wxID_ANY, wxT("Wizards"), menu);
 }
 
 void WizardsPlugin::HookPopupMenu(wxMenu *menu, MenuType type)

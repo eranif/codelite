@@ -63,7 +63,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor(wxT("Eran Ifrah"));
 	info.SetName(wxT("ExternalTools"));
-	info.SetDescription(wxT("A plugin that allows user to launch external tools from within CodeLite"));
+	info.SetDescription(_("A plugin that allows user to launch external tools from within CodeLite"));
 	info.SetVersion(wxT("v1.0"));
 	return info;
 }
@@ -79,7 +79,7 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager *manager)
 		, m_pipedProcess(NULL)
 		, m_parentMenu  (NULL)
 {
-	m_longName = wxT("A plugin that allows user to launch external tools from within CodeLite");
+	m_longName = _("A plugin that allows user to launch external tools from within CodeLite");
 	m_shortName = wxT("ExternalTools");
 	topWin = m_mgr->GetTheApp();
 
@@ -122,11 +122,11 @@ clToolBar *ExternalToolsPlugin::CreateToolBar(wxWindow *parent)
 		m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
 
 		if (size == 24) {
-			m_tb->AddTool(XRCID("external_tools_settings"), wxT("Configure external tools..."), m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/24/external-tools/configure")), wxT("Configure external tools..."));
-			m_tb->AddTool(XRCID("stop_external_tool"),      wxT("Stop external tool"),          m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/24/build/stop")),               wxT("Stop external tool"));
+			m_tb->AddTool(XRCID("external_tools_settings"), _("Configure external tools..."), m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/24/external-tools/configure")), _("Configure external tools..."));
+			m_tb->AddTool(XRCID("stop_external_tool"),      _("Stop external tool"),          m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/24/build/stop")),               _("Stop external tool"));
 		} else {
-			m_tb->AddTool(XRCID("external_tools_settings"), wxT("Configure external tools..."), m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/16/external-tools/configure") ), wxT("Configure external tools..."));
-			m_tb->AddTool(XRCID("stop_external_tool"),      wxT("Stop external tool"),          m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/16/build/stop")),                wxT("Stop external tool"));
+			m_tb->AddTool(XRCID("external_tools_settings"), _("Configure external tools..."), m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/16/external-tools/configure") ), _("Configure external tools..."));
+			m_tb->AddTool(XRCID("stop_external_tool"),      _("Stop external tool"),          m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/16/build/stop")),                _("Stop external tool"));
 		}
 		m_tb->AddSeparator();
 #if USE_AUI_TOOLBAR
@@ -333,7 +333,7 @@ void ExternalToolsPlugin::DoCreatePluginMenu()
 
 		wxMenu *menu = new wxMenu();
 		wxMenuItem *item(NULL);
-		item = new wxMenuItem(menu, XRCID("external_tools_settings"), wxT("Configure external tools..."), wxEmptyString, wxITEM_NORMAL);
+		item = new wxMenuItem(menu, XRCID("external_tools_settings"), _("Configure external tools..."), wxEmptyString, wxITEM_NORMAL);
 		menu->Append(item);
 		menu->AppendSeparator();
 
@@ -347,7 +347,7 @@ void ExternalToolsPlugin::DoCreatePluginMenu()
 			menu->Append(item);
 		}
 
-		m_parentMenu->Append(MENU_ID, wxT("External Tools"), menu);
+		m_parentMenu->Append(MENU_ID, _("External Tools"), menu);
 		topWin->Connect(XRCID("external_tools_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnSettings), NULL, (wxEvtHandler*)this);
 	}
 }

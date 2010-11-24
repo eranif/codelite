@@ -551,6 +551,10 @@ void ParseThread::FindIncludedFiles(ParseRequest *req)
 		wxString name(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
 		wxFileName fn(name);
 		fn.MakeAbsolute();
+		
+		if(TagsManagerST::Get()->IsBinaryFile(fn.GetFullPath()))
+			continue;
+		
 		filteredFileList.Add( fn.GetFullPath() );
 	}
 

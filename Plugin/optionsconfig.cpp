@@ -174,6 +174,11 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
     	m_dontTrimCaretLine = (dontTrimCaretLine > 0);
 		
     }
+#ifdef __WXMSW__
+	if(!(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */)) {
+		m_mswTheme = false;
+	}
+#endif
 }
 
 OptionsConfig::~OptionsConfig(void)

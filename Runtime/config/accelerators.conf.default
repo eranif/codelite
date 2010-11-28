@@ -74,8 +74,8 @@ toggle_bookmark|Search|Toggle Bookmark|Ctrl-B
 next_bookmark|Search|Next Bookmark|F2
 previous_bookmark|Search|Previous Bookmark|Shift-F2
 removeall_bookmarks|Search|Remove All Bookmarks|
-new_workspace|Workspace|Create New Workspace...|
-switch_to_workspace|Workspace|Switch to Workspace...|
+new_workspace|Workspace|New Workspace...|
+switch_to_workspace|Workspace|Open Workspace...|
 close_workspace|Workspace|Close Workspace|
 reload_workspace|Workspace|Reload Workspace|
 import_from_msvs|Workspace|Import MS Visual Studio Solution File...|

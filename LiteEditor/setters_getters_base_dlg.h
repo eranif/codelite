@@ -87,7 +87,7 @@ protected:
 	}
 
 public:
-	SettersGettersBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Generate Setters/Getters for class"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 655,518 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+	SettersGettersBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Generate Setters/Getters for class"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 655,518 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 
 };
 

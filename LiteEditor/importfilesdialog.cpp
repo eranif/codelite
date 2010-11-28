@@ -138,10 +138,10 @@ void ImportFilesDialog::OnChangeDir(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
 	wxString path(m_treeCtrlDir->GetRootDir());
-	wxString new_path = wxDirSelector(wxT("Select Directory:"), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = wxDirSelector(_("Select Directory:"), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 
 	wxWindowDisabler disableAll;
-	wxBusyInfo info(wxT("Loading directories, please wait..."), this);
+	wxBusyInfo info(_("Loading directories, please wait..."), this);
 	wxTheApp->Yield();
 	if(new_path.IsEmpty() == false){
 		m_treeCtrlDir->BuildTree( new_path );

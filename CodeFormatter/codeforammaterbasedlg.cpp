@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : codeforammaterbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -52,15 +27,15 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	wxStaticBoxSizer* sbSizer3;
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_panel2, wxID_ANY, wxEmptyString ), wxVERTICAL );
 	
-	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, wxT("Predefined Style options define the style by setting several other options\nIf other options are also used, the other options will override the\npredefined style"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, _("Predefined Style options define the style by setting several other options\nIf other options are also used, the other options will override the\npredefined style"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	sbSizer3->Add( m_staticText2, 1, wxALL|wxEXPAND, 5 );
 	
 	bSizer8->Add( sbSizer3, 0, wxEXPAND|wxALL, 5 );
 	
-	wxString m_radioBoxPredefinedStyleChoices[] = { wxT("GNU"), wxT("Java"), wxT("K&&R"), wxT("Linux"), wxT("ANSI") };
+	wxString m_radioBoxPredefinedStyleChoices[] = { _("GNU"), _("Java"), _("K&&R"), _("Linux"), _("ANSI") };
 	int m_radioBoxPredefinedStyleNChoices = sizeof( m_radioBoxPredefinedStyleChoices ) / sizeof( wxString );
-	m_radioBoxPredefinedStyle = new wxRadioBox( m_panel2, wxID_ANY, wxT("Predefined Style:"), wxDefaultPosition, wxDefaultSize, m_radioBoxPredefinedStyleNChoices, m_radioBoxPredefinedStyleChoices, 1, wxRA_SPECIFY_COLS );
+	m_radioBoxPredefinedStyle = new wxRadioBox( m_panel2, wxID_ANY, _("Predefined Style:"), wxDefaultPosition, wxDefaultSize, m_radioBoxPredefinedStyleNChoices, m_radioBoxPredefinedStyleChoices, 1, wxRA_SPECIFY_COLS );
 	m_radioBoxPredefinedStyle->SetSelection( 0 );
 	bSizer8->Add( m_radioBoxPredefinedStyle, 0, wxALL|wxEXPAND, 5 );
 	
@@ -76,62 +51,52 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_panel2->SetSizer( bSizer8 );
 	m_panel2->Layout();
 	bSizer8->Fit( m_panel2 );
-	m_notebook1->AddPage( m_panel2, wxT("Predefined Styles"), true );
+	m_notebook1->AddPage( m_panel2, _("Predefined Styles"), true );
 	m_panel3 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
-	wxString m_radioBoxBracketsChoices[] = { wxT("Break Closing"), wxT("Attach"), wxT("Linux"), wxT("Break"), wxT("None") };
+	wxString m_radioBoxBracketsChoices[] = { _("Break Closing"), _("Attach"), _("Linux"), _("Break"), _("None") };
 	int m_radioBoxBracketsNChoices = sizeof( m_radioBoxBracketsChoices ) / sizeof( wxString );
-	m_radioBoxBrackets = new wxRadioBox( m_panel3, wxID_ANY, wxT("Brackets:"), wxDefaultPosition, wxDefaultSize, m_radioBoxBracketsNChoices, m_radioBoxBracketsChoices, 1, wxRA_SPECIFY_ROWS );
+	m_radioBoxBrackets = new wxRadioBox( m_panel3, wxID_ANY, _("Brackets:"), wxDefaultPosition, wxDefaultSize, m_radioBoxBracketsNChoices, m_radioBoxBracketsChoices, 1, wxRA_SPECIFY_ROWS );
 	m_radioBoxBrackets->SetSelection( 3 );
 	bSizer3->Add( m_radioBoxBrackets, 0, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer1;
-	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Indentation:") ), wxVERTICAL );
+	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, _("Indentation:") ), wxVERTICAL );
 	
 	wxGridSizer* gSizer1;
 	gSizer1 = new wxGridSizer( 0, 2, 0, 0 );
 	
-	m_checkBoxIndetClass = new wxCheckBox( m_panel3, wxID_ANY, wxT("Class"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxIndetClass = new wxCheckBox( m_panel3, wxID_ANY, _("Class"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_checkBoxIndetClass, 0, wxALL, 5 );
 	
-	m_checkBoxIndentBrackets = new wxCheckBox( m_panel3, wxID_ANY, wxT("Brackets"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxIndentBrackets = new wxCheckBox( m_panel3, wxID_ANY, _("Brackets"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_checkBoxIndentBrackets, 0, wxALL, 5 );
 	
-	m_checkBoxIndetSwitch = new wxCheckBox( m_panel3, wxID_ANY, wxT("Switches"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxIndetSwitch = new wxCheckBox( m_panel3, wxID_ANY, _("Switches"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_checkBoxIndetSwitch, 0, wxALL, 5 );
 	
-	m_checkBoxIndentNamespaces = new wxCheckBox( m_panel3, wxID_ANY, wxT("Namespaces"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxIndentNamespaces = new wxCheckBox( m_panel3, wxID_ANY, _("Namespaces"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_checkBoxIndentNamespaces, 0, wxALL, 5 );
 	
-	m_checkBoxIndetCase = new wxCheckBox( m_panel3, wxID_ANY, wxT("Case"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxIndetCase = new wxCheckBox( m_panel3, wxID_ANY, _("Case"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_checkBoxIndetCase, 0, wxALL, 5 );
 	
-	m_checkBoxIndentLabels = new wxCheckBox( m_panel3, wxID_ANY, wxT("Labels"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxIndentLabels = new wxCheckBox( m_panel3, wxID_ANY, _("Labels"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_checkBoxIndentLabels, 0, wxALL, 5 );
 	
-	m_checkBoxIndetBlocks = new wxCheckBox( m_panel3, wxID_ANY, wxT("Blocks"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxIndetBlocks = new wxCheckBox( m_panel3, wxID_ANY, _("Blocks"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_checkBoxIndetBlocks, 0, wxALL, 5 );
 	
-	m_checkBoxIndentPreprocessors = new wxCheckBox( m_panel3, wxID_ANY, wxT("Preprocessors"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxIndentPreprocessors = new wxCheckBox( m_panel3, wxID_ANY, _("Preprocessors"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxIndentPreprocessors->SetValue(true);
-	
 	gSizer1->Add( m_checkBoxIndentPreprocessors, 0, wxALL, 5 );
 	
-	m_checkBoxIndentMaxInst = new wxCheckBox( m_panel3, wxID_ANY, wxT("Max Instatement Indent"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxIndentMaxInst = new wxCheckBox( m_panel3, wxID_ANY, _("Max Instatement Indent"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_checkBoxIndentMaxInst, 0, wxALL, 5 );
 	
-	m_checkBoxIndentMinCond = new wxCheckBox( m_panel3, wxID_ANY, wxT("Min Conditional Indent"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxIndentMinCond = new wxCheckBox( m_panel3, wxID_ANY, _("Min Conditional Indent"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_checkBoxIndentMinCond, 0, wxALL, 5 );
 	
 	sbSizer1->Add( gSizer1, 0, wxEXPAND, 5 );
@@ -139,53 +104,42 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	bSizer3->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
 	
 	wxStaticBoxSizer* sbSizer2;
-	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Formatting Options:") ), wxVERTICAL );
+	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, _("Formatting Options:") ), wxVERTICAL );
 	
 	wxGridSizer* gSizer2;
 	gSizer2 = new wxGridSizer( 0, 2, 0, 0 );
 	
-	m_checkBoxFormatBreakBlocks = new wxCheckBox( m_panel3, wxID_ANY, wxT("Break Blocks"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxFormatBreakBlocks = new wxCheckBox( m_panel3, wxID_ANY, _("Break Blocks"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkBoxFormatBreakBlocks, 0, wxALL, 5 );
 	
-	m_checkBoxFormatPadParenth = new wxCheckBox( m_panel3, wxID_ANY, wxT("Pad Parenthesis"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxFormatPadParenth = new wxCheckBox( m_panel3, wxID_ANY, _("Pad Parenthesis"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkBoxFormatPadParenth, 0, wxALL, 5 );
 	
-	m_checkBoxFormatBreakBlocksAll = new wxCheckBox( m_panel3, wxID_ANY, wxT("Break Blocks All"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxFormatBreakBlocksAll = new wxCheckBox( m_panel3, wxID_ANY, _("Break Blocks All"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkBoxFormatBreakBlocksAll, 0, wxALL, 5 );
 	
-	m_checkBoxFormatPadParentOut = new wxCheckBox( m_panel3, wxID_ANY, wxT("Pad Parenthesis Outside"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxFormatPadParentOut = new wxCheckBox( m_panel3, wxID_ANY, _("Pad Parenthesis Outside"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkBoxFormatPadParentOut, 0, wxALL, 5 );
 	
-	m_checkBoxFormatBreakElseif = new wxCheckBox( m_panel3, wxID_ANY, wxT("Break else-if"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxFormatBreakElseif = new wxCheckBox( m_panel3, wxID_ANY, _("Break else-if"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkBoxFormatBreakElseif, 0, wxALL, 5 );
 	
-	m_checkBoxFormatPadParentIn = new wxCheckBox( m_panel3, wxID_ANY, wxT("Pad Parenthesis  Inside"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxFormatPadParentIn = new wxCheckBox( m_panel3, wxID_ANY, _("Pad Parenthesis  Inside"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkBoxFormatPadParentIn, 0, wxALL, 5 );
 	
-	m_checkBoxFormatPadOperators = new wxCheckBox( m_panel3, wxID_ANY, wxT("Pad Operators"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxFormatPadOperators = new wxCheckBox( m_panel3, wxID_ANY, _("Pad Operators"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkBoxFormatPadOperators, 0, wxALL, 5 );
 	
-	m_checkBoxFormatUnPadParent = new wxCheckBox( m_panel3, wxID_ANY, wxT("UnPad Parenthesis"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxFormatUnPadParent = new wxCheckBox( m_panel3, wxID_ANY, _("UnPad Parenthesis"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkBoxFormatUnPadParent, 0, wxALL, 5 );
 	
-	m_checkBoxFormatOneLineKeepStmnt = new wxCheckBox( m_panel3, wxID_ANY, wxT("One Line Keep Statement"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxFormatOneLineKeepStmnt = new wxCheckBox( m_panel3, wxID_ANY, _("One Line Keep Statement"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkBoxFormatOneLineKeepStmnt, 0, wxALL, 5 );
 	
-	m_checkBoxFormatFillEmptyLines = new wxCheckBox( m_panel3, wxID_ANY, wxT("Fill Empty Lines"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxFormatFillEmptyLines = new wxCheckBox( m_panel3, wxID_ANY, _("Fill Empty Lines"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkBoxFormatFillEmptyLines, 0, wxALL, 5 );
 	
-	m_checkBoxFormatOneLineKeepBlocks = new wxCheckBox( m_panel3, wxID_ANY, wxT("One Line Keep Blocks"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxFormatOneLineKeepBlocks = new wxCheckBox( m_panel3, wxID_ANY, _("One Line Keep Blocks"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkBoxFormatOneLineKeepBlocks, 0, wxALL, 5 );
 	
 	sbSizer2->Add( gSizer2, 0, wxEXPAND, 5 );
@@ -195,7 +149,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_panel3->SetSizer( bSizer3 );
 	m_panel3->Layout();
 	bSizer3->Fit( m_panel3 );
-	m_notebook1->AddPage( m_panel3, wxT("Custom"), false );
+	m_notebook1->AddPage( m_panel3, _("Custom"), false );
 	
 	bSizer5->Add( m_notebook1, 3, wxEXPAND | wxALL, 5 );
 	
@@ -213,14 +167,14 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonOK = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonOK->SetDefault(); 
 	bSizer2->Add( m_buttonOK, 0, wxALL, 5 );
 	
-	m_buttonClose = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonClose = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonClose, 0, wxALL, 5 );
 	
-	m_buttonHelp = new wxButton( this, wxID_ANY, wxT("&Help"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonHelp = new wxButton( this, wxID_ANY, _("&Help"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonHelp, 0, wxALL, 5 );
 	
 	bSizer1->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -283,4 +237,5 @@ CodeFormatterBaseDlg::~CodeFormatterBaseDlg()
 	m_checkBoxFormatOneLineKeepStmnt->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CodeFormatterBaseDlg::OnCheckBox ), NULL, this );
 	m_checkBoxFormatFillEmptyLines->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CodeFormatterBaseDlg::OnCheckBox ), NULL, this );
 	m_checkBoxFormatOneLineKeepBlocks->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CodeFormatterBaseDlg::OnCheckBox ), NULL, this );
+	
 }

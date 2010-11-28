@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -106,4 +106,5 @@ RenameFileBaseDlg::~RenameFileBaseDlg()
 	// Disconnect Events
 	m_checkListMatches->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( RenameFileBaseDlg::OnFileSelected ), NULL, this );
 	m_checkListMatches->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( RenameFileBaseDlg::OnFileToggeled ), NULL, this );
+	
 }

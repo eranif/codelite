@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -67,6 +67,7 @@ QMakeSettingsBaseDlg::~QMakeSettingsBaseDlg()
 	m_notebook->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( QMakeSettingsBaseDlg::OnRightDown ), NULL, this );
 	m_buttonNew->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QMakeSettingsBaseDlg::OnNewQmakeSettings ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QMakeSettingsBaseDlg::OnOK ), NULL, this );
+	
 }
 
 QmakeSettingsTabBase::QmakeSettingsTabBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -116,4 +117,5 @@ QmakeSettingsTabBase::~QmakeSettingsTabBase()
 {
 	// Disconnect Events
 	m_filePickerQmakeExec->Disconnect( wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler( QmakeSettingsTabBase::OnFileSelected ), NULL, this );
+	
 }

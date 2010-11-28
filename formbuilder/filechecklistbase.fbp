@@ -12,7 +12,7 @@
         <property name="file">filechecklistbase</property>
         <property name="first_id">1000</property>
         <property name="help_provider">none</property>
-        <property name="internationalize">0</property>
+        <property name="internationalize">1</property>
         <property name="name">FileCheckListBase</property>
         <property name="namespace"></property>
         <property name="path">../LiteEditor</property>

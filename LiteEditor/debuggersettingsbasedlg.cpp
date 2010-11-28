@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -38,11 +38,11 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID i
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_buttonOK = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonOK->SetDefault();
 	bSizer2->Add( m_buttonOK, 0, wxALL, 5 );
 
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonCancel, 0, wxALL, 5 );
 
 	bSizer1->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -99,13 +99,13 @@ PreDefinedTypesPageBase::PreDefinedTypesPageBase( wxWindow* parent, wxWindowID i
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 
-	m_buttonNewType = new wxButton( m_panel2, wxID_ANY, wxT("&New..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonNewType = new wxButton( m_panel2, wxID_ANY, _("&New..."), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add( m_buttonNewType, 0, wxALL|wxEXPAND, 5 );
 
-	m_buttonEdit = new wxButton( m_panel2, wxID_ANY, wxT("Edit..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonEdit = new wxButton( m_panel2, wxID_ANY, _("Edit..."), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add( m_buttonEdit, 0, wxALL|wxEXPAND, 5 );
 
-	m_buttonDelete = new wxButton( m_panel2, wxID_ANY, wxT("&Delete"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDelete = new wxButton( m_panel2, wxID_ANY, _("&Delete"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add( m_buttonDelete, 0, wxALL|wxEXPAND, 5 );
 
 	bSizer5->Add( bSizer6, 0, wxEXPAND, 5 );
@@ -155,14 +155,14 @@ NewPreDefinedSetDlg::NewPreDefinedSetDlg( wxWindow* parent, wxWindowID id, const
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer2->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_textCtrlName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer2->Add( m_textCtrlName, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Copy Values From:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Copy Values From:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	fgSizer2->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -174,7 +174,7 @@ NewPreDefinedSetDlg::NewPreDefinedSetDlg( wxWindow* parent, wxWindowID id, const
 
 	fgSizer2->Add( 0, 0, 0, wxEXPAND, 5 );
 
-	m_checkBoxMakeActive = new wxCheckBox( this, wxID_ANY, wxT("Make this 'PreDefined Types' set active"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxMakeActive = new wxCheckBox( this, wxID_ANY, _("Make this 'PreDefined Types' set active"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_checkBoxMakeActive, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 
 	bSizer17->Add( fgSizer2, 0, wxEXPAND, 5 );
@@ -188,11 +188,11 @@ NewPreDefinedSetDlg::NewPreDefinedSetDlg( wxWindow* parent, wxWindowID id, const
 	wxBoxSizer* bSizer18;
 	bSizer18 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_button9 = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button9 = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_button9->SetDefault();
 	bSizer18->Add( m_button9, 0, wxALL, 5 );
 
-	m_button10 = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button10 = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer18->Add( m_button10, 0, wxALL, 5 );
 
 	bSizer17->Add( bSizer18, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -220,34 +220,34 @@ DbgPageGeneralBase::DbgPageGeneralBase( wxWindow* parent, wxWindowID id, const w
 	wxBoxSizer* bSizer10;
 	bSizer10 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_staticText1 = new wxStaticText( m_panel6, wxID_ANY, wxT("Debugger path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( m_panel6, wxID_ANY, _("Debugger path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	bSizer10->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_textCtrDbgPath = new wxTextCtrl( m_panel6, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	bSizer10->Add( m_textCtrDbgPath, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_buttonBrowse = new wxButton( m_panel6, wxID_ANY, wxT("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonBrowse = new wxButton( m_panel6, wxID_ANY, _("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer10->Add( m_buttonBrowse, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	bSizer16->Add( bSizer10, 0, wxEXPAND, 5 );
 
 	wxStaticBoxSizer* sbSizer1;
-	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, wxT("Options:") ), wxVERTICAL );
+	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, _("Options:") ), wxVERTICAL );
 
 	wxGridSizer* gSizer3;
 	gSizer3 = new wxGridSizer( 4, 1, 0, 0 );
 
-	m_checkBreakAtWinMain = new wxCheckBox( m_panel6, wxID_ANY, wxT("Automatically set breakpoint at main"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBreakAtWinMain = new wxCheckBox( m_panel6, wxID_ANY, _("Automatically set breakpoint at main"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer3->Add( m_checkBreakAtWinMain, 0, wxALL, 5 );
 
-	m_catchThrow = new wxCheckBox( m_panel6, wxID_ANY, wxT("Break when C++ exception is thrown"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_catchThrow = new wxCheckBox( m_panel6, wxID_ANY, _("Break when C++ exception is thrown"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer3->Add( m_catchThrow, 0, wxALL, 5 );
 
-	m_checkBoxSetBreakpointsAfterMain = new wxCheckBox( m_panel6, wxID_ANY, wxT("Apply breakpoints after main function is hit"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxSetBreakpointsAfterMain = new wxCheckBox( m_panel6, wxID_ANY, _("Apply breakpoints after main function is hit"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer3->Add( m_checkBoxSetBreakpointsAfterMain, 0, wxALL, 5 );
 
-	m_checkBoxEnablePendingBreakpoints = new wxCheckBox( m_panel6, wxID_ANY, wxT("Enable pending breakpoints"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxEnablePendingBreakpoints = new wxCheckBox( m_panel6, wxID_ANY, _("Enable pending breakpoints"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer3->Add( m_checkBoxEnablePendingBreakpoints, 0, wxALL, 5 );
 
 	sbSizer1->Add( gSizer3, 0, wxEXPAND, 5 );
@@ -255,15 +255,15 @@ DbgPageGeneralBase::DbgPageGeneralBase( wxWindow* parent, wxWindowID id, const w
 	bSizer16->Add( sbSizer1, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticBoxSizer* sbSizer4;
-	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, wxT("Debugger Tooltip:") ), wxVERTICAL );
+	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, _("Debugger Tooltip:") ), wxVERTICAL );
 
 	wxGridSizer* gSizer31;
 	gSizer31 = new wxGridSizer( 2, 1, 0, 0 );
 
-	m_showTooltips = new wxCheckBox( m_panel6, wxID_ANY, wxT("While debugging, show debugger tooltips"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_showTooltips = new wxCheckBox( m_panel6, wxID_ANY, _("While debugging, show debugger tooltips"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer31->Add( m_showTooltips, 0, wxEXPAND|wxALL, 5 );
 
-	m_checkBoxAutoExpand = new wxCheckBox( m_panel6, wxID_ANY, wxT("Auto expand items under the cursor"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxAutoExpand = new wxCheckBox( m_panel6, wxID_ANY, _("Auto expand items under the cursor"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer31->Add( m_checkBoxAutoExpand, 0, wxEXPAND|wxALL, 5 );
 
 	sbSizer4->Add( gSizer31, 0, wxEXPAND, 5 );
@@ -271,25 +271,25 @@ DbgPageGeneralBase::DbgPageGeneralBase( wxWindow* parent, wxWindowID id, const w
 	bSizer16->Add( sbSizer4, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticBoxSizer* sbSizer3;
-	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, wxT("Display:") ), wxHORIZONTAL );
+	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, _("Display:") ), wxHORIZONTAL );
 
 	wxFlexGridSizer* fgSizer21;
 	fgSizer21 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer21->SetFlexibleDirection( wxBOTH );
 	fgSizer21->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_staticText2 = new wxStaticText( m_panel6, wxID_ANY, wxT("Number of elements to display for arrays / strings:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( m_panel6, wxID_ANY, _("Number of elements to display for arrays / strings:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
-	m_staticText2->SetToolTip( wxT(" For no limit, set it to 0") );
+	m_staticText2->SetToolTip( _(" For no limit, set it to 0") );
 
 	fgSizer21->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_spinCtrlNumElements = new wxSpinCtrl( m_panel6, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 10000, 200 );
-	m_spinCtrlNumElements->SetToolTip( wxT("For no limit, set it to 0") );
+	m_spinCtrlNumElements->SetToolTip( _("For no limit, set it to 0") );
 
 	fgSizer21->Add( m_spinCtrlNumElements, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_checkBoxExpandLocals = new wxCheckBox( m_panel6, wxID_ANY, wxT("Use 'PreDefined types for the 'Locals' view"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxExpandLocals = new wxCheckBox( m_panel6, wxID_ANY, _("Use 'PreDefined types for the 'Locals' view"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer21->Add( m_checkBoxExpandLocals, 0, wxALL|wxEXPAND, 5 );
 
 
@@ -334,13 +334,13 @@ DbgPageMiscBase::DbgPageMiscBase( wxWindow* parent, wxWindowID id, const wxPoint
 	wxGridSizer* gSizer2;
 	gSizer2 = new wxGridSizer( 4, 1, 0, 0 );
 
-	m_checkBoxEnableLog = new wxCheckBox( m_panel7, wxID_ANY, wxT("Enable full debugger logging"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxEnableLog = new wxCheckBox( m_panel7, wxID_ANY, _("Enable full debugger logging"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkBoxEnableLog, 0, wxALL, 5 );
 
-	m_checkShowTerminal = new wxCheckBox( m_panel7, wxID_ANY, wxT("Show debugger terminal"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkShowTerminal = new wxCheckBox( m_panel7, wxID_ANY, _("Show debugger terminal"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkShowTerminal, 0, wxALL, 5 );
 
-	m_checkUseRelativePaths = new wxCheckBox( m_panel7, wxID_ANY, wxT("Use file name only for breakpoints (NO full paths)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkUseRelativePaths = new wxCheckBox( m_panel7, wxID_ANY, _("Use file name only for breakpoints (NO full paths)"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_checkUseRelativePaths, 0, wxALL, 5 );
 
 	sbSizer2->Add( gSizer2, 0, wxEXPAND, 5 );
@@ -348,22 +348,22 @@ DbgPageMiscBase::DbgPageMiscBase( wxWindow* parent, wxWindowID id, const wxPoint
 	bSizer17->Add( sbSizer2, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticBoxSizer* sbSizer6;
-	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( m_panel7, wxID_ANY, wxT("MinGW / Cygwin:") ), wxVERTICAL );
+	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( m_panel7, wxID_ANY, _("MinGW / Cygwin:") ), wxVERTICAL );
 
 	wxGridSizer* gSizer5;
 	gSizer5 = new wxGridSizer( 3, 1, 0, 0 );
 
-	m_checkBoxDebugAssert = new wxCheckBox( m_panel7, wxID_ANY, wxT("Break at assertion failure (MinGW only)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxDebugAssert = new wxCheckBox( m_panel7, wxID_ANY, _("Break at assertion failure (MinGW only)"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer5->Add( m_checkBoxDebugAssert, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText5 = new wxStaticText( m_panel7, wxID_ANY, wxT("Cygwin path conversion command:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5 = new wxStaticText( m_panel7, wxID_ANY, _("Cygwin path conversion command:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
-	m_staticText5->SetToolTip( wxT("Set here the command to use in order to convert cygwin paths into native Windows paths (use $(File) as a place holder for the file name)") );
+	m_staticText5->SetToolTip( _("Set here the command to use in order to convert cygwin paths into native Windows paths (use $(File) as a place holder for the file name)") );
 
 	gSizer5->Add( m_staticText5, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	m_textCtrlCygwinPathCommand = new wxTextCtrl( m_panel7, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
-	m_textCtrlCygwinPathCommand->SetToolTip( wxT("Set here the command to use in order to convert cygwin paths into native Windows paths (use $(File) as a place holder for the file name)") );
+	m_textCtrlCygwinPathCommand->SetToolTip( _("Set here the command to use in order to convert cygwin paths into native Windows paths (use $(File) as a place holder for the file name)") );
 
 	gSizer5->Add( m_textCtrlCygwinPathCommand, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -409,20 +409,20 @@ DbgPagePreDefTypesBase::DbgPagePreDefTypesBase( wxWindow* parent, wxWindowID id,
 	wxBoxSizer* bSizer14;
 	bSizer14 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_buttonNewSet = new wxButton( m_panel6, wxID_NEW, wxT("&New"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_buttonNewSet->SetToolTip( wxT("Create new 'PreDefined' set") );
+	m_buttonNewSet = new wxButton( m_panel6, wxID_NEW, _("&New"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonNewSet->SetToolTip( _("Create new 'PreDefined' set") );
 
 	bSizer14->Add( m_buttonNewSet, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_buttonDeleteSet = new wxButton( m_panel6, wxID_DELETE, wxT("&Delete"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_buttonDeleteSet->SetToolTip( wxT("Delete the currently selected set") );
+	m_buttonDeleteSet = new wxButton( m_panel6, wxID_DELETE, _("&Delete"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDeleteSet->SetToolTip( _("Delete the currently selected set") );
 
 	bSizer14->Add( m_buttonDeleteSet, 0, wxALL, 5 );
 
 	bSizer16->Add( bSizer14, 0, wxALIGN_RIGHT, 5 );
 
 	wxStaticBoxSizer* sbSizer5;
-	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, wxT("Available sets:") ), wxVERTICAL );
+	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, _("Available sets:") ), wxVERTICAL );
 
 	m_notebookPreDefTypes = new wxChoicebook( m_panel6, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCHB_DEFAULT );
 	sbSizer5->Add( m_notebookPreDefTypes, 1, wxEXPAND, 5 );

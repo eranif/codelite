@@ -62,7 +62,7 @@ protected:
 	void OnButtonOK(wxCommandEvent &event);
 
 public:
-	NewConfigurationDlg( wxWindow* parent, const wxString &projName, int id = wxID_ANY, wxString title = wxT("New Configuration"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 352,199 ), int style = wxDEFAULT_DIALOG_STYLE );
+	NewConfigurationDlg( wxWindow* parent, const wxString &projName, int id = wxID_ANY, wxString title = _("New Configuration"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 352,199 ), int style = wxDEFAULT_DIALOG_STYLE );
 	
 };
 

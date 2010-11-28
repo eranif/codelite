@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Dec 29 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -23,14 +23,14 @@ NewWorkspaceBase::NewWorkspaceBase( wxWindow* parent, wxWindowID id, const wxStr
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText1 = new wxStaticText( m_panelWorkspace, wxID_ANY, wxT("Workspace Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( m_panelWorkspace, wxID_ANY, _("Workspace Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	bSizer4->Add( m_staticText1, 0, wxALL, 5 );
 	
 	m_textCtrlWorkspaceName = new wxTextCtrl( m_panelWorkspace, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_textCtrlWorkspaceName, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText3 = new wxStaticText( m_panelWorkspace, wxID_ANY, wxT("Workspace Path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( m_panelWorkspace, wxID_ANY, _("Workspace Path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	bSizer4->Add( m_staticText3, 0, wxALL, 5 );
 	
@@ -40,18 +40,17 @@ NewWorkspaceBase::NewWorkspaceBase( wxWindow* parent, wxWindowID id, const wxStr
 	m_textCtrlWorkspacePath = new wxTextCtrl( m_panelWorkspace, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_textCtrlWorkspacePath, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_buttonWorkspaceDirPicker = new wxButton( m_panelWorkspace, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonWorkspaceDirPicker = new wxButton( m_panelWorkspace, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_buttonWorkspaceDirPicker, 0, wxALL, 5 );
 	
 	bSizer4->Add( bSizer3, 0, wxEXPAND, 5 );
 	
-	m_checkBoxCreateSeparateDir = new wxCheckBox( m_panelWorkspace, wxID_ANY, wxT("Create the workspace under a separate directory"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxCreateSeparateDir = new wxCheckBox( m_panelWorkspace, wxID_ANY, _("Create the workspace under a separate directory"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxCreateSeparateDir->SetValue(true);
-	
 	bSizer4->Add( m_checkBoxCreateSeparateDir, 0, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer1;
-	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panelWorkspace, wxID_ANY, wxT("File Name:") ), wxVERTICAL );
+	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panelWorkspace, wxID_ANY, _("File Name:") ), wxVERTICAL );
 	
 	m_staticTextWorkspaceFileName = new wxStaticText( m_panelWorkspace, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextWorkspaceFileName->Wrap( -1 );
@@ -67,11 +66,11 @@ NewWorkspaceBase::NewWorkspaceBase( wxWindow* parent, wxWindowID id, const wxStr
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonCreateWorkspace = new wxButton( m_panelWorkspace, wxID_OK, wxT("&Create"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCreateWorkspace = new wxButton( m_panelWorkspace, wxID_OK, _("&Create"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonCreateWorkspace->SetDefault(); 
 	bSizer5->Add( m_buttonCreateWorkspace, 0, wxALL, 5 );
 	
-	m_buttonCancelWorkspace = new wxButton( m_panelWorkspace, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancelWorkspace = new wxButton( m_panelWorkspace, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer5->Add( m_buttonCancelWorkspace, 0, wxALL, 5 );
 	
 	bSizer2->Add( bSizer5, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -100,4 +99,5 @@ NewWorkspaceBase::~NewWorkspaceBase()
 	m_buttonWorkspaceDirPicker->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewWorkspaceBase::OnWorkspaceDirPicker ), NULL, this );
 	m_checkBoxCreateSeparateDir->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewWorkspaceBase::OnWorkspacePathUpdated ), NULL, this );
 	m_buttonCreateWorkspace->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewWorkspaceBase::OnButtonCreate ), NULL, this );
+	
 }

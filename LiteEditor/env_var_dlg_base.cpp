@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -19,13 +19,13 @@ EnvVarsTableDlgBase::EnvVarsTableDlgBase( wxWindow* parent, wxWindowID id, const
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxVERTICAL );
 	
-	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Define here set of environment variables which will be applied by CodeLite before launching processes.\n\nVariables are defined in the format of NAME=VALUE"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Define here set of environment variables which will be applied by CodeLite before launching processes.\n\nVariables are defined in the format of NAME=VALUE"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	sbSizer1->Add( m_staticText1, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer1->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
 	
-	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Available environment sets:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Available environment sets:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	m_staticText2->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 	
@@ -48,7 +48,7 @@ EnvVarsTableDlgBase::EnvVarsTableDlgBase( wxWindow* parent, wxWindowID id, const
 	m_panel1->SetSizer( bSizer5 );
 	m_panel1->Layout();
 	bSizer5->Fit( m_panel1 );
-	m_notebook1->AddPage( m_panel1, wxT("Default"), false );
+	m_notebook1->AddPage( m_panel1, _("Default"), false );
 	bSizer2->Add( m_notebook1, 1, wxEXPAND|wxALL, 5 );
 	
 	bSizer6->Add( bSizer2, 1, wxEXPAND, 5 );
@@ -56,10 +56,10 @@ EnvVarsTableDlgBase::EnvVarsTableDlgBase( wxWindow* parent, wxWindowID id, const
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonNewSet = new wxButton( this, wxID_ANY, wxT("&New Set..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonNewSet = new wxButton( this, wxID_ANY, _("&New Set..."), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer7->Add( m_buttonNewSet, 0, wxALL, 5 );
 	
-	m_buttonDeleteSet = new wxButton( this, wxID_ANY, wxT("Delete Set"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDeleteSet = new wxButton( this, wxID_ANY, _("Delete Set"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer7->Add( m_buttonDeleteSet, 0, wxALL, 5 );
 	
 	bSizer6->Add( bSizer7, 0, wxEXPAND, 5 );
@@ -72,11 +72,11 @@ EnvVarsTableDlgBase::EnvVarsTableDlgBase( wxWindow* parent, wxWindowID id, const
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonOk = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOk = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonOk->SetDefault(); 
 	bSizer3->Add( m_buttonOk, 0, wxALL, 5 );
 	
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_buttonCancel, 0, wxALL, 5 );
 	
 	bSizer1->Add( bSizer3, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
@@ -101,6 +101,7 @@ EnvVarsTableDlgBase::~EnvVarsTableDlgBase()
 	m_buttonDeleteSet->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnvVarsTableDlgBase::OnDeleteSet ), NULL, this );
 	m_buttonDeleteSet->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EnvVarsTableDlgBase::OnDeleteSetUI ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnvVarsTableDlgBase::OnButtonOk ), NULL, this );
+	
 }
 
 EnvVarSetPage::EnvVarSetPage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )

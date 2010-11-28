@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb  8 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -8,14 +8,16 @@
 #ifndef __breakpoint_dlg_base__
 #define __breakpoint_dlg_base__
 
+#include <wx/intl.h>
+
 class BreakpointsListctrl;
 
 #include <wx/listctrl.h>
+#include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/string.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
@@ -119,7 +121,7 @@ class BreakpointPropertiesDlg : public wxDialog
 	
 	public:
 		
-		BreakpointPropertiesDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Breakpoint and Watchpoint Properties"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		BreakpointPropertiesDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Breakpoint and Watchpoint Properties"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~BreakpointPropertiesDlg();
 	
 };

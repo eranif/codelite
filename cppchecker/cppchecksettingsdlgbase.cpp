@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -22,19 +22,15 @@ CppCheckSettingsDialogBase::CppCheckSettingsDialogBase( wxWindow* parent, wxWind
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
 	m_cbOptionAll = new wxCheckBox( m_panel1, wxID_ANY, _("Make the checking more sensitive."), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer3->Add( m_cbOptionAll, 0, wxALL|wxEXPAND, 5 );
 	
 	m_cbOptionForce = new wxCheckBox( m_panel1, wxID_ANY, _("Force checking on files that have 'too many' configurations"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer3->Add( m_cbOptionForce, 0, wxALL|wxEXPAND, 5 );
 	
 	m_cbOptionStyle = new wxCheckBox( m_panel1, wxID_ANY, _("Check coding style"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer3->Add( m_cbOptionStyle, 0, wxALL|wxEXPAND, 5 );
 	
 	m_cbOptionUnusedFunctions = new wxCheckBox( m_panel1, wxID_ANY, _("Check if there are unused functions"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer3->Add( m_cbOptionUnusedFunctions, 0, wxALL|wxEXPAND, 5 );
 	
 	m_panel1->SetSizer( bSizer3 );
@@ -124,4 +120,5 @@ CppCheckSettingsDialogBase::~CppCheckSettingsDialogBase()
 	m_buttonClearList->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CppCheckSettingsDialogBase::OnClearList ), NULL, this );
 	m_buttonClearList->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CppCheckSettingsDialogBase::OnClearListUI ), NULL, this );
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CppCheckSettingsDialogBase::OnBtnOK ), NULL, this );
+	
 }

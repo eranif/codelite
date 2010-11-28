@@ -1,29 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : newkeyshortcutbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
  ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -44,11 +20,11 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg( wxWindow* parent, wxWindowID id, c
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticTextAction = new wxStaticText( m_panel1, wxID_ANY, wxT("Action:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextAction = new wxStaticText( m_panel1, wxID_ANY, _("Action:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextAction->Wrap( -1 );
 	bSizer5->Add( m_staticTextAction, 1, wxALL|wxEXPAND, 5 );
 	
-	m_staticText = new wxStaticText( m_panel1, wxID_ANY, wxT("Hit any key combination:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText = new wxStaticText( m_panel1, wxID_ANY, _("Hit any key combination:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText->Wrap( -1 );
 	bSizer5->Add( m_staticText, 0, wxALL|wxEXPAND, 5 );
 	
@@ -58,7 +34,7 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg( wxWindow* parent, wxWindowID id, c
 	m_textCtrl1 = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_READONLY );
 	bSizer6->Add( m_textCtrl1, 1, wxALL|wxEXPAND, 5 );
 	
-	m_buttonClear = new wxButton( m_panel1, wxID_ANY, wxT("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonClear = new wxButton( m_panel1, wxID_ANY, _("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add( m_buttonClear, 0, wxALL, 5 );
 	
 	bSizer5->Add( bSizer6, 0, wxEXPAND, 5 );
@@ -74,11 +50,11 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg( wxWindow* parent, wxWindowID id, c
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonOk = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOk = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonOk->SetDefault(); 
 	bSizer4->Add( m_buttonOk, 0, wxALL, 5 );
 	
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_buttonCancel, 0, wxALL, 5 );
 	
 	bSizer3->Add( bSizer4, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -96,4 +72,5 @@ NewKeyShortcutBaseDlg::~NewKeyShortcutBaseDlg()
 	// Disconnect Events
 	m_textCtrl1->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( NewKeyShortcutBaseDlg::OnKeyDown ), NULL, this );
 	m_buttonClear->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewKeyShortcutBaseDlg::OnButtonClear ), NULL, this );
+	
 }

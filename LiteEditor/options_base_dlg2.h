@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -8,12 +8,14 @@
 #ifndef __options_base_dlg2__
 #define __options_base_dlg2__
 
+#include <wx/intl.h>
+
 #include <wx/treebook.h>
+#include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/string.h>
 #include <wx/sizer.h>
 #include <wx/statline.h>
 #include <wx/button.h>
@@ -45,7 +47,8 @@ class OptionsBaseDlg2 : public wxDialog
 
 
 	public:
-		OptionsBaseDlg2( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Global Editor Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,480 ), long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxRESIZE_BORDER );
+		
+		OptionsBaseDlg2( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Editor Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,480 ), long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxRESIZE_BORDER ); 
 		~OptionsBaseDlg2();
 
 };

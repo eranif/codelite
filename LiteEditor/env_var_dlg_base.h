@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -7,6 +7,8 @@
 
 #ifndef __env_var_dlg_base__
 #define __env_var_dlg_base__
+
+#include <wx/intl.h>
 
 #include <wx/string.h>
 #include <wx/stattext.h>
@@ -54,7 +56,7 @@ class EnvVarsTableDlgBase : public wxDialog
 	
 	public:
 		
-		EnvVarsTableDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Environment Variables"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		EnvVarsTableDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Environment Variables"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~EnvVarsTableDlgBase();
 	
 };

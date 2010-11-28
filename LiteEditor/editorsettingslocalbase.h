@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -7,6 +7,8 @@
 
 #ifndef __editorsettingslocalbase__
 #define __editorsettingslocalbase__
+
+#include <wx/intl.h>
 
 #include <wx/string.h>
 #include <wx/stattext.h>
@@ -92,7 +94,7 @@ class LocalEditorSettingsbase : public wxDialog
 	
 	public:
 		
-		LocalEditorSettingsbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Local Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		LocalEditorSettingsbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Local Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~LocalEditorSettingsbase();
 	
 };

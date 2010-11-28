@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -7,6 +7,8 @@
 
 #ifndef __renamesymbolbase__
 #define __renamesymbolbase__
+
+#include <wx/intl.h>
 
 #include <wx/string.h>
 #include <wx/stattext.h>
@@ -47,7 +49,7 @@ class RenameSymbolBase : public wxDialog
 	
 	public:
 		
-		RenameSymbolBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Rename Symbol"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 895,579 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		RenameSymbolBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Rename Symbol"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 895,579 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~RenameSymbolBase();
 	
 };

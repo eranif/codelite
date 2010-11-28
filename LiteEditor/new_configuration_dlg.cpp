@@ -61,21 +61,21 @@ NewConfigurationDlg::NewConfigurationDlg( wxWindow* parent, const wxString &proj
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText1 = new wxStaticText( m_panel1, wxID_ANY, wxT("Configuration Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( m_panel1, wxID_ANY, _("Configuration Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_staticText1, 0, wxALL, 5 );
 	
 	wxTextValidator validator(wxFILTER_ASCII);
 	m_textConfigurationName = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, validator );
 	bSizer3->Add( m_textConfigurationName, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText2 = new wxStaticText( m_panel1, wxID_ANY, wxT("Copy Settings from:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( m_panel1, wxID_ANY, _("Copy Settings from:"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_staticText2, 0, wxALL, 5 );
 	
 	wxArrayString m_choiceCopyConfigurationsChoices;
 	m_choiceCopyConfigurations = new wxChoice( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceCopyConfigurationsChoices, 0 );
 
 	// Get all configuration of the project
-	m_choiceCopyConfigurations->Append(wxT("-- None --"));
+	m_choiceCopyConfigurations->Append(_("-- None --"));
 	ProjectSettingsPtr settings = ManagerST::Get()->GetProjectSettings(m_projectName);
 	if(settings){
 		ProjectSettingsCookie cookie;
@@ -99,10 +99,10 @@ NewConfigurationDlg::NewConfigurationDlg( wxWindow* parent, const wxString &proj
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonOK = new wxButton( this, wxID_ANY, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK = new wxButton( this, wxID_ANY, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonOK, 0, wxALL, 5 );
 	
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonCancel, 0, wxALL, 5 );
 	
 	bSizer1->Add( bSizer2, 0, wxALIGN_RIGHT, 5 );
@@ -122,7 +122,7 @@ void NewConfigurationDlg::OnButtonOK(wxCommandEvent &event)
 	newConfName = newConfName.Trim();
 	newConfName = newConfName.Trim(false);
 	if(newConfName.IsEmpty()){
-		wxMessageBox (wxT("Configuration Name is empty"), wxT("CodeLite"), wxOK | wxICON_INFORMATION);
+		wxMessageBox (_("Configuration Name is empty"), _("CodeLite"), wxOK | wxICON_INFORMATION);
 		return;
 	}
 
@@ -130,7 +130,7 @@ void NewConfigurationDlg::OnButtonOK(wxCommandEvent &event)
 	wxString copyFrom = m_choiceCopyConfigurations->GetStringSelection();
 	BuildConfigPtr newBuildConf;
 
-	if(copyFrom == wxT("-- None --")){
+	if(copyFrom == _("-- None --")){
 		newBuildConf = new BuildConfig(NULL);
 	}else{
 		BuildConfigPtr origBuildConf = settings->GetBuildConfiguration(copyFrom);

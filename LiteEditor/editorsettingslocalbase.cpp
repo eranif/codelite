@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -16,12 +16,12 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText = new wxStaticText( this, wxID_ANY, wxT("Untick one or more checkboxes to set any local preferences, "), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText = new wxStaticText( this, wxID_ANY, _("Untick one or more checkboxes to set any local preferences, "), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText->Wrap( -1 );
 	mainSizer->Add( m_staticText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 10 );
 	
 	wxStaticBoxSizer* sbSizer6;
-	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Indentation") ), wxVERTICAL );
+	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Indentation") ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer31;
 	fgSizer31 = new wxFlexGridSizer( 0, 2, 0, 20 );
@@ -29,23 +29,23 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	fgSizer31->SetFlexibleDirection( wxBOTH );
 	fgSizer31->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_indentsUsesTabsEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_indentsUsesTabsEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_indentsUsesTabsEnable->SetValue(true); 
 	fgSizer31->Add( m_indentsUsesTabsEnable, 0, wxALL, 5 );
 	
-	m_indentsUsesTabs = new wxCheckBox( this, wxID_ANY, wxT("Use tabs in indentation"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_indentsUsesTabs->SetToolTip( wxT("If clear, only spaces will be used for indentation.\nIf set, a mixture of tabs and spaces will be used.") );
+	m_indentsUsesTabs = new wxCheckBox( this, wxID_ANY, _("Use tabs in indentation"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_indentsUsesTabs->SetToolTip( _("If clear, only spaces will be used for indentation.\nIf set, a mixture of tabs and spaces will be used.") );
 	
 	fgSizer31->Add( m_indentsUsesTabs, 0, wxALL, 5 );
 	
-	m_tabWidthEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_tabWidthEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_tabWidthEnable->SetValue(true); 
 	fgSizer31->Add( m_tabWidthEnable, 0, wxALL, 5 );
 	
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticTexttabWidth = new wxStaticText( this, wxID_ANY, wxT("Columns per tab character in document:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTexttabWidth = new wxStaticText( this, wxID_ANY, _("Columns per tab character in document:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTexttabWidth->Wrap( -1 );
 	bSizer7->Add( m_staticTexttabWidth, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
@@ -57,14 +57,14 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	
 	fgSizer31->Add( bSizer7, 1, wxEXPAND, 5 );
 	
-	m_indentWidthEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_indentWidthEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_indentWidthEnable->SetValue(true); 
 	fgSizer31->Add( m_indentWidthEnable, 0, wxALL, 5 );
 	
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticTextindentWidth = new wxStaticText( this, wxID_ANY, wxT("Columns per indentation level:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextindentWidth = new wxStaticText( this, wxID_ANY, _("Columns per indentation level:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextindentWidth->Wrap( -1 );
 	bSizer6->Add( m_staticTextindentWidth, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -81,7 +81,7 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	mainSizer->Add( sbSizer6, 0, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer11;
-	sbSizer11 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Margins") ), wxVERTICAL );
+	sbSizer11 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Margins") ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer21;
 	fgSizer21 = new wxFlexGridSizer( 0, 2, 0, 20 );
@@ -89,28 +89,28 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	fgSizer21->SetFlexibleDirection( wxBOTH );
 	fgSizer21->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_displayBookmarkMarginEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_displayBookmarkMarginEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_displayBookmarkMarginEnable->SetValue(true); 
 	fgSizer21->Add( m_displayBookmarkMarginEnable, 0, wxALL, 5 );
 	
-	m_displayBookmarkMargin = new wxCheckBox( this, wxID_ANY, wxT("Display Breakpoints / Bookmarks margin"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_displayBookmarkMargin = new wxCheckBox( this, wxID_ANY, _("Display Breakpoints / Bookmarks margin"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer21->Add( m_displayBookmarkMargin, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_checkBoxDisplayFoldMarginEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_checkBoxDisplayFoldMarginEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_checkBoxDisplayFoldMarginEnable->SetValue(true); 
 	fgSizer21->Add( m_checkBoxDisplayFoldMarginEnable, 0, wxALL, 5 );
 	
-	m_checkBoxDisplayFoldMargin = new wxCheckBox( this, wxID_ANY, wxT("Display Folding margin"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxDisplayFoldMargin->SetToolTip( wxT("Display the margin that lets you 'fold' individual functions, or sections of functions, to hide their contents") );
+	m_checkBoxDisplayFoldMargin = new wxCheckBox( this, wxID_ANY, _("Display Folding margin"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxDisplayFoldMargin->SetToolTip( _("Display the margin that lets you 'fold' individual functions, or sections of functions, to hide their contents") );
 	
 	fgSizer21->Add( m_checkBoxDisplayFoldMargin, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_checkBoxHideChangeMarkerMarginEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_checkBoxHideChangeMarkerMarginEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_checkBoxHideChangeMarkerMarginEnable->SetValue(true); 
 	fgSizer21->Add( m_checkBoxHideChangeMarkerMarginEnable, 0, wxALL, 5 );
 	
-	m_checkBoxHideChangeMarkerMargin = new wxCheckBox( this, wxID_ANY, wxT("Hide change marker margin"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxHideChangeMarkerMargin->SetToolTip( wxT("Display the margin in which a coloured line marks any altered line") );
+	m_checkBoxHideChangeMarkerMargin = new wxCheckBox( this, wxID_ANY, _("Hide change marker margin"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxHideChangeMarkerMargin->SetToolTip( _("Display the margin in which a coloured line marks any altered line") );
 	
 	fgSizer21->Add( m_checkBoxHideChangeMarkerMargin, 0, wxALL, 5 );
 	
@@ -119,7 +119,7 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	mainSizer->Add( sbSizer11, 1, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer1;
-	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Misc") ), wxVERTICAL );
+	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Misc") ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer2;
 	fgSizer2 = new wxFlexGridSizer( 0, 2, 0, 20 );
@@ -127,61 +127,61 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_displayLineNumbersEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_displayLineNumbersEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_displayLineNumbersEnable->SetValue(true); 
 	fgSizer2->Add( m_displayLineNumbersEnable, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_displayLineNumbers = new wxCheckBox( this, wxID_ANY, wxT("Display line numbers"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_displayLineNumbers->SetToolTip( wxT("Display line numbers margin") );
+	m_displayLineNumbers = new wxCheckBox( this, wxID_ANY, _("Display line numbers"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_displayLineNumbers->SetToolTip( _("Display line numbers margin") );
 	
 	fgSizer2->Add( m_displayLineNumbers, 0, wxALL, 5 );
 	
-	m_showIndentationGuideLinesEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_showIndentationGuideLinesEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_showIndentationGuideLinesEnable->SetValue(true); 
 	fgSizer2->Add( m_showIndentationGuideLinesEnable, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_showIndentationGuideLines = new wxCheckBox( this, wxID_ANY, wxT("Show indentation guidelines"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_showIndentationGuideLines->SetToolTip( wxT("Display horizontal guides for matching braces \"{\"") );
+	m_showIndentationGuideLines = new wxCheckBox( this, wxID_ANY, _("Show indentation guidelines"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_showIndentationGuideLines->SetToolTip( _("Display horizontal guides for matching braces \"{\"") );
 	
 	fgSizer2->Add( m_showIndentationGuideLines, 0, wxALL, 5 );
 	
-	m_highlightCaretLineEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_highlightCaretLineEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_highlightCaretLineEnable->SetValue(true); 
 	fgSizer2->Add( m_highlightCaretLineEnable, 0, wxALL, 5 );
 	
-	m_highlightCaretLine = new wxCheckBox( this, wxID_ANY, wxT("Highlight caret line"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_highlightCaretLine->SetToolTip( wxT("Set a different background colour for the line containing the caret") );
+	m_highlightCaretLine = new wxCheckBox( this, wxID_ANY, _("Highlight caret line"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_highlightCaretLine->SetToolTip( _("Set a different background colour for the line containing the caret") );
 	
 	fgSizer2->Add( m_highlightCaretLine, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_checkBoxTrimLineEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_checkBoxTrimLineEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_checkBoxTrimLineEnable->SetValue(true); 
 	fgSizer2->Add( m_checkBoxTrimLineEnable, 0, wxALL, 5 );
 	
-	m_checkBoxTrimLine = new wxCheckBox( this, wxID_ANY, wxT("When saving files, trim empty lines"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxTrimLine = new wxCheckBox( this, wxID_ANY, _("When saving files, trim empty lines"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_checkBoxTrimLine, 0, wxALL, 5 );
 	
-	m_checkBoxAppendLFEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_checkBoxAppendLFEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_checkBoxAppendLFEnable->SetValue(true); 
 	fgSizer2->Add( m_checkBoxAppendLFEnable, 0, wxALL, 5 );
 	
-	m_checkBoxAppendLF = new wxCheckBox( this, wxID_ANY, wxT("If missing, append EOL at end of file"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxAppendLF->SetToolTip( wxT("Make sure the file finishes with an end-of-line") );
+	m_checkBoxAppendLF = new wxCheckBox( this, wxID_ANY, _("If missing, append EOL at end of file"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxAppendLF->SetToolTip( _("Make sure the file finishes with an end-of-line") );
 	
 	fgSizer2->Add( m_checkBoxAppendLF, 0, wxALL, 5 );
 	
-	m_whitespaceStyleEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_whitespaceStyleEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_whitespaceStyleEnable->SetValue(true); 
 	fgSizer2->Add( m_whitespaceStyleEnable, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	wxGridSizer* gSizer2;
 	gSizer2 = new wxGridSizer( 2, 2, 0, 0 );
 	
-	m_staticTextwhitespaceStyle = new wxStaticText( this, wxID_ANY, wxT("Whitespace visibility:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextwhitespaceStyle = new wxStaticText( this, wxID_ANY, _("Whitespace visibility:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextwhitespaceStyle->Wrap( -1 );
 	gSizer2->Add( m_staticTextwhitespaceStyle, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	wxString m_whitespaceStyleChoices[] = { wxT("Invisible"), wxT("Visible always"), wxT("Visible after indentation"), wxT("Indentation only") };
+	wxString m_whitespaceStyleChoices[] = { _("Invisible"), _("Visible always"), _("Visible after indentation"), _("Indentation only") };
 	int m_whitespaceStyleNChoices = sizeof( m_whitespaceStyleChoices ) / sizeof( wxString );
 	m_whitespaceStyle = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_whitespaceStyleNChoices, m_whitespaceStyleChoices, 0 );
 	m_whitespaceStyle->SetSelection( 0 );
@@ -189,35 +189,35 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	
 	fgSizer2->Add( gSizer2, 1, wxEXPAND, 5 );
 	
-	m_choiceEOLEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_choiceEOLEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_choiceEOLEnable->SetValue(true); 
 	fgSizer2->Add( m_choiceEOLEnable, 0, wxALL, 5 );
 	
 	wxGridSizer* gSizer1;
 	gSizer1 = new wxGridSizer( 2, 2, 0, 0 );
 	
-	m_EOLstatic = new wxStaticText( this, wxID_ANY, wxT("EOL Mode:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_EOLstatic = new wxStaticText( this, wxID_ANY, _("EOL Mode:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_EOLstatic->Wrap( -1 );
 	gSizer1->Add( m_EOLstatic, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	wxString m_choiceEOLChoices[] = { wxT("Default"), wxT("Mac (CR)"), wxT("Windows (CRLF)"), wxT("Unix (LF)") };
+	wxString m_choiceEOLChoices[] = { _("Default"), _("Mac (CR)"), _("Windows (CRLF)"), _("Unix (LF)") };
 	int m_choiceEOLNChoices = sizeof( m_choiceEOLChoices ) / sizeof( wxString );
 	m_choiceEOL = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceEOLNChoices, m_choiceEOLChoices, 0 );
 	m_choiceEOL->SetSelection( 0 );
-	m_choiceEOL->SetToolTip( wxT("Set the editor's EOL mode (End Of Line). When set to 'Default' CodeLite will set the EOL according to the hosting OS") );
+	m_choiceEOL->SetToolTip( _("Set the editor's EOL mode (End Of Line). When set to 'Default' CodeLite will set the EOL according to the hosting OS") );
 	
 	gSizer1->Add( m_choiceEOL, 1, wxALL|wxEXPAND, 5 );
 	
 	fgSizer2->Add( gSizer1, 1, wxEXPAND, 5 );
 	
-	m_fileEncodingEnable = new wxCheckBox( this, wxID_ANY, wxT("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_fileEncodingEnable = new wxCheckBox( this, wxID_ANY, _("Use global setting"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
 	m_fileEncodingEnable->SetValue(true); 
 	fgSizer2->Add( m_fileEncodingEnable, 0, wxALL, 5 );
 	
 	wxGridSizer* gSizer21;
 	gSizer21 = new wxGridSizer( 2, 2, 0, 0 );
 	
-	m_staticTextfileEncoding = new wxStaticText( this, wxID_ANY, wxT("File font encoding"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextfileEncoding = new wxStaticText( this, wxID_ANY, _("File font encoding"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextfileEncoding->Wrap( -1 );
 	gSizer21->Add( m_staticTextfileEncoding, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
@@ -235,11 +235,11 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_button1 = new wxButton( this, wxID_OK, wxT("&Ok"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button1 = new wxButton( this, wxID_OK, _("&Ok"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_button1->SetDefault(); 
 	bSizer4->Add( m_button1, 0, wxALL, 5 );
 	
-	m_button2 = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button2 = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_button2, 0, wxALL, 5 );
 	
 	mainSizer->Add( bSizer4, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -284,4 +284,5 @@ LocalEditorSettingsbase::~LocalEditorSettingsbase()
 	m_choiceEOLEnable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::choiceEOLUpdateUI ), NULL, this );
 	m_fileEncodingEnable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LocalEditorSettingsbase::fileEncodingUpdateUI ), NULL, this );
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LocalEditorSettingsbase::OnOK ), NULL, this );
+	
 }

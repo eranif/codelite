@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -15,7 +15,6 @@ QMakeTabBase::QMakeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkBoxUseQmake = new wxCheckBox( this, wxID_ANY, _("This project uses qmake"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	mainSizer->Add( m_checkBoxUseQmake, 0, wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizer1;
@@ -77,4 +76,5 @@ QMakeTabBase::~QMakeTabBase()
 	m_textCtrlQmakeExeLine->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QMakeTabBase::OnUseQmake ), NULL, this );
 	m_staticText5->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QMakeTabBase::OnUseQmake ), NULL, this );
 	m_textCtrlFreeText->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QMakeTabBase::OnUseQmake ), NULL, this );
+	
 }

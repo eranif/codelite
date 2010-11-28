@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -48,13 +48,13 @@ class NavBarBase : public wxPanel
 		
 		NavBarBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~NavBarBase();
+		
 		void m_splitterOnIdle( wxIdleEvent& )
 		{
 			m_splitter->SetSashPosition( 150 );
 			m_splitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( NavBarBase::m_splitterOnIdle ), NULL, this );
 		}
 		
-	
 };
 
 #endif //__navbarbase__

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -33,10 +33,10 @@ FileCheckListBase::FileCheckListBase( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
 	
-	m_clearAll = new wxButton( this, wxID_ANY, wxT("C&lear All"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_clearAll = new wxButton( this, wxID_ANY, _("C&lear All"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_clearAll, 0, wxALL, 5 );
 	
-	m_checkAllButton = new wxButton( this, wxID_ANY, wxT("Check &All"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkAllButton = new wxButton( this, wxID_ANY, _("Check &All"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_checkAllButton, 0, wxALL, 5 );
 	
 	bSizer3->Add( bSizer4, 0, wxEXPAND, 5 );
@@ -54,11 +54,11 @@ FileCheckListBase::FileCheckListBase( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_okButton = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_okButton = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_okButton->SetDefault(); 
 	bSizer2->Add( m_okButton, 0, wxALL, 5 );
 	
-	m_cancelButton = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_cancelButton = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_cancelButton, 0, wxALL, 5 );
 	
 	bSizer1->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -83,4 +83,5 @@ FileCheckListBase::~FileCheckListBase()
 	m_fileCheckList->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( FileCheckListBase::OnFileCheckChanged ), NULL, this );
 	m_clearAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FileCheckListBase::OnClearAll ), NULL, this );
 	m_checkAllButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FileCheckListBase::OnCheckAll ), NULL, this );
+	
 }

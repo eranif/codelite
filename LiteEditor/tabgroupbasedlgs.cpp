@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Dec 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -40,7 +40,6 @@ LoadTabGroupBaseDlg::LoadTabGroupBaseDlg( wxWindow* parent, wxWindowID id, const
 	bSizer2->Add( m_listBox, 1, wxALL|wxEXPAND, 5 );
 
 	m_replaceCheck = new wxCheckBox( this, wxID_ANY, _("Replace current tabs"), wxDefaultPosition, wxDefaultSize, 0 );
-
 	m_replaceCheck->SetToolTip( _("By default, the tabs of this group will be added to the current tabs. Tick this to replace the current tabs instead.") );
 
 	bSizer2->Add( m_replaceCheck, 0, wxALL, 5 );

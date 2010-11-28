@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -44,4 +44,5 @@ EditorOptionsGeneralSavePanelBase::~EditorOptionsGeneralSavePanelBase()
 {
 	// Disconnect Events
 	m_checkBoxDontTrimCurrentLine->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralSavePanelBase::OnTrimCaretLineUI ), NULL, this );
+	
 }

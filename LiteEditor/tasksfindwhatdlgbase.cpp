@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -77,6 +77,7 @@ TasksFindWhatDlgBase::~TasksFindWhatDlgBase()
 	m_buttonDelete->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TasksFindWhatDlgBase::OnDeleteTask ), NULL, this );
 	m_buttonDelete->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TasksFindWhatDlgBase::OnDeleteTaskUI ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TasksFindWhatDlgBase::OnButtonOk ), NULL, this );
+	
 }
 
 NewTaskDialog::NewTaskDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )

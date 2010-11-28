@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : externaltoolsbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -51,13 +26,13 @@ ExternalToolBaseDlg::ExternalToolBaseDlg( wxWindow* parent, wxWindowID id, const
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonNewTool = new wxButton( this, wxID_ANY, wxT("New..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonNewTool = new wxButton( this, wxID_ANY, _("New..."), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer9->Add( m_buttonNewTool, 0, wxALL, 5 );
 	
-	m_buttonEdit = new wxButton( this, wxID_ANY, wxT("Edit..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonEdit = new wxButton( this, wxID_ANY, _("Edit..."), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer9->Add( m_buttonEdit, 0, wxALL, 5 );
 	
-	m_buttonDelete = new wxButton( this, wxID_ANY, wxT("Delete..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDelete = new wxButton( this, wxID_ANY, _("Delete..."), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer9->Add( m_buttonDelete, 0, wxALL, 5 );
 	
 	bSizer8->Add( bSizer9, 0, 0, 5 );
@@ -70,11 +45,11 @@ ExternalToolBaseDlg::ExternalToolBaseDlg( wxWindow* parent, wxWindowID id, const
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonOk = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOk = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonOk->SetDefault(); 
 	bSizer7->Add( m_buttonOk, 0, wxALL, 5 );
 	
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer7->Add( m_buttonCancel, 0, wxALL, 5 );
 	
 	bSizer6->Add( bSizer7, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -109,4 +84,5 @@ ExternalToolBaseDlg::~ExternalToolBaseDlg()
 	m_buttonEdit->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ExternalToolBaseDlg::OnButtonEditUI ), NULL, this );
 	m_buttonDelete->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ExternalToolBaseDlg::OnButtonDelete ), NULL, this );
 	m_buttonDelete->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ExternalToolBaseDlg::OnButtonDeleteUI ), NULL, this );
+	
 }

@@ -1,29 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : copyrights_proj_sel_base_dlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
  ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -40,7 +16,7 @@ CopyrightsProjectSelBaseDlg::CopyrightsProjectSelBaseDlg( wxWindow* parent, wxWi
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Select projects to insert copyrights block:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Select projects to insert copyrights block:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	bSizer3->Add( m_staticText3, 0, wxALL|wxEXPAND, 5 );
 	
@@ -59,10 +35,10 @@ CopyrightsProjectSelBaseDlg::CopyrightsProjectSelBaseDlg( wxWindow* parent, wxWi
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonCheckAll = new wxButton( this, wxID_ANY, wxT("Check &All"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCheckAll = new wxButton( this, wxID_ANY, _("Check &All"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer7->Add( m_buttonCheckAll, 0, wxALL, 5 );
 	
-	m_buttonUnCheckAll = new wxButton( this, wxID_ANY, wxT("&Un-Check All"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonUnCheckAll = new wxButton( this, wxID_ANY, _("&Un-Check All"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer7->Add( m_buttonUnCheckAll, 0, wxALL, 5 );
 	
 	bSizer5->Add( bSizer7, 0, 0, 5 );
@@ -72,11 +48,11 @@ CopyrightsProjectSelBaseDlg::CopyrightsProjectSelBaseDlg( wxWindow* parent, wxWi
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonInsert = new wxButton( this, wxID_OK, wxT("&Insert"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonInsert = new wxButton( this, wxID_OK, _("&Insert"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonInsert->SetDefault(); 
 	bSizer4->Add( m_buttonInsert, 0, wxALL, 5 );
 	
-	m_button5 = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button5 = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_button5, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	bSizer3->Add( bSizer4, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -94,4 +70,5 @@ CopyrightsProjectSelBaseDlg::~CopyrightsProjectSelBaseDlg()
 	// Disconnect Events
 	m_buttonCheckAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CopyrightsProjectSelBaseDlg::OnCheckAll ), NULL, this );
 	m_buttonUnCheckAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CopyrightsProjectSelBaseDlg::OnUnCheckAll ), NULL, this );
+	
 }

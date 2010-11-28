@@ -67,10 +67,10 @@ DependenciesDlg::DependenciesDlg( wxWindow* parent, const wxString &projectName,
 	wxBoxSizer* btnSizer;
 	btnSizer = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonOK = new wxButton( this, wxID_ANY, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK = new wxButton( this, wxID_ANY, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_buttonOK, 0, wxALL, 5 );
 	
-	m_buttonCancel = new wxButton( this, wxID_ANY, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_ANY, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_buttonCancel, 0, wxALL, 5 );
 	
 	mainSizer->Add( btnSizer, 0, wxALIGN_RIGHT, 5 );

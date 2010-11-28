@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -78,7 +78,6 @@ NewQtProjBaseDlg::NewQtProjBaseDlg( wxWindow* parent, wxWindowID id, const wxStr
 	
 	m_checkBoxUseSepDirectory = new wxCheckBox( this, wxID_ANY, _("Create the project under a separate directory"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxUseSepDirectory->SetValue(true);
-	
 	sbSizer1->Add( m_checkBoxUseSepDirectory, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer5->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
@@ -109,4 +108,5 @@ NewQtProjBaseDlg::~NewQtProjBaseDlg()
 	// Disconnect Events
 	m_buttonSelectProjectPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewQtProjBaseDlg::OnBrowseProjectPath ), NULL, this );
 	m_buttonSelectConfig->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewQtProjBaseDlg::OnNewQmakeSettings ), NULL, this );
+	
 }

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -35,7 +35,7 @@ NewItemBaseDlg::NewItemBaseDlg( wxWindow* parent, wxWindowID id, const wxString&
 	fgSizer2->SetFlexibleDirection( wxHORIZONTAL );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText6 = new wxStaticText( this, wxID_ANY, wxT("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6 = new wxStaticText( this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
 	fgSizer2->Add( m_staticText6, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
@@ -45,7 +45,7 @@ NewItemBaseDlg::NewItemBaseDlg( wxWindow* parent, wxWindowID id, const wxString&
 	
 	fgSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Location:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Location:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer2->Add( m_staticText3, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
@@ -54,7 +54,7 @@ NewItemBaseDlg::NewItemBaseDlg( wxWindow* parent, wxWindowID id, const wxString&
 	
 	fgSizer2->Add( m_location, 1, wxALL|wxEXPAND, 5 );
 	
-	m_browseBtn = new wxButton( this, wxID_ANY, wxT("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_browseBtn = new wxButton( this, wxID_ANY, _("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_browseBtn, 0, wxALL, 5 );
 	
 	m_mainSizer->Add( fgSizer2, 0, wxEXPAND|wxALL, 5 );
@@ -65,11 +65,11 @@ NewItemBaseDlg::NewItemBaseDlg( wxWindow* parent, wxWindowID id, const wxString&
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_okButton = new wxButton( this, wxID_ANY, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_okButton = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_okButton->SetDefault(); 
 	bSizer6->Add( m_okButton, 0, wxALL, 5 );
 	
-	m_cancel = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_cancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add( m_cancel, 0, wxALL, 5 );
 	
 	m_mainSizer->Add( bSizer6, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );

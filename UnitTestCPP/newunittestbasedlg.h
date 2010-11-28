@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -47,6 +47,7 @@ class NewUnitTestBaseDlg : public wxDialog
 		wxButton* m_button23;
 	
 	public:
+		
 		NewUnitTestBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Unit Test"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~NewUnitTestBaseDlg();
 	

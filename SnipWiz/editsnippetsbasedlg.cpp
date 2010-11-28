@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -36,7 +36,7 @@ EditSnippetsBaseDlg::EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id, const
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText1 = new wxStaticText( m_panel2, wxID_ANY, wxT("Menu Entry:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( m_panel2, wxID_ANY, _("Menu Entry:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	fgSizer1->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -46,19 +46,19 @@ EditSnippetsBaseDlg::EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id, const
 	
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	m_staticText3 = new wxStaticText( m_panel2, wxID_ANY, wxT("Keyboard Shortcut:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( m_panel2, wxID_ANY, _("Keyboard Shortcut:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer1->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlAccelerator = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
 	fgSizer1->Add( m_textCtrlAccelerator, 0, wxALL|wxEXPAND, 5 );
 	
-	m_buttonShortcut = new wxButton( m_panel2, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonShortcut = new wxButton( m_panel2, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_buttonShortcut, 0, wxALL, 5 );
 	
 	bSizer6->Add( fgSizer1, 1, wxEXPAND, 5 );
 	
-	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, wxT("Use $ as placeholder for the selection and @ to set the caret position.\ne.g. for($ = 0; $ < @; $++)\nNOTE:\nIf you snippet contains @ or $, you can escape the placeholders with a backslash: \\@ OR \\$ "), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, _("Use $ as placeholder for the selection and @ to set the caret position.\ne.g. for($ = 0; $ < @; $++)\nNOTE:\nIf you snippet contains @ or $, you can escape the placeholders with a backslash: \\@ OR \\$ "), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	bSizer6->Add( m_staticText2, 0, wxALL, 5 );
 	
@@ -70,13 +70,13 @@ EditSnippetsBaseDlg::EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id, const
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonAdd = new wxButton( m_panel2, wxID_ANY, wxT("Add"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonAdd = new wxButton( m_panel2, wxID_ANY, _("Add"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_buttonAdd, 0, wxALL, 5 );
 	
-	m_buttonChange = new wxButton( m_panel2, wxID_ANY, wxT("Change"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonChange = new wxButton( m_panel2, wxID_ANY, _("Change"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_buttonChange, 0, wxALL, 5 );
 	
-	m_buttonRemove = new wxButton( m_panel2, wxID_ANY, wxT("Remove"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonRemove = new wxButton( m_panel2, wxID_ANY, _("Remove"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_buttonRemove, 0, wxALL, 5 );
 	
 	bSizer6->Add( bSizer8, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
@@ -88,7 +88,7 @@ EditSnippetsBaseDlg::EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id, const
 	m_panel2->SetSizer( bSizer4 );
 	m_panel2->Layout();
 	bSizer4->Fit( m_panel2 );
-	m_notebook1->AddPage( m_panel2, wxT("Snippets"), true );
+	m_notebook1->AddPage( m_panel2, _("Snippets"), true );
 	m_panel3 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
@@ -99,14 +99,14 @@ EditSnippetsBaseDlg::EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id, const
 	m_panel3->SetSizer( bSizer9 );
 	m_panel3->Layout();
 	bSizer9->Fit( m_panel3 );
-	m_notebook1->AddPage( m_panel3, wxT("About"), false );
+	m_notebook1->AddPage( m_panel3, _("About"), false );
 	
 	bSizer3->Add( m_notebook1, 1, wxEXPAND | wxALL, 5 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer3->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
 	
-	m_buttonClose = new wxButton( this, wxID_OK, wxT("Close"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonClose = new wxButton( this, wxID_OK, _("Close"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonClose->SetDefault(); 
 	bSizer3->Add( m_buttonClose, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
@@ -138,4 +138,5 @@ EditSnippetsBaseDlg::~EditSnippetsBaseDlg()
 	m_buttonChange->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditSnippetsBaseDlg::OnChangeSnippetUI ), NULL, this );
 	m_buttonRemove->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditSnippetsBaseDlg::OnRemoveSnippet ), NULL, this );
 	m_buttonRemove->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditSnippetsBaseDlg::OnRemoveSnippetUI ), NULL, this );
+	
 }

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -7,6 +7,8 @@
 
 #ifndef __editorsettingsbookmarksbasepanel__
 #define __editorsettingsbookmarksbasepanel__
+
+#include <wx/intl.h>
 
 #include <wx/string.h>
 #include <wx/checkbox.h>

@@ -60,13 +60,13 @@ EditWorkspaceConfDlg::EditWorkspaceConfDlg( wxWindow* parent, int id, wxString t
 	wxBoxSizer* btnSizer;
 	btnSizer = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonRename = new wxButton( this, wxID_ANY, wxT("&Rename"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonRename = new wxButton( this, wxID_ANY, _("&Rename"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_buttonRename, 0, wxALL, 5 );
 	
-	m_buttonDelete = new wxButton( this, wxID_ANY, wxT("&Delete"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDelete = new wxButton( this, wxID_ANY, _("&Delete"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_buttonDelete, 0, wxALL, 5 );
 	
-	m_buttonClose = new wxButton( this, wxID_CANCEL, wxT("&Close"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonClose = new wxButton( this, wxID_CANCEL, _("&Close"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_buttonClose, 0, wxALL, 5 );
 	
 	mainSizer->Add( btnSizer, 0, wxEXPAND, 5 );
@@ -121,8 +121,8 @@ void EditWorkspaceConfDlg::OnDelete(wxCommandEvent &event)
 	//remove the requested workspace build configuration
 	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
 	wxString msg;
-	msg << wxT("Remove workspace configuration '") << delMe << wxT("' ?");
-	if(wxMessageBox(msg, wxT("CodeLite"), wxICON_QUESTION | wxYES_NO | wxCANCEL) == wxYES){
+	msg << _("Remove workspace configuration '") << delMe << wxT("' ?");
+	if(wxMessageBox(msg, _("CodeLite"), wxICON_QUESTION | wxYES_NO | wxCANCEL) == wxYES){
 		matrix->RemoveConfiguration(delMe);
 		//apply changes
 		ManagerST::Get()->SetWorkspaceBuildMatrix(matrix);
@@ -134,7 +134,7 @@ void EditWorkspaceConfDlg::OnDelete(wxCommandEvent &event)
 
 void EditWorkspaceConfDlg::DoRename(const wxString &selItem)
 {
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, wxT("New Configuration Name:"), wxT("Rename"), selItem);
+	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, _("New Configuration Name:"), _("Rename"), selItem);
 	if(dlg->ShowModal() == wxID_OK){
 		wxString newName = dlg->GetValue();
 		TrimString(newName);

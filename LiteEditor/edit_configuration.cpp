@@ -79,10 +79,10 @@ EditConfigurationDialog::EditConfigurationDialog( wxWindow* parent, const wxStri
 	wxBoxSizer* bSizer18;
 	bSizer18 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonDelete = new wxButton( m_panel6, wxID_ANY, wxT("&Delete"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDelete = new wxButton( m_panel6, wxID_ANY, _("&Delete"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer18->Add( m_buttonDelete, 0, wxALL, 5 );
 	
-	m_buttonRename = new wxButton( m_panel6, wxID_ANY, wxT("&Rename"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonRename = new wxButton( m_panel6, wxID_ANY, _("&Rename"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer18->Add( m_buttonRename, 0, wxALL, 5 );
 	bSizer17->Add( bSizer18, 0, wxEXPAND, 5 );
 	
@@ -97,7 +97,7 @@ EditConfigurationDialog::EditConfigurationDialog( wxWindow* parent, const wxStri
 	wxBoxSizer* bSizer16;
 	bSizer16 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonClose = new wxButton( this, wxID_OK, wxT("Close"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonClose = new wxButton( this, wxID_OK, _("Close"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer16->Add( m_buttonClose, 0, wxALL, 5 );
 	
 	bSizer15->Add( bSizer16, 0, wxALIGN_CENTER, 5 );
@@ -140,7 +140,7 @@ void EditConfigurationDialog::RenameConfiguration(const wxString &oldName, const
 void EditConfigurationDialog::OnItemDclick(wxCommandEvent &event)
 {
 	wxString oldName = event.GetString();
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, wxT("Enter New Name:"), wxT("Rename"), oldName);
+	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, _("Enter New Name:"), _("Rename"), oldName);
 	dlg->SetTextValidator(wxFILTER_ASCII);
 
 	if(dlg->ShowModal() == wxID_OK){
@@ -162,7 +162,7 @@ void EditConfigurationDialog::OnButtonRename(wxCommandEvent &event)
 	if(oldName.IsEmpty()){
 		return;
 	}
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, wxT("Enter New Name:"), wxT("Rename"), oldName);
+	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, _("Enter New Name:"), _("Rename"), oldName);
 	dlg->SetTextValidator(wxFILTER_ASCII);
 
 	if(dlg->ShowModal() == wxID_OK){
@@ -178,9 +178,9 @@ void EditConfigurationDialog::OnButtonDelete(wxCommandEvent &event)
 	if(selection.IsEmpty()){
 		return;
 	}
-	wxString msg(wxT("Remove configuration '"));
-	msg << selection << wxT("' ?");
-	if(wxMessageBox(msg, wxT("Confirm"), wxYES_NO | wxCANCEL | wxICON_QUESTION) == wxYES){
+	wxString msg(_("Remove configuration '"));
+	msg << selection << _("' ?");
+	if(wxMessageBox(msg, _("Confirm"), wxYES_NO | wxCANCEL | wxICON_QUESTION) == wxYES){
 		ProjectSettingsPtr settings = ManagerST::Get()->GetProjectSettings(m_projectName);
 		if(settings){
 			settings->RemoveConfiguration(selection);

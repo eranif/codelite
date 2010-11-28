@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -7,6 +7,8 @@
 
 #ifndef __dbgcommandbasedlg__
 #define __dbgcommandbasedlg__
+
+#include <wx/intl.h>
 
 #include <wx/string.h>
 #include <wx/stattext.h>
@@ -42,7 +44,8 @@ class DbgCommandBaseDlg : public wxDialog
 		wxButton* m_buttonCancel;
 	
 	public:
-		DbgCommandBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Debugger Type"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 456,190 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		
+		DbgCommandBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Debugger Type"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 456,190 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~DbgCommandBaseDlg();
 	
 };

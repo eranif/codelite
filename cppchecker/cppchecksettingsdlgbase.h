@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -65,6 +65,7 @@ class CppCheckSettingsDialogBase : public wxDialog
 		
 	
 	public:
+		
 		CppCheckSettingsDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("CppChecker settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 344,246 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~CppCheckSettingsDialogBase();
 	

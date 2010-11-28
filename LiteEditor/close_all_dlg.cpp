@@ -64,13 +64,13 @@ CloseAllDialog::CloseAllDialog( wxWindow* parent, int id, wxString title, wxPoin
 	wxBoxSizer* buttonSizer;
 	buttonSizer = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonSave = new wxButton( m_mainPanel, wxID_ANY, wxT("Ask me for each file"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonSave = new wxButton( m_mainPanel, wxID_ANY, _("Ask me for each file"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttonSizer->Add( m_buttonSave, 0, wxALL, 5 );
 	
-	m_buttonSaveAllFiles = new wxButton( m_mainPanel, wxID_ANY, wxT("Save all files"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonSaveAllFiles = new wxButton( m_mainPanel, wxID_ANY, _("Save all files"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttonSizer->Add( m_buttonSaveAllFiles, 0, wxALL, 5 );
 	
-	m_buttonDiscardChangesForAllFiles = new wxButton( m_mainPanel, wxID_ANY, wxT("Discard changes for all files"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDiscardChangesForAllFiles = new wxButton( m_mainPanel, wxID_ANY, _("Discard changes for all files"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttonSizer->Add( m_buttonDiscardChangesForAllFiles, 0, wxALL, 5 );
 	
 	panelSizer->Add( buttonSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -80,7 +80,7 @@ CloseAllDialog::CloseAllDialog( wxWindow* parent, int id, wxString title, wxPoin
 	panelSizer->Fit( m_mainPanel );
 	mainSizer->Add( m_mainPanel, 1, wxEXPAND | wxALL, 5 );
 	
-	m_staticMsg->SetLabel(wxT("Some of the files are modified, what action should CodeLite take?"));
+	m_staticMsg->SetLabel(_("Some of the files are modified, what action should CodeLite take?"));
 	this->SetSizer( mainSizer );
 	this->Layout();
 	mainSizer->Fit(this);

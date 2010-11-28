@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : commentpagebase.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -42,7 +17,7 @@ CommentPageBase::CommentPageBase( wxWindow* parent, wxWindowID id, const wxPoint
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("General:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( this, wxID_ANY, _("General:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	m_staticText1->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
 	
@@ -53,19 +28,17 @@ CommentPageBase::CommentPageBase( wxWindow* parent, wxWindowID id, const wxPoint
 	
 	bSizer1->Add( bSizer2, 0, wxEXPAND, 5 );
 	
-	m_checkBoxContCComment = new wxCheckBox( this, wxID_ANY, wxT("When hitting <ENTER> in a C style comment section,automatically add '*' at the next line"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxContCComment = new wxCheckBox( this, wxID_ANY, _("When hitting <ENTER> in a C style comment section,automatically add '*' at the next line"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxContCComment->SetValue(true);
-	
 	bSizer1->Add( m_checkBoxContCComment, 0, wxALL, 5 );
 	
-	m_checkBoxContinueCppComment = new wxCheckBox( this, wxID_ANY, wxT("When hitting <ENTER> in a C++ style comment section,automatically add '//' at the next line"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxContinueCppComment = new wxCheckBox( this, wxID_ANY, _("When hitting <ENTER> in a C++ style comment section,automatically add '//' at the next line"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_checkBoxContinueCppComment, 0, wxALL, 5 );
 	
 	wxBoxSizer* bSizer21;
 	bSizer21 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText11 = new wxStaticText( this, wxID_ANY, wxT("Doxygen:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText11 = new wxStaticText( this, wxID_ANY, _("Doxygen:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText11->Wrap( -1 );
 	m_staticText11->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
 	
@@ -76,19 +49,17 @@ CommentPageBase::CommentPageBase( wxWindow* parent, wxWindowID id, const wxPoint
 	
 	bSizer1->Add( bSizer21, 0, wxEXPAND, 5 );
 	
-	m_checkBoxUseSlash2Starts = new wxCheckBox( this, wxID_ANY, wxT("Use '/**' as doxygen block start (else use '/*!')"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxUseSlash2Starts = new wxCheckBox( this, wxID_ANY, _("Use '/**' as doxygen block start (else use '/*!')"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxUseSlash2Starts->SetValue(true);
-	
 	bSizer1->Add( m_checkBoxUseSlash2Starts, 0, wxALL, 5 );
 	
-	m_checkBoxUseShtroodel = new wxCheckBox( this, wxID_ANY, wxT("Use '@' as doxygen keyword prefix"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+	m_checkBoxUseShtroodel = new wxCheckBox( this, wxID_ANY, _("Use '@' as doxygen keyword prefix"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_checkBoxUseShtroodel, 0, wxALL, 5 );
 	
 	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline4, 0, wxEXPAND | wxALL, 5 );
 	
-	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("CodeLite contains a built-in doxygen documentation generator which adds doxygen comments to your code.\nHere you can set the prefix that will placed on top of the dynamic content of the comment:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( this, wxID_ANY, _("CodeLite contains a built-in doxygen documentation generator which adds doxygen comments to your code.\nHere you can set the prefix that will placed on top of the dynamic content of the comment:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	bSizer1->Add( m_staticText4, 0, wxALL|wxEXPAND, 5 );
 	
@@ -100,14 +71,14 @@ CommentPageBase::CommentPageBase( wxWindow* parent, wxWindowID id, const wxPoint
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText6 = new wxStaticText( this, wxID_ANY, wxT("Class prefix:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6 = new wxStaticText( this, wxID_ANY, _("Class prefix:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
 	fgSizer1->Add( m_staticText6, 0, wxALL, 5 );
 	
 	m_textCtrlClassPattern = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
 	fgSizer1->Add( m_textCtrlClassPattern, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_staticText7 = new wxStaticText( this, wxID_ANY, wxT("Function prefix:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7 = new wxStaticText( this, wxID_ANY, _("Function prefix:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText7->Wrap( -1 );
 	fgSizer1->Add( m_staticText7, 0, wxALL, 5 );
 	
@@ -119,7 +90,7 @@ CommentPageBase::CommentPageBase( wxWindow* parent, wxWindowID id, const wxPoint
 	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );
 	
-	m_staticText12 = new wxStaticText( this, wxID_ANY, wxT("The following macros are available:\n$(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name)\n$(CurrentFileFullPath), $(CurrentFileExt), $(ProjectName), $(WorksapceName)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText12 = new wxStaticText( this, wxID_ANY, _("The following macros are available:\n$(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name)\n$(CurrentFileFullPath), $(CurrentFileExt), $(ProjectName), $(WorksapceName)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText12->Wrap( -1 );
 	bSizer1->Add( m_staticText12, 0, wxALL|wxEXPAND, 5 );
 	
@@ -134,4 +105,5 @@ CommentPageBase::~CommentPageBase()
 {
 	// Disconnect Events
 	m_checkBoxUseShtroodel->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CommentPageBase::OnUseAtPrefix ), NULL, this );
+	
 }

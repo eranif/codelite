@@ -54,7 +54,7 @@ protected:
 	wxButton* m_buttonCancel;
 
 public:
-	FreeTextDialog( wxWindow* parent, wxString value = wxEmptyString, int id = wxID_ANY, wxString title = wxT("Edit"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 481,299 ), int style = wxDEFAULT_DIALOG_STYLE);
+	FreeTextDialog( wxWindow* parent, wxString value = wxEmptyString, int id = wxID_ANY, wxString title = _("Edit"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 481,299 ), int style = wxDEFAULT_DIALOG_STYLE);
 	wxString GetValue() const { return m_text->GetValue(); }
 
 };

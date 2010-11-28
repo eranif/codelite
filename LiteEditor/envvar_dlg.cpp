@@ -60,7 +60,7 @@ EnvVarDlg::EnvVarDlg( wxWindow* parent, wxWindowID id, const wxString& title, co
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText1 = new wxStaticText( m_panel1, wxID_ANY, wxT("Variable Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( m_panel1, wxID_ANY, _("Variable Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	fgSizer2->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -69,7 +69,7 @@ EnvVarDlg::EnvVarDlg( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	fgSizer2->Add( m_textName, 1, wxALL|wxEXPAND, 5 );
 	
-	m_staticText2 = new wxStaticText( m_panel1, wxID_ANY, wxT("Variable Value:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( m_panel1, wxID_ANY, _("Variable Value:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	fgSizer2->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -87,11 +87,11 @@ EnvVarDlg::EnvVarDlg( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* bSizer11;
 	bSizer11 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonOK = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonOK->SetDefault(); 
 	bSizer11->Add( m_buttonOK, 0, wxALL, 5 );
 	
-	m_buttonCacnel = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCacnel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer11->Add( m_buttonCacnel, 0, wxALL, 5 );
 	
 	bSizer4->Add( bSizer11, 0, wxALIGN_CENTER_HORIZONTAL, 5 );

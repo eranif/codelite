@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -28,13 +28,11 @@ CscopeTabBase::CscopeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	bSizer31->Add( m_choiceSearchScope, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_checkBoxUpdateDb = new wxCheckBox( this, wxID_ANY, _("Update Db"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	m_checkBoxUpdateDb->SetToolTip( _("Update the databse before executing any CScope command") );
 	
 	bSizer31->Add( m_checkBoxUpdateDb, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_checkBoxRevertedIndex = new wxCheckBox( this, wxID_ANY, _("Create reverted Index"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	m_checkBoxRevertedIndex->SetToolTip( _("Create reverted Index database") );
 	
 	bSizer31->Add( m_checkBoxRevertedIndex, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -83,4 +81,5 @@ CscopeTabBase::~CscopeTabBase()
 	m_buttonClear->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CscopeTabBase::OnClearResultsUI ), NULL, this );
 	m_treeCtrlResults->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( CscopeTabBase::OnLeftDClick ), NULL, this );
 	m_treeCtrlResults->Disconnect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( CscopeTabBase::OnItemActivated ), NULL, this );
+	
 }

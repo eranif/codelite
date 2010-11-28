@@ -60,7 +60,7 @@ protected:
 	virtual void OnButtonCancel(wxCommandEvent &event);
 
 public:
-	DependenciesDlg( wxWindow* parent, const wxString &projectName, int id = wxID_ANY, wxString title = wxT("Build Order"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 700,450 ), int style = wxDEFAULT_DIALOG_STYLE );
+	DependenciesDlg( wxWindow* parent, const wxString &projectName, int id = wxID_ANY, wxString title = _("Build Order"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 700,450 ), int style = wxDEFAULT_DIALOG_STYLE );
 
 };
 

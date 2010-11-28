@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -92,4 +92,5 @@ ContinousBuildBasePane::~ContinousBuildBasePane()
 	m_listBoxQueue->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnEnableContBuildUI ), NULL, this );
 	m_staticText4->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnEnableContBuildUI ), NULL, this );
 	m_listBoxFailedFiles->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ContinousBuildBasePane::OnEnableContBuildUI ), NULL, this );
+	
 }

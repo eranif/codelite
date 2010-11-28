@@ -64,7 +64,7 @@ protected:
 	void OnAskForEachFile(wxCommandEvent &event);
 
 public:
-	CloseAllDialog( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Close All"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 424,127 ), int style = wxDEFAULT_DIALOG_STYLE );
+	CloseAllDialog( wxWindow* parent, int id = wxID_ANY, wxString title = _("Close All"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 424,127 ), int style = wxDEFAULT_DIALOG_STYLE );
 };
 
 #endif //__close_all_dlg__

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -59,13 +59,13 @@ class ImplementParentVirtualFunctionsBase : public wxDialog
 		
 		ImplementParentVirtualFunctionsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Implement Parent Virtual Functions"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~ImplementParentVirtualFunctionsBase();
+		
 		void m_splitter1OnIdle( wxIdleEvent& )
 		{
 			m_splitter1->SetSashPosition( 0 );
 			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( ImplementParentVirtualFunctionsBase::m_splitter1OnIdle ), NULL, this );
 		}
 		
-	
 };
 
 #endif //__implementparentvirtualfunctionsbase__

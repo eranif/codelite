@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -19,7 +19,7 @@ NewIneritanceBaseDlg::NewIneritanceBaseDlg( wxWindow* parent, wxWindowID id, con
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Parent class:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Parent class:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	bSizer5->Add( m_staticText2, 0, wxALL|wxEXPAND, 5 );
 	
@@ -29,16 +29,16 @@ NewIneritanceBaseDlg::NewIneritanceBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_textCtrlInhertiance = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxTE_RICH2 );
 	bSizer2->Add( m_textCtrlInhertiance, 1, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	
-	m_buttonMore = new wxButton( this, wxID_ANY, wxT("More..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+	m_buttonMore = new wxButton( this, wxID_ANY, _("More..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
 	bSizer2->Add( m_buttonMore, 0, wxTOP|wxBOTTOM, 5 );
 	
 	bSizer5->Add( bSizer2, 0, wxEXPAND, 0 );
 	
-	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Inheritance access:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Inheritance access:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	bSizer5->Add( m_staticText1, 0, wxALL, 5 );
 	
-	wxString m_choiceAccessChoices[] = { wxT("public"), wxT("private"), wxT("protected"), wxT("virtual") };
+	wxString m_choiceAccessChoices[] = { _("public"), _("private"), _("protected"), _("virtual") };
 	int m_choiceAccessNChoices = sizeof( m_choiceAccessChoices ) / sizeof( wxString );
 	m_choiceAccess = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceAccessNChoices, m_choiceAccessChoices, 0 );
 	m_choiceAccess->SetSelection( 0 );
@@ -55,10 +55,10 @@ NewIneritanceBaseDlg::NewIneritanceBaseDlg( wxWindow* parent, wxWindowID id, con
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonOK = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_buttonOK, 0, wxALL, 5 );
 	
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_buttonCancel, 0, wxALL, 5 );
 	
 	bSizer1->Add( bSizer3, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -77,4 +77,5 @@ NewIneritanceBaseDlg::~NewIneritanceBaseDlg()
 {
 	// Disconnect Events
 	m_buttonMore->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewIneritanceBaseDlg::OnButtonMore ), NULL, this );
+	
 }

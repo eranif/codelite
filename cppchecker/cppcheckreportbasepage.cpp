@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -69,4 +69,5 @@ CppCheckReportBasePage::~CppCheckReportBasePage()
 	m_buttonClear->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CppCheckReportBasePage::OnClearReportUI ), NULL, this );
 	m_buttonStop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CppCheckReportBasePage::OnStopChecking ), NULL, this );
 	m_buttonStop->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CppCheckReportBasePage::OnStopCheckingUI ), NULL, this );
+	
 }

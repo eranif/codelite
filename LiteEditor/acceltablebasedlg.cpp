@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -19,12 +19,12 @@ AccelTableBaseDlg::AccelTableBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Filter"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Filter"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	bSizer5->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlFilter = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH );
-	m_textCtrlFilter->SetToolTip( wxT("Type here to find an entry by its action") );
+	m_textCtrlFilter->SetToolTip( _("Type here to find an entry by its action") );
 	
 	bSizer5->Add( m_textCtrlFilter, 1, wxALL, 5 );
 	
@@ -39,10 +39,10 @@ AccelTableBaseDlg::AccelTableBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonEdit = new wxButton( this, wxID_ANY, wxT("&Edit..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonEdit = new wxButton( this, wxID_ANY, _("&Edit..."), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_buttonEdit, 0, wxALL, 5 );
 	
-	m_buttonDefault = new wxButton( this, wxID_ANY, wxT("&Defaults"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDefault = new wxButton( this, wxID_ANY, _("&Defaults"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_buttonDefault, 0, wxALL, 5 );
 	
 	bSizer4->Add( bSizer3, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -55,11 +55,11 @@ AccelTableBaseDlg::AccelTableBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_button1 = new wxButton( this, wxID_OK, wxT("&Ok"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button1 = new wxButton( this, wxID_OK, _("&Ok"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_button1->SetDefault(); 
 	bSizer2->Add( m_button1, 0, wxALL, 5 );
 	
-	m_button2 = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button2 = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_button2, 0, wxALL, 5 );
 	
 	bSizer1->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -89,4 +89,5 @@ AccelTableBaseDlg::~AccelTableBaseDlg()
 	m_buttonEdit->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AccelTableBaseDlg::OnEditButton ), NULL, this );
 	m_buttonDefault->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AccelTableBaseDlg::OnButtonDefaults ), NULL, this );
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AccelTableBaseDlg::OnButtonOk ), NULL, this );
+	
 }

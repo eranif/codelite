@@ -31,20 +31,20 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	wxBitmap commentsBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("cc/16/note"));
 	m_toolBar1 = new clToolBar( m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, (1 << 5) /* wxAUI_TB_VERTICAL */);
 	m_toolBar1->AddTool( TOOL_SHOW_PRIVATE_MEMBERS, 
-						 wxT("Show Protected / Private Items"), 
+						 _("Show Protected / Private Items"), 
 						 bmp, 
 						 bmp, 
 						 wxITEM_CHECK, 
-						 wxT("Show Only Public Items"), 
+						 _("Show Only Public Items"), 
 						 wxEmptyString,
 						 NULL);
 						 
 	m_toolBar1->AddTool( TOOL_SHOW_ITEM_COMMENTS, 
-						 wxT("Show Item Comments"), 
+						 _("Show Item Comments"), 
 						 commentsBmp, 
 						 commentsBmp, 
 						 wxITEM_CHECK, 
-						 wxT("Show Item Comments"), 
+						 _("Show Item Comments"), 
 						 wxEmptyString,
 						 NULL);
 						 

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -78,4 +78,5 @@ EditorSettingsFoldingBase::~EditorSettingsFoldingBase()
 	m_foldStyle->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldingMarginUI ), NULL, this );
 	m_staticText21->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldColourUI ), NULL, this );
 	m_colourPicker->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldColourUI ), NULL, this );
+	
 }

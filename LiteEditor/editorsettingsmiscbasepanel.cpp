@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -14,16 +14,16 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	wxString m_toolbarIconSizeChoices[] = { wxT("Toolbar uses small icons (16x16)"), wxT("Toolbar uses large icons (24x24)") };
+	wxString m_toolbarIconSizeChoices[] = { _("Toolbar uses small icons (16x16)"), _("Toolbar uses large icons (24x24)") };
 	int m_toolbarIconSizeNChoices = sizeof( m_toolbarIconSizeChoices ) / sizeof( wxString );
 	m_toolbarIconSize = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_toolbarIconSizeNChoices, m_toolbarIconSizeChoices, 0 );
 	m_toolbarIconSize->SetSelection( 1 );
 	bSizer1->Add( m_toolbarIconSize, 0, wxALL|wxEXPAND, 5 );
 	
-	m_useSingleToolbar = new wxCheckBox( this, wxID_ANY, wxT("Use single toolbar"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_useSingleToolbar = new wxCheckBox( this, wxID_ANY, _("Use single toolbar"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_useSingleToolbar, 0, wxALL|wxEXPAND, 5 );
 	
-	m_checkBoxEnableMSWTheme = new wxCheckBox( this, wxID_ANY, wxT("Enable Windows(R) theme for Vista / Windows 7"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxEnableMSWTheme = new wxCheckBox( this, wxID_ANY, _("Enable Windows(R) theme for Vista / Windows 7"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_checkBoxEnableMSWTheme, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticline3 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -35,7 +35,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("File font encoding"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( this, wxID_ANY, _("File font encoding"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	fgSizer1->Add( m_staticText1, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
@@ -49,18 +49,18 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
 	
-	m_showSplashScreen = new wxCheckBox( this, wxID_ANY, wxT("Show splashscreen on startup"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_showSplashScreen = new wxCheckBox( this, wxID_ANY, _("Show splashscreen on startup"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_showSplashScreen->SetValue(true); 
 	bSizer1->Add( m_showSplashScreen, 0, wxALL, 5 );
 	
-	m_singleAppInstance = new wxCheckBox( this, wxID_ANY, wxT("Allow only single instance running"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_singleAppInstance = new wxCheckBox( this, wxID_ANY, _("Allow only single instance running"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_singleAppInstance, 0, wxALL, 5 );
 	
-	m_versionCheckOnStartup = new wxCheckBox( this, wxID_ANY, wxT("Check for new version on startup"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_versionCheckOnStartup = new wxCheckBox( this, wxID_ANY, _("Check for new version on startup"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_versionCheckOnStartup->SetValue(true); 
 	bSizer1->Add( m_versionCheckOnStartup, 0, wxALL, 5 );
 	
-	m_fullFilePath = new wxCheckBox( this, wxID_ANY, wxT("Show file's full path in frame title"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_fullFilePath = new wxCheckBox( this, wxID_ANY, _("Show file's full path in frame title"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_fullFilePath->SetValue(true); 
 	bSizer1->Add( m_fullFilePath, 0, wxALL, 5 );
 	
@@ -73,21 +73,21 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Clear recent workspace / files history"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Clear recent workspace / files history"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	fgSizer2->Add( m_staticText2, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_clearButton = new wxButton( this, wxID_ANY, wxT("&Clear"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_clearButton = new wxButton( this, wxID_ANY, _("&Clear"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_clearButton, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
 	
-	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Max items kept in find / replace dialog:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Max items kept in find / replace dialog:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer2->Add( m_staticText3, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_maxItemsFindReplace = new wxSpinCtrl( this, wxID_ANY, wxT("10"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 50, 10 );
 	fgSizer2->Add( m_maxItemsFindReplace, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
 	
-	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Maximum number of tabs opened in the editor:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Maximum number of tabs opened in the editor:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	fgSizer2->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	

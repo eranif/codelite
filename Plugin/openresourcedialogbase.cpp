@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -111,4 +111,5 @@ OpenResourceDialogBase::~OpenResourceDialogBase()
 	m_checkBoxUsePartialMatching->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( OpenResourceDialogBase::OnUsePartialMatching ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( OpenResourceDialogBase::OnOK ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( OpenResourceDialogBase::OnOKUI ), NULL, this );
+	
 }

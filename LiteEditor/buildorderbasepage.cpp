@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : buildorderbasepage.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -51,7 +26,7 @@ DependenciesPageBase::DependenciesPageBase( wxWindow* parent, wxWindowID id, con
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxVERTICAL );
 	
-	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Select build order for configuration:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Select build order for configuration:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	sbSizer1->Add( m_staticText3, 0, wxALL, 5 );
 	
@@ -66,7 +41,7 @@ DependenciesPageBase::DependenciesPageBase( wxWindow* parent, wxWindowID id, con
 	wxBoxSizer* bSizer31;
 	bSizer31 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Projects:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Projects:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	bSizer31->Add( m_staticText1, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	
@@ -79,7 +54,7 @@ DependenciesPageBase::DependenciesPageBase( wxWindow* parent, wxWindowID id, con
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Build Order:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Build Order:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	bSizer4->Add( m_staticText2, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	
@@ -100,10 +75,10 @@ DependenciesPageBase::DependenciesPageBase( wxWindow* parent, wxWindowID id, con
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonDown = new wxButton( this, wxID_ANY, wxT("Down"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDown = new wxButton( this, wxID_ANY, _("Down"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_buttonDown, 0, wxALL, 5 );
 	
-	m_buttonUp = new wxButton( this, wxID_ANY, wxT("Up"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonUp = new wxButton( this, wxID_ANY, _("Up"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_buttonUp, 0, wxALL, 5 );
 	
 	bSizer6->Add( bSizer8, 1, wxEXPAND, 5 );
@@ -111,7 +86,7 @@ DependenciesPageBase::DependenciesPageBase( wxWindow* parent, wxWindowID id, con
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonApply = new wxButton( this, wxID_ANY, wxT("Apply"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonApply = new wxButton( this, wxID_ANY, _("Apply"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer7->Add( m_buttonApply, 0, wxALL, 5 );
 	
 	bSizer6->Add( bSizer7, 0, 0, 5 );
@@ -145,4 +120,5 @@ DependenciesPageBase::~DependenciesPageBase()
 	m_buttonUp->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DependenciesPageBase::OnMoveUp ), NULL, this );
 	m_buttonApply->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DependenciesPageBase::OnApplyButton ), NULL, this );
 	m_buttonApply->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DependenciesPageBase::OnApplyButtonUI ), NULL, this );
+	
 }

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -7,6 +7,8 @@
 
 #ifndef __attachdbgprocbasedlg__
 #define __attachdbgprocbasedlg__
+
+#include <wx/intl.h>
 
 #include <wx/string.h>
 #include <wx/stattext.h>
@@ -56,7 +58,7 @@ class AttachDbgProcBaseDlg : public wxDialog
 	
 	public:
 		
-		AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Attach debugger to process:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 445,471 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Attach debugger to process:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 445,471 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~AttachDbgProcBaseDlg();
 	
 };

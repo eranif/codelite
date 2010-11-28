@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -42,14 +42,14 @@ OptionsBaseDlg2::OptionsBaseDlg2( wxWindow* parent, wxWindowID id, const wxStrin
 	wxBoxSizer* btnSizer;
 	btnSizer = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_okButton = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_okButton = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_okButton->SetDefault(); 
 	btnSizer->Add( m_okButton, 0, wxALIGN_RIGHT|wxALL, 5 );
 	
-	m_cancelButton = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_cancelButton = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_cancelButton, 0, wxALIGN_RIGHT|wxALL, 5 );
 	
-	m_applyButton = new wxButton( this, wxID_APPLY, wxT("Apply"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_applyButton = new wxButton( this, wxID_APPLY, _("Apply"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_applyButton, 0, wxALIGN_RIGHT|wxALL, 5 );
 	
 	mainSizer->Add( btnSizer, 0, wxALIGN_CENTER, 5 );
@@ -75,4 +75,5 @@ OptionsBaseDlg2::~OptionsBaseDlg2()
 	m_okButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( OptionsBaseDlg2::OnButtonOK ), NULL, this );
 	m_cancelButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( OptionsBaseDlg2::OnButtonCancel ), NULL, this );
 	m_applyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( OptionsBaseDlg2::OnButtonApply ), NULL, this );
+	
 }

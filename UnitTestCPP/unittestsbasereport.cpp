@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : unittestsbasereport.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -45,14 +20,14 @@ UnitTestsBasePage::UnitTestsBasePage( wxWindow* parent, wxWindowID id, const wxP
 	fgSizer3->SetFlexibleDirection( wxBOTH );
 	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText7 = new wxStaticText( this, wxID_ANY, wxT("Passed:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7 = new wxStaticText( this, wxID_ANY, _("Passed:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText7->Wrap( -1 );
 	fgSizer3->Add( m_staticText7, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_progressPassed = new ProgressCtrl(this);
 	fgSizer3->Add( m_progressPassed, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText8 = new wxStaticText( this, wxID_ANY, wxT("Failed:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText8 = new wxStaticText( this, wxID_ANY, _("Failed:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText8->Wrap( -1 );
 	fgSizer3->Add( m_staticText8, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -64,7 +39,7 @@ UnitTestsBasePage::UnitTestsBasePage( wxWindow* parent, wxWindowID id, const wxP
 	m_staticline3 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer8->Add( m_staticline3, 0, wxEXPAND | wxALL, 5 );
 	
-	m_staticText9 = new wxStaticText( this, wxID_ANY, wxT("Summary:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText9 = new wxStaticText( this, wxID_ANY, _("Summary:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText9->Wrap( -1 );
 	m_staticText9->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
 	
@@ -76,7 +51,7 @@ UnitTestsBasePage::UnitTestsBasePage( wxWindow* parent, wxWindowID id, const wxP
 	fgSizer4->SetFlexibleDirection( wxBOTH );
 	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText10 = new wxStaticText( this, wxID_ANY, wxT("Total tests:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText10 = new wxStaticText( this, wxID_ANY, _("Total tests:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText10->Wrap( -1 );
 	fgSizer4->Add( m_staticText10, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -84,7 +59,7 @@ UnitTestsBasePage::UnitTestsBasePage( wxWindow* parent, wxWindowID id, const wxP
 	m_staticTextTotalTests->Wrap( -1 );
 	fgSizer4->Add( m_staticTextTotalTests, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_staticText12 = new wxStaticText( this, wxID_ANY, wxT("Tests failed:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText12 = new wxStaticText( this, wxID_ANY, _("Tests failed:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText12->Wrap( -1 );
 	fgSizer4->Add( m_staticText12, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -92,7 +67,7 @@ UnitTestsBasePage::UnitTestsBasePage( wxWindow* parent, wxWindowID id, const wxP
 	m_staticTextFailTestsNum->Wrap( -1 );
 	fgSizer4->Add( m_staticTextFailTestsNum, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_staticText14 = new wxStaticText( this, wxID_ANY, wxT("Tests passed:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText14 = new wxStaticText( this, wxID_ANY, _("Tests passed:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText14->Wrap( -1 );
 	fgSizer4->Add( m_staticText14, 0, wxALL, 5 );
 	
@@ -105,7 +80,7 @@ UnitTestsBasePage::UnitTestsBasePage( wxWindow* parent, wxWindowID id, const wxP
 	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer8->Add( m_staticline4, 0, wxEXPAND | wxALL, 5 );
 	
-	m_staticText16 = new wxStaticText( this, wxID_ANY, wxT("Errors:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText16 = new wxStaticText( this, wxID_ANY, _("Errors:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText16->Wrap( -1 );
 	m_staticText16->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
 	
@@ -125,4 +100,5 @@ UnitTestsBasePage::~UnitTestsBasePage()
 {
 	// Disconnect Events
 	m_listCtrlErrors->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( UnitTestsBasePage::OnItemActivated ), NULL, this );
+	
 }

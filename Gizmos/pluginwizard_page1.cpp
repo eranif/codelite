@@ -44,21 +44,21 @@ PluginWizardPage1::PluginWizardPage1( wxWizard* parent)
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 
-	m_staticText5 = new wxStaticText( this, wxID_ANY, wxT("General Information:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5 = new wxStaticText( this, wxID_ANY, _("General Information:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
 	bSizer1->Add( m_staticText5, 0, wxALL, 5 );
 
 	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
 
-	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Plugin Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Plugin Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	bSizer1->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_textCtrlPluginName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_textCtrlPluginName, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Description:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Description:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	bSizer1->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -76,14 +76,14 @@ void PluginWizardPage1::OnValidate(wxWizardEvent &event)
 
 	//we dont accept empty plugin names
 	if(name.IsEmpty()){
-		wxMessageBox(_("Missing plugin name"), wxT("CodeLite"), wxOK | wxICON_WARNING);
+		wxMessageBox(_("Missing plugin name"), _("CodeLite"), wxOK | wxICON_WARNING);
 		event.Veto();
 		return;
 	}
 	//a valid name must contains only
 	//[A-Za-z_]
 	if(name.find_first_not_of(wxT("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_")) != wxString::npos){
-		wxMessageBox(_("Invalid characters in plugin name\nonly [A-Za-z_0-9] are allowed"), wxT("CodeLite"), wxOK | wxICON_WARNING);
+		wxMessageBox(_("Invalid characters in plugin name\nonly [A-Za-z_0-9] are allowed"), _("CodeLite"), wxOK | wxICON_WARNING);
 		event.Veto();
 		return;
 	}

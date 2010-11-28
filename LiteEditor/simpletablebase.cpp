@@ -34,11 +34,11 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
 	{
 		wxBoxSizer* bSizer4;
 		bSizer4 = new wxBoxSizer( wxVERTICAL );
-		m_button1 = new wxButton( this, wxID_ANY, wxT("New..."), wxDefaultPosition, wxDefaultSize, 0 );
+		m_button1 = new wxButton( this, wxID_ANY, _("New..."), wxDefaultPosition, wxDefaultSize, 0 );
 		bSizer4->Add( m_button1, 0, wxALL|wxEXPAND, 5 );
-		m_button2 = new wxButton( this, wxID_ANY, wxT("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
+		m_button2 = new wxButton( this, wxID_ANY, _("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
 		bSizer4->Add( m_button2, 0, wxALL|wxEXPAND, 5 );
-		m_button3 = new wxButton( this, wxID_ANY, wxT("Delete All"), wxDefaultPosition, wxDefaultSize, 0 );
+		m_button3 = new wxButton( this, wxID_ANY, _("Delete All"), wxDefaultPosition, wxDefaultSize, 0 );
 		bSizer4->Add( m_button3, 0, wxALL|wxEXPAND, 5 );
 		bSizer3->Add( bSizer4, 0, wxEXPAND, 5 );
 	}
@@ -46,7 +46,7 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
 	{
 		wxBoxSizer* bSizer4;
 		bSizer4 = new wxBoxSizer( wxVERTICAL );
-		m_button1 = new wxButton( this, wxID_REFRESH, wxT("Refresh"), wxDefaultPosition, wxDefaultSize, 0 );
+		m_button1 = new wxButton( this, wxID_REFRESH, _("Refresh"), wxDefaultPosition, wxDefaultSize, 0 );
 		bSizer4->Add( m_button1, 0, wxALL|wxEXPAND, 5 );
 		bSizer3->Add( bSizer4, 0, wxEXPAND, 5 );
 	}

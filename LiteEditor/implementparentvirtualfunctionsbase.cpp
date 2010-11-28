@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -105,4 +105,5 @@ ImplementParentVirtualFunctionsBase::~ImplementParentVirtualFunctionsBase()
 	// Disconnect Events
 	m_checkBoxAddDoxy->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ImplementParentVirtualFunctionsBase::OnAddDoxy ), NULL, this );
 	m_checkBoxAddVirtualKeyword->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ImplementParentVirtualFunctionsBase::OnAddVirtual ), NULL, this );
+	
 }

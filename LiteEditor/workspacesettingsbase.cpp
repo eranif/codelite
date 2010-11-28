@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -168,4 +168,5 @@ WorkspaceSettingsBase::~WorkspaceSettingsBase()
 	m_button8->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceSettingsBase::OnClearAllExcludePathsUI ), NULL, this );
 	m_choiceEnvSets->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( WorkspaceSettingsBase::OnEnvSelected ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnButtonOK ), NULL, this );
+	
 }

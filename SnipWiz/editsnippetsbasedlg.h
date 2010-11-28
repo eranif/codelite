@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -7,6 +7,8 @@
 
 #ifndef __editsnippetsbasedlg__
 #define __editsnippetsbasedlg__
+
+#include <wx/intl.h>
 
 #include <wx/string.h>
 #include <wx/listbox.h>
@@ -69,7 +71,8 @@ class EditSnippetsBaseDlg : public wxDialog
 		
 	
 	public:
-		EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Edit Snippets"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+		
+		EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Edit Snippets"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
 		~EditSnippetsBaseDlg();
 	
 };

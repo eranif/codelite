@@ -67,7 +67,7 @@ protected:
 	wxButton* m_buttonCacnel;
 
 public:
-	EnvVarDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Environment Variable"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
+	EnvVarDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Environment Variable"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 	~EnvVarDlg();
 	
 	wxString GetName() const ;

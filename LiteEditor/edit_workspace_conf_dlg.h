@@ -62,7 +62,7 @@ protected:
 	void OnListBoxDClick(wxCommandEvent &event);
 
 public:
-	EditWorkspaceConfDlg( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Edit Workspace Configuration"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 362,261 ), int style = wxDEFAULT_DIALOG_STYLE );
+	EditWorkspaceConfDlg( wxWindow* parent, int id = wxID_ANY, wxString title = _("Edit Workspace Configuration"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 362,261 ), int style = wxDEFAULT_DIALOG_STYLE );
 
 };
 

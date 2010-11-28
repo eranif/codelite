@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug  4 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -11,7 +11,7 @@
 
 AddOptionCheckDialogBase::AddOptionCheckDialogBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetSizeHints( wxSize( -1,-1 ), wxDefaultSize );
 	
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
@@ -71,4 +71,5 @@ AddOptionCheckDialogBase::~AddOptionCheckDialogBase()
 	// Disconnect Events
 	m_checkListOptions->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( AddOptionCheckDialogBase::OnOptionToggled ), NULL, this );
 	m_textOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( AddOptionCheckDialogBase::OnOptionsText ), NULL, this );
+	
 }

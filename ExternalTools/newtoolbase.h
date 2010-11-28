@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -7,6 +7,8 @@
 
 #ifndef __newtoolbase__
 #define __newtoolbase__
+
+#include <wx/intl.h>
 
 #include <wx/string.h>
 #include <wx/stattext.h>
@@ -73,7 +75,7 @@ class NewToolBase : public wxDialog
 	
 	public:
 		
-		NewToolBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("External Tool"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
+		NewToolBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("External Tool"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~NewToolBase();
 	
 };

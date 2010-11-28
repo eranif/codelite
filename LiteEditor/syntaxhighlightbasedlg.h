@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -8,12 +8,14 @@
 #ifndef __syntaxhighlightbasedlg__
 #define __syntaxhighlightbasedlg__
 
+#include <wx/intl.h>
+
 #include <wx/statline.h>
+#include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/string.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/dialog.h>
@@ -53,7 +55,7 @@ class SyntaxHighlightBaseDlg : public wxDialog
 	
 	public:
 		
-		SyntaxHighlightBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Syntax Highlight:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 557,373 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		SyntaxHighlightBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Syntax Highlight:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 557,373 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~SyntaxHighlightBaseDlg();
 	
 };

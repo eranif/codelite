@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -63,4 +63,5 @@ NavBarBase::~NavBarBase()
 	m_scope->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( NavBarBase::OnScopeListMouseDown ), NULL, this );
 	m_func->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( NavBarBase::OnFunction ), NULL, this );
 	m_func->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( NavBarBase::OnFuncListMouseDown ), NULL, this );
+	
 }

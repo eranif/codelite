@@ -54,16 +54,16 @@ BuildPage::BuildPage( wxWindow* parent, int id, wxPoint pos, wxSize size, int st
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_staticText = new wxStaticText( this, wxID_ANY, wxT("Available Build Systems:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText = new wxStaticText( this, wxID_ANY, _("Available Build Systems:"), wxDefaultPosition, wxDefaultSize, 0 );
 	mainSizer->Add( m_staticText, 0, wxALL, 5 );
 
 	m_bookBuildSystems = new wxChoicebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCHB_DEFAULT );
 	mainSizer->Add( m_bookBuildSystems, 0, wxEXPAND | wxALL, 5 );
 
-	m_fixOnStartup = new wxCheckBox(this, wxID_ANY, wxT("Fix build tool path on startup"));
+	m_fixOnStartup = new wxCheckBox(this, wxID_ANY, _("Fix build tool path on startup"));
 	mainSizer->Add( m_fixOnStartup, 0, wxEXPAND | wxALL, 5 );
 
-	m_generateAsteriskCleanTarget = new wxCheckBox(this, wxID_ANY, wxT("Use asterisk (*) for the clean target (e.g. rm -f *.o)"));
+	m_generateAsteriskCleanTarget = new wxCheckBox(this, wxID_ANY, _("Use asterisk (*) for the clean target (e.g. rm -f *.o)"));
 	mainSizer->Add( m_generateAsteriskCleanTarget, 0, wxEXPAND | wxALL, 5 );
 
 	long fix(1);
@@ -135,29 +135,29 @@ BuildSystemPage::BuildSystemPage(wxWindow *parent, wxString name)
 	fgSizer4->SetFlexibleDirection( wxBOTH );
 	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_staticText17 = new wxStaticText( this, wxID_ANY, wxT("Build Tool:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText17 = new wxStaticText( this, wxID_ANY, _("Build Tool:"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer4->Add( m_staticText17, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_filePicker = new FilePicker(this);
 	fgSizer4->Add( m_filePicker, 1, wxALL|wxEXPAND, 5 );
 
-	m_staticText18 = new wxStaticText( this, wxID_ANY, wxT("Build Tool Switches:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText18 = new wxStaticText( this, wxID_ANY, _("Build Tool Switches:"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer4->Add( m_staticText18, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_textBuildToolOptions = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer4->Add( m_textBuildToolOptions, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText19 = new wxStaticText( this, wxID_ANY, wxT("No. of concurrent jobs:"), wxDefaultPosition, wxDefaultSize, 0);
+	m_staticText19 = new wxStaticText( this, wxID_ANY, _("No. of concurrent jobs:"), wxDefaultPosition, wxDefaultSize, 0);
 	fgSizer4->Add( m_staticText19, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
 
 	wxArrayString choices;
-	choices.Add(wxT("1"));
-	choices.Add(wxT("2"));
-	choices.Add(wxT("3"));
-	choices.Add(wxT("4"));
-	choices.Add(wxT("unlimited"));
+	choices.Add(_("1"));
+	choices.Add(_("2"));
+	choices.Add(_("3"));
+	choices.Add(_("4"));
+	choices.Add(_("unlimited"));
 	//choices.Add(wxT("unspecified"));  // TODO: hops enable this and use to suppress -j opt switch
-	m_choiceJobs = new wxComboBox(this, wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, choices, wxCB_READONLY);
+	m_choiceJobs = new wxComboBox(this, wxID_ANY, _("1"), wxDefaultPosition, wxDefaultSize, choices, wxCB_READONLY);
 	fgSizer4->Add( m_choiceJobs, 1, wxALL|wxEXPAND, 5);
 	fgSizer4->AddGrowableCol( 1 );
 

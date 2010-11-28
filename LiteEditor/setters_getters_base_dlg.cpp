@@ -56,14 +56,14 @@ SettersGettersBaseDlg::SettersGettersBaseDlg( wxWindow* parent, wxWindowID id, c
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 
-	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Class Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Class Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	bSizer3->Add( m_staticText2, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	m_textClassName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
 	bSizer3->Add( m_textClassName, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
 
-	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Select members from the list below :"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Select members from the list below :"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	bSizer3->Add( m_staticText3, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 
@@ -72,18 +72,18 @@ SettersGettersBaseDlg::SettersGettersBaseDlg( wxWindow* parent, wxWindowID id, c
 
 	wxArrayString m_checkListMembersChoices;
 	m_checkListMembers = new SettersGettersTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxTR_HIDE_ROOT );
-	m_checkListMembers->AddRoot(wxT("Root"), false);
+	m_checkListMembers->AddRoot(_("Root"), false);
 
 	bSizer4->Add( m_checkListMembers, 1, wxALL|wxEXPAND, 5 );
 
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
 
-	m_buttonCheckAll = new wxButton( this, wxID_ANY, wxT("Check &All"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCheckAll = new wxButton( this, wxID_ANY, _("Check &All"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonCheckAll->SetDefault();
 	bSizer5->Add( m_buttonCheckAll, 0, wxALL, 5 );
 
-	m_buttonUncheckAll = new wxButton( this, wxID_ANY, wxT("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonUncheckAll = new wxButton( this, wxID_ANY, _("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer5->Add( m_buttonUncheckAll, 0, wxALL, 5 );
 
 	bSizer4->Add( bSizer5, 0, wxEXPAND, 5 );
@@ -126,13 +126,13 @@ SettersGettersBaseDlg::SettersGettersBaseDlg( wxWindow* parent, wxWindowID id, c
 //	bSizer3->Add( m_textPreview, 1, wxEXPAND | wxALL, 5 );
 
 	wxStaticBoxSizer* sbSizer1;
-	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, -1, wxT("Options:") ), wxHORIZONTAL );
+	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, -1, _("Options:") ), wxHORIZONTAL );
 
-	m_checkStartWithUppercase = new wxCheckBox( this, wxID_ANY, wxT("Function name starts with upper case letter"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkStartWithUppercase = new wxCheckBox( this, wxID_ANY, _("Function name starts with upper case letter"), wxDefaultPosition, wxDefaultSize, 0 );
 
 	sbSizer1->Add( m_checkStartWithUppercase, 0, wxALL, 5 );
 
-	m_checkFormat = new wxCheckBox( this, wxID_ANY, wxT("Format text after insertion"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkFormat = new wxCheckBox( this, wxID_ANY, _("Format text after insertion"), wxDefaultPosition, wxDefaultSize, 0 );
 
 	sbSizer1->Add( m_checkFormat, 0, wxALL, 5 );
 
@@ -143,11 +143,11 @@ SettersGettersBaseDlg::SettersGettersBaseDlg( wxWindow* parent, wxWindowID id, c
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_buttonOK = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonOK, 0, wxALL, 5 );
 	m_buttonOK->SetDefault();
 
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonCancel, 0, wxALL, 5 );
 
 	bSizer1->Add( bSizer2, 0, wxALIGN_RIGHT, 5 );

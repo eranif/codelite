@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -22,7 +22,7 @@ AttachDbgProcBaseDlg::AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id, con
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Debugger to use:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Debugger to use:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer1->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -31,7 +31,7 @@ AttachDbgProcBaseDlg::AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_choiceDebugger->SetSelection( 0 );
 	fgSizer1->Add( m_choiceDebugger, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText31 = new wxStaticText( this, wxID_ANY, wxT("Filter:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText31 = new wxStaticText( this, wxID_ANY, _("Filter:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText31->Wrap( -1 );
 	fgSizer1->Add( m_staticText31, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -40,7 +40,7 @@ AttachDbgProcBaseDlg::AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id, con
 	
 	bSizer1->Add( fgSizer1, 0, wxEXPAND, 5 );
 	
-	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Processes:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Processes:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	bSizer1->Add( m_staticText4, 0, wxALL, 5 );
 	
@@ -53,14 +53,14 @@ AttachDbgProcBaseDlg::AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id, con
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonOk = new wxButton( this, wxID_OK, wxT("&Attach"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOk = new wxButton( this, wxID_OK, _("&Attach"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonOk->SetDefault(); 
 	bSizer2->Add( m_buttonOk, 0, wxALL, 5 );
 	
-	m_button2 = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button2 = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_button2, 0, wxALL, 5 );
 	
-	m_buttonRefresh = new wxButton( this, wxID_REFRESH, wxT("&Refresh"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonRefresh = new wxButton( this, wxID_REFRESH, _("&Refresh"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonRefresh, 0, wxALL, 5 );
 	
 	bSizer1->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -88,4 +88,5 @@ AttachDbgProcBaseDlg::~AttachDbgProcBaseDlg()
 	m_listCtrlProcesses->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( AttachDbgProcBaseDlg::OnItemSelected ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( AttachDbgProcBaseDlg::OnBtnAttachUI ), NULL, this );
 	m_buttonRefresh->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AttachDbgProcBaseDlg::OnRefresh ), NULL, this );
+	
 }

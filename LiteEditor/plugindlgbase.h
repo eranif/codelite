@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -7,6 +7,8 @@
 
 #ifndef __plugindlgbase__
 #define __plugindlgbase__
+
+#include <wx/intl.h>
 
 #include <wx/string.h>
 #include <wx/stattext.h>
@@ -46,7 +48,8 @@ class PluginMgrDlgBase : public wxDialog
 		
 	
 	public:
-		PluginMgrDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Manage Plugins:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 672,425 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		
+		PluginMgrDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Plugins:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 672,425 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~PluginMgrDlgBase();
 	
 };

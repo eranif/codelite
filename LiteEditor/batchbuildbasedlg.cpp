@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : batchbuildbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -41,7 +16,7 @@ BatchBuildBaseDlg::BatchBuildBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText = new wxStaticText( this, wxID_ANY, wxT("Select the configurations to build/clean:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText = new wxStaticText( this, wxID_ANY, _("Select the configurations to build/clean:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText->Wrap( -1 );
 	bSizer1->Add( m_staticText, 0, wxALL|wxEXPAND, 5 );
 	
@@ -58,17 +33,17 @@ BatchBuildBaseDlg::BatchBuildBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonBuild = new wxButton( this, wxID_ANY, wxT("&Build"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonBuild = new wxButton( this, wxID_ANY, _("&Build"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonBuild->SetDefault(); 
 	bSizer4->Add( m_buttonBuild, 0, wxALL, 5 );
 	
-	m_buttonClean = new wxButton( this, wxID_ANY, wxT("&Clean"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonClean = new wxButton( this, wxID_ANY, _("&Clean"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_buttonClean, 0, wxALL, 5 );
 	
-	m_button3 = new wxButton( this, wxID_ANY, wxT("Check &All"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button3 = new wxButton( this, wxID_ANY, _("Check &All"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_button3, 0, wxALL, 5 );
 	
-	m_button4 = new wxButton( this, wxID_ANY, wxT("&Uncheck All"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button4 = new wxButton( this, wxID_ANY, _("&Uncheck All"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_button4, 0, wxALL, 5 );
 	
 	bSizer3->Add( bSizer4, 1, wxEXPAND, 5 );
@@ -76,10 +51,10 @@ BatchBuildBaseDlg::BatchBuildBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonDown = new wxButton( this, wxID_ANY, wxT("Move Up"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDown = new wxButton( this, wxID_ANY, _("Move Up"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer5->Add( m_buttonDown, 0, wxALL, 5 );
 	
-	m_buttonUp = new wxButton( this, wxID_ANY, wxT("Move Down"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonUp = new wxButton( this, wxID_ANY, _("Move Down"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer5->Add( m_buttonUp, 0, wxALL, 5 );
 	
 	bSizer3->Add( bSizer5, 1, wxEXPAND, 5 );
@@ -94,7 +69,7 @@ BatchBuildBaseDlg::BatchBuildBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonClose = new wxButton( this, wxID_CANCEL, wxT("Close"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonClose = new wxButton( this, wxID_CANCEL, _("Close"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add( m_buttonClose, 0, wxALL, 5 );
 	
 	bSizer1->Add( bSizer6, 0, wxALIGN_RIGHT, 5 );
@@ -136,4 +111,5 @@ BatchBuildBaseDlg::~BatchBuildBaseDlg()
 	m_buttonUp->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BatchBuildBaseDlg::OnMoveDown ), NULL, this );
 	m_buttonUp->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( BatchBuildBaseDlg::OnMoveDownUI ), NULL, this );
 	m_buttonClose->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BatchBuildBaseDlg::OnClose ), NULL, this );
+	
 }

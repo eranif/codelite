@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug 25 2009)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -7,6 +7,8 @@
 
 #ifndef __acceltablebasedlg__
 #define __acceltablebasedlg__
+
+#include <wx/intl.h>
 
 #include <wx/string.h>
 #include <wx/stattext.h>
@@ -53,7 +55,7 @@ class AccelTableBaseDlg : public wxDialog
 	
 	public:
 		
-		AccelTableBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Keyboard Shortcuts:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 819,530 ), long style = wxDEFAULT_DIALOG_STYLE );
+		AccelTableBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Keyboard Shortcuts:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 819,530 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~AccelTableBaseDlg();
 	
 };

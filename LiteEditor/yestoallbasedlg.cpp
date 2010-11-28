@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -21,7 +21,6 @@ YesToAllBaseDlg::YesToAllBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	bSizer1->Add( m_staticMsg, 1, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxAll = new wxCheckBox( this, wxID_ANY, _("Apply to all"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer1->Add( m_checkBoxAll, 0, wxALL, 5 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -53,4 +52,5 @@ YesToAllBaseDlg::~YesToAllBaseDlg()
 	// Disconnect Events
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( YesToAllBaseDlg::OnYesClicked ), NULL, this );
 	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( YesToAllBaseDlg::OnNoClicked ), NULL, this );
+	
 }

@@ -1,29 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : addincludefiledlgbase.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
  ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep 26 2007)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -46,7 +22,7 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase( wxWindow* parent, wxWindowID id, c
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText4 = new wxStaticText( m_mainPanel, wxID_ANY, wxT("Line that will be added:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( m_mainPanel, wxID_ANY, _("Line that will be added:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	bSizer9->Add( m_staticText4, 0, wxTOP|wxRIGHT, 5 );
 	
@@ -56,19 +32,19 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase( wxWindow* parent, wxWindowID id, c
 	m_textCtrlLineToAdd = new wxTextCtrl( m_mainPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add( m_textCtrlLineToAdd, 1, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 	
-	m_buttonClearCachedPaths = new wxButton( m_mainPanel, wxID_ANY, wxT("Clear Cached Paths"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonClearCachedPaths = new wxButton( m_mainPanel, wxID_ANY, _("Clear Cached Paths"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add( m_buttonClearCachedPaths, 0, wxALL, 5 );
 	
 	bSizer9->Add( bSizer6, 0, wxEXPAND, 5 );
 	
-	m_staticText5 = new wxStaticText( m_mainPanel, wxID_ANY, wxT("File's full path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5 = new wxStaticText( m_mainPanel, wxID_ANY, _("File's full path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
 	bSizer9->Add( m_staticText5, 0, wxTOP|wxRIGHT, 5 );
 	
 	m_textCtrlFullPath = new wxTextCtrl( m_mainPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
 	bSizer9->Add( m_textCtrlFullPath, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 	
-	m_staticText6 = new wxStaticText( m_mainPanel, wxID_ANY, wxT("Preview:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6 = new wxStaticText( m_mainPanel, wxID_ANY, _("Preview:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
 	bSizer9->Add( m_staticText6, 0, wxTOP|wxRIGHT, 5 );
 	
@@ -110,10 +86,10 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase( wxWindow* parent, wxWindowID id, c
 	wxBoxSizer* bSizer11;
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonUp = new wxButton( m_mainPanel, wxID_ANY, wxT("&Up"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonUp = new wxButton( m_mainPanel, wxID_ANY, _("&Up"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer11->Add( m_buttonUp, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	
-	m_buttonDown = new wxButton( m_mainPanel, wxID_ANY, wxT("&Down"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDown = new wxButton( m_mainPanel, wxID_ANY, _("&Down"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer11->Add( m_buttonDown, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	
 	bSizer12->Add( bSizer11, 0, wxEXPAND, 0 );
@@ -131,11 +107,11 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase( wxWindow* parent, wxWindowID id, c
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonOK = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonOK->SetDefault(); 
 	bSizer8->Add( m_buttonOK, 0, wxALL, 5 );
 	
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_buttonCancel, 0, wxALL, 5 );
 	
 	bSizer7->Add( bSizer8, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -149,4 +125,15 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase( wxWindow* parent, wxWindowID id, c
 	m_buttonUp->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AddIncludeFileDlgBase::OnButtonUp ), NULL, this );
 	m_buttonDown->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AddIncludeFileDlgBase::OnButtonDown ), NULL, this );
 	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AddIncludeFileDlgBase::OnButtonOK ), NULL, this );
+}
+
+AddIncludeFileDlgBase::~AddIncludeFileDlgBase()
+{
+	// Disconnect Events
+	m_textCtrlLineToAdd->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( AddIncludeFileDlgBase::OnTextUpdated ), NULL, this );
+	m_buttonClearCachedPaths->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AddIncludeFileDlgBase::OnClearCachedPaths ), NULL, this );
+	m_buttonUp->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AddIncludeFileDlgBase::OnButtonUp ), NULL, this );
+	m_buttonDown->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AddIncludeFileDlgBase::OnButtonDown ), NULL, this );
+	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AddIncludeFileDlgBase::OnButtonOK ), NULL, this );
+	
 }

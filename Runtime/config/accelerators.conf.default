@@ -129,15 +129,19 @@ about|Help|About...|
 swap_files|C++|Swap Header/Implementation file|F12
 find_decl|C++|Goto Declaration|
 find_impl|C++|Goto Implementation|
-go_to_function_start|C++|Goto Begining of Current Function|
-go_to_next_function|C++|Goto Begining of Next Function|
+go_to_function_start|C++::Search|Goto Begining of Current Function|
+go_to_next_function|C++::Search|Goto Begining of Next Function|
+find_references|C++::Search|Find References...|
 insert_doxy_comment|C++::Code Generation / Refactoring|Insert Doxygen Comment|Ctrl-Shift-D
 setters_getters|C++::Code Generation / Refactoring|Generate Setters/Getters...|
 move_impl|C++::Code Generation / Refactoring|Move Function Implementation to...|
 add_impl|C++::Code Generation / Refactoring|Add Function Implementation...|
 rename_function|C++::Code Generation / Refactoring|Rename Symbol...|Ctrl-Shift-H
-comment_selection|C++|Comment Selection|Ctrl-Shift-/
-comment_line|C++|Toggle Line Comment|Ctrl-/
+comment_selection|C++::Code Generation / Refactoring|Comment Selection|Ctrl-Shift-/
+comment_line|C++::Code Generation / Refactoring|Toggle Line Comment|Ctrl-/
+add_multi_impl|C++::Code Generation / Refactoring|Implement all Un-implemented Functions...|
+add_virtual_impl|C++::Code Generation / Refactoring|Implement inherited virtual Functions...|
+add_pure_virtual_impl|C++::Code Generation / Refactoring|Implement inherited pure virtual Functions...|
 add_include_file|C++|Add Include File|Ctrl-Shift-I
 insert_breakpoint|C++|Toggle Breakpoint|F9
 toggle_bookmark|C++|Toggle Bookmark|Ctrl-B

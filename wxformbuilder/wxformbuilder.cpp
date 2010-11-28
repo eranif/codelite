@@ -120,11 +120,6 @@ void wxFormBuilder::HookPopupMenu(wxMenu *menu, MenuType type)
 				isFbpFile = true;
 			}
 		}
-
-		if (!m_openWithWxFbItem && isFbpFile) {
-			m_openWithWxFbSepItem = menu->PrependSeparator();
-			m_openWithWxFbItem = menu->Prepend(XRCID("wxfb_open"), _("Open with wxFormBuilder..."));
-		}
 	}
 }
 

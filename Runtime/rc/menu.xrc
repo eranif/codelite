@@ -897,6 +897,13 @@
     </object>
 
 	<object class="wxMenu" name="file_tree_file">
+        <object class="wxMenuItem" name="wxfb_open">
+            <label>Open with wxFormBuilder...</label>
+        </object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="open_in_editor">
+            <label>Open in CodeLite</label>
+        </object>
         <object class="wxMenuItem" name="compile_item">
             <label>Compile</label>
         </object>

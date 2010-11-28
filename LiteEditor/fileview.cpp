@@ -89,6 +89,7 @@ BEGIN_EVENT_TABLE( FileViewTree, wxTreeCtrl )
 	EVT_MENU( XRCID( "clean_project_only" ),           FileViewTree::OnCleanProjectOnly )
 	EVT_MENU( XRCID( "rebuild_project_only" ),         FileViewTree::OnRebuildProjectOnly)
 	EVT_MENU( XRCID( "import_directory" ),             FileViewTree::OnImportDirectory )
+	EVT_MENU( XRCID( "open_in_editor" ),               FileViewTree::OnOpenInEditor )
 	EVT_MENU( XRCID( "compile_item" ),                 FileViewTree::OnCompileItem )
 	EVT_MENU( XRCID( "preprocess_item" ),              FileViewTree::OnPreprocessItem )
 	EVT_MENU( XRCID( "rename_item" ),                  FileViewTree::OnRenameItem )
@@ -411,6 +412,17 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 		PluginManager::Get()->HookPopupMenu( menu, type );
 	}
 
+	if ( type == MenuTypeFileView_File ) {
+		// Now the menu has definitely been constructed, do updateUI for "Open with wxFormBuilder..."
+		TreeItemInfo item = GetSelectedItemInfo();
+		if ( item.m_item.IsOk() ) {
+			wxMenuItem* OpenWithFB = menu->FindItem(XRCID("wxfb_open"));
+			if (OpenWithFB) {
+				OpenWithFB->Enable( item.m_fileName.GetExt() == wxT("fbp") );
+			}
+		}
+	}
+	
 	PopupMenu( menu );
 
 	//remove the custom makefile hooked menu items
@@ -545,6 +557,28 @@ void FileViewTree::DoItemActivated( wxTreeItemId &item, wxEvent &event )
 		DoSetProjectActive(item);
 	} else {
 		event.Skip();
+	}
+}
+
+void FileViewTree::OnOpenInEditor(wxCommandEvent& event)
+{
+	wxArrayTreeItemIds items;
+	size_t num = GetMultiSelection(items);
+	for ( size_t i=0; i<num; i++ ) {
+		wxTreeItemId item = items.Item(i);
+		FilewViewTreeItemData* itemData = static_cast<FilewViewTreeItemData*>( GetItemData(item) );
+		if ( itemData &&itemData->GetData().GetKind() == ProjectItem::TypeFile ) {
+			wxString filename = itemData->GetData().GetFile();
+			wxString project  = itemData->GetData().Key().BeforeFirst( wxT( ':' ) );
+
+			// Convert the file name to an absolute path
+			wxFileName fn( filename );
+			fn.MakeAbsolute( ManagerST::Get()->GetProjectCwd( project ) );
+
+			// DON'T ask the plugins if they want the file opening in another way, as happens from a double-click
+			// Here we _know_ the user wants to open in CL
+			clMainFrame::Get()->GetMainBook()->OpenFile( fn.GetFullPath(), project, -1 );
+		}
 	}
 }
 

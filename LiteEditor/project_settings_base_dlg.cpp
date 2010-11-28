@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -111,21 +111,31 @@ GlobalSettingsBasePanel::GlobalSettingsBasePanel( wxWindow* parent, wxWindowID i
 	fgSizer10->SetFlexibleDirection( wxBOTH );
 	fgSizer10->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText6 = new wxStaticText( m_compilerPage, wxID_ANY, _("Compiler Options:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6 = new wxStaticText( m_compilerPage, wxID_ANY, _("C++ Compiler Options:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
 	fgSizer10->Add( m_staticText6, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCompilerOptions = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCompilerOptions = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer10->Add( m_textCompilerOptions, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonCompilerOptions = new wxButton( m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer10->Add( m_buttonCompilerOptions, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
+	m_staticText46 = new wxStaticText( m_compilerPage, wxID_ANY, _("C Compiler Options:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText46->Wrap( -1 );
+	fgSizer10->Add( m_staticText46, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlCCompileOptions = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	fgSizer10->Add( m_textCtrlCCompileOptions, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_buttonCCompileOptions = new wxButton( m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer10->Add( m_buttonCCompileOptions, 0, wxALL, 5 );
+	
 	m_staticText4 = new wxStaticText( m_compilerPage, wxID_ANY, _("Additional Search Path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	fgSizer10->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textAdditionalSearchPath = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textAdditionalSearchPath = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer10->Add( m_textAdditionalSearchPath, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonAddSearchPath = new wxButton( m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -135,7 +145,7 @@ GlobalSettingsBasePanel::GlobalSettingsBasePanel( wxWindow* parent, wxWindowID i
 	m_staticText171->Wrap( -1 );
 	fgSizer10->Add( m_staticText171, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textPreprocessor = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textPreprocessor = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer10->Add( m_textPreprocessor, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonAddPreprocessor = new wxButton( m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -239,6 +249,8 @@ GlobalSettingsBasePanel::GlobalSettingsBasePanel( wxWindow* parent, wxWindowID i
 	// Connect Events
 	m_textCompilerOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_buttonCompilerOptions->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnButtonAddCompilerOptions ), NULL, this );
+	m_textCtrlCCompileOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonCCompileOptions->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnButtonAddCCompilerOptions ), NULL, this );
 	m_textAdditionalSearchPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_buttonAddSearchPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnAddSearchPath ), NULL, this );
 	m_textPreprocessor->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
@@ -260,6 +272,8 @@ GlobalSettingsBasePanel::~GlobalSettingsBasePanel()
 	// Disconnect Events
 	m_textCompilerOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_buttonCompilerOptions->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnButtonAddCompilerOptions ), NULL, this );
+	m_textCtrlCCompileOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonCCompileOptions->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnButtonAddCCompilerOptions ), NULL, this );
 	m_textAdditionalSearchPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_buttonAddSearchPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnAddSearchPath ), NULL, this );
 	m_textPreprocessor->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
@@ -475,7 +489,7 @@ PSCompilerPageBase::PSCompilerPageBase( wxWindow* parent, wxWindowID id, const w
 	m_staticline7 = new wxStaticLine( m_compilerPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	m_gbSizer2->Add( m_staticline7, wxGBPosition( 1, 0 ), wxGBSpan( 1, 3 ), wxEXPAND|wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_staticText6 = new wxStaticText( m_compilerPage, wxID_ANY, _("Compiler Options:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6 = new wxStaticText( m_compilerPage, wxID_ANY, _("C++ Compiler Options:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
 	m_staticText6->SetToolTip( _("Additional compiler options to pass to the compiler provided as a semi-colon delimited list") );
 	
@@ -484,55 +498,67 @@ PSCompilerPageBase::PSCompilerPageBase( wxWindow* parent, wxWindowID id, const w
 	m_textCompilerOptions = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	m_textCompilerOptions->SetToolTip( _("Additional compiler options to pass to the compiler provided as a semi-colon delimited list") );
 	
-	m_gbSizer2->Add( m_textCompilerOptions, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	m_gbSizer2->Add( m_textCompilerOptions, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_buttonCompilerOptions = new wxButton( m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	m_gbSizer2->Add( m_buttonCompilerOptions, wxGBPosition( 2, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
+	m_staticText45 = new wxStaticText( m_compilerPage, wxID_ANY, _("C Compiler Options:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText45->Wrap( -1 );
+	m_gbSizer2->Add( m_staticText45, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlCCompilerOptions = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	m_textCtrlCCompilerOptions->SetToolTip( _("Additional C compiler options to pass to the compiler provided as a semi-colon delimited list (used for C files only)") );
+	
+	m_gbSizer2->Add( m_textCtrlCCompilerOptions, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_button35 = new wxButton( m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_gbSizer2->Add( m_button35, wxGBPosition( 3, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	
 	m_staticText4 = new wxStaticText( m_compilerPage, wxID_ANY, _("Include Paths:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
-	m_staticText4->SetToolTip( _("Include path to pass to the compiler (provided as semi-colon demlimited list)") );
+	m_staticText4->SetToolTip( _("Include path to pass to the compiler (provided as semi-colon delimited list)") );
 	
-	m_gbSizer2->Add( m_staticText4, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_gbSizer2->Add( m_staticText4, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textAdditionalSearchPath = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
-	m_textAdditionalSearchPath->SetToolTip( _("Include path to pass to the compiler (provided as semi-colon demlimited list)") );
+	m_textAdditionalSearchPath->SetToolTip( _("Include path to pass to the compiler (provided as semi-colon delimited list)") );
 	
-	m_gbSizer2->Add( m_textAdditionalSearchPath, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	m_gbSizer2->Add( m_textAdditionalSearchPath, wxGBPosition( 4, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_buttonAddSearchPath = new wxButton( m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
-	m_gbSizer2->Add( m_buttonAddSearchPath, wxGBPosition( 3, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	m_gbSizer2->Add( m_buttonAddSearchPath, wxGBPosition( 4, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_staticText171 = new wxStaticText( m_compilerPage, wxID_ANY, _("Preprocessor:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText171->Wrap( -1 );
-	m_staticText171->SetToolTip( _("macros (\"defines\") to pass to the compiler (provided as semi-colon demlimited list)") );
+	m_staticText171->SetToolTip( _("macros (\"defines\") to pass to the compiler (provided as semi-colon delimited list)") );
 	
-	m_gbSizer2->Add( m_staticText171, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_gbSizer2->Add( m_staticText171, wxGBPosition( 5, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textPreprocessor = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
-	m_textPreprocessor->SetToolTip( _("macros (\"defines\") to pass to the compiler (provided as semi-colon demlimited list)") );
+	m_textPreprocessor->SetToolTip( _("macros (\"defines\") to pass to the compiler (provided as semi-colon delimited list)") );
 	
-	m_gbSizer2->Add( m_textPreprocessor, wxGBPosition( 4, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	m_gbSizer2->Add( m_textPreprocessor, wxGBPosition( 5, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_buttonAddPreprocessor = new wxButton( m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
-	m_gbSizer2->Add( m_buttonAddPreprocessor, wxGBPosition( 4, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	m_gbSizer2->Add( m_buttonAddPreprocessor, wxGBPosition( 5, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_staticline14 = new wxStaticLine( m_compilerPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	m_gbSizer2->Add( m_staticline14, wxGBPosition( 5, 0 ), wxGBSpan( 1, 3 ), wxEXPAND|wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_gbSizer2->Add( m_staticline14, wxGBPosition( 6, 0 ), wxGBSpan( 1, 3 ), wxEXPAND|wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_staticTextPreCompiledHeader = new wxStaticText( m_compilerPage, wxID_ANY, _("PCH:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextPreCompiledHeader->Wrap( -1 );
 	m_staticTextPreCompiledHeader->SetToolTip( _("Specify here the pre-compiled header to use") );
 	
-	m_gbSizer2->Add( m_staticTextPreCompiledHeader, wxGBPosition( 6, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_gbSizer2->Add( m_staticTextPreCompiledHeader, wxGBPosition( 7, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlPreCompiledHeader = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	m_textCtrlPreCompiledHeader->SetToolTip( _("Specify here the pre-compiled header to use") );
 	
-	m_gbSizer2->Add( m_textCtrlPreCompiledHeader, wxGBPosition( 6, 1 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	m_gbSizer2->Add( m_textCtrlPreCompiledHeader, wxGBPosition( 7, 1 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	m_buttonBrowsePreCompiledHeader = new wxButton( m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
-	m_gbSizer2->Add( m_buttonBrowsePreCompiledHeader, wxGBPosition( 6, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	m_gbSizer2->Add( m_buttonBrowsePreCompiledHeader, wxGBPosition( 7, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	compilerPageSizer->Add( m_gbSizer2, 1, wxEXPAND, 5 );
 	
@@ -556,6 +582,11 @@ PSCompilerPageBase::PSCompilerPageBase( wxWindow* parent, wxWindowID id, const w
 	m_textCompilerOptions->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
 	m_buttonCompilerOptions->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSCompilerPageBase::OnButtonAddCompilerOptions ), NULL, this );
 	m_buttonCompilerOptions->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
+	m_staticText45->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
+	m_textCtrlCCompilerOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompilerPageBase::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlCCompilerOptions->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
+	m_button35->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSCompilerPageBase::OnButtonAddCCompilerOptions ), NULL, this );
+	m_button35->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
 	m_staticText4->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
 	m_textAdditionalSearchPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompilerPageBase::OnCmdEvtVModified ), NULL, this );
 	m_textAdditionalSearchPath->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
@@ -587,6 +618,11 @@ PSCompilerPageBase::~PSCompilerPageBase()
 	m_textCompilerOptions->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
 	m_buttonCompilerOptions->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSCompilerPageBase::OnButtonAddCompilerOptions ), NULL, this );
 	m_buttonCompilerOptions->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
+	m_staticText45->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
+	m_textCtrlCCompilerOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompilerPageBase::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlCCompilerOptions->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
+	m_button35->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSCompilerPageBase::OnButtonAddCCompilerOptions ), NULL, this );
+	m_button35->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
 	m_staticText4->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
 	m_textAdditionalSearchPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompilerPageBase::OnCmdEvtVModified ), NULL, this );
 	m_textAdditionalSearchPath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );

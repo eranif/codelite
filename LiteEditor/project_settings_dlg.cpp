@@ -89,11 +89,11 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 
 	m_treebook->SetFocus();
 	GetSizer()->Fit(this);
-	
+
 	wxSize sz = GetSize();
 	Centre();
 	WindowAttrManager::Load(this, wxT("ProjectSettingsDlg"), NULL);
-	
+
 	// Make sure that all the controls are visible
 	wxSize newSize = GetSize();
 	if(newSize.x <= sz.x && newSize.y <= sz.y) {
@@ -120,7 +120,7 @@ void ProjectSettingsDlg::BuildTree()
 	m_treebook->AddSubPage(new PSCustomBuildPage(m_treebook, m_projectName, this),   wxT("Custom Build"),          false);
 	m_treebook->AddSubPage(new PSCustomMakefileRulesPage(m_treebook, this),          wxT("Custom Makefile Rules"), false);
 
-	m_treebook->AddPage(new GlobalSettingsPanel(m_treebook, m_projectName, this), wxT("Global Settings"), false);
+	m_treebook->AddPage(new GlobalSettingsPanel(m_treebook, m_projectName, this, gp), wxT("Global Settings"), false);
 
 	// We do this here rather than in wxFB to avoid failure and an assert in >wx2.8
 	gp->m_gbSizer1->AddGrowableCol(1);
@@ -248,10 +248,11 @@ void ProjectSettingsDlg::OnConfigurationChanged(wxCommandEvent& event)
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-GlobalSettingsPanel::GlobalSettingsPanel(wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg)
+GlobalSettingsPanel::GlobalSettingsPanel(wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg, PSGeneralPage* gp)
 	: GlobalSettingsBasePanel(parent)
 	, m_projectName(projectName)
 	, m_dlg(dlg)
+	, m_gp(gp)
 {
 	GetSizer()->Fit(this);
 	Centre();
@@ -259,14 +260,24 @@ GlobalSettingsPanel::GlobalSettingsPanel(wxWindow* parent, const wxString &proje
 
 void GlobalSettingsPanel::OnButtonAddCompilerOptions(wxCommandEvent &event)
 {
-	// This is not perfect : I just take the first compiler to find options
-	BuildSettingsConfigCookie cookie;
-	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
+	wxString cmpName = m_gp->GetCompiler();
+	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
 	if (PopupAddOptionCheckDlg(m_textCompilerOptions, _("Compiler options"), cmp->GetCompilerOptions())) {
 		m_dlg->SetIsDirty(true);
 	}
 	event.Skip();
 }
+
+void GlobalSettingsPanel::OnButtonAddCCompilerOptions(wxCommandEvent& event)
+{
+	wxString cmpName = m_gp->GetCompiler();
+	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
+	if (PopupAddOptionCheckDlg(m_textCtrlCCompileOptions, _("C Compiler options"), cmp->GetCompilerOptions())) {
+		m_dlg->SetIsDirty(true);
+	}
+	event.Skip();
+}
+
 
 void GlobalSettingsPanel::OnAddSearchPath(wxCommandEvent &event)
 {
@@ -302,9 +313,8 @@ void GlobalSettingsPanel::OnAddLibraryPath(wxCommandEvent &event)
 
 void GlobalSettingsPanel::OnButtonAddLinkerOptions(wxCommandEvent &event)
 {
-	// This is not perfect : I just take the first compiler to find options
-	BuildSettingsConfigCookie cookie;
-	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
+	wxString cmpName = m_gp->GetCompiler();
+	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
 	if (PopupAddOptionCheckDlg(m_textLinkerOptions, _("Linker options"), cmp->GetLinkerOptions())) {
 		m_dlg->SetIsDirty(true);
 	}
@@ -349,7 +359,6 @@ void GlobalSettingsPanel::Clear()
 
 void GlobalSettingsPanel::Load(BuildConfigPtr buildConf)
 {
-	wxUnusedVar(buildConf);
 	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
 	BuildConfigCommonPtr globalSettings = projSettingsPtr->GetGlobalSettings();
 	if (!globalSettings) {
@@ -358,6 +367,7 @@ void GlobalSettingsPanel::Load(BuildConfigPtr buildConf)
 	}
 
 	m_textCompilerOptions->SetValue(globalSettings->GetCompileOptions());
+	m_textCtrlCCompileOptions->SetValue(globalSettings->GetCCompileOptions());
 	m_textPreprocessor->SetValue(globalSettings->GetPreprocessor());
 	m_textAdditionalSearchPath->SetValue(globalSettings->GetIncludePath());
 
@@ -380,6 +390,7 @@ void GlobalSettingsPanel::Save(BuildConfigPtr buildConf, ProjectSettingsPtr proj
 	}
 
 	globalSettings->SetCompileOptions(m_textCompilerOptions->GetValue());
+	globalSettings->SetCCompileOptions(m_textCtrlCCompileOptions->GetValue());
 	globalSettings->SetIncludePath(m_textAdditionalSearchPath->GetValue());
 	globalSettings->SetPreprocessor(m_textPreprocessor->GetValue());
 

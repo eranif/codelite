@@ -6,13 +6,20 @@
 #include "wx_xml_compatibility.h"
 
 BuildConfigCommon::BuildConfigCommon(wxXmlNode* node, wxString confType)
-: m_confType(confType)
+	: m_confType(confType)
 {
 	if (node) {
 		// read the compile options
 		wxXmlNode *compile = XmlUtils::FindFirstByTagName(node, wxT("Compiler"));
 		if (compile) {
-			m_compileOptions = XmlUtils::ReadString(compile, wxT("Options"));
+			m_compileOptions  = XmlUtils::ReadString(compile, wxT("Options"));
+
+			if(!compile->GetPropVal(wxT("C_Options"), &m_cCompileOptions)) {
+				// the attribute "C_Options" does not exist,
+				// copy the values from the "Options" attribute
+				m_cCompileOptions  = m_compileOptions;
+			}
+
 			wxXmlNode *child = compile->GetChildren();
 			while (child) {
 				if (child->GetName() == wxT("IncludePath")) {
@@ -51,8 +58,7 @@ BuildConfigCommon::BuildConfigCommon(wxXmlNode* node, wxString confType)
 				child = child->GetNext();
 			}
 		}
-	}
-	else {
+	} else {
 		m_includePath.Add(wxT("."));
 		m_libPath.Add(wxT("."));
 	}
@@ -70,6 +76,7 @@ wxXmlNode *BuildConfigCommon::ToXml() const
 	//create the compile node
 	wxXmlNode *compile = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compiler"));
 	compile->AddProperty(wxT("Options"), m_compileOptions);
+	compile->AddProperty(wxT("C_Options"), m_cCompileOptions);
 	node->AddChild(compile);
 
 	size_t i=0;
@@ -168,4 +175,3 @@ wxString BuildConfigCommon::GetPreprocessor() const
 
 	return asString;
 }
-

@@ -126,7 +126,7 @@ private:
 	wxString                     m_dbgEnvSet;
 	bool                         m_useSeparateDebugArgs;
 	wxString                     m_debugArgs;
-
+	
 public:
 	BuildConfig(wxXmlNode *node);
 	virtual ~BuildConfig();
@@ -171,6 +171,9 @@ public:
 	wxString GetIncludePath() const;
 	const wxString &GetCompileOptions() const {
 		return m_commonConfig.GetCompileOptions();
+	}
+	const wxString &GetCCompileOptions() const {
+		return m_commonConfig.GetCCompileOptions();
 	}
 	const wxString &GetLinkOptions() const {
 		return m_commonConfig.GetLinkOptions();
@@ -223,6 +226,9 @@ public:
 	void SetLibPath(const wxString &path);
 	void SetCompileOptions(const wxString &options) {
 		m_commonConfig.SetCompileOptions(options);
+	}
+	void SetCCompileOptions(const wxString &options) {
+		m_commonConfig.SetCCompileOptions(options);
 	}
 	void SetLinkOptions(const wxString &options) {
 		m_commonConfig.SetLinkOptions(options);

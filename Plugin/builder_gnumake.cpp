@@ -715,6 +715,8 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 				wxString dependFile;
 				wxString preprocessedFile;
 
+				bool isCFile = FileExtManager::GetType(rel_paths.at(i).GetFullName()) == FileExtManager::TypeSourceC;
+				
 				objectName << wxT("$(IntermediateDirectory)/") << objPrefix << filenameOnly << wxT("$(ObjectSuffix)");
 				if (generateDependenciesFiles) {
 					dependFile << wxT("$(IntermediateDirectory)/") << objPrefix << filenameOnly << wxT("$(DependSuffix)");
@@ -726,16 +728,21 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 				// set the file rule
 				text << objectName << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT(" ") << dependFile << wxT("\n");
 				text << wxT("\t") << compilationLine << wxT("\n");
-
+				
+				wxString cmpOptions(wxT("$(CmpOptions)"));
+				if(isCFile) {
+					cmpOptions = wxT("$(C_CmpOptions)");
+				}
+				
 				wxString compilerMacro = DoGetCompilerMacro(rel_paths.at(i).GetFullPath(wxPATH_UNIX));
 				if (generateDependenciesFiles) {
 					text << dependFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
-					text << wxT("\t") << wxT("@") << compilerMacro << wxT(" $(CmpOptions) $(IncludePath) -MG -MP -MT") << objectName <<wxT(" -MF") << dependFile << wxT(" -MM \"") << absFileName << wxT("\"\n\n");
+					text << wxT("\t") << wxT("@") << compilerMacro << wxT(" ") << cmpOptions << wxT(" $(IncludePath) -MG -MP -MT") << objectName <<wxT(" -MF") << dependFile << wxT(" -MM \"") << absFileName << wxT("\"\n\n");
 				}
 
 				if (supportPreprocessOnlyFiles) {
 					text << preprocessedFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
-					text << wxT("\t") << wxT("@") << compilerMacro << wxT(" $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ") << preprocessedFile << wxT(" \"") << absFileName << wxT("\"\n\n");
+					text << wxT("\t") << wxT("@") << compilerMacro << wxT(" ") << cmpOptions << wxT(" $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ") << preprocessedFile << wxT(" \"") << absFileName << wxT("\"\n\n");
 				}
 
 			} else if (ft.kind == Compiler::CmpFileKindResource && bldConf->IsResCompilerRequired()) {
@@ -1071,16 +1078,22 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 
 	wxString buildOpts = bldConf->GetCompileOptions();
 	buildOpts.Replace(wxT(";"), wxT(" "));
-
+	
+	wxString cBuildOpts = bldConf->GetCCompileOptions();
+	cBuildOpts.Replace(wxT(";"), wxT(" "));
+	
 	// Let the plugins add their content here
 	wxCommandEvent e(wxEVT_GET_ADDITIONAL_COMPILEFLAGS);
 	wxTheApp->ProcessEvent(e);
 
 	wxString additionalCompileFlags = e.GetString();
-	if(additionalCompileFlags.IsEmpty() == false)
+	if(additionalCompileFlags.IsEmpty() == false) {
 		buildOpts << wxT(" ") << additionalCompileFlags;
-
-	text << wxT("CmpOptions             :=") << buildOpts << wxT(" $(Preprocessors)") << wxT("\n");
+		cBuildOpts << wxT(" ") << additionalCompileFlags;
+	}
+	
+	text << wxT("CmpOptions             :=") << buildOpts  << wxT(" $(Preprocessors)") << wxT("\n");
+	text << wxT("C_CmpOptions           :=") << cBuildOpts << wxT(" $(Preprocessors)") << wxT("\n");
 
 	//only if resource compiler required, evaluate the resource variables
 	if (bldConf->IsResCompilerRequired()) {

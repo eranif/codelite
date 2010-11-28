@@ -39,7 +39,7 @@ extern const wxString GLOBAL_SETTINGS_LABEL;
 extern const wxString APPEND_TO_GLOBAL_SETTINGS;
 extern const wxString OVERWRITE_GLOBAL_SETTINGS;
 extern const wxString PREPEND_GLOBAL_SETTINGS;
-
+class PSGeneralPage;
 class ProjectSettingsDlg;
 /////////////////////////////////////////////////////////////
 // base class for the project settings pages
@@ -66,9 +66,10 @@ class GlobalSettingsPanel : public GlobalSettingsBasePanel, public IProjectSetti
 {
 	wxString            m_projectName;
 	ProjectSettingsDlg *m_dlg;
-
+	PSGeneralPage *     m_gp;
+	
 public:
-	GlobalSettingsPanel(wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg);
+	GlobalSettingsPanel(wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg, PSGeneralPage *gp);
 
 	virtual void Clear();
 	virtual void Load(BuildConfigPtr buildConf);
@@ -76,6 +77,7 @@ public:
 
 protected:
 
+	virtual void OnButtonAddCCompilerOptions(wxCommandEvent& event);
 	virtual void OnCmdEvtVModified( wxCommandEvent& event );
 	virtual void OnButtonAddCompilerOptions(wxCommandEvent &event);
 	virtual void OnAddSearchPath(wxCommandEvent &event);

@@ -86,6 +86,7 @@ void PSCompilerPage::Load(BuildConfigPtr buildConf)
 	m_textAdditionalSearchPath->SetValue(buildConf->GetIncludePath());
 	m_textPreprocessor->SetValue(buildConf->GetPreprocessor());
 	m_textCtrlPreCompiledHeader->SetValue(buildConf->GetPrecompiledHeader());
+	m_textCtrlCCompilerOptions->SetValue(buildConf->GetCCompileOptions());
 	SelectChoiceWithGlobalSettings(m_choiceCmpUseWithGlobalSettings, buildConf->GetBuildCmpWithGlobalSettings());
 }
 
@@ -96,7 +97,7 @@ void PSCompilerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetti
 	buildConf->SetIncludePath(m_textAdditionalSearchPath->GetValue());
 	buildConf->SetPreprocessor(m_textPreprocessor->GetValue());
 	buildConf->SetPrecompiledHeader(m_textCtrlPreCompiledHeader->GetValue());
-
+	buildConf->SetCCompileOptions(m_textCtrlCCompilerOptions->GetValue());
 	wxString useWithGlobalSettings = m_choiceCmpUseWithGlobalSettings->GetStringSelection();
 	if (useWithGlobalSettings == APPEND_TO_GLOBAL_SETTINGS) {
 		buildConf->SetBuildCmpWithGlobalSettings(BuildConfig::APPEND_TO_GLOBAL_SETTINGS);
@@ -114,9 +115,20 @@ void PSCompilerPage::Clear()
 	m_textAdditionalSearchPath->Clear();
 	m_textPreprocessor->Clear();
 	m_textCtrlPreCompiledHeader->Clear();
+	m_textCtrlCCompilerOptions->Clear();
 }
 
 void PSCompilerPage::OnProjectCustumBuildUI(wxUpdateUIEvent& event)
 {
 	event.Enable( !m_dlg->IsCustomBuildEnabled() );
+}
+
+void PSCompilerPage::OnButtonAddCCompilerOptions(wxCommandEvent& event)
+{
+	wxString cmpName = m_gp->GetCompiler();
+	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
+	if (PopupAddOptionCheckDlg(m_textCtrlCCompilerOptions, _("C Compiler options"), cmp->GetCompilerOptions())) {
+		m_dlg->SetIsDirty(true);
+	}
+	event.Skip();
 }

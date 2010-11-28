@@ -31,6 +31,7 @@ protected:
 	void OnButtonAddPreprocessor( wxCommandEvent& event );
 	void OnBrowsePreCmpHeader( wxCommandEvent& event );
 	void OnProjectCustumBuildUI(wxUpdateUIEvent& event);
+	void OnButtonAddCCompilerOptions(wxCommandEvent& event);
 
 
 public:

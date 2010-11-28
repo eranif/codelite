@@ -190,7 +190,7 @@ Compiler::Compiler(wxXmlNode *node)
 		AddCmpFileType(wxT("cpp"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
 		AddCmpFileType(wxT("cxx"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
 		AddCmpFileType(wxT("c++"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
-		AddCmpFileType(wxT("c"),   CmpFileKindSource, wxT("$(C_CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("c"),   CmpFileKindSource, wxT("$(C_CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(C_CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
 		AddCmpFileType(wxT("cc"),  CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
 		AddCmpFileType(wxT("m"),   CmpFileKindSource, wxT("$(CompilerName) -x objective-c $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
 		AddCmpFileType(wxT("mm"),  CmpFileKindSource, wxT("$(CompilerName) -x objective-c++ $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));

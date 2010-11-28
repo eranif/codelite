@@ -102,11 +102,13 @@ BuildConfigPtr ProjectSettings::GetBuildConfiguration(const wxString &configName
 	BuildConfigPtr buildConfMerged(buildConf->Clone());
 	if (buildConfMerged->GetBuildCmpWithGlobalSettings() == BuildConfig::PREPEND_GLOBAL_SETTINGS) 	{
 		buildConfMerged->SetCompileOptions(buildConf->GetCompileOptions() + wxT(";") + m_globalSettings->GetCompileOptions());
+		buildConfMerged->SetCCompileOptions(buildConf->GetCCompileOptions() + wxT(";") + m_globalSettings->GetCCompileOptions());
 		buildConfMerged->SetPreprocessor(buildConf->GetPreprocessor() + wxT(";") + m_globalSettings->GetPreprocessor());
 		buildConfMerged->SetIncludePath(buildConf->GetIncludePath() + wxT(";") + m_globalSettings->GetIncludePath());
 	}
 	else if (buildConfMerged->GetBuildCmpWithGlobalSettings() == BuildConfig::APPEND_TO_GLOBAL_SETTINGS) {
 		buildConfMerged->SetCompileOptions(m_globalSettings->GetCompileOptions() + wxT(";") + buildConf->GetCompileOptions());
+		buildConfMerged->SetCCompileOptions(m_globalSettings->GetCCompileOptions() + wxT(";") + buildConf->GetCCompileOptions());
 		buildConfMerged->SetPreprocessor(m_globalSettings->GetPreprocessor() + wxT(";") + buildConf->GetPreprocessor());
 		buildConfMerged->SetIncludePath(m_globalSettings->GetIncludePath() + wxT(";") + buildConf->GetIncludePath());
 	}

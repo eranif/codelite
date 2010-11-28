@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -65,7 +65,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 	
 	public:
 		
-		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~ProjectSettingsBaseDlg();
 	
 };
@@ -83,6 +83,9 @@ class GlobalSettingsBasePanel : public wxPanel
 		wxStaticText* m_staticText6;
 		wxTextCtrl* m_textCompilerOptions;
 		wxButton* m_buttonCompilerOptions;
+		wxStaticText* m_staticText46;
+		wxTextCtrl* m_textCtrlCCompileOptions;
+		wxButton* m_buttonCCompileOptions;
 		wxStaticText* m_staticText4;
 		wxTextCtrl* m_textAdditionalSearchPath;
 		wxButton* m_buttonAddSearchPath;
@@ -110,6 +113,7 @@ class GlobalSettingsBasePanel : public wxPanel
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCmdEvtVModified( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonAddCompilerOptions( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonAddCCompilerOptions( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAddSearchPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonAddPreprocessor( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonAddLinkerOptions( wxCommandEvent& event ) { event.Skip(); }
@@ -195,6 +199,9 @@ class PSCompilerPageBase : public wxPanel
 		wxStaticText* m_staticText6;
 		wxTextCtrl* m_textCompilerOptions;
 		wxButton* m_buttonCompilerOptions;
+		wxStaticText* m_staticText45;
+		wxTextCtrl* m_textCtrlCCompilerOptions;
+		wxButton* m_button35;
 		wxStaticText* m_staticText4;
 		wxTextCtrl* m_textAdditionalSearchPath;
 		wxButton* m_buttonAddSearchPath;
@@ -212,6 +219,7 @@ class PSCompilerPageBase : public wxPanel
 		virtual void OnCompiledNotNeededUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnCmdEvtVModified( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonAddCompilerOptions( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonAddCCompilerOptions( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAddSearchPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonAddPreprocessor( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnBrowsePreCmpHeader( wxCommandEvent& event ) { event.Skip(); }

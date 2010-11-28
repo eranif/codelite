@@ -32,17 +32,17 @@
 
 class WXDLLIMPEXP_SDK BuildConfigCommon : public ConfObject
 {
-	wxArrayString m_includePath;
-	wxString m_compileOptions;
-	wxString m_linkOptions;
-	wxArrayString m_libs;
-	wxArrayString m_libPath;
-	wxArrayString m_preprocessor;
-	wxString m_resCompileOptions;
-	wxString m_resCmpIncludePath;
+	wxArrayString  m_includePath;
+	wxString       m_compileOptions;
+	wxString       m_linkOptions;
+	wxArrayString  m_libs;
+	wxArrayString  m_libPath;
+	wxArrayString  m_preprocessor;
+	wxString       m_resCompileOptions;
+	wxString       m_resCmpIncludePath;
+	wxString       m_cCompileOptions;
+	wxString       m_confType; // xml node name
 	
-	wxString m_confType; // xml node name 
-
 public:
 	BuildConfigCommon(wxXmlNode* node, wxString confType = wxT("Configuration"));
 	virtual ~BuildConfigCommon();
@@ -52,7 +52,7 @@ public:
 	//--------------------------------
 	// Setters / Getters
 	//--------------------------------
-	
+
 	wxString GetPreprocessor() const;
 	void GetPreprocessor(wxArrayString &arr) {
 		arr = m_preprocessor;
@@ -66,6 +66,12 @@ public:
 		m_compileOptions = options;
 	}
 
+	void SetCCompileOptions(const wxString& cCompileOptions) {
+		this->m_cCompileOptions = cCompileOptions;
+	}
+	const wxString& GetCCompileOptions() const {
+		return m_cCompileOptions;
+	}
 	const wxString &GetLinkOptions() const {
 		return m_linkOptions;
 	}
@@ -97,7 +103,7 @@ public:
 	void SetResCmpIncludePath(const wxString &path) {
 		m_resCmpIncludePath = path;
 	}
-	
+
 	const wxString &GetResCompileOptions() const {
 		return m_resCompileOptions;
 	}

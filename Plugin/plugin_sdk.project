@@ -250,7 +250,7 @@
   <Dependencies Name="Win_wxWidgets_29"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
-      <Compiler Options="">
+      <Compiler Options="" C_Options="">
         <IncludePath Value="."/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
@@ -265,7 +265,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Required="yes" PreCompiledHeader="">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" C_Options="-Wall;-g" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../CodeLite"/>
@@ -305,7 +305,7 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes)" Required="yes" PreCompiledHeader="">
+      <Compiler Options="-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes)" C_Options="-Wall" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../CodeLite"/>
@@ -345,7 +345,7 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Win_wxWidgets_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Required="yes" PreCompiledHeader="">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" C_Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../CodeLite"/>

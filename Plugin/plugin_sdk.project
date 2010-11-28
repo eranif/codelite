@@ -193,14 +193,12 @@
       <File Name="dockablepane.h"/>
       <File Name="detachedpanesinfo.cpp"/>
       <File Name="detachedpanesinfo.h"/>
-      <File Name="notebook_ex_nav_dlg_base.h"/>
       <File Name="fileclose.png"/>
       <File Name="fileclose-pressed.png"/>
       <File Name="notebook_ex.cpp"/>
       <File Name="notebook_ex.h"/>
       <File Name="notebook_ex_nav_dlg.cpp"/>
       <File Name="notebook_ex_nav_dlg.h"/>
-      <File Name="notebook_ex_nav_dlg_base.cpp"/>
       <File Name="tabicons.h"/>
       <File Name="tabicons.cpp"/>
       <File Name="output_pane_book.h"/>

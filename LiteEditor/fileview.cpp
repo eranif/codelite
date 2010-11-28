@@ -370,7 +370,7 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 				menu->Prepend(item);
 				dynItems.push_back(item);
 
-				wxString menu_text(wxT("Run ") + toolName);
+				wxString menu_text(_("Run ") + toolName);
 
 				item = new wxMenuItem(menu, XRCID("generate_makefile"), menu_text, wxEmptyString, wxITEM_NORMAL);
 				menu->Prepend(item);
@@ -557,7 +557,7 @@ void FileViewTree::OnExportMakefile( wxCommandEvent &event )
 		BuilderPtr builder = BuildManagerST::Get()->GetSelectedBuilder(); // use current builder
 		projectName = GetItemText( item );
 		if ( !builder->Export( projectName, wxEmptyString, false, true, errMsg ) ) {
-			wxMessageBox( errMsg, wxT( "CodeLite" ), wxICON_HAND );
+			wxMessageBox( errMsg, _( "CodeLite" ), wxICON_HAND );
 			return;
 		}
 	}
@@ -760,7 +760,7 @@ void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 		start_path = proj->GetFileName().GetPath();
 	}
 
-	wxFileDialog *dlg = new wxFileDialog( this, wxT( "Add Existing Item" ), start_path, wxEmptyString, ALL, wxFD_MULTIPLE | wxFD_OPEN | wxFD_FILE_MUST_EXIST , wxDefaultPosition );
+	wxFileDialog *dlg = new wxFileDialog( this, _( "Add Existing Item" ), start_path, wxEmptyString, ALL, wxFD_MULTIPLE | wxFD_OPEN | wxFD_FILE_MUST_EXIST , wxDefaultPosition );
 	if ( dlg->ShowModal() == wxID_OK ) {
 		dlg->GetPaths( paths );
 
@@ -871,15 +871,15 @@ void FileViewTree::DoRemoveItems()
 				int result = wxID_YES;
 				if ( ApplyToEachFile==false ) {
 					wxString message;
-					message << wxT( "Are you sure you want remove '" ) << name << wxT( "' ?" );
+					message << _( "Are you sure you want remove '" ) << name << wxT( "' ?" );
 					if (num > 1) {
 						// For multiple selections, use a YesToAll dialog
 						YesToAllDlg dlg(this, message);
-						dlg.SetCheckboxText(wxString(wxT("Apply to all Files")));
+						dlg.SetCheckboxText(wxString(_("Apply to all Files")));
 						result = dlg.ShowModal();
 						ApplyToEachFile = dlg.GetIsChecked();
 					} else {
-						result = wxMessageBox( message, wxT("Are you sure?"), wxYES_NO | wxICON_QUESTION, this );
+						result = wxMessageBox( message, _("Are you sure?"), wxYES_NO | wxICON_QUESTION, this );
 					}
 				}
 				if ( result==wxID_CANCEL || (result==wxID_NO && ApplyToEachFile==true) ) {
@@ -917,9 +917,9 @@ void FileViewTree::DoRemoveVirtualFolder( wxTreeItemId &item )
 {
 	wxString name = GetItemText( item );
 	wxString message( wxT( "'" ) + name + wxT( "'" ) );
-	message << wxT( " and all its content will be removed from the project." );
+	message << _( " and all its content will be removed from the project." );
 
-	if ( wxMessageBox( message, wxT( "CodeLite" ), wxYES_NO|wxICON_WARNING ) == wxYES ) {
+	if ( wxMessageBox( message, _( "CodeLite" ), wxYES_NO|wxICON_WARNING ) == wxYES ) {
 		wxString path = GetItemPath( item );
 		ManagerST::Get()->RemoveVirtualDirectory( path );
 
@@ -937,7 +937,7 @@ void FileViewTree::OnNewVirtualFolder( wxCommandEvent & WXUNUSED( event ) )
 
 	wxTreeItemId item = GetSingleSelection();
 
-	wxTextEntryDialog dlg( NULL, wxT( "Virtual Directory Name:" ), wxT( "New Virtual Directory" ), defaultName );
+	wxTextEntryDialog dlg( NULL, _( "Virtual Directory Name:" ), _( "New Virtual Directory" ), defaultName );
 	dlg.Centre();
 	if ( dlg.ShowModal() == wxID_OK && dlg.GetValue().Trim().IsEmpty() == false) {
 		DoAddVirtualFolder( item, dlg.GetValue() );
@@ -1045,7 +1045,7 @@ void FileViewTree::OnProjectProperties( wxCommandEvent & WXUNUSED( event ) )
 
 	wxString projectName( GetItemText( item ) );
 	wxString title( projectName );
-	title << wxT( " Project Settings" );
+	title << _( " Project Settings" );
 
 	//open the project properties dialog
 	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
@@ -1066,10 +1066,10 @@ void FileViewTree::OnProjectProperties( wxCommandEvent & WXUNUSED( event ) )
 
 void FileViewTree::DoRemoveProject( const wxString &name )
 {
-	wxString message ( wxT( "You are about to remove project '" ) );
+	wxString message ( _( "You are about to remove project '" ) );
 	message << name << wxT( "' " );
-	message << wxT( " from the workspace, click 'Yes' to proceed or 'No' to abort." );
-	if ( wxMessageBox ( message, wxT( "Confirm" ), wxYES_NO ) == wxYES ) {
+	message << _( " from the workspace, click 'Yes' to proceed or 'No' to abort." );
+	if ( wxMessageBox ( message, _( "Confirm" ), wxYES_NO ) == wxYES ) {
 		ManagerST::Get()->RemoveProject( name );
 		// SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED); -- sent by WorkspaceTab
 	}
@@ -1200,7 +1200,7 @@ void FileViewTree::OnCompileItem(wxCommandEvent &e)
 				wxString logmsg;
 				wxString path = GetItemPath( parent );
 				wxString proj = path.BeforeFirst(wxT(':'));
-				logmsg << wxT("Compiling file: ") << data->GetData().GetFile() << wxT(" of project ") << proj << wxT("\n");
+				logmsg << _("Compiling file: ") << data->GetData().GetFile() << _(" of project ") << proj << wxT("\n");
 				mgr->CompileFile(proj, data->GetData().GetFile());
 			}
 		}
@@ -1220,7 +1220,7 @@ void FileViewTree::OnPreprocessItem(wxCommandEvent &e)
 				wxString logmsg;
 				wxString path = GetItemPath( parent );
 				wxString proj = path.BeforeFirst(wxT(':'));
-				logmsg << wxT("Preprocessing file: ") << data->GetData().GetFile() << wxT(" of project ") << proj << wxT("\n");
+				logmsg << _("Preprocessing file: ") << data->GetData().GetFile() << _(" of project ") << proj << wxT("\n");
 				mgr->CompileFile(proj, data->GetData().GetFile(), true);
 			}
 		}
@@ -1448,7 +1448,7 @@ void FileViewTree::ExpandToPath(const wxString &project, const wxFileName &fileN
 				}
 			} else {
 				wxString message;
-				message << wxT("Failed to find file: ") << fileName.GetFullPath() << wxT(" in FileView.");
+				message << _("Failed to find file: ") << fileName.GetFullPath() << _(" in FileView.");
 				wxLogMessage(message);
 			}
 			break;
@@ -1589,7 +1589,7 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	proj->BeginTranscation();
 	{
 		// Create a progress dialog
-		wxProgressDialog *prgDlg = new wxProgressDialog (wxT("Importing files ..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)files.GetCount(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE);
+		wxProgressDialog *prgDlg = new wxProgressDialog (_("Importing files ..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)files.GetCount(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE);
 		prgDlg->GetSizer()->Fit(prgDlg);
 		prgDlg->Layout();
 		prgDlg->Centre();
@@ -1633,7 +1633,7 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 			DoAddItem(proj, fvitem);
 
 			wxString msg;
-			msg << wxT("Adding file: ") << fn.GetFullPath();
+			msg << _("Adding file: ") << fn.GetFullPath();
 			prgDlg->Update((int)i, msg);
 		}
 		m_itemsToSort.clear();
@@ -1697,14 +1697,14 @@ void FileViewTree::OnRenameItem(wxCommandEvent& e)
 				ProjectPtr p = ManagerST::Get()->GetProject(proj);
 				if ( p ) {
 					// prompt user for new name
-					wxString newName = wxGetTextFromUser(wxT("New file name:"), wxT("Rename file:"), GetItemText(item));
+					wxString newName = wxGetTextFromUser(_("New file name:"), _("Rename file:"), GetItemText(item));
 					if ( newName.IsEmpty() == false ) {
 
 						wxFileName tmp(data->GetData().GetFile());
 						tmp.SetFullName(newName);
 
 						if (tmp.FileExists()) {
-							wxMessageBox(_("A File with that name already exists!"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+							wxMessageBox(_("A File with that name already exists!"), _("CodeLite"), wxICON_WARNING|wxOK);
 							return;
 						}
 
@@ -1733,7 +1733,7 @@ void FileViewTree::OnRenameVirtualFolder(wxCommandEvent& e)
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		// got the item, prompt user for new name
-		wxString newName = wxGetTextFromUser(wxT("New virtual folder name:"), wxT("Rename virtual folder:"), GetItemText(item));
+		wxString newName = wxGetTextFromUser(_("New virtual folder name:"), _("Rename virtual folder:"), GetItemText(item));
 		if (newName.IsEmpty() || newName == GetItemText(item)) {
 			// user clicked cancel
 			return;
@@ -1746,12 +1746,12 @@ void FileViewTree::OnRenameVirtualFolder(wxCommandEvent& e)
 		path = path.AfterFirst(wxT(':'));
 		ProjectPtr p = ManagerST::Get()->GetProject(proj);
 		if (!p) {
-			wxLogMessage(wxT("failed to rename virtual folder: ") + path + wxT(", reason: could not locate project ") + proj);
+			wxLogMessage(_("failed to rename virtual folder: ") + path + _(", reason: could not locate project ") + proj);
 			return;
 		}
 
 		if (!p->RenameVirtualDirectory(path, newName)) {
-			wxLogMessage(wxT("failed to rename virtual folder: ") + path);
+			wxLogMessage(_("failed to rename virtual folder: ") + path);
 			return;
 		}
 		SetItemText(item, newName);

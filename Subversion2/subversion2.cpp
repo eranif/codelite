@@ -143,57 +143,57 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
 	wxMenu* menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
-	item = new wxMenuItem(menu, XRCID("svn_explorer_set_as_view"), wxT("Display this path in the Subverion View"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_explorer_set_as_view"), _("Display this path in the Subverion View"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 	menu->AppendSeparator();
 
-	item = new wxMenuItem(menu, XRCID("svn_explorer_update"), wxT("Update"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_explorer_update"), _("Update"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("svn_explorer_commit"), wxT("Commit"), wxEmptyString, wxITEM_NORMAL);
-	menu->Append(item);
-
-	menu->AppendSeparator();
-
-	item = new wxMenuItem(menu, XRCID("svn_explorer_lock"), wxT("Lock file"), wxEmptyString, wxITEM_NORMAL);
-	menu->Append(item);
-
-	item = new wxMenuItem(menu, XRCID("svn_explorer_unlock"), wxT("UnLock file"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_explorer_commit"), _("Commit"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
 
-	item = new wxMenuItem(menu, XRCID("svn_explorer_add"), wxT("Add"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_explorer_lock"), _("Lock file"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("svn_explorer_delete"), wxT("Delete"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_explorer_unlock"), _("UnLock file"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
+	menu->AppendSeparator();
+
+	item = new wxMenuItem(menu, XRCID("svn_explorer_add"), _("Add"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
+	item = new wxMenuItem(menu, XRCID("svn_explorer_delete"), _("Delete"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
 
-	item = new wxMenuItem(menu, XRCID("svn_explorer_revert"), wxT("Revert"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_explorer_revert"), _("Revert"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 	menu->AppendSeparator();
 
-	item = new wxMenuItem(menu, XRCID("svn_explorer_diff"), wxT("Create Diff"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_explorer_diff"), _("Create Diff"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-	item = new wxMenuItem(menu, XRCID("svn_explorer_patch"), wxT("Apply Patch"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_explorer_patch"), _("Apply Patch"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 	menu->AppendSeparator();
 
-	item = new wxMenuItem(menu, XRCID("svn_explorer_blame"), wxT("Blame ..."), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_explorer_blame"), _("Blame ..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
-	item = new wxMenuItem(menu, XRCID("svn_explorer_log"), wxT("Change Log..."), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_explorer_log"), _("Change Log..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
 	wxMenu *subMenu;
 	subMenu = new wxMenu;
-	subMenu->Append(XRCID("svn_explorer_ignore_file"),         wxT("Ignore this file"));
-	subMenu->Append(XRCID("svn_explorer_ignore_file_pattern"), wxT("Ignore this file pattern"));
-	menu->Append(wxID_ANY, wxT("Ignore"), subMenu);
+	subMenu->Append(XRCID("svn_explorer_ignore_file"),         _("Ignore this file"));
+	subMenu->Append(XRCID("svn_explorer_ignore_file_pattern"), _("Ignore this file pattern"));
+	menu->Append(wxID_ANY, _("Ignore"), subMenu);
 
 	return menu;
 }
@@ -716,13 +716,6 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
 		return;
 	}
 
-	command << GetSvnExeName(nonInteractive) << loginString << wxT(" blame ");
-
-	// Concatenate list of files to be updated
-	for (size_t i=0; i<files.GetCount(); i++) {
-		command << wxT("\"") << files.Item(i) << wxT("\" ");
-	}
-
 	GetConsole()->EnsureVisible();
 	GetConsole()->AppendText(command + wxT("\n"));
 	m_blameCommand.Execute(command, wxT(""), new SvnBlameHandler(this, event.GetId(), this), this);
@@ -813,7 +806,7 @@ void Subversion2::DoSwitchURL(const wxString& workingDirectory, const wxString &
 	}
 	bool nonInteractive = GetNonInteractiveMode(event);
 
-	wxString targetUrl = wxGetTextFromUser(wxT("Enter new URL:"), wxT("Svn Switch..."), sourceUrl);
+	wxString targetUrl = wxGetTextFromUser(_("Enter new URL:"), wxT("Svn Switch..."), sourceUrl);
 	if(targetUrl.IsEmpty()) {
 		return;
 	}

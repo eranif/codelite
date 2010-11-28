@@ -892,9 +892,9 @@ void clMainFrame::CreateViewAsSubMenu()
 {
 	//get the 'View As' menu
 
-	int idx = GetMenuBar()->FindMenu(wxT("View"));
-	if (idx != wxNOT_FOUND) {
-		wxMenu *menu = GetMenuBar()->GetMenu(idx);
+	wxMenu* menu = NULL;
+	wxMenuItem* menuitem = GetMenuBar()->FindItem( XRCID("display_eol"), &menu );
+	if (menuitem && menu) {
 		wxMenu *submenu = new wxMenu();
 
 		//create a view as sub menu and attach it
@@ -918,7 +918,7 @@ void clMainFrame::CreateViewAsSubMenu()
 			minId++;
 			submenu->Append(item);
 		}
-		menu->Append(viewAsSubMenuID, wxT("View As"), submenu);
+		menu->Append(viewAsSubMenuID, _("View As"), submenu);
 	}
 }
 
@@ -2588,15 +2588,10 @@ void clMainFrame::CreateRecentlyOpenedFilesMenu()
 	FileHistory &hs = GetMainBook()->GetRecentlyOpenedFilesClass();
 	GetMainBook()->GetRecentlyOpenedFiles(files);
 
-	int idx = GetMenuBar()->FindMenu(wxT("File"));
-	if (idx != wxNOT_FOUND) {
-		wxMenu *menu = GetMenuBar()->GetMenu(idx);
-		wxMenu *submenu = NULL;
-		wxMenuItem *item = menu->FindItem(XRCID("recent_files"));
-		if (item) {
-			submenu = item->GetSubMenu();
-		}
-
+	wxMenu* menu = NULL;
+	wxMenuItem* item = GetMenuBar()->FindItem( XRCID("recent_files"), &menu );
+	if (item && menu) {
+		wxMenu *submenu = item->GetSubMenu();
 		if (submenu) {
 			for (size_t i=0; i<files.GetCount(); i++) {
 				hs.AddFileToHistory(files.Item(i));
@@ -2615,15 +2610,10 @@ void clMainFrame::CreateRecentlyOpenedWorkspacesMenu()
 	FileHistory &hs = ManagerST::Get()->GetRecentlyOpenedWorkspacesClass();
 	ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
 
-	int idx = GetMenuBar()->FindMenu(wxT("File"));
-	if (idx != wxNOT_FOUND) {
-		wxMenu *menu = GetMenuBar()->GetMenu(idx);
-		wxMenu *submenu = NULL;
-		wxMenuItem *item = menu->FindItem(XRCID("recent_workspaces"));
-		if (item) {
-			submenu = item->GetSubMenu();
-		}
-
+	wxMenu* menu = NULL;
+	wxMenuItem* item = GetMenuBar()->FindItem( XRCID("recent_workspaces"), &menu );
+	if (item && menu) {
+		wxMenu *submenu = item->GetSubMenu();
 		if (submenu) {
 			for (size_t i=0; i<files.GetCount(); i++) {
 				hs.AddFileToHistory(files.Item(i));

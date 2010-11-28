@@ -34,7 +34,7 @@ void CppCheckSettingsDialog::OnAddFile(wxCommandEvent& e)
 {
 	const wxString ALL(wxT("All Files (*)|*"));
 	wxFileDialog dlg(this,
-					 wxT("Add File:"),
+					 _("Add File:"),
 					 wxEmptyString,
 					 wxEmptyString,
 					 ALL,

@@ -214,7 +214,7 @@ void TabgroupsPane::OnItemActivated(wxTreeEvent& event) {
 		EditorConfigST::Get()->GetRecentItems( previousgroups, wxT("RecentTabgroups") );
 
 		if (!fn.FileExists()) {
-			wxMessageBox(_("I'm afraid that tabgroup no longer exists :/"), wxT("CodeLite"), wxICON_ERROR|wxOK, this);
+			wxMessageBox(_("I'm afraid that tabgroup no longer exists :/"), _("CodeLite"), wxICON_ERROR|wxOK, this);
 			m_tree->DeleteChildren(item);
 			m_tree->Delete(item);
 			// Remove it from the RecentTabgroups list too
@@ -231,7 +231,7 @@ void TabgroupsPane::OnItemActivated(wxTreeEvent& event) {
 		if (editors.size() > 0) {
 			// If there are editors currently loaded, ask if they are to be replaced or added to
 			wxString msg(_("Do you want to replace the existing editors? (Say 'No' to load the new ones alongside)"));
-			int ans = wxMessageBox(msg, wxT("Load the tabgroup"), wxICON_QUESTION|wxYES_NO|wxCANCEL, this);
+			int ans = wxMessageBox(msg, _("Load the tabgroup"), wxICON_QUESTION|wxYES_NO|wxCANCEL, this);
 			if (ans == wxCANCEL) {
 				return;
 			}
@@ -256,7 +256,7 @@ void TabgroupsPane::OnItemActivated(wxTreeEvent& event) {
 	} else {
 		// Activating an item means load just it, as an editor
 		if (!fn.FileExists()) {
-			wxMessageBox(_("I'm afraid that tabgroup item no longer exists :/"), wxT("CodeLite"), wxICON_ERROR|wxOK, this);
+			wxMessageBox(_("I'm afraid that tabgroup item no longer exists :/"), _("CodeLite"), wxICON_ERROR|wxOK, this);
 			DeleteTabgroupItem();
 			return;
 		}
@@ -274,20 +274,20 @@ void TabgroupsPane::OnItemRtClick(wxTreeEvent& event) {
 
 	wxMenu menu; // Tabgroup Menu
 	if (data->GetType() == TGT_group) {
-		menu.Append(TGM_ID_Add, wxT("&Add a new item to this tabgroup"));
+		menu.Append(TGM_ID_Add, _("&Add a new item to this tabgroup"));
 		if (m_node) {
-			menu.Append(TGM_ID_Paste, wxT("&Paste an item into this tabgroup"));
+			menu.Append(TGM_ID_Paste, _("&Paste an item into this tabgroup"));
 		}
 		menu.AppendSeparator();
-		menu.Append(TGM_ID_Duplicate, wxT("Du&plicate this tabgroup"));
-		menu.Append(TGM_ID_Delete, wxT("&Delete this tabgroup"));
+		menu.Append(TGM_ID_Duplicate, _("Du&plicate this tabgroup"));
+		menu.Append(TGM_ID_Delete, _("&Delete this tabgroup"));
 	} else {
-		menu.Append(TGM_ID_CopyItem, wxT("&Copy this item, to be pasted to another tabgroup"));
-		menu.Append(TGM_ID_CutItem, wxT("Cu&t this item, to be pasted to another tabgroup"));
+		menu.Append(TGM_ID_CopyItem, _("&Copy this item, to be pasted to another tabgroup"));
+		menu.Append(TGM_ID_CutItem, _("Cu&t this item, to be pasted to another tabgroup"));
 		if (m_node) {
-			menu.Append(TGM_ID_Paste, wxT("&Paste an item into this tabgroup"));
+			menu.Append(TGM_ID_Paste, _("&Paste an item into this tabgroup"));
 		}
-		menu.Append(TGM_ID_RemoveItem, wxT("&Remove this item from the tabgroup"));
+		menu.Append(TGM_ID_RemoveItem, _("&Remove this item from the tabgroup"));
 	}
 	wxPoint pt = event.GetPoint();
 	PopupMenu(&menu, pt.x, pt.y);
@@ -433,7 +433,7 @@ void TabgroupsPane::AddTabgroupItem() {
 	}
 
 	if (!wxFileExists(newfilepath)) {
-		if (wxMessageBox(_("That filepath doesn't seem to exist. Are you sure?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO, this) != wxYES) {
+		if (wxMessageBox(_("That filepath doesn't seem to exist. Are you sure?"), _("CodeLite"), wxICON_QUESTION|wxYES_NO, this) != wxYES) {
 			return;
 		}
 	}
@@ -495,14 +495,14 @@ void TabgroupsPane::PasteTabgroupItem(wxTreeItemId itemtopaste /*= wxTreeItemId(
 	wxString filepath = groupdata->GetFilepath();
 	wxXmlDocument doc(filepath);
 	if (!doc.IsOk()) {
-		wxMessageBox(_("Failed to load the destination tabgroup :/"), wxT("CodeLite"), wxICON_ERROR|wxOK, this);
+		wxMessageBox(_("Failed to load the destination tabgroup :/"), _("CodeLite"), wxICON_ERROR|wxOK, this);
 		return;
 	}
 
 	bool NeedToChangeTree = true;
 	wxXmlNode* node = TabGroupsManager::Get()->FindTabgroupItem(doc, filepath, m_copieditem_filepath);
 	if (node) {
-		if (wxMessageBox(_("There is already an item with this filepath in the tabgroup. Overwrite it?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO, this) == wxYES) {
+		if (wxMessageBox(_("There is already an item with this filepath in the tabgroup. Overwrite it?"), _("CodeLite"), wxICON_QUESTION|wxYES_NO, this) == wxYES) {
 			wxXmlNode* parent = node->GetParent();
 			if (parent) {
 				parent->RemoveChild(node);
@@ -560,7 +560,7 @@ void TabgroupsPane::DeleteTabgroup() {
 	}
 
 	wxString msg = wxString::Format(_("Delete tabgroup %s?"), m_tree->GetItemText(item).c_str());
-	if (wxMessageBox(msg, wxT("CodeLite"), wxICON_QUESTION|wxYES_NO, this) == wxYES) {
+	if (wxMessageBox(msg, _("CodeLite"), wxICON_QUESTION|wxYES_NO, this) == wxYES) {
 		m_tree->Delete(item);
 
 		// Remove it from the RecentTabgroups list too
@@ -596,12 +596,12 @@ void TabgroupsPane::DuplicateTabgroup() {
 
 	wxFileName newfilepath(oldfilepath.GetPath(), newname);
 	if (newfilepath.FileExists()) {
-		wxMessageBox(_("Sorry, there is already a tabgroup with this name"), wxT("CodeLite"), wxICON_INFORMATION|wxOK, this);
+		wxMessageBox(_("Sorry, there is already a tabgroup with this name"), _("CodeLite"), wxICON_INFORMATION|wxOK, this);
 		return;
 	}
 
 	if (!wxCopyFile(oldfilepath.GetFullPath(), newfilepath.GetFullPath())) {
-		wxMessageBox(_("Sorry, duplication of the tabgroup failed :/"), wxT("CodeLite"), wxICON_ERROR|wxOK, this);
+		wxMessageBox(_("Sorry, duplication of the tabgroup failed :/"), _("CodeLite"), wxICON_ERROR|wxOK, this);
 		return;
 	}
 	// Do the rest in a separate method, which is also called by Frame::OnFileSaveTabGroup
@@ -679,7 +679,7 @@ void TabgroupsPane::DeleteTabgroupItem(bool DoCut /*=false*/, wxTreeItemId itemt
 
 	if (!DoCut) {	// If we're deleting, check the user really meant it
 		wxString msg = wxString::Format(_("Remove item %s from %s?"), m_tree->GetItemText(item).c_str(), m_tree->GetItemText(parent).c_str());
-		if (wxMessageBox(msg, wxT("CodeLite"), wxICON_QUESTION|wxYES_NO, this) != wxYES) {
+		if (wxMessageBox(msg, _("CodeLite"), wxICON_QUESTION|wxYES_NO, this) != wxYES) {
 			return;
 		}
 	}
@@ -702,7 +702,7 @@ void TabgroupsPane::DeleteTabgroupItem(bool DoCut /*=false*/, wxTreeItemId itemt
 	}
 
 	// Either !doc.IsOk() or !TabInfoNode
-	wxMessageBox(_("Failed to amend the tabgroup :/"), wxT("CodeLite"), wxICON_ERROR|wxOK, this);
+	wxMessageBox(_("Failed to amend the tabgroup :/"), _("CodeLite"), wxICON_ERROR|wxOK, this);
 }
 
 int TabgroupsPane::DoGetIconIndex(const wxString& filename)

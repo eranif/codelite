@@ -236,7 +236,7 @@ void WizardsPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 		menu->Prepend(item);
 		m_vdDynItems.push_back(item);
 
-		item = new wxMenuItem(menu, ID_MI_NEW_NEW_CLASS, wxT("&New Class..."), wxEmptyString, wxITEM_NORMAL);
+		item = new wxMenuItem(menu, ID_MI_NEW_NEW_CLASS, _("&New Class..."), wxEmptyString, wxITEM_NORMAL);
 		menu->Prepend(item);
 		m_vdDynItems.push_back(item);
 	}

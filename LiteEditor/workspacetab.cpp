@@ -79,22 +79,22 @@ void WorkspaceTab::CreateGUIControls()
 	SetSizer(sz);
 
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
-	tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
+	tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), _("Link Editor"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);
-	tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
-	tb->AddTool(XRCID("go_home"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxT("Goto Active Project"), wxITEM_NORMAL);
+	tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), _("Collapse All"), wxITEM_NORMAL);
+	tb->AddTool(XRCID("go_home"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), _("Goto Active Project"), wxITEM_NORMAL);
 	tb->AddSeparator();
 
 	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
-	tb->AddTool(XRCID("project_properties"), wxEmptyString, bmpLoader->LoadBitmap(wxT("workspace/16/project_settings")),      wxT("Open Active Project Settings..."), wxITEM_NORMAL);
-	tb->AddTool(XRCID("set_project_active"), wxEmptyString, bmpLoader->LoadBitmap(wxT("workspace/16/project_select_active")), wxT("Select Active Project"),           wxITEM_NORMAL);
+	tb->AddTool(XRCID("project_properties"), wxEmptyString, bmpLoader->LoadBitmap(wxT("workspace/16/project_settings")),      _("Open Active Project Settings..."), wxITEM_NORMAL);
+	tb->AddTool(XRCID("set_project_active"), wxEmptyString, bmpLoader->LoadBitmap(wxT("workspace/16/project_select_active")), _("Select Active Project"),           wxITEM_NORMAL);
 	tb->AddSeparator();
 
 	// add the 'multiple/single' tree style
 	long val (0);
 	if(EditorConfigST::Get()->GetLongValue(wxT("WspTreeMultipleSelection"), val) == false) {val = 0;}
 
-	tb->AddTool(XRCID("set_multi_selection"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("cursor")), wxT("Toggle Multiple / Single Selection"), wxITEM_CHECK);
+	tb->AddTool(XRCID("set_multi_selection"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("cursor")), _("Toggle Multiple/Single Selection"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("set_multi_selection"), val ? true : false);
 	tb->Realize();
 	sz->Add(tb, 0, wxEXPAND, 0);
@@ -212,7 +212,7 @@ void WorkspaceTab::OnProjectSettings(wxCommandEvent& e)
 {
 	wxString projectName = ManagerST::Get()->GetActiveProjectName();
 	wxString title( projectName );
-	title << wxT( " Project Settings" );
+	title << _( " Project Settings" );
 
 	//open the project properties dialog
 	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
@@ -362,7 +362,7 @@ void WorkspaceTab::OnToggleMultiSelection(wxCommandEvent& e)
 {
 	EditorConfigST::Get()->SaveLongValue(wxT("WspTreeMultipleSelection"), e.IsChecked() ? 1 : 0);
 	// Reload the tree
-	int answer = wxMessageBox(_("Workspace reload is required\nWould you like to reload workspace now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL, this);
+	int answer = wxMessageBox(_("Workspace reload is required\nWould you like to reload workspace now?"), _("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL, this);
 	if ( answer == wxYES ) {
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
 		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);

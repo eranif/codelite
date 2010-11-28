@@ -46,7 +46,7 @@ CopyrightsOptionsDlg::CopyrightsOptionsDlg( wxWindow* parent, IConfigTool *confi
 void CopyrightsOptionsDlg::OnSelectFile( wxCommandEvent& event )
 {
 	// open file selection
-	wxFileDialog *dlg = new wxFileDialog(this, wxT("Choose a file:"));
+	wxFileDialog *dlg = new wxFileDialog(this, _("Choose a file:"));
 	if(dlg->ShowModal() == wxID_OK)
 	{
 		// Get the dirname

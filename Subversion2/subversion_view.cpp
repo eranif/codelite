@@ -157,22 +157,22 @@ void SubversionView::CreatGUIControls()
 	// Create the toolbar
 	BitmapLoader *bmpLdr = m_plugin->GetManager()->GetStdIcons();
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
-	tb->AddTool(XRCID("svn_link_editor"), wxT("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
+	tb->AddTool(XRCID("svn_link_editor"), _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), _("Link Editor"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("svn_link_editor"), m_plugin->GetSettings().GetFlags() & SvnLinkEditor);
 
-	tb->AddTool(XRCID("clear_svn_output"), wxT("Clear Svn Output Tab"), bmpLdr->LoadBitmap(wxT("output-pane/16/clear")), wxT("Clear Svn Output Tab"), wxITEM_NORMAL);
-	tb->AddTool(XRCID("svn_refresh"),      wxT("Refresh View"), bmpLdr->LoadBitmap ( wxT ( "output-pane/16/reload" ) ), wxT ( "Refresh View" ) );
+	tb->AddTool(XRCID("clear_svn_output"), _("Clear Svn Output Tab"), bmpLdr->LoadBitmap(wxT("output-pane/16/clear")), _("Clear Svn Output Tab"), wxITEM_NORMAL);
+	tb->AddTool(XRCID("svn_refresh"),      _("Refresh View"), bmpLdr->LoadBitmap ( wxT ( "output-pane/16/reload" ) ), _( "Refresh View" ) );
 	tb->AddSeparator();
 
-	tb->AddTool(XRCID("svn_stop"),         wxT("Stop current svn process"), bmpLdr->LoadBitmap(wxT("toolbars/16/build/stop")), wxT ( "Stop current svn process" ) );
-	tb->AddTool(XRCID("svn_cleanup"),      wxT("Svn Cleanup"), wxXmlResource::Get()->LoadBitmap ( wxT ( "eraser" ) ), wxT ( "Svn Cleanup" ) );
+	tb->AddTool(XRCID("svn_stop"),         _("Stop current svn process"), bmpLdr->LoadBitmap(wxT("toolbars/16/build/stop")), _( "Stop current svn process" ) );
+	tb->AddTool(XRCID("svn_cleanup"),      _("Svn Cleanup"), wxXmlResource::Get()->LoadBitmap ( wxT ( "eraser" ) ), _( "Svn Cleanup" ) );
 
 	tb->AddSeparator();
-	tb->AddTool(XRCID("svn_checkout"),         wxT("Svn Checkout"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_checkout" ) ), wxT ( "Svn Checkout" ) );
+	tb->AddTool(XRCID("svn_checkout"),         _("Svn Checkout"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_checkout" ) ), _( "Svn Checkout" ) );
 
 	tb->AddSeparator();
-	tb->AddTool(XRCID("svn_settings"),     wxT("Svn Settings..."), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_settings" ) ), wxT ( "Svn Settings..." ) );
-	tb->AddTool(XRCID("svn_info"),         wxT("Svn Info"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_info" ) ), wxT ( "Svn Info" ) );
+	tb->AddTool(XRCID("svn_settings"),     _("Svn Settings..."), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_settings" ) ), _( "Svn Settings..." ) );
+	tb->AddTool(XRCID("svn_info"),         _("Svn Info"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_info" ) ), _( "Svn Info" ) );
 
 	tb->Connect(XRCID("clear_svn_output"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnClearOuptut), NULL, this);
 	tb->Connect(XRCID("svn_stop"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnStop),        NULL, this);
@@ -400,12 +400,12 @@ void SubversionView::CreateSecondRootMenu(wxMenu* menu)
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_revert"),  wxT("Revert"));
 	menu->AppendSeparator();
-	menu->Append(XRCID("svn_diff"),    wxT("Create Diff..."));
+	menu->Append(XRCID("svn_diff"),    _("Create Diff..."));
 }
 
 void SubversionView::CreateFileMenu(wxMenu* menu)
 {
-	menu->Append(XRCID("svn_open_file"),  wxT("Open File..."));
+	menu->Append(XRCID("svn_open_file"),  _("Open File..."));
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_commit"),  wxT("Commit"));
 	menu->Append(XRCID("svn_update"),  wxT("Update"));
@@ -422,7 +422,7 @@ void SubversionView::CreateFileMenu(wxMenu* menu)
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_resolve"), wxT("Resolve"));
 	menu->AppendSeparator();
-	menu->Append(XRCID("svn_diff"),    wxT("Create Diff..."));
+	menu->Append(XRCID("svn_diff"),    _("Create Diff..."));
 	menu->AppendSeparator();
 
 	menu->Append(XRCID("svn_blame"),    wxT("Blame..."));
@@ -430,8 +430,8 @@ void SubversionView::CreateFileMenu(wxMenu* menu)
 
 	wxMenu *subMenu;
 	subMenu = new wxMenu;
-	subMenu->Append(XRCID("svn_ignore_file"),         wxT("Ignore this file"));
-	subMenu->Append(XRCID("svn_ignore_file_pattern"), wxT("Ignore this file pattern"));
+	subMenu->Append(XRCID("svn_ignore_file"),         _("Ignore this file"));
+	subMenu->Append(XRCID("svn_ignore_file_pattern"), _("Ignore this file pattern"));
 	menu->Append(wxID_ANY, wxT("Ignore"), subMenu);
 }
 
@@ -456,10 +456,10 @@ void SubversionView::CreateRootMenu(wxMenu* menu)
 	menu->Append(XRCID("svn_patch_dry_run"), wxT("Apply Patch - Dry Run..."));
 
 	menu->AppendSeparator();
-	menu->Append(XRCID("svn_log"),           wxT("Change Log..."));
+	menu->Append(XRCID("svn_log"),           _("Change Log..."));
 
 	menu->AppendSeparator();
-	menu->Append(XRCID("svn_properties"),    wxT("Properties..."));
+	menu->Append(XRCID("svn_properties"),    _("Properties..."));
 }
 
 void SubversionView::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths)

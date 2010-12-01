@@ -2370,7 +2370,10 @@ void Manager::UpdateFileLine ( const wxString &filename, int lineno, bool reposi
 void Manager::UpdateGotControl ( const DebuggerEvent &e )
 {
 	//put us on top of the z-order window
+	long curFlags = clMainFrame::Get()->GetWindowStyleFlag();
+	clMainFrame::Get()->SetWindowStyleFlag(curFlags | wxSTAY_ON_TOP);
 	clMainFrame::Get()->Raise();
+	clMainFrame::Get()->SetWindowStyleFlag(curFlags);
 	m_dbgCanInteract = true;
 	
 	int reason = e.m_controlReason;

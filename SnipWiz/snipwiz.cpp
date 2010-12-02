@@ -299,7 +299,11 @@ void SnipWiz::OnMenuSnippets( wxCommandEvent &e )
 			// format the text for insertion
 			wxString output = FormatOutput( editor, srText );
 
-			int curPos = editor->GetCurrentPosition() - selection.Len();
+			int curPos = editor->GetCurrentPosition();
+			if ( selection.Len() != 0 ) {
+				curPos = editor->GetSelectionStart();
+			}
+
 			// get caret position
 			long cursorPos = output.Find( REAL_CARET_STR );
 			if ( cursorPos != wxNOT_FOUND )

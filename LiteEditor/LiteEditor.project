@@ -217,6 +217,12 @@
       <File Name="implementparentvirtualfunctionsbase.h"/>
       <File Name="implement_parent_virtual_functions.h"/>
       <File Name="implement_parent_virtual_functions.cpp"/>
+      <File Name="cc_colourise_page.cpp"/>
+      <File Name="cc_colourise_page.h"/>
+      <File Name="cc_display_and_behavior_page.cpp"/>
+      <File Name="cc_display_and_behavior_page.h"/>
+      <File Name="cc_triggering_page.cpp"/>
+      <File Name="cc_triggering_page.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Compiler">
       <File Name="advanced_settings.h"/>

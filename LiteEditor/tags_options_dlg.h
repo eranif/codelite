@@ -33,6 +33,32 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
+class TagsOptionsPageBase
+{
+public:
+	TagsOptionsPageBase(){}
+	virtual ~TagsOptionsPageBase(){}
+	
+	virtual void Save(TagsOptionsData &data) = 0;
+	void SetFlag(TagsOptionsData &data, CodeCompletionOpts flag, bool set)
+	{
+		if (set) {
+			data.SetFlags(data.GetFlags() | flag);
+		} else {
+			data.SetFlags(data.GetFlags() & ~(flag));
+		}
+	}
+	
+	void SetColouringFlag(TagsOptionsData &data, CodeCompletionColourOpts flag, bool set)
+	{
+		if (set) {
+			data.SetCcColourFlags(data.GetCcColourFlags() | flag);
+		} else {
+			data.SetCcColourFlags(data.GetCcColourFlags() & ~(flag));
+		}
+	}
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 /// Class TagsOptionsDlg
 ///////////////////////////////////////////////////////////////////////////////
@@ -49,7 +75,6 @@ protected:
 	void CopyData                ();
 	void OnButtonOK              (wxCommandEvent &event);
 	void OnButtonAdd             (wxCommandEvent &event);
-	void OnColourWorkspaceUI     (wxUpdateUIEvent &e);
 	void OnClearAll              (wxCommandEvent &e);
 	void OnClearAllUI            (wxUpdateUIEvent &e);
 	void OnAddSearchPath         (wxCommandEvent &e);
@@ -64,7 +89,6 @@ protected:
 	void OnRemoveExcludePathUI   (wxUpdateUIEvent &e);
 	void OnFileSelectedUI        (wxUpdateUIEvent& event);
 	void OnParse                 (wxCommandEvent& event);
-	void OnAutoShowWordAssitUI   (wxUpdateUIEvent& event);
 
 public:
 	TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data);

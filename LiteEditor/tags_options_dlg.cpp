@@ -41,6 +41,9 @@
 #include <wx/wx.h>
 #endif //WX_PRECOMP
 
+#include "cc_display_and_behavior_page.h"
+#include "cc_colourise_page.h"
+#include "cc_triggering_page.h"
 #include <wx/tokenzr.h>
 #include "pp_include.h"
 #include "pluginmanager.h"
@@ -61,8 +64,11 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data)
 {
 	m_colour_flags = m_data.GetCcColourFlags();
 	InitValues();
-
-	m_checkBoxMarkTagsFilesInBold->SetFocus();
+	
+	m_treebook->AddPage(new CCDisplayAndBehvior(m_treebook, data), _("Display and behvior"), true);
+	m_treebook->AddPage(new CCColourisePage(m_treebook, data), _("Colouring"), false);
+	m_treebook->AddPage(new CCTriggeringPage(m_treebook, data), _("Triggering"), false);
+	
 	WindowAttrManager::Load(this, wxT("TagsOptionsDlgAttr"), NULL);
 }
 
@@ -74,36 +80,10 @@ TagsOptionsDlg::~TagsOptionsDlg()
 void TagsOptionsDlg::InitValues()
 {
 	//initialize the CodeLite page
-	m_checkDisplayFunctionTip->SetValue            (m_data.GetFlags() & CC_DISP_FUNC_CALLTIP ? true : false);
-	m_checkDisplayTypeInfo->SetValue               (m_data.GetFlags() & CC_DISP_TYPE_INFO ? true : false);
+
 	m_checkFilesWithoutExt->SetValue               (m_data.GetFlags() & CC_PARSE_EXT_LESS_FILES ? true : false);
-	m_checkColourLocalVars->SetValue               (m_data.GetFlags() & CC_COLOUR_VARS ? true : false);
-	m_checkColourProjTags->SetValue                (m_data.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
-	m_checkCppKeywordAssist->SetValue              (m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
-	m_checkWordAssist->SetValue                    (m_data.GetFlags() & CC_WORD_ASSIST ? true : false);
-	m_checkAutoInsertSingleChoice->SetValue        (m_data.GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE ? true : false);
-	m_checkDisableParseOnSave->SetValue            (m_data.GetFlags() & CC_DISABLE_AUTO_PARSING ? true : false);
-	m_checkBoxMarkTagsFilesInBold->SetValue        (m_data.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
-	m_checkBoxretagWorkspaceOnStartup->SetValue    (m_data.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ? true : false);
-	m_checkBoxDeepUsingNamespaceResolving->SetValue(m_data.GetFlags() & CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING ? true : false);
-	
-	m_checkBoxClass->SetValue                      (m_data.GetCcColourFlags() & CC_COLOUR_CLASS);
-	m_checkBoxEnum->SetValue                       (m_data.GetCcColourFlags() & CC_COLOUR_ENUM);
-	m_checkBoxFunction->SetValue                   (m_data.GetCcColourFlags() & CC_COLOUR_FUNCTION);
-	m_checkBoxMacro->SetValue                      (m_data.GetCcColourFlags() & CC_COLOUR_MACRO);
-	m_checkBoxNamespace->SetValue                  (m_data.GetCcColourFlags() & CC_COLOUR_NAMESPACE);
-	m_checkBoxPrototype->SetValue                  (m_data.GetCcColourFlags() & CC_COLOUR_PROTOTYPE);
-	m_checkBoxStruct->SetValue                     (m_data.GetCcColourFlags() & CC_COLOUR_STRUCT);
-	m_checkBoxTypedef->SetValue                    (m_data.GetCcColourFlags() & CC_COLOUR_TYPEDEF);
-	m_checkBoxUnion->SetValue                      (m_data.GetCcColourFlags() & CC_COLOUR_UNION);
-	m_checkBoxEnumerator->SetValue                 (m_data.GetCcColourFlags() & CC_COLOUR_ENUMERATOR);
-	m_checkBoxMember->SetValue                     (m_data.GetCcColourFlags() & CC_COLOUR_MEMBER);
-	m_checkBoxVariable->SetValue                   (m_data.GetCcColourFlags() & CC_COLOUR_VARIABLE);
-	m_checkBoxColourMacroBlocks->SetValue          (m_data.GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS);
 	m_listBoxSearchPaths->Append                   (m_data.GetParserSearchPaths() );
 	m_listBoxSearchPaths1->Append                  (m_data.GetParserExcludePaths() );
-	m_spinCtrlMaxItemToColour->SetValue            (m_data.GetMaxItemToColour() );
-	m_sliderMinWordLen->SetValue                   (m_data.GetMinWordLen() );
 	m_textPrep->SetValue                           (m_data.GetTokens());
 	m_textTypes->SetValue                          (m_data.GetTypes());
 	m_textCtrlFilesList->SetValue                  (m_data.GetMacrosFiles());
@@ -143,34 +123,15 @@ void TagsOptionsDlg::OnButtonAdd(wxCommandEvent &event)
 
 void TagsOptionsDlg::CopyData()
 {
-	//save data to the interal member m_data
-	SetFlag(CC_DISP_FUNC_CALLTIP,                   m_checkDisplayFunctionTip->IsChecked());
-	SetFlag(CC_DISP_TYPE_INFO,                      m_checkDisplayTypeInfo->IsChecked());
-	SetFlag(CC_PARSE_EXT_LESS_FILES,                m_checkFilesWithoutExt->IsChecked());
-	SetFlag(CC_COLOUR_VARS,                         m_checkColourLocalVars->IsChecked());
-	SetFlag(CC_CPP_KEYWORD_ASISST,                  m_checkCppKeywordAssist->IsChecked());
-	SetFlag(CC_WORD_ASSIST,                         m_checkWordAssist->IsChecked());
-	SetFlag(CC_AUTO_INSERT_SINGLE_CHOICE,           m_checkAutoInsertSingleChoice->IsChecked());
-	SetFlag(CC_DISABLE_AUTO_PARSING,                m_checkDisableParseOnSave->IsChecked());
-	SetFlag(CC_COLOUR_WORKSPACE_TAGS,               m_checkColourProjTags->IsChecked());
-	SetFlag(CC_MARK_TAGS_FILES_IN_BOLD,             m_checkBoxMarkTagsFilesInBold->IsChecked());
-	SetFlag(CC_RETAG_WORKSPACE_ON_STARTUP,          m_checkBoxretagWorkspaceOnStartup->IsChecked());
-	SetFlag(CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING, m_checkBoxDeepUsingNamespaceResolving->IsChecked());
-
-	SetColouringFlag(CC_COLOUR_CLASS,        m_checkBoxClass->IsChecked());
-	SetColouringFlag(CC_COLOUR_ENUM,         m_checkBoxEnum->IsChecked());
-	SetColouringFlag(CC_COLOUR_FUNCTION,     m_checkBoxFunction->IsChecked());
-	SetColouringFlag(CC_COLOUR_MACRO,        m_checkBoxMacro->IsChecked());
-	SetColouringFlag(CC_COLOUR_NAMESPACE,    m_checkBoxNamespace->IsChecked());
-	SetColouringFlag(CC_COLOUR_PROTOTYPE,    m_checkBoxPrototype->IsChecked());
-	SetColouringFlag(CC_COLOUR_STRUCT,       m_checkBoxStruct->IsChecked());
-	SetColouringFlag(CC_COLOUR_TYPEDEF,      m_checkBoxTypedef->IsChecked());
-	SetColouringFlag(CC_COLOUR_UNION,        m_checkBoxUnion->IsChecked());
-	SetColouringFlag(CC_COLOUR_ENUMERATOR,   m_checkBoxEnumerator->IsChecked());
-	SetColouringFlag(CC_COLOUR_VARIABLE,     m_checkBoxVariable->IsChecked());
-	SetColouringFlag(CC_COLOUR_MEMBER,       m_checkBoxMember->IsChecked());
-	SetColouringFlag(CC_COLOUR_MACRO_BLOCKS, m_checkBoxColourMacroBlocks->IsChecked());
+	// Save data to the interal member m_data
+	for(size_t i=0; i<m_treebook->GetPageCount(); i++) {
+		TagsOptionsPageBase *page = dynamic_cast<TagsOptionsPageBase*>(m_treebook->GetPage(i));
+		if(page) {
+			page->Save(m_data);
+		}
+	}
 	
+	SetFlag(CC_PARSE_EXT_LESS_FILES,                m_checkFilesWithoutExt->IsChecked());
 	m_data.SetFileSpec(m_textFileSpec->GetValue());
 
 	m_data.SetTokens(m_textPrep->GetValue());
@@ -179,8 +140,6 @@ void TagsOptionsDlg::CopyData()
 	m_data.SetLanguageSelection(m_comboBoxLang->GetStringSelection());
 	m_data.SetParserSearchPaths( m_listBoxSearchPaths->GetStrings() );
 	m_data.SetParserExcludePaths( m_listBoxSearchPaths1->GetStrings() );
-	m_data.SetMaxItemToColour( m_spinCtrlMaxItemToColour->GetValue() );
-	m_data.SetMinWordLen( m_sliderMinWordLen->GetValue() );
 	m_data.SetMacrosFiles( m_textCtrlFilesList->GetValue() );
 
 }
@@ -201,11 +160,6 @@ void TagsOptionsDlg::SetColouringFlag(CodeCompletionColourOpts flag, bool set)
 	} else {
 		m_data.SetCcColourFlags(m_data.GetCcColourFlags() & ~(flag));
 	}
-}
-
-void TagsOptionsDlg::OnColourWorkspaceUI(wxUpdateUIEvent& e)
-{
-	e.Enable(m_checkColourProjTags->IsChecked());
 }
 
 void TagsOptionsDlg::OnAddSearchPath(wxCommandEvent& e)
@@ -331,9 +285,4 @@ void TagsOptionsDlg::OnParse(wxCommandEvent& event)
 		CopyData();
 		EndModal(wxID_OK);
 	}
-}
-
-void TagsOptionsDlg::OnAutoShowWordAssitUI(wxUpdateUIEvent& event)
-{
-	event.Enable(m_checkWordAssist->IsChecked());
 }

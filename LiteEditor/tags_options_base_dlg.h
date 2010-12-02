@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -10,29 +10,30 @@
 
 #include <wx/intl.h>
 
-#include <wx/string.h>
-#include <wx/checkbox.h>
+#include <wx/treebook.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
+#include <wx/string.h>
 #include <wx/sizer.h>
-#include <wx/statbox.h>
 #include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/stattext.h>
-#include <wx/spinctrl.h>
-#include <wx/slider.h>
-#include <wx/notebook.h>
+#include <wx/statbox.h>
 #include <wx/listbox.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
 #include <wx/combobox.h>
+#include <wx/checkbox.h>
 #include <wx/statline.h>
 #include <wx/hyperlink.h>
+#include <wx/notebook.h>
 #include <wx/dialog.h>
+#include <wx/spinctrl.h>
+#include <wx/slider.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -47,39 +48,7 @@ class TagsOptionsBaseDlg : public wxDialog
 	protected:
 		wxNotebook* m_mainBook;
 		wxPanel* m_generalPage;
-		wxNotebook* m_notebook3;
-		wxPanel* m_panel8;
-		wxCheckBox* m_checkBoxMarkTagsFilesInBold;
-		wxCheckBox* m_checkDisplayTypeInfo;
-		wxCheckBox* m_checkDisplayFunctionTip;
-		wxCheckBox* m_checkCppKeywordAssist;
-		wxCheckBox* m_checkBoxretagWorkspaceOnStartup;
-		wxCheckBox* m_checkDisableParseOnSave;
-		wxCheckBox* m_checkBoxDeepUsingNamespaceResolving;
-		wxPanel* m_panel6;
-		wxStaticText* m_staticText72;
-		wxSpinCtrl* m_spinCtrlMaxItemToColour;
-		wxCheckBox* m_checkColourLocalVars;
-		wxCheckBox* m_checkBoxColourMacroBlocks;
-		wxCheckBox* m_checkColourProjTags;
-		wxCheckBox* m_checkBoxClass;
-		wxCheckBox* m_checkBoxStruct;
-		wxCheckBox* m_checkBoxFunction;
-		wxCheckBox* m_checkBoxEnum;
-		wxCheckBox* m_checkBoxEnumerator;
-		wxCheckBox* m_checkBoxUnion;
-		wxCheckBox* m_checkBoxPrototype;
-		wxCheckBox* m_checkBoxTypedef;
-		wxCheckBox* m_checkBoxMacro;
-		wxCheckBox* m_checkBoxNamespace;
-		wxCheckBox* m_checkBoxMember;
-		wxCheckBox* m_checkBoxVariable;
-		wxPanel* m_panel7;
-		wxCheckBox* m_checkWordAssist;
-		
-		wxStaticText* m_staticTextMinWordLen;
-		wxSlider* m_sliderMinWordLen;
-		wxCheckBox* m_checkAutoInsertSingleChoice;
+		wxTreebook *m_treebook;
 		wxPanel* m_panelParser;
 		wxStaticText* m_staticText7;
 		wxListBox* m_listBoxSearchPaths;
@@ -115,8 +84,6 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxButton* m_buttonCancel;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnColourWorkspaceUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnAutoShowWordAssitUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnAddSearchPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAddSearchPathUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnRemoveSearchPath( wxCommandEvent& event ) { event.Skip(); }
@@ -136,8 +103,93 @@ class TagsOptionsBaseDlg : public wxDialog
 	
 	public:
 		
-		TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Tags Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 840,596 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Tags Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~TagsOptionsBaseDlg();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class CCDisplayAndBehaviorBase
+///////////////////////////////////////////////////////////////////////////////
+class CCDisplayAndBehaviorBase : public wxPanel 
+{
+	private:
+	
+	protected:
+		wxCheckBox* m_checkBoxMarkTagsFilesInBold;
+		wxCheckBox* m_checkDisplayTypeInfo;
+		wxCheckBox* m_checkDisplayFunctionTip;
+		wxCheckBox* m_checkCppKeywordAssist;
+		wxCheckBox* m_checkBoxretagWorkspaceOnStartup;
+		wxCheckBox* m_checkDisableParseOnSave;
+		wxCheckBox* m_checkBoxDeepUsingNamespaceResolving;
+	
+	public:
+		
+		CCDisplayAndBehaviorBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		~CCDisplayAndBehaviorBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class CCColouringBasePage
+///////////////////////////////////////////////////////////////////////////////
+class CCColouringBasePage : public wxPanel 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText72;
+		wxSpinCtrl* m_spinCtrlMaxItemToColour;
+		wxCheckBox* m_checkColourLocalVars;
+		wxCheckBox* m_checkBoxColourMacroBlocks;
+		wxCheckBox* m_checkColourProjTags;
+		wxCheckBox* m_checkBoxClass;
+		wxCheckBox* m_checkBoxStruct;
+		wxCheckBox* m_checkBoxFunction;
+		wxCheckBox* m_checkBoxEnum;
+		wxCheckBox* m_checkBoxEnumerator;
+		wxCheckBox* m_checkBoxUnion;
+		wxCheckBox* m_checkBoxPrototype;
+		wxCheckBox* m_checkBoxTypedef;
+		wxCheckBox* m_checkBoxMacro;
+		wxCheckBox* m_checkBoxNamespace;
+		wxCheckBox* m_checkBoxMember;
+		wxCheckBox* m_checkBoxVariable;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnColourWorkspaceUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		CCColouringBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		~CCColouringBasePage();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class CCTriggering
+///////////////////////////////////////////////////////////////////////////////
+class CCTriggering : public wxPanel 
+{
+	private:
+	
+	protected:
+		wxCheckBox* m_checkWordAssist;
+		
+		wxStaticText* m_staticTextMinWordLen;
+		wxSlider* m_sliderMinWordLen;
+		wxCheckBox* m_checkAutoInsertSingleChoice;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnAutoShowWordAssitUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		CCTriggering( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		~CCTriggering();
 	
 };
 

@@ -368,7 +368,7 @@ bool BreakptMgr::DelBreakpoint(const int id)
 			bool contIsNeeded = PauseDebuggerIfNeeded();
 			if (dbgr->RemoveBreak(id)) {
 				// Strangely, -break-delete doesn't output any confirmation except for ^done. So do it here
-				wxString msg = ((m_bps.at(index).bp_type == BP_type_watchpt) ? wxT("Watchpoint ") : wxT("Breakpoint "));
+				wxString msg = ((m_bps.at(index).bp_type == BP_type_watchpt) ? _("Watchpoint ") : _("Breakpoint "));
 				ManagerST::Get()->UpdateAddLine(msg + wxString::Format(_("%u deleted"), id));
 			}
 			if (contIsNeeded) {
@@ -549,7 +549,7 @@ bool BreakptMgr::IgnoreByLineno(const wxString& file, const int lineno)
 		return false;
 	}
 
-	long newvalue = wxGetNumberFromUser( _("Please enter the new ignore-count"), wxT(""), wxT("Set ignore-count"), bp.ignore_number, 0, 1000000);
+	long newvalue = wxGetNumberFromUser( _("Please enter the new ignore-count"), wxT(""), _("Set ignore-count"), bp.ignore_number, 0, 1000000);
 	if ((newvalue == -1) || (newvalue == (long)bp.ignore_number)) {
 		return false;
 	}

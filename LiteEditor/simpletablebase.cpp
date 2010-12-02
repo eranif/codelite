@@ -134,7 +134,11 @@ void DebuggerTreeListCtrlBase::OnEvaluateVariableObj(const DebuggerEvent& event)
 	std::map<wxString, wxTreeItemId>::iterator iter = m_gdbIdToTreeId.find(gdbId);
 	if( iter != m_gdbIdToTreeId.end() ) {
 
+#if wxVERSION_NUMBER < 2808
+		wxColour defColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+#else
 		wxColour defColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
+#endif
 		wxColour redColour = *wxRED;
 		wxColour itemColor;
 

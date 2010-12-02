@@ -300,10 +300,13 @@ bool CodeLiteApp::OnInit()
 	wxLocale::AddCatalogLookupPathPrefix(wxT("/usr/local/share/locale"));
 #endif
 
+	// Load the standard wxWidgets catalogue: it'll help if there isn't a CodeLite one for a language
+	// But do it first so that, if a word appears in both catalogues, the CodeLite-translated one takes precedence
+	m_locale.AddCatalog(wxT("wxstd"));
+
 	if ( ! m_locale.AddCatalog(wxT("codelite")) )
 	  m_locale.AddCatalog(wxT("CodeLite"));              	// Hedge bets re our spelling
 
-	m_locale.AddCatalog(wxT("wxstd"));                   	// Load the standard wxWidgets catalogue too: it'll help if there isn't a CodeLite one for a language
 
 	// Init resources and add the PNG handler
 	wxSystemOptions::SetOption(_T("msw.remap"), 0);

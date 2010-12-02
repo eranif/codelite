@@ -175,27 +175,27 @@ void OutputTabWindow::CreateGUIControls()
 	m_tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL|wxTB_NODIVIDER);
 
 	m_tb->AddTool(XRCID("scroll_on_output"),
-	              wxT("Scroll on Output"),
+	              _("Scroll on Output"),
 	              wxXmlResource::Get()->LoadBitmap(wxT("link_editor")),
-	              wxT("Scroll on Output"),
+	              _("Scroll on Output"),
 	              wxITEM_CHECK);
 	m_tb->ToggleTool(XRCID("scroll_on_output"), m_outputScrolls);
 
 	m_tb->AddTool(XRCID("word_wrap_output"),
-	              wxT("Word Wrap"),
+	              _("Word Wrap"),
 	              wxXmlResource::Get()->LoadBitmap(wxT("word_wrap")),
-	              wxT("Word Wrap"),
+	              _("Word Wrap"),
 	              wxITEM_CHECK);
 
 	m_tb->AddTool(XRCID("clear_all_output"),
-	              wxT("Clear All"),
+	              _("Clear All"),
 	              bmpLoader->LoadBitmap(wxT("output-pane/16/clear")),
-	              wxT("Clear All"));
+	              _("Clear All"));
 
 	m_tb->AddTool(XRCID("search_output"),
-	              wxT("Find..."),
+	              _("Find..."),
 	              bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")),
-	              wxT("Find..."),
+	              _("Find..."),
 				  wxITEM_CHECK);
 
 	m_tb->AddTool(XRCID("collapse_all"), _("Fold All Results"),

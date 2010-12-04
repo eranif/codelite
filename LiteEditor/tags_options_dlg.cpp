@@ -44,6 +44,8 @@
 #include "cc_display_and_behavior_page.h"
 #include "cc_colourise_page.h"
 #include "cc_triggering_page.h"
+#include "cc_include_files.h"
+#include "cc_advance_page.h"
 #include <wx/tokenzr.h>
 #include "pp_include.h"
 #include "pluginmanager.h"
@@ -63,11 +65,17 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data)
 	, m_data(data)
 {
 	m_colour_flags = m_data.GetCcColourFlags();
-	InitValues();
 	
-	m_treebook->AddPage(new CCDisplayAndBehvior(m_treebook, data), _("Display and behvior"), true);
-	m_treebook->AddPage(new CCColourisePage(m_treebook, data), _("Colouring"), false);
-	m_treebook->AddPage(new CCTriggeringPage(m_treebook, data), _("Triggering"), false);
+	m_treebook->AddPage(0, _("General"));
+	m_treebook->AddSubPage(new CCDisplayAndBehvior(m_treebook, data), _("Display and behvior"), true);
+	m_treebook->AddSubPage(new CCColourisePage(m_treebook, data), _("Colouring"), false);
+	m_treebook->AddSubPage(new CCTriggeringPage(m_treebook, data), _("Triggering"), false);
+	
+	m_includeFilesPage = new CCIncludeFilesPage(m_treebook, data); 
+	m_treebook->AddPage(m_includeFilesPage, _("Include Files"), false);
+	
+	m_advancedPage = new CCAdvancePage(m_treebook, data, this);
+	m_treebook->AddPage(m_advancedPage, _("Advanced"), false);
 	
 	WindowAttrManager::Load(this, wxT("TagsOptionsDlgAttr"), NULL);
 }
@@ -77,48 +85,11 @@ TagsOptionsDlg::~TagsOptionsDlg()
 	WindowAttrManager::Save(this, wxT("TagsOptionsDlgAttr"), NULL);
 }
 
-void TagsOptionsDlg::InitValues()
-{
-	//initialize the CodeLite page
-
-	m_checkFilesWithoutExt->SetValue               (m_data.GetFlags() & CC_PARSE_EXT_LESS_FILES ? true : false);
-	m_listBoxSearchPaths->Append                   (m_data.GetParserSearchPaths() );
-	m_listBoxSearchPaths1->Append                  (m_data.GetParserExcludePaths() );
-	m_textPrep->SetValue                           (m_data.GetTokens());
-	m_textTypes->SetValue                          (m_data.GetTypes());
-	m_textCtrlFilesList->SetValue                  (m_data.GetMacrosFiles());
-
-	m_textFileSpec->SetValue(m_data.GetFileSpec());
-	m_comboBoxLang->Clear();
-	m_comboBoxLang->Append(m_data.GetLanguages());
-	if ( m_data.GetLanguages().IsEmpty() == false ) {
-		wxString lan = m_data.GetLanguages().Item(0);
-		m_comboBoxLang->SetStringSelection(lan);
-
-	} else {
-		m_comboBoxLang->Append(wxT("c++"));
-		m_comboBoxLang->SetSelection(0);
-
-	}
-
-
-}
-
 void TagsOptionsDlg::OnButtonOK(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 	CopyData();
 	EndModal(wxID_OK);
-}
-
-void TagsOptionsDlg::OnButtonAdd(wxCommandEvent &event)
-{
-	wxUnusedVar(event);
-	//pop up add option dialog
-	AddOptionDlg dlg(this, m_textPrep->GetValue());
-	if (dlg.ShowModal() == wxID_OK) {
-		m_textPrep->SetValue(dlg.GetValue());
-	}
 }
 
 void TagsOptionsDlg::CopyData()
@@ -130,18 +101,6 @@ void TagsOptionsDlg::CopyData()
 			page->Save(m_data);
 		}
 	}
-	
-	SetFlag(CC_PARSE_EXT_LESS_FILES,                m_checkFilesWithoutExt->IsChecked());
-	m_data.SetFileSpec(m_textFileSpec->GetValue());
-
-	m_data.SetTokens(m_textPrep->GetValue());
-	m_data.SetTypes(m_textTypes->GetValue());
-	m_data.SetLanguages(m_comboBoxLang->GetStrings());
-	m_data.SetLanguageSelection(m_comboBoxLang->GetStringSelection());
-	m_data.SetParserSearchPaths( m_listBoxSearchPaths->GetStrings() );
-	m_data.SetParserExcludePaths( m_listBoxSearchPaths1->GetStrings() );
-	m_data.SetMacrosFiles( m_textCtrlFilesList->GetValue() );
-
 }
 
 void TagsOptionsDlg::SetFlag(CodeCompletionOpts flag, bool set)
@@ -162,98 +121,11 @@ void TagsOptionsDlg::SetColouringFlag(CodeCompletionColourOpts flag, bool set)
 	}
 }
 
-void TagsOptionsDlg::OnAddSearchPath(wxCommandEvent& e)
-{
-	wxUnusedVar(e);
-	wxString new_path = wxDirSelector(wxT("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-	if(new_path.IsEmpty() == false) {
-		if(m_listBoxSearchPaths->GetStrings().Index(new_path) == wxNOT_FOUND) {
-			m_listBoxSearchPaths->Append(new_path);
-		}
-	}
-}
-
-void TagsOptionsDlg::OnAddSearchPathUI(wxUpdateUIEvent& e)
-{
-	e.Enable(true);
-}
-
-void TagsOptionsDlg::OnClearAll(wxCommandEvent& e)
-{
-	wxUnusedVar(e);
-	m_listBoxSearchPaths->Clear();
-}
-
-void TagsOptionsDlg::OnClearAllUI(wxUpdateUIEvent& e)
-{
-	e.Enable(m_listBoxSearchPaths->IsEmpty() == false);
-}
-
-void TagsOptionsDlg::OnRemoveSearchPath(wxCommandEvent& e)
-{
-	wxUnusedVar(e);
-	int sel = m_listBoxSearchPaths->GetSelection();
-	if( sel != wxNOT_FOUND) {
-		m_listBoxSearchPaths->Delete((unsigned int)sel);
-	}
-}
-
-void TagsOptionsDlg::OnRemoveSearchPathUI(wxUpdateUIEvent& e)
-{
-	e.Enable(m_listBoxSearchPaths->GetSelection() != wxNOT_FOUND);
-}
-
-void TagsOptionsDlg::OnAddExcludePath(wxCommandEvent& e)
-{
-	wxUnusedVar(e);
-	wxString new_path = wxDirSelector(wxT("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-	if(new_path.IsEmpty() == false) {
-		if(m_listBoxSearchPaths1->GetStrings().Index(new_path) == wxNOT_FOUND) {
-			m_listBoxSearchPaths1->Append(new_path);
-		}
-	}
-}
-
-void TagsOptionsDlg::OnAddExcludePathUI(wxUpdateUIEvent& e)
-{
-	e.Enable(true);
-}
-
-void TagsOptionsDlg::OnClearAllExcludePaths(wxCommandEvent& e)
-{
-	wxUnusedVar(e);
-	m_listBoxSearchPaths1->Clear();
-}
-
-void TagsOptionsDlg::OnClearAllExcludePathsUI(wxUpdateUIEvent& e)
-{
-	e.Enable(m_listBoxSearchPaths1->IsEmpty() == false);
-}
-
-void TagsOptionsDlg::OnRemoveExcludePath(wxCommandEvent& e)
-{
-	wxUnusedVar(e);
-	int sel = m_listBoxSearchPaths1->GetSelection();
-	if( sel != wxNOT_FOUND) {
-		m_listBoxSearchPaths1->Delete((unsigned int)sel);
-	}
-}
-
-void TagsOptionsDlg::OnRemoveExcludePathUI(wxUpdateUIEvent& e)
-{
-	e.Enable(m_listBoxSearchPaths1->GetSelection() != wxNOT_FOUND);
-}
-
-void TagsOptionsDlg::OnFileSelectedUI(wxUpdateUIEvent& event)
-{
-	event.Enable( m_textCtrlFilesList->GetValue().IsEmpty() == false);
-}
-
-void TagsOptionsDlg::OnParse(wxCommandEvent& event)
+void TagsOptionsDlg::Parse()
 {
 	// Prepate list of files to work on
-	wxArrayString files = wxStringTokenize(m_textCtrlFilesList->GetValue(), wxT(" \t"), wxTOKEN_STRTOK);
-	wxArrayString searchPaths = m_listBoxSearchPaths->GetStrings();
+	wxArrayString files       = wxStringTokenize(m_advancedPage->GetFiles(), wxT(" \t"), wxTOKEN_STRTOK);
+	wxArrayString searchPaths = m_includeFilesPage->GetIncludePaths();
 
 	wxArrayString fullpathsArr;
 

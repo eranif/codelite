@@ -223,6 +223,10 @@
       <File Name="cc_display_and_behavior_page.h"/>
       <File Name="cc_triggering_page.cpp"/>
       <File Name="cc_triggering_page.h"/>
+      <File Name="cc_include_files.cpp"/>
+      <File Name="cc_include_files.h"/>
+      <File Name="cc_advance_page.cpp"/>
+      <File Name="cc_advance_page.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Compiler">
       <File Name="advanced_settings.h"/>

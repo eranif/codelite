@@ -77,6 +77,8 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data)
 	m_advancedPage = new CCAdvancePage(m_treebook, data, this);
 	m_treebook->AddPage(m_advancedPage, _("Advanced"), false);
 	
+	Centre();
+	GetSizer()->Fit(this);
 	WindowAttrManager::Load(this, wxT("TagsOptionsDlgAttr"), NULL);
 }
 

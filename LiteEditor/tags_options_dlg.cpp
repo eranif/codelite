@@ -67,7 +67,7 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data)
 	m_colour_flags = m_data.GetCcColourFlags();
 	
 	m_treebook->AddPage(0, _("General"));
-	m_treebook->AddSubPage(new CCDisplayAndBehvior(m_treebook, data), _("Display and behvior"), true);
+	m_treebook->AddSubPage(new CCDisplayAndBehvior(m_treebook, data), _("Display and behavior"), true);
 	m_treebook->AddSubPage(new CCColourisePage(m_treebook, data), _("Colouring"), false);
 	m_treebook->AddSubPage(new CCTriggeringPage(m_treebook, data), _("Triggering"), false);
 	

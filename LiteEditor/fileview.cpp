@@ -54,7 +54,6 @@
 #include "editorsettingslocal.h"
 #include "localworkspace.h"
 
-
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
 static const wxString gsCustomTargetsMenu(wxT("Custom Build Targets"));
@@ -134,6 +133,7 @@ void FileViewTree::OnBuildInProgress( wxUpdateUIEvent &event )
 FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
 {
 	Create( parent, id, pos, size, style );
+	MSWSetNativeTheme(this);
 
 	// Initialise images map
 	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();

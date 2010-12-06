@@ -84,9 +84,10 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 	if(where != wxNOT_FOUND) {
 		m_choiceConfig->SetSelection(where);
 	}
+	MSWSetNativeTheme( m_treebook->GetTreeCtrl() );
 	BuildTree();
 	LoadValues(m_configName);
-
+	
 	m_treebook->SetFocus();
 	GetSizer()->Fit(this);
 

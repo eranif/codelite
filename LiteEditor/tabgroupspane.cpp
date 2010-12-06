@@ -38,6 +38,7 @@
 #include "frame.h"
 #include "tabgroupmanager.h"
 #include "tabgroupspane.h"
+#include "globals.h"
 
 TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption) : wxPanel(parent, wxID_ANY) {
 	m_node = NULL;
@@ -98,7 +99,8 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption) : wxPane
 	wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
 	m_tree = new wxTreeCtrl(this,wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_LINES_AT_ROOT | wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS | wxTR_EDIT_LABELS,
 	                        wxDefaultValidator, wxT("tabgrouptree"));
-
+	MSWSetNativeTheme(m_tree);
+	
 	// Add icons to the tree
 	wxImageList *imgList = new wxImageList(16, 16, true);
 

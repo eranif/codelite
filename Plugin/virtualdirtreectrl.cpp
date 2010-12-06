@@ -72,7 +72,8 @@ wxVirtualDirTreeCtrl::wxVirtualDirTreeCtrl(wxWindow* parent, wxWindowID id, cons
 {
 	// create an icon list for the tree ctrl
 	_iconList = new wxImageList(16,16);
-
+	MSWSetNativeTheme(this);
+	
 	// reset to default extension list
 	ResetExtensions();
 }

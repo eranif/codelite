@@ -271,6 +271,8 @@ DebuggerSettingsDlg::DebuggerSettingsDlg( wxWindow* parent )
 
 void DebuggerSettingsDlg::Initialize()
 {
+	MSWSetNativeTheme(m_notebook2->GetTreeCtrl());
+	
 	DebuggerMgr &mgr = DebuggerMgr::Get();
 	wxArrayString debuggers = mgr.GetAvailableDebuggers();
 	for (size_t i=0; i<debuggers.GetCount(); i++) {

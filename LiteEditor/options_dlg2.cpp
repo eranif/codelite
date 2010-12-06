@@ -28,6 +28,7 @@
 #include "editorsettingsdockingwidows.h"
 #include "editorsettingsterminal.h"
 #include "editorsettingscaret.h"
+#include "globals.h"
 
 #include "frame.h"
 #include "editor_options_general_guides_panel.h"
@@ -44,7 +45,7 @@
 #include "editorsettingsfolding.h"
 #include "editorsettingsmiscpanel.h"
 #include "manager.h"
-#include "../Plugin/windowattrmanager.h"
+#include "windowattrmanager.h"
 
 OptionsDlg2::OptionsDlg2( wxWindow* parent )
 		: OptionsBaseDlg2( parent )
@@ -53,6 +54,7 @@ OptionsDlg2::OptionsDlg2( wxWindow* parent )
 {
 	Initialize();
 	WindowAttrManager::Load(this, wxT("OptionsDlgAttr"), NULL);
+	MSWSetNativeTheme( m_treeBook->GetTreeCtrl() );
 	GetSizer()->Layout();
 }
 

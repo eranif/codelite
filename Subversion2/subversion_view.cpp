@@ -127,6 +127,8 @@ void SubversionView::OnTreeMenu( wxTreeEvent& event )
 
 void SubversionView::CreatGUIControls()
 {
+	MSWSetNativeTheme(m_treeCtrl);
+	
 	// Assign the image list
 	wxImageList *imageList = new wxImageList(16, 16, true);
 	BitmapLoader *bmpLoader = m_plugin->GetManager()->GetStdIcons();

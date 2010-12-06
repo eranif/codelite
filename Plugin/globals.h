@@ -244,5 +244,12 @@ WXDLLIMPEXP_SDK void GetProjectTemplateList( IManager *manager, std::list<Projec
  */
 WXDLLIMPEXP_SDK bool ExtractFileFromZip(const wxString &zipPath, const wxString& filename, const wxString &targetDir, wxString &targetFileName);
 
+
+/**
+ * @brief set the native Windows theme for the application
+ * @param win [input]
+ */
+WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString &theme = wxT("Explorer"));
+
 #endif //GLOBALS_H
 

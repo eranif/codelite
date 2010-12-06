@@ -45,6 +45,7 @@
 #include "compilerfiletypespage.h"
 #include "compilercompileroptionspage.h"
 #include "compilerlinkeroptionspage.h"
+#include "globals.h"
 
 BEGIN_EVENT_TABLE(AdvancedDlg, wxDialog)
 	EVT_MENU(XRCID("delete_compiler"), AdvancedDlg::OnDeleteCompiler)
@@ -81,7 +82,8 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 
 	m_compilersNotebook = new wxTreebook(m_compilersPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBK_DEFAULT );
 	bSizer5->Add( m_compilersNotebook, 1, wxALL|wxEXPAND, 5 );
-
+	MSWSetNativeTheme(m_compilersNotebook->GetTreeCtrl());
+	
 	m_compilersPage->SetSizer( bSizer5 );
 	m_compilersPage->Layout();
 	bSizer5->Fit( m_compilersPage );

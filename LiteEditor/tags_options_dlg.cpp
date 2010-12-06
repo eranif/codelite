@@ -57,6 +57,7 @@
 #include "macros.h"
 #include "wx/tokenzr.h"
 #include "add_option_dialog.h"
+#include "globals.h"
 
 //---------------------------------------------------------
 
@@ -76,6 +77,7 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data)
 	
 	m_advancedPage = new CCAdvancePage(m_treebook, data, this);
 	m_treebook->AddPage(m_advancedPage, _("Advanced"), false);
+	MSWSetNativeTheme(m_treebook->GetTreeCtrl());
 	
 	Centre();
 	GetSizer()->Fit(this);

@@ -51,6 +51,10 @@
 #include <wx/fontmap.h>
 #include <wx/zipstrm.h>
 
+#ifdef __WXMSW__
+#include <Uxtheme.h>
+#endif
+
 static wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &confToBuild, const wxString &fileName);
 
 #ifdef __WXMAC__
@@ -747,4 +751,11 @@ bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const
 		entry = zip.GetNextEntry();
 	}
 	return false;
+}
+
+void MSWSetNativeTheme(wxWindow* win, const wxString &theme)
+{
+#ifdef __WXMSW__
+	SetWindowTheme((HWND)win->GetHWND(), theme.c_str(), NULL);
+#endif
 }

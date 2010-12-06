@@ -33,15 +33,18 @@ class wxMenuItem;
 class wxFormBuilder : public IPlugin
 {
 	wxEvtHandler *m_topWin;
-	wxMenuItem* m_separatorItem;
-	wxMenuItem* m_openWithWxFbItem;
-	wxMenuItem* m_openWithWxFbSepItem;
-
+	wxMenuItem*   m_separatorItem;
+	wxMenuItem*   m_openWithWxFbItem;
+	wxMenuItem*   m_openWithWxFbSepItem;
+	bool          m_addFileMenu;
+	
 public:
 	wxFormBuilder(IManager *manager);
 	~wxFormBuilder();
 
 protected:
+	DECLARE_EVENT_TABLE()
+	
 	void OnSettings(wxCommandEvent &e);
 	void OnNewDialog(wxCommandEvent &e);
 	void OnNewDialogWithButtons(wxCommandEvent &e);
@@ -49,7 +52,8 @@ protected:
 	void OnNewPanel(wxCommandEvent &e);
 	void OpenWithWxFb(wxCommandEvent &e);
 	void OnOpenFile(wxCommandEvent &e);
-
+	void OnWxFBTerminated(wxCommandEvent &e);
+	
 	wxMenu *CreatePopupMenu();
 	void DoCreateWxFormBuilderProject(const wxFBItemInfo &data);
 	void DoLaunchWxFB(const wxString &file);

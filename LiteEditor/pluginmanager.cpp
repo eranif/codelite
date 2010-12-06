@@ -242,12 +242,9 @@ void PluginManager::Load()
 				clMainFrame::Get()->GetDockingManager().AddPane( tb, wxAuiPaneInfo().Name( plugin->GetShortName() ).LeftDockable( true ).RightDockable( true ).Caption( plugin->GetShortName() ).ToolbarPane().Top() );
 
 				//Add menu entry at the 'View->Toolbars' menu for this toolbar
-				int ii = clMainFrame::Get()->GetMenuBar()->FindMenu( wxT( "View" ) );
-				if ( ii != wxNOT_FOUND ) {
-					wxMenu *viewMenu = clMainFrame::Get()->GetMenuBar()->GetMenu( ii );
-					wxMenu *submenu = NULL;
-					wxMenuItem *item = viewMenu->FindItem( XRCID("toolbars_menu") );
+				wxMenuItem* item = clMainFrame::Get()->GetMenuBar()->FindItem(XRCID("toolbars_menu"));
 					if (item) {
+					wxMenu* submenu = NULL;
 						submenu = item->GetSubMenu();
 						//add the new toolbar entry at the end of this menu
 
@@ -259,7 +256,6 @@ void PluginManager::Load()
 						clMainFrame::Get()->RegisterToolbar(id, plugin->GetShortName());
 					}
 				}
-			}
 
 			//let the plugin plug its menu in the 'Plugins' menu at the menu bar
 			//the create menu will be placed as a sub menu of the 'Plugin' menu

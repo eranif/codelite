@@ -126,11 +126,11 @@ wxString NewKeyShortcutDlg::ToString(wxKeyEvent &e)
 
 	int flags = e.GetModifiers();
 	if ( flags & wxACCEL_ALT )
-		text += _("Alt-");
+		text += wxT("Alt-");
 	if ( flags & wxACCEL_CTRL )
-		text += _("Ctrl-");
+		text += wxT("Ctrl-");
 	if ( flags & wxACCEL_SHIFT )
-		text += _("Shift-");
+		text += wxT("Shift-");
 
 	const int code = e.GetKeyCode();
 

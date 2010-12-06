@@ -70,6 +70,8 @@ protected:
 	void OnToggleReplaceControlsUI(wxUpdateUIEvent& event);
 	void OnHighlightMatches(wxCommandEvent& event);
 	void OnHighlightMatchesUI(wxUpdateUIEvent& event);
+	void OnQuickFindCommandEvent(wxCommandEvent& event);
+	void OnReceivingFocus(wxFocusEvent& event);
 
 
 	void OnFindNext         (wxCommandEvent &e);

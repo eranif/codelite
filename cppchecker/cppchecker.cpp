@@ -38,7 +38,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor(wxT("Eran Ifrah & Jérémie (jfouche)"));
 	info.SetName(wxT("CppChecker"));
-	info.SetDescription(_("CppCheker integration for CodeLite IDE"));
+	info.SetDescription(_("CppChecker integration for CodeLite IDE"));
 	info.SetVersion(wxT("v1.0"));
 	return info;
 }
@@ -68,7 +68,7 @@ CppCheckPlugin::CppCheckPlugin(IManager *manager)
 {
 	FileExtManager::Init();
 
-	m_longName = _("CppCheck intergration for CodeLite IDE");
+	m_longName = _("CppCheck integration for CodeLite IDE");
 	m_shortName = wxT("CppCheck");
 
 	// Load settings

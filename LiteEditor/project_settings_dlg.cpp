@@ -55,10 +55,9 @@
 #include "ps_general_page.h"
 #include <wx/wupdlock.h>
 
-const wxString GLOBAL_SETTINGS_LABEL = wxT("Global settings");
-const wxString APPEND_TO_GLOBAL_SETTINGS = wxT("Append to global settings");
-const wxString OVERWRITE_GLOBAL_SETTINGS = wxT("overwrite global settings");
-const wxString PREPEND_GLOBAL_SETTINGS = wxT("prepend global settings");
+const wxString APPEND_TO_GLOBAL_SETTINGS = _("Append to global settings");
+const wxString OVERWRITE_GLOBAL_SETTINGS = _("overwrite global settings");
+const wxString PREPEND_GLOBAL_SETTINGS = _("prepend global settings");
 
 BEGIN_EVENT_TABLE(ProjectSettingsDlg, ProjectSettingsBaseDlg)
 END_EVENT_TABLE()

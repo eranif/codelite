@@ -34,6 +34,19 @@
 #include "stringsearcher.h"
 #include "quickfindbar.h"
 
+DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
+
+void PostCommandEvent(wxWindow* destination, wxWindow* FocusedControl)
+{
+#if wxVERSION_NUMBER >= 2900
+	//Posts an event that signals for SelectAll() to be done after a delay
+	// This is often needed in >2.9, as scintilla seems to steal the selection
+	wxCommandEvent event(QUICKFIND_COMMAND_EVENT);
+	event.SetEventObject(FocusedControl);
+	wxPostEvent(destination, event);
+#endif
+}		
+
 QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 		: QuickFindBarBase(parent, id)
 		, m_sci(NULL)
@@ -54,6 +67,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 	wxTheApp->Connect(XRCID("find_previous"),          wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindPrevious),      NULL, this);
 	wxTheApp->Connect(XRCID("find_next_at_caret"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNextCaret),     NULL, this);
 	wxTheApp->Connect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
+	wxTheApp->Connect(QUICKFIND_COMMAND_EVENT, wxCommandEventHandler(QuickFindBar::OnQuickFindCommandEvent), NULL, this);
 }
 
 bool QuickFindBar::Show(bool show)
@@ -446,6 +460,7 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
 		m_findWhat->SetValue(findWhat);
 		m_findWhat->SelectAll();
 		m_findWhat->SetFocus();
+		PostCommandEvent(this, m_findWhat);
 
 	} else {
 		wxString findWhat = m_sci->GetSelectedText().BeforeFirst(wxT('\n'));
@@ -454,6 +469,7 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
 		}
 		m_findWhat->SelectAll();
 		m_findWhat->SetFocus();
+		PostCommandEvent(this, m_findWhat);
 
 	}
 	return res;
@@ -652,6 +668,23 @@ void QuickFindBar::OnHighlightMatchesUI(wxUpdateUIEvent& event)
 			event.Enable(true);
 			event.Check(nFoundLine != wxNOT_FOUND);
 		}
+	}
+}
+
+void QuickFindBar::OnReceivingFocus(wxFocusEvent& event)
+{
+	if ((event.GetEventObject() == m_findWhat) || (event.GetEventObject() == m_replaceWith)) {
+		PostCommandEvent(this, wxStaticCast(event.GetEventObject(), wxWindow));
+	}
+}
+
+void QuickFindBar::OnQuickFindCommandEvent(wxCommandEvent& event)
+{
+	if (event.GetEventObject() == m_findWhat) {
+		m_findWhat->SelectAll();
+
+	} else if (event.GetEventObject() == m_replaceWith) {
+		m_replaceWith->SelectAll();
 	}
 }
 

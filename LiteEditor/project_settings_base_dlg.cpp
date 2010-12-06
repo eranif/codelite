@@ -106,7 +106,7 @@ GlobalSettingsBasePanel::GlobalSettingsBasePanel( wxWindow* parent, wxWindowID i
 	compilerPageSizer = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer10;
-	fgSizer10 = new wxFlexGridSizer( 3, 3, 0, 0 );
+	fgSizer10 = new wxFlexGridSizer( 0, 3, 0, 0 );
 	fgSizer10->AddGrowableCol( 1 );
 	fgSizer10->SetFlexibleDirection( wxBOTH );
 	fgSizer10->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );

@@ -46,7 +46,7 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	fgSizer1->Add( m_staticTextNamespace, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_textCtrlNamespace = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
-	m_textCtrlNamespace->SetToolTip( _("Place this class inside a namspace") );
+	m_textCtrlNamespace->SetToolTip( _("Place this class inside a namespace") );
 	
 	fgSizer1->Add( m_textCtrlNamespace, 0, wxALL|wxEXPAND, 5 );
 	

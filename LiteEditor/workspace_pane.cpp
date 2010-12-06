@@ -44,7 +44,7 @@
 #include "tabgroupspane.h"
 #include "workspace_pane.h"
 
-#define OPEN_CONFIG_MGR_STR wxT("<Open Configuration Manager...>")
+#define OPEN_CONFIG_MGR_STR _("<Open Configuration Manager...>")
 
 WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr)
     : wxPanel(parent)

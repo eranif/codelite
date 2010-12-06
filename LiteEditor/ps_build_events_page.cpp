@@ -135,10 +135,10 @@ void PSBuildEventsPage::Load(BuildConfigPtr buildConf)
 	BuildCommandList buildCmds;
 	if(m_isPreEvents) {
 		buildConf->GetPreBuildCommands(buildCmds);
-		m_staticText11->SetLabel(wxT("Set the commands to run in the pre build stage:"));
+		m_staticText11->SetLabel(_("Set the commands to run in the pre build stage:"));
 	} else {
 		buildConf->GetPostBuildCommands(buildCmds);
-		m_staticText11->SetLabel(wxT("Set the commands to run in the post build stage:"));
+		m_staticText11->SetLabel(_("Set the commands to run in the post build stage:"));
 	}
 	
 	BuildCommandList::const_iterator iter = buildCmds.begin();

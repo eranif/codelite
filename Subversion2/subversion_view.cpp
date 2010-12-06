@@ -427,7 +427,7 @@ void SubversionView::CreateFileMenu(wxMenu* menu)
 	menu->Append(XRCID("svn_diff"),    _("Create Diff..."));
 	menu->AppendSeparator();
 
-	menu->Append(XRCID("svn_blame"),    wxT("Blame..."));
+	menu->Append(XRCID("svn_blame"),    _("Blame..."));
 	menu->AppendSeparator();
 
 	wxMenu *subMenu;
@@ -446,16 +446,16 @@ void SubversionView::CreateRootMenu(wxMenu* menu)
 	menu->Append(XRCID("svn_revert"),        wxT("Revert"));
 	menu->AppendSeparator();
 
-	menu->Append(XRCID("svn_tag"),           wxT("Create Tag"));
-	menu->Append(XRCID("svn_branch"),        wxT("Create Branch"));
+	menu->Append(XRCID("svn_tag"),           _("Create Tag"));
+	menu->Append(XRCID("svn_branch"),        _("Create Branch"));
 	menu->AppendSeparator();
 
-	menu->Append(XRCID("svn_switch"),        wxT("Switch URL..."));
+	menu->Append(XRCID("svn_switch"),        _("Switch URL..."));
 	menu->AppendSeparator();
 
-	menu->Append(XRCID("svn_diff"),          wxT("Create Diff..."));
-	menu->Append(XRCID("svn_patch"),         wxT("Apply Patch..."));
-	menu->Append(XRCID("svn_patch_dry_run"), wxT("Apply Patch - Dry Run..."));
+	menu->Append(XRCID("svn_diff"),          _("Create Diff..."));
+	menu->Append(XRCID("svn_patch"),         _("Apply Patch..."));
+	menu->Append(XRCID("svn_patch_dry_run"), _("Apply Patch - Dry Run..."));
 
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_log"),           _("Change Log..."));
@@ -602,7 +602,7 @@ void SubversionView::OnBranch(wxCommandEvent& event)
 	// Prompt user for URLs + comment
 	SvnCopyDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow());
 
-	dlg.SetTitle(wxT("Create Branch"));
+	dlg.SetTitle(_("Create Branch"));
 	dlg.SetSourceURL(svnInfo.m_sourceUrl);
 	dlg.SetTargetURL(svnInfo.m_sourceUrl);
 
@@ -643,7 +643,7 @@ void SubversionView::OnTag(wxCommandEvent& event)
 	// Prompt user for URLs + comment
 	SvnCopyDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow());
 
-	dlg.SetTitle(wxT("Create Tag"));
+	dlg.SetTitle(_("Create Tag"));
 	dlg.SetSourceURL(svnInfo.m_sourceUrl);
 	dlg.SetTargetURL(svnInfo.m_sourceUrl);
 

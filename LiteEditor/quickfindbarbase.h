@@ -88,6 +88,7 @@ class QuickFindBarBase : public wxPanel
 		virtual void OnCheckBoxCase( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnCheckBoxWord( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnCheckBoxRegex( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnReceivingFocus( wxFocusEvent& event ) { event.Skip(); }
 
 
 	public:

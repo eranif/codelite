@@ -133,6 +133,7 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	this->Connect( wxID_SHOW_REPLACE_CONTROLS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnToggleReplaceControlsUI ) );
 	m_findWhat->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( QuickFindBarBase::OnKeyDown ), NULL, this );
 	m_findWhat->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( QuickFindBarBase::OnText ), NULL, this );
+	m_findWhat->Connect( wxEVT_SET_FOCUS, wxFocusEventHandler( QuickFindBarBase::OnReceivingFocus ), NULL, this );
 	m_findWhat->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( QuickFindBarBase::OnEnter ), NULL, this );
 	this->Connect( wxID_FIND_NEXT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnNext ) );
 	this->Connect( wxID_FIND_NEXT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnUpdateUI ) );
@@ -140,6 +141,7 @@ QuickFindBarBase::QuickFindBarBase( wxWindow* parent, wxWindowID id, const wxPoi
 	this->Connect( wxID_FIND_PREVIOUS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnUpdateUI ) );
 	m_replaceWith->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( QuickFindBarBase::OnKeyDown ), NULL, this );
 	m_replaceWith->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( QuickFindBarBase::OnReplaceEnter ), NULL, this );
+	m_replaceWith->Connect( wxEVT_SET_FOCUS, wxFocusEventHandler( QuickFindBarBase::OnReceivingFocus ), NULL, this );
 	m_replaceWith->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnReplaceUI ), NULL, this );
 	this->Connect( wxID_TOOL_REPLACE, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickFindBarBase::OnReplace ) );
 	this->Connect( wxID_TOOL_REPLACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( QuickFindBarBase::OnReplaceUI ) );

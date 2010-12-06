@@ -19,8 +19,8 @@ PSCustomBuildPage::PSCustomBuildPage( wxWindow* parent, const wxString &projectN
 	, m_selecteCustomTaregt(wxNOT_FOUND)
 	, m_dlg(dlg)
 {
-	m_listCtrlTargets->InsertColumn(0, wxT("Target"));
-	m_listCtrlTargets->InsertColumn(1, wxT("Command"));
+	m_listCtrlTargets->InsertColumn(0, _("Target"));
+	m_listCtrlTargets->InsertColumn(1, _("Command"));
 }
 
 void PSCustomBuildPage::OnCustomBuildEnabled( wxCommandEvent& event )
@@ -57,7 +57,7 @@ void PSCustomBuildPage::OnBrowseCustomBuildWD( wxCommandEvent& event )
 		initPath = fn.GetFullPath();
 	}
 
-	wxString new_path = wxDirSelector(wxT("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = wxDirSelector(_("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
 		m_textCtrlCustomBuildWD->SetValue(new_path);
 	}
@@ -79,13 +79,13 @@ void PSCustomBuildPage::OnNewTarget( wxCommandEvent& event )
 	wxUnusedVar(event);
 
 	EnvVarDlg dlg(this);
-	dlg.SetTitle(wxT("New target"));
-	dlg.SetStaticText1(wxT("Target Name:"));
-	dlg.SetStaticText2(wxT("Command:"));
+	dlg.SetTitle(_("New target"));
+	dlg.SetStaticText1(_("Target Name:"));
+	dlg.SetStaticText2(_("Command:"));
 	if (dlg.ShowModal() == wxID_OK) {
 		GetDlg()->SetIsDirty(true);
 		if (GetTargetCommand(dlg.GetName()).IsEmpty() == false) {
-			wxMessageBox(wxString::Format(wxT("Target '%s' already exist!"), dlg.GetName().c_str()), wxT("CodeLite"), wxICON_WARNING|wxCENTER|wxOK, this);
+			wxMessageBox(wxString::Format(_("Target '%s' already exist!"), dlg.GetName().c_str()), _("CodeLite"), wxICON_WARNING|wxCENTER|wxOK, this);
 			return;
 		}
 		long item = AppendListCtrlRow(m_listCtrlTargets);
@@ -147,9 +147,9 @@ void PSCustomBuildPage::DoEditTarget(long item)
 		wxString target = GetColumnText(m_listCtrlTargets, item, 0);
 		wxString cmd    = GetColumnText(m_listCtrlTargets, item, 1);
 		EnvVarDlg dlg(this);
-		dlg.SetTitle(wxT("Edit target"));
-		dlg.SetStaticText1(wxT("Target Name:"));
-		dlg.SetStaticText2(wxT("Command:"));
+		dlg.SetTitle(_("Edit target"));
+		dlg.SetStaticText1(_("Target Name:"));
+		dlg.SetStaticText2(_("Command:"));
 		dlg.SetName(target);
 		dlg.SetValue(cmd);
 		// dont allow user to modify the common targets

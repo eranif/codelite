@@ -56,6 +56,7 @@ protected:
 	
 	void SelectItem(long index);
 	void OnButtonKeyShortcut(wxCommandEvent &e);
+	void DoItemSelected(const wxString& text);
 	
 public:
 	/** Constructor */

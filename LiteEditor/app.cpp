@@ -517,9 +517,6 @@ bool CodeLiteApp::OnInit()
 	//       Win 95).
 	clMainFrame::Initialize( parser.GetParamCount() == 0 );
 	m_pMainFrame = clMainFrame::Get();
-
-	// update the accelerators table
-	ManagerST::Get()->UpdateMenuAccelerators();
 	m_pMainFrame->Show(TRUE);
 	SetTopWindow(m_pMainFrame);
 
@@ -550,7 +547,6 @@ bool CodeLiteApp::OnInit()
 
 #ifdef __WXGTK__
 	// Needed on GTK
-	ManagerST::Get()->UpdateMenuAccelerators();
 	if (clMainFrame::Get()->GetMainBook()->GetActiveEditor() == NULL) {
 		clMainFrame::Get()->GetOutputPane()->GetBuildTab()->SetFocus();
 	}

@@ -85,18 +85,8 @@
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
 
 //---------------------------------------------------------------
-// Menu accelerators helper methods
+// Menu accelerators helper method
 //---------------------------------------------------------------
-
-static wxString StripAccelAndNemonics ( const wxString &text )
-{
-	//possible mnemonics:
-	//_ and &
-	wxString stripedText ( text );
-	stripedText.Replace ( wxT ( "_" ), wxEmptyString );
-	stripedText.Replace ( wxT ( "&" ), wxEmptyString );
-	return stripedText.BeforeFirst ( wxT ( '\t' ) );
-}
 
 static wxString StripAccel ( const wxString &text )
 {
@@ -1517,7 +1507,7 @@ void Manager::UpdateMenuAccelerators()
 	GetDefaultAcceleratorMap ( defAccelMap );
 
 	// loop over default accelerators map, and search for items that does not exist in the user's list
-	std::map< wxString, MenuItemData >::iterator it = defAccelMap.begin();
+	std::map< int, MenuItemData >::iterator it = defAccelMap.begin();
 	for ( ; it != defAccelMap.end(); it++ ) {
 		if ( menuMap.find ( it->first ) == menuMap.end() ) {
 			// this item does not exist in the users accelerators
@@ -1529,7 +1519,6 @@ void Manager::UpdateMenuAccelerators()
 
 	wxMenuBar *bar = clMainFrame::Get()->GetMenuBar();
 
-	wxString content;
 	std::vector< wxAcceleratorEntry > accelVec;
 	size_t count = bar->GetMenuCount();
 	for ( size_t i=0; i< count; i++ ) {
@@ -1568,14 +1557,6 @@ void Manager::UpdateMenuAccelerators()
 				accelVec.push_back ( *a );
 				delete a;
 			}
-		}
-	}
-
-	if ( content.IsEmpty() == false ) {
-		wxFFile f (wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/accelerators.conf"));
-		if(f.IsOpened()) {
-			f.Write ( content );
-			f.Close();
 		}
 	}
 
@@ -1624,7 +1605,7 @@ void Manager::LoadAcceleratorTable ( const wxArrayString &files, MenuItemDataMap
 		item.accel = line.BeforeFirst ( wxT ( '|' ) );
 		line = line.AfterFirst ( wxT ( '|' ) );
 
-		accelMap[item.action] = item;
+		accelMap[wxXmlResource::GetXRCID(item.id)] = item;
 	}
 }
 
@@ -1642,10 +1623,10 @@ void Manager::UpdateMenu ( wxMenu *menu, MenuItemDataMap &accelMap, std::vector<
 				continue;
 			}
 
-			//search this item in the accelMap
-			wxString labelText = StripAccelAndNemonics ( item->GetItemLabel() );
-			if ( accelMap.find ( labelText ) != accelMap.end() ) {
-				MenuItemData item_data = accelMap.find ( labelText )->second;
+			//search for this item in the accelMap
+			int id = item->GetId();
+			if ( (id != wxID_ANY) && accelMap.find(id) != accelMap.end() ) {
+				MenuItemData item_data = accelMap.find(id)->second;
 
 				wxString txt;
 				txt << StripAccel ( item->GetItemLabel() );
@@ -1666,7 +1647,7 @@ void Manager::UpdateMenu ( wxMenu *menu, MenuItemDataMap &accelMap, std::vector<
 				}
 
 				//remove this entry from the map
-				accelMap.erase ( labelText );
+				accelMap.erase(id);
 			}
 		}
 	}

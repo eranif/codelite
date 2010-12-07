@@ -46,7 +46,7 @@ public:
 	wxString accel;
 };
 
-typedef std::map< wxString, MenuItemData > MenuItemDataMap;
+typedef std::map< int, MenuItemData > MenuItemDataMap;
 
 /**
  * @class IKeyboard
@@ -70,8 +70,7 @@ public:
 	virtual int PopupNewKeyboardShortcutDlg(wxWindow *parent, MenuItemData& menuItemData) = 0;
 
 	/**
-	 * @brief return map of all accelerators sets for CodeLite. For historic reasons, the key
-	 * for the map is the action
+	 * @brief return map of all accelerators sets for CodeLite. The key for the map is XRCID(MenuItemData::id)
 	 * @param accelMap [output]
 	 */
 	virtual void GetAccelerators(MenuItemDataMap &accelMap) = 0;

@@ -26,6 +26,7 @@
 #include <wx/ffile.h>
 #include "newkeyshortcutdlg.h"
 #include <wx/tokenzr.h>
+#include <wx/xrc/xmlres.h>
 #include "keyboardmanager.h"
 #include "manager.h"
 
@@ -43,7 +44,7 @@ bool KeyboardManager::AddAccelerator(MenuItemDataMap &accelMap, const MenuItemDa
 		return false;
 	}
 
-	accelMap[menuItemData.action] = menuItemData;
+	accelMap[wxXmlResource::GetXRCID(menuItemData.id)] = menuItemData;
 	return true;
 }
 
@@ -56,7 +57,7 @@ void KeyboardManager::GetAccelerators(MenuItemDataMap& accelMap)
 	ManagerST::Get()->GetDefaultAcceleratorMap(defAccelMap);
 
 	// loop over default accelerators map, and search for items that does not exist in the user's list
-	std::map< wxString, MenuItemData >::iterator it = defAccelMap.begin();
+	std::map< int, MenuItemData >::iterator it = defAccelMap.begin();
 	for (; it != defAccelMap.end(); it++) {
 		if (accelMap.find(it->first) == accelMap.end()) {
 			// this item does not exist in the users accelerators

@@ -9,16 +9,7 @@
 static wxArrayString ExecCommand(const wxString &cmd)
 {
 	wxArrayString outputArr;
-#ifdef __WXMSW__	
 	ProcUtils::SafeExecuteCommand(cmd, outputArr);
-#else
-	wxArrayString o, e;
-	wxExecute(cmd, o, e);
-	outputArr = o;
-	for(size_t i=0; i<e.size(); i++)
-		outputArr.Add(e.Item(i));
-	
-#endif
 	return outputArr;
 }
 
@@ -34,17 +25,28 @@ IncludePathLocator::~IncludePathLocator()
 void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePaths)
 {
 	// Common compiler paths - should be placed at top of the include path!
-	wxString tmpfile = wxFileName::CreateTempFileName(wxT("codelite"));
+	wxString tmpfile1 = wxFileName::CreateTempFileName(wxT("codelite"));
 	wxString command;
+	wxString tmpfile = tmpfile1;
+	tmpfile += wxT(".cpp");
 	
-#ifdef __WXMAC__
+	wxRenameFile(tmpfile1, tmpfile);
+	
+	// GCC prints parts of its output to stdout and some to stderr
+	// redirect all output to stdout
+#if defined(__WXMAC__)
 	// Mac does not like the standard command
-	command = wxString::Format(wxT("cpp -v -x=c++ %s"), tmpfile.c_str());
+	command = wxString::Format(wxT("cpp -v -x=c++ %s 2>&1"), tmpfile.c_str());
+	
+#elif defined (__WXGTK__)
+	command = wxString::Format(wxT("cpp -x c++ -v %s 2>&1"), tmpfile.c_str());
+	
 #else
 	command = wxString::Format(wxT("cpp -x c++ -v %s"), tmpfile.c_str());
+	
 #endif
 
-	wxArrayString outputArr = ExecCommand( command );
+	wxArrayString outputArr = ExecCommand(command);
 	wxRemoveFile( tmpfile );
 	
 	// Analyze the output

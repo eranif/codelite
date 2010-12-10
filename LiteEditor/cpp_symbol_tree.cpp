@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "globals.h"
 #include "stringsearcher.h"
 #include "stringsearcher.h"
 #include "cl_editor.h"
@@ -75,6 +76,7 @@ CppSymbolTree::CppSymbolTree(wxWindow *parent, const wxWindowID id, const wxPoin
 	Connect(GetId(), wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEventHandler(CppSymbolTree::OnMouseRightUp));
 	Connect(GetId(), wxEVT_LEFT_DCLICK, wxMouseEventHandler(CppSymbolTree::OnMouseDblClick));
 	Connect(GetId(), wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(CppSymbolTree::OnItemActivated));
+	MSWSetNativeTheme(this);
 }
 
 void CppSymbolTree::OnMouseRightUp(wxTreeEvent &event)

@@ -73,9 +73,9 @@ void QuickDebugDlg::OnButtonBrowseExe( wxCommandEvent& event )
 	wxUnusedVar(event);
 	wxString path(GetExe());
 	if(wxFileName::FileExists(path)){
-		m_textCtrlExePath->SetValue(wxFileSelector(wxT("Select file:"), path.c_str()));
+		m_textCtrlExePath->SetValue(wxFileSelector(_("Select file:"), path.c_str()));
 	}else{
-		m_textCtrlExePath->SetValue(wxFileSelector(wxT("Select file:")));
+		m_textCtrlExePath->SetValue(wxFileSelector(_("Select file:")));
 	}
 }
 
@@ -136,8 +136,8 @@ void QuickDebugDlg::OnButtonBrowseWD(wxCommandEvent& event)
 	wxUnusedVar(event);
 	wxString path(GetWorkingDirectory());
 	if(wxFileName::DirExists(path)){
-		m_textCtrl5->SetValue(wxDirSelector(wxT("Select working directory:"), path));
+		m_textCtrl5->SetValue(wxDirSelector(_("Select working directory:"), path));
 	}else{
-		m_textCtrl5->SetValue(wxDirSelector(wxT("Select working directory:")));
+		m_textCtrl5->SetValue(wxDirSelector(_("Select working directory:")));
 	}
 }

@@ -57,7 +57,7 @@
 
 const wxString APPEND_TO_GLOBAL_SETTINGS = _("Append to global settings");
 const wxString OVERWRITE_GLOBAL_SETTINGS = _("overwrite global settings");
-const wxString PREPEND_GLOBAL_SETTINGS = _("prepend global settings");
+const wxString PREPEND_GLOBAL_SETTINGS = _("prepend to global settings");
 
 BEGIN_EVENT_TABLE(ProjectSettingsDlg, ProjectSettingsBaseDlg)
 END_EVENT_TABLE()

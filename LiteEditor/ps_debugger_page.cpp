@@ -19,9 +19,9 @@ void PSDebuggerPage::OnSelectDebuggerPath( wxCommandEvent& event )
 	wxUnusedVar(event);
 	wxString path(m_textCtrlDebuggerPath->GetValue());
 	if (wxFileName::FileExists(path)) {
-		m_textCtrlDebuggerPath->SetValue(wxFileSelector(wxT("Select file:"), path.c_str()));
+		m_textCtrlDebuggerPath->SetValue(wxFileSelector(_("Select file:"), path.c_str()));
 	} else {
-		m_textCtrlDebuggerPath->SetValue(wxFileSelector(wxT("Select file:")));
+		m_textCtrlDebuggerPath->SetValue(wxFileSelector(_("Select file:")));
 	}
 }
 

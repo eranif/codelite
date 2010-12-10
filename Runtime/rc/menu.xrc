@@ -488,7 +488,7 @@
                 <label>Global &amp;Editor Preferences...</label>
             </object>
 			<object class="wxMenuItem" name="syntax_highlight">
-                <label>&amp;Syntax Highlight and &amp;Fonts...</label>
+                <label>Syntax Highlight and &amp;Fonts...</label>
             </object>
 			<object class="wxMenuItem" name="configure_accelerators">
                 <label>Keyboard &amp;shortcuts...</label>
@@ -543,7 +543,7 @@
             <label>Close All</label>
         </object>
 		<object class="wxMenuItem" name="close_other_tabs">
-            <label>Close Other tabs</label>
+            <label>Close Other Tabs</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="refresh_file">
@@ -737,7 +737,7 @@
             <label>Add an Existing File...</label>
         </object>
         <object class="wxMenuItem" name="new_virtual_folder">
-            <label>New virtual Folder</label>
+            <label>New Virtual Folder</label>
         </object>
          <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="sort_item">

@@ -65,9 +65,9 @@ public:
 	FilePicker(wxWindow *parent, 
 			   wxWindowID id = wxID_ANY, 
 			   const wxString &defaultFile = wxEmptyString,
-			   const wxString &message = wxT("Select a file:"), 
+			   const wxString &message = _("Select a file:"), 
 			   const wxString &wildCard = wxT("*.*"), 
-			   const wxString &buttonCaption = wxT("Browse"), 
+			   const wxString &buttonCaption = _("Browse"), 
 			   const wxPoint& pos = wxDefaultPosition, 
 			   const wxSize& size = wxDefaultSize, 
 			   long style = wxFD_DEFAULT_STYLE );

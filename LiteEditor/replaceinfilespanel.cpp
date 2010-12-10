@@ -52,19 +52,19 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 
 	wxBoxSizer *horzSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	wxButton *unmark = new wxButton(this, XRCID("unmark_all"), wxT("&Unmark All"));
+	wxButton *unmark = new wxButton(this, XRCID("unmark_all"), _("&Unmark All"));
 	horzSizer->Add(unmark, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
-	wxButton *mark = new wxButton(this, XRCID("mark_all"), wxT("Mark &All"));
+	wxButton *mark = new wxButton(this, XRCID("mark_all"), _("Mark &All"));
 	horzSizer->Add(mark, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
-	m_replaceWithText = new wxStaticText( this, XRCID("replace_with_label"), wxT("Replace With:"));
+	m_replaceWithText = new wxStaticText( this, XRCID("replace_with_label"), _("Replace With:"));
 	horzSizer->Add(m_replaceWithText, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5);
 
 	m_replaceWith = new wxComboBox(this, XRCID("replace_with_combo"));
 	horzSizer->Add(m_replaceWith, 2, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5);
 
-	wxButton *repl = new wxButton(this, XRCID("replace"), wxT("&Replace Marked"));
+	wxButton *repl = new wxButton(this, XRCID("replace"), _("&Replace Marked"));
 	horzSizer->Add(repl, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
 	m_progress = new wxGauge(this, wxID_ANY, 1, wxDefaultPosition, wxSize(-1, 15), wxGA_HORIZONTAL);
@@ -174,7 +174,7 @@ void ReplaceInFilesPanel::DoSaveResults(wxScintilla *sci,
 	if (dynamic_cast<LEditor*>(sci) == NULL) {
 		// it's a temp editor, check if we have any changes to save
 		if (sci->GetModify() && !WriteFileWithBackup(begin->second.GetFileName(), sci->GetText(), false)) {
-			wxMessageBox(_("Failed to save file:\n") + begin->second.GetFileName(), wxT("CodeLite - Replace"),
+			wxMessageBox(_("Failed to save file:\n") + begin->second.GetFileName(), _("CodeLite - Replace"),
 			             wxICON_ERROR|wxOK);
 			wxLogMessage(wxT("Replace: Failed to write file ") + begin->second.GetFileName());
 			ok = false;
@@ -200,7 +200,7 @@ wxScintilla *ReplaceInFilesPanel::DoGetEditor(const wxString &fileName)
 	// not open for editing, so make our own temp editor
 	wxString content;
 	if (!ReadFileWithConversion(fileName, content)) {
-		wxMessageBox(_("Failed to open file:\n") + fileName, wxT("CodeLite - Replace"), wxICON_ERROR|wxOK);
+		wxMessageBox(_("Failed to open file:\n") + fileName, _("CodeLite - Replace"), wxICON_ERROR|wxOK);
 		wxLogMessage(wxT("Replace: Failed to read file ") + fileName);
 		return NULL;
 	}
@@ -371,8 +371,8 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 		filesToSave.push_back(std::make_pair(wxFileName(*i), true));
 	}
 	if (!filesToSave.empty() &&
-	        clMainFrame::Get()->GetMainBook()->UserSelectFiles(filesToSave, wxT("Save Modified Files"),
-	                wxT("Some files are modified.\nChoose the files you would like to save."), true)) {
+	        clMainFrame::Get()->GetMainBook()->UserSelectFiles(filesToSave, _("Save Modified Files"),
+	                _("Some files are modified.\nChoose the files you would like to save."), true)) {
 		for (size_t i = 0; i < filesToSave.size(); i++) {
 			if (filesToSave[i].second) {
 				LEditor *editor = clMainFrame::Get()->GetMainBook()->FindEditor(filesToSave[i].first.GetFullPath());

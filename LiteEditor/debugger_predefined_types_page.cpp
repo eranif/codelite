@@ -8,9 +8,9 @@ PreDefinedTypesPage::PreDefinedTypesPage( wxWindow* parent, const DebuggerPreDef
 	, m_selectedItem(wxNOT_FOUND)
 {
 	m_data = preDefTypes;
-	m_listCtrl1->InsertColumn(0, wxT("Type"));
-	m_listCtrl1->InsertColumn(1, wxT("Expression"));
-	m_listCtrl1->InsertColumn(2, wxT("Debugger Command"));
+	m_listCtrl1->InsertColumn(0, _("Type"));
+	m_listCtrl1->InsertColumn(1, _("Expression"));
+	m_listCtrl1->InsertColumn(2, _("Debugger Command"));
 
 	//Populate the list with the items from the configuration file
 	DebuggerCmdDataVec cmds = m_data.GetCmds();
@@ -61,7 +61,7 @@ void PreDefinedTypesPage::OnNewShortcut( wxCommandEvent& event )
 			wxString existingName = GetColumnText(m_listCtrl1, i, 0);
 			if(name == existingName) {
 				dlg->Destroy();
-				wxMessageBox(_("Debugger type with the same name already exist"), wxT("CodeLite"), wxOK | wxICON_INFORMATION);
+				wxMessageBox(_("A Debugger type with that name already exists"), _("CodeLite"), wxOK | wxICON_INFORMATION);
 				return;
 			}
 		}

@@ -73,7 +73,7 @@ void PSCompilerPage::OnBrowsePreCmpHeader( wxCommandEvent& event )
 	if (p) {
 		projectPath = p->GetFileName().GetPath();
 	}
-	wxString preCmpHeader = wxFileSelector(wxT("Select file:"), projectPath, wxT(""));
+	wxString preCmpHeader = wxFileSelector(_("Select file:"), projectPath, wxT(""));
 	if (preCmpHeader.IsEmpty() == false) {
 		m_textCtrlPreCompiledHeader->SetValue( preCmpHeader );
 	}

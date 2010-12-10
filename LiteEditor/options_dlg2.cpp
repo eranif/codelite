@@ -117,26 +117,26 @@ void OptionsDlg2::DoSave()
 
 void OptionsDlg2::Initialize()
 {
-	m_treeBook->AddPage(0, wxT("General"));
-	AddSubPage(new EditorOptionsGeneralGuidesPanel(m_treeBook),      wxT("Guides"), true);
-	AddSubPage(new EditorOptionsGeneralIndentationPanel(m_treeBook), wxT("Indentation"));
-	AddSubPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook), wxT("Right Margin Indicator"));
-	AddSubPage(new EditorSettingsCaret(m_treeBook),                  wxT("Caret & Scrolling"));
-	AddSubPage(new EditorOptionsGeneralSavePanel(m_treeBook),        wxT("Save Options"));
+	m_treeBook->AddPage(0,_("General"));
+	AddSubPage(new EditorOptionsGeneralGuidesPanel(m_treeBook),     _("Guides"), true);
+	AddSubPage(new EditorOptionsGeneralIndentationPanel(m_treeBook),_("Indentation"));
+	AddSubPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook),_("Right Margin Indicator"));
+	AddSubPage(new EditorSettingsCaret(m_treeBook),                 _("Caret & Scrolling"));
+	AddSubPage(new EditorOptionsGeneralSavePanel(m_treeBook),       _("Save Options"));
 
 	m_treeBook->AddPage(0, wxT("C++"));
-	AddSubPage(new EditorSettingsComments(m_treeBook),             wxT("Comments"));
+	AddSubPage(new EditorSettingsComments(m_treeBook),            _("Comments"));
 	AddSubPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), wxT("Doxygen"));
-	AddSubPage(new EditorOptionsGeneralCodeNavPanel(m_treeBook),   wxT("Quick Code Navigation"));
+	AddSubPage(new EditorOptionsGeneralCodeNavPanel(m_treeBook),  _("Quick Code Navigation"));
 
-	AddPage(new EditorSettingsFolding(m_treeBook),        wxT("Folding"));
-	AddPage(new EditorSettingsBookmarksPanel(m_treeBook), wxT("Bookmarks & Breakpoints"));
-	AddPage(new EditorSettingsDialogs(m_treeBook),        wxT("Dialogs"));
-	AddPage(new EditorSettingsDockingWindows(m_treeBook), wxT("Docking Windows"));
+	AddPage(new EditorSettingsFolding(m_treeBook),       _("Folding"));
+	AddPage(new EditorSettingsBookmarksPanel(m_treeBook),_("Bookmarks & Breakpoints"));
+	AddPage(new EditorSettingsDialogs(m_treeBook),       _("Dialogs"));
+	AddPage(new EditorSettingsDockingWindows(m_treeBook),_("Docking Windows"));
 
 #ifndef __WXMSW__
 	// the Terminal page should NOT be added under Windows
-	AddPage(new EditorSettingsTerminal(m_treeBook),       wxT("Terminal"));
+	AddPage(new EditorSettingsTerminal(m_treeBook),      _("Terminal"));
 #endif
-	AddPage(new EditorSettingsMiscPanel(m_treeBook),      wxT("Misc"));
+	AddPage(new EditorSettingsMiscPanel(m_treeBook),     _("Misc"));
 }

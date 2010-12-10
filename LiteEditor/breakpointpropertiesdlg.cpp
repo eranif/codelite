@@ -167,9 +167,9 @@ void BreakptPropertiesDlg::OnBrowse( wxCommandEvent& event )
 	wxUnusedVar(event);
 	wxString newfilepath, filepath(m_textFilename->GetValue());
 	if ((!filepath.IsEmpty()) && wxFileName::FileExists(filepath)) {
-		newfilepath = wxFileSelector(wxT("Select file:"), filepath.c_str());
+		newfilepath = wxFileSelector(_("Select file:"), filepath.c_str());
 	} else {
-		newfilepath = wxFileSelector(wxT("Select file:"));
+		newfilepath = wxFileSelector(_("Select file:"));
 	}
 
 	if (!newfilepath.IsEmpty()) {

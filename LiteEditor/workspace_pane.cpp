@@ -78,7 +78,7 @@ void WorkspacePane::CreateGUIControls()
 
 	wxArrayString choices;
 	m_workspaceConfig = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, choices);
-	m_workspaceConfig->SetToolTip(wxT("Select the workspace build configuration"));
+	m_workspaceConfig->SetToolTip(_("Select the workspace build configuration"));
 
 	m_workspaceConfig->Enable(false);
 	m_workspaceConfig->Append(OPEN_CONFIG_MGR_STR);
@@ -93,15 +93,15 @@ void WorkspacePane::CreateGUIControls()
 	long bookStyle = wxVB_LEFT | wxAUI_NB_WINDOWLIST_BUTTON;
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
 
-	// Calculate the widthest tab (the one with the 'Workspcae' label)
+	// Calculate the widest tab (the one with the 'Workspace' label)
 	int xx, yy;
 	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	wxWindow::GetTextExtent(wxT("Workspace"), &xx, &yy, NULL, NULL, &fnt);
+	wxWindow::GetTextExtent(_("Workspace"), &xx, &yy, NULL, NULL, &fnt);
 
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 0);
 
 	// Add the parsing progress controls
-	m_staticText = new wxStaticText(this, wxID_ANY, wxT("Parsing workspace..."));
+	m_staticText = new wxStaticText(this, wxID_ANY, _("Parsing workspace..."));
 	mainSizer->Add(m_staticText, 0, wxEXPAND|wxALL, 2);
 
 	m_parsingProgress = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1, 15), wxGA_HORIZONTAL|wxGA_SMOOTH);
@@ -120,7 +120,7 @@ void WorkspacePane::CreateGUIControls()
 	// Add the workspace tab
 	wxString  name;
 
-	name = wxT("Workspace");
+	name = _("Workspace");
 	if(IS_DETACHED(name)) {
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
 		m_workspaceTab = new WorkspaceTab(cp, name);
@@ -131,7 +131,7 @@ void WorkspacePane::CreateGUIControls()
 	}
 
 	// Add the explorer tab
-	name = wxT("Explorer");
+	name = _("Explorer");
 	if(IS_DETACHED(name)) {
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
 		m_explorer = new FileExplorer(cp, name);
@@ -142,7 +142,7 @@ void WorkspacePane::CreateGUIControls()
 	}
 
 	// Add the Open Windows Panel (Tabs)
-	name = wxT("Tabs");
+	name = _("Tabs");
 	if(IS_DETACHED(name)) {
 		DockablePane *cp = new DockablePane(GetParent(), m_book,  name, wxNullBitmap, wxSize(200, 200));
 		m_openWindowsPane = new OpenWindowsPanel(cp, name);
@@ -153,7 +153,7 @@ void WorkspacePane::CreateGUIControls()
 	}
 
 	// Add the Tabgroups tab
-	name = wxT("Tabgroups");
+	name = _("Tabgroups");
 	if(IS_DETACHED(name)) {
 		DockablePane *cp = new DockablePane(GetParent(), m_book,  name, wxNullBitmap, wxSize(200, 200));
 		m_TabgroupsPane = new TabgroupsPane(cp, name);
@@ -248,7 +248,7 @@ void WorkspacePane::ClearProgress()
 	m_parsingProgress->SetValue(0);
 	m_parsingProgress->Hide();
 
-	m_staticText->SetLabel(wxT("Parsing workspace..."));
+	m_staticText->SetLabel(_("Parsing workspace..."));
 	m_staticText->Hide();
 	Layout();
 }
@@ -261,7 +261,7 @@ void WorkspacePane::UpdateProgress(int val)
 		Layout();
 	}
 
-	m_staticText->SetLabel(wxString::Format(wxT("Parsing workspace: %d%% completed"), val));
+	m_staticText->SetLabel(wxString::Format(_("Parsing workspace: %d%% completed"), val));
 	m_parsingProgress->SetValue(val);
 	m_parsingProgress->Update();
 }

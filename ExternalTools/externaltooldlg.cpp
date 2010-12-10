@@ -92,7 +92,7 @@ void ExternalToolDlg::OnButtonEditUI( wxUpdateUIEvent& event )
 
 void ExternalToolDlg::OnButtonDelete( wxCommandEvent& event )
 {
-	if (wxMessageBox(_("Are you sure you want to delete this tool?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
+	if (wxMessageBox(_("Are you sure you want to delete this tool?"), _("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
 		m_listCtrlTools->DeleteItem(m_item);
 	}
 }
@@ -104,9 +104,9 @@ void ExternalToolDlg::OnButtonDeleteUI( wxUpdateUIEvent& event )
 
 void ExternalToolDlg::Initialize()
 {
-	m_listCtrlTools->InsertColumn(0, wxT("ID"));
-	m_listCtrlTools->InsertColumn(1, wxT("Name"));
-	m_listCtrlTools->InsertColumn(2, wxT("Path"));
+	m_listCtrlTools->InsertColumn(0, _("ID"));
+	m_listCtrlTools->InsertColumn(1, _("Name"));
+	m_listCtrlTools->InsertColumn(2, _("Path"));
 
 	m_listCtrlTools->SetColumnWidth(0, 200);
 	m_listCtrlTools->SetColumnWidth(1, 200);

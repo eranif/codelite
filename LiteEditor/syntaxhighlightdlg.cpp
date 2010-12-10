@@ -103,7 +103,7 @@ wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 //			}
 //		}
 //	}
-	wxStaticText *txt = new wxStaticText(page, wxID_ANY, wxT("Colouring scheme:"), wxDefaultPosition, wxDefaultSize, 0);
+	wxStaticText *txt = new wxStaticText(page, wxID_ANY, _("Colouring scheme:"), wxDefaultPosition, wxDefaultSize, 0);
 	sz->Add(txt, 0, wxEXPAND|wxALL, 5);
 
 	m_themes = new wxChoice(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, EditorConfigST::Get()->GetLexersThemes(), 0 );
@@ -200,7 +200,7 @@ SyntaxHighlightDlg::~SyntaxHighlightDlg()
 
 void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& e)
 {
-	if(wxMessageBox(_("Are you sure you want to load all default syntax highlight settings and lose all your changes?"), wxT("CodeLite"), wxYES_NO|wxCANCEL|wxICON_QUESTION|wxCENTER, this) != wxYES){
+	if(wxMessageBox(_("Are you sure you want to load all default syntax highlight settings and lose all your changes?"), _("CodeLite"), wxYES_NO|wxCANCEL|wxICON_QUESTION|wxCENTER, this) != wxYES){
 		return;
 	}
 

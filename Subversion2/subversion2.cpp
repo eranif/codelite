@@ -143,7 +143,7 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
 	wxMenu* menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
-	item = new wxMenuItem(menu, XRCID("svn_explorer_set_as_view"), _("Display this path in the Subverion View"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_explorer_set_as_view"), _("Display this path in the Subversion View"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 	menu->AppendSeparator();
 

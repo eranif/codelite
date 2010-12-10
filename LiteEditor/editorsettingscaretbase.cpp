@@ -49,10 +49,10 @@ EditorSettingsCaretBase::EditorSettingsCaretBase( wxWindow* parent, wxWindowID i
 	m_checkBoxScrollBeyondLastLine = new wxCheckBox( this, wxID_ANY, _("Allow caret to scroll beyond end of file"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_checkBoxScrollBeyondLastLine, 0, wxALL|wxEXPAND, 5 );
 	
-	m_checkBoxAdjustScrollbarSize = new wxCheckBox( this, wxID_ANY, _("Auto just horizontal scrollbar width"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxAdjustScrollbarSize = new wxCheckBox( this, wxID_ANY, _("Auto-adjust horizontal scrollbar width"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_checkBoxAdjustScrollbarSize, 0, wxALL|wxEXPAND, 5 );
 	
-	m_checkBoxCaretUseCamelCase = new wxCheckBox( this, wxID_ANY, _("Caret jumps between word segments marked by capitalisation (CamelCase) or undescores"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxCaretUseCamelCase = new wxCheckBox( this, wxID_ANY, _("Caret jumps between word segments marked by capitalisation (CamelCase) or underscores"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_checkBoxCaretUseCamelCase, 0, wxALL|wxEXPAND, 5 );
 	
 	mainSizer->Add( fgSizer2, 0, wxEXPAND|wxALL, 5 );

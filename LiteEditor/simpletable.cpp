@@ -85,10 +85,10 @@ void WatchesTable::Clear()
 
 void WatchesTable::InitTable()
 {
-	m_listTable->AddColumn(wxT("Expression"), 150);
-	m_listTable->AddColumn(wxT("Value"),      500);
-	m_listTable->AddColumn(wxT("Type"),       200);
-	m_listTable->AddRoot(wxT("Watches"));
+	m_listTable->AddColumn(_("Expression"), 150);
+	m_listTable->AddColumn(_("Value"),      500);
+	m_listTable->AddColumn(_("Type"),       200);
+	m_listTable->AddRoot(_("Watches"));
 }
 
 void WatchesTable::OnListKeyDown( wxTreeEvent& event )
@@ -119,7 +119,7 @@ void WatchesTable::OnItemRightClick(wxTreeEvent &event)
 void WatchesTable::OnNewWatch(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	wxString expr = wxGetTextFromUser(wxT("Expression to watch:"), wxT("New watch"));
+	wxString expr = wxGetTextFromUser(_("Expression to watch:"), _("New watch"));
 	if (expr.IsEmpty() == false) {
 		AddExpression(expr);
 		RefreshValues(false);
@@ -183,7 +183,7 @@ void WatchesTable::AddExpression(const wxString &expr)
 		wxTreeItemId item = m_listTable->GetFirstChild(root, cookie);
 		while(item.IsOk()) {
 			if(m_listTable->GetItemText(item) == expr) {
-				wxMessageBox(_("A similar expression already exist in the watches table"), wxT("CodeLite"), wxOK | wxICON_INFORMATION);
+				wxMessageBox(_("A similar expression already exist in the watches table"), _("CodeLite"), wxOK | wxICON_INFORMATION);
 				return;
 			}
 			item = m_listTable->GetNextChild(root, cookie);
@@ -263,7 +263,7 @@ void WatchesTable::OnMenuEditExpr(wxCommandEvent &event)
 		return;
 	}
 
-	wxString newExpr = wxGetTextFromUser(wxT("Update expression:"), wxT("Update Watch"), m_listTable->GetItemText(item));
+	wxString newExpr = wxGetTextFromUser(_("Update expression:"), _("Update Watch"), m_listTable->GetItemText(item));
 	if(newExpr.IsEmpty())
 		return;
 

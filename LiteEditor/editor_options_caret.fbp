@@ -465,7 +465,7 @@
                                 <property name="font"></property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
-                                <property name="label">Auto just horizontal scrollbar width</property>
+                                <property name="label">Auto-adjust horizontal scrollbar width</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
                                 <property name="name">m_checkBoxAdjustScrollbarSize</property>
@@ -522,7 +522,7 @@
                                 <property name="font"></property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
-                                <property name="label">Caret jumps between word segments marked by capitalisation (CamelCase) or undescores</property>
+                                <property name="label">Caret jumps between word segments marked by capitalisation (CamelCase) or underscores</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
                                 <property name="name">m_checkBoxCaretUseCamelCase</property>

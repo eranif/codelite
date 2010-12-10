@@ -36,6 +36,7 @@
 #include "dockablepane.h"
 #include "windowstack.h"
 #include "dropbutton.h"
+#include "globals.h"
 
 class SymbolViewPlugin : public IPlugin
 {
@@ -107,7 +108,10 @@ public:
         DECLARE_DYNAMIC_CLASS(SymTree)
     public:
         SymTree() { }
-        SymTree(wxWindow *parent) : wxTreeCtrl(parent) { }
+        SymTree(wxWindow *parent) : wxTreeCtrl(parent) 
+		{ 
+			MSWSetNativeTheme(this);
+		}
 
         int IsCtorOrDtor(const wxTreeItemId &id);
         int OnCompareItems(const wxTreeItemId &id1, const wxTreeItemId &id2);

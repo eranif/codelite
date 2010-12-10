@@ -37,7 +37,7 @@
             <property name="name">AccelTableBaseDlg</property>
             <property name="pos"></property>
             <property name="size">819,530</property>
-            <property name="style">wxDEFAULT_DIALOG_STYLE</property>
+            <property name="style">wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</property>
             <property name="subclass"></property>
             <property name="title">Keyboard Shortcuts:</property>
             <property name="tooltip"></property>

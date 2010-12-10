@@ -150,7 +150,7 @@ TEST_FUNC(testThis)
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/this_ptr.h")), 4, wxT("this->"), LoadFile(wxT("../tests/this_ptr.h")), tags);
 
 #ifdef __WXMSW__
-	CHECK_SIZE(tags.size(), 1142);
+	CHECK_SIZE(tags.size(), 1149);
 #else
 	CHECK_SIZE(tags.size(), 952);
 #endif
@@ -184,7 +184,7 @@ TEST_FUNC(testTemplateTypedef)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_template_typedef.h")), 3, wxT("ManagerST::Get()->"), LoadFile(wxT("../tests/test_template_typedef.h")), tags);
-	CHECK_SIZE(tags.size(), 205);
+	CHECK_SIZE(tags.size(), 219);
 	return true;
 }
 
@@ -242,7 +242,7 @@ TEST_FUNC(testClFrame)
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_cl_frame.h")), 4, wxT("clMainFrame::Get()->"), LoadFile(wxT("../tests/test_cl_frame.h")), tags);
 #ifdef __WXMSW__
-	CHECK_SIZE(tags.size(), 1142);
+	CHECK_SIZE(tags.size(), 1149);
 #else
 	CHECK_SIZE(tags.size(), 952);
 #endif
@@ -355,7 +355,8 @@ int main(int argc, char **argv)
 {
 	//Initialize the wxWidgets library
 	wxInitializer initializer;
-	testRetagWorkspace();
+	//testRetagWorkspace();
 	//testStringSearcher();
+	testCC();
 	return 0;
 }

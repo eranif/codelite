@@ -277,6 +277,7 @@
         <Library Value="libwxsqlite3ud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxscintillaud.dll"/>
+        <Library Value="libUxTheme.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="yes"/>
       <General OutputFile="../lib/gcc_lib/libplugin_sdkud.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>

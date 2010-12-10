@@ -897,7 +897,7 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
                                bool workspaceOnly)
 {
 	wxString path;
-	wxString typeName, typeScope, tmp;
+	wxString tmp;
 	std::vector<TagEntryPtr> tmpCandidates, candidates;
 
 	//remove the word from the expression
@@ -910,33 +910,30 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
 	expression.erase(expression.find_last_not_of(trimString)+1);
 	tmp = expression;
 	expression.EndsWith(word, &tmp);
-	expression = tmp;
-
-	wxString scope(text);// = GetLanguage()->GetScope(text);
+	
+	wxString scope(text);
 	wxString scopeName = GetLanguage()->GetScopeName(scope, NULL);
-	if (expression.IsEmpty()) {
-
-		TagsByScopeAndName(scopeName, word, tmpCandidates, ExactMatch);
-		if (tmpCandidates.empty()) {
-			// no match in the given scope, try to collect from global scope as well
-			GetGlobalTags(word, tmpCandidates, ExactMatch);
-		}
-
+	
+	bool expressionWasEmpty = tmp.IsEmpty();
+	wxString typeName, typeScope;
+	wxString oper, dummy;
+	bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
+	if (!res) {
+		return;
+	}
+	
+	if ( expressionWasEmpty ) {
+		std::vector<TagEntryPtr> tmpCandidates;
+		TagsByScopeAndName(typeScope, word, tmpCandidates, ExactMatch);
 		if (!imp) {
 			//collect only implementation
 			FilterImplementation(tmpCandidates, tags);
+			
 		} else {
 			FilterDeclarations(tmpCandidates, tags);
 		}
 
 	} else {
-
-		wxString typeName, typeScope;
-		wxString oper, dummy;
-		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
-		if (!res) {
-			return;
-		}
 
 		//get all symbols realted to this scope
 		scope = wxT("");

@@ -286,6 +286,13 @@ bool Language::NextToken(wxString &token, wxString &delim, bool &subscriptOperat
 			funcArgList << wxString::From8BitData(m_tokenScanner->YYText());
 		}
 	}
+	
+	if(token.IsEmpty() == false && depth == 0) {
+		if(delim.IsEmpty()) {
+			delim = wxT(".");
+			return true;
+		}
+	}
 	return false;
 }
 

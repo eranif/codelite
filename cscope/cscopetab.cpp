@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "csscopeconfdata.h"
+#include "globals.h"
 #include <wx/app.h>
 #include <wx/log.h>
 #include "cscopetab.h"
@@ -36,6 +37,8 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 		, m_mgr(mgr)
 {
 	CScopeConfData data;
+	MSWSetNativeTheme(m_treeCtrlResults);
+	
 	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);
 	m_choiceSearchScope->SetStringSelection(data.GetScanScope());
 	m_checkBoxUpdateDb->SetValue(data.GetRebuildOption());

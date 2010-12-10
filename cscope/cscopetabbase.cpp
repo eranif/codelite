@@ -28,7 +28,7 @@ CscopeTabBase::CscopeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	bSizer31->Add( m_choiceSearchScope, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_checkBoxUpdateDb = new wxCheckBox( this, wxID_ANY, _("Update Db"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxUpdateDb->SetToolTip( _("Update the databse before executing any CScope command") );
+	m_checkBoxUpdateDb->SetToolTip( _("Update the database before executing any CScope command") );
 	
 	bSizer31->Add( m_checkBoxUpdateDb, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	

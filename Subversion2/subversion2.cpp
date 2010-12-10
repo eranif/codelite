@@ -63,7 +63,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor(wxT("Eran Ifrah"));
 	info.SetName(wxT("Subversion"));
-	info.SetDescription(wxT("Subversion plugin for codelite2.0 based on the svn command line tool"));
+	info.SetDescription(_("Subversion plugin for codelite2.0 based on the svn command line tool"));
 	info.SetVersion(wxT("v2.0"));
 	return info;
 }
@@ -81,7 +81,7 @@ Subversion2::Subversion2(IManager *manager)
 		, m_blameCommand    (this)
 		, m_svnClientVersion(0.0)
 {
-	m_longName = wxT("Subversion plugin for codelite2.0 based on the svn command line tool");
+	m_longName = _("Subversion plugin for codelite2.0 based on the svn command line tool");
 	m_shortName = wxT("Subversion2");
 
 	DoInitialize();
@@ -378,7 +378,7 @@ void Subversion2::OnUpdate(wxCommandEvent& event)
 void Subversion2::OnDiff(wxCommandEvent& event)
 {
 	wxString diffAgainst(wxT("BASE"));
-	diffAgainst = wxGetTextFromUser(wxT("Insert base revision to diff against:"), wxT("Diff against"), wxT("BASE"), GetManager()->GetTheApp()->GetTopWindow());
+	diffAgainst = wxGetTextFromUser(_("Insert base revision to diff against:"), _("Diff against"), wxT("BASE"), GetManager()->GetTheApp()->GetTopWindow());
 	if (diffAgainst.empty()) {
 		// user clicked 'Cancel'
 		diffAgainst = wxT("BASE");

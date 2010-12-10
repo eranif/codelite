@@ -42,7 +42,7 @@ void QMakeSettingsDlg::OnNewQmakeSettings( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 
-	wxString name = wxGetTextFromUser(wxT("New qmake settings name"), wxT("New qmake settings"));
+	wxString name = wxGetTextFromUser(_("New qmake settings name"), _("New qmake settings"));
 	if (name.IsEmpty() == false) {
 		m_notebook->AddPage(new QmakeSettingsTab(m_notebook, name), name, true);
 	}
@@ -77,8 +77,8 @@ void QMakeSettingsDlg::OnRightDown(wxMouseEvent& event)
 	if ( m_rightClickTabIdx != wxNOT_FOUND && flags & wxNB_HITTEST_ONLABEL ) {
 		wxMenu menu;
 
-		menu.Append(XRCID("rename_qmake"), wxT("Rename..."), wxEmptyString);
-		menu.Append(XRCID("delete_qmake"), wxT("Delete"), wxEmptyString);
+		menu.Append(XRCID("rename_qmake"), _("Rename..."), wxEmptyString);
+		menu.Append(XRCID("delete_qmake"), _("Delete"), wxEmptyString);
 
 		menu.Connect(XRCID("rename_qmake"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QMakeSettingsDlg::OnRename), NULL, this);
 		menu.Connect(XRCID("delete_qmake"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QMakeSettingsDlg::OnDelete), NULL, this);
@@ -91,7 +91,7 @@ void QMakeSettingsDlg::OnDelete(wxCommandEvent& event)
 {
 	if ( m_rightClickTabIdx != wxNOT_FOUND ) {
 		wxString qmakeSettingsName = m_notebook->GetPageText( (size_t) m_rightClickTabIdx );
-		int answer = wxMessageBox(wxString::Format(wxT("Are you sure you want to delete qmake settings '%s'?"), qmakeSettingsName.c_str()), wxT("CodeLite"), wxYES_NO|wxCANCEL, this);
+		int answer = wxMessageBox(wxString::Format(_("Are you sure you want to delete qmake settings '%s'?"), qmakeSettingsName.c_str()), _("CodeLite"), wxYES_NO|wxCANCEL, this);
 		if ( answer == wxYES ) {
 			m_notebook->DeletePage( (size_t) m_rightClickTabIdx );
 		}
@@ -102,7 +102,7 @@ void QMakeSettingsDlg::OnRename(wxCommandEvent& event)
 {
 	if ( m_rightClickTabIdx != wxNOT_FOUND ) {
 		wxString qmakeSettingsName = m_notebook->GetPageText( (size_t) m_rightClickTabIdx );
-		wxString newName           = wxGetTextFromUser(wxT("New name:"), wxT("Rename..."));
+		wxString newName           = wxGetTextFromUser(_("New name:"), _("Rename..."));
 		if ( newName.empty() == false ) {
 			QmakeSettingsTab *tab = dynamic_cast<QmakeSettingsTab*>(m_notebook->GetPage(m_rightClickTabIdx));
 			if (tab) {

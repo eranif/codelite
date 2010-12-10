@@ -195,7 +195,7 @@ public:
 	FindReplaceDialog(	wxWindow* parent,
 	                   const FindReplaceData& data,
 	                   wxWindowID id = wxID_ANY,
-	                   const wxString& caption = wxT("Find / Replace"),
+	                   const wxString& caption = _("Find / Replace"),
 	                   const wxPoint& pos = wxDefaultPosition,
 	                   const wxSize& size = wxDefaultSize,
 	                   long style = wxDEFAULT_DIALOG_STYLE);
@@ -204,7 +204,7 @@ public:
 	bool Create(wxWindow* parent,
 	            const FindReplaceData& data,
 	            wxWindowID id = wxID_ANY,
-	            const wxString& caption = wxT("Find / Replace"),
+	            const wxString& caption = _("Find / Replace"),
 	            const wxPoint& pos = wxDefaultPosition,
 	            const wxSize& size = wxDefaultSize,
 	            long style = wxDEFAULT_DIALOG_STYLE

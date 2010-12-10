@@ -62,7 +62,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor(wxT("Scott Dolim"));
 	info.SetName(wxT("SymbolView"));
-	info.SetDescription(wxT("Show Symbols of File, Project, or Workspace"));
+	info.SetDescription(_("Show Symbols of File, Project, or Workspace"));
 	info.SetVersion(wxT("v1.0"));
 
 	// this plugin starts as disabled by default
@@ -90,7 +90,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
         , m_choiceSizer(NULL)
 		, m_imagesList(NULL)
 {
-	m_longName = wxT("Symbols View Plugin");
+	m_longName = _("Symbols View Plugin");
 	m_shortName = wxT("SymbolView");
 
 	LoadImagesAndIndexes();
@@ -113,9 +113,9 @@ SymbolViewPlugin::~SymbolViewPlugin()
 void SymbolViewPlugin::LoadImagesAndIndexes()
 {
 	m_viewModeNames.Add(wxEmptyString, vmMax);
-	m_viewModeNames[vmCurrentFile]      = wxT("Current File");
-	m_viewModeNames[vmCurrentProject]   = wxT("Current Project");
-	m_viewModeNames[vmCurrentWorkspace] = wxT("Current Workspace");
+	m_viewModeNames[vmCurrentFile]      = _("Current File");
+	m_viewModeNames[vmCurrentProject]   = _("Current Project");
+	m_viewModeNames[vmCurrentWorkspace] = _("Current Workspace");
 
 	m_imagesList = new wxImageList(16, 16);
 
@@ -217,7 +217,7 @@ void SymbolViewPlugin::CreateGUIControls()
 
 	} else {
 		m_symView = new wxPanel(book);
-		book->AddPage(m_symView, wxT("Symbols"), false);
+		book->AddPage(m_symView, _("Symbols"), false);
 	}
 
 
@@ -225,10 +225,10 @@ void SymbolViewPlugin::CreateGUIControls()
 	m_symView->SetSizer(sz);
 
 	m_tb = new wxToolBar(m_symView, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
-	m_tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
+	m_tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), _("Link Editor"), wxITEM_CHECK);
 	m_tb->ToggleTool(XRCID("link_editor"), true);
-	m_tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
-	m_tb->AddTool(XRCID("gohome"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxT("Go to Active Editor Symbols"), wxITEM_NORMAL);
+	m_tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), _("Collapse All"), wxITEM_NORMAL);
+	m_tb->AddTool(XRCID("gohome"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), _("Go to Active Editor Symbols"), wxITEM_NORMAL);
 	m_tb->Realize();
 	sz->Add(m_tb, 0, wxEXPAND);
 
@@ -320,7 +320,7 @@ void SymbolViewPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 	if (type == MenuTypeEditor) {
         size_t pos = size_t(-1);
         if (menu->FindChildItem(XRCID("find_decl"), &pos) != NULL) {
-            menu->Insert(pos, XRCID("show_tag_in_symview"), wxT("Show in Symbol View"));
+            menu->Insert(pos, XRCID("show_tag_in_symview"), _("Show in Symbol View"));
         }
 	} else if (type == MenuTypeFileExplorer) {
 	} else if (type == MenuTypeFileView_Workspace) {
@@ -675,9 +675,9 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 
 	// root node gets special grouping children
 	if (id == tree->GetRootItem()) {
-		tree->m_globals = tree->AppendItem(id, wxT("Global Functions and Variables"), m_image[wxT("globals")]);
-		tree->m_protos  = tree->AppendItem(id, wxT("Functions Prototypes"),           m_image[wxT("globals")]);
-		tree->m_macros  = tree->AppendItem(id, wxT("Macros"),                         m_image[wxT("globals")]);
+		tree->m_globals = tree->AppendItem(id, _("Global Functions and Variables"), m_image[wxT("globals")]);
+		tree->m_protos  = tree->AppendItem(id, _("Functions Prototypes"),           m_image[wxT("globals")]);
+		tree->m_macros  = tree->AppendItem(id, _("Macros"),                         m_image[wxT("globals")]);
 	} else {
 		tree->SetItemHasChildren(id, false);
 	}
@@ -898,7 +898,7 @@ void SymbolViewPlugin::AddDeferredSymbols(const std::multimap<wxString, wxString
  */
 void SymbolViewPlugin::UpdateTrees(const wxArrayString &files, bool removeOld)
 {
-	PluginBusyMessage wait_msg(m_mgr, wxT("Updating SymbolView tree..."), XRCID("symbolview"));
+	PluginBusyMessage wait_msg(m_mgr, _("Updating SymbolView tree..."), XRCID("symbolview"));
 
 	std::multimap<wxString,wxString> sqlopts;
 	std::map<TagKey, TreeNode> tagsToDelete;
@@ -958,7 +958,7 @@ void SymbolViewPlugin::CreateSymbolTree(const wxString &path, WindowStack *paren
 	if (path.IsEmpty() || !parent)
 		return;
 
-	PluginBusyMessage wait_msg(m_mgr, wxT("Building SymbolView tree..."), XRCID("symbolview"));
+	PluginBusyMessage wait_msg(m_mgr, _("Building SymbolView tree..."), XRCID("symbolview"));
 
 	// make new empty tree
 	SymTree *tree = new SymTree(parent);

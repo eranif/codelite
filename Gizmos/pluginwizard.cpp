@@ -31,7 +31,7 @@
 PluginWizard::PluginWizard(wxWindow *parent, wxWindowID id)
 {
 	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("new_plugin_wiz_bmp"));
-	wxWizard::Create(parent, id, wxT("New Plugin Wizard"), bmp);
+	wxWizard::Create(parent, id, _("New Plugin Wizard"), bmp);
 
 	//create the pages
 	m_page1 = new PluginWizardPage1(this);

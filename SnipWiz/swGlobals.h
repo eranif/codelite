@@ -46,5 +46,5 @@ static const wxString defaultFile = wxT( "SnipWiz.snip" );
 static const wxString defaultTmplFile = wxT( "SnipWiz.tmpl" );
 static const wxString plugName = wxT( "SnipWiz" );
 
-static const wxString noEditor = wxT( "There is no active editor\n" );
-static const wxString codeLite = wxT( "CodeLite" );
+static const wxString noEditor = _("There is no active editor\n");
+static const wxString codeLite = _("CodeLite");

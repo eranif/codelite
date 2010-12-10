@@ -2711,7 +2711,7 @@ void clMainFrame::CreateWelcomePage()
 	wxString workspaceTable = CreateWorkspaceTable();
 	wxString filesTable = CreateFilesTable();
 
-	content.Replace(wxT("$(WorkspaceTable)"), workspaceTable);
+	size_t num =content.Replace(wxT("$(WorkspaceTable)"), workspaceTable);
 	content.Replace(wxT("$(FilesTable)"), filesTable);
 
 	//replace the HTML colours with platfroms correct colours
@@ -2722,6 +2722,14 @@ void clMainFrame::CreateWelcomePage()
 
 	content.Replace(wxT("$(ACTIVE_CAPTION)"), active_caption.GetAsString());
 	content.Replace(wxT("$(ACTIVE_CAPTION_TEXT)"), active_caption_txt.GetAsString());
+
+	content.Replace(wxT("$(QuickLinks)"), _("Quick Links:"));
+	content.Replace(wxT("$(CodeLiteWiki)"), _("CodeLite Wiki"));
+	content.Replace(wxT("$(CodeLiteForums)"), _("CodeLite Forums"));
+	content.Replace(wxT("$(CreateNewWorkspace)"), _("Create a New Workspace"));
+	content.Replace(wxT("$(OpenWorkspace)"), _("Open a Workspace"));
+	content.Replace(wxT("$(RecentWorkspaces)"), _("Recently opened workspaces:"));
+	content.Replace(wxT("$(RecentFiles)"), _("Recently opened files:"));
 
 	welcomePage->SetPage(content);
 	GetMainBook()->AddPage(welcomePage, _("Welcome!"), wxNullBitmap, true);

@@ -198,7 +198,7 @@
                                 <property name="size" />
                                 <property name="style" />
                                 <property name="subclass" />
-                                <property name="tooltip">Update the databse before executing any CScope command</property>
+                                <property name="tooltip">Update the database before executing any CScope command</property>
                                 <property name="window_extra_style" />
                                 <property name="window_name" />
                                 <property name="window_style" />

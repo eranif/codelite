@@ -48,7 +48,7 @@ void CscopeDbBuilderThread::ProcessRequest(ThreadRequest *request)
 	DirSaver ds;
 
 	wxSetWorkingDirectory(req->GetWorkingDir());
-	SendStatusEvent( wxT("Executing cscope..."), 10, req->GetFindWhat(), req->GetOwner() );
+	SendStatusEvent( _("Executing cscope..."), 10, req->GetFindWhat(), req->GetOwner() );
 
 	//notify the database creation process as completed
 	wxArrayString output;
@@ -56,10 +56,10 @@ void CscopeDbBuilderThread::ProcessRequest(ThreadRequest *request)
 	//set environment variables required by cscope
 	wxSetEnv(wxT("TMPDIR"), wxFileName::GetTempDir());
 	ProcUtils::SafeExecuteCommand(req->GetCmd(), output);
-	SendStatusEvent( wxT("Parsing results..."), 50, wxEmptyString, req->GetOwner() );
+	SendStatusEvent( _("Parsing results..."), 50, wxEmptyString, req->GetOwner() );
 
 	CscopeResultTable *result = ParseResults( output );
-	SendStatusEvent( wxT("Done"), 100, wxEmptyString, req->GetOwner() );
+	SendStatusEvent( _("Done"), 100, wxEmptyString, req->GetOwner() );
 
 	// send status message
 	SendStatusEvent(req->GetEndMsg(), 100, wxEmptyString, req->GetOwner());

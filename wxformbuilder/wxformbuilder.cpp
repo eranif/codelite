@@ -228,7 +228,7 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
 
 	wxFileName tmplFile(templateFile);
 	if (!tmplFile.FileExists()) {
-		wxMessageBox(wxString::Format(_("Cant find wxFormBuilder template file '%s'"), tmplFile.GetFullPath().c_str()), _("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
+		wxMessageBox(wxString::Format(_("Can't find wxFormBuilder template file '%s'"), tmplFile.GetFullPath().c_str()), _("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
 		return;
 	}
 
@@ -241,7 +241,7 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
 		// copy the file to here
 		wxFileName fbpFile(files_path, data.file + wxT(".fbp"));
 		if (!wxCopyFile(tmplFile.GetFullPath(), fbpFile.GetFullPath())) {
-			wxMessageBox(wxString::Format(_("Failed to copy tempalte file to '%s'"), fbpFile.GetFullPath().c_str()), _("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
+			wxMessageBox(wxString::Format(_("Failed to copy template file to '%s'"), fbpFile.GetFullPath().c_str()), _("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
 			return;
 		}
 		// open the file, and replace expand its macros

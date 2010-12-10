@@ -36,7 +36,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor(wxT("Eran Ifrah"));
 	info.SetName(wxT("QMakePlugin"));
-	info.SetDescription(wxT("Qt's QMake integration with CodeLite"));
+	info.SetDescription(_("Qt's QMake integration with CodeLite"));
 	info.SetVersion(wxT("v1.0"));
 	return info;
 }
@@ -49,7 +49,7 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 QMakePlugin::QMakePlugin(IManager *manager)
 		: IPlugin(manager)
 {
-	m_longName = wxT("Qt's QMake integration with CodeLite");
+	m_longName = _("Qt's QMake integration with CodeLite");
 	m_shortName = wxT("QMakePlugin");
 
 	m_conf = new QmakeConf(wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/qmake.ini"));
@@ -90,11 +90,11 @@ clToolBar *QMakePlugin::CreateToolBar(wxWindow *parent)
 
 		// Add tools to the plugins toolbar. You must provide 2 sets of icons: 24x24 and 16x16
 		if (size == 24) {
-			tb->AddTool(XRCID("qmake_settings"), wxT("Configure qmake"), LoadBitmapFile(wxT("qt24_preferences.png")), wxT("Configure qmake"));
-			tb->AddTool(XRCID("new_qmake_project"), wxT("Create new qmake based project"), LoadBitmapFile(wxT("qt24_new.png")), wxT("Create new qmake based project"));
+			tb->AddTool(XRCID("qmake_settings"), _("Configure qmake"), LoadBitmapFile(wxT("qt24_preferences.png")), _("Configure qmake"));
+			tb->AddTool(XRCID("new_qmake_project"), _("Create new qmake based project"), LoadBitmapFile(wxT("qt24_new.png")), _("Create new qmake based project"));
 		} else {
-			tb->AddTool(XRCID("qmake_settings"), wxT("Configure qmake"), LoadBitmapFile(wxT("qt16_preferences.png")), wxT("Configure qmake"));
-			tb->AddTool(XRCID("new_qmake_project"), wxT("Create new qmake based project"), LoadBitmapFile(wxT("qt16_new.png")), wxT("Create new qmake based project"));
+			tb->AddTool(XRCID("qmake_settings"), _("Configure qmake"), LoadBitmapFile(wxT("qt16_preferences.png")), _("Configure qmake"));
+			tb->AddTool(XRCID("new_qmake_project"), _("Create new qmake based project"), LoadBitmapFile(wxT("qt16_new.png")), _("Create new qmake based project"));
 		}
 		// And finally, we must call 'Realize()'
 		tb->Realize();
@@ -383,7 +383,7 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
 {
 	wxUnusedVar ( event );
 	if (m_conf->GetAllConfigurations().IsEmpty()) {
-		wxMessageBox(wxT("There is no qmake defined, please define one from 'Plugins -> Qmake -> Settings'"), wxT("CodeLite"), wxOK|wxICON_WARNING|wxCENTER, m_mgr->GetTheApp()->GetTopWindow());
+		wxMessageBox(_("There is no qmake defined, please define one from 'Plugins -> Qmake -> Settings'"), _("CodeLite"), wxOK|wxICON_WARNING|wxCENTER, m_mgr->GetTheApp()->GetTopWindow());
 		return;
 	}
 
@@ -440,7 +440,7 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
 		{
 			DirSaver ds;
 			if ( !wxSetWorkingDirectory(path) ) {
-				wxMessageBox(_("Invalid project path!"), wxT("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
+				wxMessageBox(_("Invalid project path!"), _("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
 				return;
 			}
 
@@ -451,7 +451,7 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
 
 			if ( !WriteFileWithBackup(name + wxT(".project"), content, false) ) {
 				wxMessageBox(wxString::Format(_("Failed to create .project file '%s'"), wxString(name + wxT(".project")).c_str()),
-				             wxT("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
+				             _("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
 				return;
 			}
 

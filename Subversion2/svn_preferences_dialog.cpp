@@ -86,7 +86,7 @@ wxString SvnPreferencesDialog::DoGetExecutable(const wxString& basePath)
 		}
 	}
 
-	wxString newPath = wxFileSelector(wxT("Select Executable:"), path.c_str(), wxT(""), wxT(""), wxT("*"), 0, this);
+	wxString newPath = wxFileSelector(_("Select Executable:"), path.c_str(), wxT(""), wxT(""), wxT("*"), 0, this);
 	return newPath;
 }
 

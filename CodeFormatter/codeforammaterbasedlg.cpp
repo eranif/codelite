@@ -27,7 +27,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	wxStaticBoxSizer* sbSizer3;
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_panel2, wxID_ANY, wxEmptyString ), wxVERTICAL );
 	
-	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, _("Predefined Style options define the style by setting several other options\nIf other options are also used, the other options will override the\npredefined style"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, _("Choose one of the following predefined styles.\nYou may optionally override one or more of its settings from the Custom page"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	sbSizer3->Add( m_staticText2, 1, wxALL|wxEXPAND, 5 );
 	

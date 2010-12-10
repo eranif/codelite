@@ -267,28 +267,28 @@ void CodeFormatterDlg::UpdatePredefinedHelpText()
 	switch ( sel ) {
 	case 0: // AS_GNU
 		m_staticTextPredefineHelp->SetLabel(
-			wxT("GNU style formatting/indenting.  Brackets are broken,\n")
-			wxT("blocks are indented, and indentation is 2 spaces. \n")
-			wxT("Namespaces, classes, and switches are NOT indented."));
+			wxString(_("GNU style formatting/indenting.  Brackets are broken,\n")) +
+			wxString(_("blocks are indented, and indentation is 2 spaces. \n")) +
+			wxString(_("Namespaces, classes, and switches are NOT indented.")));
 		break;
 	case 1: // AS_JAVA
 		m_staticTextPredefineHelp->SetLabel(
-		    wxT("Java style formatting/indenting. Brackets are attached,\n")
-		    wxT("indentation is 4 spaces. Switches are NOT indented.")
+		    wxString(_("Java style formatting/indenting. Brackets are attached,\n")) +
+		    wxString(_("indentation is 4 spaces. Switches are NOT indented."))
 		);
 		break;
 	case 2: // AS_KR
 		m_staticTextPredefineHelp->SetLabel(
-		    wxT("Kernighan & Ritchie style formatting/indenting.\nBrackets are attached, indentation is 4 spaces.\nNamespaces, classes, and switches are NOT indented.")
+		    _("Kernighan & Ritchie style formatting/indenting.\nBrackets are attached, indentation is 4 spaces.\nNamespaces, classes, and switches are NOT indented.")
 		);
 		break;
 	case 3: // AS_KR
 		m_staticTextPredefineHelp->SetLabel(
-		    wxT("Linux style formatting/indenting.\nAll brackets are linux style, indentation is 8 spaces.\nNamespaces, classes, and switches are NOT indented.")
+		    _("Linux style formatting/indenting.\nAll brackets are linux style, indentation is 8 spaces.\nNamespaces, classes, and switches are NOT indented.")
 		);
 		break;
 	case 4: // AS_ANSI
-		m_staticTextPredefineHelp->SetLabel(wxT("ANSI style formatting/indenting.\nBrackets are broken, indentation is 4 spaces.\nNamespaces, classes, and switches are NOT indented."));
+		m_staticTextPredefineHelp->SetLabel(_("ANSI style formatting/indenting.\nBrackets are broken, indentation is 4 spaces.\nNamespaces, classes, and switches are NOT indented."));
 		break;
 	}
 }

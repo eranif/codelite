@@ -209,7 +209,7 @@
                                                             <property name="font" />
                                                             <property name="hidden">0</property>
                                                             <property name="id">wxID_ANY</property>
-                                                            <property name="label">Predefined Style options define the style by setting several other options&#x0A;If other options are also used, the other options will override the&#x0A;predefined style</property>
+                                                            <property name="label">Choose one of the following predefined styles.&#x0A;You may optionally override one or more of its settings from the Custom page</property>
                                                             <property name="maximum_size" />
                                                             <property name="minimum_size" />
                                                             <property name="name">m_staticText2</property>

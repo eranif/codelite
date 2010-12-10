@@ -75,7 +75,7 @@ Cscope::Cscope(IManager *manager)
 		: IPlugin(manager)
 		, m_topWindow(NULL)
 {
-	m_longName = _("Cscope Integration for CodeLite");
+	m_longName = _("CScope Integration for CodeLite");
 	m_shortName = CSCOPE_NAME;
 	m_topWindow = m_mgr->GetTheApp();
 
@@ -387,7 +387,7 @@ void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
 	wxString command;
 	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -d -L -1 ") << word << wxT(" -i ") << list_file;
-	endMsg << wxT("cscope results for: find global definition of '") << word << wxT("'");
+	endMsg << _("cscope results for: find global definition of '") << word << wxT("'");
 	DoCscopeCommand(command, word, endMsg);
 }
 
@@ -410,7 +410,7 @@ void Cscope::OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e)
 	wxString command;
 	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -d -L -2 ") << word << wxT(" -i ") << list_file;
-	endMsg << wxT("cscope results for: functions called by '") << word << wxT("'");
+	endMsg << _("cscope results for: functions called by '") << word << wxT("'");
 	DoCscopeCommand(command, word, endMsg);
 }
 
@@ -428,7 +428,7 @@ void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent &e)
 	wxString command;
 	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -d -L -3 ") << word << wxT(" -i ") << list_file;
-	endMsg << wxT("cscope results for: functions calling '") << word << wxT("'");
+	endMsg << _("cscope results for: functions calling '") << word << wxT("'");
 	DoCscopeCommand(command, word, endMsg);
 }
 
@@ -453,12 +453,12 @@ void Cscope::OnCreateDB(wxCommandEvent &e)
 	if (settings.GetBuildRevertedIndexOption())
 	{
 		command << wxT(" -q");
-		endMsg << wxT("Recreated inverted CScope DB");
+		endMsg << _("Recreated inverted CScope DB");
 	}
 	else
 	{
 		command << wxT(" -b");
-		endMsg << wxT("Recreated CScope DB");
+		endMsg << _("Recreated CScope DB");
 	}
 
 	// Do the actual create db

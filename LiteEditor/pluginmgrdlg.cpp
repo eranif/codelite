@@ -111,30 +111,36 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
 
 		//create line with the plugin name
 		content << wxT("<tr bgcolor=\"LIGHT GREY\">");
-		content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>Plugin Name:</strong></font></td>");
+		content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>$(PluginName)</strong></font></td>");
 		content << wxT("<td ALIGN=\"LEFT\" ><font size=\"2\" face=\"Verdana\">") << info.GetName() << wxT("</font></td>");
 		content << wxT("</tr>");
 
 		//plugin author
 		content << wxT("<tr bgcolor=\"WHITE\">");
-		content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>Author:</strong></font></td>");
+		content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>$(Author)</strong></font></td>");
 		content << wxT("<td ALIGN=\"LEFT\" ><font size=\"2\" face=\"Verdana\">") << info.GetAuthor() << wxT("</font></td>");
 		content << wxT("</tr>");
 
 		//plugin version
 		content << wxT("<tr bgcolor=\"LIGHT GREY\">");
-		content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>Version:</strong></font></td>");
+		content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>$(Version)</strong></font></td>");
 		content << wxT("<td ALIGN=\"LEFT\" ><font size=\"2\" face=\"Verdana\">") << info.GetVersion() << wxT("</font></td>");
 		content << wxT("</tr>");
 
 		//plugin description
 		content << wxT("<tr bgcolor=\"WHITE\">");
-		content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>Description:</strong></font></td>");
+		content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>$(Description)</strong></font></td>");
 		content << wxT("<td ALIGN=\"LEFT\" ><font size=\"2\" face=\"Verdana\">") << info.GetDescription() << wxT("</font></td>");
 		content << wxT("</tr>");
 
 		content << wxT("<tr bgcolor=\"LIGHT GREY\">");
-		content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>Status:</strong></font></td>");
+		content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>$(Status)</strong></font></td>");
+
+		content.Replace(wxT("$(PluginName)"), _("Plugin Name:"));
+		content.Replace(wxT("$(Author)"), _("Author:"));
+		content.Replace(wxT("$(Version)"), _("Version:"));
+		content.Replace(wxT("$(Description)"), _("Description:"));
+		content.Replace(wxT("$(Status)"), _("Status:"));
 
 		wxString status;
 		if (info.GetEnabled()) {

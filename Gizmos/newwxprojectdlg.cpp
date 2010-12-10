@@ -72,17 +72,17 @@ bool NewWxProjectDlg::ValidateInput()
 {
 	if(m_textCtrlName->GetValue().IsEmpty()){
 		wxString msg;
-		msg << wxT("Invalid project name '") << m_textCtrlName->GetValue() << wxT("'\n");
-		msg << wxT("Valid characters for project name are [0-9A-Za-z_]");
-		wxMessageBox(msg, wxT("CodeLite"), wxICON_WARNING|wxOK);
+		msg << _("Invalid project name '") << m_textCtrlName->GetValue() << wxT("'\n");
+		msg << _("Valid characters for project name are [0-9A-Za-z_]");
+		wxMessageBox(msg, _("CodeLite"), wxICON_WARNING|wxOK);
 		return false;
 	}
 	
 	if(m_textCtrlName->GetValue().find_first_not_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")) != wxString::npos){
 		wxString msg;
-		msg << wxT("Invalid project name '") << m_textCtrlName->GetValue() << wxT("'\n");
-		msg << wxT("Valid characters for project name are [0-9A-Za-z_]");
-		wxMessageBox(msg, wxT("CodeLite"), wxICON_WARNING|wxOK);
+		msg << _("Invalid project name '") << m_textCtrlName->GetValue() << wxT("'\n");
+		msg << _("Valid characters for project name are [0-9A-Za-z_]");
+		wxMessageBox(msg, _("CodeLite"), wxICON_WARNING|wxOK);
 		return false;
 	}
 
@@ -95,7 +95,7 @@ bool NewWxProjectDlg::ValidateInput()
 	
 	wxFileName::Mkdir(path, 0777, wxPATH_MKDIR_FULL);
 	if ( !wxDirExists(path) ) {
-		wxMessageBox(wxString::Format(wxT("Failed to create the path: %s\nA permissions problem, perhaps?"), path.c_str() ), wxT("Error"), wxOK | wxICON_HAND);
+		wxMessageBox(wxString::Format(_("Failed to create the path: %s\nA permissions problem, perhaps?"), path.c_str() ), _("Error"), wxOK | wxICON_HAND);
 		return false;
 	}
 

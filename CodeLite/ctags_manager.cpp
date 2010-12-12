@@ -910,31 +910,41 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
 	expression.erase(expression.find_last_not_of(trimString)+1);
 	tmp = expression;
 	expression.EndsWith(word, &tmp);
-	
+	expression = tmp;
+
 	wxString scope(text);
-	wxString scopeName = GetLanguage()->GetScopeName(scope, NULL);
-	
-	bool expressionWasEmpty = tmp.IsEmpty();
-	wxString typeName, typeScope;
-	wxString oper, dummy;
-	bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
-	if (!res) {
-		return;
-	}
-	
-	if ( expressionWasEmpty ) {
-		std::vector<TagEntryPtr> tmpCandidates;
-		TagsByScopeAndName(typeScope, word, tmpCandidates, ExactMatch);
+	std::vector<wxString> visibleScopes;
+	wxString scopeName = GetLanguage()->GetScopeName(scope, &visibleScopes);
+	if (expression.IsEmpty()) {
+		// add the current scope to the "visibleScopes" to be tested
+		if(scopeName != wxT("<global>")) {
+			visibleScopes.push_back(scopeName);
+		}
+		
+		// collect tags from all the visible scopes
+		for(size_t i=0; i<visibleScopes.size(); i++)
+			TagsByScopeAndName(visibleScopes.at(i), word, tmpCandidates, ExactMatch);
+			
+		if (tmpCandidates.empty()) {
+			// no match in the given scope, try to collect from global scope as well
+			GetGlobalTags(word, tmpCandidates, ExactMatch);
+		}
+		
 		if (!imp) {
 			//collect only implementation
 			FilterImplementation(tmpCandidates, tags);
-			
+
 		} else {
 			FilterDeclarations(tmpCandidates, tags);
 		}
 
 	} else {
-
+		wxString typeName, typeScope;
+		wxString oper, dummy;
+		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
+		if (!res) {
+			return;
+		}
 		//get all symbols realted to this scope
 		scope = wxT("");
 		if (typeScope == wxT("<global>"))
@@ -2646,7 +2656,7 @@ bool TagsManager::IsBinaryFile(const wxString& filepath)
 	// If the file is a C++ file, avoid testing the content return false based on the extension
 	FileExtManager::FileType type = FileExtManager::GetType(filepath);
 	if(type == FileExtManager::TypeHeader || type == FileExtManager::TypeSourceC || type == FileExtManager::TypeSourceCpp)
-		   return false;
+		return false;
 
 	// examine the file based on the content of the first 4K (max) bytes
 	FILE *fp = fopen(filepath.To8BitData(), "rb");

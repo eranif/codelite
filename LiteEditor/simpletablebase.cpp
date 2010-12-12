@@ -8,7 +8,7 @@
 #include "simpletablebase.h"
 #include "manager.h"
 #include "debugger.h"
-
+#include "globals.h"
 ///////////////////////////////////////////////////////////////////////////
 
 DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
@@ -28,6 +28,8 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
 
 	long treeStyle = wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS;
 	m_listTable = new wxTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
+	MSWSetNativeTheme(m_listTable);
+	
 	bSizer3->Add( m_listTable, 1, wxEXPAND|wxALL, 1 );
 
 	if(m_withButtons)

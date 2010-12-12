@@ -2711,7 +2711,7 @@ void clMainFrame::CreateWelcomePage()
 	wxString workspaceTable = CreateWorkspaceTable();
 	wxString filesTable = CreateFilesTable();
 
-	size_t num =content.Replace(wxT("$(WorkspaceTable)"), workspaceTable);
+	content.Replace(wxT("$(WorkspaceTable)"), workspaceTable);
 	content.Replace(wxT("$(FilesTable)"), filesTable);
 
 	//replace the HTML colours with platfroms correct colours

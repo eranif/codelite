@@ -43,6 +43,7 @@ DEFINE_EVENT_TYPE(wxEVT_FRD_CLEARBOOKMARKS)
 BEGIN_EVENT_TABLE(FindReplaceDialog, wxDialog)
 	EVT_CLOSE(FindReplaceDialog::OnClose)
 	EVT_CHAR_HOOK(FindReplaceDialog::OnKeyDown)
+	EVT_COMMAND(wxID_ANY, wxEVT_FRD_FIND_NEXT, FindReplaceDialog::OnFindEvent)
 END_EVENT_TABLE()
 
 #define VALIDATE_FINDWHAT(){\
@@ -169,6 +170,11 @@ void FindReplaceDialog::CreateGUIControls()
 	SetFindReplaceData(m_data, true);
 }
 
+void FindReplaceDialog::OnFindEvent(wxCommandEvent &event)
+{
+	SetFindReplaceData(GetData(), false);
+}
+
 void FindReplaceDialog::SetFindReplaceData(FindReplaceData &data, bool focus)
 {
 	m_findString->Freeze();
@@ -276,7 +282,14 @@ void FindReplaceDialog::OnClick(wxCommandEvent &event)
 
 	// update the data of the find/replace dialog, in particular,
 	// update the history of the Find What / replace with controls
+#if defined(__WXGTK__) && wxVERSION_NUMBER >= 2900
+	// But if it's a findNext or a Replace, do it by posting an event,
+	// otherwise strange duplications happen (because scintilla steals the primary selection?)
+	wxCommandEvent e(wxEVT_FRD_FIND_NEXT); // Arbitrary choice of event-type
+	wxPostEvent(this, e);
+#else
 	SetFindReplaceData(m_data, false);
+#endif
 }
 
 void FindReplaceDialog::OnClose(wxCloseEvent &event)

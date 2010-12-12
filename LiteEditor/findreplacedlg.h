@@ -243,6 +243,7 @@ protected:
 	void CreateGUIControls();
 	void ConnectEvents();
 	void OnClick(wxCommandEvent &event);
+	void OnFindEvent(wxCommandEvent &event);
 	void SendEvent(wxEventType type);
 
 	void OnKeyDown(wxKeyEvent &event);

@@ -290,8 +290,9 @@ bool CodeLiteApp::OnInit()
 	// load the exception handler dll so we will get Dr MinGW at runtime
 	m_handler = LoadLibrary(wxT("exchndl.dll"));
 #endif
-
-	m_locale.Init();                                   		// Initialise the catalog we'll be using
+	
+	// TODO :: load english locale by default until the localization is done
+	m_locale.Init(wxLANGUAGE_ENGLISH_UK); // Initialise the catalog we'll be using
 
 #if defined (__WXGTK__)
 	// Cater for a --prefix= build. This gets added automatically to the search path for catalogues.

@@ -54,7 +54,7 @@ AttachDbgProcDlg::AttachDbgProcDlg( wxWindow* parent )
 	}
 
 	m_listCtrlProcesses->InsertColumn(0, wxT("PID"));
-	m_listCtrlProcesses->InsertColumn(1, wxT("Name"));
+	m_listCtrlProcesses->InsertColumn(1, _("Name"));
 
 	RefreshProcessesList(wxEmptyString);
 	m_textCtrlFilter->SetFocus();

@@ -40,11 +40,11 @@ ListCtrlPanel::ListCtrlPanel ( wxWindow* parent )
 	imageList->Add(currLevel);
 	m_listCtrl->AssignImageList(imageList.release(), wxIMAGE_LIST_SMALL);
 
-	m_listCtrl->InsertColumn ( 0, wxT("Level")   );
-	m_listCtrl->InsertColumn ( 1, wxT("Address") );
-	m_listCtrl->InsertColumn ( 2, wxT("Function"));
-	m_listCtrl->InsertColumn ( 3, wxT("File")    );
-	m_listCtrl->InsertColumn ( 4, wxT("Line")    );
+	m_listCtrl->InsertColumn ( 0, _("Level")   );
+	m_listCtrl->InsertColumn ( 1, _("Address") );
+	m_listCtrl->InsertColumn ( 2, _("Function"));
+	m_listCtrl->InsertColumn ( 3, _("File")    );
+	m_listCtrl->InsertColumn ( 4, _("Line")    );
 }
 
 void ListCtrlPanel::OnItemActivated ( wxListEvent& event )
@@ -131,7 +131,7 @@ void ListCtrlPanel::OnItemRightClicked(wxListEvent& event)
 	// Popup the menu
 	wxMenu menu;
 
-	menu.Append(XRCID("stack_copy_backtrace"),  wxT("Copy Backtrace to Clipboard"));
+	menu.Append(XRCID("stack_copy_backtrace"),  _("Copy Backtrace to Clipboard"));
 	menu.Connect(XRCID("stack_copy_backtrace"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(ListCtrlPanel::OnCopyBacktrace), NULL, this);
 	m_listCtrl->PopupMenu( &menu );
 }

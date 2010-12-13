@@ -38,10 +38,10 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 	, m_data(data) {
 	// DirPicker values
 	wxArrayString choices;
-	choices.Add(SEARCH_IN_PROJECT);
-	choices.Add(SEARCH_IN_WORKSPACE);
-	choices.Add(SEARCH_IN_CURR_FILE_PROJECT);
-	choices.Add(SEARCH_IN_CURRENT_FILE);
+	choices.Add(wxGetTranslation(SEARCH_IN_PROJECT));
+	choices.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
+	choices.Add(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
+	choices.Add(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
 	for (size_t i = 0; i < m_data.GetSearchPaths().GetCount(); ++i) {
 		choices.Add(m_data.GetSearchPaths().Item(i));
 	}
@@ -174,15 +174,15 @@ SearchData FindInFilesDialog::DoGetSearchData() {
 	wxArrayString files;
 	for (size_t i = 0; i < rootDirs.GetCount(); ++i) {
 		const wxString& rootDir = rootDirs.Item(i);
-		if (rootDir == SEARCH_IN_WORKSPACE) {
+		if (rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE)) {
 
 			ManagerST::Get()->GetWorkspaceFiles(files);
 
-		} else if (rootDir == SEARCH_IN_PROJECT) {
+		} else if (rootDir == wxGetTranslation(SEARCH_IN_PROJECT)) {
 
 			ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
 
-		} else if (rootDir == SEARCH_IN_CURR_FILE_PROJECT) {
+		} else if (rootDir == wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) {
 
 			wxString project = ManagerST::Get()->GetActiveProjectName();
 
@@ -193,7 +193,7 @@ SearchData FindInFilesDialog::DoGetSearchData() {
 			}
 			ManagerST::Get()->GetProjectFiles(project, files);
 
-		} else if ( rootDir == SEARCH_IN_CURRENT_FILE ) {
+		} else if ( rootDir == wxGetTranslation(SEARCH_IN_CURRENT_FILE) ) {
 			LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 			if(editor) {
 				files.Add(editor->GetFileName().GetFullPath());
@@ -368,20 +368,20 @@ bool FindInFilesDialog::Show() {
 void FindInFilesDialog::DoSaveSearchPaths() {
 	wxArrayString paths = m_dirPicker->GetValues();
 
-	int where = paths.Index(SEARCH_IN_PROJECT);
+	int where = paths.Index(wxGetTranslation(SEARCH_IN_PROJECT));
 	if (where != wxNOT_FOUND) {
 		paths.RemoveAt(where);
 	}
-	where = paths.Index(SEARCH_IN_WORKSPACE);
+	where = paths.Index(wxGetTranslation(SEARCH_IN_WORKSPACE));
 	if (where != wxNOT_FOUND) {
 		paths.RemoveAt(where);
 	}
-	where = paths.Index(SEARCH_IN_CURR_FILE_PROJECT);
+	where = paths.Index(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
 	if (where != wxNOT_FOUND) {
 		paths.RemoveAt(where);
 	}
 
-	where = paths.Index(SEARCH_IN_CURRENT_FILE);
+	where = paths.Index(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
 	if (where != wxNOT_FOUND) {
 		paths.RemoveAt(where);
 	}

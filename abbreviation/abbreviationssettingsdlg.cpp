@@ -107,8 +107,8 @@ void AbbreviationsSettingsDlg::OnDelete(wxCommandEvent& event)
 		return;
 	}
 	
-	if(wxMessageBox(wxString::Format(wxT("Are you sure you want to delete '%s'"), m_activeItemName.c_str()),
-			wxT("CodeLite"), wxYES_NO|wxCANCEL|wxCENTER|wxICON_QUESTION, this) != wxYES)
+	if(wxMessageBox(wxString::Format(_("Are you sure you want to delete '%s'"), m_activeItemName.c_str()),
+			_("CodeLite"), wxYES_NO|wxCANCEL|wxCENTER|wxICON_QUESTION, this) != wxYES)
 	{
 		return;
 	}
@@ -152,15 +152,15 @@ void AbbreviationsSettingsDlg::OnDeleteUI(wxUpdateUIEvent& event)
 void AbbreviationsSettingsDlg::OnNew(wxCommandEvent& e)
 {
 	if(m_dirty) {
-		if(wxMessageBox(_("Would you like to save the current changes?"), wxT("CodeLite"), wxYES_NO|wxCENTER, this) == wxYES){
+		if(wxMessageBox(_("Would you like to save the current changes?"), _("CodeLite"), wxYES_NO|wxCENTER, this) == wxYES){
 			DoSaveCurrent();
 		}
 	}
 	
-	wxString name = wxGetTextFromUser(wxT("Insert new abbreviation name:"), wxT("New abbreviation..."), wxT(""), this);
+	wxString name = wxGetTextFromUser(_("What is the name of the new abbreviation name:"), _("New abbreviation..."), wxT(""), this);
 	if(name.IsEmpty() == false){
 		if( m_listBoxAbbreviations->FindString(name) != wxNOT_FOUND ){
-			wxMessageBox(wxString::Format(wxT("An abbreviation with this name already exist!")));
+			wxMessageBox(wxString::Format(_("An abbreviation with this name already exists!")));
 			return;
 		}
 		

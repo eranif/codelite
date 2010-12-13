@@ -37,15 +37,15 @@
 #include "shelltab.h"
 #include "taskpanel.h"
 
-const wxString OutputPane::FIND_IN_FILES_WIN = wxT("Search");
-const wxString OutputPane::BUILD_WIN         = wxT("Build");
-const wxString OutputPane::ERRORS_WIN        = wxT("Errors");
-const wxString OutputPane::OUTPUT_WIN        = wxT("Output");
-const wxString OutputPane::OUTPUT_DEBUG      = wxT("Debug");
-const wxString OutputPane::REPLACE_IN_FILES  = wxT("Replace");
-const wxString OutputPane::TASKS             = wxT("Tasks");
-const wxString OutputPane::TRACE_TAB         = wxT("Trace");
-const wxString OutputPane::SHOW_USAGE        = wxT("References");
+const wxString OutputPane::FIND_IN_FILES_WIN = _("Search");
+const wxString OutputPane::BUILD_WIN         = _("Build");
+const wxString OutputPane::ERRORS_WIN        = _("Errors");
+const wxString OutputPane::OUTPUT_WIN        = _("Output");
+const wxString OutputPane::OUTPUT_DEBUG      = _("Debug");
+const wxString OutputPane::REPLACE_IN_FILES  = _("Replace");
+const wxString OutputPane::TASKS             = _("Tasks");
+const wxString OutputPane::TRACE_TAB         = _("Trace");
+const wxString OutputPane::SHOW_USAGE        = _("References");
 
 OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 200))
@@ -69,39 +69,39 @@ void OutputPane::CreateGUIControls()
 
 	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 
-	// Calculate the widthest tab (the one with the 'Workspcae' label)
+	// Calculate the widest tab (the one with the 'Workspace' label) TODO: What happens with translations?
 	int xx, yy;
 	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	wxWindow::GetTextExtent(REPLACE_IN_FILES, &xx, &yy, NULL, NULL, &fnt);
+	wxWindow::GetTextExtent(wxGetTranslation(REPLACE_IN_FILES), &xx, &yy, NULL, NULL, &fnt);
 
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 0);
 
-	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);
-	m_book->AddPage(m_buildWin, BUILD_WIN, true, wxXmlResource::Get()->LoadBitmap(wxT("build")));
+	m_buildWin = new BuildTab(m_book, wxID_ANY, wxGetTranslation(BUILD_WIN));
+	m_book->AddPage(m_buildWin, wxGetTranslation(BUILD_WIN), true, wxXmlResource::Get()->LoadBitmap(wxT("build")));
 
-	m_errorsWin = new ErrorsTab(m_buildWin, m_book, wxID_ANY, ERRORS_WIN);
-	m_book->AddPage(m_errorsWin, ERRORS_WIN, false, bmpLoader->LoadBitmap(wxT("output-pane/16/errors")));
+	m_errorsWin = new ErrorsTab(m_buildWin, m_book, wxID_ANY, wxGetTranslation(ERRORS_WIN));
+	m_book->AddPage(m_errorsWin, wxGetTranslation(ERRORS_WIN), false, bmpLoader->LoadBitmap(wxT("output-pane/16/errors")));
 
-	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN, true);
-	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")));
+	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, wxGetTranslation(FIND_IN_FILES_WIN), true);
+	m_book->AddPage(m_findResultsTab, wxGetTranslation(FIND_IN_FILES_WIN), false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")));
 
-	m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, REPLACE_IN_FILES);
-	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find_and_replace")) );
+	m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, wxGetTranslation(REPLACE_IN_FILES));
+	m_book->AddPage(m_replaceResultsTab, wxGetTranslation(REPLACE_IN_FILES), false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find_and_replace")) );
 
-	m_showUsageTab = new FindUsageTab(m_book, SHOW_USAGE);
-	m_book->AddPage(m_showUsageTab, SHOW_USAGE, false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")) );
+	m_showUsageTab = new FindUsageTab(m_book, wxGetTranslation(SHOW_USAGE));
+	m_book->AddPage(m_showUsageTab, wxGetTranslation(SHOW_USAGE), false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")) );
 
-	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
-	m_book->AddPage(m_outputWind, OUTPUT_WIN, false, bmpLoader->LoadBitmap(wxT("output-pane/16/terminal")));
+	m_outputWind = new ShellTab(m_book, wxID_ANY, wxGetTranslation(OUTPUT_WIN));
+	m_book->AddPage(m_outputWind, wxGetTranslation(OUTPUT_WIN), false, bmpLoader->LoadBitmap(wxT("output-pane/16/terminal")));
 
-	m_outputDebug = new DebugTab(m_book, wxID_ANY, OUTPUT_DEBUG);
-	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, false, wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
+	m_outputDebug = new DebugTab(m_book, wxID_ANY, wxGetTranslation(OUTPUT_DEBUG));
+	m_book->AddPage(m_outputDebug, wxGetTranslation(OUTPUT_DEBUG), false, wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
 
 	wxTextCtrl *text = new wxTextCtrl(m_book, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
-	m_book->AddPage(text, TRACE_TAB, false, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
+	m_book->AddPage(text, wxGetTranslation(TRACE_TAB), false, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
 	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
 
-	m_taskPanel = new TaskPanel(m_book, wxID_ANY, TASKS);
-	m_book->AddPage(m_taskPanel, TASKS, false, bmpLoader->LoadBitmap(wxT("output-pane/16/tasks")));
+	m_taskPanel = new TaskPanel(m_book, wxID_ANY, wxGetTranslation(TASKS));
+	m_book->AddPage(m_taskPanel, wxGetTranslation(TASKS), false, bmpLoader->LoadBitmap(wxT("output-pane/16/tasks")));
 	mainSizer->Layout();
 }

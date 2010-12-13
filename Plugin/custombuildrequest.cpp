@@ -210,9 +210,9 @@ void CustomBuildRequest::Process(IManager *manager)
 	//and what configuration
 	wxString text;
 	if (isClean) {
-		text << CLEAN_PROJECT_PREFIX;
+		text << wxGetTranslation(CLEAN_PROJECT_PREFIX);
 	} else {
-		text << BUILD_PROJECT_PREFIX;
+		text << wxGetTranslation(BUILD_PROJECT_PREFIX);
 	}
 	text << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]----------\n");
 

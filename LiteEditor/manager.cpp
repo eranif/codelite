@@ -1375,13 +1375,13 @@ void Manager::ShowDebuggerPane ( bool show )
 	// make the output pane visible
 	wxArrayString dbgPanes;
 	dbgPanes.Add ( _("Debugger") );
-	dbgPanes.Add ( DebuggerPane::LOCALS );
-	dbgPanes.Add ( DebuggerPane::FRAMES );
-	dbgPanes.Add ( DebuggerPane::WATCHES );
-	dbgPanes.Add ( DebuggerPane::BREAKPOINTS );
-	dbgPanes.Add ( DebuggerPane::THREADS );
-	dbgPanes.Add ( DebuggerPane::MEMORY );
-	dbgPanes.Add ( DebuggerPane::ASCII_VIEWER );
+	dbgPanes.Add ( wxGetTranslation(DebuggerPane::LOCALS) );
+	dbgPanes.Add ( wxGetTranslation(DebuggerPane::FRAMES) );
+	dbgPanes.Add ( wxGetTranslation(DebuggerPane::WATCHES) );
+	dbgPanes.Add ( wxGetTranslation(DebuggerPane::BREAKPOINTS) );
+	dbgPanes.Add ( wxGetTranslation(DebuggerPane::THREADS) );
+	dbgPanes.Add ( wxGetTranslation(DebuggerPane::MEMORY) );
+	dbgPanes.Add ( wxGetTranslation(DebuggerPane::ASCII_VIEWER) );
 
 	if ( show ) {
 
@@ -1859,36 +1859,36 @@ void Manager::DoUpdateDebuggerTabControl(wxAuiTabCtrl* tabControl)
 		// updated
 		//--------------------------------------------------------------------
 
-		if ( curpage == pane->GetLocalsTable() || IsPaneVisible ( DebuggerPane::LOCALS ) ) {
+		if ( curpage == pane->GetLocalsTable() || IsPaneVisible (wxGetTranslation( DebuggerPane::LOCALS) ) ) {
 
 			//update the locals tree
 			dbgr->QueryLocals();
 
 		}
 
-		if ( curpage == pane->GetWatchesTable() || IsPaneVisible ( DebuggerPane::WATCHES ) ) {
+		if ( curpage == pane->GetWatchesTable() || IsPaneVisible ( wxGetTranslation(DebuggerPane::WATCHES) ) ) {
 			pane->GetWatchesTable()->RefreshValues();
 
 		}
-		if ( curpage == ( wxWindow* ) pane->GetFrameListView() || IsPaneVisible ( DebuggerPane::FRAMES ) ) {
+		if ( curpage == ( wxWindow* ) pane->GetFrameListView() || IsPaneVisible ( wxGetTranslation(DebuggerPane::FRAMES) ) ) {
 
 			//update the stack call
 			dbgr->ListFrames();
 
 		}
-		if ( curpage == ( wxWindow* ) pane->GetBreakpointView() || IsPaneVisible ( DebuggerPane::BREAKPOINTS ) ) {
+		if ( curpage == ( wxWindow* ) pane->GetBreakpointView() || IsPaneVisible ( wxGetTranslation(DebuggerPane::BREAKPOINTS) ) ) {
 
 			// update the breakpoint view
 			pane->GetBreakpointView()->Initialize();
 
 		}
-		if ( curpage == ( wxWindow* ) pane->GetThreadsView() || IsPaneVisible ( DebuggerPane::THREADS ) ) {
+		if ( curpage == ( wxWindow* ) pane->GetThreadsView() || IsPaneVisible ( wxGetTranslation(DebuggerPane::THREADS) ) ) {
 
 			// update the thread list
 			dbgr->ListThreads();
 		}
 
-		if ( curpage == ( wxWindow* ) pane->GetMemoryView() || IsPaneVisible ( DebuggerPane::MEMORY ) ) {
+		if ( curpage == ( wxWindow* ) pane->GetMemoryView() || IsPaneVisible ( wxGetTranslation(DebuggerPane::MEMORY) ) ) {
 
 			// Update the memory view tab
 			MemoryView *memView = pane->GetMemoryView();
@@ -2136,7 +2136,7 @@ void Manager::DbgStart ( long pid )
 
 	// if showing debug tab on run, then we always show it
 	if (EditorConfigST::Get()->GetOptions()->GetShowDebugOnRun()) {
-		ShowOutputPane(OutputPane::OUTPUT_DEBUG);
+		ShowOutputPane(wxGetTranslation(OutputPane::OUTPUT_DEBUG));
 	}
 	// else, we leave it as it currently is (displayed or not)
 

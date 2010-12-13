@@ -132,7 +132,7 @@ void CleanRequest::Process(IManager *manager)
 		//also, send another message to the main frame, indicating which project is being built
 		//and what configuration
 		wxString text;
-		text << CLEAN_PROJECT_PREFIX << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
+		text << wxGetTranslation(CLEAN_PROJECT_PREFIX) << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
 		text << wxT("----------\n");
 		AppendLine(text);
 	}

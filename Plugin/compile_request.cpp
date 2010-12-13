@@ -171,7 +171,7 @@ void CompileRequest::Process(IManager *manager)
 		//also, send another message to the main frame, indicating which project is being built
 		//and what configuration
 		wxString text;
-		text << BUILD_PROJECT_PREFIX << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
+		text << wxGetTranslation(BUILD_PROJECT_PREFIX) << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
 		if (m_fileName.IsEmpty()) {
 			text << wxT("----------\n");
 		} else if (m_preprocessOnly) {

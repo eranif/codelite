@@ -26,6 +26,7 @@
 #define MACROS_H
 
 #include <wx/stdpaths.h>
+#include <wx/intl.h>
 //-------------------------------------------------------
 // wxWidgets Connect macros
 //-------------------------------------------------------
@@ -80,22 +81,22 @@
 // Constants
 //-----------------------------------------------------
 
-const wxString clCMD_NEW = wxT("<New...>");
-const wxString clCMD_EDIT = wxT("<Edit...>");
-const wxString clCMD_DELETE = wxT("<Delete...>");
+const wxString clCMD_NEW = _("<New...>");
+const wxString clCMD_EDIT = _("<Edit...>");
+//const wxString clCMD_DELETE = _("<Delete...>");  Unused
 
 // constant message
-const wxString BUILD_START_MSG             = wxT("----------Build Started--------\n");
-const wxString BUILD_END_MSG               = wxT("----------Build Ended----------\n");
-const wxString BUILD_PROJECT_PREFIX        = wxT("----------Building project:[ ");
-const wxString CLEAN_PROJECT_PREFIX        = wxT("----------Cleaning project:[ ");
-const wxString SEARCH_IN_WORKSPACE         = wxT("Entire Workspace");
-const wxString SEARCH_IN_PROJECT           = wxT("Active Project");
-const wxString SEARCH_IN_CURR_FILE_PROJECT = wxT("Current File's Project");
-const wxString SEARCH_IN_CURRENT_FILE      = wxT("Current File");
+const wxString BUILD_START_MSG             = _("----------Build Started--------\n");
+const wxString BUILD_END_MSG               = _("----------Build Ended----------\n");
+const wxString BUILD_PROJECT_PREFIX        = _("----------Building project:[ ");
+const wxString CLEAN_PROJECT_PREFIX        = _("----------Cleaning project:[ ");
+const wxString SEARCH_IN_WORKSPACE         = _("Entire Workspace");
+const wxString SEARCH_IN_PROJECT           = _("Active Project");
+const wxString SEARCH_IN_CURR_FILE_PROJECT = _("Current File's Project");
+const wxString SEARCH_IN_CURRENT_FILE      = _("Current File");
 
-const wxString USE_WORKSPACE_ENV_VAR_SET   = wxT("<Use Defaults>");
-const wxString USE_GLOBAL_SETTINGS         = wxT("<Use Defaults>");
+const wxString USE_WORKSPACE_ENV_VAR_SET   = _("<Use Defaults>");
+const wxString USE_GLOBAL_SETTINGS         = _("<Use Defaults>");
 
 // terminal macro
 #ifdef __WXGTK__

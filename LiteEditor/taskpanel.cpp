@@ -44,9 +44,9 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
     , m_filter(NULL)
 {
     wxArrayString scopes;
-    scopes.Add(SEARCH_IN_PROJECT);
-    scopes.Add(SEARCH_IN_WORKSPACE);
-    scopes.Add(SEARCH_IN_CURR_FILE_PROJECT);
+    scopes.Add(wxGetTranslation(SEARCH_IN_PROJECT));
+    scopes.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
+    scopes.Add(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
 
     wxArrayString filters;
     filters.Add(wxT("C/C++ Sources"));
@@ -132,11 +132,11 @@ SearchData TaskPanel::DoGetSearchData()
 	rootDirs.push_back(rootDir);
     data.SetRootDirs(rootDirs);
     wxArrayString files;
-	if (rootDir == SEARCH_IN_WORKSPACE) {
+	if (rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE)) {
 		ManagerST::Get()->GetWorkspaceFiles(files);
-	} else if (rootDir == SEARCH_IN_PROJECT) {
+	} else if (rootDir == wxGetTranslation(SEARCH_IN_PROJECT)) {
 		ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
-	} else if (rootDir == SEARCH_IN_CURR_FILE_PROJECT) {
+	} else if (rootDir == wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) {
 		wxString project = ManagerST::Get()->GetActiveProjectName();
 		if (clMainFrame::Get()->GetMainBook()->GetActiveEditor()) {
 			wxFileName activeFile = clMainFrame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();

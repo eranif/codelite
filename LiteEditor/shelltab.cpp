@@ -53,7 +53,7 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
 {
 	m_inputSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	wxStaticText *text = new wxStaticText(this, wxID_ANY, wxT("Send:"));
+	wxStaticText *text = new wxStaticText(this, wxID_ANY, _("Send:"));
 	m_inputSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 0);
 
 	m_input = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxTE_PROCESS_ENTER);
@@ -64,10 +64,10 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
 	m_inputSizer->Add(m_input, 1, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 	
 	wxButton *btn;
-	btn = new wxButton(this, XRCID("send_input"), wxT("Send"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+	btn = new wxButton(this, XRCID("send_input"), _("Send"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	m_inputSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
-	btn = new wxButton(this, XRCID("stop_process"), wxT("Stop"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+	btn = new wxButton(this, XRCID("stop_process"), _("Stop"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	m_inputSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
 
@@ -269,7 +269,7 @@ void DebugTab::AppendLine(const wxString& line)
 		wxString newLine (line);
 		newLine.Trim().Trim(false);
 		lineBefore.Trim().Trim(false);
-		if ( (lineBefore == newLine) && (newLine == wxT("Continuing...")) ) {
+		if ( (lineBefore == newLine) && (newLine == _("Continuing...")) ) {
 			// Dont add this line...
 		} else {
 			AppendText(line);
@@ -292,7 +292,7 @@ DebugTabPanel::DebugTabPanel( wxWindow* parent, wxWindowID id, const wxPoint& po
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 
-	m_checkBoxEnableLog = new wxCheckBox( this, wxID_ANY, wxT("Enable debugger full logging"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxEnableLog = new wxCheckBox( this, wxID_ANY, _("Enable debugger full logging"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_checkBoxEnableLog, 0, wxALL|wxEXPAND, 0 );
 
 	this->SetSizer( bSizer1 );

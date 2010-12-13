@@ -48,9 +48,9 @@ void ThreadListPanel::OnItemActivated( wxListEvent& event )
 void ThreadListPanel::InitList()
 {
 		//add two columns to the list ctrl
-	m_list->InsertColumn(0, wxT("Thread ID"));
-	m_list->InsertColumn(1, wxT("Active"));
-	m_list->InsertColumn(2, wxT("Information"));
+	m_list->InsertColumn(0, _("Thread ID"));
+	m_list->InsertColumn(1, _("Active"));
+	m_list->InsertColumn(2, _("Information"));
 }
 
 void ThreadListPanel::PopulateList(const ThreadEntryArray &threads)
@@ -71,7 +71,7 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray &threads)
 		wxString str_active;
 		
 		str_id << entry.dbgid;
-		str_active =  entry.active ? wxT("Yes") : wxT("No");
+		str_active =  entry.active ? _("Yes") : _("No");
 		
 		SetColumnText(m_list, item, 0, str_id);
 		SetColumnText(m_list, item, 1, str_active);

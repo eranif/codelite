@@ -18,10 +18,10 @@ END_EVENT_TABLE()
 LocalsTable::LocalsTable(wxWindow *parent)
 	: DebuggerTreeListCtrlBase(parent, wxID_ANY, false)
 {
-	m_listTable->AddColumn(wxT("Name"), 150);
-	m_listTable->AddColumn(wxT("Value"), 500);
-	m_listTable->AddColumn(wxT("Type"), 200);
-	m_listTable->AddRoot(wxT("Locals"));
+	m_listTable->AddColumn(_("Name"), 150);
+	m_listTable->AddColumn(_("Value"), 500);
+	m_listTable->AddColumn(_("Type"), 200);
+	m_listTable->AddRoot(_("Locals"));
 
 	m_DBG_USERR        = DBG_USERR_LOCALS;
 	m_QUERY_NUM_CHILDS = QUERY_LOCALS_CHILDS;
@@ -334,7 +334,7 @@ void LocalsTable::UpdateFrameInfo()
 		Clear();
 		m_curStackInfo = ManagerST::Get()->DbgGetCurrentFrameInfo();
 		clMainFrame::Get()->GetOutputPane()->GetDebugWindow()->AppendLine(
-		    wxString::Format(wxT("Current scope is now set to: \"%s\", depth: %d\n"),
+		    wxString::Format(_("Current scope is now set to: \"%s\", depth: %d\n"),
 		                     m_curStackInfo.func.c_str(),
 		                     m_curStackInfo.depth)
 		);
@@ -358,7 +358,7 @@ void LocalsTable::OnRefreshUI(wxUpdateUIEvent& event)
 void LocalsTable::OnItemRightClick(wxTreeEvent& event)
 {
 	wxMenu menu;
-	menu.Append(XRCID("Change_Value"), wxT("Change value..."), wxT(""), wxITEM_NORMAL);
+	menu.Append(XRCID("Change_Value"), _("Change value..."), wxT(""), wxITEM_NORMAL);
 	PopupMenu( &menu );
 }
 
@@ -369,8 +369,8 @@ void LocalsTable::OnEditValue(wxCommandEvent& event)
 		return;
 
 	wxString itemPath = GetItemPath(selectedItem);
-	wxString newValue = wxGetTextFromUser(wxString::Format(wxT("Insert new value for '%s':"), itemPath.c_str()),
-										  wxT("Edit expression"));
+	wxString newValue = wxGetTextFromUser(wxString::Format(_("Insert new value for '%s':"), itemPath.c_str()),
+										  _("Edit expression"));
 	if(newValue.IsEmpty())
 		return;
 

@@ -369,7 +369,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 			if (number.ToLong(&id)) {
 				if(id != wxNOT_FOUND && m_gdb->m_internalBpId == id) {
 
-					m_observer->UpdateAddLine(wxString::Format(wxT("Internal breakpoint was hit (id=%d), Applying user breakpoints and continuing"), m_gdb->m_internalBpId));
+					m_observer->UpdateAddLine(wxString::Format(_("Internal breakpoint was hit (id=%d), Applying user breakpoints and continuing"), m_gdb->m_internalBpId));
 
 					// This is an internal breakpoint ID
 					m_gdb->m_internalBpId = wxNOT_FOUND;
@@ -475,7 +475,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 		// Failed to place the breakpoint
 		// Tell the bp manager to remove the bp from public view
 		m_observer->UpdateBpAdded(m_bp.internal_id, -1);
-		m_observer->UpdateAddLine(wxString::Format(wxT("ERROR: failed to place breakpoint: \"%s\""), line.c_str()), true);
+		m_observer->UpdateAddLine(wxString::Format(_("ERROR: failed to place breakpoint: \"%s\""), line.c_str()), true);
 		return true;
 	}
 
@@ -490,7 +490,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 
 	if (reBreak.Matches(line)) {
 		number = reBreak.GetMatch(line, 1);
-		m_observer->UpdateAddLine(wxString::Format(wxT("Found the breakpoint ID!")), true);
+		m_observer->UpdateAddLine(wxString::Format(_("Found the breakpoint ID!")), true);
 
 	} else if (reWatch.Matches(line)) {
 		number = reWatch.GetMatch(line, 1);
@@ -536,7 +536,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 	if (m_bpType == BP_type_watchpt) {
 		msg <<  m_bp.watchpt_data;
 	} else if (m_bp.memory_address.IsEmpty() == false) {
-		msg <<  wxT("address ") << m_bp.memory_address;
+		msg <<  _("address ") << m_bp.memory_address;
 	} else {
 		if (! m_bp.file.IsEmpty()) {
 			msg << m_bp.file << wxT(':');
@@ -732,15 +732,15 @@ bool DbgCmdSelectFrame::ProcessOutput(const wxString &line)
 bool DbgCmdHandlerRemoteDebugging::ProcessOutput(const wxString& line)
 {
 	// We use this handler as a callback to indicate that gdb has connected to the debugger
-	m_observer->UpdateRemoteTargetConnected(wxT("Successfully connected to debugger server"));
+	m_observer->UpdateRemoteTargetConnected(_("Successfully connected to debugger server"));
 
 	// Apply the breakpoints
-	m_observer->UpdateRemoteTargetConnected(wxT("Applying breakpoints..."));
+	m_observer->UpdateRemoteTargetConnected(_("Applying breakpoints..."));
 	DbgGdb *gdb = dynamic_cast<DbgGdb*>(m_debugger);
 	if(gdb) {
 		gdb->SetBreakpoints();
 	}
-	m_observer->UpdateRemoteTargetConnected(wxT("Applying breakpoints... done"));
+	m_observer->UpdateRemoteTargetConnected(_("Applying breakpoints... done"));
 	// continue execution
 	return m_debugger->Continue();
 }
@@ -870,9 +870,9 @@ bool DbgCmdSetConditionHandler::ProcessOutput(const wxString& line)
 	// If successful, the only output is ^done, so assume that means it worked
 	if (dbg_output.Find(wxT("^done")) != wxNOT_FOUND) {
 		if (m_bp.conditions.IsEmpty()) {
-			m_observer->UpdateAddLine(wxString::Format(wxT("Breakpoint %d condition cleared"), m_bp.debugger_id));
+			m_observer->UpdateAddLine(wxString::Format(_("Breakpoint %d condition cleared"), m_bp.debugger_id));
 		} else {
-			m_observer->UpdateAddLine(wxString::Format(wxT("Condition %s set for breakpoint %d"), m_bp.conditions.c_str(), m_bp.debugger_id));
+			m_observer->UpdateAddLine(wxString::Format(_("Condition %s set for breakpoint %d"), m_bp.conditions.c_str(), m_bp.debugger_id));
 		}
 		return true;
 	}

@@ -4054,12 +4054,12 @@ void clMainFrame::SelectBestEnvSet()
 		if(p) {
 			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(activeProj, wxEmptyString);
 			if(buildConf) {
-				if( buildConf->GetEnvVarSet() != USE_WORKSPACE_ENV_VAR_SET &&
+				if( buildConf->GetEnvVarSet() != wxGetTranslation(USE_WORKSPACE_ENV_VAR_SET) &&
 					buildConf->GetEnvVarSet() != wxT("<Use Workspace Settings>") /* backward support */) {
 					projectSetName    = buildConf->GetEnvVarSet();
 				}
 
-				if( buildConf->GetDbgEnvSet() != USE_GLOBAL_SETTINGS) {
+				if( buildConf->GetDbgEnvSet() != wxGetTranslation(USE_GLOBAL_SETTINGS)) {
 					projectDbgSetName = buildConf->GetDbgEnvSet();
 				}
 			}

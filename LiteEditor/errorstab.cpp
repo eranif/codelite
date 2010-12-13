@@ -43,10 +43,10 @@ ErrorsTab::ErrorsTab ( BuildTab *bt, wxWindow *parent, wxWindowID id, const wxSt
 	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 
 	m_tb->RemoveTool ( XRCID ( "repeat_output" ) );
-	m_tb->AddCheckTool ( XRCID ( "show_errors" ), wxT ( "Errors" ),     bmpLoader->LoadBitmap(wxT("status/16/error")), wxNullBitmap, wxT ( "Show build errors" ) );
+	m_tb->AddCheckTool ( XRCID ( "show_errors" ), _("Errors"),     bmpLoader->LoadBitmap(wxT("status/16/error")), wxNullBitmap, wxT ( "Show build errors" ) );
 	m_tb->ToggleTool ( XRCID ( "show_errors" ), true );
 
-	m_tb->AddCheckTool ( XRCID ( "show_warnings" ), wxT ( "Warnings" ), bmpLoader->LoadBitmap(wxT("status/16/warning")), wxNullBitmap, wxT ( "Show build warnings" ) );
+	m_tb->AddCheckTool ( XRCID ( "show_warnings" ), _("Warnings"), bmpLoader->LoadBitmap(wxT("status/16/warning")), wxNullBitmap, wxT ( "Show build warnings" ) );
 	m_tb->ToggleTool ( XRCID ( "show_warnings" ), true );
 	m_tb->Realize();
 

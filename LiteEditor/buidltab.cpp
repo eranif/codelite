@@ -501,7 +501,7 @@ void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 		Clear();
 	}
 
-	AppendText ( BUILD_START_MSG );
+	AppendText ( wxGetTranslation(BUILD_START_MSG) );
     OutputPane *opane = clMainFrame::Get()->GetOutputPane();
 
 	wxWindow *win(NULL);
@@ -527,7 +527,7 @@ void BuildTab::OnBuildAddLine ( wxCommandEvent &e )
 {
 //	e.Skip();
 	AppendText ( e.GetString() );
-//    if (e.GetInt() == QueueCommand::CustomBuild && e.GetString().Contains(BUILD_PROJECT_PREFIX) && !m_lineInfo.empty()) {
+//    if (e.GetInt() == QueueCommand::CustomBuild && e.GetString().Contains(wxGetTranslation(BUILD_PROJECT_PREFIX)) && !m_lineInfo.empty()) {
 //        // try to show more specific progress in custom builds
 //        LineInfo &info = m_lineInfo.rbegin()->second;
 //        Frame::Get()->SetStatusMessage(wxString::Format(wxT("Building %s (%s)"),
@@ -538,7 +538,7 @@ void BuildTab::OnBuildAddLine ( wxCommandEvent &e )
 void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 {
 	m_building = false;
-	AppendText (BUILD_END_MSG);
+	AppendText (wxGetTranslation(BUILD_END_MSG));
 
 	wxString term = wxString::Format ( wxT ( "%d %s, %d %s" ), m_errorCount, _("errors"), m_warnCount, _("warnings") );
 	long elapsed = m_sw.Time() / 1000;
@@ -744,7 +744,7 @@ void BuildTab::DoProcessLine(const wxString& text, int lineno)
 	LineInfo info;
 	info.linetext = text;
 
-	if ( text.Contains ( BUILD_PROJECT_PREFIX ) ) {
+	if ( text.Contains ( wxGetTranslation(BUILD_PROJECT_PREFIX) ) ) {
 		// now building the next project
 		wxString prj = text.AfterFirst ( wxT ( '[' ) ).BeforeFirst ( wxT ( ']' ) );
 		info.project       = prj.BeforeFirst ( wxT ( '-' ) ).Trim ( false ).Trim();
@@ -802,7 +802,7 @@ void BuildTab::DoProcessLine(const wxString& text, int lineno)
 	}
 
 	// check for start-of-build or end-of-build messages
-	if ( text.StartsWith ( BUILD_START_MSG ) || text.StartsWith ( BUILD_END_MSG ) ) {
+	if ( text.StartsWith ( wxGetTranslation(BUILD_START_MSG) ) || text.StartsWith ( wxGetTranslation(BUILD_END_MSG) ) ) {
 		info.linecolor = wxSCI_LEX_GCC_BUILDING;
 	}
 

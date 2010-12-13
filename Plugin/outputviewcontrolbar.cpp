@@ -241,23 +241,23 @@ void OutputViewControlBar::OnEditorFocus(wxCommandEvent& event)
 		// Optionally don't hide the various panes (sometimes it's irritating, you click to do something and...)
 		int cursel(m_book->GetSelection());
 		if (cursel != wxNOT_FOUND) {
-			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfBuild() && m_book->GetPageText(cursel) == wxT("Build") )
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfBuild() && m_book->GetPageText(cursel) == _("Build") )
 				return;
-			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfErrors() && m_book->GetPageText(cursel) == wxT("Errors") )
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfErrors() && m_book->GetPageText(cursel) == _("Errors") )
 				return;
-			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfSearch() && m_book->GetPageText(cursel) == wxT("Search") )
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfSearch() && m_book->GetPageText(cursel) == _("Search") )
 				return;
-			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfReplace() && m_book->GetPageText(cursel) == wxT("Replace") )
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfReplace() && m_book->GetPageText(cursel) == _("Replace") )
 				return;
-			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfReferences() && m_book->GetPageText(cursel) == wxT("References") )
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfReferences() && m_book->GetPageText(cursel) == _("References") )
 				return;
-			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfOutput() && m_book->GetPageText(cursel) == wxT("Output") )
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfOutput() && m_book->GetPageText(cursel) == _("Output") )
 				return;
-			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfDebug() && m_book->GetPageText(cursel) == wxT("Debug") )
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfDebug() && m_book->GetPageText(cursel) == _("Debug") )
 				return;
-			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfTrace() && m_book->GetPageText(cursel) == wxT("Trace") )
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfTrace() && m_book->GetPageText(cursel) == _("Trace") )
 				return;
-			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfTasks() && m_book->GetPageText(cursel) == wxT("Tasks") )
+			if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfTasks() && m_book->GetPageText(cursel) == _("Tasks") )
 				return;
 		}
 

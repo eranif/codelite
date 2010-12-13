@@ -532,7 +532,7 @@ void ContextCpp::AddMenuDynamicContent(wxMenu *menu)
 	if (IsIncludeStatement(line, &fileName)) {
 
 		PrependMenuItemSeparator(menu);
-		menuItemText << wxT("Open Include File \"") << fileName << wxT("\"");
+		menuItemText <<_("Open Include File \"") << fileName << wxT("\"");
 
 		PrependMenuItem(menu, menuItemText, wxCommandEventHandler(ContextCpp::OnContextOpenDocument));
 		m_selectedWord = fileName;
@@ -546,7 +546,7 @@ void ContextCpp::AddMenuDynamicContent(wxMenu *menu)
 		wxString word = rCtrl.GetWordAtCaret();
 		if (word.IsEmpty() == false) {
 			PrependMenuItemSeparator(menu);
-			menuItemText << wxT("Add Include File for \"") << word << wxT("\"");
+			menuItemText <<_("Add Include File for \"") << word << wxT("\"");
 			PrependMenuItem(menu, menuItemText, XRCID("add_include_file"));
 			m_selectedWord = word;
 		}
@@ -604,7 +604,7 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent &e)
 	wxString choice;
 	if (options.GetCount() > 1) {
 		//multiple matches
-		choice = wxGetSingleChoice(wxT("Select File to Include:"), wxT("Add Include File"), options, &GetCtrl());
+		choice = wxGetSingleChoice(_("Select File to Include:"),_("Add Include File"), options, &GetCtrl());
 	} else {
 		choice = options.Item(0);
 	}
@@ -872,7 +872,7 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
 	bool userAnsweredBefore = EditorConfigST::Get()->GetLongValue(wxT("CreateSwappedFile"), res);
 	if (!userAnsweredBefore) {
 		// prompt the user with an "annoying" dialog
-		ThreeButtonDlg dlg(clMainFrame::Get(), _("No matched file was found, would you like to create one?"), wxT("CodeLite"));
+		ThreeButtonDlg dlg(clMainFrame::Get(), _("No matched file was found, would you like to create one?"),_("CodeLite"));
 		res = dlg.ShowModal();
 		if (dlg.GetDontAskMeAgain() && res != wxID_CANCEL) {
 			// the user is not interested of creating file, so dont bot
@@ -1122,11 +1122,11 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 	if (tag->GetFile().CmpNoCase(editor.GetFileName().GetFullPath()) != 0) {
 
 		wxString msg;
-		msg << wxT("This file does not seem to contain the declaration for '") << tag->GetName() << wxT("'\n");
-		msg << wxT("The declaration of '") << tag->GetName() << wxT("' is located at '") << tag->GetFile() << wxT("'\n");
-		msg << wxT("Would you like CodeLite to open this file for you?");
+		msg <<_("This file does not seem to contain the declaration for '") << tag->GetName() << wxT("'\n");
+		msg <<_("The declaration of '") << tag->GetName() <<_("' is located at '") << tag->GetFile() << wxT("'\n");
+		msg <<_("Would you like CodeLite to open this file for you?");
 
-		if (wxMessageBox(msg, wxT("CodeLite"), wxYES_NO) == wxYES) {
+		if (wxMessageBox(msg,_("CodeLite"), wxYES_NO) == wxYES) {
 			wxString projectName = ManagerST::Get()->GetProjectNameByFile(tag->GetFile());
 			clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), projectName, tag->GetLine());
 		}
@@ -1500,7 +1500,7 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
 
 	wxString scopeName = TagsManagerST::Get()->GetScopeName(context);
 	if (scopeName.IsEmpty() || scopeName == wxT("<global>")) {
-		wxMessageBox(_("Cant resolve scope properly. Found <") + scopeName + wxT(">"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+		wxMessageBox(_("Cant resolve scope properly. Found <") + scopeName + wxT(">"),_("CodeLite"), wxICON_INFORMATION|wxOK);
 		return;
 	}
 
@@ -1555,7 +1555,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 
 	wxString scopeName = TagsManagerST::Get()->GetScopeName(context);
 	if (scopeName.IsEmpty() || scopeName == wxT("<global>")) {
-		wxMessageBox(_("'Add Functions Implementation' can only work inside valid scope, got (") + scopeName + wxT(")"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+		wxMessageBox(_("'Add Functions Implementation' can only work inside valid scope, got (") + scopeName + wxT(")"),_("CodeLite"), wxICON_INFORMATION|wxOK);
 		return;
 	}
 
@@ -1587,7 +1587,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 	}
 
 	MoveFuncImplDlg dlg(NULL, body, targetFile);
-	dlg.SetTitle(wxT("Implement All Un-Implemented Functions"));
+	dlg.SetTitle(_("Implement All Un-Implemented Functions"));
 	if (dlg.ShowModal() == wxID_OK) {
 		//get the updated data
 		targetFile = dlg.GetFileName();
@@ -1657,7 +1657,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 
 		if (DoGetFunctionBody(curPos, blockStartPos, blockEndPos, content)) {
 			//function already has body ...
-			wxMessageBox(_("Function '") + tag->GetName() + wxT("' already has a body"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+			wxMessageBox(_("Function '") + tag->GetName() +_("' already has a body"),_("CodeLite"), wxICON_WARNING|wxOK);
 			return;
 		}
 
@@ -1677,7 +1677,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 		}
 
 		MoveFuncImplDlg dlg(NULL, body, targetFile);
-		dlg.SetTitle(wxT("Add Function Implmentation"));
+		dlg.SetTitle(_("Add Function Implementation"));
 		if (dlg.ShowModal() == wxID_OK) {
 			//get the updated data
 			targetFile = dlg.GetFileName();
@@ -2041,11 +2041,11 @@ void ContextCpp::OnRenameLocalSymbol(wxCommandEvent& e)
 	RefactoringEngine::Instance()->RenameLocalSymbol(word, rCtrl.GetFileName(), rCtrl.LineFromPosition(pos+1), word_start);
 
 	if(RefactoringEngine::Instance()->GetCandidates().empty()) {
-		wxMessageBox(wxT("No matches were found!"), wxT("Refactoring local variable"), wxOK|wxCENTER);
+		wxMessageBox(_("No matches were found!"), _("Refactoring local variable"), wxOK|wxCENTER);
 		return;
 	}
 
-	wxString newName = wxGetTextFromUser(wxT("Insert New Variable Name:"), wxT("Refactoring local variable"), word);
+	wxString newName = wxGetTextFromUser(_("Insert New Variable Name:"), _("Refactoring local variable"), word);
 	if(newName == word || newName.IsEmpty())
 		return;
 	ReplaceInFiles(newName, RefactoringEngine::Instance()->GetCandidates());
@@ -2088,7 +2088,7 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
 		dlg->GetMatches( matches );
 		if (matches.empty() == false) {
 			if (dlg->GetWord() == word) {
-				int answer = wxMessageBox(_("The replacement symbol is the same as the original. Try again?"), wxT("CodeLite"), wxICON_QUESTION | wxYES_NO, dlg);
+				int answer = wxMessageBox(_("The replacement symbol is the same as the original. Try again?"), _("CodeLite"), wxICON_QUESTION | wxYES_NO, dlg);
 				if (answer == wxYES) {
 					continue;
 				}
@@ -2181,7 +2181,7 @@ void ContextCpp::OnRetagFile(wxCommandEvent& e)
 	wxUnusedVar(e);
 	LEditor &editor = GetCtrl();
 	if ( editor.GetModify() ) {
-		wxMessageBox(wxString::Format(wxT("Please save the file before retagging it")));
+		wxMessageBox(wxString::Format(_("Please save the file before retagging it")));
 		return;
 	}
 
@@ -2454,7 +2454,7 @@ void ContextCpp::DoOpenWorkspaceFile()
 			choices.Add(files2.at(i).GetFullPath());
 		}
 
-		fileToOpen = wxGetSingleChoice(wxT("Select file to open:"), wxT("Select file"), choices, &GetCtrl());
+		fileToOpen = wxGetSingleChoice(_("Select file to open:"), _("Select file"), choices, &GetCtrl());
 	} else if (files2.size() == 1) {
 		fileToOpen = files2.at(0).GetFullPath();
 	}

@@ -68,8 +68,8 @@ void ConfigurationManagerDlg::AddEntry(const wxString &projectName, const wxStri
 			bldConf = settings->GetNextBuildConfiguration(cookie);
 		}
 	}
-	choiceConfig->Append(clCMD_NEW);
-	choiceConfig->Append(clCMD_EDIT);
+	choiceConfig->Append(wxGetTranslation(clCMD_NEW));
+	choiceConfig->Append(wxGetTranslation(clCMD_EDIT));
 	ConnectChoice(choiceConfig, ConfigurationManagerDlg::OnConfigSelected);
 	wxStaticText *text = new wxStaticText( m_scrolledWindow, wxID_ANY, projectName, wxDefaultPosition, wxDefaultSize, 0 );
 
@@ -118,8 +118,8 @@ void ConfigurationManagerDlg::PopulateConfigurations()
 	}
 
 	// append the 'New' & 'Delete' commands
-	m_choiceConfigurations->Append(clCMD_NEW);
-	m_choiceConfigurations->Append(clCMD_EDIT);
+	m_choiceConfigurations->Append(wxGetTranslation(clCMD_NEW));
+	m_choiceConfigurations->Append(wxGetTranslation(clCMD_EDIT));
 
 	int sel = m_choiceConfigurations->FindString(matrix->GetSelectedConfigurationName());
 	if (sel != wxNOT_FOUND) {
@@ -181,8 +181,8 @@ void ConfigurationManagerDlg::LoadProjectConfiguration(const wxString &projectNa
 				}
 
 				//append the EDIT & NEW commands
-				iter->second.choiceControl->Append(clCMD_EDIT);
-				iter->second.choiceControl->Append(clCMD_NEW);
+				iter->second.choiceControl->Append(wxGetTranslation(clCMD_EDIT));
+				iter->second.choiceControl->Append(wxGetTranslation(clCMD_NEW));
 
 				//select the build configuration according to the build matrix
 				BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
@@ -215,9 +215,9 @@ void ConfigurationManagerDlg::InitDialog()
 
 void ConfigurationManagerDlg::OnWorkspaceConfigSelected(wxCommandEvent &event)
 {
-	if (event.GetString() == clCMD_NEW) {
+	if (event.GetString() == wxGetTranslation(clCMD_NEW)) {
 		OnButtonNew(event);
-	} else if (event.GetString() == clCMD_EDIT) {
+	} else if (event.GetString() == wxGetTranslation(clCMD_EDIT)) {
 		//popup the delete dialog for configurations
 		EditWorkspaceConfDlg *dlg = new EditWorkspaceConfDlg(this);
 		dlg->ShowModal();
@@ -244,7 +244,7 @@ void ConfigurationManagerDlg::OnConfigSelected(wxCommandEvent &event)
 		return;
 
 	wxString selection = event.GetString();
-	if (selection == clCMD_NEW) {
+	if (selection == wxGetTranslation(clCMD_NEW)) {
 		// popup the 'New Configuration' dialog
 		NewConfigurationDlg *dlg = new NewConfigurationDlg(this, iter->second.project);
 		dlg->ShowModal();
@@ -255,7 +255,7 @@ void ConfigurationManagerDlg::OnConfigSelected(wxCommandEvent &event)
 		
 		// clCMD_NEW does not mark the page as dirty !
 		
-	} else if (selection == clCMD_EDIT) {
+	} else if (selection == wxGetTranslation(clCMD_EDIT)) {
 		EditConfigurationDialog *dlg = new EditConfigurationDialog(this, iter->second.project);
 		dlg->ShowModal();
 		dlg->Destroy();
@@ -312,7 +312,7 @@ WorkspaceConfiguration::ConfigMappingList ConfigurationManagerDlg::GetCurrentSet
 	for (; iter != m_projSettingsMap.end(); iter++) {
 
 		wxString value = iter->second.choiceControl->GetStringSelection();
-		if (value != clCMD_NEW && value != clCMD_EDIT) {
+		if (value != wxGetTranslation(clCMD_NEW) && value != wxGetTranslation(clCMD_EDIT)) {
 			ConfigMappingEntry entry(iter->second.project, value);
 			list.push_back(entry);
 		}

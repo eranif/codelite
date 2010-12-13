@@ -185,7 +185,7 @@ void SvnConsole::Stop()
 		delete m_process;
 		m_process = NULL;
 	}
-	AppendText(wxT("Aborted.\n"));
+	AppendText(_("Aborted.\n"));
 	AppendText(wxT("--------\n"));
 }
 
@@ -252,7 +252,7 @@ bool SvnConsole::DoExecute(const wxString& cmd, SvnCommandHandler* handler, cons
 
 	m_process = CreateAsyncProcess(this, cmdShell, IProcessCreateWithHiddenConsole, workingDirectory);
 	if (!m_process) {
-		AppendText(wxT("Failed to launch Subversion client.\n"));
+		AppendText(_("Failed to launch Subversion client.\n"));
 		return false;
 	}
 	m_sci->SetFocus();

@@ -24,7 +24,7 @@ void PSEnvironmentPage::Load(BuildConfigPtr buildConf)
 	m_choiceEnv->Clear();
 	std::map<wxString, wxString> envSets = EnvironmentConfig::Instance()->GetSettings().GetEnvVarSets();
 	std::map<wxString, wxString>::const_iterator iterI = envSets.begin();
-	int useActiveSetIndex = m_choiceEnv->Append(USE_WORKSPACE_ENV_VAR_SET);
+	int useActiveSetIndex = m_choiceEnv->Append(wxGetTranslation(USE_WORKSPACE_ENV_VAR_SET));
 
 	for (; iterI != envSets.end(); iterI++) {
 		m_choiceEnv->Append(iterI->first);
@@ -33,7 +33,7 @@ void PSEnvironmentPage::Load(BuildConfigPtr buildConf)
 	m_choiceEnv->SetSelection(selEnv == wxNOT_FOUND ? useActiveSetIndex : selEnv);
 
 	m_choiceDbgEnv->Clear();
-	useActiveSetIndex = m_choiceDbgEnv->Append(USE_GLOBAL_SETTINGS);
+	useActiveSetIndex = m_choiceDbgEnv->Append(wxGetTranslation(USE_GLOBAL_SETTINGS));
 
 	DebuggerSettingsPreDefMap data;
 	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);

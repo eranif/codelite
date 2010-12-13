@@ -38,13 +38,13 @@
 #include "breakpointdlg.h"
 #include "threadlistpanel.h"
 
-const wxString DebuggerPane::LOCALS       = wxT("Locals");
-const wxString DebuggerPane::WATCHES      = wxT("Watches");
-const wxString DebuggerPane::FRAMES       = wxT("Call Stack");
-const wxString DebuggerPane::BREAKPOINTS  = wxT("Breakpoints");
-const wxString DebuggerPane::THREADS      = wxT("Threads");
-const wxString DebuggerPane::MEMORY       = wxT("Memory");
-const wxString DebuggerPane::ASCII_VIEWER = wxT("Ascii Viewer");
+const wxString DebuggerPane::LOCALS       = _("Locals");
+const wxString DebuggerPane::WATCHES      = _("Watches");
+const wxString DebuggerPane::FRAMES       = _("Call Stack");
+const wxString DebuggerPane::BREAKPOINTS  = _("Breakpoints");
+const wxString DebuggerPane::THREADS      = _("Threads");
+const wxString DebuggerPane::MEMORY       = _("Memory");
+const wxString DebuggerPane::ASCII_VIEWER = _("Ascii Viewer");
 
 #define IS_DETACHED(name) ( detachedPanes.Index(name) != wxNOT_FOUND ) ? true : false
 
@@ -90,7 +90,7 @@ void DebuggerPane::CreateGUIControls()
 	// Calculate the widthest tab (the one with the 'Call Stack' label)
 	int xx, yy;
 	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	wxWindow::GetTextExtent(wxT("Breakpoints"), &xx, &yy, NULL, NULL, &fnt);
+	wxWindow::GetTextExtent(_("Breakpoints"), &xx, &yy, NULL, NULL, &fnt);
 
 	// load list of detached panes
 	wxArrayString detachedPanes;
@@ -101,7 +101,7 @@ void DebuggerPane::CreateGUIControls()
 
 	wxString name;
 	wxBitmap bmp;
-	name = LOCALS;
+	name = wxGetTranslation(LOCALS);
 	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("locals_view"));
 	// Add the 'Locals View'
 	if( IS_DETACHED(name) ) {
@@ -115,7 +115,7 @@ void DebuggerPane::CreateGUIControls()
 	}
 
 	// Add the 'watches View'
-	name = WATCHES;
+	name = wxGetTranslation(WATCHES);
 	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("watches"));
 	if( IS_DETACHED(name) ) {
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
@@ -129,7 +129,7 @@ void DebuggerPane::CreateGUIControls()
 
 
 	// Add the 'ASCII Viewer'
-	name = ASCII_VIEWER;
+	name = wxGetTranslation(ASCII_VIEWER);
 	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("text_view"));
 	if( IS_DETACHED(name) ) {
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
@@ -142,7 +142,7 @@ void DebuggerPane::CreateGUIControls()
 	}
 
 	// Add the 'Call Stack'
-	name = FRAMES;
+	name = wxGetTranslation(FRAMES);
 	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("frames"));
 	if( IS_DETACHED(name) ) {
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
@@ -155,7 +155,7 @@ void DebuggerPane::CreateGUIControls()
 	}
 
 	// Add the 'Breakpoints'
-	name = BREAKPOINTS;
+	name = wxGetTranslation(BREAKPOINTS);
 	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("breakpoint"));
 	if( IS_DETACHED(name) ) {
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
@@ -168,7 +168,7 @@ void DebuggerPane::CreateGUIControls()
 	}
 
 	// Add the 'Breakpoints'
-	name = THREADS;
+	name = wxGetTranslation(THREADS);
 	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("threads"));
 	if( IS_DETACHED(name) ) {
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
@@ -181,7 +181,7 @@ void DebuggerPane::CreateGUIControls()
 	}
 
 	// Add the 'Memory View'
-	name = MEMORY;
+	name = wxGetTranslation(MEMORY);
 	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("memory_view"));
 	if( IS_DETACHED(name) ) {
 		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));

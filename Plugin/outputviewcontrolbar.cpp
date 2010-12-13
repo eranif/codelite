@@ -33,7 +33,11 @@ OutputViewControlBar::OutputViewControlBar(wxWindow* win, OutputPaneBook *book, 
 	SetSizer( mainSizer );
 
 #if !OP_USE_AUI_TOOLBAR
-	m_buttons = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_HORZ_TEXT|wxTB_FLAT|wxTB_NODIVIDER);
+#ifdef __WXMSW__
+	m_buttons = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT);
+#else
+	m_buttons = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORZ_LAYOUT|wxTB_TEXT);
+#endif
 #else
 	m_buttons = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_HORZ_TEXT);
 	m_buttons->SetArtProvider(new CLMainAuiTBArt());
@@ -49,7 +53,7 @@ OutputViewControlBar::OutputViewControlBar(wxWindow* win, OutputPaneBook *book, 
 	wxTheApp->Connect ( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputViewControlBar::OnEditorFocus  ), NULL, this );
 	wxTheApp->Connect ( wxEVT_BUILD_STARTED  , wxCommandEventHandler ( OutputViewControlBar::OnBuildStarted ), NULL, this );
 	wxTheApp->Connect ( wxEVT_BUILD_ENDED    , wxCommandEventHandler ( OutputViewControlBar::OnBuildEnded   ), NULL, this );
-	mainSizer->Add(m_buttons, 1, wxEXPAND);
+	mainSizer->Add(m_buttons, 1, wxEXPAND|wxTOP, 2);
 	mainSizer->Layout();
 }
 

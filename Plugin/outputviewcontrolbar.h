@@ -18,7 +18,7 @@
 #include <wx/aui/framemanager.h>
 #include "output_pane_book.h"
 
-#if defined (__WXMSW__)||defined(__WXMAC__)
+#if defined(__WXMAC__)
 #    define OP_USE_AUI_TOOLBAR 1
 #else
 #    define OP_USE_AUI_TOOLBAR 0

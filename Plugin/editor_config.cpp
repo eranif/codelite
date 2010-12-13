@@ -540,6 +540,61 @@ wxArrayString EditorConfig::GetLexersThemes()
 	return themes;
 }
 
+bool EditorConfig::GetPaneStickiness(const wxString& caption)
+{
+	if (caption == _("Build")) {
+		return GetOptions()->GetHideOutputPaneNotIfBuild();
+	} else if (caption == _("Errors")) {
+		return GetOptions()->GetHideOutputPaneNotIfErrors();
+	} else if (caption == _("Search")) {
+		return GetOptions()->GetHideOutputPaneNotIfSearch();
+	} else if (caption == _("Replace")) {
+		return GetOptions()->GetHideOutputPaneNotIfReplace();
+	} else if (caption == _("References")) {
+		return GetOptions()->GetHideOutputPaneNotIfReferences();
+	} else if (caption == _("Output")) {
+		return GetOptions()->GetHideOutputPaneNotIfOutput();
+	} else if (caption == _("Debug")) {
+		return GetOptions()->GetHideOutputPaneNotIfDebug();
+	} else if (caption == _("Trace")) {
+		return GetOptions()->GetHideOutputPaneNotIfTrace();
+	} else if (caption == _("Tasks")) {
+		return GetOptions()->GetHideOutputPaneNotIfTasks();
+	} 
+	
+	// How did we get here?
+	return false;
+}
+
+void EditorConfig::SetPaneStickiness(const wxString& caption, bool stickiness)
+{
+	OptionsConfigPtr options = GetOptions();
+	if (caption == _("Build")) {
+		options->SetHideOutputPaneNotIfBuild(stickiness);
+	} else if (caption == _("Errors")) {
+		options->SetHideOutputPaneNotIfErrors(stickiness);
+	} else if (caption == _("Search")) {
+		options->SetHideOutputPaneNotIfSearch(stickiness);
+	} else if (caption == _("Replace")) {
+		options->SetHideOutputPaneNotIfReplace(stickiness);
+	} else if (caption == _("References")) {
+		options->SetHideOutputPaneNotIfReferences(stickiness);
+	} else if (caption == _("Output")) {
+		options->SetHideOutputPaneNotIfOutput(stickiness);
+	} else if (caption == _("Debug")) {
+		options->SetHideOutputPaneNotIfDebug(stickiness);
+	} else if (caption == _("Trace")) {
+		options->SetHideOutputPaneNotIfTrace(stickiness);
+	} else if (caption == _("Tasks")) {
+		options->SetHideOutputPaneNotIfTasks(stickiness);
+	} else {
+		return;
+	}
+	
+	SetOptions(options);
+	Save();
+}
+
 static EditorConfig* gs_EditorConfig = NULL;
 void EditorConfigST::Free()
 {
@@ -556,4 +611,3 @@ EditorConfig* EditorConfigST::Get()
 	}
 	return gs_EditorConfig;
 }
-

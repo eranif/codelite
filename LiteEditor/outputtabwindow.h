@@ -51,6 +51,7 @@ protected:
     static void InitStyle   (wxScintilla *sci, int lexer, bool folding);
 
 	void CreateGUIControls();
+	void SetThisPaneIsSticky(bool stickiness);
 
 	virtual void AppendText(const wxString &text);
 	virtual void Clear();
@@ -64,6 +65,7 @@ protected:
 	virtual void OnCollapseAll    (wxCommandEvent   &e);
     virtual void OnRepeatOutput   (wxCommandEvent   &e);
 	virtual void OnEdit           (wxCommandEvent   &e);
+	virtual void OnToggleHoldOpen (wxCommandEvent   &e);
 
 
     virtual void OnOutputScrollsUI(wxUpdateUIEvent  &e);
@@ -72,6 +74,7 @@ protected:
 	virtual void OnWordWrapUI     (wxUpdateUIEvent  &e);
 	virtual void OnCollapseAllUI  (wxUpdateUIEvent  &e);
     virtual void OnRepeatOutputUI (wxUpdateUIEvent  &e);
+    virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent  &e);
 
 	virtual void OnMouseDClick    (wxScintillaEvent &e);
 	virtual void OnHotspotClicked (wxScintillaEvent &e);
@@ -83,6 +86,8 @@ protected:
 public:
 	OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString &name);
 	~OutputTabWindow();
+
+	bool IsThisPaneSticky();
 
 	const wxString &GetCaption() const {return m_name;}
 };

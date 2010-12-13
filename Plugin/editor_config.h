@@ -273,6 +273,20 @@ public:
 	 */
 	void SaveStringValue(const wxString &key, const wxString &value);
 
+	/**
+	 * \brief should this pane remain open despite an editor click
+	 * \param caption string to identify the pane
+	 * \return true if the pane should stay open
+	 */
+	bool GetPaneStickiness(const wxString& caption);
+
+	/**
+	 * \brief sets whether this pane should remain open despite an editor click
+	 * \param caption string to identify the pane
+	 * \param stickiness true if the pane should stay open
+	 */	
+	void SetPaneStickiness(const wxString& caption, bool stickiness);
+
 private:
 	EditorConfig();
 	virtual ~EditorConfig();

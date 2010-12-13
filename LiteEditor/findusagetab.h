@@ -21,7 +21,7 @@ public:
 	virtual void OnClearAllUI(wxUpdateUIEvent& e);
 	virtual void OnClearAll(wxCommandEvent& e);
 	virtual void OnMouseDClick(wxScintillaEvent& e);
-
+	virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
 public:
 	void ShowUsage(const std::list<CppToken> &matches, const wxString &searchWhat);
 

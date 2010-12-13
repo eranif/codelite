@@ -172,3 +172,15 @@ void TaskPanel::OnFindWhat(wxCommandEvent& e)
 	TasksFindWhatDlg dlg(this);
 	dlg.ShowModal();
 }
+
+void TaskPanel::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
+{
+	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
+		e.Enable(true);
+		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfTasks() );
+		
+	} else {
+		e.Enable(false);
+		e.Check(false);
+	}
+}

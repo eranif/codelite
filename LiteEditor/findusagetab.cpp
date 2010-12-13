@@ -6,6 +6,7 @@
 #include "ctags_manager.h"
 #include "cl_editor.h"
 #include "frame.h"
+#include "editor_config.h"
 
 FindUsageTab::FindUsageTab(wxWindow* parent, const wxString &name)
 : OutputTabWindow(parent, wxID_ANY, name)
@@ -126,5 +127,17 @@ void FindUsageTab::DoOpenResult(const CppToken& token)
 		if(editor) {
 			editor->SetSelection(token.getOffset(), token.getOffset() + token.getName().length());
 		}
+	}
+}
+
+void FindUsageTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
+{
+	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
+		e.Enable(true);
+		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfReferences() );
+		
+	} else {
+		e.Enable(false);
+		e.Check(false);
 	}
 }

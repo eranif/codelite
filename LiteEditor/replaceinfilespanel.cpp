@@ -26,6 +26,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/progdlg.h>
 
+#include "editor_config.h"
 #include "globals.h"
 #include "frame.h"
 #include "cl_editor.h"
@@ -402,4 +403,16 @@ void ReplaceInFilesPanel::OnReplaceUI(wxUpdateUIEvent& e)
 void ReplaceInFilesPanel::OnReplaceWithComboUI(wxUpdateUIEvent& e)
 {
 	e.Enable(m_sci->GetLength() > 0);
+}
+
+void ReplaceInFilesPanel::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
+{
+	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
+		e.Enable(true);
+		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfReplace() );
+		
+	} else {
+		e.Enable(false);
+		e.Check(false);
+	}
 }

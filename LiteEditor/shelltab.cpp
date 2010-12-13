@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include "editor_config.h"
 
 #include "macros.h"
 #include "async_executable_cmd.h"
@@ -330,5 +331,28 @@ void DebugTabPanel::OnEnableDbgLogUI(wxUpdateUIEvent& event)
 	if(dbgr) {
 		DebuggerInformation info = dbgr->GetDebuggerInformation();
 		event.Check( info.enableDebugLog );
+	}
+}
+void ShellTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
+{
+	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
+		e.Enable(true);
+		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfOutput() );
+		
+	} else {
+		e.Enable(false);
+		e.Check(false);
+	}
+}
+
+void DebugTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
+{
+	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
+		e.Enable(true);
+		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfDebug() );
+		
+	} else {
+		e.Enable(false);
+		e.Check(false);
 	}
 }

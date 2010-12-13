@@ -53,7 +53,7 @@ class ReplaceInFilesPanel : public FindResultsTab
 	virtual void OnUnmarkAllUI        (wxUpdateUIEvent  &e);
 	virtual void OnReplaceUI          (wxUpdateUIEvent  &e);
 	virtual void OnReplaceWithComboUI (wxUpdateUIEvent  &e);
-
+	virtual void OnHoldOpenUpdateUI   (wxUpdateUIEvent& e);
     DECLARE_EVENT_TABLE()
 
 public:

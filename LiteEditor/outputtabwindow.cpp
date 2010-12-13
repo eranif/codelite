@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include "frame.h"
+#include "editor_config.h"
 #include "macros.h"
 #include "globals.h"
 #include "manager.h"
@@ -38,12 +40,14 @@ BEGIN_EVENT_TABLE(OutputTabWindow, wxPanel)
 	EVT_MENU(XRCID("word_wrap_output"),      OutputTabWindow::OnWordWrap)
 	EVT_MENU(XRCID("collapse_all"),          OutputTabWindow::OnCollapseAll)
 	EVT_MENU(XRCID("repeat_output"),         OutputTabWindow::OnRepeatOutput)
+	EVT_MENU(XRCID("hold_pane_open"),        OutputTabWindow::OnToggleHoldOpen)
 	EVT_UPDATE_UI(XRCID("scroll_on_output"), OutputTabWindow::OnOutputScrollsUI)
 	EVT_UPDATE_UI(XRCID("search_output"),    OutputTabWindow::OnSearchOutputUI)
 	EVT_UPDATE_UI(XRCID("clear_all_output"), OutputTabWindow::OnClearAllUI)
 	EVT_UPDATE_UI(XRCID("word_wrap_output"), OutputTabWindow::OnWordWrapUI)
 	EVT_UPDATE_UI(XRCID("collapse_all"),     OutputTabWindow::OnCollapseAllUI)
 	EVT_UPDATE_UI(XRCID("repeat_output"),    OutputTabWindow::OnRepeatOutputUI)
+	EVT_UPDATE_UI(XRCID("hold_pane_open"),   OutputTabWindow::OnHoldOpenUpdateUI)
 	EVT_SCI_DOUBLECLICK(wxID_ANY,            OutputTabWindow::OnMouseDClick)
 	EVT_SCI_HOTSPOT_CLICK(wxID_ANY,          OutputTabWindow::OnHotspotClicked)
 	EVT_SCI_MARGINCLICK(wxID_ANY,            OutputTabWindow::OnMarginClick)
@@ -173,6 +177,11 @@ void OutputTabWindow::CreateGUIControls()
 
 	//Create the toolbar
 	m_tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL|wxTB_NODIVIDER);
+
+	m_tb->AddTool(XRCID("hold_pane_open"), _("Keep open"),
+	               bmpLoader->LoadBitmap(wxT("output-pane/16/ToolPin")),
+	              _("Don't close this pane when an editor gets focus"),
+				  wxITEM_CHECK);
 
 	m_tb->AddTool(XRCID("scroll_on_output"),
 	              _("Scroll on Output"),
@@ -396,6 +405,15 @@ void OutputTabWindow::OnEdit(wxCommandEvent &e)
 	}
 }
 
+void OutputTabWindow::OnToggleHoldOpen(wxCommandEvent &e)
+{
+	int sel;
+	wxChoicebook* book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
+	if (book && (sel=book->GetSelection()) != wxNOT_FOUND) {
+		EditorConfigST::Get()->SetPaneStickiness(book->GetPageText(sel), e.IsChecked());
+	}
+}
+
 void OutputTabWindow::OnSearchOutput(wxCommandEvent& e)
 {
 	if(m_findBar->IsShown()) {
@@ -418,4 +436,9 @@ void OutputTabWindow::OnHideSearchBar(wxCommandEvent& e)
 {
 	m_findBar->Hide();
 	GetSizer()->Layout();
+}
+
+void OutputTabWindow::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
+{
+	e.Skip();
 }

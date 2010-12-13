@@ -42,12 +42,14 @@ private:
 	void AppendLine(int line);
 	void MarkLine(int line);
 
-	void OnRedisplayLines(wxCommandEvent   &e);
-	void OnClearAll      (wxCommandEvent   &e);
-	void OnRepeatOutput  (wxCommandEvent   &e);
-	void OnClearAllUI    (wxUpdateUIEvent  &e);
-	void OnRepeatOutputUI(wxUpdateUIEvent  &e);
-	void OnMouseDClick   (wxScintillaEvent &e);
+	void OnRedisplayLines  (wxCommandEvent   &e);
+	void OnClearAll        (wxCommandEvent   &e);
+	void OnRepeatOutput    (wxCommandEvent   &e);
+	void OnClearAllUI      (wxUpdateUIEvent  &e);
+	void OnRepeatOutputUI  (wxUpdateUIEvent  &e);
+	void OnMouseDClick     (wxScintillaEvent &e);
+	void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
+	
 	DECLARE_EVENT_TABLE()
 
 public:

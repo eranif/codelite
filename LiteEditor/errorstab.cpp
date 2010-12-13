@@ -29,6 +29,7 @@
 #include "pluginmanager.h"
 
 
+#include "editor_config.h"
 BEGIN_EVENT_TABLE ( ErrorsTab, OutputTabWindow )
 	EVT_MENU ( XRCID ( "show_errors" ),      ErrorsTab::OnRedisplayLines )
 	EVT_MENU ( XRCID ( "show_warnings" ),    ErrorsTab::OnRedisplayLines )
@@ -203,4 +204,16 @@ void ErrorsTab::OnRepeatOutput ( wxCommandEvent& e )
 void ErrorsTab::OnRepeatOutputUI ( wxUpdateUIEvent& e )
 {
 	m_bt->OnRepeatOutputUI ( e );
+}
+
+void ErrorsTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
+{
+	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
+		e.Enable(true);
+		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfErrors() );
+		
+	} else {
+		e.Enable(false);
+		e.Check(false);
+	}
 }

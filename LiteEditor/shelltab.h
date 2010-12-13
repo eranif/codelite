@@ -51,7 +51,8 @@ protected:
 	virtual void OnKeyDown    (wxKeyEvent      &e);
 	virtual void OnEnter      (wxCommandEvent  &e);
 	virtual void OnUpdateUI   (wxUpdateUIEvent &e);
-
+	virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent &e);
+	
 	DECLARE_EVENT_TABLE()
 
 public:
@@ -66,7 +67,8 @@ protected:
 	bool DoSendInput(const wxString  &line);
 	void OnStopProc (wxCommandEvent  &e);
 	void OnUpdateUI (wxUpdateUIEvent &e);
-
+	virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent &e);
+	
 public:
 	DebugTab(wxWindow *parent, wxWindowID id, const wxString &name);
 	~DebugTab();

@@ -733,3 +733,15 @@ void FindResultsTab::OnClosePage(NotebookEvent& e)
 	}
 	m_book->DeletePage((size_t)where, true);
 }
+
+void FindResultsTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
+{
+	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
+		e.Enable(true);
+		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfSearch() );
+		
+	} else {
+		e.Enable(false);
+		e.Check(false);
+	}
+}

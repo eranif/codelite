@@ -45,9 +45,9 @@ public:
 
 public:
 	CompiledPattern(wxRegEx *re, const wxString &file, const wxString &line)
-			: regex(re)
-			, fileIndex(file)
-			, lineIndex(line) {}
+		: regex(re)
+		, fileIndex(file)
+		, lineIndex(line) {}
 
 	~CompiledPattern() {
 		if (regex) {
@@ -74,7 +74,7 @@ private:
 	 */
 	struct LineInfo {
 		LineInfo()
-				: linenum(0), linecolor(wxSCI_LEX_GCC_OUTPUT), filestart(0), filelen(0) { }
+			: linenum(0), linecolor(wxSCI_LEX_GCC_OUTPUT), filestart(0), filelen(0) { }
 		wxString project;
 		wxString configuration;
 		wxString linetext;
@@ -132,6 +132,7 @@ private:
 	void OnRepeatOutputUI     (wxUpdateUIEvent  &e);
 	void OnNextBuildErrorUI   (wxUpdateUIEvent  &e);
 	void OnMouseDClick        (wxScintillaEvent &e);
+	void OnHoldOpenUpdateUI   (wxUpdateUIEvent& e);
 
 public:
 	void Clear();
@@ -143,7 +144,11 @@ public:
 
 	wxString GetBuildToolTip(const wxString &fileName, int lineno, wxMemoryBuffer &styleBits);
 
-	bool GetBuildEndedSuccessfully() const {return m_errorCount == 0 && !m_buildInterrupted;}
-	void SetBuildInterrupted(bool b) { m_buildInterrupted = b; }
+	bool GetBuildEndedSuccessfully() const {
+		return m_errorCount == 0 && !m_buildInterrupted;
+	}
+	void SetBuildInterrupted(bool b) {
+		m_buildInterrupted = b;
+	}
 };
 #endif // __buidltab__

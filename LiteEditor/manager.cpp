@@ -2106,8 +2106,6 @@ void Manager::DbgStart ( long attachPid )
 		}
 	} else {
 		//Attach to process...
-		wxString sudoCmd;
-		
 		if ( !dbgr->Start ( dbgname, exepath, PID, sudoCmd, bps, dbg_cmds, clMainFrame::Get()->StartTTY(title) ) ) {
 			wxString errMsg;
 			errMsg << _( "Failed to initialize debugger: " ) << dbgname << wxT( "\n" );

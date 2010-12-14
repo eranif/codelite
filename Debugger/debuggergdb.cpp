@@ -674,7 +674,20 @@ void DbgGdb::Poke()
 			m_observer->UpdateGotControl( DBG_EXITED_NORMALLY );
 			return;
 		}
-
+		
+		// Check for "Operation not permitted" usually means 
+		// that the process does not have enough permission to 
+		// attach to the process
+		if( line.Contains(wxT("Operation not permitted")) ) {
+#ifdef __WXGTK__
+			m_consoleFinder.FreeConsole();
+#endif
+			m_observer->UpdateAddLine( _("Failed to start debugger: permission denied") );
+			m_observer->UpdateGotControl( DBG_EXITED_NORMALLY );
+			return;
+			
+		}
+		
 		if( tmpline.StartsWith( wxT( ">" ) ) ) {
 			// Shell line, probably user command line
 			continue;

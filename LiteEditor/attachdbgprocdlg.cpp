@@ -30,6 +30,7 @@
 #include <algorithm>
 
 bool AttachDbgProcDlg::ms_useSudo = false;
+wxString AttachDbgProcDlg::ms_sudoCmd = wxT("sudo -A");
 
 /// Ascending sorting function
 struct PIDSorter {
@@ -59,6 +60,7 @@ AttachDbgProcDlg::AttachDbgProcDlg( wxWindow* parent )
 	m_listCtrlProcesses->InsertColumn(1, _("Name"));
 	
 	m_checkBoxUseSudo->SetValue(ms_useSudo);
+	m_textCtrlSudoCommand->SetValue(ms_sudoCmd);
 	
 	RefreshProcessesList(wxEmptyString);
 	m_textCtrlFilter->SetFocus();
@@ -163,6 +165,7 @@ void AttachDbgProcDlg::OnBtnAttachUI( wxUpdateUIEvent& event )
 AttachDbgProcDlg::~AttachDbgProcDlg()
 {
 	ms_useSudo = m_checkBoxUseSudo->IsChecked();
+	ms_sudoCmd = m_textCtrlSudoCommand->GetValue();
 	WindowAttrManager::Save(this, wxT("AttachDbgProcDlg"), NULL);
 }
 

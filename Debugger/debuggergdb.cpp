@@ -190,6 +190,7 @@ void DbgGdb::EmptyQueue()
 bool DbgGdb::Start( const wxString &debuggerPath,
                     const wxString & exeName,
 					int pid,
+					const wxString& sudoCmd,
 					const std::vector<BreakpointInfo> &bpList,
 					const wxArrayString &cmds,
 					const wxString &ttyName)
@@ -207,7 +208,11 @@ bool DbgGdb::Start( const wxString &debuggerPath,
 	cmd << dbgExeName << wxT( " --interpreter=mi " );
 	cmd << ProcUtils::GetProcessNameByPid( pid ) << wxT( " " );
 #endif
-
+	
+	if(sudoCmd.IsEmpty() == false) {
+		cmd.Prepend(sudoCmd + wxT(" "));
+	}
+	
 	m_debuggeePid = pid;
 	cmd << wxT( " --pid=" ) << m_debuggeePid;
 	wxLogMessage( cmd );

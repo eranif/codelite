@@ -581,7 +581,13 @@ public:
 	 * \param ttyName [Gtk/Mac] provide a tty for redireting all inferior output 
 	 * \return
 	 */
-	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString &ttyName) = 0;
+	virtual bool Start(const wxString &debuggerPath, 
+					   const wxString &exeName, 
+					   int pid, 
+					   const wxString& sudoCmd,
+					   const std::vector<BreakpointInfo> &bpList, 
+					   const wxArrayString &cmds, 
+					   const wxString &ttyName) = 0;
 
 	/**
 	 * \brief Run the program under the debugger. This method must be called *after* Start() has been called

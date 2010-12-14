@@ -1912,7 +1912,7 @@ void Manager::SetMemory ( const wxString& address, size_t count, const wxString 
 
 // Debugger API
 
-void Manager::DbgStart ( long pid )
+void Manager::DbgStart ( long attachPid )
 {
 	//set the working directory to the project directory
 	DirSaver            ds;
@@ -1920,6 +1920,7 @@ void Manager::DbgStart ( long pid )
 	wxString            output;
 	wxString            debuggerName;
 	wxString            exepath;
+	wxString            sudoCmd;
 	wxString            wd;
 	wxString            args;
 	BuildConfigPtr      bldConf;
@@ -1935,7 +1936,7 @@ void Manager::DbgStart ( long pid )
 	}
 #endif
 
-	if ( pid == 1 ) { //attach to process
+	if ( attachPid == 1 ) { //attach to process
 		AttachDbgProcDlg *dlg = new AttachDbgProcDlg ( NULL );
 		if ( dlg->ShowModal() == wxID_OK ) {
 			wxString processId = dlg->GetProcessId();
@@ -1950,6 +1951,7 @@ void Manager::DbgStart ( long pid )
 				exepath = fn.GetFullName();
 
 			}
+			sudoCmd = dlg->GetRunAsAnotherUser() ? dlg->GetSudoCommand() : wxString();
 			dlg->Destroy();
 
 			startup_info.pid = PID;
@@ -1959,7 +1961,7 @@ void Manager::DbgStart ( long pid )
 		}
 	}
 
-	if ( pid == wxNOT_FOUND ) {
+	if ( attachPid == wxNOT_FOUND ) {
 		//need to debug the current project
 		proj = WorkspaceST::Get()->FindProjectByName ( GetActiveProjectName(), errMsg );
 		if ( proj ) {
@@ -2019,7 +2021,7 @@ void Manager::DbgStart ( long pid )
 	dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
 	dbgr->SetDebuggerInformation ( dinfo );
 
-	if ( pid == wxNOT_FOUND ) {
+	if ( attachPid == wxNOT_FOUND ) {
 		exepath = bldConf->GetCommand();
 		
 		// Get the debugging arguments.
@@ -2070,7 +2072,7 @@ void Manager::DbgStart ( long pid )
 	// or else call to UpdateBreakpoint() will yield an attempt to
 	// actually add the breakpoint before Run() is called - this can
 	// be a problem when adding breakpoint to dll files.
-	if ( wxNOT_FOUND == pid ) {
+	if ( wxNOT_FOUND == attachPid ) {
 		clMainFrame::Get()->GetMainBook()->UpdateBreakpoints();
 	}
 
@@ -2093,7 +2095,7 @@ void Manager::DbgStart ( long pid )
 
 	// read
 	wxArrayString dbg_cmds;
-	if ( pid == wxNOT_FOUND ) {
+	if ( attachPid == wxNOT_FOUND ) {
 		//it is now OK to start the debugger...
 		dbg_cmds = wxStringTokenize ( bldConf->GetDebuggerStartupCmds(), wxT ( "\n" ), wxTOKEN_STRTOK );
 		if ( !dbgr->Start ( dbgname, exepath, wd, bps, dbg_cmds, clMainFrame::Get()->StartTTY(title) ) ) {
@@ -2104,7 +2106,9 @@ void Manager::DbgStart ( long pid )
 		}
 	} else {
 		//Attach to process...
-		if ( !dbgr->Start ( dbgname, exepath, PID, bps, dbg_cmds, clMainFrame::Get()->StartTTY(title) ) ) {
+		wxString sudoCmd;
+		
+		if ( !dbgr->Start ( dbgname, exepath, PID, sudoCmd, bps, dbg_cmds, clMainFrame::Get()->StartTTY(title) ) ) {
 			wxString errMsg;
 			errMsg << _( "Failed to initialize debugger: " ) << dbgname << wxT( "\n" );
 			DebugMessage ( errMsg );
@@ -2158,7 +2162,7 @@ void Manager::DbgStart ( long pid )
 
 		dbgr->Run ( args, comm );
 
-	} else if ( pid == wxNOT_FOUND ) {
+	} else if ( attachPid == wxNOT_FOUND ) {
 
 		// debugging local target
 		dbgr->Run ( args, wxEmptyString );

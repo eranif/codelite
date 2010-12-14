@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -20,6 +20,7 @@
 #include <wx/textctrl.h>
 #include <wx/sizer.h>
 #include <wx/listctrl.h>
+#include <wx/checkbox.h>
 #include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -41,6 +42,8 @@ class AttachDbgProcBaseDlg : public wxDialog
 		wxTextCtrl* m_textCtrlFilter;
 		wxStaticText* m_staticText4;
 		wxListCtrl* m_listCtrlProcesses;
+		wxCheckBox* m_checkBoxUseSudo;
+		wxTextCtrl* m_textCtrlSudoCommand;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonOk;
 		wxButton* m_button2;
@@ -52,13 +55,15 @@ class AttachDbgProcBaseDlg : public wxDialog
 		virtual void OnItemActivated( wxListEvent& event ) { event.Skip(); }
 		virtual void OnItemDeselected( wxListEvent& event ) { event.Skip(); }
 		virtual void OnItemSelected( wxListEvent& event ) { event.Skip(); }
+		virtual void OnAttachAsAnotherUserUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnSudoCommandUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnBtnAttachUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnRefresh( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Attach debugger to process:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 445,471 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Attach debugger to process:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 445,471 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~AttachDbgProcBaseDlg();
 	
 };

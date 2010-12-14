@@ -94,7 +94,7 @@ public:
 
 	//------ IDebugger ---------
 	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString &ttyName);
-	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString &ttyName);
+	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const wxString &sudoCmd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString &ttyName);
 	virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString &ttyName);
 	virtual bool Run(const wxString &args, const wxString &comm);
 	virtual bool Stop();

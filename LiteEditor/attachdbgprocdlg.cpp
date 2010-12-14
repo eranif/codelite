@@ -29,6 +29,8 @@
 #include "procutils.h"
 #include <algorithm>
 
+bool AttachDbgProcDlg::ms_useSudo = false;
+
 /// Ascending sorting function
 struct PIDSorter {
 	bool operator()(const ProcessEntry &rStart, const ProcessEntry &rEnd) {
@@ -43,8 +45,8 @@ struct NameSorter {
 };
 
 AttachDbgProcDlg::AttachDbgProcDlg( wxWindow* parent )
-		: AttachDbgProcBaseDlg( parent )
-		, m_selectedItem(wxNOT_FOUND)
+	: AttachDbgProcBaseDlg( parent )
+	, m_selectedItem(wxNOT_FOUND)
 {
 	wxArrayString choices = DebuggerMgr::Get().GetAvailableDebuggers();
 	m_choiceDebugger->Append(choices);
@@ -53,9 +55,11 @@ AttachDbgProcDlg::AttachDbgProcDlg( wxWindow* parent )
 		m_choiceDebugger->SetSelection(0);
 	}
 
-	m_listCtrlProcesses->InsertColumn(0, wxT("PID"));
+	m_listCtrlProcesses->InsertColumn(0, _("PID"));
 	m_listCtrlProcesses->InsertColumn(1, _("Name"));
-
+	
+	m_checkBoxUseSudo->SetValue(ms_useSudo);
+	
 	RefreshProcessesList(wxEmptyString);
 	m_textCtrlFilter->SetFocus();
 	Centre();
@@ -81,14 +85,14 @@ void AttachDbgProcDlg::RefreshProcessesList(wxString filter, int colToSort)
 		std::sort(proclist.begin(), proclist.end(), NameSorter());
 
 	}
-	
+
 	filter.MakeLower();
 	for (size_t i=0; i<proclist.size(); i++) {
-		
+
 		// Use case in-sensitive match for the filter
 		wxString entryName (proclist.at(i).name);
 		entryName.MakeLower();
-		
+
 		// Append only processes that matches the filter string
 		if ( filter.IsEmpty() || entryName.Contains(filter) ) {
 			long item = AppendListCtrlRow(m_listCtrlProcesses);
@@ -158,6 +162,7 @@ void AttachDbgProcDlg::OnBtnAttachUI( wxUpdateUIEvent& event )
 
 AttachDbgProcDlg::~AttachDbgProcDlg()
 {
+	ms_useSudo = m_checkBoxUseSudo->IsChecked();
 	WindowAttrManager::Save(this, wxT("AttachDbgProcDlg"), NULL);
 }
 
@@ -174,4 +179,21 @@ void AttachDbgProcDlg::OnRefresh(wxCommandEvent& event)
 	m_textCtrlFilter->Clear();
 	RefreshProcessesList(wxEmptyString);
 	m_textCtrlFilter->SetFocus();
+}
+
+void AttachDbgProcDlg::OnSudoCommandUI(wxUpdateUIEvent& event)
+{
+	event.Enable(m_checkBoxUseSudo->IsChecked());
+}
+
+void AttachDbgProcDlg::OnAttachAsAnotherUserUI(wxUpdateUIEvent& event)
+{
+#if 1
+#ifdef __WXMSW__
+	event.Check(false);
+	event.Enable(false);
+#else
+	event.Enable(true);
+#endif
+#endif
 }

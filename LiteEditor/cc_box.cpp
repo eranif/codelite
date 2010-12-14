@@ -200,6 +200,13 @@ void CCBox::Adjust()
 
 		pt.y -=      BOX_HEIGHT;
 		pt.y -=      lineHeight;
+		
+#ifdef __WXMSW__
+		// Under Windows it seems that we need another 5 pixels ...
+		pt.y -= 5;
+		ccPoint.y -= 5;
+#endif
+
 	}
 #ifdef __WXMSW__
 	ccPoint = GetParent()->ScreenToClient(ccPoint);

@@ -47,20 +47,6 @@ AttachDbgProcBaseDlg::AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_listCtrlProcesses = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_VRULES );
 	bSizer1->Add( m_listCtrlProcesses, 1, wxALL|wxEXPAND, 5 );
 	
-	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 0, 1, 0, 0 );
-	fgSizer2->AddGrowableCol( 0 );
-	fgSizer2->SetFlexibleDirection( wxBOTH );
-	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	m_checkBoxUseSudo = new wxCheckBox( this, wxID_ANY, _("Attach as another user using the following command:"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer2->Add( m_checkBoxUseSudo, 0, wxALL, 5 );
-	
-	m_textCtrlSudoCommand = new wxTextCtrl( this, wxID_ANY, _("sudo -A"), wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
-	fgSizer2->Add( m_textCtrlSudoCommand, 0, wxALL|wxEXPAND, 5 );
-	
-	bSizer1->Add( fgSizer2, 0, wxEXPAND, 5 );
-	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
 	
@@ -81,6 +67,7 @@ AttachDbgProcBaseDlg::AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id, con
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	bSizer1->Fit( this );
 	
 	// Connect Events
 	m_textCtrlFilter->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( AttachDbgProcBaseDlg::OnFilter ), NULL, this );
@@ -88,8 +75,6 @@ AttachDbgProcBaseDlg::AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_listCtrlProcesses->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( AttachDbgProcBaseDlg::OnItemActivated ), NULL, this );
 	m_listCtrlProcesses->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( AttachDbgProcBaseDlg::OnItemDeselected ), NULL, this );
 	m_listCtrlProcesses->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( AttachDbgProcBaseDlg::OnItemSelected ), NULL, this );
-	m_checkBoxUseSudo->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( AttachDbgProcBaseDlg::OnAttachAsAnotherUserUI ), NULL, this );
-	m_textCtrlSudoCommand->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( AttachDbgProcBaseDlg::OnSudoCommandUI ), NULL, this );
 	m_buttonOk->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( AttachDbgProcBaseDlg::OnBtnAttachUI ), NULL, this );
 	m_buttonRefresh->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AttachDbgProcBaseDlg::OnRefresh ), NULL, this );
 }
@@ -102,8 +87,6 @@ AttachDbgProcBaseDlg::~AttachDbgProcBaseDlg()
 	m_listCtrlProcesses->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( AttachDbgProcBaseDlg::OnItemActivated ), NULL, this );
 	m_listCtrlProcesses->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( AttachDbgProcBaseDlg::OnItemDeselected ), NULL, this );
 	m_listCtrlProcesses->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( AttachDbgProcBaseDlg::OnItemSelected ), NULL, this );
-	m_checkBoxUseSudo->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( AttachDbgProcBaseDlg::OnAttachAsAnotherUserUI ), NULL, this );
-	m_textCtrlSudoCommand->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( AttachDbgProcBaseDlg::OnSudoCommandUI ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( AttachDbgProcBaseDlg::OnBtnAttachUI ), NULL, this );
 	m_buttonRefresh->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AttachDbgProcBaseDlg::OnRefresh ), NULL, this );
 	

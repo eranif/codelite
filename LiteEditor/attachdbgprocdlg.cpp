@@ -29,9 +29,6 @@
 #include "procutils.h"
 #include <algorithm>
 
-bool AttachDbgProcDlg::ms_useSudo = false;
-wxString AttachDbgProcDlg::ms_sudoCmd = wxT("sudo -A");
-
 /// Ascending sorting function
 struct PIDSorter {
 	bool operator()(const ProcessEntry &rStart, const ProcessEntry &rEnd) {
@@ -58,10 +55,7 @@ AttachDbgProcDlg::AttachDbgProcDlg( wxWindow* parent )
 
 	m_listCtrlProcesses->InsertColumn(0, _("PID"));
 	m_listCtrlProcesses->InsertColumn(1, _("Name"));
-	
-	m_checkBoxUseSudo->SetValue(ms_useSudo);
-	m_textCtrlSudoCommand->SetValue(ms_sudoCmd);
-	
+
 	RefreshProcessesList(wxEmptyString);
 	m_textCtrlFilter->SetFocus();
 	Centre();
@@ -164,8 +158,6 @@ void AttachDbgProcDlg::OnBtnAttachUI( wxUpdateUIEvent& event )
 
 AttachDbgProcDlg::~AttachDbgProcDlg()
 {
-	ms_useSudo = m_checkBoxUseSudo->IsChecked();
-	ms_sudoCmd = m_textCtrlSudoCommand->GetValue();
 	WindowAttrManager::Save(this, wxT("AttachDbgProcDlg"), NULL);
 }
 
@@ -182,21 +174,4 @@ void AttachDbgProcDlg::OnRefresh(wxCommandEvent& event)
 	m_textCtrlFilter->Clear();
 	RefreshProcessesList(wxEmptyString);
 	m_textCtrlFilter->SetFocus();
-}
-
-void AttachDbgProcDlg::OnSudoCommandUI(wxUpdateUIEvent& event)
-{
-	event.Enable(m_checkBoxUseSudo->IsChecked());
-}
-
-void AttachDbgProcDlg::OnAttachAsAnotherUserUI(wxUpdateUIEvent& event)
-{
-#if 1
-#ifdef __WXMSW__
-	event.Check(false);
-	event.Enable(false);
-#else
-	event.Enable(true);
-#endif
-#endif
 }

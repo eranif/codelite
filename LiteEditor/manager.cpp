@@ -1920,7 +1920,6 @@ void Manager::DbgStart ( long attachPid )
 	wxString            output;
 	wxString            debuggerName;
 	wxString            exepath;
-	wxString            sudoCmd;
 	wxString            wd;
 	wxString            args;
 	BuildConfigPtr      bldConf;
@@ -1951,7 +1950,6 @@ void Manager::DbgStart ( long attachPid )
 				exepath = fn.GetFullName();
 
 			}
-			sudoCmd = dlg->GetRunAsAnotherUser() ? dlg->GetSudoCommand() : wxString();
 			dlg->Destroy();
 
 			startup_info.pid = PID;
@@ -2106,7 +2104,7 @@ void Manager::DbgStart ( long attachPid )
 		}
 	} else {
 		//Attach to process...
-		if ( !dbgr->Start ( dbgname, exepath, PID, sudoCmd, bps, dbg_cmds, clMainFrame::Get()->StartTTY(title) ) ) {
+		if ( !dbgr->Start ( dbgname, exepath, PID, wxT(""), bps, dbg_cmds, clMainFrame::Get()->StartTTY(title) ) ) {
 			wxString errMsg;
 			errMsg << _( "Failed to initialize debugger: " ) << dbgname << wxT( "\n" );
 			DebugMessage ( errMsg );

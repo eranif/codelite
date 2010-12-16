@@ -16,6 +16,7 @@ xcopy templates\gizmos\* "%ProgramFiles(x86)%\CodeLite\templates\gizmos\" /E /I 
 xcopy templates\qmake\* "%ProgramFiles(x86)%\CodeLite\templates\qmake\" /E /I /H /Y /EXCLUDE:excludes
 xcopy *.html "%ProgramFiles(x86)%\CodeLite\" /H /Y /EXCLUDE:excludes
 xcopy codelite-icons.zip "%ProgramFiles(x86)%\CodeLite\" /H /Y /EXCLUDE:excludes
+xcopy locale\* "%ProgramFiles(x86)%\CodeLite\locale\" /E /I /H /Y /EXCLUDE:excludes
 
 :: Copy the misc files
 copy codelite_indexer.exe "%ProgramFiles(x86)%\CodeLite\" /Y

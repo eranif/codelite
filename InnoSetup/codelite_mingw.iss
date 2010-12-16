@@ -76,7 +76,7 @@ Source: "C:\Users\eran\software\MinGW-4.4.1\bin\libintl3.dll"; DestDir: "{app}";
 Source: "C:\Users\eran\software\MinGW-4.4.1\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Users\eran\software\MinGW-4.4.1\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
 Source: "..\UnitTest++\*"; DestDir: "{code:GetUnitTestPPInstallDir}"; Flags: recursesubdirs ; Components: UnitTestPP
-
+Source: "..\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs ; Components: Editor
 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}"

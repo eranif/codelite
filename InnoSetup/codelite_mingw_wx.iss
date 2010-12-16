@@ -51,6 +51,7 @@ Source: "..\Runtime\templates\*"; DestDir: "{app}\templates"; Flags: recursesubd
 Source: "..\Runtime\lexers\*.xml"; DestDir: "{app}\lexers\"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\debuggers\Debugger.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs ; Components: Editor
 
 Source: "..\lib\gcc_lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\lib\gcc_lib\libwxscintillau.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

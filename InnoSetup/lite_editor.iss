@@ -72,7 +72,7 @@ Source: "C:\Users\eran\software\MinGW-4.4.1\bin\cygncurses-8.dll"; DestDir: "{ap
 Source: "C:\Users\eran\software\MinGW-4.4.1\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Users\eran\software\MinGW-4.4.1\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Users\eran\software\MinGW-4.4.1\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-
+Source: "..\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs ; Components: Editor
 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}"

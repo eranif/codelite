@@ -42,7 +42,7 @@ void PSGeneralPage::OnBrowseIntermediateDir( wxCommandEvent& event )
 		fn.MakeAbsolute();
 		initPath = fn.GetFullPath();
 	}
-	wxString new_path = wxDirSelector(wxT("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = wxDirSelector(_("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
 		m_textCtrlItermediateDir->SetValue(new_path);
 	}
@@ -51,7 +51,7 @@ void PSGeneralPage::OnBrowseIntermediateDir( wxCommandEvent& event )
 void PSGeneralPage::OnBrowseProgram( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	wxString program = wxFileSelector(wxT("Select Program to Run / Debug:"));
+	wxString program = wxFileSelector(_("Select Program to Run / Debug:"));
 	if (program.IsEmpty() == false) {
 		m_textCommand->SetValue( program );
 	}
@@ -76,7 +76,7 @@ void PSGeneralPage::OnBrowseCommandWD( wxCommandEvent& event )
 		initPath = fn.GetFullPath();
 	}
 
-	wxString new_path = wxDirSelector(wxT("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = wxDirSelector(_("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
 		m_textCtrlCommandWD->SetValue(new_path);
 	}

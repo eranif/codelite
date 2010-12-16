@@ -198,13 +198,13 @@ bool MainBook::AskUserToSave(LEditor *editor)
 
 	// unsaved changes
 	wxString msg;
-	msg << wxT("Save changes to '") << editor->GetFileName().GetFullName() << wxT("' ?");
+	msg << _("Save changes to '") << editor->GetFileName().GetFullName() << wxT("' ?");
 	long style = wxYES_NO;
 	if (!ManagerST::Get()->IsShutdownInProgress()) {
 		style |= wxCANCEL;
 	}
 
-	int answer = wxMessageBox(msg, wxT("Confirm"), style);
+	int answer = wxMessageBox(msg, _("Confirm"), style);
 	switch (answer) {
 	case wxYES:
 		return editor->SaveFile();
@@ -391,7 +391,7 @@ LEditor *MainBook::NewEditor()
 {
 	static int fileCounter = 0;
 
-	wxString fileNameStr(wxT("Untitled"));
+	wxString fileNameStr(_("Untitled"));
 	fileNameStr << ++fileCounter;
 	wxFileName fileName(fileNameStr);
 
@@ -632,8 +632,8 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 	}
 	editors.resize(n);
 
-	bool res = !askUser || UserSelectFiles(files, wxT("Save Modified Files"),
-	                                       wxT("Some files are modified.\nChoose the files you would like to save."));
+	bool res = !askUser || UserSelectFiles(files, _("Save Modified Files"),
+	                                       _("Some files are modified.\nChoose the files you would like to save."));
 	if (res) {
 		for (size_t i = 0; i < files.size(); i++) {
 			if (files[i].second) {
@@ -666,7 +666,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
 	editors.resize(n);
 
 	if(prompt) {
-		UserSelectFiles(files, wxT("Reload Modified Files"), wxT("Files have been modified outside the editor.\nChoose which files you would like to reload."), false);
+		UserSelectFiles(files, _("Reload Modified Files"), _("Files have been modified outside the editor.\nChoose which files you would like to reload."), false);
 	}
 
 	std::vector<wxFileName> filesToRetag;
@@ -732,8 +732,8 @@ bool MainBook::CloseAll(bool cancellable)
 	}
 	editors.resize(n);
 
-	if (!UserSelectFiles(files, wxT("Save Modified Files"),
-	                     wxT("Some files are modified.\nChoose the files you would like to save."), cancellable))
+	if (!UserSelectFiles(files, _("Save Modified Files"),
+	                     _("Some files are modified.\nChoose the files you would like to save."), cancellable))
 		return false;
 
 	for (size_t i = 0; i < files.size(); i++) {

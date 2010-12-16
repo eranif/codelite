@@ -39,7 +39,7 @@ void DependenciesPage::OnConfigChanged( wxCommandEvent& event )
 {
 	if(m_dirty) {
 		// save old configuration
-		if(wxMessageBox(wxString::Format(wxT("Build order for configuration '%s' has been modified, would you like to save it?"), m_currentSelection.GetData()), wxT("CodeLite"), wxYES_NO|wxICON_QUESTION) == wxYES){
+		if(wxMessageBox(wxString::Format(_("Build order for configuration '%s' has been modified, would you like to save it?"), m_currentSelection.GetData()), _("CodeLite"), wxYES_NO|wxICON_QUESTION) == wxYES){
 			Save();
 		}
 		m_dirty = false;
@@ -172,7 +172,7 @@ void DependenciesPage::Init()
 		DoPopulateControl( m_choiceProjectConfig->GetStringSelection() );
 
 	} else {
-		wxMessageBox(errMsg, wxT("CodeLite"));
+		wxMessageBox(errMsg, _("CodeLite"));
 		return;
 	}
 }

@@ -8,8 +8,8 @@ CompilerLinkerOptionsPage::CompilerLinkerOptionsPage( wxWindow* parent, const wx
 , m_cmpname(cmpname)
 , m_selectedLnkOption(wxNOT_FOUND)
 {
-	m_listLinkerOptions->InsertColumn(0, wxT("Switch"));
-	m_listLinkerOptions->InsertColumn(1, wxT("Help"));
+	m_listLinkerOptions->InsertColumn(0, _("Switch"));
+	m_listLinkerOptions->InsertColumn(1, _("Help"));
 	
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(m_cmpname);
 	const Compiler::CmpCmdLineOptions& lnkOptions = cmp->GetLinkerOptions();
@@ -69,7 +69,7 @@ void CompilerLinkerOptionsPage::OnNewLinkerOption( wxCommandEvent& event )
 void CompilerLinkerOptionsPage::OnDeleteLinkerOption( wxCommandEvent& event )
 {
 	if (m_selectedLnkOption != wxNOT_FOUND) {
-		if (wxMessageBox(_("Are you sure you want to delete this linker option?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
+		if (wxMessageBox(_("Are you sure you want to delete this linker option?"), _("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
 			m_listLinkerOptions->DeleteItem(m_selectedLnkOption);
 			m_listLinkerOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
 			m_selectedLnkOption = wxNOT_FOUND;

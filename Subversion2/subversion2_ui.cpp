@@ -306,7 +306,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	
 	m_notebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	wxSize m_notebookImageSize = wxSize( 32,32 );
-	int m_notebookIndex = 0;
+	// int m_notebookIndex = 0; unused var commented out
 	wxImageList* m_notebookImages = new wxImageList( m_notebookImageSize.GetWidth(), m_notebookImageSize.GetHeight() );
 	m_notebook->AssignImageList( m_notebookImages );
 	wxBitmap m_notebookBitmap;
@@ -923,7 +923,9 @@ PatchDlgBase::PatchDlgBase( wxWindow* parent, wxWindowID id, const wxString& tit
 	fgSizer11->SetFlexibleDirection( wxBOTH );
 	fgSizer11->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_filePicker = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("Patch files (*.patch;*.diff)|*.patch;*.diff|All Files (*)|*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
+	m_filePicker = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"),
+		wxString(_("Patch files")) + wxT(" (*.patch;*.diff)|*.patch;*.diff|") + wxString(_("All Files")) + wxT(" (*)|*"),
+			wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
 	fgSizer11->Add( m_filePicker, 0, wxALL|wxEXPAND, 5 );
 	
 	wxString m_radioBoxEOLPolicyChoices[] = { _("Do not change EOL, apply patch as it is"), _("Change to Windows style (CRLF)"), _("Change to UNIX style (LF)") };

@@ -136,7 +136,7 @@ void wxTerminal::OnProcessEnd(wxCommandEvent& event)
 	}
 	if(m_exitWhenProcessDies) {
 		m_textCtrl->SetInsertionPointEnd();
-		m_textCtrl->AppendText(wxT("\nPress any key to continue..."));
+		m_textCtrl->AppendText(wxString(wxT("\n")) +_("Press any key to continue..."));
 		m_exitOnKey = true;
 	}
 }
@@ -166,7 +166,7 @@ void wxTerminal::DoCtrlC()
 		CloseHandle(  hProcess );
 	}
 #else
-	int status(0);
+	//int status(0); Commented out as 'Unused variable'
 	wxKill(m_process->GetPid(), wxSIGKILL, NULL, wxKILL_CHILDREN);
 //	waitpid(m_process->GetPid(), &status, 0);
 #endif
@@ -203,11 +203,11 @@ void wxTerminal::DoProcessCommand(const wxString& command)
 	} else {
 		m_process = NULL;
 		m_textCtrl->SetInsertionPointEnd();
-		m_textCtrl->AppendText(wxString::Format(wxT("Failed to execute command: %s\nWorking Directory: %s\n"), cmdShell.c_str(), m_workingDir.c_str()));
+		m_textCtrl->AppendText(wxString::Format(_("Failed to execute command: %s\nWorking Directory: %s\n"), cmdShell.c_str(), m_workingDir.c_str()));
 
 		if(m_exitWhenProcessDies) {
 			m_textCtrl->SetInsertionPointEnd();
-			m_textCtrl->AppendText(wxT("\nPress any key to continue..."));
+			m_textCtrl->AppendText(wxString(wxT("\n")) +_("Press any key to continue..."));
 			m_exitOnKey = true;
 		}
 	}

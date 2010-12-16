@@ -431,7 +431,7 @@ IEditor *UnitTestPP::DoAddTestFile(const wxString& filename, const wxString &pro
 		// the file does not exist!
 		wxFFile file(filename, wxT("wb"));
 		if ( !file.IsOpened() ) {
-			wxMessageBox(wxString::Format(wxT("Could not create target file '%s'"), filename.c_str()), _("CodeLite"), wxICON_WARNING|wxOK);
+			wxMessageBox(wxString::Format(_("Could not create target file '%s'"), filename.c_str()), _("CodeLite"), wxICON_WARNING|wxOK);
 			return NULL;
 		}
 

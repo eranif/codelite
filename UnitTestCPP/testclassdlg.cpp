@@ -121,7 +121,7 @@ void TestClassDlg::OnButtonOk(wxCommandEvent& e)
 {
 	// validate the class name
 	if ( m_checkListMethods->GetCount() == 0 ) {
-		wxMessageBox(_("There are no tests to generate"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		wxMessageBox(_("There are no tests to generate"), _("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 	EndModal(wxID_OK);
@@ -156,7 +156,7 @@ void TestClassDlg::DoRefreshFunctions(bool repportError)
 
 	if (matches.empty()) {
 		if(repportError){
-			wxMessageBox(_("Could not find match for class '")+m_textCtrlClassName->GetValue()+wxT("'"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+			wxMessageBox(_("Could not find match for class '")+m_textCtrlClassName->GetValue()+wxT("'"), _("CodeLite"), wxICON_WARNING|wxOK);
 		}
 		return;
 	}
@@ -175,7 +175,7 @@ void TestClassDlg::DoRefreshFunctions(bool repportError)
 			choices.Add(t->GetPath());
 		}
 
-		theClass = wxGetSingleChoice(wxT("Select class:"), wxT("Select class:"), choices, this);
+		theClass = wxGetSingleChoice(_("Select class:"), _("Select class:"), choices, this);
 	}
 
 	if (theClass.empty()) {//user clicked 'Cancel'

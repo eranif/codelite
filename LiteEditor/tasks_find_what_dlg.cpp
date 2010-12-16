@@ -18,8 +18,8 @@ public:
 TasksFindWhatDlg::TasksFindWhatDlg( wxWindow* parent )
 		: TasksFindWhatDlgBase( parent )
 {
-	m_list->InsertColumn(0, wxT("Enabled"));
-	m_list->InsertColumn(1, wxT("Task"));
+	m_list->InsertColumn(0, _("Enabled"));
+	m_list->InsertColumn(1, _("Task"));
 	m_list->SetColumnWidth(1, 200);
 
 	// Load all info from disk
@@ -47,7 +47,7 @@ void TasksFindWhatDlg::OnNewTask( wxCommandEvent& event )
 	if (dlg.ShowModal() == wxID_OK) {
 		wxRegEx re(dlg.m_regex->GetValue());
 		if (re.IsValid() == false) {
-			wxMessageBox(wxString::Format(wxT("'%s' is not a valid regulare expression"), dlg.m_regex->GetValue().c_str()), wxT("CodeLite"), wxICON_WARNING|wxOK);
+			wxMessageBox(wxString::Format(_("'%s' is not a valid regular expression"), dlg.m_regex->GetValue().c_str()), _("CodeLite"), wxICON_WARNING|wxOK);
 			return;
 		}
 		DoAddLine(dlg.m_name->GetValue(), dlg.m_regex->GetValue(), true);
@@ -61,7 +61,7 @@ void TasksFindWhatDlg::OnDeleteTask( wxCommandEvent& event )
 	if (selection == wxNOT_FOUND)
 		return;
 
-	int answer = wxMessageBox(wxT("Are you sure you want to delete this entry?"), wxT("Confirm"), wxICON_QUESTION|wxYES_NO);
+	int answer = wxMessageBox(_("Are you sure you want to delete this entry?"), _("Confirm"), wxICON_QUESTION|wxYES_NO);
 	if (answer == wxYES) {
 		m_list->DeleteItem(selection);
 	}

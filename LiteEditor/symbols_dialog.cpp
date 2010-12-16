@@ -38,11 +38,11 @@ SymbolsDialog::SymbolsDialog( wxWindow* parent )
 		, m_selectedItem(wxNOT_FOUND)
 {
 	// Initialise the list control
-	m_results->InsertColumn(0, wxT("Symbol"));
-	m_results->InsertColumn(1, wxT("Kind"));
-	m_results->InsertColumn(2, wxT("File"));
-	m_results->InsertColumn(3, wxT("Line"));
-	m_results->InsertColumn(4, wxT("Pattern"));
+	m_results->InsertColumn(0, _("Symbol"));
+	m_results->InsertColumn(1, _("Kind"));
+	m_results->InsertColumn(2, _("File"));
+	m_results->InsertColumn(3, _("Line"));
+	m_results->InsertColumn(4, _("Pattern"));
 	
 	m_results->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(SymbolsDialog::OnItemDeselected), NULL, this);
 	Centre();

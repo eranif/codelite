@@ -49,7 +49,7 @@ public:
         }
         else
         {
-            wxMessageBox(wxT("Failed to load image"));
+            wxMessageBox(_("Failed to load image"));
         }
     }
 
@@ -310,7 +310,7 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 MacBundler::MacBundler(IManager *manager)
 		: IPlugin(manager)
 {
-	m_longName = wxT("Manage OS X app bundles");
+	m_longName = _("Manage OS X app bundles");
 	m_shortName = wxT("MacBundler");
 }
 

@@ -28,7 +28,7 @@
 #include "imanager.h"
 
 NewIneritanceDlg::NewIneritanceDlg( wxWindow* parent, IManager *mgr, const wxString &parentName, const wxString &access )
-: NewIneritanceBaseDlg( parent, wxID_ANY, wxT("New Inheritance"))
+: NewIneritanceBaseDlg( parent, wxID_ANY, _("New Inheritance"))
 , m_mgr(mgr)
 {
 	//by default select 0

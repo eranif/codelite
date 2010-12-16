@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "editor_config.h"
 #include "optionsconfig.h"
+#include <wx/intl.h>
 #include <wx/fontmap.h>
 #include "xmlutils.h"
 #include "macros.h"
@@ -91,6 +92,8 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         , m_caretUseCamelCase(false)
 		, m_wordWrap(false)
 		, m_dockingStyle(0)
+		, m_preferredLocale(wxT("en_US"))
+		, m_useLocale(0)
 {
 	m_mswTheme = false;
 #ifdef __WXMSW__
@@ -159,6 +162,8 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
     	m_wordWrap                      = XmlUtils::ReadBool  (node, wxT("m_wordWrap"),                m_wordWrap);
 		m_dockingStyle                  = XmlUtils::ReadLong  (node, wxT("m_dockingStyle"),            m_dockingStyle);
 		m_mswTheme                      = XmlUtils::ReadBool  (node, wxT("m_mswTheme"),                m_mswTheme);
+		m_preferredLocale               = XmlUtils::ReadString(node, wxT("m_preferredLocale"),         m_preferredLocale);
+		m_useLocale                 	= XmlUtils::ReadBool  (node, wxT("m_useLocale"),               m_useLocale);
 		
         // These hacks will likely be changed in the future. If so, we'll be able to remove the #include "editor_config.h" too
     	long trim             (0); 
@@ -230,6 +235,9 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("m_wordWrap"),                    BoolToString(m_wordWrap));
 	n->AddProperty(wxT("m_dockingStyle"),                wxString::Format(wxT("%d"), m_dockingStyle));
 	n->AddProperty(wxT("m_mswTheme"),                    BoolToString(m_mswTheme));
+	n->AddProperty(wxT("m_preferredLocale"),             m_preferredLocale);
+	n->AddProperty(wxT("m_useLocale"),                   BoolToString(m_useLocale));
+
 	wxString tmp;
     tmp << m_indentWidth;
     n->AddProperty(wxT("IndentWidth"), tmp);

@@ -43,7 +43,7 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 	m_choiceSearchScope->SetStringSelection(data.GetScanScope());
 	m_checkBoxUpdateDb->SetValue(data.GetRebuildOption());
 	m_checkBoxRevertedIndex->SetValue(data.GetBuildRevertedIndexOption());
-	SetMessage(wxT("Ready"), 0);
+	SetMessage(_("Ready"), 0);
 }
 
 void CscopeTab::OnItemActivated( wxTreeEvent& event )
@@ -97,7 +97,7 @@ void CscopeTab::BuildTable(CscopeResultTable *table)
 			}
 
 			wxString display_string;
-			display_string << wxT("Line: ") << entry.GetLine() << wxT(", ") << entry.GetScope() << wxT(", ") << entry.GetPattern();
+			display_string << _("Line: ") << entry.GetLine() << wxT(", ") << entry.GetScope() << wxT(", ") << entry.GetPattern();
 			m_treeCtrlResults->AppendItem(parent, display_string, wxNOT_FOUND, wxNOT_FOUND, new CscopeTabClientData(entry));
 		}
 	}
@@ -174,7 +174,7 @@ void CscopeTab::SetMessage(const wxString &msg, int percent)
 void CscopeTab::OnClearResults(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
-	SetMessage(wxT("Ready"), 0);
+	SetMessage(_("Ready"), 0);
 	Clear();
 }
 

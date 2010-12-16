@@ -64,7 +64,7 @@ void CleanRequest::Process(IManager *manager)
 
 	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
-		AppendLine(wxT("Cant find project: ") + m_info.GetProject());
+		AppendLine(_("Cant find project: ") + m_info.GetProject());
 		return;
 	}
 	wxString             pname (proj->GetName());
@@ -78,7 +78,7 @@ void CleanRequest::Process(IManager *manager)
 	}
 
 	if ( cmd.IsEmpty() ) {
-		AppendLine(wxT("Sorry, there is no 'Clean' command available\n"));
+		AppendLine(_("Sorry, there is no 'Clean' command available\n"));
 		return;
 	}
 
@@ -94,7 +94,7 @@ void CleanRequest::Process(IManager *manager)
 			}
 		}
 	} else {
-		AppendLine(wxT("Sorry, couldn't find the Build configuration\n"));
+		AppendLine(_("Sorry, couldn't find the Build configuration\n"));
 		return;
 	}
 
@@ -144,7 +144,7 @@ void CleanRequest::Process(IManager *manager)
 
 		//remove environment settings applied
 		wxString message;
-		message << wxT("Failed to start clean process, command: ") << cmd << wxT(", process terminated with exit code: 0");
+		message << _("Failed to start clean process, command: ") << cmd << _(", process terminated with exit code: 0");
 		AppendLine(message);
 		return;
 	}

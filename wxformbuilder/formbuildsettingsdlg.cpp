@@ -46,7 +46,7 @@ FormBuildSettingsDlg::FormBuildSettingsDlg( wxWindow* parent, IManager *mgr )
 void FormBuildSettingsDlg::OnButtonBrowse( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	wxString new_path = wxFileSelector(wxT("Select wxFormBuilder exe:"), m_textCtrlFBPath->GetValue().c_str(), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
+	wxString new_path = wxFileSelector(_("Select wxFormBuilder exe:"), m_textCtrlFBPath->GetValue().c_str(), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
 	if (new_path.IsEmpty() == false) {
 		m_textCtrlFBPath->SetValue(new_path);
 	}

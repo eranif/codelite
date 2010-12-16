@@ -47,7 +47,7 @@ void CompilerFileTypePage::OnFileTypeSelected(wxListEvent& event)
 void CompilerFileTypePage::OnDeleteFileType(wxCommandEvent& event)
 {
 	if (m_selectedFileType != wxNOT_FOUND) {
-		if (wxMessageBox(_("Are you sure you want to delete this file type?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
+		if (wxMessageBox(_("Are you sure you want to delete this file type?"), _("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
 			m_listCtrlFileTypes->DeleteItem(m_selectedFileType);
 			m_selectedFileType = wxNOT_FOUND;
 		}
@@ -69,9 +69,9 @@ void CompilerFileTypePage::InitFileTypes()
 {
 	m_listCtrlFileTypes->Freeze();
 	m_listCtrlFileTypes->ClearAll();
-	m_listCtrlFileTypes->InsertColumn(0, wxT("Extension"));
-	m_listCtrlFileTypes->InsertColumn(1, wxT("Kind"));
-	m_listCtrlFileTypes->InsertColumn(2, wxT("Compilation Line"));
+	m_listCtrlFileTypes->InsertColumn(0, _("Extension"));
+	m_listCtrlFileTypes->InsertColumn(1, _("Kind"));
+	m_listCtrlFileTypes->InsertColumn(2, _("Compilation Line"));
 
 	//populate the list control
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(m_cmpname);
@@ -83,7 +83,7 @@ void CompilerFileTypePage::InitFileTypes()
 
 			long item = AppendListCtrlRow(m_listCtrlFileTypes);
 			SetColumnText(m_listCtrlFileTypes, item, 0, ft.extension);
-			SetColumnText(m_listCtrlFileTypes, item, 1, ft.kind == Compiler::CmpFileKindSource ? wxT("Source") : wxT("Resource"));
+			SetColumnText(m_listCtrlFileTypes, item, 1, ft.kind == Compiler::CmpFileKindSource ? _("Source") : _("Resource"));
 			SetColumnText(m_listCtrlFileTypes, item, 2, ft.compilation_line);
 		}
 	}
@@ -102,7 +102,7 @@ void CompilerFileTypePage::Save(CompilerPtr cmp)
 	for (int i=0; i<count; i++) {
 		Compiler::CmpFileTypeInfo ft;
 		ft.extension = GetColumnText(m_listCtrlFileTypes, i, 0);
-		ft.kind = GetColumnText(m_listCtrlFileTypes, i, 1) == wxT("Resource") ? Compiler::CmpFileKindResource : Compiler::CmpFileKindSource;
+		ft.kind = GetColumnText(m_listCtrlFileTypes, i, 1) == _("Resource") ? Compiler::CmpFileKindResource : Compiler::CmpFileKindSource;
 		ft.compilation_line = GetColumnText(m_listCtrlFileTypes, i, 2);
 
 		fileTypes[ft.extension] = ft;

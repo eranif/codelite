@@ -39,7 +39,7 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 		:
 		NewProjectBaseDlg( parent )
 {
-	m_listTemplates->InsertColumn( 0, wxT("Type") );
+	m_listTemplates->InsertColumn( 0, _("Type") );
 	m_listTemplates->SetColumnWidth( 0, m_listTemplates->GetSize().GetWidth() );
 
 	//get list of project templates
@@ -54,10 +54,10 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 	std::set<wxString>              categories;
 
 	// Add the 'All' category
-	categories.insert(wxT("All"));
+	categories.insert(_("All"));
 	for (; iter != m_list.end(); iter++) {
 		wxString internalType = (*iter)->GetProjectInternalType();
-		if (internalType.IsEmpty()) internalType = wxT("Others");
+		if (internalType.IsEmpty()) internalType = _("Others");
 		categories.insert( internalType );
 	}
 
@@ -122,17 +122,17 @@ void NewProjectDlg::OnCreate(wxCommandEvent &event)
 	wxString projectName = m_txtProjName->GetValue();
 	projectName.Trim().Trim(false);
 	if(projectName.find_first_not_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")) != wxString::npos) {
-		wxMessageBox(_("Project name can only contain alpha numeric characters and/or the underscore '_'"), wxT("Error"), wxOK | wxICON_HAND | wxCENTER, this);
+		wxMessageBox(_("Project name can only contain alpha numeric characters and/or the underscore '_'"), _("Error"), wxOK | wxICON_HAND | wxCENTER, this);
 		return;
 	}
 
 	if(projectName.IsEmpty()) {
-		wxMessageBox(_("Please provide a name for the project"), wxT("Error"), wxOK | wxICON_HAND | wxCENTER, this);
+		wxMessageBox(_("Please provide a name for the project"), _("Error"), wxOK | wxICON_HAND | wxCENTER, this);
 		return;
 	}
 
 	if ( !wxDirExists(fn.GetPath()) ) {
-		wxMessageBox(_("Invalid path: ") + fn.GetPath(), wxT("Error"), wxOK | wxICON_HAND);
+		wxMessageBox(_("Invalid path: ") + fn.GetPath(), _("Error"), wxOK | wxICON_HAND);
 		return;
 	}
 
@@ -150,10 +150,10 @@ void NewProjectDlg::OnCreate(wxCommandEvent &event)
 			if ( wxFileName::FileExists(new_file) ) {
 				// this file already - notify the user
 				wxString msg;
-				msg << wxT("The File '") << f.GetFullName() << wxT("' already exists at the target directory '") << base_dir << wxT("'\n");
-				msg << wxT("Please select a different project path\n");
-				msg << wxT("The file '") << f.GetFullName() << wxT("' is part of the template project [") << p->GetName() << wxT("]");
-				wxMessageBox(msg, wxT("CodeLite"), wxOK|wxICON_HAND);
+				msg << _("The File '") << f.GetFullName() << _("' already exists at the target directory '") << base_dir << wxT("'\n");
+				msg << _("Please select a different project path\n");
+				msg << _("The file '") << f.GetFullName() << _("' is part of the template project [") << p->GetName() << wxT("]");
+				wxMessageBox(msg, _("CodeLite"), wxOK|wxICON_HAND);
 				return;
 			}
 		}
@@ -249,10 +249,10 @@ void NewProjectDlg::FillProjectTemplateListCtrl(const wxString& category)
 	for (; iter != m_list.end(); iter++) {
 		wxString intType = (*iter)->GetProjectInternalType();
 
-		if ( (category == wxT("All")) ||
+		if ( (category == _("All")) ||
 		        (intType == category) ||
-		        ( (intType == wxEmptyString) && (category == wxT("Others")) ) ||
-		        ( (m_chCategories->FindString(intType) == wxNOT_FOUND) && (category == wxT("Others")) ) ) {
+		        ( (intType == wxEmptyString) && (category == _("Others")) ) ||
+		        ( (m_chCategories->FindString(intType) == wxNOT_FOUND) && (category == _("Others")) ) ) {
 			long item = AppendListCtrlRow(m_listTemplates);
 			std::map<wxString,int>::iterator img_iter = m_mapImages.find((*iter)->GetName());
 			int imgid(0);
@@ -276,7 +276,7 @@ void NewProjectDlg::OnBrowseProjectPath(wxCommandEvent& event)
 	wxUnusedVar(event);
 
 	wxString path(m_textCtrlProjectPath->GetValue());
-	wxString new_path = wxDirSelector(wxT("Select Project Path:"), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = wxDirSelector(_("Select Project Path:"), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
 		m_textCtrlProjectPath->SetValue(new_path);
 	}

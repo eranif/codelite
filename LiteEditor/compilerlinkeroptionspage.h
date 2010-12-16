@@ -34,7 +34,7 @@ class CompilerLinkerOptionDialog : public CompilerOptionDialog
 {
 public:
 	CompilerLinkerOptionDialog(wxWindow* parent, const wxString& name, const wxString& help)
-	: CompilerOptionDialog(parent, wxT("Linker option"), name, help)
+	: CompilerOptionDialog(parent, _("Linker option"), name, help)
 	{
 	}
 };

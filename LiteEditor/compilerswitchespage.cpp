@@ -28,8 +28,8 @@ void CompilerSwitchesPage::AddSwitch(const wxString &name, const wxString &value
 void CompilerSwitchesPage::EditSwitch()
 {
 	wxString message;
-	message << m_selSwitchName << wxT(" switch:");
-	wxTextEntryDialog dlg(this, message, wxT("Edit"), m_selSwitchValue);
+	message << m_selSwitchName << _(" switch:");
+	wxTextEntryDialog dlg(this, message, _("Edit"), m_selSwitchValue);
 	if (dlg.ShowModal() == wxID_OK) {
 		wxString newVal = dlg.GetValue();
 		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(m_cmpname);
@@ -81,8 +81,8 @@ void CompilerSwitchesPage::InitSwitches()
 	//insert columns:
 	m_listSwitches->Freeze();
 	m_listSwitches->ClearAll();
-	m_listSwitches->InsertColumn(0, wxT("Name"));
-	m_listSwitches->InsertColumn(1, wxT("Value"));
+	m_listSwitches->InsertColumn(0, _("Name"));
+	m_listSwitches->InsertColumn(1, _("Value"));
 
 	//populate the list control
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(m_cmpname);

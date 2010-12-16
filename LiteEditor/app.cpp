@@ -291,23 +291,6 @@ bool CodeLiteApp::OnInit()
 	m_handler = LoadLibrary(wxT("exchndl.dll"));
 #endif
 	
-	// TODO :: load english locale by default until the localization is done
-	m_locale.Init(wxLANGUAGE_ENGLISH_UK); // Initialise the catalog we'll be using
-
-#if defined (__WXGTK__)
-	// Cater for a --prefix= build. This gets added automatically to the search path for catalogues.
-	// So hack in the standard ones too, otherwise wxstd.mo will be missed
-	wxLocale::AddCatalogLookupPathPrefix(wxT("/usr/share/locale"));
-	wxLocale::AddCatalogLookupPathPrefix(wxT("/usr/local/share/locale"));
-#endif
-
-	// Load the standard wxWidgets catalogue: it'll help if there isn't a CodeLite one for a language
-	// But do it first so that, if a word appears in both catalogues, the CodeLite-translated one takes precedence
-	m_locale.AddCatalog(wxT("wxstd"));
-
-	if ( ! m_locale.AddCatalog(wxT("codelite")) )
-	  m_locale.AddCatalog(wxT("CodeLite"));              	// Hedge bets re our spelling
-
 
 	// Init resources and add the PNG handler
 	wxSystemOptions::SetOption(_T("msw.remap"), 0);
@@ -441,7 +424,6 @@ bool CodeLiteApp::OnInit()
 	// set the CTAGS_REPLACEMENT environment variable
 	wxSetEnv(wxT("CTAGS_REPLACEMENTS"), ManagerST::Get()->GetStarupDirectory() + wxT("/ctags.replacements"));
 
-	// show splashscreen here
 	long style = wxSIMPLE_BORDER;
 #if defined (__WXMSW__) || defined (__WXGTK__)
 	style |= wxFRAME_NO_TASKBAR;
@@ -495,6 +477,44 @@ bool CodeLiteApp::OnInit()
 	GeneralInfo inf;
 	cfg->ReadObject(wxT("GeneralInfo"), &inf);
 
+	// Set up the locale if appropriate
+	if (EditorConfigST::Get()->GetOptions()->GetUseLocale()) {
+		int preferredLocale = wxLANGUAGE_DEFAULT;
+		// The locale had to be saved as the canonical locale name, as the wxLanguage enum wasn't consistent between wx versions
+		wxString preferredLocalename = EditorConfigST::Get()->GetOptions()->GetPreferredLocale();
+		if (!preferredLocalename.IsEmpty()) {
+			const wxLanguageInfo* info = wxLocale::FindLanguageInfo(preferredLocalename);
+			if (info) {
+				preferredLocale = info->Language;
+		if (preferredLocale == wxLANGUAGE_UNKNOWN) {
+			preferredLocale = wxLANGUAGE_DEFAULT;
+		}
+			}
+		}
+		
+#if defined (__WXGTK__)
+		// Cater for a --prefix= build. This gets added automatically to the search path for catalogues.
+		// So hack in the standard ones too, otherwise wxstd.mo will be missed
+		wxLocale::AddCatalogLookupPathPrefix(wxT("/usr/share/locale"));
+		wxLocale::AddCatalogLookupPathPrefix(wxT("/usr/local/share/locale"));
+#endif
+		// This has to be done before the catalogues are added, as otherwise the wrong one (or none) will be found
+		m_locale.Init(preferredLocale);
+
+		bool codelitemo_found = m_locale.AddCatalog(wxT("codelite"));
+		if (!codelitemo_found) {
+		  m_locale.AddCatalog(wxT("CodeLite")); // Hedge bets re our spelling
+		}
+
+		if (!codelitemo_found) {
+			// I wanted to 'un-init' the locale if no translations were found
+			// as otherwise, in a RTL locale, menus, dialogs etc will be displayed RTL, in English...
+			// However I couldn't find a way to do this
+		}
+	}
+
+
+	// show splashscreen here
 	bool showSplash(false);
 #ifndef __WXDEBUG__
 	showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;

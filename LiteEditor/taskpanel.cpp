@@ -49,14 +49,14 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
     scopes.Add(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
 
     wxArrayString filters;
-    filters.Add(wxT("C/C++ Sources"));
+    filters.Add( wxString(wxT("C/C++ ")) + _("Sources"));
     m_extensions.Add(wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc;*.hh"));
-    filters.Add(wxT("All Files"));
+    filters.Add(_("All Files"));
     m_extensions.Add(wxT("*.*"));
 
     wxBoxSizer *horzSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    wxStaticText *text = new wxStaticText(this, wxID_ANY, wxT("Search Tasks in:"));
+    wxStaticText *text = new wxStaticText(this, wxID_ANY, _("Search Tasks in:"));
     horzSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
     m_scope = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, scopes);
@@ -67,7 +67,7 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
     m_filter->SetSelection(0);
     horzSizer->Add(m_filter, 1, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2);
 
-    wxButton *btn = new wxButton(this, XRCID("search"), wxT("&Search"));
+    wxButton *btn = new wxButton(this, XRCID("search"), _("&Search"));
     horzSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
 	m_findWhat = new wxButton(this, XRCID("find_what"), _("Find What..."));

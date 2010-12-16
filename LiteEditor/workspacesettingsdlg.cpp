@@ -63,7 +63,7 @@ WorkspaceSettingsDlg::~WorkspaceSettingsDlg()
 void WorkspaceSettingsDlg::OnAddIncludePath( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	wxString new_path = wxDirSelector(wxT("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = wxDirSelector(_("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
 		if (m_listBoxSearchPaths->GetStrings().Index(new_path) == wxNOT_FOUND) {
 			m_listBoxSearchPaths->Append(new_path);
@@ -99,7 +99,7 @@ void WorkspaceSettingsDlg::OnClearAllIncludePathUI( wxUpdateUIEvent& event )
 void WorkspaceSettingsDlg::OnAddExcludePath( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	wxString new_path = wxDirSelector(wxT("Add Parser Exclude Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = wxDirSelector(_("Add Parser Exclude Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
 		if (m_listBoxExcludePaths->GetStrings().Index(new_path) == wxNOT_FOUND) {
 			m_listBoxExcludePaths->Append(new_path);

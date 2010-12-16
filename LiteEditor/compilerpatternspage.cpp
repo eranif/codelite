@@ -199,7 +199,7 @@ void CompilerPatternDlg::OnSubmit( wxCommandEvent& event )
 {
 	if (TransferDataFromWindow()) {
 		if( m_pattern.Trim().IsEmpty() || m_lineIdx.Trim().IsEmpty() || m_fileIdx.Trim().IsEmpty() ) {
-			wxMessageBox(_("Please fill all the fields"), wxT("CodeLite"), wxOK|wxICON_INFORMATION, this);
+			wxMessageBox(_("Please fill all the fields"), _("CodeLite"), wxOK|wxICON_INFORMATION, this);
 			return;
 		}
 		EndModal(wxID_OK);

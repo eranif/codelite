@@ -1765,7 +1765,7 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 
 		wxString sessionName = dlg.GetTabgroupName();
 		if (sessionName.IsEmpty()) {
-			if ( wxMessageBox(_("Please enter a name for the tab group"), wxT("CodeLite"), wxICON_ERROR|wxOK|wxCANCEL, this) != wxOK ) {
+			if ( wxMessageBox(_("Please enter a name for the tab group"), _("CodeLite"), wxICON_ERROR|wxOK|wxCANCEL, this) != wxOK ) {
 				return;
 			} else {
 				continue;
@@ -2982,7 +2982,7 @@ void clMainFrame::OnLoadLastSession(wxCommandEvent &event)
 void clMainFrame::OnShowWelcomePageUI(wxUpdateUIEvent &event)
 {
 	CHECK_SHUTDOWN();
-	event.Enable(GetMainBook()->FindPage(wxT("Welcome!")) == NULL);
+	event.Enable(GetMainBook()->FindPage(_("Welcome!")) == NULL);
 }
 
 void clMainFrame::OnShowWelcomePage(wxCommandEvent &event)
@@ -3598,7 +3598,7 @@ void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
 
 void clMainFrame::ShowWelcomePage()
 {
-	wxWindow *win = GetMainBook()->FindPage(wxT("Welcome!"));
+	wxWindow *win = GetMainBook()->FindPage(_("Welcome!"));
 	if (win) {
 		GetMainBook()->SelectPage(win);
 	} else {
@@ -4181,7 +4181,7 @@ void clMainFrame::DoSuggestRestart()
 	btn2.buttonLabel = _("Not now");
 	btn2.window      = NULL;
 
-	GetMainBook()->ShowMessage(_("Some of the changes made requires a restart of CodeLite, Restart now?"), false,
+	GetMainBook()->ShowMessage(_("Some of the changes made require a restart of CodeLite. Restart now?"), false,
 								PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/restart")), btn1, btn2);
 #endif
 }

@@ -39,11 +39,19 @@ class EditorSettingsMiscPanel
 	, public TreeBookNode<EditorSettingsMiscPanel>
 {
 	bool m_restartRequired;
+	bool m_oldSetLocale;
+	wxString m_oldpreferredLocale;
+	
 protected:
+	int FindAvailableLocales();
+
 	// Handlers for EditorSettingsMiscBasePanel events.
 	void OnClearButtonClick( wxCommandEvent& event );
 	void OnClearUI(wxUpdateUIEvent &e);
 	void OnEnableThemeUI(wxUpdateUIEvent& event);
+	void LocaleStaticUpdateUI(wxUpdateUIEvent& event);
+	void LocaleChkUpdateUI(wxUpdateUIEvent& event);
+	void LocaleChoiceUpdateUI(wxUpdateUIEvent& event);
 
 public:
 	/** Constructor */

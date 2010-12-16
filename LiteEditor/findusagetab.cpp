@@ -63,7 +63,7 @@ void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString&
 	wxString      curfileContent;
 	wxArrayString lines;
 	
-	text << wxT("===== Finding references of '") << searchWhat << wxT("' =====\n");
+	text << _("===== Finding references of '") << searchWhat << wxT("' =====\n");
 	lineNumber++;
 	
 	std::list<CppToken>::const_iterator iter = matches.begin();
@@ -116,7 +116,7 @@ void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString&
 		text << wxT("\n");
 		lineNumber++;
 	}
-	text << wxT("===== Found total of ") << m_matches.size() << wxT(" matches =====\n");
+	text << wxString::Format(_("%s Found total of %u matches %s\n"), wxT("====="), (unsigned int)m_matches.size(),  wxT("matches ====="));
 	AppendText( text );
 }
 

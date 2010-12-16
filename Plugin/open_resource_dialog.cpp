@@ -12,7 +12,7 @@
 #include "windowattrmanager.h"
 #include <vector>
 
-wxString OpenResourceDialog::TYPE_WORKSPACE_FILE = wxT("Workspace file");
+wxString OpenResourceDialog::TYPE_WORKSPACE_FILE = _("Workspace file");
 wxString OpenResourceDialog::TYPE_CLASS          = wxT("Class, struct or union");
 wxString OpenResourceDialog::TYPE_MACRO          = wxT("Macro");
 wxString OpenResourceDialog::TYPE_FUNCTION       = wxT("Function");
@@ -42,7 +42,7 @@ OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager, con
 	m_listOptions->SetColumnWidth(2, 300);
 	
 	m_textCtrlResourceName->SetFocus();
-	SetLabel(wxString::Format(wxT("Open %s"), m_type.c_str()));
+	SetLabel(wxString::Format(_("Open %s"), m_type.c_str()));
 
 	WindowAttrManager::Load(this, wxT("OpenResourceDialog"), m_manager->GetConfigTool());
 	SimpleLongValue l;
@@ -104,7 +104,7 @@ void OpenResourceDialog::OnType( wxCommandEvent& event )
 	DoPopulateList();
 	m_textCtrlResourceName->SetFocus();
 
-	SetLabel(wxString::Format(wxT("Open %s"), m_type.c_str()));
+	SetLabel(wxString::Format(_("Open %s"), m_type.c_str()));
 }
 
 void OpenResourceDialog::OnUsePartialMatching( wxCommandEvent& event )
@@ -233,7 +233,7 @@ void OpenResourceDialog::DoPopulateTags()
 	}
 
 	if (m_listOptions->GetItemCount() == 150) {
-		m_staticTextErrorMessage->SetLabel(wxT("Too many matches, please narrow down your search"));
+		m_staticTextErrorMessage->SetLabel(_("Too many matches, please narrow down your search"));
 	}
 
 	if (!gotExactMatch && m_listOptions->GetItemCount()) {
@@ -278,7 +278,7 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
 		DoAppendLine(fn.GetFullName(), fn.GetFullPath(), wxT(""), false, new OpenResourceDialogItemData(tmpArr.Item(i), -1, wxT(""), OpenResourceDialog::TYPE_WORKSPACE_FILE, wxT(""), wxT("")));
 		
 		if( i == 150 ) {
-			m_staticTextErrorMessage->SetLabel(wxT("Too many matches, please narrow down your search"));
+			m_staticTextErrorMessage->SetLabel(_("Too many matches, please narrow down your search"));
 			break;
 		}
 	}

@@ -109,7 +109,7 @@ void CppCheckReportPage::Clear()
 void CppCheckReportPage::OnStopChecking(wxCommandEvent& event)
 {
 	m_plugin->StopAnalysis();
-	m_staticTextFile->SetLabel(wxT("Check Interrupted!"));
+	m_staticTextFile->SetLabel(_("Check Interrupted!"));
 	m_gauge->SetValue( m_gauge->GetRange() );
 }
 
@@ -228,11 +228,11 @@ void CppCheckReportPage::PrintStatusMessage()
 	wxString statusLine;
 
 	statusLine << wxT("===== ");
-	statusLine << wxT("cppcheck analysis ended. Found ") << sErrorCount << wxT(" possible errors ");
+	statusLine << _("cppcheck analysis ended. Found ") << sErrorCount << _(" possible errors");
 	statusLine << wxT("=====");
 
 	AppendLine( statusLine );
-	SetMessage( wxT("Done") );
+	SetMessage( _("Done") );
 }
 
 void CppCheckReportPage::SetGaugeRange(int range)

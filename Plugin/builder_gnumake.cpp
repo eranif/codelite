@@ -103,15 +103,15 @@ BuilderGnuMake::~BuilderGnuMake()
 bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild, bool isProjectOnly, bool force, wxString &errMsg)
 {
 	TIMER_START();
-	PRINT_TIMESTAMP(wxT("Exporting makefile...\n"));
+	PRINT_TIMESTAMP(_("Exporting makefile...\n"));
 	if (project.IsEmpty()) {
 		return false;
 	}
-	PRINT_TIMESTAMP(wxT("Exporting makefile...done\n"));
+	PRINT_TIMESTAMP(_("Exporting makefile...done\n"));
 
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project, errMsg);
 	if (!proj) {
-		errMsg << wxT("Cant open project '") << project << wxT("'");
+		errMsg << _("Cant open project '") << project << wxT("'");
 		return false;
 	}
 
@@ -121,15 +121,15 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 	if (confToBuild.IsEmpty()) {
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
 		if (!bldConf) {
-			errMsg << wxT("Cant find build configuration for project '") << project << wxT("'");
+			errMsg << _("Cant find build configuration for project '") << project << wxT("'");
 			return false;
 		}
 		bld_conf_name = bldConf->GetName();
 	}
 
-	PRINT_TIMESTAMP(wxT("Reading project dependencies...\n"));
+	PRINT_TIMESTAMP(_("Reading project dependencies...\n"));
 	wxArrayString depsArr = proj->GetDependencies(bld_conf_name);
-	PRINT_TIMESTAMP(wxT("Reading project dependencies...done\n"));
+	PRINT_TIMESTAMP(_("Reading project dependencies...done\n"));
 
 	wxArrayString removeList;
 	if (!isProjectOnly) {
@@ -142,9 +142,9 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 			//is still on the depdendencie list of this project
 			if (!dependProj) {
 				wxString msg;
-				msg << wxT("CodeLite can not find project '") << depsArr.Item(i) << wxT("' which is required\n");
-				msg << wxT("for building project '") << project << wxT("'.\nWould like to remove it from the dependency list?");
-				if (wxMessageBox(msg, wxT("CodeLite"), wxYES_NO | wxICON_QUESTION) == wxYES) {
+				msg << _("CodeLite can not find project '") << depsArr.Item(i) << _("' which is required\n");
+				msg << _("for building project '") << project << _("'.\nWould you like to remove it from the dependency list?");
+				if (wxMessageBox(msg, _("CodeLite"), wxYES_NO | wxICON_QUESTION) == wxYES) {
 					//remove the project from the dependecie list, and continue
 					removeList.Add(depsArr.Item(i));
 				}
@@ -179,7 +179,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 	wxFileName wspfile(WorkspaceST::Get()->GetWorkspaceFileName());
 
-	PRINT_TIMESTAMP(wxT("Generating makefile...\n"));
+	PRINT_TIMESTAMP(_("Generating makefile...\n"));
 	text << wxT(".PHONY: clean All\n\n");
 	text << wxT("All:\n");
 
@@ -265,11 +265,11 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 				CreateCustomPostBuildEvents(dependProjbldConf, text);
 
 			} else {
-				PRINT_TIMESTAMP(wxString::Format(wxT("Generating makefile for project %s...\n"), dependProj->GetName().c_str()));
+				PRINT_TIMESTAMP(wxString::Format(_("Generating makefile for project %s...\n"), dependProj->GetName().c_str()));
 				// generate the dependency project makefile
 				GenerateMakefile(dependProj, projectSelConf, confToBuild.IsEmpty() ? force : true);
 				text << GetProjectMakeCommand(wspfile, fn, dependProj, confToBuild);
-				PRINT_TIMESTAMP(wxString::Format(wxT("Generating makefile for project %s...done\n"), dependProj->GetName().c_str()));
+				PRINT_TIMESTAMP(wxString::Format(_("Generating makefile for project %s...done\n"), dependProj->GetName().c_str()));
 			}
 		}
 	}
@@ -418,14 +418,14 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 		text << wxT("\t") << GetCdCmd(wspfile, projectPath) << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\" clean\n") ;
 	}
 
-	PRINT_TIMESTAMP(wxT("Generating makefile...done\n"));
+	PRINT_TIMESTAMP(_("Generating makefile...done\n"));
 
 	//dump the content to file
-	PRINT_TIMESTAMP(wxT("Writing makefile...\n"));
+	PRINT_TIMESTAMP(_("Writing makefile...\n"));
 	wxFileOutputStream output(fn);
 	wxStringInputStream content(text);
 	output << content;
-	PRINT_TIMESTAMP(wxT("Writing makefile...done\n"));
+	PRINT_TIMESTAMP(_("Writing makefile...done\n"));
 
 	return true;
 }
@@ -769,13 +769,13 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 		text << wxT("-include ") << wxT("$(IntermediateDirectory)/*$(DependSuffix)\n");
 	}
 
-	PRINT_TIMESTAMP(wxT("Looping over the file list...done\n"));
-	PRINT_TIMESTAMP(wxT("Creating file targets...done\n"));
+	PRINT_TIMESTAMP(_("Looping over the file list...done\n"));
+	PRINT_TIMESTAMP(_("Creating file targets...done\n"));
 }
 
 void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text)
 {
-	PRINT_TIMESTAMP(wxT("Creating clean targets...\n"));
+	PRINT_TIMESTAMP(_("Creating clean targets...\n"));
 	//get the project specific build configuration for the workspace active
 	//configuration
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
@@ -793,9 +793,9 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
 	bool useAsterisk = ((imd.IsEmpty() == false) && asterisk);
 
 	// support for full path
-	PRINT_TIMESTAMP(wxT("Loading file list for clean...\n"));
+	PRINT_TIMESTAMP(_("Loading file list for clean...\n"));
 	proj->GetFiles(rel_paths, abs_files);
-	PRINT_TIMESTAMP(wxT("Loading file list...done\n"));
+	PRINT_TIMESTAMP(_("Loading file list...done\n"));
 
 	//add clean target
 	text << wxT("##\n");

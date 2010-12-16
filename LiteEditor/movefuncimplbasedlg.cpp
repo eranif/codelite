@@ -19,14 +19,14 @@ MoveFuncImplBaseDlg::MoveFuncImplBaseDlg( wxWindow* parent, wxWindowID id, const
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Select file to place the function implementation:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Select the file in which to place the function implementation:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	bSizer7->Add( m_staticText4, 0, wxALL|wxEXPAND, 5 );
 	
 	m_filePicker = new FilePicker(this);
 	bSizer7->Add( m_filePicker, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText5 = new wxStaticText( this, wxID_ANY, _("Function's implementation (you can edit the below code):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5 = new wxStaticText( this, wxID_ANY, _("Function implementation (you can edit the code below):"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
 	bSizer7->Add( m_staticText5, 0, wxALL, 5 );
 	

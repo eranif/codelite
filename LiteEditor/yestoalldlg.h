@@ -19,7 +19,7 @@ class YesToAllDlg : public YesToAllBaseDlg
 
 	public:
 		YesToAllDlg( wxWindow* parent, const wxString& message = wxT("This space unintentionally left blank"), const bool setcheck = false,
-						const wxString& title = wxT("Are you sure?"), wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+						const wxString& title = _("Are you sure?"), wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
 						const wxSize& size = wxSize( wxDefaultSize ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		void SetMessage(const wxString& message);
 		void SetCheckboxText(const wxString& text);

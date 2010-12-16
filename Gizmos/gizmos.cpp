@@ -67,7 +67,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor(wxT("Eran Ifrah"));
 	info.SetName(wxT("Wizards"));
-	info.SetDescription(wxT("Wizards Plugin - a collection of useful wizards for C++:\nnew Class Wizard, new wxWidgets Wizard, new Plugin Wizard"));
+	info.SetDescription(_("Wizards Plugin - a collection of useful wizards for C++:\nnew Class Wizard, new wxWidgets Wizard, new Plugin Wizard"));
 	info.SetVersion(wxT("v1.1"));
 	return info;
 }
@@ -162,7 +162,7 @@ static void WriteNamespacesDeclaration(const wxArrayString& namespacesList, wxSt
 WizardsPlugin::WizardsPlugin(IManager *manager)
 		: IPlugin(manager)
 {
-	m_longName = wxT("Wizards Plugin - a collection of useful utils for C++");
+	m_longName = _("Wizards Plugin - a collection of useful utils for C++");
 	m_shortName = wxT("Wizards");
 }
 
@@ -314,7 +314,7 @@ void WizardsPlugin::DoCreateNewPlugin()
 		filename = m_mgr->GetStartupDirectory() + wxT("/templates/gizmos/plugin.cpp.wizard");
 		content.Clear();
 		if (!ReadFileWithConversion(filename, content)) {
-			wxMessageBox(_("Failed to load wizard's file 'plugin.cpp.wizard'"), wxT("CodeLite"), wxICON_WARNING | wxOK);
+			wxMessageBox(_("Failed to load wizard's file 'plugin.cpp.wizard'"), _("CodeLite"), wxICON_WARNING | wxOK);
 			return;
 		}
 
@@ -333,7 +333,7 @@ void WizardsPlugin::DoCreateNewPlugin()
 		filename = m_mgr->GetStartupDirectory() + wxT("/templates/gizmos/plugin.h.wizard");
 		content.Clear();
 		if (!ReadFileWithConversion(filename, content)) {
-			wxMessageBox(_("Failed to load wizard's file 'plugin.h.wizard'"), wxT("CodeLite"), wxICON_WARNING | wxOK);
+			wxMessageBox(_("Failed to load wizard's file 'plugin.h.wizard'"), _("CodeLite"), wxICON_WARNING | wxOK);
 			return;
 		}
 

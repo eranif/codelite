@@ -53,7 +53,7 @@ void CCIncludeFilesPage::OnClearAllUI( wxUpdateUIEvent& event )
 void CCIncludeFilesPage::OnAddExcludePath( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	wxString new_path = wxDirSelector(wxT("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = wxDirSelector(_("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if(new_path.IsEmpty() == false) {
 		if(m_listBoxSearchPaths1->GetStrings().Index(new_path) == wxNOT_FOUND) {
 			m_listBoxSearchPaths1->Append(new_path);

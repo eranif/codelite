@@ -29,6 +29,7 @@
 #include "manager.h"
 #include "pluginmanager.h"
 #include "wx/wxprec.h"
+#include <wx/intl.h>
 #include <wx/fontmap.h>
 
 #ifdef __WXMSW__
@@ -50,6 +51,16 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 	
 	m_checkBoxEnableMSWTheme->SetValue(options->GetMswTheme());
 	m_useSingleToolbar->SetValue(!PluginManager::Get()->AllowToolbar());
+
+	m_oldSetLocale = options->GetUseLocale();
+	m_SetLocale->SetValue(m_oldSetLocale);
+	m_oldpreferredLocale = options->GetPreferredLocale();
+	// Load the available locales and feed them to the wxchoice
+	int select = FindAvailableLocales();
+	if (select != wxNOT_FOUND) {
+		m_AvailableLocales->SetSelection(select);
+	}
+	
 
 	wxArrayString astrEncodings;
 	wxFontEncoding fontEnc;
@@ -145,6 +156,16 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 	}
 	options->SetIconsSize(iconSize);
 
+	bool setlocale = m_SetLocale->IsChecked();
+	options->SetUseLocale(setlocale);
+	wxString newLocaleString = m_AvailableLocales->GetStringSelection();
+	// I don't think we should check if newLocaleString is empty; that's still useful information
+	newLocaleString = newLocaleString.BeforeFirst(wxT(':')); // Store it as "fr_FR", not "fr_FR: French"
+	options->SetPreferredLocale(newLocaleString);
+	if ((setlocale != m_oldSetLocale) || (newLocaleString != m_oldpreferredLocale)) {
+		m_restartRequired = true;
+	}
+	
 	// save file font encoding
 	options->SetFileFontEncoding(m_fileEncoding->GetStringSelection());
 
@@ -179,4 +200,58 @@ void EditorSettingsMiscPanel::OnEnableThemeUI(wxUpdateUIEvent& event)
 #else
 	event.Enable(false);
 #endif
+}
+
+void EditorSettingsMiscPanel::LocaleChkUpdateUI(wxUpdateUIEvent& event)
+{
+	event.Enable(m_AvailableLocales->GetCount() > 0);
+}
+
+void EditorSettingsMiscPanel::LocaleChoiceUpdateUI(wxUpdateUIEvent& event)
+{
+	event.Enable(m_SetLocale->IsChecked());
+}
+
+void EditorSettingsMiscPanel::LocaleStaticUpdateUI(wxUpdateUIEvent& event)
+{
+	event.Enable(m_SetLocale->IsChecked());
+}
+
+int EditorSettingsMiscPanel::FindAvailableLocales()
+{
+	wxArrayString canonicalNames;
+	int select(wxNOT_FOUND), sysdefault_sel(wxNOT_FOUND);
+	m_AvailableLocales->Clear();
+
+	int system_lang = wxLocale::GetSystemLanguage();
+	if (system_lang == wxLANGUAGE_UNKNOWN) {
+		// Least-stupid fallback value
+		system_lang = wxLANGUAGE_ENGLISH_US;
+	}
+
+	for (int n=0, lang=wxLANGUAGE_UNKNOWN+1; lang < wxLANGUAGE_USER_DEFINED; ++lang) {
+		const wxLanguageInfo* info = wxLocale::GetLanguageInfo(lang);
+		// Check there *is* a Canonical name, as empty strings return a valid locale :/
+		if ((!info->CanonicalName.IsEmpty()) && wxLocale::IsAvailable(lang)) {
+
+			// Check we haven't already seen this item: we may find the system default twice
+			if (canonicalNames.Index(info->CanonicalName) == wxNOT_FOUND) {
+				// Display the name as e.g. "en_GB: English (U.K.)"
+				m_AvailableLocales->Append(info->CanonicalName + wxT(": ") + info->Description);
+				canonicalNames.Add(info->CanonicalName);
+			
+				if (info->CanonicalName == m_oldpreferredLocale) {
+					// Use this as the selection in the wxChoice
+					select = n;
+				}		
+				if (lang == system_lang) {
+					// Use this as the selection if m_oldpreferredLocale isn't found
+					sysdefault_sel = n;
+				}
+				++n;
+			}
+		}
+	}
+	
+	return (select != wxNOT_FOUND) ? select:sysdefault_sel ;
 }

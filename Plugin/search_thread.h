@@ -413,14 +413,14 @@ public:
 		m_elapsed = elapsed;
 	}
 	wxString GetMessage() const {
-		wxString msg(wxT("====== Number of files scanned: "));
+		wxString msg(wxString(wxT("====== ")) + _("Number of files scanned: "));
 		msg << m_fileScanned << wxT(",");
-		msg << wxT(" Matches found: ");
+		msg << _(" Matches found: ");
 		msg << m_matchesFound;
 		int secs  = m_elapsed / 1000;
 		int msecs = m_elapsed % 1000;
 
-		msg << wxT(", elapsed time: ") << secs << wxT(":") << msecs << wxT(" sec ======");
+		msg << _(", elapsed time: ") << secs << wxT(":") << msecs << _(" seconds") << wxT(" ======");
 		return msg;
 	}
 

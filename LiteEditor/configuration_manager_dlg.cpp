@@ -127,7 +127,7 @@ void ConfigurationManagerDlg::PopulateConfigurations()
 	} else if (m_choiceConfigurations->GetCount() > 2) {
 		m_choiceConfigurations->SetSelection(2);
 	} else {
-		m_choiceConfigurations->Append(wxT("Debug"));
+		m_choiceConfigurations->Append(_("Debug"));
 		m_choiceConfigurations->SetSelection(2);
 	}
 
@@ -227,7 +227,7 @@ void ConfigurationManagerDlg::OnWorkspaceConfigSelected(wxCommandEvent &event)
 		PopulateConfigurations();
 	} else {
 		if (m_dirty) {
-			if ( wxMessageBox(wxString::Format(wxT("Settings for workspace configuration '%s' have changed, would you like to save them?"), m_currentWorkspaceConfiguration.GetData()), wxT("CodeLite"), wxYES_NO|wxICON_QUESTION) == wxYES) {
+			if ( wxMessageBox(wxString::Format(_("Settings for workspace configuration '%s' have changed, would you like to save them?"), m_currentWorkspaceConfiguration.GetData()), _("CodeLite"), wxYES_NO|wxICON_QUESTION) == wxYES) {
 				SaveCurrentSettings();
 			}
 			m_dirty = false;
@@ -274,7 +274,7 @@ void ConfigurationManagerDlg::OnConfigSelected(wxCommandEvent &event)
 void ConfigurationManagerDlg::OnButtonNew(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, wxT("Enter New Configuration Name:"), wxT("New Configuration"));
+	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, _("Enter New Configuration Name:"), _("New Configuration"));
 	if (dlg->ShowModal() == wxID_OK) {
 		wxString value = dlg->GetValue();
 		TrimString(value);

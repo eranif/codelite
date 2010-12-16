@@ -54,9 +54,9 @@ UnitTestsPage::UnitTestsPage(wxWindow* parent, TestSummary* summary, IManager *m
 	msg << summary->totalTests - summary->errorCount;
 	m_staticTextSuccessTestsNum->SetLabel(msg);
 
-	m_listCtrlErrors->InsertColumn(0, wxT("File"));
-	m_listCtrlErrors->InsertColumn(1, wxT("Line"));
-	m_listCtrlErrors->InsertColumn(2, wxT("Description"));
+	m_listCtrlErrors->InsertColumn(0, _("File"));
+	m_listCtrlErrors->InsertColumn(1, _("Line"));
+	m_listCtrlErrors->InsertColumn(2, _("Description"));
 
 	for (size_t i=0; i<summary->errorLines.GetCount(); i++) {
 		ErrorLineInfo info = summary->errorLines.Item(i);

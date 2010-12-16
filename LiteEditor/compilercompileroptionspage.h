@@ -45,7 +45,7 @@ class CompilerCompilerOptionDialog : public CompilerOptionDialog
 {
 public:
 	CompilerCompilerOptionDialog(wxWindow* parent, const wxString& name, const wxString& help)
-	: CompilerOptionDialog(parent, wxT("Compiler option"), name, help)
+	: CompilerOptionDialog(parent, _("Compiler option"), name, help)
 	{
 	}
 };

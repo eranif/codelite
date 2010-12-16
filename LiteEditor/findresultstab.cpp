@@ -108,7 +108,7 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 	BitmapLoader &loader = *(PluginManager::Get()->GetStdIcons());
 
 	wxTheApp->Connect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
-	m_tb->AddTool ( XRCID ( "stop_search" ), wxT ( "Stop current search" ), loader.LoadBitmap(wxT("toolbars/16/build/stop")), wxT ( "Stop current search" ) );
+	m_tb->AddTool ( XRCID("stop_search"), _("Stop current search"), loader.LoadBitmap(wxT("toolbars/16/build/stop")), _("Stop current search") );
 	Connect( XRCID ( "stop_search" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler ( FindResultsTab::OnStopSearch  ), NULL, this );
 	Connect( XRCID ( "stop_search" ), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler( FindResultsTab::OnStopSearchUI), NULL, this );
 	m_tb->Realize();
@@ -302,7 +302,7 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent &e)
 	LoadFindInFilesData();
 
 	if (m_searchInProgress) {
-		wxMessageBox(_("The search thread is currently busy"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+		wxMessageBox(_("The search thread is currently busy"), _("CodeLite"), wxICON_INFORMATION|wxOK);
 		return;
 	}
 
@@ -385,10 +385,10 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
 		m_searchData = *data;
 
 		wxString message;
-		message << wxT("====== Searching for: '") <<  data->GetFindString()
-		<< wxT("'; Match case: ")         << (data->IsMatchCase()         ? wxT("true") : wxT("false"))
-		<< wxT(" ; Match whole word: ")   << (data->IsMatchWholeWord()    ? wxT("true") : wxT("false"))
-		<< wxT(" ; Regular expression: ") << (data->IsRegularExpression() ? wxT("true") : wxT("false"))
+		message << _("====== Searching for: '") <<  data->GetFindString()
+		<< _("'; Match case: ")         << (data->IsMatchCase()         ? _("true") : _("false"))
+		<< _(" ; Match whole word: ")   << (data->IsMatchWholeWord()    ? _("true") : _("false"))
+		<< _(" ; Regular expression: ") << (data->IsRegularExpression() ? _("true") : _("false"))
 		<< wxT(" ======\n");
 		AppendText( message );
 	}
@@ -638,7 +638,7 @@ void FindResultsTab::NextMatch()
 		// if we are here, it means we are the end of the search results list, add a status message
 		wxCommandEvent e(wxEVT_UPDATE_STATUS_BAR);
 		e.SetEventObject(this);
-		e.SetString(wxString::Format(wxT("Reached the end of 'find in files' search results list" )));
+		e.SetString(wxString::Format(_("Reached the end of 'find in files' search results list" )));
 		e.SetInt(0);
 		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 	}
@@ -672,7 +672,7 @@ void FindResultsTab::PrevMatch()
 		// if we are here, it means we are the top of the search results list, add a status message
 		wxCommandEvent e(wxEVT_UPDATE_STATUS_BAR);
 		e.SetEventObject(this);
-		e.SetString(wxString::Format(wxT("Reached the begining of 'find in files' search results list" )));
+		e.SetString(wxString::Format(_("Reached the beginning of 'find in files' search results list" )));
 		e.SetInt(0);
 		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 	}

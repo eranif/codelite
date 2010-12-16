@@ -8,8 +8,8 @@ CompilerCompilerOptionsPage::CompilerCompilerOptionsPage( wxWindow* parent, cons
 , m_cmpname(cmpname)
 , m_selectedCmpOption(wxNOT_FOUND)
 {
-	m_listCompilerOptions->InsertColumn(0, wxT("Switch"));
-	m_listCompilerOptions->InsertColumn(1, wxT("Help"));
+	m_listCompilerOptions->InsertColumn(0, _("Switch"));
+	m_listCompilerOptions->InsertColumn(1, _("Help"));
 	
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(m_cmpname);
 	const Compiler::CmpCmdLineOptions& cmpOptions = cmp->GetCompilerOptions();
@@ -71,7 +71,7 @@ void CompilerCompilerOptionsPage::OnNewCompilerOption( wxCommandEvent& event )
 void CompilerCompilerOptionsPage::OnDeleteCompilerOption( wxCommandEvent& event )
 {
 	if (m_selectedCmpOption != wxNOT_FOUND) {
-		if (wxMessageBox(_("Are you sure you want to delete this compiler option?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
+		if (wxMessageBox(_("Are you sure you want to delete this compiler option?"), _("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
 			m_listCompilerOptions->DeleteItem(m_selectedCmpOption);
 			m_listCompilerOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
 			m_selectedCmpOption = wxNOT_FOUND;

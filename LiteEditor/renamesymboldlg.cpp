@@ -41,8 +41,8 @@ RenameSymbol::RenameSymbol( wxWindow* parent, const std::list<CppToken>& candida
 {
 	// Initialize the columns
 	m_checkListCandidates->InsertColumn(0, wxT(" "));
-	m_checkListCandidates->InsertColumn(1, wxT("File"));
-	m_checkListCandidates->InsertColumn(2, wxT("Position"));
+	m_checkListCandidates->InsertColumn(1, _("File"));
+	m_checkListCandidates->InsertColumn(2, _("Position"));
 	m_checkListCandidates->SetColumnWidth(0, 20);
 	m_checkListCandidates->SetColumnWidth(1, 200);
 
@@ -97,7 +97,7 @@ void RenameSymbol::OnButtonOK(wxCommandEvent& e)
 	wxUnusedVar(e);
 
 	if(!IsValidCppIndetifier(m_textCtrlNewName->GetValue())){
-		wxMessageBox(_("Invalid C/C++ symbol name"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		wxMessageBox(_("Invalid C/C++ symbol name"), _("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 

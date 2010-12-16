@@ -65,8 +65,8 @@ BuildTab::BuildTab ( wxWindow *parent, wxWindowID id, const wxString &name )
 {
 	m_tb->RemoveTool ( XRCID ( "repeat_output" ) );
 
-	m_tb->AddTool ( XRCID ( "advance_settings" ), wxT ( "Set compiler colours..." ),
-	                wxXmlResource::Get()->LoadBitmap ( wxT ( "colourise" ) ), wxT ( "Set compiler colours..." ) );
+	m_tb->AddTool ( XRCID("advance_settings" ), _("Set compiler colours..."),
+	                wxXmlResource::Get()->LoadBitmap ( wxT("colourise") ), _("Set compiler colours...") );
 	Connect ( XRCID ( "advance_settings" ),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler ( BuildTab::OnCompilerColours ), NULL, this );
 	m_tb->Realize();
 

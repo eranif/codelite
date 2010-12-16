@@ -56,10 +56,10 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 	m_checkBoxVirtualDtor->SetValue    ( data.GetFlags() & NewClassDlgData::VirtualDtor);
 
 	//set two columns to our list
-	m_listCtrl1->InsertColumn(0, wxT("Name"));
-	m_listCtrl1->InsertColumn(1, wxT("Access"));
+	m_listCtrl1->InsertColumn(0, _("Name"));
+	m_listCtrl1->InsertColumn(1, _("Access"));
 
-	m_listCtrl1->InsertColumn(2, wxT("File"));
+	m_listCtrl1->InsertColumn(2, _("File"));
 
 	TreeItemInfo item = mgr->GetSelectedTreeItemInfo(TreeFileView);
 	if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory){
@@ -221,8 +221,8 @@ bool NewClassDlg::ValidateInput()
 	//validate the class name
 	if (!IsValidCppIndetifier( m_textClassName->GetValue() )) {
 		wxString msg;
-		msg << wxT("'") << m_textClassName->GetValue() << wxT("' is not a valid C++ qualifier");
-		wxMessageBox(msg, wxT("CodeLite"), wxOK | wxICON_WARNING);
+		msg << wxT("'") << m_textClassName->GetValue() << _("' is not a valid C++ qualifier");
+		wxMessageBox(msg, _("CodeLite"), wxOK | wxICON_WARNING);
 		return false;
 	}
 
@@ -234,8 +234,8 @@ bool NewClassDlg::ValidateInput()
 		for (unsigned int i = 0; i < namespacesList.Count(); i++) {
 			if (!IsValidCppIndetifier (namespacesList[i])) {
 				wxString msg;
-				msg << wxT("'") << namespacesList[i] << wxT("' is not a valid C++ qualifier");
-				wxMessageBox(msg, wxT("CodeLite"), wxOK | wxICON_WARNING);
+				msg << wxT("'") << namespacesList[i] << _("' is not a valid C++ qualifier");
+				wxMessageBox(msg, _("CodeLite"), wxOK | wxICON_WARNING);
 				return false;
 			}
 		}
@@ -245,33 +245,33 @@ bool NewClassDlg::ValidateInput()
 	wxString path(m_textCtrlGenFilePath->GetValue());
 	if (!wxDir::Exists(path)) {
 		wxString msg;
-		msg << wxT("'") << path << wxT("': directory does not exist");
-		wxMessageBox(msg, wxT("CodeLite"), wxOK | wxICON_WARNING);
+		msg << wxT("'") << path << _("': directory does not exist");
+		wxMessageBox(msg, _("CodeLite"), wxOK | wxICON_WARNING);
 		return false;
 	}
 
 	if(GetClassFile().IsEmpty()){
-		wxMessageBox(_("Empty file name"), wxT("CodeLite"), wxOK|wxICON_WARNING);
+		wxMessageBox(_("Empty file name"), _("CodeLite"), wxOK|wxICON_WARNING);
 		return false;
 	}
 
 	wxString cpp_file;
 	cpp_file << GetClassPath() << wxFileName::GetPathSeparator() << GetClassFile() << wxT(".cpp");
 	if( wxFileName::FileExists(cpp_file) ) {
-		if(wxMessageBox(wxString::Format(wxT("A file with this name: '%s' already exists, continue anyway?"), cpp_file.GetData()), wxT("CodeLite"), wxYES_NO|wxICON_WARNING) == wxNO){
+		if(wxMessageBox(wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), cpp_file.GetData()), _("CodeLite"), wxYES_NO|wxICON_WARNING) == wxNO){
 			return false;
 		}
 	}
 	wxString h_file;
 	h_file << GetClassPath() << wxFileName::GetPathSeparator() << GetClassFile() << wxT(".h");
 	if( wxFileName::FileExists(h_file) ) {
-		if(wxMessageBox(wxString::Format(wxT("A file with this name: '%s' already exists, continue anyway?"), h_file.GetData()), wxT("CodeLite"), wxYES_NO|wxICON_WARNING) == wxNO){
+		if(wxMessageBox(wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), h_file.GetData()), _("CodeLite"), wxYES_NO|wxICON_WARNING) == wxNO){
 			return false;
 		}
 	}
 
 	if(GetVirtualDirectoryPath().IsEmpty()){
-		wxMessageBox(_("Please select a virtual directory"), wxT("CodeLite"), wxOK|wxICON_WARNING);
+		wxMessageBox(_("Please select a virtual directory"), _("CodeLite"), wxOK|wxICON_WARNING);
 		return false;
 	}
 	return true;
@@ -348,7 +348,7 @@ void NewClassDlg::OnBrowseFolder(wxCommandEvent& e)
 	if(wxFileName::DirExists(m_textCtrlGenFilePath->GetValue())){
 		initPath = m_textCtrlGenFilePath->GetValue();
 	}
-	wxString new_path = wxDirSelector(wxT("Select Generated Files Path:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = wxDirSelector(_("Select Generated Files Path:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if(new_path.IsEmpty() == false){
 		m_textCtrlGenFilePath->SetValue(new_path);
 	}

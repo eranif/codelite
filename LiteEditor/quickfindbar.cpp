@@ -121,7 +121,7 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 		if (!EditorConfigST::Get()->GetLongValue(wxT("FindNextWrapAroundAnswer"), res)) {
 			// First time we are prompting to the user, or the user never
 			// checked the checkbox 'dont ask me again'
-			ThreeButtonDlg dlg(clMainFrame::Get(), msg, wxT("CodeLite"));
+			ThreeButtonDlg dlg(clMainFrame::Get(), msg, _("CodeLite"));
 			res = dlg.ShowModal();
 			if (dlg.GetDontAskMeAgain() && res != wxID_CANCEL) {
 				//save this answer

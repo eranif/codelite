@@ -76,7 +76,7 @@ void NewWorkspaceDlg::OnWorkspacePathUpdated( wxCommandEvent& event )
 
 void NewWorkspaceDlg::OnWorkspaceDirPicker( wxCommandEvent& event )
 {
-	const wxString& dir = wxDirSelector(wxT("Choose a folder:"));
+	const wxString& dir = wxDirSelector(_("Choose a folder:"));
 	if ( !dir.empty() ) {
 		m_textCtrlWorkspacePath->SetValue( dir );
 	}
@@ -94,7 +94,7 @@ void NewWorkspaceDlg::OnButtonCreate( wxCommandEvent& event )
 	}
 	
 	if ( !wxDirExists(fn.GetPath()) ) {
-		wxMessageBox(_("Invalid path: ") + fn.GetPath(), wxT("Error"), wxOK | wxICON_HAND);
+		wxMessageBox(_("Invalid path: ") + fn.GetPath(), _("Error"), wxOK | wxICON_HAND);
 		return;
 	}
 	EndModal(wxID_OK);

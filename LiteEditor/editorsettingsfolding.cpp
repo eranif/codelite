@@ -53,7 +53,7 @@ void EditorSettingsFolding::Save(OptionsConfigPtr options)
 
 void EditorSettingsFolding::OnFoldColourUI(wxUpdateUIEvent& e)
 {
-	e.Enable( m_displayMargin->IsChecked() && (m_foldStyle->GetStringSelection() == wxT("Arrows with Background Colour") || m_foldStyle->GetStringSelection() == wxT("Simple with Background Colour")) );
+	e.Enable( m_displayMargin->IsChecked() && (m_foldStyle->GetStringSelection() == _("Arrows with Background Colour") || m_foldStyle->GetStringSelection() == _("Simple with Background Colour")) );
 }
 
 void EditorSettingsFolding::OnFoldingMarginUI(wxUpdateUIEvent& event)

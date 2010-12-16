@@ -73,16 +73,16 @@ void EditorSettingsLocal::DisplayHigherValues( const OptionsConfigPtr options )
 
 	switch (options->GetShowWhitspaces()) {
 	case wxSCI_WS_VISIBLEALWAYS:
-		m_whitespaceStyle->SetStringSelection(wxT("Visible always"));
+		m_whitespaceStyle->SetStringSelection(_("Visible always"));
 		break;
 	case wxSCI_WS_VISIBLEAFTERINDENT:
-		m_whitespaceStyle->SetStringSelection(wxT("Visible after indentation"));
+		m_whitespaceStyle->SetStringSelection(_("Visible after indentation"));
 		break;
 	case wxSCI_WS_INDENTVISIBLE:
-		m_whitespaceStyle->SetStringSelection(wxT("Indentation only"));
+		m_whitespaceStyle->SetStringSelection(_("Indentation only"));
 		break;
 	default:
-		m_whitespaceStyle->SetStringSelection(wxT("Invisible"));
+		m_whitespaceStyle->SetStringSelection(_("Invisible"));
 		break;
 	}
 
@@ -160,16 +160,16 @@ void EditorSettingsLocal::DisplayLocalValues( const LocalOptionsConfigPtr option
 	if (options->ShowWhitespacesIsValid()) {
 		switch (options->GetShowWhitespaces()) {
 		case wxSCI_WS_VISIBLEALWAYS:
-			m_whitespaceStyle->SetStringSelection(wxT("Visible always"));
+			m_whitespaceStyle->SetStringSelection(_("Visible always"));
 			break;
 		case wxSCI_WS_VISIBLEAFTERINDENT:
-			m_whitespaceStyle->SetStringSelection(wxT("Visible after indentation"));
+			m_whitespaceStyle->SetStringSelection(_("Visible after indentation"));
 			break;
 		case wxSCI_WS_INDENTVISIBLE:
-			m_whitespaceStyle->SetStringSelection(wxT("Indentation only"));
+			m_whitespaceStyle->SetStringSelection(_("Indentation only"));
 			break;
 		default:
-			m_whitespaceStyle->SetStringSelection(wxT("Invisible"));
+			m_whitespaceStyle->SetStringSelection(_("Invisible"));
 			break;
 		}
 		m_whitespaceStyleEnable->SetValue(false);
@@ -235,11 +235,11 @@ void EditorSettingsLocal::OnOK( wxCommandEvent& event )
 	}
 	if (m_whitespaceStyle->IsEnabled()) {
 		int style(wxSCI_WS_INVISIBLE);
-		if (m_whitespaceStyle->GetStringSelection() == wxT("Visible always")) {
+		if (m_whitespaceStyle->GetStringSelection() == _("Visible always")) {
 			style = wxSCI_WS_VISIBLEALWAYS;
-		} else if (m_whitespaceStyle->GetStringSelection() == wxT("Visible after indentation")) {
+		} else if (m_whitespaceStyle->GetStringSelection() == _("Visible after indentation")) {
 			style = wxSCI_WS_VISIBLEAFTERINDENT;
-		} else if (m_whitespaceStyle->GetStringSelection() == wxT("Indentation only")) {
+		} else if (m_whitespaceStyle->GetStringSelection() == _("Indentation only")) {
 			style = wxSCI_WS_INDENTVISIBLE;
 		}
 		GetLocalOpts()->SetShowWhitespaces(style);

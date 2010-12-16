@@ -51,7 +51,7 @@ class DebuggerSettingsBaseDlg : public wxDialog
 
 	public:
 
-		DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Debugger Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Debugger Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~DebuggerSettingsBaseDlg();
 
 };
@@ -124,7 +124,7 @@ class NewPreDefinedSetDlg : public wxDialog
 		wxChoice* m_choiceCopyFrom;
 		wxCheckBox* m_checkBoxMakeActive;
 
-		NewPreDefinedSetDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Create a new 'PreDefined Types' set..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		NewPreDefinedSetDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create a new 'PreDefined Types' set..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~NewPreDefinedSetDlg();
 
 };

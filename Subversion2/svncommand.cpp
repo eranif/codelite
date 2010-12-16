@@ -78,11 +78,11 @@ void SvnCommand::OnProcessTerminated(wxCommandEvent& event)
 
 		if(m_handler->TestLoginRequired(m_output)) {
 			// re-issue the last command but this time with login dialog
-			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Authentication failed. Retrying...\n"));
+			m_handler->GetPlugin()->GetConsole()->AppendText(_("Authentication failed. Retrying...\n"));
 			m_handler->ProcessLoginRequired(m_workingDirectory);
 
 		} else if(m_handler->TestVerificationFailed(m_output)) {
-			m_handler->GetPlugin()->GetConsole()->AppendText(wxT("Server certificate verification failed. Retrying...\n"));
+			m_handler->GetPlugin()->GetConsole()->AppendText(_("Server certificate verification failed. Retrying...\n"));
 			m_handler->ProcessVerificationRequired();
 
 		} else {

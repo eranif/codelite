@@ -60,7 +60,7 @@ void CustomBuildRequest::Process(IManager *manager)
 
 	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
-		AppendLine(wxT("Cant find project: ") + m_info.GetProject());
+		AppendLine(_("Cant find project: ") + m_info.GetProject());
 		return;
 	}
 
@@ -136,7 +136,7 @@ void CustomBuildRequest::Process(IManager *manager)
 		if (errMsg.IsEmpty() == false) {
 			AppendLine(errMsg);
 		} else {
-			AppendLine(wxT("Command line is empty. Build aborted."));
+			AppendLine(_("Command line is empty. Build aborted."));
 		}
 		return;
 	}
@@ -178,7 +178,7 @@ void CustomBuildRequest::Process(IManager *manager)
 	::wxSetWorkingDirectory(wd);
 
 	// Print message to the build tab
-	AppendLine(wxString::Format(wxT("MESSAGE: Entering directory `%s'\n"), wd.c_str()));
+	AppendLine(wxString::Format(_("MESSAGE: Entering directory `%s'\n"), wd.c_str()));
 
 	// Command handling:
 	//////////////////////////////////////////////////////
@@ -222,7 +222,7 @@ void CustomBuildRequest::Process(IManager *manager)
 	m_proc = CreateAsyncProcess(this, cmd);
 	if ( !m_proc ) {
 		wxString message;
-		message << wxT("Failed to start build process, command: ") << cmd << wxT(", process terminated with exit code: 0");
+		message << _("Failed to start build process, command: ") << cmd << _(", process terminated with exit code: 0");
 		AppendLine(message);
 		return;
 	}

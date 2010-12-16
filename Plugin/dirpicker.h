@@ -66,7 +66,7 @@ public:
 				wxWindowID id = wxID_ANY,
 				const wxString &buttonCaption = wxT("..."),
 				const wxString &defaultPos = wxEmptyString,
-				const wxString &message = wxT("Select a folder:"),
+				const wxString &message = _("Select a folder:"),
 				const wxPoint& pos = wxDefaultPosition,
 				const wxSize& size = wxDefaultSize,
 				long style = wxDP_USE_TEXTCTRL);

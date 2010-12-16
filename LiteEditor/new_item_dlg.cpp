@@ -129,7 +129,7 @@ void NewItemDlg::OnClick(wxCommandEvent &event)
 	else if ( id == m_browseBtn->GetId() )
 	{
 		DirSaver ds;
-		wxDirDialog *dlg = new wxDirDialog(this, wxT("Location:"),  m_cwd);
+		wxDirDialog *dlg = new wxDirDialog(this, _("Location:"),  m_cwd);
 		if (dlg->ShowModal() == wxID_OK)
 		{
 			m_location->SetValue(dlg->GetPath());
@@ -143,7 +143,7 @@ void NewItemDlg::DoCreateFile()
 	wxString errMsg;
 	if ( !Validate(errMsg) )
 	{
-		wxMessageBox(errMsg, wxT("CodeLite"), wxICON_INFORMATION | wxOK);
+		wxMessageBox(errMsg, _("CodeLite"), wxICON_INFORMATION | wxOK);
 		return;
 	}
 
@@ -201,27 +201,27 @@ bool NewItemDlg::Validate(wxString &errMsg)
 
 	if ( m_location->GetValue().Trim().IsEmpty() )
 	{
-		errMsg = wxT("Missing location");
+		errMsg = _("Missing location");
 		return false;
 	}
 
 	if ( !fn.DirExists() )
 	{
-		errMsg = wxT("Directory: ");
-		errMsg << fn.GetPath() << wxT(" does not exist");
+		errMsg = _("Directory: ");
+		errMsg << fn.GetPath() << _(" does not exist");
 		return false;
 	}
 
 	fn = wxFileName(m_location->GetValue(), m_fileName->GetValue());
 	if ( fn.FileExists() )
 	{
-		errMsg = wxT("A file with that name already exist, please choose different name");
+		errMsg = _("A file with that name already exists. Please choose a different name");
 		return false;
 	}
 
 	if ( m_fileName->GetValue().Trim().IsEmpty() )
 	{
-		errMsg = wxT("Missing file name");
+		errMsg = _("Missing file name");
 		return false;
 	}
 

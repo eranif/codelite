@@ -136,7 +136,7 @@ bool wxVirtualDirTreeCtrl::SetRootPath(const wxString &root, bool notify, int fl
 
 				// show a busy dialog
 				if(_flags & (wxVDTC_RELOAD_ALL | wxVDTC_SHOW_BUSYDLG))
-					bsy = new wxBusyInfo(wxT("Please wait, scanning directory..."), 0);
+					bsy = new wxBusyInfo(_("Please wait, scanning directory..."), 0);
 
 				// scan directory, either the smart way or not at all
 				ScanFromDir(start, path, (wxVDTC_RELOAD_ALL & _flags ? -1 : VDTC_MIN_SCANDEPTH));

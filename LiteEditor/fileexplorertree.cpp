@@ -358,7 +358,7 @@ void FileExplorerTree::OnOpenShell(wxCommandEvent &event)
 		EnvSetter env;
 
 		if (!ProcUtils::Shell()) {
-			wxMessageBox(_("Failed to load shell terminal"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+			wxMessageBox(_("Failed to load shell terminal"), _("CodeLite"), wxICON_WARNING|wxOK);
 			return;
 		}
 	}
@@ -383,7 +383,7 @@ void FileExplorerTree::OnOpenWidthDefaultApp(wxCommandEvent& e)
 		}
 
 		// fallback code: suggest to the user to open the file with CL
-		if (wxMessageBox(wxString::Format(wxT("Could not find default application for file '%s'\nWould you like CodeLite to open it?"), fullpath.GetFullName().c_str()), wxT("CodeLite"),
+		if (wxMessageBox(wxString::Format(_("Could not find default application for file '%s'\nWould you like CodeLite to open it?"), fullpath.GetFullName().c_str()), _("CodeLite"),
 						 wxICON_QUESTION|wxYES_NO) == wxYES) {
 			DoOpenItem( item );
 		}

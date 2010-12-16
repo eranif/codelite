@@ -327,7 +327,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 	if(!DoResolveWord(states, fn, pos + symname.Len(), line, symname, &rs))
 		return;
 
-	wxProgressDialog* prgDlg = CreateProgressDialog(wxT("Stage 1/2: Gathering required information..."), (int)files.size());
+	wxProgressDialog* prgDlg = CreateProgressDialog(_("Stage 1/2: Gathering required information..."), (int)files.size());
 
 	// Search the provided input files for the symbol to rename and prepare
 	// a CppTokensMap
@@ -335,7 +335,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 		wxFileName curfile = files.at(i);
 
 		wxString msg;
-		msg << wxT("Parsing: ") << curfile.GetFullName();
+		msg << _("Parsing: ") << curfile.GetFullName();
 		// update the progress bar
 		if (!prgDlg->Update(i, msg)){
 			prgDlg->Destroy();
@@ -366,13 +366,13 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 
 	TextStatesPtr statesPtr(NULL);
 	wxString      statesPtrFileName;
-	prgDlg = CreateProgressDialog(wxT("Stage 2/2: Parsing matches..."), (int) tokens.size());
+	prgDlg = CreateProgressDialog(_("Stage 2/2: Parsing matches..."), (int) tokens.size());
 	for (; iter != tokens.end(); iter++) {
 
 		// TODO :: send an event here to report our progress
 		wxFileName f(iter->getFilename());
 		wxString   msg;
-		msg << wxT("Parsing expression ") << counter << wxT("/") << tokens.size() << wxT(" in file: ") << f.GetFullName();
+		msg << _("Parsing expression ") << counter << wxT("/") << tokens.size() << _(" in file: ") << f.GetFullName();
 		if ( !prgDlg->Update(counter, msg) ) {
 			// user clicked 'Cancel'
 			Clear();

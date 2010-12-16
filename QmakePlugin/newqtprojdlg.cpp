@@ -36,7 +36,7 @@ void NewQtProjDlg::OnBrowseProjectPath( wxCommandEvent& event )
 	if ( m_mgr->IsWorkspaceOpen() ) {
 		initPath = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath();
 	}
-	wxString new_path = wxDirSelector(wxT("Select directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = wxDirSelector(_("Select directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
 		m_textCtrl->SetValue(new_path);
 	}

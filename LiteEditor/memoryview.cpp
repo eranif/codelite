@@ -154,7 +154,7 @@ void MemoryView::OnUpdate(wxCommandEvent& e)
 				// OK
 				continue;
 			} else {
-				wxMessageBox(wxString::Format(wxT("Invalid memory value: %s"), hexValues.Item(y).c_str()), wxT("CodeLite"), wxICON_WARNING|wxOK);
+				wxMessageBox(wxString::Format(_("Invalid memory value: %s"), hexValues.Item(y).c_str()), _("CodeLite"), wxICON_WARNING|wxOK);
 				// update the pane to old value
 				ManagerST::Get()->UpdateDebuggerPane();
 				return;

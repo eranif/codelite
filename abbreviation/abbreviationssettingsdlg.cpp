@@ -48,7 +48,7 @@ AbbreviationsSettingsDlg::~AbbreviationsSettingsDlg()
 void AbbreviationsSettingsDlg::OnItemSelected( wxCommandEvent& event )
 {
 	if(m_dirty) {
-		if(wxMessageBox(_("Would you like to save the current changes?"), wxT("CodeLite"), wxYES_NO|wxCENTER, this) == wxYES){
+		if(wxMessageBox(_("Would you like to save the current changes?"), _("CodeLite"), wxYES_NO|wxCENTER, this) == wxYES){
 			DoSaveCurrent();
 		}
 	}

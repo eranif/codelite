@@ -711,7 +711,7 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
 	if(files.GetCount() == 0)
 		return;
 
-	bool nonInteractive = GetNonInteractiveMode(event);
+	/*bool nonInteractive = unused var commented out*/GetNonInteractiveMode(event);
 	if(LoginIfNeeded(event, files.Item(0), loginString) == false) {
 		return;
 	}

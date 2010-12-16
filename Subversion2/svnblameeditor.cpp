@@ -132,7 +132,7 @@ void SvnBlameEditor::OnContextMenu(wxContextMenuEvent& event)
 		GotoPos( PositionFromPoint(clientPt) );
 		// Margin context menu
 		wxMenu menu;
-		menu.Append( XRCID("svn_highlight_revision"), wxT("Hightlight this revision"), wxT("Hightlight this revision"), false);
+		menu.Append( XRCID("svn_highlight_revision"), _("Highlight this revision"), _("Highlight this revision"), false);
 		menu.Connect(XRCID("svn_highlight_revision"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SvnBlameEditor::OnHighlightRevision), NULL, this);
 
 		PopupMenu(&menu);

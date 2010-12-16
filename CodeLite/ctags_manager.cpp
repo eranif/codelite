@@ -1190,8 +1190,8 @@ bool TagsManager::DoBuildDatabase(const wxArrayString &files, ITagsStorage &db, 
 	}
 
 	// Create a progress dialog
-	MyProgress prgDlg(wxT("Building tags database ..."), files.GetCount());
-	prgDlg.Update(0, wxT("Parsing..."));
+	MyProgress prgDlg(_("Building tags database ..."), files.GetCount());
+	prgDlg.Update(0, _("Parsing..."));
 
 	// We commit every 10 files
 	db.Begin();
@@ -1205,7 +1205,7 @@ bool TagsManager::DoBuildDatabase(const wxArrayString &files, ITagsStorage &db, 
 		}
 
 		// update the progress bar
-		if (!prgDlg.Update(i, wxString::Format(wxT("Parsing : %s"), curFile.GetFullName().c_str()))) {
+		if (!prgDlg.Update(i, wxString::Format(_("Parsing : %s"), curFile.GetFullName().c_str()))) {
 			prgDlg.Destroy();
 			return false;
 		}
@@ -1223,7 +1223,7 @@ bool TagsManager::DoBuildDatabase(const wxArrayString &files, ITagsStorage &db, 
 
 		if ( i % 50 == 0 ) {
 			// update the progress bar
-			if (!prgDlg.Update(i, wxT("Committing..."))) {
+			if (!prgDlg.Update(i, _("Committing..."))) {
 				prgDlg.Destroy();
 				return false;
 			}

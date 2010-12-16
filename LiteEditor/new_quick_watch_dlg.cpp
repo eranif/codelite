@@ -63,7 +63,7 @@ void DisplayVariableDlg::OnExpandItem( wxTreeEvent& event )
 			while ( child.IsOk() ) {
 				if ( m_treeCtrl->GetItemText(child) == wxT("<dummy>") ) {
 					// Dummy node, remove it and ask the debugger for information
-					m_treeCtrl->SetItemText(child, wxT("Loading..."));
+					m_treeCtrl->SetItemText(child, _("Loading..."));
 
 					QWTreeData *data = (QWTreeData *)m_treeCtrl->GetItemData(item);
 					if ( data ) {
@@ -114,7 +114,7 @@ void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChil
 		wxTreeItemId child = m_treeCtrl->GetFirstChild(item, kookie);
 		while ( child.IsOk() ) {
 			wxString itemText = m_treeCtrl->GetItemText(child);
-			if ( itemText == wxT("<dummy>") || itemText == wxT("Loading...")) {
+			if ( itemText == wxT("<dummy>") || itemText == _("Loading...")) {
 				m_treeCtrl->Delete( child );
 			}
 			child = m_treeCtrl->GetNextChild(item, kookie);
@@ -302,8 +302,8 @@ void DisplayVariableDlg::OnItemMenu(wxTreeEvent& event)
 	// Popup the menu
 	wxMenu menu;
 
-	menu.Append(XRCID("tip_add_watch"),  wxT("Add Watch"));
-	menu.Append(XRCID("tip_copy_value"), wxT("Copy Value to Clipboard"));
+	menu.Append(XRCID("tip_add_watch"),  _("Add Watch"));
+	menu.Append(XRCID("tip_copy_value"), _("Copy Value to Clipboard"));
 
 	menu.Connect(XRCID("tip_add_watch"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection), NULL, this);
 	menu.Connect(XRCID("tip_copy_value"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection), NULL, this);

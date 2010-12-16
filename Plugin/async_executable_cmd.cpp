@@ -88,8 +88,8 @@ void AsyncExeCmd::SendStartMsg()
 	event.SetEventObject(this);
 
 	wxString msg;
-	msg << wxT("Current working directory: ") << wxGetCwd() << wxT("\n");
-	msg << wxT("Running program: ") << m_cmdLine << wxT("\n");
+	msg << _("Current working directory: ") << wxGetCwd() << wxT("\n");
+	msg << _("Running program: ") << m_cmdLine << wxT("\n");
 	event.SetString(msg);
 	m_owner->ProcessEvent(event);
 }
@@ -101,7 +101,7 @@ void AsyncExeCmd::SendEndMsg(int exitCode)
 
 	wxCommandEvent event(wxEVT_ASYNC_PROC_ENDED);
 	event.SetEventObject(this);
-	wxString message(wxT("Program exited with return code: "));
+	wxString message(_("Program exited with return code: "));
 	message << exitCode << wxT("\n");
 	event.SetString(message);
 	m_owner->ProcessEvent(event);

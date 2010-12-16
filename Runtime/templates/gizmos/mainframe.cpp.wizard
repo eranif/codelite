@@ -34,7 +34,7 @@ void $(MainFrameName)::Initialize()
 	wxStatusBar* statusBar = new wxStatusBar(this, wxID_ANY);
 	statusBar->SetFieldsCount(1);
 	SetStatusBar(statusBar);
-	GetStatusBar()->SetStatusText(wxT("Ready"));
+	GetStatusBar()->SetStatusText(_("Ready"));
 	
 	//Create a menu bar
 	CreateMenuBar();
@@ -59,6 +59,6 @@ void $(MainFrameName)::CreateMenuBar()
 	//File Menu
 	wxMenu *menu = new wxMenu();
 	menu->Append(wxID_EXIT);
-	mb->Append(menu, wxT("&File"));
+	mb->Append(menu, _("&File"));
 	SetMenuBar(mb);
 }

@@ -65,8 +65,8 @@ void LoadTabGroupDlg::InsertListItem(const wxString& item)
 
 void LoadTabGroupDlg::OnBrowse( wxCommandEvent& WXUNUSED(event) )
 {
-	wxString group = wxFileSelector(_("Select a program:"), wxT(""), wxT(""), tabgroupTag,
-						wxT("Tab groups (*.tabgroup)|*.tabgroup"), wxFD_OPEN | wxFD_FILE_MUST_EXIST, this);
+	wxString group = wxFileSelector(_("Select a tab group:"), wxT(""), wxT(""), tabgroupTag,
+						wxString(_("Tab groups")) + wxT(" (*.tabgroup)|*.tabgroup"), wxFD_OPEN | wxFD_FILE_MUST_EXIST, this);
 	if (!group.IsEmpty()) {
 		// Need to insert/select the new item, otherwise it won't be used
 		InsertListItem(group);

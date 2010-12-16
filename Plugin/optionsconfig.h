@@ -92,6 +92,8 @@ protected:
 	bool           m_wordWrap;
 	int            m_dockingStyle;
 	bool           m_mswTheme;
+	wxString       m_preferredLocale;
+	bool           m_useLocale;
 
 public:
 	OptionsConfig() {}
@@ -102,6 +104,18 @@ public:
 	// Setters/Getters
 	//-------------------------------------
 
+	void SetPreferredLocale(const wxString& preferredLocale) {
+		this->m_preferredLocale = preferredLocale;
+	}
+	wxString GetPreferredLocale() const {
+		return m_preferredLocale;
+	}
+	void SetUseLocale(bool useLocale) {
+		this->m_useLocale = useLocale;
+	}
+	bool GetUseLocale() const {
+		return m_useLocale;
+	}
 	void SetMswTheme(bool mswTheme) {
 		this->m_mswTheme = mswTheme;
 	}

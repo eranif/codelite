@@ -261,7 +261,7 @@ void Manager::OpenWorkspace ( const wxString &path )
 	if ( !res ) {
 		// in case part of the workspace was opened, close the workspace
 		CloseWorkspace();
-		wxMessageBox ( errMsg, wxT ( "Error" ), wxOK | wxICON_HAND );
+		wxMessageBox( errMsg, _("Error"), wxOK | wxICON_HAND );
 		return;
 	}
 
@@ -1930,7 +1930,7 @@ void Manager::DbgStart ( long attachPid )
 #if defined(__WXGTK__)
 	wxString where;
 	if ( !ExeLocator::Locate ( wxT ( "xterm" ), where ) ) {
-		wxMessageBox ( _( "Failed to locate 'xterm' application required by CodeLite, please install it and try again!" ), wxT ( "CodeLite" ), wxOK|wxCENTER|wxICON_WARNING, clMainFrame::Get() );
+		wxMessageBox ( _( "Failed to locate 'xterm' application required by CodeLite, please install it and try again!" ), _("CodeLite" ), wxOK|wxCENTER|wxICON_WARNING, clMainFrame::Get() );
 		return;
 	}
 #endif
@@ -2701,7 +2701,7 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() ) {
 		if ( wxMessageBox ( _( "This would terminate the current debug session, continue?" ),
-		                    wxT ( "Confirm" ), wxICON_QUESTION|wxYES_NO|wxCANCEL ) != wxYES )
+		                    _("Confirm" ), wxICON_QUESTION|wxYES_NO|wxCANCEL ) != wxYES )
 			return;
 		DbgStop();
 	}
@@ -2714,7 +2714,7 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 
 	QueueCommand info ( projectName, conf, false, QueueCommand::Build );
 	if ( bldConf && bldConf->IsCustomBuild() ) {
-		info.SetCustomBuildTarget ( preprocessOnly ? wxT("Preprocess File") : wxT ( "Compile Single File" ) );
+		info.SetCustomBuildTarget ( preprocessOnly ? _("Preprocess File") : _("Compile Single File" ) );
 		info.SetKind ( QueueCommand::CustomBuild );
 	}
 
@@ -2752,7 +2752,7 @@ void Manager::DoBuildProject ( const QueueCommand& buildInfo )
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() ) {
 		if ( wxMessageBox ( _( "This would terminate the current debug session, continue?" ),
-		                    wxT ( "Confirm" ), wxICON_QUESTION|wxYES_NO|wxCANCEL ) != wxYES )
+		                    _("Confirm" ), wxICON_QUESTION|wxYES_NO|wxCANCEL ) != wxYES )
 			return;
 		DbgStop();
 	}
@@ -2791,7 +2791,7 @@ void Manager::DoCustomBuild ( const QueueCommand& buildInfo )
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() ) {
 		if ( wxMessageBox ( _( "This would terminate the current debug session, continue?" ),
-		                    wxT ( "Confirm" ), wxICON_QUESTION|wxYES_NO|wxCANCEL ) != wxYES )
+		                    _("Confirm"), wxICON_QUESTION|wxYES_NO|wxCANCEL ) != wxYES )
 			return;
 		DbgStop();
 	}

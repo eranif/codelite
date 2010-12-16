@@ -250,7 +250,7 @@ void PluginManager::Load()
 
 						int id = wxNewId();
 						wxString text(plugin->GetShortName());
-						text << wxT(" ToolBar");
+						text << _(" ToolBar");
 						wxMenuItem *newItem = new wxMenuItem(submenu, id, text, wxEmptyString, wxITEM_CHECK);
 						submenu->Append(newItem);
 						clMainFrame::Get()->RegisterToolbar(id, plugin->GetShortName());

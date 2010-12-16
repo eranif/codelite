@@ -242,7 +242,10 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 				wxString customWd  = dependProjbldConf->GetCustomBuildWorkingDir();
 				wxString build_cmd = dependProjbldConf->GetCustomBuildCmd();
 				wxString customWdCmd;
-
+				
+				customWd  = ExpandAllVariables(customWd,  WorkspaceST::Get(), dependProj->GetName(), dependProjbldConf->GetName(), wxEmptyString);
+				build_cmd = ExpandAllVariables(build_cmd, WorkspaceST::Get(), dependProj->GetName(), dependProjbldConf->GetName(), wxEmptyString);
+				
 				build_cmd.Trim().Trim(false);
 
 				if (build_cmd.empty()) {
@@ -364,8 +367,12 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 			} else {
 
-				wxString customWd = dependProjbldConf->GetCustomBuildWorkingDir();
+				wxString customWd  = dependProjbldConf->GetCustomBuildWorkingDir();
 				wxString clean_cmd = dependProjbldConf->GetCustomCleanCmd();
+				
+				customWd  = ExpandAllVariables(customWd,  WorkspaceST::Get(), dependProj->GetName(), dependProjbldConf->GetName(), wxEmptyString);
+				clean_cmd = ExpandAllVariables(clean_cmd, WorkspaceST::Get(), dependProj->GetName(), dependProjbldConf->GetName(), wxEmptyString);
+				
 				wxString customWdCmd;
 
 				clean_cmd.Trim().Trim(false);

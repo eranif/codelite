@@ -181,8 +181,8 @@ static void WaitForDebugger(int signo)
 {
 	wxString msg;
 	msg << wxT("codelite crashed: you may attach to it using gdb\n")
-		<< wxT("or let it crash silently..\n")
-		<< wxT("Attach debugger?\n");
+	    << wxT("or let it crash silently..\n")
+	    << wxT("Attach debugger?\n");
 
 	int rc = wxMessageBox(msg, wxT("CodeLite Crash Handler"), wxYES_NO|wxCENTER|wxICON_ERROR);
 	if(rc == wxYES) {
@@ -217,7 +217,7 @@ static void ChildTerminatedSingalHandler(int signo)
 		if(pid > 0) {
 			// waitpid succeeded
 			IProcess::SetProcessExitCode(pid, WEXITSTATUS(status));
-			
+
 		} else {
 			break;
 
@@ -234,11 +234,11 @@ IMPLEMENT_APP(CodeLiteApp)
 
 extern void InitXmlResource();
 CodeLiteApp::CodeLiteApp(void)
-		: m_pMainFrame(NULL)
-		, m_singleInstance(NULL)
-		, m_loadPlugins(true)
+	: m_pMainFrame(NULL)
+	, m_singleInstance(NULL)
+	, m_loadPlugins(true)
 #ifdef __WXMSW__
-		, m_handler(NULL)
+	, m_handler(NULL)
 #endif
 {
 }
@@ -290,7 +290,7 @@ bool CodeLiteApp::OnInit()
 	// load the exception handler dll so we will get Dr MinGW at runtime
 	m_handler = LoadLibrary(wxT("exchndl.dll"));
 #endif
-	
+
 
 	// Init resources and add the PNG handler
 	wxSystemOptions::SetOption(_T("msw.remap"), 0);
@@ -427,10 +427,10 @@ bool CodeLiteApp::OnInit()
 	long style = wxSIMPLE_BORDER;
 #if defined (__WXMSW__) || defined (__WXGTK__)
 	style |= wxFRAME_NO_TASKBAR;
-	
+
 #else // Mac
 	wxUnusedVar(style);
-	
+
 #endif
 
 	//read the last frame size from the configuration file
@@ -479,31 +479,35 @@ bool CodeLiteApp::OnInit()
 
 	// Set up the locale if appropriate
 	if (EditorConfigST::Get()->GetOptions()->GetUseLocale()) {
-		int preferredLocale = wxLANGUAGE_DEFAULT;
+		int preferredLocale = wxLANGUAGE_ENGLISH;
 		// The locale had to be saved as the canonical locale name, as the wxLanguage enum wasn't consistent between wx versions
 		wxString preferredLocalename = EditorConfigST::Get()->GetOptions()->GetPreferredLocale();
 		if (!preferredLocalename.IsEmpty()) {
 			const wxLanguageInfo* info = wxLocale::FindLanguageInfo(preferredLocalename);
 			if (info) {
 				preferredLocale = info->Language;
-		if (preferredLocale == wxLANGUAGE_UNKNOWN) {
-			preferredLocale = wxLANGUAGE_DEFAULT;
-		}
+				if (preferredLocale == wxLANGUAGE_UNKNOWN) {
+					preferredLocale = wxLANGUAGE_ENGLISH;
+				}
 			}
 		}
-		
+
 #if defined (__WXGTK__)
 		// Cater for a --prefix= build. This gets added automatically to the search path for catalogues.
 		// So hack in the standard ones too, otherwise wxstd.mo will be missed
 		wxLocale::AddCatalogLookupPathPrefix(wxT("/usr/share/locale"));
 		wxLocale::AddCatalogLookupPathPrefix(wxT("/usr/local/share/locale"));
+
+#elif defined(__WXMSW__)
+		wxLocale::AddCatalogLookupPathPrefix(ManagerST::Get()->GetInstallDir() + wxT("\\locale"));
 #endif
+
 		// This has to be done before the catalogues are added, as otherwise the wrong one (or none) will be found
 		m_locale.Init(preferredLocale);
 
 		bool codelitemo_found = m_locale.AddCatalog(wxT("codelite"));
 		if (!codelitemo_found) {
-		  m_locale.AddCatalog(wxT("CodeLite")); // Hedge bets re our spelling
+			m_locale.AddCatalog(wxT("CodeLite")); // Hedge bets re our spelling
 		}
 
 		if (!codelitemo_found) {
@@ -642,10 +646,10 @@ bool CodeLiteApp::CheckSingularity(const wxCmdLineParser &parser, const wxString
 
 				wxString file_name, tmp_file;
 				tmp_file 	<< ManagerST::Get()->GetStarupDirectory()
-				<< wxT("/ipc/command.msg.tmp");
+				            << wxT("/ipc/command.msg.tmp");
 
 				file_name 	<< ManagerST::Get()->GetStarupDirectory()
-				<< wxT("/ipc/command.msg");
+				            << wxT("/ipc/command.msg");
 
 				// write the content to a temporary file, once completed,
 				// rename the file to the actual file name
@@ -835,4 +839,3 @@ wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxS
 	}
 	return defaultMenuFile;
 }
-

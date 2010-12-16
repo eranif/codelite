@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include "globals.h"
 #include <wx/clntdata.h>
 #include "frame.h"
 #include "manager.h"
@@ -34,6 +35,8 @@ OpenWindowsPanel::OpenWindowsPanel( wxWindow* parent, const wxString &caption )
     , m_caption(caption)
     , m_rclickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")))
 {
+	MSWSetNativeTheme(m_fileList);
+	
     wxTheApp->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
     wxTheApp->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OpenWindowsPanel::OnEditorClosing), NULL, this);
     wxTheApp->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);

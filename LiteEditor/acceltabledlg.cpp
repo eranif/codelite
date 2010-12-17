@@ -22,8 +22,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/imaglist.h>
-#include <wx/debug.h>
 #include "pluginmanager.h"
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
@@ -32,6 +30,7 @@
 #include "newkeyshortcutdlg.h"
 #include "acceltabledlg.h"
 #include "manager.h"
+#include <wx/imaglist.h>
 #include <algorithm>
 
 //-------------------------------------------------------------------------------

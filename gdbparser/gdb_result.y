@@ -193,6 +193,7 @@ child_attributes :  child_key '=' GDB_STRING {
 						}
 					}
 				 |  child_key '=' GDB_STRING { sg_attributes[$1] = $3;} ',' child_attributes
+				 |  GDB_TIME '=' '{' child_attributes '}'
 				 ;
 
 stop_statement : GDB_STOPPED ',' GDB_TIME '=' '{' child_attributes '}' ',' GDB_REASON '=' GDB_STRING {

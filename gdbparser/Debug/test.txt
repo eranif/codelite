@@ -1,1 +1,2 @@
-^done,name="var4",numchild="3",type="ParameterPanel * const",typecode="PTR",dynamic_type="ParameterPanel *",resolved_type="ParameterPanel *",in_scope="true",block_start_addr="0x00050978",block_end_addr="0x000516cb",time={wallclock="0.00103",user="0.00069",system="0.00023",start="1292613255.186766",end="1292613255.187796"}
+^done,value="0 '\\0'",time={wallclock="0.00002",user="0.00002",system="0.00000",start="1292616626.233981",end="1292616626.234002"}
+ 

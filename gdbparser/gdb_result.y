@@ -76,13 +76,25 @@ parse: children_list
 
 children_list:    { cleanup(); } child_pattern
 				|  error {
-				//printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
+				printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
 				}
 			;
 
 child_pattern :   '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN '=' list_open children list_close
 				| '^' GDB_DONE ',' GDB_NAME '=' GDB_STRING ',' {sg_attributes[$4] = $6;} child_attributes
 				{
+					sg_children.push_back( sg_attributes );
+					sg_attributes.clear();
+				}
+				| '^' GDB_DONE ',' GDB_VALUE '=' GDB_STRING ',' child_attributes
+				{
+					sg_attributes[$4] = $6;
+					sg_children.push_back( sg_attributes );
+					sg_attributes.clear();
+				}
+				| '^' GDB_DONE ',' GDB_VALUE '=' GDB_STRING
+				{
+					sg_attributes[$4] = $6;
 					sg_children.push_back( sg_attributes );
 					sg_attributes.clear();
 				}

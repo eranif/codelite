@@ -1259,18 +1259,12 @@ bool DbgCmdListChildren::ProcessOutput(const wxString& line)
 
 bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
 {
-	// -var-evaluate-expression var1
-	// ^done,value="{...}"
-	wxString    v;
-
-	int where = line.Find(wxT("value=\""));
-	if ( where != wxNOT_FOUND ) {
-		v = line.Mid(where + 7); // Skip the value="
-		if (v.IsEmpty() == false) {
-			v.RemoveLast(); // remove closing qoute
-		}
-
-		wxString display_line = wxGdbFixValue( v );
+	std::string cbuffer = line.mb_str(wxConvUTF8).data();
+	std::vector< std::map<std::string, std::string > > children;
+	gdbParseListChildren(cbuffer, children);
+	
+	if(children.empty() == false) {
+		wxString display_line = ExtractGdbChild(children.at(0), wxT("value"));
 		display_line.Trim().Trim(false);
 		if ( display_line.IsEmpty() == false ) {
 			if(m_userReason == DBG_USERR_WATCHTABLE || display_line != wxT("{...}")) {

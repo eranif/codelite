@@ -91,6 +91,14 @@ void DisplayVariableDlg::BuildTree(const VariableObjChildren& children, IDebugge
 	vob.isAFake = false;
 
 	wxTreeItemId root = m_treeCtrl->AddRoot( m_variableName, -1, -1, new QWTreeData(vob) );
+	
+	// Mac does not return value for the root item... 
+	// we need to force another evaluate call here
+#ifdef __WXMAC__
+	m_debugger->EvaluateVariableObject( m_mainVariableObject, DBG_USERR_QUICKWACTH );
+	m_gdbId2ItemLeaf[m_mainVariableObject] = root;
+#endif
+
 	if ( children.empty() ) return;
 	DoAddChildren( root, children );
 }
@@ -162,6 +170,11 @@ void DisplayVariableDlg::UpdateValue(const wxString& varname, const wxString& va
 		wxTreeItemId item = iter->second;
 		if ( item.IsOk() ) {
 			wxString curtext = m_treeCtrl->GetItemText( item );
+#ifdef __WXMAC__
+			if(item == m_treeCtrl->GetRootItem()) {
+				curtext = curtext.BeforeFirst(wxT('='));
+			}
+#endif
 			curtext << wxT(" = ") << value;
 			m_treeCtrl->SetItemText( item, curtext );
 

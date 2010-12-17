@@ -67,8 +67,7 @@ struct CompilerPatterns {
 class BuildTab : public OutputTabWindow
 {
 	friend class ErrorsTab;
-
-private:
+public:
 	/**
 	 * Tracks an "important" line in the build log (error, warning, etc)
 	 */
@@ -110,6 +109,7 @@ private:
 
 	void Initialize       ();
 	void DoMarkAndOpenFile  (std::map<int,LineInfo>::iterator i, bool scrollToLine);
+	bool DoOpenFile( const BuildTab::LineInfo &lineInfo);
 	bool ExtractLineInfo    (LineInfo &info, const wxString &text, const wxRegEx &re, const wxString &fileidx, const wxString &lineidx);
 	bool GetCompilerPatterns(const wxString &compilerName, CompilerPatterns &patterns);
 	void DoProcessLine      (const wxString &text, int lineno);

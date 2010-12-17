@@ -27,31 +27,26 @@
 
 #include <vector>
 #include "buidltab.h"
-
+#include "treelistctrl.h"
 
 class ErrorsTab : public OutputTabWindow
 {
 	friend class BuildTab;
-
-private:
-	BuildTab *m_bt;
-	std::map<int,int> m_lineMap;
-
-	void ClearLines();
-	bool IsShowing(int line);
-	void AppendLine(int line);
-	void MarkLine(int line);
-
-	void OnRedisplayLines  (wxCommandEvent   &e);
-	void OnClearAll        (wxCommandEvent   &e);
-	void OnRepeatOutput    (wxCommandEvent   &e);
-	void OnClearAllUI      (wxUpdateUIEvent  &e);
-	void OnRepeatOutputUI  (wxUpdateUIEvent  &e);
-	void OnMouseDClick     (wxScintillaEvent &e);
-	void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
+	wxTreeListCtrl* m_treeListCtrl;
+	BuildTab*       m_bt;
 	
-	DECLARE_EVENT_TABLE()
-
+private:
+	wxTreeItemId DoFindFile(const wxString& filename);
+	bool         IsMessageExists(const wxString& msg, const wxTreeItemId& item);
+	
+protected:
+	void ClearLines();
+	void AddError( const BuildTab::LineInfo &lineInfo);
+	void OnClearAll        (wxCommandEvent   &e);
+	void OnClearAllUI      (wxUpdateUIEvent  &e);
+	void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
+	void OnItemDClick      (wxTreeEvent &event);
+	void OnBuildEnded      (wxCommandEvent &event);
 public:
 	ErrorsTab(BuildTab *bt, wxWindow *parent, wxWindowID id, const wxString &name);
 	~ErrorsTab();

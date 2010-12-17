@@ -25,33 +25,68 @@
 #include <wx/xrc/xmlres.h>
 #include "globals.h"
 #include "errorstab.h"
+#include "drawingutils.h"
 #include "findresultstab.h"
 #include "pluginmanager.h"
-
-
+#include "treelistctrl.h"
+#include "fileextmanager.h"
+#include "globals.h"
 #include "editor_config.h"
-BEGIN_EVENT_TABLE ( ErrorsTab, OutputTabWindow )
-	EVT_MENU ( XRCID ( "show_errors" ),      ErrorsTab::OnRedisplayLines )
-	EVT_MENU ( XRCID ( "show_warnings" ),    ErrorsTab::OnRedisplayLines )
-END_EVENT_TABLE()
 
+class ErrorsTabItemData : public wxTreeItemData
+{
+public:
+	BuildTab::LineInfo m_lineInfo;
+	
+public:
+	ErrorsTabItemData(const BuildTab::LineInfo& lineInfo) {
+		m_lineInfo = lineInfo;
+	}
+	
+	virtual ~ErrorsTabItemData(){}
+};
 
 ErrorsTab::ErrorsTab ( BuildTab *bt, wxWindow *parent, wxWindowID id, const wxString &name )
 		: OutputTabWindow ( parent, id, name )
-		, m_bt ( bt )
+		, m_bt(bt)
 {
     m_autoAppear = false; // BuildTab controls this tab's auto-appearance
-	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
-
-	m_tb->RemoveTool ( XRCID ( "repeat_output" ) );
-	m_tb->AddCheckTool ( XRCID ( "show_errors" ), _("Errors"),     bmpLoader->LoadBitmap(wxT("status/16/error")), wxNullBitmap, wxT ( "Show build errors" ) );
-	m_tb->ToggleTool ( XRCID ( "show_errors" ), true );
-
-	m_tb->AddCheckTool ( XRCID ( "show_warnings" ), _("Warnings"), bmpLoader->LoadBitmap(wxT("status/16/warning")), wxNullBitmap, wxT ( "Show build warnings" ) );
-	m_tb->ToggleTool ( XRCID ( "show_warnings" ), true );
+	m_tb->RemoveTool( XRCID("repeat_output"   ));
+	m_tb->RemoveTool( XRCID("search_output"   ));
+	m_tb->RemoveTool( XRCID("word_wrap_output"));
+	m_tb->RemoveTool( XRCID("word_wrap_output"));
+	m_tb->RemoveTool( XRCID("collapse_all"));
 	m_tb->Realize();
-
-	FindResultsTab::SetStyles ( m_sci );
+	
+	m_hSizer->Detach(m_sci);
+	m_sci->Hide();
+	
+	// Insert a wxTreeListCtrl 
+	long treeStyle = wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_HAS_BUTTONS|wxTR_NO_LINES|wxTR_ROW_LINES;
+	m_treeListCtrl = new wxTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
+	MSWSetNativeTheme(m_treeListCtrl);
+	
+	m_treeListCtrl->AddColumn(_("File" ), 800);
+	m_treeListCtrl->AddColumn(_("Line") , 800);
+	
+	wxImageList *imageList = new wxImageList(16, 16, true);
+	imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/error")));                        // 0
+	imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/warning")));                      // 1
+	imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("mime/16/c")));                              // 2
+	imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("mime/16/cpp")));                            // 3
+	imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("mime/16/h")));                              // 4
+	imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("mime/16/text")));                           // 5
+	imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/unittest++/run_as_unittest"))); // 6
+	
+	m_treeListCtrl->AssignImageList( imageList );
+	m_treeListCtrl->AddRoot(_("Build Output"));
+	m_treeListCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(ErrorsTab::OnItemDClick), NULL, this);
+#ifdef __WXMAC__
+	m_hSizer->Insert(0, m_treeListCtrl, 1, wxEXPAND);
+#else
+	m_hSizer->Add(m_treeListCtrl, 1, wxEXPAND);
+#endif
+	wxTheApp->Connect ( wxEVT_BUILD_ENDED , wxCommandEventHandler ( ErrorsTab::OnBuildEnded   ), NULL, this );
 }
 
 ErrorsTab::~ErrorsTab()
@@ -60,130 +95,50 @@ ErrorsTab::~ErrorsTab()
 
 void ErrorsTab::ClearLines()
 {
-	Clear();
-	m_lineMap.clear();
+	m_treeListCtrl->DeleteChildren(m_treeListCtrl->GetRootItem());
 }
 
-bool ErrorsTab::IsShowing ( int linecolor )
+void ErrorsTab::AddError ( const BuildTab::LineInfo &lineInfo )
 {
-	switch ( linecolor ) {
-	case wxSCI_LEX_GCC_BUILDING:
-		return true;
-	case wxSCI_LEX_GCC_ERROR:
-		return m_tb->GetToolState ( XRCID ( "show_errors" ) );
-	case wxSCI_LEX_GCC_WARNING:
-		return m_tb->GetToolState ( XRCID ( "show_warnings" ) );
-	}
-	return false;
-}
-
-void ErrorsTab::AppendLine ( int line )
-{
-	std::map<int,BuildTab::LineInfo>::iterator i = m_bt->m_lineInfo.find ( line );
-	if ( i == m_bt->m_lineInfo.end() || !IsShowing ( i->second.linecolor ) )
+	if(lineInfo.linecolor != wxSCI_LEX_GCC_ERROR && lineInfo.linecolor != wxSCI_LEX_GCC_WARNING)
 		return;
-	if ( i->second.linecolor == wxSCI_LEX_GCC_BUILDING ) {
-		if ( i->second.linetext[0] == wxT ( '-' ) ) {
-			m_lineMap[m_sci->GetLineCount()-1] = line;
-			AppendText ( i->second.linetext );
+	
+	bool isError = (lineInfo.linecolor == wxSCI_LEX_GCC_ERROR);
+	
+	wxTreeItemId item = DoFindFile(lineInfo.filename);
+	if(!item.IsOk()) {
+		int imgId(5); // text
+		switch(FileExtManager::GetType(lineInfo.filename)) {
+		case FileExtManager::TypeHeader:
+			imgId = 4;
+			break;
+		
+		case FileExtManager::TypeSourceC:
+			imgId = 2;
+			break;
+			
+		case FileExtManager::TypeSourceCpp:
+			imgId = 3;
+			break;
+		
+		default:
+			imgId = 5;
+			break;
 		}
+		
+		// append new entry
+		item = m_treeListCtrl->AppendItem(m_treeListCtrl->GetRootItem(), lineInfo.filename, imgId, imgId);
+		wxColour rootItemColour = DrawingUtils::LightColour(wxT("LIGHT GRAY"), 3.0);
+		m_treeListCtrl->SetItemBackgroundColour(item, rootItemColour);
+	}
+	
+	// Dont add duplicate entries
+	wxString displayText = lineInfo.linetext.Mid(lineInfo.filestart + lineInfo.filelen);
+	if(IsMessageExists(displayText, item))
 		return;
-	}
-
-	wxString filename = i->second.linetext.Mid ( i->second.filestart, i->second.filelen );
-	wxString prevfile;
-	if ( !m_lineMap.empty() ) {
-		std::map<int,BuildTab::LineInfo>::iterator p = m_bt->m_lineInfo.find ( m_lineMap.rbegin()->second );
-		prevfile = p->second.linetext.Mid ( p->second.filestart, p->second.filelen );
-	}
-	if ( prevfile != filename ) {
-		// new file -- put file name on its own line
-		AppendText ( filename + wxT ( "\n" ) );
-	}
-
-	int lineno = m_sci->GetLineCount()-1;
-	m_lineMap[lineno] = line;
-
-	// remove "...filename:" from line text
-	wxString text = i->second.linetext.Mid ( i->second.filestart + i->second.filelen );
-	if ( !text.IsEmpty() && text[0] == wxT ( ':' ) ) {
-		text = text.Mid ( 1 );
-	}
-	// pad (possible) line number to 5 spaces
-	int pos = text.Find ( wxT ( ':' ) );
-	if ( pos < 0 || pos > 4 ) {
-		pos = 0;
-	}
-	text.Pad ( 5-pos, wxT ( ' ' ), false );
-
-	AppendText ( text );
-	m_sci->SetIndicatorCurrent ( i->second.linecolor == wxSCI_LEX_GCC_ERROR ? 2 : 1 );
-	m_sci->IndicatorFillRange ( m_sci->PositionFromLine ( lineno ), 5 );
-}
-
-void ErrorsTab::MarkLine ( int line )
-{
-	std::map<int,BuildTab::LineInfo>::iterator i = m_bt->m_lineInfo.find ( line );
-	if ( i == m_bt->m_lineInfo.end() || !IsShowing ( i->second.linecolor ) )
-		return;
-	for ( std::map<int,int>::iterator j = m_lineMap.begin(); j != m_lineMap.end(); j++ ) {
-		if ( j->second == line ) {
-			m_sci->MarkerDeleteAll ( 0x7 );
-			m_sci->MarkerAdd ( j->first, 0x7 );
-			m_sci->EnsureVisible ( j->first );
-			m_sci->EnsureCaretVisible();
-
-			// clear selection
-			int pos = m_sci->PositionFromLine ( j->first );
-			m_sci->SetSelection ( wxNOT_FOUND, pos );
-		}
-	}
-}
-
-void ErrorsTab::OnRedisplayLines ( wxCommandEvent& e )
-{
-	wxUnusedVar ( e );
-
-	int marked = -1;
-	ClearLines();
-	for ( int i = 0; i < m_bt->m_sci->GetLineCount(); i++ ) {
-		AppendLine ( i );
-		if ( m_bt->m_sci->MarkerGet ( i ) & 1<<0x7 ) {
-			marked = i;
-		}
-	}
-	if ( marked >= 0 ) {
-		MarkLine ( marked );
-	}
-}
-
-void ErrorsTab::OnMouseDClick ( wxScintillaEvent &e )
-{
-	int pos = e.GetPosition();
-	int style = m_sci->GetStyleAt(pos);
-	int line = m_sci->LineFromPosition(pos);
-
-	if ( style == wxSCI_LEX_FIF_FILE ) {
-
-		m_sci->ToggleFold ( line );
-
-		// clear the selection
-		m_sci->SetSelection ( wxNOT_FOUND, pos );
-
-	} else {
-
-		m_sci->SetSelection ( wxNOT_FOUND, e.GetPosition() );
-		std::map<int,int>::iterator i = m_lineMap.find ( m_sci->LineFromPosition ( e.GetPosition() ) );
-		if ( i != m_lineMap.end() ) {
-			std::map<int,BuildTab::LineInfo>::iterator m = m_bt->m_lineInfo.find ( i->second );
-			if ( m != m_bt->m_lineInfo.end() || m->second.linecolor != wxSCI_LEX_GCC_BUILDING ) {
-				m_bt->DoMarkAndOpenFile ( m, true );
-				return;
-			}
-		}
-		OutputTabWindow::OnMouseDClick ( e );
-	}
-
+		
+	wxTreeItemId newItem = m_treeListCtrl->AppendItem(item, displayText, isError ? 0 : 1, isError ? 0 : 1, new ErrorsTabItemData(lineInfo));
+	m_treeListCtrl->SetItemText(newItem, 1, wxString::Format(wxT("%ld"), lineInfo.linenum + 1));
 }
 
 void ErrorsTab::OnClearAll ( wxCommandEvent& e )
@@ -196,16 +151,6 @@ void ErrorsTab::OnClearAllUI ( wxUpdateUIEvent& e )
 	m_bt->OnClearAllUI ( e );
 }
 
-void ErrorsTab::OnRepeatOutput ( wxCommandEvent& e )
-{
-	m_bt->OnRepeatOutput ( e );
-}
-
-void ErrorsTab::OnRepeatOutputUI ( wxUpdateUIEvent& e )
-{
-	m_bt->OnRepeatOutputUI ( e );
-}
-
 void ErrorsTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
 	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
@@ -215,5 +160,58 @@ void ErrorsTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 	} else {
 		e.Enable(false);
 		e.Check(false);
+	}
+}
+
+wxTreeItemId ErrorsTab::DoFindFile(const wxString& filename)
+{
+	wxTreeItemIdValue cookieOne;
+	wxTreeItemId child = m_treeListCtrl->GetFirstChild(m_treeListCtrl->GetRootItem(), cookieOne);
+	while( child.IsOk() ) {
+		if(m_treeListCtrl->GetItemText(child) == filename)
+			return child;
+		child = m_treeListCtrl->GetNextChild(m_treeListCtrl->GetRootItem(), cookieOne);
+	}
+	return wxTreeItemId();
+}
+
+void ErrorsTab::OnItemDClick(wxTreeEvent& event)
+{
+	if(event.GetItem().IsOk() == false) {
+		return;
+	}
+	
+	ErrorsTabItemData *itemData = dynamic_cast<ErrorsTabItemData*>(m_treeListCtrl->GetItemData(event.GetItem()));
+	if(itemData) {
+		m_bt->DoOpenFile(itemData->m_lineInfo);
+	}
+	event.Skip();
+}
+
+bool ErrorsTab::IsMessageExists(const wxString& msg, const wxTreeItemId& item)
+{
+	wxTreeItemIdValue cookieOne;
+	wxTreeItemId child = m_treeListCtrl->GetFirstChild(item, cookieOne);
+	while( child.IsOk() ) {
+		if(m_treeListCtrl->GetItemText(child) == msg)
+			return true;
+		child = m_treeListCtrl->GetNextChild(item, cookieOne);
+	}
+	return false;
+}
+
+void ErrorsTab::OnBuildEnded(wxCommandEvent& event)
+{
+	// Count the number of errors
+	wxTreeItemIdValue cookieOne;
+	int numChild(0);
+	wxTreeItemId child = m_treeListCtrl->GetFirstChild(m_treeListCtrl->GetRootItem(), cookieOne);
+	while( child.IsOk() ) {
+		numChild++;
+		child = m_treeListCtrl->GetNextChild(m_treeListCtrl->GetRootItem(), cookieOne);
+	}
+	if(numChild == 0) {
+		// No errors were found!
+		m_treeListCtrl->AppendItem(m_treeListCtrl->GetRootItem(), _("Build ended successfully."), 6, 6);
 	}
 }

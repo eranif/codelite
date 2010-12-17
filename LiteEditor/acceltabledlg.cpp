@@ -32,6 +32,7 @@
 #include "manager.h"
 #include <wx/imaglist.h>
 #include <algorithm>
+#include <wx/imaglist.h>
 
 //-------------------------------------------------------------------------------
 //Helper classes for sorting

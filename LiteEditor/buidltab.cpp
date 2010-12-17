@@ -299,14 +299,10 @@ std::map<int,BuildTab::LineInfo>::iterator BuildTab::GetNextBadLine()
 	return i != e ? i : m_lineInfo.end();
 }
 
-void BuildTab::DoMarkAndOpenFile ( std::map<int,LineInfo>::iterator i, bool scrollToLine )
+bool BuildTab::DoOpenFile( const BuildTab::LineInfo &info)
 {
-	if ( i == m_lineInfo.end() )
-		return;
-
-	const LineInfo &info = i->second;
 	if (info.linecolor != wxSCI_LEX_GCC_ERROR && info.linecolor != wxSCI_LEX_GCC_WARNING)
-		return;
+		return false;
 
 	wxFileName filename(info.filename);
 
@@ -342,26 +338,26 @@ void BuildTab::DoMarkAndOpenFile ( std::map<int,LineInfo>::iterator i, bool scro
 
 	LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile ( file, info.project, info.linenum );
 	if (editor == NULL) {
-//
-//		// failed to open the file, try using the name part of the file only
-//		wxFileName fName = ManagerST::Get()->FindFile(filename.GetFullName());
-//		if(fName.IsOk()) {
-//			editor = Frame::Get()->GetMainBook()->OpenFile ( fName.GetFullPath(), info.project, info.linenum );
-//		}
-//
-//		if(editor == NULL)
-		return;
+		return false;
 	}
+	
+	return true;
+}
 
+void BuildTab::DoMarkAndOpenFile ( std::map<int,LineInfo>::iterator i, bool scrollToLine )
+{
+	if ( i == m_lineInfo.end() )
+		return;
+		
+	if(!DoOpenFile(i->second))
+		return;
+	
 	// mark the current error/warning line in the output tab
 	m_sci->MarkerDeleteAll   ( 0x7           );
 	m_sci->MarkerAdd         ( i->first, 0x7 );
 
 	if(scrollToLine)
 		m_sci->ScrollToLine      ( i->first      );
-
-	// mark it in the errors tab too
-	clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->MarkLine ( i->first );
 }
 
 void BuildTab::MarkEditor ( LEditor *editor )
@@ -613,7 +609,6 @@ void BuildTab::OnConfigChanged ( wxCommandEvent &e )
 	const wxString *config = ( const wxString * ) e.GetClientData();
 	if ( config && *config == wxT ( "build_tab_settings" ) ) {
 		Initialize();
-		clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->OnRedisplayLines ( e );
 	}
 }
 
@@ -855,7 +850,7 @@ void BuildTab::DoProcessLine(const wxString& text, int lineno)
 		if (!info.filename.IsEmpty() && (info.linecolor == wxSCI_LEX_GCC_ERROR || info.linecolor == wxSCI_LEX_GCC_WARNING)) {
 			m_fileMap.insert(std::make_pair(info.filename, lineno));
 		}
-		clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->AppendLine ( lineno );
+		clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->AddError ( info );
 	}
 }
 

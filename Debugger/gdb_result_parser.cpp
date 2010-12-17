@@ -523,7 +523,7 @@ case 3:
 break;
 case 5:
 {
-				printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
+				/*printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());*/
 				}
 break;
 case 7:

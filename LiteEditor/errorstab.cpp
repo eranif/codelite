@@ -213,5 +213,11 @@ void ErrorsTab::OnBuildEnded(wxCommandEvent& event)
 	if(numChild == 0) {
 		// No errors were found!
 		m_treeListCtrl->AppendItem(m_treeListCtrl->GetRootItem(), _("Build ended successfully."), 6, 6);
+	} else {
+		wxTreeItemIdValue cookieTwo;
+		wxTreeItemId firstFile = m_treeListCtrl->GetFirstChild(m_treeListCtrl->GetRootItem(), cookieTwo);
+		if(firstFile.IsOk()) {
+			m_treeListCtrl->Expand(firstFile);
+		}
 	}
 }

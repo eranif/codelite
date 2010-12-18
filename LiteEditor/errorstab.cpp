@@ -68,7 +68,7 @@ ErrorsTab::ErrorsTab ( BuildTab *bt, wxWindow *parent, wxWindowID id, const wxSt
 	m_treeListCtrl = new wxTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
 	MSWSetNativeTheme(m_treeListCtrl);
 	
-	m_treeListCtrl->AddColumn(_("File" ), 800);
+	m_treeListCtrl->AddColumn(_("Message" ), 800);
 	m_treeListCtrl->AddColumn(_("Line") , 800);
 	
 	wxImageList *imageList = new wxImageList(16, 16, true);

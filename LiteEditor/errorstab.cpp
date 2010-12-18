@@ -132,16 +132,17 @@ void ErrorsTab::AddError ( const BuildTab::LineInfo &lineInfo )
 		}
 		// append new entry
 		item = m_treeListCtrl->AppendItem(m_treeListCtrl->GetRootItem(), lineInfo.filename, imgId, imgId);
-		wxColour rootItemColour = DrawingUtils::LightColour(wxT("GRAY"), 3.0);
+		wxColour rootItemColour = DrawingUtils::LightColour(wxT("GRAY"), 4.0);
 		m_treeListCtrl->SetItemBackgroundColour(item, rootItemColour);
 	}
 	
-	// Dont add duplicate entries
-	if(IsMessageExists(lineInfo.linetext, item))
-		return;
 		
 	wxString displayText = lineInfo.linetext.Mid(lineInfo.filestart + lineInfo.filelen);
 	displayText.Trim().Trim(false);
+	
+	// Dont add duplicate entries
+	if(IsMessageExists(displayText, lineInfo.linenum, item))
+		return;
 	
 	if(m_tb->GetToolState(XRCID("scroll_on_output"))) {
 		// Make sure the new entry is visible
@@ -200,13 +201,13 @@ void ErrorsTab::OnItemDClick(wxTreeEvent& event)
 	event.Skip();
 }
 
-bool ErrorsTab::IsMessageExists(const wxString& msg, const wxTreeItemId& item)
+bool ErrorsTab::IsMessageExists(const wxString& msg, long linenum, const wxTreeItemId& item)
 {
 	wxTreeItemIdValue cookieOne;
 	wxTreeItemId child = m_treeListCtrl->GetFirstChild(item, cookieOne);
 	while( child.IsOk() ) {
-		ErrorsTabItemData *itemData = (ErrorsTabItemData*)(m_treeListCtrl->GetItemData(item));
-		if(itemData && itemData->m_lineInfo.linetext == msg)
+		ErrorsTabItemData *itemData = (ErrorsTabItemData*)m_treeListCtrl->GetItemData(child);
+		if(itemData && itemData->m_lineInfo.linenum == linenum && m_treeListCtrl->GetItemText(child) == msg)
 			return true;
 		child = m_treeListCtrl->GetNextChild(item, cookieOne);
 	}
@@ -234,21 +235,18 @@ void ErrorsTab::OnBuildEnded(wxCommandEvent& event)
 		
 		// Add status mesage
 		wxString msg;
-		int msgIcon(0); // error icon
+		int msgIcon(-1); // error icon
 		if(m_errorCount == 0) {
-			msg = wxString::Format(_("Build ended with %d warnings"), m_warningCount);
-			msgIcon = 1;
-			bgColor = wxT("ORANGE");	
+			msg = wxString::Format(_("Build ended with %d warning(s)"), m_warningCount);
+			bgColor = wxT("GOLD");
 			
 		} else if(m_warningCount == 0) {
 			msg = wxString::Format(_("Build ended with %d errors"), m_errorCount);
-			msgIcon = 0;
 			bgColor = wxT("RED");
 			
 		} else {
 			msg = wxString::Format(_("Build ended with %d errors, %d warnings"), m_errorCount, m_warningCount);
-			msgIcon = 0;
-			bgColor = wxT("ORANGE");
+			bgColor = wxT("RED");
 		}
 		
 		statusItem = m_treeListCtrl->InsertItem(m_treeListCtrl->GetRootItem(), 0, msg, msgIcon, msgIcon);

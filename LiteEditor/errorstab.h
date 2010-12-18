@@ -39,7 +39,7 @@ class ErrorsTab : public OutputTabWindow
 	
 private:
 	wxTreeItemId DoFindFile(const wxString& filename);
-	bool         IsMessageExists(const wxString& msg, const wxTreeItemId& item);
+	bool         IsMessageExists(const wxString& msg, long line, const wxTreeItemId& item);
 	
 protected:
 	void ClearLines();

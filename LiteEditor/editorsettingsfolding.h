@@ -42,6 +42,7 @@ class EditorSettingsFolding
 	void OnFoldColourUI(wxUpdateUIEvent &e);
 	void OnFoldingMarginUI(wxUpdateUIEvent& event);
 
+	StringManager m_stringManager;
 public:
 	/** Constructor */
 	EditorSettingsFolding( wxWindow* parent );

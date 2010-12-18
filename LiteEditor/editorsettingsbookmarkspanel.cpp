@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "globals.h"
 #include "editorsettingsbookmarkspanel.h"
 
 EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel( wxWindow* parent )
@@ -36,7 +37,11 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel( wxWindow* parent )
 	//get the editor's options from the disk
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
 	m_displaySelection->SetValue(options->GetDisplayBookmarkMargin());
-	m_bookMarkShape->SetStringSelection(options->GetBookmarkShape());
+
+	// These are localised inside m_bookMarkShape. However serialising the translated strings will break other locales...
+	const wxString UnlocalisedShapes[] = { wxT("Small Rectangle"), wxT("Rounded Rectangle"), wxT("Circle"), wxT("Small Arrow") };
+	m_stringManager.AddStrings(sizeof(UnlocalisedShapes)/sizeof(wxString), UnlocalisedShapes, options->GetBookmarkShape(), m_bookMarkShape);
+
 	m_backgroundColor->SetColour(options->GetBookmarkBgColour());
 	m_foregroundColor->SetColour(options->GetBookmarkFgColour());
 
@@ -50,7 +55,14 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel( wxWindow* parent )
 void EditorSettingsBookmarksPanel::Save(OptionsConfigPtr options)
 {
 	options->SetDisplayBookmarkMargin( m_displaySelection->IsChecked() );
-	options->SetBookmarkShape( m_bookMarkShape->GetStringSelection());
+	
+	// Get the bookmark selection, unlocalised
+	wxString bmShape = m_stringManager.GetStringSelection();
+	if (bmShape.IsEmpty()) {
+		bmShape = wxT("Small Arrow");
+	}
+	options->SetBookmarkShape( bmShape);
+
 	options->SetBookmarkBgColour( m_backgroundColor->GetColour() );
 	options->SetBookmarkFgColour( m_foregroundColor->GetColour() );
 	EditorConfigST::Get()->SaveStringValue(wxT("WordHighlightColour"), m_highlightColor->GetColour().GetAsString());

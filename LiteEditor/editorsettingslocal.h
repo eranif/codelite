@@ -61,6 +61,8 @@ protected:
 
 	void OnOK( wxCommandEvent& event );
 
+	StringManager m_EOLstringManager;
+	StringManager m_WSstringManager;
 	LocalOptionsConfigPtr localOptions;
 	OptionsConfigPtr higherOptions;
 	wxXmlNode* node;

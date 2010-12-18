@@ -414,7 +414,7 @@ void LEditor::SetProperties()
 	// Fold settings
 	//---------------------------------------------------
 	// Define the folding style to be square
-	if ( options->GetFoldStyle() == _("Flatten Tree Square Headers") ) {
+	if ( options->GetFoldStyle() == wxT("Flatten Tree Square Headers") ) {
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_BOXMINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_BOXPLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_VLINE, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
@@ -423,7 +423,7 @@ void LEditor::SetProperties()
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_BOXMINUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_TCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 
-	} else if ( options->GetFoldStyle() == _("Flatten Tree Circular Headers") ) {
+	} else if ( options->GetFoldStyle() == wxT("Flatten Tree Circular Headers") ) {
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_CIRCLEMINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_CIRCLEPLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_VLINE, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
@@ -432,7 +432,7 @@ void LEditor::SetProperties()
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_CIRCLEMINUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_TCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 
-	} else if ( options->GetFoldStyle() == _("Simple") ) {
+	} else if ( options->GetFoldStyle() == wxT("Simple") ) {
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_MINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_PLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
@@ -441,7 +441,7 @@ void LEditor::SetProperties()
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_MINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 
-	} else if ( options->GetFoldStyle() == _("Arrows with Background Colour") ) {
+	} else if ( options->GetFoldStyle() == wxT("Arrows with Background Colour") ) {
 
 		wxColour bgcol = options->GetFoldBgColour();
 
@@ -453,7 +453,7 @@ void LEditor::SetProperties()
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_ARROWDOWN_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
 		DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_FULLRECT_TAIL, wxColor(0xff, 0xff, 0xff), bgcol);
 
-	} else if ( options->GetFoldStyle() == _("Simple with Background Colour") ) {
+	} else if ( options->GetFoldStyle() == wxT("Simple with Background Colour") ) {
 
 		wxColour bgcol = options->GetFoldBgColour();
 
@@ -465,7 +465,7 @@ void LEditor::SetProperties()
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_MINUS_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
 		DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_FULLRECT_TAIL, wxColor(0xff, 0xff, 0xff), bgcol);
 
-	} else { // use _("Arrows") as the default
+	} else { // use wxT("Arrows") as the default
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_ARROWDOWN, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_ARROW, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));

@@ -35,10 +35,9 @@ EditorSettingsFoldingBase::EditorSettingsFoldingBase( wxWindow* parent, wxWindow
 	m_staticText2->Wrap( -1 );
 	mainSizer->Add( m_staticText2, 0, wxALL, 5 );
 	
-	wxString m_foldStyleChoices[] = { _("Simple"), _("Arrows"), _("Arrows with Background Colour"), _("Simple with Background Colour"), _("Flatten Tree Square Headers"), _("Flatten Tree Circular Headers") };
-	int m_foldStyleNChoices = sizeof( m_foldStyleChoices ) / sizeof( wxString );
-	m_foldStyle = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_foldStyleNChoices, m_foldStyleChoices, 0 );
-	m_foldStyle->SetSelection( 1 );
+	wxArrayString m_foldStyleChoices;
+	m_foldStyle = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_foldStyleChoices, 0 );
+	m_foldStyle->SetSelection( 0 );
 	mainSizer->Add( m_foldStyle, 0, wxALL|wxEXPAND, 5 );
 	
 	wxGridSizer* gSizer1;

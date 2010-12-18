@@ -181,9 +181,8 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	m_staticTextwhitespaceStyle->Wrap( -1 );
 	gSizer2->Add( m_staticTextwhitespaceStyle, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	wxString m_whitespaceStyleChoices[] = { _("Invisible"), _("Visible always"), _("Visible after indentation"), _("Indentation only") };
-	int m_whitespaceStyleNChoices = sizeof( m_whitespaceStyleChoices ) / sizeof( wxString );
-	m_whitespaceStyle = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_whitespaceStyleNChoices, m_whitespaceStyleChoices, 0 );
+	wxArrayString m_whitespaceStyleChoices;
+	m_whitespaceStyle = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_whitespaceStyleChoices, 0 );
 	m_whitespaceStyle->SetSelection( 0 );
 	gSizer2->Add( m_whitespaceStyle, 0, wxALL, 5 );
 	
@@ -200,9 +199,8 @@ LocalEditorSettingsbase::LocalEditorSettingsbase( wxWindow* parent, wxWindowID i
 	m_EOLstatic->Wrap( -1 );
 	gSizer1->Add( m_EOLstatic, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	wxString m_choiceEOLChoices[] = { _("Default"), _("Mac (CR)"), _("Windows (CRLF)"), _("Unix (LF)") };
-	int m_choiceEOLNChoices = sizeof( m_choiceEOLChoices ) / sizeof( wxString );
-	m_choiceEOL = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceEOLNChoices, m_choiceEOLChoices, 0 );
+	wxArrayString m_choiceEOLChoices;
+	m_choiceEOL = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceEOLChoices, 0 );
 	m_choiceEOL->SetSelection( 0 );
 	m_choiceEOL->SetToolTip( _("Set the editor's EOL mode (End Of Line). When set to 'Default' CodeLite will set the EOL according to the hosting OS") );
 	

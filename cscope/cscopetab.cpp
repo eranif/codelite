@@ -40,7 +40,10 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 	MSWSetNativeTheme(m_treeCtrlResults);
 	
 	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);
-	m_choiceSearchScope->SetStringSelection(data.GetScanScope());
+
+	const wxString SearchScope[] = { wxT("Entire Workspace"), wxT("Active Project") };
+	m_stringManager.AddStrings(sizeof(SearchScope)/sizeof(wxString), SearchScope, data.GetScanScope(), m_choiceSearchScope);
+
 	m_checkBoxUpdateDb->SetValue(data.GetRebuildOption());
 	m_checkBoxRevertedIndex->SetValue(data.GetBuildRevertedIndexOption());
 	SetMessage(_("Ready"), 0);
@@ -186,7 +189,7 @@ void CscopeTab::OnClearResultsUI(wxUpdateUIEvent& e)
 void CscopeTab::OnChangeSearchScope(wxCommandEvent& e)
 {
 	CScopeConfData data;
-	data.SetScanScope(m_choiceSearchScope->GetStringSelection());
+	data.SetScanScope(m_stringManager.GetStringSelection());
 	data.SetRebuildDbOption(m_checkBoxUpdateDb->IsChecked());
 	data.SetBuildRevertedIndexOption(m_checkBoxRevertedIndex->IsChecked());
 	m_mgr->GetConfigTool()->WriteObject(wxT("CscopeSettings"), &data);

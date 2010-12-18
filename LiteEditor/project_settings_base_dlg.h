@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -24,14 +24,14 @@
 #include <wx/dialog.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/bitmap.h>
-#include <wx/image.h>
-#include <wx/icon.h>
-#include <wx/notebook.h>
 #include <wx/checkbox.h>
 #include <wx/gbsizer.h>
 #include <wx/checklst.h>
 #include <wx/listctrl.h>
+#include <wx/bitmap.h>
+#include <wx/image.h>
+#include <wx/icon.h>
+#include <wx/notebook.h>
 #include <wx/statbox.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -67,66 +67,6 @@ class ProjectSettingsBaseDlg : public wxDialog
 		
 		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~ProjectSettingsBaseDlg();
-	
-};
-
-///////////////////////////////////////////////////////////////////////////////
-/// Class GlobalSettingsBasePanel
-///////////////////////////////////////////////////////////////////////////////
-class GlobalSettingsBasePanel : public wxPanel 
-{
-	private:
-	
-	protected:
-		wxNotebook* m_notebook;
-		wxPanel* m_compilerPage;
-		wxStaticText* m_staticText6;
-		wxTextCtrl* m_textCompilerOptions;
-		wxButton* m_buttonCompilerOptions;
-		wxStaticText* m_staticText46;
-		wxTextCtrl* m_textCtrlCCompileOptions;
-		wxButton* m_buttonCCompileOptions;
-		wxStaticText* m_staticText4;
-		wxTextCtrl* m_textAdditionalSearchPath;
-		wxButton* m_buttonAddSearchPath;
-		wxStaticText* m_staticText171;
-		wxTextCtrl* m_textPreprocessor;
-		wxButton* m_buttonAddPreprocessor;
-		wxPanel* m_linkerPage;
-		wxStaticText* m_staticText10;
-		wxTextCtrl* m_textLinkerOptions;
-		wxButton* m_buttonLinkerOptions;
-		wxStaticText* m_staticText7;
-		wxTextCtrl* m_textLibraryPath;
-		wxButton* m_buttonLibraryPath;
-		wxStaticText* m_staticText8;
-		wxTextCtrl* m_textLibraries;
-		wxButton* m_buttonLibraries;
-		wxPanel* m_resourceCmpPage;
-		wxStaticText* m_staticText221;
-		wxTextCtrl* m_textAddResCmpOptions;
-		wxButton* m_buttonAddResCmpOptions;
-		wxStaticText* m_staticText23;
-		wxTextCtrl* m_textAddResCmpPath;
-		wxButton* m_buttonAddResCmpPath;
-		
-		// Virtual event handlers, overide them in your derived class
-		virtual void OnCmdEvtVModified( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnButtonAddCompilerOptions( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnButtonAddCCompilerOptions( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnAddSearchPath( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnButtonAddPreprocessor( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnButtonAddLinkerOptions( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnAddLibraryPath( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnAddLibrary( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnResourceCmpAddOption( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnResourceCmpAddPath( wxCommandEvent& event ) { event.Skip(); }
-		
-	
-	public:
-		
-		GlobalSettingsBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
-		~GlobalSettingsBasePanel();
 	
 };
 
@@ -451,6 +391,66 @@ class PSCustomBuildBasePage : public wxPanel
 		
 		PSCustomBuildBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSCustomBuildBasePage();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class GlobalSettingsBasePanel
+///////////////////////////////////////////////////////////////////////////////
+class GlobalSettingsBasePanel : public wxPanel 
+{
+	private:
+	
+	protected:
+		wxNotebook* m_notebook;
+		wxPanel* m_compilerPage;
+		wxStaticText* m_staticText6;
+		wxTextCtrl* m_textCompilerOptions;
+		wxButton* m_buttonCompilerOptions;
+		wxStaticText* m_staticText46;
+		wxTextCtrl* m_textCtrlCCompileOptions;
+		wxButton* m_buttonCCompileOptions;
+		wxStaticText* m_staticText4;
+		wxTextCtrl* m_textAdditionalSearchPath;
+		wxButton* m_buttonAddSearchPath;
+		wxStaticText* m_staticText171;
+		wxTextCtrl* m_textPreprocessor;
+		wxButton* m_buttonAddPreprocessor;
+		wxPanel* m_linkerPage;
+		wxStaticText* m_staticText10;
+		wxTextCtrl* m_textLinkerOptions;
+		wxButton* m_buttonLinkerOptions;
+		wxStaticText* m_staticText7;
+		wxTextCtrl* m_textLibraryPath;
+		wxButton* m_buttonLibraryPath;
+		wxStaticText* m_staticText8;
+		wxTextCtrl* m_textLibraries;
+		wxButton* m_buttonLibraries;
+		wxPanel* m_resourceCmpPage;
+		wxStaticText* m_staticText221;
+		wxTextCtrl* m_textAddResCmpOptions;
+		wxButton* m_buttonAddResCmpOptions;
+		wxStaticText* m_staticText23;
+		wxTextCtrl* m_textAddResCmpPath;
+		wxButton* m_buttonAddResCmpPath;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnCmdEvtVModified( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonAddCompilerOptions( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonAddCCompilerOptions( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddSearchPath( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonAddPreprocessor( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonAddLinkerOptions( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddLibraryPath( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAddLibrary( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnResourceCmpAddOption( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnResourceCmpAddPath( wxCommandEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		GlobalSettingsBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		~GlobalSettingsBasePanel();
 	
 };
 

@@ -1,3 +1,4 @@
+
 #include "ps_general_page.h"
 #include "project_settings_dlg.h"
 #include "build_settings_config.h"
@@ -92,11 +93,8 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
 
 	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
 	wxString projType = projSettingsPtr->GetProjectType(buildConf->GetName());
-	int sel = m_choiceProjectTypes->FindString(projType);
-	if (sel == wxNOT_FOUND) {
-		sel = 0;
-	}
-	m_choiceProjectTypes->SetSelection(sel);
+	const wxString ProjectTypes[] = { wxT("Static Library"), wxT("Dynamic Library"), wxT("Executable") };
+	m_stringManager.AddStrings(sizeof(ProjectTypes)/sizeof(wxString), ProjectTypes, projType, m_choiceProjectTypes);
 
 	m_choiceCompilerType->Clear();
 	wxString cmpType = buildConf->GetCompilerType();
@@ -145,11 +143,13 @@ void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettin
 	buildConf->SetCommand(m_textCommand->GetValue());
 	buildConf->SetCommandArguments(m_textCommandArguments->GetValue());
 	buildConf->SetWorkingDirectory(m_textCtrlCommandWD->GetValue());
-	projSettingsPtr->SetProjectType(m_choiceProjectTypes->GetStringSelection());
+	// Get the project type selection, unlocalised
+	wxString ProjectType = m_stringManager.GetStringSelection();
+	projSettingsPtr->SetProjectType(ProjectType);
 	buildConf->SetCompilerType(m_choiceCompilerType->GetStringSelection());
 	buildConf->SetDebuggerType(m_choiceDebugger->GetStringSelection());
 	buildConf->SetPauseWhenExecEnds(m_checkBoxPauseWhenExecEnds->IsChecked());
-	buildConf->SetProjectType(m_choiceProjectTypes->GetStringSelection());
+	buildConf->SetProjectType(ProjectType);
 	buildConf->SetUseSeparateDebugArgs(m_checkBoxUseDebugArgs->IsChecked());
 	buildConf->SetDebugArgs(m_textCtrlDebugArgs->GetValue());
 }

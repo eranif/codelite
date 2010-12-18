@@ -22,9 +22,8 @@ EditorSettingsBookmarksBasePanel::EditorSettingsBookmarksBasePanel( wxWindow* pa
 	m_staticText3->Wrap( -1 );
 	bSizer2->Add( m_staticText3, 0, wxALL, 5 );
 	
-	wxString m_bookMarkShapeChoices[] = { _("Small Rectangle"), _("Rounded Rectangle"), _("Circle"), _("Small Arrow") };
-	int m_bookMarkShapeNChoices = sizeof( m_bookMarkShapeChoices ) / sizeof( wxString );
-	m_bookMarkShape = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_bookMarkShapeNChoices, m_bookMarkShapeChoices, 0 );
+	wxArrayString m_bookMarkShapeChoices;
+	m_bookMarkShape = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_bookMarkShapeChoices, 0 );
 	m_bookMarkShape->SetSelection( 0 );
 	bSizer2->Add( m_bookMarkShape, 0, wxALL|wxEXPAND, 5 );
 	

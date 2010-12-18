@@ -759,3 +759,48 @@ void MSWSetNativeTheme(wxWindow* win, const wxString &theme)
 	SetWindowTheme((HWND)win->GetHWND(), theme.c_str(), NULL);
 #endif
 }
+
+void StringManager::AddStrings(size_t size, const wxString* strings, const wxString& current, wxControlWithItems* control)
+{
+	m_size = size;
+	m_unlocalisedStringArray = wxArrayString(size, strings);
+	p_control = control;
+	p_control->Clear();
+
+	// Add each item to the control, localising as we go
+	for (size_t n=0; n < size; ++n) {
+		p_control->Append(wxGetTranslation(strings[n]));
+	}
+	
+	// Select in the control the currently used string
+	SetStringSelection(current);
+}
+
+wxString StringManager::GetStringSelection() const
+{
+	wxString selection;
+	// Find which localised string was selected
+	int sel = p_control->GetSelection();
+	if (sel != wxNOT_FOUND) {
+		selection = m_unlocalisedStringArray.Item(sel);
+	}
+
+	return selection;
+}
+
+void StringManager::SetStringSelection(const wxString& str, size_t dfault /*= 0*/)
+{
+	if (str.IsEmpty() || m_size == 0) {
+		return;
+	}
+	int sel = m_unlocalisedStringArray.Index(str);
+	if (sel != wxNOT_FOUND) {
+		p_control->SetSelection(sel);
+	} else {
+		if (dfault < m_size) {
+			p_control->SetSelection(dfault);
+		} else {
+			p_control->SetSelection(0);
+		}
+	} 
+}

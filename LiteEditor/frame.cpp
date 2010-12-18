@@ -754,24 +754,30 @@ void clMainFrame::CreateGUIControls(void)
 	// Add docking windows
 	//---------------------------------------------
 
-	m_outputPane = new OutputPane(m_mainPanel, _("Output View"));
+	// I'm not localising the captions of these Views atm. That's because wxAui uses name+caption to ID a pane
+	// It also serialises the caption. That means that changing locale will break the layout stored in codelite.layout
+	// If it's decided to do this in the future, change only the 'Caption(wxT("Output View"))' bits below
+	// However I'm creating unused strings here, so that the translations remain in the catalogue
+	const wxString unusedOV(_("Output View")); const wxString unusedWV(_("Workspace View"));
+
+	m_outputPane = new OutputPane(m_mainPanel, wxT("Output View"));
 	wxAuiPaneInfo paneInfo;
 	m_mgr.AddPane(m_outputPane,
-	              paneInfo.Name(wxT("Output View")).Caption(_("Output View")).Bottom().Layer(0).Position(0).CaptionVisible(false).MinSize(200, 200));
-	RegisterDockWindow(XRCID("output_pane"), _("Output View"));
+	              paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(0).Position(0).CaptionVisible(false).MinSize(200, 200));
+	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
 
 	// Add the explorer pane
-	m_workspacePane = new WorkspacePane(m_mainPanel, _("Workspace View"), &m_mgr);
+	m_workspacePane = new WorkspacePane(m_mainPanel, wxT("Workspace View"), &m_mgr);
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
 	              Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
 	              Left().BestSize(250, 300).Layer(1).Position(0).CloseButton(true));
-	RegisterDockWindow(XRCID("workspace_pane"), _("Workspace View"));
+	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace View"));
 
 	//add the debugger locals tree, make it hidden by default
-	m_debuggerPane = new DebuggerPane(m_mainPanel, _("Debugger"), &m_mgr);
+	m_debuggerPane = new DebuggerPane(m_mainPanel, wxT("Debugger"), &m_mgr);
 	m_mgr.AddPane(m_debuggerPane,
 	              wxAuiPaneInfo().Name(m_debuggerPane->GetCaption()).Caption(m_debuggerPane->GetCaption()).Bottom().Layer(1).Position(1).CloseButton(true).Hide());
-	RegisterDockWindow(XRCID("debugger_pane"), _("Debugger"));
+	RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
 
 	m_mainBook = new MainBook(m_mainPanel);
 	m_mgr.AddPane(m_mainBook, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(false));

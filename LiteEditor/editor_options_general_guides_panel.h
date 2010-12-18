@@ -41,6 +41,8 @@ class EditorOptionsGeneralGuidesPanel
 {
 	void OnhighlightCaretLineUI(wxUpdateUIEvent& event);
 
+	StringManager m_EOLstringManager;
+	StringManager m_WSstringManager;
 public:
 	/** Constructor */
 	EditorOptionsGeneralGuidesPanel( wxWindow* parent );

@@ -39,6 +39,7 @@ class EditorSettingsBookmarksPanel
 : public EditorSettingsBookmarksBasePanel
 , public TreeBookNode<EditorSettingsBookmarksPanel>
 {
+	StringManager m_stringManager;
 public:
 	/** Constructor */
 	EditorSettingsBookmarksPanel( wxWindow* parent );

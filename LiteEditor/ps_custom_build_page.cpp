@@ -199,7 +199,10 @@ void PSCustomBuildPage::Load(BuildConfigPtr buildConf)
 {
 	m_checkEnableCustomBuild->SetValue(buildConf->IsCustomBuild());
 	m_textCtrlCustomBuildWD->SetValue(buildConf->GetCustomBuildWorkingDir());
-	m_thirdPartyTool->SetStringSelection(buildConf->GetToolName());
+	
+	const wxString PartyTool[] = { wxT("None"), wxT("Other") };
+	m_stringManager.AddStrings(sizeof(PartyTool)/sizeof(wxString), PartyTool, buildConf->GetToolName(), m_thirdPartyTool);
+
 	m_textCtrlMakefileGenerationCmd->SetValue(buildConf->GetMakeGenerationCommand());
 	
 	m_listCtrlTargets->DeleteAllItems();
@@ -271,7 +274,8 @@ void PSCustomBuildPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSe
 	buildConf->SetPreprocessFileCommand(GetTargetCommand(CUSTOM_TARGET_PREPROCESS_FILE));
 	buildConf->EnableCustomBuild(m_checkEnableCustomBuild->IsChecked());
 	buildConf->SetMakeGenerationCommand(m_textCtrlMakefileGenerationCmd->GetValue());
-	buildConf->SetToolName(m_thirdPartyTool->GetStringSelection());
+	// Get the build-tool selection, unlocalised
+	buildConf->SetToolName(m_stringManager.GetStringSelection());
 	buildConf->SetCustomBuildWorkingDir(m_textCtrlCustomBuildWD->GetValue());
 }
 

@@ -21,9 +21,8 @@ CscopeTabBase::CscopeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_staticText2->Wrap( -1 );
 	bSizer31->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	wxString m_choiceSearchScopeChoices[] = { _("Entire Workspace"), _("Active Project") };
-	int m_choiceSearchScopeNChoices = sizeof( m_choiceSearchScopeChoices ) / sizeof( wxString );
-	m_choiceSearchScope = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceSearchScopeNChoices, m_choiceSearchScopeChoices, 0 );
+	wxArrayString m_choiceSearchScopeChoices;
+	m_choiceSearchScope = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceSearchScopeChoices, 0 );
 	m_choiceSearchScope->SetSelection( 0 );
 	bSizer31->Add( m_choiceSearchScope, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	

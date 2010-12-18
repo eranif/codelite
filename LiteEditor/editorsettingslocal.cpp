@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "globals.h"
 #include "editorsettingslocal.h"
 #include "windowattrmanager.h"
 #include <wx/wxscintilla.h>
@@ -71,22 +72,26 @@ void EditorSettingsLocal::DisplayHigherValues( const OptionsConfigPtr options )
 	m_checkBoxDisplayFoldMargin->SetValue( options->GetDisplayFoldMargin() );
 	m_displayBookmarkMargin->SetValue( options->GetDisplayBookmarkMargin() );
 
+	const wxString WhitespaceStyle[] = { wxT("Invisible"), wxT("Visible always"), wxT("Visible after indentation"), wxT("Indentation only") };
+	wxString currentWhitespace;
 	switch (options->GetShowWhitspaces()) {
 	case wxSCI_WS_VISIBLEALWAYS:
-		m_whitespaceStyle->SetStringSelection(_("Visible always"));
+		currentWhitespace = wxT("Visible always");
 		break;
 	case wxSCI_WS_VISIBLEAFTERINDENT:
-		m_whitespaceStyle->SetStringSelection(_("Visible after indentation"));
+		currentWhitespace = wxT("Visible after indentation");
 		break;
 	case wxSCI_WS_INDENTVISIBLE:
-		m_whitespaceStyle->SetStringSelection(_("Indentation only"));
+		currentWhitespace = wxT("Indentation only");
 		break;
 	default:
-		m_whitespaceStyle->SetStringSelection(_("Invisible"));
+		currentWhitespace = wxT("Invisible");
 		break;
 	}
+	m_WSstringManager.AddStrings(sizeof(WhitespaceStyle)/sizeof(wxString), WhitespaceStyle, currentWhitespace, m_whitespaceStyle);
 
-	m_choiceEOL->SetStringSelection(options->GetEolMode());
+	const wxString EOLChoices[] = { wxT("Default"), wxT("Mac (CR)"), wxT("Windows (CRLF)"), wxT("Unix (LF)") };
+	m_EOLstringManager.AddStrings(sizeof(EOLChoices)/sizeof(wxString), EOLChoices, options->GetEolMode(), m_choiceEOL);
 
 	wxArrayString astrEncodings;
 	wxFontEncoding fontEnc;
@@ -160,23 +165,23 @@ void EditorSettingsLocal::DisplayLocalValues( const LocalOptionsConfigPtr option
 	if (options->ShowWhitespacesIsValid()) {
 		switch (options->GetShowWhitespaces()) {
 		case wxSCI_WS_VISIBLEALWAYS:
-			m_whitespaceStyle->SetStringSelection(_("Visible always"));
+			m_WSstringManager.SetStringSelection(wxT("Visible always"));
 			break;
 		case wxSCI_WS_VISIBLEAFTERINDENT:
-			m_whitespaceStyle->SetStringSelection(_("Visible after indentation"));
+			m_WSstringManager.SetStringSelection(wxT("Visible after indentation"));
 			break;
 		case wxSCI_WS_INDENTVISIBLE:
-			m_whitespaceStyle->SetStringSelection(_("Indentation only"));
+			m_WSstringManager.SetStringSelection(wxT("Indentation only"));
 			break;
 		default:
-			m_whitespaceStyle->SetStringSelection(_("Invisible"));
+			m_WSstringManager.SetStringSelection(wxT("Invisible"));
 			break;
 		}
 		m_whitespaceStyleEnable->SetValue(false);
 	}
 
 	if (options->EolModeIsValid()) {
-		m_choiceEOL->SetStringSelection( options->GetEolMode() );
+		m_EOLstringManager.SetStringSelection( options->GetEolMode() );
 		m_choiceEOLEnable->SetValue(false);
 	}
 
@@ -234,18 +239,19 @@ void EditorSettingsLocal::OnOK( wxCommandEvent& event )
 		GetLocalOpts()->SetDisplayBookmarkMargin( m_displayBookmarkMargin->GetValue() );
 	}
 	if (m_whitespaceStyle->IsEnabled()) {
-		int style(wxSCI_WS_INVISIBLE);
-		if (m_whitespaceStyle->GetStringSelection() == _("Visible always")) {
+		wxString Whitespace = m_WSstringManager.GetStringSelection();
+		int style(wxSCI_WS_INVISIBLE); // invisible
+		if (Whitespace == wxT("Visible always")) {
 			style = wxSCI_WS_VISIBLEALWAYS;
-		} else if (m_whitespaceStyle->GetStringSelection() == _("Visible after indentation")) {
+		} else if (Whitespace == wxT("Visible after indentation")) {
 			style = wxSCI_WS_VISIBLEAFTERINDENT;
-		} else if (m_whitespaceStyle->GetStringSelection() == _("Indentation only")) {
+		} else if (Whitespace == wxT("Indentation only")) {
 			style = wxSCI_WS_INDENTVISIBLE;
 		}
 		GetLocalOpts()->SetShowWhitespaces(style);
 	}
 	if (m_choiceEOL->IsEnabled()) {
-		GetLocalOpts()->SetEolMode( m_choiceEOL->GetStringSelection() );
+		GetLocalOpts()->SetEolMode(m_EOLstringManager.GetStringSelection());
 	}
 	if (m_fileEncoding->IsEnabled()) {
 		GetLocalOpts()->SetFileFontEncoding( m_fileEncoding->GetStringSelection() );

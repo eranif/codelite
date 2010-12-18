@@ -25,6 +25,7 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#include <wx/ctrlsub.h>
 #include <wx/string.h>
 #include <wx/colour.h>
 #include <wx/arrstr.h>
@@ -250,6 +251,41 @@ WXDLLIMPEXP_SDK bool ExtractFileFromZip(const wxString &zipPath, const wxString&
  * @param win [input]
  */
 WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString &theme = wxT("Explorer"));
+
+
+/**
+ * @class StringManager
+ * @brief Stores unlocalised strings for serialisation, while managing localised ones in the gui
+ */
+class WXDLLIMPEXP_SDK StringManager
+{
+protected:
+	wxArrayString m_unlocalisedStringArray;
+	wxControlWithItems* p_control;
+	size_t m_size;
+public:
+	StringManager() : m_size(0) {}
+
+/**
+ * @brief Store the data, and load the strings into the control, localised
+ * @param size size of the string array
+ * @param strings the string array
+ * @param current the option currently used
+ * @param control the gui element, probably a wxChoice
+ */
+	void AddStrings(size_t size, const wxString* const strings, const wxString& current, wxControlWithItems* control);
+/**
+ * @brief Returns the unlocalised string corresponding to the selection
+ * @return an unlocalised string
+ */
+	wxString GetStringSelection() const;
+/**
+ * @brief Sets m_control's selection to that corresponding to the unlocalised string
+ * @param an unlocalised string
+ * @param the default used if str is not found
+ */	
+	void SetStringSelection(const wxString& str, size_t dfault = 0);
+};
 
 #endif //GLOBALS_H
 

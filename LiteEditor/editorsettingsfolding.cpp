@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "globals.h"
 #include "editorsettingsfolding.h"
 
 EditorSettingsFolding::EditorSettingsFolding( wxWindow* parent )
@@ -35,7 +36,11 @@ EditorSettingsFolding::EditorSettingsFolding( wxWindow* parent )
 	m_foldPreprocessors->SetValue(options->GetFoldPreprocessor());
 	m_foldCompact->SetValue(options->GetFoldCompact());
 	m_foldElse->SetValue(options->GetFoldAtElse());
-	m_foldStyle->SetStringSelection( options->GetFoldStyle() );
+	
+	const wxString FoldStyles[] = { wxT("Simple"), wxT("Arrows"), wxT("Arrows with Background Colour"), wxT("Simple with Background Colour"), 
+									  wxT("Flatten Tree Square Headers"), wxT("Flatten Tree Circular Headers") };
+	m_stringManager.AddStrings(sizeof(FoldStyles)/sizeof(wxString), FoldStyles, options->GetFoldStyle(), m_foldStyle);
+
 	m_colourPicker->SetColour(options->GetFoldBgColour());
 }
 
@@ -47,7 +52,14 @@ void EditorSettingsFolding::Save(OptionsConfigPtr options)
 	options->SetFoldPreprocessor(m_foldPreprocessors->GetValue());
 	options->SetFoldCompact(m_foldCompact->GetValue());
 	options->SetFoldAtElse(m_foldElse->GetValue());
-	options->SetFoldStyle(m_foldStyle->GetStringSelection());
+	
+	// Get the foldstyle selection, unlocalised
+	wxString foldStyle = m_stringManager.GetStringSelection();
+	if (foldStyle.IsEmpty()) {
+		foldStyle = wxT("Arrows");
+	}
+	options->SetFoldStyle(foldStyle);
+	
 	options->SetFoldBgColour(m_colourPicker->GetColour());
 }
 

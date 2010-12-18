@@ -1374,7 +1374,7 @@ void Manager::ShowDebuggerPane ( bool show )
 {
 	// make the output pane visible
 	wxArrayString dbgPanes;
-	dbgPanes.Add ( _("Debugger") );
+	dbgPanes.Add ( wxT("Debugger") );
 	dbgPanes.Add ( wxGetTranslation(DebuggerPane::LOCALS) );
 	dbgPanes.Add ( wxGetTranslation(DebuggerPane::FRAMES) );
 	dbgPanes.Add ( wxGetTranslation(DebuggerPane::WATCHES) );
@@ -1411,7 +1411,7 @@ void Manager::ShowDebuggerPane ( bool show )
 void Manager::ShowWorkspacePane ( wxString focusWin, bool commit )
 {
 	// make the output pane visible
-	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(_("Workspace View"));
+	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Workspace View"));
 	if ( info.IsOk() && !info.IsShown() ) {
 		info.Show();
 		if ( commit ) {
@@ -1451,9 +1451,9 @@ void Manager::TogglePanes()
 		panes.Clear();
 		// create the list of panes to be tested
 		wxArrayString candidates;
-		candidates.Add ( _("Output View") );
-		candidates.Add ( _("Workspace View") );
-		candidates.Add ( _("Debugger") );
+		candidates.Add ( wxT("Output View") );
+		candidates.Add ( wxT("Workspace View") );
+		candidates.Add ( wxT("Debugger") );
 
 		// add the detached tabs list
 		wxArrayString dynamicPanes = clMainFrame::Get()->GetDockablePaneMenuManager()->GetDeatchedPanesList();
@@ -1841,7 +1841,7 @@ void Manager::DoUpdateDebuggerTabControl(wxAuiTabCtrl* tabControl)
 		return;
 
 	// make sure that the debugger pane is visible
-	if(!IsPaneVisible ( _("Debugger") ))
+	if(!IsPaneVisible ( wxT("Debugger") ))
 		return;
 
 	curpage = tabControl->GetPage((size_t)activePageId).window;
@@ -1998,7 +1998,7 @@ void Manager::DbgStart ( long attachPid )
 	}
 
 	// Is the debugger-pane is already visible? If so, don't close it again when the session is over
-	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(_("Debugger"));
+	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
 	if ( info.IsOk() ) {
 		SetDebuggerPaneOriginallyVisible(info.IsShown());
 	}
@@ -2165,7 +2165,7 @@ void Manager::DbgStart ( long attachPid )
 	}
 
 	// and finally double-check the debugger pane visible
-	wxAuiPaneInfo &info2 = clMainFrame::Get()->GetDockingManager().GetPane(_("Debugger"));
+	wxAuiPaneInfo &info2 = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
 	if ( info2.IsOk() && !info2.IsShown() ) {
 		ShowDebuggerPane ( true );
 	}
@@ -2296,7 +2296,7 @@ void Manager::DbgDoSimpleCommand ( int cmd )
 
 void Manager::DbgSetFrame ( int frame, int lineno )
 {
-	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane (_("Debugger"));
+	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane (wxT("Debugger"));
 	if ( info.IsShown() ) {
 		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 		if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
@@ -2410,7 +2410,7 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 		}
 
 		//Print the stack trace
-		wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(_("Debugger"));
+		wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
 		if ( info.IsShown() && showDialog ) {
 			clMainFrame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
 			UpdateDebuggerPane();
@@ -2426,7 +2426,7 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 		dlg.ShowModal();
 
 		//Print the stack trace
-		wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(_("Debugger"));
+		wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
 		if ( info.IsShown() ) {
 			clMainFrame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
 			UpdateDebuggerPane();

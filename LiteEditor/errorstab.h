@@ -34,6 +34,8 @@ class ErrorsTab : public OutputTabWindow
 	friend class BuildTab;
 	wxTreeListCtrl* m_treeListCtrl;
 	BuildTab*       m_bt;
+	int             m_errorCount;
+	int             m_warningCount;
 	
 private:
 	wxTreeItemId DoFindFile(const wxString& filename);

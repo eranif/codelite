@@ -49,6 +49,8 @@ public:
 ErrorsTab::ErrorsTab ( BuildTab *bt, wxWindow *parent, wxWindowID id, const wxString &name )
 		: OutputTabWindow ( parent, id, name )
 		, m_bt(bt)
+		, m_errorCount(0)
+		, m_warningCount(0)
 {
     m_autoAppear = false; // BuildTab controls this tab's auto-appearance
 	m_tb->RemoveTool( XRCID("repeat_output"   ));
@@ -96,6 +98,8 @@ ErrorsTab::~ErrorsTab()
 void ErrorsTab::ClearLines()
 {
 	m_treeListCtrl->DeleteChildren(m_treeListCtrl->GetRootItem());
+	m_errorCount = 0;
+	m_warningCount = 0;
 }
 
 void ErrorsTab::AddError ( const BuildTab::LineInfo &lineInfo )
@@ -104,6 +108,7 @@ void ErrorsTab::AddError ( const BuildTab::LineInfo &lineInfo )
 		return;
 	
 	bool isError = (lineInfo.linecolor == wxSCI_LEX_GCC_ERROR);
+	isError ? m_errorCount++ : m_warningCount++;
 	
 	wxTreeItemId item = DoFindFile(lineInfo.filename);
 	if(!item.IsOk()) {
@@ -133,10 +138,16 @@ void ErrorsTab::AddError ( const BuildTab::LineInfo &lineInfo )
 	}
 	
 	// Dont add duplicate entries
-	wxString displayText = lineInfo.linetext.Mid(lineInfo.filestart + lineInfo.filelen);
-	if(IsMessageExists(displayText, item))
+	if(IsMessageExists(lineInfo.linetext, item))
 		return;
 		
+	wxString displayText = lineInfo.linetext.Mid(lineInfo.filestart + lineInfo.filelen);
+	
+	if(m_tb->GetToolState(XRCID("scroll_on_output"))) {
+		// Make sure the new entry is visible
+		m_treeListCtrl->EnsureVisible(item);
+	}
+	
 	wxTreeItemId newItem = m_treeListCtrl->AppendItem(item, displayText, isError ? 0 : 1, isError ? 0 : 1, new ErrorsTabItemData(lineInfo));
 	m_treeListCtrl->SetItemText(newItem, 1, wxString::Format(wxT("%ld"), lineInfo.linenum + 1));
 }
@@ -193,7 +204,8 @@ bool ErrorsTab::IsMessageExists(const wxString& msg, const wxTreeItemId& item)
 	wxTreeItemIdValue cookieOne;
 	wxTreeItemId child = m_treeListCtrl->GetFirstChild(item, cookieOne);
 	while( child.IsOk() ) {
-		if(m_treeListCtrl->GetItemText(child) == msg)
+		ErrorsTabItemData *itemData = (ErrorsTabItemData*)(m_treeListCtrl->GetItemData(item));
+		if(itemData && itemData->m_lineInfo.linetext == msg)
 			return true;
 		child = m_treeListCtrl->GetNextChild(item, cookieOne);
 	}
@@ -203,21 +215,35 @@ bool ErrorsTab::IsMessageExists(const wxString& msg, const wxTreeItemId& item)
 void ErrorsTab::OnBuildEnded(wxCommandEvent& event)
 {
 	// Count the number of errors
-	wxTreeItemIdValue cookieOne;
-	int numChild(0);
-	wxTreeItemId child = m_treeListCtrl->GetFirstChild(m_treeListCtrl->GetRootItem(), cookieOne);
-	while( child.IsOk() ) {
-		numChild++;
-		child = m_treeListCtrl->GetNextChild(m_treeListCtrl->GetRootItem(), cookieOne);
-	}
-	if(numChild == 0) {
+	if(m_warningCount == 0 && m_errorCount == 0) {
 		// No errors were found!
 		m_treeListCtrl->AppendItem(m_treeListCtrl->GetRootItem(), _("Build ended successfully."), 6, 6);
+		
 	} else {
 		wxTreeItemIdValue cookieTwo;
 		wxTreeItemId firstFile = m_treeListCtrl->GetFirstChild(m_treeListCtrl->GetRootItem(), cookieTwo);
 		if(firstFile.IsOk()) {
 			m_treeListCtrl->Expand(firstFile);
 		}
+		
+		// Add status mesage
+		wxString msg;
+		int msgIcon(0); // error icon
+		if(m_errorCount == 0) {
+			msg = wxString::Format(_("Build ended with %d warnings"), m_warningCount);
+			msgIcon = 1;
+			
+		} else if(m_warningCount == 0) {
+			msg = wxString::Format(_("Build ended with %d errors"), m_errorCount);
+			msgIcon = 0;
+			
+		} else {
+			msg = wxString::Format(_("Build ended with %d errors, %d warnings"), m_errorCount, m_warningCount);
+			msgIcon = 0;
+		}
+		
+		wxTreeItemId statusItem = m_treeListCtrl->InsertItem(m_treeListCtrl->GetRootItem(), 0, msg, msgIcon, msgIcon);
+		m_treeListCtrl->SetItemBold(statusItem);
+		m_treeListCtrl->EnsureVisible( statusItem );
 	}
 }

@@ -132,7 +132,7 @@ void ErrorsTab::AddError ( const BuildTab::LineInfo &lineInfo )
 		}
 		// append new entry
 		item = m_treeListCtrl->AppendItem(m_treeListCtrl->GetRootItem(), lineInfo.filename, imgId, imgId);
-		wxColour rootItemColour = DrawingUtils::LightColour(wxT("GRAY"), 4.0);
+		wxColour rootItemColour = DrawingUtils::LightColour(wxT("GRAY"), 5.0);
 		m_treeListCtrl->SetItemBackgroundColour(item, rootItemColour);
 	}
 	
@@ -152,6 +152,12 @@ void ErrorsTab::AddError ( const BuildTab::LineInfo &lineInfo )
 	int imgId = isError ? 0 : 1;
 	wxTreeItemId newItem = m_treeListCtrl->AppendItem(item, displayText, imgId, imgId, new ErrorsTabItemData(lineInfo));
 	m_treeListCtrl->SetItemText(newItem, 1, wxString::Format(wxT("%ld"), lineInfo.linenum + 1));
+	
+	if(isError) {
+		// Set the text color of the parent node to red
+		m_treeListCtrl->SetItemTextColour(item, wxT("RED"));
+		m_treeListCtrl->SetItemBold(item);
+	}
 }
 
 void ErrorsTab::OnClearAll ( wxCommandEvent& e )

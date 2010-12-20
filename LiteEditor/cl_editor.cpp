@@ -2368,7 +2368,6 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 
 void LEditor::OnKeyDown(wxKeyEvent &event)
 {
-	event.Skip();
 	// Hide tooltip dialog if its ON
 	if(ManagerST::Get()->GetDebuggerTip()->IsShown() && event.GetKeyCode() != WXK_CONTROL) {
 		ManagerST::Get()->GetDebuggerTip()->HideDialog();

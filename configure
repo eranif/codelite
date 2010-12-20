@@ -611,6 +611,16 @@ createInstallTarget()
 		echo "	@chmod +x $HOME/Desktop/codelite.desktop" >> Makefile
 	  fi
 	fi
+	if [ "$install_translations" = "yes" ] ; then
+		# Runtime/locale contains the domain name, but not LC_MESSAGES/
+	  for lang in Runtime/locale/* ; do
+		lang=`basename $lang`
+		if test -f Runtime/locale/$lang/codelite.mo ; then
+			echo "	@mkdir -p \$(DESTDIR)$prefix/share/locale/$lang/LC_MESSAGES" >> Makefile
+			echo "	@cp -f Runtime/locale/$lang/codelite.mo   \$(DESTDIR)$prefix/share/locale/$lang/LC_MESSAGES/" >> Makefile
+		fi
+	  done
+	fi
 	echo "" >> Makefile
 }
 
@@ -645,6 +655,14 @@ createUnInstallTarget()
 	    echo "	  \$(RM) -fr \$(DESTDIR)$prefix/share/applications/codelite.desktop; \\" >> Makefile
 	echo "	fi" >> Makefile
 	echo "	@\$(RM) -fr ~/Desktop/codelite.desktop" >> Makefile
+	if [ "$install_translations" = "yes" ] ; then
+		for lang in Runtime/locale/* ; do
+			lang=`basename $lang`
+			if test -f Runtime/locale/$lang/codelite.mo ; then
+				echo "	@\$(RM) \$(DESTDIR)$prefix/share/locale/$lang/LC_MESSAGES/codelite.mo" >> Makefile
+			fi
+		done
+	fi
 	echo "" >> Makefile
 }
 
@@ -673,6 +691,7 @@ prefix="/usr"
 plugins_dir="/usr/lib/codelite"
 add_desktop_icon="yes"
 make_symlink="no"
+install_translations="yes";
 os_name=`uname -s`
 arch=`uname -m`
 
@@ -731,12 +750,15 @@ do
 	if [ "$1" = "--enable-debug" ]; then
 		enable_debug="yes"
 
-	   # The next 2 aren't in the Usage, but will prevent undesirable things from happening when e.g. making rpms
+	   # The next 3 aren't in the Usage, but will prevent undesirable things from happening when e.g. making rpms
 		elif [ "$1" = "--disable-desktop_icon" ]; then
 			add_desktop_icon="no"
 
 		elif [ "$1" = "--disable-make_symlink" ]; then
 			make_symlink="no"
+
+		elif [ "$1" = "--disable-translations" ]; then
+			install_translations="no"
 
 		elif [ "$1" = "--help" ]; then
 			Show_Help_and_Exit

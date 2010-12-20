@@ -137,6 +137,16 @@ mkdir -p fakeroot/${PREFIX}/lib/codelite/resources
 
 mkdir -p fakeroot/usr/share/applications/
 mkdir -p fakeroot/usr/share/menu/
+mkdir -p fakeroot/usr/share/locale/
+
+## Copy the locale files
+for lang in Runtime/locale/* ; do
+	lang=`basename $lang`
+	if test -f Runtime/locale/$lang/codelite.mo ; then
+		mkdir -p fakeroot/share/locale/$lang/LC_MESSAGES
+		cp -f Runtime/locale/$lang/codelite.mo fakeroot/share/locale/$lang/LC_MESSAGES/
+	fi
+done
 
 cp -pr Runtime/config/build_settings.xml.default fakeroot/${PREFIX}/share/codelite/config/build_settings.xml.default
 cp -pr Runtime/config/plugins.xml.default fakeroot/${PREFIX}/share/codelite/config/plugins.xml.default

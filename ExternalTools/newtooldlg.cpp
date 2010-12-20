@@ -35,6 +35,12 @@ NewToolDlg::NewToolDlg( wxWindow* parent, IManager *mgr, ExternalToolData *data)
 		: NewToolBase( parent )
 		, m_mgr(mgr)
 {
+	// Don't use wxFB to load translated versions of these strings: the translations wouldn't be very sensible, and it might break things
+	const wxString IdChoices[] = { wxT("external_tool_0"), wxT("external_tool_1"), wxT("external_tool_2"), wxT("external_tool_3"), wxT("external_tool_4"),
+									wxT("external_tool_5"), wxT("external_tool_6"), wxT("external_tool_7"), wxT("external_tool_8"), wxT("external_tool_9") };
+	wxArrayString choices(10, IdChoices);
+	m_choiceId->Clear();
+	m_choiceId->Append(choices);
 	m_choiceId->SetFocus();
 	if( data ) {
 		m_textCtrlArguments->SetValue(data->m_args);

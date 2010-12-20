@@ -38,6 +38,7 @@ class IManager;
 class NewWxProjectDlg : public NewWxProjectBaseDlg
 {
 	IManager *m_mgr;
+	StringManager m_stringManager;
 protected:
 	void OnButtonCancel(wxCommandEvent &e);
 	void OnButtonOK(wxCommandEvent &e);

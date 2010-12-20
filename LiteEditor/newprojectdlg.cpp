@@ -58,7 +58,8 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 	for (; iter != m_list.end(); iter++) {
 		wxString internalType = (*iter)->GetProjectInternalType();
 		if (internalType.IsEmpty()) internalType = _("Others");
-		categories.insert( internalType );
+		// Use wxGetTranslation() here. Some won't have translations, but it'll catch e.g. "GUI"
+		categories.insert( wxGetTranslation(internalType) );
 	}
 
 	std::set<wxString>::iterator cIter = categories.begin();
@@ -66,8 +67,8 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 		m_chCategories->Append((*cIter));
 	}
 
-	// Select the 'Console' to be the default
-	int where = m_chCategories->FindString(wxT("Console"));
+	// Select 'GUI' to be the default category
+	int where = m_chCategories->FindString(_("GUI"));
 	if (where == wxNOT_FOUND) {
 		where = 0;
 	}
@@ -247,7 +248,7 @@ void NewProjectDlg::FillProjectTemplateListCtrl(const wxString& category)
 
 	std::list<ProjectPtr>::iterator iter = m_list.begin();
 	for (; iter != m_list.end(); iter++) {
-		wxString intType = (*iter)->GetProjectInternalType();
+		wxString intType = wxGetTranslation( (*iter)->GetProjectInternalType() );
 
 		if ( (category == _("All")) ||
 		        (intType == category) ||

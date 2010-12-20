@@ -38,9 +38,8 @@ NewIneritanceBaseDlg::NewIneritanceBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_staticText1->Wrap( -1 );
 	bSizer5->Add( m_staticText1, 0, wxALL, 5 );
 	
-	wxString m_choiceAccessChoices[] = { _("public"), _("private"), _("protected"), _("virtual") };
-	int m_choiceAccessNChoices = sizeof( m_choiceAccessChoices ) / sizeof( wxString );
-	m_choiceAccess = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceAccessNChoices, m_choiceAccessChoices, 0 );
+	wxArrayString m_choiceAccessChoices;
+	m_choiceAccess = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceAccessChoices, 0 );
 	m_choiceAccess->SetSelection( 0 );
 	bSizer5->Add( m_choiceAccess, 0, wxALL|wxEXPAND, 5 );
 	

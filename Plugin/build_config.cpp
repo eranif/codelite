@@ -115,8 +115,8 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 			}
 		}
 		
-		SetEnvVarSet(wxGetTranslation(USE_WORKSPACE_ENV_VAR_SET));
-		SetDbgEnvSet(wxGetTranslation(USE_GLOBAL_SETTINGS));
+		SetEnvVarSet(USE_WORKSPACE_ENV_VAR_SET);
+		SetDbgEnvSet(USE_GLOBAL_SETTINGS);
 		
 		// read the environment page
 		wxXmlNode *envNode = XmlUtils::FindFirstByTagName(node, wxT("Environment"));

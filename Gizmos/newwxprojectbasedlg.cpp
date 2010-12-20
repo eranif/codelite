@@ -138,9 +138,8 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	m_staticText6->Wrap( -1 );
 	fgSizer2->Add( m_staticText6, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	wxString m_choiceVersionChoices[] = { _("Default"), _("2.6"), _("2.8"), _("2.9"), _("3.0") };
-	int m_choiceVersionNChoices = sizeof( m_choiceVersionChoices ) / sizeof( wxString );
-	m_choiceVersion = new wxChoice( m_panelAdvancedInfo, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceVersionNChoices, m_choiceVersionChoices, 0 );
+	wxArrayString m_choiceVersionChoices;
+	m_choiceVersion = new wxChoice( m_panelAdvancedInfo, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceVersionChoices, 0 );
 	m_choiceVersion->SetSelection( 0 );
 	m_choiceVersion->SetToolTip( _("Use selected wxWidgets version.") );
 	

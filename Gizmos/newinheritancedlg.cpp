@@ -31,6 +31,11 @@ NewIneritanceDlg::NewIneritanceDlg( wxWindow* parent, IManager *mgr, const wxStr
 : NewIneritanceBaseDlg( parent, wxID_ANY, _("New Inheritance"))
 , m_mgr(mgr)
 {
+	// Do this the hard way, rather than letting wxFB localise these particular strings :p
+	const wxString AccessChoices[] = { wxT("public"), wxT("private"), wxT("protected"), wxT("virtual") };
+	wxArrayString choices(4, AccessChoices);
+	m_choiceAccess->Clear();
+	m_choiceAccess->Append(choices);
 	//by default select 0
 	m_choiceAccess->Select(0);
 	if(access.IsEmpty() == false){

@@ -250,7 +250,7 @@ void AdvancedDlg::SaveCompilers()
 bool AdvancedDlg::CreateDefaultNewCompiler ( const wxString &name )
 {
 	if ( BuildSettingsConfigST::Get()->IsCompilerExist ( name ) ) {
-		wxMessageBox ( _( "A compiler with this name already exist" ), _( "Error" ), wxOK | wxICON_HAND );
+		wxMessageBox ( _( "A compiler with this name already exists" ), _( "Error" ), wxOK | wxICON_HAND );
 		return false;
 	}
 

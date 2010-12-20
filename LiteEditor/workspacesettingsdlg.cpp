@@ -33,7 +33,7 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *lo
 	wxString activeEnvSet;
 	wxString tmpSet = localWorkspace->GetActiveEnvironmentSet();
 	
-	if(tmpSet == wxT("<Use Active Set>")){
+	if(tmpSet == _("<Use Active Set>")){
 		tmpSet = wxGetTranslation(USE_GLOBAL_SETTINGS);
 	}
 	

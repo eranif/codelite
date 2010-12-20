@@ -61,7 +61,7 @@ public:
 	virtual ~EvnVarList();
 
 	void SetActiveSet(const wxString& activeSet) {
-		if(activeSet != wxT("<Use Active Set>") && activeSet != wxGetTranslation(USE_GLOBAL_SETTINGS))
+		if(activeSet != _("<Use Active Set>") && activeSet != USE_GLOBAL_SETTINGS)
 			this->m_activeSet = activeSet;
 	}
 

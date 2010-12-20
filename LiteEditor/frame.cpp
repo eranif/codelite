@@ -3948,7 +3948,7 @@ void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
 	} else if (e.GetId() == XRCID("find_type")) {
 		searchType = OpenResourceDialog::TYPE_CLASS;
 	} else {
-		searchType = OpenResourceDialog::TYPE_WORKSPACE_FILE;
+		searchType = wxGetTranslation(OpenResourceDialog::TYPE_WORKSPACE_FILE);
 	}
 
 	OpenResourceDialog dlg(this, PluginManager::Get(), searchType);
@@ -4060,12 +4060,12 @@ void clMainFrame::SelectBestEnvSet()
 		if(p) {
 			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(activeProj, wxEmptyString);
 			if(buildConf) {
-				if( buildConf->GetEnvVarSet() != wxGetTranslation(USE_WORKSPACE_ENV_VAR_SET) &&
+				if( buildConf->GetEnvVarSet() != USE_WORKSPACE_ENV_VAR_SET &&
 					buildConf->GetEnvVarSet() != wxT("<Use Workspace Settings>") /* backward support */) {
 					projectSetName    = buildConf->GetEnvVarSet();
 				}
 
-				if( buildConf->GetDbgEnvSet() != wxGetTranslation(USE_GLOBAL_SETTINGS)) {
+				if( buildConf->GetDbgEnvSet() != USE_GLOBAL_SETTINGS) {
 					projectDbgSetName = buildConf->GetDbgEnvSet();
 				}
 			}

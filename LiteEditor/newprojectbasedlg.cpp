@@ -26,9 +26,8 @@ NewProjectBaseDlg::NewProjectBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_staticText2->Wrap( -1 );
 	categoriesSizer->Add( m_staticText2, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	
-	wxString m_chCategoriesChoices[] = { _("Console"), _("GUI"), _("Library"), _("Others"), _("User templates"), _("All") };
-	int m_chCategoriesNChoices = sizeof( m_chCategoriesChoices ) / sizeof( wxString );
-	m_chCategories = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxSize( 275,-1 ), m_chCategoriesNChoices, m_chCategoriesChoices, 0 );
+	wxArrayString m_chCategoriesChoices;
+	m_chCategories = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxSize( 275,-1 ), m_chCategoriesChoices, 0 );
 	m_chCategories->SetSelection( 0 );
 	m_chCategories->SetMinSize( wxSize( 275,-1 ) );
 	

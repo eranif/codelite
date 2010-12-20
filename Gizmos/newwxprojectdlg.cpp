@@ -25,6 +25,7 @@
  #include "wx/xrc/xmlres.h"
 #include "windowattrmanager.h"
 #include "imanager.h"
+#include "globals.h"
 #include "newwxprojectdlg.h"
 #include "wx/msgdlg.h"
 #include "workspace.h"
@@ -36,6 +37,9 @@ NewWxProjectDlg::NewWxProjectDlg( wxWindow* parent, IManager *mgr  )
 	m_bitmap1->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("wx_project_header")));
 	m_choiceApplicationType->SetSelection(wxProjectTypeSimpleMain);
 	m_dirPicker->SetPath(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+	const wxString VersionChoices[] = { wxT("Default"), wxT("2.6"), wxT("2.8"), wxT("2.9"), wxT("3.0") };
+	m_stringManager.AddStrings(sizeof(VersionChoices)/sizeof(wxString), VersionChoices, wxT("Default"), m_choiceVersion);
+	
 	m_textCtrlName->SetFocus();
 
 #if defined (__WXMSW__)	
@@ -141,7 +145,7 @@ void NewWxProjectDlg::GetProjectInfo(NewWxProjectInfo &info)
 	info.SetName(m_textCtrlName->GetValue());
 	info.SetPath(path);
 	info.SetPrefix(m_textCtrlPrefix->GetValue());
-	info.SetVersion(m_choiceVersion->GetStringSelection());
+	info.SetVersion(m_stringManager.GetStringSelection());
 }
 
 void NewWxProjectDlg::OnChoiceChanged(wxCommandEvent &e)

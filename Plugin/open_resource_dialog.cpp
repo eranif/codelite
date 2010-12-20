@@ -12,6 +12,7 @@
 #include "windowattrmanager.h"
 #include <vector>
 
+// It makes sense to localise "Workspace file" but surely not the others...
 wxString OpenResourceDialog::TYPE_WORKSPACE_FILE = _("Workspace file");
 wxString OpenResourceDialog::TYPE_CLASS          = wxT("Class, struct or union");
 wxString OpenResourceDialog::TYPE_MACRO          = wxT("Macro");
@@ -50,6 +51,14 @@ OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager, con
 	m_manager->GetConfigTool()->ReadObject(wxT("OpenResourceAllowsPartialMatch"), &l);
 	m_checkBoxUsePartialMatching->SetValue(l.GetValue() == 1);
 
+	m_choiceResourceType->Clear();
+	m_choiceResourceType->Append(wxGetTranslation(TYPE_WORKSPACE_FILE));
+	m_choiceResourceType->Append(TYPE_CLASS);
+	m_choiceResourceType->Append(TYPE_MACRO);
+	m_choiceResourceType->Append(TYPE_FUNCTION);
+	m_choiceResourceType->Append(TYPE_TYPEDEF);
+	m_choiceResourceType->Append(TYPE_NAMESPACE);
+	
 	m_choiceResourceType->SetStringSelection(m_type);
 
 	if (!allowChangeType)
@@ -145,7 +154,7 @@ void OpenResourceDialog::DoPopulateList()
 	wxWindowUpdateLocker locker(this);
 	wxArrayString kind;
 	Clear();
-	if (m_type == TYPE_WORKSPACE_FILE) {
+	if (m_type == wxGetTranslation(TYPE_WORKSPACE_FILE)) {
 		DoPopulateWorkspaceFile();
 		return;
 
@@ -275,7 +284,7 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
 	// Change was done, update the file list
 	for (size_t i=0; i<tmpArr.GetCount(); i++) {
 		wxFileName fn(tmpArr.Item(i));
-		DoAppendLine(fn.GetFullName(), fn.GetFullPath(), wxT(""), false, new OpenResourceDialogItemData(tmpArr.Item(i), -1, wxT(""), OpenResourceDialog::TYPE_WORKSPACE_FILE, wxT(""), wxT("")));
+		DoAppendLine(fn.GetFullName(), fn.GetFullPath(), wxT(""), false, new OpenResourceDialogItemData(tmpArr.Item(i), -1, wxT(""), wxGetTranslation(TYPE_WORKSPACE_FILE), wxT(""), wxT("")));
 		
 		if( i == 150 ) {
 			m_staticTextErrorMessage->SetLabel(_("Too many matches, please narrow down your search"));
@@ -367,7 +376,7 @@ void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event)
 
 bool OpenResourceDialogItemData::IsOk() const
 {
-	if (m_resourceType == OpenResourceDialog::TYPE_WORKSPACE_FILE) {
+	if (m_resourceType == wxGetTranslation(OpenResourceDialog::TYPE_WORKSPACE_FILE)) {
 		return m_file.IsEmpty() == false;
 	} else {
 		// tag

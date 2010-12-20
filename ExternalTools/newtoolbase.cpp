@@ -27,9 +27,8 @@ NewToolBase::NewToolBase( wxWindow* parent, wxWindowID id, const wxString& title
 	m_staticText5->Wrap( -1 );
 	fgSizer1->Add( m_staticText5, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	wxString m_choiceIdChoices[] = { _("external_tool_0"), _("external_tool_1"), _("external_tool_2"), _("external_tool_3"), _("external_tool_4"), _("external_tool_5"), _("external_tool_6"), _("external_tool_7"), _("external_tool_8"), _("external_tool_9") };
-	int m_choiceIdNChoices = sizeof( m_choiceIdChoices ) / sizeof( wxString );
-	m_choiceId = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceIdNChoices, m_choiceIdChoices, 0 );
+	wxArrayString m_choiceIdChoices;
+	m_choiceId = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceIdChoices, 0 );
 	m_choiceId->SetSelection( 0 );
 	fgSizer1->Add( m_choiceId, 0, wxALL|wxEXPAND, 5 );
 	

@@ -48,9 +48,8 @@ NewQtProjBaseDlg::NewQtProjBaseDlg( wxWindow* parent, wxWindowID id, const wxStr
 	m_staticText13->Wrap( -1 );
 	fgSizer2->Add( m_staticText13, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	wxString m_choiceProjKindChoices[] = { _("Console"), _("GUI"), _("Static Library"), _("Dynamic Library") };
-	int m_choiceProjKindNChoices = sizeof( m_choiceProjKindChoices ) / sizeof( wxString );
-	m_choiceProjKind = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceProjKindNChoices, m_choiceProjKindChoices, 0 );
+	wxArrayString m_choiceProjKindChoices;
+	m_choiceProjKind = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceProjKindChoices, 0 );
 	m_choiceProjKind->SetSelection( 0 );
 	fgSizer2->Add( m_choiceProjKind, 0, wxALL|wxEXPAND, 5 );
 	

@@ -11,6 +11,12 @@ NewQtProjDlg::NewQtProjDlg( wxWindow* parent, QmakeConf *conf, IManager *mgr )
 		, m_conf(conf)
 		, m_mgr (mgr)
 {
+	const wxString ProjKinds[] = { wxT("Console"), wxT("GUI"), wxT("Static Library"), wxT("Dynamic Library") };
+	wxArrayString choices(4, ProjKinds);
+	m_choiceProjKind->Clear();
+	m_choiceProjKind->Append(choices);
+	m_choiceProjKind->SetSelection(1);
+
 	m_choiceQmake->Append(m_conf->GetAllConfigurations());
 	if (m_choiceQmake->IsEmpty() == false) {
 		m_choiceQmake->SetSelection(0);

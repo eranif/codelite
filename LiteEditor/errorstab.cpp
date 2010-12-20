@@ -156,7 +156,6 @@ void ErrorsTab::AddError ( const BuildTab::LineInfo &lineInfo )
 	if(isError) {
 		// Set the text color of the parent node to red
 		m_treeListCtrl->SetItemTextColour(item, wxT("RED"));
-		m_treeListCtrl->SetItemBold(item);
 	}
 }
 

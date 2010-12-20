@@ -143,8 +143,8 @@ mkdir -p fakeroot/usr/share/locale/
 for lang in Runtime/locale/* ; do
 	lang=`basename $lang`
 	if test -f Runtime/locale/$lang/codelite.mo ; then
-		mkdir -p fakeroot/share/locale/$lang/LC_MESSAGES
-		cp -f Runtime/locale/$lang/codelite.mo fakeroot/share/locale/$lang/LC_MESSAGES/
+		mkdir -p fakeroot/usr/share/locale/$lang/LC_MESSAGES
+		cp -f Runtime/locale/$lang/codelite.mo fakeroot/usr/share/locale/$lang/LC_MESSAGES/
 	fi
 done
 

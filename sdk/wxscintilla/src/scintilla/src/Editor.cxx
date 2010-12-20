@@ -5325,7 +5325,10 @@ int Editor::KeyDefault(int, int) {
 }
 
 int Editor::KeyDown(int key, bool shift, bool ctrl, bool alt, bool *consumed) {
-	DwellEnd(false);
+	// CHANGED [START]
+	if(!ctrl)
+		DwellEnd(false);
+	// CHANGED [END]
 	int modifiers = (shift ? SCI_SHIFT : 0) | (ctrl ? SCI_CTRL : 0) |
 	        (alt ? SCI_ALT : 0);
 	int msg = kmap.Find(key, modifiers);

@@ -1256,6 +1256,10 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 	if(ManagerST::Get()->GetDebuggerTip() && ManagerST::Get()->GetDebuggerTip()->IsShown())
 		return;
 	
+	// We disply the tooltip only if the control key is down
+	if(wxGetMouseState().ControlDown() == false)
+		return;
+	
 	wxPoint pt;
 	wxString word;
 	pt.x = event.GetX();

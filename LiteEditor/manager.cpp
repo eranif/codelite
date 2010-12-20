@@ -2992,7 +2992,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 		// CreateVariableObject callback
 		if ( event.m_userReason == DBG_USERR_QUICKWACTH ) {
 
-			if ( dbgInfo.showTooltips ) {
+			if ( dbgInfo.showTooltipsOnlyWithControlKeyIsDown ) {
 
 				/////////////////////////////////////////////
 				// Handle Tooltips

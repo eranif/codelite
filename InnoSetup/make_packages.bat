@@ -24,13 +24,13 @@ GOTO END
 IF "%2"=="" GOTO USAGE
 
 :: Installer name for IDE only
-SET CODELITE_INSTALLER=codelite-2.8.0.%2
+SET CODELITE_INSTALLER=codelite-2.9.0.%2
 
 :: Installer name for IDE + MinGW
-SET CODELITE_INSTALLER_MINGW=codelite-2.8.0.%2-mingw4.4.1
+SET CODELITE_INSTALLER_MINGW=codelite-2.9.0.%2-mingw4.4.1
 
 :: Installer name for IDE + MinGW + WX2.8.10
-SET CODELITE_INSTALLER_MINGW_WX=codelite-2.8.0.%2-mingw4.4.1-wx2.8.10
+SET CODELITE_INSTALLER_MINGW_WX=codelite-2.9.0.%2-mingw4.4.1-wx2.8.10
 
 "%ProgramFiles(x86)%\Inno Setup 5\iscc" lite_editor.iss /F%CODELITE_INSTALLER%
 

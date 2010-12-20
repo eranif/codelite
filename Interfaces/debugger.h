@@ -357,7 +357,7 @@ public:
 	wxString  consoleCommand;
 	bool      useRelativeFilePaths;
 	bool      catchThrow;
-	bool      showTooltips;
+	bool      showTooltipsOnlyWithControlKeyIsDown;
 	bool      debugAsserts;
 	wxString  startupCommands;
 	int       maxDisplayStringSize;
@@ -377,7 +377,7 @@ public:
 			, consoleCommand(TERMINAL_CMD)
 			, useRelativeFilePaths(false)
 			, catchThrow(false)
-			, showTooltips(false)
+			, showTooltipsOnlyWithControlKeyIsDown(false)
 			, debugAsserts(false)
 			, startupCommands(wxEmptyString)
 			, maxDisplayStringSize(200)
@@ -399,7 +399,7 @@ public:
 		arch.Write(wxT("consoleCommand"),                      consoleCommand);
 		arch.Write(wxT("useRelativeFilePaths"),                useRelativeFilePaths);
 		arch.Write(wxT("catchThrow"),                          catchThrow);
-		arch.Write(wxT("showTooltips"),                        showTooltips);
+		arch.Write(wxT("showTooltips"),                        showTooltipsOnlyWithControlKeyIsDown);
 		arch.Write(wxT("debugAsserts"),                        debugAsserts);
 		arch.WriteCData(wxT("startupCommands"),                startupCommands);
 		arch.Write(wxT("maxDisplayStringSize"),                maxDisplayStringSize);
@@ -419,7 +419,7 @@ public:
 		arch.Read(wxT("consoleCommand"),                      consoleCommand);
 		arch.Read(wxT("useRelativeFilePaths"),                useRelativeFilePaths);
 		arch.Read(wxT("catchThrow"),                          catchThrow);
-		arch.Read(wxT("showTooltips"),                        showTooltips);
+		arch.Read(wxT("showTooltips"),                        showTooltipsOnlyWithControlKeyIsDown);
 		arch.Read(wxT("debugAsserts"),                        debugAsserts);
 		arch.ReadCData(wxT("startupCommands"),                startupCommands);
 		startupCommands.Trim();

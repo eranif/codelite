@@ -40,6 +40,7 @@ EditorOptionsGeneralSavePanel::EditorOptionsGeneralSavePanel( wxWindow* parent )
 	long dontTrimCaretLine(0);
 	EditorConfigST::Get()->GetLongValue(wxT("DontTrimCaretLine"), dontTrimCaretLine);
 	m_checkBoxDontTrimCurrentLine->SetValue(dontTrimCaretLine ? true : false);
+	m_checkBoxTrimModifiedLines->SetValue( EditorConfigST::Get()->GetOptions()->GetTrimOnlyModifiedLines());
 }
 
 void EditorOptionsGeneralSavePanel::Save(OptionsConfigPtr options)
@@ -47,6 +48,7 @@ void EditorOptionsGeneralSavePanel::Save(OptionsConfigPtr options)
 	EditorConfigST::Get()->SaveLongValue(wxT("EditorTrimEmptyLines"), m_checkBoxTrimLine->IsChecked() ? 1 : 0);
 	EditorConfigST::Get()->SaveLongValue(wxT("EditorAppendLf"),       m_checkBoxAppendLF->IsChecked() ? 1 : 0);
 	EditorConfigST::Get()->SaveLongValue(wxT("DontTrimCaretLine"),    m_checkBoxDontTrimCurrentLine->IsChecked() ? 1 : 0);
+	options->SetTrimOnlyModifiedLines(m_checkBoxTrimModifiedLines->IsChecked());
 }
 
 void EditorOptionsGeneralSavePanel::OnTrimCaretLineUI(wxUpdateUIEvent& event)

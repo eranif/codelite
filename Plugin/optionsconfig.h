@@ -94,6 +94,7 @@ protected:
 	bool           m_mswTheme;
 	wxString       m_preferredLocale;
 	bool           m_useLocale;
+	bool           m_trimOnlyModifiedLines;
 
 public:
 	OptionsConfig() {}
@@ -104,6 +105,12 @@ public:
 	// Setters/Getters
 	//-------------------------------------
 
+	void SetTrimOnlyModifiedLines(bool trimOnlyModifiedLines) {
+		this->m_trimOnlyModifiedLines = trimOnlyModifiedLines;
+	}
+	bool GetTrimOnlyModifiedLines() const {
+		return m_trimOnlyModifiedLines;
+	}
 	void SetPreferredLocale(const wxString& preferredLocale) {
 		this->m_preferredLocale = preferredLocale;
 	}

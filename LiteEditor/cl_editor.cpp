@@ -3277,10 +3277,11 @@ void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
 
 void LEditor::TrimText()
 {
-	bool trim              = GetOptions()->GetTrimLine();
-	bool appendLf          = GetOptions()->GetAppendLF();
-	bool dontTrimCaretLine = GetOptions()->GetDontTrimCaretLine();
-
+	bool trim                  = GetOptions()->GetTrimLine();
+	bool appendLf              = GetOptions()->GetAppendLF();
+	bool dontTrimCaretLine     = GetOptions()->GetDontTrimCaretLine();
+	bool trimOnlyModifiedLInes = GetOptions()->GetTrimOnlyModifiedLines();
+	
 	if (!trim && !appendLf) {
 		return;
 	}
@@ -3292,7 +3293,11 @@ void LEditor::TrimText()
 		int maxLines = GetLineCount();
 		int currLine = GetCurrentLine();
 		for (int line = 0; line < maxLines; line++) {
-
+			
+			//only trim lines modified by the user in this session
+			if(trimOnlyModifiedLInes && (MarginGetStyle(line) != CL_LINE_MODIFIED_STYLE))
+				continue;
+				
 			// We can trim in the following cases:
 			// 1) line is is NOT the caret line OR
 			// 2) line is the caret line, however dontTrimCaretLine is FALSE

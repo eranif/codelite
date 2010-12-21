@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -27,6 +27,18 @@ EditorOptionsGeneralSavePanelBase::EditorOptionsGeneralSavePanelBase( wxWindow* 
 	m_checkBoxDontTrimCurrentLine = new wxCheckBox( this, wxID_ANY, _("Do not trim the caret line"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_checkBoxDontTrimCurrentLine, 0, wxRIGHT|wxLEFT, 20 );
 	
+	
+	fgSizer1->Add( 0, 0, 1, wxEXPAND|wxTOP, 5 );
+	
+	
+	fgSizer1->Add( 0, 0, 1, wxEXPAND|wxTOP, 5 );
+	
+	
+	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	m_checkBoxTrimModifiedLines = new wxCheckBox( this, wxID_ANY, _("Trim only modified lines"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_checkBoxTrimModifiedLines, 0, wxRIGHT|wxLEFT, 20 );
+	
 	bSizer3->Add( fgSizer1, 0, wxEXPAND|wxALL, 5 );
 	
 	m_checkBoxAppendLF = new wxCheckBox( this, wxID_ANY, _("If missing, append EOL at end of file"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -38,11 +50,13 @@ EditorOptionsGeneralSavePanelBase::EditorOptionsGeneralSavePanelBase( wxWindow* 
 	
 	// Connect Events
 	m_checkBoxDontTrimCurrentLine->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralSavePanelBase::OnTrimCaretLineUI ), NULL, this );
+	m_checkBoxTrimModifiedLines->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralSavePanelBase::OnTrimCaretLineUI ), NULL, this );
 }
 
 EditorOptionsGeneralSavePanelBase::~EditorOptionsGeneralSavePanelBase()
 {
 	// Disconnect Events
 	m_checkBoxDontTrimCurrentLine->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralSavePanelBase::OnTrimCaretLineUI ), NULL, this );
+	m_checkBoxTrimModifiedLines->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralSavePanelBase::OnTrimCaretLineUI ), NULL, this );
 	
 }

@@ -94,6 +94,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_dockingStyle(0)
 		, m_preferredLocale(wxT("en_US"))
 		, m_useLocale(0)
+		, m_trimOnlyModifiedLines(true)
 {
 	m_mswTheme = false;
 #ifdef __WXMSW__
@@ -163,8 +164,8 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_dockingStyle                  = XmlUtils::ReadLong  (node, wxT("m_dockingStyle"),            m_dockingStyle);
 		m_mswTheme                      = XmlUtils::ReadBool  (node, wxT("m_mswTheme"),                m_mswTheme);
 		m_preferredLocale               = XmlUtils::ReadString(node, wxT("m_preferredLocale"),         m_preferredLocale);
-		m_useLocale                 	= XmlUtils::ReadBool  (node, wxT("m_useLocale"),               m_useLocale);
-		
+		m_useLocale                     = XmlUtils::ReadBool  (node, wxT("m_useLocale"),               m_useLocale);
+		m_trimOnlyModifiedLines         = XmlUtils::ReadBool  (node, wxT("m_trimOnlyModifiedLines"),   m_trimOnlyModifiedLines);
         // These hacks will likely be changed in the future. If so, we'll be able to remove the #include "editor_config.h" too
     	long trim             (0); 
 		long appendLf         (0);
@@ -237,7 +238,8 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("m_mswTheme"),                    BoolToString(m_mswTheme));
 	n->AddProperty(wxT("m_preferredLocale"),             m_preferredLocale);
 	n->AddProperty(wxT("m_useLocale"),                   BoolToString(m_useLocale));
-
+	n->AddProperty(wxT("m_trimOnlyModifiedLines"),       BoolToString(m_trimOnlyModifiedLines));
+	
 	wxString tmp;
     tmp << m_indentWidth;
     n->AddProperty(wxT("IndentWidth"), tmp);

@@ -1257,7 +1257,15 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 		return;
 	
 	// We disply the tooltip only if the control key is down
-	if(wxGetMouseState().ControlDown() == false)
+	DebuggerInformation info;
+	
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if(!dbgr) {
+		return;
+	}
+	
+	DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), info);
+	if(info.showTooltipsOnlyWithControlKeyIsDown && wxGetMouseState().ControlDown() == false)
 		return;
 	
 	wxPoint pt;
@@ -1304,7 +1312,6 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 		return;
 	}
 
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
 		if ( ManagerST::Get()->GetDebuggerTip()->IsShown() && ManagerST::Get()->GetDebuggerTip()->m_expression == word) {
 			// a 'Quick Show dialog' is already shown for this word

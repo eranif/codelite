@@ -50,8 +50,13 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 						 
 	m_toolBar1->Realize();
 
+#ifdef __WXGTK__
+	topSizer->Add( m_listCtrl, 1, wxEXPAND|wxALL, 2 );
+	topSizer->Add( m_toolBar1, 0, wxEXPAND|wxALL, 2 );
+#else
 	topSizer->Add( m_listCtrl, 1, wxEXPAND, 2 );
 	topSizer->Add( m_toolBar1, 0, wxEXPAND, 2 );
+#endif
 
     m_mainPanel->SetAutoLayout( true );
     m_mainPanel->SetSizer( topSizer );

@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <sys/wait.h>
 #include <string.h>
+#include "procutils.h"
 
 #ifdef __WXGTK__
 #    include <pty.h>
@@ -441,8 +442,9 @@ void UnixProcessImpl::Terminate()
 		// If hard kill requested, pass -9
 		if(GetHardKill())
 			cmd << wxT(" -9");
-
-		wxExecute(cmd, wxEXEC_ASYNC);
+		
+		wxArrayString dummyArr;
+		ProcUtils::SafeExecuteCommand(cmd, dummyArr);
 	}
 #else
 	wxKill (GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM);

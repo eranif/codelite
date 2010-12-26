@@ -340,8 +340,6 @@ void Manager::CloseWorkspace()
 
 	// Delete any breakpoints belong to the current workspace
 	GetBreakpointsMgr()->DelAllBreakpoints();
-	// Then remove them from the debugger pane, in case that's visible
-	clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
 	// since we closed the workspace, we also need to set the 'LastActiveWorkspaceName' to be
 	// default

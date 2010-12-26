@@ -106,6 +106,9 @@ dbg_next|Debug|Next|F10
 dbg_stepout|Debug|Step Out|Shift-F11
 show_cursor|Debug|Show Cursor|
 insert_breakpoint|Debug|Toggle Breakpoint|F9
+disable_all_breakpoints|Debug|Disable All Breakpoints|
+enable_all_breakpoints|Debug|Enable All Breakpoints|
+delete_all_breakpoints|Debug|Delete All Breakpoints|
 quick_debug|Debug|Quick Debug...|
 create_ext_database|Tags|Create external tags database...|
 open_ext_database|Tags|Attach external tags database...|

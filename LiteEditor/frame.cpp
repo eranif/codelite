@@ -385,6 +385,9 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_MENU(XRCID("show_cursor"),              clMainFrame::OnDebugCmd)
 	EVT_MENU(XRCID("add_breakpoint"),						clMainFrame::DispatchCommandEvent)
 	EVT_MENU(XRCID("insert_breakpoint"),        clMainFrame::DispatchCommandEvent) // Toggles
+	EVT_MENU(XRCID("disable_all_breakpoints"),  clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("enable_all_breakpoints"),  	clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("delete_all_breakpoints"),  	clMainFrame::DispatchCommandEvent)
 	EVT_MENU(XRCID("insert_temp_breakpoint"),   clMainFrame::DispatchCommandEvent)
 	EVT_MENU(XRCID("insert_cond_breakpoint"),   clMainFrame::DispatchCommandEvent)
 	EVT_MENU(XRCID("edit_breakpoint"),          clMainFrame::DispatchCommandEvent)
@@ -404,6 +407,9 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("dbg_next"),            clMainFrame::OnDebugCmdUI)
 	EVT_UPDATE_UI(XRCID("show_cursor"),         clMainFrame::OnDebugCmdUI)
 	EVT_UPDATE_UI(XRCID("insert_breakpoint"),   clMainFrame::OnDebugManageBreakpointsUI)
+	EVT_UPDATE_UI(XRCID("disable_all_breakpoints"), clMainFrame::OnDebugManageBreakpointsUI)
+	EVT_UPDATE_UI(XRCID("enable_all_breakpoints"),  clMainFrame::OnDebugManageBreakpointsUI)
+	EVT_UPDATE_UI(XRCID("delete_all_breakpoints"),  clMainFrame::OnDebugManageBreakpointsUI)
 	EVT_UPDATE_UI(XRCID("quick_debug"),         clMainFrame::OnQuickDebugUI)
 
 	//-------------------------------------------------------
@@ -2860,7 +2866,18 @@ void clMainFrame::OnDebugStopUI(wxUpdateUIEvent &e)
 
 void clMainFrame::OnDebugManageBreakpointsUI(wxUpdateUIEvent &e)
 {
+	if (e.GetId() == XRCID("delete_all_breakpoints")) {
+		std::vector<BreakpointInfo> bps;
+		ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(bps);
+		e.Enable(bps.size());
+	} else if (e.GetId() == XRCID("disable_all_breakpoints")) {
+		e.Enable(ManagerST::Get()->GetBreakpointsMgr()->AreThereEnabledBreakpoints());
+	} else if (e.GetId() == XRCID("enable_all_breakpoints")) {
+		e.Enable(ManagerST::Get()->GetBreakpointsMgr()->AreThereDisabledBreakpoints());
+	} else {
+
 	e.Enable(true);
+}
 }
 
 void clMainFrame::OnDebugCmd(wxCommandEvent &e)

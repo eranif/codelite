@@ -466,6 +466,15 @@
 			<object class="wxMenuItem" name="insert_breakpoint">
 				<label>Toggle &amp;Breakpoint</label>
 			</object>
+			<object class="wxMenuItem" name="disable_all_breakpoints">
+				<label>Disable All Breakpoints</label>
+			</object>
+			<object class="wxMenuItem" name="enable_all_breakpoints">
+				<label>Enable All Breakpoints</label>
+			</object>
+			<object class="wxMenuItem" name="delete_all_breakpoints">
+				<label>Delete All Breakpoints</label>
+			</object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="quick_debug">
 				<label>&amp;Quick Debug...</label>
@@ -682,7 +691,11 @@
         <object class="wxMenuItem" name="insert_breakpoint">
             <label>Toggle Breakpoint</label>
         </object>
+        <object class="wxMenuItem" name="delete_all_breakpoints">
+            <label>Delete All Breakpoints</label>
+        </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+
 		<object class="wxMenuItem" name="retag_file">
             <label>Re-Tag File</label>
         </object>

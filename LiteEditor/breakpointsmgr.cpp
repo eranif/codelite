@@ -458,6 +458,41 @@ void BreakptMgr::DelAllBreakpoints()
 	DeleteAllBreakpointMarkers();
 	m_bps.clear();
 	m_pendingBreakpointsList.clear();	// Delete any pending bps too
+	clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+}
+
+void BreakptMgr::SetAllBreakpointsEnabledState(bool enabled)
+{
+	// UpdateUI should prevent this from being called unless the debugger is running, but check anyway
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if (dbgr && dbgr->IsRunning()) {
+		unsigned int successes = 0;
+		bool contIsNeeded = PauseDebuggerIfNeeded();
+
+		for (size_t i=0; i<m_bps.size(); ++i) {
+			BreakpointInfo &bp = m_bps.at(i);
+			if ((bp.debugger_id != -1) 				// Sanity
+					&& (bp.is_enabled != enabled)) { // No point setting it to the current status
+				if (dbgr->SetEnabledState(bp.debugger_id, enabled)) {
+					bp.is_enabled = enabled;
+					++successes;
+				}
+			}
+		}
+
+		if (contIsNeeded) {
+			dbgr->Continue();
+		}
+		
+		if (successes) {
+			RefreshBreakpointMarkers();
+			clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+		}
+
+		wxString msg = wxString::Format(wxT("%u "), successes);
+		msg << (enabled ? _("breakpoints enabled") : _("breakpoints disabled"));
+		clMainFrame::Get()->SetStatusMessage(msg, 0);
+	}
 }
 
 // Toggle a breakpoint's enabled state
@@ -897,7 +932,7 @@ bool BreakptMgr::SetBPEnabledState(const int bid, const bool enable)
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
-		// If the debugger is already running, tell it about the new ignore level
+		// If the debugger is already running, tell it about the new 'enable' level
 		// If not, it'll happen automatically when the debugger does start
 		bool contIsNeeded = PauseDebuggerIfNeeded();
 		bool result = dbgr->SetEnabledState(bid, enable);
@@ -966,6 +1001,25 @@ void BreakptMgr::SetBreakpoints(const std::vector<BreakpointInfo>& bps)
 {
 	// append the breakpoint list
 	m_bps.insert(m_bps.end(), bps.begin(), bps.end());
+}
+
+bool BreakptMgr::AreThereEnabledBreakpoints(bool enabled /*= true*/)
+{
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if (!(dbgr && dbgr->IsRunning())) {
+		// No point playing with bp enablement when the debugger's not running
+		return false;
+	}
+
+	for (size_t i=0; i<m_bps.size(); ++i) {
+		BreakpointInfo &bp = m_bps.at(i);
+		if (bp.is_enabled == enabled) {
+			// There's at least one bp that can be altered
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 void BreakptMgr::SaveSession(SessionEntry& session)

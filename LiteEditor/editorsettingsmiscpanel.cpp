@@ -232,7 +232,7 @@ int EditorSettingsMiscPanel::FindAvailableLocales()
 	for (int n=0, lang=wxLANGUAGE_UNKNOWN+1; lang < wxLANGUAGE_USER_DEFINED; ++lang) {
 		const wxLanguageInfo* info = wxLocale::GetLanguageInfo(lang);
 		// Check there *is* a Canonical name, as empty strings return a valid locale :/
-		if ((!info->CanonicalName.IsEmpty()) && wxLocale::IsAvailable(lang)) {
+		if ((info && !info->CanonicalName.IsEmpty()) && wxLocale::IsAvailable(lang)) {
 
 			// Check we haven't already seen this item: we may find the system default twice
 			if (canonicalNames.Index(info->CanonicalName) == wxNOT_FOUND) {

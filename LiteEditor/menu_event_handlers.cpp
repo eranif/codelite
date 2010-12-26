@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "menu_event_handlers.h"
+#include "manager.h"
 #include "cl_editor.h"
 #include "frame.h"
 
@@ -419,6 +420,18 @@ void DebuggerMenuHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &e
 
 	if (event.GetId() == XRCID("edit_breakpoint")) {
 		editor->OnEditBreakpoint();
+	}
+
+	if (event.GetId() == XRCID("disable_all_breakpoints")) {
+		ManagerST::Get()->GetBreakpointsMgr()->SetAllBreakpointsEnabledState(false);
+	}
+
+	if (event.GetId() == XRCID("enable_all_breakpoints")) {
+		ManagerST::Get()->GetBreakpointsMgr()->SetAllBreakpointsEnabledState(true);
+	}
+
+	if (event.GetId() == XRCID("delete_all_breakpoints")) {
+		ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints();
 	}
 }
 

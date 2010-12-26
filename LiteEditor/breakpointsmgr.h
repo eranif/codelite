@@ -252,6 +252,23 @@ public:
 	void UnDisableAllBreakpoints();
 
 	/**
+	 * Enable/Disable all breakpoints. Only used while the debugger is running
+	 */
+	void SetAllBreakpointsEnabledState(bool enabled);
+
+	/**
+	 * UpdateUI for SetAllBreakpointsEnabledState
+	 */
+	bool AreThereEnabledBreakpoints(bool enabled = true);
+
+	/**
+	 * UpdateUI for SetAllBreakpointsEnabledState, disabled version
+	 */
+	bool AreThereDisabledBreakpoints() {
+		return AreThereEnabledBreakpoints(false);
+	}
+
+	/**
 	 * remove all breakpoints
 	 */
 	void DelAllBreakpoints();

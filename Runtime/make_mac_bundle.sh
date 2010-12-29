@@ -130,8 +130,8 @@ cp plugins/resources/*.*  ./CodeLite.app/Contents/SharedSupport/plugins/resource
 for lang in locale/* ; do
 	lang=`basename $lang`
 	if test -f locale/$lang/codelite.mo ; then
-		mkdir -p ./CodeLite.app/Contents/Resources/locale/$lang.lproj/
-		cp -f locale/$lang/codelite.mo ./CodeLite.app/Contents/Resources/locale/$lang.lproj/
+		mkdir -p ./CodeLite.app/Contents/Resources/$lang.lproj/
+		cp -f locale/$lang/codelite.mo ./CodeLite.app/Contents/Resources/$lang.lproj/
 	fi
 done
 

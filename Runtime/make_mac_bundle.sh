@@ -126,12 +126,14 @@ cp ../sdk/codelite_cppcheck/codelite_cppcheck ./CodeLite.app/Contents/SharedSupp
 cp ./OpenTerm   ./CodeLite.app/Contents/SharedSupport/
 cp plugins/resources/*.*  ./CodeLite.app/Contents/SharedSupport/plugins/resources/
 
+## Copy the locale files
+for lang in locale/* ; do
+	lang=`basename $lang`
+	if test -f locale/$lang/codelite.mo ; then
+		mkdir -p ./CodeLite.app/Contents/Resources/locale/$lang.lproj/
+		cp -f locale/$lang/codelite.mo ./CodeLite.app/Contents/Resources/locale/$lang.lproj/
+	fi
+done
 
-
-#fix_shared_object_depends ./CodeLite.app/Contents/MacOS/libplugin
-#fix_shared_object_depends ./CodeLite.app/Contents/MacOS/libcodelite
-#fix_shared_object_depends ./CodeLite.app/Contents/MacOS/libwxscintilla
-#fix_shared_object_depends ./CodeLite.app/Contents/MacOS/libwxsqlite
 fix_codelite_indexer_deps
-
 fix_shared_object_depends lib

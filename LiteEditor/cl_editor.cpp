@@ -2369,10 +2369,32 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 void LEditor::OnKeyDown(wxKeyEvent &event)
 {
 	// Hide tooltip dialog if its ON
-	if(ManagerST::Get()->GetDebuggerTip()->IsShown() && event.GetKeyCode() != WXK_CONTROL) {
+	IDebugger *   dbgr                = DebuggerMgr::Get().GetActiveDebugger();
+	bool          dbgTipIsShown       = ManagerST::Get()->GetDebuggerTip()->IsShown();
+	bool          keyIsControl        = event.GetKeyCode() == WXK_CONTROL;
+	
+	if(dbgTipIsShown && !keyIsControl) {
+		
+		// If any key is pressed, but the CONTROL key hide the 
+		// debugger tip
 		ManagerST::Get()->GetDebuggerTip()->HideDialog();
+	
+	} else if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() && keyIsControl) {
+		
+		DebuggerInformation info;
+		DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), info);
+		
+		if(info.showTooltipsOnlyWithControlKeyIsDown) {
+			// CONTROL Key + Debugger is running and interactive
+			// and no debugger tip is shown -> emulate "Dwell" event
+			wxScintillaEvent sciEvent;
+			wxPoint pt ( ScreenToClient(wxGetMousePosition()) );
+			sciEvent.SetPosition( PositionFromPointClose(pt.x, pt.y));
+			
+			m_context->OnDbgDwellStart(sciEvent);
+		}
 	}
-
+	
 	//let the context process it as well
 	if (GetFunctionTip()->IsActive() && event.GetKeyCode() == WXK_ESCAPE)
 		GetFunctionTip()->Deactivate();

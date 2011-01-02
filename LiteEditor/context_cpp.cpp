@@ -1268,10 +1268,7 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 	if(info.showTooltipsOnlyWithControlKeyIsDown && wxGetMouseState().ControlDown() == false)
 		return;
 	
-	wxPoint pt;
 	wxString word;
-	pt.x = event.GetX();
-	pt.y = event.GetY();
 	LEditor &ctrl = GetCtrl();
 	int pos = event.GetPosition();
 	if (pos != wxNOT_FOUND) {

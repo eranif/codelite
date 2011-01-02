@@ -7,7 +7,11 @@
 
 #include "cc_boxbase.h"
 #include <wx/pen.h>
+#if wxVERSION_NUMBER >= 2809
 #include <wx/aui/auibar.h>
+#else
+	#include <wx/toolbar.h>
+#endif
 #include <wx/xrc/xmlres.h>
 
 
@@ -29,13 +33,18 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 
 	wxBitmap bmp         = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("cc/16/lock"));
 	wxBitmap commentsBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("cc/16/note"));
+
+#if wxVERSION_NUMBER >= 2809
 	m_toolBar1 = new clToolBar( m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, (1 << 5) /* wxAUI_TB_VERTICAL */);
+#else
+	m_toolBar1 = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL);
+#endif
 	m_toolBar1->AddTool( TOOL_SHOW_PRIVATE_MEMBERS, 
 						 _("Show Protected / Private Items"), 
 						 bmp, 
 						 bmp, 
 						 wxITEM_CHECK, 
-						 _("Show Only Public Items"), 
+						 _("If pressed, will show 'protected' and 'private' items as well as 'public' ones"), 
 						 wxEmptyString,
 						 NULL);
 						 

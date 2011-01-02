@@ -4,8 +4,11 @@ fix_shared_object_depends() {
 	search_string=$1
 
 	## Get list of files to work on
-	file_list=`ls ../lib/*.so`
-	file_list="${file_list} ${exe_name} "
+    dylibs=`ls ./CodeLite.app/Contents/MacOS/*.dylib`
+	sos=`ls ./CodeLite.app/Contents/MacOS/*.so`
+    sos2=`ls ./CodeLite.app/Contents/SharedSupport/plugins/*.so`
+    sos3=`ls ./CodeLite.app/Contents/SharedSupport/debuggers/*.so`
+	file_list="${dylibs} ${sos} ${sos2} ${sos3} ./CodeLite.app/Contents/MacOS/${exe_name} "
 
 	## Since the plugins must use the same wx configuration as the
 	## executable, we can run the following command only once and
@@ -18,20 +21,20 @@ fix_shared_object_depends() {
 			for path in ${orig_path}
 			do
 					new_path=`echo ${path} | xargs basename`
-					install_name_tool -change ${orig_path} @executable_path/${new_path} ${file}
+					install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ${file}
 			done
 	done
 }
 fix_codelite_indexer_deps() {
 
-	orig_path=`otool -L ./codelite_indexer  | grep libwx_* | awk '{print $1;}'`
+	orig_path=`otool -L ./CodeLite.app/Contents/SharedSupport/codelite_indexer  | grep libwx_* | awk '{print $1;}'`
 
 	## Loop over the files, and update the path of the wx library
 	for path in ${orig_path}
 	do
 		new_path=`echo ${path} | xargs basename`
-		install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite_indexer
-		echo install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite_indexer
+		install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./CodeLite.app/Contents/SharedSupport/codelite_indexer
+		echo install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./CodeLite.app/Contents/SharedSupport/codelite_indexer
 	done
 }
 
@@ -50,20 +53,20 @@ mkdir -p ./CodeLite.app/Contents/SharedSupport/plugins/resources/
 mkdir -p ./CodeLite.app/Contents/SharedSupport/debuggers
 mkdir -p ./CodeLite.app/Contents/SharedSupport/config
 
+wx_file_list=`otool -L ${exe_name}  | grep libwx_* | awk '{print $1;}'`
+
 # fix the script
 echo "Running install_name_tool..."
-fix_shared_object_depends libwx_
-fix_codelite_indexer_deps
-## copy the wx dlls to the exeutable path which under Mac is located at ./CodeLite.app/Contents/MacOS/
-for wx_file in ${orig_path}
-do
-		cp ${wx_file} ./CodeLite.app/Contents/MacOS/
-done
 
-fix_shared_object_depends libplugin
-fix_shared_object_depends libcodelite
-fix_shared_object_depends libwxscintilla
-fix_shared_object_depends libwxsqlite
+# copy the libs locally, the script will have an easier time finding them this way
+mkdir -p lib
+cp ../lib/*.so ./lib
+
+## copy the wx dlls to the executable path which under Mac is located at ./CodeLite.app/Contents/MacOS/
+for wx_file in ${wx_file_list}
+do
+    cp ${wx_file} ./CodeLite.app/Contents/MacOS/
+done
 
 #echo install_name_tool -change /usr/lib/libcurl.4.dylib @executable_path/libcurl.4.dylib ${exe_name}
 #install_name_tool -change /usr/lib/libcurl.4.dylib @executable_path/libcurl.4.dylib ${exe_name}
@@ -121,7 +124,7 @@ cp ../lib/libwxsqlite3u.so ./CodeLite.app/Contents/MacOS/
 cp ./codelite_indexer  ./CodeLite.app/Contents/SharedSupport/
 cp ../sdk/codelite_cppcheck/codelite_cppcheck ./CodeLite.app/Contents/SharedSupport/
 cp ./OpenTerm   ./CodeLite.app/Contents/SharedSupport/
-cp plugins/resources/*.*                      ./CodeLite.app/Contents/SharedSupport/plugins/resources/
+cp plugins/resources/*.*  ./CodeLite.app/Contents/SharedSupport/plugins/resources/
 
 ## Copy the locale files
 for lang in locale/* ; do
@@ -132,3 +135,5 @@ for lang in locale/* ; do
 	fi
 done
 
+fix_codelite_indexer_deps
+fix_shared_object_depends lib

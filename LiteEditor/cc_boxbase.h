@@ -22,7 +22,11 @@
 #include <wx/toolbar.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
+#if wxVERSION_NUMBER >= 2809
 #include <wx/aui/auibar.h>
+#else
+	#include <wx/toolbar.h>
+#endif
 #include "cl_defs.h"
 
 ///////////////////////////////////////////////////////////////////////////

@@ -649,12 +649,16 @@ void CCBox::HideCCBox()
 		Hide();
 		DoHideCCHelpTab();
 		if( !m_constructing ) {
-			bool checked;
-			checked = m_toolBar1->GetToolToggled(TOOL_SHOW_PRIVATE_MEMBERS);
-			LEditor::m_ccShowPrivateMembers = checked ? 1 : 0;
-
-			checked = m_toolBar1->GetToolToggled(TOOL_SHOW_ITEM_COMMENTS);
-			LEditor::m_ccShowItemsComments  = checked ? 1 : 0;
+			bool members_checked, comments_checked;
+#if wxVERSION_NUMBER >= 2809
+			members_checked = m_toolBar1->GetToolToggled(TOOL_SHOW_PRIVATE_MEMBERS);
+			comments_checked = m_toolBar1->GetToolToggled(TOOL_SHOW_ITEM_COMMENTS);
+#else
+			members_checked = m_toolBar1->GetToolState(TOOL_SHOW_PRIVATE_MEMBERS);
+			comments_checked = m_toolBar1->GetToolState(TOOL_SHOW_ITEM_COMMENTS);
+#endif
+			LEditor::m_ccShowPrivateMembers = members_checked ? 1 : 0;
+			LEditor::m_ccShowItemsComments  = comments_checked ? 1 : 0;
 		}
 	}
 

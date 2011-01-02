@@ -106,7 +106,7 @@ public:
 	static bool ReadBool(wxXmlNode *node, const wxString &propName, bool defaultValue = false);
 
 	/**
-	 * Try to read a boolean property from the given node.
+	 * Try to read a string property from the given node.
 	 * If it doesn't exist, don't provide a default value.
 	 * \param propName the property name
 	 * \param value will contain the result if found

@@ -178,8 +178,8 @@ bool StringFindReplacer::DoSimpleSearch(const wchar_t* pinput, int startOffset, 
 			// full word match
 			// test that the characeter at upos - 1 & the character at upos + find_str.Len() are not
 			// valid word char [a-zA-Z0-9_]
-			if (upos > 1) {
-				if(isalpha(str[upos-1]) || (int)str[upos] == (int)'_') {
+			if (upos > 0) {
+				if(isalpha(str[upos-1]) || isdigit(str[upos-1]) || (int)str[upos-1] == (int)'_') {
 					// remove the part that already been scanned
 					// and search again
 					str = str.substr(upos+find_what.length());
@@ -190,7 +190,7 @@ bool StringFindReplacer::DoSimpleSearch(const wchar_t* pinput, int startOffset, 
 			}
 			int charAfterOff = upos + find_str.length();
 			if (charAfterOff < (int)str.length()) {
-				if(isalpha(str[charAfterOff]) || (int)str[charAfterOff] == (int)'_') {
+				if(isalpha(str[charAfterOff]) || isdigit(str[charAfterOff]) || (int)str[charAfterOff] == (int)'_') {
 					// remove the part that already been scanned
 					// and search again
 					str = str.substr(upos+find_what.length());

@@ -1037,7 +1037,6 @@ bool DbgGdb::DoInitializeGdb( const std::vector<BreakpointInfo> &bpList, const w
 
 	ExecuteCmd( wxT( "set width 0" ) );
 	ExecuteCmd( wxT( "set height 0" ) );
-	ExecuteCmd( wxT( "set print pretty on" ) ); // pretty printing
 
 	// Number of elements to show for arrays (including strings)
 	wxString sizeCommand;

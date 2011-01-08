@@ -151,6 +151,8 @@ private:
 	wxEvtHandler*                 m_evtHandler;
 	std::set<wxString>            m_CppIgnoreKeyWords;
 	wxArrayString                 m_projectPaths;
+	wxFontEncoding                m_encoding;
+	
 public:
 
 	void SetLanguage(Language *lang);
@@ -200,7 +202,9 @@ public:
 	 * @param options options to use
 	 */
 	void SetCtagsOptions(const TagsOptionsData &options);
-
+	
+	void SetEncoding(const wxFontEncoding &encoding);
+	
 	/**
 	 * Locate symbol by name in database
 	 * @param name name to search

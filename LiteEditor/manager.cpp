@@ -314,7 +314,10 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
 		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 	}
-
+	
+	// Set the encoding for the tags manager
+	TagsManagerST::Get()->SetEncoding( EditorConfigST::Get()->GetOptions()->GetFileFontEncoding() );
+	
 	// Load the tags file content (we load the file and then destroy it) this way the file is forced into
 	// the file system cache and will prevent hangs when first using the tagging system
 	if(TagsManagerST::Get()->GetDatabase()) {

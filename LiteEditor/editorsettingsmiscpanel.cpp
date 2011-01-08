@@ -31,6 +31,7 @@
 #include "wx/wxprec.h"
 #include <wx/intl.h>
 #include <wx/fontmap.h>
+#include "ctags_manager.h"
 
 #ifdef __WXMSW__
 #include <wx/msw/uxtheme.h>
@@ -168,7 +169,10 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 	
 	// save file font encoding
 	options->SetFileFontEncoding(m_fileEncoding->GetStringSelection());
-
+	
+	// Update the tags manager encoding
+	TagsManagerST::Get()->SetEncoding(options->GetFileFontEncoding());
+	
 	if (oldIconSize != iconSize || oldUseSingleToolbar != m_useSingleToolbar->IsChecked()) {
 		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 0);
 		//notify the user

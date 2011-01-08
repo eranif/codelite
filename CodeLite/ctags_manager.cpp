@@ -150,6 +150,7 @@ TagsManager::TagsManager()
 	, m_canRestartIndexer      (true)
 	, m_lang                   (NULL)
 	, m_evtHandler             (NULL)
+	, m_encoding               (wxFONTENCODING_DEFAULT)
 {
 	// Create databases
 	m_workspaceDatabase = new TagsStorageSQLite( );
@@ -386,7 +387,10 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 	}
 
 	// convert the data into wxString
-	tags = wxString(reply.getTags().c_str(), wxConvUTF8);
+	if(m_encoding == wxFONTENCODING_DEFAULT || m_encoding == wxFONTENCODING_SYSTEM)
+		tags = wxString(reply.getTags().c_str(), wxConvUTF8);
+	else
+		tags = wxString(reply.getTags().c_str(), wxCSConv(m_encoding));
 	if(tags.empty()) {
 		tags = wxString::From8BitData(reply.getTags().c_str());
 	}
@@ -2722,4 +2726,9 @@ wxString TagsManager::WrapLines(const wxString& str)
 void TagsManager::GetVariables(const std::string& in, VariableList& li, const std::map<std::string, std::string>& ignoreMap, bool isUsedWithinFunc)
 {
 	get_variables(in, li, ignoreMap, isUsedWithinFunc);
+}
+
+void TagsManager::SetEncoding(const wxFontEncoding& encoding)
+{
+	m_encoding = encoding;
 }

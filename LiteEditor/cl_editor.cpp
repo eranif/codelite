@@ -1642,6 +1642,8 @@ void LEditor::DoFindAndReplace(bool isReplaceDlg)
 				// Don't try to use a multiline selection as the 'find' token. It looks ugly and
 				// it won't be what the user wants (it'll be the 'Replace in Selection' selection)
 				m_findReplaceDlg->GetData().SetFindString(GetSelectedText());
+			} else {
+				m_findReplaceDlg->GetData().SetFlags( m_findReplaceDlg->GetData().GetFlags() | wxFRD_SELECTIONONLY );
 			}
 		} else {
 			// always set the find string in 'Find' dialog
@@ -1713,8 +1715,10 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 		}
 	} else if (type == wxEVT_FRD_REPLACEALL) {
 		ReplaceAll();
+		
 	} else if (type == wxEVT_FRD_BOOKMARKALL) {
 		MarkAll();
+		
 	} else if (type == wxEVT_FRD_CLEARBOOKMARKS) {
 		DelAllMarkers();
 	}
@@ -2085,6 +2089,8 @@ bool LEditor::ReplaceAll()
 	bool replaceInSelectionOnly = m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY;
 
 	BeginUndoAction();
+	m_findReplaceDlg->ResetReplacedCount();
+	
 	long savedPos = GetCurrentPos();
 	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len, posInChars, match_lenInChars) ) {
 		// Manipulate the buffer
@@ -2103,11 +2109,19 @@ bool LEditor::ReplaceAll()
 	}
 
 	if ( replaceInSelectionOnly ) {
+		
+		// Prepare the next selection
+		int selStart = GetSelectionStart();
+		int selEnd   = selStart + txt.Len();
+		
 		// replace the selection
 		ReplaceSelection(txt);
-
+		
+		// Keep the selection
+		SetSelectionStart(selStart);
+		SetSelectionEnd  (selEnd);
+		
 		// place the caret at the end of the selection
-		SetCurrentPos(GetSelectionEnd());
 		EnsureCaretVisible();
 
 	} else {
@@ -2117,10 +2131,6 @@ bool LEditor::ReplaceAll()
 	}
 
 	EndUndoAction();
-
-	if ( replaceInSelectionOnly )
-		m_findReplaceDlg->ResetSelectionOnlyFlag();
-
 	m_findReplaceDlg->SetReplacementsMessage();
 	return m_findReplaceDlg->GetReplacedCount() > 0;
 }

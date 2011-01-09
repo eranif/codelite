@@ -299,7 +299,13 @@ void FindReplaceDialog::OnClose(wxCloseEvent &event)
 	// Fire a close event
 	SendEvent(wxEVT_FRD_CLOSE);
 	Hide();
+	
+	// Make sure the Search in Selected Text flag is clear, otherwise we can't Find Next
+	size_t flags = m_data.GetFlags();
+	flags &= ~(wxFRD_SELECTIONONLY);
+	m_data.SetFlags( flags );
 }
+
 void FindReplaceDialog::OnKeyDown(wxKeyEvent &event)
 {
 	if (event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
@@ -346,6 +352,8 @@ void FindReplaceDialog::ConnectEvents()
 	m_regualrExpression->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindReplaceDialog::OnClick), NULL, this);
 	m_searchUp->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindReplaceDialog::OnClick), NULL, this);
 	m_selectionOnly->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindReplaceDialog::OnClick), NULL, this);
+	m_find->Connect(wxID_ANY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindReplaceDialog::OnSelectionOnlyUI), NULL, this);
+	m_replace->Connect(wxID_ANY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindReplaceDialog::OnSelectionOnlyUI), NULL, this);
 }
 
 void FindReplaceDialog::SendEvent(wxEventType type)
@@ -446,6 +454,11 @@ void FindReplaceDialog::ResetSelectionOnlyFlag()
 {
 	size_t flags = GetData().GetFlags();
 	GetData().SetFlags( flags & ~(wxFRD_SELECTIONONLY) );
+}
+
+void FindReplaceDialog::OnSelectionOnlyUI(wxUpdateUIEvent& event)
+{
+	event.Enable(m_selectionOnly->IsChecked() == false);
 }
 
 //---------------------------------------------------------------

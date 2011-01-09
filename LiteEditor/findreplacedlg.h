@@ -244,6 +244,7 @@ protected:
 	void ConnectEvents();
 	void OnClick(wxCommandEvent &event);
 	void OnFindEvent(wxCommandEvent &event);
+	void OnSelectionOnlyUI(wxUpdateUIEvent &event);
 	void SendEvent(wxEventType type);
 
 	void OnKeyDown(wxKeyEvent &event);

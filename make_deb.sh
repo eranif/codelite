@@ -79,9 +79,36 @@ echo "Running postinst step..."
 if [ "\$1" = "configure" ] && [ -x "\`which update-menus 2>/dev/null\`" ]; then
     update-menus
 fi
+## Update mime database
+if [ "\$1" = "configure" ] && [ -x "\`which update-mime-database 2>/dev/null\`" ]; then
+   update-mime-database ${PREFIX}/share/mime
+fi
+## Update mime icon
+if [ "\$1" = "configure" ] && [ -x "\`which update-icon-caches 2>/dev/null\`" ]; then
+   update-icon-caches ${PREFIX}/share/icons/hicolor
+fi
+echo "Done"
+EOF
+    cat > fakeroot/DEBIAN/postrm <<EOF
+#!/bin/sh
+echo "Running postrm step..."
+
+## Menu updating
+if [ "\$1" = "configure" ] && [ -x "\`which update-menus 2>/dev/null\`" ]; then
+    update-menus
+fi
+## Update mime database
+if [ "\$1" = "configure" ] && [ -x "\`which update-mime-database 2>/dev/null\`" ]; then
+   update-mime-database ${PREFIX}/share/mime
+fi
+## Update mime icon
+if [ "\$1" = "configure" ] && [ -x "\`which update-icon-caches 2>/dev/null\`" ]; then
+   update-icon-caches ${PREFIX}/share/icons/hicolor
+fi
 echo "Done"
 EOF
     chmod 0755 fakeroot/DEBIAN/postinst
+	chmod 0755 fakeroot/DEBIAN/postrm
 }
 
 ## Making destop file
@@ -184,6 +211,15 @@ cp -pr Runtime/codelite-icons.zip fakeroot/${PREFIX}/share/codelite/
 
 cp -pr AUTHORS fakeroot/${PREFIX}/share/codelite/
 cp -pr COPYING fakeroot/${PREFIX}/share/codelite/
+
+## Support mime type
+mkdir -p fakeroot/${PREFIX}/share/mime/packages/
+mkdir -p fakeroot/${PREFIX}/share/icons/hicolor/32x32/mimetypes
+
+cp -pr codelite.xml fakeroot/${PREFIX}/share/mime/packages/
+cp -pr Runtime/images/cubes.png fakeroot/${PREFIX}/share/icons/hicolor/32x32/mimetypes/application-x-codelite-project.png
+cp -pr Runtime/images/cubes.png fakeroot/${PREFIX}/share/icons/hicolor/32x32/mimetypes/application-x-codelite-workspace.png
+
 
 chmod 0644 fakeroot/${PREFIX}/lib/codelite/debuggers/*.so
 chmod 0644 fakeroot/${PREFIX}/lib/codelite/*.so

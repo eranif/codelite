@@ -122,6 +122,8 @@ void SearchThread::ProcessRequest(ThreadRequest *req)
 
 void SearchThread::GetFiles(const SearchData *data, wxArrayString &files)
 {
+	std::set<wxString> scannedFiles;
+
 	const wxArrayString& rootDirs = data->GetRootDirs();
 	for (size_t i = 0; i < rootDirs.Count(); ++i) {
 		wxArrayString someFiles;
@@ -144,10 +146,11 @@ void SearchThread::GetFiles(const SearchData *data, wxArrayString &files)
 			someFiles = traverser.GetFiles();
 		}
 
+
 		for (size_t j = 0; j < someFiles.Count(); ++j) {
-			if(files.Index(someFiles.Item(j)) == wxNOT_FOUND) {
-				// add only unique file names
-				files.push_back(someFiles.Item(j));
+			if(scannedFiles.find(someFiles.Item(j)) == scannedFiles.end()) {
+				files.Add(someFiles.Item(j));
+				scannedFiles.insert(someFiles.Item(j));
 			}
 		}
 	}

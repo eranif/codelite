@@ -179,7 +179,24 @@ void BuildTab::SetStyles ( wxScintilla *sci )
 	wxFont defFont = wxSystemSettings::GetFont ( wxSYS_DEFAULT_GUI_FONT );
 	wxFont font ( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL );
 	wxFont bold ( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxFONTWEIGHT_BOLD );
-
+	
+	LexerConfPtr cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
+	if(cppLexer) {
+		std::list<StyleProperty> styles = cppLexer->GetProperties();
+		std::list<StyleProperty>::iterator iter = styles.begin();
+		for (; iter != styles.end(); iter++) {
+			if(iter->GetId() == wxSCI_C_DEFAULT) {
+				StyleProperty sp        = (*iter);
+				int           size      = sp.GetFontSize();
+				wxString      face      = sp.GetFaceName();
+				bool          italic    = sp.GetItalic();
+				
+				font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , wxNORMAL, false, face);
+				bold = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , wxBOLD,   false, face);
+			}
+		}
+	}
+	
 	sci->StyleSetFont ( wxSCI_LEX_GCC_DEFAULT,      font );
 	sci->StyleSetFont ( wxSCI_LEX_GCC_OUTPUT,       font );
 	sci->StyleSetFont ( wxSCI_LEX_GCC_BUILDING,     bold );

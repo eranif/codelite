@@ -229,7 +229,7 @@ void ErrorsTab::OnBuildEnded(wxCommandEvent& event)
 		// No errors were found!
 		statusItem = m_treeListCtrl->AppendItem(m_treeListCtrl->GetRootItem(), _("Build ended successfully."), 6, 6);
 		m_treeListCtrl->SetItemBold(statusItem);
-		bgColor = wxT("FOREST GREEN");
+		bgColor = wxT("PALE GREEN");
 		
 	} else {
 		wxTreeItemIdValue cookieTwo;
@@ -247,17 +247,16 @@ void ErrorsTab::OnBuildEnded(wxCommandEvent& event)
 			
 		} else if(m_warningCount == 0) {
 			msg = wxString::Format(_("Build ended with %d errors"), m_errorCount);
-			bgColor = wxT("RED");
+			bgColor = wxT("PINK");
 			
 		} else {
 			msg = wxString::Format(_("Build ended with %d errors, %d warnings"), m_errorCount, m_warningCount);
-			bgColor = wxT("RED");
+			bgColor = wxT("PINK");
 		}
 		
 		statusItem = m_treeListCtrl->InsertItem(m_treeListCtrl->GetRootItem(), 0, msg, msgIcon, msgIcon);
 		m_treeListCtrl->EnsureVisible( statusItem );
 	}
 	m_treeListCtrl->SetItemBold(statusItem);
-	bgColor = DrawingUtils::LightColour(bgColor, 4.0);
 	m_treeListCtrl->SetItemBackgroundColour(statusItem, bgColor);
 }

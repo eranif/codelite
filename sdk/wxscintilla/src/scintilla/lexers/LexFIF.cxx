@@ -35,10 +35,16 @@ static void ColouriseFifDoc(unsigned int pos, int length, int /*initStyle*/,
 {
 	styler.StartAt(pos);
 	styler.StartSegment(pos);
+	int lineFirstChar(-1);
 	for (int firstchar = -1; length > 0; pos++, length--) {
         if (firstchar == -1) {
             firstchar = styler[pos]; // first char of each line
         }
+		
+		if(lineFirstChar == -1) {
+			lineFirstChar = styler[pos];
+		}
+		
         if (styler[pos] == '|' && firstchar == ' ') {
             if (length > 1 && styler[pos+1] == ' ') {
                 // include the following space
@@ -46,10 +52,21 @@ static void ColouriseFifDoc(unsigned int pos, int length, int /*initStyle*/,
                 length--;
             }
             styler.ColourTo(pos, SCLEX_FIF_FILE_SHORT);
-            firstchar = '|'; // first colon only
+            firstchar = '|'; 
             if (length > 1 && styler[pos+1] == '[') {
                 firstchar = '[';
             }
+			
+		} else if (styler[pos] == '|' && firstchar == '.') {
+			if (length > 1 && styler[pos+1] == ' ') {
+				// include the following space
+				pos++;
+				length--;
+			}
+			styler.ColourTo(pos, SCLEX_FIF_FILE_SHORT);
+			if (length > 1 && styler[pos+1] == '[') {
+				firstchar = '[';
+			}
 		} else if (styler[pos] == ']' && firstchar == '['){
             if (length > 1 && styler[pos+1] == ' ') {
                 // include the following space
@@ -59,24 +76,30 @@ static void ColouriseFifDoc(unsigned int pos, int length, int /*initStyle*/,
 			styler.ColourTo(pos, SCLEX_FIF_SCOPE);
             firstchar = ']'; // first ']' only
 		} else if (AtEOL(styler, pos)) {
-            switch (firstchar) {
-                case ' ':
-                case '|':
-                case '[':
-                case ']':
-                    styler.ColourTo(pos, SCLEX_FIF_MATCH);
-                    break;
-                case '=':
-                    styler.ColourTo(pos, SCLEX_FIF_DEFAULT);
-                    break;
-                case '-':
-                    styler.ColourTo(pos, SCLEX_FIF_PROJECT);
-                    break;
-                default:
-                    styler.ColourTo(pos, SCLEX_FIF_FILE);
-                    break;
-            }
-            firstchar = -1;
+			if(lineFirstChar == '.') {
+				styler.ColourTo(pos, SCLEX_FIF_MATCH_COMMENT);
+			} else {
+				switch (firstchar) {
+					case ' ':
+					case '|':
+					case '[':
+					case ']':
+						styler.ColourTo(pos, SCLEX_FIF_MATCH);
+						break;
+					case '=':
+						styler.ColourTo(pos, SCLEX_FIF_DEFAULT);
+						break;
+					case '-':
+						styler.ColourTo(pos, SCLEX_FIF_PROJECT);
+						break;
+					default:
+						styler.ColourTo(pos, SCLEX_FIF_FILE);
+						break;
+				}
+				
+			}
+            firstchar     = -1;
+			lineFirstChar = -1;
         }
 	}
 }

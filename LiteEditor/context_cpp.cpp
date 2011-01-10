@@ -322,7 +322,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 		return;
 	}
 	
-	if(rCtrl.GetLineIndentation(rCtrl.GetCurrentLine())) {
+	if(rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == wxT('\n')) {
 		return;
 	}
 	

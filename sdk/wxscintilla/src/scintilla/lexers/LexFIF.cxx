@@ -39,14 +39,14 @@ static void ColouriseFifDoc(unsigned int pos, int length, int /*initStyle*/,
         if (firstchar == -1) {
             firstchar = styler[pos]; // first char of each line
         }
-        if (styler[pos] == ':' && firstchar == ' ') {
+        if (styler[pos] == '|' && firstchar == ' ') {
             if (length > 1 && styler[pos+1] == ' ') {
                 // include the following space
                 pos++;
                 length--;
             }
             styler.ColourTo(pos, SCLEX_FIF_FILE_SHORT);
-            firstchar = ':'; // first colon only
+            firstchar = '|'; // first colon only
             if (length > 1 && styler[pos+1] == '[') {
                 firstchar = '[';
             }
@@ -61,7 +61,7 @@ static void ColouriseFifDoc(unsigned int pos, int length, int /*initStyle*/,
 		} else if (AtEOL(styler, pos)) {
             switch (firstchar) {
                 case ' ':
-                case ':':
+                case '|':
                 case '[':
                 case ']':
                     styler.ColourTo(pos, SCLEX_FIF_MATCH);

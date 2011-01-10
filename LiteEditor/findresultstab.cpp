@@ -156,8 +156,6 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 {
 	InitStyle(sci, wxSCI_LEX_FIF, true);
 
-	wxColour fifFgColour = *wxBLUE;
-
 #ifdef __WXGTK__
 	wxColour fifBgColour = DrawingUtils::GetPanelBgColour();
 #else
@@ -177,12 +175,15 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_MATCH, true);
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_SCOPE, wxT("GREY"));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_SCOPE, wxT("BROWN"));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_SCOPE, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_SCOPE, false);
 	
 	wxColour fgColour(wxT("GREEN"));
-
+	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
+	wxFont bold(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxFONTWEIGHT_BOLD);
+	
 	LexerConfPtr cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
 	if(cppLexer) {
 		std::list<StyleProperty> styles = cppLexer->GetProperties();
@@ -191,6 +192,15 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 			if(iter->GetId() == wxSCI_C_COMMENTLINE) {
 				fgColour = iter->GetFgColour();
 				break;
+				
+			} else if(iter->GetId() == wxSCI_C_DEFAULT) {
+				StyleProperty sp        = (*iter);
+				int           size      = sp.GetFontSize();
+				wxString      face      = sp.GetFaceName();
+				bool          italic    = sp.GetItalic();
+				
+				font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , wxNORMAL, false, face);
+				bold = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , wxBOLD,   false, face);
 			}
 		}
 	}
@@ -206,16 +216,12 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetTextCtrlTextColour());
 	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	sci->StyleSetEOLFilled(wxSCI_LEX_FIF_DEFAULT, true);
-	
-	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
-	wxFont bold(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxFONTWEIGHT_BOLD);
 
 	sci->StyleSetFont(wxSCI_LEX_FIF_FILE,          font);
 	sci->StyleSetFont(wxSCI_LEX_FIF_DEFAULT,       bold);
 	sci->StyleSetFont(wxSCI_LEX_FIF_PROJECT,       bold);
 	sci->StyleSetFont(wxSCI_LEX_FIF_MATCH,         font);
-	sci->StyleSetFont(wxSCI_LEX_FIF_FILE_SHORT,    font);
+	sci->StyleSetFont(wxSCI_LEX_FIF_FILE_SHORT,    bold);
 	sci->StyleSetFont(wxSCI_LEX_FIF_SCOPE,         font);
 	sci->StyleSetFont(wxSCI_LEX_FIF_MATCH_COMMENT, font);
 
@@ -233,7 +239,7 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->SetMarginWidth(2, 0);
 	sci->SetMarginWidth(3, 0);
 	sci->SetMarginWidth(4, 0);
-
+	sci->SetViewWhiteSpace(wxSCI_WS_VISIBLEAFTERINDENT);
 	sci->SetMarginSensitive(1, true);
 }
 
@@ -425,9 +431,9 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
 
 		wxString linenum;
 		if(iter->GetMatchState() == CppWordScanner::STATE_CPP_COMMENT || iter->GetMatchState() == CppWordScanner::STATE_C_COMMENT)
-			linenum = wxString::Format(wxT(".%4u: "), iter->GetLineNumber());
+			linenum = wxString::Format(wxT(".%4u| "), iter->GetLineNumber());
 		else
-			linenum = wxString::Format(wxT(" %4u: "), iter->GetLineNumber());
+			linenum = wxString::Format(wxT(" %4u| "), iter->GetLineNumber());
 		
 		SearchData d = GetSearchData(m_recv);
 		// Print the scope name
@@ -459,12 +465,31 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
 	// did the page closed before the search ended?
 	if(m_book && m_book->GetPageIndex(m_recv) != Notebook::npos) {
 
-		AppendText(summary->GetMessage());
+		AppendText(summary->GetMessage() + wxT("\n"));
 		m_recv = NULL;
 		if (m_tb->GetToolState(XRCID("scroll_on_output"))) {
 			m_sci->GotoLine(0);
 		}
-
+		
+		if(m_sci) {
+			// Collapse the matches
+			int firstLine(wxNOT_FOUND);
+			int maxLine = m_sci->GetLineCount();
+			for (int line = 0; line < maxLine; line++) {
+				if ((m_sci->GetFoldLevel(line) & wxSCI_FOLDLEVELHEADERFLAG) && m_sci->GetFoldExpanded(line) ) {
+					m_sci->ToggleFold(line);
+					
+					if(firstLine == wxNOT_FOUND) {
+						firstLine = line;
+					}
+				}
+			}
+			
+			// Expand the first matched file
+			if(firstLine != wxNOT_FOUND) {
+				m_sci->ToggleFold(firstLine);
+			}
+		}
 	}
 	delete summary;
 }

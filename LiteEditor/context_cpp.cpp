@@ -319,10 +319,13 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 	LEditor &rCtrl = GetCtrl();
 
 	if (rCtrl.GetDisableSmartIndent()) {
-		/*ContextBase::AutoIndent(nChar);*/
 		return;
 	}
-
+	
+	if(rCtrl.GetLineIndentation(rCtrl.GetCurrentLine())) {
+		return;
+	}
+	
 	int curpos = rCtrl.GetCurrentPos();
 	if (IsComment(curpos) && nChar == wxT('\n')) {
 		AutoAddComment();

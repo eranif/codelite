@@ -82,8 +82,49 @@ static wxString MacGetInstallPath()
 }
 #endif
 
+static wxFontEncoding GetBOMEncoding(char *b, wxMemoryBuffer &bom)
+{
+	// Support for BOM:
+	//----------------------------------
+	//00 00 FE FF UTF-32, big-endian
+	//FF FE 00 00 UTF-32, little-endian
+	//FE FF       UTF-16, big-endian
+	//FF FE       UTF-16, little-endian
+	//EF BB BF    UTF-8
+	//----------------------------------
+	wxFontEncoding encoding = wxFONTENCODING_SYSTEM;
 
-static bool ReadFile8BitData(const char *file_name, wxString &content)
+	const char UTF32be[]= { 0x00, 0x00, 0xfe, 0xff};
+	const char UTF32le[]= { 0xff, 0xfe, 0x00, 0x00};
+	const char UTF16be[]= { 0xfe, 0xff            };
+	const char UTF16le[]= { 0xff, 0xfe            };
+	const char UTF8[]   = { 0xef, 0xbb, 0xbf      };
+	
+	if(memcmp(b, UTF32be, sizeof(UTF32be)) == 0) {
+		encoding = wxFONTENCODING_UTF32BE;
+		bom.AppendData(UTF32be, sizeof(UTF32be));
+		
+	} else if(memcmp(b, UTF32le, sizeof(UTF32le)) == 0) {
+		encoding = wxFONTENCODING_UTF32LE;
+		bom.AppendData(UTF32le, sizeof(UTF32le));
+		
+	} else if(memcmp(b, UTF16be, sizeof(UTF16be)) == 0) {
+		encoding = wxFONTENCODING_UTF16BE;
+		bom.AppendData(UTF16be, sizeof(UTF16be));
+		
+	} else if(memcmp(b, UTF16le, sizeof(UTF16le)) == 0) {
+		encoding = wxFONTENCODING_UTF16LE;
+		bom.AppendData(UTF16le, sizeof(UTF16le));
+		
+	} else if(memcmp(b, UTF8, sizeof(UTF8)) == 0) {
+		encoding = wxFONTENCODING_UTF8;
+		bom.AppendData(UTF8, sizeof(UTF8));
+	}
+	
+	return encoding;
+}
+
+static bool ReadFile8BitData(const char *file_name, wxString &content, wxMemoryBuffer& bom)
 {
 	content.Empty();
 
@@ -95,7 +136,20 @@ static bool ReadFile8BitData(const char *file_name, wxString &content)
 			char *buffer = new char[size+1];
 			if ( fread(buffer, sizeof(char), size, fp) == size ) {
 				buffer[size] = 0;
-				content = wxString::From8BitData(buffer);
+				
+				wxFontEncoding encoding = wxFONTENCODING_SYSTEM;
+				if(size > 3) {
+					encoding = GetBOMEncoding(buffer, bom);
+				}
+				
+				if(encoding != wxFONTENCODING_SYSTEM) {
+					wxCSConv conv(encoding);
+					content = wxString(buffer + bom.GetDataLen(), conv);
+					
+				} else {
+					content = wxString::From8BitData(buffer);
+					
+				}
 			}
 			delete [] buffer;
 		}
@@ -151,7 +205,7 @@ wxString GetColumnText(wxListCtrl *list, long index, long column)
 	return list_item.GetText();
 }
 
-bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontEncoding encoding)
+bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontEncoding encoding, wxMemoryBuffer *bom)
 {
 	wxLogNull noLog;
 	content.Clear();
@@ -170,9 +224,15 @@ bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontE
 			// now try the Utf8
 			file.ReadAll(&content, wxConvUTF8);
 			if (content.IsEmpty()) {
-				// try local 8 bit data
+				// try local 8 bit data OR BOM files
 				const wxCharBuffer name = _C(fileName);
-				ReadFile8BitData(name.data(), content);
+				if(bom) {
+					ReadFile8BitData(name.data(), content, *bom);
+					
+				} else {
+					wxMemoryBuffer dummy;
+					ReadFile8BitData(name.data(), content, dummy);
+				}
 			} // UTF8
 		} // user encoding
 	}

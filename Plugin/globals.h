@@ -94,7 +94,7 @@ WXDLLIMPEXP_SDK long AppendListCtrlRow(wxListCtrl *list);
  * \param encoding
  * \return true on success, false otherwise
  */
-WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontEncoding encoding = wxFONTENCODING_DEFAULT);
+WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontEncoding encoding = wxFONTENCODING_DEFAULT, wxMemoryBuffer *bom = NULL);
 
 /**
  * \brief write file using UTF8 converter

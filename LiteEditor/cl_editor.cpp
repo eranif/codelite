@@ -1079,21 +1079,19 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 #endif
 
 	// save the file using the user's defined encoding
+	// unless we got a BOM set
 	wxCSConv fontEncConv(GetOptions()->GetFileFontEncoding());
-
+	bool useBuiltIn = (GetOptions()->GetFileFontEncoding() == wxFONTENCODING_UTF8);
+	
 	// trim lines / append LF if needed
 	TrimText();
 
 	// BUG#2982452
 	// try to manually convert the text to make sure that the conversion does not fail
 	wxString theText = GetText();
-	const wxWX2MBbuf buf = theText.mb_str(fontEncConv);
-	if(!buf.data()) {
-		wxMessageBox(wxString::Format(wxT("%s\n%s '%s'"), _("Save file failed!"),_("Could not convert the file to the requested encoding"),  
-							wxFontMapper::GetEncodingName(GetOptions()->GetFileFontEncoding()).c_str()), _("CodeLite"), wxOK|wxICON_WARNING);
-		return false;
-	}
-
+	int      txtLen  = GetTextLength();
+	
+	// Make sure we can open the file for writing
 	wxString tmp_file;
 	wxFFile file(fileName.GetFullPath().GetData(), wxT("wb"));
 	if (file.IsOpened() == false) {
@@ -1111,7 +1109,15 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 			return false;
 		}
 	}
-	file.Write(theText, fontEncConv);
+	
+	const wxWX2MBbuf buf = theText.mb_str(useBuiltIn ? (const wxMBConv&)wxConvUTF8 : (const wxMBConv&)fontEncConv);
+	if(!buf.data()) {
+		wxMessageBox(wxString::Format(wxT("%s\n%s '%s'"), _("Save file failed!"),_("Could not convert the file to the requested encoding"),  
+							wxFontMapper::GetEncodingName(GetOptions()->GetFileFontEncoding()).c_str()), _("CodeLite"), wxOK|wxICON_WARNING);
+		return false;
+	}
+	
+	file.Write(buf.data(), txtLen);
 	file.Close();
 
 #ifdef __WXGTK__
@@ -2208,6 +2214,7 @@ void LEditor::ReloadFile()
 	ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding(), &m_fileBom);
 	
 	SetText( text );
+
 	m_modifyTime = GetFileLastModifiedTime();
 
 	SetSavePoint();

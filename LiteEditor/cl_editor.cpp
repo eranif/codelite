@@ -2201,14 +2201,14 @@ void LEditor::ReloadFile()
 	clMainFrame::Get()->SetStatusMessage(_("Loading file..."), 0, XRCID("editor"));
 
 	wxString text;
-	ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding());
+	
+	// Read the file we currently support:
+	// BOM, Auto-Detect encoding & User defined encoding
+	m_fileBom.Clear();
+	ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding(), &m_fileBom);
+	
 	SetText( text );
 	m_modifyTime = GetFileLastModifiedTime();
-
-//	if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_IF_DEFS) {
-		// Colour undefined sections in "grey" text colour
-//		ManagerST::Get()->UpdatePreprocessorFile(m_fileName.GetFullPath());
-//	}
 
 	SetSavePoint();
 	EmptyUndoBuffer();

@@ -37,6 +37,22 @@ class wxListCtrl;
 class IEditor;
 class IManager;
 
+class WXDLLIMPEXP_SDK BOM
+{
+	wxMemoryBuffer m_bom;
+	
+public:
+	BOM(const char* buffer, size_t len);
+	BOM();
+	~BOM();
+	
+	void Clear();
+	int Len() const;
+	wxFontEncoding Encoding();
+	static wxFontEncoding Encoding(const char* buff);
+	void SetData(const char* buffer, size_t len);
+};
+
 /**
  * \brief send command event to the application (wxTheApp),
  * \param eventId
@@ -94,7 +110,7 @@ WXDLLIMPEXP_SDK long AppendListCtrlRow(wxListCtrl *list);
  * \param encoding
  * \return true on success, false otherwise
  */
-WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontEncoding encoding = wxFONTENCODING_DEFAULT, wxMemoryBuffer *bom = NULL);
+WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontEncoding encoding = wxFONTENCODING_DEFAULT, BOM *bom = NULL);
 
 /**
  * \brief write file using UTF8 converter

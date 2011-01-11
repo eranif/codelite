@@ -140,6 +140,7 @@ class LEditor : public wxScintilla, public IEditor
 	int                                         m_lastCharEnteredPos;
 	bool                                        m_isFocused;
 	bool                                        m_pluginInitializedRMenu;
+	BOM                                         m_fileBom;
 	
 public:
 	static bool                                 m_ccShowPrivateMembers;

@@ -82,49 +82,31 @@ static wxString MacGetInstallPath()
 }
 #endif
 
-static wxFontEncoding GetBOMEncoding(char *b, wxMemoryBuffer &bom)
+static bool IsBOMFile(const char* file_name)
 {
-	// Support for BOM:
-	//----------------------------------
-	//00 00 FE FF UTF-32, big-endian
-	//FF FE 00 00 UTF-32, little-endian
-	//FE FF       UTF-16, big-endian
-	//FF FE       UTF-16, little-endian
-	//EF BB BF    UTF-8
-	//----------------------------------
-	wxFontEncoding encoding = wxFONTENCODING_SYSTEM;
-
-	const char UTF32be[]= { 0x00, 0x00, 0xfe, 0xff};
-	const char UTF32le[]= { 0xff, 0xfe, 0x00, 0x00};
-	const char UTF16be[]= { 0xfe, 0xff            };
-	const char UTF16le[]= { 0xff, 0xfe            };
-	const char UTF8[]   = { 0xef, 0xbb, 0xbf      };
-	
-	if(memcmp(b, UTF32be, sizeof(UTF32be)) == 0) {
-		encoding = wxFONTENCODING_UTF32BE;
-		bom.AppendData(UTF32be, sizeof(UTF32be));
-		
-	} else if(memcmp(b, UTF32le, sizeof(UTF32le)) == 0) {
-		encoding = wxFONTENCODING_UTF32LE;
-		bom.AppendData(UTF32le, sizeof(UTF32le));
-		
-	} else if(memcmp(b, UTF16be, sizeof(UTF16be)) == 0) {
-		encoding = wxFONTENCODING_UTF16BE;
-		bom.AppendData(UTF16be, sizeof(UTF16be));
-		
-	} else if(memcmp(b, UTF16le, sizeof(UTF16le)) == 0) {
-		encoding = wxFONTENCODING_UTF16LE;
-		bom.AppendData(UTF16le, sizeof(UTF16le));
-		
-	} else if(memcmp(b, UTF8, sizeof(UTF8)) == 0) {
-		encoding = wxFONTENCODING_UTF8;
-		bom.AppendData(UTF8, sizeof(UTF8));
+	bool res (false);
+	FILE *fp = fopen(file_name, "rb");
+	if ( fp ) {
+		struct stat buff;
+		if ( stat(file_name, &buff) == 0 ) {
+			
+			// Read the first 4 bytes (or less)
+			size_t size = buff.st_size;
+			if(size > 4) size = 4;
+			
+			char *buffer = new char[size];
+			if ( fread(buffer, sizeof(char), size, fp) == size ) {
+				BOM bom(buffer, size);
+				res = (bom.Encoding() != wxFONTENCODING_SYSTEM);
+			}
+			delete [] buffer;
+		}
+		fclose(fp);
 	}
-	
-	return encoding;
+	return res;
 }
 
-static bool ReadFile8BitData(const char *file_name, wxString &content, wxMemoryBuffer& bom)
+static bool ReadBOMFile(const char *file_name, wxString &content, BOM& bom)
 {
 	content.Empty();
 
@@ -137,24 +119,44 @@ static bool ReadFile8BitData(const char *file_name, wxString &content, wxMemoryB
 			if ( fread(buffer, sizeof(char), size, fp) == size ) {
 				buffer[size] = 0;
 				
-				wxFontEncoding encoding = wxFONTENCODING_SYSTEM;
-				if(size > 3) {
-					encoding = GetBOMEncoding(buffer, bom);
-				}
+				wxFontEncoding encoding(wxFONTENCODING_SYSTEM);
+				size_t         bomSize (size);
+				
+				if(bomSize > 4) bomSize = 4;
+				bom.SetData(buffer, bomSize);
+				encoding = bom.Encoding();
 				
 				if(encoding != wxFONTENCODING_SYSTEM) {
 					wxCSConv conv(encoding);
-					content = wxString(buffer + bom.GetDataLen(), conv);
-					
-				} else {
-					content = wxString::From8BitData(buffer);
-					
+					// Skip the BOM
+					content = wxString(buffer, conv);
 				}
 			}
 			delete [] buffer;
 		}
 		fclose(fp);
 	} // From8BitData
+	return content.IsEmpty() == false;
+}
+
+static bool ReadFile8BitData(const char *file_name, wxString &content)
+{
+	content.Empty();
+
+	FILE *fp = fopen(file_name, "rb");
+	if ( fp ) {
+		struct stat buff;
+		if ( stat(file_name, &buff) == 0 ) {
+			size_t size = buff.st_size;
+			char *buffer = new char[size+1];
+			if ( fread(buffer, sizeof(char), size, fp) == size ) {
+				buffer[size] = 0;
+				content = wxString::From8BitData(buffer);
+			}
+			delete [] buffer;
+		}
+		fclose(fp);
+	}
 	return content.IsEmpty() == false;
 }
 
@@ -205,14 +207,23 @@ wxString GetColumnText(wxListCtrl *list, long index, long column)
 	return list_item.GetText();
 }
 
-bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontEncoding encoding, wxMemoryBuffer *bom)
+bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontEncoding encoding, BOM *bom)
 {
 	wxLogNull noLog;
 	content.Clear();
 	wxFFile file(fileName, wxT("rb"));
+	
+	const wxCharBuffer name = _C(fileName);
 	if (file.IsOpened()) {
+		
+		// If we got a BOM pointer, test to see whether the file is BOM file
+		if(bom && IsBOMFile(name.data())) {
+			return ReadBOMFile(name.data(), content, *bom);
+		}
+		
 		if (encoding == wxFONTENCODING_DEFAULT)
 			encoding = EditorConfigST::Get()->GetOptions()->GetFileFontEncoding();
+			
 		// first try the user defined encoding (except for UTF8: the UTF8 builtin appears to be faster)
 		if (encoding != wxFONTENCODING_UTF8) {
 			wxCSConv fontEncConv(encoding);
@@ -220,21 +231,15 @@ bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontE
 				file.ReadAll(&content, fontEncConv);
 			}
 		}
+		
 		if (content.IsEmpty()) {
 			// now try the Utf8
 			file.ReadAll(&content, wxConvUTF8);
 			if (content.IsEmpty()) {
-				// try local 8 bit data OR BOM files
-				const wxCharBuffer name = _C(fileName);
-				if(bom) {
-					ReadFile8BitData(name.data(), content, *bom);
-					
-				} else {
-					wxMemoryBuffer dummy;
-					ReadFile8BitData(name.data(), content, dummy);
-				}
-			} // UTF8
-		} // user encoding
+				// try local 8 bit data
+				ReadFile8BitData(name.data(), content);
+			}
+		}
 	}
 	return !content.IsEmpty();
 }
@@ -863,4 +868,101 @@ void StringManager::SetStringSelection(const wxString& str, size_t dfault /*= 0*
 			p_control->SetSelection(0);
 		}
 	} 
+}
+
+////////////////////////////////////////
+// BOM
+////////////////////////////////////////
+
+BOM::BOM(const char* buffer, size_t len)
+{
+	m_bom.AppendData(buffer, len);
+}
+
+BOM::BOM()
+{
+}
+
+BOM::~BOM()
+{
+}
+
+wxFontEncoding BOM::Encoding()
+{
+	wxFontEncoding encoding = Encoding((const char*)m_bom.GetData());
+	if(encoding != wxFONTENCODING_SYSTEM) {
+		switch(encoding) {
+			
+		case wxFONTENCODING_UTF32BE:
+		case wxFONTENCODING_UTF32LE:
+			m_bom.SetDataLen(4);
+			break;
+			
+		case wxFONTENCODING_UTF8:
+			m_bom.SetDataLen(3);
+			break;
+			
+		case wxFONTENCODING_UTF16BE:
+		case wxFONTENCODING_UTF16LE:
+		default:
+			m_bom.SetDataLen(2);
+			break;
+			
+		}
+	}
+	return encoding;
+}
+
+wxFontEncoding BOM::Encoding(const char* buff)
+{
+	// Support for BOM:
+	//----------------------------------
+	//00 00 FE FF UTF-32, big-endian
+	//FF FE 00 00 UTF-32, little-endian
+	//FE FF       UTF-16, big-endian
+	//FF FE       UTF-16, little-endian
+	//EF BB BF    UTF-8
+	//----------------------------------
+	wxFontEncoding encoding = wxFONTENCODING_SYSTEM; /* -1 */
+
+	static const char UTF32be[]= { 0x00, 0x00, 0xfe, 0xff};
+	static const char UTF32le[]= { 0xff, 0xfe, 0x00, 0x00};
+	static const char UTF16be[]= { 0xfe, 0xff            };
+	static const char UTF16le[]= { 0xff, 0xfe            };
+	static const char UTF8[]   = { 0xef, 0xbb, 0xbf      };
+	
+	if(memcmp(buff, UTF32be, sizeof(UTF32be)) == 0) {
+		encoding = wxFONTENCODING_UTF32BE;
+		
+	} else if(memcmp(buff, UTF32le, sizeof(UTF32le)) == 0) {
+		encoding = wxFONTENCODING_UTF32LE;
+		
+	} else if(memcmp(buff, UTF16be, sizeof(UTF16be)) == 0) {
+		encoding = wxFONTENCODING_UTF16BE;
+		
+	} else if(memcmp(buff, UTF16le, sizeof(UTF16le)) == 0) {
+		encoding = wxFONTENCODING_UTF16LE;
+		
+	} else if(memcmp(buff, UTF8, sizeof(UTF8)) == 0) {
+		encoding = wxFONTENCODING_UTF8;
+	}
+	return encoding;
+}
+
+void BOM::SetData(const char* buffer, size_t len)
+{
+	m_bom = wxMemoryBuffer();
+	m_bom.SetDataLen(0);
+	m_bom.AppendData(buffer, len);
+}
+
+int BOM::Len() const
+{
+	return m_bom.GetDataLen();
+}
+
+void BOM::Clear()
+{
+	m_bom = wxMemoryBuffer();
+	m_bom.SetDataLen(0);
 }

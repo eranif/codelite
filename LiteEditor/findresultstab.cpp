@@ -232,8 +232,8 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->MarkerDefine       (7, wxSCI_MARK_ARROW);
 	sci->MarkerSetBackground(7, *wxBLACK);
 
-	sci->IndicatorSetForeground(1, wxT("FOREST GREEN"));
-	sci->IndicatorSetStyle(1, wxSCI_INDIC_BOX);
+	sci->IndicatorSetForeground(1, wxT("PALE GREEN"));
+	sci->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
 
 	sci->SetMarginWidth(0, 0);
 	sci->SetMarginWidth(1, 16);

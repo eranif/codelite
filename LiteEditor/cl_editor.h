@@ -41,6 +41,7 @@
 #include "debuggermanager.h"
 #include "breakpointsmgr.h"
 #include "plugin.h"
+#include "globals.h"
 
 #define DEBUGGER_INDICATOR          11
 #define MATCH_INDICATOR             10

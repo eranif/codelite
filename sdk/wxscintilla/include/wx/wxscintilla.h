@@ -436,8 +436,8 @@
 #define wxSCI_LEX_FIF_DEFAULT 0
 #define wxSCI_LEX_FIF_FILE	  1
 #define wxSCI_LEX_FIF_MATCH	  2
-#define wxSCI_LEX_FIF_FILE_SHORT	3
-#define wxSCI_LEX_FIF_PROJECT 4
+#define wxSCI_LEX_FIF_LINE_NUMBER	3
+#define wxSCI_LEX_FIF_HEADER 4
 #define wxSCI_LEX_FIF_SCOPE 5
 #define wxSCI_LEX_FIF_MATCH_COMMENT  6
 

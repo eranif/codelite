@@ -37,7 +37,7 @@ void FindUsageTab::OnMouseDClick(wxScintillaEvent& e)
 	int line = m_sci->LineFromPosition(pos);
 	int style = m_sci->GetStyleAt(pos);
 
-	if (style == wxSCI_LEX_FIF_FILE || style == wxSCI_LEX_FIF_PROJECT) {
+	if (style == wxSCI_LEX_FIF_FILE || style == wxSCI_LEX_FIF_HEADER) {
 		m_sci->ToggleFold(line);
 	} else {
 		UsageResultsMap::const_iterator iter = m_matches.find(line);

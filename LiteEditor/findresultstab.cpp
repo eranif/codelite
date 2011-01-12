@@ -149,14 +149,21 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 {
 	InitStyle(sci, wxSCI_LEX_FIF, true);
 
+	wxColour bgcol;
+#ifdef __WXMSW__
+	bgcol = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
+#else
+	bgcol = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT), 2.0);
+#endif
+
 	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_PROJECT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-	sci->StyleSetBackground(wxSCI_LEX_FIF_PROJECT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_HEADER, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_HEADER, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE_SHORT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE_SHORT, DrawingUtils::GetPanelBgColour());
+	sci->StyleSetForeground(wxSCI_LEX_FIF_LINE_NUMBER, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_LINE_NUMBER, bgcol);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
@@ -197,7 +204,7 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_MATCH_COMMENT, true);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE, DrawingUtils::GetTextCtrlTextColour());
-	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, wxT("LIGHT GRAY"));
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_FILE, true);
 	
 	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetTextCtrlTextColour());
@@ -206,9 +213,9 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 
 	sci->StyleSetFont(wxSCI_LEX_FIF_FILE,          font);
 	sci->StyleSetFont(wxSCI_LEX_FIF_DEFAULT,       bold);
-	sci->StyleSetFont(wxSCI_LEX_FIF_PROJECT,       bold);
+	sci->StyleSetFont(wxSCI_LEX_FIF_HEADER,       bold);
 	sci->StyleSetFont(wxSCI_LEX_FIF_MATCH,         font);
-	sci->StyleSetFont(wxSCI_LEX_FIF_FILE_SHORT,    font);
+	sci->StyleSetFont(wxSCI_LEX_FIF_LINE_NUMBER,    font);
 	sci->StyleSetFont(wxSCI_LEX_FIF_SCOPE,         font);
 	sci->StyleSetFont(wxSCI_LEX_FIF_MATCH_COMMENT, font);
 
@@ -534,7 +541,7 @@ void FindResultsTab::OnMouseDClick(wxScintillaEvent &e)
 	int line = m_sci->LineFromPosition(pos);
 	int style = m_sci->GetStyleAt(pos);
 
-	if (style == wxSCI_LEX_FIF_FILE || style == wxSCI_LEX_FIF_PROJECT) {
+	if (style == wxSCI_LEX_FIF_FILE || style == wxSCI_LEX_FIF_HEADER) {
 		m_sci->ToggleFold(line);
 	} else {
 		size_t n = m_book ? m_book->GetSelection() : 0;

@@ -33,74 +33,95 @@ static inline bool AtEOL(Accessor &styler, unsigned int i)
 static void ColouriseFifDoc(unsigned int pos, int length, int /*initStyle*/,
                             WordList *[], Accessor &styler)
 {
+	enum {
+		Start,
+		StateLineNum,
+		StateScope,
+		StateMatchString,
+		StateFile,
+		StateComment,
+		StateHeader
+	};
+	
+	int state = Start;
 	styler.StartAt(pos);
 	styler.StartSegment(pos);
 	int lineFirstChar(-1);
+	int lineNumCount(0);
 	for (int firstchar = -1; length > 0; pos++, length--) {
         if (firstchar == -1) {
             firstchar = styler[pos]; // first char of each line
         }
-		
-		if(lineFirstChar == -1) {
-			lineFirstChar = styler[pos];
-		}
-		
-        if (styler[pos] == '|' && firstchar == ' ') {
-            if (length > 1 && styler[pos+1] == ' ') {
-                // include the following space
-                pos++;
-                length--;
-            }
-            styler.ColourTo(pos, SCLEX_FIF_FILE_SHORT);
-            firstchar = '|'; 
-            if (length > 1 && styler[pos+1] == '[') {
-                firstchar = '[';
-            }
-			
-		} else if (styler[pos] == '|' && firstchar == '.') {
-			if (length > 1 && styler[pos+1] == ' ') {
-				// include the following space
-				pos++;
-				length--;
-			}
-			styler.ColourTo(pos, SCLEX_FIF_FILE_SHORT);
-			if (length > 1 && styler[pos+1] == '[') {
-				firstchar = '[';
-			}
-		} else if (styler[pos] == ']' && firstchar == '['){
-            if (length > 1 && styler[pos+1] == ' ') {
-                // include the following space
-                pos++;
-                length--;
-            }
-			styler.ColourTo(pos, SCLEX_FIF_SCOPE);
-            firstchar = ']'; // first ']' only
-		} else if (AtEOL(styler, pos)) {
-			if(lineFirstChar == '.') {
-				styler.ColourTo(pos, SCLEX_FIF_MATCH_COMMENT);
-			} else {
-				switch (firstchar) {
-					case ' ':
-					case '|':
-					case '[':
-					case ']':
-						styler.ColourTo(pos, SCLEX_FIF_MATCH);
-						break;
-					case '=':
-						styler.ColourTo(pos, SCLEX_FIF_DEFAULT);
-						break;
-					case '-':
-						styler.ColourTo(pos, SCLEX_FIF_PROJECT);
-						break;
-					default:
-						styler.ColourTo(pos, SCLEX_FIF_FILE);
-						break;
-				}
+		switch(state) {
+		case Start:
+			if(firstchar == ' ') {
+				state = StateLineNum;
 				
+			} else if(firstchar == '=') {
+				state = StateHeader;
+				
+			} else {
+				state = StateFile;
 			}
-            firstchar     = -1;
-			lineFirstChar = -1;
-        }
+			break;
+		case StateLineNum:
+			if(lineNumCount == 6) {
+				if(styler[pos] == '/') {
+					// colour the entire line with the comment style
+					styler.ColourTo(pos-1, SCLEX_FIF_LINE_NUMBER);
+					state = StateComment;
+					
+				} else if(styler[pos] == '[') {
+					// dont include the '['
+					styler.ColourTo(pos-1, SCLEX_FIF_LINE_NUMBER);
+					state = StateScope;
+				} else {
+					styler.ColourTo(pos-1, SCLEX_FIF_LINE_NUMBER);
+					state = StateMatchString;
+				}
+			} else {
+				lineNumCount++;
+			}
+			break;
+		case StateScope:
+			if(styler[pos] == ']') {
+				styler.ColourTo(pos, SCLEX_FIF_SCOPE);
+				state = StateMatchString;
+			}
+			break;
+		case StateMatchString:
+			if(AtEOL(styler, pos)) {
+				state = Start;
+				styler.ColourTo(pos, SCLEX_FIF_MATCH);
+				lineNumCount = 0;
+				firstchar = -1;
+			}
+			break;
+		case StateFile:
+			if(AtEOL(styler, pos)) {
+				state = Start;
+				styler.ColourTo(pos, SCLEX_FIF_FILE);
+				lineNumCount = 0;
+				firstchar = -1;
+			}
+			break;
+		case StateComment:
+			if(AtEOL(styler, pos)) {
+				state = Start;
+				styler.ColourTo(pos, SCLEX_FIF_MATCH_COMMENT);
+				lineNumCount = 0;
+				firstchar = -1;
+			}
+			break;
+		case StateHeader:
+			if(AtEOL(styler, pos)) {
+				state = Start;
+				styler.ColourTo(pos, SCLEX_FIF_HEADER);
+				lineNumCount = 0;
+				firstchar = -1;
+			}
+			break;
+		}
 	}
 }
 
@@ -119,7 +140,7 @@ static void FoldFifDoc(unsigned int pos, int length, int,
             case SCLEX_FIF_DEFAULT:
                 nextLevel = SC_FOLDLEVELBASE;
                 break;
-            case SCLEX_FIF_PROJECT:
+            case SCLEX_FIF_HEADER:
                 nextLevel = (SC_FOLDLEVELBASE + 1) | SC_FOLDLEVELHEADERFLAG;
                 break;
             case SCLEX_FIF_FILE:

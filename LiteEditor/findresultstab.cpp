@@ -168,11 +168,11 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetForeground(wxSCI_LEX_FIF_PROJECT, wxT("BLACK"));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_PROJECT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE_SHORT, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
-	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE_SHORT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE_SHORT, wxT("BLACK"));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE_SHORT, DrawingUtils::GetPanelBgColour());
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, DrawingUtils::GetTextCtrlTextColour());
-	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, fifBgColour);
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_MATCH, true);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_SCOPE, wxT("BROWN"));
@@ -210,7 +210,7 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_MATCH_COMMENT, true);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE, DrawingUtils::GetTextCtrlTextColour());
-	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, fifBgColour);
+	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_FILE, true);
 	
 	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetTextCtrlTextColour());
@@ -221,7 +221,7 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetFont(wxSCI_LEX_FIF_DEFAULT,       bold);
 	sci->StyleSetFont(wxSCI_LEX_FIF_PROJECT,       bold);
 	sci->StyleSetFont(wxSCI_LEX_FIF_MATCH,         font);
-	sci->StyleSetFont(wxSCI_LEX_FIF_FILE_SHORT,    bold);
+	sci->StyleSetFont(wxSCI_LEX_FIF_FILE_SHORT,    font);
 	sci->StyleSetFont(wxSCI_LEX_FIF_SCOPE,         font);
 	sci->StyleSetFont(wxSCI_LEX_FIF_MATCH_COMMENT, font);
 
@@ -240,7 +240,7 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->SetMarginWidth(2, 0);
 	sci->SetMarginWidth(3, 0);
 	sci->SetMarginWidth(4, 0);
-	sci->SetViewWhiteSpace(wxSCI_WS_VISIBLEAFTERINDENT);
+	//sci->SetViewWhiteSpace(wxSCI_WS_VISIBLEAFTERINDENT);
 	sci->SetMarginSensitive(1, true);
 }
 
@@ -432,9 +432,9 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
 
 		wxString linenum;
 		if(iter->GetMatchState() == CppWordScanner::STATE_CPP_COMMENT || iter->GetMatchState() == CppWordScanner::STATE_C_COMMENT)
-			linenum = wxString::Format(wxT(".%4u| "), iter->GetLineNumber());
+			linenum = wxString::Format(wxT(" %5u //"), iter->GetLineNumber());
 		else
-			linenum = wxString::Format(wxT(" %4u| "), iter->GetLineNumber());
+			linenum = wxString::Format(wxT(" %5u "), iter->GetLineNumber());
 		
 		SearchData d = GetSearchData(m_recv);
 		// Print the scope name

@@ -149,23 +149,17 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 {
 	InitStyle(sci, wxSCI_LEX_FIF, true);
 
-#ifdef __WXGTK__
-	wxColour fifBgColour = DrawingUtils::GetPanelBgColour();
-#else
-	wxColour fifBgColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
-#endif
-
-	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, wxT("BLACK"));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_PROJECT, wxT("BLACK"));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_PROJECT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_PROJECT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE_SHORT, wxT("BLACK"));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE_SHORT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE_SHORT, DrawingUtils::GetPanelBgColour());
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, DrawingUtils::GetTextCtrlTextColour());
-	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, fifBgColour);
+	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_MATCH, true);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_SCOPE, wxT("BROWN"));

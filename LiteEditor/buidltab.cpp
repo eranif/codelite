@@ -64,7 +64,8 @@ BuildTab::BuildTab ( wxWindow *parent, wxWindowID id, const wxString &name )
 	, m_buildInterrupted(false)
 {
 	m_tb->RemoveTool ( XRCID ( "repeat_output" ) );
-
+	m_tb->RemoveTool( XRCID("collapse_all") );
+	
 	m_tb->AddTool ( XRCID("advance_settings" ), _("Set compiler colours..."),
 	                wxXmlResource::Get()->LoadBitmap ( wxT("colourise") ), _("Set compiler colours...") );
 	Connect ( XRCID ( "advance_settings" ),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler ( BuildTab::OnCompilerColours ), NULL, this );
@@ -205,7 +206,10 @@ void BuildTab::SetStyles ( wxScintilla *sci )
 	sci->StyleSetFont ( wxSCI_LEX_GCC_ERROR,        options.GetBoldErrFont()  ? bold : font );
 	sci->StyleSetFont ( wxSCI_LEX_GCC_MAKE_ENTER,   font );
 	sci->StyleSetFont ( wxSCI_LEX_GCC_MAKE_LEAVING, font );
-
+	sci->SetMarginWidth(2, 0);
+	sci->SetMarginWidth(1, 0);
+	sci->SetMarginWidth(3, 0);
+	sci->SetMarginWidth(4, 0);
 	sci->Colourise ( 0, sci->GetLength() );
 }
 

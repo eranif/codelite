@@ -66,13 +66,6 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 		, m_recv(NULL)
 		, m_matchInfo(1)
 {
-	// Remove the 'find' tool
-#if 0
-	m_tb->RemoveTool ( XRCID ( "search_output" ) );
-	m_tb->Realize();
-	m_findBar->SetEditor(NULL);
-#endif
-
 	if (useBook) {
 
 		// load the book style from the settings file
@@ -472,23 +465,16 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
 			m_sci->GotoLine(0);
 		}
 		
+		OutputTabWindow::OnCollapseAll(e);
 		if(m_sci) {
 			// Collapse the matches
-			int firstLine(wxNOT_FOUND);
 			int maxLine = m_sci->GetLineCount();
 			for (int line = 0; line < maxLine; line++) {
-				if ((m_sci->GetFoldLevel(line) & wxSCI_FOLDLEVELHEADERFLAG) && m_sci->GetFoldExpanded(line) ) {
+				int foldLevel = (m_sci->GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+				if (foldLevel == 2 && !m_sci->GetFoldExpanded(line) ) {
 					m_sci->ToggleFold(line);
-					
-					if(firstLine == wxNOT_FOUND) {
-						firstLine = line;
-					}
+					break;
 				}
-			}
-			
-			// Expand the first matched file
-			if(firstLine != wxNOT_FOUND) {
-				m_sci->ToggleFold(firstLine);
 			}
 		}
 	}

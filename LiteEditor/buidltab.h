@@ -133,7 +133,7 @@ private:
 	void OnNextBuildErrorUI   (wxUpdateUIEvent  &e);
 	void OnMouseDClick        (wxScintillaEvent &e);
 	void OnHoldOpenUpdateUI   (wxUpdateUIEvent& e);
-
+	void OnCollapseAll        (wxCommandEvent&  e);
 public:
 	void Clear();
 	void AppendText(const wxString &text);

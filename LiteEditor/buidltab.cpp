@@ -892,3 +892,22 @@ void BuildTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 		e.Check(false);
 	}
 }
+
+void BuildTab::OnCollapseAll(wxCommandEvent& e)
+{
+	if(m_sci) {
+		int maxLine = m_sci->GetLineCount();
+		// do two passes: first see if any folds can be collapsed
+		// if not, then expand instead
+		bool done = false;
+		for (int pass = 0; pass < 2 && !done; pass++) {
+			for (int line = 0; line < maxLine; line++) {
+				int foldLevel = (m_sci->GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+				if (foldLevel == 1 && m_sci->GetFoldExpanded(line) == !pass) {
+					m_sci->ToggleFold(line);
+					done = true;
+				}
+			}
+		}
+	}
+}

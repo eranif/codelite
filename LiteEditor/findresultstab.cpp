@@ -151,18 +151,18 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 
 	wxColour bgcol;
 #ifdef __WXMSW__
-	bgcol = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
+	bgcol = DrawingUtils::LightColour(wxT("GRAY"), 4.0);
 #else
-	bgcol = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT), 2.0);
+	bgcol = DrawingUtils::LightColour(wxT("GRAY"), 2.0);
 #endif
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_HEADER, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-	sci->StyleSetBackground(wxSCI_LEX_FIF_HEADER, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_HEADER, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_HEADER, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_LINE_NUMBER, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_LINE_NUMBER, *wxWHITE);
 	sci->StyleSetBackground(wxSCI_LEX_FIF_LINE_NUMBER, bgcol);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
@@ -204,13 +204,14 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_MATCH_COMMENT, true);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE, DrawingUtils::GetTextCtrlTextColour());
-	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, wxT("LIGHT GRAY"));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, bgcol);
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_FILE, true);
 	
 	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetTextCtrlTextColour());
 	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	sci->StyleSetEOLFilled(wxSCI_LEX_FIF_DEFAULT, true);
-
+	sci->StyleSetEOLFilled(wxSCI_LEX_FIF_HEADER, true);
+	
 	sci->StyleSetFont(wxSCI_LEX_FIF_FILE,          font);
 	sci->StyleSetFont(wxSCI_LEX_FIF_DEFAULT,       bold);
 	sci->StyleSetFont(wxSCI_LEX_FIF_HEADER,       bold);

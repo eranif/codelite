@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -41,8 +41,9 @@ CscopeTabBase::CscopeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	
 	mainSizer->Add( bSizer31, 0, wxALIGN_RIGHT|wxEXPAND, 5 );
 	
-	m_treeCtrlResults = new wxTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT );
-	mainSizer->Add( m_treeCtrlResults, 1, wxEXPAND, 5 );
+	long treeStyle = wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_HAS_BUTTONS;
+	m_treeCtrlResults = new wxTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
+	mainSizer->Add( m_treeCtrlResults, 1, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
@@ -66,8 +67,6 @@ CscopeTabBase::CscopeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_checkBoxRevertedIndex->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CscopeTabBase::OnChangeSearchScope ), NULL, this );
 	m_buttonClear->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CscopeTabBase::OnClearResults ), NULL, this );
 	m_buttonClear->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CscopeTabBase::OnClearResultsUI ), NULL, this );
-	m_treeCtrlResults->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( CscopeTabBase::OnLeftDClick ), NULL, this );
-	m_treeCtrlResults->Connect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( CscopeTabBase::OnItemActivated ), NULL, this );
 }
 
 CscopeTabBase::~CscopeTabBase()
@@ -78,7 +77,5 @@ CscopeTabBase::~CscopeTabBase()
 	m_checkBoxRevertedIndex->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CscopeTabBase::OnChangeSearchScope ), NULL, this );
 	m_buttonClear->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CscopeTabBase::OnClearResults ), NULL, this );
 	m_buttonClear->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CscopeTabBase::OnClearResultsUI ), NULL, this );
-	m_treeCtrlResults->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( CscopeTabBase::OnLeftDClick ), NULL, this );
-	m_treeCtrlResults->Disconnect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( CscopeTabBase::OnItemActivated ), NULL, this );
 	
 }

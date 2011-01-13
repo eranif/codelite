@@ -27,9 +27,13 @@
 #include <wx/app.h>
 #include <wx/log.h>
 #include "cscopetab.h"
+#include "drawingutils.h"
 #include "cscopedbbuilderthread.h"
 #include "imanager.h"
+#include "fileextmanager.h"
 #include "workspace.h"
+#include "bitmap_loader.h"
+#include <wx/treectrl.h>
 
 CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 		: CscopeTabBase( parent )
@@ -43,10 +47,24 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 
 	const wxString SearchScope[] = { wxT("Entire Workspace"), wxT("Active Project") };
 	m_stringManager.AddStrings(sizeof(SearchScope)/sizeof(wxString), SearchScope, data.GetScanScope(), m_choiceSearchScope);
-
+	
+	m_treeCtrlResults->AddColumn(_("Scope"),   300);
+	m_treeCtrlResults->AddColumn(_("Line"),    50);
+	m_treeCtrlResults->AddColumn(_("Pattern"), 1000);
+	m_treeCtrlResults->AddRoot(_("CScope"));
+	
+	wxImageList *imageList = new wxImageList(16, 16, true);
+	imageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/c")));                              // 0
+	imageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/cpp")));                            // 1
+	imageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/h")));                              // 2
+	imageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/text")));                           // 3
+	m_treeCtrlResults->AssignImageList( imageList );
+	
 	m_checkBoxUpdateDb->SetValue(data.GetRebuildOption());
 	m_checkBoxRevertedIndex->SetValue(data.GetBuildRevertedIndexOption());
 	SetMessage(_("Ready"), 0);
+	
+	m_treeCtrlResults->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(CscopeTab::OnItemActivated), NULL, this);
 }
 
 void CscopeTab::OnItemActivated( wxTreeEvent& event )
@@ -61,7 +79,7 @@ void CscopeTab::Clear()
 		//free the old table
 		FreeTable();
 	}
-	m_treeCtrlResults->DeleteAllItems();
+	m_treeCtrlResults->DeleteChildren(m_treeCtrlResults->GetRootItem());
 }
 
 void CscopeTab::BuildTable(CscopeResultTable *table)
@@ -76,10 +94,10 @@ void CscopeTab::BuildTable(CscopeResultTable *table)
 	}
 
 	m_table = table;
-	m_treeCtrlResults->DeleteAllItems();
+	m_treeCtrlResults->DeleteChildren(m_treeCtrlResults->GetRootItem());
 
 	//add hidden root
-	wxTreeItemId root = m_treeCtrlResults->AddRoot(wxT("Root"));
+	wxTreeItemId root = m_treeCtrlResults->GetRootItem();
 
 	CscopeResultTable::iterator iter = m_table->begin();
 	for (; iter != m_table->end(); iter++ ) {
@@ -87,7 +105,8 @@ void CscopeTab::BuildTable(CscopeResultTable *table)
 
 		//add item for this file
 		wxTreeItemId parent;
-
+		std::set<wxString> insertedItems;
+		
 		std::vector< CscopeEntryData >* vec = iter->second;
 		std::vector< CscopeEntryData >::iterator it = vec->begin();
 		for ( ; it != vec->end(); it++ ) {
@@ -96,12 +115,41 @@ void CscopeTab::BuildTable(CscopeResultTable *table)
 				//add parent item
 				CscopeEntryData parent_entry = entry;
 				parent_entry.SetKind(KindFileNode);
-				parent = m_treeCtrlResults->AppendItem(root, entry.GetFile(), wxNOT_FOUND, wxNOT_FOUND, new CscopeTabClientData(parent_entry));
+				
+				// detemine the image ID
+				int imgId(3); // text
+				switch(FileExtManager::GetType(entry.GetFile())) {
+				case FileExtManager::TypeHeader:
+					imgId = 2;
+					break;
+				
+				case FileExtManager::TypeSourceC:
+					imgId = 0;
+					break;
+					
+				case FileExtManager::TypeSourceCpp:
+					imgId = 1;
+					break;
+				
+				default:
+					imgId = 3;
+					break;
+				}
+				parent = m_treeCtrlResults->AppendItem(root, entry.GetFile(), imgId, imgId, NULL);
+				
+				wxColour rootItemColour = DrawingUtils::LightColour(wxT("LIGHT GRAY"), 3.0);
+				m_treeCtrlResults->SetItemBackgroundColour(parent, rootItemColour);
 			}
-
+			
+			// Dont insert duplicate entries to the match view
 			wxString display_string;
 			display_string << _("Line: ") << entry.GetLine() << wxT(", ") << entry.GetScope() << wxT(", ") << entry.GetPattern();
-			m_treeCtrlResults->AppendItem(parent, display_string, wxNOT_FOUND, wxNOT_FOUND, new CscopeTabClientData(entry));
+			if(insertedItems.find(display_string) == insertedItems.end()) {
+				insertedItems.insert(display_string);
+				wxTreeItemId item = m_treeCtrlResults->AppendItem(parent, entry.GetScope(), wxNOT_FOUND, wxNOT_FOUND, new CscopeTabClientData(entry));
+				m_treeCtrlResults->SetItemText(item, 1, wxString::Format(wxT("%d"), entry.GetLine()));
+				m_treeCtrlResults->SetItemText(item, 2, entry.GetPattern());
+			}
 		}
 	}
 	FreeTable();
@@ -183,7 +231,7 @@ void CscopeTab::OnClearResults(wxCommandEvent &e)
 
 void CscopeTab::OnClearResultsUI(wxUpdateUIEvent& e)
 {
-	e.Enable(m_treeCtrlResults->IsEmpty() == false);
+	e.Enable(m_treeCtrlResults->HasChildren( m_treeCtrlResults->GetRootItem()));
 }
 
 void CscopeTab::OnChangeSearchScope(wxCommandEvent& e)

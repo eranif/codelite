@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -20,7 +20,7 @@
 #include <wx/checkbox.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
-#include <wx/treectrl.h>
+#include "treelistctrl.h"
 #include <wx/gauge.h>
 #include <wx/panel.h>
 
@@ -40,16 +40,14 @@ class CscopeTabBase : public wxPanel
 		wxCheckBox* m_checkBoxUpdateDb;
 		wxCheckBox* m_checkBoxRevertedIndex;
 		wxButton* m_buttonClear;
-		wxTreeCtrl* m_treeCtrlResults;
+		wxTreeListCtrl* m_treeCtrlResults;
 		wxStaticText* m_statusMessage;
 		wxGauge* m_gauge;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnChangeSearchScope( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnClearResults( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnClearResultsUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void OnLeftDClick( wxMouseEvent& event ){ event.Skip(); }
-		virtual void OnItemActivated( wxTreeEvent& event ){ event.Skip(); }
+		virtual void OnChangeSearchScope( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnClearResults( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnClearResultsUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	
 	public:

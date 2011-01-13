@@ -166,12 +166,14 @@ class CCIncludeFilesBasePage : public wxPanel
 		wxButton* m_buttonClearAllExcludPath;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnItemActivated( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAddSearchPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAddSearchPathUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnRemoveSearchPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnRemoveSearchPathUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnClearAll( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClearAllUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnItemActivatedExcludePath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAddExcludePath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAddExcludePathUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnRemoveExcludePath( wxCommandEvent& event ) { event.Skip(); }

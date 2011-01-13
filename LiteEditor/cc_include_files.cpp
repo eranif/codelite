@@ -1,5 +1,6 @@
 #include "cc_include_files.h"
 #include <wx/dirdlg.h>
+#include <wx/textdlg.h>
 
 CCIncludeFilesPage::CCIncludeFilesPage( wxWindow* parent, const TagsOptionsData & data )
 	: CCIncludeFilesBasePage( parent )
@@ -100,4 +101,28 @@ void CCIncludeFilesPage::Save(TagsOptionsData& data)
 wxArrayString CCIncludeFilesPage::GetIncludePaths() const
 {
 	return m_listBoxSearchPaths->GetStrings();
+}
+
+void CCIncludeFilesPage::OnItemActivated(wxCommandEvent& event)
+{
+	int sel = m_listBoxSearchPaths->GetSelection();
+	if(sel != wxNOT_FOUND) {
+		wxString text = m_listBoxSearchPaths->GetString((unsigned int)sel);
+		text = wxGetTextFromUser(wxEmptyString, _("Edit search path:"), text);
+		if(text.IsEmpty() == false) {
+			m_listBoxSearchPaths->SetString((unsigned int)sel, text);
+		}
+	}
+}
+
+void CCIncludeFilesPage::OnItemActivatedExcludePath(wxCommandEvent& event)
+{
+	int sel = m_listBoxSearchPaths1->GetSelection();
+	if(sel != wxNOT_FOUND) {
+		wxString text = m_listBoxSearchPaths1->GetString((unsigned int)sel);
+		text = wxGetTextFromUser(wxEmptyString, _("Edit exclude path:"), text);
+		if(text.IsEmpty() == false) {
+			m_listBoxSearchPaths1->SetString((unsigned int)sel, text);
+		}
+	}
 }

@@ -2419,7 +2419,7 @@
                                 <event name="OnLeftDown"></event>
                                 <event name="OnLeftUp"></event>
                                 <event name="OnListBox"></event>
-                                <event name="OnListBoxDClick"></event>
+                                <event name="OnListBoxDClick">OnItemActivated</event>
                                 <event name="OnMiddleDClick"></event>
                                 <event name="OnMiddleDown"></event>
                                 <event name="OnMiddleUp"></event>
@@ -2739,7 +2739,7 @@
                                 <event name="OnLeftDown"></event>
                                 <event name="OnLeftUp"></event>
                                 <event name="OnListBox"></event>
-                                <event name="OnListBoxDClick"></event>
+                                <event name="OnListBoxDClick">OnItemActivatedExcludePath</event>
                                 <event name="OnMiddleDClick"></event>
                                 <event name="OnMiddleDown"></event>
                                 <event name="OnMiddleUp"></event>

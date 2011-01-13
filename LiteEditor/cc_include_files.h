@@ -29,7 +29,9 @@ protected:
 	void OnRemoveExcludePathUI( wxUpdateUIEvent& event );
 	void OnClearAllExcludePaths( wxCommandEvent& event );
 	void OnClearAllExcludePathsUI( wxUpdateUIEvent& event );
-	
+	void OnItemActivated(wxCommandEvent& event);
+	void OnItemActivatedExcludePath(wxCommandEvent& event);
+
 public:
 	/** Constructor */
 	CCIncludeFilesPage( wxWindow* parent, const TagsOptionsData & data );

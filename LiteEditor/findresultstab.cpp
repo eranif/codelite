@@ -162,7 +162,7 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetForeground(wxSCI_LEX_FIF_HEADER, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_HEADER, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_LINE_NUMBER, *wxWHITE);
+	sci->StyleSetForeground(wxSCI_LEX_FIF_LINE_NUMBER, wxT("MAROON"));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_LINE_NUMBER, bgcol);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));

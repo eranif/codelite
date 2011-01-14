@@ -60,6 +60,9 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 	imageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/text")));                           // 3
 	m_treeCtrlResults->AssignImageList( imageList );
 	
+	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	m_font = wxFont( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL );
+	
 	m_checkBoxUpdateDb->SetValue(data.GetRebuildOption());
 	m_checkBoxRevertedIndex->SetValue(data.GetBuildRevertedIndexOption());
 	SetMessage(_("Ready"), 0);
@@ -136,6 +139,7 @@ void CscopeTab::BuildTable(CscopeResultTable *table)
 					break;
 				}
 				parent = m_treeCtrlResults->AppendItem(root, entry.GetFile(), imgId, imgId, NULL);
+				m_treeCtrlResults->SetItemFont(parent, m_font);
 				
 				wxColour rootItemColour = DrawingUtils::LightColour(wxT("LIGHT GRAY"), 3.0);
 				m_treeCtrlResults->SetItemBackgroundColour(parent, rootItemColour);
@@ -147,6 +151,7 @@ void CscopeTab::BuildTable(CscopeResultTable *table)
 			if(insertedItems.find(display_string) == insertedItems.end()) {
 				insertedItems.insert(display_string);
 				wxTreeItemId item = m_treeCtrlResults->AppendItem(parent, entry.GetScope(), wxNOT_FOUND, wxNOT_FOUND, new CscopeTabClientData(entry));
+				m_treeCtrlResults->SetItemFont(item, m_font);
 				m_treeCtrlResults->SetItemText(item, 1, wxString::Format(wxT("%d"), entry.GetLine()));
 				m_treeCtrlResults->SetItemText(item, 2, entry.GetPattern());
 			}

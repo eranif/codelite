@@ -61,8 +61,9 @@ class CscopeTab : public CscopeTabBase
 	CscopeResultTable *m_table;
 	IManager *         m_mgr;
 	wxString           m_findWhat;
-	StringManager	   m_stringManager;
-
+	StringManager      m_stringManager;
+	wxFont             m_font;
+	
 protected:
 	// Handlers for CscopeTabBase events.
 	void OnItemActivated( wxTreeEvent& event );

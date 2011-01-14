@@ -151,7 +151,7 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 
 	wxColour bgcol;
 #ifdef __WXMSW__
-	bgcol = DrawingUtils::LightColour(wxT("GRAY"), 4.0);
+	bgcol = DrawingUtils::LightColour(wxT("LIGHT GRAY"), 3.0);
 #else
 	bgcol = DrawingUtils::LightColour(wxT("GRAY"), 2.0);
 #endif

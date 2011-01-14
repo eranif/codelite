@@ -100,7 +100,10 @@ void OutputPane::CreateGUIControls()
 	wxTextCtrl *text = new wxTextCtrl(m_book, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
 	m_book->AddPage(text, wxGetTranslation(TRACE_TAB), false, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
 	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
-
+	
+	// Now that we set up our own log target, re-enable the logging
+	wxLog::EnableLogging(true);
+	
 	m_taskPanel = new TaskPanel(m_book, wxID_ANY, wxGetTranslation(TASKS));
 	m_book->AddPage(m_taskPanel, wxGetTranslation(TASKS), false, bmpLoader->LoadBitmap(wxT("output-pane/16/tasks")));
 	mainSizer->Layout();

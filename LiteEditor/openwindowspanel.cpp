@@ -91,7 +91,7 @@ void OpenWindowsPanel::DoCloseSelectedItem(int item)
 {
     DoOpenSelectedItem(item); // make sure the editor is selected in MainBook
     wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_file"));
-    AddPendingEvent(e);
+    ProcessEvent(e);
 }
 
 void OpenWindowsPanel::OnKeyDown( wxKeyEvent& event )
@@ -149,16 +149,19 @@ void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
 		return;
 
     int i = EditorItem(editor);
-    if (i != wxNOT_FOUND && i == m_fileList->GetSelection())
+	DoClearSelections();
+	
+    if (i != wxNOT_FOUND) {
+		DoSelectItem(i);
         return;
+	}
 
     if (i == wxNOT_FOUND) {
         wxString txt = editor->GetFileName().GetFullName();
         MyStringClientData *data = new MyStringClientData(editor->GetFileName().GetFullPath());
         i = m_fileList->Append(txt, data);
     }
-    m_fileList->Select(i);
-    m_fileList->EnsureVisible(i);
+	DoSelectItem(i);
 }
 
 void OpenWindowsPanel::OnAllEditorsClosed(wxCommandEvent& e)
@@ -187,9 +190,17 @@ void OpenWindowsPanel::OnCloseSelectedFiles(wxCommandEvent& e)
     m_fileList->GetSelections(sels);
 	if(sels.IsEmpty())
 		return;
-		
-	for(int i=0; i<(int)sels.GetCount(); i++) {
-		DoCloseSelectedItem(sels.Item(i));
+	
+	wxArrayString files;
+	for(size_t i=0; i<sels.GetCount(); i++) {
+		MyStringClientData *data = dynamic_cast<MyStringClientData *>(m_fileList->GetClientObject(sels.Item(i)));
+		if(data) {
+			files.Add(data->GetData());
+		}
+	}
+	
+	for(size_t i=0; i<sels.GetCount(); i++) {
+		DoCloseItem(files.Item(i));
 	}
 }
 
@@ -216,3 +227,27 @@ void OpenWindowsPanel::DoSaveItem(int item)
 		}
 	}
 }
+
+void OpenWindowsPanel::DoCloseItem(const wxString &filename)
+{
+	clMainFrame::Get()->GetMainBook()->CloseEditor(filename);
+}
+
+void OpenWindowsPanel::DoClearSelections()
+{
+	wxArrayInt sels;
+    m_fileList->GetSelections(sels);
+	if(sels.IsEmpty())
+		return;
+	
+	for(size_t i=0; i<sels.GetCount(); i++)
+		m_fileList->SetSelection(sels.Item(i), false);
+}
+
+void OpenWindowsPanel::DoSelectItem(int item)
+{
+	DoClearSelections();
+	m_fileList->SetSelection(item, true);
+	m_fileList->EnsureVisible(item);
+}
+

@@ -45,7 +45,10 @@ class OpenWindowsPanel : public OpenWindowsPanelBase
 	void DoOpenSelectedItem(int item);
     void DoCloseSelectedItem(int item);
     void DoSaveItem(int item);
-    
+    void DoCloseItem(const wxString &filename);
+    void DoClearSelections();
+	void DoSelectItem(int item);
+	
 protected:
 	// Handlers for OpenWindowsPanelBase events.
 	void OnKeyDown( wxKeyEvent& event );

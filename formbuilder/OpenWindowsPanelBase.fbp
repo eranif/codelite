@@ -103,7 +103,7 @@
                         <property name="validator_variable"></property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
-                        <property name="window_style"></property>
+                        <property name="window_style">wxWANTS_CHARS</property>
                         <event name="OnChar">OnChar</event>
                         <event name="OnEnterWindow"></event>
                         <event name="OnEraseBackground"></event>

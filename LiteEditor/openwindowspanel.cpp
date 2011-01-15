@@ -100,16 +100,17 @@ void OpenWindowsPanel::OnKeyDown( wxKeyEvent& event )
         case WXK_RETURN:
         case WXK_NUMPAD_ENTER:
         case WXK_SPACE:
-            if (m_fileList->GetSelection() != wxNOT_FOUND) {
-                DoOpenSelectedItem(m_fileList->GetSelection());
+			if (DoGetSingleSelection() != wxNOT_FOUND) {
+                DoOpenSelectedItem(DoGetSingleSelection());
             }
             break;
         case WXK_DELETE:
         case WXK_NUMPAD_DELETE:
-            if (m_fileList->GetSelection() != wxNOT_FOUND) {
-                DoCloseSelectedItem(m_fileList->GetSelection());
-                m_fileList->SetFocus();
-            }
+			{
+				wxCommandEvent dummyEvent;
+				OnCloseSelectedFiles(dummyEvent);
+				m_fileList->SetFocus();
+			}
             break;
         default:
             event.Skip();
@@ -251,3 +252,12 @@ void OpenWindowsPanel::DoSelectItem(int item)
 	m_fileList->EnsureVisible(item);
 }
 
+int OpenWindowsPanel::DoGetSingleSelection()
+{
+	wxArrayInt sels;
+    m_fileList->GetSelections(sels);
+	if(sels.IsEmpty())
+		return wxNOT_FOUND;
+	
+	return sels.Item(0);
+}

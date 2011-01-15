@@ -14,7 +14,7 @@ OpenWindowsPanelBase::OpenWindowsPanelBase( wxWindow* parent, wxWindowID id, con
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	m_fileList = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_EXTENDED|wxLB_SORT ); 
+	m_fileList = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_EXTENDED|wxLB_SORT|wxWANTS_CHARS ); 
 	mainSizer->Add( m_fileList, 1, wxALL|wxEXPAND, 0 );
 	
 	this->SetSizer( mainSizer );

@@ -39,16 +39,18 @@ class OpenWindowsPanel : public OpenWindowsPanelBase
 {
     wxString m_caption;
     wxMenu *m_rclickMenu;
+    wxMenu *m_mutliMenu;
     
     int  EditorItem(LEditor *editor);
 	void DoOpenSelectedItem(int item);
     void DoCloseSelectedItem(int item);
+    void DoSaveItem(int item);
     
 protected:
 	// Handlers for OpenWindowsPanelBase events.
 	void OnKeyDown( wxKeyEvent& event );
 	void OnItemDClicked( wxCommandEvent& event );
-	void OnRightUp( wxMouseEvent& event );
+	void OnRightDown( wxMouseEvent& event );
     void OnChar( wxKeyEvent& event );
     
 	// Handlers for workspace events
@@ -56,6 +58,10 @@ protected:
     void OnEditorClosing(wxCommandEvent &e);
     void OnAllEditorsClosed(wxCommandEvent &e);
     
+	DECLARE_EVENT_TABLE()
+	void OnCloseSelectedFiles(wxCommandEvent &e);
+	void OnSaveSelectedFiles(wxCommandEvent &e);
+	
 public:
 	/** Constructor */
 	OpenWindowsPanel( wxWindow* parent, const wxString &caption );

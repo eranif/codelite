@@ -1,5 +1,5 @@
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -14,7 +14,7 @@ OpenWindowsPanelBase::OpenWindowsPanelBase( wxWindow* parent, wxWindowID id, con
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	m_fileList = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SORT ); 
+	m_fileList = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_EXTENDED|wxLB_SORT ); 
 	mainSizer->Add( m_fileList, 1, wxALL|wxEXPAND, 0 );
 	
 	this->SetSizer( mainSizer );
@@ -25,7 +25,7 @@ OpenWindowsPanelBase::OpenWindowsPanelBase( wxWindow* parent, wxWindowID id, con
 	m_fileList->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( OpenWindowsPanelBase::OnKeyDown ), NULL, this );
 	m_fileList->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( OpenWindowsPanelBase::OnItemSelected ), NULL, this );
 	m_fileList->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( OpenWindowsPanelBase::OnItemDClicked ), NULL, this );
-	m_fileList->Connect( wxEVT_RIGHT_UP, wxMouseEventHandler( OpenWindowsPanelBase::OnRightUp ), NULL, this );
+	m_fileList->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( OpenWindowsPanelBase::OnRightDown ), NULL, this );
 }
 
 OpenWindowsPanelBase::~OpenWindowsPanelBase()
@@ -35,6 +35,6 @@ OpenWindowsPanelBase::~OpenWindowsPanelBase()
 	m_fileList->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( OpenWindowsPanelBase::OnKeyDown ), NULL, this );
 	m_fileList->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( OpenWindowsPanelBase::OnItemSelected ), NULL, this );
 	m_fileList->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( OpenWindowsPanelBase::OnItemDClicked ), NULL, this );
-	m_fileList->Disconnect( wxEVT_RIGHT_UP, wxMouseEventHandler( OpenWindowsPanelBase::OnRightUp ), NULL, this );
+	m_fileList->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( OpenWindowsPanelBase::OnRightDown ), NULL, this );
 	
 }

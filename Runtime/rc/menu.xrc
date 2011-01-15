@@ -543,7 +543,15 @@
             <label>Close Other Tabs</label>
         </object>
 	</object>
-
+	<object class="wxMenu" name="tabs_multi_sels_menu">
+		<object class="wxMenuItem" name="wxID_CLOSE_SELECTED">
+            <label>Close</label>
+        </object>
+		<object class="wxMenuItem" name="wxID_SAVE_SELECTED">
+            <label>Save</label>
+        </object>
+	</object>
+	
 	<object class="wxMenu" name="editor_tab_right_click">
 		<object class="wxMenuItem" name="close_file">
             <label>Close</label>

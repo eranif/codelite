@@ -30,10 +30,16 @@
 #include "openwindowspanel.h"
 #include "string_client_data.h"
 
+BEGIN_EVENT_TABLE(OpenWindowsPanel, OpenWindowsPanelBase)
+EVT_MENU(XRCID("wxID_CLOSE_SELECTED"), OpenWindowsPanel::OnCloseSelectedFiles)
+EVT_MENU(XRCID("wxID_SAVE_SELECTED"), OpenWindowsPanel::OnSaveSelectedFiles)
+END_EVENT_TABLE()
+
 OpenWindowsPanel::OpenWindowsPanel( wxWindow* parent, const wxString &caption )
     : OpenWindowsPanelBase( parent )
     , m_caption(caption)
     , m_rclickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")))
+    , m_mutliMenu(wxXmlResource::Get()->LoadMenu(wxT("tabs_multi_sels_menu")))
 {
 	MSWSetNativeTheme(m_fileList);
 	
@@ -48,6 +54,12 @@ OpenWindowsPanel::~OpenWindowsPanel()
 		delete m_rclickMenu;
 		m_rclickMenu = NULL;
 	}
+	
+	if(m_mutliMenu) {
+		delete m_mutliMenu;
+		m_mutliMenu = NULL;
+	}
+	
     // clear list now, or wxGTK seems to crash on exit
     m_fileList->Clear();
 	
@@ -79,7 +91,7 @@ void OpenWindowsPanel::DoCloseSelectedItem(int item)
 {
     DoOpenSelectedItem(item); // make sure the editor is selected in MainBook
     wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_file"));
-    ProcessEvent(e);
+    AddPendingEvent(e);
 }
 
 void OpenWindowsPanel::OnKeyDown( wxKeyEvent& event )
@@ -110,14 +122,18 @@ void OpenWindowsPanel::OnItemDClicked( wxCommandEvent& event )
 	DoOpenSelectedItem(event.GetSelection());
 }
 
-void OpenWindowsPanel::OnRightUp( wxMouseEvent& event )
+void OpenWindowsPanel::OnRightDown( wxMouseEvent& event )
 {
 	wxUnusedVar(event);
-    int sel = m_fileList->GetSelection();
-    if (sel != wxNOT_FOUND) {
-        DoOpenSelectedItem(sel);
+	wxArrayInt sels;
+    m_fileList->GetSelections(sels);
+	
+	if(sels.GetCount() == 1) {
+        DoOpenSelectedItem(sels.Item(0));
         PopupMenu(m_rclickMenu);
-    }
+    } else {
+		PopupMenu(m_mutliMenu);
+	}
 }
 
 void OpenWindowsPanel::OnChar(wxKeyEvent& event)
@@ -136,7 +152,6 @@ void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
     if (i != wxNOT_FOUND && i == m_fileList->GetSelection())
         return;
 
-    m_fileList->Freeze();
     if (i == wxNOT_FOUND) {
         wxString txt = editor->GetFileName().GetFullName();
         MyStringClientData *data = new MyStringClientData(editor->GetFileName().GetFullPath());
@@ -144,7 +159,6 @@ void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
     }
     m_fileList->Select(i);
     m_fileList->EnsureVisible(i);
-    m_fileList->Thaw();
 }
 
 void OpenWindowsPanel::OnAllEditorsClosed(wxCommandEvent& e)
@@ -162,8 +176,43 @@ void OpenWindowsPanel::OnEditorClosing(wxCommandEvent& e)
 
     int i = EditorItem(editor);
     if (i != wxNOT_FOUND) {
-        m_fileList->Freeze();
         m_fileList->Delete(i);
-        m_fileList->Thaw();
     }
+}
+
+void OpenWindowsPanel::OnCloseSelectedFiles(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	wxArrayInt sels;
+    m_fileList->GetSelections(sels);
+	if(sels.IsEmpty())
+		return;
+		
+	for(int i=0; i<(int)sels.GetCount(); i++) {
+		DoCloseSelectedItem(sels.Item(i));
+	}
+}
+
+void OpenWindowsPanel::OnSaveSelectedFiles(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	wxArrayInt sels;
+    m_fileList->GetSelections(sels);
+	if(sels.IsEmpty())
+		return;
+		
+	for(int i=0; i<(int)sels.GetCount(); i++) {
+		DoSaveItem(sels.Item(i));
+	}
+}
+
+void OpenWindowsPanel::DoSaveItem(int item)
+{
+	MyStringClientData *data = dynamic_cast<MyStringClientData *>(m_fileList->GetClientObject(item));
+	if(data) {
+		LEditor * editor = clMainFrame::Get()->GetMainBook()->FindEditor(data->GetData());
+		if(editor) {
+			editor->SaveFile();
+		}
+	}
 }

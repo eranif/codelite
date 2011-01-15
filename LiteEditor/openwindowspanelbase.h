@@ -1,5 +1,5 @@
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -33,16 +33,16 @@ class OpenWindowsPanelBase : public wxPanel
 		wxListBox* m_fileList;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnChar( wxKeyEvent& event ){ event.Skip(); }
-		virtual void OnKeyDown( wxKeyEvent& event ){ event.Skip(); }
-		virtual void OnItemSelected( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnItemDClicked( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnRightUp( wxMouseEvent& event ){ event.Skip(); }
+		virtual void OnChar( wxKeyEvent& event ) { event.Skip(); }
+		virtual void OnKeyDown( wxKeyEvent& event ) { event.Skip(); }
+		virtual void OnItemSelected( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnItemDClicked( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnRightDown( wxMouseEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		OpenWindowsPanelBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL|wxWANTS_CHARS ); 
+		OpenWindowsPanelBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL|wxWANTS_CHARS );
 		~OpenWindowsPanelBase();
 	
 };

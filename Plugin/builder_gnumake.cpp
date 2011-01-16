@@ -1137,7 +1137,12 @@ wxString BuilderGnuMake::ParseIncludePath(const wxString &paths, const wxString 
 		wxString path(tkz.NextToken());
 		TrimString(path);
 		path.Replace(wxT("\\"), wxT("/"));
-		incluedPath << wxT("\"$(IncludeSwitch)") << path << wxT("\" ");
+		
+		wxString wrapper;
+		if(path.Contains(wxT(" ")))
+			wrapper = wxT("\"");
+		
+		incluedPath << wxT("$(IncludeSwitch)") << wrapper << path << wrapper << wxT(" ");
 	}
 	return incluedPath;
 }
@@ -1153,7 +1158,11 @@ wxString BuilderGnuMake::ParseLibPath(const wxString &paths, const wxString &pro
 		wxString path(tkz.NextToken());
 		path.Trim().Trim(false);
 		path.Replace(wxT("\\"), wxT("/"));
-		libPath << wxT("\"$(LibraryPathSwitch)") << path << wxT("\" ");
+		wxString wrapper;
+		if(path.Contains(wxT(" ")))
+			wrapper = wxT("\"");
+			
+		libPath << wxT("$(LibraryPathSwitch)") << wrapper << path << wrapper << wxT(" ");
 	}
 	return libPath;
 }

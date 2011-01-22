@@ -25,6 +25,7 @@
 #include "newprojectdlg.h"
 #include "pluginmanager.h"
 #include "windowattrmanager.h"
+#include "editor_config.h"
 #include <wx/xrc/xmlres.h>
 #include "globals.h"
 #include "macros.h"
@@ -36,9 +37,11 @@
 #include <set>
 
 NewProjectDlg::NewProjectDlg( wxWindow* parent )
-		:
-		NewProjectBaseDlg( parent )
+	: NewProjectBaseDlg( parent )
 {
+	NewProjectDlgData info;
+	EditorConfigST::Get()->ReadObject(wxT("NewProjectDlgData"), &info);
+	
 	m_listTemplates->InsertColumn( 0, _("Type") );
 	m_listTemplates->SetColumnWidth( 0, m_listTemplates->GetSize().GetWidth() );
 
@@ -93,6 +96,8 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 
 	m_textCtrlProjectPath->SetValue( WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
 	m_txtProjName->SetFocus();
+	
+	m_cbSeparateDir->SetValue( info.GetFlags() & NewProjectDlgData::NpSeparateDirectory );
 	Centre();
 
 	UpdateProjectPage();
@@ -101,6 +106,16 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 
 NewProjectDlg::~NewProjectDlg()
 {
+	// Keep the options
+	NewProjectDlgData info;
+	size_t            flags (0);
+	
+	if(m_cbSeparateDir->IsChecked())
+		flags |= NewProjectDlgData::NpSeparateDirectory;
+	
+	info.SetFlags(flags);
+	EditorConfigST::Get()->WriteObject(wxT("NewProjectDlgData"), &info);
+	
 	WindowAttrManager::Save(this, wxT("NewProjectDialog"), NULL);
 }
 
@@ -289,3 +304,25 @@ void NewProjectDlg::OnProjectPathUpdated(wxCommandEvent& event)
 
 	UpdateFullFileName();
 }
+//////////////////////////////////////////////////////////////////////////
+
+NewProjectDlgData::NewProjectDlgData()
+: m_flags(NpSeparateDirectory)
+{
+}
+
+NewProjectDlgData::~NewProjectDlgData()
+{
+}
+
+void NewProjectDlgData::DeSerialize(Archive& arch)
+{
+	arch.Read(wxT("m_flags"), m_flags);
+}
+
+void NewProjectDlgData::Serialize(Archive& arch)
+{
+	arch.Write(wxT("m_flags"), m_flags);
+}
+
+

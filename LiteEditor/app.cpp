@@ -524,7 +524,12 @@ bool CodeLiteApp::OnInit()
 #ifndef __WXDEBUG__
 	showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
 #endif
-
+	
+	// Don't show the splash screen when opening codelite to view
+	// a file, this is done to reduce the load time
+	if(parser.GetParamCount() > 0) 
+		showSplash = false;
+		
 	m_splash = NULL;
 	if (showSplash) {
 		wxBitmap bitmap;
@@ -536,11 +541,7 @@ bool CodeLiteApp::OnInit()
 		}
 	}
 
-	// Create the main application window (a dialog in this case)
-	// NOTE: Vertical dimension comprises the caption bar.
-	//       Horizontal dimension has to take into account the thin
-	//       hilighting border around the dialog (2 points in
-	//       Win 95).
+	// Create the main application window
 	clMainFrame::Initialize( parser.GetParamCount() == 0 );
 	m_pMainFrame = clMainFrame::Get();
 	m_pMainFrame->Show(TRUE);

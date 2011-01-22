@@ -92,7 +92,8 @@ class clMainFrame : public wxFrame
 	wxString                              m_codeliteDownloadPageURL;
 	wxString                              m_defaultLayout;
 	bool                                  m_workspaceRetagIsRequired;
-
+	bool                                  m_loadLastSession;
+	
 protected:
 	bool IsEditorEvent(wxEvent &event);
 

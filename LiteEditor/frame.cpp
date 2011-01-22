@@ -658,7 +658,8 @@ void clMainFrame::Initialize(bool loadLastSession)
 	                        wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
 
 	m_theFrame->m_frameGeneralInfo = inf;
-
+	m_theFrame->m_loadLastSession = loadLastSession;
+	
 	m_theFrame->Maximize(m_theFrame->m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME ? true : false);
 
 	//add the welcome page
@@ -2419,7 +2420,7 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 	}
 
 	// Load last session?
-	if (m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION) {
+	if (m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && m_loadLastSession) {
 		wxWindowUpdateLocker locker(this);
 		LoadSession(SessionManager::Get().GetLastSession());
 	}

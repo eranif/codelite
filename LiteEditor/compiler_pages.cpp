@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -290,6 +290,9 @@ CompilerAdvanceBase::CompilerAdvanceBase( wxWindow* parent, wxWindowID id, const
 	
 	m_checkBoxGenerateDependenciesFiles = new wxCheckBox( this, wxID_ANY, _("Use compiler -MT switch to generate source dependencies files (*.o.d)"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer11->Add( m_checkBoxGenerateDependenciesFiles, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	m_checkBoxReadObjectsFromFile = new wxCheckBox( this, wxID_ANY, _("Pass object list to the linker via file"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer11->Add( m_checkBoxReadObjectsFromFile, 0, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );

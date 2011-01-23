@@ -31,6 +31,7 @@
 #include <wx/string.h>
 #include <list>
 #include <map>
+#include "compiler.h"
 #include "codelite_exports.h"
 
 #ifndef WXDLLIMPEXP_LE_SDK
@@ -145,7 +146,9 @@ public:
 	const wxString &GetCompilerType() const {
 		return m_compilerType;
 	}
-
+	
+	CompilerPtr GetCompiler() const;
+	
 	void SetDebugArgs(const wxString& debugArgs) {
 		this->m_debugArgs = debugArgs;
 	}

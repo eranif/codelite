@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -156,6 +156,7 @@ class CompilerAdvanceBase : public wxPanel
 	
 	protected:
 		wxCheckBox* m_checkBoxGenerateDependenciesFiles;
+		wxCheckBox* m_checkBoxReadObjectsFromFile;
 		wxStaticLine* m_staticline2;
 		wxStaticText* m_staticText18;
 		wxStaticText* m_staticText141;

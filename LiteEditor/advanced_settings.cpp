@@ -120,8 +120,9 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	LoadCompilers();
 
 	if(m_compilersNotebook->GetPageCount()){
-		m_compilersNotebook->ExpandNode(0);
-		m_compilersNotebook->SetSelection(1);
+		if(m_compilersNotebook->GetSelection() != wxNOT_FOUND) {
+			m_compilersNotebook->ExpandNode(m_compilersNotebook->GetSelection());
+		}
 	}
 
 	ConnectButton(m_buttonNewCompiler, AdvancedDlg::OnButtonNewClicked);
@@ -145,14 +146,21 @@ void AdvancedDlg::LoadCompilers()
 	m_compilersNotebook->DeleteAllPages();
 
 	BuildSettingsConfigCookie cookie;
-	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
-	bool first (true);
-	while (cmp) {
-		AddCompiler(cmp, first);
-		cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
-		first = false;
+	
+	wxString proj, conf;
+	ManagerST::Get()->GetActiveProjectAndConf(proj, conf);
+	
+	wxString cmpType;
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj, conf);
+	if(bldConf) {
+		cmpType = bldConf->GetCompilerType();
 	}
 
+	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
+	while (cmp) {
+		AddCompiler(cmp, cmpType == cmp->GetName());
+		cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
+	}
 	m_compilersNotebook->Thaw();
 }
 
@@ -266,14 +274,14 @@ void AdvancedDlg::AddCompiler(CompilerPtr cmp, bool selected)
 
 	// add the root node
 	m_compilersNotebook->AddPage(0, cmp->GetName(), selected);
-
+	
+	CompilerToolsPage *p3 = new CompilerToolsPage(m_compilersNotebook, cmp->GetName());
+	pages.push_back(p3);
+	m_compilersNotebook->AddSubPage(p3, _("Tools"), selected);
+	
 	CompilerPatternsPage *p2 = new CompilerPatternsPage(m_compilersNotebook, cmp->GetName());
 	pages.push_back(p2);
 	m_compilersNotebook->AddSubPage(p2, _("Patterns"), false);
-
-	CompilerToolsPage *p3 = new CompilerToolsPage(m_compilersNotebook, cmp->GetName());
-	pages.push_back(p3);
-	m_compilersNotebook->AddSubPage(p3, _("Tools"), false);
 
 	CompilerSwitchesPage *p4 = new CompilerSwitchesPage(m_compilersNotebook, cmp->GetName());
 	pages.push_back(p4);

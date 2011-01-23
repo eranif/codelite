@@ -13,6 +13,8 @@ CompilerAdvancePage::CompilerAdvancePage( wxWindow* parent, const wxString &cmpn
 	m_checkBoxGenerateDependenciesFiles->SetValue(cmp->GetGenerateDependeciesFile());
 	m_textCtrlGlobalIncludePath->SetValue(cmp->GetGlobalIncludePath());
 	m_textCtrlGlobalLibPath->SetValue(cmp->GetGlobalLibPath());
+	m_checkBoxReadObjectsFromFile->SetValue(cmp->GetReadObjectFilesFromList());
+	
 }
 
 void CompilerAdvancePage::Save(CompilerPtr cmp)
@@ -23,4 +25,5 @@ void CompilerAdvancePage::Save(CompilerPtr cmp)
 	cmp->SetObjectSuffix(m_textObjectExtension->GetValue());
     cmp->SetDependSuffix(m_textDependExtension->GetValue());
     cmp->SetPreprocessSuffix(m_textPreprocessExtension->GetValue());
+	cmp->SetReadObjectFilesFromList(m_checkBoxReadObjectsFromFile->IsChecked());
 }

@@ -532,6 +532,14 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 	CreateLinkTargets(proj->GetSettings()->GetProjectType(bldConf->GetName()), bldConf, text, targetName);
 
 	CreatePostBuildEvents        (bldConf, text);
+	
+	// In any case add the 'objects_file' target here
+	// this is a special target that creates a file with the content of the 
+	// $(Objects) variable (to be used with the @<file-name> option of the LD
+	text << wxT("\n");
+	text << wxT("objects_file:\n");
+	text << wxT("\t@echo $(Objects) > $(ObjectsFileList)\n");
+	
 	CreateMakeDirsTarget         (bldConf, targetName, text);
 	CreatePreBuildEvents         (bldConf, text);
 	CreatePreCompiledHeaderTarget(bldConf, text);
@@ -619,6 +627,7 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
 	Compiler::CmpFileTypeInfo ft;
 	wxString cwd = ::wxGetCwd();
 
+	wxString objectsList;
 	for (size_t i=0; i<files.size(); i++) {
 
 		// is this a valid file?
@@ -917,12 +926,23 @@ void BuilderGnuMake::CreateLinkTargets(const wxString &type, BuildConfigPtr bldC
 	//this is to workaround bug in the generated makefiles
 	//which causes the makefile to report 'nothing to be done'
 	//even when a dependency was modified
+	
+	bool readObjectsFromFile(false);
+	readObjectsFromFile = (bldConf->GetCompiler() && bldConf->GetCompiler()->GetReadObjectFilesFromList());
+	
 	if (type  == Project::EXECUTABLE || type == Project::DYNAMIC_LIBRARY) {
-		text << wxT("all: $(OutputFile)\n\n");
+		text << wxT("all: ");
+		if(readObjectsFromFile)
+			text << wxT("objects_file ");
+		text << wxT("$(OutputFile)\n\n");
+		
 		text << wxT("$(OutputFile): makeDirStep $(Objects)\n");
 		targetName = wxT("makeDirStep");
 	} else {
-		text << wxT("all: $(IntermediateDirectory) $(OutputFile)\n\n");
+		text << wxT("all: $(IntermediateDirectory) ");
+		if(readObjectsFromFile)
+			text << wxT("objects_file ");
+		text << wxT("$(OutputFile)\n\n");
 		text << wxT("$(OutputFile): $(Objects)\n");
 	}
 
@@ -934,16 +954,37 @@ void BuilderGnuMake::CreateLinkTargets(const wxString &type, BuildConfigPtr bldC
 void BuilderGnuMake::CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text)
 {
 	text << wxT("\t@$(MakeDirCommand) $(@D)\n");
-
+	CompilerPtr cmp = bldConf->GetCompiler();
+	
 	if (type == Project::STATIC_LIBRARY) {
 		//create a static library
-		text << wxT("\t") << wxT("$(ArchiveTool) $(ArchiveOutputSwitch)$(OutputFile) $(Objects)\n");
+		text << wxT("\t") << wxT("$(ArchiveTool) $(ArchiveOutputSwitch)$(OutputFile)");
+		if(cmp && cmp->GetReadObjectFilesFromList()) {
+			text << wxT(" @$(ObjectsFileList)\n");
+		} else {
+			text << wxT(" $(Objects)\n");
+		}
+		
 	} else if (type == Project::DYNAMIC_LIBRARY) {
 		//create a shared library
-		text << wxT("\t") << wxT("$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile) $(Objects) $(LibPath) $(Libs) $(LinkOptions)\n");
+		text << wxT("\t") << wxT("$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile)");
+		if(cmp && cmp->GetReadObjectFilesFromList()) {
+			text << wxT(" @$(ObjectsFileList) ");
+		} else {
+			text << wxT(" $(Objects) ");
+		}
+		text << wxT("$(LibPath) $(Libs) $(LinkOptions)\n");
+		
 	} else if (type == Project::EXECUTABLE) {
 		//create an executable
-		text << wxT("\t") << wxT("$(LinkerName) $(OutputSwitch)$(OutputFile) $(Objects) $(LibPath) $(Libs) $(LinkOptions)\n");
+		text << wxT("\t") << wxT("$(LinkerName) $(OutputSwitch)$(OutputFile)");
+		if(cmp && cmp->GetReadObjectFilesFromList()) {
+			text << wxT(" @$(ObjectsFileList) ");
+		} else {
+			text << wxT(" $(Objects) ");
+		}
+		text << wxT("$(LibPath) $(Libs) $(LinkOptions)\n");
+		
 	}
 }
 
@@ -1040,7 +1081,10 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 
 	wxString cmpType = bldConf->GetCompilerType();
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
-
+	
+	wxString objectsFileName(proj->GetFileName().GetPath());
+	objectsFileName << PATH_SEP << proj->GetName() << wxT(".txt");
+	
 	text << wxT("## ") << name << wxT("\n");
 
 	// Expand the build macros into the generated makefile
@@ -1076,7 +1120,8 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("ObjectSwitch           :=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
 	text << wxT("ArchiveOutputSwitch    :=") << cmp->GetSwitch(wxT("ArchiveOutput")) << wxT("\n");
 	text << wxT("PreprocessOnlySwitch   :=") << cmp->GetSwitch(wxT("PreprocessOnly")) << wxT("\n");
-
+	text << wxT("ObjectsFileList        :=\"") << objectsFileName << wxT("\"\n");
+	
 	if (OS_WINDOWS) {
 		text << wxT("MakeDirCommand         :=") << wxT("makedir") << wxT("\n");
 	} else {

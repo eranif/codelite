@@ -56,20 +56,20 @@ public:
 		wxString compilation_line;
 		CmpFileKind kind;
 	};
-	
+
 	struct CmpCmdLineOption {
 		wxString name;
 		wxString help;
 	};
 	typedef std::map<wxString, CmpCmdLineOption> CmpCmdLineOptions;
-	
+
 	struct CmpInfoPattern {
 		wxString pattern;
 		wxString lineNumberIndex;
 		wxString fileNameIndex;
 	};
 	typedef std::list<CmpInfoPattern> CmpListInfoPattern;
-	
+
 
 private:
 	void AddCmpFileType(const wxString &extension, CmpFileKind type, const wxString &compile_line);
@@ -81,9 +81,9 @@ protected:
 	CmpCmdLineOptions m_compilerOptions;
 	CmpCmdLineOptions m_linkerOptions;
 	wxString m_objectSuffix;
-    wxString m_dependSuffix;
-    wxString m_preprocessSuffix;
-    
+	wxString m_dependSuffix;
+	wxString m_preprocessSuffix;
+
 	CmpListInfoPattern m_errorPatterns;
 	CmpListInfoPattern m_warningPatterns;
 
@@ -92,6 +92,7 @@ protected:
 	wxString m_globalLibPath;
 	wxString m_pathVariable;
 	bool m_generateDependeciesFile;
+	bool m_readObjectFilesFromList;
 
 public:
 	typedef std::map<wxString, wxString>::const_iterator ConstIterator;
@@ -127,7 +128,7 @@ public:
 	void SetObjectSuffix(const wxString &suffix) {
 		m_objectSuffix = suffix;
 	}
-  	const wxString &GetDependSuffix() const {
+	const wxString &GetDependSuffix() const {
 		return m_dependSuffix;
 	}
 	void SetDependSuffix(const wxString &suffix) {
@@ -139,7 +140,7 @@ public:
 	void SetPreprocessSuffix(const wxString &suffix) {
 		m_preprocessSuffix = suffix;
 	}
-    
+
 	void SetName(const wxString &name) {
 		m_name = name;
 	}
@@ -188,11 +189,11 @@ public:
 	const std::map<wxString, Compiler::CmpFileTypeInfo>& GetFileTypes() const {
 		return m_fileTypes;
 	}
-	
+
 	const CmpCmdLineOptions& GetCompilerOptions() const {
 		return m_compilerOptions;
 	}
-	
+
 	void SetCompilerOptions(const CmpCmdLineOptions& cmpOptions) {
 		m_compilerOptions = cmpOptions;
 	}
@@ -200,7 +201,7 @@ public:
 	const CmpCmdLineOptions& GetLinkerOptions() const {
 		return m_linkerOptions;
 	}
-	
+
 	void SetLinkerOptions(const CmpCmdLineOptions& cmpOptions) {
 		m_linkerOptions = cmpOptions;
 	}
@@ -210,6 +211,12 @@ public:
 	}
 	const bool& GetGenerateDependeciesFile() const {
 		return m_generateDependeciesFile;
+	}
+	void SetReadObjectFilesFromList(bool readObjectFilesFromList) {
+		this->m_readObjectFilesFromList = readObjectFilesFromList;
+	}
+	bool GetReadObjectFilesFromList() const {
+		return m_readObjectFilesFromList;
 	}
 	bool GetCmpFileType(const wxString &extension, Compiler::CmpFileTypeInfo &ft);
 };

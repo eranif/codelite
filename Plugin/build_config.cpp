@@ -439,3 +439,8 @@ wxString BuildConfig::GetIntermediateDirectory() const
 wxString BuildConfig::GetWorkingDirectory() const {
 	return NormalizePath(m_workingDirectory);
 }
+
+CompilerPtr BuildConfig::GetCompiler() const
+{
+	return BuildSettingsConfigST::Get()->GetCompiler(GetCompilerType());
+}

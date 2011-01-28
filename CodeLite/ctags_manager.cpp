@@ -920,6 +920,7 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
 	std::vector<wxString> visibleScopes;
 	wxString scopeName = GetLanguage()->GetScopeName(scope, &visibleScopes);
 	if (expression.IsEmpty()) {
+		
 		// add the current scope to the "visibleScopes" to be tested
 		if(scopeName != wxT("<global>")) {
 			visibleScopes.push_back(scopeName);
@@ -941,7 +942,13 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
 		} else {
 			FilterDeclarations(tmpCandidates, tags);
 		}
-
+		
+		if(tags.empty()) {
+			TryFindImplDeclUsingNS(scopeName, word, imp, visibleScopes, tags);
+			if(tags.empty())
+				TryReducingScopes(scopeName, word, imp, tags);
+		}
+		
 	} else {
 		wxString typeName, typeScope;
 		wxString oper, dummy;
@@ -959,6 +966,87 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
 		std::vector<TagEntryPtr> tmpCandidates;
 		TagsByScopeAndName(scope, word, tmpCandidates, ExactMatch);
 
+		if (!imp) {
+			//collect only implementation
+			FilterImplementation(tmpCandidates, tags);
+		} else {
+			FilterDeclarations(tmpCandidates, tags);
+		}
+		
+		if(tags.empty()) {
+			TryFindImplDeclUsingNS(scope, word, imp, visibleScopes, tags);
+			if(tags.empty())
+				TryReducingScopes(scope, word, imp, tags);
+		}
+	}
+}
+
+void TagsManager::TryReducingScopes(const wxString& scope, const wxString& word, bool imp, std::vector<TagEntryPtr>& tags)
+{
+	if(scope == wxT("<global>") || scope.IsEmpty())
+		return;
+		
+	// if we are here, it means that the the 'word' was not found in the 'scope'
+	// and we already tried the 'TryFindImplDeclUsingNS' method.
+	// What is left to be done is to reduce the 'scope' until we find a match.
+	// Example:
+	// OuterScope::Foo::Bar::Method()
+	// However the entry in the database is stored only with as 'Bar::Method()'
+	// we will reduce the scope and will try the following scopes:
+	// Foo::Bar
+	// Bar
+	std::vector<wxString> visibleScopes;
+	wxArrayString scopes = wxStringTokenize(scope, wxT(":"), wxTOKEN_STRTOK);
+	for(size_t i=1; i<scopes.GetCount(); i++) {
+		wxString newScope;
+		for(size_t j=i; j<scopes.GetCount(); j++) {
+			newScope << scopes.Item(j) << wxT("::");
+		}
+		if(newScope.Len() >= 2) {
+			newScope.RemoveLast(2);
+		}
+		visibleScopes.push_back(newScope);
+	}
+	std::vector<TagEntryPtr> tmpCandidates;
+	if(visibleScopes.empty() == false) {
+		for(size_t i=0; i<visibleScopes.size(); i++) {
+			TagsByScopeAndName(visibleScopes.at(i), word, tmpCandidates, ExactMatch);
+		}
+		
+		if (!imp) {
+			//collect only implementation
+			FilterImplementation(tmpCandidates, tags);
+		} else {
+			FilterDeclarations(tmpCandidates, tags);
+		}
+	}
+}
+
+void TagsManager::TryFindImplDeclUsingNS(const wxString &scope,
+										 const wxString &word,
+										 bool imp,
+										 const std::vector<wxString>& visibleScopes, 
+										 std::vector<TagEntryPtr> &tags)
+{
+	std::vector<TagEntryPtr> tmpCandidates;
+	// if we got here and the tags.empty() is true, 
+	// there is another option to try:
+	// sometimes people tend to write code similar to:
+	// using namespace Foo;
+	// void Bar::func(){}
+	// this will make the entry in the tags database to have a scope of 'Bar' without
+	// the Foo scope, however the ProcessExpression() method does take into consideration
+	// the 'using namespace' statement, we attempt to fix this here
+	if(visibleScopes.empty() == false) {
+		tmpCandidates.clear();
+		for(size_t i=0; i<visibleScopes.size(); i++) {
+			wxString newScope(scope);
+			if(newScope.StartsWith(visibleScopes.at(i) + wxT("::"))) {
+				newScope.Remove(0, visibleScopes.at(i).Len() + 2);
+			}
+			TagsByScopeAndName(newScope, word, tmpCandidates, ExactMatch);
+		}
+		
 		if (!imp) {
 			//collect only implementation
 			FilterImplementation(tmpCandidates, tags);
@@ -2732,3 +2820,4 @@ void TagsManager::SetEncoding(const wxFontEncoding& encoding)
 {
 	m_encoding = encoding;
 }
+

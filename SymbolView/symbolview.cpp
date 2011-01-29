@@ -454,13 +454,16 @@ void SymbolViewPlugin::GetFiles(const wxFileName &path, wxArrayString &files)
 			for (size_t j = 0; j < projectFiles.size(); j++) {
 				wxFileName &fileName = projectFiles[j];
 				wxString file = fileName.GetFullPath();
+				
+				FileExtManager::FileType pathType = FileExtManager::GetType(path.GetFullName());
+				FileExtManager::FileType fileType = FileExtManager::GetType(fileName.GetFullName());
+				
 				if (fullPath == workspaceFileName || fullPath == projectFileName || fullPath == file) {
 					files.Add(file);
 
-				} else if (path.GetExt() != wxT("h") && fileName.GetExt() == wxT("h")) {
+				} else if ((pathType == FileExtManager::TypeSourceC || pathType == FileExtManager::TypeSourceCpp) && fileType == FileExtManager::TypeHeader) {
 					// TODO: replace this code with a "real" solution based on actual file dependencies.
 					// for now, make sure .c or .cpp file also includes corresponding .h file.
-					// FIXME: this only works if the .h file is in the same directory as the .c/.cpp file.
 					wxString otherFile;
 					if(FindSwappedFile(fileName, otherFile, projectFiles)) {
 						if (fullPath.CmpNoCase(otherFile) == 0) {
@@ -511,7 +514,9 @@ void SymbolViewPlugin::GetPaths(const wxArrayString &files, std::multimap<wxStri
 			if (fileset.find(filePath) != fileset.end()) {
 				filePaths.insert(std::make_pair(filePath, projectFileName));
 			}
-			if (fileName.GetExt() != wxT("h")) {
+			
+			FileExtManager::FileType fileNameType = FileExtManager::GetType(fileName.GetFullName());
+			if (fileNameType == FileExtManager::TypeSourceC || fileNameType == FileExtManager::TypeSourceCpp) {
 				wxString headerFile;
 				if(FindSwappedFile(fileName, headerFile, projectFiles)) {
 					if (fileset.find(headerFile) == fileset.end()) {

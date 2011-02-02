@@ -63,11 +63,11 @@ public:
 };
 
 //---------------------------
-// List of availabla trees
+// List of available trees
 //---------------------------
 enum TreeType {
 	TreeFileView = 0,
-	TreeFileExplorer,
+	TreeFileExplorer
 };
 
 //------------------------------------------------------------------

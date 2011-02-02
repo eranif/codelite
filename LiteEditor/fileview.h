@@ -185,7 +185,7 @@ private:
 	wxTreeItemId GetSingleSelection();
 	size_t GetMultiSelection(wxArrayTreeItemIds &arr);
 	wxTreeItemId FindItemByPath(wxTreeItemId &parent, const wxString &projectPath, const wxString &fileName);
-	DECLARE_EVENT_TABLE();
+	DECLARE_EVENT_TABLE()
 };
 
 #endif // FILE_VIEW_TREE_H

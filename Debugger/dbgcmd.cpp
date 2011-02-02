@@ -167,7 +167,26 @@ static std::map<wxString, wxString> g_fileCache;
 
 bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 {
-#if defined (__WXMSW__) || defined (__WXGTK__)
+#if defined (__WXGTK__)
+	//Output from "-stack-info-frame"
+	//^done,frame={level="0",addr="0x000000000043b227",func="MyClass::DoFoo",file="./Foo.cpp",fullname="/full/path/to/Foo.cpp",line="30"}
+
+	wxString tmpLine;
+	line.StartsWith(wxT("^done,frame={"), &tmpLine);
+	tmpLine.RemoveLast();
+	if (tmpLine.IsEmpty()) {
+		return false;
+	}
+
+	StackEntry entry;
+	ParseStackEntry(tmpLine, entry);
+
+	long line_number;
+	entry.line.ToLong(&line_number);
+	m_observer->UpdateFileLine(entry.file, line_number);
+
+#elif defined (__WXMSW__)
+	//Output of -file-list-exec-source-file
 	//^done,line="36",file="a.cpp",fullname="C:/testbug1/a.cpp"
 
 	// By default we use the 'fullname' as our file name. however,

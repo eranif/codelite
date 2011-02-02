@@ -45,7 +45,7 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 	
 	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);
 
-	const wxString SearchScope[] = { wxT("Entire Workspace"), wxT("Active Project") };
+	const wxString SearchScope[] = { wxTRANSLATE("Entire Workspace"), wxTRANSLATE("Active Project") };
 	m_stringManager.AddStrings(sizeof(SearchScope)/sizeof(wxString), SearchScope, data.GetScanScope(), m_choiceSearchScope);
 	
 	m_treeCtrlResults->AddColumn(_("Scope"),   300);

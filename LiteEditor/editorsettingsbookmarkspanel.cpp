@@ -39,7 +39,7 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel( wxWindow* parent )
 	m_displaySelection->SetValue(options->GetDisplayBookmarkMargin());
 
 	// These are localised inside m_bookMarkShape. However serialising the translated strings will break other locales...
-	const wxString UnlocalisedShapes[] = { wxT("Small Rectangle"), wxT("Rounded Rectangle"), wxT("Circle"), wxT("Small Arrow") };
+	const wxString UnlocalisedShapes[] = { wxTRANSLATE("Small Rectangle"), wxTRANSLATE("Rounded Rectangle"), wxTRANSLATE("Circle"), wxTRANSLATE("Small Arrow") };
 	m_stringManager.AddStrings(sizeof(UnlocalisedShapes)/sizeof(wxString), UnlocalisedShapes, options->GetBookmarkShape(), m_bookMarkShape);
 
 	m_backgroundColor->SetColour(options->GetBookmarkBgColour());

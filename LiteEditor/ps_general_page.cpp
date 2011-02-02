@@ -93,7 +93,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
 
 	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
 	wxString projType = projSettingsPtr->GetProjectType(buildConf->GetName());
-	const wxString ProjectTypes[] = { wxT("Static Library"), wxT("Dynamic Library"), wxT("Executable") };
+	const wxString ProjectTypes[] = { wxTRANSLATE("Static Library"), wxTRANSLATE("Dynamic Library"), wxTRANSLATE("Executable") };
 	m_stringManager.AddStrings(sizeof(ProjectTypes)/sizeof(wxString), ProjectTypes, projType, m_choiceProjectTypes);
 
 	m_choiceCompilerType->Clear();

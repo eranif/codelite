@@ -200,7 +200,7 @@ void PSCustomBuildPage::Load(BuildConfigPtr buildConf)
 	m_checkEnableCustomBuild->SetValue(buildConf->IsCustomBuild());
 	m_textCtrlCustomBuildWD->SetValue(buildConf->GetCustomBuildWorkingDir());
 	
-	const wxString PartyTool[] = { wxT("None"), wxT("Other") };
+	const wxString PartyTool[] = { wxTRANSLATE("None"), wxTRANSLATE("Other") };
 	m_stringManager.AddStrings(sizeof(PartyTool)/sizeof(wxString), PartyTool, buildConf->GetToolName(), m_thirdPartyTool);
 
 	m_textCtrlMakefileGenerationCmd->SetValue(buildConf->GetMakeGenerationCommand());

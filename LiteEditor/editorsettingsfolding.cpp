@@ -37,8 +37,8 @@ EditorSettingsFolding::EditorSettingsFolding( wxWindow* parent )
 	m_foldCompact->SetValue(options->GetFoldCompact());
 	m_foldElse->SetValue(options->GetFoldAtElse());
 	
-	const wxString FoldStyles[] = { wxT("Simple"), wxT("Arrows"), wxT("Arrows with Background Colour"), wxT("Simple with Background Colour"), 
-									  wxT("Flatten Tree Square Headers"), wxT("Flatten Tree Circular Headers") };
+	const wxString FoldStyles[] = { wxTRANSLATE("Simple"), wxTRANSLATE("Arrows"), wxTRANSLATE("Arrows with Background Colour"), wxTRANSLATE("Simple with Background Colour"), 
+									  wxTRANSLATE("Flatten Tree Square Headers"), wxTRANSLATE("Flatten Tree Circular Headers") };
 	m_stringManager.AddStrings(sizeof(FoldStyles)/sizeof(wxString), FoldStyles, options->GetFoldStyle(), m_foldStyle);
 
 	m_colourPicker->SetColour(options->GetFoldBgColour());

@@ -72,7 +72,7 @@ void EditorSettingsLocal::DisplayHigherValues( const OptionsConfigPtr options )
 	m_checkBoxDisplayFoldMargin->SetValue( options->GetDisplayFoldMargin() );
 	m_displayBookmarkMargin->SetValue( options->GetDisplayBookmarkMargin() );
 
-	const wxString WhitespaceStyle[] = { wxT("Invisible"), wxT("Visible always"), wxT("Visible after indentation"), wxT("Indentation only") };
+	const wxString WhitespaceStyle[] = { wxTRANSLATE("Invisible"), wxTRANSLATE("Visible always"), wxTRANSLATE("Visible after indentation"), wxTRANSLATE("Indentation only") };
 	wxString currentWhitespace;
 	switch (options->GetShowWhitspaces()) {
 	case wxSCI_WS_VISIBLEALWAYS:
@@ -90,7 +90,7 @@ void EditorSettingsLocal::DisplayHigherValues( const OptionsConfigPtr options )
 	}
 	m_WSstringManager.AddStrings(sizeof(WhitespaceStyle)/sizeof(wxString), WhitespaceStyle, currentWhitespace, m_whitespaceStyle);
 
-	const wxString EOLChoices[] = { wxT("Default"), wxT("Mac (CR)"), wxT("Windows (CRLF)"), wxT("Unix (LF)") };
+	const wxString EOLChoices[] = { wxTRANSLATE("Default"), wxT("Mac (CR)"), wxT("Windows (CRLF)"), wxT("Unix (LF)") };
 	m_EOLstringManager.AddStrings(sizeof(EOLChoices)/sizeof(wxString), EOLChoices, options->GetEolMode(), m_choiceEOL);
 
 	wxArrayString astrEncodings;

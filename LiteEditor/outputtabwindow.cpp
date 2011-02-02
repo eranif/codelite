@@ -319,6 +319,10 @@ void OutputTabWindow::OnCollapseAll(wxCommandEvent& e)
 		bool done = false;
 		for (int pass = 0; pass < 2 && !done; pass++) {
 			for (int line = 0; line < maxLine; line++) {
+				// Only test fold-header lines, otherwise we get false positives from "=== Searching for..."
+				if (! (m_sci->GetFoldLevel(line) & wxSCI_FOLDLEVELHEADERFLAG)) {
+					continue;	
+				}
 				int foldLevel = (m_sci->GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
 				if (foldLevel == 2 && m_sci->GetFoldExpanded(line) == !pass) {
 					m_sci->ToggleFold(line);

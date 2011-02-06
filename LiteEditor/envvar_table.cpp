@@ -23,6 +23,7 @@ EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent )
 		sci->StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 		sci->StyleSetForeground(i, *wxBLACK);
 		sci->StyleSetFont(i, font);
+		sci->SetWrapMode(wxSCI_WRAP_WORD);
 	}
 	
 	WindowAttrManager::Load(this, wxT("EnvVarsTableDlg"), NULL);

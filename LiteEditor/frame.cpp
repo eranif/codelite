@@ -4354,7 +4354,7 @@ wxString clMainFrame::StartTTY(const wxString &title)
 	// Create a new TTY Console and place it in the AUI
 	ConsoleFrame *console = new ConsoleFrame(m_mainPanel);
 	wxAuiPaneInfo paneInfo;
-	paneInfo.Name(wxT("Debugger Console")).Float().Caption(title).Dockable().FloatingSize(300, 200).CloseButton(false);
+	paneInfo.Name(wxT("Debugger Console")).Caption(title).Dockable().FloatingSize(300, 200).CloseButton(false);
 	m_mgr.AddPane(console, paneInfo);
 
 	if(!content.IsEmpty()) {

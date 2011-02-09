@@ -924,6 +924,9 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
 		// add the current scope to the "visibleScopes" to be tested
 		if(scopeName != wxT("<global>")) {
 			visibleScopes.push_back(scopeName);
+			wxArrayString outerScopes = BreakToOuterScopes(scopeName);
+			for(size_t i=0; i<outerScopes.GetCount(); i++)
+				visibleScopes.push_back(outerScopes.Item(i));
 		}
 		
 		// collect tags from all the visible scopes
@@ -1724,12 +1727,7 @@ wxString TagsManager::GetScopeName(const wxString &scope)
 
 bool TagsManager::ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope, wxString &oper, wxString &scopeTempalteInitiList)
 {
-	bool res = GetLanguage()->ProcessExpression(expr, scopeText, filename, lineno, typeName, typeScope, oper, scopeTempalteInitiList);
-//	if (res && IsTypeAndScopeExists(typeName, typeScope) == false && scopeTempalteInitiList.empty() == false) {
-//		// try to resolve it again
-//		res = GetLanguage()->ResolveTemplate(typeName, typeScope, typeScope, scopeTempalteInitiList);
-//	}
-	return res;
+	return GetLanguage()->ProcessExpression(expr, scopeText, filename, lineno, typeName, typeScope, oper, scopeTempalteInitiList);
 }
 
 bool TagsManager::GetMemberType(const wxString &scope, const wxString &name, wxString &type, wxString &typeScope)
@@ -2821,3 +2819,19 @@ void TagsManager::SetEncoding(const wxFontEncoding& encoding)
 	m_encoding = encoding;
 }
 
+wxArrayString TagsManager::BreakToOuterScopes(const wxString& scope)
+{
+	wxArrayString outerScopes;
+	wxArrayString scopes = wxStringTokenize(scope, wxT(":"), wxTOKEN_STRTOK);
+	for(size_t i=1; i<scopes.GetCount(); i++) {
+		wxString newScope;
+		for(size_t j=0; j<i; j++) {
+			newScope << scopes.Item(j) << wxT("::");
+		}
+		if(newScope.Len() >= 2) {
+			newScope.RemoveLast(2);
+		}
+		outerScopes.Add(newScope);
+	}
+	return outerScopes;
+}

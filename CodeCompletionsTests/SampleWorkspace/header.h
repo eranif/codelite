@@ -32,3 +32,17 @@ struct ST {
 ST theStruct;
 
 #define EG(x) theStruct.x
+
+// Needed for the test of the 'goto decl inside namespace'
+namespace Baz
+{
+struct Tada
+{
+    int bar;  
+};
+
+class Foo
+{
+public:
+    Tada sad; // Tada cannot be located via Goto Declaration/Implementation
+};

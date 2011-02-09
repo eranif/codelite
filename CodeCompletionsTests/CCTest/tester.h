@@ -78,7 +78,7 @@ bool Test_##Name::Name()
 	}
 
 #define CHECK_STRING(str, expcStr) { if(strcmp(str, expcStr) == 0) {\
-			printf("% -40s(%d): Successfull!\n", __FUNCTION__, m_testCount);\
+			printf("%-40s(%d): Successfull!\n", __FUNCTION__, m_testCount);\
 		} else {\
 			printf("%-40s(%d): ERROR\n%s:%d: Expected string: %s, Actual string:%s\n", __FUNCTION__, m_testCount, __FILE__, __LINE__, expcStr, str);\
 			return false;\

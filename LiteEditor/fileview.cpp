@@ -1568,7 +1568,14 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	wxStringTokenizer tok(filespec, wxT(";"));
 	std::set<wxString> specMap;
 	while ( tok.HasMoreTokens() ) {
-		wxString v = tok.GetNextToken().AfterLast(wxT('*'));
+		wxString v = tok.GetNextToken();
+		// Cater for *.*, and also for idiots asking for *.foo;*.*
+		if (v == wxT("*.*")) {
+			// Remove any previous entries, and stop looking for more: an empty specMap signals *.*
+			specMap.clear();
+			break;
+		}
+		v = v.AfterLast(wxT('*'));
 		v = v.AfterLast(wxT('.')).MakeLower();
 		specMap.insert( v );
 	}

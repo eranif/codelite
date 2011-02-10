@@ -532,6 +532,8 @@ createPluginTargets()
 	echo "	@echo" >> Makefile
 	echo "	@test -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
 	echo "	@test -d  ${base_dir}/\$(OUTPUT_DIR) || mkdir ${base_dir}/\$(OUTPUT_DIR)" >> Makefile
+	## Ensure that ${runtime_path} exists. It should already, but might not when cloning a git repository (depending on its .gitignore)
+	echo "	@test -d  ${runtime_path} || mkdir ${runtime_path}" >> Makefile
 	echo "" >> Makefile
 	echo "clean:" >> Makefile
 	echo "	\$(RM) ${base_dir}/\$(OUTPUT_DIR)/${plugin_name}.so" >> Makefile

@@ -143,9 +143,7 @@
   </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebug_29"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="PreProcessing">
     <File Name="pp.cpp"/>
     <File Name="pp.l"/>
@@ -167,7 +165,6 @@
     <File Name="stringaccessor.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Required="yes" PreCompiledHeader="">
@@ -295,4 +292,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

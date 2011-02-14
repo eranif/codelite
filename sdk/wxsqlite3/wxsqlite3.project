@@ -23,12 +23,6 @@
   <Dependencies Name="ReleaseUnicode">
     <Project Name="sqlite3"/>
   </Dependencies>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="sqlite3"/>
-  </Dependencies>
-  <Dependencies Name="WinReleaseUnicode">
-    <Project Name="sqlite3"/>
-  </Dependencies>
   <Dependencies Name="WinDebug_29">
     <Project Name="sqlite3"/>
   </Dependencies>
@@ -157,7 +151,13 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <Dependencies Name="WinDebugUnicode">
+    <Project Name="sqlite3"/>
+  </Dependencies>
   <Dependencies Name="Win_wxWidgets_29">
+    <Project Name="sqlite3"/>
+  </Dependencies>
+  <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
   </Dependencies>
 </CodeLite_Project>

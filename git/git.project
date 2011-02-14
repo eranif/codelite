@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="git">
+  <Dependencies/>
+  <VirtualDirectory Name="git">
+    <File Name="git.cpp"/>
+    <File Name="git.h"/>
+    <File Name="gitCommitDlg.cpp"/>
+    <File Name="gitCommitDlg.h"/>
+    <File Name="gitCommitEditor.cpp"/>
+    <File Name="gitCommitEditor.h"/>
+    <File Name="gitCommitListDlg.cpp"/>
+    <File Name="gitCommitListDlg.h"/>
+    <File Name="gitDiffDlg.cpp"/>
+    <File Name="gitDiffDlg.h"/>
+    <File Name="gitentry.cpp"/>
+    <File Name="gitentry.h"/>
+    <File Name="gitLogDlg.cpp"/>
+    <File Name="gitLogDlg.h"/>
+    <File Name="gitSettingsDlg.cpp"/>
+    <File Name="gitSettingsDlg.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="icons">
+    <File Name="icons/giggle.xpm"/>
+    <File Name="icons/icon_git.xpm"/>
+    <File Name="icons/menuadd.xpm"/>
+    <File Name="icons/menubranch.xpm"/>
+    <File Name="icons/menucheckout.xpm"/>
+    <File Name="icons/menucleanup.xpm"/>
+    <File Name="icons/menucommit.xpm"/>
+    <File Name="icons/menudelete.xpm"/>
+    <File Name="icons/menudiff.xpm"/>
+    <File Name="icons/menuexport.xpm"/>
+    <File Name="icons/menuimport.xpm"/>
+    <File Name="icons/menulog.xpm"/>
+    <File Name="icons/menuswitch.xpm"/>
+  </VirtualDirectory>
+  <Settings Type="Dynamic Library">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" C_Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="."/>
+        <IncludePath Value="..\..\CL_trunk/Interfaces"/>
+        <IncludePath Value="..\..\CL_trunk/CodeLite"/>
+        <IncludePath Value="..\..\CL_trunk/Plugin"/>
+        <IncludePath Value="..\..\CL_trunk/sdk/wxsqlite3/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXUSINGDLL_SCI"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
+        <LibraryPath Value="..\..\CL_trunk/lib"/>
+        <Library Value="libpluginud.dll"/>
+        <Library Value="libcodeliteud.dll"/>
+        <Library Value="libwxsqlite3ud.dll"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ConfigurationName)/git.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2" C_Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="."/>
+        <IncludePath Value="..\..\CL_trunk/Interfaces"/>
+        <IncludePath Value="..\..\CL_trunk/CodeLite"/>
+        <IncludePath Value="..\..\CL_trunk/Plugin"/>
+        <IncludePath Value="..\..\CL_trunk/sdk/wxsqlite3/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXUSINGDLL_SCI"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-s" Required="yes">
+        <LibraryPath Value="..\..\CL_trunk/lib"/>
+        <Library Value="libpluginu.dll"/>
+        <Library Value="libcodeliteu.dll"/>
+        <Library Value="libwxsqlite3u.dll"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ConfigurationName)/git.dll" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sqlite3"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxpropgrid/include"/>
+        <IncludePath Value="../sdk/codelite_cppcheck"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="_WIN32_WINNT=0x501"/>
+        <Preprocessor Value="ASTYLE_LIB"/>
+        <Preprocessor Value="WXUSINGDLL_SCI"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdkud.dll"/>
+        <Library Value="libcodeliteud.dll"/>
+        <Library Value="libwxsqlite3ud.dll"/>
+        <Library Value="libwxscintillaud.dll"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../Runtime/plugins/git.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sqlite3"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxpropgrid/include"/>
+        <IncludePath Value="../sdk/codelite_cppcheck"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="_WIN32_WINNT=0x501"/>
+        <Preprocessor Value="WXUSINGDLL_SCI"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="ASTYLE_LIB"/>
+      </Compiler>
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-s" Required="yes">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdku.dll"/>
+        <Library Value="libcodeliteu.dll"/>
+        <Library Value="libwxsqlite3u.dll"/>
+        <Library Value="libwxscintillau.dll"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../Runtime/plugins/git.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./WinReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+  <Dependencies Name="WinReleaseUnicode"/>
+</CodeLite_Project>

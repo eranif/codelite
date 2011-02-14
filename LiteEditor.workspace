@@ -35,6 +35,7 @@
   <Project Name="Subversion2" Path="Subversion2/Subversion2.project" Active="No"/>
   <Project Name="SymbolView" Path="SymbolView/SymbolView.project" Active="No"/>
   <Project Name="MacBundler" Path="MacBundler/MacBundler.project" Active="No"/>
+  <Project Name="git" Path="git/git.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
@@ -51,6 +52,7 @@
       <Project Name="LiteEditor" ConfigName="WinReleaseUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="WinReleaseUnicode"/>
+      <Project Name="git" ConfigName="WinReleaseUnicode"/>
       <Project Name="ExternalTools" ConfigName="WinReleaseUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="WinReleaseUnicode"/>
       <Project Name="Cscope" ConfigName="WinReleaseUnicode"/>
@@ -76,6 +78,7 @@
       <Project Name="LiteEditor" ConfigName="WinDebugUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="WinDebugUnicode"/>
+      <Project Name="git" ConfigName="WinDebugUnicode"/>
       <Project Name="ExternalTools" ConfigName="WinDebugUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="WinDebugUnicode"/>
       <Project Name="Cscope" ConfigName="WinDebugUnicode"/>
@@ -86,7 +89,7 @@
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="no">
+    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
@@ -110,8 +113,9 @@
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
+      <Project Name="git" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="no">
+    <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
@@ -135,8 +139,9 @@
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
+      <Project Name="git" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_wxWidgets_29" Selected="no">
+    <WorkspaceConfiguration Name="Win_wxWidgets_29" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="Win_wxWidgets_29"/>
       <Project Name="wxscintilla" ConfigName="Win_wxWidgets_29"/>
       <Project Name="wxFormBuilder" ConfigName="Win_wxWidgets_29"/>
@@ -160,6 +165,7 @@
       <Project Name="CodeLite" ConfigName="Win_wxWidgets_29"/>
       <Project Name="CodeFormatter" ConfigName="Win_wxWidgets_29"/>
       <Project Name="abbreviation" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="git" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

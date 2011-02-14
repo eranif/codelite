@@ -31,8 +31,6 @@
     <File Name="cppcheck_settings.cpp"/>
     <File Name="cppcheck_settings.h"/>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinRelease_29"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -181,5 +179,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

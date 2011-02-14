@@ -1,0 +1,24 @@
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//
+// copyright            : (C) 2011 by René Kraus (aka upCASE)
+//
+//////////////////////////////////////////////////////////////////////////////
+
+#ifndef __gitDiffDlg__
+#define __gitDiffDlg__
+
+#include <wx/wx.h>
+
+class GitCommitEditor;
+
+class GitDiffDlg : public wxDialog
+{
+  GitCommitEditor* m_editor;
+  public:
+    GitDiffDlg(wxWindow* parent);
+    void SetDiff(const wxString& diff);
+};
+
+#endif //__gitDiffDlg__
+

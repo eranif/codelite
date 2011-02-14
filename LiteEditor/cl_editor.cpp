@@ -1117,7 +1117,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 		return false;
 	}
 	
-	file.Write(buf.data(), txtLen);
+	file.Write(buf.data(), strlen(buf.data()));
 	file.Close();
 
 #ifdef __WXGTK__

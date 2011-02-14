@@ -1089,7 +1089,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	// BUG#2982452
 	// try to manually convert the text to make sure that the conversion does not fail
 	wxString theText = GetText();
-	int      txtLen  = GetTextLength();
+//	int      txtLen  = GetTextLength();
 	
 	// Make sure we can open the file for writing
 	wxString tmp_file;

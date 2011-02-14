@@ -39,7 +39,14 @@ OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager, con
 	m_listOptions->InsertColumn(2, wxT(""));
 	
 	m_listOptions->SetColumnWidth(0, 150);
-	m_listOptions->SetColumnWidth(1, 300);
+	
+	if(m_type == TYPE_WORKSPACE_FILE) {
+		m_listOptions->SetColumnWidth(1, 1000);
+		
+	} else {
+		m_listOptions->SetColumnWidth(1, 300);
+	}
+	
 	m_listOptions->SetColumnWidth(2, 300);
 	
 	m_textCtrlResourceName->SetFocus();
@@ -110,6 +117,14 @@ void OpenResourceDialog::OnType( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 	m_type = m_choiceResourceType->GetStringSelection();
+	
+	if(m_type == TYPE_WORKSPACE_FILE) {
+		m_listOptions->SetColumnWidth(1, 1000);
+		
+	} else {
+		m_listOptions->SetColumnWidth(1, 300);
+	}
+	
 	DoPopulateList();
 	m_textCtrlResourceName->SetFocus();
 

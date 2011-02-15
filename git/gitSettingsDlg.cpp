@@ -33,7 +33,7 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxColour& tracked,
                                     wxDefaultPosition,
                                     wxDefaultSize,
                                     wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL);
-  wxGridSizer* sizer = new wxGridSizer(2,4);
+  wxGridSizer* sizer = new wxGridSizer(0,2, 4);
   sizer->Add(m_labelTrackedColour,0,wxEXPAND,2);
   sizer->Add(m_colourTrackedFile,0,wxEXPAND,2);
   sizer->Add(m_labelDiffColour,0,wxEXPAND,2);

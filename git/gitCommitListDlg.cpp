@@ -1,4 +1,6 @@
 #include "gitCommitListDlg.h"
+#include "gitentry.h"
+#include "editor_config.h"
 
 #include <wx/tokenzr.h>
 #include "gitCommitEditor.h"
@@ -18,6 +20,11 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir)
 	m_workingDir(workingDir)
 {
 	SetIcon(wxICON(icon_git));
+	
+	GitEntry data;
+	EditorConfigST::Get()->ReadObject(wxT("GitData"), &data);
+	m_gitPath = data.GetGITExecutablePath();
+	
 	m_commitListBox = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT);
 	m_commitListBox->InsertColumn(0,wxT("Commit"));
 	m_commitListBox->InsertColumn(1,wxT("Subject"));
@@ -94,9 +101,10 @@ void GitCommitListDlg::OnChangeCommit(wxListEvent& e)
 {
 	wxString commitID = e.GetItem().GetText();
 
-	wxString command = wxT("git --no-pager show ")+commitID;
+	wxString command = wxString::Format(wxT("%s --no-pager show %s"), m_gitPath.c_str(), commitID.c_str());
 	m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, m_workingDir);
 }
+
 /*******************************************************************************/
 void GitCommitListDlg::OnChangeFile(wxCommandEvent& e)
 {

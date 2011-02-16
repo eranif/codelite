@@ -25,6 +25,8 @@ class GitCommitListDlg : public wxDialog
 	wxString m_workingDir;
 	wxString m_commandOutput;
 	IProcess * m_process;
+	wxString   m_gitPath;
+	
 public:
 	GitCommitListDlg(wxWindow* parent, const wxString& workingDir);
 	~GitCommitListDlg();

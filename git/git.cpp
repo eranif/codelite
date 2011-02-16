@@ -273,18 +273,23 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	if(!m_mgr->GetWorkspace()) {
-		wxMessageBox(wxT("No active workspace found!\n"
-		                 "Setting a repository path relies on an sctive workspace."),
-		             wxT("Missing workspace"),
+		wxMessageBox(_("No active workspace found!\n"
+						"Setting a repository path relies on an sctive workspace."),
+		             _("Missing workspace"),
 		             wxICON_ERROR);
 		return;
 	}
 
 	wxString workspaceName = m_mgr->GetWorkspace()->GetName();
-
-	const wxString& dir = wxDirSelector(wxT("Select git root directory for this workspace"),
-	                                    m_repositoryDirectory);
-
+	
+	// use the current repository as the starting path 
+	// if current repository is empty, use the current workspace path
+	wxString startPath = m_repositoryDirectory;
+	if(startPath.IsEmpty()) {
+		startPath = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath();
+	}
+	
+	const wxString& dir = wxDirSelector(wxT("Select git root directory for this workspace"), startPath);
 	if (m_repositoryDirectory != dir ) {
 		m_repositoryDirectory = dir;
 
@@ -1197,9 +1202,10 @@ void GitPlugin::InitDefaults()
 
 	wxString repoPath = data.GetPath(workspaceName);
 
-	if(!repoPath.IsEmpty()) {
+	if(!repoPath.IsEmpty() && wxFileName::DirExists(repoPath + wxFileName::GetPathSeparator() + wxT(".git"))) {
 		m_repositoryDirectory = repoPath;
 		EnableMenuAndToolBar(true);
+		
 	} else {
 		EnableMenuAndToolBar(false);
 		m_repositoryDirectory.Empty();
@@ -1213,6 +1219,7 @@ void GitPlugin::InitDefaults()
 		ProcessGitActionQueue();
 	}
 }
+
 /*******************************************************************************/
 void GitPlugin::EnableMenuAndToolBar(bool enable)
 {

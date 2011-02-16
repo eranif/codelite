@@ -95,6 +95,7 @@ GitPlugin::GitPlugin(IManager *manager)
 	m_topWindow = m_mgr->GetTheApp();
 
 	m_topWindow->Connect( wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
+	m_topWindow->Connect( wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitPlugin::OnWorkspaceClosed), NULL, this);
 	m_topWindow->Connect( wxEVT_FILE_SAVED, wxCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
 	m_topWindow->Connect( wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
 
@@ -128,12 +129,11 @@ clToolBar *GitPlugin::CreateToolBar(wxWindow *parent)
 		m_pluginToolbar->AddTool(ID_COMMIT_LIST, wxT("Log"), XPM_BITMAP(menulog), wxT("Browse commit history"));
 		m_pluginToolbar->AddTool(ID_GITK, wxT("gitk"), XPM_BITMAP(giggle), wxT("Start gitk"));
 		m_pluginToolbar->Realize();
-
-		EnableMenuAndToolBar(false);
 		return m_pluginToolbar;
 	}
 	return NULL;
 }
+
 /*******************************************************************************/
 void GitPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 {
@@ -211,8 +211,21 @@ void GitPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 	m_topWindow->Connect( ID_REFRESH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnRefresh ), NULL, this );
 	m_topWindow->Connect( ID_GARBAGE_COLLETION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnGarbageColletion ), NULL, this );
 
-	EnableMenuAndToolBar(false);
+	m_topWindow->Connect( ID_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
+	m_topWindow->Connect( ID_SWITCH_BRANCH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
+	m_topWindow->Connect( ID_SWITCH_BRANCH_REMOTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
+	m_topWindow->Connect( ID_CREATE_BRANCH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
+	m_topWindow->Connect( ID_PULL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
+	m_topWindow->Connect( ID_COMMIT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
+	m_topWindow->Connect( ID_COMMIT_LIST, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
+	m_topWindow->Connect( ID_PUSH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
+	m_topWindow->Connect( ID_RESET_REPO, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
+	m_topWindow->Connect( ID_GITK, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
+	m_topWindow->Connect( ID_LIST_MODIFIED,wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
+	m_topWindow->Connect( ID_REFRESH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
+	m_topWindow->Connect( ID_GARBAGE_COLLETION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
 }
+
 /*******************************************************************************/
 void GitPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 {
@@ -272,7 +285,7 @@ void GitPlugin::UnPlug()
 void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	if(!m_mgr->GetWorkspace()) {
+	if(!m_mgr->IsWorkspaceOpen()) {
 		wxMessageBox(_("No active workspace found!\n"
 						"Setting a repository path relies on an sctive workspace."),
 		             _("Missing workspace"),
@@ -290,23 +303,32 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 	}
 	
 	const wxString& dir = wxDirSelector(wxT("Select git root directory for this workspace"), startPath);
-	if (m_repositoryDirectory != dir ) {
-		m_repositoryDirectory = dir;
+	
+	// make sure that this is a valid git path
+	if(wxFileName::DirExists(dir + wxFileName::GetPathSeparator() + wxT(".git"))) {
+		if (m_repositoryDirectory != dir ) {
+			m_repositoryDirectory = dir;
 
-		GitEntry data;
-		m_mgr->GetConfigTool()->ReadObject(wxT("GitData"), &data);
-		data.SetEntry(workspaceName, dir);
-		m_mgr->GetConfigTool()->WriteObject(wxT("GitData"), &data);
+			GitEntry data;
+			m_mgr->GetConfigTool()->ReadObject(wxT("GitData"), &data);
+			data.SetEntry(workspaceName, dir);
+			m_mgr->GetConfigTool()->WriteObject(wxT("GitData"), &data);
 
-		if(!dir.IsEmpty()) {
-			EnableMenuAndToolBar(true);
-			AddDefaultActions();
-			ProcessGitActionQueue();
-		} else {
-			EnableMenuAndToolBar(false);
+			if(!dir.IsEmpty()) {
+				AddDefaultActions();
+				ProcessGitActionQueue();
+				
+			} else {
+				m_repositoryDirectory.Clear();
+				
+			}
 		}
+	} else {
+		wxMessageBox(_("The selected directory does not contain any .git directory"), wxT("CodeLite"), wxICON_WARNING|wxOK|wxCENTER);
+		return;
 	}
 }
+
 /*******************************************************************************/
 void GitPlugin::OnSettings(wxCommandEvent &e)
 {
@@ -643,6 +665,7 @@ void GitPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
 	InitDefaults();
 	e.Skip();
 }
+
 /*******************************************************************************/
 void GitPlugin::ProcessGitActionQueue()
 {
@@ -1178,10 +1201,6 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
 /*******************************************************************************/
 void GitPlugin::InitDefaults()
 {
-	if(!m_mgr->GetWorkspace()) {
-		return;
-	}
-
 	wxString workspaceName = m_mgr->GetWorkspace()->GetName();
 
 	GitEntry data;
@@ -1204,10 +1223,8 @@ void GitPlugin::InitDefaults()
 
 	if(!repoPath.IsEmpty() && wxFileName::DirExists(repoPath + wxFileName::GetPathSeparator() + wxT(".git"))) {
 		m_repositoryDirectory = repoPath;
-		EnableMenuAndToolBar(true);
 		
 	} else {
-		EnableMenuAndToolBar(false);
 		m_repositoryDirectory.Empty();
 		m_mgr->GetDockingManager()->GetPane( wxT("Workspace View") ).
 		Caption( wxT("Workspace View"));
@@ -1215,42 +1232,12 @@ void GitPlugin::InitDefaults()
 	}
 
 	if(!m_repositoryDirectory.IsEmpty()) {
+		wxLogMessage(wxT("GIT: intializing git on %s"), m_repositoryDirectory.c_str());
 		AddDefaultActions();
 		ProcessGitActionQueue();
 	}
 }
 
-/*******************************************************************************/
-void GitPlugin::EnableMenuAndToolBar(bool enable)
-{
-	if(m_pluginToolbar) {
-		m_pluginToolbar->EnableTool(ID_PULL, enable);
-		m_pluginToolbar->EnableTool(ID_COMMIT, enable);
-		m_pluginToolbar->EnableTool(ID_PUSH, enable);
-		m_pluginToolbar->EnableTool(ID_RESET_REPO, enable);
-		m_pluginToolbar->EnableTool(ID_CREATE_BRANCH, enable);
-		m_pluginToolbar->EnableTool(ID_SWITCH_BRANCH, enable);
-		m_pluginToolbar->EnableTool(ID_SWITCH_BRANCH_REMOTE, enable);
-		m_pluginToolbar->EnableTool(ID_COMMIT_LIST, enable);
-		m_pluginToolbar->EnableTool(ID_GITK, enable);
-	}
-
-	if(m_pluginMenu) {
-		m_pluginMenu->Enable(ID_PULL, enable);
-		m_pluginMenu->Enable(ID_COMMIT, enable);
-		m_pluginMenu->Enable(ID_PUSH, enable);
-		m_pluginMenu->Enable(ID_RESET_REPO, enable);
-		m_pluginMenu->Enable(ID_CREATE_BRANCH, enable);
-		m_pluginMenu->Enable(ID_SWITCH_BRANCH, enable);
-		m_pluginMenu->Enable(ID_SWITCH_BRANCH_REMOTE, enable);
-		m_pluginMenu->Enable(ID_COMMIT_LIST, enable);
-		m_pluginMenu->Enable(ID_GITK, enable);
-		m_pluginMenu->Enable(ID_LIST_MODIFIED, enable);
-		m_pluginMenu->Enable(ID_GARBAGE_COLLETION, enable);
-		m_pluginMenu->Enable(ID_LIST_MODIFIED, enable);
-		m_pluginMenu->Enable(ID_REFRESH, enable);
-	}
-}
 /*******************************************************************************/
 void GitPlugin::AddDefaultActions()
 {
@@ -1267,6 +1254,7 @@ void GitPlugin::AddDefaultActions()
 	ga.action = gitListRemotes;
 	m_gitActionQueue.push(ga);
 }
+
 /*******************************************************************************/
 void GitPlugin::ColourFileTree(wxTreeCtrl *tree, const wxArrayString& files,
                                const wxColour& colour,
@@ -1305,6 +1293,7 @@ void GitPlugin::OnProgressTimer(wxTimerEvent& Event)
 	if(m_progressDialog->IsShown())
 		m_progressDialog->Pulse();
 }
+
 /*******************************************************************************/
 void GitPlugin::ShowProgress(const wxString& message, bool pulse)
 {
@@ -1330,5 +1319,47 @@ void GitPlugin::HideProgress()
 	if(m_progressDialog) {
 		m_progressDialog->Hide();
 		m_progressTimer.Stop();
+	}
+}
+
+void GitPlugin::OnEnableGitRepoExists(wxUpdateUIEvent& e)
+{
+	e.Enable(m_repositoryDirectory.IsEmpty() == false);
+}
+
+void GitPlugin::OnWorkspaceClosed(wxCommandEvent& e)
+{
+	e.Skip();
+	
+	// store the GIT entry data
+	if(m_mgr->GetWorkspace() && m_mgr->GetWorkspace()->GetName().IsEmpty() == false) {
+		GitEntry data;
+		m_mgr->GetConfigTool()->ReadObject(wxT("GitData"), &data);
+		data.SetEntry(m_mgr->GetWorkspace()->GetName(), m_repositoryDirectory);
+		m_mgr->GetConfigTool()->WriteObject(wxT("GitData"), &data);
+	}
+	
+	// Clearn any saved data from the current workspace 
+	// git commands etc
+	DoCleanup();
+}
+
+void GitPlugin::DoCleanup()
+{
+	m_gitActionQueue = std::queue<gitAction>();
+	m_repositoryDirectory.Clear();
+	m_modifiedIDs.clear();
+	m_remotes.Clear();
+	m_localBranchList.Clear();
+	m_remoteBranchList.Clear();
+	m_trackedFiles.Clear();
+	m_modifiedFiles.Clear();
+	m_addedFiles = false;
+	m_progressMessage.Clear();
+	m_commandOutput.Clear();
+	m_bActionRequiresTreUpdate = false;
+	if(m_process) {
+		delete m_process;
+		m_process = NULL;
 	}
 }

@@ -97,7 +97,6 @@ class GitPlugin : public IPlugin
 
 private:
 	void InitDefaults();
-	void EnableMenuAndToolBar(bool enable);
 	void AddDefaultActions();
 	void ProcessGitActionQueue();
 	void ColourFileTree(wxTreeCtrl *tree, const wxArrayString& files,
@@ -112,7 +111,8 @@ private:
 
 	void ShowProgress(const wxString& message, bool pulse = true);
 	void HideProgress();
-
+	void DoCleanup();
+	
 	DECLARE_EVENT_TABLE();
 	// Event handlers
 	void OnProgressTimer(wxTimerEvent& Event);
@@ -122,7 +122,7 @@ private:
 	void OnFileSaved(wxCommandEvent& e);
 	void OnFilesAddedToProject(wxCommandEvent& e);
 	void OnWorkspaceLoaded(wxCommandEvent& e);
-
+	void OnWorkspaceClosed(wxCommandEvent &e);
 	void OnSetGitRepoPath(wxCommandEvent &e);
 	void OnSettings(wxCommandEvent &e);
 	void OnFileDiffSelected(wxCommandEvent &e);
@@ -141,6 +141,8 @@ private:
 	void OnListModified(wxCommandEvent& e);
 	void OnRefresh(wxCommandEvent& e);
 	void OnGarbageColletion(wxCommandEvent& e);
+	void OnEnableGitRepoExists(wxUpdateUIEvent &e);
+	
 public:
 	GitPlugin(IManager *manager);
 	~GitPlugin();

@@ -1,4 +1,5 @@
 #include "gitSettingsDlg.h"
+#include "windowattrmanager.h"
 
 #include "icons/icon_git.xpm"
 
@@ -11,6 +12,12 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxColour& tracked,
 	m_pathGITK->SetPath(pathGITK);
 	m_colourDiffFile->SetColour(diff);
 	m_colourTrackedFile->SetColour(tracked);
+	WindowAttrManager::Load(this, wxT("GitSettingsDlg"), NULL);
+}
+
+GitSettingsDlg::~GitSettingsDlg()
+{
+	WindowAttrManager::Save(this, wxT("GitSettingsDlg"), NULL);
 }
 
 const wxColour GitSettingsDlg::GetTrackedFileColour()
@@ -29,3 +36,5 @@ const wxString GitSettingsDlg::GetGITKExecutablePath()
 {
 	return m_pathGITK->GetPath();
 }
+
+

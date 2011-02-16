@@ -1,49 +1,23 @@
 #include "gitCommitDlg.h"
 #include "gitCommitEditor.h"
+#include "windowattrmanager.h"
 #include <wx/tokenzr.h>
 
 #include "icons/icon_git.xpm"
 
 GitCommitDlg::GitCommitDlg(wxWindow* parent, const wxString& repoDir)
-	:wxDialog(parent, wxID_ANY, wxT("Commit"),wxDefaultPosition, wxDefaultSize,
-	          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+	: GitCommitDlgBase(parent)
 	,m_workingDir(repoDir)
 {
-	SetIcon(wxICON(icon_git));
-	m_listBox = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE);
-	m_listBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(GitCommitDlg::OnChangeFile), NULL, this);
-	m_editor = new GitCommitEditor(this);
-	m_commitMessage = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2);
-
-	wxStdDialogButtonSizer* sizer_3 = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
-
-	wxStaticBoxSizer* sizer_list = new wxStaticBoxSizer(wxVERTICAL, this, wxT("File list"));
-	sizer_list->Add(m_listBox, 1, wxALL|wxEXPAND, 5);
-
-	wxStaticBoxSizer* sizer_edit = new wxStaticBoxSizer(wxVERTICAL,this,wxT("File diff"));
-	sizer_edit->Add(m_editor, 1, wxALL|wxEXPAND, 5);
-
-	wxStaticBoxSizer* sizer_msg = new wxStaticBoxSizer(wxHORIZONTAL,this,wxT("Commit message"));
-	sizer_msg->Add(m_commitMessage, 1, wxALL|wxEXPAND, 5);
-
-	wxBoxSizer* sizer_1 = new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer* sizer_2 = new wxBoxSizer(wxHORIZONTAL);
-	sizer_2->Add(sizer_list, 0, wxALL|wxEXPAND, 5);
-	sizer_2->Add(sizer_edit, 1, wxALL|wxEXPAND, 5);
-	sizer_1->Add(sizer_2, 2, wxEXPAND, 0);
-	sizer_1->Add(sizer_msg, 1, wxALL|wxEXPAND, 5);
-	sizer_1->Add(sizer_3, 0, wxALL|wxEXPAND, 5);
-	SetSizer(sizer_1);
-	sizer_1->Fit(this);
-	Layout();
-
-	SetSize(1250,-1);
+	WindowAttrManager::Load(this, wxT("GitCommitDlg"), NULL);
 }
+
 /*******************************************************************************/
 GitCommitDlg::~GitCommitDlg()
 {
-	m_listBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(GitCommitDlg::OnChangeFile), NULL, this);
+	WindowAttrManager::Save(this, wxT("GitCommitDlg"), NULL);
 }
+
 /*******************************************************************************/
 void GitCommitDlg::AppendDiff(const wxString& diff)
 {

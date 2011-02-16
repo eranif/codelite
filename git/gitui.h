@@ -22,6 +22,11 @@
 #include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
+#include <wx/checklst.h>
+#include <wx/panel.h>
+#include "gitCommitEditor.h"
+#include <wx/splitter.h>
+#include <wx/textctrl.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -51,6 +56,53 @@ class GitSettingsDlgBase : public wxDialog
 		
 		GitSettingsDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git settings..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~GitSettingsDlgBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class GitCommitDlgBase
+///////////////////////////////////////////////////////////////////////////////
+class GitCommitDlgBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxSplitterWindow* m_splitter2;
+		wxPanel* m_panel3;
+		wxSplitterWindow* m_splitter1;
+		wxPanel* m_panel1;
+		wxStaticText* m_staticText6;
+		wxCheckListBox* m_listBox;
+		wxPanel* m_panel2;
+		wxStaticText* m_staticText7;
+		GitCommitEditor* m_editor;
+		wxPanel* m_panel4;
+		wxStaticText* m_staticText8;
+		wxTextCtrl* m_commitMessage;
+		wxStaticLine* m_staticline3;
+		wxButton* m_button5;
+		wxButton* m_button6;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnChangeFile( wxCommandEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		GitCommitDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git commit..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~GitCommitDlgBase();
+		
+		void m_splitter2OnIdle( wxIdleEvent& )
+		{
+			m_splitter2->SetSashPosition( 0 );
+			m_splitter2->Disconnect( wxEVT_IDLE, wxIdleEventHandler( GitCommitDlgBase::m_splitter2OnIdle ), NULL, this );
+		}
+		
+		void m_splitter1OnIdle( wxIdleEvent& )
+		{
+			m_splitter1->SetSashPosition( 0 );
+			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( GitCommitDlgBase::m_splitter1OnIdle ), NULL, this );
+		}
 	
 };
 

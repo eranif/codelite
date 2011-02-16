@@ -8,31 +8,25 @@
 #ifndef __gitCommitDlg__
 #define __gitCommitDlg__
 
-#include <wx/wx.h>
+#include "gitui.h"
 #include <map>
-class GitCommitEditor;
 
-class GitCommitDlg : public wxDialog
+class GitCommitDlg : public GitCommitDlgBase
 {
-  GitCommitEditor* m_editor;
-  wxCheckListBox* m_listBox;
-  wxTextCtrl* m_commitMessage;
-  std::map<wxString, wxString> m_diffMap;
-  wxString m_workingDir;
+	std::map<wxString, wxString> m_diffMap;
+	wxString m_workingDir;
 
-  public:
-    GitCommitDlg(wxWindow* parent, const wxString& repoDir);
-    ~GitCommitDlg();
-    
-    void AppendDiff(const wxString& diff);
+public:
+	GitCommitDlg(wxWindow* parent, const wxString& repoDir);
+	~GitCommitDlg();
 
-    wxArrayString GetSelectedFiles();
-    wxString GetCommitMessage();
+	void AppendDiff(const wxString& diff);
 
-  private:
-    void OnChangeFile(wxCommandEvent& e);
+	wxArrayString GetSelectedFiles();
+	wxString GetCommitMessage();
+
+private:
+	void OnChangeFile(wxCommandEvent& e);
 };
-
-
 
 #endif

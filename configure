@@ -827,7 +827,7 @@ echo "Plugins: SDK \\" >> Makefile
 ########################################################
 ##
 ## Add any plugin targets you need here
-## Append these as dependencie for the main project
+## Append these as dependencies for the main project
 ##
 ########################################################
 echo "Debugger\\" >> Makefile
@@ -844,6 +844,7 @@ echo "abbreviation\\" >> Makefile
 echo "SymbolView\\" >> Makefile
 echo "ContinuousBuild\\" >> Makefile
 echo "QmakePlugin\\" >> Makefile
+echo "git\\" >> Makefile
 echo "CppCheck\\" >> Makefile
 ## Mac Only
 if [ "$os_name" = "Darwin" ]; then
@@ -871,6 +872,7 @@ echo "abbreviation_install\\" >> Makefile
 echo "SymbolView_install\\" >> Makefile
 echo "ContinuousBuild_install\\" >> Makefile
 echo "QmakePlugin_install\\" >> Makefile
+echo "git_install\\" >> Makefile
 ## Mac only
 if [ "$os_name" = "Darwin" ]; then
 	echo "CppCheck_install\\" >> Makefile
@@ -901,6 +903,7 @@ echo "abbreviation_clean\\" >> Makefile
 echo "SymbolView_clean\\" >> Makefile
 echo "ContinuousBuild_clean\\" >> Makefile
 echo "QmakePlugin_clean\\" >> Makefile
+echo "git_clean\\" >> Makefile
 if [ "$os_name" = "Darwin" ]; then
 	echo "MacBundler_clean\\" >> Makefile
 fi
@@ -928,6 +931,7 @@ createPluginMakefile "abbreviation" "abbreviation" "\$(DESTDIR)$plugins_dir/" ".
 createPluginMakefile "SymbolView" "SymbolView" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "ContinuousBuild" "ContinuousBuild" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "QmakePlugin" "QmakePlugin" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "git" "git" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "cppchecker" "CppCheck" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 ## Mac only plugin: MacBundler
 if [ "$os_name" = "Darwin" ]; then

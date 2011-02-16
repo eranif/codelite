@@ -36,7 +36,11 @@
 
 static GitPlugin* thePlugin = NULL;
 
-#define XPM_BITMAP(name) wxBitmap(name##_xpm, wxBITMAP_TYPE_XPM)
+#ifdef __WXMSW__
+#    define XPM_BITMAP(name) wxBitmap(name##_xpm, wxBITMAP_TYPE_XPM)
+#else
+#    define XPM_BITMAP(name) wxBitmap( (const char**) name##_xpm )
+#endif
 
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)

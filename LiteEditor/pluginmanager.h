@@ -35,6 +35,7 @@
 #include "plugindata.h"
 #include "keyboardmanager.h"
 #include <set>
+#include <map>
 
 class wxBookCtrlBase;
 class EnvironmentConfig;
@@ -51,7 +52,8 @@ class PluginManager : public IManager
 	KeyboardManager                m_keyboardMgr;
 	BitmapLoader    *              m_bmpLoader;
 	std::set<MenuType>             m_menusToBeHooked;
-
+	std::map<wxString,wxString>    m_backticks;
+	
 private:
 	PluginManager();
 	virtual ~PluginManager();
@@ -126,6 +128,8 @@ public:
 	virtual IMacroManager*         GetMacrosManager();
 	virtual bool                   IsShutdownInProgress() const;
 	virtual BitmapLoader*          GetStdIcons();
+	virtual wxArrayString          GetProjectCompileFlags(const wxString &projectName, bool isCppFile);
+	
 	//------------------------------------
 	//End of IManager interface
 	//------------------------------------

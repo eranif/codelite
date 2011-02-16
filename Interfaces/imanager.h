@@ -396,6 +396,11 @@ public:
 	 * @brief return the default icons loader class
 	 */
 	virtual BitmapLoader* GetStdIcons() = 0;
+	
+	/**
+	 * @brief return the compilation flags for a file in a given project
+	 */
+	virtual wxArrayString GetProjectCompileFlags(const wxString &projectName, bool isCppFile) = 0;
 };
 
 

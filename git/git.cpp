@@ -34,9 +34,9 @@
 #include "icons/menuswitch.xpm"
 #include "icons/icon_git.xpm"
 
-#define XPM_BITMAP(name) wxBitmap(name##_xpm, wxBITMAP_TYPE_XPM)
-
 static GitPlugin* thePlugin = NULL;
+
+#define XPM_BITMAP(name) wxBitmap(name##_xpm, wxBITMAP_TYPE_XPM)
 
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
@@ -83,6 +83,8 @@ GitPlugin::GitPlugin(IManager *manager)
 	, m_bActionRequiresTreUpdate(false)
 	, m_process(NULL)
 	, m_topWindow(NULL)
+	, m_pluginToolbar(NULL)
+	, m_pluginMenu(NULL)
 {
 	m_longName = wxT("GIT plugin");
 	m_shortName = wxT("git");
@@ -106,86 +108,87 @@ clToolBar *GitPlugin::CreateToolBar(wxWindow *parent)
 
 	if(m_mgr->AllowToolbar()) {
 		int size = m_mgr->GetToolbarIconSize();
-		clToolBar *tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
-		tb->SetToolBitmapSize(wxSize(size,size));
-		tb->AddTool(ID_PULL, wxT("Pull"), XPM_BITMAP(menucheckout), wxT("Pull remote changes"));
-		tb->AddSeparator();
-		tb->AddTool(ID_COMMIT, wxT("Commit"), XPM_BITMAP(menucommit), wxT("Commit local changes"));
-		tb->AddTool(ID_PUSH, wxT("Push"), XPM_BITMAP(menuimport), wxT("Push local changes"));
-		tb->AddSeparator();
-		tb->AddTool(ID_RESET_REPO, wxT("Reset"), XPM_BITMAP(menucleanup), wxT("Reset repository"));
-		tb->AddSeparator();
-		tb->AddTool(ID_CREATE_BRANCH, wxT("Create branch"), XPM_BITMAP(menubranch), wxT("Create local branch"));
-		tb->AddTool(ID_SWITCH_BRANCH, wxT("Local branch"), XPM_BITMAP(menuswitch), wxT("Switch to local branch"));
-		tb->AddTool(ID_SWITCH_BRANCH_REMOTE, wxT("Remote branch"), XPM_BITMAP(menuexport), wxT("Init and switch to remote branch"));
-		tb->AddSeparator();
-		tb->AddTool(ID_COMMIT_LIST, wxT("Log"), XPM_BITMAP(menulog), wxT("Browse commit history"));
-		tb->AddTool(ID_GITK, wxT("gitk"), XPM_BITMAP(giggle), wxT("Start gitk"));
+		m_pluginToolbar = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+		m_pluginToolbar->SetToolBitmapSize(wxSize(size,size));
+		m_pluginToolbar->AddTool(ID_PULL, wxT("Pull"), XPM_BITMAP(menucheckout), wxT("Pull remote changes"));
+		m_pluginToolbar->AddSeparator();
+		m_pluginToolbar->AddTool(ID_COMMIT, wxT("Commit"), XPM_BITMAP(menucommit), wxT("Commit local changes"));
+		m_pluginToolbar->AddTool(ID_PUSH, wxT("Push"), XPM_BITMAP(menuimport), wxT("Push local changes"));
+		m_pluginToolbar->AddSeparator();
+		m_pluginToolbar->AddTool(ID_RESET_REPO, wxT("Reset"), XPM_BITMAP(menucleanup), wxT("Reset repository"));
+		m_pluginToolbar->AddSeparator();
+		m_pluginToolbar->AddTool(ID_CREATE_BRANCH, wxT("Create branch"), XPM_BITMAP(menubranch), wxT("Create local branch"));
+		m_pluginToolbar->AddTool(ID_SWITCH_BRANCH, wxT("Local branch"), XPM_BITMAP(menuswitch), wxT("Switch to local branch"));
+		m_pluginToolbar->AddTool(ID_SWITCH_BRANCH_REMOTE, wxT("Remote branch"), XPM_BITMAP(menuexport), wxT("Init and switch to remote branch"));
+		m_pluginToolbar->AddSeparator();
+		m_pluginToolbar->AddTool(ID_COMMIT_LIST, wxT("Log"), XPM_BITMAP(menulog), wxT("Browse commit history"));
+		m_pluginToolbar->AddTool(ID_GITK, wxT("gitk"), XPM_BITMAP(giggle), wxT("Start gitk"));
+		m_pluginToolbar->Realize();
 
-		tb->Realize();
-		return tb;
+		EnableMenuAndToolBar(false);
+		return m_pluginToolbar;
 	}
 	return NULL;
 }
 /*******************************************************************************/
 void GitPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 {
-	wxMenu *menu = new wxMenu();
+	m_pluginMenu = new wxMenu();
 	wxMenuItem *item( NULL );
 
-	item = new wxMenuItem(menu, ID_PULL, wxT( "Pull remote changes"));
+	item = new wxMenuItem( m_pluginMenu, ID_PULL, wxT( "Pull remote changes"));
 	item->SetBitmap(XPM_BITMAP(menucheckout));
-	menu->Append( item );
-	menu->AppendSeparator();
+	m_pluginMenu->Append( item );
+	m_pluginMenu->AppendSeparator();
 
-	item = new wxMenuItem(menu, ID_COMMIT, wxT( "Commit local changes"));
+	item = new wxMenuItem( m_pluginMenu, ID_COMMIT, wxT( "Commit local changes"));
 	item->SetBitmap(XPM_BITMAP(menucommit));
-	menu->Append( item );
-	item = new wxMenuItem(menu, ID_PUSH, wxT( "Push local commits"));
+	m_pluginMenu->Append( item );
+	item = new wxMenuItem( m_pluginMenu, ID_PUSH, wxT( "Push local commits"));
 	item->SetBitmap(XPM_BITMAP(menuimport));
-	menu->Append( item );
-	menu->AppendSeparator();
+	m_pluginMenu->Append( item );
+	m_pluginMenu->AppendSeparator();
 
-	item = new wxMenuItem(menu, ID_RESET_REPO, wxT( "Reset current repository" ));
+	item = new wxMenuItem( m_pluginMenu, ID_RESET_REPO, wxT( "Reset current repository" ));
 	item->SetBitmap(XPM_BITMAP(menucleanup));
-	menu->Append( item );
-	menu->AppendSeparator();
-	item = new wxMenuItem(menu, ID_CREATE_BRANCH, wxT( "Create local branch" ) );
+	m_pluginMenu->Append( item );
+	m_pluginMenu->AppendSeparator();
+	item = new wxMenuItem( m_pluginMenu, ID_CREATE_BRANCH, wxT( "Create local branch" ) );
 	item->SetBitmap(XPM_BITMAP(menubranch));
-	menu->Append( item );
-	item = new wxMenuItem(menu, ID_SWITCH_BRANCH, wxT( "Switch local branch" ), wxT( "Switch local branch" ), wxITEM_NORMAL );
+	m_pluginMenu->Append( item );
+	item = new wxMenuItem( m_pluginMenu, ID_SWITCH_BRANCH, wxT( "Switch local branch" ), wxT( "Switch local branch" ), wxITEM_NORMAL );
 	item->SetBitmap(XPM_BITMAP(menuswitch));
-	menu->Append( item );
+	m_pluginMenu->Append( item );
 
-	item = new wxMenuItem(menu, ID_SWITCH_BRANCH_REMOTE, wxT( "Switch remote branch" ), wxT( "Switch remote branch" ), wxITEM_NORMAL );
+	item = new wxMenuItem( m_pluginMenu, ID_SWITCH_BRANCH_REMOTE, wxT( "Switch remote branch" ), wxT( "Switch remote branch" ), wxITEM_NORMAL );
 	item->SetBitmap(XPM_BITMAP(menuexport));
-	menu->Append( item );
+	m_pluginMenu->Append( item );
 
-	menu->AppendSeparator();
-	item = new wxMenuItem(menu, ID_COMMIT_LIST, wxT( "List commits" ), wxT( "List commits" ), wxITEM_NORMAL );
+	m_pluginMenu->AppendSeparator();
+	item = new wxMenuItem( m_pluginMenu, ID_COMMIT_LIST, wxT( "List commits" ), wxT( "List commits" ), wxITEM_NORMAL );
 	item->SetBitmap(XPM_BITMAP(giggle));
-	menu->Append( item );
-	menu->AppendSeparator();
-	item = new wxMenuItem(menu, ID_LIST_MODIFIED, wxT( "List modified files" ), wxT( "List modified files" ), wxITEM_NORMAL );
-	menu->Append( item );
-	item = new wxMenuItem(menu, ID_GITK, wxT( "Start gitk" ), wxT( "Start gitk" ), wxITEM_NORMAL );
+	m_pluginMenu->Append( item );
+	m_pluginMenu->AppendSeparator();
+	item = new wxMenuItem( m_pluginMenu, ID_LIST_MODIFIED, wxT( "List modified files" ), wxT( "List modified files" ), wxITEM_NORMAL );
+	m_pluginMenu->Append( item );
+	item = new wxMenuItem( m_pluginMenu, ID_GITK, wxT( "Start gitk" ), wxT( "Start gitk" ), wxITEM_NORMAL );
 	item->SetBitmap(XPM_BITMAP(giggle));
-	menu->Append( item );
+	m_pluginMenu->Append( item );
 
-	menu->AppendSeparator();
-	item = new wxMenuItem(menu, ID_GARBAGE_COLLETION, wxT( "Clean git database (garbage collection)" ));
-	menu->Append( item );
-	item = new wxMenuItem(menu, ID_REFRESH, wxT( "Refresh git file list" ), wxT( "Refresh file lists" ), wxITEM_NORMAL );
-	menu->Append( item );
-	menu->AppendSeparator();
-	item = new wxMenuItem(menu, ID_SETTINGS, wxT( "GIT plugin settings" ), wxT( "Set GIT executable path" ), wxITEM_NORMAL );
-	menu->Append( item );
-	item = new wxMenuItem(menu, ID_SETGITREPO, wxT( "Set GIT repository path" ), wxT( "Set GIT repository path" ), wxITEM_NORMAL );
+	m_pluginMenu->AppendSeparator();
+	item = new wxMenuItem( m_pluginMenu, ID_GARBAGE_COLLETION, wxT( "Clean git database (garbage collection)" ));
+	m_pluginMenu->Append( item );
+	item = new wxMenuItem( m_pluginMenu, ID_REFRESH, wxT( "Refresh git file list" ), wxT( "Refresh file lists" ), wxITEM_NORMAL );
+	m_pluginMenu->Append( item );
+	m_pluginMenu->AppendSeparator();
+	item = new wxMenuItem( m_pluginMenu, ID_SETTINGS, wxT( "GIT plugin settings" ), wxT( "Set GIT executable path" ), wxITEM_NORMAL );
+	m_pluginMenu->Append( item );
+	item = new wxMenuItem( m_pluginMenu, ID_SETGITREPO, wxT( "Set GIT repository path" ), wxT( "Set GIT repository path" ), wxITEM_NORMAL );
 	item->SetBitmap(XPM_BITMAP(menulog));
-	menu->Append( item );
+	m_pluginMenu->Append( item );
 
 	item = new wxMenuItem(pluginsMenu, wxID_ANY, wxT("Git"));
-	item->SetSubMenu(menu);
+	item->SetSubMenu( m_pluginMenu);
 	item->SetBitmap(XPM_BITMAP(icon_git));
 	pluginsMenu->Append(item);
 
@@ -204,6 +207,7 @@ void GitPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 	m_topWindow->Connect( ID_REFRESH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnRefresh ), NULL, this );
 	m_topWindow->Connect( ID_GARBAGE_COLLETION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnGarbageColletion ), NULL, this );
 
+	EnableMenuAndToolBar(false);
 }
 /*******************************************************************************/
 void GitPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
@@ -286,8 +290,11 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 		m_mgr->GetConfigTool()->WriteObject(wxT("GitData"), &data);
 
 		if(!dir.IsEmpty()) {
+			EnableMenuAndToolBar(true);
 			AddDefaultActions();
 			ProcessGitActionQueue();
+		} else {
+			EnableMenuAndToolBar(false);
 		}
 	}
 }
@@ -680,7 +687,7 @@ void GitPlugin::ProcessGitActionQueue()
 		break;
 	case gitResetFile:
 		wxLogMessage(wxT("GIT: Reset file ") + ga.arguments);
-		command << wxT(" --no-pager checkout git --no-pager diff --no-color HEAD") << ga.arguments;
+		command << wxT(" --no-pager checkout ") << ga.arguments;
 		break;
 	case gitPull:
 		wxLogMessage(wxT("GIT: Pull remote changes"));
@@ -748,9 +755,10 @@ void GitPlugin::ProcessGitActionQueue()
 		wxLogMessage(wxT("Unknown git action"));
 		return;
 	}
-
+	wxLogMessage(wxT("Git: %s"), command.c_str());
 	m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, m_repositoryDirectory);
 }
+
 /*******************************************************************************/
 void GitPlugin::FinishGitListAction(const gitAction& ga)
 {
@@ -798,8 +806,10 @@ void GitPlugin::ListBranchAction(const gitAction& ga)
 			branchList.Add(gitList[i].Mid(2));
 		}
 	}
-
-	branchList.Remove(m_currentBranch);
+	
+	if(branchList.Index(m_currentBranch) != wxNOT_FOUND) {
+		branchList.Remove(m_currentBranch);
+	}
 
 	if(ga.action == gitBranchList) {
 		m_localBranchList = branchList;
@@ -998,7 +1008,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 	   || ga.action == gitListModified) {
 		if(ga.action == gitListAll
 		   && m_bActionRequiresTreUpdate) {
-			if(m_commandOutput.Lower().Contains(_("create")))
+			if(m_commandOutput.Lower().Contains(_("created")))
 				UpdateFileTree();
 		}
 		m_bActionRequiresTreUpdate = false;
@@ -1073,9 +1083,17 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 						m_gitActionQueue.push(ga);
 					}
 				} else if(m_commandOutput.Contains(wxT("CONFLICT"))) {
-					wxMessageBox(wxT("There was a conflict during merge.\n"
-					                 "Please resolve conflicts and commit by hand.\n"
-					                 "After resolving conflicts, be sure to reload the current project."));
+					if(wxMessageBox(wxT("There was a conflict during merge.\n"
+					                    "Please resolve conflicts and commit by hand.\n"
+					                    "After resolving conflicts, be sure to reload the current project.\n\n"
+					                    "Would you like to start \'git mergetool\'?"),
+					                wxT("Conflict found during merge"),
+					                wxYES_NO) == wxYES) {
+						wxString oldCWD = wxGetCwd();
+						wxSetWorkingDirectory(m_repositoryDirectory);
+						wxExecute(m_pathGITExecutable+wxT(" mergetool -y"));
+						wxSetWorkingDirectory(oldCWD);
+					}
 				}
 				if(m_commandOutput.Contains(wxT("Updating")))
 					m_bActionRequiresTreUpdate = true;
@@ -1177,7 +1195,9 @@ void GitPlugin::InitDefaults()
 
 	if(!repoPath.IsEmpty()) {
 		m_repositoryDirectory = repoPath;
+		EnableMenuAndToolBar(true);
 	} else {
+		EnableMenuAndToolBar(false);
 		m_repositoryDirectory.Empty();
 		m_mgr->GetDockingManager()->GetPane( wxT("Workspace View") ).
 		Caption( wxT("Workspace View"));
@@ -1187,6 +1207,37 @@ void GitPlugin::InitDefaults()
 	if(!m_repositoryDirectory.IsEmpty()) {
 		AddDefaultActions();
 		ProcessGitActionQueue();
+	}
+}
+/*******************************************************************************/
+void GitPlugin::EnableMenuAndToolBar(bool enable)
+{
+	if(m_pluginToolbar) {
+		m_pluginToolbar->EnableTool(ID_PULL, enable);
+		m_pluginToolbar->EnableTool(ID_COMMIT, enable);
+		m_pluginToolbar->EnableTool(ID_PUSH, enable);
+		m_pluginToolbar->EnableTool(ID_RESET_REPO, enable);
+		m_pluginToolbar->EnableTool(ID_CREATE_BRANCH, enable);
+		m_pluginToolbar->EnableTool(ID_SWITCH_BRANCH, enable);
+		m_pluginToolbar->EnableTool(ID_SWITCH_BRANCH_REMOTE, enable);
+		m_pluginToolbar->EnableTool(ID_COMMIT_LIST, enable);
+		m_pluginToolbar->EnableTool(ID_GITK, enable);
+	}
+
+	if(m_pluginMenu) {
+		m_pluginMenu->Enable(ID_PULL, enable);
+		m_pluginMenu->Enable(ID_COMMIT, enable);
+		m_pluginMenu->Enable(ID_PUSH, enable);
+		m_pluginMenu->Enable(ID_RESET_REPO, enable);
+		m_pluginMenu->Enable(ID_CREATE_BRANCH, enable);
+		m_pluginMenu->Enable(ID_SWITCH_BRANCH, enable);
+		m_pluginMenu->Enable(ID_SWITCH_BRANCH_REMOTE, enable);
+		m_pluginMenu->Enable(ID_COMMIT_LIST, enable);
+		m_pluginMenu->Enable(ID_GITK, enable);
+		m_pluginMenu->Enable(ID_LIST_MODIFIED, enable);
+		m_pluginMenu->Enable(ID_GARBAGE_COLLETION, enable);
+		m_pluginMenu->Enable(ID_LIST_MODIFIED, enable);
+		m_pluginMenu->Enable(ID_REFRESH, enable);
 	}
 }
 /*******************************************************************************/

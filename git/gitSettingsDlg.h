@@ -8,24 +8,17 @@
 #ifndef __gitSettingsDlg__
 #define __gitSettingsDlg__
 
-#include <wx/wx.h>
-#include <wx/clrpicker.h>
-#include <wx/filepicker.h>
+#include "gitui.h"
 
-class GitSettingsDlg : public wxDialog
+class GitSettingsDlg : public GitSettingsDlgBase
 {
-  wxColourPickerCtrl* m_colourTrackedFile;
-  wxColourPickerCtrl* m_colourDiffFile;
-  wxFilePickerCtrl* m_pathGIT;
-  wxFilePickerCtrl* m_pathGITK;
-  public:
-    GitSettingsDlg(wxWindow* parent,const wxColour& tracked, const wxColour& diff,
-                   const wxString& pathGIT, const wxString& pathGITK);
-    const wxColour GetTrackedFileColour();
-    const wxColour GetDiffFileColour();
-    const wxString GetGITExecutablePath();
-    const wxString GetGITKExecutablePath();
+public:
+	GitSettingsDlg(wxWindow* parent,const wxColour& tracked, const wxColour& diff,
+	               const wxString& pathGIT, const wxString& pathGITK);
+	const wxColour GetTrackedFileColour();
+	const wxColour GetDiffFileColour();
+	const wxString GetGITExecutablePath();
+	const wxString GetGITKExecutablePath();
 };
 
 #endif //__gitSettingsDlg__
-

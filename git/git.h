@@ -92,8 +92,12 @@ class GitPlugin : public IPlugin
 	IProcess * m_process;
 	wxEvtHandler *m_topWindow;
 
+	clToolBar* m_pluginToolbar;
+	wxMenu* m_pluginMenu;
+
 private:
 	void InitDefaults();
+	void EnableMenuAndToolBar(bool enable);
 	void AddDefaultActions();
 	void ProcessGitActionQueue();
 	void ColourFileTree(wxTreeCtrl *tree, const wxArrayString& files,

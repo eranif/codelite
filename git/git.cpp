@@ -241,7 +241,7 @@ void GitPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 		//menu->Append(item);
 		//m_topWindow->Connect( ID_DELETE_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileDeleteSelected), NULL, this );
 
-		item = new wxMenuItem(menu, ID_RESET_FILE,wxT("Gi:t Reset file"));
+		item = new wxMenuItem(menu, ID_RESET_FILE,wxT("Git: Reset file"));
 		item->SetBitmap(XPM_BITMAP(menudelete));
 		menu->Append(item);
 		m_topWindow->Connect( ID_RESET_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileResetSelected), NULL, this );

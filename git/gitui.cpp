@@ -185,3 +185,139 @@ GitCommitDlgBase::~GitCommitDlgBase()
 	m_listBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( GitCommitDlgBase::OnChangeFile ), NULL, this );
 	
 }
+
+GitCommitListDlgBase::GitCommitListDlgBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer14;
+	bSizer14 = new wxBoxSizer( wxVERTICAL );
+	
+	m_splitter3 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE );
+	m_splitter3->SetSashGravity( 0.25 );
+	m_splitter3->Connect( wxEVT_IDLE, wxIdleEventHandler( GitCommitListDlgBase::m_splitter3OnIdle ), NULL, this );
+	
+	m_panel5 = new wxPanel( m_splitter3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer16;
+	bSizer16 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText9 = new wxStaticText( m_panel5, wxID_ANY, _("Commit list:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText9->Wrap( -1 );
+	bSizer16->Add( m_staticText9, 0, wxALL, 5 );
+	
+	m_commitListBox = new wxListCtrl( m_panel5, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_VRULES );
+	bSizer16->Add( m_commitListBox, 1, wxALL|wxEXPAND, 5 );
+	
+	m_panel5->SetSizer( bSizer16 );
+	m_panel5->Layout();
+	bSizer16->Fit( m_panel5 );
+	m_panel6 = new wxPanel( m_splitter3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer17;
+	bSizer17 = new wxBoxSizer( wxVERTICAL );
+	
+	m_splitter4 = new wxSplitterWindow( m_panel6, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE );
+	m_splitter4->SetSashGravity( 0.5 );
+	m_splitter4->Connect( wxEVT_IDLE, wxIdleEventHandler( GitCommitListDlgBase::m_splitter4OnIdle ), NULL, this );
+	
+	m_panel7 = new wxPanel( m_splitter4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer19;
+	bSizer19 = new wxBoxSizer( wxVERTICAL );
+	
+	m_splitter5 = new wxSplitterWindow( m_panel7, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE );
+	m_splitter5->SetSashGravity( 0.5 );
+	m_splitter5->Connect( wxEVT_IDLE, wxIdleEventHandler( GitCommitListDlgBase::m_splitter5OnIdle ), NULL, this );
+	
+	m_panel9 = new wxPanel( m_splitter5, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer20;
+	bSizer20 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText10 = new wxStaticText( m_panel9, wxID_ANY, _("Modified paths:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText10->Wrap( -1 );
+	bSizer20->Add( m_staticText10, 0, wxALL, 5 );
+	
+	m_fileListBox = new wxListBox( m_panel9, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+	bSizer20->Add( m_fileListBox, 1, wxALL|wxEXPAND, 5 );
+	
+	m_panel9->SetSizer( bSizer20 );
+	m_panel9->Layout();
+	bSizer20->Fit( m_panel9 );
+	m_panel10 = new wxPanel( m_splitter5, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer21;
+	bSizer21 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText11 = new wxStaticText( m_panel10, wxID_ANY, _("Diff:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText11->Wrap( -1 );
+	bSizer21->Add( m_staticText11, 0, wxALL, 5 );
+	
+	m_editor = new GitCommitEditor(m_panel10);
+	bSizer21->Add( m_editor, 1, wxALL|wxEXPAND, 5 );
+	
+	m_panel10->SetSizer( bSizer21 );
+	m_panel10->Layout();
+	bSizer21->Fit( m_panel10 );
+	m_splitter5->SplitVertically( m_panel9, m_panel10, 0 );
+	bSizer19->Add( m_splitter5, 1, wxEXPAND, 5 );
+	
+	m_panel7->SetSizer( bSizer19 );
+	m_panel7->Layout();
+	bSizer19->Fit( m_panel7 );
+	m_panel8 = new wxPanel( m_splitter4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer18;
+	bSizer18 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText12 = new wxStaticText( m_panel8, wxID_ANY, _("Commit message:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText12->Wrap( -1 );
+	bSizer18->Add( m_staticText12, 0, wxALL, 5 );
+	
+	m_commitMessage = new wxTextCtrl( m_panel8, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2 );
+	m_commitMessage->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
+	bSizer18->Add( m_commitMessage, 1, wxALL|wxEXPAND, 5 );
+	
+	m_panel8->SetSizer( bSizer18 );
+	m_panel8->Layout();
+	bSizer18->Fit( m_panel8 );
+	m_splitter4->SplitHorizontally( m_panel7, m_panel8, 0 );
+	bSizer17->Add( m_splitter4, 1, wxEXPAND, 5 );
+	
+	m_panel6->SetSizer( bSizer17 );
+	m_panel6->Layout();
+	bSizer17->Fit( m_panel6 );
+	m_splitter3->SplitHorizontally( m_panel5, m_panel6, 0 );
+	bSizer14->Add( m_splitter3, 1, wxEXPAND, 5 );
+	
+	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer14->Add( m_staticline4, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer15;
+	bSizer15 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_button7 = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button7->SetDefault(); 
+	bSizer15->Add( m_button7, 0, wxALL, 5 );
+	
+	m_button8 = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer15->Add( m_button8, 0, wxALL, 5 );
+	
+	bSizer14->Add( bSizer15, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	this->SetSizer( bSizer14 );
+	this->Layout();
+	bSizer14->Fit( this );
+	
+	this->Centre( wxBOTH );
+	
+	// Connect Events
+	m_commitListBox->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( GitCommitListDlgBase::OnChangeCommit ), NULL, this );
+	m_fileListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( GitCommitListDlgBase::OnChangeFile ), NULL, this );
+	m_fileListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( GitCommitListDlgBase::OnChangeFile ), NULL, this );
+}
+
+GitCommitListDlgBase::~GitCommitListDlgBase()
+{
+	// Disconnect Events
+	m_commitListBox->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( GitCommitListDlgBase::OnChangeCommit ), NULL, this );
+	m_fileListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( GitCommitListDlgBase::OnChangeFile ), NULL, this );
+	m_fileListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( GitCommitListDlgBase::OnChangeFile ), NULL, this );
+	
+}

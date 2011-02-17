@@ -27,6 +27,8 @@
 #include "gitCommitEditor.h"
 #include <wx/splitter.h>
 #include <wx/textctrl.h>
+#include <wx/listctrl.h>
+#include <wx/listbox.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -102,6 +104,65 @@ class GitCommitDlgBase : public wxDialog
 		{
 			m_splitter1->SetSashPosition( 0 );
 			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( GitCommitDlgBase::m_splitter1OnIdle ), NULL, this );
+		}
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class GitCommitListDlgBase
+///////////////////////////////////////////////////////////////////////////////
+class GitCommitListDlgBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxSplitterWindow* m_splitter3;
+		wxPanel* m_panel5;
+		wxStaticText* m_staticText9;
+		wxListCtrl* m_commitListBox;
+		wxPanel* m_panel6;
+		wxSplitterWindow* m_splitter4;
+		wxPanel* m_panel7;
+		wxSplitterWindow* m_splitter5;
+		wxPanel* m_panel9;
+		wxStaticText* m_staticText10;
+		wxListBox* m_fileListBox;
+		wxPanel* m_panel10;
+		wxStaticText* m_staticText11;
+		GitCommitEditor* m_editor;
+		wxPanel* m_panel8;
+		wxStaticText* m_staticText12;
+		wxTextCtrl* m_commitMessage;
+		wxStaticLine* m_staticline4;
+		wxButton* m_button7;
+		wxButton* m_button8;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnChangeCommit( wxListEvent& event ) { event.Skip(); }
+		virtual void OnChangeFile( wxCommandEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		GitCommitListDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Commit list"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~GitCommitListDlgBase();
+		
+		void m_splitter3OnIdle( wxIdleEvent& )
+		{
+			m_splitter3->SetSashPosition( 0 );
+			m_splitter3->Disconnect( wxEVT_IDLE, wxIdleEventHandler( GitCommitListDlgBase::m_splitter3OnIdle ), NULL, this );
+		}
+		
+		void m_splitter4OnIdle( wxIdleEvent& )
+		{
+			m_splitter4->SetSashPosition( 0 );
+			m_splitter4->Disconnect( wxEVT_IDLE, wxIdleEventHandler( GitCommitListDlgBase::m_splitter4OnIdle ), NULL, this );
+		}
+		
+		void m_splitter5OnIdle( wxIdleEvent& )
+		{
+			m_splitter5->SetSashPosition( 0 );
+			m_splitter5->Disconnect( wxEVT_IDLE, wxIdleEventHandler( GitCommitListDlgBase::m_splitter5OnIdle ), NULL, this );
 		}
 	
 };

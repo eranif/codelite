@@ -8,24 +8,19 @@
 #ifndef __gitCommitListDlg__
 #define __gitCommitListDlg__
 
-#include <wx/wx.h>
 #include <map>
-#include <wx/listctrl.h>
+#include "gitui.h"
 
 class GitCommitEditor;
 class IProcess;
 
-class GitCommitListDlg : public wxDialog
+class GitCommitListDlg : public GitCommitListDlgBase
 {
-	GitCommitEditor* m_editor;
-	wxListCtrl* m_commitListBox;
-	wxListBox* m_fileListBox;
-	wxTextCtrl* m_commitMessage;
 	std::map<wxString, wxString> m_diffMap;
-	wxString m_workingDir;
-	wxString m_commandOutput;
-	IProcess * m_process;
-	wxString   m_gitPath;
+	wxString                     m_workingDir;
+	wxString                     m_commandOutput;
+	IProcess *                   m_process;
+	wxString                     m_gitPath;
 	
 public:
 	GitCommitListDlg(wxWindow* parent, const wxString& workingDir);

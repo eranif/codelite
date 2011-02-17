@@ -1,6 +1,7 @@
 #include "gitCommitListDlg.h"
 #include "gitentry.h"
 #include "editor_config.h"
+#include "windowattrmanager.h"
 
 #include <wx/tokenzr.h>
 #include "gitCommitEditor.h"
@@ -15,70 +16,27 @@ BEGIN_EVENT_TABLE(GitCommitListDlg, wxDialog)
 END_EVENT_TABLE()
 
 GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir)
-	:wxDialog(parent, wxID_ANY, wxT("Commit list"),wxDefaultPosition, wxDefaultSize,
-	          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER),
-	m_workingDir(workingDir)
+	: GitCommitListDlgBase(parent)
+	, m_workingDir(workingDir)
 {
-	SetIcon(wxICON(icon_git));
-	
 	GitEntry data;
 	EditorConfigST::Get()->ReadObject(wxT("GitData"), &data);
 	m_gitPath = data.GetGITExecutablePath();
 	
-	m_commitListBox = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT);
-	m_commitListBox->InsertColumn(0,wxT("Commit"));
-	m_commitListBox->InsertColumn(1,wxT("Subject"));
-	m_commitListBox->InsertColumn(2,wxT("Author"));
-	m_commitListBox->InsertColumn(3,wxT("Date"));
-	m_commitListBox->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(GitCommitListDlg::OnChangeCommit), NULL, this);
-
-	m_fileListBox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE);
-	m_fileListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(GitCommitListDlg::OnChangeFile), NULL, this);
-	m_fileListBox->SetMinSize(wxSize(350,50));
-	m_editor = new GitCommitEditor(this);
-	m_commitMessage = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2);
-
-	wxFont font(10, wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
-	wxTextAttr atr = m_commitMessage->GetDefaultStyle();
-	atr.SetFont(font);
-	m_commitMessage->SetDefaultStyle(atr);
-
-	wxStdDialogButtonSizer* sizer_3 = CreateStdDialogButtonSizer(wxOK);
-
-	wxStaticBoxSizer* sizer_listCommit = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Commit list"));
-	sizer_listCommit->Add(m_commitListBox, 1, wxALL|wxEXPAND, 5);
-
-	wxStaticBoxSizer* sizer_listFile = new wxStaticBoxSizer(wxVERTICAL, this, wxT("File list"));
-	sizer_listFile->Add(m_fileListBox, 1, wxALL|wxEXPAND, 5);
-
-	wxStaticBoxSizer* sizer_edit = new wxStaticBoxSizer(wxVERTICAL,this,wxT("File diff"));
-	sizer_edit->Add(m_editor, 1, wxALL|wxEXPAND, 5);
-
-	wxStaticBoxSizer* sizer_msg = new wxStaticBoxSizer(wxHORIZONTAL,this,wxT("Commit message"));
-	sizer_msg->Add(m_commitMessage, 1, wxALL|wxEXPAND, 5);
-
-	wxBoxSizer* sizer_1 = new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer* sizer_2 = new wxBoxSizer(wxHORIZONTAL);
-	sizer_2->Add(sizer_listFile, 0, wxALL|wxEXPAND, 5);
-	sizer_2->Add(sizer_edit, 1, wxALL|wxEXPAND, 5);
-	sizer_1->Add(sizer_listCommit, 1, wxEXPAND, 0);
-	sizer_1->Add(sizer_2, 1, wxEXPAND, 0);
-	sizer_1->Add(sizer_msg, 1, wxALL|wxEXPAND, 5);
-	sizer_1->Add(sizer_3, 0, wxALL|wxEXPAND, 5);
-	SetSizer(sizer_1);
-	sizer_1->Fit(this);
-	Layout();
-
-	wxSize s = GetSize();
-	SetSize(s.GetWidth()+200,1000);
-
+	m_commitListBox->InsertColumn(0, wxT("Commit"));
+	m_commitListBox->InsertColumn(1, wxT("Subject"));
+	m_commitListBox->InsertColumn(2, wxT("Author"));
+	m_commitListBox->InsertColumn(3, wxT("Date"));
+	
+	WindowAttrManager::Load(this, wxT("GitCommitListDlg"), NULL);
 }
+
 /*******************************************************************************/
 GitCommitListDlg::~GitCommitListDlg()
 {
-	m_commitListBox->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(GitCommitListDlg::OnChangeCommit), NULL, this);
-	m_fileListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(GitCommitListDlg::OnChangeFile), NULL, this);
+	WindowAttrManager::Save(this, wxT("GitCommitListDlg"), NULL);
 }
+
 /*******************************************************************************/
 void GitCommitListDlg::SetCommitList(const wxString& commits)
 {

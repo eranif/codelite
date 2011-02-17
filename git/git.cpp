@@ -1225,10 +1225,7 @@ void GitPlugin::InitDefaults()
 		m_repositoryDirectory = repoPath;
 		
 	} else {
-		m_repositoryDirectory.Empty();
-		m_mgr->GetDockingManager()->GetPane( wxT("Workspace View") ).
-		Caption( wxT("Workspace View"));
-		m_mgr->GetDockingManager()->Update();
+		DoCleanup();
 	}
 
 	if(!m_repositoryDirectory.IsEmpty()) {
@@ -1362,4 +1359,6 @@ void GitPlugin::DoCleanup()
 		delete m_process;
 		m_process = NULL;
 	}
+	m_mgr->GetDockingManager()->GetPane( wxT("Workspace View") ).Caption( wxT("Workspace View"));
+	m_mgr->GetDockingManager()->Update();
 }

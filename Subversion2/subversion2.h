@@ -79,8 +79,9 @@ protected:
 	///////////////////////////////////////////////////////////
 	// IDE events
 	///////////////////////////////////////////////////////////
-	void OnGetCompileLine   (wxCommandEvent &event);
-
+	void OnGetCompileLine        (wxCommandEvent &event);
+	void OnWorkspaceConfigChanged(wxCommandEvent &event);
+	
 	wxMenu* CreateFileExplorerPopMenu();
 	bool    IsSubversionViewDetached ();
 public:

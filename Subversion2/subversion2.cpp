@@ -102,7 +102,8 @@ Subversion2::Subversion2(IManager *manager)
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_unlock"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnUnLockFile),        NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_lock"),                wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnLockFile),          NULL, this);
 
-	GetManager()->GetTheApp()->Connect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, wxCommandEventHandler(Subversion2::OnGetCompileLine), NULL, this);
+	GetManager()->GetTheApp()->Connect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, wxCommandEventHandler(Subversion2::OnGetCompileLine),         NULL, this);
+	GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED,    wxCommandEventHandler(Subversion2::OnWorkspaceConfigChanged), NULL, this);
 }
 
 Subversion2::~Subversion2()
@@ -880,4 +881,10 @@ void Subversion2::DoLockFile(const wxString& workingDirectory, const wxArrayStri
 		command << wxT("\"") << fullpaths.Item(i) << wxT("\" ");
 
 	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this, event.GetId(), this));
+}
+
+void Subversion2::OnWorkspaceConfigChanged(wxCommandEvent& event)
+{
+	event.Skip();
+	m_subversionView->BuildTree();
 }

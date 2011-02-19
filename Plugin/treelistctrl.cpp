@@ -4560,8 +4560,11 @@ void wxTreeListCtrl::DoHeaderLayout()
         m_header_win->Refresh();
     }
     if (m_main_win) {
+		// Protect against trying to set a negative height (occurs in wx >=2.9)
+		if (h > m_headerHeight) {
         m_main_win->SetSize (0, m_headerHeight, w, h - m_headerHeight);
     }
+}
 }
 
 void wxTreeListCtrl::OnSize(wxSizeEvent& WXUNUSED(event))

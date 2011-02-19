@@ -58,6 +58,8 @@ wxID_REPLACE|Search|Replace...|Ctrl-H
 find_next|Search|Find Next|F3
 find_next_at_caret|Search|Find Word At Caret|Ctrl-F3
 find_previous_at_caret|Search|Find Word At Caret Backward|Ctrl-Shift-F3
+grep_current_file|Search|Grep Selection in the Current File|Ctrl-Shift-G
+grep_current_workspace|Search|Grep Selection in the Workspace|
 incremental_search|Search|Incremental Search|Ctrl-F
 next_fif_match|Search|Go to Next 'Find In File' Match|F8
 previous_fif_match|Search|Go to Previous 'Find In File' Match|Ctrl-F8
@@ -148,4 +150,4 @@ add_pure_virtual_impl|C++::Code Generation / Refactoring|Implement inherited pur
 add_include_file|C++|Add Include File|Ctrl-Shift-I
 insert_breakpoint|C++|Toggle Breakpoint|F9
 toggle_bookmark|C++|Toggle Bookmark|Ctrl-B
-retag_file|C++|Re-Tag File|Ctrl-Shift-G
+retag_file|C++|Re-Tag File|

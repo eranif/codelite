@@ -177,11 +177,6 @@ public:
 	}
 
 	/**
-	 * Close the current file
-	 */
-	void CloseActiveFile();
-
-	/**
 	 * @return the output pane (the bottom pane)
 	 */
 	OutputPane *GetOutputPane() {
@@ -333,15 +328,13 @@ protected:
     void OnBuildEnded(wxCommandEvent &event);
 	void OnQuit(wxCommandEvent& WXUNUSED(event));
 	void OnClose(wxCloseEvent &event);
-	void OnAddSourceFile(wxCommandEvent& event);
-	void OnBuildFromDatabase(wxCommandEvent& event);
+	
 	void OnSave(wxCommandEvent& event);
 	void OnSaveAs(wxCommandEvent& event);
 	void OnFileReload(wxCommandEvent& event);
 	void OnFileLoadTabGroup(wxCommandEvent& event);
 	void OnCompleteWord(wxCommandEvent& event);
 	void OnFunctionCalltip(wxCommandEvent& event);
-	void OnDeleteProject(wxCommandEvent& event);
 	void OnAbout(wxCommandEvent& event);
 	void OnCheckForUpdate(wxCommandEvent &e);
 	void OnFileNew(wxCommandEvent &event);
@@ -350,7 +343,6 @@ protected:
 	void OnFileCloseUI(wxUpdateUIEvent &event);
 	void OnFileSaveAll(wxCommandEvent &event);
 	void OnFileSaveTabGroup(wxCommandEvent &event);
-	void OnFileFindAndReplace(wxCommandEvent &event);
 	void OnFileExistUpdateUI(wxUpdateUIEvent &event);
 	void OnCompleteWordUpdateUI(wxUpdateUIEvent &event);
 	void OnFunctionCalltipUI(wxUpdateUIEvent &event);
@@ -361,7 +353,6 @@ protected:
 	void OnTogglePanes(wxCommandEvent &event);
 	void OnProjectNewWorkspace(wxCommandEvent &event);
 	void OnProjectNewProject(wxCommandEvent &event);
-	void OnCreateWorkspace(wxCommandEvent &event);
 	void OnReloadWorkspace(wxCommandEvent &event);
 	void OnReloadWorkspaceUI(wxUpdateUIEvent &event);
 	void OnSwitchWorkspace(wxCommandEvent &event);
@@ -403,12 +394,9 @@ protected:
 	void OnPreviousFiFMatch  (wxCommandEvent &e);
 	void OnNextFiFMatchUI    (wxUpdateUIEvent &e);
 	void OnPreviousFiFMatchUI(wxUpdateUIEvent &e);
-
-	// this event is sent from the notebook container to the frame
-	void OnFileClosing(NotebookEvent &event);
-	void OnPageChanged(NotebookEvent &event);
-	void OnPageClosed(NotebookEvent &event);
-
+	void OnGrepWord          (wxCommandEvent &e);
+	void OnGrepWordUI        (wxUpdateUIEvent& e);
+	
 	//handle symbol tree events
 	void OnAddSymbols                 (SymbolTreeEvent &event);
 	void OnDeleteSymbols              (SymbolTreeEvent &event);
@@ -435,7 +423,6 @@ protected:
 	void OnDebugCmd(wxCommandEvent &e);
 	void OnDebugCmdUI(wxUpdateUIEvent &e);
 	void OnDebuggerSettings(wxCommandEvent &e);
-	void OnMenuOpen(wxMenuEvent &e);
 	void OnLinkClicked(wxHtmlLinkEvent &e);
 	void OnLoadLastSessionUI(wxUpdateUIEvent &event);
 	void OnLoadLastSession(wxCommandEvent &event);
@@ -479,7 +466,6 @@ protected:
 	void OnDestroyDetachedPane(wxCommandEvent &e);
 
 	void OnManagePlugins(wxCommandEvent &e);
-	void OnManageTags(wxCommandEvent &e);
 	void OnCppContextMenu(wxCommandEvent &e);
 
 	void OnConfigureAccelerators(wxCommandEvent &e);
@@ -494,7 +480,6 @@ protected:
 	void OnShowFullScreen(wxCommandEvent &e);
 	void OnSetStatusMessage(wxCommandEvent &e);
 	void OnFindResourceXXX  (wxCommandEvent &e);
-	void OnShowQuickFinderUI(wxUpdateUIEvent &e);
 	void OnShowActiveProjectSettings(wxCommandEvent &e);
 	void OnShowActiveProjectSettingsUI(wxUpdateUIEvent &e);
 	void OnLoadPerspective(wxCommandEvent &e);

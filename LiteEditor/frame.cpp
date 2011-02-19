@@ -37,6 +37,7 @@
 
 #include <set>
 #include <list>
+#include <wx/fontmap.h>
 #include <wx/clipbrd.h>
 #include <wx/numdlg.h>
 #include <wx/stdpaths.h>
@@ -274,25 +275,27 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	//-------------------------------------------------------
 	// Search menu
 	//-------------------------------------------------------
-	EVT_MENU(wxID_FIND,                         clMainFrame::DispatchCommandEvent)
-	EVT_MENU(wxID_REPLACE,                      clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("find_function"),            clMainFrame::OnFindResourceXXX   )
-	EVT_MENU(XRCID("find_macro"),               clMainFrame::OnFindResourceXXX   )
-	EVT_MENU(XRCID("find_typedef"),             clMainFrame::OnFindResourceXXX   )
-	EVT_MENU(XRCID("find_resource"),            clMainFrame::OnFindResourceXXX   )
-	EVT_MENU(XRCID("find_type"),                clMainFrame::OnFindResourceXXX   )
-	EVT_MENU(XRCID("incremental_search"),       clMainFrame::OnIncrementalSearch )
-	EVT_MENU(XRCID("find_symbol"),              clMainFrame::OnQuickOutline      )
-	EVT_MENU(XRCID("goto_definition"),          clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("goto_previous_definition"), clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("goto_linenumber"),          clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("toggle_bookmark"),          clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("next_bookmark"),            clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("previous_bookmark"),        clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("removeall_bookmarks"),      clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("next_fif_match"),           clMainFrame::OnNextFiFMatch      )
-	EVT_MENU(XRCID("previous_fif_match"),       clMainFrame::OnPreviousFiFMatch  )
-
+	EVT_MENU(wxID_FIND,                             clMainFrame::DispatchCommandEvent  )
+	EVT_MENU(wxID_REPLACE,                          clMainFrame::DispatchCommandEvent  )
+	EVT_MENU(XRCID("find_function"),                clMainFrame::OnFindResourceXXX     )
+	EVT_MENU(XRCID("find_macro"),                   clMainFrame::OnFindResourceXXX     )
+	EVT_MENU(XRCID("find_typedef"),                 clMainFrame::OnFindResourceXXX     )
+	EVT_MENU(XRCID("find_resource"),                clMainFrame::OnFindResourceXXX     )
+	EVT_MENU(XRCID("find_type"),                    clMainFrame::OnFindResourceXXX     )
+	EVT_MENU(XRCID("incremental_search"),           clMainFrame::OnIncrementalSearch   )
+	EVT_MENU(XRCID("find_symbol"),                  clMainFrame::OnQuickOutline        )
+	EVT_MENU(XRCID("goto_definition"),              clMainFrame::DispatchCommandEvent  )
+	EVT_MENU(XRCID("goto_previous_definition"),     clMainFrame::DispatchCommandEvent  )
+	EVT_MENU(XRCID("goto_linenumber"),              clMainFrame::DispatchCommandEvent  )
+	EVT_MENU(XRCID("toggle_bookmark"),              clMainFrame::DispatchCommandEvent  )
+	EVT_MENU(XRCID("next_bookmark"),                clMainFrame::DispatchCommandEvent  )
+	EVT_MENU(XRCID("previous_bookmark"),            clMainFrame::DispatchCommandEvent  )
+	EVT_MENU(XRCID("removeall_bookmarks"),          clMainFrame::DispatchCommandEvent  )
+	EVT_MENU(XRCID("next_fif_match"),               clMainFrame::OnNextFiFMatch        )
+	EVT_MENU(XRCID("previous_fif_match"),           clMainFrame::OnPreviousFiFMatch    )
+	EVT_MENU(XRCID("grep_current_file"),            clMainFrame::OnGrepWord            )
+	EVT_MENU(XRCID("grep_current_workspace"),       clMainFrame::OnGrepWord            )
+	
 	EVT_UPDATE_UI(wxID_FIND,                        clMainFrame::OnFileExistUpdateUI   )
 	EVT_UPDATE_UI(wxID_REPLACE,                     clMainFrame::OnFileExistUpdateUI   )
 	EVT_UPDATE_UI(XRCID("find_next"),               clMainFrame::OnFileExistUpdateUI   )
@@ -316,6 +319,8 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("removeall_bookmarks"),     clMainFrame::OnFileExistUpdateUI   )
 	EVT_UPDATE_UI(XRCID("next_fif_match"),          clMainFrame::OnNextFiFMatchUI      )
 	EVT_UPDATE_UI(XRCID("previous_fif_match"),      clMainFrame::OnPreviousFiFMatchUI  )
+	EVT_UPDATE_UI(XRCID("grep_current_file"),       clMainFrame::OnGrepWordUI          )
+	EVT_UPDATE_UI(XRCID("grep_current_workspace"),  clMainFrame::OnGrepWordUI          )
 
 	//-------------------------------------------------------
 	// Project menu
@@ -4402,3 +4407,48 @@ void clMainFrame::OnViewWordWrapUI(wxUpdateUIEvent& e)
 	e.Check(opts->GetWordWrap());
 }
 
+void clMainFrame::OnGrepWord(wxCommandEvent& e)
+{
+	CHECK_SHUTDOWN();
+	LEditor *editor = GetMainBook()->GetActiveEditor();
+	if(!editor || editor->GetSelectedText().IsEmpty())
+		return;
+		
+	// Prepare the search data
+	bool singleFileSearch(true);
+	if(e.GetId() == XRCID("grep_current_workspace")) singleFileSearch = false;
+	
+	SearchData data;
+	data.SetFindString(editor->GetSelectedText());
+	data.SetMatchCase        (true);
+	data.SetMatchWholeWord   (true);
+	data.SetRegularExpression(false);
+	data.SetDisplayScope     (false);
+	data.SetEncoding         (wxFontMapper::GetEncodingName(editor->GetOptions()->GetFileFontEncoding()));
+	data.SetSkipComments     (false);
+	data.SetSkipStrings      (false);
+	data.SetColourComments   (false);
+	
+	wxArrayString files;
+	wxArrayString rootDirs;
+	if(singleFileSearch) {
+		rootDirs.Add(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
+		files.Add(editor->GetFileName().GetFullPath());
+	} else {
+		rootDirs.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
+		ManagerST::Get()->GetWorkspaceFiles(files);
+	}
+	
+	data.SetRootDirs(rootDirs);
+	data.SetFiles(files);
+	data.UseNewTab(true);
+	data.SetOwner(GetOutputPane()->GetFindResultsTab());
+	SearchThreadST::Get()->PerformSearch(data);
+}
+
+void clMainFrame::OnGrepWordUI(wxUpdateUIEvent& e)
+{
+	CHECK_SHUTDOWN();
+	LEditor *editor = GetMainBook()->GetActiveEditor();
+	e.Enable(editor && !editor->GetSelectedText().IsEmpty());
+}

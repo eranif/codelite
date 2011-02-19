@@ -270,6 +270,13 @@
                 <label>Find Word At Caret Backward</label>
             </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+			<object class="wxMenuItem" name="grep_current_file">
+                <label>Grep Selection in the Current File</label>
+            </object>
+			<object class="wxMenuItem" name="grep_current_workspace">
+                <label>Grep Selection in the Workspace</label>
+            </object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="next_fif_match">
                 <label>Go to Next 'Find In File' Match</label>
             </object>

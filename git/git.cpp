@@ -287,9 +287,9 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 	wxUnusedVar(e);
 	if(!m_mgr->IsWorkspaceOpen()) {
 		wxMessageBox(_("No active workspace found!\n"
-						"Setting a repository path relies on an sctive workspace."),
+						"Setting a repository path relies on an active workspace."),
 		             _("Missing workspace"),
-		             wxICON_ERROR);
+		             wxICON_ERROR | wxOK, m_mgr->GetTheApp()->GetTopWindow());
 		return;
 	}
 
@@ -303,6 +303,9 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 	}
 	
 	const wxString& dir = wxDirSelector(wxT("Select git root directory for this workspace"), startPath);
+	if (dir.empty()) {
+		return;		// The user probably pressed Cancel
+	}
 	
 	// make sure that this is a valid git path
 	if(wxFileName::DirExists(dir + wxFileName::GetPathSeparator() + wxT(".git"))) {
@@ -324,7 +327,7 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 			}
 		}
 	} else {
-		wxMessageBox(_("The selected directory does not contain any .git directory"), wxT("CodeLite"), wxICON_WARNING|wxOK|wxCENTER);
+		wxMessageBox(_("The selected directory does not contain any .git directory"), wxT("CodeLite"), wxICON_WARNING|wxOK|wxCENTER, m_mgr->GetTheApp()->GetTopWindow());
 		return;
 	}
 }
@@ -359,7 +362,7 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent &e)
 	TreeItemInfo info = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
 	wxString path = info.m_fileName.GetFullPath();
 	if(m_trackedFiles.Index(path) != wxNOT_FOUND) {
-		wxMessageBox(wxT("File is already part of the index..."));
+		wxMessageBox(wxT("File is already part of the index..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_mgr->GetTheApp()->GetTopWindow());
 		return;
 	}
 	m_addedFiles = true;
@@ -380,7 +383,7 @@ void GitPlugin::OnFileDeleteSelected(wxCommandEvent &e)
 	TreeItemInfo info = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
 	wxString path = info.m_fileName.GetFullPath();
 	if(wxMessageBox(wxT("Really delete file ")+path+wxT(" from the index (not from disk)?")
-	                , wxT("Confirm file deletion"), wxYES_NO) == wxNO)
+	                , wxT("Confirm file deletion"), wxYES_NO, m_mgr->GetTheApp()->GetTopWindow()) == wxNO)
 	  return;
 	path.Replace(m_repositoryDirectory,wxT(""));
 	if(path.StartsWith(wxT("/")))
@@ -398,7 +401,7 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent &e)
 	TreeItemInfo info = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
 	wxString path = info.m_fileName.GetFullPath();
 	if(m_modifiedFiles.Index(path) == wxNOT_FOUND) {
-		wxMessageBox(wxT("File is not modified, there is no diff..."));
+		wxMessageBox(wxT("File is not modified, there is no diff..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_mgr->GetTheApp()->GetTopWindow());
 		return;
 	}
 	path.Replace(m_repositoryDirectory,wxT(""));
@@ -416,7 +419,7 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent &e)
 
 	if(wxMessageBox(wxT("Really reset file ")+info.m_text
 	                +wxT("?\nAll changes to the file will be lost!"),
-	                wxT("Confirm reset"), wxYES_NO) == wxNO) {
+	                wxT("Confirm reset"), wxYES_NO, m_mgr->GetTheApp()->GetTopWindow()) == wxNO) {
 		return;
 	}
 	gitAction ga = {gitResetFile,info.m_fileName.GetFullPath()};
@@ -428,12 +431,12 @@ void GitPlugin::OnSwitchLocalBranch(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	if(m_modifiedFiles.GetCount() != 0) {
-		wxMessageBox(wxT("Modified files found! Commit them first before switching branches..."));
+		wxMessageBox(wxT("Modified files found! Commit them first before switching branches..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_mgr->GetTheApp()->GetTopWindow());
 		return;
 	}
 
 	if(m_localBranchList.GetCount() == 0) {
-		wxMessageBox(wxT("No other local branches found!"));
+		wxMessageBox(wxT("No other local branches found!"), wxT("CodeLite"), wxICON_ERROR | wxOK, m_mgr->GetTheApp()->GetTopWindow());
 		return;
 	}
 
@@ -456,11 +459,11 @@ void GitPlugin::OnSwitchRemoteBranch(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	if(m_modifiedFiles.GetCount() != 0) {
-		wxMessageBox(wxT("Modified files found! Commit them first before switching branches..."));
+		wxMessageBox(wxT("Modified files found! Commit them first before switching branches..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_mgr->GetTheApp()->GetTopWindow());
 		return;
 	}
 	if(m_remoteBranchList.GetCount() == 0) {
-		wxMessageBox(wxT("No remote branches found!"));
+		wxMessageBox(wxT("No remote branches found!"), wxT("CodeLite"), wxICON_ERROR | wxOK, m_mgr->GetTheApp()->GetTopWindow());
 		return;
 	}
 	wxString message = wxT("Select remote branch (current is ");
@@ -499,7 +502,7 @@ void GitPlugin::OnCreateBranch(wxCommandEvent &e)
 	m_gitActionQueue.push(ga);
 
 	if(wxMessageBox(wxT("Switch to new branch once it is created?"),
-	                wxT("Switch to new branch"), wxYES_NO) == wxYES) {
+	                wxT("Switch to new branch"), wxYES_NO, m_mgr->GetTheApp()->GetTopWindow()) == wxYES) {
 		ga.action = gitBranchSwitch;
 		ga.arguments = newBranch;
 		m_gitActionQueue.push(ga);
@@ -515,7 +518,7 @@ void GitPlugin::OnCommit(wxCommandEvent &e)
 	wxUnusedVar(e);
 	if(m_modifiedFiles.GetCount() == 0
 	   && !m_addedFiles) {
-		wxMessageBox(wxT("No modified files found, nothing to commit..."));
+		wxMessageBox(wxT("No modified files found, nothing to commit..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_mgr->GetTheApp()->GetTopWindow());
 		return;
 	}
 	gitAction ga = {gitDiffRepoCommit,wxT("")};
@@ -535,12 +538,12 @@ void GitPlugin::OnPush(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	if(m_remotes.GetCount() == 0) {
-		wxMessageBox(wxT("No remotes found, can't push!"));
+		wxMessageBox(wxT("No remotes found, can't push!"), wxT("CodeLite"), wxICON_ERROR | wxOK, m_mgr->GetTheApp()->GetTopWindow());
 		return;
 	}
 
 	if(wxMessageBox(wxT("Push all local commits?"),
-	                wxT("Push changes"), wxYES_NO) == wxYES) {
+	                wxT("Push changes"), wxYES_NO, m_mgr->GetTheApp()->GetTopWindow()) == wxYES) {
 		wxString remote = m_remotes[0];
 		if(m_remotes.GetCount() > 1) {
 			remote = wxGetSingleChoice(wxT("Select remote to push to."),
@@ -559,7 +562,7 @@ void GitPlugin::OnPull(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	if(wxMessageBox(wxT("Save all changes and pull remote changes?"),
-	                wxT("Pull remote changes"), wxYES_NO) == wxYES) {
+	                wxT("Pull remote changes"), wxYES_NO, m_mgr->GetTheApp()->GetTopWindow()) == wxYES) {
 		m_mgr->SaveAll();
 		gitAction ga = {gitPull,wxT("")};
 		m_gitActionQueue.push(ga);
@@ -572,7 +575,7 @@ void GitPlugin::OnResetRepository(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	if(wxMessageBox(wxT("Are you sure that you want to discard all local changes?"),
-	                wxT("Reset repository"), wxYES_NO) == wxYES) {
+	                wxT("Reset repository"), wxYES_NO, m_mgr->GetTheApp()->GetTopWindow()) == wxYES) {
 		gitAction ga = {gitResetRepo,wxT("")};
 		m_gitActionQueue.push(ga);
 		AddDefaultActions();
@@ -875,7 +878,7 @@ void GitPlugin::UpdateFileTree()
 {
 
 	if(wxMessageBox(wxT("Do you want to start importing new / updating changed files?"),
-	                wxT("Import files"), wxYES_NO) == wxNO) {
+	                wxT("Import files"), wxYES_NO, m_mgr->GetTheApp()->GetTopWindow()) == wxNO) {
 		return;
 	}
 
@@ -1021,7 +1024,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 		                   "Last command output:\n");
 		msg << m_commandOutput;
 		msg << wxT("\nExit code: ") << exitCode;
-		wxMessageBox(msg, wxT("git error"),wxICON_ERROR);
+		wxMessageBox(msg, wxT("git error"),wxICON_ERROR | wxOK, m_mgr->GetTheApp()->GetTopWindow());
 		//Last action failed, clear queue
 		while(!m_gitActionQueue.empty()) {
 			m_gitActionQueue.pop();
@@ -1070,7 +1073,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 				m_gitActionQueue.push(ga);
 				AddDefaultActions();
 			} else {
-				wxMessageBox(wxT("No commit message given, aborting..."));
+				wxMessageBox(wxT("No commit message given, aborting..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_mgr->GetTheApp()->GetTopWindow());
 			}
 		}
 	} else if(ga.action == gitResetFile ) {
@@ -1091,20 +1094,20 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 	          || ga.action == gitResetRepo) {
 		if(ga.action == gitPull) {
 			if(m_commandOutput.Contains(wxT("Already"))) {
-				wxMessageBox(wxT("Nothing to pull, already up-to-date."));
+				wxMessageBox(wxT("Nothing to pull, already up-to-date."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_mgr->GetTheApp()->GetTopWindow());
 			} else {
 				wxString log =  m_commandOutput.Mid(m_commandOutput.Find(wxT("From ")));
 				GitLogDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), wxT("Pull log"));
 				dlg.SetLog(log);
 				dlg.ShowModal();
 				if(m_commandOutput.Contains(wxT("Merge made by"))) {
-					if(wxMessageBox(wxT("Merged after pull. Rebase?"),wxT("Rebase"), wxYES_NO) == wxYES) {
+					if(wxMessageBox(wxT("Merged after pull. Rebase?"),wxT("Rebase"), wxYES_NO, m_mgr->GetTheApp()->GetTopWindow()) == wxYES) {
 						wxString selection;
 						if(m_remotes.GetCount() > 1) {
 							selection = wxGetSingleChoice(wxT("Rebase with what branch?"), wxT("Rebase"),m_remoteBranchList);
 						} else {
 							selection = m_remotes[0]+wxT("/")+m_currentBranch;
-							if(wxMessageBox(wxT("Rebase with ")+selection+wxT("?"),wxT("Rebase"), wxYES_NO) == wxNO)
+							if(wxMessageBox(wxT("Rebase with ")+selection+wxT("?"),wxT("Rebase"), wxYES_NO, m_mgr->GetTheApp()->GetTopWindow()) == wxNO)
 								selection.Empty();
 						}
 
@@ -1120,7 +1123,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 					                    "After resolving conflicts, be sure to reload the current project.\n\n"
 					                    "Would you like to start \'git mergetool\'?"),
 					                wxT("Conflict found during merge"),
-					                wxYES_NO) == wxYES) {
+					                wxYES_NO, m_mgr->GetTheApp()->GetTopWindow()) == wxYES) {
 						wxString oldCWD = wxGetCwd();
 						wxSetWorkingDirectory(m_repositoryDirectory);
 						wxExecute(m_pathGITExecutable+wxT(" mergetool -y"));
@@ -1133,7 +1136,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 		} else if(ga.action == gitBranchSwitch
 		          || ga.action == gitBranchSwitchRemote) {
 			if(wxMessageBox(wxT("Switched branch. Do you want to clean the current build?"),
-			                wxT("Clean build after branch switch"), wxYES_NO) == wxYES) {
+			                wxT("Clean build after branch switch"), wxYES_NO, m_mgr->GetTheApp()->GetTopWindow()) == wxYES) {
 				wxString conf, projectName;
 				projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
 

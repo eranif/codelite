@@ -159,3 +159,16 @@ wxArrayString DirPicker::GetValues() const
 		return dummy;
 	}
 }
+
+int DirPicker::GetCurrentSelection() const
+{
+	wxCHECK_MSG(m_style & wxDP_USE_COMBOBOX, wxNOT_FOUND, wxT("GetCurrentSelection is available only for wxDP_USE_COMBOBOX style"));
+
+	int index = wxNOT_FOUND;
+	wxString stringsel = m_combo->GetValue();
+	if (!stringsel.empty()) {
+		index = m_combo->FindString(stringsel);
+	}
+	
+	return index;
+}

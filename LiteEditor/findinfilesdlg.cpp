@@ -42,10 +42,16 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 	choices.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
 	choices.Add(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
 	choices.Add(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
-	for (size_t i = 0; i < m_data.GetSearchPaths().GetCount(); ++i) {
+	
+	size_t count = m_data.GetSearchPaths().GetCount();
+	for (size_t i = 0; i < count; ++i) {
 		choices.Add(m_data.GetSearchPaths().Item(i));
 	}
-	m_dirPicker->SetValues(choices, 1);
+	int initial = m_data.GetSearchScope();
+	if ((initial == wxNOT_FOUND) || ((size_t)initial >= count)){
+		initial = 1;
+	}
+	m_dirPicker->SetValues(choices, initial);
 
 	// Search for
 	m_findString->Clear();
@@ -61,6 +67,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 	m_regualrExpression->SetValue(m_data.GetFlags() & wxFRD_REGULAREXPRESSION);
 	m_printScope->SetValue(m_data.GetFlags() & wxFRD_DISPLAYSCOPE);
 	m_checkBoxSaveFilesBeforeSearching->SetValue(m_data.GetFlags() & wxFRD_SAVE_BEFORE_SEARCH);
+	m_checkBoxSeparateTab->SetValue(m_data.GetFlags() & wxFRD_SEPARATETAB_DISPLAY);
 	m_checkBoxSkipMatchesFoundInComments->SetValue(m_data.GetFlags() & wxFRD_SKIP_COMMENTS);
 	m_checkBoxSkipMatchesFoundInStrings->SetValue(m_data.GetFlags() & wxFRD_SKIP_STRINGS);
 	m_checkBoxHighlighStringComments->SetValue(m_data.GetFlags() & wxFRD_COLOUR_COMMENTS);
@@ -223,8 +230,9 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event) {
 	wxArrayString fileMask = m_fileTypes->GetStrings();
 	if(!value.IsEmpty() && fileMask.Index(value) == wxNOT_FOUND) {
 		fileMask.Add(value);
-
 	}
+
+	m_data.SetSearchScope(m_dirPicker->GetCurrentSelection());
 
 	m_data.SetFileMask( fileMask );
 	if(value.IsEmpty() == false)
@@ -273,6 +281,12 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event) {
 			flags |= wxFRD_DISPLAYSCOPE;
 		} else {
 			flags &= ~(wxFRD_DISPLAYSCOPE);
+		}
+	} else if (btnClicked == m_checkBoxSeparateTab) {
+		if (m_checkBoxSeparateTab->IsChecked()) {
+			flags |= wxFRD_SEPARATETAB_DISPLAY;
+		} else {
+			flags &= ~(wxFRD_SEPARATETAB_DISPLAY);
 		}
 	} else if (btnClicked == m_checkBoxSaveFilesBeforeSearching) {
 		if (m_checkBoxSaveFilesBeforeSearching->IsChecked()) {

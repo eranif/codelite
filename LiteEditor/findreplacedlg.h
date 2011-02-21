@@ -44,6 +44,7 @@ class wxStaticText;
 #define wxFRD_SKIP_COMMENTS         0x00000200
 #define wxFRD_SKIP_STRINGS          0x00000400
 #define wxFRD_COLOUR_COMMENTS       0x00000800
+#define wxFRD_SEPARATETAB_DISPLAY   0x00001000
 
 #define FIND_DLG 0
 #define REPLACE_DLG 1
@@ -74,12 +75,13 @@ class FindReplaceData : public SerializedObject
 	wxString       m_encoding;
 	wxArrayString  m_fileMask;
 	wxString       m_selectedMask;
+	int            m_searchScope;
 
 private:
 	void TruncateArray(wxArrayString &arr, size_t maxSize);
 
 public:
-	FindReplaceData() : m_flags(0)
+	FindReplaceData() : m_flags(0), m_searchScope(1)
 	{}
 
 	virtual ~FindReplaceData()
@@ -105,7 +107,18 @@ public:
 	wxArrayString &GetReplaceStringArr() {
 		return m_replaceString;
 	}
-
+	/**
+	 * \brief set whether to search the workspace, the project...
+	 */
+	void SetSearchScope(int scope) {
+		this->m_searchScope = scope;
+	}
+	/**
+	 * \brief get whether to search the workspace, the project...
+	 */
+	int GetSearchScope() const {
+		return m_searchScope;
+	}
 	void SetEncoding(const wxString& encoding) {
 		this->m_encoding = encoding;
 	}

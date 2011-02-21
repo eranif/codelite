@@ -483,6 +483,7 @@ void FindReplaceData::Serialize(Archive& arch)
 {
 	arch.Write(wxT("m_findString"),    m_findString);
 	arch.Write(wxT("m_replaceString"), m_replaceString);
+	arch.Write(wxT("m_searchScope"),   m_searchScope);
 	arch.Write(wxT("m_flags"),         (long)m_flags);
 	arch.Write(wxT("m_searchPaths"),   m_searchPaths);
 	arch.Write(wxT("m_encoding"),      m_encoding);
@@ -494,6 +495,7 @@ void FindReplaceData::DeSerialize(Archive& arch)
 {
 	arch.Read(wxT("m_findString"),    m_findString);
 	arch.Read(wxT("m_replaceString"), m_replaceString);
+	arch.Read(wxT("m_searchScope"),   m_searchScope);
 	arch.Read(wxT("m_flags"),         (long&)m_flags);
 	arch.Read(wxT("m_searchPaths"),   m_searchPaths);
 	arch.Read(wxT("m_encoding"),      m_encoding);

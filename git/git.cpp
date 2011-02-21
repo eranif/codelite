@@ -1059,7 +1059,6 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 		dlg.ShowModal();
 	} else if(ga.action == gitDiffRepoCommit ) {
 		GitCommitDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_repositoryDirectory);
-		wxLogMessage(m_commandOutput);
 		dlg.AppendDiff(m_commandOutput);
 		if(dlg.ShowModal() == wxID_OK) {
 			wxString message = dlg.GetCommitMessage();

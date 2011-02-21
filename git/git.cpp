@@ -665,6 +665,7 @@ void GitPlugin::OnFilesAddedToProject(wxCommandEvent& e)
 /*******************************************************************************/
 void GitPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
 {
+	DoCleanup();
 	InitDefaults();
 	e.Skip();
 }

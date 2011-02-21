@@ -40,14 +40,14 @@ GitSettingsDlgBase::GitSettingsDlgBase( wxWindow* parent, wxWindowID id, const w
 	m_staticText4->Wrap( -1 );
 	fgSizer1->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_pathGIT = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*.*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
+	m_pathGIT = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
 	fgSizer1->Add( m_pathGIT, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText5 = new wxStaticText( this, wxID_ANY, _("Path to gitk executable:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
 	fgSizer1->Add( m_staticText5, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_pathGITK = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*.*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
+	m_pathGITK = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
 	fgSizer1->Add( m_pathGITK, 0, wxALL|wxEXPAND, 5 );
 	
 	mainSizer->Add( fgSizer1, 0, wxEXPAND|wxALL, 5 );

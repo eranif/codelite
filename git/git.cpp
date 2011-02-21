@@ -716,10 +716,11 @@ void GitPlugin::ProcessGitActionQueue()
 		command << wxT(" --no-pager diff --no-color ") << ga.arguments;
 		break;
 	case gitDiffRepoCommit:
-		wxLogMessage(wxT("GIT: Diff repo HEAD"));
 		command << wxT(" --no-pager diff --no-color HEAD");
+		wxLogMessage(wxT("GIT: %s"), command.c_str());
 		ShowProgress(wxT("Obtaining diffs for modified files..."));
 		break;
+		
 	case gitResetFile:
 		wxLogMessage(wxT("GIT: Reset file ") + ga.arguments);
 		command << wxT(" --no-pager checkout ") << ga.arguments;
@@ -790,8 +791,11 @@ void GitPlugin::ProcessGitActionQueue()
 		wxLogMessage(wxT("Unknown git action"));
 		return;
 	}
-	wxLogMessage(wxT("Git: %s"), command.c_str());
+	wxLogMessage(wxT("Git: %s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
 	m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, m_repositoryDirectory);
+	if(!m_process) {
+		wxLogMessage(wxT("Failed to execute git command!"));
+	}
 }
 
 /*******************************************************************************/
@@ -1010,20 +1014,17 @@ void GitPlugin::UpdateFileTree()
 void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 {
 	HideProgress();
-
-	int exitCode = 0;
-	if(m_process) {
-		int pid = m_process->GetPid();
-		IProcess::GetProcessExitCode(pid, exitCode);
-	}
+	
+	ProcessEventData *ped = (ProcessEventData*) event.GetClientData();
+	m_commandOutput.append(ped->GetData());
+	
+	delete ped;
 	m_commandOutput.Replace(wxT("\r"), wxT(""));
 
-	if(exitCode != 0 || m_commandOutput.StartsWith(wxT("fatal"))
-	   || m_commandOutput.StartsWith(wxT("error"))) {
+	if(m_commandOutput.StartsWith(wxT("fatal")) || m_commandOutput.StartsWith(wxT("error"))) {
 		wxString msg = wxT("There was a problem while performing a git action.\n"
 		                   "Last command output:\n");
 		msg << m_commandOutput;
-		msg << wxT("\nExit code: ") << exitCode;
 		wxMessageBox(msg, wxT("git error"),wxICON_ERROR | wxOK, m_mgr->GetTheApp()->GetTopWindow());
 		//Last action failed, clear queue
 		while(!m_gitActionQueue.empty()) {
@@ -1057,6 +1058,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 		dlg.ShowModal();
 	} else if(ga.action == gitDiffRepoCommit ) {
 		GitCommitDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_repositoryDirectory);
+		wxLogMessage(m_commandOutput);
 		dlg.AppendDiff(m_commandOutput);
 		if(dlg.ShowModal() == wxID_OK) {
 			wxString message = dlg.GetCommitMessage();

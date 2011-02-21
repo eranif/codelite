@@ -331,9 +331,15 @@ bool UnixProcessImpl::Read(wxString& buff)
 			// colors are marked with ESC and terminates with lower case 'm'
 			RemoveTerminalColoring(buffer);
 			
-			buff.Append( wxString(buffer, wxConvUTF8) );
+			wxString convBuff = wxString(buffer, wxConvUTF8);
+			if(convBuff.IsEmpty()) {
+				convBuff = wxString::From8BitData(buffer);
+			}
+			
+			buff.Append( convBuff );
 			return true;
 		}
+		
 		return false;
 	} else {
 		if ( rc == EINTR || rc == EAGAIN ) {

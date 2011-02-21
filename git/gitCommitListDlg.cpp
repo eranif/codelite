@@ -40,20 +40,24 @@ GitCommitListDlg::~GitCommitListDlg()
 /*******************************************************************************/
 void GitCommitListDlg::SetCommitList(const wxString& commits)
 {
-	wxArrayString gitList = wxStringTokenize(commits, wxT("\n"));
+	wxArrayString gitList = wxStringTokenize(commits, wxT("\n"), wxTOKEN_STRTOK);
+	
 	for(unsigned i=0; i < gitList.GetCount(); ++i) {
 		wxArrayString gitCommit = wxStringTokenize(gitList[i], wxT("|"));
-
-		m_commitListBox->InsertItem(i,gitCommit[0]);
-		m_commitListBox->SetItem(i,1,gitCommit[1]);
-		m_commitListBox->SetItem(i,2,gitCommit[2]);
-		m_commitListBox->SetItem(i,3,gitCommit[3]);
+		if(gitCommit.GetCount() >= 4) {
+			m_commitListBox->InsertItem(i, gitCommit[0]);
+			m_commitListBox->SetItem   (i, 1, gitCommit[1]);
+			m_commitListBox->SetItem   (i, 2, gitCommit[2]);
+			m_commitListBox->SetItem   (i, 3, gitCommit[3]);
+		}
 	}
-	m_commitListBox->SetColumnWidth(0,150);
-	m_commitListBox->SetColumnWidth(1,500);
-	m_commitListBox->SetColumnWidth(2,250);
-	m_commitListBox->SetColumnWidth(3,150);
+	
+	m_commitListBox->SetColumnWidth(0, 150);
+	m_commitListBox->SetColumnWidth(1, 500);
+	m_commitListBox->SetColumnWidth(2, 250);
+	m_commitListBox->SetColumnWidth(3, 150);
 }
+
 /*******************************************************************************/
 void GitCommitListDlg::OnChangeCommit(wxListEvent& e)
 {

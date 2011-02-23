@@ -35,6 +35,7 @@
 #include <wx/stopwatch.h>
 #include <wx/ffile.h>
 #include "map"
+#include <algorithm>
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -752,6 +753,13 @@ wxString Language::GetScopeName(const wxString &in, std::vector<wxString> *addit
 			}
 			additionlNS->clear();
 			additionlNS->insert(additionlNS->begin(), tmpScopes.begin(), tmpScopes.end());
+		}
+		
+		wxArrayString moreScopes = GetTagsManager()->BreakToOuterScopes(scope);
+		for(size_t i=0; i<moreScopes.GetCount(); i++) {
+			if(moreScopes.Item(i) != scope && std::find(additionlNS->begin(), additionlNS->end(), moreScopes.Item(i)) == additionlNS->end()) {
+				additionlNS->push_back(moreScopes.Item(i));
+			}
 		}
 	}
 	

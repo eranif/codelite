@@ -31,6 +31,7 @@
     
     
     
+    
     <File Name="tests/test_wxarraystr.h"/>
     <File Name="tests/test_auto_ptr.h"/>
     <File Name="tests/test_shared_ptr.h"/>
@@ -147,6 +148,7 @@
       <Compiler Options="-O2;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=no )" C_Options="-O2;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=no )" Required="yes" PreCompiledHeader="">
         <IncludePath Value="$(CL_HOME)/CodeLite"/>
         <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>
+        <IncludePath Value="$(CL_HOME)/Plugin"/>
         <Preprocessor Value="__WX__"/>
       </Compiler>
       <Linker Options="-s;$(shell wx-config --debug=no --libs --unicode=yes --static=no --universal=no )" Required="yes">

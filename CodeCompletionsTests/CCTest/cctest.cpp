@@ -150,7 +150,7 @@ TEST_FUNC(testThis)
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/this_ptr.h")), 4, wxT("this->"), LoadFile(wxT("../tests/this_ptr.h")), tags);
 
 #ifdef __WXMSW__
-	CHECK_SIZE(tags.size(), 1149);
+	CHECK_SIZE(tags.size(), 1140);
 #else
 	CHECK_SIZE(tags.size(), 952);
 #endif
@@ -242,7 +242,7 @@ TEST_FUNC(testClFrame)
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_cl_frame.h")), 4, wxT("clMainFrame::Get()->"), LoadFile(wxT("../tests/test_cl_frame.h")), tags);
 #ifdef __WXMSW__
-	CHECK_SIZE(tags.size(), 1149);
+	CHECK_SIZE(tags.size(), 1140);
 #else
 	CHECK_SIZE(tags.size(), 952);
 #endif
@@ -267,6 +267,21 @@ TEST_FUNC(testGotoDeclInsideNamespace)
 									   wxT("Tada"), 
 									   wxT("Tada"), 
 									   LoadFile(wxT("../tests/test_goto_decl_inside_ns.h")), 
+									   tags);
+	
+	CHECK_SIZE(tags.size(), 1);
+	CHECK_STRING(tags.at(0)->GetName().mb_str(wxConvUTF8).data(), "Tada");
+	return true;
+}
+
+TEST_FUNC(testGotoDeclOfFuncArgUsingTheMethodScope)
+{
+	std::vector<TagEntryPtr> tags;
+	TagsManagerST::Get()->FindImplDecl(wxFileName(wxT("../tests/test_goto_decl_of_func_arg.h")), 
+									   13,
+									   wxT("Tada"), 
+									   wxT("Tada"), 
+									   LoadFile(wxT("../tests/test_goto_decl_of_func_arg.h")), 
 									   tags);
 	
 	CHECK_SIZE(tags.size(), 1);

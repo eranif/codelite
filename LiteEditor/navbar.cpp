@@ -31,135 +31,146 @@
 #include "navbar.h"
 
 NavBar::NavBar(wxWindow* parent)
-    : NavBarBase(parent)
+	: NavBarBase(parent)
+	, m_startingUp(true)
 {
-	long sashPos(150);
-	EditorConfigST::Get()->GetLongValue(wxT("NavBarSashPos"), sashPos);
-	m_splitter->SetSashPosition(sashPos);
-
 #ifdef __WXMAC__
 	m_scope->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
 	m_func->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
 #endif
+	m_splitter->Refresh();
 }
 
 NavBar::~NavBar()
 {
-	// Save the sash position
-	EditorConfigST::Get()->SaveLongValue(wxT("NavBarSashPos"), m_splitter->GetSashPosition());
 }
 
 void NavBar::OnScopeListMouseDown(wxMouseEvent& e)
 {
-    if (!ManagerST::Get()->IsWorkspaceOpen())
-        return;
+	if (!ManagerST::Get()->IsWorkspaceOpen())
+		return;
 
-    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if (!editor)
-        return;
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+	if (!editor)
+		return;
 
-    std::vector<wxString> scopes;
-    TagsManagerST::Get()->GetScopesFromFile(editor->GetFileName(), scopes);
+	std::vector<wxString> scopes;
+	TagsManagerST::Get()->GetScopesFromFile(editor->GetFileName(), scopes);
 
-    m_scope->Freeze();
+	m_scope->Freeze();
 
-    wxString cursel = m_scope->GetStringSelection();
-    m_scope->Clear();
-    for (unsigned i = 0; i < scopes.size(); i++) {
-        m_scope->AppendString(scopes[i]);
-    }
-    if (!cursel.IsEmpty()) {
-        m_scope->SetStringSelection(cursel);
-    }
+	wxString cursel = m_scope->GetStringSelection();
+	m_scope->Clear();
+	for (unsigned i = 0; i < scopes.size(); i++) {
+		m_scope->AppendString(scopes[i]);
+	}
+	if (!cursel.IsEmpty()) {
+		m_scope->SetStringSelection(cursel);
+	}
 
-    m_scope->Thaw();
+	m_scope->Thaw();
 
-    e.Skip();
+	e.Skip();
 }
 
 void NavBar::OnScope(wxCommandEvent& e)
 {
-    size_t sel = e.GetSelection();
-    if (sel < m_scope->GetCount()) {
-        m_tags.clear();
-        m_func->Clear();
-    }
+	size_t sel = e.GetSelection();
+	if (sel < m_scope->GetCount()) {
+		m_tags.clear();
+		m_func->Clear();
+	}
 }
 
 void NavBar::OnFuncListMouseDown(wxMouseEvent& e)
 {
-    if (!ManagerST::Get()->IsWorkspaceOpen())
-        return;
+	if (!ManagerST::Get()->IsWorkspaceOpen())
+		return;
 
-    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if (!editor)
-        return;
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+	if (!editor)
+		return;
 
-    wxString scope = m_scope->GetStringSelection();
-    if (scope.IsEmpty())
-        return;
+	wxString scope = m_scope->GetStringSelection();
+	if (scope.IsEmpty())
+		return;
 
-    m_tags.clear();
-    TagsManagerST::Get()->TagsFromFileAndScope(editor->GetFileName(), scope, m_tags);
+	m_tags.clear();
+	TagsManagerST::Get()->TagsFromFileAndScope(editor->GetFileName(), scope, m_tags);
 
-    m_func->Freeze();
+	m_func->Freeze();
 
-    wxString cursel = m_func->GetStringSelection();
-    m_func->Clear();
-    for (size_t i = 0; i < m_tags.size(); i++) {
-        m_func->AppendString(m_tags[i]->GetDisplayName());
-    }
-    if (!cursel.IsEmpty()) {
-        m_func->SetStringSelection(cursel);
-    }
+	wxString cursel = m_func->GetStringSelection();
+	m_func->Clear();
+	for (size_t i = 0; i < m_tags.size(); i++) {
+		m_func->AppendString(m_tags[i]->GetDisplayName());
+	}
+	if (!cursel.IsEmpty()) {
+		m_func->SetStringSelection(cursel);
+	}
 
-    m_func->Thaw();
+	m_func->Thaw();
 
-    e.Skip();
+	e.Skip();
 }
 
 void NavBar::OnFunction(wxCommandEvent& e)
 {
-    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if (!editor)
-        return;
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+	if (!editor)
+		return;
 
 	size_t sel = e.GetSelection();
 	if (sel >= m_tags.size())
-        return;
+		return;
 
-    wxString pattern = m_tags[sel]->GetPattern();
-    wxString name = m_tags[sel]->GetName();
-    editor->FindAndSelect(pattern, name);
-    editor->SetActive();
+	wxString pattern = m_tags[sel]->GetPattern();
+	wxString name = m_tags[sel]->GetName();
+	editor->FindAndSelect(pattern, name);
+	editor->SetActive();
 }
 
 void NavBar::DoShow(bool s)
 {
-    if (Show(s)) {
-        GetParent()->GetSizer()->Layout();
-    }
+	if (Show(s)) {
+		GetParent()->GetSizer()->Layout();
+	}
 }
 
 void NavBar::UpdateScope(TagEntryPtr tag)
 {
-    size_t sel = m_func->GetSelection();
-    if (tag && sel < m_tags.size() && *m_tags[sel] == *tag)
-        return;
+	size_t sel = m_func->GetSelection();
+	if (tag && sel < m_tags.size() && *m_tags[sel] == *tag)
+		return;
 
-    Freeze();
+	Freeze();
 
-    m_tags.clear();
-    m_scope->Clear();
-    m_func->Clear();
+	m_tags.clear();
+	m_scope->Clear();
+	m_func->Clear();
 
-    if (tag) {
-        m_tags.push_back(tag);
-        m_scope->AppendString(tag->GetScope());
-        m_func->AppendString(tag->GetDisplayName());
-        m_scope->SetSelection(0);
-        m_func->SetSelection(0);
-    }
+	if (tag) {
+		m_tags.push_back(tag);
+		m_scope->AppendString(tag->GetScope());
+		m_func->AppendString(tag->GetDisplayName());
+		m_scope->SetSelection(0);
+		m_func->SetSelection(0);
+	}
 
-    Thaw();
+	Thaw();
+}
+
+void NavBar::OnSplitterPosChanged(wxSplitterEvent& event)
+{
+	event.Skip();
+	if(!m_startingUp) {
+		EditorConfigST::Get()->SaveLongValue(wxT("NavBarSashPos"), m_splitter->GetSashPosition());
+	}
+}
+
+void NavBar::SetSashPosition(int pos)
+{
+	m_splitter->SetSashPosition(pos);
+	Layout();
+	m_startingUp = false;
 }

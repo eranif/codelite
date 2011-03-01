@@ -64,12 +64,12 @@ private:
 	void OnWorkspaceClosed    (wxCommandEvent    &e);
 	void OnDebugEnded         (wxCommandEvent    &e);
 	void OnStringHighlight    (wxCommandEvent    &e);
+	void OnInitDone           (wxCommandEvent    &e);
 
 	bool AskUserToSave(LEditor *editor);
 	bool DoSelectPage (wxWindow *win  );
 	void DoPositionFindBar(int where);
 	void DoHandleFrameMenu(LEditor *editor);
-
 public:
 	MainBook(wxWindow *parent);
 	~MainBook();

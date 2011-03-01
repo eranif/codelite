@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -38,6 +38,7 @@ class NavBarBase : public wxPanel
 		wxChoice* m_func;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnSplitterPosChanged( wxSplitterEvent& event ) { event.Skip(); }
 		virtual void OnScope( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnScopeListMouseDown( wxMouseEvent& event ) { event.Skip(); }
 		virtual void OnFunction( wxCommandEvent& event ) { event.Skip(); }
@@ -48,13 +49,7 @@ class NavBarBase : public wxPanel
 		
 		NavBarBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~NavBarBase();
-		
-		void m_splitterOnIdle( wxIdleEvent& )
-		{
-			m_splitter->SetSashPosition( 150 );
-			m_splitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( NavBarBase::m_splitterOnIdle ), NULL, this );
-		}
-		
+	
 };
 
 #endif //__navbarbase__

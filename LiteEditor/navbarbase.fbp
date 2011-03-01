@@ -24,6 +24,7 @@
         <object class="Panel" expanded="1">
             <property name="bg"></property>
             <property name="context_help"></property>
+            <property name="context_menu">1</property>
             <property name="enabled">1</property>
             <property name="event_handler">impl_virtual</property>
             <property name="fg"></property>
@@ -80,6 +81,7 @@
                     <object class="wxSplitterWindow" expanded="1">
                         <property name="bg"></property>
                         <property name="context_help"></property>
+                        <property name="context_menu">1</property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>
                         <property name="font"></property>
@@ -92,7 +94,7 @@
                         <property name="permission">protected</property>
                         <property name="pos"></property>
                         <property name="sashgravity">0</property>
-                        <property name="sashpos">150</property>
+                        <property name="sashpos">-1</property>
                         <property name="sashsize">-1</property>
                         <property name="size"></property>
                         <property name="splitmode">wxSPLIT_VERTICAL</property>
@@ -129,7 +131,7 @@
                         <event name="OnSetFocus"></event>
                         <event name="OnSize"></event>
                         <event name="OnSplitterDClick"></event>
-                        <event name="OnSplitterSashPosChanged"></event>
+                        <event name="OnSplitterSashPosChanged">OnSplitterPosChanged</event>
                         <event name="OnSplitterSashPosChanging"></event>
                         <event name="OnSplitterUnsplit"></event>
                         <event name="OnUpdateUI"></event>
@@ -137,6 +139,7 @@
                             <object class="wxPanel" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
+                                <property name="context_menu">1</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>
@@ -193,6 +196,7 @@
                                             <property name="bg"></property>
                                             <property name="choices"></property>
                                             <property name="context_help"></property>
+                                            <property name="context_menu">1</property>
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="font"></property>
@@ -247,6 +251,7 @@
                             <object class="wxPanel" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
+                                <property name="context_menu">1</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>
@@ -303,6 +308,7 @@
                                             <property name="bg"></property>
                                             <property name="choices"></property>
                                             <property name="context_help"></property>
+                                            <property name="context_menu">1</property>
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>
                                             <property name="font"></property>

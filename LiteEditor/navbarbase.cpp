@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -16,7 +16,6 @@ NavBarBase::NavBarBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, con
 	
 	m_splitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE );
 	m_splitter->SetSashGravity( 0 );
-	m_splitter->Connect( wxEVT_IDLE, wxIdleEventHandler( NavBarBase::m_splitterOnIdle ), NULL, this );
 	
 	m_panel1 = new wxPanel( m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer3;
@@ -42,7 +41,7 @@ NavBarBase::NavBarBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, con
 	m_panel2->SetSizer( bSizer4 );
 	m_panel2->Layout();
 	bSizer4->Fit( m_panel2 );
-	m_splitter->SplitVertically( m_panel1, m_panel2, 150 );
+	m_splitter->SplitVertically( m_panel1, m_panel2, -1 );
 	mainSizer->Add( m_splitter, 0, wxEXPAND|wxALL, 2 );
 	
 	this->SetSizer( mainSizer );
@@ -50,6 +49,7 @@ NavBarBase::NavBarBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, con
 	mainSizer->Fit( this );
 	
 	// Connect Events
+	m_splitter->Connect( wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED, wxSplitterEventHandler( NavBarBase::OnSplitterPosChanged ), NULL, this );
 	m_scope->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( NavBarBase::OnScope ), NULL, this );
 	m_scope->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( NavBarBase::OnScopeListMouseDown ), NULL, this );
 	m_func->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( NavBarBase::OnFunction ), NULL, this );
@@ -59,6 +59,7 @@ NavBarBase::NavBarBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, con
 NavBarBase::~NavBarBase()
 {
 	// Disconnect Events
+	m_splitter->Disconnect( wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED, wxSplitterEventHandler( NavBarBase::OnSplitterPosChanged ), NULL, this );
 	m_scope->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( NavBarBase::OnScope ), NULL, this );
 	m_scope->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( NavBarBase::OnScopeListMouseDown ), NULL, this );
 	m_func->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( NavBarBase::OnFunction ), NULL, this );

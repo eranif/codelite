@@ -57,7 +57,8 @@ void MainBook::CreateGuiControls()
 
 	m_navBar = new NavBar(this);
 	sz->Add(m_navBar, 0, wxEXPAND);
-
+	m_navBar->Freeze();
+	
 	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_PASS_FOCUS|wxVB_NODND | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_SCROLL_BUTTONS;
 
 	// load the notebook style from the configuration settings
@@ -87,7 +88,8 @@ void MainBook::ConnectEvents()
 	wxTheApp->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
 	wxTheApp->Connect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
 	wxTheApp->Connect(wxEVT_DEBUG_ENDED,       wxCommandEventHandler(MainBook::OnDebugEnded),         NULL, this);
-
+	wxTheApp->Connect(wxEVT_INIT_DONE,         wxCommandEventHandler(MainBook::OnInitDone),           NULL, this);
+	
 	// Highlight Job
 	Connect(wxEVT_CMD_JOB_STATUS_VOID_PTR,         wxCommandEventHandler(MainBook::OnStringHighlight),      NULL, this);
 }
@@ -106,7 +108,7 @@ MainBook::~MainBook()
 	wxTheApp->Disconnect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
 	wxTheApp->Disconnect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
 	wxTheApp->Disconnect(wxEVT_DEBUG_ENDED,       wxCommandEventHandler(MainBook::OnDebugEnded),         NULL, this);
-
+	wxTheApp->Disconnect(wxEVT_INIT_DONE,         wxCommandEventHandler(MainBook::OnInitDone),           NULL, this);
 	Disconnect(wxEVT_CMD_JOB_STATUS_VOID_PTR,         wxCommandEventHandler(MainBook::OnStringHighlight),      NULL, this);
 }
 
@@ -1020,4 +1022,13 @@ void MainBook::SetViewWordWrap(bool b)
 	for (size_t i = 0; i < editors.size(); i++) {
 		editors[i]->SetWrapMode(b ? wxSCI_WRAP_WORD : wxSCI_WRAP_NONE);
 	}
+}
+
+void MainBook::OnInitDone(wxCommandEvent& e)
+{
+	e.Skip();
+	long sashPos(150);
+	EditorConfigST::Get()->GetLongValue(wxT("NavBarSashPos"), sashPos);
+	m_navBar->SetSashPosition(sashPos);
+	m_navBar->Thaw();
 }

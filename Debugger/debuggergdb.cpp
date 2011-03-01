@@ -195,6 +195,9 @@ bool DbgGdb::Start( const wxString &debuggerPath,
 					const wxArrayString &cmds,
 					const wxString &ttyName)
 {
+	//set the environment variables
+	EnvSetter env( m_env );
+	
 	wxString dbgExeName;
 	if ( ! DoLocateGdbExecutable( debuggerPath, dbgExeName ) ) {
 		return false;
@@ -216,9 +219,6 @@ bool DbgGdb::Start( const wxString &debuggerPath,
 	m_debuggeePid = pid;
 	cmd << wxT( " --pid=" ) << m_debuggeePid;
 	wxLogMessage( cmd );
-
-	//set the environment variables
-	EnvSetter env( m_env );
 
 	m_observer->UpdateAddLine( wxString::Format( wxT( "Current working dir: %s" ), wxGetCwd().c_str() ) );
 	m_observer->UpdateAddLine( wxString::Format( wxT( "Launching gdb from : %s" ), wxGetCwd().c_str() ) );
@@ -242,7 +242,9 @@ bool DbgGdb::Start( const wxString &debuggerPath,
 					const wxArrayString &cmds,
 					const wxString &ttyName)
 {
-
+	//set the environment variables
+	EnvSetter env( m_env );
+	
 	wxString dbgExeName;
 	if ( ! DoLocateGdbExecutable( debuggerPath, dbgExeName ) ) {
 		return false;
@@ -256,9 +258,6 @@ bool DbgGdb::Start( const wxString &debuggerPath,
 #endif
 
 	m_debuggeePid = wxNOT_FOUND;
-
-	//set the environment variables
-	EnvSetter env( m_env );
 
 	m_observer->UpdateAddLine( wxString::Format( wxT( "Current working dir: %s" ), wxGetCwd().c_str() ) );
 	m_observer->UpdateAddLine( wxString::Format( wxT( "Launching gdb from : %s" ), cwd.c_str() ) );
@@ -963,7 +962,7 @@ bool DbgGdb::DoLocateGdbExecutable( const wxString& debuggerPath, wxString& dbgE
 		return false;
 	}
 	wxString cmd;
-
+	
 	dbgExeName = debuggerPath;
 	if ( dbgExeName.IsEmpty() ) {
 		dbgExeName = wxT( "gdb" );

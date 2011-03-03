@@ -85,6 +85,15 @@ void SubversionView::OnChangeRootDir( wxCommandEvent& event )
 	wxString path(m_textCtrlRootDir->GetValue());
 	wxString new_path = wxDirSelector(wxT(""), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
+		
+		SvnSettingsData ssd = m_plugin->GetSettings();
+		std::map<wxString, wxString> m = ssd.GetWorkspaceRepoPath();
+		if(m_plugin->GetManager()->IsWorkspaceOpen()) {
+			m[m_plugin->GetManager()->GetWorkspace()->GetName()] = new_path;
+			ssd.SetWorkspaceRepoPath(m);
+			m_plugin->SetSettings(ssd);
+		}
+		
 		m_textCtrlRootDir->SetValue(new_path);
 		BuildTree();
 	}
@@ -214,7 +223,18 @@ void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
 	event.Skip();
 	Workspace *workspace = m_plugin->GetManager()->GetWorkspace();
 	if(m_plugin->GetManager()->IsWorkspaceOpen() && workspace) {
-		m_textCtrlRootDir->SetValue(workspace->GetWorkspaceFileName().GetPath());
+		
+		// Set the repository path to the workspace path unless user manually modified it
+		// (in that case, the new value is stored in the 
+		wxString repoPath = workspace->GetWorkspaceFileName().GetPath();
+		SvnSettingsData ssd = m_plugin->GetSettings();
+		std::map<wxString, wxString> m = ssd.GetWorkspaceRepoPath();
+		std::map<wxString, wxString>::iterator iter = m.find(workspace->GetName());
+		if(iter != m.end()) {
+			repoPath = iter->second;
+		}
+		
+		m_textCtrlRootDir->SetValue(repoPath);
 		BuildTree();
 	}
 }

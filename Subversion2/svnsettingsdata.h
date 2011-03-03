@@ -28,6 +28,7 @@
 
 #include "serialized_object.h" // Base class
 #include "notebook_ex.h"
+#include <map>
 
 enum SvnSettingsDataFlags {
 	SvnAddFileToSvn        = 0x00000001,
@@ -39,28 +40,28 @@ enum SvnSettingsDataFlags {
 	SvnUsePosixLocale      = 0x00000040
 };
 
-class SvnSettingsData : public SerializedObject
-{
-	wxString      m_executable;
-	wxString      m_ignoreFilePattern;
-	wxString      m_externalDiffViewer;
-	wxString      m_sshClient;
-	wxString      m_sshClientArgs;
-	size_t        m_flags;
-	wxArrayString m_urls;
-	wxString      m_revisionMacroName;
-	size_t        m_svnTabIndex;
+class SvnSettingsData : public SerializedObject {
+	wxString                     m_executable;
+	wxString                     m_ignoreFilePattern;
+	wxString                     m_externalDiffViewer;
+	wxString                     m_sshClient;
+	wxString                     m_sshClientArgs;
+	size_t                       m_flags;
+	wxArrayString                m_urls;
+	wxString                     m_revisionMacroName;
+	size_t                       m_svnTabIndex;
+	std::map<wxString, wxString> m_workspaceRepoPath;
 
 public:
 	SvnSettingsData()
-			: m_executable(wxT("svn"))
-			, m_ignoreFilePattern(wxT("*.o *.obj *.exe *.lib *.so *.dll *.a *.dynlib *.exp *.ilk *.pdb *.d *.tags *.suo *.ncb *.bak *.orig *.dll *.mine *.o.d *.session Debug Release DebugUnicode ReleaseUnicode"))
-			, m_externalDiffViewer(wxT(""))
-			, m_sshClient(wxT(""))
-			, m_sshClientArgs(wxT(""))
-			, m_flags(SvnAddFileToSvn|SvnRetagWorkspace|SvnUsePosixLocale)
-			, m_revisionMacroName(wxT("SVN_REVISION"))
-			, m_svnTabIndex(Notebook::npos) {
+		: m_executable(wxT("svn"))
+		, m_ignoreFilePattern(wxT("*.o *.obj *.exe *.lib *.so *.dll *.a *.dynlib *.exp *.ilk *.pdb *.d *.tags *.suo *.ncb *.bak *.orig *.dll *.mine *.o.d *.session Debug Release DebugUnicode ReleaseUnicode"))
+		, m_externalDiffViewer(wxT(""))
+		, m_sshClient(wxT(""))
+		, m_sshClientArgs(wxT(""))
+		, m_flags(SvnAddFileToSvn|SvnRetagWorkspace|SvnUsePosixLocale)
+		, m_revisionMacroName(wxT("SVN_REVISION"))
+		, m_svnTabIndex(Notebook::npos) {
 	}
 
 	virtual ~SvnSettingsData() {
@@ -77,6 +78,7 @@ public:
 		arch.Read(wxT("m_urls"),                      m_urls);
 		arch.Read(wxT("m_revisionMacroName"),         m_revisionMacroName);
 		arch.Read(wxT("m_svnTabIndex"),               m_svnTabIndex);
+		arch.Read(wxT("m_workspaceRepoPath"),         m_workspaceRepoPath);
 	}
 
 	virtual void Serialize(Archive &arch) {
@@ -89,6 +91,7 @@ public:
 		arch.Write(wxT("m_urls"),                      m_urls);
 		arch.Write(wxT("m_revisionMacroName"),         m_revisionMacroName);
 		arch.Write(wxT("m_svnTabIndex"),               m_svnTabIndex);
+		arch.Write(wxT("m_workspaceRepoPath"),         m_workspaceRepoPath);
 	}
 
 	void SetSvnTabIndex(const size_t& svnTabIndex) {
@@ -144,6 +147,12 @@ public:
 	}
 	const wxArrayString& GetUrls() const {
 		return m_urls;
+	}
+	void SetWorkspaceRepoPath(const std::map<wxString, wxString>& workspaceRepoPath) {
+		this->m_workspaceRepoPath = workspaceRepoPath;
+	}
+	const std::map<wxString, wxString>& GetWorkspaceRepoPath() const {
+		return m_workspaceRepoPath;
 	}
 };
 

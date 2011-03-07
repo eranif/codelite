@@ -479,6 +479,25 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
 				}
 			}
 		}
+	} else if(m_recv == m_sci) {
+		// Replace In Files...
+		AppendText(summary->GetMessage() + wxT("\n"));
+		if (m_tb->GetToolState(XRCID("scroll_on_output"))) {
+			m_sci->GotoLine(0);
+		}
+		
+		OutputTabWindow::OnCollapseAll(e);
+		if(m_sci) {
+			// Collapse the matches
+			int maxLine = m_sci->GetLineCount();
+			for (int line = 0; line < maxLine; line++) {
+				int foldLevel = (m_sci->GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+				if (foldLevel == 2 && !m_sci->GetFoldExpanded(line) ) {
+					m_sci->ToggleFold(line);
+					break;
+				}
+			}
+		}
 	}
 	delete summary;
 }

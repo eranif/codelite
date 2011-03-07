@@ -37,7 +37,7 @@
   <Project Name="MacBundler" Path="MacBundler/MacBundler.project" Active="No"/>
   <Project Name="git" Path="git/git.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
@@ -63,7 +63,7 @@
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>

@@ -30,6 +30,7 @@
 #include <wx/msgdlg.h>
 #include "virtualdirectoryselector.h"
 #include "wx/xrc/xmlres.h"
+#include <wx/tokenzr.h>
 #include "newinheritancedlg.h"
 #include "imanager.h"
 #include "globals.h"
@@ -60,7 +61,8 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 	m_listCtrl1->InsertColumn(1, _("Access"));
 
 	m_listCtrl1->InsertColumn(2, _("File"));
-
+	
+	wxString vdPath;
 	TreeItemInfo item = mgr->GetSelectedTreeItemInfo(TreeFileView);
 	if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory){
 		wxString path = VirtualDirectorySelector::DoGetPath(m_mgr->GetTree(TreeFileView), item.m_item, false);
@@ -72,20 +74,22 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 	//set the class path to be the active project path
 	wxString errMsg;
 	if (m_mgr->GetWorkspace()) {
+		wxString start_path;
 		if (item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
-
-			m_textCtrlGenFilePath->SetValue(item.m_fileName.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-
+			m_basePath = item.m_fileName.GetPath(wxPATH_GET_VOLUME);
+			
 		} else {
-
+			
 			wxString projname = m_mgr->GetWorkspace()->GetActiveProjectName();
 			ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projname, errMsg);
 			if (proj) {
-				m_textCtrlGenFilePath->SetValue(proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+				m_basePath = proj->GetFileName().GetPath(wxPATH_GET_VOLUME);
 			}
-
 		}
 	}
+	
+	DoUpdateGeneratedPath();
+	
 	m_textCtrlFileName->Enable( false );
 	GetSizer()->Layout();
 	Centre();
@@ -360,6 +364,7 @@ void NewClassDlg::OnBrowseVD(wxCommandEvent& e)
 	VirtualDirectorySelector dlg(this, m_mgr->GetWorkspace(), m_textCtrlVD->GetValue());
 	if(dlg.ShowModal() == wxID_OK){
 		m_textCtrlVD->SetValue(dlg.GetVirtualDirectoryPath());
+		DoUpdateGeneratedPath();
 	}
 }
 
@@ -453,4 +458,22 @@ wxString NewClassDlg::doSpliteByCaptilization(const wxString& str)
 		output.Remove(0, 1);
 	}
 	return output;
+}
+
+void NewClassDlg::DoUpdateGeneratedPath()
+{
+	wxString vdPath = m_textCtrlVD->GetValue();
+	wxString start_path = m_basePath;
+	
+	// try to place the class as close as we can to the selected virtual folder
+	wxArrayString subDirs = wxStringTokenize(vdPath.AfterFirst(wxT(':')), wxT(":"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<subDirs.GetCount(); i++) {
+		wxFileName fn(start_path + wxFileName::GetPathSeparator() + subDirs.Item(i), wxEmptyString);
+		if(fn.DirExists()) {
+			start_path << wxFileName::GetPathSeparator() << subDirs.Item(i);
+		} else {
+			break;
+		}
+	}
+	m_textCtrlGenFilePath->SetValue(start_path);
 }

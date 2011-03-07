@@ -72,8 +72,10 @@ struct NewClassInfo {
 /** Implementing NewClassBaseDlg */
 class NewClassDlg : public NewClassBaseDlg
 {
-	long m_selectedItem;
+	long      m_selectedItem;
 	IManager *m_mgr;
+	wxString  m_basePath;
+	
 protected:
 	// Handlers for NewClassBaseDlg events.
 	void OnListItemActivated( wxListEvent& event );
@@ -93,7 +95,8 @@ protected:
 	void OnCheckInline(wxCommandEvent &e);
 
 	wxString doSpliteByCaptilization(const wxString &str);
-
+	void DoUpdateGeneratedPath();
+	
 public:
 	/** Constructor */
 	NewClassDlg( wxWindow* parent, IManager *mgr );

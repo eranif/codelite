@@ -739,62 +739,37 @@ bool FileViewTree::AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &pa
 
 void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 {
-	static wxString start_path(wxEmptyString);
-
+	wxString start_path(wxEmptyString);
 	wxTreeItemId item = GetSingleSelection();
 	if ( !item.IsOk() ) {
 		return;
 	}
 
-	const wxString ALL(	wxT("All Files (*)|*|")
+	const wxString ALL( wxT("All Files (*)|*|")
 	                    wxT( "C/C++ Source Files (*.c;*.cpp;*.cxx;*.cc)|*.c;*.cpp;*.cxx;*.cc|" )
 	                    wxT( "C/C++ Header Files (*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc)|*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc" ) );
 	
-	// There are 3 possibilities:
-	//	1) A standard situation, with the project and files all in subdir of the codelite dir.
-	//	   In this case, the existing files inside the virtual dir will have a name but no path, so use the project's path
-	//	2) Non-standard, with the project in one path, and files elsewhere
-	//	   In this case, the existing files inside the virtual dir will have a filepath, & we can get the path from this
-	//	   as it's unlikely that people will want to mix files with different paths in one virtual dir
-	//	3) Either 1 or 2, but with start_path already holding a recently-used path
-
-	// To make life easier for people in situation 2), try to find a valid path for the wxFileDialog from the virtual dir
-	if (ItemHasChildren(item)) {
-		wxTreeItemIdValue cookie;
-		wxTreeItemId child = GetFirstChild(item, cookie);
-		do { // Find the first file in the virtual dir (assuming there is one)
-			if (child.IsOk()) {
-				FilewViewTreeItemData *childData = static_cast<FilewViewTreeItemData*>( GetItemData( child ) );
-				if (childData && childData->GetData().GetKind() == ProjectItem::TypeFile) {
-					// We're only interested in files here, not child virtual dirs
-					wxFileName fn(childData->GetData().GetFile());
-					fn.MakeAbsolute();
-					if (!fn.FileExists()) {
-						child = GetNextChild(item, cookie);
-						continue;
-					}
-					wxString path = fn.GetPath();
-					if (!path.IsEmpty()) {
-						start_path = path;
-					}
-					// Break whether or not we've found a valid path. If not, trying harder is unlikely to help
-					break;
-				}
-			}
-			child = GetNextChild(item, cookie);
-		} while (child.IsOk());
-	}
 	
 	wxString vdPath = GetItemPath( item );
-	wxString project;
+	wxString project, vd;
 	project = vdPath.BeforeFirst( wxT( ':' ) );
-
-	wxArrayString paths;
+	vd      = vdPath.AfterFirst(wxT(':'));
+	
 	ProjectPtr proj = ManagerST::Get()->GetProject( project );
-	if (start_path.IsEmpty()) {
-		start_path = proj->GetFileName().GetPath();
+	start_path = proj->GetFileName().GetPath();
+	
+	// try to open the dir dialog as close as we can to the virtual folder ones
+	wxArrayString subDirs = wxStringTokenize(vd, wxT(":"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<subDirs.GetCount(); i++) {
+		wxFileName fn(start_path + wxFileName::GetPathSeparator() + subDirs.Item(i), wxEmptyString);
+		if(fn.DirExists()) {
+			start_path << wxFileName::GetPathSeparator() << subDirs.Item(i);
+		} else {
+			break;
+		}
 	}
-
+	
+	wxArrayString paths;
 	wxFileDialog dlg(this, _("Add Existing Item"), start_path, wxEmptyString, ALL, wxFD_MULTIPLE | wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if ( dlg.ShowModal() == wxID_OK ) {
 		dlg.GetPaths( paths );
@@ -819,8 +794,20 @@ void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )
 
 	// Project name
 	wxString projName = path.BeforeFirst( wxT( ':' ) );
+	wxString vd       = path.AfterFirst( wxT( ':' ) );
 	wxString projCwd = ManagerST::Get()->GetProjectCwd( projName );
-
+	
+	// try to open the dir dialog as close as we can to the virtual folder ones
+	wxArrayString subDirs = wxStringTokenize(vd, wxT(":"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<subDirs.GetCount(); i++) {
+		wxFileName fn(projCwd + wxFileName::GetPathSeparator() + subDirs.Item(i), wxEmptyString);
+		if(fn.DirExists()) {
+			projCwd << wxFileName::GetPathSeparator() << subDirs.Item(i);
+		} else {
+			break;
+		}
+	}
+	
 	NewItemDlg dlg(clMainFrame::Get(), projCwd);
 	dlg.SetTitle(_("New Item"));
 	if ( dlg.ShowModal() == wxID_OK ) {

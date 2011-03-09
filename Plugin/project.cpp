@@ -1079,3 +1079,44 @@ void Project::ConvertToUnixFormat(wxXmlNode* parent)
 		child = child->GetNext();
 	}
 }
+
+wxString Project::GetBestPathForVD(const wxString& vdPath)
+{
+	// Project name
+	const wxString basePath = GetFileName().GetPath();
+	wxString bestPath;
+	
+	// try to open the dir dialog as close as we can to the virtual folder ones
+	int matches(0);
+	wxArrayString subDirs = wxStringTokenize(vdPath, wxT(":"), wxTOKEN_STRTOK);
+	bestPath = basePath;
+	for(size_t i=0; i<subDirs.GetCount(); i++) {
+		wxFileName fn(basePath + wxFileName::GetPathSeparator() + subDirs.Item(i), wxEmptyString);
+		if(fn.DirExists()) {
+			bestPath << wxFileName::GetPathSeparator() << subDirs.Item(i);
+			matches++;
+		} else {
+			break;
+		}
+	}
+	
+	if(matches) {
+		return bestPath;
+	}
+	
+	// Could not find any match for the virtual directory when tested
+	// directly under the project path. Try it again using a path from 
+	// the first file that we could find under the virtual directory
+	wxArrayString files;
+	GetFilesByVirtualDir(vdPath, files);
+	if(files.IsEmpty() == false) {
+		wxFileName f(files.Item(0));
+		if(f.MakeAbsolute(GetFileName().GetPath())) {
+			bestPath = f.GetPath();
+			return bestPath;
+		}
+	}
+	
+	// all failed, return the project path as our default path
+	return basePath;
+}

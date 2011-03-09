@@ -463,17 +463,13 @@ wxString NewClassDlg::doSpliteByCaptilization(const wxString& str)
 void NewClassDlg::DoUpdateGeneratedPath()
 {
 	wxString vdPath = m_textCtrlVD->GetValue();
-	wxString start_path = m_basePath;
 	
-	// try to place the class as close as we can to the selected virtual folder
-	wxArrayString subDirs = wxStringTokenize(vdPath.AfterFirst(wxT(':')), wxT(":"), wxTOKEN_STRTOK);
-	for(size_t i=0; i<subDirs.GetCount(); i++) {
-		wxFileName fn(start_path + wxFileName::GetPathSeparator() + subDirs.Item(i), wxEmptyString);
-		if(fn.DirExists()) {
-			start_path << wxFileName::GetPathSeparator() << subDirs.Item(i);
-		} else {
-			break;
-		}
+	wxString project, vd, errMsg;
+	project = vdPath.BeforeFirst( wxT( ':' ) );
+	vd      = vdPath.AfterFirst(wxT(':'));
+	
+	ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(project, errMsg);
+	if(proj) {
+		m_textCtrlGenFilePath->SetValue(proj->GetBestPathForVD(vd));
 	}
-	m_textCtrlGenFilePath->SetValue(start_path);
 }

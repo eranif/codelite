@@ -756,18 +756,7 @@ void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 	vd      = vdPath.AfterFirst(wxT(':'));
 	
 	ProjectPtr proj = ManagerST::Get()->GetProject( project );
-	start_path = proj->GetFileName().GetPath();
-	
-	// try to open the dir dialog as close as we can to the virtual folder ones
-	wxArrayString subDirs = wxStringTokenize(vd, wxT(":"), wxTOKEN_STRTOK);
-	for(size_t i=0; i<subDirs.GetCount(); i++) {
-		wxFileName fn(start_path + wxFileName::GetPathSeparator() + subDirs.Item(i), wxEmptyString);
-		if(fn.DirExists()) {
-			start_path << wxFileName::GetPathSeparator() << subDirs.Item(i);
-		} else {
-			break;
-		}
-	}
+	start_path = proj->GetBestPathForVD(vd);
 	
 	wxArrayString paths;
 	wxFileDialog dlg(this, _("Add Existing Item"), start_path, wxEmptyString, ALL, wxFD_MULTIPLE | wxFD_OPEN | wxFD_FILE_MUST_EXIST);
@@ -793,19 +782,12 @@ void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )
 	wxString path = GetItemPath( item );
 
 	// Project name
-	wxString projName = path.BeforeFirst( wxT( ':' ) );
-	wxString vd       = path.AfterFirst( wxT( ':' ) );
-	wxString projCwd = ManagerST::Get()->GetProjectCwd( projName );
-	
-	// try to open the dir dialog as close as we can to the virtual folder ones
-	wxArrayString subDirs = wxStringTokenize(vd, wxT(":"), wxTOKEN_STRTOK);
-	for(size_t i=0; i<subDirs.GetCount(); i++) {
-		wxFileName fn(projCwd + wxFileName::GetPathSeparator() + subDirs.Item(i), wxEmptyString);
-		if(fn.DirExists()) {
-			projCwd << wxFileName::GetPathSeparator() << subDirs.Item(i);
-		} else {
-			break;
-		}
+	wxString   projName = path.BeforeFirst(wxT(':'));
+	wxString   vd       = path.AfterFirst (wxT(':'));
+	wxString   projCwd;
+	ProjectPtr project  = ManagerST::Get()->GetProject(projName);
+	if(project) {
+		projCwd = project->GetBestPathForVD(vd);
 	}
 	
 	NewItemDlg dlg(clMainFrame::Get(), projCwd);

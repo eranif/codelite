@@ -471,7 +471,9 @@ public:
 	void SetProjectLastModifiedTime(time_t modificationTime) {
 		m_modifyTime = modificationTime;
 	}
-
+	
+	wxString GetBestPathForVD(const wxString& vdPath);
+ 
 private:
 
 	void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree);

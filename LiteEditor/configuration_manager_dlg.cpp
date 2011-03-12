@@ -102,8 +102,7 @@ void ConfigurationManagerDlg::PopulateConfigurations()
 
 	Freeze();
 	// remove old entries from the configuration table
-	wxSizerItemList list = mainSizer->GetChildren();
-	for ( wxSizerItemList::Node *node = list.GetFirst(); node; node = node->GetNext() ) {
+	for ( wxSizerItemList::compatibility_iterator node = mainSizer->GetChildren().GetFirst(); node; node = node->GetNext() ) {
 		wxSizerItem *current = node->GetData();
 		current->GetWindow()->Destroy();
 	}

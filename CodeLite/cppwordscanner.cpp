@@ -226,7 +226,6 @@ void CppWordScanner::doInit()
 	for(size_t i=0; i<tmpArr.GetCount(); i++) {
 		m_arr.Add(tmpArr.Item(i).c_str());
 	}
-	m_arr.Sort();
 }
 
 TextStatesPtr CppWordScanner::states()

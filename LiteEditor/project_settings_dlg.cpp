@@ -215,7 +215,11 @@ void ProjectSettingsDlg::ClearValues()
 void ProjectSettingsDlg::OnButtonHelp(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	MacrosDlg dlg(this, MacrosDlg::MacrosProject);
+
+	ProjectPtr project = ManagerST::Get()->GetProject(m_projectName);
+	IEditor* editor = PluginManager::Get()->GetActiveEditor();
+
+	MacrosDlg dlg(this, MacrosDlg::MacrosProject, project, editor);
 	dlg.ShowModal();
 }
 

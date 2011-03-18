@@ -30,19 +30,22 @@
 #include <wx/xrc/xmlres.h>
 #include "macrosdlg.h"
 #include "globals.h"
+#include "ieditor.h"
 
 BEGIN_EVENT_TABLE(MacrosDlg, MacrosBaseDlg)
 	EVT_MENU(XRCID("copy_macro"), MacrosDlg::OnCopy)
 END_EVENT_TABLE()
 
-MacrosDlg::MacrosDlg( wxWindow* parent, int content )
+MacrosDlg::MacrosDlg( wxWindow* parent, int content, ProjectPtr project, IEditor *editor )
 		: MacrosBaseDlg( parent )
 		, m_item(wxNOT_FOUND)
 		, m_content(content)
+		, m_project(project)
+		, m_editor(editor)
 {
 	Initialize();
 	m_buttonOk->SetFocus();
-	GetSizer()->SetMinSize(500, 400);
+	GetSizer()->SetMinSize(700, 400);
 	GetSizer()->Fit(this);
 }
 
@@ -50,7 +53,7 @@ void MacrosDlg::OnItemRightClick( wxListEvent& event )
 {
 	m_item = event.m_itemIndex;
 	wxMenu menu;
-	menu.Append(XRCID("copy_macro"), wxT("Copy"), false);
+	menu.Append(XRCID("copy_macro"), wxT("Copy macro name"), false);
 	PopupMenu(&menu);
 }
 
@@ -58,6 +61,12 @@ void MacrosDlg::Initialize()
 {
 	m_listCtrlMacros->InsertColumn(0, _("Macro"));
 	m_listCtrlMacros->InsertColumn(1, _("Description"));
+
+	// Only show third column if we can expand the macros
+	if (m_project && m_editor)
+	{
+		m_listCtrlMacros->InsertColumn(2, wxT("Value"));
+	}
 
 	switch ( m_content ) {
 	case MacrosExternalTools:
@@ -84,7 +93,7 @@ void MacrosDlg::Initialize()
 		AddMacro(wxT("$(ProjectFilesAbs)"),       _("A space delimited string containing all of the project files in an absolute path"));
 		AddMacro(wxT("`expression`"),             _("backticks: evaluates the expression inside the backticks into a string"));
 		break;
-		
+
 	case MacrosCompiler:
 		AddMacro(wxT("$(CompilerName)"),           _("Expands to the compiler name as set in the Tools tab"));
 		AddMacro(wxT("$(SourceSwitch)"),           _("Expands to the source switch (usually, -c)"));
@@ -124,6 +133,13 @@ void MacrosDlg::Initialize()
 	// resize columns
 	m_listCtrlMacros->SetColumnWidth(0, wxLIST_AUTOSIZE);
 	m_listCtrlMacros->SetColumnWidth(1, wxLIST_AUTOSIZE);
+
+	// Only resize third column if we can and may expand the macros
+	if (m_project && m_editor)
+	{
+		// Do not autosize this column as it may grow very, very wide
+		m_listCtrlMacros->SetColumnWidth(2, 220);
+	}
 }
 
 void MacrosDlg::AddMacro(const wxString& name, const wxString& desc)
@@ -131,6 +147,13 @@ void MacrosDlg::AddMacro(const wxString& name, const wxString& desc)
 	long row = AppendListCtrlRow(m_listCtrlMacros);
 	SetColumnText(m_listCtrlMacros, row, 0, name);
 	SetColumnText(m_listCtrlMacros, row, 1, desc);
+
+	// Only fill third column if we can and may expand the macros
+	if (m_project && m_editor)
+	{
+		wxString value = ExpandVariables(name, m_project, m_editor);
+		SetColumnText(m_listCtrlMacros, row, 2, value);
+	}
 }
 
 MacrosDlg::~MacrosDlg()

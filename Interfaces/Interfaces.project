@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="Interfaces">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0006Common000000000000]]>
+    </Plugin>
+  </Plugins>
   <VirtualDirectory Name="Header Files">
     <File Name="debugger.h"/>
     <File Name="debuggerobserver.h"/>
@@ -13,23 +18,61 @@
     <File Name="cl_defs.h"/>
   </VirtualDirectory>
   <Dependencies/>
+  <Dependencies Name="Common"/>
+  <Dependencies Name="Debug"/>
   <Settings Type="Static Library">
-    <Configuration Name="Common" CompilerType="gnu g++" DebuggerType="" Type="">
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="-g">
+    <Configuration Name="Common" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Required="yes" Options="-O0">
+      <Linker Options="-O0" Required="yes">
         <LibraryPath Value="."/>
         <LibraryPath Value="Debug"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""/>
-      <ResourceCompiler Required="no" Options=""/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
+        <RebuildCommand/>
         <CleanCommand/>
         <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="-O0" Required="yes">
+        <LibraryPath Value="."/>
+        <LibraryPath Value="Debug"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
         <ThirdPartyToolName/>
@@ -40,32 +83,15 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="" Type="">
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="-g">
+    <GlobalSettings>
+      <Compiler Options="">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Required="yes" Options="-O0">
+      <Linker Options="">
         <LibraryPath Value="."/>
-        <LibraryPath Value="Debug"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""/>
-      <ResourceCompiler Required="no" Options=""/>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName/>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
   </Settings>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Common"/>

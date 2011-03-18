@@ -30,6 +30,7 @@
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include "macrosdlg.h"
+#include "workspace.h"
 
 NewToolDlg::NewToolDlg( wxWindow* parent, IManager *mgr, ExternalToolData *data)
 		: NewToolBase( parent )
@@ -78,7 +79,13 @@ void NewToolDlg::OnButtonBrowseWD( wxCommandEvent& event )
 void NewToolDlg::OnButtonHelp( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	MacrosDlg dlg(this, MacrosDlg::MacrosExternalTools);
+
+	wxString errMsg = wxT("");
+	wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
+	ProjectPtr project = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
+	IEditor* editor = m_mgr->GetActiveEditor();
+
+	MacrosDlg dlg(this, MacrosDlg::MacrosExternalTools, project, editor);
 	dlg.ShowModal();
 }
 
@@ -86,7 +93,7 @@ void NewToolDlg::OnButtonOk( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 	int rc(wxID_OK);
-	
+
 	// load all the tools
 	ExternalToolsData inData;
 	m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
@@ -99,7 +106,7 @@ void NewToolDlg::OnButtonOk( wxCommandEvent& event )
 			break;
 		}
 	}
-	
+
 	EndModal(rc);
 }
 

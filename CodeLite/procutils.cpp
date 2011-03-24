@@ -422,7 +422,8 @@ bool ProcUtils::Shell()
 	if (Locate(wxT("gnome-terminal"), where)) {
 		terminal = where;
 	} else if (Locate(wxT("konsole"), where)) {
-		terminal = where;
+		wxString path = wxGetCwd();
+		terminal << where << wxT(" --workdir \"") << path << wxT("\"");
 	} else if (Locate(wxT("xterm"), where)) {
 		terminal = where;
 	}

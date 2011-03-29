@@ -1368,6 +1368,13 @@ bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 			focus->SetFocus();
 		}
 	}
+
+#if wxVERSION_NUMBER >= 2900
+	// This is needed in >=wxGTK-2.9, otherwise the current editor sometimes doesn't notice that the output pane has appeared
+	// resulting in an area at the bottom that can't be scrolled to
+	clMainFrame::Get()->SendSizeEvent(wxSEND_EVENT_POST);
+#endif
+
 	return true;
 }
 

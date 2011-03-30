@@ -14,6 +14,7 @@ class LocalsTable : public DebuggerTreeListCtrlBase
 
 	DebuggerPreDefinedTypes m_preDefTypes;
 	bool                    m_resolveLocals;
+	bool                    m_arrayAsCharPtr;
 
 protected:
 	void          DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved, size_t flags, std::map<wxString, wxString> &oldValues);

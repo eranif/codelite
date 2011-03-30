@@ -153,6 +153,8 @@ class DbgPageGeneralBase : public wxPanel
 		wxSpinCtrl* m_spinCtrlNumElements;
 		wxCheckBox* m_checkBoxExpandLocals;
 		
+		wxCheckBox* m_checkBoxCharArrAsPtr;
+		
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnBrowse( wxCommandEvent& event ) { event.Skip(); }

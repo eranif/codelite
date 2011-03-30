@@ -365,7 +365,7 @@ public:
 	bool      autoExpandTipItems;
 	bool      applyBreakpointsAfterProgramStarted;
 	wxString  cygwinPathCommand;
-
+	bool      charArrAsPtr;
 public:
 	DebuggerInformation()
 			: name(wxEmptyString)
@@ -384,6 +384,7 @@ public:
 			, resolveLocals     (true)
 			, autoExpandTipItems(true)
 			, applyBreakpointsAfterProgramStarted(false)
+			, charArrAsPtr(false)
 	{
 	}
 
@@ -407,6 +408,7 @@ public:
 		arch.Write(wxT("autoExpandTipItems"),                  autoExpandTipItems);
 		arch.Write(wxT("applyBreakpointsAfterProgramStarted"), applyBreakpointsAfterProgramStarted);
 		arch.Write(wxT("cygwinPathCommand"),                   cygwinPathCommand);
+		arch.Write(wxT("charArrAsPtr"),                        charArrAsPtr);
 	}
 
 	void DeSerialize(Archive &arch) {
@@ -429,6 +431,7 @@ public:
 		arch.Read(wxT("autoExpandTipItems"),                  autoExpandTipItems);
 		arch.Read(wxT("applyBreakpointsAfterProgramStarted"), applyBreakpointsAfterProgramStarted);
 		arch.Read(wxT("cygwinPathCommand"),                   cygwinPathCommand);
+		arch.Read(wxT("charArrAsPtr"),                        charArrAsPtr);
 	}
 };
 

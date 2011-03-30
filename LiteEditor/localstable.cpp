@@ -1,4 +1,5 @@
 #include "localstable.h"
+#include <wx/regex.h>
 #include <wx/wupdlock.h>
 #include "debuggerconfigtool.h"
 #include "globals.h"
@@ -17,6 +18,7 @@ END_EVENT_TABLE()
 
 LocalsTable::LocalsTable(wxWindow *parent)
 	: DebuggerTreeListCtrlBase(parent, wxID_ANY, false)
+	, m_arrayAsCharPtr(false)
 {
 	m_listTable->AddColumn(_("Name"), 150);
 	m_listTable->AddColumn(_("Value"), 500);
@@ -52,7 +54,8 @@ void LocalsTable::Initialize()
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if(dbgr) {
 		DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), info);
-		m_resolveLocals = info.resolveLocals;
+		m_resolveLocals  = info.resolveLocals;
+		m_arrayAsCharPtr = info.charArrAsPtr;
 	}
 
 	m_preDefTypes = data.GetActiveSet();
@@ -264,7 +267,15 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 		if(m_resolveLocals) {
 			newVarName = m_preDefTypes.GetPreDefinedTypeForTypename(locals[i].type, locals[i].name);
 		}
-
+		
+		// Evaluate arrays as char*?
+		static wxRegEx reConstArr(wxT("char *[\\[0-9\\]]*"));
+		if(m_arrayAsCharPtr && reConstArr.Matches(locals[i].type)) {
+			// array
+			newVarName.Clear();
+			newVarName << wxT("(char*)") << locals[i].name;
+		}
+		
 		if(newVarName.IsEmpty() == false) {
 			if(newVarName.Contains(wxT("@"))) {
 

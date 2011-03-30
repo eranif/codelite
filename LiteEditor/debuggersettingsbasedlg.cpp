@@ -298,6 +298,12 @@ DbgPageGeneralBase::DbgPageGeneralBase( wxWindow* parent, wxWindowID id, const w
 	
 	fgSizer21->Add( 0, 0, 1, wxEXPAND, 5 );
 	
+	m_checkBoxCharArrAsPtr = new wxCheckBox( m_panel6, wxID_ANY, _("Auto cast 'char[]' into 'char*'"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer21->Add( m_checkBoxCharArrAsPtr, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	
+	fgSizer21->Add( 0, 0, 1, wxEXPAND, 5 );
+	
 	sbSizer3->Add( fgSizer21, 0, wxEXPAND, 5 );
 	
 	bSizer16->Add( sbSizer3, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );

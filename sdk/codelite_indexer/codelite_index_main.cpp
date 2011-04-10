@@ -35,8 +35,8 @@ int main(int argc, char **argv)
 		printf("Usage: %s --batch <file_list> <output file>\n", argv[0]);
 		printf("   <string> - a unique string that identifies this indexer from other instances               \n");
 		printf("   --pid    - when set, <string> is handled as process number and the indexer will            \n");
+		printf("              check if this process alive. If it is down, the indexer will go down as well\n");
 		printf("   --batch  - when set, batch parsing is done using list of files set in file_list argument   \n");
-		printf("              check if this process alive. Incase it is down, the indexer will go down as well\n");
 		return 1;
 	}
 

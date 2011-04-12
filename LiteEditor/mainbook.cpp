@@ -541,11 +541,9 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		NavMgr::Get()->AddJump(jumpfrom, jumpto);
 	}
 
-#ifdef __WXMAC__
 	if(m_book->GetPageCount() == 1) {
 		m_book->GetSizer()->Layout();
 	}
-#endif
 	return editor;
 }
 
@@ -557,11 +555,11 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 	long MaxBuffers(15);
 	EditorConfigST::Get()->GetLongValue(wxT("MaxOpenedTabs"), MaxBuffers);
 
-#ifdef __WXMSW__
-	// On Mac adding this locker causes wierd behaviors like not showing the file content or
-	// hiding the welcome page
-	wxWindowUpdateLocker locker(m_book);
-#endif
+//#ifdef __WXMSW__
+//	// On Mac adding this locker causes wierd behaviors like not showing the file content or
+//	// hiding the welcome page
+//	//wxWindowUpdateLocker locker(m_book);
+//#endif
 
 	bool closeLastTab = ((long)(m_book->GetPageCount()) >= MaxBuffers) && GetUseBuffereLimit();
 	if ((insert_at_index == (size_t)wxNOT_FOUND) || (insert_at_index >= m_book->GetPageCount())) {

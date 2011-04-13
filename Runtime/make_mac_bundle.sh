@@ -25,6 +25,28 @@ fix_shared_object_depends() {
 			done
 	done
 }
+
+fix_non_plugins_depends() {
+	search_string=$1
+
+	## Get list of files to work on
+    dylibs=`ls ./CodeLite.app/Contents/MacOS/*.dylib`
+	sos=`ls ./CodeLite.app/Contents/MacOS/*.so`
+    sos2=`ls ./CodeLite.app/Contents/SharedSupport/plugins/*.so`
+    sos3=`ls ./CodeLite.app/Contents/SharedSupport/debuggers/*.so`
+	file_list="${dylibs} ${sos} ${sos2} ${sos3} ./CodeLite.app/Contents/MacOS/${exe_name} "
+	
+	orig_path=`otool -L ${exe_name}  | grep ${search_string} | awk '{print $1;}'`
+	
+	## Loop over the files, and update the path of the wx library
+	for file in ${file_list}
+	do
+		new_path=`echo ${orig_path} | xargs basename`
+		install_name_tool -change ${orig_path} @executable_path/../MacOS/${new_path} ${file}
+		echo install_name_tool -change ${orig_path} @executable_path/../MacOS/${new_path} ${file}
+	done
+}
+
 fix_codelite_indexer_deps() {
 
 	orig_path=`otool -L ./CodeLite.app/Contents/SharedSupport/codelite_indexer  | grep libwx_* | awk '{print $1;}'`
@@ -136,4 +158,8 @@ for lang in locale/* ; do
 done
 
 fix_codelite_indexer_deps
-fix_shared_object_depends lib
+fix_shared_object_depends libwx_
+fix_non_plugins_depends ./lib/libwxscintillau.so
+fix_non_plugins_depends ./lib/libcodeliteu.so
+fix_non_plugins_depends ./lib/libpluginu.so
+fix_non_plugins_depends ./lib/libwxsqlite3u.so

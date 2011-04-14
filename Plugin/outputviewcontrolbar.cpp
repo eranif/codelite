@@ -129,10 +129,7 @@ void OutputViewControlBar::DoTogglePane(bool hide)
 				wxTheApp->GetTopWindow()->Freeze();
 
 				DoFindDockInfo(m_aui->SavePerspective(), dock_info, saved_dock_info);
-				pane_info.Hide();
-
-				m_aui->Update();
-
+				HackHidePane(true, pane_info, m_aui);
 				wxTheApp->GetTopWindow()->Thaw();
 			}
 
@@ -142,19 +139,19 @@ void OutputViewControlBar::DoTogglePane(bool hide)
 			if ( pane_info.IsShown() == false ) {
 				wxTheApp->GetTopWindow()->Freeze();
 				if ( saved_dock_info.IsEmpty() ) {
-					pane_info.Show();
-					m_aui->Update();
+					HackShowPane(pane_info, m_aui);
+					
 				} else {
 					wxString auiPerspective = m_aui->SavePerspective();
 					if ( auiPerspective.Find(dock_info) == wxNOT_FOUND ) {
 						// the dock_info does not exist
 						auiPerspective << saved_dock_info << wxT("|");
 						m_aui->LoadPerspective(auiPerspective, false);
-						pane_info.Show();
-						m_aui->Update();
+						HackShowPane(pane_info, m_aui);
+						
 					} else {
-						pane_info.Show();
-						m_aui->Update();
+						HackShowPane(pane_info, m_aui);
+						
 					}
 				}
 				wxTheApp->GetTopWindow()->Thaw();
@@ -318,4 +315,35 @@ void OutputViewControlBar::OnBuildStarted(wxCommandEvent& event)
 	m_buildInProgress = true;
 	event.Skip();
 }
+
+// Overcome wxAui (wxWidgets v2.8) issue. When hiding a pane, its
+// dimensions can get "lost" when it is subsequently shown.  So,
+// explicitly resize the pane during a Show() to its last known
+// window width and height.
+void OutputViewControlBar::HackHidePane(bool commit, wxAuiPaneInfo &pane_info, wxAuiManager *pAui)
+{
+	if ( pane_info.IsOk() && pAui ) {
+		int width = 0;
+		int height = 0;
+		pane_info.window->GetClientSize(&width, &height);
+		pane_info.BestSize(width,height);    // save for later subsequent show
+		pane_info.Hide();
+
+		if ( commit ) {
+			pAui->Update();
+		}
+	}
+}
+
+void OutputViewControlBar::HackShowPane(wxAuiPaneInfo &pane_info, wxAuiManager *pAui)
+{
+	if ( pane_info.IsOk() && pAui ) {
+		pane_info.MinSize(pane_info.best_size);    // saved while hiding
+		pane_info.Show();
+		pAui->Update();
+		pane_info.MinSize(10,5);	// so it can't disappear if undocked
+		pAui->Update();
+	}
+}
+
 

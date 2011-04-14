@@ -543,7 +543,6 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_MENU(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT, clMainFrame::OnReloadExternallModifiedNoPrompt)
 END_EVENT_TABLE()
 
-
 clMainFrame* clMainFrame::m_theFrame = NULL;
 
 clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
@@ -2030,11 +2029,10 @@ void clMainFrame::ViewPane(const wxString &paneName, wxCommandEvent &event)
 		wxAuiPaneInfo &info = m_mgr.GetPane(paneName);
 		if (info.IsOk()) {
 			if ( event.IsChecked() ) {
-				info.Show();
+				OutputViewControlBar::HackShowPane(info,&m_mgr);
 			} else {
-				info.Hide();
+				OutputViewControlBar::HackHidePane(true,info,&m_mgr);
 			}
-			m_mgr.Update();
 		}
 	}
 
@@ -3431,6 +3429,10 @@ void clMainFrame::OnAuiManagerRender(wxAuiManagerEvent &e)
 void clMainFrame::OnDockablePaneClosed(wxAuiManagerEvent &e)
 {
 	DockablePane *pane = dynamic_cast<DockablePane*>(e.GetPane()->window);
+	wxAuiPaneInfo* pInfo = e.GetPane();
+	if (pInfo->IsOk()) {
+		OutputViewControlBar::HackHidePane(false,*pInfo,&m_mgr);
+	}
 	if (pane) {
 		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
 		pane->GetEventHandler()->ProcessEvent(evt);

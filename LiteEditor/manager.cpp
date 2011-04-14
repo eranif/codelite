@@ -80,6 +80,7 @@
 #include "clean_request.h"
 #include "buidltab.h"
 #include "tabgroupmanager.h"
+#include "outputviewcontrolbar.h"
 #include "manager.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
@@ -1307,9 +1308,7 @@ void Manager::ToggleOutputPane(bool hide)
 				clMainFrame::Get()->Freeze();
 
 				DoFindDockInfo(aui->SavePerspective(), dock_info, saved_dock_info);
-				pane_info.Hide();
-
-				aui->Update();
+				OutputViewControlBar::HackHidePane(true,pane_info,aui);
 
 				clMainFrame::Get()->Thaw();
 			}
@@ -1322,8 +1321,7 @@ void Manager::ToggleOutputPane(bool hide)
 
 				if ( saved_dock_info.IsEmpty() ) {
 
-					pane_info.Show();
-					aui->Update();
+					OutputViewControlBar::HackShowPane(pane_info,aui);
 
 				} else {
 					wxString auiPerspective = aui->SavePerspective();
@@ -1331,11 +1329,9 @@ void Manager::ToggleOutputPane(bool hide)
 						// the dock_info does not exist
 						auiPerspective << saved_dock_info << wxT("|");
 						aui->LoadPerspective(auiPerspective, false);
-						pane_info.Show();
-						aui->Update();
+						OutputViewControlBar::HackShowPane(pane_info,aui);
 					} else {
-						pane_info.Show();
-						aui->Update();
+						OutputViewControlBar::HackShowPane(pane_info,aui);
 					}
 				}
 				clMainFrame::Get()->Thaw();
@@ -1391,13 +1387,14 @@ void Manager::ShowDebuggerPane ( bool show )
 	dbgPanes.Add ( wxGetTranslation(DebuggerPane::MEMORY) );
 	dbgPanes.Add ( wxGetTranslation(DebuggerPane::ASCII_VIEWER) );
 
+	wxAuiManager *aui = &clMainFrame::Get()->GetDockingManager();
 	if ( show ) {
 
 		for ( size_t i=0; i<dbgPanes.GetCount(); i++ ) {
 			wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( dbgPanes.Item ( i ) );
 			// show all debugger related panes
 			if ( info.IsOk() && !info.IsShown() ) {
-				info.Show();
+				OutputViewControlBar::OutputViewControlBar::HackShowPane(info,aui);
 			}
 		}
 
@@ -1408,11 +1405,10 @@ void Manager::ShowDebuggerPane ( bool show )
 			wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( dbgPanes.Item ( i ) );
 			// show all debugger related panes
 			if ( info.IsOk() && info.IsShown() ) {
-				info.Hide();
+				OutputViewControlBar::HackHidePane(true,info,aui);
 			}
 		}
 	}
-	clMainFrame::Get()->GetDockingManager().Update();
 
 }
 
@@ -1439,10 +1435,8 @@ void Manager::HidePane ( const wxString &paneName, bool commit )
 {
 	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( paneName );
 	if ( info.IsOk() && info.IsShown() ) {
-		info.Hide();
-		if ( commit ) {
-			clMainFrame::Get()->GetDockingManager().Update();
-		}
+		wxAuiManager *aui = &clMainFrame::Get()->GetDockingManager();
+		OutputViewControlBar::HackHidePane(commit,info,aui);
 	}
 }
 

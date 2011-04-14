@@ -59,10 +59,14 @@ public:
 	void OnBuildEnded           (wxCommandEvent      &event);
 
 protected:
-	void        DoTogglePane     (bool hide = true);
-	wxWindow *  DoFindButton     (const wxString &name);
-	void        DoMarkActive     (const wxString &name);
-	bool        DoFindDockInfo   (const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info);
+	void         DoTogglePane     (bool hide = true);
+	wxWindow *   DoFindButton     (const wxString &name);
+	void         DoMarkActive     (const wxString &name);
+	bool         DoFindDockInfo   (const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info);
+	
+public:
+	static void  HackHidePane     (bool commit, wxAuiPaneInfo &pane_info, wxAuiManager *pAui);
+	static void  HackShowPane     (wxAuiPaneInfo &pane_info, wxAuiManager *pAui);
 };
 
 #endif // __auicontrolbar__

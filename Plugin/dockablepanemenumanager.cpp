@@ -27,11 +27,9 @@
 #include <wx/aui/aui.h>
 #include <wx/app.h>
 #include <wx/xrc/xmlres.h>
+#include "outputviewcontrolbar.h"
 #include "dockablepanemenumanager.h"
 #include <wx/log.h>
-
-//const wxEventType wxEVT_CMD_HIDE_PANE = wxNewEventType();
-//const wxEventType wxEVT_CMD_SHOW_PANE = wxNewEventType();
 
 DockablePaneMenuManager::DockablePaneMenuManager(wxMenuBar* mb, wxAuiManager *aui)
 		: m_mb(mb)
@@ -82,13 +80,11 @@ void DockablePaneMenuManager::OnDockpaneMenuItem(wxCommandEvent& e)
 	wxString name = NameById(e.GetId());
 	wxAuiPaneInfo &info = m_aui->GetPane(name);
 	if ( info.IsOk() ) {
-		if (e.IsChecked()) {
-			// need to show the item
-			info.Show();
+		if ( e.IsChecked() ) {
+			OutputViewControlBar::HackShowPane(info, m_aui);
 		} else {
-			info.Hide();
+			OutputViewControlBar::HackHidePane(true, info, m_aui);
 		}
-		m_aui->Update();
 	}
 }
 

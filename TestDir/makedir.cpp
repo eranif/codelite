@@ -7,12 +7,17 @@
 #include <wx/string.h>	//wxString
 #include "wx/cmdline.h"
 
-static const wxCmdLineEntryDesc cmdLineDesc[] = 
-{
-	{wxCMD_LINE_PARAM,  NULL, NULL, wxT("input file"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE },
+#if wxVERSION_NUMBER < 2900
+static const wxCmdLineEntryDesc cmdLineDesc[] = {
+	{wxCMD_LINE_PARAM,  NULL, NULL, wxT("Directory name"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_NONE }
 };
-
+#else
+static const wxCmdLineEntryDesc cmdLineDesc[] = {
+	{wxCMD_LINE_PARAM,  NULL, NULL, "Directory name", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL },
+	{wxCMD_LINE_NONE }
+};
+#endif
 
 int main(int argc, char **argv) 
 {
@@ -22,8 +27,9 @@ int main(int argc, char **argv)
 	
 	//parse the input
 	wxCmdLineParser parser;
-	parser.SetDesc(cmdLineDesc);
 	parser.SetCmdLine(argc, argv);
+	parser.SetDesc(cmdLineDesc);
+	
 	if (parser.Parse() != 0) {
 		return -1;
 	}

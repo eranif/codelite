@@ -225,7 +225,8 @@ wxString Notebook::GetPageText(size_t page) const
 
 void Notebook::OnNavigationKey(wxNavigationKeyEvent &e)
 {
-	if ( e.IsWindowChange() ) {
+	if ( e.IsWindowChange() )
+	{
 		if (DoNavigate())
 			return;
 	}
@@ -475,10 +476,17 @@ void Notebook::OnKeyDown(wxKeyEvent& e)
 	if(e.m_controlDown) {
 		switch(e.GetKeyCode()) {
 		case WXK_TAB:
-		case WXK_PAGEDOWN:
-		case WXK_PAGEUP:
-			DoNavigate();
+			DoNavigate(); // smart tabbing
 			return;
+			
+		case WXK_PAGEDOWN:
+			AdvanceSelection(false);
+			return;
+			
+		case WXK_PAGEUP:
+			AdvanceSelection(true);
+			return;
+			
 		default:
 			break;
 		}

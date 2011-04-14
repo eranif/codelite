@@ -28,6 +28,7 @@
 #include "frame.h"
 #include "windowattrmanager.h"
 #include <wx/notebook.h>
+#include <wx/treebook.h>
 #include "macros.h"
 #include "editor_config.h"
 #include <wx/dir.h>
@@ -82,27 +83,6 @@ wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	page->SetSizer(sz);
 
-//	wxArrayString themesArr;
-//
-//	wxString path = ManagerST::Get()->GetStarupDirectory();
-//	path << wxT("/lexers/");
-//
-//	wxArrayString files;
-//	wxArrayString dirs;
-//	wxDir::GetAllFiles(path, &files, wxEmptyString, wxDIR_DIRS | wxDIR_FILES);
-//	//filter out all non-directories
-//	wxFileName base_path( path );
-//	for (size_t i=0; i<files.GetCount(); i++) {
-//		wxFileName fn( files.Item(i) );
-//		wxString new_path( fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) );
-//		if (new_path != base_path.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR)) {
-//			fn.MakeRelativeTo(base_path.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-//			new_path = fn.GetPath();
-//			if (dirs.Index(new_path) == wxNOT_FOUND) {
-//				dirs.Add(new_path);
-//			}
-//		}
-//	}
 	wxStaticText *txt = new wxStaticText(page, wxID_ANY, _("Colouring scheme:"), wxDefaultPosition, wxDefaultSize, 0);
 	sz->Add(txt, 0, wxEXPAND|wxALL, 5);
 
@@ -117,13 +97,12 @@ wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 	}
 
 	long style = wxNB_DEFAULT;
-	m_lexersBook = new wxNotebook(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+	m_lexersBook = new wxTreebook(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+	MSWSetNativeTheme(m_lexersBook->GetTreeCtrl());
+	
 	sz->Add(m_lexersBook, 1, wxEXPAND | wxALL, 5);
 	m_lexersBook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-
-#ifdef __WXMAC__
-	m_lexersBook->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
-#endif
+	
 	LoadLexers(m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection());
 
 	m_startingTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
@@ -155,8 +134,27 @@ void SyntaxHighlightDlg::LoadLexers(const wxString& theme)
 		lexName.Trim().Trim(false);
 		if(lexName.IsEmpty())
 			continue;
-
-		m_lexersBook->AddPage(CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), selected);
+		
+		// get the parent node for this lexer
+		wxString firstChar = lexName.Mid(0, 1).MakeUpper();
+		size_t parentIndex(wxString::npos);
+		for(size_t i=0; i<m_lexersBook->GetPageCount(); i++) {
+			wxString pageText = m_lexersBook->GetPageText(i);
+			pageText.MakeUpper();
+			if( pageText.StartsWith(firstChar) ) {
+				parentIndex = i;
+				break;
+			}
+		}
+		
+		if(parentIndex == wxString::npos) {
+			// add parent node
+			m_lexersBook->AddPage(CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), selected);
+			
+		} else {
+			m_lexersBook->InsertPage(parentIndex, CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), selected);
+		}
+		
 		selected = false;
 	}
 	Thaw();

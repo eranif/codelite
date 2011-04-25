@@ -247,7 +247,6 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
 	if (dlg.ShowModal() == wxID_OK) {
 		wxArrayString projects;
 		dlg.GetProjects( projects );
-		dlg.Destroy();
 
 		// expand constants
 		wxString err_msg;
@@ -341,7 +340,7 @@ void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
 void Copyright::MassUpdate(const std::vector<wxFileName> &filtered_files, const wxString &content)
 {
 	// last confirmation from the user
-	if (wxMessageBox(wxString::Format(_("You are about to modifiy %d files, continue?"), filtered_files.size()), _("CodeLite"), wxYES_NO|wxICON_QUESTION) == wxNO) {
+	if (wxMessageBox(wxString::Format(_("You are about to modify %u files. Continue?"), (unsigned int)filtered_files.size()), _("CodeLite"), wxYES_NO|wxICON_QUESTION) == wxNO) {
 		return;
 	}
 

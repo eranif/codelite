@@ -84,7 +84,16 @@ int OpenWindowsPanel::EditorItem(LEditor *editor)
 void OpenWindowsPanel::DoOpenSelectedItem(int item)
 {
 	MyStringClientData *data = dynamic_cast<MyStringClientData *>(m_fileList->GetClientObject(item));
-    clMainFrame::Get()->GetMainBook()->OpenFile(data->GetData(), wxEmptyString);
+	if(data) {
+		LEditor *editor = dynamic_cast<LEditor*>(clMainFrame::Get()->GetMainBook()->FindPage(data->GetData()));
+		
+		if( editor && editor->GetFileName().FileExists() == false ) {
+			// "Untitled" document, this means that 'OpenFile' will probably fail for it
+			clMainFrame::Get()->GetMainBook()->SelectPage(editor);
+		} else {
+			clMainFrame::Get()->GetMainBook()->OpenFile(data->GetData(), wxEmptyString);
+		}
+	}
 }
 
 void OpenWindowsPanel::DoCloseSelectedItem(int item)

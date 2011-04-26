@@ -710,10 +710,13 @@ void clMainFrame::CreateGUIControls(void)
 	SetIcon(icon);
 #endif
 	m_mainPanel = new wxPanel(this);
+	m_horzSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
+	
+	m_horzSizer->Add(m_mainPanel, 1, wxEXPAND);
+	mainSizer->Add(m_horzSizer, 1, wxEXPAND);
+	
 	SetSizer(mainSizer);
-
-	mainSizer->Add(m_mainPanel, 1, wxEXPAND);
 
 	// tell wxAuiManager to manage this frame
 	m_mgr.SetManagedWindow(m_mainPanel);
@@ -3032,8 +3035,7 @@ void clMainFrame::CompleteInitialization()
 
 	OutputViewControlBar* outputViewControlBar = new OutputViewControlBar(this, GetOutputPane()->GetNotebook(), &m_mgr, wxID_ANY);
 	outputViewControlBar->AddAllButtons();
-
-
+	
 	GetSizer()->Add(outputViewControlBar, 0, wxEXPAND);
 	Layout();
 	SelectBestEnvSet();

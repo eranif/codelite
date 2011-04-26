@@ -93,7 +93,7 @@ class clMainFrame : public wxFrame
 	wxString                              m_defaultLayout;
 	bool                                  m_workspaceRetagIsRequired;
 	bool                                  m_loadLastSession;
-	
+	wxSizer*                              m_horzSizer;
 protected:
 	bool IsEditorEvent(wxEvent &event);
 

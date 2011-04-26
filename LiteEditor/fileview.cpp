@@ -1558,24 +1558,36 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 		}
 
 		/* always excluded by default */
-		wxString filepath = fn.GetPath();
-		if( filepath.Contains(wxT(".svn"))           || filepath.Contains(wxT(".cvs"))           ||
-		    filepath.Contains(wxT(".arch-ids"))      || filepath.Contains(wxT("arch-inventory")) ||
-		    filepath.Contains(wxT("autom4te.cache")) || filepath.Contains(wxT("BitKeeper"))      ||
-		    filepath.Contains(wxT(".bzr"))           || filepath.Contains(wxT(".bzrignore"))     ||
-		    filepath.Contains(wxT("CVS"))            || filepath.Contains(wxT(".cvsignore"))     ||
-		    filepath.Contains(wxT("_darcs"))         || filepath.Contains(wxT(".deps"))          ||
-		    filepath.Contains(wxT("EIFGEN"))         || filepath.Contains(wxT(".git"))           ||
-		    filepath.Contains(wxT(".hg"))            || filepath.Contains(wxT("PENDING"))        ||
-		    filepath.Contains(wxT("RCS"))            || filepath.Contains(wxT("RESYNC"))         ||
-		    filepath.Contains(wxT("SCCS"))           || filepath.Contains(wxT("{arch}"))) {
-			continue;
+		const wxArrayString &dirs = fn.GetDirs();
+		bool cont = true;
+		for(size_t j=0; j<dirs.GetCount() && cont ; j++) 
+		{
+			wxString filepath = fn.GetPath();
+			if( dirs.Item(j) == wxT(".svn")           || dirs.Item(j) == wxT(".cvs")           ||
+				dirs.Item(j) == wxT(".arch-ids")      || dirs.Item(j) == wxT("arch-inventory") ||
+				dirs.Item(j) == wxT("autom4te.cache") || dirs.Item(j) == wxT("BitKeeper")      ||
+				dirs.Item(j) == wxT(".bzr")           || dirs.Item(j) == wxT(".bzrignore")     ||
+				dirs.Item(j) == wxT("CVS")            || dirs.Item(j) == wxT(".cvsignore")     ||
+				dirs.Item(j) == wxT("_darcs")         || dirs.Item(j) == wxT(".deps")          ||
+				dirs.Item(j) == wxT("EIFGEN")         || dirs.Item(j) == wxT(".git")           ||
+				dirs.Item(j) == wxT(".hg")            || dirs.Item(j) == wxT("PENDING")        ||
+				dirs.Item(j) == wxT("RCS")            || dirs.Item(j) == wxT("RESYNC")         ||
+				dirs.Item(j) == wxT("SCCS")           || dirs.Item(j) == wxT("{arch}")) 
+			{
+				cont = false;
+				break;
+			}
 		}
-
+		
+		// skip the directory?
+		if(!cont) continue;
+		
 		if ( specMap.empty() ) {
 			files.Add(all_files.Item(i));
+			
 		} else if (fn.GetExt().IsEmpty() & extlessFiles) {
 			files.Add(all_files.Item(i));
+			
 		} else if (specMap.find(fn.GetExt().MakeLower()) != specMap.end()) {
 			files.Add(all_files.Item(i));
 		}

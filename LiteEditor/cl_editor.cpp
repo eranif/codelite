@@ -1185,6 +1185,8 @@ void LEditor::UpdateBreakpoints()
 		}
 
 		ManagerST::Get()->GetBreakpointsMgr()->SetBreakpoints(iter->second);
+		// update the Breakpoints pane too
+		clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 	}
 }
 

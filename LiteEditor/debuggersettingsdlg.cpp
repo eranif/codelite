@@ -109,6 +109,7 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 		m_checkBoxAutoExpand->SetValue(info.autoExpandTipItems);
 		m_checkBoxExpandLocals->SetValue(info.resolveLocals);
 		m_checkBoxSetBreakpointsAfterMain->SetValue(info.applyBreakpointsAfterProgramStarted);
+		m_raiseOnBpHit->SetValue(info.whenBreakpointHitRaiseCodelite);
 		m_checkBoxCharArrAsPtr->SetValue(info.charArrAsPtr);
 	}
 }
@@ -317,6 +318,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 			info.resolveLocals                        = page->m_checkBoxExpandLocals->IsChecked();
 			info.autoExpandTipItems                   = page->m_checkBoxAutoExpand->IsChecked();
 			info.applyBreakpointsAfterProgramStarted  = page->m_checkBoxSetBreakpointsAfterMain->IsChecked();
+			info.whenBreakpointHitRaiseCodelite       = page->m_raiseOnBpHit->IsChecked();
 			info.charArrAsPtr                         = page->m_checkBoxCharArrAsPtr->IsChecked();
 			DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
 

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -236,19 +236,31 @@ DbgPageGeneralBase::DbgPageGeneralBase( wxWindow* parent, wxWindowID id, const w
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, _("Options:") ), wxVERTICAL );
 	
 	wxGridSizer* gSizer3;
-	gSizer3 = new wxGridSizer( 4, 1, 0, 0 );
+	gSizer3 = new wxGridSizer( 0, 1, 0, 0 );
+	
+	m_checkBoxEnablePendingBreakpoints = new wxCheckBox( m_panel6, wxID_ANY, _("Enable pending breakpoints"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxEnablePendingBreakpoints->SetToolTip( _("Some breakpoints can't be applied before the program is run, or even later. This is especially a problem when trying to debug inside a library that is dynamically loaded (CodeLite itself contains examples of this).\n\ngdb has an option to 'remember' any breakpoints that it can't initially set, and automatically to set them when it becomes possible. It doesn't always work! However, tick this box to tell gdb to try.") );
+	
+	gSizer3->Add( m_checkBoxEnablePendingBreakpoints, 0, wxALL, 5 );
+	
+	m_checkBoxSetBreakpointsAfterMain = new wxCheckBox( m_panel6, wxID_ANY, _("Apply breakpoints after main function is hit"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxSetBreakpointsAfterMain->SetToolTip( _("Sometimes, some breakpoints won't apply cleanly until after main() has been reached. If this box is ticked, CodeLite won't try to apply them earlier.") );
+	
+	gSizer3->Add( m_checkBoxSetBreakpointsAfterMain, 0, wxALL, 5 );
 	
 	m_checkBreakAtWinMain = new wxCheckBox( m_panel6, wxID_ANY, _("Automatically set breakpoint at main"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBreakAtWinMain->SetToolTip( _("Every time the debugger runs, set a breakpoint at main(). You may wish to stop then anyway; but it's especially useful when you want to set breakpoints that won't 'take' earlier (however, first try enabling Pending breakpoints, or 'Apply breakpoints after main is hit'") );
+	
 	gSizer3->Add( m_checkBreakAtWinMain, 0, wxALL, 5 );
 	
 	m_catchThrow = new wxCheckBox( m_panel6, wxID_ANY, _("Break when C++ exception is thrown"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer3->Add( m_catchThrow, 0, wxALL, 5 );
 	
-	m_checkBoxSetBreakpointsAfterMain = new wxCheckBox( m_panel6, wxID_ANY, _("Apply breakpoints after main function is hit"), wxDefaultPosition, wxDefaultSize, 0 );
-	gSizer3->Add( m_checkBoxSetBreakpointsAfterMain, 0, wxALL, 5 );
+	m_raiseOnBpHit = new wxCheckBox( m_panel6, wxID_ANY, _("Raise CodeLite when a breakpoint is hit"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_raiseOnBpHit->SetValue(true); 
+	m_raiseOnBpHit->SetToolTip( _("Normally, when a breakpoint is hit, you'll want CodeLite to be raise to the top of the window z-order, so that you can examine values of variables etc.\nHowever you won't always want that to happen; in particular, not if the breakpoint has commands, which end in 'continue'. If so untick this box to stop it happening.") );
 	
-	m_checkBoxEnablePendingBreakpoints = new wxCheckBox( m_panel6, wxID_ANY, _("Enable pending breakpoints"), wxDefaultPosition, wxDefaultSize, 0 );
-	gSizer3->Add( m_checkBoxEnablePendingBreakpoints, 0, wxALL, 5 );
+	gSizer3->Add( m_raiseOnBpHit, 0, wxALL, 5 );
 	
 	sbSizer1->Add( gSizer3, 0, wxEXPAND, 5 );
 	

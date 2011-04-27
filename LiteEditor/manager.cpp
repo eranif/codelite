@@ -2352,19 +2352,27 @@ void Manager::UpdateFileLine ( const wxString &filename, int lineno, bool reposi
 
 void Manager::UpdateGotControl ( const DebuggerEvent &e )
 {
-	//put us on top of the z-order window
-	long curFlags = clMainFrame::Get()->GetWindowStyleFlag();
-	clMainFrame::Get()->SetWindowStyleFlag(curFlags | wxSTAY_ON_TOP);
-	clMainFrame::Get()->Raise();
-	clMainFrame::Get()->SetWindowStyleFlag(curFlags);
-	m_dbgCanInteract = true;
-	
 	int reason = e.m_controlReason;
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if (dbgr == NULL) {
+		wxLogDebug(wxT("Active debugger not found :/"));
+		return;
+	}
+	
+	DebuggerInformation dinfo;
+	DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), dinfo);
+	// Raise CodeLite (unless the cause is a hit bp, and we're configured not to
+	//   e.g. because there's a command-list breakpoint ending in 'continue')
+	if ( (reason != DBG_BP_HIT) || dinfo.whenBreakpointHitRaiseCodelite ) {
+		//put us on top of the z-order window
+		long curFlags = clMainFrame::Get()->GetWindowStyleFlag();
+		clMainFrame::Get()->SetWindowStyleFlag(curFlags | wxSTAY_ON_TOP);
+		clMainFrame::Get()->Raise();
+		clMainFrame::Get()->SetWindowStyleFlag(curFlags);
+		m_dbgCanInteract = true;
+	}
 	
 	SendCmdEvent(wxEVT_DEBUG_EDITOR_GOT_CONTROL);
-
-	//query the current line and file
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 
 	if(dbgr && dbgr->IsRunning()) {
 		// in case we got an error, try and clear the Locals view

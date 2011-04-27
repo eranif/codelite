@@ -364,6 +364,7 @@ public:
 	bool      resolveLocals;
 	bool      autoExpandTipItems;
 	bool      applyBreakpointsAfterProgramStarted;
+	bool      whenBreakpointHitRaiseCodelite;
 	wxString  cygwinPathCommand;
 	bool      charArrAsPtr;
 public:
@@ -384,6 +385,7 @@ public:
 			, resolveLocals     (true)
 			, autoExpandTipItems(true)
 			, applyBreakpointsAfterProgramStarted(false)
+			, whenBreakpointHitRaiseCodelite(true)
 			, charArrAsPtr(false)
 	{
 	}
@@ -407,6 +409,7 @@ public:
 		arch.Write(wxT("resolveLocals"),                       resolveLocals);
 		arch.Write(wxT("autoExpandTipItems"),                  autoExpandTipItems);
 		arch.Write(wxT("applyBreakpointsAfterProgramStarted"), applyBreakpointsAfterProgramStarted);
+		arch.Write(wxT("whenBreakpointHitRaiseCodelite"),      whenBreakpointHitRaiseCodelite);
 		arch.Write(wxT("cygwinPathCommand"),                   cygwinPathCommand);
 		arch.Write(wxT("charArrAsPtr"),                        charArrAsPtr);
 	}
@@ -430,6 +433,7 @@ public:
 		arch.Read(wxT("resolveLocals"),                       resolveLocals);
 		arch.Read(wxT("autoExpandTipItems"),                  autoExpandTipItems);
 		arch.Read(wxT("applyBreakpointsAfterProgramStarted"), applyBreakpointsAfterProgramStarted);
+		arch.Read(wxT("whenBreakpointHitRaiseCodelite"),      whenBreakpointHitRaiseCodelite);
 		arch.Read(wxT("cygwinPathCommand"),                   cygwinPathCommand);
 		arch.Read(wxT("charArrAsPtr"),                        charArrAsPtr);
 	}

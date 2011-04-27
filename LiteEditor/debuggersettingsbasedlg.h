@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -13,10 +13,10 @@
 #include <wx/treebook.h>
 #include <wx/gdicmn.h>
 #include <wx/notebook.h>
+#include <wx/string.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/string.h>
 #include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
@@ -53,7 +53,7 @@ class DebuggerSettingsBaseDlg : public wxDialog
 	
 	public:
 		
-		DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Debugger Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Debugger Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~DebuggerSettingsBaseDlg();
 	
 };
@@ -70,7 +70,7 @@ class DbgPageStartupCmdsBase : public wxPanel
 	
 	public:
 		
-		DbgPageStartupCmdsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		DbgPageStartupCmdsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~DbgPageStartupCmdsBase();
 	
 };
@@ -100,7 +100,7 @@ class PreDefinedTypesPageBase : public wxPanel
 	
 	public:
 		
-		PreDefinedTypesPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		PreDefinedTypesPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~PreDefinedTypesPageBase();
 	
 };
@@ -126,7 +126,7 @@ class NewPreDefinedSetDlg : public wxDialog
 		wxChoice* m_choiceCopyFrom;
 		wxCheckBox* m_checkBoxMakeActive;
 		
-		NewPreDefinedSetDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create a new 'PreDefined Types' set..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		NewPreDefinedSetDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create a new 'PreDefined Types' set..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~NewPreDefinedSetDlg();
 	
 };
@@ -143,10 +143,11 @@ class DbgPageGeneralBase : public wxPanel
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textCtrDbgPath;
 		wxButton* m_buttonBrowse;
+		wxCheckBox* m_checkBoxEnablePendingBreakpoints;
+		wxCheckBox* m_checkBoxSetBreakpointsAfterMain;
 		wxCheckBox* m_checkBreakAtWinMain;
 		wxCheckBox* m_catchThrow;
-		wxCheckBox* m_checkBoxSetBreakpointsAfterMain;
-		wxCheckBox* m_checkBoxEnablePendingBreakpoints;
+		wxCheckBox* m_raiseOnBpHit;
 		wxCheckBox* m_showTooltipsRequiresControl;
 		wxCheckBox* m_checkBoxAutoExpand;
 		wxStaticText* m_staticText2;
@@ -162,7 +163,7 @@ class DbgPageGeneralBase : public wxPanel
 	
 	public:
 		
-		DbgPageGeneralBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		DbgPageGeneralBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~DbgPageGeneralBase();
 	
 };
@@ -190,7 +191,7 @@ class DbgPageMiscBase : public wxPanel
 	
 	public:
 		
-		DbgPageMiscBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		DbgPageMiscBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~DbgPageMiscBase();
 	
 };
@@ -217,7 +218,7 @@ class DbgPagePreDefTypesBase : public wxPanel
 	
 	public:
 		
-		DbgPagePreDefTypesBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		DbgPagePreDefTypesBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~DbgPagePreDefTypesBase();
 	
 };

@@ -431,9 +431,9 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
 		else
 			linenum = wxString::Format(wxT(" %5u "), iter->GetLineNumber());
 		
-		SearchData d = GetSearchData(m_recv);
+		SearchData *d = GetSearchData(m_recv);
 		// Print the scope name
-		if (d.GetDisplayScope()) {
+		if (d->GetDisplayScope()) {
 			TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(iter->GetFileName(), iter->GetLineNumber());
 			wxString scopeName (wxT("global"));
 			if(tag) {
@@ -446,7 +446,7 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
 		
 		delta += linenum.Length();
 		AppendText(linenum + text + wxT("\n"));
-		m_recv->IndicatorFillRange(m_sci->PositionFromLine(lineno)+iter->GetColumn()+delta, iter->GetLen());
+		//m_recv->IndicatorFillRange(m_sci->PositionFromLine(lineno)+iter->GetColumn()+delta, iter->GetLen());
 	}
 	delete res;
 }
@@ -580,7 +580,7 @@ long FindResultsTab::GetBookStyle()
 	return 0;
 }
 
-SearchData FindResultsTab::GetSearchData(wxScintilla* sci)
+SearchData* FindResultsTab::GetSearchData(wxScintilla* sci)
 {
 	if (m_book) {
 		size_t i = m_book->GetPageIndex(sci);
@@ -589,15 +589,15 @@ SearchData FindResultsTab::GetSearchData(wxScintilla* sci)
 			if (tab) {
 				SearchData *data = (SearchData *) tab->GetClientData();
 				if (data) {
-					return *data;
+					return data;
 				}
 			}
 		}
-		return SearchData();
+		return NULL;
 	} else {
 		// in case we dont have a notebook (e.g. 'Replace In Files')
 		// we use the global saved search data
-		return m_searchData;
+		return &m_searchData;
 	}
 }
 

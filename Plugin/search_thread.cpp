@@ -45,6 +45,15 @@ const wxEventType wxEVT_SEARCH_THREAD_SEARCHSTARTED = wxNewEventType();
 
 extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 
+#define SEND_ST_EVENT()\
+	if (owner) {\
+		wxPostEvent(owner, event);\
+	} else if (m_notifiedWindow ) {\
+		wxPostEvent(m_notifiedWindow, event);\
+	}\
+	wxThread::Sleep(5);
+	
+
 //----------------------------------------------------------------
 // SearchData
 //----------------------------------------------------------------
@@ -491,25 +500,52 @@ void SearchThread::SendEvent(wxEventType type, wxEvtHandler *owner)
 {
 	if ( !m_notifiedWindow && !owner)
 		return;
-
+		
+	static int counter(0);
+	
 	wxCommandEvent event(type, GetId());
 
-	if (type == wxEVT_SEARCH_THREAD_MATCHFOUND) {
+	if (type == wxEVT_SEARCH_THREAD_MATCHFOUND && counter == 10) {
+		// match found and we scanned 10 files
+		counter = 0;
 		event.SetClientData( new SearchResultList(m_results) );
 		m_results.clear();
+		SEND_ST_EVENT();
+		
+	} else if(type == wxEVT_SEARCH_THREAD_MATCHFOUND) {
+		// a match event, but we did not meet the minimum number of files
+		counter++;
+		wxThread::Sleep(10);
+		
 	} else if (type == wxEVT_SEARCH_THREAD_SEARCHEND) {
-		// Nothing to do
+		// search eneded, if we got any matches "buffed" send them before the 
+		// the summary event
+		if(m_results.empty() == false) {
+			wxCommandEvent evt(wxEVT_SEARCH_THREAD_MATCHFOUND, GetId());
+			evt.SetClientData( new SearchResultList(m_results) );
+			m_results.clear();
+			counter = 0;
+			
+			if (owner) {
+				wxPostEvent(owner, evt);
+			} else if (m_notifiedWindow ) {
+				wxPostEvent(m_notifiedWindow, evt);
+			}
+		}
+		
+		// Now send the summary event
 		event.SetClientData( new SearchSummary(m_summary) );
+		SEND_ST_EVENT();
+		
 	} else if (type == wxEVT_SEARCH_THREAD_SEARCHCANCELED) {
+		// search cancelled, we dont care about any matches which haven't 
+		// been reported yet
 		event.SetClientData(new wxString(wxT("Search cancelled by user")));
+		m_results.clear();
+		counter = 0;
+		
+		SEND_ST_EVENT();
 	}
-
-	if (owner) {
-		wxPostEvent(owner, event);
-	} else if (m_notifiedWindow ) {
-		wxPostEvent(m_notifiedWindow, event);
-	}
-	wxThread::Sleep(5);
 }
 
 void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)

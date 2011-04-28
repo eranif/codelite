@@ -80,7 +80,7 @@ protected:
 	virtual void OnStopSearch      (wxCommandEvent   &e);
 	virtual void OnStopSearchUI    (wxUpdateUIEvent  &e);
 	virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
-	SearchData   GetSearchData     (wxScintilla *sci   );
+	SearchData*  GetSearchData     (wxScintilla *sci   );
 	void         DoOpenSearchResult(const SearchResult &result, wxScintilla *sci, int markerLine);
     DECLARE_EVENT_TABLE()
 

@@ -51,7 +51,7 @@ extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 	} else if (m_notifiedWindow ) {\
 		wxPostEvent(m_notifiedWindow, event);\
 	}\
-	wxThread::Sleep(5);
+	wxThread::Sleep(1);
 	
 
 //----------------------------------------------------------------

@@ -446,7 +446,7 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
 		
 		delta += linenum.Length();
 		AppendText(linenum + text + wxT("\n"));
-		//m_recv->IndicatorFillRange(m_sci->PositionFromLine(lineno)+iter->GetColumn()+delta, iter->GetLen());
+		m_recv->IndicatorFillRange(m_sci->PositionFromLine(lineno)+iter->GetColumn()+delta, iter->GetLen());
 	}
 	delete res;
 }

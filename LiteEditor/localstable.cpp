@@ -276,16 +276,16 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 			newVarName << wxT("(char*)") << locals[i].name;
 		}
 		
-		if(newVarName.IsEmpty() == false) {
-			if(newVarName.Contains(wxT("@"))) {
-
-				// using GDB special array print,
-				// we need to delete this variable object and re-create it
-				// otherwise its content wont be updated
-				int where = itemsNotRemoved.Index(newVarName);
-				if(where != wxNOT_FOUND)
-					itemsNotRemoved.RemoveAt(where);
-			}
+		if(newVarName.IsEmpty() == false && !newVarName.Contains(wxT("@"))) {
+			//if(newVarName.Contains(wxT("@"))) {
+			//
+			//	// using GDB special array print,
+			//	// we need to delete this variable object and re-create it
+			//	// otherwise its content wont be updated
+			//	int where = itemsNotRemoved.Index(newVarName);
+			//	if(where != wxNOT_FOUND)
+			//		itemsNotRemoved.RemoveAt(where);
+			//}
 			
 			wxTreeItemId treeItem = DoFindItemByExpression(newVarName);
 			if(treeItem.IsOk()) {

@@ -854,7 +854,9 @@ void FileViewTree::DoRemoveItems()
 		return;
 	}
 
-	bool ApplyToEachFile = false;
+	bool ApplyToEachFileRemoval = false;
+	bool ApplyToEachFileDeletion = false;
+	bool AlsoDeleteFromDisc = false;
 
 	for ( size_t i=0; i<num; i++ ) {
 		wxTreeItemId item = items.Item( i );
@@ -870,21 +872,21 @@ void FileViewTree::DoRemoveItems()
 			switch (data->GetData().GetKind()) {
 			case ProjectItem::TypeFile: {
 				int result = wxID_YES;
-				if ( ApplyToEachFile==false ) {
+				if ( ApplyToEachFileRemoval==false ) {
 					wxString message;
 					message << _( "Are you sure you want remove '" ) << name << wxT( "' ?" );
-					if (num > 1) {
+					if ((num > 1) && ((i+1) < num) ) {
 						// For multiple selections, use a YesToAll dialog
 						YesToAllDlg dlg(this, message);
 						dlg.SetCheckboxText(wxString(_("Apply to all Files")));
 						result = dlg.ShowModal();
-						ApplyToEachFile = dlg.GetIsChecked();
+						ApplyToEachFileRemoval = dlg.GetIsChecked();
 					} else {
 						result = wxMessageBox( message, _("Are you sure?"), wxYES_NO | wxICON_QUESTION, this );
 					}
 				}
-				if ( result==wxID_CANCEL || (result==wxID_NO && ApplyToEachFile==true) ) {
-					return;	// Assume Cancel or No+ApplyToEachFile means for folders etc too, not just files
+				if ( result==wxID_CANCEL || (result==wxID_NO && ApplyToEachFileRemoval==true) ) {
+					return;	// Assume Cancel or No+ApplyToEachFileRemoval means for folders etc too, not just files
 				}
 				if ( result==wxID_YES || result==wxYES ) {
 					wxTreeItemId parent = GetItemParent( item );
@@ -895,6 +897,35 @@ void FileViewTree::DoRemoveItems()
 						wxString file_name(data->GetData().GetFile());
 						Delete( item );
 						SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+
+						if (ApplyToEachFileDeletion==false) {
+							wxString message;
+							message << _("Do you also want to delete the file '")  << name << _("' from disc?");
+							if ((num > 1) && ((i+1) < num) ) {
+								// For multiple selections, use a YesToAll dialog
+								YesToAllDlg dlg(this, message);
+								dlg.SetCheckboxText(wxString(_("Apply to all Files")));
+								result = dlg.ShowModal();
+								ApplyToEachFileDeletion = dlg.GetIsChecked();
+							} else {
+								result = wxMessageBox(message, _("Are you sure?"), wxYES_NO | wxICON_QUESTION, this);
+							}
+						}
+
+						if ((result==wxID_YES || result==wxYES) || AlsoDeleteFromDisc) {
+							AlsoDeleteFromDisc = ApplyToEachFileDeletion;	// If we're here, ApplyToAll means delete all
+
+							wxString message(_("An error occurred during file removal. Maybe it has been already deleted or you don't have the necessary permissions"));
+							if (wxDirExists(name)) {
+								if (!wxRmdir(name)) {
+									wxMessageBox(message, _("Error"), wxOK | wxICON_ERROR, this);
+								}
+							} else {
+								if(!wxRemoveFile(file_name)) {
+									wxMessageBox(message, _("Error"), wxOK | wxICON_ERROR, this);
+								}
+							}
+						}
 					}
 				}
 			}

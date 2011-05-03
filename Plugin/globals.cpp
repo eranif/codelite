@@ -50,6 +50,7 @@
 #include <set>
 #include <wx/fontmap.h>
 #include <wx/zipstrm.h>
+#include <wx/filename.h>
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -80,6 +81,11 @@ static wxString MacGetInstallPath()
 
 	return rest;
 }
+#endif
+
+#if defined(__WXGTK__)
+    #include <unistd.h>
+    #include <dirent.h>
 #endif
 
 static bool IsBOMFile(const char* file_name)
@@ -868,6 +874,41 @@ void StringManager::SetStringSelection(const wxString& str, size_t dfault /*= 0*
 			p_control->SetSelection(0);
 		}
 	} 
+}
+
+// Make absolute first, including abolishing any symlinks (Normalise only does MSW shortcuts)
+// Then only 'make relative' if it's a subpath of reference_path (or reference_path itself)
+bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path)
+{
+	if (reference_path.IsEmpty() || !fn.IsOk()) {
+		return false;
+	}
+
+#if defined(__WXGTK__)
+	// Normalize() doesn't account for symlinks in wxGTK
+	wxStructStat statstruct;
+	int error = wxLstat(fn.GetFullPath(), &statstruct);
+	
+	if (!error && S_ISLNK(statstruct.st_mode))	{	// If it's a symlink
+		char buf[4096];
+		int len = readlink(fn.GetFullPath().mb_str(wxConvUTF8), buf, WXSIZEOF(buf) - sizeof(char));
+		if ( len != -1 ) {
+			buf[len] = '\0'; // readlink() doesn't NULL-terminate the buffer
+			fn.Assign(wxString(buf, wxConvUTF8, len));
+		}
+	}
+#endif	
+
+	fn.Normalize(wxPATH_NORM_DOTS | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_TILDE | wxPATH_NORM_SHORTCUT);
+	
+	// Now see if fn is in or under 'reference_path'
+	wxString fnPath = fn.GetPath();
+	if ((fnPath.Len() >= reference_path.Len()) && (fnPath.compare(0, reference_path.Len(), reference_path) == 0)) {
+		fn.MakeRelativeTo(reference_path);
+		return true;
+	}
+
+	return false;
 }
 
 ////////////////////////////////////////

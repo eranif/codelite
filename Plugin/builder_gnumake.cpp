@@ -215,9 +215,9 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 			}
 
 			text << wxT("\t@echo ") << wxGetTranslation(BUILD_PROJECT_PREFIX) << dependProj->GetName() << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
-			// make the paths relative
+			// make the paths relative, if it's sensible to do so
 			wxFileName fn(dependProj->GetFileName());
-			fn.MakeRelativeTo(wspfile.GetPath());
+			MakeRelativeIfSensible(fn, wspfile.GetPath());
 
 			bool isPluginGeneratedMakefile = SendCmdEvent(wxEVT_GET_IS_PLUGIN_MAKEFILE, (void*)&depsArr.Item(i), projectSelConf);
 
@@ -292,9 +292,9 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 	text << wxT("\t@echo ") << wxGetTranslation(BUILD_PROJECT_PREFIX) << project << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
 
-	//make the paths relative
+	//make the paths relative, if it's sensible to do so
 	wxFileName projectPath(proj->GetFileName());
-	projectPath.MakeRelativeTo(wspfile.GetPath());
+	MakeRelativeIfSensible(projectPath, wspfile.GetPath());
 
 	wxString pname( proj->GetName() );
 
@@ -334,7 +334,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 			//make the paths relative
 			wxFileName fn(dependProj->GetFileName());
-			fn.MakeRelativeTo(wspfile.GetPath());
+			MakeRelativeIfSensible(fn, wspfile.GetPath());
 
 			//if the dependencie project is project of type 'Custom Build' - do the custom build instead
 			//of the geenrated makefile
@@ -1484,6 +1484,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(const wxFileName& wspfile, const 
 	basicMakeCommand << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\"");
 
 	makeCommand << wxT("\t") << GetCdCmd(wspfile, projectPath);
+
 	if( bldConf ) {
 		wxString preprebuild = bldConf->GetPreBuildCustom();
 		wxString precmpheader = bldConf->GetPrecompiledHeader();

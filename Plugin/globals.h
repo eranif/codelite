@@ -270,6 +270,15 @@ WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString &theme = wx
 
 
 /**
+ * @brief make relative only if a subpath of reference_path (or is reference_path itself)
+ * @brief also, make normalise first, and abolish any symlink
+ * @param fn wxFileName to alter
+ * @param reference_path the path to which to make relative
+ */
+WXDLLIMPEXP_SDK bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path);
+
+
+/**
  * @class StringManager
  * @brief Stores unlocalised strings for serialisation, while managing localised ones in the gui
  */

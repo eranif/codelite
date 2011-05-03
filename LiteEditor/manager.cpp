@@ -272,6 +272,15 @@ void Manager::OpenWorkspace ( const wxString &path )
 		clMainFrame::Get()->GetMainBook()->ShowMessage(errMsg, true, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/error")));
 	}
 
+	if (GetActiveProjectName().IsEmpty()) {
+		// This might happen if a removed faulty project was active
+		wxArrayString list;
+		WorkspaceST::Get()->GetProjectList(list);
+		if ( !list.IsEmpty() ) {
+			WorkspaceST::Get()->SetActiveProject(list.Item(0), true);
+		}
+	}
+
 	DoSetupWorkspace ( path );
 }
 

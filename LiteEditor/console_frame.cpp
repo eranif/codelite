@@ -7,6 +7,7 @@
 
 #include <wx/app.h>
 #include "console_frame.h"
+#include "drawingutils.h"
 #include "plugin.h"
 #include "windowattrmanager.h"
 #include "globals.h"
@@ -19,7 +20,8 @@ ConsoleFrame::ConsoleFrame( wxWindow* parent, wxWindowID id )
 {
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
-
+	
+	SetBackgroundColour(DrawingUtils::GetTextCtrlBgColour());
 	m_terminal = new wxTerminal(this);
 	bSizer1->Add(m_terminal, 1, wxEXPAND|wxALL);
 

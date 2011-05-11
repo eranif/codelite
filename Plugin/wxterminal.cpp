@@ -2,6 +2,7 @@
 #include "asyncprocess.h"
 #include <wx/filename.h>
 #include "processreaderthread.h"
+#include "drawingutils.h"
 
 #ifdef __WXMSW__
 #include "windows.h"
@@ -51,10 +52,12 @@ wxTerminal::wxTerminal( wxWindow* parent )
 	, m_dummyProcess(NULL)
 #endif
 {
-	m_defaultStyle.SetFont( m_textCtrl->GetFont() );
-	m_defaultStyle.SetTextColour( wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT)  );
-	m_defaultStyle.SetBackgroundColour( wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-	m_textCtrl->SetDefaultStyle( m_defaultStyle );
+	m_defaultStyle.SetFont            ( m_textCtrl->GetFont() );
+	m_defaultStyle.SetTextColour      ( DrawingUtils::GetTextCtrlTextColour() );
+	m_defaultStyle.SetBackgroundColour( DrawingUtils::GetTextCtrlBgColour());
+	
+	m_textCtrl->SetBackgroundColour( DrawingUtils::GetTextCtrlBgColour() );
+	m_textCtrl->SetDefaultStyle       ( m_defaultStyle );
 }
 
 wxTerminal::~wxTerminal()

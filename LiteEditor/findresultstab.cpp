@@ -156,8 +156,8 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	bgcol = DrawingUtils::LightColour(wxT("GRAY"), 2.0);
 #endif
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetTextCtrlTextColour());
+	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetTextCtrlBgColour());
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_HEADER, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_HEADER, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
@@ -165,12 +165,12 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetForeground(wxSCI_LEX_FIF_LINE_NUMBER, wxT("MAROON"));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_LINE_NUMBER, bgcol);
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, DrawingUtils::GetTextCtrlTextColour());
+	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, DrawingUtils::GetTextCtrlBgColour());
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_MATCH, true);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_SCOPE, wxT("BROWN"));
-	sci->StyleSetBackground(wxSCI_LEX_FIF_SCOPE, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_SCOPE, DrawingUtils::GetTextCtrlBgColour());
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_SCOPE, false);
 	
 	wxColour fgColour(wxT("GREEN"));
@@ -200,7 +200,7 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	}
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH_COMMENT, fgColour);
-	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH_COMMENT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH_COMMENT, DrawingUtils::GetTextCtrlBgColour());
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_MATCH_COMMENT, true);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE, DrawingUtils::GetTextCtrlTextColour());
@@ -208,7 +208,7 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_FILE, true);
 	
 	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetTextCtrlTextColour());
-	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetTextCtrlBgColour());
 	sci->StyleSetEOLFilled(wxSCI_LEX_FIF_DEFAULT, true);
 	sci->StyleSetEOLFilled(wxSCI_LEX_FIF_HEADER, true);
 	

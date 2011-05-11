@@ -303,7 +303,7 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 				DbgTreeItemData *data = new DbgTreeItemData();
 				data->_kind = DbgTreeItemData::VariableObject;
 				wxTreeItemId item = m_listTable->AppendItem(root, newVarName, -1, -1, data);
-				m_listTable->SetItemBackgroundColour(item, rootItemColour);
+				//m_listTable->SetItemBackgroundColour(item, rootItemColour);
 
 
 				m_listTable->AppendItem(item, wxT("<dummy>"));
@@ -320,8 +320,8 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
 			if(itemsNotRemoved.Index(locals[i].name) == wxNOT_FOUND) {
 				// New entry
 				wxTreeItemId item = m_listTable->AppendItem(root, locals[i].name, -1, -1, new DbgTreeItemData());
-				m_listTable->SetItemBackgroundColour(item, rootItemColour);
-
+				//m_listTable->SetItemTextColour(item, DrawingUtils::GetMenuTextColour());
+				
 				m_listTable->SetItemText(item, 1, locals[i].value);
 				m_listTable->SetItemText(item, 2, locals[i].type);
 

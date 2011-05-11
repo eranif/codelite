@@ -30,6 +30,7 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
 	m_listTable = new wxTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
 	MSWSetNativeTheme(m_listTable);
 	
+	m_listTable->SetForegroundColour(DrawingUtils::GetMenuTextColour());
 	bSizer3->Add( m_listTable, 1, wxEXPAND|wxALL, 1 );
 
 	if(m_withButtons)
@@ -118,9 +119,11 @@ void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item, size_
 
 		bool resetColor = ((itemKind == 0) || (data && (data->_kind & itemKind)));
 		if(resetColor) {
-			m_listTable->SetItemTextColour(child, *wxBLACK);
+			m_listTable->SetItemTextColour(child, DrawingUtils::GetMenuTextColour());
 		}
-
+		
+		m_listTable->SetItemBackgroundColour(child, DrawingUtils::GetTextCtrlBgColour());
+		
 		if(m_listTable->HasChildren(child)) {
 			DoResetItemColour(child, itemKind);
 		}
@@ -135,25 +138,14 @@ void DebuggerTreeListCtrlBase::OnEvaluateVariableObj(const DebuggerEvent& event)
 
 	std::map<wxString, wxTreeItemId>::iterator iter = m_gdbIdToTreeId.find(gdbId);
 	if( iter != m_gdbIdToTreeId.end() ) {
-
-#if wxVERSION_NUMBER < 2808
-		wxColour defColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-#else
-		wxColour defColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
-#endif
-		wxColour redColour = *wxRED;
-		wxColour itemColor;
-
+		
 		wxString newValue = value;
 		wxString curValue = m_listTable->GetItemText(iter->second, 1);
 
-		if(newValue == curValue || curValue.IsEmpty())
-			itemColor = defColour;
-		else
-			itemColor = redColour;
+		if(!(newValue == curValue || curValue.IsEmpty()))
+			m_listTable->SetItemTextColour(iter->second, *wxRED);
 
 		m_listTable->SetItemText(iter->second, 1, value);
-		m_listTable->SetItemTextColour(iter->second, itemColor);
 
 		// keep the red items IDs in the array
 		m_gdbIdToTreeId.erase(iter);

@@ -36,6 +36,7 @@ public:
 	static wxColor DarkColour (const wxColour& color, float percent);
 	static wxColor GetPanelBgColour();
 	static wxColor GetTextCtrlTextColour();
+	static wxColor GetTextCtrlBgColour();
 	static wxColor GetMenuTextColour();
 	static wxColor GetMenuBarBgColour();
 	

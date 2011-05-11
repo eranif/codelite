@@ -198,6 +198,7 @@ cp -pr lib/wxformbuilder.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/abbreviation.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/QmakePlugin.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/CppCheck.so fakeroot/${PREFIX}/lib/codelite/
+cp -pr lib/git.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/libwxscintillau.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/libpluginu.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/libcodeliteu.so fakeroot/${PREFIX}/lib/codelite/

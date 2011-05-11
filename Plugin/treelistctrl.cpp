@@ -33,6 +33,7 @@
 #include <wx/tooltip.h>
 #include <wx/renderer.h>
 #include "codelite_exports.h"
+#include "drawingutils.h"
 
 #ifdef __WXMAC__
 #include "wx/mac/private.h"
@@ -1902,11 +1903,8 @@ bool wxTreeListMainWindow::Create (wxTreeListCtrl *parent,
     SetValidator(validator);
 #endif
 
-#if !wxCHECK_VERSION(2, 5, 0)
-    SetBackgroundColour (wxSystemSettings::GetSystemColour (wxSYS_COLOUR_LISTBOX));
-#else
-    SetBackgroundColour (wxSystemSettings::GetColour (wxSYS_COLOUR_LISTBOX));
-#endif
+	SetBackgroundColour(DrawingUtils::GetTextCtrlBgColour());
+	
     // prevent any background repaint in order to reducing flicker
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
@@ -3251,12 +3249,8 @@ void wxTreeListMainWindow::PaintItem (wxTreeListItem *item, wxDC& dc) {
         }
 
         if (HasFlag(wxTR_COLUMN_LINES)) { // vertical lines between columns
-#if !wxCHECK_VERSION(2, 5, 0)
-            wxPen pen (wxSystemSettings::GetSystemColour (wxSYS_COLOUR_3DLIGHT ), 1, wxSOLID);
-#else
-            wxPen pen (wxSystemSettings::GetColour (wxSYS_COLOUR_3DLIGHT ), 1, wxSOLID);
-#endif
-            dc.SetPen ((GetBackgroundColour() == *wxWHITE)? pen: *wxWHITE_PEN);
+            wxPen pen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 1, wxSOLID);
+            dc.SetPen (pen);
             dc.DrawLine (x_colstart+col_w-1, item->GetY(), x_colstart+col_w-1, item->GetY()+total_h);
         }
 
@@ -3323,12 +3317,9 @@ void wxTreeListMainWindow::PaintLevel (wxTreeListItem *item, wxDC &dc,
             int total_width = m_owner->GetHeaderWindow()->GetWidth();
             // if the background colour is white, choose a
             // contrasting color for the lines
-#if !wxCHECK_VERSION(2, 5, 0)
-            wxPen pen (wxSystemSettings::GetSystemColour (wxSYS_COLOUR_3DLIGHT ), 1, wxSOLID);
-#else
-            wxPen pen (wxSystemSettings::GetColour (wxSYS_COLOUR_3DLIGHT ), 1, wxSOLID);
-#endif
-            dc.SetPen ((GetBackgroundColour() == *wxWHITE)? pen: *wxWHITE_PEN);
+            wxPen pen (wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 1, wxSOLID);
+			
+            dc.SetPen (pen);
             dc.DrawLine (0, y_top, total_width, y_top);
             dc.DrawLine (0, y_top+h, total_width, y_top+h);
         }

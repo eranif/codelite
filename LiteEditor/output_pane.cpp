@@ -98,6 +98,20 @@ void OutputPane::CreateGUIControls()
 	m_book->AddPage(m_outputDebug, wxGetTranslation(OUTPUT_DEBUG), false, wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
 
 	wxTextCtrl *text = new wxTextCtrl(m_book, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
+	
+	/////////////////////////////////////
+	// Set the trace's font & colors
+	/////////////////////////////////////
+	wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	f.SetFamily(wxFONTFAMILY_TELETYPE);
+	text->SetFont(f);
+	text->SetBackgroundColour(DrawingUtils::GetTextCtrlBgColour());
+	wxTextAttr defaultStyle;
+	defaultStyle.SetBackgroundColour(DrawingUtils::GetTextCtrlBgColour());
+	defaultStyle.SetTextColour(DrawingUtils::GetTextCtrlTextColour());
+	defaultStyle.SetFont(f);
+	text->SetDefaultStyle(defaultStyle);
+	
 	m_book->AddPage(text, wxGetTranslation(TRACE_TAB), false, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
 	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
 	

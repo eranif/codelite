@@ -92,7 +92,7 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 	sci->StyleClearAll();
 
 	for(int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
-		sci->StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+		sci->StyleSetBackground(i, DrawingUtils::GetTextCtrlBgColour() );
 		sci->StyleSetForeground(i, DrawingUtils::GetTextCtrlTextColour());
 	}
 

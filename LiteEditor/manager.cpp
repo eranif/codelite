@@ -28,6 +28,7 @@
 #include "crawler_include.h"
 #include "renamefiledlg.h"
 #include "clang_code_completion.h"
+#include "fileextmanager.h"
 #include "localstable.h"
 #include "new_quick_watch_dlg.h"
 #include "debuggerconfigtool.h"
@@ -1020,13 +1021,24 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 	std::vector<IncludeStatement> includes, matches;
 
 	for(size_t i=0; i<workspaceFiles.GetCount(); i++) {
+		
 		// Dont attempt to scan binary files
 		// Skip binary files
 		if(TagsManagerST::Get()->IsBinaryFile(workspaceFiles.Item(i))) {
 			continue;
 		}
-
-		IncludeFinder(workspaceFiles.Item(i).mb_str(wxConvUTF8).data(), includes);
+		
+		// Scan only C/C++/h files
+		switch(FileExtManager::GetType(workspaceFiles.Item(i))) {
+		case FileExtManager::TypeHeader:
+		case FileExtManager::TypeSourceC:
+		case FileExtManager::TypeSourceCpp:
+			IncludeFinder(workspaceFiles.Item(i).mb_str(wxConvUTF8).data(), includes);
+			break;
+		default:
+			// ignore any other type
+			break;
+		}
 	}
 
 	// Filter non-relevant matches

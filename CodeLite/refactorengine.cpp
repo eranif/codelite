@@ -2,6 +2,7 @@
 #include "cppwordscanner.h"
 #include "entry.h"
 #include "ctags_manager.h"
+#include "fileextmanager.h"
 #include <wx/progdlg.h>
 #include <wx/sizer.h>
 
@@ -342,9 +343,20 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 			Clear();
 			return;
 		}
-
-		CppWordScanner tmpScanner(curfile.GetFullPath());
-		tmpScanner.Match(symname, l);
+		
+		// Scan only valid C / C++ files
+		switch(FileExtManager::GetType(curfile.GetFullName())) {
+		case FileExtManager::TypeHeader:
+		case FileExtManager::TypeSourceC:
+		case FileExtManager::TypeSourceCpp:
+			{
+				CppWordScanner tmpScanner(curfile.GetFullPath());
+				tmpScanner.Match(symname, l);
+			}
+			break;
+		default:
+			break;
+		}
 	}
 	prgDlg->Destroy();
 

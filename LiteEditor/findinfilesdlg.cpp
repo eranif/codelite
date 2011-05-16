@@ -38,15 +38,17 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 	, m_data(data) {
 	// DirPicker values
 	wxArrayString choices;
-	choices.Add(wxGetTranslation(SEARCH_IN_PROJECT));
-	choices.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
-	choices.Add(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
-	choices.Add(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
 	
 	size_t count = m_data.GetSearchPaths().GetCount();
 	for (size_t i = 0; i < count; ++i) {
 		choices.Add(m_data.GetSearchPaths().Item(i));
 	}
+	
+	choices.Add(wxGetTranslation(SEARCH_IN_PROJECT));
+	choices.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
+	choices.Add(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
+	choices.Add(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
+	
 	int initial = m_data.GetSearchScope();
 	if ((initial == wxNOT_FOUND) || ((size_t)initial >= count)){
 		initial = 1;

@@ -31,8 +31,8 @@ SvnConsole::SvnConsole(wxWindow *parent, Subversion2* plugin)
 	m_sci->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SvnConsole::OnKeyDown), NULL, this);
 
 	for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
-		m_sci->StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-		m_sci->StyleSetForeground(i, *wxBLACK);
+		m_sci->StyleSetBackground(i, DrawingUtils::GetTextCtrlBgColour());
+		m_sci->StyleSetForeground(i, DrawingUtils::GetTextCtrlTextColour());
 	}
 
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

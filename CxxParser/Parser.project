@@ -41,7 +41,7 @@
   <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
-      <Compiler Options="">
+      <Compiler Options="" C_Options="">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="">
@@ -50,7 +50,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;" Required="yes" PreCompiledHeader="">
+      <Compiler Options="-g;" C_Options="-g;" Required="yes" PreCompiledHeader="">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="-O2" Required="yes">
@@ -58,7 +58,7 @@
         <LibraryPath Value="./Release"/>
       </Linker>
       <ResourceCompiler Options="" Required="yes"/>
-      <General OutputFile="./Release/CppParser" IntermediateDirectory="./Release" Command="CppParser" CommandArguments="" WorkingDirectory="./Release" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="./Release/CppParser" IntermediateDirectory="./Release" Command="CppParser" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./Release" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>

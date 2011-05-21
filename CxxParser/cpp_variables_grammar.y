@@ -162,7 +162,10 @@ template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_sta
 //the main rule for finding variables
 //in the code. if this rule succeeded, the variables
 //is added to the gs_vars vriable
-variables	        : stmnt_starter variable_decl special_star_amp const_spec variable_name_list postfix
+variables           : LE_TYPEDEF LE_STRUCT optional_struct_name '{' {var_consumBracketsContent('{');} typedef_name_list ';'
+					{
+					}
+					| stmnt_starter variable_decl special_star_amp const_spec variable_name_list postfix
                         {
                         	if(gs_vars)
                             {
@@ -181,7 +184,8 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                                     //create new variable for every variable name found
                                 	var = curr_var;
                                 	var.m_pattern      = $2 + " " + $3 + " " + $4 ;
-                                	var.m_completeType = $2 + " " + $3 + " " + $4 ;
+									if(var.m_completeType.empty())
+										var.m_completeType = $2 + " " + $3 + " " + $4 ;
                                 	var.m_name = gs_names.at(i);
                                 	gs_vars->push_back(var);
                                 }
@@ -324,6 +328,16 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                         }
                         ;
 
+optional_struct_name     : /* empty */
+						| LE_IDENTIFIER
+						| '*'  LE_IDENTIFIER
+						| '**' LE_IDENTIFIER
+						;
+						
+typedef_name_list: optional_struct_name
+				 | typedef_name_list ',' optional_struct_name
+				 ;
+
 ellipsis_prefix: '(' {$$ = $1;}
                 |',' {$$ = $1;}
                 ;
@@ -438,6 +452,7 @@ variable_decl       :   const_spec basic_type_name
                             $3.erase($3.find_last_not_of(":")+1);
                         	curr_var.m_typeScope = $3;
                         	curr_var.m_type = $4;
+							curr_var.m_completeType = $3 + $4;
                         	curr_var.m_isConst = !$1.empty();
                         	s_tmpString.clear();
                         }
@@ -448,6 +463,7 @@ variable_decl       :   const_spec basic_type_name
                         	curr_var.m_typeScope = $3;
                         	curr_var.m_type = $4;
                         	curr_var.m_isTemplate = !curr_var.m_templateDecl.empty();
+							curr_var.m_completeType = $3 + $4;
                         	curr_var.m_isConst = !$1.empty();
                         	s_tmpString.clear();
                         }

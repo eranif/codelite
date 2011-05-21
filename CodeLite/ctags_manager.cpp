@@ -1152,7 +1152,7 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno,
 		wxString oper, dummy;
 		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
 		if (!res) {
-			return false;
+			return NULL;
 		}
 
 		//load all tags from the database that matches typeName & typeScope

@@ -30,7 +30,7 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
 	m_listTable = new wxTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
 	MSWSetNativeTheme(m_listTable);
 	
-	m_listTable->SetForegroundColour(DrawingUtils::GetMenuTextColour());
+	m_listTable->SetForegroundColour(DrawingUtils::GetTextCtrlTextColour());
 	bSizer3->Add( m_listTable, 1, wxEXPAND|wxALL, 1 );
 
 	if(m_withButtons)
@@ -119,7 +119,7 @@ void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item, size_
 
 		bool resetColor = ((itemKind == 0) || (data && (data->_kind & itemKind)));
 		if(resetColor) {
-			m_listTable->SetItemTextColour(child, DrawingUtils::GetMenuTextColour());
+			m_listTable->SetItemTextColour(child, DrawingUtils::GetTextCtrlTextColour());
 		}
 		
 		m_listTable->SetItemBackgroundColour(child, DrawingUtils::GetTextCtrlBgColour());

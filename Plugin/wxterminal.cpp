@@ -118,7 +118,7 @@ void wxTerminal::OnKey(wxKeyEvent& event)
 		case WXK_NUMPAD_ENTER:
 		case WXK_RETURN: {
 			// get last line and pass it to the caller
-			wxString lineText = m_textCtrl->GetLineText(m_textCtrl->GetNumberOfLines()-1);
+			wxString lineText = m_textCtrl->GetRange(m_inferiorEnd, curPos);
 			lineText.Trim().Trim(false);
 			m_dummyProcess->Write(lineText);
 			break;

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -17,8 +17,10 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_textCtrlRootDir = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-	bSizer2->Add( m_textCtrlRootDir, 1, wxALIGN_CENTER_VERTICAL, 5 );
+	wxArrayString m_choiceRootDirChoices;
+	m_choiceRootDir = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceRootDirChoices, 0 );
+	m_choiceRootDir->SetSelection( 0 );
+	bSizer2->Add( m_choiceRootDir, 1, wxEXPAND, 5 );
 	
 	m_buttonChangeRootDir = new wxButton( this, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
 	m_buttonChangeRootDir->SetToolTip( _("Select a different root directory") );
@@ -306,7 +308,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	
 	m_notebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	wxSize m_notebookImageSize = wxSize( 32,32 );
-	// int m_notebookIndex = 0; unused var commented out
+	int m_notebookIndex = 0;
 	wxImageList* m_notebookImages = new wxImageList( m_notebookImageSize.GetWidth(), m_notebookImageSize.GetHeight() );
 	m_notebook->AssignImageList( m_notebookImages );
 	wxBitmap m_notebookBitmap;
@@ -923,9 +925,7 @@ PatchDlgBase::PatchDlgBase( wxWindow* parent, wxWindowID id, const wxString& tit
 	fgSizer11->SetFlexibleDirection( wxBOTH );
 	fgSizer11->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_filePicker = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"),
-		wxString(_("Patch files")) + wxT(" (*.patch;*.diff)|*.patch;*.diff|") + wxString(_("All Files")) + wxT(" (*)|*"),
-			wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
+	m_filePicker = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("Patch files (*.patch;*.diff)|*.patch;*.diff|All Files (*)|*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
 	fgSizer11->Add( m_filePicker, 0, wxALL|wxEXPAND, 5 );
 	
 	wxString m_radioBoxEOLPolicyChoices[] = { _("Do not change EOL, apply patch as it is"), _("Change to Windows style (CRLF)"), _("Change to UNIX style (LF)") };

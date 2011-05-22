@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -11,7 +11,7 @@
 #include <wx/intl.h>
 
 #include <wx/string.h>
-#include <wx/textctrl.h>
+#include <wx/choice.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
@@ -21,9 +21,9 @@
 #include <wx/treectrl.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
+#include <wx/textctrl.h>
 #include <wx/checklst.h>
 #include <wx/splitter.h>
-#include <wx/choice.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
 #include <wx/wxscintilla.h>
@@ -49,7 +49,7 @@ class SubversionPageBase : public wxPanel
 	private:
 	
 	protected:
-		wxTextCtrl* m_textCtrlRootDir;
+		wxChoice* m_choiceRootDir;
 		wxButton* m_buttonChangeRootDir;
 		wxTreeCtrl* m_treeCtrl;
 		

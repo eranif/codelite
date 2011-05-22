@@ -79,13 +79,14 @@ protected:
 	SvnTreeData::SvnNodeType DoGetSelectionType(const wxArrayTreeItemIds &items);
 	void                     DoGetPaths(const wxTreeItemId &parent, wxArrayString &paths);
 	void                     DoLinkEditor();
-
+	void DoSetRootPath       (const wxString &path);
+	
 protected:
 	// Menu management
 	void CreateFileMenu      (wxMenu *menu);
 	void CreateRootMenu      (wxMenu *menu);
 	void CreateSecondRootMenu(wxMenu *menu);
-
+	
 protected:
 	// Handlers for SubversionPageBase events.
 	void OnChangeRootDir ( wxCommandEvent& event );
@@ -143,7 +144,7 @@ public:
 	void     UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString &conflictedFiles, const wxArrayString &unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles, const wxArrayString& lockedFiles);
 	void     BuildTree();
 	void     BuildTree(const wxString &root);
-	wxString GetRootDir() const {return m_textCtrlRootDir->GetValue();}
+	wxString GetRootDir() const { return m_choiceRootDir->GetStringSelection(); }
 };
 
 #endif // __subversion_page__

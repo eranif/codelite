@@ -40,7 +40,8 @@ enum SvnSettingsDataFlags {
 	SvnUsePosixLocale      = 0x00000040
 };
 
-class SvnSettingsData : public SerializedObject {
+class SvnSettingsData : public SerializedObject
+{
 	wxString                     m_executable;
 	wxString                     m_ignoreFilePattern;
 	wxString                     m_externalDiffViewer;
@@ -51,6 +52,7 @@ class SvnSettingsData : public SerializedObject {
 	wxString                     m_revisionMacroName;
 	size_t                       m_svnTabIndex;
 	std::map<wxString, wxString> m_workspaceRepoPath;
+	wxArrayString                m_repos;
 
 public:
 	SvnSettingsData()
@@ -79,6 +81,7 @@ public:
 		arch.Read(wxT("m_revisionMacroName"),         m_revisionMacroName);
 		arch.Read(wxT("m_svnTabIndex"),               m_svnTabIndex);
 		arch.Read(wxT("m_workspaceRepoPath"),         m_workspaceRepoPath);
+		arch.Read(wxT("m_repos"),                     m_repos);
 	}
 
 	virtual void Serialize(Archive &arch) {
@@ -92,8 +95,15 @@ public:
 		arch.Write(wxT("m_revisionMacroName"),         m_revisionMacroName);
 		arch.Write(wxT("m_svnTabIndex"),               m_svnTabIndex);
 		arch.Write(wxT("m_workspaceRepoPath"),         m_workspaceRepoPath);
+		arch.Write(wxT("m_repos"),                     m_repos);
 	}
 
+	void SetRepos(const wxArrayString& repos) {
+		this->m_repos = repos;
+	}
+	const wxArrayString& GetRepos() const {
+		return m_repos;
+	}
 	void SetSvnTabIndex(const size_t& svnTabIndex) {
 		this->m_svnTabIndex = svnTabIndex;
 	}

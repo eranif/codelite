@@ -20,7 +20,7 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	wxArrayString m_choiceRootDirChoices;
 	m_choiceRootDir = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceRootDirChoices, 0 );
 	m_choiceRootDir->SetSelection( 0 );
-	bSizer2->Add( m_choiceRootDir, 1, wxEXPAND, 5 );
+	bSizer2->Add( m_choiceRootDir, 1, wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_buttonChangeRootDir = new wxButton( this, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
 	m_buttonChangeRootDir->SetToolTip( _("Select a different root directory") );
@@ -37,6 +37,7 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	mainSizer->Fit( this );
 	
 	// Connect Events
+	m_choiceRootDir->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( SubversionPageBase::OnRootDirChanged ), NULL, this );
 	m_buttonChangeRootDir->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SubversionPageBase::OnChangeRootDir ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( SubversionPageBase::OnItemActivated ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( SubversionPageBase::OnTreeMenu ), NULL, this );
@@ -45,6 +46,7 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 SubversionPageBase::~SubversionPageBase()
 {
 	// Disconnect Events
+	m_choiceRootDir->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( SubversionPageBase::OnRootDirChanged ), NULL, this );
 	m_buttonChangeRootDir->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SubversionPageBase::OnChangeRootDir ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( SubversionPageBase::OnItemActivated ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( SubversionPageBase::OnTreeMenu ), NULL, this );

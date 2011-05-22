@@ -54,6 +54,7 @@ class SubversionPageBase : public wxPanel
 		wxTreeCtrl* m_treeCtrl;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnRootDirChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnChangeRootDir( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnItemActivated( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnTreeMenu( wxTreeEvent& event ) { event.Skip(); }

@@ -85,17 +85,7 @@ void SubversionView::OnChangeRootDir( wxCommandEvent& event )
 	wxString path(m_choiceRootDir->GetStringSelection());
 	wxString new_path = wxDirSelector(wxT(""), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
-		
-		SvnSettingsData ssd = m_plugin->GetSettings();
-		std::map<wxString, wxString> m = ssd.GetWorkspaceRepoPath();
-		if(m_plugin->GetManager()->IsWorkspaceOpen()) {
-			m[m_plugin->GetManager()->GetWorkspace()->GetName()] = new_path;
-			ssd.SetWorkspaceRepoPath(m);
-			m_plugin->SetSettings(ssd);
-		}
-		
-		DoSetRootPath(new_path);
-		BuildTree();
+		DoRootDirChanged(new_path);
 	}
 }
 
@@ -137,7 +127,7 @@ void SubversionView::OnTreeMenu( wxTreeEvent& event )
 void SubversionView::CreatGUIControls()
 {
 	MSWSetNativeTheme(m_treeCtrl);
-	
+
 	// Assign the image list
 	wxImageList *imageList = new wxImageList(16, 16, true);
 	BitmapLoader *bmpLoader = m_plugin->GetManager()->GetStdIcons();
@@ -195,16 +185,14 @@ void SubversionView::CreatGUIControls()
 	wxSizer *sz = GetSizer();
 	sz->Insert(0, tb, 0, wxEXPAND);
 	tb->Realize();
-	
+
 	m_choiceRootDir->Clear();
+	m_choiceRootDir->Append( m_plugin->GetSettings().GetRepos() );
 	
-	// TODO:: fix this to read the values from the 
-	// configuration file
 	if (m_plugin->GetManager()->IsWorkspaceOpen()) {
-		m_choiceRootDir->Append(m_plugin->GetManager()->GetWorkspace()->GetWorkspaceFileName().GetPath());
-		m_choiceRootDir->SetSelection(0);
+		DoRootDirChanged(m_plugin->GetManager()->GetWorkspace()->GetWorkspaceFileName().GetPath());
 	}
-	
+
 	BuildTree();
 }
 
@@ -217,9 +205,9 @@ void SubversionView::BuildTree(const wxString& root)
 {
 	if(root.IsEmpty())
 		return;
-		
-	DoSetRootPath(root);
-	
+
+	DoChangeRootPathUI(root);
+
 	wxString command;
 	command << m_plugin->GetSvnExeName() << wxT("--xml -q status");
 	m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL), m_plugin);
@@ -230,9 +218,9 @@ void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
 	event.Skip();
 	Workspace *workspace = m_plugin->GetManager()->GetWorkspace();
 	if(m_plugin->GetManager()->IsWorkspaceOpen() && workspace) {
-		
+
 		// Set the repository path to the workspace path unless user manually modified it
-		// (in that case, the new value is stored in the 
+		// (in that case, the new value is stored in the
 		wxString repoPath = workspace->GetWorkspaceFileName().GetPath();
 		SvnSettingsData ssd = m_plugin->GetSettings();
 		std::map<wxString, wxString> m = ssd.GetWorkspaceRepoPath();
@@ -240,8 +228,8 @@ void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
 		if(iter != m.end()) {
 			repoPath = iter->second;
 		}
-		
-		DoSetRootPath(repoPath);
+
+		DoRootDirChanged(repoPath);
 		BuildTree();
 	}
 }
@@ -249,9 +237,7 @@ void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
 void SubversionView::OnWorkspaceClosed(wxCommandEvent& event)
 {
 	event.Skip();
-	// TODO :: initialize the choice control with the values from the disk
-	DoSetRootPath(_(""));
-	ClearAll();
+	DoChangeRootPathUI(_("<No repository path is selected>"));
 	m_plugin->GetConsole()->Clear();
 }
 
@@ -1083,12 +1069,54 @@ void SubversionView::OnUnLock(wxCommandEvent& event)
 	m_plugin->DoLockFile(m_choiceRootDir->GetStringSelection(), files, event, false);
 }
 
-void SubversionView::DoSetRootPath(const wxString& path)
+void SubversionView::DoChangeRootPathUI(const wxString& path)
 {
+	if(path == _("<No repository path is selected>")) {
+		ClearAll();
+	}
+	
 	int where = m_choiceRootDir->FindString(path);
 	if(where == wxNOT_FOUND) {
 		m_choiceRootDir->Append(path);
 	}
-	
+
 	m_choiceRootDir->SetSelection(m_choiceRootDir->FindString(path));
+}
+
+void SubversionView::OnRootDirChanged(wxCommandEvent& event)
+{
+	DoRootDirChanged(m_choiceRootDir->GetStringSelection());
+}
+
+void SubversionView::DoRootDirChanged(const wxString& path)
+{
+	if(path == _("<No repository path is selected>")) {
+		DoChangeRootPathUI(path);
+		
+	} else {
+	
+		SvnSettingsData ssd = m_plugin->GetSettings();
+		std::map<wxString, wxString> m = ssd.GetWorkspaceRepoPath();
+		if(m_plugin->GetManager()->IsWorkspaceOpen()) {
+			m[m_plugin->GetManager()->GetWorkspace()->GetName()] = path;
+			ssd.SetWorkspaceRepoPath(m);
+		}
+		
+		wxArrayString dirs, modDirs;
+		dirs = m_choiceRootDir->GetStrings();
+		
+		for(size_t i=0; i<dirs.Count(); i++) {
+			if(dirs.Item(i).Trim().Trim(false).IsEmpty()) {
+				continue;
+			} else {
+				modDirs.Add(dirs.Item(i));
+			}
+		}
+		
+		ssd.SetRepos(modDirs);
+		m_plugin->SetSettings(ssd);
+		DoChangeRootPathUI(path);
+		BuildTree();
+		
+	}
 }

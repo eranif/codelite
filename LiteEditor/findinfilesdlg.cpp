@@ -44,15 +44,24 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 		choices.Add(m_data.GetSearchPaths().Item(i));
 	}
 	
-	choices.Add(wxGetTranslation(SEARCH_IN_PROJECT));
-	choices.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
-	choices.Add(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
-	choices.Add(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
+	// add the default search paths
+	if(choices.Index(wxGetTranslation(SEARCH_IN_WORKSPACE)) == wxNOT_FOUND)
+		choices.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
+	
+	if(choices.Index(wxGetTranslation(SEARCH_IN_PROJECT)) == wxNOT_FOUND)
+		choices.Add(wxGetTranslation(SEARCH_IN_PROJECT));
+	
+	if(choices.Index(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) == wxNOT_FOUND)
+		choices.Add(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
+	
+	if(choices.Index(wxGetTranslation(SEARCH_IN_CURRENT_FILE)) == wxNOT_FOUND)
+		choices.Add(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
 	
 	int initial = m_data.GetSearchScope();
 	if ((initial == wxNOT_FOUND) || ((size_t)initial >= count)){
-		initial = 1;
+		initial = 0;
 	}
+	
 	m_dirPicker->SetValues(choices, initial);
 
 	// Search for
@@ -383,24 +392,6 @@ bool FindInFilesDialog::Show() {
 
 void FindInFilesDialog::DoSaveSearchPaths() {
 	wxArrayString paths = m_dirPicker->GetValues();
-
-	int where = paths.Index(wxGetTranslation(SEARCH_IN_PROJECT));
-	if (where != wxNOT_FOUND) {
-		paths.RemoveAt(where);
-	}
-	where = paths.Index(wxGetTranslation(SEARCH_IN_WORKSPACE));
-	if (where != wxNOT_FOUND) {
-		paths.RemoveAt(where);
-	}
-	where = paths.Index(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
-	if (where != wxNOT_FOUND) {
-		paths.RemoveAt(where);
-	}
-
-	where = paths.Index(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
-	if (where != wxNOT_FOUND) {
-		paths.RemoveAt(where);
-	}
 	m_data.SetSearchPaths(paths);
 }
 

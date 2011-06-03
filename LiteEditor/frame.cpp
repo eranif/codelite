@@ -4369,7 +4369,13 @@ wxString clMainFrame::StartTTY(const wxString &title)
 	if(!content.IsEmpty()) {
 		m_mgr.LoadPerspective(content, false);
 	}
-
+	
+	// Re-set the title (it might be modified by 'LoadPerspective'
+	wxAuiPaneInfo& pi = m_mgr.GetPane(wxT("Debugger Console"));
+	if(pi.IsOk()) {
+		pi.Caption(title);
+	}
+	
 	wxAuiPaneInfo &info = m_mgr.GetPane(wxT("Debugger Console"));
 	if(info.IsShown() == false) {
 		info.Show();

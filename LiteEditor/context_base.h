@@ -84,6 +84,7 @@ public:
 	virtual void ApplySettings() = 0;
 
 	// functions with default implementation:
+	virtual bool IsDefaultContext() const {return true;}
 	virtual void OnCallTipClick(wxScintillaEvent& event){event.Skip();}
 	virtual void OnCalltipCancel(){};
 	virtual void OnDwellEnd(wxScintillaEvent & event){event.Skip();}

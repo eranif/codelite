@@ -635,6 +635,7 @@ void GitPlugin::OnGarbageColletion(wxCommandEvent& e)
 /*******************************************************************************/
 void GitPlugin::OnFileSaved(wxCommandEvent& e)
 {
+	e.Skip();
 	wxUnusedVar(e);
 	std::map<wxString, wxTreeItemId>::const_iterator it;
 	for(it = m_modifiedIDs.begin(); it != m_modifiedIDs.end(); ++it) {
@@ -654,6 +655,7 @@ void GitPlugin::OnFileSaved(wxCommandEvent& e)
 /*******************************************************************************/
 void GitPlugin::OnFilesAddedToProject(wxCommandEvent& e)
 {
+	e.Skip();
 	wxUnusedVar(e);
 	wxLogMessage(wxT("GIT: Files added to project, updating file list"));
 	gitAction ga = {gitListAll,wxT("")};

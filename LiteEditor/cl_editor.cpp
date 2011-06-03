@@ -718,6 +718,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 			 m_autoAddMatchedBrace                                 && // auto-add-match-brace option is enabled
 			 !m_disableSmartIndent                                 && // the disable smart indent option is NOT enabled
 			 MatchBraceBack(wxT('}'), GetCurrentPos(), matchedPos) && // Insert it only if it match an open brace
+			 !m_context->IsDefaultContext()                        && // the editor's context is NOT the default one
 			 matchedPos == m_lastCharEnteredPos) {                    // and that open brace must be the one that we have inserted
 
 			// Add closing brace only if the last char that was entered is the match for it

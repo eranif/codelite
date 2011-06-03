@@ -101,6 +101,7 @@ void ContextDiff::GoHyperlink(int start, int end, int type, bool alt)
         // FIXME: search backwards for "+++ filename", since this could be a directory diff
         rCtrl.GetFileName().GetFullName().EndsWith(wxT(".diff"), &fileName);
     }
+	
     wxFileName fn = ManagerST::Get()->FindFile(fileName);
     if (fn.IsOk()) {
         clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, lineNum);

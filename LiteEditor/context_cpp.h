@@ -70,6 +70,8 @@ private:
 
 public:
 	ContextCpp(LEditor *container);
+	virtual bool IsDefaultContext() const;
+
 	virtual ~ContextCpp();
 	ContextCpp();
 	virtual ContextBase *NewInstance(LEditor *container);

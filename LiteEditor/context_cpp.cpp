@@ -2851,3 +2851,8 @@ void ContextCpp::OnFindReferences(wxCommandEvent& e)
 	// Show the results
 	clMainFrame::Get()->GetOutputPane()->GetShowUsageTab()->ShowUsage( RefactoringEngine::Instance()->GetCandidates(), word);
 }
+
+bool ContextCpp::IsDefaultContext() const
+{
+	return false;
+}

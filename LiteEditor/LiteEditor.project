@@ -844,6 +844,7 @@
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
+        <Target Name="configure --enable-debug --prefix=/home/eran/root">./configure --enable-debug --prefix=/home/eran/root</Target>
         <Target Name="configure --enable-debug">./configure --enable-debug</Target>
         <Target Name="configure">./configure</Target>
         <RebuildCommand>make -w clean all</RebuildCommand>

@@ -703,9 +703,13 @@ wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno, wxMemor
 	for ( ; i1 != i2;  i1++ ) {
 		std::map<int,LineInfo>::iterator i = m_lineInfo.find ( i1->second ) ;
 		if ( i != m_lineInfo.end() && i->second.linenum == lineno && (i->second.linecolor == wxSCI_LEX_GCC_ERROR || i->second.linecolor == wxSCI_LEX_GCC_WARNING )) {
+			static wxRegEx reLineCol(wxT("^(:)?([0-9]+) *(:([0-9]+) *)?:")); // many compilers are using line:col: before the actual message
+			
 			wxString text = i->second.linetext.Mid(i->second.filestart+i->second.filelen);
-			if (!text.IsEmpty() && text[0] == wxT(':')) {
-				text.erase(0, 1);
+			text.Trim().Trim(false);
+			
+			if( reLineCol.Matches(text) ) {
+				reLineCol.ReplaceAll(&text, wxT(""));
 			}
 
 			wxString tmpTip (wxT(" ") + text.Trim(false).Trim() + wxT("\n"));

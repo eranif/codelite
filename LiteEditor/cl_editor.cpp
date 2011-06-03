@@ -1272,8 +1272,11 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 			tooltip = clMainFrame::Get()->GetOutputPane()->GetBuildTab()->GetBuildToolTip(fname, line, style_bytes);
 			type = ct_compiler_msg;
 		}
-
-		if (! tooltip.IsEmpty()) {
+		
+		wxString tmpTip = tooltip;
+		tmpTip.Trim().Trim(false);
+		
+		if (!tmpTip.IsEmpty()) {
 			DoShowCalltip(position, tooltip, type);
 		}
 

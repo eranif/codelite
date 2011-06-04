@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="DatabaseExplorer">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00040001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode000000000000]]>
+    </Plugin>
+  </Plugins>
+  <VirtualDirectory Name="src">
+    <File Name="wx_pch.cpp"/>
+    <File Name="ViewSettings.cpp"/>
+    <File Name="view.cpp"/>
+    <File Name="TableSettingsDialog.cpp"/>
+    <File Name="table.cpp"/>
+    <File Name="SqliteType.cpp"/>
+    <File Name="SqliteDbAdapter.cpp"/>
+    <File Name="SqlCommandPanel.cpp"/>
+    <File Name="PostgreSqlType.cpp"/>
+    <File Name="PostgreSqlDbAdapter.cpp"/>
+    <File Name="PostgresConnectionHistory.cpp"/>
+    <File Name="OneArrow.cpp"/>
+    <File Name="NArrow.cpp"/>
+    <File Name="MySqlType.cpp"/>
+    <File Name="MySqlDbAdapter.cpp"/>
+    <File Name="MysqlConnectionHistory.cpp"/>
+    <File Name="LogDialog.cpp"/>
+    <File Name="IDbItem.cpp"/>
+    <File Name="GUI.cpp"/>
+    <File Name="FrameCanvas.cpp"/>
+    <File Name="ErdView.cpp"/>
+    <File Name="ErdTable.cpp"/>
+    <File Name="ErdPanel.cpp"/>
+    <File Name="ErdForeignKey.cpp"/>
+    <File Name="ErdCommitWizard.cpp"/>
+    <File Name="dumpclass.cpp"/>
+    <File Name="DnDTableShape.cpp"/>
+    <File Name="DbViewerPanel.cpp"/>
+    <File Name="DbSettingDialog.cpp"/>
+    <File Name="dbitem.cpp"/>
+    <File Name="dbeclasstype.cpp"/>
+    <File Name="dbconnection.cpp"/>
+    <File Name="database.cpp"/>
+    <File Name="CreateForeignKey.cpp"/>
+    <File Name="constraint.cpp"/>
+    <File Name="column.cpp"/>
+    <File Name="CodePreviewDialog.cpp"/>
+    <File Name="ClassGenerateDialog.cpp"/>
+    <File Name="AdapterSelectDlg.cpp"/>
+    <File Name="Ids.cpp"/>
+    <File Name="databaseexplorer.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+    <File Name="databaseexplorer.h"/>
+    <File Name="wx_pch.h"/>
+    <File Name="ViewSettings.h"/>
+    <File Name="view.h"/>
+    <File Name="TableSettingsDialog.h"/>
+    <File Name="table.h"/>
+    <File Name="SqliteType.h"/>
+    <File Name="SqliteDbAdapter.h"/>
+    <File Name="SqlCommandPanel.h"/>
+    <File Name="PostgreSqlType.h"/>
+    <File Name="PostgreSqlDbAdapter.h"/>
+    <File Name="PostgresConnectionHistory.h"/>
+    <File Name="OneArrow.h"/>
+    <File Name="NArrow.h"/>
+    <File Name="MySqlType.h"/>
+    <File Name="MySqlDbAdapter.h"/>
+    <File Name="MysqlConnectionHistory.h"/>
+    <File Name="LogDialog.h"/>
+    <File Name="Ids.h"/>
+    <File Name="IDbType.h"/>
+    <File Name="IDbItem.h"/>
+    <File Name="IDbAdapter.h"/>
+    <File Name="GUI.h"/>
+    <File Name="FrameCanvas.h"/>
+    <File Name="ErdView.h"/>
+    <File Name="ErdTable.h"/>
+    <File Name="ErdPanel.h"/>
+    <File Name="ErdForeignKey.h"/>
+    <File Name="ErdCommitWizard.h"/>
+    <File Name="dumpclass.h"/>
+    <File Name="DnDTableShape.h"/>
+    <File Name="DbViewerPanel.h"/>
+    <File Name="DbSettingDialog.h"/>
+    <File Name="dbitem.h"/>
+    <File Name="dbeclasstype.h"/>
+    <File Name="dbconnection.h"/>
+    <File Name="database.h"/>
+    <File Name="CreateForeignKey.h"/>
+    <File Name="constraint.h"/>
+    <File Name="column.h"/>
+    <File Name="CodePreviewDialog.h"/>
+    <File Name="ClassGenerateDialog.h"/>
+    <File Name="BuildNum.h"/>
+    <File Name="Art.h"/>
+    <File Name="AdapterSelectDlg.h"/>
+    <File Name="GUI.fbp"/>
+  </VirtualDirectory>
+  <Dependencies/>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <Settings Type="Dynamic Library">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="">
+        <IncludePath Value="."/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="_WIN32_WINNT=0x501"/>
+        <Preprocessor Value="ASTYLE_LIB"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" C_Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../wxshapeframework/include"/>
+        <IncludePath Value="../sdk/databaselayer/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="DBL_USE_SQLITE"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
+        <LibraryPath Value="../../CodeLite_dev/lib"/>
+        <Library Value="libpluginud.dll"/>
+        <Library Value="libcodeliteud.dll"/>
+        <Library Value="libwxsqlite3ud.dll"/>
+        <Library Value="libwxshapeframeworkud.dll"/>
+        <Library Value="libdatabaselayersqliteud.dll"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../Runtime/plugins/DatabaseExplorer.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2" C_Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="."/>
+        <IncludePath Value="../../CodeLite_dev/Interfaces"/>
+        <IncludePath Value="../../CodeLite_dev/CodeLite"/>
+        <IncludePath Value="../../CodeLite_dev/Plugin"/>
+        <IncludePath Value="../../CodeLite_dev/sdk/wxsqlite3/include"/>
+        <IncludePath Value="../../CodeLite_dev/sdk/wxshapeframework/include"/>
+        <IncludePath Value="../../CodeLite_dev/sdk/databaselayer/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="DBL_USE_SQLITE"/>
+      </Compiler>
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-s" Required="yes">
+        <LibraryPath Value="../../CodeLite_dev/lib"/>
+        <Library Value="libpluginu.dll"/>
+        <Library Value="libcodeliteu.dll"/>
+        <Library Value="libwxsqlite3u.dll"/>
+        <Library Value="libwxshapeframeworku.dll"/>
+        <Library Value="libdatabaselayersqliteu.dll"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../Runtime/plugins/DatabaseExplorer.dll" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="."/>
+        <IncludePath Value="../../CodeLite_dev/Interfaces"/>
+        <IncludePath Value="../../CodeLite_dev/CodeLite"/>
+        <IncludePath Value="../../CodeLite_dev/Plugin"/>
+        <IncludePath Value="../../CodeLite_dev/sdk/wxsqlite3/include"/>
+        <IncludePath Value="../../CodeLite_dev/sdk/wxshapeframework/include"/>
+        <IncludePath Value="../../CodeLite_dev/sdk/databaselayer/include"/>
+        <IncludePath Value="../../CodeLite_dev/sdk/wxscintilla/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="DBL_USE_SQLITE"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
+        <LibraryPath Value="../../CodeLite_dev/lib/gcc_lib"/>
+        <Library Value="libplugin_sdkud.dll"/>
+        <Library Value="libCodeLiteud.dll"/>
+        <Library Value="libwxsqlite3ud.dll"/>
+        <Library Value="libwxshapeframeworkud.dll"/>
+        <Library Value="libdatabaselayersqliteud.dll"/>
+        <Library Value="libwxscintillaud.dll"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../Runtime/plugins/DatabaseExplorer.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./WinDebugUnicode" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" Required="yes" PreCompiledHeader="">
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxshapeframework/include"/>
+        <IncludePath Value="../sdk/databaselayer/include"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="DBL_USE_SQLITE"/>
+      </Compiler>
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-s" Required="yes">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdku.dll"/>
+        <Library Value="libcodeliteu.dll"/>
+        <Library Value="libwxsqlite3u.dll"/>
+        <Library Value="libwxshapeframeworku.dll"/>
+        <Library Value="libdatabaselayersqliteu.dll"/>
+        <Library Value="libwxscintillau.dll"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../Runtime/plugins/DatabaseExplorer.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./WinReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>

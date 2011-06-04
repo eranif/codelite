@@ -128,8 +128,12 @@ public:
 	virtual IMacroManager*         GetMacrosManager();
 	virtual bool                   IsShutdownInProgress() const;
 	virtual BitmapLoader*          GetStdIcons();
-	virtual wxArrayString          GetProjectCompileFlags(const wxString &projectName, bool isCppFile);
-	
+	virtual wxArrayString          GetProjectCompileFlags(const wxString &projectName, bool isCppFile);	
+	virtual void 				   AddEditorPage(wxWindow* page, const wxString& name);
+	virtual wxPanel* 			   GetEditorPaneNotebook();
+	virtual wxWindow* 			   GetActivePage();
+	virtual wxWindow* 			   GetPage(size_t page);
+
 	//------------------------------------
 	//End of IManager interface
 	//------------------------------------

@@ -136,6 +136,8 @@ enum {
 	//clientData is closing editor (IEditor*)
 	wxEVT_EDITOR_CLOSING,
 	//clientData is NULL
+	wxEVT_ALL_EDITORS_CLOSING,
+	//clientData is NULL
 	wxEVT_ALL_EDITORS_CLOSED,
 
 	// This event is sent when the user clicks inside an editor

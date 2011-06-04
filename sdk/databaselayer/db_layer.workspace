@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Workspace Name="db_layer" Database="./db_layer.tags">
+  <Project Name="databaselayer_sqlite" Path="databaselayer_sqlite.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="WinDebug" Selected="no">
+      <Project Name="databaselayer_sqlite" ConfigName="WinDebugUnicode"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="WinRelease" Selected="yes">
+      <Project Name="databaselayer_sqlite" ConfigName="WinReleaseUnicode"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

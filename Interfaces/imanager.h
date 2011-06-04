@@ -142,6 +142,11 @@ public:
 	 * @sa Notebook
 	 */
 	virtual OutputPaneBook* GetOutputPaneNotebook() = 0;
+	
+	virtual wxPanel* GetEditorPaneNotebook() = 0;
+	virtual void AddEditorPage(wxWindow *page, const wxString& name) = 0;	
+	virtual wxWindow* GetActivePage() = 0;
+	virtual wxWindow* GetPage(size_t page) = 0;
 
 	/**
 	 * @brief return the startup directory of CodeLite which is also the base directory for searching installation files

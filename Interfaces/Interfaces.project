@@ -18,7 +18,6 @@
     <File Name="cl_defs.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="Common"/>
   <Dependencies Name="Debug"/>
   <Settings Type="Static Library">
     <Configuration Name="Common" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -94,5 +93,6 @@
     </GlobalSettings>
   </Settings>
   <Dependencies Name="Debug"/>
+  <Dependencies Name="Common"/>
   <Dependencies Name="Common"/>
 </CodeLite_Project>

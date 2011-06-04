@@ -1,0 +1,6 @@
+1) SOLVED při exportu do SQL souboru přidávat DROP TABLE IF EXIST
+2) Při zpětné modifikaci databáze přidat CREATE IF NOT EXISTS 
+3) Přidat parsování dalších parametrů typu MySql
+4) Přidat konverzi mezi db typy
+5) Přepracovat připojovací dialog
+6) Přepracovat dbViewr panel

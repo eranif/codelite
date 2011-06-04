@@ -1,0 +1,129 @@
+#include "dumpclass.h"
+
+DumpClass::DumpClass(IDbAdapter* pDbAdapter, xsSerializable* pItems, const wxString& fileName) {
+	m_pDbAdapter = pDbAdapter;
+	m_pItems = pItems;
+	m_fileName = fileName;
+
+}
+
+DumpClass::~DumpClass() {
+}
+
+wxString DumpClass::DumpData() {
+	int totalRowCount = 0;
+	int tableCount = 0;
+	wxTextFile* pOutFile = new wxTextFile(m_fileName);
+	if (pOutFile->Exists()) {
+		pOutFile->Open();
+		pOutFile->Clear();
+	} else {
+		pOutFile->Create();
+		pOutFile->Open();
+	}
+
+	if (pOutFile->IsOpened()) {
+
+		SerializableList::compatibility_iterator node = m_pItems->GetFirstChildNode();
+		while( node ) {
+			Table* pTab = wxDynamicCast(node->GetData(), Table);
+			if (pTab) {
+				totalRowCount += DumpTable(pOutFile, pTab);
+				tableCount++;
+			}			
+			node = node->GetNext();
+			}
+			
+		pOutFile->Write();
+		pOutFile->Close();
+		
+	}
+	if (pOutFile)  delete pOutFile;
+	return wxString::Format(wxT("Dumped %i rows in %i tables"),totalRowCount, tableCount );
+}
+
+int DumpClass::DumpTable(wxTextFile* pFile, Table* pTab) {
+	int rowCount = 0;
+	if ((pFile->IsOpened())&&(pTab != NULL)) {
+		
+		wxString cols = wxT("");
+		SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
+		while (node){
+			Column* pCol = wxDynamicCast(node->GetData(), Column);
+			if (pCol){
+				if (!cols.IsEmpty()) cols += wxT(", ");
+				cols += pCol->GetName();
+				}		
+			node = node->GetNext();
+			}
+			
+		wxString startLine = wxString::Format(wxT("INSERT INTO %s (%s) VALUES"), pTab->GetName().c_str(), cols.c_str());	
+		int n = 0;
+		bool pocatek = false;
+
+		
+		DatabaseLayer* pDbLayer = m_pDbAdapter->GetDatabaseLayer(pTab->GetParentName());
+		if (pDbLayer){
+			//DatabaseResultSet* pResult = pDbLayer->RunQueryWithResults(wxString::Format(wxT("SELECT %s FROM %s.%s"), cols.c_str(),pTab->GetParentName().c_str(), pTab->GetName().c_str()));
+			DatabaseResultSet* pResult = pDbLayer->RunQueryWithResults(m_pDbAdapter->GetDefaultSelect(cols ,pTab->GetParentName(), pTab->GetName()));
+			
+			while (pResult->Next()){
+				if (n == 0 ) pFile->AddLine(startLine);		
+				rowCount++;
+				
+				int colIndex = 1;
+				wxString dataLine = wxT("");
+				SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
+				while (node){
+					Column* pCol = wxDynamicCast(node->GetData(), Column);
+					if (pCol){
+						
+						if (!dataLine.IsEmpty()) dataLine += wxT(", ");
+						
+						if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_TEXT){
+							dataLine += wxString::Format(wxT("'%s'"), pResult->GetResultString(colIndex).c_str());							
+							} else if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_DATE_TIME){
+								dataLine += wxString::Format(wxT("'%s'"), pResult->GetResultDate(colIndex).FormatDate().c_str());							
+							} else if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_DECIMAL){
+								wxString cislo = wxString::Format(wxT("%f"), pResult->GetResultDouble(colIndex));
+								cislo.Replace(wxT(","),wxT("."));
+								dataLine += cislo;	
+							} else if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_FLOAT){
+								wxString cislo = wxString::Format(wxT("%f"), pResult->GetResultDouble(colIndex));
+								cislo.Replace(wxT(","),wxT("."));
+								dataLine += cislo;							
+							} else if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_INT){
+								dataLine += wxString::Format(wxT("%i"), pResult->GetResultInt(colIndex));							
+							} else if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_BOOLEAN){
+								if (pResult->GetResultBool(colIndex)) dataLine += wxT("true");	
+								else dataLine += wxT("false");
+							} else if (pCol->GetPType()->GetUniversalType() != IDbType::dbtTYPE_OTHER){
+								dataLine += wxString::Format(wxT("%s"), pResult->GetResultString(colIndex).c_str());							
+							}				
+						colIndex++;
+						}		
+					node = node->GetNext();
+					}
+
+				if (n++ > 20 ){
+					pFile->AddLine(wxString::Format(wxT(",(%s);"), dataLine.c_str()));
+					pocatek = false;
+					n = 0;
+					}else{
+					if (pocatek == false){
+						pocatek = true;
+						pFile->AddLine(wxString::Format(wxT("(%s)"), dataLine.c_str()));
+						}else{
+						pFile->AddLine(wxString::Format(wxT(",(%s)"), dataLine.c_str()));
+						}
+						
+					}				
+				
+				}
+			if (rowCount > 0) pFile->AddLine(wxT(";"));
+			pDbLayer->CloseResultSet(pResult);
+			pDbLayer->Close();
+			}			
+	}
+	return rowCount;
+}

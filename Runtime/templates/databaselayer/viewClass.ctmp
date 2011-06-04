@@ -1,0 +1,87 @@
+#include "%%classItemName%%.h"
+
+%%classItemName%%::%%classItemName%%(DatabaseResultSet* pResult)
+{
+	if (pResult) {
+		%%classItemLoading%%
+	}
+}
+
+%%classItemName%%::~%%classItemName%%()
+{
+}
+
+%%primaryKeyBody%%
+
+#include <wx/listimpl.cpp>
+
+WX_DEFINE_LIST(%%classItemName%%List);
+
+%%classColName%%::%%classColName%%(DatabaseResultSet* pResult)
+{
+	while(pResult->Next()) {
+		m_list.Append(new %%classItemName%%(pResult));		
+	}
+}    
+
+%%classColName%%::~%%classColName%%()
+{
+	m_list.DeleteContents(true);
+	m_list.Clear();
+}
+
+%%classColName%%* %%classColName%%::Get(DatabaseLayer* pDbLayer)
+{
+	%%classColName%%* pCol = NULL;
+	if (pDbLayer) {
+		if (pDbLayer->IsOpen()) {
+			PreparedStatement* pStatement = pDbLayer->PrepareStatement(wxT("SELECT * FROM %%classTableName%%"));
+			if (pStatement) {
+				pCol = new %%classColName%%(pStatement->RunQueryWithResults());			
+				pStatement->Close();				
+			}			
+		}		
+	}
+	return pCol;
+}
+
+void %%classColName%%::Fill(wxGrid* pGrid)
+{
+	pGrid->DeleteCols(0,pGrid->GetNumberCols());
+	pGrid->DeleteRows(0,pGrid->GetNumberRows());
+
+	%%classColLabelFillGrid%%
+
+	int i = 0;
+	%%classItemName%%List::iterator iter;
+   	for (iter = m_list.begin(); iter != m_list.end(); ++iter) {
+		%%classItemName%%* current = *iter;
+		pGrid->AppendRows();
+		
+		%%classColDataFillGrid%%
+		i++;		
+	}	
+}
+
+%%classColName%%* %%classColName%%::Get(DatabaseLayer* pDbLayer, wxArrayString& conditions,CondConType conType)
+{
+	wxString whereStatement = conditions[0];
+	
+	for (int i = 1; i < conditions.Count(); i++) {		
+		if (conType == wAND) whereStatement.Append(wxT(" AND "));
+		if (conType == wOR) whereStatement.Append(wxT(" OR "));
+		whereStatement.Append(conditions[i]);		
+	}
+		
+	%%classColName%%* pCol = NULL;
+	if (pDbLayer){
+		if (pDbLayer->IsOpen()) {
+			PreparedStatement* pStatement = pDbLayer->PrepareStatement(wxT("SELECT * FROM %%classTableName%% WHERE ") + whereStatement);
+			if (pStatement) {
+				pCol = new %%classColName%%(pStatement->RunQueryWithResults());	
+				pStatement->Close();
+			}		
+		}		
+	}
+	return pCol;
+}

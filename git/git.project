@@ -237,7 +237,6 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinReleaseUnicode"/>
   <VirtualDirectory Name="formbuilder">
     <File Name="gitui.fbp"/>
   </VirtualDirectory>
@@ -245,4 +244,5 @@
     <File Name="gitui.cpp"/>
     <File Name="gitui.h"/>
   </VirtualDirectory>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

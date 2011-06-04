@@ -37,6 +37,7 @@ void FileExtManager::Init()
 		m_map[wxT("project") ]   = TypeProject;
 		m_map[wxT("workspace") ] = TypeWorkspace;
 		m_map[wxT("fbp") ] = TypeFormbuilder;
+		m_map[wxT("cdp") ] = TypeCodedesigner;
 	}
 }
 

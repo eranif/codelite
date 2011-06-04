@@ -184,6 +184,9 @@ public:
 
 		// formbuilder files
 		_imgIdx[wxT("fbp")] =  15;
+		
+		// codedesigner files
+		_imgIdx[wxT("cdp")] =  16;
 	};
 
 	/** Default destructor */

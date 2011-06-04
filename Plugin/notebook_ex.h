@@ -219,7 +219,7 @@ public:
 	 * \param nOldSel - old selection
 	 */
 	NotebookEvent(wxEventType commandType = wxEVT_NULL, int winid = 0, size_t nSel = (size_t)-1, size_t nOldSel = (size_t)-1)
-			: wxNotifyEvent(commandType, winid), sel(nSel), oldsel(nOldSel) {}
+			: wxNotifyEvent(commandType, winid), sel(nSel), oldsel(nOldSel) { }
 
 	/**
 	 * \param s - index of currently selected page
@@ -244,7 +244,7 @@ public:
 	size_t GetOldSelection() {
 		return oldsel;
 	}
-
+	
 	virtual wxEvent *Clone() const { return new NotebookEvent(*this); }
 };
 

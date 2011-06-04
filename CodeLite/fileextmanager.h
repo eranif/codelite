@@ -45,6 +45,7 @@ public:
 		TypeWorkspace,
 		TypeProject,
 		TypeFormbuilder,
+		TypeCodedesigner,
 		TypeOther
 	};
 

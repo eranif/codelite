@@ -382,6 +382,7 @@ bool Notebook::DeleteAllPages(bool notify)
 	size_t count = GetPageCount();
 	for (size_t i=0; i<count && res; i++) {
 		res = this->DeletePage(0, notify);
+		
 	}
 	return res;
 }

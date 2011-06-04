@@ -713,3 +713,26 @@ wxArrayString PluginManager::GetProjectCompileFlags(const wxString &projectName,
 	}
 	return args;
 }
+
+void PluginManager::AddEditorPage(wxWindow* page, const wxString& name)
+{
+	clMainFrame::Get()->GetMainBook()->AddPage(page, name,wxNullBitmap,true);
+}
+
+wxPanel* PluginManager::GetEditorPaneNotebook()
+{
+	return clMainFrame::Get()->GetMainBook();
+}
+
+
+wxWindow* PluginManager::GetActivePage()
+{
+	return clMainFrame::Get()->GetMainBook()->GetCurrentPage();
+}
+
+
+wxWindow* PluginManager::GetPage(size_t page)
+{
+	return clMainFrame::Get()->GetMainBook()->GetPage(page);
+}
+

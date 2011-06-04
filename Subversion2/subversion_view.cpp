@@ -139,7 +139,7 @@ void SubversionView::CreatGUIControls()
 	imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/conflict" ) ));    // 4
 	imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/unversioned" ) )); // 5
 
-	// File icons 6-13
+	// File icons 6-14
 	imageList->Add( bmpLoader->LoadBitmap(wxT("workspace/16/project") ) );     // 6
 	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/folder" ) ) );          // 7
 	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/c" ) ) );               // 8
@@ -148,9 +148,10 @@ void SubversionView::CreatGUIControls()
 	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/text" ) ) );            // 11
 	imageList->Add( bmpLoader->LoadBitmap(wxT("workspace/16/workspace") ) );   // 12
 	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/wxfb" ) ) );            // 13
+	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/cd" ) ) );            // 14
 
 	// lock files icon ID
-	imageList->Add( bmpLoader->LoadBitmap(wxT("subversion/16/locked" ) ) );    // 14
+	imageList->Add( bmpLoader->LoadBitmap(wxT("subversion/16/locked" ) ) );    // 15
 
 	m_treeCtrl->AssignImageList( imageList );
 
@@ -263,7 +264,7 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
 	DoAddNode(svnADDED_FILES,       2,  SvnTreeData::SvnNodeTypeAddedRoot,       newFiles);
 	DoAddNode(svnDELETED_FILES,     3,  SvnTreeData::SvnNodeTypeDeletedRoot,     deletedFiles);
 	DoAddNode(svnCONFLICTED_FILES,  4,  SvnTreeData::SvnNodeTypeConflictRoot,    conflictedFiles);
-	DoAddNode(svnLOCKED_FILES,      14, SvnTreeData::SvnNodeTypeLockedRoot,      lockedFiles);
+	DoAddNode(svnLOCKED_FILES,      15, SvnTreeData::SvnNodeTypeLockedRoot,      lockedFiles);
 	DoAddNode(svnUNVERSIONED_FILES, 5,  SvnTreeData::SvnNodeTypeUnversionedRoot, unversionedFiles);
 
 	if (m_treeCtrl->ItemHasChildren(root)) {
@@ -329,6 +330,10 @@ int SubversionView::DoGetIconIndex(const wxString& filename)
 
 	case FileExtManager::TypeFormbuilder:
 		iconIndex = 13;
+		break;
+		
+	case FileExtManager::TypeCodedesigner:
+		iconIndex = 14;
 		break;
 	default:
 		iconIndex = 11;

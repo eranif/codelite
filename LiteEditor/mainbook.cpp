@@ -120,6 +120,8 @@ void MainBook::OnMouseDClick(NotebookEvent& e)
 
 void MainBook::OnPageClosing(NotebookEvent &e)
 {
+	e.Skip();
+	
 	LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(e.GetSelection()));
 	if (!editor)
 		return;
@@ -745,8 +747,11 @@ bool MainBook::CloseAll(bool cancellable)
 	// Delete the files without notifications (it will be faster)
 	wxWindowUpdateLocker locker(this);
 	ClangCodeCompletion::Instance()->CancelCodeComplete();
-
-	m_book->DeleteAllPages(false);
+ 
+	SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
+	
+	// 
+	m_book->DeleteAllPages(true);
 
 	// Since we got no more editors opened,
 	// send a wxEVT_ALL_EDITORS_CLOSED event
@@ -1028,3 +1033,9 @@ void MainBook::OnInitDone(wxCommandEvent& e)
 	m_navBar->SetSashPosition(sashPos);
 	m_navBar->Thaw();
 }
+
+wxWindow* MainBook::GetPage(size_t page)
+{
+	return m_book->GetPage(page);
+}
+

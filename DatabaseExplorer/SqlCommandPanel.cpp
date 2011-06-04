@@ -113,7 +113,7 @@ void SQLCommandPanel::ExecuteSql() {
 }
 
 void SQLCommandPanel::OnLoadClick(wxCommandEvent& event) {
-	wxFileDialog dlg(this, wxT("Chose file"),wxT(""),wxT(""),wxT("Sql files(*.slq)|*.sql"),wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+	wxFileDialog dlg(this, wxT("Chose file"),wxT(""),wxT(""),wxT("Sql files(*.sql)|*.sql"),wxFD_OPEN|wxFD_FILE_MUST_EXIST);
 	m_scintillaSQL->ClearAll();
 	if (dlg.ShowModal() == wxID_OK) {
 		wxTextFile file( dlg.GetPath());

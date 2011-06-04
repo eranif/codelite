@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 11 2011)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -75,7 +75,7 @@ _SqlCommandPanel::_SqlCommandPanel( wxWindow* parent, wxWindowID id, const wxPoi
 	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_toolBar3 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_HORIZONTAL ); 
-	m_button34 = new wxButton( m_toolBar3, wxID_ANY, wxT("Templates"), wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
+	m_button34 = new wxButton( m_toolBar3, wxID_ANY, wxT("Templates"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_toolBar3->AddControl( m_button34 );
 	m_toolBar3->Realize(); 
 	
@@ -85,12 +85,8 @@ _SqlCommandPanel::_SqlCommandPanel( wxWindow* parent, wxWindowID id, const wxPoi
 	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( _SqlCommandPanel::m_splitter1OnIdle ), NULL, this );
 	
 	m_panel13 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxFlexGridSizer* fgSizer14;
-	fgSizer14 = new wxFlexGridSizer( 1, 1, 0, 0 );
-	fgSizer14->AddGrowableCol( 0 );
-	fgSizer14->AddGrowableRow( 0 );
-	fgSizer14->SetFlexibleDirection( wxBOTH );
-	fgSizer14->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	wxBoxSizer* bSizer23;
+	bSizer23 = new wxBoxSizer( wxVERTICAL );
 	
 	m_scintillaSQL = new wxScintilla( m_panel13, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), 0, wxEmptyString );
 	m_scintillaSQL->SetUseTabs( true );
@@ -110,6 +106,7 @@ _SqlCommandPanel::_SqlCommandPanel( wxWindow* parent, wxWindowID id, const wxPoi
 	m_scintillaSQL->SetFoldFlags( wxSCI_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSCI_FOLDFLAG_LINEAFTER_CONTRACTED );
 	m_scintillaSQL->SetMarginType( 0, wxSCI_MARGIN_NUMBER );
 	m_scintillaSQL->SetMarginWidth( 0, m_scintillaSQL->TextWidth( wxSCI_STYLE_LINENUMBER, wxT("_99999") ) );
+	m_scintillaSQL->StyleSetFont( wxSCI_STYLE_DEFAULT, wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
 	m_scintillaSQL->MarkerDefine( wxSCI_MARKNUM_FOLDER, wxSCI_MARK_BOXPLUS );
 	m_scintillaSQL->MarkerSetBackground( wxSCI_MARKNUM_FOLDER, wxColour( wxT("BLACK") ) );
 	m_scintillaSQL->MarkerSetForeground( wxSCI_MARKNUM_FOLDER, wxColour( wxT("WHITE") ) );
@@ -127,22 +124,11 @@ _SqlCommandPanel::_SqlCommandPanel( wxWindow* parent, wxWindowID id, const wxPoi
 	m_scintillaSQL->MarkerDefine( wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_EMPTY );
 	m_scintillaSQL->SetSelBackground( true, wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
 	m_scintillaSQL->SetSelForeground( true, wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT ) );
-	m_scintillaSQL->SetMinSize( wxSize( -1,150 ) );
+	m_scintillaSQL->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
 	
-	fgSizer14->Add( m_scintillaSQL, 1, wxEXPAND, 5 );
+	bSizer23->Add( m_scintillaSQL, 1, wxEXPAND, 5 );
 	
-	m_panel13->SetSizer( fgSizer14 );
-	m_panel13->Layout();
-	fgSizer14->Fit( m_panel13 );
-	m_panel14 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxFlexGridSizer* fgSizer15;
-	fgSizer15 = new wxFlexGridSizer( 2, 1, 0, 0 );
-	fgSizer15->AddGrowableCol( 0 );
-	fgSizer15->AddGrowableRow( 1 );
-	fgSizer15->SetFlexibleDirection( wxBOTH );
-	fgSizer15->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	m_panel3 = new wxPanel( m_panel14, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxTAB_TRAVERSAL );
+	m_panel3 = new wxPanel( m_panel13, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer7;
 	fgSizer7 = new wxFlexGridSizer( 1, 4, 0, 0 );
 	fgSizer7->AddGrowableCol( 1 );
@@ -150,22 +136,30 @@ _SqlCommandPanel::_SqlCommandPanel( wxWindow* parent, wxWindowID id, const wxPoi
 	fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_btnExecute = new wxButton( m_panel3, wxID_ANY, wxT("Execute"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_btnExecute->SetDefault(); 
 	fgSizer7->Add( m_btnExecute, 0, wxALL, 5 );
 	
 	m_labelStatus = new wxStaticText( m_panel3, wxID_ANY, wxT("Result:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labelStatus->Wrap( -1 );
 	fgSizer7->Add( m_labelStatus, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_btnSave = new wxButton( m_panel3, wxID_ANY, wxT("Save"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_btnSave = new wxButton( m_panel3, wxID_SAVE, wxT("Save"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer7->Add( m_btnSave, 0, wxALL, 5 );
 	
-	m_btnLoad = new wxButton( m_panel3, wxID_ANY, wxT("Load"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_btnLoad = new wxButton( m_panel3, wxID_LOAD, wxT("Load"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer7->Add( m_btnLoad, 0, wxALL, 5 );
 	
 	m_panel3->SetSizer( fgSizer7 );
 	m_panel3->Layout();
 	fgSizer7->Fit( m_panel3 );
-	fgSizer15->Add( m_panel3, 1, wxEXPAND, 5 );
+	bSizer23->Add( m_panel3, 0, wxEXPAND, 5 );
+	
+	m_panel13->SetSizer( bSizer23 );
+	m_panel13->Layout();
+	bSizer23->Fit( m_panel13 );
+	m_panel14 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer24;
+	bSizer24 = new wxBoxSizer( wxVERTICAL );
 	
 	m_gridTable = new wxGrid( m_panel14, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	
@@ -198,16 +192,17 @@ _SqlCommandPanel::_SqlCommandPanel( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	// Cell Defaults
 	m_gridTable->SetDefaultCellAlignment( wxALIGN_LEFT, wxALIGN_TOP );
-	fgSizer15->Add( m_gridTable, 1, wxEXPAND, 5 );
+	bSizer24->Add( m_gridTable, 1, wxEXPAND, 5 );
 	
-	m_panel14->SetSizer( fgSizer15 );
+	m_panel14->SetSizer( bSizer24 );
 	m_panel14->Layout();
-	fgSizer15->Fit( m_panel14 );
+	bSizer24->Fit( m_panel14 );
 	m_splitter1->SplitHorizontally( m_panel13, m_panel14, 163 );
 	fgSizer3->Add( m_splitter1, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( fgSizer3 );
 	this->Layout();
+	fgSizer3->Fit( this );
 	
 	// Connect Events
 	m_button34->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _SqlCommandPanel::OnTemplatesBtnClick ), NULL, this );
@@ -281,7 +276,7 @@ _DbViewerPanel::_DbViewerPanel( wxWindow* parent, wxWindowID id, const wxPoint& 
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
 	
-	m_toolBar1 = new wxToolBar( m_panelData, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_HORIZONTAL ); 
+	m_toolBar1 = new wxToolBar( m_panelData, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL ); 
 	m_toolBar1->AddTool( wxID_CONNECT, wxT("Open connection"), wxBitmap( database_xpm ), wxNullBitmap, wxITEM_NORMAL, wxT("Open new connection"), wxT("Open new connection"), NULL ); 
 	m_toolBar1->AddTool( wxID_CLOSE_CONNECTION, wxT("tool"), wxBitmap( delete_xpm ), wxNullBitmap, wxITEM_NORMAL, wxT("Close selected connection"), wxT("Close selected connection"), NULL ); 
 	m_toolBar1->AddTool( wxID_TOOL_REFRESH, wxT("tool"), wxBitmap( refresh_xpm ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
@@ -309,6 +304,7 @@ _DbViewerPanel::_DbViewerPanel( wxWindow* parent, wxWindowID id, const wxPoint& 
 	
 	this->SetSizer( fgSizer18 );
 	this->Layout();
+	fgSizer18->Fit( this );
 	
 	// Connect Events
 	this->Connect( wxID_CONNECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( _DbViewerPanel::OnConncectClick ) );
@@ -449,7 +445,7 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_staticText11->Wrap( -1 );
 	fgSizer41->Add( m_staticText11, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_filePickerSqlite = new wxFilePickerCtrl( m_Sqlite, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("Database file (*.sqlite)|*.sqlite"), wxDefaultPosition, wxSize( -1,-1 ), wxFLP_OPEN|wxFLP_USE_TEXTCTRL );
+	m_filePickerSqlite = new wxFilePickerCtrl( m_Sqlite, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("Database file (*.sqlite)|*.sqlite|All Files (*)|*"), wxDefaultPosition, wxSize( -1,-1 ), wxFLP_OPEN|wxFLP_USE_TEXTCTRL );
 	fgSizer41->Add( m_filePickerSqlite, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
 	
 	sbSizer31->Add( fgSizer41, 1, wxEXPAND, 5 );
@@ -463,12 +459,12 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	bSizer81 = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_btnOKSqlite = new wxButton( m_Sqlite, wxID_Sqlite_OK, wxT("OK"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer81->Add( m_btnOKSqlite, 1, wxALL, 5 );
+	bSizer81->Add( m_btnOKSqlite, 0, wxALL, 5 );
 	
 	m_btnCancel1 = new wxButton( m_Sqlite, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer81->Add( m_btnCancel1, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer81->Add( m_btnCancel1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	sbSizer41->Add( bSizer81, 0, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
+	sbSizer41->Add( bSizer81, 0, wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT, 5 );
 	
 	fgSizer31->Add( sbSizer41, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 	

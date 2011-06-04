@@ -3,6 +3,7 @@
 #include "SqlCommandPanel.h"
 #include "ErdPanel.h"
 #include "AdapterSelectDlg.h"
+#include <wx/wupdlock.h>
 
 #include <wx/wfstream.h>
 #include <wx/imaglist.h>
@@ -12,7 +13,7 @@ DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pMa
 	m_pNotebook = notebook;
 	m_pGlobalParent = parent;
 	m_mgr = pManager;
-	
+
 	m_pDbAdapter = NULL;
 	m_pConnections = new xsSerializable();
 
@@ -21,7 +22,7 @@ DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pMa
 	m_thmSizer->Layout();
 	Layout();
 
-	
+
 	m_mgr->GetTheApp()->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,NotebookEventHandler(DbViewerPanel::OnPageChange), NULL, this);
 	m_mgr->GetTheApp()->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSING,NotebookEventHandler(DbViewerPanel::OnPageClose), NULL, this);
 	//m_pNotebook->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE,wxAuiNotebookEventHandler(DbViewerPanel::OnPageClose), NULL, this);
@@ -32,8 +33,8 @@ DbViewerPanel::~DbViewerPanel()
 {
 	m_mgr->GetTheApp()->Disconnect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,NotebookEventHandler(DbViewerPanel::OnPageChange), NULL, this);
 	m_mgr->GetTheApp()->Disconnect(wxEVT_COMMAND_BOOK_PAGE_CLOSING,NotebookEventHandler(DbViewerPanel::OnPageClose), NULL, this);
-	
-	
+
+
 	//if ((m_pDbConnector != NULL)&&(m_pDbConnector->IsConnected())) m_pDbConnector->CloseConnection();
 	//delete m_pDbConnector;
 	delete m_pDbAdapter;
@@ -59,11 +60,12 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 		if (Table* tab =  wxDynamicCast(item->GetData(), Table)) {
 			tab->RefreshChildren();
 			if( cState.ControlDown() ) {
-				//m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),(Table*)tab->Clone()), CreatePanelName(tab, DbViewerPanel::Erd));
-				//m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,tab->GetDbAdapter(),(Table*)tab->Clone()), CreatePanelName(tab, DbViewerPanel::Erd), true);
 				m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),m_pConnections, (Table*) tab->Clone() ), CreatePanelName(tab, DbViewerPanel::Erd));
-			} else
+			} else {
+				wxWindowUpdateLocker locker(m_mgr->GetEditorPaneNotebook());
 				m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),tab->GetParentName(),tab->GetName()), CreatePanelName(tab, DbViewerPanel::Sql));
+				
+			}
 		}
 
 		if (View* pView = wxDynamicCast(item->GetData(), View)) {
@@ -224,8 +226,8 @@ void DbViewerPanel::OnDnDStart(wxTreeEvent& event)
 	lstDnD.DeleteContents(true);
 	DbItem* item = (DbItem*) m_treeDatabases->GetItemData(event.GetItem());
 
-	ErdPanel* pPanel = wxDynamicCast(m_mgr->GetActivePage(),ErdPanel); 
-	
+	ErdPanel* pPanel = wxDynamicCast(m_mgr->GetActivePage(),ErdPanel);
+
 	if (item != NULL) {
 		if (pPanel) {
 			Table* table = wxDynamicCast(item->GetData(),Table);
@@ -244,7 +246,7 @@ void DbViewerPanel::OnDnDStart(wxTreeEvent& event)
 				lstDnD.Append(pShape);
 				pPanel->getCanvas()->DoDragDrop(lstDnD);
 			}
-		}		
+		}
 		//delete pShape;
 	}
 }
@@ -395,7 +397,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 					}
 				}
 			}
-		}else if (evt.GetId() == IDR_DBVIEWER_ERD_TABLE) {
+		} else if (evt.GetId() == IDR_DBVIEWER_ERD_TABLE) {
 			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_selectedID);
 			if (data) {
 				Table* pTab = (Table*) wxDynamicCast(data->GetData(),Table);
@@ -404,7 +406,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 					m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,pTab->GetDbAdapter()->Clone(),m_pConnections, (Table*) pTab->Clone() ), CreatePanelName(pTab, DbViewerPanel::Erd));
 				}
 			}
-		}else if (evt.GetId() == IDR_DBVIEWER_ERD_DB) {
+		} else if (evt.GetId() == IDR_DBVIEWER_ERD_DB) {
 			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_selectedID);
 			if (data) {
 				Database* pDb = (Database*) wxDynamicCast(data->GetData(),Database);
@@ -413,7 +415,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 					m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,pDb->GetDbAdapter()->Clone(),m_pConnections, (Database*) pDb->Clone() ), CreatePanelName(pDb, DbViewerPanel::Erd));
 				}
 			}
-		}else if (evt.GetId() == IDR_DBVIEWER_CLASS_DB) {
+		} else if (evt.GetId() == IDR_DBVIEWER_CLASS_DB) {
 			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_selectedID);
 			if (data) {
 				Database* pDb = (Database*) wxDynamicCast(data->GetData(),Database);
@@ -422,10 +424,10 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 					pDb->RefreshChildren(true);
 					pDb->RefreshChildrenDetails();
 					ClassGenerateDialog dlg(m_mgr->GetTheApp()->GetTopWindow(), pDb->GetDbAdapter(), (Database*) pDb->Clone(),m_mgr);
-					dlg.ShowModal();				
+					dlg.ShowModal();
 				}
 			}
-		}else if (evt.GetId() == IDR_DBVIEWER_CLASS_TABLE) {
+		} else if (evt.GetId() == IDR_DBVIEWER_CLASS_TABLE) {
 			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_selectedID);
 			if (data) {
 				Table* pTab = (Table*) wxDynamicCast(data->GetData(),Table);
@@ -435,7 +437,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 					dlg.ShowModal();
 				}
 			}
-		}else if (evt.GetId() ==  IDR_DBVIEWER_DROP_TABLE) {
+		} else if (evt.GetId() ==  IDR_DBVIEWER_DROP_TABLE) {
 			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_selectedID);
 			if (data) {
 				Table* pTab = (Table*) wxDynamicCast(data->GetData(),Table);
@@ -456,7 +458,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 					}
 				}
 			}
-		}else if (evt.GetId() == IDR_DBVIEWER_IMPORT_DATABASE) {
+		} else if (evt.GetId() == IDR_DBVIEWER_IMPORT_DATABASE) {
 			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_selectedID);
 			if (data) {
 				Database* pDb = (Database*) wxDynamicCast(data->GetData(),Database);
@@ -470,7 +472,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 				}
 			}
 			RefreshDbView();
-		}else if (evt.GetId() == IDR_DBVIEWER_DUMP_DATABASE) {
+		} else if (evt.GetId() == IDR_DBVIEWER_DUMP_DATABASE) {
 			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_selectedID);
 			if (data) {
 				Database* pDb = (Database*) wxDynamicCast(data->GetData(),Database);
@@ -486,7 +488,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 				}
 
 			}
-		}else if (evt.GetId() == IDR_DBVIEWER_EXPORT_DATABASE) {
+		} else if (evt.GetId() == IDR_DBVIEWER_EXPORT_DATABASE) {
 			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_selectedID);
 			if (data) {
 				Database* pDb = (Database*) wxDynamicCast(data->GetData(),Database);
@@ -495,7 +497,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 
 					wxFileDialog dlg(this, wxT("Export database..."), wxGetCwd(), wxT(""), wxT("SQL Files (*.sql)|*.sql"), wxSAVE | wxFD_OVERWRITE_PROMPT);
 
-					if(dlg.ShowModal() == wxID_OK) {					
+					if(dlg.ShowModal() == wxID_OK) {
 						// CreateStructure
 						wxString retStr = wxT("-- SQL script created by wxDbExplorer\n\n ");
 						SerializableList::compatibility_iterator tabNode = pDb->GetFirstChildNode();
@@ -527,8 +529,8 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 
 						DumpClass dump(pDb->GetDbAdapter(), pDb, dlg.GetPath());
 						dump.DumpData();
-						
-						
+
+
 						wxTextFile file(dlg.GetPath());
 						if (!file.Exists()) file.Create();
 						file.Open();
@@ -536,14 +538,14 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 							file.InsertLine(retStr,0);
 							file.Write();
 							file.Close();
-							}
-						
-					wxMessageBox(wxString::Format(wxT("The database has been exported to '%s'."), dlg.GetPath().GetData()), wxT("wxDbExplorer"));
-					}					
-					
+						}
+
+						wxMessageBox(wxString::Format(wxT("The database has been exported to '%s'."), dlg.GetPath().GetData()), wxT("wxDbExplorer"));
+					}
+
 				}
 			}
-		}else{
+		} else {
 			wxMessageBox(wxT("Sorry, requested feature isn't implemented yet. "),wxT("Sorry"));
 		}
 	} catch (DatabaseLayerException& e) {
@@ -631,8 +633,8 @@ void DbViewerPanel::OnPageClose(NotebookEvent& event)
 	ErdPanel* pPanel = wxDynamicCast(m_mgr->GetPage(event.GetSelection()),ErdPanel);
 	if (pPanel)	{
 		m_pThumbnail->SetCanvas(NULL);
-		event.Skip();	
-		}
+		event.Skip();
+	}
 }
 
 wxString DbViewerPanel::CreatePanelName(Database* d, PanelType type)
@@ -662,7 +664,12 @@ void DbViewerPanel::InitStyledTextCtrl(wxScintilla *sci)
 {
 	sci->SetLexer( wxSCI_LEX_SQL );
 	sci->SetKeyWords(0, wxT("select insert into delete update from drop create alter where values order by desc asc show table column tables columns limit as in exists view join left inner set") );
-	sci->StyleSetFont( wxSCI_STYLE_DEFAULT, *wxSWISS_FONT );
+	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	font.SetFamily(wxTELETYPE);
+	
+	for(int i=0; i<wxSCI_STYLE_MAX; i++)
+		sci->StyleSetFont( wxSCI_STYLE_MAX, font);
+		
 	sci->StyleSetBold( wxSCI_C_WORD, true );
 	sci->StyleSetForeground( wxSCI_C_WORD, *wxBLUE );
 	sci->StyleSetForeground( wxSCI_C_STRING, *wxRED );

@@ -3,39 +3,58 @@
 #include <wx/file.h>
 #include <wx/textfile.h>
 #include "SqlCommandPanel.h"
+#include <wx/wupdlock.h>
+#include <wx/busyinfo.h>
+#include <wx/xrc/xmlres.h>
 
 
+const wxEventType wxEVT_EXECUTE_SQL = XRCID("wxEVT_EXECUTE_SQL");
 
+BEGIN_EVENT_TABLE(SQLCommandPanel, _SqlCommandPanel)
+EVT_COMMAND(wxID_ANY, wxEVT_EXECUTE_SQL, SQLCommandPanel::OnExecuteSQL)
+END_EVENT_TABLE()
 
-SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const wxString& dbName, const wxString& dbTable) : _SqlCommandPanel(parent) {
+SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const wxString& dbName, const wxString& dbTable) 
+	: _SqlCommandPanel(parent)
+{
 	DbViewerPanel::InitStyledTextCtrl( m_scintillaSQL );
 	m_pDbAdapter = dbAdapter;
 	m_dbName = dbName;
 	m_dbTable = dbTable;
-
+	
 	//TODO:SQL:
 	//m_scintillaSQL->AddText(wxT("-- selected database ") + m_dbName);
 	m_scintillaSQL->AddText(wxString::Format(wxT(" -- selected database %s\n"), m_dbName.c_str()));
 	if (!dbTable.IsEmpty()) {
 		m_scintillaSQL->AddText(m_pDbAdapter->GetDefaultSelect(m_dbName, m_dbTable));
-		ExecuteSql();
+		wxCommandEvent event(wxEVT_EXECUTE_SQL);
+		GetEventHandler()->AddPendingEvent(event);
 	}
 }
 
-SQLCommandPanel::~SQLCommandPanel() {
+SQLCommandPanel::~SQLCommandPanel()
+{
 	delete m_pDbAdapter;
 }
 
-void SQLCommandPanel::OnExecuteClick(wxCommandEvent& event) {
+void SQLCommandPanel::OnExecuteClick(wxCommandEvent& event)
+{
+	event.Skip();
 	ExecuteSql();
 }
-void SQLCommandPanel::OnScintilaKeyDown(wxKeyEvent& event) {
+
+void SQLCommandPanel::OnScintilaKeyDown(wxKeyEvent& event)
+{
 	if ((event.ControlDown())&&(event.GetKeyCode() == WXK_RETURN)) {
 		ExecuteSql();
 	}
 	event.Skip();
 }
-void SQLCommandPanel::ExecuteSql() {
+
+void SQLCommandPanel::ExecuteSql()
+{
+	wxBusyInfo infoDlg(_("Executing sql..."), this);
+	wxWindowUpdateLocker locker(this);
 	DatabaseLayer* m_pDbLayer = m_pDbAdapter->GetDatabaseLayer(m_dbName);
 	if (m_pDbLayer->IsOpen()) {
 		// test for empty string
@@ -97,7 +116,7 @@ void SQLCommandPanel::ExecuteSql() {
 				m_gridTable->AutoSize();
 				// show result status
 				m_labelStatus->SetLabel(wxString::Format(wxT("Result: %i rows"),rows));
-
+				Layout();
 			} catch (DatabaseLayerException& e) {
 				wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
 				wxMessageDialog dlg(this,errorMessage,wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
@@ -112,7 +131,8 @@ void SQLCommandPanel::ExecuteSql() {
 		wxMessageBox(wxT("Cant connect!"));
 }
 
-void SQLCommandPanel::OnLoadClick(wxCommandEvent& event) {
+void SQLCommandPanel::OnLoadClick(wxCommandEvent& event)
+{
 	wxFileDialog dlg(this, wxT("Chose file"),wxT(""),wxT(""),wxT("Sql files(*.sql)|*.sql"),wxFD_OPEN|wxFD_FILE_MUST_EXIST);
 	m_scintillaSQL->ClearAll();
 	if (dlg.ShowModal() == wxID_OK) {
@@ -127,7 +147,8 @@ void SQLCommandPanel::OnLoadClick(wxCommandEvent& event) {
 	}
 }
 
-void SQLCommandPanel::OnSaveClick(wxCommandEvent& event) {
+void SQLCommandPanel::OnSaveClick(wxCommandEvent& event)
+{
 	wxFileDialog dlg(this,wxT("Chose file"),wxT(""),wxT(""),wxT("Sql files(*.sql)|*.sql"),wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
 	if (dlg.ShowModal() == wxID_OK) {
 
@@ -139,21 +160,23 @@ void SQLCommandPanel::OnSaveClick(wxCommandEvent& event) {
 	}
 }
 
-void SQLCommandPanel::OnTeplatesLeftDown(wxMouseEvent& event) {
+void SQLCommandPanel::OnTeplatesLeftDown(wxMouseEvent& event)
+{
 }
-void SQLCommandPanel::OnTemplatesBtnClick(wxCommandEvent& event) {
+void SQLCommandPanel::OnTemplatesBtnClick(wxCommandEvent& event)
+{
 	wxMenu menu;
 
 	menu.Append(IDR_SQLCOMMAND_SELECT,wxT("Insert SELECT SQL template"),wxT("Insert SELECT SQL statement template into editor."));
 	menu.Append(IDR_SQLCOMMAND_INSERT,wxT("Insert INSERT SQL template"),wxT("Insert INSERT SQL statement template into editor."));
 	menu.Append(IDR_SQLCOMMAND_UPDATE,wxT("Insert UPDATE SQL template"),wxT("Insert UPDATE SQL statement template into editor."));
 	menu.Append(IDR_SQLCOMMAND_DELETE,wxT("Insert DELETE SQL template"),wxT("Insert DELETE SQL statement template into editor."));
-	menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&SQLCommandPanel::OnPopupClick, NULL, this);	
+	menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&SQLCommandPanel::OnPopupClick, NULL, this);
 	PopupMenu(&menu);
 }
 void SQLCommandPanel::OnPopupClick(wxCommandEvent& evt)
 {
-	
+
 	if (evt.GetId() == IDR_SQLCOMMAND_SELECT) {
 		m_scintillaSQL->AddText(wxT("SELECT * FROM TableName\n"));
 	} else	if (evt.GetId() == IDR_SQLCOMMAND_INSERT) {
@@ -162,6 +185,11 @@ void SQLCommandPanel::OnPopupClick(wxCommandEvent& evt)
 		m_scintillaSQL->AddText(wxT("UPDATE TableName SET ColumnA = 2, ColumnB = 'Second text' WHERE ID = 1\n"));
 	} else	if (evt.GetId() == IDR_SQLCOMMAND_DELETE) {
 		m_scintillaSQL->AddText(wxT("DELETE FROM TableName WHERE ID = 1\n"));
-	} 
+	}
 }
 
+void SQLCommandPanel::OnExecuteSQL(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	ExecuteSql();
+}

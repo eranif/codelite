@@ -32,7 +32,9 @@ public:
 	void OnPopupClick(wxCommandEvent &evt);
 	void ExecuteSql();
 
-
+	DECLARE_EVENT_TABLE()
+	void OnExecuteSQL(wxCommandEvent &e);
+	
 protected:
 	IDbAdapter* m_pDbAdapter;
 	wxString m_dbName;

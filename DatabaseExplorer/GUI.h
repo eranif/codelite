@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 11 2011)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -45,24 +45,25 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-#define wxID_CONNECT 1000
-#define wxID_CLOSE_CONNECTION 1001
-#define wxID_TOOL_REFRESH 1002
-#define wxID_TOOL_ERD 1003
-#define wxID_Sqlite_OK 1004
-#define wxID_PG_OK 1005
-#define wxID_PG_CANCEL 1006
-#define wxID_PG_SAVE 1007
-#define wxID_PG_REMOVE 1008
-#define wxID_PG_LIST 1009
-#define wxID_NEW_COL 1010
-#define wxID_NEW_CONSTRAIN 1011
-#define wxID_DEL 1012
-#define wxID_PAGE_TYPE 1013
-#define wxID_TX_SIZE 1014
-#define wxID_PAGE_CONSTRAINT 1015
-#define wxID_ON_UPDATE 1016
-#define wxID_GENERATE 1017
+#define wxID_LOAD 1000
+#define wxID_CONNECT 1001
+#define wxID_CLOSE_CONNECTION 1002
+#define wxID_TOOL_REFRESH 1003
+#define wxID_TOOL_ERD 1004
+#define wxID_Sqlite_OK 1005
+#define wxID_PG_OK 1006
+#define wxID_PG_CANCEL 1007
+#define wxID_PG_SAVE 1008
+#define wxID_PG_REMOVE 1009
+#define wxID_PG_LIST 1010
+#define wxID_NEW_COL 1011
+#define wxID_NEW_CONSTRAIN 1012
+#define wxID_DEL 1013
+#define wxID_PAGE_TYPE 1014
+#define wxID_TX_SIZE 1015
+#define wxID_PAGE_CONSTRAINT 1016
+#define wxID_ON_UPDATE 1017
+#define wxID_GENERATE 1018
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _MainFrame
@@ -120,12 +121,12 @@ class _SqlCommandPanel : public wxPanel
 		wxSplitterWindow* m_splitter1;
 		wxPanel* m_panel13;
 		wxScintilla* m_scintillaSQL;
-		wxPanel* m_panel14;
 		wxPanel* m_panel3;
 		wxButton* m_btnExecute;
 		wxStaticText* m_labelStatus;
 		wxButton* m_btnSave;
 		wxButton* m_btnLoad;
+		wxPanel* m_panel14;
 		wxGrid* m_gridTable;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -138,7 +139,7 @@ class _SqlCommandPanel : public wxPanel
 	
 	public:
 		
-		_SqlCommandPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,480 ), long style = wxTAB_TRAVERSAL ); 
+		_SqlCommandPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~_SqlCommandPanel();
 		
 		void m_splitter1OnIdle( wxIdleEvent& )
@@ -204,7 +205,7 @@ class _DbViewerPanel : public wxPanel
 	
 	public:
 		
-		_DbViewerPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 300,500 ), long style = wxTAB_TRAVERSAL ); 
+		_DbViewerPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~_DbViewerPanel();
 		
 		void m_splitterPanelsOnIdle( wxIdleEvent& )

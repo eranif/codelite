@@ -45,7 +45,8 @@ WX_DECLARE_HASH_MAP( wxString, wxTreeItemId, wxStringHash, wxStringEqual, TableH
 
 class MainBook;
 /*! \brief Main application panel. It show database tree and can open special editors. */
-class DbViewerPanel : public _DbViewerPanel {
+class DbViewerPanel : public _DbViewerPanel
+{
 
 public:
 	DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pManager);
@@ -62,7 +63,9 @@ public:
 		m_server = server;
 	}
 
-	wxSplitterWindow *GetSplitter() { return m_splitterPanels; }
+	wxSplitterWindow *GetSplitter() {
+		return m_splitterPanels;
+	}
 
 	virtual void OnConncectClick(wxCommandEvent& event);
 	virtual void OnConncectUI(wxUpdateUIEvent& event);
@@ -77,24 +80,19 @@ public:
 
 	void OnPageClose(NotebookEvent& event);
 	void OnPageChange(NotebookEvent& event);
-
 	void OnPopupClick(wxCommandEvent &evt);
-
-
 	void RefreshDbView();
-	
 	static void InitStyledTextCtrl(wxScintilla *sci);
 
 protected:
 
-	enum PanelType
-	{
+	enum PanelType {
 		Sql,
 		Erd
 	};
-	
 
-	
+
+
 	xsSerializable* m_pConnections;
 
 	IDbAdapter* m_pDbAdapter;
@@ -104,12 +102,12 @@ protected:
 	wxTreeItemId m_selectedID;
 	wxWindow* m_pNotebook;
 	IManager* m_mgr;
-	
+
 	TableHashMap m_hashTables;
 	Database* m_pEditedDatabase;
 	DbConnection* m_pEditedConnection;
 	wxSFThumbnail* m_pThumbnail;
-	
+
 	bool ImportDb(const wxString& sqlFile, Database* pDb);
 	wxString CreatePanelName(Table* t, PanelType type);
 	wxString CreatePanelName(View* v, PanelType type);

@@ -13,6 +13,8 @@ xcopy templates\ "%ProgramFiles(x86)%\CodeLite\templates\" /E /I /H /Y /EXCLUDE:
 xcopy templates\formbuilder\* "%ProgramFiles(x86)%\CodeLite\templates\formbuilder\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\projects\* "%ProgramFiles(x86)%\CodeLite\templates\projects\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\gizmos\* "%ProgramFiles(x86)%\CodeLite\templates\gizmos\" /E /I /H /Y /EXCLUDE:excludes
+xcopy templates\codedesigner\* "%ProgramFiles(x86)%\CodeLite\templates\codedesigner\" /E /I /H /Y /EXCLUDE:excludes
+xcopy templates\databaselayer\* "%ProgramFiles(x86)%\CodeLite\templates\databaselayer\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\qmake\* "%ProgramFiles(x86)%\CodeLite\templates\qmake\" /E /I /H /Y /EXCLUDE:excludes
 xcopy *.html "%ProgramFiles(x86)%\CodeLite\" /H /Y /EXCLUDE:excludes
 xcopy codelite-icons.zip "%ProgramFiles(x86)%\CodeLite\" /H /Y /EXCLUDE:excludes

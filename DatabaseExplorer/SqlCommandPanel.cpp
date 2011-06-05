@@ -64,9 +64,12 @@ void SQLCommandPanel::ExecuteSql()
 				if (!m_pDbAdapter->GetUseDb(m_dbName).IsEmpty()) m_pDbLayer->RunQuery(m_pDbAdapter->GetUseDb(m_dbName));
 				// run query
 				DatabaseResultSet* pResultSet = m_pDbLayer->RunQueryWithResults(this->m_scintillaSQL->GetText());
+				
 				// clear variables
 				m_gridTable->DeleteCols(0,m_gridTable->GetNumberCols());
 				m_gridTable->DeleteRows(0,m_gridTable->GetNumberRows());
+				m_gridValues.clear();
+				
 				int rows = 0;
 				int cols = pResultSet->GetMetaData()->GetColumnCount();
 
@@ -78,46 +81,75 @@ void SQLCommandPanel::ExecuteSql()
 
 				// fill table data
 				while (pResultSet->Next()) {
+					wxString value;
 					m_gridTable->AppendRows();
 					for (int i = 1; i<= pResultSet->GetMetaData()->GetColumnCount(); i++) {
 
-						switch (	pResultSet->GetMetaData()->GetColumnType(i)) {
+						switch (pResultSet->GetMetaData()->GetColumnType(i)) {
 						case ResultSetMetaData::COLUMN_INTEGER:
-							m_gridTable->SetCellValue(wxString::Format(wxT("%i"),pResultSet->GetResultInt(i)),rows,i-1);
+							value = wxString::Format(wxT("%i"),pResultSet->GetResultInt(i));
 							break;
+							
 						case ResultSetMetaData::COLUMN_STRING:
-							m_gridTable->SetCellValue(pResultSet->GetResultString(i),rows,i-1);
+							value =  pResultSet->GetResultString(i);
 							break;
+							
 						case ResultSetMetaData::COLUMN_UNKNOWN:
-							m_gridTable->SetCellValue(pResultSet->GetResultString(i),rows,i-1);
+							value = pResultSet->GetResultString(i);
 							break;
+							
 						case ResultSetMetaData::COLUMN_BLOB:
-							m_gridTable->SetCellValue(pResultSet->GetResultString(i),rows,i-1);
-							break;
-						case ResultSetMetaData::COLUMN_BOOL:
-							m_gridTable->SetCellValue(wxString::Format(wxT("%b"),pResultSet->GetResultBool(i)),rows,i-1);
-							break;
-						case ResultSetMetaData::COLUMN_DATE:
-							m_gridTable->SetCellValue(pResultSet->GetResultDate(i).Format(),rows,i-1);
-							break;
-						case ResultSetMetaData::COLUMN_DOUBLE:
-							m_gridTable->SetCellValue(wxString::Format(wxT("%f"),pResultSet->GetResultDouble(i)),rows,i-1);
-							break;
-						case ResultSetMetaData::COLUMN_NULL:
-							//m_gridTable->SetCellValue(pResultSet->GetResultString(i),rows,i-1);
-							break;
-						default:
-							m_gridTable->SetCellValue(pResultSet->GetResultString(i),rows,i-1);
+						{
+							wxMemoryBuffer buffer;
+							pResultSet->GetResultBlob(i, buffer);
+							value = wxString::Format(wxT("BLOB (Size:%u)"), buffer.GetDataLen());
 							break;
 						}
+						case ResultSetMetaData::COLUMN_BOOL:
+							value = wxString::Format(wxT("%b"),pResultSet->GetResultBool(i));
+							break;
+							
+						case ResultSetMetaData::COLUMN_DATE:
+							value = pResultSet->GetResultDate(i).Format();
+							break;
+							
+						case ResultSetMetaData::COLUMN_DOUBLE:
+							value = wxString::Format(wxT("%f"),pResultSet->GetResultDouble(i));
+							break;
+							
+						case ResultSetMetaData::COLUMN_NULL:
+							value = wxT("NULL");
+							break;
+							
+						default:
+							value = pResultSet->GetResultString(i);
+							break;
+						}
+						
+						m_gridValues[std::make_pair<int, int>(rows,  i-1)] = value;
+						
+						// truncate the string to a reasonable string
+						if(value.Length() > 100) {
+							value = value.Mid(0, 100);
+							value.Append(wxT("..."));
+						}
+						
+						// Convert all whitespace chars into visible ones
+						value.Replace(wxT("\n"), wxT("\\n"));
+						value.Replace(wxT("\r"), wxT("\\r"));
+						value.Replace(wxT("\t"), wxT("\\t"));
+						m_gridTable->SetCellValue(value ,rows, i-1);
 					}
 					rows++;
 				}
+				
 				m_pDbLayer->CloseResultSet(pResultSet);
 				m_gridTable->AutoSize();
+				
 				// show result status
 				m_labelStatus->SetLabel(wxString::Format(wxT("Result: %i rows"),rows));
 				Layout();
+				
 			} catch (DatabaseLayerException& e) {
 				wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
 				wxMessageDialog dlg(this,errorMessage,wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
@@ -199,8 +231,12 @@ void SQLCommandPanel::OnGridCellRightClick(wxGridEvent& event)
 {
 	event.Skip();
 	
-	// Keep the current cell's value
-	m_cellValue = m_gridTable->GetCellValue(event.GetRow(), event.GetCol());
+	// Keep the current cell's value (taken from the map and NOT from the UI)
+	std::map<std::pair<int, int>, wxString >::const_iterator iter = m_gridValues.find(std::make_pair<int, int>(event.GetRow(), event.GetCol()));
+	if(iter == m_gridValues.end())
+		return;
+
+	m_cellValue = iter->second;
 	
 	wxMenu menu; 
 	menu.Append (XRCID("db_copy_cell_value"), _("Copy value to clipboard"));

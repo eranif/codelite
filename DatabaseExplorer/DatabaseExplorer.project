@@ -277,7 +277,7 @@
         <Library Value="libwxscintillau.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../Runtime/plugins/DatabaseExplorer.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./WinReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/plugins/DatabaseExplorer.dll" IntermediateDirectory="./WinReleaseUnicode" Command="codelite" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>

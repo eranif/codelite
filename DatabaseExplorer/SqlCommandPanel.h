@@ -15,14 +15,16 @@
 
 #include "Ids.h"
 
+#include <map>
 
 class SQLCommandPanel : public _SqlCommandPanel
 {
 protected:
-	IDbAdapter* m_pDbAdapter;
-	wxString    m_dbName;
-	wxString    m_dbTable;
-	wxString    m_cellValue;
+	IDbAdapter*                              m_pDbAdapter;
+	wxString                                 m_dbName;
+	wxString                                 m_dbTable;
+	wxString                                 m_cellValue;
+	std::map<std::pair<int, int>, wxString > m_gridValues;
 	
 public:
 	SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter, const wxString& dbName,const wxString& dbTable);

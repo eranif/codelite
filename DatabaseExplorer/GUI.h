@@ -27,8 +27,8 @@
 #ifdef __VISUALC__
 #include <wx/link_additions.h>
 #endif //__VISUALC__
-#include <wx/stattext.h>
 #include <wx/grid.h>
+#include <wx/stattext.h>
 #include <wx/splitter.h>
 #include <wx/dialog.h>
 #include <wx/treectrl.h>
@@ -36,6 +36,7 @@
 #include <wx/statbox.h>
 #include <wx/listbox.h>
 #include <wx/filepicker.h>
+#include <wx/listctrl.h>
 #include <wx/notebook.h>
 #include <wx/statline.h>
 #include <wx/combobox.h>
@@ -45,7 +46,7 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-#define wxID_LOAD 1000
+#define wxID_RUN 1000
 #define wxID_CONNECT 1001
 #define wxID_CLOSE_CONNECTION 1002
 #define wxID_TOOL_REFRESH 1003
@@ -121,20 +122,19 @@ class _SqlCommandPanel : public wxPanel
 		wxSplitterWindow* m_splitter1;
 		wxPanel* m_panel13;
 		wxScintilla* m_scintillaSQL;
-		wxPanel* m_panel3;
-		wxButton* m_btnExecute;
-		wxStaticText* m_labelStatus;
 		wxButton* m_btnSave;
 		wxButton* m_btnLoad;
+		wxButton* m_btnExecute;
 		wxPanel* m_panel14;
 		wxGrid* m_gridTable;
+		wxStaticText* m_labelStatus;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnTemplatesBtnClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnScintilaKeyDown( wxKeyEvent& event ) { event.Skip(); }
-		virtual void OnExecuteClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnSaveClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnLoadClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnExecuteClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnGridCellRightClick( wxGridEvent& event ) { event.Skip(); }
 		
 	
@@ -243,6 +243,7 @@ class _DBSettingsDialog : public wxDialog
 		wxPanel* m_Sqlite;
 		wxStaticText* m_staticText11;
 		wxFilePickerCtrl* m_filePickerSqlite;
+		wxListCtrl* m_listCtrlRecentFiles;
 		wxButton* m_btnOKSqlite;
 		wxButton* m_btnCancel1;
 		wxPanel* m_PostgrePanel;
@@ -274,6 +275,8 @@ class _DBSettingsDialog : public wxDialog
 		virtual void OnHistoryClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnHistoryDClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnHistoruUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnItemActivated( wxListEvent& event ) { event.Skip(); }
+		virtual void OnItemKeyDown( wxListEvent& event ) { event.Skip(); }
 		virtual void OnSqliteOkClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnPgSqlKeyDown( wxKeyEvent& event ) { event.Skip(); }
 		virtual void OnPgOkClick( wxCommandEvent& event ) { event.Skip(); }

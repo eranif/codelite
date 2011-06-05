@@ -135,6 +135,7 @@ class _SqlCommandPanel : public wxPanel
 		virtual void OnExecuteClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnSaveClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnLoadClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnGridCellRightClick( wxGridEvent& event ) { event.Skip(); }
 		
 	
 	public:

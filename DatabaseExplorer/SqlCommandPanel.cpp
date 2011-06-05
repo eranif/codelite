@@ -6,22 +6,23 @@
 #include <wx/wupdlock.h>
 #include <wx/busyinfo.h>
 #include <wx/xrc/xmlres.h>
+#include "globals.h"
 
 
 const wxEventType wxEVT_EXECUTE_SQL = XRCID("wxEVT_EXECUTE_SQL");
 
 BEGIN_EVENT_TABLE(SQLCommandPanel, _SqlCommandPanel)
-EVT_COMMAND(wxID_ANY, wxEVT_EXECUTE_SQL, SQLCommandPanel::OnExecuteSQL)
+	EVT_COMMAND(wxID_ANY, wxEVT_EXECUTE_SQL, SQLCommandPanel::OnExecuteSQL)
 END_EVENT_TABLE()
 
-SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const wxString& dbName, const wxString& dbTable) 
+SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const wxString& dbName, const wxString& dbTable)
 	: _SqlCommandPanel(parent)
 {
 	DbViewerPanel::InitStyledTextCtrl( m_scintillaSQL );
 	m_pDbAdapter = dbAdapter;
 	m_dbName = dbName;
 	m_dbTable = dbTable;
-	
+
 	//TODO:SQL:
 	//m_scintillaSQL->AddText(wxT("-- selected database ") + m_dbName);
 	m_scintillaSQL->AddText(wxString::Format(wxT(" -- selected database %s\n"), m_dbName.c_str()));
@@ -192,4 +193,25 @@ void SQLCommandPanel::OnExecuteSQL(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	ExecuteSql();
+}
+
+void SQLCommandPanel::OnGridCellRightClick(wxGridEvent& event)
+{
+	event.Skip();
+	
+	// Keep the current cell's value
+	m_cellValue = m_gridTable->GetCellValue(event.GetRow(), event.GetCol());
+	
+	wxMenu menu; 
+	menu.Append (XRCID("db_copy_cell_value"), _("Copy value to clipboard"));
+	menu.Connect(XRCID("db_copy_cell_value"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SQLCommandPanel::OnCopyCellValue), NULL, this);
+	m_gridTable->PopupMenu( &menu );
+}
+
+void SQLCommandPanel::OnCopyCellValue(wxCommandEvent& e)
+{
+	e.Skip();
+	if(m_cellValue.IsEmpty() == false) {
+		CopyToClipboard(m_cellValue);
+	}
 }

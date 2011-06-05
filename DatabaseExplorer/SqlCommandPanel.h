@@ -16,8 +16,14 @@
 #include "Ids.h"
 
 
-class SQLCommandPanel : public _SqlCommandPanel {
-
+class SQLCommandPanel : public _SqlCommandPanel
+{
+protected:
+	IDbAdapter* m_pDbAdapter;
+	wxString    m_dbName;
+	wxString    m_dbTable;
+	wxString    m_cellValue;
+	
 public:
 	SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter, const wxString& dbName,const wxString& dbTable);
 	virtual ~SQLCommandPanel();
@@ -32,13 +38,11 @@ public:
 	void OnPopupClick(wxCommandEvent &evt);
 	void ExecuteSql();
 
+	void OnGridCellRightClick(wxGridEvent& event);
+	void OnCopyCellValue(wxCommandEvent &e);
+	
 	DECLARE_EVENT_TABLE()
 	void OnExecuteSQL(wxCommandEvent &e);
-	
-protected:
-	IDbAdapter* m_pDbAdapter;
-	wxString m_dbName;
-	wxString m_dbTable;
 
 };
 

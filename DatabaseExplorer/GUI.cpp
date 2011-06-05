@@ -210,6 +210,7 @@ _SqlCommandPanel::_SqlCommandPanel( wxWindow* parent, wxWindowID id, const wxPoi
 	m_btnExecute->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _SqlCommandPanel::OnExecuteClick ), NULL, this );
 	m_btnSave->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _SqlCommandPanel::OnSaveClick ), NULL, this );
 	m_btnLoad->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _SqlCommandPanel::OnLoadClick ), NULL, this );
+	m_gridTable->Connect( wxEVT_GRID_CELL_RIGHT_CLICK, wxGridEventHandler( _SqlCommandPanel::OnGridCellRightClick ), NULL, this );
 }
 
 _SqlCommandPanel::~_SqlCommandPanel()
@@ -220,6 +221,7 @@ _SqlCommandPanel::~_SqlCommandPanel()
 	m_btnExecute->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _SqlCommandPanel::OnExecuteClick ), NULL, this );
 	m_btnSave->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _SqlCommandPanel::OnSaveClick ), NULL, this );
 	m_btnLoad->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _SqlCommandPanel::OnLoadClick ), NULL, this );
+	m_gridTable->Disconnect( wxEVT_GRID_CELL_RIGHT_CLICK, wxGridEventHandler( _SqlCommandPanel::OnGridCellRightClick ), NULL, this );
 	
 }
 

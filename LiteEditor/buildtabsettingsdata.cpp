@@ -32,7 +32,7 @@ BuildTabSettingsData::BuildTabSettingsData()
 		, m_boldWarnFont(false)
 		, m_showBuildPane(0)
 		, m_autoHide(false)
-		, m_autoShow(true)
+		, m_autoShow(false)
 		, m_errorsFirstLine(false)
 		, m_errorWarningStyle(EWS_Bookmarks)
 {

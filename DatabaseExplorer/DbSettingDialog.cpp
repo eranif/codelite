@@ -13,7 +13,8 @@
 #include <wx/dblayer/include/DatabaseErrorCodes.h>
 #include <wx/dblayer/include/DatabaseLayerException.h>
 
-DbSettingDialog::DbSettingDialog(DbViewerPanel *parent, wxWindow* pWindowParent):_DBSettingsDialog( pWindowParent ) {
+DbSettingDialog::DbSettingDialog(DbViewerPanel *parent, wxWindow* pWindowParent):_DBSettingsDialog( pWindowParent )
+{
 
 	m_pParent = parent;
 	LoadHistory();
@@ -25,7 +26,8 @@ DbSettingDialog::DbSettingDialog(DbViewerPanel *parent, wxWindow* pWindowParent)
 #endif
 }
 
-DbSettingDialog::~DbSettingDialog() {
+DbSettingDialog::~DbSettingDialog()
+{
 
 	m_pHistory = new MysqlConnectionHistory();
 	if (m_pHistory) {
@@ -49,10 +51,12 @@ DbSettingDialog::~DbSettingDialog() {
 	}
 }
 
-void DbSettingDialog::OnCancelClick(wxCommandEvent& event) {
+void DbSettingDialog::OnCancelClick(wxCommandEvent& event)
+{
 	Destroy();
 }
-void DbSettingDialog::OnOkClick(wxCommandEvent& event) {
+void DbSettingDialog::OnOkClick(wxCommandEvent& event)
+{
 #ifdef DBL_USE_MYSQL
 	try {
 		//MysqlDatabaseLayer *DbLayer = new MysqlDatabaseLayer(m_txServer->GetValue(),wxT(""),m_txUserName->GetValue(),m_txPassword->GetValue());
@@ -76,7 +80,8 @@ void DbSettingDialog::OnOkClick(wxCommandEvent& event) {
 #endif
 }
 
-void DbSettingDialog::OnSqliteOkClick(wxCommandEvent& event) {
+void DbSettingDialog::OnSqliteOkClick(wxCommandEvent& event)
+{
 #ifdef DBL_USE_SQLITE
 	try {
 
@@ -103,11 +108,13 @@ void DbSettingDialog::OnSqliteOkClick(wxCommandEvent& event) {
 #endif
 }
 
-void DbSettingDialog::OnHistoruUI(wxUpdateUIEvent& event) {
+void DbSettingDialog::OnHistoruUI(wxUpdateUIEvent& event)
+{
 	//event.Enable( m_listBox2->GetCount() > 0 );
 }
 
-void DbSettingDialog::OnHistoryClick(wxCommandEvent& event) {
+void DbSettingDialog::OnHistoryClick(wxCommandEvent& event)
+{
 	MysqlHistItem* item = wxDynamicCast(event.GetClientData(), MysqlHistItem);
 	if (item) {
 		m_txName->SetValue(item->GetName());
@@ -117,29 +124,36 @@ void DbSettingDialog::OnHistoryClick(wxCommandEvent& event) {
 	}
 }
 
-void DbSettingDialog::OnHistoryDClick(wxCommandEvent& event) {
+void DbSettingDialog::OnHistoryDClick(wxCommandEvent& event)
+{
 }
 
-void DbSettingDialog::OnRemoveClick(wxCommandEvent& event) {
+void DbSettingDialog::OnRemoveClick(wxCommandEvent& event)
+{
 	int i = m_listBox2->GetSelection();
 	if (i > -1) m_listBox2->Delete(i);
 }
 
-void DbSettingDialog::OnRmoveUI(wxUpdateUIEvent& event) {
+void DbSettingDialog::OnRmoveUI(wxUpdateUIEvent& event)
+{
 	event.Enable(m_listBox2->GetSelection() > -1);
 }
 
-void DbSettingDialog::OnSaveClick(wxCommandEvent& event) {
+void DbSettingDialog::OnSaveClick(wxCommandEvent& event)
+{
 	m_listBox2->Append(m_txName->GetValue(), new MysqlHistItem(m_txName->GetValue(),m_txServer->GetValue(),m_txUserName->GetValue(),m_txPassword->GetValue()));
 }
 
-void DbSettingDialog::OnSaveUI(wxUpdateUIEvent& event) {
+void DbSettingDialog::OnSaveUI(wxUpdateUIEvent& event)
+{
 	event.Enable(!m_txName->IsEmpty());
 }
-void DbSettingDialog::OnOKUI(wxUpdateUIEvent& event) {
+void DbSettingDialog::OnOKUI(wxUpdateUIEvent& event)
+{
 	event.Enable(!m_txServer->IsEmpty() && !m_txUserName->IsEmpty());
 }
-void DbSettingDialog::LoadHistory() {
+void DbSettingDialog::LoadHistory()
+{
 	m_pHistory = MysqlConnectionHistory::LoadFromFile();
 	if (m_pHistory) {
 		m_listBox2->Clear();
@@ -173,11 +187,13 @@ void DbSettingDialog::LoadHistory() {
 
 }
 
-void DbSettingDialog::OnPgCancelClick(wxCommandEvent& event) {
+void DbSettingDialog::OnPgCancelClick(wxCommandEvent& event)
+{
 	Destroy();
 }
 
-void DbSettingDialog::OnPgOkClick(wxCommandEvent& event) {
+void DbSettingDialog::OnPgOkClick(wxCommandEvent& event)
+{
 #ifdef DBL_USE_POSTGRES
 	try {
 		//MysqlDatabaseLayer *DbLayer = new MysqlDatabaseLayer(m_txServer->GetValue(),wxT(""),m_txUserName->GetValue(),m_txPassword->GetValue());
@@ -202,15 +218,18 @@ void DbSettingDialog::OnPgOkClick(wxCommandEvent& event) {
 }
 
 
-void DbSettingDialog::OnPgRemoveClick(wxCommandEvent& event) {
+void DbSettingDialog::OnPgRemoveClick(wxCommandEvent& event)
+{
 	int i = m_listBoxPg->GetSelection();
 	if (i > -1) m_listBoxPg->Delete(i);
 }
 
-void DbSettingDialog::OnPgSaveClick(wxCommandEvent& event) {
+void DbSettingDialog::OnPgSaveClick(wxCommandEvent& event)
+{
 	m_listBoxPg->Append(m_txPgName->GetValue(), new PostgresHistItem(m_txPgName->GetValue(),m_txPgServer->GetValue(),m_txPgUserName->GetValue(),m_txPgPassword->GetValue(),m_txPgDatabase->GetValue()));
 }
-void DbSettingDialog::OnPgHistoryClick(wxCommandEvent& event) {
+void DbSettingDialog::OnPgHistoryClick(wxCommandEvent& event)
+{
 	PostgresHistItem* item = wxDynamicCast(event.GetClientData(), PostgresHistItem);
 	if (item) {
 		m_txPgName->SetValue(item->GetName());
@@ -221,30 +240,44 @@ void DbSettingDialog::OnPgHistoryClick(wxCommandEvent& event) {
 	}
 }
 
-void DbSettingDialog::OnPgHistoryDClick(wxCommandEvent& event) {
+void DbSettingDialog::OnPgHistoryDClick(wxCommandEvent& event)
+{
 }
-void DbSettingDialog::OnPgOKUI(wxUpdateUIEvent& event) {
+void DbSettingDialog::OnPgOKUI(wxUpdateUIEvent& event)
+{
 	event.Enable(!m_txPgServer->IsEmpty() && !m_txPgUserName->IsEmpty());
 }
 
-void DbSettingDialog::OnPgRmoveUI(wxUpdateUIEvent& event) {
+void DbSettingDialog::OnPgRmoveUI(wxUpdateUIEvent& event)
+{
 	event.Enable(m_listBoxPg->GetSelection() > -1);
 }
 
-void DbSettingDialog::OnPgSaveUI(wxUpdateUIEvent& event) {
+void DbSettingDialog::OnPgSaveUI(wxUpdateUIEvent& event)
+{
 	event.Enable(!m_txPgName->IsEmpty());
 }
-void DbSettingDialog::OnMySqlPassKeyDown(wxKeyEvent& event) {
-	if (event.KeyCode() == WXK_RETURN){	
+void DbSettingDialog::OnMySqlPassKeyDown(wxKeyEvent& event)
+{
+	if (event.KeyCode() == WXK_RETURN) {
 		wxCommandEvent event2;
 		OnOkClick(event2);
 	} else event.Skip();
-	
+
 }
 
-void DbSettingDialog::OnPgSqlKeyDown(wxKeyEvent& event) {
-	if (event.KeyCode() == WXK_RETURN){
+void DbSettingDialog::OnPgSqlKeyDown(wxKeyEvent& event)
+{
+	if (event.KeyCode() == WXK_RETURN) {
 		wxCommandEvent event2;
 		OnPgOkClick(event2);
 	} else event.Skip();
+}
+
+void DbSettingDialog::OnItemActivated(wxListEvent& event)
+{
+}
+
+void DbSettingDialog::OnItemKeyDown(wxListEvent& event)
+{
 }

@@ -22,7 +22,8 @@
 
 
 /*! \brief Dialog for connection to the database server. It should be change everytime, if new database server typ is add. */
-class DbSettingDialog : public _DBSettingsDialog {
+class DbSettingDialog : public _DBSettingsDialog
+{
 
 public:
 	DbSettingDialog(DbViewerPanel *parent, wxWindow* pWindowParent);
@@ -54,6 +55,8 @@ protected:
 	virtual void OnPgRmoveUI(wxUpdateUIEvent& event);
 	virtual void OnPgSaveUI(wxUpdateUIEvent& event);
 	virtual void OnPgSqlKeyDown(wxKeyEvent& event);
+	virtual void OnItemActivated(wxListEvent& event);
+	virtual void OnItemKeyDown(wxListEvent& event);
 
 
 

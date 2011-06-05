@@ -73,7 +73,6 @@ class GitPlugin : public IPlugin
 	wxArrayString m_trackedFiles;
 	wxArrayString m_modifiedFiles;
 	bool m_addedFiles;
-	std::map<wxString, wxTreeItemId> m_modifiedIDs;
 	wxArrayString m_remotes;
 
 	wxColour m_colourTrackedFile;
@@ -99,10 +98,8 @@ private:
 	void InitDefaults();
 	void AddDefaultActions();
 	void ProcessGitActionQueue();
-	void ColourFileTree(wxTreeCtrl *tree, const wxArrayString& files,
-	                    const wxColour& colour,
-	                    std::map<wxString, wxTreeItemId>& cIDs,
-	                    bool storeIds);
+	void ColourFileTree(wxTreeCtrl *tree, const wxArrayString& files, const wxColour& colour) const;
+	void CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified = false) const;
 
 	void FinishGitListAction(const gitAction& ga);
 	void ListBranchAction(const gitAction& ga);

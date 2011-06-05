@@ -429,16 +429,8 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	fgSizer3->Fit( m_MySqlPanel );
 	m_notebook2->AddPage( m_MySqlPanel, wxT("MySql"), false );
 	m_Sqlite = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxFlexGridSizer* fgSizer31;
-	fgSizer31 = new wxFlexGridSizer( 2, 1, 0, 0 );
-	fgSizer31->AddGrowableCol( 0 );
-	fgSizer31->AddGrowableCol( 1 );
-	fgSizer31->AddGrowableRow( 0 );
-	fgSizer31->SetFlexibleDirection( wxBOTH );
-	fgSizer31->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	wxStaticBoxSizer* sbSizer31;
-	sbSizer31 = new wxStaticBoxSizer( new wxStaticBox( m_Sqlite, wxID_ANY, wxEmptyString ), wxVERTICAL );
+	wxBoxSizer* bSizer27;
+	bSizer27 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer41;
 	fgSizer41 = new wxFlexGridSizer( 1, 2, 0, 0 );
@@ -454,15 +446,10 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_filePickerSqlite = new wxFilePickerCtrl( m_Sqlite, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("Database file (*.sqlite)|*.sqlite|All Files (*)|*"), wxDefaultPosition, wxSize( -1,-1 ), wxFLP_OPEN|wxFLP_USE_TEXTCTRL );
 	fgSizer41->Add( m_filePickerSqlite, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
 	
-	sbSizer31->Add( fgSizer41, 0, wxEXPAND, 5 );
+	bSizer27->Add( fgSizer41, 0, wxEXPAND, 5 );
 	
-	m_listCtrlRecentFiles = new wxListCtrl( m_Sqlite, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_ICON|wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL );
-	sbSizer31->Add( m_listCtrlRecentFiles, 1, wxALL|wxEXPAND, 5 );
-	
-	fgSizer31->Add( sbSizer31, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
-	
-	wxStaticBoxSizer* sbSizer41;
-	sbSizer41 = new wxStaticBoxSizer( new wxStaticBox( m_Sqlite, wxID_ANY, wxEmptyString ), wxVERTICAL );
+	m_listCtrlRecentFiles = new wxListCtrl( m_Sqlite, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL );
+	bSizer27->Add( m_listCtrlRecentFiles, 1, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer81;
 	bSizer81 = new wxBoxSizer( wxHORIZONTAL );
@@ -474,13 +461,11 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_btnCancel1->SetDefault(); 
 	bSizer81->Add( m_btnCancel1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	sbSizer41->Add( bSizer81, 0, wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT, 5 );
+	bSizer27->Add( bSizer81, 0, wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT, 5 );
 	
-	fgSizer31->Add( sbSizer41, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
-	
-	m_Sqlite->SetSizer( fgSizer31 );
+	m_Sqlite->SetSizer( bSizer27 );
 	m_Sqlite->Layout();
-	fgSizer31->Fit( m_Sqlite );
+	bSizer27->Fit( m_Sqlite );
 	m_notebook2->AddPage( m_Sqlite, wxT("Sqlite"), true );
 	m_PostgrePanel = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer32;
@@ -589,6 +574,7 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_listBox2->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( _DBSettingsDialog::OnHistoryDClick ), NULL, this );
 	m_listBox2->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnHistoruUI ), NULL, this );
 	m_listCtrlRecentFiles->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( _DBSettingsDialog::OnItemActivated ), NULL, this );
+	m_listCtrlRecentFiles->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( _DBSettingsDialog::OnItemSelected ), NULL, this );
 	m_listCtrlRecentFiles->Connect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( _DBSettingsDialog::OnItemKeyDown ), NULL, this );
 	m_btnOKSqlite->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnSqliteOkClick ), NULL, this );
 	m_btnCancel1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnCancelClick ), NULL, this );
@@ -620,6 +606,7 @@ _DBSettingsDialog::~_DBSettingsDialog()
 	m_listBox2->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( _DBSettingsDialog::OnHistoryDClick ), NULL, this );
 	m_listBox2->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnHistoruUI ), NULL, this );
 	m_listCtrlRecentFiles->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( _DBSettingsDialog::OnItemActivated ), NULL, this );
+	m_listCtrlRecentFiles->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( _DBSettingsDialog::OnItemSelected ), NULL, this );
 	m_listCtrlRecentFiles->Disconnect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( _DBSettingsDialog::OnItemKeyDown ), NULL, this );
 	m_btnOKSqlite->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnSqliteOkClick ), NULL, this );
 	m_btnCancel1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnCancelClick ), NULL, this );

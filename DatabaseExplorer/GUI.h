@@ -276,6 +276,7 @@ class _DBSettingsDialog : public wxDialog
 		virtual void OnHistoryDClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnHistoruUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnItemActivated( wxListEvent& event ) { event.Skip(); }
+		virtual void OnItemSelected( wxListEvent& event ) { event.Skip(); }
 		virtual void OnItemKeyDown( wxListEvent& event ) { event.Skip(); }
 		virtual void OnSqliteOkClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnPgSqlKeyDown( wxKeyEvent& event ) { event.Skip(); }
@@ -292,7 +293,7 @@ class _DBSettingsDialog : public wxDialog
 	
 	public:
 		
-		_DBSettingsDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Connection settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
+		_DBSettingsDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Connection settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~_DBSettingsDialog();
 	
 };

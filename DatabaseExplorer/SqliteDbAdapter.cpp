@@ -27,17 +27,18 @@ DatabaseLayer* SQLiteDbAdapter::GetDatabaseLayer(const wxString& dbName) {
 
 IDbType* SQLiteDbAdapter::GetDbTypeByName(const wxString& typeName) {
 	IDbType* type = NULL;
-	if (typeName == wxT("NULL")) {
+	wxString typeNameString = typeName.Upper();
+	if (typeNameString == wxT("NULL")) {
 		type = new SqliteType(wxT("NULL"), IDbType::dbtNOT_NULL, IDbType::dbtTYPE_OTHER);
-	} else if (typeName == wxT("INTEGER")) {
+	} else if (typeNameString == wxT("INTEGER")) {
 		type = new SqliteType(wxT("INTEGER"), IDbType::dbtNOT_NULL, IDbType::dbtTYPE_INT );
-	} else if (typeName == wxT("REAL")) {
+	} else if (typeNameString == wxT("REAL")) {
 		type = new SqliteType(wxT("REAL"), IDbType::dbtNOT_NULL, IDbType::dbtTYPE_DECIMAL );
-	} else if (typeName == wxT("TEXT")) {
+	} else if (typeNameString == wxT("TEXT")) {
 		type = new SqliteType(wxT("TEXT"), IDbType::dbtNOT_NULL, IDbType::dbtTYPE_TEXT );
-	} else if (typeName == wxT("BLOB")) {
+	} else if (typeNameString == wxT("BLOB")) {
 		type = new SqliteType(wxT("BLOB"), IDbType::dbtNOT_NULL, IDbType::dbtTYPE_OTHER );
-	}
+	} else type = new SqliteType(typeNameString, IDbType::dbtNOT_NULL, IDbType::dbtTYPE_TEXT);
 
 	wxASSERT(type);
 	return type;

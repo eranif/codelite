@@ -1,4 +1,8 @@
 #include "DbSettingDialog.h"
+#include "db_explorer_settings.h"
+#include "editor_config.h"
+#include "windowattrmanager.h"
+#include "globals.h"
 
 #include <wx/dblayer/include/DatabaseLayer.h>
 
@@ -17,6 +21,10 @@ DbSettingDialog::DbSettingDialog(DbViewerPanel *parent, wxWindow* pWindowParent)
 {
 
 	m_pParent = parent;
+	m_listCtrlRecentFiles->InsertColumn(0, wxT("File name"));
+	m_listCtrlRecentFiles->SetColumnWidth(0, 600);
+	m_filePickerSqlite->SetFocus();
+
 	LoadHistory();
 #ifndef DBL_USE_MYSQL
 	m_MySqlPanel->Enable(false);
@@ -24,11 +32,12 @@ DbSettingDialog::DbSettingDialog(DbViewerPanel *parent, wxWindow* pWindowParent)
 #ifndef DBL_USE_POSTGRES
 	m_PostgrePanel->Enable(false);
 #endif
+	WindowAttrManager::Load(this, wxT("DbSettingDialog"), NULL);
 }
 
 DbSettingDialog::~DbSettingDialog()
 {
-
+	WindowAttrManager::Save(this, wxT("DbSettingDialog"), NULL);
 	m_pHistory = new MysqlConnectionHistory();
 	if (m_pHistory) {
 		for (unsigned int i = 0 ; i < m_listBox2->GetCount(); i++) {
@@ -93,8 +102,18 @@ void DbSettingDialog::OnSqliteOkClick(wxCommandEvent& event)
 		wxString serverName = m_filePickerSqlite->GetPath();
 		m_pParent->AddDbConnection(new DbConnection(pAdapt, serverName));
 
+		// Save the recent opened files
+		DbExplorerSettings settings;
+		EditorConfigST::Get()->ReadObject(wxT("DbExplorerSettings"), &settings);
+
+		wxArrayString files = settings.GetRecentFiles();
+		files.Insert(serverName, 0);
+		settings.SetRecentFiles(files);
+		EditorConfigST::Get()->WriteObject(wxT("DbExplorerSettings"), &settings);
+
 		m_pParent->SetServer(serverName);
 		Destroy();
+
 	} catch (DatabaseLayerException& e) {
 		wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
 		wxMessageDialog dlg(this,errorMessage,wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
@@ -154,6 +173,17 @@ void DbSettingDialog::OnOKUI(wxUpdateUIEvent& event)
 }
 void DbSettingDialog::LoadHistory()
 {
+	// recent sqlite files
+	DbExplorerSettings settings;
+	EditorConfigST::Get()->ReadObject(wxT("DbExplorerSettings"), &settings);
+	wxArrayString files = settings.GetRecentFiles();
+
+	m_listCtrlRecentFiles->DeleteAllItems();
+	for(size_t i=0; i<files.Count(); i++) {
+		int idx = AppendListCtrlRow(m_listCtrlRecentFiles);
+		SetColumnText(m_listCtrlRecentFiles, idx, 0, files.Item(i));
+	}
+
 	m_pHistory = MysqlConnectionHistory::LoadFromFile();
 	if (m_pHistory) {
 		m_listBox2->Clear();
@@ -259,7 +289,7 @@ void DbSettingDialog::OnPgSaveUI(wxUpdateUIEvent& event)
 }
 void DbSettingDialog::OnMySqlPassKeyDown(wxKeyEvent& event)
 {
-	if (event.KeyCode() == WXK_RETURN) {
+	if (event.GetKeyCode() == WXK_RETURN) {
 		wxCommandEvent event2;
 		OnOkClick(event2);
 	} else event.Skip();
@@ -268,7 +298,7 @@ void DbSettingDialog::OnMySqlPassKeyDown(wxKeyEvent& event)
 
 void DbSettingDialog::OnPgSqlKeyDown(wxKeyEvent& event)
 {
-	if (event.KeyCode() == WXK_RETURN) {
+	if (event.GetKeyCode() == WXK_RETURN) {
 		wxCommandEvent event2;
 		OnPgOkClick(event2);
 	} else event.Skip();
@@ -276,8 +306,21 @@ void DbSettingDialog::OnPgSqlKeyDown(wxKeyEvent& event)
 
 void DbSettingDialog::OnItemActivated(wxListEvent& event)
 {
+	wxCommandEvent dummy;
+	m_filePickerSqlite->SetPath( GetColumnText(m_listCtrlRecentFiles, event.GetItem(), 0) );
+	OnSqliteOkClick(dummy);
 }
 
 void DbSettingDialog::OnItemKeyDown(wxListEvent& event)
 {
+	if(event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_NUMPAD_DELETE) {
+		m_listCtrlRecentFiles->DeleteItem(event.GetItem());
+	} else {
+		event.Skip();
+	}
+}
+
+void DbSettingDialog::OnItemSelected(wxListEvent& event)
+{
+	m_filePickerSqlite->SetPath(GetColumnText(m_listCtrlRecentFiles, event.GetItem(), 0));
 }

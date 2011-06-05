@@ -47,6 +47,7 @@
     <File Name="AdapterSelectDlg.cpp"/>
     <File Name="Ids.cpp"/>
     <File Name="databaseexplorer.cpp"/>
+    <File Name="db_explorer_settings.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="databaseexplorer.h"/>
@@ -95,6 +96,7 @@
     <File Name="Art.h"/>
     <File Name="AdapterSelectDlg.h"/>
     <File Name="GUI.fbp"/>
+    <File Name="db_explorer_settings.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
@@ -209,20 +211,19 @@
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes" PreCompiledHeader="">
-        <IncludePath Value="."/>
-        <IncludePath Value="../../CodeLite_dev/Interfaces"/>
-        <IncludePath Value="../../CodeLite_dev/CodeLite"/>
-        <IncludePath Value="../../CodeLite_dev/Plugin"/>
-        <IncludePath Value="../../CodeLite_dev/sdk/wxsqlite3/include"/>
-        <IncludePath Value="../../CodeLite_dev/sdk/wxshapeframework/include"/>
-        <IncludePath Value="../../CodeLite_dev/sdk/databaselayer/include"/>
-        <IncludePath Value="../../CodeLite_dev/sdk/wxscintilla/include"/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxshapeframework/include"/>
+        <IncludePath Value="../sdk/databaselayer/include"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="DBL_USE_SQLITE"/>
       </Compiler>
       <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
-        <LibraryPath Value="../../CodeLite_dev/lib/gcc_lib"/>
+        <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
@@ -231,7 +232,7 @@
         <Library Value="libwxscintillaud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../Runtime/plugins/DatabaseExplorer.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./WinDebugUnicode" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/plugins/DatabaseExplorer.dll" IntermediateDirectory="./WinDebugUnicode" Command="codelite" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>

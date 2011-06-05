@@ -58,6 +58,8 @@ protected:
 	virtual void OnItemActivated(wxListEvent& event);
 	virtual void OnItemKeyDown(wxListEvent& event);
 
+	virtual void OnItemSelected(wxListEvent& event);
+
 
 
 	void LoadHistory();

@@ -65,7 +65,7 @@
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
@@ -83,6 +83,7 @@
       <Project Name="git" ConfigName="WinDebugUnicode"/>
       <Project Name="ExternalTools" ConfigName="WinDebugUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="WinDebugUnicode"/>
+      <Project Name="DatabaseExplorer" ConfigName="WinDebugUnicode"/>
       <Project Name="Cscope" ConfigName="WinDebugUnicode"/>
       <Project Name="CppChecker" ConfigName="WinDebugUnicode"/>
       <Project Name="Copyright" ConfigName="WinDebugUnicode"/>
@@ -90,7 +91,6 @@
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
-      <Project Name="DatabaseExplorer" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>

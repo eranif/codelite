@@ -54,7 +54,9 @@ void SQLCommandPanel::OnScintilaKeyDown(wxKeyEvent& event)
 
 void SQLCommandPanel::ExecuteSql()
 {
-	wxBusyInfo infoDlg(_("Executing sql..."), this);
+	wxBusyInfo infoDlg(_("Executing sql..."), wxTheApp->GetTopWindow());
+	wxTheApp->Yield();
+	
 	wxWindowUpdateLocker locker(this);
 	DatabaseLayer* m_pDbLayer = m_pDbAdapter->GetDatabaseLayer(m_dbName);
 	if (m_pDbLayer->IsOpen()) {

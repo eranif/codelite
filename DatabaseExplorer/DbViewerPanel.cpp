@@ -386,7 +386,10 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 				Table* pTab = (Table*) wxDynamicCast(data->GetData(),Table);
 				if (pTab) {
 					pTab->RefreshChildren();
-					m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,pTab->GetDbAdapter()->Clone(),m_pConnections, (Table*) pTab->Clone() ), CreatePanelName(pTab, DbViewerPanel::Erd));
+					wxString pagename;
+					pagename = CreatePanelName(pTab, DbViewerPanel::Erd);
+					m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,pTab->GetDbAdapter()->Clone(),m_pConnections, (Table*) pTab->Clone() ), pagename);
+					m_pagesAdded.Add(pagename);
 				}
 			}
 		} else if (evt.GetId() == IDR_DBVIEWER_ERD_DB) {
@@ -395,7 +398,10 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 				Database* pDb = (Database*) wxDynamicCast(data->GetData(),Database);
 				if (pDb) {
 					pDb->RefreshChildrenDetails();
-					m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,pDb->GetDbAdapter()->Clone(),m_pConnections, (Database*) pDb->Clone() ), CreatePanelName(pDb, DbViewerPanel::Erd));
+					wxString pagename;
+					pagename = CreatePanelName(pDb, DbViewerPanel::Erd);
+					m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,pDb->GetDbAdapter()->Clone(),m_pConnections, (Database*) pDb->Clone() ), pagename);
+					m_pagesAdded.Add(pagename);
 				}
 			}
 		} else if (evt.GetId() == IDR_DBVIEWER_CLASS_DB) {

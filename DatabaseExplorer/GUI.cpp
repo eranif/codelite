@@ -634,7 +634,7 @@ _ErdPanel::_ErdPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	fgSizer7->SetFlexibleDirection( wxBOTH );
 	fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_toolBarErd = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_HORIZONTAL ); 
+	m_toolBarErd = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL ); 
 	m_toolBarErd->Realize(); 
 	
 	fgSizer7->Add( m_toolBarErd, 0, wxEXPAND, 5 );

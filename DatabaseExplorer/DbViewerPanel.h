@@ -47,7 +47,20 @@ class MainBook;
 /*! \brief Main application panel. It show database tree and can open special editors. */
 class DbViewerPanel : public _DbViewerPanel
 {
-
+protected:
+	xsSerializable* m_pConnections;
+	IDbAdapter*     m_pDbAdapter;
+	wxWindow*       m_pGlobalParent;
+	wxString        m_server;
+	wxTreeItemId    m_selectedID;
+	wxWindow*       m_pNotebook;
+	IManager*       m_mgr;
+	TableHashMap    m_hashTables;
+	Database*       m_pEditedDatabase;
+	DbConnection*   m_pEditedConnection;
+	wxSFThumbnail*  m_pThumbnail;
+	bool            m_connected;
+	
 public:
 	DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pManager);
 	virtual ~DbViewerPanel();
@@ -90,24 +103,6 @@ protected:
 		Sql,
 		Erd
 	};
-
-
-
-	xsSerializable* m_pConnections;
-
-	IDbAdapter* m_pDbAdapter;
-	wxWindow* m_pGlobalParent;
-	//DatabaseLayer *m_pDbLayer;
-	wxString m_server;
-	wxTreeItemId m_selectedID;
-	wxWindow* m_pNotebook;
-	IManager* m_mgr;
-
-	TableHashMap m_hashTables;
-	Database* m_pEditedDatabase;
-	DbConnection* m_pEditedConnection;
-	wxSFThumbnail* m_pThumbnail;
-
 	bool ImportDb(const wxString& sqlFile, Database* pDb);
 	wxString CreatePanelName(Table* t, PanelType type);
 	wxString CreatePanelName(View* v, PanelType type);

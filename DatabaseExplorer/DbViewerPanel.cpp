@@ -8,7 +8,9 @@
 #include <wx/wfstream.h>
 #include <wx/imaglist.h>
 
-DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pManager):_DbViewerPanel(parent)
+DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pManager)
+	: _DbViewerPanel(parent)
+	, m_connected(false)
 {
 	m_pNotebook = notebook;
 	m_pGlobalParent = parent;
@@ -25,8 +27,6 @@ DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pMa
 
 	m_mgr->GetTheApp()->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,NotebookEventHandler(DbViewerPanel::OnPageChange), NULL, this);
 	m_mgr->GetTheApp()->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSING,NotebookEventHandler(DbViewerPanel::OnPageClose), NULL, this);
-	//m_pNotebook->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE,wxAuiNotebookEventHandler(DbViewerPanel::OnPageClose), NULL, this);
-	//m_pNotebook->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED,wxAuiNotebookEventHandler(DbViewerPanel::OnPageChange), NULL, this);
 }
 
 DbViewerPanel::~DbViewerPanel()
@@ -48,9 +48,9 @@ void DbViewerPanel::OnConncectClick(wxCommandEvent& event)
 }
 void DbViewerPanel::OnConncectUI(wxUpdateUIEvent& event)
 {
-	if (m_pDbAdapter == NULL ) event.Enable(true);
-	//else event.Enable(false);
+	event.Enable( !m_pConnections->HasChildren() );
 }
+
 void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 {
 	DbItem* item = (DbItem*) m_treeDatabases->GetItemData(event.GetItem());
@@ -333,9 +333,10 @@ void DbViewerPanel::OnItemRightClick(wxTreeEvent& event)
 }
 void DbViewerPanel::OnToolCloseClick(wxCommandEvent& event)
 {
-
+	// Close the active connection (there is only one)
 	// getting selected item data
-	DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_treeDatabases->GetSelection());
+	wxTreeItemIdValue cookie;
+	DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_treeDatabases->GetFirstChild(m_treeDatabases->GetRootItem(), cookie));
 	if (data) {
 		DbConnection* pCon = wxDynamicCast(data->GetData(), DbConnection);
 		if (pCon) {
@@ -351,17 +352,7 @@ void DbViewerPanel::OnToolCloseClick(wxCommandEvent& event)
 
 void DbViewerPanel::OnToolCloseUI(wxUpdateUIEvent& event)
 {
-	// getting selected item data
-	event.Enable(false);
-	
-	wxTreeItemId treeId = m_treeDatabases->GetSelection();
-	if( treeId.IsOk() ) {
-		DbItem* data = (DbItem*) m_treeDatabases->GetItemData( treeId );
-		if (data) {
-			DbConnection* pCon = wxDynamicCast(data->GetData(), DbConnection);
-			if (pCon) event.Enable(true);
-		}
-	}
+	event.Enable(m_pConnections->HasChildren());
 }
 
 void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)

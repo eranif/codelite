@@ -39,7 +39,6 @@ int SqliteResultSetMetaData::GetColumnType(int i)
     switch (columnType)
     {
       case SQLITE_INTEGER:
-        puts("sqlite3_column_type returned SQLITE_INTEGER");
         returnType = COLUMN_INTEGER;
         break;
       case SQLITE_FLOAT:

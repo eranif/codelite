@@ -10,7 +10,6 @@
 
 DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pManager)
 	: _DbViewerPanel(parent)
-	, m_connected(false)
 {
 	m_pNotebook = notebook;
 	m_pGlobalParent = parent;
@@ -56,41 +55,40 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 	DbItem* item = (DbItem*) m_treeDatabases->GetItemData(event.GetItem());
 	if (item) {
 		wxMouseState cState = wxGetMouseState();
-
+		
+		wxString pagename;
 		if (Table* tab =  wxDynamicCast(item->GetData(), Table)) {
 			tab->RefreshChildren();
 			if( cState.ControlDown() ) {
-				m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),m_pConnections, (Table*) tab->Clone() ), CreatePanelName(tab, DbViewerPanel::Erd));
+				pagename = CreatePanelName(tab, DbViewerPanel::Erd);
+				m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),m_pConnections, (Table*) tab->Clone() ), pagename);
 			} else {
 				wxWindowUpdateLocker locker(m_mgr->GetEditorPaneNotebook());
-				m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),tab->GetParentName(),tab->GetName()), CreatePanelName(tab, DbViewerPanel::Sql));
+				pagename = CreatePanelName(tab, DbViewerPanel::Sql);
+				m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),tab->GetParentName(),tab->GetName()), pagename);
 
 			}
 		}
 
 		if (View* pView = wxDynamicCast(item->GetData(), View)) {
-			m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,pView->GetDbAdapter()->Clone(),pView->GetParentName(),pView->GetName()), CreatePanelName(pView, DbViewerPanel::Sql));
+			pagename = CreatePanelName(pView, DbViewerPanel::Sql);
+			m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,pView->GetDbAdapter()->Clone(),pView->GetParentName(),pView->GetName()), pagename);
 		}
 
 		if (Database* db = wxDynamicCast(item->GetData(), Database)) {
 			if( cState.ControlDown() ) {
 				db->RefreshChildrenDetails();
-				m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,db->GetDbAdapter()->Clone(),m_pConnections,(Database*)db->Clone()), CreatePanelName(db, DbViewerPanel::Erd));
+				pagename = CreatePanelName(db, DbViewerPanel::Erd);
+				m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,db->GetDbAdapter()->Clone(),m_pConnections,(Database*)db->Clone()), pagename);
 			} else {
-				m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,db->GetDbAdapter()->Clone(),db->GetName(),wxT("")), CreatePanelName(db, DbViewerPanel::Sql));
+				pagename = CreatePanelName(db, DbViewerPanel::Sql);
+				m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,db->GetDbAdapter()->Clone(),db->GetName(),wxT("")), pagename);
 			}
 		}
+		m_pagesAdded.Add(pagename);
 	}
-
-
-	/*	if ((item != NULL)&&(item->GetTable() != NULL)) {
-			Table* table = item->GetTable();
-			wxString dbName = table->getParentName();
-			wxString dbTable = table->getName();
-			m_pNotebook->AddPage(new SQLCommandPanel(m_pNotebook,m_pDbAdapter,dbName,dbTable),dbName,true);
-
-		}*/
 }
+
 void DbViewerPanel::OnRefreshClick(wxCommandEvent& event)
 {
 
@@ -196,42 +194,9 @@ void DbViewerPanel::RefreshDbView()
 
 void DbViewerPanel::OnItemSelectionChange(wxTreeEvent& event)
 {
-	/*
-	// clear propertyGrid
-	m_propertyGrid->Clear();
-	m_propertyGrid->AppendCategory(wxT("Basic info"));
-
-	// expand selected item
-	m_treeDatabases->Expand(event.GetItem());
-
-	// getting selected item data
-	wxTreeItemData* data = m_treeDatabases->GetItemData(event.GetItem());
-
-	// showing parameter in propertyGrid
-	if ((data != NULL)){
-		switch(((IDbItem* )data)->GetType()){
-			case DbTableType:
-				m_propertyGrid->Append(wxT("Table name"),wxPG_LABEL,((IDbItem* )data)->GetName());
-				m_propertyGrid->Append(wxT("Database name"),wxPG_LABEL,((IDbItem* )data)->GetParentName());
-
-				break;
-			case DbColumnType:
-				m_propertyGrid->Append(wxT("Column name"),wxPG_LABEL, ((IDbItem* )data)->GetName());
-				m_propertyGrid->Append(wxT("Table name"),wxPG_LABEL, ((IDbItem* )data)->GetParentName());
-				m_propertyGrid->AppendCategory(wxT("Parameters"));
-				m_propertyGrid->Append(wxT("Type"),wxPG_LABEL, ((DbColumn* )data)->GetColumnType());
-				m_propertyGrid->Append(wxT("Not null"),wxPG_LABEL, ((DbColumn* )data)->IsNotNull());
-				m_propertyGrid->Append(wxT("Primary key"),wxPG_LABEL, ((DbColumn* )data)->IsPrimaryKey());
-				m_propertyGrid->Append(wxT("Foreign key"),wxPG_LABEL, ((DbColumn* )data)->IsForeignKey());
-
-
-				break;
-			case DbDatabaseType:
-				m_propertyGrid->Append(wxT("DB name"),wxPG_LABEL,((IDbItem* )data)->GetName());
-				break;
-			}
-	}	*/
+	wxUnusedVar(event);
 }
+
 void DbViewerPanel::OnERDClick(wxCommandEvent& event)
 {
 	AdapterSelectDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_pNotebook, m_mgr, m_pConnections);
@@ -348,6 +313,13 @@ void DbViewerPanel::OnToolCloseClick(wxCommandEvent& event)
 			}
 		}
 	}
+	
+	// loop over the editor open pages and close all DbExplorer related
+	for(size_t i=0; i<m_pagesAdded.Count(); i++) {
+		m_mgr->ClosePage(m_pagesAdded.Item(i));
+	}
+	
+	m_pagesAdded.Clear();
 }
 
 void DbViewerPanel::OnToolCloseUI(wxUpdateUIEvent& event)

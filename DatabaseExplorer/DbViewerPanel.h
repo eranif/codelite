@@ -59,7 +59,7 @@ protected:
 	Database*       m_pEditedDatabase;
 	DbConnection*   m_pEditedConnection;
 	wxSFThumbnail*  m_pThumbnail;
-	bool            m_connected;
+	wxArrayString   m_pagesAdded;
 	
 public:
 	DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pManager);

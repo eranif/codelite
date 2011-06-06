@@ -896,15 +896,6 @@ bool MainBook::DoSelectPage(wxWindow* win)
 		m_quickFindBar->SetEditor( editor );
 	}
 
-	// FIXME: move special context-specific menu handling to the Context classes?
-	// it could be done inside the existing ContextXXX::SetActive() method.
-	if (!editor || editor->GetContext()->GetName() != wxT("C++")) {
-		int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
-		if ( idx != wxNOT_FOUND ) {
-			delete clMainFrame::Get()->GetMenuBar()->Remove(idx);
-		}
-	}
-
 	// Remove context menu if needed
 	DoHandleFrameMenu(editor);
 
@@ -987,7 +978,14 @@ void MainBook::DoHandleFrameMenu(LEditor* editor)
 	if (!editor || editor->GetContext()->GetName() != wxT("C++")) {
 		int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
 		if ( idx != wxNOT_FOUND ) {
-			delete clMainFrame::Get()->GetMenuBar()->Remove(idx);
+			clMainFrame::Get()->GetMenuBar()->EnableTop(idx, false);
+		}
+		
+	} else if( editor && editor->GetContext()->GetName() == wxT("C++")) {
+		
+		int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
+		if ( idx != wxNOT_FOUND ) {
+			clMainFrame::Get()->GetMenuBar()->EnableTop(idx, true);
 		}
 	}
 }

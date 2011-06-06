@@ -307,7 +307,11 @@ void DbSettingDialog::OnPgSqlKeyDown(wxKeyEvent& event)
 void DbSettingDialog::OnItemActivated(wxListEvent& event)
 {
 	wxCommandEvent dummy;
-	m_filePickerSqlite->SetPath( GetColumnText(m_listCtrlRecentFiles, event.GetItem(), 0) );
+	
+	long selecteditem = -1;
+	selecteditem = m_listCtrlRecentFiles->GetNextItem(selecteditem, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	
+	m_filePickerSqlite->SetPath( GetColumnText(m_listCtrlRecentFiles, (int)selecteditem, 0) );
 	OnSqliteOkClick(dummy);
 }
 
@@ -322,5 +326,8 @@ void DbSettingDialog::OnItemKeyDown(wxListEvent& event)
 
 void DbSettingDialog::OnItemSelected(wxListEvent& event)
 {
-	m_filePickerSqlite->SetPath(GetColumnText(m_listCtrlRecentFiles, event.GetItem(), 0));
+	long selecteditem = -1;
+	selecteditem = m_listCtrlRecentFiles->GetNextItem(selecteditem, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	
+	m_filePickerSqlite->SetPath(GetColumnText(m_listCtrlRecentFiles, (int)selecteditem, 0));
 }

@@ -1106,7 +1106,6 @@ bool Manager::MoveFileToVD ( const wxString &fileName, const wxString &srcVD, co
 		wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND);
 		return false;
 	}
-	SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*) &files);
 
 	// Add the file to the project
 	res = WorkspaceST::Get()->AddNewFile ( targetVD, fn.GetFullPath(), errMsg );
@@ -1114,7 +1113,6 @@ bool Manager::MoveFileToVD ( const wxString &fileName, const wxString &srcVD, co
 		//file or virtual dir does not exist
 		return false;
 	}
-	SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*) &files);
 	return true;
 }
 

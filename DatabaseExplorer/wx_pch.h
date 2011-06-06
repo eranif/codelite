@@ -6,7 +6,7 @@
  * Copyright: Michal Bližňák ()
  * License:
  **************************************************************/
-
+#if 0
 #ifndef WX_PCH_H_INCLUDED
 #define WX_PCH_H_INCLUDED
 
@@ -42,3 +42,4 @@
 #endif // WX_PRECOMP
 
 #endif // WX_PCH_H_INCLUDED
+#endif

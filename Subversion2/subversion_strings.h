@@ -34,5 +34,5 @@ const wxString svnCONFLICTED_FILES        = _("Conflicted Files");
 const wxString svnLOCKED_FILES            = _("Locked Files");
 const wxString svnUNVERSIONED_FILES       = _("Unversioned Files");
 const wxString svnCONSOLE_TEXT            = wxT("Svn");
-const wxString svnANOTHER_PROCESS_RUNNING = _("MESSAGE: Another process is already running.\nMESSAGE: Ignoring last command.\n");
+const wxString svnANOTHER_PROCESS_RUNNING = _("\nMESSAGE: Another process is already running.\nMESSAGE: Ignoring last command.\n");
 #endif // SVNSTRINGS_H

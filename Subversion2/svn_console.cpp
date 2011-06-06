@@ -276,24 +276,16 @@ void SvnConsole::OnCharAdded(wxScintillaEvent& event)
 
 void SvnConsole::OnUpdateUI(wxScintillaEvent& event)
 {
-	if(m_sci->GetCurrentPos() < m_inferiorEnd) {
-		m_sci->SetCurrentPos(m_inferiorEnd);
-		m_sci->SetSelectionStart(m_inferiorEnd);
-		m_sci->SetSelectionEnd(m_inferiorEnd);
-		m_sci->EnsureCaretVisible();
-	}
+	//if(m_sci->GetCurrentPos() < m_inferiorEnd) {
+	//	m_sci->SetCurrentPos(m_inferiorEnd);
+	//	m_sci->SetSelectionStart(m_inferiorEnd);
+	//	m_sci->SetSelectionEnd(m_inferiorEnd);
+	//	m_sci->EnsureCaretVisible();
+	//}
 	event.Skip();
 }
 
 void SvnConsole::OnKeyDown(wxKeyEvent& event)
 {
-	switch(event.GetKeyCode()) {
-	case WXK_DELETE:
-	case WXK_NUMPAD_DELETE:
-	case WXK_BACK:
-		if(m_sci->GetCurrentPos() < m_inferiorEnd) {
-			return;
-		}
-	}
 	event.Skip();
 }

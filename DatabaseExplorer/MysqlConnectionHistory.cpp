@@ -31,8 +31,10 @@ MysqlConnectionHistory* MysqlConnectionHistory::LoadFromFile()
 {
 	wxXmlSerializer serializer;
 	MysqlConnectionHistory *item = NULL;
-	if ( DatabaseExplorer::GetManager()->GetInstallDirectory() + wxFileName::GetPathSeparator() + wxFile::Exists(wxT("MySqlHistory.xml")) ){		
-		if (serializer.DeserializeFromXml( DatabaseExplorer::GetManager()->GetInstallDirectory() + wxFileName::GetPathSeparator() + wxT("MySqlHistory.xml") )){
+	wxString filename;
+	filename << DatabaseExplorer::GetManager()->GetInstallDirectory() << wxFileName::GetPathSeparator() << wxT("MySqlHistory.xml");
+	if ( wxFile::Exists(filename) ){		
+		if (serializer.DeserializeFromXml( filename )){
 			xsSerializable* ser = serializer.GetRootItem();
 			item = wxDynamicCast(ser->GetFirstChild(), MysqlConnectionHistory);			
 			if (item) item = (MysqlConnectionHistory*) item->Clone();			

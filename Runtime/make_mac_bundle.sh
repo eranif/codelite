@@ -56,15 +56,11 @@ fix_codelite_indexer_deps() {
 	do
 		new_path=`echo ${path} | xargs basename`
 		install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./CodeLite.app/Contents/SharedSupport/codelite_indexer
-		echo install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./CodeLite.app/Contents/SharedSupport/codelite_indexer
 	done
 }
 
 ## extract the file name from the Makefile
-exe_name=`cat ../Makefile | grep ^EXE_NAME_NO_PATH | cut -d= -f2`
-## Run install_name_tool on the executable to bundle
-## libwx with the bundle
-
+exe_name=codelite
 
 rm -rf CodeLite.app
 mkdir -p ./CodeLite.app/Contents/MacOS
@@ -122,6 +118,7 @@ cat Info.plist.template | sed s/EXE_NAME/${exe_name}/g >> ./CodeLite.app/Content
 
 cp config/debuggers.xml.default ./CodeLite.app/Contents/SharedSupport/config
 
+## Copy plugins...
 cp ../lib/CodeFormatter.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/Debugger.so ./CodeLite.app/Contents/SharedSupport/debuggers/
 cp ../lib/Gizmos.so ./CodeLite.app/Contents/SharedSupport/plugins/
@@ -138,10 +135,15 @@ cp ../lib/abbreviation.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/QmakePlugin.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/CppCheck.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/MacBundler.so ./CodeLite.app/Contents/SharedSupport/plugins/
+cp ../lib/DatabaseExplorer.so ./CodeLite.app/Contents/SharedSupport/plugins/
+cp ../lib/CodeDesigner.so ./CodeLite.app/Contents/SharedSupport/plugins/
+
 cp ../lib/libwxscintillau.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libpluginu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libcodeliteu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libwxsqlite3u.so ./CodeLite.app/Contents/MacOS/
+cp ../lib/libdblayersqliteu.so ./CodeLite.app/Contents/MacOS/
+cp ../lib/libwxshapeframeworku.so ./CodeLite.app/Contents/MacOS/
 
 cp ./codelite_indexer  ./CodeLite.app/Contents/SharedSupport/
 cp ../sdk/codelite_cppcheck/codelite_cppcheck ./CodeLite.app/Contents/SharedSupport/
@@ -163,3 +165,6 @@ fix_non_plugins_depends ./lib/libwxscintillau.so
 fix_non_plugins_depends ./lib/libcodeliteu.so
 fix_non_plugins_depends ./lib/libpluginu.so
 fix_non_plugins_depends ./lib/libwxsqlite3u.so
+fix_non_plugins_depends ./lib/libwxshapeframeworku.so
+fix_non_plugins_depends ./lib/libdblayersqliteu.so
+

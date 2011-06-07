@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun  6 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -349,85 +349,6 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
 	
 	m_notebook2 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-	m_MySqlPanel = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxFlexGridSizer* fgSizer3;
-	fgSizer3 = new wxFlexGridSizer( 2, 1, 0, 0 );
-	fgSizer3->AddGrowableRow( 2 );
-	fgSizer3->SetFlexibleDirection( wxBOTH );
-	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	wxStaticBoxSizer* sbSizer3;
-	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_MySqlPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
-	
-	wxFlexGridSizer* fgSizer4;
-	fgSizer4 = new wxFlexGridSizer( 2, 2, 0, 0 );
-	fgSizer4->AddGrowableCol( 1 );
-	fgSizer4->SetFlexibleDirection( wxBOTH );
-	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	m_staticText10 = new wxStaticText( m_MySqlPanel, wxID_ANY, wxT("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText10->Wrap( -1 );
-	fgSizer4->Add( m_staticText10, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_txName = new wxTextCtrl( m_MySqlPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer4->Add( m_txName, 1, wxALL|wxEXPAND, 5 );
-	
-	m_staticText1 = new wxStaticText( m_MySqlPanel, wxID_ANY, wxT("Server:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1->Wrap( -1 );
-	fgSizer4->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_txServer = new wxTextCtrl( m_MySqlPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 150,-1 ), 0 );
-	fgSizer4->Add( m_txServer, 1, wxALL|wxEXPAND, 5 );
-	
-	m_staticText2 = new wxStaticText( m_MySqlPanel, wxID_ANY, wxT("User name:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2->Wrap( -1 );
-	fgSizer4->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_txUserName = new wxTextCtrl( m_MySqlPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 150,-1 ), 0 );
-	fgSizer4->Add( m_txUserName, 1, wxALL|wxEXPAND, 5 );
-	
-	m_staticText3 = new wxStaticText( m_MySqlPanel, wxID_ANY, wxT("Password:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText3->Wrap( -1 );
-	fgSizer4->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_txPassword = new wxTextCtrl( m_MySqlPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 150,-1 ), wxTE_PASSWORD );
-	fgSizer4->Add( m_txPassword, 0, wxALL|wxEXPAND, 5 );
-	
-	sbSizer3->Add( fgSizer4, 1, wxEXPAND, 5 );
-	
-	fgSizer3->Add( sbSizer3, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
-	
-	wxStaticBoxSizer* sbSizer4;
-	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_MySqlPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
-	
-	wxBoxSizer* bSizer8;
-	bSizer8 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_btnOK = new wxButton( m_MySqlPanel, wxID_OK, wxT("OK"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer8->Add( m_btnOK, 1, wxALL, 5 );
-	
-	m_btnCancel = new wxButton( m_MySqlPanel, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer8->Add( m_btnCancel, 1, wxALL, 5 );
-	
-	m_btnSave = new wxButton( m_MySqlPanel, wxID_ANY, wxT("Save"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_btnSave->SetToolTip( wxT("Invalide value in \"Name\".") );
-	
-	bSizer8->Add( m_btnSave, 1, wxALL, 5 );
-	
-	m_btnRemove = new wxButton( m_MySqlPanel, wxID_ANY, wxT("Remove"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer8->Add( m_btnRemove, 1, wxALL, 5 );
-	
-	sbSizer4->Add( bSizer8, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
-	
-	fgSizer3->Add( sbSizer4, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
-	
-	m_listBox2 = new wxListBox( m_MySqlPanel, wxID_ANY, wxDefaultPosition, wxSize( -1,100 ), 0, NULL, 0 ); 
-	fgSizer3->Add( m_listBox2, 1, wxALL|wxEXPAND, 5 );
-	
-	m_MySqlPanel->SetSizer( fgSizer3 );
-	m_MySqlPanel->Layout();
-	fgSizer3->Fit( m_MySqlPanel );
-	m_notebook2->AddPage( m_MySqlPanel, wxT("MySql"), false );
 	m_Sqlite = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer27;
 	bSizer27 = new wxBoxSizer( wxVERTICAL );
@@ -451,33 +372,89 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_listCtrlRecentFiles = new wxListCtrl( m_Sqlite, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL );
 	bSizer27->Add( m_listCtrlRecentFiles, 1, wxALL|wxEXPAND, 5 );
 	
-	wxBoxSizer* bSizer81;
-	bSizer81 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_btnOKSqlite = new wxButton( m_Sqlite, wxID_Sqlite_OK, wxT("OK"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer81->Add( m_btnOKSqlite, 0, wxALL, 5 );
-	
-	m_btnCancel1 = new wxButton( m_Sqlite, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_btnCancel1->SetDefault(); 
-	bSizer81->Add( m_btnCancel1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	bSizer27->Add( bSizer81, 0, wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT, 5 );
-	
 	m_Sqlite->SetSizer( bSizer27 );
 	m_Sqlite->Layout();
 	bSizer27->Fit( m_Sqlite );
 	m_notebook2->AddPage( m_Sqlite, wxT("Sqlite"), true );
+	m_MySqlPanel = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxFlexGridSizer* fgSizer3;
+	fgSizer3 = new wxFlexGridSizer( 3, 1, 0, 0 );
+	fgSizer3->AddGrowableCol( 0 );
+	fgSizer3->AddGrowableRow( 1 );
+	fgSizer3->SetFlexibleDirection( wxBOTH );
+	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	wxFlexGridSizer* fgSizer4;
+	fgSizer4 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer4->AddGrowableCol( 1 );
+	fgSizer4->SetFlexibleDirection( wxBOTH );
+	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText10 = new wxStaticText( m_MySqlPanel, wxID_ANY, wxT("Connection name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText10->Wrap( -1 );
+	fgSizer4->Add( m_staticText10, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_txName = new wxTextCtrl( m_MySqlPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_txName->SetToolTip( wxT("Name for this connection") );
+	
+	fgSizer4->Add( m_txName, 1, wxALL|wxEXPAND, 5 );
+	
+	m_staticText1 = new wxStaticText( m_MySqlPanel, wxID_ANY, wxT("Server:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1->Wrap( -1 );
+	m_staticText1->SetToolTip( wxT("Host name / IP of the server hosting the MySQL server") );
+	
+	fgSizer4->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_txServer = new wxTextCtrl( m_MySqlPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 150,-1 ), 0 );
+	m_txServer->SetToolTip( wxT("Host name / IP of the server hosting the MySQL server") );
+	
+	fgSizer4->Add( m_txServer, 1, wxALL|wxEXPAND, 5 );
+	
+	m_staticText2 = new wxStaticText( m_MySqlPanel, wxID_ANY, wxT("User name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2->Wrap( -1 );
+	fgSizer4->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_txUserName = new wxTextCtrl( m_MySqlPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 150,-1 ), 0 );
+	m_txUserName->SetToolTip( wxT("Database user name") );
+	
+	fgSizer4->Add( m_txUserName, 1, wxALL|wxEXPAND, 5 );
+	
+	m_staticText3 = new wxStaticText( m_MySqlPanel, wxID_ANY, wxT("Password:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	fgSizer4->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_txPassword = new wxTextCtrl( m_MySqlPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 150,-1 ), wxTE_PASSWORD );
+	m_txPassword->SetToolTip( wxT("Database password") );
+	
+	fgSizer4->Add( m_txPassword, 0, wxALL|wxEXPAND, 5 );
+	
+	fgSizer3->Add( fgSizer4, 1, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer8;
+	bSizer8 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticline6 = new wxStaticLine( m_MySqlPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer8->Add( m_staticline6, 0, wxEXPAND | wxALL, 5 );
+	
+	m_listBox2 = new wxListBox( m_MySqlPanel, wxID_ANY, wxDefaultPosition, wxSize( -1,100 ), 0, NULL, 0 ); 
+	bSizer8->Add( m_listBox2, 1, wxEXPAND|wxTOP|wxBOTTOM, 5 );
+	
+	fgSizer3->Add( bSizer8, 0, wxALIGN_CENTER_HORIZONTAL|wxALL|wxEXPAND, 5 );
+	
+	m_MySqlPanel->SetSizer( fgSizer3 );
+	m_MySqlPanel->Layout();
+	fgSizer3->Fit( m_MySqlPanel );
+	m_notebook2->AddPage( m_MySqlPanel, wxT("MySql"), false );
 	m_PostgrePanel = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer32;
 	fgSizer32 = new wxFlexGridSizer( 2, 1, 0, 0 );
+	fgSizer32->AddGrowableCol( 0 );
+	fgSizer32->AddGrowableRow( 2 );
 	fgSizer32->SetFlexibleDirection( wxBOTH );
 	fgSizer32->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	wxStaticBoxSizer* sbSizer32;
-	sbSizer32 = new wxStaticBoxSizer( new wxStaticBox( m_PostgrePanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
-	
 	wxFlexGridSizer* fgSizer42;
-	fgSizer42 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer42 = new wxFlexGridSizer( 1, 2, 0, 0 );
 	fgSizer42->AddGrowableCol( 1 );
 	fgSizer42->SetFlexibleDirection( wxBOTH );
 	fgSizer42->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -517,36 +494,13 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_txPgDatabase = new wxTextCtrl( m_PostgrePanel, wxID_ANY, wxT("postgres"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer42->Add( m_txPgDatabase, 1, wxALL|wxEXPAND, 5 );
 	
-	sbSizer32->Add( fgSizer42, 1, wxEXPAND, 5 );
+	fgSizer32->Add( fgSizer42, 1, wxEXPAND, 5 );
 	
-	fgSizer32->Add( sbSizer32, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
-	
-	wxStaticBoxSizer* sbSizer42;
-	sbSizer42 = new wxStaticBoxSizer( new wxStaticBox( m_PostgrePanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
-	
-	wxBoxSizer* bSizer82;
-	bSizer82 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_btnPgOK = new wxButton( m_PostgrePanel, wxID_PG_OK, wxT("OK"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer82->Add( m_btnPgOK, 1, wxALL, 5 );
-	
-	m_btnPgCancel = new wxButton( m_PostgrePanel, wxID_PG_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer82->Add( m_btnPgCancel, 1, wxALL, 5 );
-	
-	m_btnPgSave = new wxButton( m_PostgrePanel, wxID_PG_SAVE, wxT("Save"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_btnPgSave->SetToolTip( wxT("Invalide value in \"Name\".") );
-	
-	bSizer82->Add( m_btnPgSave, 1, wxALL, 5 );
-	
-	m_btnPgRemove = new wxButton( m_PostgrePanel, wxID_PG_REMOVE, wxT("Remove"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer82->Add( m_btnPgRemove, 1, wxALL, 5 );
-	
-	sbSizer42->Add( bSizer82, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
-	
-	fgSizer32->Add( sbSizer42, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	m_staticline7 = new wxStaticLine( m_PostgrePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	fgSizer32->Add( m_staticline7, 0, wxALL|wxEXPAND, 5 );
 	
 	m_listBoxPg = new wxListBox( m_PostgrePanel, wxID_PG_LIST, wxDefaultPosition, wxSize( -1,100 ), 0, NULL, 0 ); 
-	fgSizer32->Add( m_listBoxPg, 1, wxALL|wxEXPAND, 5 );
+	fgSizer32->Add( m_listBoxPg, 0, wxALL|wxEXPAND, 5 );
 	
 	m_PostgrePanel->SetSizer( fgSizer32 );
 	m_PostgrePanel->Layout();
@@ -555,6 +509,21 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	
 	bSizer4->Add( m_notebook2, 1, wxEXPAND | wxALL, 5 );
 	
+	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer4->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer28;
+	bSizer28 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_button35 = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button35->SetDefault(); 
+	bSizer28->Add( m_button35, 0, wxALL, 5 );
+	
+	m_button36 = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer28->Add( m_button36, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	bSizer4->Add( bSizer28, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+	
 	this->SetSizer( bSizer4 );
 	this->Layout();
 	bSizer4->Fit( this );
@@ -562,65 +531,35 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	this->Centre( wxBOTH );
 	
 	// Connect Events
-	m_txPassword->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( _DBSettingsDialog::OnMySqlPassKeyDown ), NULL, this );
-	m_btnOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnOkClick ), NULL, this );
-	m_btnOK->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnOKUI ), NULL, this );
-	m_btnCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnCancelClick ), NULL, this );
-	m_btnSave->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnSaveClick ), NULL, this );
-	m_btnSave->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnSaveUI ), NULL, this );
-	m_btnRemove->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnRemoveClick ), NULL, this );
-	m_btnRemove->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnRmoveUI ), NULL, this );
-	m_listBox2->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( _DBSettingsDialog::OnHistoryClick ), NULL, this );
-	m_listBox2->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( _DBSettingsDialog::OnHistoryDClick ), NULL, this );
-	m_listBox2->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnHistoruUI ), NULL, this );
 	m_listCtrlRecentFiles->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( _DBSettingsDialog::OnItemActivated ), NULL, this );
 	m_listCtrlRecentFiles->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( _DBSettingsDialog::OnItemSelected ), NULL, this );
 	m_listCtrlRecentFiles->Connect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( _DBSettingsDialog::OnItemKeyDown ), NULL, this );
-	m_btnOKSqlite->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnSqliteOkClick ), NULL, this );
-	m_btnCancel1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnCancelClick ), NULL, this );
+	m_txPassword->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( _DBSettingsDialog::OnMySqlPassKeyDown ), NULL, this );
+	m_listBox2->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( _DBSettingsDialog::OnHistoryClick ), NULL, this );
+	m_listBox2->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( _DBSettingsDialog::OnHistoryDClick ), NULL, this );
+	m_listBox2->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnHistoruUI ), NULL, this );
 	m_txPgPassword->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( _DBSettingsDialog::OnPgSqlKeyDown ), NULL, this );
-	m_btnPgOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnPgOkClick ), NULL, this );
-	m_btnPgOK->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnPgOKUI ), NULL, this );
-	m_btnPgCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnPgCancelClick ), NULL, this );
-	m_btnPgSave->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnPgSaveClick ), NULL, this );
-	m_btnPgSave->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnPgSaveUI ), NULL, this );
-	m_btnPgRemove->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnPgRemoveClick ), NULL, this );
-	m_btnPgRemove->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnPgRmoveUI ), NULL, this );
 	m_listBoxPg->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( _DBSettingsDialog::OnPgHistoryClick ), NULL, this );
 	m_listBoxPg->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( _DBSettingsDialog::OnPgHistoryDClick ), NULL, this );
 	m_listBoxPg->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnHistoruUI ), NULL, this );
+	m_button35->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnDlgOK ), NULL, this );
 }
 
 _DBSettingsDialog::~_DBSettingsDialog()
 {
 	// Disconnect Events
-	m_txPassword->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( _DBSettingsDialog::OnMySqlPassKeyDown ), NULL, this );
-	m_btnOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnOkClick ), NULL, this );
-	m_btnOK->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnOKUI ), NULL, this );
-	m_btnCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnCancelClick ), NULL, this );
-	m_btnSave->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnSaveClick ), NULL, this );
-	m_btnSave->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnSaveUI ), NULL, this );
-	m_btnRemove->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnRemoveClick ), NULL, this );
-	m_btnRemove->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnRmoveUI ), NULL, this );
-	m_listBox2->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( _DBSettingsDialog::OnHistoryClick ), NULL, this );
-	m_listBox2->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( _DBSettingsDialog::OnHistoryDClick ), NULL, this );
-	m_listBox2->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnHistoruUI ), NULL, this );
 	m_listCtrlRecentFiles->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( _DBSettingsDialog::OnItemActivated ), NULL, this );
 	m_listCtrlRecentFiles->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( _DBSettingsDialog::OnItemSelected ), NULL, this );
 	m_listCtrlRecentFiles->Disconnect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( _DBSettingsDialog::OnItemKeyDown ), NULL, this );
-	m_btnOKSqlite->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnSqliteOkClick ), NULL, this );
-	m_btnCancel1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnCancelClick ), NULL, this );
+	m_txPassword->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( _DBSettingsDialog::OnMySqlPassKeyDown ), NULL, this );
+	m_listBox2->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( _DBSettingsDialog::OnHistoryClick ), NULL, this );
+	m_listBox2->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( _DBSettingsDialog::OnHistoryDClick ), NULL, this );
+	m_listBox2->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnHistoruUI ), NULL, this );
 	m_txPgPassword->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( _DBSettingsDialog::OnPgSqlKeyDown ), NULL, this );
-	m_btnPgOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnPgOkClick ), NULL, this );
-	m_btnPgOK->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnPgOKUI ), NULL, this );
-	m_btnPgCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnPgCancelClick ), NULL, this );
-	m_btnPgSave->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnPgSaveClick ), NULL, this );
-	m_btnPgSave->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnPgSaveUI ), NULL, this );
-	m_btnPgRemove->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnPgRemoveClick ), NULL, this );
-	m_btnPgRemove->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnPgRmoveUI ), NULL, this );
 	m_listBoxPg->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( _DBSettingsDialog::OnPgHistoryClick ), NULL, this );
 	m_listBoxPg->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( _DBSettingsDialog::OnPgHistoryDClick ), NULL, this );
 	m_listBoxPg->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _DBSettingsDialog::OnHistoruUI ), NULL, this );
+	m_button35->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _DBSettingsDialog::OnDlgOK ), NULL, this );
 	
 }
 

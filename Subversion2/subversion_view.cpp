@@ -866,7 +866,12 @@ void SubversionView::OnItemActivated(wxTreeEvent& event)
 			paths.Add(/*m_choiceRootDir->GetStringSelection() + wxFileName::GetPathSeparator() + */data->GetFilepath());
 		}
 	}
-
+	
+	if(paths.IsEmpty()) {
+		event.Skip();
+		return;
+	}
+	
 	wxString loginString;
 	if(m_plugin->LoginIfNeeded(event, m_choiceRootDir->GetStringSelection(), loginString) == false) {
 		return;

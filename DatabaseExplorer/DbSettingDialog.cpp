@@ -38,33 +38,18 @@ DbSettingDialog::DbSettingDialog(DbViewerPanel *parent, wxWindow* pWindowParent)
 DbSettingDialog::~DbSettingDialog()
 {
 	WindowAttrManager::Save(this, wxT("DbSettingDialog"), NULL);
-	m_pHistory = new MysqlConnectionHistory();
-	if (m_pHistory) {
-		for (unsigned int i = 0 ; i < m_listBox2->GetCount(); i++) {
-			MysqlHistItem* item = wxDynamicCast(m_listBox2->GetClientData(i), MysqlHistItem);
-			if (item) {
-				m_pHistory->AddChild((MysqlHistItem* )item->Clone());
-			}
-		}
-		MysqlConnectionHistory::SaveToFile(m_pHistory);
-	}
-	m_pPgHistory = new PostgresConnectionHistory();
-	if (m_pPgHistory) {
-		for (unsigned int i = 0 ; i < m_listBoxPg->GetCount(); i++) {
-			PostgresHistItem* item = wxDynamicCast(m_listBoxPg->GetClientData(i), PostgresHistItem);
-			if (item) {
-				m_pPgHistory->AddChild((PostgresHistItem* )item->Clone());
-			}
-		}
-		PostgresConnectionHistory::SaveToFile(m_pPgHistory);
-	}
+	
+	// Save all the connections
+	DoSaveSqliteHistory();
+	DoSaveMySQLHistory();
+	DoSavePgSQLHistory();
 }
 
 void DbSettingDialog::OnCancelClick(wxCommandEvent& event)
 {
 	Destroy();
 }
-void DbSettingDialog::OnOkClick(wxCommandEvent& event)
+void DbSettingDialog::OnMySqlOkClick(wxCommandEvent& event)
 {
 #ifdef DBL_USE_MYSQL
 	try {
@@ -101,16 +86,7 @@ void DbSettingDialog::OnSqliteOkClick(wxCommandEvent& event)
 		//m_pParent->SetDbLayer(DbLayer);
 		wxString serverName = m_filePickerSqlite->GetPath();
 		m_pParent->AddDbConnection(new DbConnection(pAdapt, serverName));
-
-		// Save the recent opened files
-		DbExplorerSettings settings;
-		EditorConfigST::Get()->ReadObject(wxT("DbExplorerSettings"), &settings);
-
-		wxArrayString files = settings.GetRecentFiles();
-		files.Insert(serverName, 0);
-		settings.SetRecentFiles(files);
-		EditorConfigST::Get()->WriteObject(wxT("DbExplorerSettings"), &settings);
-
+		
 		m_pParent->SetServer(serverName);
 		Destroy();
 
@@ -127,99 +103,42 @@ void DbSettingDialog::OnSqliteOkClick(wxCommandEvent& event)
 #endif
 }
 
-void DbSettingDialog::OnHistoruUI(wxUpdateUIEvent& event)
-{
-	//event.Enable( m_listBox2->GetCount() > 0 );
-}
-
 void DbSettingDialog::OnHistoryClick(wxCommandEvent& event)
 {
-	MysqlHistItem* item = wxDynamicCast(event.GetClientData(), MysqlHistItem);
-	if (item) {
-		m_txName->SetValue(item->GetName());
-		m_txServer->SetValue(item->GetServer());
-		m_txUserName->SetValue(item->GetUserName());
-		m_txPassword->SetValue(item->GetPassword());
-	}
+	wxUnusedVar(event);
+	DoFindConnectionByName(DoLoadMySQLHistory(), m_listBox2->GetStringSelection());
 }
 
 void DbSettingDialog::OnHistoryDClick(wxCommandEvent& event)
 {
+	wxUnusedVar(event);
+	DoFindConnectionByName(DoLoadMySQLHistory(), m_listBox2->GetStringSelection());
+	wxCommandEvent dummy;
+	OnMySqlOkClick(dummy);
 }
 
-void DbSettingDialog::OnRemoveClick(wxCommandEvent& event)
-{
-	int i = m_listBox2->GetSelection();
-	if (i > -1) m_listBox2->Delete(i);
-}
-
-void DbSettingDialog::OnRmoveUI(wxUpdateUIEvent& event)
-{
-	event.Enable(m_listBox2->GetSelection() > -1);
-}
-
-void DbSettingDialog::OnSaveClick(wxCommandEvent& event)
-{
-	m_listBox2->Append(m_txName->GetValue(), new MysqlHistItem(m_txName->GetValue(),m_txServer->GetValue(),m_txUserName->GetValue(),m_txPassword->GetValue()));
-}
-
-void DbSettingDialog::OnSaveUI(wxUpdateUIEvent& event)
-{
-	event.Enable(!m_txName->IsEmpty());
-}
-void DbSettingDialog::OnOKUI(wxUpdateUIEvent& event)
-{
-	event.Enable(!m_txServer->IsEmpty() && !m_txUserName->IsEmpty());
-}
 void DbSettingDialog::LoadHistory()
 {
 	// recent sqlite files
-	DbExplorerSettings settings;
-	EditorConfigST::Get()->ReadObject(wxT("DbExplorerSettings"), &settings);
-	wxArrayString files = settings.GetRecentFiles();
+	wxArrayString files = DoLoadSqliteHistory();
 
 	m_listCtrlRecentFiles->DeleteAllItems();
 	for(size_t i=0; i<files.Count(); i++) {
 		int idx = AppendListCtrlRow(m_listCtrlRecentFiles);
 		SetColumnText(m_listCtrlRecentFiles, idx, 0, files.Item(i));
 	}
-
-	m_pHistory = MysqlConnectionHistory::LoadFromFile();
-	if (m_pHistory) {
-		m_listBox2->Clear();
-		SerializableList::compatibility_iterator node = m_pHistory->GetFirstChildNode();
-		while( node ) {
-			if( node->GetData()->IsKindOf( CLASSINFO(MysqlHistItem)) ) {
-				MysqlHistItem *item = (MysqlHistItem*) node->GetData();
-				m_listBox2->Append(item->GetName(),item->Clone());
-			}
-			node = node->GetNext();
-		}
+	
+	DbConnectionInfoVec mySqlConns = DoLoadMySQLHistory();
+	m_listBox2->Clear();
+	for(size_t i=0; i<mySqlConns.size(); i++) {
+		m_listBox2->Append(mySqlConns.at(i).GetConnectionName());
 	}
-	if (m_pHistory) delete m_pHistory;
-	m_pHistory = NULL;
-
-	m_pPgHistory = PostgresConnectionHistory::LoadFromFile();
-	if (m_pPgHistory) {
-		m_listBoxPg->Clear();
-		SerializableList::compatibility_iterator node = m_pPgHistory->GetFirstChildNode();
-		while( node ) {
-			if( node->GetData()->IsKindOf( CLASSINFO(PostgresHistItem)) ) {
-				PostgresHistItem *item = (PostgresHistItem*) node->GetData();
-				m_listBoxPg->Append(item->GetName(),item->Clone());
-			}
-			node = node->GetNext();
-		}
+	
+	DbConnectionInfoVec pgSqlConns = DoLoadPgSQLHistory();
+	m_listBoxPg->Clear();
+	for(size_t i=0; i<pgSqlConns.size(); i++) {
+		m_listBoxPg->Append(pgSqlConns.at(i).GetConnectionName());
 	}
-	if (m_pPgHistory) delete m_pPgHistory;
-	m_pPgHistory = NULL;
-
-
-}
-
-void DbSettingDialog::OnPgCancelClick(wxCommandEvent& event)
-{
-	Destroy();
 }
 
 void DbSettingDialog::OnPgOkClick(wxCommandEvent& event)
@@ -248,69 +167,28 @@ void DbSettingDialog::OnPgOkClick(wxCommandEvent& event)
 }
 
 
-void DbSettingDialog::OnPgRemoveClick(wxCommandEvent& event)
-{
-	int i = m_listBoxPg->GetSelection();
-	if (i > -1) m_listBoxPg->Delete(i);
-}
-
-void DbSettingDialog::OnPgSaveClick(wxCommandEvent& event)
-{
-	m_listBoxPg->Append(m_txPgName->GetValue(), new PostgresHistItem(m_txPgName->GetValue(),m_txPgServer->GetValue(),m_txPgUserName->GetValue(),m_txPgPassword->GetValue(),m_txPgDatabase->GetValue()));
-}
 void DbSettingDialog::OnPgHistoryClick(wxCommandEvent& event)
 {
-	PostgresHistItem* item = wxDynamicCast(event.GetClientData(), PostgresHistItem);
-	if (item) {
-		m_txPgName->SetValue(item->GetName());
-		m_txPgServer->SetValue(item->GetServer());
-		m_txPgUserName->SetValue(item->GetUserName());
-		m_txPgPassword->SetValue(item->GetPassword());
-		m_txPgDatabase->SetValue(item->GetDatabase());
-	}
+	wxUnusedVar(event);
+	DoFindConnectionByName(DoLoadPgSQLHistory(), m_listBoxPg->GetStringSelection());
 }
 
 void DbSettingDialog::OnPgHistoryDClick(wxCommandEvent& event)
 {
-}
-void DbSettingDialog::OnPgOKUI(wxUpdateUIEvent& event)
-{
-	event.Enable(!m_txPgServer->IsEmpty() && !m_txPgUserName->IsEmpty());
-}
-
-void DbSettingDialog::OnPgRmoveUI(wxUpdateUIEvent& event)
-{
-	event.Enable(m_listBoxPg->GetSelection() > -1);
-}
-
-void DbSettingDialog::OnPgSaveUI(wxUpdateUIEvent& event)
-{
-	event.Enable(!m_txPgName->IsEmpty());
-}
-void DbSettingDialog::OnMySqlPassKeyDown(wxKeyEvent& event)
-{
-	if (event.GetKeyCode() == WXK_RETURN) {
-		wxCommandEvent event2;
-		OnOkClick(event2);
-	} else event.Skip();
-
-}
-
-void DbSettingDialog::OnPgSqlKeyDown(wxKeyEvent& event)
-{
-	if (event.GetKeyCode() == WXK_RETURN) {
-		wxCommandEvent event2;
-		OnPgOkClick(event2);
-	} else event.Skip();
+	wxUnusedVar(event);
+	DoFindConnectionByName(DoLoadPgSQLHistory(), m_listBoxPg->GetStringSelection());
+	
+	wxCommandEvent dummy;
+	OnPgOkClick(dummy);
 }
 
 void DbSettingDialog::OnItemActivated(wxListEvent& event)
 {
 	wxCommandEvent dummy;
-	
+
 	long selecteditem = -1;
 	selecteditem = m_listCtrlRecentFiles->GetNextItem(selecteditem, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	
+
 	m_filePickerSqlite->SetPath( GetColumnText(m_listCtrlRecentFiles, (int)selecteditem, 0) );
 	OnSqliteOkClick(dummy);
 }
@@ -319,8 +197,11 @@ void DbSettingDialog::OnItemKeyDown(wxListEvent& event)
 {
 	if(event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_NUMPAD_DELETE) {
 		m_listCtrlRecentFiles->DeleteItem(event.GetItem());
+		DoSaveSqliteHistory();
+		
 	} else {
 		event.Skip();
+		
 	}
 }
 
@@ -328,6 +209,152 @@ void DbSettingDialog::OnItemSelected(wxListEvent& event)
 {
 	long selecteditem = -1;
 	selecteditem = m_listCtrlRecentFiles->GetNextItem(selecteditem, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	
+
 	m_filePickerSqlite->SetPath(GetColumnText(m_listCtrlRecentFiles, (int)selecteditem, 0));
+}
+
+void DbSettingDialog::OnDlgOK(wxCommandEvent& event)
+{
+	// Dispatch the OK click 
+	int selection = m_notebook2->GetSelection();
+	switch(selection) {
+	case 0: // Sqlite
+		OnSqliteOkClick(event);
+		break;
+	case 1: // MySQL
+		OnMySqlOkClick(event);
+		break;
+	case 2: // Pg
+		OnPgOkClick(event);
+		break;
+	default:
+		return;
+	}
+}
+
+void DbSettingDialog::DoSaveSqliteHistory()
+{
+	// Save the recent opened files
+	DbExplorerSettings settings;
+	EditorConfigST::Get()->ReadObject(wxT("DbExplorerSettings"), &settings);
+
+	wxArrayString files = settings.GetRecentFiles();
+	
+	wxString filename = m_filePickerSqlite->GetPath();
+	filename.Trim().Trim(false);
+	if(filename.IsEmpty())
+		return;
+		
+	files.Insert(filename, 0);
+	settings.SetRecentFiles(files);
+	EditorConfigST::Get()->WriteObject(wxT("DbExplorerSettings"), &settings);
+}
+
+wxArrayString DbSettingDialog::DoLoadSqliteHistory()
+{
+	DbExplorerSettings settings;
+	EditorConfigST::Get()->ReadObject(wxT("DbExplorerSettings"), &settings);
+	return settings.GetRecentFiles();
+}
+
+DbConnectionInfoVec DbSettingDialog::DoLoadMySQLHistory()
+{
+	DbExplorerSettings settings;
+	EditorConfigST::Get()->ReadObject(wxT("DbExplorerSettings"), &settings);
+	return settings.GetMySQLConnections();
+}
+
+DbConnectionInfoVec DbSettingDialog::DoLoadPgSQLHistory()
+{
+	DbExplorerSettings settings;
+	EditorConfigST::Get()->ReadObject(wxT("DbExplorerSettings"), &settings);
+	return settings.GetPgSQLConnections();
+}
+
+void DbSettingDialog::DoSaveMySQLHistory()
+{
+	DbExplorerSettings settings;
+	EditorConfigST::Get()->ReadObject(wxT("DbExplorerSettings"), &settings);
+	DbConnectionInfoVec mysql = settings.GetMySQLConnections();
+	
+	DbConnectionInfo conn;
+	conn.SetConnectionType (DbConnectionInfo::DbConnTypeMySQL);
+	conn.SetDefaultDatabase(wxT(""));
+	conn.SetConnectionName (m_txName->GetValue());
+	conn.SetPassword       (m_txPassword->GetValue());
+	conn.SetServer         (m_txServer->GetValue());
+	conn.SetUsername       (m_txUserName->GetValue());
+	
+	if(!conn.IsValid())
+		return;
+		
+	// remove any connection with this name
+	DbConnectionInfoVec::iterator iter = mysql.begin();
+	for(; iter != mysql.end(); iter++) {
+		if(iter->GetConnectionName() == conn.GetConnectionName()) {
+			mysql.erase(iter);
+			break;
+		}
+	}
+	
+	mysql.insert(mysql.begin(), conn);
+	settings.SetMySQLConnections(mysql);
+	EditorConfigST::Get()->WriteObject(wxT("DbExplorerSettings"), &settings);
+}
+
+void DbSettingDialog::DoSavePgSQLHistory()
+{
+	DbExplorerSettings settings;
+	EditorConfigST::Get()->ReadObject(wxT("DbExplorerSettings"), &settings);
+	DbConnectionInfoVec pgconns = settings.GetPgSQLConnections();
+	
+	DbConnectionInfo conn;
+	conn.SetConnectionType (DbConnectionInfo::DbConnTypePgSQL);
+	conn.SetConnectionName (m_txPgName->GetValue());
+	conn.SetDefaultDatabase(m_txPgDatabase->GetValue());
+	conn.SetPassword       (m_txPgPassword->GetValue());
+	conn.SetServer         (m_txPgServer->GetValue());
+	conn.SetUsername       (m_txPgUserName->GetValue());
+	
+	if(!conn.IsValid())
+		return;
+	
+	// remove any connection with this name
+	DbConnectionInfoVec::iterator iter = pgconns.begin();
+	for(; iter != pgconns.end(); iter++) {
+		if(iter->GetConnectionName() == conn.GetConnectionName()) {
+			pgconns.erase(iter);
+			break;
+		}
+	}
+	
+	pgconns.insert(pgconns.begin(), conn);
+	settings.SetPgSQLConnections(pgconns);
+	EditorConfigST::Get()->WriteObject(wxT("DbExplorerSettings"), &settings);
+}
+
+void DbSettingDialog::DoFindConnectionByName(const DbConnectionInfoVec& conns, const wxString& name)
+{
+	for(size_t i=0; i<conns.size(); i++) {
+		if(conns.at(i).GetConnectionName() == name) {
+			// we found the selected connection
+			if(conns.at(i).GetConnectionType() == DbConnectionInfo::DbConnTypeMySQL) {
+				// populate the MySQL fields
+				m_txName->SetValue(conns.at(i).GetConnectionName());
+				m_txServer->SetValue(conns.at(i).GetServer());
+				m_txUserName->SetValue(conns.at(i).GetUsername());
+				m_txPassword->SetValue(conns.at(i).GetPassword());
+				
+			} else {
+				// populate the PgSQL fields
+				m_txPgName->SetValue(conns.at(i).GetConnectionName());
+				m_txPgServer->SetValue(conns.at(i).GetServer());
+				m_txPgUserName->SetValue(conns.at(i).GetUsername());
+				m_txPgPassword->SetValue(conns.at(i).GetPassword());
+				m_txPgDatabase->SetValue(conns.at(i).GetDefaultDatabase());
+				
+			}
+			return;
+		}
+	}
 }

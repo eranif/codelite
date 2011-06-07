@@ -16,12 +16,10 @@
     <File Name="SqlCommandPanel.cpp"/>
     <File Name="PostgreSqlType.cpp"/>
     <File Name="PostgreSqlDbAdapter.cpp"/>
-    <File Name="PostgresConnectionHistory.cpp"/>
     <File Name="OneArrow.cpp"/>
     <File Name="NArrow.cpp"/>
     <File Name="MySqlType.cpp"/>
     <File Name="MySqlDbAdapter.cpp"/>
-    <File Name="MysqlConnectionHistory.cpp"/>
     <File Name="LogDialog.cpp"/>
     <File Name="IDbItem.cpp"/>
     <File Name="GUI.cpp"/>
@@ -61,12 +59,10 @@
     <File Name="SqlCommandPanel.h"/>
     <File Name="PostgreSqlType.h"/>
     <File Name="PostgreSqlDbAdapter.h"/>
-    <File Name="PostgresConnectionHistory.h"/>
     <File Name="OneArrow.h"/>
     <File Name="NArrow.h"/>
     <File Name="MySqlType.h"/>
     <File Name="MySqlDbAdapter.h"/>
-    <File Name="MysqlConnectionHistory.h"/>
     <File Name="LogDialog.h"/>
     <File Name="Ids.h"/>
     <File Name="IDbType.h"/>

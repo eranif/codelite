@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun  6 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -32,13 +32,13 @@
 #include <wx/splitter.h>
 #include <wx/dialog.h>
 #include <wx/treectrl.h>
-#include <wx/textctrl.h>
-#include <wx/statbox.h>
-#include <wx/listbox.h>
 #include <wx/filepicker.h>
 #include <wx/listctrl.h>
-#include <wx/notebook.h>
+#include <wx/textctrl.h>
 #include <wx/statline.h>
+#include <wx/listbox.h>
+#include <wx/notebook.h>
+#include <wx/statbox.h>
 #include <wx/combobox.h>
 #include <wx/checkbox.h>
 #include <wx/radiobox.h>
@@ -51,20 +51,15 @@
 #define wxID_CLOSE_CONNECTION 1002
 #define wxID_TOOL_REFRESH 1003
 #define wxID_TOOL_ERD 1004
-#define wxID_Sqlite_OK 1005
-#define wxID_PG_OK 1006
-#define wxID_PG_CANCEL 1007
-#define wxID_PG_SAVE 1008
-#define wxID_PG_REMOVE 1009
-#define wxID_PG_LIST 1010
-#define wxID_NEW_COL 1011
-#define wxID_NEW_CONSTRAIN 1012
-#define wxID_DEL 1013
-#define wxID_PAGE_TYPE 1014
-#define wxID_TX_SIZE 1015
-#define wxID_PAGE_CONSTRAINT 1016
-#define wxID_ON_UPDATE 1017
-#define wxID_GENERATE 1018
+#define wxID_PG_LIST 1005
+#define wxID_NEW_COL 1006
+#define wxID_NEW_CONSTRAIN 1007
+#define wxID_DEL 1008
+#define wxID_PAGE_TYPE 1009
+#define wxID_TX_SIZE 1010
+#define wxID_PAGE_CONSTRAINT 1011
+#define wxID_ON_UPDATE 1012
+#define wxID_GENERATE 1013
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _MainFrame
@@ -226,6 +221,10 @@ class _DBSettingsDialog : public wxDialog
 	
 	protected:
 		wxNotebook* m_notebook2;
+		wxPanel* m_Sqlite;
+		wxStaticText* m_staticText11;
+		wxFilePickerCtrl* m_filePickerSqlite;
+		wxListCtrl* m_listCtrlRecentFiles;
 		wxPanel* m_MySqlPanel;
 		wxStaticText* m_staticText10;
 		wxTextCtrl* m_txName;
@@ -235,17 +234,8 @@ class _DBSettingsDialog : public wxDialog
 		wxTextCtrl* m_txUserName;
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_txPassword;
-		wxButton* m_btnOK;
-		wxButton* m_btnCancel;
-		wxButton* m_btnSave;
-		wxButton* m_btnRemove;
+		wxStaticLine* m_staticline6;
 		wxListBox* m_listBox2;
-		wxPanel* m_Sqlite;
-		wxStaticText* m_staticText11;
-		wxFilePickerCtrl* m_filePickerSqlite;
-		wxListCtrl* m_listCtrlRecentFiles;
-		wxButton* m_btnOKSqlite;
-		wxButton* m_btnCancel1;
 		wxPanel* m_PostgrePanel;
 		wxStaticText* m_staticText101;
 		wxTextCtrl* m_txPgName;
@@ -257,38 +247,24 @@ class _DBSettingsDialog : public wxDialog
 		wxTextCtrl* m_txPgPassword;
 		wxStaticText* m_staticText24;
 		wxTextCtrl* m_txPgDatabase;
-		wxButton* m_btnPgOK;
-		wxButton* m_btnPgCancel;
-		wxButton* m_btnPgSave;
-		wxButton* m_btnPgRemove;
+		wxStaticLine* m_staticline7;
 		wxListBox* m_listBoxPg;
+		wxStaticLine* m_staticline5;
+		wxButton* m_button35;
+		wxButton* m_button36;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnMySqlPassKeyDown( wxKeyEvent& event ) { event.Skip(); }
-		virtual void OnOkClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnOKUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnCancelClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnSaveClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnSaveUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnRemoveClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnRmoveUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnHistoryClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnHistoryDClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnHistoruUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnItemActivated( wxListEvent& event ) { event.Skip(); }
 		virtual void OnItemSelected( wxListEvent& event ) { event.Skip(); }
 		virtual void OnItemKeyDown( wxListEvent& event ) { event.Skip(); }
-		virtual void OnSqliteOkClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnMySqlPassKeyDown( wxKeyEvent& event ) { event.Skip(); }
+		virtual void OnHistoryClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnHistoryDClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnHistoruUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnPgSqlKeyDown( wxKeyEvent& event ) { event.Skip(); }
-		virtual void OnPgOkClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnPgOKUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnPgCancelClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnPgSaveClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnPgSaveUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnPgRemoveClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnPgRmoveUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnPgHistoryClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnPgHistoryDClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDlgOK( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:

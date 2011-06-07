@@ -279,7 +279,13 @@ wxString Cscope::DoCreateListFile(bool force)
 		}
 
 		//iterate over the files and convert them to be relative path
+		// Also remove any .exe files (one of which managed to crash cscope),
+		// and files without an ext, which may be binaries and are unlikely to be .c or .h files in disguise; and .xpm and .png too
 		for (size_t i=0; i< tmpfiles.size(); i++ ) {
+			wxString ext = tmpfiles.at(i).GetExt();
+			if (ext == wxT("exe") || ext == wxT("") || ext == wxT("xpm") || ext == wxT("png")) {
+				continue;
+			}
 			tmpfiles.at(i).MakeRelativeTo(wspPath);
 			files.push_back(tmpfiles.at(i));
 		}
@@ -316,9 +322,6 @@ void Cscope::DoCscopeCommand(const wxString &command, const wxString &findWhat, 
 		wxMessageBox( msg, _("CScope not found"), wxOK|wxCENTER|wxICON_WARNING );
 		return;
 	}
-
-	//try to locate the cscope database
-	wxArrayString output;
 
 	//set the focus to the cscope tab
 	wxBookCtrlBase *book = m_mgr->GetOutputPaneNotebook();

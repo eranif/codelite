@@ -153,12 +153,17 @@ void SQLCommandPanel::ExecuteSql()
 				Layout();
 				
 			} catch (DatabaseLayerException& e) {
-				wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
-				wxMessageDialog dlg(this,errorMessage,wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
-				dlg.ShowModal();
+				// for some reason an exception is thrown even if the error code is 0...
+				if(e.GetErrorCode() != 0) {
+					wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
+					wxMessageDialog dlg(this,errorMessage,wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+					dlg.ShowModal();
+				}
+				
 			} catch( ... ) {
 				wxMessageDialog dlg(this,wxT("Unknown error."),wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
 				dlg.ShowModal();
+				
 			}
 		}
 

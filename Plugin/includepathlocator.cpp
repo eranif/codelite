@@ -92,6 +92,11 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 	// Run: qmake -query QT_INSTALL_PREFIX
 	wxString cmd;
 	cmd << qmake << wxT(" -query QT_INSTALL_PREFIX");
+	
+#ifdef __WXGTK__
+	cmd << wxT(" 2>/dev/null");
+#endif
+
 	out = ExecCommand(cmd);
 
 	if (out.IsEmpty() == false ) {
@@ -196,7 +201,7 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 #else
 	// run wx-config and parse the output
 	out.Clear();
-	out = ExecCommand(wxT("wx-config --cxxflags"));
+	out = ExecCommand(wxT("wx-config --cxxflags 2>/dev/null"));
 	if (out.IsEmpty() == false) {
 		wxString line ( out.Item(0) );
 		int where = line.Find(wxT(" -I"));

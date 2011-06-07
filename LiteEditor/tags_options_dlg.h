@@ -61,6 +61,7 @@ public:
 
 class CCIncludeFilesPage;
 class CCAdvancePage;
+class CCClangPage;
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class TagsOptionsDlg
@@ -71,6 +72,7 @@ class TagsOptionsDlg : public TagsOptionsBaseDlg
 	size_t              m_colour_flags;
 	CCIncludeFilesPage *m_includeFilesPage;
 	CCAdvancePage *     m_advancedPage;
+	CCClangPage*        m_clangPage;
 	
 protected:
 	void SetFlag(CodeCompletionOpts flag, bool set);

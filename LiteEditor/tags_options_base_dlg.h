@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Jun  6 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -11,11 +11,11 @@
 #include <wx/intl.h>
 
 #include <wx/treebook.h>
+#include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/string.h>
 #include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
@@ -33,6 +33,7 @@
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/notebook.h>
+#include <wx/filepicker.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -56,7 +57,7 @@ class TagsOptionsBaseDlg : public wxDialog
 	
 	public:
 		
-		TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Tags Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Tags Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~TagsOptionsBaseDlg();
 	
 };
@@ -79,7 +80,7 @@ class CCDisplayAndBehaviorBase : public wxPanel
 	
 	public:
 		
-		CCDisplayAndBehaviorBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		CCDisplayAndBehaviorBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~CCDisplayAndBehaviorBase();
 	
 };
@@ -116,7 +117,7 @@ class CCColouringBasePage : public wxPanel
 	
 	public:
 		
-		CCColouringBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		CCColouringBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~CCColouringBasePage();
 	
 };
@@ -141,7 +142,7 @@ class CCTriggering : public wxPanel
 	
 	public:
 		
-		CCTriggering( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		CCTriggering( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~CCTriggering();
 	
 };
@@ -184,7 +185,7 @@ class CCIncludeFilesBasePage : public wxPanel
 	
 	public:
 		
-		CCIncludeFilesBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		CCIncludeFilesBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~CCIncludeFilesBasePage();
 	
 };
@@ -219,8 +220,32 @@ class CCAdvancedBasePage : public wxPanel
 	
 	public:
 		
-		CCAdvancedBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		CCAdvancedBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
 		~CCAdvancedBasePage();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class CCClangBasePage
+///////////////////////////////////////////////////////////////////////////////
+class CCClangBasePage : public wxPanel 
+{
+	private:
+	
+	protected:
+		wxCheckBox* m_checkBoxEnableClangCC;
+		wxStaticText* m_staticText10;
+		wxFilePickerCtrl* m_filePickerClang;
+		wxCheckBox* m_checkBoxLogClangOutput;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnClangCCEnabledUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		CCClangBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
+		~CCClangBasePage();
 	
 };
 

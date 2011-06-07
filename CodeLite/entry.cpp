@@ -33,6 +33,7 @@
 #include "code_completion_api.h"
 
 TagEntry::TagEntry(const tagEntry& entry)
+: m_isClangTag(false)
 {
 	Create(entry);
 }
@@ -48,6 +49,7 @@ TagEntry::TagEntry()
 		, m_id(wxNOT_FOUND)
 		, m_scope(wxEmptyString)
 		, m_differOnByLineNumber(false)
+		, m_isClangTag(false)
 {
 }
 
@@ -72,6 +74,7 @@ TagEntry& TagEntry::operator=(const TagEntry& rhs)
 	m_path = rhs.m_path.c_str();
 	m_hti = rhs.m_hti;
 	m_scope = rhs.m_scope.c_str();
+	m_isClangTag = rhs.m_isClangTag;
 	m_differOnByLineNumber = rhs.m_differOnByLineNumber;
 
 	// loop over the map and copy item by item
@@ -128,6 +131,7 @@ void TagEntry::Create(const wxString &fileName,
                       const wxString &kind,
                       std::map<wxString, wxString>& extFields)
 {
+	m_isClangTag = false;
 	SetName( name );
 	SetLine( lineNumber );
 	SetKind( kind.IsEmpty() ? wxT("<unknown>") : kind );
@@ -196,6 +200,7 @@ void TagEntry::Create(const wxString &fileName,
 
 void TagEntry::Create(const tagEntry& entry)
 {
+	m_isClangTag = false;
 	// Get other information from the string data and store it into map
 	for (int i = 0;  i < entry.fields.count;  ++i) {
 		wxString key = _U(entry.fields.list[i].key);

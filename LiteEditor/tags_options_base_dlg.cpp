@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Jun  6 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -528,5 +528,49 @@ CCAdvancedBasePage::~CCAdvancedBasePage()
 	// Disconnect Events
 	m_buttonParse->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCAdvancedBasePage::OnParse ), NULL, this );
 	m_buttonParse->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCAdvancedBasePage::OnFileSelectedUI ), NULL, this );
+	
+}
+
+CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
+{
+	wxBoxSizer* bSizer18;
+	bSizer18 = new wxBoxSizer( wxVERTICAL );
+	
+	m_checkBoxEnableClangCC = new wxCheckBox( this, wxID_ANY, _("Enable clang code completion"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer18->Add( m_checkBoxEnableClangCC, 0, wxALL|wxEXPAND, 5 );
+	
+	wxFlexGridSizer* fgSizer4;
+	fgSizer4 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer4->AddGrowableCol( 1 );
+	fgSizer4->SetFlexibleDirection( wxBOTH );
+	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText10 = new wxStaticText( this, wxID_ANY, _("clang path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText10->Wrap( -1 );
+	fgSizer4->Add( m_staticText10, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_filePickerClang = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL );
+	fgSizer4->Add( m_filePickerClang, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer18->Add( fgSizer4, 0, wxEXPAND|wxALL, 5 );
+	
+	m_checkBoxLogClangOutput = new wxCheckBox( this, wxID_ANY, _("Log clang output to 'Trace' tab"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer18->Add( m_checkBoxLogClangOutput, 0, wxALL|wxEXPAND, 5 );
+	
+	this->SetSizer( bSizer18 );
+	this->Layout();
+	
+	// Connect Events
+	m_staticText10->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_filePickerClang->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_checkBoxLogClangOutput->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
+}
+
+CCClangBasePage::~CCClangBasePage()
+{
+	// Disconnect Events
+	m_staticText10->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_filePickerClang->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_checkBoxLogClangOutput->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	
 }

@@ -571,7 +571,7 @@ void CodeDesigner::StartServer()
 		delete m_Server;
 		m_Server = NULL;
 		
-		wxMessageBox( _("Unable to create CodeDesigner plugin's IPC server. Please, check communication port value"), _("CodeLite"), wxOK | wxICON_WARNING );
+		//wxMessageBox( _("Unable to create CodeDesigner plugin's IPC server. Please, check communication port value"), _("CodeLite"), wxOK | wxICON_WARNING );
 	}
 }
 

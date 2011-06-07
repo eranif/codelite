@@ -27,6 +27,7 @@ class ClangCodeCompletion : public wxEvtHandler
 	std::map<wxString,wxString> m_backticks;
 	int                         m_activationPos;
 	IEditor*                    m_activationEditor;
+	bool                        m_loggingEnabled;
 	
 public:
 	static ClangCodeCompletion* Instance();

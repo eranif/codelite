@@ -227,6 +227,8 @@
       <File Name="cc_include_files.h"/>
       <File Name="cc_advance_page.cpp"/>
       <File Name="cc_advance_page.h"/>
+      <File Name="cc_clang_page.h"/>
+      <File Name="cc_clang_page.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Compiler">
       <File Name="advanced_settings.h"/>
@@ -896,6 +898,7 @@ resources.cpp: resources.xrc
       <CustomBuild Enabled="yes">
         <Target Name="configure --enable-debug">./configure --enable-debug</Target>
         <Target Name="configure">./configure</Target>
+        <Target Name="./configure --enable-debug --prefix=/home/eran/root --enable-mysql">./configure --enable-debug --prefix=/home/eran/root --enable-mysql</Target>
         <RebuildCommand>make clean &amp;&amp; make -j2</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>
         <BuildCommand>make -j 2</BuildCommand>

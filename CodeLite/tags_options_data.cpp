@@ -138,6 +138,8 @@ TagsOptionsData::TagsOptionsData()
 #else
 		, m_macrosFiles   (wxT("sys/cdefs.h bits/c++config.h"))
 #endif
+		, m_clangOptions(0)
+		, m_clangBinary(wxT(""))
 {
 	SetVersion(wxT("3.0.2"));
 	// Initialize defaults
@@ -256,6 +258,8 @@ void TagsOptionsData::Serialize(Archive &arch)
 	arch.Write     (wxT("m_parserExcludePaths"),m_parserExcludePaths);
 	arch.Write     (wxT("m_maxItemToColour"),   m_maxItemToColour);
 	arch.Write     (wxT("m_macrosFiles"),       m_macrosFiles);
+	arch.Write     (wxT("m_clangOptions"),      m_clangOptions);
+	arch.Write     (wxT("m_clangBinary"),       m_clangBinary);
 }
 
 void TagsOptionsData::DeSerialize(Archive &arch)
@@ -272,6 +276,8 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	arch.Read     (wxT("m_parserExcludePaths"),m_parserExcludePaths);
 	arch.Read     (wxT("m_maxItemToColour"),   m_maxItemToColour);
 	arch.Read     (wxT("m_macrosFiles"),       m_macrosFiles);
+	arch.Read     (wxT("m_clangOptions"),      m_clangOptions);
+	arch.Read     (wxT("m_clangBinary"),       m_clangBinary);
 
 	// since of build 3749, we *always* set CC_ACCURATE_SCOPE_RESOLVING to true
 	DoUpdateTokensWxMapReversed();

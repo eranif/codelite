@@ -70,6 +70,11 @@ enum CodeCompletionColourOpts {
 	CC_COLOUR_ENUM | CC_COLOUR_PROTOTYPE
 };
 
+enum CodeCompletionClangOptions {
+	CC_CLANG_ENABLED            = 0x00000001,
+	CC_CLANG_LOG_OUTPUT         = 0x00000002
+};
+
 class WXDLLIMPEXP_CL TagsOptionsData : public SerializedObject
 {
 	size_t                       m_ccFlags;
@@ -86,6 +91,8 @@ class WXDLLIMPEXP_CL TagsOptionsData : public SerializedObject
 	std::map<wxString, wxString> m_tokensWxMap;
 	std::map<wxString, wxString> m_tokensWxMapReversed;
 	wxString                     m_macrosFiles;
+	size_t                       m_clangOptions;
+	wxString                     m_clangBinary;
 
 protected:
 	void DoUpdateTokensWxMap();
@@ -96,7 +103,20 @@ public:
 	virtual ~TagsOptionsData();
 
 	//setters/getters
-	void SetFlags(const size_t &flags) {
+
+	void SetClangOptions(size_t clangOptions) {
+		this->m_clangOptions = clangOptions;
+	}
+	size_t GetClangOptions() const {
+		return m_clangOptions;
+	}
+	void SetClangBinary(const wxString& clangBinary) {
+		this->m_clangBinary = clangBinary;
+	}
+	const wxString& GetClangBinary() const {
+		return m_clangBinary;
+	}
+	void SetFlags(size_t flags) {
 		m_ccFlags = flags;
 	}
 

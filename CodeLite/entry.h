@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef CODELITE_ENTRY_H
+#ifndef CODELITE_ENTRY_H
 #define CODELITE_ENTRY_H
 
 #include <wx/treectrl.h>
@@ -63,6 +63,7 @@ class WXDLLIMPEXP_CL TagEntry
 	long                         m_id;
 	wxString                     m_scope;
 	bool                         m_differOnByLineNumber;
+	bool                         m_isClangTag;
 
 public:
 	/**
@@ -118,17 +119,19 @@ public:
 	 * \param project Project name
 	 */
 	void Create(const wxString &fileName,
-				const wxString &name,
-				int lineNumber,
-				const wxString &pattern,
-				const wxString &kind,
-				std::map<wxString, wxString>& extFields);
+	            const wxString &name,
+	            int lineNumber,
+	            const wxString &pattern,
+	            const wxString &kind,
+	            std::map<wxString, wxString>& extFields);
 
 	/**
 	 * Test if this entry has been initialised.
 	 * \return true if this tag entry has been initialised
 	 */
-	const bool IsOk() const { return GetKind() != _T("<unknown>"); }
+	const bool IsOk() const {
+		return GetKind() != _T("<unknown>");
+	}
 
 	/**
 	 * Test of this tag is a container (class, union, struct or namespace
@@ -160,55 +163,109 @@ public:
 	//------------------------------------------
 	// Operations
 	//------------------------------------------
-	bool GetDifferOnByLineNumber() const {return m_differOnByLineNumber;}
+	bool GetDifferOnByLineNumber() const {
+		return m_differOnByLineNumber;
+	}
 
-	int GetId() const { return m_id; }
-	void SetId(int id) { m_id = id;}
+	int GetId() const {
+		return m_id;
+	}
+	void SetId(int id) {
+		m_id = id;
+	}
 
-	const wxString& GetName() const { return m_name;}
-	void SetName(const wxString& name) { m_name = name; }
+	const wxString& GetName() const {
+		return m_name;
+	}
+	void SetName(const wxString& name) {
+		m_name = name;
+	}
 
-	const wxString& GetPath() const { return m_path;}
-	void SetPath(const wxString& path) { m_path = path; }
+	const wxString& GetPath() const {
+		return m_path;
+	}
+	void SetPath(const wxString& path) {
+		m_path = path;
+	}
 
-	const wxString& GetFile() const { return m_file;}
-	void SetFile(const wxString& file) { m_file = file;}
+	const wxString& GetFile() const {
+		return m_file;
+	}
+	void SetFile(const wxString& file) {
+		m_file = file;
+	}
 
-	int GetLine() const { return m_lineNumber;}
-	void SetLine(int line) { m_lineNumber = line; }
+	int GetLine() const {
+		return m_lineNumber;
+	}
+	void SetLine(int line) {
+		m_lineNumber = line;
+	}
 
 	wxString GetPattern() const;
-	void SetPattern(const wxString& pattern) { m_pattern = pattern; }
+	void SetPattern(const wxString& pattern) {
+		m_pattern = pattern;
+	}
 
 	wxString GetKind() const;
-	void SetKind(const wxString& kind) { m_kind = kind; }
+	void SetKind(const wxString& kind) {
+		m_kind = kind;
+	}
 
-	const wxString& GetParent() const { return m_parent; }
-	void SetParent(const wxString& parent) { m_parent = parent; }
+	const wxString& GetParent() const {
+		return m_parent;
+	}
+	void SetParent(const wxString& parent) {
+		m_parent = parent;
+	}
 
-	wxTreeItemId& GetTreeItemId() { return m_hti; }
-	void SetTreeItemId(wxTreeItemId& hti) { m_hti = hti; }
+	wxTreeItemId& GetTreeItemId() {
+		return m_hti;
+	}
+	void SetTreeItemId(wxTreeItemId& hti) {
+		m_hti = hti;
+	}
 
-	wxString GetAccess() const { return GetExtField(_T("access"));}
-	void SetAccess(const wxString &access){m_extFields[wxT("access")] = access;}
+	wxString GetAccess() const {
+		return GetExtField(_T("access"));
+	}
+	void SetAccess(const wxString &access) {
+		m_extFields[wxT("access")] = access;
+	}
 
-	wxString GetSignature() const { return GetExtField(_T("signature")); }
-	void SetSignature(const wxString &sig) { m_extFields[wxT("signature")] = sig; }
+	wxString GetSignature() const {
+		return GetExtField(_T("signature"));
+	}
+	void SetSignature(const wxString &sig) {
+		m_extFields[wxT("signature")] = sig;
+	}
 
-	void SetInherits ( const wxString &inherits ) { m_extFields[_T("inherits")] = inherits; }
-	void SetTyperef  ( const wxString &typeref  ) { m_extFields[_T("typeref")]   = typeref; }
+	void SetInherits ( const wxString &inherits ) {
+		m_extFields[_T("inherits")] = inherits;
+	}
+	void SetTyperef  ( const wxString &typeref  ) {
+		m_extFields[_T("typeref")]   = typeref;
+	}
 
 	wxString GetInheritsAsString                  () const;
 	wxArrayString GetInheritsAsArrayNoTemplates   () const;
 	wxArrayString GetInheritsAsArrayWithTemplates () const;
 
-	wxString GetTyperef() const { return GetExtField(_T("typeref")); }
+	wxString GetTyperef() const {
+		return GetExtField(_T("typeref"));
+	}
 
-	void     SetReturnValue(const wxString &retVal  ) { m_extFields[_T("returns")]   = retVal; }
+	void     SetReturnValue(const wxString &retVal  ) {
+		m_extFields[_T("returns")]   = retVal;
+	}
 	wxString GetReturnValue() const;
 
-	const wxString &GetScope() const {return m_scope;}
-	void SetScope(const wxString &scope){m_scope = scope;}
+	const wxString &GetScope() const {
+		return m_scope;
+	}
+	void SetScope(const wxString &scope) {
+		m_scope = scope;
+	}
 
 	/**
 	 * \return Scope name of the tag.
@@ -250,14 +307,26 @@ public:
 	//------------------------------------------
 	// Extenstion fields
 	//------------------------------------------
-	wxString GetExtField(const wxString& extField) const
-	{
+	wxString GetExtField(const wxString& extField) const {
 		std::map<wxString, wxString>::const_iterator iter = m_extFields.find(extField);
 		if(iter == m_extFields.end())
 			return wxEmptyString;
 		return iter->second;
 	}
 
+	/**
+	 * @brief mark this tag has clang generated tag
+	 */
+	void SetIsClangTag(bool isClangTag) {
+		this->m_isClangTag = isClangTag;
+	}
+	
+	/**
+	 * @brief return true if this tag was generated by clang
+	 */
+	bool GetIsClangTag() const {
+		return m_isClangTag;
+	}
 	//------------------------------------------
 	// Misc
 	//------------------------------------------

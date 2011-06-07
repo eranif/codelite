@@ -45,6 +45,7 @@
 #include "cc_colourise_page.h"
 #include "cc_triggering_page.h"
 #include "cc_include_files.h"
+#include "cc_clang_page.h"
 #include "cc_advance_page.h"
 #include <wx/tokenzr.h>
 #include "pp_include.h"
@@ -77,6 +78,10 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data)
 	
 	m_advancedPage = new CCAdvancePage(m_treebook, data, this);
 	m_treebook->AddPage(m_advancedPage, _("Advanced"), false);
+	
+	m_clangPage = new CCClangPage(m_treebook, data);
+	m_treebook->AddPage(m_clangPage, _("clang"), false);
+	
 	MSWSetNativeTheme(m_treebook->GetTreeCtrl());
 	
 	Centre();

@@ -1,4 +1,8 @@
 #include "clang_code_completion.h"
+#include "pluginmanager.h"
+#include "ctags_manager.h"
+#include "tags_options_data.h"
+#include "includepathlocator.h"
 #include "environmentconfig.h"
 #include "processreaderthread.h"
 #include "globals.h"
@@ -14,6 +18,12 @@
 #include <wx/arrstr.h>
 #include "procutils.h"
 
+#define CLANG_LOG_LINE(str) {\
+	if(m_loggingEnabled) { \
+		wxLogMessage(wxT("CLANG: %s"), str.c_str());\
+	}\
+}
+	
 static wxStopWatch gStopWatch;
 
 BEGIN_EVENT_TABLE(ClangCodeCompletion, wxEvtHandler)
@@ -28,6 +38,7 @@ ClangCodeCompletion::ClangCodeCompletion()
 	, m_process         (NULL)
 	, m_activationPos   (wxNOT_FOUND)
 	, m_activationEditor(NULL)
+	, m_loggingEnabled  (false)
 {
 }
 
@@ -58,9 +69,6 @@ void ClangCodeCompletion::Release()
 
 void ClangCodeCompletion::CodeComplete(IEditor* editor)
 {
-	// TODO :: this code works but for now we disable it until we
-	// add an option in the UI for it
-#if 0
 	// Sanity:
 	if(!editor || !m_manager || !m_manager->GetWorkspace() || !m_manager->IsWorkspaceOpen())
 		return;
@@ -68,7 +76,21 @@ void ClangCodeCompletion::CodeComplete(IEditor* editor)
 	// clang process is already running
 	if(m_process)
 		return;
-		
+	
+	// check if clang code-completion is enabled
+	TagsOptionsData options;
+	options = m_manager->GetTagsManager()->GetCtagsOptions();
+	if(! (options.GetClangOptions() & CC_CLANG_ENABLED) )
+		return;
+	
+	m_loggingEnabled = options.GetClangOptions() & CC_CLANG_LOG_OUTPUT;
+	wxString clangBinary = options.GetClangBinary();
+	clangBinary.Trim().Trim(false);
+	
+	if(clangBinary.IsEmpty()) {
+		clangBinary = wxT("clang");
+	}
+	
 	// First, we need to build the command line
 	// try to locate the basic include paths:
 	wxArrayString args = GetStandardIncludePathsArgs();
@@ -174,7 +196,7 @@ void ClangCodeCompletion::CodeComplete(IEditor* editor)
 
 		wxString command;
 
-		command << wxT("clang -w -fsyntax-only -Xclang -code-completion-at=");
+		command << wxT("\"") << clangBinary << wxT("\" -w -fsyntax-only -Xclang -code-completion-at=");
 		FileExtManager::FileType type = FileExtManager::GetType(editor->GetFileName().GetFullPath());
 		if(type == FileExtManager::TypeSourceC || type == FileExtManager::TypeSourceCpp) {
 			if(!WriteFileWithBackup(m_tmpfile, currentBuffer, false)) {
@@ -211,7 +233,9 @@ void ClangCodeCompletion::CodeComplete(IEditor* editor)
 		command.Replace(wxT("\n"), wxT(" "));
 		command.Replace(wxT("\r"), wxT(" "));
 		
-		m_process = CreateAsyncProcess(this, command, editor->GetFileName().GetPath(wxPATH_GET_SEPARATOR|wxPATH_GET_VOLUME));
+		CLANG_LOG_LINE(command);
+		
+		m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, editor->GetFileName().GetPath(wxPATH_GET_SEPARATOR|wxPATH_GET_VOLUME));
 		if(! m_process ) {
 			wxLogMessage(wxT("Failed to start process: %s"), command.c_str());
 			return;
@@ -222,70 +246,29 @@ void ClangCodeCompletion::CodeComplete(IEditor* editor)
 		
 		gStopWatch.Start();
 	}
-#endif
 }
 
 wxArrayString ClangCodeCompletion::GetStandardIncludePathsArgs()
 {
-	static wxArrayString paths;
-#ifdef __WXMSW__
+	static wxArrayString paths, dummy;
+	
 	if(paths.IsEmpty() == false)
 		return paths;
-
-	wxString      standardIncludeBase;
-	wxGetEnv(wxT("MINGW_INCL_HOME"), &standardIncludeBase);
-	if (standardIncludeBase.IsEmpty() == false && wxDir::Exists(standardIncludeBase)) {
-
-		wxString mingwBaseDir (standardIncludeBase );
-
-		// "C:/MinGW-4.4.1/include"
-		standardIncludeBase.Prepend(wxT("-I"));
-		paths.Add(standardIncludeBase + wxT("\\include"));
-		standardIncludeBase << wxT("\\lib\\gcc\\mingw32\\");
-		mingwBaseDir        << wxT("\\lib\\gcc\\mingw32\\");
-
-		long          highestVersion(0);
-		wxString      sHighestVersion;
-		wxArrayString files;
-
-		if (wxDir::Exists( mingwBaseDir ) ) {
-			wxDir::GetAllFiles(mingwBaseDir, &files, wxEmptyString, wxDIR_DIRS|wxDIR_FILES);
-
-			//filter out all non-directories
-			for (size_t i=0; i<files.GetCount(); i++) {
-				wxFileName fn(files.Item(i));
-
-				wxString p = fn.GetPath().Mid( mingwBaseDir.Length() );
-				wxString tmp_p(p);
-				tmp_p.Replace(wxT("."), wxT(""));
-				long number(0);
-				tmp_p.ToLong( &number );
-				if (number && number > highestVersion) {
-					sHighestVersion = p.BeforeFirst(wxFileName::GetPathSeparator());
-					highestVersion  = number;
-				}
-			}
-
-			if (sHighestVersion.IsEmpty() == false) {
-				standardIncludeBase << sHighestVersion << wxT("\\include");
-				paths.Add( standardIncludeBase );
-				paths.Add( standardIncludeBase + wxT("\\c++") );
-				paths.Add( standardIncludeBase + wxT("\\c++\\mingw32") );
-			}
-		}
+	
+	IncludePathLocator pathLocator(PluginManager::Get());
+	pathLocator.Locate(paths, dummy);
+	
+	for(size_t i=0;i<paths.Count(); i++) {
+		paths.Item(i).Prepend(wxT("-I"));
 	}
+	
 	return paths;
-#else
-	return paths;
-#endif
 }
 
 void ClangCodeCompletion::OnProcessTerminated(wxCommandEvent& e)
 {
 	ProcessEventData *ped = (ProcessEventData*) e.GetClientData();
 	delete ped;
-	
-	//wxLogMessage(wxT("clang process ended after %d ms"), gStopWatch.Time());
 	
 	// Parse the output
 	if(m_output.IsEmpty() == false) {
@@ -309,7 +292,7 @@ void ClangCodeCompletion::DoParseOutput()
 	// Sanity
 	if(m_output.IsEmpty() || !m_activationEditor || m_activationPos == wxNOT_FOUND)
 		return;
-		
+	
 	wxArrayString entries = wxStringTokenize(m_output, wxT("\n\r"), wxTOKEN_STRTOK);
 	std::vector<TagEntryPtr> tags;
 	tags.reserve( entries.size() );
@@ -318,6 +301,8 @@ void ClangCodeCompletion::DoParseOutput()
 		entries.Item(i).Trim().Trim(false);
 		if(entries.Item(i).IsEmpty())
 			continue;
+		
+		CLANG_LOG_LINE(entries.Item(i));
 		
 		TagEntryPtr tag = ClangEntryToTagEntry( entries.Item(i) );
 		if(tag) {
@@ -390,16 +375,34 @@ TagEntryPtr ClangCodeCompletion::ClangEntryToTagEntry(const wxString& line)
 	
 	// determine the kind
 	tag->SetKind(wxT("prototype")); // default
+	tag->SetIsClangTag(true);
+	
+	tmp.Replace(wxT("[#"), wxT(""));
+	tmp.Replace(wxT("<#"), wxT(""));
+	tmp.Replace(wxT("{#"), wxT(""));
+	tmp.Replace(wxT("#]"), wxT(" "));
+	tmp.Replace(wxT("#>"), wxT(" "));
+	tmp.Replace(wxT("#}"), wxT(" "));
+	
+	wxString pattern;
+	// Simulate a valid ctags pattern...
+	pattern << wxT("/^ ") << tmp << wxT(" $/");
 	
 	if(tmp == name) {
 		// this a type (enum/typedef/internal class)
 		tag->SetKind(wxT("class"));
-	} else if(tmp.Contains(wxT("("))) {
-		// definitly a method, do nothing
+		
+	} else if(tmp.Contains(wxT("(")) || tmp.EndsWith(wxT("::"))) {
+		wxString signature = tmp.AfterFirst(wxT('('));
+		signature = signature.BeforeLast(wxT(')'));
+		
+		tag->SetSignature(wxT("(") + signature + wxT(")"));
+		
 	} else {
 		tag->SetKind(wxT("member"));
+		
 	}
-	
+	tag->SetPattern(pattern);
 	return tag;
 }
 

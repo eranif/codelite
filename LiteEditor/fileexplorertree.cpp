@@ -381,6 +381,13 @@ void FileExplorerTree::OnOpenWidthDefaultApp(wxCommandEvent& e)
 				return;
 			}
 		}
+		
+#ifdef __WXGTK__
+		// All hell break loose, try xdg-open
+		wxString cmd = wxString::Format(wxT("xdg-open \"%s\""), fullpath.GetFullPath().c_str());
+		wxExecute(cmd);
+		return;
+#endif
 
 		// fallback code: suggest to the user to open the file with CL
 		if (wxMessageBox(wxString::Format(_("Could not find default application for file '%s'\nWould you like CodeLite to open it?"), fullpath.GetFullName().c_str()), _("CodeLite"),

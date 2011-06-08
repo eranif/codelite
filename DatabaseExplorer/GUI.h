@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun  6 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -47,19 +47,15 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #define wxID_RUN 1000
-#define wxID_CONNECT 1001
-#define wxID_CLOSE_CONNECTION 1002
-#define wxID_TOOL_REFRESH 1003
-#define wxID_TOOL_ERD 1004
-#define wxID_PG_LIST 1005
-#define wxID_NEW_COL 1006
-#define wxID_NEW_CONSTRAIN 1007
-#define wxID_DEL 1008
-#define wxID_PAGE_TYPE 1009
-#define wxID_TX_SIZE 1010
-#define wxID_PAGE_CONSTRAINT 1011
-#define wxID_ON_UPDATE 1012
-#define wxID_GENERATE 1013
+#define wxID_PG_LIST 1001
+#define wxID_NEW_COL 1002
+#define wxID_NEW_CONSTRAIN 1003
+#define wxID_DEL 1004
+#define wxID_PAGE_TYPE 1005
+#define wxID_TX_SIZE 1006
+#define wxID_PAGE_CONSTRAINT 1007
+#define wxID_ON_UPDATE 1008
+#define wxID_GENERATE 1009
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _MainFrame
@@ -187,12 +183,6 @@ class _DbViewerPanel : public wxPanel
 		wxBoxSizer* m_thmSizer;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnConncectClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnConncectUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnToolCloseClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnToolCloseUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnRefreshClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnERDClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDnDStart( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnItemActivate( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnItemRightClick( wxTreeEvent& event ) { event.Skip(); }

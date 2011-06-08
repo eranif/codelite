@@ -8,6 +8,11 @@
 #include <wx/wfstream.h>
 #include <wx/imaglist.h>
 
+#define wxID_CONNECT          45534
+#define wxID_CLOSE_CONNECTION 45535
+#define wxID_TOOL_REFRESH     45536
+#define wxID_TOOL_ERD         45537
+
 DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pManager)
 	: _DbViewerPanel(parent)
 {
@@ -23,16 +28,25 @@ DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pMa
 	m_thmSizer->Layout();
 	
 	// replace the icons...
-	m_toolBar1->FindById(wxID_CONNECT)->SetNormalBitmap(pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/connect")));
-	m_toolBar1->FindById(wxID_CLOSE_CONNECTION)->SetNormalBitmap(pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/disconnect")));
-	m_toolBar1->FindById(wxID_TOOL_REFRESH)->SetNormalBitmap(pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/database_refresh")));
+	m_toolBar1->AddTool( wxID_CONNECT, wxT("Open connection"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/connect")), wxNullBitmap, wxITEM_NORMAL, wxT("Open new connection"), wxT("Open new connection"), NULL ); 
+	m_toolBar1->AddTool( wxID_CLOSE_CONNECTION, wxT("tool"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/disconnect")), wxNullBitmap, wxITEM_NORMAL, wxT("Close selected connection"), wxT("Close selected connection"), NULL ); 
+	m_toolBar1->AddTool( wxID_TOOL_REFRESH, wxT("tool"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/database_refresh")), wxNullBitmap, wxITEM_NORMAL, wxT("Refresh View"), wxEmptyString, NULL ); 
+	m_toolBar1->AddTool( wxID_TOOL_ERD, wxT("ERD"), wxBitmap( Grid_xpm ), wxNullBitmap, wxITEM_NORMAL, wxT("Open ERD View"), wxEmptyString, NULL ); 
 	m_toolBar1->Realize();
 	
 	Layout();
 
-
 	m_mgr->GetTheApp()->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,NotebookEventHandler(DbViewerPanel::OnPageChange), NULL, this);
 	m_mgr->GetTheApp()->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSING,NotebookEventHandler(DbViewerPanel::OnPageClose), NULL, this);
+	
+	this->Connect( wxID_CONNECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnConncectClick ) );
+	this->Connect( wxID_CONNECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnConncectUI ) );
+	this->Connect( wxID_CLOSE_CONNECTION, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnToolCloseClick ) );
+	this->Connect( wxID_CLOSE_CONNECTION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnToolCloseUI ) );
+	this->Connect( wxID_TOOL_REFRESH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnRefreshClick ) );
+	this->Connect( wxID_TOOL_REFRESH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnToolCloseUI ) );
+	this->Connect( wxID_TOOL_ERD, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnERDClick ) );
+	this->Connect( wxID_TOOL_ERD, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnToolCloseUI ) );
 }
 
 DbViewerPanel::~DbViewerPanel()
@@ -40,6 +54,15 @@ DbViewerPanel::~DbViewerPanel()
 	m_mgr->GetTheApp()->Disconnect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,NotebookEventHandler(DbViewerPanel::OnPageChange), NULL, this);
 	m_mgr->GetTheApp()->Disconnect(wxEVT_COMMAND_BOOK_PAGE_CLOSING,NotebookEventHandler(DbViewerPanel::OnPageClose), NULL, this);
 	delete m_pDbAdapter;
+	
+	this->Disconnect( wxID_CONNECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnConncectClick ) );
+	this->Disconnect( wxID_CONNECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnConncectUI ) );
+	this->Disconnect( wxID_CLOSE_CONNECTION, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnToolCloseClick ) );
+	this->Disconnect( wxID_CLOSE_CONNECTION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnToolCloseUI ) );
+	this->Disconnect( wxID_TOOL_REFRESH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnRefreshClick ) );
+	this->Disconnect( wxID_TOOL_REFRESH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnToolCloseUI ) );
+	this->Disconnect( wxID_TOOL_ERD, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnERDClick ) );
+	this->Disconnect( wxID_TOOL_ERD, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnToolCloseUI ) );
 }
 
 void DbViewerPanel::OnConncectClick(wxCommandEvent& event)

@@ -21,6 +21,13 @@ DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pMa
 	m_pThumbnail = new wxSFThumbnail(m_panelThumb);
 	m_thmSizer->Add(m_pThumbnail, 1, wxEXPAND, 0);
 	m_thmSizer->Layout();
+	
+	// replace the icons...
+	m_toolBar1->FindById(wxID_CONNECT)->SetNormalBitmap(pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/connect")));
+	m_toolBar1->FindById(wxID_CLOSE_CONNECTION)->SetNormalBitmap(pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/disconnect")));
+	m_toolBar1->FindById(wxID_TOOL_REFRESH)->SetNormalBitmap(pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/database_refresh")));
+	m_toolBar1->Realize();
+	
 	Layout();
 
 
@@ -32,10 +39,6 @@ DbViewerPanel::~DbViewerPanel()
 {
 	m_mgr->GetTheApp()->Disconnect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,NotebookEventHandler(DbViewerPanel::OnPageChange), NULL, this);
 	m_mgr->GetTheApp()->Disconnect(wxEVT_COMMAND_BOOK_PAGE_CLOSING,NotebookEventHandler(DbViewerPanel::OnPageClose), NULL, this);
-
-
-	//if ((m_pDbConnector != NULL)&&(m_pDbConnector->IsConnected())) m_pDbConnector->CloseConnection();
-	//delete m_pDbConnector;
 	delete m_pDbAdapter;
 }
 
@@ -45,6 +48,7 @@ void DbViewerPanel::OnConncectClick(wxCommandEvent& event)
 	dlg.ShowModal();
 	RefreshDbView();
 }
+
 void DbViewerPanel::OnConncectUI(wxUpdateUIEvent& event)
 {
 	event.Enable( !m_pConnections->HasChildren() );

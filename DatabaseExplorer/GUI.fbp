@@ -7,7 +7,6 @@
         <property name="disconnect_events">1</property>
         <property name="disconnect_mode">source_name</property>
         <property name="disconnect_python_events">0</property>
-        <property name="embedded_files_path">res</property>
         <property name="encoding">UTF-8</property>
         <property name="event_generation">connect</property>
         <property name="file">GUI</property>
@@ -2330,12 +2329,12 @@
                                                 <property name="label">tool</property>
                                                 <property name="name">m_toolRefresh</property>
                                                 <property name="statusbar"></property>
-                                                <property name="tooltip"></property>
+                                                <property name="tooltip">Refresh View</property>
                                                 <event name="OnMenuSelection"></event>
                                                 <event name="OnToolClicked">OnRefreshClick</event>
                                                 <event name="OnToolEnter"></event>
                                                 <event name="OnToolRClicked"></event>
-                                                <event name="OnUpdateUI"></event>
+                                                <event name="OnUpdateUI">OnToolCloseUI</event>
                                             </object>
                                             <object class="tool" expanded="0">
                                                 <property name="bitmap">res/gui/Grid.xpm; Load From File</property>
@@ -2344,12 +2343,12 @@
                                                 <property name="label">ERD</property>
                                                 <property name="name">m_toolERD</property>
                                                 <property name="statusbar"></property>
-                                                <property name="tooltip"></property>
+                                                <property name="tooltip">Open ERD View</property>
                                                 <event name="OnMenuSelection"></event>
                                                 <event name="OnToolClicked">OnERDClick</event>
                                                 <event name="OnToolEnter"></event>
                                                 <event name="OnToolRClicked"></event>
-                                                <event name="OnUpdateUI"></event>
+                                                <event name="OnUpdateUI">OnToolCloseUI</event>
                                             </object>
                                         </object>
                                     </object>

@@ -373,7 +373,7 @@ wxColor DrawingUtils::GetTextCtrlTextColour()
 	static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
 	if( !intitialized ) {
-		// try to get the background colour from a menu
+		// try to get the text colour from a textctrl
 		GtkWidget *textCtrl = gtk_text_view_new();
 		GtkStyle   *def = gtk_rc_get_style( textCtrl );
 		if(!def)
@@ -399,7 +399,7 @@ wxColor DrawingUtils::GetMenuTextColour()
 	static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT));
 
 	if( !intitialized ) {
-		// try to get the background colour from a menu
+		// try to get the text colour from a menu
 		GtkWidget *menuBar = gtk_menu_new();
 		GtkStyle   *def = gtk_rc_get_style( menuBar );
 		if(!def)
@@ -451,7 +451,7 @@ wxColor DrawingUtils::GetTextCtrlBgColour()
 	static wxColour bgCol(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
 	if( !intitialized ) {
-		// try to get the background colour from a menu
+		// try to get the background colour from a textctrl
 		GtkWidget *textCtrl = gtk_text_view_new();
 		GtkStyle   *def = gtk_rc_get_style( textCtrl );
 		if(!def)

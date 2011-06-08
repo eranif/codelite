@@ -1,5 +1,6 @@
 #include <wx/app.h>
 #include "environmentconfig.h"
+#include "editor_config.h"
 #include <wx/textdlg.h>
 #include "svn_console.h"
 #include "subversion_strings.h"
@@ -9,6 +10,7 @@
 #include "globals.h"
 #include "processreaderthread.h"
 #include "subversion2.h"
+#include "lexer_configuration.h"
 
 //-------------------------------------------------------------
 BEGIN_EVENT_TABLE(SvnConsole, SvnShellBase)
@@ -29,60 +31,8 @@ SvnConsole::SvnConsole(wxWindow *parent, Subversion2* plugin)
 	m_sci->SetLexer(wxSCI_LEX_SVN);
 	m_sci->StyleClearAll();
 	m_sci->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SvnConsole::OnKeyDown), NULL, this);
-
-	for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
-		m_sci->StyleSetBackground(i, DrawingUtils::GetTextCtrlBgColour());
-		m_sci->StyleSetForeground(i, DrawingUtils::GetTextCtrlTextColour());
-	}
-
-	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
-	m_sci->StyleSetFont(0, font);
-
-	m_sci->SetHotspotActiveUnderline (true);
-	m_sci->SetHotspotActiveForeground(true, wxT("BLUE"));
-	m_sci->SetHotspotSingleLine(true);
-
-	m_sci->SetMarginWidth(0, 0);
-	m_sci->SetMarginWidth(1, 0);
-	m_sci->SetMarginWidth(2, 0);
-	m_sci->SetMarginWidth(4, 16);
-
-	m_sci->SetWrapMode(wxSCI_WRAP_CHAR);
-	m_sci->SetWrapStartIndent(4);
-	m_sci->SetWrapVisualFlags(2);
-	m_sci->SetScrollWidthTracking(true);
-	m_sci->SetCaretWidth(2);
 	
-	/////////////////////////////////////////////////////////////////////////////
-	// Set SVN styles
-	/////////////////////////////////////////////////////////////////////////////
-	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_INFO,     wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
-	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_INFO,     DrawingUtils::GetTextCtrlBgColour() );
-
-	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_ADDED,    wxT("FOREST GREEN") );
-	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_ADDED,    DrawingUtils::GetTextCtrlBgColour() );
-
-	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_MERGED,   wxT("FOREST GREEN") );
-	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_MERGED,   DrawingUtils::GetTextCtrlBgColour() );
-
-	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_UPDATED,  wxT("FOREST GREEN") );
-	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_UPDATED,  DrawingUtils::GetTextCtrlBgColour() );
-
-	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_CONFLICT, wxT("RED") );
-	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_CONFLICT, DrawingUtils::GetTextCtrlBgColour() );
-
-	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_DELETED,  wxT("FOREST GREEN") );
-	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_DELETED,  DrawingUtils::GetTextCtrlBgColour() );
-
-	m_sci->StyleSetFont ( wxSCI_LEX_SVN_INFO,     font );
-	m_sci->StyleSetFont ( wxSCI_LEX_SVN_ADDED,    font );
-	m_sci->StyleSetFont ( wxSCI_LEX_SVN_MERGED,   font );
-	m_sci->StyleSetFont ( wxSCI_LEX_SVN_UPDATED,  font );
-	m_sci->StyleSetFont ( wxSCI_LEX_SVN_CONFLICT, font );
-	m_sci->StyleSetFont ( wxSCI_LEX_SVN_DELETED,  font );
-
-	//m_sci->SetReadOnly(true);
+	DoInitializeFontsAndColours();
 }
 
 SvnConsole::~SvnConsole()
@@ -177,6 +127,8 @@ void SvnConsole::Clear()
 {
 	m_sci->ClearAll();
 	m_inferiorEnd = 0;
+	
+	DoInitializeFontsAndColours();
 }
 
 void SvnConsole::Stop()
@@ -288,4 +240,76 @@ void SvnConsole::OnUpdateUI(wxScintillaEvent& event)
 void SvnConsole::OnKeyDown(wxKeyEvent& event)
 {
 	event.Skip();
+}
+
+void SvnConsole::DoInitializeFontsAndColours()
+{
+	for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
+		m_sci->StyleSetBackground(i, DrawingUtils::GetTextCtrlBgColour());
+		m_sci->StyleSetForeground(i, DrawingUtils::GetTextCtrlTextColour());
+	}
+	
+	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
+	
+	LexerConfPtr cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
+	if(cppLexer) {
+		std::list<StyleProperty> styles = cppLexer->GetProperties();
+		std::list<StyleProperty>::iterator iter = styles.begin();
+		for (; iter != styles.end(); iter++) {
+			if(iter->GetId() == wxSCI_C_DEFAULT) {
+				StyleProperty sp        = (*iter);
+				int           size      = sp.GetFontSize();
+				wxString      face      = sp.GetFaceName();
+				bool          italic    = sp.GetItalic();
+				
+				font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , wxNORMAL, false, face);
+			}
+		}
+	}
+	
+	m_sci->StyleSetFont(0, font);
+	m_sci->SetHotspotActiveUnderline (true);
+	m_sci->SetHotspotActiveForeground(true, wxT("BLUE"));
+	m_sci->SetHotspotSingleLine(true);
+
+	m_sci->SetMarginWidth(0, 0);
+	m_sci->SetMarginWidth(1, 0);
+	m_sci->SetMarginWidth(2, 0);
+	m_sci->SetMarginWidth(4, 16);
+
+	m_sci->SetWrapMode(wxSCI_WRAP_CHAR);
+	m_sci->SetWrapStartIndent(4);
+	m_sci->SetWrapVisualFlags(2);
+	m_sci->SetScrollWidthTracking(true);
+	m_sci->SetCaretWidth(2);
+	
+	/////////////////////////////////////////////////////////////////////////////
+	// Set SVN styles
+	/////////////////////////////////////////////////////////////////////////////
+	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_INFO,     wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
+	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_INFO,     DrawingUtils::GetTextCtrlBgColour() );
+
+	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_ADDED,    wxT("FOREST GREEN") );
+	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_ADDED,    DrawingUtils::GetTextCtrlBgColour() );
+
+	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_MERGED,   wxT("FOREST GREEN") );
+	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_MERGED,   DrawingUtils::GetTextCtrlBgColour() );
+
+	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_UPDATED,  wxT("FOREST GREEN") );
+	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_UPDATED,  DrawingUtils::GetTextCtrlBgColour() );
+
+	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_CONFLICT, wxT("RED") );
+	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_CONFLICT, DrawingUtils::GetTextCtrlBgColour() );
+
+	m_sci->StyleSetForeground ( wxSCI_LEX_SVN_DELETED,  wxT("FOREST GREEN") );
+	m_sci->StyleSetBackground ( wxSCI_LEX_SVN_DELETED,  DrawingUtils::GetTextCtrlBgColour() );
+
+	m_sci->StyleSetFont ( wxSCI_LEX_SVN_INFO,     font );
+	m_sci->StyleSetFont ( wxSCI_LEX_SVN_ADDED,    font );
+	m_sci->StyleSetFont ( wxSCI_LEX_SVN_MERGED,   font );
+	m_sci->StyleSetFont ( wxSCI_LEX_SVN_UPDATED,  font );
+	m_sci->StyleSetFont ( wxSCI_LEX_SVN_CONFLICT, font );
+	m_sci->StyleSetFont ( wxSCI_LEX_SVN_DELETED,  font );
+	
 }

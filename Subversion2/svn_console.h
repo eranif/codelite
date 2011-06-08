@@ -51,6 +51,7 @@ protected:
 	virtual void OnUpdateUI         (wxScintillaEvent& event);
 	virtual void OnKeyDown          (wxKeyEvent &event);
 	
+	void DoInitializeFontsAndColours();
 	bool DoExecute(const wxString &cmd, SvnCommandHandler *handler, const wxString &workingDirectory, bool printProcessOutput);
 public:
 	SvnConsole(wxWindow *parent, Subversion2* plugin);

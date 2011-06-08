@@ -113,6 +113,7 @@ void SubversionView::OnTreeMenu( wxTreeEvent& event )
 		case SvnTreeData::SvnNodeTypeAddedRoot:
 		case SvnTreeData::SvnNodeTypeDeletedRoot:
 		case SvnTreeData::SvnNodeTypeModifiedRoot:
+		case SvnTreeData::SvnNodeTypeFolder:
 			CreateSecondRootMenu( &menu );
 			break;
 
@@ -290,8 +291,13 @@ void SubversionView::DoAddNode(const wxString& title, int imgId, SvnTreeData::Sv
 
 		// Add all children items
 		for (size_t i=0; i<files.GetCount(); i++) {
-			wxString filename(files.Item(i));
-			m_treeCtrl->AppendItem(parent, files.Item(i), DoGetIconIndex(filename), DoGetIconIndex(filename), new SvnTreeData(SvnTreeData::SvnNodeTypeFile, files.Item(i)));
+			wxFileName filename(files.Item(i));
+			wxTreeItemId folderParent = DoGetParentNode(files.Item(i), parent);
+			m_treeCtrl->AppendItem(folderParent, 
+								   filename.GetFullName(), 
+								   DoGetIconIndex(filename.GetFullName()), 
+								   DoGetIconIndex(filename.GetFullName()), 
+								   new SvnTreeData(SvnTreeData::SvnNodeTypeFile, files.Item(i)));
 		}
 
 		if ( nodeType != SvnTreeData::SvnNodeTypeUnversionedRoot) {
@@ -392,7 +398,14 @@ SvnTreeData::SvnNodeType SubversionView::DoGetSelectionType(const wxArrayTreeIte
 			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeModifiedRoot;
 			return m_selectionInfo.m_selectionType;
 		}
-
+		
+		if (data->GetType() == SvnTreeData::SvnNodeTypeFolder && items.GetCount() == 1) {
+			// populate the list of paths with all the conflicted paths
+			DoGetPaths( items.Item(i), m_selectionInfo.m_paths );
+			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeFolder;
+			return m_selectionInfo.m_selectionType;
+		}
+		
 		if (type == SvnTreeData::SvnNodeTypeInvalid &&
 		    (data->GetType() == SvnTreeData::SvnNodeTypeFile || data->GetType() == SvnTreeData::SvnNodeTypeRoot)) {
 			type = data->GetType();
@@ -420,6 +433,7 @@ void SubversionView::CreateSecondRootMenu(wxMenu* menu)
 	menu->Append(XRCID("svn_update"),  wxT("Update"));
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_revert"),  wxT("Revert"));
+	menu->Append(XRCID("svn_add"),     wxT("Add"));
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_diff"),    _("Create Diff..."));
 }
@@ -494,16 +508,17 @@ void SubversionView::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths
 	while ( item.IsOk() ) {
 		SvnTreeData *data = (SvnTreeData *)m_treeCtrl->GetItemData(item);
 		if (data) {
-			if (data->GetFilepath().IsEmpty() == false) {
+			
+			if (data->GetFilepath().IsEmpty() == false && data->GetType() == SvnTreeData::SvnNodeTypeFile) {
 				paths.Add( data->GetFilepath() );
 			}
 
 			if (( data->GetType() == SvnTreeData::SvnNodeTypeAddedRoot    ||
 			      data->GetType() == SvnTreeData::SvnNodeTypeModifiedRoot ||
-			      data->GetType() == SvnTreeData::SvnNodeTypeDeletedRoot) &&
-
-			    m_treeCtrl->ItemHasChildren(item)) {
-
+			      data->GetType() == SvnTreeData::SvnNodeTypeDeletedRoot  ||
+				  data->GetType() == SvnTreeData::SvnNodeTypeFolder)      &&
+				  m_treeCtrl->ItemHasChildren(item)) 
+			{
 				DoGetPaths(item, paths);
 			}
 		}
@@ -1129,4 +1144,36 @@ void SubversionView::DoRootDirChanged(const wxString& path)
 		BuildTree();
 		
 	}
+}
+
+wxTreeItemId SubversionView::DoGetParentNode(const wxString& filename, const wxTreeItemId& parent)
+{
+	wxFileName fn(filename);
+	wxTreeItemId actualParentNode = parent;
+	wxArrayString dirs = fn.GetDirs();
+	wxString curpath;
+	for(size_t i=0; i<dirs.GetCount(); i++) {
+		// add or get the parent for this node
+		curpath << dirs.Item(i) << wxT("/");
+		actualParentNode = DoFindChild(actualParentNode, dirs.Item(i), curpath);
+	}
+	return actualParentNode;
+}
+
+wxTreeItemId SubversionView::DoFindChild(const wxTreeItemId& parent, const wxString& name, const wxString &curpath)
+{
+	wxTreeItemIdValue cookie;
+	wxTreeItemId child = m_treeCtrl->GetFirstChild(parent, cookie);
+	while( child.IsOk() ) {
+		if(m_treeCtrl->GetItemText(child) == name) {
+			return child;
+		}
+		child = m_treeCtrl->GetNextChild(parent, cookie);
+	}
+	// if we reached here, we did not find a tree node for this name
+	return m_treeCtrl->AppendItem(parent, // parent node
+						   name,   // text
+						   7,      // folder icon
+						   7, 
+						   new SvnTreeData(SvnTreeData::SvnNodeTypeFolder, curpath));
 }

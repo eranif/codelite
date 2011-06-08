@@ -84,10 +84,12 @@ protected:
 	void DoRootDirChanged    (const wxString &path);
 protected:
 	// Menu management
-	void CreateFileMenu      (wxMenu *menu);
-	void CreateRootMenu      (wxMenu *menu);
-	void CreateSecondRootMenu(wxMenu *menu);
-
+	void         CreateFileMenu      (wxMenu *menu);
+	void         CreateRootMenu      (wxMenu *menu);
+	void         CreateSecondRootMenu(wxMenu *menu);
+	wxTreeItemId DoGetParentNode     (const wxString &filename, const wxTreeItemId& parent);
+	wxTreeItemId DoFindChild         (const wxTreeItemId& parent, const wxString &name, const wxString &curpath);
+	
 protected:
 	// Handlers for SubversionPageBase events.
 	void OnChangeRootDir ( wxCommandEvent& event );

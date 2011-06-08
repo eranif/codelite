@@ -40,7 +40,8 @@ public:
 		SvnNodeTypeAddedRoot,
 		SvnNodeTypeConflictRoot,
 		SvnNodeTypeFile,
-		SvnNodeTypeLockedRoot
+		SvnNodeTypeLockedRoot,
+		SvnNodeTypeFolder
 	};
 
 	SvnNodeType m_type;

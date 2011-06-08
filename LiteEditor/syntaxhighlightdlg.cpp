@@ -113,8 +113,14 @@ wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 void SyntaxHighlightDlg::LoadLexers(const wxString& theme)
 {
 	Freeze();
-	bool selected = true;
-
+	
+	// get the current open editor's lexer name
+	wxString currentLexer;
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+	if(editor) {
+		currentLexer = editor->GetContext()->GetName();
+	}
+	
 	//remove old lexers
 	if (m_lexersBook->GetPageCount() > 0) {
 		m_lexersBook->DeleteAllPages();
@@ -149,13 +155,11 @@ void SyntaxHighlightDlg::LoadLexers(const wxString& theme)
 		
 		if(parentIndex == wxString::npos) {
 			// add parent node
-			m_lexersBook->AddPage(CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), selected);
+			m_lexersBook->AddPage(CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), currentLexer == iter->second->GetName());
 			
 		} else {
-			m_lexersBook->InsertPage(parentIndex, CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), selected);
+			m_lexersBook->InsertPage(parentIndex, CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), currentLexer == iter->second->GetName());
 		}
-		
-		selected = false;
 	}
 	Thaw();
 }

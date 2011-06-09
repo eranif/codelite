@@ -149,21 +149,21 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 {
 	InitStyle(sci, wxSCI_LEX_FIF, true);
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetTextCtrlTextColour());
-	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetTextCtrlBgColour());
+	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneFgColour());
+	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneBgColour());
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_HEADER, DrawingUtils::GetTextCtrlTextColour());
-	sci->StyleSetBackground(wxSCI_LEX_FIF_HEADER, DrawingUtils::GetTextCtrlBgColour());
+	sci->StyleSetForeground(wxSCI_LEX_FIF_HEADER, DrawingUtils::GetOutputPaneFgColour());
+	sci->StyleSetBackground(wxSCI_LEX_FIF_HEADER, DrawingUtils::GetOutputPaneBgColour());
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_LINE_NUMBER, wxT("MAROON"));
-	sci->StyleSetBackground(wxSCI_LEX_FIF_LINE_NUMBER, DrawingUtils::GetTextCtrlBgColour());
+	sci->StyleSetBackground(wxSCI_LEX_FIF_LINE_NUMBER, DrawingUtils::GetOutputPaneBgColour());
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, DrawingUtils::GetTextCtrlTextColour());
-	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, DrawingUtils::GetTextCtrlBgColour());
+	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, DrawingUtils::GetOutputPaneFgColour());
+	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, DrawingUtils::GetOutputPaneBgColour());
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_MATCH, true);
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_SCOPE, wxT("BROWN"));
-	sci->StyleSetBackground(wxSCI_LEX_FIF_SCOPE, DrawingUtils::GetTextCtrlBgColour());
+	sci->StyleSetBackground(wxSCI_LEX_FIF_SCOPE, DrawingUtils::GetOutputPaneBgColour());
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_SCOPE, false);
 	
 	wxColour fgColour(wxT("GREEN"));
@@ -193,15 +193,15 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	}
 
 	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH_COMMENT, fgColour);
-	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH_COMMENT, DrawingUtils::GetTextCtrlBgColour());
+	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH_COMMENT, DrawingUtils::GetOutputPaneBgColour());
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_MATCH_COMMENT, true);
 
-	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE, DrawingUtils::GetTextCtrlTextColour());
-	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, DrawingUtils::GetTextCtrlBgColour());
+	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE, DrawingUtils::GetOutputPaneFgColour());
+	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, DrawingUtils::GetOutputPaneBgColour());
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_FILE, true);
 	
-	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetTextCtrlTextColour());
-	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetTextCtrlBgColour());
+	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneFgColour());
+	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneBgColour());
 	sci->StyleSetEOLFilled(wxSCI_LEX_FIF_DEFAULT, true);
 	sci->StyleSetEOLFilled(wxSCI_LEX_FIF_HEADER, true);
 	

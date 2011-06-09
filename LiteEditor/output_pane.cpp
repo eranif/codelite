@@ -105,10 +105,10 @@ void OutputPane::CreateGUIControls()
 	wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	f.SetFamily(wxFONTFAMILY_TELETYPE);
 	text->SetFont(f);
-	text->SetBackgroundColour(DrawingUtils::GetTextCtrlBgColour());
+	text->SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
 	wxTextAttr defaultStyle;
-	defaultStyle.SetBackgroundColour(DrawingUtils::GetTextCtrlBgColour());
-	defaultStyle.SetTextColour(DrawingUtils::GetTextCtrlTextColour());
+	defaultStyle.SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
+	defaultStyle.SetTextColour(DrawingUtils::GetOutputPaneFgColour());
 	defaultStyle.SetFont(f);
 	text->SetDefaultStyle(defaultStyle);
 	

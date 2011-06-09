@@ -1903,7 +1903,7 @@ bool wxTreeListMainWindow::Create (wxTreeListCtrl *parent,
     SetValidator(validator);
 #endif
 
-	SetBackgroundColour(DrawingUtils::GetTextCtrlBgColour());
+	SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
 	
     // prevent any background repaint in order to reducing flicker
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);

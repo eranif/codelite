@@ -87,15 +87,13 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 
 
 	// Update selected text properties
-	m_colourPickerSelTextBgColoour->SetColour( selTextProperties.GetBgColour() );
+	m_colourPickerSelTextBgColour->SetColour( selTextProperties.GetBgColour() );
 	m_sliderSelTextAlpha->SetValue(selTextProperties.GetAlpha());
 
 	if (m_propertyList.empty()) {
 		m_fontPicker->Enable(false);
 		m_colourPicker->Enable(false);
 	}
-
-
 }
 
 void LexerPage::OnItemSelected(wxCommandEvent & event)
@@ -202,7 +200,7 @@ void LexerPage::SaveSettings()
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
 		for (; iter != m_propertyList.end(); iter++) {
 			if (iter->GetId() == SEL_TEXT_ATTR_ID) {
-				iter->SetBgColour(m_colourPickerSelTextBgColoour->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
+				iter->SetBgColour(m_colourPickerSelTextBgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
 				iter->SetAlpha( m_sliderSelTextAlpha->GetValue() );
 				break;
 			}
@@ -210,8 +208,10 @@ void LexerPage::SaveSettings()
 
 		m_lexer->SetProperties( m_propertyList );
 		m_lexer->SetFileSpec( m_fileSpec->GetValue() );
+
 		m_isModified = false;
 	}
+
 }
 
 void LexerPage::OnEditKeyWordsButton0(wxCommandEvent& event)
@@ -296,6 +296,12 @@ void LexerPage::OnAlphaChanged(wxScrollEvent& event)
 }
 
 void LexerPage::OnSelTextChanged(wxColourPickerEvent& event)
+{
+	event.Skip();
+	m_isModified = true;
+}
+
+void LexerPage::OnOutputViewColourChanged(wxColourPickerEvent& event)
 {
 	event.Skip();
 	m_isModified = true;

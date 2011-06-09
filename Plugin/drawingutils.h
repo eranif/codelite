@@ -37,6 +37,8 @@ public:
 	static wxColor GetPanelBgColour();
 	static wxColor GetTextCtrlTextColour();
 	static wxColor GetTextCtrlBgColour();
+	static wxColor GetOutputPaneFgColour();
+	static wxColor GetOutputPaneBgColour();
 	static wxColor GetMenuTextColour();
 	static wxColor GetMenuBarBgColour();
 	

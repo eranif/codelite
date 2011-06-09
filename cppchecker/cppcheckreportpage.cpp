@@ -39,27 +39,27 @@ CppCheckReportPage::CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheck
 #endif
 
 	for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
-		m_outputText->StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-		m_outputText->StyleSetForeground(i, *wxBLACK);
+		m_outputText->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
+		m_outputText->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
 	}
 
 	m_outputText->StyleSetForeground ( wxSCI_LEX_GCC_MAKE_ENTER, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
-	m_outputText->StyleSetBackground ( wxSCI_LEX_GCC_MAKE_ENTER, wxSystemSettings::GetColour (wxSYS_COLOUR_WINDOW ) );
+	m_outputText->StyleSetBackground ( wxSCI_LEX_GCC_MAKE_ENTER, DrawingUtils::GetOutputPaneBgColour() );
 
 	m_outputText->StyleSetForeground ( wxSCI_LEX_GCC_MAKE_LEAVING, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
-	m_outputText->StyleSetBackground ( wxSCI_LEX_GCC_MAKE_LEAVING, wxSystemSettings::GetColour (wxSYS_COLOUR_WINDOW ) );
+	m_outputText->StyleSetBackground ( wxSCI_LEX_GCC_MAKE_LEAVING, DrawingUtils::GetOutputPaneBgColour() );
 
-	m_outputText->StyleSetForeground ( wxSCI_LEX_GCC_OUTPUT, wxT("BLACK") );
-	m_outputText->StyleSetBackground ( wxSCI_LEX_GCC_OUTPUT, wxSystemSettings::GetColour ( wxSYS_COLOUR_WINDOW ) );
+	m_outputText->StyleSetForeground ( wxSCI_LEX_GCC_OUTPUT, DrawingUtils::GetOutputPaneFgColour() );
+	m_outputText->StyleSetBackground ( wxSCI_LEX_GCC_OUTPUT, DrawingUtils::GetOutputPaneBgColour() );
 
-	m_outputText->StyleSetForeground ( wxSCI_LEX_GCC_BUILDING, wxT("BLACK") );
-	m_outputText->StyleSetBackground ( wxSCI_LEX_GCC_BUILDING, wxSystemSettings::GetColour ( wxSYS_COLOUR_WINDOW ) );
+	m_outputText->StyleSetForeground ( wxSCI_LEX_GCC_BUILDING, DrawingUtils::GetOutputPaneFgColour() );
+	m_outputText->StyleSetBackground ( wxSCI_LEX_GCC_BUILDING, DrawingUtils::GetOutputPaneBgColour() );
 
 	m_outputText->StyleSetForeground ( wxSCI_LEX_GCC_WARNING, wxT("BROWN") );
-	m_outputText->StyleSetBackground ( wxSCI_LEX_GCC_WARNING, wxSystemSettings::GetColour (wxSYS_COLOUR_WINDOW ) );
+	m_outputText->StyleSetBackground ( wxSCI_LEX_GCC_WARNING, DrawingUtils::GetOutputPaneBgColour() );
 
 	m_outputText->StyleSetForeground ( wxSCI_LEX_GCC_ERROR, wxT("RED") );
-	m_outputText->StyleSetBackground ( wxSCI_LEX_GCC_ERROR, wxSystemSettings::GetColour (wxSYS_COLOUR_WINDOW ) );
+	m_outputText->StyleSetBackground ( wxSCI_LEX_GCC_ERROR, DrawingUtils::GetOutputPaneBgColour() );
 
 	m_outputText->StyleSetForeground ( wxSCI_LEX_GCC_FILE_LINK, wxT ( "BLUE" ) );
 

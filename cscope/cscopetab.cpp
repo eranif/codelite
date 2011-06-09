@@ -53,6 +53,8 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 	m_treeCtrlResults->AddColumn(_("Pattern"), 1000);
 	m_treeCtrlResults->AddRoot(_("CScope"));
 	
+	
+	
 	wxImageList *imageList = new wxImageList(16, 16, true);
 	imageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/c")));                              // 0
 	imageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/cpp")));                            // 1
@@ -62,7 +64,7 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 	
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	m_font = wxFont( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL );
-	
+
 	m_checkBoxUpdateDb->SetValue(data.GetRebuildOption());
 	m_checkBoxRevertedIndex->SetValue(data.GetBuildRevertedIndexOption());
 	SetMessage(_("Ready"), 0);

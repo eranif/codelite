@@ -21,7 +21,7 @@ ConsoleFrame::ConsoleFrame( wxWindow* parent, wxWindowID id )
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	SetBackgroundColour(DrawingUtils::GetTextCtrlBgColour());
+	SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
 	m_terminal = new wxTerminal(this);
 	bSizer1->Add(m_terminal, 1, wxEXPAND|wxALL);
 

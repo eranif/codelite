@@ -36,8 +36,7 @@
 #include "manager.h"
 
 SyntaxHighlightDlg::SyntaxHighlightDlg( wxWindow* parent )
-:
-SyntaxHighlightBaseDlg( parent )
+	: SyntaxHighlightBaseDlg( parent ), restartRequired(false)
 {
 	GetSizer()->Insert(0, CreateSyntaxHighlightPage(), 1, wxALL|wxEXPAND, 5);
 	GetSizer()->Layout();
@@ -162,6 +161,10 @@ void SyntaxHighlightDlg::LoadLexers(const wxString& theme)
 		}
 	}
 	Thaw();
+	
+	// The outputview colours are global to all a theme's lexors, so are dealt with separately
+	m_colourPickerOutputPanesFgColour->SetColour(wxColour(EditorConfigST::Get()->GetCurrentOutputviewFgColour()));
+	m_colourPickerOutputPanesBgColour->SetColour(wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour()));
 }
 
 void SyntaxHighlightDlg::OnThemeChanged(wxCommandEvent& event)
@@ -173,6 +176,7 @@ void SyntaxHighlightDlg::OnThemeChanged(wxCommandEvent& event)
 	EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), themeName);
 
 	LoadLexers( themeName );
+	Layout();
 }
 
 wxPanel *SyntaxHighlightDlg::CreateLexerPage(wxWindow *parent, LexerConfPtr lexer)
@@ -193,6 +197,20 @@ void SyntaxHighlightDlg::SaveChanges()
 
 	// Save all lexers once
 	EditorConfigST::Get()->SaveLexers();
+
+	// The outputview colours are global to all a theme's lexors, so are dealt with separately
+	wxString oldcolourstr = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+	wxString colourstr = m_colourPickerOutputPanesFgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
+	if (colourstr != oldcolourstr) {
+		restartRequired = true;
+	}
+	EditorConfigST::Get()->SetCurrentOutputviewFgColour(colourstr);
+	oldcolourstr = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
+	colourstr = m_colourPickerOutputPanesBgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
+	if (colourstr != oldcolourstr) {
+		restartRequired = true;
+	}
+	EditorConfigST::Get()->SetCurrentOutputviewBgColour(colourstr);
 }
 
 SyntaxHighlightDlg::~SyntaxHighlightDlg()

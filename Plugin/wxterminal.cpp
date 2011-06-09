@@ -53,10 +53,10 @@ wxTerminal::wxTerminal( wxWindow* parent )
 #endif
 {
 	m_defaultStyle.SetFont            ( m_textCtrl->GetFont() );
-	m_defaultStyle.SetTextColour      ( DrawingUtils::GetTextCtrlTextColour() );
-	m_defaultStyle.SetBackgroundColour( DrawingUtils::GetTextCtrlBgColour());
+	m_defaultStyle.SetTextColour      ( DrawingUtils::GetOutputPaneFgColour() );
+	m_defaultStyle.SetBackgroundColour( DrawingUtils::GetOutputPaneBgColour());
 	
-	m_textCtrl->SetBackgroundColour( DrawingUtils::GetTextCtrlBgColour() );
+	m_textCtrl->SetBackgroundColour( DrawingUtils::GetOutputPaneBgColour() );
 	m_textCtrl->SetDefaultStyle       ( m_defaultStyle );
 }
 

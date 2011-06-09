@@ -3,6 +3,7 @@
 #include "continousbuildconf.h"
 #include <wx/msgdlg.h>
 #include "imanager.h"
+#include "drawingutils.h"
 
 ContinousBuildPane::ContinousBuildPane( wxWindow* parent, IManager *manager, ContinuousBuild *plugin )
 		: ContinousBuildBasePane( parent )
@@ -12,6 +13,9 @@ ContinousBuildPane::ContinousBuildPane( wxWindow* parent, IManager *manager, Con
 	ContinousBuildConf conf;
 	m_mgr->GetConfigTool()->ReadObject(wxT("ContinousBuildConf"), &conf);
 	m_checkBox1->SetValue(conf.GetEnabled());
+
+	m_listBoxQueue->SetForegroundColour(DrawingUtils::GetOutputPaneFgColour());
+	m_listBoxQueue->SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
 }
 
 void ContinousBuildPane::OnStopAll( wxCommandEvent& event )

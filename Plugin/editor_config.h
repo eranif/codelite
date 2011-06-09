@@ -98,6 +98,8 @@ struct LexersInfo {
 	ThemeLexersMap lexers;
 	wxString       filename;
 	wxString       theme;
+	wxString       outputpane_fg_colour;  // Here because they're global to this theme, not per lexor
+	wxString       outputpane_bg_colour;
 };
 
 /**
@@ -159,6 +161,18 @@ public:
 	LexerConfPtr GetLexer(const wxString& lexer);
 
 	/**
+	 * Get the outputview's foreground colour, which is global to a theme
+	 * \return the colour as a wxString
+	 */
+	wxString GetCurrentOutputviewFgColour() const;
+
+	/**
+	 * Get the outputview's background colour, which is global to a theme
+	 * \return the colour as a wxString
+	 */
+	wxString GetCurrentOutputviewBgColour() const;
+
+	/**
 	 * Return iterator to the begin of the undelying lexer mapping
 	  */
 	ConstIterator LexerBegin();
@@ -198,6 +212,24 @@ public:
 	 * \param &dbName
 	 */
 	void SetTagsDatabase(const wxString &dbName);
+
+	/**
+	 * Store in the current LexersInfo, the outputview's foreground colour as it's global to a theme
+	 */
+	void SetCurrentOutputviewFgColour(const wxString& colourstring) {
+		if (m_activeThemeLexers) {
+			m_activeThemeLexers->outputpane_fg_colour = colourstring;
+		}
+	}
+
+	/**
+	 * Store in the current LexersInfo, the outputview's background colour as it's global to a theme
+	 */
+	void SetCurrentOutputviewBgColour(const wxString& colourstring) {
+		if (m_activeThemeLexers) {
+			m_activeThemeLexers->outputpane_bg_colour = colourstring;
+		}
+	}
 
 	/**
 	 * save lexers settings

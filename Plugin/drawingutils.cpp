@@ -26,6 +26,7 @@
 #include <wx/panel.h>
 #include "wx/settings.h"
 #include "drawingutils.h"
+#include "editor_config.h"
 #include "wx/dc.h"
 
 #ifdef __WXGTK__
@@ -469,4 +470,24 @@ wxColor DrawingUtils::GetTextCtrlBgColour()
 #else
 	return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
 #endif
+}
+
+wxColor DrawingUtils::GetOutputPaneFgColour()
+{
+	wxString col = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+	if (col.IsEmpty()) {
+		return GetTextCtrlTextColour();
+	}
+
+	return wxColour(col);
+}
+
+wxColor DrawingUtils::GetOutputPaneBgColour()
+{
+	wxString col = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
+	if (col.IsEmpty()) {
+		return GetTextCtrlBgColour();
+	}
+
+	return wxColour(col);
 }

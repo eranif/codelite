@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Jan 25 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -10,21 +10,21 @@
 
 #include <wx/intl.h>
 
-#include <wx/statline.h>
 #include <wx/string.h>
+#include <wx/stattext.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/button.h>
+#include <wx/clrpicker.h>
 #include <wx/sizer.h>
+#include <wx/statbox.h>
+#include <wx/statline.h>
+#include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/listbox.h>
-#include <wx/stattext.h>
 #include <wx/fontpicker.h>
-#include <wx/clrpicker.h>
 #include <wx/checkbox.h>
-#include <wx/statbox.h>
 #include <wx/textctrl.h>
 #include <wx/slider.h>
 #include <wx/panel.h>
@@ -40,6 +40,10 @@ class SyntaxHighlightBaseDlg : public wxDialog
 	private:
 	
 	protected:
+		wxStaticText* m_staticText91;
+		wxColourPickerCtrl* m_colourPickerOutputPanesFgColour;
+		wxStaticText* m_staticText911;
+		wxColourPickerCtrl* m_colourPickerOutputPanesBgColour;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonOk;
 		wxButton* m_buttonCancel;
@@ -47,6 +51,7 @@ class SyntaxHighlightBaseDlg : public wxDialog
 		wxButton* m_buttonDefaults;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnOutputViewColourChanged( wxColourPickerEvent& event ) { event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonCancel( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonApply( wxCommandEvent& event ) { event.Skip(); }
@@ -92,9 +97,10 @@ class LexerPageBase : public wxPanel
 		wxStaticText* m_staticText8;
 		wxTextCtrl* m_fileSpec;
 		wxStaticText* m_staticText9;
-		wxColourPickerCtrl* m_colourPickerSelTextBgColoour;
+		wxColourPickerCtrl* m_colourPickerSelTextBgColour;
 		wxStaticText* m_staticText11;
 		wxSlider* m_sliderSelTextAlpha;
+		wxButton* m_buttonTextSelApplyToAll;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnItemSelected( wxCommandEvent& event ) { event.Skip(); }
@@ -111,11 +117,12 @@ class LexerPageBase : public wxPanel
 		virtual void OnText( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnSelTextChanged( wxColourPickerEvent& event ) { event.Skip(); }
 		virtual void OnAlphaChanged( wxScrollEvent& event ) { event.Skip(); }
+		virtual void OnTextSelApplyToAll( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		LexerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		LexerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~LexerPageBase();
 	
 };

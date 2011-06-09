@@ -3643,6 +3643,11 @@ void clMainFrame::OnSyntaxHighlight(wxCommandEvent& e)
 {
 	SyntaxHighlightDlg *dlg = new SyntaxHighlightDlg(this);
 	dlg->ShowModal();
+
+	if (dlg->restartRequired) {
+		DoSuggestRestart();
+	}
+
 	dlg->Destroy();
 }
 

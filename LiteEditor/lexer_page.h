@@ -64,6 +64,7 @@ protected:
 	virtual void OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event);
 	virtual void OnAlphaChanged(wxScrollEvent& event);
 	virtual void OnSelTextChanged(wxColourPickerEvent& event);
+	virtual void OnOutputViewColourChanged(wxColourPickerEvent& event);
 
 
 	void         EditKeyWords(int set);

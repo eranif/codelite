@@ -62,6 +62,7 @@ public:
 	SyntaxHighlightDlg( wxWindow* parent );
 	virtual ~SyntaxHighlightDlg();
 	
+	bool restartRequired;
 };
 
 #endif // __syntaxhighlightdlg__

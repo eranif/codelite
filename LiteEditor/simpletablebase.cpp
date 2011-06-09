@@ -122,7 +122,7 @@ void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item, size_
 			m_listTable->SetItemTextColour(child, DrawingUtils::GetTextCtrlTextColour());
 		}
 		
-		m_listTable->SetItemBackgroundColour(child, DrawingUtils::GetTextCtrlBgColour());
+		m_listTable->SetItemBackgroundColour(child, DrawingUtils::GetOutputPaneBgColour());
 		
 		if(m_listTable->HasChildren(child)) {
 			DoResetItemColour(child, itemKind);

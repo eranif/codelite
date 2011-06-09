@@ -132,7 +132,7 @@ void ErrorsTab::AddError ( const BuildTab::LineInfo &lineInfo )
 		}
 		// append new entry
 		item = m_treeListCtrl->AppendItem(m_treeListCtrl->GetRootItem(), lineInfo.filename, imgId, imgId);
-		m_treeListCtrl->SetItemBackgroundColour(item, DrawingUtils::GetTextCtrlBgColour());
+		m_treeListCtrl->SetItemBackgroundColour(item, DrawingUtils::GetOutputPaneBgColour());
 	}
 	
 		
@@ -156,7 +156,7 @@ void ErrorsTab::AddError ( const BuildTab::LineInfo &lineInfo )
 		// Set the text color of the parent node to red
 		m_treeListCtrl->SetItemTextColour(item, wxT("RED"));
 	} else {
-		m_treeListCtrl->SetItemTextColour(item, DrawingUtils::GetTextCtrlTextColour());
+		m_treeListCtrl->SetItemTextColour(item, DrawingUtils::GetOutputPaneFgColour());
 	}
 }
 
@@ -223,7 +223,7 @@ bool ErrorsTab::IsMessageExists(const wxString& msg, long linenum, const wxTreeI
 void ErrorsTab::OnBuildEnded(wxCommandEvent& event)
 {
 	wxColour     bgColor;
-	wxColour     fgColor = DrawingUtils::GetTextCtrlTextColour(); // default color
+	wxColour     fgColor = DrawingUtils::GetOutputPaneFgColour(); // default color
 	
 	wxTreeItemId statusItem;
 	

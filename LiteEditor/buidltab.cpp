@@ -155,16 +155,16 @@ void BuildTab::SetStyles ( wxScintilla *sci )
 	InitStyle ( sci, wxSCI_LEX_GCC, true );
 
 	sci->StyleSetForeground ( wxSCI_LEX_GCC_MAKE_ENTER, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
-	sci->StyleSetBackground ( wxSCI_LEX_GCC_MAKE_ENTER, DrawingUtils::GetTextCtrlBgColour() );
+	sci->StyleSetBackground ( wxSCI_LEX_GCC_MAKE_ENTER, DrawingUtils::GetOutputPaneBgColour() );
 
 	sci->StyleSetForeground ( wxSCI_LEX_GCC_MAKE_LEAVING, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
-	sci->StyleSetBackground ( wxSCI_LEX_GCC_MAKE_LEAVING, DrawingUtils::GetTextCtrlBgColour() );
+	sci->StyleSetBackground ( wxSCI_LEX_GCC_MAKE_LEAVING, DrawingUtils::GetOutputPaneBgColour() );
 
-	sci->StyleSetForeground ( wxSCI_LEX_GCC_OUTPUT, DrawingUtils::GetTextCtrlTextColour() );
-	sci->StyleSetBackground ( wxSCI_LEX_GCC_OUTPUT, DrawingUtils::GetTextCtrlBgColour() );
+	sci->StyleSetForeground ( wxSCI_LEX_GCC_OUTPUT, DrawingUtils::GetOutputPaneFgColour() );
+	sci->StyleSetBackground ( wxSCI_LEX_GCC_OUTPUT, DrawingUtils::GetOutputPaneBgColour() );
 
-	sci->StyleSetForeground ( wxSCI_LEX_GCC_BUILDING, DrawingUtils::GetTextCtrlTextColour() );
-	sci->StyleSetBackground ( wxSCI_LEX_GCC_BUILDING, DrawingUtils::GetTextCtrlBgColour() );
+	sci->StyleSetForeground ( wxSCI_LEX_GCC_BUILDING, DrawingUtils::GetOutputPaneFgColour() );
+	sci->StyleSetBackground ( wxSCI_LEX_GCC_BUILDING, DrawingUtils::GetOutputPaneBgColour() );
 
 	sci->StyleSetForeground ( wxSCI_LEX_GCC_WARNING, options.GetWarnColour() );
 	sci->StyleSetBackground ( wxSCI_LEX_GCC_WARNING, options.GetWarnColourBg() );

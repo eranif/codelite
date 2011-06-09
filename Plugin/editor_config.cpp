@@ -169,6 +169,8 @@ void EditorConfig::SaveLexers()
 		wxXmlDocument doc;
 		wxXmlNode *node = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("Lexers"));
 		node->AddProperty(wxT("Theme"), iter->second->theme);
+		node->AddProperty(wxT("OutputView_Fg_Colour"), iter->second->outputpane_fg_colour);
+		node->AddProperty(wxT("OutputView_Bg_Colour"), iter->second->outputpane_bg_colour);
 		doc.SetRoot( node );
 
 		std::map<wxString, LexerConfPtr>::iterator it = iter->second->lexers.begin();
@@ -198,6 +200,24 @@ LexerConfPtr EditorConfig::GetLexer(const wxString &lexerName)
 		return NULL;
 
 	return iter->second;
+}
+
+wxString EditorConfig::GetCurrentOutputviewFgColour() const
+{
+	if (m_activeThemeLexers == NULL || m_activeThemeLexers->outputpane_fg_colour.IsEmpty()) {
+		return DrawingUtils::GetTextCtrlTextColour().GetAsString(wxC2S_HTML_SYNTAX);
+	}
+
+	return m_activeThemeLexers->outputpane_fg_colour;
+}
+
+wxString EditorConfig::GetCurrentOutputviewBgColour() const
+{
+	if (m_activeThemeLexers == NULL || m_activeThemeLexers->outputpane_bg_colour.IsEmpty()) {
+		return DrawingUtils::GetTextCtrlBgColour().GetAsString(wxC2S_HTML_SYNTAX);
+	}
+
+	return m_activeThemeLexers->outputpane_bg_colour;
 }
 
 EditorConfig::ConstIterator EditorConfig::LexerEnd()
@@ -443,9 +463,21 @@ void EditorConfig::LoadLexers(bool loadDefault)
 			wxXmlNode* root = doc.GetRoot();
 			if(root) {
 				wxString themeName    = root->GetPropVal(wxT("Theme"), wxT("Default"));
+				wxString ovFgColour   = root->GetPropVal(wxT("OutputView_Fg_Colour"), wxT(""));
+				wxString ovBgColour   = root->GetPropVal(wxT("OutputView_Bg_Colour"), wxT(""));
 				pLexersInfo           = new LexersInfo;
 				pLexersInfo->filename = fileToLoad;
 				pLexersInfo->theme    = themeName;
+				if (ovFgColour.IsEmpty()) {
+					pLexersInfo->outputpane_fg_colour = DrawingUtils::GetOutputPaneFgColour().GetAsString(wxC2S_HTML_SYNTAX);
+				} else {
+					pLexersInfo->outputpane_fg_colour = ovFgColour;
+				}
+				if (ovBgColour.IsEmpty()) {
+					pLexersInfo->outputpane_bg_colour = DrawingUtils::GetOutputPaneBgColour().GetAsString(wxC2S_HTML_SYNTAX);
+				} else {
+					pLexersInfo->outputpane_bg_colour = ovBgColour;
+				}
 
 				wxXmlNode *child = root->GetChildren();
 				while(child) {

@@ -245,8 +245,8 @@ void SvnConsole::OnKeyDown(wxKeyEvent& event)
 void SvnConsole::DoInitializeFontsAndColours()
 {
 	for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
-		m_sci->StyleSetBackground(i, DrawingUtils::GetTextCtrlBgColour());
-		m_sci->StyleSetForeground(i, DrawingUtils::GetTextCtrlTextColour());
+		m_sci->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
+		m_sci->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
 	}
 	
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

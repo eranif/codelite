@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Jan 25 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -15,6 +15,37 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg( wxWindow* parent, wxWindowID id,
 	
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
+	
+	wxStaticBoxSizer* sbSizer4;
+	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Output Panes and Terminals Global Settings:") ), wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer4;
+	fgSizer4 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer4->AddGrowableCol( 1 );
+	fgSizer4->SetFlexibleDirection( wxBOTH );
+	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText91 = new wxStaticText( this, wxID_ANY, _("Global foreground Colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText91->Wrap( -1 );
+	fgSizer4->Add( m_staticText91, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_colourPickerOutputPanesFgColour = new wxColourPickerCtrl( this, wxID_ANY, wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL|wxCLRP_USE_TEXTCTRL );
+	m_colourPickerOutputPanesFgColour->SetToolTip( _("This is where you can set the foreground colour for the Output View panes (where you can see the output from e.g. 'Build' or 'Debug') and terminal (where you see the trace output while debugging)") );
+	
+	fgSizer4->Add( m_colourPickerOutputPanesFgColour, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticText911 = new wxStaticText( this, wxID_ANY, _("Global background Colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText911->Wrap( -1 );
+	fgSizer4->Add( m_staticText911, 0, wxALL, 5 );
+	
+	m_colourPickerOutputPanesBgColour = new wxColourPickerCtrl( this, wxID_ANY, wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL|wxCLRP_USE_TEXTCTRL );
+	m_colourPickerOutputPanesBgColour->SetToolTip( _("This is where you can set the background colour for the Output View panes (where you can see the output from e.g. 'Build' or 'Debug') and terminal (where you see the trace output while debugging)") );
+	
+	fgSizer4->Add( m_colourPickerOutputPanesBgColour, 0, wxALL|wxEXPAND, 5 );
+	
+	sbSizer4->Add( fgSizer4, 1, wxEXPAND, 5 );
+	
+	bSizer1->Add( sbSizer4, 0, wxEXPAND, 5 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
@@ -47,6 +78,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg( wxWindow* parent, wxWindowID id,
 	this->Centre( wxBOTH );
 	
 	// Connect Events
+	m_colourPickerOutputPanesFgColour->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( SyntaxHighlightBaseDlg::OnOutputViewColourChanged ), NULL, this );
+	m_colourPickerOutputPanesBgColour->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( SyntaxHighlightBaseDlg::OnOutputViewColourChanged ), NULL, this );
 	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnButtonOK ), NULL, this );
 	m_buttonCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnButtonCancel ), NULL, this );
 	m_buttonApply->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnButtonApply ), NULL, this );
@@ -56,6 +89,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg( wxWindow* parent, wxWindowID id,
 SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
 {
 	// Disconnect Events
+	m_colourPickerOutputPanesFgColour->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( SyntaxHighlightBaseDlg::OnOutputViewColourChanged ), NULL, this );
+	m_colourPickerOutputPanesBgColour->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( SyntaxHighlightBaseDlg::OnOutputViewColourChanged ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnButtonOK ), NULL, this );
 	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnButtonCancel ), NULL, this );
 	m_buttonApply->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnButtonApply ), NULL, this );
@@ -206,8 +241,8 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_staticText9->Wrap( -1 );
 	fgSizer3->Add( m_staticText9, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_colourPickerSelTextBgColoour = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 128, 128, 128 ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL|wxCLRP_USE_TEXTCTRL );
-	fgSizer3->Add( m_colourPickerSelTextBgColoour, 0, wxALL|wxEXPAND, 5 );
+	m_colourPickerSelTextBgColour = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 128, 128, 128 ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL|wxCLRP_USE_TEXTCTRL );
+	fgSizer3->Add( m_colourPickerSelTextBgColour, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText11 = new wxStaticText( this, wxID_ANY, _("Selected Text Alpha:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText11->Wrap( -1 );
@@ -217,6 +252,11 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	fgSizer3->Add( m_sliderSelTextAlpha, 0, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	sbSizer3->Add( fgSizer3, 1, wxEXPAND, 5 );
+	
+	m_buttonTextSelApplyToAll = new wxButton( this, wxID_ANY, _("Apply these choices to all lexors"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonTextSelApplyToAll->SetToolTip( _("To save having to go through every lexor to set your text selection preferences, click here to apply these settings to all the lexors in this theme") );
+	
+	sbSizer3->Add( m_buttonTextSelApplyToAll, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer3->Add( sbSizer3, 0, wxEXPAND|wxALL, 5 );
 	
@@ -240,7 +280,7 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_globalFontPicker->Connect( wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler( LexerPageBase::OnFontChanged ), NULL, this );
 	m_globalBgColourPicker->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnColourChanged ), NULL, this );
 	m_fileSpec->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( LexerPageBase::OnText ), NULL, this );
-	m_colourPickerSelTextBgColoour->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnSelTextChanged ), NULL, this );
+	m_colourPickerSelTextBgColour->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnSelTextChanged ), NULL, this );
 	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
 	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
 	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
@@ -250,6 +290,7 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
 	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
 	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
+	m_buttonTextSelApplyToAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnTextSelApplyToAll ), NULL, this );
 }
 
 LexerPageBase::~LexerPageBase()
@@ -270,7 +311,7 @@ LexerPageBase::~LexerPageBase()
 	m_globalFontPicker->Disconnect( wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler( LexerPageBase::OnFontChanged ), NULL, this );
 	m_globalBgColourPicker->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnColourChanged ), NULL, this );
 	m_fileSpec->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( LexerPageBase::OnText ), NULL, this );
-	m_colourPickerSelTextBgColoour->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnSelTextChanged ), NULL, this );
+	m_colourPickerSelTextBgColour->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnSelTextChanged ), NULL, this );
 	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
 	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
 	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
@@ -280,5 +321,6 @@ LexerPageBase::~LexerPageBase()
 	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
 	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
 	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
+	m_buttonTextSelApplyToAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnTextSelApplyToAll ), NULL, this );
 	
 }

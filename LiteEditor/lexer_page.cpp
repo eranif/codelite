@@ -325,3 +325,15 @@ std::list<StyleProperty>::iterator LexerPage::GetSelectedStyle()
 	}
 	return m_propertyList.begin();
 }
+
+void LexerPage::GetTextSelectionValues(wxString& colourstring, int& alpha) const
+{
+	colourstring = m_colourPickerSelTextBgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
+	alpha = m_sliderSelTextAlpha->GetValue();
+}
+
+void LexerPage::SetTextSelectionValues(const wxString& colourstring, int alpha)
+{
+	m_colourPickerSelTextBgColour->SetColour(colourstring);
+	m_sliderSelTextAlpha->SetValue(alpha);
+}

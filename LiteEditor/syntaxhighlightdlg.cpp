@@ -101,6 +101,7 @@ wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 	
 	sz->Add(m_lexersBook, 1, wxEXPAND | wxALL, 5);
 	m_lexersBook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	m_lexersBook->Connect(ID_buttonTextSelApplyToAll, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightDlg::OnTextSelApplyToAll), NULL, this );
 	
 	LoadLexers(m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection());
 
@@ -177,6 +178,30 @@ void SyntaxHighlightDlg::OnThemeChanged(wxCommandEvent& event)
 
 	LoadLexers( themeName );
 	Layout();
+}
+
+void SyntaxHighlightDlg::OnTextSelApplyToAll(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+
+	LexerPage* page;
+	wxWindow* win = m_lexersBook->GetCurrentPage();
+	if (!win || (page = dynamic_cast<LexerPage*>(win)) == NULL) {
+		return;
+	}
+
+	// Get the text-selection values for the current page, then apply them to all pages
+	wxString colourstring; int alpha;
+	page->GetTextSelectionValues(colourstring, alpha);
+
+	for (size_t i=0; i < m_lexersBook->GetPageCount(); ++i) {
+		wxWindow* win = m_lexersBook->GetPage(i);
+		LexerPage* page = dynamic_cast<LexerPage*>(win);
+		if (page) {
+			page->SetTextSelectionValues(colourstring, alpha);
+			page->SetModified();
+		}
+	}
 }
 
 wxPanel *SyntaxHighlightDlg::CreateLexerPage(wxWindow *parent, LexerConfPtr lexer)

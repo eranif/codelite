@@ -51,6 +51,7 @@ protected:
 	void OnButtonApply( wxCommandEvent& event );
 	void OnThemeChanged(wxCommandEvent& event);
 	void OnRestoreDefaults(wxCommandEvent &e);
+	void OnTextSelApplyToAll(wxCommandEvent& event);
 	
 	wxPanel *CreateSyntaxHighlightPage();
 	void LoadLexers(const wxString& theme);	

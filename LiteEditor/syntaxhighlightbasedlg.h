@@ -19,7 +19,6 @@
 #include <wx/clrpicker.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
-#include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/listbox.h>
@@ -31,6 +30,7 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
+#define ID_buttonTextSelApplyToAll 10000
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class SyntaxHighlightBaseDlg
@@ -44,7 +44,6 @@ class SyntaxHighlightBaseDlg : public wxDialog
 		wxColourPickerCtrl* m_colourPickerOutputPanesFgColour;
 		wxStaticText* m_staticText911;
 		wxColourPickerCtrl* m_colourPickerOutputPanesBgColour;
-		wxStaticLine* m_staticline1;
 		wxButton* m_buttonOk;
 		wxButton* m_buttonCancel;
 		wxButton* m_buttonApply;

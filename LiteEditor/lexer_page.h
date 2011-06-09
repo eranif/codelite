@@ -65,6 +65,7 @@ protected:
 	virtual void OnAlphaChanged(wxScrollEvent& event);
 	virtual void OnSelTextChanged(wxColourPickerEvent& event);
 	virtual void OnOutputViewColourChanged(wxColourPickerEvent& event);
+	virtual void OnTextSelApplyToAll(wxCommandEvent& event) { event.Skip(); }
 
 
 	void         EditKeyWords(int set);
@@ -73,9 +74,15 @@ protected:
 public:
 	LexerPage( wxWindow* parent, LexerConfPtr lexer, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 285,300 ), int style = wxTAB_TRAVERSAL );
 	void SaveSettings();
+	
+	void GetTextSelectionValues(wxString& colourstring, int& alpha) const;
+	void SetTextSelectionValues(const wxString& colourstring, int alpha);
 
 	const bool& GetIsModified() const {
 		return m_isModified;
+	}
+	void SetModified() {
+		m_isModified = true;
 	}
 };
 

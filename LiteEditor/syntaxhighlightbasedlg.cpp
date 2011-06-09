@@ -47,9 +47,6 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg( wxWindow* parent, wxWindowID id,
 	
 	bSizer1->Add( sbSizer4, 0, wxEXPAND, 5 );
 	
-	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
-	
 	wxBoxSizer* buttonSizer;
 	buttonSizer = new wxBoxSizer( wxHORIZONTAL );
 	
@@ -253,7 +250,7 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	
 	sbSizer3->Add( fgSizer3, 1, wxEXPAND, 5 );
 	
-	m_buttonTextSelApplyToAll = new wxButton( this, wxID_ANY, _("Apply these choices to all lexors"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonTextSelApplyToAll = new wxButton( this, ID_buttonTextSelApplyToAll, _("Apply these choices to all lexors"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonTextSelApplyToAll->SetToolTip( _("To save having to go through every lexor to set your text selection preferences, click here to apply these settings to all the lexors in this theme") );
 	
 	sbSizer3->Add( m_buttonTextSelApplyToAll, 0, wxALL|wxEXPAND, 5 );

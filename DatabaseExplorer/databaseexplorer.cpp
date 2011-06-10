@@ -201,7 +201,7 @@ void DatabaseExplorer::UnPlug()
 	//TODO:: perform the unplug action for this plugin
 	
 	
-	int index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_dbViewerPanel);
+	size_t index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_dbViewerPanel);
 	if (index != Notebook::npos) {
 		m_mgr->GetWorkspacePaneNotebook()->RemovePage(index, false);
 	}

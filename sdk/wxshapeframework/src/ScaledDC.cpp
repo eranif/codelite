@@ -17,13 +17,17 @@
 #include "wx/wxsf/ScaledDC.h"
 #include "wx/wxsf/CommonFcn.h"
 
+#if defined (__WXGTK__) && wxVERSION_NUMBER >= 2900
+	#include "wx/gtk/dcclient.h"
+#endif
+
 bool wxSFScaledDC::m_fEnableGC = false;
 
 //----------------------------------------------------------------------------------//
 // Constructor and destructor
 //----------------------------------------------------------------------------------//
 
-wxSFScaledDC::wxSFScaledDC( wxWindowDC *target, double scale)
+wxSFScaledDC::wxSFScaledDC( wxWindowDC *target, double scale, wxWindow* win) : wxClientDC(win)
 {
 	m_nScale = scale;
 	m_pTargetDC = target;
@@ -101,6 +105,7 @@ void wxSFScaledDC::Clear()
 {
 	m_pTargetDC->Clear();
 }
+#if wxVERSION_NUMBER < 2900
 void wxSFScaledDC::ComputeScaleAndOrigin()
 {
 	m_pTargetDC->ComputeScaleAndOrigin();
@@ -109,6 +114,7 @@ bool wxSFScaledDC::DoBlit(wxCoord xdest, wxCoord ydest, wxCoord width, wxCoord h
 {
 	return m_pTargetDC->Blit( Scale(xdest), Scale(ydest), width, height, source, xsrc, ysrc, rop, useMask, xsrcMask, ysrcMask);
 }
+#endif
 void wxSFScaledDC::DoCrossHair(wxCoord x, wxCoord y)
 {
 	m_pTargetDC->CrossHair( Scale(x), Scale(y) );
@@ -240,7 +246,12 @@ void wxSFScaledDC::DoDrawPoint(wxCoord x, wxCoord y)
     else
         m_pTargetDC->DrawPoint(Scale(x), Scale(y));
 }
+
+#if wxVERSION_NUMBER < 2900
 void wxSFScaledDC::DoDrawPolyPolygon(int n, int count[], wxPoint points[], wxCoord xoffset, wxCoord yoffset, int fillStyle)
+#else
+	void wxSFScaledDC::DoDrawPolyPolygon(int n, int count[], wxPoint points[], wxCoord xoffset, wxCoord yoffset, wxPolygonFillMode fillStyle)
+#endif
 {
     if( m_fEnableGC )
     {
@@ -287,7 +298,12 @@ void wxSFScaledDC::DoDrawPolyPolygon(int n, int count[], wxPoint points[], wxCoo
         delete [] updPoints;
     }
 }
+
+#if wxVERSION_NUMBER < 2900
 void wxSFScaledDC::DoDrawPolygon(int n, wxPoint points[], wxCoord xoffset, wxCoord yoffset, int fillStyle)
+#else
+	void wxSFScaledDC::DoDrawPolygon(int n, wxPoint points[], wxCoord xoffset, wxCoord yoffset, wxPolygonFillMode fillStyle)
+#endif
 {
     if( m_fEnableGC )
     {
@@ -373,7 +389,12 @@ void wxSFScaledDC::DoDrawRoundedRectangle(wxCoord x, wxCoord y, wxCoord width, w
     else
 		m_pTargetDC->DrawRoundedRectangle(Scale(x), Scale(y), Scale(width), Scale(height), radius*m_nScale);
 }
+
+#if wxVERSION_NUMBER < 2900
 void wxSFScaledDC::DoDrawSpline(wxList* points)
+#else
+	void wxSFScaledDC::DoDrawSpline(const wxPointList* points)
+#endif
 {
 	m_pTargetDC->DrawSpline( points );
 }
@@ -403,7 +424,12 @@ void wxSFScaledDC::DoDrawText(const wxString& text, wxCoord x, wxCoord y)
         SetFont(prevfont);
     }
 }
+
+#if wxVERSION_NUMBER < 2900
 bool wxSFScaledDC::DoFloodFill(wxCoord x, wxCoord y, const wxColour& col, int style)
+#else
+	bool wxSFScaledDC::DoFloodFill(wxCoord x, wxCoord y, const wxColour& col, wxFloodFillStyle style)
+#endif
 {
 	return m_pTargetDC->FloodFill( Scale(x), Scale(y), col, style );
 }
@@ -474,10 +500,15 @@ void wxSFScaledDC::DoSetClippingRegionAsRegion(const wxRegion& region)
 
 	// not implemented...
 }
+
+#if wxVERSION_NUMBER < 2900
+	// This is deprecated in wx2.9. See http://trac.wxwidgets.org/ticket/9860
 void wxSFScaledDC::DrawObject(wxDrawObject* drawobject)
 {
 	m_pTargetDC->DrawObject( drawobject );
 }
+#endif
+
 void wxSFScaledDC::EndDoc()
 {
 	m_pTargetDC->EndDoc();
@@ -517,7 +548,17 @@ const wxFont& wxSFScaledDC::GetFont() const
 #ifdef __WXGTK__
 GdkWindow* wxSFScaledDC::GetGDKWindow() const
 {
+	#if wxVERSION_NUMBER < 2900
 	return m_pTargetDC->GetGDKWindow();
+	#else
+		// This is untested, but it was taken from src/gtk/dcclient.cpp so it should work
+		wxDCImpl* impl = m_pTargetDC->GetImpl();
+		wxWindowDCImpl* gtk_impl = wxDynamicCast(impl, wxWindowDCImpl);
+		if (gtk_impl)
+			return gtk_impl->GetGDKWindow();
+		 else
+			return (GdkWindow*)NULL;
+	#endif
 }
 #endif
 wxLayoutDirection wxSFScaledDC::GetLayoutDirection() const
@@ -551,7 +592,11 @@ const wxPen& wxSFScaledDC::GetPen() const
 wxBitmap wxSFScaledDC::GetSelectedBitmap() const
 {
 	#ifndef __WXMAC__ 
+#if wxVERSION_NUMBER < 2900
 	return m_pTargetDC->GetSelectedBitmap(); 
+	#else 
+	return m_pTargetDC->GetImpl()->GetSelectedBitmap(); 
+#endif
 	#else 
 	return wxNullBitmap; 
 	#endif 
@@ -574,7 +619,7 @@ bool wxSFScaledDC::IsOk() const
 }
 bool wxSFScaledDC::Ok() const
 {
-	return m_pTargetDC->Ok();
+	return m_pTargetDC->IsOk();
 }
 void wxSFScaledDC::SetAxisOrientation(bool xLeftRight, bool yBottomUp)
 {
@@ -616,7 +661,12 @@ void wxSFScaledDC::SetLayoutDirection(wxLayoutDirection dir)
 {
 	m_pTargetDC->SetLayoutDirection( dir );
 }
+
+#if wxVERSION_NUMBER < 2900
 void wxSFScaledDC::SetLogicalFunction(int function)
+#else
+	void wxSFScaledDC::SetLogicalFunction(wxRasterOperationMode function)
+#endif
 {
 	m_pTargetDC->SetLogicalFunction( function );
 }
@@ -628,7 +678,12 @@ void wxSFScaledDC::SetLogicalScale(double x, double y)
 {
 	m_pTargetDC->SetLogicalScale( x, y );
 }
+
+#if wxVERSION_NUMBER < 2900
 void wxSFScaledDC::SetMapMode(int mode)
+#else
+	void wxSFScaledDC::SetMapMode(wxMappingMode mode)
+#endif
 {
 	m_pTargetDC->SetMapMode( mode );
 }

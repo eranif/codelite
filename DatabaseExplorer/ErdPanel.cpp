@@ -25,8 +25,16 @@ BEGIN_EVENT_TABLE(ErdPanel, _ErdPanel)
 	EVT_UPDATE_UI(wxID_PASTE, ErdPanel::OnUpdatePaste)
 	EVT_UPDATE_UI(wxID_UNDO, ErdPanel::OnUpdateUndo)
 	EVT_UPDATE_UI(wxID_REDO, ErdPanel::OnUpdateRedo)
-	EVT_TOOL_RANGE(IDT_ERD_FIRST, IDT_ERD_LAST, ErdPanel::OnTool)
-	EVT_UPDATE_UI_RANGE(IDT_ERD_FIRST, IDT_ERD_LAST, ErdPanel::OnToolUpdate)
+	// The following were originally EVT_*_RANGEs, but these won't work with XRCIDs in wx2.9
+	// and only worked by chance in earlier versions: see http://trac.wxwidgets.org/ticket/11431
+	EVT_TOOL(IDT_ERD_TOOL, ErdPanel::OnTool)
+	EVT_TOOL(IDT_ERD_TABLE, ErdPanel::OnTool)
+	EVT_TOOL(IDT_ERD_LINE, ErdPanel::OnTool)
+	EVT_TOOL(IDT_ERD_VIEW, ErdPanel::OnTool)
+	EVT_UPDATE_UI(IDT_ERD_TOOL, ErdPanel::OnToolUpdate)
+	EVT_UPDATE_UI(IDT_ERD_TABLE, ErdPanel::OnToolUpdate)
+	EVT_UPDATE_UI(IDT_ERD_LINE, ErdPanel::OnToolUpdate)
+	EVT_UPDATE_UI(IDT_ERD_VIEW, ErdPanel::OnToolUpdate)
 	
 END_EVENT_TABLE()
 
@@ -138,7 +146,7 @@ void ErdPanel::OnToolUpdate(wxUpdateUIEvent& event) {
 
 }
 void ErdPanel::OnLoad(wxCommandEvent& WXUNUSED(event)) {
-	wxFileDialog dlg(this, wxT("Load canvas from file..."), wxGetCwd(), wxT(""), wxT("ERD Files (*.erd)|*.erd"), wxOPEN | wxFD_FILE_MUST_EXIST);
+	wxFileDialog dlg(this, wxT("Load canvas from file..."), wxGetCwd(), wxT(""), wxT("ERD Files (*.erd)|*.erd"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
 	if(dlg.ShowModal() == wxID_OK) {
 		m_pFrameCanvas->LoadCanvas(dlg.GetPath());
@@ -147,7 +155,7 @@ void ErdPanel::OnLoad(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void ErdPanel::OnSave(wxCommandEvent& WXUNUSED(event)) {
-	wxFileDialog dlg(this, wxT("Save canvas to file..."), wxGetCwd(), wxT(""), wxT("ERD Files (*.erd)|*.erd"), wxSAVE | wxFD_OVERWRITE_PROMPT);
+	wxFileDialog dlg(this, wxT("Save canvas to file..."), wxGetCwd(), wxT(""), wxT("ERD Files (*.erd)|*.erd"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
 	if(dlg.ShowModal() == wxID_OK) {
 		m_pFrameCanvas->SaveCanvas(dlg.GetPath());
@@ -157,7 +165,7 @@ void ErdPanel::OnSave(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void ErdPanel::OnSaveSql(wxCommandEvent& event) {
-	wxFileDialog dlg(this, wxT("Save SQL create query..."), wxGetCwd(), wxT(""), wxT("SQL Files (*.sql)|*.sql"), wxSAVE | wxFD_OVERWRITE_PROMPT);
+	wxFileDialog dlg(this, wxT("Save SQL create query..."), wxGetCwd(), wxT(""), wxT("SQL Files (*.sql)|*.sql"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
 	if(dlg.ShowModal() == wxID_OK) {
 		wxTextFile file(dlg.GetPath());
@@ -237,7 +245,7 @@ void ErdPanel::OnUpdateUndo(wxUpdateUIEvent& event) {
 }
 
 void ErdPanel::OnSaveImg(wxCommandEvent& event) {
-	wxFileDialog dlg(this, wxT("Export canvas to BMP..."), wxGetCwd(), wxT(""), wxT("BMP Files (*.bmp)|*.bmp"), wxSAVE);
+	wxFileDialog dlg(this, wxT("Export canvas to BMP..."), wxGetCwd(), wxT(""), wxT("BMP Files (*.bmp)|*.bmp"), wxFD_SAVE);
 
 	if(dlg.ShowModal() == wxID_OK) {
 		m_pFrameCanvas->SaveCanvasToBMP(dlg.GetPath());

@@ -480,7 +480,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 				Database* pDb = (Database*) wxDynamicCast(data->GetData(),Database);
 				if (pDb) {
 					//TODO:LANG:
-					wxFileDialog dlg(this, wxT("Import database from SQL file ..."), wxGetCwd(), wxT(""), wxT("SQL Files (*.sql)|*.sql"), wxOPEN | wxFILE_MUST_EXIST);
+					wxFileDialog dlg(this, wxT("Import database from SQL file ..."), wxGetCwd(), wxT(""), wxT("SQL Files (*.sql)|*.sql"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 					if(dlg.ShowModal() == wxID_OK) {
 						ImportDb(dlg.GetPath(), pDb);
 					}
@@ -511,7 +511,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 				if (pDb) {
 					pDb->RefreshChildrenDetails();
 
-					wxFileDialog dlg(this, wxT("Export database..."), wxGetCwd(), wxT(""), wxT("SQL Files (*.sql)|*.sql"), wxSAVE | wxFD_OVERWRITE_PROMPT);
+					wxFileDialog dlg(this, wxT("Export database..."), wxGetCwd(), wxT(""), wxT("SQL Files (*.sql)|*.sql"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
 					if(dlg.ShowModal() == wxID_OK) {
 						// CreateStructure

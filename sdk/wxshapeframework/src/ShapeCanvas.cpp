@@ -327,7 +327,7 @@ void wxSFShapeCanvas::_OnPaint(wxPaintEvent& event)
 	// use double-buffered painting
 	wxBufferedPaintDC paintDC( this );
 
-	wxSFScaledDC dc( (wxWindowDC*)&paintDC, m_Settings.m_nScale );
+	wxSFScaledDC dc( (wxWindowDC*)&paintDC, m_Settings.m_nScale, this );
 
 	PrepareDC( dc );
 	dc.PrepareGC();
@@ -2051,7 +2051,7 @@ void wxSFShapeCanvas::SaveCanvasToBMP(const wxString& file)
 	wxMemoryDC dc( outbmp );
 
     //wxSFScaledPaintDC outdc(outbmp, 1);
-	wxSFScaledDC outdc((wxWindowDC*)&dc, 1);
+	wxSFScaledDC outdc((wxWindowDC*)&dc, 1, this);
 
     if(outdc.IsOk())
     {

@@ -24,10 +24,10 @@
  * the global scalling capabilities provided by the shape canvas wont be available.
  * \sa wxSFShapeCanvas
  */
-class WXDLLIMPEXP_SF wxSFScaledDC : public wxDC {
+class WXDLLIMPEXP_SF wxSFScaledDC : public wxClientDC {
 
 public:
-	wxSFScaledDC( wxWindowDC* target, double scale );
+	wxSFScaledDC( wxWindowDC* target, double scale, wxWindow* win );
 	virtual ~wxSFScaledDC();
 	
 	// public member data accessors
@@ -52,8 +52,15 @@ public:
 	virtual bool CanDrawBitmap() const;
 	virtual bool CanGetTextExtent() const;
 	virtual void Clear();
-	virtual void ComputeScaleAndOrigin();
-	virtual void DrawObject(wxDrawObject* drawobject);
+#if wxVERSION_NUMBER < 2900
+	virtual void ComputeScaleAndOrigin();				// Compilation fix, as it's unused here
+	virtual void DrawObject(wxDrawObject* drawobject);	// Deprecated in wx2.9 See http://trac.wxwidgets.org/ticket/9860
+	virtual void SetLogicalFunction(int function);
+	virtual void SetMapMode( int mode );
+#else
+	virtual void SetLogicalFunction(wxRasterOperationMode function);
+	virtual void SetMapMode( wxMappingMode mode );
+#endif
 	virtual void EndDoc();
 	virtual void EndPage();
 	virtual const wxBrush& GetBackground() const;
@@ -86,10 +93,8 @@ public:
 	virtual void SetDeviceOrigin(wxCoord x, wxCoord y);
 	virtual void SetFont(const wxFont& font);
 	virtual void SetLayoutDirection(wxLayoutDirection dir);
-	virtual void SetLogicalFunction(int function);
 	virtual void SetLogicalOrigin( wxCoord x, wxCoord y );
 	virtual void SetLogicalScale(double x, double y);
-	virtual void SetMapMode( int mode );
 	virtual void SetPalette(const wxPalette& palette);
 	virtual void SetPen(const wxPen& pen);
 	virtual void SetTextBackground(const wxColour& colour);
@@ -129,7 +134,9 @@ protected:
 	 */
     void UninitGC();
 
+#if wxVERSION_NUMBER < 2900
 	virtual bool DoBlit(wxCoord xdest, wxCoord ydest, wxCoord width, wxCoord height, wxDC *source, wxCoord xsrc, wxCoord ysrc, int rop = wxCOPY, bool useMask = false, wxCoord xsrcMask = wxDefaultCoord, wxCoord ysrcMask = wxDefaultCoord);
+#endif
 	virtual void DoCrossHair(wxCoord x, wxCoord y);
 	virtual void DoDrawArc(wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2, wxCoord xc, wxCoord yc);
 	virtual void DoDrawBitmap(const wxBitmap &bmp, wxCoord x, wxCoord y, bool useMask = false);
@@ -140,14 +147,21 @@ protected:
 	virtual void DoDrawLine(wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2);
 	virtual void DoDrawLines(int n, wxPoint points[], wxCoord xoffset, wxCoord yoffset);
 	virtual void DoDrawPoint(wxCoord x, wxCoord y);
+#if wxVERSION_NUMBER < 2900
 	virtual void DoDrawPolyPolygon(int n, int count[], wxPoint points[], wxCoord xoffset, wxCoord yoffset, int fillStyle);
 	virtual void DoDrawPolygon(int n, wxPoint points[], wxCoord xoffset, wxCoord yoffset, int fillStyle = wxODDEVEN_RULE);
+	virtual void DoDrawSpline(wxList *points);
+	virtual bool DoFloodFill(wxCoord x, wxCoord y, const wxColour& col, int style = wxFLOOD_SURFACE);
+#else
+	virtual void DoDrawPolyPolygon(int n, int count[], wxPoint points[], wxCoord xoffset, wxCoord yoffset, wxPolygonFillMode fillStyle);
+	virtual void DoDrawPolygon(int n, wxPoint points[], wxCoord xoffset, wxCoord yoffset, wxPolygonFillMode fillStyle = wxODDEVEN_RULE);
+	virtual void DoDrawSpline(const wxPointList *points);
+	virtual bool DoFloodFill(wxCoord x, wxCoord y, const wxColour& col, wxFloodFillStyle style = wxFLOOD_SURFACE);
+#endif
 	virtual void DoDrawRectangle(wxCoord x, wxCoord y, wxCoord width, wxCoord height);
 	virtual void DoDrawRotatedText(const wxString& text, wxCoord x, wxCoord y, double angle);
 	virtual void DoDrawRoundedRectangle(wxCoord x, wxCoord y, wxCoord width, wxCoord height, double radius);
-	virtual void DoDrawSpline(wxList *points);
 	virtual void DoDrawText(const wxString& text, wxCoord x, wxCoord y);
-	virtual bool DoFloodFill(wxCoord x, wxCoord y, const wxColour& col, int style = wxFLOOD_SURFACE);
 	virtual wxBitmap DoGetAsBitmap(const wxRect *subrect) const;
 	virtual void DoGetClippingBox(wxCoord *x, wxCoord *y, wxCoord *w, wxCoord *h) const;
 	virtual void DoGetClippingRegion(wxCoord *x, wxCoord *y, wxCoord *w, wxCoord *h);

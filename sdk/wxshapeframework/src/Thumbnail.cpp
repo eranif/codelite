@@ -183,7 +183,7 @@ void wxSFThumbnail::_OnPaint(wxPaintEvent& event)
 		dc.DrawRectangle(0, 0, double(szVirtCanvas.x)*m_nScale, double(szVirtCanvas.y)*m_nScale);
 		
 		// draw top level shapes
-		wxSFScaledDC sdc( (wxWindowDC*)&dc, m_nScale * m_pCanvas->GetScale() );
+		wxSFScaledDC sdc( (wxWindowDC*)&dc, m_nScale * m_pCanvas->GetScale(), m_pCanvas );
 		this->DrawContent( sdc );
 		
 		// draw canvas client area

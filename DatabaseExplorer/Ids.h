@@ -5,12 +5,10 @@
 extern int IDS_ERD_SAVE_SQL;
 extern int IDS_ERD_SAVE_BMP;
 extern int IDS_ERD_COMMIT;
-extern int IDT_ERD_FIRST;
 extern int IDT_ERD_TOOL;
 extern int IDT_ERD_TABLE;
 extern int IDT_ERD_VIEW;
 extern int IDT_ERD_LINE;
-extern int IDT_ERD_LAST;
 extern int IDT_ERD_ALIGN_CIRCLE;
 extern int IDT_ERD_ALIGN_MESH;
 extern int IDT_ERD_ALIGN_VTREE;

@@ -25,6 +25,7 @@
 
 #include <wx/socket.h>
 #include "cl_registry.h"
+#include "file_logger.h"
 #include "fileextmanager.h"
 #include <wx/splash.h>
 #include <wx/fileconf.h>
@@ -401,7 +402,7 @@ bool CodeLiteApp::OnInit()
 
 	// Update codelite revision and Version
 	EditorConfigST::Get()->Init(SvnRevision, wxT("2.0.2") );
-
+	
 	wxString curdir = wxGetCwd();
 	::wxSetWorkingDirectory(homeDir);
 	// Load all of the XRC files that will be used. You can put everything
@@ -449,7 +450,13 @@ bool CodeLiteApp::OnInit()
 		wxLogMessage(wxT("Failed to load configuration file: ") + wxGetCwd() + wxT("/config/codelite.xml"), wxT("CodeLite"), wxICON_ERROR | wxOK);
 		return false;
 	}
-
+	
+	// Set the log file verbosity
+	long log_verbosity(FileLogger::Error);
+	EditorConfigST::Get()->GetLongValue(wxT("LogVerbosity"), log_verbosity);
+	FileLogger::Get()->SetVerbosity(log_verbosity);
+	CL_SYSTEM(wxT("Starting codelite..."));
+	
 	// check for single instance
 	if ( !CheckSingularity(parser, curdir) ) {
 		return false;
@@ -584,6 +591,7 @@ bool CodeLiteApp::OnInit()
 
 int CodeLiteApp::OnExit()
 {
+	CL_SYSTEM(wxT("Bye"));
 	EditorConfigST::Free();
 	ConfFileLocator::Release();
 	return 0;

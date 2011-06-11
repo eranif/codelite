@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -47,7 +47,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	wxArrayString m_fileEncodingChoices;
 	m_fileEncoding = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_fileEncodingChoices, 0 );
 	m_fileEncoding->SetSelection( 0 );
-	fgSizer1->Add( m_fileEncoding, 0, wxALL|wxEXPAND, 5 );
+	fgSizer1->Add( m_fileEncoding, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	m_SetLocale = new wxCheckBox( this, wxID_ANY, _("Enable localization"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_SetLocale->SetValue(true); 
@@ -67,7 +67,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	m_AvailableLocales->SetSelection( 0 );
 	m_AvailableLocales->SetToolTip( _("These are the locales that are available on your system. There won't necessarily be CodeLite translations for all of them.") );
 	
-	fgSizer1->Add( m_AvailableLocales, 0, wxALL|wxEXPAND, 5 );
+	fgSizer1->Add( m_AvailableLocales, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	sbSizer2->Add( fgSizer1, 0, wxALL|wxEXPAND, 5 );
 	
@@ -94,18 +94,48 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	fgSizer2->Add( m_staticText3, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_maxItemsFindReplace = new wxSpinCtrl( this, wxID_ANY, wxT("10"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 50, 10 );
-	fgSizer2->Add( m_maxItemsFindReplace, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
+	fgSizer2->Add( m_maxItemsFindReplace, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Maximum number of tabs opened in the editor:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	fgSizer2->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_spinCtrlMaxOpenTabs = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 5, 30, 15 );
-	fgSizer2->Add( m_spinCtrlMaxOpenTabs, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
+	fgSizer2->Add( m_spinCtrlMaxOpenTabs, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	sbSizer4->Add( fgSizer2, 0, wxEXPAND|wxALL, 5 );
 	
 	bSizer1->Add( sbSizer4, 0, wxEXPAND|wxALL, 5 );
+	
+	wxStaticBoxSizer* sbSizer5;
+	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Log file:") ), wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer3;
+	fgSizer3 = new wxFlexGridSizer( 0, 3, 0, 0 );
+	fgSizer3->AddGrowableCol( 0 );
+	fgSizer3->SetFlexibleDirection( wxBOTH );
+	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText6 = new wxStaticText( this, wxID_ANY, _("Log file verbosity:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6->Wrap( -1 );
+	fgSizer3->Add( m_staticText6, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxString m_choice4Choices[] = { _("Error"), _("Warning"), _("Debug"), _("Developer") };
+	int m_choice4NChoices = sizeof( m_choice4Choices ) / sizeof( wxString );
+	m_choice4 = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice4NChoices, m_choice4Choices, 0 );
+	m_choice4->SetSelection( 0 );
+	m_choice4->SetToolTip( _("codelite logs to file various events, this option controls the logging verbosity") );
+	
+	fgSizer3->Add( m_choice4, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+	
+	m_buttonOpenLog = new wxButton( this, wxID_ANY, _("Open.."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOpenLog->SetToolTip( _("Open the log file into an editor") );
+	
+	fgSizer3->Add( m_buttonOpenLog, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALIGN_RIGHT, 5 );
+	
+	sbSizer5->Add( fgSizer3, 0, wxEXPAND|wxALL, 5 );
+	
+	bSizer1->Add( sbSizer5, 0, wxEXPAND|wxALL, 5 );
 	
 	wxStaticBoxSizer* sbSizer3;
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Others:") ), wxVERTICAL );
@@ -138,6 +168,8 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	m_AvailableLocales->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsMiscBasePanel::LocaleChoiceUpdateUI ), NULL, this );
 	m_clearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditorSettingsMiscBasePanel::OnClearButtonClick ), NULL, this );
 	m_clearButton->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsMiscBasePanel::OnClearUI ), NULL, this );
+	m_choice4->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( EditorSettingsMiscBasePanel::OnLogVerbosityChanged ), NULL, this );
+	m_buttonOpenLog->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditorSettingsMiscBasePanel::OnShowLogFile ), NULL, this );
 }
 
 EditorSettingsMiscBasePanel::~EditorSettingsMiscBasePanel()
@@ -149,5 +181,7 @@ EditorSettingsMiscBasePanel::~EditorSettingsMiscBasePanel()
 	m_AvailableLocales->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsMiscBasePanel::LocaleChoiceUpdateUI ), NULL, this );
 	m_clearButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditorSettingsMiscBasePanel::OnClearButtonClick ), NULL, this );
 	m_clearButton->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsMiscBasePanel::OnClearUI ), NULL, this );
+	m_choice4->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( EditorSettingsMiscBasePanel::OnLogVerbosityChanged ), NULL, this );
+	m_buttonOpenLog->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditorSettingsMiscBasePanel::OnShowLogFile ), NULL, this );
 	
 }

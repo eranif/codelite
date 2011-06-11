@@ -660,6 +660,10 @@
   <VirtualDirectory Name="ClangCodeCompletion">
     <File Name="clang_code_completion.h"/>
     <File Name="clang_code_completion.cpp"/>
+    <File Name="clangpch_cache.h"/>
+    <File Name="clangpch_cache.cpp"/>
+    <File Name="clang_driver.h"/>
+    <File Name="clang_driver.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29">
     <Project Name="wxscintilla"/>
@@ -735,6 +739,54 @@
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
     <Project Name="wxscintilla"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="CodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
+    <Project Name="abbreviation"/>
+    <Project Name="ContinuousBuild"/>
+    <Project Name="QMakePlugin"/>
+    <Project Name="CppChecker"/>
+    <Project Name="Subversion2"/>
+    <Project Name="SymbolView"/>
+    <Project Name="git"/>
+    <Project Name="DatabaseExplorer"/>
+  </Dependencies>
+  <Dependencies Name="WinDebugUnicode">
+    <Project Name="wxscintilla"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="CodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
+    <Project Name="abbreviation"/>
+    <Project Name="ContinuousBuild"/>
+    <Project Name="QMakePlugin"/>
+    <Project Name="CppChecker"/>
+    <Project Name="Subversion2"/>
+    <Project Name="SymbolView"/>
+    <Project Name="git"/>
+    <Project Name="DatabaseExplorer"/>
+  </Dependencies>
+  <Dependencies Name="WinDebugUnicode">
+    <Project Name="wxscintilla"/>
+    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="CodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -865,8 +917,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -887,7 +938,7 @@ resources.cpp: resources.xrc
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="Default"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -914,7 +965,8 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .</CustomPreBuild>
+	autorev .
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -1011,52 +1063,4 @@ svninfo.cpp:
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-    <Project Name="Copyright"/>
-    <Project Name="UnitTestPP"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="snipwiz"/>
-    <Project Name="wxFormBuilder"/>
-    <Project Name="abbreviation"/>
-    <Project Name="ContinuousBuild"/>
-    <Project Name="QMakePlugin"/>
-    <Project Name="CppChecker"/>
-    <Project Name="Subversion2"/>
-    <Project Name="SymbolView"/>
-    <Project Name="git"/>
-    <Project Name="DatabaseExplorer"/>
-  </Dependencies>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-    <Project Name="Copyright"/>
-    <Project Name="UnitTestPP"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="snipwiz"/>
-    <Project Name="wxFormBuilder"/>
-    <Project Name="abbreviation"/>
-    <Project Name="ContinuousBuild"/>
-    <Project Name="QMakePlugin"/>
-    <Project Name="CppChecker"/>
-    <Project Name="Subversion2"/>
-    <Project Name="SymbolView"/>
-    <Project Name="git"/>
-    <Project Name="DatabaseExplorer"/>
-  </Dependencies>
 </CodeLite_Project>

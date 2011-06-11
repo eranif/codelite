@@ -41,7 +41,7 @@ class EditorSettingsMiscPanel
 	bool m_restartRequired;
 	bool m_oldSetLocale;
 	wxString m_oldpreferredLocale;
-	
+
 protected:
 	int FindAvailableLocales();
 
@@ -52,6 +52,8 @@ protected:
 	void LocaleStaticUpdateUI(wxUpdateUIEvent& event);
 	void LocaleChkUpdateUI(wxUpdateUIEvent& event);
 	void LocaleChoiceUpdateUI(wxUpdateUIEvent& event);
+	void OnLogVerbosityChanged(wxCommandEvent& event);
+	void OnShowLogFile(wxCommandEvent& event);
 
 public:
 	/** Constructor */

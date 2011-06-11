@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun  6 2011)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -550,12 +550,18 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	fgSizer4->Add( m_staticText10, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_filePickerClang = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL );
-	fgSizer4->Add( m_filePickerClang, 0, wxALL|wxEXPAND, 5 );
+	fgSizer4->Add( m_filePickerClang, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_staticText101 = new wxStaticText( this, wxID_ANY, _("Clear clang PCH cache directory:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText101->Wrap( -1 );
+	fgSizer4->Add( m_staticText101, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_buttonClearCache = new wxButton( this, wxID_CLEAR, _("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonClearCache->SetToolTip( _("Clicking this button will erase all clang's generated PCH files. \nUse this button as the first step to resolve a code completion issue") );
+	
+	fgSizer4->Add( m_buttonClearCache, 0, wxALL|wxALIGN_RIGHT, 5 );
 	
 	bSizer18->Add( fgSizer4, 0, wxEXPAND|wxALL, 5 );
-	
-	m_checkBoxLogClangOutput = new wxCheckBox( this, wxID_ANY, _("Log clang output to 'Trace' tab"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer18->Add( m_checkBoxLogClangOutput, 0, wxALL|wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer18 );
 	this->Layout();
@@ -563,7 +569,9 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	// Connect Events
 	m_staticText10->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_filePickerClang->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
-	m_checkBoxLogClangOutput->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_staticText101->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_buttonClearCache->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCClangBasePage::OnClearClangCache ), NULL, this );
+	m_buttonClearCache->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClearClangCacheUI ), NULL, this );
 }
 
 CCClangBasePage::~CCClangBasePage()
@@ -571,6 +579,8 @@ CCClangBasePage::~CCClangBasePage()
 	// Disconnect Events
 	m_staticText10->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_filePickerClang->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
-	m_checkBoxLogClangOutput->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_staticText101->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_buttonClearCache->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCClangBasePage::OnClearClangCache ), NULL, this );
+	m_buttonClearCache->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClearClangCacheUI ), NULL, this );
 	
 }

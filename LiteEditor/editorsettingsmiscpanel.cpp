@@ -28,6 +28,7 @@
 #include "frame.h"
 #include "manager.h"
 #include "pluginmanager.h"
+#include "file_logger.h"
 #include "wx/wxprec.h"
 #include <wx/intl.h>
 #include <wx/fontmap.h>
@@ -49,7 +50,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 	} else {
 		m_toolbarIconSize->SetSelection(1);
 	}
-	
+
 	m_checkBoxEnableMSWTheme->SetValue(options->GetMswTheme());
 	m_useSingleToolbar->SetValue(!PluginManager::Get()->AllowToolbar());
 
@@ -61,7 +62,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 	if (select != wxNOT_FOUND) {
 		m_AvailableLocales->SetSelection(select);
 	}
-	
+
 
 	wxArrayString astrEncodings;
 	wxFontEncoding fontEnc;
@@ -103,6 +104,11 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 	long maxTabs(15);
 	EditorConfigST::Get()->GetLongValue(wxT("MaxOpenedTabs"), maxTabs);
 	m_spinCtrlMaxOpenTabs->SetValue(maxTabs);
+
+	// Set the logging verbosity
+	long logVerbosity(FileLogger::Error);
+	EditorConfigST::Get()->GetLongValue(wxT("LogVerbosity"), logVerbosity);
+	m_choice4->SetStringSelection( FileLogger::GetVerbosityAsString(logVerbosity) );
 }
 
 void EditorSettingsMiscPanel::OnClearButtonClick( wxCommandEvent& )
@@ -119,7 +125,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 	} else {
 		clMainFrame::Get()->SetFrameFlag(false, CL_SHOW_SPLASH);
 	}
-	
+
 	// Set the theme support.
 	// This option requires a restart of codelite
 	bool oldEnableMSWTheme = options->GetMswTheme();
@@ -127,7 +133,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 	if(oldEnableMSWTheme != m_checkBoxEnableMSWTheme->IsChecked()) {
 		m_restartRequired = true;
 	}
-	
+
 	EditorConfigST::Get()->SaveLongValue(wxT("SingleInstance"), m_singleAppInstance->IsChecked() ? 1 : 0);
 	EditorConfigST::Get()->SaveLongValue(wxT("CheckNewVersion"), m_versionCheckOnStartup->IsChecked() ? 1 : 0);
 	EditorConfigST::Get()->SaveLongValue(wxT("ShowFullPathInFrameTitle"), m_fullFilePath->IsChecked() ? 1 : 0);
@@ -166,13 +172,13 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 	if ((setlocale != m_oldSetLocale) || (newLocaleString != m_oldpreferredLocale)) {
 		m_restartRequired = true;
 	}
-	
+
 	// save file font encoding
 	options->SetFileFontEncoding(m_fileEncoding->GetStringSelection());
-	
+
 	// Update the tags manager encoding
 	TagsManagerST::Get()->SetEncoding(options->GetFileFontEncoding());
-	
+
 	if (oldIconSize != iconSize || oldUseSingleToolbar != m_useSingleToolbar->IsChecked()) {
 		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 0);
 		//notify the user
@@ -243,11 +249,11 @@ int EditorSettingsMiscPanel::FindAvailableLocales()
 				// Display the name as e.g. "en_GB: English (U.K.)"
 				m_AvailableLocales->Append(info->CanonicalName + wxT(": ") + info->Description);
 				canonicalNames.Add(info->CanonicalName);
-			
+
 				if (info->CanonicalName == m_oldpreferredLocale) {
 					// Use this as the selection in the wxChoice
 					select = n;
-				}		
+				}
 				if (lang == system_lang) {
 					// Use this as the selection if m_oldpreferredLocale isn't found
 					sysdefault_sel = n;
@@ -256,6 +262,23 @@ int EditorSettingsMiscPanel::FindAvailableLocales()
 			}
 		}
 	}
-	
+
 	return (select != wxNOT_FOUND) ? select:sysdefault_sel ;
+}
+
+void EditorSettingsMiscPanel::OnLogVerbosityChanged(wxCommandEvent& event)
+{
+	FileLogger::Get()->SetVerbosity(event.GetString());
+	EditorConfigST::Get()->SaveLongValue(wxT("LogVerbosity"), FileLogger::GetVerbosityAsNumber(m_choice4->GetStringSelection()));
+}
+
+void EditorSettingsMiscPanel::OnShowLogFile(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	wxString logfile;
+	logfile << wxStandardPaths::Get().GetUserDataDir()
+			<< wxFileName::GetPathSeparator()
+			<< wxT("codelite.log");
+			
+	clMainFrame::Get()->GetMainBook()->OpenFile(logfile);
 }

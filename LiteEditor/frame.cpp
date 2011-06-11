@@ -873,8 +873,6 @@ void clMainFrame::CreateGUIControls(void)
 		CreateToolbars24();
 	}
 
-	ClangCodeCompletion::Instance()->Initialize(PluginManager::Get());
-
 	GetWorkspacePane()->GetNotebook()->SetRightClickMenu( wxXmlResource::Get()->LoadMenu(wxT("workspace_view_rmenu")) );
 	GetDebuggerPane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu( wxT("debugger_view_rmenu") ) );
 

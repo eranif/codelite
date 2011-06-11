@@ -13,6 +13,9 @@ public:
 
 	virtual void OnClangCCEnabledUI(wxUpdateUIEvent& event);
 	virtual void Save(TagsOptionsData& data);
+	virtual void OnClearClangCache(wxCommandEvent& event);
+	virtual void OnClearClangCacheUI(wxUpdateUIEvent& event);
+
 };
 
 #endif // CCCLANGPAGE_H

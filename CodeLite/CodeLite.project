@@ -33,6 +33,8 @@
     <File Name="fileextmanager.cpp"/>
     <File Name="parsedtoken.h"/>
     <File Name="parsedtoken.cpp"/>
+    <File Name="file_logger.h"/>
+    <File Name="file_logger.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

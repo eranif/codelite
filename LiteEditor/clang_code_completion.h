@@ -5,6 +5,7 @@
 #include "asyncprocess.h"
 #include <map>
 #include "entry.h"
+#include "clang_driver.h"
 
 class IEditor;
 class IManager;
@@ -20,40 +21,40 @@ class ClangCodeCompletion : public wxEvtHandler
 {
 
 	static ClangCodeCompletion* ms_instance;
-	IManager *                  m_manager;
 	IProcess*                   m_process;
-	wxString                    m_output;
-	wxString                    m_tmpfile;
-	std::map<wxString,wxString> m_backticks;
 	int                         m_activationPos;
 	IEditor*                    m_activationEditor;
-	bool                        m_loggingEnabled;
-	
+	ClangDriver                 m_clang;
+
+	friend class ClangDriver;
+
 public:
 	static ClangCodeCompletion* Instance();
 	static void Release();
-	void Initialize(IManager *manager);
+
 	/**
 	 * @brief perform code completion
 	 * @param editor
 	 */
 	void CodeComplete(IEditor *editor);
 	void CancelCodeComplete();
-	
+	const ClangPCHCache &GetCache() const {
+		return m_clang.GetCache();
+	}
+	ClangPCHCache &GetCache() {
+		return m_clang.GetCache();
+	}
 protected:
 	wxArrayString GetStandardIncludePathsArgs();
-	void DoParseOutput();
+	void DoParseOutput(const wxString &output);
 	void DoCleanUp();
 	TagEntryPtr ClangEntryToTagEntry(const wxString &line);
-	
-protected:
-	DECLARE_EVENT_TABLE()
-	void OnProcessTerminated(wxCommandEvent &e);
-	void OnProcessOutput    (wxCommandEvent &e);
+
 
 private:
 	ClangCodeCompletion();
 	~ClangCodeCompletion();
+
 };
 
 #endif // CLANGCODECOMPLETION_H

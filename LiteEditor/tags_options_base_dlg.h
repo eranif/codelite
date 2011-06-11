@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun  6 2011)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -236,10 +236,13 @@ class CCClangBasePage : public wxPanel
 		wxCheckBox* m_checkBoxEnableClangCC;
 		wxStaticText* m_staticText10;
 		wxFilePickerCtrl* m_filePickerClang;
-		wxCheckBox* m_checkBoxLogClangOutput;
+		wxStaticText* m_staticText101;
+		wxButton* m_buttonClearCache;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnClangCCEnabledUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnClearClangCache( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnClearClangCacheUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	
 	public:

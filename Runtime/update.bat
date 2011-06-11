@@ -1,5 +1,4 @@
 @echo off
-
 xcopy config\*.default "%ProgramFiles(x86)%\CodeLite\config\" /E /I /H /Y /EXCLUDE:excludes
 xcopy config\build_settings.xml.default.win "%ProgramFiles(x86)%\CodeLite\config\build_settings.xml.default" /E /I /H /Y /EXCLUDE:excludes
 xcopy debuggers\*.dll "%ProgramFiles(x86)%\CodeLite\debuggers\" /E /I /H /Y /EXCLUDE:excludes
@@ -26,6 +25,7 @@ xcopy ..\lib\gcc_lib\libwxshapeframework*.dll "%ProgramFiles(x86)%\CodeLite\" /E
 copy codelite_indexer.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy codelite_cppcheck.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy codelite_launcher.exe "%ProgramFiles(x86)%\CodeLite\" /Y
+copy "clang++.exe" "%ProgramFiles(x86)%\CodeLite\" /Y
 copy makedir.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy le_exec.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy CodeLite.exe "%ProgramFiles(x86)%\CodeLite\" /Y

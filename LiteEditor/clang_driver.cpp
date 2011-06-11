@@ -16,6 +16,10 @@
 #include "fileextmanager.h"
 #include "globals.h"
 
+static wxString PRE_PROCESS_CMD = wxT("\"$CLANG\" -cc1 $ARGS -w \"$SRC_FILE\" -E 1> \"$PP_OUTPUT_FILE\" 2>&1");
+static wxString PCH_CMD         = wxT("\"$CLANG\" -cc1 -x c++-header $ARGS -w \"$SRC_FILE\" -emit-pch -o \"$PCH_FILE\"");
+static wxString CC_CMD          = wxT("\"$CLANG\" -cc1 $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\"");
+
 BEGIN_EVENT_TABLE(ClangDriver, wxEvtHandler)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  ClangDriver::OnClangProcessOutput)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, ClangDriver::OnClangProcessTerminated)
@@ -88,7 +92,7 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type)
 	// clang process is already running
 	if(m_process)
 		return ;
-
+	
 	// check if clang code-completion is enabled
 	ClangDriverCleaner cleaner(this);
 	
@@ -210,15 +214,36 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type)
 		int lineStartPos = editor->PosFromLine( editor->GetCurrentLine() );
 		int column       = editor->GetCurrentPosition() - lineStartPos  + 1;
 		int line         = editor->GetCurrentLine() + 1;
-
+		
+		if(type == CT_CodeCompletion) {
+			int where = currentBuffer.Find(wxT('\n'), true);
+			if(where != wxNOT_FOUND) {
+				CL_DEBUG1(wxT("clang code completion has been invoked for the line: %s"), currentBuffer.Mid(where).c_str());
+			}
+		}
+		
 		column -= (int)filterWord.Length();
 
 		// Create temp file
 		m_tmpfile.clear();
 		m_tmpfile << editor->GetFileName().GetPath(wxPATH_GET_SEPARATOR|wxPATH_GET_VOLUME) << editor->GetFileName().GetName() << wxT("_clang_tmp") << wxT(".cpp");
 
+		
+		// Select the pattern
 		wxString command;
-		command << wxT("\"") << clangBinary << wxT("\"");
+		switch(type) {
+		case CT_PreProcess:
+			command = PRE_PROCESS_CMD;
+			break;
+			
+		case CT_CreatePCH:
+			command = PCH_CMD;
+			break;
+			
+		case CT_CodeCompletion:
+			command = CC_CMD;
+			break;
+		}
 		
 		// Add the arguments
 		wxString argString;
@@ -226,20 +251,23 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type)
 			argString << wxT(" ") << args.Item(i);
 		}
 		
-		command << argString;
+		// Replace the place holders
+		wxString ppOutputFile;
+		ppOutputFile << DoGetPchHeaderFile(editor->GetFileName().GetFullPath()) << wxT(".1");
+		
+		command.Replace(wxT("$CLANG"),          clangBinary);
+		command.Replace(wxT("$ARGS"),           argString);
+		command.Replace(wxT("$PCH_FILE"),       DoGetPchOutputFileName(editor->GetFileName().GetFullPath()));
+		command.Replace(wxT("$PP_OUTPUT_FILE"), ppOutputFile);
+		
 		if(type == CT_CreatePCH) {
 			// Creating PCH file
-			command << wxT(" -Xclang -w -x  c++-header ") 
-					<< wxT("\"") << DoGetPchHeaderFile(editor->GetFileName().GetFullPath()) << wxT("\"")
-					<< wxT(" -Xclang -emit-pch -o ")
-					<< wxT("\"") << DoGetPchOutputFileName(editor->GetFileName().GetFullPath()) << wxT("\"");
+			command.Replace(wxT("$SRC_FILE"), DoGetPchHeaderFile(editor->GetFileName().GetFullPath()));
 		
 		} else if(type == CT_CodeCompletion ) {
 			
-			command << wxT(" -Xclang -w -fsyntax-only ")
-					<< wxT(" -include-pch ")
-					<< wxT("\"") << DoGetPchOutputFileName(editor->GetFileName().GetFullPath()) << wxT("\"")
-					<< wxT(" -Xclang -code-completion-at=");
+			wxString location;
+			wxString completefileName;
 			
 			// Prepare the file name
 			FileExtManager::FileType type = FileExtManager::GetType(editor->GetFileName().GetFullPath());
@@ -250,9 +278,9 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type)
 					return ;
 				}
 				
-				wxString completefileName;
+				
 				completefileName << editor->GetFileName().GetName() << wxT("_clang_tmp") << wxT(".cpp");
-				command << completefileName << wxT(":") << line << wxT(":") << column << wxT(" ") << completefileName;
+				location << completefileName << wxT(":") << line << wxT(":") << column << wxT(" ");
 
 			} else {
 				wxString implFile;
@@ -262,17 +290,14 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type)
 					return ;
 				}
 				
-				wxString completefileName;
 				completefileName << editor->GetFileName().GetName() << wxT("_clang_tmp") << wxT(".cpp");
-				command << editor->GetFileName().GetFullPath() << wxT(":") << line << wxT(":") << column << wxT(" ") << completefileName;
+				location << editor->GetFileName().GetFullPath() << wxT(":") << line << wxT(":") << column;
 			}
+			command.Replace(wxT("$SRC_FILE"), completefileName);
+			command.Replace(wxT("$LOCATION"), location);
 			
 		} else if(type == CT_PreProcess) {
-			command << wxT(" -Xclang -w ") << wxT("\"") << editor->GetFileName().GetFullPath() << wxT("\" -E ");
-		}
-		
-		if(type == CT_PreProcess) {
-			command << wxT(" 1> \"") << DoGetPchHeaderFile(editor->GetFileName().GetFullPath()) << wxT(".1\" 2>&1");
+			command.Replace(wxT("$SRC_FILE"), editor->GetFileName().GetFullPath());
 			WrapInShell(command);
 		}
 			

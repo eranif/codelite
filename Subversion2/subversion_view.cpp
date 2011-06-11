@@ -270,16 +270,6 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
 
 	if (m_treeCtrl->ItemHasChildren(root)) {
 		m_treeCtrl->Expand(root);
-		
-		// Expand the top level children as well
-		wxTreeItemIdValue cookie;
-		wxTreeItemId child = m_treeCtrl->GetFirstChild(root, cookie);
-		while( child.IsOk() ) {
-			if(m_treeCtrl->ItemHasChildren(child)) {
-				m_treeCtrl->Expand(child);
-			}
-			child = m_treeCtrl->GetNextChild(root, cookie);
-		}
 	}
 	DoLinkEditor();
 }
@@ -312,6 +302,17 @@ void SubversionView::DoAddNode(const wxString& title, int imgId, SvnTreeData::Sv
 
 		if ( nodeType != SvnTreeData::SvnNodeTypeUnversionedRoot) {
 			m_treeCtrl->Expand(parent);
+			
+			// Expand the top level children as well
+			wxTreeItemIdValue cookie;
+			wxTreeItemId child = m_treeCtrl->GetFirstChild(parent, cookie);
+			while( child.IsOk() ) {
+				if(m_treeCtrl->ItemHasChildren(child)) {
+					m_treeCtrl->Expand(child);
+				}
+				child = m_treeCtrl->GetNextChild(parent, cookie);
+			}
+			
 		}
 	}
 }

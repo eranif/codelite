@@ -52,8 +52,8 @@ public:
 	virtual bool CanDrawBitmap() const;
 	virtual bool CanGetTextExtent() const;
 	virtual void Clear();
+	virtual void ComputeScaleAndOrigin();
 #if wxVERSION_NUMBER < 2900
-	virtual void ComputeScaleAndOrigin();				// Compilation fix, as it's unused here
 	virtual void DrawObject(wxDrawObject* drawobject);	// Deprecated in wx2.9 See http://trac.wxwidgets.org/ticket/9860
 	virtual void SetLogicalFunction(int function);
 	virtual void SetMapMode( int mode );

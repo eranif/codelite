@@ -105,15 +105,19 @@ void wxSFScaledDC::Clear()
 {
 	m_pTargetDC->Clear();
 }
-#if wxVERSION_NUMBER < 2900
 void wxSFScaledDC::ComputeScaleAndOrigin()
 {
+#if wxVERSION_NUMBER < 2900
 	m_pTargetDC->ComputeScaleAndOrigin();
+#else
+	m_pTargetDC->GetImpl()->ComputeScaleAndOrigin();
+#endif
 }
-bool wxSFScaledDC::DoBlit(wxCoord xdest, wxCoord ydest, wxCoord width, wxCoord height, wxDC* source, wxCoord xsrc, wxCoord ysrc, int rop, bool useMask, wxCoord xsrcMask, wxCoord ysrcMask)
-{
-	return m_pTargetDC->Blit( Scale(xdest), Scale(ydest), width, height, source, xsrc, ysrc, rop, useMask, xsrcMask, ysrcMask);
-}
+#if wxVERSION_NUMBER < 2900
+	bool wxSFScaledDC::DoBlit(wxCoord xdest, wxCoord ydest, wxCoord width, wxCoord height, wxDC* source, wxCoord xsrc, wxCoord ysrc, int rop, bool useMask, wxCoord xsrcMask, wxCoord ysrcMask)
+	{
+		return m_pTargetDC->Blit( Scale(xdest), Scale(ydest), width, height, source, xsrc, ysrc, rop, useMask, xsrcMask, ysrcMask);
+	}
 #endif
 void wxSFScaledDC::DoCrossHair(wxCoord x, wxCoord y)
 {

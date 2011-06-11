@@ -282,7 +282,7 @@ bool wxSFShapeCanvas::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
         int nWidth, nHeight;
         wxDisplaySize(&nWidth, &nHeight);
 
-        if( !m_OutBMP.Create(nWidth, nHeight) ) wxLogError(wxT("Couldn't create output bitmap."));
+        if( !m_OutBMP.Create(nWidth, nHeight) ) { wxLogError(wxT("Couldn't create output bitmap.")); }
 	}
 
     SetScrollbars(5, 5, 100, 100);

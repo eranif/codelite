@@ -1,5 +1,11 @@
 General
 -------
+clang cc:
+----------
+1) Clear PCH cache should clear the files as well
+2) Make the PCH cache limit by size (LRU)
+
+
 
 High priority:
 --------------

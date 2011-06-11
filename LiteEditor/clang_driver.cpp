@@ -41,11 +41,32 @@ ClangDriver::~ClangDriver()
 
 void ClangDriver::CodeCompletion(IEditor* editor)
 {
-	if(m_cache.GetPCH(editor->GetFileName().GetFullPath()).IsValid()) {
+	if(!editor) {
+		CL_WARNING(wxT("ClangDriver::CodeCompletion() called with NULL editor!"));
+		return;
+	}
+	
+	const ClangPCHEntry& entry = m_cache.GetPCH(editor->GetFileName().GetFullPath());
+	
+	wxArrayString removedIncludes;
+	wxString current_buffer = editor->GetTextRange(0, editor->GetCurrentPosition());
+	DoRemoveAllIncludeStatements(current_buffer, removedIncludes);
+	
+	bool isValid   = entry.IsValid();
+	bool needRegen = entry.NeedRegenration(removedIncludes);
+	
+	if(isValid && !needRegen) {
+		CL_DEBUG(wxT("Valid PCH cache entry found for file: %s"), editor->GetFileName().GetFullName().c_str());
 		CL_DEBUG(wxT("ClangDriver::CodeCompletion(): Calling DoRunCommand with state: CT_CodeCompletion"));
 		DoRunCommand(editor, CT_CodeCompletion);
 		
 	} else {
+		if(isValid) {
+			CL_DEBUG(wxT("Regenerating PCH file.."));
+		} else {
+			CL_DEBUG(wxT("No PCH entry was found for file: "), editor->GetFileName().GetFullName().c_str());
+		}
+		
 		CL_DEBUG(wxT("ClangDriver::CodeCompletion(): Calling DoRunCommand with state: CT_PreProcess"));
 		DoRunCommand(editor, CT_PreProcess);
 		
@@ -140,6 +161,7 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type)
 	
 	if(type == CT_PreProcess) {
 		// Remove all the include statements from the code
+		m_removedIncludes.Clear();
 		DoRemoveAllIncludeStatements(currentBuffer, m_removedIncludes);
 	}
 	
@@ -374,7 +396,6 @@ void ClangDriver::DoCleanup()
 	}
 	
 	m_commandType = CT_PreProcess;
-	m_removedIncludes.Clear();
 	m_output.Clear();
 }
 
@@ -384,7 +405,7 @@ void ClangDriver::OnPCHCreationCompleted()
 	CL_DEBUG1(wxT("ClangDriver::OnPCHCreationCompleted():\n[%s]"), m_output.c_str());
 	
 	wxString filename = m_activationEditor->GetFileName().GetFullPath();
-	m_cache.AddPCH(filename, DoGetPchHeaderFile(filename));
+	m_cache.AddPCH(filename, DoGetPchHeaderFile(filename), m_removedIncludes, m_pchHeaders);
 	CL_DEBUG(wxT("caching PCH file: %s for file %s"), DoGetPchHeaderFile(filename).c_str(), filename.c_str());
 	
 	m_pchHeaders.Clear();
@@ -420,18 +441,7 @@ void ClangDriver::OnPreProcessingCompleted()
 	for(size_t i=0; i<m_pchHeaders.GetCount(); i++) {
 		files.insert(m_pchHeaders.Item(i));
 	}
-	
-	// Check to see if we got 
-	wxString pchfilename;
-	const ClangPCHEntry& entry = m_cache.GetPCH(m_activationEditor->GetFileName().GetFullPath());
-	if(!entry.IsValid()) {
-		// No such entry or we have an entry, but it needs to be udpated
-		DoRunCommand(m_activationEditor, CT_CreatePCH);
-		
-	} else {
-		// Skip to the next state
-		DoRunCommand(m_activationEditor, CT_CodeCompletion);
-	}
+	DoRunCommand(m_activationEditor, CT_CreatePCH);
 }
 
 void ClangDriver::DoFilterIncludeFilesFromPP()
@@ -540,6 +550,9 @@ void ClangDriver::DoRemoveAllIncludeStatements(wxString& buffer, wxArrayString &
 	
 	buffer.Clear();
 	for(size_t i=0; i<lines.GetCount(); i++) {
+		
+		if(i >= 300) break;
+		
 		wxString curline = lines.Item(i);
 		wxString trimLine = lines.Item(i);
 		trimLine.Trim().Trim(false);
@@ -578,8 +591,4 @@ bool ClangDriver::ShouldInclude(const wxString& header)
 void ClangDriver::OnFileSaved(wxCommandEvent& e)
 {
 	e.Skip();
-	wxString *fileName = (wxString*) e.GetClientData();
-	if(fileName) {
-		m_cache.RemoveEntry(*fileName);
-	}
 }

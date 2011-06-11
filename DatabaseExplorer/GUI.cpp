@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun  6 2011)
+// C++ code generated with wxFormBuilder (version Jun 10 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -62,10 +62,9 @@ _ThumbPane::~_ThumbPane()
 _SqlCommandPanel::_SqlCommandPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
 {
 	wxFlexGridSizer* fgSizer3;
-	fgSizer3 = new wxFlexGridSizer( 2, 1, 0, 0 );
+	fgSizer3 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer3->AddGrowableCol( 0 );
 	fgSizer3->AddGrowableRow( 1 );
-	fgSizer3->AddGrowableRow( 3 );
 	fgSizer3->SetFlexibleDirection( wxBOTH );
 	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -333,9 +332,9 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	bSizer27 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer41;
-	fgSizer41 = new wxFlexGridSizer( 1, 2, 0, 0 );
+	fgSizer41 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer41->AddGrowableCol( 1 );
-	fgSizer41->AddGrowableRow( 1 );
+	fgSizer41->AddGrowableRow( 0 );
 	fgSizer41->SetFlexibleDirection( wxBOTH );
 	fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -357,14 +356,14 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_notebook2->AddPage( m_Sqlite, wxT("Sqlite"), true );
 	m_MySqlPanel = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer3;
-	fgSizer3 = new wxFlexGridSizer( 3, 1, 0, 0 );
+	fgSizer3 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer3->AddGrowableCol( 0 );
 	fgSizer3->AddGrowableRow( 1 );
 	fgSizer3->SetFlexibleDirection( wxBOTH );
 	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	wxFlexGridSizer* fgSizer4;
-	fgSizer4 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer4 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer4->AddGrowableCol( 1 );
 	fgSizer4->SetFlexibleDirection( wxBOTH );
 	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -426,14 +425,14 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_notebook2->AddPage( m_MySqlPanel, wxT("MySql"), false );
 	m_PostgrePanel = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer32;
-	fgSizer32 = new wxFlexGridSizer( 2, 1, 0, 0 );
+	fgSizer32 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer32->AddGrowableCol( 0 );
-	fgSizer32->AddGrowableRow( 2 );
+	fgSizer32->AddGrowableRow( 1 );
 	fgSizer32->SetFlexibleDirection( wxBOTH );
 	fgSizer32->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	wxFlexGridSizer* fgSizer42;
-	fgSizer42 = new wxFlexGridSizer( 1, 2, 0, 0 );
+	fgSizer42 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer42->AddGrowableCol( 1 );
 	fgSizer42->SetFlexibleDirection( wxBOTH );
 	fgSizer42->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -545,10 +544,9 @@ _DBSettingsDialog::~_DBSettingsDialog()
 _ErdPanel::_ErdPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
 {
 	wxFlexGridSizer* fgSizer7;
-	fgSizer7 = new wxFlexGridSizer( 3, 1, 0, 0 );
+	fgSizer7 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer7->AddGrowableCol( 0 );
 	fgSizer7->AddGrowableRow( 1 );
-	fgSizer7->AddGrowableRow( 2 );
 	fgSizer7->SetFlexibleDirection( wxBOTH );
 	fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -584,14 +582,14 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
 	wxFlexGridSizer* fgSizer9;
-	fgSizer9 = new wxFlexGridSizer( 2, 1, 0, 0 );
+	fgSizer9 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer9->AddGrowableRow( 1 );
 	fgSizer9->SetFlexibleDirection( wxBOTH );
 	fgSizer9->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_panel7 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer10;
-	fgSizer10 = new wxFlexGridSizer( 2, 1, 0, 0 );
+	fgSizer10 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer10->SetFlexibleDirection( wxBOTH );
 	fgSizer10->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -617,7 +615,7 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	
 	m_panel13 = new wxPanel( m_panel9, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer11;
-	fgSizer11 = new wxFlexGridSizer( 2, 1, 0, 0 );
+	fgSizer11 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer11->AddGrowableRow( 0 );
 	fgSizer11->SetFlexibleDirection( wxBOTH );
 	fgSizer11->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -860,7 +858,7 @@ _CreateForeignKey::_CreateForeignKey( wxWindow* parent, wxWindowID id, const wxS
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
 	wxFlexGridSizer* fgSizer12;
-	fgSizer12 = new wxFlexGridSizer( 2, 3, 0, 0 );
+	fgSizer12 = new wxFlexGridSizer( 0, 3, 0, 0 );
 	fgSizer12->AddGrowableCol( 0 );
 	fgSizer12->AddGrowableCol( 2 );
 	fgSizer12->AddGrowableRow( 0 );
@@ -975,7 +973,7 @@ _LogDialog::_LogDialog( wxWindow* parent, wxWindowID id, const wxString& title, 
 	this->SetSizeHints( wxSize( 640,460 ), wxDefaultSize );
 	
 	wxFlexGridSizer* fgSizer13;
-	fgSizer13 = new wxFlexGridSizer( 2, 1, 0, 0 );
+	fgSizer13 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer13->AddGrowableCol( 0 );
 	fgSizer13->AddGrowableRow( 0 );
 	fgSizer13->SetFlexibleDirection( wxBOTH );
@@ -1030,7 +1028,7 @@ _ViewSettings::_ViewSettings( wxWindow* parent, wxWindowID id, const wxString& t
 	sbSizer12 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer14;
-	fgSizer14 = new wxFlexGridSizer( 3, 1, 0, 0 );
+	fgSizer14 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer14->AddGrowableCol( 0 );
 	fgSizer14->AddGrowableRow( 2 );
 	fgSizer14->SetFlexibleDirection( wxBOTH );
@@ -1121,7 +1119,7 @@ _ClassGenerateDialog::_ClassGenerateDialog( wxWindow* parent, wxWindowID id, con
 	bSizer22 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer19;
-	fgSizer19 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer19 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer19->SetFlexibleDirection( wxBOTH );
 	fgSizer19->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -1151,7 +1149,7 @@ _ClassGenerateDialog::_ClassGenerateDialog( wxWindow* parent, wxWindowID id, con
 	fgSizer19->Add( m_staticText34, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	wxFlexGridSizer* fgSizer26;
-	fgSizer26 = new wxFlexGridSizer( 1, 2, 0, 0 );
+	fgSizer26 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer26->AddGrowableCol( 0 );
 	fgSizer26->SetFlexibleDirection( wxBOTH );
 	fgSizer26->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -1213,7 +1211,7 @@ _ErdCommitDialog::_ErdCommitDialog( wxWindow* parent, wxWindowID id, const wxStr
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
 	wxFlexGridSizer* fgSizer20;
-	fgSizer20 = new wxFlexGridSizer( 2, 1, 0, 0 );
+	fgSizer20 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer20->AddGrowableCol( 0 );
 	fgSizer20->AddGrowableRow( 0 );
 	fgSizer20->SetFlexibleDirection( wxBOTH );
@@ -1222,7 +1220,7 @@ _ErdCommitDialog::_ErdCommitDialog( wxWindow* parent, wxWindowID id, const wxStr
 	m_notebook4 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_LEFT );
 	m_pnSelDatabase = new wxPanel( m_notebook4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer21;
-	fgSizer21 = new wxFlexGridSizer( 1, 1, 0, 0 );
+	fgSizer21 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer21->AddGrowableCol( 0 );
 	fgSizer21->AddGrowableRow( 0 );
 	fgSizer21->SetFlexibleDirection( wxBOTH );
@@ -1237,7 +1235,7 @@ _ErdCommitDialog::_ErdCommitDialog( wxWindow* parent, wxWindowID id, const wxStr
 	m_notebook4->AddPage( m_pnSelDatabase, wxT("1) Select database"), true );
 	m_pnBackup = new wxPanel( m_notebook4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer22;
-	fgSizer22 = new wxFlexGridSizer( 7, 1, 0, 0 );
+	fgSizer22 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer22->AddGrowableCol( 0 );
 	fgSizer22->SetFlexibleDirection( wxBOTH );
 	fgSizer22->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -1270,7 +1268,7 @@ _ErdCommitDialog::_ErdCommitDialog( wxWindow* parent, wxWindowID id, const wxStr
 	m_notebook4->AddPage( m_pnBackup, wxT("2) Backup db            "), false );
 	m_panel20 = new wxPanel( m_notebook4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer24;
-	fgSizer24 = new wxFlexGridSizer( 2, 1, 0, 0 );
+	fgSizer24 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer24->AddGrowableCol( 0 );
 	fgSizer24->AddGrowableRow( 0 );
 	fgSizer24->SetFlexibleDirection( wxBOTH );
@@ -1302,7 +1300,7 @@ _ErdCommitDialog::_ErdCommitDialog( wxWindow* parent, wxWindowID id, const wxStr
 	m_notebook4->AddPage( m_panel20, wxT("3) Write structure "), false );
 	m_panel201 = new wxPanel( m_notebook4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer241;
-	fgSizer241 = new wxFlexGridSizer( 3, 1, 0, 0 );
+	fgSizer241 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer241->AddGrowableCol( 0 );
 	fgSizer241->AddGrowableRow( 1 );
 	fgSizer241->SetFlexibleDirection( wxBOTH );
@@ -1383,7 +1381,7 @@ _CodePreviewDialog::_CodePreviewDialog( wxWindow* parent, wxWindowID id, const w
 	this->SetSizeHints( wxSize( 500,470 ), wxDefaultSize );
 	
 	wxFlexGridSizer* fgSizer25;
-	fgSizer25 = new wxFlexGridSizer( 2, 1, 0, 0 );
+	fgSizer25 = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizer25->AddGrowableCol( 0 );
 	fgSizer25->AddGrowableRow( 0 );
 	fgSizer25->SetFlexibleDirection( wxBOTH );

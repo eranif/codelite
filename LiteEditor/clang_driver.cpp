@@ -251,6 +251,18 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type)
 			argString << wxT(" ") << args.Item(i);
 		}
 		
+		// Remove some of the flags which are known to cause problems to clang under Windows
+		// error: unknown argument: '-mthreads'
+		// error: unknown argument: '-pipe'
+		// error: unknown argument: '-fmessage-length=0'
+		// error: unknown argument: '-fno-strict-aliasing'
+		
+		argString.Replace(wxT("-fno-strict-aliasing"), wxT(""));
+		argString.Replace(wxT("-mthreads"), wxT(""));
+		argString.Replace(wxT("-pipe"), wxT(""));
+		argString.Replace(wxT("-fmessage-length=0"), wxT(""));
+		argString.Replace(wxT("-g"), wxT(""));
+		
 		// Replace the place holders
 		wxString ppOutputFile;
 		ppOutputFile << DoGetPchHeaderFile(editor->GetFileName().GetFullPath()) << wxT(".1");

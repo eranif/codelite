@@ -1,7 +1,10 @@
 General
 -------
+
 clang cc:
 ----------
+- Create a PCH when a file is loaded
+- Move the ClangDriver state machine into a separate thread
 
 
 High priority:

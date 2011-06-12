@@ -152,11 +152,6 @@ void wxSFThumbnail::_OnPaint(wxPaintEvent& event)
 {
 	wxUnusedVar( event );
 	
-	#if wxUSE_GRAPHICS_CONTEXT
-	bool fGCEnabled = wxSFShapeCanvas::IsGCEnabled();
-    wxSFScaledDC::EnableGC( false );
-    #endif
-	
 	wxBufferedPaintDC dc(this);
 	
 	// clear background
@@ -183,7 +178,7 @@ void wxSFThumbnail::_OnPaint(wxPaintEvent& event)
 		dc.DrawRectangle(0, 0, double(szVirtCanvas.x)*m_nScale, double(szVirtCanvas.y)*m_nScale);
 		
 		// draw top level shapes
-		wxSFScaledDC sdc( (wxWindowDC*)&dc, m_nScale * m_pCanvas->GetScale(), m_pCanvas );
+		wxSFScaledDC sdc( (wxWindowDC*)&dc, m_nScale * m_pCanvas->GetScale() );
 		this->DrawContent( sdc );
 		
 		// draw canvas client area
@@ -196,10 +191,6 @@ void wxSFThumbnail::_OnPaint(wxPaintEvent& event)
 	} 
 	
 	dc.SetBackground( wxNullBrush );
-	
-    #if wxUSE_GRAPHICS_CONTEXT
-    wxSFScaledDC::EnableGC( fGCEnabled );
-    #endif
 }
 
 void wxSFThumbnail::_OnTimer(wxTimerEvent& event)

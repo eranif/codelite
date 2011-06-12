@@ -79,20 +79,12 @@ bool wxSFShapeHandle::Contains(const wxPoint& pos)
 
 void wxSFShapeHandle::Draw(wxDC& dc)
 {
-    #if wxUSE_GRAPHICS_CONTEXT
-    wxSFScaledDC::EnableGC( false );
-    #endif
-
 	if(m_fVisible && m_pParentShape)
 	{
 		if(m_fMouseOver)DrawHover(dc);
 		else
 			DrawNormal(dc);
 	}
-
-    #if wxUSE_GRAPHICS_CONTEXT
-    wxSFScaledDC::EnableGC( wxSFShapeCanvas::IsGCEnabled() );
-    #endif
 }
 
 void wxSFShapeHandle::Refresh()
@@ -111,9 +103,22 @@ void wxSFShapeHandle::DrawNormal(wxDC& dc)
     #else
     dc.SetPen(*wxBLACK_PEN);
     #endif
-    dc.SetBrush(*wxBLACK_BRUSH);
 
+	#if wxUSE_GRAPHICS_CONTEXT
+    if( wxSFShapeCanvas::IsGCEnabled() )
+	{
+		dc.SetBrush( wxColour(0, 0, 0, 128) );
+	}
+	else
+	{
+		dc.SetBrush(*wxBLACK_BRUSH);
     dc.SetLogicalFunction(wxINVERT);
+	}
+	#else
+	dc.SetBrush(*wxBLACK_BRUSH);
+	dc.SetLogicalFunction(wxINVERT);
+	#endif
+   
     dc.DrawRectangle(GetHandleRect());
     dc.SetLogicalFunction(wxCOPY);
 

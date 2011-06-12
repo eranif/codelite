@@ -388,6 +388,6 @@
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebug_29"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

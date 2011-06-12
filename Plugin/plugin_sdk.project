@@ -385,6 +385,6 @@
     </Configuration>
   </Settings>
   <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

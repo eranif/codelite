@@ -244,6 +244,6 @@
     <File Name="gitui.cpp"/>
     <File Name="gitui.h"/>
   </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

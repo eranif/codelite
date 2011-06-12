@@ -97,7 +97,6 @@
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
@@ -298,4 +297,5 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

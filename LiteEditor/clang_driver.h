@@ -33,7 +33,7 @@ protected:
 	
 protected:
 	void          DoRunCommand(IEditor *editor, CommandType type);
-	wxArrayString GetStandardIncludePathsArgs();
+	wxArrayString GetStandardIncludePathsArgs(const wxString &clangBinary);
 	void          DoCleanup();
 	void          DoFilterIncludeFilesFromPP();
 	void          DoRemoveAllIncludeStatements(wxString &buffer, wxArrayString &includesRemoved);

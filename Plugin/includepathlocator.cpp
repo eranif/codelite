@@ -22,7 +22,7 @@ IncludePathLocator::~IncludePathLocator()
 {
 }
 
-void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePaths)
+void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePaths, const wxString &tool)
 {
 	// Common compiler paths - should be placed at top of the include path!
 	wxString tmpfile1 = wxFileName::CreateTempFileName(wxT("codelite"));
@@ -30,19 +30,24 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 	wxString tmpfile = tmpfile1;
 	tmpfile += wxT(".cpp");
 	
+	wxString bin = tool;
+	if(bin.IsEmpty()) {
+		bin = wxT("cpp");
+	}
+	
 	wxRenameFile(tmpfile1, tmpfile);
 	
 	// GCC prints parts of its output to stdout and some to stderr
 	// redirect all output to stdout
 #if defined(__WXMAC__)
 	// Mac does not like the standard command
-	command = wxString::Format(wxT("cpp -v -x=c++ %s 2>&1"), tmpfile.c_str());
+	command = wxString::Format(wxT("%s -v -x=c++ %s 2>&1"), bin.c_str(), tmpfile.c_str());
 	
 #elif defined (__WXGTK__)
-	command = wxString::Format(wxT("cpp -x c++ -v %s 2>&1"), tmpfile.c_str());
+	command = wxString::Format(wxT("%s -x c++ -v %s 2>&1"), bin.c_str(), tmpfile.c_str());
 	
 #else
-	command = wxString::Format(wxT("cpp -x c++ -v %s"), tmpfile.c_str());
+	command = wxString::Format(wxT("%s -x c++ -v %s"), bin.c_str(), tmpfile.c_str());
 	
 #endif
 

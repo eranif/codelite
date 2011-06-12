@@ -45,7 +45,6 @@ public:
 		return m_clang.GetCache();
 	}
 protected:
-	wxArrayString GetStandardIncludePathsArgs();
 	void DoParseOutput(const wxString &output);
 	void DoCleanUp();
 	TagEntryPtr ClangEntryToTagEntry(const wxString &line);

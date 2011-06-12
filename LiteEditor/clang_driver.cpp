@@ -170,7 +170,17 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type)
 	// First, we need to build the command line
 	wxArrayString args;
 	if(type == CT_CreatePCH || type == CT_PreProcess || type == CT_CodeCompletion) {
-		args = GetStandardIncludePathsArgs();
+		wxString binary = clangBinary;
+#ifndef __WXMSW__
+		if(binary.IsEmpty() == false) {
+			binary << wxT(" -cc1 ");
+		}
+		args = GetStandardIncludePathsArgs(binary);
+#else
+		// since we install the binary outselves, we use the
+		// paths as seen by g++
+		args = GetStandardIncludePathsArgs(wxT(""));
+#endif
 	}
 
 	// Next apppend the user include paths
@@ -398,7 +408,7 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type)
 	}
 }
 
-wxArrayString ClangDriver::GetStandardIncludePathsArgs()
+wxArrayString ClangDriver::GetStandardIncludePathsArgs(const wxString &clangBinary)
 {
 	static wxArrayString paths, dummy;
 	
@@ -406,7 +416,7 @@ wxArrayString ClangDriver::GetStandardIncludePathsArgs()
 		return paths;
 	
 	IncludePathLocator pathLocator(PluginManager::Get());
-	pathLocator.Locate(paths, dummy);
+	pathLocator.Locate(paths, dummy, clangBinary);
 	
 	for(size_t i=0;i<paths.Count(); i++) {
 		paths.Item(i).Prepend(wxT("-I"));

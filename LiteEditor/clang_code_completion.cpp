@@ -27,8 +27,7 @@ ClangCodeCompletion::ClangCodeCompletion()
 	, m_activationEditor(NULL)
 {
 	// make sure that clang's PCH cache directory exists
-	wxString cacheDir = wxStandardPaths::Get().GetUserDataDir();
-	cacheDir << wxFileName::GetPathSeparator() << wxT("clang_cache");
+	wxString cacheDir = ClangPCHCache::GetCacheDirectory();
 	if(! wxDir::Exists(cacheDir) ) {
 		wxMkdir(cacheDir);
 	}

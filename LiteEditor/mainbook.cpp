@@ -1011,6 +1011,7 @@ void MainBook::OnPageChanging(NotebookEvent& e)
 		editor->HideCompletionBox();
 		editor->CallTipCancel();
 	}
+	ClangCodeCompletion::Instance()->CancelCodeComplete();
 	e.Skip();
 }
 

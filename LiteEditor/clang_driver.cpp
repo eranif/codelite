@@ -25,6 +25,36 @@ EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  ClangDriver::OnClangProcessOutput)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, ClangDriver::OnClangProcessTerminated)
 END_EVENT_TABLE()
 
+#ifdef __WXMSW__
+static wxString MSWGetDefaultClangBinary()
+{
+	static bool initialized = false;
+	static wxString defaultClang;
+	
+	if(!initialized) {
+		initialized = true;
+		// try to locate the default binary
+		wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+		defaultClang = exePath.GetPath();
+		defaultClang << wxFileName::GetPathSeparator() << wxT("clang++.exe");
+		
+		if(!wxFileName::FileExists(defaultClang)) {
+			defaultClang.Clear();
+		}
+		
+		if(defaultClang.IsEmpty() == false) {
+			CL_SYSTEM(wxT("Located default clang binary: %s"), defaultClang.c_str());
+			
+		} else {
+			CL_SYSTEM(wxT("Could not locate default clang binary"));
+			
+		}
+	}
+	
+	return defaultClang;
+}
+#endif
+
 ClangDriver::ClangDriver()
 	: m_process(NULL)
 	, m_activationPos(wxNOT_FOUND)
@@ -130,7 +160,11 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type)
 	clangBinary.Trim().Trim(false);
 
 	if(clangBinary.IsEmpty()) {
+#ifdef __WXMSW__
+		clangBinary = MSWGetDefaultClangBinary();
+#else
 		clangBinary = wxT("clang");
+#endif
 	}
 
 	// First, we need to build the command line
@@ -406,9 +440,12 @@ void ClangDriver::OnPCHCreationCompleted()
 	CL_DEBUG(wxT("ClangDriver::OnPCHCreationCompleted() called"));
 	CL_DEBUG1(wxT("ClangDriver::OnPCHCreationCompleted():\n[%s]"), m_output.c_str());
 	
-	wxString filename = m_activationEditor->GetFileName().GetFullPath();
-	m_cache.AddPCH(filename, DoGetPchHeaderFile(filename), m_removedIncludes, m_pchHeaders);
-	CL_DEBUG(wxT("caching PCH file: %s for file %s"), DoGetPchHeaderFile(filename).c_str(), filename.c_str());
+	if(m_activationEditor) {
+		wxString filename = m_activationEditor->GetFileName().GetFullPath();
+		m_cache.AddPCH(filename, DoGetPchOutputFileName(filename), m_removedIncludes, m_pchHeaders);
+		CL_DEBUG(wxT("caching PCH file: %s for file %s"), DoGetPchOutputFileName(filename).c_str(), filename.c_str());
+		wxRemoveFile(DoGetPchHeaderFile(filename));
+	}
 	
 	m_pchHeaders.Clear();
 	DoCleanup();
@@ -458,6 +495,8 @@ void ClangDriver::DoFilterIncludeFilesFromPP()
 	if(fp.IsOpened()) {
 		fp.ReadAll(&content);
 	}
+	fp.Close();
+	wxRemoveFile(tmpfilename);
 	
 	wxArrayString includes;
 	wxArrayString lines = wxStringTokenize(content, wxT("\n\r"), wxTOKEN_STRTOK);
@@ -523,9 +562,7 @@ wxString ClangDriver::DoGetPchHeaderFile(const wxString& filename)
 {
 	wxFileName fn(filename);
 	wxString name;
-	name << wxStandardPaths::Get().GetUserDataDir() 
-		 << wxFileName::GetPathSeparator() 
-		 << wxT("clang_cache") 
+	name << ClangPCHCache::GetCacheDirectory()
 		 << wxFileName::GetPathSeparator()
 		 << fn.GetName()
 		 << wxT("__H__.h");
@@ -541,7 +578,8 @@ void ClangDriver::Abort()
 {
 	m_activationEditor = NULL;
 	m_activationPos = wxNOT_FOUND;
-	
+	m_pchHeaders.Clear();
+	m_removedIncludes.Clear();
 	DoCleanup();
 }
 

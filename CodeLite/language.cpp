@@ -155,25 +155,21 @@ ParsedToken* Language::ParseTokens(const wxString &scopeName)
 
 			pt->SetTypeScope( result.m_scope.empty() ? wxString(wxT("<global>")) : wxString::From8BitData(result.m_scope.c_str()));
 			if (scopeName == wxT("<global>")) {
-				wxLogMessage(wxString::Format(wxT("'this' can not be used in the global scope")));
 				ParsedToken::DeleteTokens( header );
 				return NULL;
 			}
 
 			if (pt->GetOperator() == wxT("::")) {
-				wxLogMessage(wxString::Format(wxT("'this' can not be used with operator ::")));
 				ParsedToken::DeleteTokens( header );
 				return NULL;
 			}
 
 			if (result.m_isPtr && pt->GetOperator() == wxT(".")) {
-				wxLogMessage(wxString::Format(wxT("Did you mean to use '->' instead of '.' ?")));
 				ParsedToken::DeleteTokens( header );
 				return NULL;
 			}
 
 			if (!result.m_isPtr && pt->GetOperator() == wxT("->")) {
-				wxLogMessage(wxString::Format(wxT("Can not use '->' operator on a non pointer object")));
 				ParsedToken::DeleteTokens( header );
 				return NULL;
 			}

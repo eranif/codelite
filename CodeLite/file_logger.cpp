@@ -66,10 +66,9 @@ FileLogger* FileLogger::Get()
 	if(!initialized) {
 		wxString filename;
 		filename << wxStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << wxT("codelite.log");
-		theLogger.m_fp.Open(filename, wxFile::write_append);
+		theLogger.m_fp.Open(filename, wxT("a+"));
 		initialized = true;
 	}
-	
 	return &theLogger;
 }
 

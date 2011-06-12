@@ -33,6 +33,7 @@
 #include "codeformatterdlg.h"
 #include "wx/menu.h"
 #include "precompiled_header.h"
+#include "file_logger.h"
 
 
 extern "C" EXPORT char* STDCALL
@@ -49,7 +50,7 @@ void  STDCALL ASErrorHandler(int errorNumber, const char* errorMessage)
 {
 	wxString errStr;
 	errStr << _U(errorMessage) << wxT(" (error ") << errorNumber << wxT(")");
-	wxLogMessage(errStr);
+	CL_DEBUG(errStr.c_str());
 }
 
 // Allocate memory for the Artistic Style formatter

@@ -25,6 +25,7 @@
 #include "precompiled_header.h"
 #include "pp_include.h"
 #include "pptable.h"
+#include "file_logger.h"
 #include <wx/tokenzr.h>
 #include "crawler_include.h"
 #include "parse_thread.h"
@@ -39,14 +40,9 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM)
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
 
 #if 0
-#define PARSE_THREAD_DBG
-#    ifdef __WXMSW__
-#        define DEBUG_MESSAGE(x) wxLogMessage(x)
-#    else
-#        define DEBUG_MESSAGE(x) wxPrintf(x); wxPrintf(wxT("\n"));
-#    endif
+#define DEBUG_MESSAGE(x) CL_DEBUG1(x.c_str())
 #else
-#        define DEBUG_MESSAGE(x)
+#define DEBUG_MESSAGE(x)
 #endif
 
 #define TEST_DESTROY() {\

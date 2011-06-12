@@ -26,6 +26,7 @@
 #include "processreaderthread.h"
 #include "cppwordscanner.h"
 #include "fileextmanager.h"
+#include "file_logger.h"
 #include <wx/frame.h>
 #include <wx/app.h>
 #include "codelite_exports.h"
@@ -294,7 +295,7 @@ void TagsManager::StartCodeLiteIndexer()
 	uid << wxGetProcessId();
 
 	if(m_codeliteIndexerPath.FileExists() == false) {
-		wxLogMessage(wxT("ERROR: Could not locate indexer: %s"), m_codeliteIndexerPath.GetFullPath().c_str());
+		CL_ERROR(wxT("ERROR: Could not locate indexer: %s"), m_codeliteIndexerPath.GetFullPath().c_str());
 		m_codeliteIndexerProcess = NULL;
 		return;
 	}
@@ -647,11 +648,12 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 			bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, scopeTeamplateInitList);
 			if (!res) {
 				PERF_END();
-				wxLogMessage(wxString::Format(wxT("Failed to resolve %s"), expression.c_str()));
+				CL_DEBUG(wxT("Failed to resolve %s"), expression.c_str());
 				return false;
 			}
 		}
 	}
+	
 	// Load all tags from the database that matches typeName & typeScope
 	wxString scope;
 	if (typeScope == wxT("<global>"))
@@ -1413,9 +1415,9 @@ bool TagsManager::IsTypeAndScopeExists(wxString &typeName, wxString &scope)
 
 	// First try the fast query to save some time
 	if(m_workspaceDatabase->IsTypeAndScopeExistLimitOne(typeName, scope)) {
-		//wxLogMessage(wxT("Type Exist! Skipping!"));
 		return true;
 	}
+	
 	// replace macros:
 	// replace the provided typeName and scope with user defined macros as appeared in the PreprocessorMap
 	typeName = DoReplaceMacros(typeName);

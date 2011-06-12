@@ -1,7 +1,7 @@
 #ifndef FILELOGGER_H
 #define FILELOGGER_H
 
-#include <wx/file.h>
+#include <wx/ffile.h>
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_CL FileLogger {
@@ -15,7 +15,7 @@ public:
 	};
 	
 protected:
-	wxFile m_fp;
+	wxFFile m_fp;
 	int    m_verbosity;
 	
 public:

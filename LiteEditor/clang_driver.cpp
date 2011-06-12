@@ -46,6 +46,12 @@ void ClangDriver::CodeCompletion(IEditor* editor)
 		return;
 	}
 	
+	const TagsOptionsData &options = TagsManagerST::Get()->GetCtagsOptions();
+	if(! (options.GetClangOptions() & CC_CLANG_ENABLED) ) {
+		CL_DEBUG1(wxT("clang code-completion is disabled."));
+		return ;
+	}
+	
 	const ClangPCHEntry& entry = m_cache.GetPCH(editor->GetFileName().GetFullPath());
 	
 	wxArrayString removedIncludes;
@@ -117,13 +123,9 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type)
 	// check if clang code-completion is enabled
 	ClangDriverCleaner cleaner(this);
 	
-	TagsOptionsData options;
-	options = TagsManagerST::Get()->GetCtagsOptions();
-	if(! (options.GetClangOptions() & CC_CLANG_ENABLED) ) {
-		return ;
-	}
+	const TagsOptionsData &options = TagsManagerST::Get()->GetCtagsOptions();
 	
-	m_commandType    = type;
+	m_commandType = type;
 	wxString clangBinary = options.GetClangBinary();
 	clangBinary.Trim().Trim(false);
 

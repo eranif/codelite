@@ -23,10 +23,12 @@ SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const 
 	m_dbName = dbName;
 	m_dbTable = dbTable;
 	
-	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
-	wxTheApp->Connect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Connect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Connect(wxID_UNDO,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Connect(wxID_REDO,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	
 	m_scintillaSQL->AddText(wxString::Format(wxT(" -- selected database %s\n"), m_dbName.c_str()));
 	if (!dbTable.IsEmpty()) {
@@ -38,10 +40,12 @@ SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const 
 
 SQLCommandPanel::~SQLCommandPanel()
 {
-	wxTheApp->Disconnect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
-	wxTheApp->Disconnect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Disconnect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Disconnect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Disconnect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Disconnect(wxID_UNDO,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Disconnect(wxID_REDO,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	delete m_pDbAdapter;
 }
 
@@ -269,7 +273,24 @@ void SQLCommandPanel::OnCopyCellValue(wxCommandEvent& e)
 void SQLCommandPanel::OnEdit(wxCommandEvent& e)
 {
 	if(wxWindow::FindFocus() == m_scintillaSQL) {
-		switch(e.GetEventType()) {
+		switch(e.GetId()) {
+		case wxID_REDO:
+			if(m_scintillaSQL->CanRedo()) {
+				m_scintillaSQL->Redo();
+			}
+			break;
+			
+		case wxID_UNDO:
+			if(m_scintillaSQL->CanUndo()) {
+				m_scintillaSQL->Undo();
+			}
+			break;
+			
+		case wxID_CUT:
+			if(m_scintillaSQL->GetSelectedText().IsEmpty() == false) {
+				m_scintillaSQL->Cut();
+			}
+			break;
 		case wxID_COPY:
 			if(m_scintillaSQL->GetSelectedText().IsEmpty() == false) {
 				m_scintillaSQL->Copy();

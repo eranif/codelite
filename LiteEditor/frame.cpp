@@ -1458,7 +1458,10 @@ bool clMainFrame::IsEditorEvent(wxEvent &event)
 	case wxID_CUT:
 	case wxID_SELECTALL:
 	case wxID_COPY:
-	case wxID_PASTE: {
+	case wxID_PASTE: 
+	case wxID_UNDO:
+	case wxID_REDO:
+	{
 		bool isFocused = mainBook->GetActiveEditor()->IsFocused();
 		return isFocused;
 	}
@@ -1480,7 +1483,10 @@ bool clMainFrame::IsEditorEvent(wxEvent &event)
 		case wxID_CUT:
 		case wxID_SELECTALL:
 		case wxID_COPY:
-		case wxID_PASTE: {
+		case wxID_PASTE:
+		case wxID_UNDO:
+		case wxID_REDO:
+		{
 			LEditor *ed = dynamic_cast<LEditor*>(focusWin);
 			if ( !ed ) {
 				// let other controls handle it

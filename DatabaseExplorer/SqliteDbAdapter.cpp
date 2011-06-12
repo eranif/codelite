@@ -5,9 +5,11 @@
 
 SQLiteDbAdapter::SQLiteDbAdapter() {
 	m_sFileName = wxT("");
+	m_adapterType = atSQLITE;
 }
 SQLiteDbAdapter::SQLiteDbAdapter(const wxString& fileName) {
 	m_sFileName = fileName;
+	m_adapterType = atSQLITE;
 }
 
 SQLiteDbAdapter::~SQLiteDbAdapter() {

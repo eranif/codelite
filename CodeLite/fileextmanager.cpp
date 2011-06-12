@@ -38,6 +38,7 @@ void FileExtManager::Init()
 		m_map[wxT("workspace") ] = TypeWorkspace;
 		m_map[wxT("fbp") ] = TypeFormbuilder;
 		m_map[wxT("cdp") ] = TypeCodedesigner;
+		m_map[wxT("erd") ] = TypeErd;
 	}
 }
 

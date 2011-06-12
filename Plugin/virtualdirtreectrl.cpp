@@ -648,6 +648,7 @@ void wxVirtualDirTreeCtrl::OnAssignIcons(wxImageList &icons)
 	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/makefile")));            //14
 	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/wxfb")));                //15
 	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/cd")));                //16
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/erd")));                //17
 }
 
 VdtcTreeItemBase *wxVirtualDirTreeCtrl::OnCreateTreeItem(int type, const wxString &name)

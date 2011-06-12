@@ -46,6 +46,7 @@ public:
 		TypeProject,
 		TypeFormbuilder,
 		TypeCodedesigner,
+		TypeErd,
 		TypeOther
 	};
 

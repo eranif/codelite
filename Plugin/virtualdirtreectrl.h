@@ -187,6 +187,9 @@ public:
 		
 		// codedesigner files
 		_imgIdx[wxT("cdp")] =  16;
+		
+		// erd (dbexplorer) files
+		_imgIdx[wxT("erd")] =  17;
 	};
 
 	/** Default destructor */

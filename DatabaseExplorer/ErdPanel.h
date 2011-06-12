@@ -16,6 +16,24 @@
 #include "ErdCommitWizard.h"
 
 class FrameCanvas;
+
+class ErdInfo : public xsSerializable
+{
+public:
+	XS_DECLARE_CLONABLE_CLASS(ErdInfo);
+	
+	ErdInfo();
+	ErdInfo(const ErdInfo& obj);
+	~ErdInfo() {;}
+	
+	void SetAdapterType(const IDbAdapter::TYPE& type) {this->m_adapterType = type;}
+	const IDbAdapter::TYPE& GetAdapterType() const {return m_adapterType;}	
+	
+protected:
+	
+	IDbAdapter::TYPE m_adapterType;
+};
+
 /*! \brief Editor for ERD creating. */
 class ErdPanel : public _ErdPanel {
 	public:
@@ -41,8 +59,10 @@ class ErdPanel : public _ErdPanel {
 		ErdPanel(wxWindow *parent, IDbAdapter* dbAdapter, xsSerializable* pConnections, xsSerializable* pItems);
 		virtual ~ErdPanel();
 		void Init(wxWindow *parent, IDbAdapter* dbAdapter);
+		bool LoadERD(const wxString& path);
+		bool SaveERD(const wxString& path);
 
-		wxSFShapeCanvas* getCanvas() {
+		wxSFShapeCanvas* GetCanvas() {
 			return (wxSFShapeCanvas*)m_pFrameCanvas;
 		}
 

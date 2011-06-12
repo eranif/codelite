@@ -1,4 +1,23 @@
 #include "ErdPanel.h"
+
+XS_IMPLEMENT_CLONABLE_CLASS(ErdInfo, xsSerializable)
+
+ErdInfo::ErdInfo()
+{
+	m_adapterType = IDbAdapter::atUNKNOWN;
+	
+	XS_SERIALIZE_INT( m_adapterType, wxT("adapter_type") );
+}
+
+ErdInfo::ErdInfo(const ErdInfo& obj)
+{
+	m_adapterType = obj.m_adapterType;
+	
+	XS_SERIALIZE_INT( m_adapterType, wxT("adapter_type") );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 IMPLEMENT_DYNAMIC_CLASS(ErdPanel,_ErdPanel)
 
 BEGIN_EVENT_TABLE(ErdPanel, _ErdPanel)
@@ -93,9 +112,16 @@ ErdPanel::~ErdPanel() {
 }
 
 void ErdPanel::Init(wxWindow* parent, IDbAdapter* dbAdapter) {
+	
+	ErdInfo *pInfo = new ErdInfo();
+	pInfo->SetAdapterType( m_pDbAdapter->GetAdapterType() );
+	m_diagramManager.SetRootItem( pInfo );
+		
 	m_pFrameCanvas = new FrameCanvas(&m_diagramManager,dbAdapter,m_wxsfPanel,this, wxID_ANY);
 	m_wxsfSizer->Add(m_pFrameCanvas,  1, wxEXPAND, 2);
 	m_wxsfPanel->Layout();
+	
+	m_nToolMode = modeDESIGN;
 
 	m_toolBarErd->SetToolBitmapSize(wxSize(16, 15));
 	m_toolBarErd->AddTool(wxID_OPEN, wxT("Open"), wxBitmap(fileopen_xpm),  wxT("Open diagram"));
@@ -142,15 +168,14 @@ void ErdPanel::OnToolUpdate(wxUpdateUIEvent& event) {
 	else if (event.GetId() == IDT_ERD_LINE) event.Check(m_nToolMode == modeLine);
 	else if (event.GetId() == IDT_ERD_VIEW) event.Check(m_nToolMode == modeVIEW);
 	else event.Skip();
-
-
 }
+
 void ErdPanel::OnLoad(wxCommandEvent& WXUNUSED(event)) {
 	wxFileDialog dlg(this, wxT("Load canvas from file..."), wxGetCwd(), wxT(""), wxT("ERD Files (*.erd)|*.erd"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
 	if(dlg.ShowModal() == wxID_OK) {
-		m_pFrameCanvas->LoadCanvas(dlg.GetPath());
-		m_pFrameCanvas->UpdateERD();
+		
+		LoadERD( dlg.GetPath() );
 	}
 }
 
@@ -158,9 +183,8 @@ void ErdPanel::OnSave(wxCommandEvent& WXUNUSED(event)) {
 	wxFileDialog dlg(this, wxT("Save canvas to file..."), wxGetCwd(), wxT(""), wxT("ERD Files (*.erd)|*.erd"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
 	if(dlg.ShowModal() == wxID_OK) {
-		m_pFrameCanvas->SaveCanvas(dlg.GetPath());
 
-		wxMessageBox(wxString::Format(wxT("The chart has been saved to '%s'."), dlg.GetPath().GetData()), wxT("DatabaseExplorer"));
+		SaveERD( dlg.GetPath() );
 	}
 }
 
@@ -289,5 +313,44 @@ void ErdPanel::OnPageClosing(NotebookEvent& event)
 	wxMessageBox(wxT("Event Veto"));
 	event.Veto();
 	
+}
+bool ErdPanel::LoadERD(const wxString& path)
+{
+	m_diagramManager.GetRootItem()->RemoveChildren();
+	
+	if( m_diagramManager.DeserializeFromXml( path ) )
+	{
+		ErdInfo *pInfo = wxDynamicCast( m_diagramManager.GetRootItem(), ErdInfo );
+		if( pInfo && (pInfo->GetAdapterType() == m_pDbAdapter->GetAdapterType()) )
+		{
+			m_pFrameCanvas->UpdateERD();
+			m_pFrameCanvas->Refresh();
+			
+			return true;
+		}
+		else
+		{
+			m_diagramManager.GetRootItem()->RemoveChildren();
+			wxMessageBox( wxT("ERD type doesn't match current database adapter."), wxT("DB Error"), wxICON_ERROR | wxOK );
+			
+			m_pFrameCanvas->Refresh();
+			
+			return false;
+		}
+	}
+	
+	return false;
+}
+
+bool ErdPanel::SaveERD(const wxString& path)
+{
+	if( m_diagramManager.SerializeToXml( path, xsWITH_ROOT ) )
+	{
+		wxMessageBox(wxString::Format(wxT("The chart has been saved to '%s'."), path.c_str()), wxT("DatabaseExplorer"));
+		
+		return true;
+	}
+	else
+		return false;
 }
 

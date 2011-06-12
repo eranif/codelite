@@ -25,7 +25,11 @@ public:
 	static IManager* GetManager();
 	
 protected:
+	bool m_addFileMenu;
+
 	void OnAbout(wxCommandEvent &e);
+	void OnOpenWithDBE(wxCommandEvent &e);
+	void OnUpdateOpenWithDBE(wxUpdateUIEvent &e);
 
 	DbViewerPanel* m_dbViewerPanel;
 };

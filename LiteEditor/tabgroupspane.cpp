@@ -98,6 +98,9 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption) : wxPane
 	
 	// codedesigner files
 	_imgIdx[wxT("cdp")] =  16;
+	
+	// erd (dbexplorer) files
+	_imgIdx[wxT("erd")] =  17;
 
 	wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
 	m_tree = new wxTreeCtrl(this,wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_LINES_AT_ROOT | wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS | wxTR_EDIT_LABELS,
@@ -125,6 +128,7 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption) : wxPane
 	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/makefile")));    //14
 	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/wxfb")));        //15
 	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/cd")));        //16
+	imgList->Add(bmpLoader->LoadBitmap(wxT("mime/16/erd")));        //17
 
 	m_tree->AssignImageList( imgList );
 	sz->Add(m_tree, 1, wxEXPAND);

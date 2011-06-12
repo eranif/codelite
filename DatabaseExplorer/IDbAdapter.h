@@ -18,6 +18,13 @@ class IDbType;
 class IDbAdapter {
 
 public:
+	enum TYPE {
+		atUNKNOWN = 0,
+		atSQLITE,
+		atMYSQL,
+		atPOSTGRES
+	};
+	
 	/*! \brief Return opened DatabaseLayer for selected database. If dbName is empty, DatabaseLayer will be opend without defalut database. */
 	virtual DatabaseLayer* GetDatabaseLayer(const wxString& dbName) = 0;
 	
@@ -75,6 +82,10 @@ public:
 	/*! \brief Return wxArrayString of possible db types */
 	virtual void ConvertTable(Table* pTab) = 0;
 	
+	const TYPE& GetAdapterType() const {return m_adapterType;}
+	
+protected:
+	TYPE m_adapterType;
 
 };
 

@@ -148,6 +148,7 @@ FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint
 	images->Add( bmpLoader->LoadBitmap(wxT("mime/16/wxfb")) );                //7
 	images->Add( bmpLoader->LoadBitmap(wxT("workspace/16/project_active")) ); //8
 	images->Add( bmpLoader->LoadBitmap(wxT("mime/16/cd")) );                //9
+	images->Add( bmpLoader->LoadBitmap(wxT("mime/16/erd")) );                //10
 
 	AssignImageList( images );
 
@@ -298,6 +299,8 @@ int FileViewTree::GetIconIndex( const ProjectItem &item )
 			icondIndex = 7;
 		} else if ( filename.GetExt().CmpNoCase(wxT("cdp")) == 0) {
 			icondIndex = 9;
+		} else if ( filename.GetExt().CmpNoCase(wxT("erd")) == 0) {
+			icondIndex = 10;
 		} else {
 			icondIndex = 5;
 		}

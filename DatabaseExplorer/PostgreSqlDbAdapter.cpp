@@ -9,12 +9,14 @@ PostgreSqlDbAdapter::PostgreSqlDbAdapter() {
 	this->m_serverName = wxT("");
 	this->m_userName = wxT("");
 	this->m_password = wxT("");
+	this->m_adapterType = atPOSTGRES;
 }
 PostgreSqlDbAdapter::PostgreSqlDbAdapter(const wxString& serverName,const wxString& defaultDb, const wxString& userName, const wxString& password) {
 	this->m_serverName = serverName;
 	this->m_userName = userName;
 	this->m_password = password;
 	this->m_defaultDb = defaultDb;
+	this->m_adapterType = atPOSTGRES;
 }
 
 PostgreSqlDbAdapter::~PostgreSqlDbAdapter() {

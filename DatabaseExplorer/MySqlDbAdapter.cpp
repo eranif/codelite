@@ -9,11 +9,13 @@ MySqlDbAdapter::MySqlDbAdapter() {
 	this->m_serverName = wxT("");
 	this->m_userName = wxT("");
 	this->m_password = wxT("");
+	this->m_adapterType = atMYSQL;
 }
 MySqlDbAdapter::MySqlDbAdapter(const wxString& serverName, const wxString& userName, const wxString& password) {
 	this->m_serverName = serverName;
 	this->m_userName = userName;
 	this->m_password = password;
+	this->m_adapterType = atMYSQL;
 }
 
 MySqlDbAdapter::~MySqlDbAdapter() {

@@ -246,7 +246,7 @@ void DbViewerPanel::OnDnDStart(wxTreeEvent& event)
 				table = (Table*) table->Clone();
 				wxSFShapeBase *pShape = new dndTableShape(table);
 				lstDnD.Append(pShape);
-				pPanel->getCanvas()->DoDragDrop(lstDnD);
+				pPanel->GetCanvas()->DoDragDrop(lstDnD);
 			}
 
 			View* view = wxDynamicCast(item->GetData(),View);
@@ -254,7 +254,7 @@ void DbViewerPanel::OnDnDStart(wxTreeEvent& event)
 				view = (View*) view->Clone();
 				wxSFShapeBase *pShape = new dndTableShape(view);
 				lstDnD.Append(pShape);
-				pPanel->getCanvas()->DoDragDrop(lstDnD);
+				pPanel->GetCanvas()->DoDragDrop(lstDnD);
 			}
 		}
 		//delete pShape;
@@ -639,7 +639,7 @@ bool DbViewerPanel::ImportDb(const wxString& sqlFile, Database* pDb)
 void DbViewerPanel::OnPageChange(NotebookEvent& event)
 {
 	ErdPanel* pPanel = wxDynamicCast(m_mgr->GetActivePage(),ErdPanel);
-	if (pPanel)	m_pThumbnail->SetCanvas(pPanel->getCanvas());
+	if (pPanel)	m_pThumbnail->SetCanvas(pPanel->GetCanvas());
 
 	event.Skip();
 }

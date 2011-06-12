@@ -38,7 +38,7 @@ wxSFDiagramManager::wxSFDiagramManager()
     m_pShapeCanvas = NULL;
     m_lstIDPairs.DeleteContents(true);
 
-    m_sSFVersion =  wxT("1.11.0 beta");
+    m_sSFVersion =  wxT("1.11.1 beta");
 
     SetSerializerOwner(wxT("wxShapeFramework"));
     SetSerializerVersion(wxT("1.0"));
@@ -327,14 +327,14 @@ void wxSFDiagramManager::Clear()
 // Serialization/deserialization functions
 //----------------------------------------------------------------------------------//
 
-bool wxSFDiagramManager::SerializeToXml(const wxString& file)
+bool wxSFDiagramManager::SerializeToXml(const wxString& file, bool withroot)
 {
-    return wxXmlSerializer::SerializeToXml(file);
+    return wxXmlSerializer::SerializeToXml(file, withroot);
 }
 
-bool wxSFDiagramManager::SerializeToXml(wxOutputStream& outstream)
+bool wxSFDiagramManager::SerializeToXml(wxOutputStream& outstream, bool withroot)
 {
-    return wxXmlSerializer::SerializeToXml(outstream);
+    return wxXmlSerializer::SerializeToXml(outstream, withroot);
 }
 
 bool wxSFDiagramManager::DeserializeFromXml(const wxString& file)
@@ -344,11 +344,11 @@ bool wxSFDiagramManager::DeserializeFromXml(const wxString& file)
 	wxFileInputStream instream(file);
 	if(instream.IsOk())
 	{
-        m_pShapeCanvas->ClearCanvasHistory();
+        if( m_pShapeCanvas ) m_pShapeCanvas->ClearCanvasHistory();
 
 		fSuccess = DeserializeFromXml(instream);
 
-        m_pShapeCanvas->SaveCanvasState();
+        if( m_pShapeCanvas ) m_pShapeCanvas->SaveCanvasState();
 	}
 	else
 		wxMessageBox(wxT("Unable to initialize input stream."), wxT("ShapeFramework"), wxOK | wxICON_ERROR);
@@ -469,6 +469,10 @@ void wxSFDiagramManager::_DeserializeObjects(xsSerializable* parent, wxXmlNode* 
 				wxMessageBox( wxT("Deserialization couldn't be completed because not of all shapes are accepted."), wxT("wxShapeFramework"), wxOK | wxICON_WARNING );
 				return;
 			}
+		}
+		else if(shapeNode->GetName() == m_sRootName + wxT("_properties"))
+		{
+		    m_pRoot->DeserializeObject(shapeNode->GetChildren());
 		}
 		shapeNode = shapeNode->GetNext();
 	}

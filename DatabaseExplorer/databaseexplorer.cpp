@@ -2,8 +2,21 @@
 #include "databaseexplorer.h"
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
+#include "ErdPanel.h"
 #include <wx/xrc/xmlres.h>
 #include "wx/wxsf/AutoLayout.h"
+
+#ifdef DBL_USE_MYSQL
+#include "MySqlDbAdapter.h"
+#endif
+
+#ifdef DBL_USE_SQLITE
+#include "SqliteDbAdapter.h"
+#endif
+
+#ifdef DBL_USE_POSTGRES
+#include "PostgreSqlDbAdapter.h"
+#endif
 
 static DatabaseExplorer* thePlugin = NULL;
 
@@ -65,12 +78,16 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 
 DatabaseExplorer::DatabaseExplorer(IManager *manager)
 		: IPlugin(manager)
+		, m_addFileMenu(true)
 {
 	
 	// create tab (possibly detached)
 	Notebook *book = m_mgr->GetWorkspacePaneNotebook();
 	wxWindow *editorBook = m_mgr->GetEditorPaneNotebook();
 	
+	m_mgr->GetTheApp()->Connect(XRCID("erd_open"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
+	m_mgr->GetTheApp()->Connect(XRCID("erd_open"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DatabaseExplorer::OnUpdateOpenWithDBE), NULL, this);	
+	m_mgr->GetTheApp()->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED, wxCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
 	
 	if( IsDbViewDetached() ) {
 		DockablePane *cp = new DockablePane(book->GetParent()->GetParent(), book, wxT("DbExplorer"), wxNullBitmap, wxSize(200, 200));
@@ -176,6 +193,15 @@ void DatabaseExplorer::HookPopupMenu(wxMenu *menu, MenuType type)
 		//TODO::Append items for the file view/Virtual folder context menu
 	} else if (type == MenuTypeFileView_File) {
 		//TODO::Append items for the file view/file context menu
+		if(m_addFileMenu)
+		{
+			wxMenuItem *item = new wxMenuItem(menu, XRCID("erd_open"), _("Open with DatabaseExplorer..."), wxEmptyString, wxITEM_NORMAL);
+			
+			menu->PrependSeparator();
+			menu->Prepend( item );
+			
+			m_addFileMenu = false;
+		}
 	}
 }
 
@@ -244,3 +270,73 @@ void DatabaseExplorer::OnAbout(wxCommandEvent& e)
 	
 }
 
+void DatabaseExplorer::OnUpdateOpenWithDBE(wxUpdateUIEvent& e)
+{
+	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo( TreeFileView );
+	if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeFile )
+	{
+		e.Enable(item.m_fileName.GetExt() == wxT("erd"));
+	}
+}
+
+void DatabaseExplorer::OnOpenWithDBE(wxCommandEvent& e)
+{
+	// get the file name
+	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo( TreeFileView );
+	if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeFile )
+	{
+		if (item.m_fileName.GetExt() == wxT("erd"))
+		{
+			// try to determine used database adapter
+			IDbAdapter *adapter = NULL;
+			IDbAdapter::TYPE type = IDbAdapter::atUNKNOWN;
+			
+			wxSFDiagramManager mgr;
+			mgr.AcceptShape( wxT("All") );
+			mgr.SetRootItem( new ErdInfo() );
+			
+			if( mgr.DeserializeFromXml( item.m_fileName.GetFullPath() ) )
+			{
+				ErdInfo *info = wxDynamicCast( mgr.GetRootItem(), ErdInfo );
+				
+				if( info ) type = info->GetAdapterType();
+				
+				switch( type )
+				{
+					case IDbAdapter::atSQLITE:
+						#ifdef DBL_USE_SQLITE
+						adapter = new SQLiteDbAdapter();
+						#endif
+						break;
+						
+					case IDbAdapter::atMYSQL:
+						#ifdef DBL_USE_MYSQL
+						adapter = new MySqlDbAdapter();
+						#endif
+						break;
+						
+					case IDbAdapter::atPOSTGRES:
+						#ifdef DBL_USE_POSTGRES
+						adapter = new PostgreSqlDbAdapter();
+						#endif
+						break;
+						
+					default:
+						break;
+				}
+				
+				if( adapter )
+				{
+					ErdPanel *panel = new ErdPanel( m_mgr->GetEditorPaneNotebook(), adapter, NULL );
+					m_mgr->AddEditorPage( panel, wxString::Format( wxT("ERD [%s]"), item.m_fileName.GetFullName().c_str() ) );
+					panel->LoadERD( item.m_fileName.GetFullPath() );
+				}
+			}
+		}
+		else
+		{
+			wxMessageBox(_("Please select an 'erd' (DatabaseExplorer ERD file) file only"), _("CodeLite"), wxOK|wxCENTER|wxICON_INFORMATION);
+			return;
+		}
+	}
+}

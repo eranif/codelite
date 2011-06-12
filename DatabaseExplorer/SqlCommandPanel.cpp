@@ -22,9 +22,12 @@ SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const 
 	m_pDbAdapter = dbAdapter;
 	m_dbName = dbName;
 	m_dbTable = dbTable;
-
-	//TODO:SQL:
-	//m_scintillaSQL->AddText(wxT("-- selected database ") + m_dbName);
+	
+	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Connect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	
 	m_scintillaSQL->AddText(wxString::Format(wxT(" -- selected database %s\n"), m_dbName.c_str()));
 	if (!dbTable.IsEmpty()) {
 		m_scintillaSQL->AddText(m_pDbAdapter->GetDefaultSelect(m_dbName, m_dbTable));
@@ -35,6 +38,10 @@ SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const 
 
 SQLCommandPanel::~SQLCommandPanel()
 {
+	wxTheApp->Disconnect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Disconnect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
+	wxTheApp->Disconnect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	delete m_pDbAdapter;
 }
 
@@ -256,5 +263,29 @@ void SQLCommandPanel::OnCopyCellValue(wxCommandEvent& e)
 	e.Skip();
 	if(m_cellValue.IsEmpty() == false) {
 		CopyToClipboard(m_cellValue);
+	}
+}
+
+void SQLCommandPanel::OnEdit(wxCommandEvent& e)
+{
+	if(wxWindow::FindFocus() == m_scintillaSQL) {
+		switch(e.GetEventType()) {
+		case wxID_COPY:
+			if(m_scintillaSQL->GetSelectedText().IsEmpty() == false) {
+				m_scintillaSQL->Copy();
+			}
+			break;
+		case wxID_PASTE:
+			if(m_scintillaSQL->CanPaste()) {
+				m_scintillaSQL->Paste();
+			}
+			break;
+		case wxID_SELECTALL:
+			m_scintillaSQL->SelectAll();
+			break;
+		}
+	} else {
+		e.Skip();
+		
 	}
 }

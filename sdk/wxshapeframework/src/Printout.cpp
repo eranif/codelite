@@ -158,7 +158,7 @@ bool wxSFPrintout::OnPrintPage(int page)
         m_pCanvas->SetScale(1);
 
 		#ifdef __WXMSW__
-		wxSFScaledDC sdc( (wxWindowDC*)dc, nScale );
+		wxSFScaledDC sdc( (wxWindowDC*)dc, nScale, m_pCanvas );
 		sdc.PrepareGC();
         m_pCanvas->DrawContent(sdc, sfNOT_FROM_PAINT);
         #else

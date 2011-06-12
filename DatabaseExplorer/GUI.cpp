@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 10 2011)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -75,7 +75,7 @@ _SqlCommandPanel::_SqlCommandPanel( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	fgSizer3->Add( m_toolBar3, 0, wxEXPAND, 5 );
 	
-	m_splitter1 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D|wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME );
+	m_splitter1 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxNO_BORDER );
 	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( _SqlCommandPanel::m_splitter1OnIdle ), NULL, this );
 	
 	m_panel13 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -155,7 +155,7 @@ _SqlCommandPanel::_SqlCommandPanel( wxWindow* parent, wxWindowID id, const wxPoi
 	wxBoxSizer* bSizer24;
 	bSizer24 = new wxBoxSizer( wxVERTICAL );
 	
-	m_gridTable = new wxGrid( m_panel14, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_gridTable = new wxGrid( m_panel14, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
 	
 	// Grid
 	m_gridTable->CreateGrid( 5, 5 );
@@ -186,11 +186,11 @@ _SqlCommandPanel::_SqlCommandPanel( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	// Cell Defaults
 	m_gridTable->SetDefaultCellAlignment( wxALIGN_LEFT, wxALIGN_TOP );
-	bSizer24->Add( m_gridTable, 1, wxEXPAND, 5 );
+	bSizer24->Add( m_gridTable, 1, wxEXPAND|wxALL, 5 );
 	
 	m_labelStatus = new wxStaticText( m_panel14, wxID_ANY, wxT("Result:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_labelStatus->Wrap( -1 );
-	bSizer24->Add( m_labelStatus, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer24->Add( m_labelStatus, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	m_panel14->SetSizer( bSizer24 );
 	m_panel14->Layout();

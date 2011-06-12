@@ -46,7 +46,6 @@ DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pMa
 	this->Connect( wxID_TOOL_REFRESH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnRefreshClick ) );
 	this->Connect( wxID_TOOL_REFRESH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnToolCloseUI ) );
 	this->Connect( wxID_TOOL_ERD, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnERDClick ) );
-	this->Connect( wxID_TOOL_ERD, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnToolCloseUI ) );
 }
 
 DbViewerPanel::~DbViewerPanel()
@@ -62,7 +61,6 @@ DbViewerPanel::~DbViewerPanel()
 	this->Disconnect( wxID_TOOL_REFRESH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnRefreshClick ) );
 	this->Disconnect( wxID_TOOL_REFRESH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnToolCloseUI ) );
 	this->Disconnect( wxID_TOOL_ERD, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnERDClick ) );
-	this->Disconnect( wxID_TOOL_ERD, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnToolCloseUI ) );
 }
 
 void DbViewerPanel::OnConncectClick(wxCommandEvent& event)

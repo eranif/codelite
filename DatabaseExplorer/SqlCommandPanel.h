@@ -45,6 +45,7 @@ public:
 	
 	DECLARE_EVENT_TABLE()
 	void OnExecuteSQL(wxCommandEvent &e);
+	void OnEdit      (wxCommandEvent &e);
 
 };
 

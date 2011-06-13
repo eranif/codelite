@@ -20,7 +20,7 @@
 #include <wx/listimpl.cpp>
 #include <wx/arrimpl.cpp>
 #include <limits>
-#include "wx_xml_compatibility.h"
+#include "wx/wx_xml_compatibility.h"
 
 using namespace std;
 using namespace wxXS;

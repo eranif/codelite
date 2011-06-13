@@ -23,7 +23,7 @@
 #include "wx/wxsf/ControlShape.h"
 #include "wx/wxsf/LineShape.h"
 #include "wx/wxsf/GridShape.h"
-#include "wx_xml_compatibility.h"
+#include "wx/wx_xml_compatibility.h"
 
 using namespace wxSFCommonFcn;
 

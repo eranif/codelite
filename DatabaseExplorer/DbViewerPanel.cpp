@@ -88,7 +88,6 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 				pagename = CreatePanelName(tab, DbViewerPanel::Erd);
 				m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),m_pConnections, (Table*) tab->Clone() ), pagename);
 			} else {
-				wxWindowUpdateLocker locker(m_mgr->GetEditorPaneNotebook());
 				pagename = CreatePanelName(tab, DbViewerPanel::Sql);
 				m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),tab->GetParentName(),tab->GetName()), pagename);
 

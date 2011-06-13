@@ -30,6 +30,7 @@ protected:
 	ClangPCHCache               m_cache;
 	wxArrayString               m_removedIncludes;
 	wxArrayString               m_pchHeaders;
+	wxString                    m_compilationArgs;
 	
 protected:
 	void          DoRunCommand(IEditor *editor, CommandType type);
@@ -40,6 +41,7 @@ protected:
 	wxString      DoGetPchHeaderFile(const wxString &filename);
 	wxString      DoGetPchOutputFileName(const wxString &filename);
 	bool          ShouldInclude(const wxString &header);
+	void          DoPrepareCompilationArgs(const wxString &projectName, const wxString &clangBinary);
 	
 	// Internal
 	void OnPCHCreationCompleted();

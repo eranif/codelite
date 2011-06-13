@@ -42,12 +42,12 @@ wxWizardPageSimple* ErdCommitWizard::GetFirstPage() {
 FirstPage::FirstPage(wxWizard* parent):wxWizardPageSimple(parent) {
 	wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 	mainSizer->Add(
-	    new wxStaticText(this, wxID_ANY, wxT("Wizard for creating db structure\n")
-	                     wxT("on ERD diagram base.\n\n")
-	                     wxT("All tables, which really exist in\n")
-	                     wxT("database, will be deleted during\n")
-	                     wxT("this process, but you can backup\n")
-	                     wxT("it in the second step.")),
+	    new wxStaticText(this, wxID_ANY, wxString(_("Wizard for creating db structure\n")) +
+	                     wxString(_("on ERD diagram base.\n\n")) +
+	                     wxString(_("All tables which really exist in\n")) +
+	                     wxString(_("the database, will be deleted during\n")) +
+	                     wxString(_("this process, but you can do a backup\n")) +
+	                     wxString(_("in the second step."))),
 	    0,wxALL,5);
 	SetSizer(mainSizer);
 	mainSizer->Fit(this);
@@ -66,7 +66,7 @@ DatabasePage::DatabasePage(ErdCommitWizard* parent, xsSerializable* pConnections
 	m_mainSizer->AddGrowableRow( 1 );
 	m_mainSizer->SetFlexibleDirection( wxBOTH );
 	m_mainSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	m_mainSizer->Add(new wxStaticText(this,wxID_ANY,wxT("Select target database:")));
+	m_mainSizer->Add(new wxStaticText(this,wxID_ANY,_("Select target database:")));
 	m_treeDatabases = new wxTreeCtrl(this,wxID_ANY,wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT);
 	m_mainSizer->Add(m_treeDatabases, 0, wxALL|wxEXPAND, 5 );
 
@@ -127,7 +127,7 @@ bool DatabasePage::TransferDataFromWindow() {
 	}
 	//TODO:LANG:
 	if (!m_pParentWizard->GetSelectedDatabase()) {
-		wxMessageBox(wxT("At first time you have to select target database!"));
+		wxMessageBox(_("The first time you have to select a target database!"));
 		return false;
 	}
 	return true;
@@ -141,18 +141,18 @@ BackupPage::BackupPage(ErdCommitWizard* parent):wxWizardPageSimple(parent) {
 	m_mainSizer->SetFlexibleDirection(wxBOTH);
 	m_mainSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_mainSizer->Add(new wxStaticText(this,wxID_ANY, wxT("Backup data file")));
-	m_pFileData = new wxFilePickerCtrl(this,wxID_ANY,wxT("data.sql"),wxT("Select file"), wxT("SQL file *.sql|*.sql"),wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_SAVE|wxFLP_OVERWRITE_PROMPT);
+	m_mainSizer->Add(new wxStaticText(this,wxID_ANY, _("Backup data file")));
+	m_pFileData = new wxFilePickerCtrl(this,wxID_ANY,_("data.sql"),_("Select file"), wxT("SQL file *.sql|*.sql"),wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_SAVE|wxFLP_OVERWRITE_PROMPT);
 	m_mainSizer->Add(m_pFileData, 0, wxALL|wxEXPAND, 5 );
 	m_mainSizer->Add(new wxStaticLine(this), 0, wxALL|wxEXPAND, 5 );
-	m_pCheckStructure = new wxCheckBox(this, wxID_ANY,wxT("Backup database structure"));
+	m_pCheckStructure = new wxCheckBox(this, wxID_ANY,_("Backup database structure"));
 	m_mainSizer->Add(m_pCheckStructure, 0, wxALL|wxEXPAND, 5 );
-	m_mainSizer->Add(new wxStaticText(this,wxID_ANY, wxT("Backup structure file")));
-	m_pFileStructure = new wxFilePickerCtrl(this,wxID_ANY,wxT("structure.sql"),wxT("Select file"), wxT("SQL file *.sql|*.sql"),wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_SAVE|wxFLP_OVERWRITE_PROMPT);
+	m_mainSizer->Add(new wxStaticText(this,wxID_ANY, _("Backup structure file")));
+	m_pFileStructure = new wxFilePickerCtrl(this,wxID_ANY,_("structure.sql"),_("Select file"), wxT("SQL file *.sql|*.sql"),wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_SAVE|wxFLP_OVERWRITE_PROMPT);
 	m_mainSizer->Add(m_pFileStructure, 0, wxALL|wxEXPAND, 5 );
 	m_mainSizer->Add(new wxStaticLine(this), 0, wxALL|wxEXPAND, 5 );
 
-	m_btnBackup = new wxButton(this, wxID_ANY, wxT("Backup!"));
+	m_btnBackup = new wxButton(this, wxID_ANY, _("Backup!"));
 	m_mainSizer->Add(m_btnBackup,0,wxALIGN_CENTER_HORIZONTAL,0);
 
 	SetSizer(m_mainSizer);
@@ -166,7 +166,7 @@ BackupPage::BackupPage(ErdCommitWizard* parent):wxWizardPageSimple(parent) {
 
 bool BackupPage::TransferDataFromWindow() {
 	if (!backuped) {
-		wxMessageDialog dlg(this, wxT("Backup database data before changing structure is really good idea. Do you want to continue without it?"),wxT("Backup"),wxYES_NO);
+		wxMessageDialog dlg(this, _("Backing up database data before changing the structure is really good idea. Do you want to continue without doing so?"),_("Backup"),wxYES_NO);
 		if (dlg.ShowModal() ==  wxID_YES) {
 			return true;
 		} else return false;
@@ -189,7 +189,7 @@ void BackupPage::OnBtnBackupClick(wxCommandEvent& event) {
 	DumpClass* pDump = new DumpClass(m_pParentWizard->GetSelectedDatabase()->GetDbAdapter(), m_pParentWizard->GetSelectedDatabase(), m_pFileData->GetPath());
 	if (pDump) dumpResult = pDump->DumpData();
 
-	wxMessageBox(wxT("Data saved! ")+ dumpResult );
+	wxMessageBox(_("Data saved! ")+ dumpResult );
 
 	if (m_pCheckStructure->IsChecked()) {
 		wxString retStr;
@@ -235,7 +235,7 @@ void BackupPage::OnBtnBackupClick(wxCommandEvent& event) {
 			pTextFile.AddLine(retStr);
 			pTextFile.Write();
 			pTextFile.Close();
-			wxMessageBox(wxT("Structure saved!"));
+			wxMessageBox(_("Structure saved!"));
 		}
 
 	}
@@ -261,15 +261,15 @@ WriteStructurePage::WriteStructurePage(ErdCommitWizard* parent):wxWizardPageSimp
 	m_mainSizer->SetFlexibleDirection(wxBOTH);
 	m_mainSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_mainSizer->Add(new wxStaticText(this, wxID_ANY,wxT("Write log:")));
+	m_mainSizer->Add(new wxStaticText(this, wxID_ANY,_("Write log:")));
 
 	m_txLog = new wxTextCtrl(this, wxID_ANY,wxT(""),wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY);
 	m_mainSizer->Add(m_txLog,0,wxEXPAND,5);
 	m_mainSizer->Add(new wxStaticLine(this),0, wxEXPAND,2);
 
 	wxBoxSizer* pSizer = new wxBoxSizer(wxHORIZONTAL);
-	m_btnWrite = new wxButton(this, wxID_ANY,wxT("Write !!"));
-	m_btnShowSql = new wxButton(this, wxID_ANY, wxT("Show SQL"));
+	m_btnWrite = new wxButton(this, wxID_ANY,_("Write !!"));
+	m_btnShowSql = new wxButton(this, wxID_ANY, _("Show SQL"));
 
 	pSizer->Add(m_btnWrite, wxALIGN_CENTER_HORIZONTAL);
 	pSizer->Add(m_btnShowSql, wxALIGN_CENTER_HORIZONTAL);
@@ -308,7 +308,7 @@ void WriteStructurePage::OnBtnWriteClick(wxCommandEvent& event) {
 
 			pDbLayer->Commit();
 			pDbLayer->Close();
-			m_txLog->SetValue(wxT("Data structure written successfully!"));
+			m_txLog->SetValue(_("Data structure written successfully!"));
 			commited = true;
 		}
 
@@ -324,13 +324,13 @@ void WriteStructurePage::OnBtnWriteClick(wxCommandEvent& event) {
 			pDbLayer->RollBack();
 			pDbLayer->Close();
 		}
-		m_txLog->SetValue(wxT("Uknow error!"));
+		m_txLog->SetValue(_("Unknown error!"));
 	}
 }
 
 bool WriteStructurePage::TransferDataFromWindow() {
 	if (!commited) {
-		wxMessageDialog dlg(this, wxT("Would you like to continue without write database structure?"),wxT("Question"),wxYES_NO);
+		wxMessageDialog dlg(this, _("Would you like to continue without writing the database structure?"),_("Question"),wxYES_NO);
 		if (dlg.ShowModal() ==  wxID_YES) {
 			return true;
 		} else return false;
@@ -346,7 +346,7 @@ bool WriteStructurePage::TransferDataToWindow() {
 LastPage::LastPage(wxWizard* parent):wxWizardPageSimple(parent) {
 	wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 	mainSizer->Add(
-	    new wxStaticText(this, wxID_ANY, wxT("Writing structure ended.\n")),
+	    new wxStaticText(this, wxID_ANY, _("Writing structure ended.\n")),
 	    0,wxALL,5);
 	SetSizer(mainSizer);
 	mainSizer->Fit(this);
@@ -364,19 +364,19 @@ RestorePage::RestorePage(ErdCommitWizard* parent):wxWizardPageSimple(parent) {
 	m_mainSizer->AddGrowableRow(4);
 
 
-	m_mainSizer->Add(new wxStaticText(this, wxID_ANY, wxT("File for data restore:")), 0, wxEXPAND, 2);
+	m_mainSizer->Add(new wxStaticText(this, wxID_ANY, _("File for data restore:")), 0, wxEXPAND, 2);
 
-	m_restoreFile = new wxFilePickerCtrl(this,wxID_ANY,wxT(""),wxT("Select file"), wxT("SQL file *.sql|*.sql"),wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST);
+	m_restoreFile = new wxFilePickerCtrl(this,wxID_ANY,wxT(""),_("Select file"), wxT("SQL file *.sql|*.sql"),wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST);
 	m_mainSizer->Add(m_restoreFile, 0, wxEXPAND, 2);
 	m_mainSizer->Add(new wxStaticLine(this),0, wxEXPAND,2);
 
-	m_mainSizer->Add(new wxStaticText(this, wxID_ANY, wxT("Restore log:")), 0, wxEXPAND, 2);
+	m_mainSizer->Add(new wxStaticText(this, wxID_ANY, _("Restore log:")), 0, wxEXPAND, 2);
 
 	m_txLog = new wxTextCtrl(this, wxID_ANY, wxT(""),wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY);
 	m_mainSizer->Add(m_txLog,0,wxEXPAND,2 );
 	m_mainSizer->Add(new wxStaticLine(this),0, wxEXPAND,2);
 
-	m_btnRestore = new wxButton(this,wxID_ANY,wxT("Restore"));
+	m_btnRestore = new wxButton(this,wxID_ANY,_("Restore"));
 	m_mainSizer->Add(m_btnRestore,0, wxALIGN_CENTER_HORIZONTAL, 5);
 
 	SetSizer(m_mainSizer);
@@ -420,7 +420,7 @@ void RestorePage::OnBtnRestoreClick(wxCommandEvent& event)
 				AppendComment(wxT("Run SQL command:"));
 				AppendText(command);
 				pDbLayer->RunQuery(command);
-				AppendComment(wxT("Successful!"));
+				AppendComment(_("Successful!"));
 				command.clear();
 			}
 		}
@@ -433,16 +433,16 @@ void RestorePage::OnBtnRestoreClick(wxCommandEvent& event)
 		}
 		wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
 
-		AppendComment(wxT("Fail!"));
+		AppendComment(_("Fail!"));
 		AppendComment(errorMessage);
-		wxMessageDialog dlg(this,errorMessage,wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+		wxMessageDialog dlg(this,errorMessage,_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
 		dlg.ShowModal();
 	} catch( ... ) {
 		if (pDbLayer) {
 			pDbLayer->RollBack();
 			pDbLayer->Close();
 		}
-		wxMessageDialog dlg(this,wxT("Unknown error."),wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+		wxMessageDialog dlg(this,_("Unknown error."),_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
 		dlg.ShowModal();
 	}
 

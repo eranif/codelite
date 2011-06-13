@@ -123,7 +123,7 @@ void FrameCanvas::OnLeftDown(wxMouseEvent& event) {
 				pShape->AcceptTrgNeighbour(wxT("All"));
 
 				View* view = new View();
-				view->SetName(wxT("New view"));
+				view->SetName(_("New view"));
 				view->SetSelect(wxT("SELECT * FROM table"));
 				pShape->SetUserData(view);
 
@@ -153,24 +153,24 @@ void FrameCanvas::OnRightDown(wxMouseEvent& event) {
 	wxMenu mnu;
 	mnu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&FrameCanvas::OnPopupClick, NULL, this);
 	
-	mnu.Append(IDR_POPUP_COPY, wxT("Copy"))->Enable(CanCopy());
-	mnu.Append(IDR_POPUP_CUT, wxT("Cut"))->Enable(CanCut());
-	mnu.Append(IDR_POPUP_PASTE, wxT("Paste"))->Enable(CanPaste());
+	mnu.Append(IDR_POPUP_COPY, _("Copy"))->Enable(CanCopy());
+	mnu.Append(IDR_POPUP_CUT, _("Cut"))->Enable(CanCut());
+	mnu.Append(IDR_POPUP_PASTE, _("Paste"))->Enable(CanPaste());
 	mnu.AppendSeparator();
 	
-	mnu.Append(IDR_POPUP_NEW_TABLE, wxT("Add new ERD table"));
-	mnu.Append(IDR_POPUP_NEW_VIEW, wxT("Add new ERD view"));
+	mnu.Append(IDR_POPUP_NEW_TABLE, _("Add new ERD table"));
+	mnu.Append(IDR_POPUP_NEW_VIEW, _("Add new ERD view"));
 	mnu.AppendSeparator();
 	wxSFShapeBase* sBase = GetShapeUnderCursor();
 	if (sBase) {
 
 		ErdTable* table = wxDynamicCast(sBase->GetGrandParentShape(), ErdTable);
 		if (table) {
-			mnu.Append(IDR_POPUP_MI1, 	wxT("Add column"));
-			mnu.Append(IDR_POPUP_MI2, 	wxT("Add create sql to clippoard"));
+			mnu.Append(IDR_POPUP_MI1, 	_("Add column"));
+			mnu.Append(IDR_POPUP_MI2, 	_("Add create sql to clippoard"));
 			mnu.AppendSeparator();
-			mnu.Append(IDR_POPUP_NEW_KEY, wxT("Create foreign key"));
-			mnu.Append(IDR_POPUP_MI3, wxT("Create view for table"));			
+			mnu.Append(IDR_POPUP_NEW_KEY, _("Create foreign key"));
+			mnu.Append(IDR_POPUP_MI3, _("Create view for table"));			
 		}
 	}
 
@@ -187,14 +187,14 @@ void FrameCanvas::OnPopupClick(wxCommandEvent &evt) {
 	   if (evt.GetId() == IDR_POPUP_MI1) {
 			ErdTable* table = wxDynamicCast(GetShapeUnderCursor()->GetGrandParentShape(), ErdTable);
 			if (table) {
-				table->AddColumn(wxT("ID"),m_pDbAdapter->GetDbTypeByUniversalName(IDbType::dbtTYPE_INT));
-				table->AddColumn(wxT("text"),m_pDbAdapter->GetDbTypeByUniversalName(IDbType::dbtTYPE_TEXT));
+				table->AddColumn(_("ID"),m_pDbAdapter->GetDbTypeByUniversalName(IDbType::dbtTYPE_INT));
+				table->AddColumn(_("text"),m_pDbAdapter->GetDbTypeByUniversalName(IDbType::dbtTYPE_TEXT));
 				table->UpdateColumns();
 				table->Refresh();
 				SaveCanvasState();
 			}
 		}else if (evt.GetId() == IDR_POPUP_MI2) {
-			bool dropTable = ( wxMessageBox( wxT("Add drop table statement?"),wxT("Drop table"),wxYES_NO ) == wxYES );
+			bool dropTable = ( wxMessageBox( _("Add drop table statement?"),_("Drop table"),wxYES_NO ) == wxYES );
 			if (wxTheClipboard->Open()) {
 				ErdTable* table = wxDynamicCast(GetShapeUnderCursor()->GetGrandParentShape(), ErdTable);
 				if (table) {

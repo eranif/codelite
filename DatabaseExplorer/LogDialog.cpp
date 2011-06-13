@@ -4,7 +4,7 @@ LogDialog::LogDialog(wxWindow* parent):_LogDialog(parent)
 {
 	m_canClose = false;
 	
-	m_text = wxT(" --------------- Log starts at: ") + wxNow() + wxT(" -------------------\n");
+	m_text = _(" --------------- Log starts at: ") + wxNow() + _(" -------------------\n");
 	m_textCtrl11->SetValue(m_text);	
 }
 
@@ -36,7 +36,7 @@ void LogDialog::OnCloseUI(wxUpdateUIEvent& event)
 
 void LogDialog::AppendSeparator()
 {
-	m_text.Append(wxT("*********************************************************\n"));
+	m_text.Append(_("*********************************************************\n"));
 	m_textCtrl11->SetValue(m_text);
 }
 

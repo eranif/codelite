@@ -280,7 +280,7 @@ void ErdTable::SetCommonProps(wxSFShapeBase* shape)
 void ErdTable::AddColumn(const wxString& colName, IDbType* type)
 {
 	Table* tab = (Table*) wxDynamicCast(GetUserData(),Table);
-	tab->AddColumn(new Column(colName,wxT("New table"),type));
+	tab->AddColumn(new Column(colName,_("New table"),type));
 }
 
 void ErdTable::ClearConnections()

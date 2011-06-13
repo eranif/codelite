@@ -124,34 +124,34 @@ void ErdPanel::Init(wxWindow* parent, IDbAdapter* dbAdapter) {
 	m_nToolMode = modeDESIGN;
 
 	m_toolBarErd->SetToolBitmapSize(wxSize(16, 15));
-	m_toolBarErd->AddTool(wxID_OPEN, wxT("Open"), wxBitmap(fileopen_xpm),  wxT("Open diagram"));
-	m_toolBarErd->AddTool(wxID_SAVE, wxT("Save"), wxBitmap(filesave_xpm),  wxT("Save diagram"));
-	m_toolBarErd->AddTool(IDS_ERD_SAVE_SQL, wxT("Save SQL"), wxBitmap(export_sql_xpm),wxT("Save SQL"));
-	m_toolBarErd->AddTool(IDS_ERD_COMMIT, wxT("Commit ERD"), wxBitmap(export_db_xpm),wxT("Commit ERD"));	
-	m_toolBarErd->AddTool(IDS_ERD_SAVE_BMP, wxT("Save BMP"), wxBitmap(export_img_xpm),wxT("Save BMP"));
+	m_toolBarErd->AddTool(wxID_OPEN, _("Open"), wxBitmap(fileopen_xpm),  _("Open diagram"));
+	m_toolBarErd->AddTool(wxID_SAVE, _("Save"), wxBitmap(filesave_xpm),  _("Save diagram"));
+	m_toolBarErd->AddTool(IDS_ERD_SAVE_SQL, _("Save SQL"), wxBitmap(export_sql_xpm),_("Save SQL"));
+	m_toolBarErd->AddTool(IDS_ERD_COMMIT, _("Commit ERD"), wxBitmap(export_db_xpm),_("Commit ERD"));	
+	m_toolBarErd->AddTool(IDS_ERD_SAVE_BMP, _("Save BMP"), wxBitmap(export_img_xpm),_("Save BMP"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddTool(wxID_PRINT, wxT("Print"), wxBitmap(fileprint_xpm),  wxT("Print diagram"));
-	m_toolBarErd->AddTool(wxID_PREVIEW, wxT("Preview"), wxBitmap(filepreview_xpm),  wxT("Print preview"));
+	m_toolBarErd->AddTool(wxID_PRINT, _("Print"), wxBitmap(fileprint_xpm),  _("Print diagram"));
+	m_toolBarErd->AddTool(wxID_PREVIEW, _("Preview"), wxBitmap(filepreview_xpm),  _("Print preview"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddTool(wxID_COPY, wxT("Copy"), wxBitmap(editcopy_xpm),  wxT("Copy item"));
-	m_toolBarErd->AddTool(wxID_CUT, wxT("Cut"), wxBitmap(editcut_xpm),  wxT("Cut item"));
-	m_toolBarErd->AddTool(wxID_PASTE, wxT("Paste"), wxBitmap(editpaste_xpm),  wxT("Paste item"));
+	m_toolBarErd->AddTool(wxID_COPY, _("Copy"), wxBitmap(editcopy_xpm),  _("Copy item"));
+	m_toolBarErd->AddTool(wxID_CUT, _("Cut"), wxBitmap(editcut_xpm),  _("Cut item"));
+	m_toolBarErd->AddTool(wxID_PASTE, _("Paste"), wxBitmap(editpaste_xpm),  _("Paste item"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddTool(wxID_UNDO, wxT("Undo"), wxBitmap(undo_xpm),  wxT("Undo"));
-	m_toolBarErd->AddTool(wxID_REDO, wxT("Redo"), wxBitmap(redo_xpm),  wxT("Redo"));
+	m_toolBarErd->AddTool(wxID_UNDO, _("Undo"), wxBitmap(undo_xpm),  _("Undo"));
+	m_toolBarErd->AddTool(wxID_REDO, _("Redo"), wxBitmap(redo_xpm),  _("Redo"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddRadioTool(IDT_ERD_TOOL, wxT("Tool"), wxBitmap(Tool_xpm), wxNullBitmap, wxT("Design tool"));
-	m_toolBarErd->AddRadioTool(IDT_ERD_TABLE, wxT("Table"), wxBitmap(form_blue_xpm),wxNullBitmap, wxT("Database table"));
-	m_toolBarErd->AddRadioTool(IDT_ERD_VIEW, wxT("View"), wxBitmap(form_yellow_xpm),wxNullBitmap, wxT("Database view"));
-	m_toolBarErd->AddRadioTool(IDT_ERD_LINE, wxT("Constraint 1:N"), wxBitmap(link_editor_xpm),wxNullBitmap, wxT("Foreign key connection"));
+	m_toolBarErd->AddRadioTool(IDT_ERD_TOOL, _("Tool"), wxBitmap(Tool_xpm), wxNullBitmap, _("Design tool"));
+	m_toolBarErd->AddRadioTool(IDT_ERD_TABLE, _("Table"), wxBitmap(form_blue_xpm),wxNullBitmap, _("Database table"));
+	m_toolBarErd->AddRadioTool(IDT_ERD_VIEW, _("View"), wxBitmap(form_yellow_xpm),wxNullBitmap, _("Database view"));
+	m_toolBarErd->AddRadioTool(IDT_ERD_LINE, _("Constraint 1:N"), wxBitmap(link_editor_xpm),wxNullBitmap, _("Foreign key connection"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddTool(IDT_ERD_ALIGN_CIRCLE, wxT("Align into circle"), wxBitmap(AlignCircle_xpm),  wxT("Align into circle"));
-	m_toolBarErd->AddTool(IDT_ERD_ALIGN_MESH, wxT("Align into mesh"), wxBitmap(AlignMesh_xpm),  wxT("Align into mesh"));
-	m_toolBarErd->AddTool(IDT_ERD_ALIGN_VTREE, wxT("Align into vertical tree"), wxBitmap(AlignVTree_xpm),  wxT("Align into vertical tree"));
-	m_toolBarErd->AddTool(IDT_ERD_ALIGN_HTREE, wxT("Align into horizontal tree"), wxBitmap(AlignHTree_xpm),  wxT("Align into horizontal tree"));
+	m_toolBarErd->AddTool(IDT_ERD_ALIGN_CIRCLE, _("Align into circle"), wxBitmap(AlignCircle_xpm),  _("Align into circle"));
+	m_toolBarErd->AddTool(IDT_ERD_ALIGN_MESH, _("Align into mesh"), wxBitmap(AlignMesh_xpm),  _("Align into mesh"));
+	m_toolBarErd->AddTool(IDT_ERD_ALIGN_VTREE, _("Align into vertical tree"), wxBitmap(AlignVTree_xpm),  _("Align into vertical tree"));
+	m_toolBarErd->AddTool(IDT_ERD_ALIGN_HTREE, _("Align into horizontal tree"), wxBitmap(AlignHTree_xpm),  _("Align into horizontal tree"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddTool(IDT_ERD_ZOOM100, wxT("Zoom 100%"), wxBitmap(Zoom100_xpm),  wxT("Zoom 100%"));
-	m_toolBarErd->AddTool(IDT_ERD_ZOOMALL, wxT("Zoom to all"), wxBitmap(ZoomAll_xpm),  wxT("Zoom to all"));
+	m_toolBarErd->AddTool(IDT_ERD_ZOOM100, _("Zoom 100%"), wxBitmap(Zoom100_xpm),  _("Zoom 100%"));
+	m_toolBarErd->AddTool(IDT_ERD_ZOOMALL, _("Zoom to all"), wxBitmap(ZoomAll_xpm),  _("Zoom to all"));
 	m_toolBarErd->Realize();
 }
 
@@ -171,7 +171,7 @@ void ErdPanel::OnToolUpdate(wxUpdateUIEvent& event) {
 }
 
 void ErdPanel::OnLoad(wxCommandEvent& WXUNUSED(event)) {
-	wxFileDialog dlg(this, wxT("Load canvas from file..."), wxGetCwd(), wxT(""), wxT("ERD Files (*.erd)|*.erd"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+	wxFileDialog dlg(this, _("Load canvas from file..."), wxGetCwd(), wxT(""), wxT("ERD Files (*.erd)|*.erd"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
 	if(dlg.ShowModal() == wxID_OK) {
 		
@@ -180,7 +180,7 @@ void ErdPanel::OnLoad(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void ErdPanel::OnSave(wxCommandEvent& WXUNUSED(event)) {
-	wxFileDialog dlg(this, wxT("Save canvas to file..."), wxGetCwd(), wxT(""), wxT("ERD Files (*.erd)|*.erd"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+	wxFileDialog dlg(this, _("Save canvas to file..."), wxGetCwd(), wxT(""), wxT("ERD Files (*.erd)|*.erd"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
 	if(dlg.ShowModal() == wxID_OK) {
 
@@ -189,7 +189,7 @@ void ErdPanel::OnSave(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void ErdPanel::OnSaveSql(wxCommandEvent& event) {
-	wxFileDialog dlg(this, wxT("Save SQL create query..."), wxGetCwd(), wxT(""), wxT("SQL Files (*.sql)|*.sql"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+	wxFileDialog dlg(this, _("Save SQL create query..."), wxGetCwd(), wxT(""), wxT("SQL Files (*.sql)|*.sql"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
 	if(dlg.ShowModal() == wxID_OK) {
 		wxTextFile file(dlg.GetPath());
@@ -203,7 +203,7 @@ void ErdPanel::OnSaveSql(wxCommandEvent& event) {
 			file.Write();
 			file.Close();
 		}
-		wxMessageBox(wxString::Format(wxT("The SQL script has been saved to '%s'."), dlg.GetPath().GetData()), wxT("DatabaseExplorer"));
+		wxMessageBox(wxString::Format(_("The SQL script has been saved to '%s'."), dlg.GetPath().GetData()), _("DatabaseExplorer"));
 	}
 }
 
@@ -269,7 +269,7 @@ void ErdPanel::OnUpdateUndo(wxUpdateUIEvent& event) {
 }
 
 void ErdPanel::OnSaveImg(wxCommandEvent& event) {
-	wxFileDialog dlg(this, wxT("Export canvas to BMP..."), wxGetCwd(), wxT(""), wxT("BMP Files (*.bmp)|*.bmp"), wxFD_SAVE);
+	wxFileDialog dlg(this, _("Export canvas to BMP..."), wxGetCwd(), wxT(""), wxT("BMP Files (*.bmp)|*.bmp"), wxFD_SAVE);
 
 	if(dlg.ShowModal() == wxID_OK) {
 		m_pFrameCanvas->SaveCanvasToBMP(dlg.GetPath());
@@ -331,7 +331,7 @@ bool ErdPanel::LoadERD(const wxString& path)
 		else
 		{
 			m_diagramManager.GetRootItem()->RemoveChildren();
-			wxMessageBox( wxT("ERD type doesn't match current database adapter."), wxT("DB Error"), wxICON_ERROR | wxOK );
+			wxMessageBox( _("ERD type doesn't match current database adapter."), _("DB Error"), wxICON_ERROR | wxOK );
 			
 			m_pFrameCanvas->Refresh();
 			
@@ -346,7 +346,7 @@ bool ErdPanel::SaveERD(const wxString& path)
 {
 	if( m_diagramManager.SerializeToXml( path, xsWITH_ROOT ) )
 	{
-		wxMessageBox(wxString::Format(wxT("The chart has been saved to '%s'."), path.c_str()), wxT("DatabaseExplorer"));
+		wxMessageBox(wxString::Format(_("The chart has been saved to '%s'."), path.c_str()), _("DatabaseExplorer"));
 		
 		return true;
 	}

@@ -21,7 +21,7 @@ DbSettingDialog::DbSettingDialog(DbViewerPanel *parent, wxWindow* pWindowParent)
 {
 
 	m_pParent = parent;
-	m_listCtrlRecentFiles->InsertColumn(0, wxT("File name"));
+	m_listCtrlRecentFiles->InsertColumn(0, _("File name"));
 	m_listCtrlRecentFiles->SetColumnWidth(0, 600);
 	m_filePickerSqlite->SetFocus();
 
@@ -63,14 +63,14 @@ void DbSettingDialog::OnMySqlOkClick(wxCommandEvent& event)
 		Destroy();
 	} catch (DatabaseLayerException& e) {
 		wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
-		wxMessageDialog dlg(this,errorMessage,wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+		wxMessageDialog dlg(this,errorMessage,_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
 		dlg.ShowModal();
 	} catch( ... ) {
-		wxMessageDialog dlg(this,wxT("Unknown error."),wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+		wxMessageDialog dlg(this,_("Unknown error."),_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
 		dlg.ShowModal();
 	}
 #else
-	wxMessageBox( wxT("MySQL connection is not supported."), wxT("DB Error"), wxOK | wxICON_WARNING );
+	wxMessageBox( _("MySQL connection is not supported."), _("DB Error"), wxOK | wxICON_WARNING );
 #endif
 }
 
@@ -92,14 +92,14 @@ void DbSettingDialog::OnSqliteOkClick(wxCommandEvent& event)
 
 	} catch (DatabaseLayerException& e) {
 		wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
-		wxMessageDialog dlg(this,errorMessage,wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+		wxMessageDialog dlg(this,errorMessage,_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
 		dlg.ShowModal();
 	} catch( ... ) {
-		wxMessageDialog dlg(this,wxT("Unknown error."),wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+		wxMessageDialog dlg(this,_("Unknown error."),_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
 		dlg.ShowModal();
 	}
 #else
-	wxMessageBox( wxT("SQLite connection is not supported."), wxT("DB Error"), wxOK | wxICON_WARNING );
+	wxMessageBox( _("SQLite connection is not supported."), _("DB Error"), wxOK | wxICON_WARNING );
 #endif
 }
 
@@ -155,14 +155,14 @@ void DbSettingDialog::OnPgOkClick(wxCommandEvent& event)
 		Destroy();
 	} catch (DatabaseLayerException& e) {
 		wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
-		wxMessageDialog dlg(this,errorMessage,wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+		wxMessageDialog dlg(this,errorMessage,_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
 		dlg.ShowModal();
 	} catch( ... ) {
-		wxMessageDialog dlg(this,wxT("Unknown error."),wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+		wxMessageDialog dlg(this,_("Unknown error."),_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
 		dlg.ShowModal();
 	}
 #else
-	wxMessageBox( wxT("PostgreSQL connection is not supported."), wxT("DB Error"), wxOK | wxICON_WARNING );
+	wxMessageBox( _("PostgreSQL connection is not supported."), _("DB Error"), wxOK | wxICON_WARNING );
 #endif
 }
 

@@ -60,10 +60,10 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager) {
 
 extern "C" EXPORT PluginInfo GetPluginInfo() {
 	PluginInfo info;
-	info.SetAuthor(wxT("Peter Janků, Michal Bližňák, Tomas Bata University in Zlin, Czech Republic (www.fai.utb.cz)"));
-	info.SetName(wxT("DatabaseExplorer"));
-	info.SetDescription(wxT("DatabaseExplorer for CodeLite"));
-	info.SetVersion(wxT("v1.0"));
+	info.SetAuthor(_("Peter Janků, Michal Bližňák, Tomas Bata University in Zlin, Czech Republic (www.fai.utb.cz)"));
+	info.SetName(_("DatabaseExplorer"));
+	info.SetDescription(_("DatabaseExplorer for CodeLite"));
+	info.SetVersion(_("v1.0"));
 	return info;
 }
 
@@ -108,7 +108,7 @@ DatabaseExplorer::DatabaseExplorer(IManager *manager)
 	if( pVTreeAlg ) pVTreeAlg->SetVSpace( 75 );
 
 
-	m_longName = wxT("DatabaseExplorer for CodeLite");
+	m_longName = _("DatabaseExplorer for CodeLite");
 	m_shortName = wxT("DatabaseExplorer");
 }
 
@@ -237,19 +237,19 @@ bool DatabaseExplorer::IsDbViewDetached() {
 
 
 void DatabaseExplorer::OnAbout(wxCommandEvent& e) {
-	wxString version = wxString::Format( wxT("0.1.0.1p Alpha"));
+	wxString version = wxString::Format( _("0.1.0.1p Alpha"));
 
-	wxString desc = wxT("Cross-platform database plugin designed for managing data, ERD and code generation.\n\n");
+	wxString desc = _("Cross-platform database plugin designed for managing data, ERD and code generation.\n\n");
 	desc << wxbuildinfo(long_f) << wxT("\n\n");
 
 	wxAboutDialogInfo info;
-	info.SetName(wxT("DatabaseExplorer"));
+	info.SetName(_("DatabaseExplorer"));
 	info.SetVersion(version);
 	info.SetDescription(desc);
-	info.SetCopyright(wxT("2011 (C) Tomas Bata University, Zlin, Czech Republic"));
-	info.SetWebSite(wxT("http://www.fai.utb.cz"));
-	info.AddDeveloper(wxT("Peter Janků"));
-	info.AddDeveloper(wxT("Michal Bližňák"));
+	info.SetCopyright(_("2011 (C) Tomas Bata University, Zlin, Czech Republic"));
+	info.SetWebSite(_("http://www.fai.utb.cz"));
+	info.AddDeveloper(_("Peter Janků"));
+	info.AddDeveloper(_("Michal Bližňák"));
 
 	wxAboutBox(info);
 

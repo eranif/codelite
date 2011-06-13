@@ -110,15 +110,15 @@ void ClassGenerateDialog::OnGenerateClick(wxCommandEvent& event) {
 		Table* pTable = wxDynamicCast(m_pItems, Table);
 		
 		if (pTable){
-			if (GenerateClass(pTable,filePath)) m_textCtrl19->AppendText(pTable->GetName() + wxT("......... Generated successfully!\n"));			
-			else m_textCtrl19->AppendText(pTable->GetName() + wxT("......... Error!!!\n"));			 	
+			if (GenerateClass(pTable,filePath)) m_textCtrl19->AppendText(pTable->GetName() + _("......... Generated successfully!\n"));			
+			else m_textCtrl19->AppendText(pTable->GetName() + _("......... Error!!!\n"));			 	
 		}else{
 			SerializableList::compatibility_iterator node = m_pItems->GetFirstChildNode();
 			while( node ) {
 				Table* pTab = wxDynamicCast(node->GetData(),Table);
 				if (pTab){
-					if (GenerateClass(pTab,filePath)) m_textCtrl19->AppendText(pTab->GetName() + wxT("......... Generated successfully!\n"));			
-					else m_textCtrl19->AppendText(pTab->GetName() + wxT("......... Error!!!\n"));			 	
+					if (GenerateClass(pTab,filePath)) m_textCtrl19->AppendText(pTab->GetName() + _("......... Generated successfully!\n"));			
+					else m_textCtrl19->AppendText(pTab->GetName() + _("......... Error!!!\n"));			 	
 					}
 
 				node = node->GetNext();

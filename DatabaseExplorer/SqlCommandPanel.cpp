@@ -176,31 +176,31 @@ void SQLCommandPanel::ExecuteSql()
 				m_gridTable->AutoSize();
 				
 				// show result status
-				m_labelStatus->SetLabel(wxString::Format(wxT("Result: %i rows"),rows));
+				m_labelStatus->SetLabel(wxString::Format(_("Result: %i rows"),rows));
 				Layout();
 				
 			} catch (DatabaseLayerException& e) {
 				// for some reason an exception is thrown even if the error code is 0...
 				if(e.GetErrorCode() != 0) {
 					wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
-					wxMessageDialog dlg(this,errorMessage,wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+					wxMessageDialog dlg(this,errorMessage,_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
 					dlg.ShowModal();
 				}
 				
 			} catch( ... ) {
-				wxMessageDialog dlg(this,wxT("Unknown error."),wxT("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+				wxMessageDialog dlg(this,_("Unknown error."),_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
 				dlg.ShowModal();
 				
 			}
 		}
 
 	} else
-		wxMessageBox(wxT("Cant connect!"));
+		wxMessageBox(_("Cant connect!"));
 }
 
 void SQLCommandPanel::OnLoadClick(wxCommandEvent& event)
 {
-	wxFileDialog dlg(this, wxT("Chose file"),wxT(""),wxT(""),wxT("Sql files(*.sql)|*.sql"),wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+	wxFileDialog dlg(this, _("Chose a file"),wxT(""),wxT(""),wxT("Sql files(*.sql)|*.sql"),wxFD_OPEN|wxFD_FILE_MUST_EXIST);
 	m_scintillaSQL->ClearAll();
 	if (dlg.ShowModal() == wxID_OK) {
 		wxTextFile file( dlg.GetPath());
@@ -216,7 +216,7 @@ void SQLCommandPanel::OnLoadClick(wxCommandEvent& event)
 
 void SQLCommandPanel::OnSaveClick(wxCommandEvent& event)
 {
-	wxFileDialog dlg(this,wxT("Chose file"),wxT(""),wxT(""),wxT("Sql files(*.sql)|*.sql"),wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+	wxFileDialog dlg(this,_("Chose a file"),wxT(""),wxT(""),wxT("Sql files(*.sql)|*.sql"),wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
 	if (dlg.ShowModal() == wxID_OK) {
 
 		wxFile file(dlg.GetPath(),wxFile::write);
@@ -234,10 +234,10 @@ void SQLCommandPanel::OnTemplatesBtnClick(wxCommandEvent& event)
 {
 	wxMenu menu;
 
-	menu.Append(IDR_SQLCOMMAND_SELECT,wxT("Insert SELECT SQL template"),wxT("Insert SELECT SQL statement template into editor."));
-	menu.Append(IDR_SQLCOMMAND_INSERT,wxT("Insert INSERT SQL template"),wxT("Insert INSERT SQL statement template into editor."));
-	menu.Append(IDR_SQLCOMMAND_UPDATE,wxT("Insert UPDATE SQL template"),wxT("Insert UPDATE SQL statement template into editor."));
-	menu.Append(IDR_SQLCOMMAND_DELETE,wxT("Insert DELETE SQL template"),wxT("Insert DELETE SQL statement template into editor."));
+	menu.Append(IDR_SQLCOMMAND_SELECT,_("Insert SELECT SQL template"),_("Insert SELECT SQL statement template into editor."));
+	menu.Append(IDR_SQLCOMMAND_INSERT,_("Insert INSERT SQL template"),_("Insert INSERT SQL statement template into editor."));
+	menu.Append(IDR_SQLCOMMAND_UPDATE,_("Insert UPDATE SQL template"),_("Insert UPDATE SQL statement template into editor."));
+	menu.Append(IDR_SQLCOMMAND_DELETE,_("Insert DELETE SQL template"),_("Insert DELETE SQL statement template into editor."));
 	menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&SQLCommandPanel::OnPopupClick, NULL, this);
 	PopupMenu(&menu);
 }

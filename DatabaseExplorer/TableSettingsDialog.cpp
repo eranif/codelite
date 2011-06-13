@@ -102,7 +102,7 @@ void TableSettings::OnListBoxClick(wxCommandEvent& event) {
 }
 
 void TableSettings::OnNewColumnClick(wxCommandEvent& event) {
-	Column* pCol = new Column(wxT("New col"),m_pTable->GetName(),m_pDbAdapter->GetDbTypeByName(m_pDbAdapter->GetDbTypes()->Last()));
+	Column* pCol = new Column(_("New col"),m_pTable->GetName(),m_pDbAdapter->GetDbTypeByName(m_pDbAdapter->GetDbTypes()->Last()));
 	if (pCol) m_pTable->AddColumn(pCol);
 	UpdateView();
 }

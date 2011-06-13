@@ -14,25 +14,25 @@ AdapterSelectDlg::~AdapterSelectDlg() {
 
 void AdapterSelectDlg::OnMysqlClick(wxCommandEvent& event) {
 #ifdef DBL_USE_MYSQL
-	m_pManager->AddEditorPage(new ErdPanel(m_pParentBook, new MySqlDbAdapter(), m_pConnectons),wxT("MySQL ERD"));
+	m_pManager->AddEditorPage(new ErdPanel(m_pParentBook, new MySqlDbAdapter(), m_pConnectons),_("MySQL ERD"));
 	Destroy();
 #else
-	wxMessageBox( wxT("MySQL ERD is not supported."), wxT("DB Error"), wxOK | wxICON_WARNING );
+	wxMessageBox( _("MySQL ERD is not supported."), _("DB Error"), wxOK | wxICON_WARNING );
 #endif
 }
 void AdapterSelectDlg::OnSqliteClick(wxCommandEvent& event) {
 #ifdef DBL_USE_SQLITE
-	m_pManager->AddEditorPage(new ErdPanel(m_pParentBook, new SQLiteDbAdapter(), m_pConnectons),wxT("SQLite ERD"));
+	m_pManager->AddEditorPage(new ErdPanel(m_pParentBook, new SQLiteDbAdapter(), m_pConnectons),_("SQLite ERD"));
 	Destroy();
 #else
-	wxMessageBox( wxT("SQLite ERD is not supported."), wxT("DB Error"), wxOK | wxICON_WARNING );
+	wxMessageBox( _("SQLite ERD is not supported."), _("DB Error"), wxOK | wxICON_WARNING );
 #endif
 }
 void AdapterSelectDlg::OnPostgresClick(wxCommandEvent& event) {
 #ifdef DBL_USE_POSTGRES
-	m_pManager->AddEditorPage(new ErdPanel(m_pParentBook, new PostgreSqlDbAdapter(), m_pConnectons),wxT("PostgreSQL ERD"));
+	m_pManager->AddEditorPage(new ErdPanel(m_pParentBook, new PostgreSqlDbAdapter(), m_pConnectons),_("PostgreSQL ERD"));
 	Destroy();
 #else
-	wxMessageBox( wxT("PostgreSQL ERD is not supported."), wxT("DB Error"), wxOK | wxICON_WARNING );
+	wxMessageBox( _("PostgreSQL ERD is not supported."), _("DB Error"), wxOK | wxICON_WARNING );
 #endif
 }

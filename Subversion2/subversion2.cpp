@@ -718,6 +718,11 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
 	}
 
 	GetConsole()->EnsureVisible();
+	command << GetSvnExeName() << wxT(" blame ") << loginString;
+	for(size_t i=0 ;i<files.GetCount(); i++) {
+		command << wxT("\"") << files.Item(i) << wxT("\" ");
+	}
+	
 	GetConsole()->AppendText(command + wxT("\n"));
 	m_blameCommand.Execute(command, wxT(""), new SvnBlameHandler(this, event.GetId(), this), this);
 }

@@ -779,6 +779,12 @@ void clMainFrame::CreateGUIControls(void)
 	m_mgr.AddPane(m_outputPane,
 	              paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(0).Position(0).CaptionVisible(false));
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
+	// Now it's created, hide it. Otherwise, if codelite.layout doesn't exist, it starts slightly open
+	// That looks silly, and it's difficult for a novice user to know what's happening
+	wxAuiPaneInfo& info = m_mgr.GetPane(wxT("Output View"));
+	if (info.IsOk()) {
+		info.Hide();
+	}
 
 	// Add the explorer pane
 	m_workspacePane = new WorkspacePane(m_mainPanel, wxT("Workspace View"), &m_mgr);

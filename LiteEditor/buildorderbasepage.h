@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -41,22 +41,22 @@ class DependenciesPageBase : public wxPanel
 		wxCheckListBox* m_checkListProjectList;
 		wxStaticText* m_staticText2;
 		wxListBox* m_listBoxBuildOrder;
-		wxButton* m_buttonDown;
 		wxButton* m_buttonUp;
+		wxButton* m_buttonDown;
 		wxButton* m_buttonApply;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnConfigChanged( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnCheckListItemToggled( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnMoveDown( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnMoveUp( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnApplyButton( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnApplyButtonUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnConfigChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnCheckListItemToggled( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnMoveUp( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnMoveDown( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnApplyButton( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnApplyButtonUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		DependenciesPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 810,492 ), long style = wxTAB_TRAVERSAL );
+		DependenciesPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 810,492 ), long style = wxTAB_TRAVERSAL ); 
 		~DependenciesPageBase();
 	
 };

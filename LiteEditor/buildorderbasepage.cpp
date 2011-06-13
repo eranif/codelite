@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -75,11 +75,11 @@ DependenciesPageBase::DependenciesPageBase( wxWindow* parent, wxWindowID id, con
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonDown = new wxButton( this, wxID_ANY, _("Down"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer8->Add( m_buttonDown, 0, wxALL, 5 );
-	
-	m_buttonUp = new wxButton( this, wxID_ANY, _("Up"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonUp = new wxButton( this, wxID_UP, _("Up"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_buttonUp, 0, wxALL, 5 );
+	
+	m_buttonDown = new wxButton( this, wxID_DOWN, _("Down"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer8->Add( m_buttonDown, 0, wxALL, 5 );
 	
 	bSizer6->Add( bSizer8, 1, wxEXPAND, 5 );
 	
@@ -105,8 +105,8 @@ DependenciesPageBase::DependenciesPageBase( wxWindow* parent, wxWindowID id, con
 	// Connect Events
 	m_choiceProjectConfig->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( DependenciesPageBase::OnConfigChanged ), NULL, this );
 	m_checkListProjectList->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( DependenciesPageBase::OnCheckListItemToggled ), NULL, this );
-	m_buttonDown->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DependenciesPageBase::OnMoveDown ), NULL, this );
 	m_buttonUp->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DependenciesPageBase::OnMoveUp ), NULL, this );
+	m_buttonDown->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DependenciesPageBase::OnMoveDown ), NULL, this );
 	m_buttonApply->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DependenciesPageBase::OnApplyButton ), NULL, this );
 	m_buttonApply->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DependenciesPageBase::OnApplyButtonUI ), NULL, this );
 }
@@ -116,8 +116,8 @@ DependenciesPageBase::~DependenciesPageBase()
 	// Disconnect Events
 	m_choiceProjectConfig->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( DependenciesPageBase::OnConfigChanged ), NULL, this );
 	m_checkListProjectList->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( DependenciesPageBase::OnCheckListItemToggled ), NULL, this );
-	m_buttonDown->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DependenciesPageBase::OnMoveDown ), NULL, this );
 	m_buttonUp->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DependenciesPageBase::OnMoveUp ), NULL, this );
+	m_buttonDown->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DependenciesPageBase::OnMoveDown ), NULL, this );
 	m_buttonApply->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DependenciesPageBase::OnApplyButton ), NULL, this );
 	m_buttonApply->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DependenciesPageBase::OnApplyButtonUI ), NULL, this );
 	

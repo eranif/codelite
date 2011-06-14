@@ -104,16 +104,17 @@ void ClangCodeCompletion::DoParseOutput(const wxString &output)
 		
 		std::vector<TagEntryPtr> *tagsToShow = &tags;
 		std::vector<TagEntryPtr> filteredTags;
-		if(filter.IsEmpty() == false) {
-			filter.MakeLower();
-			
+		wxString tmpfilter = filter;
+		
+		if(tmpfilter.IsEmpty() == false) {
+			tmpfilter.MakeLower();
 			
 			filteredTags.reserve( tags.size() );
 			for(size_t i=0; i<tags.size(); i++) {
 				wxString n = tags.at(i)->GetName();
 				n.MakeLower();
 				
-				if(n.StartsWith(filter)) {
+				if(n.StartsWith(tmpfilter)) {
 					filteredTags.push_back(tags.at(i));
 				}
 			}

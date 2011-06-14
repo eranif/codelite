@@ -94,6 +94,7 @@ class WXDLLIMPEXP_CL TagsOptionsData : public SerializedObject
 	wxString                     m_macrosFiles;
 	size_t                       m_clangOptions;
 	wxString                     m_clangBinary;
+	wxString                     m_clangCmpOptions;
 
 protected:
 	void DoUpdateTokensWxMap();
@@ -105,6 +106,12 @@ public:
 
 	//setters/getters
 
+	void SetClangCmpOptions(const wxString& clangCmpOptions) {
+		this->m_clangCmpOptions = clangCmpOptions;
+	}
+	const wxString& GetClangCmpOptions() const {
+		return m_clangCmpOptions;
+	}
 	void SetClangOptions(size_t clangOptions) {
 		this->m_clangOptions = clangOptions;
 	}

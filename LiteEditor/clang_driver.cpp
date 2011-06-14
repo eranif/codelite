@@ -16,9 +16,9 @@
 #include "fileextmanager.h"
 #include "globals.h"
 
-static wxString PRE_PROCESS_CMD = wxT("\"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w \"$SRC_FILE\" -E 1> \"$PP_OUTPUT_FILE\" 2>&1");
-static wxString PCH_CMD         = wxT("\"$CLANG\" -cc1 -fcxx-exceptions -x c++-header $ARGS -w \"$SRC_FILE\" -emit-pch -o \"$PCH_FILE\"");
-static wxString CC_CMD          = wxT("\"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\"");
+static wxString PRE_PROCESS_CMD = wxT("\"$CLANG\" -cc1 -fexceptions $ARGS -w \"$SRC_FILE\" -E 1> \"$PP_OUTPUT_FILE\" 2>&1");
+static wxString PCH_CMD         = wxT("\"$CLANG\" -cc1 -fexceptions -x c++-header $ARGS -w \"$SRC_FILE\" -emit-pch -o \"$PCH_FILE\"");
+static wxString CC_CMD          = wxT("\"$CLANG\" -cc1 -fexceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\"");
 
 BEGIN_EVENT_TABLE(ClangDriver, wxEvtHandler)
 	EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  ClangDriver::OnClangProcessOutput)
@@ -257,7 +257,8 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type) {
 	if(type == CT_CreatePCH) {
 		// Creating PCH file
 		command.Replace(wxT("$SRC_FILE"), DoGetPchHeaderFile(editor->GetFileName().GetFullPath()));
-
+		WrapInShell(command);
+		
 	} else if(type == CT_CodeCompletion ) {
 
 		wxString location;
@@ -289,7 +290,7 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type) {
 		
 		command.Replace(wxT("$SRC_FILE"), completefileName);
 		command.Replace(wxT("$LOCATION"), location);
-		//WrapInShell(command);
+		WrapInShell(command);
 		
 	} else if(type == CT_PreProcess) {
 		command.Replace(wxT("$SRC_FILE"), editor->GetFileName().GetFullPath());
@@ -356,6 +357,14 @@ void ClangDriver::OnPCHCreationCompleted() {
 	CL_DEBUG(wxT("ClangDriver::OnPCHCreationCompleted() called"));
 	CL_DEBUG1(wxT("ClangDriver::OnPCHCreationCompleted():\n[%s]"), m_output.c_str());
 
+	if(m_output.Find(wxT("error :")) != wxNOT_FOUND) {
+		// failed to create the PCH
+		m_pchHeaders.Clear();
+		DoCleanup();
+		CL_DEBUG(wxT(" ==========> ClangDriver::CodeCompletion() ENDED WITH ERROR <=============="));
+		return;
+	}
+	
 	if(m_activationEditor) {
 		wxString filename = m_activationEditor->GetFileName().GetFullPath();
 		m_cache.AddPCH(filename, DoGetPchOutputFileName(filename), m_removedIncludes, m_pchHeaders);
@@ -563,7 +572,7 @@ void ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, const wx
 #endif
 	
 	wxArrayString args;
-	args = GetStandardIncludePathsArgs(binary);
+	//args = GetStandardIncludePathsArgs(binary);
 	
 	wxString errMsg;
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
@@ -586,58 +595,65 @@ void ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, const wx
 	if(!dependProjbldConf)
 		return;
 	
-	// no support for custom projects yet
-	if(dependProjbldConf->IsCustomBuild())
-		return;
+	// for non custom projects, take the settings from the build configuration
+	if(!dependProjbldConf->IsCustomBuild()) {
 
-	// Get the include paths and add them
-	wxString projectIncludePaths = dependProjbldConf->GetIncludePath();
-	wxArrayString projectIncludePathsArr = wxStringTokenize(projectIncludePaths, wxT(";"), wxTOKEN_STRTOK);
-	for(size_t i=0; i<projectIncludePathsArr.GetCount(); i++) {
-		args.Add( wxString::Format(wxT("-I%s"), projectIncludePathsArr[i].c_str()) );
-	}
-	
-	// get the compiler options and add them
-	wxString projectCompileOptions = dependProjbldConf->GetCompileOptions();
-	wxArrayString projectCompileOptionsArr = wxStringTokenize(projectCompileOptions, wxT(";"), wxTOKEN_STRTOK);
-	for(size_t i=0; i<projectCompileOptionsArr.GetCount(); i++) {
-		wxString cmpOption (projectCompileOptionsArr.Item(i));
-		cmpOption.Trim().Trim(false);
-		wxString tmp;
-		// Expand backticks / $(shell ...) syntax supported by codelite
-		if(cmpOption.StartsWith(wxT("$(shell "), &tmp) || cmpOption.StartsWith(wxT("`"), &tmp)) {
-			cmpOption = tmp;
-			tmp.Clear();
-			if(cmpOption.EndsWith(wxT(")"), &tmp) || cmpOption.EndsWith(wxT("`"), &tmp)) {
-				cmpOption = tmp;
-			}
-			if(m_backticks.find(cmpOption) == m_backticks.end()) {
-				// Expand the backticks into their value
-				wxArrayString outArr;
-				// Apply the environment before executing the command
-				EnvSetter setter( EnvironmentConfig::Instance() );
-				ProcUtils::SafeExecuteCommand(cmpOption, outArr);
-				wxString expandedValue;
-				for(size_t j=0; j<outArr.size(); j++) {
-					expandedValue << outArr.Item(j) << wxT(" ");
-				}
-				m_backticks[cmpOption] = expandedValue;
-				cmpOption = expandedValue;
-			} else {
-				cmpOption = m_backticks.find(cmpOption)->second;
-			}
+		// Get the include paths and add them
+		wxString projectIncludePaths = dependProjbldConf->GetIncludePath();
+		wxArrayString projectIncludePathsArr = wxStringTokenize(projectIncludePaths, wxT(";"), wxTOKEN_STRTOK);
+		for(size_t i=0; i<projectIncludePathsArr.GetCount(); i++) {
+			args.Add( wxString::Format(wxT("-I%s"), projectIncludePathsArr[i].c_str()) );
 		}
-		args.Add( cmpOption );
+		
+		// get the compiler options and add them
+		wxString projectCompileOptions = dependProjbldConf->GetCompileOptions();
+		wxArrayString projectCompileOptionsArr = wxStringTokenize(projectCompileOptions, wxT(";"), wxTOKEN_STRTOK);
+		for(size_t i=0; i<projectCompileOptionsArr.GetCount(); i++) {
+			wxString cmpOption (projectCompileOptionsArr.Item(i));
+			cmpOption.Trim().Trim(false);
+			wxString tmp;
+			// Expand backticks / $(shell ...) syntax supported by codelite
+			if(cmpOption.StartsWith(wxT("$(shell "), &tmp) || cmpOption.StartsWith(wxT("`"), &tmp)) {
+				cmpOption = tmp;
+				tmp.Clear();
+				if(cmpOption.EndsWith(wxT(")"), &tmp) || cmpOption.EndsWith(wxT("`"), &tmp)) {
+					cmpOption = tmp;
+				}
+				if(m_backticks.find(cmpOption) == m_backticks.end()) {
+					// Expand the backticks into their value
+					wxArrayString outArr;
+					// Apply the environment before executing the command
+					EnvSetter setter( EnvironmentConfig::Instance() );
+					ProcUtils::SafeExecuteCommand(cmpOption, outArr);
+					wxString expandedValue;
+					for(size_t j=0; j<outArr.size(); j++) {
+						expandedValue << outArr.Item(j) << wxT(" ");
+					}
+					m_backticks[cmpOption] = expandedValue;
+					cmpOption = expandedValue;
+				} else {
+					cmpOption = m_backticks.find(cmpOption)->second;
+				}
+			}
+			args.Add( cmpOption );
+		}
+		// get the compiler preprocessor and add them as well
+		wxString projectPreps = dependProjbldConf->GetPreprocessor();
+		wxArrayString projectPrepsArr = wxStringTokenize(projectPreps, wxT(";"), wxTOKEN_STRTOK);
+		for(size_t i=0; i<projectPrepsArr.GetCount(); i++) {
+			args.Add( wxString::Format(wxT("-D%s"), projectPrepsArr[i].c_str()) );
+		}
 	}
-	// get the compiler preprocessor and add them as well
-	wxString projectPreps = dependProjbldConf->GetPreprocessor();
-	wxArrayString projectPrepsArr = wxStringTokenize(projectPreps, wxT(";"), wxTOKEN_STRTOK);
-	for(size_t i=0; i<projectPrepsArr.GetCount(); i++) {
-		args.Add( wxString::Format(wxT("-D%s"), projectPrepsArr[i].c_str()) );
-	}
-	
 	// Add the arguments
 	m_compilationArgs.Clear();
+	
+	const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();
+	m_compilationArgs << options.GetClangCmpOptions();
+	
+	m_compilationArgs.Replace(wxT("\n"), wxT(" "));
+	m_compilationArgs.Replace(wxT("\r"), wxT(" "));
+	m_compilationArgs << wxT(" ");
+	
 	for(size_t i=0; i<args.size(); i++) {
 		m_compilationArgs << wxT(" ") << args.Item(i);
 	}
@@ -647,7 +663,6 @@ void ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, const wx
 	m_compilationArgs.Replace(wxT("-mthreads"),            wxT(""));
 	m_compilationArgs.Replace(wxT("-pipe"),                wxT(""));
 	m_compilationArgs.Replace(wxT("-fmessage-length=0"),   wxT(""));
-	m_compilationArgs.Replace(wxT("-g"),                   wxT(""));
 	m_compilationArgs.Replace(wxT("-fPIC"),                wxT(""));
 	
 	CL_DEBUG(wxT("Using compilation args: %s"), m_compilationArgs.c_str());

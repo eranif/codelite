@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun  6 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -240,6 +240,7 @@ class CCClangBasePage : public wxPanel
 		wxFilePickerCtrl* m_filePickerClang;
 		wxStaticText* m_staticText101;
 		wxButton* m_buttonClearCache;
+		wxTextCtrl* m_textCtrlCompilerOptions;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnClangCCEnabledUI( wxUpdateUIEvent& event ) { event.Skip(); }
@@ -249,7 +250,7 @@ class CCClangBasePage : public wxPanel
 	
 	public:
 		
-		CCClangBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
+		CCClangBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~CCClangBasePage();
 	
 };

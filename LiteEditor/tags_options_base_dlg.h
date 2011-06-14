@@ -234,6 +234,8 @@ class CCClangBasePage : public wxPanel
 	
 	protected:
 		wxCheckBox* m_checkBoxEnableClangCC;
+		wxCheckBox* m_checkBoxClangFirst;
+		
 		wxStaticText* m_staticText10;
 		wxFilePickerCtrl* m_filePickerClang;
 		wxStaticText* m_staticText101;

@@ -664,6 +664,8 @@
     <File Name="clangpch_cache.cpp"/>
     <File Name="clang_driver.h"/>
     <File Name="clang_driver.cpp"/>
+    <File Name="code_completion_manager.h"/>
+    <File Name="code_completion_manager.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29">
     <Project Name="wxscintilla"/>

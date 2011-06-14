@@ -539,6 +539,30 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	m_checkBoxEnableClangCC = new wxCheckBox( this, wxID_ANY, _("Enable clang code completion"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer18->Add( m_checkBoxEnableClangCC, 0, wxALL|wxEXPAND, 5 );
 	
+	wxStaticBoxSizer* sbSizer10;
+	sbSizer10 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Options:") ), wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer5;
+	fgSizer5 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer5->AddGrowableCol( 1 );
+	fgSizer5->SetFlexibleDirection( wxBOTH );
+	fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_checkBoxClangFirst = new wxCheckBox( this, wxID_ANY, _("Use clang completion over ctags ccompletion"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxClangFirst->SetToolTip( _("Check this option so codelite will use the clang's code completion over the ctags one.\nclang is more accurate, while ctags is faster") );
+	
+	fgSizer5->Add( m_checkBoxClangFirst, 0, wxALL, 5 );
+	
+	
+	fgSizer5->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	sbSizer10->Add( fgSizer5, 1, wxEXPAND|wxALL, 5 );
+	
+	bSizer18->Add( sbSizer10, 0, wxEXPAND|wxALL, 5 );
+	
+	wxStaticBoxSizer* sbSizer9;
+	sbSizer9 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("PCH Cache:") ), wxVERTICAL );
+	
 	wxFlexGridSizer* fgSizer4;
 	fgSizer4 = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer4->AddGrowableCol( 1 );
@@ -550,9 +574,11 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	fgSizer4->Add( m_staticText10, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_filePickerClang = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL );
+	m_filePickerClang->SetToolTip( _("Select clang binary to use.\nWhen left empty, codelite will use the default clang binary") );
+	
 	fgSizer4->Add( m_filePickerClang, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_staticText101 = new wxStaticText( this, wxID_ANY, _("Clear clang PCH cache directory:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText101 = new wxStaticText( this, wxID_ANY, _("Clear clang PCH cache:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText101->Wrap( -1 );
 	fgSizer4->Add( m_staticText101, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -561,12 +587,15 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	
 	fgSizer4->Add( m_buttonClearCache, 0, wxALL|wxALIGN_RIGHT, 5 );
 	
-	bSizer18->Add( fgSizer4, 0, wxEXPAND|wxALL, 5 );
+	sbSizer9->Add( fgSizer4, 0, wxEXPAND|wxALL, 5 );
+	
+	bSizer18->Add( sbSizer9, 0, wxEXPAND|wxALL, 5 );
 	
 	this->SetSizer( bSizer18 );
 	this->Layout();
 	
 	// Connect Events
+	m_checkBoxClangFirst->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_staticText10->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_filePickerClang->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_staticText101->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
@@ -577,6 +606,7 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 CCClangBasePage::~CCClangBasePage()
 {
 	// Disconnect Events
+	m_checkBoxClangFirst->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_staticText10->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_filePickerClang->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_staticText101->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );

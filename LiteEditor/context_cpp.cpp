@@ -26,7 +26,7 @@
 
 #include "pluginmanager.h"
 #include "refactorengine.h"
-#include "clang_code_completion.h"
+#include "code_completion_manager.h"
 #include "fileextmanager.h"
 #include "drawingutils.h"
 #include "findusagetab.h"
@@ -526,7 +526,6 @@ void ContextCpp::AddMenuDynamicContent(wxMenu *menu)
 	wxString fileName;
 
 	LEditor &rCtrl = GetCtrl();
-//	VALIDATE_PROJECT(rCtrl);
 
 	wxString menuItemText;
 	wxString line = rCtrl.GetCurLine();
@@ -690,23 +689,11 @@ void ContextCpp::CompleteWord()
 		return;
 	}
 
-	TagsManager *mgr = TagsManagerST::Get();
-
 	//get the current expression
 	wxString expr = GetExpression(rCtrl.GetCurrentPos(), true);
 
-	std::vector<TagEntryPtr> candidates;
-	//get the full text of the current page
-	wxString text = rCtrl.GetTextRange(0, rCtrl.GetCurrentPos());
-	int lineNum = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
-
 	DoSetProjectPaths();
-	if (mgr->WordCompletionCandidates(rCtrl.GetFileName(), lineNum, expr, text, word, candidates) && !candidates.empty()) {
-		DisplayCompletionBox(candidates, word, false);
-	} else {
-		// Incase code completion fails, use clang to complete
-		ClangCodeCompletion::Instance()->CodeComplete( &rCtrl );
-	}
+	CodeCompletionManager::Get().WordCompletion(&GetCtrl(), expr, word);
 }
 
 void ContextCpp::DisplayCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl)
@@ -2381,24 +2368,12 @@ void ContextCpp::DoCodeComplete(long pos)
 
 		// get the token
 		wxString word = editor.GetTextRange(word_start, word_end);
-		
-		// Get the calltip
-		clCallTipPtr tip = TagsManagerST::Get()->GetFunctionTip(editor.GetFileName(), line, expr, text, word);
-		if(!tip || !tip->Count()) {
-			// try the Clang engine...
-			ClangCodeCompletion::Instance()->Calltip(&editor);
-			return;
-		}
-		
-		editor.ShowCalltip(tip);
+		CodeCompletionManager::Get().Calltip(&editor, line, expr, text, word);
 		
 	} else {
 		DoSetProjectPaths();
-		if (TagsManagerST::Get()->AutoCompleteCandidates(editor.GetFileName(), line, expr, text, candidates)) {
-			DisplayCompletionBox(candidates, wxEmptyString, showFullDecl);
-		} else {
-			ClangCodeCompletion::Instance()->CodeComplete( &editor );
-		}
+		CodeCompletionManager::Get().CodeComplete(&editor, line, expr, text);
+		
 	}
 }
 

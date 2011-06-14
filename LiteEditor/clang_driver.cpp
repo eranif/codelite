@@ -16,9 +16,9 @@
 #include "fileextmanager.h"
 #include "globals.h"
 
-static wxString PRE_PROCESS_CMD = wxT("\"$CLANG\" -cc1 $ARGS -w \"$SRC_FILE\" -E 1> \"$PP_OUTPUT_FILE\" 2>&1");
-static wxString PCH_CMD         = wxT("\"$CLANG\" -cc1 -x c++-header $ARGS -w \"$SRC_FILE\" -emit-pch -o \"$PCH_FILE\"");
-static wxString CC_CMD          = wxT("\"$CLANG\" -cc1 $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\"");
+static wxString PRE_PROCESS_CMD = wxT("\"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w \"$SRC_FILE\" -E 1> \"$PP_OUTPUT_FILE\" 2>&1");
+static wxString PCH_CMD         = wxT("\"$CLANG\" -cc1 -fcxx-exceptions -x c++-header $ARGS -w \"$SRC_FILE\" -emit-pch -o \"$PCH_FILE\"");
+static wxString CC_CMD          = wxT("\"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\"");
 
 BEGIN_EVENT_TABLE(ClangDriver, wxEvtHandler)
 	EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  ClangDriver::OnClangProcessOutput)
@@ -102,12 +102,7 @@ void ClangDriver::CodeCompletion(IEditor* editor) {
 
 	// Start clean..
 	DoCleanup();
-	const TagsOptionsData &options = TagsManagerST::Get()->GetCtagsOptions();
-	if(! (options.GetClangOptions() & CC_CLANG_ENABLED) ) {
-		CL_DEBUG1(wxT("clang code-completion is disabled."));
-		return ;
-	}
-
+	
 	const ClangPCHEntry& entry = m_cache.GetPCH(editor->GetFileName().GetFullPath());
 
 	wxArrayString removedIncludes;
@@ -294,7 +289,8 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type) {
 		
 		command.Replace(wxT("$SRC_FILE"), completefileName);
 		command.Replace(wxT("$LOCATION"), location);
-
+		//WrapInShell(command);
+		
 	} else if(type == CT_PreProcess) {
 		command.Replace(wxT("$SRC_FILE"), editor->GetFileName().GetFullPath());
 		WrapInShell(command);

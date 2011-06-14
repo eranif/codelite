@@ -8,6 +8,7 @@ CCClangPage::CCClangPage(wxWindow* parent, const TagsOptionsData &data)
 {
 	m_checkBoxEnableClangCC->SetValue(data.GetClangOptions() & CC_CLANG_ENABLED);
 	m_filePickerClang->SetPath(data.GetClangBinary());
+	m_checkBoxClangFirst->SetValue(data.GetClangOptions() & CC_CLANG_FIRST);
 	
 #if defined (__WXMSW__)
 	if(m_filePickerClang->GetPath().IsEmpty()) {
@@ -33,7 +34,10 @@ void CCClangPage::Save(TagsOptionsData& data)
 	size_t options (0);
 	if(m_checkBoxEnableClangCC->IsChecked())
 		options |= CC_CLANG_ENABLED;
-
+		
+	if(m_checkBoxClangFirst->IsChecked())
+		options |= CC_CLANG_FIRST;
+		
 	data.SetClangOptions(options);
 	data.SetClangBinary(m_filePickerClang->GetPath());
 }

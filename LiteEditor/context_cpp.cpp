@@ -701,7 +701,7 @@ void ContextCpp::CompleteWord()
 	int lineNum = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
 
 	DoSetProjectPaths();
-	if (mgr->WordCompletionCandidates(rCtrl.GetFileName(), lineNum, expr, text, word, candidates)) {
+	if (mgr->WordCompletionCandidates(rCtrl.GetFileName(), lineNum, expr, text, word, candidates) && !candidates.empty()) {
 		DisplayCompletionBox(candidates, word, false);
 	} else {
 		// Incase code completion fails, use clang to complete

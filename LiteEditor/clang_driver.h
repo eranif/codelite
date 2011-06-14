@@ -9,8 +9,7 @@
 class IEditor;
 class ClangDriverCleaner;
 
-class ClangDriver : public wxEvtHandler
-{
+class ClangDriver : public wxEvtHandler {
 	friend class ClangDriverCleaner;
 public:
 	enum CommandType {
@@ -31,7 +30,8 @@ protected:
 	wxArrayString               m_removedIncludes;
 	wxArrayString               m_pchHeaders;
 	wxString                    m_compilationArgs;
-	
+	bool                        m_isCalltip;
+
 protected:
 	void          DoRunCommand(IEditor *editor, CommandType type);
 	wxArrayString GetStandardIncludePathsArgs(const wxString &clangBinary);
@@ -42,7 +42,7 @@ protected:
 	wxString      DoGetPchOutputFileName(const wxString &filename);
 	bool          ShouldInclude(const wxString &header);
 	void          DoPrepareCompilationArgs(const wxString &projectName, const wxString &clangBinary);
-	
+
 	// Internal
 	void OnPCHCreationCompleted();
 	void OnCodeCompletionCompleted();
@@ -61,23 +61,28 @@ public:
 	int GetActivationPos() const {
 		return m_activationPos;
 	}
-	
+
 	const ClangPCHCache& GetCache() const {
 		return m_cache;
 	}
-	
+
 	ClangPCHCache &GetCache() {
 		return m_cache;
 	}
-	
+
+	void SetIsCalltip(bool isCalltip) {
+		this->m_isCalltip = isCalltip;
+	}
+	bool GetIsCalltip() const {
+		return m_isCalltip;
+	}
 	DECLARE_EVENT_TABLE()
 	void OnClangProcessOutput    (wxCommandEvent &e);
 	void OnClangProcessTerminated(wxCommandEvent &e);
 	void OnFileSaved             (wxCommandEvent &e);
 };
 
-class ClangDriverCleaner
-{
+class ClangDriverCleaner {
 	ClangDriver *m_driver;
 public:
 	ClangDriverCleaner(ClangDriver *driver) : m_driver(driver) {}

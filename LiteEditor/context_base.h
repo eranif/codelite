@@ -110,7 +110,8 @@ public:
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl){return NULL;}
 	virtual wxString GetCurrentScopeName() {return wxEmptyString;}
 	virtual void SemicolonShift(){}
-
+	virtual int  DoGetCalltipParamterIndex();
+	
     // ctrl-click style navigation support
 	virtual int  GetHyperlinkRange(int pos, int &start, int &end);
     virtual void GoHyperlink(int start, int end, int type, bool alt);

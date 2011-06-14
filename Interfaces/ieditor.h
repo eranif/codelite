@@ -31,6 +31,7 @@
 #include <wx/colour.h>
 #include "entry.h"
 #include <vector>
+#include "cl_calltip.h"
 
 class NavMgr;
 
@@ -223,7 +224,13 @@ public:
 	 * @param owner event handler to be notified once a selection is made
 	 */
 	virtual void ShowCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, wxEvtHandler *owner) = 0;
-
+	
+	/**
+	 * @brief display codelite calltip at the current position
+	 * @param tip tip to display
+	 */
+	virtual void ShowCalltip(clCallTipPtr tip) = 0;
+	
 	/**
 	 * @brief register new user image fot TagEntry kind
 	 * @param kind the kind string that will be associated with the bitmap (TagEntry::GetKind())

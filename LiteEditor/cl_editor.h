@@ -610,7 +610,11 @@ public:
 	 * @return
 	 */
 	virtual wxString GetTextRange(int startPos, int endPos);
-
+	
+	/**
+	 * @brief display a calltip at the current position
+	 */
+	virtual void ShowCalltip(clCallTipPtr tip);
 	//----------------------------------------------------------------------------
 	//----------------------------------------------------------------------------
 

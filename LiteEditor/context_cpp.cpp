@@ -2381,14 +2381,17 @@ void ContextCpp::DoCodeComplete(long pos)
 
 		// get the token
 		wxString word = editor.GetTextRange(word_start, word_end);
-		editor.GetFunctionTip()->Add( TagsManagerST::Get()->GetFunctionTip(editor.GetFileName(), line, expr, text, word) );
-		editor.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
-
-		// In an ideal world, we would like our tooltip to be placed
-		// on top of the caret.
-		wxPoint pt = editor.PointFromPosition(currentPosition);
-		editor.GetFunctionTip()->Activate(pt, editor.GetCurrLineHeight(), editor.StyleGetBackground(wxSCI_C_DEFAULT));
-
+		
+		// Get the calltip
+		clCallTipPtr tip = TagsManagerST::Get()->GetFunctionTip(editor.GetFileName(), line, expr, text, word);
+		if(!tip || !tip->Count()) {
+			// try the Clang engine...
+			ClangCodeCompletion::Instance()->Calltip(&editor);
+			return;
+		}
+		
+		editor.ShowCalltip(tip);
+		
 	} else {
 		DoSetProjectPaths();
 		if (TagsManagerST::Get()->AutoCompleteCandidates(editor.GetFileName(), line, expr, text, candidates)) {
@@ -2544,60 +2547,6 @@ void ContextCpp::OnCallTipClick(wxScintillaEvent& e)
 
 void ContextCpp::OnCalltipCancel()
 {
-}
-
-int ContextCpp::DoGetCalltipParamterIndex()
-{
-	int index(0);
-	LEditor &ctrl =  GetCtrl();
-	int pos = ctrl.DoGetOpenBracePos();
-	if (pos != wxNOT_FOUND) {
-
-		// loop over the text from pos -> current position and count the number of commas found
-		int depth(0);
-		bool exit_loop(false);
-
-		while ( pos < ctrl.GetCurrentPos() && !exit_loop ) {
-			wxChar ch        = ctrl.SafeGetChar(pos);
-			wxChar ch_before = ctrl.SafeGetChar(ctrl.PositionBefore(pos));
-
-			if (IsCommentOrString(pos)) {
-				pos = ctrl.PositionAfter(pos);
-				continue;
-			}
-
-			switch (ch) {
-			case wxT(','):
-				if (depth == 0) index++;
-				break;
-			case wxT('{'):
-			case wxT('}'):
-			case wxT(';'):
-				// error?
-				exit_loop = true;
-				break;
-			case wxT('('):
-			case wxT('<'):
-			case wxT('['):
-				depth++;
-				break;
-			case wxT('>'):
-				if ( ch_before == wxT('-') ) {
-					// operator noting to do
-					break;
-				}
-				// fall through
-			case wxT(')'):
-			case wxT(']'):
-				depth--;
-				break;
-			default:
-				break;
-			}
-			pos = ctrl.PositionAfter(pos);
-		}
-	}
-	return index;
 }
 
 void ContextCpp::DoUpdateCalltipHighlight()
@@ -2856,3 +2805,4 @@ bool ContextCpp::IsDefaultContext() const
 {
 	return false;
 }
+

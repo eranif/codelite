@@ -72,7 +72,9 @@ ClangDriver::ClangDriver()
 	: m_process(NULL)
 	, m_activationPos(wxNOT_FOUND)
 	, m_activationEditor(NULL)
-	, m_commandType(CT_PreProcess) {
+	, m_commandType(CT_PreProcess) 
+	, m_isCalltip(false)
+{
 	wxTheApp->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(ClangDriver::OnFileSaved), NULL, this);
 }
 
@@ -338,17 +340,17 @@ wxArrayString ClangDriver::GetStandardIncludePathsArgs(const wxString &clangBina
 void ClangDriver::DoCleanup() {
 	if(m_process)
 		delete m_process;
-
+	
 	m_process = NULL;
 
 	// remove the temporary file
-//	if(m_tmpfile.IsEmpty() == false) {
-//#ifndef __WXMSW__
-//		::unlink( m_tmpfile.mb_str(wxConvUTF8).data() );
-//#endif
-//		wxRemoveFile( m_tmpfile );
-//		m_tmpfile.Clear();
-//	}
+	if(m_tmpfile.IsEmpty() == false) {
+#ifndef __WXMSW__
+		::unlink( m_tmpfile.mb_str(wxConvUTF8).data() );
+#endif
+		wxRemoveFile( m_tmpfile );
+		m_tmpfile.Clear();
+	}
 
 	m_commandType = CT_PreProcess;
 	m_output.Clear();

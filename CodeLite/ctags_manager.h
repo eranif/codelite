@@ -775,7 +775,7 @@ public:
 	wxString WrapLines(const wxString &str);
 	
 	void GetVariables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap, bool isUsedWithinFunc);
-	
+	void GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<TagEntryPtr> &tips);
 protected:
 	// provide a default handler for the wxEVT_UPDATE_FILETREE_EVENT event
 	void OnUpdateFileTreeEvent(wxCommandEvent &e);
@@ -788,7 +788,6 @@ protected:
 	void           GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &tags, size_t flags = PartialMatch);
 	void           GetLocalTags(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags, size_t flags = PartialMatch);
 	void           TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<wxString> &tips);
-	void           GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<TagEntryPtr> &tips);
 	DoxygenComment DoCreateDoxygenComment(TagEntryPtr tag, wxChar keyPrefix);
 	bool           DoBuildDatabase(const wxArrayString &files, ITagsStorage &db, const wxString *rootPath = NULL);
 	bool           ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope, wxString &oper, wxString &scopeTempalteInitiList);

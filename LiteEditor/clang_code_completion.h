@@ -37,6 +37,8 @@ public:
 	 * @param editor
 	 */
 	void CodeComplete(IEditor *editor);
+	void Calltip(IEditor *editor);
+	
 	void CancelCodeComplete();
 	const ClangPCHCache &GetCache() const {
 		return m_clang.GetCache();

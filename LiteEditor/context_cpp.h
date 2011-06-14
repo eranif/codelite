@@ -65,7 +65,6 @@ private:
 	void Initialize();
 	void DoCodeComplete(long pos);
 	void DoCreateFile(const wxFileName &fn);
-	int  DoGetCalltipParamterIndex();
 	void DoUpdateCalltipHighlight();
 
 public:
@@ -90,7 +89,6 @@ public:
 	virtual void RetagFile();
 	virtual wxString CallTipContent();
 	virtual void SetActive();
-
 	virtual void SemicolonShift();
 
 	// ctrl-click style navigation support

@@ -56,6 +56,7 @@ void ClangCodeCompletion::Release()
 void ClangCodeCompletion::CodeComplete(IEditor* editor)
 {
 	m_activationEditor = editor;
+	m_clang.SetIsCalltip(false);
 	m_clang.CodeCompletion(editor);
 }
 
@@ -96,10 +97,17 @@ void ClangCodeCompletion::DoParseOutput(const wxString &output)
 		// Get the text between the current position and the activation pos and filter all results
 		// that dont match
 		wxString filter = m_activationEditor->GetTextRange(m_activationPos, m_activationEditor->GetCurrentPosition());
+		
+		if(m_clang.GetIsCalltip() && filter.EndsWith(wxT("("))) {
+			filter.RemoveLast();
+		}
+		
+		std::vector<TagEntryPtr> *tagsToShow = &tags;
+		std::vector<TagEntryPtr> filteredTags;
 		if(filter.IsEmpty() == false) {
 			filter.MakeLower();
 			
-			std::vector<TagEntryPtr> filteredTags;
+			
 			filteredTags.reserve( tags.size() );
 			for(size_t i=0; i<tags.size(); i++) {
 				wxString n = tags.at(i)->GetName();
@@ -110,12 +118,19 @@ void ClangCodeCompletion::DoParseOutput(const wxString &output)
 				}
 			}
 			
-			if(filteredTags.empty() == false) {
-				m_activationEditor->ShowCompletionBox(filteredTags, filter, NULL);
-			}
-		} else {
-			m_activationEditor->ShowCompletionBox(tags, wxEmptyString, NULL);
+			tagsToShow = &filteredTags;
 		}
+		
+		if(m_clang.GetIsCalltip()) {
+			std::vector<TagEntryPtr> tips;
+			TagsManagerST::Get()->GetFunctionTipFromTags(*tagsToShow, filter, tips);
+			m_activationEditor->ShowCalltip(new clCallTip(tips));
+			
+		} else {
+			m_activationEditor->ShowCompletionBox(*tagsToShow, filter, NULL);
+			
+		}
+		
 	}
 }
 
@@ -187,4 +202,11 @@ void ClangCodeCompletion::DoCleanUp()
 void ClangCodeCompletion::CancelCodeComplete()
 {
 	DoCleanUp();
+}
+
+void ClangCodeCompletion::Calltip(IEditor* editor)
+{
+	m_activationEditor = editor;
+	m_clang.SetIsCalltip(true);
+	m_clang.CodeCompletion(editor);
 }

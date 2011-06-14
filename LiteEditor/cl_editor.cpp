@@ -3834,3 +3834,14 @@ bool LEditor::IsFocused() const
 #else
 	return m_isFocused;
 #endif}
+
+void LEditor::ShowCalltip(clCallTipPtr tip)
+{
+	GetFunctionTip()->Add( tip );
+	GetFunctionTip()->Highlight(m_context->DoGetCalltipParamterIndex());
+	
+	// In an ideal world, we would like our tooltip to be placed
+	// on top of the caret.
+	wxPoint pt = PointFromPosition(GetCurrentPosition());
+	GetFunctionTip()->Activate(pt, GetCurrLineHeight(), StyleGetBackground(wxSCI_C_DEFAULT));
+}

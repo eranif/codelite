@@ -231,3 +231,57 @@ void ContextBase::PrependMenuItemSeparator(wxMenu *menu)
 	menu->Prepend(item);
 	m_dynItems.push_back(item);
 }
+
+int ContextBase::DoGetCalltipParamterIndex()
+{
+	int index(0);
+	LEditor &ctrl =  GetCtrl();
+	int pos = ctrl.DoGetOpenBracePos();
+	if (pos != wxNOT_FOUND) {
+
+		// loop over the text from pos -> current position and count the number of commas found
+		int depth(0);
+		bool exit_loop(false);
+
+		while ( pos < ctrl.GetCurrentPos() && !exit_loop ) {
+			wxChar ch        = ctrl.SafeGetChar(pos);
+			wxChar ch_before = ctrl.SafeGetChar(ctrl.PositionBefore(pos));
+
+			if (IsCommentOrString(pos)) {
+				pos = ctrl.PositionAfter(pos);
+				continue;
+			}
+
+			switch (ch) {
+			case wxT(','):
+				if (depth == 0) index++;
+				break;
+			case wxT('{'):
+			case wxT('}'):
+			case wxT(';'):
+				// error?
+				exit_loop = true;
+				break;
+			case wxT('('):
+			case wxT('<'):
+			case wxT('['):
+				depth++;
+				break;
+			case wxT('>'):
+				if ( ch_before == wxT('-') ) {
+					// operator noting to do
+					break;
+				}
+				// fall through
+			case wxT(')'):
+			case wxT(']'):
+				depth--;
+				break;
+			default:
+				break;
+			}
+			pos = ctrl.PositionAfter(pos);
+		}
+	}
+	return index;
+}

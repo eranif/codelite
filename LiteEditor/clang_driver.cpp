@@ -16,9 +16,15 @@
 #include "fileextmanager.h"
 #include "globals.h"
 
-static wxString PRE_PROCESS_CMD = wxT("\"$CLANG\" -cc1 -fexceptions $ARGS -w \"$SRC_FILE\" -E 1> \"$PP_OUTPUT_FILE\" 2>&1");
-static wxString PCH_CMD         = wxT("\"$CLANG\" -cc1 -fexceptions -x c++-header $ARGS -w \"$SRC_FILE\" -emit-pch -o \"$PCH_FILE\"");
-static wxString CC_CMD          = wxT("\"$CLANG\" -cc1 -fexceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\"");
+#ifdef __WXMSW__
+    static wxString PRE_PROCESS_CMD = wxT("\"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w \"$SRC_FILE\" -E 1> \"$PP_OUTPUT_FILE\" 2>&1");
+    static wxString PCH_CMD         = wxT("\"$CLANG\" -cc1 -fcxx-exceptions -x c++-header $ARGS -w \"$SRC_FILE\" -emit-pch -o \"$PCH_FILE\"");
+    static wxString CC_CMD          = wxT("\"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\"");
+#else
+    static wxString PRE_PROCESS_CMD = wxT("\"$CLANG\" -cc1 -fexceptions $ARGS -w \"$SRC_FILE\" -E 1> \"$PP_OUTPUT_FILE\" 2>&1");
+    static wxString PCH_CMD         = wxT("\"$CLANG\" -cc1 -fexceptions -x c++-header $ARGS -w \"$SRC_FILE\" -emit-pch -o \"$PCH_FILE\"");
+    static wxString CC_CMD          = wxT("\"$CLANG\" -cc1 -fexceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\"");
+#endif
 
 BEGIN_EVENT_TABLE(ClangDriver, wxEvtHandler)
 	EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  ClangDriver::OnClangProcessOutput)

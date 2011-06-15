@@ -141,7 +141,7 @@ bool                    LEditor::m_ccShowItemsComments  = true ;
 bool                    LEditor::m_ccInitialized        = false;
 
 LEditor::LEditor(wxWindow* parent)
-		: wxScintilla                (parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxSTATIC_BORDER)
+		: wxScintilla                (parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxNO_BORDER)
 		, m_rightClickMenu           (NULL)
 		, m_popupIsOn                (false)
 		, m_modifyTime               (0)

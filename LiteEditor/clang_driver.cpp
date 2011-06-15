@@ -542,9 +542,12 @@ void ClangDriver::DoRemoveAllIncludeStatements(wxString& buffer, wxArrayString &
 }
 
 bool ClangDriver::ShouldInclude(const wxString& header) {
+	wxFileName fnHeader(header);
 	// Header is in the form of full path
 	for(size_t i=0; i<m_removedIncludes.GetCount(); i++) {
-		if(header.EndsWith(m_removedIncludes.Item(i))) {
+		wxFileName fn(m_removedIncludes.Item(i));
+		
+		if(fn.GetFullName() == fnHeader.GetFullName() && header.EndsWith(m_removedIncludes.Item(i))) {
 			return true;
 		}
 	}
@@ -652,7 +655,7 @@ void ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, const wx
 	wxString strGlobalMacros = options.GetClangMacros();
 	wxArrayString globalMacros = wxStringTokenize(strGlobalMacros, wxT("\n\r"), wxTOKEN_STRTOK);
 	for(size_t i=0; i<globalMacros.GetCount(); i++) {
-		m_compilationArgs << wxT(" -D") << globalIncludes.Item(i).Trim().Trim(false) << wxT(" ");
+		m_compilationArgs << wxT(" -D") << globalMacros.Item(i).Trim().Trim(false) << wxT(" ");
 	}
 	
 	for(size_t i=0; i<args.size(); i++) {

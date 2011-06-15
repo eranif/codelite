@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun  6 2011)
+// C++ code generated with wxFormBuilder (version Dec 21 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -11,11 +11,11 @@
 #include <wx/intl.h>
 
 #include <wx/treebook.h>
-#include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
+#include <wx/string.h>
 #include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
@@ -58,7 +58,7 @@ class TagsOptionsBaseDlg : public wxDialog
 	
 	public:
 		
-		TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Tags Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Tags Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~TagsOptionsBaseDlg();
 	
 };
@@ -81,7 +81,7 @@ class CCDisplayAndBehaviorBase : public wxPanel
 	
 	public:
 		
-		CCDisplayAndBehaviorBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		CCDisplayAndBehaviorBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~CCDisplayAndBehaviorBase();
 	
 };
@@ -118,7 +118,7 @@ class CCColouringBasePage : public wxPanel
 	
 	public:
 		
-		CCColouringBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		CCColouringBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~CCColouringBasePage();
 	
 };
@@ -143,7 +143,7 @@ class CCTriggering : public wxPanel
 	
 	public:
 		
-		CCTriggering( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		CCTriggering( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~CCTriggering();
 	
 };
@@ -186,7 +186,7 @@ class CCIncludeFilesBasePage : public wxPanel
 	
 	public:
 		
-		CCIncludeFilesBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		CCIncludeFilesBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~CCIncludeFilesBasePage();
 	
 };
@@ -221,7 +221,7 @@ class CCAdvancedBasePage : public wxPanel
 	
 	public:
 		
-		CCAdvancedBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		CCAdvancedBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~CCAdvancedBasePage();
 	
 };
@@ -240,14 +240,14 @@ class CCClangBasePage : public wxPanel
 		wxCheckBox* m_checkBoxClangFirst;
 		wxSplitterWindow* m_splitter1;
 		wxPanel* m_panel8;
-		wxSplitterWindow* m_splitter3;
-		wxPanel* m_panel9;
 		wxTextCtrl* m_textCtrlClangSearchPaths;
 		wxButton* m_buttonSuggest;
+		wxPanel* m_panel6;
+		wxSplitterWindow* m_splitter3;
+		wxPanel* m_panel9;
+		wxTextCtrl* m_textCtrlClangOptions;
 		wxPanel* m_panel10;
 		wxTextCtrl* m_textCtrlClangMacros;
-		wxPanel* m_panel6;
-		wxTextCtrl* m_textCtrlClangOptions;
 		wxPanel* m_panel4;
 		wxStaticText* m_staticText10;
 		wxFilePickerCtrl* m_filePickerClang;
@@ -263,20 +263,20 @@ class CCClangBasePage : public wxPanel
 	
 	public:
 		
-		CCClangBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		CCClangBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~CCClangBasePage();
-		
 		void m_splitter1OnIdle( wxIdleEvent& )
 		{
-			m_splitter1->SetSashPosition( 0 );
-			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CCClangBasePage::m_splitter1OnIdle ), NULL, this );
+		m_splitter1->SetSashPosition( 0 );
+		m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CCClangBasePage::m_splitter1OnIdle ), NULL, this );
 		}
 		
 		void m_splitter3OnIdle( wxIdleEvent& )
 		{
-			m_splitter3->SetSashPosition( 0 );
-			m_splitter3->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CCClangBasePage::m_splitter3OnIdle ), NULL, this );
+		m_splitter3->SetSashPosition( 0 );
+		m_splitter3->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CCClangBasePage::m_splitter3OnIdle ), NULL, this );
 		}
+		
 	
 };
 

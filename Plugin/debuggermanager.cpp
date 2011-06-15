@@ -29,6 +29,7 @@
 #include "editor_config.h"
 #include <wx/msgdlg.h>
 #include "debuggerconfigtool.h"
+#include "cl_defs.h"
 
 //---------------------------------------------------------
 static DebuggerMgr *ms_instance = NULL;

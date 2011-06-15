@@ -21,4 +21,10 @@
 #    define USE_AUI_TOOLBAR    0
 #endif
 
+#ifdef __WXGTK__
+#    ifndef PLUGINS_DIR
+#        define PLUGINS_DIR "/usr/lib/codelite"
+#    endif
+#endif
+
 #endif // CL_DEFS_H

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun  6 2011)
+// C++ code generated with wxFormBuilder (version Dec 21 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -60,7 +60,6 @@ TagsOptionsBaseDlg::~TagsOptionsBaseDlg()
 {
 	// Disconnect Events
 	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonOK ), NULL, this );
-	
 }
 
 CCDisplayAndBehaviorBase::CCDisplayAndBehaviorBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -240,7 +239,6 @@ CCColouringBasePage::~CCColouringBasePage()
 	m_checkBoxNamespace->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCColouringBasePage::OnColourWorkspaceUI ), NULL, this );
 	m_checkBoxMember->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCColouringBasePage::OnColourWorkspaceUI ), NULL, this );
 	m_checkBoxVariable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCColouringBasePage::OnColourWorkspaceUI ), NULL, this );
-	
 }
 
 CCTriggering::CCTriggering( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -300,7 +298,6 @@ CCTriggering::~CCTriggering()
 	// Disconnect Events
 	m_staticTextMinWordLen->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCTriggering::OnAutoShowWordAssitUI ), NULL, this );
 	m_sliderMinWordLen->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCTriggering::OnAutoShowWordAssitUI ), NULL, this );
-	
 }
 
 CCIncludeFilesBasePage::CCIncludeFilesBasePage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -408,7 +405,6 @@ CCIncludeFilesBasePage::~CCIncludeFilesBasePage()
 	m_buttonRemoveExcludePath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnRemoveExcludePathUI ), NULL, this );
 	m_buttonClearAllExcludPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnClearAllExcludePaths ), NULL, this );
 	m_buttonClearAllExcludPath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnClearAllExcludePathsUI ), NULL, this );
-	
 }
 
 CCAdvancedBasePage::CCAdvancedBasePage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -528,7 +524,6 @@ CCAdvancedBasePage::~CCAdvancedBasePage()
 	// Disconnect Events
 	m_buttonParse->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCAdvancedBasePage::OnParse ), NULL, this );
 	m_buttonParse->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCAdvancedBasePage::OnFileSelectedUI ), NULL, this );
-	
 }
 
 CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -555,38 +550,49 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	
 	fgSizer5->Add( m_checkBoxClangFirst, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer20->Add( fgSizer5, 0, wxEXPAND|wxALL, 5 );
+	bSizer20->Add( fgSizer5, 0, wxALL|wxEXPAND, 5 );
 	
 	m_splitter1 = new wxSplitterWindow( m_panel3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE );
-	m_splitter1->SetSashGravity( 0.8 );
-	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( CCClangBasePage::m_splitter1OnIdle ), NULL, this );
+	m_splitter1->SetSashGravity( 0 );
 	m_splitter1->SetMinimumPaneSize( 1 );
-	
+	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( CCClangBasePage::m_splitter1OnIdle ), NULL, this );
 	m_panel8 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer22;
-	bSizer22 = new wxBoxSizer( wxVERTICAL );
-	
-	m_splitter3 = new wxSplitterWindow( m_panel8, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D|wxSP_LIVE_UPDATE );
-	m_splitter3->SetSashGravity( 0.8 );
-	m_splitter3->Connect( wxEVT_IDLE, wxIdleEventHandler( CCClangBasePage::m_splitter3OnIdle ), NULL, this );
-	m_splitter3->SetMinimumPaneSize( 1 );
-	
-	m_panel9 = new wxPanel( m_splitter3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxStaticBoxSizer* sbSizer12;
-	sbSizer12 = new wxStaticBoxSizer( new wxStaticBox( m_panel9, wxID_ANY, _("Search paths:") ), wxVERTICAL );
+	sbSizer12 = new wxStaticBoxSizer( new wxStaticBox( m_panel8, wxID_ANY, _("Search paths:") ), wxVERTICAL );
 	
-	m_textCtrlClangSearchPaths = new wxTextCtrl( m_panel9, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlClangSearchPaths = new wxTextCtrl( m_panel8, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
 	m_textCtrlClangSearchPaths->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
 	m_textCtrlClangSearchPaths->SetToolTip( _("Add here search paths used by clang for locating inculde files") );
 	
 	sbSizer12->Add( m_textCtrlClangSearchPaths, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_buttonSuggest = new wxButton( m_panel9, wxID_ANY, _("Suggest search paths..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonSuggest = new wxButton( m_panel8, wxID_ANY, _("Suggest search paths..."), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer12->Add( m_buttonSuggest, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
-	m_panel9->SetSizer( sbSizer12 );
+	m_panel8->SetSizer( sbSizer12 );
+	m_panel8->Layout();
+	sbSizer12->Fit( m_panel8 );
+	m_panel6 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer221;
+	bSizer221 = new wxBoxSizer( wxVERTICAL );
+	
+	m_splitter3 = new wxSplitterWindow( m_panel6, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D|wxSP_LIVE_UPDATE );
+	m_splitter3->SetSashGravity( 0.5 );
+	m_splitter3->SetMinimumPaneSize( 1 );
+	m_splitter3->Connect( wxEVT_IDLE, wxIdleEventHandler( CCClangBasePage::m_splitter3OnIdle ), NULL, this );
+	m_panel9 = new wxPanel( m_splitter3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxStaticBoxSizer* sbSizer15;
+	sbSizer15 = new wxStaticBoxSizer( new wxStaticBox( m_panel9, wxID_ANY, _("Compiler flags:") ), wxVERTICAL );
+	
+	m_textCtrlClangOptions = new wxTextCtrl( m_panel9, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlClangOptions->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	m_textCtrlClangOptions->SetToolTip( _("Add here options to be passed to clang when generating PCH file.\nbackticks expressions are allowed (e.g. `wx-config --cflags`)") );
+	
+	sbSizer15->Add( m_textCtrlClangOptions, 1, wxALL|wxEXPAND, 5 );
+	
+	m_panel9->SetSizer( sbSizer15 );
 	m_panel9->Layout();
-	sbSizer12->Fit( m_panel9 );
+	sbSizer15->Fit( m_panel9 );
 	m_panel10 = new wxPanel( m_splitter3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxStaticBoxSizer* sbSizer16;
 	sbSizer16 = new wxStaticBoxSizer( new wxStaticBox( m_panel10, wxID_ANY, _("Macros:") ), wxVERTICAL );
@@ -601,24 +607,11 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	m_panel10->Layout();
 	sbSizer16->Fit( m_panel10 );
 	m_splitter3->SplitHorizontally( m_panel9, m_panel10, 0 );
-	bSizer22->Add( m_splitter3, 1, wxEXPAND, 5 );
+	bSizer221->Add( m_splitter3, 1, wxEXPAND, 5 );
 	
-	m_panel8->SetSizer( bSizer22 );
-	m_panel8->Layout();
-	bSizer22->Fit( m_panel8 );
-	m_panel6 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxStaticBoxSizer* sbSizer15;
-	sbSizer15 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, _("Compiler flags:") ), wxVERTICAL );
-	
-	m_textCtrlClangOptions = new wxTextCtrl( m_panel6, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
-	m_textCtrlClangOptions->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
-	m_textCtrlClangOptions->SetToolTip( _("Add here options to be passed to clang when generating PCH file.\nbackticks expressions are allowed (e.g. `wx-config --cflags`)") );
-	
-	sbSizer15->Add( m_textCtrlClangOptions, 1, wxALL|wxEXPAND, 5 );
-	
-	m_panel6->SetSizer( sbSizer15 );
+	m_panel6->SetSizer( bSizer221 );
 	m_panel6->Layout();
-	sbSizer15->Fit( m_panel6 );
+	bSizer221->Fit( m_panel6 );
 	m_splitter1->SplitHorizontally( m_panel8, m_panel6, 0 );
 	bSizer20->Add( m_splitter1, 1, wxEXPAND, 5 );
 	
@@ -693,5 +686,4 @@ CCClangBasePage::~CCClangBasePage()
 	m_staticText101->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_buttonClearCache->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCClangBasePage::OnClearClangCache ), NULL, this );
 	m_buttonClearCache->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClearClangCacheUI ), NULL, this );
-	
 }

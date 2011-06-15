@@ -4,6 +4,8 @@
 #include "clang_code_completion.h"
 #include <wx/stdpaths.h>
 #include "editor_config.h"
+#include "includepathlocator.h"
+#include "pluginmanager.h"
 
 CCClangPage::CCClangPage(wxWindow* parent, const TagsOptionsData &data)
 	: CCClangBasePage(parent)
@@ -82,6 +84,23 @@ void CCClangPage::OnClearClangCacheUI(wxUpdateUIEvent& event)
 
 void CCClangPage::OnSuggestSearchPaths(wxCommandEvent& event)
 {
-	// Suggest include paths ...
 	wxUnusedVar(event);
+	IncludePathLocator locator(PluginManager::Get());
+	wxArrayString paths, excludes;
+	locator.Locate(paths, excludes, false);
+	
+	wxString suggestedPaths;
+	for(size_t i=0; i<paths.GetCount(); i++) {
+		suggestedPaths << paths.Item(i) << wxT("\n");
+	}
+	
+	suggestedPaths.Trim().Trim(false);
+	if(m_textCtrlClangSearchPaths->GetValue().Contains(suggestedPaths) == false) {
+		wxString newVal = m_textCtrlClangSearchPaths->GetValue();
+		newVal.Trim().Trim(false);
+		if(newVal.IsEmpty() == false)
+			newVal << wxT("\n");
+		newVal << suggestedPaths;
+		m_textCtrlClangSearchPaths->SetValue(newVal);
+	}
 }

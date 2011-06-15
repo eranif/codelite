@@ -95,6 +95,8 @@ class WXDLLIMPEXP_CL TagsOptionsData : public SerializedObject
 	size_t                       m_clangOptions;
 	wxString                     m_clangBinary;
 	wxString                     m_clangCmpOptions;
+	wxString                     m_clangSearchPaths;
+	wxString                     m_clangMacros;
 
 protected:
 	void DoUpdateTokensWxMap();
@@ -106,6 +108,18 @@ public:
 
 	//setters/getters
 
+	void SetClangMacros(const wxString& clangMacros) {
+		this->m_clangMacros = clangMacros;
+	}
+	void SetClangSearchPaths(const wxString& clangSearchPaths) {
+		this->m_clangSearchPaths = clangSearchPaths;
+	}
+	const wxString& GetClangMacros() const {
+		return m_clangMacros;
+	}
+	const wxString& GetClangSearchPaths() const {
+		return m_clangSearchPaths;
+	}
 	void SetClangCmpOptions(const wxString& clangCmpOptions) {
 		this->m_clangCmpOptions = clangCmpOptions;
 	}

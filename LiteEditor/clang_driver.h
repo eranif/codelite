@@ -42,7 +42,8 @@ protected:
 	wxString      DoGetPchOutputFileName(const wxString &filename);
 	bool          ShouldInclude(const wxString &header);
 	void          DoPrepareCompilationArgs(const wxString &projectName, const wxString &clangBinary);
-
+	wxString      DoExpandBacktick(const wxString &backtick);
+	
 	// Internal
 	void OnPCHCreationCompleted();
 	void OnCodeCompletionCompleted();

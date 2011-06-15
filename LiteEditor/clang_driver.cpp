@@ -609,34 +609,16 @@ void ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, const wx
 		wxString projectCompileOptions = dependProjbldConf->GetCompileOptions();
 		wxArrayString projectCompileOptionsArr = wxStringTokenize(projectCompileOptions, wxT(";"), wxTOKEN_STRTOK);
 		for(size_t i=0; i<projectCompileOptionsArr.GetCount(); i++) {
+			
 			wxString cmpOption (projectCompileOptionsArr.Item(i));
 			cmpOption.Trim().Trim(false);
-			wxString tmp;
-			// Expand backticks / $(shell ...) syntax supported by codelite
-			if(cmpOption.StartsWith(wxT("$(shell "), &tmp) || cmpOption.StartsWith(wxT("`"), &tmp)) {
-				cmpOption = tmp;
-				tmp.Clear();
-				if(cmpOption.EndsWith(wxT(")"), &tmp) || cmpOption.EndsWith(wxT("`"), &tmp)) {
-					cmpOption = tmp;
-				}
-				if(m_backticks.find(cmpOption) == m_backticks.end()) {
-					// Expand the backticks into their value
-					wxArrayString outArr;
-					// Apply the environment before executing the command
-					EnvSetter setter( EnvironmentConfig::Instance() );
-					ProcUtils::SafeExecuteCommand(cmpOption, outArr);
-					wxString expandedValue;
-					for(size_t j=0; j<outArr.size(); j++) {
-						expandedValue << outArr.Item(j) << wxT(" ");
-					}
-					m_backticks[cmpOption] = expandedValue;
-					cmpOption = expandedValue;
-				} else {
-					cmpOption = m_backticks.find(cmpOption)->second;
-				}
-			}
+			
+			// expand backticks, if the option is not a backtick the value remains 
+			// unchanged
+			cmpOption = DoExpandBacktick(cmpOption);
 			args.Add( cmpOption );
 		}
+		
 		// get the compiler preprocessor and add them as well
 		wxString projectPreps = dependProjbldConf->GetPreprocessor();
 		wxArrayString projectPrepsArr = wxStringTokenize(projectPreps, wxT(";"), wxTOKEN_STRTOK);
@@ -648,11 +630,30 @@ void ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, const wx
 	m_compilationArgs.Clear();
 	
 	const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();
-	m_compilationArgs << options.GetClangCmpOptions();
 	
-	m_compilationArgs.Replace(wxT("\n"), wxT(" "));
-	m_compilationArgs.Replace(wxT("\r"), wxT(" "));
-	m_compilationArgs << wxT(" ");
+	///////////////////////////////////////////////////////////////////////
+	// add global clang include paths
+	wxString strGlobalIncludes = options.GetClangSearchPaths();
+	wxArrayString globalIncludes = wxStringTokenize(strGlobalIncludes, wxT("\n\r"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<globalIncludes.GetCount(); i++) {
+		m_compilationArgs << wxT(" -I\"") << globalIncludes.Item(i).Trim().Trim(false) << wxT("\" ");
+	}
+	
+	///////////////////////////////////////////////////////////////////////
+	// add global clang compiler options
+	wxString strGlobalCmpOptions = options.GetClangCmpOptions();
+	wxArrayString globalCmpOptions = wxStringTokenize(strGlobalCmpOptions, wxT("\n\r"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<globalCmpOptions.GetCount(); i++) {
+		m_compilationArgs << DoExpandBacktick(globalCmpOptions.Item(i).Trim().Trim(false)) << wxT(" ");
+	}
+	
+	///////////////////////////////////////////////////////////////////////
+	// add global macros
+	wxString strGlobalMacros = options.GetClangMacros();
+	wxArrayString globalMacros = wxStringTokenize(strGlobalMacros, wxT("\n\r"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<globalMacros.GetCount(); i++) {
+		m_compilationArgs << wxT(" -D") << globalIncludes.Item(i).Trim().Trim(false) << wxT(" ");
+	}
 	
 	for(size_t i=0; i<args.size(); i++) {
 		m_compilationArgs << wxT(" ") << args.Item(i);
@@ -666,4 +667,34 @@ void ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, const wx
 	m_compilationArgs.Replace(wxT("-fPIC"),                wxT(""));
 	
 	CL_DEBUG(wxT("Using compilation args: %s"), m_compilationArgs.c_str());
+}
+
+wxString ClangDriver::DoExpandBacktick(const wxString& backtick)
+{
+	wxString tmp;
+	wxString cmpOption = backtick;
+	// Expand backticks / $(shell ...) syntax supported by codelite
+	if(cmpOption.StartsWith(wxT("$(shell "), &tmp) || cmpOption.StartsWith(wxT("`"), &tmp)) {
+		cmpOption = tmp;
+		tmp.Clear();
+		if(cmpOption.EndsWith(wxT(")"), &tmp) || cmpOption.EndsWith(wxT("`"), &tmp)) {
+			cmpOption = tmp;
+		}
+		if(m_backticks.find(cmpOption) == m_backticks.end()) {
+			// Expand the backticks into their value
+			wxArrayString outArr;
+			// Apply the environment before executing the command
+			EnvSetter setter( EnvironmentConfig::Instance() );
+			ProcUtils::SafeExecuteCommand(cmpOption, outArr);
+			wxString expandedValue;
+			for(size_t j=0; j<outArr.size(); j++) {
+				expandedValue << outArr.Item(j) << wxT(" ");
+			}
+			m_backticks[cmpOption] = expandedValue;
+			cmpOption = expandedValue;
+		} else {
+			cmpOption = m_backticks.find(cmpOption)->second;
+		}
+	}
+	return cmpOption;
 }

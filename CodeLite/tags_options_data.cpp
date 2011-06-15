@@ -261,6 +261,8 @@ void TagsOptionsData::Serialize(Archive &arch)
 	arch.Write     (wxT("m_clangOptions"),      m_clangOptions);
 	arch.Write     (wxT("m_clangBinary"),       m_clangBinary);
 	arch.WriteCData(wxT("m_clangCmpOptions"),   m_clangCmpOptions);
+	arch.WriteCData(wxT("m_clangSearchPaths"),  m_clangSearchPaths);
+	arch.WriteCData(wxT("m_clangMacros"),       m_clangMacros);
 }
 
 void TagsOptionsData::DeSerialize(Archive &arch)
@@ -280,6 +282,8 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	arch.Read     (wxT("m_clangOptions"),      m_clangOptions);
 	arch.Read     (wxT("m_clangBinary"),       m_clangBinary);
 	arch.ReadCData(wxT("m_clangCmpOptions"),   m_clangCmpOptions);
+	arch.ReadCData(wxT("m_clangSearchPaths"),  m_clangSearchPaths);
+	arch.ReadCData(wxT("m_clangMacros"),       m_clangMacros);
 	
 	// since of build 3749, we *always* set CC_ACCURATE_SCOPE_RESOLVING to true
 	DoUpdateTokensWxMapReversed();

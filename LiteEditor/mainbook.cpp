@@ -126,8 +126,6 @@ void MainBook::OnPageClosing(NotebookEvent &e)
 	if (!editor)
 		return;
 
-	ClangCodeCompletion::Instance()->CancelCodeComplete();
-
 	if (AskUserToSave(editor)) {
 		SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
 	} else {

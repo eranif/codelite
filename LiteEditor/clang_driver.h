@@ -17,7 +17,13 @@ public:
 		CT_CreatePCH,
 		CT_PreProcess
 	};
-
+	
+	enum WorkingContext {
+		CTX_CodeCompletion, // the default context
+		CTX_Calltip,
+		CTX_CachePCH
+	};
+	
 protected:
 	IProcess *                  m_process;
 	wxString                    m_tmpfile;
@@ -30,20 +36,21 @@ protected:
 	wxArrayString               m_removedIncludes;
 	wxArrayString               m_pchHeaders;
 	wxString                    m_compilationArgs;
-	bool                        m_isCalltip;
-
+	WorkingContext              m_context;
+	bool                        m_isBusy;
+	
 protected:
 	void          DoRunCommand(IEditor *editor, CommandType type);
-	wxArrayString GetStandardIncludePathsArgs(const wxString &clangBinary);
 	void          DoCleanup();
 	void          DoFilterIncludeFilesFromPP();
 	void          DoRemoveAllIncludeStatements(wxString &buffer, wxArrayString &includesRemoved);
 	wxString      DoGetPchHeaderFile(const wxString &filename);
 	wxString      DoGetPchOutputFileName(const wxString &filename);
 	bool          ShouldInclude(const wxString &header);
-	void          DoPrepareCompilationArgs(const wxString &projectName, const wxString &clangBinary);
+	void          DoPrepareCompilationArgs(const wxString &projectName);
 	wxString      DoExpandBacktick(const wxString &backtick);
-	
+	bool          DoProcessBuffer(IEditor* editor, wxString &location, wxString &completefileName);
+	int           DoGetHeaderScanLastPos(IEditor *editor);
 	// Internal
 	void OnPCHCreationCompleted();
 	void OnCodeCompletionCompleted();
@@ -55,7 +62,9 @@ public:
 
 	void CodeCompletion(IEditor *editor);
 	void Abort();
-
+	
+	bool IsBusy() const;
+	
 	void SetActivationPos(int activationPos) {
 		this->m_activationPos = activationPos;
 	}
@@ -71,16 +80,17 @@ public:
 		return m_cache;
 	}
 
-	void SetIsCalltip(bool isCalltip) {
-		this->m_isCalltip = isCalltip;
+	void SetWorkingContext(WorkingContext wc) {
+		this->m_context = wc;
 	}
-	bool GetIsCalltip() const {
-		return m_isCalltip;
+	
+	WorkingContext GetWorkingContext() const {
+		return this->m_context;
 	}
+	
 	DECLARE_EVENT_TABLE()
 	void OnClangProcessOutput    (wxCommandEvent &e);
 	void OnClangProcessTerminated(wxCommandEvent &e);
-	void OnFileSaved             (wxCommandEvent &e);
 };
 
 class ClangDriverCleaner {

@@ -22,10 +22,14 @@
 ClangCodeCompletion* ClangCodeCompletion::ms_instance = 0;
 
 ClangCodeCompletion::ClangCodeCompletion()
-	: m_process         (NULL)
-	, m_activationPos   (wxNOT_FOUND)
-	, m_activationEditor(NULL)
+	: m_process             (NULL)
+	, m_activationPos       (wxNOT_FOUND)
+	, m_activationEditor    (NULL)
+	, m_allEditorsAreClosing(false)
 {
+	wxTheApp->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(ClangCodeCompletion::OnFileLoaded),        NULL, this);
+	wxTheApp->Connect(wxEVT_ALL_EDITORS_CLOSING,   wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
+	wxTheApp->Connect(wxEVT_ALL_EDITORS_CLOSED,    wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed ), NULL, this);
 	// make sure that clang's PCH cache directory exists
 	wxString cacheDir = ClangPCHCache::GetCacheDirectory();
 	if(! wxDir::Exists(cacheDir) ) {
@@ -55,8 +59,11 @@ void ClangCodeCompletion::Release()
 
 void ClangCodeCompletion::CodeComplete(IEditor* editor)
 {
+	if(m_clang.IsBusy())
+		return;
+		
 	m_activationEditor = editor;
-	m_clang.SetIsCalltip(false);
+	m_clang.SetWorkingContext(ClangDriver::CTX_CodeCompletion);
 	m_clang.CodeCompletion(editor);
 }
 
@@ -98,7 +105,7 @@ void ClangCodeCompletion::DoParseOutput(const wxString &output)
 		// that dont match
 		wxString filter = m_activationEditor->GetTextRange(m_activationPos, m_activationEditor->GetCurrentPosition());
 		
-		if(m_clang.GetIsCalltip() && filter.EndsWith(wxT("("))) {
+		if(m_clang.GetWorkingContext() == ClangDriver::CTX_Calltip && filter.EndsWith(wxT("("))) {
 			filter.RemoveLast();
 		}
 		
@@ -122,7 +129,7 @@ void ClangCodeCompletion::DoParseOutput(const wxString &output)
 			tagsToShow = &filteredTags;
 		}
 		
-		if(m_clang.GetIsCalltip()) {
+		if(m_clang.GetWorkingContext() == ClangDriver::CTX_Calltip) {
 			std::vector<TagEntryPtr> tips;
 			TagsManagerST::Get()->GetFunctionTipFromTags(*tagsToShow, filter, tips);
 			m_activationEditor->ShowCalltip(new clCallTip(tips));
@@ -195,6 +202,7 @@ TagEntryPtr ClangCodeCompletion::ClangEntryToTagEntry(const wxString& line)
 
 void ClangCodeCompletion::DoCleanUp()
 {
+	CL_DEBUG(wxT("Aborting PCH caching..."));
 	m_clang.Abort();
 	m_activationEditor = NULL;
 	m_activationPos    = wxNOT_FOUND;
@@ -207,7 +215,52 @@ void ClangCodeCompletion::CancelCodeComplete()
 
 void ClangCodeCompletion::Calltip(IEditor* editor)
 {
+	if(m_clang.IsBusy())
+		return;
+		
 	m_activationEditor = editor;
-	m_clang.SetIsCalltip(true);
+	m_clang.SetWorkingContext(ClangDriver::CTX_Calltip);
 	m_clang.CodeCompletion(editor);
 }
+
+void ClangCodeCompletion::OnFileLoaded(wxCommandEvent& e)
+{
+	e.Skip();
+	
+	// Sanity
+	if(!(TagsManagerST::Get()->GetCtagsOptions().GetClangOptions() & CC_CLANG_ENABLED)) 
+		return;
+
+	CL_DEBUG(wxT("ClangCodeCompletion::OnFileLoaded() START"));
+	
+	if(m_clang.IsBusy() || m_allEditorsAreClosing) {
+		CL_DEBUG(wxT("ClangCodeCompletion::OnFileLoaded() ENDED"));
+		return;
+	}
+
+	if(e.GetClientData()) {
+		IEditor *editor = (IEditor*)e.GetClientData();	
+		// sanity
+		if(editor->GetProjectName().IsEmpty() || editor->GetFileName().GetFullName().IsEmpty())
+			return;
+		
+		m_activationEditor = editor;
+		m_clang.SetWorkingContext(ClangDriver::CTX_CachePCH);
+		m_clang.CodeCompletion(m_activationEditor);
+	
+	}
+	CL_DEBUG(wxT("ClangCodeCompletion::OnFileLoaded() ENDED"));
+}
+
+void ClangCodeCompletion::OnAllEditorsClosed(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	m_allEditorsAreClosing = false;
+}
+
+void ClangCodeCompletion::OnAllEditorsClosing(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	m_allEditorsAreClosing = true;
+}
+

@@ -25,7 +25,8 @@ class ClangCodeCompletion : public wxEvtHandler
 	int                         m_activationPos;
 	IEditor*                    m_activationEditor;
 	ClangDriver                 m_clang;
-
+	bool                        m_allEditorsAreClosing;
+	
 	friend class ClangDriver;
 
 public:
@@ -50,8 +51,12 @@ protected:
 	void DoParseOutput(const wxString &output);
 	void DoCleanUp();
 	TagEntryPtr ClangEntryToTagEntry(const wxString &line);
-
-
+	
+	// Event handling
+	void OnFileLoaded(wxCommandEvent &e);
+	void OnAllEditorsClosing(wxCommandEvent &e);
+	void OnAllEditorsClosed(wxCommandEvent &e);
+	
 private:
 	ClangCodeCompletion();
 	~ClangCodeCompletion();

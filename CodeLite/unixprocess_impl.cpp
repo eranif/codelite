@@ -1,4 +1,5 @@
 #include "unixprocess_impl.h"
+#include "file_logger.h"
 
 #if defined(__WXMAC__)||defined(__WXGTK__)
 
@@ -312,13 +313,18 @@ bool UnixProcessImpl::Read(wxString& buff)
 
 	memset(&rs, 0, sizeof(rs));
 	FD_SET(GetReadHandle(), &rs);
-	timeout.tv_sec  = 1; // 1 second
-	timeout.tv_usec = 0;
-
+	timeout.tv_sec  = 0;      // 0 seconds
+	timeout.tv_usec = 150000; // 150 ms
+	
+	int errCode(0);
+	errno = 0;
+	
 	int rc = select(GetReadHandle()+1, &rs, NULL, NULL, &timeout);
+	errCode = errno;
 	if ( rc == 0 ) {
 		// timeout
 		return true;
+		
 	} else if ( rc > 0 ) {
 		// there is something to read
 		char buffer[BUFF_SIZE+1]; // our read buffer
@@ -339,12 +345,14 @@ bool UnixProcessImpl::Read(wxString& buff)
 			buff.Append( convBuff );
 			return true;
 		}
-		
 		return false;
+		
 	} else {
-		if ( rc == EINTR || rc == EAGAIN ) {
+		
+		if ( errCode == EINTR || errCode == EAGAIN ) {
 			return true;
 		}
+		
 		// Process terminated
 		// the exit code will be set in the sigchld event handler
 		return false;

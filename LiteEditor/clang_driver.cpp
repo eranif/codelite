@@ -297,11 +297,15 @@ void ClangDriver::DoRunCommand(IEditor* editor, CommandType type)
 
 void ClangDriver::DoCleanup()
 {
-	if(m_process)
+	static bool in_delete = false;
+	if(m_process && !in_delete) {
+		in_delete = true;
 		delete m_process;
-
+	}
+	
+	in_delete = false;
 	m_process = NULL;
-
+	
 	// remove the temporary file
 	if(m_tmpfile.IsEmpty() == false) {
 #ifndef __WXMSW__

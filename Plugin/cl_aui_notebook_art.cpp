@@ -324,8 +324,8 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 
 		border_points[0] = wxPoint(tab_x,             tab_y+tab_height-4);
 		border_points[1] = wxPoint(tab_x,             tab_y+2);
-		border_points[2] = wxPoint(tab_x+2,           tab_y);
-		border_points[3] = wxPoint(tab_x+tab_width-2, tab_y);
+		border_points[2] = wxPoint(tab_x,             tab_y);
+		border_points[3] = wxPoint(tab_x+tab_width,   tab_y);
 		border_points[4] = wxPoint(tab_x+tab_width,   tab_y+2);
 		border_points[5] = wxPoint(tab_x+tab_width,   tab_y+tab_height-4);
 	}

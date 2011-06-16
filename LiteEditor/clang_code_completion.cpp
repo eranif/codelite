@@ -226,7 +226,7 @@ void ClangCodeCompletion::Calltip(IEditor* editor)
 void ClangCodeCompletion::OnFileLoaded(wxCommandEvent& e)
 {
 	e.Skip();
-	
+	/*
 	// Sanity
 	if(!(TagsManagerST::Get()->GetCtagsOptions().GetClangOptions() & CC_CLANG_ENABLED)) 
 		return;
@@ -250,6 +250,7 @@ void ClangCodeCompletion::OnFileLoaded(wxCommandEvent& e)
 	
 	}
 	CL_DEBUG(wxT("ClangCodeCompletion::OnFileLoaded() ENDED"));
+	*/
 }
 
 void ClangCodeCompletion::OnAllEditorsClosed(wxCommandEvent& e)

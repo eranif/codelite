@@ -213,6 +213,7 @@ wxString ClangPchMakerThread::DoGetPchHeaderFile(const wxString& filename)
 	name << ClangPCHCache::GetCacheDirectory()
 	     << wxFileName::GetPathSeparator()
 	     << fn.GetName()
+		 << wxT("_") << fn.GetExt()
 	     << wxT("__H__.h");
 	return name;
 }

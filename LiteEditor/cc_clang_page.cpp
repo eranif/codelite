@@ -74,12 +74,12 @@ void CCClangPage::OnClangCCEnabledUI(wxUpdateUIEvent& event)
 void CCClangPage::OnClearClangCache(wxCommandEvent& event)
 {
 	wxBusyCursor cursor;
-	ClangCodeCompletion::Instance()->GetCache().Clear();
+	ClangCodeCompletion::Instance()->ClearCache();
 }
 
 void CCClangPage::OnClearClangCacheUI(wxUpdateUIEvent& event)
 {
-	event.Enable(m_checkBoxEnableClangCC->IsChecked() && !ClangCodeCompletion::Instance()->GetCache().IsEmpty());
+	event.Enable(m_checkBoxEnableClangCC->IsChecked() && !ClangCodeCompletion::Instance()->IsCacheEmpty());
 }
 
 void CCClangPage::OnSuggestSearchPaths(wxCommandEvent& event)

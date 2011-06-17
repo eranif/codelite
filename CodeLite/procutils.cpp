@@ -467,23 +467,21 @@ void ProcUtils::SafeExecuteCommand(const wxString &command, wxArrayString &outpu
 	// wait for the process to terminate
 	wxString tmpbuf;
 	wxString buff;
-	static int maxRetries (1000);
-
-	int retries(0);
-	while (proc->IsAlive() && retries < maxRetries) {
+	
+	while (proc->IsAlive()) {
+		tmpbuf.Clear();
 		proc->Read(tmpbuf);
 		buff << tmpbuf;
 		wxThread::Sleep(100);
-		retries++;
 	}
-
-	tmpbuf.Empty();
+	tmpbuf.Clear();
+	
+	// Read any unread output
 	proc->Read(tmpbuf);
-	while( tmpbuf.IsEmpty() == false && retries < maxRetries) {
+	while( !tmpbuf.IsEmpty() ) {
 		buff << tmpbuf;
-		tmpbuf.Empty();
+		tmpbuf.Clear();
 		proc->Read(tmpbuf);
-		retries++;
 	}
 
 	// Convert buff into wxArrayString

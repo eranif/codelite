@@ -21,7 +21,6 @@ class ClangCodeCompletion : public wxEvtHandler
 {
 
 	static ClangCodeCompletion* ms_instance;
-	IProcess*                   m_process;
 	int                         m_activationPos;
 	IEditor*                    m_activationEditor;
 	ClangDriver                 m_clang;
@@ -39,14 +38,10 @@ public:
 	 */
 	void CodeComplete(IEditor *editor);
 	void Calltip(IEditor *editor);
-	
 	void CancelCodeComplete();
-	const ClangPCHCache &GetCache() const {
-		return m_clang.GetCache();
-	}
-	ClangPCHCache &GetCache() {
-		return m_clang.GetCache();
-	}
+	void ClearCache();
+	bool IsCacheEmpty();
+	
 protected:
 	void DoParseOutput(const wxString &output);
 	void DoCleanUp();

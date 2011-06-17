@@ -5,56 +5,44 @@
 #include "asyncprocess.h"
 #include <map>
 #include "clangpch_cache.h"
+#include "clang_pch_maker_thread.h"
 
 class IEditor;
 class ClangDriverCleaner;
 
-class ClangDriver : public wxEvtHandler {
-	friend class ClangDriverCleaner;
+class ClangDriver : public wxEvtHandler
+{
 public:
-	enum CommandType {
-		CT_CodeCompletion,
-		CT_CreatePCH,
-		CT_PreProcess
-	};
-	
 	enum WorkingContext {
-		CTX_CodeCompletion, // the default context
+		CTX_CodeCompletion,
 		CTX_Calltip,
 		CTX_CachePCH
 	};
-	
+
 protected:
 	IProcess *                  m_process;
 	wxString                    m_tmpfile;
 	std::map<wxString,wxString> m_backticks;
 	wxString                    m_output;
 	int                         m_activationPos;
-	IEditor*                    m_activationEditor;
-	CommandType                 m_commandType;
-	ClangPCHCache               m_cache;
-	wxArrayString               m_removedIncludes;
-	wxArrayString               m_pchHeaders;
-	wxString                    m_compilationArgs;
+	ClangPchMakerThread         m_pchMakerThread;
+	wxString                    m_filename;
 	WorkingContext              m_context;
-	bool                        m_isBusy;
-	
+
 protected:
-	void          DoRunCommand(IEditor *editor, CommandType type);
+	void          DoRunCommand(IEditor *editor);
 	void          DoCleanup();
-	void          DoFilterIncludeFilesFromPP();
 	void          DoRemoveAllIncludeStatements(wxString &buffer, wxArrayString &includesRemoved);
 	wxString      DoGetPchHeaderFile(const wxString &filename);
 	wxString      DoGetPchOutputFileName(const wxString &filename);
-	bool          ShouldInclude(const wxString &header);
-	void          DoPrepareCompilationArgs(const wxString &projectName);
+	wxString      DoPrepareCompilationArgs(const wxString &projectName, wxString &projectPath);
 	wxString      DoExpandBacktick(const wxString &backtick);
 	bool          DoProcessBuffer(IEditor* editor, wxString &location, wxString &completefileName);
 	int           DoGetHeaderScanLastPos(IEditor *editor);
+	wxString      DoGetClangBinary();
+
 	// Internal
-	void OnPCHCreationCompleted();
 	void OnCodeCompletionCompleted();
-	void OnPreProcessingCompleted();
 
 public:
 	ClangDriver();
@@ -62,9 +50,17 @@ public:
 
 	void CodeCompletion(IEditor *editor);
 	void Abort();
-	
-	bool IsBusy() const;
-	
+
+	bool IsBusy() const {
+		return m_process != NULL;
+	}
+
+	void SetContext(WorkingContext context) {
+		this->m_context = context;
+	}
+	WorkingContext GetContext() const {
+		return m_context;
+	}
 	void SetActivationPos(int activationPos) {
 		this->m_activationPos = activationPos;
 	}
@@ -72,38 +68,12 @@ public:
 		return m_activationPos;
 	}
 
-	const ClangPCHCache& GetCache() const {
-		return m_cache;
-	}
-
-	ClangPCHCache &GetCache() {
-		return m_cache;
-	}
-
-	void SetWorkingContext(WorkingContext wc) {
-		this->m_context = wc;
-	}
-	
-	WorkingContext GetWorkingContext() const {
-		return this->m_context;
-	}
+	void ClearCache();
+	bool IsCacheEmpty();
 	
 	DECLARE_EVENT_TABLE()
 	void OnClangProcessOutput    (wxCommandEvent &e);
 	void OnClangProcessTerminated(wxCommandEvent &e);
-};
-
-class ClangDriverCleaner {
-	ClangDriver *m_driver;
-public:
-	ClangDriverCleaner(ClangDriver *driver) : m_driver(driver) {}
-	~ClangDriverCleaner() {
-		if(m_driver)
-			m_driver->DoCleanup();
-	}
-	void Clear() {
-		m_driver = NULL;
-	}
 };
 
 #endif // CLANGDRIVER_H

@@ -666,6 +666,8 @@
     <File Name="clang_driver.cpp"/>
     <File Name="code_completion_manager.h"/>
     <File Name="code_completion_manager.cpp"/>
+    <File Name="clang_pch_maker_thread.h"/>
+    <File Name="clang_pch_maker_thread.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29">
     <Project Name="wxscintilla"/>

@@ -1,22 +1,4 @@
-General
--------
-
-clang cc:
-----------
-- Create a PCH when a file is loaded
 - Add code completion options per project
+- Make word completion working again
+- Parse output from clang and display it to user
 
-
-High priority:
---------------
-
-- goto impl/ decl looks broken when using with class decorator... /
-- 'Apply Patch' - offer to change EOL before applying it
-
-
-Optinal:
---------
-
-- add build-errors-assistant
-- Add option to customize the single toolbar
-- Refactoring: add an option to add 'add forward decl'

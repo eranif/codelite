@@ -126,14 +126,16 @@ bool CodeCompletionManager::DoCtagsCodeComplete(LEditor* editor, int line, const
 
 void CodeCompletionManager::DoUpdateOptions()
 {
-	m_options = CC_CTAGS_ENABLED | CC_CLANG_ENABLED;
 	const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();
+	m_options = options.GetClangOptions();
+	
+	m_options |= CC_CTAGS_ENABLED; // For now, we always enables CTAGS
 	
 	// Incase CLANG is set as the main CC engine, remove the CTAGS options BUT 
 	// only if CLANG is enabled...
-	if((options.GetClangOptions() & CC_CLANG_FIRST) && (options.GetClangOptions() & CC_CLANG_ENABLED)) {
+	if((m_options & CC_CLANG_FIRST) && (m_options & CC_CLANG_ENABLED)) {
 		m_options &= ~CC_CTAGS_ENABLED;
-		m_options |= CC_CLANG_ENABLED;
 	}
-	
 }
+
+

@@ -21,7 +21,7 @@
 #ifdef __WXMSW__
 static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" 1> \"$PCH_FILE.code-completion\" 2>&1 && FileGrep \"$PCH_FILE.code-completion\" $FILTER ");
 #else
-static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" | grep -i $FILTER > \"$PCH_FILE.code-completion\"");
+static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" > \"$PCH_FILE.code-completion\"");
 #endif
 
 BEGIN_EVENT_TABLE(ClangDriver, wxEvtHandler)

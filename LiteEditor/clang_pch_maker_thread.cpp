@@ -1,5 +1,5 @@
+#include <wx/app.h>
 #include "clang_pch_maker_thread.h"
-#include <wx/xrc/xmlres.h>
 #include <wx/thread.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
@@ -7,7 +7,8 @@
 #include "globals.h"
 #include "procutils.h"
 #include "fileextmanager.h"
-#include <wx/app.h>
+
+#include <wx/xrc/xmlres.h>
 
 #ifdef __WXMSW__
     static wxString PRE_PROCESS_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w \"$SRC_FILE\" -E 1> \"$PP_OUTPUT_FILE\" 2>&1");

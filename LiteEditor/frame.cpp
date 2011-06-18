@@ -598,6 +598,8 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
 	wxTheApp->Connect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	wxTheApp->Connect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
+	wxTheApp->Connect(wxEVT_CLANG_PCH_CACHE_STARTED, wxCommandEventHandler(clMainFrame::OnPchCacheStarted),          NULL, this);
+	wxTheApp->Connect(wxEVT_CLANG_PCH_CACHE_ENDED,   wxCommandEventHandler(clMainFrame::OnPchCacheEnded),            NULL, this);
 }
 
 clMainFrame::~clMainFrame(void)
@@ -610,6 +612,8 @@ clMainFrame::~clMainFrame(void)
 	wxTheApp->Disconnect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	wxTheApp->Disconnect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
+	wxTheApp->Disconnect(wxEVT_CLANG_PCH_CACHE_STARTED, wxCommandEventHandler(clMainFrame::OnPchCacheStarted),          NULL, this);
+	wxTheApp->Disconnect(wxEVT_CLANG_PCH_CACHE_ENDED,   wxCommandEventHandler(clMainFrame::OnPchCacheEnded),            NULL, this);
 
 	delete m_timer;
 	ManagerST::Free();
@@ -4476,4 +4480,20 @@ void clMainFrame::OnGrepWordUI(wxUpdateUIEvent& e)
 	CHECK_SHUTDOWN();
 	LEditor *editor = GetMainBook()->GetActiveEditor();
 	e.Enable(editor && !editor->GetSelectedText().IsEmpty());
+}
+
+void clMainFrame::OnPchCacheEnded(wxCommandEvent& e)
+{
+	e.Skip();
+	SetStatusMessage(wxString::Format(wxT("Generating PCH completed")), 0);
+}
+
+void clMainFrame::OnPchCacheStarted(wxCommandEvent& e)
+{
+	e.Skip();
+	wxString *filename = (wxString*)e.GetClientData();
+	wxFileName fn(*filename);
+	delete filename;
+	
+	SetStatusMessage(wxString::Format(wxT("Generating PCH for file: %s"), fn.GetFullName().c_str()), 0);
 }

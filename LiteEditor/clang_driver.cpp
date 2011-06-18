@@ -18,6 +18,7 @@
 
 #define MAX_LINE_TO_SCAN_FOR_HEADERS 500
 
+
 #ifdef __WXMSW__
 static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" 1> \"$PCH_FILE.code-completion\" 2>&1 && FileGrep \"$PCH_FILE.code-completion\" $FILTER ");
 #else

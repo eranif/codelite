@@ -485,7 +485,11 @@ protected:
 	void OnLoadPerspective(wxCommandEvent &e);
 	void OnWorkspaceSettings(wxCommandEvent &e);
 	void OnWorkspaceEditorPreferences(wxCommandEvent &e);
-
+	
+	// Clang
+	void OnPchCacheStarted(wxCommandEvent &e);
+	void OnPchCacheEnded  (wxCommandEvent &e);
+	
 	DECLARE_EVENT_TABLE()
 };
 

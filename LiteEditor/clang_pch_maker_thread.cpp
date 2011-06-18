@@ -1,4 +1,5 @@
 #include "clang_pch_maker_thread.h"
+#include <wx/xrc/xmlres.h>
 #include <wx/thread.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
@@ -6,6 +7,7 @@
 #include "globals.h"
 #include "procutils.h"
 #include "fileextmanager.h"
+#include <wx/app.h>
 
 #ifdef __WXMSW__
     static wxString PRE_PROCESS_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w \"$SRC_FILE\" -E 1> \"$PP_OUTPUT_FILE\" 2>&1");
@@ -14,6 +16,9 @@
     static wxString PRE_PROCESS_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions $ARGS -w \"$SRC_FILE\" -E 1> \"$PP_OUTPUT_FILE\" 2>&1");
     static wxString PCH_CMD         = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions -x c++-header $ARGS -w \"$SRC_FILE\" -emit-pch -o \"$PCH_FILE\" 1> \"$PCH_FILE.output\" 2>&1");
 #endif
+
+const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED = XRCID("clang_pch_cache_started");
+const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   = XRCID("clang_pch_cache_ended");
 
 static bool WriteFileLatin1(const wxString &file_name, const wxString &content)
 {
@@ -70,6 +75,11 @@ void ClangPchMakerThread::DoCreatePch(ClangPchCreateTask *task)
 	wxString      currentBuffer;
 	wxFileName    fileName;
 	wxArrayString outputArr;
+	
+	// Send start event
+	wxCommandEvent e(wxEVT_CLANG_PCH_CACHE_STARTED);
+	e.SetClientData(new wxString(task->GetFileName().c_str()));
+	wxTheApp->AddPendingEvent(e);
 	
 	CL_DEBUG(wxT(" ==========> [ ClangPchMakerThread ] PCH creation started <=============="));
 	
@@ -134,6 +144,10 @@ void ClangPchMakerThread::DoCreatePch(ClangPchCreateTask *task)
 	CL_DEBUG(wxT("Executing: %s"), command.c_str());
 	ProcUtils::SafeExecuteCommand(command, outputArr);
 	DoCacheResult(task, outputArr);
+	
+	// Send start event
+	wxCommandEvent eEnd(wxEVT_CLANG_PCH_CACHE_ENDED);
+	wxTheApp->AddPendingEvent(eEnd);
 }
 
 void ClangPchMakerThread::DoCacheResult(ClangPchCreateTask *task, const wxArrayString &output)

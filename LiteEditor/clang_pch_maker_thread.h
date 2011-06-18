@@ -4,6 +4,9 @@
 #include "worker_thread.h" // Base class: ThreadRequest
 #include "clangpch_cache.h"
 
+extern const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED ;
+extern const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   ;
+
 class ClangPchCreateTask : public ThreadRequest
 {
 public:

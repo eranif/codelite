@@ -18,10 +18,28 @@ CodeCompletionManager::~CodeCompletionManager()
 
 void CodeCompletionManager::WordCompletion(LEditor *editor, const wxString& expr, const wxString& word)
 {
+	wxString expression = expr;
+	wxString tmp;
+	
 	DoUpdateOptions();
 	
-	// Currently, we always do ctags word completion
-	DoCtagsWordCompletion(editor, expr, word);
+	// Trim whitespace from right and left
+	static wxString trimString(wxT("!<>=(){};\r\n\t\v "));
+	
+	expression = expression.erase(0, expression.find_first_not_of(trimString));
+	expression = expression.erase(expression.find_last_not_of(trimString)+1);
+		
+	if(expression.EndsWith(word, &tmp)) {
+		expression = tmp;
+	}
+	
+	if(expression.IsEmpty()) {
+		// Currently, we always do ctags word completion for empty expressions
+		DoCtagsWordCompletion(editor, expr, word);
+		
+	} else {
+		DoClangWordCompletion(editor);
+	}
 }
 
 CodeCompletionManager& CodeCompletionManager::Get()
@@ -99,7 +117,7 @@ void CodeCompletionManager::DoClangCodeComplete(LEditor* editor)
 bool CodeCompletionManager::DoCtagsCodeComplete(LEditor* editor, int line, const wxString& expr, const wxString& text)
 {
 	std::vector<TagEntryPtr> candidates;
-	if (TagsManagerST::Get()->AutoCompleteCandidates(editor->GetFileName(), line, expr, text, candidates)) {
+	if (TagsManagerST::Get()->AutoCompleteCandidates(editor->GetFileName(), line, expr, text, candidates) && !candidates.empty()) {
 		editor->ShowCompletionBox(candidates, wxEmptyString, false);
 		return true;
 	}
@@ -108,7 +126,7 @@ bool CodeCompletionManager::DoCtagsCodeComplete(LEditor* editor, int line, const
 
 void CodeCompletionManager::DoUpdateOptions()
 {
-	m_options = CC_CTAGS_ENABLED;
+	m_options = CC_CTAGS_ENABLED | CC_CLANG_ENABLED;
 	const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();
 	
 	// Incase CLANG is set as the main CC engine, remove the CTAGS options BUT 

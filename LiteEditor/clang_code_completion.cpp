@@ -79,6 +79,13 @@ void ClangCodeCompletion::DoParseOutput(const wxString &output)
 	if(output.IsEmpty() || !m_activationEditor || m_activationPos == wxNOT_FOUND)
 		return;
 	
+	// Get the text between the current position and the activation pos and filter all results
+	// that dont match
+	wxString filter = m_activationEditor->GetTextRange(m_activationPos, m_activationEditor->GetCurrentPosition());
+	if(m_clang.GetContext() == ClangDriver::CTX_Calltip && filter.EndsWith(wxT("("))) {
+		filter.RemoveLast();
+	}
+	
 	wxArrayString entries = wxStringTokenize(output, wxT("\n\r"), wxTOKEN_STRTOK);
 	std::vector<TagEntryPtr> tags;
 	tags.reserve( entries.size() );
@@ -88,7 +95,7 @@ void ClangCodeCompletion::DoParseOutput(const wxString &output)
 		if(entries.Item(i).IsEmpty())
 			continue;
 		
-		TagEntryPtr tag = ClangEntryToTagEntry( entries.Item(i) );
+		TagEntryPtr tag = ClangEntryToTagEntry( entries.Item(i), filter );
 		if(tag) {
 			tags.push_back( tag );
 		}
@@ -105,14 +112,6 @@ void ClangCodeCompletion::DoParseOutput(const wxString &output)
 		// We need to make sure that the caret is still infront of the completion char
 		if(m_activationEditor->GetCurrentPosition() < m_activationPos)
 			return;
-		
-		// Get the text between the current position and the activation pos and filter all results
-		// that dont match
-		wxString filter = m_activationEditor->GetTextRange(m_activationPos, m_activationEditor->GetCurrentPosition());
-		
-		if(m_clang.GetContext() == ClangDriver::CTX_Calltip && filter.EndsWith(wxT("("))) {
-			filter.RemoveLast();
-		}
 		
 		std::vector<TagEntryPtr> *tagsToShow = &tags;
 		std::vector<TagEntryPtr> filteredTags;
@@ -147,7 +146,7 @@ void ClangCodeCompletion::DoParseOutput(const wxString &output)
 	}
 }
 
-TagEntryPtr ClangCodeCompletion::ClangEntryToTagEntry(const wxString& line)
+TagEntryPtr ClangCodeCompletion::ClangEntryToTagEntry(const wxString& line, const wxString &filter)
 {
 	// an example of line:
 	// COMPLETION: OpenFile : [#bool#]OpenFile(<#class wxString const &fileName#>{#, <#class wxString const &projectName#>{#, <#int lineno#>#}#})
@@ -164,6 +163,14 @@ TagEntryPtr ClangCodeCompletion::ClangEntryToTagEntry(const wxString& line)
 	
 	if(name.IsEmpty())
 		return NULL;
+	
+	wxString lcName, lcFilter;
+	lcName = name; lcFilter = filter;
+	lcName.MakeLower(); lcFilter.MakeLower();
+	
+	if(!lcFilter.IsEmpty() && !lcName.StartsWith(lcFilter)) {
+		return NULL;
+	}
 	
 	TagEntry *t = new TagEntry();
 	TagEntryPtr tag(t);
@@ -275,4 +282,14 @@ void ClangCodeCompletion::OnAllEditorsClosing(wxCommandEvent& e)
 bool ClangCodeCompletion::IsCacheEmpty()
 {
 	return m_clang.IsCacheEmpty();
+}
+
+void ClangCodeCompletion::WordComplete(IEditor* editor)
+{
+	if(m_clang.IsBusy())
+		return;
+		
+	m_activationEditor = editor;
+	m_clang.SetContext(ClangDriver::CTX_WordCompletion);
+	m_clang.CodeCompletion(editor);
 }

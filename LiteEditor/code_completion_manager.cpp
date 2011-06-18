@@ -18,16 +18,10 @@ CodeCompletionManager::~CodeCompletionManager()
 
 void CodeCompletionManager::WordCompletion(LEditor *editor, const wxString& expr, const wxString& word)
 {
-	bool res (false);
 	DoUpdateOptions();
 	
-	if(GetOptions() & CC_CTAGS_ENABLED) {
-		res = DoCtagsWordCompletion(editor, expr, word);
-	}
-
-	if(!res && (GetOptions() & CC_CLANG_ENABLED )) {
-		DoClangWordCompletion(editor);
-	}
+	// Currently, we always do ctags word completion
+	DoCtagsWordCompletion(editor, expr, word);
 }
 
 CodeCompletionManager& CodeCompletionManager::Get()
@@ -51,7 +45,7 @@ bool CodeCompletionManager::DoCtagsWordCompletion(LEditor* editor, const wxStrin
 
 void CodeCompletionManager::DoClangWordCompletion(LEditor* editor)
 {
-	ClangCodeCompletion::Instance()->CodeComplete(editor);
+	ClangCodeCompletion::Instance()->WordComplete(editor);
 }
 
 bool CodeCompletionManager::DoCtagsCalltip(LEditor* editor, int line, const wxString &expr, const wxString &text, const wxString &word)

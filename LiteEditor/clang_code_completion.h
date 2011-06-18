@@ -32,11 +32,8 @@ public:
 	static ClangCodeCompletion* Instance();
 	static void Release();
 
-	/**
-	 * @brief perform code completion
-	 * @param editor
-	 */
 	void CodeComplete(IEditor *editor);
+	void WordComplete(IEditor *editor);
 	void Calltip(IEditor *editor);
 	void CancelCodeComplete();
 	void ClearCache();
@@ -45,7 +42,7 @@ public:
 protected:
 	void DoParseOutput(const wxString &output);
 	void DoCleanUp();
-	TagEntryPtr ClangEntryToTagEntry(const wxString &line);
+	TagEntryPtr ClangEntryToTagEntry(const wxString &line, const wxString &filter);
 	
 	// Event handling
 	void OnFileLoaded(wxCommandEvent &e);

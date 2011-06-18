@@ -19,15 +19,19 @@
 #define MAX_LINE_TO_SCAN_FOR_HEADERS 500
 
 #ifdef __WXMSW__
-static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\"");
+static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" 1> \"$PCH_FILE.code-completion\" 2>&1 && FileGrep \"$PCH_FILE.code-completion\" $FILTER ");
 #else
-static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\"");
+static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" | grep -i $FILTER > \"$PCH_FILE.code-completion\"");
 #endif
 
 BEGIN_EVENT_TABLE(ClangDriver, wxEvtHandler)
 	EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  ClangDriver::OnClangProcessOutput)
 	EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, ClangDriver::OnClangProcessTerminated)
 END_EVENT_TABLE()
+
+static bool wxIsWhitespace(wxChar ch) {
+	return ch == wxT(' ') || ch == wxT('\t') || ch == wxT('\r') || ch == wxT('\n');
+}
 
 static bool WriteFileLatin1(const wxString &file_name, const wxString &content)
 {
@@ -135,8 +139,6 @@ void ClangDriver::CodeCompletion(IEditor* editor)
 
 void ClangDriver::OnClangProcessOutput(wxCommandEvent& e)
 {
-	CL_DEBUG(wxT("ClangDriver::OnClangProcessOutput() called !"));
-	
 	ProcessEventData *ped = (ProcessEventData*) e.GetClientData();
 	if(ped) {
 		m_output << ped->GetData();
@@ -167,19 +169,23 @@ void ClangDriver::DoRunCommand(IEditor* editor)
 	command = CC_CMD;
 
 	// wxT("\"$CLANG\" -cc1 -fexceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\"");
+	m_ccfilename = DoGetPchOutputFileName(editor->GetFileName().GetFullPath());
 	command.Replace(wxT("$CLANG"),          clangBinary);
 	command.Replace(wxT("$ARGS"),           compilationArgs);
-	command.Replace(wxT("$PCH_FILE"),       DoGetPchOutputFileName(editor->GetFileName().GetFullPath()));
+	command.Replace(wxT("$PCH_FILE"),       m_ccfilename);
 	command.Replace(wxT("$PROJECT_PATH"),   projectPath);
 	
 	wxString completefileName, location;
-	if(!DoProcessBuffer(editor, location, completefileName)) {
+	wxString filterWord;
+	if(!DoProcessBuffer(editor, location, completefileName, filterWord)) {
 		DoCleanup();
 		return;
 	}
 	
 	command.Replace(wxT("$SRC_FILE"), completefileName);
 	command.Replace(wxT("$LOCATION"), location);
+	command.Replace(wxT("$FILTER"),   filterWord);
+	
 	WrapInShell(command);
 
 	// Remove any white spaces from the command
@@ -206,7 +212,7 @@ void ClangDriver::DoCleanup()
 	}
 	
 	m_process = NULL;
-	
+	m_ccfilename.Clear();
 	// remove the temporary file
 	if(m_tmpfile.IsEmpty() == false) {
 #ifndef __WXMSW__
@@ -222,7 +228,18 @@ void ClangDriver::DoCleanup()
 void ClangDriver::OnCodeCompletionCompleted()
 {
 	// clang output is stored in m_output
-	wxString output = m_output;
+	// "$PCH_FILE.code-completion"
+	wxString filename;
+	filename << m_ccfilename << wxT(".code-completion");
+	wxString output;
+	wxFFile fp(filename, wxT("r"));
+	if(fp.IsOpened()) {
+		fp.ReadAll( &output );
+	}
+	
+	// TODO :: delete temporary code-completion file
+	wxRemoveFile(filename);
+	
 	CL_DEBUG(wxT("ClangDriver::OnCodeCompletionCompleted() called"));
 	CL_DEBUG1(wxT("ClangDriver::OnCodeCompletionCompleted():\n[%s]"), output.c_str());
 
@@ -417,7 +434,7 @@ wxString ClangDriver::DoExpandBacktick(const wxString& backtick)
 	return cmpOption;
 }
 
-bool ClangDriver::DoProcessBuffer(IEditor* editor, wxString &location, wxString &completefileName)
+bool ClangDriver::DoProcessBuffer(IEditor* editor, wxString &location, wxString &completefileName, wxString &filterWord)
 {
 	// First, we need to find the currently active workspace configuration
 	wxString currentBuffer = editor->GetTextRange(0, editor->GetCurrentPosition());
@@ -425,10 +442,15 @@ bool ClangDriver::DoProcessBuffer(IEditor* editor, wxString &location, wxString 
 		return false;
 	}
 	
-	wxString filterWord;
+	filterWord.Clear();
 	
 	// Move backward until we found our -> or :: or .
 	for(size_t i=currentBuffer.Length() - 1; i>0; i--) {
+		// Context word complete and we found a whitespace - break the search
+		if(GetContext() == CTX_WordCompletion && wxIsWhitespace(currentBuffer.at(i))) {
+			break;
+		}
+		
 		if(currentBuffer.EndsWith(wxT("->")) || currentBuffer.EndsWith(wxT(".")) || currentBuffer.EndsWith(wxT("::"))) {
 			break;
 		} else {

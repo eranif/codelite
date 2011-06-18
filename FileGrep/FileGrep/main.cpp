@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <string.h>
 #include <iostream>
 #include <algorithm>
 
@@ -31,9 +32,15 @@ int main(int argc, char **argv)
 	FILE* fp  = NULL;
 	FILE* ofp = NULL;
 	
-	if(argc < 3) {
+	if(argc < 2) {
 		printf("usage: %s <filename> <filter>\n", argv[0]);
 		return 1;
+	}
+	
+	if(argc <3) {
+		// no filter?
+		// do nothing
+		return 0;
 	}
 	
 	fp = fopen(argv[1], "r");
@@ -46,16 +53,20 @@ int main(int argc, char **argv)
 	ofp = fopen(out_file_name, "w");
 	
 	char line[2048];
+	memset(line, 0, sizeof(line));
 	while( fgets(line, sizeof(line), fp) ) {
 		if(ci_find_substr(line, argv[2]) != -1) {
 			// we got a match
-			fwrite(line, sizeof(char), sizeof(line), ofp);
+			fwrite(line, sizeof(char), strlen(line), ofp);
 		}
+		memset(line, 0, sizeof(line));
 	}
 	
 	// read the file content and close the file
 	fclose(fp);
 	fclose(ofp);
 	
+	remove(argv[1]);
+	rename(out_file_name, argv[1]);
 	return 0;
 }

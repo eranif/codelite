@@ -16,7 +16,8 @@ public:
 	enum WorkingContext {
 		CTX_CodeCompletion,
 		CTX_Calltip,
-		CTX_CachePCH
+		CTX_CachePCH,
+		CTX_WordCompletion
 	};
 
 protected:
@@ -28,7 +29,8 @@ protected:
 	ClangPchMakerThread         m_pchMakerThread;
 	wxString                    m_filename;
 	WorkingContext              m_context;
-
+	wxString                    m_ccfilename;
+	
 protected:
 	void          DoRunCommand(IEditor *editor);
 	void          DoCleanup();
@@ -37,7 +39,7 @@ protected:
 	wxString      DoGetPchOutputFileName(const wxString &filename);
 	wxString      DoPrepareCompilationArgs(const wxString &projectName, wxString &projectPath);
 	wxString      DoExpandBacktick(const wxString &backtick);
-	bool          DoProcessBuffer(IEditor* editor, wxString &location, wxString &completefileName);
+	bool          DoProcessBuffer(IEditor* editor, wxString &location, wxString &completefileName, wxString &filterWord);
 	int           DoGetHeaderScanLastPos(IEditor *editor);
 	wxString      DoGetClangBinary();
 

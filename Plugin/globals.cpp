@@ -924,6 +924,28 @@ wxString wxImplode(const wxArrayString &arr, const wxString &glue)
 	return str;
 }
 
+wxString wxShellExec(const wxString &cmd)
+{
+	wxString filename = wxFileName::CreateTempFileName(wxT("clTempFile"));
+	wxString filename_path;
+	filename_path << filename << wxFileName::GetPathSeparator() << filename;
+	
+	wxString theCommand = cmd;
+	theCommand = wxString::Format(wxT("%s 1> \"%s\" 2>&1"), cmd.c_str(), filename_path.c_str());
+	WrapInShell(theCommand);
+	
+	wxArrayString dummy;
+	ProcUtils::SafeExecuteCommand(theCommand, dummy);
+	
+	wxString content;
+	wxFFile fp(filename_path, wxT("r"));
+	if(fp.IsOpened()) {
+		fp.ReadAll( &content );
+	}
+	fp.Close();
+	return content;
+}
+
 ////////////////////////////////////////
 // BOM
 ////////////////////////////////////////

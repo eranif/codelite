@@ -427,18 +427,14 @@ wxString ClangDriver::DoExpandBacktick(const wxString& backtick)
 		if(cmpOption.EndsWith(wxT(")"), &tmp) || cmpOption.EndsWith(wxT("`"), &tmp)) {
 			cmpOption = tmp;
 		}
+		
 		if(m_backticks.find(cmpOption) == m_backticks.end()) {
+			
 			// Expand the backticks into their value
-			wxArrayString outArr;
-			// Apply the environment before executing the command
-			EnvSetter setter( EnvironmentConfig::Instance() );
-			ProcUtils::SafeExecuteCommand(cmpOption, outArr);
-			wxString expandedValue;
-			for(size_t j=0; j<outArr.size(); j++) {
-				expandedValue << outArr.Item(j) << wxT(" ");
-			}
+			wxString expandedValue = wxShellExec(cmpOption);
 			m_backticks[cmpOption] = expandedValue;
 			cmpOption = expandedValue;
+			
 		} else {
 			cmpOption = m_backticks.find(cmpOption)->second;
 		}

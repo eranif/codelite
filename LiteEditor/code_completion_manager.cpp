@@ -33,12 +33,19 @@ void CodeCompletionManager::WordCompletion(LEditor *editor, const wxString& expr
 		expression = tmp;
 	}
 	
-	if(expression.IsEmpty()) {
-		// Currently, we always do ctags word completion for empty expressions
+	
+	if(expression.IsEmpty() || !(GetOptions() & CC_CLANG_ENABLED)) {
+		
+		// No clang enabled or the expression is empty...use ctags
 		DoCtagsWordCompletion(editor, expr, word);
 		
-	} else {
+	} else if(GetOptions() & CC_CLANG_FIRST) {
 		DoClangWordCompletion(editor);
+		
+	} else {
+		if(!DoCtagsWordCompletion(editor, expr, word)) {
+			DoClangWordCompletion(editor);
+		}
 	}
 }
 

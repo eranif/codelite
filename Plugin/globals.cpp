@@ -927,22 +927,19 @@ wxString wxImplode(const wxArrayString &arr, const wxString &glue)
 wxString wxShellExec(const wxString &cmd)
 {
 	wxString filename = wxFileName::CreateTempFileName(wxT("clTempFile"));
-	wxString filename_path;
-	filename_path << filename << wxFileName::GetPathSeparator() << filename;
-	
-	wxString theCommand = cmd;
-	theCommand = wxString::Format(wxT("%s 1> \"%s\" 2>&1"), cmd.c_str(), filename_path.c_str());
+	wxString theCommand = wxString::Format(wxT("%s 1> \"%s\" 2>&1"), cmd.c_str(), filename.c_str());
 	WrapInShell(theCommand);
 	
 	wxArrayString dummy;
 	ProcUtils::SafeExecuteCommand(theCommand, dummy);
 	
 	wxString content;
-	wxFFile fp(filename_path, wxT("r"));
+	wxFFile fp(filename, wxT("r"));
 	if(fp.IsOpened()) {
 		fp.ReadAll( &content );
 	}
 	fp.Close();
+	wxRemoveFile(filename);
 	return content;
 }
 

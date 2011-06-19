@@ -30,6 +30,7 @@
 #include "dirtraverser.h"
 #include "imanager.h"
 #include "environmentconfig.h"
+#include "environmentconfig.h"
 #include <wx/dataobj.h>
 #include <wx/stdpaths.h>
 #include "drawingutils.h"
@@ -931,6 +932,7 @@ wxString wxShellExec(const wxString &cmd)
 	WrapInShell(theCommand);
 	
 	wxArrayString dummy;
+	EnvSetter es;
 	ProcUtils::SafeExecuteCommand(theCommand, dummy);
 	
 	wxString content;

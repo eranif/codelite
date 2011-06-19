@@ -164,6 +164,7 @@ void ClangPchMakerThread::DoCacheResult(ClangPchCreateTask *task, const wxArrayS
 	}
 	
 	wxRemoveFile(pchfilename);
+	CL_DEBUG1(wxT("[ ClangPchMakerThread ] %s"), pchfilename.c_str());
 	
 	// Cache the result (incase of no errors were made)
 	if(strOutput.Find(wxT("error :")) != wxNOT_FOUND) {

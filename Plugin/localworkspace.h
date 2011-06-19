@@ -327,6 +327,9 @@ public:
 	void GetParserOptions(wxString &opts);
 	void SetParserOptions(const wxString &opts);
 	
+	void GetParserMacros(wxString &macros);
+	void SetParserMacros(const wxString &macros);
+	
 	/**
 	 * @brief set and get the active environment variables set name
 	 */

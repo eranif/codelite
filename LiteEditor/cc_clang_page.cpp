@@ -13,21 +13,8 @@ CCClangPage::CCClangPage(wxWindow* parent, const TagsOptionsData &data)
 	m_checkBoxEnableClangCC->SetValue(data.GetClangOptions() & CC_CLANG_ENABLED);
 	m_filePickerClang->SetPath(data.GetClangBinary());
 	m_checkBoxClangFirst->SetValue(data.GetClangOptions() & CC_CLANG_FIRST);
-	m_textCtrlClangOptions->SetValue(data.GetClangCmpOptions());
-	m_textCtrlClangMacros->SetValue(data.GetClangMacros());
 	m_textCtrlClangSearchPaths->SetValue(data.GetClangSearchPaths());
 	
-	long val(-1);
-	EditorConfigST::Get()->GetLongValue(wxT("cc_clang_sash_1"), val);
-	if(val != -1) {
-		m_splitter1->SetSashPosition(val);
-	}
-	
-	val = -1;
-	EditorConfigST::Get()->GetLongValue(wxT("cc_clang_sash_2"), val);
-	if(val != -1) {
-		m_splitter3->SetSashPosition(val);
-	}
 	Layout();
 #if defined (__WXMSW__)
 	if(m_filePickerClang->GetPath().IsEmpty()) {
@@ -46,8 +33,6 @@ CCClangPage::CCClangPage(wxWindow* parent, const TagsOptionsData &data)
 
 CCClangPage::~CCClangPage()
 {
-	EditorConfigST::Get()->SaveLongValue(wxT("cc_clang_sash_1"), m_splitter1->GetSashPosition());
-	EditorConfigST::Get()->SaveLongValue(wxT("cc_clang_sash_2"), m_splitter3->GetSashPosition());
 }
 
 void CCClangPage::Save(TagsOptionsData& data)
@@ -61,8 +46,6 @@ void CCClangPage::Save(TagsOptionsData& data)
 
 	data.SetClangOptions(options);
 	data.SetClangBinary(m_filePickerClang->GetPath());
-	data.SetClangCmpOptions(m_textCtrlClangOptions->GetValue());
-	data.SetClangMacros(m_textCtrlClangMacros->GetValue());
 	data.SetClangSearchPaths(m_textCtrlClangSearchPaths->GetValue());
 }
 

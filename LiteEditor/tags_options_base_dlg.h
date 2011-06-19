@@ -32,7 +32,6 @@
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/notebook.h>
-#include <wx/splitter.h>
 #include <wx/filepicker.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -223,18 +222,9 @@ class CCClangBasePage : public wxPanel
 		wxCheckBox* m_checkBoxClangFirst;
 		wxStaticLine* m_staticline3;
 		wxStaticText* m_staticText13;
-		wxSplitterWindow* m_splitter1;
 		wxPanel* m_panel8;
 		wxTextCtrl* m_textCtrlClangSearchPaths;
 		wxButton* m_buttonSuggest;
-		wxPanel* m_panel6;
-		wxSplitterWindow* m_splitter3;
-		wxPanel* m_panel9;
-		wxStaticText* m_staticText11;
-		wxTextCtrl* m_textCtrlClangOptions;
-		wxPanel* m_panel10;
-		wxStaticText* m_staticText12;
-		wxTextCtrl* m_textCtrlClangMacros;
 		wxPanel* m_panel4;
 		wxStaticText* m_staticText10;
 		wxFilePickerCtrl* m_filePickerClang;
@@ -252,18 +242,6 @@ class CCClangBasePage : public wxPanel
 		
 		CCClangBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~CCClangBasePage();
-		
-		void m_splitter1OnIdle( wxIdleEvent& )
-		{
-			m_splitter1->SetSashPosition( 0 );
-			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CCClangBasePage::m_splitter1OnIdle ), NULL, this );
-		}
-		
-		void m_splitter3OnIdle( wxIdleEvent& )
-		{
-			m_splitter3->SetSashPosition( 0 );
-			m_splitter3->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CCClangBasePage::m_splitter3OnIdle ), NULL, this );
-		}
 	
 };
 

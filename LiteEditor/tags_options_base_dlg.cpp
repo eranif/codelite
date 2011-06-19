@@ -532,12 +532,7 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	m_staticText13->Wrap( -1 );
 	bSizer20->Add( m_staticText13, 0, wxALL|wxEXPAND, 5 );
 	
-	m_splitter1 = new wxSplitterWindow( m_panel3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE );
-	m_splitter1->SetSashGravity( 0 );
-	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( CCClangBasePage::m_splitter1OnIdle ), NULL, this );
-	m_splitter1->SetMinimumPaneSize( 1 );
-	
-	m_panel8 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panel8 = new wxPanel( m_panel3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer24;
 	bSizer24 = new wxBoxSizer( wxVERTICAL );
 	
@@ -545,65 +540,15 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	m_textCtrlClangSearchPaths->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
 	m_textCtrlClangSearchPaths->SetToolTip( _("Add here search paths used by clang for locating inculde files") );
 	
-	bSizer24->Add( m_textCtrlClangSearchPaths, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+	bSizer24->Add( m_textCtrlClangSearchPaths, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_buttonSuggest = new wxButton( m_panel8, wxID_ANY, _("Suggest search paths..."), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer24->Add( m_buttonSuggest, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALL, 5 );
+	bSizer24->Add( m_buttonSuggest, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM, 5 );
 	
 	m_panel8->SetSizer( bSizer24 );
 	m_panel8->Layout();
 	bSizer24->Fit( m_panel8 );
-	m_panel6 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer221;
-	bSizer221 = new wxBoxSizer( wxVERTICAL );
-	
-	m_splitter3 = new wxSplitterWindow( m_panel6, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE );
-	m_splitter3->SetSashGravity( 0.5 );
-	m_splitter3->Connect( wxEVT_IDLE, wxIdleEventHandler( CCClangBasePage::m_splitter3OnIdle ), NULL, this );
-	m_splitter3->SetMinimumPaneSize( 1 );
-	
-	m_panel9 = new wxPanel( m_splitter3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer22;
-	bSizer22 = new wxBoxSizer( wxVERTICAL );
-	
-	m_staticText11 = new wxStaticText( m_panel9, wxID_ANY, _("Compile flags:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText11->Wrap( -1 );
-	bSizer22->Add( m_staticText11, 0, wxALL|wxEXPAND, 5 );
-	
-	m_textCtrlClangOptions = new wxTextCtrl( m_panel9, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
-	m_textCtrlClangOptions->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
-	m_textCtrlClangOptions->SetToolTip( _("Add here options to be passed to clang when generating PCH file.\nbackticks expressions are allowed (e.g. `wx-config --cflags`)") );
-	
-	bSizer22->Add( m_textCtrlClangOptions, 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
-	
-	m_panel9->SetSizer( bSizer22 );
-	m_panel9->Layout();
-	bSizer22->Fit( m_panel9 );
-	m_panel10 = new wxPanel( m_splitter3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer23;
-	bSizer23 = new wxBoxSizer( wxVERTICAL );
-	
-	m_staticText12 = new wxStaticText( m_panel10, wxID_ANY, _("Macros:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText12->Wrap( -1 );
-	bSizer23->Add( m_staticText12, 0, wxEXPAND|wxALL, 5 );
-	
-	m_textCtrlClangMacros = new wxTextCtrl( m_panel10, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
-	m_textCtrlClangMacros->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
-	m_textCtrlClangMacros->SetToolTip( _("Add here macros to pass to clang when generating PCH files\nOne macro per line") );
-	
-	bSizer23->Add( m_textCtrlClangMacros, 1, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
-	
-	m_panel10->SetSizer( bSizer23 );
-	m_panel10->Layout();
-	bSizer23->Fit( m_panel10 );
-	m_splitter3->SplitHorizontally( m_panel9, m_panel10, 0 );
-	bSizer221->Add( m_splitter3, 1, wxEXPAND, 5 );
-	
-	m_panel6->SetSizer( bSizer221 );
-	m_panel6->Layout();
-	bSizer221->Fit( m_panel6 );
-	m_splitter1->SplitHorizontally( m_panel8, m_panel6, 0 );
-	bSizer20->Add( m_splitter1, 1, wxEXPAND, 5 );
+	bSizer20->Add( m_panel8, 1, wxEXPAND|wxALL, 5 );
 	
 	m_panel3->SetSizer( bSizer20 );
 	m_panel3->Layout();
@@ -656,7 +601,6 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	m_textCtrlClangSearchPaths->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_buttonSuggest->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCClangBasePage::OnSuggestSearchPaths ), NULL, this );
 	m_buttonSuggest->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
-	m_textCtrlClangOptions->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_staticText10->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_staticText101->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_buttonClearCache->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCClangBasePage::OnClearClangCache ), NULL, this );
@@ -671,7 +615,6 @@ CCClangBasePage::~CCClangBasePage()
 	m_textCtrlClangSearchPaths->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_buttonSuggest->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCClangBasePage::OnSuggestSearchPaths ), NULL, this );
 	m_buttonSuggest->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
-	m_textCtrlClangOptions->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_staticText10->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_staticText101->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_buttonClearCache->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCClangBasePage::OnClearClangCache ), NULL, this );

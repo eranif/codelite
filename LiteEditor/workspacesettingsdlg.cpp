@@ -102,7 +102,7 @@ wxArrayString WorkspaceSettingsDlg::GetIncludePaths() const
 
 void WorkspaceSettingsDlg::OnButtonOK(wxCommandEvent& event)
 {
-	m_localWorkspace->SetParserPaths(GetIncludePaths(), GetExcludePaths());
 	m_localWorkspace->SetActiveEnvironmentSet(m_choiceEnvSets->GetStringSelection());
+	m_ccPage->Save();
 	event.Skip();
 }

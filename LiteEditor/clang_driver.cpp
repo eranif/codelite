@@ -13,6 +13,7 @@
 #include "project.h"
 #include "configuration_mapping.h"
 #include "procutils.h"
+#include "localworkspace.h"
 #include "fileextmanager.h"
 #include "globals.h"
 
@@ -375,28 +376,40 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 	for(size_t i=0; i<globalIncludes.GetCount(); i++) {
 		compilationArgs << wxT(" -I\"") << globalIncludes.Item(i).Trim().Trim(false) << wxT("\" ");
 	}
-
+	
 	///////////////////////////////////////////////////////////////////////
-	// add global clang compiler options
-	wxString strGlobalCmpOptions = options.GetClangCmpOptions();
-	wxArrayString globalCmpOptions = wxStringTokenize(strGlobalCmpOptions, wxT("\n\r"), wxTOKEN_STRTOK);
-	for(size_t i=0; i<globalCmpOptions.GetCount(); i++) {
-		compilationArgs << DoExpandBacktick(globalCmpOptions.Item(i).Trim().Trim(false)) << wxT(" ");
+	// Workspace setting additional flags 
+	///////////////////////////////////////////////////////////////////////
+	
+	// Include paths
+	wxArrayString workspaceIncls, dummy;
+	LocalWorkspaceST::Get()->GetParserPaths(workspaceIncls, dummy);
+	for(size_t i=0; i<workspaceIncls.GetCount(); i++) {
+		compilationArgs << wxT(" -I\"") << workspaceIncls.Item(i).Trim().Trim(false) << wxT("\" ");
 	}
-
-	///////////////////////////////////////////////////////////////////////
-	// add global macros
-	wxString strGlobalMacros = options.GetClangMacros();
-	wxArrayString globalMacros = wxStringTokenize(strGlobalMacros, wxT("\n\r"), wxTOKEN_STRTOK);
-	for(size_t i=0; i<globalMacros.GetCount(); i++) {
-		compilationArgs << wxT(" -D") << globalMacros.Item(i).Trim().Trim(false) << wxT(" ");
+	
+	// Options
+	wxString strWorkspaceCmpOptions;
+	LocalWorkspaceST::Get()->GetParserOptions(strWorkspaceCmpOptions);
+	
+	wxArrayString workspaceCmpOptions = wxStringTokenize(strWorkspaceCmpOptions, wxT("\n\r"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<workspaceCmpOptions.GetCount(); i++) {
+		compilationArgs << DoExpandBacktick(workspaceCmpOptions.Item(i).Trim().Trim(false)) << wxT(" ");
+	}
+	
+	// Macros
+	wxString strWorkspaceMacros;
+	LocalWorkspaceST::Get()->GetParserMacros(strWorkspaceMacros);
+	wxArrayString workspaceMacros = wxStringTokenize(strWorkspaceMacros, wxT("\n\r"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<workspaceMacros.GetCount(); i++) {
+		compilationArgs << wxT(" -D") << workspaceMacros.Item(i).Trim().Trim(false) << wxT(" ");
 	}
 
 	for(size_t i=0; i<args.size(); i++) {
 		compilationArgs << wxT(" ") << args.Item(i);
 	}
 
-	// Remove some of the flags which are known to cause problems to clang under Windows
+	// Remove some of the flags which are known to cause problems to clang
 	compilationArgs.Replace(wxT("-fno-strict-aliasing"), wxT(""));
 	compilationArgs.Replace(wxT("-mthreads"),            wxT(""));
 	compilationArgs.Replace(wxT("-pipe"),                wxT(""));

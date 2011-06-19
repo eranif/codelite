@@ -473,3 +473,30 @@ void LocalWorkspace::SetParserOptions(const wxString& opts)
 	m_doc.GetRoot()->AddChild(optsNode);
 	SetCDATANodeContent(optsNode, opts);
 }
+
+void LocalWorkspace::GetParserMacros(wxString& macros)
+{
+	macros.Clear();
+	if(!SanityCheck())
+		return;
+	
+	wxXmlNode* optsNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserMacros"));
+	if( optsNode ) {
+		macros = optsNode->GetNodeContent();
+		macros.Trim().Trim(false);
+	}
+}
+
+void LocalWorkspace::SetParserMacros(const wxString& macros)
+{
+	wxXmlNode* optsNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserMacros"));
+	if(optsNode) {
+		m_doc.GetRoot()->RemoveChild(optsNode);
+		delete optsNode;
+	}
+	
+	optsNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("WorkspaceParserMacros"));
+	m_doc.GetRoot()->AddChild(optsNode);
+	SetCDATANodeContent(optsNode, macros);
+}
+

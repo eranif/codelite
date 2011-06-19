@@ -18,7 +18,12 @@ public:
 	CodeCompletionPage(wxWindow *parent, int type);
 	virtual ~CodeCompletionPage();
 	
+	void Save();
+	
 	wxArrayString GetIncludePaths() const;
+	wxString      GetMacros() const;
+	wxString      GetCmpOptions() const;
+	wxString      GetIncludePathsAsString() const;
 };
 
 #endif // CODECOMPLETIONPAGE_H

@@ -1,20 +1,20 @@
 #include "workspacesettingsdlg.h"
+#include "code_completion_page.h"
 #include "localworkspace.h"
 #include "environmentconfig.h"
 #include "evnvarlist.h"
 #include "windowattrmanager.h"
 #include <wx/dirdlg.h>
 #include <map>
+#include <wx/tokenzr.h>
+#include "globals.h"
 
 WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *localWorkspace)
-: WorkspaceSettingsBase( parent )
-, m_localWorkspace(localWorkspace)
+	: WorkspaceSettingsBase( parent )
+	, m_localWorkspace(localWorkspace)
 {
-	wxArrayString excludePaths, includePaths;
-	localWorkspace->GetParserPaths(includePaths, excludePaths);
-
-	m_listBoxExcludePaths->Append(excludePaths);
-	m_listBoxSearchPaths->Append(includePaths);
+	m_ccPage = new CodeCompletionPage(m_notebook1, CodeCompletionPage::TypeWorkspace);
+	m_notebook1->AddPage(m_ccPage, wxT("Code Completion"), true);
 
 	EvnVarList vars;
 	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
@@ -32,11 +32,11 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *lo
 	// select the current workspace active set name
 	wxString activeEnvSet;
 	wxString tmpSet = localWorkspace->GetActiveEnvironmentSet();
-	
-	if(tmpSet == _("<Use Active Set>")){
+
+	if(tmpSet == _("<Use Active Set>")) {
 		tmpSet = wxGetTranslation(USE_GLOBAL_SETTINGS);
 	}
-	
+
 	int where = m_choiceEnvSets->FindString(tmpSet);
 	if (where == wxNOT_FOUND) {
 		activeEnvSet = activePage;
@@ -47,7 +47,7 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *lo
 		m_choiceEnvSets->SetSelection(where);
 	}
 
-	if(activeEnvSet.IsEmpty() == false){
+	if(activeEnvSet.IsEmpty() == false) {
 		vars.SetActiveSet(activeEnvSet);
 		EnvironmentConfig::Instance()->SetSettings(vars);
 	}
@@ -60,86 +60,44 @@ WorkspaceSettingsDlg::~WorkspaceSettingsDlg()
 	WindowAttrManager::Save(this, wxT("WorkspaceSettingsDlg"), NULL);
 }
 
-void WorkspaceSettingsDlg::OnAddIncludePath( wxCommandEvent& event )
-{
-	wxUnusedVar(event);
-	wxString new_path = wxDirSelector(_("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-	if (new_path.IsEmpty() == false) {
-		if (m_listBoxSearchPaths->GetStrings().Index(new_path) == wxNOT_FOUND) {
-			m_listBoxSearchPaths->Append(new_path);
-		}
-	}
-}
-
-void WorkspaceSettingsDlg::OnRemoveIncludePath( wxCommandEvent& event )
-{
-	wxUnusedVar(event);
-	int sel = m_listBoxSearchPaths->GetSelection();
-	if ( sel != wxNOT_FOUND) {
-		m_listBoxSearchPaths->Delete((unsigned int)sel);
-	}
-}
-
-void WorkspaceSettingsDlg::OnRemoveIncludePathUI( wxUpdateUIEvent& event )
-{
-	event.Enable( m_listBoxSearchPaths->GetSelection() != wxNOT_FOUND );
-}
-
-void WorkspaceSettingsDlg::OnClearAllIncludePaths( wxCommandEvent& event )
-{
-	wxUnusedVar(event);
-	m_listBoxSearchPaths->Clear();
-}
-
-void WorkspaceSettingsDlg::OnClearAllIncludePathUI( wxUpdateUIEvent& event )
-{
-	event.Enable( m_listBoxSearchPaths->IsEmpty() == false );
-}
-
-void WorkspaceSettingsDlg::OnAddExcludePath( wxCommandEvent& event )
-{
-	wxUnusedVar(event);
-	wxString new_path = wxDirSelector(_("Add Parser Exclude Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-	if (new_path.IsEmpty() == false) {
-		if (m_listBoxExcludePaths->GetStrings().Index(new_path) == wxNOT_FOUND) {
-			m_listBoxExcludePaths->Append(new_path);
-		}
-	}
-}
-
-void WorkspaceSettingsDlg::OnRemoveExcludePath( wxCommandEvent& event )
-{
-	wxUnusedVar(event);
-	int sel = m_listBoxExcludePaths->GetSelection();
-	if ( sel != wxNOT_FOUND) {
-		m_listBoxExcludePaths->Delete((unsigned int)sel);
-	}
-}
-
-void WorkspaceSettingsDlg::OnRemoveExcludePathUI( wxUpdateUIEvent& event )
-{
-	event.Enable( m_listBoxExcludePaths->GetSelection() != wxNOT_FOUND );
-}
-
-void WorkspaceSettingsDlg::OnClearAllExcludePaths( wxCommandEvent& event )
-{
-	wxUnusedVar(event);
-	m_listBoxExcludePaths->Clear();
-}
-
-void WorkspaceSettingsDlg::OnClearAllExcludePathsUI( wxUpdateUIEvent& event )
-{
-	event.Enable(m_listBoxExcludePaths->IsEmpty() == false);
-}
-
+//void WorkspaceSettingsDlg::OnAddIncludePath( wxCommandEvent& event )
+//{
+//	wxUnusedVar(event);
+//	wxString new_path = wxDirSelector(_("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+//	if (new_path.IsEmpty() == false) {
+//		wxString curpaths = m_textCtrlIncludePaths->GetValue();
+//		curpaths.Trim().Trim(false);
+//		if(curpaths.IsEmpty()) {
+//			curpaths << wxT("\n");
+//		}
+//		curpaths << new_path;
+//		m_textCtrlIncludePaths->SetValue(curpaths);
+//	}
+//}
+//
+//void WorkspaceSettingsDlg::OnAddExcludePath( wxCommandEvent& event )
+//{
+//	wxUnusedVar(event);
+//	wxString new_path = wxDirSelector(_("Add Parser Exclude Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+//	if (new_path.IsEmpty() == false) {
+//		wxString curpaths = m_textCtrlExcludePaths->GetValue();
+//		curpaths.Trim().Trim(false);
+//		if(curpaths.IsEmpty()) {
+//			curpaths << wxT("\n");
+//		}
+//		curpaths << new_path;
+//		m_textCtrlExcludePaths->SetValue(curpaths);
+//	}
+//}
+//
 wxArrayString WorkspaceSettingsDlg::GetExcludePaths() const
 {
-	return m_listBoxExcludePaths->GetStrings();
+	return wxArrayString();
 }
 
 wxArrayString WorkspaceSettingsDlg::GetIncludePaths() const
 {
-	return m_listBoxSearchPaths->GetStrings();
+	return m_ccPage->GetIncludePaths();
 }
 
 void WorkspaceSettingsDlg::OnButtonOK(wxCommandEvent& event)

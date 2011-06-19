@@ -26,7 +26,6 @@
 #include <wx/stattext.h>
 #include <wx/spinctrl.h>
 #include <wx/slider.h>
-#include <wx/listbox.h>
 #include <wx/textctrl.h>
 #include <wx/hyperlink.h>
 #include <wx/bitmap.h>
@@ -157,31 +156,15 @@ class CCIncludeFilesBasePage : public wxPanel
 	
 	protected:
 		wxStaticText* m_staticText7;
-		wxListBox* m_listBoxSearchPaths;
+		wxTextCtrl* m_textCtrlCtagsSearchPaths;
 		wxButton* m_buttonAddSearchPath;
-		wxButton* m_buttonRemovePath;
-		wxButton* m_buttonClearAll;
 		wxStaticText* m_staticText71;
-		wxListBox* m_listBoxSearchPaths1;
+		wxTextCtrl* m_textCtrlCtagsExcludePaths;
 		wxButton* m_buttonAddExcludePath;
-		wxButton* m_buttonRemoveExcludePath;
-		wxButton* m_buttonClearAllExcludPath;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnItemActivated( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAddSearchPath( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnAddSearchPathUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnRemoveSearchPath( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnRemoveSearchPathUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnClearAll( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnClearAllUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnItemActivatedExcludePath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAddExcludePath( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnAddExcludePathUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnRemoveExcludePath( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnRemoveExcludePathUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnClearAllExcludePaths( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnClearAllExcludePathsUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	
 	public:

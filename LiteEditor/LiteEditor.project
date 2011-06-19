@@ -329,6 +329,8 @@
       <File Name="workspacesettingsbase.h"/>
       <File Name="workspacesettingsdlg.h"/>
       <File Name="workspacesettingsdlg.cpp"/>
+      <File Name="code_completion_page.h"/>
+      <File Name="code_completion_page.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Plugins">
       <File Name="pluginmgrdlg.h"/>

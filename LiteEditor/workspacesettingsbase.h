@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -18,16 +18,17 @@
 #include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
-#include <wx/listbox.h>
-#include <wx/button.h>
+#include <wx/choice.h>
 #include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/choice.h>
 #include <wx/notebook.h>
 #include <wx/statline.h>
+#include <wx/button.h>
 #include <wx/dialog.h>
+#include <wx/textctrl.h>
+#include <wx/splitter.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -41,17 +42,6 @@ class WorkspaceSettingsBase : public wxDialog
 	
 	protected:
 		wxNotebook* m_notebook1;
-		wxPanel* m_panel2;
-		wxStaticText* m_staticText1;
-		wxListBox* m_listBoxSearchPaths;
-		wxButton* m_button3;
-		wxButton* m_button4;
-		wxButton* m_button5;
-		wxStaticText* m_staticText2;
-		wxListBox* m_listBoxExcludePaths;
-		wxButton* m_button6;
-		wxButton* m_button7;
-		wxButton* m_button8;
 		wxPanel* m_panelEnv;
 		wxStaticText* m_staticText3;
 		wxStaticText* m_staticText4;
@@ -61,24 +51,58 @@ class WorkspaceSettingsBase : public wxDialog
 		wxButton* m_buttonCancel;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnAddIncludePath( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnRemoveIncludePath( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnRemoveIncludePathUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnClearAllIncludePaths( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnClearAllIncludePathUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnAddExcludePath( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnRemoveExcludePath( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnRemoveExcludePathUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnClearAllExcludePaths( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnClearAllExcludePathsUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnEnvSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		WorkspaceSettingsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Workspace Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		WorkspaceSettingsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Workspace Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~WorkspaceSettingsBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class CodeCompletionBasePage
+///////////////////////////////////////////////////////////////////////////////
+class CodeCompletionBasePage : public wxPanel 
+{
+	private:
+	
+	protected:
+		wxSplitterWindow* m_splitter1;
+		wxPanel* m_panel8;
+		wxStaticText* m_staticText5;
+		wxTextCtrl* m_textCtrlSearchPaths;
+		wxPanel* m_panel6;
+		wxSplitterWindow* m_splitter3;
+		wxPanel* m_panel9;
+		wxStaticText* m_staticText11;
+		wxTextCtrl* m_textCtrlCmpOptions;
+		wxPanel* m_panel10;
+		wxStaticText* m_staticText12;
+		wxTextCtrl* m_textCtrlMacros;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnClangCCEnabledUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		CodeCompletionBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
+		~CodeCompletionBasePage();
+		
+		void m_splitter1OnIdle( wxIdleEvent& )
+		{
+			m_splitter1->SetSashPosition( 0 );
+			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CodeCompletionBasePage::m_splitter1OnIdle ), NULL, this );
+		}
+		
+		void m_splitter3OnIdle( wxIdleEvent& )
+		{
+			m_splitter3->SetSashPosition( 0 );
+			m_splitter3->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CodeCompletionBasePage::m_splitter3OnIdle ), NULL, this );
+		}
 	
 };
 

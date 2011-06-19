@@ -73,11 +73,12 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data)
 	m_treebook->AddSubPage(new CCColourisePage(m_treebook, data), _("Colouring"), false);
 	m_treebook->AddSubPage(new CCTriggeringPage(m_treebook, data), _("Triggering"), false);
 	
+	m_treebook->AddPage(0, _("ctags"));
 	m_includeFilesPage = new CCIncludeFilesPage(m_treebook, data); 
-	m_treebook->AddPage(m_includeFilesPage, _("Include Files"), false);
+	m_treebook->AddSubPage(m_includeFilesPage, _("Include Files"), false);
 	
 	m_advancedPage = new CCAdvancePage(m_treebook, data, this);
-	m_treebook->AddPage(m_advancedPage, _("Advanced"), false);
+	m_treebook->AddSubPage(m_advancedPage, _("Advanced"), false);
 	
 	m_clangPage = new CCClangPage(m_treebook, data);
 	m_treebook->AddPage(m_clangPage, _("clang"), false);

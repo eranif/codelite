@@ -18,20 +18,8 @@ class CCIncludeFilesPage : public CCIncludeFilesBasePage, public TagsOptionsPage
 protected:
 	// Handlers for CCIncludeFilesBasePage events.
 	void OnAddSearchPath( wxCommandEvent& event );
-	void OnAddSearchPathUI( wxUpdateUIEvent& event );
-	void OnRemoveSearchPath( wxCommandEvent& event );
-	void OnRemoveSearchPathUI( wxUpdateUIEvent& event );
-	void OnClearAll( wxCommandEvent& event );
-	void OnClearAllUI( wxUpdateUIEvent& event );
 	void OnAddExcludePath( wxCommandEvent& event );
-	void OnAddExcludePathUI( wxUpdateUIEvent& event );
-	void OnRemoveExcludePath( wxCommandEvent& event );
-	void OnRemoveExcludePathUI( wxUpdateUIEvent& event );
-	void OnClearAllExcludePaths( wxCommandEvent& event );
-	void OnClearAllExcludePathsUI( wxUpdateUIEvent& event );
-	void OnItemActivated(wxCommandEvent& event);
-	void OnItemActivatedExcludePath(wxCommandEvent& event);
-
+	
 public:
 	/** Constructor */
 	CCIncludeFilesPage( wxWindow* parent, const TagsOptionsData & data );

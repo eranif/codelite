@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -17,76 +17,6 @@ WorkspaceSettingsBase::WorkspaceSettingsBase( wxWindow* parent, wxWindowID id, c
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_notebook1 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-	m_panel2 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer4;
-	bSizer4 = new wxBoxSizer( wxVERTICAL );
-	
-	wxStaticBoxSizer* sbSizer1;
-	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel2, wxID_ANY, wxEmptyString ), wxVERTICAL );
-	
-	m_staticText1 = new wxStaticText( m_panel2, wxID_ANY, _("Add search path(s) for the code completion parser.\nThe search paths are used for locating include files for this workspace ONLY"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1->Wrap( -1 );
-	sbSizer1->Add( m_staticText1, 0, wxALL|wxEXPAND, 5 );
-	
-	bSizer4->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
-	
-	wxBoxSizer* bSizer5;
-	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_listBoxSearchPaths = new wxListBox( m_panel2, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	bSizer5->Add( m_listBoxSearchPaths, 1, wxEXPAND|wxALL, 5 );
-	
-	wxBoxSizer* bSizer7;
-	bSizer7 = new wxBoxSizer( wxVERTICAL );
-	
-	m_button3 = new wxButton( m_panel2, wxID_ANY, _("&Add..."), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( m_button3, 0, wxALL|wxEXPAND, 5 );
-	
-	m_button4 = new wxButton( m_panel2, wxID_ANY, _("&Remove"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( m_button4, 0, wxALL|wxEXPAND, 5 );
-	
-	m_button5 = new wxButton( m_panel2, wxID_ANY, _("Clear All"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( m_button5, 0, wxALL|wxEXPAND, 5 );
-	
-	bSizer5->Add( bSizer7, 0, wxEXPAND, 5 );
-	
-	bSizer4->Add( bSizer5, 1, wxEXPAND, 5 );
-	
-	wxStaticBoxSizer* sbSizer2;
-	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_panel2, wxID_ANY, wxEmptyString ), wxVERTICAL );
-	
-	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, _("Add exclude path(s) for the code completion parser.\nCodeLite will skip any file found inside these paths while scanning for include files for this workspace ONLY"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2->Wrap( -1 );
-	sbSizer2->Add( m_staticText2, 1, wxEXPAND|wxALL, 5 );
-	
-	bSizer4->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
-	
-	wxBoxSizer* bSizer6;
-	bSizer6 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_listBoxExcludePaths = new wxListBox( m_panel2, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	bSizer6->Add( m_listBoxExcludePaths, 1, wxALL|wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer8;
-	bSizer8 = new wxBoxSizer( wxVERTICAL );
-	
-	m_button6 = new wxButton( m_panel2, wxID_ANY, _("&Add..."), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer8->Add( m_button6, 0, wxALL, 5 );
-	
-	m_button7 = new wxButton( m_panel2, wxID_ANY, _("&Remove"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer8->Add( m_button7, 0, wxALL, 5 );
-	
-	m_button8 = new wxButton( m_panel2, wxID_ANY, _("Clear All"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer8->Add( m_button8, 0, wxALL, 5 );
-	
-	bSizer6->Add( bSizer8, 0, wxEXPAND, 5 );
-	
-	bSizer4->Add( bSizer6, 1, wxEXPAND, 5 );
-	
-	m_panel2->SetSizer( bSizer4 );
-	m_panel2->Layout();
-	bSizer4->Fit( m_panel2 );
-	m_notebook1->AddPage( m_panel2, _("Parser Include Files"), true );
 	m_panelEnv = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer81;
 	bSizer81 = new wxBoxSizer( wxVERTICAL );
@@ -139,16 +69,6 @@ WorkspaceSettingsBase::WorkspaceSettingsBase( wxWindow* parent, wxWindowID id, c
 	this->Centre( wxBOTH );
 	
 	// Connect Events
-	m_button3->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnAddIncludePath ), NULL, this );
-	m_button4->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnRemoveIncludePath ), NULL, this );
-	m_button4->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceSettingsBase::OnRemoveIncludePathUI ), NULL, this );
-	m_button5->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnClearAllIncludePaths ), NULL, this );
-	m_button5->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceSettingsBase::OnClearAllIncludePathUI ), NULL, this );
-	m_button6->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnAddExcludePath ), NULL, this );
-	m_button7->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnRemoveExcludePath ), NULL, this );
-	m_button7->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceSettingsBase::OnRemoveExcludePathUI ), NULL, this );
-	m_button8->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnClearAllExcludePaths ), NULL, this );
-	m_button8->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceSettingsBase::OnClearAllExcludePathsUI ), NULL, this );
 	m_choiceEnvSets->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( WorkspaceSettingsBase::OnEnvSelected ), NULL, this );
 	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnButtonOK ), NULL, this );
 }
@@ -156,17 +76,102 @@ WorkspaceSettingsBase::WorkspaceSettingsBase( wxWindow* parent, wxWindowID id, c
 WorkspaceSettingsBase::~WorkspaceSettingsBase()
 {
 	// Disconnect Events
-	m_button3->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnAddIncludePath ), NULL, this );
-	m_button4->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnRemoveIncludePath ), NULL, this );
-	m_button4->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceSettingsBase::OnRemoveIncludePathUI ), NULL, this );
-	m_button5->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnClearAllIncludePaths ), NULL, this );
-	m_button5->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceSettingsBase::OnClearAllIncludePathUI ), NULL, this );
-	m_button6->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnAddExcludePath ), NULL, this );
-	m_button7->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnRemoveExcludePath ), NULL, this );
-	m_button7->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceSettingsBase::OnRemoveExcludePathUI ), NULL, this );
-	m_button8->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnClearAllExcludePaths ), NULL, this );
-	m_button8->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceSettingsBase::OnClearAllExcludePathsUI ), NULL, this );
 	m_choiceEnvSets->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( WorkspaceSettingsBase::OnEnvSelected ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceSettingsBase::OnButtonOK ), NULL, this );
+	
+}
+
+CodeCompletionBasePage::CodeCompletionBasePage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
+{
+	wxBoxSizer* bSizer9;
+	bSizer9 = new wxBoxSizer( wxVERTICAL );
+	
+	m_splitter1 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE );
+	m_splitter1->SetSashGravity( 0 );
+	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( CodeCompletionBasePage::m_splitter1OnIdle ), NULL, this );
+	m_splitter1->SetMinimumPaneSize( 1 );
+	
+	m_panel8 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer24;
+	bSizer24 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText5 = new wxStaticText( m_panel8, wxID_ANY, _("Search paths:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5->Wrap( -1 );
+	bSizer24->Add( m_staticText5, 0, wxALL|wxEXPAND, 5 );
+	
+	m_textCtrlSearchPaths = new wxTextCtrl( m_panel8, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlSearchPaths->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	m_textCtrlSearchPaths->SetToolTip( _("Add here search paths used by clang / ctags for locating inculde files") );
+	
+	bSizer24->Add( m_textCtrlSearchPaths, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+	
+	m_panel8->SetSizer( bSizer24 );
+	m_panel8->Layout();
+	bSizer24->Fit( m_panel8 );
+	m_panel6 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer221;
+	bSizer221 = new wxBoxSizer( wxVERTICAL );
+	
+	m_splitter3 = new wxSplitterWindow( m_panel6, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE );
+	m_splitter3->SetSashGravity( 0.5 );
+	m_splitter3->Connect( wxEVT_IDLE, wxIdleEventHandler( CodeCompletionBasePage::m_splitter3OnIdle ), NULL, this );
+	m_splitter3->SetMinimumPaneSize( 1 );
+	
+	m_panel9 = new wxPanel( m_splitter3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer22;
+	bSizer22 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText11 = new wxStaticText( m_panel9, wxID_ANY, _("Compile flags (clang only):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText11->Wrap( -1 );
+	bSizer22->Add( m_staticText11, 0, wxALL|wxEXPAND, 5 );
+	
+	m_textCtrlCmpOptions = new wxTextCtrl( m_panel9, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlCmpOptions->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	m_textCtrlCmpOptions->SetToolTip( _("Add here options to be passed to clang when generating PCH file.\nbackticks expressions are allowed (e.g. `wx-config --cflags`)") );
+	
+	bSizer22->Add( m_textCtrlCmpOptions, 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+	
+	m_panel9->SetSizer( bSizer22 );
+	m_panel9->Layout();
+	bSizer22->Fit( m_panel9 );
+	m_panel10 = new wxPanel( m_splitter3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer23;
+	bSizer23 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText12 = new wxStaticText( m_panel10, wxID_ANY, _("Macros (clang only):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText12->Wrap( -1 );
+	bSizer23->Add( m_staticText12, 0, wxEXPAND|wxALL, 5 );
+	
+	m_textCtrlMacros = new wxTextCtrl( m_panel10, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlMacros->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	m_textCtrlMacros->SetToolTip( _("Add here macros to pass to clang when generating PCH files\nOne macro per line") );
+	
+	bSizer23->Add( m_textCtrlMacros, 1, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	
+	m_panel10->SetSizer( bSizer23 );
+	m_panel10->Layout();
+	bSizer23->Fit( m_panel10 );
+	m_splitter3->SplitHorizontally( m_panel9, m_panel10, 0 );
+	bSizer221->Add( m_splitter3, 1, wxEXPAND, 5 );
+	
+	m_panel6->SetSizer( bSizer221 );
+	m_panel6->Layout();
+	bSizer221->Fit( m_panel6 );
+	m_splitter1->SplitHorizontally( m_panel8, m_panel6, 0 );
+	bSizer9->Add( m_splitter1, 1, wxEXPAND, 5 );
+	
+	this->SetSizer( bSizer9 );
+	this->Layout();
+	
+	// Connect Events
+	m_textCtrlSearchPaths->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CodeCompletionBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_textCtrlCmpOptions->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CodeCompletionBasePage::OnClangCCEnabledUI ), NULL, this );
+}
+
+CodeCompletionBasePage::~CodeCompletionBasePage()
+{
+	// Disconnect Events
+	m_textCtrlSearchPaths->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CodeCompletionBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_textCtrlCmpOptions->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CodeCompletionBasePage::OnClangCCEnabledUI ), NULL, this );
 	
 }

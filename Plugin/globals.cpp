@@ -911,6 +911,19 @@ bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path)
 	return false;
 }
 
+wxString wxImplode(const wxArrayString &arr, const wxString &glue)
+{
+	wxString str, tmp;
+	for(size_t i=0; i<arr.GetCount(); i++) {
+		str << arr.Item(i) << glue;
+	}
+	
+	if(str.EndsWith(glue, &tmp)){
+		str = tmp;
+	}
+	return str;
+}
+
 ////////////////////////////////////////
 // BOM
 ////////////////////////////////////////

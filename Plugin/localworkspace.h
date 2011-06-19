@@ -323,7 +323,10 @@ public:
 	 */
 	void GetParserPaths(wxArrayString &inclduePaths, wxArrayString &excludePaths);
 	void SetParserPaths(const wxArrayString &inclduePaths, const wxArrayString &excludePaths);
-
+	
+	void GetParserOptions(wxString &opts);
+	void SetParserOptions(const wxString &opts);
+	
 	/**
 	 * @brief set and get the active environment variables set name
 	 */

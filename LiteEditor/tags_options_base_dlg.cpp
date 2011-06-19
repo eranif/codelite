@@ -320,8 +320,10 @@ CCIncludeFilesBasePage::CCIncludeFilesBasePage( wxWindow* parent, wxWindowID id,
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_listBoxSearchPaths = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	bSizer9->Add( m_listBoxSearchPaths, 1, wxEXPAND, 5 );
+	m_textCtrlCtagsSearchPaths = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlCtagsSearchPaths->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
+	bSizer9->Add( m_textCtrlCtagsSearchPaths, 1, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
@@ -329,15 +331,9 @@ CCIncludeFilesBasePage::CCIncludeFilesBasePage( wxWindow* parent, wxWindowID id,
 	m_buttonAddSearchPath = new wxButton( this, wxID_ANY, _("&Add..."), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_buttonAddSearchPath, 0, wxALL|wxEXPAND, 5 );
 	
-	m_buttonRemovePath = new wxButton( this, wxID_ANY, _("&Remove"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer8->Add( m_buttonRemovePath, 0, wxALL|wxEXPAND, 5 );
-	
-	m_buttonClearAll = new wxButton( this, wxID_ANY, _("Clea&r All"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer8->Add( m_buttonClearAll, 0, wxALL|wxEXPAND, 5 );
-	
 	bSizer9->Add( bSizer8, 0, wxEXPAND, 5 );
 	
-	bSizer7->Add( bSizer9, 1, wxEXPAND|wxALL, 5 );
+	bSizer7->Add( bSizer9, 1, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer51;
 	sbSizer51 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxVERTICAL );
@@ -351,20 +347,16 @@ CCIncludeFilesBasePage::CCIncludeFilesBasePage( wxWindow* parent, wxWindowID id,
 	wxBoxSizer* bSizer91;
 	bSizer91 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_listBoxSearchPaths1 = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	bSizer91->Add( m_listBoxSearchPaths1, 1, wxALL|wxEXPAND, 5 );
+	m_textCtrlCtagsExcludePaths = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlCtagsExcludePaths->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
+	bSizer91->Add( m_textCtrlCtagsExcludePaths, 1, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer81;
 	bSizer81 = new wxBoxSizer( wxVERTICAL );
 	
 	m_buttonAddExcludePath = new wxButton( this, wxID_ANY, _("&Add..."), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer81->Add( m_buttonAddExcludePath, 0, wxALL|wxEXPAND, 5 );
-	
-	m_buttonRemoveExcludePath = new wxButton( this, wxID_ANY, _("&Remove"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer81->Add( m_buttonRemoveExcludePath, 0, wxALL|wxEXPAND, 5 );
-	
-	m_buttonClearAllExcludPath = new wxButton( this, wxID_ANY, _("Clea&r All"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer81->Add( m_buttonClearAllExcludPath, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer91->Add( bSizer81, 0, wxEXPAND, 5 );
 	
@@ -375,39 +367,15 @@ CCIncludeFilesBasePage::CCIncludeFilesBasePage( wxWindow* parent, wxWindowID id,
 	bSizer7->Fit( this );
 	
 	// Connect Events
-	m_listBoxSearchPaths->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnItemActivated ), NULL, this );
 	m_buttonAddSearchPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnAddSearchPath ), NULL, this );
-	m_buttonAddSearchPath->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnAddSearchPathUI ), NULL, this );
-	m_buttonRemovePath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnRemoveSearchPath ), NULL, this );
-	m_buttonRemovePath->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnRemoveSearchPathUI ), NULL, this );
-	m_buttonClearAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnClearAll ), NULL, this );
-	m_buttonClearAll->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnClearAllUI ), NULL, this );
-	m_listBoxSearchPaths1->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnItemActivatedExcludePath ), NULL, this );
 	m_buttonAddExcludePath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnAddExcludePath ), NULL, this );
-	m_buttonAddExcludePath->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnAddExcludePathUI ), NULL, this );
-	m_buttonRemoveExcludePath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnRemoveExcludePath ), NULL, this );
-	m_buttonRemoveExcludePath->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnRemoveExcludePathUI ), NULL, this );
-	m_buttonClearAllExcludPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnClearAllExcludePaths ), NULL, this );
-	m_buttonClearAllExcludPath->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnClearAllExcludePathsUI ), NULL, this );
 }
 
 CCIncludeFilesBasePage::~CCIncludeFilesBasePage()
 {
 	// Disconnect Events
-	m_listBoxSearchPaths->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnItemActivated ), NULL, this );
 	m_buttonAddSearchPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnAddSearchPath ), NULL, this );
-	m_buttonAddSearchPath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnAddSearchPathUI ), NULL, this );
-	m_buttonRemovePath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnRemoveSearchPath ), NULL, this );
-	m_buttonRemovePath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnRemoveSearchPathUI ), NULL, this );
-	m_buttonClearAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnClearAll ), NULL, this );
-	m_buttonClearAll->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnClearAllUI ), NULL, this );
-	m_listBoxSearchPaths1->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnItemActivatedExcludePath ), NULL, this );
 	m_buttonAddExcludePath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnAddExcludePath ), NULL, this );
-	m_buttonAddExcludePath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnAddExcludePathUI ), NULL, this );
-	m_buttonRemoveExcludePath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnRemoveExcludePath ), NULL, this );
-	m_buttonRemoveExcludePath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnRemoveExcludePathUI ), NULL, this );
-	m_buttonClearAllExcludPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCIncludeFilesBasePage::OnClearAllExcludePaths ), NULL, this );
-	m_buttonClearAllExcludPath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCIncludeFilesBasePage::OnClearAllExcludePathsUI ), NULL, this );
 	
 }
 

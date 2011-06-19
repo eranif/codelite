@@ -1,4 +1,4 @@
 - Add code completion options per project
-- Make word completion working again
 - Parse output from clang and display it to user
+
 

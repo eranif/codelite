@@ -277,6 +277,11 @@ WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString &theme = wx
  */
 WXDLLIMPEXP_SDK bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path);
 
+/**
+ * @brief joins array element into a string using 'glue' as the array elements
+ * separator
+ */
+WXDLLIMPEXP_SDK wxString wxImplode(const wxArrayString &arr, const wxString &glue = wxT("\n"));
 
 /**
  * @class StringManager

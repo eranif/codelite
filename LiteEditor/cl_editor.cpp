@@ -2683,6 +2683,11 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,const wxString& conditions/*=wxT
 	if (!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp)) {
 		wxMessageBox(_("Failed to insert breakpoint"));
 	} else {
+		// enable the 'expectingControl' to 'true'
+		// this is used by Manager class to detect whether the control
+		// was triggered by user action
+		ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
+		
 		clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 		wxString message( _("Breakpoint successfully added") ), prefix;
 		if (is_temp) {

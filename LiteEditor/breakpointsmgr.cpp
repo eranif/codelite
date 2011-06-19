@@ -43,7 +43,6 @@ bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, c
 		bp.is_temp = true;
 	}
 	bp.conditions = conditions;
-
 	return AddBreakpoint(bp);
 }
 

@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef BREAKPOINTS_MANAGER_H
+#ifndef BREAKPOINTS_MANAGER_H
 #define BREAKPOINTS_MANAGER_H
 
 #include "list"
@@ -47,7 +47,9 @@ class BreakptMgr
 	int NextInternalID;		// Used to give each bp a unique internal ID. Start at 10k to avoid confusion with gdb's IDs
 
 	myDragImage* m_dragImage;
+	bool         m_expectingControl;
 
+protected:
 	// Delete all breakpoint markers for this file, then re-mark with the currently-correct marker
 	void DoRefreshFileBreakpoints(LEditor* editor);
 	void DoProvideBestBP_Type(LEditor* editor, const std::vector<BreakpointInfo>& li);	// Tells the editor which is the most appropriate bp marker to show
@@ -108,8 +110,15 @@ class BreakptMgr
 
 public:
 
+	void SetExpectingControl(bool expectingControl) {
+		this->m_expectingControl = expectingControl;
+	}
+	bool GetExpectingControl() const {
+		return m_expectingControl;
+	}
 	BreakptMgr() {
 		NextInternalID = FIRST_INTERNAL_ID;
+		m_expectingControl = false;
 	}
 
 	~BreakptMgr() {
@@ -138,7 +147,8 @@ public:
 	 * @param bps
 	 */
 	void SetPendingBreakpoints(const std::vector<BreakpointInfo>& bps) {
-		m_pendingBreakpointsList.clear(); m_pendingBreakpointsList = bps;
+		m_pendingBreakpointsList.clear();
+		m_pendingBreakpointsList = bps;
 	}
 
 	/**
@@ -309,17 +319,19 @@ public:
 	/**
 	 * Get a unique id for a breakpoint, to use when the debugger isn't running
 	 */
-	int GetNextID() { return ++NextInternalID; }
+	int GetNextID() {
+		return ++NextInternalID;
+	}
 
 	/**
 	 * Save session
 	 */
-	 void SaveSession(SessionEntry& session);
+	void SaveSession(SessionEntry& session);
 
 	/**
 	 * Load session
 	 */
-	 void LoadSession(const SessionEntry& session);
+	void LoadSession(const SessionEntry& session);
 };
 
 class myDragImage  :  public wxDragImage, public wxEvtHandler

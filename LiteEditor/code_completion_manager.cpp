@@ -63,7 +63,9 @@ bool CodeCompletionManager::DoCtagsWordCompletion(LEditor* editor, const wxStrin
 
 void CodeCompletionManager::DoClangWordCompletion(LEditor* editor)
 {
-	ClangCodeCompletion::Instance()->WordComplete(editor);
+	DoUpdateOptions();
+	if(GetOptions() & CC_CLANG_ENABLED)
+		ClangCodeCompletion::Instance()->WordComplete(editor);
 }
 
 bool CodeCompletionManager::DoCtagsCalltip(LEditor* editor, int line, const wxString &expr, const wxString &text, const wxString &word)
@@ -80,7 +82,9 @@ bool CodeCompletionManager::DoCtagsCalltip(LEditor* editor, int line, const wxSt
 
 void CodeCompletionManager::DoClangCalltip(LEditor* editor)
 {
-	ClangCodeCompletion::Instance()->Calltip(editor);
+	DoUpdateOptions();
+	if(GetOptions() & CC_CLANG_ENABLED)
+		ClangCodeCompletion::Instance()->Calltip(editor);
 }
 
 void CodeCompletionManager::Calltip(LEditor* editor, int line, const wxString& expr, const wxString& text, const wxString& word)

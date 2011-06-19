@@ -2372,6 +2372,9 @@ void Manager::UpdateFileLine ( const wxString &filename, int lineno, bool reposi
 void Manager::UpdateGotControl ( const DebuggerEvent &e )
 {
 	int reason = e.m_controlReason;
+	bool userTriggered = GetBreakpointsMgr()->GetExpectingControl();
+	GetBreakpointsMgr()->SetExpectingControl(false);
+	
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr == NULL) {
 		wxLogDebug(wxT("Active debugger not found :/"));
@@ -2427,7 +2430,7 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 
 		} else if ( reason == DBG_RECV_SIGNAL_SIGTRAP ) {
 			signame = wxT ( "SIGTRAP" );
-			showDialog = false;
+			showDialog = !userTriggered;
 		}
 
 		DebugMessage ( _("Program Received signal ") + signame + wxT("\n") );
@@ -2443,6 +2446,15 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 		if ( info.IsShown() && showDialog ) {
 			clMainFrame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
 			UpdateDebuggerPane();
+		}
+		
+		if(!userTriggered) {
+			if ( dbgr && dbgr->IsRunning() ) {
+				dbgr->QueryFileLine();
+				dbgr->BreakList();
+				// Apply all previous watches
+				DbgRestoreWatches();
+			}
 		}
 	}
 	break;

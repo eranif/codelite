@@ -21,9 +21,9 @@
 
 
 #ifdef __WXMSW__
-static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" 1> \"$PCH_FILE.code-completion\" 2>&1 && FileGrep \"$PCH_FILE.code-completion\" $FILTER ");
+static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" 2>&1 1> \"$PCH_FILE.code-completion\"");
 #else
-static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" > \"$PCH_FILE.code-completion\"");
+static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" 2>&1 1> \"$PCH_FILE.code-completion\"");
 #endif
 
 BEGIN_EVENT_TABLE(ClangDriver, wxEvtHandler)
@@ -231,15 +231,13 @@ void ClangDriver::OnCodeCompletionCompleted()
 {
 	// clang output is stored in m_output
 	// "$PCH_FILE.code-completion"
+	wxString output;
 	wxString filename;
 	filename << m_ccfilename << wxT(".code-completion");
-	wxString output;
 	wxFFile fp(filename, wxT("r"));
 	if(fp.IsOpened()) {
 		fp.ReadAll( &output );
 	}
-	
-	// TODO :: delete temporary code-completion file
 	wxRemoveFile(filename);
 	
 	CL_DEBUG(wxT("ClangDriver::OnCodeCompletionCompleted() called"));

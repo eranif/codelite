@@ -222,7 +222,7 @@ void clAuiTabArt::DrawBackground(wxDC& dc,
 	int w = rect.GetWidth();
 
 	if (m_flags &wxAUI_NB_BOTTOM) {
-		dc.SetBrush(wxBrush(bottom_color));
+		dc.SetBrush(m_bottom_rect_colour);
 		dc.DrawRectangle(-1, 0, w+2, 4);
 	}
 	// TODO: else if (m_flags &wxAUI_NB_LEFT) {}
@@ -310,8 +310,8 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 	if (m_flags &wxAUI_NB_BOTTOM) {
 		border_points[0] = wxPoint(tab_x,             tab_y);
 		border_points[1] = wxPoint(tab_x,             tab_y+tab_height-6);
-		border_points[2] = wxPoint(tab_x+2,           tab_y+tab_height-4);
-		border_points[3] = wxPoint(tab_x+tab_width-2, tab_y+tab_height-4);
+		border_points[2] = wxPoint(tab_x,             tab_y+tab_height-4);
+		border_points[3] = wxPoint(tab_x+tab_width,   tab_y+tab_height-4);
 		border_points[4] = wxPoint(tab_x+tab_width,   tab_y+tab_height-6);
 		border_points[5] = wxPoint(tab_x+tab_width,   tab_y);
 

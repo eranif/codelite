@@ -81,7 +81,6 @@
 #include "clean_request.h"
 #include "buidltab.h"
 #include "tabgroupmanager.h"
-#include "outputviewcontrolbar.h"
 #include "manager.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
@@ -1327,7 +1326,7 @@ void Manager::ToggleOutputPane(bool hide)
 				clMainFrame::Get()->Freeze();
 
 				DoFindDockInfo(aui->SavePerspective(), dock_info, saved_dock_info);
-				OutputViewControlBar::HackHidePane(true,pane_info,aui);
+				DockablePaneMenuManager::HackHidePane(true,pane_info,aui);
 
 				clMainFrame::Get()->Thaw();
 			}
@@ -1340,7 +1339,7 @@ void Manager::ToggleOutputPane(bool hide)
 
 				if ( saved_dock_info.IsEmpty() ) {
 
-					OutputViewControlBar::HackShowPane(pane_info,aui);
+					DockablePaneMenuManager::HackShowPane(pane_info,aui);
 
 				} else {
 					wxString auiPerspective = aui->SavePerspective();
@@ -1348,9 +1347,9 @@ void Manager::ToggleOutputPane(bool hide)
 						// the dock_info does not exist
 						auiPerspective << saved_dock_info << wxT("|");
 						aui->LoadPerspective(auiPerspective, false);
-						OutputViewControlBar::HackShowPane(pane_info,aui);
+						DockablePaneMenuManager::HackShowPane(pane_info,aui);
 					} else {
-						OutputViewControlBar::HackShowPane(pane_info,aui);
+						DockablePaneMenuManager::HackShowPane(pane_info,aui);
 					}
 				}
 				clMainFrame::Get()->Thaw();
@@ -1368,7 +1367,7 @@ bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 
 	// set the selection to focus win
 	OutputPane *pane = clMainFrame::Get()->GetOutputPane();
-	int index(wxNOT_FOUND);
+	size_t index(Notebook::npos);
 	for(size_t i=0; i<pane->GetNotebook()->GetPageCount(); i++) {
 		if(pane->GetNotebook()->GetPageText(i) == focusWin) {
 			index = (int)i;
@@ -1376,7 +1375,7 @@ bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 		}
 	}
 
-	if ( index != wxNOT_FOUND && index != pane->GetNotebook()->GetSelection() ) {
+	if ( index != Notebook::npos && index != pane->GetNotebook()->GetSelection() ) {
 		wxWindow *focus = wxWindow::FindFocus();
 		pane->GetNotebook()->SetSelection ( ( size_t ) index );
 		if (focus) {
@@ -1413,7 +1412,7 @@ void Manager::ShowDebuggerPane ( bool show )
 			wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( dbgPanes.Item ( i ) );
 			// show all debugger related panes
 			if ( info.IsOk() && !info.IsShown() ) {
-				OutputViewControlBar::OutputViewControlBar::HackShowPane(info,aui);
+				DockablePaneMenuManager::DockablePaneMenuManager::HackShowPane(info,aui);
 			}
 		}
 
@@ -1424,7 +1423,7 @@ void Manager::ShowDebuggerPane ( bool show )
 			wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( dbgPanes.Item ( i ) );
 			// show all debugger related panes
 			if ( info.IsOk() && info.IsShown() ) {
-				OutputViewControlBar::HackHidePane(true,info,aui);
+				DockablePaneMenuManager::HackHidePane(true,info,aui);
 			}
 		}
 	}
@@ -1455,7 +1454,7 @@ void Manager::HidePane ( const wxString &paneName, bool commit )
 	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane ( paneName );
 	if ( info.IsOk() && info.IsShown() ) {
 		wxAuiManager *aui = &clMainFrame::Get()->GetDockingManager();
-		OutputViewControlBar::HackHidePane(commit,info,aui);
+		DockablePaneMenuManager::HackHidePane(commit,info,aui);
 	}
 }
 

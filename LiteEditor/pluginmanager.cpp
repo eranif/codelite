@@ -337,7 +337,7 @@ wxTreeCtrl *PluginManager::GetTree(TreeType type)
 	}
 }
 
-OutputPaneBook* PluginManager::GetOutputPaneNotebook()
+Notebook* PluginManager::GetOutputPaneNotebook()
 {
 	return clMainFrame::Get()->GetOutputPane()->GetNotebook();
 }

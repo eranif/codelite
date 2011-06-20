@@ -324,7 +324,7 @@ void Cscope::DoCscopeCommand(const wxString &command, const wxString &findWhat, 
 	}
 
 	//set the focus to the cscope tab
-	wxBookCtrlBase *book = m_mgr->GetOutputPaneNotebook();
+	Notebook *book = m_mgr->GetOutputPaneNotebook();
 
 	//make sure that the Output pane is visible
 	wxAuiManager *aui = m_mgr->GetDockingManager();

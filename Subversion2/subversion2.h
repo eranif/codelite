@@ -81,6 +81,7 @@ protected:
 	///////////////////////////////////////////////////////////
 	void OnGetCompileLine        (wxCommandEvent &event);
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);
+	void OnFileRemoved           (wxCommandEvent &event);
 	
 	wxMenu* CreateFileExplorerPopMenu();
 	bool    IsSubversionViewDetached ();

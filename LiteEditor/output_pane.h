@@ -72,7 +72,7 @@ private:
 	wxString m_caption;
 	wxLog   *m_logTargetOld;
 
-	OutputPaneBook        *m_book;
+	Notebook              *m_book;
 	FindResultsTab        *m_findResultsTab;
 	ReplaceInFilesPanel   *m_replaceResultsTab;
 	BuildTab              *m_buildWin;
@@ -97,7 +97,7 @@ public:
 	 */
 	virtual ~OutputPane();
 
-	OutputPaneBook       *GetNotebook()      { return m_book;    }
+	Notebook       *GetNotebook()      { return m_book;    }
 	const wxString &     GetCaption () const { return m_caption; }
 
 	FindResultsTab        *GetFindResultsTab   () { return m_findResultsTab;    }

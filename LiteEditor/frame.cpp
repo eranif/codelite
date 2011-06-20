@@ -32,7 +32,6 @@
 #include "includepathlocator.h"
 #include "localstable.h"
 #include "console_frame.h"
-#include "outputviewcontrolbar.h"
 #include "clauidockart.h"
 
 #include <set>
@@ -701,7 +700,7 @@ clMainFrame* clMainFrame::Get()
 
 void clMainFrame::CreateGUIControls(void)
 {
-	this->Freeze();
+	//this->Freeze();
 
 #ifdef __WXMSW__
 	SetIcon(wxICON(aaaaa));
@@ -752,12 +751,7 @@ void clMainFrame::CreateGUIControls(void)
 	DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"), wxT("2.9.0"));
 	WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
 
-#if defined(__WXMAC__)
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 1);
-#else
-	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 1);
-#endif
-
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
 
 	// Load the menubar from XRC and set this frame's menubar to it.
@@ -781,7 +775,7 @@ void clMainFrame::CreateGUIControls(void)
 	m_outputPane = new OutputPane(m_mainPanel, wxT("Output View"));
 	wxAuiPaneInfo paneInfo;
 	m_mgr.AddPane(m_outputPane,
-	              paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(0).Position(0).CaptionVisible(false));
+	              paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(0).Position(0).CaptionVisible(false).PaneBorder(false));
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
 	// Now it's created, hide it. Otherwise, if codelite.layout doesn't exist, it starts slightly open
 	// That looks silly, and it's difficult for a novice user to know what's happening
@@ -2046,9 +2040,9 @@ void clMainFrame::ViewPane(const wxString &paneName, wxCommandEvent &event)
 		wxAuiPaneInfo &info = m_mgr.GetPane(paneName);
 		if (info.IsOk()) {
 			if ( event.IsChecked() ) {
-				OutputViewControlBar::HackShowPane(info,&m_mgr);
+				DockablePaneMenuManager::HackShowPane(info,&m_mgr);
 			} else {
-				OutputViewControlBar::HackHidePane(true,info,&m_mgr);
+				DockablePaneMenuManager::HackHidePane(true,info,&m_mgr);
 			}
 		}
 	}
@@ -3047,14 +3041,14 @@ void clMainFrame::CompleteInitialization()
 	GetSizer()->Add(line, 0, wxEXPAND);
 #endif
 
-	OutputViewControlBar* outputViewControlBar = new OutputViewControlBar(this, GetOutputPane()->GetNotebook(), &m_mgr, wxID_ANY);
-	outputViewControlBar->AddAllButtons();
+	//OutputViewControlBar* outputViewControlBar = new OutputViewControlBar(this, GetOutputPane()->GetNotebook(), &m_mgr, wxID_ANY);
+	//outputViewControlBar->AddAllButtons();
 	
-	GetSizer()->Add(outputViewControlBar, 0, wxEXPAND);
+	//GetSizer()->Add(outputViewControlBar, 0, wxEXPAND);
 	Layout();
 	SelectBestEnvSet();
 
-	this->Thaw();
+//	this->Thaw();
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent &e)
@@ -3447,7 +3441,7 @@ void clMainFrame::OnDockablePaneClosed(wxAuiManagerEvent &e)
 	DockablePane *pane = dynamic_cast<DockablePane*>(e.GetPane()->window);
 	wxAuiPaneInfo* pInfo = e.GetPane();
 	if (pInfo->IsOk()) {
-		OutputViewControlBar::HackHidePane(false,*pInfo,&m_mgr);
+		DockablePaneMenuManager::HackHidePane(false,*pInfo,&m_mgr);
 	}
 	if (pane) {
 		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));

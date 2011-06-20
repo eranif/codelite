@@ -161,7 +161,7 @@ void SvnConsole::EnsureVisible()
 	}
 
 	// Select the Subversion tab
-	wxBookCtrlBase *book = m_plugin->GetManager()->GetOutputPaneNotebook();
+	Notebook *book = m_plugin->GetManager()->GetOutputPaneNotebook();
 
 	for(size_t i=0; i<book->GetPageCount(); i++) {
 		if(book->GetPage(i) == m_plugin->GetConsole()) {

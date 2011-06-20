@@ -53,5 +53,9 @@ public:
 	wxString NameById(int id);
 	wxArrayString GetDeatchedPanesList();
 	bool IsPaneDetached(const wxString &name);
+	
+	static void HackShowPane(wxAuiPaneInfo &pane_info, wxAuiManager *pAui);
+	static void HackHidePane(bool commit, wxAuiPaneInfo &pane_info, wxAuiManager *pAui);
 };
+
 #endif // __dockablepanemenumanager__

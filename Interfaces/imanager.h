@@ -26,7 +26,6 @@
 #ifndef IMANAGER_H
 #define IMANAGER_H
 
-#include "output_pane_book.h"
 #include "ieditor.h"
 #include "iconfigtool.h"
 #include "ikeyboard.h"
@@ -36,7 +35,7 @@
 #include "queuecommand.h"
 #include <wx/aui/framemanager.h>
 #include "bitmap_loader.h"
-
+#include "notebook_ex.h"
 
 class TagsManager;
 class Workspace;
@@ -141,7 +140,7 @@ public:
 	 * @return pointer to Notebook
 	 * @sa Notebook
 	 */
-	virtual OutputPaneBook* GetOutputPaneNotebook() = 0;
+	virtual Notebook* GetOutputPaneNotebook() = 0;
 	
 	virtual wxPanel* GetEditorPaneNotebook() = 0;
 	virtual void AddEditorPage(wxWindow *page, const wxString& name) = 0;	

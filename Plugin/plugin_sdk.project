@@ -149,8 +149,6 @@
       <File Name="virtualdirectoryselectorbase.cpp"/>
       <File Name="windowstack.h"/>
       <File Name="windowstack.cpp"/>
-      <File Name="outputviewcontrolbar.cpp"/>
-      <File Name="outputviewcontrolbar.h"/>
       <File Name="listctrl_improved.h"/>
       <File Name="listctrl_improved.cpp"/>
       <File Name="cl_editor_tip_window.cpp"/>
@@ -201,7 +199,6 @@
       <File Name="notebook_ex_nav_dlg.h"/>
       <File Name="tabicons.h"/>
       <File Name="tabicons.cpp"/>
-      <File Name="output_pane_book.h"/>
       <File Name="cl_aui_notebook_art.cpp"/>
       <File Name="cl_aui_notebook_art.h"/>
     </VirtualDirectory>

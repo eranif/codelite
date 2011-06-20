@@ -23,7 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
-#include "output_pane_book.h"
 #include "frame.h"
 #include "editor_config.h"
 #include <wx/dcbuffer.h>
@@ -65,7 +64,7 @@ void OutputPane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
-	m_book = new OutputPaneBook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_DEFAULT);
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_BOTTOM | wxNO_BORDER);
 
 	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 

@@ -355,7 +355,7 @@ void CppCheckPlugin::SetTabVisible(bool clearContent)
 	}
 
 	// Set the focus to the CppCheck tab
-	wxBookCtrlBase *book = m_mgr->GetOutputPaneNotebook();
+	Notebook *book = m_mgr->GetOutputPaneNotebook();
 	if (book->GetPageText((size_t)book->GetSelection()) != wxT("CppCheck")) {
 		for (size_t i=0; i<book->GetPageCount(); i++) {
 			if (book->GetPageText(i) == wxT("CppCheck")) {

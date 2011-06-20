@@ -104,6 +104,7 @@ Subversion2::Subversion2(IManager *manager)
 
 	GetManager()->GetTheApp()->Connect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, wxCommandEventHandler(Subversion2::OnGetCompileLine),         NULL, this);
 	GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED,    wxCommandEventHandler(Subversion2::OnWorkspaceConfigChanged), NULL, this);
+	GetManager()->GetTheApp()->Connect(wxEVT_PROJ_FILE_REMOVED,           wxCommandEventHandler(Subversion2::OnFileRemoved),            NULL, this);
 }
 
 Subversion2::~Subversion2()
@@ -892,4 +893,33 @@ void Subversion2::OnWorkspaceConfigChanged(wxCommandEvent& event)
 {
 	event.Skip();
 	m_subversionView->BuildTree();
+}
+
+void Subversion2::OnFileRemoved(wxCommandEvent& event)
+{
+	event.Skip();
+	wxArrayString *files = (wxArrayString*)event.GetClientData();
+	if(files && !files->IsEmpty()) {
+		
+		if(wxMessageBox(wxT("Would you like to delete the file(s) from the svn as well?"), 
+						wxT("Subversion"), 
+						wxYES_NO|wxCANCEL|wxCENTER, 
+						GetManager()->GetTheApp()->GetTopWindow()) == wxYES) 
+		{
+			wxString fileList;
+			for(size_t i=0; i<files->GetCount(); i++) {
+				wxFileName fn(files->Item(i));
+				fileList << wxT("\"") << fn.GetFullPath() << wxT("\" ");
+			}
+			
+			wxString   command;
+			RecreateLocalSvnConfigFile();
+			
+			command << GetSvnExeName(false) << wxT(" delete --force ") << fileList;
+			GetConsole()->Execute(command, 
+								  m_subversionView->GetRootDir(), 
+								  new SvnDefaultCommandHandler(this, event.GetId(), 
+								  this));
+		}
+	}
 }

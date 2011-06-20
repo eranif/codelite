@@ -30,6 +30,7 @@
 #include "output_pane.h"
 #include "findresultstab.h"
 #include "findusagetab.h"
+#include "dockablepanemenumanager.h"
 #include "replaceinfilespanel.h"
 #include "buidltab.h"
 #include "errorstab.h"
@@ -50,13 +51,20 @@ OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 200))
 		, m_caption(caption)
 		, m_logTargetOld(NULL)
+		, m_buildInProgress(false)
 {
 	CreateGUIControls();
+	wxTheApp->Connect ( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
+	wxTheApp->Connect ( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
+	wxTheApp->Connect ( wxEVT_BUILD_ENDED ,    wxCommandEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
 }
 
 OutputPane::~OutputPane()
 {
 	delete wxLog::SetActiveTarget(m_logTargetOld);
+	wxTheApp->Disconnect( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
+	wxTheApp->Disconnect( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
+	wxTheApp->Disconnect( wxEVT_BUILD_ENDED ,    wxCommandEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
 }
 
 void OutputPane::CreateGUIControls()
@@ -121,3 +129,36 @@ void OutputPane::CreateGUIControls()
 	m_book->AddPage(m_taskPanel, wxGetTranslation(TASKS), false, bmpLoader->LoadBitmap(wxT("output-pane/16/tasks")));
 	mainSizer->Layout();
 }
+
+void OutputPane::OnEditorFocus(wxCommandEvent& e)
+{
+	e.Skip();
+	if (EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
+
+		// Optionally don't hide the various panes (sometimes it's irritating, you click to do something and...)
+		size_t cursel(m_book->GetSelection());
+		if (cursel != Notebook::npos  
+				&& EditorConfigST::Get()->GetPaneStickiness(m_book->GetPageText(cursel))) {
+				return;
+		}
+		
+		if(m_buildInProgress)
+			return;
+		
+		wxAuiPaneInfo &info = PluginManager::Get()->GetDockingManager()->GetPane(wxT("Output View"));
+		DockablePaneMenuManager::HackHidePane(true, info, PluginManager::Get()->GetDockingManager());
+	}
+}
+
+void OutputPane::OnBuildStarted(wxCommandEvent& e)
+{
+	e.Skip();
+	m_buildInProgress = true;
+}
+
+void OutputPane::OnBuildEnded(wxCommandEvent& e)
+{
+	e.Skip();
+	m_buildInProgress = false;
+}
+

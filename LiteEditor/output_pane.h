@@ -81,9 +81,14 @@ private:
 	DebugTab              *m_outputDebug;
 	TaskPanel             *m_taskPanel;
 	FindUsageTab          *m_showUsageTab;
+	bool                   m_buildInProgress;
 	
+protected:
 	void CreateGUIControls();
-
+	void OnEditorFocus(wxCommandEvent &e);
+	void OnBuildStarted(wxCommandEvent &e);
+	void OnBuildEnded(wxCommandEvent &e);
+	
 public:
 	/**
 	 * Constructor

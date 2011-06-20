@@ -34,6 +34,7 @@
 #include "workspace.h"
 #include "bitmap_loader.h"
 #include <wx/treectrl.h>
+#include <wx/imaglist.h>
 
 CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 		: CscopeTabBase( parent )

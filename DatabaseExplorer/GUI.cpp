@@ -269,9 +269,7 @@ _DbViewerPanel::_DbViewerPanel( wxWindow* parent, wxWindowID id, const wxPoint& 
 	fgSizer18->SetFlexibleDirection( wxBOTH );
 	fgSizer18->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_splitterPanels = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
-	m_splitterPanels->Connect( wxEVT_IDLE, wxIdleEventHandler( _DbViewerPanel::m_splitterPanelsOnIdle ), NULL, this );
-	
+	m_splitterPanels = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME );
 	m_panelData = new wxPanel( m_splitterPanels, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
@@ -295,7 +293,7 @@ _DbViewerPanel::_DbViewerPanel( wxWindow* parent, wxWindowID id, const wxPoint& 
 	m_panelThumb->SetSizer( m_thmSizer );
 	m_panelThumb->Layout();
 	m_thmSizer->Fit( m_panelThumb );
-	m_splitterPanels->SplitHorizontally( m_panelData, m_panelThumb, 305 );
+	m_splitterPanels->SplitHorizontally( m_panelData, m_panelThumb, -1 );
 	fgSizer18->Add( m_splitterPanels, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( fgSizer18 );

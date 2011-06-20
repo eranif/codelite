@@ -2080,12 +2080,12 @@
                         <property name="resize">Resizable</property>
                         <property name="row"></property>
                         <property name="sashgravity">0.0</property>
-                        <property name="sashpos">305</property>
+                        <property name="sashpos">-1</property>
                         <property name="sashsize">-1</property>
                         <property name="show">1</property>
                         <property name="size"></property>
                         <property name="splitmode">wxSPLIT_HORIZONTAL</property>
-                        <property name="style">wxSP_3D</property>
+                        <property name="style">wxSP_3DSASH|wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME</property>
                         <property name="subclass"></property>
                         <property name="toolbar_pane">0</property>
                         <property name="tooltip"></property>
@@ -2406,7 +2406,7 @@
                             </object>
                         </object>
                         <object class="splitteritem" expanded="1">
-                            <object class="wxPanel" expanded="0">
+                            <object class="wxPanel" expanded="1">
                                 <property name="BottomDockable">1</property>
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>

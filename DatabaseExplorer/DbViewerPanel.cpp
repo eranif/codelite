@@ -12,6 +12,7 @@
 #define wxID_CLOSE_CONNECTION 45535
 #define wxID_TOOL_REFRESH     45536
 #define wxID_TOOL_ERD         45537
+#define wxID_TOOL_PREVIEW     45538
 
 DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pManager)
 	: _DbViewerPanel(parent)
@@ -25,6 +26,8 @@ DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pMa
 
 	m_pThumbnail = new wxSFThumbnail(m_panelThumb);
 	m_thmSizer->Add(m_pThumbnail, 1, wxEXPAND, 0);
+	m_splitterPanels->SetSashPosition(-1);
+	m_splitterPanels->UpdateSize();
 	m_thmSizer->Layout();
 	
 	// replace the icons...
@@ -32,6 +35,7 @@ DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pMa
 	m_toolBar1->AddTool( wxID_CLOSE_CONNECTION, _("tool"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/disconnect")), wxNullBitmap, wxITEM_NORMAL, _("Close selected connection"), _("Close selected connection"), NULL ); 
 	m_toolBar1->AddTool( wxID_TOOL_REFRESH, _("tool"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/database_refresh")), wxNullBitmap, wxITEM_NORMAL, _("Refresh View"), wxEmptyString, NULL ); 
 	m_toolBar1->AddTool( wxID_TOOL_ERD, _("ERD"), wxBitmap( Grid_xpm ), wxNullBitmap, wxITEM_NORMAL, _("Open ERD View"), wxEmptyString, NULL ); 
+	m_toolBar1->AddTool( wxID_TOOL_PREVIEW, _("Show ERD Thumbnail"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/thumbnail")), _("Show ERD Thumbnail"), wxITEM_CHECK);
 	m_toolBar1->Realize();
 	
 	Layout();
@@ -46,6 +50,7 @@ DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pMa
 	this->Connect( wxID_TOOL_REFRESH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnRefreshClick ) );
 	this->Connect( wxID_TOOL_REFRESH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnToolCloseUI ) );
 	this->Connect( wxID_TOOL_ERD, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnERDClick ) );
+	this->Connect( wxID_TOOL_PREVIEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnShowThumbnail ) );
 }
 
 DbViewerPanel::~DbViewerPanel()
@@ -738,4 +743,16 @@ void DbViewerPanel::InitStyledTextCtrl(wxScintilla *sci)
 	sci->MarkerSetForeground( wxSCI_MARKNUM_FOLDERTAIL, wxColour( wxT("WHITE") ) );
 
 	sci->SetFoldFlags( wxSCI_FOLDFLAG_LINEAFTER_CONTRACTED );
+}
+
+void DbViewerPanel::OnShowThumbnail(wxCommandEvent& e)
+{
+	if(e.IsChecked()) {
+		m_splitterPanels->SetSashPosition(m_panelThumb->GetSize().GetHeight());
+		
+	} else {
+		m_splitterPanels->SetSashPosition(-1);
+		
+	}
+	m_splitterPanels->UpdateSize();
 }

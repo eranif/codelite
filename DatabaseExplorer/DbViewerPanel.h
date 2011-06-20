@@ -90,7 +90,8 @@ public:
 	virtual void OnItemRightClick(wxTreeEvent& event);
 	virtual void OnToolCloseClick(wxCommandEvent& event);
 	virtual void OnToolCloseUI(wxUpdateUIEvent& event);
-
+	virtual void OnShowThumbnail(wxCommandEvent &e);
+	
 	void OnPageClose(NotebookEvent& event);
 	void OnPageChange(NotebookEvent& event);
 	void OnPopupClick(wxCommandEvent &evt);

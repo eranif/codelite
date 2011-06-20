@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -20,12 +20,12 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	wxArrayString m_choiceRootDirChoices;
 	m_choiceRootDir = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceRootDirChoices, 0 );
 	m_choiceRootDir->SetSelection( 0 );
-	bSizer2->Add( m_choiceRootDir, 1, wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer2->Add( m_choiceRootDir, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_buttonChangeRootDir = new wxButton( this, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
 	m_buttonChangeRootDir->SetToolTip( _("Select a different root directory") );
 	
-	bSizer2->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	bSizer2->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 	
 	mainSizer->Add( bSizer2, 0, wxEXPAND, 5 );
 	

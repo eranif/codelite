@@ -267,7 +267,7 @@ void TdsPreparedStatement::SetParamDate(int nPosition, const wxDateTime& dateVal
 
   AllocateParameter(nPosition);
 
-  wxString dateAsString = dateValue.Format(_("%Y-%m-%d %H:%M:%S"));
+  wxString dateAsString = dateValue.Format(wxT("%Y-%m-%d %H:%M:%S"));
   //fprintf(stderr, "Setting param %d to date %s\n", nPosition, dateAsString.c_str());
   CONV_RESULT cr;
   wxCharBuffer dateCharBuffer = ConvertToUnicodeStream(dateAsString);

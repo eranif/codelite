@@ -34,7 +34,7 @@ FirebirdDatabaseLayer::FirebirdDatabaseLayer()
 #endif
 
   m_strServer = _("localhost");
-  m_strDatabase = _("");
+  m_strDatabase = wxT("");
   m_strRole = wxEmptyString;
 }
 
@@ -57,8 +57,8 @@ FirebirdDatabaseLayer::FirebirdDatabaseLayer(const wxString& strDatabase)
 #endif
 
   m_strServer = _("localhost");
-  m_strUser = _("");
-  m_strPassword = _("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
   m_strRole = wxEmptyString;
 
   Open(strDatabase);
@@ -82,7 +82,7 @@ FirebirdDatabaseLayer::FirebirdDatabaseLayer(const wxString& strDatabase, const 
   }
 #endif
 
-  m_strServer = _("");  // assume embedded database in this case
+  m_strServer = wxT("");  // assume embedded database in this case
   m_strUser = strUser;
   m_strPassword = strPassword;
   m_strRole = wxEmptyString;

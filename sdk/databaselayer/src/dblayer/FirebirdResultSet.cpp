@@ -134,7 +134,7 @@ wxString FirebirdResultSet::GetResultString(int nField)
     {
       // Incompatible field type
       // Set error codes and throw an exception here
-      strReturn = _("");
+      strReturn = wxT("");
 
       SetErrorMessage(_("Invalid field type"));
       SetErrorCode(DATABASE_LAYER_INCOMPATIBLE_FIELD_TYPE);

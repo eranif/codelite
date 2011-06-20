@@ -444,7 +444,7 @@ int TdsDatabaseLayer::RunQuery(const wxString& strQuery, bool bParseQuery)
   while (start != stop)
   {
     char* szErrorMessage = NULL;
-    wxString strErrorMessage = _("");
+    wxString strErrorMessage = wxT("");
     wxString sql = RemoveLastSemiColon(*start);
     wxCharBuffer sqlBuffer = ConvertToUnicodeStream(sql);
 
@@ -478,7 +478,7 @@ DatabaseResultSet* TdsDatabaseLayer::RunQueryWithResults(const wxString& strQuer
     for (unsigned int i=0; i<(QueryArray.size()-1); i++)
     {
       char* szErrorMessage = NULL;
-      wxString strErrorMessage = _("");
+      wxString strErrorMessage = wxT("");
       wxString sql = RemoveLastSemiColon(QueryArray[i]);
       wxCharBuffer sqlBuffer = ConvertToUnicodeStream(sql);
 

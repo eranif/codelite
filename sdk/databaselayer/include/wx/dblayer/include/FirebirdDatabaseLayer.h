@@ -27,7 +27,7 @@ public:
   virtual bool Open(const wxString& strDatabase);
   virtual bool Open();
   virtual bool Open(const wxString& strDatabase, const wxString& strUser, const wxString& strPassword);
-  virtual bool Open(const wxString& strServer, const wxString& strDatabase, const wxString& strUser = _(""), const wxString& strPassword = _(""));
+  virtual bool Open(const wxString& strServer, const wxString& strDatabase, const wxString& strUser = wxT(""), const wxString& strPassword = wxT(""));
   
   // close database  
   virtual bool Close();

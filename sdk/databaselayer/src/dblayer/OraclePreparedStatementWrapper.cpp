@@ -26,7 +26,7 @@ wxString OraclePreparedStatementWrapper::TranslateSQL(const wxString& strOrigina
   wxString strReturn = strOriginalSQL;
   if (strReturn.Last() == ';')
     strReturn.RemoveLast();
-  int nFound = strReturn.Replace(_("?"), wxString::Format(_(":%d"), nParameterIndex), false);
+  int nFound = strReturn.Replace(wxT("?"), wxString::Format(wxT(":%d"), nParameterIndex), false);
   if (nFound == 0)
   {
     m_nParameterCount = 0;
@@ -36,7 +36,7 @@ wxString OraclePreparedStatementWrapper::TranslateSQL(const wxString& strOrigina
     while (nFound != 0)
     {
       nParameterIndex++;
-      nFound = strReturn.Replace(_("?"), wxString::Format(_(":%d"), nParameterIndex), false);
+      nFound = strReturn.Replace(wxT("?"), wxString::Format(wxT(":%d"), nParameterIndex), false);
     }
     m_nParameterCount = nParameterIndex-1;
   }

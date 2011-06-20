@@ -161,7 +161,7 @@ void SqlitePreparedStatement::SetParamDate(int nPosition, const wxDateTime& date
     if (nIndex > -1)
     {
       sqlite3_reset(m_Statements[nIndex]);
-      wxCharBuffer valueBuffer = ConvertToUnicodeStream(dateValue.Format(_("%Y-%m-%d %H:%M:%S")));
+      wxCharBuffer valueBuffer = ConvertToUnicodeStream(dateValue.Format(wxT("%Y-%m-%d %H:%M:%S")));
       int nReturn = sqlite3_bind_text(m_Statements[nIndex], nPosition, valueBuffer, -1, SQLITE_TRANSIENT);
       if (nReturn != SQLITE_OK)
       {

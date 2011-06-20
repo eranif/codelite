@@ -27,9 +27,9 @@ MysqlDatabaseLayer::MysqlDatabaseLayer()
   InitDatabase();
   m_strServer = _("localhost");
   m_iPort = 3306; // default
-  m_strDatabase = _("");
-  m_strUser = _("");
-  m_strPassword = _("");
+  m_strDatabase = wxT("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
 }
 
 MysqlDatabaseLayer::MysqlDatabaseLayer(const wxString& strDatabase)
@@ -48,8 +48,8 @@ MysqlDatabaseLayer::MysqlDatabaseLayer(const wxString& strDatabase)
   InitDatabase();
   m_strServer = _("localhost");
   m_iPort = 3306; // default
-  m_strUser = _("");
-  m_strPassword = _("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
   Open(strDatabase);
 }
 
@@ -68,8 +68,8 @@ MysqlDatabaseLayer::MysqlDatabaseLayer(const wxString& strServer, const wxString
 #endif
   InitDatabase();
   ParseServerAndPort(strServer);
-  m_strUser = _("");
-  m_strPassword = _("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
   Open(strDatabase);
 }
 

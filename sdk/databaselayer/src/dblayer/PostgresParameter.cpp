@@ -18,14 +18,14 @@ PostgresParameter::PostgresParameter(int nValue)
 {
   m_nParameterType = PostgresParameter::PARAM_INT;
   //m_nValue = nValue;
-  m_strValue = wxString::Format(_("%d"), nValue);
+  m_strValue = wxString::Format(wxT("%d"), nValue);
 }
 
 PostgresParameter::PostgresParameter(double dblValue)
 {
   m_nParameterType = PostgresParameter::PARAM_DOUBLE;
   //m_dblValue = dblValue;
-  m_strValue = wxString::Format(_("%f"), dblValue);
+  m_strValue = wxString::Format(wxT("%f"), dblValue);
 }
 
 PostgresParameter::PostgresParameter(bool bValue)
@@ -37,7 +37,7 @@ PostgresParameter::PostgresParameter(bool bValue)
 PostgresParameter::PostgresParameter(const wxDateTime& dateValue)
 {
   m_nParameterType = PostgresParameter::PARAM_DATETIME;
-  m_strDateValue = dateValue.Format(_("%Y-%m-%d %H:%M:%S"));
+  m_strDateValue = dateValue.Format(wxT("%Y-%m-%d %H:%M:%S"));
   m_nBufferLength = m_strDateValue.Length();
 }
 

@@ -21,10 +21,10 @@ PostgresDatabaseLayer::PostgresDatabaseLayer()
   }
 #endif
   m_strServer = _("localhost");
-  m_strUser = _("");
-  m_strPassword = _("");
-  m_strDatabase = _("");
-  m_strPort = _("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
+  m_strDatabase = wxT("");
+  m_strPort = wxT("");
 }
 
 PostgresDatabaseLayer::PostgresDatabaseLayer(const wxString& strDatabase)
@@ -41,9 +41,9 @@ PostgresDatabaseLayer::PostgresDatabaseLayer(const wxString& strDatabase)
   }
 #endif
   m_strServer = _("localhost");
-  m_strUser = _("");
-  m_strPassword = _("");
-  m_strPort = _("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
+  m_strPort = wxT("");
 
   Open(strDatabase);
 }
@@ -62,9 +62,9 @@ PostgresDatabaseLayer::PostgresDatabaseLayer(const wxString& strServer, const wx
   }
 #endif
   m_strServer = strServer;
-  m_strUser = _("");
-  m_strPassword = _("");
-  m_strPort = _("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
+  m_strPort = wxT("");
 
   Open(strDatabase);
 }
@@ -85,7 +85,7 @@ PostgresDatabaseLayer::PostgresDatabaseLayer(const wxString& strDatabase, const 
   m_strServer = _("localhost");
   m_strUser = strUser;
   m_strPassword = strPassword;
-  m_strPort = _("");
+  m_strPort = wxT("");
 
   Open(strDatabase);
 }
@@ -106,7 +106,7 @@ PostgresDatabaseLayer::PostgresDatabaseLayer(const wxString& strServer, const wx
   m_strServer = strServer;
   m_strUser = strUser;
   m_strPassword = strPassword;
-  m_strPort = _("");
+  m_strPort = wxT("");
 
   Open(strDatabase);
 }
@@ -127,7 +127,7 @@ PostgresDatabaseLayer::PostgresDatabaseLayer(const wxString& strServer, int nPor
   m_strServer = strServer;
   m_strUser = strUser;
   m_strPassword = strPassword;
-  m_strPort = wxString::Format(_("%d"), nPort);
+  m_strPort = wxString::Format(wxT("%d"), nPort);
 
   Open(strDatabase);
 }
@@ -157,25 +157,25 @@ bool PostgresDatabaseLayer::Open()
   wxCharBuffer portCharBuffer;
   const char* pPort = NULL;
   
-  if (m_strServer != _("localhost") && m_strServer != _(""))
+  if (m_strServer != _("localhost") && m_strServer != wxT(""))
   {
     serverCharBuffer = ConvertToUnicodeStream(m_strServer);
     pHost = serverCharBuffer;
   }
   
-  if (m_strUser != _(""))
+  if (m_strUser != wxT(""))
   {
     userCharBuffer = ConvertToUnicodeStream(m_strUser);
     pUser = userCharBuffer;
   }
 
-  if (m_strPassword != _(""))
+  if (m_strPassword != wxT(""))
   {
     passwordCharBuffer = ConvertToUnicodeStream(m_strPassword);
     pPassword = passwordCharBuffer;
   }
 
-  if (m_strPort != _(""))
+  if (m_strPort != wxT(""))
   {
     portCharBuffer = ConvertToUnicodeStream(m_strPort);
     pPort = portCharBuffer;
@@ -206,10 +206,10 @@ bool PostgresDatabaseLayer::Open(const wxString& strDatabase)
 bool PostgresDatabaseLayer::Open(const wxString& strServer, const wxString& strDatabase)
 {
   m_strServer = strServer;
-  m_strUser = _("");
-  m_strPassword = _("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
   m_strDatabase = strDatabase;
-  m_strPort = _("");
+  m_strPort = wxT("");
   return Open();
 }
 
@@ -219,7 +219,7 @@ bool PostgresDatabaseLayer::Open(const wxString& strDatabase, const wxString& st
   m_strUser = strUser;
   m_strPassword = strPassword;
   m_strDatabase = strDatabase;
-  m_strPort = _("");
+  m_strPort = wxT("");
   return Open();
 }
 
@@ -229,7 +229,7 @@ bool PostgresDatabaseLayer::Open(const wxString& strServer, const wxString& strD
   m_strUser = strUser;
   m_strPassword = strPassword;
   m_strDatabase = strDatabase;
-  m_strPort = _("");
+  m_strPort = wxT("");
   return Open();
 }
 
@@ -260,7 +260,7 @@ bool PostgresDatabaseLayer::Close()
 
 void PostgresDatabaseLayer::SetPort(int nPort)
 {
-  m_strPort = wxString::Format(_("%d"), nPort);
+  m_strPort = wxString::Format(wxT("%d"), nPort);
 }
 
 bool PostgresDatabaseLayer::IsOpen()

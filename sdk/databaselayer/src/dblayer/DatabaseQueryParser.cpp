@@ -3,7 +3,7 @@
 bool IsEmptyQuery(const wxString& strQuery)
 {
   wxString strQueryCopy(strQuery);
-  strQueryCopy.Replace(_(";"), _(""));  // Remove all query delimiting semi-colons
+  strQueryCopy.Replace(_(";"), wxT(""));  // Remove all query delimiting semi-colons
   return (strQueryCopy.Trim(true).Trim(false) == wxEmptyString);
 }
 

@@ -12,7 +12,7 @@ MysqlParameter::MysqlParameter(const wxString& strValue)
   m_nParameterType = MysqlParameter::PARAM_STRING;
   m_strValue = strValue;
   m_CharBufferValue = ConvertToUnicodeStream(m_strValue);
-  if (_("") == strValue)
+  if (wxT("") == strValue)
   {
     m_nBufferLength = 0;
   }

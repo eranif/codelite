@@ -71,7 +71,7 @@ int PostgresResultSet::GetResultInt(int nField)
 
 wxString PostgresResultSet::GetResultString(int nField)
 {
-  wxString strValue = _("");
+  wxString strValue = wxT("");
   if (m_bBinaryResults)
   {
     wxLogError(_("Not implemented\n"));
@@ -126,7 +126,7 @@ bool PostgresResultSet::GetResultBool(int nField)
       if (m_pInterface->GetPQgetisnull()(m_pResult, m_nCurrentRow, nField-1) != 1)
       {
         wxString strValue = ConvertFromUnicodeStream(m_pInterface->GetPQgetvalue()(m_pResult, m_nCurrentRow, nField-1));
-        bValue = (strValue != _("0"));
+        bValue = (strValue != wxT("0"));
       }
     }
   }

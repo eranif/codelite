@@ -23,14 +23,14 @@ std::string RemoveLastSemiColon(std::string strvalue)
 OTLDatabaseLayer::OTLDatabaseLayer()
 {
   m_bAutoCommit = true;
-  m_strPort = _("1521");
+  m_strPort = wxT("1521");
   otl_connect::otl_initialize();
 }
 
 OTLDatabaseLayer::OTLDatabaseLayer(const wxString& strUser, const wxString& strPassword, bool bOpenDatabase /*=false*/)
 {
   m_bAutoCommit = true;
-  m_strPort = _("1521");
+  m_strPort = wxT("1521");
   m_strUser = strUser;
   m_strPassword = strPassword;
   otl_connect::otl_initialize();
@@ -41,7 +41,7 @@ OTLDatabaseLayer::OTLDatabaseLayer(const wxString& strUser, const wxString& strP
 OTLDatabaseLayer::OTLDatabaseLayer(const wxString& strUser, const wxString& strPassword, const wxString& strDatabase)
 {
   m_bAutoCommit = true;
-  m_strPort = _("1521");
+  m_strPort = wxT("1521");
   otl_connect::otl_initialize();
   Open(strDatabase, strUser, strPassword);
 }
@@ -61,7 +61,7 @@ bool OTLDatabaseLayer::Open()
 {
   try
   {
-    wxString tnsString = _("");
+    wxString tnsString = wxT("");
 
     if (m_strServer != wxEmptyString)
     {
@@ -85,9 +85,9 @@ bool OTLDatabaseLayer::Open()
     wxCharBuffer tnsStringBuffer = ConvertToUnicodeStream(tnsString);
     std::string strTnsString(tnsStringBuffer);
 
-    wxString connectString = m_strUser + _("/") + m_strPassword;
+    wxString connectString = m_strUser + wxT("/") + m_strPassword;
     if (m_strDatabase != wxEmptyString)
-      connectString += _("@") + m_strDatabase;
+      connectString += wxT("@") + m_strDatabase;
 
     try
     {

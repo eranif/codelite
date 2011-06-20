@@ -105,13 +105,13 @@ wxString OTLResultSet::GetFieldAsString(int nField)
   case ResultSetMetaData::COLUMN_INTEGER:
     {
       long lValue = GetResultLong(nField);
-      Result = wxString::Format(_("%u"),lValue);
+      Result = wxString::Format(wxT("%u"),lValue);
       break;
     }
   case ResultSetMetaData::COLUMN_DOUBLE:
     {
       double dValue = GetResultDouble(nField);
-      Result = wxString::Format(_("%f"),dValue);
+      Result = wxString::Format(wxT("%f"),dValue);
       break;
     }
   case ResultSetMetaData::COLUMN_DATE:
@@ -131,7 +131,7 @@ wxString OTLResultSet::GetFieldAsString(int nField)
       break;
     }
   default:
-    Result = _("");
+    Result = wxT("");
     break;
   }
 

@@ -92,7 +92,7 @@ int SqliteResultSet::GetResultInt(int nField)
 
 wxString SqliteResultSet::GetResultString(int nField)
 {
-  wxString strValue = _("");
+  wxString strValue = wxT("");
   if (m_pSqliteStatement == NULL)
     m_pSqliteStatement = m_pStatement->GetLastStatement();
   strValue = ConvertFromUnicodeStream((const char*)(sqlite3_column_text(m_pSqliteStatement, nField-1)));
@@ -126,7 +126,7 @@ wxDateTime SqliteResultSet::GetResultDate(int nField)
   wxString strDate = GetResultString(nField);
   wxDateTime date;
   // First check for the 2-digit year format
-  if (date.ParseFormat(strDate, _("%m/%d/%y %H:%M:%S")) != NULL)
+  if (date.ParseFormat(strDate, wxT("%m/%d/%y %H:%M:%S")) != NULL)
   {
     return date;
   }

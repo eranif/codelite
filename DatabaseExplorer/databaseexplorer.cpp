@@ -60,7 +60,7 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager) {
 
 extern "C" EXPORT PluginInfo GetPluginInfo() {
 	PluginInfo info;
-	info.SetAuthor(_("Peter Janků, Michal Bližňák, Tomas Bata University in Zlin, Czech Republic (www.fai.utb.cz)"));
+	info.SetAuthor(wxT("Peter Janků, Michal Bližňák, Tomas Bata University in Zlin, Czech Republic (www.fai.utb.cz)"));
 	info.SetName(_("DatabaseExplorer"));
 	info.SetDescription(_("DatabaseExplorer for CodeLite"));
 	info.SetVersion(_("v1.0"));
@@ -248,8 +248,8 @@ void DatabaseExplorer::OnAbout(wxCommandEvent& e) {
 	info.SetDescription(desc);
 	info.SetCopyright(_("2011 (C) Tomas Bata University, Zlin, Czech Republic"));
 	info.SetWebSite(_("http://www.fai.utb.cz"));
-	info.AddDeveloper(_("Peter Janků"));
-	info.AddDeveloper(_("Michal Bližňák"));
+	info.AddDeveloper(wxT("Peter Janků"));
+	info.AddDeveloper(wxT("Michal Bližňák"));
 
 	wxAboutBox(info);
 

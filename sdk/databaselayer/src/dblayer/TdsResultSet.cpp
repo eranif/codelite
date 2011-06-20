@@ -227,7 +227,7 @@ long TdsResultSet::GetResultLong(int nField)
   //fprintf(stderr, "%d\n", *src);
 
   long nValue = 0;
-  wxString strValue = wxString::Format(_("%d"), *src);
+  wxString strValue = wxString::Format(wxT("%d"), *src);
   strValue.ToLong(&nValue);
 
   return nValue;

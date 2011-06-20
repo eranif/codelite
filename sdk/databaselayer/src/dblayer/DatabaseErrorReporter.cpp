@@ -33,7 +33,7 @@ void DatabaseErrorReporter::SetErrorCode(int nErrorCode)
 
 void DatabaseErrorReporter::ResetErrorCodes()
 {
-  m_strErrorMessage = _("");
+  m_strErrorMessage = wxT("");
   m_nErrorCode = DATABASE_LAYER_OK;
 }
 

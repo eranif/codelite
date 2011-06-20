@@ -77,11 +77,11 @@ GitPlugin::GitPlugin(IManager *manager)
 	, m_colourTrackedFile(wxT("DARK GREEN"))
 	, m_colourDiffFile(wxT("MAROON"))
 #ifdef __WXGTK__
-	, m_pathGITExecutable(_("/usr/bin/git"))
-	, m_pathGITKExecutable(_("/usr/bin/gitk"))
+	, m_pathGITExecutable(wxT("/usr/bin/git"))
+	, m_pathGITKExecutable(wxT("/usr/bin/gitk"))
 #else
-	, m_pathGITExecutable(_("git"))
-	, m_pathGITKExecutable(_("gitk"))
+	, m_pathGITExecutable(wxT("git"))
+	, m_pathGITKExecutable(wxT("gitk"))
 #endif
 	, m_progressDialog(NULL)
 	, m_bActionRequiresTreUpdate(false)

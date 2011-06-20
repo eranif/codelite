@@ -16,7 +16,7 @@ OracleDatabaseLayer::OracleDatabaseLayer()
 OracleDatabaseLayer::OracleDatabaseLayer(const wxString& strUser, const wxString& strPassword, bool bOpenDatabase /*=false*/)
 {
   m_bAutoCommit = true;
-  m_strPort = _("1521");
+  m_strPort = wxT("1521");
   m_strUser = strUser;
   m_strPassword = strPassword;
   m_pEnvironment = oracle::occi::Environment::createEnvironment();
@@ -27,7 +27,7 @@ OracleDatabaseLayer::OracleDatabaseLayer(const wxString& strUser, const wxString
 OracleDatabaseLayer::OracleDatabaseLayer(const wxString& strDatabase, const wxString& strUser, const wxString& strPassword)
 {
   m_bAutoCommit = true;
-  m_strPort = _("1521");
+  m_strPort = wxT("1521");
   m_pEnvironment = oracle::occi::Environment::createEnvironment();
   m_pDatabase = NULL;
   Open(strDatabase, strUser, strPassword);
@@ -36,7 +36,7 @@ OracleDatabaseLayer::OracleDatabaseLayer(const wxString& strDatabase, const wxSt
 OracleDatabaseLayer::OracleDatabaseLayer(oracle::occi::Environment* pEnvironment, oracle::occi::Connection* pDatabase)
 {
   m_bAutoCommit = true;
-  m_strPort = _("1521");
+  m_strPort = wxT("1521");
   m_pEnvironment = pEnvironment;
   m_pDatabase = pDatabase;
 }
@@ -44,7 +44,7 @@ OracleDatabaseLayer::OracleDatabaseLayer(oracle::occi::Environment* pEnvironment
 OracleDatabaseLayer::OracleDatabaseLayer(const wxString& strServer, const wxString& strDatabase, const wxString& strUser, const wxString& strPassword)
 {
   m_bAutoCommit = true;
-  m_strPort = _("1521");
+  m_strPort = wxT("1521");
   m_pEnvironment = oracle::occi::Environment::createEnvironment();
   m_pDatabase = NULL;
   Open(strServer, strDatabase, strUser, strPassword);
@@ -62,7 +62,7 @@ bool OracleDatabaseLayer::Open()
 {
   try
   {
-    wxString tnsString = _("");
+    wxString tnsString = wxT("");
     if (m_strServer != wxEmptyString)
     {
       tnsString += _("Host=") + m_strServer;
@@ -76,7 +76,7 @@ bool OracleDatabaseLayer::Open()
     {
       // Add the parameter separater (colon) if needed
       if (tnsString.length() > 0)
-        tnsString += _(";");
+        tnsString += wxT(";");
       tnsString += _("Service Name=") + m_strDatabase;
     }
 

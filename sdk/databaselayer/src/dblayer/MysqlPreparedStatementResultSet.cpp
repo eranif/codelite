@@ -129,7 +129,7 @@ int MysqlPreparedStatementResultSet::GetResultInt(int nField)
 
 wxString MysqlPreparedStatementResultSet::GetResultString(int nField)
 {
-  wxString strValue = _("");
+  wxString strValue = wxT("");
   MYSQL_BIND* pResultBinding = GetResultBinding(nField);
   if (pResultBinding != NULL)
   {
@@ -314,7 +314,7 @@ MYSQL_BIND* MysqlPreparedStatementResultSet::GetResultBinding(int nField)
 
   if (finder == m_BindingWrappers.end())
   {
-    wxString msg(_("Field '") + wxString::Format(_("%d"), nField) + _("' not found in the resultset"));
+    wxString msg(_("Field '") + wxString::Format(wxT("%d"), nField) + _("' not found in the resultset"));
 #ifndef DONT_USE_DATABASE_LAYER_EXCEPTIONS
     DatabaseLayerException error(DATABASE_LAYER_FIELD_NOT_IN_RESULTSET, msg);
     throw error;

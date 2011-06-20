@@ -138,7 +138,7 @@ int SqliteDatabaseLayer::RunQuery(const wxString& strQuery, bool bParseQuery)
   while (start != stop)
   {
     char* szErrorMessage = NULL;
-    wxString strErrorMessage = _("");
+    wxString strErrorMessage = wxT("");
     wxCharBuffer sqlBuffer = ConvertToUnicodeStream(*start);
     int nReturn = sqlite3_exec((sqlite3*)m_pDatabase, sqlBuffer, 0, 0, &szErrorMessage);
   
@@ -172,7 +172,7 @@ DatabaseResultSet* SqliteDatabaseLayer::RunQueryWithResults(const wxString& strQ
     for (unsigned int i=0; i<(QueryArray.size()-1); i++)
     {
       char* szErrorMessage = NULL;
-      wxString strErrorMessage = _("");
+      wxString strErrorMessage = wxT("");
       wxCharBuffer sqlBuffer = ConvertToUnicodeStream(QueryArray[i]);
       int nReturn = sqlite3_exec((sqlite3*)m_pDatabase, sqlBuffer, 0, 0, &szErrorMessage);
   

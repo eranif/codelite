@@ -23,7 +23,6 @@ xcopy ..\lib\gcc_lib\libwxshapeframework*.dll "%ProgramFiles(x86)%\CodeLite\" /E
 
 :: Copy the misc files
 copy codelite_indexer.exe "%ProgramFiles(x86)%\CodeLite\" /Y
-copy FileGrep.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy codelite_cppcheck.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy codelite_launcher.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy "clang++.exe" "%ProgramFiles(x86)%\CodeLite\" /Y

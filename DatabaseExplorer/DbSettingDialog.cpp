@@ -41,8 +41,14 @@ DbSettingDialog::~DbSettingDialog()
 	
 	// Save all the connections
 	DoSaveSqliteHistory();
+	
+#ifdef DBL_USE_MYSQL
 	DoSaveMySQLHistory();
+#endif
+
+#ifdef DBL_USE_POSTGRES
 	DoSavePgSQLHistory();
+#endif
 }
 
 void DbSettingDialog::OnCancelClick(wxCommandEvent& event)
@@ -106,15 +112,19 @@ void DbSettingDialog::OnSqliteOkClick(wxCommandEvent& event)
 void DbSettingDialog::OnHistoryClick(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
+#ifdef DBL_USE_MYSQL
 	DoFindConnectionByName(DoLoadMySQLHistory(), m_listBox2->GetStringSelection());
+#endif
 }
 
 void DbSettingDialog::OnHistoryDClick(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
+#ifdef DBL_USE_MYSQL
 	DoFindConnectionByName(DoLoadMySQLHistory(), m_listBox2->GetStringSelection());
 	wxCommandEvent dummy;
 	OnMySqlOkClick(dummy);
+#endif
 }
 
 void DbSettingDialog::LoadHistory()
@@ -127,18 +137,21 @@ void DbSettingDialog::LoadHistory()
 		int idx = AppendListCtrlRow(m_listCtrlRecentFiles);
 		SetColumnText(m_listCtrlRecentFiles, idx, 0, files.Item(i));
 	}
-	
+#ifdef DBL_USE_MYSQL
 	DbConnectionInfoVec mySqlConns = DoLoadMySQLHistory();
 	m_listBox2->Clear();
 	for(size_t i=0; i<mySqlConns.size(); i++) {
 		m_listBox2->Append(mySqlConns.at(i).GetConnectionName());
 	}
-	
+#endif
+
+#ifdef DBL_USE_POSTGRES
 	DbConnectionInfoVec pgSqlConns = DoLoadPgSQLHistory();
 	m_listBoxPg->Clear();
 	for(size_t i=0; i<pgSqlConns.size(); i++) {
 		m_listBoxPg->Append(pgSqlConns.at(i).GetConnectionName());
 	}
+#endif
 }
 
 void DbSettingDialog::OnPgOkClick(wxCommandEvent& event)
@@ -170,16 +183,20 @@ void DbSettingDialog::OnPgOkClick(wxCommandEvent& event)
 void DbSettingDialog::OnPgHistoryClick(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
+#ifdef DBL_USE_POSTGRES
 	DoFindConnectionByName(DoLoadPgSQLHistory(), m_listBoxPg->GetStringSelection());
+#endif
 }
 
 void DbSettingDialog::OnPgHistoryDClick(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
+#ifdef DBL_USE_POSTGRES
 	DoFindConnectionByName(DoLoadPgSQLHistory(), m_listBoxPg->GetStringSelection());
 	
 	wxCommandEvent dummy;
 	OnPgOkClick(dummy);
+#endif
 }
 
 void DbSettingDialog::OnItemActivated(wxListEvent& event)

@@ -346,10 +346,10 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 		dc.DrawRectangle(r.x, r.y+1, r.width-1, r.height-4);
 
 		// this white helps fill out the gradient at the top of the tab
-
 		dc.SetPen(m_base_colour);
 		dc.SetBrush(m_base_colour);
 		dc.DrawRectangle(r.x, r.y+1, r.width-1, r.height-4);
+	
 
 		// these two points help the rounded corners appear more antialiased
 		dc.SetPen(m_base_colour_pen);
@@ -365,7 +365,8 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 		// draw gradient background
 		wxColor top_color = m_base_colour_4;
 		wxColor bottom_color = m_bottom_rect_colour;
-		dc.GradientFillLinear(r, bottom_color, top_color, wxNORTH);
+		dc.GradientFillLinear(r, bottom_color, top_color, m_flags & wxAUI_NB_BOTTOM ? wxSOUTH : wxNORTH);
+			
 	} else {
 		// draw inactive tab
 		
@@ -404,11 +405,12 @@ void clAuiTabArt::DrawTab(wxDC& dc,
 	// there are two horizontal grey lines at the bottom of the tab control,
 	// this gets rid of the top one of those lines in the tab control
 	if (page.active) {
-		if (m_flags &wxAUI_NB_BOTTOM)
-			dc.SetPen(wxPen(wxColour(wxAuiStepColour(m_base_colour, 170))));
+		//if (m_flags &wxAUI_NB_BOTTOM)
+		//	dc.SetPen(wxPen(wxColour(wxAuiStepColour(m_base_colour, 170))));
+		
 		// TODO: else if (m_flags &wxAUI_NB_LEFT) {}
 		// TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
-		else //for wxAUI_NB_TOP
+		//else //for wxAUI_NB_TOP
 			dc.SetPen(m_bottom_rect_colour);
 		dc.DrawLine(border_points[0].x+1,
 		            border_points[0].y,

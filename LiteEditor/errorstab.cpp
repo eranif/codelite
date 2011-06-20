@@ -32,6 +32,7 @@
 #include "fileextmanager.h"
 #include "globals.h"
 #include "editor_config.h"
+#include <wx/imaglist.h>
 
 class ErrorsTabItemData : public wxTreeItemData
 {

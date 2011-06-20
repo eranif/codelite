@@ -522,11 +522,14 @@ void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 	OutputPane *opane = clMainFrame::Get()->GetOutputPane();
 
 	wxWindow *win(NULL);
-	int sel =  opane->GetNotebook()->GetSelection();
-	if(sel != wxNOT_FOUND)
-		win = opane->GetNotebook()->GetPage((size_t)sel);
-
-	if (m_showMe == BuildTabSettingsData::ShowOnEnd &&
+	size_t sel =  opane->GetNotebook()->GetSelection();
+	if(sel != Notebook::npos)
+		win = opane->GetNotebook()->GetPage(sel);
+	
+	if(m_showMe == BuildTabSettingsData::ShowOnStart) {
+		ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN, true);
+		
+	} else if (m_showMe == BuildTabSettingsData::ShowOnEnd &&
 	    m_autoHide &&
 	    ManagerST::Get()->IsPaneVisible(opane->GetCaption()) &&
 	    (win == this || win == opane->GetErrorsTab())) {

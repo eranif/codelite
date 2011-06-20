@@ -1370,16 +1370,17 @@ bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 	size_t index(Notebook::npos);
 	for(size_t i=0; i<pane->GetNotebook()->GetPageCount(); i++) {
 		if(pane->GetNotebook()->GetPageText(i) == focusWin) {
-			index = (int)i;
+			index = i;
 			break;
 		}
 	}
 
 	if ( index != Notebook::npos && index != pane->GetNotebook()->GetSelection() ) {
 		wxWindow *focus = wxWindow::FindFocus();
+		LEditor *editor = dynamic_cast<LEditor*>( focus );
 		pane->GetNotebook()->SetSelection ( ( size_t ) index );
-		if (focus) {
-			focus->SetFocus();
+		if (editor) {
+			editor->SetFocus();
 		}
 	}
 

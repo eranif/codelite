@@ -39,22 +39,13 @@ DbSettingDialog::~DbSettingDialog()
 {
 	WindowAttrManager::Save(this, wxT("DbSettingDialog"), NULL);
 	
-	// Save all the connections
-	DoSaveSqliteHistory();
-	
-#ifdef DBL_USE_MYSQL
-	DoSaveMySQLHistory();
-#endif
-
-#ifdef DBL_USE_POSTGRES
-	DoSavePgSQLHistory();
-#endif
 }
 
 void DbSettingDialog::OnCancelClick(wxCommandEvent& event)
 {
-	Destroy();
+	event.Skip();
 }
+
 void DbSettingDialog::OnMySqlOkClick(wxCommandEvent& event)
 {
 #ifdef DBL_USE_MYSQL
@@ -66,7 +57,6 @@ void DbSettingDialog::OnMySqlOkClick(wxCommandEvent& event)
 		m_pParent->AddDbConnection(new DbConnection(adapt, serverName));
 
 		m_pParent->SetServer(serverName);
-		Destroy();
 	} catch (DatabaseLayerException& e) {
 		wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
 		wxMessageDialog dlg(this,errorMessage,_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
@@ -94,7 +84,6 @@ void DbSettingDialog::OnSqliteOkClick(wxCommandEvent& event)
 		m_pParent->AddDbConnection(new DbConnection(pAdapt, serverName));
 		
 		m_pParent->SetServer(serverName);
-		Destroy();
 
 	} catch (DatabaseLayerException& e) {
 		wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
@@ -165,7 +154,6 @@ void DbSettingDialog::OnPgOkClick(wxCommandEvent& event)
 		m_pParent->AddDbConnection(new DbConnection(adapt, serverName));
 
 		m_pParent->SetServer(serverName);
-		Destroy();
 	} catch (DatabaseLayerException& e) {
 		wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
 		wxMessageDialog dlg(this,errorMessage,_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
@@ -245,8 +233,20 @@ void DbSettingDialog::OnDlgOK(wxCommandEvent& event)
 		OnPgOkClick(event);
 		break;
 	default:
-		return;
+		break;
 	}
+
+	// Save all the connections
+	DoSaveSqliteHistory();
+	
+#ifdef DBL_USE_MYSQL
+	DoSaveMySQLHistory();
+#endif
+
+#ifdef DBL_USE_POSTGRES
+	DoSavePgSQLHistory();
+#endif
+	event.Skip();
 }
 
 void DbSettingDialog::DoSaveSqliteHistory()

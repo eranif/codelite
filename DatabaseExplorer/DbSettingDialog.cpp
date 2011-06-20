@@ -196,6 +196,7 @@ void DbSettingDialog::OnItemActivated(wxListEvent& event)
 
 	m_filePickerSqlite->SetPath( GetColumnText(m_listCtrlRecentFiles, (int)selecteditem, 0) );
 	OnSqliteOkClick(dummy);
+	Close();
 }
 
 void DbSettingDialog::OnItemKeyDown(wxListEvent& event)

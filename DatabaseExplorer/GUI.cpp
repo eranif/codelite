@@ -262,43 +262,22 @@ _AdapterSelectDlg::~_AdapterSelectDlg()
 
 _DbViewerPanel::_DbViewerPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
 {
-	wxFlexGridSizer* fgSizer18;
-	fgSizer18 = new wxFlexGridSizer( 1, 1, 0, 0 );
-	fgSizer18->AddGrowableCol( 0 );
-	fgSizer18->AddGrowableRow( 0 );
-	fgSizer18->SetFlexibleDirection( wxBOTH );
-	fgSizer18->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	wxBoxSizer* bSizer28;
+	bSizer28 = new wxBoxSizer( wxVERTICAL );
 	
-	m_splitterPanels = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME );
-	m_panelData = new wxPanel( m_splitterPanels, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer4;
-	bSizer4 = new wxBoxSizer( wxVERTICAL );
-	
-	m_toolBar1 = new wxToolBar( m_panelData, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER|wxNO_BORDER ); 
+	m_toolBar1 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER|wxNO_BORDER ); 
 	m_toolBar1->Realize(); 
 	
-	bSizer4->Add( m_toolBar1, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
+	bSizer28->Add( m_toolBar1, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 	
-	m_treeDatabases = new wxTreeCtrl( m_panelData, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_LINES_AT_ROOT );
+	m_treeDatabases = new wxTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_LINES_AT_ROOT );
 	m_treeDatabases->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 	
-	bSizer4->Add( m_treeDatabases, 1, wxEXPAND, 5 );
+	bSizer28->Add( m_treeDatabases, 1, wxEXPAND, 5 );
 	
-	m_panelData->SetSizer( bSizer4 );
-	m_panelData->Layout();
-	bSizer4->Fit( m_panelData );
-	m_panelThumb = new wxPanel( m_splitterPanels, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_thmSizer = new wxBoxSizer( wxVERTICAL );
-	
-	m_panelThumb->SetSizer( m_thmSizer );
-	m_panelThumb->Layout();
-	m_thmSizer->Fit( m_panelThumb );
-	m_splitterPanels->SplitHorizontally( m_panelData, m_panelThumb, -1 );
-	fgSizer18->Add( m_splitterPanels, 1, wxEXPAND, 5 );
-	
-	this->SetSizer( fgSizer18 );
+	this->SetSizer( bSizer28 );
 	this->Layout();
-	fgSizer18->Fit( this );
+	bSizer28->Fit( this );
 	
 	// Connect Events
 	m_treeDatabases->Connect( wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler( _DbViewerPanel::OnDnDStart ), NULL, this );

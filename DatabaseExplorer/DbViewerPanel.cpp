@@ -24,11 +24,13 @@ DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pMa
 	m_pDbAdapter = NULL;
 	m_pConnections = new xsSerializable();
 
-	m_pThumbnail = new wxSFThumbnail(m_panelThumb);
-	m_thmSizer->Add(m_pThumbnail, 1, wxEXPAND, 0);
-	m_splitterPanels->SetSashPosition(-1);
-	m_splitterPanels->UpdateSize();
-	m_thmSizer->Layout();
+	m_pThumbnail = new wxSFThumbnail(this);
+	m_pThumbnail->SetSizeHints(wxSize(-1, 200));
+	
+	GetSizer()->Add(m_pThumbnail, 0, wxEXPAND);
+	GetSizer()->Hide(m_pThumbnail);
+	
+	GetSizer()->Layout();
 	
 	// replace the icons...
 	m_toolBar1->AddTool( wxID_CONNECT, _("Open connection"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/connect")), wxNullBitmap, wxITEM_NORMAL, _("Open new connection"), _("Open new connection"), NULL ); 
@@ -748,11 +750,11 @@ void DbViewerPanel::InitStyledTextCtrl(wxScintilla *sci)
 void DbViewerPanel::OnShowThumbnail(wxCommandEvent& e)
 {
 	if(e.IsChecked()) {
-		m_splitterPanels->SetSashPosition(m_panelThumb->GetSize().GetHeight());
+		GetSizer()->Show(m_pThumbnail);
 		
 	} else {
-		m_splitterPanels->SetSashPosition(-1);
+		GetSizer()->Hide(m_pThumbnail);
 		
 	}
-	m_splitterPanels->UpdateSize();
+	GetSizer()->Layout();
 }

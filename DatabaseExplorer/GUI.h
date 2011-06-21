@@ -175,12 +175,8 @@ class _DbViewerPanel : public wxPanel
 	private:
 	
 	protected:
-		wxSplitterWindow* m_splitterPanels;
-		wxPanel* m_panelData;
 		wxToolBar* m_toolBar1;
 		wxTreeCtrl* m_treeDatabases;
-		wxPanel* m_panelThumb;
-		wxBoxSizer* m_thmSizer;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnDnDStart( wxTreeEvent& event ) { event.Skip(); }

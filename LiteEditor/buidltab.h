@@ -115,7 +115,8 @@ private:
 	void DoProcessLine      (const wxString &text, int lineno);
 	void MarkEditor         (LEditor *editor);
 	std::map<int,LineInfo>::iterator GetNextBadLine();
-
+	void DoStripErrorLine  (wxString &errstr);
+	
 	// Event handlers
 	void OnActiveEditorChanged(wxCommandEvent   &e);
 	void OnBuildStarted       (wxCommandEvent   &e);

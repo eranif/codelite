@@ -76,10 +76,6 @@ public:
 		m_server = server;
 	}
 
-	wxSplitterWindow *GetSplitter() {
-		return m_splitterPanels;
-	}
-
 	virtual void OnConncectClick(wxCommandEvent& event);
 	virtual void OnConncectUI(wxUpdateUIEvent& event);
 	virtual void OnItemActivate(wxTreeEvent& event);

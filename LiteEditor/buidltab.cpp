@@ -544,14 +544,7 @@ void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 
 void BuildTab::OnBuildAddLine ( wxCommandEvent &e )
 {
-//	e.Skip();
 	AppendText ( e.GetString() );
-//    if (e.GetInt() == QueueCommand::CustomBuild && e.GetString().Contains(wxGetTranslation(BUILD_PROJECT_PREFIX)) && !m_lineInfo.empty()) {
-//        // try to show more specific progress in custom builds
-//        LineInfo &info = m_lineInfo.rbegin()->second;
-//        Frame::Get()->SetStatusMessage(wxString::Format(wxT("Building %s (%s)"),
-//                                       info.project.c_str(), info.configuration.c_str()), 3, XRCID("build"));
-//    }
 }
 
 void BuildTab::OnBuildEnded ( wxCommandEvent &e )
@@ -706,16 +699,9 @@ wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno, wxMemor
 	for ( ; i1 != i2;  i1++ ) {
 		std::map<int,LineInfo>::iterator i = m_lineInfo.find ( i1->second ) ;
 		if ( i != m_lineInfo.end() && i->second.linenum == lineno && (i->second.linecolor == wxSCI_LEX_GCC_ERROR || i->second.linecolor == wxSCI_LEX_GCC_WARNING )) {
-			static wxRegEx reLineCol(wxT("^(:)?([0-9]+) *(:([0-9]+) *)?([:,])?")); // many compilers are using line:col: before the actual message
-			
 			wxString text = i->second.linetext.Mid(i->second.filestart+i->second.filelen);
-			text.Trim().Trim(false);
-			
-			if( reLineCol.Matches(text) ) {
-				reLineCol.ReplaceAll(&text, wxT(""));
-			}
-
-			wxString tmpTip (wxT(" ") + text.Trim(false).Trim() + wxT("\n"));
+			DoStripErrorLine(text);
+			wxString tmpTip (text.Trim(false).Trim() + wxT("\n"));
 
 #if defined(__WXGTK__) || defined (__WXMAC__)
 			// Remove any non ascii characters from the tip
@@ -873,12 +859,25 @@ void BuildTab::DoProcessLine(const wxString& text, int lineno)
 	}
 
 	if ( info.linecolor != wxSCI_LEX_GCC_OUTPUT ) {
-		m_lineInfo[lineno] = info;
-		m_lineMap[text] = lineno;
-		if (!info.filename.IsEmpty() && (info.linecolor == wxSCI_LEX_GCC_ERROR || info.linecolor == wxSCI_LEX_GCC_WARNING)) {
-			m_fileMap.insert(std::make_pair(info.filename, lineno));
+		
+		wxString errtext = info.linetext.Mid(info.filestart + info.filelen);
+		DoStripErrorLine(errtext);
+		
+		if(errtext.IsEmpty() && info.linecolor == wxSCI_LEX_GCC_WARNING) {
+			// dont collect lines of type:
+			// In file inclued from.. since they dont contain any useful information
+			m_warnCount--;
+			m_lineInfo[lineno] = info;
+			m_lineMap [text]   = lineno;
+			
+		} else {
+			m_lineInfo[lineno] = info;
+			m_lineMap [text]   = lineno;
+			if (!info.filename.IsEmpty() && (info.linecolor == wxSCI_LEX_GCC_ERROR || info.linecolor == wxSCI_LEX_GCC_WARNING)) {
+				m_fileMap.insert(std::make_pair(info.filename, lineno));
+			}
+			clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->AddError ( info );
 		}
-		clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->AddError ( info );
 	}
 }
 
@@ -921,4 +920,15 @@ void BuildTab::OnCollapseAll(wxCommandEvent& e)
 			}
 		}
 	}
+}
+
+void BuildTab::DoStripErrorLine(wxString& errstr)
+{
+	static wxRegEx reLineCol(wxT("^(:)?([0-9]+) *(:([0-9]+) *)?([:,])?")); // many compilers are using line:col: before the actual message
+	errstr.Trim().Trim(false);
+	
+	if( reLineCol.Matches(errstr) ) {
+		reLineCol.ReplaceAll(&errstr, wxT(""));
+	}
+	errstr.Trim().Trim(false);
 }

@@ -25,6 +25,8 @@ protected:
 	wxString                                 m_dbTable;
 	wxString                                 m_cellValue;
 	std::map<std::pair<int, int>, wxString > m_gridValues;
+protected:
+	bool IsBlobColumn(const wxString &str);
 	
 public:
 	SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter, const wxString& dbName,const wxString& dbTable);
@@ -42,7 +44,9 @@ public:
 
 	void OnGridCellRightClick(wxGridEvent& event);
 	void OnCopyCellValue(wxCommandEvent &e);
-	
+
+	virtual void OnGridLabelRightClick(wxGridEvent& event);
+
 	DECLARE_EVENT_TABLE()
 	void OnExecuteSQL(wxCommandEvent &e);
 	void OnEdit      (wxCommandEvent &e);

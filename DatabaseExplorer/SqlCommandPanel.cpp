@@ -22,22 +22,22 @@ SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const 
 	m_pDbAdapter = dbAdapter;
 	m_dbName = dbName;
 	m_dbTable = dbTable;
-	
+
 	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Connect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Connect(wxID_UNDO,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Connect(wxID_REDO,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
-	
-	wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	wxTheApp->Connect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	wxTheApp->Connect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	wxTheApp->Connect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	wxTheApp->Connect(wxID_UNDO,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	wxTheApp->Connect(wxID_REDO,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	
-	
+
+	//wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
+	//wxTheApp->Connect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
+	//wxTheApp->Connect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
+	//wxTheApp->Connect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
+	//wxTheApp->Connect(wxID_UNDO,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
+	//wxTheApp->Connect(wxID_REDO,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
+
+
 	m_scintillaSQL->AddText(wxString::Format(wxT(" -- selected database %s\n"), m_dbName.c_str()));
 	if (!dbTable.IsEmpty()) {
 		m_scintillaSQL->AddText(m_pDbAdapter->GetDefaultSelect(m_dbName, m_dbTable));
@@ -54,14 +54,14 @@ SQLCommandPanel::~SQLCommandPanel()
 	wxTheApp->Disconnect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Disconnect(wxID_UNDO,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Disconnect(wxID_REDO,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
-	
-	wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	wxTheApp->Disconnect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	wxTheApp->Disconnect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	wxTheApp->Disconnect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	wxTheApp->Disconnect(wxID_UNDO,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	wxTheApp->Disconnect(wxID_REDO,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	
+
+	//wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
+	//wxTheApp->Disconnect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
+	//wxTheApp->Disconnect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
+	//wxTheApp->Disconnect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
+	//wxTheApp->Disconnect(wxID_UNDO,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
+	//wxTheApp->Disconnect(wxID_REDO,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
+
 	delete m_pDbAdapter;
 }
 
@@ -83,8 +83,10 @@ void SQLCommandPanel::ExecuteSql()
 {
 	wxBusyInfo infoDlg(_("Executing sql..."), wxTheApp->GetTopWindow());
 	wxTheApp->Yield();
-	
+
 	wxWindowUpdateLocker locker(this);
+	std::set<int> textCols;
+	std::set<int> blobCols;
 	DatabaseLayer* m_pDbLayer = m_pDbAdapter->GetDatabaseLayer(m_dbName);
 	if (m_pDbLayer->IsOpen()) {
 		// test for empty string
@@ -93,12 +95,12 @@ void SQLCommandPanel::ExecuteSql()
 				if (!m_pDbAdapter->GetUseDb(m_dbName).IsEmpty()) m_pDbLayer->RunQuery(m_pDbAdapter->GetUseDb(m_dbName));
 				// run query
 				DatabaseResultSet* pResultSet = m_pDbLayer->RunQueryWithResults(this->m_scintillaSQL->GetText());
-				
+
 				// clear variables
 				m_gridTable->DeleteCols(0,m_gridTable->GetNumberCols());
 				m_gridTable->DeleteRows(0,m_gridTable->GetNumberRows());
 				m_gridValues.clear();
-				
+
 				int rows = 0;
 				int cols = pResultSet->GetMetaData()->GetColumnCount();
 
@@ -118,51 +120,71 @@ void SQLCommandPanel::ExecuteSql()
 						case ResultSetMetaData::COLUMN_INTEGER:
 							value = wxString::Format(wxT("%i"),pResultSet->GetResultInt(i));
 							break;
-							
+
 						case ResultSetMetaData::COLUMN_STRING:
 							value =  pResultSet->GetResultString(i);
 							break;
-							
+
 						case ResultSetMetaData::COLUMN_UNKNOWN:
 							value = pResultSet->GetResultString(i);
 							break;
-							
-						case ResultSetMetaData::COLUMN_BLOB:
-						{
-							wxMemoryBuffer buffer;
-							pResultSet->GetResultBlob(i, buffer);
-							value = wxString::Format(wxT("BLOB (Size:%u)"), buffer.GetDataLen());
+
+						case ResultSetMetaData::COLUMN_BLOB: {
+							if(textCols.find(i) != textCols.end()) {
+								// this column should be displayed as TEXT rather than BLOB
+								value = pResultSet->GetResultString(i);
+								
+							} else if(blobCols.find(i) != blobCols.end()) {
+								// this column should be displayed as BLOB
+								wxMemoryBuffer buffer;
+								pResultSet->GetResultBlob(i, buffer);
+								value = wxString::Format(wxT("BLOB (Size:%u)"), buffer.GetDataLen());
+								
+							} else {
+								// first time
+								wxString strCol = pResultSet->GetResultString(i);
+								if(IsBlobColumn(strCol)) {
+									blobCols.insert(i);
+									wxMemoryBuffer buffer;
+									pResultSet->GetResultBlob(i, buffer);
+									value = wxString::Format(wxT("BLOB (Size:%u)"), buffer.GetDataLen());
+									
+								} else {
+									textCols.insert(i);
+									value = strCol;
+								}
+							}
 							break;
 						}
 						case ResultSetMetaData::COLUMN_BOOL:
 							value = wxString::Format(wxT("%b"),pResultSet->GetResultBool(i));
 							break;
-							
+
 						case ResultSetMetaData::COLUMN_DATE:
 							value = pResultSet->GetResultDate(i).Format();
 							break;
-							
+
 						case ResultSetMetaData::COLUMN_DOUBLE:
 							value = wxString::Format(wxT("%f"),pResultSet->GetResultDouble(i));
 							break;
-							
+
 						case ResultSetMetaData::COLUMN_NULL:
 							value = wxT("NULL");
 							break;
-							
+
 						default:
 							value = pResultSet->GetResultString(i);
 							break;
 						}
-						
+
 						m_gridValues[std::make_pair<int, int>(rows,  i-1)] = value;
-						
+
 						// truncate the string to a reasonable string
 						if(value.Length() > 100) {
 							value = value.Mid(0, 100);
 							value.Append(wxT("..."));
 						}
-						
+
 						// Convert all whitespace chars into visible ones
 						value.Replace(wxT("\n"), wxT("\\n"));
 						value.Replace(wxT("\r"), wxT("\\r"));
@@ -171,14 +193,14 @@ void SQLCommandPanel::ExecuteSql()
 					}
 					rows++;
 				}
-				
+
 				m_pDbLayer->CloseResultSet(pResultSet);
 				m_gridTable->AutoSize();
-				
+
 				// show result status
 				m_labelStatus->SetLabel(wxString::Format(_("Result: %i rows"),rows));
 				Layout();
-				
+
 			} catch (DatabaseLayerException& e) {
 				// for some reason an exception is thrown even if the error code is 0...
 				if(e.GetErrorCode() != 0) {
@@ -186,11 +208,11 @@ void SQLCommandPanel::ExecuteSql()
 					wxMessageDialog dlg(this,errorMessage,_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
 					dlg.ShowModal();
 				}
-				
+
 			} catch( ... ) {
 				wxMessageDialog dlg(this,_("Unknown error."),_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
 				dlg.ShowModal();
-				
+
 			}
 		}
 
@@ -243,16 +265,28 @@ void SQLCommandPanel::OnTemplatesBtnClick(wxCommandEvent& event)
 }
 void SQLCommandPanel::OnPopupClick(wxCommandEvent& evt)
 {
-
+	wxString text = m_scintillaSQL->GetText();
+	text.Trim().Trim(false);
+	
+	text.Append(wxT("\n"));
+	
 	if (evt.GetId() == IDR_SQLCOMMAND_SELECT) {
-		m_scintillaSQL->AddText(wxT("SELECT * FROM TableName\n"));
+		text << wxT("SELECT * FROM TableName\n");
+		
 	} else	if (evt.GetId() == IDR_SQLCOMMAND_INSERT) {
-		m_scintillaSQL->AddText(wxT("INSERT INTO TableName (ColumnA, ColumnB) VALUES (1,'Test text')\n"));
+		text << wxT("INSERT INTO TableName (ColumnA, ColumnB) VALUES (1,'Test text')\n");
+		
 	} else	if (evt.GetId() == IDR_SQLCOMMAND_UPDATE) {
-		m_scintillaSQL->AddText(wxT("UPDATE TableName SET ColumnA = 2, ColumnB = 'Second text' WHERE ID = 1\n"));
+		text <<  wxT("UPDATE TableName SET ColumnA = 2, ColumnB = 'Second text' WHERE ID = 1\n");
+		
 	} else	if (evt.GetId() == IDR_SQLCOMMAND_DELETE) {
-		m_scintillaSQL->AddText(wxT("DELETE FROM TableName WHERE ID = 1\n"));
+		text << wxT("DELETE FROM TableName WHERE ID = 1\n");
 	}
+	
+	m_scintillaSQL->SetText(text);
+	m_scintillaSQL->SetSelectionStart(m_scintillaSQL->GetLength() - 1);
+	m_scintillaSQL->SetSelectionEnd  (m_scintillaSQL->GetLength() - 1);
+	m_scintillaSQL->SetFocus();
 }
 
 void SQLCommandPanel::OnExecuteSQL(wxCommandEvent& e)
@@ -264,15 +298,15 @@ void SQLCommandPanel::OnExecuteSQL(wxCommandEvent& e)
 void SQLCommandPanel::OnGridCellRightClick(wxGridEvent& event)
 {
 	event.Skip();
-	
+
 	// Keep the current cell's value (taken from the map and NOT from the UI)
 	std::map<std::pair<int, int>, wxString >::const_iterator iter = m_gridValues.find(std::make_pair<int, int>(event.GetRow(), event.GetCol()));
 	if(iter == m_gridValues.end())
 		return;
 
 	m_cellValue = iter->second;
-	
-	wxMenu menu; 
+
+	wxMenu menu;
 	menu.Append (XRCID("db_copy_cell_value"), _("Copy value to clipboard"));
 	menu.Connect(XRCID("db_copy_cell_value"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(SQLCommandPanel::OnCopyCellValue), NULL, this);
 	m_gridTable->PopupMenu( &menu );
@@ -295,13 +329,13 @@ void SQLCommandPanel::OnEdit(wxCommandEvent& e)
 				m_scintillaSQL->Redo();
 			}
 			break;
-			
+
 		case wxID_UNDO:
 			if(m_scintillaSQL->CanUndo()) {
 				m_scintillaSQL->Undo();
 			}
 			break;
-			
+
 		case wxID_CUT:
 			if((m_scintillaSQL->GetSelectionStart() - m_scintillaSQL->GetSelectionEnd()) != 0) {
 				m_scintillaSQL->Cut();
@@ -323,42 +357,57 @@ void SQLCommandPanel::OnEdit(wxCommandEvent& e)
 		}
 	} else {
 		e.Skip();
-		
+
 	}
 }
 
 void SQLCommandPanel::OnEditUI(wxUpdateUIEvent& e)
 {
-	if(wxWindow::FindFocus() == m_scintillaSQL) {
-		bool enable = false;
-		switch(e.GetId()) {
-		case wxID_REDO:
-			enable = m_scintillaSQL->CanRedo();
-			break;
-			
-		case wxID_UNDO:
-			enable = m_scintillaSQL->CanUndo();
-			break;
-			
-		case wxID_COPY:
-		case wxID_CUT:
-			enable = ((m_scintillaSQL->GetSelectionStart() - m_scintillaSQL->GetSelectionEnd()) != 0);
-			break;
-		
-		case wxID_PASTE:
-			enable = m_scintillaSQL->CanPaste();
-			break;
-			
-		case wxID_SELECTALL:
-			enable = m_scintillaSQL->GetLength() > 0;
-			break;
-		default:
-			break;
+	wxUnusedVar(e);
+//	if(wxWindow::FindFocus() == m_scintillaSQL) {
+//		bool enable = false;
+//		switch(e.GetId()) {
+//		case wxID_REDO:
+//			enable = m_scintillaSQL->CanRedo();
+//			break;
+//
+//		case wxID_UNDO:
+//			enable = m_scintillaSQL->CanUndo();
+//			break;
+//
+//		case wxID_COPY:
+//		case wxID_CUT:
+//			enable = ((m_scintillaSQL->GetSelectionStart() - m_scintillaSQL->GetSelectionEnd()) != 0);
+//			break;
+//
+//		case wxID_PASTE:
+//			enable = m_scintillaSQL->CanPaste();
+//			break;
+//
+//		case wxID_SELECTALL:
+//			enable = m_scintillaSQL->GetLength() > 0;
+//			break;
+//		default:
+//			break;
+//		}
+//		e.Enable(enable);
+//		e.StopPropagation();
+//	} else {
+//		e.Skip();
+//	}
+}
+
+void SQLCommandPanel::OnGridLabelRightClick(wxGridEvent& event)
+{
+	event.Skip();
+}
+
+bool SQLCommandPanel::IsBlobColumn(const wxString &str)
+{
+	for(size_t i=0; i<str.Len(); i++) {
+		if(!wxIsprint(str.GetChar(i))){
+			return true;
 		}
-		e.Enable(enable);
-		
-	} else {
-		e.Skip();
-		
 	}
+	return false;
 }

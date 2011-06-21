@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun  6 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -127,6 +127,7 @@ class _SqlCommandPanel : public wxPanel
 		virtual void OnLoadClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnExecuteClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnGridCellRightClick( wxGridEvent& event ) { event.Skip(); }
+		virtual void OnGridLabelRightClick( wxGridEvent& event ) { event.Skip(); }
 		
 	
 	public:

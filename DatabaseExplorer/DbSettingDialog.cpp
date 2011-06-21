@@ -108,12 +108,7 @@ void DbSettingDialog::OnHistoryClick(wxCommandEvent& event)
 
 void DbSettingDialog::OnHistoryDClick(wxCommandEvent& event)
 {
-	wxUnusedVar(event);
-#ifdef DBL_USE_MYSQL
-	DoFindConnectionByName(DoLoadMySQLHistory(), m_listBox2->GetStringSelection());
-	wxCommandEvent dummy;
-	OnMySqlOkClick(dummy);
-#endif
+	event.Skip();
 }
 
 void DbSettingDialog::LoadHistory()
@@ -178,13 +173,7 @@ void DbSettingDialog::OnPgHistoryClick(wxCommandEvent& event)
 
 void DbSettingDialog::OnPgHistoryDClick(wxCommandEvent& event)
 {
-	wxUnusedVar(event);
-#ifdef DBL_USE_POSTGRES
-	DoFindConnectionByName(DoLoadPgSQLHistory(), m_listBoxPg->GetStringSelection());
-	
-	wxCommandEvent dummy;
-	OnPgOkClick(dummy);
-#endif
+	event.Skip();
 }
 
 void DbSettingDialog::OnItemActivated(wxListEvent& event)

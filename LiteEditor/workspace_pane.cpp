@@ -44,8 +44,6 @@
 #include "tabgroupspane.h"
 #include "workspace_pane.h"
 
-#define OPEN_CONFIG_MGR_STR _("<Open Configuration Manager...>")
-
 WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr)
     : wxPanel(parent)
     , m_caption(caption)
@@ -57,11 +55,6 @@ WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiMan
 
 WorkspacePane::~WorkspacePane()
 {
-	wxTheApp->Disconnect(wxEVT_WORKSPACE_LOADED,         wxCommandEventHandler(WorkspacePane::OnWorkspaceConfig),     NULL, this);
-	wxTheApp->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(WorkspacePane::OnWorkspaceConfig),     NULL, this);
-	wxTheApp->Disconnect(wxEVT_WORKSPACE_CLOSED,         wxCommandEventHandler(WorkspacePane::OnWorkspaceClosed),     NULL, this);
-    wxTheApp->Disconnect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspacePane::OnConfigurationManager),   NULL, this);
-    wxTheApp->Disconnect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspacePane::OnConfigurationManagerUI), NULL, this);
 }
 
 #define IS_DETACHED(name) (detachedPanes.Index(name) != wxNOT_FOUND) ? true : false
@@ -70,24 +63,6 @@ void WorkspacePane::CreateGUIControls()
 {
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
-
-    // selected configuration:
-
-	wxBoxSizer *hsz = new wxBoxSizer(wxHORIZONTAL);
-	mainSizer->Add(hsz, 0, wxEXPAND|wxTOP|wxBOTTOM, 5);
-
-	wxArrayString choices;
-	m_workspaceConfig = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, choices);
-	m_workspaceConfig->SetToolTip(_("Select the workspace build configuration"));
-
-	m_workspaceConfig->Enable(false);
-	m_workspaceConfig->Append(OPEN_CONFIG_MGR_STR);
-	ConnectChoice(m_workspaceConfig, WorkspacePane::OnConfigurationManagerChoice);
-	hsz->Add(m_workspaceConfig, 1, wxEXPAND| wxALL, 1);
-
-#ifdef __WXMAC__
-	m_workspaceConfig->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
-#endif
 
     // add notebook for tabs
 	long bookStyle = wxVB_LEFT | wxAUI_NB_WINDOWLIST_BUTTON;
@@ -171,76 +146,6 @@ void WorkspacePane::CreateGUIControls()
 
 void WorkspacePane::Connect()
 {
-	wxTheApp->Connect(wxEVT_WORKSPACE_LOADED,         wxCommandEventHandler(WorkspacePane::OnWorkspaceConfig),     NULL, this);
-	wxTheApp->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(WorkspacePane::OnWorkspaceConfig),     NULL, this);
-	wxTheApp->Connect(wxEVT_WORKSPACE_CLOSED,         wxCommandEventHandler(WorkspacePane::OnWorkspaceClosed),     NULL, this);
-    wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspacePane::OnConfigurationManager),   NULL, this);
-    wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspacePane::OnConfigurationManagerUI), NULL, this);
-}
-
-void WorkspacePane::OnWorkspaceConfig(wxCommandEvent& e)
-{
-    e.Skip();
-
-    BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
-	std::list<WorkspaceConfigurationPtr> confs = matrix->GetConfigurations();
-
-	m_workspaceConfig->Freeze();
-    m_workspaceConfig->Enable(true);
-	m_workspaceConfig->Clear();
-	for (std::list<WorkspaceConfigurationPtr>::iterator iter = confs.begin() ; iter != confs.end(); iter++) {
-		m_workspaceConfig->Append((*iter)->GetName());
-	}
-	if (m_workspaceConfig->GetCount() > 0) {
-        m_workspaceConfig->SetStringSelection(matrix->GetSelectedConfigurationName());
-	}
-	m_workspaceConfig->Append(OPEN_CONFIG_MGR_STR);
-	m_workspaceConfig->Thaw();
-	
-	clMainFrame::Get()->SelectBestEnvSet();
-}
-
-void WorkspacePane::OnWorkspaceClosed(wxCommandEvent& e)
-{
-    e.Skip();
-    m_workspaceConfig->Clear();
-    m_workspaceConfig->Enable(false);
-}
-
-void WorkspacePane::OnConfigurationManagerUI(wxUpdateUIEvent& e)
-{
-	e.Enable(ManagerST::Get()->IsWorkspaceOpen());
-}
-
-void WorkspacePane::OnConfigurationManagerChoice(wxCommandEvent &event)
-{
-	wxString selection = m_workspaceConfig->GetStringSelection();
-	if(selection == OPEN_CONFIG_MGR_STR){
-		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("configuration_manager"));
-		e.SetEventObject(this);
-		ProcessEvent(e);
-		return;
-	}
-
-	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-	matrix->SetSelectedConfigurationName(selection);
-	ManagerST::Get()->SetWorkspaceBuildMatrix(matrix);
-
-	// Set the focus to the active editor if any
-	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-	if(editor)
-		editor->SetActive();
-
-}
-
-void WorkspacePane::OnConfigurationManager(wxCommandEvent& e)
-{
-	wxUnusedVar(e);
-	ConfigurationManagerDlg dlg(this);
-	dlg.ShowModal();
-
-	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-	m_workspaceConfig->SetStringSelection(matrix->GetSelectedConfigurationName());
 }
 
 void WorkspacePane::ClearProgress()

@@ -788,7 +788,7 @@ void clMainFrame::CreateGUIControls(void)
 	m_workspacePane = new WorkspacePane(m_mainPanel, wxT("Workspace View"), &m_mgr);
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
 	              Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
-	              Left().BestSize(250, 300).Layer(1).Position(0).CloseButton(true));
+	              Left().BestSize(250, 300).Layer(1).Position(0).CloseButton(true).PaneBorder(false));
 	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace View"));
 
 	//add the debugger locals tree, make it hidden by default

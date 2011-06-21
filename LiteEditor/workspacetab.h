@@ -34,32 +34,38 @@ class WorkspaceTab : public wxPanel
 	FileViewTree *m_fileView;
     wxString      m_caption;
     bool          m_isLinkedToEditor;
-
+	wxChoice*     m_workspaceConfig;
+	
+protected:
 	void CreateGUIControls();
     void ConnectEvents();
+	void DoWorkspaceConfig();
+	
+	void OnLinkEditor                (wxCommandEvent &e);
+	void OnToggleMultiSelection      (wxCommandEvent &e);
+	void OnCollapseAll               (wxCommandEvent &e);
+	void OnCollapseAllUI             (wxUpdateUIEvent&e);
+	void OnGoHome                    (wxCommandEvent &e);
+	void OnGoHomeUI                  (wxUpdateUIEvent&e);
+	void OnProjectSettingsUI         (wxUpdateUIEvent&e);
+	void OnProjectSettings           (wxCommandEvent &e);
+    void OnShowFile                  (wxCommandEvent &e);
+    void OnShowFileUI                (wxUpdateUIEvent&e);
+	void OnShowProjectListPopup      (wxCommandEvent &e);
+	void OnMenuSelection             (wxCommandEvent &e);
 
-	void OnLinkEditor           (wxCommandEvent  &e);
-	void OnToggleMultiSelection (wxCommandEvent  &e);
-	void OnCollapseAll          (wxCommandEvent  &e);
-	void OnCollapseAllUI        (wxUpdateUIEvent &e);
-	void OnGoHome               (wxCommandEvent  &e);
-	void OnGoHomeUI             (wxUpdateUIEvent &e);
-	void OnProjectSettingsUI    (wxUpdateUIEvent &e);
-	void OnProjectSettings      (wxCommandEvent  &e);
-    void OnShowFile             (wxCommandEvent  &e);
-    void OnShowFileUI           (wxUpdateUIEvent &e);
-	void OnShowProjectListPopup (wxCommandEvent  &e);
-	void OnMenuSelection        (wxCommandEvent  &e);
-
-    void OnWorkspaceLoaded      (wxCommandEvent  &e);
-    void OnWorkspaceClosed      (wxCommandEvent  &e);
-    void OnProjectAdded         (wxCommandEvent  &e);
-    void OnProjectRemoved       (wxCommandEvent  &e);
-    void OnProjectFileAdded     (wxCommandEvent  &e);
-    void OnProjectFileRemoved   (wxCommandEvent  &e);
-    void OnActiveEditorChanged  (wxCommandEvent  &e);
-    void OnEditorClosing        (wxCommandEvent  &e);
-
+    void OnWorkspaceLoaded           (wxCommandEvent &e);
+    void OnWorkspaceClosed           (wxCommandEvent &e);
+    void OnProjectAdded              (wxCommandEvent &e);
+    void OnProjectRemoved            (wxCommandEvent &e);
+    void OnProjectFileAdded          (wxCommandEvent &e);
+    void OnProjectFileRemoved        (wxCommandEvent &e);
+    void OnActiveEditorChanged       (wxCommandEvent &e);
+    void OnEditorClosing             (wxCommandEvent &e);
+	void OnWorkspaceConfig           (wxCommandEvent &e);
+	void OnConfigurationManagerChoice(wxCommandEvent &e);
+	void OnConfigurationManager      (wxCommandEvent& e);
+	
 public:
 	WorkspaceTab(wxWindow *parent, const wxString &caption);
 	~WorkspaceTab();

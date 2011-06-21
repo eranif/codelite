@@ -274,7 +274,7 @@ _DbViewerPanel::_DbViewerPanel( wxWindow* parent, wxWindowID id, const wxPoint& 
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
 	
-	m_toolBar1 = new wxToolBar( m_panelData, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxNO_BORDER ); 
+	m_toolBar1 = new wxToolBar( m_panelData, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER|wxNO_BORDER ); 
 	m_toolBar1->Realize(); 
 	
 	bSizer4->Add( m_toolBar1, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
@@ -422,12 +422,8 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	fgSizer3->Fit( m_MySqlPanel );
 	m_notebook2->AddPage( m_MySqlPanel, wxT("MySql"), false );
 	m_PostgrePanel = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxFlexGridSizer* fgSizer32;
-	fgSizer32 = new wxFlexGridSizer( 0, 1, 0, 0 );
-	fgSizer32->AddGrowableCol( 0 );
-	fgSizer32->AddGrowableRow( 1 );
-	fgSizer32->SetFlexibleDirection( wxBOTH );
-	fgSizer32->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	wxBoxSizer* bSizer_1;
+	bSizer_1 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer42;
 	fgSizer42 = new wxFlexGridSizer( 0, 2, 0, 0 );
@@ -470,17 +466,17 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_txPgDatabase = new wxTextCtrl( m_PostgrePanel, wxID_ANY, wxT("postgres"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer42->Add( m_txPgDatabase, 1, wxALL|wxEXPAND, 5 );
 	
-	fgSizer32->Add( fgSizer42, 1, wxEXPAND, 5 );
+	bSizer_1->Add( fgSizer42, 0, wxEXPAND, 5 );
 	
 	m_staticline7 = new wxStaticLine( m_PostgrePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	fgSizer32->Add( m_staticline7, 0, wxALL|wxEXPAND, 5 );
+	bSizer_1->Add( m_staticline7, 0, wxALL|wxEXPAND, 5 );
 	
 	m_listBoxPg = new wxListBox( m_PostgrePanel, wxID_PG_LIST, wxDefaultPosition, wxSize( -1,100 ), 0, NULL, 0 ); 
-	fgSizer32->Add( m_listBoxPg, 0, wxALL|wxEXPAND, 5 );
+	bSizer_1->Add( m_listBoxPg, 1, wxALL|wxEXPAND, 5 );
 	
-	m_PostgrePanel->SetSizer( fgSizer32 );
+	m_PostgrePanel->SetSizer( bSizer_1 );
 	m_PostgrePanel->Layout();
-	fgSizer32->Fit( m_PostgrePanel );
+	bSizer_1->Fit( m_PostgrePanel );
 	m_notebook2->AddPage( m_PostgrePanel, wxT("PostgreSQL"), false );
 	
 	bSizer4->Add( m_notebook2, 1, wxEXPAND | wxALL, 5 );

@@ -193,12 +193,6 @@ class _DbViewerPanel : public wxPanel
 		
 		_DbViewerPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~_DbViewerPanel();
-		
-		void m_splitterPanelsOnIdle( wxIdleEvent& )
-		{
-			m_splitterPanels->SetSashPosition( 305 );
-			m_splitterPanels->Disconnect( wxEVT_IDLE, wxIdleEventHandler( _DbViewerPanel::m_splitterPanelsOnIdle ), NULL, this );
-		}
 	
 };
 

@@ -326,6 +326,7 @@ class DiffDialogBase : public wxDialog
 		wxTextCtrl* m_textCtrlFromRev;
 		wxStaticText* m_staticText26;
 		wxTextCtrl* m_textCtrlToRev;
+		
 		wxStaticLine* m_staticline6;
 		wxButton* m_button20;
 		wxButton* m_button19;

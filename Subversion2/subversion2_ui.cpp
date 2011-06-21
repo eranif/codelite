@@ -20,12 +20,12 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	wxArrayString m_choiceRootDirChoices;
 	m_choiceRootDir = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceRootDirChoices, 0 );
 	m_choiceRootDir->SetSelection( 0 );
-	bSizer2->Add( m_choiceRootDir, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	bSizer2->Add( m_choiceRootDir, 1, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 	
 	m_buttonChangeRootDir = new wxButton( this, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
 	m_buttonChangeRootDir->SetToolTip( _("Select a different root directory") );
 	
-	bSizer2->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	bSizer2->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 2 );
 	
 	mainSizer->Add( bSizer2, 0, wxEXPAND, 5 );
 	
@@ -200,7 +200,9 @@ SvnCopyDialogBase::SvnCopyDialogBase( wxWindow* parent, wxWindowID id, const wxS
 	m_staticText5->Wrap( -1 );
 	bSizer7->Add( m_staticText5, 0, wxALL, 5 );
 	
-	m_textCtrlComment = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2 );
+	m_textCtrlComment = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlComment->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
 	bSizer7->Add( m_textCtrlComment, 1, wxALL|wxEXPAND, 5 );
 	
 	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -651,7 +653,7 @@ SvnCheckoutDialogBase::SvnCheckoutDialogBase( wxWindow* parent, wxWindowID id, c
 	bSizer19->Add( sbSizer4, 0, wxEXPAND|wxALL, 5 );
 	
 	
-	bSizer19->Add( 0, 0, 1, wxALL|wxEXPAND, 5 );
+	bSizer19->Add( 0, 0, 1, wxEXPAND|wxBOTTOM, 5 );
 	
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxHORIZONTAL );
@@ -663,7 +665,7 @@ SvnCheckoutDialogBase::SvnCheckoutDialogBase( wxWindow* parent, wxWindowID id, c
 	m_button15 = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer20->Add( m_button15, 0, wxALL, 5 );
 	
-	bSizer19->Add( bSizer20, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+	bSizer19->Add( bSizer20, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	this->SetSizer( bSizer19 );
 	this->Layout();
@@ -715,7 +717,7 @@ SvnLogDialog::SvnLogDialog( wxWindow* parent, wxWindowID id, const wxString& tit
 	m_to = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer9->Add( m_to, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer21->Add( fgSizer9, 0, wxEXPAND|wxALL, 5 );
+	bSizer21->Add( fgSizer9, 0, wxEXPAND, 5 );
 	
 	
 	bSizer21->Add( 0, 0, 1, wxEXPAND|wxALL, 5 );
@@ -776,7 +778,10 @@ DiffDialogBase::DiffDialogBase( wxWindow* parent, wxWindowID id, const wxString&
 	m_textCtrlToRev = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	fgSizer9->Add( m_textCtrlToRev, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer25->Add( fgSizer9, 1, wxEXPAND, 5 );
+	bSizer25->Add( fgSizer9, 0, wxEXPAND, 5 );
+	
+	
+	bSizer25->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	m_staticline6 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer25->Add( m_staticline6, 0, wxEXPAND | wxALL, 5 );

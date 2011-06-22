@@ -5,10 +5,16 @@
   <VirtualDirectory Name="src">
     <File Name="main.cpp"/>
     <File Name="input-file.txt"/>
+    <File Name="clang_output_parser_api.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Grammer">
     <File Name="grammer.y"/>
     <File Name="grammer.l"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="GeneratedCode">
+    <File Name="clang_result_lexer.cpp"/>
+    <File Name="clang_result_parser.cpp"/>
+    <File Name="clang_result_parser.h"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -33,7 +39,10 @@
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy clang_*.h ..\LiteEditor</Command>
+        <Command Enabled="yes">copy clang_*.cpp ..\LiteEditor</Command>
+      </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
         <CleanCommand/>
@@ -88,9 +97,4 @@ clang_result_lexer.cpp: grammer.l
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="GeneratedCode">
-    <File Name="clang_result_lexer.cpp"/>
-    <File Name="clang_result_parser.cpp"/>
-    <File Name="clang_result_parser.h"/>
-  </VirtualDirectory>
 </CodeLite_Project>

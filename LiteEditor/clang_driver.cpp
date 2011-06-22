@@ -238,6 +238,7 @@ void ClangDriver::OnCodeCompletionCompleted()
 	if(fp.IsOpened()) {
 		fp.ReadAll( &output );
 	}
+	fp.Close();
 	wxRemoveFile(filename);
 	
 	CL_DEBUG(wxT("ClangDriver::OnCodeCompletionCompleted() called"));

@@ -1,209 +1,53 @@
-COMPLETION: AddPendingEvent : [#void#][#wxEvtHandler::#]AddPendingEvent(<#wxEvent &event#>)
-COMPLETION: AllocExclusive : [#void#][#wxObject::#]AllocExclusive()
-COMPLETION: argc : [#int#][#wxAppConsole::#]argc
-COMPLETION: argv : [#wxChar **#][#wxAppConsole::#]argv
-COMPLETION: CallOnInit : [#bool#][#wxAppConsole::#]CallOnInit()
-COMPLETION: CheckBuildOptions : [#bool#][#wxAppConsole::#]CheckBuildOptions(<#const char *optionsSignature#>, <#const char *componentName#>)
-COMPLETION: CheckSingularity : [#bool#]CheckSingularity(<#const wxCmdLineParser &parser#>, <#const wxString &curdir#>)
-COMPLETION: CleanUp : [#void#][#wxApp::#]CleanUp()
-COMPLETION: CleanUp (Hidden) : [#void#]wxAppBase::CleanUp()
-COMPLETION: CleanUp (Hidden) : [#void#]wxAppConsole::CleanUp()
-COMPLETION: ClearEventHashTable : [#void#][#wxEvtHandler::#]ClearEventHashTable()
-COMPLETION: ClearEventLocker : [#void#][#wxEvtHandler::#]ClearEventLocker()
-COMPLETION: CloneRefData : [#wxObjectRefData *#][#wxObject::#]CloneRefData(<#const wxObjectRefData *data#>)[# const#]
-COMPLETION: CodeLiteApp : CodeLiteApp::
-COMPLETION: Connect : [#void#][#wxEvtHandler::#]Connect(<#int winid#>, <#int lastId#>, <#int eventType#>, <#wxObjectEventFunction func#>{#, <#wxObject *userData#>{#, <#wxEvtHandler *eventSink#>#}#})
-COMPLETION: Connect : [#void#][#wxEvtHandler::#]Connect(<#int winid#>, <#int eventType#>, <#wxObjectEventFunction func#>{#, <#wxObject *userData#>{#, <#wxEvtHandler *eventSink#>#}#})
-COMPLETION: Connect : [#void#][#wxEvtHandler::#]Connect(<#int eventType#>, <#wxObjectEventFunction func#>{#, <#wxObject *userData#>{#, <#wxEvtHandler *eventSink#>#}#})
-COMPLETION: CopySettings : [#bool#]CopySettings(<#const wxString &destDir#>, <#wxString &installPath#>)
-COMPLETION: CreateRefData : [#wxObjectRefData *#][#wxObject::#]CreateRefData()[# const#]
-COMPLETION: CreateTraits : [#wxAppTraits *#][#wxAppBase::#]CreateTraits()
-COMPLETION: CreateTraits (Hidden) : [#wxAppTraits *#]wxAppConsole::CreateTraits()
-COMPLETION: DeletePendingObjects : [#void#][#wxAppBase::#]DeletePendingObjects()
-COMPLETION: Disconnect : [#bool#][#wxEvtHandler::#]Disconnect(<#int winid#>, <#int lastId#>, <#wxEventType eventType#>{#, <#wxObjectEventFunction func#>{#, <#wxObject *userData#>{#, <#wxEvtHandler *eventSink#>#}#}#})
-COMPLETION: Disconnect : [#bool#][#wxEvtHandler::#]Disconnect({#<#int winid#>{#, <#wxEventType eventType#>{#, <#wxObjectEventFunction func#>{#, <#wxObject *userData#>{#, <#wxEvtHandler *eventSink#>#}#}#}#}#})
-COMPLETION: Disconnect : [#bool#][#wxEvtHandler::#]Disconnect(<#wxEventType eventType#>, <#wxObjectEventFunction func#>{#, <#wxObject *userData#>{#, <#wxEvtHandler *eventSink#>#}#})
-COMPLETION: Dispatch : [#bool#][#wxAppBase::#]Dispatch()
-COMPLETION: DoFindMenuFile : [#wxString#]DoFindMenuFile(<#const wxString &installDirectory#>, <#const wxString &requiredVersion#>)
-COMPLETION: DoGetClientData : [#void *#][#wxEvtHandler::#]DoGetClientData()[# const#]
-COMPLETION: DoGetClientObject : [#wxClientData *#][#wxEvtHandler::#]DoGetClientObject()[# const#]
-COMPLETION: DoSetClientData : [#void#][#wxEvtHandler::#]DoSetClientData(<#void *data#>)
-COMPLETION: DoSetClientObject : [#void#][#wxEvtHandler::#]DoSetClientObject(<#wxClientData *data#>)
-COMPLETION: Exit : [#void#][#wxAppBase::#]Exit()
-COMPLETION: Exit (Hidden) : [#void#]wxAppConsole::Exit()
-COMPLETION: ExitMainLoop : [#void#][#wxAppBase::#]ExitMainLoop()
-COMPLETION: FilterEvent : [#int#][#wxAppConsole::#]FilterEvent(<#wxEvent &event#>)
-COMPLETION: GetAppName : [#wxString#][#wxAppConsole::#]GetAppName()[# const#]
-COMPLETION: GetClassInfo : [#wxClassInfo *#][#wxApp::#]GetClassInfo()[# const#]
-COMPLETION: GetClassInfo (Hidden) : [#wxClassInfo *#]wxEvtHandler::GetClassInfo()[# const#]
-COMPLETION: GetClassInfo (Hidden) : [#wxClassInfo *#]wxObject::GetClassInfo()[# const#]
-COMPLETION: GetClassName : [#wxString#][#wxAppConsole::#]GetClassName()[# const#]
-COMPLETION: GetClientData : [#void *#][#wxEvtHandler::#]GetClientData()[# const#]
-COMPLETION: GetClientObject : [#wxClientData *#][#wxEvtHandler::#]GetClientObject()[# const#]
-COMPLETION: GetComCtl32Version : [#int#][#wxApp::#]GetComCtl32Version()
-COMPLETION: GetDisplayMode : [#wxVideoMode#][#wxAppBase::#]GetDisplayMode()[# const#]
-COMPLETION: GetDynamicEventTable : [#wxList *#][#wxEvtHandler::#]GetDynamicEventTable()[# const#]
-COMPLETION: GetEventHashTable : [#wxEventHashTable &#][#wxApp::#]GetEventHashTable()[# const#]
-COMPLETION: GetEventHashTable (Hidden) : [#wxEventHashTable &#]wxEvtHandler::GetEventHashTable()[# const#]
-COMPLETION: GetEventTable : [#const wxEventTable *#][#wxApp::#]GetEventTable()[# const#]
-COMPLETION: GetEventTable (Hidden) : [#const wxEventTable *#]wxEvtHandler::GetEventTable()[# const#]
-COMPLETION: GetEvtHandlerEnabled : [#bool#][#wxEvtHandler::#]GetEvtHandlerEnabled()[# const#]
-COMPLETION: GetExitOnFrameDelete : [#bool#][#wxAppBase::#]GetExitOnFrameDelete()[# const#]
-COMPLETION: GetInitializerFunction : [#wxAppInitializerFunction#][#wxAppConsole::#]GetInitializerFunction()
-COMPLETION: GetInstance : [#wxAppConsole *#][#wxAppConsole::#]GetInstance()
-COMPLETION: GetLayoutDirection : [#wxLayoutDirection#][#wxAppBase::#]GetLayoutDirection()[# const#]
-COMPLETION: GetLoadPlugins : [#bool#]GetLoadPlugins()[# const#]
-COMPLETION: GetNextHandler : [#wxEvtHandler *#][#wxEvtHandler::#]GetNextHandler()[# const#]
-COMPLETION: GetParserPaths : [#const wxArrayString &#]GetParserPaths()[# const#]
-COMPLETION: GetPreviousHandler : [#wxEvtHandler *#][#wxEvtHandler::#]GetPreviousHandler()[# const#]
-COMPLETION: GetPrintMode : [#int#][#wxApp::#]GetPrintMode()[# const#]
-COMPLETION: GetPrintMode (Hidden) : [#int#]wxAppBase::GetPrintMode()[# const#]
-COMPLETION: GetRefData : [#wxObjectRefData *#][#wxObject::#]GetRefData()[# const#]
-COMPLETION: GetTopWindow : [#wxWindow *#][#wxAppBase::#]GetTopWindow()[# const#]
-COMPLETION: GetTraits : [#wxAppTraits *#][#wxAppConsole::#]GetTraits()
-COMPLETION: GetUseBestVisual : [#bool#][#wxAppBase::#]GetUseBestVisual()[# const#]
-COMPLETION: GetVendorName : [#const wxString &#][#wxAppConsole::#]GetVendorName()[# const#]
-COMPLETION: HandleEvent : [#void#][#wxAppConsole::#]HandleEvent(<#wxEvtHandler *handler#>, <#wxEventFunction func#>, <#wxEvent &event#>)[# const#]
-COMPLETION: Initialize : [#bool#][#wxApp::#]Initialize(<#int &argc#>, <#wxChar **argv#>)
-COMPLETION: Initialize (Hidden) : [#bool#]wxAppBase::Initialize(<#int &argc#>, <#wxChar **argv#>)
-COMPLETION: Initialize (Hidden) : [#bool#]wxAppConsole::Initialize(<#int &argc#>, <#wxChar **argv#>)
-COMPLETION: Initialized : [#bool#][#wxAppBase::#]Initialized()
-COMPLETION: InitRichEdit : [#bool#][#wxApp::#]InitRichEdit({#<#int version#>#})
-COMPLETION: IsActive : [#bool#][#wxAppBase::#]IsActive()[# const#]
-COMPLETION: IsKindOf : [#bool#][#wxObject::#]IsKindOf(<#wxClassInfo *info#>)[# const#]
-COMPLETION: IsMainLoopRunning : [#bool#][#wxAppBase::#]IsMainLoopRunning()
-COMPLETION: IsMainLoopRunning (Hidden) : [#bool#]wxAppConsole::IsMainLoopRunning()
-COMPLETION: IsSameAs : [#bool#][#wxObject::#]IsSameAs(<#const wxObject &o#>)[# const#]
-COMPLETION: Later : [#enum <anonymous>#][#<anonymous enum at C:\wxWidgets-2.8.12\include/wx/app.h:528:5>::#]Later
-COMPLETION: Lock : [#const wxCriticalSection &#][#wxEvtHandler::#]Lock()[# const#]
-COMPLETION: Lock : [#wxCriticalSection &#][#wxEvtHandler::#]Lock()
-COMPLETION: m_appName : [#wxString#][#wxAppConsole::#]m_appName
-COMPLETION: m_className : [#wxString#][#wxAppConsole::#]m_className
-COMPLETION: m_clientData : [#void *#][#wxEvtHandler::#]m_clientData
-COMPLETION: m_clientDataType : [#wxClientDataType#][#wxEvtHandler::#]m_clientDataType
-COMPLETION: m_clientObject : [#wxClientData *#][#wxEvtHandler::#]m_clientObject
-COMPLETION: m_dynamicEvents : [#wxList *#][#wxEvtHandler::#]m_dynamicEvents
-COMPLETION: m_enabled : [#bool#][#wxEvtHandler::#]m_enabled
-COMPLETION: m_eventsLocker : [#wxCriticalSection *#][#wxEvtHandler::#]m_eventsLocker
-COMPLETION: m_exitOnFrameDelete : [#enum <anonymous>#][#wxAppBase::#]m_exitOnFrameDelete
-COMPLETION: m_forceTrueColour : [#bool#][#wxAppBase::#]m_forceTrueColour
-COMPLETION: m_handler : [#HINSTANCE#]m_handler
-COMPLETION: m_isActive : [#bool#][#wxAppBase::#]m_isActive
-COMPLETION: m_loadPlugins : [#bool#]m_loadPlugins
-COMPLETION: m_locale : [#wxLocale#]m_locale
-COMPLETION: m_mainLoop : [#wxEventLoop *#][#wxAppBase::#]m_mainLoop
-COMPLETION: m_nCmdShow : [#int#][#wxApp::#]m_nCmdShow
-COMPLETION: m_nextHandler : [#wxEvtHandler *#][#wxEvtHandler::#]m_nextHandler
-COMPLETION: m_parserPaths : [#wxArrayString#]m_parserPaths
-COMPLETION: m_pendingEvents : [#wxList *#][#wxEvtHandler::#]m_pendingEvents
-COMPLETION: m_pMainFrame : [#clMainFrame *#]m_pMainFrame
-COMPLETION: m_previousHandler : [#wxEvtHandler *#][#wxEvtHandler::#]m_previousHandler
-COMPLETION: m_printMode : [#int#][#wxApp::#]m_printMode
-COMPLETION: m_refData : [#wxObjectRefData *#][#wxObject::#]m_refData
-COMPLETION: m_singleInstance : [#wxSingleInstanceChecker *#]m_singleInstance
-COMPLETION: m_splash : [#wxSplashScreen *#]m_splash
-COMPLETION: m_topWindow : [#wxWindow *#][#wxAppBase::#]m_topWindow
-COMPLETION: m_traits : [#wxAppTraits *#][#wxAppConsole::#]m_traits
-COMPLETION: m_useBestVisual : [#bool#][#wxAppBase::#]m_useBestVisual
-COMPLETION: m_vendorName : [#wxString#][#wxAppConsole::#]m_vendorName
-COMPLETION: MacOpenFile : [#void#]MacOpenFile(<#const wxString &fileName#>)
-COMPLETION: MainLoop : [#int#][#wxAppBase::#]MainLoop()
-COMPLETION: ms_appInitFn : [#wxAppInitializerFunction#][#wxAppConsole::#]ms_appInitFn
-COMPLETION: ms_appInstance : [#wxAppConsole *#][#wxAppConsole::#]ms_appInstance
-COMPLETION: ms_classInfo : [#wxClassInfo#][#wxApp::#]ms_classInfo
-COMPLETION: ms_classInfo (Hidden) : [#wxClassInfo#]wxEvtHandler::ms_classInfo
-COMPLETION: ms_classInfo (Hidden) : [#wxClassInfo#]wxObject::ms_classInfo
-COMPLETION: MSWReadRegistry : [#void#]MSWReadRegistry()
-COMPLETION: No : [#enum <anonymous>#][#<anonymous enum at C:\wxWidgets-2.8.12\include/wx/app.h:528:5>::#]No
-COMPLETION: OnCmdLineError : [#bool#][#wxAppConsole::#]OnCmdLineError(<#wxCmdLineParser &parser#>)
-COMPLETION: OnCmdLineHelp : [#bool#][#wxAppConsole::#]OnCmdLineHelp(<#wxCmdLineParser &parser#>)
-COMPLETION: OnCmdLineParsed : [#bool#][#wxAppBase::#]OnCmdLineParsed(<#wxCmdLineParser &parser#>)
-COMPLETION: OnCmdLineParsed (Hidden) : [#bool#]wxAppConsole::OnCmdLineParsed(<#wxCmdLineParser &parser#>)
-COMPLETION: OnEndSession : [#void#][#wxApp::#]OnEndSession(<#wxCloseEvent &event#>)
-COMPLETION: OnExceptionInMainLoop : [#bool#][#wxApp::#]OnExceptionInMainLoop()
-COMPLETION: OnExceptionInMainLoop (Hidden) : [#bool#]wxAppBase::OnExceptionInMainLoop()
-COMPLETION: OnExit : [#int#]OnExit()
-COMPLETION: OnExit (Hidden) : [#int#]wxAppBase::OnExit()
-COMPLETION: OnExit (Hidden) : [#int#]wxAppConsole::OnExit()
-COMPLETION: OnFatalException : [#void#]OnFatalException()
-COMPLETION: OnFatalException (Hidden) : [#void#]wxAppConsole::OnFatalException()
-COMPLETION: OnIdle : [#void#][#wxApp::#]OnIdle(<#wxIdleEvent &event#>)
-COMPLETION: OnIdle (Hidden) : [#void#]wxAppBase::OnIdle(<#wxIdleEvent &event#>)
-COMPLETION: OnInit : [#bool#]OnInit()
-COMPLETION: OnInit (Hidden) : [#bool#]wxAppConsole::OnInit()
-COMPLETION: OnInitCmdLine : [#void#][#wxAppBase::#]OnInitCmdLine(<#wxCmdLineParser &parser#>)
-COMPLETION: OnInitCmdLine (Hidden) : [#void#]wxAppConsole::OnInitCmdLine(<#wxCmdLineParser &parser#>)
-COMPLETION: OnInitGui : [#bool#][#wxAppBase::#]OnInitGui()
-COMPLETION: OnInitGui (Hidden) : [#bool#]wxAppConsole::OnInitGui()
-COMPLETION: OnQueryEndSession : [#void#][#wxApp::#]OnQueryEndSession(<#wxCloseEvent &event#>)
-COMPLETION: OnRun : [#int#][#wxAppBase::#]OnRun()
-COMPLETION: OnRun (Hidden) : [#int#]wxAppConsole::OnRun()
-COMPLETION: OnUnhandledException : [#void#][#wxAppConsole::#]OnUnhandledException()
-COMPLETION: operator= : [#CodeLiteApp &#]operator=(<#const CodeLiteApp &#>)
-COMPLETION: operator= (Hidden) : [#wxApp &#]wxApp::operator=(<#const wxApp &#>)
-COMPLETION: operator= (Hidden) : [#wxAppBase &#]wxAppBase::operator=(<#const wxAppBase &#>)
-COMPLETION: operator= (Hidden) : [#wxAppConsole &#]wxAppConsole::operator=(<#const wxAppConsole &#>)
-COMPLETION: operator= (Hidden) : [#wxEvtHandler &#]wxEvtHandler::operator=(<#const wxEvtHandler &#>)
-COMPLETION: operator= (Hidden) : [#wxObject &#]wxObject::operator=(<#const wxObject &other#>)
-COMPLETION: Pending : [#bool#][#wxAppBase::#]Pending()
-COMPLETION: ProcessEvent : [#bool#][#wxEvtHandler::#]ProcessEvent(<#wxEvent &event#>)
-COMPLETION: ProcessEventIfMatches : [#bool#][#wxEvtHandler::#]ProcessEventIfMatches(<#const wxEventTableEntryBase &tableEntry#>, <#wxEvtHandler *handler#>, <#wxEvent &event#>)
-COMPLETION: ProcessIdle : [#bool#][#wxAppBase::#]ProcessIdle()
-COMPLETION: ProcessPendingEvents : [#void#][#wxAppConsole::#]ProcessPendingEvents()
-COMPLETION: ProcessPendingEvents (Hidden) : [#void#]wxEvtHandler::ProcessPendingEvents()
-COMPLETION: ProcessThreadEvent : [#bool#][#wxEvtHandler::#]ProcessThreadEvent(<#wxEvent &event#>)
-COMPLETION: Ref : [#void#][#wxObject::#]Ref(<#const wxObject &clone#>)
-COMPLETION: RegisterWindowClasses : [#bool#][#wxApp::#]RegisterWindowClasses()
-COMPLETION: SearchDynamicEventTable : [#bool#][#wxEvtHandler::#]SearchDynamicEventTable(<#wxEvent &event#>)
-COMPLETION: SearchEventTable : [#bool#][#wxEvtHandler::#]SearchEventTable(<#wxEventTable &table#>, <#wxEvent &event#>)
-COMPLETION: SendIdleEvents : [#bool#][#wxAppBase::#]SendIdleEvents(<#wxWindow *win#>, <#wxIdleEvent &event#>)
-COMPLETION: SetActive : [#void#][#wxAppBase::#]SetActive(<#bool isActive#>, <#wxWindow *lastFocus#>)
-COMPLETION: SetAppName : [#void#][#wxAppConsole::#]SetAppName(<#const wxString &name#>)
-COMPLETION: SetClassName : [#void#][#wxAppConsole::#]SetClassName(<#const wxString &name#>)
-COMPLETION: SetClientData : [#void#][#wxEvtHandler::#]SetClientData(<#void *data#>)
-COMPLETION: SetClientObject : [#void#][#wxEvtHandler::#]SetClientObject(<#wxClientData *data#>)
-COMPLETION: SetDisplayMode : [#bool#][#wxAppBase::#]SetDisplayMode(<#const wxVideoMode &#>)
-COMPLETION: SetEvtHandlerEnabled : [#void#][#wxEvtHandler::#]SetEvtHandlerEnabled(<#bool enabled#>)
-COMPLETION: SetExitOnFrameDelete : [#void#][#wxAppBase::#]SetExitOnFrameDelete(<#bool flag#>)
-COMPLETION: SetInitializerFunction : [#void#][#wxAppConsole::#]SetInitializerFunction(<#wxAppInitializerFunction fn#>)
-COMPLETION: SetInstance : [#void#][#wxAppConsole::#]SetInstance(<#wxAppConsole *app#>)
-COMPLETION: SetLoadPlugins : [#void#]SetLoadPlugins(<#bool loadPlugins#>)
-COMPLETION: SetNextHandler : [#void#][#wxEvtHandler::#]SetNextHandler(<#wxEvtHandler *handler#>)
-COMPLETION: SetParserPaths : [#void#]SetParserPaths(<#const wxArrayString &parserPaths#>)
-COMPLETION: SetPreviousHandler : [#void#][#wxEvtHandler::#]SetPreviousHandler(<#wxEvtHandler *handler#>)
-COMPLETION: SetPrintMode : [#void#][#wxApp::#]SetPrintMode(<#int mode#>)
-COMPLETION: SetPrintMode (Hidden) : [#void#]wxAppBase::SetPrintMode(<#int#>)
-COMPLETION: SetRefData : [#void#][#wxObject::#]SetRefData(<#wxObjectRefData *data#>)
-COMPLETION: SetTopWindow : [#void#][#wxAppBase::#]SetTopWindow(<#wxWindow *win#>)
-COMPLETION: SetUseBestVisual : [#void#][#wxAppBase::#]SetUseBestVisual(<#bool flag#>{#, <#bool forceTrueColour#>#})
-COMPLETION: SetVendorName : [#void#][#wxAppConsole::#]SetVendorName(<#const wxString &name#>)
-COMPLETION: sm_eventHashTable : [#wxEventHashTable#][#wxApp::#]sm_eventHashTable
-COMPLETION: sm_eventHashTable (Hidden) : [#wxEventHashTable#]wxEvtHandler::sm_eventHashTable
-COMPLETION: sm_eventTable : [#const wxEventTable#][#wxApp::#]sm_eventTable
-COMPLETION: sm_eventTable (Hidden) : [#const wxEventTable#]wxEvtHandler::sm_eventTable
-COMPLETION: sm_eventTableEntries : [#const wxEventTableEntry []#][#wxApp::#]sm_eventTableEntries
-COMPLETION: sm_eventTableEntries (Hidden) : [#const wxEventTableEntry []#]wxEvtHandler::sm_eventTableEntries
-COMPLETION: TryParent : [#bool#][#wxEvtHandler::#]TryParent(<#wxEvent &event#>)
-COMPLETION: TryValidator : [#bool#][#wxEvtHandler::#]TryValidator(<#wxEvent &#>)
-COMPLETION: UnRef : [#void#][#wxObject::#]UnRef()
-COMPLETION: UnregisterWindowClasses : [#bool#][#wxApp::#]UnregisterWindowClasses()
-COMPLETION: UnShare : [#void#][#wxObject::#]UnShare()
-COMPLETION: WakeUpIdle : [#void#][#wxApp::#]WakeUpIdle()
-COMPLETION: WakeUpIdle (Hidden) : [#void#]wxAppConsole::WakeUpIdle()
-COMPLETION: wxApp : wxApp::
-COMPLETION: wxAppBase : wxAppBase::
-COMPLETION: wxAppConsole : wxAppConsole::
-COMPLETION: wxCreateObject : [#wxObject *#][#wxApp::#]wxCreateObject()
-COMPLETION: wxCreateObject (Hidden) : [#wxObject *#]wxEvtHandler::wxCreateObject()
-COMPLETION: wxEvtHandler : wxEvtHandler::
-COMPLETION: wxObject : wxObject::
-COMPLETION: Yes : [#enum <anonymous>#][#<anonymous enum at C:\wxWidgets-2.8.12\include/wx/app.h:528:5>::#]Yes
-COMPLETION: Yield : [#bool#][#wxApp::#]Yield({#<#bool onlyIfNeeded#>#})
-COMPLETION: Yield (Hidden) : [#bool#]wxAppBase::Yield({#<#bool onlyIfNeeded#>#})
-COMPLETION: Yield (Hidden) : [#bool#]wxAppConsole::Yield({#<#bool#>#})
-COMPLETION: ~CodeLiteApp : [#void#]~CodeLiteApp()
-COMPLETION: ~wxApp : [#void#][#wxApp::#]~wxApp()
-COMPLETION: ~wxAppBase : [#void#][#wxAppBase::#]~wxAppBase()
-COMPLETION: ~wxAppConsole : [#void#][#wxAppConsole::#]~wxAppConsole()
-COMPLETION: ~wxEvtHandler : [#void#][#wxEvtHandler::#]~wxEvtHandler()
-COMPLETION: ~wxObject : [#void#][#wxObject::#]~wxObject()
+COMPLETION: append : [#std::basic_string<char> &#]append(<#_InputIterator __first#>, <#_InputIterator __last#>)
+COMPLETION: assign : [#std::basic_string<char> &#]assign(<#_InputIterator __first#>, <#_InputIterator __last#>)
+COMPLETION: at : [#const_reference#]at(<#size_type __n#>)[# const#]
+COMPLETION: basic_string : basic_string::
+COMPLETION: basic_string : [#void#]basic_string(<#_InputIterator __beg#>, <#_InputIterator __end#>{#, <#const std::allocator<char> &__a#>#})
+COMPLETION: begin : [#const_iterator#]begin()[# const#]
+COMPLETION: c_str : [#const char *#]c_str()[# const#]
+COMPLETION: capacity : [#size_type#]capacity()[# const#]
+COMPLETION: compare : [#int#]compare(<#const std::basic_string<char> &__str#>)[# const#]
+COMPLETION: compare : [#int#]compare(<#size_type __pos#>, <#size_type __n#>, <#const std::basic_string<char> &__str#>)[# const#]
+COMPLETION: compare : [#int#]compare(<#size_type __pos1#>, <#size_type __n1#>, <#const std::basic_string<char> &__str#>, <#size_type __pos2#>, <#size_type __n2#>)[# const#]
+COMPLETION: compare : [#int#]compare(<#const char *__s#>)[# const#]
+COMPLETION: compare : [#int#]compare(<#size_type __pos#>, <#size_type __n1#>, <#const char *__s#>)[# const#]
+COMPLETION: compare : [#int#]compare(<#size_type __pos#>, <#size_type __n1#>, <#const char *__s#>, <#size_type __n2#>)[# const#]
+COMPLETION: copy : [#size_type#]copy(<#char *__s#>, <#size_type __n#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: data : [#const char *#]data()[# const#]
+COMPLETION: empty : [#bool#]empty()[# const#]
+COMPLETION: end : [#const_iterator#]end()[# const#]
+COMPLETION: find : [#size_type#]find(<#const char *__s#>, <#size_type __pos#>, <#size_type __n#>)[# const#]
+COMPLETION: find : [#size_type#]find(<#const std::basic_string<char> &__str#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find : [#size_type#]find(<#const char *__s#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find : [#size_type#]find(<#char __c#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find_first_not_of : [#size_type#]find_first_not_of(<#const std::basic_string<char> &__str#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find_first_not_of : [#size_type#]find_first_not_of(<#const char *__s#>, <#size_type __pos#>, <#size_type __n#>)[# const#]
+COMPLETION: find_first_not_of : [#size_type#]find_first_not_of(<#const char *__s#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find_first_not_of : [#size_type#]find_first_not_of(<#char __c#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find_first_of : [#size_type#]find_first_of(<#const std::basic_string<char> &__str#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find_first_of : [#size_type#]find_first_of(<#const char *__s#>, <#size_type __pos#>, <#size_type __n#>)[# const#]
+COMPLETION: find_first_of : [#size_type#]find_first_of(<#const char *__s#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find_first_of : [#size_type#]find_first_of(<#char __c#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find_last_not_of : [#size_type#]find_last_not_of(<#const std::basic_string<char> &__str#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find_last_not_of : [#size_type#]find_last_not_of(<#const char *__s#>, <#size_type __pos#>, <#size_type __n#>)[# const#]
+COMPLETION: find_last_not_of : [#size_type#]find_last_not_of(<#const char *__s#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find_last_not_of : [#size_type#]find_last_not_of(<#char __c#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find_last_of : [#size_type#]find_last_of(<#const std::basic_string<char> &__str#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find_last_of : [#size_type#]find_last_of(<#const char *__s#>, <#size_type __pos#>, <#size_type __n#>)[# const#]
+COMPLETION: find_last_of : [#size_type#]find_last_of(<#const char *__s#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: find_last_of : [#size_type#]find_last_of(<#char __c#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: get_allocator : [#allocator_type#]get_allocator()[# const#]
+COMPLETION: insert : [#void#]insert(<#iterator __p#>, <#_InputIterator __beg#>, <#_InputIterator __end#>)
+COMPLETION: length : [#size_type#]length()[# const#]
+COMPLETION: max_size : [#size_type#]max_size()[# const#]
+COMPLETION: npos : [#const size_type#]npos
+COMPLETION: operator[] : [#const_reference#]operator[](<#size_type __pos#>)[# const#]
+COMPLETION: rbegin : [#const_reverse_iterator#]rbegin()[# const#]
+COMPLETION: rend : [#const_reverse_iterator#]rend()[# const#]
+COMPLETION: replace : [#std::basic_string<char> &#]replace(<#iterator __i1#>, <#iterator __i2#>, <#_InputIterator __k1#>, <#_InputIterator __k2#>)
+COMPLETION: rfind : [#size_type#]rfind(<#const std::basic_string<char> &__str#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: rfind : [#size_type#]rfind(<#const char *__s#>, <#size_type __pos#>, <#size_type __n#>)[# const#]
+COMPLETION: rfind : [#size_type#]rfind(<#const char *__s#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: rfind : [#size_type#]rfind(<#char __c#>{#, <#size_type __pos#>#})[# const#]
+COMPLETION: size : [#size_type#]size()[# const#]
+COMPLETION: substr : [#std::basic_string<char>#]substr({#<#size_type __pos#>{#, <#size_type __n#>#}#})[# const#]

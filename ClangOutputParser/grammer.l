@@ -14,11 +14,14 @@
  * clang_lex_string contains the current token string representation
  */
 static std::string clang_lex_string;
+extern std::string clang_result_lval;
 
 /**
  * reset the lexer
  */
 void clang_lex_clean();
+
+void clang_yyless(int count);
 
 /**
  * accessors
@@ -32,7 +35,8 @@ const std::string& clang_lex_get_string()
  * return value macro
  */
 #define RETURN_VALUE(x) {\
-					    clang_lex_string = yytext;\
+					    clang_lex_string  = yytext;\
+						clang_result_lval = yytext;\
 						return(x);\
 					  }
 %}
@@ -72,7 +76,8 @@ quotes_escape [\]{2}"
 {horizontal_white}+                                        {}
 ({v_tab}|{c_return}|{form_feed})+                          {}
 ({horizontal_white}|{v_tab}|{c_return}|{form_feed})*"\n"   {}
-"COMPLETION:"                                              {RETURN_VALUE(CLANG_COMPLETION);}
+"COMPLETION"                                               {RETURN_VALUE(CLANG_COMPLETION)};
+operator                                                   {RETURN_VALUE(CLANG_OPERATOR)};
 "(hidden)"                                                 {RETURN_VALUE(CLANG_HIDDEN);}
 "[#"                                                       {RETURN_VALUE(CLANG_DELIM_OPEN);}
 "#]"                                                       {RETURN_VALUE(CLANG_DELIM_CLOSE);}
@@ -99,7 +104,7 @@ quotes_escape [\]{2}"
 "=="                                                       {RETURN_VALUE(CLANG_OP_EQ);}
 "!="                                                       {RETURN_VALUE(CLANG_OP_NE);}
 "..."                                                      {RETURN_VALUE(CLANG_ELLIPSIS);}
-{identifier}                                               {RETURN_VALUE(CLANG_IDENTIFIER);}
+{identifier}                                               {RETURN_VALUE(CLANG_NAME);}
 .                                                          {RETURN_VALUE((int)*yytext);}
 
 %%
@@ -119,4 +124,9 @@ void clang_set_lexer_input(const std::string &in)
 int clang_result_wrap()
 {
 	return 1;
+}
+
+void clang_yyless(int count)
+{
+	yyless(count);
 }

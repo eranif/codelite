@@ -6,6 +6,7 @@
 #include <map>
 #include "entry.h"
 #include "clang_driver.h"
+#include "clang_output_parser_api.h"
 
 class IEditor;
 class IManager;
@@ -42,7 +43,7 @@ public:
 protected:
 	void DoParseOutput(const wxString &output);
 	void DoCleanUp();
-	TagEntryPtr ClangEntryToTagEntry(const wxString &line, const wxString &filter);
+	TagEntryPtr ClangEntryToTagEntry(const ClangEntry& entry, const std::string &filter);
 	
 	// Event handling
 	void OnFileLoaded(wxCommandEvent &e);

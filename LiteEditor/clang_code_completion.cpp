@@ -86,16 +86,16 @@ void ClangCodeCompletion::DoParseOutput(const wxString &output)
 		filter.RemoveLast();
 	}
 	
-	wxArrayString entries = wxStringTokenize(output, wxT("\n\r"), wxTOKEN_STRTOK);
 	std::vector<TagEntryPtr> tags;
-	tags.reserve( entries.size() );
 	
-	for(size_t i=0; i<entries.GetCount(); i++) {
-		entries.Item(i).Trim().Trim(false);
-		if(entries.Item(i).IsEmpty())
-			continue;
-		
-		TagEntryPtr tag = ClangEntryToTagEntry( entries.Item(i), filter );
+	// Parse clang output
+	clang_parse_string(output.To8BitData().data());
+	const ClangEntryVector &results = clang_results();
+	
+	// Filter unwanted resutls
+	std::string cfilter = filter.To8BitData().data();
+	for(size_t i=0; i<results.size(); i++) {
+		TagEntryPtr tag = ClangEntryToTagEntry( results.at(i), cfilter );
 		if(tag) {
 			tags.push_back( tag );
 		}
@@ -146,69 +146,44 @@ void ClangCodeCompletion::DoParseOutput(const wxString &output)
 	}
 }
 
-TagEntryPtr ClangCodeCompletion::ClangEntryToTagEntry(const wxString& line, const wxString &filter)
+TagEntryPtr ClangCodeCompletion::ClangEntryToTagEntry(const ClangEntry& entry, const std::string &filter)
 {
-	// an example of line:
-	// COMPLETION: OpenFile : [#bool#]OpenFile(<#class wxString const &fileName#>{#, <#class wxString const &projectName#>{#, <#int lineno#>#}#})
-	wxString tmp;
-	if(line.StartsWith(wxT("COMPLETION: "), &tmp) == false)
-		return NULL;
-	
-	if(line.Contains(wxT("(Hidden)")))
-		return NULL;
-	
-	// Next comes the name of the entry
-	wxString name = tmp.BeforeFirst(wxT(':'));
-	name.Trim().Trim(false);
-	
-	if(name.IsEmpty())
-		return NULL;
-	
-	wxString lcName, lcFilter;
-	lcName = name; lcFilter = filter;
-	lcName.MakeLower(); lcFilter.MakeLower();
-	
-	if(!lcFilter.IsEmpty() && !lcName.StartsWith(lcFilter)) {
+	if(!filter.empty() && entry.name.find(filter.c_str()) != 0) {
+		// the entry name does not start with the filter string
 		return NULL;
 	}
 	
 	TagEntry *t = new TagEntry();
 	TagEntryPtr tag(t);
-	tag->SetName( name );
-	
-	tmp = tmp.AfterFirst(wxT(':'));
-	tmp.Trim().Trim(false);
-	
-	// determine the kind
-	tag->SetKind(wxT("prototype")); // default
 	tag->SetIsClangTag(true);
+	tag->SetName      (wxString::From8BitData(entry.name.c_str()) );
+	tag->SetPattern   (wxString::From8BitData(entry.pattern().c_str()));
+	tag->SetSignature (wxString::From8BitData(entry.signature.c_str()));
 	
-	tmp.Replace(wxT("[#"), wxT(""));
-	tmp.Replace(wxT("<#"), wxT(""));
-	tmp.Replace(wxT("{#"), wxT(""));
-	tmp.Replace(wxT("#]"), wxT(" "));
-	tmp.Replace(wxT("#>"), wxT(" "));
-	tmp.Replace(wxT("#}"), wxT(" "));
-	
-	wxString pattern;
-	// Simulate a valid ctags pattern...
-	pattern << wxT("/^ ") << tmp << wxT(" $/");
-	
-	if(tmp == name) {
-		// this a type (enum/typedef/internal class)
+	switch(entry.type) {
+	case ClangEntry::TypeCtor:
+	case ClangEntry::TypeDtor:
+	case ClangEntry::TypeMethod:
+		tag->SetKind(wxT("prototype"));
+		break;
+		
+	case ClangEntry::TypeEnum:
+		tag->SetKind(wxT("enumerator"));
+		break;
+		
+	case ClangEntry::TypeVariable:
+		tag->SetKind(wxT("variable"));
+		break;
+		
+	case ClangEntry::TypeClass:
 		tag->SetKind(wxT("class"));
+		break;
 		
-	} else if(tmp.Contains(wxT("(")) || tmp.EndsWith(wxT("::"))) {
-		wxString signature = tmp.AfterFirst(wxT('('));
-		signature = signature.BeforeLast(wxT(')'));
-		
-		tag->SetSignature(wxT("(") + signature + wxT(")"));
-		
-	} else {
-		tag->SetKind(wxT("member"));
+	default:
+		tag->SetKind(wxT("prototype"));
+		break;
 		
 	}
-	tag->SetPattern(pattern);
 	return tag;
 }
 

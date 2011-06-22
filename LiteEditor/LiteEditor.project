@@ -670,6 +670,12 @@
     <File Name="code_completion_manager.cpp"/>
     <File Name="clang_pch_maker_thread.h"/>
     <File Name="clang_pch_maker_thread.cpp"/>
+    <VirtualDirectory Name="GeneratedCode">
+      <File Name="clang_output_parser_api.h"/>
+      <File Name="clang_result_lexer.cpp"/>
+      <File Name="clang_result_parser.cpp"/>
+      <File Name="clang_result_parser.h"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29">
     <Project Name="wxscintilla"/>

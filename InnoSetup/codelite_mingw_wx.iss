@@ -65,7 +65,6 @@ Source: "..\Runtime\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversio
 Source: "..\Runtime\codelite_launcher.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\codelite_cppcheck.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\clang++.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "..\Runtime\FileGrep.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\le_exec.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

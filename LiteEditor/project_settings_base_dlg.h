@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -26,7 +26,6 @@
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/gbsizer.h>
-#include <wx/checklst.h>
 #include <wx/listctrl.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -65,7 +64,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 	
 	public:
 		
-		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~ProjectSettingsBaseDlg();
 	
 };
@@ -117,7 +116,7 @@ class PSGeneralPageBase : public wxPanel
 	public:
 		wxGridBagSizer* m_gbSizer1;
 		
-		PSGeneralPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		PSGeneralPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~PSGeneralPageBase();
 	
 };
@@ -167,7 +166,7 @@ class PSCompilerPageBase : public wxPanel
 	
 	public:
 		
-		PSCompilerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		PSCompilerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~PSCompilerPageBase();
 	
 };
@@ -208,7 +207,7 @@ class PSLinkPageBase : public wxPanel
 	
 	public:
 		
-		PSLinkPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		PSLinkPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~PSLinkPageBase();
 	
 };
@@ -245,7 +244,7 @@ class PSDebuggerPageBase : public wxPanel
 	
 	public:
 		
-		PSDebuggerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		PSDebuggerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~PSDebuggerPageBase();
 	
 };
@@ -282,7 +281,7 @@ class PSResourcesPageBase : public wxPanel
 	
 	public:
 		
-		PSResourcesPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		PSResourcesPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~PSResourcesPageBase();
 	
 };
@@ -307,7 +306,7 @@ class PSEnvironmentBasePage : public wxPanel
 	
 	public:
 		
-		PSEnvironmentBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		PSEnvironmentBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~PSEnvironmentBasePage();
 	
 };
@@ -323,26 +322,11 @@ class PSBuildEventsBasePage : public wxPanel
 		wxPanel* m_preBuildPage;
 		wxStaticText* m_staticText11;
 		wxStaticLine* m_staticline2;
-		wxCheckListBox* m_checkListBuildCommands;
-		wxButton* m_buttonNewPreBuildCmd;
-		wxButton* m_buttonDeletePreBuildCmd;
-		wxButton* m_buttonEditPreBuildCmd;
-		wxButton* m_buttonUpPreBuildCmd;
-		wxButton* m_buttonDownPreBuildCmd;
-		
-		// Virtual event handlers, overide them in your derived class
-		virtual void OnCmdEvtVModified( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnNewBuildCommand( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnDeleteBuildCommand( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnBuildSelectedUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnEditBuildCommand( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnUpBuildCommand( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnDownBuildCommand( wxCommandEvent& event ) { event.Skip(); }
-		
+		wxTextCtrl* m_textCtrlBuildEvents;
 	
 	public:
 		
-		PSBuildEventsBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		PSBuildEventsBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~PSBuildEventsBasePage();
 	
 };
@@ -389,7 +373,7 @@ class PSCustomBuildBasePage : public wxPanel
 	
 	public:
 		
-		PSCustomBuildBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		PSCustomBuildBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~PSCustomBuildBasePage();
 	
 };
@@ -476,7 +460,7 @@ class PSCustomMakefileBasePage : public wxPanel
 	
 	public:
 		
-		PSCustomMakefileBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		PSCustomMakefileBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~PSCustomMakefileBasePage();
 	
 };

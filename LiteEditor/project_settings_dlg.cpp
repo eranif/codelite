@@ -103,24 +103,29 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 
 void ProjectSettingsDlg::BuildTree()
 {
+	wxString selectedPage = EditorConfigST::Get()->GetStringValue(wxT("PSSelectedPage"));
+	if(selectedPage.IsEmpty()) {
+		selectedPage = _("General");
+	}
+	
 	PSGeneralPage *gp = new PSGeneralPage(m_treebook, m_projectName, this);
 	m_treebook->AddPage(0, _("Common Settings"));
-	m_treebook->AddSubPage(gp,                                                       _("General"),               true);
-	m_treebook->AddSubPage(new PSCompilerPage(m_treebook, m_projectName, this, gp),  _("Compiler"),              false);
-	m_treebook->AddSubPage(new PSLinkerPage(m_treebook, this, gp),                   _("Linker"),                false);
-	m_treebook->AddSubPage(new PSEnvironmentPage(m_treebook, this),                  _("Environment"),           false);
-	m_treebook->AddSubPage(new PSDebuggerPage(m_treebook, this),                     _("Debugger"),              false);
-	m_treebook->AddSubPage(new PSResourcesPage(m_treebook, this),                    _("Resources"),             false);
+	m_treebook->AddSubPage(gp,                                                       _("General"),               selectedPage == _("General"));
+	m_treebook->AddSubPage(new PSCompilerPage(m_treebook, m_projectName, this, gp),  _("Compiler"),              selectedPage == _("Compiler"));
+	m_treebook->AddSubPage(new PSLinkerPage(m_treebook, this, gp),                   _("Linker"),                selectedPage == _("Linker"));
+	m_treebook->AddSubPage(new PSEnvironmentPage(m_treebook, this),                  _("Environment"),           selectedPage == _("Environment"));
+	m_treebook->AddSubPage(new PSDebuggerPage(m_treebook, this),                     _("Debugger"),              selectedPage == _("Debugger"));
+	m_treebook->AddSubPage(new PSResourcesPage(m_treebook, this),                    _("Resources"),             selectedPage == _("Resources"));
 
 	m_treebook->AddPage(0, _("Pre / Post Build Commands"));
-	m_treebook->AddSubPage(new PSBuildEventsPage(m_treebook, true, this),            _("Pre Build"),             false);
-	m_treebook->AddSubPage(new PSBuildEventsPage(m_treebook, false, this),           _("Post Build"),            false);
+	m_treebook->AddSubPage(new PSBuildEventsPage(m_treebook, true, this),            _("Pre Build"),             selectedPage == _("Pre Build"));
+	m_treebook->AddSubPage(new PSBuildEventsPage(m_treebook, false, this),           _("Post Build"),            selectedPage == _("Post Build"));
 
 	m_treebook->AddPage(0, _("Customize"));
-	m_treebook->AddSubPage(new PSCustomBuildPage(m_treebook, m_projectName, this),   _("Custom Build"),          false);
-	m_treebook->AddSubPage(new PSCustomMakefileRulesPage(m_treebook, this),          _("Custom Makefile Rules"), false);
+	m_treebook->AddSubPage(new PSCustomBuildPage(m_treebook, m_projectName, this),   _("Custom Build"),          selectedPage == _("Custom Build"));
+	m_treebook->AddSubPage(new PSCustomMakefileRulesPage(m_treebook, this),          _("Custom Makefile Rules"), selectedPage == _("Custom Makefile Rules"));
 
-	m_treebook->AddPage(new GlobalSettingsPanel(m_treebook, m_projectName, this, gp), _("Global Settings"), false);
+	m_treebook->AddPage(new GlobalSettingsPanel(m_treebook, m_projectName, this, gp), _("Global Settings"),      selectedPage == _("Global Settings"));
 
 	// We do this here rather than in wxFB to avoid failure and an assert in >wx2.8
 	gp->m_gbSizer1->AddGrowableCol(1);
@@ -129,6 +134,7 @@ void ProjectSettingsDlg::BuildTree()
 ProjectSettingsDlg::~ProjectSettingsDlg()
 {
 	PluginManager::Get()->UnHookProjectSettingsTab(m_treebook, m_projectName, wxEmptyString /* all tabs */);
+	EditorConfigST::Get()->SaveStringValue(wxT("PSSelectedPage"), m_treebook->GetPageText(m_treebook->GetSelection()));
 	WindowAttrManager::Save(this, wxT("ProjectSettingsDlg"), NULL);
 }
 

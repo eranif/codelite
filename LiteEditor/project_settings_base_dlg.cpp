@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -200,7 +200,7 @@ PSGeneralPageBase::PSGeneralPageBase( wxWindow* parent, wxWindowID id, const wxP
 	bSizer19->Add( m_gbSizer1, 0, wxEXPAND, 5 );
 	
 	m_staticline11 = new wxStaticLine( m_generalPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizer19->Add( m_staticline11, 0, wxEXPAND | wxALL, 5 );
+	bSizer19->Add( m_staticline11, 0, wxEXPAND|wxALL, 5 );
 	
 	wxBoxSizer* bSizer17;
 	bSizer17 = new wxBoxSizer( wxVERTICAL );
@@ -213,7 +213,7 @@ PSGeneralPageBase::PSGeneralPageBase( wxWindow* parent, wxWindowID id, const wxP
 	m_generalPage->SetSizer( bSizer19 );
 	m_generalPage->Layout();
 	bSizer19->Fit( m_generalPage );
-	bSizer35->Add( m_generalPage, 1, wxEXPAND|wxALL, 5 );
+	bSizer35->Add( m_generalPage, 1, wxEXPAND | wxALL, 5 );
 	
 	this->SetSizer( bSizer35 );
 	this->Layout();
@@ -368,7 +368,7 @@ PSCompilerPageBase::PSCompilerPageBase( wxWindow* parent, wxWindowID id, const w
 	m_compilerPage->SetSizer( compilerPageSizer );
 	m_compilerPage->Layout();
 	compilerPageSizer->Fit( m_compilerPage );
-	bSizer36->Add( m_compilerPage, 1, wxEXPAND | wxALL, 5 );
+	bSizer36->Add( m_compilerPage, 1, wxEXPAND|wxALL, 5 );
 	
 	this->SetSizer( bSizer36 );
 	this->Layout();
@@ -846,7 +846,7 @@ PSBuildEventsBasePage::PSBuildEventsBasePage( wxWindow* parent, wxWindowID id, c
 	
 	m_staticText11 = new wxStaticText( m_preBuildPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText11->Wrap( -1 );
-	bSizer8->Add( m_staticText11, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
+	bSizer8->Add( m_staticText11, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND|wxRIGHT|wxLEFT, 5 );
 	
 	m_staticline2 = new wxStaticLine( m_preBuildPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer8->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
@@ -854,70 +854,25 @@ PSBuildEventsBasePage::PSBuildEventsBasePage( wxWindow* parent, wxWindowID id, c
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxHORIZONTAL );
 	
-	wxArrayString m_checkListBuildCommandsChoices;
-	m_checkListBuildCommands = new wxCheckListBox( m_preBuildPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_checkListBuildCommandsChoices, 0 );
-	bSizer9->Add( m_checkListBuildCommands, 1, wxALL|wxEXPAND, 5 );
+	m_textCtrlBuildEvents = new wxTextCtrl( m_preBuildPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlBuildEvents->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
 	
-	wxBoxSizer* bSizer10;
-	bSizer10 = new wxBoxSizer( wxVERTICAL );
-	
-	m_buttonNewPreBuildCmd = new wxButton( m_preBuildPage, wxID_NEW, _("New..."), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer10->Add( m_buttonNewPreBuildCmd, 0, wxALL, 5 );
-	
-	m_buttonDeletePreBuildCmd = new wxButton( m_preBuildPage, wxID_DELETE, _("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer10->Add( m_buttonDeletePreBuildCmd, 0, wxALL, 5 );
-	
-	m_buttonEditPreBuildCmd = new wxButton( m_preBuildPage, wxID_EDIT, _("Edit..."), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer10->Add( m_buttonEditPreBuildCmd, 0, wxALL, 5 );
-	
-	m_buttonUpPreBuildCmd = new wxButton( m_preBuildPage, wxID_UP, _("Up"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer10->Add( m_buttonUpPreBuildCmd, 0, wxALL, 5 );
-	
-	m_buttonDownPreBuildCmd = new wxButton( m_preBuildPage, wxID_DOWN, _("Down"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer10->Add( m_buttonDownPreBuildCmd, 0, wxALL, 5 );
-	
-	bSizer9->Add( bSizer10, 0, wxEXPAND, 5 );
+	bSizer9->Add( m_textCtrlBuildEvents, 1, wxALL|wxEXPAND, 5 );
 	
 	bSizer8->Add( bSizer9, 1, wxEXPAND, 5 );
 	
 	m_preBuildPage->SetSizer( bSizer8 );
 	m_preBuildPage->Layout();
 	bSizer8->Fit( m_preBuildPage );
-	bSizer41->Add( m_preBuildPage, 1, wxEXPAND | wxALL, 5 );
+	bSizer41->Add( m_preBuildPage, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer41 );
 	this->Layout();
 	bSizer41->Fit( this );
-	
-	// Connect Events
-	m_checkListBuildCommands->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( PSBuildEventsBasePage::OnCmdEvtVModified ), NULL, this );
-	m_checkListBuildCommands->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( PSBuildEventsBasePage::OnCmdEvtVModified ), NULL, this );
-	m_buttonNewPreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSBuildEventsBasePage::OnNewBuildCommand ), NULL, this );
-	m_buttonDeletePreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSBuildEventsBasePage::OnDeleteBuildCommand ), NULL, this );
-	m_buttonDeletePreBuildCmd->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSBuildEventsBasePage::OnBuildSelectedUI ), NULL, this );
-	m_buttonEditPreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSBuildEventsBasePage::OnEditBuildCommand ), NULL, this );
-	m_buttonEditPreBuildCmd->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSBuildEventsBasePage::OnBuildSelectedUI ), NULL, this );
-	m_buttonUpPreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSBuildEventsBasePage::OnUpBuildCommand ), NULL, this );
-	m_buttonUpPreBuildCmd->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSBuildEventsBasePage::OnBuildSelectedUI ), NULL, this );
-	m_buttonDownPreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSBuildEventsBasePage::OnDownBuildCommand ), NULL, this );
-	m_buttonDownPreBuildCmd->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSBuildEventsBasePage::OnBuildSelectedUI ), NULL, this );
 }
 
 PSBuildEventsBasePage::~PSBuildEventsBasePage()
 {
-	// Disconnect Events
-	m_checkListBuildCommands->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( PSBuildEventsBasePage::OnCmdEvtVModified ), NULL, this );
-	m_checkListBuildCommands->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( PSBuildEventsBasePage::OnCmdEvtVModified ), NULL, this );
-	m_buttonNewPreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSBuildEventsBasePage::OnNewBuildCommand ), NULL, this );
-	m_buttonDeletePreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSBuildEventsBasePage::OnDeleteBuildCommand ), NULL, this );
-	m_buttonDeletePreBuildCmd->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSBuildEventsBasePage::OnBuildSelectedUI ), NULL, this );
-	m_buttonEditPreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSBuildEventsBasePage::OnEditBuildCommand ), NULL, this );
-	m_buttonEditPreBuildCmd->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSBuildEventsBasePage::OnBuildSelectedUI ), NULL, this );
-	m_buttonUpPreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSBuildEventsBasePage::OnUpBuildCommand ), NULL, this );
-	m_buttonUpPreBuildCmd->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSBuildEventsBasePage::OnBuildSelectedUI ), NULL, this );
-	m_buttonDownPreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSBuildEventsBasePage::OnDownBuildCommand ), NULL, this );
-	m_buttonDownPreBuildCmd->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSBuildEventsBasePage::OnBuildSelectedUI ), NULL, this );
-	
 }
 
 PSCustomBuildBasePage::PSCustomBuildBasePage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )

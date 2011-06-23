@@ -20,12 +20,6 @@ class PSBuildEventsPage : public PSBuildEventsBasePage, public IProjectSettingsP
 protected:
 	// Handlers for PSBuildEventsBasePage events.
 	void OnCmdEvtVModified( wxCommandEvent& event );
-	void OnNewBuildCommand( wxCommandEvent& event );
-	void OnDeleteBuildCommand( wxCommandEvent& event );
-	void OnBuildSelectedUI( wxUpdateUIEvent& event );
-	void OnEditBuildCommand( wxCommandEvent& event );
-	void OnUpBuildCommand( wxCommandEvent& event );
-	void OnDownBuildCommand( wxCommandEvent& event );
 
 public:
 	/** Constructor */

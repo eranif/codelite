@@ -133,6 +133,7 @@ public:
 	virtual bool SetVariableObbjectDisplayFormat(const wxString& name, DisplayFormat displayFormat);
 	virtual bool UpdateVariableObject(const wxString& name, int userReason);
 	virtual void AssignValue(const wxString& expression, const wxString& newValue);
+	virtual bool Jump(wxString filename, int line);
 
 	/**
 	 * @brief restart the debugger (execute 'run')

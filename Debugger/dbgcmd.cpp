@@ -1392,3 +1392,9 @@ bool DbgCmdHandlerExecRun::ProcessOutput(const wxString& line)
 		
 	}
 }
+
+bool DbgCmdJumpHandler::ProcessOutput(const wxString& line)
+{
+	//TODO: handle questions like "Line 24 is not in `main(int, char**)'.  Jump anyway? (y or n) "
+	return false;
+}

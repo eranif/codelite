@@ -810,6 +810,11 @@ public:
 	 * @return
 	 */
 	virtual bool UpdateVariableObject(const wxString& name, int userReason) = 0;
+
+	/**
+	 * @brief set next statement to run at given file and line
+	 */
+	virtual bool Jump(wxString filename, int line) = 0;
 };
 
 //-----------------------------------------------------------

@@ -681,6 +681,7 @@ private:
 	void OnPopupMenuUpdateUI(wxUpdateUIEvent &event);
 	void OnDbgAddWatch(wxCommandEvent &event);
 	void OnDbgRunToCursor(wxCommandEvent &event);
+	void OnDbgJumpToCursor(wxCommandEvent &event);
 	void OnDbgCustomWatch(wxCommandEvent &event);
 	void OnDragStart(wxScintillaEvent &e);
 	void OnDragEnd(wxScintillaEvent &e);

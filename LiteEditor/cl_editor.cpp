@@ -2838,6 +2838,12 @@ void LEditor::AddDebuggerContextMenu(wxMenu *menu)
 	menu->Prepend(item);
 	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
 	m_dynItems.push_back(item);
+
+	item = new wxMenuItem(menu, wxNewId(), _("Jump to cursor"));
+	menu->Prepend(item);
+	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgJumpToCursor), NULL, this);
+	m_dynItems.push_back(item);
+
 }
 
 void LEditor::RemoveDebuggerContextMenu(wxMenu *menu)
@@ -3410,6 +3416,15 @@ void LEditor::OnDbgRunToCursor(wxCommandEvent& event)
 		bp.bp_type = BP_type_tempbreak;
 		dbgr->Break(bp);
 		dbgr->Continue();
+	}
+}
+
+void LEditor::OnDbgJumpToCursor(wxCommandEvent& event)
+{
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+
+	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
+		dbgr->Jump(GetFileName().GetFullPath(), GetCurrentLine()+1);
 	}
 }
 

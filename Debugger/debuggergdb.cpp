@@ -1268,3 +1268,26 @@ void DbgGdb::GetDebugeePID()
 		}
 	}
 }
+
+bool DbgGdb::Jump(wxString filename, int line)
+{
+	BreakpointInfo bp;
+	bp.Create(filename, line, -1);
+	bp.bp_type = BP_type_tempbreak;
+	Break(bp);
+
+	// by default, use full paths for the file name
+	wxFileName fn( filename );
+	wxString tmpfileName( fn.GetFullPath() );
+	if ( m_info.useRelativeFilePaths ) {
+		// user set the option to use relative paths (file name w/o the full path)
+		tmpfileName = fn.GetFullName();
+	}
+
+	tmpfileName.Replace( wxT( "\\" ), wxT( "/" ) );
+
+	wxString command;
+	command << wxT( "-exec-jump " ) << wxT( "\"\\\"" ) << tmpfileName << wxT( ":" ) << line << wxT( "\\\"\"" );
+	//return WriteCommand( command, new DbgCmdHandlerAsyncCmd( m_observer, this ) );
+	return ExecCLICommand( command, new DbgCmdJumpHandler( m_observer ) );
+}

@@ -434,4 +434,16 @@ public:
 	virtual bool WantsErrors() { return true; }
 
 };
+
+// Callback for handling jump command questions
+// command
+class DbgCmdJumpHandler : public DbgCmdCLIHandler
+{
+public:
+	DbgCmdJumpHandler(IDebuggerObserver *observer) : DbgCmdCLIHandler(observer) {}
+	virtual ~DbgCmdJumpHandler() {}
+
+	virtual bool ProcessOutput(const wxString & line);
+};
+
 #endif //DBGCMD_H

@@ -977,6 +977,7 @@ bool BreakptMgr::PauseDebuggerIfNeeded()
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning() && !ManagerST::Get()->DbgCanInteract()) {
+		SetExpectingControl(true);
 		dbgr->Interrupt();
 		return true;
 	}

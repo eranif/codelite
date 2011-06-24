@@ -25,21 +25,23 @@
 #include "codeformatter.h"
 #include "windowattrmanager.h"
 #include "codeformatterdlg.h"
+#include "editor_config.h"
+#include "lexer_configuration.h"
 
-CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, size_t flags, const wxString &sampleCode )
-		: CodeFormatterBaseDlg( parent )
-		, m_cf(cf)
-		, m_sampleCode(sampleCode)
+CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, const FormatOptions& opts, const wxString &sampleCode )
+	: CodeFormatterBaseDlg( parent )
+	, m_cf(cf)
+	, m_sampleCode(sampleCode)
 {
 	// center the dialog
 	Centre();
 
-	m_options.SetOption(flags);
+	m_options = opts;
 	m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterDlg::OnOK), NULL, this);
 	m_buttonHelp->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterDlg::OnHelp), NULL, this);
 
 	// Initialise dialog
-	m_textCtrlPreview->SetValue(m_sampleCode);
+	m_textCtrlPreview->SetText(m_sampleCode);
 	InitDialog();
 
 	GetSizer()->Fit(this);
@@ -105,7 +107,96 @@ void CodeFormatterDlg::InitDialog()
 	} else if (m_options.GetOptions() & AS_BRACKETS_BREAK) {
 		selection = 3;
 	}
+
+	m_textCtrlPreview->SetLexer(wxSCI_LEX_CPP);
+
+	LexerConfPtr cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
+	wxFont font;
+	if(cppLexer) {
+		std::list<StyleProperty> styles = cppLexer->GetProperties();
+		std::list<StyleProperty>::iterator iter = styles.begin();
+		for (; iter != styles.end(); iter++) {
+
+			StyleProperty sp        = (*iter);
+			int           size      = sp.GetFontSize();
+			wxString      face      = sp.GetFaceName();
+			bool          bold      = sp.IsBold();
+			bool          italic    = sp.GetItalic();
+			bool          underline = sp.GetUnderlined();
+			int           alpha     = sp.GetAlpha();
+
+			// handle special cases
+			if ( sp.GetId() == FOLD_MARGIN_ATTR_ID ) {
+
+				// fold margin foreground colour
+				m_textCtrlPreview->SetFoldMarginColour(true, sp.GetBgColour());
+				m_textCtrlPreview->SetFoldMarginHiColour(true, sp.GetFgColour());
+
+			} else if ( sp.GetId() == SEL_TEXT_ATTR_ID ) {
+
+				// selection colour
+				if(wxColour(sp.GetBgColour()).IsOk()) {
+					m_textCtrlPreview->SetSelBackground(true, sp.GetBgColour());
+					m_textCtrlPreview->SetSelAlpha(alpha);
+				}
+
+			} else if ( sp.GetId() == CARET_ATTR_ID ) {
+
+				// caret colour
+				if(wxColour(sp.GetFgColour()).IsOk()) {
+					m_textCtrlPreview->SetCaretForeground(sp.GetFgColour());
+				}
+
+			} else {
+				int fontSize( size );
+
+				wxFont font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , bold ? wxBOLD : wxNORMAL, underline, face);
+				if (sp.GetId() == 0) { //default
+					m_textCtrlPreview->StyleSetFont(wxSCI_STYLE_DEFAULT, font);
+					m_textCtrlPreview->StyleSetSize(wxSCI_STYLE_DEFAULT, size);
+					m_textCtrlPreview->StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
+					m_textCtrlPreview->StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
+					m_textCtrlPreview->StyleSetSize(wxSCI_STYLE_LINENUMBER, size);
+					m_textCtrlPreview->SetFoldMarginColour(true, (*iter).GetBgColour());
+					m_textCtrlPreview->SetFoldMarginHiColour(true, (*iter).GetBgColour());
+
+					// test the background colour of the editor, if it is considered "dark"
+					// set the indicator to be hollow rectanlgle
+					StyleProperty sp = (*iter);
+					if ( DrawingUtils::IsDark(sp.GetBgColour()) ) {
+						m_textCtrlPreview->IndicatorSetStyle(1, wxSCI_INDIC_BOX);
+						m_textCtrlPreview->IndicatorSetStyle(2, wxSCI_INDIC_BOX);
+					}
+				} else if(sp.GetId() == wxSCI_STYLE_CALLTIP) {
+					// do nothing
+				}
+
+				m_textCtrlPreview->StyleSetFont(sp.GetId(), font);
+				m_textCtrlPreview->StyleSetSize(sp.GetId(), fontSize);
+				m_textCtrlPreview->StyleSetEOLFilled(sp.GetId(), iter->GetEolFilled());
+
+				if(iter->GetId() == LINE_NUMBERS_ATTR_ID) {
+					// Set the line number colours only if requested
+					// otherwise, use default colours provided by scintilla
+					if(sp.GetBgColour().IsEmpty() == false)
+						m_textCtrlPreview->StyleSetBackground(sp.GetId(), sp.GetBgColour());
+
+					if(sp.GetFgColour().IsEmpty() == false)
+						m_textCtrlPreview->StyleSetForeground(sp.GetId(), sp.GetFgColour());
+					else
+						m_textCtrlPreview->StyleSetForeground(sp.GetId(), wxT("BLACK"));
+
+				} else {
+					m_textCtrlPreview->StyleSetForeground(sp.GetId(), sp.GetFgColour());
+					m_textCtrlPreview->StyleSetBackground(sp.GetId(), sp.GetBgColour());
+				}
+			}
+		}
+		m_textCtrlPreview->SetKeyWords(0, cppLexer->GetKeyWords(0));
+	}
+	
 	m_radioBoxBrackets->SetSelection(selection);
+	m_textCtrlUserFlags->SetValue(m_options.GetCustomFlags());
 }
 
 void CodeFormatterDlg::OnRadioBoxPredefinedStyle( wxCommandEvent& event )
@@ -242,6 +333,7 @@ void CodeFormatterDlg::OnOK(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	//Save the options
+	m_options.SetCustomFlags(m_textCtrlUserFlags->GetValue());
 	EndModal(wxID_OK);
 }
 
@@ -256,7 +348,7 @@ void CodeFormatterDlg::UpdatePreview()
 {
 	wxString output;
 	m_cf->AstyleFormat(m_sampleCode, m_options.ToString(), output);
-	m_textCtrlPreview->SetValue(output);
+	m_textCtrlPreview->SetText(output);
 
 	UpdatePredefinedHelpText();
 }
@@ -267,9 +359,9 @@ void CodeFormatterDlg::UpdatePredefinedHelpText()
 	switch ( sel ) {
 	case 0: // AS_GNU
 		m_staticTextPredefineHelp->SetLabel(
-			wxString(_("GNU style formatting/indenting.  Brackets are broken,\n")) +
-			wxString(_("blocks are indented, and indentation is 2 spaces. \n")) +
-			wxString(_("Namespaces, classes, and switches are NOT indented.")));
+		    wxString(_("GNU style formatting/indenting.  Brackets are broken,\n")) +
+		    wxString(_("blocks are indented, and indentation is 2 spaces. \n")) +
+		    wxString(_("Namespaces, classes, and switches are NOT indented.")));
 		break;
 	case 1: // AS_JAVA
 		m_staticTextPredefineHelp->SetLabel(

@@ -1,31 +1,31 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : formatoptions.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : formatoptions.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "formatoptions.h"
+#include "formatoptions.h"
 
 FormatOptions::FormatOptions()
-		: m_options(AS_DEFAULT | AS_INDENT_USES_TABS)
+	: m_options(AS_DEFAULT | AS_INDENT_USES_TABS)
 {
 }
 
@@ -36,11 +36,13 @@ FormatOptions::~FormatOptions()
 void FormatOptions::DeSerialize(Archive &arch)
 {
 	arch.Read(wxT("m_options"), m_options);
+	arch.Read(wxT("m_customFlags"), m_customFlags);
 }
 
 void FormatOptions::Serialize(Archive &arch)
 {
 	arch.Write(wxT("m_options"), m_options);
+	arch.Write(wxT("m_customFlags"), m_customFlags);
 }
 
 wxString FormatOptions::ToString() const
@@ -132,13 +134,8 @@ wxString FormatOptions::ToString() const
 	if (m_options & AS_UNPAD_PARENTHESIS) {
 		options << wxT(" -U ");
 	}
-	
-//	if (m_options & AS_INDENT_USES_TABS) {
-//		options << wxT(" -t4 ");
-//	} else {
-//		options << wxT(" -s4 ");
-//	}
-	
+	if(m_customFlags.IsEmpty() == false) {
+		options << wxT(" ") << m_customFlags;
+	}
 	return options;
 }
-

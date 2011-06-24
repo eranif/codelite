@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -24,9 +24,13 @@
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/checkbox.h>
-#include <wx/notebook.h>
 #include <wx/textctrl.h>
-#include <wx/statline.h>
+#include <wx/notebook.h>
+#include <wx/wxscintilla.h>
+#ifdef __VISUALC__
+#include <wx/link_additions.h>
+#endif //__VISUALC__
+#include <wx/splitter.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
 
@@ -41,6 +45,8 @@ class CodeFormatterBaseDlg : public wxDialog
 	private:
 	
 	protected:
+		wxSplitterWindow* m_splitter1;
+		wxPanel* m_panel31;
 		wxNotebook* m_notebook1;
 		wxPanel* m_panel2;
 		wxStaticText* m_staticText2;
@@ -69,22 +75,30 @@ class CodeFormatterBaseDlg : public wxDialog
 		wxCheckBox* m_checkBoxFormatOneLineKeepStmnt;
 		wxCheckBox* m_checkBoxFormatFillEmptyLines;
 		wxCheckBox* m_checkBoxFormatOneLineKeepBlocks;
-		wxTextCtrl* m_textCtrlPreview;
-		wxStaticLine* m_staticline1;
+		wxStaticText* m_staticText3;
+		wxTextCtrl* m_textCtrlUserFlags;
+		wxPanel* m_panel4;
+		wxScintilla* m_textCtrlPreview;
 		wxButton* m_buttonOK;
 		wxButton* m_buttonClose;
 		wxButton* m_buttonHelp;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnRadioBoxPredefinedStyle( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnRadioBoxBrackets( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnCheckBox( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnRadioBoxPredefinedStyle( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnRadioBoxBrackets( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnCheckBox( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
 		CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Formatter Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~CodeFormatterBaseDlg();
+		
+		void m_splitter1OnIdle( wxIdleEvent& )
+		{
+			m_splitter1->SetSashPosition( 400 );
+			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CodeFormatterBaseDlg::m_splitter1OnIdle ), NULL, this );
+		}
 	
 };
 

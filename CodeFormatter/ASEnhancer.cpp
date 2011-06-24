@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *   ASEnhancer.cpp
  *
- *   Copyright (C) 2006-2010 by Jim Pattee <jimp03@email.com>
+ *   Copyright (C) 2006-2011 by Jim Pattee <jimp03@email.com>
  *   Copyright (C) 1998-2002 by Tal Davidson
  *   <http://www.gnu.org/licenses/lgpl-3.0.html>
  *
@@ -25,12 +26,10 @@
  */
 
 #include "astyle.h"
-
+#include <iostream>		// for cout
 
 namespace astyle
 {
-
-// ---------------------------- functions for ASEnhancer Class -------------------------------------
 
 /**
  * ASEnhancer constructor
@@ -58,6 +57,7 @@ void ASEnhancer::init(int fileType,
                       int _indentLength,
                       string _indentString,
                       bool _caseIndent,
+                      bool _preprocessorIndent,
                       bool _emptyLineFill)
 {
 	// formatting variables from ASFormatter and ASBeautifier
@@ -69,6 +69,7 @@ void ASEnhancer::init(int fileType,
 		useTabs = false;
 
 	caseIndent    = _caseIndent;
+	preprocessorIndent = _preprocessorIndent;
 	emptyLineFill = _emptyLineFill;
 	quoteChar = '\'';
 
@@ -80,12 +81,13 @@ void ASEnhancer::init(int fileType,
 	switchDepth = 0;
 	lookingForCaseBracket = false;
 	unindentNextLine = false;
+	shouldIndentLine = false;
 
 	// switch struct and vector
 	sw.switchBracketCount = 0;
 	sw.unindentDepth = 0;
 	sw.unindentCase = false;
-	swVector.clear();
+	switchStack.clear();
 
 	// other variables
 	nextLineIsEventIndent = false;
@@ -103,10 +105,10 @@ void ASEnhancer::init(int fileType,
  *
  * @param line       the original formatted line will be updated if necessary.
  */
-void ASEnhancer::enhance(string &line, bool isInSQL)
+void ASEnhancer::enhance(string& line, bool isInPreprocessor, bool isInSQL)
 {
 	bool isSpecialChar = false;			// is a backslash escape character
-
+	shouldIndentLine = true;
 	lineNumber++;
 
 	// check for beginning of event table
@@ -217,19 +219,24 @@ void ASEnhancer::enhance(string &line, bool isInSQL)
 
 		bool isPotentialKeyword = isCharPotentialHeader(line, i);
 
-		// ----------------  process event tables  --------------------------------------
+		// ----------------  wxWidgets and MFC macros  ----------------------------------
 
 		if (isPotentialKeyword)
 		{
 			if (findKeyword(line, i, "BEGIN_EVENT_TABLE")
-			        || findKeyword(line, i, "BEGIN_MESSAGE_MAP"))
+			        || findKeyword(line, i, "BEGIN_DISPATCH_MAP")
+			        || findKeyword(line, i, "BEGIN_EVENT_MAP")
+			        || findKeyword(line, i, "BEGIN_MESSAGE_MAP")
+			        || findKeyword(line, i, "BEGIN_PROPPAGEIDS"))
 			{
 				nextLineIsEventIndent = true;
 				break;
 			}
-
 			if (findKeyword(line, i, "END_EVENT_TABLE")
-			        || findKeyword(line, i, "END_MESSAGE_MAP"))
+			        || findKeyword(line, i, "END_DISPATCH_MAP")
+			        || findKeyword(line, i, "END_EVENT_MAP")
+			        || findKeyword(line, i, "END_MESSAGE_MAP")
+			        || findKeyword(line, i, "END_PROPPAGEIDS"))
 			{
 				isInEventTable = false;
 				break;
@@ -252,7 +259,7 @@ void ASEnhancer::enhance(string &line, bool isInSQL)
 		if (isPotentialKeyword && findKeyword(line, i, "switch"))
 		{
 			switchDepth++;
-			swVector.push_back(sw);                         // save current variables
+			switchStack.push_back(sw);                      // save current variables
 			sw.switchBracketCount = 0;
 			sw.unindentCase = false;                        // don't clear case until end of switch
 			i += 5;                                         // bypass switch statement
@@ -261,7 +268,9 @@ void ASEnhancer::enhance(string &line, bool isInSQL)
 
 		// just want unindented switch statements from this point
 
-		if (caseIndent || switchDepth == 0)
+		if (caseIndent
+		        || switchDepth == 0
+		        || (isInPreprocessor && !preprocessorIndent))
 		{
 			// bypass the entire word
 			if (isPotentialKeyword)
@@ -278,11 +287,11 @@ void ASEnhancer::enhance(string &line, bool isInSQL)
 
 	if (isInEventTable || isInDeclareSection)
 	{
-		if (line[0] != '#')
+		if (line.length() == 0 || line[0] != '#')
 			indentLine(line, 1);
 	}
 
-	if (sw.unindentDepth > 0)
+	if (shouldIndentLine && sw.unindentDepth > 0)
 		unindentLine(line, sw.unindentDepth);
 }
 
@@ -293,24 +302,24 @@ void ASEnhancer::enhance(string &line, bool isInSQL)
  * @param i             the line index of the case statement.
  * @return              the line index of the colon.
  */
-size_t ASEnhancer::findCaseColon(string  &line, size_t caseIndex) const
+size_t ASEnhancer::findCaseColon(string&  line, size_t caseIndex) const
 {
 	size_t i = caseIndex;
-	bool isInQuote = false;
-	char quoteChar = ' ';
+	bool isInQuote_ = false;
+	char quoteChar_ = ' ';
 	for (; i < line.length(); i++)
 	{
-		if (isInQuote)
+		if (isInQuote_)
 		{
 			if (line[i] == '\\')
 			{
 				i++;
 				continue;
 			}
-			else if (line[i] == quoteChar)          // check ending quote
+			else if (line[i] == quoteChar_)          // check ending quote
 			{
-				isInQuote = false;
-				quoteChar = ' ';
+				isInQuote_ = false;
+				quoteChar_ = ' ';
 				continue;
 			}
 			else
@@ -320,8 +329,8 @@ size_t ASEnhancer::findCaseColon(string  &line, size_t caseIndex) const
 		}
 		if (line[i] == '\'' || line[i] == '\"')		// check opening quote
 		{
-			isInQuote = true;
-			quoteChar = line[i];
+			isInQuote_ = true;
+			quoteChar_ = line[i];
 			continue;
 		}
 		if (line[i] == ':')
@@ -343,23 +352,23 @@ size_t ASEnhancer::findCaseColon(string  &line, size_t caseIndex) const
  * @param unindent      the number of tabsets to insert.
  * @return              the number of characters inserted.
  */
-int ASEnhancer::indentLine(string  &line, int indent) const
+int ASEnhancer::indentLine(string&  line, int indent) const
 {
 	if (line.length() == 0
 	        && ! emptyLineFill)
 		return 0;
 
-	size_t charsToInsert;                       // number of chars to insert
+	size_t charsToInsert;
 
-	if (useTabs)                                // if formatted with tabs
+	if (useTabs)
 	{
-		charsToInsert = indent;                 // tabs to insert
-		line.insert((size_t) 0, charsToInsert, '\t');    // insert the tabs
+		charsToInsert = indent;
+		line.insert(0U, charsToInsert, '\t');
 	}
 	else
 	{
-		charsToInsert = indent * indentLength;  // compute chars to insert
-		line.insert((size_t)0, charsToInsert, ' ');     // insert the spaces
+		charsToInsert = indent * indentLength;
+		line.insert(0U, charsToInsert, ' ');
 	}
 
 	return charsToInsert;
@@ -373,7 +382,7 @@ int ASEnhancer::indentLine(string  &line, int indent) const
  * @param index         the current line index.
  * @return              true if a hit.
  */
-bool ASEnhancer::isBeginDeclareSectionSQL(string  &line, size_t index) const
+bool ASEnhancer::isBeginDeclareSectionSQL(string&  line, size_t index) const
 {
 	string word;
 	size_t hits = 0;
@@ -422,7 +431,7 @@ bool ASEnhancer::isBeginDeclareSectionSQL(string  &line, size_t index) const
  * @param index         the current line index.
  * @return              true if a hit.
  */
-bool ASEnhancer::isEndDeclareSectionSQL(string  &line, size_t index) const
+bool ASEnhancer::isEndDeclareSectionSQL(string&  line, size_t index) const
 {
 	string word;
 	size_t hits = 0;
@@ -464,13 +473,88 @@ bool ASEnhancer::isEndDeclareSectionSQL(string  &line, size_t index) const
 }
 
 /**
+ * check if a one-line bracket has been reached,
+ * i.e. if the currently reached '{' character is closed
+ * with a complimentry '}' elsewhere on the current line,
+ *.
+ * @return     false = one-line bracket has not been reached.
+ *             true  = one-line bracket has been reached.
+ */
+bool ASEnhancer::isOneLineBlockReached(string& line, int startChar) const
+{
+	assert(line[startChar] == '{');
+
+	bool isInComment_ = false;
+	bool isInQuote_ = false;
+	int _bracketCount = 1;
+	int lineLength = line.length();
+	char quoteChar_ = ' ';
+	char ch = ' ';
+
+	for (int i = startChar + 1; i < lineLength; ++i)
+	{
+		ch = line[i];
+
+		if (isInComment_)
+		{
+			if (line.compare(i, 2, "*/") == 0)
+			{
+				isInComment_ = false;
+				++i;
+			}
+			continue;
+		}
+
+		if (ch == '\\')
+		{
+			++i;
+			continue;
+		}
+
+		if (isInQuote_)
+		{
+			if (ch == quoteChar_)
+				isInQuote_ = false;
+			continue;
+		}
+
+		if (ch == '"' || ch == '\'')
+		{
+			isInQuote_ = true;
+			quoteChar_ = ch;
+			continue;
+		}
+
+		if (line.compare(i, 2, "//") == 0)
+			break;
+
+		if (line.compare(i, 2, "/*") == 0)
+		{
+			isInComment_ = true;
+			++i;
+			continue;
+		}
+
+		if (ch == '{')
+			++_bracketCount;
+		else if (ch == '}')
+			--_bracketCount;
+
+		if (_bracketCount == 0)
+			return true;
+	}
+
+	return false;
+}
+
+/**
  * process the character at the current index in a switch block.
  *
  * @param line          a reference to the line to indent.
  * @param index         the current line index.
  * @return              the new line index.
  */
-size_t ASEnhancer::processSwitchBlock(string  &line, size_t index)
+size_t ASEnhancer::processSwitchBlock(string& line, size_t index)
 {
 	size_t i = index;
 	bool isPotentialKeyword = isCharPotentialHeader(line, i);
@@ -491,11 +575,22 @@ size_t ASEnhancer::processSwitchBlock(string  &line, size_t index)
 	if (line[i] == '}')                                 // if close bracket
 	{
 		sw.switchBracketCount--;
+		assert(sw.switchBracketCount <= bracketCount);
 		if (sw.switchBracketCount == 0)                 // if end of switch statement
 		{
-			switchDepth--;                              // one less switch
-			sw = swVector.back();                       // restore sw struct
-			swVector.pop_back();                        // remove last entry from stack
+			int lineUnindent = sw.unindentDepth;
+			if (line.find_first_not_of(" \t") == i
+			        && switchStack.size() > 0)
+				lineUnindent = switchStack[switchStack.size()-1].unindentDepth;
+			if (shouldIndentLine)
+			{
+				if (lineUnindent > 0)
+					i -= unindentLine(line, lineUnindent);
+				shouldIndentLine = false;
+			}
+			switchDepth--;
+			sw = switchStack.back();
+			switchStack.pop_back();
 		}
 		return i;
 	}
@@ -503,16 +598,16 @@ size_t ASEnhancer::processSwitchBlock(string  &line, size_t index)
 	if (isPotentialKeyword
 	        && (findKeyword(line, i, "case") || findKeyword(line, i, "default")))
 	{
-		if (sw.unindentCase)                            // if unindented last case
+		if (sw.unindentCase)					// if unindented last case
 		{
-			sw.unindentCase = false;                    // stop unindenting previous case
-			sw.unindentDepth--;                         // reduce depth
+			sw.unindentCase = false;			// stop unindenting previous case
+			sw.unindentDepth--;
 		}
 
 		i = findCaseColon(line, i);
 
 		i++;
-		for (; i < line.length(); i++)                  // bypass whitespace
+		for (; i < line.length(); i++)			// bypass whitespace
 		{
 			if (!isWhiteSpace(line[i]))
 				break;
@@ -521,13 +616,15 @@ size_t ASEnhancer::processSwitchBlock(string  &line, size_t index)
 		{
 			if (line[i] == '{')
 			{
+				bracketCount++;
 				sw.switchBracketCount++;
-				unindentNextLine = true;
+				if (!isOneLineBlockReached(line, i))
+					unindentNextLine = true;
 				return i;
 			}
 		}
-		lookingForCaseBracket = true;                   // bracket must be on next line
-		i--;                                            // need to check for comments
+		lookingForCaseBracket = true;
+		i--;									// need to process this char
 		return i;
 	}
 	if (isPotentialKeyword)
@@ -546,7 +643,7 @@ size_t ASEnhancer::processSwitchBlock(string  &line, size_t index)
  * @param unindent      the number of tabsets to erase.
  * @return              the number of characters erased.
  */
-int ASEnhancer::unindentLine(string  &line, int unindent) const
+int ASEnhancer::unindentLine(string&  line, int unindent) const
 {
 	size_t whitespace = line.find_first_not_of(" \t");
 

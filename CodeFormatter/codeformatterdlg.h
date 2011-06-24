@@ -57,9 +57,9 @@ protected:
 	
 public:
 	/** Constructor */
-	CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, size_t flags, const wxString &sampleCode );
+	CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, const FormatOptions& opts, const wxString &sampleCode );
 	~CodeFormatterDlg();
-	size_t GetOptions() const{return m_options.GetOptions();}
+	FormatOptions GetOptions() const{return m_options;}
 };
 
 #endif // __codeformatterdlg__

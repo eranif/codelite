@@ -14,7 +14,6 @@
   <Project Name="CodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
   <Project Name="DebuggerGDB" Path="Debugger/DebuggerGDB.project" Active="No"/>
   <Project Name="Interfaces" Path="Interfaces/Interfaces.project" Active="No"/>
-  <Project Name="CodeFormatter" Path="CodeFormatter/CodeFormatter.project" Active="No"/>
   <Project Name="Gizmos" Path="Gizmos/Gizmos.project" Active="No"/>
   <Project Name="Cscope" Path="cscope/Cscope.project" Active="No"/>
   <Environment>
@@ -39,6 +38,7 @@
   <Project Name="DatabaseExplorer" Path="DatabaseExplorer/DatabaseExplorer.project" Active="No"/>
   <Project Name="wxshapeframework" Path="sdk/wxshapeframework/wxshapeframework.project" Active="No"/>
   <Project Name="databaselayer_sqlite" Path="sdk/databaselayer/databaselayer_sqlite.project" Active="No"/>
+  <Project Name="CodeFormatter" Path="CodeFormatter/CodeFormatter.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
@@ -66,8 +66,8 @@
       <Project Name="Copyright" ConfigName="WinReleaseUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
@@ -95,10 +95,10 @@
       <Project Name="Copyright" ConfigName="WinDebugUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
-      <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="no">
+    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
@@ -120,12 +120,12 @@
       <Project Name="Copyright" ConfigName="WinDebugUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
-      <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="git" ConfigName="DebugUnicode"/>
       <Project Name="DatabaseExplorer" ConfigName="DebugUnicode"/>
       <Project Name="wxshapeframework" ConfigName="DebugUnicode"/>
       <Project Name="databaselayer_sqlite" ConfigName="DebugUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
@@ -149,12 +149,12 @@
       <Project Name="Copyright" ConfigName="WinDebugUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
-      <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="git" ConfigName="DebugUnicode"/>
       <Project Name="DatabaseExplorer" ConfigName="DebugUnicode"/>
       <Project Name="wxshapeframework" ConfigName="DebugUnicode"/>
       <Project Name="databaselayer_sqlite" ConfigName="DebugUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_wxWidgets_29" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="Win_wxWidgets_29"/>
@@ -178,12 +178,12 @@
       <Project Name="Copyright" ConfigName="Win_wxWidgets_29"/>
       <Project Name="ContinuousBuild" ConfigName="Win_wxWidgets_29"/>
       <Project Name="CodeLite" ConfigName="Win_wxWidgets_29"/>
-      <Project Name="CodeFormatter" ConfigName="Win_wxWidgets_29"/>
       <Project Name="abbreviation" ConfigName="Win_wxWidgets_29"/>
       <Project Name="git" ConfigName="DebugUnicode"/>
       <Project Name="DatabaseExplorer" ConfigName="DebugUnicode"/>
       <Project Name="wxshapeframework" ConfigName="DebugUnicode"/>
       <Project Name="databaselayer_sqlite" ConfigName="DebugUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="Win_wxWidgets_29"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

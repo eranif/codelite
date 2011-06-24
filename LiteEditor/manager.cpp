@@ -2289,6 +2289,7 @@ void Manager::DbgDoSimpleCommand ( int cmd )
 	if ( dbgr && dbgr->IsRunning() ) {
 		switch ( cmd ) {
 		case DBG_PAUSE:
+			GetBreakpointsMgr()->SetExpectingControl(true);
 			dbgr->Interrupt();
 			break;
 		case DBG_NEXT:
@@ -2443,7 +2444,7 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 
 		//Print the stack trace
 		wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
-		if ( info.IsShown() && showDialog ) {
+		if ( info.IsShown() ) {
 			clMainFrame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
 			UpdateDebuggerPane();
 		}

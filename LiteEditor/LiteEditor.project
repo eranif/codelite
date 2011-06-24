@@ -958,7 +958,7 @@ resources.cpp: resources.xrc
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="Default"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>

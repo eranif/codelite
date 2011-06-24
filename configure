@@ -920,7 +920,7 @@ echo "Plugins: SDK \\" >> Makefile
 ## Append these as dependencies for the main project
 ##
 ########################################################
-echo "CodeDesigner\\" >> Makefile
+#echo "CodeDesigner\\" >> Makefile
 echo "DatabaseExplorer\\" >> Makefile
 echo "Debugger\\" >> Makefile
 echo "Gizmos\\" >> Makefile
@@ -950,7 +950,7 @@ echo "plugins_install:\\" >> Makefile
 ## For all plugins you add, you can add an entry here for
 ## the install target
 ########################################################
-echo "CodeDesigner_install\\" >> Makefile
+#echo "CodeDesigner_install\\" >> Makefile
 echo "DatabaseExplorer_install\\" >> Makefile
 echo "Debugger_install\\" >> Makefile
 echo "Gizmos_install\\" >> Makefile
@@ -983,7 +983,7 @@ echo "clean_plugins:\\" >> Makefile
 ## For all plugins you add, add an entry here for 'clean'
 ##
 ########################################################
-echo "CodeDesigner_clean\\" >> Makefile
+#echo "CodeDesigner_clean\\" >> Makefile
 echo "DatabaseExplorer_clean\\" >> Makefile
 echo "Debugger_clean\\" >> Makefile
 echo "Gizmos_clean\\" >> Makefile
@@ -1012,7 +1012,7 @@ echo "" >> Makefile
 ## createPluginMakefile <plugin path> <plugin name>
 ##
 ########################################################
-createPluginMakefile "CodeDesigner" "CodeDesigner"  "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+#createPluginMakefile "CodeDesigner" "CodeDesigner"  "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "DatabaseExplorer" "DatabaseExplorer"  "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "Debugger" "Debugger" "\$(DESTDIR)$plugins_dir/debuggers/" "../Runtime/debuggers"
 createPluginMakefile "Gizmos" "Gizmos"  "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"

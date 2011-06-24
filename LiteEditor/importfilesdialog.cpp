@@ -30,6 +30,8 @@
 #include "manager.h"
 #include "project.h"
 #include "ctags_manager.h"
+#include "imanager.h"
+#include "pluginmanager.h"
 #include "checkdirtreectrl.h"
 #include "editor_config.h"
 #include "importfilessettings.h"
@@ -51,11 +53,11 @@ ImportFilesDialog::ImportFilesDialog( wxWindow* parent, wxWindowID id, const wxS
 		options.SetFlags(flags);
 	}
 
+	options.SetBaseDir( PluginManager::Get()->GetSelectedTreeItemInfo(TreeFileView).m_fileName.GetPath() );
 	if(options.GetBaseDir().IsEmpty()) {
-		ProjectPtr proj = ManagerST::Get()->GetProject(ManagerST::Get()->GetActiveProjectName());
-		options.SetBaseDir( proj->GetFileName().GetPath() );
+		options.SetBaseDir(wxGetCwd());
 	}
-
+	
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 	wxBoxSizer* mainSizer;

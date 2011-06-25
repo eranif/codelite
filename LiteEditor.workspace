@@ -66,8 +66,8 @@
       <Project Name="Copyright" ConfigName="WinReleaseUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>

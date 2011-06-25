@@ -54,6 +54,7 @@ protected:
 	void UpdateCheckBox(wxCheckBox *obj, size_t flag);
 	void UpdatePreview();
 	void UpdatePredefinedHelpText();
+	void OnSplitterIdle(wxIdleEvent &e);
 	
 public:
 	/** Constructor */

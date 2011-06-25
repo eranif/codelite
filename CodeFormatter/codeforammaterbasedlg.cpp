@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun  6 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -18,7 +18,6 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	
 	m_splitter1 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME );
 	m_splitter1->SetSashGravity( 0.5 );
-	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( CodeFormatterBaseDlg::m_splitter1OnIdle ), NULL, this );
 	
 	m_panel31 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer7;
@@ -218,7 +217,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_panel4->SetSizer( bSizer5 );
 	m_panel4->Layout();
 	bSizer5->Fit( m_panel4 );
-	m_splitter1->SplitVertically( m_panel31, m_panel4, 400 );
+	m_splitter1->SplitVertically( m_panel31, m_panel4, -1 );
 	bSizer1->Add( m_splitter1, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer2;

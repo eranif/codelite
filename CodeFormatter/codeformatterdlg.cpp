@@ -42,9 +42,9 @@ CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, const F
 
 	// Initialise dialog
 	m_textCtrlPreview->SetText(m_sampleCode);
-	InitDialog();
 
 	GetSizer()->Fit(this);
+	InitDialog();
 	UpdatePreview();
 
 	m_radioBoxPredefinedStyle->SetFocus();
@@ -197,6 +197,8 @@ void CodeFormatterDlg::InitDialog()
 	
 	m_radioBoxBrackets->SetSelection(selection);
 	m_textCtrlUserFlags->SetValue(m_options.GetCustomFlags());
+	
+	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( CodeFormatterDlg::OnSplitterIdle), NULL, this );
 }
 
 void CodeFormatterDlg::OnRadioBoxPredefinedStyle( wxCommandEvent& event )
@@ -334,6 +336,7 @@ void CodeFormatterDlg::OnOK(wxCommandEvent &e)
 	wxUnusedVar(e);
 	//Save the options
 	m_options.SetCustomFlags(m_textCtrlUserFlags->GetValue());
+	EditorConfigST::Get()->SaveLongValue(wxT("CodeFormatterDlgSashPos"), m_splitter1->GetSashPosition());
 	EndModal(wxID_OK);
 }
 
@@ -388,4 +391,13 @@ void CodeFormatterDlg::UpdatePredefinedHelpText()
 CodeFormatterDlg::~CodeFormatterDlg()
 {
 	WindowAttrManager::Save(this, wxT("CodeFormatterDlgAttr"), m_cf->GetManager()->GetConfigTool());
+}
+
+void CodeFormatterDlg::OnSplitterIdle(wxIdleEvent& e)
+{
+	long sashPosition(wxNOT_FOUND);
+	if(EditorConfigST::Get()->GetLongValue(wxT("CodeFormatterDlgSashPos"), sashPosition)) {
+		m_splitter1->SetSashPosition(sashPosition);
+	}
+	m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CodeFormatterDlg::OnSplitterIdle), NULL, this );
 }

@@ -43,7 +43,8 @@ private:
 	void OnScope             (wxCommandEvent &e);
 	void OnFunction          (wxCommandEvent &e);
 	void OnSplitterPosChanged(wxSplitterEvent& event);
-
+	void OnSplitterIdle      (wxIdleEvent &e);
+	
 public:
 	NavBar(wxWindow *parent);
 	virtual ~NavBar();

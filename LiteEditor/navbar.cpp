@@ -38,7 +38,7 @@ NavBar::NavBar(wxWindow* parent)
 	m_scope->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
 	m_func->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
 #endif
-	m_splitter->Refresh();
+	m_splitter->Connect( wxEVT_IDLE, wxIdleEventHandler( NavBar::OnSplitterIdle), NULL, this );
 }
 
 NavBar::~NavBar()
@@ -173,4 +173,13 @@ void NavBar::SetSashPosition(int pos)
 	m_splitter->SetSashPosition(pos);
 	Layout();
 	m_startingUp = false;
+}
+
+void NavBar::OnSplitterIdle(wxIdleEvent& e)
+{
+	long pos(wxNOT_FOUND);
+	if(EditorConfigST::Get()->GetLongValue(wxT("NavBarSashPos"), pos)) {
+		m_splitter->SetSashPosition(pos);
+	}
+	m_splitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( NavBar::OnSplitterIdle), NULL, this );
 }

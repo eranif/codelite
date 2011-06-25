@@ -7,6 +7,7 @@
         <property name="disconnect_events">1</property>
         <property name="disconnect_mode">source_name</property>
         <property name="disconnect_python_events">0</property>
+        <property name="embedded_files_path">res</property>
         <property name="encoding">UTF-8</property>
         <property name="event_generation">connect</property>
         <property name="file">codeforammaterbasedlg</property>
@@ -171,7 +172,7 @@
                         <property name="resize">Resizable</property>
                         <property name="row"></property>
                         <property name="sashgravity">0.5</property>
-                        <property name="sashpos">400</property>
+                        <property name="sashpos">-1</property>
                         <property name="sashsize">-1</property>
                         <property name="show">1</property>
                         <property name="size"></property>

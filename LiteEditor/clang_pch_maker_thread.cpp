@@ -11,11 +11,11 @@
 #include <wx/xrc/xmlres.h>
 
 #ifdef __WXMSW__
-    static wxString PRE_PROCESS_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w \"$SRC_FILE\" -E 1> \"$PP_OUTPUT_FILE\" 2>&1");
-    static wxString PCH_CMD         = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions -x c++-header $ARGS -w \"$SRC_FILE\" -emit-pch -o \"$PCH_FILE\" 1> \"$PCH_FILE.output\" 2>&1");
+    static wxString PRE_PROCESS_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w \"$SRC_FILE\" -E > \"$PP_OUTPUT_FILE\" 2>&1");
+    static wxString PCH_CMD         = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions -x c++-header $ARGS -w \"$SRC_FILE\" -emit-pch -o \"$PCH_FILE\" > \"$PCH_FILE.output\" 2>&1");
 #else
-    static wxString PRE_PROCESS_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions $ARGS -w \"$SRC_FILE\" -E 1> \"$PP_OUTPUT_FILE\" 2>&1");
-    static wxString PCH_CMD         = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions -x c++-header $ARGS -w \"$SRC_FILE\" -emit-pch -o \"$PCH_FILE\" 1> \"$PCH_FILE.output\" 2>&1");
+    static wxString PRE_PROCESS_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions $ARGS -w \"$SRC_FILE\" -E > \"$PP_OUTPUT_FILE\" 2>&1");
+    static wxString PCH_CMD         = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions -x c++-header $ARGS -w \"$SRC_FILE\" -emit-pch -o \"$PCH_FILE\" > \"$PCH_FILE.output\" 2>&1");
 #endif
 
 const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED = XRCID("clang_pch_cache_started");
@@ -305,8 +305,9 @@ void ClangPchMakerThread::DoFilterIncludeFilesFromPP(ClangPchCreateTask *task)
 	wxString pchHeaderFile = DoGetPchHeaderFile(filename.GetFullPath());
 	wxString pchHeaderFileContent;
 	
+	std::set<wxString> includesMatched; // cookie
 	for(size_t i=0; i<includes.GetCount(); i++) {
-		if(ShouldInclude(task, includes.Item(i))) {
+		if(ShouldInclude(task, includes.Item(i), includesMatched)) {
 			task->GetPchHeaders().Add(includes.Item(i));
 			pchHeaderFileContent << wxT("#include \"") << includes.Item(i) << wxT("\"\n");
 		}
@@ -315,14 +316,19 @@ void ClangPchMakerThread::DoFilterIncludeFilesFromPP(ClangPchCreateTask *task)
 	WriteFileLatin1(pchHeaderFile, pchHeaderFileContent);
 }
 
-bool ClangPchMakerThread::ShouldInclude(ClangPchCreateTask *task, const wxString& header)
+bool ClangPchMakerThread::ShouldInclude(ClangPchCreateTask *task, const wxString& header, std::set<wxString> &includesMatched)
 {
 	wxFileName fnHeader(header);
 	// Header is in the form of full path
 	for(size_t i=0; i<task->GetIncludesRemoved().GetCount(); i++) {
 		wxFileName fn(task->GetIncludesRemoved().Item(i));
-
+		
+		// Do we already got a match for this include?
+		if(includesMatched.find(task->GetIncludesRemoved().Item(i)) != includesMatched.end())
+			continue;
+		
 		if(fn.GetFullName() == fnHeader.GetFullName() && header.EndsWith(task->GetIncludesRemoved().Item(i))) {
+			includesMatched.insert(task->GetIncludesRemoved().Item(i));
 			return true;
 		}
 	}

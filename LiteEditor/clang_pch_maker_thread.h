@@ -90,7 +90,7 @@ protected:
 	wxString DoGetPchHeaderFile(const wxString &filename);
 	wxString DoGetPchOutputFileName(const wxString &filename);
 	void     DoFilterIncludeFilesFromPP(ClangPchCreateTask *task);
-	bool     ShouldInclude(ClangPchCreateTask *task, const wxString& header);
+	bool     ShouldInclude(ClangPchCreateTask *task, const wxString& header, std::set<wxString> &includesMatched);
 	void     DoPrepareCommand(wxString &command);
 	void     DoCacheResult(ClangPchCreateTask *task, const wxArrayString &output);
 

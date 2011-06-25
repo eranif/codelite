@@ -329,6 +329,9 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 	BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), projectSelConf);
 
 	projectPath = proj->GetFileName().GetPath();
+	if(dependProjbldConf) {
+		CL_DEBUG(wxT("DoPrepareCompilationArgs(): Project=%s, Conf=%s"), projectName.c_str(), dependProjbldConf->GetName().c_str());
+	}
 	
 	// for non custom projects, take the settings from the build configuration
 	if(dependProjbldConf && !dependProjbldConf->IsCustomBuild()) {

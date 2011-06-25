@@ -928,7 +928,7 @@ wxString wxImplode(const wxArrayString &arr, const wxString &glue)
 wxString wxShellExec(const wxString &cmd)
 {
 	wxString filename = wxFileName::CreateTempFileName(wxT("clTempFile"));
-	wxString theCommand = wxString::Format(wxT("%s 1> \"%s\" 2>&1"), cmd.c_str(), filename.c_str());
+	wxString theCommand = wxString::Format(wxT("%s > \"%s\" 2>&1"), cmd.c_str(), filename.c_str());
 	WrapInShell(theCommand);
 	
 	wxArrayString dummy;

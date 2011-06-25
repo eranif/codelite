@@ -933,6 +933,7 @@ wxString wxShellExec(const wxString &cmd)
 	
 	wxArrayString dummy;
 	EnvSetter es;
+	theCommand = EnvironmentConfig::Instance()->ExpandVariables(theCommand, false);
 	ProcUtils::SafeExecuteCommand(theCommand, dummy);
 	
 	wxString content;

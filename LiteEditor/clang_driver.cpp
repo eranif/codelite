@@ -427,10 +427,12 @@ wxString ClangDriver::DoExpandBacktick(const wxString& backtick)
 		
 		if(m_backticks.find(cmpOption) == m_backticks.end()) {
 			
+			CL_DEBUG(wxT("DoExpandBacktick(): executing: '%s'"), cmpOption.c_str());
 			// Expand the backticks into their value
 			wxString expandedValue = wxShellExec(cmpOption);
 			m_backticks[cmpOption] = expandedValue;
 			cmpOption = expandedValue;
+			CL_DEBUG(wxT("DoExpandBacktick(): result: '%s'"), expandedValue.c_str());
 			
 		} else {
 			cmpOption = m_backticks.find(cmpOption)->second;
@@ -537,6 +539,7 @@ wxString ClangDriver::DoGetClangBinary()
 void ClangDriver::ClearCache()
 {
 	m_pchMakerThread.ClearCache();
+	m_backticks.clear();
 }
 
 bool ClangDriver::IsCacheEmpty()

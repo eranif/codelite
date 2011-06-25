@@ -154,20 +154,20 @@ void ClangPchMakerThread::DoCreatePch(ClangPchCreateTask *task)
 void ClangPchMakerThread::DoCacheResult(ClangPchCreateTask *task, const wxArrayString &output)
 {
 	// read the output...
-	wxString pchfilename = DoGetPchOutputFileName(task->GetFileName());
-	pchfilename.Append(wxT(".output"));
+	wxString pch_output_filename = DoGetPchOutputFileName(task->GetFileName());
+	wxString pchFileName = pch_output_filename;
+	pch_output_filename.Append(wxT(".output"));
 	wxString strOutput;
-	wxFFile of(pchfilename, wxT("rb"));
+	wxFFile of(pch_output_filename, wxT("rb"));
 	if(of.IsOpened()) {
 		of.ReadAll( &strOutput );
 		of.Close();
 	}
 	
-	wxRemoveFile(pchfilename);
+	wxRemoveFile(pch_output_filename);
 	CL_DEBUG1(wxT("[ ClangPchMakerThread ] %s"), strOutput.c_str());
 	
-	// Cache the result (incase of no errors were made)
-	if(strOutput.Find(wxT("error :")) != wxNOT_FOUND) {
+	if(!wxFileName::FileExists(pchFileName) || strOutput.Find(wxT("error :")) != wxNOT_FOUND) {
 		// failed to create the PCH
 		CL_DEBUG(wxT(" ==========> [ ClangPchMakerThread ] PCH creation ended with error <=============="));
 		return;

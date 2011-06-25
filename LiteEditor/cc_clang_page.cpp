@@ -11,9 +11,20 @@ CCClangPage::CCClangPage(wxWindow* parent, const TagsOptionsData &data)
 	: CCClangBasePage(parent)
 {
 	m_checkBoxEnableClangCC->SetValue(data.GetClangOptions() & CC_CLANG_ENABLED);
-	m_filePickerClang->SetPath(data.GetClangBinary());
+	m_textCtrlClangPath->SetValue(data.GetClangBinary());
 	m_checkBoxClangFirst->SetValue(data.GetClangOptions() & CC_CLANG_FIRST);
 	m_textCtrlClangSearchPaths->SetValue(data.GetClangSearchPaths());
+	m_choiceCachePolicy->Clear();
+	
+	// defaults
+	m_choiceCachePolicy->Append(TagsOptionsData::CLANG_CACHE_LAZY);
+	m_choiceCachePolicy->Append(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD);
+	m_choiceCachePolicy->Select(1);
+	
+	int where = m_choiceCachePolicy->FindString(data.GetClangCachePolicy());
+	if(where != wxNOT_FOUND) {
+		m_choiceCachePolicy->Select(where);
+	}
 	
 	Layout();
 #if defined (__WXMSW__)
@@ -45,8 +56,9 @@ void CCClangPage::Save(TagsOptionsData& data)
 		options |= CC_CLANG_FIRST;
 
 	data.SetClangOptions(options);
-	data.SetClangBinary(m_filePickerClang->GetPath());
+	data.SetClangBinary(m_textCtrlClangPath->GetValue());
 	data.SetClangSearchPaths(m_textCtrlClangSearchPaths->GetValue());
+	data.SetClangCachePolicy(m_choiceCachePolicy->GetStringSelection());
 }
 
 void CCClangPage::OnClangCCEnabledUI(wxUpdateUIEvent& event)
@@ -71,12 +83,12 @@ void CCClangPage::OnSuggestSearchPaths(wxCommandEvent& event)
 	IncludePathLocator locator(PluginManager::Get());
 	wxArrayString paths, excludes;
 	locator.Locate(paths, excludes, false);
-	
+
 	wxString suggestedPaths;
 	for(size_t i=0; i<paths.GetCount(); i++) {
 		suggestedPaths << paths.Item(i) << wxT("\n");
 	}
-	
+
 	suggestedPaths.Trim().Trim(false);
 	if(m_textCtrlClangSearchPaths->GetValue().Contains(suggestedPaths) == false) {
 		wxString newVal = m_textCtrlClangSearchPaths->GetValue();
@@ -85,5 +97,14 @@ void CCClangPage::OnSuggestSearchPaths(wxCommandEvent& event)
 			newVal << wxT("\n");
 		newVal << suggestedPaths;
 		m_textCtrlClangSearchPaths->SetValue(newVal);
+	}
+}
+
+void CCClangPage::OnSelectClangPath(wxCommandEvent& event)
+{
+	wxString path = m_textCtrlClangPath->GetValue();
+	wxString new_path = wxFileSelector(_("Select a clang to use:"), path.c_str(), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
+	if (new_path.IsEmpty() == false) {
+		m_textCtrlClangPath->SetValue(new_path);
 	}
 }

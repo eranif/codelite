@@ -16,6 +16,7 @@ public:
 	virtual void OnClearClangCache(wxCommandEvent& event);
 	virtual void OnClearClangCacheUI(wxUpdateUIEvent& event);
 	virtual void OnSuggestSearchPaths(wxCommandEvent& event);
+	virtual void OnSelectClangPath(wxCommandEvent& event);
 
 };
 

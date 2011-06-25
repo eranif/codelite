@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun  6 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -32,7 +32,7 @@
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/notebook.h>
-#include <wx/filepicker.h>
+#include <wx/choice.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -227,13 +227,17 @@ class CCClangBasePage : public wxPanel
 		wxButton* m_buttonSuggest;
 		wxPanel* m_panel4;
 		wxStaticText* m_staticText10;
-		wxFilePickerCtrl* m_filePickerClang;
+		wxTextCtrl* m_textCtrlClangPath;
+		wxButton* m_buttonSelectClang;
 		wxStaticText* m_staticText101;
 		wxButton* m_buttonClearCache;
+		wxStaticText* m_staticText12;
+		wxChoice* m_choiceCachePolicy;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnClangCCEnabledUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnSuggestSearchPaths( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnSelectClangPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClearClangCache( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClearClangCacheUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		

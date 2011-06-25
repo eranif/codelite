@@ -28,6 +28,9 @@
 #include "tags_options_data.h"
 #include <set>
 
+wxString TagsOptionsData::CLANG_CACHE_LAZY         = wxT("Lazy");
+wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = wxT("On File Load");
+
 static bool _IsValidCppIndetifier(const wxString &id)
 {
 	if (id.IsEmpty()) {
@@ -140,6 +143,7 @@ TagsOptionsData::TagsOptionsData()
 #endif
 		, m_clangOptions(0)
 		, m_clangBinary(wxT(""))
+		, m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
 {
 	SetVersion(wxT("3.0.2"));
 	// Initialize defaults
@@ -263,6 +267,7 @@ void TagsOptionsData::Serialize(Archive &arch)
 	arch.WriteCData(wxT("m_clangCmpOptions"),   m_clangCmpOptions);
 	arch.WriteCData(wxT("m_clangSearchPaths"),  m_clangSearchPaths);
 	arch.WriteCData(wxT("m_clangMacros"),       m_clangMacros);
+	arch.Write     (wxT("m_clangCachePolicy"),  m_clangCachePolicy);
 }
 
 void TagsOptionsData::DeSerialize(Archive &arch)
@@ -284,7 +289,7 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	arch.ReadCData(wxT("m_clangCmpOptions"),   m_clangCmpOptions);
 	arch.ReadCData(wxT("m_clangSearchPaths"),  m_clangSearchPaths);
 	arch.ReadCData(wxT("m_clangMacros"),       m_clangMacros);
-	
+	arch.Read     (wxT("m_clangCachePolicy"),  m_clangCachePolicy);
 	// since of build 3749, we *always* set CC_ACCURATE_SCOPE_RESOLVING to true
 	DoUpdateTokensWxMapReversed();
 	DoUpdateTokensWxMap();

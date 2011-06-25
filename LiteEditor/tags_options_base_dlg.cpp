@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun  6 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -538,7 +538,7 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	
 	m_textCtrlClangSearchPaths = new wxTextCtrl( m_panel8, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
 	m_textCtrlClangSearchPaths->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
-	m_textCtrlClangSearchPaths->SetToolTip( _("Add here search paths used by clang for locating inculde files") );
+	m_textCtrlClangSearchPaths->SetToolTip( _("Add here search paths used by clang for locating include files") );
 	
 	bSizer24->Add( m_textCtrlClangSearchPaths, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -568,10 +568,16 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	m_staticText10->Wrap( -1 );
 	fgSizer4->Add( m_staticText10, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_filePickerClang = new wxFilePickerCtrl( m_panel4, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL );
-	m_filePickerClang->SetToolTip( _("Select clang binary to use.\nWhen left empty, codelite will use the default clang binary") );
+	wxBoxSizer* bSizer22;
+	bSizer22 = new wxBoxSizer( wxHORIZONTAL );
 	
-	fgSizer4->Add( m_filePickerClang, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	m_textCtrlClangPath = new wxTextCtrl( m_panel4, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer22->Add( m_textCtrlClangPath, 1, wxEXPAND|wxTOP|wxBOTTOM|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_buttonSelectClang = new wxButton( m_panel4, wxID_OPEN, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer22->Add( m_buttonSelectClang, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	fgSizer4->Add( bSizer22, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_staticText101 = new wxStaticText( m_panel4, wxID_ANY, _("Clear clang PCH cache:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText101->Wrap( -1 );
@@ -580,7 +586,17 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	m_buttonClearCache = new wxButton( m_panel4, wxID_CLEAR, _("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonClearCache->SetToolTip( _("Clicking this button will erase all clang's generated PCH files. \nUse this button as the first step to resolve a code completion issue") );
 	
-	fgSizer4->Add( m_buttonClearCache, 0, wxALL|wxALIGN_RIGHT, 5 );
+	fgSizer4->Add( m_buttonClearCache, 0, wxALL|wxALIGN_RIGHT|wxEXPAND, 5 );
+	
+	m_staticText12 = new wxStaticText( m_panel4, wxID_ANY, _("Caching policy:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText12->Wrap( -1 );
+	fgSizer4->Add( m_staticText12, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxString m_choiceCachePolicyChoices[] = { _("Lazy"), _("On File Load") };
+	int m_choiceCachePolicyNChoices = sizeof( m_choiceCachePolicyChoices ) / sizeof( wxString );
+	m_choiceCachePolicy = new wxChoice( m_panel4, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceCachePolicyNChoices, m_choiceCachePolicyChoices, 0 );
+	m_choiceCachePolicy->SetSelection( 1 );
+	fgSizer4->Add( m_choiceCachePolicy, 0, wxALL|wxALIGN_RIGHT|wxEXPAND, 5 );
 	
 	bSizer21->Add( fgSizer4, 0, wxEXPAND, 5 );
 	
@@ -602,6 +618,9 @@ CCClangBasePage::CCClangBasePage( wxWindow* parent, wxWindowID id, const wxPoint
 	m_buttonSuggest->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCClangBasePage::OnSuggestSearchPaths ), NULL, this );
 	m_buttonSuggest->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_staticText10->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_textCtrlClangPath->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_buttonSelectClang->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCClangBasePage::OnSelectClangPath ), NULL, this );
+	m_buttonSelectClang->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_staticText101->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_buttonClearCache->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCClangBasePage::OnClearClangCache ), NULL, this );
 	m_buttonClearCache->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClearClangCacheUI ), NULL, this );
@@ -616,6 +635,9 @@ CCClangBasePage::~CCClangBasePage()
 	m_buttonSuggest->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCClangBasePage::OnSuggestSearchPaths ), NULL, this );
 	m_buttonSuggest->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_staticText10->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_textCtrlClangPath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_buttonSelectClang->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCClangBasePage::OnSelectClangPath ), NULL, this );
+	m_buttonSelectClang->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_staticText101->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_buttonClearCache->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CCClangBasePage::OnClearClangCache ), NULL, this );
 	m_buttonClearCache->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CCClangBasePage::OnClearClangCacheUI ), NULL, this );

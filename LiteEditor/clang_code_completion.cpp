@@ -218,28 +218,26 @@ void ClangCodeCompletion::OnFileLoaded(wxCommandEvent& e)
 	e.Skip();
 	
 	// Sanity
-	if(!(TagsManagerST::Get()->GetCtagsOptions().GetClangOptions() & CC_CLANG_ENABLED)) 
+	if(!(TagsManagerST::Get()->GetCtagsOptions().GetClangOptions() & CC_CLANG_ENABLED))
 		return;
-
-	CL_DEBUG(wxT("ClangCodeCompletion::OnFileLoaded() START"));
-	
-	if(m_clang.IsBusy() || m_allEditorsAreClosing) {
-		CL_DEBUG(wxT("ClangCodeCompletion::OnFileLoaded() ENDED"));
-		return;
-	}
-
-	if(e.GetClientData()) {
-		IEditor *editor = (IEditor*)e.GetClientData();
-		// sanity
-		if(editor->GetProjectName().IsEmpty() || editor->GetFileName().GetFullName().IsEmpty())
-			return;
 		
-		m_activationEditor = editor;
-		m_clang.SetContext(ClangDriver::CTX_CachePCH);
-		m_clang.CodeCompletion(m_activationEditor);
-	
+	if(TagsManagerST::Get()->GetCtagsOptions().GetClangCachePolicy() == TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD) {
+		CL_DEBUG(wxT("ClangCodeCompletion::OnFileLoaded() START"));
+		if(m_clang.IsBusy() || m_allEditorsAreClosing) {
+			CL_DEBUG(wxT("ClangCodeCompletion::OnFileLoaded() ENDED"));
+			return;
+		}
+		if(e.GetClientData()) {
+			IEditor *editor = (IEditor*)e.GetClientData();
+			// sanity
+			if(editor->GetProjectName().IsEmpty() || editor->GetFileName().GetFullName().IsEmpty())
+				return;
+			m_activationEditor = editor;
+			m_clang.SetContext(ClangDriver::CTX_CachePCH);
+			m_clang.CodeCompletion(m_activationEditor);
+		}
+		CL_DEBUG(wxT("ClangCodeCompletion::OnFileLoaded() ENDED"));
 	}
-	CL_DEBUG(wxT("ClangCodeCompletion::OnFileLoaded() ENDED"));
 }
 
 void ClangCodeCompletion::OnAllEditorsClosed(wxCommandEvent& e)

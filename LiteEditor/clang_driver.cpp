@@ -328,14 +328,10 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 	wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, proj->GetName());
 	BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), projectSelConf);
 
-	// no build config?
-	if(!dependProjbldConf)
-		return wxT("");
-	
 	projectPath = proj->GetFileName().GetPath();
 	
 	// for non custom projects, take the settings from the build configuration
-	if(!dependProjbldConf->IsCustomBuild()) {
+	if(dependProjbldConf && !dependProjbldConf->IsCustomBuild()) {
 
 		// Get the include paths and add them
 		wxString projectIncludePaths = dependProjbldConf->GetIncludePath();

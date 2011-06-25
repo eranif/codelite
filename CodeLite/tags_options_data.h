@@ -31,49 +31,49 @@
 #include <map>
 
 enum CodeCompletionOpts {
-	CC_PARSE_COMMENTS                      = 0x00000001,
-	CC_DISP_COMMENTS                       = 0x00000002,
-	CC_DISP_TYPE_INFO                      = 0x00000004,
-	CC_DISP_FUNC_CALLTIP                   = 0x00000008,
-	CC_LOAD_EXT_DB                         = 0x00000010,
-	CC_AUTO_INSERT_SINGLE_CHOICE           = 0x00000020,
-	CC_PARSE_EXT_LESS_FILES                = 0x00000040,
-	CC_COLOUR_VARS                         = 0x00000080,
-	CC_COLOUR_WORKSPACE_TAGS               = 0x00000100,
-	CC_CPP_KEYWORD_ASISST                  = 0x00000200,
-	CC_WORD_ASSIST                         = 0x00000400,
-	CC_DISABLE_AUTO_PARSING                = 0x00000800,
-	CC_MARK_TAGS_FILES_IN_BOLD             = 0x00001000,
-	CC_RETAG_WORKSPACE_ON_STARTUP          = 0x00004000,
-	CC_ACCURATE_SCOPE_RESOLVING            = 0x00008000,
-	CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING = 0x00010000
+    CC_PARSE_COMMENTS                      = 0x00000001,
+    CC_DISP_COMMENTS                       = 0x00000002,
+    CC_DISP_TYPE_INFO                      = 0x00000004,
+    CC_DISP_FUNC_CALLTIP                   = 0x00000008,
+    CC_LOAD_EXT_DB                         = 0x00000010,
+    CC_AUTO_INSERT_SINGLE_CHOICE           = 0x00000020,
+    CC_PARSE_EXT_LESS_FILES                = 0x00000040,
+    CC_COLOUR_VARS                         = 0x00000080,
+    CC_COLOUR_WORKSPACE_TAGS               = 0x00000100,
+    CC_CPP_KEYWORD_ASISST                  = 0x00000200,
+    CC_WORD_ASSIST                         = 0x00000400,
+    CC_DISABLE_AUTO_PARSING                = 0x00000800,
+    CC_MARK_TAGS_FILES_IN_BOLD             = 0x00001000,
+    CC_RETAG_WORKSPACE_ON_STARTUP          = 0x00004000,
+    CC_ACCURATE_SCOPE_RESOLVING            = 0x00008000,
+    CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING = 0x00010000
 };
 
 enum CodeCompletionColourOpts {
-	CC_COLOUR_CLASS             = 0x00000001,
-	CC_COLOUR_STRUCT            = 0x00000002,
-	CC_COLOUR_FUNCTION          = 0x00000004,
-	CC_COLOUR_ENUM              = 0x00000008,
-	CC_COLOUR_UNION             = 0x00000010,
-	CC_COLOUR_PROTOTYPE         = 0x00000020,
-	CC_COLOUR_TYPEDEF           = 0x00000040,
-	CC_COLOUR_MACRO             = 0x00000080,
-	CC_COLOUR_NAMESPACE         = 0x00000100,
-	CC_COLOUR_ENUMERATOR        = 0x00000200,
-	CC_COLOUR_VARIABLE          = 0x00000400,
-	CC_COLOUR_MEMBER            = 0x00000800,
-	CC_COLOUR_MACRO_BLOCKS      = 0x00001000,
-	CC_COLOUR_ALL               = CC_COLOUR_CLASS | CC_COLOUR_STRUCT | CC_COLOUR_FUNCTION |
-	CC_COLOUR_ENUM | CC_COLOUR_UNION | CC_COLOUR_PROTOTYPE | CC_COLOUR_TYPEDEF | CC_COLOUR_MACRO |
-	CC_COLOUR_NAMESPACE | CC_COLOUR_ENUMERATOR | CC_COLOUR_VARIABLE | CC_COLOUR_MEMBER,
-	CC_COLOUR_DEFAULT           = CC_COLOUR_CLASS | CC_COLOUR_STRUCT | CC_COLOUR_FUNCTION |
-	CC_COLOUR_ENUM | CC_COLOUR_PROTOTYPE
+    CC_COLOUR_CLASS             = 0x00000001,
+    CC_COLOUR_STRUCT            = 0x00000002,
+    CC_COLOUR_FUNCTION          = 0x00000004,
+    CC_COLOUR_ENUM              = 0x00000008,
+    CC_COLOUR_UNION             = 0x00000010,
+    CC_COLOUR_PROTOTYPE         = 0x00000020,
+    CC_COLOUR_TYPEDEF           = 0x00000040,
+    CC_COLOUR_MACRO             = 0x00000080,
+    CC_COLOUR_NAMESPACE         = 0x00000100,
+    CC_COLOUR_ENUMERATOR        = 0x00000200,
+    CC_COLOUR_VARIABLE          = 0x00000400,
+    CC_COLOUR_MEMBER            = 0x00000800,
+    CC_COLOUR_MACRO_BLOCKS      = 0x00001000,
+    CC_COLOUR_ALL               = CC_COLOUR_CLASS | CC_COLOUR_STRUCT | CC_COLOUR_FUNCTION |
+                                  CC_COLOUR_ENUM | CC_COLOUR_UNION | CC_COLOUR_PROTOTYPE | CC_COLOUR_TYPEDEF | CC_COLOUR_MACRO |
+                                  CC_COLOUR_NAMESPACE | CC_COLOUR_ENUMERATOR | CC_COLOUR_VARIABLE | CC_COLOUR_MEMBER,
+    CC_COLOUR_DEFAULT           = CC_COLOUR_CLASS | CC_COLOUR_STRUCT | CC_COLOUR_FUNCTION |
+                                  CC_COLOUR_ENUM | CC_COLOUR_PROTOTYPE
 };
 
 enum CodeCompletionClangOptions {
-	CC_CLANG_ENABLED            = 0x00000001,
-	CC_CLANG_FIRST              = 0x00000002,
-	CC_CTAGS_ENABLED            = 0x00000004
+    CC_CLANG_ENABLED            = 0x00000001,
+    CC_CLANG_FIRST              = 0x00000002,
+    CC_CTAGS_ENABLED            = 0x00000004
 };
 
 class WXDLLIMPEXP_CL TagsOptionsData : public SerializedObject
@@ -97,17 +97,27 @@ class WXDLLIMPEXP_CL TagsOptionsData : public SerializedObject
 	wxString                     m_clangCmpOptions;
 	wxString                     m_clangSearchPaths;
 	wxString                     m_clangMacros;
-
+	wxString                     m_clangCachePolicy;
 protected:
 	void DoUpdateTokensWxMap();
 	void DoUpdateTokensWxMapReversed();
-
+	
+public:
+	static wxString CLANG_CACHE_LAZY;
+	static wxString CLANG_CACHE_ON_FILE_LOAD;
+	
 public:
 	TagsOptionsData();
 	virtual ~TagsOptionsData();
 
 	//setters/getters
 
+	void SetClangCachePolicy(const wxString& clangCachePolicy) {
+		this->m_clangCachePolicy = clangCachePolicy;
+	}
+	const wxString& GetClangCachePolicy() const {
+		return m_clangCachePolicy;
+	}
 	void SetClangMacros(const wxString& clangMacros) {
 		this->m_clangMacros = clangMacros;
 	}

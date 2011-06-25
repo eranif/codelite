@@ -54,6 +54,6 @@ void CodeCompletionPage::Save()
 		LocalWorkspaceST::Get()->SetParserPaths(GetIncludePaths(), wxArrayString());
 		LocalWorkspaceST::Get()->SetParserMacros(GetMacros());
 		LocalWorkspaceST::Get()->SetParserOptions(GetCmpOptions());
-		
+		LocalWorkspaceST::Get()->Flush();
 	}
 }

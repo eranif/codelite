@@ -290,6 +290,13 @@ protected:
 
 public:
 	/**
+	 * @brief flush the XML content to the disk
+	 */
+	void Flush() {
+		SaveXmlFile();
+	}
+	
+	/**
 	* @brief Get any local editor preferences, merging the values into the global options
 	* \param options the global options
 	* \param projectname the name of the currently active project

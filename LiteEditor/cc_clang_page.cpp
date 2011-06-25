@@ -28,7 +28,7 @@ CCClangPage::CCClangPage(wxWindow* parent, const TagsOptionsData &data)
 	
 	Layout();
 #if defined (__WXMSW__)
-	if(m_filePickerClang->GetPath().IsEmpty()) {
+	if(m_textCtrlClangPath->GetValue().IsEmpty()) {
 		wxString defaultClang;
 		// try to locate the default binary
 		wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
@@ -36,7 +36,7 @@ CCClangPage::CCClangPage(wxWindow* parent, const TagsOptionsData &data)
 		defaultClang << wxFileName::GetPathSeparator() << wxT("clang++.exe");
 
 		if(wxFileName::FileExists(defaultClang)) {
-			m_filePickerClang->SetPath(defaultClang);
+			m_textCtrlClangPath->SetValue(defaultClang);
 		}
 	}
 #endif

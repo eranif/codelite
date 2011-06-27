@@ -204,15 +204,26 @@ createCodeLiteCppcheckMakefile ()
 	rm -fr Makefile
 
 	# is_64bit will probably hold yes or no, but could also contain data from an environmental variable
+	cppchkcompiler_extras="$is_64bit"
+	c_cppchkcompiler_extras="$is_64bit"
+
+	# If it wasn't overridden, implement the normal behaviour
+	if [ "$os_name" = "Darwin" ]; then
+		if [ "$is_64bit" = "yes" ]; then
+			cppchkcompiler_extras="-m64 -DON_64_BIT "
+			c_cppchkcompiler_extras="-m64 -DON_64_BIT "
+		elif [ "$is_64bit" = "no" ]; then
+			cppchkcompiler_extras="-m32 "
+			c_cppchkcompiler_extras="-m32 "
+	fi
+	else # Not darwin
 	if [ "$is_64bit" = "yes" ]; then
-		cppchkcompiler_extras="-DON_64_BIT "
-		c_cppchkcompiler_extras="-DON_64_BIT "
-	elif [ "$is_64bit" = "no" ]; then
-		cppchkcompiler_extras=""	# Otherwise the word 'no' will be used!
-		c_cppchkcompiler_extras=""
-	else	# User-provided data
-		cppchkcompiler_extras="$is_64bit"
-		c_cppchkcompiler_extras="$is_64bit"
+			cppchkcompiler_extras="-DON_64_BIT "
+			c_cppchkcompiler_extras="-DON_64_BIT "
+		elif [ "$is_64bit" = "no" ]; then
+			cppchkcompiler_extras=""	# Otherwise the word 'no' will be used!
+			c_cppchkcompiler_extras=""
+		fi
 	fi
 
 	if [ "$enable_debug" = "yes" ]; then
@@ -301,15 +312,26 @@ createCodeLiteIndexerMakefile ()
 	rm -fr Makefile
 
 	# is_64bit will probably hold yes or no, but could also contain data from an environmental variable
+	indexercompiler_extras="$is_64bit"
+	c_indexercompiler_extras="$is_64bit"
+
+	# If it wasn't overridden, implement the normal behaviour
+	if [ "$os_name" = "Darwin" ]; then
+		if [ "$is_64bit" = "yes" ]; then
+			indexercompiler_extras="-m64 -DON_64_BIT "
+			c_indexercompiler_extras="-m64 -DON_64_BIT "
+		elif [ "$is_64bit" = "no" ]; then
+			indexercompiler_extras="-m32 "
+			c_indexercompiler_extras="-m32 "
+	fi
+	else # Not darwin
 	if [ "$is_64bit" = "yes" ]; then
-		indexercompiler_extras="-DON_64_BIT "
-		c_indexercompiler_extras="-DON_64_BIT "
-	elif [ "$is_64bit" = "no" ]; then
-		indexercompiler_extras=""	# Otherwise the word 'no' will be used!
-		c_indexercompiler_extras=""
-	else	# User-provided data
-		indexercompiler_extras="$is_64bit"
-		c_indexercompiler_extras="$is_64bit"
+			indexercompiler_extras="-DON_64_BIT "
+			c_indexercompiler_extras="-DON_64_BIT "
+		elif [ "$is_64bit" = "no" ]; then
+			indexercompiler_extras=""	# Otherwise the word 'no' will be used!
+			c_indexercompiler_extras=""
+		fi
 	fi
 
 	if [ "$enable_debug" = "yes" ]; then

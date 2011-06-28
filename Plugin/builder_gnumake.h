@@ -55,17 +55,17 @@ protected:
 	virtual void CreateListMacros(ProjectPtr proj, const wxString &confToBuild, wxString &text);
 	void CreateSrcList(ProjectPtr proj, const wxString &confToBuild, wxString &text);
 	void CreateObjectList(ProjectPtr proj, const wxString &confToBuild, wxString &text);
-	virtual void CreateLinkTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text, wxString &targetName);
+	virtual void CreateLinkTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text, wxString &targetName, const wxString &projName, const wxArrayString &depsProj);
 	virtual void CreateFileTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text);
 	void CreateCleanTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text);
 	// Override default methods defined in the builder interface
 	virtual wxString GetBuildToolCommand(bool isCommandlineCommand) const;
 
 private:
-	void GenerateMakefile(ProjectPtr proj, const wxString &confToBuild, bool force);
+	void GenerateMakefile(ProjectPtr proj, const wxString &confToBuild, bool force, const wxArrayString &depsProj);
 	void CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldConf, wxString &text);
 	void CreateMakeDirsTarget(BuildConfigPtr bldConf, const wxString &targetName, wxString &text);
-	void CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text);
+	void CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text, const wxString &projName);
 	void CreatePreBuildEvents(BuildConfigPtr bldConf, wxString &text);
 	void CreatePostBuildEvents(BuildConfigPtr bldConf, wxString &text);
 	void CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxString &text);
@@ -79,9 +79,12 @@ private:
 	wxString ParseLibs(const wxString &libs);
 	wxString ParsePreprocessor(const wxString &prep);
 	bool HasPrebuildCommands(BuildConfigPtr bldConf) const;
+	bool HasPostbuildCommands(BuildConfigPtr bldConf) const;
+	
 	wxString GetProjectMakeCommand(const wxFileName &wspfile, const wxFileName& projectPath, ProjectPtr proj, const wxString &confToBuild);
 	wxString GetProjectMakeCommand(ProjectPtr proj, const wxString &confToBuild, const wxString &target, bool addCleanTarget, bool cleanOnly);
 	wxString DoGetCompilerMacro(const wxString &filename);
 	wxString DoGetTargetPrefix(const wxFileName &filename, const wxString &cwd);
+	wxString DoGetMarkerFileDir(const wxString &projname);
 };
 #endif // BUILDER_GNUMAKE_H

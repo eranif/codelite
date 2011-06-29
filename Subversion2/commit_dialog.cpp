@@ -130,6 +130,8 @@ wxString CommitDialog::GetMesasge()
 			}
 		}
 	}
+	
+	msg.Trim().Trim(false);
 	return msg;
 }
 

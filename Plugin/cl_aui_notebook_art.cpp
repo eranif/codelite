@@ -791,7 +791,7 @@ clAuiSimpleTabArt::clAuiSimpleTabArt()
 
     wxColour background_colour = base_colour;
     wxColour normaltab_colour = base_colour;
-    wxColour selectedtab_colour = *wxWHITE;
+    wxColour selectedtab_colour = DrawingUtils::LightColour(DrawingUtils::GetPanelBgColour(), 3.0);
 
     m_bkbrush = wxBrush(background_colour);
     m_normal_bkbrush = wxBrush(normaltab_colour);

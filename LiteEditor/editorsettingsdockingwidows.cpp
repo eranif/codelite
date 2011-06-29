@@ -31,8 +31,9 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows( wxWindow* parent )
 		tabStyle = 1;
 		m_startingFlags = OptionsConfig::TabGlossy;
 	}
-	m_radioBoxTabControlStyle->SetSelection(tabStyle);
 	
+	m_endFlags = m_startingFlags;
+	m_radioBoxTabControlStyle->SetSelection(tabStyle);
 	m_checkBoxHideOutputPaneNotIfDebug->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI ), NULL, this );
 }
 

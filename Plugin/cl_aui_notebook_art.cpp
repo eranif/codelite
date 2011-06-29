@@ -867,11 +867,10 @@ void clAuiSimpleTabArt::DrawBackground(wxDC& dc,
 
     // draw base line
     dc.SetPen(*wxGREY_PEN);
-    dc.DrawLine(0, rect.GetHeight()-3, rect.GetWidth(), rect.GetHeight()-3);
+    dc.DrawLine(0, rect.GetHeight()-2, rect.GetWidth(), rect.GetHeight()-2);
 	
 	dc.SetPen(m_selected_bkpen);
     dc.DrawLine(0, rect.GetHeight()-1, rect.GetWidth(), rect.GetHeight()-1);
-    dc.DrawLine(0, rect.GetHeight()-2, rect.GetWidth(), rect.GetHeight()-2);
 }
 
 
@@ -947,7 +946,7 @@ void clAuiSimpleTabArt::DrawTab(wxDC& dc,
     // -- draw line --
 
     wxPoint points[7];
-	wxCoord actual_tab_height = tab_height - 2;
+	wxCoord actual_tab_height = tab_height - 1;
     points[0].x = tab_x;
     points[0].y = tab_y + actual_tab_height - 1;
     points[1].x = tab_x + actual_tab_height - 3;

@@ -132,7 +132,7 @@ void OptionsDlg2::Initialize()
 	AddPage(new EditorSettingsFolding(m_treeBook),       _("Folding"));
 	AddPage(new EditorSettingsBookmarksPanel(m_treeBook),_("Bookmarks & Breakpoints"));
 	AddPage(new EditorSettingsDialogs(m_treeBook),       _("Dialogs"));
-	AddPage(new EditorSettingsDockingWindows(m_treeBook),_("Docking Windows"));
+	AddPage(new EditorSettingsDockingWindows(m_treeBook),_("Windows & Tabs"));
 
 #ifndef __WXMSW__
 	// the Terminal page should NOT be added under Windows

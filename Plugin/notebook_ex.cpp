@@ -2,6 +2,7 @@
 #include "cl_aui_notebook_art.h"
 #include "drawingutils.h"
 #include <wx/xrc/xmlres.h>
+#include "editor_config.h"
 #include <wx/choicebk.h>
 #include <wx/notebook.h>
 #include "notebook_ex_nav_dlg.h"
@@ -74,7 +75,18 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 
 #endif  //
 
-	SetArtProvider(new clAuiTabArt());
+	// Set the notebook theme
+	wxAuiTabArt *artProvider;
+	size_t flags = EditorConfigST::Get()->GetOptions()->GetOptions();
+	if(flags & OptionsConfig::TabClassic) {
+		artProvider = new clAuiTabArt();
+		
+	} else if(flags & OptionsConfig::TabCurved) {
+		artProvider = new clAuiSimpleTabArt();
+	} else {
+		artProvider = new wxAuiDefaultTabArt();
+	}
+	SetArtProvider(artProvider);
 }
 
 Notebook::~Notebook()

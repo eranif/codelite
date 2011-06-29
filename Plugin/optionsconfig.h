@@ -35,6 +35,14 @@
 
 class WXDLLIMPEXP_SDK OptionsConfig : public ConfObject
 {
+public:
+	enum {
+		TabClassic = 0x00000001,
+		TabGlossy  = 0x00000002,
+		TabCurved  = 0x00000004,
+		TabAll     = TabClassic | TabGlossy | TabCurved
+	};
+
 protected:
 	bool           m_displayFoldMargin;
 	bool           m_underlineFoldLine;
@@ -95,6 +103,7 @@ protected:
 	wxString       m_preferredLocale;
 	bool           m_useLocale;
 	bool           m_trimOnlyModifiedLines;
+	size_t         m_options;
 
 public:
 	OptionsConfig() {}
@@ -105,6 +114,12 @@ public:
 	// Setters/Getters
 	//-------------------------------------
 
+	void SetOptions(size_t options) {
+		this->m_options = options;
+	}
+	size_t GetOptions() const {
+		return m_options;
+	}
 	void SetTrimOnlyModifiedLines(bool trimOnlyModifiedLines) {
 		this->m_trimOnlyModifiedLines = trimOnlyModifiedLines;
 	}

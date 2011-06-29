@@ -15,11 +15,15 @@ class EditorSettingsDockingWindows
 : public EditorSettingsDockingWindowsBase
 , public TreeBookNode<EditorSettingsDockingWindows>
 {
+	size_t m_startingFlags;
+	size_t m_endFlags;
+	
 	void OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event);
 public:
 	/** Constructor */
 	EditorSettingsDockingWindows( wxWindow* parent );
 	virtual void Save(OptionsConfigPtr options);
+	bool IsRestartRequired();
 };
 
 #endif // __editorsettingsdockingwidows__

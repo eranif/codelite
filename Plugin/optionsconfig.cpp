@@ -95,6 +95,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_preferredLocale(wxT("en_US"))
 		, m_useLocale(0)
 		, m_trimOnlyModifiedLines(true)
+		, m_options(TabClassic)
 {
 	m_mswTheme = false;
 #ifdef __WXMSW__
@@ -166,6 +167,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_preferredLocale               = XmlUtils::ReadString(node, wxT("m_preferredLocale"),         m_preferredLocale);
 		m_useLocale                     = XmlUtils::ReadBool  (node, wxT("m_useLocale"),               m_useLocale);
 		m_trimOnlyModifiedLines         = XmlUtils::ReadBool  (node, wxT("m_trimOnlyModifiedLines"),   m_trimOnlyModifiedLines);
+		m_options                       = XmlUtils::ReadLong  (node, wxT("m_options"),                 m_options);
         // These hacks will likely be changed in the future. If so, we'll be able to remove the #include "editor_config.h" too
     	long trim             (0); 
 		long appendLf         (0);
@@ -281,7 +283,10 @@ wxXmlNode *OptionsConfig::ToXml() const
 	tmp.clear();
 	tmp = wxFontMapper::GetEncodingName(m_fileFontEncoding);
 	n->AddProperty(wxT("FileFontEncoding"), tmp);
-
+	
+	tmp.Clear();
+	tmp << m_options;
+	n->AddProperty(wxT("m_options"), tmp);
 	return n;
 }
 

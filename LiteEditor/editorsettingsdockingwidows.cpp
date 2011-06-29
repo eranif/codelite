@@ -21,6 +21,18 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows( wxWindow* parent )
 	m_checkBoxShowDebugOnRun->SetValue               (options->GetShowDebugOnRun());
 	m_radioBoxHint->SetSelection                     (options->GetDockingStyle());
 	
+	int tabStyle (0); // Classic
+	m_startingFlags = OptionsConfig::TabClassic;
+	if(options->GetOptions() & OptionsConfig::TabCurved) {
+		tabStyle = 2;
+		m_startingFlags = OptionsConfig::TabCurved;
+		
+	} else if(options->GetOptions() & OptionsConfig::TabGlossy) {
+		tabStyle = 1;
+		m_startingFlags = OptionsConfig::TabGlossy;
+	}
+	m_radioBoxTabControlStyle->SetSelection(tabStyle);
+	
 	m_checkBoxHideOutputPaneNotIfDebug->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI ), NULL, this );
 }
 
@@ -40,9 +52,39 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
 	options->SetOutputPaneDockable( m_checkBoxOutputPaneCanDock->IsChecked() );
 	options->SetShowDebugOnRun( m_checkBoxShowDebugOnRun->IsChecked() );
 	options->SetDockingStyle( m_radioBoxHint->GetSelection() );
+	
+	size_t flags(options->GetOptions());
+	m_endFlags = 0;
+	// set the tab control options:
+	////////////////////////////////////
+	
+	// Clear the current tab control style
+	flags &= ~OptionsConfig::TabAll;
+	
+	switch(m_radioBoxTabControlStyle->GetSelection()) {
+	case 1: // glossy
+		flags |= OptionsConfig::TabGlossy;
+		m_endFlags |= OptionsConfig::TabGlossy;
+		break;
+	case 2: // curved
+		flags |= OptionsConfig::TabCurved;
+		m_endFlags |= OptionsConfig::TabCurved;
+		break;
+	default:
+	case 0: // classic
+		flags |= OptionsConfig::TabClassic;
+		m_endFlags |= OptionsConfig::TabClassic;
+		break;
+	}
+	options->SetOptions(flags);
 }
 
 void EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)
 {
 	event.Enable( m_checkBoxHideOutputPaneOnClick->IsChecked() );
+}
+
+bool EditorSettingsDockingWindows::IsRestartRequired()
+{
+	return m_startingFlags != m_endFlags;
 }

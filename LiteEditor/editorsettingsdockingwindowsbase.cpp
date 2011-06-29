@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -101,15 +101,21 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase( wxWindow* pa
 	mainSizer->Add( sbSizer11, 0, wxEXPAND|wxALL, 5 );
 	
 	wxBoxSizer* bSizer2;
-	bSizer2 = new wxBoxSizer( wxVERTICAL );
+	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
 	wxString m_radioBoxHintChoices[] = { _("Transparent hint"), _("Rectangle hint"), _("Venetian blinds hints") };
 	int m_radioBoxHintNChoices = sizeof( m_radioBoxHintChoices ) / sizeof( wxString );
 	m_radioBoxHint = new wxRadioBox( this, wxID_ANY, _("Docking Style:"), wxDefaultPosition, wxDefaultSize, m_radioBoxHintNChoices, m_radioBoxHintChoices, 1, wxRA_SPECIFY_COLS );
 	m_radioBoxHint->SetSelection( 0 );
-	bSizer2->Add( m_radioBoxHint, 0, wxALL|wxEXPAND, 5 );
+	bSizer2->Add( m_radioBoxHint, 1, wxALL|wxEXPAND, 5 );
 	
-	mainSizer->Add( bSizer2, 1, wxEXPAND, 5 );
+	wxString m_radioBoxTabControlStyleChoices[] = { _("Classic"), _("Glossy"), _("Curved") };
+	int m_radioBoxTabControlStyleNChoices = sizeof( m_radioBoxTabControlStyleChoices ) / sizeof( wxString );
+	m_radioBoxTabControlStyle = new wxRadioBox( this, wxID_ANY, _("Tab Control Style:"), wxDefaultPosition, wxDefaultSize, m_radioBoxTabControlStyleNChoices, m_radioBoxTabControlStyleChoices, 1, wxRA_SPECIFY_COLS );
+	m_radioBoxTabControlStyle->SetSelection( 0 );
+	bSizer2->Add( m_radioBoxTabControlStyle, 1, wxALL|wxEXPAND, 5 );
+	
+	mainSizer->Add( bSizer2, 0, wxEXPAND, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();

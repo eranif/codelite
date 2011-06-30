@@ -53,7 +53,7 @@ generateDebianFiles()
 {
     cat > fakeroot/DEBIAN/control <<EOF
 Package: codelite
-Version: 2.10.0.${cur_rev}
+Version: 3.0.0.${cur_rev}
 Section: devel
 Priority: optional
 Architecture: ${arch}
@@ -199,10 +199,13 @@ cp -pr lib/abbreviation.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/QmakePlugin.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/CppCheck.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/git.so fakeroot/${PREFIX}/lib/codelite/
+cp -pr lib/DatabaseExplorer.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/libwxscintillau.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/libpluginu.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/libcodeliteu.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/libwxsqlite3u.so fakeroot/${PREFIX}/lib/codelite/
+cp -pr lib/libdblayersqliteu.so fakeroot/${PREFIX}/lib/codelite/
+cp -pr lib/libwxshapeframeworku.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr Runtime/plugins/resources/*.* fakeroot/${PREFIX}/lib/codelite/resources/
 cp -pr Runtime/*.html fakeroot/${PREFIX}/share/codelite/
 cp -pr Runtime/astyle.sample fakeroot/${PREFIX}/share/codelite/

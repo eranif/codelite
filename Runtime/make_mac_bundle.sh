@@ -136,7 +136,6 @@ cp ../lib/QmakePlugin.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/CppCheck.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/MacBundler.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/DatabaseExplorer.so ./CodeLite.app/Contents/SharedSupport/plugins/
-cp ../lib/CodeDesigner.so ./CodeLite.app/Contents/SharedSupport/plugins/
 
 cp ../lib/libwxscintillau.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libpluginu.so ./CodeLite.app/Contents/MacOS/

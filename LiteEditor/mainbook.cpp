@@ -749,7 +749,7 @@ bool MainBook::CloseAll(bool cancellable)
 	SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
 	
 	// 
-	m_book->DeleteAllPages(true);
+	m_book->DeleteAllPages(false);
 
 	// Since we got no more editors opened,
 	// send a wxEVT_ALL_EDITORS_CLOSED event

@@ -579,7 +579,7 @@ wxSize clAuiTabArt::GetTabSize(wxDC& dc,
 		tab_width += bitmap.GetWidth();
 		tab_width += 3; // right side bitmap padding
 		tab_height = wxMax(tab_height, bitmap.GetHeight());
-		tab_height += 8;
+		tab_height += 10;
 	} else {
 		tab_height += 10;
 	}

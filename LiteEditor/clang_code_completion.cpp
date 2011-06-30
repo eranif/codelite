@@ -242,13 +242,13 @@ void ClangCodeCompletion::OnFileLoaded(wxCommandEvent& e)
 
 void ClangCodeCompletion::OnAllEditorsClosed(wxCommandEvent& e)
 {
-	wxUnusedVar(e);
+	e.Skip();
 	m_allEditorsAreClosing = false;
 }
 
 void ClangCodeCompletion::OnAllEditorsClosing(wxCommandEvent& e)
 {
-	wxUnusedVar(e);
+	e.Skip();
 	m_allEditorsAreClosing = true;
 }
 

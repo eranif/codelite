@@ -776,7 +776,7 @@ clAuiSimpleTabArt::clAuiSimpleTabArt()
 {
     m_normal_font = *wxNORMAL_FONT;
     m_selected_font = *wxNORMAL_FONT;
-    m_selected_font.SetWeight(wxBOLD);
+    //m_selected_font.SetWeight(wxBOLD);
     m_measuring_font = m_selected_font;
 
     m_flags = 0;
@@ -924,7 +924,7 @@ void clAuiSimpleTabArt::DrawTab(wxDC& dc,
     {
         dc.SetPen(m_selected_bkpen);
         dc.SetBrush(m_selected_bkbrush);
-        dc.SetFont(m_selected_font);
+        dc.SetFont(m_normal_font);
         textx = selected_textx;
         texty = selected_texty;
     }

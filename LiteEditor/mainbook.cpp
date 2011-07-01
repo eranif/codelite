@@ -59,7 +59,11 @@ void MainBook::CreateGuiControls()
 	sz->Add(m_navBar, 0, wxEXPAND);
 	m_navBar->Freeze();
 	
-	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_PASS_FOCUS|wxVB_NODND | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_SCROLL_BUTTONS;
+	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_NODND;
+	
+#if !CL_USE_NATIVEBOOK
+	style |= wxVB_PASS_FOCUS | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_SCROLL_BUTTONS;
+#endif
 
 	// load the notebook style from the configuration settings
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
@@ -342,6 +346,7 @@ void MainBook::GetAllEditors(std::vector<LEditor*> &editors, bool retain_order /
 	}
 	} else {
 		std::vector<wxWindow*> windows;
+#if !CL_USE_NATIVEBOOK
 		m_book->GetEditorsInOrder(windows);
 		for (size_t i = 0; i < windows.size(); i++) {
 			LEditor *editor = dynamic_cast<LEditor*>(windows.at(i));
@@ -349,6 +354,14 @@ void MainBook::GetAllEditors(std::vector<LEditor*> &editors, bool retain_order /
 				editors.push_back(editor);
 			}
 		}
+#else
+		for(size_t i=0; i<m_book->GetPageCount(); i++) {
+			LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
+			if(editor) {
+				editors.push_back(editor);
+			}
+		}
+#endif
 	}
 }
 
@@ -474,7 +487,12 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		editor->Create(projName, fileName);
 
 		// If we're here from 'Swap Header/Implementation file', insert the new page next door
+#if !CL_USE_NATIVEBOOK
 		size_t sel = m_book->GetVisibleEditorIndex();
+#else
+		size_t sel = (size_t)m_book->GetSelection();
+#endif
+
 		if ((extra & OF_PlaceNextToCurrent) && (sel != Notebook::npos)) {
 			AddPage(editor, fileName.GetFullName(), wxNullBitmap, false, sel+1);
 		} else {
@@ -540,10 +558,11 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		BrowseRecord jumpto = editor->CreateBrowseRecord();
 		NavMgr::Get()->AddJump(jumpfrom, jumpto);
 	}
-
+#if !CL_USE_NATIVEBOOK
 	if(m_book->GetPageCount() == 1) {
 		m_book->GetSizer()->Layout();
 	}
+#endif
 	return editor;
 }
 
@@ -579,9 +598,11 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 		}
 	}
 
+#if !CL_USE_NATIVEBOOK
 	if(m_book->GetPageCount() == 1) {
 		m_book->GetSizer()->Layout();
 	}
+#endif
 	return true;
 }
 
@@ -872,13 +893,14 @@ void MainBook::MarkEditorReadOnly(LEditor* editor, bool ro)
 	if (!editor) {
 		return;
 	}
-
+#if !CL_USE_NATIVEBOOK
 	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
 		if (editor == m_book->GetPage(i)) {
 			m_book->SetPageBitmap(i, ro ? wxXmlResource::Get()->LoadBitmap(wxT("read_only")) : wxNullBitmap);
 			break;
 		}
 	}
+#endif
 }
 
 long MainBook::GetBookStyle()

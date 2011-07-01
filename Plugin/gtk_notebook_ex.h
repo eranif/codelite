@@ -22,47 +22,58 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __Notebook__
-#define __Notebook__
 #include "cl_defs.h"
-
 #if CL_USE_NATIVEBOOK
-#    include "gtk_notebook_ex.h"
-#else
 
-#include <wx/wx.h>
-#include <wx/aui/auibook.h>
-#include <vector>
-#include <set>
-#include "codelite_exports.h"
+#ifndef __GTK_Notebook__
+#define __GTK_Notebook__
+
+#include <wx/bookctrl.h>
+#include <wx/choicebk.h>
+#include <wx/panel.h>
+#include <map>
 
 enum {
-	wxVB_LEFT                   = wxAUI_NB_LEFT,
-	wxVB_RIGHT                  = wxAUI_NB_RIGHT,
-	wxVB_TOP                    = wxAUI_NB_TOP,
-	wxVB_BOTTOM                 = wxAUI_NB_BOTTOM,
-	wxVB_FIXED_WIDTH            = wxAUI_NB_TAB_FIXED_WIDTH,
-	wxVB_HAS_X                  = wxAUI_NB_CLOSE_ON_ACTIVE_TAB,
+	wxVB_LEFT                   = wxNB_TOP,
+	wxVB_RIGHT                  = wxNB_TOP,
+	wxVB_TOP                    = wxNB_TOP,
+	wxVB_BOTTOM                 = wxNB_TOP,
+	wxVB_FIXED_WIDTH            = wxNB_FIXEDWIDTH,
+	wxVB_HAS_X                  = 0x00010000,
 	wxVB_MOUSE_MIDDLE_CLOSE_TAB = 0x00020000,
 	wxVB_NODND                  = 0x00040000,
 	wxVB_NO_TABS                = 0x00100000,
-	wxVB_PASS_FOCUS             = 0x00400000
+	wxVB_CHOICE_CTRL            = 0x00200000
 };
 
 class NotebookNavDialog;
 class wxMenu;
+class wxButton;
 
-class WXDLLIMPEXP_SDK Notebook : public wxAuiNotebook
+class Notebook;
+class MyGtkPageInfo 
 {
-	NotebookNavDialog *m_popupWin;
-	wxMenu*            m_contextMenu;
-	wxArrayPtrVoid     m_history;
-	long               m_style;
-	size_t             m_leftDownTabIdx;
-	bool               m_notify;
-	wxPoint            m_leftDownPos;
-
 public:
+	GtkWidget *m_button;
+	GtkWidget *m_box;
+	Notebook  *m_book;
+};
+
+class Notebook : public wxNotebook
+{
+	NotebookNavDialog *     m_popupWin;
+	wxMenu*                 m_contextMenu;
+	wxArrayPtrVoid          m_history;
+	long                    m_style;
+	size_t                  m_leftDownTabIdx;
+	wxButton*               m_closeButton;
+	wxButton*               m_menuButton;
+	bool                    m_notify;
+	std::map<wxWindow*, MyGtkPageInfo*> m_gtk_page_info;
+	wxImageList*            m_imgList;
+	
+public:
+
 	static const size_t npos = static_cast<size_t>(-1);
 
 protected:
@@ -72,17 +83,26 @@ protected:
 	wxWindow* GetPreviousSelection();
 	bool      HasCloseButton() {return m_style & wxVB_HAS_X;}
 	bool      HasCloseMiddle() {return m_style & wxVB_MOUSE_MIDDLE_CLOSE_TAB;}
+	int       DoGetBmpIdx(const wxBitmap& bmp);
+	
+public:
+	void           GTKAddCloseButton(int idx);
+	void           GTKDeletePgInfo(wxWindow* page);
+	MyGtkPageInfo* GTKGetPgInfo(wxWindow* page);
+	void           GTKShowCloseButton();
+	void           GTKHandleButtonCloseClicked(MyGtkPageInfo* pgInfo);
+	int            GTKIndexFromPgInfo(MyGtkPageInfo* pgInfo);
 
 public:
 	Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
 	virtual ~Notebook();
-
+	
 	/**
 	 * \brief return the currently selected item index
 	 * \return the currently selected item, of the book is empty, return Notebook::npos
 	 */
 	size_t GetSelection();
-
+	
 	/**
 	 * \brief set page at given index to be the selected page. this function does not trigger an event
 	 * \param page
@@ -95,8 +115,8 @@ public:
 	 * \param text page's caption
 	 * \param selected set the page as the selected page
 	 */
-	bool AddPage(wxWindow *win, const wxString &text, bool selected = false, const wxBitmap &bmp = wxNullBitmap);
-	bool InsertPage(size_t index, wxWindow *win, const wxString &text, bool selected = false, const wxBitmap &bmp = wxNullBitmap);
+	void AddPage(wxWindow *win, const wxString &text, bool selected = false, const wxBitmap& bmp = wxNullBitmap);
+	void InsertPage(size_t index, wxWindow *win, const wxString &text, bool selected = false, const wxBitmap& bmp = wxNullBitmap);
 
 	/**
 	 * \brief return page at give position
@@ -160,59 +180,41 @@ public:
 	size_t GetPageIndex(const wxString &text);
 
 	/**
-	 * \brief returns the index within its tabctrl of the selected editor
-	 * \return page index, or Notebook::npos if page does not exist in the notebook
-	 */
-	size_t GetVisibleEditorIndex();
-
-	/**
 	 * \brief set the text for page at a given index
 	 * \param index page's index
 	 * \param text new text
 	 */
 	bool SetPageText(size_t index, const wxString &text);
-
-	/**
-	 * \brief tries to get a list of displayed editors, in display order
-	 * \param vector in which to return the editors
-	 */
-	void GetEditorsInOrder(std::vector<wxWindow*> &editors);
-	
 	
 	/**
-	 * @brief return a set of the used wxAuiTabControl in the notebook
+	 * @brief Sets the image list for the page control and takes ownership of the list.
 	 */
-	std::set<wxAuiTabCtrl*> GetAllTabControls();
+	void AssignImageList(wxImageList* imageList);
+	/**
+	 * @brief Sets the image list for the page control. It does not take ownership of the image list, you must delete it yourself.
+	 */
+	void SetImageList(wxImageList* imageList);
 	
 protected:
 	// Event handlers
 	void OnNavigationKey      (wxNavigationKeyEvent &e);
+	void OnMouseMiddle        (wxMouseEvent         &e);
+	void OnMouseLeftDClick    (wxMouseEvent         &e);
 	void OnKeyDown            (wxKeyEvent           &e);
-	void OnTabRightDown       (wxAuiNotebookEvent   &e);
-	void OnTabRightUp         (wxAuiNotebookEvent   &e);
-	void OnTabMiddle          (wxAuiNotebookEvent   &e);
-	void OnTabButton          (wxAuiNotebookEvent   &e);
-
-	// wxAuiNotebook events
-	void OnInternalPageChanged (wxAuiNotebookEvent &e);
-	void OnInternalPageChanging(wxAuiNotebookEvent &e);
-	void OnInternalPageClosing (wxAuiNotebookEvent &e);
-	void OnInternalPageClosed  (wxAuiNotebookEvent &e);
-	void OnBgDclick            (wxAuiNotebookEvent &e);
-
-	void OnInternalMenu        (wxCommandEvent  &e);
-
-	// wxChoicebook events
-	void OnFocus                (wxFocusEvent      &e);
-
+	void OnMenu               (wxContextMenuEvent   &e);
+	
+	// wxNotebook events
+	void OnIternalPageChanged (wxNotebookEvent &e);
+	void OnIternalPageChanging(wxNotebookEvent &e);
+	
 protected:
-	void DoPageChangedEvent   (wxAuiNotebookEvent &e);
-	void DoPageChangingEvent  (wxAuiNotebookEvent &e);
+	void DoPageChangedEvent   (wxBookCtrlBaseEvent &e);
+	void DoPageChangingEvent  (wxBookCtrlBaseEvent &e);
 	bool DoNavigate();
-
+	
 };
 
-class WXDLLIMPEXP_SDK NotebookEvent : public wxNotifyEvent
+class NotebookEvent : public wxNotifyEvent
 {
 	size_t sel, oldsel;
 
@@ -224,7 +226,7 @@ public:
 	 * \param nOldSel - old selection
 	 */
 	NotebookEvent(wxEventType commandType = wxEVT_NULL, int winid = 0, size_t nSel = (size_t)-1, size_t nOldSel = (size_t)-1)
-			: wxNotifyEvent(commandType, winid), sel(nSel), oldsel(nOldSel) { }
+			: wxNotifyEvent(commandType, winid), sel(nSel), oldsel(nOldSel) {}
 
 	/**
 	 * \param s - index of currently selected page
@@ -249,17 +251,16 @@ public:
 	size_t GetOldSelection() {
 		return oldsel;
 	}
-	
 	virtual wxEvent *Clone() const { return new NotebookEvent(*this); }
 };
 
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGED;
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGING;
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSING;
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED;
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED;
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_COMMAND_BOOK_PAGE_X_CLICKED;
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_COMMAND_BOOK_BG_DCLICK;
+extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGED;
+extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGING;
+extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSING;
+extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED;
+extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED;
+extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_X_CLICKED;
+extern const wxEventType wxEVT_COMMAND_BOOK_BG_DCLICK;
 
 typedef void (wxEvtHandler::*NotebookEventFunction)(NotebookEvent&);
 
@@ -284,12 +285,8 @@ typedef void (wxEvtHandler::*NotebookEventFunction)(NotebookEvent&);
 #define EVT_BOOK_PAGE_X_CLICKED(winid, fn) \
 	wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED, winid, NotebookEventHandler(fn))
 
-#define EVT_BOOK_SWAP_PAGES(winid, fn) \
-	wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_SWAP_PAGES, winid, NotebookEventHandler(fn))
-
 #define EVT_BOOK_BG_DCLICK(winid, fn) \
 	wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_BG_DCLICK, winid, NotebookEventHandler(fn))
-
-#endif // __WXGTK__
-
-#endif // __Notebook__
+	
+#endif // __GTK_Notebook__
+#endif /// __WXGTK__

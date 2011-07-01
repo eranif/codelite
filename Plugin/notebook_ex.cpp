@@ -1,3 +1,6 @@
+#include "cl_defs.h"
+#if !CL_USE_NATIVEBOOK
+
 #include <wx/app.h>
 #include "cl_aui_notebook_art.h"
 #include "drawingutils.h"
@@ -644,3 +647,5 @@ std::set<wxAuiTabCtrl*> Notebook::GetAllTabControls()
 	}
 	return ctrls;
 }
+
+#endif // __WXGTK__

@@ -2,6 +2,7 @@
 #include <wx/utils.h>
 #include <wx/tokenzr.h>
 #include "clang_code_completion.h"
+#include <wx/filedlg.h>
 #include <wx/stdpaths.h>
 #include "editor_config.h"
 #include "includepathlocator.h"

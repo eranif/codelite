@@ -35,6 +35,7 @@
 #include "debuggersettings.h"
 #include "dbcontentcacher.h"
 #include "debuggerasciiviewer.h"
+#include <wx/aui/auibook.h>
 
 #include <vector>
 #include <algorithm>
@@ -1841,31 +1842,32 @@ static void DebugMessage ( wxString msg )
 void Manager::UpdateDebuggerPane()
 {
 	DebuggerPane *pane = clMainFrame::Get()->GetDebuggerPane();
+	
+#if CL_USE_NATIVEBOOK
+	DoUpdateDebuggerTabControl(pane->GetNotebook()->GetCurrentPage());
+#else
+
 	std::set<wxAuiTabCtrl*> tabControls = pane->GetNotebook()->GetAllTabControls();
 	std::set<wxAuiTabCtrl*>::iterator iter = tabControls.begin();
 
 	for(; iter != tabControls.end(); iter++) {
-		DoUpdateDebuggerTabControl(*iter);
+		int activePageId = (*iter)->GetActivePage();
+		if(activePageId != wxNOT_FOUND) {
+			DoUpdateDebuggerTabControl((*iter)->GetPage((size_t)activePageId).window);
+		}
 	}
+#endif
 }
 
-void Manager::DoUpdateDebuggerTabControl(wxAuiTabCtrl* tabControl)
+void Manager::DoUpdateDebuggerTabControl(wxWindow* curpage)
 {
 	//Update the debugger pane
 	DebuggerPane *pane = clMainFrame::Get()->GetDebuggerPane();
-
-	wxWindow* curpage = NULL;
-	int activePageId = tabControl->GetActivePage();
-
-	// sanity
-	if(activePageId == wxNOT_FOUND)
-		return;
 
 	// make sure that the debugger pane is visible
 	if(!IsPaneVisible ( wxT("Debugger") ))
 		return;
 
-	curpage = tabControl->GetPage((size_t)activePageId).window;
 	if ( curpage == ( wxWindow* ) pane->GetBreakpointView() || IsPaneVisible ( DebuggerPane::BREAKPOINTS) ) {
 		pane->GetBreakpointView()->Initialize();
 	}

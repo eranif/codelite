@@ -573,7 +573,7 @@ protected:
 
 	//--------------------------- Debugger Support -----------------------------
 protected:
-	void DoUpdateDebuggerTabControl(wxAuiTabCtrl* tabControl);
+	void DoUpdateDebuggerTabControl(wxWindow* curpage);
 	bool DebuggerPaneWasShown;
 	
 public:

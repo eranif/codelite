@@ -16,6 +16,7 @@
 #include <wx/bitmap.h>
 #include <wx/aui/auibar.h>
 #include "drawingutils.h"
+#include <wx/button.h>
 
 class CLQuickFindTbArt : public wxAuiDefaultToolBarArt
 {

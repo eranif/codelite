@@ -14,6 +14,7 @@
 #include "asyncprocess.h"
 #include "processreaderthread.h"
 #include <queue>
+#include <set>
 
 typedef struct gitAction {
 	int action;

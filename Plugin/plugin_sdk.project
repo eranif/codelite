@@ -201,6 +201,8 @@
       <File Name="tabicons.cpp"/>
       <File Name="cl_aui_notebook_art.cpp"/>
       <File Name="cl_aui_notebook_art.h"/>
+      <File Name="gtk_notebook_ex.cpp"/>
+      <File Name="gtk_notebook_ex.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="JobQueue">

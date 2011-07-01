@@ -4,6 +4,7 @@
 //-----------------------------------
 // Use new toolbars where possible
 //-----------------------------------
+#include <wx/version.h>
 
 #if defined(__WXMSW__)||defined(__WXMAC__)||defined(__WXGTK__)
 #    if wxCHECK_VERSION(2, 8, 9)
@@ -25,6 +26,9 @@
 #    ifndef PLUGINS_DIR
 #        define PLUGINS_DIR "/usr/lib/codelite"
 #    endif
+#    define CL_USE_NATIVEBOOK 1
+#else
+#    define CL_USE_NATIVEBOOK 0
 #endif
 
 #endif // CL_DEFS_H

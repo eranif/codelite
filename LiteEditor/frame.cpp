@@ -3385,12 +3385,24 @@ void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 	wxString  text = GetWorkspacePane()->GetNotebook()->GetPageText(sel);
 	wxBitmap  bmp;
 
+#if !CL_USE_NATIVEBOOK
 	DockablePane *pane = new DockablePane(m_mainPanel, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));
 	page->Reparent(pane);
 
 	// remove the page from the notebook
 	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
 	pane->SetChildNoReparent(page);
+	
+#else
+
+	DockablePane *pane = new DockablePane(m_mainPanel, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));
+	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
+	// HACK: since Reparent will remove the widget from the parent, we need to place it back...
+	gtk_container_add( GTK_CONTAINER(GetWorkspacePane()->GetNotebook()->m_widget), page->m_widget );
+	page->Reparent(pane);
+	pane->SetChildNoReparent(page);
+	
+#endif
 
 	wxUnusedVar(e);
 }
@@ -3586,13 +3598,24 @@ void clMainFrame::OnDetachDebuggerViewTab(wxCommandEvent& e)
 	wxString  text = GetDebuggerPane()->GetNotebook()->GetPageText(sel);
 	wxBitmap  bmp ;
 
+#if !CL_USE_NATIVEBOOK
 	DockablePane *pane = new DockablePane(m_mainPanel, GetDebuggerPane()->GetNotebook(), text, bmp, wxSize(200, 200));
 	page->Reparent(pane);
 
 	// remove the page from the notebook
 	GetDebuggerPane()->GetNotebook()->RemovePage(sel, false);
 	pane->SetChildNoReparent(page);
+	
+#else
 
+	DockablePane *pane = new DockablePane(m_mainPanel, GetDebuggerPane()->GetNotebook(), text, bmp, wxSize(200, 200));
+	GetDebuggerPane()->GetNotebook()->RemovePage(sel, false);
+	// HACK: since Reparent will remove the widget from the parent, we need to place it back...
+	gtk_container_add( GTK_CONTAINER(GetDebuggerPane()->GetNotebook()->m_widget), page->m_widget );
+	page->Reparent(pane);
+	pane->SetChildNoReparent(page);
+	
+#endif
 	wxUnusedVar(e);
 }
 

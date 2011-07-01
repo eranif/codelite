@@ -7,6 +7,7 @@
 #include <wx/busyinfo.h>
 #include <wx/xrc/xmlres.h>
 #include "globals.h"
+#include <set>
 
 
 const wxEventType wxEVT_EXECUTE_SQL = XRCID("wxEVT_EXECUTE_SQL");

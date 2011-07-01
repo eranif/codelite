@@ -490,7 +490,7 @@ void Notebook::GTKAddCloseButton(int idx)
 	pgInfo->m_book   = this;
 	
 	image  = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-	gtk_widget_set_size_request(image, 10, 10);
+	gtk_widget_set_size_request(image, 12, 12);
 	gtk_button_set_image (GTK_BUTTON(pgInfo->m_button), image);
 	gtk_widget_set_name(pgInfo->m_button, "tab-close-button");
 	gtk_button_set_relief(GTK_BUTTON(pgInfo->m_button), GTK_RELIEF_NONE);

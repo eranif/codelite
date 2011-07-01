@@ -34,6 +34,9 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows( wxWindow* parent )
 	
 	m_endFlags = m_startingFlags;
 	m_radioBoxTabControlStyle->SetSelection(tabStyle);
+#if CL_USE_NATIVEBOOK
+	m_radioBoxTabControlStyle->Enable(false);
+#endif
 	m_checkBoxHideOutputPaneNotIfDebug->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI ), NULL, this );
 }
 

@@ -40,7 +40,7 @@
   <Project Name="databaselayer_sqlite" Path="sdk/databaselayer/databaselayer_sqlite.project" Active="No"/>
   <Project Name="CodeFormatter" Path="CodeFormatter/CodeFormatter.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
@@ -98,7 +98,7 @@
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="yes">
+    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxshapeframework" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>

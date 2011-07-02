@@ -196,6 +196,16 @@ public:
                  const wxAuiNotebookPageArray& pages,
                  const wxSize& required_bmp_size);
 
+#if wxVERSION_NUMBER >= 2902
+	// Compilation fix: these new functions are pure virtual in wxAuiTabArt
+	virtual void SetColour(const wxColour& colour) {
+		wxUnusedVar(colour);
+	}
+	virtual void SetActiveColour(const wxColour& colour) {
+		wxUnusedVar(colour);
+	}
+#endif
+
 protected:
 
     wxFont m_normal_font;

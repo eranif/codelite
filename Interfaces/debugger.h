@@ -497,11 +497,12 @@ protected:
 	EnvironmentConfig * m_env;
 	wxString            m_name;
 	bool                m_isRemoteDebugging;
-
+	wxString            m_debuggeeProjectName;
+	
 public:
 	IDebugger() : m_env(NULL), m_isRemoteDebugging(false) {};
 	virtual ~IDebugger() {};
-
+	void SetProjectName(const wxString &project){m_debuggeeProjectName = project;}
 	void SetName(const wxString &name) {
 		m_name = name;
 	}

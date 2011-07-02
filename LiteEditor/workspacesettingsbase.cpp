@@ -26,9 +26,9 @@ WorkspaceSettingsBase::WorkspaceSettingsBase( wxWindow* parent, wxWindowID id, c
 	
 	m_staticText3 = new wxStaticText( m_panelEnv, wxID_ANY, _("By default, CodeLite uses the current active environment variables set as defined in the Settings > Environment Variables dialog.\nHowever, you may choose a different set to become the active set when this workspace is loaded selecting it here."), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
-	sbSizer3->Add( m_staticText3, 0, wxALL|wxEXPAND, 5 );
+	sbSizer3->Add( m_staticText3, 0, wxALL, 5 );
 	
-	bSizer81->Add( sbSizer3, 0, wxEXPAND|wxALL, 5 );
+	bSizer81->Add( sbSizer3, 0, wxALL, 5 );
 	
 	m_staticText4 = new wxStaticText( m_panelEnv, wxID_ANY, _("Environment sets:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
@@ -39,6 +39,18 @@ WorkspaceSettingsBase::WorkspaceSettingsBase( wxWindow* parent, wxWindowID id, c
 	m_choiceEnvSets = new wxChoice( m_panelEnv, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceEnvSetsNChoices, m_choiceEnvSetsChoices, 0 );
 	m_choiceEnvSets->SetSelection( 0 );
 	bSizer81->Add( m_choiceEnvSets, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticline2 = new wxStaticLine( m_panelEnv, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer81->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
+	
+	m_staticText6 = new wxStaticText( m_panelEnv, wxID_ANY, _("Specify here an additional environment variables that will be shared with other people who are using this workspace:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6->Wrap( -1 );
+	bSizer81->Add( m_staticText6, 0, wxALL|wxEXPAND, 5 );
+	
+	m_textCtrlWspEnvVars = new wxTextCtrl( m_panelEnv, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlWspEnvVars->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
+	bSizer81->Add( m_textCtrlWspEnvVars, 1, wxALL|wxEXPAND, 5 );
 	
 	m_panelEnv->SetSizer( bSizer81 );
 	m_panelEnv->Layout();
@@ -101,7 +113,7 @@ CodeCompletionBasePage::CodeCompletionBasePage( wxWindow* parent, wxWindowID id,
 	
 	m_textCtrlSearchPaths = new wxTextCtrl( m_panel8, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
 	m_textCtrlSearchPaths->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
-	m_textCtrlSearchPaths->SetToolTip( _("Add here search paths used by clang / ctags for locating inculde files") );
+	m_textCtrlSearchPaths->SetToolTip( _("Add here search paths used by clang / ctags for locating include files") );
 	
 	bSizer24->Add( m_textCtrlSearchPaths, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 	

@@ -1772,7 +1772,7 @@ void Manager::ExecuteNoDebug ( const wxString &projectName )
 	wxString wd;
 
 	// we call it here once for the 'wd'
-	EnvSetter env1;
+	EnvSetter env1(NULL, NULL, projectName);
 	wxString execLine = GetProjectExecutionCommand ( projectName, wd, true );
 	ProjectPtr proj = GetProject ( projectName );
 
@@ -1792,7 +1792,7 @@ void Manager::ExecuteNoDebug ( const wxString &projectName )
 	//execute the program:
 	//- no hiding the console
 	//- no redirection of the stdin/out
-	EnvSetter env;
+	EnvSetter env(NULL, NULL, projectName);
 
 	// call it again here to get the actual exection line - we do it here since
 	// the environment has been applied
@@ -2056,7 +2056,7 @@ void Manager::DbgStart ( long attachPid )
 		exepath.Append ( wxT ( "\"" ) );
 
 		// Apply environment variables
-		EnvSetter env;
+		EnvSetter env(NULL, NULL, proj ? proj->GetName() : wxT(""));
 		wd = bldConf->GetWorkingDirectory();
 
 		// Expand variables before passing them to the debugger
@@ -2085,7 +2085,13 @@ void Manager::DbgStart ( long attachPid )
 
 	// Set the 'Is remote debugging' flag'
 	dbgr->SetIsRemoteDebugging(bldConf && bldConf->GetIsDbgRemoteTarget() && PID == wxNOT_FOUND);
-
+	
+	if(proj) {
+		dbgr->SetProjectName(proj->GetName());
+	} else {
+		dbgr->SetProjectName(wxT(""));
+	}
+	
 	// Loop through the open editors and let each editor
 	// a chance to update the debugger manager with any line
 	// changes (i.e. file was edited and breakpoints were moved)

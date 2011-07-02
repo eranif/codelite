@@ -286,7 +286,7 @@ WXDLLIMPEXP_SDK wxString wxImplode(const wxArrayString &arr, const wxString &glu
 /**
  * @brief executes a command under the proper shell and return string as the output
  */
-WXDLLIMPEXP_SDK wxString wxShellExec(const wxString &cmd);
+WXDLLIMPEXP_SDK wxString wxShellExec(const wxString &cmd, const wxString &projectName);
 
 /**
  * @class StringManager

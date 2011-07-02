@@ -182,7 +182,7 @@ void CompileRequest::Process(IManager *manager)
 		AppendLine(text);
 	}
 
-	EnvSetter envir(env, &om);
+	EnvSetter envir(env, &om, proj->GetName());
 	m_proc = CreateAsyncProcess(this, cmd);
 	if (!m_proc ) {
 		wxString message;

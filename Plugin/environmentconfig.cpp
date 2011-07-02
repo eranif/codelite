@@ -111,7 +111,7 @@ wxString EnvironmentConfig::ExpandVariables(const wxString &in, bool applyEnviro
 	return expandedValue;
 }
 
-void EnvironmentConfig::ApplyEnv(StringMap *overrideMap)
+void EnvironmentConfig::ApplyEnv(StringMap *overrideMap, const wxString &project)
 {
 	// Dont allow recursive apply of the environment
 	m_envApplied++;
@@ -124,7 +124,7 @@ void EnvironmentConfig::ApplyEnv(StringMap *overrideMap)
 	ReadObject(wxT("Variables"), &vars);
 
 	// get the active environment variables set
-	EnvMap variables = vars.GetVariables();
+	EnvMap variables = vars.GetVariables(wxEmptyString, true, project);
 
 	// if we have an "override map" place all the entries from the override map
 	// into the global map before applying the environment

@@ -14,7 +14,7 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *lo
 	, m_localWorkspace(localWorkspace)
 {
 	m_ccPage = new CodeCompletionPage(m_notebook1, CodeCompletionPage::TypeWorkspace);
-	m_notebook1->AddPage(m_ccPage, wxT("Code Completion"), true);
+	m_notebook1->AddPage(m_ccPage, wxT("Code Completion"), false);
 
 	EvnVarList vars;
 	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
@@ -51,7 +51,11 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *lo
 		vars.SetActiveSet(activeEnvSet);
 		EnvironmentConfig::Instance()->SetSettings(vars);
 	}
-
+	
+	wxString envvars = WorkspaceST::Get()->GetEnvironmentVariabels();
+	envvars.Trim().Trim(false);
+	
+	m_textCtrlWspEnvVars->SetValue(envvars);
 	WindowAttrManager::Load(this, wxT("WorkspaceSettingsDlg"), NULL);
 }
 
@@ -103,6 +107,7 @@ wxArrayString WorkspaceSettingsDlg::GetIncludePaths() const
 void WorkspaceSettingsDlg::OnButtonOK(wxCommandEvent& event)
 {
 	m_localWorkspace->SetActiveEnvironmentSet(m_choiceEnvSets->GetStringSelection());
+	WorkspaceST::Get()->SetEnvironmentVariabels(m_textCtrlWspEnvVars->GetValue());
 	m_ccPage->Save();
 	event.Skip();
 }

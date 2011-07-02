@@ -62,7 +62,8 @@ class DbgGdb : public wxEvtHandler, public IDebugger
 	IProcess*                   m_gdbProcess;
 	wxArrayString               m_gdbOutputArr;
 	wxString                    m_gdbOutputIncompleteLine;
-
+	
+	
 public:
 	int                         m_internalBpId;
 
@@ -87,6 +88,7 @@ public:
 	void SetBreakpoints();
 	void SetInternalMainBpID(int bpId);
 	void GetDebugeePID();
+	
 	
 public:
 	DbgGdb();

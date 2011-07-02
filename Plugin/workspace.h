@@ -253,7 +253,21 @@ public:
 	 * \param prj
 	 */
 	void AddProjectToBuildMatrix(ProjectPtr prj);
-
+	
+	//----------------------------------
+	// Workspace environment variables
+	//----------------------------------
+	/**
+	 * @brief return the workspace environment variables
+	 */
+	wxString GetEnvironmentVariabels();
+	
+	/**
+	 * @brief set the workspace environment variables. These environment variables
+	 * will be kept in the workspace file (i.e. they are portable)
+	 */
+	void SetEnvironmentVariabels(const wxString &envvars);
+	
 	//----------------------------------
 	//File modifications
 	//----------------------------------

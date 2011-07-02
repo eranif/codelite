@@ -353,7 +353,7 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 
 			// expand backticks, if the option is not a backtick the value remains
 			// unchanged
-			cmpOption = DoExpandBacktick(cmpOption);
+			cmpOption = DoExpandBacktick(cmpOption, projectName);
 			args.Add( cmpOption );
 		}
 
@@ -392,7 +392,7 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 	
 	wxArrayString workspaceCmpOptions = wxStringTokenize(strWorkspaceCmpOptions, wxT("\n\r"), wxTOKEN_STRTOK);
 	for(size_t i=0; i<workspaceCmpOptions.GetCount(); i++) {
-		compilationArgs << DoExpandBacktick(workspaceCmpOptions.Item(i).Trim().Trim(false)) << wxT(" ");
+		compilationArgs << DoExpandBacktick(workspaceCmpOptions.Item(i).Trim().Trim(false), projectName) << wxT(" ");
 	}
 	
 	// Macros
@@ -416,7 +416,7 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 	return compilationArgs;
 }
 
-wxString ClangDriver::DoExpandBacktick(const wxString& backtick)
+wxString ClangDriver::DoExpandBacktick(const wxString& backtick, const wxString &projectName)
 {
 	wxString tmp;
 	wxString cmpOption = backtick;
@@ -432,7 +432,7 @@ wxString ClangDriver::DoExpandBacktick(const wxString& backtick)
 			
 			CL_DEBUG(wxT("DoExpandBacktick(): executing: '%s'"), cmpOption.c_str());
 			// Expand the backticks into their value
-			wxString expandedValue = wxShellExec(cmpOption);
+			wxString expandedValue = wxShellExec(cmpOption, projectName);
 			m_backticks[cmpOption] = expandedValue;
 			cmpOption = expandedValue;
 			CL_DEBUG(wxT("DoExpandBacktick(): result: '%s'"), expandedValue.c_str());

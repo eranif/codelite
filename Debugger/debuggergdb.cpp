@@ -196,7 +196,7 @@ bool DbgGdb::Start( const wxString &debuggerPath,
 					const wxString &ttyName)
 {
 	//set the environment variables
-	EnvSetter env( m_env );
+	EnvSetter env( m_env, NULL, m_debuggeeProjectName );
 	
 	wxString dbgExeName;
 	if ( ! DoLocateGdbExecutable( debuggerPath, dbgExeName ) ) {
@@ -243,7 +243,7 @@ bool DbgGdb::Start( const wxString &debuggerPath,
 					const wxString &ttyName)
 {
 	//set the environment variables
-	EnvSetter env( m_env );
+	EnvSetter env( m_env, NULL, m_debuggeeProjectName );
 	
 	wxString dbgExeName;
 	if ( ! DoLocateGdbExecutable( debuggerPath, dbgExeName ) ) {
@@ -330,7 +330,7 @@ bool DbgGdb::Stop()
 	EmptyQueue();
 	m_gdbOutputArr.Clear();
 	m_bpList.clear();
-
+	m_debuggeeProjectName.Clear();
 	// Clear any bufferd output
 	m_gdbOutputIncompleteLine.Clear();
 	return true;
@@ -894,6 +894,7 @@ void DbgGdb::OnProcessEnd( wxCommandEvent &e )
 	m_observer->UpdateGotControl( DBG_EXITED_NORMALLY );
 	m_gdbOutputArr.Clear();
 	m_consoleFinder.FreeConsole();
+	m_debuggeeProjectName.Clear();
 	SetIsRemoteDebugging( false );
 }
 

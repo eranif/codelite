@@ -38,7 +38,7 @@ protected:
 	wxString      DoGetPchHeaderFile(const wxString &filename);
 	wxString      DoGetPchOutputFileName(const wxString &filename);
 	wxString      DoPrepareCompilationArgs(const wxString &projectName, wxString &projectPath);
-	wxString      DoExpandBacktick(const wxString &backtick);
+	wxString      DoExpandBacktick(const wxString &backtick, const wxString &projectName);
 	bool          DoProcessBuffer(IEditor* editor, wxString &location, wxString &completefileName, wxString &filterWord);
 	int           DoGetHeaderScanLastPos(IEditor *editor);
 	wxString      DoGetClangBinary();

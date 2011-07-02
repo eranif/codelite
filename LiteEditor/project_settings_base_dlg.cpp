@@ -811,7 +811,19 @@ PSEnvironmentBasePage::PSEnvironmentBasePage( wxWindow* parent, wxWindowID id, c
 	m_choiceDbgEnv->SetSelection( 0 );
 	fgSizer12->Add( m_choiceDbgEnv, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	bSizer34->Add( fgSizer12, 1, wxEXPAND|wxALL, 5 );
+	bSizer34->Add( fgSizer12, 0, wxEXPAND, 5 );
+	
+	m_staticline12 = new wxStaticLine( m_panelEnv, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer34->Add( m_staticline12, 0, wxEXPAND | wxALL, 5 );
+	
+	m_staticText47 = new wxStaticText( m_panelEnv, wxID_ANY, _("Additional environment variables:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText47->Wrap( -1 );
+	bSizer34->Add( m_staticText47, 0, wxALL, 5 );
+	
+	m_textCtrlEnvvars = new wxTextCtrl( m_panelEnv, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlEnvvars->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
+	bSizer34->Add( m_textCtrlEnvvars, 1, wxALL|wxEXPAND, 5 );
 	
 	m_panelEnv->SetSizer( bSizer34 );
 	m_panelEnv->Layout();

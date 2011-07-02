@@ -217,7 +217,7 @@ void CustomBuildRequest::Process(IManager *manager)
 	text << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]----------\n");
 
 	AppendLine(text);
-	EnvSetter environment(env, &om);
+	EnvSetter environment(env, &om, proj->GetName());
 
 	m_proc = CreateAsyncProcess(this, cmd);
 	if ( !m_proc ) {

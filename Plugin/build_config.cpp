@@ -123,6 +123,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		if (envNode) {
 			SetEnvVarSet( XmlUtils::ReadString(envNode, wxT("EnvVarSetName")) );
 			SetDbgEnvSet( XmlUtils::ReadString(envNode, wxT("DbgSetName")) );
+			m_envvars = envNode->GetNodeContent();
 		}
 		
 		wxXmlNode *customBuild = XmlUtils::FindFirstByTagName(node, wxT("CustomBuild"));
@@ -296,8 +297,12 @@ wxXmlNode *BuildConfig::ToXml() const
 	wxXmlNode *envNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Environment"));
 	envNode->AddProperty(wxT("EnvVarSetName"),  GetEnvVarSet());
 	envNode->AddProperty(wxT("DbgSetName"),     GetDbgEnvSet());
-	node->AddChild(envNode);
 	
+	// Add CDATA section with project environment variables
+	wxXmlNode *envContent = new wxXmlNode(wxXML_CDATA_SECTION_NODE, wxEmptyString, m_envvars);
+	envNode->AddChild(envContent);
+	node->AddChild(envNode);
+
 	wxXmlNode *dbgStartupCommands = new wxXmlNode(debugger, wxXML_ELEMENT_NODE, wxT("StartupCommands"));
 	XmlUtils::SetNodeContent(dbgStartupCommands, m_debuggerStartupCmds);
 

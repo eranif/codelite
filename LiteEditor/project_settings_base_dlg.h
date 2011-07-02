@@ -299,6 +299,9 @@ class PSEnvironmentBasePage : public wxPanel
 		wxChoice* m_choiceEnv;
 		wxStaticText* m_staticText45;
 		wxChoice* m_choiceDbgEnv;
+		wxStaticLine* m_staticline12;
+		wxStaticText* m_staticText47;
+		wxTextCtrl* m_textCtrlEnvvars;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCmdEvtVModified( wxCommandEvent& event ) { event.Skip(); }

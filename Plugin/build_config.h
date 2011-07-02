@@ -127,7 +127,8 @@ private:
 	wxString                     m_dbgEnvSet;
 	bool                         m_useSeparateDebugArgs;
 	wxString                     m_debugArgs;
-	
+	wxString                     m_envvars;
+
 public:
 	BuildConfig(wxXmlNode *node);
 	virtual ~BuildConfig();
@@ -137,6 +138,13 @@ public:
 	//--------------------------------
 	// Setters / Getters
 	//--------------------------------
+
+	void SetEnvvars(const wxString& envvars) {
+		this->m_envvars = envvars;
+	}
+	const wxString& GetEnvvars() const {
+		return m_envvars;
+	}
 	wxString GetPreprocessor() const;
 	void GetPreprocessor(wxArrayString &arr) {
 		m_commonConfig.GetPreprocessor(arr);
@@ -146,9 +154,9 @@ public:
 	const wxString &GetCompilerType() const {
 		return m_compilerType;
 	}
-	
+
 	CompilerPtr GetCompiler() const;
-	
+
 	void SetDebugArgs(const wxString& debugArgs) {
 		this->m_debugArgs = debugArgs;
 	}

@@ -720,7 +720,7 @@ void CodeLiteApp::MSWReadRegistry()
 		// Supprot for wxWidgets
 		if (strWx.IsEmpty() == false) {
 			// we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
-			EnvMap envs = vars.GetVariables(wxT("Default"));
+			EnvMap envs = vars.GetVariables(wxT("Default"), false, wxT(""));
 
 			if (!envs.Contains(wxT("WXWIN"))) {
 				vars.AddVariable(wxT("Default"), wxT("WXWIN"), strWx);
@@ -737,7 +737,7 @@ void CodeLiteApp::MSWReadRegistry()
 		// Support for UnitTest++
 		if (strUnitTestPP.IsEmpty() == false) {
 			// we have UnitTest++ installed on this machine
-			EnvMap envs = vars.GetVariables(wxT("Default"));
+			EnvMap envs = vars.GetVariables(wxT("Default"), false, wxT(""));
 
 			if (!envs.Contains(wxT("UNIT_TEST_PP_SRC_DIR")) ) {
 				vars.AddVariable(wxT("Default"), wxT("UNIT_TEST_PP_SRC_DIR"), strUnitTestPP);
@@ -788,7 +788,7 @@ void CodeLiteApp::MSWReadRegistry()
 
 				if (strWx.IsEmpty() == false) {
 					// we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
-					EnvMap envs = vars.GetVariables(wxT("Default"));
+					EnvMap envs = vars.GetVariables(wxT("Default"), false, wxT(""));
 
 					if (envs.Contains(wxT("WXWIN")) == false) {
 						vars.AddVariable(wxT("Default"), wxT("WXWIN"), strWx);
@@ -811,7 +811,7 @@ void CodeLiteApp::MSWReadRegistry()
 				// Support for UnitTest++
 				if (strUnitTestPP.IsEmpty() == false) {
 					// we have UnitTest++ installed on this machine
-					EnvMap envs = vars.GetVariables(wxT("Default"));
+					EnvMap envs = vars.GetVariables(wxT("Default"), false, wxT(""));
 
 					if (!envs.Contains(wxT("UNIT_TEST_PP_SRC_DIR")) ) {
 						vars.AddVariable(wxT("Default"), wxT("UNIT_TEST_PP_SRC_DIR"), strUnitTestPP);

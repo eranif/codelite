@@ -732,3 +732,35 @@ Workspace* WorkspaceST::Get()
 		gs_Workspace = new Workspace;
 	return gs_Workspace;
 }
+
+wxString Workspace::GetEnvironmentVariabels()
+{
+	if(!m_doc.IsOk())
+		return wxEmptyString;
+	
+	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Environment"));
+	if(node) {
+		return node->GetNodeContent();
+	}
+	return wxEmptyString;
+}
+
+void Workspace::SetEnvironmentVariabels(const wxString& envvars)
+{
+	if(!m_doc.IsOk())
+		return;
+	
+	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Environment"));
+	if(node) {
+		m_doc.GetRoot()->RemoveChild(node);
+		delete node;
+	}
+	
+	node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Environment"));
+	m_doc.GetRoot()->AddChild(node);
+	
+	wxXmlNode *contentNode = new wxXmlNode(wxXML_CDATA_SECTION_NODE, wxEmptyString, envvars);
+	node->AddChild( contentNode );
+	
+	SaveXmlFile();
+}

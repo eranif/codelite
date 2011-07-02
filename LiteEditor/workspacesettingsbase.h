@@ -19,15 +19,15 @@
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/choice.h>
+#include <wx/statline.h>
+#include <wx/textctrl.h>
 #include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/notebook.h>
-#include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
-#include <wx/textctrl.h>
 #include <wx/splitter.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -46,6 +46,9 @@ class WorkspaceSettingsBase : public wxDialog
 		wxStaticText* m_staticText3;
 		wxStaticText* m_staticText4;
 		wxChoice* m_choiceEnvSets;
+		wxStaticLine* m_staticline2;
+		wxStaticText* m_staticText6;
+		wxTextCtrl* m_textCtrlWspEnvVars;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonOk;
 		wxButton* m_buttonCancel;

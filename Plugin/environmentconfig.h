@@ -40,7 +40,7 @@ class WXDLLIMPEXP_SDK EnvironmentConfig : public ConfigurationToolBase
 
 protected:
 	wxString    DoExpandVariables(const wxString &in);
-	void        ApplyEnv(StringMap *overrideMap);
+	void        ApplyEnv(StringMap *overrideMap, const wxString &project);
 	void        UnApplyEnv();
 
 public:
@@ -64,12 +64,17 @@ class EnvSetter
 	EnvironmentConfig *m_env;
 public:
 	EnvSetter(StringMap *om = NULL) : m_env(EnvironmentConfig::Instance()) {
-		m_env->ApplyEnv(om);
+		m_env->ApplyEnv(om, wxEmptyString);
 	}
 
-	EnvSetter(EnvironmentConfig *conf, StringMap *om = NULL) : m_env(conf) {
+	EnvSetter(EnvironmentConfig *conf, StringMap *om = NULL) : m_env(conf ? conf : EnvironmentConfig::Instance()) {
 		if (m_env) {
-			m_env->ApplyEnv(om);
+			m_env->ApplyEnv(om, wxEmptyString);
+		}
+	}
+	EnvSetter(EnvironmentConfig *conf, StringMap *om, const wxString &project) : m_env(conf ? conf : EnvironmentConfig::Instance()) {
+		if (m_env) {
+			m_env->ApplyEnv(om, project);
 		}
 	}
 	~EnvSetter() {

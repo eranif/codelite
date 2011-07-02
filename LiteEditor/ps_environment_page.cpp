@@ -45,6 +45,7 @@ void PSEnvironmentPage::Load(BuildConfigPtr buildConf)
 
 	int selDbg = m_choiceDbgEnv->FindString( buildConf->GetDbgEnvSet() );
 	m_choiceDbgEnv->SetSelection(selEnv == wxNOT_FOUND ? useActiveSetIndex : selDbg);
+	m_textCtrlEnvvars->SetValue(buildConf->GetEnvvars());
 }
 
 void PSEnvironmentPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
@@ -61,6 +62,7 @@ void PSEnvironmentPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSe
 		env = USE_WORKSPACE_ENV_VAR_SET;
 	}
 	buildConf->SetEnvVarSet(env);
+	buildConf->SetEnvvars(m_textCtrlEnvvars->GetValue().Trim().Trim(false));
 }
 
 void PSEnvironmentPage::Clear()

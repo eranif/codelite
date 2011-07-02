@@ -85,8 +85,8 @@ public:
 	 */
 	void   InsertVariable(const wxString &setName, const wxString &name, const wxString &value);
 
-	EnvMap GetVariables       (const wxString &setName = wxT(""));
-	bool   IsSetExist         (const wxString &setName);
+	EnvMap GetVariables(const wxString &setName, bool includeWorkspaceEnvs, const wxString &projectName);
+	bool   IsSetExist  (const wxString &setName);
 
 public:
 	virtual void DeSerialize(Archive &arch);

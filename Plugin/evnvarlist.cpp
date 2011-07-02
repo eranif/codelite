@@ -25,6 +25,7 @@
 #include "evnvarlist.h"
 #include <wx/tokenzr.h>
 #include <wx/log.h>
+#include "workspace.h"
 
 EvnVarList::EvnVarList()
 : m_activeSet(wxT("Default"))
@@ -75,18 +76,34 @@ void EvnVarList::InsertVariable(const wxString& setName, const wxString& name, c
 
 	DoGetSetVariablesStr(setName, actualSetName);
 
-	EnvMap set = GetVariables(actualSetName);
+	EnvMap set = GetVariables(actualSetName, false, wxT(""));
 	set.Put(name, value);
 
 	m_envVarSets[actualSetName] = set.String();
 }
 
-EnvMap EvnVarList::GetVariables(const wxString& setName)
+EnvMap EvnVarList::GetVariables(const wxString& setName, bool includeWorkspaceEnvs, const wxString &projectName)
 {
 	EnvMap   variables;
 	wxString actualSetName;
 
 	wxString      currentValueStr = DoGetSetVariablesStr(setName, actualSetName);
+	
+	if(includeWorkspaceEnvs && !WorkspaceST::Get()->GetName().IsEmpty()) {
+		currentValueStr.Trim().Trim(false);
+		currentValueStr << wxT("\n");
+		currentValueStr << WorkspaceST::Get()->GetEnvironmentVariabels();
+		
+		if(projectName.IsEmpty() == false) {
+			currentValueStr.Trim().Trim(false);
+			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxT(""));
+			if(buildConf) {
+				currentValueStr << wxT("\n");
+				currentValueStr << buildConf->GetEnvvars();
+			}
+		}
+	}
+	
 	wxArrayString currentValues   = wxStringTokenize(currentValueStr, wxT("\r\n"), wxTOKEN_STRTOK);
 	for(size_t i=0; i<currentValues.GetCount(); i++){
 		wxString entry = currentValues.Item(i);
@@ -106,7 +123,6 @@ EnvMap EvnVarList::GetVariables(const wxString& setName)
 		wxString varvalue = entry.AfterFirst(wxT('='));
 		variables.Put(varname, varvalue);
 	}
-
 	return variables;
 }
 

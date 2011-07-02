@@ -925,14 +925,14 @@ wxString wxImplode(const wxArrayString &arr, const wxString &glue)
 	return str;
 }
 
-wxString wxShellExec(const wxString &cmd)
+wxString wxShellExec(const wxString &cmd, const wxString &projectName)
 {
 	wxString filename = wxFileName::CreateTempFileName(wxT("clTempFile"));
 	wxString theCommand = wxString::Format(wxT("%s > \"%s\" 2>&1"), cmd.c_str(), filename.c_str());
 	WrapInShell(theCommand);
 	
 	wxArrayString dummy;
-	EnvSetter es;
+	EnvSetter es(NULL, NULL, projectName);
 	theCommand = EnvironmentConfig::Instance()->ExpandVariables(theCommand, false);
 	ProcUtils::SafeExecuteCommand(theCommand, dummy);
 	

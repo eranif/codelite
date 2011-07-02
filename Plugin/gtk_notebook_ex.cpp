@@ -63,6 +63,7 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 		, m_style(style)
 		, m_notify (true)
 		, m_imgList(NULL)
+		, m_startingTab(Notebook::npos)
 {
 	Initialize();
 	SetPadding(wxSize(0, 0));
@@ -72,6 +73,9 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 	Connect(wxEVT_MIDDLE_DOWN,                    wxMouseEventHandler(Notebook::OnMouseMiddle),            NULL, this);
 	Connect(wxEVT_LEFT_DCLICK,                    wxMouseEventHandler(Notebook::OnMouseLeftDClick),        NULL, this);
 	Connect(wxEVT_CONTEXT_MENU,                   wxContextMenuEventHandler(Notebook::OnMenu),             NULL, this);
+	
+	Connect(wxEVT_LEFT_DOWN,                      wxMouseEventHandler(Notebook::OnLeftDown),         NULL, this);
+	Connect(wxEVT_LEFT_UP,                        wxMouseEventHandler(Notebook::OnLeftUp),         NULL, this);
 }
 
 Notebook::~Notebook()
@@ -83,6 +87,9 @@ Notebook::~Notebook()
 	Disconnect(wxEVT_LEFT_DCLICK,                    wxMouseEventHandler(Notebook::OnMouseLeftDClick),        NULL, this);
 	Disconnect(wxEVT_CONTEXT_MENU,                   wxContextMenuEventHandler(Notebook::OnMenu),             NULL, this);
 
+	Disconnect(wxEVT_LEFT_DOWN,                      wxMouseEventHandler(Notebook::OnLeftDown),         NULL, this);
+	Disconnect(wxEVT_LEFT_UP,                        wxMouseEventHandler(Notebook::OnLeftUp),         NULL, this);
+	
 	std::map<wxWindow*, MyGtkPageInfo*>::iterator iter = m_gtk_page_info.begin();
 	for(; iter != m_gtk_page_info.end(); iter++) {
 		gtk_widget_destroy(iter->second->m_button);
@@ -106,10 +113,8 @@ void Notebook::AddPage(wxWindow *win, const wxString &text, bool selected, const
 	if (wxNotebook::AddPage(win, text, selected, imgid)) {
 		win->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
 		PushPageHistory(win);
-		if(HasCloseButton()) {
-			int idx = (int)GetPageCount();
-			GTKAddCloseButton(idx-1);
-		}
+		int idx = (int)GetPageCount();
+		GTKAddCloseButtonAndReorderable(idx-1);
 	}
 }
 
@@ -259,9 +264,7 @@ void Notebook::InsertPage(size_t index, wxWindow* win, const wxString& text, boo
 	if (wxNotebook::InsertPage(index, win, text, selected, imgId)) {
 		win->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(Notebook::OnKeyDown),  NULL, this);
 		PushPageHistory(win);
-		if(HasCloseButton()) {
-			GTKAddCloseButton(index);
-		}
+		GTKAddCloseButtonAndReorderable(index);
 	}
 }
 
@@ -483,30 +486,32 @@ void Notebook::OnMouseLeftDClick(wxMouseEvent& e)
 	}
 }
 
-void Notebook::GTKAddCloseButton(int idx)
+void Notebook::GTKAddCloseButtonAndReorderable(int idx)
 {
-	// add button
-	GtkWidget *image;
-	
 	MyNotebookPage *pg = (MyNotebookPage*) wxNotebook::GetNotebookPage(idx);
-	MyGtkPageInfo *pgInfo = new MyGtkPageInfo;
 	wxWindow* page = GetPage((size_t)idx);
+	// Place a close button
+	if(HasCloseButton()) {
+		GtkWidget *image;
+		MyGtkPageInfo *pgInfo = new MyGtkPageInfo;
+		pgInfo->m_button = gtk_button_new();
+		pgInfo->m_box    = pg->m_box;
+		pgInfo->m_book   = this;
+		
+		image  = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+		gtk_widget_set_size_request(image, 12, 12);
+		gtk_button_set_image (GTK_BUTTON(pgInfo->m_button), image);
+		gtk_widget_set_name(pgInfo->m_button, "tab-close-button");
+		gtk_button_set_relief(GTK_BUTTON(pgInfo->m_button), GTK_RELIEF_NONE);
+		gtk_box_pack_start   (GTK_BOX(pg->m_box), pgInfo->m_button, FALSE, FALSE, 0);
+		
+		gtk_signal_connect (GTK_OBJECT (pgInfo->m_button), "clicked", GTK_SIGNAL_FUNC (OnNotebookButtonClicked), pgInfo);
+		m_gtk_page_info[page] = pgInfo;
+		GTKShowCloseButton();
+	}
 	
-	pgInfo->m_button = gtk_button_new();
-	pgInfo->m_box    = pg->m_box;
-	pgInfo->m_book   = this;
-	
-	image  = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-	gtk_widget_set_size_request(image, 12, 12);
-	gtk_button_set_image (GTK_BUTTON(pgInfo->m_button), image);
-	gtk_widget_set_name(pgInfo->m_button, "tab-close-button");
-	gtk_button_set_relief(GTK_BUTTON(pgInfo->m_button), GTK_RELIEF_NONE);
-	gtk_box_pack_start   (GTK_BOX(pg->m_box), pgInfo->m_button, FALSE, FALSE, 0);
-	
-	gtk_signal_connect (GTK_OBJECT (pgInfo->m_button), "clicked", GTK_SIGNAL_FUNC (OnNotebookButtonClicked), pgInfo);
-	m_gtk_page_info[page] = pgInfo;
-	
-	GTKShowCloseButton();
+	// Make this tab re-orderable
+//	gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(this->m_widget), page->m_widget, true);
 }
 
 void Notebook::GTKDeletePgInfo(wxWindow* page)
@@ -573,4 +578,43 @@ int Notebook::DoGetBmpIdx(const wxBitmap& bmp)
 	return idx;
 }
 
+void Notebook::OnLeftDown(wxMouseEvent& e)
+{
+	e.Skip();
+	long flags(0);
+	int where = wxNotebook::HitTest( e.GetPosition(), &flags );
+	if(where != wxNOT_FOUND) {
+		m_startingTab = (size_t)where;
+		
+	} else {
+		m_startingTab = Notebook::npos;
+		
+	}
+}
+
+void Notebook::OnLeftUp(wxMouseEvent& e)
+{
+	e.Skip();
+	long flags(0);
+	int where = wxNotebook::HitTest( e.GetPosition(), &flags );
+	if(where != wxNOT_FOUND && m_startingTab != Notebook::npos && m_startingTab != (size_t)where) {
+		
+		// keep the page information before we remove it
+		// we will need the text, bmpIdx & the window
+		wxWindow* page  = GetPage(m_startingTab);
+		wxString  text  = GetPageText(m_startingTab);
+		int       imgid = GetPageImage(m_startingTab);
+		
+		// change the starting tab position
+		RemovePage(m_startingTab, false);
+		wxBitmap bmp = imgid == wxNOT_FOUND ? wxNullBitmap : GetImageList()->GetBitmap(imgid);
+		this->InsertPage(where, page, text, true, bmp);
+		
+	} else {
+		m_startingTab = Notebook::npos;
+	}
+}
+
 #endif
+
+

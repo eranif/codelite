@@ -71,6 +71,7 @@ class Notebook : public wxNotebook
 	bool                    m_notify;
 	std::map<wxWindow*, MyGtkPageInfo*> m_gtk_page_info;
 	wxImageList*            m_imgList;
+	size_t                  m_startingTab;
 	
 public:
 
@@ -86,7 +87,7 @@ protected:
 	int       DoGetBmpIdx(const wxBitmap& bmp);
 	
 public:
-	void           GTKAddCloseButton(int idx);
+	void           GTKAddCloseButtonAndReorderable(int idx);
 	void           GTKDeletePgInfo(wxWindow* page);
 	MyGtkPageInfo* GTKGetPgInfo(wxWindow* page);
 	void           GTKShowCloseButton();
@@ -200,6 +201,8 @@ protected:
 	void OnNavigationKey      (wxNavigationKeyEvent &e);
 	void OnMouseMiddle        (wxMouseEvent         &e);
 	void OnMouseLeftDClick    (wxMouseEvent         &e);
+	void OnLeftDown           (wxMouseEvent         &e);
+	void OnLeftUp             (wxMouseEvent         &e);
 	void OnKeyDown            (wxKeyEvent           &e);
 	void OnMenu               (wxContextMenuEvent   &e);
 	

@@ -18,6 +18,7 @@
 class MyNotebookPage: public wxObject
 {
 public:
+#if wxVERSION_NUMBER < 2900
     MyNotebookPage()
     {
         m_image = -1;
@@ -30,6 +31,12 @@ public:
     GtkWidget         *m_page;
     GtkLabel          *m_label;
     GtkWidget         *m_box;     // in which the label and image are packed
+#else
+		GtkWidget* m_box;
+		GtkWidget* m_label;
+		GtkWidget* m_image;
+		int m_imageIndex;
+#endif
 };
 
 // The close button callback

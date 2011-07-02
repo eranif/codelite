@@ -252,7 +252,7 @@ void SubversionView::ClearAll()
 void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString& conflictedFiles, const wxArrayString& unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles, const wxArrayString& lockedFiles)
 {
 
-	wxWindowUpdateLocker locker( m_treeCtrl );
+	clWindowUpdateLocker locker( m_treeCtrl );
 	ClearAll();
 
 	// Add root node

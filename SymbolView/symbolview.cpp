@@ -1246,7 +1246,7 @@ void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
 				wxArrayString filePaths;
 				filePaths.Add(m_mgr->GetActiveEditor()->GetFileName().GetFullPath());
 
-				wxWindowUpdateLocker locker(m_viewStack);
+				clWindowUpdateLocker locker(m_viewStack);
 				UpdateTrees(filePaths, false);
 			}
 		} else {
@@ -1255,7 +1255,7 @@ void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
 			for (size_t i = 0; i < files->size(); i++) {
 				filePaths.Add(files->at(i).GetFullPath());
 			}
-			wxWindowUpdateLocker locker(m_viewStack);
+			clWindowUpdateLocker locker(m_viewStack);
 			UpdateTrees(filePaths, true);
 
 		}
@@ -1270,7 +1270,7 @@ void SymbolViewPlugin::OnProjectFileAdded(wxCommandEvent& e)
 {
 	wxArrayString *files = (wxArrayString*) e.GetClientData();
 	if (files && !files->IsEmpty()) {
-		wxWindowUpdateLocker locker(m_viewStack);
+		clWindowUpdateLocker locker(m_viewStack);
 		UpdateTrees(*files, false);
 	}
 	e.Skip();

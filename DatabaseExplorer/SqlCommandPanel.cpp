@@ -85,7 +85,7 @@ void SQLCommandPanel::ExecuteSql()
 	wxBusyInfo infoDlg(_("Executing sql..."), wxTheApp->GetTopWindow());
 	wxTheApp->Yield();
 
-	wxWindowUpdateLocker locker(this);
+	clWindowUpdateLocker locker(this);
 	std::set<int> textCols;
 	std::set<int> blobCols;
 	DatabaseLayer* m_pDbLayer = m_pDbAdapter->GetDatabaseLayer(m_dbName);

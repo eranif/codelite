@@ -247,7 +247,7 @@ void ProjectSettingsDlg::OnConfigurationChanged(wxCommandEvent& event)
 
 	m_configName = event.GetString();
 
-	wxWindowUpdateLocker locker(this);
+	clWindowUpdateLocker locker(this);
 	LoadValues(m_configName);
 
 	m_treebook->SetFocus();

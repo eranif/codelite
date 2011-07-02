@@ -3,6 +3,7 @@
 #include "evnvarlist.h"
 #include "environmentconfig.h"
 #include "windowattrmanager.h"
+#include "window_locker.h"
 
 EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent )
 		: EnvVarsTableDlgBase( parent )
@@ -116,7 +117,7 @@ void EnvVarsTableDlg::OnDeleteSetUI(wxUpdateUIEvent& event)
 
 void EnvVarsTableDlg::DoAddPage(const wxString &name, const wxString &content, bool select)
 {
-	wxWindowUpdateLocker locker(this);
+	clWindowUpdateLocker locker(this);
 	EnvVarSetPage *page = new EnvVarSetPage(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(0,0));
 	wxScintilla *sci = page->m_textCtrl;
 	sci->StyleClearAll();

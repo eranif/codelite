@@ -348,7 +348,7 @@ void CCBox::Show(const wxString& word)
 	m_toolBar1->ToggleTool(TOOL_SHOW_ITEM_COMMENTS,   LEditor::m_ccShowItemsComments);
 
 	CCItemInfo item;
-	wxWindowUpdateLocker locker(m_listCtrl);
+	clWindowUpdateLocker locker(m_listCtrl);
 	m_listCtrl->DeleteAllItems();
 
 	// Get the associated editor

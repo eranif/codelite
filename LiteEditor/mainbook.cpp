@@ -577,7 +577,7 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 //#ifdef __WXMSW__
 //	// On Mac adding this locker causes wierd behaviors like not showing the file content or
 //	// hiding the welcome page
-//	//wxWindowUpdateLocker locker(m_book);
+//	//clWindowUpdateLocker locker(m_book);
 //#endif
 
 	bool closeLastTab = ((long)(m_book->GetPageCount()) >= MaxBuffers) && GetUseBuffereLimit();
@@ -716,7 +716,7 @@ bool MainBook::CloseAllButThis(wxWindow *page)
 {
 	wxString text;
 
-	wxWindowUpdateLocker locker(this);
+	clWindowUpdateLocker locker(this);
 
 	size_t pos = m_book->GetPageIndex(page);
 	if (pos != Notebook::npos) {
@@ -764,7 +764,7 @@ bool MainBook::CloseAll(bool cancellable)
 	}
 
 	// Delete the files without notifications (it will be faster)
-	wxWindowUpdateLocker locker(this);
+	clWindowUpdateLocker locker(this);
 	ClangCodeCompletion::Instance()->CancelCodeComplete();
  
 	SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
@@ -961,7 +961,7 @@ wxWindow* MainBook::GetCurrentPage()
 
 void MainBook::OnClosePage(NotebookEvent& e)
 {
-	wxWindowUpdateLocker locker( this );
+	clWindowUpdateLocker locker( this );
 	int where = e.GetSelection();
 	if(where == wxNOT_FOUND) {
 		return;
@@ -973,7 +973,7 @@ void MainBook::OnClosePage(NotebookEvent& e)
 
 void MainBook::DoPositionFindBar(int where)
 {
-	wxWindowUpdateLocker locker(this);
+	clWindowUpdateLocker locker(this);
 	m_quickFindBar->Hide();
 	// the find bar is already placed on the MainBook, detach it
 	GetSizer()->Detach(m_quickFindBar);

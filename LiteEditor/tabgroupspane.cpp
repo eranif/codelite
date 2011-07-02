@@ -250,7 +250,7 @@ void TabgroupsPane::OnItemActivated(wxTreeEvent& event) {
 			}
 		}
 
-		wxWindowUpdateLocker locker(clMainFrame::Get());
+		clWindowUpdateLocker locker(clMainFrame::Get());
 		TabGroupEntry session;
 		if (SessionManager::Get().FindSession(filepath.BeforeLast(wxT('.')), session, wxString(wxT(".tabgroup")), tabgroupTag) ) {
 			clMainFrame::Get()->GetMainBook()->RestoreSession(session);

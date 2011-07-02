@@ -1,6 +1,7 @@
 #include "open_resource_dialog.h"
 #include <wx/xrc/xmlres.h>
 #include "globals.h"
+#include "window_locker.h"
 #include "editor_config.h"
 #include "ieditor.h"
 #include "ctags_manager.h"
@@ -166,7 +167,7 @@ void OpenResourceDialog::OnItemActivated(wxListEvent& event)
 void OpenResourceDialog::DoPopulateList()
 {
 	m_tags.clear();
-	wxWindowUpdateLocker locker(this);
+	clWindowUpdateLocker locker(this);
 	wxArrayString kind;
 	Clear();
 	if (m_type == wxGetTranslation(TYPE_WORKSPACE_FILE)) {

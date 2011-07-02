@@ -1650,7 +1650,7 @@ void clMainFrame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
 	wxString filepath = dlg.GetListBox()->GetStringSelection();
 	wxString sessionFilepath = filepath.BeforeLast(wxT('.'));
 
-	wxWindowUpdateLocker locker(this);
+	clWindowUpdateLocker locker(this);
 	TabGroupEntry session;
 	if (SessionManager::Get().FindSession(sessionFilepath, session, wxString(wxT(".tabgroup")), tabgroupTag) ) {
 		// We've 'loaded' the requested tabs. If required, delete any current ones
@@ -1705,7 +1705,7 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent &event)
 	                   wxT("All Files (*)|*"));
 	wxFileDialog dlg(this, _("Open Workspace"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE , wxDefaultPosition);
 	if (dlg.ShowModal() == wxID_OK) {
-		wxWindowUpdateLocker locker(this);
+		clWindowUpdateLocker locker(this);
 		ManagerST::Get()->OpenWorkspace(dlg.GetPath());
 	}
 }
@@ -1759,7 +1759,7 @@ void clMainFrame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
 void clMainFrame::OnFileClose(wxCommandEvent &event)
 {
 	wxUnusedVar( event );
-	wxWindowUpdateLocker locker(this);
+	clWindowUpdateLocker locker(this);
 	GetMainBook()->ClosePage(GetMainBook()->GetCurrentPage());
 }
 
@@ -2435,7 +2435,7 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 
 	// Load last session?
 	if (m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && m_loadLastSession) {
-		wxWindowUpdateLocker locker(this);
+		clWindowUpdateLocker locker(this);
 		LoadSession(SessionManager::Get().GetLastSession());
 	}
 
@@ -2687,7 +2687,7 @@ void clMainFrame::OnRecentWorkspace(wxCommandEvent &event)
 		if ( file_name.EndsWith(wxT(".workspace")) == false ) {
 			file_name << wxT(".workspace");
 		}
-		wxWindowUpdateLocker locker(this);
+		clWindowUpdateLocker locker(this);
 		ManagerST::Get()->OpenWorkspace( file_name );
 	}
 }
@@ -2978,7 +2978,7 @@ void clMainFrame::OnStartPageEvent(wxCommandEvent& e)
 {
 	StartPageData *data = (StartPageData *)e.GetClientData();
 	if ( data->action == wxT("switch-workspace" )) {
-		wxWindowUpdateLocker locker(this);
+		clWindowUpdateLocker locker(this);
 		ManagerST::Get()->OpenWorkspace(data->file_path);
 
 	} else if ( data->action == wxT("open-file" )) {
@@ -4092,7 +4092,7 @@ void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 
 		}
 
-		//wxWindowUpdateLocker locker(this);
+		//clWindowUpdateLocker locker(this);
 		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == SvnRevision) {
 			m_mgr.LoadPerspective(pers);
 
@@ -4260,7 +4260,7 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 	e.Skip();
 
 #ifndef __WXMAC__
-	wxWindowUpdateLocker locker(this);
+	clWindowUpdateLocker locker(this);
 #endif
 
 	wxLogMessage(wxT("Restoring layout"));

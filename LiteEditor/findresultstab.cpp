@@ -317,7 +317,7 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
 
 	if (e.GetInt() != 0 || m_sci == NULL) {
 		if (m_book) {
-			wxWindowUpdateLocker locker(this);
+			clWindowUpdateLocker locker(this);
 			wxScintilla *sci = new wxScintilla(m_book);
 			SetStyles(sci);
 

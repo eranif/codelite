@@ -30,7 +30,7 @@
 #include <wx/colour.h>
 #include <wx/arrstr.h>
 #include "codelite_exports.h"
-
+#include "window_locker.h"
 #include "workspace.h"
 
 class wxListCtrl;

@@ -251,7 +251,7 @@ int PPLex( const wxString &filePath)
 	while( true ) {
 		type = pp_lex();
 		if(type == 0) break;
-		printf("%s, %d\n", pp_lval.c_str(), type);
+		//printf("%s, %d\n", pp_lval.c_str(), type);
 	}
 	
     if ( YY_CURRENT_BUFFER->yy_input_file ) {

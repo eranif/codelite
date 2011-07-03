@@ -974,7 +974,6 @@ void MainBook::OnClosePage(NotebookEvent& e)
 void MainBook::DoPositionFindBar(int where)
 {
 	clWindowUpdateLocker locker(this);
-	m_quickFindBar->Hide();
 	// the find bar is already placed on the MainBook, detach it
 	GetSizer()->Detach(m_quickFindBar);
 
@@ -984,7 +983,6 @@ void MainBook::DoPositionFindBar(int where)
 	else
 		GetSizer()->Insert(where, m_quickFindBar, 0, wxTOP|wxBOTTOM|wxEXPAND);
 		
-	m_quickFindBar->Show();
 	GetSizer()->Layout();
 }
 

@@ -36,6 +36,20 @@
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
+#define CHECK_FOCUS_WIN() {\
+	wxWindow *focus = wxWindow::FindFocus();\
+	if(focus != m_sci) {\
+		e.Skip();\
+		return;\
+	}\
+	\
+	if (!m_sci || m_sci->GetLength() == 0) {\
+		e.Skip();\
+		return;\
+	}\
+}
+
+
 void PostCommandEvent(wxWindow* destination, wxWindow* FocusedControl)
 {
 #if wxVERSION_NUMBER >= 2900
@@ -477,10 +491,8 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
 
 void QuickFindBar::OnFindNext(wxCommandEvent& e)
 {
-	wxUnusedVar(e);
-	if (!m_sci || m_sci->GetLength() == 0)
-		return;
-
+	CHECK_FOCUS_WIN();
+	
 	// Highlighted text takes precedence over the current search string
 	wxString selectedText = m_sci->GetSelectedText();
 	if (selectedText.IsEmpty() == false) {
@@ -493,10 +505,8 @@ void QuickFindBar::OnFindNext(wxCommandEvent& e)
 
 void QuickFindBar::OnFindPrevious(wxCommandEvent& e)
 {
-	wxUnusedVar(e);
-	if (!m_sci || m_sci->GetLength() == 0)
-		return;
-
+	CHECK_FOCUS_WIN();
+	
 	// Highlighted text takes precedence over the current search string
 	wxString selectedText = m_sci->GetSelectedText();
 	if (selectedText.IsEmpty() == false) {
@@ -509,10 +519,8 @@ void QuickFindBar::OnFindPrevious(wxCommandEvent& e)
 
 void QuickFindBar::OnFindNextCaret(wxCommandEvent& e)
 {
-	wxUnusedVar(e);
-	if (!m_sci || m_sci->GetLength() == 0)
-		return;
-
+	CHECK_FOCUS_WIN();
+	
 	wxString selection( m_sci->GetSelectedText() );
 	if (selection.IsEmpty()) {
 		// select the word
@@ -534,9 +542,7 @@ void QuickFindBar::OnFindNextCaret(wxCommandEvent& e)
 
 void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
 {
-	wxUnusedVar(e);
-	if (!m_sci || m_sci->GetLength() == 0)
-		return;
+	CHECK_FOCUS_WIN();
 
 	wxString selection( m_sci->GetSelectedText() );
 	if (selection.IsEmpty()) {

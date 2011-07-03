@@ -53,6 +53,7 @@ OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 		, m_logTargetOld(NULL)
 		, m_buildInProgress(false)
 {
+	Hide();
 	CreateGUIControls();
 	wxTheApp->Connect ( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
 	wxTheApp->Connect ( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );

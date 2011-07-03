@@ -712,17 +712,18 @@ void clMainFrame::CreateGUIControls(void)
 	icon.CopyFromBitmap(bmp);
 	SetIcon(icon);
 #endif
-	m_mainPanel = new wxPanel(this);
-	m_horzSizer = new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
-	
-	m_horzSizer->Add(m_mainPanel, 1, wxEXPAND);
-	mainSizer->Add(m_horzSizer, 1, wxEXPAND);
-	
-	SetSizer(mainSizer);
+
+//	m_mainPanel = new wxPanel(this);
+//	m_horzSizer = new wxBoxSizer(wxHORIZONTAL);
+//	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
+//	
+//	m_horzSizer->Add(m_mainPanel, 1, wxEXPAND);
+//	mainSizer->Add(m_horzSizer, 1, wxEXPAND);
+//	
+//	SetSizer(mainSizer);
 
 	// tell wxAuiManager to manage this frame
-	m_mgr.SetManagedWindow(m_mainPanel);
+	m_mgr.SetManagedWindow(this);
 	m_mgr.SetArtProvider(new CLAuiDockArt());
 	SetAUIManagerFlags();
 
@@ -772,35 +773,36 @@ void clMainFrame::CreateGUIControls(void)
 	// However I'm creating unused strings here, so that the translations remain in the catalogue
 	const wxString unusedOV(_("Output View")); const wxString unusedWV(_("Workspace View"));
 
-	m_outputPane = new OutputPane(m_mainPanel, wxT("Output View"));
-	wxAuiPaneInfo paneInfo;
-	m_mgr.AddPane(m_outputPane,
-	              paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(0).Position(0).CaptionVisible(false).PaneBorder(false));
-	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
-	// Now it's created, hide it. Otherwise, if codelite.layout doesn't exist, it starts slightly open
-	// That looks silly, and it's difficult for a novice user to know what's happening
-	wxAuiPaneInfo& info = m_mgr.GetPane(wxT("Output View"));
-	if (info.IsOk()) {
-		info.Hide();
-	}
-
 	// Add the explorer pane
-	m_workspacePane = new WorkspacePane(m_mainPanel, wxT("Workspace View"), &m_mgr);
+	m_workspacePane = new WorkspacePane(this, wxT("Workspace View"), &m_mgr);
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
 	              Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
 	              Left().BestSize(250, 300).Layer(1).Position(0).CloseButton(true).PaneBorder(false));
 	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace View"));
 
 	//add the debugger locals tree, make it hidden by default
-	m_debuggerPane = new DebuggerPane(m_mainPanel, wxT("Debugger"), &m_mgr);
+	m_debuggerPane = new DebuggerPane(this, wxT("Debugger"), &m_mgr);
 	m_mgr.AddPane(m_debuggerPane,
 	              wxAuiPaneInfo().Name(m_debuggerPane->GetCaption()).Caption(m_debuggerPane->GetCaption()).Bottom().Layer(1).Position(1).CloseButton(true).Hide());
 	RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
 
-	m_mainBook = new MainBook(m_mainPanel);
+	m_mainBook = new MainBook(this);
 	m_mgr.AddPane(m_mainBook, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(false));
 	CreateRecentlyOpenedFilesMenu();
-
+	
+	m_outputPane = new OutputPane(this, wxT("Output View"));
+	wxAuiPaneInfo paneInfo;
+	m_mgr.AddPane(m_outputPane,
+	              paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(1).Position(0).CaptionVisible(false).PaneBorder(false));
+	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
+	
+	// Now it's created, hide it. Otherwise, if codelite.layout doesn't exist, it starts slightly open
+	// That looks silly, and it's difficult for a novice user to know what's happening
+	wxAuiPaneInfo& info = m_mgr.GetPane(wxT("Output View"));
+	if (info.IsOk()) {
+		info.Hide();
+	}
+	
 	long show_nav(1);
 	EditorConfigST::Get()->GetLongValue(wxT("ShowNavBar"), show_nav);
 	if ( !show_nav ) {
@@ -959,10 +961,10 @@ void clMainFrame::CreateToolbars24()
 #if !USE_AUI_TOOLBAR
 	wxWindow *toolbar_parent (this);
 	if (PluginManager::Get()->AllowToolbar()) {
-		toolbar_parent = m_mainPanel;
+		toolbar_parent = this;
 	}
 #else
-	wxWindow *toolbar_parent (m_mainPanel);
+	wxWindow *toolbar_parent (this);
 #endif
 
 	//----------------------------------------------
@@ -1248,10 +1250,10 @@ void clMainFrame::CreateToolbars16()
 #if !USE_AUI_TOOLBAR
 	wxWindow *toolbar_parent (this);
 	if (PluginManager::Get()->AllowToolbar()) {
-		toolbar_parent = m_mainPanel;
+		toolbar_parent = this;
 	}
 #else
-	wxWindow *toolbar_parent (m_mainPanel);
+	wxWindow *toolbar_parent (this);
 #endif
 
 	clToolBar *tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
@@ -3034,21 +3036,9 @@ void clMainFrame::CompleteInitialization()
 
 	// Connect some system events
 	m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(clMainFrame::OnDockablePaneClosed), NULL, this);
-	m_mgr.Connect(wxEVT_AUI_RENDER,     wxAuiManagerEventHandler(clMainFrame::OnAuiManagerRender),   NULL, this);
-
-#ifdef __WXMAC__
-	wxStaticLine *line = new wxStaticLine(this);
-	GetSizer()->Add(line, 0, wxEXPAND);
-#endif
-
-	//OutputViewControlBar* outputViewControlBar = new OutputViewControlBar(this, GetOutputPane()->GetNotebook(), &m_mgr, wxID_ANY);
-	//outputViewControlBar->AddAllButtons();
-	
-	//GetSizer()->Add(outputViewControlBar, 0, wxEXPAND);
+	//m_mgr.Connect(wxEVT_AUI_RENDER,     wxAuiManagerEventHandler(clMainFrame::OnAuiManagerRender),   NULL, this);
 	Layout();
 	SelectBestEnvSet();
-
-//	this->Thaw();
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent &e)
@@ -3386,7 +3376,7 @@ void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 	wxBitmap  bmp;
 
 #if !CL_USE_NATIVEBOOK
-	DockablePane *pane = new DockablePane(m_mainPanel, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));
+	DockablePane *pane = new DockablePane(this, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));
 	page->Reparent(pane);
 
 	// remove the page from the notebook
@@ -3395,7 +3385,7 @@ void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 	
 #else
 
-	DockablePane *pane = new DockablePane(m_mainPanel, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));
+	DockablePane *pane = new DockablePane(this, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));
 	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
 	// HACK: since Reparent will remove the widget from the parent, we need to place it back...
 	gtk_container_add( GTK_CONTAINER(GetWorkspacePane()->GetNotebook()->m_widget), page->m_widget );
@@ -3599,7 +3589,7 @@ void clMainFrame::OnDetachDebuggerViewTab(wxCommandEvent& e)
 	wxBitmap  bmp ;
 
 #if !CL_USE_NATIVEBOOK
-	DockablePane *pane = new DockablePane(m_mainPanel, GetDebuggerPane()->GetNotebook(), text, bmp, wxSize(200, 200));
+	DockablePane *pane = new DockablePane(this, GetDebuggerPane()->GetNotebook(), text, bmp, wxSize(200, 200));
 	page->Reparent(pane);
 
 	// remove the page from the notebook
@@ -3608,7 +3598,7 @@ void clMainFrame::OnDetachDebuggerViewTab(wxCommandEvent& e)
 	
 #else
 
-	DockablePane *pane = new DockablePane(m_mainPanel, GetDebuggerPane()->GetNotebook(), text, bmp, wxSize(200, 200));
+	DockablePane *pane = new DockablePane(this, GetDebuggerPane()->GetNotebook(), text, bmp, wxSize(200, 200));
 	GetDebuggerPane()->GetNotebook()->RemovePage(sel, false);
 	// HACK: since Reparent will remove the widget from the parent, we need to place it back...
 	gtk_container_add( GTK_CONTAINER(GetDebuggerPane()->GetNotebook()->m_widget), page->m_widget );
@@ -4297,8 +4287,7 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 void clMainFrame::SetAUIManagerFlags()
 {
 	// Set the manager flags
-	unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_ACTIVE_PANE |
-							   wxAUI_MGR_ALLOW_FLOATING    |
+	unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING    |
 							   wxAUI_MGR_TRANSPARENT_DRAG;
 
 	int dockingStyle = EditorConfigST::Get()->GetOptions()->GetDockingStyle();
@@ -4397,7 +4386,7 @@ wxString clMainFrame::StartTTY(const wxString &title)
 	}
 
 	// Create a new TTY Console and place it in the AUI
-	ConsoleFrame *console = new ConsoleFrame(m_mainPanel);
+	ConsoleFrame *console = new ConsoleFrame(this);
 	wxAuiPaneInfo paneInfo;
 	paneInfo.Name(wxT("Debugger Console")).Caption(title).Dockable().FloatingSize(300, 200).CloseButton(false);
 	m_mgr.AddPane(console, paneInfo);

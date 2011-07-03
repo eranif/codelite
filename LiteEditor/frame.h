@@ -122,7 +122,6 @@ public:
 	 */
 	void SetAUIManagerFlags();
 	
-	wxPanel *GetMainPanel() {return m_mainPanel;}
 
 	/**
 	 * @brief update the environment status message:

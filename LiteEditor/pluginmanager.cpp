@@ -234,7 +234,7 @@ void PluginManager::Load()
 			m_plugins[plugin->GetShortName()] = plugin;
 
 			//load the toolbar
-			clToolBar *tb = plugin->CreateToolBar( AllowToolbar() ? (wxWindow*)clMainFrame::Get()->GetMainPanel() : (wxWindow*)clMainFrame::Get() );
+			clToolBar *tb = plugin->CreateToolBar( (wxWindow*)clMainFrame::Get() );
 			if ( tb ) {
 #if USE_AUI_TOOLBAR
 				// When using AUI toolbars, use our own custom art-provider

@@ -4,6 +4,7 @@
 #include "ErdPanel.h"
 #include "AdapterSelectDlg.h"
 #include <wx/wupdlock.h>
+#include "window_locker.h"
 
 #include <wx/wfstream.h>
 #include <wx/imaglist.h>

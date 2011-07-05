@@ -43,6 +43,7 @@ BEGIN_EVENT_TABLE(ShellTab, OutputTabWindow)
 
 	EVT_UPDATE_UI(XRCID("send_input"),   ShellTab::OnUpdateUI)
 	EVT_UPDATE_UI(XRCID("stop_process"), ShellTab::OnUpdateUI)
+	EVT_UPDATE_UI(XRCID("hold_pane_open"), ShellTab::OnHoldOpenUpdateUI)
 END_EVENT_TABLE()
 
 
@@ -234,6 +235,8 @@ DebugTab::DebugTab(wxWindow* parent, wxWindowID id, const wxString& name)
 	}
 
 	m_vertSizer->Prepend(new DebugTabPanel(this), 0, wxEXPAND);
+	
+	Connect(XRCID("hold_pane_open"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebugTab::OnHoldOpenUpdateUI), NULL, this);
 }
 
 DebugTab::~DebugTab()
@@ -335,6 +338,11 @@ void DebugTabPanel::OnEnableDbgLogUI(wxUpdateUIEvent& event)
 }
 void ShellTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
+	int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
+	if (clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) {
+		return;
+	}
+
 	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
 		e.Enable(true);
 		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfOutput() );
@@ -347,6 +355,11 @@ void ShellTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 
 void DebugTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
+	int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
+	if (clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) {
+		return;
+	}
+
 	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
 		e.Enable(true);
 		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfDebug() );

@@ -32,6 +32,7 @@
 #include <wx/wxscintilla.h>
 
 #include "macros.h"
+#include "file_logger.h"
 #include "editor_config.h"
 #include "frame.h"
 #include "buildtabsettingsdata.h"
@@ -70,6 +71,8 @@ BuildTab::BuildTab ( wxWindow *parent, wxWindowID id, const wxString &name )
 	                wxXmlResource::Get()->LoadBitmap ( wxT("colourise") ), _("Set compiler colours...") );
 	Connect ( XRCID ( "advance_settings" ),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler ( BuildTab::OnCompilerColours ), NULL, this );
 	m_tb->Realize();
+
+	Connect(XRCID("hold_pane_open"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTab::OnHoldOpenUpdateUI), NULL, this);
 
 	wxTheApp->Connect ( wxEVT_SHELL_COMMAND_STARTED,         wxCommandEventHandler ( BuildTab::OnBuildStarted ),    NULL, this );
 	wxTheApp->Connect ( wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, wxCommandEventHandler ( BuildTab::OnBuildStarted ),    NULL, this );
@@ -893,6 +896,13 @@ bool BuildTab::GetCompilerPatterns(const wxString& compilerName, CompilerPattern
 
 void BuildTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
+	CL_DEBUG1(wxT("BuildTab::OnHoldOpenUpdateUI event caught"));
+	int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
+	if (clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this){
+		return;
+	}
+	CL_DEBUG1(wxT("BuildTab::OnHoldOpenUpdateUI correct page"));
+
 	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
 		e.Enable(true);
 		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfBuild() );

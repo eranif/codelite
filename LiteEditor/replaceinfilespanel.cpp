@@ -44,6 +44,7 @@ BEGIN_EVENT_TABLE(ReplaceInFilesPanel, FindResultsTab)
 	EVT_UPDATE_UI(XRCID("replace"),             ReplaceInFilesPanel::OnReplaceUI)
 	EVT_UPDATE_UI(XRCID("replace_with_combo"),  ReplaceInFilesPanel::OnReplaceWithComboUI)
 	EVT_UPDATE_UI(XRCID("replace_with_label"),  ReplaceInFilesPanel::OnReplaceWithComboUI)
+	EVT_UPDATE_UI(XRCID("hold_pane_open"),  	ReplaceInFilesPanel::OnHoldOpenUpdateUI)
 END_EVENT_TABLE()
 
 
@@ -407,6 +408,11 @@ void ReplaceInFilesPanel::OnReplaceWithComboUI(wxUpdateUIEvent& e)
 
 void ReplaceInFilesPanel::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
+	int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
+	if (clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) {
+		return;
+	}
+
 	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
 		e.Enable(true);
 		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfReplace() );

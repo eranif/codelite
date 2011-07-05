@@ -36,6 +36,7 @@ BEGIN_EVENT_TABLE(TaskPanel, FindResultsTab)
     EVT_BUTTON(XRCID("search"),       TaskPanel::OnSearch)
 	EVT_BUTTON(XRCID("find_what"),    TaskPanel::OnFindWhat)
     EVT_UPDATE_UI(XRCID("search"),    TaskPanel::OnSearchUI)
+	EVT_UPDATE_UI(XRCID("hold_pane_open"), TaskPanel::OnHoldOpenUpdateUI)
 END_EVENT_TABLE()
 
 TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
@@ -175,6 +176,11 @@ void TaskPanel::OnFindWhat(wxCommandEvent& e)
 
 void TaskPanel::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
+	int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
+	if (clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) {
+		return;
+	}
+
 	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
 		e.Enable(true);
 		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfTasks() );

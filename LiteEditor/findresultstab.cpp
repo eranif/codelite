@@ -54,6 +54,7 @@ BEGIN_EVENT_TABLE(FindResultsTab, OutputTabWindow)
 	EVT_UPDATE_UI(XRCID("close_fif_tab"),        FindResultsTab::OnTabMenuUI    )
 	EVT_UPDATE_UI(XRCID("close_all_fif_tabs"),   FindResultsTab::OnTabMenuUI    )
 	EVT_UPDATE_UI(XRCID("close_other_fif_tabs"), FindResultsTab::OnTabMenuUI    )
+	EVT_UPDATE_UI(XRCID("hold_pane_open"),  	 FindResultsTab::OnHoldOpenUpdateUI)
 
 END_EVENT_TABLE()
 
@@ -762,6 +763,11 @@ void FindResultsTab::OnClosePage(NotebookEvent& e)
 
 void FindResultsTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
+	int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
+	if (clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) {
+		return;
+	}
+
 	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
 		e.Enable(true);
 		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfSearch() );

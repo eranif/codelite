@@ -47,7 +47,6 @@ BEGIN_EVENT_TABLE(OutputTabWindow, wxPanel)
 	EVT_UPDATE_UI(XRCID("word_wrap_output"), OutputTabWindow::OnWordWrapUI)
 	EVT_UPDATE_UI(XRCID("collapse_all"),     OutputTabWindow::OnCollapseAllUI)
 	EVT_UPDATE_UI(XRCID("repeat_output"),    OutputTabWindow::OnRepeatOutputUI)
-	EVT_UPDATE_UI(XRCID("hold_pane_open"),   OutputTabWindow::OnHoldOpenUpdateUI)
 	EVT_SCI_DOUBLECLICK(wxID_ANY,            OutputTabWindow::OnMouseDClick)
 	EVT_SCI_HOTSPOT_CLICK(wxID_ANY,          OutputTabWindow::OnHotspotClicked)
 	EVT_SCI_MARGINCLICK(wxID_ANY,            OutputTabWindow::OnMarginClick)
@@ -374,7 +373,6 @@ bool OutputTabWindow::IsFocused()
 void OutputTabWindow::OnEditUI(wxUpdateUIEvent& e)
 {
 	if ( !IsFocused() || !m_sci ) {
-		e.Skip();
 		return;
 	}
 
@@ -442,7 +440,3 @@ void OutputTabWindow::OnHideSearchBar(wxCommandEvent& e)
 	GetSizer()->Layout();
 }
 
-void OutputTabWindow::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
-{
-	e.Skip();
-}

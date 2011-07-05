@@ -31,7 +31,9 @@
 #include "treelistctrl.h"
 #include "fileextmanager.h"
 #include "globals.h"
+#include "frame.h"
 #include "editor_config.h"
+#include "file_logger.h"
 #include <wx/imaglist.h>
 
 class ErrorsTabItemData : public wxTreeItemData
@@ -90,6 +92,8 @@ ErrorsTab::ErrorsTab ( BuildTab *bt, wxWindow *parent, wxWindowID id, const wxSt
 	m_hSizer->Add(m_treeListCtrl, 1, wxEXPAND);
 #endif
 	wxTheApp->Connect ( wxEVT_BUILD_ENDED , wxCommandEventHandler ( ErrorsTab::OnBuildEnded   ), NULL, this );
+	
+	Connect(XRCID("hold_pane_open"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ErrorsTab::OnHoldOpenUpdateUI), NULL, this);
 }
 
 ErrorsTab::~ErrorsTab()
@@ -173,6 +177,12 @@ void ErrorsTab::OnClearAllUI ( wxUpdateUIEvent& e )
 
 void ErrorsTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
+	CL_DEBUG1(wxT("ErrorsTab::OnHoldOpenUpdateUI event caught!"));
+	int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
+	if (clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this){
+		return;
+	}
+	CL_DEBUG1(wxT("ErrorsTab::OnHoldOpenUpdateUI correct page"));
 	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
 		e.Enable(true);
 		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfErrors() );

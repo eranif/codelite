@@ -74,7 +74,6 @@ protected:
 	virtual void OnWordWrapUI     (wxUpdateUIEvent  &e);
 	virtual void OnCollapseAllUI  (wxUpdateUIEvent  &e);
     virtual void OnRepeatOutputUI (wxUpdateUIEvent  &e);
-    virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent  &e);
 
 	virtual void OnMouseDClick    (wxScintillaEvent &e);
 	virtual void OnHotspotClicked (wxScintillaEvent &e);

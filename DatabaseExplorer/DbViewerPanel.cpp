@@ -3,7 +3,7 @@
 #include "SqlCommandPanel.h"
 #include "ErdPanel.h"
 #include "AdapterSelectDlg.h"
-#include <wx/wupdlock.h>
+#include "window_locker.h"
 #include "window_locker.h"
 
 #include <wx/wfstream.h>

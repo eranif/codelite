@@ -501,9 +501,13 @@ void Notebook::GTKAddCloseButtonAndReorderable(int idx)
 		image  = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
 		gtk_widget_set_size_request(image, 12, 12);
 		gtk_button_set_image (GTK_BUTTON(pgInfo->m_button), image);
-		gtk_widget_set_name(pgInfo->m_button, "tab-close-button");
+		gtk_widget_set_name  (pgInfo->m_button, "tab-close-button");
 		gtk_button_set_relief(GTK_BUTTON(pgInfo->m_button), GTK_RELIEF_NONE);
-		gtk_box_pack_start   (GTK_BOX(pg->m_box), pgInfo->m_button, FALSE, FALSE, 0);
+		gtk_box_pack_end     (GTK_BOX(pg->m_box), pgInfo->m_button, FALSE, FALSE, 0);
+		// wxGTK has already used gtk_box_pack_end for the tab's label, so atm the close button will be on the left
+		// so re-order it to position 0, which in a GTK_PACK_END box means the far right
+		gtk_box_reorder_child(GTK_BOX(pg->m_box), pgInfo->m_button, 0);
+		gtk_box_set_spacing  (GTK_BOX(pg->m_box), 5);
 		
 		gtk_signal_connect (GTK_OBJECT (pgInfo->m_button), "clicked", GTK_SIGNAL_FUNC (OnNotebookButtonClicked), pgInfo);
 		m_gtk_page_info[page] = pgInfo;

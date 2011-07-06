@@ -7,7 +7,6 @@
 #include "wx/wxsf/wxShapeFramework.h"
 #include "wx/wxsf/ShapeBase.h"
 #include "FrameCanvas.h"
-#include "Art.h"
 #include "Ids.h"
 #include "ErdTable.h"
 #include "ErdView.h"

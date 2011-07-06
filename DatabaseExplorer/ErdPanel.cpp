@@ -1,4 +1,5 @@
 #include "ErdPanel.h"
+#include "Art.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(ErdInfo, xsSerializable)
 

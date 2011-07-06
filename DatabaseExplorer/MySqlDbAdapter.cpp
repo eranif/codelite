@@ -62,7 +62,7 @@ wxString MySqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable) {
 		node = node->GetNext();
 		if (node) {
 			if (wxDynamicCast(node->GetData(),Column)) str.append(wxT(",\n ")) ;
-			else if (constr = wxDynamicCast(node->GetData(),Constraint)) {
+			else if ((constr = wxDynamicCast(node->GetData(),Constraint))) {
 				if (constr->GetType() == Constraint::primaryKey) str.append(wxT(",\n ")) ;
 			}
 

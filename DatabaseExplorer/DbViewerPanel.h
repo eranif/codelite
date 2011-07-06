@@ -104,6 +104,7 @@ protected:
 	wxString CreatePanelName(Table* t, PanelType type);
 	wxString CreatePanelName(View* v, PanelType type);
 	wxString CreatePanelName(Database* d, PanelType type);
+	bool     DoSelectPage(const wxString &page);
 };
 
 #endif // DBEXPLORERPANEL_H

@@ -31,14 +31,6 @@ SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const 
 	wxTheApp->Connect(wxID_UNDO,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Connect(wxID_REDO,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 
-	//wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	//wxTheApp->Connect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	//wxTheApp->Connect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	//wxTheApp->Connect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	//wxTheApp->Connect(wxID_UNDO,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	//wxTheApp->Connect(wxID_REDO,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-
-
 	m_scintillaSQL->AddText(wxString::Format(wxT(" -- selected database %s\n"), m_dbName.c_str()));
 	if (!dbTable.IsEmpty()) {
 		m_scintillaSQL->AddText(m_pDbAdapter->GetDefaultSelect(m_dbName, m_dbTable));
@@ -55,14 +47,6 @@ SQLCommandPanel::~SQLCommandPanel()
 	wxTheApp->Disconnect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Disconnect(wxID_UNDO,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
 	wxTheApp->Disconnect(wxID_REDO,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SQLCommandPanel::OnEdit),   NULL, this);
-
-	//wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	//wxTheApp->Disconnect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	//wxTheApp->Disconnect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	//wxTheApp->Disconnect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	//wxTheApp->Disconnect(wxID_UNDO,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-	//wxTheApp->Disconnect(wxID_REDO,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SQLCommandPanel::OnEditUI),   NULL, this);
-
 	delete m_pDbAdapter;
 }
 
@@ -110,7 +94,8 @@ void SQLCommandPanel::ExecuteSql()
 				for (int i = 1; i<= pResultSet->GetMetaData()->GetColumnCount(); i++) {
 					m_gridTable->SetColLabelValue(i-1,pResultSet->GetMetaData()->GetColumnName(i));
 				}
-
+				
+				m_gridTable->BeginBatch();
 				// fill table data
 				while (pResultSet->Next()) {
 					wxString value;
@@ -194,14 +179,17 @@ void SQLCommandPanel::ExecuteSql()
 					}
 					rows++;
 				}
-
+				
+				m_gridTable->EndBatch();
+				
 				m_pDbLayer->CloseResultSet(pResultSet);
-				m_gridTable->AutoSize();
 
 				// show result status
 				m_labelStatus->SetLabel(wxString::Format(_("Result: %i rows"),rows));
 				Layout();
-
+				
+				GetParent()->Layout();
+				
 			} catch (DatabaseLayerException& e) {
 				// for some reason an exception is thrown even if the error code is 0...
 				if(e.GetErrorCode() != 0) {
@@ -411,4 +399,15 @@ bool SQLCommandPanel::IsBlobColumn(const wxString &str)
 		}
 	}
 	return false;
+}
+
+void SQLCommandPanel::SetDefaultSelect()
+{
+	m_scintillaSQL->ClearAll();
+	m_scintillaSQL->AddText(wxString::Format(wxT(" -- selected database %s\n"), m_dbName.c_str()));
+	if (!m_dbTable.IsEmpty()) {
+		m_scintillaSQL->AddText(m_pDbAdapter->GetDefaultSelect(m_dbName, m_dbTable));
+		wxCommandEvent event(wxEVT_EXECUTE_SQL);
+		GetEventHandler()->AddPendingEvent(event);
+	}
 }

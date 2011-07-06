@@ -20,8 +20,6 @@
 #include "view.h"
 #include "CodePreviewDialog.h"
 
-#include "Art.h"
-
 /*! \brief Wizard for commiting database structure from ERD diagrom to database server. */
 class ErdCommitWizard : public wxWizard {
 

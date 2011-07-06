@@ -41,7 +41,8 @@ public:
 
 	void OnPopupClick(wxCommandEvent &evt);
 	void ExecuteSql();
-
+	void SetDefaultSelect();
+	
 	void OnGridCellRightClick(wxGridEvent& event);
 	void OnCopyCellValue(wxCommandEvent &e);
 

@@ -9,6 +9,9 @@
 #include <wx/wfstream.h>
 #include <wx/imaglist.h>
 
+#include "res/gui/Grid.xpm"
+#include "res/gui/database.xpm"
+
 #define wxID_CONNECT          45534
 #define wxID_CLOSE_CONNECTION 45535
 #define wxID_TOOL_REFRESH     45536
@@ -100,14 +103,17 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 				clWindowUpdateLocker locker(m_mgr->GetEditorPaneNotebook());
 #endif
 				pagename = CreatePanelName(tab, DbViewerPanel::Sql);
-				m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),tab->GetParentName(),tab->GetName()), pagename);
-
+				if(!DoSelectPage(pagename)) {
+					m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),tab->GetParentName(),tab->GetName()), pagename);
+				}
 			}
 		}
 
 		if (View* pView = wxDynamicCast(item->GetData(), View)) {
 			pagename = CreatePanelName(pView, DbViewerPanel::Sql);
-			m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,pView->GetDbAdapter()->Clone(),pView->GetParentName(),pView->GetName()), pagename);
+			if(!DoSelectPage(pagename)) {
+				m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,pView->GetDbAdapter()->Clone(),pView->GetParentName(),pView->GetName()), pagename);
+			}
 		}
 
 		if (Database* db = wxDynamicCast(item->GetData(), Database)) {
@@ -117,7 +123,9 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 				m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,db->GetDbAdapter()->Clone(),m_pConnections,(Database*)db->Clone()), pagename);
 			} else {
 				pagename = CreatePanelName(db, DbViewerPanel::Sql);
-				m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,db->GetDbAdapter()->Clone(),db->GetName(),wxT("")), pagename);
+				if(!DoSelectPage(pagename)) {
+					m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,db->GetDbAdapter()->Clone(),db->GetName(),wxT("")), pagename);
+				}
 			}
 		}
 		m_pagesAdded.Add(pagename);
@@ -759,3 +767,21 @@ void DbViewerPanel::OnShowThumbnail(wxCommandEvent& e)
 	}
 	GetSizer()->Layout();
 }
+
+bool DbViewerPanel::DoSelectPage(const wxString& page)
+{
+	wxWindow *win = m_mgr->FindPage(page);
+	if(win) {
+		m_mgr->SelectPage(win);
+		
+		// replace the query and execute it
+		SQLCommandPanel *sqlPage = dynamic_cast<SQLCommandPanel*>(win);
+		if(sqlPage) {
+			sqlPage->SetDefaultSelect();
+			sqlPage->ExecuteSql();
+		}
+		return true;
+	}
+	return false;
+}
+

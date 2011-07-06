@@ -1,5 +1,10 @@
 #include "ErdCommitWizard.h"
 
+#include "res/gui/folder.xpm"
+#include "res/gui/form_blue.xpm"
+#include "res/gui/form_yellow.xpm"
+#include "res/gui/wiztest.xpm"
+
 ErdCommitWizard::ErdCommitWizard(wxWindow* parent, xsSerializable* pConnections, const wxString& createScript): wxWizard(parent,wxID_ANY,_T("ERD commit wizard"),
 	        wxBitmap(wiztest_xpm)) {
 

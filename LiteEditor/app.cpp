@@ -586,6 +586,10 @@ bool CodeLiteApp::OnInit()
 	}
 #endif
 
+	// Especially with the OutputView open, CodeLite was consuming 50% of a cpu, mostly in updateui 
+	// The next line limits the frequency of UpdateUI events to every 100ms
+	wxUpdateUIEvent::SetUpdateInterval(100);
+
 	return TRUE;
 }
 

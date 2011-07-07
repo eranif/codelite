@@ -95,7 +95,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_preferredLocale(wxT("en_US"))
 		, m_useLocale(0)
 		, m_trimOnlyModifiedLines(true)
-		, m_options(TabClassic)
+		, m_options(TabCurved)
 {
 	m_mswTheme = false;
 #ifdef __WXMSW__

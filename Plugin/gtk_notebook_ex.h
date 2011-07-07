@@ -85,6 +85,7 @@ protected:
 	bool      HasCloseButton() {return m_style & wxVB_HAS_X;}
 	bool      HasCloseMiddle() {return m_style & wxVB_MOUSE_MIDDLE_CLOSE_TAB;}
 	int       DoGetBmpIdx(const wxBitmap& bmp);
+	int       GetPageindexFromWidget(GtkWidget* gtk_page);
 	
 public:
 	void           GTKAddCloseButtonAndReorderable(int idx);
@@ -93,6 +94,7 @@ public:
 	void           GTKShowCloseButton();
 	void           GTKHandleButtonCloseClicked(MyGtkPageInfo* pgInfo);
 	int            GTKIndexFromPgInfo(MyGtkPageInfo* pgInfo);
+	void           GTKOnPageReordered(GtkWidget* page, int new_pos);
 
 public:
 	Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
@@ -201,8 +203,6 @@ protected:
 	void OnNavigationKey      (wxNavigationKeyEvent &e);
 	void OnMouseMiddle        (wxMouseEvent         &e);
 	void OnMouseLeftDClick    (wxMouseEvent         &e);
-	void OnLeftDown           (wxMouseEvent         &e);
-	void OnLeftUp             (wxMouseEvent         &e);
 	void OnKeyDown            (wxKeyEvent           &e);
 	void OnMenu               (wxContextMenuEvent   &e);
 	

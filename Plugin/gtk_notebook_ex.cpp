@@ -9,6 +9,7 @@
 #include "gtk_notebook_ex.h"
 #include <wx/button.h>
 #include "wx/sizer.h"
+#include <wx/debug.h>
 #include <wx/log.h>
 #include <wx/wupdlock.h>
 
@@ -38,6 +39,15 @@ public:
 		int m_imageIndex;
 #endif
 };
+
+
+extern "C" {
+static void OnPageReordered(GtkNotebook*, GtkWidget* page, guint new_pos, Notebook* notebk)
+{
+    notebk->GTKOnPageReordered(page, new_pos);
+}
+}
+
 
 // The close button callback
 static void OnNotebookButtonClicked(GtkWidget *widget, gpointer data)
@@ -73,9 +83,6 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 	Connect(wxEVT_MIDDLE_DOWN,                    wxMouseEventHandler(Notebook::OnMouseMiddle),            NULL, this);
 	Connect(wxEVT_LEFT_DCLICK,                    wxMouseEventHandler(Notebook::OnMouseLeftDClick),        NULL, this);
 	Connect(wxEVT_CONTEXT_MENU,                   wxContextMenuEventHandler(Notebook::OnMenu),             NULL, this);
-	
-	Connect(wxEVT_LEFT_DOWN,                      wxMouseEventHandler(Notebook::OnLeftDown),         NULL, this);
-	Connect(wxEVT_LEFT_UP,                        wxMouseEventHandler(Notebook::OnLeftUp),         NULL, this);
 }
 
 Notebook::~Notebook()
@@ -86,9 +93,6 @@ Notebook::~Notebook()
 	Disconnect(wxEVT_MIDDLE_DOWN,                    wxMouseEventHandler(Notebook::OnMouseMiddle),            NULL, this);
 	Disconnect(wxEVT_LEFT_DCLICK,                    wxMouseEventHandler(Notebook::OnMouseLeftDClick),        NULL, this);
 	Disconnect(wxEVT_CONTEXT_MENU,                   wxContextMenuEventHandler(Notebook::OnMenu),             NULL, this);
-
-	Disconnect(wxEVT_LEFT_DOWN,                      wxMouseEventHandler(Notebook::OnLeftDown),         NULL, this);
-	Disconnect(wxEVT_LEFT_UP,                        wxMouseEventHandler(Notebook::OnLeftUp),         NULL, this);
 	
 	std::map<wxWindow*, MyGtkPageInfo*>::iterator iter = m_gtk_page_info.begin();
 	for(; iter != m_gtk_page_info.end(); iter++) {
@@ -515,7 +519,8 @@ void Notebook::GTKAddCloseButtonAndReorderable(int idx)
 	}
 	
 	// Make this tab re-orderable
-//	gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(this->m_widget), page->m_widget, true);
+	gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(this->m_widget), page->m_widget, true);
+	g_signal_connect(GTK_NOTEBOOK(this->m_widget), "page-reordered", G_CALLBACK(OnPageReordered), this);
 }
 
 void Notebook::GTKDeletePgInfo(wxWindow* page)
@@ -582,41 +587,41 @@ int Notebook::DoGetBmpIdx(const wxBitmap& bmp)
 	return idx;
 }
 
-void Notebook::OnLeftDown(wxMouseEvent& e)
+int Notebook::GetPageindexFromWidget(GtkWidget* gtk_page)
 {
-	e.Skip();
-	long flags(0);
-	int where = wxNotebook::HitTest( e.GetPosition(), &flags );
-	if(where != wxNOT_FOUND) {
-		m_startingTab = (size_t)where;
-		
-	} else {
-		m_startingTab = Notebook::npos;
-		
+	wxCHECK_MSG(gtk_page, wxNOT_FOUND, wxT("Null gtk widget page in notebook"));
+
+	for (size_t n=0; n < GetPageCount(); ++n) {
+		wxWindow* page = GetPage(n);
+		wxCHECK_MSG(page, wxNOT_FOUND, wxT("Null page in notebook"));
+		if (page->m_widget == gtk_page) {
+			return (int)n;
+		}
 	}
+
+	return wxNOT_FOUND;
 }
 
-void Notebook::OnLeftUp(wxMouseEvent& e)
+void Notebook::GTKOnPageReordered(GtkWidget* page, int new_pos)
 {
-	e.Skip();
-	long flags(0);
-	int where = wxNotebook::HitTest( e.GetPosition(), &flags );
-	if(where != wxNOT_FOUND && m_startingTab != Notebook::npos && m_startingTab != (size_t)where) {
-		
-		// keep the page information before we remove it
-		// we will need the text, bmpIdx & the window
-		wxWindow* page  = GetPage(m_startingTab);
-		wxString  text  = GetPageText(m_startingTab);
-		int       imgid = GetPageImage(m_startingTab);
-		
-		// change the starting tab position
-		RemovePage(m_startingTab, false);
-		wxBitmap bmp = imgid == wxNOT_FOUND ? wxNullBitmap : GetImageList()->GetBitmap(imgid);
-		this->InsertPage(where, page, text, true, bmp);
-		
-	} else {
-		m_startingTab = Notebook::npos;
+	wxCHECK_RET(page, wxT("Null gtk widget page"));
+
+	// gtk tells us the new position of the tab, but we need to deduce the old one
+	// As the wxGTK notebook hasn't been re-ordered yet, we can do so by finding the page's GtkWidget
+	int old_pos = GetPageindexFromWidget(page);
+	if (((size_t)new_pos) == Notebook::npos || ((size_t)new_pos) == Notebook::npos || new_pos == old_pos) {
+		return;
 	}
+
+	// Now update the wxNotebook to match the new reality. First the wxNotebookPage array
+	wxWindow* win = m_pages[old_pos];
+	m_pages.RemoveAt(old_pos);
+	m_pages.Insert(win, new_pos);
+
+	// Then the 'extra' data list
+	wxGtkNotebookPage* data = m_pagesData.Item(old_pos)->GetData();
+	m_pagesData.DeleteObject(data);
+	m_pagesData.Insert(new_pos, data);
 }
 
 #endif

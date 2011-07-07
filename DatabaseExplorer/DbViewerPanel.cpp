@@ -97,14 +97,21 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 			tab->RefreshChildren();
 			if( cState.ControlDown() ) {
 				pagename = CreatePanelName(tab, DbViewerPanel::Erd);
-				m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),m_pConnections, (Table*) tab->Clone() ), pagename);
+				ErdPanel *erdpanel = new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),m_pConnections, (Table*) tab->Clone() );
+				m_mgr->AddEditorPage(erdpanel, pagename);
+				m_pagesAdded.Add(pagename);
+				erdpanel->SetFocus();
+				
 			} else {
 #if defined (__WXMSW__)
 				clWindowUpdateLocker locker(m_mgr->GetEditorPaneNotebook());
 #endif
 				pagename = CreatePanelName(tab, DbViewerPanel::Sql);
 				if(!DoSelectPage(pagename)) {
-					m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),tab->GetParentName(),tab->GetName()), pagename);
+					SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),tab->GetParentName(),tab->GetName());
+					m_mgr->AddEditorPage(sqlpage, pagename);
+					sqlpage->SetFocus();
+					m_pagesAdded.Add(pagename);
 				}
 			}
 		}
@@ -112,7 +119,10 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 		if (View* pView = wxDynamicCast(item->GetData(), View)) {
 			pagename = CreatePanelName(pView, DbViewerPanel::Sql);
 			if(!DoSelectPage(pagename)) {
-				m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,pView->GetDbAdapter()->Clone(),pView->GetParentName(),pView->GetName()), pagename);
+				SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook,pView->GetDbAdapter()->Clone(),pView->GetParentName(),pView->GetName());
+				m_mgr->AddEditorPage(sqlpage, pagename);
+				m_pagesAdded.Add(pagename);
+				sqlpage->SetFocus();
 			}
 		}
 
@@ -120,15 +130,20 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 			if( cState.ControlDown() ) {
 				db->RefreshChildrenDetails();
 				pagename = CreatePanelName(db, DbViewerPanel::Erd);
-				m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,db->GetDbAdapter()->Clone(),m_pConnections,(Database*)db->Clone()), pagename);
+				ErdPanel *erdpanel = new ErdPanel(m_pNotebook,db->GetDbAdapter()->Clone(),m_pConnections,(Database*)db->Clone());
+				m_mgr->AddEditorPage(erdpanel, pagename);
+				erdpanel->SetFocus();
+				
 			} else {
 				pagename = CreatePanelName(db, DbViewerPanel::Sql);
 				if(!DoSelectPage(pagename)) {
-					m_mgr->AddEditorPage(new SQLCommandPanel(m_pNotebook,db->GetDbAdapter()->Clone(),db->GetName(),wxT("")), pagename);
+					SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook,db->GetDbAdapter()->Clone(),db->GetName(),wxT(""));
+					m_mgr->AddEditorPage(sqlpage, pagename);
+					m_pagesAdded.Add(pagename);
+					sqlpage->SetFocus();
 				}
 			}
 		}
-		m_pagesAdded.Add(pagename);
 	}
 }
 
@@ -431,8 +446,10 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 					pTab->RefreshChildren();
 					wxString pagename;
 					pagename = CreatePanelName(pTab, DbViewerPanel::Erd);
-					m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,pTab->GetDbAdapter()->Clone(),m_pConnections, (Table*) pTab->Clone() ), pagename);
+					ErdPanel *erdpanel = new ErdPanel(m_pNotebook,pTab->GetDbAdapter()->Clone(),m_pConnections, (Table*) pTab->Clone() );
+					m_mgr->AddEditorPage(erdpanel, pagename);
 					m_pagesAdded.Add(pagename);
+					erdpanel->SetFocus();
 				}
 			}
 		} else if (evt.GetId() == IDR_DBVIEWER_ERD_DB) {
@@ -443,8 +460,10 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 					pDb->RefreshChildrenDetails();
 					wxString pagename;
 					pagename = CreatePanelName(pDb, DbViewerPanel::Erd);
-					m_mgr->AddEditorPage(new ErdPanel(m_pNotebook,pDb->GetDbAdapter()->Clone(),m_pConnections, (Database*) pDb->Clone() ), pagename);
+					ErdPanel *erdpanel = new ErdPanel(m_pNotebook,pDb->GetDbAdapter()->Clone(),m_pConnections, (Database*) pDb->Clone() );
+					m_mgr->AddEditorPage(erdpanel, pagename);
 					m_pagesAdded.Add(pagename);
+					erdpanel->SetFocus();
 				}
 			}
 		} else if (evt.GetId() == IDR_DBVIEWER_CLASS_DB) {
@@ -665,8 +684,8 @@ void DbViewerPanel::OnPageClose(NotebookEvent& event)
 	ErdPanel* pPanel = wxDynamicCast(m_mgr->GetPage(event.GetSelection()),ErdPanel);
 	if (pPanel)	{
 		m_pThumbnail->SetCanvas(NULL);
-		event.Skip();
 	}
+	event.Skip();
 }
 
 wxString DbViewerPanel::CreatePanelName(Database* d, PanelType type)
@@ -773,6 +792,7 @@ bool DbViewerPanel::DoSelectPage(const wxString& page)
 	wxWindow *win = m_mgr->FindPage(page);
 	if(win) {
 		m_mgr->SelectPage(win);
+		win->SetFocus();
 		
 		// replace the query and execute it
 		SQLCommandPanel *sqlPage = dynamic_cast<SQLCommandPanel*>(win);

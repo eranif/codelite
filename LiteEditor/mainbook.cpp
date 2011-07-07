@@ -944,10 +944,13 @@ void MainBook::OnPageChanged(NotebookEvent& e)
 {
 	int newSel = e.GetSelection();
 	if(newSel != wxNOT_FOUND) {
-		LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage((size_t)newSel));
-		if(editor) {
-			SelectPage(editor);
-			ManagerST::Get()->UpdatePreprocessorFile(editor->GetFileName().GetFullPath());
+		wxWindow *win = m_book->GetPage((size_t)newSel);
+		if(win) {
+			SelectPage(win);
+			LEditor *editor = dynamic_cast<LEditor*>(win);
+			if(editor) {
+				ManagerST::Get()->UpdatePreprocessorFile(editor->GetFileName().GetFullPath());
+			}
 		}
 	}
 	e.Skip();

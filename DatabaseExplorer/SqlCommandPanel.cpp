@@ -67,7 +67,6 @@ void SQLCommandPanel::OnScintilaKeyDown(wxKeyEvent& event)
 void SQLCommandPanel::ExecuteSql()
 {
 	wxBusyInfo infoDlg(_("Executing sql..."), wxTheApp->GetTopWindow());
-	wxTheApp->Yield();
 
 	clWindowUpdateLocker locker(this);
 	std::set<int> textCols;
@@ -82,8 +81,15 @@ void SQLCommandPanel::ExecuteSql()
 				DatabaseResultSet* pResultSet = m_pDbLayer->RunQueryWithResults(this->m_scintillaSQL->GetText());
 
 				// clear variables
-				m_gridTable->DeleteCols(0,m_gridTable->GetNumberCols());
-				m_gridTable->DeleteRows(0,m_gridTable->GetNumberRows());
+				if(m_gridTable->GetNumberCols()) {
+					m_gridTable->DeleteCols(0, m_gridTable->GetNumberCols());
+					
+				}
+				
+				if(m_gridTable->GetNumberRows()) {
+					m_gridTable->DeleteRows(0, m_gridTable->GetNumberRows());
+				}
+				
 				m_gridValues.clear();
 
 				int rows = 0;

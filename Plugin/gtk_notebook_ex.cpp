@@ -515,7 +515,7 @@ void Notebook::GTKAddCloseButtonAndReorderable(int idx)
 		
 		gtk_signal_connect (GTK_OBJECT (pgInfo->m_button), "clicked", GTK_SIGNAL_FUNC (OnNotebookButtonClicked), pgInfo);
 		m_gtk_page_info[page] = pgInfo;
-		GTKShowCloseButton();
+		GTKShowCloseButton(idx);
 	}
 	
 	// Make this tab re-orderable
@@ -540,10 +540,10 @@ MyGtkPageInfo* Notebook::GTKGetPgInfo(wxWindow* page)
 	return iter->second;
 }
 
-void Notebook::GTKShowCloseButton()
+void Notebook::GTKShowCloseButton(int idx)
 {
-	for(size_t i=0; i<GetPageCount(); i++) {
-		MyGtkPageInfo* pgInfo = GTKGetPgInfo(GetPage(i));
+	if ((idx != wxNOT_FOUND) && (idx < (int)GetPageCount())) {
+		MyGtkPageInfo* pgInfo = GTKGetPgInfo(GetPage(idx));
 		if(pgInfo){
 			gtk_widget_show(pgInfo->m_button);
 			gtk_widget_show(pgInfo->m_box);

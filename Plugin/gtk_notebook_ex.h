@@ -91,7 +91,7 @@ public:
 	void           GTKAddCloseButtonAndReorderable(int idx);
 	void           GTKDeletePgInfo(wxWindow* page);
 	MyGtkPageInfo* GTKGetPgInfo(wxWindow* page);
-	void           GTKShowCloseButton();
+	void           GTKShowCloseButton(int idx);
 	void           GTKHandleButtonCloseClicked(MyGtkPageInfo* pgInfo);
 	int            GTKIndexFromPgInfo(MyGtkPageInfo* pgInfo);
 	void           GTKOnPageReordered(GtkWidget* page, int new_pos);

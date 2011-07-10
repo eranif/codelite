@@ -3,8 +3,7 @@
 #include <wx/cmdline.h>
 
 const wxCmdLineEntryDesc gCmdLineDesc[] = {
-//	{ wxCMD_LINE_OPTION, wxT("pid"), wxT("pid"),  wxT("Process ID"),           wxCMD_LINE_VAL_NUMBER },
-	{ wxCMD_LINE_OPTION, wxT("n"),   wxT("name"), wxT("Executable to launch"), wxCMD_LINE_VAL_STRING },
+	{ wxCMD_LINE_OPTION, "n",   "name", "Executable to launch", wxCMD_LINE_VAL_STRING },
 	{ wxCMD_LINE_NONE }
 };
 

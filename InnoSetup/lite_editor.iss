@@ -34,7 +34,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 [Files]
 Source: "..\Runtime\CodeLite.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\Users\eran\software\wxWidgets-2.8.12\lib\gcc_dll\wxmsw28u_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\wxWidgets-2.9.2\lib\gcc_dll\wxmsw292u_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\sdk\wxconfig\wx-config.exe"; DestDir: "{app}"; Components: Editor
 Source: "..\Runtime\config\codelite.xml.default"; DestDir: "{app}\config"; Components: Editor;
@@ -47,7 +47,7 @@ Source: "..\Runtime\astyle.sample"; DestDir: "{app}"; Flags: ignoreversion ; Com
 Source: "..\Runtime\config\codelite.layout.default"; DestDir: "{app}\config"; DestName: codelite.layout; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\templates\*"; DestDir: "{app}\templates"; Flags: recursesubdirs ; Components: Editor
 Source: "..\Runtime\lexers\*.xml"; DestDir: "{app}\lexers\"; Flags: ignoreversion ; Components: Editor
-Source: "..\Runtime\debuggers\Debugger.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\debuggers\*.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 Source: "..\lib\gcc_lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\lib\gcc_lib\libwxscintillau.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
@@ -66,16 +66,16 @@ Source: "..\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignoreversion ; Compone
 Source: "..\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\codelite-icons.zip"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs ; Components: Editor
 
 [Icons]

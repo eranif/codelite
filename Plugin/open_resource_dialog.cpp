@@ -34,7 +34,7 @@ OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager, con
 	
 	m_timer = new wxTimer(this, XRCID("OR_TIMER"));
 	m_timer->Start(500);
-	
+	MSWSetNativeTheme(m_listOptions);
 	m_listOptions->InsertColumn(0, wxT(""));
 	m_listOptions->InsertColumn(1, wxT(""));
 	m_listOptions->InsertColumn(2, wxT(""));

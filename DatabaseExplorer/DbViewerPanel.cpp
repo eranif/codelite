@@ -12,11 +12,11 @@
 #include "res/gui/Grid.xpm"
 #include "res/gui/database.xpm"
 
-#define wxID_CONNECT          45534
-#define wxID_CLOSE_CONNECTION 45535
-#define wxID_TOOL_REFRESH     45536
-#define wxID_TOOL_ERD         45537
-#define wxID_TOOL_PREVIEW     45538
+#define wxID_CONNECT          15534
+#define wxID_CLOSE_CONNECTION 15535
+#define wxID_TOOL_REFRESH     15536
+#define wxID_TOOL_ERD         15537
+#define wxID_TOOL_PREVIEW     15538
 
 DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pManager)
 	: _DbViewerPanel(parent)

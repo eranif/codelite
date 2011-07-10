@@ -11,7 +11,7 @@ DefaultDirName={pf}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-mingw4.4.1-wx2.8.12
+OutputBaseFilename=codelite-mingw4.4.1-wx2.9.2
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -26,7 +26,7 @@ Name: "eng"; MessagesFile: "compiler:Default.isl"
 [Components]
 Name: "Editor";           Description: "CodeLite IDE (Editor + Plugins)";                               Types: full custom;
 Name: "MinGW";            Description: "GCC 4.4.1 (MinGW) full (gcc/g++/gdb/WinAPI)";                   Types: full;
-Name: "wxWidgets_2_8_12"; Description: "wxWidgets framework, built as monolithic shared debug/release"; Types: full;
+Name: "wxWidgets_2_9_2";  Description: "wxWidgets framework (2.9.2), built as monolithic shared debug/release"; Types: full;
 Name: "UnitTestPP";       Description: "UnitTest++ 1.3 framework";                                      Types: full;
 
 [Tasks]
@@ -36,7 +36,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 [Files]
 Source: "..\Runtime\CodeLite.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\Users\eran\software\wxWidgets-2.8.12\lib\gcc_dll\wxmsw28u_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\wxWidgets-2.9.2\lib\gcc_dll\wxmsw292u_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\sdk\wxconfig\wx-config.exe"; DestDir: "{app}"; Components: Editor
 Source: "..\Runtime\config\codelite.xml.default"; DestDir: "{app}\config"; Components: Editor;
@@ -49,7 +49,7 @@ Source: "..\Runtime\astyle.sample"; DestDir: "{app}"; Flags: ignoreversion ; Com
 Source: "..\Runtime\config\codelite.layout.default"; DestDir: "{app}\config"; DestName: codelite.layout; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\templates\*"; DestDir: "{app}\templates"; Flags: recursesubdirs ; Components: Editor
 Source: "..\Runtime\lexers\*.xml"; DestDir: "{app}\lexers\"; Flags: ignoreversion ; Components: Editor
-Source: "..\Runtime\debuggers\Debugger.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\debuggers\*.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs ; Components: Editor
 
@@ -71,18 +71,18 @@ Source: "..\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignoreversion ; Compone
 Source: "..\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\codelite-icons.zip"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Users\eran\software\MinGW-4.4.1\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
-Source: "..\Runtime\wxWidgets-2.8.12\*"; DestDir: "{code:GetWxInstallDir}"; Flags: recursesubdirs ; Components: wxWidgets_2_8_12
+Source: "C:\MinGW-4.4.1\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.4.1\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
+Source: "..\Runtime\wxWidgets-2.9.2\*"; DestDir: "{code:GetWxInstallDir}"; Flags: recursesubdirs ; Components: wxWidgets_2_9_2
 Source: "..\UnitTest++\*"; DestDir: "{code:GetUnitTestPPInstallDir}"; Flags: recursesubdirs ; Components: UnitTestPP
 
 [Icons]
@@ -129,7 +129,7 @@ begin
   Wx_Page.Add('');
 
   // Set initial value (optional)
-  Wx_Page.Values[0] := ExpandConstant('{sd}\wxWidgets-2.8.12\');
+  Wx_Page.Values[0] := ExpandConstant('{sd}\wxWidgets-2.9.2\');
 end;
 
 procedure CreateUnitTestPPPage();
@@ -194,7 +194,7 @@ begin
   end
 
   if PageID = Wx_Page.ID then begin
-    if IsComponentSelected('wxWidgets_2_8_12') = False then
+    if IsComponentSelected('wxWidgets_2_9_2') = False then
       Result := True;
   end
 

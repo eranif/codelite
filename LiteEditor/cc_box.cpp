@@ -208,9 +208,12 @@ void CCBox::Adjust()
 #endif
 
 	}
-#ifdef __WXMSW__
+	
+	// Not needed under wx29
+#if  defined(__WXMSW__) && (wxVERSION_NUMBER < 2900)
 	ccPoint = GetParent()->ScreenToClient(ccPoint);
 #endif
+
 	Move(ccPoint);
 	editor->m_ccPoint = pt;
 	editor->m_ccPoint.x += 2;

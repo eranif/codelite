@@ -34,6 +34,9 @@
   <Project Name="wxshapeframework" Path="sdk/wxshapeframework/wxshapeframework.project" Active="No"/>
   <Project Name="databaselayer_sqlite" Path="sdk/databaselayer/databaselayer_sqlite.project" Active="No"/>
   <Project Name="CodeFormatter" Path="CodeFormatter/CodeFormatter.project" Active="No"/>
+  <Environment>
+    <![CDATA[]]>
+  </Environment>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
@@ -181,7 +184,4 @@
       <Project Name="CodeFormatter" ConfigName="Win_wxWidgets_29"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
-  <Environment>
-    <![CDATA[WXWIN=C:\wxWidgets-2.9.2]]>
-  </Environment>
 </CodeLite_Workspace>

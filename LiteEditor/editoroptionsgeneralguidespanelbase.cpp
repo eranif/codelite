@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -79,7 +79,7 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer2 = new wxFlexGridSizer( 3, 2, 0, 0 );
 	fgSizer2->AddGrowableCol( 1 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -92,19 +92,19 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 	
 	fgSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Caret line backgound color:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1->Wrap( -1 );
-	fgSizer2->Add( m_staticText1, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
-	
-	m_caretLineColourPicker = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
-	fgSizer2->Add( m_caretLineColourPicker, 1, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
-	
 	m_staticText41 = new wxStaticText( this, wxID_ANY, _("Caret line alpha:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText41->Wrap( -1 );
 	fgSizer2->Add( m_staticText41, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_sliderCaretLineAlpha = new wxSlider( this, wxID_ANY, 50, 0, 256, wxDefaultPosition, wxDefaultSize, wxSL_LABELS );
-	fgSizer2->Add( m_sliderCaretLineAlpha, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
+	fgSizer2->Add( m_sliderCaretLineAlpha, 0, wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL|wxEXPAND|wxALIGN_BOTTOM, 5 );
+	
+	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Caret line backgound color:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1->Wrap( -1 );
+	fgSizer2->Add( m_staticText1, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	m_caretLineColourPicker = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
+	fgSizer2->Add( m_caretLineColourPicker, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	bSizer1->Add( fgSizer2, 0, wxEXPAND|wxALL, 5 );
 	
@@ -114,19 +114,19 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 	
 	// Connect Events
 	m_highlightCaretLine->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( EditorOptionsGeneralGuidesPanelBase::OnHighlightCaretLine ), NULL, this );
-	m_staticText1->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
-	m_caretLineColourPicker->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
 	m_staticText41->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
 	m_sliderCaretLineAlpha->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
+	m_staticText1->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
+	m_caretLineColourPicker->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
 }
 
 EditorOptionsGeneralGuidesPanelBase::~EditorOptionsGeneralGuidesPanelBase()
 {
 	// Disconnect Events
 	m_highlightCaretLine->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( EditorOptionsGeneralGuidesPanelBase::OnHighlightCaretLine ), NULL, this );
-	m_staticText1->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
-	m_caretLineColourPicker->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
 	m_staticText41->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
 	m_sliderCaretLineAlpha->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
+	m_staticText1->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
+	m_caretLineColourPicker->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
 	
 }

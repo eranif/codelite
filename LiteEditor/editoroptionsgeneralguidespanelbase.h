@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -20,8 +20,8 @@
 #include <wx/choice.h>
 #include <wx/sizer.h>
 #include <wx/statline.h>
-#include <wx/clrpicker.h>
 #include <wx/slider.h>
+#include <wx/clrpicker.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -48,10 +48,10 @@ class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 		wxStaticLine* m_staticline1;
 		wxCheckBox* m_highlightCaretLine;
 		
-		wxStaticText* m_staticText1;
-		wxColourPickerCtrl* m_caretLineColourPicker;
 		wxStaticText* m_staticText41;
 		wxSlider* m_sliderCaretLineAlpha;
+		wxStaticText* m_staticText1;
+		wxColourPickerCtrl* m_caretLineColourPicker;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnHighlightCaretLine( wxCommandEvent& event ) { event.Skip(); }
@@ -60,7 +60,7 @@ class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 	
 	public:
 		
-		EditorOptionsGeneralGuidesPanelBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		EditorOptionsGeneralGuidesPanelBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~EditorOptionsGeneralGuidesPanelBase();
 	
 };

@@ -679,6 +679,7 @@ void QuickFindBar::OnHighlightMatchesUI(wxUpdateUIEvent& event)
 
 void QuickFindBar::OnReceivingFocus(wxFocusEvent& event)
 {
+	event.Skip();
 	if ((event.GetEventObject() == m_findWhat) || (event.GetEventObject() == m_replaceWith)) {
 		PostCommandEvent(this, wxStaticCast(event.GetEventObject(), wxWindow));
 	}

@@ -11,7 +11,7 @@ class ClangPchCreateTask : public ThreadRequest
 {
 public:
 	enum {
-		CreatePch
+	    CreatePch
 	};
 
 private:
@@ -23,6 +23,8 @@ private:
 	wxString      project_path;    // Input
 	wxArrayString pchHeaders;      // Internally used
 	wxArrayString includesRemoved; // Internally used
+	wxArrayString projectPaths;
+
 public:
 	ClangPchCreateTask()
 		: task_type(CreatePch)
@@ -30,9 +32,14 @@ public:
 
 	virtual ~ClangPchCreateTask() {}
 
+	wxArrayString& GetProjectPaths() {
+		return projectPaths;
+	}
+	
 	void SetProjectPath(const wxString& project_path) {
 		this->project_path = project_path.c_str();
 	}
+	
 	const wxString& GetProjectPath() const {
 		return project_path;
 	}

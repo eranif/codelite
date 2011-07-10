@@ -167,6 +167,11 @@ public:
 	wxString GetActiveProjectName();
 
 	/**
+	 * @brief return the paths of all projects in the workspace (full paths)
+	 */
+	wxArrayString GetAllProjectPaths();
+	
+	/**
 	 * Set project as active
 	 * \param name  project name
 	 * \param active state

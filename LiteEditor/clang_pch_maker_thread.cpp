@@ -322,7 +322,15 @@ bool ClangPchMakerThread::ShouldInclude(ClangPchCreateTask *task, const wxString
 	// Header is in the form of full path
 	for(size_t i=0; i<task->GetIncludesRemoved().GetCount(); i++) {
 		wxFileName fn(task->GetIncludesRemoved().Item(i));
-		
+
+		// if 'header' is located in any of the project paths
+		// include it
+		for(size_t j=0; j<task->GetProjectPaths().GetCount(); j++) {
+			if(fnHeader.GetPath() == task->GetProjectPaths().Item(j)) {
+				return true;
+			}
+		}
+
 		// Do we already got a match for this include?
 		if(includesMatched.find(task->GetIncludesRemoved().Item(i)) != includesMatched.end())
 			continue;

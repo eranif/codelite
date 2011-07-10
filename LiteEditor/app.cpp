@@ -302,7 +302,7 @@ bool CodeLiteApp::OnInit()
 	wxImage::AddHandler( new wxXPMHandler );
 	wxImage::AddHandler( new wxGIFHandler );
 	InitXmlResource();
-	
+	 
 	wxLog::EnableLogging(false);
 	wxString homeDir(wxEmptyString);
 

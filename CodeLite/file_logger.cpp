@@ -49,6 +49,10 @@ void FileLogger::AddLogLine(const wxString &msg, int verbosity)
 			formattedMsg << wxT(" DBG ] ");
 			break;
 			
+		case Developer:
+			formattedMsg << wxT(" DVL ] ");
+			break;
+
 		}
 		
 		

@@ -764,3 +764,13 @@ void Workspace::SetEnvironmentVariabels(const wxString& envvars)
 	
 	SaveXmlFile();
 }
+
+wxArrayString Workspace::GetAllProjectPaths()
+{
+	wxArrayString projects;
+	std::map<wxString, ProjectPtr>::iterator iter = m_projects.begin();
+	for(; iter != m_projects.end(); iter++) {
+		projects.Add(iter->second->GetFileName().GetFullPath());
+	}
+	return projects;
+}

@@ -21,9 +21,9 @@
 
 
 #ifdef __WXMSW__
-static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" 2>&1 1> \"$PCH_FILE.code-completion\"");
+static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fcxx-exceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" 1> \"$PCH_FILE.code-completion\" 2>&1");
 #else
-static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" 2>&1 1> \"$PCH_FILE.code-completion\"");
+static wxString CC_CMD = wxT("cd \"$PROJECT_PATH\" && \"$CLANG\" -cc1 -fexceptions $ARGS -w -fsyntax-only -include-pch \"$PCH_FILE\" -code-completion-at=$LOCATION \"$SRC_FILE\" 1> \"$PCH_FILE.code-completion\" 2>&1");
 #endif
 
 BEGIN_EVENT_TABLE(ClangDriver, wxEvtHandler)
@@ -134,6 +134,13 @@ void ClangDriver::CodeCompletion(IEditor* editor)
 	task->SetFileName       ( editor->GetFileName().GetFullPath());
 	task->SetCurrentBuffer  ( buffer_unmodified );
 	task->SetProjectPath    ( projectPath );
+
+	// We do it in loop to make sure that there is a real copy
+	// of the pointers and not ref-count
+	wxArrayString projects = WorkspaceST::Get()->GetAllProjectPaths();
+	for(size_t i=0; i<projects.GetCount(); i++) {
+		task->GetProjectPaths().Add( wxFileName(projects.Item(i)).GetPath().c_str() );
+	}
 	m_pchMakerThread.Add( task );
 	
 	CL_DEBUG(wxT("Queued request to create PCH for file: %s"), editor->GetFileName().GetFullName().c_str());

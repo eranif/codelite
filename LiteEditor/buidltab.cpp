@@ -896,13 +896,10 @@ bool BuildTab::GetCompilerPatterns(const wxString& compilerName, CompilerPattern
 
 void BuildTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
-	CL_DEBUG1(wxT("BuildTab::OnHoldOpenUpdateUI event caught"));
 	int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
 	if (clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this){
 		return;
 	}
-	CL_DEBUG1(wxT("BuildTab::OnHoldOpenUpdateUI correct page"));
-
 	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
 		e.Enable(true);
 		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfBuild() );

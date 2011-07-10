@@ -945,8 +945,8 @@ public:
         if (cfg["USE_GUI"] == "1")
             po["PORTNAME"] = "msw";
 
-        if (cfg["DEBUG_FLAG"] == "1")
-            po["WXDEBUGFLAG"] = "d";
+//        if (cfg["DEBUG_FLAG"] == "1")
+//            po["WXDEBUGFLAG"] = "d";
 			
         if (cfg["BUILD"] == "debug")
             po["WXDEBUGFLAG"] = "d";
@@ -993,17 +993,17 @@ public:
         if (cfg["WXUNIV"] == "1")
             po["__WXUNIV_DEFINE_p_1"] = addResDefine("__WXUNIVERSAL__");
 
-        if (cfg["BUILD"] == "debug" && cfg["DEBUG_FLAG"] == "default")
+        if (cfg["BUILD"] == "debug")
             po["__DEBUG_DEFINE_p"] = addDefine("__WXDEBUG__");
 
-        if (cfg["DEBUG_FLAG"] == "1")
-            po["__DEBUG_DEFINE_p"] = addDefine("__WXDEBUG__");
+//        if (cfg["DEBUG_FLAG"] == "1")
+//            po["__DEBUG_DEFINE_p"] = addDefine("__WXDEBUG__");
 
-        if (cfg["BUILD"] == "debug" && cfg["DEBUG_FLAG"] == "default")
+        if (cfg["BUILD"] == "debug")
             po["__DEBUG_DEFINE_p_1"] = addResDefine("__WXDEBUG__");
 
-        if (cfg["DEBUG_FLAG"] == "1")
-            po["__DEBUG_DEFINE_p_1"] = addResDefine("__WXDEBUG__");
+//        if (cfg["DEBUG_FLAG"] == "1")
+//            po["__DEBUG_DEFINE_p_1"] = addResDefine("__WXDEBUG__");
 
         if (cfg["USE_EXCEPTIONS"] == "0")
             po["__EXCEPTIONS_DEFINE_p"] = addDefine("wxNO_EXCEPTIONS");
@@ -1180,11 +1180,11 @@ public:
         if (cfg["USE_GUI"] == "1")
             po["PORTNAME"] = "msw";
 
-        if (cfg["BUILD"] == "debug" && cfg["DEBUG_FLAG"] == "default")
+        if (cfg["BUILD"] == "debug")
             po["WXDEBUGFLAG"] = "d";
 
-        if (cfg["DEBUG_FLAG"] == "1")
-            po["WXDEBUGFLAG"] = "d";
+//        if (cfg["DEBUG_FLAG"] == "1")
+//            po["WXDEBUGFLAG"] = "d";
 
         if (cfg["UNICODE"] == "1")
             po["WXUNICODEFLAG"] = "u";
@@ -1323,11 +1323,11 @@ public:
         if (cfg["WXUNIV"] == "1")
             po["__WXUNIV_DEFINE_p_1"] = addResDefine("__WXUNIVERSAL__");
 */
-        if (cfg["BUILD"] == "debug" && cfg["DEBUG_FLAG"] == "default")
+        if (cfg["BUILD"] == "debug")
             po["__DEBUG_DEFINE_p"] = addDefine("__WXDEBUG__");
 
-        if (cfg["DEBUG_FLAG"] == "1")
-            po["__DEBUG_DEFINE_p"] = addDefine("__WXDEBUG__");
+//        if (cfg["DEBUG_FLAG"] == "1")
+//            po["__DEBUG_DEFINE_p"] = addDefine("__WXDEBUG__");
 /*
         if (cfg["BUILD"] == "debug" && cfg["DEBUG_FLAG"] == "default")
             po["__DEBUG_DEFINE_p_1"] = addResDefine("__WXDEBUG__");
@@ -1483,11 +1483,11 @@ public:
         if (cfg["USE_GUI"] == "1")
             po["PORTNAME"] = "msw";
 
-        if (cfg["BUILD"] == "debug" && cfg["DEBUG_FLAG"] == "default")
+        if (cfg["BUILD"] == "debug")
             po["WXDEBUGFLAG"] = "d";
 
-        if (cfg["DEBUG_FLAG"] == "1")
-            po["WXDEBUGFLAG"] = "d";
+//        if (cfg["DEBUG_FLAG"] == "1")
+//            po["WXDEBUGFLAG"] = "d";
 
         if (cfg["UNICODE"] == "1")
             po["WXUNICODEFLAG"] = "u";
@@ -1627,13 +1627,13 @@ public:
         if (cfg["BUILD"] == "debug" && cfg["DEBUG_RUNTIME_LIBS"] == "0")
             po["__NO_VC_CRTDBG_p"] = addDefine("__NO_VC_CRTDBG__");
 
-        if (cfg["BUILD"] == "release" && cfg["DEBUG_FLAG"] == "1")
+        if (cfg["BUILD"] == "release")
             po["__NO_VC_CRTDBG_p"] = addDefine("__NO_VC_CRTDBG__");
 
         if (cfg["BUILD"] == "debug" && cfg["DEBUG_RUNTIME_LIBS"] == "0")
             po["__NO_VC_CRTDBG_p_1"] = addResDefine("__NO_VC_CRTDBG__");
 
-        if (cfg["BUILD"] == "release" && cfg["DEBUG_FLAG"] == "1")
+        if (cfg["BUILD"] == "release")
             po["__NO_VC_CRTDBG_p_1"] = addResDefine("__NO_VC_CRTDBG__");
 
         if (cfg["WXUNIV"] == "1")
@@ -1642,17 +1642,17 @@ public:
         if (cfg["WXUNIV"] == "1")
             po["__WXUNIV_DEFINE_p_1"] = addResDefine("__WXUNIVERSAL__");
 
-        if (cfg["BUILD"] == "debug" && cfg["DEBUG_FLAG"] == "default")
+        if (cfg["BUILD"] == "debug")
             po["__DEBUG_DEFINE_p"] = addDefine("__WXDEBUG__");
 
-        if (cfg["DEBUG_FLAG"] == "1")
-            po["__DEBUG_DEFINE_p"] = addDefine("__WXDEBUG__");
+//        if (cfg["DEBUG_FLAG"] == "1")
+//            po["__DEBUG_DEFINE_p"] = addDefine("__WXDEBUG__");
 
-        if (cfg["BUILD"] == "debug" && cfg["DEBUG_FLAG"] == "default")
+        if (cfg["BUILD"] == "debug")
             po["__DEBUG_DEFINE_p_1"] = addResDefine("__WXDEBUG__");
 
-        if (cfg["DEBUG_FLAG"] == "1")
-            po["__DEBUG_DEFINE_p_1"] = addResDefine("__WXDEBUG__");
+//        if (cfg["DEBUG_FLAG"] == "1")
+//            po["__DEBUG_DEFINE_p_1"] = addResDefine("__WXDEBUG__");
 
         if (cfg["USE_EXCEPTIONS"] == "0")
             po["__EXCEPTIONS_DEFINE_p"] = addDefine("wxNO_EXCEPTIONS");
@@ -1795,11 +1795,11 @@ public:
         if (cfg["USE_GUI"] == "1")
             po["PORTNAME"] = "msw";
 
-        if (cfg["BUILD"] == "debug" && cfg["DEBUG_FLAG"] == "default")
+        if (cfg["BUILD"] == "debug")
             po["WXDEBUGFLAG"] = "d";
 
-        if (cfg["DEBUG_FLAG"] == "1")
-            po["WXDEBUGFLAG"] = "d";
+//        if (cfg["DEBUG_FLAG"] == "1")
+//            po["WXDEBUGFLAG"] = "d";
 
         if (cfg["UNICODE"] == "1")
             po["WXUNICODEFLAG"] = "u";
@@ -1882,11 +1882,11 @@ public:
         if (cfg["WXUNIV"] == "1")
             po["__WXUNIV_DEFINE_p"] = addDefine("__WXUNIVERSAL__");
 
-        if (cfg["BUILD"] == "debug" && cfg["DEBUG_FLAG"] == "default")
+        if (cfg["BUILD"] == "debug")
             po["__DEBUG_DEFINE_p"] = addDefine("__WXDEBUG__");
 
-        if (cfg["DEBUG_FLAG"] == "1")
-            po["__DEBUG_DEFINE_p"] = addDefine("__WXDEBUG__");
+//        if (cfg["DEBUG_FLAG"] == "1")
+//            po["__DEBUG_DEFINE_p"] = addDefine("__WXDEBUG__");
 
         if (cfg["USE_EXCEPTIONS"] == "0")
             po["__EXCEPTIONS_DEFINE_p"] = addDefine("wxNO_EXCEPTIONS");

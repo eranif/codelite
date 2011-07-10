@@ -527,9 +527,12 @@ bool CodeLiteApp::OnInit()
 
 
 	// show splashscreen here
-	bool showSplash(false);
-#ifndef __WXDEBUG__
+	bool showSplash;
+	
+#if wxDEBUG_LEVEL == 0
 	showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
+#else
+	showSplash = false;
 #endif
 	
 	// Don't show the splash screen when opening codelite to view

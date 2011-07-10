@@ -16,11 +16,6 @@
   <Project Name="Interfaces" Path="Interfaces/Interfaces.project" Active="No"/>
   <Project Name="Gizmos" Path="Gizmos/Gizmos.project" Active="No"/>
   <Project Name="Cscope" Path="cscope/Cscope.project" Active="No"/>
-  <Environment>
-    <Variable Name="MINGW" Value="C:/MinGW"/>
-    <Variable Name="WorkspaceName" Value="LiteEditor"/>
-    <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
-  </Environment>
   <Project Name="Copyright" Path="Copyright/Copyright.project" Active="No"/>
   <Project Name="UnitTestPP" Path="UnitTestCPP/UnitTestPP.project" Active="No"/>
   <Project Name="ExternalTools" Path="ExternalTools/ExternalTools.project" Active="No"/>
@@ -186,4 +181,7 @@
       <Project Name="CodeFormatter" ConfigName="Win_wxWidgets_29"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
+  <Environment>
+    <![CDATA[WXWIN=C:\wxWidgets-2.9.2]]>
+  </Environment>
 </CodeLite_Workspace>

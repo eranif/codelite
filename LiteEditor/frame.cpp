@@ -3387,8 +3387,10 @@ void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 
 	DockablePane *pane = new DockablePane(this, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));
 	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
-	// HACK: since Reparent will remove the widget from the parent, we need to place it back...
+#if wxVERSION_NUMBER < 2903
+	// HACK: since Reparent will remove the widget from the parent, we need to place it back... (This was fixed in wxGTK-2.9.3)
 	gtk_container_add( GTK_CONTAINER(GetWorkspacePane()->GetNotebook()->m_widget), page->m_widget );
+#endif
 	page->Reparent(pane);
 	pane->SetChildNoReparent(page);
 	

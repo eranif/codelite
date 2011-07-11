@@ -738,11 +738,16 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 					preprocessedFile << wxT("$(IntermediateDirectory)/") << objPrefix << filenameOnly << wxT("$(PreprocessSuffix)");
 				}
 
+				if(!isCFile) {
+					// Add the PCH include line
+					compilationLine.Replace(wxT("$(CompilerName)"), wxT("$(CompilerName) $(IncludePCH)"));
+				}
+				
 				// set the file rule
 				text << objectName << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT(" ") << dependFile << wxT("\n");
 				text << wxT("\t") << compilationLine << wxT("\n");
 				
-				wxString cmpOptions(wxT("$(CmpOptions)"));
+				wxString cmpOptions(wxT("$(CmpOptions) $(IncludePCH)"));
 				if(isCFile) {
 					cmpOptions = wxT("$(C_CmpOptions)");
 				}
@@ -1212,9 +1217,16 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("LinkOptions            := ") << linkOpt << wxT("\n");
 
 	// add the global include path followed by the project include path
+	wxString pchFile = bldConf->GetPrecompiledHeader();
+	pchFile.Trim().Trim(false);
+	if(pchFile.IsEmpty() == false) {
+		pchFile.Prepend(wxT(" -include ")).Append(wxT(" "));
+	}
+	
 	text << wxT("IncludePath            := ") << ParseIncludePath(cmp->GetGlobalIncludePath(), proj->GetName(), bldConf->GetName()) << wxT(" ") << ParseIncludePath(bldConf->GetIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
-	text << wxT("RcIncludePath          :=") << ParseIncludePath(bldConf->GetResCmpIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
-	text << wxT("Libs                   :=") << ParseLibs(bldConf->GetLibraries()) << wxT("\n");
+	text << wxT("IncludePCH             := ") << pchFile << wxT("\n");
+	text << wxT("RcIncludePath          := ") << ParseIncludePath(bldConf->GetResCmpIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
+	text << wxT("Libs                   := ") << ParseLibs(bldConf->GetLibraries()) << wxT("\n");
 
 	// add the global library path followed by the project library path
 	text << wxT("LibPath                :=") << ParseLibPath(cmp->GetGlobalLibPath(), proj->GetName(), bldConf->GetName()) << wxT(" ") << ParseLibPath(bldConf->GetLibPath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
@@ -1618,6 +1630,7 @@ void BuilderGnuMake::CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxStr
 	filename.Trim().Trim(false);
 
 	if(filename.IsEmpty()) return;
+	
 	text << wxT("\n");
 	text << wxT("# PreCompiled Header\n");
 	text << filename << wxT(".gch: ") << filename << wxT("\n");

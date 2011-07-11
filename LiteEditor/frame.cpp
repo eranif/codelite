@@ -3287,6 +3287,7 @@ void clMainFrame::OnHighlightWord(wxCommandEvent& event)
 void clMainFrame::OnShowNavBar(wxCommandEvent& e)
 {
 	GetMainBook()->ShowNavBar(e.IsChecked());
+	m_mgr.Update();
 }
 
 void clMainFrame::OnShowNavBarUI(wxUpdateUIEvent& e)

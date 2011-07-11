@@ -252,11 +252,8 @@ void MainBook::UpdateNavBar(LEditor *editor)
 
 void MainBook::ShowNavBar(bool s)
 {
-	Freeze();
 	m_navBar->DoShow(s);
 	UpdateNavBar(GetActiveEditor());
-	Thaw();
-	Refresh();
 }
 
 void MainBook::SaveSession(SessionEntry &session, wxArrayInt& intArr)

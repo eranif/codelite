@@ -53,6 +53,16 @@ public:
 	void SetData(const char* buffer, size_t len);
 };
 
+class WXDLLIMPEXP_SDK clEventDisabler
+{
+public:
+	static bool eventsDisabled;
+	
+public:
+	clEventDisabler();
+	~clEventDisabler();
+};
+
 /**
  * \brief send command event to the application (wxTheApp),
  * \param eventId

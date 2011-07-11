@@ -89,6 +89,9 @@ static wxString MacGetInstallPath()
     #include <dirent.h>
 #endif
 
+// static initialization
+bool clEventDisabler::eventsDisabled = false;
+
 static bool IsBOMFile(const char* file_name)
 {
 	bool res (false);
@@ -169,6 +172,9 @@ static bool ReadFile8BitData(const char *file_name, wxString &content)
 
 bool SendCmdEvent(int eventId, void *clientData)
 {
+	if(clEventDisabler::eventsDisabled)
+		return false;
+
 	wxCommandEvent e(eventId);
 	if (clientData) {
 		e.SetClientData(clientData);
@@ -178,6 +184,9 @@ bool SendCmdEvent(int eventId, void *clientData)
 
 bool SendCmdEvent(int eventId, void *clientData, const wxString &str)
 {
+	if(clEventDisabler::eventsDisabled)
+		return false;
+		
 	wxCommandEvent e(eventId);
 	e.SetClientData(clientData);
 	e.SetString(str);
@@ -186,6 +195,9 @@ bool SendCmdEvent(int eventId, void *clientData, const wxString &str)
 
 void PostCmdEvent(int eventId, void *clientData)
 {
+	if(clEventDisabler::eventsDisabled)
+		return;
+		
 	wxCommandEvent e(eventId);
 	if (clientData) {
 		e.SetClientData(clientData);
@@ -1042,3 +1054,16 @@ void BOM::Clear()
 	m_bom = wxMemoryBuffer();
 	m_bom.SetDataLen(0);
 }
+
+/////////////////////////////////////////////////////////////////
+
+clEventDisabler::clEventDisabler()
+{
+	eventsDisabled = true;
+}
+
+clEventDisabler::~clEventDisabler()
+{
+	eventsDisabled = false;
+}
+

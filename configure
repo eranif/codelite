@@ -424,6 +424,7 @@ createRules_sharedObject ()
 	additional_link_libs=""
 	if [ "$os_name" = "Darwin" ];then
 	  additional_link_libs=$6
+	  additional_link_libs="$additional_link_libs -headerpad_max_install_names"
 	fi
 
 	additional_flags=$7
@@ -802,9 +803,17 @@ wxMINOR_VERSION=`echo $wxversionnumber | awk -F. '{print $2}'`
 
 ## wx versions 2.9 and greater need an extra 'std,aui' in wx-config --libs
  # NB this logic will fail for wx versions < 2 ;)
+
+if [ "$os_name" != "Darwin" ]; then
 wxconfiglibs="wx-config --libs std,aui"
 if [ "$wxMAJOR_VERSION" -eq 2 ] && [ "$wxMINOR_VERSION" -lt 9 ]; then
 	wxconfiglibs="wx-config --libs"
+fi
+else
+wxconfiglibs="wx-config --libs std"
+if [ "$wxMAJOR_VERSION" -eq 2 ] && [ "$wxMINOR_VERSION" -lt 9 ]; then
+	wxconfiglibs="wx-config --libs"
+fi
 fi
 
 ## Replace place holders in the desktop file

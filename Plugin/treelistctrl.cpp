@@ -36,7 +36,7 @@
 #include "drawingutils.h"
 
 #ifdef __WXMAC__
-#include "wx/mac/private.h"
+//#include "wx/mac/private.h"
 #endif
 
 #include "treelistctrl.h"

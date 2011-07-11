@@ -3166,20 +3166,6 @@ void wxSFShapeCanvas::PageMargins()
 #ifdef __WXMAC__ 
 void wxSFShapeCanvas::PageMargins() 
 { 
-	(*g_pageSetupData) = *g_printData; 
-
-	wxWindow * win = this; 
-	while (!win->IsTopLevel())
-	{ 
-		win = win->GetParent(); 
-		if (!win) break; 
-	} 
- 
-	wxMacPageMarginsDialog pageMarginsDialog((win)?(wxFrame*)win : NULL, g_pageSetupData); 
-	pageMarginsDialog.ShowModal(); 
- 
-	(*g_printData) = pageMarginsDialog.GetPageSetupDialogData().GetPrintData(); 
-	(*g_pageSetupData) = pageMarginsDialog.GetPageSetupDialogData(); 
 } 
 #endif
 

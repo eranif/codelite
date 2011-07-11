@@ -24,7 +24,7 @@
 #include <wx/wxsf/CommonFcn.h>
 
 #ifdef __WXMAC__ 
-#include <wx/mac/carbon/printdlg.h> 
+#include <wx/printdlg.h> 
 #endif 
 
 /*! \brief XPM (mono-)bitmap which can be used in shape's shadow brush */

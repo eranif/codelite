@@ -36,7 +36,9 @@
 #include "drawingutils.h"
 
 #ifdef __WXMAC__
-//#include "wx/mac/private.h"
+#if wxVERSION_NUMBER < 2900
+#include "wx/mac/private.h"
+#endif
 #endif
 
 #include "treelistctrl.h"

@@ -4,7 +4,7 @@
 #include "ErdPanel.h"
 #include "AdapterSelectDlg.h"
 #include "window_locker.h"
-#include "window_locker.h"
+#include "globals.h"
 
 #include <wx/wfstream.h>
 #include <wx/imaglist.h>
@@ -24,7 +24,9 @@ DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pMa
 	m_pNotebook = notebook;
 	m_pGlobalParent = parent;
 	m_mgr = pManager;
-
+	
+	MSWSetNativeTheme(m_treeDatabases);
+	
 	m_pDbAdapter = NULL;
 	m_pConnections = new xsSerializable();
 

@@ -151,20 +151,28 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 
 void DbViewerPanel::OnRefreshClick(wxCommandEvent& event)
 {
-
-	DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_treeDatabases->GetSelection());
-	if (data) {
-		DbConnection* pCon = wxDynamicCast(data->GetData(), DbConnection);
-		if (pCon) pCon->RefreshChildren();
-		Database* pDb = wxDynamicCast(data->GetData(),Database);
-		if (pDb) pDb->RefreshChildren(false);
-		Table* pTab = wxDynamicCast(data->GetData(), Table);
-		if (pTab) pTab->RefreshChildren();
-
+	// Refresh all connections
+	wxTreeItemId root = m_treeDatabases->GetRootItem();
+	if(root.IsOk()) {
+		wxTreeItemIdValue cookie;
+		wxTreeItemId child = m_treeDatabases->GetFirstChild(root, cookie);
+		while(child.IsOk()) {
+			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(child);
+			if (data) {
+				DbConnection* pCon = wxDynamicCast(data->GetData(), DbConnection);
+				if (pCon) pCon->RefreshChildren();
+				Database* pDb = wxDynamicCast(data->GetData(),Database);
+				if (pDb) pDb->RefreshChildren(false);
+				Table* pTab = wxDynamicCast(data->GetData(), Table);
+				if (pTab) pTab->RefreshChildren();
+			}
+			child = m_treeDatabases->GetNextChild(root, cookie);
+		}
 	}
-
+	// Refresh the view
 	RefreshDbView();
 }
+
 void DbViewerPanel::RefreshDbView()
 {
 	// clear items from tree

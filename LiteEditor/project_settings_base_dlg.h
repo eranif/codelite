@@ -151,6 +151,7 @@ class PSCompilerPageBase : public wxPanel
 		wxStaticText* m_staticTextPreCompiledHeader;
 		wxTextCtrl* m_textCtrlPreCompiledHeader;
 		wxButton* m_buttonBrowsePreCompiledHeader;
+		wxCheckBox* m_checkBoxPCHInCommandLine;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCheckCompilerNeeded( wxCommandEvent& event ) { event.Skip(); }

@@ -128,6 +128,7 @@ private:
 	bool                         m_useSeparateDebugArgs;
 	wxString                     m_debugArgs;
 	wxString                     m_envvars;
+	bool                         m_pchInCommandLine;
 
 public:
 	BuildConfig(wxXmlNode *node);
@@ -139,6 +140,12 @@ public:
 	// Setters / Getters
 	//--------------------------------
 
+	void SetPchInCommandLine(bool pchInCommandLine) {
+		this->m_pchInCommandLine = pchInCommandLine;
+	}
+	bool GetPchInCommandLine() const {
+		return m_pchInCommandLine;
+	}
 	void SetEnvvars(const wxString& envvars) {
 		this->m_envvars = envvars;
 	}

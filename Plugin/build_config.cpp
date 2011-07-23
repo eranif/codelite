@@ -38,8 +38,9 @@ const wxString BuildConfig::APPEND_TO_GLOBAL_SETTINGS = wxT("append");
 const wxString BuildConfig::PREPEND_GLOBAL_SETTINGS   = wxT("prepend");
 
 BuildConfig::BuildConfig(wxXmlNode *node)
-: m_commonConfig(node)
-, m_useSeparateDebugArgs(false)
+	: m_commonConfig(node)
+	, m_useSeparateDebugArgs(false)
+	, m_pchInCommandLine(false)
 {
 	if ( node ) {
 		m_name = XmlUtils::ReadString(node, wxT("Name"));
@@ -54,6 +55,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		if (compile) {
 			m_compilerRequired = XmlUtils::ReadBool(compile, wxT("Required"), true);
 			m_precompiledHeader = XmlUtils::ReadString(compile, wxT("PreCompiledHeader"));
+			m_pchInCommandLine  = XmlUtils::ReadBool(compile, wxT("PCHInCommandLine"), false);
 		}
 
 		wxXmlNode *linker = XmlUtils::FindFirstByTagName(node, wxT("Linker"));
@@ -80,9 +82,10 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 			while (child) {
 				if (child->GetName() == wxT("StartupCommands")) {
 					m_debuggerStartupCmds = child->GetNodeContent();
-				} else if (child->GetName() == wxT("PostConnectCommands")) {
-					m_debuggerPostRemoteConnectCmds = child->GetNodeContent();
-				}
+				} else
+					if (child->GetName() == wxT("PostConnectCommands")) {
+						m_debuggerPostRemoteConnectCmds = child->GetNodeContent();
+					}
 				child = child->GetNext();
 			}
 		}
@@ -114,10 +117,10 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 				child = child->GetNext();
 			}
 		}
-		
+
 		SetEnvVarSet(USE_WORKSPACE_ENV_VAR_SET);
 		SetDbgEnvSet(USE_GLOBAL_SETTINGS);
-		
+
 		// read the environment page
 		wxXmlNode *envNode = XmlUtils::FindFirstByTagName(node, wxT("Environment"));
 		if (envNode) {
@@ -125,7 +128,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 			SetDbgEnvSet( XmlUtils::ReadString(envNode, wxT("DbgSetName")) );
 			m_envvars = envNode->GetNodeContent();
 		}
-		
+
 		wxXmlNode *customBuild = XmlUtils::FindFirstByTagName(node, wxT("CustomBuild"));
 		if (customBuild) {
 			m_enableCustomBuild = XmlUtils::ReadBool(customBuild, wxT("Enabled"), false);
@@ -133,27 +136,35 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 			while (child) {
 				if (child->GetName() == wxT("BuildCommand")) {
 					m_customBuildCmd = child->GetNodeContent();
-				} else if (child->GetName() == wxT("CleanCommand")) {
-					m_customCleanCmd = child->GetNodeContent();
-				} else if (child->GetName() == wxT("RebuildCommand")) {
-					m_customRebuildCmd = child->GetNodeContent();
-				} else if (child->GetName() == wxT("SingleFileCommand")) {
-					m_singleFileBuildCommand = child->GetNodeContent();
-				} else if (child->GetName() == wxT("PreprocessFileCommand")) {
-					m_preprocessFileCommand = child->GetNodeContent();
-				} else if (child->GetName() == wxT("WorkingDirectory")) {
-					m_customBuildWorkingDir = child->GetNodeContent();
-				} else if (child->GetName() == wxT("ThirdPartyToolName")) {
-					m_toolName = child->GetNodeContent();
-				} else if (child->GetName() == wxT("MakefileGenerationCommand")) {
-					m_makeGenerationCommand = child->GetNodeContent();
-				} else if (child->GetName() == wxT("Target")) {
-					wxString target_name = child->GetPropVal(wxT("Name"), wxT(""));
-					wxString target_cmd = child->GetNodeContent();
-					if(target_name.IsEmpty() == false) {
-						m_customTargets[target_name] = target_cmd;
-					}
-				}
+				} else
+					if (child->GetName() == wxT("CleanCommand")) {
+						m_customCleanCmd = child->GetNodeContent();
+					} else
+						if (child->GetName() == wxT("RebuildCommand")) {
+							m_customRebuildCmd = child->GetNodeContent();
+						} else
+							if (child->GetName() == wxT("SingleFileCommand")) {
+								m_singleFileBuildCommand = child->GetNodeContent();
+							} else
+								if (child->GetName() == wxT("PreprocessFileCommand")) {
+									m_preprocessFileCommand = child->GetNodeContent();
+								} else
+									if (child->GetName() == wxT("WorkingDirectory")) {
+										m_customBuildWorkingDir = child->GetNodeContent();
+									} else
+										if (child->GetName() == wxT("ThirdPartyToolName")) {
+											m_toolName = child->GetNodeContent();
+										} else
+											if (child->GetName() == wxT("MakefileGenerationCommand")) {
+												m_makeGenerationCommand = child->GetNodeContent();
+											} else
+												if (child->GetName() == wxT("Target")) {
+													wxString target_name = child->GetPropVal(wxT("Name"), wxT(""));
+													wxString target_cmd = child->GetNodeContent();
+													if(target_name.IsEmpty() == false) {
+														m_customTargets[target_name] = target_cmd;
+													}
+												}
 				child = child->GetNext();
 			}
 		} else {
@@ -168,11 +179,12 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 					m_customPreBuildRule = child->GetNodeContent();
 					m_customPreBuildRule.Trim().Trim(false);
 
-				} else if (child->GetName() == wxT("CustomPostBuild")) {
-					m_customPostBuildRule = child->GetNodeContent();
-					m_customPostBuildRule.Trim().Trim(false);
+				} else
+					if (child->GetName() == wxT("CustomPostBuild")) {
+						m_customPostBuildRule = child->GetNodeContent();
+						m_customPostBuildRule.Trim().Trim(false);
 
-				}
+					}
 				child = child->GetNext();
 			}
 		}
@@ -188,7 +200,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 			m_useSeparateDebugArgs  = XmlUtils::ReadBool  (general, wxT("UseSeparateDebugArgs"), false);
 			m_debugArgs             = XmlUtils::ReadString(general, wxT("DebugArguments"));
 		}
-		
+
 	} else {
 
 		//create default project settings
@@ -211,16 +223,16 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		m_makeGenerationCommand = wxEmptyString;
 		m_toolName = wxEmptyString;
 		m_singleFileBuildCommand = wxEmptyString;
-        m_preprocessFileCommand = wxEmptyString;
+		m_preprocessFileCommand = wxEmptyString;
 		m_debuggerStartupCmds = wxEmptyString;
 		m_debuggerPostRemoteConnectCmds = wxEmptyString;
 		m_isDbgRemoteTarget = false;
 		m_useSeparateDebugArgs = false;
 		m_debugArgs = wxEmptyString;
-		
+
 		SetEnvVarSet(wxT("<Use Workspace Settings>"));
 		SetDbgEnvSet(wxT("<Use Global Settings>")   );
-		
+
 		BuildSettingsConfigCookie cookie;
 		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
 		if (cmp) {
@@ -265,6 +277,7 @@ wxXmlNode *BuildConfig::ToXml() const
 	if (compile) {
 		compile->AddProperty(wxT("Required"),          BoolToString(m_compilerRequired));
 		compile->AddProperty(wxT("PreCompiledHeader"), m_precompiledHeader);
+		compile->AddProperty(wxT("PCHInCommandLine"),  BoolToString(m_pchInCommandLine));
 	}
 
 	wxXmlNode *link = XmlUtils::FindFirstByTagName(node, wxT("Linker"));
@@ -297,7 +310,7 @@ wxXmlNode *BuildConfig::ToXml() const
 	wxXmlNode *envNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Environment"));
 	envNode->AddProperty(wxT("EnvVarSetName"),  GetEnvVarSet());
 	envNode->AddProperty(wxT("DbgSetName"),     GetDbgEnvSet());
-	
+
 	// Add CDATA section with project environment variables
 	wxXmlNode *envContent = new wxXmlNode(wxXML_CDATA_SECTION_NODE, wxEmptyString, m_envvars);
 	envNode->AddChild(envContent);
@@ -441,7 +454,8 @@ wxString BuildConfig::GetIntermediateDirectory() const
 	return NormalizePath(m_intermediateDirectory);
 }
 
-wxString BuildConfig::GetWorkingDirectory() const {
+wxString BuildConfig::GetWorkingDirectory() const
+{
 	return NormalizePath(m_workingDirectory);
 }
 

@@ -1217,10 +1217,16 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("LinkOptions            := ") << linkOpt << wxT("\n");
 
 	// add the global include path followed by the project include path
-	wxString pchFile = bldConf->GetPrecompiledHeader();
-	pchFile.Trim().Trim(false);
-	if(pchFile.IsEmpty() == false) {
-		pchFile.Prepend(wxT(" -include ")).Append(wxT(" "));
+	wxString pchFile;
+
+	// If the PCH is required to be in the command line, add it here
+	// otherwise, we just make sure it is generated and the compiler will pick it by itself
+	if(bldConf->GetPchInCommandLine()) {
+		pchFile = bldConf->GetPrecompiledHeader();
+		pchFile.Trim().Trim(false);
+		if(pchFile.IsEmpty() == false) {
+			pchFile.Prepend(wxT(" -include ")).Append(wxT(" "));
+		}
 	}
 	
 	text << wxT("IncludePath            := ") << ParseIncludePath(cmp->GetGlobalIncludePath(), proj->GetName(), bldConf->GetName()) << wxT(" ") << ParseIncludePath(bldConf->GetIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");

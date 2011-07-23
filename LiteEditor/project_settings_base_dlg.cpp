@@ -274,9 +274,10 @@ PSCompilerPageBase::PSCompilerPageBase( wxWindow* parent, wxWindowID id, const w
 	compilerPageSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkCompilerNeeded = new wxCheckBox( m_compilerPage, wxID_ANY, _("Compiler is not required for this project"), wxDefaultPosition, wxDefaultSize, 0 );
-	compilerPageSizer->Add( m_checkCompilerNeeded, 0, wxALL, 5 );
+	compilerPageSizer->Add( m_checkCompilerNeeded, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 	
 	m_gbSizer2 = new wxGridBagSizer( 0, 0 );
+	m_gbSizer2->AddGrowableCol( 1 );
 	m_gbSizer2->SetFlexibleDirection( wxBOTH );
 	m_gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -363,6 +364,9 @@ PSCompilerPageBase::PSCompilerPageBase( wxWindow* parent, wxWindowID id, const w
 	m_buttonBrowsePreCompiledHeader = new wxButton( m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	m_gbSizer2->Add( m_buttonBrowsePreCompiledHeader, wxGBPosition( 7, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
+	m_checkBoxPCHInCommandLine = new wxCheckBox( m_compilerPage, wxID_ANY, _("Explicitly include the PCH file in the command line using compiler switch"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_gbSizer2->Add( m_checkBoxPCHInCommandLine, wxGBPosition( 8, 0 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND, 5 );
+	
 	compilerPageSizer->Add( m_gbSizer2, 1, wxEXPAND, 5 );
 	
 	m_compilerPage->SetSizer( compilerPageSizer );
@@ -406,6 +410,8 @@ PSCompilerPageBase::PSCompilerPageBase( wxWindow* parent, wxWindowID id, const w
 	m_textCtrlPreCompiledHeader->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
 	m_buttonBrowsePreCompiledHeader->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSCompilerPageBase::OnBrowsePreCmpHeader ), NULL, this );
 	m_buttonBrowsePreCompiledHeader->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
+	m_checkBoxPCHInCommandLine->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSCompilerPageBase::OnCmdEvtVModified ), NULL, this );
+	m_checkBoxPCHInCommandLine->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
 }
 
 PSCompilerPageBase::~PSCompilerPageBase()
@@ -442,6 +448,8 @@ PSCompilerPageBase::~PSCompilerPageBase()
 	m_textCtrlPreCompiledHeader->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
 	m_buttonBrowsePreCompiledHeader->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSCompilerPageBase::OnBrowsePreCmpHeader ), NULL, this );
 	m_buttonBrowsePreCompiledHeader->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
+	m_checkBoxPCHInCommandLine->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSCompilerPageBase::OnCmdEvtVModified ), NULL, this );
+	m_checkBoxPCHInCommandLine->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
 	
 }
 

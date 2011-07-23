@@ -88,6 +88,7 @@ void PSCompilerPage::Load(BuildConfigPtr buildConf)
 	m_textCtrlPreCompiledHeader->SetValue(buildConf->GetPrecompiledHeader());
 	m_textCtrlCCompilerOptions->SetValue(buildConf->GetCCompileOptions());
 	SelectChoiceWithGlobalSettings(m_choiceCmpUseWithGlobalSettings, buildConf->GetBuildCmpWithGlobalSettings());
+	m_checkBoxPCHInCommandLine->SetValue(buildConf->GetPchInCommandLine());
 }
 
 void PSCompilerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
@@ -98,6 +99,8 @@ void PSCompilerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetti
 	buildConf->SetPreprocessor(m_textPreprocessor->GetValue());
 	buildConf->SetPrecompiledHeader(m_textCtrlPreCompiledHeader->GetValue());
 	buildConf->SetCCompileOptions(m_textCtrlCCompilerOptions->GetValue());
+	buildConf->SetPchInCommandLine(m_checkBoxPCHInCommandLine->IsChecked());
+	
 	wxString useWithGlobalSettings = m_choiceCmpUseWithGlobalSettings->GetStringSelection();
 	if (useWithGlobalSettings == APPEND_TO_GLOBAL_SETTINGS) {
 		buildConf->SetBuildCmpWithGlobalSettings(BuildConfig::APPEND_TO_GLOBAL_SETTINGS);

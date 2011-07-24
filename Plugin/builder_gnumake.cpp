@@ -273,7 +273,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 				depsProjs.Add(dep_file);
 				
 				GenerateMakefile(dependProj, projectSelConf, confToBuild.IsEmpty() ? force : true, wxArrayString());
-				text << GetProjectMakeCommand(wspfile, fn, dependProj, confToBuild);
+				text << GetProjectMakeCommand(wspfile, fn, dependProj, projectSelConf);
 				PRINT_TIMESTAMP(wxString::Format(_("Generating makefile for project %s...done\n"), dependProj->GetName().c_str()));
 			}
 		}

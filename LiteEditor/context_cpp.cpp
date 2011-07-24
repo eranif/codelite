@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
+#include "precompiled_header.h"
 #include "pluginmanager.h"
 #include "refactorengine.h"
 #include "code_completion_manager.h"
@@ -36,7 +37,6 @@
 #include "debuggerasciiviewer.h"
 #include <wx/file.h>
 #include "threebuttondlg.h"
-#include "precompiled_header.h"
 #include "debuggerconfigtool.h"
 #include "debuggersettings.h"
 #include "parse_thread.h"

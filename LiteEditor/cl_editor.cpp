@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "precompiled_header.h"
 #include "cl_editor.h"
-#include <wx/fontmap.h>
 #include "cl_editor_tip_window.h"
 #include "new_quick_watch_dlg.h"
 #include "buildtabsettingsdata.h"
@@ -34,31 +34,22 @@
 #include "drawingutils.h"
 #include "cc_box.h"
 #include "stringsearcher.h"
-#include "precompiled_header.h"
 #include "colourrequest.h"
 #include "colourthread.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/ffile.h>
-#include <wx/tooltip.h>
-#include <wx/settings.h>
 #include "parse_thread.h"
 #include "ctags_manager.h"
 #include "manager.h"
 #include "menumanager.h"
-#include <wx/fdrepdlg.h>
 #include "findreplacedlg.h"
 #include "context_manager.h"
 #include "editor_config.h"
 #include "filedroptarget.h"
 #include "fileutils.h"
-#include "wx/tokenzr.h"
 #include "simpletable.h"
 #include "debuggerpane.h"
 #include "frame.h"
 #include "pluginmanager.h"
 #include "breakpointdlg.h"
-#include <sys/stat.h>
-#include <sys/types.h>
 #include "debuggersettings.h"
 #include "globals.h"
 #include "threebuttondlg.h"
@@ -66,7 +57,6 @@
 #include "addincludefiledlg.h"
 #include "quickfindbar.h"
 #include "buidltab.h"
-#include <wx/wupdlock.h>
 #include "localworkspace.h"
 
 // fix bug in wxscintilla.h

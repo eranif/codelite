@@ -34,19 +34,6 @@
 #include "console_frame.h"
 #include "clauidockart.h"
 
-#include <set>
-#include <list>
-#include <wx/fontmap.h>
-#include <wx/clipbrd.h>
-#include <wx/numdlg.h>
-#include <wx/stdpaths.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/splitter.h>
-#include <wx/aboutdlg.h>
-#include <wx/aui/framemanager.h>
-#include <wx/ffile.h>
-#include <wx/dir.h>
-
 #ifdef __WXGTK20__
 #include <gtk-2.0/gtk/gtk.h>
 #endif

@@ -25,7 +25,7 @@ bool clNamedPipeClient::connect(long )
 	this->setLastError(ZNP_OK);
 
 	while (1) {
-		_pipeHandle = CreateFile(
+		_pipeHandle = CreateFileA(
 		                  getPipePath(),        // pipe name
 		                  GENERIC_READ |        // read and write access
 		                  GENERIC_WRITE,
@@ -47,7 +47,7 @@ bool clNamedPipeClient::connect(long )
 
 		// All pipe instances are busy, so wait for 20 seconds.
 
-		if (!WaitNamedPipe(getPipePath(), 20000)) {
+		if (!WaitNamedPipeA(getPipePath(), 20000)) {
 			DWORD err = GetLastError();
 			if (err == WAIT_TIMEOUT) {
 				this->setLastError(ZNP_TIMEOUT);

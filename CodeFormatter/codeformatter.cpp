@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "precompiled_header.h"
 #include "globals.h"
 #include "editor_config.h"
 #include "codeformatter.h"
@@ -32,7 +33,6 @@
 #include "wx/log.h"
 #include "codeformatterdlg.h"
 #include "wx/menu.h"
-#include "precompiled_header.h"
 #include "file_logger.h"
 
 

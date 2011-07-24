@@ -28,7 +28,7 @@ public:
 #ifdef __WXMSW__
 static PIPE_HANDLE createNamedPipe(const char* pipeName, SECURITY_ATTRIBUTES sa)
 {
-	return CreateNamedPipe(	pipeName,
+	return CreateNamedPipeA(	pipeName,
 	                        PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED,
 	                        PIPE_TYPE_BYTE | PIPE_WAIT | PIPE_READMODE_BYTE,
 	                        PIPE_UNLIMITED_INSTANCES,

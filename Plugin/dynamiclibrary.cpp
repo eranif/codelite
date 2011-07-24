@@ -22,11 +22,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "dynamiclibrary.h"
+# include "precompiled_header.h"
+#include "dynamiclibrary.h"
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
 # include <dlfcn.h>
-# include "precompiled_header.h"
 #endif
 
 clDynamicLibrary::clDynamicLibrary()

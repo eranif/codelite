@@ -23,38 +23,23 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/socket.h>
+#include "precompiled_header.h"
 #include "cl_registry.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
-#include <wx/splash.h>
-#include <wx/fileconf.h>
 #include "evnvarlist.h"
 #include "environmentconfig.h"
 #include "conffilelocator.h"
 #include "app.h"
-#include <wx/snglinst.h>
-#include <wx/image.h>
-#include <wx/filefn.h>
 #include "dirsaver.h"
-
-
 #include "xmlutils.h"
 #include "editor_config.h"
 #include "wx_xml_compatibility.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/sysopt.h>
 #include "manager.h"
 #include "macros.h"
-#include "wx/txtstrm.h"
-#include "wx/wfstream.h"
 #include "stack_walker.h"
-#include <wx/cmdline.h>
 #include "procutils.h"
 #include "globals.h"
-#include "wx/tokenzr.h"
-#include "wx/dir.h"
-#include <wx/stdpaths.h>
 #include "frame.h"
 #include "buidltab.h"
 #include "asyncprocess.h" // IProcess

@@ -36,12 +36,12 @@
 #endif
 
 #ifdef __cplusplus
+#include "precompiled_header.h"
 #include <stdlib.h>
 #include "unistd.h"
-#include <iostream> 
+#include <iostream>
 
 #include "FlexLexer.h"
-#include "precompiled_header.h"
 #endif
 
 namespace flex

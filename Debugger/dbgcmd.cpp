@@ -22,10 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "precompiled_header.h"
 #include "dbgcmd.h"
 #include "wx/tokenzr.h"
 #include "debuggergdb.h"
-#include "precompiled_header.h"
 #include "gdb_result_parser.h"
 #include <wx/regex.h>
 #include "gdb_parser_incl.h"

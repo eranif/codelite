@@ -35,9 +35,12 @@
 #include "clauidockart.h"
 
 #ifdef __WXGTK20__
-#include <gtk-2.0/gtk/gtk.h>
+	// We need this ugly hack to workaround a gtk2-wxGTK name-clash
+	// See http://trac.wxwidgets.org/ticket/10883
+	#define GSocket GlibGSocket
+		#include <gtk-2.0/gtk/gtk.h>
+	#undef GSocket
 #endif
-
 #include "imanager.h"
 #include "newversiondlg.h"
 #include "quickdebugdlg.h"

@@ -9,7 +9,7 @@
     <File Name="precompiled_header_release.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
-  <Settings Type="Dynamic Library">
+  <Settings Type="Static Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
         <IncludePath Value="."/>
@@ -20,7 +20,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" C_Options="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" C_Options="" Required="yes" PreCompiledHeader="precompiled_header_dbg.h" PCHInCommandLine="yes" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs --debug=yes --unicode=yes)" Required="yes"/>
@@ -51,7 +51,7 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" C_Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" Required="yes" PreCompiledHeader="" PCHInCommandLine="no">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" C_Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes)" Required="yes"/>
@@ -82,7 +82,7 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;$(shell wx-config --cxxflags --debug=no --unicode=yes);" C_Options="" Required="yes" PreCompiledHeader="precompiled_header_release.h" PCHInCommandLine="no">
+      <Compiler Options="-O2;$(shell wx-config --cxxflags --debug=no --unicode=yes);" C_Options="" Required="yes" PreCompiledHeader="precompiled_header_release.h" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="-O2;$(shell wx-config --libs --debug=no --unicode=yes)" Required="yes"/>
@@ -113,7 +113,7 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;$(shell wx-config --cxxflags --debug=no --unicode=yes);" C_Options="-O2;$(shell wx-config --cxxflags --debug=no --unicode=yes);" Required="yes" PreCompiledHeader="" PCHInCommandLine="no">
+      <Compiler Options="-O2;$(shell wx-config --cxxflags --debug=no --unicode=yes);" C_Options="-O2;$(shell wx-config --cxxflags --debug=no --unicode=yes);" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="-s;$(shell wx-config --libs --debug=no --unicode=yes)" Required="yes"/>

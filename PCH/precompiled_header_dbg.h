@@ -78,7 +78,6 @@
 #include <vector>
 #include <map>
 #include <stack>
-#include "readtags.h"
 #include <wx/fontmap.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/ffile.h>

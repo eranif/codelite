@@ -89,6 +89,8 @@ void PSCompilerPage::Load(BuildConfigPtr buildConf)
 	m_textCtrlCCompilerOptions->SetValue(buildConf->GetCCompileOptions());
 	SelectChoiceWithGlobalSettings(m_choiceCmpUseWithGlobalSettings, buildConf->GetBuildCmpWithGlobalSettings());
 	m_checkBoxPCHInCommandLine->SetValue(buildConf->GetPchInCommandLine());
+	m_checkBoxSeparatePCHFlags->SetValue(buildConf->GetUseSeparatePCHFlags());
+	m_textCtrlPCHCompilationFlags->SetValue(buildConf->GetPchCompileFlags());
 }
 
 void PSCompilerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
@@ -100,6 +102,8 @@ void PSCompilerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetti
 	buildConf->SetPrecompiledHeader(m_textCtrlPreCompiledHeader->GetValue());
 	buildConf->SetCCompileOptions(m_textCtrlCCompilerOptions->GetValue());
 	buildConf->SetPchInCommandLine(m_checkBoxPCHInCommandLine->IsChecked());
+	buildConf->SetUseSeparatePCHFlags(m_checkBoxSeparatePCHFlags->IsChecked());
+	buildConf->SetPchCompileFlags(m_textCtrlPCHCompilationFlags->GetValue());
 	
 	wxString useWithGlobalSettings = m_choiceCmpUseWithGlobalSettings->GetStringSelection();
 	if (useWithGlobalSettings == APPEND_TO_GLOBAL_SETTINGS) {
@@ -134,4 +138,12 @@ void PSCompilerPage::OnButtonAddCCompilerOptions(wxCommandEvent& event)
 		m_dlg->SetIsDirty(true);
 	}
 	event.Skip();
+}
+
+void PSCompilerPage::OnEnablePCHFLagsUI(wxUpdateUIEvent& event)
+{
+	bool customIsEnabled     = m_dlg->IsCustomBuildEnabled();
+	bool compiledIsRequired  = m_checkCompilerNeeded->IsChecked();
+	bool useSeparatePCHFlags = m_checkBoxSeparatePCHFlags->IsChecked();
+	event.Enable(!customIsEnabled && !compiledIsRequired && useSeparatePCHFlags);
 }

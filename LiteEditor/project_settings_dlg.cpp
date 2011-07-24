@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-
+#include "precompiled_header.h"
 #include "dirsaver.h"
 #include "ps_custom_makefile_rules_page.h"
 #include "ps_custom_build_page.h"
@@ -36,7 +36,6 @@
 #include "windowattrmanager.h"
 #include "envvar_dlg.h"
 #include "debuggerconfigtool.h"
-#include <wx/dirdlg.h>
 #include "project_settings_dlg.h"
 #include "debuggersettings.h"
 #include "globals.h"
@@ -50,10 +49,8 @@
 #include "editor_config.h"
 #include "build_settings_config.h"
 #include "debuggermanager.h"
-#include "wx/tokenzr.h"
 #include "addoptioncheckdlg.h"
 #include "ps_general_page.h"
-#include <wx/wupdlock.h>
 
 const wxString APPEND_TO_GLOBAL_SETTINGS = _("Append to global settings");
 const wxString OVERWRITE_GLOBAL_SETTINGS = _("overwrite global settings");

@@ -129,6 +129,8 @@ private:
 	wxString                     m_debugArgs;
 	wxString                     m_envvars;
 	bool                         m_pchInCommandLine;
+	bool                         m_useSeparatePCHFlags;
+	wxString                     m_pchCompileFlags;
 
 public:
 	BuildConfig(wxXmlNode *node);
@@ -140,6 +142,18 @@ public:
 	// Setters / Getters
 	//--------------------------------
 
+	void SetPchCompileFlags(const wxString& pchCompileFlags) {
+		this->m_pchCompileFlags = pchCompileFlags;
+	}
+	const wxString& GetPchCompileFlags() const {
+		return m_pchCompileFlags;
+	}
+	void SetUseSeparatePCHFlags(bool useSeparatePCHFlags) {
+		this->m_useSeparatePCHFlags = useSeparatePCHFlags;
+	}
+	bool GetUseSeparatePCHFlags() const {
+		return m_useSeparatePCHFlags;
+	}
 	void SetPchInCommandLine(bool pchInCommandLine) {
 		this->m_pchInCommandLine = pchInCommandLine;
 	}

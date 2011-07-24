@@ -26,12 +26,12 @@
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/gbsizer.h>
+#include <wx/statbox.h>
 #include <wx/listctrl.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/notebook.h>
-#include <wx/statbox.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -147,11 +147,11 @@ class PSCompilerPageBase : public wxPanel
 		wxStaticText* m_staticText171;
 		wxTextCtrl* m_textPreprocessor;
 		wxButton* m_buttonAddPreprocessor;
-		wxStaticLine* m_staticline14;
-		wxStaticText* m_staticTextPreCompiledHeader;
 		wxTextCtrl* m_textCtrlPreCompiledHeader;
 		wxButton* m_buttonBrowsePreCompiledHeader;
 		wxCheckBox* m_checkBoxPCHInCommandLine;
+		wxCheckBox* m_checkBoxSeparatePCHFlags;
+		wxTextCtrl* m_textCtrlPCHCompilationFlags;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCheckCompilerNeeded( wxCommandEvent& event ) { event.Skip(); }
@@ -163,6 +163,7 @@ class PSCompilerPageBase : public wxPanel
 		virtual void OnAddSearchPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonAddPreprocessor( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnBrowsePreCmpHeader( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnEnablePCHFLagsUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	
 	public:
@@ -185,7 +186,7 @@ class PSLinkPageBase : public wxPanel
 		wxGridBagSizer* m_gbSizer3;
 		wxStaticText* m_staticText3311;
 		wxChoice* m_choiceLnkUseWithGlobalSettings;
-		wxStaticLine* m_staticline8;
+		
 		wxStaticText* m_staticText10;
 		wxTextCtrl* m_textLinkerOptions;
 		wxButton* m_buttonLinkerOptions;

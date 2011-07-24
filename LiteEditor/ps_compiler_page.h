@@ -32,6 +32,7 @@ protected:
 	void OnBrowsePreCmpHeader( wxCommandEvent& event );
 	void OnProjectCustumBuildUI(wxUpdateUIEvent& event);
 	void OnButtonAddCCompilerOptions(wxCommandEvent& event);
+	void OnEnablePCHFLagsUI(wxUpdateUIEvent& event);
 
 
 public:

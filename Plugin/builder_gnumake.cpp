@@ -1176,6 +1176,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("ArchiveOutputSwitch    :=") << cmp->GetSwitch(wxT("ArchiveOutput")) << wxT("\n");
 	text << wxT("PreprocessOnlySwitch   :=") << cmp->GetSwitch(wxT("PreprocessOnly")) << wxT("\n");
 	text << wxT("ObjectsFileList        :=\"") << objectsFileName << wxT("\"\n");
+	text << wxT("PCHCompileFlags        :=") << bldConf->GetPchCompileFlags() << wxT("\n");
 	
 	if (OS_WINDOWS) {
 		text << wxT("MakeDirCommand         :=") << wxT("makedir") << wxT("\n");
@@ -1640,7 +1641,12 @@ void BuilderGnuMake::CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxStr
 	text << wxT("\n");
 	text << wxT("# PreCompiled Header\n");
 	text << filename << wxT(".gch: ") << filename << wxT("\n");
-	text << wxT("\t") << DoGetCompilerMacro(filename) << wxT(" $(SourceSwitch) ") << filename << wxT(" $(CmpOptions) $(IncludePath)\n");
+	if(bldConf->GetUseSeparatePCHFlags()) {
+		text << wxT("\t") << DoGetCompilerMacro(filename) << wxT(" $(SourceSwitch) ") << filename << wxT(" $(PCHCompileFlags)\n");
+		
+	} else {
+		text << wxT("\t") << DoGetCompilerMacro(filename) << wxT(" $(SourceSwitch) ") << filename << wxT(" $(CmpOptions) $(IncludePath)\n");
+	}
 	text << wxT("\n");
 }
 

@@ -9,7 +9,7 @@
     <File Name="precompiled_header_release.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
-  <Settings Type="Static Library">
+  <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
         <IncludePath Value="."/>

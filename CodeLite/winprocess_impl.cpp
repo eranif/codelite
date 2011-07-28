@@ -31,6 +31,12 @@
 #include "procutils.h"
 #include "smart_ptr.h"
 
+#ifdef _WIN32_WINNT
+#undef _WIN32_WINNT
+#endif
+
+#define _WIN32_WINNT 0x0501 // Make AttachConsole(DWORD) visible
+
 class MyDirGuard {
 	wxString _d;
 public:

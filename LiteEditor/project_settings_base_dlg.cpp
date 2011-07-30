@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -280,7 +280,6 @@ PSCompilerPageBase::PSCompilerPageBase( wxWindow* parent, wxWindowID id, const w
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_compilerPage, wxID_ANY, _("Compiler Options:") ), wxVERTICAL );
 	
 	m_gbSizer2 = new wxGridBagSizer( 0, 0 );
-	m_gbSizer2->AddGrowableCol( 1 );
 	m_gbSizer2->SetFlexibleDirection( wxBOTH );
 	m_gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -489,7 +488,6 @@ PSLinkPageBase::PSLinkPageBase( wxWindow* parent, wxWindowID id, const wxPoint& 
 	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_linkerPage, wxID_ANY, _("Linker Options:") ), wxVERTICAL );
 	
 	m_gbSizer3 = new wxGridBagSizer( 0, 0 );
-	m_gbSizer3->AddGrowableCol( 1 );
 	m_gbSizer3->SetFlexibleDirection( wxBOTH );
 	m_gbSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -535,6 +533,7 @@ PSLinkPageBase::PSLinkPageBase( wxWindow* parent, wxWindowID id, const wxPoint& 
 	
 	m_textLibraries = new wxTextCtrl( m_linkerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	m_textLibraries->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	m_textLibraries->SetToolTip( _("Enter any extra library names, separated by';' e.g. Foo  or  Foo;Bar") );
 	
 	m_gbSizer3->Add( m_textLibraries, wxGBPosition( 4, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -1124,7 +1123,7 @@ GlobalSettingsBasePanel::GlobalSettingsBasePanel( wxWindow* parent, wxWindowID i
 	m_compilerPage->SetSizer( compilerPageSizer );
 	m_compilerPage->Layout();
 	compilerPageSizer->Fit( m_compilerPage );
-	m_notebook->AddPage( m_compilerPage, _("Compiler"), true );
+	m_notebook->AddPage( m_compilerPage, _("Compiler"), false );
 	m_linkerPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* linkerPageSizer;
 	linkerPageSizer = new wxBoxSizer( wxVERTICAL );
@@ -1160,6 +1159,8 @@ GlobalSettingsBasePanel::GlobalSettingsBasePanel( wxWindow* parent, wxWindowID i
 	fgSizer11->Add( m_staticText8, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textLibraries = new wxTextCtrl( m_linkerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textLibraries->SetToolTip( _("Enter any extra library names, separated by';' e.g. Foo  or  Foo;Bar") );
+	
 	fgSizer11->Add( m_textLibraries, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonLibraries = new wxButton( m_linkerPage, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -1170,7 +1171,7 @@ GlobalSettingsBasePanel::GlobalSettingsBasePanel( wxWindow* parent, wxWindowID i
 	m_linkerPage->SetSizer( linkerPageSizer );
 	m_linkerPage->Layout();
 	linkerPageSizer->Fit( m_linkerPage );
-	m_notebook->AddPage( m_linkerPage, _("Linker"), false );
+	m_notebook->AddPage( m_linkerPage, _("Linker"), true );
 	m_resourceCmpPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer151;
 	bSizer151 = new wxBoxSizer( wxVERTICAL );

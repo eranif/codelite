@@ -79,13 +79,6 @@ void* ProcessReaderThread::Entry()
 				} else {
 					delete ed;
 				}
-//#if defined(__WXGTK__)||defined(__WXMAC__)
-//				// Perform process cleanup
-//				int status(0);
-//				if(m_process->GetPid() != wxNOT_FOUND) {
-//					waitpid(m_process->GetPid(), &status, WNOHANG);
-//				}
-//#endif
 				break;
 			}
 		}
@@ -99,8 +92,6 @@ void ProcessReaderThread::Stop()
 	// and wait for its termination
 	if ( IsAlive() )
 		Delete();
-
-	wxThread::Wait();
 }
 
 void ProcessReaderThread::Start(int priority)

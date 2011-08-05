@@ -530,8 +530,10 @@ bool DbgGdb::Interrupt()
 			// we have DebugBreakProcess
 			HANDLE process = OpenProcess( PROCESS_ALL_ACCESS, FALSE, ( DWORD )m_debuggeePid );
 			BOOL res = DebugBreakProcessFunc( process );
+			CloseHandle(process);
 			return res == TRUE;
 		}
+		
 		// on Windows version < XP we need to find a solution for interrupting the
 		// debuggee process
 		return false;

@@ -1,16 +1,3 @@
-/*********************************************************************
- * Name:      	main.cpp
- * Purpose:   	Illustrates initialization and usage of wxWidgets in
- * 				console applications.
- * Author:    
- * Created:   
- * Copyright: 
- * License:   	wxWidgets license (www.wxwidgets.org)
- * 
- * Notes:		
- *********************************************************************/
- 
-// main wxWidgets header file
 #include <wx/wx.h>
 
 int main( int argc, char** argv )
@@ -28,6 +15,5 @@ int main( int argc, char** argv )
 
 	long mem = wxGetFreeMemory().ToLong();
 	wxPrintf(wxT("Memory: %ld\n"), mem);
-
 	return 0;
 }

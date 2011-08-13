@@ -18,6 +18,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows( wxWindow* parent )
 	m_checkBoxHideOutputPaneNotIfTasks->SetValue     (options->GetHideOutputPaneNotIfTasks());
 	m_checkBoxFindBarAtBottom->SetValue              (options->GetFindBarAtBottom());
 	m_checkBoxOutputPaneCanDock->SetValue            (options->GetOutputPaneDockable());
+	m_checkBoxDontFoldSearchResults->SetValue        (options->GetDontAutoFoldResults());
 	m_checkBoxShowDebugOnRun->SetValue               (options->GetShowDebugOnRun());
 	m_radioBoxHint->SetSelection                     (options->GetDockingStyle());
 	
@@ -54,6 +55,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
 	options->SetHideOutputPaneNotIfTasks( m_checkBoxHideOutputPaneNotIfTasks->IsChecked() );
 	options->SetFindBarAtBottom( m_checkBoxFindBarAtBottom->IsChecked() );
 	options->SetOutputPaneDockable( m_checkBoxOutputPaneCanDock->IsChecked() );
+	options->SetDontAutoFoldResults( m_checkBoxDontFoldSearchResults->IsChecked() );
 	options->SetShowDebugOnRun( m_checkBoxShowDebugOnRun->IsChecked() );
 	options->SetDockingStyle( m_radioBoxHint->GetSelection() );
 	

@@ -461,15 +461,17 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
 			m_sci->GotoLine(0);
 		}
 		
-		OutputTabWindow::OnCollapseAll(e);
-		if(m_sci) {
-			// Collapse the matches
-			int maxLine = m_sci->GetLineCount();
-			for (int line = 0; line < maxLine; line++) {
-				int foldLevel = (m_sci->GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
-				if (foldLevel == 2 && !m_sci->GetFoldExpanded(line) ) {
-					m_sci->ToggleFold(line);
-					break;
+		if(!EditorConfigST::Get()->GetOptions()->GetDontAutoFoldResults()) {
+			OutputTabWindow::OnCollapseAll(e);
+			if(m_sci) {
+				// Uncollapse the first file's matches
+				int maxLine = m_sci->GetLineCount();
+				for (int line = 0; line < maxLine; line++) {
+					int foldLevel = (m_sci->GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+					if (foldLevel == 2 && !m_sci->GetFoldExpanded(line) ) {
+						m_sci->ToggleFold(line);
+						break;
+					}
 				}
 			}
 		}
@@ -479,16 +481,18 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
 		if (m_tb->GetToolState(XRCID("scroll_on_output"))) {
 			m_sci->GotoLine(0);
 		}
-		
-		OutputTabWindow::OnCollapseAll(e);
-		if(m_sci) {
-			// Collapse the matches
-			int maxLine = m_sci->GetLineCount();
-			for (int line = 0; line < maxLine; line++) {
-				int foldLevel = (m_sci->GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
-				if (foldLevel == 2 && !m_sci->GetFoldExpanded(line) ) {
-					m_sci->ToggleFold(line);
-					break;
+
+		if(!EditorConfigST::Get()->GetOptions()->GetDontAutoFoldResults()) {
+			OutputTabWindow::OnCollapseAll(e);
+			if(m_sci) {
+				// Uncollapse the first file's matches
+				int maxLine = m_sci->GetLineCount();
+				for (int line = 0; line < maxLine; line++) {
+					int foldLevel = (m_sci->GetFoldLevel(line) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+					if (foldLevel == 2 && !m_sci->GetFoldExpanded(line) ) {
+						m_sci->ToggleFold(line);
+						break;
+					}
 				}
 			}
 		}

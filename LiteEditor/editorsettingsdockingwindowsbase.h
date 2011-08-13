@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -43,6 +43,7 @@ class EditorSettingsDockingWindowsBase : public wxPanel
 		wxCheckBox* m_checkBoxHideOutputPaneNotIfTrace;
 		wxCheckBox* m_checkBoxHideOutputPaneNotIfTasks;
 		wxCheckBox* m_checkBoxOutputPaneCanDock;
+		wxCheckBox* m_checkBoxDontFoldSearchResults;
 		wxCheckBox* m_checkBoxFindBarAtBottom;
 		wxCheckBox* m_checkBoxShowDebugOnRun;
 		wxRadioBox* m_radioBoxHint;

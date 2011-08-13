@@ -94,6 +94,7 @@ protected:
 	bool           m_disableSemicolonShift;
 	int            m_caretLineAlpha;
 	bool           m_outputPaneDockable;
+	bool           m_dontAutoFoldResults;
 	bool           m_showDebugOnRun;
 	bool           m_caretUseCamelCase;
 	bool           m_dontTrimCaretLine;
@@ -156,11 +157,17 @@ public:
 	bool GetCaretUseCamelCase() const {
 		return m_caretUseCamelCase;
 	}
-	void SetOutputPaneDockable(bool outputPaneDockable) {
-		this->m_outputPaneDockable = outputPaneDockable;
+	void SetOutputPaneDockable(bool dontAutoFoldResults) {
+		this->m_outputPaneDockable = dontAutoFoldResults;
 	}
 	bool GetOutputPaneDockable() const {
 		return m_outputPaneDockable;
+	}
+	void SetDontAutoFoldResults(bool dontAutoFoldResults) {
+		this->m_dontAutoFoldResults = dontAutoFoldResults;
+	}
+	bool GetDontAutoFoldResults() const {
+		return m_dontAutoFoldResults;
 	}
 	void SetShowDebugOnRun(bool showDebugOnRun) {
 		this->m_showDebugOnRun = showDebugOnRun;

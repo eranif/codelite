@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -78,6 +78,11 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase( wxWindow* pa
 	
 	m_checkBoxOutputPaneCanDock = new wxCheckBox( this, wxID_ANY, _("Make the output pane dockable"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_checkBoxOutputPaneCanDock, 0, wxALL|wxEXPAND, 5 );
+	
+	m_checkBoxDontFoldSearchResults = new wxCheckBox( this, wxID_ANY, _("Don't automatically fold Search results"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxDontFoldSearchResults->SetToolTip( _("By default, all but the first results of 'Search' are automatically folded; you have to click on each subsequent file to see its contained matches. Tick this box to prevent this.\nYou can still fold and unfold results with the button in the output pane toolbar. ") );
+	
+	sbSizer1->Add( m_checkBoxDontFoldSearchResults, 0, wxALL, 5 );
 	
 	mainSizer->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
 	

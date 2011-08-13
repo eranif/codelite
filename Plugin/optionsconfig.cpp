@@ -88,6 +88,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         , m_disableSemicolonShift(false)
         , m_caretLineAlpha(50)
         , m_outputPaneDockable(false)
+        , m_dontAutoFoldResults(false)
         , m_showDebugOnRun(true)
         , m_caretUseCamelCase(false)
 		, m_wordWrap(false)
@@ -159,6 +160,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
     	m_disableSemicolonShift         = XmlUtils::ReadBool  (node, wxT("DisableSemicolonShift"),     m_disableSemicolonShift);
     	m_caretLineAlpha                = XmlUtils::ReadLong  (node, wxT("CaretLineAlpha"),            m_caretLineAlpha);
     	m_outputPaneDockable            = XmlUtils::ReadBool  (node, wxT("OutputPaneDockable"),        m_outputPaneDockable);
+    	m_dontAutoFoldResults           = XmlUtils::ReadBool  (node, wxT("DontAutoFoldResults"),       m_dontAutoFoldResults);
     	m_showDebugOnRun                = XmlUtils::ReadBool  (node, wxT("ShowDebugOnRun"),            m_showDebugOnRun);
     	m_caretUseCamelCase             = XmlUtils::ReadBool  (node, wxT("m_caretUseCamelCase"),       m_caretUseCamelCase);
     	m_wordWrap                      = XmlUtils::ReadBool  (node, wxT("m_wordWrap"),                m_wordWrap);
@@ -231,6 +233,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("DisableSmartIndent"),            BoolToString(m_disableSmartIndent));
 	n->AddProperty(wxT("DisableSemicolonShift"),         BoolToString(m_disableSemicolonShift));
 	n->AddProperty(wxT("OutputPaneDockable"),            BoolToString(m_outputPaneDockable));
+	n->AddProperty(wxT("DontAutoFoldResults"),           BoolToString(m_dontAutoFoldResults));
 	n->AddProperty(wxT("ShowDebugOnRun"),                BoolToString(m_showDebugOnRun));
 	n->AddProperty(wxT("ConsoleCommand"),                m_programConsoleCommand);
 	n->AddProperty(wxT("EOLMode"),                       m_eolMode);

@@ -131,6 +131,9 @@ private:
 	bool                         m_pchInCommandLine;
 	bool                         m_useSeparatePCHFlags;
 	wxString                     m_pchCompileFlags;
+	wxString                     m_clangPPFlags;  // clang only pre-processors (useful when using a custom makefile)
+	wxString                     m_clangCmpFlags; // clang only compilation flags (useful when using a custom makefile)
+	wxString                     m_ccSearchPaths;
 
 public:
 	BuildConfig(wxXmlNode *node);
@@ -142,6 +145,24 @@ public:
 	// Setters / Getters
 	//--------------------------------
 
+	void SetCcSearchPaths(const wxString& ccSearchPaths) {
+		this->m_ccSearchPaths = ccSearchPaths;
+	}
+	void SetClangCmpFlags(const wxString& clangCmpFlags) {
+		this->m_clangCmpFlags = clangCmpFlags;
+	}
+	void SetClangPPFlags(const wxString& clangPPFlags) {
+		this->m_clangPPFlags = clangPPFlags;
+	}
+	const wxString& GetCcSearchPaths() const {
+		return m_ccSearchPaths;
+	}
+	const wxString& GetClangCmpFlags() const {
+		return m_clangCmpFlags;
+	}
+	const wxString& GetClangPPFlags() const {
+		return m_clangPPFlags;
+	}
 	void SetPchCompileFlags(const wxString& pchCompileFlags) {
 		this->m_pchCompileFlags = pchCompileFlags;
 	}

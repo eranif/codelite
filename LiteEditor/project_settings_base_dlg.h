@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -32,6 +32,7 @@
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/notebook.h>
+#include <wx/splitter.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -467,6 +468,50 @@ class PSCustomMakefileBasePage : public wxPanel
 		
 		PSCustomMakefileBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~PSCustomMakefileBasePage();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class PSCompletionBase
+///////////////////////////////////////////////////////////////////////////////
+class PSCompletionBase : public wxPanel 
+{
+	private:
+	
+	protected:
+		wxSplitterWindow* m_splitter1;
+		wxPanel* m_panel14;
+		wxStaticText* m_staticText47;
+		wxTextCtrl* m_textCtrlSearchPaths;
+		wxPanel* m_panel15;
+		wxSplitterWindow* m_splitter2;
+		wxPanel* m_panel16;
+		wxStaticText* m_staticText48;
+		wxTextCtrl* m_textCtrlCmpOptions;
+		wxPanel* m_panel17;
+		wxStaticText* m_staticText49;
+		wxTextCtrl* m_textCtrlMacros;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnCmdEvtVModified( wxCommandEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		PSCompletionBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
+		~PSCompletionBase();
+		
+		void m_splitter1OnIdle( wxIdleEvent& )
+		{
+			m_splitter1->SetSashPosition( 0 );
+			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( PSCompletionBase::m_splitter1OnIdle ), NULL, this );
+		}
+		
+		void m_splitter2OnIdle( wxIdleEvent& )
+		{
+			m_splitter2->SetSashPosition( 0 );
+			m_splitter2->Disconnect( wxEVT_IDLE, wxIdleEventHandler( PSCompletionBase::m_splitter2OnIdle ), NULL, this );
+		}
 	
 };
 

@@ -51,7 +51,28 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		m_buildCmpWithGlobalSettings = XmlUtils::ReadString(node, wxT("BuildCmpWithGlobalSettings"), APPEND_TO_GLOBAL_SETTINGS);
 		m_buildLnkWithGlobalSettings = XmlUtils::ReadString(node, wxT("BuildLnkWithGlobalSettings"), APPEND_TO_GLOBAL_SETTINGS);
 		m_buildResWithGlobalSettings = XmlUtils::ReadString(node, wxT("BuildResWithGlobalSettings"), APPEND_TO_GLOBAL_SETTINGS);
-
+		
+		wxXmlNode *completion = XmlUtils::FindFirstByTagName(node, wxT("Completion"));
+		if(completion) {
+			wxXmlNode * search_paths = XmlUtils::FindFirstByTagName(completion, wxT("SearchPaths"));
+			if(search_paths) {
+				m_ccSearchPaths = search_paths->GetNodeContent();
+				m_ccSearchPaths.Trim().Trim(false);
+			}
+			
+			wxXmlNode * clang_pp = XmlUtils::FindFirstByTagName(completion, wxT("ClangPP"));
+			if(clang_pp) {
+				m_clangPPFlags = clang_pp->GetNodeContent();
+				m_clangPPFlags.Trim().Trim(false);
+			}
+			
+			wxXmlNode * clang_cmp_flags = XmlUtils::FindFirstByTagName(completion, wxT("ClangCmpFlags"));
+			if(clang_cmp_flags) {
+				m_clangCmpFlags = clang_cmp_flags->GetNodeContent();
+				m_clangCmpFlags.Trim().Trim(false);
+			}
+			
+		}
 		wxXmlNode *compile = XmlUtils::FindFirstByTagName(node, wxT("Compiler"));
 		if (compile) {
 			m_compilerRequired = XmlUtils::ReadBool(compile, wxT("Required"), true);
@@ -406,6 +427,19 @@ wxXmlNode *BuildConfig::ToXml() const
 	XmlUtils::SetNodeContent(preCmd, m_customPreBuildRule);
 	wxXmlNode *postCmd = new wxXmlNode(additionalCmds, wxXML_ELEMENT_NODE, wxT("CustomPostBuild"));
 	XmlUtils::SetNodeContent(postCmd, m_customPostBuildRule);
+	
+	// Set the completion flags
+	wxXmlNode *completion = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Completion"));
+	node->AddChild(completion);
+	
+	wxXmlNode * search_paths = new wxXmlNode(completion, wxXML_ELEMENT_NODE, wxT("SearchPaths"));
+	XmlUtils::SetNodeContent(search_paths, m_ccSearchPaths);
+	
+	wxXmlNode * clang_pp = new wxXmlNode(completion, wxXML_ELEMENT_NODE, wxT("ClangPP"));
+	XmlUtils::SetNodeContent(clang_pp, m_clangPPFlags);
+	
+	wxXmlNode * clang_cmp_flags = new wxXmlNode(completion, wxXML_ELEMENT_NODE, wxT("ClangCmpFlags"));
+	XmlUtils::SetNodeContent(clang_cmp_flags, m_clangCmpFlags);
 	return node;
 }
 

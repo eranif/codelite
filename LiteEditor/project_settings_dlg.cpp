@@ -32,6 +32,7 @@
 #include "ps_debugger_page.h"
 #include "ps_linker_page.h"
 #include "ps_compiler_page.h"
+#include "ps_completion_page.h"
 #include "pluginmanager.h"
 #include "windowattrmanager.h"
 #include "envvar_dlg.h"
@@ -121,7 +122,8 @@ void ProjectSettingsDlg::BuildTree()
 	m_treebook->AddPage(0, _("Customize"));
 	m_treebook->AddSubPage(new PSCustomBuildPage(m_treebook, m_projectName, this),   _("Custom Build"),          selectedPage == _("Custom Build"));
 	m_treebook->AddSubPage(new PSCustomMakefileRulesPage(m_treebook, this),          _("Custom Makefile Rules"), selectedPage == _("Custom Makefile Rules"));
-
+	
+	m_treebook->AddPage(new PSCompletionPage(m_treebook, this), _("Code Completion"), selectedPage == _("Code Completion"));
 	m_treebook->AddPage(new GlobalSettingsPanel(m_treebook, m_projectName, this, gp), _("Global Settings"),      selectedPage == _("Global Settings"));
 
 	// We do this here rather than in wxFB to avoid failure and an assert in >wx2.8

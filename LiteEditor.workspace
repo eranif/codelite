@@ -34,10 +34,10 @@
   <Project Name="wxshapeframework" Path="sdk/wxshapeframework/wxshapeframework.project" Active="No"/>
   <Project Name="databaselayer_sqlite" Path="sdk/databaselayer/databaselayer_sqlite.project" Active="No"/>
   <Project Name="CodeFormatter" Path="CodeFormatter/CodeFormatter.project" Active="No"/>
+  <Project Name="PCH" Path="PCH/PCH.project"/>
   <Environment>
     <![CDATA[]]>
   </Environment>
-  <Project Name="PCH" Path="PCH/PCH.project"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>

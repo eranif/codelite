@@ -326,11 +326,21 @@ public:
 	wxString GetStringSelection() const;
 /**
  * @brief Sets m_control's selection to that corresponding to the unlocalised string
- * @param an unlocalised string
- * @param the default used if str is not found
+ * @param str an unlocalised string
+ * @param dfault the default used if str is not found
  */	
 	void SetStringSelection(const wxString& str, size_t dfault = 0);
 };
+
+/**
+ * @brief Prepends the wxString to the wxArrayString, first removing any matching entry
+ * @param oldarray contains any entries
+ * @param str the new entry
+ * @param maxsize the maximum number of items allowed in the arraystring. 0 means no maximum
+ * @return the amended entries
+ */	
+	WXDLLIMPEXP_SDK wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxString& str, const size_t maxsize);
+
 
 #endif //GLOBALS_H
 

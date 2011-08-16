@@ -44,6 +44,7 @@
 #include "imanager.h"
 #include "newversiondlg.h"
 #include "quickdebugdlg.h"
+#include "debugcoredump.h"
 #include "syntaxhighlightdlg.h"
 #include "dirsaver.h"
 #include "batchbuilddlg.h"
@@ -391,6 +392,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_MENU(XRCID("ignore_breakpoint"),        clMainFrame::DispatchCommandEvent)
 	EVT_MENU(XRCID("delete_breakpoint"),        clMainFrame::DispatchCommandEvent)
 	EVT_MENU(XRCID("quick_debug"),              clMainFrame::OnQuickDebug)
+	EVT_MENU(XRCID("debug_core_dump"),          clMainFrame::OnDebugCoreDump)
 
 	EVT_UPDATE_UI(XRCID("start_debugger"),      clMainFrame::OnDebugUI)
 	EVT_UPDATE_UI(XRCID("restart_debugger"),    clMainFrame::OnDebugRestartUI)
@@ -405,6 +407,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("enable_all_breakpoints"),  clMainFrame::OnDebugManageBreakpointsUI)
 	EVT_UPDATE_UI(XRCID("delete_all_breakpoints"),  clMainFrame::OnDebugManageBreakpointsUI)
 	EVT_UPDATE_UI(XRCID("quick_debug"),         clMainFrame::OnQuickDebugUI)
+	EVT_UPDATE_UI(XRCID("debug_core_dump"),     clMainFrame::OnQuickDebugUI)
 
 	//-------------------------------------------------------
 	// Plugins menu
@@ -3745,7 +3748,82 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
 	dlg->Destroy();
 }
 
-void clMainFrame::OnQuickDebugUI(wxUpdateUIEvent& e)
+void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
+{
+	// launch the debugger
+	DebugCoreDumpDlg *dlg = new DebugCoreDumpDlg(this);
+	if (dlg->ShowModal() == wxID_OK) {
+
+		DebuggerMgr::Get().SetActiveDebugger(dlg->GetDebuggerName());
+		IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
+
+		if (dbgr && !dbgr->IsRunning()) {
+
+			wxString debuggingcommand;
+			debuggingcommand << wxT("-c ") << dlg->GetCore() << wxT(" ") << dlg->GetExe();
+			wxString wd = dlg->GetWorkingDirectory();
+
+			// update the debugger information
+			DebuggerInformation dinfo;
+			DebuggerMgr::Get().GetDebuggerInformation(dlg->GetDebuggerName(), dinfo);
+			dinfo.breakAtWinMain = false;
+
+			// read the console command
+			dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
+
+			wxString dbgname = dinfo.path;
+			dbgname = EnvironmentConfig::Instance()->ExpandVariables(dbgname, true);
+
+			// launch the debugger
+			dbgr->SetObserver(ManagerST::Get());
+			dbgr->SetDebuggerInformation(dinfo);
+
+			DebuggerStartupInfo startup_info;
+			startup_info.debugger = dbgr;
+
+			// notify plugins that we're about to start debugging
+			if (SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info))
+				// plugin stopped debugging
+				return;
+
+			wxString tty;
+#ifndef __WXMSW__
+			wxString title;
+			title << _("Debugging: ") << dlg->GetCore();
+			tty = StartTTY(title);
+			if(tty.IsEmpty()) {
+				wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"), wxOK|wxCENTER|wxICON_ERROR);
+			}
+#endif
+
+			dbgr->SetIsRemoteDebugging(false);
+
+			// The next two are empty, but are required as parameters
+			std::vector<BreakpointInfo> bpList;
+			wxArrayString cmds;
+
+			dbgr->Start(dbgname, debuggingcommand, wd, bpList, cmds, tty);
+
+			// notify plugins that the debugger just started
+			SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);
+
+			dbgr->Run(wxEmptyString, wxEmptyString);
+
+			// Coredump debugging doesn't use breakpoints, but probably we should do this here anyway...
+			clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+
+			// and finally make sure that the debugger pane is visible
+			wxAuiPaneInfo &info = GetDockingManager().GetPane(wxT("Debugger"));
+			if ( info.IsOk() && !info.IsShown() ) {
+				ManagerST::Get()->SetDebuggerPaneOriginallyVisible(false);
+			ManagerST::Get()->ShowDebuggerPane();
+			}
+		}
+	}
+	dlg->Destroy();
+}
+
+void clMainFrame::OnQuickDebugUI(wxUpdateUIEvent& e) // (Also used by DebugCoreDump)
 {
 	CHECK_SHUTDOWN();
 	IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();

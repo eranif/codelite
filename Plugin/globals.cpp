@@ -889,6 +889,29 @@ void StringManager::SetStringSelection(const wxString& str, size_t dfault /*= 0*
 	} 
 }
 
+wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxString& str, const size_t maxsize)
+{
+	wxArrayString array(oldarray);
+	if (!str.empty()) {
+	// Remove any pre-existing identical entry
+	// This avoids duplication, and allows us to prepend the current string
+	// As a result, the array will be suitable for 'recently-used-strings' situations
+	int index = array.Index(str);
+	if (index != wxNOT_FOUND) {
+		array.RemoveAt(index);
+	}
+	array.Insert(str, 0);
+	}
+
+	// Truncate the array if needed
+	if (maxsize) {
+		while (array.GetCount() > maxsize) {
+			array.RemoveAt(array.GetCount()-1);
+		}
+	}
+	return array;
+}
+
 // Make absolute first, including abolishing any symlinks (Normalise only does MSW shortcuts)
 // Then only 'make relative' if it's a subpath of reference_path (or reference_path itself)
 bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path)

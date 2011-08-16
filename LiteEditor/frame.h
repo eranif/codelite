@@ -389,6 +389,7 @@ protected:
 	void OnOpenShellFromFilePath(wxCommandEvent &e);
 	void OnQuickDebug(wxCommandEvent &e);
 	void OnQuickDebugUI(wxUpdateUIEvent &e);
+	void OnDebugCoreDump(wxCommandEvent &e);
 	void OnNextFiFMatch      (wxCommandEvent &e);
 	void OnPreviousFiFMatch  (wxCommandEvent &e);
 	void OnNextFiFMatchUI    (wxUpdateUIEvent &e);

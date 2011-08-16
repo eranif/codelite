@@ -29,8 +29,10 @@ QuickDebugBase::QuickDebugBase( wxWindow* parent, wxWindowID id, const wxString&
 	m_staticText2->Wrap( -1 );
 	fgSizer1->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrlExePath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer1->Add( m_textCtrlExePath, 0, wxALL|wxEXPAND, 5 );
+	m_ExeFilepath = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+	m_ExeFilepath->SetToolTip( _("Enter the filepath to the program that you want to debug.\nAlternatively, if you enter the path below, putting just the filename here will suffice.") );
+	
+	fgSizer1->Add( m_ExeFilepath, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowseExe = new wxButton( this, wxID_ANY, _("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_buttonBrowseExe, 0, wxALL, 5 );
@@ -39,8 +41,10 @@ QuickDebugBase::QuickDebugBase( wxWindow* parent, wxWindowID id, const wxString&
 	m_staticText5->Wrap( -1 );
 	fgSizer1->Add( m_staticText5, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrl5 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer1->Add( m_textCtrl5, 0, wxALL|wxEXPAND, 5 );
+	m_WD = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+	m_WD->SetToolTip( _("Optionally, enter the path where the program that you want to debug can be found") );
+	
+	fgSizer1->Add( m_WD, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowseWD = new wxButton( this, wxID_ANY, _("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_buttonBrowseWD, 0, wxALL, 5 );
@@ -97,6 +101,7 @@ QuickDebugBase::QuickDebugBase( wxWindow* parent, wxWindowID id, const wxString&
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	bSizer1->Fit( this );
 	
 	this->Centre( wxBOTH );
 	

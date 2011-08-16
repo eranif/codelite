@@ -36,16 +36,16 @@ QuickDebugInfo::~QuickDebugInfo()
 void QuickDebugInfo::DeSerialize(Archive& arch)
 {
 	arch.Read(wxT("m_arguments"), m_arguments);
-	arch.Read(wxT("m_exePath"), m_exePath);
+	arch.Read(wxT("m_exeFilepaths"), m_exeFilepaths);
 	arch.Read(wxT("m_selectedDbg"), m_selectedDbg);
 	arch.Read(wxT("m_startCmds"), m_startCmds);
-	arch.Read(wxT("m_wd"), m_wd);
+	arch.Read(wxT("m_wds"), m_wds);
 }
 void QuickDebugInfo::Serialize(Archive& arch)
 {
 	arch.Write(wxT("m_arguments"), m_arguments);
-	arch.Write(wxT("m_exePath"), m_exePath);
+	arch.Write(wxT("m_exeFilepaths"), m_exeFilepaths);
 	arch.Write(wxT("m_selectedDbg"), m_selectedDbg);
 	arch.Write(wxT("m_startCmds"), m_startCmds);
-	arch.Write(wxT("m_wd"), m_wd);
+	arch.Write(wxT("m_wds"), m_wds);
 }

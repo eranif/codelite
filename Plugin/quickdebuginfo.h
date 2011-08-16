@@ -34,8 +34,8 @@
 class WXDLLIMPEXP_SDK QuickDebugInfo : public SerializedObject
 {
 
-	wxString m_exePath;
-	wxString m_wd;
+	wxArrayString m_exeFilepaths;
+	wxArrayString m_wds;
 	wxString m_arguments;
 	wxArrayString m_startCmds;
 	int m_selectedDbg;
@@ -51,8 +51,8 @@ public:
 	void SetArguments(const wxString& arguments) {
 		this->m_arguments = arguments;
 	}
-	void SetExePath(const wxString& exePath) {
-		this->m_exePath = exePath;
+	void SetExeFilepaths(const wxArrayString& exeFilepaths) {
+		this->m_exeFilepaths = exeFilepaths;
 	}
 	void SetSelectedDbg(const int& selectedDbg) {
 		this->m_selectedDbg = selectedDbg;
@@ -60,15 +60,15 @@ public:
 	void SetStartCmds(const wxArrayString& startCmds) {
 		this->m_startCmds = startCmds;
 	}
-	void SetWd(const wxString& wd) {
-		this->m_wd = wd;
+	void SetWDs(const wxArrayString& wds) {
+		this->m_wds = wds;
 	}
 
 	const wxString& GetArguments() const {
 		return m_arguments;
 	}
-	const wxString& GetExePath() const {
-		return m_exePath;
+	const wxArrayString& GetExeFilepaths() const {
+		return m_exeFilepaths;
 	}
 	const int& GetSelectedDbg() const {
 		return m_selectedDbg;
@@ -76,8 +76,8 @@ public:
 	const wxArrayString& GetStartCmds() const {
 		return m_startCmds;
 	}
-	const wxString& GetWd() const {
-		return m_wd;
+	const wxArrayString& GetWds() const {
+		return m_wds;
 	}
 };
 #endif // __quickdebuginfo__

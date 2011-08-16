@@ -29,17 +29,32 @@
 #include "editor_config.h"
 #include <wx/filedlg.h>
 #include <wx/dirdlg.h>
+#include <wx/display.h>
 #include "debuggermanager.h"
+#include "globals.h"
 #include "quickdebugdlg.h"
 
 QuickDebugDlg::QuickDebugDlg( wxWindow* parent )
 :
 QuickDebugBase( parent )
 {
-	Initialize();
-	m_buttonDebug->SetFocus();
-	GetSizer()->SetMinSize(550, wxNOT_FOUND);
+	// Prevent enormously-long strings from crowding the browse buttons off the screen
+	wxDisplay display;
+	int width = display.GetClientArea().GetWidth();
+	wxSize size(width/4, -1);
+	m_ExeFilepath->SetInitialSize(size);
+	m_WD->SetInitialSize(size);
+
+	SetMaxSize(wxSize(width*2/3, -1));
+	GetSizer()->Layout();
 	GetSizer()->Fit(this);
+
+	Initialize();
+	if (m_ExeFilepath->IsEmpty()) {
+		m_ExeFilepath->SetFocus();
+	} else {
+		m_buttonDebug->SetFocus();
+	}
 	
 	WindowAttrManager::Load(this, wxT("QuickDebugDlgAttr"), NULL);
 }
@@ -57,7 +72,15 @@ void QuickDebugDlg::Initialize()
 		m_choiceDebuggers->SetSelection(info.GetSelectedDbg());
 	}
 	
-	m_textCtrlExePath->SetValue(info.GetExePath());
+	m_ExeFilepath->Append(info.GetExeFilepaths());
+	if (m_ExeFilepath->GetCount() > 0) {
+		m_ExeFilepath->SetSelection(0);
+	}
+
+	m_WD->Append(info.GetWds());
+	if (m_WD->GetCount() > 0) {
+		m_WD->SetSelection(0);
+	}	
 	m_textCtrlArgs->SetValue(info.GetArguments());
 	
 	wxString startupCmds;
@@ -65,17 +88,26 @@ void QuickDebugDlg::Initialize()
 		startupCmds << info.GetStartCmds().Item(i) << wxT("\n");
 	}
 	m_textCtrlCmds->SetValue(startupCmds);
-	m_textCtrl5->SetValue(info.GetWd());
 }
 
 void QuickDebugDlg::OnButtonBrowseExe( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	wxString path(GetExe());
-	if(wxFileName::FileExists(path)){
-		m_textCtrlExePath->SetValue(wxFileSelector(_("Select file:"), path.c_str()));
-	}else{
-		m_textCtrlExePath->SetValue(wxFileSelector(_("Select file:")));
+
+	wxString path, ans;
+	wxFileName fn(GetExe());
+	if (fn.FileExists()) {
+		// Use the serialised path as the wxFileSelector default path
+		path = fn.GetPath();
+	} else {
+		// Otherwise use any working dir entry, which might just have been altered
+		path = GetWorkingDirectory();
+	}
+
+	ans = wxFileSelector(_("Select file:"), path);
+	if (!ans.empty()) {
+		m_ExeFilepath->Insert(ans, 0);
+		m_ExeFilepath->SetSelection(0);
 	}
 }
 
@@ -84,10 +116,11 @@ void QuickDebugDlg::OnButtonDebug( wxCommandEvent& event )
 	wxUnusedVar(event);
 	
 	// save values
+	const size_t MAX_NO_ITEMS = 10;
 	QuickDebugInfo info;
 	info.SetSelectedDbg(m_choiceDebuggers->GetSelection());
-	info.SetExePath(m_textCtrlExePath->GetValue());
-	info.SetWd(m_textCtrl5->GetValue());
+	info.SetExeFilepaths( ReturnWithStringPrepended(m_ExeFilepath->GetStrings(), GetExe(), MAX_NO_ITEMS) );
+	info.SetWDs( ReturnWithStringPrepended(m_WD->GetStrings(), GetWorkingDirectory(), MAX_NO_ITEMS) );
 	info.SetStartCmds(GetStartupCmds());
 	info.SetArguments(m_textCtrlArgs->GetValue());
 	EditorConfigST::Get()->WriteObject(wxT("QuickDebugDlg"), &info);
@@ -115,7 +148,7 @@ wxString QuickDebugDlg::GetDebuggerName()
 
 wxString QuickDebugDlg::GetExe()
 {
-	return m_textCtrlExePath->GetValue();
+	return m_ExeFilepath->GetValue();
 }
 
 wxArrayString QuickDebugDlg::GetStartupCmds()
@@ -128,16 +161,21 @@ wxArrayString QuickDebugDlg::GetStartupCmds()
 
 wxString QuickDebugDlg::GetWorkingDirectory()
 {
-	return m_textCtrl5->GetValue();
+	return m_WD->GetValue();
 }
 
 void QuickDebugDlg::OnButtonBrowseWD(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
-	wxString path(GetWorkingDirectory());
-	if(wxFileName::DirExists(path)){
-		m_textCtrl5->SetValue(wxDirSelector(_("Select working directory:"), path));
-	}else{
-		m_textCtrl5->SetValue(wxDirSelector(_("Select working directory:")));
+
+	wxString ans, path(GetWorkingDirectory());
+	if (!wxFileName::DirExists(path)){
+		path = wxGetCwd();
+	}
+
+	ans = wxDirSelector(_("Select working directory:"), path);
+	if (!ans.empty()) {
+		m_WD->Insert(ans, 0);
+		m_WD->SetSelection(0);
 	}
 }

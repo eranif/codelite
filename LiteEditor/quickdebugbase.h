@@ -16,8 +16,9 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/textctrl.h>
+#include <wx/combobox.h>
 #include <wx/button.h>
+#include <wx/textctrl.h>
 #include <wx/panel.h>
 #include <wx/choice.h>
 #include <wx/sizer.h>
@@ -36,10 +37,10 @@ class QuickDebugBase : public wxDialog
 	
 	protected:
 		wxStaticText* m_staticText2;
-		wxTextCtrl* m_textCtrlExePath;
+		wxComboBox* m_ExeFilepath;
 		wxButton* m_buttonBrowseExe;
 		wxStaticText* m_staticText5;
-		wxTextCtrl* m_textCtrl5;
+		wxComboBox* m_WD;
 		wxButton* m_buttonBrowseWD;
 		wxStaticText* m_staticText4;
 		wxTextCtrl* m_textCtrlArgs;
@@ -54,15 +55,15 @@ class QuickDebugBase : public wxDialog
 		wxButton* m_buttonCancel;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnButtonBrowseExe( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonBrowseWD( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonDebug( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonCancel( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnButtonBrowseExe( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonBrowseWD( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonDebug( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonCancel( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		QuickDebugBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Quick Debug"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 559,370 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		QuickDebugBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Quick Debug"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~QuickDebugBase();
 	
 };

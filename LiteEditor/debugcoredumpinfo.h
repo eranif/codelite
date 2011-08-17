@@ -31,7 +31,7 @@
 #include "serialized_object.h"
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK DebugCoreDumpInfo : public SerializedObject
+class DebugCoreDumpInfo : public SerializedObject
 {
 public:
 	DebugCoreDumpInfo() : m_selectedDbg(0) {}

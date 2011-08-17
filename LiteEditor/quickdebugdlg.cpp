@@ -50,7 +50,7 @@ QuickDebugBase( parent )
 	GetSizer()->Fit(this);
 
 	Initialize();
-	if (m_ExeFilepath->IsEmpty()) {
+	if (m_ExeFilepath->GetCount() == 0) {
 		m_ExeFilepath->SetFocus();
 	} else {
 		m_buttonDebug->SetFocus();

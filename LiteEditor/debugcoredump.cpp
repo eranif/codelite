@@ -26,6 +26,8 @@
 #include "manager.h"
 #include "project.h"
 #include "windowattrmanager.h"
+#include "macromanager.h"
+#include "pluginmanager.h"
 #include "editor_config.h"
 #include "globals.h"
 #include "debuggermanager.h"
@@ -53,7 +55,7 @@ DebugCoreDumpDlg::DebugCoreDumpDlg(wxWindow* parent) : DebugCoreDumpDlgBase(pare
 	WindowAttrManager::Load(this, wxT("DebugCoreDumpDlgAttr"), NULL);
 
 	Initialize();
-	if (m_Core->IsEmpty()) {
+	if (m_Core->GetCount()) {
 		m_Core->SetFocus();
 	} else {
 		m_buttonDebug->SetFocus();
@@ -87,17 +89,43 @@ void DebugCoreDumpDlg::Initialize()
 	if (m_ExeFilepath->GetCount() > 0) {
 		m_ExeFilepath->SetSelection(0);
 	} else {
-		wxString activename = ManagerST::Get()->GetActiveProjectName();
-		if (!activename.empty()) {
-			wxString errMsg;
-			ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(activename, errMsg);
-			if (proj) {
-				if (m_ExeFilepath->Append(proj->GetFileName().GetFullPath()) != wxNOT_FOUND) {
-					m_ExeFilepath->SetSelection(0);
+		// determine the executable to debug:
+		// - If the 'Program' field is set - we use it
+		// - Else we use the project's output name
+		wxString activename, conf;
+		ManagerST::Get()->GetActiveProjectAndConf(activename, conf);
+		BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(activename, conf);
+		if(buildConf) {
+			// expand all macros with their values
+			wxString programToDebug = buildConf->GetCommand();
+			programToDebug.Trim().Trim(false);
+			
+			if(programToDebug.IsEmpty()) {
+				programToDebug = buildConf->GetOutputFileName();
+			}
+			wxString outputFile = MacroManager::Instance()->Expand(programToDebug, PluginManager::Get(), activename, conf);
+			
+			if (m_ExeFilepath->Append(outputFile) != wxNOT_FOUND) {
+				m_ExeFilepath->SetSelection(0);
+			}
+			
+			// determine the working directory
+			// if we have a working directory set in the project settings, use it (if it is not an 
+			// absolute path, it will be appended to the project's path)
+			wxString projWD = MacroManager::Instance()->Expand(buildConf->GetWorkingDirectory(), PluginManager::Get(), activename, conf);
+			projWD.Trim().Trim(false);
+			wxString wd;
+			ProjectPtr proj = ManagerST::Get()->GetProject(activename);
+			if(proj) {
+				if(projWD.IsEmpty() || !wxFileName(projWD).IsAbsolute()) {
+					wxString basePath = proj->GetFileName().GetPath();
+					wd << basePath << wxFileName::GetPathSeparator();
 				}
-				if (m_WD->Insert(proj->GetFileName().GetPath(), 0) != wxNOT_FOUND) {
-					m_WD->SetSelection(0);
-				}
+			}
+			wd << projWD;
+			
+			if (m_WD->Insert(wd, 0) != wxNOT_FOUND) {
+				m_WD->SetSelection(0);
 			}
 		}
 	}

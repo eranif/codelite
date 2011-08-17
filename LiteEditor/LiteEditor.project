@@ -612,6 +612,12 @@
     <File Name="breakpointpropertiesdlg.cpp"/>
     <File Name="breakpointpropertiesdlg.h"/>
     <File Name="breakpointsmgr.cpp"/>
+    <File Name="debugcoredump.cpp"/>
+    <File Name="debugcoredump.h"/>
+    <File Name="debugcoredumpbase.cpp"/>
+    <File Name="debugcoredumpbase.h"/>
+    <File Name="debugcoredumpinfo.cpp"/>
+    <File Name="debugcoredumpinfo.h"/>
   </VirtualDirectory>
   <Options/>
   <Dependencies Name="UnixCodeLite">

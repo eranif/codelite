@@ -3789,7 +3789,7 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
 			wxString tty;
 #ifndef __WXMSW__
 			wxString title;
-			title << _("Debugging: ") << dlg->GetCore();
+			title << _("Debugging: '") << dlg->GetCore() << _("' from '") << dlg->GetExe() << wxT("'");
 			tty = StartTTY(title);
 			if(tty.IsEmpty()) {
 				wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"), wxOK|wxCENTER|wxICON_ERROR);
@@ -3807,16 +3807,20 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
 			// notify plugins that the debugger just started
 			SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);
 
-			dbgr->Run(wxEmptyString, wxEmptyString);
-
 			// Coredump debugging doesn't use breakpoints, but probably we should do this here anyway...
 			clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
-			// and finally make sure that the debugger pane is visible
+			// Make sure that the debugger pane is visible, and select the stack trace tab
 			wxAuiPaneInfo &info = GetDockingManager().GetPane(wxT("Debugger"));
 			if ( info.IsOk() && !info.IsShown() ) {
 				ManagerST::Get()->SetDebuggerPaneOriginallyVisible(false);
-			ManagerST::Get()->ShowDebuggerPane();
+				ManagerST::Get()->ShowDebuggerPane();
+				clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::FRAMES);
+				ManagerST::Get()->UpdateDebuggerPane();
+
+			// Finally, get the call-stack and 'continue' gdb (which seems to be necessary for things to work...)
+			dbgr->ListFrames();
+			dbgr->Continue();
 			}
 		}
 	}

@@ -55,7 +55,8 @@ DebugCoreDumpDlg::DebugCoreDumpDlg(wxWindow* parent) : DebugCoreDumpDlgBase(pare
 	WindowAttrManager::Load(this, wxT("DebugCoreDumpDlgAttr"), NULL);
 
 	Initialize();
-	if (m_Core->GetCount()) {
+	if (m_Core->GetCount() == 0) {
+		// If there's no known core yet, set focus here so one can be added
 		m_Core->SetFocus();
 	} else {
 		m_buttonDebug->SetFocus();

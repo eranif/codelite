@@ -905,6 +905,7 @@ void FileViewTree::DoRemoveItems()
 						Delete( item );
 						SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 
+						int DeleteThisItemFromDisc = false;
 						if (ApplyToEachFileDeletion==false) {
 							wxString message;
 							message << _("Do you also want to delete the file '")  << name << _("' from disc?");
@@ -912,14 +913,14 @@ void FileViewTree::DoRemoveItems()
 								// For multiple selections, use a YesToAll dialog
 								YesToAllDlg dlg(this, message);
 								dlg.SetCheckboxText(wxString(_("Apply to all Files")));
-								result = dlg.ShowModal();
+								DeleteThisItemFromDisc = dlg.ShowModal();
 								ApplyToEachFileDeletion = dlg.GetIsChecked();
 							} else {
-								result = wxMessageBox(message, _("Are you sure?"), wxYES_NO | wxICON_QUESTION, this);
+								DeleteThisItemFromDisc = wxMessageBox(message, _("Are you sure?"), wxYES_NO | wxICON_QUESTION, this);
 							}
 						}
 
-						if ((result==wxID_YES || result==wxYES) || AlsoDeleteFromDisc) {
+						if ((DeleteThisItemFromDisc==wxID_YES || DeleteThisItemFromDisc==wxYES) || AlsoDeleteFromDisc) {
 							AlsoDeleteFromDisc = ApplyToEachFileDeletion;	// If we're here, ApplyToAll means delete all
 
 							wxString message(_("An error occurred during file removal. Maybe it has been already deleted or you don't have the necessary permissions"));

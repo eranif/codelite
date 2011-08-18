@@ -2295,6 +2295,7 @@ void Manager::DbgDoSimpleCommand ( int cmd )
 		case DBG_PAUSE:
 			GetBreakpointsMgr()->SetExpectingControl(true);
 			dbgr->Interrupt();
+			dbgr->ListFrames();
 			break;
 		case DBG_NEXT:
 			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->ResetTableColors();

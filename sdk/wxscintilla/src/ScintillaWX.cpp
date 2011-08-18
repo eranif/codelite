@@ -1096,7 +1096,12 @@ int  ScintillaWX::DoKeyDown(const wxKeyEvent& evt, bool* consumed) {
 #if wxVERSION_NUMBER < 2900
 	int key = evt.GetKeyCode();
 #else
-	int key = evt.GetUnicodeKey();
+	int key;
+	if(evt.GetKeyCode() == 0 && evt.GetUnicodeKey() == 226) {
+		key = evt.GetUnicodeKey();
+	} else {
+		key = evt.GetKeyCode();
+	}
 #endif
 	
 	bool shift = evt.ShiftDown(),

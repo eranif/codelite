@@ -133,6 +133,7 @@ END_EVENT_TABLE()
 DbgGdb::DbgGdb()
 	: m_debuggeePid( wxNOT_FOUND )
 	, m_cliHandler ( NULL )
+	, m_break_at_main( false )
 	, m_internalBpId( wxNOT_FOUND )
 {
 #ifdef __WXMSW__
@@ -1063,16 +1064,21 @@ bool DbgGdb::DoInitializeGdb( const std::vector<BreakpointInfo> &bpList, const w
 		SetBreakpoints();
 
 	} else if( setBreakpointsAfterMain && m_bpList.empty() == false ) {
-		// Place an intermediate breakpoint at main, once this breakpoint is hit
-		// set all breakpoints and remove that breakpoint + continue
+		// Place an 'internal' breakpoint at main. Once this breakpoint is hit
+		// set all breakpoints and remove the 'internal' one.
+		// Then 'continue', unless the user has said he actually _wants_ to break at main
 		WriteCommand( wxT( "-break-insert -t main" ), new DbgFindMainBreakpointIdHandler( m_observer, this ) );
-
 	}
 
-	if ( m_info.breakAtWinMain && !setBreakpointsAfterMain ) {
+	if (m_info.breakAtWinMain) {
 		// Set a breakpoint at WinMain
 		// Use a temporary one, so that it isn't duplicated in future sessions
 		WriteCommand( wxT( "-break-insert -t main" ), NULL );
+		// Flag that we've done this. DbgFindMainBreakpointIdHandler::ProcessOutput uses this
+		// to decide whether or not to 'continue' after setting BPs after main()
+		SetShouldBreakAtMain(true);
+	} else {
+		SetShouldBreakAtMain(false); // Needs explicitly to be set, in case the user has just changed his options
 	}
 	return true;
 }

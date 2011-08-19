@@ -396,8 +396,13 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 					// Apply the breakpoints
 					m_gdb->SetBreakpoints();
 
-					// Continue running
-					m_gdb->Continue();
+					// Continue running; but only if the user didn't _want_ to break-at-main anyway!
+					if (!m_gdb->GetShouldBreakAtMain()) {
+						m_gdb->Continue();
+					} else {
+						// If we're not Continue()ing, we need to do UpdateGotControl(), otherwise the user can't tell what's happened
+						UpdateGotControl(DBG_BP_HIT, func);
+					}
 
 				} else {
 

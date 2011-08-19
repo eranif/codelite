@@ -62,7 +62,7 @@ class DbgGdb : public wxEvtHandler, public IDebugger
 	IProcess*                   m_gdbProcess;
 	wxArrayString               m_gdbOutputArr;
 	wxString                    m_gdbOutputIncompleteLine;
-	
+	bool                        m_break_at_main;
 	
 public:
 	int                         m_internalBpId;
@@ -87,6 +87,12 @@ public:
 	bool ExecCLICommand(const wxString &command, DbgCmdCLIHandler* cmd);
 	void SetBreakpoints();
 	void SetInternalMainBpID(int bpId);
+	void SetShouldBreakAtMain(bool break_at_main) {
+		m_break_at_main = break_at_main;
+	}
+	bool GetShouldBreakAtMain() const {
+		return m_break_at_main;
+	}
 	void GetDebugeePID();
 	
 	

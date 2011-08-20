@@ -1,18 +1,19 @@
+#include "precompiled_header.h"
 #include "envvar_table.h"
-#include <wx/wupdlock.h>
 #include "evnvarlist.h"
 #include "environmentconfig.h"
 #include "windowattrmanager.h"
 #include "window_locker.h"
+#include <wx/regex.h>
 
 EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent )
-		: EnvVarsTableDlgBase( parent )
+	: EnvVarsTableDlgBase( parent )
 {
 	EvnVarList vars;
 	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
 	std::map<wxString, wxString> envSets = vars.GetEnvVarSets();
 	wxString activePage = vars.GetActiveSet();
-	
+
 	wxScintilla *sci = m_textCtrlDefault;
 	sci->StyleClearAll();
 	sci->SetLexer(wxSCI_LEX_NULL);
@@ -26,7 +27,7 @@ EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent )
 		sci->StyleSetFont(i, font);
 		sci->SetWrapMode(wxSCI_WRAP_WORD);
 	}
-	
+
 	WindowAttrManager::Load(this, wxT("EnvVarsTableDlg"), NULL);
 	std::map<wxString, wxString>::iterator iter = envSets.begin();
 	for (; iter != envSets.end(); iter++) {
@@ -133,4 +134,75 @@ void EnvVarsTableDlg::DoAddPage(const wxString &name, const wxString &content, b
 	}
 	sci->SetText(content);
 	m_notebook1->AddPage(page, name, select);
+}
+
+void EnvVarsTableDlg::OnExport(wxCommandEvent& event)
+{
+	int selection = m_notebook1->GetSelection();
+	if(selection == wxNOT_FOUND)
+		return;
+
+#ifdef __WXMSW__
+	bool isWindows = true;
+#else
+	bool isWindows = false;
+#endif
+
+	wxString text;
+	if(selection == 0) {
+		text = m_textCtrlDefault->GetText();
+	} else {
+		EnvVarSetPage *page = dynamic_cast<EnvVarSetPage*>(m_notebook1->GetPage((size_t)selection));
+		if(page) {
+			text = page->m_textCtrl->GetText();
+		}
+	}
+	
+	if(text.IsEmpty())
+		return;
+	
+	wxArrayString lines = wxStringTokenize(text, wxT("\r\n"), wxTOKEN_STRTOK);
+	wxString envfile;
+	if(isWindows) {
+		envfile << wxT("environment.bat");
+	} else {
+		envfile << wxT("environment");
+	}
+
+	wxFileName fn(wxGetCwd(), envfile);
+	wxFFile fp(fn.GetFullPath(), wxT("w+b"));
+	if(fp.IsOpened() == false) {
+		wxMessageBox(wxString::Format(_("Failed to open file: '%s' for write"), fn.GetFullPath().c_str()), wxT("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
+		return;
+	}
+
+	for(size_t i=0; i<lines.GetCount(); i++) {
+
+		wxString sLine = lines.Item(i).Trim().Trim(false);
+		if(sLine.IsEmpty())
+			continue;
+
+		static wxRegEx reVarPattern(wxT("\\$\\(( *)([a-zA-Z0-9_]+)( *)\\)"));
+		if(isWindows) {
+			while(reVarPattern.Matches(sLine)) {
+				wxString varName = reVarPattern.GetMatch(sLine, 2);
+				wxString text    = reVarPattern.GetMatch(sLine);
+				sLine.Replace(text, wxString::Format(wxT("%%%s%%"), varName.c_str()));
+			}
+			sLine.Prepend(wxT("set "));
+			sLine.Append(wxT("\r\n"));
+			
+		} else {
+			while(reVarPattern.Matches(sLine)) {
+				wxString varName = reVarPattern.GetMatch(sLine, 2);
+				wxString text    = reVarPattern.GetMatch(sLine);
+				sLine.Replace(text, wxString::Format(wxT("$%s"), varName.c_str()));
+			}
+			sLine.Prepend(wxT("export "));
+			sLine.Append(wxT("\n"));
+		}
+		fp.Write(sLine);
+	}
+
+	wxMessageBox(wxString::Format(_("Environment exported to: '%s' successfully"), fn.GetFullPath().c_str()), wxT("CodeLite"));
 }

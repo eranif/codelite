@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -43,6 +43,7 @@ class EnvVarsTableDlgBase : public wxDialog
 		wxScintilla* m_textCtrlDefault;
 		wxButton* m_buttonNewSet;
 		wxButton* m_buttonDeleteSet;
+		wxButton* m_button5;
 		wxStaticLine* m_staticline4;
 		wxButton* m_buttonOk;
 		wxButton* m_buttonCancel;
@@ -51,6 +52,7 @@ class EnvVarsTableDlgBase : public wxDialog
 		virtual void OnNewSet( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDeleteSet( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDeleteSetUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnExport( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonOk( wxCommandEvent& event ) { event.Skip(); }
 		
 	
@@ -73,7 +75,7 @@ class EnvVarSetPage : public wxPanel
 	public:
 		wxScintilla* m_textCtrl;
 		
-		EnvVarSetPage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		EnvVarSetPage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
 		~EnvVarSetPage();
 	
 };

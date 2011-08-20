@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -57,10 +57,15 @@ EnvVarsTableDlgBase::EnvVarsTableDlgBase( wxWindow* parent, wxWindowID id, const
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 	
 	m_buttonNewSet = new wxButton( this, wxID_ANY, _("&New Set..."), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( m_buttonNewSet, 0, wxALL, 5 );
+	bSizer7->Add( m_buttonNewSet, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonDeleteSet = new wxButton( this, wxID_ANY, _("Delete Set"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( m_buttonDeleteSet, 0, wxALL, 5 );
+	bSizer7->Add( m_buttonDeleteSet, 0, wxALL|wxEXPAND, 5 );
+	
+	m_button5 = new wxButton( this, wxID_ANY, _("&Export"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button5->SetToolTip( _("Export the current set to a platform \nspecific environment file") );
+	
+	bSizer7->Add( m_button5, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer6->Add( bSizer7, 0, wxEXPAND, 5 );
 	
@@ -91,6 +96,7 @@ EnvVarsTableDlgBase::EnvVarsTableDlgBase( wxWindow* parent, wxWindowID id, const
 	m_buttonNewSet->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnvVarsTableDlgBase::OnNewSet ), NULL, this );
 	m_buttonDeleteSet->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnvVarsTableDlgBase::OnDeleteSet ), NULL, this );
 	m_buttonDeleteSet->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EnvVarsTableDlgBase::OnDeleteSetUI ), NULL, this );
+	m_button5->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnvVarsTableDlgBase::OnExport ), NULL, this );
 	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnvVarsTableDlgBase::OnButtonOk ), NULL, this );
 }
 
@@ -100,6 +106,7 @@ EnvVarsTableDlgBase::~EnvVarsTableDlgBase()
 	m_buttonNewSet->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnvVarsTableDlgBase::OnNewSet ), NULL, this );
 	m_buttonDeleteSet->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnvVarsTableDlgBase::OnDeleteSet ), NULL, this );
 	m_buttonDeleteSet->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EnvVarsTableDlgBase::OnDeleteSetUI ), NULL, this );
+	m_button5->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnvVarsTableDlgBase::OnExport ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnvVarsTableDlgBase::OnButtonOk ), NULL, this );
 	
 }

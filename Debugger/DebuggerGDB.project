@@ -48,9 +48,7 @@
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
-        <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
-        <Preprocessor Value="_WIN32_WINNT=0x501"/>
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
@@ -86,6 +84,11 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
+      <Completion>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;-Winvalid-pch" C_Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2">
@@ -127,6 +130,11 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
+      <Completion>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
     </Configuration>
     <Configuration Name="Win_wxWidgets_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" C_Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
@@ -170,6 +178,11 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
+      <Completion>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
     </Configuration>
   </Settings>
 </CodeLite_Project>

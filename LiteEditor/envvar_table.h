@@ -21,6 +21,7 @@ protected:
 	void OnNewSet( wxCommandEvent& event );
 	void OnDeleteSet( wxCommandEvent& event );
 	void OnDeleteSetUI( wxUpdateUIEvent& event );
+	virtual void OnExport(wxCommandEvent& event);
 
 public:
 	/** Constructor */

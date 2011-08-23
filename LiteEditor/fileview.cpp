@@ -62,7 +62,7 @@ BEGIN_EVENT_TABLE( FileViewTree, wxTreeCtrl )
 	EVT_TREE_BEGIN_DRAG(wxID_ANY, FileViewTree::OnItemBeginDrag )
 	EVT_TREE_END_DRAG  (wxID_ANY, FileViewTree::OnItemEndDrag   )
 	EVT_TREE_ITEM_MENU (wxID_ANY, FileViewTree::OnPopupMenu     )
-	
+
 	EVT_MENU( XRCID( "local_workspace_prefs" ),        FileViewTree::OnLocalPrefs )
 	EVT_MENU( XRCID( "local_workspace_settings" ),     FileViewTree::OnLocalWorkspaceSettings )
 	EVT_MENU( XRCID( "remove_project" ),               FileViewTree::OnRemoveProject )
@@ -93,7 +93,7 @@ BEGIN_EVENT_TABLE( FileViewTree, wxTreeCtrl )
 	EVT_MENU( XRCID( "preprocess_item" ),              FileViewTree::OnPreprocessItem )
 	EVT_MENU( XRCID( "rename_item" ),                  FileViewTree::OnRenameItem )
 	EVT_MENU( XRCID( "rename_virtual_folder" ),        FileViewTree::OnRenameVirtualFolder )
-	
+
 	EVT_UPDATE_UI( XRCID( "remove_project" ),          FileViewTree::OnBuildInProgress)
 	EVT_UPDATE_UI( XRCID( "set_as_active" ),           FileViewTree::OnBuildInProgress)
 	EVT_UPDATE_UI( XRCID( "new_item" ),                FileViewTree::OnBuildInProgress)
@@ -135,7 +135,7 @@ FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint
 	Create( parent, id, pos, size, style );
 	MSWSetNativeTheme(this);
 	SetFont(wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ));
-	
+
 	// Initialise images map
 	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 	wxImageList *images = new wxImageList( 16, 16, true );
@@ -429,7 +429,7 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 			}
 		}
 	}
-	
+
 	PopupMenu( menu );
 
 	//remove the custom makefile hooked menu items
@@ -755,16 +755,16 @@ void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 	const wxString ALL( wxT("All Files (*)|*|")
 	                    wxT( "C/C++ Source Files (*.c;*.cpp;*.cxx;*.cc)|*.c;*.cpp;*.cxx;*.cc|" )
 	                    wxT( "C/C++ Header Files (*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc)|*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc" ) );
-	
-	
+
+
 	wxString vdPath = GetItemPath( item );
 	wxString project, vd;
 	project = vdPath.BeforeFirst( wxT( ':' ) );
 	vd      = vdPath.AfterFirst(wxT(':'));
-	
+
 	ProjectPtr proj = ManagerST::Get()->GetProject( project );
 	start_path = proj->GetBestPathForVD(vd);
-	
+
 	wxArrayString paths;
 	wxFileDialog dlg(this, _("Add Existing Item"), start_path, wxEmptyString, ALL, wxFD_MULTIPLE | wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if ( dlg.ShowModal() == wxID_OK ) {
@@ -796,7 +796,7 @@ void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )
 	if(project) {
 		projCwd = project->GetBestPathForVD(vd);
 	}
-	
+
 	NewItemDlg dlg(clMainFrame::Get(), projCwd);
 	dlg.SetTitle(_("New Item"));
 	if ( dlg.ShowModal() == wxID_OK ) {
@@ -1090,18 +1090,19 @@ void FileViewTree::OnProjectProperties( wxCommandEvent & WXUNUSED( event ) )
 	//open the project properties dialog
 	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
 	//find the project configuration name that matches the workspace selected configuration
-	ProjectSettingsDlg *dlg = new ProjectSettingsDlg( clMainFrame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ),
-	        projectName,
-	        title );
-	dlg->ShowModal();
+	ProjectSettingsDlg dlg( clMainFrame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ),
+	                        projectName,
+	                        title );
+							
+	if(dlg.ShowModal() == wxID_OK) {
+		ManagerST::Get()->UpdateParserPaths(true);
+	}
 
 	//mark this project as modified
 	ProjectPtr proj = ManagerST::Get()->GetProject(projectName);
 	if (proj) {
 		proj->SetModified(true);
 	}
-
-	dlg->Destroy();
 }
 
 void FileViewTree::DoRemoveProject( const wxString &name )
@@ -1599,34 +1600,32 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 		/* always excluded by default */
 		const wxArrayString &dirs = fn.GetDirs();
 		bool cont = true;
-		for(size_t j=0; j<dirs.GetCount() && cont ; j++) 
-		{
+		for(size_t j=0; j<dirs.GetCount() && cont ; j++) {
 			wxString filepath = fn.GetPath();
 			if( dirs.Item(j) == wxT(".svn")           || dirs.Item(j) == wxT(".cvs")           ||
-				dirs.Item(j) == wxT(".arch-ids")      || dirs.Item(j) == wxT("arch-inventory") ||
-				dirs.Item(j) == wxT("autom4te.cache") || dirs.Item(j) == wxT("BitKeeper")      ||
-				dirs.Item(j) == wxT(".bzr")           || dirs.Item(j) == wxT(".bzrignore")     ||
-				dirs.Item(j) == wxT("CVS")            || dirs.Item(j) == wxT(".cvsignore")     ||
-				dirs.Item(j) == wxT("_darcs")         || dirs.Item(j) == wxT(".deps")          ||
-				dirs.Item(j) == wxT("EIFGEN")         || dirs.Item(j) == wxT(".git")           ||
-				dirs.Item(j) == wxT(".hg")            || dirs.Item(j) == wxT("PENDING")        ||
-				dirs.Item(j) == wxT("RCS")            || dirs.Item(j) == wxT("RESYNC")         ||
-				dirs.Item(j) == wxT("SCCS")           || dirs.Item(j) == wxT("{arch}")) 
-			{
+			    dirs.Item(j) == wxT(".arch-ids")      || dirs.Item(j) == wxT("arch-inventory") ||
+			    dirs.Item(j) == wxT("autom4te.cache") || dirs.Item(j) == wxT("BitKeeper")      ||
+			    dirs.Item(j) == wxT(".bzr")           || dirs.Item(j) == wxT(".bzrignore")     ||
+			    dirs.Item(j) == wxT("CVS")            || dirs.Item(j) == wxT(".cvsignore")     ||
+			    dirs.Item(j) == wxT("_darcs")         || dirs.Item(j) == wxT(".deps")          ||
+			    dirs.Item(j) == wxT("EIFGEN")         || dirs.Item(j) == wxT(".git")           ||
+			    dirs.Item(j) == wxT(".hg")            || dirs.Item(j) == wxT("PENDING")        ||
+			    dirs.Item(j) == wxT("RCS")            || dirs.Item(j) == wxT("RESYNC")         ||
+			    dirs.Item(j) == wxT("SCCS")           || dirs.Item(j) == wxT("{arch}")) {
 				cont = false;
 				break;
 			}
 		}
-		
+
 		// skip the directory?
 		if(!cont) continue;
-		
+
 		if ( specMap.empty() ) {
 			files.Add(all_files.Item(i));
-			
+
 		} else if (fn.GetExt().IsEmpty() & extlessFiles) {
 			files.Add(all_files.Item(i));
-			
+
 		} else if (specMap.find(fn.GetExt().MakeLower()) != specMap.end()) {
 			files.Add(all_files.Item(i));
 		}
@@ -1833,7 +1832,7 @@ void FileViewTree::OnReBuild(wxCommandEvent& event)
 		}
 
 		// Custom build supports the 'Rebuild' target
-		if(bldConf && bldConf->IsCustomBuild()){
+		if(bldConf && bldConf->IsCustomBuild()) {
 			QueueCommand buildInfo(projectName, conf, false, QueueCommand::ReBuild);
 			if (bldConf && bldConf->IsCustomBuild()) {
 				buildInfo.SetKind(QueueCommand::CustomBuild);
@@ -1966,16 +1965,9 @@ void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
 	bool retagRequires;
 	WorkspaceSettingsDlg dlg(clMainFrame::Get(), LocalWorkspaceST::Get());
 	if(dlg.ShowModal() == wxID_OK) {
-
 		clMainFrame::Get()->SelectBestEnvSet();
 		// Update the new paths
-		retagRequires = ManagerST::Get()->UpdateParserPaths();
-
-		// send notification to the main frame to perform retag
-		if ( retagRequires ) {
-			wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
-			clMainFrame::Get()->GetEventHandler()->AddPendingEvent( event );
-		}
+		ManagerST::Get()->UpdateParserPaths(true);
 	}
 }
 

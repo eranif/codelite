@@ -241,7 +241,9 @@ void WorkspaceTab::OnProjectSettings(wxCommandEvent& e)
 
 	//find the project configuration name that matches the workspace selected configuration
 	ProjectSettingsDlg dlg( clMainFrame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ), projectName, title );
-	dlg.ShowModal();
+	if(dlg.ShowModal() == wxID_OK) {
+		ManagerST::Get()->UpdateParserPaths(true);
+	}
 
 	//mark this project as modified
 	ProjectPtr proj = ManagerST::Get()->GetProject(projectName);
@@ -440,6 +442,8 @@ void WorkspaceTab::OnConfigurationManagerChoice(wxCommandEvent& e)
 	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if(editor)
 		editor->SetActive();
+	
+	ManagerST::Get()->UpdateParserPaths(true);
 }
 
 void WorkspaceTab::OnConfigurationManager(wxCommandEvent& e)

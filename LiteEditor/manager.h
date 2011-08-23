@@ -226,7 +226,7 @@ public:
 	 * and the workspace specifc ones
 	 * @return true if the paths were modified, false otherwise
 	 */
-	bool UpdateParserPaths();
+	bool UpdateParserPaths(bool notify = false);
 
 protected:
 	void DoSetupWorkspace(const wxString &path);
@@ -434,6 +434,13 @@ public:
 
 	//--------------------------- Project Settings Mgmt -----------------------------
 public:
+	/**
+	 * @brief if a workspace is opened, return the current build configuration
+	 * of the active project
+	 * @return active build configuration or NULL
+	 */
+	BuildConfigPtr GetCurrentBuildConf();
+	
 	/**
 	 * Return a project working directory
 	 * \param project project name

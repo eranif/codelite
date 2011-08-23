@@ -410,6 +410,39 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 		compilationArgs << wxT(" -D") << workspaceMacros.Item(i).Trim().Trim(false) << wxT(" ");
 	}
 
+	///////////////////////////////////////////////////////////////////////
+	// Project setting additional flags 
+	///////////////////////////////////////////////////////////////////////
+	
+	if(dependProjbldConf) {
+		
+		// Include paths
+		wxArrayString projIncls;
+		wxString projSearchPath = dependProjbldConf->GetCcSearchPaths();
+		projIncls = wxStringTokenize(projSearchPath, wxT("\r\n"), wxTOKEN_STRTOK);
+		for(size_t i=0; i<projIncls.GetCount(); i++) {
+			wxString p = projIncls.Item(i).Trim().Trim(false);
+			if(p.IsEmpty())
+				continue;
+			compilationArgs << wxT(" -I\"") << p << wxT("\" ");
+		}
+		
+		// Options
+		wxString strProjCmpOptions = dependProjbldConf->GetClangCmpFlags();
+		
+		wxArrayString projCmpOptions = wxStringTokenize(strProjCmpOptions, wxT("\n\r"), wxTOKEN_STRTOK);
+		for(size_t i=0; i<projCmpOptions.GetCount(); i++) {
+			compilationArgs << DoExpandBacktick(projCmpOptions.Item(i).Trim().Trim(false), projectName) << wxT(" ");
+		}
+		
+		// Macros
+		wxString strProjMacros = dependProjbldConf->GetClangPPFlags();
+		wxArrayString projMacros = wxStringTokenize(strProjMacros, wxT("\n\r"), wxTOKEN_STRTOK);
+		for(size_t i=0; i<projMacros.GetCount(); i++) {
+			compilationArgs << wxT(" -D") << projMacros.Item(i).Trim().Trim(false) << wxT(" ");
+		}
+	}
+	
 	for(size_t i=0; i<args.size(); i++) {
 		compilationArgs << wxT(" ") << args.Item(i);
 	}
@@ -420,6 +453,7 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 	compilationArgs.Replace(wxT("-pipe"),                wxT(""));
 	compilationArgs.Replace(wxT("-fmessage-length=0"),   wxT(""));
 	compilationArgs.Replace(wxT("-fPIC"),                wxT(""));
+	
 	return compilationArgs;
 }
 

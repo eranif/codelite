@@ -3230,14 +3230,21 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 	}
 }
 
-bool Manager::UpdateParserPaths()
+bool Manager::UpdateParserPaths(bool notify)
 {
 	wxArrayString localIncludePaths;
 	wxArrayString localExcludePaths;
-
+	wxArrayString projectIncludePaths;
+	
 	// If we have an opened workspace, get its search paths
 	if(IsWorkspaceOpen()) {
 		LocalWorkspaceST::Get()->GetParserPaths(localIncludePaths, localExcludePaths);
+		
+		BuildConfigPtr buildConf = GetCurrentBuildConf();
+		if(buildConf) {
+			wxString projSearchPaths = buildConf->GetCcSearchPaths();
+			projectIncludePaths = wxStringTokenize(projSearchPaths, wxT("\r\n"), wxTOKEN_STRTOK);
+		}
 	}
 
 	// Update the parser thread with the new paths
@@ -3253,7 +3260,14 @@ bool Manager::UpdateParserPaths()
 			localIncludePaths.Add( globalIncludePath.Item(i) );
 		}
 	}
-
+	
+	// Add the project paths as well
+	for(size_t i=0; i<projectIncludePaths.GetCount(); i++) {
+		if(localIncludePaths.Index(projectIncludePaths.Item(i)) == wxNOT_FOUND) {
+			localIncludePaths.Add( projectIncludePaths.Item(i) );
+		}
+	}
+	
 	for(size_t i=0; i<localExcludePaths.GetCount(); i++) {
 		if(uniExcludePath.Index(localExcludePaths.Item(i)) == wxNOT_FOUND) {
 			uniExcludePath.Add( localExcludePaths.Item(i) );
@@ -3261,6 +3275,11 @@ bool Manager::UpdateParserPaths()
 	}
 
 	ParseThreadST::Get()->SetSearchPaths( localIncludePaths, uniExcludePath );
+	
+	if(notify) {
+		wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
+		clMainFrame::Get()->GetEventHandler()->AddPendingEvent( event );
+	}
 	return true;
 }
 
@@ -3439,4 +3458,14 @@ void Manager::OnInterrestingMacrosFound(wxCommandEvent& e)
 	editor->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("1"));
 	editor->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
 	editor->SetKeyWords(4, macros);
+}
+
+BuildConfigPtr Manager::GetCurrentBuildConf()
+{
+	wxString project, conf;
+	GetActiveProjectAndConf(project, conf);
+	if(project.IsEmpty())
+		return NULL;
+	
+	return WorkspaceST::Get()->GetProjBuildConf(project, conf);
 }

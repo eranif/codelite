@@ -133,7 +133,8 @@ protected:
 	void OnLock               (wxCommandEvent &event);
 	void OnUnLock             (wxCommandEvent &event);
 	void OnRootDirChanged     (wxCommandEvent& event);
-
+	void OnRename             (wxCommandEvent& event);
+	
 	DECLARE_EVENT_TABLE()
 
 	void OnStopUI         (wxUpdateUIEvent &event);

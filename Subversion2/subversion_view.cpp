@@ -58,6 +58,7 @@ BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_MENU(XRCID("svn_log"),                SubversionView::OnLog)
 	EVT_MENU(XRCID("svn_lock"),               SubversionView::OnLock)
 	EVT_MENU(XRCID("svn_unlock"),             SubversionView::OnUnLock)
+	EVT_MENU(XRCID("svn_rename"),             SubversionView::OnRename)
 END_EVENT_TABLE()
 
 SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
@@ -475,6 +476,7 @@ void SubversionView::CreateFileMenu(wxMenu* menu)
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_add"),     wxT("Add"));
 	menu->Append(XRCID("svn_delete"),  wxT("Delete"));
+	menu->Append(XRCID("svn_rename"),  wxT("Rename"));
 	menu->AppendSeparator();
 	menu->Append(XRCID("svn_resolve"), wxT("Resolve"));
 	menu->AppendSeparator();
@@ -1197,4 +1199,18 @@ wxTreeItemId SubversionView::DoFindChild(const wxTreeItemId& parent, const wxStr
 						   7,      // folder icon
 						   7, 
 						   new SvnTreeData(SvnTreeData::SvnNodeTypeFolder, curpath));
+}
+
+void SubversionView::OnRename(wxCommandEvent& event)
+{
+	wxArrayString files;
+	for(size_t i=0; i<m_selectionInfo.m_paths.size(); i++) {
+		wxFileName oldname(m_choiceRootDir->GetStringSelection() + wxFileName::GetPathSeparator() + m_selectionInfo.m_paths.Item(i));
+		wxString newname = wxGetTextFromUser(_("New name:"), _("Svn rename..."), oldname.GetFullName());
+		
+		if(newname.IsEmpty() || newname == oldname.GetFullName())
+			continue;
+
+		m_plugin->DoRename(m_choiceRootDir->GetStringSelection(), oldname.GetFullName(), newname, event);
+	}
 }

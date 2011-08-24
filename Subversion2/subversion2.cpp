@@ -92,6 +92,7 @@ Subversion2::Subversion2(IManager *manager)
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_update"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnUpdate),            NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_add"),                 wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnAdd),               NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_delete"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDelete),            NULL, this);
+	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_rename"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnRename),            NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_revert"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnRevert),            NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_patch"),               wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnPatch),             NULL, this);
 	GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_diff"),                wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDiff),              NULL, this);
@@ -171,7 +172,10 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
 
 	item = new wxMenuItem(menu, XRCID("svn_explorer_delete"), _("Delete"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-
+	
+	item = new wxMenuItem(menu, XRCID("svn_explorer_rename"), _("Rename"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	
 	menu->AppendSeparator();
 
 	item = new wxMenuItem(menu, XRCID("svn_explorer_revert"), _("Revert"), wxEmptyString, wxITEM_NORMAL);
@@ -208,6 +212,7 @@ void Subversion2::UnPlug()
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_update"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnUpdate),            NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_add"),                 wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnAdd),               NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_delete"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDelete),            NULL, this);
+	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_rename"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnRename),            NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_revert"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnRevert),            NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_patch"),               wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnPatch),             NULL, this);
 	GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_diff"),                wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDiff),              NULL, this);
@@ -917,4 +922,32 @@ void Subversion2::OnFileRemoved(wxCommandEvent& event)
 			}
 		}
 	}
+}
+
+void Subversion2::OnRename(wxCommandEvent& event)
+{
+	wxFileName oldname(DoGetFileExplorerItemFullPath());
+	
+	wxString newname = wxGetTextFromUser(_("New name:"), _("Svn rename..."), oldname.GetFullName());
+	if(newname.IsEmpty() || newname == oldname.GetFullName())
+		return;
+	
+	DoRename(DoGetFileExplorerItemPath(), oldname.GetFullName(), newname, event);
+}
+
+void Subversion2::DoRename(const wxString& workingDirectory, const wxString& oldname, const wxString& newname, wxCommandEvent& event)
+{
+	wxString command;
+	wxString loginString;
+	
+	if(LoginIfNeeded(event, workingDirectory, loginString) == false) {
+		return;
+	}
+	
+	if(oldname.IsEmpty() || newname.IsEmpty() || workingDirectory.IsEmpty())
+		return;
+	
+	bool nonInteractive = GetNonInteractiveMode(event);
+	command << GetSvnExeName(nonInteractive) << loginString <<  wxT(" rename --force ") << oldname << wxT(" ") << newname;
+	GetConsole()->Execute(command, workingDirectory, new SvnDefaultCommandHandler(this, event.GetId(), this));
 }

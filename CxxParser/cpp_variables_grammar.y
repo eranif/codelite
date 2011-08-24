@@ -98,7 +98,8 @@ extern void cl_scope_lex_clean();
 %token  LE_STATIC_CAST
 %token  LE_CONST_CAST
 %token  LE_REINTERPRET_CAST
-
+%token  LE_SIZE_T
+%token  LE_TIME_T
 %start   translation_unit
 
 %%
@@ -116,6 +117,8 @@ basic_type_name_inter:    LE_INT          { $$ = $1; }
                 |         LE_BOOL         { $$ = $1; }
 				|         LE_LONG LE_LONG { $$ = $1 + " " + $2; }
 				|         LE_INT LE_LONG  { $$ = $1 + " " + $2; }
+				|         LE_TIME_T       { $$ = $1; }
+				|         LE_SIZE_T       { $$ = $1; }
                 ;
 
 basic_type_name:	LE_UNSIGNED basic_type_name_inter   { $$ = $1 + " " + $2; }

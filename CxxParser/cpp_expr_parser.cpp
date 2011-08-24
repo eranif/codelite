@@ -151,6 +151,8 @@ extern void cl_expr_lex_clean();
 #define LE_STATIC_CAST 346
 #define LE_CONST_CAST 347
 #define LE_REINTERPRET_CAST 348
+#define LE_SIZE_T 349
+#define LE_TIME_T 350
 #define YYERRCODE 256
 short cl_expr_lhs[] = {                                        -1,
     0,    0,    3,    1,    1,    4,    4,    5,    5,    5,
@@ -292,7 +294,7 @@ short cl_expr_check[] = {                                      44,
 #ifndef YYDEBUG
 #define YYDEBUG 1
 #endif
-#define YYMAXTOKEN 348
+#define YYMAXTOKEN 350
 #if YYDEBUG
 char *cl_expr_name[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -318,7 +320,7 @@ char *cl_expr_name[] = {
 "LE_MULTassign","LE_DIVassign","LE_MODassign","LE_PLUSassign","LE_MINUSassign",
 "LE_LSassign","LE_RSassign","LE_ANDassign","LE_ERassign","LE_ORassign",
 "LE_MACRO","LE_DYNAMIC_CAST","LE_STATIC_CAST","LE_CONST_CAST",
-"LE_REINTERPRET_CAST",
+"LE_REINTERPRET_CAST","LE_SIZE_T","LE_TIME_T",
 };
 char *cl_expr_rule[] = {
 "$accept : translation_unit",

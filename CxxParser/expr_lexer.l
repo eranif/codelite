@@ -123,23 +123,23 @@ defined            {PP_KEYWORD_RETURN(LE_OPDEFINED);}
 do                  {PA_KEYWORD_RETURN(LE_DO);}
 double              {PA_KEYWORD_RETURN(LE_DOUBLE);}
 elif                {PP_KEYWORD_RETURN(LE_ELIF);}
-else              {PPPA_KEYWORD_RETURN(LE_ELSE);}
-endif              {PP_KEYWORD_RETURN(LE_ENDIF);}
+else                {PPPA_KEYWORD_RETURN(LE_ELSE);}
+endif               {PP_KEYWORD_RETURN(LE_ENDIF);}
 enum                {PA_KEYWORD_RETURN(LE_ENUM);}
-error              {PP_KEYWORD_RETURN(LE_ERROR);}
+error               {PP_KEYWORD_RETURN(LE_ERROR);}
 extern              {PA_KEYWORD_RETURN(LE_EXTERN);}
 float               {PA_KEYWORD_RETURN(LE_FLOAT);}
 for                 {PA_KEYWORD_RETURN(LE_FOR);}
 goto                {PA_KEYWORD_RETURN(LE_GOTO);}
-if                {PPPA_KEYWORD_RETURN(LE_IF);}
-ifdef              {PP_KEYWORD_RETURN(LE_IFDEF);}
-ifndef             {PP_KEYWORD_RETURN(LE_IFNDEF);}
-include            {PP_KEYWORD_RETURN(LE_INCLUDE); }
+if                  {PPPA_KEYWORD_RETURN(LE_IF);}
+ifdef               {PP_KEYWORD_RETURN(LE_IFDEF);}
+ifndef              {PP_KEYWORD_RETURN(LE_IFNDEF);}
+include             {PP_KEYWORD_RETURN(LE_INCLUDE); }
 int                 {PA_KEYWORD_RETURN(LE_INT);}
-line               {PP_KEYWORD_RETURN(LE_LINE);}
+line                {PP_KEYWORD_RETURN(LE_LINE);}
 long                {PA_KEYWORD_RETURN(LE_LONG);}
 bool                {PA_KEYWORD_RETURN(LE_BOOL);}
-pragma             {PP_KEYWORD_RETURN(LE_PRAGMA);}
+pragma              {PP_KEYWORD_RETURN(LE_PRAGMA);}
 register            {PA_KEYWORD_RETURN(LE_REGISTER);}
 return              {PA_KEYWORD_RETURN(LE_RETURN);}
 short               {PA_KEYWORD_RETURN(LE_SHORT);}
@@ -149,13 +149,14 @@ static              {PA_KEYWORD_RETURN(LE_STATIC);}
 struct              {PA_KEYWORD_RETURN(LE_STRUCT);}
 switch              {PA_KEYWORD_RETURN(LE_SWITCH);}
 typedef             {PA_KEYWORD_RETURN(LE_TYPEDEF);}
-undef              {PP_KEYWORD_RETURN(LE_UNDEF);}
+undef               {PP_KEYWORD_RETURN(LE_UNDEF);}
 union               {PA_KEYWORD_RETURN(LE_UNION);}
 unsigned            {PA_KEYWORD_RETURN(LE_UNSIGNED);}
 void                {PA_KEYWORD_RETURN(LE_VOID);}
 volatile            {PA_KEYWORD_RETURN(LE_VOLATILE);}
 while               {PA_KEYWORD_RETURN(LE_WHILE);}
-
+time_t              {PA_KEYWORD_RETURN(LE_TIME_T);}
+size_t              {PA_KEYWORD_RETURN(LE_SIZE_T);}
 
 class               {CPP_KEYWORD_RETURN(LE_CLASS);}
 namespace           {CPP_KEYWORD_RETURN(LE_NAMESPACE);}

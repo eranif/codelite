@@ -162,9 +162,11 @@ extern void cl_scope_less(int count);
 #define LE_STATIC_CAST 346
 #define LE_CONST_CAST 347
 #define LE_REINTERPRET_CAST 348
-#define LE_DECLSPEC 349
-#define LE_DLLIMPORT 350
-#define LE_DLLIEXPORT 351
+#define LE_SIZE_T 349
+#define LE_TIME_T 350
+#define LE_DECLSPEC 351
+#define LE_DLLIMPORT 352
+#define LE_DLLIEXPORT 353
 #define YYERRCODE 256
 short cl_scope_lhs[] = {                                        -1,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -372,7 +374,7 @@ short cl_scope_check[] = {                                      33,
 #ifndef YYDEBUG
 #define YYDEBUG 1
 #endif
-#define YYMAXTOKEN 351
+#define YYMAXTOKEN 353
 #if YYDEBUG
 char *cl_scope_name[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -398,7 +400,8 @@ char *cl_scope_name[] = {
 "LE_ARROWstar","LE_MULTassign","LE_DIVassign","LE_MODassign","LE_PLUSassign",
 "LE_MINUSassign","LE_LSassign","LE_RSassign","LE_ANDassign","LE_ERassign",
 "LE_ORassign","LE_MACRO","LE_DYNAMIC_CAST","LE_STATIC_CAST","LE_CONST_CAST",
-"LE_REINTERPRET_CAST","LE_DECLSPEC","LE_DLLIMPORT","LE_DLLIEXPORT",
+"LE_REINTERPRET_CAST","LE_SIZE_T","LE_TIME_T","LE_DECLSPEC","LE_DLLIMPORT",
+"LE_DLLIEXPORT",
 };
 char *cl_scope_rule[] = {
 "$accept : translation_unit",

@@ -83,6 +83,8 @@ extern void cl_expr_lex_clean();
 %token  LE_STATIC_CAST
 %token  LE_CONST_CAST
 %token  LE_REINTERPRET_CAST
+%token  LE_SIZE_T
+%token  LE_TIME_T
 
 %start   translation_unit
 

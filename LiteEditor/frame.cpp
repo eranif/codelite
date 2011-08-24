@@ -4363,7 +4363,7 @@ void clMainFrame::SetAUIManagerFlags()
 {
 	// Set the manager flags
 	unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING    |
-							   wxAUI_MGR_TRANSPARENT_DRAG;
+							   wxAUI_MGR_TRANSPARENT_DRAG | wxAUI_MGR_ALLOW_ACTIVE_PANE;
 
 	int dockingStyle = EditorConfigST::Get()->GetOptions()->GetDockingStyle();
 	switch(dockingStyle) {

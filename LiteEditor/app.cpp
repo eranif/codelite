@@ -140,13 +140,10 @@ BEGIN_EVENT_TABLE(clSplashScreen, wxSplashScreen)
 END_EVENT_TABLE()
 
 clSplashScreen::clSplashScreen(const wxBitmap& bmp)
-	: wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 5000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE|wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP|wxFRAME_SHAPED)
+	: wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 5000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE|wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP)
 	, m_bmp(bmp)
 {
 	SetSize(wxSize(m_bmp.GetWidth(), m_bmp.GetHeight()));
-//	SetShape(wxRegion(m_bmp, wxColor(246, 0, 255)));
-	SetShape(wxRegion(m_bmp, *wxWHITE));
-	
 	Show(true);
     SetThemeEnabled(false); 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);

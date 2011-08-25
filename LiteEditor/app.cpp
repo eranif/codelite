@@ -120,12 +120,49 @@ static wxBitmap clDrawSplashBitmap(const wxBitmap& bitmap, const wxString &mainT
 //-----------------------------------------------------
 // Splashscreen
 //-----------------------------------------------------
+
 class clSplashScreen : public wxSplashScreen
 {
+	wxBitmap m_bmp;
+	wxBitmap m_bgBmp;
+	
 public:
-	clSplashScreen(const wxBitmap& bmp) : wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 5000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE| wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP) {
-	}
+	clSplashScreen(const wxBitmap& bmp);
+
+	DECLARE_EVENT_TABLE()
+	void OnPaint(wxPaintEvent &e);
+	void OnEraseBackground(wxEraseEvent &e);
 };
+
+BEGIN_EVENT_TABLE(clSplashScreen, wxSplashScreen)
+	EVT_PAINT(clSplashScreen::OnPaint)
+	EVT_ERASE_BACKGROUND(clSplashScreen::OnEraseBackground)
+END_EVENT_TABLE()
+
+clSplashScreen::clSplashScreen(const wxBitmap& bmp)
+	: wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 5000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE|wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP|wxFRAME_SHAPED)
+	, m_bmp(bmp)
+{
+	SetSize(wxSize(m_bmp.GetWidth(), m_bmp.GetHeight()));
+//	SetShape(wxRegion(m_bmp, wxColor(246, 0, 255)));
+	SetShape(wxRegion(m_bmp, *wxWHITE));
+	
+	Show(true);
+    SetThemeEnabled(false); 
+    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+}
+
+void clSplashScreen::OnEraseBackground(wxEraseEvent& e)
+{
+}
+
+void clSplashScreen::OnPaint(wxPaintEvent& e)
+{
+	wxPaintDC dc(this);
+	dc.DrawBitmap(m_bmp, 0, 0, false);
+}
+
+///////////////////////////////////////////////////////////////////
 
 #if wxVERSION_NUMBER < 2900
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
@@ -287,7 +324,7 @@ bool CodeLiteApp::OnInit()
 	wxImage::AddHandler( new wxXPMHandler );
 	wxImage::AddHandler( new wxGIFHandler );
 	InitXmlResource();
-	 
+
 	wxLog::EnableLogging(false);
 	wxString homeDir(wxEmptyString);
 
@@ -387,7 +424,7 @@ bool CodeLiteApp::OnInit()
 
 	// Update codelite revision and Version
 	EditorConfigST::Get()->Init(SvnRevision, wxT("2.0.2") );
-	
+
 	wxString curdir = wxGetCwd();
 	::wxSetWorkingDirectory(homeDir);
 	// Load all of the XRC files that will be used. You can put everything
@@ -435,13 +472,13 @@ bool CodeLiteApp::OnInit()
 		wxLogMessage(wxT("Failed to load configuration file: ") + wxGetCwd() + wxT("/config/codelite.xml"), wxT("CodeLite"), wxICON_ERROR | wxOK);
 		return false;
 	}
-	
+
 	// Set the log file verbosity
 	long log_verbosity(FileLogger::Error);
 	EditorConfigST::Get()->GetLongValue(wxT("LogVerbosity"), log_verbosity);
 	FileLogger::Get()->SetVerbosity(log_verbosity);
 	CL_SYSTEM(wxT("Starting codelite..."));
-	
+
 	// check for single instance
 	if ( !CheckSingularity(parser, curdir) ) {
 		return false;
@@ -513,18 +550,18 @@ bool CodeLiteApp::OnInit()
 
 	// show splashscreen here
 	bool showSplash;
-	
+
 #if wxDEBUG_LEVEL == 0
 	showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
 #else
 	showSplash = false;
 #endif
-	
+
 	// Don't show the splash screen when opening codelite to view
 	// a file, this is done to reduce the load time
-	if(parser.GetParamCount() > 0) 
+	if(parser.GetParamCount() > 0)
 		showSplash = false;
-		
+
 	m_splash = NULL;
 	if (showSplash) {
 		wxBitmap bitmap;
@@ -574,7 +611,7 @@ bool CodeLiteApp::OnInit()
 	}
 #endif
 
-	// Especially with the OutputView open, CodeLite was consuming 50% of a cpu, mostly in updateui 
+	// Especially with the OutputView open, CodeLite was consuming 50% of a cpu, mostly in updateui
 	// The next line limits the frequency of UpdateUI events to every 100ms
 	wxUpdateUIEvent::SetUpdateInterval(100);
 

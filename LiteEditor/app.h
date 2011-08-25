@@ -75,3 +75,4 @@ private:
 };
 
 #endif // LITEEDITOR_APP_H
+

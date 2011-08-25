@@ -1962,7 +1962,6 @@ void FileViewTree::OnRebuildProjectOnly(wxCommandEvent& event)
 
 void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
 {
-	bool retagRequires;
 	WorkspaceSettingsDlg dlg(clMainFrame::Get(), LocalWorkspaceST::Get());
 	if(dlg.ShowModal() == wxID_OK) {
 		clMainFrame::Get()->SelectBestEnvSet();

@@ -22,8 +22,6 @@ AboutDlgBase::AboutDlgBase( wxWindow* parent, wxWindowID id, const wxString& tit
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
 	m_bitmap = new wxStaticBitmap( m_panel1, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
-	m_bitmap->SetMinSize( wxSize( 432,398 ) );
-	
 	bSizer3->Add( m_bitmap, 1, wxEXPAND, 5 );
 	
 	m_panel1->SetSizer( bSizer3 );

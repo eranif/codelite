@@ -22,32 +22,36 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-
+#include "precompiled_header.h"
 #include <wx/dcmemory.h>
 #include <wx/xrc/xmlres.h>
 #include "aboutdlg.h"
 #include "contributers.h"
 #include "windowattrmanager.h"
+#include "manager.h"
 
 AboutDlg::AboutDlg( wxWindow* parent, const wxString &mainTitle )
 		: AboutDlgBase( parent )
 {
-	m_bmp = wxXmlResource::Get()->LoadBitmap(wxT("About"));
-	m_bitmap->SetBitmap(m_bmp);
+	wxFileName splashscreen(ManagerST::Get()->GetStarupDirectory() +
+							wxFileName::GetPathSeparator() + 
+							wxT("images") + 
+							wxFileName::GetPathSeparator() + 
+							wxT("splashscreen.png"));
 
+	m_bmp.LoadFile(splashscreen.GetFullPath(), wxBITMAP_TYPE_PNG);
+	m_bitmap->SetBitmap(m_bmp);
+	GetSizer()->Fit(this);
+	
 	// set the page content
 	m_htmlWin3->SetPage(wxString::FromUTF8(about_hex));
 	m_buttonOk->SetFocus();
-	GetSizer()->Fit(this);
-
-	WindowAttrManager::Load(this, wxT("AboutDialog"), NULL);
+	CentreOnScreen();
 }
 
 AboutDlg::~AboutDlg()
 {
-	WindowAttrManager::Save(this, wxT("AboutDialog"), NULL);
 }
-
 
 void AboutDlg::SetInfo(const wxString& info)
 {

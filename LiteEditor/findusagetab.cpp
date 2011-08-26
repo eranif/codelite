@@ -102,7 +102,7 @@ void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString&
 		m_matches[lineNumber] = *iter;
 		
 		// Format the message
-		wxString linenum = wxString::Format(wxT(" %5u "), iter->getLineNumber() + 1);
+		wxString linenum = wxString::Format(wxT(" %5u "), (unsigned int)iter->getLineNumber() + 1);
 		wxString scopeName (wxT("<global>"));
 		TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(wxString(iter->getFilename().c_str(), wxConvUTF8), iter->getLineNumber());
 		if(tag) {

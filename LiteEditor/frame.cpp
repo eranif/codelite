@@ -261,7 +261,17 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("show_nav_toolbar"),    clMainFrame::OnShowNavBarUI)
 	EVT_UPDATE_UI(viewAsSubMenuID,              clMainFrame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, clMainFrame::DispatchUpdateUIEvent)
-
+	
+	EVT_MENU(XRCID("show_workspace_tab"), clMainFrame::OnViewShowWorkspaceTab)
+	EVT_MENU(XRCID("show_explorer_tab"),  clMainFrame::OnViewShowExplorerTab)
+	EVT_MENU(XRCID("show_tabs_tab"),      clMainFrame::OnViewShowTabs)
+	EVT_MENU(XRCID("show_tabgroups_tab"), clMainFrame::OnViewShowTabgroups)
+	
+	EVT_UPDATE_UI(XRCID("show_workspace_tab"), clMainFrame::OnViewShowWorkspaceTabUI)
+	EVT_UPDATE_UI(XRCID("show_explorer_tab"),  clMainFrame::OnViewShowExplorerTabUI)
+	EVT_UPDATE_UI(XRCID("show_tabs_tab"),      clMainFrame::OnViewShowTabsUI)
+	EVT_UPDATE_UI(XRCID("show_tabgroups_tab"), clMainFrame::OnViewShowTabgroupsUI)
+	
 	//-------------------------------------------------------
 	// Search menu
 	//-------------------------------------------------------
@@ -4577,4 +4587,71 @@ void clMainFrame::OnPchCacheStarted(wxCommandEvent& e)
 	delete filename;
 	
 	SetStatusMessage(wxString::Format(wxT("Generating PCH for file: %s"), fn.GetFullName().c_str()), 0);
+}
+
+////////////////// View -> Workspace View -> /////////////////////////////////////
+
+void clMainFrame::OnViewShowExplorerTab(wxCommandEvent& e)
+{
+	DoEnableWorkspaceViewFlag(e.IsChecked(), View_Show_Explorer_Tab);
+	GetWorkspacePane()->UpdateTabs();
+}
+
+void clMainFrame::OnViewShowExplorerTabUI(wxUpdateUIEvent& event)
+{
+	event.Check(GetWorkspacePane()->IsTabVisible(View_Show_Explorer_Tab));
+}
+
+void clMainFrame::OnViewShowTabgroups(wxCommandEvent& e)
+{
+	DoEnableWorkspaceViewFlag(e.IsChecked(), View_Show_Tabgroups_Tab);
+	GetWorkspacePane()->UpdateTabs();
+}
+
+void clMainFrame::OnViewShowTabgroupsUI(wxUpdateUIEvent& event)
+{
+	event.Check(GetWorkspacePane()->IsTabVisible(View_Show_Tabgroups_Tab));
+}
+
+void clMainFrame::OnViewShowTabs(wxCommandEvent& e)
+{
+	DoEnableWorkspaceViewFlag(e.IsChecked(), View_Show_Tabs_Tab);
+	GetWorkspacePane()->UpdateTabs();
+}
+
+void clMainFrame::OnViewShowTabsUI(wxUpdateUIEvent& event)
+{
+	event.Check(GetWorkspacePane()->IsTabVisible(View_Show_Tabs_Tab));
+}
+
+void clMainFrame::OnViewShowWorkspaceTab(wxCommandEvent& e)
+{
+	DoEnableWorkspaceViewFlag(e.IsChecked(), View_Show_Workspace_Tab);
+	GetWorkspacePane()->UpdateTabs();
+}
+
+void clMainFrame::OnViewShowWorkspaceTabUI(wxUpdateUIEvent& event)
+{
+	event.Check(GetWorkspacePane()->IsTabVisible(View_Show_Workspace_Tab));
+}
+
+///////////////////// Helper methods /////////////////////////////
+
+void clMainFrame::DoEnableWorkspaceViewFlag(bool enable, int flag)
+{
+	long flags = View_Show_Default;
+	EditorConfigST::Get()->GetLongValue(wxT("view_workspace_view"), flags);
+	if(enable) {
+		flags |= flag;
+	} else {
+		flags &= ~flag;
+	}
+	EditorConfigST::Get()->SaveLongValue(wxT("view_workspace_view"), flags);
+}
+
+bool clMainFrame::IsWorkspaceViewFlagEnabled(int flag)
+{
+	long flags = View_Show_Default;
+	EditorConfigST::Get()->GetLongValue(wxT("view_workspace_view"), flags);
+	return (flags & flag);
 }

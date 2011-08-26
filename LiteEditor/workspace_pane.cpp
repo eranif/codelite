@@ -141,6 +141,7 @@ void WorkspacePane::CreateGUIControls()
 	if (m_book->GetPageCount() > 0) {
 		m_book->SetSelection((size_t)0);
 	}
+	UpdateTabs();
 	m_mgr->Update();
 }
 
@@ -171,3 +172,99 @@ void WorkspacePane::UpdateProgress(int val)
 	m_parsingProgress->Update();
 }
 
+void WorkspacePane::UpdateTabs()
+{
+	long flags = View_Show_Default;
+	EditorConfigST::Get()->GetLongValue(wxT("view_workspace_view"), flags);
+	
+	DoShowTab(flags & View_Show_Workspace_Tab, _("Workspace"));
+	DoShowTab(flags & View_Show_Explorer_Tab,  _("Explorer"));
+	DoShowTab(flags & View_Show_Tabs_Tab,      _("Tabs"));
+	DoShowTab(flags & View_Show_Tabgroups_Tab, _("Tabgroups"));
+}
+
+void WorkspacePane::DoShowTab(bool show, const wxString& title)
+{
+	if(!show) {
+		for(size_t i=0; i<m_book->GetPageCount(); i++) {
+			if(m_book->GetPageText(i) == title) {
+				// we've got a match
+				m_book->RemovePage(i);
+				wxWindow* win = DoGetControlByName(title);
+				if(win) {
+					win->Show(false);
+				}
+				break;
+			}
+		}
+	} else {
+		for(size_t i=0; i<m_book->GetPageCount(); i++) {
+			if(m_book->GetPageText(i) == title) {
+				// requested to add a page which already exists
+				return;
+			}
+		}
+		
+		DetachedPanesInfo dpi;
+		EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
+		wxArrayString detachedPanes;
+		detachedPanes = dpi.GetPanes();
+		
+		if(IS_DETACHED(title)) return;
+		
+		wxWindow* win = DoGetControlByName(title);
+		if(win) {
+			m_book->InsertPage(0, win, title, true);
+		}
+	}
+}
+
+wxWindow* WorkspacePane::DoGetControlByName(const wxString& title)
+{
+	if(title == _("Explorer"))
+		return m_explorer;
+	else if(title == _("Workspace"))
+		return m_workspaceTab;
+	else if(title == _("Tabs"))
+		return m_openWindowsPane;
+	else if(title == _("Tabgroups"))
+		return m_TabgroupsPane;
+	return NULL;
+}
+
+bool WorkspacePane::IsTabVisible(int flag)
+{
+	wxWindow *win (NULL);
+	wxString  title;
+	
+	switch(flag) {
+	case View_Show_Workspace_Tab:
+		title = _("Workspace");
+		win = DoGetControlByName(_("Workspace"));
+		break;
+	case View_Show_Explorer_Tab:
+		title = _("Explorer");
+		win = DoGetControlByName(_("Explorer"));
+		break;
+	case View_Show_Tabs_Tab:
+		title = _("Tabs");
+		win = DoGetControlByName(_("Tabs"));
+		break;
+	case View_Show_Tabgroups_Tab:
+		title = _("Tabgroups");
+		win = DoGetControlByName(_("Tabgroups"));
+		break;
+	}
+	
+	if(!win || title.IsEmpty())
+		return false;
+		
+	// if the control exists in the notebook, return true
+	for(size_t i=0; i<m_book->GetPageCount(); i++) {
+		if(m_book->GetPageText(i) == title) {
+			return true;
+		}
+	}
+	
+	return win && win->IsShown();
+}

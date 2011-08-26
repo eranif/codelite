@@ -317,7 +317,9 @@ private:
 	void CreateWelcomePage();
 	void ReloadExternallyModifiedProjectFiles();
 	void DoSuggestRestart();
-
+	void DoEnableWorkspaceViewFlag(bool enable, int flag);
+	bool IsWorkspaceViewFlagEnabled(int flag);
+	
 protected:
 	//----------------------------------------------------
 	// event handlers
@@ -348,6 +350,17 @@ protected:
 	void OnIncrementalSearch(wxCommandEvent &event);
 	void OnViewToolbar(wxCommandEvent &event);
 	void OnViewToolbarUI(wxUpdateUIEvent &event);
+	
+	// View -> Workspace View -> ...
+	void OnViewShowWorkspaceTab(wxCommandEvent &e);
+	void OnViewShowWorkspaceTabUI(wxUpdateUIEvent &event);
+	void OnViewShowExplorerTab(wxCommandEvent &e);
+	void OnViewShowExplorerTabUI(wxUpdateUIEvent &event);
+	void OnViewShowTabs(wxCommandEvent &e);
+	void OnViewShowTabsUI(wxUpdateUIEvent &event);
+	void OnViewShowTabgroups(wxCommandEvent &e);
+	void OnViewShowTabgroupsUI(wxUpdateUIEvent &event);
+	
 	void OnViewOptions(wxCommandEvent &event);
 	void OnTogglePanes(wxCommandEvent &event);
 	void OnProjectNewWorkspace(wxCommandEvent &event);

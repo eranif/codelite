@@ -52,14 +52,18 @@ private:
 
 	void CreateGUIControls();
     void Connect();
-
+	void DoShowTab(bool show, const wxString &title);
+	wxWindow* DoGetControlByName(const wxString &title);
+	
 public:
 	WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr);
 	~WorkspacePane();
 
-	void           UpdateProgress(int val);
-	void           ClearProgress ();
-
+	void UpdateProgress(int val);
+	void ClearProgress ();
+	void UpdateTabs();
+	bool IsTabVisible(int flag);
+	
 	// Getters
 	const wxString &GetCaption      () const    { return m_caption;      }
 	Notebook       *GetNotebook     ()          { return m_book;         }

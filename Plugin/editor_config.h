@@ -36,6 +36,14 @@
 #include "plugin.h"
 #include "codelite_exports.h"
 
+enum {
+	View_Show_Workspace_Tab = 0x00000001,
+	View_Show_Explorer_Tab  = 0x00000002,
+	View_Show_Tabs_Tab      = 0x00000004,
+	View_Show_Tabgroups_Tab = 0x00000008,
+	View_Show_Default       = View_Show_Workspace_Tab | View_Show_Explorer_Tab | View_Show_Tabs_Tab | View_Show_Tabgroups_Tab
+};
+
 class WXDLLIMPEXP_SDK SimpleLongValue : public SerializedObject
 {
 	long m_value;

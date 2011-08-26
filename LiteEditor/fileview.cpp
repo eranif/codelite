@@ -28,6 +28,7 @@
 #include "evnvarlist.h"
 #include "pluginmanager.h"
 #include "workspacesettingsdlg.h"
+#include "progress_dialog.h"
 #include "importfilesdialog.h"
 #include "bitmap_loader.h"
 #include "fileview.h"
@@ -1647,11 +1648,11 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	proj->BeginTranscation();
 	{
 		// Create a progress dialog
-		wxProgressDialog *prgDlg = new wxProgressDialog (_("Importing files ..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)files.GetCount(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE);
-		prgDlg->GetSizer()->Fit(prgDlg);
-		prgDlg->Layout();
-		prgDlg->Centre();
-
+		clProgressDlg *prgDlg = new clProgressDlg(NULL,
+												  _("Importing files ..."), 
+												  wxT(""), 
+												  (int)files.GetCount());
+		
 		// get list of files
 		std::vector<wxFileName> vExistingFiles;
 		wxArrayString existingFiles;

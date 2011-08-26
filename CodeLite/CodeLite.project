@@ -165,6 +165,9 @@
     <File Name="cppwordscanner.cpp"/>
     <File Name="cppwordscanner.h"/>
     <File Name="stringaccessor.cpp"/>
+    <File Name="clprogressdlgbase.cpp"/>
+    <File Name="clprogressdlgbase.fbp"/>
+    <File Name="clprogressdlgbase.h"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29"/>
   <Dependencies Name="Win_wxWidgets_29"/>

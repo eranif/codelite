@@ -103,7 +103,7 @@ void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString&
 		// Format the message
 		wxString linenum = wxString::Format(wxT(" %5u "), iter->getLineNumber() + 1);
 		wxString scopeName (wxT("<global>"));
-		TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(iter->getFilename(), iter->getLineNumber());
+		TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(wxString(iter->getFilename().c_str(), wxConvUTF8), iter->getLineNumber());
 		if(tag) {
 			scopeName = tag->GetPath();
 		}
@@ -122,8 +122,8 @@ void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString&
 
 void FindUsageTab::DoOpenResult(const CppToken& token)
 {
-	if (token.getFilename().IsEmpty() == false) {
-		LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(token.getFilename(), wxEmptyString, token.getLineNumber()-1);
+	if (!token.getFilename().empty()) {
+		LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(wxString(token.getFilename().c_str(), wxConvUTF8), wxEmptyString, token.getLineNumber()-1);
 		if(editor) {
 			editor->SetSelection(token.getOffset(), token.getOffset() + token.getName().length());
 		}

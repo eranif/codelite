@@ -98,22 +98,6 @@ struct tagParseResult {
 	wxString fileName;
 };
 
-//------------------------------------------------------------------------------
-// Progress dialog
-//------------------------------------------------------------------------------
-class WXDLLIMPEXP_CL MyProgress : public wxProgressDialog
-{
-public:
-	MyProgress(const wxString &title, size_t count) :
-		wxProgressDialog(title, wxT(""), (int) count, NULL, wxPD_APP_MODAL|wxPD_AUTO_HIDE|wxPD_CAN_ABORT|wxPD_SMOOTH ) {
-		SetSize(500, -1);
-		Centre();
-	}
-
-	virtual ~MyProgress()
-	{}
-};
-
 //////////////////////////////////////
 // Adapter class to TagsManager
 //////////////////////////////////////
@@ -1275,67 +1259,6 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, bool quickRet
 		req->_workspaceFiles.push_back( strFiles[i].mb_str(wxConvUTF8).data() );
 	}
 	ParseThreadST::Get()->Add ( req );
-}
-
-bool TagsManager::DoBuildDatabase(const wxArrayString &files, ITagsStorage &db, const wxString *rootPath)
-{
-	wxString tags;
-
-	int maxVal = (int)files.GetCount();
-	if (files.IsEmpty()) {
-		return false;
-	}
-
-	// Create a progress dialog
-	MyProgress prgDlg(_("Building tags database ..."), files.GetCount());
-	prgDlg.Update(0, _("Parsing..."));
-
-	// We commit every 10 files
-	db.Begin();
-	for (int i=0; i<maxVal; i++) {
-		wxString fileTags;
-		wxFileName curFile(files.Item(i));
-
-		// if the cached file is being re-tagged, clear the cache
-		if (IsFileCached(curFile.GetFullPath())) {
-			ClearCachedFile(curFile.GetFullPath());
-		}
-
-		// update the progress bar
-		if (!prgDlg.Update(i, wxString::Format(_("Parsing : %s"), curFile.GetFullName().c_str()))) {
-			prgDlg.Destroy();
-			return false;
-		}
-
-		tags.Clear();
-		tagParseResult parsing_result;
-
-		parsing_result.fileName = curFile.GetFullName();
-		parsing_result.tree = ParseSourceFile(curFile);
-
-		db.Store(parsing_result.tree, wxFileName(), false);
-		if(db.InsertFileEntry(curFile.GetFullPath(), (int)time(NULL)) == TagExist) {
-			db.UpdateFileEntry(curFile.GetFullPath(), (int)time(NULL));
-		}
-
-		if ( i % 50 == 0 ) {
-			// update the progress bar
-			if (!prgDlg.Update(i, _("Committing..."))) {
-				prgDlg.Destroy();
-				return false;
-			}
-
-			// Commit what we got so far
-			db.Commit();
-
-			// Start a new transaction
-			db.Begin();
-		}
-	}
-
-	// Commit whats left
-	db.Commit();
-	return true;
 }
 
 void TagsManager::FindByNameAndScope(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags)
@@ -2662,13 +2585,13 @@ CppToken TagsManager::FindLocalVariable(const wxFileName& fileName, int pos, int
 		}
 
 		// Construct a scanner based on the modified text
-		scanner = CppWordScanner(fileName.GetFullPath(), modifiedText, 0);
+		scanner = CppWordScanner(fileName.GetFullPath().mb_str().data(), modifiedText.mb_str().data(), 0);
 		states = scanner.states();
 
 	} else {
 		// get the local by scanning from the current function's
 		tag = FunctionFromFileLine(fileName, lineNumber + 1);
-		scanner = CppWordScanner(fileName.GetFullPath());
+		scanner = CppWordScanner(fileName.GetFullPath().mb_str().data());
 		states = scanner.states();
 	}
 
@@ -2689,7 +2612,7 @@ CppToken TagsManager::FindLocalVariable(const wxFileName& fileName, int pos, int
 	VariableList vars;
 	std::map<std::string, std::string> ignoreMap;
 
-	get_variables(states->text.Mid(from, to-from).To8BitData().data(), vars, ignoreMap, false);
+	get_variables(states->text.substr(from, to-from), vars, ignoreMap, false);
 	VariableList::iterator iter = vars.begin();
 	bool isLocalVar(false);
 	for(; iter != vars.end(); iter++) {
@@ -2705,10 +2628,10 @@ CppToken TagsManager::FindLocalVariable(const wxFileName& fileName, int pos, int
 
 	// search for matches in the given range
 	CppTokensMap l;
-	scanner.Match(word, l, from, to);
+	scanner.Match(word.mb_str().data(), l, from, to);
 
 	std::list<CppToken> tokens;
-	l.findTokens(word, tokens);
+	l.findTokens(word.mb_str().data(), tokens);
 	if (tokens.empty())
 		return CppToken();
 

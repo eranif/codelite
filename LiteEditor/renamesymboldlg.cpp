@@ -118,9 +118,9 @@ void RenameSymbol::DoSelectFile(const CppToken& token)
 
 	// Recreate the editor only if needed
 	if(m_preview->GetFileName().GetFullPath() != token.getFilename())
-		m_preview->Create(wxEmptyString, token.getFilename());
+		m_preview->Create(wxEmptyString, wxString(token.getFilename().c_str(), wxConvUTF8));
 
 	m_preview->SetCaretAt(token.getOffset());
-	m_preview->SetSelection(token.getOffset(), token.getOffset()+token.getName().Len());
+	m_preview->SetSelection(token.getOffset(), token.getOffset()+token.getName().length());
 	m_preview->SetReadOnly(true);
 }

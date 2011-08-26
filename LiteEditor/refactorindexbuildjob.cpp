@@ -28,6 +28,7 @@
 #include "cppwordscanner.h"
 #include <wx/filename.h>
 #include "refactorindexbuildjob.h"
+#include "progress_dialog.h"
 #include "workspace.h"
 
 //#define POST_NEW_STATUS(msg, value, act)
@@ -49,24 +50,16 @@ RefactorIndexBuildJob::~RefactorIndexBuildJob()
 
 void RefactorIndexBuildJob::Parse(const wxString &word, CppTokensMap &l)
 {
-	wxProgressDialog* prgDlg = NULL;
+	clProgressDlg* prgDlg = NULL;
 	// Create a progress dialog
-	prgDlg = new wxProgressDialog (_("Gathering required information..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)m_files.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT);
-	prgDlg->GetSizer()->Fit(prgDlg);
-	prgDlg->Layout();
-	prgDlg->Centre();
-
+	prgDlg = new clProgressDlg (NULL, _("Gathering required information..."), wxT(""), (int)m_files.size());
 	prgDlg->Update(0, _("Gathering required information..."));
 
-//	wxStopWatch watch;
-//	watch.Start();
-//	wxPrintf(wxT("Scanned started...\n"));
 	size_t i=0;
-
 	for ( ; i<m_files.size(); i++) {
 
 		wxFileName fn = m_files.at(i);
-		CppWordScanner scanner(fn.GetFullPath());
+		CppWordScanner scanner(fn.GetFullPath().mb_str().data());
 
 		wxString msg;
 		msg << _("Parsing: ") << fn.GetFullName();
@@ -77,12 +70,8 @@ void RefactorIndexBuildJob::Parse(const wxString &word, CppTokensMap &l)
 			return;
 		}
 
-		scanner.Match(word, l);
+		scanner.Match(word.mb_str().data(), l);
 	}
-
-//	long elapsed = watch.Time();
-//	wxPrintf(wxT("Parsing completed.\n"));
-//	wxPrintf(wxT("Time to collect symbols: %d milliseconds. Total files scanned: %d\n"), elapsed, m_files.size());
 	prgDlg->Destroy();
 }
 

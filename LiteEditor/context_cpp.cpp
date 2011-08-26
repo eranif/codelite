@@ -2143,10 +2143,10 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, const std::list<CppToken
 		}
 
 		if (editor) {
-			editor->SetSelection ( cppToken.getOffset(), cppToken.getOffset()+cppToken.getName().Len() );
+			editor->SetSelection ( cppToken.getOffset(), cppToken.getOffset()+cppToken.getName().length() );
 			if ( editor->GetSelectionStart() != editor->GetSelectionEnd() ) {
 				editor->ReplaceSelection ( word );
-				off += word.Len() - cppToken.getName().Len();
+				off += word.Len() - cppToken.getName().length();
 				success = true;	// Flag that there's been at least one replacement
 			}
 		}

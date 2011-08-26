@@ -921,13 +921,7 @@ void GitPlugin::UpdateFileTree()
 	wxArrayString gitfiles = wxStringTokenize(m_commandOutput, wxT("\n"));
 	wxArrayString files;
 
-	wxProgressDialog *prgDlg = new wxProgressDialog (wxT("Importing files ..."),
-	        wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"),
-	        (int)gitfiles.GetCount()+2, NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE);
-	prgDlg->GetSizer()->Fit(prgDlg);
-	prgDlg->Layout();
-	prgDlg->Centre();
-
+	clProgressDlg *prgDlg = new clProgressDlg (NULL, wxT("Importing files ..."), wxT(""), (int)gitfiles.GetCount()+2);
 	wxString filespec = wxT("*.cpp;*.hpp;*.c;*.h;*.ui;*.py;*.txt");
 	bool extlessFiles(true);
 	wxStringTokenizer tok(filespec, wxT(";"));
@@ -1344,20 +1338,17 @@ void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, boo
 void GitPlugin::OnProgressTimer(wxTimerEvent& Event)
 {
 	if(m_progressDialog->IsShown())
-		m_progressDialog->Pulse();
+		m_progressDialog->Pulse(wxT(""));
 }
 
 /*******************************************************************************/
 void GitPlugin::ShowProgress(const wxString& message, bool pulse)
 {
 	if(!m_progressDialog) {
-		m_progressDialog = new wxProgressDialog(wxT("Git progress"),
-		                                        wxT("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n"),
-		                                        101);
+		m_progressDialog = new clProgressDlg(NULL, wxT("Git progress"), wxT("\n\n"), 101);
 		m_progressDialog->SetIcon(wxICON(icon_git));
 	}
 	m_progressDialog->CenterOnScreen();
-	m_progressDialog->Show();
 	if(pulse) {
 		m_progressDialog->Pulse(message);
 		m_progressTimer.Start(50);
@@ -1366,6 +1357,7 @@ void GitPlugin::ShowProgress(const wxString& message, bool pulse)
 		m_progressDialog->Update(0, message);
 	}
 }
+
 /*******************************************************************************/
 void GitPlugin::HideProgress()
 {

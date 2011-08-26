@@ -41,7 +41,7 @@ struct ByteState {
 class WXDLLIMPEXP_CL TextStates
 {
 public:
-	wxString               text;
+	std::string               text;
 	std::vector<ByteState> states;
 	std::vector<int>       lineToPos;
 	int                    pos;
@@ -65,7 +65,7 @@ public:
 	 * if the vector size and the text size are equal
 	 */
 	bool   IsOk() const {
-		return states.size() == text.Len();
+		return states.size() == text.length();
 	}
 
 	void SetState(size_t where, int state, int depth, int lineNo);
@@ -88,8 +88,8 @@ typedef SmartPtr<TextStates> TextStatesPtr;
 class WXDLLIMPEXP_CL CppWordScanner
 {
 	wxSortedArrayString m_arr;
-	wxString            m_filename;
-	wxString            m_text;
+	std::string            m_filename;
+	std::string            m_text;
 	int                 m_offset;
 
 public:
@@ -103,21 +103,21 @@ public:
 	};
 
 protected:
-	void doFind(const wxString &filter, CppTokensMap &l, int from, int to);
+	void doFind(const std::string &filter, CppTokensMap &l, int from, int to);
 	void doInit();
 
 public:
 	CppWordScanner() {}
-	CppWordScanner(const wxString &file_name);
-	CppWordScanner(const wxString &file_name, const wxString &text, int offset);
+	CppWordScanner(const std::string &file_name);
+	CppWordScanner(const std::string &file_name, const std::string &text, int offset);
 	~CppWordScanner();
 
 	void FindAll(CppTokensMap &l);
-	void Match(const wxString &word, CppTokensMap &l);
+	void Match(const std::string &word, CppTokensMap &l);
 	/**
-	 * @brief same as Match(const wxString &word, CppTokensMap &l) however, search for matches only in a given range
+	 * @brief same as Match(const std::string &word, CppTokensMap &l) however, search for matches only in a given range
 	 */
-	void Match(const wxString &word, CppTokensMap &l, int from, int to);
+	void Match(const std::string &word, CppTokensMap &l, int from, int to);
 	// we use std::vector<char> and NOT std::vector<char> since the specialization of vector<bool>
 	// is broken
 	TextStatesPtr states();

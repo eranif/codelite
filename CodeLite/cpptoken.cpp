@@ -35,9 +35,9 @@ CppToken::~CppToken()
 void CppToken::reset()
 {
 	name.clear();
-	offset = wxString::npos;
+	offset = std::string::npos;
 	m_id = wxNOT_FOUND;
-	lineNumber = wxString::npos;
+	lineNumber = std::string::npos;
 	filename.clear();
 }
 
@@ -48,7 +48,7 @@ void CppToken::append(const char ch)
 
 void CppToken::print()
 {
-	wxPrintf(wxT("%s | %ld\n"), name.GetData(), offset);
+	wxPrintf(wxT("%s | %ld\n"), name.c_str(), offset);
 }
 
 //-----------------------------------------------------------------
@@ -66,7 +66,7 @@ CppTokensMap::~CppTokensMap()
 void CppTokensMap::addToken(const CppToken& token)
 {
 	// try to locate an entry with this name
-	std::map<wxString, std::list<CppToken>* >::iterator iter = m_tokens.find(token.getName());
+	std::map<std::string, std::list<CppToken>* >::iterator iter = m_tokens.find(token.getName());
 	std::list<CppToken> *tokensList(NULL);
 	if (iter != m_tokens.end()) {
 		tokensList = iter->second;
@@ -78,15 +78,15 @@ void CppTokensMap::addToken(const CppToken& token)
 	tokensList->push_back( token );
 }
 
-bool CppTokensMap::contains(const wxString& name)
+bool CppTokensMap::contains(const std::string& name)
 {
-	std::map<wxString, std::list<CppToken>* >::iterator iter = m_tokens.find(name);
+	std::map<std::string, std::list<CppToken>* >::iterator iter = m_tokens.find(name);
 	return iter != m_tokens.end();
 }
 
-void CppTokensMap::findTokens(const wxString& name, std::list<CppToken>& tokens)
+void CppTokensMap::findTokens(const std::string& name, std::list<CppToken>& tokens)
 {
-	std::map<wxString, std::list<CppToken>* >::iterator iter = m_tokens.find(name);
+	std::map<std::string, std::list<CppToken>* >::iterator iter = m_tokens.find(name);
 //	std::list<CppToken> *tokensList(NULL);
 	if (iter != m_tokens.end()) {
 		tokens = *(iter->second);
@@ -94,7 +94,7 @@ void CppTokensMap::findTokens(const wxString& name, std::list<CppToken>& tokens)
 }
 void CppTokensMap::clear()
 {
-	std::map<wxString, std::list<CppToken>* >::iterator iter = m_tokens.begin();
+	std::map<std::string, std::list<CppToken>* >::iterator iter = m_tokens.begin();
 	for(; iter != m_tokens.end(); iter++) {
 		delete iter->second;
 	}

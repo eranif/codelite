@@ -25,7 +25,7 @@
 #ifndef __cpptoken__
 #define __cpptoken__
 
-#include <wx/string.h>
+#include <string>
 #include <list>
 #include <map>
 #include "codelite_exports.h"
@@ -33,9 +33,9 @@
 class WXDLLIMPEXP_CL CppToken
 {
 	int      m_id;
-	wxString name;    // the name of the token
+	std::string name;    // the name of the token
 	size_t   offset;  // file offset
-	wxString filename;
+	std::string filename;
 	size_t   lineNumber;
 	
 public:
@@ -45,7 +45,7 @@ public:
 	void reset();
 	void append(const char ch);
 
-	void setName(const wxString& name) {
+	void setName(const std::string& name) {
 		this->name = name;
 	}
 
@@ -53,18 +53,18 @@ public:
 		this->offset = offset;
 	}
 
-	const wxString& getName() const {
+	const std::string& getName() const {
 		return name;
 	}
 	const size_t& getOffset() const {
 		return offset;
 	}
 
-	void setFilename(const wxString& filename) {
+	void setFilename(const std::string& filename) {
 		this->filename = filename;
 	}
 
-	const wxString& getFilename() const {
+	const std::string& getFilename() const {
 		return filename;
 	}
 
@@ -94,7 +94,7 @@ public:
 
 class WXDLLIMPEXP_CL CppTokensMap
 {
-	std::map<wxString, std::list<CppToken>* > m_tokens;
+	std::map<std::string, std::list<CppToken>* > m_tokens;
 
 public:
 	CppTokensMap();
@@ -104,13 +104,13 @@ public:
 	 * @brief return true if any token with given name exists in the map
 	 * @param name token's name to search
 	 */
-	bool contains(const wxString &name);
+	bool contains(const std::string &name);
 	/**
 	 * @brief return list of tokens with given name
 	 * @param name token name
 	 * @param tokens [output]
 	 */
-	void findTokens(const wxString &name, std::list<CppToken> &tokens);
+	void findTokens(const std::string &name, std::list<CppToken> &tokens);
 	/**
 	 * @brief add token to the map. if token with same name already exists, it will be appended so multiple tokens with same name is allowed
 	 * @param token token to add

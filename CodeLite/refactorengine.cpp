@@ -5,6 +5,7 @@
 #include "fileextmanager.h"
 #include <wx/progdlg.h>
 #include <wx/sizer.h>
+#include "progress_dialog.h"
 
 RefactoringEngine::RefactoringEngine()
 {
@@ -38,7 +39,7 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
 	Clear();
 
 	// Load the file and get a state map + the text from the scanner
-	CppWordScanner scanner(fn.GetFullPath());
+	CppWordScanner scanner(fn.GetFullPath().mb_str().data());
 
 	// get the current file states
 	TextStatesPtr states = scanner.states();
@@ -65,10 +66,10 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
 
 	// search for matches in the given range
 	CppTokensMap l;
-	scanner.Match(symname, l, from, to);
+	scanner.Match(symname.mb_str().data(), l, from, to);
 
 	std::list<CppToken> tokens;
-	l.findTokens(symname, tokens);
+	l.findTokens(symname.mb_str().data(), tokens);
 	if (tokens.empty())
 		return;
 
@@ -92,12 +93,12 @@ bool RefactoringEngine::DoResolveWord(TextStatesPtr states, const wxFileName& fn
 	wxString expr = GetExpression(pos, states);
 
 	// sanity
-	if(states->text.Len() < (size_t)pos + 1)
+	if(states->text.length() < (size_t)pos + 1)
 		return false;
 		
 	// get the scope
 	// Optimize the text for large files
-	wxString text = states->text.Left(pos + 1);
+	wxString text(states->text.substr(0, pos + 1).c_str(), wxConvUTF8);
 
 	// we simply collect declarations & implementations
 
@@ -285,20 +286,11 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
 	return expression;
 }
 
-wxProgressDialog* RefactoringEngine::CreateProgressDialog(const wxString& title, int maxValue)
+clProgressDlg* RefactoringEngine::CreateProgressDialog(const wxString& title, int maxValue)
 {
-	wxProgressDialog* prgDlg = NULL;
+	clProgressDlg* prgDlg = NULL;
 	// Create a progress dialog
-	prgDlg = new wxProgressDialog (title,
-								   wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"),
-								   maxValue,
-								   NULL,
-								   wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT);
-	prgDlg->GetSizer()->Fit(prgDlg);
-	prgDlg->Layout();
-	prgDlg->Centre();
-
-	prgDlg->Update(0, title);
+	prgDlg = new clProgressDlg (NULL, title, wxT(""), maxValue);
 	return prgDlg;
 }
 
@@ -316,7 +308,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 	CppTokensMap l;
 
 	// Load the file and get a state map + the text from the scanner
-	CppWordScanner scanner(fn.GetFullPath());
+	CppWordScanner scanner(fn.GetFullPath().mb_str().data());
 
 	// get the current file states
 	TextStatesPtr states = scanner.states();
@@ -328,8 +320,8 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 	if(!DoResolveWord(states, fn, pos + symname.Len(), line, symname, &rs))
 		return;
 
-	wxProgressDialog* prgDlg = CreateProgressDialog(_("Stage 1/2: Gathering required information..."), (int)files.size());
-
+	clProgressDlg* prgDlg = CreateProgressDialog(_("Stage 1/2: Gathering required information..."), files.size());
+	
 	// Search the provided input files for the symbol to rename and prepare
 	// a CppTokensMap
 	for (size_t i=0; i<files.size(); i++) {
@@ -338,7 +330,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 		wxString msg;
 		msg << _("Parsing: ") << curfile.GetFullName();
 		// update the progress bar
-		if (!prgDlg->Update(i, msg)){
+		if (!prgDlg->Pulse(msg)){
 			prgDlg->Destroy();
 			Clear();
 			return;
@@ -350,8 +342,8 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 		case FileExtManager::TypeSourceC:
 		case FileExtManager::TypeSourceCpp:
 			{
-				CppWordScanner tmpScanner(curfile.GetFullPath());
-				tmpScanner.Match(symname, l);
+				CppWordScanner tmpScanner(curfile.GetFullPath().mb_str().data());
+				tmpScanner.Match(symname.mb_str().data(), l);
 			}
 			break;
 		default:
@@ -365,7 +357,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 
 	// incase no tokens were found (possibly cause of user pressing cancel
 	// abort this operation
-	l.findTokens(symname, tokens);
+	l.findTokens(symname.mb_str().data(), tokens);
 	if (tokens.empty())
 		return;
 
@@ -379,19 +371,20 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 	TextStatesPtr statesPtr(NULL);
 	wxString      statesPtrFileName;
 	prgDlg = CreateProgressDialog(_("Stage 2/2: Parsing matches..."), (int) tokens.size());
+	
 	for (; iter != tokens.end(); iter++) {
 
 		// TODO :: send an event here to report our progress
 		wxFileName f(iter->getFilename());
 		wxString   msg;
 		msg << _("Parsing expression ") << counter << wxT("/") << tokens.size() << _(" in file: ") << f.GetFullName();
-		if ( !prgDlg->Update(counter, msg) ) {
+		if ( !prgDlg->Pulse(msg) ) {
 			// user clicked 'Cancel'
 			Clear();
 			prgDlg->Destroy();
 			return;
 		}
-
+		
 		counter++;
 		// reset the result
 		target.Reset();

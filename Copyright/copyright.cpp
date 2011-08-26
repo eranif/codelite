@@ -30,6 +30,7 @@
 #include "workspace.h"
 #include "copyrights_proj_sel_dlg.h"
 #include <wx/app.h>
+#include "progress_dialog.h"
 #include "copyrights_options_dlg.h"
 #include "cppwordscanner.h"
 #include "globals.h"
@@ -188,7 +189,7 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
 	}
 
 	// verify that the file consist only with comment code
-	CppWordScanner scanner( data.GetTemplateFilename() );
+	CppWordScanner scanner( data.GetTemplateFilename().mb_str().data() );
 
 	CppTokensMap l;
 	scanner.FindAll( l );
@@ -344,12 +345,9 @@ void Copyright::MassUpdate(const std::vector<wxFileName> &filtered_files, const 
 		return;
 	}
 
-	wxProgressDialog* prgDlg = NULL;
-	prgDlg = new wxProgressDialog (_("Processing file ..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)filtered_files.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT );
-	prgDlg->GetSizer()->Fit(prgDlg);
-	prgDlg->Layout();
-	prgDlg->Centre();
-
+	clProgressDlg* prgDlg = NULL;
+	prgDlg = new clProgressDlg (NULL, _("Processing file ..."), wxT(""), (int)filtered_files.size());
+	
 	CopyrightsConfigData data;
 	m_mgr->GetConfigTool()->ReadObject(wxT("CopyrightsConfig"), &data);
 
@@ -407,7 +405,7 @@ bool Copyright::Validate(wxString& content)
 	}
 
 	// verify that the file consist only with comment code
-	CppWordScanner scanner( data.GetTemplateFilename() );
+	CppWordScanner scanner( data.GetTemplateFilename().mb_str().data() );
 
 	CppTokensMap l;
 	scanner.FindAll( l );

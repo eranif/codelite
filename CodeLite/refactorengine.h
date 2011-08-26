@@ -35,7 +35,8 @@
 #include "codelite_exports.h"
 
 typedef std::vector<wxFileName> wxFileList;
-class wxProgressDialog;
+class clProgressDlg;
+
 //----------------------------------------------------------------------------------
 
 struct RefactorSource {
@@ -63,7 +64,7 @@ class WXDLLIMPEXP_CL RefactoringEngine
 public:
 	static RefactoringEngine* Instance();
 protected:
-	wxProgressDialog *CreateProgressDialog(const wxString &title, int maxValue);
+	clProgressDlg *CreateProgressDialog(const wxString &title, int maxValue);
 	void DoFindReferences(const wxString &symname, const wxFileName& fn, int line, int pos, const wxFileList& files, bool onlyDefiniteMatches);
 	
 private:

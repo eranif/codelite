@@ -30,7 +30,7 @@
 #include "stringaccessor.h"
 #include "dirsaver.h"
 
-CppWordScanner::CppWordScanner(const wxString &fileName)
+CppWordScanner::CppWordScanner(const std::string &fileName)
 	: m_filename(fileName)
 	, m_offset(0)
 {
@@ -40,16 +40,19 @@ CppWordScanner::CppWordScanner(const wxString &fileName)
 	wxFFile thefile(fileName, wxT("rb"));
 	if(thefile.IsOpened()) {
 		wxFileOffset size = thefile.Length();
-		wxString fileData;
-		fileData.Alloc(size);
+		std::string fileData;
+		fileData.reserve(size);
 
 		wxCSConv fontEncConv(wxFONTENCODING_ISO8859_1);
-		thefile.ReadAll( &m_text, fontEncConv );
+		
+		wxString tmp;
+		thefile.ReadAll( &tmp, fontEncConv );
+		m_text = tmp.mb_str().data();
 	}
 	doInit();
 }
 
-CppWordScanner::CppWordScanner(const wxString& fileName, const wxString& text, int offset)
+CppWordScanner::CppWordScanner(const std::string& fileName, const std::string& text, int offset)
 	: m_filename(fileName)
 	, m_text    (text.c_str())
 	, m_offset  (offset)
@@ -63,22 +66,22 @@ CppWordScanner::~CppWordScanner()
 
 void CppWordScanner::FindAll(CppTokensMap &tokensMap)
 {
-	doFind(wxEmptyString, tokensMap, wxNOT_FOUND, wxNOT_FOUND);
+	doFind("", tokensMap, wxNOT_FOUND, wxNOT_FOUND);
 }
 
-void CppWordScanner::Match(const wxString& word, CppTokensMap& l)
+void CppWordScanner::Match(const std::string& word, CppTokensMap& l)
 {
 	// scan the entire text
 	doFind(word, l, wxNOT_FOUND, wxNOT_FOUND);
 }
 
-void CppWordScanner::Match(const wxString& word, CppTokensMap& l, int from, int to)
+void CppWordScanner::Match(const std::string& word, CppTokensMap& l, int from, int to)
 {
 	// scan the entire text
 	doFind(word, l, from, to);
 }
 
-void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, int to)
+void CppWordScanner::doFind(const std::string& filter, CppTokensMap& l, int from, int to)
 {
 	int state(STATE_NORMAL);
 	StringAccessor accessor(m_text);
@@ -136,14 +139,14 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
 
 				// is valid C++ word?
 				token.append( ch );
-				if (token.getOffset() == wxString::npos) {
+				if (token.getOffset() == std::string::npos) {
 					token.setOffset( i + m_offset );
 				}
 			} else {
 
 				if (token.getName().empty() == false) {
 
-					if ((int)token.getName().GetChar(0) >= 48 && (int)token.getName().GetChar(0) <= 57) {
+					if ((int)token.getName().at(0) >= 48 && (int)token.getName().at(0) <= 57) {
 						token.reset();
 					} else {
 						//dont add C++ key words
@@ -214,12 +217,12 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
 
 void CppWordScanner::doInit()
 {
-	wxString key_words =
-	    wxT("auto break case char const continue default define defined do double elif else endif enum error extern float"
-	        "for  goto if ifdef ifndef include int long pragma register return short signed sizeof static struct switch"
-	        "typedef undef union unsigned void volatile while class namespace delete friend inline new operator overload"
-	        "protected private public this virtual template typename dynamic_cast static_cast const_cast reinterpret_cast"
-	        "using throw catch size_t");
+	std::string key_words =
+	    "auto break case char const continue default define defined do double elif else endif enum error extern float"
+	    "for  goto if ifdef ifndef include int long pragma register return short signed sizeof static struct switch"
+	    "typedef undef union unsigned void volatile while class namespace delete friend inline new operator overload"
+	    "protected private public this virtual template typename dynamic_cast static_cast const_cast reinterpret_cast"
+	    "using throw catch size_t";
 
 	//add this items into map
 	wxArrayString tmpArr = wxStringTokenize(key_words, wxT(" "));
@@ -356,13 +359,13 @@ TextStatesPtr CppWordScanner::states()
 int TextStates::FunctionEndPos(int position)
 {
 	// Sanity
-	if(text.Len() != states.size())
+	if(text.length() != states.size())
 		return wxNOT_FOUND;
 
 	if(position < 0)
 		return wxNOT_FOUND;
 
-	if(position >= (int)text.Len())
+	if(position >= (int)text.length())
 		return wxNOT_FOUND;
 
 	if(states[position].depth < 0) {
@@ -402,7 +405,7 @@ int TextStates::FunctionEndPos(int position)
 
 wxChar TextStates::Next()
 {
-	if(text.Len() != states.size())
+	if(text.length() != states.size())
 		return 0;
 
 	if(pos == wxNOT_FOUND)
@@ -410,11 +413,11 @@ wxChar TextStates::Next()
 
 	// reached end of text
 	pos++;
-	while( pos < (int)text.Len() ) {
+	while( pos < (int)text.length() ) {
 		int st = states[pos].state;
 		if(st == CppWordScanner::STATE_NORMAL) {
-			if(text.Len() > (size_t)pos)
-				return text.GetChar(pos);;
+			if(text.length() > (size_t)pos)
+				return text.at(pos);;
 			return 0;
 		}
 		pos++;
@@ -424,7 +427,7 @@ wxChar TextStates::Next()
 
 wxChar TextStates::Previous()
 {
-	if(text.Len() != states.size())
+	if(text.length() != states.size())
 		return 0;
 
 	if(pos == wxNOT_FOUND)
@@ -438,8 +441,8 @@ wxChar TextStates::Previous()
 	while( pos ) {
 		int st = states[pos].state;
 		if(st == CppWordScanner::STATE_NORMAL) {
-			if(text.Len() > (size_t)pos)
-				return text.GetChar(pos);
+			if(text.length() > (size_t)pos)
+				return text.at(pos);
 			return 0;
 		}
 		pos--;

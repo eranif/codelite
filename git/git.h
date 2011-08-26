@@ -15,6 +15,7 @@
 #include "processreaderthread.h"
 #include <queue>
 #include <set>
+#include "progress_dialog.h"
 
 typedef struct gitAction {
 	int action;
@@ -85,7 +86,7 @@ class GitPlugin : public IPlugin
 	std::queue<gitAction> m_gitActionQueue;
 
 	wxTimer m_progressTimer;
-	wxProgressDialog* m_progressDialog;
+	clProgressDlg* m_progressDialog;
 	wxString m_progressMessage;
 	wxString m_commandOutput;
 	bool m_bActionRequiresTreUpdate;

@@ -2119,19 +2119,20 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, const std::list<CppToken
 	LEditor* previous = NULL;
 	for ( std::list<CppToken>::const_iterator iter = li.begin(); iter != li.end(); iter++ ) {
 		CppToken cppToken = *iter;
-		if ( fileName == cppToken.getFilename() ) {
+		wxString file_name(cppToken.getFilename().c_str(), wxConvUTF8);
+		if ( fileName == file_name ) {
 			// update next token offset in case we are still in the same file
 			cppToken.setOffset ( cppToken.getOffset() + off );
 		} else {
 			// switched file
 			off = 0;
-			fileName = cppToken.getFilename();
+			fileName = file_name;
 		}
 
 		// Open the file only once
 		LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-		if(!editor || editor->GetFileName().GetFullPath() != cppToken.getFilename()) {
-			editor = clMainFrame::Get()->GetMainBook()->OpenFile(cppToken.getFilename(), wxEmptyString, 0);
+		if(!editor || editor->GetFileName().GetFullPath() != file_name) {
+			editor = clMainFrame::Get()->GetMainBook()->OpenFile(file_name, wxEmptyString, 0);
 			// We've loaded a new editor, so start a new bulk undo action for it
 			// (this can only be done per editor, not per refactor :( )
 			// First end any previous one

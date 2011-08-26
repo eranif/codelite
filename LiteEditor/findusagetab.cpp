@@ -70,9 +70,10 @@ void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString&
 	for(; iter != matches.end(); iter++) {
 		
 		// Print the line number
-		if(curfile != iter->getFilename()) {
-			curfile = iter->getFilename();
-			wxFileName fn(iter->getFilename());
+		wxString file_name(iter->getFilename().c_str(), wxConvUTF8);
+		if(curfile != file_name) {
+			curfile = file_name;
+			wxFileName fn(file_name);
 			fn.MakeRelativeTo();
 			
 			text << fn.GetFullPath() << wxT("\n");
@@ -80,7 +81,7 @@ void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString&
 			
 			// Load the file content
 			wxLogNull nolog;
-			wxFFile thefile(iter->getFilename(), wxT("rb"));
+			wxFFile thefile(file_name, wxT("rb"));
 			if(thefile.IsOpened()) {
 				
 				wxFileOffset size = thefile.Length();

@@ -78,8 +78,8 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
 	RefactorSource target;
 	std::list<CppToken>::iterator iter = tokens.begin();
 	for (; iter != tokens.end(); iter++) {
-		wxFileName f(iter->getFilename());
-		if (!DoResolveWord(states, wxFileName(iter->getFilename()), iter->getOffset(), line, symname, &target)) {
+		wxFileName f(wxString(iter->getFilename().c_str(), wxConvUTF8));
+		if (!DoResolveWord(states, wxFileName(wxString(iter->getFilename().c_str(), wxConvUTF8)), iter->getOffset(), line, symname, &target)) {
 			m_candidates.push_back( *iter );
 		}
 	}
@@ -330,7 +330,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 		wxString msg;
 		msg << _("Parsing: ") << curfile.GetFullName();
 		// update the progress bar
-		if (!prgDlg->Pulse(msg)){
+		if (!prgDlg->Update(i, msg)){
 			prgDlg->Destroy();
 			Clear();
 			return;
@@ -375,10 +375,10 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 	for (; iter != tokens.end(); iter++) {
 
 		// TODO :: send an event here to report our progress
-		wxFileName f(iter->getFilename());
+		wxFileName f(wxString(iter->getFilename().c_str(), wxConvUTF8));
 		wxString   msg;
 		msg << _("Parsing expression ") << counter << wxT("/") << tokens.size() << _(" in file: ") << f.GetFullName();
-		if ( !prgDlg->Pulse(msg) ) {
+		if ( !prgDlg->Update(counter, msg) ) {
 			// user clicked 'Cancel'
 			Clear();
 			prgDlg->Destroy();
@@ -389,17 +389,17 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 		// reset the result
 		target.Reset();
 
-		if(!statesPtr || statesPtrFileName != iter->getFilename()) {
+		if(!statesPtr || statesPtrFileName != wxString(iter->getFilename().c_str(), wxConvUTF8)) {
 			// Create new statesPtr
 			CppWordScanner sc(iter->getFilename());
 			statesPtr         = sc.states();
-			statesPtrFileName = iter->getFilename();
+			statesPtrFileName = wxString(iter->getFilename().c_str(), wxConvUTF8);
 		}
 
 		if(!statesPtr)
 			continue;
 
-		if (DoResolveWord(statesPtr, wxFileName(iter->getFilename()), iter->getOffset(), iter->getLineNumber(), symname, &target)) {
+		if (DoResolveWord(statesPtr, wxFileName(wxString(iter->getFilename().c_str(), wxConvUTF8)), iter->getOffset(), iter->getLineNumber(), symname, &target)) {
 			
 			// set the line number
 			if(statesPtr->states.size() > iter->getOffset())

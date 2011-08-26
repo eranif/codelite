@@ -82,7 +82,7 @@ void RenameSymbol::OnItemSelected( wxListEvent& event )
 void RenameSymbol::AddMatch(const CppToken& token, bool check)
 {
 	wxString relativeTo = WorkspaceST::Get()->GetWorkspaceFileName().GetPath();
-	wxFileName fn( token.getFilename() );
+	wxFileName fn( wxString(token.getFilename().c_str(), wxConvUTF8) );
 	fn.MakeRelativeTo( relativeTo );
 
 	long index = m_checkListCandidates->AppendRow();
@@ -117,8 +117,9 @@ void RenameSymbol::DoSelectFile(const CppToken& token)
 	m_preview->SetReadOnly(false);
 
 	// Recreate the editor only if needed
-	if(m_preview->GetFileName().GetFullPath() != token.getFilename())
-		m_preview->Create(wxEmptyString, wxString(token.getFilename().c_str(), wxConvUTF8));
+	wxString file_name(token.getFilename().c_str(), wxConvUTF8);
+	if(m_preview->GetFileName().GetFullPath() != file_name)
+		m_preview->Create(wxEmptyString, file_name);
 
 	m_preview->SetCaretAt(token.getOffset());
 	m_preview->SetSelection(token.getOffset(), token.getOffset()+token.getName().length());

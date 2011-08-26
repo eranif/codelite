@@ -37,7 +37,7 @@ CppWordScanner::CppWordScanner(const std::string &fileName)
 	// disable log
 	wxLogNull nolog;
 
-	wxFFile thefile(fileName, wxT("rb"));
+	wxFFile thefile(wxString(fileName.c_str(), wxConvUTF8), wxT("rb"));
 	if(thefile.IsOpened()) {
 		wxFileOffset size = thefile.Length();
 		std::string fileData;
@@ -84,7 +84,7 @@ void CppWordScanner::Match(const std::string& word, CppTokensMap& l, int from, i
 void CppWordScanner::doFind(const std::string& filter, CppTokensMap& l, int from, int to)
 {
 	int state(STATE_NORMAL);
-	StringAccessor accessor(m_text);
+	StringAccessor accessor(wxString(m_text.c_str(), wxConvUTF8));
 	CppToken token;
 	int lineNo(0);
 	
@@ -150,7 +150,8 @@ void CppWordScanner::doFind(const std::string& filter, CppTokensMap& l, int from
 						token.reset();
 					} else {
 						//dont add C++ key words
-						if (m_arr.Index(token.getName()) == wxNOT_FOUND) {
+						wxString tmpName(token.getName().c_str(), wxConvUTF8);
+						if (m_arr.Index(tmpName) == wxNOT_FOUND) {
 
 							// Ok, we are not a number!
 							// filter out non matching words
@@ -217,12 +218,12 @@ void CppWordScanner::doFind(const std::string& filter, CppTokensMap& l, int from
 
 void CppWordScanner::doInit()
 {
-	std::string key_words =
-	    "auto break case char const continue default define defined do double elif else endif enum error extern float"
-	    "for  goto if ifdef ifndef include int long pragma register return short signed sizeof static struct switch"
-	    "typedef undef union unsigned void volatile while class namespace delete friend inline new operator overload"
-	    "protected private public this virtual template typename dynamic_cast static_cast const_cast reinterpret_cast"
-	    "using throw catch size_t";
+	wxString key_words =
+	    wxT("auto break case char const continue default define defined do double elif else endif enum error extern float")
+	    wxT("for  goto if ifdef ifndef include int long pragma register return short signed sizeof static struct switch")
+	    wxT("typedef undef union unsigned void volatile while class namespace delete friend inline new operator overload")
+	    wxT("protected private public this virtual template typename dynamic_cast static_cast const_cast reinterpret_cast")
+	    wxT("using throw catch size_t");
 
 	//add this items into map
 	wxArrayString tmpArr = wxStringTokenize(key_words, wxT(" "));
@@ -246,7 +247,7 @@ TextStatesPtr CppWordScanner::states()
 	int depth(0);
 	int lineNo(0);
 
-	StringAccessor accessor(m_text.c_str());
+	StringAccessor accessor(wxString(m_text.c_str(), wxConvUTF8));
 
 	for (size_t i=0; i<m_text.size(); i++) {
 

@@ -53,6 +53,7 @@ class WXDLLIMPEXP_SDK BuildSettingsConfig
 {
 	wxXmlDocument *m_doc;
 	wxFileName m_fileName;
+	wxString   m_version;
 protected:
 	wxXmlNode* GetCompilerNode(const wxString& name) const;
 
@@ -121,6 +122,12 @@ public:
 	 * get name of current selected build system from configuration 
 	 */
 	 wxString GetSelectedBuildSystem(); 
+	 
+	/**
+	 * @brief discard the current settings and reload the default build
+	 * settings
+	 */
+	 void RestoreDefaults();
 };
 
 class WXDLLIMPEXP_SDK BuildSettingsConfigST

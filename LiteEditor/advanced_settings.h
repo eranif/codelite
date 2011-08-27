@@ -73,12 +73,14 @@ protected:
 	wxStaticLine* m_staticline10;
 	wxButton* m_buttonOK;
 	wxButton* m_buttonCancel;
+	wxButton* m_buttonRestoreDefaults;
 	BuildPage *m_buildPage;
 	BuildTabSetting *m_buildSettings;
 	wxMenu *m_rightclickMenu;
 
 	void OnButtonNewClicked(wxCommandEvent &);
 	void OnButtonOKClicked(wxCommandEvent &);
+	void OnRestoreDefaults(wxCommandEvent &);
 	void OnDeleteCompiler(wxCommandEvent &);
 	void OnContextMenu(wxContextMenuEvent &e);
     

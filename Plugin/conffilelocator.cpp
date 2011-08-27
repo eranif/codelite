@@ -71,6 +71,14 @@ wxString ConfFileLocator::Locate(const wxString& baseName)
 	}
 }
 
+void ConfFileLocator::DeleteLocalCopy(const wxString& basename)
+{
+	wxFileName privateFile(GetLocalCopy(basename));
+	if(privateFile.FileExists()){
+		wxRemoveFile(privateFile.GetFullPath());
+	}
+}
+
 wxString ConfFileLocator::GetLocalCopy(const wxString& baseName)
 {
 	return wxStandardPaths::Get().GetUserDataDir() + wxT("/") + baseName;

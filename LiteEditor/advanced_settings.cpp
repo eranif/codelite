@@ -46,6 +46,7 @@
 #include "compilercompileroptionspage.h"
 #include "compilerlinkeroptionspage.h"
 #include "globals.h"
+#include "frame.h"
 
 BEGIN_EVENT_TABLE(AdvancedDlg, wxDialog)
 	EVT_MENU(XRCID("delete_compiler"), AdvancedDlg::OnDeleteCompiler)
@@ -91,9 +92,6 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 
 	mainSizer->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 
-	m_staticline10 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	mainSizer->Add( m_staticline10, 0, wxEXPAND | wxALL, 5 );
-
 	wxBoxSizer* btnSizer;
 	btnSizer = new wxBoxSizer( wxHORIZONTAL );
 
@@ -103,6 +101,9 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_buttonCancel, 0, wxALL, 5 );
 
+	m_buttonRestoreDefaults = new wxButton( this, wxID_REVERT, _("Load Defaults..."), wxDefaultPosition, wxDefaultSize, 0 );
+	btnSizer->Add( m_buttonRestoreDefaults, 0, wxALL, 5 );
+	m_buttonRestoreDefaults->SetToolTip(_("Revert all the changes and restore all the build settings to the factory defaults"));
 	mainSizer->Add( btnSizer, 0, wxALIGN_RIGHT, 5 );
 
 	m_buildSettings = new BuildTabSetting(m_notebook);
@@ -127,7 +128,8 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 
 	ConnectButton(m_buttonNewCompiler, AdvancedDlg::OnButtonNewClicked);
 	ConnectButton(m_buttonOK, AdvancedDlg::OnButtonOKClicked);
-
+	ConnectButton(m_buttonRestoreDefaults, AdvancedDlg::OnRestoreDefaults);
+	
 	m_notebook->SetSelection( selected_page );
 
 	// center the dialog
@@ -323,5 +325,22 @@ void AdvancedDlg::OnContextMenu(wxContextMenuEvent& e)
 	// only compilers have children
 	if(item.IsOk() && tree->HasChildren(item)){
 		PopupMenu(m_rightclickMenu);
+	}
+}
+
+void AdvancedDlg::OnRestoreDefaults(wxCommandEvent&)
+{
+	if(wxMessageBox(_("Are you sure you want to revert to the default settings?"), 
+					wxT("CodeLite"), 
+					wxYES_NO|wxCANCEL|wxCENTRE|wxICON_WARNING, 
+					this) == wxYES) 
+	{
+		// restore the default settings of the build configuration
+		BuildSettingsConfigST::Get()->RestoreDefaults();
+		
+		// Dismiss this dialog and reload it
+		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("advance_settings"));
+		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
+		EndModal(wxID_OK);
 	}
 }

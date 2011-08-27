@@ -46,7 +46,7 @@ public:
 	wxString Locate(const wxString &baseName);
 	wxString GetLocalCopy(const wxString &baseName);
 	wxString GetDefaultCopy(const wxString &baseName);
-	
+	void     DeleteLocalCopy(const wxString &basename);
 private:
 	ConfFileLocator();
 	virtual ~ConfFileLocator();

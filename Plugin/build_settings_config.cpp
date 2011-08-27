@@ -42,6 +42,7 @@ BuildSettingsConfig::~BuildSettingsConfig()
 
 bool BuildSettingsConfig::Load(const wxString &version)
 {
+	m_version = version;
 	wxString initialSettings = ConfFileLocator::Instance()->Locate(wxT("config/build_settings.xml"));
 	bool loaded = m_doc->Load(initialSettings);
 	wxString xmlVersion = m_doc->GetRoot()->GetPropVal(wxT("Version"), wxEmptyString);
@@ -204,6 +205,20 @@ wxString BuildSettingsConfig::GetSelectedBuildSystem() {
 	return active;
 }
 
+void BuildSettingsConfig::RestoreDefaults()
+{
+	// Delete the local copy of the build settings
+	ConfFileLocator::Instance()->DeleteLocalCopy(wxT("config/build_settings.xml"));
+	
+	// free the XML dodcument loaded into the memory and allocate new one
+	delete m_doc;
+	m_doc = new wxXmlDocument();
+	
+	// call Load again, this time the default settings will be loaded
+	// since we just deleted the local settings
+	Load(m_version);
+}
+
 static BuildSettingsConfig* gs_buildSettingsInstance = NULL;
 void BuildSettingsConfigST::Free()
 {
@@ -219,4 +234,3 @@ BuildSettingsConfig* BuildSettingsConfigST::Get()
 		gs_buildSettingsInstance = new BuildSettingsConfig;
 	return gs_buildSettingsInstance;
 }
-

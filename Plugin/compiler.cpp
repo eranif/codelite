@@ -64,7 +64,7 @@ Compiler::Compiler(wxXmlNode *node)
 		}
 		
 		if (!node->HasProp(wxT("ReadObjectsListFromFile"))) {
-			m_readObjectFilesFromList = false;
+			m_readObjectFilesFromList = true;
 		} else {
 			m_readObjectFilesFromList = XmlUtils::ReadBool(node, wxT("ReadObjectsListFromFile"));
 		}
@@ -185,7 +185,7 @@ Compiler::Compiler(wxXmlNode *node)
 		m_globalLibPath                        = wxEmptyString;
 		m_pathVariable                         = wxEmptyString;
 		m_generateDependeciesFile              = false;
-		m_readObjectFilesFromList              = false;
+		m_readObjectFilesFromList              = true;
 	}
     if (m_generateDependeciesFile && m_dependSuffix.IsEmpty()) {
         m_dependSuffix = m_objectSuffix + wxT(".d");

@@ -210,7 +210,7 @@ bool MainBook::AskUserToSave(LEditor *editor)
 		style |= wxCANCEL;
 	}
 
-	int answer = wxMessageBox(msg, _("Confirm"), style);
+	int answer = wxMessageBox(msg, _("Confirm"), style, clMainFrame::Get());
 	switch (answer) {
 	case wxYES:
 		return editor->SaveFile();

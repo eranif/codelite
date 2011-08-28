@@ -8,6 +8,7 @@
 #include "quickfindbarbase.h"
 #include <wx/xrc/xmlres.h>
 #include "pluginmanager.h"
+#include <wx/button.h>
 
 #if USE_AUI_TOOLBAR
 
@@ -16,7 +17,6 @@
 #include <wx/bitmap.h>
 #include <wx/aui/auibar.h>
 #include "drawingutils.h"
-#include <wx/button.h>
 
 class CLQuickFindTbArt : public wxAuiDefaultToolBarArt
 {

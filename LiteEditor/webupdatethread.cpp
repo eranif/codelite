@@ -71,8 +71,7 @@ void WebUpdateJob::Process(wxThread* thread)
 //	}
 //	curl_global_cleanup();
 
-//	wxURL url(wxT("http://codelite.org/packages_test.txt"));
-	wxURL url(wxT("http://codelite.org/packages.txt"));
+	wxURL url(wxT("http://codeliteorg.ipage.com/packages.txt"));
 	if (url.GetError() == wxURL_NOERR) {
 
 		wxInputStream *in_stream = url.GetInputStream();

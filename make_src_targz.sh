@@ -9,14 +9,15 @@
 
 cur_rev=`svn info | grep Revision | awk '{print $2;}'`
 curdir=`pwd`
+codelite_ver="codeilte-3.0.0"
 rm -fr /tmp/codelite-${cur_rev}/
 
-svn export . /tmp/codelite-2.10.0.${cur_rev}/
+svn export . /tmp/${codelite_ver}.${cur_rev}/
 
 ## set correct permissions
 
-cp ./LiteEditor/svninfo.cpp /tmp/codelite-2.10.0.${cur_rev}/LiteEditor/
+cp ./LiteEditor/svninfo.cpp /tmp/${codelite_ver}.${cur_rev}/LiteEditor/
 echo "Creating tar-ball"
 cd /tmp/
-rm -fr /tmp/codelite-2.10.0.${cur_rev}/sdk/curl
-tar cvfz ${curdir}/codelite-2.10.0.${cur_rev}.tar.gz codelite-2.10.0.${cur_rev}/*
+rm -fr /tmp/${codelite_ver}.${cur_rev}/sdk/curl
+tar cvfz ${curdir}/${codelite_ver}.${cur_rev}.tar.gz ${codelite_ver}.${cur_rev}/* --exclude ${codelite_ver}.${cur_rev}/Runtime/clang++.exe

@@ -9,7 +9,7 @@
 
 cur_rev=`svn info | grep Revision | awk '{print $2;}'`
 curdir=`pwd`
-codelite_ver="codeilte-3.0.0"
+codelite_ver="codelite-3.0.0"
 rm -fr /tmp/codelite-${cur_rev}/
 
 svn export . /tmp/${codelite_ver}.${cur_rev}/

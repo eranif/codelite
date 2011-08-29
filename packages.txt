@@ -1,8 +1,7 @@
 # Simple CodeLite packages available for download
-#
-# Package name | Revision | Download URL
+# Package name | Revision | Download URL | Release notes URL
 
-
-GTK	| 1596 | http://downloads.sourceforge.net/codelite/codelite-rev1596_i386.deb?modtime=1211901049&big_mirror=0
-MSW | 1599 | http://downloads.sourceforge.net/codelite/CodeLite_REV1599.exe?modtime=1211949719&big_mirror=0
-MAC | 1596 | http://downloads.sourceforge.net/codelite/CodeLite_bundle_rev1596.zip?modtime=1211900796&big_mirror=0
+GTK    | 5041 | http://sourceforge.net/projects/codelite/files/Releases/codelite-3.0/codelite_3.0.0.5041-ubuntu0_i386.deb/download  | http://sourceforge.net/projects/codelite/files/Releases/codelite-3.0/README/download
+MSW    | 5041 | http://sourceforge.net/projects/codelite/files/Releases/codelite-3.0/codelite-3.0.0.5041.exe/download               | http://sourceforge.net/projects/codelite/files/Releases/codelite-3.0/README/download
+GTK_64 | 4778 | http://sourceforge.net/projects/codelite/files/Releases/codelite-2.10/codelite_2.10.0.4778-ubuntu0_amd64.deb/download | http://sourceforge.net/projects/codelite/files/Releases/codelite-2.10/README/download
+MAC    | 5041 | http://sourceforge.net/projects/codelite/files/Releases/codelite-3.0/codelite-mac-intel-3.0.0.5041.app.zip/download | http://sourceforge.net/projects/codelite/files/Releases/codelite-3.0/README/download

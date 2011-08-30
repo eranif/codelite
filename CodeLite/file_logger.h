@@ -15,8 +15,8 @@ public:
 	};
 	
 protected:
-	wxFFile m_fp;
-	int    m_verbosity;
+	int   m_verbosity;
+	FILE* m_fp;
 	
 public:
 	FileLogger();

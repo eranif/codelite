@@ -9,18 +9,21 @@ static bool initialized = false;
 
 FileLogger::FileLogger()
 	: m_verbosity(FileLogger::Error)
+	, m_fp(NULL)
 {
 }
 
 FileLogger::~FileLogger()
 {
-	wxLogNull nl;
-	m_fp.Close();
+	if(m_fp) {
+		fclose(m_fp);
+		m_fp = NULL;
+	}
 }
 
 void FileLogger::AddLogLine(const wxString &msg, int verbosity)
 {
-	if(m_verbosity >= verbosity && m_fp.IsOpened()) {
+	if(m_verbosity >= verbosity && m_fp) {
 		wxString formattedMsg;
 		
 		timeval tim;
@@ -61,9 +64,9 @@ void FileLogger::AddLogLine(const wxString &msg, int verbosity)
 		formattedMsg << msg;
 		formattedMsg.Trim().Trim(false);
 		formattedMsg << wxT("\n");
-				
-		m_fp.Write(formattedMsg);
-		m_fp.Flush();
+		
+		wxFprintf(m_fp, wxT("%s"), formattedMsg.c_str());
+		fflush(m_fp);
 	}
 }
 
@@ -72,7 +75,7 @@ FileLogger* FileLogger::Get()
 	if(!initialized) {
 		wxString filename;
 		filename << wxStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << wxT("codelite.log");
-		theLogger.m_fp.Open(filename, wxT("a+"));
+		theLogger.m_fp = wxFopen(filename, wxT("a+"));
 		initialized = true;
 	}
 	return &theLogger;

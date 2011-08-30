@@ -145,7 +145,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_clangBinary(wxT(""))
 		, m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
 {
-	SetVersion(wxT("3.0.2"));
+	SetVersion(wxT("3.0.3"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =
@@ -214,6 +214,7 @@ wxT("_GLIBCXX_BEGIN_NAMESPACE(%0)=namespace %0{\n")
 wxT("_GLIBCXX_END_NAMESPACE=}\n")
 wxT("_GLIBCXX_BEGIN_NESTED_NAMESPACE(%0, %1)=namespace %0{\n")
 wxT("_GLIBCXX_END_NESTED_NAMESPACE=}\n")
+wxT("_GLIBCXX_VISIBILITY(%0)\n")
 wxT("_GLIBCXX_STD=std\n")
 wxT("__const=const\n")
 wxT("__restrict\n")

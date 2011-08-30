@@ -2,6 +2,7 @@
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 #include <sys/time.h>
+#include <wx/log.h>
 
 static FileLogger theLogger;
 static bool initialized = false;
@@ -13,6 +14,7 @@ FileLogger::FileLogger()
 
 FileLogger::~FileLogger()
 {
+	wxLogNull nl;
 	m_fp.Close();
 }
 

@@ -476,12 +476,20 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 			// in the middle, and trigger the function tooltip
 
 			if (word.Find(wxT("(")) == wxNOT_FOUND && triggerTip) {
-				// ima)ge id in range of 8-10 is function
-				editor->InsertText(editor->GetCurrentPos(), wxT("()"));
-				editor->CharRight();
-				int pos = editor->GetCurrentPos();
+				
+				// If the char after the insertion is '(' dont place another '()'
+				int dummyPos = wxNOT_FOUND;
+				wxChar charAfter = editor->NextChar(editor->GetCurrentPos(), dummyPos);
+				if(charAfter != wxT('(')) {
+					// add braces
+					editor->InsertText(editor->GetCurrentPos(), wxT("()"));
+					dummyPos = wxNOT_FOUND;
+				}
+				
+				int pos = dummyPos == wxNOT_FOUND ? editor->GetCurrentPos() : dummyPos;
 				editor->SetSelectionStart(pos);
 				editor->SetSelectionEnd(pos);
+				editor->CharRight();
 				editor->SetIndicatorCurrent(MATCH_INDICATOR);
 				editor->IndicatorFillRange(pos, 1);
 				// trigger function tip

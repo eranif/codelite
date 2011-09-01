@@ -18,10 +18,9 @@ bool clProgressDlg::Update(int value, const wxString& msg)
 {
 	m_staticLabel->SetLabel(msg);
 	m_gauge->SetValue(value);
-	wxSafeYield(this, true);
-
-	if(value % 10 == 0) {
-		this->ProcessPendingEvents();
+	
+	if(value % 20 == 0) {
+		wxSafeYield(this, true);
 	}
 	return true;
 }

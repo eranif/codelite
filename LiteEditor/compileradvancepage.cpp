@@ -14,6 +14,7 @@ CompilerAdvancePage::CompilerAdvancePage( wxWindow* parent, const wxString &cmpn
 	m_textCtrlGlobalIncludePath->SetValue(cmp->GetGlobalIncludePath());
 	m_textCtrlGlobalLibPath->SetValue(cmp->GetGlobalLibPath());
 	m_checkBoxReadObjectsFromFile->SetValue(cmp->GetReadObjectFilesFromList());
+	m_checkBoxObjectNameSameAsFileName->SetValue(cmp->GetObjectNameIdenticalToFileName());
 	
 }
 
@@ -26,4 +27,5 @@ void CompilerAdvancePage::Save(CompilerPtr cmp)
     cmp->SetDependSuffix(m_textDependExtension->GetValue());
     cmp->SetPreprocessSuffix(m_textPreprocessExtension->GetValue());
 	cmp->SetReadObjectFilesFromList(m_checkBoxReadObjectsFromFile->IsChecked());
+	cmp->SetObjectNameIdenticalToFileName(m_checkBoxObjectNameSameAsFileName->IsChecked());
 }

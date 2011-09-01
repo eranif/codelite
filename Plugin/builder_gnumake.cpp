@@ -636,7 +636,7 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
 			continue;
 		}
 
-		wxString objPrefix = DoGetTargetPrefix(files.at(i), cwd);
+		wxString objPrefix = DoGetTargetPrefix(files.at(i), cwd, cmp);
 
 		if (ft.kind == Compiler::CmpFileKindResource) {
 			// resource files are handled differently
@@ -707,7 +707,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 			relPath = rel_paths.at(i).GetPath(true, wxPATH_UNIX);
 			relPath.Trim().Trim(false);
 
-			wxString objPrefix = DoGetTargetPrefix(abs_files.at(i), cwd);
+			wxString objPrefix = DoGetTargetPrefix(abs_files.at(i), cwd, cmp);
 
 			compilationLine.Replace(wxT("$(FileName)"),     filenameOnly);
 			compilationLine.Replace(wxT("$(FileFullName)"), fullnameOnly);
@@ -823,7 +823,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
 
 				Compiler::CmpFileTypeInfo ft;
 				if (cmp->GetCmpFileType(abs_files[i].GetExt(), ft)) {
-					wxString objPrefix = DoGetTargetPrefix(abs_files.at(i), cwd);
+					wxString objPrefix = DoGetTargetPrefix(abs_files.at(i), cwd, cmp);
 
 					if (ft.kind == Compiler::CmpFileKindSource) {
 
@@ -873,7 +873,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
 		if(!useAsterisk) {
 			for (size_t i=0; i<abs_files.size(); i++) {
 
-				wxString objPrefix = DoGetTargetPrefix( abs_files.at(i), cwd );
+				wxString objPrefix = DoGetTargetPrefix( abs_files.at(i), cwd, cmp );
 
 				Compiler::CmpFileTypeInfo ft;
 				if (cmp->GetCmpFileType(abs_files[i].GetExt(), ft) && ft.kind == Compiler::CmpFileKindSource) {
@@ -1429,7 +1429,7 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 	//fn.MakeRelativeTo(proj->GetFileName().GetPath());
 
 	wxString relPath = fn.GetPath(true, wxPATH_UNIX);
-	wxString objNamePrefix = DoGetTargetPrefix(fn, proj->GetFileName().GetPath());
+	wxString objNamePrefix = DoGetTargetPrefix(fn, proj->GetFileName().GetPath(), cmp);
 	target << bldConf->GetIntermediateDirectory() << wxT("/") << objNamePrefix << fn.GetName() << cmp->GetObjectSuffix();
 
 	target = ExpandAllVariables(target, WorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);
@@ -1469,7 +1469,7 @@ wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString &project, const wxS
 	wxString cmpType = bldConf->GetCompilerType();
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
 
-	wxString objNamePrefix = DoGetTargetPrefix(fn, proj->GetFileName().GetPath());
+	wxString objNamePrefix = DoGetTargetPrefix(fn, proj->GetFileName().GetPath(), cmp);
 	target << bldConf->GetIntermediateDirectory() << wxT("/") << objNamePrefix << fn.GetName() << cmp->GetPreprocessSuffix();
 
 	target = ExpandAllVariables(target, WorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);
@@ -1710,12 +1710,15 @@ wxString BuilderGnuMake::DoGetCompilerMacro(const wxString& filename)
 	return compilerMacro;
 }
 
-wxString BuilderGnuMake::DoGetTargetPrefix(const wxFileName& filename, const wxString &cwd)
+wxString BuilderGnuMake::DoGetTargetPrefix(const wxFileName& filename, const wxString &cwd, CompilerPtr cmp)
 {
 	size_t        count = filename.GetDirCount();
 	wxArrayString dirs  = filename.GetDirs();
 	wxString      lastDir;
-
+	
+	if(cmp && cmp->GetObjectNameIdenticalToFileName())
+		return wxEmptyString;
+		
 	if(cwd == filename.GetPath()) {
 		return wxEmptyString;
 	}

@@ -84,7 +84,7 @@ private:
 	wxString GetProjectMakeCommand(const wxFileName &wspfile, const wxFileName& projectPath, ProjectPtr proj, const wxString &confToBuild);
 	wxString GetProjectMakeCommand(ProjectPtr proj, const wxString &confToBuild, const wxString &target, bool addCleanTarget, bool cleanOnly);
 	wxString DoGetCompilerMacro(const wxString &filename);
-	wxString DoGetTargetPrefix(const wxFileName &filename, const wxString &cwd);
+	wxString DoGetTargetPrefix(const wxFileName &filename, const wxString &cwd, CompilerPtr cmp);
 	wxString DoGetMarkerFileDir(const wxString &projname);
 };
 #endif // BUILDER_GNUMAKE_H

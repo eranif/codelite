@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -61,7 +61,7 @@ class CompilerPatternsBase : public wxPanel
 	
 	public:
 		
-		CompilerPatternsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		CompilerPatternsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
 		~CompilerPatternsBase();
 	
 };
@@ -91,7 +91,7 @@ class CompilerToolsBase : public wxPanel
 	
 	public:
 		
-		CompilerToolsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		CompilerToolsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~CompilerToolsBase();
 	
 };
@@ -114,7 +114,7 @@ class CompilerSwitchesBase : public wxPanel
 	
 	public:
 		
-		CompilerSwitchesBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 438,428 ), long style = wxTAB_TRAVERSAL );
+		CompilerSwitchesBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 438,428 ), long style = wxTAB_TRAVERSAL ); 
 		~CompilerSwitchesBase();
 	
 };
@@ -142,7 +142,7 @@ class CompilerFileTypesBase : public wxPanel
 	
 	public:
 		
-		CompilerFileTypesBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		CompilerFileTypesBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
 		~CompilerFileTypesBase();
 	
 };
@@ -157,6 +157,7 @@ class CompilerAdvanceBase : public wxPanel
 	protected:
 		wxCheckBox* m_checkBoxGenerateDependenciesFiles;
 		wxCheckBox* m_checkBoxReadObjectsFromFile;
+		wxCheckBox* m_checkBoxObjectNameSameAsFileName;
 		wxStaticLine* m_staticline2;
 		wxStaticText* m_staticText18;
 		wxStaticText* m_staticText141;
@@ -174,7 +175,7 @@ class CompilerAdvanceBase : public wxPanel
 	
 	public:
 		
-		CompilerAdvanceBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		CompilerAdvanceBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~CompilerAdvanceBase();
 	
 };
@@ -202,7 +203,7 @@ class CompilerCompilerOptionsBase : public wxPanel
 	
 	public:
 		
-		CompilerCompilerOptionsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		CompilerCompilerOptionsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
 		~CompilerCompilerOptionsBase();
 	
 };
@@ -230,7 +231,7 @@ class CompilerLinkerOptionsBase : public wxPanel
 	
 	public:
 		
-		CompilerLinkerOptionsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		CompilerLinkerOptionsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
 		~CompilerLinkerOptionsBase();
 	
 };
@@ -256,7 +257,7 @@ class CompilerOptionDlgBase : public wxDialog
 		wxString m_sName; 
 		wxString m_sHelp; 
 		
-		CompilerOptionDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		CompilerOptionDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~CompilerOptionDlgBase();
 	
 };
@@ -289,7 +290,7 @@ class CompilerPatternDlgBase : public wxDialog
 		wxString m_fileIdx; 
 		wxString m_lineIdx; 
 		
-		CompilerPatternDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		CompilerPatternDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~CompilerPatternDlgBase();
 	
 };

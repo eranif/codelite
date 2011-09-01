@@ -29,6 +29,7 @@
 #include "wx_xml_compatibility.h"
 
 Compiler::Compiler(wxXmlNode *node)
+: m_objectNameIdenticalToFileName(false)
 {
     // ensure all relevant entries exist in switches map (makes sure they show up in build settings dlg)
     m_switches[wxT("Include")]             = wxEmptyString;
@@ -68,6 +69,8 @@ Compiler::Compiler(wxXmlNode *node)
 		} else {
 			m_readObjectFilesFromList = XmlUtils::ReadBool(node, wxT("ReadObjectsListFromFile"));
 		}
+
+		m_objectNameIdenticalToFileName = XmlUtils::ReadBool(node, wxT("ObjectNameIdenticalToFileName"));
 		
 		wxXmlNode *child = node->GetChildren();
 		while (child) {
@@ -186,6 +189,7 @@ Compiler::Compiler(wxXmlNode *node)
 		m_pathVariable                         = wxEmptyString;
 		m_generateDependeciesFile              = false;
 		m_readObjectFilesFromList              = true;
+		m_objectNameIdenticalToFileName        = false;
 	}
     if (m_generateDependeciesFile && m_dependSuffix.IsEmpty()) {
         m_dependSuffix = m_objectSuffix + wxT(".d");
@@ -214,8 +218,9 @@ wxXmlNode *Compiler::ToXml() const
 {
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compiler"));
 	node->AddProperty(wxT("Name"), m_name);
-	node->AddProperty(wxT("GenerateDependenciesFiles"), BoolToString(m_generateDependeciesFile));
-	node->AddProperty(wxT("ReadObjectsListFromFile"),   BoolToString(m_readObjectFilesFromList));
+	node->AddProperty(wxT("GenerateDependenciesFiles"),     BoolToString(m_generateDependeciesFile));
+	node->AddProperty(wxT("ReadObjectsListFromFile"),       BoolToString(m_readObjectFilesFromList));
+	node->AddProperty(wxT("ObjectNameIdenticalToFileName"), BoolToString(m_objectNameIdenticalToFileName));
 	
 	std::map<wxString, wxString>::const_iterator iter = m_switches.begin();
 	for (; iter != m_switches.end(); iter++) {

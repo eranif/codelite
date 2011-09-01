@@ -47,8 +47,8 @@ class WXDLLIMPEXP_SDK Compiler : public ConfObject
 {
 public:
 	enum CmpFileKind {
-		CmpFileKindSource,
-		CmpFileKindResource
+	    CmpFileKindSource,
+	    CmpFileKindResource
 	};
 
 	struct CmpFileTypeInfo {
@@ -93,6 +93,7 @@ protected:
 	wxString m_pathVariable;
 	bool m_generateDependeciesFile;
 	bool m_readObjectFilesFromList;
+	bool m_objectNameIdenticalToFileName;
 
 public:
 	typedef std::map<wxString, wxString>::const_iterator ConstIterator;
@@ -219,6 +220,12 @@ public:
 		return m_readObjectFilesFromList;
 	}
 	bool GetCmpFileType(const wxString &extension, Compiler::CmpFileTypeInfo &ft);
+	void SetObjectNameIdenticalToFileName(bool objectNameIdenticalToFileName) {
+		this->m_objectNameIdenticalToFileName = objectNameIdenticalToFileName;
+	}
+	bool GetObjectNameIdenticalToFileName() const {
+		return m_objectNameIdenticalToFileName;
+	}
 };
 
 typedef SmartPtr<Compiler> CompilerPtr;

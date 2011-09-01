@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -293,6 +293,11 @@ CompilerAdvanceBase::CompilerAdvanceBase( wxWindow* parent, wxWindowID id, const
 	
 	m_checkBoxReadObjectsFromFile = new wxCheckBox( this, wxID_ANY, _("Pass object list to the linker via file"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer11->Add( m_checkBoxReadObjectsFromFile, 0, wxALL|wxEXPAND, 5 );
+	
+	m_checkBoxObjectNameSameAsFileName = new wxCheckBox( this, wxID_ANY, _("Object name is same as the file name"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxObjectNameSameAsFileName->SetToolTip( _("By default, codelite will prepend the relative directory to the file name to compose an object name (e.g. src/a.cpp will generate object: src_a.o).\nUncheck this option to make the object name exactly as the file name without any prefixes") );
+	
+	bSizer11->Add( m_checkBoxObjectNameSameAsFileName, 0, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );

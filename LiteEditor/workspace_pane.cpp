@@ -44,6 +44,14 @@
 #include "tabgroupspane.h"
 #include "workspace_pane.h"
 
+#ifdef __WXGTK20__
+	// We need this ugly hack to workaround a gtk2-wxGTK name-clash
+	// See http://trac.wxwidgets.org/ticket/10883
+	#define GSocket GlibGSocket
+		#include <gtk-2.0/gtk/gtk.h>
+	#undef GSocket
+#endif
+
 WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr)
     : wxPanel(parent)
     , m_caption(caption)
@@ -214,6 +222,7 @@ void WorkspacePane::DoShowTab(bool show, const wxString& title)
 		
 		wxWindow* win = DoGetControlByName(title);
 		if(win) {
+			win->Show(true);
 			m_book->InsertPage(0, win, title, true);
 		}
 	}

@@ -57,7 +57,7 @@ void ListCtrlPanel::OnItemActivated ( wxListEvent& event )
 
 	if (m_currLevel != event.m_itemIndex)
 	{
-		if (m_currLevel >= 0)
+		if (m_currLevel >= 0 && m_currLevel < m_listCtrl->GetItemCount())
 			m_listCtrl->SetItemImage(m_currLevel, -1);
 		SetCurrentLevel( event.m_itemIndex );
 	}
@@ -85,7 +85,7 @@ void ListCtrlPanel::Update ( const StackEntryArray &stackArr )
 		m_listCtrl->SetColumnWidth(2, wxLIST_AUTOSIZE);
 		m_listCtrl->SetColumnWidth(3, wxLIST_AUTOSIZE);
 
-		if (m_currLevel >= 0)
+		if (m_currLevel >= 0 && m_currLevel < m_listCtrl->GetItemCount())
 			m_listCtrl->SetItemImage(m_currLevel, 0);
 
 		m_listCtrl->EnsureVisible(m_currLevel);

@@ -62,10 +62,10 @@ Depends: libwxgtk2.8-0, libgtk2.0-0
 Recommends: gdb
 Conflicts: codelite-plugins
 Installed-Size: ${inst_size}
-Maintainer: Eran Ifrah [eran.ifrah@gmail.com]
+Maintainer: Eran Ifrah <eran.ifrah@gmail.com>
 Description: A powerful open-source, cross platform code editor
      Codelite is designed for the C/C++ programming languages, and is regularly tested
-     on Ubuntu lucid and Debian lenny/squeeze.
+     on Ubuntu natty and Debian squeeze.
 		 CodeLite is distributed under the terms of the GPL license.
 		 CodeLite uses a sophisticated yet intuitive interface, which allows user easily to
 		 create and build complex projects.

@@ -661,7 +661,7 @@ void CCBox::HideCCBox()
 		DoHideCCHelpTab();
 		if( !m_constructing ) {
 			bool members_checked, comments_checked;
-#if wxVERSION_NUMBER >= 2809
+#if USE_AUI_TOOLBAR
 			members_checked = m_toolBar1->GetToolToggled(TOOL_SHOW_PRIVATE_MEMBERS);
 			comments_checked = m_toolBar1->GetToolToggled(TOOL_SHOW_ITEM_COMMENTS);
 #else

@@ -92,6 +92,7 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 
 	wxString                m_installDir;
 	wxString                m_startupDir;
+	wxString                m_originalCwd;
 	FileHistory             m_recentWorkspaces;
 	ShellCommand           *m_shellProcess;
 	AsyncExeCmd            *m_asyncExeCmd;
@@ -124,6 +125,14 @@ public:
 	bool GetRetagInProgress() const {
 		return m_retagInProgress;
 	}
+
+	const wxString &GetOriginalCwd() const {
+		return m_originalCwd;
+	}
+	void SetOriginalCwd(const wxString &path) {
+		m_originalCwd = path;
+	}
+
 	const wxString &GetStarupDirectory() const {
 		return m_startupDir;
 	}

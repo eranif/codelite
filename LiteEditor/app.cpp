@@ -422,7 +422,7 @@ bool CodeLiteApp::OnInit()
 	// Update codelite revision and Version
 	EditorConfigST::Get()->Init(SvnRevision, wxT("2.0.2") );
 
-	wxString curdir = wxGetCwd();
+	ManagerST::Get()->SetOriginalCwd(wxGetCwd());
 	::wxSetWorkingDirectory(homeDir);
 	// Load all of the XRC files that will be used. You can put everything
 	// into one giant XRC file if you wanted, but then they become more
@@ -477,7 +477,7 @@ bool CodeLiteApp::OnInit()
 	CL_SYSTEM(wxT("Starting codelite..."));
 
 	// check for single instance
-	if ( !CheckSingularity(parser, curdir) ) {
+	if ( !CheckSingularity(parser, ManagerST::Get()->GetOriginalCwd()) ) {
 		return false;
 	}
 
@@ -589,7 +589,7 @@ bool CodeLiteApp::OnInit()
 
 		//convert to full path and open it
 		wxFileName fn(argument);
-		fn.MakeAbsolute(curdir);
+		fn.MakeAbsolute(ManagerST::Get()->GetOriginalCwd());
 
 		if (fn.GetExt() == wxT("workspace")) {
 			ManagerST::Get()->OpenWorkspace(fn.GetFullPath());

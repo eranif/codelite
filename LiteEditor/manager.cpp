@@ -3151,6 +3151,12 @@ void Manager::DoRestartCodeLite()
 	// The Shell is our friend
 	restartCodeLiteCommand << wxStandardPaths::Get().GetExecutablePath();
 
+	// Restore the original working dir and any paramters
+	for (int i = 1; i < wxTheApp->argc; i++) {
+		restartCodeLiteCommand << wxT(" ") << wxTheApp->argv[i];
+	}
+	wxSetWorkingDirectory(GetOriginalCwd());
+
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("exit_app"));
 	clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
 

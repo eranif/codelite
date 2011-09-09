@@ -27,6 +27,7 @@
 #include "context_cpp.h"
 #include "context_diff.h"
 #include "context_base.h"
+#include "context_html.h"
 #include "generic_context.h"
 #include "editor_config.h"
 
@@ -35,7 +36,8 @@ ContextManager::ContextManager()
 	// register available contexts
 	m_contextPool[wxT("C++")] = new ContextCpp();
     m_contextPool[wxT("Diff")] = new ContextDiff();
-
+	m_contextPool[wxT("Html")] = new ContextHtml();
+	
 	// load generic lexers
 	EditorConfig::ConstIterator iter = EditorConfigST::Get()->LexerBegin();
     for(; iter != EditorConfigST::Get()->LexerEnd(); iter++){

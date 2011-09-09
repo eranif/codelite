@@ -464,6 +464,8 @@
     <File Name="stringhighlighterjob.h"/>
     <File Name="context_diff.cpp"/>
     <File Name="context_diff.h"/>
+    <File Name="context_html.h"/>
+    <File Name="context_html.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Manager">
     <File Name="manager.h"/>

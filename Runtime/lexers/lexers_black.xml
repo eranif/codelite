@@ -184,7 +184,7 @@ subpage  subsection subsubsection test throw todo tparam typedef union until var
   <KeyWords2>cdabs cdcos cdexp cdlog cdsin cdsqrt cotan cotand  dcmplx dconjg dcotan dcotand decode dimag dll_export dll_import doublecomplex dreal  dvchk encode find flen flush getarg getcharqq getcl getdat getenv gettim hfix ibchng  identifier imag int1 int2 int4 intc intrup invalop iostat_msg isha ishc ishl jfix  lacfar locking locnear map nargs nbreak ndperr ndpexc offset ovefl peekcharqq precfill  prompt qabs qacos qacosd qasin qasind qatan qatand qatan2 qcmplx qconjg qcos qcosd  qcosh qdim qexp qext qextd qfloat qimag qlog qlog10 qmax1 qmin1 qmod qreal qsign qsin  qsind qsinh qsqrt qtan qtand qtanh ran rand randu rewrite segment setdat settim system  timer undfl unlock union val virtual volatile zabs zcos zexp zlog zsin zsqrt</KeyWords2>
   <KeyWords3/>
   <KeyWords4/>
-  <Extensions>*.f;*.f90;*.inc</Extensions>
+  <Extensions>*.f;*.f90;</Extensions>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
     <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#A0A0A0" BgColour="#FFFFFF" Italic="yes" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -212,131 +212,131 @@ subpage  subsection subsubsection test throw todo tparam typedef union until var
   </Properties>
 </Lexer>
 <Lexer Name="Html" Id="4">
-  <KeyWords0>a abbr acronym address applet area b base basefont                                    bdo big blockquote body br button caption center                                    cite code col colgroup dd del dfn dir div dl dt em                                    fieldset font form frame frameset h1 h2 h3 h4 h5 h6                                    head hr html i iframe img input ins isindex kbd label                                    legend li link map menu meta noframes noscript                                    object ol optgroup option p param pre q s samp                                    script select small span strike strong style sub sup                                    table tbody td textarea tfoot th thead title tr tt u ul                                    var xml xmlns xml:lang                                    abbr accept-charset accept accesskey action align alink                                    alt archive axis background bgcolor border                                    cellpadding cellspacing char charoff charset checked cite                                    class classid clear codebase codetype color cols colspan                                    compact content coords                                    data datafld dataformatas datapagesize datasrc datetime                                    declare defer dir disabled enctype event                                    face for frame frameborder                                    headers height href hreflang hspace http-equiv                                    id ismap label lang language leftmargin link longdesc                                    marginwidth marginheight maxlength media method multiple                                    name nohref noresize noshade nowrap                                    object onblur onchange onclick ondblclick onfocus                                    onkeydown onkeypress onkeyup onload onmousedown                                    onmousemove onmouseover onmouseout onmouseup                                    onreset onselect onsubmit onunload                                    profile prompt readonly rel rev rows rowspan rules                                    scheme scope selected shape size span src standby start style                                    summary tabindex target text title topmargin type usemap                                    valign value valuetype version vlink vspace width                                    text password checkbox radio submit reset                                    file hidden image                                    article aside calendar canvas card command commandset datagrid datatree                                    footer gauge header m menubar menulabel nav progress section switch tabbo                                    active command contenteditable ping                                    public !doctype</KeyWords0>
-  <KeyWords1>abstract boolean break byte case catch char class const                             continue debugger default delete do double	else enum export                             extends false final finally float for function goto if implements                             import in	instanceof int interface long native new null package                             private protected public return short static super	switch                             synchronized this throw throws transient true try typeof var                             void volatile while with</KeyWords1>
-  <KeyWords2>addressof alias and as attribute base begin binary boolean byref byte byval call case compare                             const currency date decimal declare defbool defbyte defint deflng defcur defsng defdbl defdec                             defdate defstr defobj defvar dim do double each else elseif empty end enum eqv erase error                             event exit explicit false for friend function get gosub goto if imp implements in input integer                             is len let lib like load lock long loop lset me mid midb mod new next not nothing null object                             on option optional or paramarray preserve print private property public raiseevent randomize                             redim rem resume return rset seek select set single static step stop string sub then time to                             true type typeof unload until variant wend while with withevents xor</KeyWords2>
-  <KeyWords3>and assert break class continue def del elif                             else except exec finally for from global if import in is lambda None                             not or pass print raise return try while yield</KeyWords3>
-  <KeyWords4>and array as bool boolean break case cfunction class const continue declare                              default die directory do double echo else elseif empty enddeclare endfor                              endforeach endif endswitch endwhile eval exit extends false float for                              foreach function global if include include_once int integer isset list new                              null object old_function or parent print real require require_once resource                              return static stdclass string switch true unset use var while xor __class__                              __file__ __function__ __line__ __sleep __wakeup</KeyWords4>
+  <KeyWords0>a abbr acronym address applet area b base basefont bdo big blockquote body br button caption center                                    cite code col colgroup dd del dfn dir div dl dt em                                    fieldset font form frame frameset h1 h2 h3 h4 h5 h6                                    head hr html i iframe img input ins isindex kbd label                                    legend li link map menu meta noframes noscript                                    object ol optgroup option p param pre q s samp                                    script select small span strike strong style sub sup                                    table tbody td textarea tfoot th thead title tr tt u ul                                    var xml xmlns xml:lang                                    abbr accept-charset accept accesskey action align alink                                    alt archive axis background bgcolor border                                    cellpadding cellspacing char charoff charset checked cite                                    class classid clear codebase codetype color cols colspan                                    compact content coords                                    data datafld dataformatas datapagesize datasrc datetime                                    declare defer dir disabled enctype event                                    face for frame frameborder                                    headers height href hreflang hspace http-equiv                                    id ismap label lang language leftmargin link longdesc                                    marginwidth marginheight maxlength media method multiple                                    name nohref noresize noshade nowrap                                    object onblur onchange onclick ondblclick onfocus                                    onkeydown onkeypress onkeyup onload onmousedown                                    onmousemove onmouseover onmouseout onmouseup                                    onreset onselect onsubmit onunload                                    profile prompt readonly rel rev rows rowspan rules                                    scheme scope selected shape size span src standby start style                                    summary tabindex target text title topmargin type usemap                                    valign value valuetype version vlink vspace width                                    text password checkbox radio submit reset                                    file hidden image                                    article aside calendar canvas card command commandset datagrid datatree                                    footer gauge header m menubar menulabel nav progress section switch tabbo                                    active command contenteditable ping                                    public !doctype</KeyWords0>
+  <KeyWords1>abstract boolean break byte case catch char class const continue debugger default delete do double	else enum export                             extends false final finally float for function goto if implements                             import in	instanceof int interface long native new null package                             private protected public return short static super	switch                             synchronized this throw throws transient true try typeof var                             void volatile while with</KeyWords1>
+  <KeyWords2>addressof alias and as attribute base begin binary boolean byref byte byval call case compare                             const currency date decimal declare defbool defbyte defint deflng defcur defsng defdbl defdec                             defdate defstr defobj defvar dim do double each else elseif empty end enum eqv erase error                             event exit explicit false for friend function get gosub goto if imp implements in input integer is len let lib like load lock long loop lset me mid midb mod new next not nothing null object                             on option optional or paramarray preserve print private property public raiseevent randomize redim rem resume return rset seek select set single static step stop string sub then time to true type typeof unload until variant wend while with withevents xor</KeyWords2>
+  <KeyWords3>and assert break class continue def del elif else except exec finally for from global if import in is lambda None not or pass print raise return try while yield</KeyWords3>
+  <KeyWords4>and array as bool boolean break case cfunction class const continue declare default die directory do double echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends false float for foreach function global if include include_once int integer isset list new null object old_function or parent print real require require_once resource return static stdclass string switch true unset use var while xor __class__ __file__ __function__ __line__ __sleep __namespace__ __trait__ __wakeup public protected private trait interface namespace</KeyWords4>
   <Extensions>*.htm;*.html;*.xhtml;*.phtml;*.js;*.php;*.php3;*.inc</Extensions>
   <Properties>
-    <Property Id="32" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
-    <Property Id="0" Name="Whitespace" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
-    <Property Id="1" Name="Tags" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
-    <Property Id="2" Name="Unknown tags" Bold="no" Face="" Colour="#808040" BgColour="#000000" Size="10"/>
-    <Property Id="3" Name="Attributes" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
-    <Property Id="4" Name="Unknown attributes" Bold="no" Face="" Colour="#FF0000" BgColour="#000000" Size="10"/>
-    <Property Id="5" Name="Numbers" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
-    <Property Id="6" Name="Double quoted Strings" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
-    <Property Id="7" Name="Single quoted Strings" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
-    <Property Id="8" Name="Other inside tag" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="10"/>
-    <Property Id="9" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="10" Name="Entities" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="10"/>
-    <Property Id="11" Name="XML style tag ends /&gt;" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
-    <Property Id="12" Name="XML identifier start &lt; ?" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
-    <Property Id="13" Name="XML identifier end ?&gt;" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
+    <Property Id="32" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="9"/>
+    <Property Id="0" Name="Whitespace" Bold="no" Face="" Colour="#808080" BgColour="#101010" Size="9"/>
+    <Property Id="1" Name="Tags" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="10"/>
+    <Property Id="2" Name="Unknown tags" Bold="no" Face="" Colour="#808040" BgColour="#101010" Size="10"/>
+    <Property Id="3" Name="Attributes" Bold="no" Face="" Colour="#0080FF" BgColour="#101010" Size="10"/>
+    <Property Id="4" Name="Unknown attributes" Bold="no" Face="" Colour="#FF0000" BgColour="#101010" Size="10"/>
+    <Property Id="5" Name="Numbers" Bold="no" Face="" Colour="#FF00FF" BgColour="#101010" Size="10"/>
+    <Property Id="6" Name="Double quoted Strings" Bold="no" Face="" Colour="#FF8000" BgColour="#101010" Size="10"/>
+    <Property Id="7" Name="Single quoted Strings" Bold="no" Face="" Colour="#FF8040" BgColour="#101010" Size="10"/>
+    <Property Id="8" Name="Other inside tag" Bold="no" Face="" Colour="#808080" BgColour="#101010" Size="10"/>
+    <Property Id="9" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#101010" Size="10"/>
+    <Property Id="10" Name="Entities" Bold="no" Face="" Colour="#800080" BgColour="#101010" Size="10"/>
+    <Property Id="11" Name="XML style tag ends /&gt;" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="10"/>
+    <Property Id="12" Name="XML identifier start &lt; ?" Bold="no" Face="" Colour="#FF8080" BgColour="#101010" Size="10"/>
+    <Property Id="13" Name="XML identifier end ?&gt;" Bold="no" Face="" Colour="#FF8080" BgColour="#101010" Size="10"/>
     <Property Id="14" Name="Script" Bold="no" Face="" Colour="#C0C0C0" BgColour="#505050" Size="10"/>
-    <Property Id="15" Name="ASP &lt;% ... %&gt;" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="16" Name="ASP &lt;% ... %&gt;" Bold="no" Face="" Colour="#000000" BgColour="#505050" Size="10"/>
+    <Property Id="15" Name="ASP &lt;% ... %&gt;" Bold="no" Face="" Colour="#101010" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="16" Name="ASP &lt;% ... %&gt;" Bold="no" Face="" Colour="#101010" BgColour="#505050" Size="10"/>
     <Property Id="17" Name="CDATA Section" Bold="no" Face="" Colour="#800000" BgColour="#FF8080" Size="10"/>
-    <Property Id="18" Name="PHP/Unknown Section Block" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="10"/>
-    <Property Id="19" Name="Unquoted values" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
-    <Property Id="20" Name="JSP Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="21" Name="SGML tags" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
-    <Property Id="22" Name="SGML command" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
-    <Property Id="23" Name="SGML 1st param" Bold="no" Face="" Colour="#008080" BgColour="#000000" Size="10"/>
-    <Property Id="24" Name="SGML double string" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
-    <Property Id="25" Name="SGML single string" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
-    <Property Id="26" Name="SGML error" Bold="no" Face="" Colour="#FF0000" BgColour="#000000" Size="10"/>
-    <Property Id="27" Name="SGML special (#xxxx type)" Bold="no" Face="" Colour="#008040" BgColour="#000000" Size="10"/>
-    <Property Id="28" Name="SGML entity" Bold="no" Face="" Colour="#808040" BgColour="#000000" Size="10"/>
-    <Property Id="29" Name="SGML comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="31" Name="SGML block" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
-    <Property Id="34" Name="Matched Operators" Bold="no" Face="" Colour="#FFFF00" BgColour="#000000" Size="10"/>
-    <Property Id="35" Name="Matched Operators 2" Bold="no" Face="" Colour="#FFFF00" BgColour="#000000" Size="10"/>
-    <Property Id="40" Name="JS Start" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
-    <Property Id="41" Name="JS Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
-    <Property Id="42" Name="JS Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="43" Name="JS Line Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="44" Name="JS Doc comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="45" Name="JS Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
-    <Property Id="46" Name="JS Word" Bold="no" Face="" Colour="#0080C0" BgColour="#000000" Size="10"/>
-    <Property Id="47" Name="JS Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
-    <Property Id="48" Name="JS Double quoted string" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
-    <Property Id="49" Name="JS Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
-    <Property Id="50" Name="JS Symbols" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="10"/>
-    <Property Id="51" Name="JavaScript EOL" Bold="no" Face="" Colour="#808040" BgColour="#000000" Size="10"/>
-    <Property Id="52" Name="JavaScript RegEx" Bold="no" Face="" Colour="#8000FF" BgColour="#000000" Size="10"/>
-    <Property Id="55" Name="ASP JS Start" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
-    <Property Id="56" Name="ASP JS Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
-    <Property Id="57" Name="ASP JS Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="58" Name="ASP JS Line Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="59" Name="ASP JS Doc comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="60" Name="ASP JS Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
-    <Property Id="61" Name="ASP JS Word" Bold="no" Face="" Colour="#0080C0" BgColour="#000000" Size="10"/>
-    <Property Id="62" Name="ASP JS Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
-    <Property Id="63" Name="ASP JS Double quoted string" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
-    <Property Id="64" Name="ASP JS Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
-    <Property Id="65" Name="ASP JS Symbols" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="10"/>
-    <Property Id="66" Name="ASP JavaScript EOL" Bold="no" Face="" Colour="#808040" BgColour="#000000" Size="10"/>
-    <Property Id="67" Name="ASP JavaScript RegEx" Bold="no" Face="" Colour="#8000FF" BgColour="#000000" Size="10"/>
-    <Property Id="70" Name="VBS Start" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
-    <Property Id="71" Name="VBS Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
-    <Property Id="72" Name="VBS Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="73" Name="VBS Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
-    <Property Id="74" Name="VBS KeyWord" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
-    <Property Id="75" Name="VBS String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
-    <Property Id="76" Name="VBS Identifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
-    <Property Id="77" Name="VBS Unterminated string" Bold="no" Face="" Colour="#000000" BgColour="#FF8000" Size="10"/>
-    <Property Id="80" Name="ASP VBS Start" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
-    <Property Id="81" Name="ASP VBS Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
-    <Property Id="82" Name="ASP VBS Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="83" Name="ASP VBS Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
-    <Property Id="84" Name="ASP VBS KeyWord" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
-    <Property Id="85" Name="ASP VBS String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
-    <Property Id="86" Name="ASP VBS Identifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
-    <Property Id="87" Name="ASP VBS Unterminated string" Bold="no" Face="" Colour="#000000" BgColour="#FF8000" Size="10"/>
-    <Property Id="90" Name="Embedded Python" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
-    <Property Id="91" Name="Embedded Python 2" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
-    <Property Id="92" Name="Embedded Python Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="93" Name="Embedded Python Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
-    <Property Id="94" Name="Embedded Python String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
-    <Property Id="95" Name="Embedded Python Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
-    <Property Id="96" Name="Embedded Python Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
-    <Property Id="97" Name="Embedded Python Triple quotes" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
-    <Property Id="98" Name="Embedded Python Triple double quotes" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
-    <Property Id="99" Name="Embedded Python Class Name definition" Bold="no" Face="" Colour="#808040" BgColour="#000000" Size="10"/>
-    <Property Id="100" Name="Embedded Python Function or method Name definition" Bold="no" Face="" Colour="#0080C0" BgColour="#000000" Size="10"/>
-    <Property Id="101" Name="Embedded Python Operators" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="10"/>
-    <Property Id="102" Name="Embedded Python Identifiers" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
-    <Property Id="105" Name="ASP Python" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
-    <Property Id="106" Name="ASP Python 2" Bold="no" Face="" Colour="#FF8080" BgColour="#000000" Size="10"/>
-    <Property Id="107" Name="ASP Python Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="108" Name="ASP Python Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
-    <Property Id="109" Name="ASP Python String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
-    <Property Id="110" Name="ASP Python Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
-    <Property Id="111" Name="ASP Python Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
-    <Property Id="112" Name="ASP Python Triple quotes" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
-    <Property Id="113" Name="ASP Python Triple double quotes" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="10"/>
-    <Property Id="114" Name="ASP Python Class Name definition" Bold="no" Face="" Colour="#808040" BgColour="#000000" Size="10"/>
-    <Property Id="115" Name="ASP Python Function or method Name definition" Bold="no" Face="" Colour="#0080C0" BgColour="#000000" Size="10"/>
-    <Property Id="116" Name="ASP Python Operators" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="10"/>
-    <Property Id="117" Name="ASP Python Identifiers" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
-    <Property Id="104" Name="PHP Complex Variable" Bold="no" Face="" Colour="#804040" BgColour="#000000" Size="10"/>
-    <Property Id="118" Name="PHP Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="10"/>
-    <Property Id="119" Name="PHP HString" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
-    <Property Id="120" Name="PHP Simple String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="10"/>
-    <Property Id="121" Name="PHP Word" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="10"/>
-    <Property Id="122" Name="PHP Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="10"/>
-    <Property Id="123" Name="PHP Variable" Bold="no" Face="" Colour="#808000" BgColour="#000000" Size="10"/>
-    <Property Id="124" Name="PHP Multiline comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="125" Name="PHP single line Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="10"/>
-    <Property Id="126" Name="PHP HString Variable" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="10"/>
-    <Property Id="127" Name="PHP Operator" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="10"/>
+    <Property Id="18" Name="PHP/Unknown Section Block" Bold="no" Face="" Colour="#800080" BgColour="#101010" Size="10"/>
+    <Property Id="19" Name="Unquoted values" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="10"/>
+    <Property Id="20" Name="JSP Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#101010" Size="10"/>
+    <Property Id="21" Name="SGML tags" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="10"/>
+    <Property Id="22" Name="SGML command" Bold="no" Face="" Colour="#0080FF" BgColour="#101010" Size="10"/>
+    <Property Id="23" Name="SGML 1st param" Bold="no" Face="" Colour="#008080" BgColour="#101010" Size="10"/>
+    <Property Id="24" Name="SGML double string" Bold="no" Face="" Colour="#FF8000" BgColour="#101010" Size="10"/>
+    <Property Id="25" Name="SGML single string" Bold="no" Face="" Colour="#FF8040" BgColour="#101010" Size="10"/>
+    <Property Id="26" Name="SGML error" Bold="no" Face="" Colour="#FF0000" BgColour="#101010" Size="10"/>
+    <Property Id="27" Name="SGML special (#xxxx type)" Bold="no" Face="" Colour="#008040" BgColour="#101010" Size="10"/>
+    <Property Id="28" Name="SGML entity" Bold="no" Face="" Colour="#808040" BgColour="#101010" Size="10"/>
+    <Property Id="29" Name="SGML comment" Bold="no" Face="" Colour="#00FF00" BgColour="#101010" Size="10"/>
+    <Property Id="31" Name="SGML block" Bold="no" Face="" Colour="#FF8040" BgColour="#101010" Size="10"/>
+    <Property Id="40" Name="JS Start" Bold="no" Face="" Colour="#FF8080" BgColour="#101010" Size="10"/>
+    <Property Id="41" Name="JS Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="10"/>
+    <Property Id="42" Name="JS Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#101010" Size="10"/>
+    <Property Id="43" Name="JS Line Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#101010" Size="10"/>
+    <Property Id="44" Name="JS Doc comment" Bold="no" Face="" Colour="#00FF00" BgColour="#101010" Size="10"/>
+    <Property Id="45" Name="JS Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#101010" Size="10"/>
+    <Property Id="46" Name="JS Word" Bold="no" Face="" Colour="#0080C0" BgColour="#101010" Size="10"/>
+    <Property Id="47" Name="JS Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#101010" Size="10"/>
+    <Property Id="48" Name="JS Double quoted string" Bold="no" Face="" Colour="#FF8000" BgColour="#101010" Size="10"/>
+    <Property Id="49" Name="JS Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#101010" Size="10"/>
+    <Property Id="50" Name="JS Symbols" Bold="no" Face="" Colour="#808080" BgColour="#101010" Size="10"/>
+    <Property Id="51" Name="JavaScript EOL" Bold="no" Face="" Colour="#808040" BgColour="#101010" Size="10"/>
+    <Property Id="52" Name="JavaScript RegEx" Bold="no" Face="" Colour="#8000FF" BgColour="#101010" Size="10"/>
+    <Property Id="55" Name="ASP JS Start" Bold="no" Face="" Colour="#FF8080" BgColour="#101010" Size="10"/>
+    <Property Id="56" Name="ASP JS Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="10"/>
+    <Property Id="57" Name="ASP JS Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#101010" Size="10"/>
+    <Property Id="58" Name="ASP JS Line Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#101010" Size="10"/>
+    <Property Id="59" Name="ASP JS Doc comment" Bold="no" Face="" Colour="#00FF00" BgColour="#101010" Size="10"/>
+    <Property Id="60" Name="ASP JS Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#101010" Size="10"/>
+    <Property Id="61" Name="ASP JS Word" Bold="no" Face="" Colour="#0080C0" BgColour="#101010" Size="10"/>
+    <Property Id="62" Name="ASP JS Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#101010" Size="10"/>
+    <Property Id="63" Name="ASP JS Double quoted string" Bold="no" Face="" Colour="#FF8000" BgColour="#101010" Size="10"/>
+    <Property Id="64" Name="ASP JS Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#101010" Size="10"/>
+    <Property Id="65" Name="ASP JS Symbols" Bold="no" Face="" Colour="#808080" BgColour="#101010" Size="10"/>
+    <Property Id="66" Name="ASP JavaScript EOL" Bold="no" Face="" Colour="#808040" BgColour="#101010" Size="10"/>
+    <Property Id="67" Name="ASP JavaScript RegEx" Bold="no" Face="" Colour="#8000FF" BgColour="#101010" Size="10"/>
+    <Property Id="70" Name="VBS Start" Bold="no" Face="" Colour="#FF8080" BgColour="#101010" Size="10"/>
+    <Property Id="71" Name="VBS Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="10"/>
+    <Property Id="72" Name="VBS Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#101010" Size="10"/>
+    <Property Id="73" Name="VBS Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#101010" Size="10"/>
+    <Property Id="74" Name="VBS KeyWord" Bold="no" Face="" Colour="#0080FF" BgColour="#101010" Size="10"/>
+    <Property Id="75" Name="VBS String" Bold="no" Face="" Colour="#FF8000" BgColour="#101010" Size="10"/>
+    <Property Id="76" Name="VBS Identifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="10"/>
+    <Property Id="77" Name="VBS Unterminated string" Bold="no" Face="" Colour="#101010" BgColour="#FF8000" Size="10"/>
+    <Property Id="80" Name="ASP VBS Start" Bold="no" Face="" Colour="#FF8080" BgColour="#101010" Size="10"/>
+    <Property Id="81" Name="ASP VBS Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="10"/>
+    <Property Id="82" Name="ASP VBS Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#101010" Size="10"/>
+    <Property Id="83" Name="ASP VBS Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#101010" Size="10"/>
+    <Property Id="84" Name="ASP VBS KeyWord" Bold="no" Face="" Colour="#0080FF" BgColour="#101010" Size="10"/>
+    <Property Id="85" Name="ASP VBS String" Bold="no" Face="" Colour="#FF8000" BgColour="#101010" Size="10"/>
+    <Property Id="86" Name="ASP VBS Identifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="10"/>
+    <Property Id="87" Name="ASP VBS Unterminated string" Bold="no" Face="" Colour="#101010" BgColour="#FF8000" Size="10"/>
+    <Property Id="90" Name="Embedded Python" Bold="no" Face="" Colour="#FF8080" BgColour="#101010" Size="10"/>
+    <Property Id="91" Name="Embedded Python 2" Bold="no" Face="" Colour="#FF8080" BgColour="#101010" Size="10"/>
+    <Property Id="92" Name="Embedded Python Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#101010" Size="10"/>
+    <Property Id="93" Name="Embedded Python Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#101010" Size="10"/>
+    <Property Id="94" Name="Embedded Python String" Bold="no" Face="" Colour="#FF8000" BgColour="#101010" Size="10"/>
+    <Property Id="95" Name="Embedded Python Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#101010" Size="10"/>
+    <Property Id="96" Name="Embedded Python Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#101010" Size="10"/>
+    <Property Id="97" Name="Embedded Python Triple quotes" Bold="no" Face="" Colour="#FF8000" BgColour="#101010" Size="10"/>
+    <Property Id="98" Name="Embedded Python Triple double quotes" Bold="no" Face="" Colour="#FF8040" BgColour="#101010" Size="10"/>
+    <Property Id="99" Name="Embedded Python Class Name definition" Bold="no" Face="" Colour="#808040" BgColour="#101010" Size="10"/>
+    <Property Id="100" Name="Embedded Python Function or method Name definition" Bold="no" Face="" Colour="#0080C0" BgColour="#101010" Size="10"/>
+    <Property Id="101" Name="Embedded Python Operators" Bold="no" Face="" Colour="#808080" BgColour="#101010" Size="10"/>
+    <Property Id="102" Name="Embedded Python Identifiers" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="10"/>
+    <Property Id="105" Name="ASP Python" Bold="no" Face="" Colour="#FF8080" BgColour="#101010" Size="10"/>
+    <Property Id="106" Name="ASP Python 2" Bold="no" Face="" Colour="#FF8080" BgColour="#101010" Size="10"/>
+    <Property Id="107" Name="ASP Python Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#101010" Size="10"/>
+    <Property Id="108" Name="ASP Python Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#101010" Size="10"/>
+    <Property Id="109" Name="ASP Python String" Bold="no" Face="" Colour="#FF8000" BgColour="#101010" Size="10"/>
+    <Property Id="110" Name="ASP Python Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#101010" Size="10"/>
+    <Property Id="111" Name="ASP Python Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#101010" Size="10"/>
+    <Property Id="112" Name="ASP Python Triple quotes" Bold="no" Face="" Colour="#FF8000" BgColour="#101010" Size="10"/>
+    <Property Id="113" Name="ASP Python Triple double quotes" Bold="no" Face="" Colour="#FF8040" BgColour="#101010" Size="10"/>
+    <Property Id="114" Name="ASP Python Class Name definition" Bold="no" Face="" Colour="#808040" BgColour="#101010" Size="10"/>
+    <Property Id="115" Name="ASP Python Function or method Name definition" Bold="no" Face="" Colour="#0080C0" BgColour="#101010" Size="10"/>
+    <Property Id="116" Name="ASP Python Operators" Bold="no" Face="" Colour="#808080" BgColour="#101010" Size="10"/>
+    <Property Id="117" Name="ASP Python Identifiers" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="10"/>
+    <Property Id="104" Name="PHP Complex Variable" Bold="no" Face="" Colour="#804040" BgColour="#101010" Size="10"/>
+    <Property Id="118" Name="PHP Default" Bold="no" Face="" Colour="#E0E0E0" BgColour="#101010" Size="10"/>
+    <Property Id="119" Name="PHP HString" Bold="no" Face="" Colour="#FF8000" BgColour="#101010" Size="10"/>
+    <Property Id="120" Name="PHP Simple String" Bold="no" Face="" Colour="#FF8000" BgColour="#101010" Size="10"/>
+    <Property Id="121" Name="PHP Word" Bold="no" Face="" Colour="#0080FF" BgColour="#101010" Size="10"/>
+    <Property Id="122" Name="PHP Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#101010" Size="10"/>
+    <Property Id="123" Name="PHP Variable" Bold="no" Face="" Colour="rgb(128, 128, 64)" BgColour="#101010" Size="10"/>
+    <Property Id="124" Name="PHP Multiline comment" Bold="no" Face="" Colour="#C0C0C0" BgColour="#101010" Size="10"/>
+    <Property Id="125" Name="PHP single line Comment" Bold="no" Face="" Colour="#80FFFF" BgColour="#101010" Size="10"/>
+    <Property Id="126" Name="PHP HString Variable" Bold="no" Face="" Colour="#408080" BgColour="#101010" Size="10"/>
+    <Property Id="127" Name="PHP Operator" Bold="no" Face="" Colour="#808080" BgColour="#101010" Size="10"/>
     <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
     <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
-    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
-    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
-    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#101010" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#101010" Size="9"/>
+	<Property Id="34" Name="Brace match" Bold="no" Face="" Colour="yellow" BgColour="#101010" Size="-1"/>
+	<Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="#101010" Size="-1"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#101010" Size="9"/>
   </Properties>
 </Lexer>
 <Lexer Name="InnoSetup" Id="76">

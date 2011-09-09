@@ -653,8 +653,12 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	if ( !GetFoldExpanded(curLine) ) {
 		ToggleFold(curLine);
 	}
-
+	
 	if (IndicatorValueAt(MATCH_INDICATOR, pos) && event.GetKey() == GetCharAt(pos)) {
+		CharRight();
+		DeleteBack();
+		
+	} else if ((GetOptions()->GetAutoAddMatchedBraces()) && (event.GetKey() == ')' || event.GetKey() == ']') && event.GetKey() == GetCharAt(pos)) {
 		CharRight();
 		DeleteBack();
 	}

@@ -286,6 +286,30 @@ void ContextHtml::RetagFile()
 
 void ContextHtml::SemicolonShift()
 {
+	int foundPos    (wxNOT_FOUND);
+	int semiColonPos(wxNOT_FOUND);
+	LEditor &ctrl = GetCtrl();
+	if (ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
+
+		// test to see if we are inside a 'for' statement
+		long openBracePos          (wxNOT_FOUND);
+		int  posWordBeforeOpenBrace(wxNOT_FOUND);
+
+		if (ctrl.MatchBraceBack(wxT(')'), semiColonPos, openBracePos)) {
+			ctrl.PreviousChar(openBracePos, posWordBeforeOpenBrace);
+			if (posWordBeforeOpenBrace != wxNOT_FOUND) {
+				wxString word = ctrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
+
+				// At the current pos, we got a ';'
+				// at semiColonPos we got ;
+				// switch
+				ctrl.DeleteBack();
+				ctrl.SetCurrentPos(semiColonPos);
+				ctrl.InsertText(semiColonPos, wxT(";"));
+				ctrl.SetCaretAt(semiColonPos+1);
+			}
+		}
+	}
 }
 
 void ContextHtml::SetActive()

@@ -1214,9 +1214,19 @@ void LEditor::CompleteWord()
 //------------------------------------------------------------------
 void LEditor::CodeComplete()
 {
-	m_context->CodeComplete();
+	if(clEventDisabler::eventsDisabled)
+		return;
+		
+	wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE);
+	evt.SetInt(GetCurrentPosition());
+	evt.SetEventObject(this);
+	if(wxTheApp->ProcessEvent(evt))
+		// the plugin handled the code-complete request
+		return;
+	else 
+		// let the built-in context do the job
+		m_context->CodeComplete();
 }
-
 
 //----------------------------------------------------------------
 // Demonstrate how to achieve symbol browsing using the CodeLite
@@ -3859,4 +3869,9 @@ void LEditor::ShowCalltip(clCallTipPtr tip)
 	// on top of the caret.
 	wxPoint pt = PointFromPosition(GetCurrentPosition());
 	GetFunctionTip()->Activate(pt, GetCurrLineHeight(), StyleGetBackground(wxSCI_C_DEFAULT));
+}
+
+int LEditor::PositionAfterPos(int pos)
+{
+	return wxScintilla::PositionAfter(pos);
 }

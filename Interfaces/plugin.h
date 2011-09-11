@@ -255,7 +255,13 @@ enum {
 	// for the project + configuration
 	// clientData is the builded project name (wxString*)
 	// event.GetString() returns the selected configuration
-	wxEVT_PLUGIN_EXPORT_MAKEFILE
+	wxEVT_PLUGIN_EXPORT_MAKEFILE,
+	
+	// User hit Ctrl-Space in the editor
+	// let the plugins a chance to handle this
+	// event. 
+	// Call event.GetInt() to get the position in the current editor
+	wxEVT_CMD_CODE_COMPLETE,
 };
 
 //------------------------------------------------------------------

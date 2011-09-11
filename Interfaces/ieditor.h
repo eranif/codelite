@@ -317,6 +317,21 @@ public:
 	 * @return
 	 */
 	virtual wxString GetTextRange(int startPos, int endPos) = 0;
+	
+	/**
+	 * @brief return the previous char in the editor
+	 * @param pos starting position
+	 * @param foundPos matched position
+	 * @param wantWhitespace set to false if whitespace chars should be skipped
+	 * @return return the matched char or 0 if at the start of document
+	 */
+	virtual wxChar PreviousChar(const int& pos, int &foundPos, bool wantWhitespace) = 0;
+	
+	/**
+	 * @brief return the position after 'pos'
+	 * @return -1 if at EOF
+	 */
+	virtual int PositionAfterPos(int pos) = 0;
 };
 
 #endif //IEDITOR_H

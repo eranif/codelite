@@ -313,7 +313,6 @@ public:
 
 	// Util function
 	int SafeGetChar(int pos);
-	wxChar   PreviousChar(const int& pos, int &foundPos, bool wantWhitespace = false);
 	wxString PreviousWord(int pos, int &foundPos);
 	wxChar   NextChar    (const int& pos, int &foundPos);
 
@@ -560,7 +559,7 @@ public:
 	virtual int  GetUserIndicatorEnd(int pos);
 	virtual int GetLexerId();
 	virtual int GetStyleAtPos(int pos);
-
+	
 	/**
 	 * @brief Get position of start of word.
 	 * @param pos from position
@@ -615,6 +614,9 @@ public:
 	 * @brief display a calltip at the current position
 	 */
 	virtual void ShowCalltip(clCallTipPtr tip);
+	
+	virtual wxChar PreviousChar(const int& pos, int &foundPos, bool wantWhitespace = false);
+	virtual int PositionAfterPos(int pos);
 	//----------------------------------------------------------------------------
 	//----------------------------------------------------------------------------
 

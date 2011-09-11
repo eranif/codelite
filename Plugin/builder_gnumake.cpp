@@ -1137,9 +1137,9 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	wxString outputFile = bldConf->GetOutputFileName();
 	if(OS_WINDOWS && (bldConf->GetProjectType() == Project::EXECUTABLE || bldConf->GetProjectType().IsEmpty())) {
 		outputFile.Trim().Trim(false);
-		if(outputFile.EndsWith(wxT(".exe")) == false) {
-			outputFile.Append(wxT(".exe"));
-		}
+		//if(outputFile.EndsWith(wxT(".exe")) == false) {
+		//	outputFile.Append(wxT(".exe"));
+		//}
 	}
 	
 	// Expand the build macros into the generated makefile 

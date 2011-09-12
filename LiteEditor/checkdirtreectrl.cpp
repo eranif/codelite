@@ -168,8 +168,8 @@ void CheckDirTreeCtrl::GetUnselectedDirs(wxArrayString &arr)
 			DirTreeData *data = dynamic_cast<DirTreeData*>(GetItemData(item));
 			if(data){
 				wxString text = GetItemText(item);
-				//skip the dummy items insertd into the tree
-				if(item != wxT("<Dummy>")){
+				//skip the dummy items inserted into the tree
+				if(text != wxT("<Dummy>")){
 					arr.Add(data->GetDir().GetPath());
 				}
 			}
@@ -192,8 +192,8 @@ void CheckDirTreeCtrl::GetSelectedDirs(wxArrayString &arr)
 			DirTreeData *data = dynamic_cast<DirTreeData*>(GetItemData(item));
 			if(data){
 				wxString text = GetItemText(item);
-				//skip the dummy items insertd into the tree
-				if(item != wxT("<Dummy>")){
+				//skip the dummy items inserted into the tree
+				if(text != wxT("<Dummy>")){
 					arr.Add(data->GetDir().GetPath());
 				}
 			}

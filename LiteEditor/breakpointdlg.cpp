@@ -73,7 +73,8 @@ void BreakpointDlg::Initialize()
 	// unless there are pending bps to apply,and the debugger is running
 	bool pending = ManagerST::Get()->GetBreakpointsMgr()->PendingBreakpointsExist();
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	m_buttonApplyPending->Show( pending	&& dbgr && dbgr->IsRunning() );
+	m_buttonApplyPending->Show( pending && dbgr && dbgr->IsRunning() );
+	Layout();
 	// Enable DeleteAll if there are either bps or pending bps
 	m_buttonDeleteAll->Enable(hasitems || pending);
 }

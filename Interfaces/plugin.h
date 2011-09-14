@@ -262,6 +262,21 @@ enum {
 	// event. 
 	// Call event.GetInt() to get the position in the current editor
 	wxEVT_CMD_CODE_COMPLETE,
+	
+	// A tooltip is requested for the selected entry in the completion box
+	// clientData is set to the client data set by the user
+	// the plugin returns the tooltip to the IDE using the:
+	// evt.SetString(..) method
+	wxEVT_CMD_CODE_COMPLETE_TAG_COMMENT,
+	
+	// A function calltip is requesed
+	// clientData is set to the client data set by the user
+	// the plugin returns the tooltip to the IDE using the:
+	// evt.SetString(..) method
+	wxEVT_CMD_CODE_COMPLETE_FUNCTION_CALLTIP,
+	
+	// The code completion box has been dismissed
+	wxEVT_CMD_CODE_COMPLETE_BOX_DISMISSED
 };
 
 //------------------------------------------------------------------

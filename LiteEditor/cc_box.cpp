@@ -200,7 +200,7 @@ void CCBox::Adjust()
 
 		pt.y -=      BOX_HEIGHT;
 		pt.y -=      lineHeight;
-		
+
 #ifdef __WXMSW__
 		// Under Windows it seems that we need another 5 pixels ...
 		pt.y -= 5;
@@ -208,7 +208,7 @@ void CCBox::Adjust()
 #endif
 
 	}
-	
+
 	// Not needed under wx29
 #if  defined(__WXMSW__) && (wxVERSION_NUMBER < 2900)
 	ccPoint = GetParent()->ScreenToClient(ccPoint);
@@ -454,65 +454,64 @@ void CCBox::Show(const wxString& word)
 void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 {
 	if (m_owner) {
-
-		// simply send an event and dismiss the dialog
+		// Let the owner override the default behavior
 		wxCommandEvent e(wxEVT_CCBOX_SELECTION_MADE);
 		e.SetClientData( (void*)&word );
-		m_owner->ProcessEvent(e);
+		if(m_owner->ProcessEvent(e))
+			return;
+	}
 
-	} else {
-		LEditor *editor = GetEditor();
-		int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
+	LEditor *editor = GetEditor();
+	int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
 
-		editor->SetSelection(insertPos, editor->GetCurrentPos());
-		editor->ReplaceSelection(word);
+	editor->SetSelection(insertPos, editor->GetCurrentPos());
+	editor->ReplaceSelection(word);
 
-		// incase we are adding a function, add '()' at the end of the function name and place the caret in the middle
-		int img_id = m_listCtrl->OnGetItemImage(m_selectedItem);
-		if (img_id >= 8 && img_id <= 10) {
+	// incase we are adding a function, add '()' at the end of the function name and place the caret in the middle
+	int img_id = m_listCtrl->OnGetItemImage(m_selectedItem);
+	if (img_id >= 8 && img_id <= 10) {
 
-			// if full declaration was selected, dont do anything,
-			// otherwise, append '()' to the inserted string, place the caret
-			// in the middle, and trigger the function tooltip
+		// if full declaration was selected, dont do anything,
+		// otherwise, append '()' to the inserted string, place the caret
+		// in the middle, and trigger the function tooltip
 
-			if (word.Find(wxT("(")) == wxNOT_FOUND && triggerTip) {
-				
-				// If the char after the insertion is '(' dont place another '()'
-				int dummyPos = wxNOT_FOUND;
-				wxChar charAfter = editor->NextChar(editor->GetCurrentPos(), dummyPos);
-				if(charAfter != wxT('(')) {
-					// add braces
-					editor->InsertText(editor->GetCurrentPos(), wxT("()"));
-					dummyPos = wxNOT_FOUND;
-				}
-				
-				int pos = dummyPos == wxNOT_FOUND ? editor->GetCurrentPos() : dummyPos;
-				editor->SetSelectionStart(pos);
-				editor->SetSelectionEnd(pos);
-				editor->CharRight();
-				editor->SetIndicatorCurrent(MATCH_INDICATOR);
-				editor->IndicatorFillRange(pos, 1);
-				// trigger function tip
-				editor->CodeComplete();
+		if (word.Find(wxT("(")) == wxNOT_FOUND && triggerTip) {
 
-				wxString tipContent = editor->GetContext()->CallTipContent();
-				int where = tipContent.Find(wxT(" : "));
-				if (where != wxNOT_FOUND) {
-					tipContent = tipContent.Mid(where + 3);
-				}
+			// If the char after the insertion is '(' dont place another '()'
+			int dummyPos = wxNOT_FOUND;
+			wxChar charAfter = editor->NextChar(editor->GetCurrentPos(), dummyPos);
+			if(charAfter != wxT('(')) {
+				// add braces
+				editor->InsertText(editor->GetCurrentPos(), wxT("()"));
+				dummyPos = wxNOT_FOUND;
+			}
 
-				if (tipContent.Trim().Trim(false) == wxT("()")) {
-					// dont place the caret in the middle of the braces,
-					// and it is OK to cancel the function calltip
-					int new_pos = editor->GetCurrentPos() + 1;
-					editor->SetCurrentPos(new_pos);
-					editor->SetSelectionStart(new_pos);
-					editor->SetSelectionEnd(new_pos);
+			int pos = dummyPos == wxNOT_FOUND ? editor->GetCurrentPos() : dummyPos;
+			editor->SetSelectionStart(pos);
+			editor->SetSelectionEnd(pos);
+			editor->CharRight();
+			editor->SetIndicatorCurrent(MATCH_INDICATOR);
+			editor->IndicatorFillRange(pos, 1);
+			// trigger function tip
+			editor->CodeComplete();
 
-					// remove the current tip that we just activated.
-					// if this was the last tip, it will also make it go away
-					editor->GetFunctionTip()->Remove();
-				}
+			wxString tipContent = editor->GetContext()->CallTipContent();
+			int where = tipContent.Find(wxT(" : "));
+			if (where != wxNOT_FOUND) {
+				tipContent = tipContent.Mid(where + 3);
+			}
+
+			if (tipContent.Trim().Trim(false) == wxT("()")) {
+				// dont place the caret in the middle of the braces,
+				// and it is OK to cancel the function calltip
+				int new_pos = editor->GetCurrentPos() + 1;
+				editor->SetCurrentPos(new_pos);
+				editor->SetSelectionStart(new_pos);
+				editor->SetSelectionEnd(new_pos);
+
+				// remove the current tip that we just activated.
+				// if this was the last tip, it will also make it go away
+				editor->GetFunctionTip()->Remove();
 			}
 		}
 	}
@@ -673,6 +672,12 @@ void CCBox::HideCCBox()
 		}
 	}
 
+	if(m_owner) {
+		wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE_BOX_DISMISSED, GetId());
+		evt.SetEventObject(this);
+		m_owner->AddPendingEvent(evt);
+	}
+
 	if(GetEditor()) {
 		wxCommandEvent evt(wxCMD_EVENT_SET_EDITOR_ACTIVE, GetId());
 		evt.SetEventObject(this);
@@ -711,95 +716,104 @@ void CCBox::DoShowTagTip()
 		prefix << wxT("\n@@LINE@@\n");
 	}
 
-	if( tag.IsMethod() ) {
-
-		if(tag.IsConstructor())
-			prefix << wxT("[Constructor]\n");
-
-		else if( tag.IsDestructor())
-			prefix << wxT("[Destructor]\n");
-
-		TagEntryPtr p(new TagEntry(tag));
-		prefix << TagsManagerST::Get()->FormatFunction(p, FunctionFormat_WithVirtual|FunctionFormat_Arg_Per_Line) << wxT("\n");
-
-	} else if( tag.IsClass() ) {
-
-		prefix << wxT("Kind: ");
-		prefix << wxString::Format(wxT("%s\n"), tag.GetKind().c_str() );
-
-		if(tag.GetInheritsAsString().IsEmpty() == false) {
-			prefix << wxT("Inherits: ");
-			prefix << tag.GetInheritsAsString() << wxT("\n");
-		}
-
-	} else if(tag.IsMacro() || tag.IsTypedef() || tag.IsContainer() || tag.GetKind() == wxT("member") || tag.GetKind() == wxT("variable")) {
-
-		prefix << wxT("Kind : ");
-		prefix << wxString::Format(wxT("%s\n"), tag.GetKind().c_str() );
-
-		prefix << wxT("Match Pattern: ");
-
-		// Prettify the match pattern
-		wxString matchPattern(tag.GetPattern());
-		matchPattern.Trim().Trim(false);
-
-		if(matchPattern.StartsWith(wxT("/^"))) {
-			matchPattern.Replace(wxT("/^"), wxT(""));
-		}
-
-		if(matchPattern.EndsWith(wxT("$/"))) {
-			matchPattern.Replace(wxT("$/"), wxT(""));
-		}
-
-		matchPattern.Replace(wxT("\t"), wxT(" "));
-		while(matchPattern.Replace(wxT("  "), wxT(" "))) {}
-
-		matchPattern.Trim().Trim(false);
-
-		// BUG#3082954: limit the size of the 'match pattern' to a reasonable size (200 chars)
-		matchPattern = TagsManagerST::Get()->WrapLines(matchPattern);
-		prefix << matchPattern << wxT("\n");
-
-	} else {
-		// non valid tag entry
-		return;
-	}
-
-	// Add comment section
-	wxString filename (m_comments.getFilename().c_str(), wxConvUTF8);
-	if(filename != tag.GetFile()) {
-		m_comments.clear();
-		ParseComments(tag.GetFile().mb_str(wxConvUTF8).data(), m_comments);
-		m_comments.setFilename(tag.GetFile().mb_str(wxConvUTF8).data());
-	}
-
-	wxString tagComment;
-	bool     foundComment(false);
-
-	std::string comment;
-	// search for comment in the current line, the line above it and 2 above it
-	// use the first match we got
-	for(size_t i=0; i<3; i++) {
-		comment = m_comments.getCommentForLine(tag.GetLine() - i);
-		if(comment.empty() == false) {
-			foundComment = true;
-			break;
+	// Send the plugins an event requesting tooltip for this tag
+	bool gotAComment(false);
+	if(m_owner) {
+		wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE_TAG_COMMENT, GetId());
+		evt.SetEventObject(this);
+		evt.SetClientData(tag.GetUserData());
+		if(m_owner->ProcessEvent(evt)) {
+			prefix << evt.GetString();
+			gotAComment = true;
 		}
 	}
 
-	if( foundComment ) {
-		
-		wxString theComment(comment.c_str(), wxConvUTF8);
-		theComment = TagsManagerST::Get()->WrapLines(theComment);
-		
-		theComment.Trim(false);
-		tagComment = wxString::Format(wxT("%s\n"), theComment.c_str());
-		if(prefix.IsEmpty() == false) {
-			prefix.Trim().Trim(false);
-			prefix << wxT("\n\n@@LINE@@\n");
+	if(!gotAComment) {
+		if( tag.IsMethod() ) {
+
+			if(tag.IsConstructor())
+				prefix << wxT("[Constructor]\n");
+
+			else if( tag.IsDestructor())
+				prefix << wxT("[Destructor]\n");
+
+			TagEntryPtr p(new TagEntry(tag));
+			prefix << TagsManagerST::Get()->FormatFunction(p, FunctionFormat_WithVirtual|FunctionFormat_Arg_Per_Line) << wxT("\n");
+
+		} else if( tag.IsClass() ) {
+
+			prefix << wxT("Kind: ");
+			prefix << wxString::Format(wxT("%s\n"), tag.GetKind().c_str() );
+
+			if(tag.GetInheritsAsString().IsEmpty() == false) {
+				prefix << wxT("Inherits: ");
+				prefix << tag.GetInheritsAsString() << wxT("\n");
+			}
+
+		} else if(tag.IsMacro() || tag.IsTypedef() || tag.IsContainer() || tag.GetKind() == wxT("member") || tag.GetKind() == wxT("variable")) {
+
+			prefix << wxT("Kind : ");
+			prefix << wxString::Format(wxT("%s\n"), tag.GetKind().c_str() );
+
+			prefix << wxT("Match Pattern: ");
+
+			// Prettify the match pattern
+			wxString matchPattern(tag.GetPattern());
+			matchPattern.Trim().Trim(false);
+
+			if(matchPattern.StartsWith(wxT("/^"))) {
+				matchPattern.Replace(wxT("/^"), wxT(""));
+			}
+
+			if(matchPattern.EndsWith(wxT("$/"))) {
+				matchPattern.Replace(wxT("$/"), wxT(""));
+			}
+
+			matchPattern.Replace(wxT("\t"), wxT(" "));
+			while(matchPattern.Replace(wxT("  "), wxT(" "))) {}
+
+			matchPattern.Trim().Trim(false);
+
+			// BUG#3082954: limit the size of the 'match pattern' to a reasonable size (200 chars)
+			matchPattern = TagsManagerST::Get()->WrapLines(matchPattern);
+			prefix << matchPattern << wxT("\n");
+
+		} else {
+			// non valid tag entry
+			return;
 		}
-		prefix << tagComment;
-	}
+
+		// Add comment section
+		wxString filename (m_comments.getFilename().c_str(), wxConvUTF8);
+		if(filename != tag.GetFile()) {
+			m_comments.clear();
+			ParseComments(tag.GetFile().mb_str(wxConvUTF8).data(), m_comments);
+			m_comments.setFilename(tag.GetFile().mb_str(wxConvUTF8).data());
+		}
+		wxString tagComment;
+		bool     foundComment(false);
+		std::string comment;
+		// search for comment in the current line, the line above it and 2 above it
+		// use the first match we got
+		for(size_t i=0; i<3; i++) {
+			comment = m_comments.getCommentForLine(tag.GetLine() - i);
+			if(comment.empty() == false) {
+				foundComment = true;
+				break;
+			}
+		}
+		if( foundComment ) {
+			wxString theComment(comment.c_str(), wxConvUTF8);
+			theComment = TagsManagerST::Get()->WrapLines(theComment);
+			theComment.Trim(false);
+			tagComment = wxString::Format(wxT("%s\n"), theComment.c_str());
+			if(prefix.IsEmpty() == false) {
+				prefix.Trim().Trim(false);
+				prefix << wxT("\n\n@@LINE@@\n");
+			}
+			prefix << tagComment;
+		}
+	} // gotAComment = true
 
 	editor->CallTipCancel();
 	m_startPos == wxNOT_FOUND ? m_startPos = editor->GetCurrentPos() : m_startPos;
@@ -809,7 +823,7 @@ void CCBox::DoShowTagTip()
 	if(prefix.IsEmpty()) {
 		return;
 	}
-	
+
 	editor->CallTipShowExt( m_startPos, prefix);
 	int hightlightFrom = prefix.Find(tag.GetName());
 	if(hightlightFrom != wxNOT_FOUND) {

@@ -1847,7 +1847,7 @@ void clMainFrame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 
 	LEditor* editor = GetMainBook()->GetActiveEditor();
 	// This menu item is enabled only if the current editor belongs to a project
-	event.Enable(editor && ManagerST::Get()->IsWorkspaceOpen());
+	event.Enable(editor/* && ManagerST::Get()->IsWorkspaceOpen()*/);
 }
 
 void clMainFrame::OnWorkspaceOpen(wxUpdateUIEvent &event)

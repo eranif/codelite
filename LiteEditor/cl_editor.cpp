@@ -1203,7 +1203,19 @@ wxString LEditor::GetWordAtCaret()
 //---------------------------------------------------------------------------
 void LEditor::CompleteWord()
 {
-	m_context->CompleteWord();
+	if(clEventDisabler::eventsDisabled)
+		return;
+	
+	// Let the plugins a chance to override the default behavior
+	wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE);
+	evt.SetInt(GetCurrentPosition());
+	evt.SetEventObject(this);
+	if(wxTheApp->ProcessEvent(evt))
+		// the plugin handled the code-complete request
+		return;
+	else
+		// let the built-in context do the job
+		m_context->CompleteWord();
 }
 
 //------------------------------------------------------------------

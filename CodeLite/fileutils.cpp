@@ -22,11 +22,11 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "fileutils.h"
+#include "fileutils.h"
 #include <wx/ffile.h> 
 #include "wx/string.h"
 #include <wx/strconv.h>
-
+ 
 bool FileUtils::ReadFileUTF8(const wxFileName &fn, wxString &data)
 {
 	wxFFile file(fn.GetFullPath().GetData(), wxT("rb"));

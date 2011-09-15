@@ -135,8 +135,7 @@ FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint
 {
 	Create( parent, id, pos, size, style );
 	MSWSetNativeTheme(this);
-	SetFont(wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ));
-
+	
 	// Initialise images map
 	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 	wxImageList *images = new wxImageList( 16, 16, true );

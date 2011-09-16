@@ -35,6 +35,7 @@
 TagEntry::TagEntry(const tagEntry& entry)
 : m_isClangTag(false)
 , m_userData(NULL)
+, m_flags(0)
 {
 	Create(entry);
 }
@@ -52,6 +53,7 @@ TagEntry::TagEntry()
 		, m_differOnByLineNumber(false)
 		, m_isClangTag(false)
 		, m_userData(NULL)
+		, m_flags(0)
 {
 }
 
@@ -79,6 +81,7 @@ TagEntry& TagEntry::operator=(const TagEntry& rhs)
 	m_isClangTag = rhs.m_isClangTag;
 	m_differOnByLineNumber = rhs.m_differOnByLineNumber;
 	m_userData = rhs.m_userData;
+	m_flags = rhs.m_flags;
 	// loop over the map and copy item by item
 	// we use the c_str() method to force our own copy of the string and to avoid
 	// ref counting which may cause crash when sharing wxString among threads
@@ -134,6 +137,7 @@ void TagEntry::Create(const wxString &fileName,
                       std::map<wxString, wxString>& extFields)
 {
 	m_userData = NULL;
+	m_flags = 0;
 	m_isClangTag = false;
 	SetName( name );
 	SetLine( lineNumber );

@@ -40,7 +40,7 @@ struct tagCallTipInfo {
 };
 
 clCallTip::clCallTip(const std::vector<TagEntryPtr> &tips)
-		: m_curr(0)
+	: m_curr(0)
 {
 	Initialize(tips);
 }
@@ -125,54 +125,90 @@ void clCallTip::Initialize(const std::vector<TagEntryPtr> &tips)
 	for (size_t i=0; i< tips.size(); i++) {
 		tagCallTipInfo cti;
 		TagEntryPtr t = tips.at(i);
-		if ( t->IsMethod() ) {
-
-			wxString raw_sig ( t->GetSignature().Trim().Trim(false) );
-
-			// evaluate the return value of the tag
-			cti.retValue = TagsManagerST::Get()->GetFunctionReturnValueFromPattern(t);
+		
+		// Use basic signature 
+		if(t->GetFlags() & TagEntry::Tag_No_Signature_Format) {
 			
-			bool hasDefaultValues = (raw_sig.Find(wxT("=")) != wxNOT_FOUND);
+			wxString raw_sig = t->GetSignature();
+			int startOffset (0);
+			
+			// Remove the open / close brace
+			wxString tmpsig = raw_sig;
+			tmpsig.Trim().Trim(false); // remove any whitespaces from right 
+			
+			if(tmpsig.EndsWith(wxT(")")))
+				tmpsig.RemoveLast();
 
-			// the key for unique entries is the function prototype without the variables names and
-			// any default values
-			wxString  key           = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, Normalize_Func_Reverse_Macro);
-
-			// the signature that we want to keep is one with name & default values, so try and get the maximum out of the
-			// function signature
-			wxString  full_signature = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, Normalize_Func_Name | Normalize_Func_Default_value | Normalize_Func_Reverse_Macro, &cti.paramLen);
-			cti.sig                  = full_signature;
-
-			if (hasDefaultValues) {
-				// incase default values exist in this prototype,
-				// update/insert this signature
-				mymap[key] = cti;
+			if(tmpsig.StartsWith(wxT("("))) {
+				startOffset = 1;
+				tmpsig.Remove(0, 1);
 			}
-
-			// make sure we dont add duplicates
-			if ( mymap.find(key) == mymap.end() ) {
-				// add it
-				mymap[key] = cti;
-			}
-
-		} else {
-			// macro
-			wxString macroName = t->GetName();
-			wxString pattern = t->GetPattern();
-
-			int where = pattern.Find(macroName);
-			if (where != wxNOT_FOUND) {
-				//remove the #define <name> from the pattern
-				pattern = pattern.Mid(where + macroName.Length());
-				pattern = pattern.Trim().Trim(false);
-				if (pattern.StartsWith(wxT("("))) {
-					//this macro has the form of a function
-					pattern = pattern.BeforeFirst(wxT(')'));
-					pattern.Append(wxT(')'));
-					cti.sig = pattern.Trim().Trim(false);
-					mymap[cti.sig] = cti;
+				
+			int j = 0;
+			for(; j<(int)tmpsig.Len(); j++) {
+				if(tmpsig.GetChar(j) == wxT(',')) {
+					cti.paramLen.push_back(std::make_pair<int, int>(startOffset, (j - startOffset) + 1));
+					startOffset = j;
 				}
 			}
+			
+			if(startOffset != j) {
+				cti.paramLen.push_back(std::make_pair<int, int>(startOffset, (j - startOffset) + 1));
+			}
+			cti.sig = raw_sig;
+			mymap[raw_sig] = cti;
+			
+		} else {
+			if ( t->IsMethod() ) {
+
+				wxString raw_sig ( t->GetSignature().Trim().Trim(false) );
+
+				// evaluate the return value of the tag
+				cti.retValue = TagsManagerST::Get()->GetFunctionReturnValueFromPattern(t);
+
+				bool hasDefaultValues = (raw_sig.Find(wxT("=")) != wxNOT_FOUND);
+
+				// the key for unique entries is the function prototype without the variables names and
+				// any default values
+				wxString  key           = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, Normalize_Func_Reverse_Macro);
+
+				// the signature that we want to keep is one with name & default values, so try and get the maximum out of the
+				// function signature
+				wxString  full_signature = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, Normalize_Func_Name | Normalize_Func_Default_value | Normalize_Func_Reverse_Macro, &cti.paramLen);
+				cti.sig                  = full_signature;
+
+				if (hasDefaultValues) {
+					// incase default values exist in this prototype,
+					// update/insert this signature
+					mymap[key] = cti;
+				}
+
+				// make sure we dont add duplicates
+				if ( mymap.find(key) == mymap.end() ) {
+					// add it
+					mymap[key] = cti;
+				}
+
+			} else {
+				// macro
+				wxString macroName = t->GetName();
+				wxString pattern = t->GetPattern();
+
+				int where = pattern.Find(macroName);
+				if (where != wxNOT_FOUND) {
+					//remove the #define <name> from the pattern
+					pattern = pattern.Mid(where + macroName.Length());
+					pattern = pattern.Trim().Trim(false);
+					if (pattern.StartsWith(wxT("("))) {
+						//this macro has the form of a function
+						pattern = pattern.BeforeFirst(wxT(')'));
+						pattern.Append(wxT(')'));
+						cti.sig = pattern.Trim().Trim(false);
+						mymap[cti.sig] = cti;
+					}
+				}
+			}
+
 		}
 	}
 
@@ -198,7 +234,7 @@ void clCallTip::GetHighlightPos(int index, int& start, int& len)
 	if (m_curr >= 0 && m_curr < (int)m_tips.size()) {
 		clTipInfo ti = m_tips.at(m_curr);
 		int base = ti.str.Find(wxT("("));
-		
+
 		// sanity
 		if (base != wxNOT_FOUND && index < (int)ti.paramLen.size() && index >= 0) {
 			start = ti.paramLen.at(index).first + base;
@@ -212,7 +248,7 @@ wxString clCallTip::Current()
 	// format a tip string and return it
 	if ( m_tips.empty() )
 		return wxEmptyString;
-	
+
 	if ( m_curr >= (int)m_tips.size() || m_curr < 0) {
 		m_curr = 0;
 	}

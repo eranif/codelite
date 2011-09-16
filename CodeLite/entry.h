@@ -64,7 +64,14 @@ class WXDLLIMPEXP_CL TagEntry
 	wxString                     m_scope;
 	bool                         m_differOnByLineNumber;
 	bool                         m_isClangTag;
-	void*                        m_userData;
+	void*                        m_userData;   // This member is not saved into the database
+	size_t                       m_flags;      // This member is not saved into the database
+
+public:
+	enum {
+	    Tag_No_Signature_Format  = 0x00000001, // Do not attempt to format the signature. Use the GetSignature() as is
+	    Tag_No_Return_Value_Eval = 0x00000002  // Do not evaluate the return value. Use GetReturnValue() instead
+	};
 
 public:
 	/**
@@ -73,6 +80,12 @@ public:
 	 */
 	TagEntry(const tagEntry& entry);
 
+	void SetFlags(size_t flags) {
+		this->m_flags = flags;
+	}
+	size_t GetFlags() const {
+		return m_flags;
+	}
 	/**
 	 * Default constructor.
 	 */

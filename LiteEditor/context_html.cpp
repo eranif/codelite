@@ -1,6 +1,7 @@
 #include "context_html.h"
 #include "cl_editor.h"
 #include "editor_config.h"
+#include "cl_editor_tip_window.h"
 
 ContextHtml::ContextHtml(LEditor *editor)
 	: ContextBase(editor)
@@ -186,7 +187,7 @@ void ContextHtml::CompleteWord()
 
 int ContextHtml::DoGetCalltipParamterIndex()
 {
-	return 0;
+	return ContextBase::DoGetCalltipParamterIndex();
 }
 
 wxString ContextHtml::GetCurrentScopeName()
@@ -270,6 +271,10 @@ void ContextHtml::OnKeyDown(wxKeyEvent& event)
 
 void ContextHtml::OnSciUpdateUI(wxScintillaEvent& event)
 {
+	LEditor &ctrl = GetCtrl();
+	if (ctrl.GetFunctionTip()->IsActive()) {
+		ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
+	}
 }
 
 void ContextHtml::OnUserTypedXChars(const wxString& word)
@@ -307,6 +312,7 @@ void ContextHtml::SemicolonShift()
 				ctrl.SetCurrentPos(semiColonPos);
 				ctrl.InsertText(semiColonPos, wxT(";"));
 				ctrl.SetCaretAt(semiColonPos+1);
+				ctrl.GetFunctionTip()->Deactivate();
 			}
 		}
 	}

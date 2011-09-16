@@ -3216,7 +3216,20 @@ int LEditor::GetEOLByOS()
 void LEditor::ShowFunctionTipFromCurrentPos()
 {
 	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP) {
+		
+		if(clEventDisabler::eventsDisabled)
+		return;
+	
 		int pos = DoGetOpenBracePos();
+		
+		// see if any of the plugins want to handle it
+		wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE_FUNCTION_CALLTIP, GetId());
+		evt.SetEventObject(this);
+		evt.SetInt(pos);
+		
+		if(wxTheApp->ProcessEvent(evt))
+			return;
+
 		if (pos != wxNOT_FOUND) {
 			m_context->CodeComplete(pos);
 		}

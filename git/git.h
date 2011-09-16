@@ -25,27 +25,6 @@ typedef struct gitAction {
 class GitPlugin : public IPlugin
 {
 	enum {
-		ID_SETGITREPO = wxID_HIGHEST + 1,
-		ID_SETTINGS,
-		ID_ADD_FILE,
-		ID_DELETE_FILE,
-		ID_DIFF_FILE,
-		ID_RESET_FILE,
-		ID_RESET_REPO,
-		ID_CREATE_BRANCH,
-		ID_SWITCH_BRANCH,
-		ID_SWITCH_BRANCH_REMOTE,
-		ID_PULL,
-		ID_PUSH,
-		ID_COMMIT,
-		ID_COMMIT_LIST,
-		ID_GITK,
-		ID_LIST_MODIFIED,
-		ID_REFRESH,
-		ID_GARBAGE_COLLETION,
-	};
-
-	enum {
 		gitNone = 0,
 		gitListAll,
 		gitListModified,

@@ -131,29 +131,24 @@ void clCallTip::Initialize(const std::vector<TagEntryPtr> &tips)
 			
 			wxString raw_sig = t->GetSignature();
 			int startOffset (0);
+			if(raw_sig.Find(wxT("(")) != wxNOT_FOUND) {
+				startOffset = raw_sig.Find(wxT("(")) + 1;
+			}
 			
 			// Remove the open / close brace
 			wxString tmpsig = raw_sig;
 			tmpsig.Trim().Trim(false); // remove any whitespaces from right 
 			
-			if(tmpsig.EndsWith(wxT(")")))
-				tmpsig.RemoveLast();
-
-			if(tmpsig.StartsWith(wxT("("))) {
-				startOffset = 1;
-				tmpsig.Remove(0, 1);
-			}
-				
 			int j = 0;
 			for(; j<(int)tmpsig.Len(); j++) {
 				if(tmpsig.GetChar(j) == wxT(',')) {
-					cti.paramLen.push_back(std::make_pair<int, int>(startOffset, (j - startOffset) + 1));
-					startOffset = j;
+					cti.paramLen.push_back(std::make_pair<int, int>(startOffset, (j - startOffset)));
+					startOffset = j + 1;
 				}
 			}
 			
 			if(startOffset != j) {
-				cti.paramLen.push_back(std::make_pair<int, int>(startOffset, (j - startOffset) + 1));
+				cti.paramLen.push_back(std::make_pair<int, int>(startOffset, (j - startOffset)));
 			}
 			cti.sig = raw_sig;
 			mymap[raw_sig] = cti;

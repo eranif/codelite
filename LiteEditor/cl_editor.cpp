@@ -3900,3 +3900,14 @@ int LEditor::PositionAfterPos(int pos)
 {
 	return wxScintilla::PositionAfter(pos);
 }
+
+int LEditor::GetCharAtPos(int pos)
+{
+	return wxScintilla::GetCharAt(pos);
+}
+
+int LEditor::PositionBeforePos(int pos)
+{
+	return wxScintilla::PositionBefore(pos);
+}
+

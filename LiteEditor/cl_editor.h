@@ -617,6 +617,9 @@ public:
 	
 	virtual wxChar PreviousChar(const int& pos, int &foundPos, bool wantWhitespace = false);
 	virtual int PositionAfterPos(int pos);
+	virtual int PositionBeforePos(int pos);
+	virtual int GetCharAtPos(int pos);
+	
 	//----------------------------------------------------------------------------
 	//----------------------------------------------------------------------------
 

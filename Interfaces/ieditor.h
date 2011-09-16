@@ -328,10 +328,19 @@ public:
 	virtual wxChar PreviousChar(const int& pos, int &foundPos, bool wantWhitespace) = 0;
 	
 	/**
-	 * @brief return the position after 'pos'
-	 * @return -1 if at EOF
+	 * @brief The minimum position returned is 0 and the maximum is the last position in the document
 	 */
 	virtual int PositionAfterPos(int pos) = 0;
+	
+	/**
+	 * @brief The minimum position returned is 0 and the maximum is the last position in the document
+	 */
+	virtual int PositionBeforePos(int pos) = 0;
+	
+	/**
+	 * @brief return the char at the 'pos', 0 if an error occurs
+	 */
+	virtual int GetCharAtPos(int pos) = 0;
 };
 
 #endif //IEDITOR_H

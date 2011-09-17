@@ -2449,8 +2449,13 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 
 		//Print the stack trace
 		wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
-		if ( info.IsShown() ) {
+		if ( showDialog ) {
+			// select the "Call Stack" tab
 			clMainFrame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
+		} 
+		
+		if(info.IsShown()) {
+			// Refresh the view
 			UpdateDebuggerPane();
 		}
 		

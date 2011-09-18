@@ -1847,7 +1847,7 @@ void clMainFrame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 
 	LEditor* editor = GetMainBook()->GetActiveEditor();
 	// This menu item is enabled only if the current editor belongs to a project
-	event.Enable(editor/* && ManagerST::Get()->IsWorkspaceOpen()*/);
+	event.Enable(editor);
 }
 
 void clMainFrame::OnWorkspaceOpen(wxUpdateUIEvent &event)
@@ -2468,11 +2468,18 @@ void clMainFrame::OnFileCloseAll(wxCommandEvent &event)
 
 void clMainFrame::OnQuickOutline(wxCommandEvent &event)
 {
-	wxUnusedVar(event);
-	if (ManagerST::Get()->IsWorkspaceOpen() == false)
+	// Sanity
+	if (!GetMainBook()->GetActiveEditor())
+		return;
+		
+	// let the plugins process this first
+	wxCommandEvent evt(wxEVT_CMD_SHOW_QUICK_OUTLINE, GetId());
+	evt.SetEventObject(this);
+	if(wxTheApp->ProcessEvent(evt))
 		return;
 
-	if (!GetMainBook()->GetActiveEditor())
+	wxUnusedVar(event);
+	if (ManagerST::Get()->IsWorkspaceOpen() == false)
 		return;
 
 	if (GetMainBook()->GetActiveEditor()->GetProject().IsEmpty())

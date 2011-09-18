@@ -1210,6 +1210,7 @@ void LEditor::CompleteWord()
 	wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE);
 	evt.SetInt(GetCurrentPosition());
 	evt.SetEventObject(this);
+	
 	if(wxTheApp->ProcessEvent(evt))
 		// the plugin handled the code-complete request
 		return;
@@ -1232,6 +1233,7 @@ void LEditor::CodeComplete()
 	wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE);
 	evt.SetInt(GetCurrentPosition());
 	evt.SetEventObject(this);
+	
 	if(wxTheApp->ProcessEvent(evt))
 		// the plugin handled the code-complete request
 		return;

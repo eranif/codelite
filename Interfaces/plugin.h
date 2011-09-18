@@ -261,12 +261,14 @@ enum {
 	// let the plugins a chance to handle this
 	// event. 
 	// Call event.GetInt() to get the position in the current editor
+	// Use m_mgr->GetActiveEditor() to get the active editor
 	wxEVT_CMD_CODE_COMPLETE,
 	
 	// A tooltip is requested for the selected entry in the completion box
 	// clientData is set to the client data set by the user
 	// the plugin returns the tooltip to the IDE using the:
 	// evt.SetString(..) method
+	// Use evt.GetClientData() to retrieve the client data associated with this tag
 	wxEVT_CMD_CODE_COMPLETE_TAG_COMMENT,
 	
 	// A function calltip is requesed
@@ -276,7 +278,11 @@ enum {
 	wxEVT_CMD_CODE_COMPLETE_FUNCTION_CALLTIP,
 	
 	// The code completion box has been dismissed
-	wxEVT_CMD_CODE_COMPLETE_BOX_DISMISSED
+	wxEVT_CMD_CODE_COMPLETE_BOX_DISMISSED,
+	
+	// User has requested to display the current files' outline
+	// Use m_mgr->GetActiveEditor() to get the active editor
+	wxEVT_CMD_SHOW_QUICK_OUTLINE
 };
 
 //------------------------------------------------------------------

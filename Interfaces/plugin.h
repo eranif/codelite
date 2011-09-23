@@ -257,6 +257,10 @@ enum {
 	// event.GetString() returns the selected configuration
 	wxEVT_PLUGIN_EXPORT_MAKEFILE,
 	
+	/////////////////////////////////////////////////
+	// Code completion events
+	/////////////////////////////////////////////////
+	
 	// User hit Ctrl-Space in the editor
 	// let the plugins a chance to handle this
 	// event. 
@@ -282,7 +286,45 @@ enum {
 	
 	// User has requested to display the current files' outline
 	// Use m_mgr->GetActiveEditor() to get the active editor
-	wxEVT_CMD_SHOW_QUICK_OUTLINE
+	wxEVT_CMD_SHOW_QUICK_OUTLINE,
+	
+	/////////////////////////////////////////////////
+	// Project management events
+	/////////////////////////////////////////////////
+	
+	// User selected an option to create a new workspace
+	wxEVT_CMD_CREATE_NEW_WORKSPACE,
+	// User selected an option to create a new project
+	wxEVT_CMD_CREATE_NEW_PROJECT,
+	// User requested to open a workspace
+	wxEVT_CMD_OPEN_WORKSPACE,
+	
+	// This event is sent by codelite to the plugins to query whether a 
+	// a custom workspace is opened (i.e. a worksapce which is completely managed
+	// by the plugin) this allows codelite to enable menu items which otherwise
+	// will be left disabled
+	// to return a true or false reply to codelite, use
+	// evt.SetInt(0) or evt.SetInt(1) 
+	wxEVT_CMD_IS_WORKSPACE_OPEN,
+	
+	/////////////////////////////////////////////////
+	// Search events
+	/////////////////////////////////////////////////
+	
+	// User requested to open the resource dialog with the filter set to 'workspace file'
+	wxEVT_CMD_OPEN_RESOURCE,
+	// User requested to open the resource dialog with the filter set to 'function'
+	wxEVT_CMD_OPEN_RESOURCE_FUNCTION,
+	// User requested to open the resource dialog with the filter set to 'Type (class)'
+	wxEVT_CMD_OPEN_RESOURCE_TYPE,
+	// User requested to open the resource dialog with the filter set to 'macros'
+	wxEVT_CMD_OPEN_RESOURCE_MACRO,
+	// User requested to open the resource dialog with the filter set to 'typedef'
+	wxEVT_CMD_OPEN_RESOURCE_TYPEDEF,
+	
+	// User requested to perform a raw search for a symbol
+	// Use evt.GetString() to get the searched string
+	wxEVT_CMD_FIND_SYMBOL
 };
 
 //------------------------------------------------------------------

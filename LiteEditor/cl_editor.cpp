@@ -3673,7 +3673,8 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 			wxString dbg_line = GetLine ( line ).Trim().Trim ( false );
 
 			wxString tmp_pattern ( pattern );
-			if ( dbg_line.Len() != tmp_pattern.Trim().Trim ( false ).Len() ) {
+			tmp_pattern.Trim().Trim ( false );
+			if ( dbg_line.Len() != tmp_pattern.Len() && tmp_pattern != what) {
 				offset = pos + match_len;
 				again = true;
 			} else {

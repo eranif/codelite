@@ -107,7 +107,7 @@ public:
 	virtual IKeyboard *            GetKeyboardManager();
 	virtual bool                   CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName);
 	virtual OptionsConfigPtr       GetEditorSettings();
-	virtual void                   FindAndSelect(const wxString& pattern, const wxString& name);
+	virtual void                   FindAndSelect(const wxString& pattern, const wxString& name, int pos = 0);
 	virtual TagEntryPtr            GetTagAtCaret(bool scoped, bool impl);
 	virtual bool                   AllowToolbar();
 	virtual void                   SetStatusMessage(const wxString &msg, int col, int id);

@@ -477,11 +477,11 @@ OptionsConfigPtr PluginManager::GetEditorSettings()
 	return EditorConfigST::Get()->GetOptions();
 }
 
-void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name)
+void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name, int pos)
 {
 	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if (editor) {
-		editor->FindAndSelect(pattern, name);
+		editor->FindAndSelect(pattern, name, pos, NavMgr::Get());
 		editor->SetActive();
 	}
 }

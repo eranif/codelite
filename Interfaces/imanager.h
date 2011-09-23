@@ -291,7 +291,7 @@ public:
     /**
      * @brief search for pattern in active editor and select name if found
      */
-    virtual void FindAndSelect(const wxString& pattern, const wxString& name) = 0;
+    virtual void FindAndSelect(const wxString& pattern, const wxString& name, int pos = 0) = 0;
 
     /**
      * @brief return tag at caret in active editor (if ambiguous, user will get a selection dialog)

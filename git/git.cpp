@@ -1208,6 +1208,7 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
 				if(number.ToULong(&current)) {
 					message.Prepend(m_progressMessage+wxT("\nStatus: "));
 					m_progressDialog->Update(current, message);
+					m_progressDialog->Layout();
 				}
 			}
 		}
@@ -1348,13 +1349,18 @@ void GitPlugin::ShowProgress(const wxString& message, bool pulse)
 		m_progressDialog = new clProgressDlg(NULL, wxT("Git progress"), wxT("\n\n"), 101);
 		m_progressDialog->SetIcon(wxICON(icon_git));
 	}
-	m_progressDialog->CenterOnScreen();
-	if(pulse) {
-		m_progressDialog->Pulse(message);
-		m_progressTimer.Start(50);
-	} else {
-		m_progressMessage = message;
-		m_progressDialog->Update(0, message);
+	
+	if(m_progressDialog) {
+		m_progressDialog->CenterOnScreen();
+		if(pulse) {
+			m_progressDialog->Pulse(message);
+			m_progressTimer.Start(50);
+		} else {
+			m_progressMessage = message;
+			m_progressDialog->Update(0, message);
+			m_progressDialog->Layout();
+		}
+		m_progressDialog->Show();
 	}
 }
 

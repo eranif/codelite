@@ -147,6 +147,8 @@ void AbbreviationPlugin::OnAbbreviations(wxCommandEvent& e)
 
 void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
 {
+	e.Skip();
+	
 	// get the active editor
 	IEditor *editor = m_mgr->GetActiveEditor();
 

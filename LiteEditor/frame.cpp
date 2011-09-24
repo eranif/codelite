@@ -1853,12 +1853,23 @@ void clMainFrame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 void clMainFrame::OnWorkspaceOpen(wxUpdateUIEvent &event)
 {
 	CHECK_SHUTDOWN();
-	event.Enable(ManagerST::Get()->IsWorkspaceOpen());
+	wxCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
+	e.SetEventObject(this);
+	e.SetInt(0);
+	wxTheApp->ProcessEvent(e);
+	
+	event.Enable(ManagerST::Get()->IsWorkspaceOpen() || e.GetInt());
 }
 
 // Project->New Workspace
 void clMainFrame::OnProjectNewWorkspace(wxCommandEvent &event)
 {
+	// let the plugins handle this event first
+	wxCommandEvent e(wxEVT_CMD_CREATE_NEW_WORKSPACE, GetId());
+	e.SetEventObject(this);
+	if(wxTheApp->ProcessEvent(e))
+		return;
+	
 	wxUnusedVar(event);
 	NewWorkspaceDlg *dlg = new NewWorkspaceDlg(this);
 	if (dlg->ShowModal() == wxID_OK) {

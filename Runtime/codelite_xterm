@@ -14,6 +14,6 @@ if [ "${LD_LIBRARY_PATH}" = "" ]; then
 	## Run xterm without the bash wrapper
 	xterm -T "$program_title" -e $2 2> /dev/null
 else
-	xterm -T "$program_title" -e /bin/bash -c 'export LD_LIBRARY_PATH=$0;shift;$@' $LD_LIBRARY_PATH $@ 2> /dev/null
+	xterm -T "$program_title" -e /bin/bash -c 'export LD_LIBRARY_PATH=$0;shift;$@' $LD_LIBRARY_PATH "$@" 2> /dev/null
 fi
 

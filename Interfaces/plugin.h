@@ -296,8 +296,19 @@ enum {
 	wxEVT_CMD_CREATE_NEW_WORKSPACE,
 	// User selected an option to create a new project
 	wxEVT_CMD_CREATE_NEW_PROJECT,
+	
 	// User requested to open a workspace
+	// By default codelite will open a dialog to open a workspace with the '.workspace' suffix.
+	// If a plugin wishes to offer a user a dialog with other extension (for example: .myworkspace)
+	// it should handle this event and open the dialog itself and then based on the selected
+	// file extension it should decide what to do: pass the selected file to codelite (assuming user selected the
+	// standard .workspace file, or handle it by itself).
+	// to pass the selection to codelite, simply set it in the evt.SetString(...) function
+	// If the plugin wishes to handle the file by itself, it should avoid calling evt.Skip()
 	wxEVT_CMD_OPEN_WORKSPACE,
+	
+	// User requested to close the workspace.
+	wxEVT_CMD_CLOSE_WORKSPACE,
 	
 	// This event is sent by codelite to the plugins to query whether a 
 	// a custom workspace is opened (i.e. a worksapce which is completely managed

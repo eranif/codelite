@@ -1695,6 +1695,13 @@ void clMainFrame::OnFileReload(wxCommandEvent &event)
 void clMainFrame::OnCloseWorkspace(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
+	
+	// let the plugins close any custom workspace
+	wxCommandEvent e(wxEVT_CMD_CLOSE_WORKSPACE, GetId());
+	e.SetEventObject(this);
+	wxTheApp->ProcessEvent(e);
+	
+	// In any case, make sure that we dont have a workspace opened 
 	if (ManagerST::Get()->IsWorkspaceOpen()) {
 		ManagerST::Get()->CloseWorkspace();
 		ShowWelcomePage();
@@ -1704,15 +1711,39 @@ void clMainFrame::OnCloseWorkspace(wxCommandEvent &event)
 void clMainFrame::OnSwitchWorkspace(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-
-	// now it is time to prompt user for new workspace to open
-	const wxString ALL(wxT("CodeLite Workspace files (*.workspace)|*.workspace|")
-	                   wxT("All Files (*)|*"));
-	wxFileDialog dlg(this, _("Open Workspace"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE , wxDefaultPosition);
-	if (dlg.ShowModal() == wxID_OK) {
-		clWindowUpdateLocker locker(this);
-		ManagerST::Get()->OpenWorkspace(dlg.GetPath());
+	
+	bool promptUser = true;
+	wxString wspFile;
+	
+	wxCommandEvent e(wxEVT_CMD_OPEN_WORKSPACE, GetId());
+	e.SetEventObject(this);
+	e.SetString(wxT(""));
+	if(wxTheApp->ProcessEvent(e)) {
+		if(e.GetString().IsEmpty() == false) {
+			// the plugin processed it by itself and the user already selected a file
+			// don't bother to prompt the user again just use what he already selected
+			promptUser = false;
+			wspFile = e.GetString();
+			
+		} else {
+			// the plugin processed it by itself
+			return;
+			
+		}
 	}
+	
+	if(promptUser) {
+		// now it is time to prompt user for new workspace to open
+		const wxString ALL(wxT("CodeLite Workspace files (*.workspace)|*.workspace|")
+						   wxT("All Files (*)|*"));
+		wxFileDialog dlg(this, _("Open Workspace"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE , wxDefaultPosition);
+		if (dlg.ShowModal() == wxID_OK) {
+			wspFile = dlg.GetPath();
+		}
+	}
+	
+	if(!wspFile.IsEmpty())
+		ManagerST::Get()->OpenWorkspace(wspFile);
 }
 
 void clMainFrame::OnCompleteWord(wxCommandEvent& event)

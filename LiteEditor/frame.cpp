@@ -1719,17 +1719,16 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent &event)
 	e.SetEventObject(this);
 	e.SetString(wxT(""));
 	if(wxTheApp->ProcessEvent(e)) {
-		if(e.GetString().IsEmpty() == false) {
-			// the plugin processed it by itself and the user already selected a file
-			// don't bother to prompt the user again just use what he already selected
-			promptUser = false;
-			wspFile = e.GetString();
-			
-		} else {
-			// the plugin processed it by itself
-			return;
-			
-		}
+		// the plugin processed it by itself
+		return;
+	}
+	
+	if(e.GetString().IsEmpty() == false) {
+		// the plugin processed it by itself and the user already selected a file
+		// don't bother to prompt the user again just use what he already selected
+		promptUser = false;
+		wspFile = e.GetString();
+		
 	}
 	
 	if(promptUser) {

@@ -114,6 +114,7 @@ class LEditor : public wxScintilla, public IEditor
 	wxStopWatch                                 m_watch;
 	ContextBasePtr                              m_context;
 	wxMenu *                                    m_rightClickMenu;
+	std::vector<int>                            m_changes;
 	std::vector<wxMenuItem*>                    m_dynItems;
 	std::vector<BPtoMarker>                     m_BPstoMarkers;
 	static FindReplaceDialog *                  m_findReplaceDlg;
@@ -637,6 +638,13 @@ public:
 
 	wxString GetEolString();
 	void HighlightWord(StringHighlightOutput *highlightOutput);
+
+	/**
+	 * Get the vector of line-number changes. Used for FindInFiles
+	 */
+	const std::vector<int>* GetChanges() {
+		return &m_changes;
+	}
 
 private:
 	void FillBPtoMarkerArray();

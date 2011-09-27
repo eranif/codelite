@@ -228,6 +228,7 @@ public:
 //------------------------------------------
 class WXDLLIMPEXP_SDK SearchResult : public wxObject {
 	wxString m_pattern;
+	int      m_position;
 	int      m_lineNumber;
 	int      m_column;
 	wxString m_fileName;
@@ -252,7 +253,7 @@ public:
 	SearchResult& operator=(const SearchResult &rhs) {
 		if (this == &rhs)
 			return *this;
-
+		m_position      = rhs.m_position;
 		m_column        = rhs.m_column;
 		m_lineNumber    = rhs.m_lineNumber;
 		m_pattern       = rhs.m_pattern.c_str();
@@ -281,6 +282,9 @@ public:
 	void SetPattern(const wxString &pat) {
 		m_pattern = pat.c_str();
 	}
+	void SetPosition(const int &position) {
+		m_position = position;
+	}
 	void SetLineNumber(const int &line) {
 		m_lineNumber = line;
 	}
@@ -291,6 +295,9 @@ public:
 		m_fileName = fileName.c_str();
 	}
 
+	const int& GetPosition() const {
+		return m_position;
+	}
 	const int& GetLineNumber() const {
 		return m_lineNumber;
 	}
@@ -506,10 +513,10 @@ private:
 	void DoSearchFile(const wxString &fileName, const SearchData *data);
 
 	// Perform search on a line
-	void DoSearchLine(const wxString &line, const int lineNum, const wxString &fileName, const SearchData *data, TextStatesPtr statesPtr);
+	void DoSearchLine(const wxString &line, const int lineNum, const int lineOffset, const wxString &fileName, const SearchData *data, TextStatesPtr statesPtr);
 
 	// Perform search on a line using regular expression
-	void DoSearchLineRE(const wxString &line, const int lineNum, const wxString &fileName, const SearchData *data, TextStatesPtr statesPtr);
+	void DoSearchLineRE(const wxString &line, const int lineNum, const int lineOffset, const wxString &fileName, const SearchData *data, TextStatesPtr statesPtr);
 
 	// Send an event to the notified window
 	void SendEvent(wxEventType type, wxEvtHandler *owner);

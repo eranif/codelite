@@ -349,7 +349,14 @@ Notebook *PluginManager::GetWorkspacePaneNotebook()
 
 bool PluginManager::OpenFile(const wxString &fileName, const wxString &projectName, int lineno)
 {
-	return clMainFrame::Get()->GetMainBook()->OpenFile(fileName, projectName, lineno);
+	if(clMainFrame::Get()->GetMainBook()->OpenFile(fileName, projectName, lineno)) {
+		LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+		if(editor) {
+			editor->SetActive();
+		}
+		return true;
+	}
+	return false;
 }
 
 wxString PluginManager::GetStartupDirectory() const

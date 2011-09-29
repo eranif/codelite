@@ -5,7 +5,7 @@
 clProgressDlg::clProgressDlg( wxWindow* parent, const wxString &title, const wxString& msg, int maxValue )
 	: clProgressDlgBase( parent )
 {
-	SetSizeHints(400, -1);
+	SetSizeHints(600, -1);
 	SetTitle(title);
 	m_staticLabel->SetLabel(msg);
 	m_gauge->SetRange(maxValue);

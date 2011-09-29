@@ -31,6 +31,8 @@ class WXDLLIMPEXP_CL clProgressDlg : public clProgressDlgBase
 public:
 	/** Constructor */
 	clProgressDlg( wxWindow* parent, const wxString &title, const wxString& msg, int maxValue );
+	virtual ~clProgressDlg();
+	
 	//// end generated class members
 	bool Update(int value, const wxString &msg);
 	bool Pulse(const wxString &msg);

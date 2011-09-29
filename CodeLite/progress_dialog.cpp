@@ -14,6 +14,10 @@ clProgressDlg::clProgressDlg( wxWindow* parent, const wxString &title, const wxS
 	wxYieldIfNeeded();
 }
 
+clProgressDlg::~clProgressDlg()
+{
+}
+
 bool clProgressDlg::Update(int value, const wxString& msg)
 {
 	m_staticLabel->SetLabel(msg);

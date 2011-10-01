@@ -3935,6 +3935,14 @@ void clMainFrame::OnIncrementalSearch(wxCommandEvent& event)
 void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
 {
 	wxUnusedVar( event );
+	
+	// See if any of the plugins want to handle this event by itself
+	bool fullRetag = !(event.GetId() == XRCID("retag_workspace"));
+	wxCommandEvent e(fullRetag ? wxEVT_CMD_RETAG_WORKSPACE_FULL : wxEVT_CMD_RETAG_WORKSPACE, GetId());
+	e.SetEventObject(this);
+	if(wxTheApp->ProcessEvent(e))
+		return;
+	
 	ManagerST::Get()->RetagWorkspace(event.GetId() == XRCID("retag_workspace") ? true : false );
 }
 
@@ -4503,7 +4511,14 @@ void clMainFrame::OnRetaggingProgress(wxCommandEvent& e)
 void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)
 {
 	CHECK_SHUTDOWN();
-	event.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress());
+	
+	// See whether we got a custom workspace open in one of the plugins
+	wxCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
+	e.SetEventObject(this);
+	e.SetInt(0);
+	wxTheApp->ProcessEvent(e);
+	
+	event.Enable((ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress()) || e.GetInt());
 }
 
 wxString clMainFrame::StartTTY(const wxString &title)

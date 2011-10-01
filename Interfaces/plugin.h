@@ -318,6 +318,10 @@ enum {
 	// evt.SetInt(0) or evt.SetInt(1) 
 	wxEVT_CMD_IS_WORKSPACE_OPEN,
 	
+	// User has requested a retagging for the workspace
+	wxEVT_CMD_RETAG_WORKSPACE,
+	wxEVT_CMD_RETAG_WORKSPACE_FULL,
+	
 	/////////////////////////////////////////////////
 	// Search events
 	/////////////////////////////////////////////////

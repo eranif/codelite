@@ -75,8 +75,9 @@ WorkspaceTab::~WorkspaceTab()
     wxTheApp->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,    wxCommandEventHandler(WorkspaceTab::OnActiveEditorChanged), NULL, this);
     wxTheApp->Disconnect(wxEVT_EDITOR_CLOSING,           wxCommandEventHandler(WorkspaceTab::OnEditorClosing),       NULL, this);
 	wxTheApp->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(WorkspaceTab::OnWorkspaceConfig),     NULL, this);
-    wxTheApp->Disconnect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnConfigurationManager),   NULL, this);
 	
+    wxTheApp->Disconnect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnConfigurationManager), NULL, this);
+	wxTheApp->Disconnect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler (WorkspaceTab::OnProjectSettingsUI),   NULL, this);
 }
 
 void WorkspaceTab::CreateGUIControls()
@@ -166,7 +167,9 @@ void WorkspaceTab::ConnectEvents()
     wxTheApp->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,    wxCommandEventHandler(WorkspaceTab::OnActiveEditorChanged), NULL, this);
     wxTheApp->Connect(wxEVT_EDITOR_CLOSING,           wxCommandEventHandler(WorkspaceTab::OnEditorClosing),       NULL, this);
 	wxTheApp->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(WorkspaceTab::OnWorkspaceConfig),     NULL, this);
+	
     wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnConfigurationManager),   NULL, this);
+    wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler (WorkspaceTab::OnProjectSettingsUI),   NULL, this);
 }
 
 void WorkspaceTab::OnLinkEditor(wxCommandEvent &e)

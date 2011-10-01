@@ -848,6 +848,7 @@ case 70:
 						curr_func.m_scope = yyvsp[-7];
 						curr_func.m_retrunValusConst = yyvsp[-9];
 						curr_func.m_lineno = cl_scope_lineno;
+						curr_func.m_throws = yyvsp[-2];
 						if(g_funcs)
 						{
 							g_funcs->push_back(curr_func);

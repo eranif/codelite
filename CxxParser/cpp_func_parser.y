@@ -219,6 +219,7 @@ function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec va
 						curr_func.m_scope = $6;
 						curr_func.m_retrunValusConst = $4;
 						curr_func.m_lineno = cl_scope_lineno;
+						curr_func.m_throws = $11;
 						if(g_funcs)
 						{
 							g_funcs->push_back(curr_func);

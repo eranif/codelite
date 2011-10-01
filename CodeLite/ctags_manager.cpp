@@ -1828,7 +1828,11 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
 	if ( foo.m_isConst ) {
 		body << wxT(" const");
 	}
-
+	
+	if (!foo.m_throws.empty()) {
+		body << wxT(" throw (") << wxString(foo.m_throws.c_str(), wxConvUTF8) << wxT(")");
+	}
+	
 	if (flags & FunctionFormat_Impl) {
 		body << wxT("\n{\n}\n");
 	} else {

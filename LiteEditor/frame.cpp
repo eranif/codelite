@@ -1741,8 +1741,17 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent &event)
 		}
 	}
 	
-	if(!wspFile.IsEmpty())
+	if(!wspFile.IsEmpty()) {
+		
+		// Make sure that the 'Workspace' tab is visible
+		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("show_workspace_tab"));
+		event.SetEventObject(this);
+		event.SetInt(1);
+		GetEventHandler()->ProcessEvent(event);
+		
+		// Open the workspace
 		ManagerST::Get()->OpenWorkspace(wspFile);
+	}
 }
 
 void clMainFrame::OnCompleteWord(wxCommandEvent& event)

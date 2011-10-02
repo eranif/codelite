@@ -4129,22 +4129,35 @@ void clMainFrame::OnPreviousFiFMatchUI(wxUpdateUIEvent& e)
 void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
 {
 	// Determine the search type
+	int eventType (wxEVT_CMD_OPEN_RESOURCE);
 	wxString searchType;
 	if (e.GetId() == XRCID("find_function")) {
 		searchType = OpenResourceDialog::TYPE_FUNCTION;
-
+		eventType  = wxEVT_CMD_OPEN_RESOURCE_FUNCTION;
+		
 	} else if (e.GetId() == XRCID("find_macro")) {
 		searchType = OpenResourceDialog::TYPE_MACRO;
-
+		eventType  = wxEVT_CMD_OPEN_RESOURCE_MACRO;
+		
 	} else if (e.GetId() == XRCID("find_typedef")) {
 		searchType = OpenResourceDialog::TYPE_TYPEDEF;
-
+		eventType  = wxEVT_CMD_OPEN_RESOURCE_TYPE;
+		
 	} else if (e.GetId() == XRCID("find_type")) {
 		searchType = OpenResourceDialog::TYPE_CLASS;
+		eventType  = wxEVT_CMD_OPEN_RESOURCE_TYPE;
+		
 	} else {
 		searchType = wxGetTranslation(OpenResourceDialog::TYPE_WORKSPACE_FILE);
+		eventType  = wxEVT_CMD_OPEN_RESOURCE;
 	}
-
+	
+	// Let the plugins a chance before we handle this event
+	wxCommandEvent eventOpenResource(eventType, GetId());
+	eventOpenResource.SetEventObject(this);
+	if(wxTheApp->ProcessEvent(eventOpenResource))
+		return;
+	
 	OpenResourceDialog dlg(this, PluginManager::Get(), searchType);
 	if (dlg.ShowModal() == wxID_OK) {
 		OpenResourceDialog::OpenSelection(dlg.GetSelection(), PluginManager::Get());

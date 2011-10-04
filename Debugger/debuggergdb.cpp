@@ -198,7 +198,7 @@ bool DbgGdb::Start( const wxString &debuggerPath,
 {
 	//set the environment variables
 	EnvSetter env( m_env, NULL, m_debuggeeProjectName );
-	
+
 	wxString dbgExeName;
 	if ( ! DoLocateGdbExecutable( debuggerPath, dbgExeName ) ) {
 		return false;
@@ -212,11 +212,11 @@ bool DbgGdb::Start( const wxString &debuggerPath,
 	cmd << dbgExeName << wxT( " --interpreter=mi " );
 	cmd << ProcUtils::GetProcessNameByPid( pid ) << wxT( " " );
 #endif
-	
+
 	if(sudoCmd.IsEmpty() == false) {
 		cmd.Prepend(sudoCmd + wxT(" "));
 	}
-	
+
 	m_debuggeePid = pid;
 	cmd << wxT( " --pid=" ) << m_debuggeePid;
 	wxLogMessage( cmd );
@@ -245,7 +245,7 @@ bool DbgGdb::Start( const wxString &debuggerPath,
 {
 	//set the environment variables
 	EnvSetter env( m_env, NULL, m_debuggeeProjectName );
-	
+
 	wxString dbgExeName;
 	if ( ! DoLocateGdbExecutable( debuggerPath, dbgExeName ) ) {
 		return false;
@@ -534,7 +534,7 @@ bool DbgGdb::Interrupt()
 			CloseHandle(process);
 			return res == TRUE;
 		}
-		
+
 		// on Windows version < XP we need to find a solution for interrupting the
 		// debuggee process
 		return false;
@@ -679,9 +679,9 @@ void DbgGdb::Poke()
 			m_observer->UpdateGotControl( DBG_EXITED_NORMALLY );
 			return;
 		}
-		
-		// Check for "Operation not permitted" usually means 
-		// that the process does not have enough permission to 
+
+		// Check for "Operation not permitted" usually means
+		// that the process does not have enough permission to
 		// attach to the process
 		if( line.Contains(wxT("Operation not permitted")) ) {
 #ifdef __WXGTK__
@@ -690,9 +690,9 @@ void DbgGdb::Poke()
 			m_observer->UpdateAddLine( _("Failed to start debugger: permission denied") );
 			m_observer->UpdateGotControl( DBG_EXITED_NORMALLY );
 			return;
-			
+
 		}
-		
+
 		if( tmpline.StartsWith( wxT( ">" ) ) ) {
 			// Shell line, probably user command line
 			continue;
@@ -966,7 +966,7 @@ bool DbgGdb::DoLocateGdbExecutable( const wxString& debuggerPath, wxString& dbgE
 		return false;
 	}
 	wxString cmd;
-	
+
 	dbgExeName = debuggerPath;
 	if ( dbgExeName.IsEmpty() ) {
 		dbgExeName = wxT( "gdb" );

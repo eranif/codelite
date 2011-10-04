@@ -60,6 +60,24 @@ wxString CODELITE_VERSION_STR = wxString::Format(wxT("v3.0.%s"), SvnRevision);
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h> //registry keys
+void EnableDebugPriv()
+{
+    HANDLE hToken;
+    LUID luid;
+    TOKEN_PRIVILEGES tkp;
+
+    OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken);
+
+    LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luid);
+
+    tkp.PrivilegeCount = 1;
+    tkp.Privileges[0].Luid = luid;
+    tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+
+    AdjustTokenPrivileges(hToken, false, &tkp, sizeof(tkp), NULL, NULL);
+
+    CloseHandle(hToken);
+}
 #endif
 
 #ifdef __WXMAC__
@@ -125,7 +143,7 @@ class clSplashScreen : public wxSplashScreen
 {
 	wxBitmap m_bmp;
 	wxBitmap m_bgBmp;
-	
+
 public:
 	clSplashScreen(const wxBitmap& bmp);
 
@@ -145,7 +163,7 @@ clSplashScreen::clSplashScreen(const wxBitmap& bmp)
 {
 	SetSize(wxSize(m_bmp.GetWidth(), m_bmp.GetHeight()));
 	Show(true);
-    SetThemeEnabled(false); 
+    SetThemeEnabled(false);
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 }
 
@@ -309,6 +327,9 @@ bool CodeLiteApp::OnInit()
 	// as described in http://jrfonseca.dyndns.org/projects/gnu-win32/software/drmingw/
 	// load the exception handler dll so we will get Dr MinGW at runtime
 	m_handler = LoadLibrary(wxT("exchndl.dll"));
+
+	// Enable this process debugging priviliges
+	EnableDebugPriv();
 #endif
 
 

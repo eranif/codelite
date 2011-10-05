@@ -322,6 +322,27 @@ enum {
 	wxEVT_CMD_RETAG_WORKSPACE,
 	wxEVT_CMD_RETAG_WORKSPACE_FULL,
 	
+	// codelite has requested a complete list of the workspace files.
+	// The result should be wxArrayString that contains a list of files
+	// in their ABSOLUTE path.
+	// The wxArrayString IS OWNED by codelite 
+	// and the plugin should NOT attempt to delete it
+	// <code>
+	// if(I_want_to_handle_this_event) {
+	// 		wxArrayString *files = (wxArrayString *) event.GetClientData();
+	// 		<fill the files* array ...>
+	// } else {
+	// 		event.Skip();
+	// }
+	// </code>
+	wxEVT_CMD_GET_WORKSPACE_FILES,
+	// Same as the above event, however you should return 
+	// a list of the current active project files
+	wxEVT_CMD_GET_ACTIVE_PROJECT_FILES,
+	// Same as the above event, however you should return 
+	// a list of the current files' project files list
+	wxEVT_CMD_GET_CURRENT_FILE_PROJECT_FILES,
+	
 	/////////////////////////////////////////////////
 	// Search events
 	/////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun  6 2011)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -326,8 +326,8 @@ class _TableSettings : public wxDialog
 		wxRadioBox* m_radioOnDelete;
 		wxRadioBox* m_radioOnUpdate;
 		wxButton* m_button9;
-		wxStdDialogButtonSizer* m_sdbSizer2;
-		wxButton* m_sdbSizer2OK;
+		wxButton* m_button27;
+		wxButton* m_button28;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnListBoxClick( wxCommandEvent& event ) { event.Skip(); }
@@ -350,12 +350,11 @@ class _TableSettings : public wxDialog
 		virtual void OnDeleteUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnSaveColumnClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnOKClick( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		_TableSettings( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Table settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
+		_TableSettings( wxWindow* parent, wxWindowID id = wxID_OK, const wxString& title = wxT("Table settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
 		~_TableSettings();
 	
 };

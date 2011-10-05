@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun  6 2011)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -765,11 +765,17 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	fgSizer10->Fit( m_panel7 );
 	fgSizer9->Add( m_panel7, 1, wxEXPAND | wxALL, 5 );
 	
-	m_sdbSizer2 = new wxStdDialogButtonSizer();
-	m_sdbSizer2OK = new wxButton( this, wxID_OK );
-	m_sdbSizer2->AddButton( m_sdbSizer2OK );
-	m_sdbSizer2->Realize();
-	fgSizer9->Add( m_sdbSizer2, 1, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+	wxBoxSizer* bSizer27;
+	bSizer27 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_button27 = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button27->SetDefault(); 
+	bSizer27->Add( m_button27, 0, wxALL, 5 );
+	
+	m_button28 = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer27->Add( m_button28, 0, wxALL, 5 );
+	
+	fgSizer9->Add( bSizer27, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	this->SetSizer( fgSizer9 );
 	this->Layout();
@@ -798,7 +804,6 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	m_radioOnDelete->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _TableSettings::OnDeleteUI ), NULL, this );
 	m_radioOnUpdate->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _TableSettings::OnUpdateUI ), NULL, this );
 	m_button9->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _TableSettings::OnSaveColumnClick ), NULL, this );
-	m_sdbSizer2OK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _TableSettings::OnOKClick ), NULL, this );
 }
 
 _TableSettings::~_TableSettings()
@@ -824,7 +829,6 @@ _TableSettings::~_TableSettings()
 	m_radioOnDelete->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _TableSettings::OnDeleteUI ), NULL, this );
 	m_radioOnUpdate->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _TableSettings::OnUpdateUI ), NULL, this );
 	m_button9->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _TableSettings::OnSaveColumnClick ), NULL, this );
-	m_sdbSizer2OK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _TableSettings::OnOKClick ), NULL, this );
 	
 }
 

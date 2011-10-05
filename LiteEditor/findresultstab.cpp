@@ -735,6 +735,8 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxScintilla 
 			}
 			if (!removed) {
 				editor->SetCaretAt(position);
+				// The next line is necessary as otherwise EnsureCaretVisible() fails when the file wasn't previously open :/
+				editor->GotoLine(editor->LineFromPosition(position)-1);
 				editor->EnsureCaretVisible();
 				editor->SetSelection(position, position + resultLength);
 

@@ -325,10 +325,10 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
 		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 	}
-	
+
 	// Set the encoding for the tags manager
 	TagsManagerST::Get()->SetEncoding( EditorConfigST::Get()->GetOptions()->GetFileFontEncoding() );
-	
+
 	// Load the tags file content (we load the file and then destroy it) this way the file is forced into
 	// the file system cache and will prevent hangs when first using the tagging system
 	if(TagsManagerST::Get()->GetDatabase()) {
@@ -614,6 +614,15 @@ void Manager::SetWorkspaceBuildMatrix ( BuildMatrixPtr matrix )
 
 void Manager::GetWorkspaceFiles ( wxArrayString &files )
 {
+	// Send an event to the plugins to get a list of the workspace files.
+	// If no plugin has replied, use the default GetWorkspaceFiles method
+	wxCommandEvent getFilesEevet(wxEVT_CMD_GET_WORKSPACE_FILES);
+	getFilesEevet.SetEventObject(this);
+	getFilesEevet.SetClientData(&files);
+	if(wxTheApp->ProcessEvent(getFilesEevet)) {
+		return;
+	}
+
 	if ( !IsWorkspaceOpen() ) {
 		return;
 	}
@@ -1021,13 +1030,13 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 	std::vector<IncludeStatement> includes, matches;
 
 	for(size_t i=0; i<workspaceFiles.GetCount(); i++) {
-		
+
 		// Dont attempt to scan binary files
 		// Skip binary files
 		if(TagsManagerST::Get()->IsBinaryFile(workspaceFiles.Item(i))) {
 			continue;
 		}
-		
+
 		// Scan only C/C++/h files
 		switch(FileExtManager::GetType(workspaceFiles.Item(i))) {
 		case FileExtManager::TypeHeader:
@@ -1490,8 +1499,8 @@ void Manager::TogglePanes()
 				panes.Add ( candidates.Item ( i ) );
 			}
 		}
-		
-		
+
+
 		// hide the matched panes
 		for ( size_t i=0; i<panes.GetCount(); i++ ) {
 			HidePane ( panes.Item ( i ), false );
@@ -1838,7 +1847,7 @@ static void DebugMessage ( wxString msg )
 void Manager::UpdateDebuggerPane()
 {
 	DebuggerPane *pane = clMainFrame::Get()->GetDebuggerPane();
-	
+
 #if CL_USE_NATIVEBOOK
 	DoUpdateDebuggerTabControl(pane->GetNotebook()->GetCurrentPage());
 #else
@@ -2040,14 +2049,14 @@ void Manager::DbgStart ( long attachPid )
 
 	if ( attachPid == wxNOT_FOUND ) {
 		exepath = bldConf->GetCommand();
-		
+
 		// Get the debugging arguments.
 		if(bldConf->GetUseSeparateDebugArgs()) {
 			args = bldConf->GetDebugArgs();
 		} else {
 			args = bldConf->GetCommandArguments();
 		}
-		
+
 		exepath.Prepend ( wxT ( "\"" ) );
 		exepath.Append ( wxT ( "\"" ) );
 
@@ -2081,13 +2090,13 @@ void Manager::DbgStart ( long attachPid )
 
 	// Set the 'Is remote debugging' flag'
 	dbgr->SetIsRemoteDebugging(bldConf && bldConf->GetIsDbgRemoteTarget() && PID == wxNOT_FOUND);
-	
+
 	if(proj) {
 		dbgr->SetProjectName(proj->GetName());
 	} else {
 		dbgr->SetProjectName(wxT(""));
 	}
-	
+
 	// Loop through the open editors and let each editor
 	// a chance to update the debugger manager with any line
 	// changes (i.e. file was edited and breakpoints were moved)
@@ -2380,13 +2389,13 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 	int reason = e.m_controlReason;
 	bool userTriggered = GetBreakpointsMgr()->GetExpectingControl();
 	GetBreakpointsMgr()->SetExpectingControl(false);
-	
+
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr == NULL) {
 		wxLogDebug(wxT("Active debugger not found :/"));
 		return;
 	}
-	
+
 	DebuggerInformation dinfo;
 	DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), dinfo);
 	// Raise CodeLite (unless the cause is a hit bp, and we're configured not to
@@ -2399,7 +2408,7 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 		clMainFrame::Get()->SetWindowStyleFlag(curFlags);
 		m_dbgCanInteract = true;
 	}
-	
+
 	SendCmdEvent(wxEVT_DEBUG_EDITOR_GOT_CONTROL);
 
 	if(dbgr && dbgr->IsRunning()) {
@@ -2452,13 +2461,13 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 		if ( showDialog ) {
 			// select the "Call Stack" tab
 			clMainFrame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
-		} 
-		
+		}
+
 		if(info.IsShown()) {
 			// Refresh the view
 			UpdateDebuggerPane();
 		}
-		
+
 		if(!userTriggered) {
 			if ( dbgr && dbgr->IsRunning() ) {
 				dbgr->QueryFileLine();
@@ -2503,16 +2512,15 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 	case DBG_DBGR_KILLED:
 		m_dbgCanInteract = false;
 		break;
-		
-	case DBG_EXIT_WITH_ERROR:
-	{
-		wxMessageBox(wxString::Format(_("Debugger exited with the following error string:\n%s"), 
-					 e.m_text.c_str()), 
-					 _("CodeLite"), 
-					 wxOK|wxICON_ERROR);
+
+	case DBG_EXIT_WITH_ERROR: {
+		wxMessageBox(wxString::Format(_("Debugger exited with the following error string:\n%s"),
+		                              e.m_text.c_str()),
+		             _("CodeLite"),
+		             wxOK|wxICON_ERROR);
 		// fall through
 	}
-	
+
 	case DBG_EXITED_NORMALLY:
 		//debugging finished, stop the debugger process
 		DbgStop();
@@ -2995,11 +3003,11 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 	case DBG_UR_UPDATE_STACK_LIST:
 		clMainFrame::Get()->GetDebuggerPane()->GetFrameListView()->Update ( event.m_stack );
 		break;
-		
+
 	case DBG_UR_FUNCTIONFINISHED:
 		clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateFuncReturnValue( event.m_expression );
 		break;
-		
+
 	case DBG_UR_REMOTE_TARGET_CONNECTED:
 		UpdateRemoteTargetConnected( event.m_text );
 		break;
@@ -3246,11 +3254,11 @@ bool Manager::UpdateParserPaths(bool notify)
 	wxArrayString localIncludePaths;
 	wxArrayString localExcludePaths;
 	wxArrayString projectIncludePaths;
-	
+
 	// If we have an opened workspace, get its search paths
 	if(IsWorkspaceOpen()) {
 		LocalWorkspaceST::Get()->GetParserPaths(localIncludePaths, localExcludePaths);
-		
+
 		BuildConfigPtr buildConf = GetCurrentBuildConf();
 		if(buildConf) {
 			wxString projSearchPaths = buildConf->GetCcSearchPaths();
@@ -3271,14 +3279,14 @@ bool Manager::UpdateParserPaths(bool notify)
 			localIncludePaths.Add( globalIncludePath.Item(i) );
 		}
 	}
-	
+
 	// Add the project paths as well
 	for(size_t i=0; i<projectIncludePaths.GetCount(); i++) {
 		if(localIncludePaths.Index(projectIncludePaths.Item(i)) == wxNOT_FOUND) {
 			localIncludePaths.Add( projectIncludePaths.Item(i) );
 		}
 	}
-	
+
 	for(size_t i=0; i<localExcludePaths.GetCount(); i++) {
 		if(uniExcludePath.Index(localExcludePaths.Item(i)) == wxNOT_FOUND) {
 			uniExcludePath.Add( localExcludePaths.Item(i) );
@@ -3286,7 +3294,7 @@ bool Manager::UpdateParserPaths(bool notify)
 	}
 
 	ParseThreadST::Get()->SetSearchPaths( localIncludePaths, uniExcludePath );
-	
+
 	if(notify) {
 		wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
 		clMainFrame::Get()->GetEventHandler()->AddPendingEvent( event );
@@ -3406,12 +3414,12 @@ void Manager::UpdatePreprocessorFile(const wxFileName& filename)
 	if(!TagsManagerST::Get()->IsValidCtagsFile(filename.GetFullPath())) {
 		return;
 	}
-	
+
 	if((TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS) == 0)
 		return;
-	
+
 	const wxString sFilename = filename.GetFullPath();
-		
+
 	wxArrayString projects;
 	GetProjectList( projects );
 	std::vector<wxFileName> projectFiles;
@@ -3449,22 +3457,22 @@ void Manager::OnInterrestingMacrosFound(wxCommandEvent& e)
 	}
 	wxString filename = pMacros->GetFileName();
 	wxString macros(pMacros->GetMacros());
-	delete pMacros;	
-	
+	delete pMacros;
+
 	// Check that the editor is still opened
 	MainBook* book = clMainFrame::Get()->GetMainBook();
 	LEditor* editor = book->FindEditor(filename);
 	if (!editor) {
 		return;
 	}
-	
+
 	if (macros.empty()) {
 		return;
 	}
-	
+
 	macros.Replace(wxT("\n"), wxT(" "));
 	macros.Replace(wxT("\r"), wxT(" "));
-	
+
 	// Scintilla preprocessor management
 	editor->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("1"));
 	editor->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
@@ -3477,6 +3485,35 @@ BuildConfigPtr Manager::GetCurrentBuildConf()
 	GetActiveProjectAndConf(project, conf);
 	if(project.IsEmpty())
 		return NULL;
-	
+
 	return WorkspaceST::Get()->GetProjBuildConf(project, conf);
+}
+
+void Manager::GetActiveFileProjectFiles(wxArrayString& files)
+{
+	// Send an event to the plugins to get a list of the current file's project files
+	// If no plugin has replied, use the default GetProjectFiles method
+	wxCommandEvent getFilesEevet(wxEVT_CMD_GET_CURRENT_FILE_PROJECT_FILES);
+	getFilesEevet.SetEventObject(this);
+	getFilesEevet.SetClientData(&files);
+	if(!wxTheApp->ProcessEvent(getFilesEevet)) {
+		// Set default project name
+		wxString project = GetActiveProjectName();
+		if (clMainFrame::Get()->GetMainBook()->GetActiveEditor()) {
+			// use the active file's project
+			wxFileName activeFile = clMainFrame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();
+			project = GetProjectNameByFile(activeFile.GetFullPath());
+		}
+		GetProjectFiles(project, files);
+	}
+}
+
+void Manager::GetActiveProjectFiles(wxArrayString& files)
+{
+	wxCommandEvent getFilesEevet(wxEVT_CMD_GET_ACTIVE_PROJECT_FILES);
+	getFilesEevet.SetEventObject(this);
+	getFilesEevet.SetClientData(&files);
+	if(!wxTheApp->ProcessEvent(getFilesEevet)) {
+		GetProjectFiles(GetActiveProjectName(), files);
+	}
 }

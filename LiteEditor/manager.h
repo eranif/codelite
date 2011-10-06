@@ -433,7 +433,17 @@ public:
 	 * \param project project name
 	 */
 	void GetProjectFiles(const wxString &project, wxArrayString &files);
-
+	
+	/**
+	 * @brief return list of files belonged the active project (same as running: GetProjectFiles(GetActiveProjectName(), files)
+	 */
+	void GetActiveProjectFiles(wxArrayString &files);
+	
+	/**
+	 * @brief return the currently opened file's project files
+	 */
+	void GetActiveFileProjectFiles(wxArrayString &files);
+	
 	/**
 	 * return the project name that 'fullPathFileName' belogs to. if 2 matches were found, return
 	 * the first one, or empty string if no match was found

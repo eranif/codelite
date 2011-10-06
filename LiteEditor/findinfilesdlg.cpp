@@ -193,24 +193,14 @@ SearchData FindInFilesDialog::DoGetSearchData() {
 	for (size_t i = 0; i < rootDirs.GetCount(); ++i) {
 		const wxString& rootDir = rootDirs.Item(i);
 		if (rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE)) {
-
 			ManagerST::Get()->GetWorkspaceFiles(files);
-
+			
 		} else if (rootDir == wxGetTranslation(SEARCH_IN_PROJECT)) {
-
-			ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
+			ManagerST::Get()->GetActiveProjectFiles(files);
 
 		} else if (rootDir == wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) {
-
-			wxString project = ManagerST::Get()->GetActiveProjectName();
-
-			if (clMainFrame::Get()->GetMainBook()->GetActiveEditor()) {
-				// use the active file's project
-				wxFileName activeFile = clMainFrame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();
-				project = ManagerST::Get()->GetProjectNameByFile(activeFile.GetFullPath());
-			}
-			ManagerST::Get()->GetProjectFiles(project, files);
-
+			ManagerST::Get()->GetActiveFileProjectFiles(files);
+			
 		} else if ( rootDir == wxGetTranslation(SEARCH_IN_CURRENT_FILE) ) {
 			LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 			if(editor) {
@@ -218,8 +208,8 @@ SearchData FindInFilesDialog::DoGetSearchData() {
 			}
 		}
 	}
+	
 	data.SetFiles(files);
-
 	data.UseNewTab(m_checkBoxSeparateTab->IsChecked());
 	data.SetExtensions(m_fileTypes->GetValue());
 	return data;

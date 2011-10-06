@@ -132,18 +132,17 @@ SearchData TaskPanel::DoGetSearchData()
 	wxArrayString rootDirs;
 	rootDirs.push_back(rootDir);
     data.SetRootDirs(rootDirs);
+	
     wxArrayString files;
 	if (rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE)) {
 		ManagerST::Get()->GetWorkspaceFiles(files);
+		
 	} else if (rootDir == wxGetTranslation(SEARCH_IN_PROJECT)) {
-		ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
+		ManagerST::Get()->GetActiveProjectFiles(files);
+		
 	} else if (rootDir == wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) {
-		wxString project = ManagerST::Get()->GetActiveProjectName();
-		if (clMainFrame::Get()->GetMainBook()->GetActiveEditor()) {
-			wxFileName activeFile = clMainFrame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();
-			project = ManagerST::Get()->GetProjectNameByFile(activeFile.GetFullPath());
-		}
-		ManagerST::Get()->GetProjectFiles(project, files);
+		ManagerST::Get()->GetActiveFileProjectFiles(files);
+		
 	}
     data.SetFiles(files);
     data.SetExtensions(m_extensions[m_filter->GetSelection()]);

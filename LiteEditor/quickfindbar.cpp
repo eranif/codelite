@@ -38,7 +38,7 @@ DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
 #define CHECK_FOCUS_WIN() {\
 	wxWindow *focus = wxWindow::FindFocus();\
-	if(focus != m_sci) {\
+	if(focus != m_sci && focus != m_findWhat) {\
 		e.Skip();\
 		return;\
 	}\

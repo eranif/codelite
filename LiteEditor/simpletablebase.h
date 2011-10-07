@@ -144,6 +144,7 @@ public:
 	virtual wxTreeItemId DoFindItemByExpression  (const wxString &expr);
 	virtual void         ResetTableColors        ();
 	virtual wxString     GetItemPath             (const wxTreeItemId &item);
+	virtual void         UpdateVariableObjects   ();
 };
 
 #endif //__simpletablebase__

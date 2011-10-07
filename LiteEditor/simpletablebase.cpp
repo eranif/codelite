@@ -360,3 +360,21 @@ void DebuggerTreeListCtrlBase::OnCreateVariableObjError(const DebuggerEvent& eve
 		item = m_listTable->GetNextChild(root, cookieOne);
 	}
 }
+
+void DebuggerTreeListCtrlBase::UpdateVariableObjects()
+{
+	IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
+	if(!debugger)
+		return;
+
+	wxTreeItemId root = m_listTable->GetRootItem();
+	wxTreeItemIdValue cookieOne;
+	wxTreeItemId item = m_listTable->GetFirstChild(root, cookieOne);
+	while( item.IsOk() ) {
+		wxString gdbID = DoGetGdbId(item);
+		if(gdbID.IsEmpty() == false) {
+			debugger->UpdateVariableObject(gdbID, DBG_USERR_LOCALS);
+		}
+		item = m_listTable->GetNextChild(root, cookieOne);
+	}
+}

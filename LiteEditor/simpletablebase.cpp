@@ -373,7 +373,7 @@ void DebuggerTreeListCtrlBase::UpdateVariableObjects()
 	while( item.IsOk() ) {
 		wxString gdbID = DoGetGdbId(item);
 		if(gdbID.IsEmpty() == false) {
-			debugger->UpdateVariableObject(gdbID, DBG_USERR_LOCALS);
+			debugger->UpdateVariableObject(gdbID, m_DBG_USERR);
 		}
 		item = m_listTable->GetNextChild(root, cookieOne);
 	}

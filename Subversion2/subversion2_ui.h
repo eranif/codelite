@@ -11,7 +11,7 @@
 #include <wx/intl.h>
 
 #include <wx/string.h>
-#include <wx/choice.h>
+#include <wx/stattext.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
@@ -20,10 +20,10 @@
 #include <wx/sizer.h>
 #include <wx/treectrl.h>
 #include <wx/panel.h>
-#include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/checklst.h>
 #include <wx/splitter.h>
+#include <wx/choice.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
 #include <wx/wxscintilla.h>
@@ -37,6 +37,7 @@
 #include <wx/combobox.h>
 #include <wx/filepicker.h>
 #include <wx/radiobox.h>
+#include <wx/listbox.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -49,12 +50,11 @@ class SubversionPageBase : public wxPanel
 	private:
 	
 	protected:
-		wxChoice* m_choiceRootDir;
+		wxStaticText* m_staticTextPath;
 		wxButton* m_buttonChangeRootDir;
 		wxTreeCtrl* m_treeCtrl;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnRootDirChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnChangeRootDir( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnItemActivated( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnTreeMenu( wxTreeEvent& event ) { event.Skip(); }
@@ -406,6 +406,35 @@ class PatchDlgBase : public wxDialog
 		
 		PatchDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select patch file:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~PatchDlgBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class SvnSelectLocalRepoBase
+///////////////////////////////////////////////////////////////////////////////
+class SvnSelectLocalRepoBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText37;
+		wxDirPickerCtrl* m_dirPicker1;
+		wxStaticText* m_staticText36;
+		wxListBox* m_listBoxPaths;
+		wxStaticLine* m_staticline9;
+		wxButton* m_button25;
+		wxButton* m_button26;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnPathSelected( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnPathActivated( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnMenu( wxMouseEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		SvnSelectLocalRepoBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Local Repository:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		~SvnSelectLocalRepoBase();
 	
 };
 

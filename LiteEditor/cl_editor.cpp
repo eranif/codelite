@@ -3574,27 +3574,11 @@ void LEditor::OnChange(wxScintillaEvent& event)
 
 	if (event.GetModificationType() & wxSCI_MOD_INSERTTEXT || event.GetModificationType() & wxSCI_MOD_DELETETEXT) {
 
-		// Cache details of the number of lines added/removed
-		// This is used to 'update' any affected FindInFiles result. See bug 3153847
-		if (event.GetModificationType() & wxSCI_PERFORMED_UNDO) {
-			m_changes.pop_back();
-			m_changes.pop_back();
-		} else {
-			m_changes.push_back(event.GetPosition());
-			m_changes.push_back(event.GetLength() * (event.GetModificationType() & wxSCI_MOD_DELETETEXT ? -1 : 1));
-		}
-
 		int numlines(event.GetLinesAdded());
-
-		if ( numlines) {
-			if (GetReloadingFile() == false) {
-				// a line was added to or removed from the document, so synchronize the breakpoints on this editor
-				// and the breakpoint manager
-				UpdateBreakpoints();
-			} else {
-				// The file has been reloaded, so the cached line-changes are no longer relevant
-				m_changes.clear();
-			}
+		if ( numlines && GetReloadingFile() == false) {
+			// a line was added / removed from the document, synchronized between the breakpoints on this editor
+			// and the breakpoint manager
+			UpdateBreakpoints();
 		}
 
 		// ignore this event incase we are in the middle of file reloading

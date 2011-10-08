@@ -14,20 +14,22 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	wxBoxSizer* bSizer2;
-	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
+	wxFlexGridSizer* fgSizer12;
+	fgSizer12 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer12->AddGrowableCol( 1 );
+	fgSizer12->SetFlexibleDirection( wxBOTH );
+	fgSizer12->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	wxArrayString m_choiceRootDirChoices;
-	m_choiceRootDir = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceRootDirChoices, 0 );
-	m_choiceRootDir->SetSelection( 0 );
-	bSizer2->Add( m_choiceRootDir, 1, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
+	m_staticTextPath = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextPath->Wrap( -1 );
+	fgSizer12->Add( m_staticTextPath, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_buttonChangeRootDir = new wxButton( this, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
 	m_buttonChangeRootDir->SetToolTip( _("Select a different root directory") );
 	
-	bSizer2->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 2 );
+	fgSizer12->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_RIGHT, 2 );
 	
-	mainSizer->Add( bSizer2, 0, wxEXPAND, 5 );
+	mainSizer->Add( fgSizer12, 0, wxEXPAND, 5 );
 	
 	m_treeCtrl = new wxTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_MULTIPLE );
 	mainSizer->Add( m_treeCtrl, 1, wxEXPAND, 5 );
@@ -37,7 +39,6 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	mainSizer->Fit( this );
 	
 	// Connect Events
-	m_choiceRootDir->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( SubversionPageBase::OnRootDirChanged ), NULL, this );
 	m_buttonChangeRootDir->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SubversionPageBase::OnChangeRootDir ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( SubversionPageBase::OnItemActivated ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( SubversionPageBase::OnTreeMenu ), NULL, this );
@@ -46,7 +47,6 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 SubversionPageBase::~SubversionPageBase()
 {
 	// Disconnect Events
-	m_choiceRootDir->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( SubversionPageBase::OnRootDirChanged ), NULL, this );
 	m_buttonChangeRootDir->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SubversionPageBase::OnChangeRootDir ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( SubversionPageBase::OnItemActivated ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( SubversionPageBase::OnTreeMenu ), NULL, this );
@@ -967,4 +967,69 @@ PatchDlgBase::PatchDlgBase( wxWindow* parent, wxWindowID id, const wxString& tit
 
 PatchDlgBase::~PatchDlgBase()
 {
+}
+
+SvnSelectLocalRepoBase::SvnSelectLocalRepoBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer33;
+	bSizer33 = new wxBoxSizer( wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer13;
+	fgSizer13 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer13->AddGrowableCol( 1 );
+	fgSizer13->SetFlexibleDirection( wxBOTH );
+	fgSizer13->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText37 = new wxStaticText( this, wxID_ANY, _("Select path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText37->Wrap( -1 );
+	fgSizer13->Add( m_staticText37, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_dirPicker1 = new wxDirPickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
+	fgSizer13->Add( m_dirPicker1, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer33->Add( fgSizer13, 0, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	m_staticText36 = new wxStaticText( this, wxID_ANY, _("Recently used paths:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText36->Wrap( -1 );
+	bSizer33->Add( m_staticText36, 0, wxALL, 5 );
+	
+	m_listBoxPaths = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_EXTENDED ); 
+	bSizer33->Add( m_listBoxPaths, 1, wxALL|wxEXPAND, 5 );
+	
+	m_staticline9 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer33->Add( m_staticline9, 0, wxALL|wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer34;
+	bSizer34 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_button25 = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button25->SetDefault(); 
+	bSizer34->Add( m_button25, 0, wxALL, 5 );
+	
+	m_button26 = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer34->Add( m_button26, 0, wxALL, 5 );
+	
+	bSizer33->Add( bSizer34, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	this->SetSizer( bSizer33 );
+	this->Layout();
+	bSizer33->Fit( this );
+	
+	this->Centre( wxBOTH );
+	
+	// Connect Events
+	m_listBoxPaths->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( SvnSelectLocalRepoBase::OnPathSelected ), NULL, this );
+	m_listBoxPaths->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( SvnSelectLocalRepoBase::OnPathActivated ), NULL, this );
+	m_listBoxPaths->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( SvnSelectLocalRepoBase::OnMenu ), NULL, this );
+}
+
+SvnSelectLocalRepoBase::~SvnSelectLocalRepoBase()
+{
+	// Disconnect Events
+	m_listBoxPaths->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( SvnSelectLocalRepoBase::OnPathSelected ), NULL, this );
+	m_listBoxPaths->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( SvnSelectLocalRepoBase::OnPathActivated ), NULL, this );
+	m_listBoxPaths->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( SvnSelectLocalRepoBase::OnMenu ), NULL, this );
+	
 }

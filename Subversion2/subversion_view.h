@@ -82,6 +82,7 @@ protected:
 	void                     DoLinkEditor();
 	void DoChangeRootPathUI       (const wxString &path);
 	void DoRootDirChanged    (const wxString &path);
+	wxString DoGetCurRepoPath() const ;
 protected:
 	// Menu management
 	void         CreateFileMenu      (wxMenu *menu);
@@ -150,7 +151,7 @@ public:
 	void     BuildTree();
 	void     BuildTree(const wxString &root);
 	wxString GetRootDir() const {
-		return m_choiceRootDir->GetStringSelection();
+		return DoGetCurRepoPath();
 	}
 };
 

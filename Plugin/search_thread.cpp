@@ -265,14 +265,13 @@ void SearchThread::DoSearchFile(const wxString &fileName, const SearchData *data
 		CppWordScanner scanner("", fileData.mb_str().data(), 0);
 		states = scanner.states();
 	}
-	int lineOffset = 0;
+
 	if ( data->IsRegularExpression() ) {
 		// regular expression search
 		while (tkz.HasMoreTokens()) {
 			// Read the next line
 			wxString line = tkz.NextToken();
-			DoSearchLineRE(line, lineNumber, lineOffset, fileName, data, states);
-			lineOffset += line.Length() + 1;
+			DoSearchLineRE(line, lineNumber, fileName, data, states);
 			lineNumber++;
 		}
 	} else {
@@ -281,8 +280,7 @@ void SearchThread::DoSearchFile(const wxString &fileName, const SearchData *data
 
 			// Read the next line
 			wxString line = tkz.NextToken();
-			DoSearchLine(line, lineNumber, lineOffset, fileName, data, states);
-			lineOffset += line.Length() + 1;
+			DoSearchLine(line, lineNumber, fileName, data, states);
 			lineNumber++;
 		}
 	}
@@ -290,7 +288,7 @@ void SearchThread::DoSearchFile(const wxString &fileName, const SearchData *data
 	if ( m_results.empty() == false )
 		SendEvent(wxEVT_SEARCH_THREAD_MATCHFOUND, data->GetOwner());
 }
-void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const int lineOffset, const wxString &fileName, const SearchData *data, TextStatesPtr statesPtr)
+void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const wxString &fileName, const SearchData *data, TextStatesPtr statesPtr)
 {
 	wxRegEx &re = GetRegex(data->GetFindString(), data->IsMatchCase());
 	size_t col = 0;
@@ -308,7 +306,6 @@ void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const
 			iCorrectedCol = UTF8Length(line.c_str(), col);
 			iCorrectedLen = UTF8Length(line.c_str(), col+len) - iCorrectedCol;
 			SearchResult result;
-			result.SetPosition(lineOffset + col);
 			result.SetColumnInChars((int)col);
 			result.SetColumn(iCorrectedCol);
 			result.SetLineNumber(lineNum);
@@ -372,7 +369,7 @@ void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const
 	}
 }
 
-void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const int lineOffset, const wxString &fileName, const SearchData *data, TextStatesPtr statesPtr)
+void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const wxString &fileName, const SearchData *data, TextStatesPtr statesPtr)
 {
 	wxString findString = data->GetFindString();
 	wxString modLine = line;
@@ -425,7 +422,6 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const i
 			iCorrectedCol = UTF8Length(line.c_str(), col);
 			iCorrectedLen = UTF8Length(findString.c_str(), findString.Length());
 			SearchResult result;
-			result.SetPosition(lineOffset + col);
 			result.SetColumnInChars(col);
 			result.SetColumn(iCorrectedCol);
 			result.SetLineNumber(lineNum);

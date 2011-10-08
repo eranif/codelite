@@ -2417,7 +2417,7 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Clear();
 		} else {
 			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateVariableObjects();
-			//dbgr->UpdateVariableObject(wxT("*"), DBG_USERR_LOCALS); // the reason is not really matter here
+			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->UpdateVariableObjects();
 		}
 	}
 

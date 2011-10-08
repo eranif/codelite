@@ -161,7 +161,7 @@ public:
 	void SetWorkspaceRepoPath(const std::map<wxString, wxString>& workspaceRepoPath) {
 		this->m_workspaceRepoPath = workspaceRepoPath;
 	}
-	const std::map<wxString, wxString>& GetWorkspaceRepoPath() const {
+	std::map<wxString, wxString>& GetWorkspaceRepoPath() {
 		return m_workspaceRepoPath;
 	}
 };

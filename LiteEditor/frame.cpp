@@ -1923,6 +1923,13 @@ void clMainFrame::OnProjectNewWorkspace(wxCommandEvent &event)
 // Project->New Project
 void clMainFrame::OnProjectNewProject(wxCommandEvent &event)
 {
+	// Let the plugin process this request first
+	wxCommandEvent newProjectEvent(wxEVT_CMD_CREATE_NEW_PROJECT, GetId());
+	newProjectEvent.SetEventObject(this);
+	if(wxTheApp->ProcessEvent(newProjectEvent)) {
+		return;
+	}
+	
 	wxUnusedVar(event);
 	NewProjectDlg *dlg = new NewProjectDlg(this);
 	if (dlg->ShowModal() == wxID_OK) {
@@ -1937,7 +1944,7 @@ void clMainFrame::OnProjectAddProject(wxCommandEvent &event)
 	wxUnusedVar(event);
 
 	// Prompt user for project path
-	const wxString ALL(	wxT("CodeLite Projects (*.project)|*.project|")
+	const wxString ALL( wxT("CodeLite Projects (*.project)|*.project|")
 	                    wxT("All Files (*)|*"));
 	wxFileDialog *dlg = new wxFileDialog(this, _("Open Project"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST , wxDefaultPosition);
 	if (dlg->ShowModal() == wxID_OK) {

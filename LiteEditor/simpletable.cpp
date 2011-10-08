@@ -217,7 +217,10 @@ void WatchesTable::RefreshValues(bool repositionEditor)
 
 	// rese tree items colour to black
 	DoResetItemColour(root, 0);
-
+	
+	// Send command to update all variable objects of this tree
+	UpdateVariableObjects();
+	
 	// Loop over the top level entries and search for items that has no gdbId
 	// for those items, create a variable object
 	wxTreeItemIdValue cookieOne;

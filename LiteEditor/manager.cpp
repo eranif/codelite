@@ -1890,8 +1890,8 @@ void Manager::DoUpdateDebuggerTabControl(wxWindow* curpage)
 		if ( curpage == pane->GetLocalsTable() || IsPaneVisible (wxGetTranslation( DebuggerPane::LOCALS) ) ) {
 
 			//update the locals tree
+			pane->GetLocalsTable()->UpdateVariableObjects();
 			dbgr->QueryLocals();
-
 		}
 
 		if ( curpage == pane->GetWatchesTable() || IsPaneVisible ( wxGetTranslation(DebuggerPane::WATCHES) ) ) {
@@ -2415,9 +2415,6 @@ void Manager::UpdateGotControl ( const DebuggerEvent &e )
 		// in case we got an error, try and clear the Locals view
 		if(reason == DBG_CMD_ERROR) {
 			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Clear();
-		} else {
-			clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->UpdateVariableObjects();
-			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->UpdateVariableObjects();
 		}
 	}
 

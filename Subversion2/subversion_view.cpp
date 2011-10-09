@@ -1124,8 +1124,7 @@ void SubversionView::DoChangeRootPathUI(const wxString& path)
 	if(path == _("<No repository path is selected>")) {
 		ClearAll();
 	}
-	
-	m_staticTextPath->SetLabel(path);
+	m_curpath = path;
 }
 
 void SubversionView::DoRootDirChanged(const wxString& path)
@@ -1204,5 +1203,5 @@ void SubversionView::OnRename(wxCommandEvent& event)
 
 wxString SubversionView::DoGetCurRepoPath() const
 {
-	return m_staticTextPath->GetLabel();
+	return m_curpath;
 }

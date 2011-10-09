@@ -11,15 +11,15 @@
 #include <wx/intl.h>
 
 #include <wx/string.h>
-#include <wx/stattext.h>
+#include <wx/button.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/button.h>
-#include <wx/sizer.h>
 #include <wx/treectrl.h>
+#include <wx/sizer.h>
 #include <wx/panel.h>
+#include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/checklst.h>
 #include <wx/splitter.h>
@@ -50,7 +50,6 @@ class SubversionPageBase : public wxPanel
 	private:
 	
 	protected:
-		wxStaticText* m_staticTextPath;
 		wxButton* m_buttonChangeRootDir;
 		wxTreeCtrl* m_treeCtrl;
 		

@@ -14,22 +14,10 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	wxFlexGridSizer* fgSizer12;
-	fgSizer12 = new wxFlexGridSizer( 0, 2, 0, 0 );
-	fgSizer12->AddGrowableCol( 1 );
-	fgSizer12->SetFlexibleDirection( wxBOTH );
-	fgSizer12->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	m_buttonChangeRootDir = new wxButton( this, wxID_ANY, _("Select another directory..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonChangeRootDir->SetToolTip( _("Set the svn plugin's view to monitor another directory") );
 	
-	m_staticTextPath = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticTextPath->Wrap( -1 );
-	fgSizer12->Add( m_staticTextPath, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_buttonChangeRootDir = new wxButton( this, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	m_buttonChangeRootDir->SetToolTip( _("Select a different root directory") );
-	
-	fgSizer12->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_RIGHT, 2 );
-	
-	mainSizer->Add( fgSizer12, 0, wxEXPAND, 5 );
+	mainSizer->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_RIGHT|wxEXPAND, 2 );
 	
 	m_treeCtrl = new wxTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_MULTIPLE );
 	mainSizer->Add( m_treeCtrl, 1, wxEXPAND, 5 );

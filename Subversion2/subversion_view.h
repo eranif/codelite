@@ -64,7 +64,8 @@ class SubversionView : public SubversionPageBase
 	SvnCommand           m_simpleCommand;
 	SvnCommand           m_diffCommand;
 	SvnPageSelectionInfo m_selectionInfo;
-
+	wxString             m_curpath;
+	
 public:
 	enum {
 		SvnInfo_Tag,

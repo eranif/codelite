@@ -134,7 +134,7 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
 	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/text"))),       FileExtManager::TypeText);
 	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/script"))),     FileExtManager::TypeScript);
 	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/xml"))),        FileExtManager::TypeXml);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/erd"))),        FileExtManager::TypePython);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/erd"))),        FileExtManager::TypeErd);
 	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/python"))),     FileExtManager::TypePython);
 	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/css"))),        FileExtManager::TypeCSS);
 	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/javascript"))), FileExtManager::TypeJS);

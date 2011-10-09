@@ -9,6 +9,7 @@ BitmapLoader::~BitmapLoader()
 }
 
 BitmapLoader::BitmapLoader(const wxString& zipName)
+	: m_bMapPopulated(false)
 {
 	m_zipPath = wxFileName(wxStandardPaths::Get().GetDataDir(), zipName);
 	if(m_zipPath.FileExists()) {
@@ -99,5 +100,52 @@ void BitmapLoader::doLoadBitmaps()
 		wxString key = iter->first;
 		key = key.BeforeLast(wxT('/'));
 		m_toolbarsBitmaps[iter->first] = doLoadBitmap( wxString::Format(wxT("%s/%s"), key.c_str(), iter->second.c_str()) );
+	}
+}
+
+int BitmapLoader::GetMimeImageId(const wxString& filename)
+{
+	FileExtManager::Init();
+	
+	FileExtManager::FileType type = FileExtManager::GetType(filename);
+	std::map<FileExtManager::FileType , int>::const_iterator iter = m_fileIndexMap.find(type);
+	if(iter == m_fileIndexMap.end())
+		return wxNOT_FOUND;
+
+	return iter->second;
+}
+
+wxImageList* BitmapLoader::MakeStandardMimeImageList()
+{
+	wxImageList *imageList = new wxImageList(16, 16, true);
+
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/exe" ) )),      FileExtManager::TypeExe);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/html" ) )),     FileExtManager::TypeHtml);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/zip" ) )),      FileExtManager::TypeArchive);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/php" ) ) ),     FileExtManager::TypePhp);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/dll") )),       FileExtManager::TypeDll);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/wxfb" ))),      FileExtManager::TypeFormbuilder);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/cd" ) )),       FileExtManager::TypeCodedesigner);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/bmp" ) ) ),     FileExtManager::TypeBmp);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/makefile"))),   FileExtManager::TypeMakefile);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/c"))),          FileExtManager::TypeSourceC);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/cpp"))),        FileExtManager::TypeSourceCpp);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/h"))),          FileExtManager::TypeHeader);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/text"))),       FileExtManager::TypeText);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/script"))),     FileExtManager::TypeScript);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/xml"))),        FileExtManager::TypeXml);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/erd"))),        FileExtManager::TypePython);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/python"))),     FileExtManager::TypePython);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/css"))),        FileExtManager::TypeCSS);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/javascript"))), FileExtManager::TypeJS);
+	
+	m_bMapPopulated = true;
+	return imageList;
+}
+
+void BitmapLoader::AddImage(int index, FileExtManager::FileType type)
+{
+	if(!m_bMapPopulated) {
+		m_fileIndexMap.insert(std::make_pair<FileExtManager::FileType , int>(type, index));
 	}
 }

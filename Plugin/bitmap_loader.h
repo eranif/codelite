@@ -3,18 +3,37 @@
 
 #include <wx/filename.h>
 #include <wx/bitmap.h>
+#include <wx/imaglist.h>
 #include <map>
+#include "fileextmanager.h"
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK BitmapLoader {
-	wxFileName m_zipPath;
-	std::map<wxString, wxBitmap> m_toolbarsBitmaps;
-	std::map<wxString, wxString> m_manifest;
-
+class WXDLLIMPEXP_SDK BitmapLoader 
+{
+	wxFileName                              m_zipPath;
+	std::map<wxString, wxBitmap>            m_toolbarsBitmaps;
+	std::map<wxString, wxString>            m_manifest;
+	std::map<FileExtManager::FileType, int> m_fileIndexMap;
+	bool                                    m_bMapPopulated;
+	
+protected:
+	void AddImage(int index, FileExtManager::FileType type);
+	
 public:
 	BitmapLoader(const wxString &zipName);
 	~BitmapLoader();
-
+	
+	/**
+	 * @brief prepare an image list allocated on the heap which is based on 
+	 * the FileExtManager content. It is the CALLER responsibility for deleting the memory
+	 */
+	wxImageList* MakeStandardMimeImageList();
+	/**
+	 * @brief return the image index in the image list prepared by MakeStandardMimeImageList()
+	 * @return wxNOT_FOUND if no match is found, the index otherwise
+	 */
+	int GetMimeImageId(const wxString &filename);
+	
 protected:
 	void            doLoadManifest();
 	void            doLoadBitmaps();

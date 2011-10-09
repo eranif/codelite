@@ -30,8 +30,8 @@
 #include <map>
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_CL FileExtManager {
-
+class WXDLLIMPEXP_CL FileExtManager 
+{
 public:
 	enum FileType {
 		TypeSourceC,
@@ -47,7 +47,20 @@ public:
 		TypeFormbuilder,
 		TypeCodedesigner,
 		TypeErd,
-		TypeOther
+		TypePhp,
+		TypeXml,
+		TypeCSS,
+		TypeJS,
+		TypePython,
+		TypeExe,
+		TypeHtml,
+		TypeArchive,
+		TypeDll,
+		TypeBmp,
+		TypeMakefile,
+		TypeText,
+		TypeScript,
+		TypeOther = wxNOT_FOUND
 	};
 
 private:

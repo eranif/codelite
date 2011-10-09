@@ -39,6 +39,48 @@ void FileExtManager::Init()
 		m_map[wxT("fbp") ] = TypeFormbuilder;
 		m_map[wxT("cdp") ] = TypeCodedesigner;
 		m_map[wxT("erd") ] = TypeErd;
+		
+		m_map[wxT("php")]   = TypePhp;
+		m_map[wxT("inc")]   = TypePhp;
+		m_map[wxT("phtml")] = TypePhp;
+		
+		m_map[wxT("xml")] = TypeXml;
+		m_map[wxT("css")] = TypeCSS;
+		m_map[wxT("js")]  = TypeJS;
+		m_map[wxT("py")]  = TypePython;
+		
+		m_map[wxT("exe")] = TypeExe;
+		m_map[wxT("html")] = TypeHtml;
+		m_map[wxT("htm")] = TypeHtml;
+		
+		m_map[wxT("tar")]   = TypeArchive;
+		m_map[wxT("a")]     = TypeArchive;
+		m_map[wxT("lib")]   = TypeArchive;
+		m_map[wxT("zip")]   = TypeArchive;
+		m_map[wxT("rar")]   = TypeArchive;
+		m_map[wxT("targz")] = TypeArchive;
+		
+		m_map[wxT("dll")]    = TypeDll;
+		m_map[wxT("so")]     = TypeDll;
+		m_map[wxT("dylib")]  = TypeDll;
+		
+		m_map[wxT("bmp")]  = TypeBmp;
+		m_map[wxT("jpeg")] = TypeBmp;
+		m_map[wxT("jpg")]  = TypeBmp;
+		m_map[wxT("png")]  = TypeBmp;
+		m_map[wxT("ico")]  = TypeBmp;
+		m_map[wxT("xpm")]  = TypeBmp;
+		
+		m_map[wxT("mk")] = TypeMakefile;
+		
+		m_map[wxT("log")] = TypeText;
+		m_map[wxT("txt")] = TypeText;
+		m_map[wxT("ini")] = TypeText;
+		
+		m_map[wxT("script")] = TypeScript;
+		m_map[wxT("sh")] = TypeScript;
+		m_map[wxT("bat")] = TypeScript;
+		m_map[wxT("bash")] = TypeScript;
 	}
 }
 
@@ -57,6 +99,10 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename)
 
 	std::map<wxString, FileType>::iterator iter = m_map.find(e);
 	if ( iter == m_map.end() ) {
+		// try to see if the file is a makefile
+		if(fn.GetFullName().CmpNoCase(wxT("makefile")) == 0) {
+			return TypeMakefile;
+		}
 		return TypeOther;
 	}
 	return iter->second;

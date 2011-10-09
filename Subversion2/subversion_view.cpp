@@ -156,12 +156,17 @@ void SubversionView::CreatGUIControls()
 	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/text" ) ) );            // 11
 	imageList->Add( bmpLoader->LoadBitmap(wxT("workspace/16/workspace") ) );   // 12
 	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/wxfb" ) ) );            // 13
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/cd" ) ) );            // 14
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/erd" ) ) );            // 15
+	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/cd" ) ) );              // 14
+	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/erd" ) ) );             // 15
 
 	// lock files icon ID
 	imageList->Add( bmpLoader->LoadBitmap(wxT("subversion/16/locked" ) ) );    // 16
-
+	
+	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/php")));                // 17
+	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/python")));             // 18
+	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/css")));                // 19
+	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/javascript")));         // 20
+	
 	m_treeCtrl->AssignImageList( imageList );
 
 	// Add toolbar
@@ -363,6 +368,22 @@ int SubversionView::DoGetIconIndex(const wxString& filename)
 		
 	case FileExtManager::TypeErd:
 		iconIndex = 15;
+		break;
+	
+	case FileExtManager::TypePhp:
+		iconIndex = 17;
+		break;
+		
+	case FileExtManager::TypePython:
+		iconIndex = 18;
+		break;
+
+	case FileExtManager::TypeCSS:
+		iconIndex = 19;
+		break;
+
+	case FileExtManager::TypeJS:
+		iconIndex = 20;
 		break;
 		
 	default:

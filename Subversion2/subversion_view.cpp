@@ -62,6 +62,16 @@ BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_MENU(XRCID("svn_rename"),             SubversionView::OnRename)
 END_EVENT_TABLE()
 
+static int FOLDER_IMG_ID      = wxNOT_FOUND;
+static int MODIFIED_IMG_ID    = wxNOT_FOUND;
+static int NEW_IMG_ID         = wxNOT_FOUND;
+static int DELETED_IMG_ID     = wxNOT_FOUND;
+static int CONFLICT_IMG_ID    = wxNOT_FOUND;
+static int UNVERSIONED_IMG_ID = wxNOT_FOUND;
+static int PROJECT_IMG_ID     = wxNOT_FOUND;
+static int WORKSPACE_IMG_ID   = wxNOT_FOUND;
+static int LOCKED_IMG_ID      = wxNOT_FOUND;
+
 SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
 	: SubversionPageBase( parent )
 	, m_plugin          ( plugin )
@@ -137,36 +147,22 @@ void SubversionView::CreatGUIControls()
 	MSWSetNativeTheme(m_treeCtrl);
 
 	// Assign the image list
-	wxImageList *imageList = new wxImageList(16, 16, true);
 	BitmapLoader *bmpLoader = m_plugin->GetManager()->GetStdIcons();
-
-	imageList->Add(bmpLoader->LoadBitmap(wxT("mime/16/folder" ) ));            // 0
-	imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/modified" ) ));    // 1
-	imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/new" ) ));         // 2
-	imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/deleted" ) ));     // 3
-	imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/conflict" ) ));    // 4
-	imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/unversioned" ) )); // 5
-
-	// File icons 6-15
-	imageList->Add( bmpLoader->LoadBitmap(wxT("workspace/16/project") ) );     // 6
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/folder" ) ) );          // 7
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/c" ) ) );               // 8
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/cpp" ) ) );             // 9
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/h" ) ) );               // 10
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/text" ) ) );            // 11
-	imageList->Add( bmpLoader->LoadBitmap(wxT("workspace/16/workspace") ) );   // 12
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/wxfb" ) ) );            // 13
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/cd" ) ) );              // 14
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/erd" ) ) );             // 15
-
-	// lock files icon ID
-	imageList->Add( bmpLoader->LoadBitmap(wxT("subversion/16/locked" ) ) );    // 16
 	
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/php")));                // 17
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/python")));             // 18
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/css")));                // 19
-	imageList->Add( bmpLoader->LoadBitmap(wxT("mime/16/javascript")));         // 20
+	// Prepare a default image list which contains all the mimetypes knows to FileExtManager
+	wxImageList *imageList =  bmpLoader->MakeStandardMimeImageList();
 	
+	// Append the subversion unique icons
+	FOLDER_IMG_ID      = imageList->Add(bmpLoader->LoadBitmap(wxT("mime/16/folder" ) ));
+	MODIFIED_IMG_ID    = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/modified" ) ));
+	NEW_IMG_ID         = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/new" ) ));       
+	DELETED_IMG_ID     = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/deleted" ) ));   
+	CONFLICT_IMG_ID    = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/conflict" ) ));  
+	UNVERSIONED_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/unversioned" ) ));
+	PROJECT_IMG_ID     = imageList->Add(bmpLoader->LoadBitmap(wxT("workspace/16/project") ) );   
+	WORKSPACE_IMG_ID   = imageList->Add(bmpLoader->LoadBitmap(wxT("workspace/16/workspace") ) );
+	LOCKED_IMG_ID      = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/locked" ) ) ); 
+
 	m_treeCtrl->AssignImageList( imageList );
 
 	// Add toolbar
@@ -269,17 +265,17 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
 
 	// Add root node
 	wxString rootDir = DoGetCurRepoPath();
-	wxTreeItemId root = m_treeCtrl->AddRoot(rootDir, 0, 0, new SvnTreeData(SvnTreeData::SvnNodeTypeRoot, rootDir));
+	wxTreeItemId root = m_treeCtrl->AddRoot(rootDir, FOLDER_IMG_ID, FOLDER_IMG_ID, new SvnTreeData(SvnTreeData::SvnNodeTypeRoot, rootDir));
 
 	if(root.IsOk() == false)
 		return;
 
-	DoAddNode(svnMODIFIED_FILES,    1,  SvnTreeData::SvnNodeTypeModifiedRoot,    modifiedFiles);
-	DoAddNode(svnADDED_FILES,       2,  SvnTreeData::SvnNodeTypeAddedRoot,       newFiles);
-	DoAddNode(svnDELETED_FILES,     3,  SvnTreeData::SvnNodeTypeDeletedRoot,     deletedFiles);
-	DoAddNode(svnCONFLICTED_FILES,  4,  SvnTreeData::SvnNodeTypeConflictRoot,    conflictedFiles);
-	DoAddNode(svnLOCKED_FILES,      16, SvnTreeData::SvnNodeTypeLockedRoot,      lockedFiles);
-	DoAddNode(svnUNVERSIONED_FILES, 5,  SvnTreeData::SvnNodeTypeUnversionedRoot, unversionedFiles);
+	DoAddNode(svnMODIFIED_FILES,    MODIFIED_IMG_ID,    SvnTreeData::SvnNodeTypeModifiedRoot,    modifiedFiles);
+	DoAddNode(svnADDED_FILES,       NEW_IMG_ID,         SvnTreeData::SvnNodeTypeAddedRoot,       newFiles);
+	DoAddNode(svnDELETED_FILES,     DELETED_IMG_ID,     SvnTreeData::SvnNodeTypeDeletedRoot,     deletedFiles);
+	DoAddNode(svnCONFLICTED_FILES,  CONFLICT_IMG_ID,    SvnTreeData::SvnNodeTypeConflictRoot,    conflictedFiles);
+	DoAddNode(svnLOCKED_FILES,      LOCKED_IMG_ID,      SvnTreeData::SvnNodeTypeLockedRoot,      lockedFiles);
+	DoAddNode(svnUNVERSIONED_FILES, UNVERSIONED_IMG_ID, SvnTreeData::SvnNodeTypeUnversionedRoot, unversionedFiles);
 
 	if (m_treeCtrl->ItemHasChildren(root)) {
 		m_treeCtrl->Expand(root);
@@ -333,63 +329,10 @@ void SubversionView::DoAddNode(const wxString& title, int imgId, SvnTreeData::Sv
 int SubversionView::DoGetIconIndex(const wxString& filename)
 {
 	FileExtManager::Init();
-	FileExtManager::FileType type = FileExtManager::GetType(filename);
-
-	int iconIndex( 11 );
-
-	switch ( type ) {
-	case FileExtManager::TypeHeader:
-		iconIndex = 10;
-		break;
-
-	case FileExtManager::TypeSourceC:
-		iconIndex = 8;
-		break;
-
-	case FileExtManager::TypeSourceCpp:
-		iconIndex = 9;
-		break;
-
-	case FileExtManager::TypeProject:
-		iconIndex = 6;
-		break;
-
-	case FileExtManager::TypeWorkspace:
-		iconIndex = 12;
-		break;
-
-	case FileExtManager::TypeFormbuilder:
-		iconIndex = 13;
-		break;
+	int iconIndex = m_plugin->GetManager()->GetStdIcons()->GetMimeImageId(filename);
+	if(iconIndex == wxNOT_FOUND)
+		iconIndex = m_plugin->GetManager()->GetStdIcons()->GetMimeImageId(wxT("file.txt")); // text file icon is the default
 		
-	case FileExtManager::TypeCodedesigner:
-		iconIndex = 14;
-		break;
-		
-	case FileExtManager::TypeErd:
-		iconIndex = 15;
-		break;
-	
-	case FileExtManager::TypePhp:
-		iconIndex = 17;
-		break;
-		
-	case FileExtManager::TypePython:
-		iconIndex = 18;
-		break;
-
-	case FileExtManager::TypeCSS:
-		iconIndex = 19;
-		break;
-
-	case FileExtManager::TypeJS:
-		iconIndex = 20;
-		break;
-		
-	default:
-		iconIndex = 11;
-		break;
-	}
 	return iconIndex;
 }
 
@@ -1203,8 +1146,8 @@ wxTreeItemId SubversionView::DoFindChild(const wxTreeItemId& parent, const wxStr
 	// if we reached here, we did not find a tree node for this name
 	return m_treeCtrl->AppendItem(parent, // parent node
 						   name,   // text
-						   7,      // folder icon
-						   7, 
+						   FOLDER_IMG_ID,      // folder icon
+						   FOLDER_IMG_ID, 
 						   new SvnTreeData(SvnTreeData::SvnNodeTypeFolder, curpath));
 }
 

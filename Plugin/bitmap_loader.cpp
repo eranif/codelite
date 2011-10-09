@@ -119,25 +119,27 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
 {
 	wxImageList *imageList = new wxImageList(16, 16, true);
 
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/exe" ) )),      FileExtManager::TypeExe);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/html" ) )),     FileExtManager::TypeHtml);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/zip" ) )),      FileExtManager::TypeArchive);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/php" ) ) ),     FileExtManager::TypePhp);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/dll") )),       FileExtManager::TypeDll);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/wxfb" ))),      FileExtManager::TypeFormbuilder);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/cd" ) )),       FileExtManager::TypeCodedesigner);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/bmp" ) ) ),     FileExtManager::TypeBmp);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/makefile"))),   FileExtManager::TypeMakefile);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/c"))),          FileExtManager::TypeSourceC);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/cpp"))),        FileExtManager::TypeSourceCpp);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/h"))),          FileExtManager::TypeHeader);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/text"))),       FileExtManager::TypeText);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/script"))),     FileExtManager::TypeScript);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/xml"))),        FileExtManager::TypeXml);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/erd"))),        FileExtManager::TypeErd);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/python"))),     FileExtManager::TypePython);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/css"))),        FileExtManager::TypeCSS);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/javascript"))), FileExtManager::TypeJS);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/exe" ) )),          FileExtManager::TypeExe);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/html" ) )),         FileExtManager::TypeHtml);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/zip" ) )),          FileExtManager::TypeArchive);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/php" ) ) ),         FileExtManager::TypePhp);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/dll") )),           FileExtManager::TypeDll);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/wxfb" ))),          FileExtManager::TypeFormbuilder);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/cd" ) )),           FileExtManager::TypeCodedesigner);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/bmp" ) ) ),         FileExtManager::TypeBmp);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/makefile"))),       FileExtManager::TypeMakefile);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/c"))),              FileExtManager::TypeSourceC);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/cpp"))),            FileExtManager::TypeSourceCpp);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/h"))),              FileExtManager::TypeHeader);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/text"))),           FileExtManager::TypeText);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/script"))),         FileExtManager::TypeScript);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/xml"))),            FileExtManager::TypeXml);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/erd"))),            FileExtManager::TypeErd);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/python"))),         FileExtManager::TypePython);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/css"))),            FileExtManager::TypeCSS);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/javascript"))),     FileExtManager::TypeJS);
+	AddImage( imageList->Add( LoadBitmap(wxT("workspace/16/workspace"))), FileExtManager::TypeWorkspace);
+	AddImage( imageList->Add( LoadBitmap(wxT("workspace/16/project"))),   FileExtManager::TypeProject);
 	
 	m_bMapPopulated = true;
 	return imageList;

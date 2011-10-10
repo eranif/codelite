@@ -29,6 +29,7 @@
 #include "editor_config.h"
 #include "configuration_manager_dlg.h"
 #include "detachedpanesinfo.h"
+#include "dockablepanemenumanager.h"
 #include "dockablepane.h"
 #include "manager.h"
 #include "frame.h"
@@ -213,10 +214,22 @@ void WorkspacePane::DoShowTab(bool show, const wxString& title)
 			}
 		}
 		
-		DetachedPanesInfo dpi;
-		EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
+		// Fetch the list of detached panes
+		// If the mainframe is NULL, read the 
+		// list from the disk, otherwise use the 
+		// dockable pane menu
+		clMainFrame *mainFrame = clMainFrame::Get();
 		wxArrayString detachedPanes;
-		detachedPanes = dpi.GetPanes();
+		if(mainFrame) {
+			detachedPanes = mainFrame->GetDockablePaneMenuManager()->GetDeatchedPanesList();
+			
+		} else {
+			// Read it from the disk
+			DetachedPanesInfo dpi;
+			EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
+			wxArrayString detachedPanes;
+			detachedPanes = dpi.GetPanes();
+		}
 		
 		if(IS_DETACHED(title)) return;
 		

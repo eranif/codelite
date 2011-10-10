@@ -197,9 +197,7 @@ void SubversionView::CreatGUIControls()
 	sz->Insert(0, tb, 0, wxEXPAND);
 	tb->Realize();
 
-	if (m_plugin->GetManager()->IsWorkspaceOpen()) {
-		DoRootDirChanged(m_plugin->GetManager()->GetWorkspace()->GetWorkspaceFileName().GetPath());
-	}
+	DoRootDirChanged(wxGetCwd());
 	BuildTree();
 }
 
@@ -223,22 +221,10 @@ void SubversionView::BuildTree(const wxString& root)
 void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
 {
 	event.Skip();
-	Workspace *workspace = m_plugin->GetManager()->GetWorkspace();
-	if(m_plugin->GetManager()->IsWorkspaceOpen() && workspace) {
-
-		// Set the repository path to the workspace path unless user manually modified it
-		// (in that case, the new value is stored in the
-		wxString repoPath = workspace->GetWorkspaceFileName().GetPath();
-		SvnSettingsData ssd = m_plugin->GetSettings();
-		std::map<wxString, wxString> m = ssd.GetWorkspaceRepoPath();
-		std::map<wxString, wxString>::iterator iter = m.find(workspace->GetName());
-		if(iter != m.end()) {
-			repoPath = iter->second;
-		}
-
-		DoRootDirChanged(repoPath);
-		BuildTree();
-	}
+	
+	// Workspace changes its directory to the workspace path, update the SVN path
+	DoRootDirChanged(wxGetCwd());
+	BuildTree();
 }
 
 void SubversionView::OnWorkspaceClosed(wxCommandEvent& event)
@@ -1100,11 +1086,6 @@ void SubversionView::DoRootDirChanged(const wxString& path)
 		
 		// If a workspace is opened, set this new path to the workspace
 		SvnSettingsData ssd = m_plugin->GetSettings();
-		std::map<wxString, wxString> m = ssd.GetWorkspaceRepoPath();
-		if(m_plugin->GetManager()->IsWorkspaceOpen()) {
-			m[m_plugin->GetManager()->GetWorkspace()->GetName()] = path;
-			ssd.SetWorkspaceRepoPath(m);
-		}
 		
 		const wxArrayString &repos = ssd.GetRepos();
 		wxArrayString modDirs = repos;

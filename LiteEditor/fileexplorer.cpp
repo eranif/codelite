@@ -168,7 +168,7 @@ void FileExplorer::OnWorkspaceLoaded(wxCommandEvent& e)
     e.Skip();
     wxUnusedVar(e);
     if (m_isLinkedToEditor) {
-        m_fileTree->ExpandToPath(WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
+        m_fileTree->ExpandToPath( wxGetCwd() );
     }
 }
 

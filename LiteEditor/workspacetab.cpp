@@ -345,14 +345,16 @@ void WorkspaceTab::OnActiveEditorChanged(wxCommandEvent& e)
 void WorkspaceTab::OnWorkspaceLoaded(wxCommandEvent& e)
 {
     e.Skip();
-	DoWorkspaceConfig();
-	
-	// Tree construction
-    Freeze();
-    m_fileView->BuildTree();
-    OnGoHome(e);
-    Thaw();
-    SendCmdEvent(wxEVT_FILE_VIEW_INIT_DONE);
+	if(ManagerST::Get()->IsWorkspaceOpen()) {
+		DoWorkspaceConfig();
+		
+		// Tree construction
+		Freeze();
+		m_fileView->BuildTree();
+		OnGoHome(e);
+		Thaw();
+		SendCmdEvent(wxEVT_FILE_VIEW_INIT_DONE);
+	}
 }
 
 void WorkspaceTab::OnEditorClosing(wxCommandEvent& e)

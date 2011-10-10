@@ -1198,8 +1198,10 @@ void SymbolViewPlugin::OnNodeContextMenu(wxTreeEvent& e)
  */
 void SymbolViewPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
 {
-	if (GetViewMode() == vmCurrentWorkspace) {
-		ShowSymbolTree();
+	if(m_mgr->IsWorkspaceOpen()) {
+		if (GetViewMode() == vmCurrentWorkspace) {
+			ShowSymbolTree();
+		}
 	}
 	e.Skip();
 }

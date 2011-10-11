@@ -360,7 +360,21 @@ enum {
 	
 	// User requested to perform a raw search for a symbol
 	// Use evt.GetString() to get the searched string
-	wxEVT_CMD_FIND_SYMBOL
+	wxEVT_CMD_FIND_SYMBOL,
+	
+	// codelite is about to display the editor's context menu
+	// A plugin can override the default menu display by catching this event and
+	// handling it differently
+	// event.GetEventObject() holds a pointer to the editor triggered 
+	// the menu
+	wxEVT_CMD_EDITOR_CONTEXT_MENU,
+	
+	// codelite is about to display the editor's *left margin* context menu
+	// A plugin can override the default menu display by catching this event and
+	// handling it differently
+	// event.GetEventObject() holds a pointer to the editor triggered 
+	// the menu
+	wxEVT_CMD_EDITOR_MARGIN_CONTEXT_MENU
 };
 
 //------------------------------------------------------------------

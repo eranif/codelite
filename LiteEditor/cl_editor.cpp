@@ -2342,68 +2342,83 @@ wxString LEditor::FormatTextKeepIndent(const wxString &text, int pos, size_t fla
 
 void LEditor::OnContextMenu(wxContextMenuEvent &event)
 {
-	if (m_rightClickMenu) {
+	wxString selectText = GetSelectedText();
+	wxPoint pt          = event.GetPosition();
+	wxPoint clientPt    = ScreenToClient(pt);
 
-		wxString selectText = GetSelectedText();
-		wxPoint pt = event.GetPosition();
-		wxPoint clientPt = ScreenToClient(pt);
+	// If the right-click is in the margin, provide a different context menu: bookmarks/breakpts
+	int margin = 0;
+	for (int n=0; n < FOLD_MARGIN_ID; ++n) {  // Assume a click anywhere to the left of the fold margin is for markers
+		margin += GetMarginWidth(n);
+	}
+	if ( clientPt.x < margin ) {
+		GotoPos( PositionFromPoint(clientPt) );
+		
+		// Let the plugins handle this event first
+		wxCommandEvent marginContextMenuEvent(wxEVT_CMD_EDITOR_MARGIN_CONTEXT_MENU, GetId());
+		marginContextMenuEvent.SetEventObject(this);
+		if(wxTheApp->ProcessEvent(marginContextMenuEvent))
+			return;
+			
+		DoBreakptContextMenu(clientPt);
+		return;
+	}
 
-		// If the right-click is in the margin, provide a different context menu: bookmarks/breakpts
-		int margin = 0;
-		for (int n=0; n < FOLD_MARGIN_ID; ++n) {  // Assume a click anywhere to the left of the fold margin is for markers
-			margin += GetMarginWidth(n);
-		}
-		if ( clientPt.x < margin ) {
-			GotoPos( PositionFromPoint(clientPt) );
-			return DoBreakptContextMenu(clientPt);
-		}
-
-		int closePos = PositionFromPointClose(clientPt.x, clientPt.y);
-		if (closePos != wxNOT_FOUND) {
-			if (!selectText.IsEmpty()) {
-				//If the selection text is placed under the cursor,
-				//keep it selected, else, unselect the text
-				//and place the caret to be under cursor
-				int selStart = GetSelectionStart();
-				int selEnd = GetSelectionEnd();
-				if (closePos < selStart || closePos > selEnd) {
-					//cursor is not over the selected text, unselect and re-position caret
-					SetCaretAt(closePos);
-				}
-			} else {
-				//no selection, just place the caret
+	int closePos = PositionFromPointClose(clientPt.x, clientPt.y);
+	if (closePos != wxNOT_FOUND) {
+		if (!selectText.IsEmpty()) {
+			//If the selection text is placed under the cursor,
+			//keep it selected, else, unselect the text
+			//and place the caret to be under cursor
+			int selStart = GetSelectionStart();
+			int selEnd = GetSelectionEnd();
+			if (closePos < selStart || closePos > selEnd) {
+				//cursor is not over the selected text, unselect and re-position caret
 				SetCaretAt(closePos);
 			}
+		} else {
+			//no selection, just place the caret
+			SetCaretAt(closePos);
 		}
-
-		//Let the context add it dynamic content
-		m_context->AddMenuDynamicContent(m_rightClickMenu);
-
-		//add the debugger (if currently running) to add its dynamic content
-		IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
-		if (debugger && debugger->IsRunning()) {
-			AddDebuggerContextMenu(m_rightClickMenu);
-		}
-
-		//turn the popupIsOn value to avoid annoying
-		//calltips from firing while our menu is popped
-		m_popupIsOn = true;
-
-		//let the plugins hook their content
-		if(!m_pluginInitializedRMenu) {
-			PluginManager::Get()->HookPopupMenu(m_rightClickMenu, MenuTypeEditor);
-			m_pluginInitializedRMenu = true;
-		}
-
-		//Popup the menu
-		PopupMenu(m_rightClickMenu);
-
-		m_popupIsOn = false;
-
-		//Let the context remove the dynamic content
-		m_context->RemoveMenuDynamicContent(m_rightClickMenu);
-		RemoveDebuggerContextMenu(m_rightClickMenu);
 	}
+	
+	// Let the plugins handle this event first
+	wxCommandEvent contextMenuEvent(wxEVT_CMD_EDITOR_CONTEXT_MENU, GetId());
+	contextMenuEvent.SetEventObject(this);
+	if(wxTheApp->ProcessEvent(contextMenuEvent))
+		return;
+	
+	if(!m_rightClickMenu)
+		return;
+		
+	//Let the context add it dynamic content
+	m_context->AddMenuDynamicContent(m_rightClickMenu);
+
+	//add the debugger (if currently running) to add its dynamic content
+	IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
+	if (debugger && debugger->IsRunning()) {
+		AddDebuggerContextMenu(m_rightClickMenu);
+	}
+
+	//turn the popupIsOn value to avoid annoying
+	//calltips from firing while our menu is popped
+	m_popupIsOn = true;
+
+	//let the plugins hook their content
+	if(!m_pluginInitializedRMenu) {
+		PluginManager::Get()->HookPopupMenu(m_rightClickMenu, MenuTypeEditor);
+		m_pluginInitializedRMenu = true;
+	}
+
+	//Popup the menu
+	PopupMenu(m_rightClickMenu);
+
+	m_popupIsOn = false;
+
+	//Let the context remove the dynamic content
+	m_context->RemoveMenuDynamicContent(m_rightClickMenu);
+	RemoveDebuggerContextMenu(m_rightClickMenu);
+
 	event.Skip();
 }
 

@@ -27,7 +27,6 @@
 #include "Scintilla.h"
 #include "SciLexer.h"
 
-#include "PropSetSimple.h"
 #include "WordList.h"
 #include "LexAccessor.h"
 #include "Accessor.h"
@@ -223,7 +222,7 @@ static void ColouriseTeXDoc(
 						sc.ForwardSetState(SCE_TEX_TEXT) ;
 					} else {
 						sc.GetCurrent(key, sizeof(key)-1) ;
-						k = strlen(key) ;
+						k = static_cast<int>(strlen(key)) ;
 						memmove(key,key+1,k) ; // shift left over escape token
 						key[k] = '\0' ;
 						k-- ;

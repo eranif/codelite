@@ -50,8 +50,8 @@ public:
 		assert(val < size);
 		bset[val] = true;
 	}
-	void AddString(const char *CharacterSet) {
-		for (const char *cp=CharacterSet; *cp; cp++) {
+	void AddString(const char *setToAdd) {
+		for (const char *cp=setToAdd; *cp; cp++) {
 			int val = static_cast<unsigned char>(*cp);
 			assert(val >= 0);
 			assert(val < size);
@@ -119,7 +119,6 @@ inline bool iswordstart(int ch) {
 inline bool isoperator(int ch) {
 	if (IsASCII(ch) && IsAlphaNumeric(ch))
 		return false;
-	// '.' left out as it is used to make up numbers
 	if (ch == '%' || ch == '^' || ch == '&' || ch == '*' ||
 	        ch == '(' || ch == ')' || ch == '-' || ch == '+' ||
 	        ch == '=' || ch == '|' || ch == '{' || ch == '}' ||

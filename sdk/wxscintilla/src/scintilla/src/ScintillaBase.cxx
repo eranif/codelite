@@ -13,6 +13,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include "Platform.h"
 
@@ -135,16 +136,16 @@ int ScintillaBase::KeyCommand(unsigned int iMessage) {
 			AutoCompleteMove(1);
 			return 0;
 		case SCI_LINEUP:
-			AutoCompleteMove( -1);
+			AutoCompleteMove(-1);
 			return 0;
 		case SCI_PAGEDOWN:
 			AutoCompleteMove(5);
 			return 0;
 		case SCI_PAGEUP:
-			AutoCompleteMove( -5);
+			AutoCompleteMove(-5);
 			return 0;
 		case SCI_VCHOME:
-			AutoCompleteMove( -5000);
+			AutoCompleteMove(-5000);
 			return 0;
 		case SCI_LINEEND:
 			AutoCompleteMove(5000);
@@ -204,7 +205,8 @@ void ScintillaBase::AutoCompleteStart(int lenEntered, const char *list) {
 	if (ac.chooseSingle && (listType == 0)) {
 		if (list && !strchr(list, ac.GetSeparator())) {
 			const char *typeSep = strchr(list, ac.GetTypesep());
-			size_t lenInsert = (typeSep) ? (typeSep-list) : strlen(list);
+			int lenInsert = typeSep ? 
+				static_cast<int>(typeSep-list) : static_cast<int>(strlen(list));
 			if (ac.ignoreCase) {
 				SetEmptySelection(sel.MainCaret() - lenEntered);
 				pdoc->DeleteChars(sel.MainCaret(), lenEntered);
@@ -349,6 +351,7 @@ void ScintillaBase::AutoCompleteCompleted() {
 	scn.wParam = listType;
 	scn.listType = listType;
 	Position firstPos = ac.posStart - ac.startLen;
+	scn.position = firstPos;
 	scn.lParam = firstPos;
 	scn.text = selected;
 	NotifyParent(scn);
@@ -374,6 +377,7 @@ void ScintillaBase::AutoCompleteCompleted() {
 		pdoc->InsertCString(firstPos, selected);
 		SetEmptySelection(firstPos + static_cast<int>(strlen(selected)));
 	}
+	SetLastXChosen();
 }
 
 int ScintillaBase::AutoCompleteGetCurrent() {
@@ -391,7 +395,7 @@ int ScintillaBase::AutoCompleteGetCurrentText(char *buffer) {
 			ac.lb->GetValue(item, selected, sizeof(selected));
 			if (buffer != NULL)
 				strcpy(buffer, selected);
-			return strlen(selected);
+			return static_cast<int>(strlen(selected));
 		}
 	}
 	if (buffer != NULL)
@@ -557,7 +561,7 @@ void LexState::SetLexerModule(const LexerModule *lex) {
 		}
 		lexCurrent = lex;
 		if (lexCurrent)
-		instance = lexCurrent->Create();
+			instance = lexCurrent->Create();
 		pdoc->LexerChanged();
 	}
 }
@@ -567,11 +571,11 @@ void LexState::SetLexer(uptr_t wParam) {
 	if (lexLanguage == SCLEX_CONTAINER) {
 		SetLexerModule(0);
 	} else {
-	const LexerModule *lex = Catalogue::Find(lexLanguage);
-	if (!lex)
-		lex = Catalogue::Find(SCLEX_NULL);
-	SetLexerModule(lex);
-}
+		const LexerModule *lex = Catalogue::Find(lexLanguage);
+		if (!lex)
+			lex = Catalogue::Find(SCLEX_NULL);
+		SetLexerModule(lex);
+	}
 }
 
 void LexState::SetLexerLanguage(const char *languageName) {
@@ -785,6 +789,10 @@ sptr_t ScintillaBase::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lPara
 
 	case SCI_REGISTERIMAGE:
 		ac.lb->RegisterImage(wParam, reinterpret_cast<const char *>(lParam));
+		break;
+
+	case SCI_REGISTERRGBAIMAGE:
+		ac.lb->RegisterRGBAImage(wParam, sizeRGBAImage.x, sizeRGBAImage.y, reinterpret_cast<unsigned char *>(lParam));
 		break;
 
 	case SCI_CLEARREGISTEREDIMAGES:

@@ -50,8 +50,8 @@ void SCI_METHOD LexerSimple::Lex(unsigned int startPos, int lengthDoc, int initS
 
 void SCI_METHOD LexerSimple::Fold(unsigned int startPos, int lengthDoc, int initStyle, IDocument *pAccess) {
 	if (props.GetInt("fold")) {
-	Accessor astyler(pAccess, &props);
-	module->Fold(startPos, lengthDoc, initStyle, keyWordLists, astyler);
-	astyler.Flush();
-}
+		Accessor astyler(pAccess, &props);
+		module->Fold(startPos, lengthDoc, initStyle, keyWordLists, astyler);
+		astyler.Flush();
+	}
 }

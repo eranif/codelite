@@ -154,7 +154,9 @@ void Font::Create (const char *faceName, int characterSet, int size,
 	                           false,
 	                           sci2wx(faceName),
 	                           encoding);
+#if wxVERSION_NUMBER < 2900
 	font->SetNoAntiAliasing (!extraFontFlag);
+#endif
 	fid = font;
 }
 
@@ -223,6 +225,7 @@ public:
 
 	void BrushColour(ColourAllocated back);
 	void SetFont(Font &font_);
+	virtual void DrawRGBAImage(PRectangle, int, int, const unsigned char*){}
 };
 
 SurfaceImpl::SurfaceImpl() :
@@ -1202,6 +1205,7 @@ public:
 	virtual void ClearRegisteredImages();
 	virtual void SetDoubleClickAction(CallBackAction, void *);
 	virtual void SetList(const char* list, char separator, char typesep);
+	virtual void RegisterRGBAImage(int, int, int, const unsigned char*){}
 };
 
 

@@ -21,7 +21,6 @@
 #include "Scintilla.h"
 #include "SciLexer.h"
 
-#include "PropSetSimple.h"
 #include "WordList.h"
 #include "LexAccessor.h"
 #include "Accessor.h"
@@ -107,12 +106,12 @@ static void ColouriseMatlabOctaveDoc(
 				transpose = true;
 			}
 		} else if (sc.state == SCE_MATLAB_STRING) {
-			if (sc.ch == '\\') {
-				if (sc.chNext == '\"' || sc.chNext == '\'' || sc.chNext == '\\') {
-					sc.Forward();
-				}
-			} else if (sc.ch == '\'') {
-				sc.ForwardSetState(SCE_MATLAB_DEFAULT);
+			if (sc.ch == '\'') {
+				if (sc.chNext == '\'') {
+ 					sc.Forward();
+				} else {
+					sc.ForwardSetState(SCE_MATLAB_DEFAULT);
+ 				}
 			}
 		} else if (sc.state == SCE_MATLAB_DOUBLEQUOTESTRING) {
 			if (sc.ch == '\\') {

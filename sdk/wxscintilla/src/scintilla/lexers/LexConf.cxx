@@ -2,7 +2,7 @@
 /** @file LexConf.cxx
  ** Lexer for Apache Configuration Files.
  **
- ** First working version contributed by Ahmad Zawawi <zeus_go64@hotmail.com> on October 28, 2000.
+ ** First working version contributed by Ahmad Zawawi <ahmad.zawawi@gmail.com> on October 28, 2000.
  ** i created this lexer because i needed something pretty when dealing
  ** when Apache Configuration files...
  **/
@@ -20,7 +20,6 @@
 #include "Scintilla.h"
 #include "SciLexer.h"
 
-#include "PropSetSimple.h"
 #include "WordList.h"
 #include "LexAccessor.h"
 #include "Accessor.h"

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -18,8 +18,8 @@
 #include <wx/settings.h>
 #include <wx/stattext.h>
 #include <wx/choice.h>
-#include <wx/clrpicker.h>
 #include <wx/sizer.h>
+#include <wx/statbox.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -35,22 +35,19 @@ class EditorSettingsFoldingBase : public wxPanel
 	protected:
 		wxCheckBox* m_displayMargin;
 		wxCheckBox* m_underlineFolded;
+		wxCheckBox* m_foldElse;
 		wxCheckBox* m_foldPreprocessors;
 		wxCheckBox* m_foldCompact;
-		wxCheckBox* m_foldElse;
 		wxStaticText* m_staticText2;
 		wxChoice* m_foldStyle;
-		wxStaticText* m_staticText21;
-		wxColourPickerCtrl* m_colourPicker;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnFoldingMarginUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnFoldColourUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		EditorSettingsFoldingBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 366,224 ), long style = wxTAB_TRAVERSAL );
+		EditorSettingsFoldingBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~EditorSettingsFoldingBase();
 	
 };

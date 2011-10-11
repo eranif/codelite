@@ -98,6 +98,8 @@
         <File Name="src/scintilla/lexers/LexVerilog.cxx"/>
         <File Name="src/scintilla/lexers/LexVHDL.cxx"/>
         <File Name="src/scintilla/lexers/LexYAML.cxx"/>
+        <File Name="src/scintilla/lexers/LexA68k.cxx"/>
+        <File Name="src/scintilla/lexers/LexModula.cxx"/>
       </VirtualDirectory>
       <VirtualDirectory Name="lexlib">
         <File Name="src/scintilla/lexlib/Accessor.cxx"/>
@@ -120,6 +122,7 @@
         <File Name="src/scintilla/lexlib/StyleContext.h"/>
         <File Name="src/scintilla/lexlib/WordList.cxx"/>
         <File Name="src/scintilla/lexlib/WordList.h"/>
+        <File Name="src/scintilla/lexlib/SparseState.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="src">
         <File Name="src/scintilla/src/AutoComplete.cxx"/>

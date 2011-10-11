@@ -9,17 +9,13 @@
 #ifndef SCINTILLAWIDGET_H
 #define SCINTILLAWIDGET_H
 
-#if defined(GTK) && !defined(__APPLE__)
+#if defined(GTK)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifndef __APPLE__
-#include <gtk/gtk.h>
-#endif
-
-#define SCINTILLA(obj)          GTK_CHECK_CAST (obj, scintilla_get_type (), ScintillaObject)
+#define SCINTILLA(obj)          G_TYPE_CHECK_INSTANCE_CAST (obj, scintilla_get_type (), ScintillaObject)
 #define SCINTILLA_CLASS(klass)  GTK_CHECK_CLASS_CAST (klass, scintilla_get_type (), ScintillaClass)
 #define IS_SCINTILLA(obj)       GTK_CHECK_TYPE (obj, scintilla_get_type ())
 

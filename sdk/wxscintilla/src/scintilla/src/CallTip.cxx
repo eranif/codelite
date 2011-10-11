@@ -29,6 +29,7 @@ CallTip::CallTip() {
 	rectUp = PRectangle(0,0,0,0);
 	rectDown = PRectangle(0,0,0,0);
 	lineHeight = 1;
+	offsetMain = 0;
 	startHighlight = 0;
 	endHighlight = 0;
 	tabSize = 0;
@@ -45,7 +46,8 @@ CallTip::CallTip() {
 	colourSel.desired = ColourDesired(0, 0, 0x80);
 	colourShade.desired = ColourDesired(0, 0, 0);
 	colourLight.desired = ColourDesired(0xc0, 0xc0, 0xc0);
-	
+	codePage = 0;
+	clickPlace = 0;
 	// ERAN IFRAH
 	ColourDesired c(0, 0, 255);
 	ColourAllocated ca(c.AsLong());
@@ -291,15 +293,17 @@ void CallTip::PaintCT(Surface *surfaceWindow) {
 	offsetMain = insetX;    // initial alignment assuming no arrows
 	PaintContents(surfaceWindow, true);
 
+#ifndef __APPLE__
 	// OSX doesn't put borders on "help tags"
 	// Draw a raised border around the edges of the window
 	surfaceWindow->MoveTo(0, rcClientSize.bottom - 1);
 	surfaceWindow->PenColour(colourShade.allocated);
 	surfaceWindow->LineTo(rcClientSize.right - 1, rcClientSize.bottom - 1);
 	surfaceWindow->LineTo(rcClientSize.right - 1, 0);
-	surfaceWindow->PenColour(colourShade.allocated);
+	surfaceWindow->PenColour(colourLight.allocated);
 	surfaceWindow->LineTo(0, 0);
 	surfaceWindow->LineTo(0, rcClientSize.bottom - 1);
+#endif
 }
 
 void CallTip::MouseClick(Point pt) {

@@ -37,11 +37,12 @@ EditorSettingsFolding::EditorSettingsFolding( wxWindow* parent )
 	m_foldCompact->SetValue(options->GetFoldCompact());
 	m_foldElse->SetValue(options->GetFoldAtElse());
 	
-	const wxString FoldStyles[] = { wxTRANSLATE("Simple"), wxTRANSLATE("Arrows"), wxTRANSLATE("Arrows with Background Colour"), wxTRANSLATE("Simple with Background Colour"), 
-									  wxTRANSLATE("Flatten Tree Square Headers"), wxTRANSLATE("Flatten Tree Circular Headers") };
+	const wxString FoldStyles[] = { wxTRANSLATE("Simple"), 
+									wxTRANSLATE("Arrows"), 
+									wxTRANSLATE("Flatten Tree Square Headers"), 
+									wxTRANSLATE("Flatten Tree Circular Headers") };
+									
 	m_stringManager.AddStrings(sizeof(FoldStyles)/sizeof(wxString), FoldStyles, options->GetFoldStyle(), m_foldStyle);
-
-	m_colourPicker->SetColour(options->GetFoldBgColour());
 }
 
 
@@ -55,17 +56,16 @@ void EditorSettingsFolding::Save(OptionsConfigPtr options)
 	
 	// Get the foldstyle selection, unlocalised
 	wxString foldStyle = m_stringManager.GetStringSelection();
+	
+	// thses 2 styles no longer exists...
+	if(foldStyle == _("Arrows with Background Colour") || foldStyle == _("Simple with Background Colour"))
+		foldStyle.Clear();
+		
 	if (foldStyle.IsEmpty()) {
 		foldStyle = wxT("Arrows");
 	}
-	options->SetFoldStyle(foldStyle);
 	
-	options->SetFoldBgColour(m_colourPicker->GetColour());
-}
-
-void EditorSettingsFolding::OnFoldColourUI(wxUpdateUIEvent& e)
-{
-	e.Enable( m_displayMargin->IsChecked() && (m_foldStyle->GetStringSelection() == _("Arrows with Background Colour") || m_foldStyle->GetStringSelection() == _("Simple with Background Colour")) );
+	options->SetFoldStyle(foldStyle);
 }
 
 void EditorSettingsFolding::OnFoldingMarginUI(wxUpdateUIEvent& event)

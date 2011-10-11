@@ -8,7 +8,6 @@
 #ifndef LEXACCESSOR_H
 #define LEXACCESSOR_H
 
-#include <assert.h>
 #ifdef SCI_NAMESPACE
 namespace Scintilla {
 #endif
@@ -134,7 +133,6 @@ public:
 	void ColourTo(unsigned int pos, int chAttr) {
 		// Only perform styling if non empty range
 		if (pos != startSeg - 1) {
-			//assert(pos >= startSeg);
 			if (pos < startSeg) {
 				return;
 			}
@@ -149,7 +147,6 @@ public:
 					chFlags = 0;
 				chAttr |= chFlags;
 				for (unsigned int i = startSeg; i <= pos; i++) {
-					assert((startPosStyling + validLen) < Length());
 					styleBuf[validLen++] = static_cast<char>(chAttr);
 				}
 			}

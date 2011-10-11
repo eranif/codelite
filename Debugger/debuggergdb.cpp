@@ -391,7 +391,7 @@ bool DbgGdb::Break( const BreakpointInfo& bp )
 		//----------------------------------
 		// Temporary breakpoints
 		//----------------------------------
-		command = wxT( "-break-insert -t " );
+		command = wxT( "-break-insert -f -t " );
 		break;
 
 	case BP_type_condbreak:
@@ -399,7 +399,7 @@ bool DbgGdb::Break( const BreakpointInfo& bp )
 	default:
 		// Should be standard breakpts. But if someone tries to make an ignored temp bp
 		// it won't have the BP_type_tempbreak type, so check again here
-		command =  ( bp.is_temp ? wxT( "-break-insert -t " ) : wxT( "-break-insert " ) );
+		command =  ( bp.is_temp ? wxT( "-break-insert -f -t " ) : wxT( "-break-insert -f " ) );
 		break;
 	}
 
@@ -419,7 +419,7 @@ bool DbgGdb::Break( const BreakpointInfo& bp )
 		} else if ( ! bp.function_name.IsEmpty() ) {
 			if ( bp.regex ) {
 				// update the command
-				command = wxT( "-break-insert -r " );
+				command = wxT( "-break-insert -f -r " );
 			}
 			breakWhere = bp.function_name;
 		}
@@ -1067,13 +1067,13 @@ bool DbgGdb::DoInitializeGdb( const std::vector<BreakpointInfo> &bpList, const w
 		// Place an 'internal' breakpoint at main. Once this breakpoint is hit
 		// set all breakpoints and remove the 'internal' one.
 		// Then 'continue', unless the user has said he actually _wants_ to break at main
-		WriteCommand( wxT( "-break-insert -t main" ), new DbgFindMainBreakpointIdHandler( m_observer, this ) );
+		WriteCommand( wxT( "-break-insert -f -t main" ), new DbgFindMainBreakpointIdHandler( m_observer, this ) );
 	}
 
 	if (m_info.breakAtWinMain) {
 		// Set a breakpoint at WinMain
 		// Use a temporary one, so that it isn't duplicated in future sessions
-		WriteCommand( wxT( "-break-insert -t main" ), NULL );
+		WriteCommand( wxT( "-break-insert -f -t main" ), NULL );
 		// Flag that we've done this. DbgFindMainBreakpointIdHandler::ProcessOutput uses this
 		// to decide whether or not to 'continue' after setting BPs after main()
 		SetShouldBreakAtMain(true);

@@ -306,50 +306,72 @@ bool UnixProcessImpl::IsAlive()
 	return kill(m_pid, 0) == 0;
 }
 
-bool UnixProcessImpl::Read(wxString& buff)
+static bool canRead(int fd, long ms, int &errCode) 
 {
 	fd_set  rs;
 	timeval timeout;
 
 	memset(&rs, 0, sizeof(rs));
-	FD_SET(GetReadHandle(), &rs);
-	timeout.tv_sec  = 0;      // 0 seconds
-	timeout.tv_usec = 150000; // 150 ms
+	FD_SET(fd, &rs);
+	timeout.tv_sec  = 0;         // 0 seconds
+	timeout.tv_usec = ms * 1000; // 10 us
 	
-	int errCode(0);
+	errCode = 0;
 	errno = 0;
 	
-	int rc = select(GetReadHandle()+1, &rs, NULL, NULL, &timeout);
+	int rc = select(fd+1, &rs, NULL, NULL, &timeout);
 	errCode = errno;
-	if ( rc == 0 ) {
-		// timeout
+	
+	if(rc > 0)
 		return true;
-		
-	} else if ( rc > 0 ) {
-		// there is something to read
-		char buffer[BUFF_SIZE+1]; // our read buffer
-		memset(buffer, 0, sizeof(buffer));
-		if(read(GetReadHandle(), buffer, sizeof(buffer)) > 0) {
-			buff.Empty();
-			buffer[BUFF_SIZE] = 0; // allways place a terminator
-			
-			// Remove coloring chars from the incomnig buffer
-			// colors are marked with ESC and terminates with lower case 'm'
-			RemoveTerminalColoring(buffer);
-			
-			wxString convBuff = wxString(buffer, wxConvUTF8);
-			if(convBuff.IsEmpty()) {
-				convBuff = wxString::From8BitData(buffer);
-			}
-			
-			buff.Append( convBuff );
-			return true;
+	
+	if(rc == 0) {
+		// reset errno
+		errCode = 0;
+	}
+	return false; // check errorCode
+}
+
+static bool readBuffer(wxString &buff, int fd) 
+{
+	// there is something to read
+	char buffer[BUFF_SIZE+1]; // our read buffer
+	memset(buffer, 0, sizeof(buffer));
+	if(read(fd, buffer, sizeof(buffer)) > 0) {
+		buffer[BUFF_SIZE] = 0; // allways place a terminator
+		// Remove coloring chars from the incomnig buffer
+		// colors are marked with ESC and terminates with lower case 'm'
+		RemoveTerminalColoring(buffer);
+		wxString convBuff = wxString(buffer, wxConvUTF8);
+		if(convBuff.IsEmpty()) {
+			convBuff = wxString::From8BitData(buffer);
 		}
-		return false;
+		buff.Append( convBuff );
+		return true;
+	}
+	return false;
+}
+
+
+bool UnixProcessImpl::Read(wxString& buff)
+{
+	int errCode;
+	if(canRead(GetReadHandle(), 150, errCode)) {
+		
+		// read all that you can...
+		int count(0);
+		do {
+			
+			if(!readBuffer(buff, GetReadHandle()))
+				return false;
+			count++;
+			
+		} while( count < 5 && canRead(GetReadHandle(), 1, errCode) );
+		return true;
 		
 	} else {
 		
-		if ( errCode == EINTR || errCode == EAGAIN ) {
+		if ( errCode == EINTR || errCode == EAGAIN || errCode == 0 ) {
 			return true;
 		}
 		

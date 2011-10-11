@@ -30,16 +30,16 @@ ConsoleFrame::ConsoleFrame( wxWindow* parent, wxWindowID id )
 
 	// Connect Events
 	wxTheApp->Connect(wxEVT_DEBUG_ENDED,               wxCommandEventHandler(ConsoleFrame::OnDebuggerEnded), NULL, this);
-	wxTheApp->Connect(wxEVT_DEBUG_EDITOR_GOT_CONTROL,  wxCommandEventHandler(ConsoleFrame::OnEditorGotControl), NULL, this);
-	wxTheApp->Connect(wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEventHandler(ConsoleFrame::OnEditorLostControl), NULL, this);
+	//wxTheApp->Connect(wxEVT_DEBUG_EDITOR_GOT_CONTROL,  wxCommandEventHandler(ConsoleFrame::OnEditorGotControl), NULL, this);
+	//wxTheApp->Connect(wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEventHandler(ConsoleFrame::OnEditorLostControl), NULL, this);
 }
 
 ConsoleFrame::~ConsoleFrame()
 {
 	// Disconnect Events
 	wxTheApp->Disconnect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(ConsoleFrame::OnDebuggerEnded), NULL, this);
-	wxTheApp->Disconnect(wxEVT_DEBUG_EDITOR_GOT_CONTROL,  wxCommandEventHandler(ConsoleFrame::OnEditorGotControl), NULL, this);
-	wxTheApp->Disconnect(wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEventHandler(ConsoleFrame::OnEditorLostControl), NULL, this);
+	//wxTheApp->Disconnect(wxEVT_DEBUG_EDITOR_GOT_CONTROL,  wxCommandEventHandler(ConsoleFrame::OnEditorGotControl), NULL, this);
+	//wxTheApp->Disconnect(wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEventHandler(ConsoleFrame::OnEditorLostControl), NULL, this);
 }
 
 wxString ConsoleFrame::StartTTY()

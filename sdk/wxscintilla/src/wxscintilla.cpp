@@ -2762,6 +2762,11 @@ int wxScintilla::GetRectangularSelectionModifier(){
 	return (int)SendMsg(SCI_GETRECTANGULARSELECTIONMODIFIER);
 }
 
+void wxScintilla::SetVirtualSpaceOptions(int virtualSpace)
+{
+	SendMsg(SCI_SETVIRTUALSPACEOPTIONS, (long)virtualSpace);
+}
+
 // Returns the line number of the line with the caret.
 int wxScintilla::GetCurrentLine () {
     int line = LineFromPosition (GetCurrentPos());
@@ -3529,4 +3534,3 @@ wxScintillaEvent::wxScintillaEvent (const wxScintillaEvent& event)
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
-

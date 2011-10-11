@@ -3422,6 +3422,7 @@ public:
 	void     SetAdditionalSelectionTyping(bool additionalSelectionTyping);
 	void     SetRectangularSelectionModifier(int mod);
 	int      GetRectangularSelectionModifier();
+	void     SetVirtualSpaceOptions(int virtualSpace);
 	// [PATCH] END
 
 #if wxCHECK_VERSION(2, 5, 0)

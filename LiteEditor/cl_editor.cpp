@@ -280,7 +280,8 @@ void LEditor::SetProperties()
 	SetMultipleSelection(true);
 	SetRectangularSelectionModifier(wxSCI_SCMOD_CTRL);
 	SetAdditionalSelectionTyping(true);
-
+	SetVirtualSpaceOptions(3 /* SCVS_RECTANGULARSELECTION | SCVS_USERACCESSIBLE */ );
+	
 	OptionsConfigPtr options = GetOptions();
 	CallTipUseStyle(1);
 

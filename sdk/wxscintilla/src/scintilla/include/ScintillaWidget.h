@@ -9,7 +9,7 @@
 #ifndef SCINTILLAWIDGET_H
 #define SCINTILLAWIDGET_H
 
-#if defined(GTK)
+#if defined(__WXGTK__)
 #include <gtk-2.0/gtk/gtk.h>
 #ifdef __cplusplus
 extern "C" {

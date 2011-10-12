@@ -202,7 +202,7 @@ void BackupPage::OnBtnBackupClick(wxCommandEvent& event) {
 
 		SerializableList::compatibility_iterator tabNode = m_pParentWizard->GetSelectedDatabase()->GetFirstChildNode();
 		while(tabNode) {
-			Table* tab = wxDynamicCast(tabNode->GetData(),Table);
+			DBETable* tab = wxDynamicCast(tabNode->GetData(),DBETable);
 			if (tab) {
 				retStr.append(m_pParentWizard->GetSelectedDatabase()->GetDbAdapter()->GetCreateTableSql(tab,true));
 			}
@@ -220,7 +220,7 @@ void BackupPage::OnBtnBackupClick(wxCommandEvent& event) {
 
 		tabNode = m_pParentWizard->GetSelectedDatabase()->GetFirstChildNode();
 		while(tabNode) {
-			Table* tab = wxDynamicCast(tabNode->GetData(),Table);
+			DBETable* tab = wxDynamicCast(tabNode->GetData(),DBETable);
 			if (tab) {
 				retStr.append(m_pParentWizard->GetSelectedDatabase()->GetDbAdapter()->GetAlterTableConstraintSql(tab));
 			}

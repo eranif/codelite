@@ -80,7 +80,7 @@ void ErdView::Initialize()
 		m_pLabel->GetFont().SetPointSize( 8 );
 		m_pLabel->GetFont().SetWeight(wxFONTWEIGHT_BOLD);
 
-		m_pLabel->SetText(wxT("Table name"));
+		m_pLabel->SetText(wxT("DBETable name"));
 		m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION);
 		
         SF_ADD_COMPONENT( m_pLabel, wxT("title") );		

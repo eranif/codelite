@@ -18,7 +18,7 @@ ErdTable::ErdTable():wxSFRoundRectShape()
 	Initialize();
 }
 
-ErdTable::ErdTable(Table* tab):wxSFRoundRectShape()
+ErdTable::ErdTable(DBETable* tab):wxSFRoundRectShape()
 {
 	SetUserData(tab);
 	Initialize();
@@ -68,7 +68,7 @@ void ErdTable::Initialize()
 		m_pLabel->GetFont().SetPointSize( 8 );
 		m_pLabel->GetFont().SetWeight(wxFONTWEIGHT_BOLD);
 
-		m_pLabel->SetText(wxT("Table name"));
+		m_pLabel->SetText(wxT("DBETable name"));
 		m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
 
 		SF_ADD_COMPONENT( m_pLabel, wxT("title") );
@@ -136,14 +136,14 @@ void ErdTable::UpdateColumns()
 	int i = 0;
 	Constraint::constraintType type;
 
-	Table* tab = (Table*) wxDynamicCast(GetUserData(),Table);
+	DBETable* tab = (DBETable*) wxDynamicCast(GetUserData(),DBETable);
 	if (tab)
 	{
 		m_pLabel->SetText(tab->GetName());
 		SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
 		while( node )
 		{
-			Column* pCol = wxDynamicCast(node->GetData(), Column);
+			DBEColumn* pCol = wxDynamicCast(node->GetData(), DBEColumn);
 			if( pCol )
 			{
 				type = Constraint::noKey;
@@ -279,8 +279,8 @@ void ErdTable::SetCommonProps(wxSFShapeBase* shape)
 
 void ErdTable::AddColumn(const wxString& colName, IDbType* type)
 {
-	Table* tab = (Table*) wxDynamicCast(GetUserData(),Table);
-	tab->AddColumn(new Column(colName,_("New table"),type));
+	DBETable* tab = (DBETable*) wxDynamicCast(GetUserData(),DBETable);
+	tab->AddColumn(new DBEColumn(colName,_("New table"),type));
 }
 
 void ErdTable::ClearConnections()

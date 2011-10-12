@@ -64,7 +64,7 @@ wxString SQLiteDbAdapter::GetDefaultSelect(const wxString& dbName, const wxStrin
 wxString SQLiteDbAdapter::GetDefaultSelect(const wxString& cols, const wxString& dbName, const wxString& tableName) {
 	return wxString::Format(wxT("SELECT %s FROM '%s'.'%s' LIMIT 0, 100;"),cols.c_str(), dbName.c_str(),tableName.c_str());
 }
-bool SQLiteDbAdapter::GetColumns(Table* pTab) {
+bool SQLiteDbAdapter::GetColumns(DBETable* pTab) {
 	int i = 0;
 	DatabaseLayer* dbLayer = this->GetDatabaseLayer(wxT(""));
 	if (dbLayer) {
@@ -76,7 +76,7 @@ bool SQLiteDbAdapter::GetColumns(Table* pTab) {
 			IDbType* pType = GetDbTypeByName(database->GetResultString(3));
 			if (pType) {
 				pType->SetNotNull(database->GetResultInt(4) == 1);
-				Column* pCol = new Column(database->GetResultString(2),pTab->GetName(), pType);
+				DBEColumn* pCol = new DBEColumn(database->GetResultString(2),pTab->GetName(), pType);
 				pTab->AddChild(pCol);
 				if (database->GetResultInt(6) == 1) {
 					Constraint* constr = new Constraint();
@@ -123,7 +123,7 @@ bool SQLiteDbAdapter::GetColumns(Table* pTab) {
 	}
 	return true;
 }
-wxString SQLiteDbAdapter::GetCreateTableSql(Table* tab, bool dropTable) {
+wxString SQLiteDbAdapter::GetCreateTableSql(DBETable* tab, bool dropTable) {
 	//TODO:SQL:
 	wxString str = wxT("");
 	if (dropTable) str = wxString::Format(wxT("DROP TABLE IF EXISTS '%s'; \n"),tab->GetName().c_str());
@@ -133,13 +133,13 @@ wxString SQLiteDbAdapter::GetCreateTableSql(Table* tab, bool dropTable) {
 
 	SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
 	while( node ) {
-		Column* col = NULL;
-		if( node->GetData()->IsKindOf( CLASSINFO(Column)) ) col = (Column*) node->GetData();
+		DBEColumn* col = NULL;
+		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) ) col = (DBEColumn*) node->GetData();
 		if(col)	str.append(wxString::Format(wxT("\t`%s` %s"),col->GetName().c_str(), col->GetPType()->ReturnSql().c_str()));
 
 		node = node->GetNext();
 		if (node) {
-			Column* pc =wxDynamicCast(node->GetData(),Column);
+			DBEColumn* pc =wxDynamicCast(node->GetData(),DBEColumn);
 			if (pc) str.append(wxT(",\n ")) ;
 		}
 	}
@@ -213,7 +213,7 @@ void SQLiteDbAdapter::GetTables(Database* db, bool includeViews) {
 
 
 		while (tabulky->Next()) {
-			db->AddChild(new Table(this, tabulky->GetResultString(2), db->GetName(), tabulky->GetResultString(wxT("type")).Contains(wxT("view"))));
+			db->AddChild(new DBETable(this, tabulky->GetResultString(2), db->GetName(), tabulky->GetResultString(wxT("type")).Contains(wxT("view"))));
 		}
 		dbLayer->CloseResultSet(tabulky);
 
@@ -236,10 +236,10 @@ void SQLiteDbAdapter::GetTables(Database* db, bool includeViews) {
 wxString SQLiteDbAdapter::GetCreateDatabaseSql(const wxString& dbName) {
 	return wxT("");
 }
-wxString SQLiteDbAdapter::GetDropTableSql(Table* pTab) {
+wxString SQLiteDbAdapter::GetDropTableSql(DBETable* pTab) {
 	return wxString::Format(wxT("DROP TABLE '%s'.'%s'"), pTab->GetParentName().c_str(), pTab->GetName().c_str());
 }
-wxString SQLiteDbAdapter::GetAlterTableConstraintSql(Table* tab) {
+wxString SQLiteDbAdapter::GetAlterTableConstraintSql(DBETable* tab) {
 	return wxT("");
 }
 wxString SQLiteDbAdapter::GetDropDatabaseSql(Database* pDb) {
@@ -261,11 +261,11 @@ wxString SQLiteDbAdapter::GetCreateViewSql(View* view, bool dropView) {
 	str.append(wxT("-- -------------------------------------------------------------\n"));
 	return str;
 }
-void SQLiteDbAdapter::ConvertTable(Table* pTab) {
+void SQLiteDbAdapter::ConvertTable(DBETable* pTab) {
 	SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
 	while( node ) {
-		if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  {
-			Column* col = (Column*) node->GetData();
+		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  {
+			DBEColumn* col = (DBEColumn*) node->GetData();
 			col->SetPType(ConvertType(col->GetPType()));
 		}
 		node = node->GetNext();

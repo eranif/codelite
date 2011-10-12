@@ -40,7 +40,7 @@ bool MySqlDbAdapter::IsConnected() {
 	return this->m_pDbLayer->IsOpen();
 }
 
-wxString MySqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable) {
+wxString MySqlDbAdapter::GetCreateTableSql(DBETable* tab, bool dropTable) {
 	//TODO:SQL:
 	wxString str = wxT("");
 	if (dropTable) str = wxString::Format(wxT("SET FOREIGN_KEY_CHECKS = 0;\nDROP TABLE IF EXISTS `%s` ;\nSET FOREIGN_KEY_CHECKS = 1; \n"),tab->GetName().c_str());
@@ -50,8 +50,8 @@ wxString MySqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable) {
 
 	SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
 	while( node ) {
-		Column* col = NULL;
-		if( node->GetData()->IsKindOf( CLASSINFO(Column)) ) col = (Column*) node->GetData();
+		DBEColumn* col = NULL;
+		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) ) col = (DBEColumn*) node->GetData();
 		if(col)	str.append(wxString::Format(wxT("\t`%s` %s"),col->GetName().c_str(), col->GetPType()->ReturnSql().c_str()));
 
 		Constraint* constr = wxDynamicCast(node->GetData(),Constraint);
@@ -61,7 +61,7 @@ wxString MySqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable) {
 
 		node = node->GetNext();
 		if (node) {
-			if (wxDynamicCast(node->GetData(),Column)) str.append(wxT(",\n ")) ;
+			if (wxDynamicCast(node->GetData(),DBEColumn)) str.append(wxT(",\n ")) ;
 			else if ((constr = wxDynamicCast(node->GetData(),Constraint))) {
 				if (constr->GetType() == Constraint::primaryKey) str.append(wxT(",\n ")) ;
 			}
@@ -165,7 +165,7 @@ wxString MySqlDbAdapter::GetDefaultSelect(const wxString& cols, const wxString& 
 	return ret;
 	
 }
-bool MySqlDbAdapter::GetColumns(Table* pTab) {
+bool MySqlDbAdapter::GetColumns(DBETable* pTab) {
 	DatabaseLayer* dbLayer = this->GetDatabaseLayer(wxT(""));
 
 	if (!dbLayer->IsOpen()) return NULL;
@@ -175,7 +175,7 @@ bool MySqlDbAdapter::GetColumns(Table* pTab) {
 	while (database->Next()) {
 		IDbType* pType = parseTypeString(database->GetResultString(2));
 		if (pType) {
-			Column* pCol = new Column(database->GetResultString(1),pTab->GetName(), pType);
+			DBEColumn* pCol = new DBEColumn(database->GetResultString(1),pTab->GetName(), pType);
 			pTab->AddChild(pCol);
 		}
 	}
@@ -291,7 +291,7 @@ void MySqlDbAdapter::GetTables(Database* db, bool includeViews) {
 			}
 			if (tabulky) {
 				while (tabulky->Next()) {
-					db->AddChild(new Table(this,  tabulky->GetResultString(wxT("TABLE_NAME")), db->GetName(),  tabulky->GetResultString(wxT("TABLE_TYPE")).Contains(wxT("VIEW"))));
+					db->AddChild(new DBETable(this,  tabulky->GetResultString(wxT("TABLE_NAME")), db->GetName(),  tabulky->GetResultString(wxT("TABLE_TYPE")).Contains(wxT("VIEW"))));
 				}
 				dbLayer->CloseResultSet(tabulky);
 			}
@@ -304,10 +304,10 @@ void MySqlDbAdapter::GetTables(Database* db, bool includeViews) {
 wxString MySqlDbAdapter::GetCreateDatabaseSql(const wxString& dbName) {
 	return wxString::Format(wxT("CREATE DATABASE `%s`"), dbName.c_str());
 }
-wxString MySqlDbAdapter::GetDropTableSql(Table* pTab) {
+wxString MySqlDbAdapter::GetDropTableSql(DBETable* pTab) {
 	return wxString::Format(wxT("SET FOREIGN_KEY_CHECKS = 0;\nDROP TABLE `%s`.`%s\nSET FOREIGN_KEY_CHECKS = 1;`"), pTab->GetParentName().c_str(),pTab->GetName().c_str());
 }
-wxString MySqlDbAdapter::GetAlterTableConstraintSql(Table* tab) {
+wxString MySqlDbAdapter::GetAlterTableConstraintSql(DBETable* tab) {
 	//TODO:SQL:
 	wxString str =  wxString::Format(wxT("-- ---------- CONSTRAINTS FOR TABLE `%s` \n"),tab->GetName().c_str());
 	str.append(wxT("-- -------------------------------------------------------------\n"));
@@ -392,11 +392,11 @@ wxString MySqlDbAdapter::GetCreateViewSql(View* view, bool dropView) {
 	str.append(wxT("-- -------------------------------------------------------------\n"));
 	return str;
 }
-void MySqlDbAdapter::ConvertTable(Table* pTab) {
+void MySqlDbAdapter::ConvertTable(DBETable* pTab) {
 	SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
 	while( node ) {
-		if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  {
-			Column* col = (Column*) node->GetData();
+		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  {
+			DBEColumn* col = (DBEColumn*) node->GetData();
 			col->SetPType(ConvertType(col->GetPType()));
 		}
 		node = node->GetNext();

@@ -9,7 +9,7 @@
 // Trida databazoveho sloupecku
 // -------------------------------------------------
 /*! \brief Class representing one table column */
-class Column : public xsSerializable {
+class DBEColumn : public xsSerializable {
 protected:
 	wxString m_name;
 	wxString m_parentName;
@@ -21,15 +21,15 @@ public:
 	// -------------------------------------------------
 	// Konstruktor
 	// -------------------------------------------------
-	XS_DECLARE_CLONABLE_CLASS(Column);
+	XS_DECLARE_CLONABLE_CLASS(DBEColumn);
 	/*! \brief Default constuctor*/
-	Column();
-	Column(const Column& obj);
-	Column(const wxString& name,
+	DBEColumn();
+	DBEColumn(const DBEColumn& obj);
+	DBEColumn(const wxString& name,
 			const wxString& parentName,
 			IDbType* type);
 	/*! \brief Default destruktor */
-	virtual ~Column();
+	virtual ~DBEColumn();
 	
 	
 	/*! \brief Retrun column name */

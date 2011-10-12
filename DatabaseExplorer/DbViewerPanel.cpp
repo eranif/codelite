@@ -24,33 +24,33 @@ DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pMa
 	m_pNotebook = notebook;
 	m_pGlobalParent = parent;
 	m_mgr = pManager;
-	
+
 	MSWSetNativeTheme(m_treeDatabases);
-	
+
 	m_pDbAdapter = NULL;
 	m_pConnections = new xsSerializable();
 
 	m_pThumbnail = new wxSFThumbnail(this);
 	m_pThumbnail->SetSizeHints(wxSize(-1, 200));
-	
+
 	GetSizer()->Add(m_pThumbnail, 0, wxEXPAND);
 	GetSizer()->Hide(m_pThumbnail);
-	
+
 	GetSizer()->Layout();
-	
+
 	// replace the icons...
-	m_toolBar1->AddTool( wxID_CONNECT, _("Open connection"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/connect")), wxNullBitmap, wxITEM_NORMAL, _("Open new connection"), _("Open new connection"), NULL ); 
-	m_toolBar1->AddTool( wxID_CLOSE_CONNECTION, _("tool"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/disconnect")), wxNullBitmap, wxITEM_NORMAL, _("Close selected connection"), _("Close selected connection"), NULL ); 
-	m_toolBar1->AddTool( wxID_TOOL_REFRESH, _("tool"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/database_refresh")), wxNullBitmap, wxITEM_NORMAL, _("Refresh View"), wxEmptyString, NULL ); 
-	m_toolBar1->AddTool( wxID_TOOL_ERD, _("ERD"), wxBitmap( Grid_xpm ), wxNullBitmap, wxITEM_NORMAL, _("Open ERD View"), wxEmptyString, NULL ); 
+	m_toolBar1->AddTool( wxID_CONNECT, _("Open connection"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/connect")), wxNullBitmap, wxITEM_NORMAL, _("Open new connection"), _("Open new connection"), NULL );
+	m_toolBar1->AddTool( wxID_CLOSE_CONNECTION, _("tool"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/disconnect")), wxNullBitmap, wxITEM_NORMAL, _("Close selected connection"), _("Close selected connection"), NULL );
+	m_toolBar1->AddTool( wxID_TOOL_REFRESH, _("tool"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/database_refresh")), wxNullBitmap, wxITEM_NORMAL, _("Refresh View"), wxEmptyString, NULL );
+	m_toolBar1->AddTool( wxID_TOOL_ERD, _("ERD"), wxBitmap( Grid_xpm ), wxNullBitmap, wxITEM_NORMAL, _("Open ERD View"), wxEmptyString, NULL );
 	m_toolBar1->AddTool( wxID_TOOL_PREVIEW, _("Show ERD Thumbnail"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/thumbnail")), _("Show ERD Thumbnail"), wxITEM_CHECK);
 	m_toolBar1->Realize();
-	
+
 	Layout();
 
 	m_mgr->GetTheApp()->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,NotebookEventHandler(DbViewerPanel::OnPageChange), NULL, this);
 	m_mgr->GetTheApp()->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSING,NotebookEventHandler(DbViewerPanel::OnPageClose), NULL, this);
-	
+
 	this->Connect( wxID_CONNECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnConncectClick ) );
 	this->Connect( wxID_CONNECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnConncectUI ) );
 	this->Connect( wxID_CLOSE_CONNECTION, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnToolCloseClick ) );
@@ -66,7 +66,7 @@ DbViewerPanel::~DbViewerPanel()
 	m_mgr->GetTheApp()->Disconnect(wxEVT_COMMAND_BOOK_PAGE_CHANGED,NotebookEventHandler(DbViewerPanel::OnPageChange), NULL, this);
 	m_mgr->GetTheApp()->Disconnect(wxEVT_COMMAND_BOOK_PAGE_CLOSING,NotebookEventHandler(DbViewerPanel::OnPageClose), NULL, this);
 	delete m_pDbAdapter;
-	
+
 	this->Disconnect( wxID_CONNECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnConncectClick ) );
 	this->Disconnect( wxID_CONNECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DbViewerPanel::OnConncectUI ) );
 	this->Disconnect( wxID_CLOSE_CONNECTION, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( DbViewerPanel::OnToolCloseClick ) );
@@ -93,17 +93,17 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 	DbItem* item = (DbItem*) m_treeDatabases->GetItemData(event.GetItem());
 	if (item) {
 		wxMouseState cState = wxGetMouseState();
-		
+
 		wxString pagename;
-		if (Table* tab =  wxDynamicCast(item->GetData(), Table)) {
+		if (DBETable* tab =  wxDynamicCast(item->GetData(), DBETable)) {
 			tab->RefreshChildren();
 			if( cState.ControlDown() ) {
 				pagename = CreatePanelName(tab, DbViewerPanel::Erd);
-				ErdPanel *erdpanel = new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),m_pConnections, (Table*) tab->Clone() );
+				ErdPanel *erdpanel = new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),m_pConnections, (DBETable*) tab->Clone() );
 				m_mgr->AddEditorPage(erdpanel, pagename);
 				m_pagesAdded.Add(pagename);
 				erdpanel->SetFocus();
-				
+
 			} else {
 #if defined (__WXMSW__)
 				clWindowUpdateLocker locker(m_mgr->GetEditorPaneNotebook());
@@ -135,7 +135,7 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 				ErdPanel *erdpanel = new ErdPanel(m_pNotebook,db->GetDbAdapter()->Clone(),m_pConnections,(Database*)db->Clone());
 				m_mgr->AddEditorPage(erdpanel, pagename);
 				erdpanel->SetFocus();
-				
+
 			} else {
 				pagename = CreatePanelName(db, DbViewerPanel::Sql);
 				if(!DoSelectPage(pagename)) {
@@ -163,7 +163,7 @@ void DbViewerPanel::OnRefreshClick(wxCommandEvent& event)
 				if (pCon) pCon->RefreshChildren();
 				Database* pDb = wxDynamicCast(data->GetData(),Database);
 				if (pDb) pDb->RefreshChildren(false);
-				Table* pTab = wxDynamicCast(data->GetData(), Table);
+				DBETable* pTab = wxDynamicCast(data->GetData(), DBETable);
 				if (pTab) pTab->RefreshChildren();
 			}
 			child = m_treeDatabases->GetNextChild(root, cookie);
@@ -204,7 +204,6 @@ void DbViewerPanel::RefreshDbView()
 			while(dbNode) {
 				Database* pDatabase = wxDynamicCast(dbNode->GetData(), Database);
 				if (pDatabase) {
-					//wxTreeItemId dbID = m_treeDatabases->AppendItem(rootID,pDatabase->getName(),-1,-1, new DbItem(pDatabase,NULL));//new DbDatabase(db->getName()));
 					wxTreeItemId dbID = m_treeDatabases->AppendItem(rootID,
 					                    pDatabase->GetName(),
 					                    3,
@@ -217,7 +216,7 @@ void DbViewerPanel::RefreshDbView()
 					// ----------------------------- load tables ----------------------------------
 					SerializableList::compatibility_iterator tabNode = pDatabase->GetFirstChildNode();
 					while(tabNode) {
-						Table* pTable = wxDynamicCast(tabNode->GetData(), Table);
+						DBETable* pTable = wxDynamicCast(tabNode->GetData(), DBETable);
 						if (pTable) {
 							//wxTreeItemId tabID = m_treeDatabases->AppendItem(idFolder,pTable->getName(),1,-1,new DbItem(NULL,pTable)); //NULL);
 							wxTreeItemId tabID = m_treeDatabases->AppendItem(idFolder,
@@ -225,6 +224,23 @@ void DbViewerPanel::RefreshDbView()
 							                     1,
 							                     1,
 							                     new DbItem(pTable)); //NULL);
+
+							///////////////////////////////////////////////////////////
+							// Add the columns
+							///////////////////////////////////////////////////////////
+							SerializableList::compatibility_iterator columnNode = pTable->GetFirstChildNode();
+							while(columnNode) {
+								DBEColumn *col = wxDynamicCast(columnNode->GetData(), DBEColumn);
+								if(col) {
+									wxTreeItemId colID = m_treeDatabases->AppendItem(tabID,
+									                     col->GetName(),
+									                     -1,
+									                     -1,
+									                     new DbItem(col));
+
+								}
+								columnNode = columnNode->GetNext();
+							}
 						}
 						tabNode = tabNode->GetNext();
 					}
@@ -281,10 +297,10 @@ void DbViewerPanel::OnDnDStart(wxTreeEvent& event)
 
 	if (item != NULL) {
 		if (pPanel) {
-			Table* table = wxDynamicCast(item->GetData(),Table);
+			DBETable* table = wxDynamicCast(item->GetData(),DBETable);
 			if (table) {
 				if (table->GetChildrenList().GetCount() == 0) table->RefreshChildren();
-				table = (Table*) table->Clone();
+				table = (DBETable*) table->Clone();
 				wxSFShapeBase *pShape = new dndTableShape(table);
 				lstDnD.Append(pShape);
 				pPanel->GetCanvas()->DoDragDrop(lstDnD);
@@ -298,12 +314,11 @@ void DbViewerPanel::OnDnDStart(wxTreeEvent& event)
 				pPanel->GetCanvas()->DoDragDrop(lstDnD);
 			}
 		}
-		//delete pShape;
 	}
 }
+
 void DbViewerPanel::OnItemRightClick(wxTreeEvent& event)
 {
-	//TODO:LANG:nekolikrat
 	m_pEditedDatabase = NULL;
 	m_pEditedConnection = NULL;
 	m_selectedID = event.GetItem();
@@ -314,7 +329,7 @@ void DbViewerPanel::OnItemRightClick(wxTreeEvent& event)
 	if (item) {
 		Database* db = wxDynamicCast(item->GetData(),Database);
 		if (db) {
-			menu.Append(IDR_DBVIEWER_ADD_TABLE,_("Add table"),_("Run SQL command for creating Table"));
+			menu.Append(IDR_DBVIEWER_ADD_TABLE,_("Add table"),_("Run SQL command for creating DBETable"));
 			menu.Append(IDR_DBVIEWER_DROP_DATABASE, _("Drop database"), _("Run SQL command for deleting Database"));
 			c++;
 			c++;
@@ -335,23 +350,13 @@ void DbViewerPanel::OnItemRightClick(wxTreeEvent& event)
 
 			m_pEditedDatabase = db;
 		}
-
-		DbConnection* con = wxDynamicCast(item->GetData(), DbConnection);
-		if (con) {
-			menu.Append(IDR_DBVIEWER_ADD_DATABASE, _("Add database"),_("Run SQL command for create DB"));
-
-			c++;
-
-			m_pEditedConnection = con;
-		}
-
-		Table* tab = wxDynamicCast(item->GetData(), Table);
+		DBETable* tab = wxDynamicCast(item->GetData(), DBETable);
 		if (tab) {
-			menu.Append(IDR_DBVIEWER_DROP_TABLE,_("Drop table"),_("Run SQL command for deleting Table"));
+			menu.Append(IDR_DBVIEWER_DROP_TABLE,_("Drop table"),_("Run SQL command for deleting DBETable"));
 			c++;
 			menu.AppendSeparator();
-			menu.Append(IDR_DBVIEWER_ERD_TABLE, _("Create ERD from Table"),_("Create ERD diagram from table"));
-			menu.Append(IDR_DBVIEWER_CLASS_TABLE, _("Create classes from Table"), _("Create c++ classes for selected table"));
+			menu.Append(IDR_DBVIEWER_ERD_TABLE, _("Create ERD from DBETable"),_("Create ERD diagram from table"));
+			menu.Append(IDR_DBVIEWER_CLASS_TABLE, _("Create classes from DBETable"), _("Create c++ classes for selected table"));
 			c++;
 			c++;
 		}
@@ -381,12 +386,12 @@ void DbViewerPanel::OnToolCloseClick(wxCommandEvent& event)
 			}
 		}
 	}
-	
+
 	// loop over the editor open pages and close all DbExplorer related
 	for(size_t i=0; i<m_pagesAdded.Count(); i++) {
 		m_mgr->ClosePage(m_pagesAdded.Item(i));
 	}
-	
+
 	m_pagesAdded.Clear();
 }
 
@@ -451,12 +456,12 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 		} else if (evt.GetId() == IDR_DBVIEWER_ERD_TABLE) {
 			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_selectedID);
 			if (data) {
-				Table* pTab = (Table*) wxDynamicCast(data->GetData(),Table);
+				DBETable* pTab = (DBETable*) wxDynamicCast(data->GetData(),DBETable);
 				if (pTab) {
 					pTab->RefreshChildren();
 					wxString pagename;
 					pagename = CreatePanelName(pTab, DbViewerPanel::Erd);
-					ErdPanel *erdpanel = new ErdPanel(m_pNotebook,pTab->GetDbAdapter()->Clone(),m_pConnections, (Table*) pTab->Clone() );
+					ErdPanel *erdpanel = new ErdPanel(m_pNotebook,pTab->GetDbAdapter()->Clone(),m_pConnections, (DBETable*) pTab->Clone() );
 					m_mgr->AddEditorPage(erdpanel, pagename);
 					m_pagesAdded.Add(pagename);
 					erdpanel->SetFocus();
@@ -491,17 +496,17 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 		} else if (evt.GetId() == IDR_DBVIEWER_CLASS_TABLE) {
 			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_selectedID);
 			if (data) {
-				Table* pTab = (Table*) wxDynamicCast(data->GetData(),Table);
+				DBETable* pTab = (DBETable*) wxDynamicCast(data->GetData(),DBETable);
 				if (pTab) {
 					pTab->RefreshChildren();
-					ClassGenerateDialog dlg(GetParent(), pTab->GetDbAdapter(), (Table*) pTab->Clone(), m_mgr);
+					ClassGenerateDialog dlg(GetParent(), pTab->GetDbAdapter(), (DBETable*) pTab->Clone(), m_mgr);
 					dlg.ShowModal();
 				}
 			}
 		} else if (evt.GetId() ==  IDR_DBVIEWER_DROP_TABLE) {
 			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_selectedID);
 			if (data) {
-				Table* pTab = (Table*) wxDynamicCast(data->GetData(),Table);
+				DBETable* pTab = (DBETable*) wxDynamicCast(data->GetData(),DBETable);
 				if (pTab) {
 					//TODO:LANG:
 					wxMessageDialog dlg(this, wxString::Format(_("Remove table '%s'?"),pTab->GetName().c_str()),_("Drop table"),wxYES_NO);
@@ -511,7 +516,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 						pDbLayer->Close();
 						delete pDbLayer;
 						//TODO:LANG:
-						wxMessageBox(_("Table dropped successfully"));
+						wxMessageBox(_("DBETable dropped successfully"));
 
 						Database* pDb = wxDynamicCast(pTab->GetParent(), Database);
 						if (pDb) pDb->RefreshChildren(false);
@@ -563,7 +568,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 						wxString retStr = wxT("-- SQL script created by wxDbExplorer\n\n ");
 						SerializableList::compatibility_iterator tabNode = pDb->GetFirstChildNode();
 						while(tabNode) {
-							Table* tab = wxDynamicCast(tabNode->GetData(),Table);
+							DBETable* tab = wxDynamicCast(tabNode->GetData(),DBETable);
 							if (tab) {
 								retStr.append(pDb->GetDbAdapter()->GetCreateTableSql(tab,true));
 							}
@@ -581,7 +586,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 
 						tabNode = pDb->GetFirstChildNode();
 						while(tabNode) {
-							Table* tab = wxDynamicCast(tabNode->GetData(),Table);
+							DBETable* tab = wxDynamicCast(tabNode->GetData(),DBETable);
 							if (tab) {
 								retStr.append(pDb->GetDbAdapter()->GetAlterTableConstraintSql(tab));
 							}
@@ -706,7 +711,7 @@ wxString DbViewerPanel::CreatePanelName(Database* d, PanelType type)
 		return wxT("ERD [") + d->GetName() + wxT("]");
 }
 
-wxString DbViewerPanel::CreatePanelName(Table* t, PanelType type)
+wxString DbViewerPanel::CreatePanelName(DBETable* t, PanelType type)
 {
 	if( type == DbViewerPanel::Sql ) {
 		return wxT("SQL [") + t->GetParentName() + wxT(":") + t->GetName() + wxT("]");
@@ -789,10 +794,10 @@ void DbViewerPanel::OnShowThumbnail(wxCommandEvent& e)
 {
 	if(e.IsChecked()) {
 		GetSizer()->Show(m_pThumbnail);
-		
+
 	} else {
 		GetSizer()->Hide(m_pThumbnail);
-		
+
 	}
 	GetSizer()->Layout();
 }
@@ -803,7 +808,7 @@ bool DbViewerPanel::DoSelectPage(const wxString& page)
 	if(win) {
 		m_mgr->SelectPage(win);
 		win->SetFocus();
-		
+
 		// replace the query and execute it
 		SQLCommandPanel *sqlPage = dynamic_cast<SQLCommandPanel*>(win);
 		if(sqlPage) {
@@ -814,4 +819,3 @@ bool DbViewerPanel::DoSelectPage(const wxString& page)
 	}
 	return false;
 }
-

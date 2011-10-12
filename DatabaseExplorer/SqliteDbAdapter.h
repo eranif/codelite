@@ -26,7 +26,7 @@ public:
 
 	virtual void GetDatabases(DbConnection* dbCon);
 	virtual void GetTables(Database* db, bool includeViews);
-	virtual bool GetColumns(Table* pTab);
+	virtual bool GetColumns(DBETable* pTab);
 	virtual void GetViews(Database* db);
 
 
@@ -42,16 +42,16 @@ public:
 
 	virtual wxString GetDefaultSelect(const wxString& dbName, const wxString& tableName);
 	virtual wxString GetDefaultSelect(const wxString& cols, const wxString& dbName, const wxString& tableName);
-	virtual wxString GetCreateTableSql(Table* tab, bool dropTable);
+	virtual wxString GetCreateTableSql(DBETable* tab, bool dropTable);
 	virtual wxString GetCreateViewSql(View* view, bool dropView);
-	virtual wxString GetAlterTableConstraintSql(Table* tab);
+	virtual wxString GetAlterTableConstraintSql(DBETable* tab);
 	virtual wxString GetCreateDatabaseSql(const wxString& dbName);
-	virtual wxString GetDropTableSql(Table* pTab);
+	virtual wxString GetDropTableSql(DBETable* pTab);
 	virtual wxString GetDropDatabaseSql(Database* pDb);
 
 
 	virtual IDbType* GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type);
-	virtual void ConvertTable(Table* pTab);
+	virtual void ConvertTable(DBETable* pTab);
 	virtual IDbType* ConvertType(IDbType* pType);
 
 

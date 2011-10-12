@@ -68,7 +68,7 @@ ErdPanel::ErdPanel(wxWindow *parent, IDbAdapter* dbAdapter, xsSerializable* pCon
 	Init(parent, dbAdapter);
 }
 
-ErdPanel::ErdPanel(wxWindow* parent, IDbAdapter* dbAdapter, xsSerializable* pConnections, Table* pTable):_ErdPanel(parent) {
+ErdPanel::ErdPanel(wxWindow* parent, IDbAdapter* dbAdapter, xsSerializable* pConnections, DBETable* pTable):_ErdPanel(parent) {
 	m_pErdTable = NULL;
 	m_pDbAdapter = dbAdapter;
 	m_pConnections = pConnections;
@@ -88,7 +88,7 @@ ErdPanel::ErdPanel(wxWindow* parent, IDbAdapter* dbAdapter, xsSerializable* pCon
 	int i = 10;
 	SerializableList::compatibility_iterator node = pItems->GetFirstChildNode();
 	while( node ) {
-		Table* pTable = wxDynamicCast(node->GetData(), Table);
+		DBETable* pTable = wxDynamicCast(node->GetData(), DBETable);
 		if( pTable ) {
 			ErdTable* pErdTab = new ErdTable(pTable);
 			m_diagramManager.AddShape(pErdTab, NULL, wxPoint( i ,10), sfINITIALIZE, sfDONT_SAVE_STATE);
@@ -142,7 +142,7 @@ void ErdPanel::Init(wxWindow* parent, IDbAdapter* dbAdapter) {
 	m_toolBarErd->AddTool(wxID_REDO, _("Redo"), wxBitmap(redo_xpm),  _("Redo"));
 	m_toolBarErd->AddSeparator();
 	m_toolBarErd->AddRadioTool(IDT_ERD_TOOL, _("Tool"), wxBitmap(Tool_xpm), wxNullBitmap, _("Design tool"));
-	m_toolBarErd->AddRadioTool(IDT_ERD_TABLE, _("Table"), wxBitmap(form_blue_xpm),wxNullBitmap, _("Database table"));
+	m_toolBarErd->AddRadioTool(IDT_ERD_TABLE, _("DBETable"), wxBitmap(form_blue_xpm),wxNullBitmap, _("Database table"));
 	m_toolBarErd->AddRadioTool(IDT_ERD_VIEW, _("View"), wxBitmap(form_yellow_xpm),wxNullBitmap, _("Database view"));
 	m_toolBarErd->AddRadioTool(IDT_ERD_LINE, _("Constraint 1:N"), wxBitmap(link_editor_xpm),wxNullBitmap, _("Foreign key connection"));
 	m_toolBarErd->AddSeparator();

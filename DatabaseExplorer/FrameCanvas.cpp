@@ -90,7 +90,7 @@ void FrameCanvas::OnLeftDown(wxMouseEvent& event) {
 				pShape->AcceptSrcNeighbour(wxT("All"));
 				pShape->AcceptTrgNeighbour(wxT("All"));
 
-				Table* tab = new Table();
+				DBETable* tab = new DBETable();
 				tab->SetName(wxT("NewTable"));
 				pShape->SetUserData(tab);
 
@@ -206,7 +206,7 @@ void FrameCanvas::OnPopupClick(wxCommandEvent &evt) {
 		}else if (evt.GetId() == IDR_POPUP_MI3) {
 			ErdTable* table = wxDynamicCast(GetShapeUnderCursor()->GetGrandParentShape(), ErdTable);
 			if (table) {
-				Table* pTab = table->GetTable();
+				DBETable* pTab = table->GetTable();
 				wxPoint point(round(table->GetAbsolutePosition().x), round(table->GetAbsolutePosition().y));
 				point.x = table->GetRectSize().x + 10;
 				ErdView* pView =  (ErdView*) GetDiagramManager()->AddShape(new ErdView(), NULL, point, sfINITIALIZE, sfDONT_SAVE_STATE);
@@ -236,7 +236,7 @@ void FrameCanvas::OnPopupClick(wxCommandEvent &evt) {
 				pShape->AcceptSrcNeighbour(wxT("All"));
 				pShape->AcceptTrgNeighbour(wxT("All"));
 
-				Table* tab = new Table();
+				DBETable* tab = new DBETable();
 				tab->SetName(wxT("NewTable"));
 				pShape->SetUserData(tab);
 
@@ -317,9 +317,9 @@ void FrameCanvas::OnDrop(wxCoord x, wxCoord y, wxDragResult def, const ShapeList
 	}
 
 	if (dndTab) {
-		if (dndTab->GetUserData()->IsKindOf(CLASSINFO(Table))) {
-			m_pDbAdapter->ConvertTable((Table*) dndTab->GetUserData());
-			pShape = GetDiagramManager()->AddShape(new ErdTable((Table* ) dndTab->GetUserData()), NULL, wxPoint( x,y), sfINITIALIZE, sfDONT_SAVE_STATE);
+		if (dndTab->GetUserData()->IsKindOf(CLASSINFO(DBETable))) {
+			m_pDbAdapter->ConvertTable((DBETable*) dndTab->GetUserData());
+			pShape = GetDiagramManager()->AddShape(new ErdTable((DBETable* ) dndTab->GetUserData()), NULL, wxPoint( x,y), sfINITIALIZE, sfDONT_SAVE_STATE);
 		}
 		if (dndTab->GetUserData()->IsKindOf(CLASSINFO(View))) {
 			pShape = GetDiagramManager()->AddShape(new ErdView((View* ) dndTab->GetUserData()), NULL, wxPoint( x,y), sfINITIALIZE, sfDONT_SAVE_STATE);

@@ -13,12 +13,12 @@ CreateForeignKey::CreateForeignKey(wxWindow* parent, ErdTable* pSourceTable, Erd
 	m_txDstTable->SetValue(pDestTable->GetTable()->GetName());	
 	SerializableList::compatibility_iterator node = pSourceTable->GetTable()->GetFirstChildNode();
 	while( node ) {
-		if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  m_cmbSrcCol->AppendString(wxString::Format(wxT("%s"),((Column*) node->GetData())->GetName().c_str()));
+		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  m_cmbSrcCol->AppendString(wxString::Format(wxT("%s"),((DBEColumn*) node->GetData())->GetName().c_str()));
 		node = node->GetNext();
 	}
 	node = pDestTable->GetTable()->GetFirstChildNode();
 	while( node ) {
-		if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  m_cmbDstCol->AppendString(wxString::Format(wxT("%s"),((Column*) node->GetData())->GetName().c_str()));
+		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  m_cmbDstCol->AppendString(wxString::Format(wxT("%s"),((DBEColumn*) node->GetData())->GetName().c_str()));
 		node = node->GetNext();
 	}
 }
@@ -40,7 +40,7 @@ void CreateForeignKey::OnOKClick(wxCommandEvent& event)
 	wxString dstLocColName;
 	
 	if (m_radioRelation->GetSelection() == 0){
-		Table* pTable = m_pSrcTable->GetTable();		
+		DBETable* pTable = m_pSrcTable->GetTable();		
 		Constraint* pConstr = new Constraint();
 		pConstr->SetName(wxString::Format(wxT("FK_%s_%s"), pTable->GetName().c_str(),m_pDstTable->GetTable()->GetName().c_str()));
 		pConstr->SetLocalColumn(m_cmbSrcCol->GetValue());
@@ -56,21 +56,21 @@ void CreateForeignKey::OnOKClick(wxCommandEvent& event)
 
 	if (m_radioRelation->GetSelection() == 1){
 		// Get old tables   -------------------------------------------------------------
-		Table* pSrcTable = m_pSrcTable->GetTable();	
-		Table* pDstTable = m_pDstTable->GetTable();	
+		DBETable* pSrcTable = m_pSrcTable->GetTable();	
+		DBETable* pDstTable = m_pDstTable->GetTable();	
 		// Create new table -------------------------------------------------------------
 		//wxString sr1 = pSrcTable->getName();
  		//wxString sr2 = pDstTable->getName();
-		//Table* newTab = new Table();//new Table(pSrcTable->GetDbAdapter(),wxString::Format(wxT("FKT_%s_%s"),pSrcTable->getName().c_str(),pDstTable->getName().c_str() ), wxT(""),0);
-		Table* newTab = new Table();
+		//DBETable* newTab = new DBETable();//new DBETable(pSrcTable->GetDbAdapter(),wxString::Format(wxT("FKT_%s_%s"),pSrcTable->getName().c_str(),pDstTable->getName().c_str() ), wxT(""),0);
+		DBETable* newTab = new DBETable();
 		newTab->SetName(wxString::Format(wxT("FKT_%s_%s"),pSrcTable->GetName().c_str(),pDstTable->GetName().c_str() ));
 		// Copy selected columns --------------------------------------------------------
 		SerializableList::compatibility_iterator node = pSrcTable->GetFirstChildNode();
 		while( node ) {
-			if( node->GetData()->IsKindOf( CLASSINFO(Column)) ){
-				Column* col = wxDynamicCast(node->GetData(), Column);
+			if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) ){
+				DBEColumn* col = wxDynamicCast(node->GetData(), DBEColumn);
 				if (col->GetName() == m_cmbSrcCol->GetValue()) {
-					Column* colNew = (Column*) col->Clone();
+					DBEColumn* colNew = (DBEColumn*) col->Clone();
 					srcColName = col->GetName();
 					srcLocColName = wxString::Format(wxT("%s_%s"), pSrcTable->GetName().c_str(), col->GetName().c_str());
 					colNew->SetName(srcLocColName);
@@ -82,10 +82,10 @@ void CreateForeignKey::OnOKClick(wxCommandEvent& event)
 		
 		node = pDstTable->GetFirstChildNode();
 		while( node ) {
-			if( node->GetData()->IsKindOf( CLASSINFO(Column)) ){
-				Column* col = wxDynamicCast(node->GetData(), Column);
+			if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) ){
+				DBEColumn* col = wxDynamicCast(node->GetData(), DBEColumn);
 				if (col->GetName() == m_cmbDstCol->GetValue()) {
-					Column* colNew = (Column*) col->Clone();
+					DBEColumn* colNew = (DBEColumn*) col->Clone();
 					dstColName = col->GetName();
 					dstLocColName = wxString::Format(wxT("%s_%s"), pDstTable->GetName().c_str(), col->GetName().c_str());
 					colNew->SetName(dstLocColName);

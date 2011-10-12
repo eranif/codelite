@@ -5,7 +5,7 @@ DbItem::~DbItem()
 {
 }
 
-DbItem::DbItem(Database* pDatabase, Table* pTable)
+DbItem::DbItem(Database* pDatabase, DBETable* pTable)
 {
 	this->m_pDatabase = pDatabase;
 	this->m_pTable = pTable;

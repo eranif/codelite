@@ -1,7 +1,7 @@
 #include "DnDTableShape.h"
 XS_IMPLEMENT_CLONABLE_CLASS(dndTableShape,wxSFShapeBase);
 
-dndTableShape::dndTableShape(Table* tab):wxSFShapeBase()
+dndTableShape::dndTableShape(DBETable* tab):wxSFShapeBase()
 {
 	SetUserData(tab);
 }

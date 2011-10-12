@@ -29,7 +29,7 @@ void TableSettings::OnListBoxClick(wxCommandEvent& event) {
 	if( m_fUpdating ) return;
 
 	wxString name = m_listColumns->GetStringSelection().substr(4);
-	Column* col = NULL;
+	DBEColumn* col = NULL;
 	Constraint* constr = NULL;
 
 	m_pEditedColumn = NULL;
@@ -37,7 +37,7 @@ void TableSettings::OnListBoxClick(wxCommandEvent& event) {
 
 	SerializableList::compatibility_iterator node = m_pTable->GetFirstChildNode();
 	while( node ) {
-		if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  col = (Column*) node->GetData();
+		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  col = (DBEColumn*) node->GetData();
 
 		if ((col)&&(col->GetName() == name)) {
 			m_pEditedColumn = col;
@@ -64,7 +64,7 @@ void TableSettings::OnListBoxClick(wxCommandEvent& event) {
 			if (m_pTable) {
 				SerializableList::compatibility_iterator node = m_pTable->GetFirstChildNode();
 				while( node ) {
-					if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  m_comboLocalColumn->AppendString(wxString::Format(wxT("%s"),((Column*) node->GetData())->GetName().c_str()));
+					if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  m_comboLocalColumn->AppendString(wxString::Format(wxT("%s"),((DBEColumn*) node->GetData())->GetName().c_str()));
 					node = node->GetNext();
 				}
 			}
@@ -102,7 +102,7 @@ void TableSettings::OnListBoxClick(wxCommandEvent& event) {
 }
 
 void TableSettings::OnNewColumnClick(wxCommandEvent& event) {
-	Column* pCol = new Column(_("New col"),m_pTable->GetName(),m_pDbAdapter->GetDbTypeByName(m_pDbAdapter->GetDbTypes()->Last()));
+	DBEColumn* pCol = new DBEColumn(_("New col"),m_pTable->GetName(),m_pDbAdapter->GetDbTypeByName(m_pDbAdapter->GetDbTypes()->Last()));
 	if (pCol) m_pTable->AddColumn(pCol);
 	UpdateView();
 }
@@ -149,7 +149,7 @@ void TableSettings::OnTypeSelect(wxCommandEvent& event) {
 	}
 }
 
-void TableSettings::SetTable(Table* tab, wxSFDiagramManager* pManager) {
+void TableSettings::SetTable(DBETable* tab, wxSFDiagramManager* pManager) {
 	m_pTable = tab;
 	m_pDiagramManager = pManager;
 	if (m_pTable) {
@@ -181,7 +181,7 @@ void TableSettings::UpdateView() {
 
 		SerializableList::compatibility_iterator node = m_pTable->GetFirstChildNode();
 		while( node ) {
-			if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  m_listColumns->AppendString(wxString::Format(wxT("col:%s"),((Column*) node->GetData())->GetName().c_str()));
+			if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  m_listColumns->AppendString(wxString::Format(wxT("col:%s"),((DBEColumn*) node->GetData())->GetName().c_str()));
 			node = node->GetNext();
 		}
 		node = m_pTable->GetFirstChildNode();
@@ -252,11 +252,11 @@ void TableSettings::OnUniqueUI(wxUpdateUIEvent& event) {
 }
 void TableSettings::OnDeleteColumn(wxCommandEvent& event) {
 	wxString name = m_listColumns->GetStringSelection().substr(4);
-	Column* col  = NULL;
+	DBEColumn* col  = NULL;
 	Constraint* constr = NULL;
 	SerializableList::compatibility_iterator node = m_pTable->GetFirstChildNode();
 	while( node ) {
-		if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  col = (Column*) node->GetData();
+		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  col = (DBEColumn*) node->GetData();
 		if( node->GetData()->IsKindOf( CLASSINFO(Constraint)) )  constr = (Constraint*) node->GetData();
 
 		if ((col)&&(col->GetName() == name)) {
@@ -296,7 +296,7 @@ void TableSettings::OnRefColUI(wxUpdateUIEvent& event) {
 
 void TableSettings::OnRefTabChange(wxCommandEvent& event) {
 	ErdTable* pErdTab = NULL;
-	Table* pTab = NULL;
+	DBETable* pTab = NULL;
 	m_comboRefColumn->Clear();
 	m_comboRefColumn->SetValue(wxT(""));
 	if (m_pDiagramManager) {
@@ -317,7 +317,7 @@ void TableSettings::OnRefTabChange(wxCommandEvent& event) {
 	if (pTab) {
 		SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
 		while( node ) {
-			Column* col = wxDynamicCast(node->GetData(),Column);
+			DBEColumn* col = wxDynamicCast(node->GetData(),DBEColumn);
 			if (col) {
 				m_comboRefColumn->AppendString(col->GetName());
 			}

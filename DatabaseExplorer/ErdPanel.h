@@ -54,7 +54,7 @@ class ErdPanel : public _ErdPanel {
 
 		ErdPanel();
 		ErdPanel(wxWindow *parent, IDbAdapter* dbAdapter, xsSerializable* pConnections);
-		ErdPanel(wxWindow *parent, IDbAdapter* dbAdapter, xsSerializable* pConnections, Table* pTable);
+		ErdPanel(wxWindow *parent, IDbAdapter* dbAdapter, xsSerializable* pConnections, DBETable* pTable);
 		ErdPanel(wxWindow *parent, IDbAdapter* dbAdapter, xsSerializable* pConnections, xsSerializable* pItems);
 		virtual ~ErdPanel();
 		void Init(wxWindow *parent, IDbAdapter* dbAdapter);

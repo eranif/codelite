@@ -19,22 +19,39 @@ SvnSelectLocalRepoDlg::~SvnSelectLocalRepoDlg()
 
 void SvnSelectLocalRepoDlg::OnPathSelected( wxCommandEvent& event )
 {
-	m_dirPicker1->SetPath(m_listBoxPaths->GetString(event.GetSelection()));
+	wxArrayInt selections;
+	m_listBoxPaths->GetSelections(selections);
+	if(selections.GetCount() == 1) {
+		m_dirPicker1->SetPath(m_listBoxPaths->GetString(selections.Item(0)));
+	}
 }
 
 void SvnSelectLocalRepoDlg::OnPathActivated( wxCommandEvent& event )
 {
-	m_dirPicker1->SetPath(m_listBoxPaths->GetString(event.GetSelection()));
-	EndModal(wxID_OK);
+	wxArrayInt selections;
+	m_listBoxPaths->GetSelections(selections);
+	if(!selections.IsEmpty()) {
+		m_dirPicker1->SetPath(m_listBoxPaths->GetString(selections.Item(0)));
+		EndModal(wxID_OK);
+	}
 }
 
 void SvnSelectLocalRepoDlg::OnMenu( wxMouseEvent& event )
 {
-	wxMenu menu;
-	menu.Append(wxID_DELETE, _("Remove path(s) from cache"), _("Remove path(s) from cache"), wxITEM_NORMAL);
+	wxArrayInt selections;
+	m_listBoxPaths->GetSelections(selections);
+	if(!selections.IsEmpty()) {
+		wxMenu menu;
+		if(selections.GetCount() == 1) {
+			menu.Append(wxID_DELETE, _("Remove path"), _("Remove path"), wxITEM_NORMAL);
+			
+		} else {
+			menu.Append(wxID_DELETE, _("Remove paths"), _("Remove paths"), wxITEM_NORMAL);
+		}
 
-	menu.Connect(wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SvnSelectLocalRepoDlg::OnRemoveEntry), NULL, this);
-	m_listBoxPaths->PopupMenu(&menu);
+		menu.Connect(wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SvnSelectLocalRepoDlg::OnRemoveEntry), NULL, this);
+		m_listBoxPaths->PopupMenu(&menu);
+	}
 }
 
 wxString SvnSelectLocalRepoDlg::GetPath() const

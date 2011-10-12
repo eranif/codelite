@@ -204,7 +204,8 @@ wxDateTime MysqlPreparedStatementResultSet::GetResultDate(int nField)
     if ((*(pResultBinding->is_null) == false))
     {
       MYSQL_TIME* pDate = (MYSQL_TIME*)(pResultBinding->buffer);
-      returnDate.Set(pDate->day, wxDateTime::Month(pDate->month-1), pDate->year, pDate->hour, pDate->minute, pDate->second);
+	  if(pDate->year > 0 && pDate->month > 0 && pDate->day > 0)
+		returnDate.Set(pDate->day, wxDateTime::Month(pDate->month-1), pDate->year, pDate->hour, pDate->minute, pDate->second);
     }
   }
   return returnDate;

@@ -6,9 +6,19 @@
 #include <wx/wupdlock.h>
 #include <wx/busyinfo.h>
 #include <wx/xrc/xmlres.h>
+#include "cl_defs.h"
 #include "globals.h"
 #include <set>
 
+#if CL_USE_NATIVEBOOK
+#ifdef __WXGTK20__
+	// We need this ugly hack to workaround a gtk2-wxGTK name-clash
+	// See http://trac.wxwidgets.org/ticket/10883
+	#define GSocket GlibGSocket
+		#include <gtk-2.0/gtk/gtk.h>
+	#undef GSocket
+#endif
+#endif 
 
 const wxEventType wxEVT_EXECUTE_SQL = XRCID("wxEVT_EXECUTE_SQL");
 
@@ -37,6 +47,10 @@ SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const 
 		wxCommandEvent event(wxEVT_EXECUTE_SQL);
 		GetEventHandler()->AddPendingEvent(event);
 	}
+	
+#if CL_USE_NATIVEBOOK
+	gtk_widget_show_all(this->m_widget);
+#endif
 }
 
 SQLCommandPanel::~SQLCommandPanel()
@@ -66,7 +80,7 @@ void SQLCommandPanel::OnScintilaKeyDown(wxKeyEvent& event)
 
 void SQLCommandPanel::ExecuteSql()
 {
-	wxBusyInfo infoDlg(_("Executing sql..."), wxTheApp->GetTopWindow());
+//	wxBusyInfo infoDlg(_("Executing sql..."), wxTheApp->GetTopWindow());
 
 	clWindowUpdateLocker locker(this);
 	std::set<int> textCols;
@@ -153,8 +167,15 @@ void SQLCommandPanel::ExecuteSql()
 							break;
 
 						case ResultSetMetaData::COLUMN_DATE:
-							value = pResultSet->GetResultDate(i).Format();
-							break;
+						{
+							wxDateTime dt = pResultSet->GetResultDate(i);
+							if(dt.IsValid()) {
+								value = dt.Format();
+							} else {
+								value.Clear();
+							}
+						}
+						break;
 
 						case ResultSetMetaData::COLUMN_DOUBLE:
 							value = wxString::Format(wxT("%f"),pResultSet->GetResultDouble(i));

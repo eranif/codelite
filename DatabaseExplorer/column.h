@@ -31,6 +31,22 @@ public:
 	/*! \brief Default destruktor */
 	virtual ~DBEColumn();
 	
+	wxString FormatName() {
+		wxString typeDesc;
+		if(m_pType) {
+			typeDesc << m_pType->GetTypeName();
+			if(m_pType->GetSize()) {
+				typeDesc << wxT(" (") << m_pType->GetSize() << wxT(")");
+			}
+		}
+		
+		typeDesc.Trim().Trim(false);
+		if(typeDesc.IsEmpty())
+			typeDesc << wxT("<UNKNOWN>");
+		
+		wxString formattedName = wxString::Format( wxT("%s : %s"), GetName().c_str(), typeDesc.c_str());
+		return formattedName;
+	}
 	
 	/*! \brief Retrun column name */
 	wxString GetName() { return this->m_name; }

@@ -1,31 +1,37 @@
 #include "MySqlDbAdapter.h"
 #include "dbconnection.h"
 #include "database.h"
+#include <wx/regex.h>
 #include "table.h"
 #include "constraint.h"
 #include "view.h"
 
-MySqlDbAdapter::MySqlDbAdapter() {
+MySqlDbAdapter::MySqlDbAdapter()
+{
 	this->m_serverName = wxT("");
 	this->m_userName = wxT("");
 	this->m_password = wxT("");
 	this->m_adapterType = atMYSQL;
 }
-MySqlDbAdapter::MySqlDbAdapter(const wxString& serverName, const wxString& userName, const wxString& password) {
+MySqlDbAdapter::MySqlDbAdapter(const wxString& serverName, const wxString& userName, const wxString& password)
+{
 	this->m_serverName = serverName;
 	this->m_userName = userName;
 	this->m_password = password;
 	this->m_adapterType = atMYSQL;
 }
 
-MySqlDbAdapter::~MySqlDbAdapter() {
+MySqlDbAdapter::~MySqlDbAdapter()
+{
 }
 
-void MySqlDbAdapter::CloseConnection() {
+void MySqlDbAdapter::CloseConnection()
+{
 	this->m_pDbLayer->Close();
 }
 
-DatabaseLayer* MySqlDbAdapter::GetDatabaseLayer(const wxString& dbName) {
+DatabaseLayer* MySqlDbAdapter::GetDatabaseLayer(const wxString& dbName)
+{
 	DatabaseLayer* dbLayer = NULL;
 
 #ifdef DBL_USE_MYSQL
@@ -36,11 +42,13 @@ DatabaseLayer* MySqlDbAdapter::GetDatabaseLayer(const wxString& dbName) {
 	return dbLayer;
 }
 
-bool MySqlDbAdapter::IsConnected() {
+bool MySqlDbAdapter::IsConnected()
+{
 	return this->m_pDbLayer->IsOpen();
 }
 
-wxString MySqlDbAdapter::GetCreateTableSql(DBETable* tab, bool dropTable) {
+wxString MySqlDbAdapter::GetCreateTableSql(DBETable* tab, bool dropTable)
+{
 	//TODO:SQL:
 	wxString str = wxT("");
 	if (dropTable) str = wxString::Format(wxT("SET FOREIGN_KEY_CHECKS = 0;\nDROP TABLE IF EXISTS `%s` ;\nSET FOREIGN_KEY_CHECKS = 1; \n"),tab->GetName().c_str());
@@ -84,7 +92,8 @@ wxString MySqlDbAdapter::GetCreateTableSql(DBETable* tab, bool dropTable) {
 }
 
 
-IDbType* MySqlDbAdapter::GetDbTypeByName(const wxString& typeName) {
+IDbType* MySqlDbAdapter::GetDbTypeByName(const wxString& typeName)
+{
 	IDbType* type = NULL;
 	if (typeName == wxT("INT")) {
 		type = new MySqlType(wxT("INT"), IDbType::dbtAUTO_INCREMENT | IDbType::dbtNOT_NULL | IDbType::dbtSIZE, IDbType::dbtTYPE_INT );
@@ -108,7 +117,7 @@ IDbType* MySqlDbAdapter::GetDbTypeByName(const wxString& typeName) {
 		type = new MySqlType(wxT("SMALLINT"), IDbType::dbtAUTO_INCREMENT | IDbType::dbtNOT_NULL | IDbType::dbtSIZE, IDbType::dbtTYPE_INT);
 	} else if (typeName == wxT("CHAR")) {
 		type = new MySqlType(wxT("CHAR"), IDbType::dbtNOT_NULL | IDbType::dbtSIZE, IDbType::dbtTYPE_TEXT);
-	} else if (typeName == wxT("TIMESTAMP")) {
+	} else if (typeName == wxT("TIMESTAMP") || typeName == wxT("TIME")) {
 		type = new MySqlType(wxT("TIMESTAMP"), 0, IDbType::dbtTYPE_DATE_TIME);
 	} else if (typeName == wxT("ENUM")) {
 		type = new MySqlType(wxT("ENUM"), 0, IDbType::dbtTYPE_OTHER);
@@ -129,7 +138,8 @@ IDbType* MySqlDbAdapter::GetDbTypeByName(const wxString& typeName) {
 	return type;
 }
 
-wxArrayString* MySqlDbAdapter::GetDbTypes() {
+wxArrayString* MySqlDbAdapter::GetDbTypes()
+{
 	wxArrayString* pNames = new wxArrayString();
 	pNames->Add(wxT("INT"));
 	pNames->Add(wxT("SMALLINT"));
@@ -154,18 +164,21 @@ wxArrayString* MySqlDbAdapter::GetDbTypes() {
 
 	return pNames;
 }
-wxString MySqlDbAdapter::GetDefaultSelect(const wxString& dbName, const wxString& tableName) {
+wxString MySqlDbAdapter::GetDefaultSelect(const wxString& dbName, const wxString& tableName)
+{
 	//TODO:SQL:
 	wxString ret = wxString::Format(wxT("SELECT * FROM `%s`.`%s`"), dbName.c_str(), tableName.c_str());
 	return ret;
 }
-wxString MySqlDbAdapter::GetDefaultSelect(const wxString& cols, const wxString& dbName, const wxString& tableName) {
+wxString MySqlDbAdapter::GetDefaultSelect(const wxString& cols, const wxString& dbName, const wxString& tableName)
+{
 	//TODO:SQL:
 	wxString ret = wxString::Format(wxT("SELECT %s FROM `%s`.`%s`"), cols.c_str(), dbName.c_str(), tableName.c_str());
 	return ret;
-	
+
 }
-bool MySqlDbAdapter::GetColumns(DBETable* pTab) {
+bool MySqlDbAdapter::GetColumns(DBETable* pTab)
+{
 	DatabaseLayer* dbLayer = this->GetDatabaseLayer(wxT(""));
 
 	if (!dbLayer->IsOpen()) return NULL;
@@ -215,45 +228,37 @@ bool MySqlDbAdapter::GetColumns(DBETable* pTab) {
 	delete dbLayer;
 	return true;
 }
-IDbType* MySqlDbAdapter::parseTypeString(const wxString& typeString) {
-	wxString text   = typeString.Upper().Trim();
-	wxString typeName ;
-	//int iMezera = text.Find(wxT(" "));
-	int iZavorka = text.Find(wxT("("));
-	if (iZavorka == -1)typeName = text;
-	else {
-		typeName = text.Mid(0,iZavorka);
-		text = text.Mid(iZavorka);
-	}
 
-	IDbType* type = this->GetDbTypeByName(typeName);
-	if (type) {
-		//TODO:Doresit enum
-		if ((iZavorka > 0) && (typeName.compare(wxT("ENUM")))) {
-			int iKonecZavorky = text.Find(wxT(")"));
-			int iCarka = text.Find(wxT(","));
-			if ((iCarka > 0) && (iCarka<iKonecZavorky)) {
-				long s = 0;
-				long s2 = 0;
-				text.Mid(1,iCarka-1).ToLong(&s);
-				text.Mid(iCarka+1, iZavorka-iCarka+1).ToLong(&s2);
-				type->SetSize(s);
-				type->SetSize2(s2);
-				type->SetPropertyFlags(type->GetPropertyFlags() | IDbType::dbtSIZE | IDbType::dbtSIZE_TWO);
-			} else {
-				long s = 0;
-				text.Mid(1,iKonecZavorky-1).ToLong(&s);
-				type->SetSize(s);
+IDbType* MySqlDbAdapter::parseTypeString(const wxString& typeString)
+{
+	static wxRegEx reType(wxT("([a-zA-Z]+)(\\([0-9]+\\))?"));
+	IDbType* type(NULL);
+	if(reType.Matches(typeString)) {
+		wxString typeName = reType.GetMatch(typeString, 1);
+		wxString strSize  = reType.GetMatch(typeString, 2);
+		typeName.MakeUpper();
+		
+		type = this->GetDbTypeByName(typeName);
+		if(type) {
+			strSize.Trim().Trim(false);
+			if(strSize.StartsWith(wxT("("))) { strSize.Remove(0, 1); }
+			if(strSize.EndsWith(wxT(")")))   { strSize.RemoveLast(); }
+			
+			long size = 0;
+			if(strSize.ToLong(&size)){
+				type->SetSize(size);
 			}
 		}
 	}
 	return type;
 }
 
-bool MySqlDbAdapter::CanConnect() {
+bool MySqlDbAdapter::CanConnect()
+{
 	return ((m_serverName != wxT(""))&&(m_userName != wxT("")));
 }
-void MySqlDbAdapter::GetDatabases(DbConnection* dbCon) {
+void MySqlDbAdapter::GetDatabases(DbConnection* dbCon)
+{
 	if (dbCon) {
 		DatabaseLayer* dbLayer = this->GetDatabaseLayer(wxT(""));
 		if (dbLayer) {
@@ -273,7 +278,8 @@ void MySqlDbAdapter::GetDatabases(DbConnection* dbCon) {
 	return;
 }
 
-void MySqlDbAdapter::GetTables(Database* db, bool includeViews) {
+void MySqlDbAdapter::GetTables(Database* db, bool includeViews)
+{
 	if (db) {
 		DatabaseLayer* dbLayer = this->GetDatabaseLayer(wxT(""));
 		if (dbLayer) {
@@ -301,13 +307,16 @@ void MySqlDbAdapter::GetTables(Database* db, bool includeViews) {
 	}
 	return;
 }
-wxString MySqlDbAdapter::GetCreateDatabaseSql(const wxString& dbName) {
+wxString MySqlDbAdapter::GetCreateDatabaseSql(const wxString& dbName)
+{
 	return wxString::Format(wxT("CREATE DATABASE `%s`"), dbName.c_str());
 }
-wxString MySqlDbAdapter::GetDropTableSql(DBETable* pTab) {
+wxString MySqlDbAdapter::GetDropTableSql(DBETable* pTab)
+{
 	return wxString::Format(wxT("SET FOREIGN_KEY_CHECKS = 0;\nDROP TABLE `%s`.`%s\nSET FOREIGN_KEY_CHECKS = 1;`"), pTab->GetParentName().c_str(),pTab->GetName().c_str());
 }
-wxString MySqlDbAdapter::GetAlterTableConstraintSql(DBETable* tab) {
+wxString MySqlDbAdapter::GetAlterTableConstraintSql(DBETable* tab)
+{
 	//TODO:SQL:
 	wxString str =  wxString::Format(wxT("-- ---------- CONSTRAINTS FOR TABLE `%s` \n"),tab->GetName().c_str());
 	str.append(wxT("-- -------------------------------------------------------------\n"));
@@ -360,13 +369,16 @@ wxString MySqlDbAdapter::GetAlterTableConstraintSql(DBETable* tab) {
 	str.append(wxT("-- -------------------------------------------------------------\n"));
 	return str;
 }
-wxString MySqlDbAdapter::GetDropDatabaseSql(Database* pDb) {
+wxString MySqlDbAdapter::GetDropDatabaseSql(Database* pDb)
+{
 	return wxString::Format(wxT("DROP DATABASE `%s`"),pDb->GetName().c_str());
 }
-wxString MySqlDbAdapter::GetUseDb(const wxString& dbName) {
+wxString MySqlDbAdapter::GetUseDb(const wxString& dbName)
+{
 	return wxString::Format(wxT("USE `%s`"),dbName.c_str());
 }
-void MySqlDbAdapter::GetViews(Database* db) {
+void MySqlDbAdapter::GetViews(Database* db)
+{
 	DatabaseLayer* dbLayer = this->GetDatabaseLayer(wxT(""));
 
 	if (!dbLayer->IsOpen()) return;
@@ -381,7 +393,8 @@ void MySqlDbAdapter::GetViews(Database* db) {
 
 
 }
-wxString MySqlDbAdapter::GetCreateViewSql(View* view, bool dropView) {
+wxString MySqlDbAdapter::GetCreateViewSql(View* view, bool dropView)
+{
 	wxString str = wxT("");
 	if (view) {
 		if (dropView) {
@@ -392,7 +405,8 @@ wxString MySqlDbAdapter::GetCreateViewSql(View* view, bool dropView) {
 	str.append(wxT("-- -------------------------------------------------------------\n"));
 	return str;
 }
-void MySqlDbAdapter::ConvertTable(DBETable* pTab) {
+void MySqlDbAdapter::ConvertTable(DBETable* pTab)
+{
 	SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
 	while( node ) {
 		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  {
@@ -403,7 +417,8 @@ void MySqlDbAdapter::ConvertTable(DBETable* pTab) {
 	}
 }
 
-IDbType* MySqlDbAdapter::ConvertType(IDbType* pType) {
+IDbType* MySqlDbAdapter::ConvertType(IDbType* pType)
+{
 	IDbType* newType = wxDynamicCast(pType, MySqlType);
 	if (!newType) {
 		newType = GetDbTypeByUniversalName(pType->GetUniversalType());
@@ -412,7 +427,8 @@ IDbType* MySqlDbAdapter::ConvertType(IDbType* pType) {
 	}
 	return newType;
 }
-IDbType* MySqlDbAdapter::GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type) {
+IDbType* MySqlDbAdapter::GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type)
+{
 	IDbType* newType = NULL;
 	switch (type) {
 	case IDbType::dbtTYPE_INT:
@@ -439,7 +455,7 @@ IDbType* MySqlDbAdapter::GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type) 
 	}
 	return newType;
 }
-IDbAdapter* MySqlDbAdapter::Clone() {
+IDbAdapter* MySqlDbAdapter::Clone()
+{
 	return new MySqlDbAdapter(m_serverName, m_userName, m_password);
 }
-

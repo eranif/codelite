@@ -9,9 +9,6 @@
 #include <wx/wfstream.h>
 #include <wx/imaglist.h>
 
-#include "res/gui/Grid.xpm"
-#include "res/gui/database.xpm"
-
 #define wxID_CONNECT          15534
 #define wxID_CLOSE_CONNECTION 15535
 #define wxID_TOOL_REFRESH     15536
@@ -39,11 +36,13 @@ DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pMa
 	GetSizer()->Layout();
 
 	// replace the icons...
-	m_toolBar1->AddTool( wxID_CONNECT, _("Open connection"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/connect")), wxNullBitmap, wxITEM_NORMAL, _("Open new connection"), _("Open new connection"), NULL );
-	m_toolBar1->AddTool( wxID_CLOSE_CONNECTION, _("tool"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/disconnect")), wxNullBitmap, wxITEM_NORMAL, _("Close selected connection"), _("Close selected connection"), NULL );
-	m_toolBar1->AddTool( wxID_TOOL_REFRESH, _("tool"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/database_refresh")), wxNullBitmap, wxITEM_NORMAL, _("Refresh View"), wxEmptyString, NULL );
-	m_toolBar1->AddTool( wxID_TOOL_ERD, _("ERD"), wxBitmap( Grid_xpm ), wxNullBitmap, wxITEM_NORMAL, _("Open ERD View"), wxEmptyString, NULL );
-	m_toolBar1->AddTool( wxID_TOOL_PREVIEW, _("Show ERD Thumbnail"), pManager->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/thumbnail")), _("Show ERD Thumbnail"), wxITEM_CHECK);
+	BitmapLoader *bmpLoader = pManager->GetStdIcons();
+	
+	m_toolBar1->AddTool( wxID_CONNECT, _("Open connection"),         bmpLoader->LoadBitmap(wxT("db-explorer/16/connect")),          wxNullBitmap, wxITEM_NORMAL, _("Open new connection"), _("Open new connection"), NULL );
+	m_toolBar1->AddTool( wxID_CLOSE_CONNECTION, _("tool"),           bmpLoader->LoadBitmap(wxT("db-explorer/16/disconnect")),       wxNullBitmap, wxITEM_NORMAL, _("Close selected connection"), _("Close selected connection"), NULL );
+	m_toolBar1->AddTool( wxID_TOOL_REFRESH, _("tool"),               bmpLoader->LoadBitmap(wxT("db-explorer/16/database_refresh")), wxNullBitmap, wxITEM_NORMAL, _("Refresh View"), wxEmptyString, NULL );
+	m_toolBar1->AddTool( wxID_TOOL_ERD, _("ERD"),                    bmpLoader->LoadBitmap(wxT("db-explorer/16/table")),            wxNullBitmap, wxITEM_NORMAL, _("Open ERD View"), wxEmptyString, NULL );
+	m_toolBar1->AddTool( wxID_TOOL_PREVIEW, _("Show ERD Thumbnail"), bmpLoader->LoadBitmap(wxT("db-explorer/16/thumbnail")), _("Show ERD Thumbnail"), wxITEM_CHECK);
 	m_toolBar1->Realize();
 
 	Layout();
@@ -96,7 +95,7 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 
 		wxString pagename;
 		if (DBETable* tab =  wxDynamicCast(item->GetData(), DBETable)) {
-			tab->RefreshChildren();
+			//tab->RefreshChildren();
 			if( cState.ControlDown() ) {
 				pagename = CreatePanelName(tab, DbViewerPanel::Erd);
 				ErdPanel *erdpanel = new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),m_pConnections, (DBETable*) tab->Clone() );
@@ -130,7 +129,7 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 
 		if (Database* db = wxDynamicCast(item->GetData(), Database)) {
 			if( cState.ControlDown() ) {
-				db->RefreshChildrenDetails();
+				//db->RefreshChildrenDetails();
 				pagename = CreatePanelName(db, DbViewerPanel::Erd);
 				ErdPanel *erdpanel = new ErdPanel(m_pNotebook,db->GetDbAdapter()->Clone(),m_pConnections,(Database*)db->Clone());
 				m_mgr->AddEditorPage(erdpanel, pagename);
@@ -140,6 +139,7 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 				pagename = CreatePanelName(db, DbViewerPanel::Sql);
 				if(!DoSelectPage(pagename)) {
 					SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook,db->GetDbAdapter()->Clone(),db->GetName(),wxT(""));
+					sqlpage->Show();
 					m_mgr->AddEditorPage(sqlpage, pagename);
 					m_pagesAdded.Add(pagename);
 					sqlpage->SetFocus();
@@ -180,9 +180,10 @@ void DbViewerPanel::RefreshDbView()
 	// create imageList for icons
 	wxImageList *pImageList = new wxImageList(16, 16, true,3);
 	pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/16/standard/file_open"))); // folder icon
-	pImageList->Add(wxBitmap(Grid_xpm)); // table icon
+	pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/table")));           // table icon
 	pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/16/search/find")));        // view icon
-	pImageList->Add(wxBitmap(database_xpm)); // database
+	pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/database")));        // database
+	pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/column")));          // column
 
 	m_treeDatabases->AssignImageList(pImageList);
 
@@ -233,11 +234,10 @@ void DbViewerPanel::RefreshDbView()
 								DBEColumn *col = wxDynamicCast(columnNode->GetData(), DBEColumn);
 								if(col) {
 									wxTreeItemId colID = m_treeDatabases->AppendItem(tabID,
-									                     col->GetName(),
-									                     -1,
-									                     -1,
+									                     col->FormatName().c_str(),
+									                     4,
+									                     4,
 									                     new DbItem(col));
-
 								}
 								columnNode = columnNode->GetNext();
 							}

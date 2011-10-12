@@ -36,6 +36,16 @@
 #include "mainbook.h"
 #include "message_pane.h"
 
+#if CL_USE_NATIVEBOOK
+#ifdef __WXGTK20__
+	// We need this ugly hack to workaround a gtk2-wxGTK name-clash
+	// See http://trac.wxwidgets.org/ticket/10883
+	#define GSocket GlibGSocket
+		#include <gtk-2.0/gtk/gtk.h>
+	#undef GSocket
+#endif
+#endif
+
 MainBook::MainBook(wxWindow *parent)
 		: wxPanel          (parent)
 		, m_navBar         (NULL)
@@ -579,7 +589,17 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 
 	bool closeLastTab = ((long)(m_book->GetPageCount()) >= MaxBuffers) && GetUseBuffereLimit();
 	if ((insert_at_index == (size_t)wxNOT_FOUND) || (insert_at_index >= m_book->GetPageCount())) {
-	m_book->AddPage(win, text, closeLastTab ? true : selected);
+		int next_pos = m_book->GetPageCount();
+		m_book->AddPage(win, text, closeLastTab ? true : selected);
+#if CL_USE_NATIVEBOOK		
+		IEditor *editor = dynamic_cast<IEditor*>(win);
+		if(m_book->GetSelection() != (size_t)next_pos && !editor) {
+			// failed to insert the page AND the page is not of type
+			// IEditor
+			gtk_widget_show_all (win->m_widget);
+			m_book->SetSelection(next_pos);
+		}
+#endif			
 	} else {
 		m_book->InsertPage(insert_at_index, win, text, closeLastTab ? true : selected);
 	}

@@ -589,17 +589,27 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 
 	bool closeLastTab = ((long)(m_book->GetPageCount()) >= MaxBuffers) && GetUseBuffereLimit();
 	if ((insert_at_index == (size_t)wxNOT_FOUND) || (insert_at_index >= m_book->GetPageCount())) {
+		
+#if CL_USE_NATIVEBOOK
+		// There seems to be a bug in wxGTK where we can't change 
+		// the selection programtically
 		int next_pos = m_book->GetPageCount();
+#endif
 		m_book->AddPage(win, text, closeLastTab ? true : selected);
-#if CL_USE_NATIVEBOOK		
+		
+#if CL_USE_NATIVEBOOK
+		// If the newly added page is expected to be the selected one
+		// and it is NOT of type IEditor we provide a workaround that
+		// uses direct gtk calls
+		bool shouldSelect = (closeLastTab ? true : selected);
 		IEditor *editor = dynamic_cast<IEditor*>(win);
-		if(m_book->GetSelection() != (size_t)next_pos && !editor) {
+		if(shouldSelect && (m_book->GetSelection() != (size_t)next_pos) && !editor) {
 			// failed to insert the page AND the page is not of type
 			// IEditor
 			gtk_widget_show_all (win->m_widget);
 			m_book->SetSelection(next_pos);
 		}
-#endif			
+#endif
 	} else {
 		m_book->InsertPage(insert_at_index, win, text, closeLastTab ? true : selected);
 	}

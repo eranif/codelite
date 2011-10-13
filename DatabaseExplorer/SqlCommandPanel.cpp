@@ -80,7 +80,7 @@ void SQLCommandPanel::OnScintilaKeyDown(wxKeyEvent& event)
 
 void SQLCommandPanel::ExecuteSql()
 {
-//	wxBusyInfo infoDlg(_("Executing sql..."), wxTheApp->GetTopWindow());
+	wxBusyInfo infoDlg(_("Executing sql..."), wxTheApp->GetTopWindow());
 
 	clWindowUpdateLocker locker(this);
 	std::set<int> textCols;

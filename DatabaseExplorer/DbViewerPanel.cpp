@@ -139,7 +139,9 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 				pagename = CreatePanelName(db, DbViewerPanel::Sql);
 				if(!DoSelectPage(pagename)) {
 					SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook,db->GetDbAdapter()->Clone(),db->GetName(),wxT(""));
+#ifndef __WXMSW__
 					sqlpage->Show();
+#endif
 					m_mgr->AddEditorPage(sqlpage, pagename);
 					m_pagesAdded.Add(pagename);
 					sqlpage->SetFocus();

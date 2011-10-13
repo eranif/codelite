@@ -95,7 +95,6 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 
 		wxString pagename;
 		if (DBETable* tab =  wxDynamicCast(item->GetData(), DBETable)) {
-			//tab->RefreshChildren();
 			if( cState.ControlDown() ) {
 				pagename = CreatePanelName(tab, DbViewerPanel::Erd);
 				ErdPanel *erdpanel = new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),m_pConnections, (DBETable*) tab->Clone() );
@@ -129,7 +128,6 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 
 		if (Database* db = wxDynamicCast(item->GetData(), Database)) {
 			if( cState.ControlDown() ) {
-				//db->RefreshChildrenDetails();
 				pagename = CreatePanelName(db, DbViewerPanel::Erd);
 				ErdPanel *erdpanel = new ErdPanel(m_pNotebook,db->GetDbAdapter()->Clone(),m_pConnections,(Database*)db->Clone());
 				m_mgr->AddEditorPage(erdpanel, pagename);
@@ -301,7 +299,6 @@ void DbViewerPanel::OnDnDStart(wxTreeEvent& event)
 		if (pPanel) {
 			DBETable* table = wxDynamicCast(item->GetData(),DBETable);
 			if (table) {
-				if (table->GetChildrenList().GetCount() == 0) table->RefreshChildren();
 				table = (DBETable*) table->Clone();
 				wxSFShapeBase *pShape = new dndTableShape(table);
 				lstDnD.Append(pShape);
@@ -331,7 +328,7 @@ void DbViewerPanel::OnItemRightClick(wxTreeEvent& event)
 	if (item) {
 		Database* db = wxDynamicCast(item->GetData(),Database);
 		if (db) {
-			menu.Append(IDR_DBVIEWER_ADD_TABLE,_("Add table"),_("Run SQL command for creating DBETable"));
+			menu.Append(IDR_DBVIEWER_ADD_TABLE,_("Add table"),_("Run SQL command for creating Table"));
 			menu.Append(IDR_DBVIEWER_DROP_DATABASE, _("Drop database"), _("Run SQL command for deleting Database"));
 			c++;
 			c++;
@@ -354,11 +351,11 @@ void DbViewerPanel::OnItemRightClick(wxTreeEvent& event)
 		}
 		DBETable* tab = wxDynamicCast(item->GetData(), DBETable);
 		if (tab) {
-			menu.Append(IDR_DBVIEWER_DROP_TABLE,_("Drop table"),_("Run SQL command for deleting DBETable"));
+			menu.Append(IDR_DBVIEWER_DROP_TABLE,_("Drop table"),_("Run SQL command for deleting Table"));
 			c++;
 			menu.AppendSeparator();
-			menu.Append(IDR_DBVIEWER_ERD_TABLE, _("Create ERD from DBETable"),_("Create ERD diagram from table"));
-			menu.Append(IDR_DBVIEWER_CLASS_TABLE, _("Create classes from DBETable"), _("Create c++ classes for selected table"));
+			menu.Append(IDR_DBVIEWER_ERD_TABLE, _("Create ERD from Table"),_("Create ERD diagram from table"));
+			menu.Append(IDR_DBVIEWER_CLASS_TABLE, _("Create classes from Table"), _("Create c++ classes for selected table"));
 			c++;
 			c++;
 		}
@@ -422,7 +419,6 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 						//TODO:LANG:
 						wxMessageBox(_("Database created successfully"));
 
-						m_pEditedConnection->RefreshChildren();
 						RefreshDbView();
 					} else {
 						//TODO:LANG:
@@ -447,9 +443,6 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 							delete pDbLayer;
 							//TODO:LANG:
 							wxMessageBox(_("Database dropped successfully"));
-
-							DbConnection* pCon = wxDynamicCast(pDb->GetParent(), DbConnection);
-							if (pCon) pCon->RefreshChildren();
 							RefreshDbView();
 						}
 					}
@@ -460,7 +453,6 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 			if (data) {
 				DBETable* pTab = (DBETable*) wxDynamicCast(data->GetData(),DBETable);
 				if (pTab) {
-					pTab->RefreshChildren();
 					wxString pagename;
 					pagename = CreatePanelName(pTab, DbViewerPanel::Erd);
 					ErdPanel *erdpanel = new ErdPanel(m_pNotebook,pTab->GetDbAdapter()->Clone(),m_pConnections, (DBETable*) pTab->Clone() );
@@ -474,7 +466,6 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 			if (data) {
 				Database* pDb = (Database*) wxDynamicCast(data->GetData(),Database);
 				if (pDb) {
-					pDb->RefreshChildrenDetails();
 					wxString pagename;
 					pagename = CreatePanelName(pDb, DbViewerPanel::Erd);
 					ErdPanel *erdpanel = new ErdPanel(m_pNotebook,pDb->GetDbAdapter()->Clone(),m_pConnections, (Database*) pDb->Clone() );
@@ -489,8 +480,6 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 				Database* pDb = (Database*) wxDynamicCast(data->GetData(),Database);
 				if (pDb) {
 					pDb = (Database*) pDb->Clone();
-					pDb->RefreshChildren(true);
-					pDb->RefreshChildrenDetails();
 					ClassGenerateDialog dlg(m_mgr->GetTheApp()->GetTopWindow(), pDb->GetDbAdapter(), (Database*) pDb->Clone(),m_mgr);
 					dlg.ShowModal();
 				}
@@ -500,7 +489,6 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 			if (data) {
 				DBETable* pTab = (DBETable*) wxDynamicCast(data->GetData(),DBETable);
 				if (pTab) {
-					pTab->RefreshChildren();
 					ClassGenerateDialog dlg(GetParent(), pTab->GetDbAdapter(), (DBETable*) pTab->Clone(), m_mgr);
 					dlg.ShowModal();
 				}
@@ -518,10 +506,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 						pDbLayer->Close();
 						delete pDbLayer;
 						//TODO:LANG:
-						wxMessageBox(_("DBETable dropped successfully"));
-
-						Database* pDb = wxDynamicCast(pTab->GetParent(), Database);
-						if (pDb) pDb->RefreshChildren(false);
+						wxMessageBox(_("Table dropped successfully"));
 						RefreshDbView();
 					}
 				}
@@ -536,7 +521,6 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 					if(dlg.ShowModal() == wxID_OK) {
 						ImportDb(dlg.GetPath(), pDb);
 					}
-					pDb->RefreshChildren(false);
 				}
 			}
 			RefreshDbView();
@@ -545,7 +529,6 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 			if (data) {
 				Database* pDb = (Database*) wxDynamicCast(data->GetData(),Database);
 				if (pDb) {
-					pDb->RefreshChildrenDetails();
 					//TODO:LANG:
 					wxFileDialog dlg(this, _("Dump data into file ..."),wxT(""), pDb->GetName() + wxT(".sql"),wxT("SQL files (*.sql)|*.sql"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 					if( dlg.ShowModal() == wxID_OK ) {
@@ -561,10 +544,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 			if (data) {
 				Database* pDb = (Database*) wxDynamicCast(data->GetData(),Database);
 				if (pDb) {
-					pDb->RefreshChildrenDetails();
-
 					wxFileDialog dlg(this, _("Export database..."), wxGetCwd(), wxT(""), wxT("SQL Files (*.sql)|*.sql"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-
 					if(dlg.ShowModal() == wxID_OK) {
 						// CreateStructure
 						wxString retStr = wxT("-- SQL script created by wxDbExplorer\n\n ");

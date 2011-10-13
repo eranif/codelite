@@ -35,33 +35,34 @@
 
 FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const FindReplaceData& data)
 	: FindInFilesDialogBase(parent, id)
-	, m_data(data) {
+	, m_data(data)
+{
 	// DirPicker values
 	wxArrayString choices;
-	
+
 	size_t count = m_data.GetSearchPaths().GetCount();
 	for (size_t i = 0; i < count; ++i) {
 		choices.Add(m_data.GetSearchPaths().Item(i));
 	}
-	
+
 	// add the default search paths
 	if(choices.Index(wxGetTranslation(SEARCH_IN_WORKSPACE)) == wxNOT_FOUND)
 		choices.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
-	
+
 	if(choices.Index(wxGetTranslation(SEARCH_IN_PROJECT)) == wxNOT_FOUND)
 		choices.Add(wxGetTranslation(SEARCH_IN_PROJECT));
-	
+
 	if(choices.Index(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) == wxNOT_FOUND)
 		choices.Add(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
-	
+
 	if(choices.Index(wxGetTranslation(SEARCH_IN_CURRENT_FILE)) == wxNOT_FOUND)
 		choices.Add(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
-	
+
 	int initial = m_data.GetSearchScope();
-	if ((initial == wxNOT_FOUND) || ((size_t)initial >= count)){
+	if ((initial == wxNOT_FOUND) || ((size_t)initial >= count)) {
 		initial = 0;
 	}
-	
+
 	m_dirPicker->SetValues(choices, initial);
 
 	// Search for
@@ -82,7 +83,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 	m_checkBoxSkipMatchesFoundInComments->SetValue(m_data.GetFlags() & wxFRD_SKIP_COMMENTS);
 	m_checkBoxSkipMatchesFoundInStrings->SetValue(m_data.GetFlags() & wxFRD_SKIP_STRINGS);
 	m_checkBoxHighlighStringComments->SetValue(m_data.GetFlags() & wxFRD_COLOUR_COMMENTS);
-	
+
 	// Set encoding
 	wxArrayString  astrEncodings;
 	wxFontEncoding fontEnc;
@@ -106,30 +107,79 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 		m_choiceEncoding->SetSelection(selection);
 
 	// Set the file mask
-	wxArrayString fileTypes = m_data.GetFileMask();
-	if(fileTypes.IsEmpty() == false) {
-		m_fileTypes->Clear();
-		m_fileTypes->Append(fileTypes);
-
-		int where = m_fileTypes->FindString(m_data.GetSelectedMask());
-		if(where == wxNOT_FOUND)
-			where = 0;
-
-		m_fileTypes->SetSelection(where);
-	}
+	DoSetFileMask();
 
 	GetSizer()->Fit(this);
 	Centre();
 }
 
-FindInFilesDialog::~FindInFilesDialog() {
+FindInFilesDialog::~FindInFilesDialog()
+{
 }
 
-void FindInFilesDialog::SetRootDir(const wxString &rootDir) {
+void FindInFilesDialog::SetRootDir(const wxString &rootDir)
+{
 	m_dirPicker->SetPath(rootDir);
 }
 
-void FindInFilesDialog::DoSearchReplace() {
+void FindInFilesDialog::DoSetFileMask()
+{
+	// First send an event to the plugins asking for an additional file mask
+	wxCommandEvent getFileMaskEvent(wxEVT_CMD_GET_FIND_IN_FILES_MASK, GetId());
+	getFileMaskEvent.SetEventObject(this);
+	getFileMaskEvent.SetInt(0);
+	getFileMaskEvent.SetString(wxT(""));
+	wxTheApp->ProcessEvent(getFileMaskEvent);
+
+	// Get the output
+	wxString      pluginMask      = getFileMaskEvent.GetString();
+	int           pluginMaskFlags = getFileMaskEvent.GetInt();
+	wxArrayString fileTypes       = m_data.GetFileMask();
+	size_t        insertPos       = wxString::npos;
+
+	// Incase we got an additional file masking, add it to the default ones
+	// as instructed by the plugin
+	if(pluginMask.IsEmpty() == false) {
+		if(pluginMaskFlags & 0x00000004)
+			fileTypes.Clear();
+
+		if(pluginMaskFlags & 0x00000001) {
+			int where = fileTypes.Index(pluginMask);
+			if(where != wxNOT_FOUND)
+				fileTypes.RemoveAt(where);
+			insertPos = fileTypes.Add(pluginMask);
+		}
+
+		else if(pluginMaskFlags & 0x00000002) {
+			int where = fileTypes.Index(pluginMask);
+			if(where != wxNOT_FOUND)
+				fileTypes.RemoveAt(where);
+			fileTypes.Insert(pluginMask, 0);
+			insertPos = 0;
+		}
+	}
+
+	if(fileTypes.IsEmpty() == false) {
+		m_fileTypes->Clear();
+		m_fileTypes->Append(fileTypes);
+
+		int where (wxNOT_FOUND);
+		if((pluginMaskFlags & 0x00000008) && (insertPos != wxString::npos)) {
+			where = m_fileTypes->FindString(pluginMask);
+
+		} else {
+			where = m_fileTypes->FindString(m_data.GetSelectedMask());
+
+		}
+		if(where == wxNOT_FOUND)
+			where = 0;
+
+		m_fileTypes->SetSelection(where);
+	}
+}
+
+void FindInFilesDialog::DoSearchReplace()
+{
 	SearchData data = DoGetSearchData();
 	data.SetOwner(clMainFrame::Get()->GetOutputPane()->GetReplaceResultsTab());
 
@@ -140,7 +190,8 @@ void FindInFilesDialog::DoSearchReplace() {
 	Hide();
 }
 
-void FindInFilesDialog::DoSearch() {
+void FindInFilesDialog::DoSearch()
+{
 	SearchData data = DoGetSearchData();
 	data.SetOwner(clMainFrame::Get()->GetOutputPane()->GetFindResultsTab());
 
@@ -152,7 +203,8 @@ void FindInFilesDialog::DoSearch() {
 	Hide();
 }
 
-SearchData FindInFilesDialog::DoGetSearchData() {
+SearchData FindInFilesDialog::DoGetSearchData()
+{
 	SearchData data;
 	wxString findStr(m_data.GetFindString());
 	if (m_findString->GetValue().IsEmpty() == false) {
@@ -194,13 +246,13 @@ SearchData FindInFilesDialog::DoGetSearchData() {
 		const wxString& rootDir = rootDirs.Item(i);
 		if (rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE)) {
 			ManagerST::Get()->GetWorkspaceFiles(files);
-			
+
 		} else if (rootDir == wxGetTranslation(SEARCH_IN_PROJECT)) {
 			ManagerST::Get()->GetActiveProjectFiles(files);
 
 		} else if (rootDir == wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) {
 			ManagerST::Get()->GetActiveFileProjectFiles(files);
-			
+
 		} else if ( rootDir == wxGetTranslation(SEARCH_IN_CURRENT_FILE) ) {
 			LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 			if(editor) {
@@ -208,14 +260,15 @@ SearchData FindInFilesDialog::DoGetSearchData() {
 			}
 		}
 	}
-	
+
 	data.SetFiles(files);
 	data.UseNewTab(m_checkBoxSeparateTab->IsChecked());
 	data.SetExtensions(m_fileTypes->GetValue());
 	return data;
 }
 
-void FindInFilesDialog::OnClick(wxCommandEvent &event) {
+void FindInFilesDialog::OnClick(wxCommandEvent &event)
+{
 	wxObject *btnClicked = event.GetEventObject();
 	size_t flags = m_data.GetFlags();
 
@@ -320,13 +373,15 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event) {
 	m_data.SetFlags(flags);
 }
 
-void FindInFilesDialog::OnClose(wxCloseEvent &e) {
+void FindInFilesDialog::OnClose(wxCloseEvent &e)
+{
 	wxUnusedVar(e);
 	DoSaveSearchPaths();
 	Hide();
 }
 
-void FindInFilesDialog::OnCharEvent(wxKeyEvent &event) {
+void FindInFilesDialog::OnCharEvent(wxKeyEvent &event)
+{
 	if (event.GetKeyCode() == WXK_ESCAPE) {
 		Hide();
 		return;
@@ -338,31 +393,36 @@ void FindInFilesDialog::OnCharEvent(wxKeyEvent &event) {
 	event.Skip();
 }
 
-void FindInFilesDialog::OnAddPath( wxCommandEvent& event ) {
+void FindInFilesDialog::OnAddPath( wxCommandEvent& event )
+{
 	wxString path = m_dirPicker->GetPath();
 	if (m_listPaths->FindString(path) == wxNOT_FOUND) {
 		m_listPaths->Append(path);
 	}
 }
 
-void FindInFilesDialog::OnRemovePath( wxCommandEvent& event ) {
+void FindInFilesDialog::OnRemovePath( wxCommandEvent& event )
+{
 	int sel = m_listPaths->GetSelection();
 	if (sel != wxNOT_FOUND) {
 		m_listPaths->Delete(sel);
 	}
 }
 
-void FindInFilesDialog::OnClearPaths( wxCommandEvent& event ) {
+void FindInFilesDialog::OnClearPaths( wxCommandEvent& event )
+{
 	m_listPaths->Clear();
 }
 
-bool FindInFilesDialog::Show() {
+bool FindInFilesDialog::Show()
+{
 	bool res = IsShown() || wxDialog::Show();
 	if (res) {
 
 		// update the combobox
 		m_findString->Clear();
 		m_findString->Append(m_data.GetFindStringArr());
+		DoSetFileMask();
 		m_findString->SetValue(m_data.GetFindString());
 
 		LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
@@ -380,26 +440,31 @@ bool FindInFilesDialog::Show() {
 	return res;
 }
 
-void FindInFilesDialog::DoSaveSearchPaths() {
+void FindInFilesDialog::DoSaveSearchPaths()
+{
 	wxArrayString paths = m_dirPicker->GetValues();
 	m_data.SetSearchPaths(paths);
 }
 
-void FindInFilesDialog::DoSaveOpenFiles() {
+void FindInFilesDialog::DoSaveOpenFiles()
+{
 	if (m_checkBoxSaveFilesBeforeSearching->IsChecked()) {
 		clMainFrame::Get()->GetMainBook()->SaveAll(false, false);
 	}
 }
 
-void FindInFilesDialog::OnClearPathsUI(wxUpdateUIEvent& event) {
+void FindInFilesDialog::OnClearPathsUI(wxUpdateUIEvent& event)
+{
 	event.Enable(m_listPaths->IsEmpty() == false);
 }
 
-void FindInFilesDialog::OnRemovePathUI(wxUpdateUIEvent& event) {
+void FindInFilesDialog::OnRemovePathUI(wxUpdateUIEvent& event)
+{
 	event.Enable(m_listPaths->GetSelection() != wxNOT_FOUND);
 }
 
-void FindInFilesDialog::OnFindWhatUI(wxUpdateUIEvent& event) {
+void FindInFilesDialog::OnFindWhatUI(wxUpdateUIEvent& event)
+{
 	event.Enable(m_findString->GetValue().IsEmpty() == false);
 }
 

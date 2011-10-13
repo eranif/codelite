@@ -37,7 +37,6 @@ private:
     wxArrayString m_extensions;
 	wxButton *m_findWhat;
     wxChoice *m_scope;
-    wxChoice *m_filter;
 
 protected:
     SearchData DoGetSearchData   ();

@@ -37,7 +37,9 @@ class FindInFilesDialog : public FindInFilesDialogBase {
 	void       DoSaveSearchPaths();
 	SearchData DoGetSearchData();
 	void       DoSaveOpenFiles();
-
+	void       DoSetFileMask();
+	
+	// Event Handlers
 	virtual void OnClick(wxCommandEvent &event);
 	virtual void OnClose(wxCloseEvent &event);
 	virtual void OnAddPath( wxCommandEvent& event );

@@ -16,7 +16,7 @@
 		<Property Id="5" Name="Line Deleted" Bold="no" Face="" Colour="#FF0000" BgColour="white" Size="-1"/>
 		<Property Id="6" Name="Line Added" Bold="no" Face="" Colour="#008000" BgColour="white" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="yes" Italic="no" Underline="no" Face="" Colour="#000000" BgColour="#80FFFF" Size="-1"/>
@@ -34,7 +34,7 @@
 	  <Properties>
 		<Property Id="0" Name="Default" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="yes" Italic="no" Underline="no" Face="" Colour="#000000" BgColour="#80FFFF" Size="-1"/>
@@ -76,7 +76,7 @@
 		<Property Id="19" Name="Local variables" Bold="no" Italic="yes" Underline="no" Face="" Colour="#804000" BgColour="#FFFFFF" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Italic="no" Underline="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Italic="no" Underline="no" Face="" Colour="#000000" BgColour="#000000" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="yes" Italic="no" Underline="no" Face="" Colour="#000000" BgColour="#80FFFF" Size="-1"/>
 		<Property Id="35" Name="Brace bad match" Bold="yes" Italic="no" Underline="no" Face="" Colour="#FFFFFF" BgColour="red" Size="-1"/>
@@ -110,7 +110,7 @@
 		<Property Id="15" Name="Directive" Bold="no" Face="" Colour="#07782C" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
@@ -144,7 +144,7 @@
 		<Property Id="15" Name="Decorator" Bold="no" Face="" Colour="#07782C" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
@@ -273,7 +273,7 @@
 		<Property Id="126" Name="PHP HString Variable" Bold="yes" Face="" Colour="#FF8000" BgColour="#FFF8F8" Size="-1"/>
 		<Property Id="127" Name="PHP Operator" Bold="no" Face="" Colour="#000000" BgColour="#FFF8F8" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#000000" BgColour="#8BBF86" Size="-1"/>
@@ -302,7 +302,7 @@
 		<Property Id="10" Name="Double quoted string" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="-1"/>
 		<Property Id="11" Name="Single quoted string" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#000000" BgColour="#8BBF86" Size="-1"/>
@@ -336,7 +336,7 @@
 		<Property Id="18" Name="Doxygen keyword error" Bold="no" Face="" Colour="rgb(255,0,0)" BgColour="white" Size="-1"/>
 		<Property Id="19" Name="Global class" Bold="no" Face="" Colour="medium blue" BgColour="white" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="yes" Italic="no" Underline="no" Face="" Colour="#000000" BgColour="#80FFFF" Size="-1"/>
@@ -365,7 +365,7 @@
 		<Property Id="10" Name="Operator" Bold="no" Face="" Colour="#808080" BgColour="white" Size="-1"/>
 		<Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#000000" BgColour="white" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="white" Size="-1"/>
@@ -389,7 +389,7 @@
 		<Property Id="5" Name="Target" Bold="no" Face="" Colour="#FF0000" BgColour="white" Size="-1"/>
 		<Property Id="9" Name="ID End Of Line" Bold="no" Face="" Colour="#FF0000" BgColour="white" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="yes" Italic="no" Underline="no" Face="" Colour="#000000" BgColour="#80FFFF" Size="-1"/>
@@ -438,7 +438,7 @@
 		<Property Id="30" Name="StringQW" Bold="no" Face="" Colour="#800080" BgColour="white" Size="-1"/>
 		<Property Id="31" Name="PODVerb" Bold="no" Face="" Colour="#800080" BgColour="white" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="yes" Italic="no" Underline="no" Face="" Colour="#000000" BgColour="#80FFFF" Size="-1"/>
@@ -461,7 +461,7 @@
 		<Property Id="4" Name="Defval" Bold="no" Face="" Colour="#804000" BgColour="#FFFFFF" Size="-1"/>
 		<Property Id="5" Name="Key" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#8BBF86" Size="-1"/>
@@ -495,7 +495,7 @@
 		<Property Id="15" Name="Decorator" Bold="no" Face="" Colour="#07782C" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
@@ -526,7 +526,7 @@
 		<Property Id="12" Name="Here Delimiter" Bold="no" Face="" Colour="red" BgColour="#FFFFFF" Size="-1"/>
 		<Property Id="13" Name="Here Q" Bold="no" Face="" Colour="red" BgColour="#FFFFFF" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#8BBF86" Size="-1"/>
@@ -571,7 +571,7 @@
 		<Property Id="25" Name="SGML comment" Bold="no" Face="" Colour="#000000" BgColour="white" Size="-1"/>
 		<Property Id="26" Name="SGML block" Bold="no" Face="" Colour="#000000" BgColour="white" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#000000" BgColour="#C0C0C0" Size="-1"  Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#000000" BgColour="#C0C0C0" Size="-1"  Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#000000" BgColour="#D3D3D3" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="yes" Italic="no" Underline="no" Face="" Colour="#000000" BgColour="#80FFFF" Size="-1"/>
@@ -605,7 +605,7 @@
 		<Property Id="14" Name="Ext instruction" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
@@ -630,7 +630,7 @@
 		<Property Id="6" Name="Variable" Bold="no" Face="" Colour="#FF8040" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="7" Name="Opertator" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" Size="-1"/>
-		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="256"/>
+		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" Size="-1"/>
 		<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Size="-1"/>
 		<Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#8BBF86" Italic="no" Underline="no" Size="-1"/>
@@ -662,7 +662,7 @@
 		  <Property Id="13" Name="Label" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
 		  <Property Id="14" Name="Continuation" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
 		  <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
-		  <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#000000" BgColour="#BEBEBE" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+		  <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#000000" BgColour="#BEBEBE" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
 		  <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
 		  <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
 		  <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#000000" BgColour="#8BBF86" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>

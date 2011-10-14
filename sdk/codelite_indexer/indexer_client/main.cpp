@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef __WXMSW__
+#include <io.h>
+#endif
 
 #include "network/clindexerprotocol.h"
 #include "network/cl_indexer_reply.h"
@@ -38,7 +41,12 @@ int main(int argc, char **argv)
 		printf("ERROR: Please set env variable TEST_FILE\n");
 		exit(-1);
 	}
-	files.push_back(testFile);
+	
+	std::string file_name = getcwd(NULL, 0);
+	file_name += "/";
+	file_name += testFile;
+	
+	files.push_back(file_name);
 
 	req.setFiles(files);
 	req.setCtagOptions("--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p  -IwxT,_T");

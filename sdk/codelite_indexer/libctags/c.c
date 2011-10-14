@@ -189,26 +189,28 @@ typedef enum eImplementation {
 /*  Describes the statement currently undergoing analysis.
  */
 typedef struct sStatementInfo {
-	tagScope	scope;
-	declType	declaration;    /* specifier associated with TOKEN_SPEC */
-	boolean		gotName;        /* was a name parsed yet? */
-	boolean		haveQualifyingName;  /* do we have a name we are considering? */
-	boolean		gotParenName;   /* was a name inside parentheses parsed yet? */
-	boolean		gotArgs;        /* was a list of parameters parsed yet? */
-	boolean		isPointer;      /* is 'name' a pointer? */
-	boolean     inFunction;     /* are we inside of a function? */
-	boolean		assignment;     /* have we handled an '='? */
-	boolean		notVariable;    /* has a variable declaration been disqualified ? */
-	impType		implementation; /* abstract or concrete implementation? */
+	tagScope     scope;
+	declType     declaration;    /* specifier associated with TOKEN_SPEC */
+	boolean      gotName;        /* was a name parsed yet? */
+	boolean      haveQualifyingName;  /* do we have a name we are considering? */
+	boolean      gotParenName;   /* was a name inside parentheses parsed yet? */
+	boolean      gotArgs;        /* was a list of parameters parsed yet? */
+	boolean      isPointer;      /* is 'name' a pointer? */
+	boolean      inFunction;     /* are we inside of a function? */
+	boolean      assignment;     /* have we handled an '='? */
+	boolean      notVariable;    /* has a variable declaration been disqualified ? */
+	impType      implementation; /* abstract or concrete implementation? */
 	unsigned int tokenIndex;    /* currently active token */
-	tokenInfo*	token [(int) NumTokens];
-	tokenInfo*	context;        /* accumulated scope of current statement */
-	tokenInfo*	blockName;      /* name of current block */
-	memberInfo	member;         /* information regarding parent class/struct */
-	vString*	parentClasses;  /* parent classes */
-	boolean     isNamespacAlias;/* is this a namespace alias? */
-	char        namespaceAlias[256]; /* namespace alias */
+	tokenInfo*   token [(int) NumTokens];
+	tokenInfo*   context;        /* accumulated scope of current statement */
+	tokenInfo*   blockName;      /* name of current block */
+	memberInfo   member;         /* information regarding parent class/struct */
+	vString*     parentClasses;  /* parent classes */
+	boolean      isNamespacAlias;/* is this a namespace alias? */
+	char         namespaceAlias[256]; /* namespace alias */
+	vString*     usingAlias;
 	struct sStatementInfo *parent;  /* statement we are nested within */
+	boolean      isUsingAlias;
 } statementInfo;
 
 /*  Describes the type of tag being generated.
@@ -475,6 +477,7 @@ static const keywordDesc KeywordTable [] = {
 *   FUNCTION PROTOTYPES
 */
 static void createTags (const unsigned int nestLevel, statementInfo *const parent);
+static void readUsingAlias(statementInfo* const st);
 
 /*
 *   FUNCTION DEFINITIONS
@@ -776,6 +779,7 @@ static void reinitStatement (statementInfo *const st, const boolean partial)
 	st->haveQualifyingName = FALSE;
 	st->tokenIndex		= 0;
 	st->isNamespacAlias = FALSE;
+	st->isUsingAlias    = FALSE;
 
 	memset(st->namespaceAlias, 0, sizeof(st->namespaceAlias));
 
@@ -794,7 +798,7 @@ static void reinitStatement (statementInfo *const st, const boolean partial)
 		initToken (st->blockName);
 
 	vStringClear (st->parentClasses);
-
+	vStringClear(st->usingAlias);
 	/*  Init member info.
 	 */
 	if (! partial)
@@ -1076,6 +1080,10 @@ static void addOtherFields (tagEntryInfo* const tag, const tagType type,
 		tag->extensionFields.typeRef [0] = "namespace";
 		tag->extensionFields.typeRef [1] = st->namespaceAlias;
 
+	} else if(st->isUsingAlias == TRUE) {
+		tag->extensionFields.typeRef[0] = "class";
+		tag->extensionFields.typeRef[1] = vStringValue(st->usingAlias);
+		
 	}
 }
 
@@ -1866,7 +1874,7 @@ static void processToken (tokenInfo *const token, statementInfo *const st)
 		case KEYWORD_THROWS:    discardTypeList (token);                break;
 		case KEYWORD_UNION:     st->declaration = DECL_UNION;           break;
 		case KEYWORD_UNSIGNED:  st->declaration = DECL_BASE;            break;
-		case KEYWORD_USING:     skipStatement (st); reinitStatement(st, FALSE); break;
+		case KEYWORD_USING:     readUsingAlias(st);                     break;
 		case KEYWORD_VOID:      st->declaration = DECL_BASE;            break;
 		case KEYWORD_VOLATILE:  st->declaration = DECL_BASE;            break;
 		case KEYWORD_VIRTUAL:   st->implementation = IMP_VIRTUAL;       break;
@@ -2783,7 +2791,7 @@ static statementInfo *newStatement (statementInfo *const parent)
 	st->context = newToken ();
 	st->blockName = newToken ();
 	st->parentClasses = vStringNew ();
-
+	st->usingAlias    = vStringNew ();
 	initStatement (st, parent);
 	CurrentStatement = st;
 
@@ -2798,11 +2806,14 @@ static void deleteStatement (void)
 
 	for (i = 0  ;  i < (unsigned int) NumTokens  ;  ++i)
 	{
-		deleteToken (st->token [i]);       st->token [i] = NULL;
+		deleteToken (st->token [i]);
+		st->token [i] = NULL;
 	}
+	
 	deleteToken (st->blockName);           st->blockName = NULL;
 	deleteToken (st->context);             st->context = NULL;
 	vStringDelete (st->parentClasses);     st->parentClasses = NULL;
+	vStringDelete (st->usingAlias);         st->usingAlias = NULL;
 	eFree (st);
 	CurrentStatement = parent;
 }
@@ -3149,6 +3160,55 @@ extern parserDefinition* VeraParser (void)
 	def->parser2    = findCTags;
 	def->initialize = initializeVeraParser;
 	return def;
+}
+
+static int iswhite(int c)
+{
+	return c == ' ' || c == '\t' || c == '\r' || c == '\n';
+}
+
+static void readUsingAlias(statementInfo *const st) 
+{
+	advanceToken(st);
+	tokenInfo *const token = activeToken(st);
+	vString *const name = token->name;
+	vString *fullQualifiedName = vStringNew();
+	
+	int c = skipToNonWhite();
+	while( !iswhite(c) && c != ';') 
+	{
+		vStringPut(fullQualifiedName, c);
+		if(c == ':') {
+			vStringClear(name);
+			
+		} else {
+			vStringPut(name, c);
+			
+		}
+		c = cppGetc (); 
+	}
+	vStringTerminate (name);
+	vStringTerminate (fullQualifiedName);
+	
+	cppUngetc (c);
+	analyzeIdentifier(token);
+	if(token->type != TOKEN_NAME) {
+		skipStatement (st); 
+		reinitStatement(st, FALSE);
+		
+	} else {
+		// Ok, we got ourself something like:
+		// using std::shared_ptr;
+		// this line means that shared_ptr is accessible without the prefix std, so what we will do is strip the 
+		// scope from the fully qualified name and keep only the name part
+		// in addition, we will set the fully qualified name as typeref
+		vStringClear(st->usingAlias);
+		vStringCat  (st->usingAlias, fullQualifiedName);
+		vStringTerminate(st->usingAlias);
+		vStringDelete(fullQualifiedName);
+		st->gotName = TRUE;
+		st->isUsingAlias = TRUE;
+	}
 }
 
 /* vi:set tabstop=4 shiftwidth=4 noexpandtab: */

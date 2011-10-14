@@ -891,7 +891,9 @@ bool Language::ProcessToken(TokenContainer *tokeContainer)
 
 			// if we are a "member" or " variable"
 			// try to locate the template initialization list
-			if(tags.at(0)->GetKind() == wxT("member") || tags.at(0)->GetKind() == wxT("variable")) {
+			bool isTyperef = !tags.at(0)->GetTyperef().IsEmpty();
+			
+			if( !isTyperef && (tags.at(0)->GetKind() == wxT("member") || tags.at(0)->GetKind() == wxT("variable")) ) {
 				const wxCharBuffer buf = _C(tags.at(0)->GetPattern());
 				get_variables(buf.data(), li, ignoreTokens, true);
 
@@ -1040,6 +1042,19 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 				return false;
 
 			} else if (tag->GetKind() == wxT("member") || tag->GetKind() == wxT("variable")) {
+				
+				if(tag->GetKind() == wxT("member") && !tag->GetTyperef().IsEmpty()) {
+					// Incase the tag is of type 'member' AND the name is different than 
+					// the typeref, we are actually dealing here with a 'using directive' entry
+					// in this case, the fully qualified name is tag->NameFromTyperef()
+					wxString dummy;
+					wxString typeRef = tag->NameFromTyperef(dummy);
+					
+					type = NameFromPath(typeRef);
+					typeScope = ScopeFromPath(typeRef);
+					return true;
+				}
+				
 				Variable var;
 				if (VariableFromPattern(tag->GetPattern(), tag->GetName(), var)) {
 					type = _U(var.m_type.c_str());

@@ -302,8 +302,15 @@ wxString TagsOptionsData::ToString()
 {
 	wxString options(wxEmptyString);
 
-	wxString file_name, file_content;
-	wxGetEnv(wxT("CTAGS_REPLACEMENTS"), &file_name);
+	static wxString file_name;
+	wxString file_content;
+	
+	if(file_name.IsEmpty()) {
+		char *ctagsReplacement = getenv("CTAGS_REPLACEMENTS");
+		if(ctagsReplacement) {
+			file_name = wxString(ctagsReplacement, wxConvUTF8).c_str();
+		}
+	}
 
 	DoUpdateTokensWxMap();
 	std::map<wxString, wxString> tokensMap      = GetTokensWxMap();

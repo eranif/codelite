@@ -33,7 +33,8 @@
 #include "entry.h"
 #include <vector>
 #include "cl_calltip.h"
-#include <wx/wxscintilla.h>
+
+class wxScintilla;
 
 class NavMgr;
 

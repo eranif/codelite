@@ -54,7 +54,7 @@ class clEditorTipWindow;
 class DisplayVariableDlg;
 
 enum sci_annotation_styles {
-	eAnnotationStyleError = 128, eAnnotationStyleWarning
+    eAnnotationStyleError = 128, eAnnotationStyleWarning
 };
 
 // NB The following are sci markers, which are zero based. So smt_bookmark is actually the eighth of them (important when masking it!)
@@ -142,7 +142,7 @@ class LEditor : public wxScintilla, public IEditor
 	bool                                        m_isFocused;
 	bool                                        m_pluginInitializedRMenu;
 	BOM                                         m_fileBom;
-	
+
 public:
 	static bool                                 m_ccShowPrivateMembers;
 	static bool                                 m_ccShowItemsComments;
@@ -511,6 +511,10 @@ public:
 	 * Implemetation for IEditor interace
 	 *--------------------------------------------------
 	 */
+	virtual wxScintilla* GetScintilla() {
+		return static_cast<wxScintilla*>(this);
+	}
+	
 	virtual wxString GetEditorText() {
 		return GetText();
 	}
@@ -559,7 +563,7 @@ public:
 	virtual int  GetUserIndicatorEnd(int pos);
 	virtual int GetLexerId();
 	virtual int GetStyleAtPos(int pos);
-	
+
 	/**
 	 * @brief Get position of start of word.
 	 * @param pos from position
@@ -609,17 +613,17 @@ public:
 	 * @return
 	 */
 	virtual wxString GetTextRange(int startPos, int endPos);
-	
+
 	/**
 	 * @brief display a calltip at the current position
 	 */
 	virtual void ShowCalltip(clCallTipPtr tip);
-	
+
 	virtual wxChar PreviousChar(const int& pos, int &foundPos, bool wantWhitespace = false);
 	virtual int PositionAfterPos(int pos);
 	virtual int PositionBeforePos(int pos);
 	virtual int GetCharAtPos(int pos);
-	
+
 	//----------------------------------------------------------------------------
 	//----------------------------------------------------------------------------
 

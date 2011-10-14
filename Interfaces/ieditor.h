@@ -22,16 +22,18 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef IEDITOR_H
+
+#ifndef IEDITOR_H
 #define IEDITOR_H
 
-#include "wx/filename.h"
+#include <wx/filename.h>
 #include "browse_record.h"
 #include "wx/string.h"
 #include <wx/colour.h>
 #include "entry.h"
 #include <vector>
 #include "cl_calltip.h"
+#include <wx/wxscintilla.h>
 
 class NavMgr;
 
@@ -341,6 +343,11 @@ public:
 	 * @brief return the char at the 'pos', 0 if an error occurs
 	 */
 	virtual int GetCharAtPos(int pos) = 0;
+	
+	/**
+	 * @brief return a pointer to the underlying scintilla control 
+	 */
+	virtual wxScintilla* GetScintilla() = 0;
 };
 
 #endif //IEDITOR_H

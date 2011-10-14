@@ -1471,7 +1471,15 @@ bool clMainFrame::IsEditorEvent(wxEvent &event)
 	case wxID_UNDO:
 	case wxID_REDO:
 	{
-		bool isFocused = mainBook->GetActiveEditor()->IsFocused();
+		bool isFocused;
+		LEditor* editor = dynamic_cast<LEditor*>(event.GetEventObject());
+		if(editor) {
+			isFocused = true;
+			
+		} else {
+			isFocused = mainBook->GetActiveEditor()->IsFocused();
+			
+		}
 		return isFocused;
 	}
 	default:

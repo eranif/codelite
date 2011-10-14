@@ -440,7 +440,30 @@ createRules_sharedObject ()
 	else
 	  	createVariables "yes"
 	fi
-
+	
+	if [ "$rule_name" = "DatabaseExplorer" ] ; then
+		## create custom CCFLAGS
+		dbl_flags="-DDBL_USE_SQLITE"
+		if [ "$enable_mysql" = "yes" ] ; then
+			dbl_flags="$dbl_flags -DDBL_USE_MYSQL"
+		fi
+		if [ "$enable_postgres" = "yes" ] ; then
+			dbl_flags="$dbl_flags -DDBL_USE_POSTGRES"
+		fi
+		
+		## link databaselayer backends
+		dbl_libs="-ldblayersqlite\$(EXT) -lwxshapeframework\$(EXT)"
+		if [ "$enable_mysql" = "yes" ] ; then
+			dbl_libs="$dbl_libs -ldblayermysql\$(EXT)"
+		fi
+		if [ "$enable_postgres" = "yes" ] ; then
+			dbl_libs="$dbl_libs -ldblayerpostgres\$(EXT)"
+		fi
+	
+		echo "PLUGIN_LINK_FLAGS := \$(PLUGIN_LINK_FLAGS) ${dbl_libs} " >> Makefile
+		echo "CCFLAGS := \$(CCFLAGS) ${dbl_flags} " >> Makefile
+	fi
+	
 	for a_file in $files_list
 	do
 
@@ -1044,7 +1067,6 @@ echo "" >> Makefile
 ##
 ########################################################
 #createPluginMakefile "CodeDesigner" "CodeDesigner"  "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "DatabaseExplorer" "DatabaseExplorer"  "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "Debugger" "Debugger" "\$(DESTDIR)$plugins_dir/debuggers/" "../Runtime/debuggers"
 createPluginMakefile "Gizmos" "Gizmos"  "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "cscope" "cscope" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
@@ -1061,6 +1083,7 @@ createPluginMakefile "ContinuousBuild" "ContinuousBuild" "\$(DESTDIR)$plugins_di
 createPluginMakefile "QmakePlugin" "QmakePlugin" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "git" "git" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "cppchecker" "CppCheck" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "DatabaseExplorer" "DatabaseExplorer"  "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 ## Mac only plugin: MacBundler
 if [ "$os_name" = "Darwin" ]; then
 	createPluginMakefile "MacBundler" "MacBundler" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"

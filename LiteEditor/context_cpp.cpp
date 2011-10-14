@@ -2268,9 +2268,6 @@ void ContextCpp::DoCodeComplete(long pos)
 	}
 
 	// Search for first non-whitespace wxChar
-
-	bool showFullDecl(false);
-
 	switch (ch) {
 	case '.':
 		// Class / Struct completion
@@ -2290,7 +2287,6 @@ void ContextCpp::DoCodeComplete(long pos)
 		// We open drop box as well
 		if (editor.PreviousChar(pos1, pos2) == wxT(':')) {
 			editor.PreviousChar(pos2, end);
-			showFullDecl = true;
 		} else {
 			return;
 		}
@@ -2603,7 +2599,6 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 	int position( pos );
 	int at(position);
 	bool prevGt(false);
-	bool prevColon(false);
 	while (cont && depth >= 0) {
 		wxChar ch =ctrl->PreviousChar(position, at, true);
 		position = at;
@@ -2632,7 +2627,6 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 			// dont include this token
 			at = ctrl->PositionAfter(at);
 			cont = false;
-			prevColon = false;
 			break;
 		case wxT('-'):
 			if (prevGt) {
@@ -2647,7 +2641,6 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 					cont = false;
 				}
 			}
-			prevColon = false;
 			break;
 		case wxT(' '):
 		case wxT('\n'):
@@ -2655,7 +2648,6 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 		case wxT('\t'):
 		case wxT('\r'):
 			prevGt = false;
-			prevColon = false;
 			if (depth <= 0) {
 				cont = false;
 				break;
@@ -2664,14 +2656,12 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 		case wxT('{'):
 		case wxT('='):
 			prevGt = false;
-			prevColon = false;
 			cont = false;
 			break;
 		case wxT('('):
 		case wxT('['):
 			depth--;
 			prevGt = false;
-			prevColon = false;
 			if (depth < 0) {
 				//dont include this token
 				at =ctrl->PositionAfter(at);
@@ -2689,7 +2679,6 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 		case wxT('%'):
 		case wxT('?'):
 			prevGt = false;
-			prevColon = false;
 			if (depth <= 0) {
 
 				//dont include this token
@@ -2699,12 +2688,10 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 			break;
 		case wxT('>'):
 			prevGt = true;
-			prevColon = false;
 			depth++;
 			break;
 		case wxT('<'):
 			prevGt = false;
-			prevColon = false;
 			depth--;
 			if (depth < 0) {
 
@@ -2716,12 +2703,10 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 		case wxT(')'):
 		case wxT(']'):
 			prevGt = false;
-			prevColon = false;
 			depth++;
 			break;
 		default:
 			prevGt = false;
-			prevColon = false;
 			break;
 		}
 	}

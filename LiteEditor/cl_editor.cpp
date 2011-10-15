@@ -517,7 +517,7 @@ void LEditor::SetProperties()
 	SetBufferedDraw(false);
 
 #else // MSW
-	SetTwoPhaseDraw(false);
+	SetTwoPhaseDraw(true);
 	SetBufferedDraw(true);
 #endif
 

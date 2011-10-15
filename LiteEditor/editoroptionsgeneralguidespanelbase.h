@@ -38,9 +38,11 @@ class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 		wxCheckBox* m_displayLineNumbers;
 		wxCheckBox* m_showIndentationGuideLines;
 		wxCheckBox* m_checkBoxMatchBraces;
-		wxCheckBox* m_checkBoxAutoCompleteBraces;
+		wxCheckBox* m_checkBoxAutoCompleteCurlyBraces;
 		wxCheckBox* m_checkBoxDisableSemicolonShift;
+		wxCheckBox* m_checkBoxAutoCompleteNormalBraces;
 		wxCheckBox* m_checkBoxHideChangeMarkerMargin;
+		
 		wxStaticText* m_staticText2;
 		wxChoice* m_whitespaceStyle;
 		wxStaticText* m_staticText4;

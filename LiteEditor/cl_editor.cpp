@@ -141,7 +141,8 @@ LEditor::LEditor(wxWindow* parent)
 		, m_hyperLinkIndicatroEnd    (wxNOT_FOUND)
 		, m_hyperLinkType            (wxID_NONE)
 		, m_hightlightMatchedBraces  (true)
-		, m_autoAddMatchedBrace      (false)
+		, m_autoAddMatchedCurlyBrace (false)
+		, m_autoAddNormalBraces      (false)
 		, m_autoAdjustHScrollbarWidth(true)
 		, m_calltipType              (ct_none)
 		, m_reloadingFile            (false)
@@ -286,7 +287,8 @@ void LEditor::SetProperties()
 	CallTipUseStyle(1);
 
 	m_hightlightMatchedBraces   = options->GetHighlightMatchedBraces();
-	m_autoAddMatchedBrace       = options->GetAutoAddMatchedBraces();
+	m_autoAddMatchedCurlyBrace  = options->GetAutoAddMatchedCurlyBraces();
+	m_autoAddNormalBraces       = options->GetAutoAddMatchedNormalBraces();
 	m_autoAdjustHScrollbarWidth = options->GetAutoAdjustHScrollBarWidth();
 	m_disableSmartIndent        = options->GetDisableSmartIndent();
 	m_disableSemicolonShift     = options->GetDisableSemicolonShift();
@@ -515,7 +517,7 @@ void LEditor::SetProperties()
 	SetBufferedDraw(false);
 
 #else // MSW
-	SetTwoPhaseDraw(true);
+	SetTwoPhaseDraw(false);
 	SetBufferedDraw(true);
 #endif
 
@@ -659,16 +661,24 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		CharRight();
 		DeleteBack();
 		
-	} else if ((GetOptions()->GetAutoAddMatchedBraces()) && (event.GetKey() == ')' || event.GetKey() == ']') && event.GetKey() == GetCharAt(pos)) {
-		CharRight();
-		DeleteBack();
+	} else if ( m_autoAddNormalBraces                            && 
+				(event.GetKey() == ')' || event.GetKey() == ']') && 
+				event.GetKey() == GetCharAt(pos)) 
+	{
+		// disable the auto brace adding when inside comment or string
+		if(!m_context->IsCommentOrString(pos)) {
+			CharRight();
+			DeleteBack();
+		}
 	}
 
 	wxChar matchChar (0);
 	switch ( event.GetKey() ) {
 	case ';':
-		if (!m_disableSemicolonShift)
+	
+		if (!m_disableSemicolonShift && !m_context->IsCommentOrString(pos))
 			m_context->SemicolonShift();
+			
 		break;
 
 	case '(':
@@ -710,7 +720,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		long matchedPos(wxNOT_FOUND);
 		// incase ENTER was hit immediatly after we inserted '{' into the code...
 		if ( m_lastCharEntered == wxT('{')                         && // Last char entered was {
-			 m_autoAddMatchedBrace                                 && // auto-add-match-brace option is enabled
+			 m_autoAddMatchedCurlyBrace                                 && // auto-add-match-brace option is enabled
 			 !m_disableSmartIndent                                 && // the disable smart indent option is NOT enabled
 			 MatchBraceBack(wxT('}'), GetCurrentPos(), matchedPos) && // Insert it only if it match an open brace
 			 !m_context->IsDefaultContext()                        && // the editor's context is NOT the default one
@@ -746,8 +756,8 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		break;
 	}
 
-	if (matchChar && m_autoAddMatchedBrace && !m_disableSmartIndent && !m_context->IsCommentOrString(pos)) {
-		if ( matchChar == ')' ) {
+	if (matchChar && !m_disableSmartIndent && !m_context->IsCommentOrString(pos)) {
+		if ( matchChar == ')' && m_autoAddNormalBraces) {
 			// avoid adding close brace if the next char is not a whitespace
 			// character
 			int nextChar = SafeGetChar(pos);
@@ -763,7 +773,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 				IndicatorFillRange(pos, 1);
 				break;
 			}
-		} else if (matchChar != '}') {
+		} else if (matchChar != '}' && m_autoAddNormalBraces) {
 			InsertText(pos, matchChar);
 			SetIndicatorCurrent(MATCH_INDICATOR);
 			// use grey colour rather than black, otherwise this indicator is invisible when using the
@@ -808,13 +818,12 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	long pos = GetCurrentPos();
 
 	//ignore << and >>
-	int charAfter  = SafeGetChar(PositionAfter(pos));
-	int charBefore = SafeGetChar(PositionBefore(pos));
+	int charAfter    = SafeGetChar(PositionAfter(pos));
+	int charBefore   = SafeGetChar(PositionBefore(pos));
 	int beforeBefore = SafeGetChar(PositionBefore(PositionBefore(pos)));
-	int charCurrnt = SafeGetChar(pos);
+	int charCurrnt   = SafeGetChar(pos);
 
 	bool hasSelection = (GetSelectionStart() != GetSelectionEnd());
-	
 	if(GetHighlightGuide() != wxNOT_FOUND)
 		SetHighlightGuide(0);
 		
@@ -3570,7 +3579,7 @@ void LEditor::SetEOL()
 
 void LEditor::OnChange(wxScintillaEvent& event)
 {
-	if ( m_autoAddMatchedBrace && !m_disableSmartIndent) {
+	if ( m_autoAddNormalBraces && !m_disableSmartIndent) {
 		if ( (event.GetModificationType() & wxSCI_MOD_BEFOREDELETE) && (event.GetModificationType() & wxSCI_PERFORMED_USER) ) {
 			wxString deletedText = GetTextRange(event.GetPosition(), event.GetPosition() + event.GetLength());
 			if ( deletedText.IsEmpty() == false && deletedText.Length() == 1 ) {
@@ -3899,10 +3908,12 @@ bool LEditor::IsFocused() const
 #ifdef __WXGTK__
 	// Under GTK, when popup menu is ON, we will receive a "FocusKill" event
 	// which means that we lost the focus. So the IsFocused() method is using
-	// either the m_isFocused flag or the m_popupIsOn flag	return m_isFocused || m_popupIsOn;
+	// either the m_isFocused flag or the m_popupIsOn flag
+	return m_isFocused || m_popupIsOn;
 #else
 	return m_isFocused;
-#endif}
+#endif
+}
 
 void LEditor::ShowCalltip(clCallTipPtr tip)
 {

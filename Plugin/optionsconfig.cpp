@@ -63,7 +63,6 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         , m_edgeColumn(80)
         , m_edgeColour(wxColour(wxT("LIGHT GREY")))
         , m_highlightMatchedBraces(true)
-        , m_autoAddMatchedBraces(true)
         , m_foldBgColour(wxColour(240, 240, 240))
         , m_autoAdjustHScrollBarWidth(true)
         , m_caretWidth(1)
@@ -96,7 +95,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_preferredLocale(wxT("en_US"))
 		, m_useLocale(0)
 		, m_trimOnlyModifiedLines(true)
-		, m_options(TabCurved)
+		, m_options(TabCurved | Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces)
 {
 	m_mswTheme = false;
 #ifdef __WXMSW__
@@ -136,7 +135,6 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         m_edgeColumn                    = XmlUtils::ReadLong  (node, wxT("EdgeColumn"),                m_edgeColumn);
         m_edgeColour                    = XmlUtils::ReadString(node, wxT("EdgeColour"),                m_edgeColour.GetAsString(wxC2S_HTML_SYNTAX));
     	m_highlightMatchedBraces        = XmlUtils::ReadBool  (node, wxT("HighlightMatchedBraces"),    m_highlightMatchedBraces);
-    	m_autoAddMatchedBraces          = XmlUtils::ReadBool  (node, wxT("AutoAddMatchedBraces"),      m_autoAddMatchedBraces);
     	m_foldBgColour                  = XmlUtils::ReadString(node, wxT("FoldBgColour"),              m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
     	m_autoAdjustHScrollBarWidth     = XmlUtils::ReadBool  (node, wxT("AutoAdjustHScrollBarWidth"), m_autoAdjustHScrollBarWidth);
     	m_caretBlinkPeriod              = XmlUtils::ReadLong  (node, wxT("CaretBlinkPeriod"),          m_caretBlinkPeriod);
@@ -214,7 +212,6 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("FoldAtElse"),                    BoolToString(m_foldAtElse));
 	n->AddProperty(wxT("FoldPreprocessor"),              BoolToString(m_foldPreprocessor));
 	n->AddProperty(wxT("HighlightMatchedBraces"),        BoolToString(m_highlightMatchedBraces));
-	n->AddProperty(wxT("AutoAddMatchedBraces"),          BoolToString(m_autoAddMatchedBraces));
 	n->AddProperty(wxT("FoldBgColour"),                  m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
 	n->AddProperty(wxT("AutoAdjustHScrollBarWidth"),     BoolToString(m_autoAdjustHScrollBarWidth));
 	n->AddProperty(wxT("HideChangeMarkerMargin"),        BoolToString(m_hideChangeMarkerMargin));

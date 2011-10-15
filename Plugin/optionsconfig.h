@@ -37,10 +37,12 @@ class WXDLLIMPEXP_SDK OptionsConfig : public ConfObject
 {
 public:
 	enum {
-		TabClassic = 0x00000001,
-		TabGlossy  = 0x00000002,
-		TabCurved  = 0x00000004,
-		TabAll     = TabClassic | TabGlossy | TabCurved
+		TabClassic                   = 0x00000001,
+		TabGlossy                    = 0x00000002,
+		TabCurved                    = 0x00000004,
+		TabAll                       = TabClassic | TabGlossy | TabCurved,
+		Opt_AutoCompleteCurlyBraces  = 0x00000008,
+		Opt_AutoCompleteNormalBraces = 0x00000010
 	};
 
 protected:
@@ -69,7 +71,6 @@ protected:
 	int            m_edgeColumn;
 	wxColour       m_edgeColour;
 	bool           m_highlightMatchedBraces;
-	bool           m_autoAddMatchedBraces;
 	wxColour       m_foldBgColour;
 	bool           m_autoAdjustHScrollBarWidth;
 	int            m_caretWidth;
@@ -105,7 +106,21 @@ protected:
 	bool           m_useLocale;
 	bool           m_trimOnlyModifiedLines;
 	size_t         m_options;
-
+	
+protected:
+	// Helpers
+	void EnableOption(size_t flag, bool b) {
+		if(b) {
+			m_options |= flag;
+		} else {
+			m_options &= ~flag;
+		}
+	}
+	
+	bool HasOption(size_t flag) const {
+		return m_options & flag;
+	}
+	
 public:
 	OptionsConfig() {}
 	OptionsConfig(wxXmlNode *node);
@@ -431,13 +446,23 @@ public:
 	const bool& GetHighlightMatchedBraces() const {
 		return m_highlightMatchedBraces;
 	}
-	void SetAutoAddMatchedBraces(const bool& autoAddMatchedBraces) {
-		this->m_autoAddMatchedBraces = autoAddMatchedBraces;
+	
+	void SetAutoAddMatchedCurlyBraces(bool autoAddMatchedBraces) {
+		EnableOption(Opt_AutoCompleteCurlyBraces, autoAddMatchedBraces);
 	}
-	const bool& GetAutoAddMatchedBraces() const {
-		return m_autoAddMatchedBraces;
+	
+	bool GetAutoAddMatchedCurlyBraces() const {
+		return HasOption(Opt_AutoCompleteCurlyBraces);
 	}
-
+	
+	void SetAutoAddMatchedNormalBraces(bool b) {
+		EnableOption(Opt_AutoCompleteNormalBraces, b);
+	}
+	
+	bool GetAutoAddMatchedNormalBraces() const {
+		return HasOption(Opt_AutoCompleteNormalBraces);
+	}
+	
 	void SetFoldBgColour(const wxColour& foldBgColour) {
 		this->m_foldBgColour = foldBgColour;
 	}

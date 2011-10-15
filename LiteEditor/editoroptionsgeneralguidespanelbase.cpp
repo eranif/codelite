@@ -36,20 +36,28 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 	
 	fgSizer1->Add( m_checkBoxMatchBraces, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_checkBoxAutoCompleteBraces = new wxCheckBox( this, wxID_ANY, _("Auto Complete Braces"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxAutoCompleteBraces->SetToolTip( _("Auto add matching close brace") );
+	m_checkBoxAutoCompleteCurlyBraces = new wxCheckBox( this, wxID_ANY, _("Auto Complete Curly Braces \"{\""), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxAutoCompleteCurlyBraces->SetValue(true); 
+	m_checkBoxAutoCompleteCurlyBraces->SetToolTip( _("Auto add matching close brace") );
 	
-	fgSizer1->Add( m_checkBoxAutoCompleteBraces, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer1->Add( m_checkBoxAutoCompleteCurlyBraces, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_checkBoxDisableSemicolonShift = new wxCheckBox( this, wxID_ANY, _("Disable semicolon shift"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxDisableSemicolonShift->SetToolTip( _("Auto swap between semicolon and closing brace") );
 	
 	fgSizer1->Add( m_checkBoxDisableSemicolonShift, 0, wxALL|wxEXPAND, 5 );
 	
+	m_checkBoxAutoCompleteNormalBraces = new wxCheckBox( this, wxID_ANY, _("Auto Complete Braces \"[(\""), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxAutoCompleteNormalBraces->SetValue(true); 
+	fgSizer1->Add( m_checkBoxAutoCompleteNormalBraces, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	
 	m_checkBoxHideChangeMarkerMargin = new wxCheckBox( this, wxID_ANY, _("Hide change marker margin"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxHideChangeMarkerMargin->SetToolTip( _("Hide / Display the change marker margin (red/green marks when line is modified)") );
 	
 	fgSizer1->Add( m_checkBoxHideChangeMarkerMargin, 0, wxALL, 5 );
+	
+	
+	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Whitespace visibility:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
@@ -87,14 +95,14 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 	m_highlightCaretLine = new wxCheckBox( this, wxID_ANY, _("Highlight caret line"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_highlightCaretLine->SetToolTip( _("Highlight the caret line") );
 	
-	fgSizer2->Add( m_highlightCaretLine, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	fgSizer2->Add( m_highlightCaretLine, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 	
 	
 	fgSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	m_staticText41 = new wxStaticText( this, wxID_ANY, _("Caret line alpha:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText41->Wrap( -1 );
-	fgSizer2->Add( m_staticText41, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer2->Add( m_staticText41, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_sliderCaretLineAlpha = new wxSlider( this, wxID_ANY, 50, 0, 256, wxDefaultPosition, wxDefaultSize, wxSL_LABELS );
 	fgSizer2->Add( m_sliderCaretLineAlpha, 0, wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL|wxEXPAND|wxALIGN_BOTTOM, 5 );
@@ -104,7 +112,7 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 	fgSizer2->Add( m_staticText1, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_caretLineColourPicker = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
-	fgSizer2->Add( m_caretLineColourPicker, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	fgSizer2->Add( m_caretLineColourPicker, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxEXPAND, 5 );
 	
 	bSizer1->Add( fgSizer2, 0, wxEXPAND|wxALL, 5 );
 	

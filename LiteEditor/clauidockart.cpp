@@ -34,6 +34,9 @@ CLAuiDockArt::~CLAuiDockArt()
 
 void CLAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& rect, wxAuiPaneInfo& pane)
 {
+#ifdef __WXMSW__
+	wxAuiDefaultDockArt::DrawPaneButton(dc, window, button, button_state, rect, pane);
+#else
 	switch(button){
 	case wxAUI_BUTTON_CLOSE: {
 		wxBitmap bmp;
@@ -56,6 +59,7 @@ void CLAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
 		wxAuiDefaultDockArt::DrawPaneButton(dc, window, button, button_state, rect, pane);
 		break;
 	}
+#endif
 }
 
 void CLAuiDockArt::DrawBorder(wxDC& dc, wxWindow *WXUNUSED(window), const wxRect& _rect, wxAuiPaneInfo& pane)

@@ -129,7 +129,8 @@ class LEditor : public wxScintilla, public IEditor
 	int                                         m_hyperLinkIndicatroEnd;
 	int                                         m_hyperLinkType;
 	bool                                        m_hightlightMatchedBraces;
-	bool                                        m_autoAddMatchedBrace;
+	bool                                        m_autoAddMatchedCurlyBrace;
+	bool                                        m_autoAddNormalBraces;
 	std::map<int, std::vector<BreakpointInfo> > m_breakpointsInfo;
 	bool                                        m_autoAdjustHScrollbarWidth;
 	calltip_type                                m_calltipType;

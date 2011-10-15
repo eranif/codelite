@@ -36,8 +36,8 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel( wxWindow* pare
 	m_displayLineNumbers->SetValue(options->GetDisplayLineNumbers());
 	m_checkBoxMatchBraces->SetValue(options->GetHighlightMatchedBraces());
 	m_showIndentationGuideLines->SetValue(options->GetShowIndentationGuidelines());
-	m_checkBoxAutoCompleteBraces->SetValue(options->GetAutoAddMatchedBraces());
-	
+	m_checkBoxAutoCompleteCurlyBraces->SetValue(options->GetAutoAddMatchedCurlyBraces());
+	m_checkBoxAutoCompleteNormalBraces->SetValue(options->GetAutoAddMatchedNormalBraces());
 	m_highlightCaretLine->SetValue(options->GetHighlightCaretLine());
 	m_caretLineColourPicker->SetColour(options->GetCaretLineColour());
 	const wxString EOLChoices[] = { wxTRANSLATE("Default"), wxT("Mac (CR)"), wxT("Windows (CRLF)"), wxT("Unix (LF)") };
@@ -74,7 +74,8 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
 	options->SetShowIndentationGuidelines( m_showIndentationGuideLines->IsChecked() );
 	options->SetHighlightCaretLine( m_highlightCaretLine->IsChecked() );
 	options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
-	options->SetAutoAddMatchedBraces(m_checkBoxAutoCompleteBraces->IsChecked());
+	options->SetAutoAddMatchedCurlyBraces(m_checkBoxAutoCompleteCurlyBraces->IsChecked());
+	options->SetAutoAddMatchedNormalBraces(m_checkBoxAutoCompleteNormalBraces->IsChecked());
 	options->SetEolMode(m_EOLstringManager.GetStringSelection());
 	options->SetHideChangeMarkerMargin( m_checkBoxHideChangeMarkerMargin->IsChecked() );
 	options->SetDisableSemicolonShift( m_checkBoxDisableSemicolonShift->IsChecked() );

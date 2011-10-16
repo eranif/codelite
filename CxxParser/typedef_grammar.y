@@ -150,7 +150,7 @@ typedefs             : stmnt_starter LE_TYPEDEF real_type new_name ';'
 							gs_currentTypedef.m_realType.m_templateDecl = s_templateInitList;
 						s_templateInitList.clear();
 						gs_typedefs.push_back(gs_currentTypedef);
-						
+
 					}
 					 | stmnt_starter LE_TYPEDEF LE_TYPENAME real_type new_name ';'
 					 {
@@ -161,36 +161,36 @@ typedefs             : stmnt_starter LE_TYPEDEF real_type new_name ';'
 						gs_typedefs.push_back(gs_currentTypedef);
 					 }
 					;
-						
+
 real_type : variable_decl special_star_amp
-			{ 
+			{
 				gs_currentTypedef.m_realType = curr_var;
 				gs_currentTypedef.m_realType.m_isPtr = ($2.find("*") != std::string::npos);
 			}
 			;
-			
+
 new_name   : LE_IDENTIFIER { gs_currentTypedef.m_name = $1; }
 		   ;
-		 
+
 /* the following rules are for template parameters no declarations! */
 parameter_list	: /* empty */        {$$ = "";}
                             | template_parameter	{$$ = $1;}
                             | parameter_list ',' template_parameter {$$ = $1 + $2 + " " + $3;}
                             ;
 
-template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp
-                        {
-                            $$ = $1 +  $2 + $3 +$4;
-                        }
-                    |  	const_spec nested_scope_specifier basic_type_name special_star_amp
-                        {
-                            $$ = $1 +  $2 + $3 +$4;
-                        }
-                    |  	const_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>' special_star_amp
-                        {
-                            $$ = $1 + $2 + $3 +$4 + $5 + $6 + $7 + " " ;
-                        }
-                        ;
+template_parameter	:   const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp
+                    {
+						$$ = $2 + $3 +$4;
+					}
+                    |   const_spec nested_scope_specifier basic_type_name special_star_amp
+					{
+						$$ = $2 + $3 +$4;
+					}
+                    |   const_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>' special_star_amp
+					{
+						$$ = $2 + $3 +$4 + $5 + $6 + $7 + " " ;
+					}
+;
 
 /*
 applicable for C++, for cases where a function is declared as
@@ -375,7 +375,7 @@ void do_clean_up()
 	setUseIgnoreMacros(true);
 	g_isUsedWithinFunc = false;
 	gs_typedefs.clear();
-	
+
     //do the lexer cleanup
 	cl_scope_lex_clean();
 }
@@ -384,12 +384,12 @@ void do_clean_up()
 void get_typedefs(const std::string &in, clTypedefList &li)
 {
 	std::map<std::string, std::string> dummy;
-	
+
     // provide the lexer with new input
 	if( !setLexerInput(in, dummy) ){
     	return;
     }
-	
+
 	// set the parser local output to our variable list
 	cl_typedef_parse();
 	li = gs_typedefs;

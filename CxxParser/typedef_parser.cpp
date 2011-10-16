@@ -495,7 +495,7 @@ void do_clean_up()
 	setUseIgnoreMacros(true);
 	g_isUsedWithinFunc = false;
 	gs_typedefs.clear();
-	
+
     //do the lexer cleanup
 	cl_scope_lex_clean();
 }
@@ -504,12 +504,12 @@ void do_clean_up()
 void get_typedefs(const std::string &in, clTypedefList &li)
 {
 	std::map<std::string, std::string> dummy;
-	
+
     // provide the lexer with new input
 	if( !setLexerInput(in, dummy) ){
     	return;
     }
-	
+
 	// set the parser local output to our variable list
 	cl_typedef_parse();
 	li = gs_typedefs;
@@ -718,7 +718,7 @@ case 21:
 							gs_currentTypedef.m_realType.m_templateDecl = s_templateInitList;
 						s_templateInitList.clear();
 						gs_typedefs.push_back(gs_currentTypedef);
-						
+
 					}
 break;
 case 22:
@@ -731,7 +731,7 @@ case 22:
 					 }
 break;
 case 23:
-{ 
+{
 				gs_currentTypedef.m_realType = curr_var;
 				gs_currentTypedef.m_realType.m_isPtr = (yyvsp[0].find("*") != std::string::npos);
 			}
@@ -750,18 +750,18 @@ case 27:
 break;
 case 28:
 {
-                            yyval = yyvsp[-3] +  yyvsp[-2] + yyvsp[-1] +yyvsp[0];
-                        }
+						yyval = yyvsp[-2] + yyvsp[-1] +yyvsp[0];
+					}
 break;
 case 29:
 {
-                            yyval = yyvsp[-3] +  yyvsp[-2] + yyvsp[-1] +yyvsp[0];
-                        }
+						yyval = yyvsp[-2] + yyvsp[-1] +yyvsp[0];
+					}
 break;
 case 30:
 {
-                            yyval = yyvsp[-6] + yyvsp[-5] + yyvsp[-4] +yyvsp[-3] + yyvsp[-2] + yyvsp[-1] + yyvsp[0] + " " ;
-                        }
+						yyval = yyvsp[-5] + yyvsp[-4] +yyvsp[-3] + yyvsp[-2] + yyvsp[-1] + yyvsp[0] + " " ;
+					}
 break;
 case 31:
 {yyval = yyvsp[-1]+ yyvsp[0]; }

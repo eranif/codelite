@@ -93,7 +93,7 @@ createVariables()
 	echo "DESTDIR=" >> Makefile
 	echo "" >> Makefile
 	echo "CCFLAGS= -Wall `wx-config --cxxflags ${wxcfg}` -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DINSTALL_DIR=\\\"${prefix}/share/codelite\\\" -DPLUGINS_DIR=\\\"${plugins_dir}\\\"" >> Makefile
-	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) -lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib `${wxconfiglibs} ${wxcfg}`" >> Makefile
+	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) -lwxscintilla\$(EXT) -lwxshapeframework\$(EXT) ${dbl_links} -L${base_dir}/sdk/sqlite3/lib `${wxconfiglibs} ${wxcfg}`" >> Makefile
 	echo "PLUGIN_LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) `${wxconfiglibs} ${wxcfg}` ${additional_links}" >> Makefile
 	echo "INCLUDES := \$(INCLUDES) ${additional_include_path} " >> Makefile
 	echo "" >> Makefile
@@ -437,33 +437,12 @@ createRules_sharedObject ()
 	  	createVariables "yes" "-I/usr/include/mysql"
 	elif [ "$rule_name" = "DatabaseLayerPostgres" ] ; then
 	  	createVariables "yes" "-I/usr/include/postgresql"
+	elif [ "$rule_name" = "DatabaseExplorer" ] ; then
+		createVariables "yes" " " "-Wl,--no-as-needed"
 	else
 	  	createVariables "yes"
 	fi
-	
-	if [ "$rule_name" = "DatabaseExplorer" ] ; then
-		## create custom CCFLAGS
-		dbl_flags="-DDBL_USE_SQLITE"
-		if [ "$enable_mysql" = "yes" ] ; then
-			dbl_flags="$dbl_flags -DDBL_USE_MYSQL"
-		fi
-		if [ "$enable_postgres" = "yes" ] ; then
-			dbl_flags="$dbl_flags -DDBL_USE_POSTGRES"
-		fi
-		
-		## link databaselayer backends
-		dbl_libs="-ldblayersqlite\$(EXT) -lwxshapeframework\$(EXT)"
-		if [ "$enable_mysql" = "yes" ] ; then
-			dbl_libs="$dbl_libs -ldblayermysql\$(EXT)"
-		fi
-		if [ "$enable_postgres" = "yes" ] ; then
-			dbl_libs="$dbl_libs -ldblayerpostgres\$(EXT)"
-		fi
-	
-		echo "PLUGIN_LINK_FLAGS := \$(PLUGIN_LINK_FLAGS) ${dbl_libs} " >> Makefile
-		echo "CCFLAGS := \$(CCFLAGS) ${dbl_flags} " >> Makefile
-	fi
-	
+
 	for a_file in $files_list
 	do
 
@@ -605,7 +584,7 @@ createPluginMakefile()
 		if [ "$enable_postgres" = "yes" ] ; then
 			dbl_libs="$dbl_libs -ldblayerpostgres\$(EXT)"
 		fi
-	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxshapeframework\$(EXT) ${dbl_libs}" "${dbl_flags}"
+	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxshapeframework\$(EXT) ${dbl_libs}"
 	else
 	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
 	fi

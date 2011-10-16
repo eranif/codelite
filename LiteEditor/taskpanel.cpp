@@ -162,7 +162,7 @@ void TaskPanel::OnRepeatOutput(wxCommandEvent& e)
 
 void TaskPanel::OnFindWhat(wxCommandEvent& e)
 {
-	TasksFindWhatDlg dlg(this);
+	TasksFindWhatDlg dlg(wxTheApp->GetTopWindow());
 	dlg.ShowModal();
 }
 

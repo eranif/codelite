@@ -126,7 +126,7 @@ createMainTargets()
 	fi
 
 	## default
-	target_all="all :  pre_build SQLite Scintilla ShapeFramework $target_dbl CodeLite SDK codelite_indexer codelite_cppcheck Plugins LiteEditor "
+	target_all="all :  pre_build Scintilla ShapeFramework $target_dbl CodeLite SDK codelite_indexer codelite_cppcheck Plugins LiteEditor "
 	
 	## additional database backends
 
@@ -140,6 +140,7 @@ createMainTargets()
 	fi
 
 	## add the "all" target to the makefile
+	echo ".PHONY: PrintMsg" >> Makefile
 	echo "${target_all}" >> Makefile
 	echo "" >> Makefile
 
@@ -425,6 +426,8 @@ createRules_sharedObject ()
 	if [ "$os_name" = "Darwin" ];then
 	  additional_link_libs=$6
 	  additional_link_libs="$additional_link_libs -headerpad_max_install_names"
+	elif [ "$rule_name" = "DatabaseExplorer" ]; then
+		additional_link_libs=$6
 	fi
 
 	additional_flags=$7
@@ -476,13 +479,13 @@ createRules_sharedObject ()
 	if [ "$os_name" = "Darwin" ]; then
 		shared_obj_switch=" -dynamiclib "
 	fi
-
+	
 	if [ "$rule_name" = "SDK" ]; then
-		echo "${rule_name}: \$(${object_list_name}) CodeLite " >> Makefile
-	else
+		echo "${rule_name}: CodeLite \$(${object_list_name}) " >> Makefile
+	else 
 		echo "${rule_name}: \$(${object_list_name})" >> Makefile
 	fi
-
+	
 	echo "	\$(CMP) -fPIC ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(PLUGIN_LINK_FLAGS) ${additional_link_libs} -lutil" >> Makefile
 	if [ $dont_copy != "dont_copy" ]; then
 		echo "	cp -f ${base_dir}/\$(OUTPUT_DIR)/${libname}.so ${runtime_path}/." >> Makefile
@@ -584,7 +587,7 @@ createPluginMakefile()
 		if [ "$enable_postgres" = "yes" ] ; then
 			dbl_libs="$dbl_libs -ldblayerpostgres\$(EXT)"
 		fi
-	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxshapeframework\$(EXT) ${dbl_libs}"
+	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxshapeframework\$(EXT) ${dbl_libs}" "${dbl_flags}"
 	else
 	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
 	fi
@@ -593,7 +596,7 @@ createPluginMakefile()
 	cd ${current_wd}
 
 	echo ".PHONY: ${plugin_name} ${plugin_name}_clean ${plugin_name}_install" >> Makefile
-	echo "${plugin_name}:" >> Makefile
+	echo "${plugin_name}: CodeLite SDK SQLite" >> Makefile
 	echo "	@\$(MAKE) -C ${plugin_path} -f Makefile" >> Makefile
 	echo "" >> Makefile
 
@@ -954,7 +957,6 @@ echo "Plugins: SDK \\" >> Makefile
 ##
 ########################################################
 #echo "CodeDesigner\\" >> Makefile
-echo "DatabaseExplorer\\" >> Makefile
 echo "Debugger\\" >> Makefile
 echo "Gizmos\\" >> Makefile
 echo "cscope\\" >> Makefile
@@ -971,6 +973,7 @@ echo "ContinuousBuild\\" >> Makefile
 echo "QmakePlugin\\" >> Makefile
 echo "git\\" >> Makefile
 echo "CppCheck\\" >> Makefile
+echo "DatabaseExplorer\\" >> Makefile
 ## Mac Only
 if [ "$os_name" = "Darwin" ]; then
 	echo "MacBundler\\" >> Makefile
@@ -984,7 +987,6 @@ echo "plugins_install:\\" >> Makefile
 ## the install target
 ########################################################
 #echo "CodeDesigner_install\\" >> Makefile
-echo "DatabaseExplorer_install\\" >> Makefile
 echo "Debugger_install\\" >> Makefile
 echo "Gizmos_install\\" >> Makefile
 echo "cscope_install\\" >> Makefile
@@ -1000,6 +1002,7 @@ echo "SymbolView_install\\" >> Makefile
 echo "ContinuousBuild_install\\" >> Makefile
 echo "QmakePlugin_install\\" >> Makefile
 echo "git_install\\" >> Makefile
+echo "DatabaseExplorer_install\\" >> Makefile
 ## Mac only
 if [ "$os_name" = "Darwin" ]; then
 	echo "CppCheck_install\\" >> Makefile
@@ -1017,7 +1020,6 @@ echo "clean_plugins:\\" >> Makefile
 ##
 ########################################################
 #echo "CodeDesigner_clean\\" >> Makefile
-echo "DatabaseExplorer_clean\\" >> Makefile
 echo "Debugger_clean\\" >> Makefile
 echo "Gizmos_clean\\" >> Makefile
 echo "cscope_clean\\" >> Makefile
@@ -1033,6 +1035,7 @@ echo "SymbolView_clean\\" >> Makefile
 echo "ContinuousBuild_clean\\" >> Makefile
 echo "QmakePlugin_clean\\" >> Makefile
 echo "git_clean\\" >> Makefile
+echo "DatabaseExplorer_clean\\" >> Makefile
 if [ "$os_name" = "Darwin" ]; then
 	echo "MacBundler_clean\\" >> Makefile
 fi

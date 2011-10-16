@@ -39,7 +39,7 @@
     <![CDATA[]]>
   </Environment>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
@@ -69,7 +69,7 @@
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>

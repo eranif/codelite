@@ -34,7 +34,7 @@ CLAuiDockArt::~CLAuiDockArt()
 
 void CLAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& rect, wxAuiPaneInfo& pane)
 {
-#ifdef __WXMSW__
+#if defined(__WXMSW__ ) || defined(__WXGTK__)
 	wxAuiDefaultDockArt::DrawPaneButton(dc, window, button, button_state, rect, pane);
 #else
 	switch(button){

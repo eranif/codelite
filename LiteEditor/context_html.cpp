@@ -6,6 +6,7 @@
 ContextHtml::ContextHtml(LEditor *editor)
 	: ContextBase(editor)
 {
+	editor->SetWordChars(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$"));
 }
 
 ContextHtml::ContextHtml()

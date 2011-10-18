@@ -1259,6 +1259,14 @@ void LEditor::CodeComplete()
 //----------------------------------------------------------------
 void LEditor::GotoDefinition()
 {
+	// Let the plugins process this first
+	wxString word = GetWordAtCaret();
+	wxCommandEvent event(wxEVT_CMD_FIND_SYMBOL, GetId());
+	event.SetEventObject(this);
+	event.SetString(word.c_str());
+	if(wxTheApp->ProcessEvent(event))
+		return;
+		
 	m_context->GotoDefinition();
 }
 

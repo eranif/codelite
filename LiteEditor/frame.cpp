@@ -4078,10 +4078,6 @@ void clMainFrame::ReloadExternallyModifiedProjectFiles()
 
 void clMainFrame::SaveLayoutAndSession()
 {
-	// Save the perspective
-	wxFileName userFileName   (wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config") + wxFileName::GetPathSeparator() + wxT("codelite.layout"));
-	WriteFileUTF8(userFileName.GetFullPath(), m_mgr.SavePerspective());
-
 	EditorConfigST::Get()->SaveLexers();
 
 	//save general information

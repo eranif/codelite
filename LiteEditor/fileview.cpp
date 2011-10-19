@@ -1962,11 +1962,13 @@ void FileViewTree::OnRebuildProjectOnly(wxCommandEvent& event)
 
 void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
 {
-	WorkspaceSettingsDlg dlg(clMainFrame::Get(), LocalWorkspaceST::Get());
-	if(dlg.ShowModal() == wxID_OK) {
-		clMainFrame::Get()->SelectBestEnvSet();
-		// Update the new paths
-		ManagerST::Get()->UpdateParserPaths(true);
+	if(ManagerST::Get()->IsWorkspaceOpen()) {
+		WorkspaceSettingsDlg dlg(clMainFrame::Get(), LocalWorkspaceST::Get());
+		if(dlg.ShowModal() == wxID_OK) {
+			clMainFrame::Get()->SelectBestEnvSet();
+			// Update the new paths
+			ManagerST::Get()->UpdateParserPaths(true);
+		}
 	}
 }
 

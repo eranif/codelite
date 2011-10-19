@@ -34,7 +34,6 @@ class BuildTab;
 class ErrorsTab;
 class ReplaceInFilesPanel;
 class ShellTab;
-class DebugTab;
 class TaskPanel;
 class OutputPaneBook;
 class FindUsageTab;
@@ -78,7 +77,6 @@ private:
 	BuildTab              *m_buildWin;
 	ErrorsTab             *m_errorsWin;
 	ShellTab              *m_outputWind;
-	DebugTab              *m_outputDebug;
 	TaskPanel             *m_taskPanel;
 	FindUsageTab          *m_showUsageTab;
 	bool                   m_buildInProgress;
@@ -110,7 +108,6 @@ public:
 	BuildTab              *GetBuildTab         () { return m_buildWin;          }
 	ErrorsTab             *GetErrorsTab        () { return m_errorsWin;         }
 	ShellTab              *GetOutputWindow     () { return m_outputWind;        }
-	DebugTab              *GetDebugWindow      () { return m_outputDebug;       }
 	FindUsageTab          *GetShowUsageTab     () { return m_showUsageTab;      }
 };
 

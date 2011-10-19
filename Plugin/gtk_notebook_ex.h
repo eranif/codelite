@@ -134,7 +134,12 @@ public:
 	 * \return text or wxEmptyString if page index is invalid
 	 */
 	wxString GetPageText(size_t page) const;
-
+	
+	/**
+	 * @brief return the page bitmap
+	 */
+	wxBitmap GetPageBitmap(size_t page) const;
+	
 	/**
 	 * \brief remove page from the book without destroying it
 	 * \param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED

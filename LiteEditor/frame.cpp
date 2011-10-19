@@ -3664,7 +3664,7 @@ void clMainFrame::OnDetachDebuggerViewTab(wxCommandEvent& e)
 	size_t     sel = GetDebuggerPane()->GetNotebook()->GetSelection();
 	wxWindow *page = GetDebuggerPane()->GetNotebook()->GetCurrentPage();
 	wxString  text = GetDebuggerPane()->GetNotebook()->GetPageText(sel);
-	wxBitmap  bmp ;
+	wxBitmap  bmp  = GetDebuggerPane()->GetNotebook()->GetPageBitmap(sel);
 
 #if !CL_USE_NATIVEBOOK
 	DockablePane *pane = new DockablePane(this, GetDebuggerPane()->GetNotebook(), text, bmp, wxSize(200, 200));
@@ -4450,14 +4450,9 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 		}
 
 	}
-
-	// Delete the debugger layout
-	wxString debugPrespective(wxStandardPaths::Get().GetUserDataDir() + wxT("/config/debug.layout"));
-	wxFileName fn(debugPrespective);
-	if(fn.FileExists()) {
-		wxRemoveFile(debugPrespective);
-	}
-
+	
+	ManagerST::Get()->DeleteAllPerspectives();
+	
 	m_mgr.LoadPerspective(m_defaultLayout, false);
 	UpdateAUI();
 }

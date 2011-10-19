@@ -86,6 +86,9 @@
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
 
+static wxString DEBUG_LAYOUT  = wxT("debug.layout");
+static wxString NORMAL_LAYOUT = wxT("nomral.layout");
+
 //---------------------------------------------------------------
 // Menu accelerators helper method
 //---------------------------------------------------------------
@@ -1841,7 +1844,7 @@ void Manager::OnProcessEnd ( wxProcessEvent &event )
 
 static void DebugMessage ( wxString msg )
 {
-	clMainFrame::Get()->GetOutputPane()->GetDebugWindow()->AppendLine(msg);
+	clMainFrame::Get()->GetDebuggerPane()->GetDebugWindow()->AppendLine(msg);
 }
 
 void Manager::UpdateDebuggerPane()
@@ -1962,7 +1965,10 @@ void Manager::DbgStart ( long attachPid )
 		return;
 	}
 #endif
-
+	
+	// Save the current layout
+	SavePerspective(NORMAL_LAYOUT);
+	
 	if ( attachPid == 1 ) { //attach to process
 		AttachDbgProcDlg *dlg = new AttachDbgProcDlg ( NULL );
 		if ( dlg->ShowModal() == wxID_OK ) {
@@ -2024,8 +2030,9 @@ void Manager::DbgStart ( long attachPid )
 		//dbgr->QueryFileLine();
 		return;
 	}
-
-	// Is the debugger-pane is already visible? If so, don't close it again when the session is over
+	
+	// Store the states of the debugger and the output pane prior to starting
+	// the debug session
 	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
 	if ( info.IsOk() ) {
 		SetDebuggerPaneOriginallyVisible(info.IsShown());
@@ -2197,16 +2204,15 @@ void Manager::DbgStart ( long attachPid )
 		// debugging local target
 		dbgr->Run ( args, wxEmptyString );
 	}
-
-	// and finally double-check the debugger pane visible
-	wxAuiPaneInfo &info2 = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
-	if ( info2.IsOk() && !info2.IsShown() ) {
-		ShowDebuggerPane ( true );
-	}
+	
+	LoadPerspective(DEBUG_LAYOUT);
 }
 
 void Manager::DbgStop()
 {
+	SavePerspective(DEBUG_LAYOUT);
+	LoadPerspective(NORMAL_LAYOUT);
+	
 	if ( m_watchDlg ) {
 		m_watchDlg->Destroy();
 		m_watchDlg = NULL;
@@ -2231,7 +2237,6 @@ void Manager::DbgStop()
 
 	// Clear the ascii viewer
 	clMainFrame::Get()->GetDebuggerPane()->GetAsciiViewer()->UpdateView(wxT(""), wxT(""));
-
 	// update toolbar state
 	UpdateStopped();
 
@@ -3513,5 +3518,44 @@ void Manager::GetActiveProjectFiles(wxArrayString& files)
 	getFilesEevet.SetClientData(&files);
 	if(!wxTheApp->ProcessEvent(getFilesEevet)) {
 		GetProjectFiles(GetActiveProjectName(), files);
+	}
+}
+
+void Manager::LoadPerspective(const wxString& name)
+{
+	wxString file;
+	file << wxStandardPaths::Get().GetUserDataDir() << wxT("/config/") << name;
+	
+	wxString content;
+	if(ReadFileWithConversion(file, content)) {
+		clMainFrame::Get()->GetDockingManager().LoadPerspective(content, true);
+		
+	} else {
+		if(name == DEBUG_LAYOUT) {
+			// First time, make sure that the debugger pane is visible
+			wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
+			if(info.IsOk() && !info.IsShown()) {
+				info.Show();
+				clMainFrame::Get()->GetDockingManager().Update();
+			}
+		}
+	}
+}
+
+void Manager::SavePerspective(const wxString& name)
+{
+	wxString file;
+	file << wxStandardPaths::Get().GetUserDataDir() << wxT("/config/") << name;
+	WriteFileWithBackup(file, clMainFrame::Get()->GetDockingManager().SavePerspective(), false);
+}
+
+void Manager::DeleteAllPerspectives()
+{
+	wxArrayString files;
+	wxDir::GetAllFiles(wxStandardPaths::Get().GetUserDataDir() + wxT("/config/"), &files, wxT("*.layout"));
+	
+	wxLogNull noLog;
+	for(size_t i=0; i<files.GetCount(); i++) {
+		wxRemoveFile(files.Item(i));
 	}
 }

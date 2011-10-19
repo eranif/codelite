@@ -56,10 +56,6 @@ void ConsoleFrame::OnDebuggerEnded(wxCommandEvent& e)
 {
 #ifndef __WXMSW__
 
-	// Save the debug perspective
-	wxString debugPrespective(wxStandardPaths::Get().GetUserDataDir() + wxT("/config/debug.layout"));
-	WriteFileWithBackup(debugPrespective, clMainFrame::Get()->GetDockingManager().SavePerspective(), false);
-
 	clMainFrame::Get()->GetDockingManager().DetachPane(this);
 	Destroy();
 	clMainFrame::Get()->GetDockingManager().Update();

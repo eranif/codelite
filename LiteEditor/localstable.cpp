@@ -344,7 +344,7 @@ void LocalsTable::UpdateFrameInfo()
 	if(ManagerST::Get()->DbgGetCurrentFrameInfo().IsValid() && ManagerST::Get()->DbgGetCurrentFrameInfo() != m_curStackInfo) {
 		Clear();
 		m_curStackInfo = ManagerST::Get()->DbgGetCurrentFrameInfo();
-		clMainFrame::Get()->GetOutputPane()->GetDebugWindow()->AppendLine(
+		clMainFrame::Get()->GetDebuggerPane()->GetDebugWindow()->AppendLine(
 		    wxString::Format(_("Current scope is now set to: \"%s\", depth: %d\n"),
 		                     m_curStackInfo.func.c_str(),
 		                     m_curStackInfo.depth)

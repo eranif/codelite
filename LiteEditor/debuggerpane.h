@@ -37,6 +37,7 @@ class ThreadListPanel;
 class MemoryView;
 class wxAuiManager;
 class DebuggerAsciiViewer;
+class DebugTab;
 
 class DebuggerPane : public wxPanel
 {
@@ -48,12 +49,13 @@ public:
 	static const wxString THREADS;
 	static const wxString MEMORY;
 	static const wxString ASCII_VIEWER;
-
+	static const wxString DEBUGGER_OUTPUT;
+	
 private:
 	Notebook *            m_book;
 	LocalsTable *         m_localsTable;
 	wxString              m_caption;
-	WatchesTable *         m_watchesTable;
+	WatchesTable *        m_watchesTable;
 	ListCtrlPanel *       m_frameList;
 	BreakpointDlg *       m_breakpoints;
 	ThreadListPanel*      m_threads;
@@ -61,7 +63,8 @@ private:
 	DebuggerAsciiViewer*  m_asciiViewer;
 	bool                  m_initDone;
 	wxAuiManager *        m_mgr;
-
+	DebugTab*             m_outputDebug;
+	
 private:
 	void CreateGUIControls();
 
@@ -70,14 +73,15 @@ public:
 	virtual ~DebuggerPane();
 
 	//setters/getters
-	const wxString &     GetCaption() const{return m_caption;}
-	LocalsTable *        GetLocalsTable() {return m_localsTable;}
-	WatchesTable *       GetWatchesTable(){return m_watchesTable;}
-	ListCtrlPanel *      GetFrameListView(){return m_frameList;}
-	BreakpointDlg *      GetBreakpointView(){return m_breakpoints;}
-	ThreadListPanel *    GetThreadsView(){return m_threads;}
-	MemoryView *         GetMemoryView(){return m_memory;}
-	DebuggerAsciiViewer* GetAsciiViewer(){return m_asciiViewer;}
+	const wxString &     GetCaption       () const{return m_caption;}
+	LocalsTable *        GetLocalsTable   () { return m_localsTable;}
+	WatchesTable *       GetWatchesTable  () { return m_watchesTable;}
+	ListCtrlPanel *      GetFrameListView () { return m_frameList;}
+	BreakpointDlg *      GetBreakpointView() { return m_breakpoints;}
+	ThreadListPanel *    GetThreadsView   () { return m_threads;}
+	MemoryView *         GetMemoryView    () { return m_memory;}
+	DebuggerAsciiViewer* GetAsciiViewer   () { return m_asciiViewer;}
+	DebugTab*            GetDebugWindow   () { return m_outputDebug;}
 
 	Notebook *GetNotebook(){return m_book;}
 	void SelectTab(const wxString &tabName);

@@ -624,6 +624,14 @@ void Notebook::GTKOnPageReordered(GtkWidget* page, int new_pos)
 	m_pagesData.Insert(new_pos, data);
 }
 
+wxBitmap Notebook::GetPageBitmap(size_t page) const
+{
+	if(page >= GetPageCount()) {
+		return wxNullBitmap;
+	}
+	
+	int imgIdx = wxNotebook::GetPageImage(page);
+	return m_imgList->GetBitmap(imgIdx);
+}
+
 #endif
-
-

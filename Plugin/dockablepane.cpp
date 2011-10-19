@@ -75,7 +75,7 @@ void DockablePane::ClosePane(wxCommandEvent& e)
 			sz->Detach(m_child);
 
 			// now we can add it to the noteook (it will be automatically be reparented to the notebook)
-			m_book->AddPage(m_child, m_text, false);
+			m_book->AddPage(m_child, m_text, false, m_bmp);
 		}
 
 		wxCommandEvent event(wxEVT_CMD_DELETE_DOCKPANE);

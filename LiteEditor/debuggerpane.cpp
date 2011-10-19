@@ -30,6 +30,7 @@
 #include "detachedpanesinfo.h"
  #include "wx/dcbuffer.h"
 #include "memoryview.h"
+#include "shelltab.h"
 #include "debuggerpane.h"
 #include "simpletable.h"
 #include "listctrlpanel.h"
@@ -38,13 +39,14 @@
 #include "breakpointdlg.h"
 #include "threadlistpanel.h"
 
-const wxString DebuggerPane::LOCALS       = _("Locals");
-const wxString DebuggerPane::WATCHES      = _("Watches");
-const wxString DebuggerPane::FRAMES       = _("Call Stack");
-const wxString DebuggerPane::BREAKPOINTS  = _("Breakpoints");
-const wxString DebuggerPane::THREADS      = _("Threads");
-const wxString DebuggerPane::MEMORY       = _("Memory");
-const wxString DebuggerPane::ASCII_VIEWER = _("Ascii Viewer");
+const wxString DebuggerPane::LOCALS          = _("Locals");
+const wxString DebuggerPane::WATCHES         = _("Watches");
+const wxString DebuggerPane::FRAMES          = _("Call Stack");
+const wxString DebuggerPane::BREAKPOINTS     = _("Breakpoints");
+const wxString DebuggerPane::THREADS         = _("Threads");
+const wxString DebuggerPane::MEMORY          = _("Memory");
+const wxString DebuggerPane::ASCII_VIEWER    = _("Ascii Viewer");
+const wxString DebuggerPane::DEBUGGER_OUTPUT = _("Ouptut");
 
 #define IS_DETACHED(name) ( detachedPanes.Index(name) != wxNOT_FOUND ) ? true : false
 
@@ -102,7 +104,6 @@ void DebuggerPane::CreateGUIControls()
 	DetachedPanesInfo dpi;
 	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
 	detachedPanes = dpi.GetPanes();
-
 
 	wxString name;
 	wxBitmap bmp;
@@ -197,7 +198,19 @@ void DebuggerPane::CreateGUIControls()
 		m_memory = new MemoryView(m_book);
 		m_book->AddPage(m_memory, name, false, bmp);
 	}
+	
+	name = wxGetTranslation(DEBUGGER_OUTPUT);
+	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab"));
+	if( IS_DETACHED(name) ) {
+		DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+		m_outputDebug = new DebugTab(cp, wxID_ANY, wxGetTranslation(DEBUGGER_OUTPUT));
+		cp->SetChildNoReparent(m_outputDebug);
 
+	} else {
+		m_outputDebug = new DebugTab(m_book, wxID_ANY, wxGetTranslation(DEBUGGER_OUTPUT));
+		m_book->AddPage(m_outputDebug, name, false, bmp);
+	}
+	
 	m_initDone = true;
 }
 
@@ -218,4 +231,5 @@ void DebuggerPane::Clear()
 	GetFrameListView()->Clear();
 	GetThreadsView()->Clear();
 	GetMemoryView()->Clear();
+	GetDebugWindow()->Clear();
 }

@@ -54,7 +54,6 @@ protected:
 	void SetThisPaneIsSticky(bool stickiness);
 
 	virtual void AppendText(const wxString &text);
-	virtual void Clear();
 	virtual bool IsFocused();
 
 	//Event handlers
@@ -87,7 +86,7 @@ public:
 	~OutputTabWindow();
 
 	bool IsThisPaneSticky();
-
+	virtual void Clear();
 	const wxString &GetCaption() const {return m_name;}
 };
 #endif // __outputtabwindow__

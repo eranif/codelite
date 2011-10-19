@@ -624,6 +624,11 @@ public:
 	bool GetDebuggerPaneOriginallyVisible() const {
 		return DebuggerPaneWasShown;
 	}
+	
+	void LoadPerspective(const wxString &name);
+	void SavePerspective(const wxString &name);
+	void DeleteAllPerspectives();
+	
 	//---------------------------------------------------
 	// Debugging API
 	//---------------------------------------------------

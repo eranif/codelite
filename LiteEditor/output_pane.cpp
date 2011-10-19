@@ -102,9 +102,6 @@ void OutputPane::CreateGUIControls()
 	m_outputWind = new ShellTab(m_book, wxID_ANY, wxGetTranslation(OUTPUT_WIN));
 	m_book->AddPage(m_outputWind, wxGetTranslation(OUTPUT_WIN), false, bmpLoader->LoadBitmap(wxT("output-pane/16/terminal")));
 
-	m_outputDebug = new DebugTab(m_book, wxID_ANY, wxGetTranslation(OUTPUT_DEBUG));
-	m_book->AddPage(m_outputDebug, wxGetTranslation(OUTPUT_DEBUG), false, wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
-
 	wxTextCtrl *text = new wxTextCtrl(m_book, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
 	
 	/////////////////////////////////////

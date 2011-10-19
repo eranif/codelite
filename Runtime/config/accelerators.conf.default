@@ -141,7 +141,8 @@ insert_doxy_comment|C++::Code Generation / Refactoring|Insert Doxygen Comment|Ct
 setters_getters|C++::Code Generation / Refactoring|Generate Setters/Getters...|
 move_impl|C++::Code Generation / Refactoring|Move Function Implementation to...|
 add_impl|C++::Code Generation / Refactoring|Add Function Implementation...|
-rename_function|C++::Code Generation / Refactoring|Rename Symbol...|Ctrl-Shift-H
+rename_symbol|C++::Code Generation / Refactoring|Rename Symbol...|Ctrl-Shift-H
+rename_local_variable|C++::Code Generation / Refactoring|Rename Local Variable...|Ctrl-Shift-L
 comment_selection|C++::Code Generation / Refactoring|Comment Selection|Ctrl-Shift-/
 comment_line|C++::Code Generation / Refactoring|Toggle Line Comment|Ctrl-/
 add_multi_impl|C++::Code Generation / Refactoring|Implement all Un-implemented Functions...|

@@ -316,24 +316,31 @@ bool DbgGdb::Run( const wxString &args, const wxString &comm )
 	}
 }
 
-bool DbgGdb::Stop()
+void DbgGdb::DoCleanup()
 {
 	if ( m_gdbProcess ) {
 		delete m_gdbProcess;
 		m_gdbProcess = NULL;
 	}
-
-	//free allocated console for this session
-	m_consoleFinder.FreeConsole();
-
-	//return control to the program
-	m_observer->UpdateGotControl( DBG_DBGR_KILLED );
+	
+	SetIsRemoteDebugging( false );
 	EmptyQueue();
 	m_gdbOutputArr.Clear();
 	m_bpList.clear();
 	m_debuggeeProjectName.Clear();
+	
 	// Clear any bufferd output
 	m_gdbOutputIncompleteLine.Clear();
+	
+	// Free allocated console for this session
+	m_consoleFinder.FreeConsole();
+}
+
+bool DbgGdb::Stop()
+{
+	//return control to the program
+	m_observer->UpdateGotControl( DBG_DBGR_KILLED );
+	DoCleanup();
 	return true;
 }
 
@@ -888,17 +895,9 @@ void DbgGdb::OnProcessEnd( wxCommandEvent &e )
 {
 	ProcessEventData *ped = ( ProcessEventData * )e.GetClientData();
 	delete ped;
-
-	if ( m_gdbProcess ) {
-		delete m_gdbProcess;
-		m_gdbProcess = NULL;
-	}
-
+	
 	m_observer->UpdateGotControl( DBG_EXITED_NORMALLY );
-	m_gdbOutputArr.Clear();
-	m_consoleFinder.FreeConsole();
-	m_debuggeeProjectName.Clear();
-	SetIsRemoteDebugging( false );
+	DoCleanup();
 }
 
 bool DbgGdb::GetAsciiViewerContent( const wxString &dbgCommand, const wxString& expression )

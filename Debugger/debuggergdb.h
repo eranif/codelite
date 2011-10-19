@@ -73,6 +73,8 @@ protected:
 	void           EmptyQueue();
 	bool           FilterMessage(const wxString &msg);
 	bool           DoGetNextLine(wxString &line);
+	void           DoCleanup();
+	
 	//wrapper for convinience
 	void DoProcessAsyncCommand(wxString &line, wxString &id);
 

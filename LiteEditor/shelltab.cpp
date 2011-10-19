@@ -235,7 +235,7 @@ DebugTab::DebugTab(wxWindow* parent, wxWindowID id, const wxString& name)
 	}
 
 	m_vertSizer->Prepend(new DebugTabPanel(this), 0, wxEXPAND);
-	
+	m_autoAppear = false;
 	Connect(XRCID("hold_pane_open"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebugTab::OnHoldOpenUpdateUI), NULL, this);
 }
 

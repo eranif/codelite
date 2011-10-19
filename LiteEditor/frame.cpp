@@ -616,6 +616,7 @@ clMainFrame::~clMainFrame(void)
 	wxTheApp->Disconnect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	wxTheApp->Disconnect(wxEVT_CLANG_PCH_CACHE_STARTED, wxCommandEventHandler(clMainFrame::OnPchCacheStarted),          NULL, this);
 	wxTheApp->Disconnect(wxEVT_CLANG_PCH_CACHE_ENDED,   wxCommandEventHandler(clMainFrame::OnPchCacheEnded),            NULL, this);
+	
 
 	delete m_timer;
 	ManagerST::Free();
@@ -4571,10 +4572,6 @@ wxString clMainFrame::StartTTY(const wxString &title)
 	paneInfo.Name(wxT("Debugger Console")).Caption(title).Dockable().FloatingSize(300, 200).CloseButton(false);
 	m_mgr.AddPane(console, paneInfo);
 
-	if(!content.IsEmpty()) {
-		m_mgr.LoadPerspective(content, false);
-	}
-	
 	// Re-set the title (it might be modified by 'LoadPerspective'
 	wxAuiPaneInfo& pi = m_mgr.GetPane(wxT("Debugger Console"));
 	if(pi.IsOk()) {
@@ -4750,3 +4747,4 @@ bool clMainFrame::IsWorkspaceViewFlagEnabled(int flag)
 	EditorConfigST::Get()->GetLongValue(wxT("view_workspace_view"), flags);
 	return (flags & flag);
 }
+

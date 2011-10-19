@@ -85,7 +85,6 @@
 #include "manager.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
-
 static wxString DEBUG_LAYOUT  = wxT("debug.layout");
 static wxString NORMAL_LAYOUT = wxT("nomral.layout");
 
@@ -345,7 +344,11 @@ void Manager::CloseWorkspace()
 	m_workspceClosing = true;
 
 	DbgClearWatches();
-	DbgStop();
+	
+	// If we got a running debugging session - terminate it
+	IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
+	if(debugger && debugger->IsRunning())
+		DbgStop();
 
 	//save the current session before closing
 	SessionEntry session;
@@ -1966,9 +1969,6 @@ void Manager::DbgStart ( long attachPid )
 	}
 #endif
 	
-	// Save the current layout
-	SavePerspective(NORMAL_LAYOUT);
-	
 	if ( attachPid == 1 ) { //attach to process
 		AttachDbgProcDlg *dlg = new AttachDbgProcDlg ( NULL );
 		if ( dlg->ShowModal() == wxID_OK ) {
@@ -2027,17 +2027,12 @@ void Manager::DbgStart ( long attachPid )
 		clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->ResetTableColors();
 
 		dbgr->Continue();
-		//dbgr->QueryFileLine();
 		return;
 	}
 	
-	// Store the states of the debugger and the output pane prior to starting
-	// the debug session
-	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
-	if ( info.IsOk() ) {
-		SetDebuggerPaneOriginallyVisible(info.IsShown());
-	}
-
+	// Save the current layout
+	SavePerspective(NORMAL_LAYOUT);
+	
 	//set the debugger information
 	DebuggerInformation dinfo;
 	DebuggerMgr::Get().GetDebuggerInformation ( debuggerName, dinfo );
@@ -2175,12 +2170,6 @@ void Manager::DbgStart ( long attachPid )
 	DebugMessage ( output );
 	DebugMessage ( _( "Debug session started successfully!\n" ) );
 
-	// if showing debug tab on run, then we always show it
-	if (EditorConfigST::Get()->GetOptions()->GetShowDebugOnRun()) {
-		ShowOutputPane(wxGetTranslation(OutputPane::OUTPUT_DEBUG));
-	}
-	// else, we leave it as it currently is (displayed or not)
-
 	if ( dbgr->GetIsRemoteDebugging() ) {
 
 		// debugging remote target
@@ -2240,11 +2229,6 @@ void Manager::DbgStop()
 	// update toolbar state
 	UpdateStopped();
 
-	// and finally, hide the debugger pane (if we caused it to appear)
-	if (! GetDebuggerPaneOriginallyVisible()) {
-		ShowDebuggerPane ( false );
-	}
-
 	IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
 	if ( !dbgr ) {
 		return;
@@ -2259,8 +2243,10 @@ void Manager::DbgStop()
 
 	// notify plugins that the debugger is about to be stopped
 	SendCmdEvent(wxEVT_DEBUG_ENDING);
-
-	dbgr->Stop();
+	
+	if(dbgr->IsRunning())
+		dbgr->Stop();
+		
 	DebuggerMgr::Get().SetActiveDebugger ( wxEmptyString );
 	DebugMessage ( _( "Debug session ended\n" ) );
 

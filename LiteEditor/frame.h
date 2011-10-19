@@ -502,7 +502,6 @@ protected:
 	// Clang
 	void OnPchCacheStarted(wxCommandEvent &e);
 	void OnPchCacheEnded  (wxCommandEvent &e);
-	
 	DECLARE_EVENT_TABLE()
 };
 

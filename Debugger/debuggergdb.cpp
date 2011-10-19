@@ -339,8 +339,8 @@ void DbgGdb::DoCleanup()
 bool DbgGdb::Stop()
 {
 	//return control to the program
-	m_observer->UpdateGotControl( DBG_DBGR_KILLED );
 	DoCleanup();
+	m_observer->UpdateGotControl( DBG_DBGR_KILLED );
 	return true;
 }
 
@@ -896,8 +896,8 @@ void DbgGdb::OnProcessEnd( wxCommandEvent &e )
 	ProcessEventData *ped = ( ProcessEventData * )e.GetClientData();
 	delete ped;
 	
-	m_observer->UpdateGotControl( DBG_EXITED_NORMALLY );
 	DoCleanup();
+	m_observer->UpdateGotControl( DBG_EXITED_NORMALLY );
 }
 
 bool DbgGdb::GetAsciiViewerContent( const wxString &dbgCommand, const wxString& expression )

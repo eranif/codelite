@@ -157,7 +157,7 @@
 	  <KeyWords1>abstract boolean break byte case catch char class const continue debugger default delete do double else enum export extends false final finally float for function goto if implements                             import in	instanceof int interface long native new null package                             private protected public return short static super	switch                             synchronized this throw throws transient true try typeof var                             void volatile while with</KeyWords1>
 	  <KeyWords2>addressof alias and as attribute base begin binary boolean byref byte byval call case compare const currency date decimal declare defbool defbyte defint deflng defcur defsng defdbl defdec                             defdate defstr defobj defvar dim do double each else elseif empty end enum eqv erase error                             event exit explicit false for friend function get gosub goto if imp implements in input integer                             is len let lib like load lock long loop lset me mid midb mod new next not nothing null object                             on option optional or paramarray preserve print private property public raiseevent randomize                             redim rem resume return rset seek select set single static step stop string sub then time to                             true type typeof unload until variant wend while with withevents xor</KeyWords2>
 	  <KeyWords3>and assert break class continue def del elif else except exec finally for from global if import in is lambda None not or pass print raise return try while yield</KeyWords3>
-	  <KeyWords4>and array as bool boolean break case cfunction class const continue declare default die directory do double echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends false float for foreach function global if include include_once int integer isset list new null object old_function or parent print real require require_once resource return static stdclass string switch true unset use var while xor __class__ __file__ __function__ __line__ __sleep __namespace__ __trait__ __wakeup public protected private trait interface namespace</KeyWords4>
+	  <KeyWords4>abstract and array as bool boolean break case cfunction class const continue declare default die directory do double echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends false float for foreach function global if include include_once int integer isset list new null object old_function or parent print real require require_once resource return static stdclass string switch true unset use var while xor __class__ __file__ __function__ __line__ __sleep __namespace__ __trait__ __wakeup public protected private trait interface namespace final</KeyWords4>
 	  <Extensions>*.htm;*.html;*.xhtml;*.phtml;*.js;*.php;*.php3;*.inc</Extensions>
 	  <Properties>
 		<Property Id="32" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="-1"/>
@@ -261,17 +261,17 @@
 		<Property Id="115" Name="ASP Python Function or method Name definition" Bold="yes" Face="" Colour="#800080" BgColour="#FFFFFF" Size="-1"/>
 		<Property Id="116" Name="ASP Python Operators" Bold="yes" Face="" Colour="black" BgColour="#FFFFFF" Size="-1"/>
 		<Property Id="117" Name="ASP Python Identifiers" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Size="-1"/>
-		<Property Id="104" Name="PHP Complex Variable" Bold="no" Face="" Colour="#000000" BgColour="#FFF8F8" Size="-1"/>
+		<Property Id="104" Name="PHP Complex Variable" Bold="no" Face="" Colour="#000000" BgColour="#FFF8F8" Size="-1" EolFilled="yes"/>
 		<Property Id="118" Name="PHP Default" Bold="no" Face="" Colour="#000000" BgColour="#FFF8F8" Size="-1" EolFilled="yes"/>
 		<Property Id="119" Name="PHP HString" Bold="no" Face="" Colour="#800000" BgColour="#FFF8F8" Size="-1" EolFilled="yes" />
 		<Property Id="120" Name="PHP Simple String" Bold="no" Face="" Colour="#800000" BgColour="#FFF8F8" Size="-1" EolFilled="yes" />
-		<Property Id="121" Name="PHP Word" Bold="yes" Face="" Colour="#0000FF" BgColour="#FFF8F8" Size="-1"/>
-		<Property Id="122" Name="PHP Number" Bold="no" Face="" Colour="#0000FF" BgColour="#FFF8F8" Size="-1"/>
-		<Property Id="123" Name="PHP Variable" Bold="yes" Face="" Colour="#800080" BgColour="#FFF8F8" Size="-1"/>
+		<Property Id="121" Name="PHP Word" Bold="yes" Face="" Colour="#0000FF" BgColour="#FFF8F8" Size="-1" EolFilled="yes"/>
+		<Property Id="122" Name="PHP Number" Bold="no" Face="" Colour="#0000FF" BgColour="#FFF8F8" Size="-1" EolFilled="yes"/>
+		<Property Id="123" Name="PHP Variable" Bold="yes" Face="" Colour="#800080" BgColour="#FFF8F8" Size="-1" EolFilled="yes"/>
 		<Property Id="124" Name="PHP Multiline comment" Bold="no" Face="" Colour="rgb(43, 149, 255)" BgColour="#FFF8F8" Size="-1" EolFilled="yes"/>
 		<Property Id="125" Name="PHP single line Comment" Bold="yes" Face="" Colour="#008000" BgColour="#FFF8F8" Size="-1" EolFilled="yes"/>
-		<Property Id="126" Name="PHP HString Variable" Bold="yes" Face="" Colour="#FF8000" BgColour="#FFF8F8" Size="-1"/>
-		<Property Id="127" Name="PHP Operator" Bold="no" Face="" Colour="#000000" BgColour="#FFF8F8" Size="-1"/>
+		<Property Id="126" Name="PHP HString Variable" Bold="yes" Face="" Colour="#FF8000" BgColour="#FFF8F8" Size="-1" EolFilled="yes"/>
+		<Property Id="127" Name="PHP Operator" Bold="no" Face="" Colour="#000000" BgColour="#FFF8F8" Size="-1" EolFilled="yes"/>
 		<Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="-1"/>
 		<Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="" Size="-1" Alpha="80"/>
 		<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="-1"/>

@@ -22,10 +22,8 @@ END_EVENT_TABLE()
 
 SvnConsole::SvnConsole(wxWindow *parent, Subversion2* plugin)
 		: SvnShellBase(parent)
-		, m_handler(NULL)
 		, m_process(NULL)
 		, m_plugin (plugin)
-		, m_printProcessOutput(true)
 		, m_inferiorEnd(0)
 {
 	m_sci->SetLexer(wxSCI_LEX_SVN);
@@ -49,7 +47,7 @@ void SvnConsole::OnReadProcessOutput(wxCommandEvent& event)
 	wxString s (ped->GetData());
 	s.MakeLower();
 
-	if (m_printProcessOutput)
+	if (m_currCmd.printProcessOutput)
 		AppendText( ped->GetData() );
 
 	wxArrayString lines = wxStringTokenize(s, wxT("\n"), wxTOKEN_STRTOK);
@@ -72,37 +70,35 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 		delete m_process;
 		m_process = NULL;
 	}
-
-	if (m_handler) {
+	
+	if(m_currCmd.handler) {
 		// command ended successfully, invoke the "success" callback
-		m_handler->Process(m_output);
+		m_currCmd.handler->Process(m_output);
 		AppendText(wxT("-----\n"));
-
-		delete m_handler;
-		m_handler = NULL;
+		delete m_currCmd.handler;
 	}
-
-	m_output.Clear();
-	m_workingDirectory.Clear();
-	m_url.Clear();
+	
+	// do we have more commands to process?
+	if(!m_queue.empty()) {
+		DoProcessNextCommand();
+		
+	} else {
+		// Do some cleanup
+		m_output.Clear();
+		m_url.Clear();
+		m_currCmd.clean();
+	}
 }
 
-bool SvnConsole::ExecuteURL(const wxString& cmd, const wxString& url, SvnCommandHandler* handler, bool printProcessOutput)
+void SvnConsole::ExecuteURL(const wxString& cmd, const wxString& url, SvnCommandHandler* handler, bool printProcessOutput)
 {
-	if(!DoExecute(cmd, handler, wxT(""), printProcessOutput))
-		return false;
-
+	DoExecute(cmd, handler, wxT(""), printProcessOutput);
 	m_url = url;
-	return true;
 }
 
-bool SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler, bool printProcessOutput)
+void SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler, bool printProcessOutput)
 {
-	if(!DoExecute(cmd, handler, workingDirectory, printProcessOutput))
-		return false;
-
-	m_workingDirectory = workingDirectory;
-	return true;
+	DoExecute(cmd, handler, workingDirectory, printProcessOutput);
 }
 
 void SvnConsole::AppendText(const wxString& text)
@@ -170,30 +166,34 @@ void SvnConsole::EnsureVisible()
 	}
 }
 
-bool SvnConsole::DoExecute(const wxString& cmd, SvnCommandHandler* handler, const wxString &workingDirectory, bool printProcessOutput)
+void SvnConsole::DoProcessNextCommand()
 {
-	m_workingDirectory.Clear();
-	m_url.Clear();
-
-	m_printProcessOutput = printProcessOutput;
+	// If another process is running, we try again when the process is termianted
 	if (m_process) {
-		// another process is already running...
-		AppendText(svnANOTHER_PROCESS_RUNNING);
-		if (handler)
-			delete handler;
-		return false;
+		return;
 	}
-
+	
+	if(m_queue.empty())
+		return;
+	
+	// Remove the command from the queue
+	SvnConsoleCommand *command = m_queue.front();
+	m_queue.pop_front();
 	m_output.Clear();
-	m_handler = handler;
-
+	
+	m_currCmd.clean();
+	m_currCmd = *command;
+	
+	// Delete it
+	delete command;
+	
 	EnsureVisible();
 
 	// Print the command?
-	AppendText(cmd + wxT("\n"));
+	AppendText(m_currCmd.cmd + wxT("\n"));
 
 	// Wrap the command in the OS Shell
-	wxString cmdShell (cmd);
+	wxString cmdShell (m_currCmd.cmd);
 
 	// Apply the environment variables before executing the command
 	StringMap om;
@@ -202,13 +202,24 @@ bool SvnConsole::DoExecute(const wxString& cmd, SvnCommandHandler* handler, cons
 	bool useOverrideMap = m_plugin->GetSettings().GetFlags() & SvnUsePosixLocale;
 	EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
 
-	m_process = CreateAsyncProcess(this, cmdShell, IProcessCreateWithHiddenConsole, workingDirectory);
+	m_process = CreateAsyncProcess(this, cmdShell, IProcessCreateWithHiddenConsole, m_currCmd.workingDirectory);
 	if (!m_process) {
 		AppendText(_("Failed to launch Subversion client.\n"));
-		return false;
+		return;
 	}
 	m_sci->SetFocus();
-	return true;
+}
+
+void SvnConsole::DoExecute(const wxString& cmd, SvnCommandHandler* handler, const wxString &workingDirectory, bool printProcessOutput)
+{
+	SvnConsoleCommand *consoleCommand = new SvnConsoleCommand();
+	consoleCommand->cmd                = cmd.c_str();
+	consoleCommand->handler            = handler;
+	consoleCommand->printProcessOutput = printProcessOutput;
+	consoleCommand->workingDirectory   = workingDirectory.c_str();
+	m_queue.push_back(consoleCommand);
+	
+	DoProcessNextCommand();
 }
 
 void SvnConsole::OnCharAdded(wxScintillaEvent& event)
@@ -313,3 +324,4 @@ void SvnConsole::DoInitializeFontsAndColours()
 	m_sci->StyleSetFont ( wxSCI_LEX_SVN_DELETED,  font );
 	
 }
+

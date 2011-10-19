@@ -929,7 +929,7 @@ void FileViewTree::DoRemoveItems()
 									wxMessageBox(message, _("Error"), wxOK | wxICON_ERROR, this);
 								}
 							} else {
-								if(!wxRemoveFile(file_name)) {
+								if(wxFileName::FileExists(file_name) && !wxRemoveFile(file_name)) {
 									wxMessageBox(message, _("Error"), wxOK | wxICON_ERROR, this);
 								}
 							}

@@ -45,6 +45,9 @@
 
 extern const wxEventType wxEVT_CMD_RESTART_CODELITE;
 
+extern wxString DEBUG_LAYOUT ;
+extern wxString NORMAL_LAYOUT;
+
 class DisplayVariableDlg;
 
 class DbgStackInfo

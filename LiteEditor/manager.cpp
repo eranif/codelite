@@ -85,8 +85,8 @@
 #include "manager.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
-static wxString DEBUG_LAYOUT  = wxT("debug.layout");
-static wxString NORMAL_LAYOUT = wxT("nomral.layout");
+wxString DEBUG_LAYOUT  = wxT("debug.layout");
+wxString NORMAL_LAYOUT = wxT("normal.layout");
 
 //---------------------------------------------------------------
 // Menu accelerators helper method

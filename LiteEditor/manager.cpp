@@ -195,7 +195,10 @@ Manager::~Manager ( void )
 {
 	wxTheApp->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
 	//stop background processes
-	DbgStop();
+	IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
+	
+	if(debugger && debugger->IsRunning())
+		DbgStop();
 
 	{
 		//wxLogNull noLog;

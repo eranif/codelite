@@ -1591,7 +1591,12 @@ void clMainFrame::OnClose(wxCloseEvent& event)
 
 	// Stop the search thread
 	ManagerST::Get()->KillProgram();
-	ManagerST::Get()->DbgStop();
+	
+	// Stop any debugging session if any
+	IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
+	if(debugger && debugger->IsRunning())
+		ManagerST::Get()->DbgStop();
+		
 	SearchThreadST::Get()->StopSearch();
 
 	SaveLayoutAndSession();
@@ -4240,36 +4245,7 @@ void clMainFrame::StartTimer()
 
 void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 {
-	long loadIt(1);
-	EditorConfigST::Get()->GetLongValue(wxT("LoadSavedPrespective"), loadIt);
-	if (loadIt) {
-
-		// locate the layout file
-		wxFileName defaultfileName(ManagerST::Get()->GetInstallDir() + wxFileName::GetPathSeparator() + wxT("config") + wxFileName::GetPathSeparator() + wxT("codelite.layout"));
-		wxFileName userFileName   (wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config") + wxFileName::GetPathSeparator() + wxT("codelite.layout"));
-		wxString pers(wxEmptyString);
-
-		if (userFileName.FileExists()) {
-			//load this file
-			ReadFileWithConversion(userFileName.GetFullPath(), pers);
-
-		} else if(defaultfileName.FileExists()) {
-			ReadFileWithConversion(defaultfileName.GetFullPath(), pers);
-
-		}
-
-		//clWindowUpdateLocker locker(this);
-		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == SvnRevision) {
-			m_mgr.LoadPerspective(pers);
-
-		} else {
-			EditorConfigST::Get()->SetRevision(SvnRevision);
-			EditorConfigST::Get()->SetInstallDir(ManagerST::Get()->GetInstallDir());
-		}
-
-		UpdateAUI();
-	}
-	EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
+	ManagerST::Get()->LoadPerspective(NORMAL_LAYOUT);
 }
 
 void clMainFrame::SelectBestEnvSet()

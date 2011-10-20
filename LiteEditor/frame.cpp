@@ -4241,7 +4241,18 @@ void clMainFrame::StartTimer()
 
 void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 {
-	ManagerST::Get()->LoadPerspective(NORMAL_LAYOUT);
+	wxString file;
+	file << wxStandardPaths::Get().GetUserDataDir() << wxT("/config/codelite.layout");
+	
+	wxFileName oldLayoutFile(file);
+	if(oldLayoutFile.FileExists(file)) {
+		wxRemoveFile(oldLayoutFile.GetFullPath());
+		wxCommandEvent eventRestoreLayout(wxEVT_COMMAND_MENU_SELECTED, XRCID("restore_layout"));
+		eventRestoreLayout.SetEventObject(this);
+		GetEventHandler()->ProcessEvent(eventRestoreLayout);
+		
+	} else 
+		ManagerST::Get()->LoadPerspective(NORMAL_LAYOUT);
 }
 
 void clMainFrame::SelectBestEnvSet()

@@ -199,7 +199,9 @@ Manager::~Manager ( void )
 	
 	if(debugger && debugger->IsRunning())
 		DbgStop();
-
+	
+	// Save the current layout
+	SavePerspective(NORMAL_LAYOUT);
 	{
 		//wxLogNull noLog;
 		JobQueueSingleton::Instance()->Stop();

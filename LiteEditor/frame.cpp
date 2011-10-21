@@ -3485,7 +3485,7 @@ void clMainFrame::OnNewDetachedPane(wxCommandEvent &e)
 		wxString text = pane->GetName();
 		m_DPmenuMgr->AddMenu(text);
 
-		m_mgr.AddPane(pane, wxAuiPaneInfo().Name(text).Caption(text));
+		m_mgr.AddPane(pane, wxAuiPaneInfo().Name(text).Caption(text).MaximizeButton(true));
 		m_mgr.Update();
 	}
 }

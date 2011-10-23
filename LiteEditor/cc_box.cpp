@@ -883,6 +883,7 @@ void CCBox::DoHideCCHelpTab()
 	m_hideExtInfoPane = true;
 	m_startPos = wxNOT_FOUND;
 	m_currentItem.Reset();
+	m_timer->Stop();
 	LEditor *editor = GetEditor();
 	if(editor)
 		editor->CallTipCancel();
@@ -964,6 +965,8 @@ void CCBox::OnKeyDown(wxListEvent& event)
 
 void CCBox::OnDisplayTooltip(wxTimerEvent& event)
 {
+	if(IsShown() == false)
+		return;
 	CCItemInfo tag;
 	if(m_listCtrl->GetItemTagEntry(m_selectedItem, tag)) {
 		DoFormatDescriptionPage( tag );

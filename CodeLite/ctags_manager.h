@@ -213,15 +213,6 @@ public:
 	void FindSymbol(const wxString& name, std::vector<TagEntryPtr> &tags);
 
 	/**
-	 * ParseTagsFile CTAGS file and construct a TagTree.
-	 * User should use ParseSourceFile, which calls to this function internally.
-	 * This function throws a std::exception*.
-	 * @param fp CTAGS tags file name
-	 * @return tag tree
-	 */
-	TagTreePtr ParseTagsFile(const wxFileName& fp);
-
-	/**
 	 * Parse a source file and construct a TagTree.
 	 * This function throws a std::exception*.
 	 * @param fp Source file name
@@ -689,12 +680,6 @@ public:
 	void GetUnOverridedParentVirtualFunctions(const wxString &scopeName, bool onlyPureVirtual, std::vector<TagEntryPtr> &protos);
 
 	/**
-	 * @brief send event to the file tree to mark tags file as bold
-	 * @param bold
-	 */
-	void NotifyFileTree(bool bold);
-
-	/**
 	 * @brief update the 'last_retagged' column in the 'files' table for the current timestamp
 	 * @param files list of files
 	 * @brief db    database to use
@@ -776,9 +761,6 @@ public:
 	
 	void GetVariables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap, bool isUsedWithinFunc);
 	void GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<TagEntryPtr> &tips);
-protected:
-	// provide a default handler for the wxEVT_UPDATE_FILETREE_EVENT event
-	void OnUpdateFileTreeEvent(wxCommandEvent &e);
 
 protected:
 	void           DoFindByNameAndScope(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags);
@@ -793,8 +775,6 @@ protected:
 	void           FilterImplementation(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
 	void           FilterDeclarations(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
 	wxString       DoReplaceMacros(wxString name);
-	void           UpdateFileTree(const std::vector<wxFileName> &files, bool bold);
-	void           UpdateFileTree(ITagsStorage *td, bool bold);
 	void           DoFilterNonNeededFilesForRetaging(wxArrayString &strFiles, ITagsStorage *db);
 	void           DoGetFunctionTipForEmptyExpression(const wxString &word, const wxString &text, std::vector<TagEntryPtr> &tips, bool globalScopeOnly = false);
 	void           TryFindImplDeclUsingNS(const wxString &scope, const wxString &word, bool imp, const std::vector<wxString>& visibleScopes, std::vector<TagEntryPtr> &tags);

@@ -36,7 +36,7 @@
 #include "tag_tree.h"
 #include "codelite_exports.h"
 
-class TagsStorageSQLite;
+class ITagsStorage;
 
 /**
  * @class ParseThreadEventData
@@ -108,7 +108,8 @@ public:
 		PR_FILESAVED,
 		PR_PARSEINCLUDES,
 		PR_PARSE_AND_STORE,
-		PR_GET_INTERRESTING_MACROS
+		PR_GET_INTERRESTING_MACROS,
+		PR_DELETE_TAGS_OF_FILES
 	};
 
 public:
@@ -159,7 +160,7 @@ public:
 class WXDLLIMPEXP_CL ParseThread : public WorkerThread
 {
 	friend class ParseThreadST;
-	TagsStorageSQLite*               m_pDb;
+	ITagsStorage*               m_pDb;
 	wxStopWatch                 m_watch;
 	wxArrayString               m_searchPaths;
 	wxArrayString               m_excludePaths;
@@ -209,10 +210,11 @@ private:
 	 */
 	void ParseIncludeFiles(const wxString &filename);
 
-	void ProcessSimple        (ParseRequest *req);
-	void ProcessIncludes      (ParseRequest *req);
-	void ProcessParseAndStore (ParseRequest *req);
+	void ProcessSimple            (ParseRequest *req);
+	void ProcessIncludes          (ParseRequest *req);
+	void ProcessParseAndStore     (ParseRequest *req);
 	void ProcessInterrestingMacros(ParseRequest *req);
+	void ProcessDeleteTagsOfFiles (ParseRequest *req);
 	void GetFileListToParse(const wxString &filename, wxArrayString &arrFiles);
 	void ParseAndStoreFiles(const wxArrayString &arrFiles, int initalCount);
 

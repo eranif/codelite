@@ -357,11 +357,12 @@ public:
 	virtual void GetFiles(std::vector<FileEntryPtr> &files) = 0;
 
 	/**
-	 * @brief for transactional storage, provide begin/commit methods
+	 * @brief for transactional storage, provide begin/commit/rollback methods
 	 */
 	virtual void Begin() = 0;
 	virtual void Commit() = 0;
-
+	virtual void Rollback() = 0;
+	
 	/**
 	 * Delete all entries from database that are related to filename.
 	 * @param path Database name

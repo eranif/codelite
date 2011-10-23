@@ -70,7 +70,7 @@ void* WorkerThread::Entry()
 void WorkerThread::Add(ThreadRequest *request)
 {
 	wxCriticalSectionLocker locker(m_cs);
-	m_queue.push_front(request);
+	m_queue.push_back(request);
 }
 
 ThreadRequest *WorkerThread::GetRequest()

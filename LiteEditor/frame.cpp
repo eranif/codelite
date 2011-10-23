@@ -2042,12 +2042,6 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent &event)
 			GetMainBook()->UpdateColours();
 		}
 
-		// do we need to update the file tree to mark tags files
-		// as bold?
-		if (markFilesAsBold != newMarkFilesAsBold) {
-			TagsManagerST::Get()->NotifyFileTree(newMarkFilesAsBold);
-		}
-
 		if (pathsAfter.IsEmpty() == false) {
 			// a retagg is needed
 			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));

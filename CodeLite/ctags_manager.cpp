@@ -124,7 +124,6 @@ TagsManager* TagsManagerST::Get()
 //------------------------------------------------------------------------------
 
 BEGIN_EVENT_TABLE(TagsManager, wxEvtHandler)
-	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_FILETREE_EVENT, TagsManager::OnUpdateFileTreeEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED,       TagsManager::OnIndexerTerminated)
 END_EVENT_TABLE()
 
@@ -180,7 +179,6 @@ TagsManager::~TagsManager()
 
 void TagsManager::OpenDatabase(const wxFileName& fileName)
 {
-	UpdateFileTree(m_workspaceDatabase, false);
 	m_workspaceDatabase->OpenDatabase(fileName);
 
 	if (m_workspaceDatabase->GetVersion() != m_workspaceDatabase->GetSchemaVersion()) {
@@ -192,8 +190,6 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
 			m_evtHandler->ProcessEvent( event );
 		}
 	}
-
-	UpdateFileTree(m_workspaceDatabase, true);
 }
 
 TagTreePtr TagsManager::ParseSourceFile(const wxFileName& fp, std::vector<CommentPtr> *comments)
@@ -205,7 +201,6 @@ TagTreePtr TagsManager::ParseSourceFile(const wxFileName& fp, std::vector<Commen
 	}
 	SourceToTags(fp, tags);
 
-	// return ParseTagsFile(tags, project);
 	int dummy;
 	TagTreePtr ttp = TagTreePtr( TreeFromTags(tags, dummy) );
 
@@ -258,7 +253,6 @@ TagTreePtr TagsManager::Load(const wxFileName& fileName)
 void TagsManager::Delete(const wxFileName& path, const wxString& fileName)
 {
 	m_workspaceDatabase->DeleteByFileName(path, fileName);
-	UpdateFileTree(std::vector<wxFileName>(1, fileName), false);
 }
 
 //--------------------------------------------------------
@@ -1194,18 +1188,17 @@ void TagsManager::DeleteFilesTags(const std::vector<wxFileName> &projectFiles)
 	if (projectFiles.empty()) {
 		return;
 	}
-
-	wxArrayString file_array;
-
-	m_workspaceDatabase->Begin();
-
-	for (size_t i=0; i<projectFiles.size(); i++) {
-		m_workspaceDatabase->DeleteByFileName(wxFileName(), projectFiles.at(i).GetFullPath(), false);
-		file_array.Add(projectFiles.at(i).GetFullPath());
+	
+	// Put a request to the parsing thread to delete the tags for the 'projectFiles'
+	ParseRequest *req = new ParseRequest();
+	req->setDbFile( GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
+	req->setType  ( ParseRequest::PR_DELETE_TAGS_OF_FILES );
+	req->_workspaceFiles.clear();
+	req->_workspaceFiles.reserve( projectFiles.size() );
+	for(size_t i=0; i<projectFiles.size(); i++) {
+		req->_workspaceFiles.push_back( projectFiles.at(i).GetFullPath().mb_str(wxConvUTF8).data() );
 	}
-	m_workspaceDatabase->DeleteFromFiles(file_array);
-	m_workspaceDatabase->Commit();
-	UpdateFileTree(projectFiles, false);
+	ParseThreadST::Get()->Add ( req );
 }
 
 void TagsManager::RetagFiles(const std::vector<wxFileName> &files, bool quickRetag)
@@ -1566,7 +1559,6 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 void TagsManager::CloseDatabase()
 {
 	if (m_workspaceDatabase) {
-		UpdateFileTree(m_workspaceDatabase, false);
 		delete m_workspaceDatabase;
 		m_workspaceDatabase = new TagsStorageSQLite( );
 		m_workspaceDatabase->SetSingleSearchLimit( MAX_SEARCH_LIMIT );
@@ -2235,51 +2227,6 @@ wxString TagsManager::DoReplaceMacros(wxString name)
 		}
 	}
 	return _name;
-}
-
-// wrapper function to update the file tree given a list of files.
-void TagsManager::UpdateFileTree(const std::vector<wxFileName> &files, bool bold)
-{
-	if (GetCtagsOptions().GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD) {
-		wxCommandEvent e(wxEVT_UPDATE_FILETREE_EVENT);
-		e.SetClientData((void*)&files);
-		e.SetInt((int)bold);
-		ProcessEvent(e);
-	}
-}
-
-void TagsManager::UpdateFileTree(ITagsStorage *td, bool bold)
-{
-	if (GetCtagsOptions().GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD) {
-		std::vector<FileEntryPtr> files;
-		std::vector<wxFileName> file_names;
-
-		td->GetFiles(wxEmptyString, files);
-		for (size_t i=0; i<files.size(); i++) {
-			file_names.push_back(wxFileName(files.at(i)->GetFile()));
-		}
-		UpdateFileTree(file_names, bold);
-	}
-}
-
-void TagsManager::OnUpdateFileTreeEvent(wxCommandEvent& e)
-{
-	wxUnusedVar(e);
-}
-
-void TagsManager::NotifyFileTree(bool bold)
-{
-	size_t origFlags = GetCtagsOptions().GetFlags();
-
-	// we temporarly set the flag CC_MARK_TAGS_FILES_IN_BOLD
-	m_tagsOptions.SetFlags(origFlags | CC_MARK_TAGS_FILES_IN_BOLD);
-
-	if (m_workspaceDatabase && m_workspaceDatabase->IsOpen()) {
-		UpdateFileTree(m_workspaceDatabase, bold);
-	}
-
-	// restore original flags
-	m_tagsOptions.SetFlags(origFlags);
 }
 
 void TagsManager::DeleteTagsByFilePrefix(const wxString& dbfileName, const wxString& filePrefix)

@@ -39,11 +39,7 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_ITEM)
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM)
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
 
-#if 0
 #define DEBUG_MESSAGE(x) CL_DEBUG1(x.c_str())
-#else
-#define DEBUG_MESSAGE(x)
-#endif
 
 #define TEST_DESTROY() {\
 		if( TestDestroy() ) {\
@@ -51,6 +47,17 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
 			return;\
 		}\
 	}
+
+struct DbReleaser {
+	ITagsStorage **_db;
+	DbReleaser(ITagsStorage **db) : _db(db) {}
+	~DbReleaser() {
+		if(*_db) {
+			delete *_db;
+			*_db = NULL;
+		}
+	}
+};
 
 const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS = XRCID("parse_thread_updated_symbols");
 const wxEventType wxEVT_PARSE_THREAD_MESSAGE              = XRCID("parse_thread_update_status_bar");
@@ -62,7 +69,7 @@ const wxEventType wxEVT_PARSE_THREAD_INTERESTING_MACROS   = XRCID("parse_thread_
 
 ParseThread::ParseThread()
 	: WorkerThread()
-	, m_pDb              ( NULL )
+	, m_pDb( NULL )
 {
 }
 
@@ -91,6 +98,9 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 		break;
 	case ParseRequest::PR_GET_INTERRESTING_MACROS:
 		ProcessInterrestingMacros( req );
+		break;
+	case ParseRequest::PR_DELETE_TAGS_OF_FILES:
+		ProcessDeleteTagsOfFiles( req );
 		break;
 	}
 }
@@ -208,7 +218,9 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 	if ( !m_pDb ) {
 		m_pDb = new TagsStorageSQLite();
 	}
-
+	
+	DbReleaser dbReleaser(&m_pDb);
+	
 	//convert the file content into tags
 	wxString tags;
 	wxString file_name(req->getFile());
@@ -331,10 +343,6 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 			wxPostEvent(m_notifiedWindow, clearCacheEvent);
 		}
 	}
-
-	// close the database
-	delete m_pDb;
-	m_pDb = NULL;
 }
 
 void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& arrFiles)
@@ -402,7 +410,7 @@ void ParseThread::ParseAndStoreFiles(const wxArrayString& arrFiles, int initalCo
 		}
 	}
 
-	DEBUG_MESSAGE(wxT("Done"));
+	DEBUG_MESSAGE(wxString(wxT("Done")));
 
 	// Update the retagging timestamp
 	TagsManagerST::Get()->UpdateFilesRetagTimestamp(arrFiles, m_pDb);
@@ -425,9 +433,38 @@ void ParseThread::ParseAndStoreFiles(const wxArrayString& arrFiles, int initalCo
 	}
 }
 
+void ParseThread::ProcessDeleteTagsOfFiles(ParseRequest* req)
+{
+	DEBUG_MESSAGE(wxString(wxT("ParseThread::ProcessDeleteTagsOfFile")));
+	if(req->_workspaceFiles.empty())
+		return;
+	
+	wxString dbfile = req->getDbfile();
+	if ( !m_pDb ) {
+		m_pDb = new TagsStorageSQLite();
+	}
+	
+	DbReleaser dbReleaser(&m_pDb);
+	
+	m_pDb->OpenDatabase( dbfile );
+	m_pDb->Begin();
+	
+	wxArrayString file_array;
+
+	for (size_t i=0; i<req->_workspaceFiles.size(); i++) {
+		wxString filename(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
+		m_pDb->DeleteByFileName(wxFileName(),filename, false);
+		file_array.Add(filename);
+	}
+	
+	m_pDb->DeleteFromFiles(file_array);
+	m_pDb->Commit();
+	DEBUG_MESSAGE(wxString(wxT("ParseThread::ProcessDeleteTagsOfFile - completed")));
+}
+
 void ParseThread::ProcessParseAndStore(ParseRequest* req)
 {
-	wxString      dbfile = req->getDbfile();
+	wxString dbfile = req->getDbfile();
 
 	// convert the file to tags
 	double maxVal = (double)req->_workspaceFiles.size();
@@ -445,6 +482,7 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 	if ( !m_pDb ) {
 		m_pDb = new TagsStorageSQLite();
 	}
+	DbReleaser dbReleaser(&m_pDb);
 	m_pDb->OpenDatabase( dbfile );
 
 	// We commit every 10 files
@@ -462,8 +500,6 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 			// rollback any transaction
 			// and close the database
 			m_pDb->Rollback();
-			delete m_pDb;
-			m_pDb = NULL;
 			return;
 		}
 
@@ -530,10 +566,6 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 		wxPrintf(wxT("parsing: done\n"), precent);
 		
 	}
-
-	// Close the database
-	delete m_pDb;
-	m_pDb = NULL;
 }
 
 void ParseThread::FindIncludedFiles(ParseRequest *req)
@@ -594,6 +626,7 @@ void ParseThread::ProcessInterrestingMacros(ParseRequest *req)
 	if ( !m_pDb ) {
 		m_pDb = new TagsStorageSQLite();
 	}
+	DbReleaser dbReleaser(&m_pDb);
 	m_pDb->OpenDatabase(req->getDbfile());
 
 	wxFileName fnCurrentFile(req->getFile());

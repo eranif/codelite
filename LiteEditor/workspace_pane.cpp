@@ -82,7 +82,7 @@ void WorkspacePane::CreateGUIControls()
 	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxWindow::GetTextExtent(_("Workspace"), &xx, &yy, NULL, NULL, &fnt);
 
-	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 0);
+	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
 
 	// Add the parsing progress controls
 	m_staticText = new wxStaticText(this, wxID_ANY, _("Parsing workspace..."));

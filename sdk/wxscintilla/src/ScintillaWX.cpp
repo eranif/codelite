@@ -103,6 +103,12 @@ public:
 	}
 
 	~wxSCICallTip() {
+#ifdef __WXMSW__
+		ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
+		style &= ~CS_DROPSHADOW;
+		SetClassLongPtr(GetHandle(), GCL_STYLE, style);
+#endif
+
 #if wxUSE_POPUPWIN && wxSCI_USE_POPUP && defined(__WXGTK__)
 		wxRect rect = GetRect();
 		rect.x = m_cx;
@@ -114,7 +120,11 @@ public:
 	bool AcceptsFocus() const {
 		return false;
 	}
-
+	
+	void OnEraseBg(wxEraseEvent &e) {
+		wxUnusedVar(e);
+	}
+	
 	void OnPaint(wxPaintEvent& WXUNUSED(evt)) {
 		wxBufferedPaintDC dc(this);
 		Surface* surfaceWindow = Surface::Allocate();
@@ -165,6 +175,7 @@ private:
 
 BEGIN_EVENT_TABLE(wxSCICallTip, wxSCICallTipBase)
 	EVT_PAINT(wxSCICallTip::OnPaint)
+	EVT_ERASE_BACKGROUND(wxSCICallTip::OnEraseBg)
 	EVT_SET_FOCUS(wxSCICallTip::OnFocus)
 	EVT_LEFT_DOWN(wxSCICallTip::OnLeftDown)
 END_EVENT_TABLE()

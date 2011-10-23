@@ -64,6 +64,13 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 {
 	m_constructing = true;
 	HideCCBox();
+	MSWSetNativeTheme(m_listCtrl);
+	
+#ifdef __WXMSW__
+	ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
+	style |= CS_DROPSHADOW;
+	SetClassLongPtr(GetHandle(), GCL_STYLE, style);
+#endif
 
 	// load all the CC images
 	wxImageList *il = new wxImageList(16, 16, true);
@@ -116,6 +123,13 @@ CCBox::~CCBox()
 {
 	EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_Item_Commetns"), LEditor::m_ccShowItemsComments  ? 1 : 0);
 	EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_All_Members"),   LEditor::m_ccShowPrivateMembers ? 1 : 0);
+	
+#ifdef __WXMSW__
+	ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
+	style &= ~CS_DROPSHADOW;
+	SetClassLongPtr(GetHandle(), GCL_STYLE, style);
+#endif
+
 }
 
 void CCBox::OnItemActivated( wxListEvent& event )
@@ -322,7 +336,9 @@ void CCBox::SelectItem(long item)
 	if(m_listCtrl->GetItemTagEntry(item, tag)) {
 		DoFormatDescriptionPage( tag );
 	}
-
+#ifdef __WXMSW__
+	m_listCtrl->Refresh();
+#endif
 }
 
 void CCBox::Show(const wxString& word)

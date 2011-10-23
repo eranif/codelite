@@ -93,7 +93,13 @@ class wxSCICallTip : public wxSCICallTipBase {
 public:
 	wxSCICallTip(wxWindow* parent, CallTip* ct, ScintillaWX* swx)
 		: wxSCICallTipBase(parent, param2),
-		  m_ct(ct), m_swx(swx), m_cx(-1), m_cy(-1) {
+		  m_ct(ct), m_swx(swx), m_cx(-1), m_cy(-1) 
+	{
+#ifdef __WXMSW__
+		ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
+		style |= CS_DROPSHADOW;
+		SetClassLongPtr(GetHandle(), GCL_STYLE, style);
+#endif
 	}
 
 	~wxSCICallTip() {

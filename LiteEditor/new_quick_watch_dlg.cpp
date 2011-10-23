@@ -21,12 +21,17 @@ public:
 };
 
 DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
+#ifdef __WXMSW__
+		: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(400, 200), wxRESIZE_BORDER|wxSIMPLE_BORDER )
+#else
 		: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(400, 200) )
+#endif
 		, m_debugger(NULL)
 		, m_leftWindow(false)
 {
 	Hide();
 	Centre();
+	MSWSetNativeTheme(m_treeCtrl);
 	WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
 
 	m_timer  = new wxTimer(this);

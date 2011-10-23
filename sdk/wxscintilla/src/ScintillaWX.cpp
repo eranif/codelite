@@ -1097,7 +1097,7 @@ int  ScintillaWX::DoKeyDown(const wxKeyEvent& evt, bool* consumed) {
 	int key = evt.GetKeyCode();
 #else
 	int key;
-	if(evt.GetKeyCode() == 0 && evt.GetUnicodeKey() == 226) {
+	if(evt.GetKeyCode() == 0 && evt.GetUnicodeKey() != 0) {
 		key = evt.GetUnicodeKey();
 	} else {
 		key = evt.GetKeyCode();

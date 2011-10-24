@@ -57,9 +57,9 @@ createVariables()
 	fi
 
 	## If the non-plugin .so libs aren't installed with the plugin ones, add their dir to the rpath
-	rpaths="-Wl,-rpath,$plugins_dir"
+	rpaths="-Wl,-rpath,\"$plugins_dir\""
 	if [ "$non_plugins_dir" != "$plugins_dir" ]; then
-		rpaths="$rpaths -Wl,-rpath,$non_plugins_dir"
+		rpaths="$rpaths -Wl,-rpath,\"$non_plugins_dir\""
 	fi
 
 	if [ "$enable_debug" = "yes" ]; then
@@ -92,7 +92,7 @@ createVariables()
 	echo "WXCFG=${wxcfg}" >> Makefile
 	echo "DESTDIR=" >> Makefile
 	echo "" >> Makefile
-	echo "CCFLAGS= -Wall `wx-config --cxxflags ${wxcfg}` -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DINSTALL_DIR=\\\"${prefix}/share/codelite\\\" -DPLUGINS_DIR=\\\"${plugins_dir}\\\"" >> Makefile
+	echo "CCFLAGS= -Wall `wx-config --cxxflags ${wxcfg}` -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DINSTALL_DIR=\"\\\"${prefix}/share/codelite\\\"\" -DPLUGINS_DIR=\"\\\"${plugins_dir}\\\"\"" >> Makefile
 	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) -lwxscintilla\$(EXT) -lwxshapeframework\$(EXT) ${dbl_links} -L${base_dir}/sdk/sqlite3/lib `${wxconfiglibs} ${wxcfg}`" >> Makefile
 	echo "PLUGIN_LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) `${wxconfiglibs} ${wxcfg}` ${additional_links}" >> Makefile
 	echo "INCLUDES := \$(INCLUDES) ${additional_include_path} " >> Makefile
@@ -178,8 +178,8 @@ createMainTargets()
 
 createObjectList ()
 {
-	files_list=$1
-	object_list_name=$2
+	files_list="$1"
+	object_list_name="$2"
 
 	echo "${object_list_name} = \\"  >> Makefile
 	for a_file in $files_list
@@ -199,7 +199,7 @@ createCodeLiteCppcheckMakefile ()
 	echo "Generating sdk/codelite_cppcheck/Makefile..."
 	current_wd=`pwd`
 
-	cd sdk/codelite_cppcheck/
+	cd ./sdk/codelite_cppcheck/
 
 	## remove old Makefile
 	rm -fr Makefile
@@ -298,16 +298,16 @@ createCodeLiteCppcheckMakefile ()
 	echo "	\$(RM) -fr codelite_cppcheck" >> Makefile
 
 	## restore the path
-	cd ${current_wd}
+	cd "$current_wd"
 }
 
 createCodeLiteIndexerMakefile ()
 {
-	files_list=$1
+	files_list="$1"
 	echo "Generating sdk/codelite_indexer/Makefile..."
 	current_wd=`pwd`
 
-	cd sdk/codelite_indexer/
+	cd ./sdk/codelite_indexer/
 
 	## remove old Makefile
 	rm -fr Makefile
@@ -406,7 +406,7 @@ createCodeLiteIndexerMakefile ()
 	echo "	\$(RM) -fr codelite_indexer" >> Makefile
 
 	## restore the path
-	cd ${current_wd}
+	cd "$current_wd"
 }
 
 ## The rules created here all contain -fPIC. Any other shared-lib-creating functions *must* do this too
@@ -540,10 +540,10 @@ createRules_exe ()
 
 createPluginMakefile()
 {
-	plugin_path=$1
-	plugin_name=$2
-	install_path=$3
-	post_install_path=$4
+	plugin_path="$1"
+	plugin_name="$2"
+	install_path="$3"
+	post_install_path="$4"
 
 	echo "Generating ${plugin_path}/Makefile..."
 	current_wd=`pwd`
@@ -593,7 +593,7 @@ createPluginMakefile()
 	fi
 
 	## restore the path
-	cd ${current_wd}
+	cd "$current_wd"
 
 	echo ".PHONY: ${plugin_name} ${plugin_name}_clean ${plugin_name}_install" >> Makefile
 	echo "${plugin_name}: CodeLite SDK SQLite" >> Makefile
@@ -605,8 +605,8 @@ createPluginMakefile()
 	echo "" >> Makefile
 
 	echo "${plugin_name}_install:" >> Makefile
-	echo "	@mkdir -p ${install_path}" >> Makefile
-	echo "	cp \$(OUTPUT_DIR)/${plugin_name}.so ${install_path}" >> Makefile
+	echo "	@mkdir -p \"${install_path}\"" >> Makefile
+	echo "	cp \$(OUTPUT_DIR)/${plugin_name}.so \"${install_path}\"" >> Makefile
 	echo "" >> Makefile
 }
 
@@ -646,59 +646,59 @@ createInstallTarget()
 
 	echo "core_install:" >> Makefile
 	echo "	@echo installing CodeLite" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/share/codelite" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$prefix/bin" >> Makefile
-	echo "	@cp \$(EXE_NAME) \$(DESTDIR)$prefix/bin/" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/CodeLite\"" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/share/codelite\"" >> Makefile
+	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/bin\"" >> Makefile
+	echo "	@cp \$(EXE_NAME) \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
 	if [ "$make_symlink" = "yes" ] ; then
-	  echo "	@ln -s \$(EXE_NAME_NO_PATH) \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
-	  echo "	@chmod +x \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
+	  echo "	@ln -s \$(EXE_NAME_NO_PATH) \"\$(DESTDIR)${prefix}/bin/CodeLite\"" >> Makefile
+	  echo "	@chmod +x \"\$(DESTDIR)${prefix}/bin/CodeLite\"" >> Makefile
 	fi
-	echo "	@cp Runtime/codelite_fix_files \$(DESTDIR)$prefix/bin/" >> Makefile
-	echo "	@cp Runtime/codelite_exec \$(DESTDIR)$prefix/bin/" >> Makefile
-	echo "	@cp Runtime/codelite_kill_children \$(DESTDIR)$prefix/bin/" >> Makefile
-	echo "	@cp Runtime/codelite_xterm \$(DESTDIR)$prefix/bin/" >> Makefile
-	echo "	@chmod +x \$(DESTDIR)$prefix/bin/codelite_fix_files" >> Makefile
-	echo "	@chmod +x \$(DESTDIR)$prefix/bin/codelite_exec" >> Makefile
-	echo "	@chmod +x \$(DESTDIR)$prefix/bin/codelite_kill_children" >> Makefile
-	echo "	@chmod +x \$(DESTDIR)$prefix/bin/codelite_xterm" >> Makefile
-	echo "	@cp sdk/codelite_indexer/codelite_indexer \$(DESTDIR)$prefix/bin/" >> Makefile
-	echo "	@cp sdk/codelite_cppcheck/codelite_cppcheck \$(DESTDIR)$prefix/bin/" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$prefix/share/applications" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/config" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/templates" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$plugins_dir/" >> Makefile
+	echo "	@cp Runtime/codelite_fix_files \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
+	echo "	@cp Runtime/codelite_exec \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
+	echo "	@cp Runtime/codelite_kill_children \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
+	echo "	@cp Runtime/codelite_xterm \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
+	echo "	@chmod +x \"\$(DESTDIR)${prefix}/bin/codelite_fix_files\"" >> Makefile
+	echo "	@chmod +x \"\$(DESTDIR)${prefix}/bin/codelite_exec\"" >> Makefile
+	echo "	@chmod +x \"\$(DESTDIR)${prefix}/bin/codelite_kill_children\"" >> Makefile
+	echo "	@chmod +x \"\$(DESTDIR)${prefix}/bin/codelite_xterm\"" >> Makefile
+	echo "	@cp sdk/codelite_indexer/codelite_indexer \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
+	echo "	@cp sdk/codelite_cppcheck/codelite_cppcheck \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
+	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/applications\"" >> Makefile
+	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/codelite\"" >> Makefile
+	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/codelite/config\"" >> Makefile
+	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/codelite/templates\"" >> Makefile
+	echo "	@mkdir -p \"\$(DESTDIR)${plugins_dir}/\"" >> Makefile
 	# In case the non-plugin.so libs aren't to go into the same dir as plugins...
-	echo "	@mkdir -p \$(DESTDIR)$non_plugins_dir/" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$plugins_dir/debuggers" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$plugins_dir/resources" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/images" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/rc" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/lexers" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/src/" >> Makefile
-	echo "	@cp -fr Runtime/plugins/resources/*.* \$(DESTDIR)$plugins_dir/resources/" >> Makefile
-	echo "	@cp -fr Runtime/config/build_settings.xml.default \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
-	echo "	@cp -fr Runtime/config/plugins.xml.default \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
-	echo "	@cp -fr Runtime/config/debuggers.xml.gtk \$(DESTDIR)$prefix/share/codelite/config/debuggers.xml.default" >> Makefile
-	echo "	@cp -fr Runtime/config/codelite.xml.default.gtk \$(DESTDIR)$prefix/share/codelite/config/codelite.xml.default" >> Makefile
-	echo "	@cp -fr Runtime/codelite.desktop \$(DESTDIR)$prefix/share/applications/codelite.desktop; " >> Makefile
-	echo "	@cp -fpr Runtime/rc/*.xrc \$(DESTDIR)$prefix/share/codelite/rc/" >> Makefile
-	echo "	@cp -fpr Runtime/templates/* \$(DESTDIR)$prefix/share/codelite/templates/" >> Makefile
-	echo "	@chmod -R +w \$(DESTDIR)$prefix/share/codelite/templates/* " >> Makefile
-	echo "	@cp -fpr Runtime/lexers/*.xml \$(DESTDIR)$prefix/share/codelite/lexers/" >> Makefile
-	echo "	@cp -fpr lib/lib*${ext}.so \$(DESTDIR)$non_plugins_dir/" >> Makefile
-	echo "	@chmod 0644 \$(DESTDIR)$non_plugins_dir/*.so" >> Makefile
-	echo "	@cp -fpr lib/Debugger.so \$(DESTDIR)$plugins_dir/debuggers/" >> Makefile
-	echo "	@chmod 0644 \$(DESTDIR)$plugins_dir/debuggers/*.so" >> Makefile
-	echo "	@cp -fpr Runtime/index.html \$(DESTDIR)$prefix/share/codelite/" >> Makefile
-	echo "	@cp -fpr Runtime/astyle.sample \$(DESTDIR)$prefix/share/codelite/" >> Makefile
-	echo "	@cp -fpr Runtime/svnreport.html \$(DESTDIR)$prefix/share/codelite/" >> Makefile
-	echo "	@cp -fpr Runtime/images/*.png \$(DESTDIR)$prefix/share/codelite/images/" >> Makefile
-	echo "	@cp -fpr Runtime/config/accelerators.conf.default \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
-	echo "	@cp -fpr Runtime/src/*.gz \$(DESTDIR)$prefix/share/codelite/src/" >> Makefile
-	echo "	@cp -fpr Runtime/codelite-icons.zip \$(DESTDIR)$prefix/share/codelite/" >> Makefile
-	echo "	@chmod 0666 \$(DESTDIR)$prefix/share/codelite/codelite-icons.zip" >> Makefile
+	echo "	@mkdir -p \"\$(DESTDIR)${non_plugins_dir}/\"" >> Makefile
+	echo "	@mkdir -p \"\$(DESTDIR)${plugins_dir}/debuggers\"" >> Makefile
+	echo "	@mkdir -p \"\$(DESTDIR)${plugins_dir}/resources\"" >> Makefile
+	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/codelite/images\"" >> Makefile
+	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/codelite/rc\"" >> Makefile
+	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/codelite/lexers\"" >> Makefile
+	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/codelite/src/\"" >> Makefile
+	echo "	@cp -fr Runtime/plugins/resources/*.* \"\$(DESTDIR)${plugins_dir}/resources/\"" >> Makefile
+	echo "	@cp -fr Runtime/config/build_settings.xml.default \"\$(DESTDIR)${prefix}/share/codelite/config/\"" >> Makefile
+	echo "	@cp -fr Runtime/config/plugins.xml.default \"\$(DESTDIR)${prefix}/share/codelite/config/\"" >> Makefile
+	echo "	@cp -fr Runtime/config/debuggers.xml.gtk \"\$(DESTDIR)${prefix}/share/codelite/config/debuggers.xml.default\"" >> Makefile
+	echo "	@cp -fr Runtime/config/codelite.xml.default.gtk \"\$(DESTDIR)${prefix}/share/codelite/config/codelite.xml.default\"" >> Makefile
+	echo "	@cp -fr Runtime/codelite.desktop \"\$(DESTDIR)${prefix}/share/applications/codelite.desktop\"; " >> Makefile
+	echo "	@cp -fpr Runtime/rc/*.xrc \"\$(DESTDIR)${prefix}/share/codelite/rc/\"" >> Makefile
+	echo "	@cp -fpr Runtime/templates/* \"\$(DESTDIR)${prefix}/share/codelite/templates/\"" >> Makefile
+	echo "	@chmod -R +w \"\$(DESTDIR)${prefix}/share/codelite/templates\"/* " >> Makefile
+	echo "	@cp -fpr Runtime/lexers/*.xml \"\$(DESTDIR)${prefix}/share/codelite/lexers/\"" >> Makefile
+	echo "	@cp -fpr lib/lib*${ext}.so \"\$(DESTDIR)${non_plugins_dir}/\"" >> Makefile
+	echo "	@chmod 0644 \"\$(DESTDIR)${non_plugins_dir}\"/*.so" >> Makefile
+	echo "	@cp -fpr lib/Debugger.so \"\$(DESTDIR)${plugins_dir}/debuggers/\"" >> Makefile
+	echo "	@chmod 0644 \"\$(DESTDIR)${plugins_dir}/debuggers\"/*.so" >> Makefile
+	echo "	@cp -fpr Runtime/index.html \"\$(DESTDIR)${prefix}/share/codelite/\"" >> Makefile
+	echo "	@cp -fpr Runtime/astyle.sample \"\$(DESTDIR)${prefix}/share/codelite/\"" >> Makefile
+	echo "	@cp -fpr Runtime/svnreport.html \"\$(DESTDIR)${prefix}/share/codelite/\"" >> Makefile
+	echo "	@cp -fpr Runtime/images/*.png \"\$(DESTDIR)${prefix}/share/codelite/images/\"" >> Makefile
+	echo "	@cp -fpr Runtime/config/accelerators.conf.default \"\$(DESTDIR)${prefix}/share/codelite/config/\"" >> Makefile
+	echo "	@cp -fpr Runtime/src/*.gz \"\$(DESTDIR)${prefix}/share/codelite/src/\"" >> Makefile
+	echo "	@cp -fpr Runtime/codelite-icons.zip \"\$(DESTDIR)${prefix}/share/codelite/\"" >> Makefile
+	echo "	@chmod 0666 \"\$(DESTDIR)${prefix}/share/codelite/codelite-icons.zip\"" >> Makefile
 	if [ "$add_desktop_icon" = "yes" ] ; then
 	  if test -d $HOME/Desktop/ ; then
 	    echo "	@cp -fpr Runtime/codelite.desktop $HOME/Desktop/" >> Makefile
@@ -710,8 +710,8 @@ createInstallTarget()
 	  for lang in Runtime/locale/* ; do
 		lang=`basename $lang`
 		if test -f Runtime/locale/$lang/codelite.mo ; then
-			echo "	@mkdir -p \$(DESTDIR)$prefix/share/locale/$lang/LC_MESSAGES" >> Makefile
-			echo "	@cp -f Runtime/locale/$lang/codelite.mo   \$(DESTDIR)$prefix/share/locale/$lang/LC_MESSAGES/" >> Makefile
+			echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/locale/$lang/LC_MESSAGES\"" >> Makefile
+			echo "	@cp -f Runtime/locale/$lang/codelite.mo   \"\$(DESTDIR)${prefix}/share/locale/$lang/LC_MESSAGES/\"" >> Makefile
 		fi
 	  done
 	fi
@@ -723,37 +723,37 @@ createUnInstallTarget()
 	echo "uninstall: " >> Makefile
 	echo "	@echo Uninstalling CodeLite" >> Makefile
 	if [ "$make_symlink" = "yes" ] ; then
-	  echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
+	  echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/CodeLite\"\"" >> Makefile
 	fi
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_fix_files" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_exec" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_kill_children" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_xterm" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_indexer" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_cppcheck" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUR" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUD" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/include/UnitTest++/" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/lib/libUnitTest++.a" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/share/codelite" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_fix_files\"" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_exec\"" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_kill_children\"" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_xterm\"" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_indexer\"" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_cppcheck\"" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/CodeLiteUR\"" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/CodeLiteUD\"" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite\"" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/include/UnitTest++/\"" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/lib/libUnitTest++.a\"" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/share/codelite\"" >> Makefile
 	# Avoid deleting /usr/lib
 	if [ "$non_plugins_dir" != "/usr/lib" ] && [ "$non_plugins_dir" != "/usr/lib/" ] ; then
-	echo "	@\$(RM) -fr  \$(DESTDIR)$non_plugins_dir/" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${non_plugins_dir}/\"" >> Makefile
 	fi
 	if [ "$plugins_dir" != "/usr/lib" ] && [ "$plugins_dir" != "/usr/lib/" ] ; then
-	echo "	@\$(RM) -fr  \$(DESTDIR)$plugins_dir/" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${plugins_dir}/\"" >> Makefile
     fi
     # Check write permission for /usr/share/applications, in case we're using a 'local' prefix and not doing sudo
-	echo "	@if test -w \$(DESTDIR)$prefix/share/applications ; then \\" >> Makefile
-	    echo "	  \$(RM) -fr \$(DESTDIR)$prefix/share/applications/codelite.desktop; \\" >> Makefile
+	echo "	@if test -w \"\$(DESTDIR)${prefix}/share/applications\" ; then \\" >> Makefile
+	    echo "	  \$(RM) -fr \"\$(DESTDIR)${prefix}/share/applications/codelite.desktop\"; \\" >> Makefile
 	echo "	fi" >> Makefile
 	echo "	@\$(RM) -fr ~/Desktop/codelite.desktop" >> Makefile
 	if [ "$install_translations" = "yes" ] ; then
 		for lang in Runtime/locale/* ; do
 			lang=`basename $lang`
 			if test -f Runtime/locale/$lang/codelite.mo ; then
-				echo "	@\$(RM) \$(DESTDIR)$prefix/share/locale/$lang/LC_MESSAGES/codelite.mo" >> Makefile
+				echo "	@\$(RM) \"\$(DESTDIR)${prefix}/share/locale/$lang/LC_MESSAGES/codelite.mo\"" >> Makefile
 			fi
 		done
 	fi
@@ -1010,7 +1010,7 @@ if [ "$os_name" = "Darwin" ]; then
 else
 	echo "CppCheck_install" >> Makefile
 fi
-echo "	@chmod 0644 \$(DESTDIR)$plugins_dir/*.so" >> Makefile
+echo "	@chmod 0644 \"\$(DESTDIR)${plugins_dir}\"/*.so" >> Makefile
 echo "" >> Makefile
 
 echo "clean_plugins:\\" >> Makefile
@@ -1048,25 +1048,25 @@ echo "" >> Makefile
 ## createPluginMakefile <plugin path> <plugin name>
 ##
 ########################################################
-#createPluginMakefile "CodeDesigner" "CodeDesigner"  "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "Debugger" "Debugger" "\$(DESTDIR)$plugins_dir/debuggers/" "../Runtime/debuggers"
-createPluginMakefile "Gizmos" "Gizmos"  "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "cscope" "cscope" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "Subversion2" "Subversion2" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "CodeFormatter" "CodeFormatter" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "Copyright" "Copyright" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "UnitTestCPP" "UnitTestCPP" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "ExternalTools" "ExternalTools" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "SnipWiz" "SnipWiz" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "wxformbuilder" "wxformbuilder" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "abbreviation" "abbreviation" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "SymbolView" "SymbolView" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "ContinuousBuild" "ContinuousBuild" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "QmakePlugin" "QmakePlugin" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "git" "git" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "cppchecker" "CppCheck" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
-createPluginMakefile "DatabaseExplorer" "DatabaseExplorer"  "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+#createPluginMakefile "CodeDesigner" "CodeDesigner"  "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "Debugger" "Debugger" "\$(DESTDIR)${plugins_dir}/debuggers/" "../Runtime/debuggers"
+createPluginMakefile "Gizmos" "Gizmos"  "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "cscope" "cscope" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "Subversion2" "Subversion2" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "CodeFormatter" "CodeFormatter" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "Copyright" "Copyright" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "UnitTestCPP" "UnitTestCPP" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "ExternalTools" "ExternalTools" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "SnipWiz" "SnipWiz" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "wxformbuilder" "wxformbuilder" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "abbreviation" "abbreviation" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "SymbolView" "SymbolView" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "ContinuousBuild" "ContinuousBuild" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "QmakePlugin" "QmakePlugin" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "git" "git" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "cppchecker" "CppCheck" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "DatabaseExplorer" "DatabaseExplorer"  "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
 ## Mac only plugin: MacBundler
 if [ "$os_name" = "Darwin" ]; then
-	createPluginMakefile "MacBundler" "MacBundler" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+	createPluginMakefile "MacBundler" "MacBundler" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
 fi

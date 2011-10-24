@@ -256,59 +256,59 @@ enum {
 	// clientData is the builded project name (wxString*)
 	// event.GetString() returns the selected configuration
 	wxEVT_PLUGIN_EXPORT_MAKEFILE,
-	
+
 	/////////////////////////////////////////////////
 	// Code completion events
 	/////////////////////////////////////////////////
-	
+
 	// User hit Ctrl-Space in the editor
 	// let the plugins a chance to handle this
-	// event. 
+	// event.
 	// Call event.GetInt() to get the position in the current editor
 	// Use m_mgr->GetActiveEditor() to get the active editor
 	wxEVT_CMD_CODE_COMPLETE,
-	
+
 	// A tooltip is requested for the selected entry in the completion box
 	// clientData is set to the client data set by the user
 	// the plugin returns the tooltip to the IDE using the:
 	// evt.SetString(..) method
 	// Use evt.GetClientData() to retrieve the client data associated with this tag
 	wxEVT_CMD_CODE_COMPLETE_TAG_COMMENT,
-	
+
 	// A function calltip is requesed
 	// clientData is set to the client data set by the user
 	// the plugin returns the tooltip to the IDE using the:
 	// evt.SetString(..) method
 	wxEVT_CMD_CODE_COMPLETE_FUNCTION_CALLTIP,
-	
+
 	// The code completion box has been dismissed
 	wxEVT_CMD_CODE_COMPLETE_BOX_DISMISSED,
-	
+
 	// User has requested to display the current files' outline
 	// Use m_mgr->GetActiveEditor() to get the active editor
 	wxEVT_CMD_SHOW_QUICK_OUTLINE,
-	
+
 	// User is hovering a text, display the typeinfo
 	// User m_mgr->GetActiveEditor() to get the current editor Or
 	// IEditor* editor = dynamic_cast<IEditor*>(evt.GetEventObject());
 	// Hover position is set in the evt.GetInt()
 	wxEVT_CMD_TYPEINFO_TIP,
-	
+
 	// codelite is about to display a code-completion
 	// box with the language specific keywords
 	// User m_mgr->GetActiveEditor() to get the current editor Or
 	// IEditor* editor = dynamic_cast<IEditor*>(evt.GetEventObject());
 	wxEVT_CMD_DISPLAY_LANGUAGE_KEYWORDS_CC_BOX,
-	
+
 	/////////////////////////////////////////////////
 	// Project management events
 	/////////////////////////////////////////////////
-	
+
 	// User selected an option to create a new workspace
 	wxEVT_CMD_CREATE_NEW_WORKSPACE,
 	// User selected an option to create a new project
 	wxEVT_CMD_CREATE_NEW_PROJECT,
-	
+
 	// User requested to open a workspace
 	// By default codelite will open a dialog to open a workspace with the '.workspace' suffix.
 	// If a plugin wishes to offer a user a dialog with other extension (for example: .myworkspace)
@@ -318,26 +318,26 @@ enum {
 	// to pass the selection to codelite, simply set it in the evt.SetString(...) function
 	// If the plugin wishes to handle the file by itself, it should avoid calling evt.Skip()
 	wxEVT_CMD_OPEN_WORKSPACE,
-	
+
 	// User requested to close the workspace.
 	wxEVT_CMD_CLOSE_WORKSPACE,
-	
-	// This event is sent by codelite to the plugins to query whether a 
+
+	// This event is sent by codelite to the plugins to query whether a
 	// a custom workspace is opened (i.e. a worksapce which is completely managed
 	// by the plugin) this allows codelite to enable menu items which otherwise
 	// will be left disabled
 	// to return a true or false reply to codelite, use
-	// evt.SetInt(0) or evt.SetInt(1) 
+	// evt.SetInt(0) or evt.SetInt(1)
 	wxEVT_CMD_IS_WORKSPACE_OPEN,
-	
+
 	// User has requested a retagging for the workspace
 	wxEVT_CMD_RETAG_WORKSPACE,
 	wxEVT_CMD_RETAG_WORKSPACE_FULL,
-	
+
 	// codelite has requested a complete list of the workspace files.
 	// The result should be wxArrayString that contains a list of files
 	// in their ABSOLUTE path.
-	// The wxArrayString IS OWNED by codelite 
+	// The wxArrayString IS OWNED by codelite
 	// and the plugin should NOT attempt to delete it
 	// <code>
 	// if(I_want_to_handle_this_event) {
@@ -348,17 +348,17 @@ enum {
 	// }
 	// </code>
 	wxEVT_CMD_GET_WORKSPACE_FILES,
-	// Same as the above event, however you should return 
+	// Same as the above event, however you should return
 	// a list of the current active project files
 	wxEVT_CMD_GET_ACTIVE_PROJECT_FILES,
-	// Same as the above event, however you should return 
+	// Same as the above event, however you should return
 	// a list of the current files' project files list
 	wxEVT_CMD_GET_CURRENT_FILE_PROJECT_FILES,
-	
+
 	/////////////////////////////////////////////////
 	// Search events
 	/////////////////////////////////////////////////
-	
+
 	// User requested to open the resource dialog with the filter set to 'workspace file'
 	wxEVT_CMD_OPEN_RESOURCE,
 	// User requested to open the resource dialog with the filter set to 'function'
@@ -369,38 +369,59 @@ enum {
 	wxEVT_CMD_OPEN_RESOURCE_MACRO,
 	// User requested to open the resource dialog with the filter set to 'typedef'
 	wxEVT_CMD_OPEN_RESOURCE_TYPEDEF,
-	
+
 	// User requested to perform a raw search for a symbol
 	// Use evt.GetString() to get the searched string
 	wxEVT_CMD_FIND_SYMBOL,
-	
+
 	// codelite is about to display the editor's context menu
 	// A plugin can override the default menu display by catching this event and
 	// handling it differently
-	// event.GetEventObject() holds a pointer to the editor triggered 
+	// event.GetEventObject() holds a pointer to the editor triggered
 	// the menu
 	wxEVT_CMD_EDITOR_CONTEXT_MENU,
-	
+
 	// codelite is about to display the editor's *left margin* context menu
 	// A plugin can override the default menu display by catching this event and
 	// handling it differently
-	// event.GetEventObject() holds a pointer to the editor triggered 
+	// event.GetEventObject() holds a pointer to the editor triggered
 	// the menu
 	wxEVT_CMD_EDITOR_MARGIN_CONTEXT_MENU,
-	
+
 	// codelite is requesting for the find-in-files file masking.
 	// the format should be:
 	// *.a;*.b
 	// and should be placed at:
 	// event.SetString("*.a;*.b");
-	// The plugin can also control what codelite will do with its masking by 
+	// The plugin can also control what codelite will do with its masking by
 	// setting the event.SetInt() with the following values (the plugin can use
 	// bitwise OR):
 	// 0x00000001 -> append the plugins' masking to the default masking
 	// 0x00000002 -> prepend the plugins' masking to default masking
 	// 0x00000004 -> replace default masking with the one provided by the plugin
 	// 0x00000008 -> select the plugin's masking by default
-	wxEVT_CMD_GET_FIND_IN_FILES_MASK
+	wxEVT_CMD_GET_FIND_IN_FILES_MASK,
+
+	////////////////////////////////////////////////////////
+	// Debugger events
+	////////////////////////////////////////////////////////
+
+	// User is hovering a text, display the debugger tip for this variable
+	// User m_mgr->GetActiveEditor() to get the current editor Or
+	// IEditor* editor = dynamic_cast<IEditor*>(evt.GetEventObject());
+	// Hover position is set in the evt.GetInt()
+	wxEVT_CMD_DEBUGGER_TIP,
+
+	// codelite needs to know wether the user can interact with the
+	// debugger
+	wxEVT_CMD_DEBUGGER_CAN_INTERACT,
+
+	/////////////////////////////////////////////////////////
+
+	// Send dwell end event to the plugins to notify them
+	// to dismiss any displayed tooltip
+	// event.GetEventObject() holds a pointer to the editor
+	wxEVT_CMD_EDITOR_TIP_DWELL_END
 };
 
 //------------------------------------------------------------------

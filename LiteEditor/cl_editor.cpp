@@ -282,7 +282,7 @@ void LEditor::SetProperties()
 	SetRectangularSelectionModifier(wxSCI_SCMOD_CTRL);
 	SetAdditionalSelectionTyping(true);
 	SetVirtualSpaceOptions(1 /* SCVS_RECTANGULARSELECTION=1 | SCVS_USERACCESSIBLE=2 */ );
-	
+
 	OptionsConfigPtr options = GetOptions();
 	CallTipUseStyle(1);
 
@@ -297,7 +297,7 @@ void LEditor::SetProperties()
 		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
 		SetHighlightGuide(0);
 	}
-	
+
 	SetWrapMode(options->GetWordWrap() ? wxSCI_WRAP_WORD : wxSCI_WRAP_NONE);
 	SetViewWhiteSpace(options->GetShowWhitspaces());
 	SetMouseDwellTime(500);
@@ -308,12 +308,12 @@ void LEditor::SetProperties()
 	SetProperty(wxT("fold.at.else"), options->GetFoldAtElse() ? wxT("1") : wxT("0"));
 	SetProperty(wxT("fold.preprocessor"), options->GetFoldPreprocessor() ? wxT("1") : wxT("0"));
 	SetProperty(wxT("fold.compact"), options->GetFoldCompact() ? wxT("1") : wxT("0"));
-	
+
 	// disable pre-processing (for now)
 	// TODO: make this configurable
 	SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
 	SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
-	
+
 	// Fold and comments as well
 	SetProperty(wxT("fold.comment"), wxT("1"));
 	SetModEventMask (wxSCI_MOD_DELETETEXT | wxSCI_MOD_INSERTTEXT  | wxSCI_PERFORMED_UNDO  | wxSCI_PERFORMED_REDO | wxSCI_MOD_BEFOREDELETE );
@@ -656,14 +656,14 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	if ( !GetFoldExpanded(curLine) ) {
 		ToggleFold(curLine);
 	}
-	
+
 	if (IndicatorValueAt(MATCH_INDICATOR, pos) && event.GetKey() == GetCharAt(pos)) {
 		CharRight();
 		DeleteBack();
-		
-	} else if ( m_autoAddNormalBraces                            && 
-				(event.GetKey() == ')' || event.GetKey() == ']') && 
-				event.GetKey() == GetCharAt(pos)) 
+
+	} else if ( m_autoAddNormalBraces                            &&
+				(event.GetKey() == ')' || event.GetKey() == ']') &&
+				event.GetKey() == GetCharAt(pos))
 	{
 		// disable the auto brace adding when inside comment or string
 		if(!m_context->IsCommentOrString(pos)) {
@@ -675,10 +675,10 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	wxChar matchChar (0);
 	switch ( event.GetKey() ) {
 	case ';':
-	
+
 		if (!m_disableSemicolonShift && !m_context->IsCommentOrString(pos))
 			m_context->SemicolonShift();
-			
+
 		break;
 
 	case '(':
@@ -826,7 +826,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	bool hasSelection = (GetSelectionStart() != GetSelectionEnd());
 	if(GetHighlightGuide() != wxNOT_FOUND)
 		SetHighlightGuide(0);
-		
+
 	if (m_hightlightMatchedBraces) {
 		if ( hasSelection ) {
 			wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
@@ -882,7 +882,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 		SetIndicatorCurrent(2);
 		int last = IndicatorEnd(2, 0);
 		if(last != wxNOT_FOUND) {
-			IndicatorClearRange(0, GetLength());	
+			IndicatorClearRange(0, GetLength());
 #if defined(__WXMAC__) || (wxVERSION_NUMBER >= 2900 && defined(__WXMSW__))
 		Refresh();
 #endif
@@ -1072,7 +1072,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 			                 wxYES_NO|wxICON_QUESTION|wxCENTER) == wxYES) {
 				// try to clear the read-only flag from the file
 				if ( SetFileAttributes(fileName.GetFullPath().c_str(), dwAttrs & ~(FILE_ATTRIBUTE_READONLY)) == FALSE ) {
-					wxMessageBox(wxString::Format(wxT("%s '%s' %s"), _("Failed to open file"), fileName.GetFullPath().c_str(), _("for write")), 
+					wxMessageBox(wxString::Format(wxT("%s '%s' %s"), _("Failed to open file"), fileName.GetFullPath().c_str(), _("for write")),
 																		_("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
 					return false;
 				}
@@ -1087,7 +1087,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	// unless we got a BOM set
 	wxCSConv fontEncConv(GetOptions()->GetFileFontEncoding());
 	bool useBuiltIn = (GetOptions()->GetFileFontEncoding() == wxFONTENCODING_UTF8);
-	
+
 	// trim lines / append LF if needed
 	TrimText();
 
@@ -1095,7 +1095,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	// try to manually convert the text to make sure that the conversion does not fail
 	wxString theText = GetText();
 //	int      txtLen  = GetTextLength();
-	
+
 	// Make sure we can open the file for writing
 	wxString tmp_file;
 	wxFFile file(fileName.GetFullPath().GetData(), wxT("wb"));
@@ -1114,14 +1114,14 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 			return false;
 		}
 	}
-	
+
 	const wxWX2MBbuf buf = theText.mb_str(useBuiltIn ? (const wxMBConv&)wxConvUTF8 : (const wxMBConv&)fontEncConv);
 	if(!buf.data()) {
-		wxMessageBox(wxString::Format(wxT("%s\n%s '%s'"), _("Save file failed!"),_("Could not convert the file to the requested encoding"),  
+		wxMessageBox(wxString::Format(wxT("%s\n%s '%s'"), _("Save file failed!"),_("Could not convert the file to the requested encoding"),
 							wxFontMapper::GetEncodingName(GetOptions()->GetFileFontEncoding()).c_str()), _("CodeLite"), wxOK|wxICON_WARNING);
 		return false;
 	}
-	
+
 	file.Write(buf.data(), strlen(buf.data()));
 	file.Close();
 
@@ -1215,12 +1215,12 @@ void LEditor::CompleteWord()
 {
 	if(clEventDisabler::eventsDisabled)
 		return;
-	
+
 	// Let the plugins a chance to override the default behavior
 	wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE);
 	evt.SetInt(GetCurrentPosition());
 	evt.SetEventObject(this);
-	
+
 	if(wxTheApp->ProcessEvent(evt))
 		// the plugin handled the code-complete request
 		return;
@@ -1239,15 +1239,15 @@ void LEditor::CodeComplete()
 {
 	if(clEventDisabler::eventsDisabled)
 		return;
-		
+
 	wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE);
 	evt.SetInt(GetCurrentPosition());
 	evt.SetEventObject(this);
-	
+
 	if(wxTheApp->ProcessEvent(evt))
 		// the plugin handled the code-complete request
 		return;
-	else 
+	else
 		// let the built-in context do the job
 		m_context->CodeComplete();
 }
@@ -1266,7 +1266,7 @@ void LEditor::GotoDefinition()
 	event.SetString(word.c_str());
 	if(wxTheApp->ProcessEvent(event))
 		return;
-		
+
 	m_context->GotoDefinition();
 }
 
@@ -1292,7 +1292,7 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 
 	if (IsContextMenuOn()) {
 		// Don't cover the context menu with a tooltip!
-		
+
 	} else if ( event.GetX() < margin ) {
 		// We can't use event.GetPosition() here, as in the margin it returns -1
 		int position = PositionFromPoint(wxPoint(event.GetX(),event.GetY()));
@@ -1310,10 +1310,10 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 			tooltip = clMainFrame::Get()->GetOutputPane()->GetBuildTab()->GetBuildToolTip(fname, line, style_bytes);
 			type = ct_compiler_msg;
 		}
-		
+
 		wxString tmpTip = tooltip;
 		tmpTip.Trim().Trim(false);
-		
+
 		if (!tmpTip.IsEmpty()) {
 			DoShowCalltip(position, tooltip, type);
 		}
@@ -1323,22 +1323,28 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 		m_context->OnDbgDwellStart(event);
 
 	} else if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_TYPE_INFO) {
-		
+
 		// Allow the plugins to override the default built-in behavior of displaying
 		// the type info tooltip
 		wxCommandEvent evtTypeinfo(wxEVT_CMD_TYPEINFO_TIP, GetId());
 		evtTypeinfo.SetEventObject(this);
 		evtTypeinfo.SetInt(event.GetPosition());
-		
+
 		if(wxTheApp->ProcessEvent(evtTypeinfo))
 			return;
-			
+
 		m_context->OnDwellStart(event);
 	}
 }
 
 void LEditor::OnDwellEnd(wxScintillaEvent & event)
 {
+	// Allow the plugins to override the default built-in behavior of displaying
+	wxCommandEvent evtTypeinfo(wxEVT_CMD_EDITOR_TIP_DWELL_END, GetId());
+	evtTypeinfo.SetEventObject(this);
+	if(wxTheApp->ProcessEvent(evtTypeinfo))
+		return;
+
 	m_context->OnDwellEnd(event);
 	m_context->OnDbgDwellEnd(event);
 }
@@ -1774,10 +1780,10 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 		}
 	} else if (type == wxEVT_FRD_REPLACEALL) {
 		ReplaceAll();
-		
+
 	} else if (type == wxEVT_FRD_BOOKMARKALL) {
 		MarkAll();
-		
+
 	} else if (type == wxEVT_FRD_CLEARBOOKMARKS) {
 		DelAllMarkers();
 	}
@@ -2149,7 +2155,7 @@ bool LEditor::ReplaceAll()
 
 	BeginUndoAction();
 	m_findReplaceDlg->ResetReplacedCount();
-	
+
 	long savedPos = GetCurrentPos();
 	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len, posInChars, match_lenInChars) ) {
 		// Manipulate the buffer
@@ -2168,18 +2174,18 @@ bool LEditor::ReplaceAll()
 	}
 
 	if ( replaceInSelectionOnly ) {
-		
+
 		// Prepare the next selection
 		int selStart = GetSelectionStart();
 		int selEnd   = selStart + txt.Len();
-		
+
 		// replace the selection
 		ReplaceSelection(txt);
-		
+
 		// Keep the selection
 		SetSelectionStart(selStart);
 		SetSelectionEnd  (selEnd);
-		
+
 		// place the caret at the end of the selection
 		EnsureCaretVisible();
 
@@ -2260,12 +2266,12 @@ void LEditor::ReloadFile()
 	clMainFrame::Get()->SetStatusMessage(_("Loading file..."), 0, XRCID("editor"));
 
 	wxString text;
-	
+
 	// Read the file we currently support:
 	// BOM, Auto-Detect encoding & User defined encoding
 	m_fileBom.Clear();
 	ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding(), &m_fileBom);
-	
+
 	SetText( text );
 
 	m_modifyTime = GetFileLastModifiedTime();
@@ -2382,13 +2388,13 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 	}
 	if ( clientPt.x < margin ) {
 		GotoPos( PositionFromPoint(clientPt) );
-		
+
 		// Let the plugins handle this event first
 		wxCommandEvent marginContextMenuEvent(wxEVT_CMD_EDITOR_MARGIN_CONTEXT_MENU, GetId());
 		marginContextMenuEvent.SetEventObject(this);
 		if(wxTheApp->ProcessEvent(marginContextMenuEvent))
 			return;
-			
+
 		DoBreakptContextMenu(clientPt);
 		return;
 	}
@@ -2410,16 +2416,16 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 			SetCaretAt(closePos);
 		}
 	}
-	
+
 	// Let the plugins handle this event first
 	wxCommandEvent contextMenuEvent(wxEVT_CMD_EDITOR_CONTEXT_MENU, GetId());
 	contextMenuEvent.SetEventObject(this);
 	if(wxTheApp->ProcessEvent(contextMenuEvent))
 		return;
-	
+
 	if(!m_rightClickMenu)
 		return;
-		
+
 	//Let the context add it dynamic content
 	m_context->AddMenuDynamicContent(m_rightClickMenu);
 
@@ -2457,29 +2463,29 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 	IDebugger *   dbgr                = DebuggerMgr::Get().GetActiveDebugger();
 	bool          dbgTipIsShown       = ManagerST::Get()->GetDebuggerTip()->IsShown();
 	bool          keyIsControl        = event.GetKeyCode() == WXK_CONTROL;
-	
+
 	if(dbgTipIsShown && !keyIsControl) {
-		
-		// If any key is pressed, but the CONTROL key hide the 
+
+		// If any key is pressed, but the CONTROL key hide the
 		// debugger tip
 		ManagerST::Get()->GetDebuggerTip()->HideDialog();
-	
+
 	} else if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() && keyIsControl) {
-		
+
 		DebuggerInformation info;
 		DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), info);
-		
+
 		if(info.showTooltipsOnlyWithControlKeyIsDown) {
 			// CONTROL Key + Debugger is running and interactive
 			// and no debugger tip is shown -> emulate "Dwell" event
 			wxScintillaEvent sciEvent;
 			wxPoint pt ( ScreenToClient(wxGetMousePosition()) );
 			sciEvent.SetPosition( PositionFromPointClose(pt.x, pt.y));
-			
+
 			m_context->OnDbgDwellStart(sciEvent);
 		}
 	}
-	
+
 	//let the context process it as well
 	if (GetFunctionTip()->IsActive() && event.GetKeyCode() == WXK_ESCAPE)
 		GetFunctionTip()->Deactivate();
@@ -2741,7 +2747,7 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,const wxString& conditions/*=wxT
 	if (lineno == -1) {
 		lineno = GetCurrentLine()+1;
 	}
-	
+
 	ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
 	if (!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp)) {
 		wxMessageBox(_("Failed to insert breakpoint"));
@@ -2767,7 +2773,7 @@ void LEditor::DelBreakpoint(int lineno /*= -1*/)
 	// this is used by Manager class to detect whether the control
 	// was triggered by user action
 	ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
-	
+
 	int result = ManagerST::Get()->GetBreakpointsMgr()->DelBreakpointByLineno(GetFileName().GetFullPath(), lineno);
 	switch (result) {
 	case true:
@@ -2984,7 +2990,7 @@ void LEditor::UpdateColours()
 			SetKeyWords(4, wxEmptyString);
 		}
 	}
-	
+
 	wxString newValue = TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS ? wxString(wxT("1")) : wxString(wxT("0"));
 	SetProperty(wxT("lexer.cpp.track.preprocessor"),  newValue);
 	SetProperty(wxT("lexer.cpp.update.preprocessor"), newValue);
@@ -3262,17 +3268,17 @@ int LEditor::GetEOLByOS()
 void LEditor::ShowFunctionTipFromCurrentPos()
 {
 	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP) {
-		
+
 		if(clEventDisabler::eventsDisabled)
 		return;
-	
+
 		int pos = DoGetOpenBracePos();
-		
+
 		// see if any of the plugins want to handle it
 		wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE_FUNCTION_CALLTIP, GetId());
 		evt.SetEventObject(this);
 		evt.SetInt(pos);
-		
+
 		if(wxTheApp->ProcessEvent(evt))
 			return;
 
@@ -3413,7 +3419,7 @@ void LEditor::TrimText()
 	bool appendLf              = GetOptions()->GetAppendLF();
 	bool dontTrimCaretLine     = GetOptions()->GetDontTrimCaretLine();
 	bool trimOnlyModifiedLInes = GetOptions()->GetTrimOnlyModifiedLines();
-	
+
 	if (!trim && !appendLf) {
 		return;
 	}
@@ -3425,11 +3431,11 @@ void LEditor::TrimText()
 		int maxLines = GetLineCount();
 		int currLine = GetCurrentLine();
 		for (int line = 0; line < maxLines; line++) {
-			
+
 			//only trim lines modified by the user in this session
 			if(trimOnlyModifiedLInes && (MarginGetStyle(line) != CL_LINE_MODIFIED_STYLE))
 				continue;
-				
+
 			// We can trim in the following cases:
 			// 1) line is is NOT the caret line OR
 			// 2) line is the caret line, however dontTrimCaretLine is FALSE
@@ -3938,7 +3944,7 @@ void LEditor::ShowCalltip(clCallTipPtr tip)
 {
 	GetFunctionTip()->Add( tip );
 	GetFunctionTip()->Highlight(m_context->DoGetCalltipParamterIndex());
-	
+
 	// In an ideal world, we would like our tooltip to be placed
 	// on top of the caret.
 	wxPoint pt = PointFromPosition(GetCurrentPosition());

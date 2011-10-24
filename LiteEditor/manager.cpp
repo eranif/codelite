@@ -196,10 +196,10 @@ Manager::~Manager ( void )
 	wxTheApp->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
 	//stop background processes
 	IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
-	
+
 	if(debugger && debugger->IsRunning())
 		DbgStop();
-	
+
 	// Save the current layout
 	SavePerspective(NORMAL_LAYOUT);
 	{
@@ -349,7 +349,7 @@ void Manager::CloseWorkspace()
 	m_workspceClosing = true;
 
 	DbgClearWatches();
-	
+
 	// If we got a running debugging session - terminate it
 	IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
 	if(debugger && debugger->IsRunning())
@@ -1973,7 +1973,7 @@ void Manager::DbgStart ( long attachPid )
 		return;
 	}
 #endif
-	
+
 	if ( attachPid == 1 ) { //attach to process
 		AttachDbgProcDlg *dlg = new AttachDbgProcDlg ( NULL );
 		if ( dlg->ShowModal() == wxID_OK ) {
@@ -2034,10 +2034,10 @@ void Manager::DbgStart ( long attachPid )
 		dbgr->Continue();
 		return;
 	}
-	
+
 	// Save the current layout
 	SavePerspective(NORMAL_LAYOUT);
-	
+
 	//set the debugger information
 	DebuggerInformation dinfo;
 	DebuggerMgr::Get().GetDebuggerInformation ( debuggerName, dinfo );
@@ -2198,7 +2198,7 @@ void Manager::DbgStart ( long attachPid )
 		// debugging local target
 		dbgr->Run ( args, wxEmptyString );
 	}
-	
+
 	LoadPerspective(DEBUG_LAYOUT);
 }
 
@@ -2206,7 +2206,7 @@ void Manager::DbgStop()
 {
 	SavePerspective(DEBUG_LAYOUT);
 	LoadPerspective(NORMAL_LAYOUT);
-	
+
 	if ( m_watchDlg ) {
 		m_watchDlg->Destroy();
 		m_watchDlg = NULL;
@@ -2248,10 +2248,10 @@ void Manager::DbgStop()
 
 	// notify plugins that the debugger is about to be stopped
 	SendCmdEvent(wxEVT_DEBUG_ENDING);
-	
+
 	if(dbgr->IsRunning())
 		dbgr->Stop();
-		
+
 	DebuggerMgr::Get().SetActiveDebugger ( wxEmptyString );
 	DebugMessage ( _( "Debug session ended\n" ) );
 
@@ -3516,11 +3516,11 @@ void Manager::LoadPerspective(const wxString& name)
 {
 	wxString file;
 	file << wxStandardPaths::Get().GetUserDataDir() << wxT("/config/") << name;
-	
+
 	wxString content;
 	if(ReadFileWithConversion(file, content)) {
 		clMainFrame::Get()->GetDockingManager().LoadPerspective(content, true);
-		
+
 	} else {
 		if(name == DEBUG_LAYOUT) {
 			// First time, make sure that the debugger pane is visible
@@ -3544,9 +3544,22 @@ void Manager::DeleteAllPerspectives()
 {
 	wxArrayString files;
 	wxDir::GetAllFiles(wxStandardPaths::Get().GetUserDataDir() + wxT("/config/"), &files, wxT("*.layout"));
-	
+
 	wxLogNull noLog;
 	for(size_t i=0; i<files.GetCount(); i++) {
 		wxRemoveFile(files.Item(i));
 	}
+}
+
+bool Manager::DbgCanInteract()
+{
+	// Allow the plugins to override the default built-in behavior
+	wxCommandEvent evtDbgCanInteract(wxEVT_CMD_DEBUGGER_CAN_INTERACT);
+	evtDbgCanInteract.SetEventObject(this);
+	evtDbgCanInteract.SetInt(0);
+	if(wxTheApp->ProcessEvent(evtDbgCanInteract)) {
+		return evtDbgCanInteract.GetInt() == 1;
+	}
+
+	return m_dbgCanInteract;
 }

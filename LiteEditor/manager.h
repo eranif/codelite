@@ -350,7 +350,7 @@ public:
 	 * @param event
 	 */
 	void OnInterrestingMacrosFound(wxCommandEvent& e);
-	
+
 	void OnDbContentCacherLoaded(wxCommandEvent &event);
 
 	/**
@@ -358,7 +358,7 @@ public:
 	 * \param filename
 	 */
 	void RetagFile(const wxString &filename);
-	
+
 	/**
 	 * \brief Launch the ParseThread to update the preprocessor vizualisation
 	 * \param filename
@@ -436,17 +436,17 @@ public:
 	 * \param project project name
 	 */
 	void GetProjectFiles(const wxString &project, wxArrayString &files);
-	
+
 	/**
 	 * @brief return list of files belonged the active project (same as running: GetProjectFiles(GetActiveProjectName(), files)
 	 */
 	void GetActiveProjectFiles(wxArrayString &files);
-	
+
 	/**
 	 * @brief return the currently opened file's project files
 	 */
 	void GetActiveFileProjectFiles(wxArrayString &files);
-	
+
 	/**
 	 * return the project name that 'fullPathFileName' belogs to. if 2 matches were found, return
 	 * the first one, or empty string if no match was found
@@ -462,7 +462,7 @@ public:
 	 * @return active build configuration or NULL
 	 */
 	BuildConfigPtr GetCurrentBuildConf();
-	
+
 	/**
 	 * Return a project working directory
 	 * \param project project name
@@ -604,14 +604,14 @@ protected:
 protected:
 	void DoUpdateDebuggerTabControl(wxWindow* curpage);
 	bool DebuggerPaneWasShown;
-	
+
 public:
 	BreakptMgr* GetBreakpointsMgr() {
 		return m_breakptsmgr;
 	}
 
 	void UpdateDebuggerPane();
-	
+
 	void SetMemory(const wxString &address, size_t count, const wxString &hex_value);
 
 	/**
@@ -627,11 +627,11 @@ public:
 	bool GetDebuggerPaneOriginallyVisible() const {
 		return DebuggerPaneWasShown;
 	}
-	
+
 	void LoadPerspective(const wxString &name);
 	void SavePerspective(const wxString &name);
 	void DeleteAllPerspectives();
-	
+
 	//---------------------------------------------------
 	// Debugging API
 	//---------------------------------------------------
@@ -643,7 +643,7 @@ public:
 	void         DbgDoSimpleCommand(int cmd);
 	void         DbgSetFrame(int frame, int lineno);
 	void         DbgSetThread(long threadId);
-	bool         DbgCanInteract() { return m_dbgCanInteract;}
+	bool         DbgCanInteract() ;
 	void         DbgClearWatches();
 	void         DbgRestoreWatches();
 	DbgStackInfo DbgGetCurrentFrameInfo() {return m_dbgCurrentFrameInfo; }

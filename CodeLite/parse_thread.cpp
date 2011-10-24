@@ -114,9 +114,9 @@ void ParseThread::ParseIncludeFiles(const wxString& filename)
 
 	TEST_DESTROY();
 
-	DEBUG_MESSAGE( wxString::Format(wxT("Files that need parse %d"), arrFiles.GetCount()) ) ;
+	DEBUG_MESSAGE( wxString::Format(wxT("Files that need parse %u"), (unsigned int)arrFiles.GetCount()) ) ;
 	TagsManagerST::Get()->FilterNonNeededFilesForRetaging(arrFiles, m_pDb);
-	DEBUG_MESSAGE( wxString::Format(wxT("Actual files that need parse %d"), arrFiles.GetCount()) );
+	DEBUG_MESSAGE( wxString::Format(wxT("Actual files that need parse %u"), (unsigned int)arrFiles.GetCount()) );
 
 	ParseAndStoreFiles(arrFiles, initalCount);
 }
@@ -573,7 +573,7 @@ void ParseThread::FindIncludedFiles(ParseRequest *req)
 	wxArrayString searchPaths, excludePaths, filteredFileList;
 	GetSearchPaths( searchPaths, excludePaths );
 
-	DEBUG_MESSAGE( wxString::Format(wxT("Initial workspace files count is %d"), req->_workspaceFiles.size()) ) ;
+	DEBUG_MESSAGE( wxString::Format(wxT("Initial workspace files count is %u"), (unsigned int)req->_workspaceFiles.size()) ) ;
 
 	for(size_t i=0; i<req->_workspaceFiles.size(); i++) {
 		wxString name(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
@@ -586,7 +586,7 @@ void ParseThread::FindIncludedFiles(ParseRequest *req)
 		filteredFileList.Add( fn.GetFullPath() );
 	}
 
-	DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::FindIncludedFiles -> Workspace files %d"), filteredFileList.GetCount()) );
+	DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::FindIncludedFiles -> Workspace files %u"), (unsigned int)filteredFileList.GetCount()) );
 
 	wxArrayString arrFiles;
 

@@ -35,25 +35,26 @@ CCVirtualListCtrl::~CCVirtualListCtrl()
 
 wxListItemAttr* CCVirtualListCtrl::OnGetItemAttr(long item) const
 {
-#if defined(__WXMSW__)
-	static wxListItemAttr attr;
-	static bool           first(true);
-
-	if(first) {
-		first = false;
-		wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-		fnt.SetWeight(wxBOLD);
-		attr.SetFont(fnt);
-	}
-
-	if (GetFirstSelected() == item) {
-		return &attr;
-
-	} else
-		return NULL;
-#else // Mac
+//#if defined(__WXMSW__)
+//	static wxListItemAttr attr;
+//	static bool           first(true);
+//
+//	if(first) {
+//		first = false;
+//		wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+//		fnt.SetWeight(wxBOLD);
+//		attr.SetFont(fnt);
+//	}
+//
+//	if (GetFirstSelected() == item) {
+//		return &attr;
+//
+//	} else
+//		return NULL;
+//#else // Mac
+//	return NULL;
+//#endif
 	return NULL;
-#endif
 }
 
 int CCVirtualListCtrl::OnGetItemColumnImage(long item, long column) const

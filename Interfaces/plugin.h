@@ -288,6 +288,18 @@ enum {
 	// Use m_mgr->GetActiveEditor() to get the active editor
 	wxEVT_CMD_SHOW_QUICK_OUTLINE,
 	
+	// User is hovering a text, display the typeinfo
+	// User m_mgr->GetActiveEditor() to get the current editor Or
+	// IEditor* editor = dynamic_cast<IEditor*>(evt.GetEventObject());
+	// Hover position is set in the evt.GetInt()
+	wxEVT_CMD_TYPEINFO_TIP,
+	
+	// codelite is about to display a code-completion
+	// box with the language specific keywords
+	// User m_mgr->GetActiveEditor() to get the current editor Or
+	// IEditor* editor = dynamic_cast<IEditor*>(evt.GetEventObject());
+	wxEVT_CMD_DISPLAY_LANGUAGE_KEYWORDS_CC_BOX,
+	
 	/////////////////////////////////////////////////
 	// Project management events
 	/////////////////////////////////////////////////

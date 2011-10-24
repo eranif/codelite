@@ -1292,6 +1292,7 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 
 	if (IsContextMenuOn()) {
 		// Don't cover the context menu with a tooltip!
+		
 	} else if ( event.GetX() < margin ) {
 		// We can't use event.GetPosition() here, as in the margin it returns -1
 		int position = PositionFromPoint(wxPoint(event.GetX(),event.GetY()));
@@ -1322,6 +1323,16 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 		m_context->OnDbgDwellStart(event);
 
 	} else if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_TYPE_INFO) {
+		
+		// Allow the plugins to override the default built-in behavior of displaying
+		// the type info tooltip
+		wxCommandEvent evtTypeinfo(wxEVT_CMD_TYPEINFO_TIP, GetId());
+		evtTypeinfo.SetEventObject(this);
+		evtTypeinfo.SetInt(event.GetPosition());
+		
+		if(wxTheApp->ProcessEvent(evtTypeinfo))
+			return;
+			
 		m_context->OnDwellStart(event);
 	}
 }

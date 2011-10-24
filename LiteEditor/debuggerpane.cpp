@@ -46,7 +46,7 @@ const wxString DebuggerPane::BREAKPOINTS     = _("Breakpoints");
 const wxString DebuggerPane::THREADS         = _("Threads");
 const wxString DebuggerPane::MEMORY          = _("Memory");
 const wxString DebuggerPane::ASCII_VIEWER    = _("Ascii Viewer");
-const wxString DebuggerPane::DEBUGGER_OUTPUT = _("Ouptut");
+const wxString DebuggerPane::DEBUGGER_OUTPUT = _("Output");
 
 #define IS_DETACHED(name) ( detachedPanes.Index(name) != wxNOT_FOUND ) ? true : false
 

@@ -33,7 +33,6 @@
 #include "cl_process.h"
 #include "tree.h"
 #include "entry.h"
-#include "tags_storage_sqlite3.h"
 #include "cpptoken.h"
 #include <wx/thread.h>
 #include "singleton.h"
@@ -44,6 +43,7 @@
 #include "extdbdata.h"
 #include "language.h"
 #include <set>
+#include "istorage.h"
 #include "codelite_exports.h"
 
 #ifdef USE_TRACE
@@ -64,7 +64,8 @@ class IProcess;
 #define MAX_TIP_LINE_SIZE 100
 
 #define TagsGlobal    0
-#define TagsGlobalGTK 1
+
+#define USE_TAGS_SQLITE3 1
 
 // send this event whenever the a tags file needs to be updated
 extern WXDLLIMPEXP_CL const wxEventType wxEVT_UPDATE_FILETREE_EVENT;
@@ -92,8 +93,6 @@ enum FunctionFormatFlag {
 	FunctionFormat_Impl          = 0x00000002,
 	FunctionFormat_Arg_Per_Line  = 0x00000004
 };
-
-class ITagsStorage;
 
 /**
  * This class is the interface to ctags and SQLite database.
@@ -136,7 +135,6 @@ public:
 	wxCriticalSection      m_crawlerLocker;
 
 private:
-	ITagsStorage *                m_workspaceDatabase;
 	wxFileName                    m_codeliteIndexerPath;
 	IProcess*                     m_codeliteIndexerProcess;
 	wxString                      m_ctagsCmd;
@@ -152,7 +150,12 @@ private:
 	std::set<wxString>            m_CppIgnoreKeyWords;
 	wxArrayString                 m_projectPaths;
 	wxFontEncoding                m_encoding;
+	wxFileName                    m_dbFile;
 	
+#if USE_TAGS_SQLITE3
+	ITagsStoragePtr               m_db;
+#endif
+
 public:
 
 	void SetLanguage(Language *lang);
@@ -255,9 +258,7 @@ public:
 	 * Return a pointer to the underlying databases object.
 	 * @return tags database
 	 */
-	ITagsStorage* GetDatabase() {
-		return m_workspaceDatabase;
-	}
+	ITagsStoragePtr GetDatabase();
 
 	/**
 	 * Delete all entries from database that are related to file name.
@@ -684,7 +685,7 @@ public:
 	 * @param files list of files
 	 * @brief db    database to use
 	 */
-	void UpdateFilesRetagTimestamp(const wxArrayString &files, ITagsStorage *db);
+	void UpdateFilesRetagTimestamp(const wxArrayString &files, ITagsStoragePtr db);
 
 	/**
 	 * @brief accept as input ctags pattern of a function and tries to evaluate the
@@ -698,7 +699,7 @@ public:
 	 * @param strFiles
 	 * @param db
 	 */
-	void FilterNonNeededFilesForRetaging(wxArrayString &strFiles, ITagsStorage *db);
+	void FilterNonNeededFilesForRetaging(wxArrayString &strFiles, ITagsStoragePtr db);
 
 	/**
 	 * Parse tags from memory and constructs a TagTree.
@@ -775,7 +776,7 @@ protected:
 	void           FilterImplementation(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
 	void           FilterDeclarations(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
 	wxString       DoReplaceMacros(wxString name);
-	void           DoFilterNonNeededFilesForRetaging(wxArrayString &strFiles, ITagsStorage *db);
+	void           DoFilterNonNeededFilesForRetaging(wxArrayString &strFiles, ITagsStoragePtr db);
 	void           DoGetFunctionTipForEmptyExpression(const wxString &word, const wxString &text, std::vector<TagEntryPtr> &tips, bool globalScopeOnly = false);
 	void           TryFindImplDeclUsingNS(const wxString &scope, const wxString &word, bool imp, const std::vector<wxString>& visibleScopes, std::vector<TagEntryPtr> &tags);
 	void           TryReducingScopes(const wxString &scope, const wxString &word, bool imp, std::vector<TagEntryPtr> &tags);

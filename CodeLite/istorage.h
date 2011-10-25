@@ -28,6 +28,10 @@
 
 #include "comment.h"
 #include "pptable.h"
+#include "tag_tree.h"
+#include "fileentry.h"
+#include "entry.h"
+
 /**
  * @class ITagsStorage defined the tags storage API used by codelite
  * @author eran
@@ -470,32 +474,6 @@ enum {
 	TagError
 };
 
-/**
- * \class StorageCacheEnabler
- * \author eran
- * \date 02/08/10
- * \file istorage.h
- * \brief helper class to turn on/off storage cache flag
- */
-class StorageCacheEnabler
-{
-	ITagsStorage *m_storage;
-
-public:
-	StorageCacheEnabler(ITagsStorage *storage) : m_storage(storage)
-	{
-		if(m_storage) {
-			m_storage->SetUseCache(true);
-		}
-	}
-
-	~StorageCacheEnabler()
-	{
-		if(m_storage) {
-			m_storage->SetUseCache(false);
-			m_storage = NULL;
-		}
-	}
-};
+typedef SmartPtr<ITagsStorage> ITagsStoragePtr;
 
 #endif // ISTORAGE_H

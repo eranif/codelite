@@ -696,7 +696,7 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 
 	// get scope and kind to scan for tags (also: enumerators indicate their parent enum via "typeref" in the db)
 	TagTreeData *treetag = (TagTreeData*) tree->GetItemData(id);
-	ITagsStorage *db = m_mgr->GetTagsManager()->GetDatabase();
+	ITagsStoragePtr db = m_mgr->GetTagsManager()->GetDatabase();
 	std::vector<TagEntryPtr> tags;
 	if (!treetag) {
 		db->GetTagsByFilesAndScope(files, wxT("<global>"), tags);

@@ -34,6 +34,7 @@
 #include "worker_thread.h"
 #include "procutils.h"
 #include "tag_tree.h"
+#include "istorage.h"
 #include "codelite_exports.h"
 
 class ITagsStorage;
@@ -160,7 +161,6 @@ public:
 class WXDLLIMPEXP_CL ParseThread : public WorkerThread
 {
 	friend class ParseThreadST;
-	ITagsStorage*               m_pDb;
 	wxStopWatch                 m_watch;
 	wxArrayString               m_searchPaths;
 	wxArrayString               m_excludePaths;
@@ -182,7 +182,7 @@ private:
 	 */
 	virtual ~ParseThread();
 
-	void       DoStoreTags   (const wxString &tags, const wxString &filename, int &count);
+	void       DoStoreTags   (const wxString &tags, const wxString &filename, int &count, ITagsStoragePtr db);
 	TagTreePtr DoTreeFromTags(const wxString &tags, int &count);
 
 private:
@@ -208,7 +208,7 @@ private:
 	 * the external database
 	 * @param filename
 	 */
-	void ParseIncludeFiles(const wxString &filename);
+	void ParseIncludeFiles(const wxString &filename, ITagsStoragePtr db);
 
 	void ProcessSimple            (ParseRequest *req);
 	void ProcessIncludes          (ParseRequest *req);
@@ -216,7 +216,7 @@ private:
 	void ProcessInterrestingMacros(ParseRequest *req);
 	void ProcessDeleteTagsOfFiles (ParseRequest *req);
 	void GetFileListToParse(const wxString &filename, wxArrayString &arrFiles);
-	void ParseAndStoreFiles(const wxArrayString &arrFiles, int initalCount);
+	void ParseAndStoreFiles(const wxArrayString &arrFiles, int initalCount, ITagsStoragePtr db);
 
 	void FindIncludedFiles(ParseRequest *req);
 };

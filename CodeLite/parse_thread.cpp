@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "tags_storage_sqlite3.h"
 #include "pp_include.h"
 #include "pptable.h"
 #include "file_logger.h"
@@ -48,17 +49,6 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
 		}\
 	}
 
-struct DbReleaser {
-	ITagsStorage **_db;
-	DbReleaser(ITagsStorage **db) : _db(db) {}
-	~DbReleaser() {
-		if(*_db) {
-			delete *_db;
-			*_db = NULL;
-		}
-	}
-};
-
 const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS = XRCID("parse_thread_updated_symbols");
 const wxEventType wxEVT_PARSE_THREAD_MESSAGE              = XRCID("parse_thread_update_status_bar");
 const wxEventType wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE   = XRCID("parse_thread_scan_includes_done");
@@ -69,15 +59,11 @@ const wxEventType wxEVT_PARSE_THREAD_INTERESTING_MACROS   = XRCID("parse_thread_
 
 ParseThread::ParseThread()
 	: WorkerThread()
-	, m_pDb( NULL )
 {
 }
 
 ParseThread::~ParseThread()
 {
-	if ( m_pDb ) {
-		delete m_pDb;
-	}
 }
 
 void ParseThread::ProcessRequest(ThreadRequest * request)
@@ -105,7 +91,7 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	}
 }
 
-void ParseThread::ParseIncludeFiles(const wxString& filename)
+void ParseThread::ParseIncludeFiles(const wxString& filename, ITagsStoragePtr db)
 {
 	wxArrayString arrFiles;
 	fcFileOpener::Instance()->ClearResults();
@@ -115,10 +101,10 @@ void ParseThread::ParseIncludeFiles(const wxString& filename)
 	TEST_DESTROY();
 
 	DEBUG_MESSAGE( wxString::Format(wxT("Files that need parse %u"), (unsigned int)arrFiles.GetCount()) ) ;
-	TagsManagerST::Get()->FilterNonNeededFilesForRetaging(arrFiles, m_pDb);
+	TagsManagerST::Get()->FilterNonNeededFilesForRetaging(arrFiles, db);
 	DEBUG_MESSAGE( wxString::Format(wxT("Actual files that need parse %u"), (unsigned int)arrFiles.GetCount()) );
 
-	ParseAndStoreFiles(arrFiles, initalCount);
+	ParseAndStoreFiles(arrFiles, initalCount, db);
 }
 
 TagTreePtr ParseThread::DoTreeFromTags(const wxString& tags, int &count)
@@ -126,13 +112,13 @@ TagTreePtr ParseThread::DoTreeFromTags(const wxString& tags, int &count)
 	return TagsManagerST::Get()->TreeFromTags(tags, count);
 }
 
-void ParseThread::DoStoreTags(const wxString& tags, const wxString &filename, int &count)
+void ParseThread::DoStoreTags(const wxString& tags, const wxString &filename, int &count, ITagsStoragePtr db)
 {
 	TagTreePtr ttp = DoTreeFromTags(tags, count);
-	m_pDb->Begin();
-	m_pDb->DeleteByFileName( m_pDb->GetDatabaseFileName(), filename, false);
-	m_pDb->Store(ttp, wxFileName(), false);
-	m_pDb->Commit();
+	db->Begin();
+	db->DeleteByFileName( wxFileName(), filename, false);
+	db->Store(ttp, wxFileName(), false);
+	db->Commit();
 }
 
 void ParseThread::SendEvent(int evtType, const wxString &fileName, std::vector<std::pair<wxString, TagEntry> >  &items)
@@ -214,12 +200,8 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 
 	// convert the file to tags
 	TagsManager *tagmgr = TagsManagerST::Get();
-
-	if ( !m_pDb ) {
-		m_pDb = new TagsStorageSQLite();
-	}
 	
-	DbReleaser dbReleaser(&m_pDb);
+	ITagsStoragePtr db(new TagsStorageSQLite());
 	
 	//convert the file content into tags
 	wxString tags;
@@ -236,7 +218,7 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 
 	std::vector<TagEntryPtr> tagsByFile;
 
-	m_pDb->SelectTagsByFile(file, tagsByFile, wxFileName(dbfile));
+	db->SelectTagsByFile(file, tagsByFile, wxFileName(dbfile));
 
 	// Load the records and build a language tree
 	TagEntry root;
@@ -267,43 +249,43 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 
 	// Delete old entries
 	size_t i=0;
-	m_pDb->OpenDatabase( dbfile );
-	m_pDb->Begin();
+	db->OpenDatabase( dbfile );
+	db->Begin();
 
 	// remove all the 'deleted' items from the database
 	for (i=0; i<deletedItems.size(); i++) {
-		m_pDb->DeleteTagEntry(deletedItems[i].second.GetKind(), deletedItems[i].second.GetSignature(), deletedItems[i].second.GetPath());
+		db->DeleteTagEntry(deletedItems[i].second.GetKind(), deletedItems[i].second.GetSignature(), deletedItems[i].second.GetPath());
 	}
 
 	// insert all new items to database
 	for (i=0; i<newItems.size(); i++) {
-		if (m_pDb->InsertTagEntry(newItems[i].second) == TagOk) {
+		if (db->InsertTagEntry(newItems[i].second) == TagOk) {
 			goodNewItems.push_back(newItems[i]);
 		}
 	}
 
 	// Update modified items
 	for (i=0; i<modifiedItems.size(); i++) {
-		m_pDb->UpdateTagEntry( modifiedItems[i].second );
+		db->UpdateTagEntry( modifiedItems[i].second );
 	}
 
 	///////////////////////////////////////////
 	// update the file retag timestamp
 	///////////////////////////////////////////
-	m_pDb->InsertFileEntry(file, (int)time(NULL));
+	db->InsertFileEntry(file, (int)time(NULL));
 
 	////////////////////////////////////////////////
 	// Parse and store the macros found in this file
 	////////////////////////////////////////////////
 	PPTable::Instance()->Clear();
 	PPScan( file, true );
-	m_pDb->StoreMacros( PPTable::Instance()->GetTable() );
+	db->StoreMacros( PPTable::Instance()->GetTable() );
 	PPTable::Instance()->Clear();
 
-	m_pDb->Commit();
+	db->Commit();
 
 	// Parse the saved file to get a list of files to include
-	ParseIncludeFiles( file );
+	ParseIncludeFiles( file, db );
 
 	// If there is no event handler set to handle this comaprison
 	// results, then nothing more to be done
@@ -392,7 +374,7 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
 	}
 }
 
-void ParseThread::ParseAndStoreFiles(const wxArrayString& arrFiles, int initalCount)
+void ParseThread::ParseAndStoreFiles(const wxArrayString& arrFiles, int initalCount, ITagsStoragePtr db)
 {
 	// Loop over the files and parse them
 	int totalSymbols (0);
@@ -406,14 +388,14 @@ void ParseThread::ParseAndStoreFiles(const wxArrayString& arrFiles, int initalCo
 		TagsManagerST::Get()->SourceToTags(arrFiles.Item(i), tags);
 
 		if ( tags.IsEmpty() == false ) {
-			DoStoreTags(tags, arrFiles.Item(i), totalSymbols);
+			DoStoreTags(tags, arrFiles.Item(i), totalSymbols, db);
 		}
 	}
 
 	DEBUG_MESSAGE(wxString(wxT("Done")));
 
 	// Update the retagging timestamp
-	TagsManagerST::Get()->UpdateFilesRetagTimestamp(arrFiles, m_pDb);
+	TagsManagerST::Get()->UpdateFilesRetagTimestamp(arrFiles, db);
 
 	if ( m_notifiedWindow && !arrFiles.IsEmpty() ) {
 		wxCommandEvent e(wxEVT_PARSE_THREAD_MESSAGE);
@@ -440,25 +422,21 @@ void ParseThread::ProcessDeleteTagsOfFiles(ParseRequest* req)
 		return;
 	
 	wxString dbfile = req->getDbfile();
-	if ( !m_pDb ) {
-		m_pDb = new TagsStorageSQLite();
-	}
+	ITagsStoragePtr db(new TagsStorageSQLite());
 	
-	DbReleaser dbReleaser(&m_pDb);
-	
-	m_pDb->OpenDatabase( dbfile );
-	m_pDb->Begin();
+	db->OpenDatabase( dbfile );
+	db->Begin();
 	
 	wxArrayString file_array;
 
 	for (size_t i=0; i<req->_workspaceFiles.size(); i++) {
 		wxString filename(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
-		m_pDb->DeleteByFileName(wxFileName(),filename, false);
+		db->DeleteByFileName(wxFileName(),filename, false);
 		file_array.Add(filename);
 	}
 	
-	m_pDb->DeleteFromFiles(file_array);
-	m_pDb->Commit();
+	db->DeleteFromFiles(file_array);
+	db->Commit();
 	DEBUG_MESSAGE(wxString(wxT("ParseThread::ProcessDeleteTagsOfFile - completed")));
 }
 
@@ -478,15 +456,12 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 	if(reportingPoint == 0.0) {
 		reportingPoint = 1.0;
 	}
-
-	if ( !m_pDb ) {
-		m_pDb = new TagsStorageSQLite();
-	}
-	DbReleaser dbReleaser(&m_pDb);
-	m_pDb->OpenDatabase( dbfile );
+	
+	ITagsStoragePtr db(new TagsStorageSQLite());
+	db->OpenDatabase( dbfile );
 
 	// We commit every 10 files
-	m_pDb->Begin();
+	db->Begin();
 	int    precent               (0);
 	int    lastPercentageReported(0);
 
@@ -499,7 +474,7 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 			// Do an ordered shutdown:
 			// rollback any transaction
 			// and close the database
-			m_pDb->Rollback();
+			db->Rollback();
 			return;
 		}
 
@@ -527,16 +502,16 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 		TagTreePtr tree = TagsManagerST::Get()->ParseSourceFile(curFile);
 		PPScan( curFile.GetFullPath(), false );
 
-		m_pDb->Store(tree, wxFileName(), false);
-		if(m_pDb->InsertFileEntry(curFile.GetFullPath(), (int)time(NULL)) == TagExist) {
-			m_pDb->UpdateFileEntry(curFile.GetFullPath(), (int)time(NULL));
+		db->Store(tree, wxFileName(), false);
+		if(db->InsertFileEntry(curFile.GetFullPath(), (int)time(NULL)) == TagExist) {
+			db->UpdateFileEntry(curFile.GetFullPath(), (int)time(NULL));
 		}
 
 		if ( i % 50 == 0 ) {
 			// Commit what we got so far
-			m_pDb->Commit();
+			db->Commit();
 			// Start a new transaction
-			m_pDb->Begin();
+			db->Begin();
 		}
 	}
 
@@ -545,10 +520,10 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 	const std::map<wxString, PPToken>& table = PPTable::Instance()->GetTable();
 
 	// Store the macros
-	m_pDb->StoreMacros( table );
+	db->StoreMacros( table );
 
 	// Commit whats left
-	m_pDb->Commit();
+	db->Commit();
 
 	// Clear the results
 	PPTable::Instance()->Clear();
@@ -623,11 +598,8 @@ void ParseThread::FindIncludedFiles(ParseRequest *req)
 
 void ParseThread::ProcessInterrestingMacros(ParseRequest *req)
 {
-	if ( !m_pDb ) {
-		m_pDb = new TagsStorageSQLite();
-	}
-	DbReleaser dbReleaser(&m_pDb);
-	m_pDb->OpenDatabase(req->getDbfile());
+	ITagsStoragePtr db(new TagsStorageSQLite());
+	db->OpenDatabase(req->getDbfile());
 
 	wxFileName fnCurrentFile(req->getFile());
 	fnCurrentFile.MakeAbsolute();
@@ -667,7 +639,7 @@ void ParseThread::ProcessInterrestingMacros(ParseRequest *req)
 	//    files and given files
 	// -------------------------------------------
 	wxArrayString defMacros;
-	m_pDb->GetMacrosDefined(searchFiles, PPTable::Instance()->GetNamesUsed(), defMacros);
+	db->GetMacrosDefined(searchFiles, PPTable::Instance()->GetNamesUsed(), defMacros);
 	wxString macros;
 	for (wxArrayString::const_iterator itMacro = defMacros.begin(); itMacro != defMacros.end(); ++itMacro) {
 		macros << *itMacro << wxT(" ");

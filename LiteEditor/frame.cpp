@@ -2014,7 +2014,7 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent &event)
 
 			// Remove all tags from the database which starts with the paths which were
 			// removed from the parser include path
-			ITagsStorage *db = TagsManagerST::Get()->GetDatabase();
+			ITagsStoragePtr db = TagsManagerST::Get()->GetDatabase();
 			db->Begin();
 			for (size_t i=0; i<removedPaths.GetCount(); i++) {
 				db->DeleteByFilePrefix     (wxFileName(), removedPaths.Item(i));

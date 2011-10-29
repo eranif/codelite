@@ -149,5 +149,5 @@ void TestSummary::PrintSelf()
 {
 	wxPrintf(wxT("Total tests            : %d\n"), totalTests);
 	wxPrintf(wxT("Total errors           : %d\n"), errorCount);
-	wxPrintf(wxT("Total error lines found: %d\n"), errorLines.size());
+	wxPrintf(wxT("Total error lines found: %u\n"), (unsigned int)errorLines.size());
 }

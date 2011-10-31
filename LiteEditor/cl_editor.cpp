@@ -3108,8 +3108,8 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	// alert the user
 	int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
 	if ( tags.size() >= (size_t) limit ) {
-		this->DoSetStatusMessage(wxString::Format(wxT("%s. %s (%s %d)"),
-				_("Too many items were found"), _("Narrow your search criteria"), _("Displaying"), tags.size()), 0);
+		this->DoSetStatusMessage(wxString::Format(wxT("%s. %s (%s %u)"),
+				_("Too many items were found"), _("Narrow your search criteria"), _("Displaying"), (unsigned int)tags.size()), 0);
 	}
 
 	m_ccBox->Adjust();

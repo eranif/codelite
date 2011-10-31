@@ -527,10 +527,6 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_MENU   (XRCID("never_update_parser_paths"),                clMainFrame::OnNeverUpdateParserPath)
 	EVT_MENU   (XRCID("update_parser_paths"),                      clMainFrame::OnUpdateParserPath)
 
-	EVT_SYMBOLTREE_ADD_ITEM(wxID_ANY,    clMainFrame::OnAddSymbols)
-	EVT_SYMBOLTREE_DELETE_ITEM(wxID_ANY, clMainFrame::OnDeleteSymbols)
-	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, clMainFrame::OnUpdateSymbols)
-
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, clMainFrame::OnSingleInstanceOpenFiles)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP,  clMainFrame::OnSingleInstanceRaise)
 
@@ -2568,37 +2564,6 @@ void clMainFrame::OnQuickOutline(wxCommandEvent &event)
 		editor->SetActive();
 	}
 #endif
-}
-
-void clMainFrame::OnAddSymbols(SymbolTreeEvent &event)
-{
-	// Notify the plugins
-	ParseThreadEventData data;
-	data.SetFileName(event.GetFileName());
-	data.SetItems(event.GetItems());
-
-	SendCmdEvent(wxEVT_SYNBOL_TREE_ADD_ITEM, (void*)&data);
-}
-
-void clMainFrame::OnDeleteSymbols(SymbolTreeEvent &event)
-{
-	// Notify the plugins
-	ParseThreadEventData data;
-	data.SetFileName(event.GetFileName());
-	data.SetItems(event.GetItems());
-
-	SendCmdEvent(wxEVT_SYNBOL_TREE_DELETE_ITEM, (void*)&data);
-
-}
-
-void clMainFrame::OnUpdateSymbols(SymbolTreeEvent &event)
-{
-	// Notify the plugins
-	ParseThreadEventData data;
-	data.SetFileName(event.GetFileName());
-	data.SetItems(event.GetItems());
-
-	SendCmdEvent(wxEVT_SYNBOL_TREE_UPDATE_ITEM, (void*)&data);
 }
 
 wxString clMainFrame::CreateWorkspaceTable()

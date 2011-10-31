@@ -279,9 +279,6 @@ void SymbolViewPlugin::Connect()
 	topwin->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(SymbolViewPlugin::OnProjectFileRemoved), NULL, this);
 	topwin->Connect(wxEVT_PROJ_REMOVED, wxCommandEventHandler(SymbolViewPlugin::OnProjectAdded), NULL, this);
 	topwin->Connect(wxEVT_PROJ_ADDED, wxCommandEventHandler(SymbolViewPlugin::OnProjectRemoved), NULL, this);
-	topwin->Connect(wxEVT_SYNBOL_TREE_UPDATE_ITEM, wxCommandEventHandler(SymbolViewPlugin::OnSymbolsUpdated), NULL, this);
-	topwin->Connect(wxEVT_SYNBOL_TREE_DELETE_ITEM, wxCommandEventHandler(SymbolViewPlugin::OnSymbolsDeleted), NULL, this);
-	topwin->Connect(wxEVT_SYNBOL_TREE_ADD_ITEM, wxCommandEventHandler(SymbolViewPlugin::OnSymbolsAdded), NULL, this);
 	topwin->Connect(wxEVT_FILE_RETAGGED, wxCommandEventHandler(SymbolViewPlugin::OnFileRetagged), NULL, this);
 	topwin->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewPlugin::OnActiveEditorChanged), NULL, this);
 	topwin->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewPlugin::OnEditorClosed), NULL, this);
@@ -341,9 +338,6 @@ void SymbolViewPlugin::UnPlug()
 	topwin->Disconnect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(SymbolViewPlugin::OnProjectFileRemoved), NULL, this);
 	topwin->Disconnect(wxEVT_PROJ_REMOVED, wxCommandEventHandler(SymbolViewPlugin::OnProjectAdded), NULL, this);
 	topwin->Disconnect(wxEVT_PROJ_ADDED, wxCommandEventHandler(SymbolViewPlugin::OnProjectRemoved), NULL, this);
-	topwin->Disconnect(wxEVT_SYNBOL_TREE_UPDATE_ITEM, wxCommandEventHandler(SymbolViewPlugin::OnSymbolsUpdated), NULL, this);
-	topwin->Disconnect(wxEVT_SYNBOL_TREE_DELETE_ITEM, wxCommandEventHandler(SymbolViewPlugin::OnSymbolsDeleted), NULL, this);
-	topwin->Disconnect(wxEVT_SYNBOL_TREE_ADD_ITEM, wxCommandEventHandler(SymbolViewPlugin::OnSymbolsAdded), NULL, this);
 	topwin->Disconnect(wxEVT_FILE_RETAGGED, wxCommandEventHandler(SymbolViewPlugin::OnFileRetagged), NULL, this);
 	topwin->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewPlugin::OnActiveEditorChanged), NULL, this);
 	topwin->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewPlugin::OnEditorClosed), NULL, this);
@@ -1320,85 +1314,85 @@ void SymbolViewPlugin::OnProjectRemoved(wxCommandEvent& e)
 /**
  * Respond to added symbols event (from ParseThread) by fixing up our maps and trees.
  */
-void SymbolViewPlugin::OnSymbolsAdded(wxCommandEvent& e)
-{
-	ParseThreadEventData *data = (ParseThreadEventData*) e.GetClientData();
-	if (data && !data->GetItems().empty()) {
-		m_viewStack->Freeze();
-
-		wxArrayString files;
-		std::multimap<wxString, wxString> filePaths;
-
-		files.Add(data->GetFileName());
-		GetPaths(files, filePaths);
-
-		const std::vector<std::pair<wxString,TagEntry> > &tags = data->GetItems();
-		for (size_t i = 0; i < tags.size(); i++) {
-			AddSymbol(tags[i].second, filePaths);
-		}
-		AddDeferredSymbols(filePaths);
-		SortChildren();
-
-		m_viewStack->Thaw();
-	}
-	e.Skip();
-}
-
-/**
- * Respond to updated symbols event (from ParseThread) by fixing up our maps and trees.
- */
-void SymbolViewPlugin::OnSymbolsUpdated(wxCommandEvent& e)
-{
-	ParseThreadEventData *data = (ParseThreadEventData*) e.GetClientData();
-	if (data && !data->GetItems().empty()) {
-		m_viewStack->Freeze();
-
-		wxArrayString files;
-		std::multimap<wxString, wxString> filePaths;
-
-		files.Add(data->GetFileName());
-		GetPaths(files, filePaths);
-
-		const std::vector<std::pair<wxString,TagEntry> > &tags = data->GetItems();
-		for (size_t i = 0; i < tags.size(); i++) {
-			if (tags[i].second.GetKind() != wxT("enumerator")) {
-				UpdateSymbol(tags[i].second);
-			} else {
-				// must remove and re-add enumerators in case tree location changed
-				// due to possible change in typeref
-				DeleteSymbol(tags[i].second);
-				AddSymbol(tags[i].second, filePaths);
-			}
-		}
-		AddDeferredSymbols(filePaths);
-		SortChildren();
-
-		m_viewStack->Thaw();
-	}
-	e.Skip();
-}
-
-/**
- * Respond to deleted symbols event (from ParseThread) by fixing up our maps and trees.
- */
-void SymbolViewPlugin::OnSymbolsDeleted(wxCommandEvent& e)
-{
-	ParseThreadEventData *data = (ParseThreadEventData*) e.GetClientData();
-	if (data && !data->GetItems().empty()) {
-		m_viewStack->Freeze();
-		const std::vector<std::pair<wxString,TagEntry> > &tags = data->GetItems();
-		for (size_t i = 0; i < tags.size(); i++) {
-			DeleteSymbol(tags[i].second);
-		}
-		// if the tree that was being displayed got deleted, try to show another
-		WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
-		if (viewStack->GetSelected() == NULL) {
-			ShowSymbolTree();
-		}
-		m_viewStack->Thaw();
-	}
-	e.Skip();
-}
+//void SymbolViewPlugin::OnSymbolsAdded(wxCommandEvent& e)
+//{
+//	ParseThreadEventData *data = (ParseThreadEventData*) e.GetClientData();
+//	if (data && !data->GetItems().empty()) {
+//		m_viewStack->Freeze();
+//
+//		wxArrayString files;
+//		std::multimap<wxString, wxString> filePaths;
+//
+//		files.Add(data->GetFileName());
+//		GetPaths(files, filePaths);
+//
+//		const std::vector<std::pair<wxString,TagEntry> > &tags = data->GetItems();
+//		for (size_t i = 0; i < tags.size(); i++) {
+//			AddSymbol(tags[i].second, filePaths);
+//		}
+//		AddDeferredSymbols(filePaths);
+//		SortChildren();
+//
+//		m_viewStack->Thaw();
+//	}
+//	e.Skip();
+//}
+//
+///**
+// * Respond to updated symbols event (from ParseThread) by fixing up our maps and trees.
+// */
+//void SymbolViewPlugin::OnSymbolsUpdated(wxCommandEvent& e)
+//{
+//	ParseThreadEventData *data = (ParseThreadEventData*) e.GetClientData();
+//	if (data && !data->GetItems().empty()) {
+//		m_viewStack->Freeze();
+//
+//		wxArrayString files;
+//		std::multimap<wxString, wxString> filePaths;
+//
+//		files.Add(data->GetFileName());
+//		GetPaths(files, filePaths);
+//
+//		const std::vector<std::pair<wxString,TagEntry> > &tags = data->GetItems();
+//		for (size_t i = 0; i < tags.size(); i++) {
+//			if (tags[i].second.GetKind() != wxT("enumerator")) {
+//				UpdateSymbol(tags[i].second);
+//			} else {
+//				// must remove and re-add enumerators in case tree location changed
+//				// due to possible change in typeref
+//				DeleteSymbol(tags[i].second);
+//				AddSymbol(tags[i].second, filePaths);
+//			}
+//		}
+//		AddDeferredSymbols(filePaths);
+//		SortChildren();
+//
+//		m_viewStack->Thaw();
+//	}
+//	e.Skip();
+//}
+//
+///**
+// * Respond to deleted symbols event (from ParseThread) by fixing up our maps and trees.
+// */
+//void SymbolViewPlugin::OnSymbolsDeleted(wxCommandEvent& e)
+//{
+//	ParseThreadEventData *data = (ParseThreadEventData*) e.GetClientData();
+//	if (data && !data->GetItems().empty()) {
+//		m_viewStack->Freeze();
+//		const std::vector<std::pair<wxString,TagEntry> > &tags = data->GetItems();
+//		for (size_t i = 0; i < tags.size(); i++) {
+//			DeleteSymbol(tags[i].second);
+//		}
+//		// if the tree that was being displayed got deleted, try to show another
+//		WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
+//		if (viewStack->GetSelected() == NULL) {
+//			ShowSymbolTree();
+//		}
+//		m_viewStack->Thaw();
+//	}
+//	e.Skip();
+//}
 
 /**
  * Respond to active editor change by, if allowed, showing the appropriate symbol tree.

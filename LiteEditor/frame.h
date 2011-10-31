@@ -411,9 +411,6 @@ protected:
 	void OnGrepWordUI        (wxUpdateUIEvent& e);
 	
 	//handle symbol tree events
-	void OnAddSymbols                 (SymbolTreeEvent &event);
-	void OnDeleteSymbols              (SymbolTreeEvent &event);
-	void OnUpdateSymbols              (SymbolTreeEvent &event);
 	void OnParsingThreadDone          (wxCommandEvent  &e);
 	void OnParsingThreadMessage       (wxCommandEvent  &e);
 	void OnDatabaseUpgrade            (wxCommandEvent  &e);

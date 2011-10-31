@@ -248,9 +248,9 @@ private:
     void OnProjectAdded(wxCommandEvent &e);
     void OnProjectRemoved(wxCommandEvent &e);
 
-    void OnSymbolsUpdated(wxCommandEvent &e);
-    void OnSymbolsDeleted(wxCommandEvent &e);
-    void OnSymbolsAdded(wxCommandEvent &e);
+//    void OnSymbolsUpdated(wxCommandEvent &e);
+//    void OnSymbolsDeleted(wxCommandEvent &e);
+//    void OnSymbolsAdded(wxCommandEvent &e);
 
     void OnActiveEditorChanged(wxCommandEvent &e);
     void OnEditorClosed(wxCommandEvent &e);

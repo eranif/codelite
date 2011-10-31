@@ -35,11 +35,6 @@
 #include <wx/stopwatch.h>
 #include <wx/xrc/xmlres.h>
 
-DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM)
-DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_ITEM)
-DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM)
-DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
-
 #define DEBUG_MESSAGE(x) CL_DEBUG1(x.c_str())
 
 #define TEST_DESTROY() {\
@@ -200,75 +195,18 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 
 	// convert the file to tags
 	TagsManager *tagmgr = TagsManagerST::Get();
-	
 	ITagsStoragePtr db(new TagsStorageSQLite());
-	
+	db->OpenDatabase( dbfile );
+
 	//convert the file content into tags
 	wxString tags;
 	wxString file_name(req->getFile());
 	tagmgr->SourceToTags(file_name, tags);
 
-	req->setTags(tags);
+	int count;
+	DoStoreTags(tags, file_name, count, db);
 
-	//----------------------------------------------
-	// Build a tree from project/file/project
-	// from the value which are set in the database
-	//----------------------------------------------
-	TagTreePtr oldTree;
-
-	std::vector<TagEntryPtr> tagsByFile;
-
-	db->SelectTagsByFile(file, tagsByFile, wxFileName(dbfile));
-
-	// Load the records and build a language tree
-	TagEntry root;
-	root.SetName(wxT("<ROOT>"));
-	oldTree.Reset( new TagTree(wxT("<ROOT>"), root) );
-	for(size_t i=0; i<tagsByFile.size(); i++) {
-		oldTree->AddEntry( *(tagsByFile.at(i).Get()) );
-	}
-
-	// Build second tree from the updated file
-	TagsManager *mgr = TagsManagerST::Get();
-	TagTreePtr newTree = mgr->ParseSourceFile2(wxFileName(file), req->getTags());
-
-	//-------------------------------------------------------------------
-	// Now what is left to be done here, is to update the GUI tree
-	// The GUI tree needs to be updated item by item, to avoid total tree
-	// Collapsing
-	//-------------------------------------------------------------------
-
-
-	// Compare old tree vs new tree
-	std::vector<std::pair<wxString, TagEntry> >  deletedItems;
-	std::vector<std::pair<wxString, TagEntry> >  newItems;
-	std::vector<std::pair<wxString, TagEntry> >  goodNewItems;
-	std::vector<std::pair<wxString, TagEntry> >  modifiedItems;
-
-	oldTree->Compare(newTree.Get(), deletedItems, modifiedItems, newItems);
-
-	// Delete old entries
-	size_t i=0;
-	db->OpenDatabase( dbfile );
 	db->Begin();
-
-	// remove all the 'deleted' items from the database
-	for (i=0; i<deletedItems.size(); i++) {
-		db->DeleteTagEntry(deletedItems[i].second.GetKind(), deletedItems[i].second.GetSignature(), deletedItems[i].second.GetPath());
-	}
-
-	// insert all new items to database
-	for (i=0; i<newItems.size(); i++) {
-		if (db->InsertTagEntry(newItems[i].second) == TagOk) {
-			goodNewItems.push_back(newItems[i]);
-		}
-	}
-
-	// Update modified items
-	for (i=0; i<modifiedItems.size(); i++) {
-		db->UpdateTagEntry( modifiedItems[i].second );
-	}
-
 	///////////////////////////////////////////
 	// update the file retag timestamp
 	///////////////////////////////////////////
@@ -290,40 +228,12 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 	// If there is no event handler set to handle this comaprison
 	// results, then nothing more to be done
 	if (m_notifiedWindow ) {
-
-		bool sendClearCacheEvent(false);
-		std::vector<std::pair<wxString, TagEntry> >  realModifiedItems;
-
-		sendClearCacheEvent = (!deletedItems.empty() || !realModifiedItems.empty() || !newItems.empty());
-
 		// send "end" event
 		wxCommandEvent e(wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS);
 		wxPostEvent(m_notifiedWindow, e);
 
-		// Send an event for each operation type
-		if ( !deletedItems.empty() )
-			SendEvent(wxEVT_COMMAND_SYMBOL_TREE_DELETE_ITEM, req->getFile(), deletedItems);
-
-		if ( !newItems.empty() )
-			SendEvent(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM, req->getFile(), goodNewItems);
-
-		if ( !modifiedItems.empty() ) {
-
-			for (size_t i=0; i<modifiedItems.size(); i++) {
-				std::pair<wxString, TagEntry> p = modifiedItems.at(i);
-				if (!p.second.GetDifferOnByLineNumber()) {
-					realModifiedItems.push_back(p);
-				}
-			}
-			if (realModifiedItems.empty() == false) {
-				SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, req->getFile(), realModifiedItems);
-			}
-		}
-
-		if(sendClearCacheEvent) {
-			wxCommandEvent clearCacheEvent(wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE);
-			wxPostEvent(m_notifiedWindow, clearCacheEvent);
-		}
+		wxCommandEvent clearCacheEvent(wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE);
+		wxPostEvent(m_notifiedWindow, clearCacheEvent);
 	}
 }
 

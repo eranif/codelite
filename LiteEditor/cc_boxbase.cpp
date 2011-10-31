@@ -26,10 +26,24 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 #endif
 {
 	SetSizeHints(BOX_WIDTH, BOX_HEIGHT);
-	wxBoxSizer* topSizer = new wxBoxSizer( wxHORIZONTAL );
-	m_mainPanel = new wxPanel(this);
-
-	m_listCtrl = new CCVirtualListCtrl( m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(BOX_WIDTH - 30, BOX_HEIGHT), wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL|wxBORDER_NONE );
+	wxBoxSizer* mainSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer* topSizer  = new wxBoxSizer( wxHORIZONTAL );
+	SetSizer(mainSizer);
+	
+	m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE|wxTAB_TRAVERSAL);
+#ifdef __WXGTK__
+	m_mainPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+#endif
+	m_mainPanel->SetSizer(topSizer);
+	
+	mainSizer->Add(m_mainPanel, 1, wxEXPAND);
+	
+	//this->SetBackgroundColour(*wxBLACK);
+	m_listCtrl = new CCVirtualListCtrl( m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(BOX_WIDTH - 30, BOX_HEIGHT), wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL|wxBORDER_STATIC );
+#ifdef __WXGTK__
+	m_listCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+	m_listCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
+#endif
 
 	wxBitmap bmp         = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("cc/16/lock"));
 	wxBitmap commentsBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("cc/16/note"));
@@ -60,17 +74,15 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	m_toolBar1->Realize();
 
 #ifdef __WXGTK__
-	topSizer->Add( m_listCtrl, 1, wxEXPAND|wxALL, 2 );
-	topSizer->Add( m_toolBar1, 0, wxEXPAND|wxALL, 2 );
+	topSizer->Add( m_listCtrl, 1, wxEXPAND );
+	topSizer->Add( m_toolBar1, 0, wxEXPAND );
 #else
-	topSizer->Add( m_listCtrl, 1, wxEXPAND, 2 );
-	topSizer->Add( m_toolBar1, 0, wxEXPAND, 2 );
+	topSizer->Add( m_listCtrl, 1, wxEXPAND|wxLEFT|wxTOP|wxBOTTOM, 2 );
+	topSizer->Add( m_toolBar1, 0, wxEXPAND|wxRIGHT|wxTOP|wxBOTTOM, 2 );
 #endif
 
     m_mainPanel->SetAutoLayout( true );
-    m_mainPanel->SetSizer( topSizer );
-    topSizer->Fit(m_mainPanel);
-    topSizer->Fit(this);
+    GetSizer()->Fit(this);
 
 	// Connect Events
 	m_listCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CCBoxBase::OnItemActivated ), NULL, this );

@@ -32,6 +32,8 @@
 #include "fileentry.h"
 #include "entry.h"
 
+#define MAX_SEARCH_LIMIT 50
+
 /**
  * @class ITagsStorage defined the tags storage API used by codelite
  * @author eran
@@ -55,7 +57,7 @@ public:
 	};
 
 public:
-	ITagsStorage() : m_singleSearchLimit(1000), m_maxWorkspaceTagToColour(1000), m_useCache(false) {}
+	ITagsStorage() : m_singleSearchLimit(MAX_SEARCH_LIMIT), m_maxWorkspaceTagToColour(1000), m_useCache(false) {}
 	virtual ~ITagsStorage() {};
 
 	virtual void SetUseCache(bool useCache) {
@@ -81,7 +83,7 @@ public:
 
 	void SetSingleSearchLimit(int singleSearchLimit) {
 		if ( singleSearchLimit < 0 ) {
-			singleSearchLimit = 1000;
+			singleSearchLimit = MAX_SEARCH_LIMIT;
 		}
 		this->m_singleSearchLimit = singleSearchLimit;
 	}

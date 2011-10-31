@@ -62,6 +62,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	, m_startPos(wxNOT_FOUND)
 	, m_editor(parent)
 	, m_timer(NULL)
+	, m_needRepopulateTagList(false)
 {
 	m_constructing = true;
 	HideCCBox();
@@ -123,6 +124,7 @@ CCBox::~CCBox()
 	EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_All_Members"),   LEditor::m_ccShowPrivateMembers ? 1 : 0);
 	Disconnect(m_timer->GetId(),  wxEVT_TIMER, wxTimerEventHandler(CCBox::OnDisplayTooltip),  NULL, this);
 	delete m_timer;
+	m_needRepopulateTagList = false;
 }
 
 void CCBox::OnItemActivated( wxListEvent& event )
@@ -289,11 +291,11 @@ bool CCBox::SelectWord(const wxString& word)
 			}
 		}
 
-	} else {
-		if (GetAutoHide()) {
-			HideCCBox();
-		}
 	}
+
+	m_needRepopulateTagList = true;
+	m_timer->Stop();
+	m_timer->Start(100, true);
 	return fullMatch;
 }
 
@@ -885,6 +887,7 @@ void CCBox::DoHideCCHelpTab()
 	m_currentItem.Reset();
 	m_timer->Stop();
 	LEditor *editor = GetEditor();
+	m_needRepopulateTagList = false;
 	if(editor)
 		editor->CallTipCancel();
 }
@@ -970,5 +973,11 @@ void CCBox::OnDisplayTooltip(wxTimerEvent& event)
 	CCItemInfo tag;
 	if(m_listCtrl->GetItemTagEntry(m_selectedItem, tag)) {
 		DoFormatDescriptionPage( tag );
+	}
+
+	if(m_needRepopulateTagList) {
+		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("complete_word"));
+		event.SetEventObject(clMainFrame::Get());
+		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
 	}
 }

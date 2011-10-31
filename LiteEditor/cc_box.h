@@ -60,6 +60,7 @@ class CCBox : public CCBoxBase
 	CCItemInfo               m_currentItem;
 	LEditor*                 m_editor;
 	wxTimer*                 m_timer;
+	bool                     m_needRepopulateTagList;
 	
 protected:
 	LEditor*                 GetEditor();

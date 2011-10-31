@@ -71,8 +71,6 @@
 #define PIPE_NAME "/tmp/codelite_indexer.%s.sock"
 #endif
 
-#define MAX_SEARCH_LIMIT 5000
-
 const wxEventType wxEVT_UPDATE_FILETREE_EVENT = XRCID("update_file_tree_event");
 const wxEventType wxEVT_TAGS_DB_UPGRADE       = XRCID("tags_db_upgraded");
 
@@ -586,7 +584,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 			scope << typeScope << wxT("::") << typeName;
 
 		std::vector<TagEntryPtr> tmpCandidates, tmpCandidates1;
-		TagsByScope(scope, tmpCandidates);
+		TagsByScopeAndName(scope, word, tmpCandidates);
 
 		wxString partialName(word);
 		partialName.MakeLower();
@@ -665,16 +663,16 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 
 	} else if (oper == wxT("::")) {
 
+		filter.Add(wxT("namespace"));
+		filter.Add(wxT("class"));
+		filter.Add(wxT("struct"));
+		filter.Add(wxT("prototype"));
 		filter.Add(wxT("function"));
 		filter.Add(wxT("member"));
-		filter.Add(wxT("prototype"));
 		filter.Add(wxT("typedef"));
 		filter.Add(wxT("enum"));
 		filter.Add(wxT("enumerator"));
 		filter.Add(wxT("union"));
-		filter.Add(wxT("class"));
-		filter.Add(wxT("struct"));
-		filter.Add(wxT("namespace"));
 
 		PERF_BLOCK("TagsByScope") {
 			TagsByScope(scope, filter, candidates, true);

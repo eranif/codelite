@@ -706,7 +706,7 @@ void TagsStorageSQLite::GetTagsByPath(const wxArrayString& path, std::vector<Tag
 void TagsStorageSQLite::GetTagsByNameAndParent(const wxString& name, const wxString& parent, std::vector<TagEntryPtr>& tags)
 {
 	wxString sql;
-	sql << wxT("select * from tags where name='") << name << wxT("'");
+	sql << wxT("select * from tags where name='") << name << wxT("' LIMIT ") << GetSingleSearchLimit();
 
 	std::vector<TagEntryPtr> tmpResults;
 	DoFetchTags(sql, tmpResults);
@@ -726,7 +726,7 @@ void TagsStorageSQLite::GetTagsByKindAndPath(const wxArrayString& kinds, const w
 	}
 
 	wxString sql;
-	sql << wxT("select * from tags where path='") << path << wxT("'");
+	sql << wxT("select * from tags where path='") << path << wxT("' LIMIT ") << GetSingleSearchLimit();
 
 	DoFetchTags(sql, tags, kinds);
 }
@@ -745,7 +745,7 @@ void TagsStorageSQLite::GetTagsByScopeAndKind(const wxString& scope, const wxArr
 	}
 
 	wxString sql;
-	sql << wxT("select * from tags where scope='") << scope << wxT("'");
+	sql << wxT("select * from tags where scope='") << scope << wxT("' LIMIT ") << GetSingleSearchLimit();
 	DoFetchTags(sql, tags, kinds);
 }
 
@@ -1143,7 +1143,7 @@ void TagsStorageSQLite::GetTagsByScopesAndKind(const wxArrayString& scopes, cons
 		sql << wxT("'") << scopes.Item(i) << wxT("',");
 	}
 	sql.RemoveLast();
-	sql << wxT(") ");
+	sql << wxT(") LIMIT ") << GetSingleSearchLimit();
 
 	DoFetchTags(sql, tags, kinds);
 }

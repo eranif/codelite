@@ -9,9 +9,15 @@ CLMainAuiTBArt::CLMainAuiTBArt()
 	m_mswWithThemeEnabled = EditorConfigST::Get()->GetOptions()->GetMswTheme();
 
 	if(m_mswWithThemeEnabled) {
+#if wxCHECK_VERSION(2, 9, 3)
+		m_gripperPen1 = wxPen(DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION), 2.0));
+		m_gripperPen2 = wxPen(DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION), 3.0));
+		m_gripperPen3 = *wxWHITE_PEN;
+#else
 		m_gripper_pen1 = wxPen(DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION), 2.0));
 		m_gripper_pen2 = wxPen(DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION), 3.0));
 		m_gripper_pen3 = *wxWHITE_PEN;
+#endif
 	}
 }
 

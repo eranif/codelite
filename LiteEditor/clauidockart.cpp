@@ -19,6 +19,15 @@ CLAuiDockArt::CLAuiDockArt()
 	img2.SetAlpha(closetab_active_alpha, true);
 	m_bmp_close_active = wxBitmap(img2);
 
+#if wxCHECK_VERSION(2, 9, 3)
+	if(EditorConfigST::Get()->GetOptions()->GetMswTheme()) {
+		m_borderPen = wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+	}
+
+	m_gripperBrush    = wxBrush(DrawingUtils::GetPanelBgColour());
+	m_backgroundBrush = wxBrush(DrawingUtils::GetPanelBgColour());
+	m_gripperPen3     = wxPen  (DrawingUtils::GetPanelBgColour());
+#else
 	if(EditorConfigST::Get()->GetOptions()->GetMswTheme()) {
 		m_border_pen = wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
 	}
@@ -26,6 +35,7 @@ CLAuiDockArt::CLAuiDockArt()
 	m_gripper_brush    = wxBrush(DrawingUtils::GetPanelBgColour());
 	m_background_brush = wxBrush(DrawingUtils::GetPanelBgColour());
 	m_gripper_pen3     = wxPen  (DrawingUtils::GetPanelBgColour());
+#endif
 }
 
 CLAuiDockArt::~CLAuiDockArt()
@@ -64,7 +74,11 @@ void CLAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
 
 void CLAuiDockArt::DrawBorder(wxDC& dc, wxWindow *WXUNUSED(window), const wxRect& _rect, wxAuiPaneInfo& pane)
 {
+#if wxCHECK_VERSION(2, 9, 3)
+    dc.SetPen(m_borderPen);
+#else
     dc.SetPen(m_border_pen);
+#endif
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
 
     wxRect rect = _rect;
@@ -77,7 +91,11 @@ void CLAuiDockArt::DrawBorder(wxDC& dc, wxWindow *WXUNUSED(window), const wxRect
             dc.SetPen(lightColor);
             dc.DrawLine(rect.x, rect.y, rect.x+rect.width, rect.y);
             dc.DrawLine(rect.x, rect.y, rect.x, rect.y+rect.height);
+#if wxCHECK_VERSION(2, 9, 3)
+            dc.SetPen(m_borderPen);
+#else
             dc.SetPen(m_border_pen);
+#endif
             dc.DrawLine(rect.x, rect.y+rect.height-1,
                         rect.x+rect.width, rect.y+rect.height-1);
             dc.DrawLine(rect.x+rect.width-1, rect.y,

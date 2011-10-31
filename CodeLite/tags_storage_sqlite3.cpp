@@ -1179,6 +1179,7 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const 
 		sql << wxT(" name ='") << name << wxT("' ");
 	}
 
+	sql << wxT(" LIMIT ") << GetSingleSearchLimit();
 	// get get the tags
 	DoFetchTags(sql, tags);
 }

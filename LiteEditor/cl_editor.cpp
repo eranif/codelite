@@ -3058,12 +3058,11 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	// alert the user
 	int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
 	if ( tags.size() >= (size_t) limit ) {
-		this->DoSetStatusMessage(wxString::Format(wxT("%s. %s (%s %d)"),
-				_("Too many items were found"), _("Narrow your search criteria"), _("Displaying"), tags.size()), 0);
+		DoSetStatusMessage(wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices"), tags.size()), 0);
 	}
 
 	m_ccBox->Adjust();
-	m_ccBox->Show(tags, word, false, owner);
+	m_ccBox->Show(tags, word, false, !showExtInfoPane, owner);
 }
 
 void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word, bool showFullDecl, bool autoHide, bool autoInsertSingleChoice)
@@ -3108,12 +3107,11 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	// alert the user
 	int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
 	if ( tags.size() >= (size_t) limit ) {
-		this->DoSetStatusMessage(wxString::Format(wxT("%s. %s (%s %u)"),
-				_("Too many items were found"), _("Narrow your search criteria"), _("Displaying"), (unsigned int)tags.size()), 0);
+		DoSetStatusMessage(wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices"), tags.size()), 0);
 	}
 
 	m_ccBox->Adjust();
-	m_ccBox->Show(tags, word, showFullDecl, NULL);
+	m_ccBox->Show(tags, word, showFullDecl, !showExtInfoPane, NULL);
 }
 
 void LEditor::HideCompletionBox()

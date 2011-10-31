@@ -61,7 +61,7 @@ class CCBox : public CCBoxBase
 	LEditor*                 m_editor;
 	wxTimer*                 m_timer;
 	bool                     m_needRepopulateTagList;
-	
+	bool                     m_isKeywordsList;
 protected:
 	LEditor*                 GetEditor();
 
@@ -94,7 +94,7 @@ public:
 	virtual ~CCBox();
 
 	void HideCCBox();
-	void Show(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl, wxEvtHandler *owner = NULL);
+	void Show(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl, bool isKeywordsList, wxEvtHandler *owner = NULL);
 	void InsertSelection();
 
 	void Adjust();

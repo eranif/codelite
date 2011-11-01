@@ -907,7 +907,9 @@ void CCBox::DoHideCCHelpTab()
 	m_hideExtInfoPane = true;
 	m_startPos = wxNOT_FOUND;
 	m_currentItem.Reset();
-	m_timer->Stop();
+	if(m_timer) {
+		m_timer->Stop();
+	}
 	LEditor *editor = GetEditor();
 	m_needRepopulateTagList = false;
 	if(editor)

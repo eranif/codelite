@@ -643,8 +643,14 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope, const wxStr
 	// Don't use LIKE
 	wxString from  = name;
 	wxString until = name;
-	until.Last() = until.Last() + 1;
 	
+#if wxVERSION_NUMBER < 2900
+	until.Last() = until.Last() + 1;
+#else
+	wxChar ch = until.Last();
+	until.SetChar(until.length() - 1,  ch + 1);
+#endif
+
 	// add the name condition
 	if (partialNameAllowed) {
 		sql << wxT(" name >= '") << from << wxT("' AND  name < '") << until << wxT("'");
@@ -1182,8 +1188,14 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const 
 	// Don't use LIKE
 	wxString from  = name;
 	wxString until = name;
-	until.Last() = until.Last() + 1;
 	
+#if wxVERSION_NUMBER < 2900
+	until.Last() = until.Last() + 1;
+#else
+	wxChar ch = until.Last();
+	until.SetChar(until.length() - 1,  ch + 1);
+#endif
+
 	// add the name condition
 	if (partialNameAllowed) {
 		sql << wxT(" name >= '") << from << wxT("' AND  name < '") << until << wxT("'");

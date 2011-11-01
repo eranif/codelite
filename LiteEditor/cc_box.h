@@ -95,6 +95,7 @@ public:
 
 	void HideCCBox();
 	void Show(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl, bool isKeywordsList, wxEvtHandler *owner = NULL);
+	void RefreshList(const std::vector<TagEntryPtr> &tags, const wxString &word);
 	void InsertSelection();
 
 	void Adjust();

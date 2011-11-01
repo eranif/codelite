@@ -159,6 +159,13 @@ void CCBox::OnItemSelected( wxListEvent& event )
 	
 }
 
+void CCBox::RefreshList(const std::vector<TagEntryPtr>& tags, const wxString& word)
+{
+	m_tags = tags;
+	m_timer->Stop();
+	Show(word);
+}
+
 void CCBox::Show(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl, bool isKeywordsList, wxEvtHandler *owner)
 {
 	if (tags.empty()) {
@@ -458,16 +465,20 @@ void CCBox::Show(const wxString& word)
 
 
 #ifdef __WXGTK__
-	wxPopupWindow::Show();
+	if(wxPopupWindow::IsShown() == false)
+		wxPopupWindow::Show();
+		
 	clMainFrame::Get()->Raise();
 	GetEditor()->SetFocus();
 	GetEditor()->SetSCIFocus(true);
 #else // Windows
-	wxPopupTransientWindow::Show();
+	if(wxPopupTransientWindow::IsShown() == false)
+		wxPopupTransientWindow::Show();
 #endif
 
 #else
-	wxWindow::Show();
+	if(wxWindow::IsShown() == false)
+		wxWindow::Show();
 #endif
 	SelectItem(m_selectedItem);
 }
@@ -978,7 +989,7 @@ void CCBox::OnDisplayTooltip(wxTimerEvent& event)
 
 	if(m_needRepopulateTagList && !m_isKeywordsList) {
 		m_needRepopulateTagList = false;
-		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("complete_word"));
+		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("complete_word_refresh_list"));
 		event.SetEventObject(clMainFrame::Get());
 		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
 	}

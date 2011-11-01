@@ -335,6 +335,7 @@ protected:
 	void OnFileReload(wxCommandEvent& event);
 	void OnFileLoadTabGroup(wxCommandEvent& event);
 	void OnCompleteWord(wxCommandEvent& event);
+	void OnCompleteWordRefreshList(wxCommandEvent &event);
 	void OnFunctionCalltip(wxCommandEvent& event);
 	void OnAbout(wxCommandEvent& event);
 	void OnCheckForUpdate(wxCommandEvent &e);

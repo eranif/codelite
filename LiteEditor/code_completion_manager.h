@@ -9,7 +9,8 @@ class CodeCompletionManager
 {
 protected:
 	size_t m_options;
-	
+	bool   m_wordCompletionRefreshNeeded;
+
 protected:
 	/// ctags implementions
 	bool DoCtagsWordCompletion(LEditor* editor, const wxString& expr, const wxString& word);
@@ -20,13 +21,19 @@ protected:
 	void DoClangWordCompletion(LEditor* editor);
 	void DoClangCalltip       (LEditor* editor);
 	void DoClangCodeComplete  (LEditor* editor);
-	
+
 	void DoUpdateOptions();
-	
+
 public:
 	CodeCompletionManager();
 	virtual ~CodeCompletionManager();
 
+	void SetWordCompletionRefreshNeeded(bool wordCompletionRefreshNeeded) {
+		this->m_wordCompletionRefreshNeeded = wordCompletionRefreshNeeded;
+	}
+	bool GetWordCompletionRefreshNeeded() const {
+		return m_wordCompletionRefreshNeeded;
+	}
 	void SetOptions(size_t options) {
 		this->m_options = options;
 	}

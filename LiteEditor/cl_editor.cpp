@@ -25,6 +25,7 @@
 
 #include "precompiled_header.h"
 #include "cl_editor.h"
+#include "code_completion_manager.h"
 #include "cl_editor_tip_window.h"
 #include "new_quick_watch_dlg.h"
 #include "buildtabsettingsdata.h"
@@ -1211,7 +1212,7 @@ wxString LEditor::GetWordAtCaret()
 // layer (outside of the library) to provide the input arguments for
 // the CodeParser library
 //---------------------------------------------------------------------------
-void LEditor::CompleteWord()
+void LEditor::CompleteWord(bool onlyRefresh)
 {
 	if(clEventDisabler::eventsDisabled)
 		return;
@@ -1221,12 +1222,16 @@ void LEditor::CompleteWord()
 	evt.SetInt(GetCurrentPosition());
 	evt.SetEventObject(this);
 
-	if(wxTheApp->ProcessEvent(evt))
+	if(wxTheApp->ProcessEvent(evt)) {
 		// the plugin handled the code-complete request
 		return;
-	else
+		
+	} else {
+		CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(onlyRefresh);
 		// let the built-in context do the job
 		m_context->CompleteWord();
+		
+	}
 }
 
 //------------------------------------------------------------------
@@ -1247,9 +1252,13 @@ void LEditor::CodeComplete()
 	if(wxTheApp->ProcessEvent(evt))
 		// the plugin handled the code-complete request
 		return;
-	else
+		
+	else {
+		CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
 		// let the built-in context do the job
 		m_context->CodeComplete();
+		
+	}
 }
 
 //----------------------------------------------------------------
@@ -3062,7 +3071,14 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	}
 
 	m_ccBox->Adjust();
-	m_ccBox->Show(tags, word, false, !showExtInfoPane, owner);
+	if(CodeCompletionManager::Get().GetWordCompletionRefreshNeeded()) {
+		
+		CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
+		m_ccBox->RefreshList(tags, word);
+		
+	}
+	else
+		m_ccBox->Show(tags, word, false, !showExtInfoPane, owner);
 }
 
 void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word, bool showFullDecl, bool autoHide, bool autoInsertSingleChoice)
@@ -3073,7 +3089,8 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	}
 
 	// hide any previous occurance of the completion box
-	HideCompletionBox();
+	if(!CodeCompletionManager::Get().GetWordCompletionRefreshNeeded())
+		HideCompletionBox();
 
 	if(tags.empty()) {
 		return;

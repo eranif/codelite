@@ -189,25 +189,26 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	//--------------------------------------------------
 	// Edit menu
 	//--------------------------------------------------
-	EVT_MENU(wxID_UNDO,                         clMainFrame::DispatchCommandEvent)
-	EVT_MENU(wxID_REDO,                         clMainFrame::DispatchCommandEvent)
-	EVT_MENU(wxID_DUPLICATE,                    clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("delete_line"),              clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("delete_line_end"),          clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("delete_line_start"),        clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("transpose_lines"),          clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("to_upper"),                 clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("to_lower"),                 clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("match_brace"),              clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("select_to_brace"),          clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("complete_word"),            clMainFrame::OnCompleteWord)
-	EVT_MENU(XRCID("function_call_tip"),        clMainFrame::OnFunctionCalltip)
-	EVT_MENU(XRCID("convert_eol_win"),          clMainFrame::OnConvertEol)
-	EVT_MENU(XRCID("convert_eol_unix"),         clMainFrame::OnConvertEol)
-	EVT_MENU(XRCID("convert_eol_mac"),          clMainFrame::OnConvertEol)
-	EVT_MENU(XRCID("move_line_down"),           clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("move_line_up"),             clMainFrame::DispatchCommandEvent)
-	EVT_MENU(XRCID("center_line"),              clMainFrame::DispatchCommandEvent)
+	EVT_MENU(wxID_UNDO,                           clMainFrame::DispatchCommandEvent)
+	EVT_MENU(wxID_REDO,                           clMainFrame::DispatchCommandEvent)
+	EVT_MENU(wxID_DUPLICATE,                      clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("delete_line"),                clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("delete_line_end"),            clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("delete_line_start"),          clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("transpose_lines"),            clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("to_upper"),                   clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("to_lower"),                   clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("match_brace"),                clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("select_to_brace"),            clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("complete_word"),              clMainFrame::OnCompleteWord)
+	EVT_MENU(XRCID("complete_word_refresh_list"), clMainFrame::OnCompleteWordRefreshList)
+	EVT_MENU(XRCID("function_call_tip"),          clMainFrame::OnFunctionCalltip)
+	EVT_MENU(XRCID("convert_eol_win"),            clMainFrame::OnConvertEol)
+	EVT_MENU(XRCID("convert_eol_unix"),           clMainFrame::OnConvertEol)
+	EVT_MENU(XRCID("convert_eol_mac"),            clMainFrame::OnConvertEol)
+	EVT_MENU(XRCID("move_line_down"),             clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("move_line_up"),               clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("center_line"),                clMainFrame::DispatchCommandEvent)
 
 	EVT_UPDATE_UI(wxID_UNDO,                    clMainFrame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(wxID_REDO,                    clMainFrame::DispatchUpdateUIEvent)
@@ -1758,6 +1759,15 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent &event)
 
 		// Open the workspace
 		ManagerST::Get()->OpenWorkspace(wspFile);
+	}
+}
+
+void clMainFrame::OnCompleteWordRefreshList(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	LEditor *editor = GetMainBook()->GetActiveEditor();
+	if (editor) {
+		editor->CompleteWord(true);
 	}
 }
 

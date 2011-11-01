@@ -196,7 +196,7 @@ public:
 	 */
 	void SetEOL();
 
-	void CompleteWord();
+	void CompleteWord(bool onlyRefresh = false);
 
 	/**
 	 * \brief chage the case of the current selection. If selection is empty,

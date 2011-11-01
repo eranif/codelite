@@ -626,9 +626,12 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 
 void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope, const wxString& name, bool partialNameAllowed, std::vector<TagEntryPtr> &tags)
 {
+	if(name.IsEmpty())
+		return;
+		
 	wxString sql;
-	wxString tmpName(name);
-	tmpName.Replace(wxT("_"), wxT("^_"));
+//	wxString tmpName(name);
+//	tmpName.Replace(wxT("_"), wxT("^_"));
 
 	sql << wxT("select * from tags where ");
 
@@ -636,10 +639,15 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope, const wxStr
 	if ( scope.IsEmpty() == false ) {
 		sql << wxT("scope='") << scope << wxT("' and ");
 	}
-
+	
+	// Don't use LIKE
+	wxString from  = name;
+	wxString until = name;
+	until.Last() = until.Last() + 1;
+	
 	// add the name condition
 	if (partialNameAllowed) {
-		sql << wxT(" name like '") << tmpName << wxT("%%' ESCAPE '^' ");
+		sql << wxT(" name >= '") << from << wxT("' AND  name < '") << until << wxT("'");
 	} else {
 		sql << wxT(" name ='") << name << wxT("' ");
 	}
@@ -654,7 +662,7 @@ void TagsStorageSQLite::GetTagsByScope(const wxString& scope, std::vector<TagEnt
 	wxString sql;
 
 	// Build the SQL statement
-	sql << wxT("select * from tags where scope='") << scope << wxT("' limit ") << GetSingleSearchLimit();
+	sql << wxT("select * from tags where scope='") << scope << wxT("' ORDER BY NAME limit ") << GetSingleSearchLimit();
 
 	DoFetchTags(sql, tags);
 }
@@ -1143,7 +1151,7 @@ void TagsStorageSQLite::GetTagsByScopesAndKind(const wxArrayString& scopes, cons
 		sql << wxT("'") << scopes.Item(i) << wxT("',");
 	}
 	sql.RemoveLast();
-	sql << wxT(") LIMIT ") << GetSingleSearchLimit();
+	sql << wxT(") ORDER BY NAME LIMIT ") << GetSingleSearchLimit();
 
 	DoFetchTags(sql, tags, kinds);
 }
@@ -1159,12 +1167,10 @@ void TagsStorageSQLite::GetTagsByPath(const wxString& path, std::vector<TagEntry
 
 void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const wxString& name, bool partialNameAllowed, std::vector<TagEntryPtr>& tags)
 {
-	if (scope.empty()) return;
-
+	if (scope.empty())  return;
+	if (name.IsEmpty()) return;
+	
 	wxString sql;
-	wxString tmpName(name);
-	tmpName.Replace(wxT("_"), wxT("^_"));
-
 	sql << wxT("select * from tags where scope in(");
 
 	for (size_t i=0; i<scope.GetCount(); i++) {
@@ -1172,9 +1178,15 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const 
 	}
 	sql.RemoveLast();
 	sql << wxT(") and ");
+	
+	// Don't use LIKE
+	wxString from  = name;
+	wxString until = name;
+	until.Last() = until.Last() + 1;
+	
 	// add the name condition
 	if (partialNameAllowed) {
-		sql << wxT(" name like '") << tmpName << wxT("%%' ESCAPE '^' ");
+		sql << wxT(" name >= '") << from << wxT("' AND  name < '") << until << wxT("'");
 	} else {
 		sql << wxT(" name ='") << name << wxT("' ");
 	}

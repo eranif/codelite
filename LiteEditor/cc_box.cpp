@@ -67,10 +67,10 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	m_constructing = true;
 	HideCCBox();
 	MSWSetNativeTheme(m_listCtrl);
-	
+
 	m_timer = new wxTimer(this);
 	Connect(m_timer->GetId(),  wxEVT_TIMER, wxTimerEventHandler(CCBox::OnDisplayTooltip),  NULL, this);
-	
+
 	// load all the CC images
 	wxImageList *il = new wxImageList(16, 16, true);
 
@@ -146,17 +146,17 @@ void CCBox::OnItemSelected( wxListEvent& event )
 {
 	if(m_selectedItem == event.m_itemIndex)
 		return;
-		
+
 	m_selectedItem = event.m_itemIndex;
-	
+
 	m_timer->Stop();
 	m_timer->Start(100, true);
-	
+
 	LEditor *editor = GetEditor();
 	if( editor ) {
 		editor->CallTipCancel();
 	}
-	
+
 }
 
 void CCBox::RefreshList(const std::vector<TagEntryPtr>& tags, const wxString& word)
@@ -341,12 +341,12 @@ void CCBox::SelectItem(long item)
 {
 	if(item == m_listCtrl->GetNextSelected(-1))
 		return;
-		
+
 	m_listCtrl->Select(item);
 	m_listCtrl->EnsureVisible(item);
 	m_timer->Stop();
 	m_timer->Start(100, true);
-	
+
 	LEditor *editor = GetEditor();
 	if( editor ) {
 		editor->CallTipCancel();
@@ -355,6 +355,12 @@ void CCBox::SelectItem(long item)
 
 void CCBox::Show(const wxString& word)
 {
+#ifdef __WXMSW__
+	ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
+	style |= CS_DROPSHADOW;
+	SetClassLongPtr(GetHandle(), GCL_STYLE, style);
+#endif
+
 	wxString lastName;
 	size_t i(0);
 	std::vector<CCItemInfo> _tags;
@@ -467,7 +473,7 @@ void CCBox::Show(const wxString& word)
 #ifdef __WXGTK__
 	if(wxPopupWindow::IsShown() == false)
 		wxPopupWindow::Show();
-		
+
 	clMainFrame::Get()->Raise();
 	GetEditor()->SetFocus();
 	GetEditor()->SetSCIFocus(true);
@@ -688,6 +694,11 @@ void CCBox::PreviousPage()
 void CCBox::HideCCBox()
 {
 	if( IsShown() ) {
+#ifdef __WXMSW__
+		ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
+		style &= ~CS_DROPSHADOW;
+		SetClassLongPtr(GetHandle(), GCL_STYLE, style);
+#endif
 		Hide();
 		DoHideCCHelpTab();
 		if( !m_constructing ) {
@@ -981,7 +992,7 @@ void CCBox::OnDisplayTooltip(wxTimerEvent& event)
 {
 	if(IsShown() == false)
 		return;
-		
+
 	CCItemInfo tag;
 	if(m_listCtrl->GetItemTagEntry(m_selectedItem, tag)) {
 		DoFormatDescriptionPage( tag );

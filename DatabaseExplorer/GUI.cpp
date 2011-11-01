@@ -804,6 +804,7 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	m_radioOnDelete->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _TableSettings::OnDeleteUI ), NULL, this );
 	m_radioOnUpdate->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _TableSettings::OnUpdateUI ), NULL, this );
 	m_button9->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _TableSettings::OnSaveColumnClick ), NULL, this );
+	m_button27->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _TableSettings::OnOKClick ), NULL, this );
 }
 
 _TableSettings::~_TableSettings()
@@ -829,6 +830,7 @@ _TableSettings::~_TableSettings()
 	m_radioOnDelete->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _TableSettings::OnDeleteUI ), NULL, this );
 	m_radioOnUpdate->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( _TableSettings::OnUpdateUI ), NULL, this );
 	m_button9->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _TableSettings::OnSaveColumnClick ), NULL, this );
+	m_button27->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _TableSettings::OnOKClick ), NULL, this );
 	
 }
 

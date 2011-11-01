@@ -109,7 +109,7 @@ void TableSettings::OnNewColumnClick(wxCommandEvent& event) {
 
 void TableSettings::OnOKClick(wxCommandEvent& event) {
 	m_pTable->SetName(m_txTableName->GetValue());
-	Close();
+	EndModal(wxID_OK);
 }
 
 void TableSettings::OnSaveColumnClick(wxCommandEvent& event) {

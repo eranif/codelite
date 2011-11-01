@@ -146,7 +146,7 @@ class clSplashScreen : public wxSplashScreen
 
 public:
 	clSplashScreen(const wxBitmap& bmp);
-
+	virtual ~clSplashScreen();
 	DECLARE_EVENT_TABLE()
 	void OnPaint(wxPaintEvent &e);
 	void OnEraseBackground(wxEraseEvent &e);
@@ -158,13 +158,21 @@ BEGIN_EVENT_TABLE(clSplashScreen, wxSplashScreen)
 END_EVENT_TABLE()
 
 clSplashScreen::clSplashScreen(const wxBitmap& bmp)
+#ifdef __WXMSW__
+	: wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 5000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER | wxBORDER_SIMPLE|wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP)
+#else
 	: wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 5000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE|wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP)
+#endif
 	, m_bmp(bmp)
 {
 	SetSize(wxSize(m_bmp.GetWidth(), m_bmp.GetHeight()));
 	Show(true);
-    SetThemeEnabled(false);
+    SetThemeEnabled(true);
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+}
+
+clSplashScreen::~clSplashScreen()
+{
 }
 
 void clSplashScreen::OnEraseBackground(wxEraseEvent& e)

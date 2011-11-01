@@ -29,15 +29,15 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	wxBoxSizer* mainSizer = new wxBoxSizer( wxVERTICAL );
 	wxBoxSizer* topSizer  = new wxBoxSizer( wxHORIZONTAL );
 	SetSizer(mainSizer);
-	
+
 	m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE|wxTAB_TRAVERSAL);
 #ifdef __WXGTK__
 	m_mainPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 #endif
 	m_mainPanel->SetSizer(topSizer);
-	
+
 	mainSizer->Add(m_mainPanel, 1, wxEXPAND);
-	
+
 	//this->SetBackgroundColour(*wxBLACK);
 	m_listCtrl = new CCVirtualListCtrl( m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(BOX_WIDTH - 30, BOX_HEIGHT), wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL|wxBORDER_STATIC );
 #ifdef __WXGTK__
@@ -53,24 +53,24 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 #else
 	m_toolBar1 = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL);
 #endif
-	m_toolBar1->AddTool( TOOL_SHOW_PRIVATE_MEMBERS, 
-						 _("Show Protected / Private Items"), 
-						 bmp, 
-						 bmp, 
-						 wxITEM_CHECK, 
-						 _("If pressed, will show 'protected' and 'private' items as well as 'public' ones"), 
+	m_toolBar1->AddTool( TOOL_SHOW_PRIVATE_MEMBERS,
+						 _("Show Protected / Private Items"),
+						 bmp,
+						 bmp,
+						 wxITEM_CHECK,
+						 _("If pressed, will show 'protected' and 'private' items as well as 'public' ones"),
 						 wxEmptyString,
 						 NULL);
-						 
-	m_toolBar1->AddTool( TOOL_SHOW_ITEM_COMMENTS, 
-						 _("Show Item Comments"), 
-						 commentsBmp, 
-						 commentsBmp, 
-						 wxITEM_CHECK, 
-						 _("Show Item Comments"), 
+
+	m_toolBar1->AddTool( TOOL_SHOW_ITEM_COMMENTS,
+						 _("Show Item Comments"),
+						 commentsBmp,
+						 commentsBmp,
+						 wxITEM_CHECK,
+						 _("Show Item Comments"),
 						 wxEmptyString,
 						 NULL);
-						 
+
 	m_toolBar1->Realize();
 
 #ifdef __WXGTK__

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "cc_box.h"
 #include "frame.h"
+#include <wx/settings.h>
 #include "comment_parser.h"
 #include "ctags_manager.h"
 #include <wx/wupdlock.h>
@@ -64,6 +65,10 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	, m_timer(NULL)
 	, m_needRepopulateTagList(false)
 {
+#ifdef __WXMAC__
+	Hide();
+	this->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+#endif
 	m_constructing = true;
 	HideCCBox();
 	MSWSetNativeTheme(m_listCtrl);
@@ -98,7 +103,9 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	// assign the image list and let the control take owner ship (i.e. delete it)
 	m_listCtrl->AssignImageList(il, wxIMAGE_LIST_SMALL);
 	m_listCtrl->InsertColumn(0, wxT("Name"));
+	m_listCtrl->SetColumnWidth(0, 350);
 
+	wxLogMessage(wxT("BOX_WIDTH is %d"), BOX_WIDTH);
 	m_isTipBgDark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 
 	if ( !m_isTipBgDark ) {
@@ -444,10 +451,8 @@ void CCBox::Show(const wxString& word)
 		return;
 	}
 
-	m_listCtrl->SetColumnWidth(0, BOX_WIDTH);
 	m_listCtrl->SetItems(_tags);
 	m_listCtrl->SetItemCount(_tags.size());
-
 	m_selectedItem = 0;
 
 	bool fullMatch;

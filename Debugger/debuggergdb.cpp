@@ -549,6 +549,8 @@ bool DbgGdb::Interrupt()
 		kill( m_debuggeePid, SIGINT );
 		return true;
 #endif
+	} else {
+		::wxMessageBox(_("Can't interrupt debuggee process: I don't know its PID!"), wxT("CodeLite"));
 	}
 	return false;
 }
@@ -646,7 +648,9 @@ bool DbgGdb::FilterMessage( const wxString &msg )
 void DbgGdb::Poke()
 {
 	static wxRegEx reCommand( wxT( "^([0-9]{8})" ) );
-
+	
+	static wxRegEx reDebuggeePid2(wxT("Thread[ ]*(0[xX][0-9a-fA-F]+)[ ]+\\(LWP ([0-9])+\\)"));
+	
 	//poll the debugger output
 	wxString line;
 	if ( !m_gdbProcess || m_gdbOutputArr.IsEmpty() ) {
@@ -654,12 +658,37 @@ void DbgGdb::Poke()
 	}
 
 	while ( DoGetNextLine( line ) ) {
-
+		
 		// For string manipulations without damaging the original line read
 		wxString tmpline ( line );
 		StripString( tmpline );
 		tmpline.Trim().Trim( false );
-
+		
+		// test for the debuggee PID
+		// in the line with the following pattern:
+		// =thread-group-started,id="i1",pid="15599"
+		if(m_debuggeePid < 0 && !line.IsEmpty()) {
+			wxString debuggeePidStr;
+			static wxRegEx reGroupStarted(wxT("pid=\"([0-9]+)\""));
+			if(line.Contains(wxT("=thread-group-started")) && reGroupStarted.Matches(line)) {
+				debuggeePidStr = reGroupStarted.GetMatch(line, 1);
+				
+			} else if(reDebuggeePid2.Matches(line)) {
+				debuggeePidStr = reDebuggeePid2.GetMatch(line, 1);
+				
+			}
+			
+			if(!debuggeePidStr.IsEmpty()) {
+				long iPid(0);
+				if(debuggeePidStr.ToLong(&iPid)) {
+					m_debuggeePid = iPid;
+					wxString msg;
+					msg << wxT( ">> Debuggee process ID: " ) << m_debuggeePid;
+					m_observer->UpdateAddLine( msg );
+				}
+			}
+		}
+		
 		if ( m_info.enableDebugLog ) {
 			//Is logging enabled?
 

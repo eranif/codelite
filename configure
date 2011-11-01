@@ -126,7 +126,7 @@ createMainTargets()
 	fi
 
 	## default
-	target_all="all :  pre_build Scintilla ShapeFramework $target_dbl CodeLite SDK codelite_indexer codelite_cppcheck Plugins LiteEditor "
+	target_all="all :  pre_build Scintilla ShapeFramework $target_dbl SQLite CodeLite SDK codelite_indexer codelite_cppcheck Plugins LiteEditor "
 	
 	## additional database backends
 
@@ -441,7 +441,10 @@ createRules_sharedObject ()
 	elif [ "$rule_name" = "DatabaseLayerPostgres" ] ; then
 	  	createVariables "yes" "-I/usr/include/postgresql"
 	elif [ "$rule_name" = "DatabaseExplorer" ] ; then
-		createVariables "yes" " " "-Wl,--no-as-needed"
+		
+		if [ "$os_name" != "Darwin" ];then
+			createVariables "yes" " " "-Wl,--no-as-needed"
+		fi
 	else
 	  	createVariables "yes"
 	fi

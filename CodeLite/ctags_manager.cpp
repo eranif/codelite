@@ -1154,7 +1154,7 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno,
 
 		//this function will retrieve the ineherited tags as well
 		std::vector<TagEntryPtr> tmpCandidates;
-		TagsByScope(scope, tmpCandidates);
+		TagsByScopeAndName(scope, word, tmpCandidates, ExactMatch);
 		GetFunctionTipFromTags(tmpCandidates, word, tips);
 	}
 

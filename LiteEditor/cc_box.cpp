@@ -290,8 +290,10 @@ bool CCBox::SelectWord(const wxString& word)
 			if (editor) {
 				editor->SetActive();
 			}
+			m_needRepopulateTagList = false;
+			m_timer->Stop();
+			HideCCBox();
 		}
-
 	}
 
 	m_needRepopulateTagList = true;

@@ -25,9 +25,11 @@
 #ifndef __findresultstab__
 #define __findresultstab__
 
+#include <vector>
 #include <map>
 #include <list>
 #include "wx/wxscintilla.h"
+#include "wx/debug.h"
 
 #include "notebook_ex.h"
 #include "outputtabwindow.h"
@@ -96,4 +98,62 @@ public:
 	void        NextMatch();
 	void        PrevMatch();
 };
+
+class EditorDeltasHolder
+{
+// This is all conceptually complex, so I'm being verbose for my own benefit
+// m_changes contains the current state: any position deltas since the file was loaded/reverted
+// m_changesAtLastSave is a snapshot of m_changes when the file was (last) saved
+// m_changesForCurrentMatches is a snapshot of m_changes at the last FileInFiles, so is the baseline for current matches
+// (Any or all may be empty)
+// If the file is saved, that makes no difference to any existing FiF matches, so the above situation continues. However we cache m_changes in m_changesAtLastSave
+// If another FindInFiles call is made, we no longer care about the m_changesForCurrentMatches contents as the corresponding matches will have been overwritten.
+// So we replace m_changesForCurrentMatches with m_changesAtLastSave, which is the baseline for the new matches
+// Note that, unless the file is saved at some point after an initial FiF call, both will be empty
+// And, unless there's been a 'save' since the last FiF call, the contents of m_changesForCurrentMatches and m_changesAtLastSave will be the same
+
+// When there's a 'GoTo next/previous FindInFiles' call, any relevant position changes need to be used. There are 4 possibilities:
+// 		1)	If there are no changes, FiF matches should 'just work'
+// 		2)	The common non-trivial situation is for there to be +ve position changes subsequent to the file's saved status at the last FindInFiles call
+// 			However, see below...
+// 		3)	Occasionally there will have been -ve position changes (i.e. undos), or undos followed by different alterations.
+//			If there hasn't been a second FiF call, that won't matter.
+//		4)  If there *has* been a second FiF call, followed by more alterations, it *will* matter; especially if there have been undos, then different alterations.
+//			In that case we need to use both the original changes and the replacement ones.
+// As there's no easy way to tell the difference between 2) 3) and 4) (and the cost is nil for 1) anyway) treat all cases as though they may be 4) instances.
+// That means combining m_changesForCurrentMatches (reversed and with lengths negated) and m_changes. See GetChanges()
+
+public:
+	EditorDeltasHolder(){}
+	~EditorDeltasHolder(){ Clear(); }
+
+	void Clear() {
+		m_changes.clear();
+		m_changesAtLastSave.clear();
+		m_changesForCurrentMatches.clear();
+	}
+	void Push(int position, int length) {
+		m_changes.push_back(position);
+		m_changes.push_back(length);
+	}
+	void Pop() {
+		wxCHECK_RET(m_changes.size() > 1, wxT("Trying to undo a non-existent change"));
+		m_changes.pop_back();
+		m_changes.pop_back();
+	}
+	void OnFileSaved() {
+		m_changesAtLastSave = m_changes;
+	}
+	void OnFileInFiles() {
+		m_changesForCurrentMatches = m_changesAtLastSave;
+	}
+	void GetChanges(std::vector<int>& changes);
+
+protected:
+	std::vector<int> m_changes;
+	std::vector<int> m_changesAtLastSave;
+	std::vector<int> m_changesForCurrentMatches;
+};
+
+
 #endif // __findresultstab__

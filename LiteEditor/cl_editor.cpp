@@ -59,6 +59,7 @@
 #include "quickfindbar.h"
 #include "buidltab.h"
 #include "localworkspace.h"
+#include "findresultstab.h"
 
 // fix bug in wxscintilla.h
 #ifdef EVT_SCI_CALLTIP_CLICK
@@ -177,10 +178,13 @@ LEditor::LEditor(wxWindow* parent)
 	m_functionTip = new clEditorTipWindow(this);
 //	m_debuggerTip = new DisplayVariableDlg(this);
 	m_disableSmartIndent = GetOptions()->GetDisableSmartIndent();
+	
+	m_deltas = new EditorDeltasHolder;
 }
 
 LEditor::~LEditor()
 {
+	delete m_deltas;
 }
 
 time_t LEditor::GetFileLastModifiedTime() const
@@ -993,6 +997,9 @@ bool LEditor::SaveFile()
 
 		// if we managed to save the file, remove the 'read only' attribute
 		clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, false);
+
+		// Take a snapshot of the current deltas. We'll need this as a 'base' for any future FindInFiles call
+		m_deltas->OnFileSaved();
 
 		wxString projName = GetProjectName();
 		if ( projName.Trim().Trim(false).IsEmpty() )
@@ -3639,11 +3646,25 @@ void LEditor::OnChange(wxScintillaEvent& event)
 
 	if (event.GetModificationType() & wxSCI_MOD_INSERTTEXT || event.GetModificationType() & wxSCI_MOD_DELETETEXT) {
 
+		// Cache details of the number of lines added/removed
+		// This is used to 'update' any affected FindInFiles result. See bug 3153847
+		if (event.GetModificationType() & wxSCI_PERFORMED_UNDO) {
+			m_deltas->Pop();
+		} else {
+			m_deltas->Push(event.GetPosition(), event.GetLength() * (event.GetModificationType() & wxSCI_MOD_DELETETEXT ? -1 : 1));
+		}
+
 		int numlines(event.GetLinesAdded());
-		if ( numlines && GetReloadingFile() == false) {
-			// a line was added / removed from the document, synchronized between the breakpoints on this editor
-			// and the breakpoint manager
-			UpdateBreakpoints();
+
+		if ( numlines) {
+			if (GetReloadingFile() == false) {
+				// a line was added to or removed from the document, so synchronize the breakpoints on this editor
+				// and the breakpoint manager
+				UpdateBreakpoints();
+			} else {
+				// The file has been reloaded, so the cached line-changes are no longer relevant
+				m_deltas->Clear();
+			}
 		}
 
 		// ignore this event incase we are in the middle of file reloading
@@ -3979,5 +4000,15 @@ int LEditor::GetCharAtPos(int pos)
 int LEditor::PositionBeforePos(int pos)
 {
 	return wxScintilla::PositionBefore(pos);
+}
+
+void LEditor::GetChanges(std::vector<int>& changes)
+{
+	m_deltas->GetChanges(changes);
+}
+
+void LEditor::OnFindInFiles()
+{
+	m_deltas->OnFileInFiles();
 }
 

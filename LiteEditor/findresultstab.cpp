@@ -498,6 +498,18 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
 		}
 	}
 	delete summary;
+
+	// We need to tell all editors that there's been a (new) search
+	// This lets them clear any already-saved line-changes,
+	// which a new save will have taken into account
+	std::vector<LEditor*> editors;
+	clMainFrame::Get()->GetMainBook()->GetAllEditors(editors);
+	for (size_t n=0; n < editors.size(); ++n) {
+		LEditor* editor = dynamic_cast<LEditor*>(*(editors.begin()+n));
+		if (editor) {
+			editor->OnFindInFiles();
+		}
+	}
 }
 
 void FindResultsTab::OnSearchCancel(wxCommandEvent &e)
@@ -712,34 +724,53 @@ void FindResultsTab::PrevMatch()
 void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxScintilla *sci, int markerLine)
 {
 	if (!result.GetFileName().IsEmpty()) {
-		LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(result.GetFileName(), wxEmptyString, result.GetLineNumber()-1);
-		if (editor && result.GetColumn() >= 0 && result.GetLen() >= 0) {
+		LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(result.GetFileName());
+		if (editor && result.GetLen() >= 0) {
+			// Update the destination position if there have been subsequent changes in the editor
+			int position = result.GetPosition();			
+			std::vector<int> changes;
+			editor->GetChanges(changes);
+			unsigned int changesTotal = changes.size();
+			int changePosition = 0;
+			int changeLength = 0;
+			int resultLength = result.GetLen();
+			bool removed = false;
+			for (unsigned int i = 0; i < changesTotal; i += 2) {
+				changePosition = changes.at(i);
+				changeLength = changes.at(i + 1);
+				if ((changeLength < 0) && (changePosition - changeLength > position) &&
+											(changePosition < position + resultLength)) {
+					removed = true;
+					break;
+				} else if (changePosition <= position) {
+					position += changeLength;
+				}
+			}
+			if (!removed) {
+				editor->SetCaretAt(position);
+				// The next line is necessary as otherwise EnsureCaretVisible() fails when the file wasn't previously open :/
+				editor->GotoLine(editor->LineFromPosition(position)-1);
+				editor->EnsureCaretVisible();
+				editor->SetSelection(position, position + resultLength);
 
-			int offset = editor->PositionFromLine(result.GetLineNumber()-1) + result.GetColumn();
+	#ifdef __WXGTK__
+				editor->ScrollToColumn(0);
+	#endif
 
-			editor->SetCaretAt(offset);
-			editor->GotoLine(result.GetLineNumber()-1);
-			editor->EnsureCaretVisible();
-			editor->SetSelection(offset, offset + result.GetLen());
+				if ( sci ) {
+					// remove the previous marker and add the new one
+					sci->MarkerDeleteAll( 7 );
+					sci->MarkerAdd(markerLine, 7 );
 
-#ifdef __WXGTK__
-			editor->ScrollToColumn(0);
-#endif
-
-			if ( sci ) {
-				// remove the previous marker and add the new one
-				sci->MarkerDeleteAll( 7 );
-				sci->MarkerAdd(markerLine, 7 );
-
-				// make the marked line visible
-				int pos = sci->PositionFromLine(markerLine);
-				sci->SetCurrentPos     (pos);
-				sci->SetSelectionStart (pos);
-				sci->SetSelectionEnd   (pos);
-				sci->EnsureCaretVisible(   );
-#ifdef __WXGTK__
-				sci->ScrollToColumn(0);
-#endif
+					// make the marked line visible
+					sci->SetCurrentPos     (position);
+					sci->SetSelectionStart (position);
+					sci->SetSelectionEnd   (position);
+					sci->EnsureCaretVisible();
+	#ifdef __WXGTK__
+					sci->ScrollToColumn(0);
+	#endif
+				}
 			}
 		}
 	}
@@ -781,3 +812,22 @@ void FindResultsTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 		e.Check(false);
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+
+void EditorDeltasHolder::GetChanges(std::vector<int>& changes)
+{
+	// There may have been net +ve or -ve position changes (i.e. undos) subsequent to a last save
+	// and some of these may have then been overwritten by different ones. So we need to add both the originals and current
+	// The lengths of the originals must be negated (since they're based from the end, not the beginning).
+	// Even if m_changes and m_changesForCurrentMatches have the same sizes, it may mean that nothing has changed, or none since the last save,
+	// but it may also mean that there have been n undos, followed by n different alterations. So we have to treat all array sizes the same
+	changes.clear();
+	for (int index = m_changesForCurrentMatches.size()-2; index >= 0; index -= 2) {
+		changes.push_back(m_changesForCurrentMatches.at(index)); 	// position
+		changes.push_back(-m_changesForCurrentMatches.at(index+1)); // length
+	}
+	changes.insert(changes.end(), m_changes.begin(), m_changes.end());
+}
+
+

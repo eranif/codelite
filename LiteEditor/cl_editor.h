@@ -52,6 +52,7 @@ class wxFindReplaceDialog;
 class CCBox;
 class clEditorTipWindow;
 class DisplayVariableDlg;
+class EditorDeltasHolder;
 
 enum sci_annotation_styles {
     eAnnotationStyleError = 128, eAnnotationStyleWarning
@@ -114,6 +115,7 @@ class LEditor : public wxScintilla, public IEditor
 	wxStopWatch                                 m_watch;
 	ContextBasePtr                              m_context;
 	wxMenu *                                    m_rightClickMenu;
+	EditorDeltasHolder*                         m_deltas;		// Holds any text position changes, in case they affect FindinFiles results
 	std::vector<wxMenuItem*>                    m_dynItems;
 	std::vector<BPtoMarker>                     m_BPstoMarkers;
 	static FindReplaceDialog *                  m_findReplaceDlg;
@@ -642,6 +644,17 @@ public:
 
 	wxString GetEolString();
 	void HighlightWord(StringHighlightOutput *highlightOutput);
+
+	/**
+	 * Get a vector of relevant position changes. Used for 'GoTo next/previous FindInFiles match'
+	 */
+	void GetChanges(std::vector<int>& changes);
+
+	/**
+	 * Tells the EditorDeltasHolder that there's been (another) FindInFiles call
+	 */
+	void OnFindInFiles();
+
 
 private:
 	void FillBPtoMarkerArray();

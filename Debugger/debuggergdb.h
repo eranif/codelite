@@ -95,7 +95,7 @@ public:
 	bool GetShouldBreakAtMain() const {
 		return m_break_at_main;
 	}
-	void GetDebugeePID();
+	void GetDebugeePID(const wxString& line);
 	
 	
 public:

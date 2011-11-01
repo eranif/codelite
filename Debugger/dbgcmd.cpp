@@ -323,7 +323,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 	//-exec-next, -exec-nexti
 	
 	// try and get the debugee PID
-	m_gdb->GetDebugeePID();
+	m_gdb->GetDebugeePID(line);
 
 	// Get the reason
 	std::vector<std::map<std::string, std::string> > children;

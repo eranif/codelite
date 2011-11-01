@@ -190,11 +190,11 @@ void DbgGdb::EmptyQueue()
 
 bool DbgGdb::Start( const wxString &debuggerPath,
                     const wxString & exeName,
-					int pid,
-					const wxString& sudoCmd,
-					const std::vector<BreakpointInfo> &bpList,
-					const wxArrayString &cmds,
-					const wxString &ttyName)
+                    int pid,
+                    const wxString& sudoCmd,
+                    const std::vector<BreakpointInfo> &bpList,
+                    const wxArrayString &cmds,
+                    const wxString &ttyName)
 {
 	//set the environment variables
 	EnvSetter env( m_env, NULL, m_debuggeeProjectName );
@@ -237,11 +237,11 @@ bool DbgGdb::Start( const wxString &debuggerPath,
 }
 
 bool DbgGdb::Start( const wxString &debuggerPath,
-					const wxString &exeName,
-					const wxString &cwd,
-					const std::vector<BreakpointInfo> &bpList,
-					const wxArrayString &cmds,
-					const wxString &ttyName)
+                    const wxString &exeName,
+                    const wxString &cwd,
+                    const std::vector<BreakpointInfo> &bpList,
+                    const wxArrayString &cmds,
+                    const wxString &ttyName)
 {
 	//set the environment variables
 	EnvSetter env( m_env, NULL, m_debuggeeProjectName );
@@ -322,16 +322,16 @@ void DbgGdb::DoCleanup()
 		delete m_gdbProcess;
 		m_gdbProcess = NULL;
 	}
-	
+
 	SetIsRemoteDebugging( false );
 	EmptyQueue();
 	m_gdbOutputArr.Clear();
 	m_bpList.clear();
 	m_debuggeeProjectName.Clear();
-	
+
 	// Clear any bufferd output
 	m_gdbOutputIncompleteLine.Clear();
-	
+
 	// Free allocated console for this session
 	m_consoleFinder.FreeConsole();
 }
@@ -648,9 +648,9 @@ bool DbgGdb::FilterMessage( const wxString &msg )
 void DbgGdb::Poke()
 {
 	static wxRegEx reCommand( wxT( "^([0-9]{8})" ) );
-	
-	static wxRegEx reDebuggeePid2(wxT("Thread[ ]*(0[xX][0-9a-fA-F]+)[ ]+\\(LWP ([0-9])+\\)"));
-	
+
+
+
 	//poll the debugger output
 	wxString line;
 	if ( !m_gdbProcess || m_gdbOutputArr.IsEmpty() ) {
@@ -658,37 +658,13 @@ void DbgGdb::Poke()
 	}
 
 	while ( DoGetNextLine( line ) ) {
+
+		GetDebugeePID(line);
 		
 		// For string manipulations without damaging the original line read
 		wxString tmpline ( line );
 		StripString( tmpline );
 		tmpline.Trim().Trim( false );
-		
-		// test for the debuggee PID
-		// in the line with the following pattern:
-		// =thread-group-started,id="i1",pid="15599"
-		if(m_debuggeePid < 0 && !line.IsEmpty()) {
-			wxString debuggeePidStr;
-			static wxRegEx reGroupStarted(wxT("pid=\"([0-9]+)\""));
-			if(line.Contains(wxT("=thread-group-started")) && reGroupStarted.Matches(line)) {
-				debuggeePidStr = reGroupStarted.GetMatch(line, 1);
-				
-			} else if(reDebuggeePid2.Matches(line)) {
-				debuggeePidStr = reDebuggeePid2.GetMatch(line, 1);
-				
-			}
-			
-			if(!debuggeePidStr.IsEmpty()) {
-				long iPid(0);
-				if(debuggeePidStr.ToLong(&iPid)) {
-					m_debuggeePid = iPid;
-					wxString msg;
-					msg << wxT( ">> Debuggee process ID: " ) << m_debuggeePid;
-					m_observer->UpdateAddLine( msg );
-				}
-			}
-		}
-		
 		if ( m_info.enableDebugLog ) {
 			//Is logging enabled?
 
@@ -924,7 +900,7 @@ void DbgGdb::OnProcessEnd( wxCommandEvent &e )
 {
 	ProcessEventData *ped = ( ProcessEventData * )e.GetClientData();
 	delete ped;
-	
+
 	DoCleanup();
 	m_observer->UpdateGotControl( DBG_EXITED_NORMALLY );
 }
@@ -1283,24 +1259,45 @@ void DbgGdb::AssignValue(const wxString& expression, const wxString& newValue)
 	ExecuteCmd(cmd);
 }
 
-void DbgGdb::GetDebugeePID()
+void DbgGdb::GetDebugeePID(const wxString& line)
 {
 	if ( m_debuggeePid == wxNOT_FOUND ) {
 		if ( GetIsRemoteDebugging() ) {
 			m_debuggeePid = m_gdbProcess->GetPid();
 
 		} else {
-			std::vector<long> children;
-			ProcUtils::GetChildren( m_gdbProcess->GetPid(), children );
-			std::sort( children.begin(), children.end() );
-			if ( children.empty() == false ) {
-				m_debuggeePid = children.at( 0 );
-			}
+			static wxRegEx reDebuggeePid2(wxT("Thread[ ]*(0[xX][0-9a-fA-F]+)[ ]+\\(LWP ([0-9]+)\\)"));
+			static wxRegEx reDebuggerPidWin(wxT("New Thread ([0-9]+)\\.(0[xX][0-9a-fA-F]+)"));
+			static wxRegEx reGroupStarted(wxT("id=\"([0-9]+)\""));
+			// test for the debuggee PID
+			// in the line with the following pattern:
+			// =thread-group-started,id="i1",pid="15599"
+			if(m_debuggeePid < 0 && !line.IsEmpty()) {
+				wxString debuggeePidStr;
 
-			if ( m_debuggeePid != wxNOT_FOUND ) {
-				wxString msg;
-				msg << wxT( "Debuggee process ID: " ) << m_debuggeePid;
-				m_observer->UpdateAddLine( msg );
+				if(line.Contains(wxT("=thread-group-started")) && reGroupStarted.Matches(line)) {
+					debuggeePidStr = reGroupStarted.GetMatch(line, 1);
+
+				}
+				if(line.Contains(wxT("=thread-group-created")) && reGroupStarted.Matches(line)) {
+					debuggeePidStr = reGroupStarted.GetMatch(line, 1);
+
+				} else if(reDebuggeePid2.Matches(line)) {
+					debuggeePidStr = reDebuggeePid2.GetMatch(line, 2);
+
+				} else if(reDebuggerPidWin.Matches(line)) {
+					debuggeePidStr = reDebuggerPidWin.GetMatch(line, 1);
+				}
+
+				if(!debuggeePidStr.IsEmpty()) {
+					long iPid(0);
+					if(debuggeePidStr.ToLong(&iPid)) {
+						m_debuggeePid = iPid;
+						wxString msg;
+						msg << wxT( ">> Debuggee process ID: " ) << m_debuggeePid;
+						m_observer->UpdateAddLine( msg );
+					}
+				}
 			}
 		}
 	}

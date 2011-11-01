@@ -103,9 +103,8 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	// assign the image list and let the control take owner ship (i.e. delete it)
 	m_listCtrl->AssignImageList(il, wxIMAGE_LIST_SMALL);
 	m_listCtrl->InsertColumn(0, wxT("Name"));
-	m_listCtrl->SetColumnWidth(0, 350);
+	m_listCtrl->SetColumnWidth(0, 345);
 
-	wxLogMessage(wxT("BOX_WIDTH is %d"), BOX_WIDTH);
 	m_isTipBgDark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 
 	if ( !m_isTipBgDark ) {

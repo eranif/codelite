@@ -157,7 +157,7 @@ private:
 	 */
 	void DoFetchTags ( const wxString &sql, std::vector<TagEntryPtr> &tags, const wxArrayString &kinds);
 
-	void DoAddNamePartToQuery(wxString &sql, const wxString &name, bool partial);
+	void DoAddNamePartToQuery(wxString &sql, const wxString &name, bool partial, bool prependAnd);
 public:
 	static TagEntry *FromSQLite3ResultSet(wxSQLite3ResultSet &rs);
 	static void      PPTokenFromSQlite3ResultSet(wxSQLite3ResultSet &rs, PPToken &token);
@@ -444,7 +444,7 @@ public:
 	 * @param tags [output]
 	 */
 	virtual void GetTagsByScopesAndKind(const wxArrayString& scopes, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags);
-
+	virtual void GetTagsByScopesAndKindNoLimit(const wxArrayString& scopes, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags);
 	/**
 	 * @brief get list of tags by kind and file
 	 * @param kind

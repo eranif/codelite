@@ -330,13 +330,13 @@ void ParseThread::ProcessDeleteTagsOfFiles(ParseRequest* req)
 	DEBUG_MESSAGE(wxString(wxT("ParseThread::ProcessDeleteTagsOfFile")));
 	if(req->_workspaceFiles.empty())
 		return;
-	
+
 	wxString dbfile = req->getDbfile();
 	ITagsStoragePtr db(new TagsStorageSQLite());
-	
+
 	db->OpenDatabase( dbfile );
 	db->Begin();
-	
+
 	wxArrayString file_array;
 
 	for (size_t i=0; i<req->_workspaceFiles.size(); i++) {
@@ -344,7 +344,7 @@ void ParseThread::ProcessDeleteTagsOfFiles(ParseRequest* req)
 		db->DeleteByFileName(wxFileName(),filename, false);
 		file_array.Add(filename);
 	}
-	
+
 	db->DeleteFromFiles(file_array);
 	db->Commit();
 	DEBUG_MESSAGE(wxString(wxT("ParseThread::ProcessDeleteTagsOfFile - completed")));
@@ -366,7 +366,7 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 	if(reportingPoint == 0.0) {
 		reportingPoint = 1.0;
 	}
-	
+
 	ITagsStoragePtr db(new TagsStorageSQLite());
 	db->OpenDatabase( dbfile );
 
@@ -404,7 +404,7 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 			wxCommandEvent retaggingProgressEvent(wxEVT_PARSE_THREAD_RETAGGING_PROGRESS);
 			retaggingProgressEvent.SetInt( (int)precent );
 			m_notifiedWindow->AddPendingEvent(retaggingProgressEvent);
-			
+
 		} else if(lastPercentageReported !=  precent) {
 			wxPrintf(wxT("parsing: %%%d completed\n"), precent);
 		}
@@ -446,10 +446,10 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 		*arrFiles = req->_workspaceFiles;
 		retaggingCompletedEvent.SetClientData( arrFiles );
 		m_notifiedWindow->AddPendingEvent(retaggingCompletedEvent);
-		
+
 	} else {
 		wxPrintf(wxT("parsing: done\n"), precent);
-		
+
 	}
 }
 
@@ -464,10 +464,10 @@ void ParseThread::FindIncludedFiles(ParseRequest *req)
 		wxString name(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
 		wxFileName fn(name);
 		fn.MakeAbsolute();
-		
+
 		if(TagsManagerST::Get()->IsBinaryFile(fn.GetFullPath()))
 			continue;
-		
+
 		filteredFileList.Add( fn.GetFullPath() );
 	}
 
@@ -520,7 +520,7 @@ void ParseThread::ProcessInterrestingMacros(ParseRequest *req)
 	// -------------------------------------------
 	FindIncludedFiles(req);
 	const std::set<std::string>& incFiles = fcFileOpener::Instance()->GetResults();
-	
+
 	// Add include files in native format
 	std::set<std::string> searchFiles;
 	std::set<std::string>::const_iterator itIncFile = incFiles.begin();
@@ -528,16 +528,16 @@ void ParseThread::ProcessInterrestingMacros(ParseRequest *req)
 		wxFileName fn(wxString::From8BitData(itIncFile->c_str()));
 		searchFiles.insert(fn.GetFullPath().mb_str(wxConvUTF8).data());
 	}
-	
+
 	// Add project files
 	const std::vector<std::string>& projFiles = req->_workspaceFiles;
 	for (std::vector<std::string>::const_iterator itProjFile = projFiles.begin(); itProjFile != projFiles.end(); ++itProjFile) {
 		searchFiles.insert(*itProjFile);
 	}
-	
+
 	// Remove the current file
 	searchFiles.erase(sCurrentFile.mb_str(wxConvUTF8).data());
-	
+
 	// -------------------------------------------
 	// Step 2 : Retrive PP macros used in the given files
 	// -------------------------------------------
@@ -545,7 +545,7 @@ void ParseThread::ProcessInterrestingMacros(ParseRequest *req)
 	PPScan(sCurrentFile, false);
 
 	// -------------------------------------------
-	// Step 3 : Keep only macros available in both included 
+	// Step 3 : Keep only macros available in both included
 	//    files and given files
 	// -------------------------------------------
 	wxArrayString defMacros;
@@ -607,7 +607,7 @@ ParseRequest::~ParseRequest()
 {
 }
 
-// Adaptor to the parse thread 
+// Adaptor to the parse thread
 static ParseThread* gs_theParseThread = NULL;
 
 void ParseThreadST::Free()

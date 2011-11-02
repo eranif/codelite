@@ -63,7 +63,7 @@ public:
 		, m_useCache(false)
 		, m_enableCaseInsensitive(true)
 	{}
-	
+
 	virtual ~ITagsStorage() {};
 	virtual void SetEnableCaseInsensitive(bool b) {
 		m_enableCaseInsensitive = b;
@@ -424,6 +424,13 @@ public:
 	 * @param tags [output]
 	 */
 	virtual void GetTagsByScopesAndKind(const wxArrayString& scopes, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags) = 0;
+	/**
+	 * @brief return list of tags by scopes and kinds with no LIMIT applied
+	 * @param scopes array of possible scopes
+	 * @param kinds array of possible kinds
+	 * @param tags [output]
+	 */
+	virtual void GetTagsByScopesAndKindNoLimit(const wxArrayString& scopes, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags) = 0;
 
 	/**
 	 * @brief return tags by files / scope

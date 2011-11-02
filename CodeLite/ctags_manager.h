@@ -151,7 +151,7 @@ private:
 	wxArrayString                 m_projectPaths;
 	wxFontEncoding                m_encoding;
 	wxFileName                    m_dbFile;
-	
+
 #if USE_TAGS_SQLITE3
 	ITagsStoragePtr               m_db;
 #endif
@@ -205,9 +205,9 @@ public:
 	 * @param options options to use
 	 */
 	void SetCtagsOptions(const TagsOptionsData &options);
-	
+
 	void SetEncoding(const wxFontEncoding &encoding);
-	
+
 	/**
 	 * Locate symbol by name in database
 	 * @param name name to search
@@ -436,7 +436,7 @@ public:
 	 * @param tags [ouput] the result vector
 	 * @param inherits set to true if you want inherited members as well members
 	 */
-	void TagsByScope(const wxString &scopeName, const wxString &kind, std::vector<TagEntryPtr> &tags, bool includeInherits = false, bool onlyWorkspace = false);
+	void TagsByScope(const wxString &scopeName, const wxString &kind, std::vector<TagEntryPtr> &tags, bool includeInherits = false, bool applyLimit = true);
 
 	/**
 	 * return tags belongs to given scope and kind
@@ -753,13 +753,13 @@ public:
 	 * @return return true if the file is binary
 	 */
 	bool IsBinaryFile(const wxString &filepath);
-	
+
 	/**
 	 * @brief given an input string 'str', wrap the string so each line will
 	 * not be longer than MAX_TIP_LINE_SIZE bytes
 	 */
 	wxString WrapLines(const wxString &str);
-	
+
 	void GetVariables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap, bool isUsedWithinFunc);
 	void GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<TagEntryPtr> &tips);
 
@@ -781,7 +781,7 @@ protected:
 	void           TryFindImplDeclUsingNS(const wxString &scope, const wxString &word, bool imp, const std::vector<wxString>& visibleScopes, std::vector<TagEntryPtr> &tags);
 	void           TryReducingScopes(const wxString &scope, const wxString &word, bool imp, std::vector<TagEntryPtr> &tags);
 	wxArrayString  BreakToOuterScopes(const wxString &scope);
-	
+
 };
 
 /// create the singleton typedef

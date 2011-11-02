@@ -135,7 +135,7 @@ TagsManager::TagsManager()
 	, m_evtHandler             (NULL)
 	, m_encoding               (wxFONTENCODING_DEFAULT)
 {
-	
+
 #if USE_TAGS_SQLITE3
 	m_db = new TagsStorageSQLite();
 	m_db->SetSingleSearchLimit( MAX_SEARCH_LIMIT );
@@ -190,7 +190,7 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
 #endif
 
 	db->OpenDatabase(fileName);
-	
+
 	if (db->GetVersion() != db->GetSchemaVersion()) {
 		db->RecreateDatabase();
 
@@ -641,7 +641,7 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 			}
 		}
 	}
-	
+
 	// Load all tags from the database that matches typeName & typeScope
 	wxString scope;
 	if (typeScope == wxT("<global>"))
@@ -910,7 +910,7 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
 	std::vector<wxString> visibleScopes;
 	wxString scopeName = GetLanguage()->GetScopeName(scope, &visibleScopes);
 	if (expression.IsEmpty()) {
-		
+
 		// add the current scope to the "visibleScopes" to be tested
 		if(scopeName != wxT("<global>")) {
 			visibleScopes.push_back(scopeName);
@@ -918,16 +918,16 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
 			for(size_t i=0; i<outerScopes.GetCount(); i++)
 				visibleScopes.push_back(outerScopes.Item(i));
 		}
-		
+
 		// collect tags from all the visible scopes
 		for(size_t i=0; i<visibleScopes.size(); i++)
 			TagsByScopeAndName(visibleScopes.at(i), word, tmpCandidates, ExactMatch);
-			
+
 		if (tmpCandidates.empty()) {
 			// no match in the given scope, try to collect from global scope as well
 			GetGlobalTags(word, tmpCandidates, ExactMatch);
 		}
-		
+
 		if (!imp) {
 			//collect only implementation
 			FilterImplementation(tmpCandidates, tags);
@@ -935,13 +935,13 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
 		} else {
 			FilterDeclarations(tmpCandidates, tags);
 		}
-		
+
 		if(tags.empty()) {
 			TryFindImplDeclUsingNS(scopeName, word, imp, visibleScopes, tags);
 			if(tags.empty())
 				TryReducingScopes(scopeName, word, imp, tags);
 		}
-		
+
 	} else {
 		wxString typeName, typeScope;
 		wxString oper, dummy;
@@ -965,7 +965,7 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
 		} else {
 			FilterDeclarations(tmpCandidates, tags);
 		}
-		
+
 		if(tags.empty()) {
 			TryFindImplDeclUsingNS(scope, word, imp, visibleScopes, tags);
 			if(tags.empty())
@@ -978,7 +978,7 @@ void TagsManager::TryReducingScopes(const wxString& scope, const wxString& word,
 {
 	if(scope == wxT("<global>") || scope.IsEmpty())
 		return;
-		
+
 	// if we are here, it means that the the 'word' was not found in the 'scope'
 	// and we already tried the 'TryFindImplDeclUsingNS' method.
 	// What is left to be done is to reduce the 'scope' until we find a match.
@@ -1005,7 +1005,7 @@ void TagsManager::TryReducingScopes(const wxString& scope, const wxString& word,
 		for(size_t i=0; i<visibleScopes.size(); i++) {
 			TagsByScopeAndName(visibleScopes.at(i), word, tmpCandidates, ExactMatch);
 		}
-		
+
 		if (!imp) {
 			//collect only implementation
 			FilterImplementation(tmpCandidates, tags);
@@ -1018,11 +1018,11 @@ void TagsManager::TryReducingScopes(const wxString& scope, const wxString& word,
 void TagsManager::TryFindImplDeclUsingNS(const wxString &scope,
 										 const wxString &word,
 										 bool imp,
-										 const std::vector<wxString>& visibleScopes, 
+										 const std::vector<wxString>& visibleScopes,
 										 std::vector<TagEntryPtr> &tags)
 {
 	std::vector<TagEntryPtr> tmpCandidates;
-	// if we got here and the tags.empty() is true, 
+	// if we got here and the tags.empty() is true,
 	// there is another option to try:
 	// sometimes people tend to write code similar to:
 	// using namespace Foo;
@@ -1039,7 +1039,7 @@ void TagsManager::TryFindImplDeclUsingNS(const wxString &scope,
 			}
 			TagsByScopeAndName(newScope, word, tmpCandidates, ExactMatch);
 		}
-		
+
 		if (!imp) {
 			//collect only implementation
 			FilterImplementation(tmpCandidates, tags);
@@ -1198,7 +1198,7 @@ void TagsManager::DeleteFilesTags(const std::vector<wxFileName> &projectFiles)
 	if (projectFiles.empty()) {
 		return;
 	}
-	
+
 	// Put a request to the parsing thread to delete the tags for the 'projectFiles'
 	ParseRequest *req = new ParseRequest();
 	req->setDbFile( GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
@@ -1343,7 +1343,7 @@ bool TagsManager::IsTypeAndScopeExists(wxString &typeName, wxString &scope)
 	if(GetDatabase()->IsTypeAndScopeExistLimitOne(typeName, scope)) {
 		return true;
 	}
-	
+
 	// replace macros:
 	// replace the provided typeName and scope with user defined macros as appeared in the PreprocessorMap
 	typeName = DoReplaceMacros(typeName);
@@ -1623,7 +1623,7 @@ void TagsManager::GenerateSettersGetters(const wxString &scope, const SettersGet
 	wxUnusedVar(decl);
 }
 
-void TagsManager::TagsByScope(const wxString &scopeName, const wxString &kind, std::vector<TagEntryPtr> &tags, bool includeInherits, bool onlyWorkspace)
+void TagsManager::TagsByScope(const wxString &scopeName, const wxString &kind, std::vector<TagEntryPtr> &tags, bool includeInherits, bool applyLimit)
 {
 	wxString sql;
 	std::vector<wxString> derivationList;
@@ -1643,9 +1643,10 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxString &kind, s
 		scopes.Add(derivationList.at(i));
 	}
 
-	GetDatabase()->GetTagsByScopesAndKind(scopes, kinds, tags);
-	// and finally sort the results
-	std::sort(tags.begin(), tags.end(), SAscendingSort());
+	if(applyLimit)
+		GetDatabase()->GetTagsByScopesAndKind(scopes, kinds, tags);
+	else
+		GetDatabase()->GetTagsByScopesAndKindNoLimit(scopes, kinds, tags);
 }
 
 wxString TagsManager::GetScopeName(const wxString &scope)
@@ -1832,11 +1833,11 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
 	if ( foo.m_isConst ) {
 		body << wxT(" const");
 	}
-	
+
 	if (!foo.m_throws.empty()) {
 		body << wxT(" throw (") << wxString(foo.m_throws.c_str(), wxConvUTF8) << wxT(")");
 	}
-	
+
 	if (flags & FunctionFormat_Impl) {
 		body << wxT("\n{\n}\n");
 	} else {
@@ -2130,8 +2131,8 @@ void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<
 	std::vector< TagEntryPtr > vimpl;
 
 	//currently we want to add implementation only for workspace classes
-	TagsByScope(scopeName, wxT("prototype"), vproto, false, true);
-	TagsByScope(scopeName, wxT("function"), vimpl, false, true);
+	TagsByScope(scopeName, wxT("prototype"), vproto, false, false);
+	TagsByScope(scopeName, wxT("function"), vimpl, false, false);
 
 	//filter out functions which already has implementation
 	for ( size_t i=0; i < vproto.size() ; i++ ) {
@@ -2733,6 +2734,6 @@ ITagsStoragePtr TagsManager::GetDatabase()
 	ITagsStoragePtr db(new TagsStorageSQLite());
 	db->OpenDatabase(m_dbFile);
 	return db;
-	
+
 #endif
 }

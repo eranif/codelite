@@ -637,7 +637,8 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope, const wxStr
 		sql << wxT("scope='") << scope << wxT("' ");
 	}
 
-	DoAddNamePartToQuery(sql, name, partialNameAllowed);
+	DoAddNamePartToQuery(sql, name, partialNameAllowed, !scope.IsEmpty());
+
 	sql << wxT(" LIMIT ") << this->GetSingleSearchLimit();
 
 	// get get the tags
@@ -1143,6 +1144,23 @@ void TagsStorageSQLite::GetTagsByScopesAndKind(const wxArrayString& scopes, cons
 	DoFetchTags(sql, tags, kinds);
 }
 
+void TagsStorageSQLite::GetTagsByScopesAndKindNoLimit(const wxArrayString& scopes, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags)
+{
+	if ( kinds.empty() || scopes.empty() ) {
+		return;
+	}
+
+	wxString sql;
+	sql << wxT("select * from tags where scope in (");
+	for (size_t i=0; i<scopes.GetCount(); i++) {
+		sql << wxT("'") << scopes.Item(i) << wxT("',");
+	}
+	sql.RemoveLast();
+	sql << wxT(") ORDER BY NAME");
+
+	DoFetchTags(sql, tags, kinds);
+}
+
 void TagsStorageSQLite::GetTagsByPath(const wxString& path, std::vector<TagEntryPtr>& tags)
 {
 	if (path.empty()) return;
@@ -1166,7 +1184,7 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const 
 	sql.RemoveLast();
 	sql << wxT(") ");
 
-	DoAddNamePartToQuery(sql, name, partialNameAllowed);
+	DoAddNamePartToQuery(sql, name, partialNameAllowed, true);
 	sql << wxT(" LIMIT ") << GetSingleSearchLimit();
 	// get get the tags
 	DoFetchTags(sql, tags);
@@ -1271,7 +1289,7 @@ void TagsStorageSQLite::GetTagsByKindLimit(const wxArrayString& kinds, const wxS
 		}
 	}
 
-	DoAddNamePartToQuery(sql, partName, true);
+	DoAddNamePartToQuery(sql, partName, true, true);
 	if (limit > 0) {
 		sql << wxT(" LIMIT ") << limit;
 	}
@@ -1504,18 +1522,21 @@ void TagsStorageSQLite::GetMacrosDefined(const std::set<std::string>& files, con
 	}
 }
 
-void TagsStorageSQLite::DoAddNamePartToQuery(wxString &sql, const wxString& name, bool partial)
+void TagsStorageSQLite::DoAddNamePartToQuery(wxString &sql, const wxString& name, bool partial, bool prependAnd)
 {
 	if(name.empty())
 		return;
-	
+	if(prependAnd) {
+		sql << wxT(" AND ");
+	}
+
 	if(m_enableCaseInsensitive) {
 		wxString tmpName(name);
 		tmpName.Replace(wxT("_"), wxT("^_"));
 		if(partial) {
-			sql << wxT(" AND name LIKE '") << tmpName << wxT("%%' ESCAPE '^' ");
+			sql << wxT(" name LIKE '") << tmpName << wxT("%%' ESCAPE '^' ");
 		} else {
-			sql << wxT(" AND name ='") << name << wxT("' ");
+			sql << wxT(" name ='") << name << wxT("' ");
 		}
 	} else {
 		// Don't use LIKE
@@ -1531,9 +1552,9 @@ void TagsStorageSQLite::DoAddNamePartToQuery(wxString &sql, const wxString& name
 
 		// add the name condition
 		if (partial) {
-			sql << wxT(" AND name >= '") << from << wxT("' AND  name < '") << until << wxT("'");
+			sql << wxT(" name >= '") << from << wxT("' AND  name < '") << until << wxT("'");
 		} else {
-			sql << wxT(" AND name ='") << name << wxT("' ");
+			sql << wxT(" name ='") << name << wxT("' ");
 		}
 	}
 }

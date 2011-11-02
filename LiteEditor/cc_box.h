@@ -60,7 +60,7 @@ class CCBox : public CCBoxBase
 	CCItemInfo               m_currentItem;
 	LEditor*                 m_editor;
 	wxTimer*                 m_timer;
-	bool                     m_needRepopulateTagList;
+	wxTimer*                 m_refreshListTimer;
 	bool                     m_isKeywordsList;
 protected:
 	LEditor*                 GetEditor();
@@ -77,6 +77,7 @@ protected:
 
 	void OnKeyDown(wxListEvent& event);
 	void OnDisplayTooltip(wxTimerEvent &event);
+	void OnRefreshList(wxTimerEvent &event);
 	
 protected:
 	// helper methods

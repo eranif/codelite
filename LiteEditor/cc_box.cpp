@@ -63,7 +63,6 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	, m_startPos(wxNOT_FOUND)
 	, m_editor(parent)
 	, m_timer(NULL)
-	, m_needRepopulateTagList(false)
 {
 #ifdef __WXMAC__
 	Hide();
@@ -73,8 +72,11 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	HideCCBox();
 	MSWSetNativeTheme(m_listCtrl);
 
-	m_timer = new wxTimer(this);
-	Connect(m_timer->GetId(),  wxEVT_TIMER, wxTimerEventHandler(CCBox::OnDisplayTooltip),  NULL, this);
+	m_timer            = new wxTimer(this);
+	m_refreshListTimer = new wxTimer(this);
+	
+	Connect(m_timer->GetId(),            wxEVT_TIMER, wxTimerEventHandler(CCBox::OnDisplayTooltip), NULL, this);
+	Connect(m_refreshListTimer->GetId(), wxEVT_TIMER, wxTimerEventHandler(CCBox::OnRefreshList),    NULL, this);
 
 	// load all the CC images
 	wxImageList *il = new wxImageList(16, 16, true);
@@ -130,7 +132,7 @@ CCBox::~CCBox()
 	EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_All_Members"),   LEditor::m_ccShowPrivateMembers ? 1 : 0);
 	Disconnect(m_timer->GetId(),  wxEVT_TIMER, wxTimerEventHandler(CCBox::OnDisplayTooltip),  NULL, this);
 	delete m_timer;
-	m_needRepopulateTagList = false;
+	delete m_refreshListTimer;
 }
 
 void CCBox::OnItemActivated( wxListEvent& event )
@@ -306,9 +308,11 @@ bool CCBox::SelectWord(const wxString& word)
 		}
 	}
 
-	m_needRepopulateTagList = true;
 	m_timer->Stop();
 	m_timer->Start(100, true);
+	
+	m_refreshListTimer->Stop();
+	m_refreshListTimer->Start(100, true);
 	return fullMatch;
 }
 
@@ -915,7 +919,6 @@ void CCBox::DoHideCCHelpTab()
 		m_timer->Stop();
 	}
 	LEditor *editor = GetEditor();
-	m_needRepopulateTagList = false;
 	if(editor)
 		editor->CallTipCancel();
 }
@@ -1003,9 +1006,11 @@ void CCBox::OnDisplayTooltip(wxTimerEvent& event)
 	if(m_listCtrl->GetItemTagEntry(m_selectedItem, tag)) {
 		DoFormatDescriptionPage( tag );
 	}
+}
 
-	if(m_needRepopulateTagList && !m_isKeywordsList) {
-		m_needRepopulateTagList = false;
+void CCBox::OnRefreshList(wxTimerEvent& event)
+{
+	if(!m_isKeywordsList) {
 		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("complete_word_refresh_list"));
 		event.SetEventObject(clMainFrame::Get());
 		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);

@@ -658,12 +658,24 @@ void Manager::GetWorkspaceFiles ( std::vector<wxFileName> &files, bool absPath )
 
 bool Manager::IsFileInWorkspace ( const wxString &fileName )
 {
-	wxFileName findme ( fileName );
-	std::vector<wxFileName> files;
+	std::set<wxString> files;
+	GetWorkspaceFiles ( files );
+	return files.find(fileName) != files.end();
+}
 
-	GetWorkspaceFiles ( files, true );
-	std::vector<wxFileName>::const_iterator iter = std::find ( files.begin(), files.end(), findme );
-	return iter != files.end();
+void Manager::GetWorkspaceFiles(std::set<wxString>& files)
+{
+	wxArrayString filesArr;
+	wxArrayString projects;
+	GetProjectList ( projects );
+
+	for ( size_t i=0; i<projects.GetCount(); i++ ) {
+		GetProjectFiles ( projects.Item ( i ), filesArr );
+	}
+
+	for(size_t i=0; i<filesArr.GetCount(); i++) {
+		files.insert(filesArr.Item(i));
+	}
 }
 
 wxFileName Manager::FindFile ( const wxString &filename, const wxString &project )
@@ -3563,3 +3575,4 @@ bool Manager::DbgCanInteract()
 
 	return m_dbgCanInteract;
 }
+

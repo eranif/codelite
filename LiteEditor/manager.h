@@ -321,7 +321,7 @@ public:
 	/**
 	 * @brief return list of files in a form of std::set
 	 */
-	void GetWorkspaceFiles(std::set<wxFileName> &files);
+	void GetWorkspaceFiles(std::set<wxString> &files);
 
 	/**
 	 * return list of files that are part of the workspace

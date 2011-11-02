@@ -1098,7 +1098,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 
 	wxString text = editor.GetTextRange(0, pos);
 	wxString scopeName = tagmgr->GetScopeName(text);
-	tagmgr->TagsByScope(scopeName, wxT("member"), tags);
+	tagmgr->TagsByScope(scopeName, wxT("member"), tags, false, false);
 	if (tags.empty()) {
 		return;
 	}
@@ -1349,10 +1349,6 @@ void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 
 	std::vector<TagEntryPtr> tags;
 	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
-	TagsManagerST::Get()->FindSymbol(word, tags);
-	if (tags.empty())
-		return;
-
 
 	//get this scope name
 	int startPos(0);
@@ -1364,6 +1360,11 @@ void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 		scopeName = wxT("<global>");
 	}
 
+	// Find the tag
+	TagsManagerST::Get()->TagsByScopeAndName(scopeName, word, tags, ExactMatch);
+	if(tags.empty())
+		return;
+		
 	TagEntryPtr tag;
 	bool match(false);
 	for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {

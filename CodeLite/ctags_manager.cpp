@@ -2395,7 +2395,7 @@ void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName
 	kind.Add(wxT("prototype"));
 	kind.Add(wxT("function" ));
 	for(wxArrayString::size_type i=0; i<parents.GetCount(); i++) {
-		GetDatabase()->GetTagsByScopeAndKind(parents.Item(i), kind, tags);
+		GetDatabase()->GetTagsByScopeAndKind(parents.Item(i), kind, tags, false);
 	}
 
 	for(wxArrayString::size_type i=0; i<tags.size(); i++) {
@@ -2430,7 +2430,7 @@ void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName
 	// ========
 	// Collect a list of function prototypes from the class
 	tags.clear();
-	GetDatabase()->GetTagsByScopeAndKind(scopeName, kind, tags);
+	GetDatabase()->GetTagsByScopeAndKind(scopeName, kind, tags, false);
 	for(size_t i=0; i<tags.size(); i++) {
 		TagEntryPtr t   = tags.at(i);
 		wxString    sig = NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Reverse_Macro);

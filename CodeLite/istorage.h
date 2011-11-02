@@ -186,7 +186,7 @@ public:
 	 * @param kinds
 	 * @param tags [output]
 	 */
-	virtual void GetTagsByScopeAndKind(const wxString &scope, const wxArrayString &kinds, std::vector<TagEntryPtr> &tags) = 0;
+	virtual void GetTagsByScopeAndKind(const wxString &scope, const wxArrayString &kinds, std::vector<TagEntryPtr> &tags, bool applyLimit = true) = 0;
 
 	/**
 	 * @brief get list of tags by kind and file

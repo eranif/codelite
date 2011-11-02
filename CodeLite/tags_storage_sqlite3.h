@@ -157,6 +157,7 @@ private:
 	 */
 	void DoFetchTags ( const wxString &sql, std::vector<TagEntryPtr> &tags, const wxArrayString &kinds);
 
+	void DoAddNamePartToQuery(wxString &sql, const wxString &name, bool partial);
 public:
 	static TagEntry *FromSQLite3ResultSet(wxSQLite3ResultSet &rs);
 	static void      PPTokenFromSQlite3ResultSet(wxSQLite3ResultSet &rs, PPToken &token);
@@ -554,14 +555,14 @@ public:
 	virtual void GetAllTagsNames(wxArrayString& names);
 
 	virtual void GetTagsNames(const wxArrayString& kind, wxArrayString& names);
-	
+
 	/**
 	 * @brief
 	 * @param files
 	 * @param tags
 	 */
 	virtual void GetTagsByFiles(const wxArrayString &files, std::vector<TagEntryPtr>& tags);
-	
+
 	/**
 	 * @brief
 	 * @param files

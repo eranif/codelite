@@ -1588,12 +1588,12 @@ void clMainFrame::OnClose(wxCloseEvent& event)
 
 	// Stop the search thread
 	ManagerST::Get()->KillProgram();
-	
+
 	// Stop any debugging session if any
 	IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
 	if(debugger && debugger->IsRunning())
 		ManagerST::Get()->DbgStop();
-		
+
 	SearchThreadST::Get()->StopSearch();
 
 	SaveLayoutAndSession();
@@ -1979,15 +1979,12 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent &event)
 	bool colTags(false);
 	bool newColVars(false);
 	bool newColTags(false);
-	bool markFilesAsBold(false);
-	bool newMarkFilesAsBold(false);
+	bool caseSensitive(false);
 
 	size_t colourTypes(0);
 
-	colVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
-	colTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
-	markFilesAsBold = (m_tagsOptionsData.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
-
+	colVars     = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
+	colTags     = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
 	colourTypes = m_tagsOptionsData.GetCcColourFlags();
 
 	wxArrayString pathsBefore = m_tagsOptionsData.GetParserSearchPaths();
@@ -2032,9 +2029,11 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent &event)
 
 		newColVars         = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS             ? true : false);
 		newColTags         = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS   ? true : false);
-		newMarkFilesAsBold = (m_tagsOptionsData.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
+		caseSensitive      = (m_tagsOptionsData.GetFlags() & CC_IS_CASE_SENSITIVE);
 
 		TagsManagerST::Get()->SetCtagsOptions( m_tagsOptionsData );
+		TagsManagerST::Get()->GetDatabase()->SetEnableCaseInsensitive(!caseSensitive);
+
 		EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
 
 		// We use this method 'UpdateParserPaths' since it will also update the parser
@@ -3790,7 +3789,7 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
 			// Now the debugger has been fed the breakpoints, re-Initialise the breakpt view,
 			// so that it uses debugger_ids instead of internal_ids
 			clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-			
+
 			// Layout management
 			ManagerST::Get()->SavePerspective(NORMAL_LAYOUT);
 			ManagerST::Get()->LoadPerspective(DEBUG_LAYOUT);
@@ -3860,16 +3859,16 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
 
 			// Coredump debugging doesn't use breakpoints, but probably we should do this here anyway...
 			clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-			
+
 			ManagerST::Get()->SavePerspective(NORMAL_LAYOUT);
 			ManagerST::Get()->LoadPerspective(DEBUG_LAYOUT);
-			
+
 			// Make sure that the debugger pane is visible, and select the stack trace tab
 			wxAuiPaneInfo &info = GetDockingManager().GetPane(wxT("Debugger"));
 			if ( info.IsOk() && !info.IsShown() ) {
 				ManagerST::Get()->ShowDebuggerPane();
 			}
-			
+
 			clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::FRAMES);
 			ManagerST::Get()->UpdateDebuggerPane();
 
@@ -4212,15 +4211,15 @@ void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 {
 	wxString file;
 	file << wxStandardPaths::Get().GetUserDataDir() << wxT("/config/codelite.layout");
-	
+
 	wxFileName oldLayoutFile(file);
 	if(oldLayoutFile.FileExists(file)) {
 		wxRemoveFile(oldLayoutFile.GetFullPath());
 		wxCommandEvent eventRestoreLayout(wxEVT_COMMAND_MENU_SELECTED, XRCID("restore_layout"));
 		eventRestoreLayout.SetEventObject(this);
 		GetEventHandler()->ProcessEvent(eventRestoreLayout);
-		
-	} else 
+
+	} else
 		ManagerST::Get()->LoadPerspective(NORMAL_LAYOUT);
 }
 

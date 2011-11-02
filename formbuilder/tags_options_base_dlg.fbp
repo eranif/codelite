@@ -7,7 +7,6 @@
         <property name="disconnect_events">1</property>
         <property name="disconnect_mode">source_name</property>
         <property name="disconnect_python_events">0</property>
-        <property name="embedded_files_path">res</property>
         <property name="encoding">UTF-8</property>
         <property name="event_generation">connect</property>
         <property name="file">tags_options_base_dlg</property>
@@ -631,7 +630,7 @@
                                         <property name="gripper">0</property>
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
-                                        <property name="label">Mark files and dirs in file explorer that contribute tags in bold</property>
+                                        <property name="label">Code Completion is case sensitive (improves performance)</property>
                                         <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
@@ -640,7 +639,7 @@
                                         <property name="minimize_button">0</property>
                                         <property name="minimum_size"></property>
                                         <property name="moveable">1</property>
-                                        <property name="name">m_checkBoxMarkTagsFilesInBold</property>
+                                        <property name="name">m_checkBoxEnableCaseSensitiveCompletion</property>
                                         <property name="pane_border">1</property>
                                         <property name="pane_position"></property>
                                         <property name="pane_size"></property>
@@ -655,7 +654,7 @@
                                         <property name="style"></property>
                                         <property name="subclass"></property>
                                         <property name="toolbar_pane">0</property>
-                                        <property name="tooltip">Mark files and dirs in file explorer that contribute tags in bold</property>
+                                        <property name="tooltip">When enabled, the code completion search engine will use case sensitive searches. &#x0A;So &apos;QString&apos; is NOT equal &apos;qstring&apos;</property>
                                         <property name="validator_data_type"></property>
                                         <property name="validator_style">wxFILTER_NONE</property>
                                         <property name="validator_type">wxDefaultValidator</property>

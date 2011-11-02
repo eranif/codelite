@@ -46,7 +46,8 @@ enum CodeCompletionOpts {
     CC_MARK_TAGS_FILES_IN_BOLD             = 0x00001000,
     CC_RETAG_WORKSPACE_ON_STARTUP          = 0x00004000,
     CC_ACCURATE_SCOPE_RESOLVING            = 0x00008000,
-    CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING = 0x00010000
+    CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING = 0x00010000,
+	CC_IS_CASE_SENSITIVE                   = 0x00020000
 };
 
 enum CodeCompletionColourOpts {
@@ -101,11 +102,11 @@ class WXDLLIMPEXP_CL TagsOptionsData : public SerializedObject
 protected:
 	void DoUpdateTokensWxMap();
 	void DoUpdateTokensWxMapReversed();
-	
+
 public:
 	static wxString CLANG_CACHE_LAZY;
 	static wxString CLANG_CACHE_ON_FILE_LOAD;
-	
+
 public:
 	TagsOptionsData();
 	virtual ~TagsOptionsData();

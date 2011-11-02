@@ -48,7 +48,7 @@ protected:
 	int        m_singleSearchLimit;
 	int        m_maxWorkspaceTagToColour;
 	bool       m_useCache;
-
+	bool       m_enableCaseInsensitive;
 public:
 	enum {
 		OrderNone,
@@ -57,9 +57,17 @@ public:
 	};
 
 public:
-	ITagsStorage() : m_singleSearchLimit(MAX_SEARCH_LIMIT), m_maxWorkspaceTagToColour(1000), m_useCache(false) {}
+	ITagsStorage()
+		: m_singleSearchLimit(MAX_SEARCH_LIMIT)
+		, m_maxWorkspaceTagToColour(1000)
+		, m_useCache(false)
+		, m_enableCaseInsensitive(true)
+	{}
+	
 	virtual ~ITagsStorage() {};
-
+	virtual void SetEnableCaseInsensitive(bool b) {
+		m_enableCaseInsensitive = b;
+	}
 	virtual void SetUseCache(bool useCache) {
 		this->m_useCache = useCache;
 	}
@@ -368,7 +376,7 @@ public:
 	virtual void Begin() = 0;
 	virtual void Commit() = 0;
 	virtual void Rollback() = 0;
-	
+
 	/**
 	 * Delete all entries from database that are related to filename.
 	 * @param path Database name
@@ -462,7 +470,7 @@ public:
 	/**
 	 * @brief return the macros defined by some files.
 	 * The macro return must match the given used macros.
-	 * 
+	 *
 	 * @param files The files which define the macros we are looking for
 	 * @param usedMacros The macros wee are looking for
 	 * @param defMacros [out] The real defined macros

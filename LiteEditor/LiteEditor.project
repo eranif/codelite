@@ -960,8 +960,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion>
         <ClangCmpFlags/>
@@ -987,11 +986,9 @@ resources.cpp: resources.xrc
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
-        <![CDATA[
-      
-      ]]>
+        <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -1020,7 +1017,8 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .</CustomPreBuild>
+	autorev .
+</CustomPreBuild>
       </AdditionalRules>
       <Completion>
         <ClangCmpFlags/>

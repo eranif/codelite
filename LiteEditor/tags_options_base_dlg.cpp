@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun  6 2011)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -74,10 +74,10 @@ CCDisplayAndBehaviorBase::CCDisplayAndBehaviorBase( wxWindow* parent, wxWindowID
 	wxGridSizer* gSizer1;
 	gSizer1 = new wxGridSizer( 4, 1, 0, 0 );
 	
-	m_checkBoxMarkTagsFilesInBold = new wxCheckBox( this, wxID_ANY, _("Mark files and dirs in file explorer that contribute tags in bold"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxMarkTagsFilesInBold->SetToolTip( _("Mark files and dirs in file explorer that contribute tags in bold") );
+	m_checkBoxEnableCaseSensitiveCompletion = new wxCheckBox( this, wxID_ANY, _("Code Completion is case sensitive (improves performance)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxEnableCaseSensitiveCompletion->SetToolTip( _("When enabled, the code completion search engine will use case sensitive searches. \nSo 'QString' is NOT equal 'qstring'") );
 	
-	gSizer1->Add( m_checkBoxMarkTagsFilesInBold, 0, wxALL, 5 );
+	gSizer1->Add( m_checkBoxEnableCaseSensitiveCompletion, 0, wxALL, 5 );
 	
 	m_checkDisplayTypeInfo = new wxCheckBox( this, wxID_ANY, _("Display type info tooltips"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkDisplayTypeInfo->SetToolTip( _("Display information about the hovered text") );

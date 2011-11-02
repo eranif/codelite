@@ -628,35 +628,16 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope, const wxStr
 {
 	if(name.IsEmpty())
 		return;
-		
-	wxString sql;
-//	wxString tmpName(name);
-//	tmpName.Replace(wxT("_"), wxT("^_"));
 
+	wxString sql;
 	sql << wxT("select * from tags where ");
 
 	// did we get scope?
 	if ( scope.IsEmpty() == false ) {
-		sql << wxT("scope='") << scope << wxT("' and ");
+		sql << wxT("scope='") << scope << wxT("' ");
 	}
-	
-	// Don't use LIKE
-	wxString from  = name;
-	wxString until = name;
-	
-#if wxVERSION_NUMBER < 2900
-	until.Last() = until.Last() + 1;
-#else
-	wxChar ch = until.Last();
-	until.SetChar(until.length() - 1,  ch + 1);
-#endif
 
-	// add the name condition
-	if (partialNameAllowed) {
-		sql << wxT(" name >= '") << from << wxT("' AND  name < '") << until << wxT("'");
-	} else {
-		sql << wxT(" name ='") << name << wxT("' ");
-	}
+	DoAddNamePartToQuery(sql, name, partialNameAllowed);
 	sql << wxT(" LIMIT ") << this->GetSingleSearchLimit();
 
 	// get get the tags
@@ -1175,34 +1156,17 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const 
 {
 	if (scope.empty())  return;
 	if (name.IsEmpty()) return;
-	
+
 	wxString sql;
 	sql << wxT("select * from tags where scope in(");
 
 	for (size_t i=0; i<scope.GetCount(); i++) {
-		sql <<wxT("'")<<scope.Item(i)<<wxT("',");
+		sql <<wxT("'") <<scope.Item(i) << wxT("',");
 	}
 	sql.RemoveLast();
-	sql << wxT(") and ");
-	
-	// Don't use LIKE
-	wxString from  = name;
-	wxString until = name;
-	
-#if wxVERSION_NUMBER < 2900
-	until.Last() = until.Last() + 1;
-#else
-	wxChar ch = until.Last();
-	until.SetChar(until.length() - 1,  ch + 1);
-#endif
+	sql << wxT(") ");
 
-	// add the name condition
-	if (partialNameAllowed) {
-		sql << wxT(" name >= '") << from << wxT("' AND  name < '") << until << wxT("'");
-	} else {
-		sql << wxT(" name ='") << name << wxT("' ");
-	}
-
+	DoAddNamePartToQuery(sql, name, partialNameAllowed);
 	sql << wxT(" LIMIT ") << GetSingleSearchLimit();
 	// get get the tags
 	DoFetchTags(sql, tags);
@@ -1307,12 +1271,7 @@ void TagsStorageSQLite::GetTagsByKindLimit(const wxArrayString& kinds, const wxS
 		}
 	}
 
-	if (partName.IsEmpty() == false) {
-		wxString tmpName(partName);
-		tmpName.Replace(wxT("_"), wxT("^_"));
-		sql << wxT(" AND name like '%%") << tmpName << wxT("%%' ESCAPE '^' ");
-	}
-
+	DoAddNamePartToQuery(sql, partName, true);
 	if (limit > 0) {
 		sql << wxT(" LIMIT ") << limit;
 	}
@@ -1507,21 +1466,21 @@ void TagsStorageSQLite::GetMacrosDefined(const std::set<std::string>& files, con
 	if (files.empty() || usedMacros.empty()) {
 		return;
 	}
-	
+
 	// Create the file list SQL string, used for IN operator
 	wxString sFileList;
 	for (std::set<std::string>::const_iterator itFile = files.begin(); itFile != files.end(); ++itFile) {
 		sFileList << wxT("'") << wxString::From8BitData(itFile->c_str()) << wxT("',");
 	}
 	sFileList.RemoveLast();
-	
+
 	// Create the used macros list SQL string, used for IN operator
 	wxString sMacroList;
 	for (std::set<wxString>::const_iterator itUsedMacro = usedMacros.begin(); itUsedMacro != usedMacros.end(); ++itUsedMacro) {
 		sMacroList << wxT("'") << *itUsedMacro << wxT("',");
 	}
 	sMacroList.RemoveLast();
-	
+
 	try {
 		// Step 1 : Retrieve defined macros in MACROS table
 		wxString req;
@@ -1531,10 +1490,10 @@ void TagsStorageSQLite::GetMacrosDefined(const std::set<std::string>& files, con
 		while (res.NextRow()) {
 			defMacros.push_back(res.GetString(0));
 		}
-		
+
 		// Step 2 : Retrieve defined macros in SIMPLE_MACROS table
 		req.Clear();
-		req << wxT("select name from SIMPLE_MACROS where file in (") << sFileList << wxT(")") 
+		req << wxT("select name from SIMPLE_MACROS where file in (") << sFileList << wxT(")")
 			<< wxT(" and name in (") << sMacroList << wxT(")");
 		res = m_db->ExecuteQuery(req);
 		while (res.NextRow()) {
@@ -1542,5 +1501,39 @@ void TagsStorageSQLite::GetMacrosDefined(const std::set<std::string>& files, con
 		}
 	} catch (wxSQLite3Exception &exc) {
 		wxLogError(exc.GetMessage());
+	}
+}
+
+void TagsStorageSQLite::DoAddNamePartToQuery(wxString &sql, const wxString& name, bool partial)
+{
+	if(name.empty())
+		return;
+	
+	if(m_enableCaseInsensitive) {
+		wxString tmpName(name);
+		tmpName.Replace(wxT("_"), wxT("^_"));
+		if(partial) {
+			sql << wxT(" AND name LIKE '") << tmpName << wxT("%%' ESCAPE '^' ");
+		} else {
+			sql << wxT(" AND name ='") << name << wxT("' ");
+		}
+	} else {
+		// Don't use LIKE
+		wxString from  = name;
+		wxString until = name;
+
+#if wxVERSION_NUMBER < 2900
+		until.Last() = until.Last() + 1;
+#else
+		wxChar ch = until.Last();
+		until.SetChar(until.length() - 1,  ch + 1);
+#endif
+
+		// add the name condition
+		if (partial) {
+			sql << wxT(" AND name >= '") << from << wxT("' AND  name < '") << until << wxT("'");
+		} else {
+			sql << wxT(" AND name ='") << name << wxT("' ");
+		}
 	}
 }

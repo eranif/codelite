@@ -23,7 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "project.h"
+#include "workspace.h"
 #include <wx/app.h>
+#include <wx/regex.h>
+#include "globals.h"
 #include <wx/log.h>
 #include "fileextmanager.h"
 #include "xmlutils.h"
@@ -38,10 +41,62 @@ const wxString Project::STATIC_LIBRARY = wxT("Static Library");
 const wxString Project::DYNAMIC_LIBRARY = wxT("Dynamic Library");
 const wxString Project::EXECUTABLE = wxT("Executable");
 
+static wxArrayString Explode(const wxString& in)
+{
+
+#define StateNormal   0
+#define StateInString 1
+
+	wxString inputString(in);
+	inputString.Trim().Trim(false);
+
+	int state(StateNormal);
+	wxArrayString tokens;
+	wxString      token;
+
+	if(inputString.IsEmpty())
+		return tokens;
+
+	for (size_t i=0; i<inputString.Length(); i++) {
+		wxChar ch = inputString.GetChar(i);
+		switch (ch) {
+		case wxT('"'):
+			if (state == StateNormal) {
+				state = StateInString;
+
+			} else if (state == StateInString) {
+				state = StateNormal;
+			}
+			if(token.IsEmpty() == false)
+				tokens.Add(token);
+			token.Clear();
+			break;
+		case wxT(' '):
+			if(state == StateNormal) {
+				if(token.IsEmpty() == false)
+					tokens.Add(token);
+				token.Clear();
+
+			} else {
+				token << ch;
+			}
+			break;
+		default:
+			token << ch;
+			break;
+		}
+	}
+
+	if(token.IsEmpty() == false)
+		tokens.Add(token);
+
+	return tokens;
+}
+
 
 Project::Project()
-		: m_tranActive(false)
-		, m_isModified(false)
+	: m_tranActive(false)
+	, m_isModified(false)
 {
 }
 
@@ -95,9 +150,9 @@ bool Project::Load(const wxString &path)
 	if ( !m_doc.Load(path) ) {
 		return false;
 	}
-	
+
 	ConvertToUnixFormat(m_doc.GetRoot());
-	
+
 	// Workaround WX bug: load the plugins data (GetAllPluginsData will strip any trailing whitespaces)
 	// and then set them back
 	std::map<wxString, wxString> pluginsData;
@@ -120,7 +175,7 @@ wxXmlNode *Project::GetVirtualDir(const wxString &vdFullPath)
 
 	// test the cache
 	std::map<wxString, wxXmlNode*>::iterator iter = m_vdCache.find(vdFullPath);
-	if(iter != m_vdCache.end()){
+	if(iter != m_vdCache.end()) {
 		return iter->second;
 	}
 
@@ -250,7 +305,7 @@ bool Project::DeleteVirtualDir(const wxString &vdFullPath)
 
 		// remove the entry from the cache
 		std::map<wxString, wxXmlNode*>::iterator iter = m_vdCache.find(vdFullPath);
-		if(iter != m_vdCache.end()){
+		if(iter != m_vdCache.end()) {
 			m_vdCache.erase(iter);
 		}
 
@@ -395,10 +450,10 @@ wxString Project::GetFiles(bool absPath)
 	wxString temp;
 	for (size_t i = 0; i < files.size(); i++)
 		temp << wxT("\"") << files.at(i).GetFullPath() << wxT("\" ");
-	
+
 	if(temp.IsEmpty() == false)
 		temp.RemoveLast();
-	
+
 	return temp;
 }
 
@@ -860,8 +915,8 @@ bool Project::FastAddFile(const wxString& fileName, const wxString& virtualDir)
 void Project::DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree)
 {
 	wxXmlNode *child = parent->GetChildren();
-	while(child){
-		if(child->GetName() == wxT("VirtualDirectory")){
+	while(child) {
+		if(child->GetName() == wxT("VirtualDirectory")) {
 
 			VisualWorkspaceNode data;
 			data.name = XmlUtils::ReadString(child, wxT("Name"));
@@ -871,7 +926,7 @@ void Project::DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, Visu
 			tree->AddChild(node);
 
 			// test to see if it has children
-			if(child->GetChildren()){
+			if(child->GetChildren()) {
 				DoGetVirtualDirectories(child, node);
 			}
 		}
@@ -893,15 +948,15 @@ TreeNode<wxString, VisualWorkspaceNode>* Project::GetVirtualDirectories(TreeNode
 
 bool Project::GetUserData(const wxString& name, SerializedObject* obj)
 {
-	if(!m_doc.IsOk()){
+	if(!m_doc.IsOk()) {
 		return false;
 	}
 
 	Archive arch;
 	wxXmlNode *userData = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("UserData"));
-	if(userData){
+	if(userData) {
 		wxXmlNode *dataNode = XmlUtils::FindNodeByName(userData, wxT("Data"), name);
-		if(dataNode){
+		if(dataNode) {
 			arch.SetXmlNode(dataNode);
 			obj->DeSerialize(arch);
 			return true;
@@ -912,7 +967,7 @@ bool Project::GetUserData(const wxString& name, SerializedObject* obj)
 
 bool Project::SetUserData(const wxString& name, SerializedObject* obj)
 {
-	if(!m_doc.IsOk()){
+	if(!m_doc.IsOk()) {
 		return false;
 	}
 
@@ -926,7 +981,7 @@ bool Project::SetUserData(const wxString& name, SerializedObject* obj)
 
 	// try to find a previous data stored under the same name, if we succeed - remove it
 	wxXmlNode *dataNode = XmlUtils::FindNodeByName(userData, wxT("Data"), name);
-	if(dataNode){
+	if(dataNode) {
 		// remove old node
 		userData->RemoveChild(dataNode);
 		delete dataNode;
@@ -954,7 +1009,7 @@ wxString Project::GetProjectInternalType() const
 
 void Project::GetAllPluginsData(std::map<wxString, wxString>& pluginsDataMap)
 {
-	if(!m_doc.IsOk()){
+	if(!m_doc.IsOk()) {
 		return;
 	}
 
@@ -979,7 +1034,7 @@ void Project::GetAllPluginsData(std::map<wxString, wxString>& pluginsDataMap)
 
 wxString Project::GetPluginData(const wxString& pluginName)
 {
-	if(!m_doc.IsOk()){
+	if(!m_doc.IsOk()) {
 		return wxEmptyString;
 	}
 
@@ -991,7 +1046,7 @@ wxString Project::GetPluginData(const wxString& pluginName)
 
 	// find the node and return its content
 	wxXmlNode *dataNode = XmlUtils::FindNodeByName(plugins, wxT("Plugin"), pluginName);
-	if( dataNode ){
+	if( dataNode ) {
 		return dataNode->GetNodeContent().Trim().Trim(false);
 	}
 	return wxEmptyString;
@@ -999,7 +1054,7 @@ wxString Project::GetPluginData(const wxString& pluginName)
 
 void Project::SetPluginData(const wxString& pluginName, const wxString& data)
 {
-	if(!m_doc.IsOk()){
+	if(!m_doc.IsOk()) {
 		return ;
 	}
 
@@ -1024,7 +1079,7 @@ void Project::SetPluginData(const wxString& pluginName, const wxString& data)
 
 void Project::SetAllPluginsData(const std::map<wxString, wxString>& pluginsDataMap, bool saveToFile /* true */)
 {
-	if(!m_doc.IsOk()){
+	if(!m_doc.IsOk()) {
 		return;
 	}
 
@@ -1054,16 +1109,16 @@ void Project::ConvertToUnixFormat(wxXmlNode* parent)
 {
 	if(!parent)
 		return;
-	
+
 	wxXmlNode *child = parent->GetChildren();
 	while(child) {
-		
+
 		if(child->GetName() == wxT("VirtualDirectory")) {
-			
+
 			ConvertToUnixFormat(child);
-			
+
 		} else if(child->GetName() == wxT("File")) {
-			
+
 			wxXmlProperty *props = child->GetProperties();
 			// Convert the path to unix format
 			while ( props ) {
@@ -1085,7 +1140,7 @@ wxString Project::GetBestPathForVD(const wxString& vdPath)
 	// Project name
 	const wxString basePath = GetFileName().GetPath();
 	wxString bestPath;
-	
+
 	// try to open the dir dialog as close as we can to the virtual folder ones
 	int matches(0);
 	wxArrayString subDirs = wxStringTokenize(vdPath, wxT(":"), wxTOKEN_STRTOK);
@@ -1099,13 +1154,13 @@ wxString Project::GetBestPathForVD(const wxString& vdPath)
 			break;
 		}
 	}
-	
+
 	if(matches) {
 		return bestPath;
 	}
-	
+
 	// Could not find any match for the virtual directory when tested
-	// directly under the project path. Try it again using a path from 
+	// directly under the project path. Try it again using a path from
 	// the first file that we could find under the virtual directory
 	wxArrayString files;
 	GetFilesByVirtualDir(vdPath, files);
@@ -1116,7 +1171,103 @@ wxString Project::GetBestPathForVD(const wxString& vdPath)
 			return bestPath;
 		}
 	}
-	
+
 	// all failed, return the project path as our default path
 	return basePath;
+}
+
+wxArrayString Project::GetIncludePaths()
+{
+	wxArrayString paths;
+	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+	if(!matrix) {
+		return paths;
+	}
+	wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
+	
+	wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, GetName());
+	BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(this->GetName(), projectSelConf);
+
+	// for non custom projects, take the settings from the build configuration
+	if(buildConf && !buildConf->IsCustomBuild()) {
+
+		// Get the include paths and add them
+		wxString projectIncludePaths = buildConf->GetIncludePath();
+		wxArrayString projectIncludePathsArr = wxStringTokenize(projectIncludePaths, wxT(";"), wxTOKEN_STRTOK);
+		for(size_t i=0; i<projectIncludePathsArr.GetCount(); i++) {
+			wxFileName fn;
+			if(projectIncludePathsArr.Item(i) == wxT("..")) {
+				fn = wxFileName(GetFileName().GetPath(), wxT(""));
+				fn.RemoveLastDir();
+				
+			} else if(projectIncludePathsArr.Item(i) == wxT(".")) {
+				fn = wxFileName(GetFileName().GetPath(), wxT(""));
+				
+			} else {
+				fn = projectIncludePathsArr.Item(i);
+				if(fn.IsRelative()) {
+					fn.MakeAbsolute(GetFileName().GetPath());
+				}
+			}
+			paths.Add( fn.GetFullPath() );
+		}
+
+		// get the compiler options and add them
+		wxString projectCompileOptions = buildConf->GetCompileOptions();
+		wxArrayString projectCompileOptionsArr = wxStringTokenize(projectCompileOptions, wxT(";"), wxTOKEN_STRTOK);
+		for(size_t i=0; i<projectCompileOptionsArr.GetCount(); i++) {
+
+			wxString cmpOption (projectCompileOptionsArr.Item(i));
+			cmpOption.Trim().Trim(false);
+
+			// expand backticks, if the option is not a backtick the value remains
+			// unchanged
+			wxArrayString includePaths = DoBacktickToIncludePath(cmpOption);
+			if(includePaths.IsEmpty() == false)
+				paths.insert(paths.end(), includePaths.begin(), includePaths.end());
+		}
+	}
+	return paths;
+}
+
+wxArrayString Project::DoBacktickToIncludePath(const wxString& backtick)
+{
+	wxArrayString paths;
+	wxString tmp;
+	wxString cmpOption = backtick;
+	static std::map<wxString, wxString> s_backticks;
+	
+	// Expand backticks / $(shell ...) syntax supported by codelite
+	if(cmpOption.StartsWith(wxT("$(shell "), &tmp) || cmpOption.StartsWith(wxT("`"), &tmp)) {
+		cmpOption = tmp;
+		tmp.Clear();
+		if(cmpOption.EndsWith(wxT(")"), &tmp) || cmpOption.EndsWith(wxT("`"), &tmp)) {
+			cmpOption = tmp;
+		}
+
+		if(s_backticks.find(cmpOption) == s_backticks.end()) {
+
+			// Expand the backticks into their value
+			wxString expandedValue = wxShellExec(cmpOption, GetName());
+			s_backticks[cmpOption] = expandedValue;
+			cmpOption = expandedValue;
+
+		} else {
+			cmpOption = s_backticks.find(cmpOption)->second;
+		}
+	}
+
+	wxArrayString options = Explode(cmpOption);
+	for(size_t i=0; i<options.GetCount(); i++) {
+		options.Item(i).Trim().Trim(false);
+		if(options.Item(i).StartsWith(wxT("-I"))) {
+			options.Item(i).Remove(0, 2);
+			wxFileName fn(options.Item(i));
+			if(fn.IsRelative()) {
+				fn.MakeAbsolute(GetFileName().GetPath());
+			}
+			paths.Add(fn.GetFullPath());
+		}
+	}
+	return paths;
 }

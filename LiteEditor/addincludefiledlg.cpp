@@ -24,10 +24,18 @@
 //////////////////////////////////////////////////////////////////////////////
  #include "addincludefiledlg.h"
 #include "manager.h"
+#include "frame.h"
 #include "wx/filename.h"
 #include "wx/regex.h"
+#include <algorithm>
 
 wxArrayString AddIncludeFileDlg::m_includePath;
+
+struct SAscendingSort {
+	bool operator()(const wxString &s1, const wxString& s2) {
+		return s1.Len() > s2.Len();
+	}
+};
 
 AddIncludeFileDlg::AddIncludeFileDlg( wxWindow* parent, const wxString &fullpath, const wxString &text, int lineNo )
 		:
@@ -75,11 +83,36 @@ void AddIncludeFileDlg::UpdateLineToAdd()
 	if(rest.IsEmpty()){
 		rest = fn.GetFullName();
 	}
+
+	wxString errMsg;
+	wxString projectName = clMainFrame::Get()->GetMainBook()->GetActiveEditor()->GetProject();
+	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(projectName, errMsg);
+	if(proj) {
+		wxArrayString incls = proj->GetIncludePaths();
+		std::sort(incls.begin(), incls.end(), SAscendingSort());
+
+		for(size_t i=0; i<incls.GetCount(); i++) {
+			wxString path = incls.Item(i);
+#ifdef __WXMSW__
+			path.MakeLower();
+#endif
+			if(m_fullpath.StartsWith(path, &rest) ) {
+				break;
+			}
+		}
+	}
+
+	rest.Replace(wxT("\\"), wxT("/"));
+	if(rest.StartsWith(wxT("/"))) {
+		rest.Remove(0, 1);
+	}
 	
-	if (!ManagerST::Get()->IsFileInWorkspace(m_fullpath)) {
+	if(!ManagerST::Get()->IsFileInWorkspace(m_fullpath)) {
 		line << wxT("#include <") << rest << wxT(">");
+		
 	} else {
 		line << wxT("#include \"") << rest << wxT("\"");
+		
 	}
 	
 	m_textCtrlLineToAdd->SetValue(line);

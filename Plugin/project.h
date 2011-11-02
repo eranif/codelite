@@ -473,9 +473,15 @@ public:
 	}
 	
 	wxString GetBestPathForVD(const wxString& vdPath);
- 
-private:
 
+	/**
+	 * @brief return the project include paths (all backticks, $(shell ..) expanded)
+	 * The include paths are returned as an array in the order they appear in the
+	 * project settings
+	 */
+	wxArrayString GetIncludePaths();
+private:
+	wxArrayString DoBacktickToIncludePath(const wxString &backtick);
 	void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree);
 	wxXmlNode *FindFile(wxXmlNode* parent, const wxString &file);
 

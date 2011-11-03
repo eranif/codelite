@@ -617,7 +617,7 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope, const wxStr
 	sql << wxT("select * from tags where ");
 
 	// did we get scope?
-	if ( scope.IsEmpty() == false || scope == wxT('<global>')) {
+	if ( scope.IsEmpty() == false || scope == wxT("<global>")) {
 		sql << wxT("ID IN (select tag_id from global_tags where ");
 		DoAddNamePartToQuery(sql, name, partialNameAllowed, false);
 		sql << wxT(" ) ");

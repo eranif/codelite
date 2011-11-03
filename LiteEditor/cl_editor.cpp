@@ -3806,15 +3806,11 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 			SetSelectionEnd ( curr_pos );
 		}
 	} while ( again );
-
-#ifdef __WXGTK__
-	EnsureCaretVisible();
-	ScrollToColumn(0);
-#endif
-
+	
 	if (res && navmgr) {
 		navmgr->AddJump(jumpfrom, CreateBrowseRecord());
 	}
+	this->ScrollToColumn(0);
 	return res;
 }
 

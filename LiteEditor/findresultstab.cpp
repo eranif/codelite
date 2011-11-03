@@ -166,12 +166,12 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetForeground(wxSCI_LEX_FIF_SCOPE, wxT("BROWN"));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_SCOPE, DrawingUtils::GetOutputPaneBgColour());
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_SCOPE, false);
-	
+
 	wxColour fgColour(wxT("GREEN"));
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 	wxFont bold(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxFONTWEIGHT_BOLD);
-	
+
 	LexerConfPtr cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
 	if(cppLexer) {
 		std::list<StyleProperty> styles = cppLexer->GetProperties();
@@ -180,13 +180,13 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 			if(iter->GetId() == wxSCI_C_COMMENTLINE) {
 				fgColour = iter->GetFgColour();
 				break;
-				
+
 			} else if(iter->GetId() == wxSCI_C_DEFAULT) {
 				StyleProperty sp        = (*iter);
 				int           size      = sp.GetFontSize();
 				wxString      face      = sp.GetFaceName();
 				bool          italic    = sp.GetItalic();
-				
+
 				font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , wxNORMAL, false, face);
 				bold = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , wxBOLD,   false, face);
 			}
@@ -200,12 +200,12 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetForeground(wxSCI_LEX_FIF_FILE, DrawingUtils::GetOutputPaneFgColour());
 	sci->StyleSetBackground(wxSCI_LEX_FIF_FILE, DrawingUtils::GetOutputPaneBgColour());
 	sci->StyleSetEOLFilled (wxSCI_LEX_FIF_FILE, true);
-	
+
 	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneFgColour());
 	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneBgColour());
 	sci->StyleSetEOLFilled(wxSCI_LEX_FIF_DEFAULT, true);
 	sci->StyleSetEOLFilled(wxSCI_LEX_FIF_HEADER, true);
-	
+
 	sci->StyleSetFont(wxSCI_LEX_FIF_FILE,          font);
 	sci->StyleSetFont(wxSCI_LEX_FIF_DEFAULT,       bold);
 	sci->StyleSetFont(wxSCI_LEX_FIF_HEADER,       bold);
@@ -407,10 +407,10 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
 		if (matchInfo.empty() || matchInfo.rbegin()->second.GetFileName() != iter->GetFileName()) {
 			wxFileName fn(iter->GetFileName());
 			fn.MakeRelativeTo();
-			
+
 			AppendText(fn.GetFullPath() + wxT("\n"));
 		}
-				
+
 		int lineno = m_recv->GetLineCount()-1;
 		matchInfo.insert(std::make_pair(lineno, *iter));
 		wxString text = iter->GetPattern();
@@ -424,7 +424,7 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
 			linenum = wxString::Format(wxT(" %5u //"), iter->GetLineNumber());
 		else
 			linenum = wxString::Format(wxT(" %5u "), iter->GetLineNumber());
-		
+
 		SearchData *d = GetSearchData(m_recv);
 		// Print the scope name
 		if (d->GetDisplayScope()) {
@@ -433,11 +433,11 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
 			if(tag) {
 				scopeName = tag->GetPath();
 			}
-			
+
 			linenum << wxT("[ ") << scopeName << wxT(" ] ");
 			iter->SetScope(scopeName);
 		}
-		
+
 		delta += linenum.Length();
 		AppendText(linenum + text + wxT("\n"));
 		m_recv->IndicatorFillRange(m_sci->PositionFromLine(lineno)+iter->GetColumn()+delta, iter->GetLen());
@@ -460,7 +460,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
 		if (m_tb->GetToolState(XRCID("scroll_on_output"))) {
 			m_sci->GotoLine(0);
 		}
-		
+
 		if(!EditorConfigST::Get()->GetOptions()->GetDontAutoFoldResults()) {
 			OutputTabWindow::OnCollapseAll(e);
 			if(m_sci) {
@@ -727,7 +727,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxScintilla 
 		LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(result.GetFileName());
 		if (editor && result.GetLen() >= 0) {
 			// Update the destination position if there have been subsequent changes in the editor
-			int position = result.GetPosition();			
+			int position = result.GetPosition();
 			std::vector<int> changes;
 			editor->GetChanges(changes);
 			unsigned int changesTotal = changes.size();
@@ -761,15 +761,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxScintilla 
 					// remove the previous marker and add the new one
 					sci->MarkerDeleteAll( 7 );
 					sci->MarkerAdd(markerLine, 7 );
-
-					// make the marked line visible
-					sci->SetCurrentPos     (position);
-					sci->SetSelectionStart (position);
-					sci->SetSelectionEnd   (position);
-					sci->EnsureCaretVisible();
-	#ifdef __WXGTK__
-					sci->ScrollToColumn(0);
-	#endif
+					sci->GotoLine(markerLine);
 				}
 			}
 		}
@@ -806,7 +798,7 @@ void FindResultsTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
 		e.Enable(true);
 		e.Check( EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfSearch() );
-		
+
 	} else {
 		e.Enable(false);
 		e.Check(false);

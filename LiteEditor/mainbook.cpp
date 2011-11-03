@@ -540,18 +540,14 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 
 	} else if (lineno != wxNOT_FOUND) {
 		editor->GotoLine(lineno);
-		editor->EnsureVisible(lineno);
+		
 	}
-	editor->EnsureCaretVisible();
+	
 	if (GetActiveEditor() == editor) {
 		editor->SetActive();
 	} else {
 		SelectPage(editor);
 	}
-
-#ifdef __WXGTK__
-	editor->ScrollToColumn(0);
-#endif
 
 	// Add this file to the history. Don't check for uniqueness:
 	// if it's already on the list, wxFileHistory will move it to the top

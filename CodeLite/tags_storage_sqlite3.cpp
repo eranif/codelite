@@ -211,6 +211,7 @@ void TagsStorageSQLite::RecreateDatabase()
 			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS FILES"));
 			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS MACROS"));
 			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS SIMPLE_MACROS"));
+			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS GLOBAL_TAGS"));
 
 			// drop indexes
 			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS FILES_NAME"));
@@ -225,6 +226,8 @@ void TagsStorageSQLite::RecreateDatabase()
 			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS MACROS_UNIQ"));
 			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS MACROS_NAME"));
 			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS SIMPLE_MACROS_FILE"));
+			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS GLOBAL_TAGS_IDX_1"));
+			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS GLOBAL_TAGS_IDX_2"));
 
 			// Recreate the schema
 			CreateSchema();

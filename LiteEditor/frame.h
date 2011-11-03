@@ -415,6 +415,7 @@ protected:
 	void OnParsingThreadDone          (wxCommandEvent  &e);
 	void OnParsingThreadMessage       (wxCommandEvent  &e);
 	void OnDatabaseUpgrade            (wxCommandEvent  &e);
+	void OnDatabaseUpgradeInternally  (wxCommandEvent  &e);
 	void OnClearTagsCache             (wxCommandEvent  &e);
 	void OnRetaggingCompelted         (wxCommandEvent  &e);
 	void OnRetaggingProgress          (wxCommandEvent  &e);

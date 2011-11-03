@@ -521,6 +521,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR,                 clMainFrame::OnSetStatusMessage)
 	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE,                   clMainFrame::OnDatabaseUpgrade )
+	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE_INTER,             clMainFrame::OnDatabaseUpgradeInternally)
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED,       clMainFrame::OnBuildEnded)
 	EVT_MENU   (XRCID("update_num_builders_count"),                clMainFrame::OnUpdateNumberOfBuildProcesses)
 	EVT_MENU   (XRCID("goto_codelite_download_url"),               clMainFrame::OnGotoCodeLiteDownloadPage)
@@ -4162,6 +4163,13 @@ void clMainFrame::OnParsingThreadMessage(wxCommandEvent& e)
 		wxLogMessage( *msg );
 		delete msg;
 	}
+}
+
+void clMainFrame::OnDatabaseUpgradeInternally(wxCommandEvent &e)
+{
+	wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("full_retag_workspace"));
+	this->AddPendingEvent(evt);
+	GetMainBook()->ShowMessage(_("Your workspace symbols file does not match the current version of CodeLite. CodeLite will perform a full retag of the workspace"));
 }
 
 // Due to differnet schema versions, the database was truncated by the

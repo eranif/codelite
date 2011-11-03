@@ -73,6 +73,7 @@
 
 const wxEventType wxEVT_UPDATE_FILETREE_EVENT = XRCID("update_file_tree_event");
 const wxEventType wxEVT_TAGS_DB_UPGRADE       = XRCID("tags_db_upgraded");
+const wxEventType wxEVT_TAGS_DB_UPGRADE_INTER = XRCID("tags_db_upgraded_now");
 
 //---------------------------------------------------------------------------
 // Misc
@@ -196,7 +197,8 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
 
 		// Send event to the main frame notifying it about database recreation
 		if( m_evtHandler ) {
-			wxCommandEvent event(wxEVT_TAGS_DB_UPGRADE);
+			wxCommandEvent event(wxEVT_TAGS_DB_UPGRADE_INTER);
+			event.SetEventObject(this);
 			m_evtHandler->ProcessEvent( event );
 		}
 	}

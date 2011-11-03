@@ -131,6 +131,7 @@ bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
 	wxFileName fn(dbfile);
 
 	TagsManager *mgr = TagsManagerST::Get();
+	mgr->CloseDatabase();
 	mgr->OpenDatabase(m_fileName.GetPath() + wxFileName::GetPathSeparator() + fn.GetFullName());
 	return true;
 }

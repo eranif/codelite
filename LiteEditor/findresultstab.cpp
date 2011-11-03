@@ -740,7 +740,18 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxScintilla 
 				changeLength = changes.at(i + 1);
 				if ((changeLength < 0) && (changePosition - changeLength > position) &&
 											(changePosition < position + resultLength)) {
+					// It looks like the data corresponding to this search result has been deleted
+					// While it's possible that it's been cut, then (later in the changes) re-pasted
+					// so that the result still matches, it's more likely to have been replaced by different text
+					// We can't easily tell, so assume the worst and label the result invalid
 					removed = true;
+					// Explain the failure
+					wxCommandEvent e(wxEVT_UPDATE_STATUS_BAR);
+					e.SetEventObject(this);
+					e.SetString(wxString::Format(_("Search result no longer valid")));
+					e.SetInt(0);
+					clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
+
 					break;
 				} else if (changePosition <= position) {
 					position += changeLength;
@@ -763,9 +774,10 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxScintilla 
 					sci->MarkerAdd(markerLine, 7 );
 
 					// make the marked line visible
-					sci->SetCurrentPos     (position);
-					sci->SetSelectionStart (position);
-					sci->SetSelectionEnd   (position);
+					int pos = sci->PositionFromLine(markerLine);
+					sci->SetCurrentPos     (pos);
+					sci->SetSelectionStart (pos);
+					sci->SetSelectionEnd   (pos);
 					sci->EnsureCaretVisible();
 	#ifdef __WXGTK__
 					sci->ScrollToColumn(0);

@@ -773,7 +773,6 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxScintilla 
 					sci->MarkerDeleteAll( 7 );
 					sci->MarkerAdd(markerLine, 7 );
 					sci->GotoLine(markerLine);
-					sci->SetSelectionEnd   (pos);
 				}
 			}
 		}

@@ -23,19 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "file_logger.h"
 #include <wx/longlong.h>
 #include "tags_storage_sqlite3.h"
 #include <wx/tokenzr.h>
-
-#if 0
-#define SQL_LOG 1
-#ifdef __WXMSW__
-# define SQL_LOG_NAME "codelite_tags_sql.log"
-#else
-# define SQL_LOG_NAME "/tmp/codelite_tags_sql.log"
-#endif
-static FILE* log_fp = NULL;
-#endif
 
 //-------------------------------------------------
 // Tags database class implementation
@@ -43,7 +34,7 @@ static FILE* log_fp = NULL;
 TagsStorageSQLite::TagsStorageSQLite()
 	: ITagsStorage()
 {
-	m_db    = new clSqliteDB();
+	m_db = new clSqliteDB();
 	SetUseCache(true);
 }
 
@@ -109,6 +100,9 @@ void TagsStorageSQLite::CreateSchema()
 		sql = wxT("create  table if not exists tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, file string, line integer, kind string, access string, signature string, pattern string, parent string, inherits string, path string, typeref string, scope string, return_value string);");
 		m_db->ExecuteUpdate(sql);
 
+		sql = wxT("create  table if not exists global_tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, tag_id integer)");
+		m_db->ExecuteUpdate(sql);
+
 		sql = wxT("create  table if not exists FILES (ID INTEGER PRIMARY KEY AUTOINCREMENT, file string, last_retagged integer);");
 		m_db->ExecuteUpdate(sql);
 
@@ -122,6 +116,26 @@ void TagsStorageSQLite::CreateSchema()
 		sql = wxT("CREATE UNIQUE INDEX IF NOT EXISTS FILES_NAME on FILES(file)");
 		m_db->ExecuteUpdate(sql);
 
+		// Create a trigger that makes sure that whenever a record is deleted
+		// from the TAGS table, the corresponded entry is also deleted from the
+		// global_tags
+		wxString trigger1 =
+wxT("CREATE TRIGGER IF NOT EXISTS tags_delete AFTER DELETE ON tags ")
+wxT("FOR EACH ROW ")
+wxT("BEGIN ")
+wxT("    DELETE FROM global_tags WHERE global_tags.tag_id = OLD.id;")
+wxT("END;");
+
+		m_db->ExecuteUpdate(trigger1);
+
+		wxString trigger2 =
+wxT("CREATE TRIGGER IF NOT EXISTS tags_insert AFTER INSERT ON tags ")
+wxT("FOR EACH ROW WHEN NEW.scope = '<global>' ")
+wxT("BEGIN ")
+wxT("    INSERT INTO global_tags (id, name, tag_id) VALUES (NULL, NEW.name, NEW.id);")
+wxT("END;");
+		m_db->ExecuteUpdate(trigger2);
+
 		// Create unique index on tags table
 		sql = wxT("CREATE UNIQUE INDEX IF NOT EXISTS TAGS_UNIQ on tags(kind, path, signature);");
 		m_db->ExecuteUpdate(sql);
@@ -133,6 +147,12 @@ void TagsStorageSQLite::CreateSchema()
 		m_db->ExecuteUpdate(sql);
 
 		sql = wxT("CREATE UNIQUE INDEX IF NOT EXISTS MACROS_UNIQ on MACROS(name);");
+		m_db->ExecuteUpdate(sql);
+
+		sql = wxT("CREATE INDEX IF NOT EXISTS global_tags_idx_1 on global_tags(name);");
+		m_db->ExecuteUpdate(sql);
+
+		sql = wxT("CREATE INDEX IF NOT EXISTS global_tags_idx_2 on global_tags(tag_id);");
 		m_db->ExecuteUpdate(sql);
 
 		// Create search indexes
@@ -273,7 +293,7 @@ void TagsStorageSQLite::Store(TagTreePtr tree, const wxFileName& path, bool auto
 
 		if ( autoCommit )
 			m_db->Commit();
-			
+
 	} catch (wxSQLite3Exception& e) {
 		try {
 			if ( autoCommit )
@@ -518,26 +538,15 @@ TagEntry* TagsStorageSQLite::FromSQLite3ResultSet(wxSQLite3ResultSet& rs)
 
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags)
 {
-#if SQL_LOG
-	if (!log_fp)
-		log_fp = fopen(SQL_LOG_NAME, "w+b");
-#endif
 
 	if (GetUseCache()) {
 		if (m_cache.Get(sql, tags) == true) {
-#if SQL_LOG
-			fprintf(log_fp, "[CACHED ITEMS] %s\n", sql.mb_str(wxConvUTF8).data());
-			fflush(log_fp);
-#endif
+			CL_DEBUG1(wxT("[CACHED ITEMS] %s"), sql.c_str());
 			return;
 		}
 	}
 
-#if SQL_LOG
-	fprintf(log_fp, "%s\n", sql.mb_str(wxConvUTF8).data());
-	fflush(log_fp);
-#endif
-
+	CL_DEBUG1(wxT("[CACHED ITEMS] %s"), sql.c_str());
 	// try the cache first
 	tags.reserve( 500 );
 	try {
@@ -563,25 +572,14 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags, const wxArrayString& kinds)
 {
-#if SQL_LOG
-	if (!log_fp)
-		log_fp = fopen(SQL_LOG_NAME, "w+b");
-#endif
-
 	if (GetUseCache()) {
 		if (m_cache.Get(sql, kinds, tags) == true) {
-#if SQL_LOG
-			fprintf(log_fp, "[CACHED ITEMS] %s\n", sql.mb_str(wxConvUTF8).data());
-			fflush(log_fp);
-#endif
+			CL_DEBUG1(wxT("[CACHED ITEMS] %s"), sql.c_str());
 			return;
 		}
 	}
 
-#if SQL_LOG
-	fprintf(log_fp, "%s\n", sql.mb_str(wxConvUTF8).data());
-	fflush(log_fp);
-#endif
+	CL_DEBUG1(wxT("[CACHED ITEMS] %s"), sql.c_str());
 
 	try {
 		wxSQLite3ResultSet ex_rs;
@@ -1313,16 +1311,7 @@ void TagsStorageSQLiteCache::Store(const wxString& sql, const std::vector<TagEnt
 
 void TagsStorageSQLiteCache::Clear()
 {
-#if SQL_LOG
-	if (!log_fp)
-		log_fp = fopen(SQL_LOG_NAME, "w+b");
-#endif
-
-#if SQL_LOG
-	fprintf(log_fp, "[CACHE CLEARED]\n");
-	fflush(log_fp);
-#endif
-
+	CL_DEBUG1(wxT("[CACHE CLEARED]"));
 	m_cache.clear();
 }
 

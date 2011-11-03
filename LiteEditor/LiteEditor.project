@@ -441,6 +441,8 @@
     <File Name="message_pane.cpp"/>
     <File Name="navbarbase.cpp"/>
     <File Name="navbarbase.h"/>
+    <File Name="ccboxmainpanel.h"/>
+    <File Name="ccboxmainpanel.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>

@@ -190,7 +190,7 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
 #endif
 
 	db->OpenDatabase(fileName);
-
+	db->SetEnableCaseInsensitive( !(m_tagsOptions.GetFlags() & CC_IS_CASE_SENSITIVE) );
 	if (db->GetVersion() != db->GetSchemaVersion()) {
 		db->RecreateDatabase();
 
@@ -547,10 +547,16 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 		// from the global scope
 		scope = GetLanguage()->OptimizeScope(text);
 		std::vector<TagEntryPtr> tmpCandidates;
-		GetGlobalTags     (word, tmpCandidates);
-		GetLocalTags      (word, scope,   tmpCandidates, PartialMatch | IgnoreCaseSensitive);
-		GetLocalTags      (word, funcSig, tmpCandidates, PartialMatch | IgnoreCaseSensitive);
+
+		// First get the scoped tags
 		TagsByScopeAndName(scopeName, word, tmpCandidates);
+		if(scopeName != wxT("<global>")) {
+			// No need to call it twice...
+			GetGlobalTags(word, tmpCandidates);
+		}
+		// Allways collect the local and the function argument tags
+		GetLocalTags(word, scope,   tmpCandidates, PartialMatch | IgnoreCaseSensitive);
+		GetLocalTags(word, funcSig, tmpCandidates, PartialMatch | IgnoreCaseSensitive);
 
 		for (size_t i=0; i<additionlScopes.size(); i++) {
 			TagsByScopeAndName(additionlScopes.at(i), word, tmpCandidates);

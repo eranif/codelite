@@ -242,31 +242,6 @@ public:
 	virtual int UpdateFileEntry ( const wxString &filename , int timestamp ) = 0;
 
 	// -------------------------- TagEntry -------------------------------------------
-
-	/**
-	 * @brief update tag. The parameters used as key for the update are:
-	 * Kind/Signature/Path
-	 * @param tag
-	 * @return TagOk or TagError
-	 */
-	virtual int UpdateTagEntry ( const TagEntry& tag ) = 0;
-
-	/**
-	 * @brief insert tag into the database.
-	 * @param tag
-	 * @return TagOk, TagExist or TagError
-	 */
-	virtual int InsertTagEntry ( const TagEntry &tag ) = 0;
-
-	/**
-	 * @brief delete TagEntry
-	 * @param kind
-	 * @param signature
-	 * @param path
-	 * @return TagOk or TagError
-	 */
-	virtual int DeleteTagEntry ( const wxString &kind, const wxString &signature, const wxString &path ) = 0;
-
 	/**
 	 * Return a result set of tags according to file name.
 	 * @param file Source file name

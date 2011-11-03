@@ -376,7 +376,6 @@ void CCBox::Show(const wxString& word)
 	std::vector<CCItemInfo> _tags;
 
 	m_listCtrl->SetCursor( wxCursor(wxCURSOR_ARROW) );
-	m_toolBar1->SetCursor( wxCursor(wxCURSOR_ARROW) );
 	this->SetCursor( wxCursor(wxCURSOR_ARROW) );
 
 	long checkIt (0);
@@ -390,9 +389,6 @@ void CCBox::Show(const wxString& word)
 		}
 		LEditor::m_ccInitialized = true;
 	}
-
-	m_toolBar1->ToggleTool(TOOL_SHOW_PRIVATE_MEMBERS, LEditor::m_ccShowPrivateMembers);
-	m_toolBar1->ToggleTool(TOOL_SHOW_ITEM_COMMENTS,   LEditor::m_ccShowItemsComments);
 
 	CCItemInfo item;
 	clWindowUpdateLocker locker(m_listCtrl);
@@ -710,16 +706,8 @@ void CCBox::HideCCBox()
 		Hide();
 		DoHideCCHelpTab();
 		if( !m_constructing ) {
-			bool members_checked, comments_checked;
-#if USE_AUI_TOOLBAR
-			members_checked = m_toolBar1->GetToolToggled(TOOL_SHOW_PRIVATE_MEMBERS);
-			comments_checked = m_toolBar1->GetToolToggled(TOOL_SHOW_ITEM_COMMENTS);
-#else
-			members_checked = m_toolBar1->GetToolState(TOOL_SHOW_PRIVATE_MEMBERS);
-			comments_checked = m_toolBar1->GetToolState(TOOL_SHOW_ITEM_COMMENTS);
-#endif
-			LEditor::m_ccShowPrivateMembers = members_checked ? 1 : 0;
-			LEditor::m_ccShowItemsComments  = comments_checked ? 1 : 0;
+			LEditor::m_ccShowPrivateMembers = true;
+			LEditor::m_ccShowItemsComments  = true;
 		}
 	}
 
@@ -734,12 +722,6 @@ void CCBox::HideCCBox()
 		evt.SetEventObject(this);
 		GetEditor()->GetEventHandler()->AddPendingEvent( evt );
 	}
-}
-
-void CCBox::OnShowPublicItems(wxCommandEvent& event)
-{
-	wxUnusedVar(event);
-	HideCCBox();
 }
 
 void CCBox::DoShowTagTip()
@@ -923,19 +905,6 @@ void CCBox::DoHideCCHelpTab()
 		editor->CallTipCancel();
 }
 
-void CCBox::OnShowComments(wxCommandEvent& event)
-{
-	LEditor::m_ccShowItemsComments = event.IsChecked();
-	if( LEditor::m_ccShowItemsComments == false ) {
-		DoFormatDescriptionPage( CCItemInfo() );
-	} else {
-		CCItemInfo tag;
-		if(m_listCtrl->GetItemTagEntry(m_selectedItem, tag)) {
-			DoFormatDescriptionPage( tag );
-		}
-	}
-	event.Skip();
-}
 
 void CCBox::OnTipClicked(wxScintillaEvent& event)
 {

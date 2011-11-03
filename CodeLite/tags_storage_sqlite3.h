@@ -158,6 +158,9 @@ private:
 	void DoFetchTags ( const wxString &sql, std::vector<TagEntryPtr> &tags, const wxArrayString &kinds);
 
 	void DoAddNamePartToQuery(wxString &sql, const wxString &name, bool partial, bool prependAnd);
+	void DoAddLimitPartToQuery(wxString &sql, const std::vector<TagEntryPtr> &tags);
+	int  DoInsertTagEntry( const TagEntry &tag );
+
 public:
 	static TagEntry *FromSQLite3ResultSet(wxSQLite3ResultSet &rs);
 	static void      PPTokenFromSQlite3ResultSet(wxSQLite3ResultSet &rs, PPToken &token);
@@ -481,30 +484,6 @@ public:
 	* @return
 	*/
 	virtual int UpdateFileEntry ( const wxString &filename , int timestamp );
-
-	/**
-	 * @brief update tag. The parameters used as key for the update are:
-	 * Kind/Signature/Path
-	 * @param tag
-	 * @return TagOk or TagError
-	 */
-	virtual int UpdateTagEntry ( const TagEntry& tag );
-
-	/**
-	 * @brief insert tag into the database.
-	 * @param tag
-	 * @return TagOk, TagExist or TagError
-	 */
-	virtual int InsertTagEntry ( const TagEntry &tag );
-
-	/**
-	 * @brief delete TagEntry
-	 * @param kind
-	 * @param signature
-	 * @param path
-	 * @return TagOk or TagError
-	 */
-	virtual int DeleteTagEntry ( const wxString &kind, const wxString &signature, const wxString &path );
 
 	/**
 	 * @brief return true if type exist under a given scope.

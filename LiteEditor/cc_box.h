@@ -70,9 +70,6 @@ protected:
 	void OnItemActivated( wxListEvent& event );
 	void OnItemDeSelected( wxListEvent& event );
 	void OnItemSelected( wxListEvent& event );
-
-	void OnShowPublicItems(wxCommandEvent& event);
-	void OnShowComments(wxCommandEvent& event);
 	void OnTipClicked(wxScintillaEvent &event);
 
 	void OnKeyDown(wxListEvent& event);

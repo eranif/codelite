@@ -268,26 +268,12 @@ void TagsStorageSQLite::Store(TagTreePtr tree, const wxFileName& path, bool auto
 
 			// does not matter if we insert or update, the cache must be cleared for any related tags
 
-			if (InsertTagEntry(walker.GetNode()->GetData()) == TagExist) {
-				// Update the record
-				updateList.push_back(walker.GetNode()->GetData());
-			}
+			DoInsertTagEntry(walker.GetNode()->GetData());
 		}
 
 		if ( autoCommit )
 			m_db->Commit();
-
-		// Do we need to update?
-		if (!updateList.empty()) {
-			if ( autoCommit )
-				m_db->Begin();
-
-			for (size_t i=0; i<updateList.size(); i++)
-				UpdateTagEntry(updateList.at(i));
-
-			if ( autoCommit )
-				m_db->Commit();
-		}
+			
 	} catch (wxSQLite3Exception& e) {
 		try {
 			if ( autoCommit )
@@ -825,24 +811,7 @@ int TagsStorageSQLite::UpdateFileEntry(const wxString& filename, int timestamp)
 	return TagOk;
 }
 
-int TagsStorageSQLite::DeleteTagEntry(const wxString& kind, const wxString& signature, const wxString& path)
-{
-	// Delete this record from database.
-	// Delete is done using the index
-	try {
-		wxSQLite3Statement statement = m_db->GetPrepareStatement(wxT("DELETE FROM TAGS WHERE Kind=? AND Signature=? AND Path=?"));
-		statement.Bind(1, kind);        // Kind
-		statement.Bind(2, signature);   // Signature
-		statement.Bind(3, path);        // Path
-		statement.ExecuteUpdate();
-	} catch (wxSQLite3Exception& exc) {
-		wxUnusedVar(exc);
-		return TagError;
-	}
-	return TagOk;
-}
-
-int TagsStorageSQLite::InsertTagEntry(const TagEntry& tag)
+int TagsStorageSQLite::DoInsertTagEntry(const TagEntry& tag)
 {
 	// If this node is a dummy, (IsOk() == false) we dont insert it to database
 	if ( !tag.IsOk() )
@@ -867,37 +836,6 @@ int TagsStorageSQLite::InsertTagEntry(const TagEntry& tag)
 		statement.Bind(11, tag.GetTyperef());
 		statement.Bind(12, tag.GetScope());
 		statement.Bind(13, tag.GetReturnValue());
-		statement.ExecuteUpdate();
-	} catch (wxSQLite3Exception& exc) {
-		return TagError;
-	}
-	return TagOk;
-}
-
-int TagsStorageSQLite::UpdateTagEntry(const TagEntry& tag)
-{
-	if ( !tag.IsOk() )
-		return TagOk;
-
-	try {
-		wxSQLite3Statement statement = m_db->GetPrepareStatement(wxT("UPDATE OR REPLACE TAGS SET Name=?, File=?, Line=?, Access=?, Pattern=?, Parent=?, Inherits=?, Typeref=?, Scope=?, Return_Value=? WHERE Kind=? AND Signature=? AND Path=?"));
-		// update
-		statement.Bind(1,  tag.GetName());
-		statement.Bind(2,  tag.GetFile());
-		statement.Bind(3,  tag.GetLine());
-		statement.Bind(4,  tag.GetAccess());
-		statement.Bind(5,  tag.GetPattern());
-		statement.Bind(6,  tag.GetParent());
-		statement.Bind(7,  tag.GetInheritsAsString());
-		statement.Bind(8,  tag.GetTyperef());
-		statement.Bind(9,  tag.GetScope());
-		statement.Bind(10, tag.GetReturnValue());
-
-		// where?
-		statement.Bind(11, tag.GetKind());
-		statement.Bind(12, tag.GetSignature());
-		statement.Bind(13, tag.GetPath());
-
 		statement.ExecuteUpdate();
 	} catch (wxSQLite3Exception& exc) {
 		return TagError;
@@ -1142,8 +1080,8 @@ void TagsStorageSQLite::GetTagsByScopesAndKind(const wxArrayString& scopes, cons
 		sql << wxT("'") << scopes.Item(i) << wxT("',");
 	}
 	sql.RemoveLast();
-	sql << wxT(") ORDER BY NAME LIMIT ") << GetSingleSearchLimit();
-
+	sql << wxT(") ORDER BY NAME ");
+	DoAddLimitPartToQuery(sql, tags);
 	DoFetchTags(sql, tags, kinds);
 }
 
@@ -1188,7 +1126,7 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const 
 	sql << wxT(") ");
 
 	DoAddNamePartToQuery(sql, name, partialNameAllowed, true);
-	sql << wxT(" LIMIT ") << GetSingleSearchLimit();
+	DoAddLimitPartToQuery(sql, tags);
 	// get get the tags
 	DoFetchTags(sql, tags);
 }
@@ -1196,7 +1134,8 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const 
 void TagsStorageSQLite::GetGlobalFunctions(std::vector<TagEntryPtr>& tags)
 {
 	wxString sql;
-	sql << wxT("select * from tags where scope = '<global>' AND kind IN ('function', 'prototype') LIMIT ") << GetSingleSearchLimit();
+	sql << wxT("select * from tags where scope = '<global>' AND kind IN ('function', 'prototype')");
+	DoAddLimitPartToQuery(sql, tags);
 	DoFetchTags(sql, tags);
 }
 
@@ -1559,5 +1498,14 @@ void TagsStorageSQLite::DoAddNamePartToQuery(wxString &sql, const wxString& name
 		} else {
 			sql << wxT(" name ='") << name << wxT("' ");
 		}
+	}
+}
+
+void TagsStorageSQLite::DoAddLimitPartToQuery(wxString& sql, const std::vector<TagEntryPtr>& tags)
+{
+	if(tags.size() >= (size_t)GetSingleSearchLimit()) {
+		sql << wxT(" LIMIT 1 ");
+	} else {
+		sql << wxT(" LIMIT ") << (size_t)GetSingleSearchLimit() - tags.size();
 	}
 }

@@ -43,10 +43,10 @@
 #if CC_USES_POPUPWIN
 #ifdef __WXGTK__
 #    define CCBoxParent wxPopupWindow
-#    define CC_STYLE    wxBORDER_DEFAULT
+#    define CC_STYLE    wxBORDER_NONE
 #else
 #    define CCBoxParent wxPopupTransientWindow
-#    define CC_STYLE    wxBORDER_SIMPLE | wxRESIZE_BORDER
+#    define CC_STYLE    wxBORDER_NONE
 #endif
 #    include <wx/popupwin.h>
 #else
@@ -65,7 +65,6 @@ private:
 
 protected:
 	CCVirtualListCtrl* m_listCtrl;
-	clToolBar*         m_toolBar1;
 	wxPanel*           m_mainPanel;
 
 	// Virtual event handlers, overide them in your derived class
@@ -81,13 +80,6 @@ protected:
 	virtual void OnKeyDown( wxListEvent& event ) {
 		event.Skip();
 	}
-	virtual void OnShowPublicItems( wxCommandEvent& event ) {
-		event.Skip();
-	}
-	virtual void OnShowComments( wxCommandEvent& event ) {
-		event.Skip();
-	}
-
 
 public:
 

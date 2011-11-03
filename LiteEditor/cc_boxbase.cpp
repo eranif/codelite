@@ -32,20 +32,13 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	SetSizer(mainSizer);
 
 	m_mainPanel = new CCBoxMainPanel(this);
-#ifdef __WXGTK__
-	m_mainPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-#endif
 	m_mainPanel->SetSizer(topSizer);
-
 	mainSizer->Add(m_mainPanel, 1, wxEXPAND);
-
-	//this->SetBackgroundColour(*wxBLACK);
-	m_listCtrl = new CCVirtualListCtrl( m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(BOX_WIDTH - 1, BOX_HEIGHT - 1), wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL|wxBORDER_NONE );
-#ifdef __WXGTK__
-	m_listCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-	m_listCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
-#endif
-
+	m_listCtrl = new CCVirtualListCtrl( m_mainPanel, 
+										wxID_ANY, 
+										wxDefaultPosition, 
+										wxSize(BOX_WIDTH - 1, BOX_HEIGHT - 1), 
+										wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL|wxBORDER_NONE);
 
 	topSizer->Add( m_listCtrl, 1, wxEXPAND|wxALL, 1 );
     m_mainPanel->SetAutoLayout( true );

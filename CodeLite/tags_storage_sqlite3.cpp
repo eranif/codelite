@@ -617,12 +617,15 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope, const wxStr
 	sql << wxT("select * from tags where ");
 
 	// did we get scope?
-	if ( scope.IsEmpty() == false ) {
-		sql << wxT("scope='") << scope << wxT("' ");
+	if ( scope.IsEmpty() == false || scope == wxT('<global>')) {
+		sql << wxT("ID IN (select tag_id from global_tags where ");
+		DoAddNamePartToQuery(sql, name, partialNameAllowed, false);
+		sql << wxT(" ) ");
+		
+	} else {
+		DoAddNamePartToQuery(sql, name, partialNameAllowed, !scope.IsEmpty());
 	}
-
-	DoAddNamePartToQuery(sql, name, partialNameAllowed, !scope.IsEmpty());
-
+	
 	sql << wxT(" LIMIT ") << this->GetSingleSearchLimit();
 
 	// get get the tags
@@ -1113,20 +1116,34 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const 
 {
 	if (scope.empty())  return;
 	if (name.IsEmpty()) return;
-
-	wxString sql;
-	sql << wxT("select * from tags where scope in(");
-
-	for (size_t i=0; i<scope.GetCount(); i++) {
-		sql <<wxT("'") <<scope.Item(i) << wxT("',");
+	
+	wxArrayString scopes = scope;
+	
+	// Check the given scopes and remove the '<global>' scope from it
+	// we use the more specialized method for the <global> scope by quering the 
+	// GLOBAL_TAGS table
+	int where = scopes.Index(wxT("<global>"));
+	if(where != wxNOT_FOUND) {
+		scopes.RemoveAt(where);
+		GetTagsByScopeAndName(wxString(wxT("<global>")), name, partialNameAllowed, tags);
 	}
-	sql.RemoveLast();
-	sql << wxT(") ");
+	
+	if(scopes.IsEmpty() == false) {
+		wxString sql;
+		sql << wxT("select * from tags where scope in(");
 
-	DoAddNamePartToQuery(sql, name, partialNameAllowed, true);
-	DoAddLimitPartToQuery(sql, tags);
-	// get get the tags
-	DoFetchTags(sql, tags);
+		for (size_t i=0; i<scopes.GetCount(); i++) {
+			sql <<wxT("'") <<scopes.Item(i) << wxT("',");
+		}
+		sql.RemoveLast();
+		sql << wxT(") ");
+
+		DoAddNamePartToQuery(sql, name, partialNameAllowed, true);
+		DoAddLimitPartToQuery(sql, tags);
+		// get get the tags
+		DoFetchTags(sql, tags);
+		
+	}
 }
 
 void TagsStorageSQLite::GetGlobalFunctions(std::vector<TagEntryPtr>& tags)

@@ -33,7 +33,7 @@
 #include <wx/wxsqlite3.h>
 #include "codelite_exports.h"
 
-const wxString gTagsDatabaseVersion(wxT("CodeLite Version 2.9"));
+const wxString gTagsDatabaseVersion(wxT("CodeLite Version 3.0"));
 
 /**
  * TagsDatabase is a wrapper around wxSQLite3 database with tags specific functions.

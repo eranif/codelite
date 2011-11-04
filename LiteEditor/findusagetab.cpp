@@ -124,10 +124,11 @@ void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString&
 void FindUsageTab::DoOpenResult(const CppToken& token)
 {
 	if (!token.getFilename().empty()) {
-		LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(wxString(token.getFilename().c_str(), wxConvUTF8), wxEmptyString, token.getLineNumber()-1);
+		LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(wxString(token.getFilename().c_str(), wxConvUTF8), wxEmptyString, token.getLineNumber());
 		if(editor) {
-			editor->SetSelection(token.getOffset(), token.getOffset() + token.getName().length());
+			editor->GotoLine(token.getLineNumber());
 			editor->ScrollToColumn(0);
+			editor->SetSelection(token.getOffset(), token.getOffset() + token.getName().length());
 		}
 	}
 }

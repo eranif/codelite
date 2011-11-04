@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 	std::string output, localsScope;
 	char *input = loadFile("../test.h");
 
-	::OptimizeScope(input, output, localsScope);
+	::OptimizeScope(input, output, 41, localsScope);
 	
 	printf("Locals: %s\n", localsScope.c_str());
 	printf("All   : %s\n", output.c_str());

@@ -139,7 +139,7 @@ public:
 	 * \param srcString Input string
 	 * \return visible scope
 	 */
-	wxString OptimizeScope(const wxString& srcString, wxString &localsScope);
+	wxString OptimizeScope(const wxString& srcString, int lastFuncLine, wxString &localsScope);
 
 	void CheckForTemplateAndTypedef(ParsedToken *token);
 

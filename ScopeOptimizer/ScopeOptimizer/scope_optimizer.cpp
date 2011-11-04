@@ -710,19 +710,24 @@ char *yytext;
 struct ScopeEntry {
 	std::string str;
 	int         line;
+
+	ScopeEntry() : line(-1) {}
+	void clear() {
+		line = -1;
+		str.clear();
+	}
 };
 
 static std::vector<ScopeEntry> scope_stack;
-static std::string             current_scope;
+static ScopeEntry              current_scope;
 static int                     current_state       = INITIAL;
 static int                     current_brace_depth = 1;
 static std::string             catch_for_scope;
 
-#define PUSH_SCOPE(s) {\
-	ScopeEntry se;\
-	se.str  = s;\
-	se.line = scope_optimizer_lineno;\
-	scope_stack.push_back(se);\
+#define PUSH_SCOPE(scope) {\
+	if(scope.line == -1)\
+		scope.line = scope_optimizer_lineno;\
+	scope_stack.push_back(scope);\
 }
 
 
@@ -981,15 +986,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-{current_scope += " ";}
+{current_scope.str += " ";}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-{current_scope += " ";}
+{current_scope.str += " ";}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-{current_scope += " ";}
+{current_scope.str += " ";}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
@@ -1104,8 +1109,8 @@ YY_RULE_SETUP
 case 26:
 YY_RULE_SETUP
 {
-	current_scope += "(";
-	if(current_scope.empty() == false) {
+	current_scope.str += "(";
+	if(current_scope.str.empty() == false) {
 		PUSH_SCOPE(current_scope);
 	}
 	current_scope.clear();
@@ -1115,10 +1120,10 @@ case 27:
 YY_RULE_SETUP
 {
 	if ( !scope_stack.empty() ) {
-		current_scope = scope_stack.back().str;
+		current_scope = scope_stack.back();
 		scope_stack.pop_back();
 		
-		current_scope += ")";
+		current_scope.str += ")";
 	} else {
 		current_scope.clear();
 	}
@@ -1127,12 +1132,12 @@ YY_RULE_SETUP
 case 28:
 YY_RULE_SETUP
 {
-	current_scope += "{";
+	current_scope.str += "{";
 	PUSH_SCOPE(current_scope);
 	current_scope.clear();
 	
 	if(catch_for_scope.empty() == false)
-		current_scope += catch_for_scope;
+		current_scope.str += catch_for_scope;
 	catch_for_scope.clear();
 }
 	YY_BREAK
@@ -1140,10 +1145,10 @@ case 29:
 YY_RULE_SETUP
 {
 	if ( !scope_stack.empty() ) {
-		current_scope = scope_stack.back().str;
+		current_scope = scope_stack.back();
 		
 		scope_stack.pop_back();
-		current_scope += "}";
+		current_scope.str += "}";
 	} else {
 		current_scope.clear();
 	}
@@ -1337,7 +1342,7 @@ YY_RULE_SETUP
 		catch_for_scope.clear();
 		
 	// default keep the current token
-	current_scope += yytext;
+	current_scope.str += yytext;
 }
 	YY_BREAK
 case 77:
@@ -1367,7 +1372,7 @@ case YY_STATE_EOF(FOR_STATE):
 case YY_STATE_EOF(C_COMMENT_STATE):
 case YY_STATE_EOF(CPP_COMMENT_STATE):
 {
-	if(current_scope.empty() == false) {
+	if(current_scope.str.empty() == false) {
 		PUSH_SCOPE(current_scope);
 		current_scope.clear();
 	}
@@ -2277,7 +2282,7 @@ void scope_optimizer_clean()
 	catch_for_scope.clear();
 }
 
-int OptimizeScope(const std::string &inputScope, std::string &optimizedScope, std::string &localsScope)
+int OptimizeScope(const std::string &inputScope, std::string &optimizedScope, int localsLine, std::string &localsScope)
 {
 	BEGIN INITIAL;
 	yy_scan_string(inputScope.c_str());
@@ -2289,20 +2294,18 @@ int OptimizeScope(const std::string &inputScope, std::string &optimizedScope, st
 		return rc;
 	}
 	
-	size_t i = 0;
-	current_scope.clear();
-	for (; i < scope_stack.size(); i++) {
-		current_scope += scope_stack.at(i).str;
-	}
-
-	if(scope_stack.empty() == false) {
-		localsScope = scope_stack.back().str;
+	std::string tmp_scope;
+	for (size_t i = 0; i < scope_stack.size(); i++) {
+		tmp_scope += scope_stack.at(i).str;
+		if(scope_stack.at(i).line >= localsLine) {
+			localsScope += scope_stack.at(i).str;
+		}
 	}
 
 	// if the current scope is not empty, terminate it with ';' and return
-	if ( current_scope.empty() == false ) {
-		current_scope += ";";
-		optimizedScope = current_scope;
+	if ( tmp_scope.empty() == false ) {
+		tmp_scope  += ";";
+		optimizedScope = tmp_scope;
 	}
 	scope_optimizer_clean();
 	return rc;

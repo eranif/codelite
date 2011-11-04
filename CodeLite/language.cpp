@@ -102,11 +102,11 @@ Language::~Language()
 }
 
 /// Return the visible scope until pchStopWord is encountered
-wxString Language::OptimizeScope(const wxString& srcString, wxString &localsScope)
+wxString Language::OptimizeScope(const wxString& srcString, int lastFuncLine, wxString &localsScope)
 {
 	std::string out, locals;
 	const wxCharBuffer inp = srcString.mb_str(wxConvUTF8);
-	::OptimizeScope(inp.data(), out, locals);
+	::OptimizeScope(inp.data(), out, lastFuncLine, locals);
 
 	wxString scope = _U(out.c_str());
 	localsScope = wxString( locals.c_str(), wxConvUTF8 );
@@ -332,7 +332,8 @@ CL_DEBUG(wxT("Getting function signature from the database..."));
 CL_DEBUG(wxT("Getting function signature from the database... done"));
 
 CL_DEBUG(wxT("Optimizing scope..."));
-	visibleScope = this->OptimizeScope(text, localsBody);
+	int lastFuncLine = tag ? tag->GetLine() : -1;
+	visibleScope = this->OptimizeScope(text, lastFuncLine, localsBody);
 CL_DEBUG(wxT("Optimizing scope...done"));
 
 	std::vector<wxString> additionalScopes;

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "file_logger.h"
 #include "crawler_include.h"
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
@@ -101,13 +102,14 @@ Language::~Language()
 }
 
 /// Return the visible scope until pchStopWord is encountered
-wxString Language::OptimizeScope(const wxString& srcString)
+wxString Language::OptimizeScope(const wxString& srcString, wxString &localsScope)
 {
-	std::string out;
+	std::string out, locals;
 	const wxCharBuffer inp = srcString.mb_str(wxConvUTF8);
-	::OptimizeScope(inp.data(), out);
+	::OptimizeScope(inp.data(), out, locals);
 
 	wxString scope = _U(out.c_str());
+	localsScope = wxString( locals.c_str(), wxConvUTF8 );
 	return scope;
 }
 
@@ -306,6 +308,8 @@ bool Language::ProcessExpression(const wxString& stmt,
                                  wxString &oper,					//output
                                  wxString &scopeTemplateInitList)	//output
 {
+CL_DEBUG(wxT(" >>> Language::ProcessExpression started ..."));
+
 	bool evaluationSucceeded = true;
 
 	std::map<wxString, wxString> typeMap = GetTagsManager()->GetCtagsOptions().GetTypesMap();
@@ -318,23 +322,30 @@ bool Language::ProcessExpression(const wxString& stmt,
 	statement.erase(statement.find_last_not_of(trimString)+1);
 
 	wxString lastFuncSig;
-	wxString visibleScope, scopeName;
+	wxString visibleScope, scopeName, localsBody;
+	
+CL_DEBUG(wxT("Getting function signature from the database..."));
+	TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);
+	if (tag) {
+		lastFuncSig = tag->GetSignature();
+	}
+CL_DEBUG(wxT("Getting function signature from the database... done"));
 
-	visibleScope = OptimizeScope(text);
+CL_DEBUG(wxT("Optimizing scope..."));
+	visibleScope = this->OptimizeScope(text, localsBody);
+CL_DEBUG(wxT("Optimizing scope...done"));
 
 	std::vector<wxString> additionalScopes;
 
 	// Allways use the global namespace as an addition scope
 	additionalScopes.push_back( wxT("<global>") );
-	scopeName = GetScopeName(text, &additionalScopes);
 
-	TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);
-	if (tag) {
-		lastFuncSig = tag->GetSignature();
-	}
+CL_DEBUG(wxT("Obtaining the scope name..."));
+	scopeName = GetScopeName(visibleScope, &additionalScopes);
+CL_DEBUG(wxT("Obtaining the scope name...done"));
 
-	SetLastFunctionSignature(lastFuncSig     );
-	SetVisibleScope         (visibleScope    );
+	SetLastFunctionSignature(lastFuncSig);
+	SetVisibleScope         (localsBody );
 	SetAdditionalScopes     (additionalScopes, fn.GetFullPath());
 
 	//get next token using the tokenscanner object
@@ -344,16 +355,21 @@ bool Language::ProcessExpression(const wxString& stmt,
 	// of the chain
 	TokenContainer container;
 
+CL_DEBUG(wxT("Parsing tokens of scope: %s..."), scopeName.c_str());
 	container.head = ParseTokens( scopeName );
 	if( !container.head ) {
 		return false;
 	}
+CL_DEBUG(wxT("Parsing tokens of scope: %s... done"), scopeName.c_str());
 
 	container.current = container.head;
 
 	while ( container.current ) {
 
+CL_DEBUG(wxT("PrcocessToken..."));
 		bool res = ProcessToken( &container );
+CL_DEBUG(wxT("step 1 completed"));
+
 		if ( !res && !container.Rewind()) {
 			evaluationSucceeded = false;
 			break;
@@ -367,11 +383,18 @@ bool Language::ProcessExpression(const wxString& stmt,
 		container.retries = 0;
 
 		// HACK1: Let the user override the parser decisions
+CL_DEBUG(wxT("Checking ExcuteUserTypes..."));
 		ExcuteUserTypes(container.current, typeMap);
+CL_DEBUG(wxT("Checking ExcuteUserTypes... done"));
 
+CL_DEBUG(wxT("Checking DoIsTypeAndScopeExist..."));
 		// We call here to IsTypeAndScopeExists which will attempt to provide the best scope / type
 		DoIsTypeAndScopeExist                   ( container.current );
+CL_DEBUG(wxT("Checking DoIsTypeAndScopeExist... done"));
+
+CL_DEBUG(wxT("Checking DoExtractTemplateInitListFromInheritance..."));
 		DoExtractTemplateInitListFromInheritance( container.current );
+CL_DEBUG(wxT("Checking DoExtractTemplateInitListFromInheritance... done"));
 
 		if(container.current->GetIsTemplate() && container.current->GetTemplateArgList().IsEmpty()) {
 			// We got no template declaration...
@@ -383,7 +406,10 @@ bool Language::ProcessExpression(const wxString& stmt,
 		bool cont2(false);
 
 		do {
+CL_DEBUG(wxT("Checking CheckForTemplateAndTypedef..."));
 			CheckForTemplateAndTypedef( container.current );
+CL_DEBUG(wxT("Checking CheckForTemplateAndTypedef... done"));
+
 			// We check subscript operator only once
 			cont = (container.current->GetSubscriptOperator() && OnSubscriptOperator( container.current ));
 			if(cont) {
@@ -405,10 +431,12 @@ bool Language::ProcessExpression(const wxString& stmt,
 		oper = container.current->GetOperator();
 
 		container.current = container.current->GetNext();
+CL_DEBUG(wxT("PrcocessToken... done"));
 	}
 
 	// release the tokens
 	ParsedToken::DeleteTokens( container.head );
+CL_DEBUG(wxT(" <<< Language::ProcessExpression started ... done"));
 	return evaluationSucceeded;
 }
 
@@ -804,10 +832,13 @@ bool Language::ProcessToken(TokenContainer *tokeContainer)
 	{
 		// We are the first token in the chain
 		// examine the local scope
+		
+CL_DEBUG(wxT("Parsing for local variables..."));
 		const wxCharBuffer buf  = _C(GetVisibleScope()         );
 		const wxCharBuffer buf2 = _C(GetLastFunctionSignature() + wxT(";"));
 		get_variables(buf.data(), li, ignoreTokens, false);
 		get_variables(buf2.data(), li, ignoreTokens, true);
+CL_DEBUG(wxT("Parsing for local variables... done"));
 
 		// Search for a full match in the returned list
 		for (VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {

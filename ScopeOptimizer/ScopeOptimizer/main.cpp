@@ -10,11 +10,13 @@ char *loadFile(const char *fileName);
 
 int main(int argc, char **argv)
 {
-	std::string output;
+	std::string output, localsScope;
 	char *input = loadFile("../test.h");
-	::OptimizeScope(input, output);
+
+	::OptimizeScope(input, output, localsScope);
 	
-	printf("%s\n", output.c_str());
+	printf("Locals: %s\n", localsScope.c_str());
+	printf("All   : %s\n", output.c_str());
 	return 0;
 }
 

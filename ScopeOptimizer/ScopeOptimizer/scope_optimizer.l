@@ -47,12 +47,27 @@ horizontal_white [ ]|{h_tab}
 #include <vector>
 #include <string>
 
-static std::vector<std::string> scope_stack;
-static std::string              current_scope;
-static int                      current_state       = INITIAL;
-static int                      current_brace_depth = 1;
-static std::string              catch_for_scope;
+struct ScopeEntry {
+	std::string str;
+	int         line;
+};
+
+static std::vector<ScopeEntry> scope_stack;
+static std::string             current_scope;
+static int                     current_state       = INITIAL;
+static int                     current_brace_depth = 1;
+static std::string             catch_for_scope;
+
+#define PUSH_SCOPE(s) {\
+	ScopeEntry se;\
+	se.str  = s;\
+	se.line = scope_optimizer_lineno;\
+	scope_stack.push_back(se);\
+}
+
 %}
+
+%option yylineno
 
 %%
 
@@ -123,13 +138,13 @@ for[ ]*\(               {
 \(                     {
 	current_scope += "(";
 	if(current_scope.empty() == false) {
-		scope_stack.push_back(current_scope);
+		PUSH_SCOPE(current_scope);
 	}
 	current_scope.clear();
 }
 \)                     {
 	if ( !scope_stack.empty() ) {
-		current_scope = scope_stack.back();
+		current_scope = scope_stack.back().str;
 		scope_stack.pop_back();
 		
 		current_scope += ")";
@@ -139,7 +154,7 @@ for[ ]*\(               {
 }
 \{                     {
 	current_scope += "{";
-	scope_stack.push_back(current_scope);
+	PUSH_SCOPE(current_scope);
 	current_scope.clear();
 	
 	if(catch_for_scope.empty() == false)
@@ -148,7 +163,7 @@ for[ ]*\(               {
 }
 \}                     {
 	if ( !scope_stack.empty() ) {
-		current_scope = scope_stack.back();
+		current_scope = scope_stack.back().str;
 		
 		scope_stack.pop_back();
 		current_scope += "}";
@@ -220,7 +235,7 @@ throw               {}
 <C_COMMENT_STATE>.        {}
 <<EOF>> {
 	if(current_scope.empty() == false) {
-		scope_stack.push_back( current_scope );
+		PUSH_SCOPE(current_scope);
 		current_scope.clear();
 	}
 	yyterminate();
@@ -243,7 +258,7 @@ void scope_optimizer_clean()
 	catch_for_scope.clear();
 }
 
-int OptimizeScope(const std::string &inputScope, std::string &optimizedScope)
+int OptimizeScope(const std::string &inputScope, std::string &optimizedScope, std::string &localsScope)
 {
 	BEGIN INITIAL;
 	yy_scan_string(inputScope.c_str());
@@ -257,9 +272,14 @@ int OptimizeScope(const std::string &inputScope, std::string &optimizedScope)
 	
 	size_t i = 0;
 	current_scope.clear();
-	for (; i < scope_stack.size(); i++)
-		current_scope += scope_stack.at(i);
-	
+	for (; i < scope_stack.size(); i++) {
+		current_scope += scope_stack.at(i).str;
+	}
+
+	if(scope_stack.empty() == false) {
+		localsScope = scope_stack.back().str;
+	}
+
 	// if the current scope is not empty, terminate it with ';' and return
 	if ( current_scope.empty() == false ) {
 		current_scope += ";";

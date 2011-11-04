@@ -3,6 +3,6 @@
 
 #include <string>
 
-extern int OptimizeScope(const std::string &inputScope, std::string &optimizedScope);
+extern int OptimizeScope(const std::string &inputScope, std::string &optimizedScope, std::string &localsScope);
 
 #endif

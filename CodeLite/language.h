@@ -40,9 +40,9 @@
 #include "codelite_exports.h"
 
 enum SearchFlags {
-	PartialMatch        = 1,
-	ExactMatch          = 2,
-	IgnoreCaseSensitive = 4
+    PartialMatch        = 1,
+    ExactMatch          = 2,
+    IgnoreCaseSensitive = 4
 };
 
 class TagsManager;
@@ -103,6 +103,14 @@ private:
 	wxString                m_lastFunctionSignature;
 	std::vector<wxString>   m_additionalScopes;     // collected by parsing 'using namespace XXX'
 	TemplateHelper          m_templateHelper;
+	
+protected:
+	void SetVisibleScope(const wxString& visibleScope) {
+		this->m_visibleScope = visibleScope;
+	}
+	const wxString& GetVisibleScope() const {
+		return m_visibleScope;
+	}
 
 public:
 	/**
@@ -131,22 +139,17 @@ public:
 	 * \param srcString Input string
 	 * \return visible scope
 	 */
-	wxString OptimizeScope(const wxString& srcString);
+	wxString OptimizeScope(const wxString& srcString, wxString &localsScope);
 
 	void CheckForTemplateAndTypedef(ParsedToken *token);
 
 	void SetLastFunctionSignature(const wxString& lastFunctionSignature) {
 		this->m_lastFunctionSignature = lastFunctionSignature;
 	}
-	void SetVisibleScope(const wxString& visibleScope) {
-		this->m_visibleScope = visibleScope;
-	}
 	const wxString& GetLastFunctionSignature() const {
 		return m_lastFunctionSignature;
 	}
-	const wxString& GetVisibleScope() const {
-		return m_visibleScope;
-	}
+
 	void SetAdditionalScopes(const std::vector<wxString>& additionalScopes, const wxString &filename) ;
 	const std::vector<wxString>& GetAdditionalScopes() const ;
 	/**
@@ -325,7 +328,7 @@ private:
 	bool DoCorrectUsingNamespaces( ParsedToken *token, std::vector<TagEntryPtr> tags );
 };
 
-class WXDLLIMPEXP_CL LanguageST 
+class WXDLLIMPEXP_CL LanguageST
 {
 public:
 	static void Free();

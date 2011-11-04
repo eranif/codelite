@@ -22,7 +22,7 @@ void CCBoxMainPanel::OnErasebg(wxEraseEvent& e)
 void CCBoxMainPanel::OnPaint(wxPaintEvent& e)
 {
 	wxBufferedPaintDC dc(this);
-	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
 	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 	dc.DrawRectangle(0, 0, this->GetSize().x, this->GetSize().y);
 }

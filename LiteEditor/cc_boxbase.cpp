@@ -37,10 +37,10 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	m_listCtrl = new CCVirtualListCtrl( m_mainPanel, 
 										wxID_ANY, 
 										wxDefaultPosition, 
-										wxSize(BOX_WIDTH - 1, BOX_HEIGHT - 1), 
-										wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL|wxBORDER_NONE);
+										wxSize(BOX_WIDTH - 5, BOX_HEIGHT - 2),
+										wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL);
 
-	topSizer->Add( m_listCtrl, 1, wxEXPAND|wxALL, 1 );
+	topSizer->Add( m_listCtrl, 1, wxEXPAND|wxALL, 5 );
     m_mainPanel->SetAutoLayout( true );
     GetSizer()->Fit(this);
 

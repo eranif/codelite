@@ -1634,14 +1634,16 @@ void Manager::LoadAcceleratorTable ( const wxArrayString &files, MenuItemDataMap
 		}
 	}
 
-	wxArrayString lines = wxStringTokenize ( content, wxT ( "\n" ) );
+	wxArrayString lines = wxStringTokenize ( content, wxT ( "\r\n" ), wxTOKEN_STRTOK );
 	for ( size_t i = 0; i < lines.GetCount(); i ++ ) {
-		if ( lines.Item ( i ).Trim().Trim ( false ).IsEmpty() ) {
+		wxString line = lines.Item ( i );
+
+		line.Trim(false).Trim();
+		if ( line.IsEmpty() ) {
 			continue;
 		}
 
 		MenuItemData item;
-		wxString line = lines.Item ( i );
 
 		item.id = line.BeforeFirst ( wxT ( '|' ) );
 		line = line.AfterFirst ( wxT ( '|' ) );

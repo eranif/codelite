@@ -3131,7 +3131,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	// alert the user
 	int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
 	if ( tags.size() >= (size_t) limit ) {
-		DoSetStatusMessage(wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices"), tags.size()), 0);
+		DoSetStatusMessage(wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices"), (unsigned int)tags.size()), 0);
 	}
 
 	m_ccBox->Adjust();

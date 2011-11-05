@@ -367,7 +367,6 @@ void CCBox::Show(const wxString& word)
 {
 #ifdef __WXMSW__
 	ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
-	style |= CS_DROPSHADOW;
 	SetClassLongPtr(GetHandle(), GCL_STYLE, style);
 #endif
 
@@ -700,7 +699,6 @@ void CCBox::HideCCBox()
 	if( IsShown() ) {
 #ifdef __WXMSW__
 		ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
-		style &= ~CS_DROPSHADOW;
 		SetClassLongPtr(GetHandle(), GCL_STYLE, style);
 #endif
 		Hide();

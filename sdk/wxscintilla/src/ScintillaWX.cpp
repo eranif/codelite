@@ -97,7 +97,6 @@ public:
 	{
 #ifdef __WXMSW__
 		ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
-		style |= CS_DROPSHADOW;
 		SetClassLongPtr(GetHandle(), GCL_STYLE, style);
 #endif
 	}
@@ -105,7 +104,6 @@ public:
 	~wxSCICallTip() {
 #ifdef __WXMSW__
 		ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
-		style &= ~CS_DROPSHADOW;
 		SetClassLongPtr(GetHandle(), GCL_STYLE, style);
 #endif
 

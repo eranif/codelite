@@ -130,7 +130,7 @@ void TestClassDlg::OnButtonOk(wxCommandEvent& e)
 void TestClassDlg::OnShowClassListDialog(wxCommandEvent& e)
 {
 	m_textCtrlClassName->SetFocus();
-	OpenResourceDialog dlg(m_manager->GetTheApp()->GetTopWindow(), m_manager, OpenResourceDialog::TYPE_CLASS, false);
+	OpenResourceDialog dlg(m_manager->GetTheApp()->GetTopWindow(), m_manager);
 	if (dlg.ShowModal() == wxID_OK) {
 		
 		// do something with the selected text

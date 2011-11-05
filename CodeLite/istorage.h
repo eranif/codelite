@@ -458,6 +458,11 @@ public:
 	 * @param defMacros [out] The real defined macros
 	 */
 	virtual void GetMacrosDefined(const std::set<std::string>& files, const std::set<wxString>& usedMacros, wxArrayString& defMacros) = 0;
+
+	/**
+	 * @brief return list of tags for a given prefix
+	 */
+	virtual void GetTagsByName(const wxString& prefix, std::vector<TagEntryPtr> &tags, bool exactMatch = false) = 0;
 };
 
 enum {

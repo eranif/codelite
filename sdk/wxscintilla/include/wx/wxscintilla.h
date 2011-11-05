@@ -3423,6 +3423,7 @@ public:
 	void     SetRectangularSelectionModifier(int mod);
 	int      GetRectangularSelectionModifier();
 	void     SetVirtualSpaceOptions(int virtualSpace);
+	void     SetMultiPaste(int opt);
 	// [PATCH] END
 
 #if wxCHECK_VERSION(2, 5, 0)

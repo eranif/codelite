@@ -1469,7 +1469,24 @@ void TagsStorageSQLite::GetMacrosDefined(const std::set<std::string>& files, con
 			defMacros.push_back(res.GetString(0));
 		}
 	} catch (wxSQLite3Exception &exc) {
-		wxLogError(exc.GetMessage());
+		CL_DEBUG(wxT("%s"), exc.GetMessage().c_str());
+	}
+}
+
+void TagsStorageSQLite::GetTagsByName(const wxString& prefix, std::vector<TagEntryPtr>& tags, bool exactMatch)
+{
+	try {
+		if(prefix.IsEmpty())
+			return;
+			
+		wxString sql;
+		sql << wxT("select * from tags where ");
+		DoAddNamePartToQuery(sql, prefix, !exactMatch, false);
+		DoAddLimitPartToQuery(sql, tags);
+		DoFetchTags(sql, tags);
+		
+	} catch (wxSQLite3Exception &e) {
+		CL_DEBUG(wxT("%s"), e.GetMessage().c_str());
 	}
 }
 
@@ -1518,3 +1535,5 @@ void TagsStorageSQLite::DoAddLimitPartToQuery(wxString& sql, const std::vector<T
 		sql << wxT(" LIMIT ") << (size_t)GetSingleSearchLimit() - tags.size();
 	}
 }
+
+

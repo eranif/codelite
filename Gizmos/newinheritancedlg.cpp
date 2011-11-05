@@ -55,7 +55,7 @@ NewIneritanceDlg::~NewIneritanceDlg()
 void NewIneritanceDlg::OnButtonMore( wxCommandEvent& event )
 {
 	m_textCtrlInhertiance->SetFocus();
-	OpenResourceDialog dlg(this, m_mgr, OpenResourceDialog::TYPE_CLASS, false);
+	OpenResourceDialog dlg(this, m_mgr);
 	if(dlg.ShowModal() == wxID_OK){
 		wxString parentName;
 		if( dlg.GetSelection().m_scope.IsEmpty() == false && dlg.GetSelection().m_scope != wxT("<global>"))

@@ -1,4 +1,6 @@
 #include "open_resource_dialog.h"
+#include "bitmap_loader.h"
+#include <wx/imaglist.h>
 #include <wx/xrc/xmlres.h>
 #include "globals.h"
 #include "window_locker.h"
@@ -13,65 +15,50 @@
 #include "windowattrmanager.h"
 #include <vector>
 
-// It makes sense to localise "Workspace file" but surely not the others...
-wxString OpenResourceDialog::TYPE_WORKSPACE_FILE = _("Workspace file");
-wxString OpenResourceDialog::TYPE_CLASS          = wxT("Class, struct or union");
-wxString OpenResourceDialog::TYPE_MACRO          = wxT("Macro");
-wxString OpenResourceDialog::TYPE_FUNCTION       = wxT("Function");
-wxString OpenResourceDialog::TYPE_TYPEDEF        = wxT("Typedef");
-wxString OpenResourceDialog::TYPE_NAMESPACE      = wxT("Namespace");
-
 BEGIN_EVENT_TABLE(OpenResourceDialog, OpenResourceDialogBase)
 	EVT_TIMER(XRCID("OR_TIMER"), OpenResourceDialog::OnTimer)
 END_EVENT_TABLE()
 
-OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager, const wxString &type, bool allowChangeType )
+OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager)
 		: OpenResourceDialogBase( parent )
 		, m_manager(manager)
-		, m_type(type)
 		, m_needRefresh(false)
 {
+	// Create an image list
+	wxImageList *li = new wxImageList(16, 16, true);
+	BitmapLoader *bmpLoader = m_manager->GetStdIcons();
+
+	m_tagImgMap[wxT("class")]              = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/class")));
+	m_tagImgMap[wxT("struct")]             = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/struct")));
+	m_tagImgMap[wxT("namespace")]          = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/namespace")));
+	m_tagImgMap[wxT("typedef")]            = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/typedef")));
+	m_tagImgMap[wxT("member_private")]     = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_private")));
+	m_tagImgMap[wxT("member_public")]      = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_public")));
+	m_tagImgMap[wxT("member_protected")]   = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_protected")));
+	m_tagImgMap[wxT("function_private")]   = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_private")));
+	m_tagImgMap[wxT("function_public")]    = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_public")));
+	m_tagImgMap[wxT("function_protected")] = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_protected")));
+	m_tagImgMap[wxT("enum")]               = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/enum")));
+	m_tagImgMap[wxT("enumerator")]         = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/enumerator")));
+	m_tagImgMap[wxT("cpp")]                = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));
+	m_tagImgMap[wxT("h")]                  = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/h")));
+	m_tagImgMap[wxT("text")]               = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/text")));
+	m_tagImgMap[wxT("c")]                  = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/c")));
+	m_tagImgMap[wxT("wxfb")]               = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/wxfb")));
+	
+	m_listOptions->AssignImageList(li, wxIMAGE_LIST_SMALL);
 	
 	m_timer = new wxTimer(this, XRCID("OR_TIMER"));
 	m_timer->Start(500);
 	MSWSetNativeTheme(m_listOptions);
-	m_listOptions->InsertColumn(0, wxT(""));
-	m_listOptions->InsertColumn(1, wxT(""));
-	m_listOptions->InsertColumn(2, wxT(""));
-	
-	m_listOptions->SetColumnWidth(0, 150);
-	
-	if(m_type == TYPE_WORKSPACE_FILE) {
-		m_listOptions->SetColumnWidth(1, 1000);
-		
-	} else {
-		m_listOptions->SetColumnWidth(1, 300);
-	}
-	
-	m_listOptions->SetColumnWidth(2, 300);
+	m_listOptions->InsertColumn(0, wxT("Name"));
+	m_listOptions->InsertColumn(1, wxT("Full path"));
 	
 	m_textCtrlResourceName->SetFocus();
-	SetLabel(wxString::Format(_("Open %s"), m_type.c_str()));
+	SetLabel(_("Open resource..."));
 
 	WindowAttrManager::Load(this, wxT("OpenResourceDialog"), m_manager->GetConfigTool());
-	SimpleLongValue l;
-	l.SetValue(m_checkBoxUsePartialMatching->IsChecked() ? 1 : 0);
-	m_manager->GetConfigTool()->ReadObject(wxT("OpenResourceAllowsPartialMatch"), &l);
-	m_checkBoxUsePartialMatching->SetValue(l.GetValue() == 1);
-
-	m_choiceResourceType->Clear();
-	m_choiceResourceType->Append(wxGetTranslation(TYPE_WORKSPACE_FILE));
-	m_choiceResourceType->Append(TYPE_CLASS);
-	m_choiceResourceType->Append(TYPE_MACRO);
-	m_choiceResourceType->Append(TYPE_FUNCTION);
-	m_choiceResourceType->Append(TYPE_TYPEDEF);
-	m_choiceResourceType->Append(TYPE_NAMESPACE);
 	
-	m_choiceResourceType->SetStringSelection(m_type);
-
-	if (!allowChangeType)
-		m_choiceResourceType->Enable(false);
-
 	//load all files from the workspace
 	if ( m_manager->IsWorkspaceOpen() ) {
 		wxArrayString projects;
@@ -87,49 +74,28 @@ OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager, con
 
 				//convert std::vector to wxArrayString
 				for ( std::vector<wxFileName>::iterator it = fileNames.begin(); it != fileNames.end(); it ++ ) {
-					m_files.Add ( ( *it ).GetFullPath() );
+					wxString name = it->GetFullName().MakeLower();
+					m_files.insert(std::make_pair<wxString, wxString>(name, it->GetFullPath()) );
 				}
 			}
 		}
 	}
 	
 	m_listOptions->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( OpenResourceDialog::OnItemActivated ), NULL, this );
-	m_listOptions->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( OpenResourceDialog::OnItemSelected ), NULL, this );
+	m_listOptions->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED,  wxListEventHandler( OpenResourceDialog::OnItemSelected ), NULL, this );
 }
 
 OpenResourceDialog::~OpenResourceDialog()
 {
 	m_timer->Stop();
 	delete m_timer;
-	
 	WindowAttrManager::Save(this, wxT("OpenResourceDialog"), m_manager->GetConfigTool());
-	SimpleLongValue l;
-	l.SetValue(m_checkBoxUsePartialMatching->IsChecked() ? 1 : 0);
-	m_manager->GetConfigTool()->WriteObject(wxT("OpenResourceAllowsPartialMatch"), &l);
 }
 
 void OpenResourceDialog::OnText( wxCommandEvent& event )
 {
 	m_needRefresh = true;
 	event.Skip();
-}
-
-void OpenResourceDialog::OnType( wxCommandEvent& event )
-{
-	wxUnusedVar(event);
-	m_type = m_choiceResourceType->GetStringSelection();
-	
-	if(m_type == TYPE_WORKSPACE_FILE) {
-		m_listOptions->SetColumnWidth(1, 1000);
-		
-	} else {
-		m_listOptions->SetColumnWidth(1, 300);
-	}
-	
-	DoPopulateList();
-	m_textCtrlResourceName->SetFocus();
-
-	SetLabel(wxString::Format(_("Open %s"), m_type.c_str()));
 }
 
 void OpenResourceDialog::OnUsePartialMatching( wxCommandEvent& event )
@@ -166,99 +132,69 @@ void OpenResourceDialog::OnItemActivated(wxListEvent& event)
 
 void OpenResourceDialog::DoPopulateList()
 {
-	m_tags.clear();
-	clWindowUpdateLocker locker(this);
-	wxArrayString kind;
-	Clear();
-	if (m_type == wxGetTranslation(TYPE_WORKSPACE_FILE)) {
-		DoPopulateWorkspaceFile();
+	wxString name = m_textCtrlResourceName->GetValue();
+	name.Trim().Trim(false);
+	if(name.IsEmpty())
 		return;
 
-	} else if (m_type == TYPE_CLASS) {
+	Clear();
 
-		kind.Add(wxT("class"));
-		kind.Add(wxT("struct"));
-		kind.Add(wxT("union"));
+	wxWindowUpdateLocker locker(m_listOptions);
 
-	} else if ( m_type == TYPE_FUNCTION ) {
-		kind.Add(wxT("function"));
-		kind.Add(wxT("prototype"));
-
-	} else if ( m_type == TYPE_MACRO) {
-		kind.Add(wxT("macro"));
-
-	} else if ( m_type == TYPE_TYPEDEF) {
-		kind.Add(wxT("typedef"));
-
-	} else if ( m_type == TYPE_NAMESPACE) {
-		kind.Add(wxT("namespace"));
-
-	}
-
-	if (kind.IsEmpty() == false)
-		m_manager->GetTagsManager()->GetTagsByKindLimit(m_tags, kind, 150, m_textCtrlResourceName->GetValue());
-
+	// First add the workspace files
+	DoPopulateWorkspaceFile();
 	DoPopulateTags();
+
+	if(m_listOptions->GetItemCount()) {
+		m_listOptions->SetColumnWidth(0, wxLIST_AUTOSIZE);
+		m_listOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
+	} else {
+		m_listOptions->SetColumnWidth(0, wxLIST_AUTOSIZE_USEHEADER);
+		m_listOptions->SetColumnWidth(1, wxLIST_AUTOSIZE_USEHEADER);
+	}
 }
 
 void OpenResourceDialog::DoPopulateTags()
 {
-	if (m_tags.empty())
-		return;
-
 	bool gotExactMatch(false);
 
-	wxArrayString tmpArr;
-	wxString curSel = m_textCtrlResourceName->GetValue();
-	wxString curSelNoStar;
-	if (!curSel.Trim().Trim(false).IsEmpty()) {
+	// Next, add the tags
+	std::vector<TagEntryPtr> tags;
+	wxString prefix = m_textCtrlResourceName->GetValue();
+	prefix.Trim().Trim(false);
+	if(prefix.IsEmpty())
+		return;
 
-		curSel = curSel.MakeLower().Trim().Trim(false);
-		curSelNoStar = curSel.c_str();
+	m_manager->GetTagsManager()->GetTagsByName(prefix, tags);
+	
+	for (size_t i=0; i<tags.size(); i++) {
+		TagEntryPtr tag = tags.at(i);
+		wxString name(tag->GetName());
 
-		for (size_t i=0; i<m_tags.size(); i++) {
-			TagEntryPtr tag = m_tags.at(i);
-			wxString    name(tag->GetName());
+		// keep the fullpath
+		int index(0);
+		wxString fullname;
+		if(tag->GetKind() == wxT("function") || tag->GetKind() == wxT("prototype")) {
+			fullname = wxString::Format(wxT("%s::%s%s"), tag->GetScope().c_str(), tag->GetName().c_str(), tag->GetSignature().c_str());
+			index = DoAppendLine(tag->GetName(),
+								 fullname,
+								 (tag->GetKind() == wxT("function")),
+								 new OpenResourceDialogItemData(tag->GetFile(), tag->GetLine(), tag->GetPattern(), tag->GetName(), tag->GetScope()),
+								 DoGetTagImgId(tag));
+		} else {
 
-			name.MakeLower();
+			fullname = wxString::Format(wxT("%s::%s"), tag->GetScope().c_str(), tag->GetName().c_str());
+			index = DoAppendLine(tag->GetName(),
+								 fullname,
+								 false,
+								 new OpenResourceDialogItemData(tag->GetFile(), tag->GetLine(), tag->GetPattern(), tag->GetName(), tag->GetScope()),
+								 DoGetTagImgId(tag));
 
-			//append wildcard at the end
-			if (!curSel.EndsWith(wxT("*"))) {
-				curSel << wxT("*");
-			}
-
-			// FR# [2008133]
-			if (m_checkBoxUsePartialMatching->IsChecked() && !curSel.StartsWith(wxT("*"))) {
-				curSel.Prepend(wxT("*"));
-			}
-
-			if (wxMatchWild(curSel, name)) {
-				
-				// keep the fullpath
-				int index(0);
-				if(tag->GetKind() == wxT("function") || tag->GetKind() == wxT("prototype"))
-					index = DoAppendLine(tag->GetName(), 
-										 tag->GetSignature(), 
-										 tag->GetScope(), 
-										 tag->GetKind() == wxT("function"),
-										 new OpenResourceDialogItemData(tag->GetFile(), tag->GetLine(), tag->GetPattern(), m_type, tag->GetName(), tag->GetScope()));
-				else 
-					index = DoAppendLine(tag->GetName(), 
-										 tag->GetScope(), 
-										 wxT(""), 
-										 false,
-										 new OpenResourceDialogItemData(tag->GetFile(), tag->GetLine(), tag->GetPattern(), m_type, tag->GetName(), tag->GetScope()));
-										 
-				if (curSelNoStar == name && !gotExactMatch) {
-					gotExactMatch = true;
-					DoSelectItem(index);
-				}
-			}
 		}
-	}
-
-	if (m_listOptions->GetItemCount() == 150) {
-		m_staticTextErrorMessage->SetLabel(_("Too many matches, please narrow down your search"));
+		if (prefix == name && !gotExactMatch) {
+			gotExactMatch = true;
+			DoSelectItem(index);
+		}
 	}
 
 	if (!gotExactMatch && m_listOptions->GetItemCount()) {
@@ -268,48 +204,42 @@ void OpenResourceDialog::DoPopulateTags()
 
 void OpenResourceDialog::DoPopulateWorkspaceFile()
 {
-	wxArrayString tmpArr;
 	wxString curSel = m_textCtrlResourceName->GetValue();
 	if (!curSel.Trim().Trim(false).IsEmpty()) {
 
 		curSel = curSel.MakeLower().Trim().Trim(false);
+		std::multimap<wxString, wxString>::iterator iter  = m_files.lower_bound(curSel);
+		for(; iter != m_files.end(); iter++) {
+			// Take only keys that 'StartsWith'
+			if(!iter->first.StartsWith(curSel))
+				break;
+				
+			wxFileName fn(iter->second);
+			FileExtManager::FileType type = FileExtManager::GetType(fn.GetFullName());
+			int imgId = m_tagImgMap[wxT("text")];
+			switch(type) {
+			case FileExtManager::TypeSourceC:
+				imgId = m_tagImgMap[wxT("c")];
+				break;
 
-		for (size_t i=0; i<m_files.GetCount(); i++) {
-			wxString fileName(m_files.Item(i));
-			wxString fileNameOnly(wxFileName(fileName).GetFullName());
-
-			fileNameOnly.MakeLower();
-
-			//append wildcard at the end
-			if (!curSel.EndsWith(wxT("*"))) {
-				curSel << wxT("*");
+			case FileExtManager::TypeSourceCpp:
+				imgId = m_tagImgMap[wxT("cpp")];
+				break;
+			case FileExtManager::TypeHeader:
+				imgId = m_tagImgMap[wxT("h")];
+				break;
+			case FileExtManager::TypeFormbuilder:
+				imgId = m_tagImgMap[wxT("wxfb")];
+				break;
+			default:
+				break;
 			}
-
-			// FR# [2008133]
-			if (m_checkBoxUsePartialMatching->IsChecked() && !curSel.StartsWith(wxT("*"))) {
-				curSel.Prepend(wxT("*"));
-			}
-
-			if (wxMatchWild(curSel, fileNameOnly)) {
-				// keep the fullpath
-				tmpArr.Add(m_files.Item(i));
-			}
+			DoAppendLine(fn.GetFullName(),
+						 fn.GetFullPath(),
+						 false,
+						 new OpenResourceDialogItemData(fn.GetFullPath(), -1, wxT(""), fn.GetFullName(), wxT("")),
+						 imgId);
 		}
-	}
-
-	// Change was done, update the file list
-	for (size_t i=0; i<tmpArr.GetCount(); i++) {
-		wxFileName fn(tmpArr.Item(i));
-		DoAppendLine(fn.GetFullName(), fn.GetFullPath(), wxT(""), false, new OpenResourceDialogItemData(tmpArr.Item(i), -1, wxT(""), wxGetTranslation(TYPE_WORKSPACE_FILE), wxT(""), wxT("")));
-		
-		if( i == 150 ) {
-			m_staticTextErrorMessage->SetLabel(_("Too many matches, please narrow down your search"));
-			break;
-		}
-	}
-
-	if (m_listOptions->GetItemCount() > 0) {
-		DoSelectItem(0);
 	}
 }
 
@@ -323,7 +253,6 @@ void OpenResourceDialog::Clear()
 		}
 	}
 	m_listOptions->DeleteAllItems();
-	m_staticTextErrorMessage->SetLabel(wxT(""));
 	m_fullText->SetLabel(wxT(""));
 }
 
@@ -331,7 +260,7 @@ void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selecti
 {
 	if ( manager && manager->OpenFile(selection.m_file, wxEmptyString, selection.m_line) ) {
 		IEditor *editor = manager->GetActiveEditor();
-		if ( editor && selection.m_name.IsEmpty() == false) {
+		if ( editor && !selection.m_name.IsEmpty() && !selection.m_pattern.IsEmpty()) {
 			editor->FindAndSelect(selection.m_pattern, selection.m_name, 0, manager->GetNavigationMgr());
 		}
 	}
@@ -392,12 +321,7 @@ void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event)
 
 bool OpenResourceDialogItemData::IsOk() const
 {
-	if (m_resourceType == wxGetTranslation(OpenResourceDialog::TYPE_WORKSPACE_FILE)) {
-		return m_file.IsEmpty() == false;
-	} else {
-		// tag
-		return m_file.IsEmpty() == false && m_name.IsEmpty() == false;
-	}
+	return m_file.IsEmpty() == false;
 }
 
 void OpenResourceDialog::DoSelectItem(int selection, bool makeFirst)
@@ -429,12 +353,12 @@ void OpenResourceDialog::OnItemSelected(wxListEvent& event)
 	}
 }
 
-int OpenResourceDialog::DoAppendLine(const wxString& col1, const wxString& col2, const wxString &col3, bool boldFont, OpenResourceDialogItemData* clientData)
+int OpenResourceDialog::DoAppendLine(const wxString& name, const wxString& fullname, bool boldFont, OpenResourceDialogItemData* clientData, int imgId)
 {
 	int index = AppendListCtrlRow(m_listOptions);
-	SetColumnText(m_listOptions, index, 0, col1);
-	SetColumnText(m_listOptions, index, 1, col2);
-	SetColumnText(m_listOptions, index, 2, col3);
+	SetColumnText(m_listOptions, index, 0, name, imgId);
+	SetColumnText(m_listOptions, index, 1, fullname);
+	
 	m_listOptions->SetItemPtrData(index, (wxUIntPtr)(clientData));
 	
 	// Mark implementations with bold font
@@ -451,4 +375,57 @@ void OpenResourceDialog::OnTimer(wxTimerEvent& event)
 		DoPopulateList();
 		
 	m_needRefresh = false;
+}
+
+int OpenResourceDialog::DoGetTagImgId(TagEntryPtr tag)
+{
+	wxString kind   = tag->GetKind();
+	wxString access = tag->GetAccess();
+	int imgId = m_tagImgMap[wxT("text")];
+	if (kind == wxT("class"))
+		imgId = m_tagImgMap[wxT("class")];
+
+	if (kind == wxT("struct"))
+		imgId = m_tagImgMap[wxT("struct")];
+
+	if (kind == wxT("namespace"))
+		imgId = m_tagImgMap[wxT("namespace")];
+
+	if (kind == wxT("variable"))
+		imgId = m_tagImgMap[wxT("member_public")];
+
+	if (kind == wxT("typedef"))
+		imgId = m_tagImgMap[wxT("typedef")];
+
+	if (kind == wxT("member") && access.Contains(wxT("private")))
+		imgId = m_tagImgMap[wxT("member_private")];
+
+	if (kind == wxT("member") && access.Contains(wxT("public")))
+		imgId = m_tagImgMap[wxT("member_public")];
+
+	if (kind == wxT("member") && access.Contains(wxT("protected")))
+		imgId = m_tagImgMap[wxT("member_protected")];
+
+	if (kind == wxT("member"))
+		imgId = m_tagImgMap[wxT("member_public")];
+
+	if ((kind == wxT("function") || kind == wxT("prototype")) && access.Contains(wxT("private")))
+		imgId = m_tagImgMap[wxT("function_private")];
+
+	if ((kind == wxT("function") || kind == wxT("prototype")) && (access.Contains(wxT("public")) || access.IsEmpty()))
+		imgId = m_tagImgMap[wxT("function_public")];
+
+	if ((kind == wxT("function") || kind == wxT("prototype")) && access.Contains(wxT("protected")))
+		imgId = m_tagImgMap[wxT("function_protected")];
+
+	if (kind == wxT("macro"))
+		imgId = m_tagImgMap[wxT("typedef")];
+
+	if (kind == wxT("enum"))
+		imgId = m_tagImgMap[wxT("enum")];
+
+	if (kind == wxT("enumerator"))
+		imgId = m_tagImgMap[wxT("enumerator")];
+
+	return imgId;
 }

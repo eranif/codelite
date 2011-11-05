@@ -359,17 +359,9 @@ enum {
 	// Search events
 	/////////////////////////////////////////////////
 
-	// User requested to open the resource dialog with the filter set to 'workspace file'
+	// User requested to open the resource dialog
 	wxEVT_CMD_OPEN_RESOURCE,
-	// User requested to open the resource dialog with the filter set to 'function'
-	wxEVT_CMD_OPEN_RESOURCE_FUNCTION,
-	// User requested to open the resource dialog with the filter set to 'Type (class)'
-	wxEVT_CMD_OPEN_RESOURCE_TYPE,
-	// User requested to open the resource dialog with the filter set to 'macros'
-	wxEVT_CMD_OPEN_RESOURCE_MACRO,
-	// User requested to open the resource dialog with the filter set to 'typedef'
-	wxEVT_CMD_OPEN_RESOURCE_TYPEDEF,
-
+	
 	// User requested to perform a raw search for a symbol
 	// Use evt.GetString() to get the searched string
 	wxEVT_CMD_FIND_SYMBOL,

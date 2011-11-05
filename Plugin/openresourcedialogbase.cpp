@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -16,31 +16,14 @@ OpenResourceDialogBase::OpenResourceDialogBase( wxWindow* parent, wxWindowID id,
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
+	m_textCtrlResourceName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2 );
+	mainSizer->Add( m_textCtrlResourceName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 2, 2, 0, 0 );
 	fgSizer1->AddGrowableCol( 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2->Wrap( -1 );
-	m_staticText2->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
-	
-	fgSizer1->Add( m_staticText2, 0, wxALIGN_BOTTOM|wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
-	
-	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Type:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText3->Wrap( -1 );
-	m_staticText3->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
-	
-	fgSizer1->Add( m_staticText3, 0, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
-	
-	m_textCtrlResourceName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2 );
-	fgSizer1->Add( m_textCtrlResourceName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	wxArrayString m_choiceResourceTypeChoices;
-	m_choiceResourceType = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceResourceTypeChoices, 0 );
-	m_choiceResourceType->SetSelection( 0 );
-	fgSizer1->Add( m_choiceResourceType, 0, wxEXPAND|wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	mainSizer->Add( fgSizer1, 0, wxEXPAND, 5 );
 	
@@ -60,19 +43,6 @@ OpenResourceDialogBase::OpenResourceDialogBase( wxWindow* parent, wxWindowID id,
 	
 	mainSizer->Add( sbSizer1, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 	
-	m_staticTextErrorMessage = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticTextErrorMessage->Wrap( -1 );
-	m_staticTextErrorMessage->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
-	m_staticTextErrorMessage->SetForegroundColour( wxColour( 255, 128, 128 ) );
-	
-	mainSizer->Add( m_staticTextErrorMessage, 0, wxALL|wxEXPAND, 5 );
-	
-	m_checkBoxUsePartialMatching = new wxCheckBox( this, wxID_ANY, _("Use partial matching"), wxDefaultPosition, wxDefaultSize, 0 );
-	mainSizer->Add( m_checkBoxUsePartialMatching, 0, wxALL|wxEXPAND, 5 );
-	
-	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	mainSizer->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
-	
 	wxBoxSizer* buttonSizer;
 	buttonSizer = new wxBoxSizer( wxHORIZONTAL );
 	
@@ -83,7 +53,7 @@ OpenResourceDialogBase::OpenResourceDialogBase( wxWindow* parent, wxWindowID id,
 	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttonSizer->Add( m_buttonCancel, 0, wxALL, 5 );
 	
-	mainSizer->Add( buttonSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	mainSizer->Add( buttonSizer, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -94,8 +64,6 @@ OpenResourceDialogBase::OpenResourceDialogBase( wxWindow* parent, wxWindowID id,
 	m_textCtrlResourceName->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( OpenResourceDialogBase::OnKeyDown ), NULL, this );
 	m_textCtrlResourceName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( OpenResourceDialogBase::OnText ), NULL, this );
 	m_textCtrlResourceName->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( OpenResourceDialogBase::OnEnter ), NULL, this );
-	m_choiceResourceType->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( OpenResourceDialogBase::OnType ), NULL, this );
-	m_checkBoxUsePartialMatching->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( OpenResourceDialogBase::OnUsePartialMatching ), NULL, this );
 	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( OpenResourceDialogBase::OnOK ), NULL, this );
 	m_buttonOk->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( OpenResourceDialogBase::OnOKUI ), NULL, this );
 }
@@ -106,8 +74,6 @@ OpenResourceDialogBase::~OpenResourceDialogBase()
 	m_textCtrlResourceName->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( OpenResourceDialogBase::OnKeyDown ), NULL, this );
 	m_textCtrlResourceName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( OpenResourceDialogBase::OnText ), NULL, this );
 	m_textCtrlResourceName->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( OpenResourceDialogBase::OnEnter ), NULL, this );
-	m_choiceResourceType->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( OpenResourceDialogBase::OnType ), NULL, this );
-	m_checkBoxUsePartialMatching->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( OpenResourceDialogBase::OnUsePartialMatching ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( OpenResourceDialogBase::OnOK ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( OpenResourceDialogBase::OnOKUI ), NULL, this );
 	

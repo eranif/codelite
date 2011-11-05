@@ -2742,6 +2742,11 @@ void wxScintilla::SetMultipleSelection(bool multipleSelection){
 	SendMsg(SCI_SETMULTIPLESELECTION, multipleSelection);
 }
 
+void wxScintilla::SetMultiPaste(int opt)
+{
+	SendMsg(SCI_SETMULTIPASTE, opt);
+}
+
 bool wxScintilla::GetMultipleSelection(){
 	return (bool)SendMsg(SCI_GETMULTIPLESELECTION);
 }

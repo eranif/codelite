@@ -590,6 +590,13 @@ public:
 	void GetTagsByKind(std::vector<TagEntryPtr> &tags, const wxArrayString &kind, const wxString &partName = wxEmptyString);
 
 	/**
+	 * @brief return list of tags by name
+	 * @param prefix
+	 * @param tags
+	 */
+	void GetTagsByName(const wxString &prefix, std::vector<TagEntryPtr> &tags);
+	
+	/**
 	 * @brief return list of tags by KIND
 	 * @param tags [output]
 	 * @param kind the kind of the tags to fetch from the database

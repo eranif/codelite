@@ -22,19 +22,17 @@ public:
 	wxString m_file;
 	int      m_line;
 	wxString m_pattern;
-	wxString m_resourceType;
 	wxString m_name;
 	wxString m_scope;
 
 public:
-	OpenResourceDialogItemData() : m_file(wxT("")), m_line(wxNOT_FOUND), m_pattern(wxT("")), m_resourceType(wxT("")), m_name(wxT("")), m_scope(wxT("")) {
+	OpenResourceDialogItemData() : m_file(wxT("")), m_line(wxNOT_FOUND), m_pattern(wxT("")), m_name(wxT("")), m_scope(wxT("")) {
 	}
 
-	OpenResourceDialogItemData(const wxString &file, int line, const wxString &pattern, const wxString &type, const wxString &name, const wxString &scope)
+	OpenResourceDialogItemData(const wxString &file, int line, const wxString &pattern, const wxString &name, const wxString &scope)
 			: m_file(file)
 			, m_line(line)
 			, m_pattern(pattern)
-			, m_resourceType(type)
 			, m_name(name)
 			, m_scope(scope) {
 	}
@@ -48,13 +46,12 @@ public:
 /** Implementing OpenResourceDialogBase */
 class WXDLLIMPEXP_SDK OpenResourceDialog : public OpenResourceDialogBase
 {
-	IManager *                 m_manager;
-	wxString                   m_type;
-	wxArrayString              m_files;
-	std::vector<TagEntryPtr>   m_tags;
-	OpenResourceDialogItemData m_selection;
-	wxTimer*                   m_timer;
-	bool                       m_needRefresh;
+	IManager *                        m_manager;
+	std::multimap<wxString, wxString> m_files;
+	wxTimer*                          m_timer;
+	OpenResourceDialogItemData        m_selection;
+	bool                              m_needRefresh;
+	std::map<wxString, int>           m_tagImgMap;
 	
 protected:
 	void DoPopulateList();
@@ -62,20 +59,12 @@ protected:
 	void DoPopulateTags();
 	void DoSelectItem(int selection, bool makeFirst = true);
 	void Clear();
-	int  DoAppendLine(const wxString &col1, const wxString &col2, const wxString &col3, bool boldFont, OpenResourceDialogItemData *clientData);
+	int  DoAppendLine(const wxString &name, const wxString &fullname, bool boldFont, OpenResourceDialogItemData *clientData, int imgId);
+	int  DoGetTagImgId(TagEntryPtr tag);
 	
-public:
-	static wxString TYPE_WORKSPACE_FILE;
-	static wxString TYPE_CLASS;
-	static wxString TYPE_MACRO;
-	static wxString TYPE_FUNCTION;
-	static wxString TYPE_TYPEDEF;
-	static wxString TYPE_NAMESPACE;
-
 protected:
 	// Handlers for OpenResourceDialogBase events.
 	void OnText( wxCommandEvent& event );
-	void OnType( wxCommandEvent& event );
 	void OnUsePartialMatching( wxCommandEvent& event );
 	void OnEnter( wxCommandEvent& event );
 	void OnItemActivated( wxListEvent& event );
@@ -89,7 +78,7 @@ protected:
 	
 public:
 	/** Constructor */
-	OpenResourceDialog( wxWindow* parent, IManager *manager, const wxString &type, bool allowChangeType = true );
+	OpenResourceDialog( wxWindow* parent, IManager *manager);
 	virtual ~OpenResourceDialog();
 
 	const OpenResourceDialogItemData& GetSelection() const {

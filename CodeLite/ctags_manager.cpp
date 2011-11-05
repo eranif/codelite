@@ -137,10 +137,8 @@ TagsManager::TagsManager()
 	, m_encoding               (wxFONTENCODING_DEFAULT)
 {
 
-#if USE_TAGS_SQLITE3
 	m_db = new TagsStorageSQLite();
 	m_db->SetSingleSearchLimit( MAX_SEARCH_LIMIT );
-#endif
 
 	// Create databases
 	m_ctagsCmd = wxT("  --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
@@ -184,12 +182,7 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
 {
 	m_dbFile = fileName;
 	ITagsStoragePtr db;
-#if USE_TAGS_SQLITE3
 	db = m_db;
-#else
-	db = new TagsStorageSQLite();
-#endif
-
 	db->OpenDatabase(fileName);
 	db->SetEnableCaseInsensitive( !(m_tagsOptions.GetFlags() & CC_IS_CASE_SENSITIVE) );
 	if (db->GetVersion() != db->GetSchemaVersion()) {
@@ -1580,12 +1573,10 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 void TagsManager::CloseDatabase()
 {
 	m_dbFile.Clear();
-#if USE_TAGS_SQLITE3
 	m_db = NULL; // Free the current database
 	m_db = new TagsStorageSQLite();
 	m_db->SetSingleSearchLimit( MAX_SEARCH_LIMIT );
 	m_db->SetUseCache(true);
-#endif
 }
 
 DoxygenComment TagsManager::GenerateDoxygenComment(const wxString &file, const int line, wxChar keyPrefix)
@@ -2738,13 +2729,11 @@ wxArrayString TagsManager::BreakToOuterScopes(const wxString& scope)
 
 ITagsStoragePtr TagsManager::GetDatabase()
 {
-#if USE_TAGS_SQLITE3
 	return m_db;
-#else
-
-	ITagsStoragePtr db(new TagsStorageSQLite());
-	db->OpenDatabase(m_dbFile);
-	return db;
-
-#endif
 }
+
+void TagsManager::GetTagsByName(const wxString& prefix, std::vector<TagEntryPtr>& tags)
+{
+	GetDatabase()->GetTagsByName(prefix, tags);
+}
+

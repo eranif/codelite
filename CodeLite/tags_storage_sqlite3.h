@@ -441,6 +441,10 @@ public:
 	virtual void GetTagsByScopeAndKind(const wxString &scope, const wxArrayString &kinds, std::vector<TagEntryPtr> &tags, bool applyLimit = true);
 
 	/**
+	 * @see ITagsStorage::GetTagsByName
+	 */
+	virtual void GetTagsByName(const wxString& prefix, std::vector<TagEntryPtr> &tags, bool exactMatch = false);
+	/**
 	 * @brief return list of tags by scopes and kinds
 	 * @param scopes array of possible scopes
 	 * @param kinds array of possible kinds

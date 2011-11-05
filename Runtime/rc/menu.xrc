@@ -307,18 +307,6 @@
 			<object class="wxMenuItem" name="find_resource">
                 <label>Find &amp;Resource...</label>
             </object>
-            <object class="wxMenuItem" name="find_type">
-                <label>Find &amp;Type...</label>
-            </object>
-			<object class="wxMenuItem" name="find_function">
-				<label>Find &amp;Function...</label>
-			</object>
-			<object class="wxMenuItem" name="find_macro">
-				<label>Find &amp;Macro...</label>
-			</object>
-			<object class="wxMenuItem" name="find_typedef">
-				<label>Find Type&amp;def...</label>
-			</object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="find_symbol">
                 <label>&amp;Quick Outline...</label>

@@ -287,7 +287,6 @@ void LEditor::SetProperties()
 	SetRectangularSelectionModifier(wxSCI_SCMOD_CTRL);
 	SetAdditionalSelectionTyping(true);
 	SetVirtualSpaceOptions(1 /* SCVS_RECTANGULARSELECTION=1 | SCVS_USERACCESSIBLE=2 */ );
-
 	OptionsConfigPtr options = GetOptions();
 	CallTipUseStyle(1);
 
@@ -3726,7 +3725,9 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 	size_t flags = wxSD_MATCHCASE;
 
 	pattern.Trim();
-
+	if(pattern.IsEmpty())
+		return false;
+		
 	FindReplaceData data;
 	data.SetFindString ( pattern );
 	data.SetFlags ( flags );

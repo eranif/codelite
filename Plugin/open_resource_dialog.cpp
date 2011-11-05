@@ -94,8 +94,19 @@ OpenResourceDialog::~OpenResourceDialog()
 
 void OpenResourceDialog::OnText( wxCommandEvent& event )
 {
-	m_needRefresh = true;
 	event.Skip();
+	wxString filter = m_textCtrlResourceName->GetValue();
+	filter.Trim().Trim(false);
+	
+	if(filter.IsEmpty()) {
+		// The filter content is cleared, delete all entries
+		Clear();
+		m_needRefresh = false;
+		
+	} else {
+		m_needRefresh = true;
+		
+	}
 }
 
 void OpenResourceDialog::OnUsePartialMatching( wxCommandEvent& event )

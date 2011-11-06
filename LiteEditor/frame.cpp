@@ -25,6 +25,7 @@
 #include "precompiled_header.h"
 #include "bitmap_loader.h"
 #include <wx/wupdlock.h>
+#include "file_logger.h"
 #include "cl_aui_tb_are.h"
 #include "open_resource_dialog.h" // New open resource
 #include <wx/busyinfo.h>
@@ -246,6 +247,8 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_MENU(XRCID("view_welcome_page"),        clMainFrame::OnShowWelcomePage)
 	EVT_MENU(XRCID("view_welcome_page_at_startup"), clMainFrame::OnLoadWelcomePage)
 	EVT_MENU(XRCID("show_nav_toolbar"),         clMainFrame::OnShowNavBar)
+	EVT_MENU(XRCID("toogle_main_toolbars"),     clMainFrame::OnToggleMainTBars)
+	EVT_MENU(XRCID("toogle_plugin_toolbars"),   clMainFrame::OnTogglePluginTBars)
 	EVT_MENU(XRCID("toggle_panes"),             clMainFrame::OnTogglePanes)
 	EVT_MENU_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, clMainFrame::DispatchCommandEvent)
 
@@ -2070,7 +2073,7 @@ void clMainFrame::OnViewToolbar(wxCommandEvent &event)
 {
 	std::map<int, wxString>::iterator iter = m_toolbars.find(event.GetId());
 	if (iter != m_toolbars.end()) {
-		ViewPane(iter->second, event);
+		ViewPane(iter->second, event.IsChecked());
 	}
 }
 
@@ -2083,11 +2086,82 @@ void clMainFrame::OnViewToolbarUI(wxUpdateUIEvent &event)
 	}
 }
 
+void clMainFrame::OnToggleMainTBars(wxCommandEvent &event)
+{
+	wxUnusedVar(event);
+	ToggleToolBars(true);
+}
+
+void clMainFrame::OnTogglePluginTBars(wxCommandEvent &event)
+{
+	wxUnusedVar(event);
+	ToggleToolBars(false);
+}
+
+void clMainFrame::ToggleToolBars(bool std)
+{
+	wxMenu *menu;
+	wxMenuItem* item = GetMenuBar()->FindItem(XRCID("show_std_toolbar"), &menu);
+	if (!item || !item->IsCheckable()) {
+		CL_DEBUG1(wxT("In clMainFrame::ToggleToolBars: menuitem not found"));
+		return;
+	}
+	
+	if (std) {
+		// The standard items are the first 4
+		// Use the first menuitem's state to decide whether to show or hide them all
+		bool checked = item->IsChecked();
+
+		if (!menu || (menu->GetMenuItemCount() < 4) ) {
+			CL_DEBUG1(wxT("In clMainFrame::ToggleToolBars: menu not found, or has too few items"));
+			return;
+		}
+		
+		for (size_t n=0; n < 4; ++n) {
+			wxMenuItem* item = menu->FindItemByPosition(n);
+			if (!item || !item->IsCheckable()) {
+				CL_DEBUG1(wxT("In clMainFrame::ToggleToolBars: standard menuitem not found, or is no longer checkable :/"));
+				continue;
+			}
+
+			std::map<int, wxString>::iterator iter = m_toolbars.find(item->GetId());
+			if (iter != m_toolbars.end()) {
+				ViewPane(iter->second, !checked);
+			}
+		}
+		return;
+	}
+	
+	// We don't know in advance the number of plugin toolbars, but we do know that they are at the end, following a separator
+	// So show/hide them backwards until we hit something uncheckable
+	size_t count = menu->GetMenuItemCount();
+	if (count < 8) {
+		CL_DEBUG1(wxT("In clMainFrame::ToggleToolBars: An implausibly small number of non-plugin menuitem found"));
+		return;
+	}
+
+	bool checked;
+	for (size_t n=count; n; --n) {
+		wxMenuItem* item = menu->FindItemByPosition(n-1);
+		if (!item || !item->IsCheckable()) {
+			return;
+		}
+		// Arbitrarily use the last menuitem's state to decide whether to show or hide them all
+		if (n == count) {
+			checked = item->IsChecked();
+		}
+		std::map<int, wxString>::iterator iter = m_toolbars.find(item->GetId());
+		if (iter != m_toolbars.end()) {
+			ViewPane(iter->second, !checked);
+		}
+	}
+}
+
 void clMainFrame::OnViewPane(wxCommandEvent &event)
 {
 	std::map<int, wxString>::iterator iter = m_panes.find(event.GetId());
 	if (iter != m_panes.end()) {
-		ViewPane(iter->second, event);
+		ViewPane(iter->second, event.IsChecked());
 	}
 }
 
@@ -2100,15 +2174,15 @@ void clMainFrame::OnViewPaneUI(wxUpdateUIEvent &event)
 	}
 }
 
-void clMainFrame::ViewPane(const wxString &paneName, wxCommandEvent &event)
+void clMainFrame::ViewPane(const wxString &paneName, bool checked)
 {
 	if (paneName == wxT("Output View")) {
-		ManagerST::Get()->ToggleOutputPane( !event.IsChecked() );
+		ManagerST::Get()->ToggleOutputPane( checked );
 
 	} else {
 		wxAuiPaneInfo &info = m_mgr.GetPane(paneName);
 		if (info.IsOk()) {
-			if ( event.IsChecked() ) {
+			if ( checked ) {
 				DockablePaneMenuManager::HackShowPane(info,&m_mgr);
 			} else {
 				DockablePaneMenuManager::HackHidePane(true,info,&m_mgr);

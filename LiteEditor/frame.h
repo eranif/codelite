@@ -309,9 +309,10 @@ private:
 	void CreateToolbars16();
 	void CreateNativeToolbar24();
 	void CreateNativeToolbar16();
+	void ToggleToolBars(bool all);
 	
 	void ViewPaneUI(const wxString &paneName, wxUpdateUIEvent&event);
-	void ViewPane(const wxString &paneName, wxCommandEvent &event);
+	void ViewPane(const wxString &paneName, bool checked);
 	void CreateViewAsSubMenu();
 	void CreateRecentlyOpenedFilesMenu();
 	void CreateWelcomePage();
@@ -363,6 +364,8 @@ protected:
 	void OnViewShowTabgroupsUI(wxUpdateUIEvent &event);
 	
 	void OnViewOptions(wxCommandEvent &event);
+	void OnToggleMainTBars(wxCommandEvent &event);
+	void OnTogglePluginTBars(wxCommandEvent &event);
 	void OnTogglePanes(wxCommandEvent &event);
 	void OnProjectNewWorkspace(wxCommandEvent &event);
 	void OnProjectNewProject(wxCommandEvent &event);

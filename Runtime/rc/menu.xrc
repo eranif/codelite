@@ -256,6 +256,15 @@
 					<checkable>1</checkable>
 				</object>
 				<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+				<object class="wxMenuItem" name="toogle_main_toolbars">
+					<label>Show/hide main toolbars</label>
+					<checkable>0</checkable>
+				</object>
+				<object class="wxMenuItem" name="toogle_plugin_toolbars">
+					<label>Show/hide all plugin toolbars</label>
+					<checkable>0</checkable>
+				</object>
+				<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			</object>
 
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>

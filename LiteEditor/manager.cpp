@@ -1395,6 +1395,8 @@ void Manager::ToggleOutputPane(bool hide)
 
 bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 {
+	clMainFrame::Get()->ViewPane(wxT("Output View"), true);
+	
 	// make the output pane visible
 	ToggleOutputPane( false );
 

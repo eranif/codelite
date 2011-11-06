@@ -2106,7 +2106,7 @@ void clMainFrame::ToggleToolBars(bool std)
 		CL_DEBUG1(wxT("In clMainFrame::ToggleToolBars: menuitem not found"));
 		return;
 	}
-	
+
 	if (std) {
 		// The standard items are the first 4
 		// Use the first menuitem's state to decide whether to show or hide them all
@@ -2116,7 +2116,7 @@ void clMainFrame::ToggleToolBars(bool std)
 			CL_DEBUG1(wxT("In clMainFrame::ToggleToolBars: menu not found, or has too few items"));
 			return;
 		}
-		
+
 		for (size_t n=0; n < 4; ++n) {
 			wxMenuItem* item = menu->FindItemByPosition(n);
 			if (!item || !item->IsCheckable()) {
@@ -2131,7 +2131,7 @@ void clMainFrame::ToggleToolBars(bool std)
 		}
 		return;
 	}
-	
+
 	// We don't know in advance the number of plugin toolbars, but we do know that they are at the end, following a separator
 	// So show/hide them backwards until we hit something uncheckable
 	size_t count = menu->GetMenuItemCount();
@@ -2176,17 +2176,12 @@ void clMainFrame::OnViewPaneUI(wxUpdateUIEvent &event)
 
 void clMainFrame::ViewPane(const wxString &paneName, bool checked)
 {
-	if (paneName == wxT("Output View")) {
-		ManagerST::Get()->ToggleOutputPane( checked );
-
-	} else {
-		wxAuiPaneInfo &info = m_mgr.GetPane(paneName);
-		if (info.IsOk()) {
-			if ( checked ) {
-				DockablePaneMenuManager::HackShowPane(info,&m_mgr);
-			} else {
-				DockablePaneMenuManager::HackHidePane(true,info,&m_mgr);
-			}
+	wxAuiPaneInfo &info = m_mgr.GetPane(paneName);
+	if (info.IsOk()) {
+		if ( checked ) {
+			DockablePaneMenuManager::HackShowPane(info,&m_mgr);
+		} else {
+			DockablePaneMenuManager::HackHidePane(true,info,&m_mgr);
 		}
 	}
 

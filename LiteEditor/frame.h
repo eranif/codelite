@@ -116,12 +116,12 @@ public:
 	 * \brief update various AUI parameters like Output Pane View caption visible and other
 	 */
 	void UpdateAUI();
-	
+
 	/**
 	 * @brief set the AUI manager flags as dictated from the configuration
 	 */
 	void SetAUIManagerFlags();
-	
+
 
 	/**
 	 * @brief update the environment status message:
@@ -303,16 +303,15 @@ private:
 	 */
 	void DispatchCommandEvent(wxCommandEvent &event);
 	void DispatchUpdateUIEvent(wxUpdateUIEvent &event);
-	
+
 	/// Toolbar management
 	void CreateToolbars24();
 	void CreateToolbars16();
 	void CreateNativeToolbar24();
 	void CreateNativeToolbar16();
 	void ToggleToolBars(bool all);
-	
+
 	void ViewPaneUI(const wxString &paneName, wxUpdateUIEvent&event);
-	void ViewPane(const wxString &paneName, bool checked);
 	void CreateViewAsSubMenu();
 	void CreateRecentlyOpenedFilesMenu();
 	void CreateWelcomePage();
@@ -321,6 +320,9 @@ private:
 	void DoEnableWorkspaceViewFlag(bool enable, int flag);
 	bool IsWorkspaceViewFlagEnabled(int flag);
 	
+public:
+	void ViewPane(const wxString &paneName, bool checked);
+
 protected:
 	//----------------------------------------------------
 	// event handlers
@@ -330,7 +332,7 @@ protected:
     void OnBuildEnded(wxCommandEvent &event);
 	void OnQuit(wxCommandEvent& WXUNUSED(event));
 	void OnClose(wxCloseEvent &event);
-	
+
 	void OnSave(wxCommandEvent& event);
 	void OnSaveAs(wxCommandEvent& event);
 	void OnFileReload(wxCommandEvent& event);
@@ -352,7 +354,7 @@ protected:
 	void OnIncrementalSearch(wxCommandEvent &event);
 	void OnViewToolbar(wxCommandEvent &event);
 	void OnViewToolbarUI(wxUpdateUIEvent &event);
-	
+
 	// View -> Workspace View -> ...
 	void OnViewShowWorkspaceTab(wxCommandEvent &e);
 	void OnViewShowWorkspaceTabUI(wxUpdateUIEvent &event);
@@ -362,7 +364,7 @@ protected:
 	void OnViewShowTabsUI(wxUpdateUIEvent &event);
 	void OnViewShowTabgroups(wxCommandEvent &e);
 	void OnViewShowTabgroupsUI(wxUpdateUIEvent &event);
-	
+
 	void OnViewOptions(wxCommandEvent &event);
 	void OnToggleMainTBars(wxCommandEvent &event);
 	void OnTogglePluginTBars(wxCommandEvent &event);
@@ -413,7 +415,7 @@ protected:
 	void OnPreviousFiFMatchUI(wxUpdateUIEvent &e);
 	void OnGrepWord          (wxCommandEvent &e);
 	void OnGrepWordUI        (wxUpdateUIEvent& e);
-	
+
 	//handle symbol tree events
 	void OnParsingThreadDone          (wxCommandEvent  &e);
 	void OnParsingThreadMessage       (wxCommandEvent  &e);
@@ -500,7 +502,7 @@ protected:
 	void OnLoadPerspective(wxCommandEvent &e);
 	void OnWorkspaceSettings(wxCommandEvent &e);
 	void OnWorkspaceEditorPreferences(wxCommandEvent &e);
-	
+
 	// Clang
 	void OnPchCacheStarted(wxCommandEvent &e);
 	void OnPchCacheEnded  (wxCommandEvent &e);

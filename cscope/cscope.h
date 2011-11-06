@@ -60,17 +60,18 @@ protected:
 
 	//Event handlers
 	//------------------------------------------
-	void OnFindSymbol                      (wxCommandEvent &e);
-	void OnFindUserInsertedSymbol          (wxCommandEvent &e);
-	void OnFindGlobalDefinition            (wxCommandEvent &e);
-	void OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e);
-	void OnFindFunctionsCallingThisFunction(wxCommandEvent &e);
-	void OnCreateDB                        (wxCommandEvent &e);
-	void OnDoSettings                      (wxCommandEvent &e);
-	void OnCScopeThreadEnded               (wxCommandEvent &e);
-	void OnCScopeThreadUpdateStatus        (wxCommandEvent &e);
-	void OnCscopeUI                        (wxUpdateUIEvent &e);
-	void OnWorkspaceOpenUI                 (wxUpdateUIEvent &e);
+	void OnFindSymbol                       (wxCommandEvent &e);
+	void OnFindUserInsertedSymbol           (wxCommandEvent &e);
+	void OnFindGlobalDefinition             (wxCommandEvent &e);
+	void OnFindFunctionsCalledByThisFunction(wxCommandEvent &e);
+	void OnFindFunctionsCallingThisFunction (wxCommandEvent &e);
+	void OnFindFilesIncludingThisFname      (wxCommandEvent &e);
+	void OnCreateDB                         (wxCommandEvent &e);
+	void OnDoSettings                       (wxCommandEvent &e);
+	void OnCScopeThreadEnded                (wxCommandEvent &e);
+	void OnCScopeThreadUpdateStatus         (wxCommandEvent &e);
+	void OnCscopeUI                         (wxUpdateUIEvent &e);
+	void OnWorkspaceOpenUI                  (wxUpdateUIEvent &e);
 };
 
 #endif //Cscope

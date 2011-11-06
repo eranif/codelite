@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "csscopeconfdata.h"
 #include "globals.h"
+#include "plugin.h"
 #include <wx/app.h>
 #include <wx/log.h>
 #include "cscopetab.h"
@@ -71,6 +72,8 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 	m_checkBoxRevertedIndex->SetValue(data.GetBuildRevertedIndexOption());
 	SetMessage(_("Ready"), 0);
 	
+	Clear(); // To make the Clear button UpdateUI work initially
+
 	m_treeCtrlResults->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(CscopeTab::OnItemActivated), NULL, this);
 }
 
@@ -87,6 +90,7 @@ void CscopeTab::Clear()
 		FreeTable();
 	}
 	m_treeCtrlResults->DeleteChildren(m_treeCtrlResults->GetRootItem());
+	m_treeCtrlResults->SetItemHasChildren(m_treeCtrlResults->GetRootItem(), false); // Otherwise the Clear button UpdateUI fails
 }
 
 void CscopeTab::BuildTable(CscopeResultTable *table)
@@ -240,6 +244,7 @@ void CscopeTab::OnClearResults(wxCommandEvent &e)
 
 void CscopeTab::OnClearResultsUI(wxUpdateUIEvent& e)
 {
+	CHECK_CL_SHUTDOWN();
 	e.Enable(m_treeCtrlResults->HasChildren( m_treeCtrlResults->GetRootItem()));
 }
 
@@ -250,4 +255,18 @@ void CscopeTab::OnChangeSearchScope(wxCommandEvent& e)
 	data.SetRebuildDbOption(m_checkBoxUpdateDb->IsChecked());
 	data.SetBuildRevertedIndexOption(m_checkBoxRevertedIndex->IsChecked());
 	m_mgr->GetConfigTool()->WriteObject(wxT("CscopeSettings"), &data);
+}
+
+void CscopeTab::OnCreateDB(wxCommandEvent &e)
+{
+	// There's no easy way afaict to reach the class Cscope direct, so...
+	e.SetId(XRCID("cscope_create_db"));
+	e.SetEventType(wxEVT_COMMAND_MENU_SELECTED);
+	wxPostEvent(m_mgr->GetTheApp(), e);
+}
+
+void CscopeTab::OnWorkspaceOpenUI(wxUpdateUIEvent& e)
+{
+	CHECK_CL_SHUTDOWN();
+	e.Enable(m_mgr->IsWorkspaceOpen());
 }

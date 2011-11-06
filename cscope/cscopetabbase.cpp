@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Nov 18 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -26,8 +26,8 @@ CscopeTabBase::CscopeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_choiceSearchScope->SetSelection( 0 );
 	bSizer31->Add( m_choiceSearchScope, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_checkBoxUpdateDb = new wxCheckBox( this, wxID_ANY, _("Update Db"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxUpdateDb->SetToolTip( _("Update the database before executing any CScope command") );
+	m_checkBoxUpdateDb = new wxCheckBox( this, wxID_ANY, _("Update Db if stale"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxUpdateDb->SetToolTip( _("If checked, before executing a command CScope will look for any changed files and, if found, try to update the database. In practice this seems unreliable.") );
 	
 	bSizer31->Add( m_checkBoxUpdateDb, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -36,8 +36,16 @@ CscopeTabBase::CscopeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	
 	bSizer31->Add( m_checkBoxRevertedIndex, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
+	m_buttonUpdateDbNow = new wxButton( this, wxID_ANY, _("&Update Database"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonUpdateDbNow->SetToolTip( _("Perform an immediate database update") );
+	
+	bSizer31->Add( m_buttonUpdateDbNow, 0, wxRIGHT|wxLEFT|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
+	bSizer31->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
+	
 	m_buttonClear = new wxButton( this, wxID_ANY, _("&Clear Results"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer31->Add( m_buttonClear, 0, wxRIGHT|wxLEFT|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer31->Add( m_buttonClear, 0, wxALL, 5 );
 	
 	mainSizer->Add( bSizer31, 0, wxALIGN_RIGHT|wxEXPAND, 5 );
 	
@@ -60,11 +68,16 @@ CscopeTabBase::CscopeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
+	mainSizer->Fit( this );
 	
 	// Connect Events
 	m_choiceSearchScope->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( CscopeTabBase::OnChangeSearchScope ), NULL, this );
 	m_checkBoxUpdateDb->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CscopeTabBase::OnChangeSearchScope ), NULL, this );
+	m_checkBoxUpdateDb->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CscopeTabBase::OnWorkspaceOpenUI ), NULL, this );
 	m_checkBoxRevertedIndex->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CscopeTabBase::OnChangeSearchScope ), NULL, this );
+	m_checkBoxRevertedIndex->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CscopeTabBase::OnWorkspaceOpenUI ), NULL, this );
+	m_buttonUpdateDbNow->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CscopeTabBase::OnCreateDB ), NULL, this );
+	m_buttonUpdateDbNow->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CscopeTabBase::OnWorkspaceOpenUI ), NULL, this );
 	m_buttonClear->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CscopeTabBase::OnClearResults ), NULL, this );
 	m_buttonClear->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CscopeTabBase::OnClearResultsUI ), NULL, this );
 }
@@ -74,7 +87,11 @@ CscopeTabBase::~CscopeTabBase()
 	// Disconnect Events
 	m_choiceSearchScope->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( CscopeTabBase::OnChangeSearchScope ), NULL, this );
 	m_checkBoxUpdateDb->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CscopeTabBase::OnChangeSearchScope ), NULL, this );
+	m_checkBoxUpdateDb->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CscopeTabBase::OnWorkspaceOpenUI ), NULL, this );
 	m_checkBoxRevertedIndex->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CscopeTabBase::OnChangeSearchScope ), NULL, this );
+	m_checkBoxRevertedIndex->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CscopeTabBase::OnWorkspaceOpenUI ), NULL, this );
+	m_buttonUpdateDbNow->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CscopeTabBase::OnCreateDB ), NULL, this );
+	m_buttonUpdateDbNow->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CscopeTabBase::OnWorkspaceOpenUI ), NULL, this );
 	m_buttonClear->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CscopeTabBase::OnClearResults ), NULL, this );
 	m_buttonClear->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CscopeTabBase::OnClearResultsUI ), NULL, this );
 	

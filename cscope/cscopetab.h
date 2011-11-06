@@ -73,6 +73,8 @@ protected:
 	void OnClearResults(wxCommandEvent &e);
 	void OnClearResultsUI(wxUpdateUIEvent &e);
 	void OnChangeSearchScope(wxCommandEvent &e);
+	void OnCreateDB(wxCommandEvent &e);
+	void OnWorkspaceOpenUI(wxUpdateUIEvent &e);
 
 public:
 	/** Constructor */

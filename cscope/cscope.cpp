@@ -409,10 +409,19 @@ void Cscope::OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e)
 	m_cscopeWin->Clear();
 	wxString list_file = DoCreateListFile(false);
 
+	// get the rebuild option
+	wxString rebuildOption = wxT("");
+	CScopeConfData settings;
+
+	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+	if (!settings.GetRebuildOption()) {
+		rebuildOption = wxT(" -d");
+	}
+
 	//Do the actual search
 	wxString command;
 	wxString endMsg;
-	command << GetCscopeExeName() << wxT(" -d -L -2 ") << word << wxT(" -i ") << list_file;
+	command << GetCscopeExeName() << rebuildOption << wxT(" -L -2 ") << word << wxT(" -i ") << list_file;
 	endMsg << _("cscope results for: functions called by '") << word << wxT("'");
 	DoCscopeCommand(command, word, endMsg);
 }
@@ -427,10 +436,19 @@ void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent &e)
 	m_cscopeWin->Clear();
 	wxString list_file = DoCreateListFile(false);
 
+	// get the rebuild option
+	wxString rebuildOption = wxT("");
+	CScopeConfData settings;
+
+	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+	if (!settings.GetRebuildOption()) {
+		rebuildOption = wxT(" -d");
+	}
+
 	//Do the actual search
 	wxString command;
 	wxString endMsg;
-	command << GetCscopeExeName() << wxT(" -d -L -3 ") << word << wxT(" -i ") << list_file;
+	command << GetCscopeExeName() << rebuildOption << wxT(" -L -3 ") << word << wxT(" -i ") << list_file;
 	endMsg << _("cscope results for: functions calling '") << word << wxT("'");
 	DoCscopeCommand(command, word, endMsg);
 }

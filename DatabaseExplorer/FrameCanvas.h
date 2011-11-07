@@ -39,7 +39,6 @@ class FrameCanvas : public wxSFShapeCanvas {
 		virtual void OnPaste(const ShapeList& pasted);
 
 		void OnPopupClick(wxCommandEvent &evt);
-		void OnSelectAll(wxCommandEvent &evt);
 
 		wxString GetSqlScript();
 		void UpdateERD();
@@ -47,6 +46,7 @@ class FrameCanvas : public wxSFShapeCanvas {
 	protected:
 		ErdPanel* m_pParentPanel;
 		IDbAdapter* m_pDbAdapter;
+		wxSFShapeBase *m_pSelectedShape;
 
 		wxString m_srcCol;
 		wxString m_dstCol;

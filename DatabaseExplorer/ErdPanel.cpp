@@ -1,5 +1,8 @@
 #include "ErdPanel.h"
 #include "Art.h"
+#include "databaseexplorer.h"
+
+#include <wx/xrc/xmlres.h>
 
 XS_IMPLEMENT_CLONABLE_CLASS(ErdInfo, xsSerializable)
 
@@ -22,39 +25,42 @@ ErdInfo::ErdInfo(const ErdInfo& obj)
 IMPLEMENT_DYNAMIC_CLASS(ErdPanel,_ErdPanel)
 
 BEGIN_EVENT_TABLE(ErdPanel, _ErdPanel)
-	EVT_TOOL(wxID_OPEN, ErdPanel::OnLoad)
-	EVT_TOOL(wxID_SAVE, ErdPanel::OnSave)
-	EVT_TOOL(IDS_ERD_COMMIT, ErdPanel::OnCommit)
-	EVT_TOOL(IDS_ERD_SAVE_SQL, ErdPanel::OnSaveSql)
-	EVT_TOOL(IDS_ERD_SAVE_BMP, ErdPanel::OnSaveImg)
-	EVT_TOOL(IDT_ERD_ZOOM100, ErdPanel::OnZoom100)
-	EVT_TOOL(IDT_ERD_ZOOMALL, ErdPanel::OnZoomAll)
-	EVT_TOOL(wxID_PRINT, ErdPanel::OnPrint)
-	EVT_TOOL(wxID_PREVIEW, ErdPanel::OnPreview)
-	EVT_TOOL(wxID_COPY, ErdPanel::OnCopy)
-	EVT_TOOL(wxID_CUT, ErdPanel::OnCut)
-	EVT_TOOL(wxID_PASTE, ErdPanel::OnPaste)
-	EVT_TOOL(wxID_UNDO, ErdPanel::OnUndo)
-	EVT_TOOL(wxID_REDO, ErdPanel::OnRedo)
-	EVT_TOOL(IDT_ERD_ALIGN_CIRCLE, ErdPanel::OnAlignCircle)
-	EVT_TOOL(IDT_ERD_ALIGN_MESH, ErdPanel::OnAlignMesh)
-	EVT_TOOL(IDT_ERD_ALIGN_VTREE, ErdPanel::OnAlignVTree)
-	EVT_TOOL(IDT_ERD_ALIGN_HTREE, ErdPanel::OnAlignHTree)
-	EVT_UPDATE_UI(wxID_COPY, ErdPanel::OnUpdateCopy)
-	EVT_UPDATE_UI(wxID_CUT, ErdPanel::OnUpdateCut)
-	EVT_UPDATE_UI(wxID_PASTE, ErdPanel::OnUpdatePaste)
-	EVT_UPDATE_UI(wxID_UNDO, ErdPanel::OnUpdateUndo)
-	EVT_UPDATE_UI(wxID_REDO, ErdPanel::OnUpdateRedo)
+	EVT_TOOL(XRCID("IDT_OPEN"), ErdPanel::OnLoad)
+	EVT_TOOL(XRCID("IDT_SAVE"), ErdPanel::OnSave)
+	EVT_TOOL(XRCID("IDT_ERD_COMMIT"), ErdPanel::OnCommit)
+	EVT_TOOL(XRCID("IDT_ERD_SAVE_SQL"), ErdPanel::OnSaveSql)
+	EVT_TOOL(XRCID("IDT_ERD_SAVE_BMP"), ErdPanel::OnSaveImg)
+	EVT_TOOL(XRCID("IDT_ERD_ZOOM100"), ErdPanel::OnZoom100)
+	EVT_TOOL(XRCID("IDT_ERD_ZOOMALL"), ErdPanel::OnZoomAll)
+	EVT_TOOL(XRCID("IDT_PRINT"), ErdPanel::OnPrint)
+	EVT_TOOL(XRCID("IDT_PREVIEW"), ErdPanel::OnPreview)
+	EVT_TOOL(XRCID("IDT_COPY"), ErdPanel::OnCopy)
+	EVT_TOOL(XRCID("IDT_CUT"), ErdPanel::OnCut)
+	EVT_TOOL(XRCID("IDT_PASTE"), ErdPanel::OnPaste)
+	EVT_TOOL(XRCID("IDT_UNDO"), ErdPanel::OnUndo)
+	EVT_TOOL(XRCID("IDT_REDO"), ErdPanel::OnRedo)
+	EVT_TOOL(XRCID("IDT_SELECTALL"), ErdPanel::OnSelectAll)
+	EVT_TOOL(XRCID("IDT_ERD_ALIGN_CIRCLE"), ErdPanel::OnAlignCircle)
+	EVT_TOOL(XRCID("IDT_ERD_ALIGN_MESH"), ErdPanel::OnAlignMesh)
+	EVT_TOOL(XRCID("IDT_ERD_ALIGN_VTREE"), ErdPanel::OnAlignVTree)
+	EVT_TOOL(XRCID("IDT_ERD_ALIGN_HTREE"), ErdPanel::OnAlignHTree)
+	
+	EVT_UPDATE_UI(XRCID("IDT_COPY"), ErdPanel::OnUpdateCopy)
+	EVT_UPDATE_UI(XRCID("IDT_CUT"), ErdPanel::OnUpdateCut)
+	EVT_UPDATE_UI(XRCID("IDT_PASTE"), ErdPanel::OnUpdatePaste)
+	EVT_UPDATE_UI(XRCID("IDT_UNDO"), ErdPanel::OnUpdateUndo)
+	EVT_UPDATE_UI(XRCID("IDT_REDO"), ErdPanel::OnUpdateRedo)
 	// The following were originally EVT_*_RANGEs, but these won't work with XRCIDs in wx2.9
 	// and only worked by chance in earlier versions: see http://trac.wxwidgets.org/ticket/11431
-	EVT_TOOL(IDT_ERD_TOOL, ErdPanel::OnTool)
-	EVT_TOOL(IDT_ERD_TABLE, ErdPanel::OnTool)
-	EVT_TOOL(IDT_ERD_LINE, ErdPanel::OnTool)
-	EVT_TOOL(IDT_ERD_VIEW, ErdPanel::OnTool)
-	EVT_UPDATE_UI(IDT_ERD_TOOL, ErdPanel::OnToolUpdate)
-	EVT_UPDATE_UI(IDT_ERD_TABLE, ErdPanel::OnToolUpdate)
-	EVT_UPDATE_UI(IDT_ERD_LINE, ErdPanel::OnToolUpdate)
-	EVT_UPDATE_UI(IDT_ERD_VIEW, ErdPanel::OnToolUpdate)
+	EVT_TOOL(XRCID("IDT_ERD_TOOL"), ErdPanel::OnTool)
+	EVT_TOOL(XRCID("IDT_ERD_TABLE"), ErdPanel::OnTool)
+	EVT_TOOL(XRCID("IDT_ERD_LINE"), ErdPanel::OnTool)
+	EVT_TOOL(XRCID("IDT_ERD_VIEW"), ErdPanel::OnTool)
+	
+	EVT_UPDATE_UI(XRCID("IDT_ERD_TOOL"), ErdPanel::OnToolUpdate)
+	EVT_UPDATE_UI(XRCID("IDT_ERD_TABLE"), ErdPanel::OnToolUpdate)
+	EVT_UPDATE_UI(XRCID("IDT_ERD_LINE"), ErdPanel::OnToolUpdate)
+	EVT_UPDATE_UI(XRCID("IDT_ERD_VIEW"), ErdPanel::OnToolUpdate)
 	
 END_EVENT_TABLE()
 
@@ -123,51 +129,59 @@ void ErdPanel::Init(wxWindow* parent, IDbAdapter* dbAdapter) {
 	m_wxsfPanel->Layout();
 	
 	m_nToolMode = modeDESIGN;
-
+	
 	m_toolBarErd->SetToolBitmapSize(wxSize(16, 15));
-	m_toolBarErd->AddTool(wxID_OPEN, _("Open"), wxBitmap(fileopen_xpm),  _("Open diagram"));
-	m_toolBarErd->AddTool(wxID_SAVE, _("Save"), wxBitmap(filesave_xpm),  _("Save diagram"));
-	m_toolBarErd->AddTool(IDS_ERD_SAVE_SQL, _("Save SQL"), wxBitmap(export_sql_xpm),_("Save SQL"));
-	m_toolBarErd->AddTool(IDS_ERD_COMMIT, _("Commit ERD"), wxBitmap(export_db_xpm),_("Commit ERD"));	
-	m_toolBarErd->AddTool(IDS_ERD_SAVE_BMP, _("Save BMP"), wxBitmap(export_img_xpm),_("Save BMP"));
+	m_toolBarErd->AddTool(XRCID("IDT_OPEN"), _("Open"), wxBitmap(fileopen_xpm),  _("Open diagram"));
+	m_toolBarErd->AddTool(XRCID("IDT_SAVE"), _("Save"), wxBitmap(filesave_xpm),  _("Save diagram"));
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_SAVE_SQL"), _("Save SQL"), wxBitmap(export_sql_xpm),_("Save SQL"));
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_COMMIT"), _("Commit ERD"), wxBitmap(export_db_xpm),_("Commit ERD"));	
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_SAVE_BMP"), _("Save BMP"), wxBitmap(export_img_xpm),_("Save BMP"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddTool(wxID_PRINT, _("Print"), wxBitmap(fileprint_xpm),  _("Print diagram"));
-	m_toolBarErd->AddTool(wxID_PREVIEW, _("Preview"), wxBitmap(filepreview_xpm),  _("Print preview"));
+	m_toolBarErd->AddTool(XRCID("IDT_PRINT"), _("Print"), wxBitmap(fileprint_xpm),  _("Print diagram"));
+	m_toolBarErd->AddTool(XRCID("IDT_PREVIEW"), _("Preview"), wxBitmap(filepreview_xpm),  _("Print preview"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddTool(wxID_COPY, _("Copy"), wxBitmap(editcopy_xpm),  _("Copy item"));
-	m_toolBarErd->AddTool(wxID_CUT, _("Cut"), wxBitmap(editcut_xpm),  _("Cut item"));
-	m_toolBarErd->AddTool(wxID_PASTE, _("Paste"), wxBitmap(editpaste_xpm),  _("Paste item"));
+	m_toolBarErd->AddTool(XRCID("IDT_COPY"), _("Copy"), wxBitmap(editcopy_xpm),  _("Copy item"));
+	m_toolBarErd->AddTool(XRCID("IDT_CUT"), _("Cut"), wxBitmap(editcut_xpm),  _("Cut item"));
+	m_toolBarErd->AddTool(XRCID("IDT_PASTE"), _("Paste"), wxBitmap(editpaste_xpm),  _("Paste item"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddTool(wxID_UNDO, _("Undo"), wxBitmap(undo_xpm),  _("Undo"));
-	m_toolBarErd->AddTool(wxID_REDO, _("Redo"), wxBitmap(redo_xpm),  _("Redo"));
+	m_toolBarErd->AddTool(XRCID("IDT_UNDO"), _("Undo"), DatabaseExplorer::GetManager()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/standard/undo")), _("Undo"));
+	m_toolBarErd->AddTool(XRCID("IDT_REDO"), _("Redo"), DatabaseExplorer::GetManager()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/standard/redo")), _("Redo"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddRadioTool(IDT_ERD_TOOL, _("Tool"), wxBitmap(Tool_xpm), wxNullBitmap, _("Design tool"));
-	m_toolBarErd->AddRadioTool(IDT_ERD_TABLE, _("DBETable"), wxBitmap(form_blue_xpm),wxNullBitmap, _("Database table"));
-	m_toolBarErd->AddRadioTool(IDT_ERD_VIEW, _("View"), wxBitmap(form_yellow_xpm),wxNullBitmap, _("Database view"));
-	m_toolBarErd->AddRadioTool(IDT_ERD_LINE, _("Constraint 1:N"), wxBitmap(link_editor_xpm),wxNullBitmap, _("Foreign key connection"));
+	m_toolBarErd->AddRadioTool(XRCID("IDT_ERD_TOOL"), _("Tool"), wxBitmap(Tool_xpm), wxNullBitmap, _("Design tool"));
+	m_toolBarErd->AddRadioTool(XRCID("IDT_ERD_TABLE"), _("DBETable"), DatabaseExplorer::GetManager()->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/table")),wxNullBitmap, _("Database table"));
+	m_toolBarErd->AddRadioTool(XRCID("IDT_ERD_VIEW"), _("View"), DatabaseExplorer::GetManager()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/search/find")),wxNullBitmap, _("Database view"));
+	m_toolBarErd->AddRadioTool(XRCID("IDT_ERD_LINE"), _("Constraint 1:N"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")),wxNullBitmap, _("Foreign key connection"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddTool(IDT_ERD_ALIGN_CIRCLE, _("Align into circle"), wxBitmap(AlignCircle_xpm),  _("Align into circle"));
-	m_toolBarErd->AddTool(IDT_ERD_ALIGN_MESH, _("Align into mesh"), wxBitmap(AlignMesh_xpm),  _("Align into mesh"));
-	m_toolBarErd->AddTool(IDT_ERD_ALIGN_VTREE, _("Align into vertical tree"), wxBitmap(AlignVTree_xpm),  _("Align into vertical tree"));
-	m_toolBarErd->AddTool(IDT_ERD_ALIGN_HTREE, _("Align into horizontal tree"), wxBitmap(AlignHTree_xpm),  _("Align into horizontal tree"));
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_ALIGN_CIRCLE"), _("Align into circle"), wxBitmap(AlignCircle_xpm),  _("Align into circle"));
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_ALIGN_MESH"), _("Align into mesh"), wxBitmap(AlignMesh_xpm),  _("Align into mesh"));
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_ALIGN_VTREE"), _("Align into vertical tree"), wxBitmap(AlignVTree_xpm),  _("Align into vertical tree"));
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_ALIGN_HTREE"), _("Align into horizontal tree"), wxBitmap(AlignHTree_xpm),  _("Align into horizontal tree"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddTool(IDT_ERD_ZOOM100, _("Zoom 100%"), wxBitmap(Zoom100_xpm),  _("Zoom 100%"));
-	m_toolBarErd->AddTool(IDT_ERD_ZOOMALL, _("Zoom to all"), wxBitmap(ZoomAll_xpm),  _("Zoom to all"));
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_ZOOM100"), _("Zoom 100%"), wxBitmap(Zoom100_xpm),  _("Zoom 100%"));
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_ZOOMALL"), _("Zoom to all"), wxBitmap(ZoomAll_xpm),  _("Zoom to all"));
 	m_toolBarErd->Realize();
+	
+	wxAcceleratorEntry entries[4];
+	entries[0].Set(wxACCEL_CTRL,  (int) 'C', XRCID("IDT_COPY"));
+	entries[1].Set(wxACCEL_CTRL,  (int) 'X', XRCID("IDT_CUT"));
+	entries[2].Set(wxACCEL_CTRL, (int) 'V',  XRCID("IDT_PASTE"));
+	entries[3].Set(wxACCEL_CTRL, (int) 'A', XRCID("IDT_SELECTALL"));
+	wxAcceleratorTable accel(4, entries);
+	SetAcceleratorTable(accel);
 }
 
 void ErdPanel::OnTool(wxCommandEvent& event) {
-	if (event.GetId() == IDT_ERD_TOOL) m_nToolMode = modeDESIGN;
-	else if (event.GetId() ==  IDT_ERD_TABLE)	m_nToolMode = modeTABLE;
-	else if (event.GetId() == IDT_ERD_LINE) m_nToolMode = modeLine;
-	else if (event.GetId() == IDT_ERD_VIEW) m_nToolMode = modeVIEW;
+	if (event.GetId() == XRCID("IDT_ERD_TOOL")) m_nToolMode = modeDESIGN;
+	else if (event.GetId() == XRCID("IDT_ERD_TABLE"))	m_nToolMode = modeTABLE;
+	else if (event.GetId() == XRCID("IDT_ERD_LINE")) m_nToolMode = modeLine;
+	else if (event.GetId() == XRCID("IDT_ERD_VIEW")) m_nToolMode = modeVIEW;
 }
 
 void ErdPanel::OnToolUpdate(wxUpdateUIEvent& event) {
-	if (event.GetId() == IDT_ERD_TOOL)	event.Check(m_nToolMode == modeDESIGN);
-	else if (event.GetId() == IDT_ERD_TABLE) event.Check(m_nToolMode == modeTABLE);
-	else if (event.GetId() == IDT_ERD_LINE) event.Check(m_nToolMode == modeLine);
-	else if (event.GetId() == IDT_ERD_VIEW) event.Check(m_nToolMode == modeVIEW);
+	if (event.GetId() == XRCID("IDT_ERD_TOOL"))	event.Check(m_nToolMode == modeDESIGN);
+	else if (event.GetId() == XRCID("IDT_ERD_TABLE")) event.Check(m_nToolMode == modeTABLE);
+	else if (event.GetId() == XRCID("IDT_ERD_LINE")) event.Check(m_nToolMode == modeLine);
+	else if (event.GetId() == XRCID("IDT_ERD_VIEW")) event.Check(m_nToolMode == modeVIEW);
 	else event.Skip();
 }
 
@@ -353,5 +367,10 @@ bool ErdPanel::SaveERD(const wxString& path)
 	}
 	else
 		return false;
+}
+
+void ErdPanel::OnSelectAll(wxCommandEvent& evt)
+{
+	m_pFrameCanvas->SelectAll();
 }
 

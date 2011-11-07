@@ -7,7 +7,6 @@
 #include "wx/wxsf/wxShapeFramework.h"
 #include "wx/wxsf/ShapeBase.h"
 #include "FrameCanvas.h"
-#include "Ids.h"
 #include "ErdTable.h"
 #include "ErdView.h"
 #include "IDbAdapter.h"
@@ -102,6 +101,7 @@ class ErdPanel : public _ErdPanel {
 		void OnAlignVTree(wxCommandEvent& WXUNUSED(event));
 		void OnAlignHTree(wxCommandEvent& WXUNUSED(event));
 		void OnPageClosing(NotebookEvent& event);
+		void OnSelectAll(wxCommandEvent &evt);
 
 		DECLARE_EVENT_TABLE();
 

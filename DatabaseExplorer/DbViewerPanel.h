@@ -10,7 +10,7 @@
 #include <wx/dblayer/include/MysqlDatabaseLayer.h>
 #endif
 
-#include <wx/wxsf/Thumbnail.h>
+#include <wx/wxsf/wxShapeFramework.h>
 
 // wx classes
 #include <wx/wx.h>
@@ -35,12 +35,6 @@
 #include "LogDialog.h"
 #include "ClassGenerateDialog.h"
 
-#include "Ids.h"
-
-// plugin include
-//#include "../LiteEditor/mainbook.h"
-
-
 WX_DECLARE_HASH_MAP( wxString, wxTreeItemId, wxStringHash, wxStringEqual, TableHashMap );
 
 class MainBook;
@@ -60,6 +54,8 @@ protected:
 	DbConnection*   m_pEditedConnection;
 	wxSFThumbnail*  m_pThumbnail;
 	wxArrayString   m_pagesAdded;
+	wxWindow* 		m_pPrevPanel;
+	bool			m_SuppressUpdate;
 	
 public:
 	DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pManager);
@@ -75,11 +71,16 @@ public:
 	void SetServer(wxString& server) {
 		m_server = server;
 	}
+	
+	void SetThumbnail(wxSFShapeCanvas *canvas) {
+		m_pThumbnail->SetCanvas( canvas );
+	}
 
-	virtual void OnConncectClick(wxCommandEvent& event);
-	virtual void OnConncectUI(wxUpdateUIEvent& event);
+	virtual void OnConnectClick(wxCommandEvent& event);
+	virtual void OnConnectUI(wxUpdateUIEvent& event);
 	virtual void OnItemActivate(wxTreeEvent& event);
 	virtual void OnRefreshClick(wxCommandEvent& event);
+	virtual void OnRefreshUI(wxUpdateUIEvent& event);
 	virtual void OnItemSelectionChange(wxTreeEvent& event);
 	virtual void OnERDClick(wxCommandEvent& event);
 	virtual void OnDnDStart(wxTreeEvent& event);
@@ -88,8 +89,9 @@ public:
 	virtual void OnToolCloseUI(wxUpdateUIEvent& event);
 	virtual void OnShowThumbnail(wxCommandEvent &e);
 	
-	void OnPageClose(NotebookEvent& event);
-	void OnPageChange(NotebookEvent& event);
+	void OnPageClosing(NotebookEvent& event);
+	void OnPageChanged(NotebookEvent& event);
+	
 	void OnPopupClick(wxCommandEvent &evt);
 	void RefreshDbView();
 	static void InitStyledTextCtrl(wxScintilla *sci);
@@ -105,6 +107,7 @@ protected:
 	wxString CreatePanelName(View* v, PanelType type);
 	wxString CreatePanelName(Database* d, PanelType type);
 	bool     DoSelectPage(const wxString &page);
+	void 	 AddEditorPage(wxWindow* page, const wxString& name);
 };
 
 #endif // DBEXPLORERPANEL_H

@@ -11,7 +11,6 @@
 #include "table.h"
 #include "constraint.h"
 #include "ErdForeignKey.h"
-#include "Ids.h"
 #include "NArrow.h"
 #include "IDbType.h"
 /*! \brief Class representig table graphics in ERD diagram. For more info see wxSF manual. */

@@ -3,7 +3,6 @@
 
 #include "plugin.h"
 #include "DbViewerPanel.h"
-#include "Ids.h"
 
 class DatabaseExplorer : public IPlugin
 {
@@ -23,6 +22,9 @@ public:
 	bool IsDbViewDetached();
 	
 	static IManager* GetManager();
+	static DbViewerPanel* GetViewerPanel() {
+		return m_dbViewerPanel;
+	}
 	
 protected:
 	bool m_addFileMenu;
@@ -31,7 +33,7 @@ protected:
 	void OnOpenWithDBE(wxCommandEvent &e);
 	void OnUpdateOpenWithDBE(wxUpdateUIEvent &e);
 
-	DbViewerPanel* m_dbViewerPanel;
+	static DbViewerPanel* m_dbViewerPanel;
 };
 
 #endif //DatabaseExplorer

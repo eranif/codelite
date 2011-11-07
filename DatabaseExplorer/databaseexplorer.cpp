@@ -18,7 +18,11 @@
 #include "PostgreSqlDbAdapter.h"
 #endif
 
+#define DBE_VERSION _("0.2.0 Beta")
+
 static DatabaseExplorer* thePlugin = NULL;
+
+DbViewerPanel* DatabaseExplorer::m_dbViewerPanel = NULL;
 
 IManager* DatabaseExplorer::GetManager() {
 	return thePlugin->m_mgr;
@@ -63,7 +67,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo() {
 	info.SetAuthor(wxT("Peter Janků, Michal Bližňák, Tomas Bata University in Zlin, Czech Republic (www.fai.utb.cz)"));
 	info.SetName(_("DatabaseExplorer"));
 	info.SetDescription(_("DatabaseExplorer for CodeLite"));
-	info.SetVersion(_("v1.0"));
+	info.SetVersion(DBE_VERSION);
 	return info;
 }
 
@@ -220,24 +224,18 @@ void DatabaseExplorer::UnPlug() {
 	}
 	delete m_dbViewerPanel;
 	m_dbViewerPanel = NULL;
-
-
 }
-
 
 bool DatabaseExplorer::IsDbViewDetached() {
 	DetachedPanesInfo dpi;
 	m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
 	wxArrayString detachedPanes = dpi.GetPanes();
 
-
 	return detachedPanes.Index(wxT("DbExplorer")) != wxNOT_FOUND;
-
 }
 
-
 void DatabaseExplorer::OnAbout(wxCommandEvent& e) {
-	wxString version = wxString::Format( _("0.1.0.1p Alpha"));
+	wxString version = wxString::Format(DBE_VERSION);
 
 	wxString desc = _("Cross-platform database plugin designed for managing data, ERD and code generation.\n\n");
 	desc << wxbuildinfo(long_f) << wxT("\n\n");

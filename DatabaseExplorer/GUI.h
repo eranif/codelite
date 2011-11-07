@@ -1,13 +1,15 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Oct 27 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __GUI__
-#define __GUI__
+#ifndef __GUI_H__
+#define __GUI_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/string.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -60,53 +62,53 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _MainFrame
 ///////////////////////////////////////////////////////////////////////////////
-class _MainFrame : public wxFrame
+class _MainFrame : public wxFrame 
 {
 	private:
-
+	
 	protected:
 		wxMenuBar* m_menubar3;
 		wxMenu* menuFile;
 		wxMenu* menuHelp;
 		wxStatusBar* m_statusBar1;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnExit( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAbout( wxCommandEvent& event ) { event.Skip(); }
-
-
+		
+	
 	public:
-
+		
 		_MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("DatabaseExplorer "), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxMAXIMIZE|wxTAB_TRAVERSAL );
-
+		
 		~_MainFrame();
-
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _ThumbPane
 ///////////////////////////////////////////////////////////////////////////////
-class _ThumbPane : public wxPanel
+class _ThumbPane : public wxPanel 
 {
 	private:
-
+	
 	protected:
 		wxBoxSizer* mainSizer;
-
+	
 	public:
-
-		_ThumbPane( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		
+		_ThumbPane( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
 		~_ThumbPane();
-
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _SqlCommandPanel
 ///////////////////////////////////////////////////////////////////////////////
-class _SqlCommandPanel : public wxPanel
+class _SqlCommandPanel : public wxPanel 
 {
 	private:
-
+	
 	protected:
 		wxToolBar* m_toolBar3;
 		wxButton* m_button34;
@@ -119,7 +121,7 @@ class _SqlCommandPanel : public wxPanel
 		wxPanel* m_panel14;
 		wxGrid* m_gridTable;
 		wxStaticText* m_labelStatus;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnTemplatesBtnClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnScintilaKeyDown( wxKeyEvent& event ) { event.Skip(); }
@@ -128,78 +130,78 @@ class _SqlCommandPanel : public wxPanel
 		virtual void OnExecuteClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnGridCellRightClick( wxGridEvent& event ) { event.Skip(); }
 		virtual void OnGridLabelRightClick( wxGridEvent& event ) { event.Skip(); }
-
-
+		
+	
 	public:
-
-		_SqlCommandPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		
+		_SqlCommandPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~_SqlCommandPanel();
-
+		
 		void m_splitter1OnIdle( wxIdleEvent& )
 		{
 			m_splitter1->SetSashPosition( 163 );
 			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( _SqlCommandPanel::m_splitter1OnIdle ), NULL, this );
 		}
-
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _AdapterSelectDlg
 ///////////////////////////////////////////////////////////////////////////////
-class _AdapterSelectDlg : public wxDialog
+class _AdapterSelectDlg : public wxDialog 
 {
 	private:
-
+	
 	protected:
 		wxButton* m_btnMySql;
 		wxButton* m_btnSqlite;
 		wxButton* m_button24;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnMysqlClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnSqliteClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnPostgresClick( wxCommandEvent& event ) { event.Skip(); }
-
-
+		
+	
 	public:
-
-		_AdapterSelectDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Select dbAdapter"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
+		
+		_AdapterSelectDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Select dbAdapter"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~_AdapterSelectDlg();
-
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _DbViewerPanel
 ///////////////////////////////////////////////////////////////////////////////
-class _DbViewerPanel : public wxPanel
+class _DbViewerPanel : public wxPanel 
 {
 	private:
-
+	
 	protected:
 		wxToolBar* m_toolBar1;
 		wxTreeCtrl* m_treeDatabases;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnDnDStart( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnItemActivate( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnItemRightClick( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnItemSelectionChange( wxTreeEvent& event ) { event.Skip(); }
-
-
+		
+	
 	public:
-
-		_DbViewerPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		
+		_DbViewerPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~_DbViewerPanel();
-
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _DBSettingsDialog
 ///////////////////////////////////////////////////////////////////////////////
-class _DBSettingsDialog : public wxDialog
+class _DBSettingsDialog : public wxDialog 
 {
 	private:
-
+	
 	protected:
 		wxNotebook* m_notebook2;
 		wxPanel* m_Sqlite;
@@ -233,7 +235,7 @@ class _DBSettingsDialog : public wxDialog
 		wxStaticLine* m_staticline5;
 		wxButton* m_button35;
 		wxButton* m_button36;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnItemActivated( wxListEvent& event ) { event.Skip(); }
 		virtual void OnItemSelected( wxListEvent& event ) { event.Skip(); }
@@ -246,45 +248,45 @@ class _DBSettingsDialog : public wxDialog
 		virtual void OnPgHistoryClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnPgHistoryDClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDlgOK( wxCommandEvent& event ) { event.Skip(); }
-
-
+		
+	
 	public:
-
-		_DBSettingsDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Connection settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		
+		_DBSettingsDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Connection settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~_DBSettingsDialog();
-
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _ErdPanel
 ///////////////////////////////////////////////////////////////////////////////
-class _ErdPanel : public wxPanel
+class _ErdPanel : public wxPanel 
 {
 	private:
-
+	
 	protected:
 		wxToolBar* m_toolBarErd;
 		wxPanel* m_wxsfPanel;
 		wxBoxSizer* m_wxsfSizer;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnMouseWheel( wxMouseEvent& event ) { event.Skip(); }
-
-
+		
+	
 	public:
-
-		_ErdPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,480 ), long style = wxTAB_TRAVERSAL );
+		
+		_ErdPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,480 ), long style = wxTAB_TRAVERSAL ); 
 		~_ErdPanel();
-
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _TableSettings
 ///////////////////////////////////////////////////////////////////////////////
-class _TableSettings : public wxDialog
+class _TableSettings : public wxDialog 
 {
 	private:
-
+	
 	protected:
 		wxPanel* m_panel7;
 		wxPanel* m_panel8;
@@ -305,7 +307,6 @@ class _TableSettings : public wxDialog
 		wxStaticText* m_staticText9;
 		wxComboBox* m_comboType;
 		wxStaticText* m_stSize;
-
 		wxStaticText* m_staticText25;
 		wxTextCtrl* m_txSize;
 		wxStaticText* m_staticText2511;
@@ -328,7 +329,7 @@ class _TableSettings : public wxDialog
 		wxButton* m_button9;
 		wxButton* m_button27;
 		wxButton* m_button28;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnListBoxClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnNewColumnClick( wxCommandEvent& event ) { event.Skip(); }
@@ -351,22 +352,22 @@ class _TableSettings : public wxDialog
 		virtual void OnUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnSaveColumnClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnOKClick( wxCommandEvent& event ) { event.Skip(); }
-
-
+		
+	
 	public:
-
-		_TableSettings( wxWindow* parent, wxWindowID id = wxID_OK, const wxString& title = wxT("Table settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+		
+		_TableSettings( wxWindow* parent, wxWindowID id = wxID_OK, const wxString& title = wxT("Table settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
 		~_TableSettings();
-
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _CreateForeignKey
 ///////////////////////////////////////////////////////////////////////////////
-class _CreateForeignKey : public wxDialog
+class _CreateForeignKey : public wxDialog 
 {
 	private:
-
+	
 	protected:
 		wxStaticText* m_staticText15;
 		wxTextCtrl* m_txSrcTable;
@@ -379,79 +380,77 @@ class _CreateForeignKey : public wxDialog
 		wxTextCtrl* m_txDstTable;
 		wxStaticText* m_staticText18;
 		wxComboBox* m_cmbDstCol;
-
-
 		wxButton* m_btnCancel;
 		wxButton* m_btnOK;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCancelClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnOKClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnOKUI( wxUpdateUIEvent& event ) { event.Skip(); }
-
-
+		
+	
 	public:
-
-		_CreateForeignKey( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Create foreign key"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+		
+		_CreateForeignKey( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Create foreign key"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
 		~_CreateForeignKey();
-
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _LogDialog
 ///////////////////////////////////////////////////////////////////////////////
-class _LogDialog : public wxDialog
+class _LogDialog : public wxDialog 
 {
 	private:
-
+	
 	protected:
 		wxTextCtrl* m_textCtrl11;
 		wxButton* m_button18;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCloseClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnCloseUI( wxUpdateUIEvent& event ) { event.Skip(); }
-
-
+		
+	
 	public:
-
-		_LogDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Database log"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,460 ), long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxRESIZE_BORDER );
+		
+		_LogDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Database log"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,460 ), long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxRESIZE_BORDER ); 
 		~_LogDialog();
-
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _ViewSettings
 ///////////////////////////////////////////////////////////////////////////////
-class _ViewSettings : public wxDialog
+class _ViewSettings : public wxDialog 
 {
 	private:
-
+	
 	protected:
 		wxStaticText* m_staticText19;
 		wxTextCtrl* m_txName;
 		wxStaticLine* m_staticline2;
 		wxScintilla* m_scintilla2;
 		wxButton* m_btnOK;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnOKClick( wxCommandEvent& event ) { event.Skip(); }
-
-
+		
+	
 	public:
-
-		_ViewSettings( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("View settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 650,450 ), long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxRESIZE_BORDER );
+		
+		_ViewSettings( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("View settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 650,450 ), long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxRESIZE_BORDER ); 
 		~_ViewSettings();
-
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _ClassGenerateDialog
 ///////////////////////////////////////////////////////////////////////////////
-class _ClassGenerateDialog : public wxDialog
+class _ClassGenerateDialog : public wxDialog 
 {
 	private:
-
+	
 	protected:
 		wxStaticText* m_staticText30;
 		wxTextCtrl* m_txPrefix;
@@ -464,30 +463,29 @@ class _ClassGenerateDialog : public wxDialog
 		wxButton* m_btnBrowseVirtualDir;
 		wxStaticText* m_staticText29;
 		wxTextCtrl* m_textCtrl19;
-
 		wxButton* m_button25;
 		wxButton* m_button26;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnBtnBrowseClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnGenerateClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnCancelClick( wxCommandEvent& event ) { event.Skip(); }
-
-
+		
+	
 	public:
-
-		_ClassGenerateDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Class generator dialog"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+		
+		_ClassGenerateDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Class generator dialog"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
 		~_ClassGenerateDialog();
-
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _ErdCommitDialog
 ///////////////////////////////////////////////////////////////////////////////
-class _ErdCommitDialog : public wxDialog
+class _ErdCommitDialog : public wxDialog 
 {
 	private:
-
+	
 	protected:
 		wxNotebook* m_notebook4;
 		wxPanel* m_pnSelDatabase;
@@ -502,18 +500,15 @@ class _ErdCommitDialog : public wxDialog
 		wxButton* m_btnBackup;
 		wxPanel* m_panel20;
 		wxTextCtrl* m_textCtrl22;
-
 		wxButton* m_btnWrite;
 		wxButton* m_btnShowSql;
-
 		wxPanel* m_panel201;
 		wxFilePickerCtrl* m_fileRestore;
 		wxTextCtrl* m_textCtrl221;
 		wxButton* m_btnRestore;
-
 		wxButton* m_btnBack;
 		wxButton* m_btnNext;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnNtbPageChanging( wxNotebookEvent& event ) { event.Skip(); }
 		virtual void OnStructureFileUI( wxUpdateUIEvent& event ) { event.Skip(); }
@@ -528,36 +523,36 @@ class _ErdCommitDialog : public wxDialog
 		virtual void OnBtnBackUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnBtnNext( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnNextUI( wxUpdateUIEvent& event ) { event.Skip(); }
-
-
+		
+	
 	public:
-
-		_ErdCommitDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("ERD commit structure"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,500 ), long style = wxDEFAULT_DIALOG_STYLE );
+		
+		_ErdCommitDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("ERD commit structure"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,500 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~_ErdCommitDialog();
-
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _CodePreviewDialog
 ///////////////////////////////////////////////////////////////////////////////
-class _CodePreviewDialog : public wxDialog
+class _CodePreviewDialog : public wxDialog 
 {
 	private:
-
+	
 	protected:
 		wxScintilla* m_scintilla3;
 		wxStdDialogButtonSizer* m_sdbSizer2;
 		wxButton* m_sdbSizer2OK;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnOKClick( wxCommandEvent& event ) { event.Skip(); }
-
-
+		
+	
 	public:
-
-		_CodePreviewDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("SQL Preview"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,470 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		
+		_CodePreviewDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("SQL Preview"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,470 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~_CodePreviewDialog();
-
+	
 };
 
-#endif //__GUI__
+#endif //__GUI_H__

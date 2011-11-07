@@ -272,10 +272,10 @@ void SQLCommandPanel::OnTemplatesBtnClick(wxCommandEvent& event)
 {
 	wxMenu menu;
 
-	menu.Append(IDR_SQLCOMMAND_SELECT,_("Insert SELECT SQL template"),_("Insert SELECT SQL statement template into editor."));
-	menu.Append(IDR_SQLCOMMAND_INSERT,_("Insert INSERT SQL template"),_("Insert INSERT SQL statement template into editor."));
-	menu.Append(IDR_SQLCOMMAND_UPDATE,_("Insert UPDATE SQL template"),_("Insert UPDATE SQL statement template into editor."));
-	menu.Append(IDR_SQLCOMMAND_DELETE,_("Insert DELETE SQL template"),_("Insert DELETE SQL statement template into editor."));
+	menu.Append(XRCID("IDR_SQLCOMMAND_SELECT"),_("Insert SELECT SQL template"),_("Insert SELECT SQL statement template into editor."));
+	menu.Append(XRCID("IDR_SQLCOMMAND_INSERT"),_("Insert INSERT SQL template"),_("Insert INSERT SQL statement template into editor."));
+	menu.Append(XRCID("IDR_SQLCOMMAND_UPDATE"),_("Insert UPDATE SQL template"),_("Insert UPDATE SQL statement template into editor."));
+	menu.Append(XRCID("IDR_SQLCOMMAND_DELETE"),_("Insert DELETE SQL template"),_("Insert DELETE SQL statement template into editor."));
 	menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&SQLCommandPanel::OnPopupClick, NULL, this);
 	PopupMenu(&menu);
 }
@@ -286,16 +286,16 @@ void SQLCommandPanel::OnPopupClick(wxCommandEvent& evt)
 	
 	text.Append(wxT("\n"));
 	
-	if (evt.GetId() == IDR_SQLCOMMAND_SELECT) {
+	if (evt.GetId() == XRCID("IDR_SQLCOMMAND_SELECT")) {
 		text << wxT("SELECT * FROM TableName\n");
 		
-	} else	if (evt.GetId() == IDR_SQLCOMMAND_INSERT) {
+	} else	if (evt.GetId() == XRCID("IDR_SQLCOMMAND_INSERT")) {
 		text << wxT("INSERT INTO TableName (ColumnA, ColumnB) VALUES (1,'Test text')\n");
 		
-	} else	if (evt.GetId() == IDR_SQLCOMMAND_UPDATE) {
+	} else	if (evt.GetId() == XRCID("IDR_SQLCOMMAND_UPDATE")) {
 		text <<  wxT("UPDATE TableName SET ColumnA = 2, ColumnB = 'Second text' WHERE ID = 1\n");
 		
-	} else	if (evt.GetId() == IDR_SQLCOMMAND_DELETE) {
+	} else	if (evt.GetId() == XRCID("IDR_SQLCOMMAND_DELETE")) {
 		text << wxT("DELETE FROM TableName WHERE ID = 1\n");
 	}
 	

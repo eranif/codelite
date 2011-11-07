@@ -110,7 +110,7 @@ void DatabasePage::LoadDatabases() {
 				Database* pDatabase = wxDynamicCast(dbNode->GetData(), Database);
 				if (pDatabase) {
 					//wxTreeItemId dbID = m_treeDatabases->AppendItem(rootID,pDatabase->getName(),-1,-1, new DbItem(pDatabase,NULL));//new DbDatabase(db->getName()));
-					wxTreeItemId dbID = m_treeDatabases->AppendItem(rootID,pDatabase->GetName(),-1,-1, new DbItem(pDatabase));//new DbDatabase(db->getName()));
+					m_treeDatabases->AppendItem(rootID,pDatabase->GetName(),-1,-1, new DbItem(pDatabase));//new DbDatabase(db->getName()));
 
 				}
 				dbNode = dbNode->GetNext();

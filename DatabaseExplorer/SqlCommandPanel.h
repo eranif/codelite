@@ -13,8 +13,6 @@
 #include <wx/dblayer/include/DatabaseErrorCodes.h>
 #include "IDbAdapter.h"
 
-#include "Ids.h"
-
 #include <map>
 
 class SQLCommandPanel : public _SqlCommandPanel

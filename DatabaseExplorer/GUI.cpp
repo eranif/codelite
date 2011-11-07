@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Oct 27 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -270,7 +270,7 @@ _DbViewerPanel::_DbViewerPanel( wxWindow* parent, wxWindowID id, const wxPoint& 
 	m_toolBar1 = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER|wxNO_BORDER ); 
 	m_toolBar1->Realize(); 
 	
-	bSizer28->Add( m_toolBar1, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
+	bSizer28->Add( m_toolBar1, 0, wxEXPAND, 5 );
 	
 	m_treeDatabases = new wxTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_LINES_AT_ROOT );
 	m_treeDatabases->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );

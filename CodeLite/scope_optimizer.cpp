@@ -1260,7 +1260,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-{}
+{ current_scope.str += yytext; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
@@ -1328,7 +1328,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-{}
+{ current_scope.str += yytext; }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP

@@ -202,7 +202,7 @@ undef               {}
 union               {}
 while               {}
 class               {}
-namespace           {}
+namespace           { current_scope.str += yytext; }
 delete              {}
 friend              {}
 inline              {}
@@ -219,7 +219,7 @@ dynamic_cast        {}
 static_cast         {}
 const_cast          {}
 reinterpret_cast    {}
-using               {}
+using               { current_scope.str += yytext; }
 throw               {}
 {identifier}        |
 .                   {

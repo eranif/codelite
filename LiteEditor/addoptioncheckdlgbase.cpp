@@ -24,7 +24,7 @@ AddOptionCheckDialogBase::AddOptionCheckDialogBase( wxWindow* parent, wxWindowID
 	optionsSizer = new wxBoxSizer( wxVERTICAL );
 	
 	wxArrayString m_checkListOptionsChoices;
-	m_checkListOptions = new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_checkListOptionsChoices, wxLB_EXTENDED|wxLB_MULTIPLE|wxLB_NEEDED_SB|wxLB_SORT );
+	m_checkListOptions = new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_checkListOptionsChoices, wxLB_EXTENDED|wxLB_NEEDED_SB|wxLB_SORT );
 	optionsSizer->Add( m_checkListOptions, 2, wxALL|wxEXPAND, 5 );
 	
 	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Enter other options"), wxDefaultPosition, wxDefaultSize, 0 );

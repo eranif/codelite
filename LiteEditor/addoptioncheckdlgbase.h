@@ -8,8 +8,9 @@
 #ifndef __addoptioncheckdlgbase__
 #define __addoptioncheckdlgbase__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -51,7 +52,7 @@ class AddOptionCheckDialogBase : public wxDialog
 	
 	public:
 		
-		AddOptionCheckDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,450 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		AddOptionCheckDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,450 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~AddOptionCheckDialogBase();
 	
 };

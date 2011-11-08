@@ -127,7 +127,7 @@ public:
 	void ReloadExternallyModified(bool prompt);
 
 	bool ClosePage (const wxString &text);
-	
+
 	bool ClosePage      (wxWindow *win);
 	bool CloseAllButThis(wxWindow *win);
 	bool CloseAll       (bool cancellable);

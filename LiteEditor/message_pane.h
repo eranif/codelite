@@ -17,7 +17,7 @@ public:
 	wxEvtHandler* window;
 	bool          menuCommand;
 	bool          isDefault;
-	
+
 public:
 	ButtonDetails() : buttonLabel(wxT("")), commandId(wxNOT_FOUND), window(NULL), menuCommand(true)
 	{}
@@ -29,10 +29,10 @@ class CheckboxDetails
 {
 	wxString      configLabel;	// If the user wants no more notification spam, store the preference using this label
 	bool		  showSpamCheck;
-	
+
 public:
 	CheckboxDetails() : showSpamCheck(false)
-	{}	
+	{}
 	CheckboxDetails(const wxString& label) : configLabel(label), showSpamCheck(true)
 	{}
 	~CheckboxDetails()
@@ -41,7 +41,7 @@ public:
 		return configLabel;
 	}
 	bool GetShowCheckbox() const {
-		return showSpamCheck; 
+		return showSpamCheck;
 	}
 };
 
@@ -55,11 +55,11 @@ public:
 	ButtonDetails btn3;
 	CheckboxDetails check;
 	bool          showHideButton;
-	
+
 public:
 	MessageDetails() : bmp(wxNullBitmap), showHideButton(true)
 	{}
-	
+
 	~MessageDetails()
 	{}
 };
@@ -78,13 +78,14 @@ public:
 	MessageDetails CurrentMessage();
 	void           Clear();
 	bool           IsEmpty();
+	bool           IsExists(const wxString &msg);
 };
 
 /** Implementing MessagePaneBase */
 class MessagePane : public MessagePaneBase
 {
 	MessagePaneData m_messages;
-	
+
 protected:
 	// Handlers for MessagePaneBase events.
 	void OnKeyDown( wxKeyEvent& event );
@@ -101,7 +102,7 @@ protected:
 	void DoShowCurrentMessage();
 	void DoPostEvent(ButtonDetails btn);
 	void SavePreferenceIfNeeded(const MessageDetails msg, int choice);
-	
+
 public:
 	/** Constructor */
 	MessagePane( wxWindow* parent );

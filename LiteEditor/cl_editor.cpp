@@ -178,7 +178,7 @@ LEditor::LEditor(wxWindow* parent)
 	m_functionTip = new clEditorTipWindow(this);
 //	m_debuggerTip = new DisplayVariableDlg(this);
 	m_disableSmartIndent = GetOptions()->GetDisableSmartIndent();
-	
+
 	m_deltas = new EditorDeltasHolder;
 }
 
@@ -1231,12 +1231,12 @@ void LEditor::CompleteWord(bool onlyRefresh)
 	if(wxTheApp->ProcessEvent(evt)) {
 		// the plugin handled the code-complete request
 		return;
-		
+
 	} else {
 		CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(onlyRefresh);
 		// let the built-in context do the job
 		m_context->CompleteWord();
-		
+
 	}
 }
 
@@ -1258,12 +1258,12 @@ void LEditor::CodeComplete()
 	if(wxTheApp->ProcessEvent(evt))
 		// the plugin handled the code-complete request
 		return;
-		
+
 	else {
 		CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
 		// let the built-in context do the job
 		m_context->CodeComplete();
-		
+
 	}
 }
 
@@ -3072,16 +3072,27 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	// If the number of elements exceeds the maximum query result,
 	// alert the user
 	int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
-	if ( tags.size() >= (size_t) limit ) {
-		DoSetStatusMessage(wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices"), tags.size()), 0);
+
+	long ccTooManyMatches(0);
+	EditorConfigST::Get()->GetLongValue(wxT("CodeCompletionTooManyMatches"), ccTooManyMatches);
+
+	if ( tags.size() >= (size_t) limit && !ccTooManyMatches) {
+		wxString msg = wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices"), (unsigned int)tags.size());
+		clMainFrame::Get()->GetMainBook()->ShowMessage( msg,
+														true,
+														PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")),
+														ButtonDetails(),
+														ButtonDetails(),
+														ButtonDetails(),
+														CheckboxDetails(wxT("CodeCompletionTooManyMatches")));
 	}
 
 	m_ccBox->Adjust();
 	if(CodeCompletionManager::Get().GetWordCompletionRefreshNeeded()) {
-		
+
 		CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
 		m_ccBox->RefreshList(tags, word);
-		
+
 	}
 	else
 		m_ccBox->Show(tags, word, false, !showExtInfoPane, owner);
@@ -3129,8 +3140,17 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	// If the number of elements exceeds the maximum query result,
 	// alert the user
 	int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
-	if ( tags.size() >= (size_t) limit ) {
-		DoSetStatusMessage(wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices"), (unsigned int)tags.size()), 0);
+	long ccTooManyMatches(0);
+	EditorConfigST::Get()->GetLongValue(wxT("CodeCompletionTooManyMatches"), ccTooManyMatches);
+	if ( tags.size() >= (size_t) limit && !ccTooManyMatches) {
+		wxString msg = wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices"), (unsigned int)tags.size());
+		clMainFrame::Get()->GetMainBook()->ShowMessage( msg,
+														true,
+														PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")),
+														ButtonDetails(),
+														ButtonDetails(),
+														ButtonDetails(),
+														CheckboxDetails(wxT("CodeCompletionTooManyMatches")));
 	}
 
 	m_ccBox->Adjust();
@@ -3727,7 +3747,7 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 	pattern.Trim();
 	if(pattern.IsEmpty())
 		return false;
-		
+
 	FindReplaceData data;
 	data.SetFindString ( pattern );
 	data.SetFlags ( flags );
@@ -3807,7 +3827,7 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 			SetSelectionEnd ( curr_pos );
 		}
 	} while ( again );
-	
+
 	if (res && navmgr) {
 		navmgr->AddJump(jumpfrom, CreateBrowseRecord());
 	}

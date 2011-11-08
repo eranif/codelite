@@ -45,6 +45,7 @@ class EditorSettingsDialogs
 	bool bBuildBeforeDebug;
 	bool bCreateSwappedFile;
 	bool bReloadAlteredWorkspace;
+	bool bCcTooManyMatches;
 
 	int AdjustCPUNumber_idx;
 	int ReplaceWrapAroundAnswer_idx;
@@ -52,7 +53,8 @@ class EditorSettingsDialogs
 	int BuildBeforeDebug_idx;
 	int CreateSwappedFile_idx;
 	int ReloadAlteredWorkspace_idx;
-
+	int CcTooManyMatches_idx;
+	
 public:
 	/** Constructor */
 	EditorSettingsDialogs( wxWindow* parent );

@@ -68,9 +68,9 @@ void MainBook::CreateGuiControls()
 	m_navBar = new NavBar(this);
 	sz->Add(m_navBar, 0, wxEXPAND);
 	m_navBar->Freeze();
-	
+
 	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_NODND;
-	
+
 #if !CL_USE_NATIVEBOOK
 	style |= wxVB_PASS_FOCUS | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_SCROLL_BUTTONS;
 #endif
@@ -103,7 +103,7 @@ void MainBook::ConnectEvents()
 	wxTheApp->Connect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
 	wxTheApp->Connect(wxEVT_DEBUG_ENDED,       wxCommandEventHandler(MainBook::OnDebugEnded),         NULL, this);
 	wxTheApp->Connect(wxEVT_INIT_DONE,         wxCommandEventHandler(MainBook::OnInitDone),           NULL, this);
-	
+
 	// Highlight Job
 	Connect(wxEVT_CMD_JOB_STATUS_VOID_PTR,         wxCommandEventHandler(MainBook::OnStringHighlight),      NULL, this);
 }
@@ -135,7 +135,7 @@ void MainBook::OnMouseDClick(NotebookEvent& e)
 void MainBook::OnPageClosing(NotebookEvent &e)
 {
 	e.Skip();
-	
+
 	LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(e.GetSelection()));
 	if (!editor)
 		return;
@@ -540,9 +540,9 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 
 	} else if (lineno != wxNOT_FOUND) {
 		editor->GotoLine(lineno);
-		
+
 	}
-	
+
 	if (GetActiveEditor() == editor) {
 		editor->SetActive();
 	} else {
@@ -585,14 +585,14 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 
 	bool closeLastTab = ((long)(m_book->GetPageCount()) >= MaxBuffers) && GetUseBuffereLimit();
 	if ((insert_at_index == (size_t)wxNOT_FOUND) || (insert_at_index >= m_book->GetPageCount())) {
-		
+
 #if CL_USE_NATIVEBOOK
-		// There seems to be a bug in wxGTK where we can't change 
+		// There seems to be a bug in wxGTK where we can't change
 		// the selection programtically
 		int next_pos = m_book->GetPageCount();
 #endif
 		m_book->AddPage(win, text, closeLastTab ? true : selected);
-		
+
 #if CL_USE_NATIVEBOOK
 		// If the newly added page is expected to be the selected one
 		// and it is NOT of type IEditor we provide a workaround that
@@ -665,10 +665,10 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 	for (size_t i = 0; i < editors.size(); i++) {
 		if (!editors[i]->GetModify())
 			continue;
-			
+
 		if (!includeUntitled && !editors[i]->GetFileName().FileExists())
 			continue; //don't save new documents that have not been saved to disk yet
-			
+
 		files.push_back(std::make_pair(editors[i]->GetFileName(), true));
 		editors[n++] = editors[i];
 	}
@@ -789,10 +789,10 @@ bool MainBook::CloseAll(bool cancellable)
 	// Delete the files without notifications (it will be faster)
 	clWindowUpdateLocker locker(this);
 	ClangCodeCompletion::Instance()->CancelCodeComplete();
- 
+
 	SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
-	
-	// 
+
+	//
 	m_book->DeleteAllPages(false);
 
 	// Since we got no more editors opened,
@@ -958,7 +958,13 @@ bool MainBook::DoSelectPage(wxWindow* win)
 	return true;
 }
 
-void MainBook::ShowMessage(const wxString &message, bool showHideButton, const wxBitmap &bmp, const ButtonDetails &btn1, const ButtonDetails &btn2, const ButtonDetails &btn3, const CheckboxDetails &cb)
+void MainBook::ShowMessage( const wxString &message,
+							bool showHideButton,
+							const wxBitmap &bmp,
+							const ButtonDetails &btn1,
+							const ButtonDetails &btn2,
+							const ButtonDetails &btn3,
+							const CheckboxDetails &cb)
 {
 	m_messagePane->ShowMessage(message, showHideButton, bmp, btn1, btn2, btn3, cb);
 }
@@ -1008,7 +1014,7 @@ void MainBook::DoPositionFindBar(int where)
 		GetSizer()->Add(m_quickFindBar, 0, wxTOP|wxBOTTOM|wxEXPAND);
 	else
 		GetSizer()->Insert(where, m_quickFindBar, 0, wxTOP|wxBOTTOM|wxEXPAND);
-		
+
 	GetSizer()->Layout();
 }
 
@@ -1027,9 +1033,9 @@ void MainBook::DoHandleFrameMenu(LEditor* editor)
 		if ( idx != wxNOT_FOUND ) {
 			clMainFrame::Get()->GetMenuBar()->EnableTop(idx, false);
 		}
-		
+
 	} else if( editor && editor->GetContext()->GetName() == wxT("C++")) {
-		
+
 		int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
 		if ( idx != wxNOT_FOUND ) {
 			clMainFrame::Get()->GetMenuBar()->EnableTop(idx, true);

@@ -35,13 +35,15 @@ EditorSettingsDialogs::EditorSettingsDialogs( wxWindow* parent )
 	long buildBeforeDebug(0);
 	long createSwappedFile(0);
 	long reloadAlteredWorkspace(0);
+	long ccTooManyMatches(0);
 
-	bAdjustCPUNumber = EditorConfigST::Get()->GetLongValue(wxT("AdjustCPUNumber"), adjustCpuNumber);
-	bReplaceWrapAroundAnswer = EditorConfigST::Get()->GetLongValue(wxT("ReplaceWrapAroundAnswer"), replaceWrapAround);
-	bFindNextWrapAroundAnswer = EditorConfigST::Get()->GetLongValue(wxT("FindNextWrapAroundAnswer"), findNextWrapAround);
-	bBuildBeforeDebug = EditorConfigST::Get()->GetLongValue(wxT("BuildBeforeDebug"), buildBeforeDebug);
-	bCreateSwappedFile = EditorConfigST::Get()->GetLongValue(wxT("CreateSwappedFile"), createSwappedFile);
-	bReloadAlteredWorkspace = EditorConfigST::Get()->GetLongValue(wxT("ReloadWorkspaceWhenAltered"), reloadAlteredWorkspace);
+	bAdjustCPUNumber          = EditorConfigST::Get()->GetLongValue(wxT("AdjustCPUNumber"),              adjustCpuNumber);
+	bReplaceWrapAroundAnswer  = EditorConfigST::Get()->GetLongValue(wxT("ReplaceWrapAroundAnswer"),      replaceWrapAround);
+	bFindNextWrapAroundAnswer = EditorConfigST::Get()->GetLongValue(wxT("FindNextWrapAroundAnswer"),     findNextWrapAround);
+	bBuildBeforeDebug         = EditorConfigST::Get()->GetLongValue(wxT("BuildBeforeDebug"),             buildBeforeDebug);
+	bCreateSwappedFile        = EditorConfigST::Get()->GetLongValue(wxT("CreateSwappedFile"),            createSwappedFile);
+	bReloadAlteredWorkspace   = EditorConfigST::Get()->GetLongValue(wxT("ReloadWorkspaceWhenAltered"),   reloadAlteredWorkspace);
+	bCcTooManyMatches         = EditorConfigST::Get()->GetLongValue(wxT("CodeCompletionTooManyMatches"), ccTooManyMatches);
 
 	// the value stored is 0 / 1
 	if (bAdjustCPUNumber) {
@@ -79,6 +81,10 @@ EditorSettingsDialogs::EditorSettingsDialogs( wxWindow* parent )
 		ReloadAlteredWorkspace_idx = wxNOT_FOUND;
 	}
 
+	if (bCcTooManyMatches) {
+		CcTooManyMatches_idx = m_checkListAnswers->Append(_("Don't show the 'code completion found too many matches' tip message"));
+		m_checkListAnswers->Check((unsigned int)CcTooManyMatches_idx, ccTooManyMatches == 1);
+	}
 }
 
 EditorSettingsDialogs::~EditorSettingsDialogs()
@@ -102,6 +108,9 @@ void EditorSettingsDialogs::Save(OptionsConfigPtr)
 
 	if(bCreateSwappedFile)
 		EditorConfigST::Get()->SaveLongValue(wxT("CreateSwappedFile"), m_checkListAnswers->IsChecked(CreateSwappedFile_idx) ? wxID_OK : wxID_NO);
+
+	if(bCcTooManyMatches)
+		EditorConfigST::Get()->SaveLongValue(wxT("CodeCompletionTooManyMatches"), m_checkListAnswers->IsChecked(CcTooManyMatches_idx));
 
 	// We only want to change this one if the box became unticked
 	if(bReloadAlteredWorkspace && (ReloadAlteredWorkspace_idx != wxNOT_FOUND) && m_checkListAnswers->IsChecked(ReloadAlteredWorkspace_idx))

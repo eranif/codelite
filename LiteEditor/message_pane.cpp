@@ -25,6 +25,8 @@ void MessagePane::OnKeyDown( wxKeyEvent& event )
 void MessagePane::OnButtonClose( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
+	MessageDetails msg = m_messages.CurrentMessage();
+	SavePreferenceIfNeeded(msg, wxNOT_FOUND); // -1 for Hide
 	DoShowNextMessage();
 }
 
@@ -124,6 +126,10 @@ void MessagePane::DoShowCurrentMessage()
 
 void MessagePane::ShowMessage(const wxString &message, bool showHideButton, const wxBitmap &bmp, const ButtonDetails& btn1, const ButtonDetails& btn2, const ButtonDetails& btn3, const CheckboxDetails& chkbox)
 {
+	// Dont duplicate messages...
+	if(m_messages.IsExists(message))
+		return;
+
 	MessageDetails msg;
 	msg.message        = message;
 	msg.btn1           = btn1;
@@ -157,6 +163,15 @@ void MessagePane::DoShowNextMessage()
 
 /////////////////////////////////////////////////////////////////////////////
 //
+
+bool MessagePaneData::IsExists(const wxString &msg)
+{
+	for(size_t i=0; i<m_queue.size(); i++) {
+		if(msg == m_queue.at(i).message)
+			return true;
+	}
+	return false;
+}
 
 void MessagePaneData::Clear()
 {
@@ -242,10 +257,17 @@ void MessagePane::DoPostEvent(ButtonDetails btn)
 void MessagePane::SavePreferenceIfNeeded(const MessageDetails msg, int choice)
 {
 	// If the checkbox is both shown (to cater for random ticks) and checked, save the preference
-	if (m_DontAnnoyMeCheck->IsShown() && m_DontAnnoyMeCheck->IsChecked()) {
+	if (choice != wxNOT_FOUND && m_DontAnnoyMeCheck->IsShown() && m_DontAnnoyMeCheck->IsChecked()) {
 		wxString label = msg.check.GetLabel();
 		if (!label.IsEmpty()) {
 			EditorConfigST::Get()->SaveLongValue(label, choice+1); // +1 to skip the Hide button
+		}
+	}
+
+	if(choice == wxNOT_FOUND && m_DontAnnoyMeCheck->IsShown()) {
+		wxString label = msg.check.GetLabel();
+		if (!label.IsEmpty()) {
+			EditorConfigST::Get()->SaveLongValue(label, m_DontAnnoyMeCheck->IsChecked());
 		}
 	}
 }

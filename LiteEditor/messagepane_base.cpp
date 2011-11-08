@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -53,7 +53,7 @@ MessagePaneBase::MessagePaneBase( wxWindow* parent, wxWindowID id, const wxPoint
 	
 	bSizer3->Add( m_staticTextMessage, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_DontAnnoyMeCheck = new wxCheckBox( m_panel1, wxID_ANY, _("Don't ask in future, just do this automatically"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DontAnnoyMeCheck = new wxCheckBox( m_panel1, wxID_ANY, _("Remember my answer and don't annoy me again!"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_DontAnnoyMeCheck->SetToolTip( _("If you don't want to be spammed by this message again, tick the box. You can change your mind in Settings > Global Editor Preferences > Dialogs") );
 	
 	bSizer3->Add( m_DontAnnoyMeCheck, 0, wxALL, 5 );

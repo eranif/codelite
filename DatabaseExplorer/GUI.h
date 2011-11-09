@@ -1,15 +1,13 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Oct 27 2011)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __GUI_H__
-#define __GUI_H__
+#ifndef __GUI__
+#define __GUI__
 
-#include <wx/artprov.h>
-#include <wx/xrc/xmlres.h>
 #include <wx/string.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -307,6 +305,7 @@ class _TableSettings : public wxDialog
 		wxStaticText* m_staticText9;
 		wxComboBox* m_comboType;
 		wxStaticText* m_stSize;
+		
 		wxStaticText* m_staticText25;
 		wxTextCtrl* m_txSize;
 		wxStaticText* m_staticText2511;
@@ -380,6 +379,8 @@ class _CreateForeignKey : public wxDialog
 		wxTextCtrl* m_txDstTable;
 		wxStaticText* m_staticText18;
 		wxComboBox* m_cmbDstCol;
+		
+		
 		wxButton* m_btnCancel;
 		wxButton* m_btnOK;
 		
@@ -463,6 +464,7 @@ class _ClassGenerateDialog : public wxDialog
 		wxButton* m_btnBrowseVirtualDir;
 		wxStaticText* m_staticText29;
 		wxTextCtrl* m_textCtrl19;
+		
 		wxButton* m_button25;
 		wxButton* m_button26;
 		
@@ -500,12 +502,15 @@ class _ErdCommitDialog : public wxDialog
 		wxButton* m_btnBackup;
 		wxPanel* m_panel20;
 		wxTextCtrl* m_textCtrl22;
+		
 		wxButton* m_btnWrite;
 		wxButton* m_btnShowSql;
+		
 		wxPanel* m_panel201;
 		wxFilePickerCtrl* m_fileRestore;
 		wxTextCtrl* m_textCtrl221;
 		wxButton* m_btnRestore;
+		
 		wxButton* m_btnBack;
 		wxButton* m_btnNext;
 		
@@ -555,4 +560,4 @@ class _CodePreviewDialog : public wxDialog
 	
 };
 
-#endif //__GUI_H__
+#endif //__GUI__

@@ -47,7 +47,7 @@ enum CodeCompletionOpts {
     CC_RETAG_WORKSPACE_ON_STARTUP          = 0x00004000,
     CC_ACCURATE_SCOPE_RESOLVING            = 0x00008000,
     CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING = 0x00010000,
-	CC_IS_CASE_SENSITIVE                   = 0x00020000
+    CC_IS_CASE_SENSITIVE                   = 0x00020000
 };
 
 enum CodeCompletionColourOpts {
@@ -99,6 +99,8 @@ class WXDLLIMPEXP_CL TagsOptionsData : public SerializedObject
 	wxString                     m_clangSearchPaths;
 	wxString                     m_clangMacros;
 	wxString                     m_clangCachePolicy;
+	size_t                       m_ccNumberOfDisplayItems;
+
 protected:
 	void DoUpdateTokensWxMap();
 	void DoUpdateTokensWxMapReversed();
@@ -112,7 +114,12 @@ public:
 	virtual ~TagsOptionsData();
 
 	//setters/getters
-
+	void SetCcNumberOfDisplayItems(size_t ccNumberOfDisplayItems) {
+		this->m_ccNumberOfDisplayItems = ccNumberOfDisplayItems;
+	}
+	size_t GetCcNumberOfDisplayItems() const {
+		return m_ccNumberOfDisplayItems;
+	}
 	void SetClangCachePolicy(const wxString& clangCachePolicy) {
 		this->m_clangCachePolicy = clangCachePolicy;
 	}

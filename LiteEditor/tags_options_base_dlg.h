@@ -20,11 +20,11 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/dialog.h>
+#include <wx/stattext.h>
+#include <wx/spinctrl.h>
 #include <wx/checkbox.h>
 #include <wx/statbox.h>
 #include <wx/panel.h>
-#include <wx/stattext.h>
-#include <wx/spinctrl.h>
 #include <wx/slider.h>
 #include <wx/textctrl.h>
 #include <wx/hyperlink.h>
@@ -69,6 +69,9 @@ class CCDisplayAndBehaviorBase : public wxPanel
 	private:
 	
 	protected:
+		wxStaticText* m_staticText14;
+		
+		wxSpinCtrl* m_spinCtrlNumberOfCCItems;
 		wxCheckBox* m_checkBoxEnableCaseSensitiveCompletion;
 		wxCheckBox* m_checkDisplayTypeInfo;
 		wxCheckBox* m_checkDisplayFunctionTip;

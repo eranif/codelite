@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "istorage.h"
 #include <wx/tokenzr.h>
 #include <wx/ffile.h>
 #include "tags_options_data.h"
@@ -144,6 +145,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_clangOptions(0)
 		, m_clangBinary(wxT(""))
 		, m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
+		, m_ccNumberOfDisplayItems(MAX_SEARCH_LIMIT)
 {
 	SetVersion(wxT("3.0.4"));
 	// Initialize defaults
@@ -254,46 +256,48 @@ void TagsOptionsData::Serialize(Archive &arch)
 	// since of build 3749, we *always* set CC_ACCURATE_SCOPE_RESOLVING to true
 	m_ccFlags |= CC_ACCURATE_SCOPE_RESOLVING;
 
-	arch.Write     (wxT("m_ccFlags"),           m_ccFlags);
-	arch.Write     (wxT("m_ccColourFlags"),     m_ccColourFlags);
-	arch.WriteCData(wxT("m_tokens"),            m_tokens);
-	arch.WriteCData(wxT("m_types"),             m_types);
-	arch.Write     (wxT("m_fileSpec"),          m_fileSpec);
-	arch.Write     (wxT("m_languages"),         m_languages);
-	arch.Write     (wxT("m_minWordLen"),        m_minWordLen);
-	arch.Write     (wxT("m_parserSearchPaths"), m_parserSearchPaths);
-	arch.Write     (wxT("m_parserEnabled"),     m_parserEnabled);
-	arch.Write     (wxT("m_parserExcludePaths"),m_parserExcludePaths);
-	arch.Write     (wxT("m_maxItemToColour"),   m_maxItemToColour);
-	arch.Write     (wxT("m_macrosFiles"),       m_macrosFiles);
-	arch.Write     (wxT("m_clangOptions"),      m_clangOptions);
-	arch.Write     (wxT("m_clangBinary"),       m_clangBinary);
-	arch.WriteCData(wxT("m_clangCmpOptions"),   m_clangCmpOptions);
-	arch.WriteCData(wxT("m_clangSearchPaths"),  m_clangSearchPaths);
-	arch.WriteCData(wxT("m_clangMacros"),       m_clangMacros);
-	arch.Write     (wxT("m_clangCachePolicy"),  m_clangCachePolicy);
+	arch.Write     (wxT("m_ccFlags"),                m_ccFlags);
+	arch.Write     (wxT("m_ccColourFlags"),          m_ccColourFlags);
+	arch.WriteCData(wxT("m_tokens"),                 m_tokens);
+	arch.WriteCData(wxT("m_types"),                  m_types);
+	arch.Write     (wxT("m_fileSpec"),               m_fileSpec);
+	arch.Write     (wxT("m_languages"),              m_languages);
+	arch.Write     (wxT("m_minWordLen"),             m_minWordLen);
+	arch.Write     (wxT("m_parserSearchPaths"),      m_parserSearchPaths);
+	arch.Write     (wxT("m_parserEnabled"),          m_parserEnabled);
+	arch.Write     (wxT("m_parserExcludePaths"),     m_parserExcludePaths);
+	arch.Write     (wxT("m_maxItemToColour"),        m_maxItemToColour);
+	arch.Write     (wxT("m_macrosFiles"),            m_macrosFiles);
+	arch.Write     (wxT("m_clangOptions"),           m_clangOptions);
+	arch.Write     (wxT("m_clangBinary"),            m_clangBinary);
+	arch.WriteCData(wxT("m_clangCmpOptions"),        m_clangCmpOptions);
+	arch.WriteCData(wxT("m_clangSearchPaths"),       m_clangSearchPaths);
+	arch.WriteCData(wxT("m_clangMacros"),            m_clangMacros);
+	arch.Write     (wxT("m_clangCachePolicy"),       m_clangCachePolicy);
+	arch.Write     (wxT("m_ccNumberOfDisplayItems"), m_ccNumberOfDisplayItems);
 }
 
 void TagsOptionsData::DeSerialize(Archive &arch)
 {
-	arch.Read     (wxT("m_ccFlags"),           m_ccFlags);
-	arch.Read     (wxT("m_ccColourFlags"),     m_ccColourFlags);
-	arch.ReadCData(wxT("m_tokens"),            m_tokens);
-	arch.ReadCData(wxT("m_types"),             m_types);
-	arch.Read     (wxT("m_fileSpec"),          m_fileSpec);
-	arch.Read     (wxT("m_languages"),         m_languages);
-	arch.Read     (wxT("m_minWordLen"),        m_minWordLen);
-	arch.Read     (wxT("m_parserSearchPaths"), m_parserSearchPaths);
-	arch.Read     (wxT("m_parserEnabled"),     m_parserEnabled);
-	arch.Read     (wxT("m_parserExcludePaths"),m_parserExcludePaths);
-	arch.Read     (wxT("m_maxItemToColour"),   m_maxItemToColour);
-	arch.Read     (wxT("m_macrosFiles"),       m_macrosFiles);
-	arch.Read     (wxT("m_clangOptions"),      m_clangOptions);
-	arch.Read     (wxT("m_clangBinary"),       m_clangBinary);
-	arch.ReadCData(wxT("m_clangCmpOptions"),   m_clangCmpOptions);
-	arch.ReadCData(wxT("m_clangSearchPaths"),  m_clangSearchPaths);
-	arch.ReadCData(wxT("m_clangMacros"),       m_clangMacros);
-	arch.Read     (wxT("m_clangCachePolicy"),  m_clangCachePolicy);
+	arch.Read     (wxT("m_ccFlags"),                m_ccFlags);
+	arch.Read     (wxT("m_ccColourFlags"),          m_ccColourFlags);
+	arch.ReadCData(wxT("m_tokens"),                 m_tokens);
+	arch.ReadCData(wxT("m_types"),                  m_types);
+	arch.Read     (wxT("m_fileSpec"),               m_fileSpec);
+	arch.Read     (wxT("m_languages"),              m_languages);
+	arch.Read     (wxT("m_minWordLen"),             m_minWordLen);
+	arch.Read     (wxT("m_parserSearchPaths"),      m_parserSearchPaths);
+	arch.Read     (wxT("m_parserEnabled"),          m_parserEnabled);
+	arch.Read     (wxT("m_parserExcludePaths"),     m_parserExcludePaths);
+	arch.Read     (wxT("m_maxItemToColour"),        m_maxItemToColour);
+	arch.Read     (wxT("m_macrosFiles"),            m_macrosFiles);
+	arch.Read     (wxT("m_clangOptions"),           m_clangOptions);
+	arch.Read     (wxT("m_clangBinary"),            m_clangBinary);
+	arch.ReadCData(wxT("m_clangCmpOptions"),        m_clangCmpOptions);
+	arch.ReadCData(wxT("m_clangSearchPaths"),       m_clangSearchPaths);
+	arch.ReadCData(wxT("m_clangMacros"),            m_clangMacros);
+	arch.Read     (wxT("m_clangCachePolicy"),       m_clangCachePolicy);
+	arch.Read     (wxT("m_ccNumberOfDisplayItems"), m_ccNumberOfDisplayItems);
 	// since of build 3749, we *always* set CC_ACCURATE_SCOPE_RESOLVING to true
 	DoUpdateTokensWxMapReversed();
 	DoUpdateTokensWxMap();

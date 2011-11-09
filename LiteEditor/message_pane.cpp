@@ -71,7 +71,6 @@ void MessagePane::DoShowCurrentMessage()
 		m_buttonAction->Show();
 		if(msg.btn1.isDefault){
 			m_buttonAction->SetDefault();
-			m_buttonAction->SetFocus();
 			hasDefaultButton = true;
 		}
 	}
@@ -81,7 +80,6 @@ void MessagePane::DoShowCurrentMessage()
 		m_buttonAction1->Show();
 		if(msg.btn2.isDefault){
 			m_buttonAction1->SetDefault();
-			m_buttonAction1->SetFocus();
 			hasDefaultButton = true;
 		}
 	}
@@ -91,7 +89,6 @@ void MessagePane::DoShowCurrentMessage()
 		m_buttonAction2->Show();
 		if(msg.btn3.isDefault){
 			m_buttonAction2->SetDefault();
-			m_buttonAction2->SetFocus();
 			hasDefaultButton = true;
 		}
 	}
@@ -102,7 +99,6 @@ void MessagePane::DoShowCurrentMessage()
 		m_buttonClose->Show();
 		if(!hasDefaultButton) {
 			m_buttonClose->SetDefault();
-			m_buttonClose->SetFocus();
 		}
 	} else {
 		m_buttonClose->Hide();

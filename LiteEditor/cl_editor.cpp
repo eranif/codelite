@@ -3077,7 +3077,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	EditorConfigST::Get()->GetLongValue(wxT("CodeCompletionTooManyMatches"), ccTooManyMatches);
 
 	if ( tags.size() >= (size_t) limit && !ccTooManyMatches) {
-		wxString msg = wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices"), (unsigned int)tags.size());
+		wxString msg = wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices\nYou can increase the number of displayed items from the menu: 'Settings | Tags Settings'"), (unsigned int)tags.size());
 		clMainFrame::Get()->GetMainBook()->ShowMessage( msg,
 														true,
 														PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")),
@@ -3143,7 +3143,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	long ccTooManyMatches(0);
 	EditorConfigST::Get()->GetLongValue(wxT("CodeCompletionTooManyMatches"), ccTooManyMatches);
 	if ( tags.size() >= (size_t) limit && !ccTooManyMatches) {
-		wxString msg = wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices"), (unsigned int)tags.size());
+		wxString msg = wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices\nYou can increase the number of displayed items from the menu: 'Settings | Tags Settings'"), (unsigned int)tags.size());
 		clMainFrame::Get()->GetMainBook()->ShowMessage( msg,
 														true,
 														PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")),

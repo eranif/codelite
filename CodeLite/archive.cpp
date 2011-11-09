@@ -492,7 +492,9 @@ bool Archive::Read(const wxString &name, size_t &value)
 {
 	long v = 0;
 	bool res = Read(name, v);
-	value = v;
+	if(res) {
+		value = v;
+	}
 	return res;
 }
 
@@ -500,7 +502,9 @@ bool Archive::Read(const wxString &name, wxFileName &fileName)
 {
 	wxString value;
 	bool res = Read(name, value);
-	fileName = wxFileName(value);
+	if(res) {
+		fileName = wxFileName(value);
+	}
 	return res;
 }
 

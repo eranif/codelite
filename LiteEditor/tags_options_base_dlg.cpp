@@ -72,7 +72,22 @@ CCDisplayAndBehaviorBase::CCDisplayAndBehaviorBase( wxWindow* parent, wxWindowID
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Display:") ), wxVERTICAL );
 	
 	wxGridSizer* gSizer1;
-	gSizer1 = new wxGridSizer( 4, 1, 0, 0 );
+	gSizer1 = new wxGridSizer( 0, 1, 0, 0 );
+	
+	wxBoxSizer* bSizer23;
+	bSizer23 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_staticText14 = new wxStaticText( this, wxID_ANY, _("Number of items to display in the completion box:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText14->Wrap( -1 );
+	bSizer23->Add( m_staticText14, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+	
+	
+	bSizer23->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	m_spinCtrlNumberOfCCItems = new wxSpinCtrl( this, wxID_ANY, wxT("50"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 50, 1000, 50 );
+	bSizer23->Add( m_spinCtrlNumberOfCCItems, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+	
+	gSizer1->Add( bSizer23, 0, wxEXPAND, 5 );
 	
 	m_checkBoxEnableCaseSensitiveCompletion = new wxCheckBox( this, wxID_ANY, _("Code Completion is case sensitive (improves performance)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxEnableCaseSensitiveCompletion->SetToolTip( _("When enabled, the code completion search engine will use case sensitive searches. \nSo 'QString' is NOT equal 'qstring'") );

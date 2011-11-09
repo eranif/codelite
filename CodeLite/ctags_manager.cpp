@@ -185,6 +185,8 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
 	db = m_db;
 	db->OpenDatabase(fileName);
 	db->SetEnableCaseInsensitive( !(m_tagsOptions.GetFlags() & CC_IS_CASE_SENSITIVE) );
+	db->SetSingleSearchLimit(m_tagsOptions.GetCcNumberOfDisplayItems());
+	
 	if (db->GetVersion() != db->GetSchemaVersion()) {
 		db->RecreateDatabase();
 
@@ -1575,7 +1577,7 @@ void TagsManager::CloseDatabase()
 	m_dbFile.Clear();
 	m_db = NULL; // Free the current database
 	m_db = new TagsStorageSQLite();
-	m_db->SetSingleSearchLimit( MAX_SEARCH_LIMIT );
+	m_db->SetSingleSearchLimit( m_tagsOptions.GetCcNumberOfDisplayItems() );
 	m_db->SetUseCache(true);
 }
 
@@ -1614,6 +1616,10 @@ void TagsManager::SetCtagsOptions(const TagsOptionsData &options)
 	m_tagsOptions = options;
 	RestartCodeLiteIndexer();
 	m_parseComments = m_tagsOptions.GetFlags() & CC_PARSE_COMMENTS ? true : false;
+	ITagsStoragePtr db = GetDatabase();
+	if(db) {
+		db->SetSingleSearchLimit(m_tagsOptions.GetCcNumberOfDisplayItems());
+	}
 }
 
 void TagsManager::GenerateSettersGetters(const wxString &scope, const SettersGettersData &data, const std::vector<TagEntryPtr> &tags, wxString &impl, wxString *decl)

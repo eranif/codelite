@@ -28,6 +28,8 @@
 #include "xmlutils.h"
 #include <wx/log.h>
 #include "wx_xml_compatibility.h"
+#include <wx/arrstr.h>
+
 
 SvnXML::SvnXML()
 {

@@ -964,12 +964,11 @@ void SubversionView::DoLinkEditor()
 			// Loop over the files under the main nodes
 			wxTreeItemId child = m_treeCtrl->GetFirstChild(parent, childCookie);
 			while(child.IsOk()) {
-				wxString itemText = m_treeCtrl->GetItemText(child);
-				wxFileName fn(basePath + wxFileName::GetPathSeparator() + itemText);
-				if(fn.GetFullPath() == fullPath) {
+				wxTreeItemId match = DoFindFile(child, basePath, fullPath);
+				if(match.IsOk()) {
 					m_treeCtrl->UnselectAll();
-					m_treeCtrl->SelectItem(child);
-					m_treeCtrl->EnsureVisible(child);
+					m_treeCtrl->SelectItem(match);
+					m_treeCtrl->EnsureVisible(match);
 					return;
 				}
 				child = m_treeCtrl->GetNextChild(parent, childCookie);
@@ -1149,4 +1148,33 @@ void SubversionView::OnRename(wxCommandEvent& event)
 wxString SubversionView::DoGetCurRepoPath() const
 {
 	return m_curpath;
+}
+
+wxTreeItemId SubversionView::DoFindFile(const wxTreeItemId& parent, const wxString &basepath, const wxString& fullpath)
+{
+	if(parent.IsOk() == false) {
+		return wxTreeItemId();
+	}
+
+	SvnTreeData* data = static_cast<SvnTreeData*>(m_treeCtrl->GetItemData(parent));
+	if(data && data->GetType() == SvnTreeData::SvnNodeTypeFile) {
+		wxFileName fn(data->GetFilepath());
+		fn.MakeAbsolute(basepath);
+		if(fn.GetFullPath() == fullpath) {
+			return parent;
+		}
+	}
+	
+	if(m_treeCtrl->ItemHasChildren(parent)) {
+		wxTreeItemIdValue cookie;
+		wxTreeItemId child = m_treeCtrl->GetFirstChild(parent, cookie);
+		while(child.IsOk()) {
+			wxTreeItemId fileId = DoFindFile(child, basepath, fullpath);
+			if(fileId.IsOk()) {
+				return fileId;
+			}
+			child = m_treeCtrl->GetNextChild(parent, cookie);
+		}
+	}
+	return wxTreeItemId();
 }

@@ -91,7 +91,8 @@ protected:
 	void         CreateSecondRootMenu(wxMenu *menu);
 	wxTreeItemId DoGetParentNode     (const wxString &filename, const wxTreeItemId& parent);
 	wxTreeItemId DoFindChild         (const wxTreeItemId& parent, const wxString &name, const wxString &curpath);
-	
+	wxTreeItemId DoFindFile          (const wxTreeItemId& parent, const wxString &basepath, const wxString& fullpath);
+
 protected:
 	// Handlers for SubversionPageBase events.
 	void OnChangeRootDir ( wxCommandEvent& event );

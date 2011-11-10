@@ -28,7 +28,7 @@
 #include "xmlutils.h"
 #include <wx/log.h>
 #include "wx_xml_compatibility.h"
-#include <wx/arrstr.h>
+#include <wx/tokenzr.h>
 
 
 SvnXML::SvnXML()

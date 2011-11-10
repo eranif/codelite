@@ -214,7 +214,7 @@ void SubversionView::BuildTree(const wxString& root)
 	DoChangeRootPathUI(root);
 
 	wxString command;
-	command << m_plugin->GetSvnExeName() << wxT("--xml -q status");
+	command << m_plugin->GetSvnExeName() << wxT(" status");
 	m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL), m_plugin);
 }
 

@@ -45,55 +45,72 @@ void SvnXML::GetFiles(const wxString &input,
 					  wxArrayString  &deletedFiles,
 					  wxArrayString  &lockedFiles)
 {
-	wxStringInputStream stream(input);
-	wxXmlDocument doc(stream);
-	if (!doc.IsOk()) {
-		//wxLogMessage(input);
-		return;
-	}
+	// First column information:
+	//
+	// ' ' no modifications
+    // 'A' Added
+    // 'C' Conflicted
+    // 'D' Deleted
+    // 'I' Ignored
+    // 'M' Modified
+    // 'R' Replaced
+    // 'X' an unversioned directory created by an externals definition
+    // '?' item is not under version control
+    // '!' item is missing (removed by non-svn command) or incomplete
+    // '~' versioned item obstructed by some item of a different kind
+	//
+	// Sixth column information:
+	//
+    //  ' ' no lock token
+    //  'K' lock token present
+    //  (with -u)
+    //  ' ' not locked in repository, no lock token
+    //  'K' locked in repository, lock toKen present
+    //  'O' locked in repository, lock token in some Other working copy
+    //  'T' locked in repository, lock token present but sTolen
+    //  'B' not locked in repository, lock token present but Broken
+	//
+	wxArrayString lines = wxStringTokenize(input, wxT("\n\r"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<lines.GetCount(); i++) {
+		wxString statusLine = lines.Item(i).Trim();
+		if(statusLine.Len() < 7) {
+			continue;
+		}
+		
+		wxString filename = statusLine.Mid(7);
+		filename.Trim().Trim(false);
 
-	wxXmlNode *root = doc.GetRoot();
-	if (root) {
-		wxXmlNode *node = root->GetChildren();
-		while ( node ) {
-			if (node->GetName() == wxT("target")) {
-				wxXmlNode *child = node->GetChildren();
-				while (child) {
-					if (child->GetName() == wxT("entry")) {
-						wxString path = XmlUtils::ReadString(child, wxT("path"), wxEmptyString);
-                        if (!path.IsEmpty()) {
-                            wxXmlNode *status = XmlUtils::FindFirstByTagName(child, wxT("wc-status"));
-                            if (status) {
-                                wxString item = XmlUtils::ReadString(status, wxT("item"), wxEmptyString);
-                                if (item == wxT("modified") || item == wxT("merged")) {
-                                    modifiedFiles.Add(path);
-                                } else
-								if (item == wxT("conflicted")) {
-                                    conflictedFiles.Add(path);
-                                } else
-								if (item == wxT("added")) {
-                                    newFiles.Add(path);
-                                } else
-								if (item == wxT("deleted")) {
-                                    deletedFiles.Add(path);
-                                } else
-								if (item == wxT("unversioned")) {
-                                    unversionedFiles.Add(path);
-                                }
+		wxChar ch1 = statusLine.GetChar(0);
+		wxChar ch6 = statusLine.GetChar(5);
+		switch(ch1) {
+		case 'A':
+			newFiles.Add(filename);
+			break;
+		case 'M':
+			modifiedFiles.Add(filename);
+			break;
+		case 'D':
+			deletedFiles.Add(filename);
+			break;
+		case '?':
+			unversionedFiles.Add(filename);
+			break;
+		case 'C':
+			conflictedFiles.Add(filename);
+			break;
+		default:
+			break;
+		}
 
-								wxXmlNode *lock = XmlUtils::FindFirstByTagName(status, wxT("lock"));
-								if(lock) {
-									// this item is locked
-									lockedFiles.Add(path);
-								}
-                            }
-                        }
-					}
-
-					child = child->GetNext();
-				}
-			}
-			node = node->GetNext();
+		switch(ch6) {
+		case 'K':
+			lockedFiles.Add(filename);
+			break;
+		case 'O':
+			lockedFiles.Add(filename);
+			break;
+		default:
+			break;
 		}
 	}
 }

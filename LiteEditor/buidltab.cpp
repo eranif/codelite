@@ -557,7 +557,8 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 	m_building = false;
 	AppendText (wxGetTranslation(BUILD_END_MSG));
 
-	wxString term = wxString::Format ( wxT ( "%d %s, %d %s" ), m_errorCount, _("errors"), m_warnCount, _("warnings") );
+	wxString problemcount = wxString::Format ( wxT ( "%d %s, %d %s" ), m_errorCount, _("errors"), m_warnCount, _("warnings") );
+	wxString term = problemcount;
 	long elapsed = m_sw.Time() / 1000;
 	if ( elapsed > 10 ) {
 		long sec = elapsed % 60;
@@ -585,8 +586,18 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 
 	if ( !success || m_autoAppearErrors ) {
 		if ( !m_autoAppearErrors && viewing ) {
+			// If there are both errors and warnings, go to the first *error*. Surely that's what everyone would want...
+			bool skipWarningsCache = m_skipWarnings;
+			if (m_errorCount > 0) {
+				m_skipWarnings = true;
+			}
 			std::map<int,LineInfo>::iterator i = GetNextBadLine();
+			m_skipWarnings = skipWarningsCache;
 			m_sci->GotoLine ( i->first-1 ); // minus one line so user can type F4 to open the first error
+			
+			// If we're not going to show the Errors tab, output the error/warnings count to the statusbar
+			// Otherwise, if there are dozens of them, the m_sci will have scrolled up and the count won't be visible
+			clMainFrame::Get()->SetStatusMessage(wxString(_("Build ended: ")) + problemcount, 0);
 
 		} else {
 			ManagerST::Get()->ShowOutputPane ( clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->GetCaption() );

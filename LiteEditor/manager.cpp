@@ -199,7 +199,7 @@ Manager::~Manager ( void )
 		DbgStop();
 
 	// Save the current layout
-	GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
+	GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT, false);
 	{
 		//wxLogNull noLog;
 		JobQueueSingleton::Instance()->Stop();

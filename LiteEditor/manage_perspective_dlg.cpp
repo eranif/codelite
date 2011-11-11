@@ -1,4 +1,5 @@
 #include "manage_perspective_dlg.h"
+#include "windowattrmanager.h"
 #include "manager.h"
 #include "perspectivemanager.h"
 
@@ -7,6 +8,13 @@ ManagePerspectivesDlg::ManagePerspectivesDlg( wxWindow* parent )
 {
 	m_listBox->Clear();
 	m_listBox->Append(ManagerST::Get()->GetPerspectiveManager().GetAllPerspectives());
+	GetSizer()->Fit(this);
+	WindowAttrManager::Load(this, wxT("ManagePerspectivesDlg"), NULL);
+}
+
+ManagePerspectivesDlg::~ManagePerspectivesDlg()
+{
+	WindowAttrManager::Save(this, wxT("ManagePerspectivesDlg"), NULL);
 }
 
 void ManagePerspectivesDlg::OnDeletePerspective( wxCommandEvent& event )
@@ -51,3 +59,4 @@ void ManagePerspectivesDlg::DoPopulateList()
 	m_listBox->Clear();
 	m_listBox->Append(ManagerST::Get()->GetPerspectiveManager().GetAllPerspectives());
 }
+

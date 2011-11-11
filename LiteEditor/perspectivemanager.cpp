@@ -47,11 +47,16 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
 	}
 }
 
-void PerspectiveManager::SavePerspective(const wxString& name)
+void PerspectiveManager::SavePerspective(const wxString& name, bool notify)
 {
 	WriteFileWithBackup(DoGetPathFromName(name), 
 						clMainFrame::Get()->GetDockingManager().SavePerspective(),
 						false);
+
+	if(notify) {
+		wxCommandEvent evt(wxEVT_REFRESH_PERSPECTIVE_MENU);
+		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evt);
+	}
 }
 
 wxArrayString PerspectiveManager::GetAllPerspectives()

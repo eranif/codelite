@@ -129,8 +129,9 @@ extern unsigned char cubes_alpha[];
 
 static int FrameTimerId = wxNewId();
 
-const wxEventType wxEVT_UPDATE_STATUS_BAR = XRCID("update_status_bar");
-const wxEventType wxEVT_LOAD_PERSPECTIVE  = XRCID("load_perspective");
+const wxEventType wxEVT_UPDATE_STATUS_BAR        = XRCID("update_status_bar");
+const wxEventType wxEVT_LOAD_PERSPECTIVE         = XRCID("load_perspective");
+const wxEventType wxEVT_REFRESH_PERSPECTIVE_MENU = XRCID("refresh_perspective_menu");
 
 #define CHECK_SHUTDOWN() {\
 		if(ManagerST::Get()->IsShutdownInProgress()){\
@@ -529,6 +530,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR,                 clMainFrame::OnSetStatusMessage)
 	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE,                   clMainFrame::OnDatabaseUpgrade )
 	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE_INTER,             clMainFrame::OnDatabaseUpgradeInternally)
+	EVT_COMMAND(wxID_ANY, wxEVT_REFRESH_PERSPECTIVE_MENU,          clMainFrame::OnRefreshPerspectiveMenu)
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED,       clMainFrame::OnBuildEnded)
 	EVT_MENU   (XRCID("update_num_builders_count"),                clMainFrame::OnUpdateNumberOfBuildProcesses)
 	EVT_MENU   (XRCID("goto_codelite_download_url"),               clMainFrame::OnGotoCodeLiteDownloadPage)
@@ -4454,7 +4456,6 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 	
 	// Save the current layout as the 'Default' layout
 	ManagerST::Get()->GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
-	DoUpdatePerspectiveMenu();
 }
 
 void clMainFrame::SetAUIManagerFlags()
@@ -4800,6 +4801,10 @@ void clMainFrame::OnSaveLayoutAsPerspective(wxCommandEvent& e)
 		return;
 
 	ManagerST::Get()->GetPerspectiveManager().SavePerspective(name);
-	DoUpdatePerspectiveMenu();
 }
 
+
+void clMainFrame::OnRefreshPerspectiveMenu(wxCommandEvent& e)
+{
+	DoUpdatePerspectiveMenu();
+}

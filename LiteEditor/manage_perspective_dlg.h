@@ -25,6 +25,7 @@ protected:
 public:
 	/** Constructor */
 	ManagePerspectivesDlg( wxWindow* parent );
+	virtual ~ManagePerspectivesDlg();
 };
 
 #endif // __manage_perspective_dlg__

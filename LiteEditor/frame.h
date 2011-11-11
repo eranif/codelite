@@ -60,6 +60,7 @@ class DockablePaneMenuManager;
 //--------------------------------
 extern const wxEventType wxEVT_UPDATE_STATUS_BAR;
 extern const wxEventType wxEVT_LOAD_PERSPECTIVE ;
+extern const wxEventType wxEVT_REFRESH_PERSPECTIVE_MENU;
 
 struct StartPageData {
 	wxString name;
@@ -422,6 +423,7 @@ protected:
 	void OnParsingThreadMessage       (wxCommandEvent  &e);
 	void OnDatabaseUpgrade            (wxCommandEvent  &e);
 	void OnDatabaseUpgradeInternally  (wxCommandEvent  &e);
+	void OnRefreshPerspectiveMenu     (wxCommandEvent  &e);
 	void OnClearTagsCache             (wxCommandEvent  &e);
 	void OnRetaggingCompelted         (wxCommandEvent  &e);
 	void OnRetaggingProgress          (wxCommandEvent  &e);

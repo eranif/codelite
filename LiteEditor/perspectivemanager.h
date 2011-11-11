@@ -27,7 +27,7 @@ public:
 
 	void          LoadPerspective(const wxString &name);
 	void          LoadPerspectiveByMenuId(int id);
-	void          SavePerspective(const wxString &name);
+	void          SavePerspective(const wxString &name, bool notify = true);
 	wxArrayString GetAllPerspectives();
 	void          DeleteAllPerspectives();
 	void          ClearIds();

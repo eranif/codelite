@@ -67,7 +67,14 @@ wxArrayString PerspectiveManager::GetAllPerspectives()
 	for(size_t i=0; i<files.GetCount(); i++) {
 		wxFileName fn(files.Item(i));
 		wxString name = fn.GetName();
+#if wxVERSION_NUMBER >= 2900
 		name = name.Capitalize();
+#else
+		name.MakeLower();
+		wxString start  = name.Mid(0, 1);
+		start.MakeUpper();
+		name[0] = start[0];
+#endif
 		perspectives.Add(name);
 	}
 	return perspectives;

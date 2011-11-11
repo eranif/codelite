@@ -493,6 +493,10 @@
     <File Name="dbcontentcacher.cpp"/>
     <File Name="perspectivemanager.h"/>
     <File Name="perspectivemanager.cpp"/>
+    <File Name="manageperspectivesbasedlg.cpp"/>
+    <File Name="manageperspectivesbasedlg.h"/>
+    <File Name="manage_perspective_dlg.h"/>
+    <File Name="manage_perspective_dlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="code_parser.rc"/>
@@ -612,6 +616,7 @@
     <File Name="editor_options_folding.fbp"/>
     <File Name="editor_options_misc.fbp"/>
     <File Name="editor_options_terminal.fbp"/>
+    <File Name="manageperspectivesbasedlg.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="breakpointsmgr.h"/>
@@ -990,7 +995,7 @@ resources.cpp: resources.xrc
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
         <![CDATA[]]>
       </Environment>

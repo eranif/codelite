@@ -149,10 +149,6 @@
         <object class="wxMenu" name="view_menu">
             <label>&amp;View</label>
             <style>wxMENU_TEAROFF</style>
-			<object class="wxMenuItem" name="restore_layout">
-				<label>Restore Default Layout</label>
-            </object>
-			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="word_wrap">
 				<label>Word W&amp;rap</label>
 				<checkable>1</checkable>
@@ -517,6 +513,21 @@
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
         </object>
 
+		<object class="wxMenu" name="perspective_menu">
+            <label>Pe&amp;rspective</label>
+            <style>wxMENU_TEAROFF</style>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="save_current_layout">
+                <label>Save Current Layout As...</label>
+            </object>
+            <object class="wxMenuItem" name="manage_perspectives">
+                <label>Manage Perspectives...</label>
+            </object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+			<object class="wxMenuItem" name="restore_layout">
+				<label>Restore Default Layout</label>
+            </object>
+		</object>
 		<object class="wxMenu" name="settings_menu">
             <label>Settin&amp;gs</label>
             <style>wxMENU_TEAROFF</style>

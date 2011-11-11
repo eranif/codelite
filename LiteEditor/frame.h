@@ -318,6 +318,7 @@ private:
 	void ReloadExternallyModifiedProjectFiles();
 	void DoSuggestRestart();
 	void DoEnableWorkspaceViewFlag(bool enable, int flag);
+	void DoUpdatePerspectiveMenu();
 	bool IsWorkspaceViewFlagEnabled(int flag);
 	
 public:
@@ -465,6 +466,11 @@ protected:
 	void OnUpdateParserPath(wxCommandEvent &e);
 	void OnNeverUpdateParserPath(wxCommandEvent &e);
 
+	// Perspectives management
+	void OnChangePerspective (wxCommandEvent &e);
+	void OnManagePerspectives(wxCommandEvent &e);
+	void OnSaveLayoutAsPerspective(wxCommandEvent &e);
+	
 	//EOL
 	void OnConvertEol(wxCommandEvent &e);
 	void OnViewDisplayEOL(wxCommandEvent &e);

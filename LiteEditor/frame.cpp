@@ -27,6 +27,7 @@
 #include <wx/wupdlock.h>
 #include "file_logger.h"
 #include "cl_aui_tb_are.h"
+#include "manage_perspective_dlg.h"
 #include "open_resource_dialog.h" // New open resource
 #include <wx/busyinfo.h>
 #include "tags_parser_search_path_dlg.h"
@@ -441,6 +442,13 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_MENU(wxID_ABOUT,                        clMainFrame::OnAbout)
 	EVT_MENU(XRCID("check_for_update"),         clMainFrame::OnCheckForUpdate)
 
+	//-------------------------------------------------------
+	// Perspective menu
+	//-------------------------------------------------------
+	EVT_MENU_RANGE(PERSPECTIVE_FIRST_MENU_ID, PERSPECTIVE_LAST_MENU_ID, clMainFrame::OnChangePerspective)
+	EVT_MENU(XRCID("manage_perspectives"),      clMainFrame::OnManagePerspectives)
+	EVT_MENU(XRCID("save_current_layout"),      clMainFrame::OnSaveLayoutAsPerspective)
+
 	//-----------------------------------------------------------------
 	// Toolbar
 	//-----------------------------------------------------------------
@@ -714,15 +722,6 @@ void clMainFrame::CreateGUIControls(void)
 	SetIcon(icon);
 #endif
 
-//	m_mainPanel = new wxPanel(this);
-//	m_horzSizer = new wxBoxSizer(wxHORIZONTAL);
-//	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
-//
-//	m_horzSizer->Add(m_mainPanel, 1, wxEXPAND);
-//	mainSizer->Add(m_horzSizer, 1, wxEXPAND);
-//
-//	SetSizer(mainSizer);
-
 	// tell wxAuiManager to manage this frame
 	m_mgr.SetManagedWindow(this);
 	m_mgr.SetArtProvider(new CLAuiDockArt());
@@ -762,6 +761,8 @@ void clMainFrame::CreateGUIControls(void)
 	// Set up dynamic parts of menu.
 	CreateViewAsSubMenu();
 	CreateRecentlyOpenedWorkspacesMenu();
+	DoUpdatePerspectiveMenu();
+	
 	m_DPmenuMgr = new DockablePaneMenuManager(GetMenuBar(), &m_mgr);
 
 	//---------------------------------------------
@@ -4450,6 +4451,10 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 
 	m_mgr.LoadPerspective(m_defaultLayout, false);
 	UpdateAUI();
+	
+	// Save the current layout as the 'Default' layout
+	ManagerST::Get()->GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
+	DoUpdatePerspectiveMenu();
 }
 
 void clMainFrame::SetAUIManagerFlags()
@@ -4732,3 +4737,69 @@ bool clMainFrame::IsWorkspaceViewFlagEnabled(int flag)
 	EditorConfigST::Get()->GetLongValue(wxT("view_workspace_view"), flags);
 	return (flags & flag);
 }
+
+void clMainFrame::DoUpdatePerspectiveMenu()
+{
+	// Locate the "perspective_menu"
+	size_t count = GetMenuBar()->GetMenuCount();
+	size_t pos = wxString::npos;
+	for(size_t i=0; i<count; i++) {
+		if(GetMenuBar()->GetMenuLabelText(i) == wxT("Perspective")) {
+			pos = i;
+			break;
+		}
+	}
+
+	if(pos == wxString::npos) {
+		return;
+	}
+
+	wxMenu* menu = GetMenuBar()->GetMenu(pos);
+	if(!menu) {
+		return;
+	}
+
+	std::vector<int> menuItemIds;
+	const wxMenuItemList &items = menu->GetMenuItems();
+	wxMenuItemList::const_iterator iter = items.begin();
+	for(; iter != items.end(); iter++) {
+		wxMenuItem* menuItem = *iter;
+		if(menuItem->GetId() == wxID_SEPARATOR || menuItem->GetId() == XRCID("save_current_layout") || menuItem->GetId() == XRCID("manage_perspectives") || menuItem->GetId() == XRCID("restore_layout"))
+			continue;
+		menuItemIds.push_back(menuItem->GetId());
+	}
+
+	for(size_t i=0; i<menuItemIds.size(); i++) {
+		menu->Delete(menuItemIds.at(i));
+	}
+
+	wxArrayString perspectives = ManagerST::Get()->GetPerspectiveManager().GetAllPerspectives();
+	for(size_t i=0; i<perspectives.GetCount(); i++) {
+		wxString name = perspectives.Item(i);
+		menu->Prepend(ManagerST::Get()->GetPerspectiveManager().MenuIdFromName(name), name);
+	}
+}
+
+// Perspective management
+void clMainFrame::OnChangePerspective(wxCommandEvent& e)
+{
+	ManagerST::Get()->GetPerspectiveManager().LoadPerspectiveByMenuId(e.GetId());
+}
+
+void clMainFrame::OnManagePerspectives(wxCommandEvent& e)
+{
+	ManagePerspectivesDlg dlg(this);
+	dlg.ShowModal();
+	DoUpdatePerspectiveMenu();
+}
+
+void clMainFrame::OnSaveLayoutAsPerspective(wxCommandEvent& e)
+{
+	wxString name = wxGetTextFromUser(_("New Perspective name:"), _("Save Perspective As..."));
+	if(name.IsEmpty())
+		return;
+
+	ManagerST::Get()->GetPerspectiveManager().SavePerspective(name);
+	DoUpdatePerspectiveMenu();
+}
+

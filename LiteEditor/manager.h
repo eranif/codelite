@@ -37,6 +37,7 @@
 #include "async_executable_cmd.h"
 #include "filehistory.h"
 #include "breakpointsmgr.h"
+#include "perspectivemanager.h"
 
 
 // ====================================================================
@@ -44,9 +45,6 @@
 // ====================================================================
 
 extern const wxEventType wxEVT_CMD_RESTART_CODELITE;
-
-extern wxString DEBUG_LAYOUT ;
-extern wxString NORMAL_LAYOUT;
 
 class DisplayVariableDlg;
 
@@ -58,33 +56,28 @@ public:
 
 public:
 	DbgStackInfo()
-	: depth(wxString::npos)
-	, func(wxT(""))
+		: depth(wxString::npos)
+		, func(wxT(""))
 	{}
 
-	~DbgStackInfo()
-	{
+	~DbgStackInfo() {
 		Clear();
 	}
 
-	void Clear()
-	{
+	void Clear() {
 		func.Clear();
 		depth = wxString::npos;
 	}
 
-	bool operator==(const DbgStackInfo& rhs)
-	{
+	bool operator==(const DbgStackInfo& rhs) {
 		return func == rhs.func && depth == rhs.depth;
 	}
 
-	bool operator!=(const DbgStackInfo& rhs)
-	{
+	bool operator!=(const DbgStackInfo& rhs) {
 		return func != rhs.func || depth != rhs.depth;
 	}
 
-	bool IsValid() const
-	{
+	bool IsValid() const {
 		return !func.IsEmpty() && depth != wxString::npos;
 	}
 };
@@ -113,6 +106,7 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	bool                    m_retagInProgress;
 	bool                    m_repositionEditor; //flag used for debugging, should editor be repositioned after user updates like "add watch"
 	DbgStackInfo            m_dbgCurrentFrameInfo;
+	PerspectiveManager      m_perspectiveManager;
 
 protected:
 	Manager(void);
@@ -122,6 +116,10 @@ protected:
 public:
 	DisplayVariableDlg *GetDebuggerTip();
 
+	PerspectiveManager& GetPerspectiveManager(){
+		return m_perspectiveManager;
+	}
+	
 	void SetRetagInProgress(bool retagInProgress) {
 		this->m_retagInProgress = retagInProgress;
 	}
@@ -633,10 +631,6 @@ public:
 		return DebuggerPaneWasShown;
 	}
 
-	void LoadPerspective(const wxString &name);
-	void SavePerspective(const wxString &name);
-	void DeleteAllPerspectives();
-
 	//---------------------------------------------------
 	// Debugging API
 	//---------------------------------------------------
@@ -651,7 +645,9 @@ public:
 	bool         DbgCanInteract() ;
 	void         DbgClearWatches();
 	void         DbgRestoreWatches();
-	DbgStackInfo DbgGetCurrentFrameInfo() {return m_dbgCurrentFrameInfo; }
+	DbgStackInfo DbgGetCurrentFrameInfo() {
+		return m_dbgCurrentFrameInfo;
+	}
 
 	//---------------------------------------------------
 	// Internal implementaion for various debugger events

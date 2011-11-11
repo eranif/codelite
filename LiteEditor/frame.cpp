@@ -1022,7 +1022,6 @@ void clMainFrame::CreateToolbars24()
 	tb->AddTool(XRCID("find_in_files"), _("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_in_files")),    _("Find In Files"));
 	tb->AddSeparator();
 	tb->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_resource")),    _("Find Resource In Workspace"));
-	tb->AddTool(XRCID("find_type"),     _("Find Type In Workspace"),     bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_type")),        _("Find Type In Workspace"));
 	tb->AddSeparator();
 	tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/24/search/mark_word")),        _("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
@@ -1134,7 +1133,6 @@ void clMainFrame::CreateNativeToolbar16()
 	tb->AddTool(XRCID("find_in_files"), _("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/16/search/find_in_files")),    _("Find In Files"));
 	tb->AddSeparator();
 	tb->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_resource")),    _("Find Resource In Workspace"));
-	tb->AddTool(XRCID("find_type"),     _("Find Type In Workspace"),     bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_type")),        _("Find Type In Workspace"));
 	tb->AddSeparator();
 	tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/16/search/mark_word")),        _("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
@@ -1209,7 +1207,6 @@ void clMainFrame::CreateNativeToolbar24()
 	tb->AddTool(XRCID("find_in_files"), _("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_in_files")),    _("Find In Files"));
 	tb->AddSeparator();
 	tb->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_resource")),    _("Find Resource In Workspace"));
-	tb->AddTool(XRCID("find_type"),     _("Find Type In Workspace"),     bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_type")),        _("Find Type In Workspace"));
 	tb->AddSeparator();
 	tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/24/search/mark_word")),        _("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
@@ -1311,7 +1308,6 @@ void clMainFrame::CreateToolbars16()
 	tb->AddTool(XRCID("find_in_files"), _("Find In Files"),              bmpLoader.LoadBitmap(wxT("toolbars/16/search/find_in_files")),    _("Find In Files"));
 	tb->AddSeparator();
 	tb->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_resource")),    _("Find Resource In Workspace"));
-	tb->AddTool(XRCID("find_type"),     _("Find Type In Workspace"),     bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_type")),        _("Find Type In Workspace"));
 	tb->AddSeparator();
 	tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/16/search/mark_word")),        _("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
@@ -3857,8 +3853,8 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
 			clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
 			// Layout management
-			ManagerST::Get()->SavePerspective(NORMAL_LAYOUT);
-			ManagerST::Get()->LoadPerspective(DEBUG_LAYOUT);
+			ManagerST::Get()->GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
+			ManagerST::Get()->GetPerspectiveManager().LoadPerspective(DEBUG_LAYOUT);
 		}
 	}
 	dlg->Destroy();
@@ -3926,8 +3922,8 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
 			// Coredump debugging doesn't use breakpoints, but probably we should do this here anyway...
 			clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
-			ManagerST::Get()->SavePerspective(NORMAL_LAYOUT);
-			ManagerST::Get()->LoadPerspective(DEBUG_LAYOUT);
+			ManagerST::Get()->GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
+			ManagerST::Get()->GetPerspectiveManager().LoadPerspective(DEBUG_LAYOUT);
 
 			// Make sure that the debugger pane is visible, and select the stack trace tab
 			wxAuiPaneInfo &info = GetDockingManager().GetPane(wxT("Debugger"));
@@ -4270,7 +4266,7 @@ void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 		GetEventHandler()->ProcessEvent(eventRestoreLayout);
 
 	} else
-		ManagerST::Get()->LoadPerspective(NORMAL_LAYOUT);
+		ManagerST::Get()->GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
 }
 
 void clMainFrame::SelectBestEnvSet()
@@ -4450,7 +4446,7 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 
 	}
 
-	ManagerST::Get()->DeleteAllPerspectives();
+	ManagerST::Get()->GetPerspectiveManager().DeleteAllPerspectives();
 
 	m_mgr.LoadPerspective(m_defaultLayout, false);
 	UpdateAUI();

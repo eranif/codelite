@@ -85,8 +85,6 @@
 #include "manager.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
-wxString DEBUG_LAYOUT  = wxT("debug.layout");
-wxString NORMAL_LAYOUT = wxT("normal.layout");
 
 //---------------------------------------------------------------
 // Menu accelerators helper method
@@ -201,7 +199,7 @@ Manager::~Manager ( void )
 		DbgStop();
 
 	// Save the current layout
-	SavePerspective(NORMAL_LAYOUT);
+	GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
 	{
 		//wxLogNull noLog;
 		JobQueueSingleton::Instance()->Stop();
@@ -2052,7 +2050,7 @@ void Manager::DbgStart ( long attachPid )
 	}
 
 	// Save the current layout
-	SavePerspective(NORMAL_LAYOUT);
+	GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
 
 	//set the debugger information
 	DebuggerInformation dinfo;
@@ -2215,13 +2213,13 @@ void Manager::DbgStart ( long attachPid )
 		dbgr->Run ( args, wxEmptyString );
 	}
 
-	LoadPerspective(DEBUG_LAYOUT);
+	GetPerspectiveManager().LoadPerspective(DEBUG_LAYOUT);
 }
 
 void Manager::DbgStop()
 {
-	SavePerspective(DEBUG_LAYOUT);
-	LoadPerspective(NORMAL_LAYOUT);
+	GetPerspectiveManager().SavePerspective(DEBUG_LAYOUT);
+	GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
 
 	if ( m_watchDlg ) {
 		m_watchDlg->Destroy();
@@ -3525,45 +3523,6 @@ void Manager::GetActiveProjectFiles(wxArrayString& files)
 	getFilesEevet.SetClientData(&files);
 	if(!wxTheApp->ProcessEvent(getFilesEevet)) {
 		GetProjectFiles(GetActiveProjectName(), files);
-	}
-}
-
-void Manager::LoadPerspective(const wxString& name)
-{
-	wxString file;
-	file << wxStandardPaths::Get().GetUserDataDir() << wxT("/config/") << name;
-
-	wxString content;
-	if(ReadFileWithConversion(file, content)) {
-		clMainFrame::Get()->GetDockingManager().LoadPerspective(content, true);
-
-	} else {
-		if(name == DEBUG_LAYOUT) {
-			// First time, make sure that the debugger pane is visible
-			wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
-			if(info.IsOk() && !info.IsShown()) {
-				info.Show();
-				clMainFrame::Get()->GetDockingManager().Update();
-			}
-		}
-	}
-}
-
-void Manager::SavePerspective(const wxString& name)
-{
-	wxString file;
-	file << wxStandardPaths::Get().GetUserDataDir() << wxT("/config/") << name;
-	WriteFileWithBackup(file, clMainFrame::Get()->GetDockingManager().SavePerspective(), false);
-}
-
-void Manager::DeleteAllPerspectives()
-{
-	wxArrayString files;
-	wxDir::GetAllFiles(wxStandardPaths::Get().GetUserDataDir() + wxT("/config/"), &files, wxT("*.layout"));
-
-	wxLogNull noLog;
-	for(size_t i=0; i<files.GetCount(); i++) {
-		wxRemoveFile(files.Item(i));
 	}
 }
 

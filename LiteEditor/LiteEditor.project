@@ -491,6 +491,8 @@
     <File Name="tabgroupspane.cpp"/>
     <File Name="dbcontentcacher.h"/>
     <File Name="dbcontentcacher.cpp"/>
+    <File Name="perspectivemanager.h"/>
+    <File Name="perspectivemanager.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="code_parser.rc"/>

@@ -580,7 +580,6 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
 	m_highlightWord = (bool)value;
 	
 	m_statusbarTimer = new StatusbarTimer(this);
-	SetStatusBarPane(1);
 
 	CreateGUIControls();
 

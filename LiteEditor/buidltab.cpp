@@ -265,7 +265,7 @@ bool BuildTab::ExtractLineInfo ( LineInfo &info, const wxString &text, const wxR
 
 	size_t start;
 	size_t len;
-	if ( re.GetMatch ( &start, &len, fidx ) ) {
+	if ( re.GetMatchCount() > (size_t)fidx && re.GetMatch ( &start, &len, fidx ) ) {
 		// sometimes we get leading spaces in the filename match
 		while ( len > 0 && text[start] == wxT ( ' ' ) ) {
 			start++;
@@ -298,7 +298,7 @@ bool BuildTab::ExtractLineInfo ( LineInfo &info, const wxString &text, const wxR
 		info.filename = fn.GetFullPath();
 	}
 
-	if ( re.GetMatch ( &start, &len, lidx ) ) {
+	if (  re.GetMatchCount() > (size_t)lidx &&  re.GetMatch ( &start, &len, lidx ) ) {
 		text.Mid ( start, len ).ToLong ( &info.linenum );
 		info.linenum--; // scintilla starts counting lines from 0
 	}

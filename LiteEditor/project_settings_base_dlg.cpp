@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -429,7 +429,9 @@ PSCompilerPageBase::PSCompilerPageBase( wxWindow* parent, wxWindowID id, const w
 	m_buttonBrowsePreCompiledHeader->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
 	m_checkBoxPCHInCommandLine->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSCompilerPageBase::OnCmdEvtVModified ), NULL, this );
 	m_checkBoxPCHInCommandLine->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
+	m_checkBoxSeparatePCHFlags->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSCompilerPageBase::OnCmdEvtVModified ), NULL, this );
 	m_checkBoxSeparatePCHFlags->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
+	m_textCtrlPCHCompilationFlags->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompilerPageBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlPCHCompilationFlags->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnEnablePCHFLagsUI ), NULL, this );
 }
 
@@ -467,7 +469,9 @@ PSCompilerPageBase::~PSCompilerPageBase()
 	m_buttonBrowsePreCompiledHeader->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
 	m_checkBoxPCHInCommandLine->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSCompilerPageBase::OnCmdEvtVModified ), NULL, this );
 	m_checkBoxPCHInCommandLine->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
+	m_checkBoxSeparatePCHFlags->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSCompilerPageBase::OnCmdEvtVModified ), NULL, this );
 	m_checkBoxSeparatePCHFlags->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
+	m_textCtrlPCHCompilationFlags->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompilerPageBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlPCHCompilationFlags->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnEnablePCHFLagsUI ), NULL, this );
 	
 }
@@ -874,6 +878,7 @@ PSEnvironmentBasePage::PSEnvironmentBasePage( wxWindow* parent, wxWindowID id, c
 	// Connect Events
 	m_choiceEnv->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( PSEnvironmentBasePage::OnCmdEvtVModified ), NULL, this );
 	m_choiceDbgEnv->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( PSEnvironmentBasePage::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlEnvvars->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSEnvironmentBasePage::OnCmdEvtVModified ), NULL, this );
 }
 
 PSEnvironmentBasePage::~PSEnvironmentBasePage()
@@ -881,6 +886,7 @@ PSEnvironmentBasePage::~PSEnvironmentBasePage()
 	// Disconnect Events
 	m_choiceEnv->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( PSEnvironmentBasePage::OnCmdEvtVModified ), NULL, this );
 	m_choiceDbgEnv->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( PSEnvironmentBasePage::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlEnvvars->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSEnvironmentBasePage::OnCmdEvtVModified ), NULL, this );
 	
 }
 

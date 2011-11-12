@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __project_settings_base_dlg__
-#define __project_settings_base_dlg__
+#ifndef __PROJECT_SETTINGS_BASE_DLG_H__
+#define __PROJECT_SETTINGS_BASE_DLG_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/choice.h>
 #include <wx/gdicmn.h>
@@ -187,7 +188,6 @@ class PSLinkPageBase : public wxPanel
 		wxGridBagSizer* m_gbSizer3;
 		wxStaticText* m_staticText3311;
 		wxChoice* m_choiceLnkUseWithGlobalSettings;
-		
 		wxStaticText* m_staticText10;
 		wxTextCtrl* m_textLinkerOptions;
 		wxButton* m_buttonLinkerOptions;
@@ -515,4 +515,4 @@ class PSCompletionBase : public wxPanel
 	
 };
 
-#endif //__project_settings_base_dlg__
+#endif //__PROJECT_SETTINGS_BASE_DLG_H__

@@ -107,6 +107,8 @@ basic_type_name_inter:    LE_INT          { $$ = $1; }
                 |         LE_UNSIGNED     { $$ = $1; }
                 |         LE_VOID         { $$ = $1; }
                 |         LE_BOOL         { $$ = $1; }
+				|         LE_TIME_T       { $$ = $1; }
+				|         LE_SIZE_T       { $$ = $1; }
                 ;
 
 basic_type_name:  LE_UNSIGNED basic_type_name_inter { $$ = $1 + " " + $2; }

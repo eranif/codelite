@@ -37,12 +37,22 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
 
 	} else {
 		if(name == DEBUG_LAYOUT) {
+			bool needUpdate = false;
 			// First time, make sure that the debugger pane is visible
 			wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
 			if(info.IsOk() && !info.IsShown()) {
 				info.Show();
-				clMainFrame::Get()->GetDockingManager().Update();
+				needUpdate = true;
 			}
+#ifndef __WXMSW__
+			wxAuiPaneInfo &dbgPaneInfo = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger Console"));
+			if(dbgPaneInfo.IsOk() && !dbgPaneInfo.IsShown()) {
+				dbgPaneInfo.Show();
+				needUpdate = true;
+			}
+#endif
+			if(needUpdate)
+				clMainFrame::Get()->GetDockingManager().Update();
 		}
 	}
 }

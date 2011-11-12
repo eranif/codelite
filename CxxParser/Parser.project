@@ -24,6 +24,7 @@
     <File Name="expression_result.h"/>
     <File Name="function.h"/>
     <File Name="cl_typedef.h"/>
+    <File Name="code_completion_api.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="grammar">
     <File Name="cpp.l"/>

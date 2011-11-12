@@ -33,6 +33,24 @@ ST theStruct;
 
 #define EG(x) theStruct.x
 
+// This set of classes are here for creating entries in the database for the
+// test_netsting_scope_resolving
+class string
+{
+	class SubClass
+	{
+		int member;
+		class SubSubClass
+		{
+			int sub_sub_member;
+			class Box
+			{
+				void foo();
+			};
+		};
+	};
+};
+
 // Needed for the test of the 'goto decl inside namespace'
 namespace Baz
 {
@@ -46,3 +64,4 @@ class Foo
 public:
     Tada sad; // Tada cannot be located via Goto Declaration/Implementation
 };
+

@@ -201,13 +201,13 @@ switch              {}
 undef               {}
 union               {}
 while               {}
-class               {}
+class               { current_scope.str += yytext; }
+struct              { current_scope.str += yytext; }
 namespace           { current_scope.str += yytext; }
 delete              {}
 friend              {}
 inline              {}
 operator            {}
-overload            {}
 protected           {}
 private             {}
 public              {}

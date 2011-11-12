@@ -338,12 +338,13 @@ CL_DEBUG(wxT("Optimizing scope...done"));
 
 	std::vector<wxString> additionalScopes;
 
-	// Allways use the global namespace as an addition scope
-	additionalScopes.push_back( wxT("<global>") );
-
 CL_DEBUG(wxT("Obtaining the scope name..."));
 	scopeName = GetScopeName(visibleScope, &additionalScopes);
 CL_DEBUG(wxT("Obtaining the scope name...done"));
+
+	// Allways use the global namespace as an addition scope
+	// but make sure we add it last
+	additionalScopes.push_back( wxT("<global>") );
 
 	SetLastFunctionSignature(lastFuncSig);
 	SetVisibleScope         (localsBody );
@@ -964,59 +965,44 @@ bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const 
 	wxArrayString tmplInitList;
 	DoRemoveTempalteInitialization(strippedScope, tmplInitList);
 
-	if (!GetTagsManager()->IsTypeAndScopeExists(type, strippedScope)) {
-		if (GetAdditionalScopes().empty() == false) {
-			//the type does not exist in the global scope,
-			//try the additional scopes
-			for (size_t i=0; i<GetAdditionalScopes().size(); i++) {
-				tags.clear();
-
-				// try the typeScope in any of the "using namespace XXX" declarations
-				// passed here (i.e. moreScopes variable)
-				wxString newScope(GetAdditionalScopes().at(i));
-				if (typeScope != wxT("<global>")) {
-					newScope << wxT("::") << typeScope;
-				}
-
-				if (DoSearchByNameAndScope(type, newScope, tags, type, typeScope)) {
-					return true;
-				}
-			}
-		}
-
-		//if we are here, it means that the more scopes did not matched any, try the parent scope
-		tags.clear();
-
-		wxString tmpParentScope(parentScope);
-		wxString cuttedScope(tmpParentScope);
-
-		tmpParentScope.Replace(wxT("::"), wxT("@"));
-
-		cuttedScope.Trim().Trim(false);
-		while ( !cuttedScope.IsEmpty() ) {
-
-			// try all the scopes of thse parent:
-			// for example:
-			// assuming the parent scope is A::B::C
-			// try to match:
-			// A::B::C
-			// A::B
-			// A
+	if(typeScope == wxT("<global>") && GetAdditionalScopes().empty() == false) {
+		// Incase the typeScope is "global" and we got additional-scopes
+		// Use the additional scopes *before* the "global" scope
+		for (size_t i=0; i<GetAdditionalScopes().size(); i++) {
 			tags.clear();
-			if (DoSearchByNameAndScope(type, cuttedScope, tags, type, typeScope)) {
+			wxString newScope(GetAdditionalScopes().at(i));
+			if (typeScope != wxT("<global>")) {
+				newScope << wxT("::") << typeScope;
+			}
+
+			if (DoSearchByNameAndScope(type, newScope, tags, type, typeScope)) {
 				return true;
 			}
-
-			// get the next scope to search
-			cuttedScope = tmpParentScope.BeforeLast(wxT('@'));
-			cuttedScope.Replace(wxT("@"), wxT("::"));
-			cuttedScope.Trim().Trim(false);
-
-			tmpParentScope = tmpParentScope.BeforeLast(wxT('@'));
 		}
+	}
 
-		//still no match?
+	//try the passed scope (might be <global> now)
+	if (GetTagsManager()->IsTypeAndScopeExists(type, strippedScope)) {
 		return true;
+	}
+	
+	//if we are here, it means that the more scopes did not matched any, try the parent scope
+	tags.clear();
+
+	// try all the scopes of the parent:
+	// for example:
+	// assuming the parent scope is A::B::C
+	// try to match:
+	// A::B::C
+	// A::B
+	// A
+	wxArrayString scopesToScan = GetTagsManager()->BreakToOuterScopes(parentScope);
+	scopesToScan.Add(wxT("<global>"));
+	for(size_t i=0; i<scopesToScan.GetCount(); i++) {
+		tags.clear();
+		if (DoSearchByNameAndScope(type, scopesToScan.Item(i), tags, type, typeScope, false)) {
+			return true;
+		}
 	}
 	return true;
 }
@@ -1025,12 +1011,13 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
                                       const wxString &scopeName,
                                       std::vector<TagEntryPtr> &tags,
                                       wxString &type,
-                                      wxString &typeScope)
+                                      wxString &typeScope,
+									  bool testGlobalScope)
 {
 	PERF_BLOCK("DoSearchByNameAndScope") {
 		std::vector<TagEntryPtr> tmp_tags;
 		GetTagsManager()->FindByNameAndScope(name, scopeName, tmp_tags);
-		if ( tmp_tags.empty() ) {
+		if ( tmp_tags.empty() && testGlobalScope) {
 			// try the global scope maybe?
 			GetTagsManager()->FindByNameAndScope(name, wxT("<global>"), tmp_tags);
 		}
@@ -1517,7 +1504,10 @@ void Language::CheckForTemplateAndTypedef(ParsedToken *token)
 
 		templateMatch = OnTemplates( token );
 		if(templateMatch) {
-			DoIsTypeAndScopeExist( token );
+			if(!DoIsTypeAndScopeExist( token )) {
+				std::vector<TagEntryPtr> dummyTags;
+				DoCorrectUsingNamespaces(token, dummyTags);
+			}
 			token->SetIsTemplate(false);
 			DoExtractTemplateInitListFromInheritance( token );
 		}
@@ -1806,6 +1796,11 @@ void Language::ExcuteUserTypes(ParsedToken *token, const std::map<wxString, wxSt
 
 bool Language::DoIsTypeAndScopeExist(ParsedToken* token)
 {
+	// Check to see if this is a primitve type...
+	if(is_primitive_type(token->GetTypeName().mb_str(wxConvUTF8).data())) {
+		return true;
+	}
+	
 	wxString type (token->GetTypeName());
 	wxString scope(token->GetTypeScope());
 	bool res = GetTagsManager()->IsTypeAndScopeExists(type, scope);
@@ -1815,7 +1810,7 @@ bool Language::DoIsTypeAndScopeExist(ParsedToken* token)
 	return res;
 }
 
-bool Language::DoCorrectUsingNamespaces(ParsedToken* token, std::vector<TagEntryPtr> tags)
+bool Language::DoCorrectUsingNamespaces(ParsedToken* token, std::vector<TagEntryPtr>& tags)
 {
 	wxString type (token->GetTypeName());
 	wxString scope(token->GetTypeScope());

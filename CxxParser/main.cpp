@@ -13,8 +13,8 @@ void testVarParser(char *buf);
 void testTypedefParser(char *buf);
 void testExprParser(char *buf);
 void testFuncParser(char *buf);
+void testIsPrimitive(char *buf);
 char *loadFile(const char *fileName);
-
 void testColorLocals()
 {
 
@@ -26,11 +26,18 @@ int main()
 
 	//print the scope name
 	//testScopeParser(buf);
-	testVarParser(buf);
+	//testVarParser(buf);
 	//testExprParser(buf);
 	//testFuncParser(buf);
 	//testTypedefParser(buf);
+	testIsPrimitive(buf);
 	free(buf);
+}
+
+void testIsPrimitive(char *buf)
+{
+	printf("===== Testing is_primitive_type ======\n");
+	printf("%d\n", is_primitive_type(buf) ? 1 : 0);
 }
 
 void testFuncParser(char *buf)

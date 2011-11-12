@@ -239,7 +239,8 @@ private:
 	                            const wxString &scopeName,
 	                            std::vector<TagEntryPtr> &tags,
 	                            wxString &type,
-	                            wxString &typeScope);
+	                            wxString &typeScope,
+								bool testGlobalScope = true);
 
 	bool CorrectUsingNamespace(wxString &type, wxString &typeScope, const wxString &parentScope, std::vector<TagEntryPtr>& tags);
 	/**
@@ -325,7 +326,7 @@ private:
 	// Wrapper methods to help the transition from the [wxString,wxString] API into the new ParsedToken
 	// code
 	bool DoIsTypeAndScopeExist   ( ParsedToken *token                                );
-	bool DoCorrectUsingNamespaces( ParsedToken *token, std::vector<TagEntryPtr> tags );
+	bool DoCorrectUsingNamespaces( ParsedToken *token, std::vector<TagEntryPtr> &tags );
 };
 
 class WXDLLIMPEXP_CL LanguageST

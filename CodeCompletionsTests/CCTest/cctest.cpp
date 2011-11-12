@@ -150,7 +150,7 @@ TEST_FUNC(testThis)
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/this_ptr.h")), 4, wxT("this->"), LoadFile(wxT("../tests/this_ptr.h")), tags);
 
 #ifdef __WXMSW__
-	CHECK_SIZE(tags.size(), 1287);
+	CHECK_SIZE(tags.size(), 1292);
 #else
 	CHECK_SIZE(tags.size(), 952);
 #endif
@@ -184,7 +184,7 @@ TEST_FUNC(testTemplateTypedef)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_template_typedef.h")), 3, wxT("ManagerST::Get()->"), LoadFile(wxT("../tests/test_template_typedef.h")), tags);
-	CHECK_SIZE(tags.size(), 255);
+	CHECK_SIZE(tags.size(), 254);
 	return true;
 }
 
@@ -242,7 +242,7 @@ TEST_FUNC(testClFrame)
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_cl_frame.h")), 4, wxT("clMainFrame::Get()->"), LoadFile(wxT("../tests/test_cl_frame.h")), tags);
 #ifdef __WXMSW__
-	CHECK_SIZE(tags.size(), 1287);
+	CHECK_SIZE(tags.size(), 1292);
 #else
 	CHECK_SIZE(tags.size(), 952);
 #endif
@@ -286,6 +286,14 @@ TEST_FUNC(testGotoDeclOfFuncArgUsingTheMethodScope)
 	
 	CHECK_SIZE(tags.size(), 1);
 	CHECK_STRING(tags.at(0)->GetName().mb_str(wxConvUTF8).data(), "Tada");
+	return true;
+}
+
+TEST_FUNC(testScopeResolving1)
+{
+	std::vector<TagEntryPtr> tags;
+	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_scope_resolving_1.h")), 4, wxT("cls."), LoadFile(wxT("../tests/test_scope_resolving_1.h")), tags);
+	CHECK_SIZE(tags.size(), 1);
 	return true;
 }
 

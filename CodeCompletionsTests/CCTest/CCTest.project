@@ -34,6 +34,7 @@
     
     
     
+    
     <File Name="tests/test_wxarraystr.h"/>
     <File Name="tests/test_auto_ptr.h"/>
     <File Name="tests/test_shared_ptr.h"/>
@@ -53,6 +54,7 @@
     <File Name="tests/inner_class_inheritance.h"/>
     <File Name="tests/using_namespace.h"/>
     <File Name="tests/test_goto_decl_inside_ns.h"/>
+    <File Name="tests/test_scope_resolving_1.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="TestFramework">

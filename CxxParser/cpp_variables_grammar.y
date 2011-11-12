@@ -31,6 +31,7 @@ static  bool                  g_isUsedWithinFunc = false;
 static  std::string           s_tmpString;
 static  Variable              curr_var;
 static  std::string           s_templateInitList;
+static  bool                  isBasicType = false;
 
 //---------------------------------------------
 // externs defined in the lexer
@@ -138,6 +139,10 @@ translation_unit	:        /*empty*/
                         ;
 
 external_decl	    :    {curr_var.Reset(); gs_names.clear(); s_tmpString.clear(); s_templateInitList.clear();} variables
+						| '@' basic_type_name ';' /* dummy '@' to avoid conflicts .. */
+						{
+							isBasicType = true;
+						}
                         | error {
                             yyclearin;    //clear lookahead token
                             yyerrok;
@@ -584,6 +589,7 @@ void clean_up()
     // restore settings
 	setUseIgnoreMacros(true);
 	g_isUsedWithinFunc = false;
+	isBasicType = false;
 	
     //do the lexer cleanup
 	cl_scope_lex_clean();
@@ -608,4 +614,22 @@ void get_variables(const std::string &in, VariableList &li, const std::map<std::
     //call tghe main parsing routine
 	cl_var_parse();
 	clean_up();
+}
+
+bool is_primitive_type(const std::string &in)
+{
+	std::string input = "@"; // Hack the input string...
+	input += in;
+	input += ";";
+	
+	const std::map<std::string, std::string> ignoreMap;
+	if(!setLexerInput(input, ignoreMap)) {
+		return false;
+	}
+
+	isBasicType = false;
+	cl_var_parse();
+	bool res = isBasicType;
+	clean_up();
+	return res;
 }

@@ -212,6 +212,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_MENU(XRCID("move_line_down"),             clMainFrame::DispatchCommandEvent)
 	EVT_MENU(XRCID("move_line_up"),               clMainFrame::DispatchCommandEvent)
 	EVT_MENU(XRCID("center_line"),                clMainFrame::DispatchCommandEvent)
+	EVT_MENU(XRCID("center_line_roll"),           clMainFrame::DispatchCommandEvent)
 
 	EVT_UPDATE_UI(wxID_UNDO,                    clMainFrame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(wxID_REDO,                    clMainFrame::DispatchUpdateUIEvent)
@@ -232,6 +233,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("move_line_down"),      clMainFrame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("move_line_up"),        clMainFrame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("center_line"),         clMainFrame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("center_line_roll"),    clMainFrame::OnFileExistUpdateUI)
 
 	//-------------------------------------------------------
 	// View menu

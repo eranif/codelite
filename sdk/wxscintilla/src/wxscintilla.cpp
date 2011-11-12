@@ -715,6 +715,10 @@ void wxScintilla::SetCaretPeriod (int milliseconds) {
     SendMsg (SCI_SETCARETPERIOD, milliseconds, 0);
 }
 
+void wxScintilla::VerticalCentreCaret() {
+	SendMsg (SCI_CENTERLINE, 0, 0);
+}
+
 // Set the set of characters making up words for when moving or selecting by word.
 // First sets deaults like SetCharsDefault.
 void wxScintilla::SetWordChars (const wxString& characters) {

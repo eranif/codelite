@@ -7122,6 +7122,10 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 		MoveSelectedLinesUp();
 		break;
 
+	case SCI_CENTERLINE:
+		VerticalCentreCaret();
+		break;
+
 	case SCI_MOVESELECTEDLINESDOWN:
 		MoveSelectedLinesDown();
 		break;

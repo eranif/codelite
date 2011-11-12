@@ -102,6 +102,9 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 		editor->LineUp();
 		
 	} else if (event.GetId() == XRCID("center_line")) {
+		editor->VerticalCentreCaret();
+
+	} else if (event.GetId() == XRCID("center_line_roll")) {
 		int here    = editor->GetCurrentLine();
 		int top     = editor->GetFirstVisibleLine();
 		int count   = editor->LinesOnScreen();
@@ -109,11 +112,9 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 		if (here < center) {
 			for (int lnIterator = 0; lnIterator < center - here; lnIterator++)
 				editor->LineScrollUp();   //roll up until we get to center
-				
 		} else if (here > center) {
 			for (int lnIterator = 0; lnIterator < here - center; lnIterator++)
 				editor->LineScrollDown(); //roll down until we get to center
-				
 		}
 
 	}

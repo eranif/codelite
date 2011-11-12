@@ -23,6 +23,7 @@ transpose_lines|Edit|Transpose Lines|Ctrl-T
 move_line_up|Edit|Move Line Up|Alt-PGUP
 move_line_down|Edit|Move Line Down|Alt-PGDN
 center_line|Edit|Center Line in Editor|CLEAR
+center_line_roll|Edit|Center Line in Editor by Rolling|
 wxID_SELECTALL|Edit|Select All|Ctrl-A
 match_brace|Edit|Match Brace|Ctrl-]
 select_to_brace|Edit|Select to Brace|Ctrl-Shift-E

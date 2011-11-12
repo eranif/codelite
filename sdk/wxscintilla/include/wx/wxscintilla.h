@@ -2197,6 +2197,9 @@ public:
     // Get the time in milliseconds that the caret is on and off. 0 = steady on.
     void SetCaretPeriod (int milliseconds);
 
+	// Center the caret vertically on the visible window
+	void VerticalCentreCaret();
+
     // Set the set of characters making up words for when moving or selecting by word.
     // First sets deaults like SetCharsDefault.
     void SetWordChars (const wxString& characters);

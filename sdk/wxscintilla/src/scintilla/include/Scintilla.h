@@ -421,6 +421,9 @@ typedef sptr_t (*SciFnDirect)(sptr_t ptr, unsigned int iMessage, uptr_t wParam, 
 //ERAN IFRAH
 #define SCI_CALLTIPSHOWEXT 22250
 // END
+//RICK HODGIN 11-11-2011
+#define SCI_CENTERLINE 22251
+// END
 #define SC_FOLDLEVELBASE 0x400
 #define SC_FOLDLEVELWHITEFLAG 0x1000
 #define SC_FOLDLEVELHEADERFLAG 0x2000

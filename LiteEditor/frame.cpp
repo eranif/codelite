@@ -3417,7 +3417,7 @@ void clMainFrame::OnParsingThreadDone(wxCommandEvent& e)
 	}
 
 	wxUnusedVar(e);
-	SetStatusMessage(wxEmptyString, 0, XRCID("retag_file"));
+	SetStatusMessage(wxEmptyString, 0);
 	LEditor *editor = GetMainBook()->GetActiveEditor();
 	if (editor) {
 		editor->UpdateColours();
@@ -3569,9 +3569,8 @@ void clMainFrame::OnDockablePaneClosed(wxAuiManagerEvent &e)
 	}
 }
 
-void clMainFrame::SetStatusMessage(const wxString &msg, int col, int id)
+void clMainFrame::SetStatusMessage(const wxString &msg, int col)
 {
-	wxUnusedVar(id);
 	SetStatusText(msg, col);
 }
 

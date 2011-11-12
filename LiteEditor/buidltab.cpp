@@ -576,8 +576,6 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 	term << wxT ( '\n' );
 	AppendText ( term );
 
-//	Frame::Get()->SetStatusMessage ( wxEmptyString, 3, XRCID ( "build" ) );
-
 	bool success = m_errorCount == 0 && ( m_skipWarnings || m_warnCount == 0 );
 	bool viewing = ManagerST::Get()->IsPaneVisible ( clMainFrame::Get()->GetOutputPane()->GetCaption() ) &&
 	               ( clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() == this ||

@@ -304,7 +304,7 @@ public:
     /**
      * @brief show a (short) message in the status bar
      */
-    virtual void SetStatusMessage(const wxString &msg, int col, int id) = 0;
+    virtual void SetStatusMessage(const wxString &msg, int col) = 0;
 
 	/**
 	 * @brief start processing commands from the queue
@@ -361,8 +361,8 @@ public:
 	 */
 	virtual NavMgr *GetNavigationMgr() = 0;
 
-    void SetStatusMessage(const wxString &msg, int id)
-        { SetStatusMessage(msg, 0, id); }
+    void SetStatusMessage(const wxString &msg)
+        { SetStatusMessage(msg, 0); }
 
     /**
      * @brief close the named page in the mainbook
@@ -414,29 +414,27 @@ class PluginStatusMessage
     int m_col;
     int m_id;
 public:
-    PluginStatusMessage(IManager *mgr, const wxString &msg, int col, int id)
+    PluginStatusMessage(IManager *mgr, const wxString &msg, int col)
         : m_mgr(mgr)
         , m_col(col)
-        , m_id(id)
-        { mgr->SetStatusMessage(msg, col, id); }
-    PluginStatusMessage(IManager *mgr, const wxString &msg, int id)
+        { mgr->SetStatusMessage(msg, col); }
+    PluginStatusMessage(IManager *mgr, const wxString &msg)
         : m_mgr(mgr)
         , m_col(0)
-        , m_id(id)
-        { mgr->SetStatusMessage(msg, 0, id); }
+        { mgr->SetStatusMessage(msg, 0); }
     ~PluginStatusMessage()
-        { m_mgr->SetStatusMessage(wxEmptyString, m_col, m_id); }
+        { m_mgr->SetStatusMessage(wxEmptyString, m_col); }
 };
 
 
 class PluginBusyMessage : public PluginStatusMessage, public wxBusyCursor
 {
 public:
-    PluginBusyMessage(IManager *mgr, const wxString &msg, int col, int id)
-        : PluginStatusMessage(mgr, msg, col, id)
+    PluginBusyMessage(IManager *mgr, const wxString &msg, int col)
+        : PluginStatusMessage(mgr, msg, col)
         { }
-    PluginBusyMessage(IManager *mgr, const wxString &msg, int id)
-        : PluginStatusMessage(mgr, msg, id)
+    PluginBusyMessage(IManager *mgr, const wxString &msg)
+        : PluginStatusMessage(mgr, msg)
         { }
 };
 

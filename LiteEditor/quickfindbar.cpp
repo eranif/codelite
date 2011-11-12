@@ -179,7 +179,7 @@ void QuickFindBar::OnHide(wxCommandEvent &e)
 {
 
 	// Kill any "...continued from start" statusbar message
-	clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
+	clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0);
 
 	Show(false);
 	e.Skip();

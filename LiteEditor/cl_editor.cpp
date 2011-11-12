@@ -1830,7 +1830,7 @@ void LEditor::FindNext(const FindReplaceData &data)
 			// The user doesn't want to be asked if it's OK to continue, but at least let him know he has
 			wxString msg = dirDown ? _("Reached end of document, continued from start")
 			               : _("Reached top of document, continued from bottom");
-			clMainFrame::Get()->SetStatusMessage(msg, 0, XRCID("findnext"));
+			clMainFrame::Get()->SetStatusMessage(msg, 0);
 		}
 
 		if (res == wxID_OK) {
@@ -1845,7 +1845,7 @@ void LEditor::FindNext(const FindReplaceData &data)
 				// restore the caret
 				DoSetCaretAt( saved_pos );
 				// Kill the "...continued from start" statusbar message
-				clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
+				clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0);
 				wxMessageBox(_("Can not find the string '") + data.GetFindString() + wxT("'"),
 				             _("CodeLite"),
 				             wxOK | wxICON_WARNING);
@@ -1854,7 +1854,7 @@ void LEditor::FindNext(const FindReplaceData &data)
 	} else {
 		// The string *was* found, without needing to restart from the top
 		// So cancel any previous statusbar restart message
-		clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
+		clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0);
 	}
 }
 
@@ -2278,7 +2278,7 @@ void LEditor::ReloadFile()
 	// get the pattern of the current file
 	int lineNumber = GetCurrentLine();
 
-	clMainFrame::Get()->SetStatusMessage(_("Loading file..."), 0, XRCID("editor"));
+	clMainFrame::Get()->SetStatusMessage(_("Loading file..."), 0);
 
 	wxString text;
 
@@ -2312,7 +2312,7 @@ void LEditor::ReloadFile()
 	clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
 
 	// try to locate the pattern on which the caret was prior to reloading the file
-	clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("editor"));
+	clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0);
 
 	SetReloadingFile( false );
 	ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(this);

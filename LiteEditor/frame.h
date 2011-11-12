@@ -267,7 +267,7 @@ public:
     /**
      * @brief set a status message
      */
-    void SetStatusMessage(const wxString &msg, int col, int id = wxID_ANY);
+    void SetStatusMessage(const wxString &msg, int col);
 
 	/**
 	 * @brief save the current IDE layout and session

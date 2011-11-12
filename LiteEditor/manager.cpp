@@ -849,7 +849,7 @@ void Manager::RetagFile ( const wxString& filename )
 	ParseThreadST::Get()->Add ( req );
 
 	wxString msg = wxString::Format(wxT( "Re-tagging file %s..." ), absFile.GetFullName().c_str());
-	clMainFrame::Get()->SetStatusMessage(msg, 0, XRCID("retag_file"));
+	clMainFrame::Get()->SetStatusMessage(msg, 0);
 }
 
 //--------------------------- Project Files Mgmt -----------------------------

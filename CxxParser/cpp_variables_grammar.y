@@ -23,13 +23,15 @@ void cl_scope_error(char *string);
 int  cl_var_parse();
 void syncParser();
 void var_consumeDefaultValue(char c1, char c2);
+void var_consumeDefaultValueIfNeeded();
 
-static  VariableList *           gs_vars = NULL;
-static  std::vector<std::string> gs_names;
-static  bool                     g_isUsedWithinFunc = false;
-static  std::string              s_tmpString;
-static  Variable                 curr_var;
-static  std::string              s_templateInitList;
+static  VariableList *        gs_vars = NULL;
+static  std::vector<Variable> gs_names;
+static  bool                  g_isUsedWithinFunc = false;
+static  std::string           s_tmpString;
+static  Variable              curr_var;
+static  std::string           s_templateInitList;
+
 //---------------------------------------------
 // externs defined in the lexer
 //---------------------------------------------
@@ -187,9 +189,16 @@ variables           : LE_TYPEDEF LE_STRUCT optional_struct_name '{' {var_consumB
                                     //create new variable for every variable name found
                                 	var = curr_var;
                                 	var.m_pattern      = $2 + " " + $3 + " " + $4 ;
-									if(var.m_completeType.empty())
+									if(var.m_completeType.empty()) {
 										var.m_completeType = $2 + " " + $3 + " " + $4 ;
-                                	var.m_name = gs_names.at(i);
+									}
+                                	var.m_name         = gs_names.at(i).m_name;
+									var.m_defaultValue = gs_names.at(i).m_defaultValue;
+
+									if(i != 0) {
+										var.m_isPtr        = gs_names.at(i).m_isPtr;
+										var.m_starAmp      = gs_names.at(i).m_starAmp;
+									}
                                 	gs_vars->push_back(var);
                                 }
                             	curr_var.Reset();
@@ -345,18 +354,21 @@ ellipsis_prefix: '(' {$$ = $1;}
                 |',' {$$ = $1;}
                 ;
 
-variable_name_list: 	LE_IDENTIFIER
-                        {
-                        	gs_names.push_back($1);
-                            $$ = $1;
-                        }
-                        | variable_name_list ','  special_star_amp LE_IDENTIFIER
-                        {
-                            //collect all the names
-                        	gs_names.push_back($4);
-                            $$ = $1 + $2 + " " + $3 + $4;
-                        }
-                        ;
+variable_name_list: LE_IDENTIFIER {var_consumeDefaultValueIfNeeded();}
+                    {
+                        curr_var.m_name = $1;
+                    	gs_names.push_back(curr_var);
+                    }
+                    | variable_name_list ','  special_star_amp LE_IDENTIFIER {var_consumeDefaultValueIfNeeded();}
+                    {
+                        //collect all the names
+						curr_var.m_name = $4;
+                       	curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
+						curr_var.m_starAmp = $3;
+						gs_names.push_back(curr_var);
+                        $$ = $1 + $2 + " " + $3 + $4;
+                    }
+                    ;
 
 postfix3: ','
         | ')'
@@ -414,10 +426,8 @@ special_star_amp:star_list amp_item { $$ = $1 + $2; }
 stmnt_starter       : /*empty*/ {$$ = "";}
                     | ';' { $$ = ";";}
                     | '{' { $$ = "{";}
-//						| '(' { $$ = "(";}
                     | '}' { $$ = "}";}
                     | ':' { $$ = ":";}    //e.g. private: std::string m_name;
-//						| '=' { $$ = "=";}
                     ;
 
 /** Variables **/
@@ -475,7 +485,6 @@ variable_decl       :   const_spec basic_type_name
 %%
 void yyerror(char *s) {}
 
-
 std::string var_consumBracketsContent(char openBrace)
 {
 	char closeBrace;
@@ -527,11 +536,22 @@ std::string var_consumBracketsContent(char openBrace)
 	return consumedData;
 }
 
+void var_consumeDefaultValueIfNeeded()
+{
+	int ch = cl_scope_lex();
+	if(ch != '=') {
+		cl_scope_less(0);
+		return;
+	}
+	var_consumeDefaultValue(';', ',');
+}
+ 
 void var_consumeDefaultValue(char c1, char c2)
 {
 	int depth = 0;
 	bool cont(true);
 
+	curr_var.m_defaultValue.clear();
 	while (depth >= 0) {
     	int ch = cl_scope_lex();
     	if(ch == 0) { break;}

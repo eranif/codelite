@@ -4026,6 +4026,6 @@ void LEditor::GetChanges(std::vector<int>& changes)
 
 void LEditor::OnFindInFiles()
 {
-	m_deltas->OnFileInFiles();
+	m_deltas->Clear();
 }
 

@@ -297,6 +297,14 @@ TEST_FUNC(testScopeResolving1)
 	return true;
 }
 
+TEST_FUNC(testTypedefIteratorInsideClass)
+{
+	std::vector<TagEntryPtr> tags;
+	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_typedef_iterator_inside_class.h")), 2, wxT("iter->second->"), LoadFile(wxT("../tests/test_typedef_iterator_inside_class.h")), tags);
+	CHECK_SIZE(tags.size(), 21);
+	return true;
+}
+
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////

@@ -311,7 +311,7 @@ public:
 	 * Return the actual name as described in the 'typeref' field
 	 * \return real name or wxEmptyString
 	 */
-	wxString NameFromTyperef(wxString &templateInitList);
+	wxString NameFromTyperef(wxString &templateInitList, bool nameIncludeTemplate = false);
 
 	/**
 	 * Return the actual type as described in the 'typeref' field
@@ -368,7 +368,7 @@ private:
 	 * \param path path to add
 	 */
 	void UpdatePath        (wxString & path);
-	bool TypedefFromPattern(const wxString &tagPattern, const wxString &typedefName, wxString &name, wxString &templateInit);
+	bool TypedefFromPattern(const wxString &tagPattern, const wxString &typedefName, wxString &name, wxString &templateInit, bool nameIncludeTemplate = false);
 };
 
 #endif // CODELITE_ENTRY_H

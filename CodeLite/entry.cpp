@@ -373,7 +373,7 @@ static bool GetMacroArgList(CppScanner &scanner, wxArrayString& argList)
 	return (depth == 0) && isOk;
 }
 
-wxString TagEntry::NameFromTyperef(wxString &templateInitList)
+wxString TagEntry::NameFromTyperef(wxString &templateInitList, bool nameIncludeTemplate)
 {
 	wxString typeref = GetTyperef();
 	if ( typeref.IsEmpty() == false ) {
@@ -418,7 +418,7 @@ wxString TagEntry::NameFromTyperef(wxString &templateInitList)
 		}
 
 		wxString name;
-		if (TypedefFromPattern(pat, GetName(),name, templateInitList))
+		if (TypedefFromPattern(pat, GetName(),name, templateInitList, nameIncludeTemplate))
 			return name;
 	}
 
@@ -426,7 +426,7 @@ wxString TagEntry::NameFromTyperef(wxString &templateInitList)
 	return wxEmptyString;
 }
 
-bool TagEntry::TypedefFromPattern(const wxString &tagPattern, const wxString &typedefName, wxString &name, wxString &templateInit)
+bool TagEntry::TypedefFromPattern(const wxString &tagPattern, const wxString &typedefName, wxString &name, wxString &templateInit, bool nameIncludeTemplate)
 {
 	wxString pattern(tagPattern);
 
@@ -439,9 +439,14 @@ bool TagEntry::TypedefFromPattern(const wxString &tagPattern, const wxString &ty
 	if(li.size() == 1) {
 		clTypedef td = *li.begin();
 		templateInit = _U(td.m_realType.m_templateDecl.c_str());
-		if(td.m_realType.m_typeScope.empty() == false)
-			name << _U(td.m_realType.m_typeScope.c_str()) << wxT("::");
-
+		if(td.m_realType.m_typeScope.empty() == false) {
+			name << _U(td.m_realType.m_typeScope.c_str());
+			if(nameIncludeTemplate) {
+				name << templateInit;
+			}
+			name << wxT("::");
+		}
+		
 		name         << _U(td.m_realType.m_type.c_str());
 		return true;
 	}

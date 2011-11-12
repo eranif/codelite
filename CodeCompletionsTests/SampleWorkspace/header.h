@@ -24,6 +24,8 @@
 #include <SymbolView/symbolview.h>
 #include <wx/clipbrd.h>
 #include <wx/app.h>
+#include <Plugin/editor_config.h>
+#include <Plugin/lexer_configuration.h>
 
 struct ST {
 	std::string name;

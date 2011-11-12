@@ -307,7 +307,7 @@ private:
 	 * @brief run the user defined types as they appear in the 'Types' replacement table
 	 * @param token current token
 	 */
-	void ExcuteUserTypes(ParsedToken *token, const std::map<wxString, wxString> &typeMap);
+	void ExcuteUserTypes(ParsedToken *token, const wxString &entryPath = wxEmptyString);
 
 	void ParseTemplateArgs             (const wxString &argListStr, wxArrayString &argsList);
 	void ParseTemplateInitList         (const wxString &argListStr, wxArrayString &argsList);

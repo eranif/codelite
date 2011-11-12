@@ -312,7 +312,6 @@ CL_DEBUG(wxT(" >>> Language::ProcessExpression started ..."));
 
 	bool evaluationSucceeded = true;
 
-	std::map<wxString, wxString> typeMap = GetTagsManager()->GetCtagsOptions().GetTypesMap();
 	wxString statement( stmt );
 
 	// Trim whitespace from right and left
@@ -386,7 +385,7 @@ CL_DEBUG(wxT("step 1 completed"));
 
 		// HACK1: Let the user override the parser decisions
 CL_DEBUG(wxT("Checking ExcuteUserTypes..."));
-		ExcuteUserTypes(container.current, typeMap);
+		ExcuteUserTypes(container.current);
 CL_DEBUG(wxT("Checking ExcuteUserTypes... done"));
 
 CL_DEBUG(wxT("Checking DoIsTypeAndScopeExist..."));
@@ -415,12 +414,12 @@ CL_DEBUG(wxT("Checking CheckForTemplateAndTypedef... done"));
 			// We check subscript operator only once
 			cont = (container.current->GetSubscriptOperator() && OnSubscriptOperator( container.current ));
 			if(cont) {
-				ExcuteUserTypes(container.current, typeMap);
+				ExcuteUserTypes(container.current);
 			}
 			container.current->SetSubscriptOperator(false);
 			cont2 = ( container.current->GetOperator() == wxT("->") && OnArrowOperatorOverloading( container.current ) );
 			if(cont2) {
-				ExcuteUserTypes( container.current , typeMap);
+				ExcuteUserTypes( container.current);
 			}
 			retryCount++;
 		} while ( (cont || cont2) && retryCount < 5);
@@ -894,7 +893,6 @@ CL_DEBUG(wxT("Parsing for local variables... done"));
 		return false;
 
 	} else if( tags.size() ) {
-
 		if(token->GetPrev() == NULL) {
 
 			// we are first in the chain, but still we exists in the database
@@ -1470,7 +1468,10 @@ void Language::CheckForTemplateAndTypedef(ParsedToken *token)
 
 	do {
 		typedefMatch = OnTypedef(token);
-
+		if(typedefMatch) {
+			ExcuteUserTypes(token);
+		}
+		
 		// Attempt to fix the result
 		DoIsTypeAndScopeExist( token );
 
@@ -1512,6 +1513,9 @@ void Language::CheckForTemplateAndTypedef(ParsedToken *token)
 			DoExtractTemplateInitListFromInheritance( token );
 		}
 
+		if(templateMatch) {
+			ExcuteUserTypes(token);
+		}
 		retry++;
 
 	} while ( (typedefMatch || templateMatch) && retry < 15 ) ;
@@ -1775,20 +1779,41 @@ bool Language::OnSubscriptOperator(ParsedToken *token)
 	return ret;
 }
 
-void Language::ExcuteUserTypes(ParsedToken *token, const std::map<wxString, wxString> &typeMap)
+void Language::ExcuteUserTypes(ParsedToken *token, const wxString &entryPath)
 {
+	const std::map<wxString, wxString> typeMap = GetTagsManager()->GetCtagsOptions().GetTypesMap();
 	// HACK1: Let the user override the parser decisions
-	wxString path = token->GetPath();
+	wxString path = entryPath.IsEmpty() ? token->GetPath() : entryPath;
 	std::map<wxString, wxString>::const_iterator where = typeMap.find(path);
 	if (where != typeMap.end()) {
 		wxArrayString argList;
-		token->SetTypeName(where->second.BeforeFirst(wxT('<')));
+
+
+		// Split to name and scope
+		wxString name, scope;
+		
+		scope = where->second.BeforeFirst(wxT('<'));
+		name  = scope.AfterLast(wxT(':'));
+		scope = scope.BeforeLast(wxT(':'));
+		if(scope.EndsWith(wxT(":"))) {
+			scope.RemoveLast();
+		}
+		token->SetTypeName(name);
+
+		// Did we got a scope as well?
+		if(!scope.IsEmpty())
+			token->SetTypeScope(scope);
+		
 		wxString argsString = where->second.AfterFirst(wxT('<'));
 		argsString.Prepend(wxT("<"));
 
 		DoRemoveTempalteInitialization(argsString, argList);
 		if(argList.IsEmpty() == false) {
-			token->SetTemplateInitialization(argList);
+			// If we already got a concrete template initialization list
+			// do not override it with the dummy one taken from the user
+			// type definition
+			if(token->GetTemplateInitialization().IsEmpty())
+				token->SetTemplateInitialization(argList);
 			token->SetIsTemplate(true);
 		}
 	}

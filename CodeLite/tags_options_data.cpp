@@ -147,7 +147,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
 		, m_ccNumberOfDisplayItems(MAX_SEARCH_LIMIT)
 {
-	SetVersion(wxT("3.0.4"));
+	SetVersion(wxT("3.0.5"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =

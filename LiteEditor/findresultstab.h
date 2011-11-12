@@ -137,7 +137,7 @@ public:
 		m_changes.push_back(length);
 	}
 	void Pop() {
-		wxCHECK_RET(m_changes.size() > 1, wxT("Trying to undo a non-existent change"));
+		//wxCHECK_RET(m_changes.size() > 1, wxT("Trying to undo a non-existent change"));
 		m_changes.pop_back();
 		m_changes.pop_back();
 	}

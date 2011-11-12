@@ -578,6 +578,9 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
 	long value(0);
 	EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), value);
 	m_highlightWord = (bool)value;
+	
+	m_statusbarTimer = new StatusbarTimer(this);
+	SetStatusBarPane(1);
 
 	CreateGUIControls();
 
@@ -628,6 +631,7 @@ clMainFrame::~clMainFrame(void)
 
 
 	delete m_timer;
+	delete m_statusbarTimer;
 	ManagerST::Free();
 	delete m_DPmenuMgr;
 
@@ -3569,9 +3573,17 @@ void clMainFrame::OnDockablePaneClosed(wxAuiManagerEvent &e)
 	}
 }
 
-void clMainFrame::SetStatusMessage(const wxString &msg, int col)
+void clMainFrame::SetStatusMessage(const wxString &msg, int col, int seconds_to_live /*=wxID_ANY*/)
 {
 	SetStatusText(msg, col);
+	if ((col > 0)						// We only auto-delete in column 0
+			|| (seconds_to_live == 0)	// which means keep forever
+			|| msg.empty()) {			// not much point deleting an empty string
+		return;
+	}
+
+	int seconds = (seconds_to_live > 0 ? seconds_to_live : 30);
+	m_statusbarTimer->Start(seconds * 1000, wxTIMER_ONE_SHOT);
 }
 
 void clMainFrame::OnFunctionCalltipUI(wxUpdateUIEvent& event)
@@ -4027,7 +4039,8 @@ void clMainFrame::OnSetStatusMessage(wxCommandEvent& e)
 {
 	wxString msg = e.GetString();
 	int col = e.GetInt();
-	SetStatusMessage(msg, col);
+	int seconds_to_live = e.GetId();
+	SetStatusMessage(msg, col, seconds_to_live);
 }
 
 void clMainFrame::OnReloadExternallModified(wxCommandEvent& e)

@@ -110,7 +110,7 @@ public:
 	virtual void                   FindAndSelect(const wxString& pattern, const wxString& name, int pos = 0);
 	virtual TagEntryPtr            GetTagAtCaret(bool scoped, bool impl);
 	virtual bool                   AllowToolbar();
-	virtual void                   SetStatusMessage(const wxString &msg, int col);
+	virtual void                   SetStatusMessage(const wxString &msg, int col, int seconds_to_live = wxID_ANY);
 	virtual void                   PushQueueCommand(const QueueCommand &cmd);
 	virtual void                   ProcessCommandQueue();
 	virtual void                   StopAndClearQueue();

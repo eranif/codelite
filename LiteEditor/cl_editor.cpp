@@ -2311,9 +2311,6 @@ void LEditor::ReloadFile()
 	// mark read only files
 	clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
 
-	// try to locate the pattern on which the caret was prior to reloading the file
-	clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0);
-
 	SetReloadingFile( false );
 	ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(this);
 }
@@ -3551,12 +3548,13 @@ void LEditor::OnDbgJumpToCursor(wxCommandEvent& event)
 	}
 }
 
-void LEditor::DoSetStatusMessage(const wxString& msg, int col)
+void LEditor::DoSetStatusMessage(const wxString& msg, int col, int seconds_to_live /*=wxID_ANY*/)
 {
 	wxCommandEvent e(wxEVT_UPDATE_STATUS_BAR);
 	e.SetEventObject(this);
 	e.SetString(msg);
 	e.SetInt(col);
+	e.SetId(seconds_to_live);
 	clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 }
 

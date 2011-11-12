@@ -226,8 +226,6 @@ void ContinuousBuild::OnBuildProcessEnded(wxCommandEvent& e)
 		m_view->AddFailedFile(m_buildProcess.GetFileName());
 	}
 
-	m_mgr->SetStatusMessage(wxEmptyString, 0);
-
 	// Release the resources allocted for this build
 	m_buildProcess.Stop();
 

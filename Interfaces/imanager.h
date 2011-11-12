@@ -303,8 +303,11 @@ public:
 
     /**
      * @brief show a (short) message in the status bar
+	 * @param msg the string to display
+	 * @param col the statusbar pane to use
+	 * @param seconds_to_live how many seconds to display it for; 0 == forever; -1 == use the default
      */
-    virtual void SetStatusMessage(const wxString &msg, int col) = 0;
+    virtual void SetStatusMessage(const wxString &msg, int col, int seconds_to_live = wxID_ANY) = 0;
 
 	/**
 	 * @brief start processing commands from the queue
@@ -407,36 +410,6 @@ public:
 	virtual wxArrayString GetProjectCompileFlags(const wxString &projectName, bool isCppFile) = 0;
 };
 
-
-class PluginStatusMessage
-{
-    IManager *m_mgr;
-    int m_col;
-    int m_id;
-public:
-    PluginStatusMessage(IManager *mgr, const wxString &msg, int col)
-        : m_mgr(mgr)
-        , m_col(col)
-        { mgr->SetStatusMessage(msg, col); }
-    PluginStatusMessage(IManager *mgr, const wxString &msg)
-        : m_mgr(mgr)
-        , m_col(0)
-        { mgr->SetStatusMessage(msg, 0); }
-    ~PluginStatusMessage()
-        { m_mgr->SetStatusMessage(wxEmptyString, m_col); }
-};
-
-
-class PluginBusyMessage : public PluginStatusMessage, public wxBusyCursor
-{
-public:
-    PluginBusyMessage(IManager *mgr, const wxString &msg, int col)
-        : PluginStatusMessage(mgr, msg, col)
-        { }
-    PluginBusyMessage(IManager *mgr, const wxString &msg)
-        : PluginStatusMessage(mgr, msg)
-        { }
-};
 
 
 #endif //IMANAGER_H

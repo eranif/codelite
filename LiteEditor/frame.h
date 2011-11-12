@@ -68,10 +68,22 @@ struct StartPageData {
 	wxString action;
 };
 
+
+class StatusbarTimer : public wxTimer  // Notify() clears pane 0 of the statusbar
+{
+public:
+StatusbarTimer(wxFrame* frame ) : m_frame(frame) {}
+
+protected:
+void Notify(){ m_frame->SetStatusText(wxT(""), 0); }
+
+wxFrame* m_frame;
+};
+
 class clMainFrame : public wxFrame
 {
 	MainBook *                            m_mainBook;
-	static clMainFrame*                         m_theFrame;
+	static clMainFrame*                   m_theFrame;
 	wxAuiManager                          m_mgr;
 	OutputPane *                          m_outputPane;
 	WorkspacePane *                       m_workspacePane;
@@ -95,6 +107,7 @@ class clMainFrame : public wxFrame
 	bool                                  m_workspaceRetagIsRequired;
 	bool                                  m_loadLastSession;
 	wxSizer*                              m_horzSizer;
+	StatusbarTimer*                       m_statusbarTimer;
 protected:
 	bool IsEditorEvent(wxEvent &event);
 
@@ -266,8 +279,11 @@ public:
 
     /**
      * @brief set a status message
+	 * @param msg the string to display
+	 * @param col the statusbar pane to use
+	 * @param seconds_to_live how many seconds to display it for; 0 == forever; -1 == use the default
      */
-    void SetStatusMessage(const wxString &msg, int col);
+    void SetStatusMessage(const wxString &msg, int col, int seconds_to_live = wxID_ANY);
 
 	/**
 	 * @brief save the current IDE layout and session
@@ -516,5 +532,6 @@ protected:
 	void OnPchCacheEnded  (wxCommandEvent &e);
 	DECLARE_EVENT_TABLE()
 };
+
 
 #endif // LITEEDITOR_FRAME_H

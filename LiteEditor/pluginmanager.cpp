@@ -531,9 +531,9 @@ void PluginManager::EnableToolbars()
 	}
 }
 
-void PluginManager::SetStatusMessage(const wxString &msg, int col)
+void PluginManager::SetStatusMessage(const wxString &msg, int col, int seconds_to_live /*=wxID_ANY*/)
 {
-	clMainFrame::Get()->SetStatusMessage(msg, col);
+	clMainFrame::Get()->SetStatusMessage(msg, col, seconds_to_live);
 }
 
 void PluginManager::ProcessCommandQueue()

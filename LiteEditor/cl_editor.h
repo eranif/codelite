@@ -665,7 +665,7 @@ private:
 	void BraceMatch(const bool& bSelRegion);
 	void BraceMatch(long pos);
 	void DoHighlightWord();
-	void DoSetStatusMessage(const wxString &msg, int col);
+	void DoSetStatusMessage(const wxString &msg, int col, int seconds_to_live = wxID_ANY);
 	bool IsOpenBrace (int position);
 	bool IsCloseBrace(int position);
 

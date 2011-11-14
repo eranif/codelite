@@ -1,5 +1,6 @@
 #include "perspectivemanager.h"
 #include "frame.h"
+#include "editor_config.h"
 #include <wx/stdpaths.h>
 #include <wx/aui/framemanager.h>
 #include "globals.h"
@@ -8,7 +9,12 @@ wxString DEBUG_LAYOUT  = wxT("debug.layout");
 wxString NORMAL_LAYOUT = wxT("default.layout");
 
 PerspectiveManager::PerspectiveManager()
+	: m_active(wxT("Default"))
 {
+	wxString active = EditorConfigST::Get()->GetStringValue(wxT("ActivePerspective"));
+	if(active.IsEmpty() == false) {
+		m_active = active;
+	}
 	ClearIds();
 }
 
@@ -30,11 +36,35 @@ void PerspectiveManager::DeleteAllPerspectives()
 void PerspectiveManager::LoadPerspective(const wxString& name)
 {
 	wxString file = DoGetPathFromName(name);
-	
+	wxString nameOnly;
+
+	if(name.Find(wxT(".")) == wxNOT_FOUND) {
+		nameOnly = name;
+	} else {
+		nameOnly = name.BeforeLast(wxT('.'));
+	}
+
+//	// check whether the perspective has been modified before switching
+//	// in such case - update the active perspective and then
+//	// load the new one
+//	if(nameOnly.CmpNoCase(m_active) != 0) {
+//		wxString activeContent;
+//		wxString activeFileName = DoGetPathFromName(m_active);
+//		wxString perspective    = clMainFrame::Get()->GetDockingManager().SavePerspective();
+//
+//		if(ReadFileWithConversion(activeFileName, activeContent) && activeContent != perspective) {
+//			// Need to update the active perspective
+//			WriteFileWithBackup(DoGetPathFromName(m_active), perspective, false);
+//		}
+//	}
+
 	wxString content;
 	if(ReadFileWithConversion(file, content)) {
 		clMainFrame::Get()->GetDockingManager().LoadPerspective(content, true);
-
+		clMainFrame::Get()->GetDockingManager().Update();
+		m_active = nameOnly;
+		EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
+		
 	} else {
 		if(name == DEBUG_LAYOUT) {
 			bool needUpdate = false;
@@ -53,16 +83,31 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
 #endif
 			if(needUpdate)
 				clMainFrame::Get()->GetDockingManager().Update();
+
+			SavePerspective(name);
+			m_active = nameOnly;
+			EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
+
 		}
 	}
 }
 
 void PerspectiveManager::SavePerspective(const wxString& name, bool notify)
 {
-	WriteFileWithBackup(DoGetPathFromName(name), 
-						clMainFrame::Get()->GetDockingManager().SavePerspective(),
-						false);
+	wxString pname = name;
+	if(pname.IsEmpty()) {
+		pname = GetActive();
+	}
+	WriteFileWithBackup(DoGetPathFromName(pname),
+	                    clMainFrame::Get()->GetDockingManager().SavePerspective(),
+	                    false);
 
+	if(pname.Find(wxT(".")) == wxNOT_FOUND) {
+		m_active = pname;
+	} else {
+		m_active = pname.BeforeLast(wxT('.'));
+	}
+	EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
 	if(notify) {
 		wxCommandEvent evt(wxEVT_REFRESH_PERSPECTIVE_MENU);
 		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evt);
@@ -146,7 +191,7 @@ wxString PerspectiveManager::DoGetPathFromName(const wxString& name)
 {
 	wxString file;
 	wxString filename = name;
-	
+
 	filename.MakeLower();
 	if(!filename.EndsWith(wxT(".layout"))) {
 		filename << wxT(".layout");
@@ -156,3 +201,10 @@ wxString PerspectiveManager::DoGetPathFromName(const wxString& name)
 	return file;
 }
 
+void PerspectiveManager::SavePerspectiveIfNotExists(const wxString& name)
+{
+	wxString file = DoGetPathFromName(name);
+	if(!wxFileName::FileExists(file)) {
+		SavePerspective(name, false);
+	}
+}

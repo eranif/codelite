@@ -218,18 +218,12 @@ void WorkspacePane::DoShowTab(bool show, const wxString& title)
 		// If the mainframe is NULL, read the 
 		// list from the disk, otherwise use the 
 		// dockable pane menu
-		clMainFrame *mainFrame = clMainFrame::Get();
+		
+		// Read it from the disk
+		DetachedPanesInfo dpi;
+		EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
 		wxArrayString detachedPanes;
-		if(mainFrame) {
-			detachedPanes = mainFrame->GetDockablePaneMenuManager()->GetDeatchedPanesList();
-			
-		} else {
-			// Read it from the disk
-			DetachedPanesInfo dpi;
-			EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
-			wxArrayString detachedPanes;
-			detachedPanes = dpi.GetPanes();
-		}
+		detachedPanes = dpi.GetPanes();
 		
 		if(IS_DETACHED(title)) return;
 		

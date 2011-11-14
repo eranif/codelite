@@ -449,6 +449,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	// Perspective menu
 	//-------------------------------------------------------
 	EVT_MENU_RANGE(PERSPECTIVE_FIRST_MENU_ID, PERSPECTIVE_LAST_MENU_ID, clMainFrame::OnChangePerspective)
+	EVT_UPDATE_UI_RANGE(PERSPECTIVE_FIRST_MENU_ID, PERSPECTIVE_LAST_MENU_ID, clMainFrame::OnChangePerspectiveUI)
 	EVT_MENU(XRCID("manage_perspectives"),      clMainFrame::OnManagePerspectives)
 	EVT_MENU(XRCID("save_current_layout"),      clMainFrame::OnSaveLayoutAsPerspective)
 
@@ -702,6 +703,9 @@ void clMainFrame::Initialize(bool loadLastSession)
 
 	// Keep the current layout before loading the perspective from the disk
 	m_theFrame->m_defaultLayout = m_theFrame->m_mgr.SavePerspective();
+	
+	// Save the current layout as the "Default" layout (unless we already got one ...)
+	ManagerST::Get()->GetPerspectiveManager().SavePerspectiveIfNotExists(NORMAL_LAYOUT);
 
 	// After all the plugins / panes have been loaded,
 	// its time to re-load the perspective
@@ -3523,6 +3527,11 @@ void clMainFrame::OnNewDetachedPane(wxCommandEvent &e)
 		wxString text = pane->GetName();
 		m_DPmenuMgr->AddMenu(text);
 
+		// keep list of all detached panes
+		wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
+		DetachedPanesInfo dpi(panes);
+		EditorConfigST::Get()->WriteObject(wxT("DetachedPanesList"), &dpi);
+		
 		m_mgr.AddPane(pane, wxAuiPaneInfo().Name(text).Caption(text).MaximizeButton(true));
 		m_mgr.Update();
 	}
@@ -3536,8 +3545,15 @@ void clMainFrame::OnDestroyDetachedPane(wxCommandEvent& e)
 
 		// remove any menu entries for this pane
 		m_DPmenuMgr->RemoveMenu(pane->GetName());
+
+		// keep list of all detached panes
+		wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
+		DetachedPanesInfo dpi(panes);
+		EditorConfigST::Get()->WriteObject(wxT("DetachedPanesList"), &dpi);
+
 		pane->Destroy();
 		m_mgr.Update();
+
 	}
 }
 
@@ -4165,6 +4181,9 @@ void clMainFrame::SaveLayoutAndSession()
 	DetachedPanesInfo dpi(panes);
 	EditorConfigST::Get()->WriteObject(wxT("DetachedPanesList"), &dpi);
 
+	// Update the current perspective
+	ManagerST::Get()->GetPerspectiveManager().SavePerspective();
+
 	// save the notebooks styles
 	EditorConfigST::Get()->SaveLongValue(wxT("MainBook"),      GetMainBook()->GetBookStyle());
 	EditorConfigST::Get()->SaveLongValue(wxT("FindResults"),   GetOutputPane()->GetFindResultsTab()->GetBookStyle());
@@ -4281,8 +4300,11 @@ void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 		eventRestoreLayout.SetEventObject(this);
 		GetEventHandler()->ProcessEvent(eventRestoreLayout);
 
-	} else
+	} else {
 		ManagerST::Get()->GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
+		// Update the current perspective
+		ManagerST::Get()->GetPerspectiveManager().SavePerspective();
+	}
 }
 
 void clMainFrame::SelectBestEnvSet()
@@ -4790,7 +4812,7 @@ void clMainFrame::DoUpdatePerspectiveMenu()
 	wxArrayString perspectives = ManagerST::Get()->GetPerspectiveManager().GetAllPerspectives();
 	for(size_t i=0; i<perspectives.GetCount(); i++) {
 		wxString name = perspectives.Item(i);
-		menu->Prepend(ManagerST::Get()->GetPerspectiveManager().MenuIdFromName(name), name);
+		menu->Prepend(ManagerST::Get()->GetPerspectiveManager().MenuIdFromName(name), name, wxT(""), true);
 	}
 }
 
@@ -4820,4 +4842,12 @@ void clMainFrame::OnSaveLayoutAsPerspective(wxCommandEvent& e)
 void clMainFrame::OnRefreshPerspectiveMenu(wxCommandEvent& e)
 {
 	DoUpdatePerspectiveMenu();
+}
+
+void clMainFrame::OnChangePerspectiveUI(wxUpdateUIEvent& e)
+{
+	wxString active   = ManagerST::Get()->GetPerspectiveManager().GetActive();
+	wxString itemName = ManagerST::Get()->GetPerspectiveManager().NameFromMenuId(e.GetId());
+
+	e.Check(active.CmpNoCase(itemName) == 0);
 }

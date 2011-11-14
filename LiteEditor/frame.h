@@ -485,8 +485,9 @@ protected:
 	void OnNeverUpdateParserPath(wxCommandEvent &e);
 
 	// Perspectives management
-	void OnChangePerspective (wxCommandEvent &e);
-	void OnManagePerspectives(wxCommandEvent &e);
+	void OnChangePerspective  (wxCommandEvent &e);
+	void OnChangePerspectiveUI(wxUpdateUIEvent &e);
+	void OnManagePerspectives (wxCommandEvent &e);
 	void OnSaveLayoutAsPerspective(wxCommandEvent &e);
 	
 	//EOL

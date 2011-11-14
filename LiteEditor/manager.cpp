@@ -197,9 +197,6 @@ Manager::~Manager ( void )
 
 	if(debugger && debugger->IsRunning())
 		DbgStop();
-
-	// Save the current layout
-	GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT, false);
 	{
 		//wxLogNull noLog;
 		JobQueueSingleton::Instance()->Stop();

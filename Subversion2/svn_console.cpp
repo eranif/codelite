@@ -149,21 +149,6 @@ bool SvnConsole::IsEmpty()
 
 void SvnConsole::EnsureVisible()
 {
-	// Make sure that the Output View pane is visible
-	wxAuiPaneInfo &info = m_plugin->GetManager()->GetDockingManager()->GetPane(wxT("Output View"));
-	if (info.IsOk() && !info.IsShown()) {
-		info.Show();
-		m_plugin->GetManager()->GetDockingManager()->Update();
-	}
-
-	// Select the Subversion tab
-	Notebook *book = m_plugin->GetManager()->GetOutputPaneNotebook();
-
-	for(size_t i=0; i<book->GetPageCount(); i++) {
-		if(book->GetPage(i) == m_plugin->GetConsole()) {
-			book->SetSelection(i);
-		}
-	}
 }
 
 void SvnConsole::DoProcessNextCommand()

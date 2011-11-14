@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -14,13 +14,33 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonChangeRootDir = new wxButton( this, wxID_ANY, _("Select another directory..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_splitter2 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME );
+	m_splitter2->Connect( wxEVT_IDLE, wxIdleEventHandler( SubversionPageBase::m_splitter2OnIdle ), NULL, this );
+	
+	m_panel7 = new wxPanel( m_splitter2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer34;
+	bSizer34 = new wxBoxSizer( wxVERTICAL );
+	
+	m_buttonChangeRootDir = new wxButton( m_panel7, wxID_ANY, _("Select another directory..."), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonChangeRootDir->SetToolTip( _("Set the svn plugin's view to monitor another directory") );
 	
-	mainSizer->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_RIGHT|wxEXPAND, 2 );
+	bSizer34->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxEXPAND|wxALL, 2 );
 	
-	m_treeCtrl = new wxTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_MULTIPLE );
-	mainSizer->Add( m_treeCtrl, 1, wxEXPAND, 5 );
+	m_treeCtrl = new wxTreeCtrl( m_panel7, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_MULTIPLE );
+	bSizer34->Add( m_treeCtrl, 1, wxEXPAND|wxALL, 5 );
+	
+	m_panel7->SetSizer( bSizer34 );
+	m_panel7->Layout();
+	bSizer34->Fit( m_panel7 );
+	m_lowerPane = new wxPanel( m_splitter2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer37;
+	bSizer37 = new wxBoxSizer( wxVERTICAL );
+	
+	m_lowerPane->SetSizer( bSizer37 );
+	m_lowerPane->Layout();
+	bSizer37->Fit( m_lowerPane );
+	m_splitter2->SplitHorizontally( m_panel7, m_lowerPane, 0 );
+	mainSizer->Add( m_splitter2, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -48,31 +68,34 @@ CommitDialogBase::CommitDialogBase( wxWindow* parent, wxWindowID id, const wxStr
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
-	wxBoxSizer* bugTrackerSizer;
-	bugTrackerSizer = new wxBoxSizer( wxHORIZONTAL );
-	
-	
-	bugTrackerSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+	wxFlexGridSizer* fgSizer13;
+	fgSizer13 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer13->AddGrowableCol( 1 );
+	fgSizer13->SetFlexibleDirection( wxBOTH );
+	fgSizer13->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_staticText32 = new wxStaticText( this, wxID_ANY, _("Feature Request ID:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText32->Wrap( -1 );
-	bugTrackerSizer->Add( m_staticText32, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer13->Add( m_staticText32, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlFrID = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	m_textCtrlFrID->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
 	
-	bugTrackerSizer->Add( m_textCtrlFrID, 0, wxALL, 5 );
+	fgSizer13->Add( m_textCtrlFrID, 1, wxALL|wxEXPAND, 5 );
 	
 	m_staticTextBugID = new wxStaticText( this, wxID_ANY, _("Bug ID:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextBugID->Wrap( -1 );
-	bugTrackerSizer->Add( m_staticTextBugID, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer13->Add( m_staticTextBugID, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlBugID = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
 	m_textCtrlBugID->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
 	
-	bugTrackerSizer->Add( m_textCtrlBugID, 0, wxALL, 5 );
+	fgSizer13->Add( m_textCtrlBugID, 1, wxALL|wxEXPAND, 5 );
 	
-	bSizer3->Add( bugTrackerSizer, 0, wxEXPAND, 5 );
+	bSizer3->Add( fgSizer13, 0, wxEXPAND, 5 );
+	
+	m_staticline10 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer3->Add( m_staticline10, 0, wxEXPAND | wxALL, 5 );
 	
 	m_splitter1 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME );
 	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( CommitDialogBase::m_splitter1OnIdle ), NULL, this );
@@ -224,7 +247,7 @@ SvnShellBase::SvnShellBase( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 	
 	m_sci = new wxScintilla(this);
-	bSizer9->Add( m_sci, 1, wxALL|wxEXPAND, 5 );
+	bSizer9->Add( m_sci, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer9 );
 	this->Layout();
@@ -769,7 +792,7 @@ DiffDialogBase::DiffDialogBase( wxWindow* parent, wxWindowID id, const wxString&
 	bSizer25->Add( fgSizer9, 0, wxEXPAND, 5 );
 	
 	
-	bSizer25->Add( 0, 0, 1, wxEXPAND, 5 );
+	bSizer25->Add( 0, 0, 1, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 	
 	m_staticline6 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer25->Add( m_staticline6, 0, wxEXPAND | wxALL, 5 );

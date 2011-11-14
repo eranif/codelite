@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __subversion2_ui__
-#define __subversion2_ui__
+#ifndef __SUBVERSION2_UI_H__
+#define __SUBVERSION2_UI_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/button.h>
 #include <wx/gdicmn.h>
@@ -19,12 +20,12 @@
 #include <wx/treectrl.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
+#include <wx/splitter.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/checklst.h>
-#include <wx/splitter.h>
-#include <wx/choice.h>
 #include <wx/statline.h>
+#include <wx/checklst.h>
+#include <wx/choice.h>
 #include <wx/dialog.h>
 #include <wx/wxscintilla.h>
 #include <wx/checkbox.h>
@@ -50,8 +51,11 @@ class SubversionPageBase : public wxPanel
 	private:
 	
 	protected:
+		wxSplitterWindow* m_splitter2;
+		wxPanel* m_panel7;
 		wxButton* m_buttonChangeRootDir;
 		wxTreeCtrl* m_treeCtrl;
+		wxPanel* m_lowerPane;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnChangeRootDir( wxCommandEvent& event ) { event.Skip(); }
@@ -63,6 +67,12 @@ class SubversionPageBase : public wxPanel
 		
 		SubversionPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~SubversionPageBase();
+		
+		void m_splitter2OnIdle( wxIdleEvent& )
+		{
+			m_splitter2->SetSashPosition( 0 );
+			m_splitter2->Disconnect( wxEVT_IDLE, wxIdleEventHandler( SubversionPageBase::m_splitter2OnIdle ), NULL, this );
+		}
 	
 };
 
@@ -74,11 +84,11 @@ class CommitDialogBase : public wxDialog
 	private:
 	
 	protected:
-		
 		wxStaticText* m_staticText32;
 		wxTextCtrl* m_textCtrlFrID;
 		wxStaticText* m_staticTextBugID;
 		wxTextCtrl* m_textCtrlBugID;
+		wxStaticLine* m_staticline10;
 		wxSplitterWindow* m_splitter1;
 		wxPanel* m_panel1;
 		wxStaticText* m_staticText2;
@@ -266,11 +276,9 @@ class SvnCheckoutDialogBase : public wxDialog
 	protected:
 		wxStaticText* m_staticText24;
 		wxComboBox* m_comboBoxRepoURL;
-		
 		wxStaticText* m_staticText25;
 		wxTextCtrl* m_textCtrl20;
 		wxButton* m_buttonBrowseDir;
-		
 		wxButton* m_button14;
 		wxButton* m_button15;
 		
@@ -298,7 +306,6 @@ class SvnLogDialog : public wxDialog
 	protected:
 		wxStaticText* m_staticText28;
 		wxStaticText* m_staticText29;
-		
 		wxStaticLine* m_staticline5;
 		wxButton* m_button17;
 		wxButton* m_button18;
@@ -325,7 +332,6 @@ class DiffDialogBase : public wxDialog
 		wxTextCtrl* m_textCtrlFromRev;
 		wxStaticText* m_staticText26;
 		wxTextCtrl* m_textCtrlToRev;
-		
 		wxStaticLine* m_staticline6;
 		wxButton* m_button20;
 		wxButton* m_button19;
@@ -375,7 +381,6 @@ class SvnPropsBaseDlg : public wxDialog
 		wxTextCtrl* m_textCtrlFrURL;
 		wxStaticText* m_staticText34;
 		wxTextCtrl* m_textCtrlFrMsg;
-		
 		wxStaticLine* m_staticline7;
 		wxButton* m_button21;
 		wxButton* m_button22;
@@ -437,4 +442,4 @@ class SvnSelectLocalRepoBase : public wxDialog
 	
 };
 
-#endif //__subversion2_ui__
+#endif //__SUBVERSION2_UI_H__

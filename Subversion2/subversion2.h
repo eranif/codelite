@@ -76,14 +76,14 @@ protected:
 	void OnLockFile         (wxCommandEvent &event);
 	void OnUnLockFile       (wxCommandEvent &event);
 	void OnRename           (wxCommandEvent& event);
-	
+
 	///////////////////////////////////////////////////////////
 	// IDE events
 	///////////////////////////////////////////////////////////
 	void OnGetCompileLine        (wxCommandEvent &event);
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);
 	void OnFileRemoved           (wxCommandEvent &event);
-	
+
 	wxMenu* CreateFileExplorerPopMenu();
 	bool    IsSubversionViewDetached ();
 public:
@@ -103,9 +103,7 @@ public:
 	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnPlug();
 
-	SvnConsole *GetConsole() {
-		return m_subversionConsole;
-	}
+	SvnConsole *GetConsole() ;
 
 	IManager *GetManager() {
 		return m_mgr;

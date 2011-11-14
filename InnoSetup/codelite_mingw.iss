@@ -11,7 +11,7 @@ DefaultDirName={pf}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-mingw4.4.1
+OutputBaseFilename=codelite-mingw4.6.1
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -25,7 +25,7 @@ Name: "eng"; MessagesFile: "compiler:Default.isl"
 
 [Components]
 Name: "Editor";     Description: "CodeLite IDE (Editor + Plugins)";             Types: full custom;
-Name: "MinGW";      Description: "GCC 4.4.1 (MinGW) full (gcc/g++/gdb/WinAPI)"; Types: full;
+Name: "MinGW";      Description: "GCC 4.6.1 (MinGW) full (gcc/g++/gdb/WinAPI)"; Types: full;
 Name: "UnitTestPP"; Description: "UnitTest++ 1.3 framework";                    Types: full;
 
 [Tasks]
@@ -67,17 +67,16 @@ Source: "..\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignoreversion ; Compone
 Source: "..\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\codelite-icons.zip"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW-4.4.1\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW-4.4.1\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW-4.4.1\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW-4.4.1\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW-4.4.1\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW-4.4.1\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW-4.4.1\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW-4.4.1\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW-4.4.1\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW-4.4.1\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW-4.4.1\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
+Source: "C:\MinGW-4.6.1\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
 Source: "..\UnitTest++\*"; DestDir: "{code:GetUnitTestPPInstallDir}"; Flags: recursesubdirs ; Components: UnitTestPP
 Source: "..\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs ; Components: Editor
 
@@ -108,7 +107,7 @@ begin
   MinGW_Page.Add('');
 
   // Set initial value (optional)
-  MinGW_Page.Values[0] := ExpandConstant('{sd}\MinGW-4.4.1\');
+  MinGW_Page.Values[0] := ExpandConstant('{sd}\MinGW-4.6.1\');
 end;
 
 function GetMinGWInstallDir(Param: String): String;

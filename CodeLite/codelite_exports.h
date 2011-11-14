@@ -4,36 +4,36 @@
 #ifdef __WXMSW__
 
 #include <wx/string.h>
-#ifndef WXDLLIMPEXP_CL
+#ifdef WXDLLIMPEXP_CL
+#undef WXDLLIMPEXP_CL
+#endif
 
 //////////////////////////////////////
 // codelite 
 //////////////////////////////////////
 
 #ifdef WXMAKINGDLL_CL
-#    define WXDLLIMPEXP_CL WXEXPORT
+#    define WXDLLIMPEXP_CL __declspec(dllexport)
 #elif defined(WXUSINGDLL_CL)
-#    define WXDLLIMPEXP_CL WXIMPORT
+#    define WXDLLIMPEXP_CL __declspec(dllimport)
 #else // not making nor using DLL
 #    define WXDLLIMPEXP_CL
 #endif
 
-#endif // !WXDLLIMPEXP_CL
-
 //////////////////////////////////////
 // SDK
 //////////////////////////////////////
-#ifndef WXDLLIMPEXP_SDK
+#ifdef WXDLLIMPEXP_SDK
+#undef WXDLLIMPEXP_SDK
+#endif
 
 #ifdef WXMAKINGDLL_SDK
-#    define WXDLLIMPEXP_SDK WXEXPORT
+#    define WXDLLIMPEXP_SDK __declspec(dllexport)
 #elif defined(WXUSINGDLL_SDK)
-#    define WXDLLIMPEXP_SDK WXIMPORT
+#    define WXDLLIMPEXP_SDK __declspec(dllimport)
 #else // not making nor using DLL
 #    define WXDLLIMPEXP_SDK
 #endif
-
-#endif // !WXDLLIMPEXP_SDK
 
 #else // !MSW
 #    define WXDLLIMPEXP_CL

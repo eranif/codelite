@@ -147,7 +147,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
 		, m_ccNumberOfDisplayItems(MAX_SEARCH_LIMIT)
 {
-	SetVersion(wxT("3.0.5"));
+	SetVersion(wxT("3.0.6"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =
@@ -221,6 +221,7 @@ wxT("_GLIBCXX_VISIBILITY(%0)\n")
 wxT("_GLIBCXX_BEGIN_NAMESPACE_TR1=namespace tr1{\n")
 wxT("_GLIBCXX_END_NAMESPACE_TR1=}\n")
 wxT("_GLIBCXX_STD=std\n")
+wxT("_GLIBCXX_BEGIN_NAMESPACE_CONTAINER\n")
 wxT("__const=const\n")
 wxT("__restrict\n")
 wxT("__THROW\n")
@@ -241,10 +242,10 @@ wxT("std::set::const_iterator=_Key\n")
 wxT("std::set::iterator=_Key\n")
 wxT("std::deque::reference=_Tp\n")
 wxT("std::deque::const_reference=_Tp\n")
-wxT("std::map::iterator=pair<_Key, _Tp>\n")
-wxT("std::map::const_iterator=pair<_Key,_Tp>\n")
-wxT("std::multimap::iterator=pair<_Key,_Tp>\n")
-wxT("std::multimap::const_iterator=pair<_Key,_Tp>");
+wxT("std::map::iterator=std::pair<_Key, _Tp>\n")
+wxT("std::map::const_iterator=std::pair<_Key,_Tp>\n")
+wxT("std::multimap::iterator=std::pair<_Key,_Tp>\n")
+wxT("std::multimap::const_iterator=std::pair<_Key,_Tp>");
 }
 
 TagsOptionsData::~TagsOptionsData()

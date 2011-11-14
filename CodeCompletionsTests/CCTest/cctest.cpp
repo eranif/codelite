@@ -66,7 +66,7 @@ TEST_FUNC(testMacros)
 	CHECK_SIZE(tags.size(), 184);
 
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("EG(name)."), LoadFile(wxT("../tests/simple_tests.h")), tags);
-	CHECK_SIZE(tags.size(), 197);
+	CHECK_SIZE(tags.size(), 210);
 	return true;
 }
 
@@ -74,7 +74,7 @@ TEST_FUNC(testUsingNamespace)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/using_namespace.h")), 3, wxT("v.at(0)."), LoadFile(wxT("../tests/using_namespace.h")), tags);
-	CHECK_SIZE(tags.size(), 197);
+	CHECK_SIZE(tags.size(), 210);
 	return true;
 }
 
@@ -216,7 +216,7 @@ TEST_FUNC(testVectorOfStdString_OperatorMeruba)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_vector_std_string.h")), 6, wxT("v[0]->"), LoadFile(wxT("../tests/test_vector_std_string.h")), tags);
-	CHECK_SIZE(tags.size(), 197);
+	CHECK_SIZE(tags.size(), 210);
 	return true;
 }
 
@@ -255,7 +255,7 @@ TEST_FUNC(testVectorOfStdString)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_vector_std_string.h")), 6, wxT("v.at(0)->"), LoadFile(wxT("../tests/test_vector_std_string.h")), tags);
-	CHECK_SIZE(tags.size(), 197);
+	CHECK_SIZE(tags.size(), 210);
 	return true;
 }
 

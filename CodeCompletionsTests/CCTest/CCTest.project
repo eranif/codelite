@@ -36,6 +36,7 @@
     
     
     
+    
     <File Name="tests/test_wxarraystr.h"/>
     <File Name="tests/test_auto_ptr.h"/>
     <File Name="tests/test_shared_ptr.h"/>
@@ -92,7 +93,7 @@
       <General OutputFile="$(IntermediateDirectory)/CCTest" IntermediateDirectory="./Debug" Command="./CCTest" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="wxWidgets-29">
         <![CDATA[CL_HOME=../../
-PATH=../../../lib/gcc_lib;$(PATH)]]>
+PATH=$(WXWIN)/lib/gcc_dll;../../../lib/gcc_lib;$(PATH)]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>

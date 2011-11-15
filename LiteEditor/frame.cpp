@@ -789,7 +789,7 @@ void clMainFrame::CreateGUIControls(void)
 
 	// Add the explorer pane
 	m_workspacePane = new WorkspacePane(this, wxT("Workspace View"), &m_mgr);
-	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().MaximizeButton().MinimizeButton().
+	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().MinimizeButton().
 	              Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
 	              Left().BestSize(250, 300).Layer(1).Position(0).CloseButton(true));
 	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace View"));
@@ -797,7 +797,7 @@ void clMainFrame::CreateGUIControls(void)
 	//add the debugger locals tree, make it hidden by default
 	m_debuggerPane = new DebuggerPane(this, wxT("Debugger"), &m_mgr);
 	m_mgr.AddPane(m_debuggerPane,
-	              wxAuiPaneInfo().Name(m_debuggerPane->GetCaption()).Caption(m_debuggerPane->GetCaption()).Bottom().Layer(1).Position(1).CloseButton(true).MaximizeButton().MinimizeButton().Hide());
+	              wxAuiPaneInfo().Name(m_debuggerPane->GetCaption()).Caption(m_debuggerPane->GetCaption()).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton().Hide());
 	RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
 
 	m_mainBook = new MainBook(this);
@@ -807,7 +807,7 @@ void clMainFrame::CreateGUIControls(void)
 	m_outputPane = new OutputPane(this, wxT("Output View"));
 	wxAuiPaneInfo paneInfo;
 	m_mgr.AddPane(m_outputPane,
-	              paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(1).Position(0).CaptionVisible(false).MaximizeButton().MinimizeButton());
+	              paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(1).Position(0).CaptionVisible(false).MinimizeButton());
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
 
 	// Now it's created, hide it. Otherwise, if codelite.layout doesn't exist, it starts slightly open
@@ -3532,7 +3532,7 @@ void clMainFrame::OnNewDetachedPane(wxCommandEvent &e)
 		DetachedPanesInfo dpi(panes);
 		EditorConfigST::Get()->WriteObject(wxT("DetachedPanesList"), &dpi);
 
-		m_mgr.AddPane(pane, wxAuiPaneInfo().Name(text).Caption(text).MaximizeButton(true).Float());
+		m_mgr.AddPane(pane, wxAuiPaneInfo().Name(text).Caption(text).Float());
 		m_mgr.Update();
 	}
 }

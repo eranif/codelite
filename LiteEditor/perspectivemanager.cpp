@@ -92,6 +92,12 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
 			m_active = nameOnly;
 			EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
 
+		} else if (name == NORMAL_LAYOUT) {
+			// Requested to load the Normal layout but we got no such layout
+			// Make the current one the default layout
+			SavePerspective(name);
+			m_active = nameOnly;
+			EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
 		}
 	}
 }

@@ -66,6 +66,12 @@ struct CompilerPatterns {
 
 class BuildTab : public OutputTabWindow
 {
+	enum BuildpaneScrollTo {
+		ScrollToFirstError,
+		ScrollToFirstItem,
+		ScrollToEnd
+	};
+
 	friend class ErrorsTab;
 public:
 	/**
@@ -92,7 +98,8 @@ private:
 	int                                  m_showMe;
 	bool                                 m_autoHide;
 	bool                                 m_autoShow;
-	bool                                 m_skipWarnings;
+	int                                  m_skipWarnings;
+	enum BuildpaneScrollTo               m_buildpaneScrollTo;
 	bool                                 m_building;
 	int                                  m_errorCount;
 	int                                  m_warnCount;
@@ -114,7 +121,7 @@ private:
 	bool GetCompilerPatterns(const wxString &compilerName, CompilerPatterns &patterns);
 	void DoProcessLine      (const wxString &text, int lineno);
 	void MarkEditor         (LEditor *editor);
-	std::map<int,LineInfo>::iterator GetNextBadLine();
+	std::map<int,LineInfo>::iterator GetNextBadLine(bool skipwarnings);
 	void DoStripErrorLine  (wxString &errstr);
 	
 	// Event handlers

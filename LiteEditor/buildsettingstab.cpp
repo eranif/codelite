@@ -33,7 +33,7 @@ BuildTabSetting::BuildTabSetting( wxWindow* parent )
 {
 	BuildTabSettingsData options;
 	EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
-	m_checkBoxSkipeWarnings->SetValue( options.GetSkipWarnings() );
+	m_checkBoxSkipWarnings->SetValue( options.GetSkipWarnings() );
 	m_colourPickerError->SetColour(options.GetErrorColourBg());
 	m_colourPickerWarnings->SetColour(options.GetWarnColourBg());
 	m_colourPickerErrorFg->SetColour(options.GetErrorColour());
@@ -42,11 +42,11 @@ BuildTabSetting::BuildTabSetting( wxWindow* parent )
 	m_checkBoxBoldWarnFont->SetValue(options.GetBoldWarnFont());
     m_radioBoxShowBuildTab->Select(options.GetShowBuildPane());
 	m_checkBoxAutoHide->SetValue(options.GetAutoHide());
-	m_checkBoxAutoShow->SetValue(options.GetAutoShow());
+	m_checkBoxShowErrorPane->SetValue(options.GetAutoShow());
 	m_checkBoxErrorsFirstLine->SetValue(options.GetErrorsFirstLine());
+	m_radioBuildPaneScrollDestination->SetSelection(options.GetBuildPaneScrollDestination());
 	m_checkBoxDisplayAnnotations->SetValue(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotations);
 	m_checkBoxDisplayMarkers->SetValue(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks);
-	m_checkBoxErrorsFirstLine->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( BuildTabSetting::OnNotifyUI ), NULL, this );
 }
 
 void BuildTabSetting::Save()
@@ -56,13 +56,14 @@ void BuildTabSetting::Save()
 	options.SetWarnColourBg(m_colourPickerWarnings->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
 	options.SetErrorColour(m_colourPickerErrorFg->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
 	options.SetWarnColour(m_colourPickerWarningsFg->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
-	options.SetSkipWarnings(m_checkBoxSkipeWarnings->IsChecked());
+	options.SetSkipWarnings(m_checkBoxSkipWarnings->IsChecked());
 	options.SetBoldErrFont(m_checkBoxBoldErrFont->IsChecked());
 	options.SetBoldWarnFont(m_checkBoxBoldWarnFont->IsChecked());
     options.SetShowBuildPane(m_radioBoxShowBuildTab->GetSelection());
 	options.SetAutoHide(m_checkBoxAutoHide->IsChecked());
-	options.SetAutoShow(m_checkBoxAutoShow->IsChecked());
+	options.SetAutoShow(m_checkBoxShowErrorPane->IsChecked());
 	options.SetErrorsFirstLine(m_checkBoxErrorsFirstLine->IsChecked());
+	options.SetBuildPaneScrollDestination(m_radioBuildPaneScrollDestination->GetSelection());
 
 	int flag (BuildTabSettingsData::EWS_NoMarkers);
 	if ( m_checkBoxDisplayAnnotations->IsChecked() ) {
@@ -76,7 +77,8 @@ void BuildTabSetting::Save()
 	EditorConfigST::Get()->WriteObject(wxT("build_tab_settings"), &options);
 }
 
-void BuildTabSetting::OnNotifyUI(wxUpdateUIEvent& event)
+void BuildTabSetting::OnUpdateUI(wxUpdateUIEvent& event)
 {
-	event.Enable( m_checkBoxAutoShow->IsChecked() );
+	m_checkBoxErrorsFirstLine->Enable(m_checkBoxShowErrorPane->IsChecked());
+	m_radioBuildPaneScrollDestination->Enable(!m_checkBoxShowErrorPane->IsChecked());
 }

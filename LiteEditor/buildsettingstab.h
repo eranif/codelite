@@ -39,7 +39,7 @@ public:
 	/** Constructor */
 	BuildTabSetting( wxWindow* parent );
 	void Save();
-	void OnNotifyUI(wxUpdateUIEvent& event);
+	void OnUpdateUI(wxUpdateUIEvent& event);
 };
 
 #endif // __buildsettingstab__

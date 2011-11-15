@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  3 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __buildsettingstabbase__
-#define __buildsettingstabbase__
+#ifndef __BUILDSETTINGSTABBASE_H__
+#define __BUILDSETTINGSTABBASE_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -19,8 +20,8 @@
 #include <wx/clrpicker.h>
 #include <wx/checkbox.h>
 #include <wx/sizer.h>
-#include <wx/statbox.h>
 #include <wx/radiobox.h>
+#include <wx/statbox.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -46,10 +47,11 @@ class BuildTabSettingsBase : public wxPanel
 		wxColourPickerCtrl* m_colourPickerWarnings;
 		wxColourPickerCtrl* m_colourPickerWarningsFg;
 		wxCheckBox* m_checkBoxBoldWarnFont;
-		wxCheckBox* m_checkBoxSkipeWarnings;
+		wxCheckBox* m_checkBoxSkipWarnings;
 		wxCheckBox* m_checkBoxAutoHide;
-		wxCheckBox* m_checkBoxAutoShow;
+		wxCheckBox* m_checkBoxShowErrorPane;
 		wxCheckBox* m_checkBoxErrorsFirstLine;
+		wxRadioBox* m_radioBuildPaneScrollDestination;
 		wxRadioBox* m_radioBoxShowBuildTab;
 		wxCheckBox* m_checkBoxDisplayAnnotations;
 		wxCheckBox* m_checkBoxDisplayMarkers;
@@ -60,9 +62,9 @@ class BuildTabSettingsBase : public wxPanel
 	
 	public:
 		
-		BuildTabSettingsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 720,550 ), long style = wxTAB_TRAVERSAL );
+		BuildTabSettingsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
 		~BuildTabSettingsBase();
 	
 };
 
-#endif //__buildsettingstabbase__
+#endif //__BUILDSETTINGSTABBASE_H__

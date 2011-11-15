@@ -35,6 +35,7 @@ BuildTabSettingsData::BuildTabSettingsData()
 		, m_autoShow(false)
 		, m_errorsFirstLine(false)
 		, m_errorWarningStyle(EWS_Bookmarks)
+		, m_buildpaneScrollTo(0)
 {
 	wxColour errColour(wxT("RED"));
 	wxColour wrnColour(wxT("#AA9B49"));
@@ -64,6 +65,7 @@ void BuildTabSettingsData::Serialize(Archive &arch)
 	arch.Write(wxT("m_errorsFirstLine"),   m_errorsFirstLine);
 	arch.Write(wxT("m_showBuildPane"),     m_showBuildPane);
 	arch.Write(wxT("m_errorWarningStyle"), m_errorWarningStyle);
+	arch.Write(wxT("m_buildpaneScrollTo"), m_buildpaneScrollTo);
 }
 
 void BuildTabSettingsData::DeSerialize(Archive &arch)
@@ -80,4 +82,5 @@ void BuildTabSettingsData::DeSerialize(Archive &arch)
 	arch.Read(wxT("m_errorsFirstLine"),   m_errorsFirstLine);
 	arch.Read(wxT("m_showBuildPane"),     m_showBuildPane);
 	arch.Read(wxT("m_errorWarningStyle"), m_errorWarningStyle);
+	arch.Read(wxT("m_buildpaneScrollTo"), m_buildpaneScrollTo);
 }

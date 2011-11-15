@@ -59,6 +59,7 @@ BuildTab::BuildTab ( wxWindow *parent, wxWindowID id, const wxString &name )
 	, m_autoHide        ( false )
 	, m_autoShow        ( false )
 	, m_skipWarnings    ( true )
+	, m_buildpaneScrollTo(ScrollToFirstError)
 	, m_building        ( false )
 	, m_errorCount      ( 0 )
 	, m_warnCount       ( 0 )
@@ -144,6 +145,7 @@ void BuildTab::Initialize()
 	m_autoAppear		= (m_showMe == BuildTabSettingsData::ShowOnStart);
 	m_autoAppearErrors	= m_autoShow;
 	m_errorsFirstLine	= options.GetErrorsFirstLine();
+	m_buildpaneScrollTo = (BuildpaneScrollTo)options.GetBuildPaneScrollDestination();
 
 	m_autoAppear		= (m_showMe == BuildTabSettingsData::ShowOnStart);
 
@@ -305,22 +307,22 @@ bool BuildTab::ExtractLineInfo ( LineInfo &info, const wxString &text, const wxR
 	return true;
 }
 
-std::map<int,BuildTab::LineInfo>::iterator BuildTab::GetNextBadLine()
+std::map<int,BuildTab::LineInfo>::iterator BuildTab::GetNextBadLine(bool skipwarnings)
 {
 	// start scanning from currently marked line
 	int nFoundLine = m_sci->MarkerNext(0, 255);
-	std::map<int,LineInfo>::iterator i = m_lineInfo.upper_bound ( nFoundLine );
-	std::map<int,LineInfo>::iterator e = m_lineInfo.end();
-	for ( ; i != e && i->second.linecolor != wxSCI_LEX_GCC_ERROR &&
-	      ( m_skipWarnings || i->second.linecolor != wxSCI_LEX_GCC_WARNING ); i++ ) { }
-	if ( i == e ) {
+	std::map<int,LineInfo>::iterator iter = m_lineInfo.upper_bound ( nFoundLine );
+	std::map<int,LineInfo>::iterator range_end = m_lineInfo.end();
+	for ( ; iter != range_end && iter->second.linecolor != wxSCI_LEX_GCC_ERROR &&
+	      ( skipwarnings || iter->second.linecolor != wxSCI_LEX_GCC_WARNING ); iter++ ) { }
+	if ( iter == range_end ) {
 		// wrap around to beginning
-		i = m_lineInfo.begin();
-		e = m_lineInfo.lower_bound ( nFoundLine );
-		for ( ; i != e && i->second.linecolor != wxSCI_LEX_GCC_ERROR &&
-		      ( m_skipWarnings || i->second.linecolor != wxSCI_LEX_GCC_WARNING ); i++ ) { }
+		iter = m_lineInfo.begin();
+		range_end = m_lineInfo.lower_bound ( nFoundLine );
+		for ( ; iter != range_end && iter->second.linecolor != wxSCI_LEX_GCC_ERROR &&
+		      ( skipwarnings || iter->second.linecolor != wxSCI_LEX_GCC_WARNING ); iter++ ) { }
 	}
-	return i != e ? i : m_lineInfo.end();
+	return iter != range_end ? iter : m_lineInfo.end();
 }
 
 bool BuildTab::DoOpenFile( const BuildTab::LineInfo &info)
@@ -386,7 +388,7 @@ void BuildTab::DoMarkAndOpenFile ( std::map<int,LineInfo>::iterator i, bool scro
 		m_sci->ScrollToLine      ( i->first      );
 }
 
-void BuildTab::MarkEditor ( LEditor *editor )
+void BuildTab::MarkEditor(LEditor *editor)
 {
 	if ( !editor )
 		return;
@@ -581,21 +583,22 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 	               ( clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() == this ||
 	                 clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() ==
 	                 clMainFrame::Get()->GetOutputPane()->GetErrorsTab() );
+	bool skipwarnings(false);
 
 	if ( !success || m_autoAppearErrors ) {
-		if ( !m_autoAppearErrors && viewing ) {
-			// If there are both errors and warnings, go to the first *error*. Surely that's what everyone would want...
-			bool skipWarningsCache = m_skipWarnings;
-			if (m_errorCount > 0) {
-				m_skipWarnings = true;
+		if (!m_autoAppearErrors && viewing) {
+			if (m_buildpaneScrollTo != ScrollToEnd) {
+				// The user may have opted to go to the first error, the first item, or /dev/null
+				skipwarnings = (m_errorCount > 0) && (m_buildpaneScrollTo == ScrollToFirstError);
+				std::map<int,LineInfo>::iterator i = GetNextBadLine(skipwarnings);
+				m_sci->GotoLine(i->first-1); // minus one line so user can type F4 to open the first error
+				m_sci->MarkerDeleteAll(0x7);
+				m_sci->MarkerAdd(i->first, 0x7);
+				
+				// If we're not going to show the Errors tab, output the error/warnings count to the statusbar
+				// Otherwise, if there are dozens of them, m_sci may have scrolled up and the count won't be visible
+				clMainFrame::Get()->SetStatusMessage(wxString(_("Build ended: ")) + problemcount, 0);
 			}
-			std::map<int,LineInfo>::iterator i = GetNextBadLine();
-			m_skipWarnings = skipWarningsCache;
-			m_sci->GotoLine ( i->first-1 ); // minus one line so user can type F4 to open the first error
-			
-			// If we're not going to show the Errors tab, output the error/warnings count to the statusbar
-			// Otherwise, if there are dozens of them, the m_sci will have scrolled up and the count won't be visible
-			clMainFrame::Get()->SetStatusMessage(wxString(_("Build ended: ")) + problemcount, 0);
 
 		} else {
 			ManagerST::Get()->ShowOutputPane ( clMainFrame::Get()->GetOutputPane()->GetErrorsTab()->GetCaption() );
@@ -616,7 +619,7 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 	}
 
 
-	MarkEditor ( clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
+	MarkEditor(clMainFrame::Get()->GetMainBook()->GetActiveEditor());
 
 	// notify the plugins that the build had ended
 	PostCmdEvent(wxEVT_BUILD_ENDED);
@@ -654,7 +657,7 @@ void BuildTab::OnNextBuildError ( wxCommandEvent &e )
 {
 	wxUnusedVar ( e );
 	if ( (m_errorCount > 0) || (!m_skipWarnings && m_warnCount > 0) ) {
-		std::map<int,LineInfo>::iterator i = GetNextBadLine();
+		std::map<int,LineInfo>::iterator i = GetNextBadLine(m_skipWarnings);
 		if ( i != m_lineInfo.end() ) {
 			wxString showpane = m_name;
 			if ( clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() ==

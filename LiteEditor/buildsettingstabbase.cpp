@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  3 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -77,14 +77,14 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	wxStaticBoxSizer* sbSizer2;
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("General:") ), wxVERTICAL );
 	
-	m_checkBoxSkipeWarnings = new wxCheckBox( this, wxID_ANY, _("When using the menu to jump to errors, skip warnings"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer2->Add( m_checkBoxSkipeWarnings, 0, wxALL|wxEXPAND, 5 );
+	m_checkBoxSkipWarnings = new wxCheckBox( this, wxID_ANY, _("When using the menu to jump to errors, skip warnings"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer2->Add( m_checkBoxSkipWarnings, 0, wxALL|wxEXPAND, 5 );
 	
-	m_checkBoxAutoHide = new wxCheckBox( this, wxID_ANY, _("Automatically hide the build pane when there are no errors nor warnings"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxAutoHide = new wxCheckBox( this, wxID_ANY, _("Automatically hide the build pane when there are neither errors nor warnings"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer2->Add( m_checkBoxAutoHide, 0, wxALL|wxEXPAND, 5 );
 	
-	m_checkBoxAutoShow = new wxCheckBox( this, wxID_ANY, _("Always show error pane after build"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer2->Add( m_checkBoxAutoShow, 0, wxALL, 5 );
+	m_checkBoxShowErrorPane = new wxCheckBox( this, wxID_ANY, _("Always show error pane after build"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer2->Add( m_checkBoxShowErrorPane, 0, wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizer2;
 	fgSizer2 = new wxFlexGridSizer( 1, 1, 0, 0 );
@@ -95,6 +95,12 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	fgSizer2->Add( m_checkBoxErrorsFirstLine, 0, wxALL, 5 );
 	
 	sbSizer2->Add( fgSizer2, 1, wxALIGN_LEFT|wxEXPAND|wxLEFT|wxRIGHT, 30 );
+	
+	wxString m_radioBuildPaneScrollDestinationChoices[] = { _("The first error"), _("The first warning or error"), _("The end") };
+	int m_radioBuildPaneScrollDestinationNChoices = sizeof( m_radioBuildPaneScrollDestinationChoices ) / sizeof( wxString );
+	m_radioBuildPaneScrollDestination = new wxRadioBox( this, wxID_ANY, _("After build finishes, if showing the build pane scroll to:"), wxDefaultPosition, wxDefaultSize, m_radioBuildPaneScrollDestinationNChoices, m_radioBuildPaneScrollDestinationChoices, 1, wxRA_SPECIFY_ROWS );
+	m_radioBuildPaneScrollDestination->SetSelection( 0 );
+	sbSizer2->Add( m_radioBuildPaneScrollDestination, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer1->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
 	
@@ -117,6 +123,7 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	bSizer1->Fit( this );
 	
 	// Connect Events
 	m_checkBoxErrorsFirstLine->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( BuildTabSettingsBase::OnUpdateUI ), NULL, this );

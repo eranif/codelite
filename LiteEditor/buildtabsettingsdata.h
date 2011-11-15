@@ -41,6 +41,7 @@ class BuildTabSettingsData : public SerializedObject
 	bool     m_autoShow;
 	bool     m_errorsFirstLine;
 	int      m_errorWarningStyle;
+	int      m_buildpaneScrollTo;
 
 private:
 	BuildTabSettingsData(const BuildTabSettingsData& rhs);
@@ -56,7 +57,7 @@ public:
 	enum ShowBuildPane {
 		ShowOnStart,
 		ShowOnEnd,
-		DontShow,
+		DontShow
 	};
 
 	BuildTabSettingsData();
@@ -85,6 +86,9 @@ public:
 	void SetSkipWarnings(const bool& skipWarnings) {
 		this->m_skipWarnings = skipWarnings;
 	}
+	void SetBuildPaneScrollDestination(int buildpaneScrollTo) {
+		this->m_buildpaneScrollTo = buildpaneScrollTo;
+	}
 	void SetWarnColour(const wxString& warnColour) {
 		this->m_warnColour = warnColour;
 	}
@@ -109,6 +113,9 @@ public:
 	}
 	const bool& GetSkipWarnings() const {
 		return m_skipWarnings;
+	}
+	int GetBuildPaneScrollDestination() const {
+		return m_buildpaneScrollTo;
 	}
 	const wxString& GetWarnColour() const {
 		return m_warnColour;

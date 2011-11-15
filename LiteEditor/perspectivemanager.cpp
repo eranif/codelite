@@ -35,7 +35,12 @@ void PerspectiveManager::DeleteAllPerspectives()
 
 void PerspectiveManager::LoadPerspective(const wxString& name)
 {
-	wxString file = DoGetPathFromName(name);
+	wxString pname = name;
+	if(pname.IsEmpty()) {
+		pname = m_active;
+	}
+	
+	wxString file = DoGetPathFromName(pname);
 	wxString nameOnly;
 
 	if(name.Find(wxT(".")) == wxNOT_FOUND) {
@@ -60,8 +65,7 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
 
 	wxString content;
 	if(ReadFileWithConversion(file, content)) {
-		clMainFrame::Get()->GetDockingManager().LoadPerspective(content, true);
-		clMainFrame::Get()->GetDockingManager().Update();
+		clMainFrame::Get()->GetDockingManager().LoadPerspective(content);
 		m_active = nameOnly;
 		EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
 		

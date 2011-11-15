@@ -3531,8 +3531,8 @@ void clMainFrame::OnNewDetachedPane(wxCommandEvent &e)
 		wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
 		DetachedPanesInfo dpi(panes);
 		EditorConfigST::Get()->WriteObject(wxT("DetachedPanesList"), &dpi);
-		
-		m_mgr.AddPane(pane, wxAuiPaneInfo().Name(text).Caption(text).MaximizeButton(true));
+
+		m_mgr.AddPane(pane, wxAuiPaneInfo().Name(text).Caption(text).MaximizeButton(true).Float());
 		m_mgr.Update();
 	}
 }

@@ -196,7 +196,7 @@ void SubversionView::CreatGUIControls()
 	wxSizer *sz = GetSizer();
 	sz->Insert(0, tb, 0, wxEXPAND);
 	tb->Realize();
-
+	m_splitter2->SetMinimumPaneSize(200);
 	m_subversionConsole = new SvnConsole(m_lowerPane, m_plugin);
 	m_lowerPane->GetSizer()->Add(m_subversionConsole, 1, wxEXPAND|wxALL, 5);
 	DoRootDirChanged(wxGetCwd());

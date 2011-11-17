@@ -5,12 +5,12 @@
 #include <string>
 
 const char *cmdLineArgs[] = {
-	"-IC:\\mingw-4.6.1\\lib\\gcc\\mingw32\\4.6.1\\include\\c++",
-	"-IC:\\mingw-4.6.1\\lib\\gcc\\mingw32\\4.6.1\\include\\c++\\mingw32",
-	"-IC:\\mingw-4.6.1\\lib\\gcc\\mingw32\\4.6.1\\include\\c++\\backward",
-	"-IC:\\mingw-4.6.1\\lib\\gcc\\mingw32\\4.6.1\\include",
-	"-IC:\\mingw-4.6.1\\include",
-	"-IC:\\mingw-4.6.1\\lib\\gcc\\mingw32\\4.6.1\\include-fixed"
+	"-IC:\\mingw-4.4.1\\lib\\gcc\\mingw32\\4.4.1\\include\\c++",
+	"-IC:\\mingw-4.4.1\\lib\\gcc\\mingw32\\4.4.1\\include\\c++\\mingw32",
+	"-IC:\\mingw-4.4.1\\lib\\gcc\\mingw32\\4.4.1\\include\\c++\\backward",
+	"-IC:\\mingw-4.4.1\\lib\\gcc\\mingw32\\4.4.1\\include",
+	"-IC:\\mingw-4.4.1\\include",
+	"-IC:\\mingw-4.4.1\\lib\\gcc\\mingw32\\4.4.1\\include-fixed"
 };
 
 char *loadFile(const char *fileName)
@@ -49,12 +49,12 @@ int parseFile(const std::string& filename, const std::string &modifiedBuffer, CX
 	if(!*unit) {
 		needReparse = false;
 		*unit = clang_parseTranslationUnit(index,
-	                         filename.c_str(),
-	                         cmdLineArgs,
-	                         6,
-	                         &file,
-	                         1,
-	                         CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
+		                                   filename.c_str(),
+		                                   cmdLineArgs,
+		                                   6,
+		                                   &file,
+		                                   1,
+		                                   CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
 	}
 
 	if(!*unit) {
@@ -72,22 +72,78 @@ int parseFile(const std::string& filename, const std::string &modifiedBuffer, CX
 	return 0;
 }
 
+static int displayCursorInfo(CXCursor Cursor)
+{    
+    CXString String = clang_getCursorDisplayName(Cursor);
+    printf("Display: [%s]\n", clang_getCString(String));
+    clang_disposeString(String);
+
+    CXSourceLocation loc = clang_getCursorLocation(Cursor);
+	CXFile file;
+	unsigned line, col, off;
+	clang_getSpellingLocation(loc, &file, &line, &col, &off);
+	
+	CXString strFileName = clang_getFileName(file);
+	printf("Location: %s, %u:%u\n", clang_getCString(strFileName), line, col);
+	clang_disposeString(strFileName);
+	
+	return 0;
+}
+
+enum CXChildVisitResult VisitorCallback(CXCursor Cursor,
+                                        CXCursor Parent,
+                                        CXClientData ClientData) 
+{
+	displayCursorInfo(Cursor);
+	return CXChildVisit_Continue;
+}
+
+void findFunction()
+{
+	
+	CXIndex index = clang_createIndex(0, 0);
+	CXTranslationUnit unit = clang_parseTranslationUnit(index,
+		                                   "../test-sources/file.cpp",
+		                                   cmdLineArgs,
+		                                   6,
+		                                   NULL,
+		                                   0,
+		                                   CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
+	/*
+	CXCursorVisitor visitor = VisitorCallback;
+	clang_visitChildren(clang_getTranslationUnitCursor(unit), visitor, NULL);
+	 */
+	CXFile file;
+	CXCursor cursor;
+	CXSourceLocation loc;
+	file   = clang_getFile    (unit, "../test-sources/file.cpp");
+	loc    = clang_getLocation(unit, file, 5, 8);
+	cursor = clang_getCursor  (unit, loc);
+	
+	if(cursor.kind == CXCursor_MemberRefExpr || cursor.kind == CXCursor_TypeRef) {
+		CXCursor refCur = clang_getCursorReferenced(cursor);
+		displayCursorInfo(refCur);
+	}
+}
+
 int main(int argc, char **argv)
 {
-	char *partBuffer      = loadFile("C:\\file-buffer.cpp");
+	char *partBuffer      = loadFile("../test-sources/file-buffer.cpp");
 	std::string strBuffer = partBuffer;
 	free(partBuffer);
 
-	std::string filename  = "C:\\file.cpp";
-	CXUnsavedFile file = {"C:\\file.cpp", strBuffer.c_str(), strBuffer.length()};
+	std::string filename  = "../test-sources/file.cpp";
+	CXUnsavedFile file = {filename.c_str(), strBuffer.c_str(), strBuffer.length()};
 	CXIndex index = clang_createIndex(0, 0);
 
 	CXTranslationUnit unit = 0;
 	//for(size_t i=0; i<10; i++) {
 	if(parseFile(filename, partBuffer, index, &unit) == 0) {
-
+		
+		findFunction();
+		
 		// Note that column can not be <= 0
-		CXCodeCompleteResults* results= clang_codeCompleteAt(unit, filename.c_str(), 12, 4, &file, 1 , clang_defaultCodeCompleteOptions());
+		CXCodeCompleteResults* results= clang_codeCompleteAt(unit, filename.c_str(), 6, 6, &file, 1 , clang_defaultCodeCompleteOptions());
 		if(!results) {
 			return -1;
 		}

@@ -228,7 +228,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 	} else {
 
 		//create default project settings
-		m_commonConfig.SetCompileOptions(wxT("-g"));
+		m_commonConfig.SetCompileOptions(wxT("-g -Wall"));
 		m_commonConfig.SetLinkOptions(wxT("-O0"));
 		m_commonConfig.SetLibPath(wxT(".;Debug"));
 

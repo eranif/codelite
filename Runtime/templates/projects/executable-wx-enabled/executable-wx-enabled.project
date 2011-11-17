@@ -3,7 +3,7 @@
   <Settings Type="Executable">
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)">
+      <Compiler Required="yes" Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)">
       </Compiler>
       <Linker Required="yes" Options="-mwindows;$(shell wx-config --debug=yes --libs --unicode=yes)"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -29,7 +29,7 @@
     </Configuration>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="-O2;$(shell wx-config --cxxflags --unicode=yes --debug=no)">
+      <Compiler Required="yes" Options="-O2;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no)">
       </Compiler>
       <Linker Required="yes" Options="-mwindows;-s;$(shell wx-config --debug=no --libs --unicode=yes)"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">

@@ -3814,6 +3814,11 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 					SetSelection ( pos, pos + match_len );
 					res = true;
 				}
+				
+				if (res && (line >= 0) && !again) {
+					EnsureVisible(line);
+					EnsureCaretVisible();
+				}
 			}
 
 		} else {

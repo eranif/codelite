@@ -5,12 +5,26 @@
 #include <string>
 
 const char *cmdLineArgs[] = {
-	"-IC:\\mingw-4.4.1\\lib\\gcc\\mingw32\\4.4.1\\include\\c++",
-	"-IC:\\mingw-4.4.1\\lib\\gcc\\mingw32\\4.4.1\\include\\c++\\mingw32",
-	"-IC:\\mingw-4.4.1\\lib\\gcc\\mingw32\\4.4.1\\include\\c++\\backward",
-	"-IC:\\mingw-4.4.1\\lib\\gcc\\mingw32\\4.4.1\\include",
-	"-IC:\\mingw-4.4.1\\include",
-	"-IC:\\mingw-4.4.1\\lib\\gcc\\mingw32\\4.4.1\\include-fixed"
+	"-Ic:\\mingw-4.6.1\\lib\\gcc\\mingw32\\4.6.1\\include\\c++",
+	"-Ic:\\mingw-4.6.1\\lib\\gcc\\mingw32\\4.6.1\\include\\c++\\mingw32",
+	"-Ic:\\mingw-4.6.1\\lib\\gcc\\mingw32\\4.6.1\\include\\c++\\backward",
+	"-Ic:\\mingw-4.6.1\\lib\\gcc\\mingw32\\4.6.1\\include",
+	"-Ic:\\mingw-4.6.1\\include",
+	"-Ic:\\mingw-4.6.1\\lib\\gcc\\mingw32\\4.6.1\\include-fixed",
+	"-IC:\\Users\\eran\\software\\nzbtracker",
+	"-IC:\\Users\\eran\\software\\nzbtracker\\curl\\include",
+	"-IC:\\Users\\eran\\software\\nzbtracker",
+	"-IC:\\Users\\eran\\software\\nzbtracker\\sqlite3",
+	"-DHAVE_W32API_H",
+	"-D__WXMSW__",
+	"-DNDEBUG",
+	"-D_UNICODE",
+	"-IC:\\wxWidgets-2.9.2\\lib\\gcc_dll\\mswu",
+	"-IC:\\wxWidgets-2.9.2\\include",
+	"-DWXUSINGDLL",
+	"-Wno-ctor-dtor-privacy",
+	"-Wall",
+	"-D__WX__"
 };
 
 char *loadFile(const char *fileName)
@@ -44,17 +58,19 @@ char *loadFile(const char *fileName)
 
 int parseFile(const std::string& filename, const std::string &modifiedBuffer, CXIndex index, CXTranslationUnit *unit)
 {
-	bool needReparse = true;
 	CXUnsavedFile file = {filename.c_str(), modifiedBuffer.c_str(), modifiedBuffer.length()};
 	if(!*unit) {
-		needReparse = false;
 		*unit = clang_parseTranslationUnit(index,
 		                                   filename.c_str(),
 		                                   cmdLineArgs,
-		                                   6,
+		                                   20,
 		                                   &file,
 		                                   1,
-		                                   CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
+		                                     CXTranslationUnit_CXXPrecompiledPreamble
+										   | CXTranslationUnit_CacheCompletionResults
+										   | CXTranslationUnit_CXXChainedPCH
+										   | CXTranslationUnit_PrecompiledPreamble
+										   | CXTranslationUnit_Incomplete);
 	}
 
 	if(!*unit) {
@@ -62,37 +78,40 @@ int parseFile(const std::string& filename, const std::string &modifiedBuffer, CX
 		return -1;
 	}
 
-	if(needReparse) {
-		int status = clang_reparseTranslationUnit(*unit, 1, &file, clang_defaultReparseOptions(*unit));
-		if(status != 0) {
-			printf("clang_reparseTranslationUnit error!\n");
-			return -1;
-		}
+	int status = clang_reparseTranslationUnit(*unit, 1, &file,
+											 CXTranslationUnit_CXXPrecompiledPreamble
+										   | CXTranslationUnit_CacheCompletionResults
+										   | CXTranslationUnit_CXXChainedPCH
+										   | CXTranslationUnit_PrecompiledPreamble
+										   | CXTranslationUnit_Incomplete);
+	if(status != 0) {
+		printf("clang_reparseTranslationUnit error!\n");
+		return -1;
 	}
 	return 0;
 }
 
 static int displayCursorInfo(CXCursor Cursor)
-{    
-    CXString String = clang_getCursorDisplayName(Cursor);
-    printf("Display: [%s]\n", clang_getCString(String));
-    clang_disposeString(String);
+{
+	CXString String = clang_getCursorDisplayName(Cursor);
+	printf("Display: [%s]\n", clang_getCString(String));
+	clang_disposeString(String);
 
-    CXSourceLocation loc = clang_getCursorLocation(Cursor);
+	CXSourceLocation loc = clang_getCursorLocation(Cursor);
 	CXFile file;
 	unsigned line, col, off;
 	clang_getSpellingLocation(loc, &file, &line, &col, &off);
-	
+
 	CXString strFileName = clang_getFileName(file);
 	printf("Location: %s, %u:%u\n", clang_getCString(strFileName), line, col);
 	clang_disposeString(strFileName);
-	
+
 	return 0;
 }
 
 enum CXChildVisitResult VisitorCallback(CXCursor Cursor,
                                         CXCursor Parent,
-                                        CXClientData ClientData) 
+                                        CXClientData ClientData)
 {
 	displayCursorInfo(Cursor);
 	return CXChildVisit_Continue;
@@ -100,15 +119,15 @@ enum CXChildVisitResult VisitorCallback(CXCursor Cursor,
 
 void findFunction()
 {
-	
+
 	CXIndex index = clang_createIndex(0, 0);
 	CXTranslationUnit unit = clang_parseTranslationUnit(index,
-		                                   "../test-sources/file.cpp",
-		                                   cmdLineArgs,
-		                                   6,
-		                                   NULL,
-		                                   0,
-		                                   CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
+	                         "../test-sources/file.cpp",
+	                         cmdLineArgs,
+	                         20,
+	                         NULL,
+	                         0,
+	                         CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults | CXTranslationUnit_CXXPrecompiledPreamble | CXTranslationUnit_CXXChainedPCH);
 	/*
 	CXCursorVisitor visitor = VisitorCallback;
 	clang_visitChildren(clang_getTranslationUnitCursor(unit), visitor, NULL);
@@ -119,7 +138,7 @@ void findFunction()
 	file   = clang_getFile    (unit, "../test-sources/file.cpp");
 	loc    = clang_getLocation(unit, file, 5, 8);
 	cursor = clang_getCursor  (unit, loc);
-	
+
 	if(cursor.kind == CXCursor_MemberRefExpr || cursor.kind == CXCursor_TypeRef) {
 		CXCursor refCur = clang_getCursorReferenced(cursor);
 		displayCursorInfo(refCur);
@@ -137,20 +156,23 @@ int main(int argc, char **argv)
 	CXIndex index = clang_createIndex(0, 0);
 
 	CXTranslationUnit unit = 0;
+
+
 	//for(size_t i=0; i<10; i++) {
 	if(parseFile(filename, partBuffer, index, &unit) == 0) {
-		
-		findFunction();
-		
+
+		//findFunction();
+
 		// Note that column can not be <= 0
-		CXCodeCompleteResults* results= clang_codeCompleteAt(unit, filename.c_str(), 6, 6, &file, 1 , clang_defaultCodeCompleteOptions());
+		CXCodeCompleteResults* results= clang_codeCompleteAt(unit, filename.c_str(), 83, 8, &file, 1 , clang_defaultCodeCompleteOptions());
 		if(!results) {
 			return -1;
 		}
 
 		int numResults = results->NumResults;
 		clang_sortCodeCompletionResults(results->Results, results->NumResults);
-
+		printf("Found %u matches\n", numResults);
+		
 		for (int i = 0; i < numResults; i++) {
 			CXCompletionResult result = results->Results[i];
 			CXCompletionString str    = result.CompletionString;
@@ -175,7 +197,7 @@ int main(int argc, char **argv)
 					fullSignature += clang_getCString(clang_getCompletionChunkText(str,i));
 				}
 			}
-			printf("%s: %s\n", returnValue.c_str(), fullSignature.c_str());
+			//printf("%s: %s\n", returnValue.c_str(), fullSignature.c_str());
 		}
 
 		clang_disposeCodeCompleteResults(results);

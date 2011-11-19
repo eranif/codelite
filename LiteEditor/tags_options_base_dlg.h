@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __tags_options_base_dlg__
-#define __tags_options_base_dlg__
+#ifndef __TAGS_OPTIONS_BASE_DLG_H__
+#define __TAGS_OPTIONS_BASE_DLG_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/treebook.h>
 #include <wx/string.h>
 #include <wx/gdicmn.h>
@@ -70,7 +71,6 @@ class CCDisplayAndBehaviorBase : public wxPanel
 	
 	protected:
 		wxStaticText* m_staticText14;
-		
 		wxSpinCtrl* m_spinCtrlNumberOfCCItems;
 		wxCheckBox* m_checkBoxEnableCaseSensitiveCompletion;
 		wxCheckBox* m_checkDisplayTypeInfo;
@@ -133,7 +133,6 @@ class CCTriggering : public wxPanel
 	
 	protected:
 		wxCheckBox* m_checkWordAssist;
-		
 		wxStaticText* m_staticTextMinWordLen;
 		wxSlider* m_sliderMinWordLen;
 		wxCheckBox* m_checkAutoInsertSingleChoice;
@@ -229,9 +228,6 @@ class CCClangBasePage : public wxPanel
 		wxTextCtrl* m_textCtrlClangSearchPaths;
 		wxButton* m_buttonSuggest;
 		wxPanel* m_panel4;
-		wxStaticText* m_staticText10;
-		wxTextCtrl* m_textCtrlClangPath;
-		wxButton* m_buttonSelectClang;
 		wxStaticText* m_staticText101;
 		wxButton* m_buttonClearCache;
 		wxStaticText* m_staticText12;
@@ -240,7 +236,6 @@ class CCClangBasePage : public wxPanel
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnClangCCEnabledUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnSuggestSearchPaths( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnSelectClangPath( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClearClangCache( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClearClangCacheUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
@@ -252,4 +247,4 @@ class CCClangBasePage : public wxPanel
 	
 };
 
-#endif //__tags_options_base_dlg__
+#endif //__TAGS_OPTIONS_BASE_DLG_H__

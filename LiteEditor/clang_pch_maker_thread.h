@@ -1,111 +1,100 @@
 #ifndef CLANGPCHMAKERTHREAD_H
 #define CLANGPCHMAKERTHREAD_H
 
+#if HAS_LIBCLANG
+
 #include "worker_thread.h" // Base class: ThreadRequest
 #include "clangpch_cache.h"
+#include <clang-c/Index.h>
 
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED ;
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   ;
 
-class ClangPchCreateTask : public ThreadRequest
+enum WorkingContext {
+    CTX_CodeCompletion,
+    CTX_Calltip,
+    CTX_CachePCH,
+    CTX_WordCompletion
+};
+
+struct ClangThreadReply
 {
-public:
-	enum {
-	    CreatePch
-	};
+	wxString               filterWord;
+	WorkingContext         context;
+	CXCodeCompleteResults *results;
+};
 
+class ClangThreadRequest : public ThreadRequest
+{
 private:
-	wxString      current_buffer;  // Input
-	wxString      file_name;       // Input
-	int           task_type;       // Input
-	wxString      compilationArgs; // Input
-	wxString      clang_binary;    // Input
-	wxString      project_path;    // Input
-	wxArrayString pchHeaders;      // Internally used
-	wxArrayString includesRemoved; // Internally used
-	wxArrayString projectPaths;
+	CXIndex        _index;
+	wxString       _fileName;
+	wxString       _dirtyBuffer;
+	wxString       _compilationArgs;
+	wxString       _filterWord;
+	WorkingContext _context;
+	unsigned       _line;
+	unsigned       _column;
 
 public:
-	ClangPchCreateTask()
-		: task_type(CreatePch)
-	{}
+	ClangThreadRequest(CXIndex index, const wxString &filename, const wxString &dirtyBuffer, const wxString &compArgs, const wxString &filterWord, WorkingContext context, unsigned line, unsigned column)
+		: _index(index)
+		, _fileName(filename.c_str())
+		, _dirtyBuffer(dirtyBuffer.c_str())
+		, _compilationArgs(compArgs.c_str())
+		, _filterWord(filterWord)
+		, _context(context)
+		, _line(line)
+		, _column(column) {
+	}
 
-	virtual ~ClangPchCreateTask() {}
-
-	wxArrayString& GetProjectPaths() {
-		return projectPaths;
+	unsigned GetColumn() const {
+		return _column;
 	}
-	
-	void SetProjectPath(const wxString& project_path) {
-		this->project_path = project_path.c_str();
+	const wxString& GetFilterWord() const {
+		return _filterWord;
 	}
-	
-	const wxString& GetProjectPath() const {
-		return project_path;
+	unsigned GetLine() const {
+		return _line;
 	}
-	void SetCurrentBuffer(const wxString& current_buffer) {
-		this->current_buffer = current_buffer.c_str();
-	}
-	void SetFileName(const wxString& file_name) {
-		this->file_name = file_name.c_str();
-	}
-	const wxString& GetCurrentBuffer() const {
-		return current_buffer;
+	virtual ~ClangThreadRequest() {}
+	const wxString& GetDirtyBuffer() const {
+		return _dirtyBuffer;
 	}
 	const wxString& GetFileName() const {
-		return file_name;
-	}
-	void SetTaskType(int task_type) {
-		this->task_type = task_type;
-	}
-	int GetTaskType() const {
-		return task_type;
-	}
-	void SetClangBinary(const wxString& clang_binary) {
-		this->clang_binary = clang_binary.c_str();
-	}
-	void SetCompilationArgs(const wxString& compilationArgs) {
-		this->compilationArgs = compilationArgs.c_str();
-	}
-	const wxString& GetClangBinary() const {
-		return clang_binary;
+		return _fileName;
 	}
 	const wxString& GetCompilationArgs() const {
-		return compilationArgs;
+		return _compilationArgs;
 	}
-	wxArrayString& GetPchHeaders() {
-		return pchHeaders;
+	CXIndex GetIndex() {
+		return _index;
 	}
-	wxArrayString& GetIncludesRemoved() {
-		return includesRemoved;
+	WorkingContext GetContext() const {
+		return _context;
 	}
 };
 
-class ClangPchMakerThread : public WorkerThread
+class ClangWorkerThread : public WorkerThread
 {
 protected:
 	wxCriticalSection m_cs;
-	ClangPCHCache     m_cache;
+	ClangTUCache     m_cache;
 
 public:
-	ClangPchMakerThread();
-	virtual ~ClangPchMakerThread();
+	ClangWorkerThread();
+	virtual ~ClangWorkerThread();
 
 protected:
-	void     DoCreatePch(ClangPchCreateTask *task);
-	void     DoRemoveAllIncludeStatements(ClangPchCreateTask *task, wxString &buffer);
-	wxString DoGetPchHeaderFile(const wxString &filename);
-	wxString DoGetPchOutputFileName(const wxString &filename);
-	void     DoFilterIncludeFilesFromPP(ClangPchCreateTask *task);
-	bool     ShouldInclude(ClangPchCreateTask *task, const wxString& header, std::set<wxString> &includesMatched);
-	void     DoPrepareCommand(wxString &command);
-	void     DoCacheResult(ClangPchCreateTask *task, const wxArrayString &output);
+	char** MakeCommandLine(const wxString& command, int &argc, bool isHeader);
+	void DoCacheResult(CXTranslationUnit TU, const wxString &filename);
 
 public:
 	virtual void ProcessRequest(ThreadRequest* request);
-	bool         findEntry(const wxString &filename, const wxArrayString &includes);
-	void         ClearCache();
-	bool         IsCacheEmpty();
+	CXTranslationUnit findEntry(const wxString &filename);
+	void              ClearCache();
+	bool              IsCacheEmpty();
 };
+#endif // HAS_LIBCLANG
 
 #endif // CLANGPCHMAKERTHREAD_H

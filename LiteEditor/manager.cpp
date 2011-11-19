@@ -220,7 +220,10 @@ Manager::~Manager ( void )
 	SearchThreadST::Free();
 	MenuManager::Free();
 	EnvironmentConfig::Release();
+	
+#if HAS_LIBCLANG
 	ClangCodeCompletion::Release();
+#endif
 
 	if ( m_shellProcess ) {
 		delete m_shellProcess;

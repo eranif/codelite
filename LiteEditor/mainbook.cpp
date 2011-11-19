@@ -788,7 +788,9 @@ bool MainBook::CloseAll(bool cancellable)
 
 	// Delete the files without notifications (it will be faster)
 	clWindowUpdateLocker locker(this);
+#if HAS_LIBCLANG
 	ClangCodeCompletion::Instance()->CancelCodeComplete();
+#endif
 
 	SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
 
@@ -1064,7 +1066,9 @@ void MainBook::OnPageChanging(NotebookEvent& e)
 		editor->HideCompletionBox();
 		editor->CallTipCancel();
 	}
+#if HAS_LIBCLANG
 	ClangCodeCompletion::Instance()->CancelCodeComplete();
+#endif
 	e.Skip();
 }
 

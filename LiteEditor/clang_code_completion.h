@@ -1,6 +1,8 @@
 #ifndef CLANGCODECOMPLETION_H
 #define CLANGCODECOMPLETION_H
 
+#if HAS_LIBCLANG
+
 #include <wx/event.h>
 #include "asyncprocess.h"
 #include <map>
@@ -22,8 +24,6 @@ class ClangCodeCompletion : public wxEvtHandler
 {
 
 	static ClangCodeCompletion* ms_instance;
-	int                         m_activationPos;
-	IEditor*                    m_activationEditor;
 	ClangDriver                 m_clang;
 	bool                        m_allEditorsAreClosing;
 	
@@ -41,10 +41,8 @@ public:
 	bool IsCacheEmpty();
 	
 protected:
-	void DoParseOutput(const wxString &output);
 	void DoCleanUp();
-	TagEntryPtr ClangEntryToTagEntry(const ClangEntry& entry, const std::string &filter);
-	
+
 	// Event handling
 	void OnFileLoaded(wxCommandEvent &e);
 	void OnAllEditorsClosing(wxCommandEvent &e);
@@ -56,4 +54,5 @@ private:
 
 };
 
+#endif // HAS_LIBCLANG
 #endif // CLANGCODECOMPLETION_H

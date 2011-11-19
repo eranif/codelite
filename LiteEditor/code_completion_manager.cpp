@@ -34,18 +34,11 @@ void CodeCompletionManager::WordCompletion(LEditor *editor, const wxString& expr
 	}
 	
 	
-	if(expression.IsEmpty() || !(GetOptions() & CC_CLANG_ENABLED)) {
-		
-		// No clang enabled or the expression is empty...use ctags
-		DoCtagsWordCompletion(editor, expr, word);
-		
-	} else if(GetOptions() & CC_CLANG_FIRST) {
+	if(GetOptions() & CC_CLANG_FIRST) {
 		DoClangWordCompletion(editor);
 		
 	} else {
-		if(!DoCtagsWordCompletion(editor, expr, word)) {
-			DoClangWordCompletion(editor);
-		}
+		DoCtagsWordCompletion(editor, expr, word);
 	}
 }
 
@@ -70,9 +63,13 @@ bool CodeCompletionManager::DoCtagsWordCompletion(LEditor* editor, const wxStrin
 
 void CodeCompletionManager::DoClangWordCompletion(LEditor* editor)
 {
+#if HAS_LIBCLANG
 	DoUpdateOptions();
 	if(GetOptions() & CC_CLANG_ENABLED)
 		ClangCodeCompletion::Instance()->WordComplete(editor);
+#else
+	wxUnusedVar(editor);
+#endif
 }
 
 bool CodeCompletionManager::DoCtagsCalltip(LEditor* editor, int line, const wxString &expr, const wxString &text, const wxString &word)
@@ -89,9 +86,13 @@ bool CodeCompletionManager::DoCtagsCalltip(LEditor* editor, int line, const wxSt
 
 void CodeCompletionManager::DoClangCalltip(LEditor* editor)
 {
+#if HAS_LIBCLANG
 	DoUpdateOptions();
 	if(GetOptions() & CC_CLANG_ENABLED)
 		ClangCodeCompletion::Instance()->Calltip(editor);
+#else
+	wxUnusedVar(editor);
+#endif
 }
 
 void CodeCompletionManager::Calltip(LEditor* editor, int line, const wxString& expr, const wxString& text, const wxString& word)
@@ -122,7 +123,11 @@ void CodeCompletionManager::CodeComplete(LEditor* editor, int line, const wxStri
 
 void CodeCompletionManager::DoClangCodeComplete(LEditor* editor)
 {
+#if HAS_LIBCLANG
 	ClangCodeCompletion::Instance()->CodeComplete(editor);
+#else
+	wxUnusedVar(editor);
+#endif
 }
 
 bool CodeCompletionManager::DoCtagsCodeComplete(LEditor* editor, int line, const wxString& expr, const wxString& text)

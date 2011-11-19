@@ -1,51 +1,34 @@
 #ifndef CLANGDRIVER_H
 #define CLANGDRIVER_H
 
+#if HAS_LIBCLANG
+
 #include <wx/event.h>
 #include "asyncprocess.h"
 #include <map>
 #include "clangpch_cache.h"
 #include "clang_pch_maker_thread.h"
+#include <clang-c/Index.h>
 
 class IEditor;
 class ClangDriverCleaner;
 
 class ClangDriver : public wxEvtHandler
 {
-public:
-	enum WorkingContext {
-		CTX_CodeCompletion,
-		CTX_Calltip,
-		CTX_CachePCH,
-		CTX_WordCompletion
-	};
-
 protected:
-	IProcess *                  m_process;
-	wxString                    m_tmpfile;
+	bool                        m_isBusy;
 	std::map<wxString,wxString> m_backticks;
-	wxString                    m_output;
-	int                         m_activationPos;
-	ClangPchMakerThread         m_pchMakerThread;
-	wxString                    m_filename;
+	ClangWorkerThread           m_pchMakerThread;
 	WorkingContext              m_context;
-	wxString                    m_ccfilename;
+	CXIndex                     m_index;
+	IEditor*                    m_activeEditor;
 	
 protected:
-	void          DoRunCommand(IEditor *editor);
-	void          DoCleanup();
-	void          DoRemoveAllIncludeStatements(wxString &buffer, wxArrayString &includesRemoved);
-	wxString      DoGetPchHeaderFile(const wxString &filename);
-	wxString      DoGetPchOutputFileName(const wxString &filename);
-	wxString      DoPrepareCompilationArgs(const wxString &projectName, wxString &projectPath);
-	wxString      DoExpandBacktick(const wxString &backtick, const wxString &projectName);
-	bool          DoProcessBuffer(IEditor* editor, wxString &location, wxString &completefileName, wxString &filterWord);
-	int           DoGetHeaderScanLastPos(IEditor *editor);
-	wxString      DoGetClangBinary();
-
-	// Internal
-	void OnCodeCompletionCompleted();
-
+	void     DoCleanup();
+	wxString DoPrepareCompilationArgs(const wxString &projectName, wxString &projectPath);
+	wxString DoExpandBacktick(const wxString &backtick, const wxString &projectName);
+	void     DoParseCompletionString(CXCompletionString str, wxString &entryName, wxString &signature, wxString &completeString, wxString &returnValue);
+	
 public:
 	ClangDriver();
 	virtual ~ClangDriver();
@@ -54,7 +37,7 @@ public:
 	void Abort();
 
 	bool IsBusy() const {
-		return m_process != NULL;
+		return m_isBusy;
 	}
 
 	void SetContext(WorkingContext context) {
@@ -63,19 +46,13 @@ public:
 	WorkingContext GetContext() const {
 		return m_context;
 	}
-	void SetActivationPos(int activationPos) {
-		this->m_activationPos = activationPos;
-	}
-	int GetActivationPos() const {
-		return m_activationPos;
-	}
-
+	
 	void ClearCache();
 	bool IsCacheEmpty();
 	
 	DECLARE_EVENT_TABLE()
-	void OnClangProcessOutput    (wxCommandEvent &e);
-	void OnClangProcessTerminated(wxCommandEvent &e);
+	void OnPrepareTUEnded(wxCommandEvent &e);
 };
+#endif // HAS_LIBCLANG
 
 #endif // CLANGDRIVER_H

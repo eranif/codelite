@@ -99,13 +99,15 @@ void ClangDriver::CodeCompletion(IEditor* editor)
 		m_isBusy = false;
 		return;
 	}
-
+	
+#ifdef __WXMSW__
 	ProjectPtr proj = ManagerST::Get()->GetProject(m_activeEditor->GetProjectName());
 	if(proj) {
 		wxFileName fn(fileName);
 		fn.MakeRelativeTo(proj->GetFileName().GetPath());
 		fileName = fn.GetFullPath();
 	}
+#endif
 
 	ClangThreadRequest* request = new ClangThreadRequest(m_index,
 														 fileName,

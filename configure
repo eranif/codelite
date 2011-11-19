@@ -24,7 +24,13 @@ createVariables()
 	additional_include_path=$2
 	additional_links=$3
 
-	# is_64bit will probably hold yes or no, but could also contain data from an environmental variable
+	## libclang support
+	lib_clang_cmp_flags=""
+	lib_clang_link_flags=""
+	lib_clang=""
+	with_clang="no"
+	
+	## is_64bit will probably hold yes or no, but could also contain data from an environmental variable
 	compiler_extras="$is_64bit"
 	c_compiler_extras="$is_64bit"
 
@@ -39,8 +45,15 @@ createVariables()
 	fi
 	else # Not darwin
 	if [ "$is_64bit" = "yes" ]; then
+			
 			compiler_extras="-DON_64_BIT "
 			c_compiler_extras="-DON_64_BIT "
+			
+			## clang 
+			lib_clang_cmp_flags=" -DHAS_LIBCLANG -I./sdk/clang/Linux/x86_64/include "
+			lib_clang_link_flags=" -L./sdk/clang/Linux/x86_64/lib -lclang "
+			lib_clang="./sdk/clang/Linux/x86_64/lib/libclang.so"
+			with_clang="yes"		
 		elif [ "$is_64bit" = "no" ]; then
 			compiler_extras=""	# Otherwise the word 'no' will be used!
 			c_compiler_extras=""
@@ -92,8 +105,8 @@ createVariables()
 	echo "WXCFG=${wxcfg}" >> Makefile
 	echo "DESTDIR=" >> Makefile
 	echo "" >> Makefile
-	echo "CCFLAGS= -Wall `wx-config --cxxflags ${wxcfg}` -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DINSTALL_DIR=\"\\\"${prefix}/share/codelite\\\"\" -DPLUGINS_DIR=\"\\\"${plugins_dir}\\\"\"" >> Makefile
-	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) -lwxscintilla\$(EXT) -lwxshapeframework\$(EXT) ${dbl_links} -L${base_dir}/sdk/sqlite3/lib `${wxconfiglibs} ${wxcfg}`" >> Makefile
+	echo "CCFLAGS= ${lib_clang_cmp_flags} -Wall `wx-config --cxxflags ${wxcfg}` -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DINSTALL_DIR=\"\\\"${prefix}/share/codelite\\\"\" -DPLUGINS_DIR=\"\\\"${plugins_dir}\\\"\"" >> Makefile
+	echo "LINK_FLAGS =  ${lib_clang_link_flags} -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) -lwxscintilla\$(EXT) -lwxshapeframework\$(EXT) ${dbl_links} -L${base_dir}/sdk/sqlite3/lib `${wxconfiglibs} ${wxcfg}`" >> Makefile
 	echo "PLUGIN_LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) `${wxconfiglibs} ${wxcfg}` ${additional_links}" >> Makefile
 	echo "INCLUDES := \$(INCLUDES) ${additional_include_path} " >> Makefile
 	echo "" >> Makefile
@@ -702,6 +715,11 @@ createInstallTarget()
 	echo "	@cp -fpr Runtime/src/*.gz \"\$(DESTDIR)${prefix}/share/codelite/src/\"" >> Makefile
 	echo "	@cp -fpr Runtime/codelite-icons.zip \"\$(DESTDIR)${prefix}/share/codelite/\"" >> Makefile
 	echo "	@chmod 0666 \"\$(DESTDIR)${prefix}/share/codelite/codelite-icons.zip\"" >> Makefile
+	
+	if [ "$with_clang" = "yes" ]; then 
+		echo "	@cp -fpr ${lib_clang} \"\$(DESTDIR)${non_plugins_dir}/\"" >> Makefile
+	fi
+	
 	if [ "$add_desktop_icon" = "yes" ] ; then
 	  if test -d $HOME/Desktop/ ; then
 	    echo "	@cp -fpr Runtime/codelite.desktop $HOME/Desktop/" >> Makefile

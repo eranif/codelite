@@ -4,6 +4,7 @@
 #include <memory.h>
 #include <string>
 
+#ifdef WIN32
 const char *cmdLineArgs[] = {
 	"-Ic:\\mingw-4.6.1\\lib\\gcc\\mingw32\\4.6.1\\include\\c++",
 	"-Ic:\\mingw-4.6.1\\lib\\gcc\\mingw32\\4.6.1\\include\\c++\\mingw32",
@@ -26,6 +27,31 @@ const char *cmdLineArgs[] = {
 	"-Wall",
 	"-D__WX__"
 };
+const int numArgs = 20;
+#else
+const char *cmdLineArgs[] = {
+"-I/usr/include/c++/4.6",
+"-I/usr/include/c++/4.6/x86_64-linux-gnu",
+"-I/usr/include/c++/4.6/backward",
+"-I/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include",
+"-I/usr/local/include",
+"-I/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include-fixed",
+"-I/usr/include/x86_64-linux-gnu",
+"-I/usr/include",
+"-g",
+"-I/home/eran/devl/nzbtracker/",
+"-I/home/eran/devl/nzbtracker/curl/include",
+"-I/home/eran/devl/nzbtracker/",
+"-I/home/eran/devl/nzbtracker/sqlite3",
+"-ferror-limit=1000",
+"-D__WXGTK__",
+"-D_UNICODE",
+"-D__WX__",
+"-I/usr/lib/wx/include/gtk2-unicode-debug-2.8",
+"-I/usr/include/wx-2.8/"
+};
+const int numArgs = 19;
+#endif
 
 char *loadFile(const char *fileName)
 {
@@ -63,7 +89,7 @@ int parseFile(const std::string& filename, const std::string &modifiedBuffer, CX
 		*unit = clang_parseTranslationUnit(index,
 		                                   filename.c_str(),
 		                                   cmdLineArgs,
-		                                   20,
+		                                   numArgs,
 		                                   &file,
 		                                   1,
 		                                     CXTranslationUnit_CXXPrecompiledPreamble
@@ -76,6 +102,17 @@ int parseFile(const std::string& filename, const std::string &modifiedBuffer, CX
 	if(!*unit) {
 		printf("clang_parseTranslationUnit error!\n");
 		return -1;
+	}
+
+	// Report diagnostics to the log file
+	const unsigned diagCount = clang_getNumDiagnostics(*unit);
+	for(unsigned i=0; i<diagCount; i++) {
+		CXDiagnostic diag = clang_getDiagnostic(*unit, i);
+		CXDiagnosticSeverity severity = clang_getDiagnosticSeverity(diag);
+		CXString diagStr  = clang_formatDiagnostic(diag, clang_defaultDiagnosticDisplayOptions());
+		printf("%s\n", clang_getCString(diagStr));
+		clang_disposeString(diagStr);
+		clang_disposeDiagnostic(diag);
 	}
 
 	int status = clang_reparseTranslationUnit(*unit, 1, &file,
@@ -117,33 +154,33 @@ enum CXChildVisitResult VisitorCallback(CXCursor Cursor,
 	return CXChildVisit_Continue;
 }
 
-void findFunction()
-{
-
-	CXIndex index = clang_createIndex(0, 0);
-	CXTranslationUnit unit = clang_parseTranslationUnit(index,
-	                         "../test-sources/file.cpp",
-	                         cmdLineArgs,
-	                         20,
-	                         NULL,
-	                         0,
-	                         CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults | CXTranslationUnit_CXXPrecompiledPreamble | CXTranslationUnit_CXXChainedPCH);
-	/*
-	CXCursorVisitor visitor = VisitorCallback;
-	clang_visitChildren(clang_getTranslationUnitCursor(unit), visitor, NULL);
-	 */
-	CXFile file;
-	CXCursor cursor;
-	CXSourceLocation loc;
-	file   = clang_getFile    (unit, "../test-sources/file.cpp");
-	loc    = clang_getLocation(unit, file, 5, 8);
-	cursor = clang_getCursor  (unit, loc);
-
-	if(cursor.kind == CXCursor_MemberRefExpr || cursor.kind == CXCursor_TypeRef) {
-		CXCursor refCur = clang_getCursorReferenced(cursor);
-		displayCursorInfo(refCur);
-	}
-}
+//void findFunction()
+//{
+//
+//	CXIndex index = clang_createIndex(0, 0);
+//	CXTranslationUnit unit = clang_parseTranslationUnit(index,
+//	                         "../test-sources/file.cpp",
+//	                         cmdLineArgs,
+//	                         numArgs,
+//	                         NULL,
+//	                         0,
+//	                         CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults | CXTranslationUnit_CXXPrecompiledPreamble | CXTranslationUnit_CXXChainedPCH);
+//	/*
+//	CXCursorVisitor visitor = VisitorCallback;
+//	clang_visitChildren(clang_getTranslationUnitCursor(unit), visitor, NULL);
+//	 */
+//	CXFile file;
+//	CXCursor cursor;
+//	CXSourceLocation loc;
+//	file   = clang_getFile    (unit, "../test-sources/file.cpp");
+//	loc    = clang_getLocation(unit, file, 5, 8);
+//	cursor = clang_getCursor  (unit, loc);
+//
+//	if(cursor.kind == CXCursor_MemberRefExpr || cursor.kind == CXCursor_TypeRef) {
+//		CXCursor refCur = clang_getCursorReferenced(cursor);
+//		displayCursorInfo(refCur);
+//	}
+//}
 
 int main(int argc, char **argv)
 {
@@ -172,7 +209,7 @@ int main(int argc, char **argv)
 		int numResults = results->NumResults;
 		clang_sortCodeCompletionResults(results->Results, results->NumResults);
 		printf("Found %u matches\n", numResults);
-		
+
 		for (int i = 0; i < numResults; i++) {
 			CXCompletionResult result = results->Results[i];
 			CXCompletionString str    = result.CompletionString;
@@ -197,7 +234,7 @@ int main(int argc, char **argv)
 					fullSignature += clang_getCString(clang_getCompletionChunkText(str,i));
 				}
 			}
-			//printf("%s: %s\n", returnValue.c_str(), fullSignature.c_str());
+			printf("%s: %s\n", returnValue.c_str(), fullSignature.c_str());
 		}
 
 		clang_disposeCodeCompleteResults(results);

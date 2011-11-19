@@ -3,6 +3,7 @@
 #include <wx/app.h>
 #include "clang_pch_maker_thread.h"
 #include <wx/thread.h>
+#include <wx/stdpaths.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 #include "file_logger.h"
@@ -48,10 +49,13 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
 	FileExtManager::FileType type = FileExtManager::GetType(task->GetFileName());
 	bool isSource = (type == FileExtManager::TypeSourceC || type == FileExtManager::TypeSourceCpp);
-
-	wxCharBuffer cb = task->GetDirtyBuffer().mb_str(wxConvUTF8).data();
-	CXUnsavedFile unsavedFile = { cstr(task->GetFileName()), cb.data(), cb.length() };
+	
+	std::string c_dirtyBuffer = cstr(task->GetDirtyBuffer());
+	std::string c_filename    = cstr(task->GetFileName());
+	
+	CXUnsavedFile unsavedFile = { c_filename.c_str(), c_dirtyBuffer.c_str(), c_dirtyBuffer.length() };
 	CXTranslationUnit TU = findEntry(task->GetFileName());
+	
 	if(!TU) {
 		int argc(0);
 		char **argv = MakeCommandLine(task->GetCompilationArgs(), argc, !isSource);
@@ -63,20 +67,19 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		CL_DEBUG(wxT("Calling clang_parseTranslationUnit..."));
 		// First time, need to create it
 		TU = clang_parseTranslationUnit(task->GetIndex(),
-		                                cstr(task->GetFileName()),
+		                                c_filename.c_str(),
 		                                argv,
 		                                argc,
-		                                NULL,
-		                                0,
-		                                clang_defaultEditingTranslationUnitOptions());
+		                                NULL, 0, clang_defaultEditingTranslationUnitOptions());
 
 		CL_DEBUG(wxT("Calling clang_parseTranslationUnit... done"));
 		for(int i=0; i<argc; i++) {
 			free(argv[i]);
 		}
 		delete [] argv;
+		clang_reparseTranslationUnit(TU, 1, &unsavedFile, clang_defaultReparseOptions(TU));
 	}
-
+	//
 	DoCacheResult(TU, task->GetFileName());
 
 	wxCommandEvent eEnd(wxEVT_CLANG_PCH_CACHE_ENDED);
@@ -86,11 +89,6 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	reply->results    = NULL;
 
 	if(task->GetContext() != CTX_CachePCH) {
-#ifndef __WXMSW__
-		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
-		clang_reparseTranslationUnit(TU, 1, &unsavedFile, clang_defaultReparseOptions(TU));
-		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
-#endif
 		CL_DEBUG(wxT("Calling clang_codeCompleteAt..."));
 		// Do the code-completion
 		reply->results = clang_codeCompleteAt(TU,
@@ -100,15 +98,17 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		                                      &unsavedFile,
 		                                      1,
 		                                      clang_defaultCodeCompleteOptions());
-
+		
+		CL_DEBUG(wxT("Location: %s:%u:%u"), task->GetFileName().c_str(), task->GetLine(), task->GetColumn());
 		CL_DEBUG(wxT("Calling clang_codeCompleteAt... done"));
-
+		CL_DEBUG(wxT("Found %d matches"), reply->results->NumResults);
+		
 		// Report diagnostics to the log file
 		const unsigned diagCount = clang_getNumDiagnostics(TU);
 		for(unsigned i=0; i<diagCount; i++) {
 			CXDiagnostic diag = clang_getDiagnostic(TU, i);
 			CXDiagnosticSeverity severity = clang_getDiagnosticSeverity(diag);
-			if(severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal || severity == CXDiagnostic_Warning) {
+			//if(severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal || severity == CXDiagnostic_Warning) {
 				CXString diagStr  = clang_formatDiagnostic(diag, clang_defaultDiagnosticDisplayOptions());
 				wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
 				if(!wxDiagString.Contains(wxT("'dllimport' attribute"))) {
@@ -117,7 +117,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 				}
 				clang_disposeString(diagStr);
 				clang_disposeDiagnostic(diag);
-			}
+			//}
 		}
 	}
 	eEnd.SetClientData(reply);
@@ -153,11 +153,12 @@ bool ClangWorkerThread::IsCacheEmpty()
 
 char** ClangWorkerThread::MakeCommandLine(const wxString& command, int& argc, bool isHeader)
 {
-	wxArrayString tokens = wxStringTokenize(command, wxT(" \t"), wxTOKEN_STRTOK);
+	wxArrayString tokens = wxStringTokenize(command, wxT(" \t\n\r"), wxTOKEN_STRTOK);
 	if(isHeader) {
 		tokens.Add(wxT("-x"));
 		tokens.Add(wxT("c++-header"));
 	}
+	tokens.Add(wxT("-ferror-limit=1000"));
 	argc = tokens.GetCount();
 	char** argv = new char*[argc];
 

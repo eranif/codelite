@@ -978,6 +978,11 @@ void CCBox::OnDisplayTooltip(wxTimerEvent& event)
 void CCBox::OnRefreshList(wxTimerEvent& event)
 {
 	if(!m_isKeywordsList) {
+
+		// clang is already slow... don't re-invoke the list
+		if(m_tags.empty() == false && m_tags.at(0)->GetIsClangTag())
+			return;
+			
 		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("complete_word_refresh_list"));
 		event.SetEventObject(clMainFrame::Get());
 		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);

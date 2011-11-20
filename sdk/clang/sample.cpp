@@ -90,8 +90,8 @@ int parseFile(const std::string& filename, const std::string &modifiedBuffer, CX
 		                                   filename.c_str(),
 		                                   cmdLineArgs,
 		                                   numArgs,
-		                                   &file,
-		                                   1,
+		                                   NULL,
+		                                   0,
 		                                     CXTranslationUnit_CXXPrecompiledPreamble
 										   | CXTranslationUnit_CacheCompletionResults
 										   | CXTranslationUnit_CXXChainedPCH
@@ -115,12 +115,7 @@ int parseFile(const std::string& filename, const std::string &modifiedBuffer, CX
 //		clang_disposeDiagnostic(diag);
 //	}
 
-	int status = clang_reparseTranslationUnit(*unit, 1, &file,
-											 CXTranslationUnit_CXXPrecompiledPreamble
-										   | CXTranslationUnit_CacheCompletionResults
-										   | CXTranslationUnit_CXXChainedPCH
-										   | CXTranslationUnit_PrecompiledPreamble
-										   | CXTranslationUnit_Incomplete);
+	int status = clang_reparseTranslationUnit(*unit, 0, NULL, clang_defaultReparseOptions(*unit));
 	if(status != 0) {
 		printf("clang_reparseTranslationUnit error!\n");
 		return -1;
@@ -199,11 +194,14 @@ int main(int argc, char **argv)
 	if(parseFile(filename, partBuffer, index, &unit) == 0) {
 
 		//findFunction();
-
+		CXCodeCompleteResults* results;
+		for(size_t i=0; i<10; i++) {
 		// Note that column can not be <= 0
-		CXCodeCompleteResults* results= clang_codeCompleteAt(unit, filename.c_str(), 10, 4, &file, 1 , clang_defaultCodeCompleteOptions());
-		if(!results) {
-			return -1;
+			clang_reparseTranslationUnit(unit, 0, NULL, clang_defaultReparseOptions(unit));
+			results= clang_codeCompleteAt(unit, filename.c_str(), 64, 8, &file, 1 , clang_defaultCodeCompleteOptions());
+			if(!results) {
+				return -1;
+			}
 		}
 
 		int numResults = results->NumResults;
@@ -234,7 +232,7 @@ int main(int argc, char **argv)
 					fullSignature += clang_getCString(clang_getCompletionChunkText(str,i));
 				}
 			}
-			printf("%s: %s\n", returnValue.c_str(), fullSignature.c_str());
+		//	printf("%s: %s\n", returnValue.c_str(), fullSignature.c_str());
 		}
 
 		clang_disposeCodeCompleteResults(results);

@@ -70,14 +70,22 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		                                c_filename.c_str(),
 		                                argv,
 		                                argc,
-		                                NULL, 0, clang_defaultEditingTranslationUnitOptions());
+		                                NULL, 0, CXTranslationUnit_CXXPrecompiledPreamble
+										   | CXTranslationUnit_CacheCompletionResults
+										   | CXTranslationUnit_CXXChainedPCH
+										   | CXTranslationUnit_PrecompiledPreamble
+										   | CXTranslationUnit_Incomplete);
 
 		CL_DEBUG(wxT("Calling clang_parseTranslationUnit... done"));
 		for(int i=0; i<argc; i++) {
 			free(argv[i]);
 		}
 		delete [] argv;
-		clang_reparseTranslationUnit(TU, 1, &unsavedFile, clang_defaultReparseOptions(TU));
+
+		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
+		clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
+		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done"));
+		
 	}
 	//
 	DoCacheResult(TU, task->GetFileName());
@@ -89,7 +97,12 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	reply->results    = NULL;
 
 	if(task->GetContext() != CTX_CachePCH) {
+		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
+		clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
+		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done"));
+
 		CL_DEBUG(wxT("Calling clang_codeCompleteAt..."));
+		CL_DEBUG(wxT("Location: %s:%u:%u"), task->GetFileName().c_str(), task->GetLine(), task->GetColumn());
 		// Do the code-completion
 		reply->results = clang_codeCompleteAt(TU,
 		                                      cstr(task->GetFileName()),
@@ -98,27 +111,26 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		                                      &unsavedFile,
 		                                      1,
 		                                      clang_defaultCodeCompleteOptions());
-		
-		CL_DEBUG(wxT("Location: %s:%u:%u"), task->GetFileName().c_str(), task->GetLine(), task->GetColumn());
+
 		CL_DEBUG(wxT("Calling clang_codeCompleteAt... done"));
 		CL_DEBUG(wxT("Found %d matches"), reply->results->NumResults);
 		
-		// Report diagnostics to the log file
-		const unsigned diagCount = clang_getNumDiagnostics(TU);
-		for(unsigned i=0; i<diagCount; i++) {
-			CXDiagnostic diag = clang_getDiagnostic(TU, i);
-			CXDiagnosticSeverity severity = clang_getDiagnosticSeverity(diag);
-			//if(severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal || severity == CXDiagnostic_Warning) {
-				CXString diagStr  = clang_formatDiagnostic(diag, clang_defaultDiagnosticDisplayOptions());
-				wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
-				if(!wxDiagString.Contains(wxT("'dllimport' attribute"))) {
-					CL_DEBUG(wxT("Diagnostic: %s"), wxDiagString.c_str());
-
-				}
-				clang_disposeString(diagStr);
-				clang_disposeDiagnostic(diag);
-			//}
-		}
+		//// Report diagnostics to the log file
+		//const unsigned diagCount = clang_getNumDiagnostics(TU);
+		//for(unsigned i=0; i<diagCount; i++) {
+		//	CXDiagnostic diag = clang_getDiagnostic(TU, i);
+		//	CXDiagnosticSeverity severity = clang_getDiagnosticSeverity(diag);
+		//	//if(severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal || severity == CXDiagnostic_Warning) {
+		//		CXString diagStr  = clang_formatDiagnostic(diag, clang_defaultDiagnosticDisplayOptions());
+		//		wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
+		//		if(!wxDiagString.Contains(wxT("'dllimport' attribute"))) {
+		//			CL_DEBUG(wxT("Diagnostic: %s"), wxDiagString.c_str());
+        //
+		//		}
+		//		clang_disposeString(diagStr);
+		//		clang_disposeDiagnostic(diag);
+		//	//}
+		//}
 	}
 	eEnd.SetClientData(reply);
 	wxTheApp->AddPendingEvent(eEnd);

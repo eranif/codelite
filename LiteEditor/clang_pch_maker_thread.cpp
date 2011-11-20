@@ -18,12 +18,12 @@
 const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED = XRCID("clang_pch_cache_started");
 const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   = XRCID("clang_pch_cache_ended");
 
-static wxString PCHFileName(const wxString &filename)
-{
-	wxString pchfile = wxStandardPaths::Get().GetUserDataDir();
-	pchfile << wxFileName::GetPathSeparator() << wxT("clang_cache") << wxFileName::GetPathSeparator() << wxFileName(filename).GetFullName() << wxT(".pch");
-	return pchfile;
-}
+//static wxString PCHFileName(const wxString &filename)
+//{
+//	wxString pchfile = wxStandardPaths::Get().GetUserDataDir();
+//	pchfile << wxFileName::GetPathSeparator() << wxT("clang_cache") << wxFileName::GetPathSeparator() << wxFileName(filename).GetFullName() << wxT(".pch");
+//	return pchfile;
+//}
 
 ClangWorkerThread::ClangWorkerThread()
 {
@@ -116,21 +116,21 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		CL_DEBUG(wxT("Found %d matches"), reply->results->NumResults);
 		
 		//// Report diagnostics to the log file
-		//const unsigned diagCount = clang_getNumDiagnostics(TU);
-		//for(unsigned i=0; i<diagCount; i++) {
-		//	CXDiagnostic diag = clang_getDiagnostic(TU, i);
-		//	CXDiagnosticSeverity severity = clang_getDiagnosticSeverity(diag);
-		//	//if(severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal || severity == CXDiagnostic_Warning) {
-		//		CXString diagStr  = clang_formatDiagnostic(diag, clang_defaultDiagnosticDisplayOptions());
-		//		wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
-		//		if(!wxDiagString.Contains(wxT("'dllimport' attribute"))) {
-		//			CL_DEBUG(wxT("Diagnostic: %s"), wxDiagString.c_str());
-        //
-		//		}
-		//		clang_disposeString(diagStr);
-		//		clang_disposeDiagnostic(diag);
-		//	//}
-		//}
+		const unsigned diagCount = clang_getNumDiagnostics(TU);
+		for(unsigned i=0; i<diagCount; i++) {
+			CXDiagnostic diag = clang_getDiagnostic(TU, i);
+//			CXDiagnosticSeverity severity = clang_getDiagnosticSeverity(diag);
+			//if(severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal || severity == CXDiagnostic_Warning) {
+				CXString diagStr  = clang_formatDiagnostic(diag, clang_defaultDiagnosticDisplayOptions());
+				wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
+				if(!wxDiagString.Contains(wxT("'dllimport' attribute"))) {
+					CL_DEBUG(wxT("Diagnostic: %s"), wxDiagString.c_str());
+        
+				}
+				clang_disposeString(diagStr);
+				clang_disposeDiagnostic(diag);
+			//}
+		}
 	}
 	eEnd.SetClientData(reply);
 	wxTheApp->AddPendingEvent(eEnd);

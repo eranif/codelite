@@ -10,11 +10,12 @@
 ## Copy files to the fakeroot directory structure
 cur_rev=`LC_ALL=C svn info | grep Revision | awk '{print $2;}'`
 arch=`uname -m`
-
+libclang="sdk/clang/Linux/i386/lib/libclang.so"
 if [ "${arch}" = "i686" ]; then
     arch="i386"
 elif [ "${arch}" = "x86_64" ]; then
     arch="amd64"
+    libclang="sdk/clang/Linux/x86_64/lib/libclang.so"
 fi
 
 ## Parse command line argument for getting install prefix
@@ -206,6 +207,7 @@ cp -pr lib/libcodeliteu.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/libwxsqlite3u.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/libdblayersqliteu.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/libwxshapeframeworku.so fakeroot/${PREFIX}/lib/codelite/
+cp -pr ${libclang} fakeroot/${PREFIX}/lib/codelite/
 cp -pr Runtime/plugins/resources/*.* fakeroot/${PREFIX}/lib/codelite/resources/
 cp -pr Runtime/*.html fakeroot/${PREFIX}/share/codelite/
 cp -pr Runtime/astyle.sample fakeroot/${PREFIX}/share/codelite/

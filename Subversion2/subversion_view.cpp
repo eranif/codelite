@@ -37,29 +37,30 @@ BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_UPDATE_UI(XRCID("svn_stop"),         SubversionView::OnStopUI)
 	EVT_UPDATE_UI(XRCID("clear_svn_output"), SubversionView::OnClearOuptutUI)
 
-	EVT_MENU(XRCID("svn_link_editor"),        SubversionView::OnLinkEditor)
-	EVT_MENU(XRCID("svn_commit"),             SubversionView::OnCommit)
-	EVT_MENU(XRCID("svn_update"),             SubversionView::OnUpdate)
-	EVT_MENU(XRCID("svn_revert"),             SubversionView::OnRevert)
-	EVT_MENU(XRCID("svn_tag"),                SubversionView::OnTag)
-	EVT_MENU(XRCID("svn_branch"),             SubversionView::OnBranch)
-	EVT_MENU(XRCID("svn_diff"),               SubversionView::OnDiff)
-	EVT_MENU(XRCID("svn_patch"),              SubversionView::OnPatch)
-	EVT_MENU(XRCID("svn_patch_dry_run"),      SubversionView::OnPatchDryRun)
-	EVT_MENU(XRCID("svn_resolve"),            SubversionView::OnResolve)
-	EVT_MENU(XRCID("svn_add"),                SubversionView::OnAdd)
-	EVT_MENU(XRCID("svn_delete"),             SubversionView::OnDelete)
-	EVT_MENU(XRCID("svn_ignore_file"),        SubversionView::OnIgnoreFile)
-	EVT_MENU(XRCID("svn_ignore_file_pattern"),SubversionView::OnIgnoreFilePattern)
-	EVT_MENU(XRCID("svn_blame"),              SubversionView::OnBlame)
-	EVT_MENU(XRCID("svn_checkout"),           SubversionView::OnCheckout)
-	EVT_MENU(XRCID("svn_open_file"),          SubversionView::OnOpenFile)
-	EVT_MENU(XRCID("svn_switch"),             SubversionView::OnSwitch)
-	EVT_MENU(XRCID("svn_properties"),         SubversionView::OnProperties)
-	EVT_MENU(XRCID("svn_log"),                SubversionView::OnLog)
-	EVT_MENU(XRCID("svn_lock"),               SubversionView::OnLock)
-	EVT_MENU(XRCID("svn_unlock"),             SubversionView::OnUnLock)
-	EVT_MENU(XRCID("svn_rename"),             SubversionView::OnRename)
+	EVT_MENU(XRCID("svn_link_editor"),             SubversionView::OnLinkEditor)
+	EVT_MENU(XRCID("svn_commit"),                  SubversionView::OnCommit)
+	EVT_MENU(XRCID("svn_update"),                  SubversionView::OnUpdate)
+	EVT_MENU(XRCID("svn_revert"),                  SubversionView::OnRevert)
+	EVT_MENU(XRCID("svn_tag"),                     SubversionView::OnTag)
+	EVT_MENU(XRCID("svn_branch"),                  SubversionView::OnBranch)
+	EVT_MENU(XRCID("svn_diff"),                    SubversionView::OnDiff)
+	EVT_MENU(XRCID("svn_patch"),                   SubversionView::OnPatch)
+	EVT_MENU(XRCID("svn_patch_dry_run"),           SubversionView::OnPatchDryRun)
+	EVT_MENU(XRCID("svn_resolve"),                 SubversionView::OnResolve)
+	EVT_MENU(XRCID("svn_add"),                     SubversionView::OnAdd)
+	EVT_MENU(XRCID("svn_delete"),                  SubversionView::OnDelete)
+	EVT_MENU(XRCID("svn_ignore_file"),             SubversionView::OnIgnoreFile)
+	EVT_MENU(XRCID("svn_ignore_file_pattern"),     SubversionView::OnIgnoreFilePattern)
+	EVT_MENU(XRCID("svn_blame"),                   SubversionView::OnBlame)
+	EVT_MENU(XRCID("svn_checkout"),                SubversionView::OnCheckout)
+	EVT_MENU(XRCID("svn_open_file"),               SubversionView::OnOpenFile)
+	EVT_MENU(XRCID("svn_switch"),                  SubversionView::OnSwitch)
+	EVT_MENU(XRCID("svn_properties"),              SubversionView::OnProperties)
+	EVT_MENU(XRCID("svn_log"),                     SubversionView::OnLog)
+	EVT_MENU(XRCID("svn_lock"),                    SubversionView::OnLock)
+	EVT_MENU(XRCID("svn_unlock"),                  SubversionView::OnUnLock)
+	EVT_MENU(XRCID("svn_rename"),                  SubversionView::OnRename)
+	EVT_MENU(XRCID("svn_open_local_repo_browser"), SubversionView::OnChangeRootDir)
 END_EVENT_TABLE()
 
 static int FOLDER_IMG_ID      = wxNOT_FOUND;
@@ -171,9 +172,7 @@ void SubversionView::CreatGUIControls()
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
 	tb->AddTool(XRCID("svn_link_editor"), _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), _("Link Editor"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("svn_link_editor"), m_plugin->GetSettings().GetFlags() & SvnLinkEditor);
-
-	tb->AddTool(XRCID("clear_svn_output"), _("Clear Svn Output Tab"), bmpLdr->LoadBitmap(wxT("output-pane/16/clear")), _("Clear Svn Output Tab"), wxITEM_NORMAL);
-	tb->AddTool(XRCID("svn_refresh"),      _("Refresh View"), bmpLdr->LoadBitmap ( wxT ( "output-pane/16/reload" ) ), _( "Refresh View" ) );
+	tb->AddTool(XRCID("svn_open_local_repo_browser"), _("Select a Directory to View..."), bmpLdr->LoadBitmap(wxT("toolbars/16/standard/file_open")), _("Select a Directory to View..."), wxITEM_NORMAL);
 	tb->AddSeparator();
 
 	tb->AddTool(XRCID("svn_stop"),         _("Stop current svn process"), bmpLdr->LoadBitmap(wxT("toolbars/16/build/stop")), _( "Stop current svn process" ) );
@@ -183,6 +182,9 @@ void SubversionView::CreatGUIControls()
 	tb->AddTool(XRCID("svn_checkout"),         _("Svn Checkout"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_checkout" ) ), _( "Svn Checkout" ) );
 
 	tb->AddSeparator();
+	tb->AddTool(XRCID("svn_refresh"),      _("Refresh View"), bmpLdr->LoadBitmap ( wxT ( "output-pane/16/reload" ) ), _( "Refresh View" ) );
+	tb->AddSeparator();
+	tb->AddTool(XRCID("clear_svn_output"), _("Clear Svn Output Tab"), bmpLdr->LoadBitmap(wxT("output-pane/16/clear")), _("Clear Svn Output Tab"), wxITEM_NORMAL);
 	tb->AddTool(XRCID("svn_settings"),     _("Svn Settings..."), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_settings" ) ), _( "Svn Settings..." ) );
 	tb->AddTool(XRCID("svn_info"),         _("Svn Info"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_info" ) ), _( "Svn Info" ) );
 

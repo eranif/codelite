@@ -11,13 +11,12 @@
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
+#include <wx/treectrl.h>
 #include <wx/string.h>
-#include <wx/button.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/treectrl.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/splitter.h>
@@ -26,6 +25,7 @@
 #include <wx/statline.h>
 #include <wx/checklst.h>
 #include <wx/choice.h>
+#include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/wxscintilla.h>
 #include <wx/checkbox.h>
@@ -53,12 +53,10 @@ class SubversionPageBase : public wxPanel
 	protected:
 		wxSplitterWindow* m_splitter2;
 		wxPanel* m_panel7;
-		wxButton* m_buttonChangeRootDir;
 		wxTreeCtrl* m_treeCtrl;
 		wxPanel* m_lowerPane;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnChangeRootDir( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnItemActivated( wxTreeEvent& event ) { event.Skip(); }
 		virtual void OnTreeMenu( wxTreeEvent& event ) { event.Skip(); }
 		
@@ -70,7 +68,7 @@ class SubversionPageBase : public wxPanel
 		
 		void m_splitter2OnIdle( wxIdleEvent& )
 		{
-			m_splitter2->SetSashPosition( 0 );
+			m_splitter2->SetSashPosition( 400 );
 			m_splitter2->Disconnect( wxEVT_IDLE, wxIdleEventHandler( SubversionPageBase::m_splitter2OnIdle ), NULL, this );
 		}
 	

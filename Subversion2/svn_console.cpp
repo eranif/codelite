@@ -273,10 +273,6 @@ void SvnConsole::DoInitializeFontsAndColours()
 	m_sci->SetMarginWidth(1, 0);
 	m_sci->SetMarginWidth(2, 0);
 	m_sci->SetMarginWidth(4, 16);
-
-	m_sci->SetWrapMode(wxSCI_WRAP_CHAR);
-	m_sci->SetWrapStartIndent(4);
-	m_sci->SetWrapVisualFlags(2);
 	m_sci->SetScrollWidthTracking(true);
 	m_sci->SetCaretWidth(2);
 	

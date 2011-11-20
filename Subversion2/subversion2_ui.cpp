@@ -21,11 +21,6 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	wxBoxSizer* bSizer34;
 	bSizer34 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonChangeRootDir = new wxButton( m_panel7, wxID_ANY, _("Select another directory..."), wxDefaultPosition, wxDefaultSize, 0 );
-	m_buttonChangeRootDir->SetToolTip( _("Set the svn plugin's view to monitor another directory") );
-	
-	bSizer34->Add( m_buttonChangeRootDir, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxEXPAND|wxALL, 2 );
-	
 	m_treeCtrl = new wxTreeCtrl( m_panel7, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_MULTIPLE );
 	bSizer34->Add( m_treeCtrl, 1, wxEXPAND|wxALL, 5 );
 	
@@ -39,7 +34,7 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	m_lowerPane->SetSizer( bSizer37 );
 	m_lowerPane->Layout();
 	bSizer37->Fit( m_lowerPane );
-	m_splitter2->SplitHorizontally( m_panel7, m_lowerPane, 0 );
+	m_splitter2->SplitHorizontally( m_panel7, m_lowerPane, 400 );
 	mainSizer->Add( m_splitter2, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( mainSizer );
@@ -47,7 +42,6 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 	mainSizer->Fit( this );
 	
 	// Connect Events
-	m_buttonChangeRootDir->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SubversionPageBase::OnChangeRootDir ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( SubversionPageBase::OnItemActivated ), NULL, this );
 	m_treeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( SubversionPageBase::OnTreeMenu ), NULL, this );
 }
@@ -55,7 +49,6 @@ SubversionPageBase::SubversionPageBase( wxWindow* parent, wxWindowID id, const w
 SubversionPageBase::~SubversionPageBase()
 {
 	// Disconnect Events
-	m_buttonChangeRootDir->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SubversionPageBase::OnChangeRootDir ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( SubversionPageBase::OnItemActivated ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( SubversionPageBase::OnTreeMenu ), NULL, this );
 	

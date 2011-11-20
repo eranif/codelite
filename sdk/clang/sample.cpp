@@ -105,15 +105,15 @@ int parseFile(const std::string& filename, const std::string &modifiedBuffer, CX
 	}
 
 	// Report diagnostics to the log file
-	const unsigned diagCount = clang_getNumDiagnostics(*unit);
-	for(unsigned i=0; i<diagCount; i++) {
-		CXDiagnostic diag = clang_getDiagnostic(*unit, i);
-		CXDiagnosticSeverity severity = clang_getDiagnosticSeverity(diag);
-		CXString diagStr  = clang_formatDiagnostic(diag, clang_defaultDiagnosticDisplayOptions());
-		printf("%s\n", clang_getCString(diagStr));
-		clang_disposeString(diagStr);
-		clang_disposeDiagnostic(diag);
-	}
+//	const unsigned diagCount = clang_getNumDiagnostics(*unit);
+//	for(unsigned i=0; i<diagCount; i++) {
+//		CXDiagnostic diag = clang_getDiagnostic(*unit, i);
+//		CXDiagnosticSeverity severity = clang_getDiagnosticSeverity(diag);
+//		CXString diagStr  = clang_formatDiagnostic(diag, clang_defaultDiagnosticDisplayOptions());
+//		printf("%s\n", clang_getCString(diagStr));
+//		clang_disposeString(diagStr);
+//		clang_disposeDiagnostic(diag);
+//	}
 
 	int status = clang_reparseTranslationUnit(*unit, 1, &file,
 											 CXTranslationUnit_CXXPrecompiledPreamble
@@ -201,7 +201,7 @@ int main(int argc, char **argv)
 		//findFunction();
 
 		// Note that column can not be <= 0
-		CXCodeCompleteResults* results= clang_codeCompleteAt(unit, filename.c_str(), 83, 8, &file, 1 , clang_defaultCodeCompleteOptions());
+		CXCodeCompleteResults* results= clang_codeCompleteAt(unit, filename.c_str(), 10, 4, &file, 1 , clang_defaultCodeCompleteOptions());
 		if(!results) {
 			return -1;
 		}

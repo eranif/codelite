@@ -32,5 +32,6 @@ copy CodeLite.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy patch.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy rm.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy astyle.sample "%ProgramFiles(x86)%\CodeLite\" /Y
+copy pthreadGC2.dll "%ProgramFiles(x86)%\CodeLite\" /Y
 copy ..\sdk\wxconfig\wx-config.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 

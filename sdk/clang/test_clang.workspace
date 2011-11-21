@@ -8,10 +8,11 @@
   
   
   
+  
   ]]>
   </Environment>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="test_clang" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="no">
@@ -19,6 +20,9 @@
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Linux_64" Selected="no">
       <Project Name="test_clang" ConfigName="Linux_64"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Linux_32" Selected="yes">
+      <Project Name="test_clang" ConfigName="Linux_32"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

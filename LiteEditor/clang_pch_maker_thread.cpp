@@ -81,12 +81,23 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 			free(argv[i]);
 		}
 		delete [] argv;
-
-		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
-		clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
-		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done"));
 		
+		if(TU) {
+			
+			CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
+			clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
+			CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done"));
+			
+		} else {
+			
+			CL_DEBUG(wxT("Failed to parse Translation UNIT..."));
+			wxCommandEvent eEnd(wxEVT_CLANG_PCH_CACHE_ENDED);
+			eEnd.SetClientData(NULL);
+			wxTheApp->AddPendingEvent(eEnd);
+			return;
+		}
 	}
+	
 	//
 	DoCacheResult(TU, task->GetFileName());
 
@@ -119,19 +130,17 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		const unsigned diagCount = clang_getNumDiagnostics(TU);
 		for(unsigned i=0; i<diagCount; i++) {
 			CXDiagnostic diag = clang_getDiagnostic(TU, i);
-//			CXDiagnosticSeverity severity = clang_getDiagnosticSeverity(diag);
-			//if(severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal || severity == CXDiagnostic_Warning) {
-				CXString diagStr  = clang_formatDiagnostic(diag, clang_defaultDiagnosticDisplayOptions());
-				wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
-				if(!wxDiagString.Contains(wxT("'dllimport' attribute"))) {
-					CL_DEBUG(wxT("Diagnostic: %s"), wxDiagString.c_str());
-        
-				}
-				clang_disposeString(diagStr);
-				clang_disposeDiagnostic(diag);
-			//}
+			CXString diagStr  = clang_formatDiagnostic(diag, clang_defaultDiagnosticDisplayOptions());
+			wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
+			if(!wxDiagString.Contains(wxT("'dllimport' attribute"))) {
+				CL_DEBUG(wxT("Diagnostic: %s"), wxDiagString.c_str());
+	
+			}
+			clang_disposeString(diagStr);
+			clang_disposeDiagnostic(diag);
 		}
 	}
+	
 	eEnd.SetClientData(reply);
 	wxTheApp->AddPendingEvent(eEnd);
 }

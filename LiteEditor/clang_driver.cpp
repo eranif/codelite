@@ -102,7 +102,7 @@ void ClangDriver::CodeCompletion(IEditor* editor)
 		return;
 	}
 	
-#ifdef __WXMSW__
+#if 0
 	ProjectPtr proj = ManagerST::Get()->GetProject(m_activeEditor->GetProjectName());
 	if(proj) {
 		wxFileName fn(fileName);

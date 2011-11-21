@@ -5,7 +5,9 @@
 #include <wx/regex.h>
 #include "file_logger.h"
 #include "pluginmanager.h"
+#include "macromanager.h"
 #include "includepathlocator.h"
+#include "macromanager.h"
 #include "environmentconfig.h"
 #include "tags_options_data.h"
 #include "ctags_manager.h"
@@ -245,9 +247,13 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 			wxString p = projIncls.Item(i).Trim().Trim(false);
 			if(p.IsEmpty())
 				continue;
-
+			
+			p = MacroManager::Instance()->Expand(p, PluginManager::Get(), proj->GetName());
+			
 			wxFileName fn(p, wxT(""));
-			fn.MakeAbsolute(projectPath);
+			if(fn.IsRelative()) {
+				fn.MakeAbsolute(projectPath);
+			}
 			compilationArgs << wxT(" -I") << fn.GetPath() << wxT(" ");
 		}
 

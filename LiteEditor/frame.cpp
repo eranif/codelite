@@ -2148,7 +2148,7 @@ void clMainFrame::ToggleToolBars(bool std)
 		return;
 	}
 
-	bool checked;
+	bool checked = true;
 	for (size_t n=count; n; --n) {
 		wxMenuItem* item = menu->FindItemByPosition(n-1);
 		if (!item || !item->IsCheckable()) {
@@ -2566,7 +2566,34 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 				}
 			}
 		}
-
+		
+		///////////////////////////////////////////////////////////////////////
+		// Incase CLANG search paths is empty, auto-populate it with 
+		// system defaults
+		
+		wxString clangSearchPaths = m_tagsOptionsData.GetClangSearchPaths();
+		clangSearchPaths.Trim().Trim(false);
+		if(clangSearchPaths.IsEmpty()) {
+			
+			IncludePathLocator locator(PluginManager::Get());
+			wxArrayString paths, excludes;
+			locator.Locate(paths, excludes, false);
+			
+			if(paths.IsEmpty() == false) {
+				CL_DEBUG(wxT("Settings clang default search paths to:"));
+				for(size_t i=0; i<paths.GetCount(); i++) {
+					CL_DEBUG(wxT("%s"), paths.Item(i).c_str());
+					clangSearchPaths << paths.Item(i) << wxT("\n");
+				}
+				
+				if(!clangSearchPaths.IsEmpty())
+					clangSearchPaths.RemoveLast();
+				
+				
+				m_tagsOptionsData.SetClangSearchPaths(clangSearchPaths);
+			}
+		}
+		
 		/////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////
 

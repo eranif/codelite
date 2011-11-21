@@ -34,11 +34,13 @@ void CodeCompletionManager::WordCompletion(LEditor *editor, const wxString& expr
 	}
 	
 	
-	if(GetOptions() & CC_CLANG_FIRST) {
+	if((GetOptions() & CC_CLANG_ENABLED) && (GetOptions() & CC_CLANG_FIRST)) {
 		DoClangWordCompletion(editor);
 		
 	} else {
-		DoCtagsWordCompletion(editor, expr, word);
+		if(!DoCtagsWordCompletion(editor, expr, word) && (GetOptions() & CC_CLANG_ENABLED)) {
+			DoClangWordCompletion(editor);
+		}
 	}
 }
 

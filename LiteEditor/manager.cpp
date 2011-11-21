@@ -28,6 +28,7 @@
 #include "crawler_include.h"
 #include "renamefiledlg.h"
 #include "clang_code_completion.h"
+#include "macromanager.h"
 #include "fileextmanager.h"
 #include "localstable.h"
 #include "new_quick_watch_dlg.h"
@@ -3273,7 +3274,12 @@ bool Manager::UpdateParserPaths(bool notify)
 			projectIncludePaths = wxStringTokenize(projSearchPaths, wxT("\r\n"), wxTOKEN_STRTOK);
 		}
 	}
-
+	
+	for(size_t i=0; i<projectIncludePaths.GetCount(); i++) {
+		projectIncludePaths.Item(i) = MacroManager::Instance()->Expand(projectIncludePaths.Item(i), 
+																	   PluginManager::Get(), GetActiveProjectName());
+	}
+	
 	// Update the parser thread with the new paths
 	wxArrayString globalIncludePath, uniExcludePath;
 	TagsOptionsData tod = clMainFrame::Get()->GetTagsOptions();

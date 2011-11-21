@@ -145,6 +145,7 @@ class LEditor : public wxScintilla, public IEditor
 	bool                                        m_isFocused;
 	bool                                        m_pluginInitializedRMenu;
 	BOM                                         m_fileBom;
+	int                                         m_positionToEnsureVisible;
 
 public:
 	static bool                                 m_ccShowPrivateMembers;
@@ -265,7 +266,7 @@ public:
 	void FindNext(const FindReplaceData &data);
 
 	/**
-	 * \brief diaply functions' calltip from the current position of the caret
+	 * \brief display functions' calltip from the current position of the caret
 	 */
 	void ShowFunctionTipFromCurrentPos();
 
@@ -285,6 +286,15 @@ public:
 	 */
 	ContextBasePtr GetContext() const {
 		return m_context;
+	}
+
+	/**
+	 * Stores a position for OnScnPainted() to ensure-is-visible in the next scintilla paint event
+	 * This doesn't happen until scintilla painting is complete, so it isn't ruined by e.g. word-wrap
+	 * \param position the position to ensure is visible
+	 */
+	void SetEnsureCaretIsVisible(int pos) {
+		m_positionToEnsureVisible = pos;
 	}
 
 	// Bookmark API
@@ -689,6 +699,7 @@ private:
 	void OnDwellStart(wxScintillaEvent& event);
 	void OnDwellEnd(wxScintillaEvent& event);
 	void OnCallTipClick(wxScintillaEvent& event);
+	void OnScnPainted(wxScintillaEvent &event);
 	void OnSciUpdateUI(wxScintillaEvent &event);
 	void OnFindDialog(wxCommandEvent &event);
 	void OnContextMenu(wxContextMenuEvent &event);

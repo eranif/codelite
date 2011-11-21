@@ -312,8 +312,7 @@ void MainBook::RestoreSession(SessionEntry &session)
 		}
 
 		editor->ScrollToLine(ti.GetFirstVisibleLine());
-		editor->GotoLine(ti.GetCurrentLine());
-		editor->EnsureCaretVisible();
+		editor->SetEnsureCaretIsVisible(editor->PositionFromLine(ti.GetCurrentLine()));
 
 		const wxArrayString &astrBookmarks = ti.GetBookmarks();
 		for (size_t i = 0; i < astrBookmarks.GetCount(); i++) {

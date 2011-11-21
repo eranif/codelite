@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "file_logger.h"
 #include "precompiled_header.h"
 #include "cl_editor.h"
 #include "code_completion_manager.h"
@@ -100,6 +101,7 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_SCI_MARGINCLICK            (wxID_ANY, LEditor::OnMarginClick)
 	EVT_SCI_CALLTIP_CLICK          (wxID_ANY, LEditor::OnCallTipClick)
 	EVT_SCI_DWELLEND               (wxID_ANY, LEditor::OnDwellEnd)
+	EVT_SCI_PAINTED                (wxID_ANY, LEditor::OnScnPainted)
 	EVT_SCI_UPDATEUI               (wxID_ANY, LEditor::OnSciUpdateUI)
 	EVT_SCI_SAVEPOINTREACHED       (wxID_ANY, LEditor::OnSavePoint)
 	EVT_SCI_SAVEPOINTLEFT          (wxID_ANY, LEditor::OnSavePoint)
@@ -153,6 +155,7 @@ LEditor::LEditor(wxWindow* parent)
 		, m_lastCharEnteredPos       (0)
 		, m_isFocused                (true)
 		, m_pluginInitializedRMenu   (false)
+		, m_positionToEnsureVisible  (wxNOT_FOUND)
 {
 	ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSCI_MARK_SMALLRECT;
 	ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSCI_MARK_ROUNDRECT;
@@ -814,6 +817,24 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	}
 
 	event.Skip();
+}
+
+void LEditor::OnScnPainted(wxScintillaEvent &event)
+{
+	if (m_positionToEnsureVisible == wxNOT_FOUND) {
+		return;
+	}
+
+	CL_DEBUG1(wxT("OnScnPainted"));
+
+	int line = LineFromPosition(m_positionToEnsureVisible);
+	if ( line >= 0 ) {
+		GotoLine(line);
+		EnsureVisible(line);
+	}
+	EnsureCaretVisible();
+
+	m_positionToEnsureVisible = wxNOT_FOUND;
 }
 
 void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
@@ -1900,11 +1921,8 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 
 	if ( StringFindReplacer::Search(GetText(), offset, findWhat, flags, pos, match_len) ) {
 
-		int line = LineFromPosition(pos);
-		if ( line >= 0 ) {
-			EnsureVisible(line);
-			EnsureCaretVisible();
-		}
+		SetEnsureCaretIsVisible(pos);
+
 		if ( flags & wxSD_SEARCH_BACKWARD ) {
 			SetSelection(pos + match_len, pos);
 		} else {
@@ -2304,9 +2322,7 @@ void LEditor::ReloadFile()
 	int lastLine = LineFromPosition(doclen);
 	lineNumber > lastLine ? lineNumber = lastLine : lineNumber;
 
-	GotoLine(lineNumber);
-	EnsureVisible(lineNumber);
-	EnsureCaretVisible();
+	SetEnsureCaretIsVisible(PositionFromLine(lineNumber));
 
 	// mark read only files
 	clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
@@ -3816,8 +3832,7 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 				}
 				
 				if (res && (line >= 0) && !again) {
-					EnsureVisible(line);
-					EnsureCaretVisible();
+					SetEnsureCaretIsVisible(pos);
 				}
 			}
 

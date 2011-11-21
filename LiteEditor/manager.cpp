@@ -2285,13 +2285,13 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 	wxFileName fn ( fileName );
 	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if ( editor && editor->GetFileName().GetFullPath().CmpNoCase(fn.GetFullPath()) == 0 && lineno > 0) {
-		editor->HighlightLine ( lineno   );
-		editor->GotoLine      ( lineno-1 );
-		editor->EnsureVisible ( lineno-1 );
+		editor->HighlightLine (lineno);
+		editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno-1));
 	} else if (clMainFrame::Get()->GetMainBook()->OpenFile ( fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND) && lineno > 0) {
 		editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 		if ( editor ) {
-			editor->HighlightLine ( lineno );
+			editor->HighlightLine(lineno);
+			editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno-1));
 		}
 	}
 }

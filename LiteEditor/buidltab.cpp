@@ -366,7 +366,7 @@ bool BuildTab::DoOpenFile( const BuildTab::LineInfo &info)
 	if (editor == NULL) {
 		return false;
 	}
-	editor->ScrollToLine(info.linenum - 1);
+	editor->SetEnsureCaretIsVisible(editor->PositionFromLine(info.linenum));
 	editor->ScrollToColumn(0);
 	
 	return true;

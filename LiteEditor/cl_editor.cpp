@@ -819,22 +819,39 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	event.Skip();
 }
 
+void LEditor::SetEnsureCaretIsVisible(int pos)
+{
+	OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
+	if (opts && opts->GetWordWrap()) {
+		// If the text may be word-wrapped, don't EnsureVisible immediately but from the
+		// paintevent handler, so that scintilla has time to take word-wrap into account
+		m_positionToEnsureVisible = pos;
+	} else {
+		DoEnsureCaretIsVisible(pos);
+	}
+}
+
 void LEditor::OnScnPainted(wxScintillaEvent &event)
 {
 	if (m_positionToEnsureVisible == wxNOT_FOUND) {
 		return;
 	}
 
-	CL_DEBUG1(wxT("OnScnPainted"));
+	CL_DEBUG1(wxString::Format(wxT("OnScnPainted: position = %i"), m_positionToEnsureVisible));
 
-	int line = LineFromPosition(m_positionToEnsureVisible);
+	DoEnsureCaretIsVisible(m_positionToEnsureVisible);
+	m_positionToEnsureVisible = wxNOT_FOUND;
+}
+
+void LEditor::DoEnsureCaretIsVisible(int pos)
+{
+	int line = LineFromPosition(pos);
 	if ( line >= 0 ) {
 		GotoLine(line);
 		EnsureVisible(line);
 	}
-	EnsureCaretVisible();
 
-	m_positionToEnsureVisible = wxNOT_FOUND;
+	EnsureCaretVisible();
 }
 
 void LEditor::OnSciUpdateUI(wxScintillaEvent &event)

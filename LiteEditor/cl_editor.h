@@ -289,13 +289,18 @@ public:
 	}
 
 	/**
-	 * Stores a position for OnScnPainted() to ensure-is-visible in the next scintilla paint event
+	 * If word-wrap isn't on, this calls DoEnsureCaretIsVisible() immediately. Otherwise it
+	 * stores a position for OnScnPainted() to ensure-is-visible in the next scintilla paint event
 	 * This doesn't happen until scintilla painting is complete, so it isn't ruined by e.g. word-wrap
 	 * \param position the position to ensure is visible
 	 */
-	void SetEnsureCaretIsVisible(int pos) {
-		m_positionToEnsureVisible = pos;
-	}
+	void SetEnsureCaretIsVisible(int pos);
+
+	/**
+	 * Does the necessary things to ensure that the destination line of a GoTo is visible
+	 * \param position the position to ensure is visible
+	 */	
+	void DoEnsureCaretIsVisible(int pos);
 
 	// Bookmark API
 	//-----------------------------------------

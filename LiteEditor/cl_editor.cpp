@@ -828,6 +828,7 @@ void LEditor::SetEnsureCaretIsVisible(int pos)
 		m_positionToEnsureVisible = pos;
 	} else {
 		DoEnsureCaretIsVisible(pos);
+		m_positionToEnsureVisible = wxNOT_FOUND;
 	}
 }
 
@@ -850,8 +851,10 @@ void LEditor::DoEnsureCaretIsVisible(int pos)
 		GotoLine(line);
 		EnsureVisible(line);
 	}
-
+	
 	EnsureCaretVisible();
+	// Make the caret placed at the center
+	VerticalCentreCaret();
 }
 
 void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
@@ -3850,6 +3853,7 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 				
 				if (res && (line >= 0) && !again) {
 					SetEnsureCaretIsVisible(pos);
+					SetSelection ( pos + pos1, pos + pos1 + match_len1 );
 				}
 			}
 

@@ -846,15 +846,27 @@ void LEditor::OnScnPainted(wxScintillaEvent &event)
 
 void LEditor::DoEnsureCaretIsVisible(int pos)
 {
+	// Start by caching any selection, as GotoLine() will clear it
+	int start = GetSelectionStart();
+	int end   = GetSelectionEnd();
+
 	int line = LineFromPosition(pos);
 	if ( line >= 0 ) {
 		GotoLine(line);
 		EnsureVisible(line);
 	}
+
+	if (start != end) {
+		// If there was a selection, reinstate it
+		SetSelection(start, end);
+	} else {
+		// If not, we need this to set the caret on the correct line
+		// NB we mustn't do this if there *is* a selection,
+		// otherwise the selection is extended to pos
+		SetCurrentPos(pos);
+	}
 	
 	EnsureCaretVisible();
-	// Make the caret placed at the center
-	VerticalCentreCaret();
 }
 
 void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
@@ -3853,7 +3865,6 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 				
 				if (res && (line >= 0) && !again) {
 					SetEnsureCaretIsVisible(pos);
-					SetSelection ( pos + pos1, pos + pos1 + match_len1 );
 				}
 			}
 

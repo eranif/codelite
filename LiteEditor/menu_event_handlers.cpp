@@ -236,7 +236,11 @@ void GotoHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 			}
 
 			if (line > 0) {
-				editor->SetEnsureCaretIsVisible(editor->PositionFromLine(line - 1));
+				int pos = editor->PositionFromLine(line - 1);
+				// Clear any existing selection, which otherwise becomes the Goto target
+				editor->SetSelectionStart(pos);
+				editor->SetSelectionEnd(pos);
+				editor->SetEnsureCaretIsVisible(pos);
 				break;
 			} else {
 				editor->GotoLine(0);

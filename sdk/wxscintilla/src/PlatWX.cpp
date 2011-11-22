@@ -802,7 +802,7 @@ void Window::SetFont(Font &font)
 
 void Window::SetCursor(Cursor curs)
 {
-	int cursorId;
+	wxStockCursor cursorId;
 
 	switch (curs) {
 	case cursorText:

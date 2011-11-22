@@ -1082,7 +1082,8 @@ myDragImage::myDragImage(LEditor* ed, wxBitmap btmp, std::vector<BreakpointInfo>
 {
 	// In theory, we could pass a blank cursor to wxDragImage::BeginDrag
 	// In practice, that doesn't seem to work, so do it here, and undo it in OnEndDrag()
-	oldcursor = editor->SetCursor(wxCursor(wxCURSOR_BLANK));
+	oldcursor = editor->GetCursor();
+	editor->SetCursor(wxCursor(wxCURSOR_BLANK));
 }
 
 bool myDragImage::StartDrag()

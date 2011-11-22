@@ -32,11 +32,13 @@
 #    define GetPropVal     GetPropVal
 #    define GetProperties  GetProperties
 #    define HasProp        HasProp
+#    define wxXmlProperty  wxXmlProperty
 #else
 #    define AddProperty    AddAttribute
 #    define GetPropVal     GetAttribute
 #    define GetProperties  GetAttributes
 #    define HasProp        HasAttribute
+#    define wxXmlProperty  wxXmlAttribute
 #endif
 
 #endif // WX_XML_COMPATIBILTY_H

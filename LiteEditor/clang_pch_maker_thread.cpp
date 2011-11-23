@@ -52,10 +52,11 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		wxTheApp->AddPendingEvent(eEnd);
 		return;
 	}
-
+	
 	// Send start event
 	wxCommandEvent e(wxEVT_CLANG_PCH_CACHE_STARTED);
 	wxTheApp->AddPendingEvent(e);
+	
 
 	FileExtManager::FileType type = FileExtManager::GetType(task->GetFileName());
 	bool isSource = (type == FileExtManager::TypeSourceC || type == FileExtManager::TypeSourceCpp);
@@ -118,7 +119,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	reply->results    = NULL;
 
 	if(task->GetContext() != CTX_CachePCH) {
-#ifndef __WXMSW__
+#if 0
 		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
 		clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
 		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done"));
@@ -139,7 +140,6 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 			CL_DEBUG(wxT("Found %d matches"), reply->results->NumResults);
 
 		}
-
 		if(reply->results && reply->results->NumResults == 0) {
 			printDiagnosticsToLog(TU);
 		}

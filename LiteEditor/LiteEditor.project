@@ -887,6 +887,7 @@
       
       
       
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -977,7 +978,7 @@ resources.cpp: resources.xrc
       <Completion>
         <ClangCmpFlags>`wx-config --cflags`
 `pkg-config --cflags gtk+-2.0`</ClangCmpFlags>
-        <ClangPP/>
+        <ClangPP>HAS_LIBCLANG</ClangPP>
         <SearchPaths>$(WorkspacePath)/PCH
 $(WorkspacePath)/CodeLite
 $(WorkspacePath)/sdk/wxsqlite3/include
@@ -1011,6 +1012,7 @@ $(WorkspacePath)/Interfaces</SearchPaths>
       <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)
+      
       
       ]]>
       </Environment>
@@ -1076,6 +1078,7 @@ svninfo.cpp:
       <Environment EnvVarSetName="Default" DbgSetName="Default">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)
       
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -1131,6 +1134,7 @@ resources.cpp: resources.xrc
       <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="./WinDbg29" Command="./codelite.exe" CommandArguments="-b . --no-plugins" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
         <![CDATA[
+      
       
       
       

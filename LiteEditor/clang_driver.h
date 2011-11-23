@@ -22,6 +22,7 @@ protected:
 	WorkingContext              m_context;
 	CXIndex                     m_index;
 	IEditor*                    m_activeEditor;
+	int                         m_position;
 	
 protected:
 	void     DoCleanup();

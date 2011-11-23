@@ -47,11 +47,17 @@ public:
 class WXDLLIMPEXP_CL WorkerThread : public wxThread
 {
 protected:
-	wxCriticalSection m_cs;
-	wxEvtHandler *m_notifiedWindow;
+	wxCriticalSection          m_cs;
+	wxEvtHandler *             m_notifiedWindow;
 	std::deque<ThreadRequest*> m_queue;
-
+	size_t                     m_sleep;
+	
 public:
+	/**
+	 * @brief set the sleep interval. If non is set, 200ms is the default
+	 */
+	void SetSleepInterval(size_t ms);
+	
 	/**
 	 * Default constructor.
 	 */

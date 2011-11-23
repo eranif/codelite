@@ -34,8 +34,10 @@ END_EVENT_TABLE()
 ClangDriver::ClangDriver()
 	: m_isBusy(false)
 	, m_activeEditor(NULL)
+	, m_position(wxNOT_FOUND)
 {
 	m_index = clang_createIndex(0, 0);
+	m_pchMakerThread.SetSleepInterval(30);
 	m_pchMakerThread.Start();
 	wxTheApp->Connect(wxEVT_CLANG_PCH_CACHE_ENDED, wxCommandEventHandler(ClangDriver::OnPrepareTUEnded), NULL, this);
 }
@@ -73,6 +75,7 @@ void ClangDriver::CodeCompletion(IEditor* editor)
 	wxString filterWord;
 
 	// Move backward until we found our -> or :: or .
+	m_position = m_activeEditor->GetCurrentPosition();
 	wxString tmpBuffer = m_activeEditor->GetTextRange(0, m_activeEditor->GetCurrentPosition());
 	while ( !tmpBuffer.IsEmpty() ) {
 		// Context word complete and we found a whitespace - break the search
@@ -414,6 +417,30 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 		return;
 	}
 
+	if(m_activeEditor->GetCurrentPosition() < m_position) {
+		CL_DEBUG(wxT("Current position is lower than the starting position, ignoring completion"));
+		clang_disposeCodeCompleteResults(reply->results);
+		delete reply;
+		return;
+	}
+
+	wxString typedString;
+	if(m_activeEditor->GetCurrentPosition() > m_position) {
+		// User kept on typing while the completion thread was working
+		typedString = m_activeEditor->GetTextRange(m_position, m_activeEditor->GetCurrentPosition());
+		if(typedString.find_first_not_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_")) != wxString::npos) {
+			// User typed some non valid identifier char, cancel code completion
+			CL_DEBUG(wxT("User typed: %s since the completion thread started working until it ended, ignoring completion"), typedString.c_str());
+			clang_disposeCodeCompleteResults(reply->results);
+			delete reply;
+			return;
+		}
+	}
+
+	// update the filter word
+	reply->filterWord.Append(typedString);
+	CL_DEBUG(wxT("clang completion: filter word is %s"), reply->filterWord.c_str());
+	
 	// For the Calltip, remove the opening brace from the filter string
 	wxString filterWord = reply->filterWord;
 	if(GetContext() == CTX_Calltip && filterWord.EndsWith(wxT("(")))

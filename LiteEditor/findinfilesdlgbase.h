@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __findinfilesdlgbase__
-#define __findinfilesdlgbase__
+#ifndef __FINDINFILESDLGBASE_H__
+#define __FINDINFILESDLGBASE_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -41,19 +42,14 @@ class FindInFilesDialogBase : public wxDialog
 	
 	protected:
 		wxComboBox* m_findString;
-		
 		DirPicker  *m_dirPicker;
 		wxButton* m_btnAddPath;
-		
-		
 		wxListBox* m_listPaths;
 		wxButton* m_btnRemovelPath;
 		wxButton* m_btnClearPaths;
 		wxComboBox* m_fileTypes;
-		
 		wxStaticText* m_staticText5;
 		wxChoice* m_choiceEncoding;
-		
 		wxStaticText* m_staticText7;
 		wxNotebook* m_notebook1;
 		wxPanel* m_panel1;
@@ -67,7 +63,6 @@ class FindInFilesDialogBase : public wxDialog
 		wxCheckBox* m_checkBoxSkipMatchesFoundInComments;
 		wxCheckBox* m_checkBoxSkipMatchesFoundInStrings;
 		wxCheckBox* m_checkBoxHighlighStringComments;
-		
 		wxButton* m_find;
 		wxButton* m_replaceAll;
 		wxButton* m_stop;
@@ -87,9 +82,9 @@ class FindInFilesDialogBase : public wxDialog
 	
 	public:
 		
-		FindInFilesDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find in files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+		FindInFilesDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find in files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP ); 
 		~FindInFilesDialogBase();
 	
 };
 
-#endif //__findinfilesdlgbase__
+#endif //__FINDINFILESDLGBASE_H__

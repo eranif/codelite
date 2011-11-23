@@ -33,6 +33,15 @@
 #define CL_LINE_MODIFIED_STYLE      200
 #define CL_LINE_SAVED_STYLE         201
 
+static wxColor GetInactiveColor(const wxColor& col)
+{
+	if(col == *wxBLACK) {
+		return wxColor(wxT("GREY"));
+	} else {
+		return wxColor(wxT("LIGHT GREY"));
+	}
+}
+
 ContextBase::ContextBase(LEditor *container)
 		: m_container(container)
 		, m_name(wxEmptyString)
@@ -129,6 +138,13 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 				rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
 				rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, size);
 				rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
+				
+				// Inactive state is greater by 64 from its counterpart
+				wxColor inactiveColor = GetInactiveColor((*iter).GetFgColour());
+				rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT + 64, inactiveColor);
+				rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT + 64,       font);
+				rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT + 64,       size);
+				
 				rCtrl.StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
 				rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, size);
 				rCtrl.SetFoldMarginColour(true, (*iter).GetBgColour());
@@ -166,6 +182,13 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 
 			} else {
 				rCtrl.StyleSetForeground(sp.GetId(), sp.GetFgColour());
+				
+				// Inactive state is greater by 64 from its counterpart
+				wxColor inactiveColor = GetInactiveColor(iter->GetFgColour());
+				rCtrl.StyleSetForeground(sp.GetId() + 64, inactiveColor);
+				rCtrl.StyleSetFont(sp.GetId() + 64,       font);
+				rCtrl.StyleSetSize(sp.GetId() + 64,       size);
+				
 				rCtrl.StyleSetBackground(sp.GetId(), sp.GetBgColour());
 			}
 		}

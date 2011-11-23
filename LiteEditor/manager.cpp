@@ -3425,6 +3425,8 @@ void Manager::GetActiveProjectAndConf(wxString& project, wxString& conf)
 
 void Manager::UpdatePreprocessorFile(const wxFileName& filename)
 {
+	// TODO:: Replace this code with calling to Clang for actual macros 
+	// computing
 	if(!TagsManagerST::Get()->IsValidCtagsFile(filename.GetFullPath())) {
 		return;
 	}

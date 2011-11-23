@@ -866,7 +866,9 @@ void LEditor::DoEnsureCaretIsVisible(int pos)
 		SetCurrentPos(pos);
 	}
 	
-	EnsureCaretVisible();
+	// EI: EnsureCaretVisible() does not allways provide the wanted results (i.e. in some cases, the selection is out-of-screen)
+	// This is why we use here VerticalCentreCaret() instead
+	VerticalCentreCaret();
 }
 
 void LEditor::OnSciUpdateUI(wxScintillaEvent &event)

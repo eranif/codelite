@@ -11,11 +11,11 @@
       <Project Name="indexer_client" ConfigName="Release_Unix"/>
       <Project Name="codelite_indexer" ConfigName="Release_Unix"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug_Win" Selected="yes">
+    <WorkspaceConfiguration Name="Debug_Win" Selected="no">
       <Project Name="indexer_client" ConfigName="Debug_Win"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Win"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release_Win" Selected="no">
+    <WorkspaceConfiguration Name="Release_Win" Selected="yes">
       <Project Name="indexer_client" ConfigName="Release_Win"/>
       <Project Name="codelite_indexer" ConfigName="Release_Win"/>
     </WorkspaceConfiguration>

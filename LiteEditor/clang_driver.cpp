@@ -89,7 +89,6 @@ void ClangDriver::CodeCompletion(IEditor* editor)
 		}
 	}
 
-
 	// Get the current line's starting pos
 	int lineStartPos = m_activeEditor->PosFromLine( m_activeEditor->GetCurrentLine() );
 	int column       = m_activeEditor->GetCurrentPosition() - lineStartPos  + 1;
@@ -97,7 +96,8 @@ void ClangDriver::CodeCompletion(IEditor* editor)
 	column -= (int) filterWord.Length();
 
 	// Column can not be lower than 1
-	if(column < 1) {
+	if(GetContext() != CTX_CachePCH && column < 1) {
+		CL_DEBUG(wxT("Clang: column can not be lower than 1"));
 		m_isBusy = false;
 		return;
 	}

@@ -109,6 +109,8 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 	long logVerbosity(FileLogger::Error);
 	EditorConfigST::Get()->GetLongValue(wxT("LogVerbosity"), logVerbosity);
 	m_choice4->SetStringSelection( FileLogger::GetVerbosityAsString(logVerbosity) );
+
+	m_oldMswUseTheme = m_checkBoxEnableMSWTheme->IsChecked();
 }
 
 void EditorSettingsMiscPanel::OnClearButtonClick( wxCommandEvent& )
@@ -128,9 +130,8 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 
 	// Set the theme support.
 	// This option requires a restart of codelite
-	bool oldEnableMSWTheme = options->GetMswTheme();
 	options->SetMswTheme(m_checkBoxEnableMSWTheme->IsChecked());
-	if(oldEnableMSWTheme != m_checkBoxEnableMSWTheme->IsChecked()) {
+	if(m_oldMswUseTheme != m_checkBoxEnableMSWTheme->IsChecked()) {
 		m_restartRequired = true;
 	}
 

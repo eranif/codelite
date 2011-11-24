@@ -38,10 +38,11 @@ class EditorSettingsMiscPanel
 	: public EditorSettingsMiscBasePanel
 	, public TreeBookNode<EditorSettingsMiscPanel>
 {
-	bool m_restartRequired;
-	bool m_oldSetLocale;
+	bool     m_restartRequired;
+	bool     m_oldSetLocale;
 	wxString m_oldpreferredLocale;
-
+	bool     m_oldMswUseTheme;
+	
 protected:
 	int FindAvailableLocales();
 

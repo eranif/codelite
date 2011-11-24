@@ -49,7 +49,6 @@ OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager)
 	m_listOptions->AssignImageList(li, wxIMAGE_LIST_SMALL);
 	
 	m_timer = new wxTimer(this, XRCID("OR_TIMER"));
-	m_timer->Start(500);
 	MSWSetNativeTheme(m_listOptions);
 	m_listOptions->InsertColumn(0, wxT("Name"));
 	m_listOptions->InsertColumn(1, wxT("Full path"));
@@ -95,6 +94,9 @@ OpenResourceDialog::~OpenResourceDialog()
 void OpenResourceDialog::OnText( wxCommandEvent& event )
 {
 	event.Skip();
+	m_timer->Stop();
+	m_timer->Start(200, true);
+	
 	wxString filter = m_textCtrlResourceName->GetValue();
 	filter.Trim().Trim(false);
 	

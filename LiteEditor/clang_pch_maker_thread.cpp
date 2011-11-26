@@ -60,13 +60,13 @@ enum CXChildVisitResult MacrosCallback(CXCursor cursor,
 		clang_getSpellingLocation(loc, &file, &line, &col, &off);
 
 		CXString strFileName = clang_getFileName(file);
-		wxFileName fn(clang_getCString(strFileName));
+		wxFileName fn(wxString(clang_getCString(strFileName), wxConvUTF8));
 		clang_disposeString(strFileName);
 		MacroClientData *cd = (MacroClientData*)clientData;
 
 		if(cd->filename != fn.GetFullPath()) {
 			CXString displayName = clang_getCursorDisplayName(cursor);
-			cd->macros.insert(clang_getCString(displayName));
+			cd->macros.insert(wxString(clang_getCString(displayName), wxConvUTF8));
 			clang_disposeString(displayName);
 		}
 

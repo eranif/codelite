@@ -35,11 +35,13 @@
 
 static wxColor GetInactiveColor(const wxColor& col)
 {
-	if(col == *wxBLACK) {
-		return wxColor(wxT("GREY"));
-	} else {
-		return wxColor(wxT("LIGHT GREY"));
-	}
+	wxUnusedVar(col);
+//	if(col == *wxBLACK) {
+//		return wxColor(wxT("GREY"));
+//	} else {
+//		return wxColor(wxT("LIGHT GREY"));
+//	}
+	return wxColor(wxT("LIGHT GREY"));
 }
 
 ContextBase::ContextBase(LEditor *container)

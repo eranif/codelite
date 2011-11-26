@@ -1819,7 +1819,7 @@ void ContextCpp::OnFileSaved()
 			rCtrl.SetKeyWords(3, wxEmptyString);
 		}
 	}
-	
+
 	// Update preprocessor visualization
 	ManagerST::Get()->UpdatePreprocessorFile( &GetCtrl() );
 }

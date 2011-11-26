@@ -3041,6 +3041,12 @@ void LEditor::OnDbgCustomWatch(wxCommandEvent &event)
 
 void LEditor::UpdateColours()
 {
+	// disable macros tracking (if needed it will be re-enabled by
+	// the Clang Worker Thread
+	SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("0"));
+	SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
+	Colourise(0, wxSCI_INVALID_POSITION);
+	
 	if ( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS           ||
 	     TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS ||
 		 TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_MACRO_BLOCKS) 
@@ -3056,11 +3062,6 @@ void LEditor::UpdateColours()
 			SetKeyWords(4, wxEmptyString);
 		}
 	}
-
-	wxString newValue = TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS ? wxString(wxT("1")) : wxString(wxT("0"));
-	SetProperty(wxT("lexer.cpp.track.preprocessor"),  newValue);
-	SetProperty(wxT("lexer.cpp.update.preprocessor"), newValue);
-	Colourise(0, wxSCI_INVALID_POSITION);
 }
 
 int LEditor::SafeGetChar(int pos)

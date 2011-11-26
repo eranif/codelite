@@ -3,4 +3,5 @@
 - clang: does not diplay static members of file
 - clang: when closing workspace -> clear clang cache
 - clang: when dismissing the workspace / project settings dialog -> clear PCH caching (incase any of the completion pages were updated)
+- clang: make sure we don't attempt to track PP when the file is not a valid C++ file
 

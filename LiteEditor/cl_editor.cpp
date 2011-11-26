@@ -2330,7 +2330,7 @@ void LEditor::ReloadFile()
 	// get the pattern of the current file
 	int lineNumber = GetCurrentLine();
 
-	clMainFrame::Get()->SetStatusMessage(_("Loading file..."), 0);
+	clMainFrame::Get()->SetStatusMessage(_("Loading file..."), 0, 1);
 
 	wxString text;
 

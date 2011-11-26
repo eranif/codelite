@@ -195,7 +195,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
 		CL_DEBUG(wxT("Calling clang_codeCompleteAt... done"));
 		if(reply->results) {
-			CL_DEBUG(wxT("Found %d matches"), reply->results->NumResults);
+			CL_DEBUG(wxT("Found %u matches"), reply->results->NumResults);
 
 		}
 		if(reply->results && reply->results->NumResults == 0) {
@@ -215,8 +215,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	
 		
 		CL_DEBUG(wxT("Traversing TU...done"));
-		CL_DEBUG(wxT("Collected %d Macros"), clientData.macros.size());
-		CL_DEBUG(wxT("Collected %d Interesting Macros"), clientData.interestingMacros.size());
+		CL_DEBUG(wxT("Collected %u Macros"), (unsigned int)clientData.macros.size());
+		CL_DEBUG(wxT("Collected %u Interesting Macros"), (unsigned int)clientData.interestingMacros.size());
 
 		wxString macros = clientData.intersect();
 		CL_DEBUG(wxT("The following macros will be passed to scintilla: %s"), macros.c_str());

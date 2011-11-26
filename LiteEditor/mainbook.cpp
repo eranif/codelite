@@ -977,10 +977,10 @@ void MainBook::OnPageChanged(NotebookEvent& e)
 		wxWindow *win = m_book->GetPage((size_t)newSel);
 		if(win) {
 			SelectPage(win);
-			LEditor *editor = dynamic_cast<LEditor*>(win);
-			if(editor) {
-				ManagerST::Get()->UpdatePreprocessorFile(editor);
-			}
+			//LEditor *editor = dynamic_cast<LEditor*>(win);
+			//if(editor) {
+			//	ManagerST::Get()->UpdatePreprocessorFile(editor);
+			//}
 		}
 	}
 	e.Skip();

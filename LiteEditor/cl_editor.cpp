@@ -211,7 +211,7 @@ void LEditor::SetSyntaxHighlight(const wxString &lexerName)
 	UpdateColours();
 }
 
-void LEditor::SetSyntaxHighlight()
+void LEditor::SetSyntaxHighlight(bool bUpdateColors)
 {
 	ClearDocumentStyle();
 	m_context = ContextManager::Get()->NewContextByFileName(this, m_fileName);
@@ -222,7 +222,9 @@ void LEditor::SetSyntaxHighlight()
 
 	m_context->SetActive();
 	m_context->ApplySettings();
-	UpdateColours();
+	if(bUpdateColors) {
+		UpdateColours();
+	}
 }
 
 // Fills the struct array that marries breakpoint type to marker and mask
@@ -2382,7 +2384,7 @@ void LEditor::Create(const wxString &project, const wxFileName &fileName)
 	SetProject(project);
 	// let the editor choose the syntax highlight to use according to file extension
 	// and set the editor properties to default
-	SetSyntaxHighlight();
+	SetSyntaxHighlight(false); // Dont call 'UpdateColors' it is called in 'ReloadFile'
 	// reload the file from disk
 	ReloadFile();
 }

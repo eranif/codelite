@@ -279,7 +279,7 @@ public:
 	/**
 	 * Change the document's syntax highlight - use the file name to determine lexer name
 	 */
-	virtual void SetSyntaxHighlight();
+	virtual void SetSyntaxHighlight(bool bUpdateColors = true);
 
 	/**
 	 * Return the document context object

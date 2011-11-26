@@ -356,7 +356,7 @@ void ClangDriver::DoCleanup()
 	m_activeEditor = NULL;
 }
 
-void ClangDriver::DoParseCompletionString(CXCompletionString str, wxString &entryName, wxString &signature, wxString &completeString, wxString &returnValue)
+void ClangDriver::DoParseCompletionString(CXCompletionString str, int depth, wxString &entryName, wxString &signature, wxString &completeString, wxString &returnValue)
 {
 	bool collectingSignature = false;
 	int numOfChunks = clang_getNumCompletionChunks(str);
@@ -383,7 +383,7 @@ void ClangDriver::DoParseCompletionString(CXCompletionString str, wxString &entr
 			wxString optionalString;
 			wxString dummy;
 			// Once we hit the 'Optional Chunk' only the 'completeString' is matter
-			DoParseCompletionString(optStr, dummy, dummy, optionalString, dummy);
+			DoParseCompletionString(optStr, depth + 1, dummy, dummy, optionalString, dummy);
 			if(collectingSignature) {
 				signature += optionalString;
 			}
@@ -413,9 +413,11 @@ void ClangDriver::DoParseCompletionString(CXCompletionString str, wxString &entr
 	}
 
 	// To make this tag compatible with ctags one, we need to place
-	// a /^ and $/ in the pattern string
-	completeString.Prepend(wxT("/^ "));
-	completeString.Append(wxT(" $/"));
+	// a /^ and $/ in the pattern string (we add this only to the top level completionString)
+	if(depth == 0) {
+		completeString.Prepend(wxT("/^ "));
+		completeString.Append(wxT(" $/"));
+	}
 }
 
 void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
@@ -498,7 +500,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 			continue;
 			
 		wxString entryName, entrySignature, entryPattern, entryReturnValue;
-		DoParseCompletionString(str, entryName, entrySignature, entryPattern, entryReturnValue);
+		DoParseCompletionString(str, 0, entryName, entrySignature, entryPattern, entryReturnValue);
 
 		wxString lowerCaseName = entryName;
 		lowerCaseName.MakeLower();

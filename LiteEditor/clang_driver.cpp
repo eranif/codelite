@@ -71,6 +71,10 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 			break;
 		}
 		
+		if(context == CTX_WordCompletion && !IsValidCppIndetifier(tmpBuffer.Last())) {
+			break;
+		}
+		
 		if(tmpBuffer.EndsWith(wxT("->")) || tmpBuffer.EndsWith(wxT(".")) || tmpBuffer.EndsWith(wxT("::"))) {
 			break;
 

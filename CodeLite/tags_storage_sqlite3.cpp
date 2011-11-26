@@ -35,6 +35,7 @@ TagsStorageSQLite::TagsStorageSQLite()
 	: ITagsStorage()
 {
 	m_db = new clSqliteDB();
+	m_db->SetBusyTimeout(10);
 	SetUseCache(true);
 }
 

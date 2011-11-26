@@ -20,9 +20,12 @@ CXTranslationUnit ClangTUCache::GetPCH(const wxString& filename)
 	if(iter == m_cache.end()) {
 		return 0;
 	}
-	// update this entry access time
-	iter->second.lastAccessed = time(NULL);
-	return iter->second.TU;
+	// Remove this entry from the cache. It is up to the caller to place it back!
+	
+	CXTranslationUnit TU = iter->second.TU;
+	m_cache.erase(iter);
+	
+	return TU;
 }
 
 void ClangTUCache::AddPCH(const wxString& filename, CXTranslationUnit tu)

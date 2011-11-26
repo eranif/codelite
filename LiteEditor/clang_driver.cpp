@@ -434,12 +434,18 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 	ClangThreadReply* reply = (ClangThreadReply*) e.GetClientData();
 	if(!reply)
 		return;
-
+	
+	if(reply->context == CTX_CachePCH) {
+		return; // Nothing more to be done
+	}
+	
 	// Adjust the activeEditor to fit the filename
 	IEditor *editor = clMainFrame::Get()->GetMainBook()->FindEditor(reply->filename);
-	if(!editor)
+	if(!editor) {
+		CL_DEBUG(wxT("Could not find an editor for file %s"), reply->filename.c_str());
 		return;
-
+	}
+	
 	m_activeEditor = editor;
 	
 	// What should we do with the TU?

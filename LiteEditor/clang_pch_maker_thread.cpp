@@ -57,8 +57,8 @@ enum CXChildVisitResult MacrosCallback(CXCursor cursor,
 		CXSourceLocation loc = clang_getCursorLocation(cursor);
 		CXFile file;
 		unsigned line, col, off;
+		
 		clang_getSpellingLocation(loc, &file, &line, &col, &off);
-
 		CXString strFileName = clang_getFileName(file);
 		wxFileName fn(wxString(clang_getCString(strFileName), wxConvUTF8));
 		clang_disposeString(strFileName);
@@ -165,10 +165,12 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 			return;
 		}
 	}
-
-	//
-	DoCacheResult(TU, task->GetFileName());
-
+	
+	// Construct a cache-returner class
+	// which makes sure that the TU is cached
+	// when we leave the current scope
+	CacheReturner cr(this, task->GetFileName(), TU);
+	
 	wxCommandEvent eEnd(wxEVT_CLANG_PCH_CACHE_ENDED);
 	ClangThreadReply *reply = new ClangThreadReply;
 	reply->context    = task->GetContext();

@@ -79,8 +79,13 @@ public:
 	}
 };
 
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+class CacheReturner;
 class ClangWorkerThread : public WorkerThread
 {
+	friend class CacheReturner;
 protected:
 	wxCriticalSection m_cs;
 	ClangTUCache     m_cache;
@@ -100,6 +105,29 @@ public:
 	void              ClearCache();
 	bool              IsCacheEmpty();
 };
+
+////////////////////////////////////////////////////////////
+
+// A helper class that makes sure that the 
+// TU is properly cached when done using
+class CacheReturner
+{
+public:
+	ClangWorkerThread* m_thr;
+	wxString           m_filename;
+	CXTranslationUnit  m_tu;
+	
+	CacheReturner(ClangWorkerThread* thr, const wxString &filename, CXTranslationUnit TU) 
+	: m_thr(thr)
+	, m_filename(filename.c_str()) 
+	, m_tu(TU)
+	{}
+	
+	~CacheReturner() {
+		m_thr->DoCacheResult(m_tu, m_filename.c_str());
+	}
+};
+
 #endif // HAS_LIBCLANG
 
 #endif // CLANGPCHMAKERTHREAD_H

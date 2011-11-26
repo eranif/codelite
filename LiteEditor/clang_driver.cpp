@@ -65,11 +65,12 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 	m_position = editor->GetCurrentPosition();
 	wxString tmpBuffer = editor->GetTextRange(0, editor->GetCurrentPosition());
 	while ( !tmpBuffer.IsEmpty() ) {
+		
 		// Context word complete and we found a whitespace - break the search
-		if(context == CTX_WordCompletion && wxIsWhitespace(tmpBuffer.Last())) {
+		if((context == CTX_WordCompletion || context == CTX_Calltip) && wxIsWhitespace(tmpBuffer.Last())) {
 			break;
 		}
-
+		
 		if(tmpBuffer.EndsWith(wxT("->")) || tmpBuffer.EndsWith(wxT(".")) || tmpBuffer.EndsWith(wxT("::"))) {
 			break;
 

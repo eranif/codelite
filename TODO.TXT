@@ -1,4 +1,6 @@
-- Add code completion options per project
-- Parse output from clang and display it to user
-
+- clang: code completion does not work when used inside method foo(wx//CTRL-space)
+- clang: calltip does not displayed properly for members function not preceded with this->
+- clang: does not diplay static members of file
+- clang: when closing workspace -> clear clang cache
+- clang: when dismissing the workspace / project settings dialog -> clear PCH caching (incase any of the completion pages were updated)
 

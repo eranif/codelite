@@ -979,7 +979,7 @@ void MainBook::OnPageChanged(NotebookEvent& e)
 			SelectPage(win);
 			LEditor *editor = dynamic_cast<LEditor*>(win);
 			if(editor) {
-				ManagerST::Get()->UpdatePreprocessorFile(editor->GetFileName().GetFullPath());
+				ManagerST::Get()->UpdatePreprocessorFile(editor);
 			}
 		}
 	}

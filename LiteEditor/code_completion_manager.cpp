@@ -156,4 +156,10 @@ void CodeCompletionManager::DoUpdateOptions()
 	}
 }
 
-
+void CodeCompletionManager::ProcessMacros(LEditor* editor)
+{
+#if HAS_LIBCLANG
+	// Currently only supported when compiled with clang
+	ClangCodeCompletion::Instance()->ListMacros(editor);
+#endif
+}

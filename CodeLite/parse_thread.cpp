@@ -77,9 +77,6 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	case ParseRequest::PR_PARSE_AND_STORE:
 		ProcessParseAndStore( req );
 		break;
-	case ParseRequest::PR_GET_INTERRESTING_MACROS:
-		ProcessInterrestingMacros( req );
-		break;
 	case ParseRequest::PR_DELETE_TAGS_OF_FILES:
 		ProcessDeleteTagsOfFiles( req );
 		break;
@@ -505,68 +502,6 @@ void ParseThread::FindIncludedFiles(ParseRequest *req)
 		}
 	}
 }
-
-void ParseThread::ProcessInterrestingMacros(ParseRequest *req)
-{
-	ITagsStoragePtr db(new TagsStorageSQLite());
-	db->OpenDatabase(req->getDbfile());
-
-	wxFileName fnCurrentFile(req->getFile());
-	fnCurrentFile.MakeAbsolute();
-	const wxString sCurrentFile = fnCurrentFile.GetFullPath();
-
-	// -------------------------------------------
-	// Step 1 : Retrieve all included files
-	// -------------------------------------------
-	FindIncludedFiles(req);
-	const std::set<std::string>& incFiles = fcFileOpener::Instance()->GetResults();
-
-	// Add include files in native format
-	std::set<std::string> searchFiles;
-	std::set<std::string>::const_iterator itIncFile = incFiles.begin();
-	for (; itIncFile != incFiles.end(); ++itIncFile) {
-		wxFileName fn(wxString::From8BitData(itIncFile->c_str()));
-		searchFiles.insert(fn.GetFullPath().mb_str(wxConvUTF8).data());
-	}
-
-	// Add project files
-	const std::vector<std::string>& projFiles = req->_workspaceFiles;
-	for (std::vector<std::string>::const_iterator itProjFile = projFiles.begin(); itProjFile != projFiles.end(); ++itProjFile) {
-		searchFiles.insert(*itProjFile);
-	}
-
-	// Remove the current file
-	searchFiles.erase(sCurrentFile.mb_str(wxConvUTF8).data());
-
-	// -------------------------------------------
-	// Step 2 : Retrive PP macros used in the given files
-	// -------------------------------------------
-	PPTable::Instance()->ClearNamesUsed();
-	PPScan(sCurrentFile, false);
-
-	// -------------------------------------------
-	// Step 3 : Keep only macros available in both included
-	//    files and given files
-	// -------------------------------------------
-	wxArrayString defMacros;
-	db->GetMacrosDefined(searchFiles, PPTable::Instance()->GetNamesUsed(), defMacros);
-	wxString macros;
-	for (wxArrayString::const_iterator itMacro = defMacros.begin(); itMacro != defMacros.end(); ++itMacro) {
-		macros << *itMacro << wxT(" ");
-	}
-	if (!macros.empty()) {
-		macros.RemoveLast();
-	}
-
-	// Send back the informations
-	InterrestingMacrosEventData* pMacrosData = new InterrestingMacrosEventData;
-	pMacrosData->SetFileName( sCurrentFile );
-	pMacrosData->SetMacros( macros );
-	wxCommandEvent event(wxEVT_PARSE_THREAD_INTERESTING_MACROS);
-	event.SetClientData(pMacrosData);
-	wxPostEvent(req->_evtHandler, event);
-}
-
 
 //--------------------------------------------------------------------------------------
 // Parse Request Class

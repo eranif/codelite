@@ -44,6 +44,7 @@ public:
 	void WordCompletion(LEditor* editor, const wxString& expr, const wxString& word);
 	void Calltip       (LEditor* editor, int line, const wxString &expr, const wxString &text, const wxString &word);
 	void CodeComplete  (LEditor* editor, int line, const wxString &expr, const wxString &text);
+	void ProcessMacros (LEditor* editor);
 };
 
 #endif // CODECOMPLETIONMANAGER_H

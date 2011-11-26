@@ -69,24 +69,6 @@ public:
 };
 
 /**
- * 
- */
-class InterrestingMacrosEventData
-{
-	wxString m_filename;
-	wxString m_macros;
-	
-public:
-	InterrestingMacrosEventData() {}
-	
-	void SetFileName(const wxString& filename) { m_filename = filename.c_str(); }
-	void SetMacros(const wxString& macros) { m_macros = macros.c_str(); }
-	
-	const wxString& GetFileName() const { return m_filename; }
-	const wxString& GetMacros() const { return m_macros; }
-};
-
-/**
  * @class ParseRequest
  * @author eran
  * @date 10/04/09
@@ -109,7 +91,6 @@ public:
 		PR_FILESAVED,
 		PR_PARSEINCLUDES,
 		PR_PARSE_AND_STORE,
-		PR_GET_INTERRESTING_MACROS,
 		PR_DELETE_TAGS_OF_FILES
 	};
 
@@ -213,7 +194,6 @@ private:
 	void ProcessSimple            (ParseRequest *req);
 	void ProcessIncludes          (ParseRequest *req);
 	void ProcessParseAndStore     (ParseRequest *req);
-	void ProcessInterrestingMacros(ParseRequest *req);
 	void ProcessDeleteTagsOfFiles (ParseRequest *req);
 	void GetFileListToParse(const wxString &filename, wxArrayString &arrFiles);
 	void ParseAndStoreFiles(const wxArrayString &arrFiles, int initalCount, ITagsStoragePtr db);

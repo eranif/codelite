@@ -6,6 +6,7 @@
 #include "worker_thread.h" // Base class: ThreadRequest
 #include "clangpch_cache.h"
 #include <clang-c/Index.h>
+#include <set>
 
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED ;
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   ;
@@ -14,13 +15,16 @@ enum WorkingContext {
     CTX_CodeCompletion,
     CTX_Calltip,
     CTX_CachePCH,
-    CTX_WordCompletion
+    CTX_WordCompletion,
+	CTX_Macros
 };
 
 struct ClangThreadReply
 {
 	wxString               filterWord;
 	WorkingContext         context;
+	wxString               filename;
+	wxString               macrosAsString;
 	CXCodeCompleteResults *results;
 };
 
@@ -86,9 +90,10 @@ public:
 	virtual ~ClangWorkerThread();
 
 protected:
-	char** MakeCommandLine(const wxString& command, int &argc, bool isHeader);
-	void DoCacheResult(CXTranslationUnit TU, const wxString &filename);
-
+	char**             MakeCommandLine(const wxString& command, int &argc, bool isHeader);
+	void               DoCacheResult(CXTranslationUnit TU, const wxString &filename);
+	std::set<wxString> DoGetUsedMacros(const wxString &filename);
+	
 public:
 	virtual void ProcessRequest(ThreadRequest* request);
 	CXTranslationUnit findEntry(const wxString &filename);

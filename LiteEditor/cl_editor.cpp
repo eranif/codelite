@@ -3041,9 +3041,13 @@ void LEditor::OnDbgCustomWatch(wxCommandEvent &event)
 
 void LEditor::UpdateColours()
 {
-	if ( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS ||
-	        TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS) {
+	if ( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS           ||
+	     TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS ||
+		 TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_MACRO_BLOCKS) 
+	{
 		m_context->OnFileSaved();
+		
+		
 	} else {
 		if (m_context->GetName() == wxT("C++")) {
 			SetKeyWords(1, wxEmptyString);

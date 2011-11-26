@@ -139,4 +139,9 @@ void ClangCodeCompletion::WordComplete(IEditor* editor)
 	m_clang.CodeCompletion(editor);
 }
 
+void ClangCodeCompletion::ListMacros(IEditor* editor)
+{
+	m_clang.QueueRequest(editor, CTX_Macros);
+}
+
 #endif // HAS_LIBCLANG

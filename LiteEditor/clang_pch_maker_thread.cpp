@@ -6,17 +6,73 @@
 #include <wx/stdpaths.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
+#include "y.tab.h"
+#include "cpp_scanner.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "procutils.h"
 #include "fileextmanager.h"
-#include <clang-c/Index.h>
 #include <wx/xrc/xmlres.h>
 
 #define cstr(x) x.mb_str(wxConvUTF8).data()
 
 const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED = XRCID("clang_pch_cache_started");
 const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   = XRCID("clang_pch_cache_ended");
+
+////////////////////////////////////////////////////////////////////////////
+// Internal class used for traversing the macro found in a translation UNIT
+
+struct MacroClientData {
+	std::set<wxString> macros;
+	std::set<wxString> interestingMacros;
+	wxString           filename;
+
+	wxString intersect() const {
+		std::set<wxString> resultSet;
+		std::set<wxString>::const_iterator iter = this->interestingMacros.begin();
+		for(; iter != this->interestingMacros.end(); iter++) {
+			if(this->macros.find(*iter) != this->macros.end()) {
+				// this macro exists in both lists
+				resultSet.insert(*iter);
+			}
+		}
+
+		wxString macrosAsStr;
+		std::set<wxString>::const_iterator it = resultSet.begin();
+		for(; it != resultSet.end(); it++) {
+			macrosAsStr << (*it) << wxT(" ");
+		}
+		return macrosAsStr;
+	}
+};
+
+enum CXChildVisitResult MacrosCallback(CXCursor cursor,
+                                       CXCursor parent,
+                                       CXClientData clientData)
+{
+	// Get all macros here...
+	if(cursor.kind == CXCursor_MacroDefinition) {
+
+		// Dont collect macro defined in this file
+		CXSourceLocation loc = clang_getCursorLocation(cursor);
+		CXFile file;
+		unsigned line, col, off;
+		clang_getSpellingLocation(loc, &file, &line, &col, &off);
+
+		CXString strFileName = clang_getFileName(file);
+		wxFileName fn(clang_getCString(strFileName));
+		clang_disposeString(strFileName);
+		MacroClientData *cd = (MacroClientData*)clientData;
+
+		if(cd->filename != fn.GetFullPath()) {
+			CXString displayName = clang_getCursorDisplayName(cursor);
+			cd->macros.insert(clang_getCString(displayName));
+			clang_disposeString(displayName);
+		}
+
+	}
+	return CXChildVisit_Continue;
+}
 
 static void printDiagnosticsToLog(CXTranslationUnit TU)
 {
@@ -85,7 +141,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		                                | CXTranslationUnit_CacheCompletionResults
 		                                | CXTranslationUnit_CXXChainedPCH
 		                                | CXTranslationUnit_PrecompiledPreamble
-		                                | CXTranslationUnit_Incomplete);
+		                                | CXTranslationUnit_Incomplete
+										| CXTranslationUnit_DetailedPreprocessingRecord);
 
 		CL_DEBUG(wxT("Calling clang_parseTranslationUnit... done"));
 		for(int i=0; i<argc; i++) {
@@ -116,13 +173,14 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	ClangThreadReply *reply = new ClangThreadReply;
 	reply->context    = task->GetContext();
 	reply->filterWord = task->GetFilterWord();
+	reply->filename   = task->GetFileName().c_str();
 	reply->results    = NULL;
 
-	if(task->GetContext() != CTX_CachePCH) {
+	if(task->GetContext() != CTX_CachePCH && task->GetContext() != CTX_Macros) {
 #if 0
-		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
-		clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
-		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done"));
+		//CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
+		//clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
+		//CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done"));
 #endif
 		CL_DEBUG(wxT("Calling clang_codeCompleteAt..."));
 		CL_DEBUG(wxT("Location: %s:%u:%u"), task->GetFileName().c_str(), task->GetLine(), task->GetColumn());
@@ -143,10 +201,64 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		if(reply->results && reply->results->NumResults == 0) {
 			printDiagnosticsToLog(TU);
 		}
+		
+	} else if(task->GetContext() == CTX_Macros) {
+		
+		MacroClientData clientData;
+		clientData.filename = reply->filename;
+
+		CL_DEBUG(wxT("Traversing TU..."));
+		CXCursorVisitor visitor = MacrosCallback;
+		clang_visitChildren(clang_getTranslationUnitCursor(TU), visitor, (CXClientData)&clientData);
+
+		clientData.interestingMacros = DoGetUsedMacros(reply->filename);
+	
+		
+		CL_DEBUG(wxT("Traversing TU...done"));
+		CL_DEBUG(wxT("Collected %d Macros"), clientData.macros.size());
+		CL_DEBUG(wxT("Collected %d Interesting Macros"), clientData.interestingMacros.size());
+
+		wxString macros = clientData.intersect();
+		CL_DEBUG(wxT("The following macros will be passed to scintilla: %s"), macros.c_str());
+		reply->macrosAsString = macros.c_str(); // Make sure we create a new copy and not using ref-count
 	}
 
 	eEnd.SetClientData(reply);
 	wxTheApp->AddPendingEvent(eEnd);
+}
+
+std::set<wxString> ClangWorkerThread::DoGetUsedMacros(const wxString &filename)
+{
+	std::set<wxString> pps;
+	static wxRegEx reMacro(wxT("#[ \t]*((if)|(elif)|(ifdef)|(ifndef))[ \t]*"));
+	wxString fileContent;
+	if(!ReadFileWithConversion(filename, fileContent)) {
+		return pps;
+	}
+	
+	CppScannerPtr scanner(new CppScanner());
+	wxArrayString lines = wxStringTokenize(fileContent, wxT("\r\n"));
+	for(size_t i=0; i<lines.GetCount(); i++) {
+		wxString line = lines.Item(i).Trim(false);
+		if(line.StartsWith(wxT("#")) && reMacro.IsValid() && reMacro.Matches(line)) {
+			// Macro line
+			wxString match = reMacro.GetMatch(line, 0);
+			wxString ppLine = line.Mid(match.Len());
+
+			scanner->Reset();
+			scanner->SetText(cstr(ppLine));
+			int type(0);
+			while( (type = scanner->yylex()) != 0 ) {
+				if(type == IDENTIFIER) {
+					wxString intMacro = wxString(scanner->YYText(), wxConvUTF8);
+					CL_DEBUG1(wxT("Found interesting macro: %s"), intMacro.c_str());
+					pps.insert(intMacro);
+				}
+			}
+		}
+	}
+	
+	return pps;
 }
 
 CXTranslationUnit ClangWorkerThread::findEntry(const wxString& filename)

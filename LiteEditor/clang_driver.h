@@ -13,6 +13,12 @@
 class IEditor;
 class ClangDriverCleaner;
 
+struct ClangRequest
+{
+	wxString       filename;
+	WorkingContext context;
+};
+
 class ClangDriver : public wxEvtHandler
 {
 protected:
@@ -25,15 +31,18 @@ protected:
 	int                         m_position;
 	
 protected:
-	void     DoCleanup();
-	wxString DoPrepareCompilationArgs(const wxString &projectName, wxString &projectPath);
-	wxString DoExpandBacktick(const wxString &backtick, const wxString &projectName);
-	void     DoParseCompletionString(CXCompletionString str, wxString &entryName, wxString &signature, wxString &completeString, wxString &returnValue);
+	void                DoCleanup();
+	wxString            DoPrepareCompilationArgs(const wxString &projectName, wxString &projectPath);
+	wxString            DoExpandBacktick(const wxString &backtick, const wxString &projectName);
+	void                DoParseCompletionString(CXCompletionString str, wxString &entryName, wxString &signature, wxString &completeString, wxString &returnValue);
+	void                DoProcessMacros(ClangThreadReply *reply);
+	ClangThreadRequest* DoMakeClangThreadRequest(IEditor* editor, WorkingContext context);
 	
 public:
 	ClangDriver();
 	virtual ~ClangDriver();
 
+	void QueueRequest  (IEditor *editor, WorkingContext context);
 	void CodeCompletion(IEditor *editor);
 	void Abort();
 

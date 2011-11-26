@@ -27,6 +27,7 @@
 #include "evnvarlist.h"
 #include "crawler_include.h"
 #include "renamefiledlg.h"
+#include "code_completion_manager.h"
 #include "clang_code_completion.h"
 #include "macromanager.h"
 #include "fileextmanager.h"
@@ -184,7 +185,6 @@ Manager::Manager ( void )
 	m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
 	Connect(wxEVT_CMD_RESTART_CODELITE,            wxCommandEventHandler(Manager::OnRestart),              NULL, this);
 	Connect(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, wxCommandEventHandler(Manager::OnIncludeFilesScanDone), NULL, this);
-	Connect(wxEVT_PARSE_THREAD_INTERESTING_MACROS, wxCommandEventHandler(Manager::OnInterrestingMacrosFound), NULL, this);
 	Connect(wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED,  wxCommandEventHandler(Manager::OnDbContentCacherLoaded), NULL, this);
 
 	wxTheApp->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
@@ -3423,76 +3423,15 @@ void Manager::GetActiveProjectAndConf(wxString& project, wxString& conf)
 	matrix->GetProjectSelectedConf(workspaceConf, project);
 }
 
-void Manager::UpdatePreprocessorFile(const wxFileName& filename)
+void Manager::UpdatePreprocessorFile( LEditor *editor )
 {
-	// TODO:: Replace this code with calling to Clang for actual macros 
-	// computing
-	if(!TagsManagerST::Get()->IsValidCtagsFile(filename.GetFullPath())) {
-		return;
-	}
+	// Sanity
+	if(!editor) return;
 
 	if((TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS) == 0)
 		return;
 
-	const wxString sFilename = filename.GetFullPath();
-
-	wxArrayString projects;
-	GetProjectList( projects );
-	std::vector<wxFileName> projectFiles;
-	for (size_t i = 0; i < projects.GetCount(); i++) {
-		ProjectPtr proj = GetProject( projects.Item(i) );
-		if ( proj ) {
-			proj->GetFiles(projectFiles, true);
-		}
-	}
-
-	// Create a parsing request
-	ParseRequest* parsingRequest = new ParseRequest();
-	for (size_t i = 0; i < projectFiles.size(); i++) {
-		const wxFileName& projFileName = projectFiles.at(i);
-		// filter any non valid coding file
-		if (!TagsManagerST::Get()->IsValidCtagsFile(projFileName)) {
-			continue;
-		}
-		// TODO : Only keep header files
-		parsingRequest->_workspaceFiles.push_back(projFileName.GetFullPath().mb_str(wxConvUTF8).data());
-	}
-
-	parsingRequest->setFile(sFilename);
-	parsingRequest->setType(ParseRequest::PR_GET_INTERRESTING_MACROS);
-	parsingRequest->setDbFile( TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
-	parsingRequest->_evtHandler = this;
-	ParseThreadST::Get()->Add( parsingRequest );
-}
-
-void Manager::OnInterrestingMacrosFound(wxCommandEvent& e)
-{
-	InterrestingMacrosEventData* pMacros = (InterrestingMacrosEventData*) e.GetClientData();
-	if (!pMacros) {
-		return;
-	}
-	wxString filename = pMacros->GetFileName();
-	wxString macros(pMacros->GetMacros());
-	delete pMacros;
-
-	// Check that the editor is still opened
-	MainBook* book = clMainFrame::Get()->GetMainBook();
-	LEditor* editor = book->FindEditor(filename);
-	if (!editor) {
-		return;
-	}
-
-	if (macros.empty()) {
-		return;
-	}
-
-	macros.Replace(wxT("\n"), wxT(" "));
-	macros.Replace(wxT("\r"), wxT(" "));
-
-	// Scintilla preprocessor management
-	editor->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("1"));
-	editor->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
-	editor->SetKeyWords(4, macros);
+	CodeCompletionManager::Get().ProcessMacros(editor);
 }
 
 BuildConfigPtr Manager::GetCurrentBuildConf()

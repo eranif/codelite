@@ -33,8 +33,21 @@ public:
 	static ClangCodeCompletion* Instance();
 	static void Release();
 
+	/**
+	 * @brief perform codecompletion in the editor
+	 */
 	void CodeComplete(IEditor *editor);
+	/**
+	 * @brief perform word-completin in the editor
+	 */
 	void WordComplete(IEditor *editor);
+	/**
+	 * @brief provide list of macros and pass them to the editor (this is useful for disabling block of text which is not visible due to #if #endif conditions)
+	 */
+	void ListMacros(IEditor *editor);
+	/**
+	 * @brief display calltip for a function
+	 */
 	void Calltip(IEditor *editor);
 	void CancelCodeComplete();
 	void ClearCache();

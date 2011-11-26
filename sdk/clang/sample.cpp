@@ -125,19 +125,34 @@ int parseFile(const std::string& filename, const std::string &modifiedBuffer, CX
 
 static int displayCursorInfo(CXCursor Cursor)
 {
-	CXString String = clang_getCursorDisplayName(Cursor);
-	printf("Display: [%s]\n", clang_getCString(String));
-	clang_disposeString(String);
+	if(Cursor.kind == CXCursor_MacroDefinition || Cursor.kind == CXCursor_MacroExpansion || Cursor.kind == CXCursor_MacroInstantiation)
+	{
+		printf(" ==>\n");
+		if(Cursor.kind == CXCursor_MacroDefinition)
+			printf("CXCursor_MacroDefinition\n");
+		if(Cursor.kind == CXCursor_MacroExpansion)
+			printf("CXCursor_MacroExpansion\n");
+		if(Cursor.kind == CXCursor_MacroInstantiation)
+			printf("CXCursor_MacroInstantiation\n");
 
-	CXSourceLocation loc = clang_getCursorLocation(Cursor);
-	CXFile file;
-	unsigned line, col, off;
-	clang_getSpellingLocation(loc, &file, &line, &col, &off);
+		CXString String = clang_getCursorDisplayName(Cursor);
+		printf("Display: [%s]\n", clang_getCString(String));
+		clang_disposeString(String);
 
-	CXString strFileName = clang_getFileName(file);
-	printf("Location: %s, %u:%u\n", clang_getCString(strFileName), line, col);
-	clang_disposeString(strFileName);
+		CXSourceLocation loc = clang_getCursorLocation(Cursor);
+		CXFile file;
+		unsigned line, col, off;
+		clang_getSpellingLocation(loc, &file, &line, &col, &off);
 
+		CXString strFileName = clang_getFileName(file);
+		printf("Location: %s, %u:%u\n", clang_getCString(strFileName), line, col);
+		clang_disposeString(strFileName);
+	} else {
+		//----------------
+		CXString String = clang_getCursorDisplayName(Cursor);
+		printf(" ==> Display: [%s]\n", clang_getCString(String));
+		clang_disposeString(String);
+	}
 	return 0;
 }
 
@@ -149,33 +164,38 @@ enum CXChildVisitResult VisitorCallback(CXCursor Cursor,
 	return CXChildVisit_Continue;
 }
 
-//void findFunction()
-//{
-//
-//	CXIndex index = clang_createIndex(0, 0);
-//	CXTranslationUnit unit = clang_parseTranslationUnit(index,
-//	                         "../test-sources/file.cpp",
-//	                         cmdLineArgs,
-//	                         numArgs,
-//	                         NULL,
-//	                         0,
-//	                         CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults | CXTranslationUnit_CXXPrecompiledPreamble | CXTranslationUnit_CXXChainedPCH);
-//	/*
-//	CXCursorVisitor visitor = VisitorCallback;
-//	clang_visitChildren(clang_getTranslationUnitCursor(unit), visitor, NULL);
-//	 */
-//	CXFile file;
-//	CXCursor cursor;
-//	CXSourceLocation loc;
-//	file   = clang_getFile    (unit, "../test-sources/file.cpp");
-//	loc    = clang_getLocation(unit, file, 5, 8);
-//	cursor = clang_getCursor  (unit, loc);
-//
-//	if(cursor.kind == CXCursor_MemberRefExpr || cursor.kind == CXCursor_TypeRef) {
-//		CXCursor refCur = clang_getCursorReferenced(cursor);
-//		displayCursorInfo(refCur);
-//	}
-//}
+void findFunction()
+{
+
+	CXIndex index = clang_createIndex(0, 0);
+	CXTranslationUnit unit = clang_parseTranslationUnit(index,
+	                         "../test-sources/file.cpp",
+	                         cmdLineArgs,
+	                         numArgs,
+	                         NULL,
+	                         0,
+	                         CXTranslationUnit_PrecompiledPreamble
+							 | CXTranslationUnit_CacheCompletionResults
+							 | CXTranslationUnit_CXXPrecompiledPreamble
+							 | CXTranslationUnit_CXXChainedPCH
+							 | CXTranslationUnit_DetailedPreprocessingRecord);
+
+	CXCursorVisitor visitor = VisitorCallback;
+	clang_visitChildren(clang_getTranslationUnitCursor(unit), visitor, NULL);
+	/*
+	CXFile file;
+	CXCursor cursor;
+	CXSourceLocation loc;
+	file   = clang_getFile    (unit, "../test-sources/file.cpp");
+	loc    = clang_getLocation(unit, file, 5, 8);
+	cursor = clang_getCursor  (unit, loc);
+
+	if(cursor.kind == CXCursor_MemberRefExpr || cursor.kind == CXCursor_TypeRef) {
+		CXCursor refCur = clang_getCursorReferenced(cursor);
+		displayCursorInfo(refCur);
+	}
+	*/
+}
 
 int main(int argc, char **argv)
 {
@@ -187,13 +207,13 @@ int main(int argc, char **argv)
 	CXUnsavedFile file = {filename.c_str(), strBuffer.c_str(), strBuffer.length()};
 	CXIndex index = clang_createIndex(0, 0);
 
+	findFunction();
 	CXTranslationUnit unit = 0;
-
-
+/*
 	//for(size_t i=0; i<10; i++) {
 	if(parseFile(filename, partBuffer, index, &unit) == 0) {
 
-		//findFunction();
+		//
 		CXCodeCompleteResults* results;
 		for(size_t i=0; i<10; i++) {
 		// Note that column can not be <= 0
@@ -242,6 +262,6 @@ int main(int argc, char **argv)
 
 	clang_disposeTranslationUnit(unit);
 	clang_disposeIndex(index);
-
+*/
 	return 0;
 }

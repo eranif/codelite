@@ -7,6 +7,7 @@
 #include "pluginmanager.h"
 #include "macromanager.h"
 #include "includepathlocator.h"
+#include "frame.h"
 #include "macromanager.h"
 #include "environmentconfig.h"
 #include "tags_options_data.h"
@@ -20,6 +21,7 @@
 #include "localworkspace.h"
 #include "fileextmanager.h"
 #include "globals.h"
+#include <set>
 
 static bool wxIsWhitespace(wxChar ch)
 {
@@ -50,36 +52,21 @@ ClangDriver::~ClangDriver()
 	wxTheApp->Disconnect(wxEVT_CLANG_PCH_CACHE_ENDED, wxCommandEventHandler(ClangDriver::OnPrepareTUEnded), NULL, this);
 }
 
-void ClangDriver::CodeCompletion(IEditor* editor)
+ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, WorkingContext context)
 {
-	if(m_isBusy)
-		return;
-
-	CL_DEBUG(wxT(" ==========> ClangDriver::CodeCompletion() started <=============="));
-
-	if(!editor) {
-		CL_WARNING(wxT("ClangDriver::CodeCompletion() called with NULL editor!"));
-		return;
-	}
-
-	m_activeEditor = editor;
-	wxString projectPath;
-	m_isBusy = true;
-
-
-	/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
 	// Prepare all the buffers required by the thread
-	wxString fileName = m_activeEditor->GetFileName().GetFullPath();
-	
-	wxString currentBuffer = m_activeEditor->GetTextRange(0, m_activeEditor->GetLength());
+	wxString fileName = editor->GetFileName().GetFullPath();
+
+	wxString currentBuffer = editor->GetTextRange(0, editor->GetLength());
 	wxString filterWord;
 
 	// Move backward until we found our -> or :: or .
-	m_position = m_activeEditor->GetCurrentPosition();
-	wxString tmpBuffer = m_activeEditor->GetTextRange(0, m_activeEditor->GetCurrentPosition());
+	m_position = editor->GetCurrentPosition();
+	wxString tmpBuffer = editor->GetTextRange(0, editor->GetCurrentPosition());
 	while ( !tmpBuffer.IsEmpty() ) {
 		// Context word complete and we found a whitespace - break the search
-		if(GetContext() == CTX_WordCompletion && wxIsWhitespace(tmpBuffer.Last())) {
+		if(context == CTX_WordCompletion && wxIsWhitespace(tmpBuffer.Last())) {
 			break;
 		}
 
@@ -93,36 +80,70 @@ void ClangDriver::CodeCompletion(IEditor* editor)
 	}
 
 	// Get the current line's starting pos
-	int lineStartPos = m_activeEditor->PosFromLine( m_activeEditor->GetCurrentLine() );
-	int column       = m_activeEditor->GetCurrentPosition() - lineStartPos  + 1;
-	int lineNumber   = m_activeEditor->GetCurrentLine() + 1;
+	int lineStartPos = editor->PosFromLine( editor->GetCurrentLine() );
+	int column       = editor->GetCurrentPosition() - lineStartPos  + 1;
+	int lineNumber   = editor->GetCurrentLine() + 1;
 	column -= (int) filterWord.Length();
 
 	// Column can not be lower than 1
-	if(GetContext() != CTX_CachePCH && column < 1) {
-		CL_DEBUG(wxT("Clang: column can not be lower than 1"));
-		m_isBusy = false;
-		return;
+	switch(context) {
+	case CTX_Calltip:
+	case CTX_WordCompletion:
+	case CTX_CodeCompletion:
+		if(column < 1) {
+			CL_DEBUG(wxT("Clang: column can not be lower than 1"));
+			m_isBusy = false;
+			return NULL;
+		}
+		break;
+	default:
+		break;
 	}
-	
-#if 0
-	ProjectPtr proj = ManagerST::Get()->GetProject(m_activeEditor->GetProjectName());
-	if(proj) {
-		wxFileName fn(fileName);
-		fn.MakeRelativeTo(proj->GetFileName().GetPath());
-		fileName = fn.GetFullPath();
-	}
-#endif
 
+//#if 0
+//	ProjectPtr proj = ManagerST::Get()->GetProject(editor->GetProjectName());
+//	if(proj) {
+//		wxFileName fn(fileName);
+//		fn.MakeRelativeTo(proj->GetFileName().GetPath());
+//		fileName = fn.GetFullPath();
+//	}
+//#endif
+
+	wxString projectPath;
 	ClangThreadRequest* request = new ClangThreadRequest(m_index,
 														 fileName,
 														 currentBuffer,
 														 DoPrepareCompilationArgs(editor->GetProjectName(), projectPath),
 														 filterWord,
-														 GetContext(),
+														 context,
 														 lineNumber,
 														 column);
+	return request;
+}
 
+void ClangDriver::CodeCompletion(IEditor* editor)
+{
+	if(m_isBusy)
+		return;
+
+	CL_DEBUG(wxT(" ==========> ClangDriver::CodeCompletion() started <=============="));
+
+	if(!editor) {
+		CL_WARNING(wxT("ClangDriver::CodeCompletion() called with NULL editor!"));
+		return;
+	}
+
+	m_activeEditor = editor;
+	m_isBusy       = true;
+	ClangThreadRequest * request = DoMakeClangThreadRequest(m_activeEditor, GetContext());
+
+	// Failed to prepare request?
+	if(request == NULL) {
+		m_isBusy      = false;
+		m_activeEditor = NULL;
+		return;
+	}
+	
 	/////////////////////////////////////////////////////////////////
 	// Put a request on the parsing thread
 	//
@@ -402,16 +423,32 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 	// Our thread is done
 	m_isBusy = false;
 
-	if(GetContext() == CTX_CachePCH)
-		return;
-
-	if(!m_activeEditor)
-		return;
-
+	// Sanity
 	ClangThreadReply* reply = (ClangThreadReply*) e.GetClientData();
 	if(!reply)
 		return;
+
+	// Adjust the activeEditor to fit the filename
+	IEditor *editor = clMainFrame::Get()->GetMainBook()->FindEditor(reply->filename);
+	if(!editor)
+		return;
+
+	m_activeEditor = editor;
 	
+	// What should we do with the TU?
+	switch(reply->context) {
+	case CTX_CachePCH:
+		// Nothing more to be done
+		return;
+	case CTX_Macros:
+		// Prepare list of macros
+		DoProcessMacros(reply);
+		delete reply;
+		return;
+	default:
+		break;
+	}
+
 	if(!reply->results) {
 		delete reply;
 		return;
@@ -533,4 +570,31 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 	}
 }
 
+void ClangDriver::DoProcessMacros(ClangThreadReply *reply)
+{
+	// Scintilla preprocessor management
+	m_activeEditor->GetScintilla()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("1"));
+	m_activeEditor->GetScintilla()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
+	m_activeEditor->GetScintilla()->SetKeyWords(4, reply->macrosAsString);
+	m_activeEditor->GetScintilla()->Colourise(0, wxSCI_INVALID_POSITION);
+}
+
+void ClangDriver::QueueRequest(IEditor *editor, WorkingContext context)
+{
+	if(!editor)
+		return;
+
+	switch(context) {
+	case CTX_CachePCH:
+	case CTX_Macros:
+		break;
+	default:
+		CL_DEBUG(wxT("Context %d id not allowed to be queued"), (int)context);
+		return;
+	}
+
+	m_pchMakerThread.Add( DoMakeClangThreadRequest(editor, context) );
+}
+
 #endif // HAS_LIBCLANG
+

@@ -17,7 +17,13 @@ CCColourisePage::CCColourisePage( wxWindow* parent, const TagsOptionsData &data 
 	m_checkBoxEnumerator->SetValue       (data.GetCcColourFlags() & CC_COLOUR_ENUMERATOR);
 	m_checkBoxMember->SetValue           (data.GetCcColourFlags() & CC_COLOUR_MEMBER);
 	m_checkBoxVariable->SetValue         (data.GetCcColourFlags() & CC_COLOUR_VARIABLE);
+
+#if HAS_LIBCLANG
 	m_checkBoxColourMacroBlocks->SetValue(data.GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS);
+#else
+	m_checkBoxColourMacroBlocks->SetValue(false);
+	m_checkBoxColourMacroBlocks->Enable(false);
+#endif
 	m_spinCtrlMaxItemToColour->SetValue  (data.GetMaxItemToColour() );
 }
 

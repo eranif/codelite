@@ -99,9 +99,10 @@ static void printCompletionDiagnostics(CXCodeCompleteResults *res)
 		CXDiagnostic diag = clang_codeCompleteGetDiagnostic(res, i);
 		CXString diagStr = clang_getDiagnosticSpelling(diag);
 		wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
-		if(!wxDiagString.Contains(wxT("'dllimport' attribute"))) {
-			CL_DEBUG(wxT("Completion diagnostic: %s"), wxDiagString.c_str());
-		}
+
+
+
+		CL_DEBUG(wxT("Completion diagnostic [%d]: %s"), clang_getDiagnosticSeverity(diag), wxDiagString.c_str());
 		clang_disposeString(diagStr);
 		clang_disposeDiagnostic(diag);
 	}
@@ -223,35 +224,41 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		                                      clang_defaultCodeCompleteOptions());
 
 		CL_DEBUG(wxT("Calling clang_codeCompleteAt... done"));
-		bool completionError(false);
+		wxString displayTip;
+		bool hasErrors(false);
 		if(reply->results) {
+			
 			unsigned errorCount = clang_codeCompleteGetNumDiagnostics(reply->results);
-			completionError = errorCount > 0;
+			// Collect all errors / fatal errors and report them back to user
+			for(unsigned i=0; i<errorCount; i++) {
+				CXDiagnostic         diag     = clang_codeCompleteGetDiagnostic(reply->results, i);
+				CXDiagnosticSeverity severity = clang_getDiagnosticSeverity(diag);
+				if(!hasErrors) {
+					hasErrors = (severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal);
+				}
+				
+				if(severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal || severity == CXDiagnostic_Note) {
+					CXString diagStr      = clang_getDiagnosticSpelling(diag);
+					wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
+					displayTip << wxDiagString.c_str() << wxT("\n");
+					clang_disposeString(diagStr);
+				}
+				clang_disposeDiagnostic(diag);
+			}
 
 			CL_DEBUG(wxT("Found %u matches"), reply->results->NumResults);
 			printCompletionDiagnostics(reply->results);
 		}
 		
-		if(completionError && reply->results) {
+		if(!displayTip.IsEmpty() && hasErrors) {
+			
 			// Send back the error messages
-			const unsigned diagCount = clang_codeCompleteGetNumDiagnostics(reply->results);
-			reply->errorMessage << wxT("Code Completion Error\n@@LINE@@\n");
-			for(unsigned i=0; i<diagCount; i++) {
-				CXDiagnostic diag = clang_codeCompleteGetDiagnostic(reply->results, i);
-				CXString diagStr = clang_getDiagnosticSpelling(diag);
-				wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
-				reply->errorMessage << wxDiagString.c_str() << wxT("\n");
-				clang_disposeString(diagStr);
-				clang_disposeDiagnostic(diag);
-			}
-
+			reply->errorMessage << wxT("Code Completion Error\n@@LINE@@\n") << displayTip;
+			
 			// Free the results
 			clang_disposeCodeCompleteResults(reply->results);
 			reply->results = NULL;
-			
-			if(reply->errorMessage.IsEmpty() == false) {
-				reply->errorMessage.RemoveLast();
-			}
+			reply->errorMessage.RemoveLast();
 		}
 
 	} else if(task->GetContext() == CTX_Macros) {

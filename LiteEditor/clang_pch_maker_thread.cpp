@@ -57,7 +57,7 @@ enum CXChildVisitResult MacrosCallback(CXCursor cursor,
 		CXSourceLocation loc = clang_getCursorLocation(cursor);
 		CXFile file;
 		unsigned line, col, off;
-		
+
 		clang_getSpellingLocation(loc, &file, &line, &col, &off);
 		CXString strFileName = clang_getFileName(file);
 		wxFileName fn(wxString(clang_getCString(strFileName), wxConvUTF8));
@@ -91,6 +91,22 @@ static void printDiagnosticsToLog(CXTranslationUnit TU)
 	}
 }
 
+static void printCompletionDiagnostics(CXCodeCompleteResults *res)
+{
+	//// Report diagnostics to the log file
+	const unsigned diagCount = clang_codeCompleteGetNumDiagnostics(res);
+	for(unsigned i=0; i<diagCount; i++) {
+		CXDiagnostic diag = clang_codeCompleteGetDiagnostic(res, i);
+		CXString diagStr = clang_getDiagnosticSpelling(diag);
+		wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
+		if(!wxDiagString.Contains(wxT("'dllimport' attribute"))) {
+			CL_DEBUG(wxT("Completion diagnostic: %s"), wxDiagString.c_str());
+		}
+		clang_disposeString(diagStr);
+		clang_disposeDiagnostic(diag);
+	}
+}
+
 ClangWorkerThread::ClangWorkerThread()
 {
 }
@@ -108,11 +124,11 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		wxTheApp->AddPendingEvent(eEnd);
 		return;
 	}
-	
+
 	// Send start event
 	wxCommandEvent e(wxEVT_CLANG_PCH_CACHE_STARTED);
 	wxTheApp->AddPendingEvent(e);
-	
+
 
 	FileExtManager::FileType type = FileExtManager::GetType(task->GetFileName());
 	bool isSource = (type == FileExtManager::TypeSourceC || type == FileExtManager::TypeSourceCpp);
@@ -122,7 +138,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
 	CXUnsavedFile unsavedFile = { c_filename.c_str(), c_dirtyBuffer.c_str(), c_dirtyBuffer.length() };
 	CXTranslationUnit TU = findEntry(task->GetFileName());
-	
+
 	bool reparseRequired = true;
 	if(!TU) {
 		int argc(0);
@@ -143,7 +159,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		                                | CXTranslationUnit_CXXChainedPCH
 		                                | CXTranslationUnit_PrecompiledPreamble
 		                                | CXTranslationUnit_Incomplete
-										| CXTranslationUnit_DetailedPreprocessingRecord);
+		                                | CXTranslationUnit_DetailedPreprocessingRecord);
 
 		CL_DEBUG(wxT("Calling clang_parseTranslationUnit... done"));
 		for(int i=0; i<argc; i++) {
@@ -166,19 +182,19 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 			return;
 		}
 	}
-	
+
 	// Construct a cache-returner class
 	// which makes sure that the TU is cached
 	// when we leave the current scope
 	CacheReturner cr(this, task->GetFileName(), TU);
-	
+
 	if(reparseRequired && task->GetContext() == ::CTX_ReparseTU) {
 		// We need to reparse the TU
 		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... [CTX_ReparseTU]"));
 		clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
 		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done [CTX_ReparseTU]"));
 	}
-	
+
 	// Prepare the 'End' event
 	wxCommandEvent eEnd(wxEVT_CLANG_PCH_CACHE_ENDED);
 	ClangThreadReply *reply = new ClangThreadReply;
@@ -186,11 +202,10 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	reply->filterWord = task->GetFilterWord();
 	reply->filename   = task->GetFileName().c_str();
 	reply->results    = NULL;
-	
+
 	if( task->GetContext() == CTX_CodeCompletion ||
-		task->GetContext() == CTX_WordCompletion ||
-		task->GetContext() == CTX_Calltip) 
-	{
+	    task->GetContext() == CTX_WordCompletion ||
+	    task->GetContext() == CTX_Calltip) {
 #if 0
 		//CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
 		//clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
@@ -208,16 +223,39 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		                                      clang_defaultCodeCompleteOptions());
 
 		CL_DEBUG(wxT("Calling clang_codeCompleteAt... done"));
+		bool completionError(false);
 		if(reply->results) {
-			CL_DEBUG(wxT("Found %u matches"), reply->results->NumResults);
+			unsigned errorCount = clang_codeCompleteGetNumDiagnostics(reply->results);
+			completionError = errorCount > 0;
 
-		}
-		if(reply->results && reply->results->NumResults == 0) {
-			printDiagnosticsToLog(TU);
+			CL_DEBUG(wxT("Found %u matches"), reply->results->NumResults);
+			printCompletionDiagnostics(reply->results);
 		}
 		
+		if(completionError && reply->results) {
+			// Send back the error messages
+			const unsigned diagCount = clang_codeCompleteGetNumDiagnostics(reply->results);
+			reply->errorMessage << wxT("Code Completion Error\n@@LINE@@\n");
+			for(unsigned i=0; i<diagCount; i++) {
+				CXDiagnostic diag = clang_codeCompleteGetDiagnostic(reply->results, i);
+				CXString diagStr = clang_getDiagnosticSpelling(diag);
+				wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
+				reply->errorMessage << wxDiagString.c_str() << wxT("\n");
+				clang_disposeString(diagStr);
+				clang_disposeDiagnostic(diag);
+			}
+
+			// Free the results
+			clang_disposeCodeCompleteResults(reply->results);
+			reply->results = NULL;
+			
+			if(reply->errorMessage.IsEmpty() == false) {
+				reply->errorMessage.RemoveLast();
+			}
+		}
+
 	} else if(task->GetContext() == CTX_Macros) {
-		
+
 		MacroClientData clientData;
 		clientData.filename = reply->filename;
 
@@ -226,8 +264,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		clang_visitChildren(clang_getTranslationUnitCursor(TU), visitor, (CXClientData)&clientData);
 
 		clientData.interestingMacros = DoGetUsedMacros(reply->filename);
-	
-		
+
+
 		CL_DEBUG(wxT("Traversing TU...done"));
 		CL_DEBUG(wxT("Collected %u Macros"), (unsigned int)clientData.macros.size());
 		CL_DEBUG(wxT("Collected %u Interesting Macros"), (unsigned int)clientData.interestingMacros.size());
@@ -249,7 +287,7 @@ std::set<wxString> ClangWorkerThread::DoGetUsedMacros(const wxString &filename)
 	if(!ReadFileWithConversion(filename, fileContent)) {
 		return pps;
 	}
-	
+
 	CppScannerPtr scanner(new CppScanner());
 	wxArrayString lines = wxStringTokenize(fileContent, wxT("\r\n"));
 	for(size_t i=0; i<lines.GetCount(); i++) {
@@ -271,7 +309,7 @@ std::set<wxString> ClangWorkerThread::DoGetUsedMacros(const wxString &filename)
 			}
 		}
 	}
-	
+
 	return pps;
 }
 
@@ -309,6 +347,7 @@ char** ClangWorkerThread::MakeCommandLine(const wxString& command, int& argc, bo
 		tokens.Add(wxT("-x"));
 		tokens.Add(wxT("c++-header"));
 	}
+	tokens.Add(wxT("-w"));
 	tokens.Add(wxT("-ferror-limit=1000"));
 	argc = tokens.GetCount();
 	char** argv = new char*[argc];

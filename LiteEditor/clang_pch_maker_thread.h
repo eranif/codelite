@@ -27,6 +27,7 @@ struct ClangThreadReply
 	wxString               filename;
 	wxString               macrosAsString;
 	CXCodeCompleteResults *results;
+	wxString               errorMessage;
 };
 
 class ClangThreadRequest : public ThreadRequest

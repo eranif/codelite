@@ -457,6 +457,10 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 	}
 
 	if(!reply->results) {
+		if(reply->errorMessage.IsEmpty() == false) {
+			m_activeEditor->GetScintilla()->CallTipCancel();
+			m_activeEditor->GetScintilla()->CallTipShow( m_activeEditor->GetCurrentPosition(), reply->errorMessage );
+		}
 		return;
 	}
 

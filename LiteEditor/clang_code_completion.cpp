@@ -153,7 +153,7 @@ void ClangCodeCompletion::OnFileSaved(wxCommandEvent& e)
 {
 	e.Skip();
 	
-	if( ! (TagsManagerST::Get()->GetCtagsOptions().GetClangOptions() & ::CC_DISABLE_AUTO_PARSING) ) {
+	if( ! (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & ::CC_DISABLE_AUTO_PARSING) ) {
 		CL_DEBUG(wxT("ClangCodeCompletion::OnFileSaved: Auto-parsing of saved files is disabled"));
 		return;
 	}

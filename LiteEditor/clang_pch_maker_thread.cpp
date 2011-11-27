@@ -122,7 +122,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
 	CXUnsavedFile unsavedFile = { c_filename.c_str(), c_dirtyBuffer.c_str(), c_dirtyBuffer.length() };
 	CXTranslationUnit TU = findEntry(task->GetFileName());
-
+	
+	bool reparseRequired = true;
 	if(!TU) {
 		int argc(0);
 		char **argv = MakeCommandLine(task->GetCompilationArgs(), argc, !isSource);
@@ -151,7 +152,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		delete [] argv;
 
 		if(TU) {
-
+			reparseRequired = false;
 			CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
 			clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
 			CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done"));
@@ -171,14 +172,25 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	// when we leave the current scope
 	CacheReturner cr(this, task->GetFileName(), TU);
 	
+	if(reparseRequired && task->GetContext() == ::CTX_ReparseTU) {
+		// We need to reparse the TU
+		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... [CTX_ReparseTU]"));
+		clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
+		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done [CTX_ReparseTU]"));
+	}
+	
+	// Prepare the 'End' event
 	wxCommandEvent eEnd(wxEVT_CLANG_PCH_CACHE_ENDED);
 	ClangThreadReply *reply = new ClangThreadReply;
 	reply->context    = task->GetContext();
 	reply->filterWord = task->GetFilterWord();
 	reply->filename   = task->GetFileName().c_str();
 	reply->results    = NULL;
-
-	if(task->GetContext() != CTX_CachePCH && task->GetContext() != CTX_Macros) {
+	
+	if( task->GetContext() == CTX_CodeCompletion ||
+		task->GetContext() == CTX_WordCompletion ||
+		task->GetContext() == CTX_Calltip) 
+	{
 #if 0
 		//CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
 		//clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));

@@ -16,7 +16,8 @@ enum WorkingContext {
     CTX_Calltip,
     CTX_CachePCH,
     CTX_WordCompletion,
-	CTX_Macros
+	CTX_Macros,
+	CTX_ReparseTU
 };
 
 struct ClangThreadReply

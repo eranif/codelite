@@ -158,7 +158,7 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 				int ww = rcClient.Width();
 				rcClient.left  = x;
 				rcClient.right = rcClient.left + ww;
-				surface->PenColour(colourDivider);
+				surface->PenColour(colourLight.allocated);
 				surface->MoveTo(0, rcClient.top);
 				surface->LineTo(rcClient.right, rcClient.top);
 				xEnd = rcClient.right;
@@ -293,17 +293,15 @@ void CallTip::PaintCT(Surface *surfaceWindow) {
 	offsetMain = insetX;    // initial alignment assuming no arrows
 	PaintContents(surfaceWindow, true);
 
-#ifndef __APPLE__
 	// OSX doesn't put borders on "help tags"
 	// Draw a raised border around the edges of the window
 	surfaceWindow->MoveTo(0, rcClientSize.bottom - 1);
-	surfaceWindow->PenColour(colourShade.allocated);
+	surfaceWindow->PenColour(colourLight.allocated);
 	surfaceWindow->LineTo(rcClientSize.right - 1, rcClientSize.bottom - 1);
 	surfaceWindow->LineTo(rcClientSize.right - 1, 0);
 	surfaceWindow->PenColour(colourLight.allocated);
 	surfaceWindow->LineTo(0, 0);
 	surfaceWindow->LineTo(0, rcClientSize.bottom - 1);
-#endif
 }
 
 void CallTip::MouseClick(Point pt) {

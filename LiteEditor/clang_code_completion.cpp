@@ -27,12 +27,17 @@ ClangCodeCompletion::ClangCodeCompletion()
 	: m_allEditorsAreClosing(false)
 {
 	wxTheApp->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(ClangCodeCompletion::OnFileLoaded),        NULL, this);
+	wxTheApp->Connect(wxEVT_FILE_SAVED,            wxCommandEventHandler(ClangCodeCompletion::OnFileSaved),         NULL, this);
 	wxTheApp->Connect(wxEVT_ALL_EDITORS_CLOSING,   wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
 	wxTheApp->Connect(wxEVT_ALL_EDITORS_CLOSED,    wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed ), NULL, this);
 }
 
 ClangCodeCompletion::~ClangCodeCompletion()
 {
+	wxTheApp->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(ClangCodeCompletion::OnFileLoaded),        NULL, this);
+	wxTheApp->Disconnect(wxEVT_FILE_SAVED,            wxCommandEventHandler(ClangCodeCompletion::OnFileSaved),         NULL, this);
+	wxTheApp->Disconnect(wxEVT_ALL_EDITORS_CLOSING,   wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
+	wxTheApp->Disconnect(wxEVT_ALL_EDITORS_CLOSED,    wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed ), NULL, this);
 }
 
 ClangCodeCompletion* ClangCodeCompletion::Instance()
@@ -142,6 +147,22 @@ void ClangCodeCompletion::WordComplete(IEditor* editor)
 void ClangCodeCompletion::ListMacros(IEditor* editor)
 {
 	m_clang.QueueRequest(editor, CTX_Macros);
+}
+
+void ClangCodeCompletion::OnFileSaved(wxCommandEvent& e)
+{
+	e.Skip();
+	
+	if( ! (TagsManagerST::Get()->GetCtagsOptions().GetClangOptions() & ::CC_DISABLE_AUTO_PARSING) ) {
+		CL_DEBUG(wxT("ClangCodeCompletion::OnFileSaved: Auto-parsing of saved files is disabled"));
+		return;
+	}
+	
+	// Incase a file has been saved, we need to reparse its translation unit
+	wxString *filename = (wxString*)e.GetClientData();
+	if(filename) {
+		m_clang.ReparseFile(*filename);
+	}
 }
 
 #endif // HAS_LIBCLANG

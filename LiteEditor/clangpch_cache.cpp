@@ -69,7 +69,8 @@ void ClangTUCache::Clear()
 	CL_DEBUG(wxT("clang PCH cache cleared!"));
 	std::map<wxString, ClangCacheEntry>::iterator it = m_cache.begin();
 	for(; it != m_cache.end(); it++) {
-		clang_disposeTranslationUnit(it->second.TU);
+		if(it->second.TU)
+			clang_disposeTranslationUnit(it->second.TU);
 	}
 	m_cache.clear();
 }

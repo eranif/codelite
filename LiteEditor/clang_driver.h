@@ -43,6 +43,7 @@ public:
 	virtual ~ClangDriver();
 
 	void QueueRequest  (IEditor *editor, WorkingContext context);
+	void ReparseFile(const wxString &filename);
 	void CodeCompletion(IEditor *editor);
 	void Abort();
 

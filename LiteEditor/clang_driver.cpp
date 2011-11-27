@@ -9,6 +9,7 @@
 #include "includepathlocator.h"
 #include "frame.h"
 #include "macromanager.h"
+#include <memory>
 #include "environmentconfig.h"
 #include "tags_options_data.h"
 #include "ctags_manager.h"
@@ -54,7 +55,7 @@ ClangDriver::~ClangDriver()
 
 ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, WorkingContext context)
 {
-/////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////
 	// Prepare all the buffers required by the thread
 	wxString fileName = editor->GetFileName().GetFullPath();
 
@@ -104,16 +105,7 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 	default:
 		break;
 	}
-
-//#if 0
-//	ProjectPtr proj = ManagerST::Get()->GetProject(editor->GetProjectName());
-//	if(proj) {
-//		wxFileName fn(fileName);
-//		fn.MakeRelativeTo(proj->GetFileName().GetPath());
-//		fileName = fn.GetFullPath();
-//	}
-//#endif
-
+	
 	wxString projectPath;
 	ClangThreadRequest* request = new ClangThreadRequest(m_index,
 														 fileName,
@@ -435,7 +427,10 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 	if(!reply)
 		return;
 	
-	if(reply->context == CTX_CachePCH) {
+	// Make sure we delete the reply at the end...
+	std::auto_ptr<ClangThreadReply> ap(reply);
+	
+	if(reply->context == ::CTX_CachePCH || reply->context == ::CTX_ReparseTU) {
 		return; // Nothing more to be done
 	}
 	
@@ -456,21 +451,18 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 	case CTX_Macros:
 		// Prepare list of macros
 		DoProcessMacros(reply);
-		delete reply;
 		return;
 	default:
 		break;
 	}
 
 	if(!reply->results) {
-		delete reply;
 		return;
 	}
 
 	if(m_activeEditor->GetCurrentPosition() < m_position) {
 		CL_DEBUG(wxT("Current position is lower than the starting position, ignoring completion"));
 		clang_disposeCodeCompleteResults(reply->results);
-		delete reply;
 		return;
 	}
 
@@ -482,7 +474,6 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 			// User typed some non valid identifier char, cancel code completion
 			CL_DEBUG(wxT("User typed: %s since the completion thread started working until it ended, ignoring completion"), typedString.c_str());
 			clang_disposeCodeCompleteResults(reply->results);
-			delete reply;
 			return;
 		}
 	}
@@ -569,7 +560,6 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 	}
 
 	clang_disposeCodeCompleteResults(reply->results);
-	delete reply;
 	
 	CL_DEBUG(wxT("Building completion results... done "));
 	if(GetContext() == CTX_Calltip) {
@@ -609,5 +599,11 @@ void ClangDriver::QueueRequest(IEditor *editor, WorkingContext context)
 	m_pchMakerThread.Add( DoMakeClangThreadRequest(editor, context) );
 }
 
-#endif // HAS_LIBCLANG
+void ClangDriver::ReparseFile(const wxString& filename)
+{
+	ClangThreadRequest *req = new ClangThreadRequest(m_index, filename, wxT(""), wxT(""), wxT(""), ::CTX_ReparseTU, 0, 0);
+	m_pchMakerThread.Add( req );
+	CL_DEBUG(wxT("Queued request to re-parse file: %s"), filename.c_str());
+}
 
+#endif // HAS_LIBCLANG

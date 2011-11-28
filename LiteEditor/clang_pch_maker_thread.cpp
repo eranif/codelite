@@ -19,6 +19,8 @@
 const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED = XRCID("clang_pch_cache_started");
 const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   = XRCID("clang_pch_cache_ended");
 
+extern const wxEventType wxEVT_UPDATE_STATUS_BAR;
+
 ////////////////////////////////////////////////////////////////////////////
 // Internal class used for traversing the macro found in a translation UNIT
 
@@ -142,6 +144,9 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
 	bool reparseRequired = true;
 	if(!TU) {
+		
+		DoSetStatusMsg(wxString::Format(wxT("Parsing file %s..."), task->GetFileName().c_str()));
+		
 		int argc(0);
 		char **argv = MakeCommandLine(task->GetCompilationArgs(), argc, !isSource);
 
@@ -176,6 +181,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
 		} else {
 
+			DoSetStatusMsg(wxT("Ready"));
+
 			CL_DEBUG(wxT("Failed to parse Translation UNIT..."));
 			wxCommandEvent eEnd(wxEVT_CLANG_PCH_CACHE_ENDED);
 			eEnd.SetClientData(NULL);
@@ -184,18 +191,23 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		}
 	}
 
+	
 	// Construct a cache-returner class
 	// which makes sure that the TU is cached
 	// when we leave the current scope
 	CacheReturner cr(this, task->GetFileName(), TU);
 
 	if(reparseRequired && task->GetContext() == ::CTX_ReparseTU) {
+		DoSetStatusMsg(wxString::Format(wxT("Re-Parsing file %s..."), task->GetFileName().c_str()));
+
 		// We need to reparse the TU
 		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... [CTX_ReparseTU]"));
 		clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
 		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done [CTX_ReparseTU]"));
 	}
 
+	DoSetStatusMsg(wxT("Ready"));
+	
 	// Prepare the 'End' event
 	wxCommandEvent eEnd(wxEVT_CLANG_PCH_CACHE_ENDED);
 	ClangThreadReply *reply = new ClangThreadReply;
@@ -227,7 +239,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		wxString displayTip;
 		bool hasErrors(false);
 		if(reply->results) {
-			
+			unsigned maxErrorToDisplay = 10;
+			std::set<wxString> errorMessages;
 			unsigned errorCount = clang_codeCompleteGetNumDiagnostics(reply->results);
 			// Collect all errors / fatal errors and report them back to user
 			for(unsigned i=0; i<errorCount; i++) {
@@ -240,7 +253,14 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 				if(severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal || severity == CXDiagnostic_Note) {
 					CXString diagStr      = clang_getDiagnosticSpelling(diag);
 					wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
-					displayTip << wxDiagString.c_str() << wxT("\n");
+					
+					// Collect up to 10 error messages
+					// and dont collect the same error twice
+					if(errorMessages.find(wxDiagString) == errorMessages.end() && errorMessages.size() <= maxErrorToDisplay) {
+						errorMessages.insert(wxDiagString);
+						displayTip << wxDiagString.c_str() << wxT("\n");
+					}
+					
 					clang_disposeString(diagStr);
 				}
 				clang_disposeDiagnostic(diag);
@@ -366,6 +386,15 @@ char** ClangWorkerThread::MakeCommandLine(const wxString& command, int& argc, bo
 		argv[i] = strdup(tokens.Item(i).mb_str(wxConvUTF8).data());
 	}
 	return argv;
+}
+
+void ClangWorkerThread::DoSetStatusMsg(const wxString& msg)
+{
+	wxCommandEvent e(wxEVT_UPDATE_STATUS_BAR);
+	e.SetString(msg.c_str());
+	e.SetInt(0);
+	e.SetId(10);
+	wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(e);
 }
 
 #endif // HAS_LIBCLANG

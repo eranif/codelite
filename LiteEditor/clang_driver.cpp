@@ -120,8 +120,13 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 
 void ClangDriver::CodeCompletion(IEditor* editor)
 {
-	if(m_isBusy)
+	if(m_isBusy) {
+		if(editor) {
+			editor->GetScintilla()->CallTipCancel();
+			editor->GetScintilla()->CallTipShow( editor->GetCurrentPosition(), wxT("Code Completion Message:\n@@LINE@@\nA lengthy operation is in progress..."));
+		}
 		return;
+	}
 
 	CL_DEBUG(wxT(" ==========> ClangDriver::CodeCompletion() started <=============="));
 

@@ -100,6 +100,7 @@ protected:
 	char**             MakeCommandLine(const wxString& command, int &argc, bool isHeader);
 	void               DoCacheResult(CXTranslationUnit TU, const wxString &filename);
 	std::set<wxString> DoGetUsedMacros(const wxString &filename);
+	void DoSetStatusMsg(const wxString &msg);
 	
 public:
 	virtual void ProcessRequest(ThreadRequest* request);

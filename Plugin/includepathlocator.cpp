@@ -4,6 +4,7 @@
 #include <wx/utils.h>
 #include "procutils.h"
 #include <wx/fileconf.h>
+#include <wx/tokenzr.h>
 #include "editor_config.h"
 #include "globals.h"
 

@@ -28,23 +28,18 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 
 	wxString bin = tool;
 	if(bin.IsEmpty()) {
-		bin = wxT("cpp");
+		bin = wxT("gcc");
 	}
 
 	wxRenameFile(tmpfile1, tmpfile);
 
 	// GCC prints parts of its output to stdout and some to stderr
 	// redirect all output to stdout
-#if defined(__WXMAC__)
+#if defined(__WXMAC__) || defined(__WXGTK__)
 	// Mac does not like the standard command
-	command = wxString::Format(wxT("%s -v -x=c++ %s 2>&1"), bin.c_str(), tmpfile.c_str());
-
-#elif defined (__WXGTK__)
-	command = wxString::Format(wxT("%s -x c++ -v %s 2>&1"), bin.c_str(), tmpfile.c_str());
-
+	command = wxString::Format(wxT("%s -v -x c++ /dev/null -fsyntax-only 2>&1"), bin.c_str());
 #else
-	command = wxString::Format(wxT("%s -x c++ -v %s"), bin.c_str(), tmpfile.c_str());
-
+	command = wxString::Format(wxT("%s -v -x c++ %s -fsyntax-only 2>&1"), bin.c_str(), tmpfile.c_str());
 #endif
 
 	wxArrayString outputArr = ExecCommand(command);

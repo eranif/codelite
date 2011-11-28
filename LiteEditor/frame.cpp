@@ -2060,6 +2060,11 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent &event)
 			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
 			AddPendingEvent(e);
 		}
+
+#if HAS_LIBCLANG
+		// Clear clang's cache
+		ClangCodeCompletion::Instance()->ClearCache();
+#endif
 	}
 }
 

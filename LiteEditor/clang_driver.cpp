@@ -457,7 +457,9 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 	}
 
 	if(!reply->results) {
-		if(reply->errorMessage.IsEmpty() == false) {
+		// Display an error message if needed, but not if the code-completion box
+		// is visible
+		if(reply->errorMessage.IsEmpty() == false && !m_activeEditor->IsCompletionBoxShown()) {
 			m_activeEditor->GetScintilla()->CallTipCancel();
 			m_activeEditor->GetScintilla()->CallTipShow( m_activeEditor->GetCurrentPosition(), reply->errorMessage );
 		}

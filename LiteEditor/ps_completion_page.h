@@ -18,6 +18,7 @@ class PSCompletionPage : public PSCompletionBase, public IProjectSettingsPage
 {
 protected:
 	ProjectSettingsDlg* m_dlg;
+	bool                m_ccSettingsModified;
 	
 protected:
 	// Handlers for PSCompletionBase events.

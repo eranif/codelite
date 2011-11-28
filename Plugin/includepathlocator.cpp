@@ -1,13 +1,16 @@
 #include "includepathlocator.h"
 #include <wx/dir.h>
+#include "environmentconfig.h"
 #include <wx/utils.h>
 #include "procutils.h"
 #include <wx/fileconf.h>
 #include "editor_config.h"
+#include "globals.h"
 
 // Helper method
 static wxArrayString ExecCommand(const wxString &cmd) {
 	wxArrayString outputArr;
+	EnvSetter setter;
 	ProcUtils::SafeExecuteCommand(cmd, outputArr);
 	return outputArr;
 }
@@ -37,14 +40,15 @@ void IncludePathLocator::Locate(wxArrayString& paths, wxArrayString &excludePath
 	// redirect all output to stdout
 #if defined(__WXMAC__) || defined(__WXGTK__)
 	// Mac does not like the standard command
-	command = wxString::Format(wxT("%s -v -x c++ /dev/null -fsyntax-only 2>&1"), bin.c_str());
+	command = wxString::Format(wxT("%s -v -x c++ /dev/null -fsyntax-only"), bin.c_str());
 #else
-	command = wxString::Format(wxT("%s -v -x c++ %s -fsyntax-only 2>&1"), bin.c_str(), tmpfile.c_str());
+	command = wxString::Format(wxT("%s -v -x c++ %s -fsyntax-only"), bin.c_str(), tmpfile.c_str());
 #endif
 
-	wxArrayString outputArr = ExecCommand(command);
+	wxString outputStr = wxShellExec(command, wxEmptyString);
 	wxRemoveFile( tmpfile );
 
+	wxArrayString outputArr = wxStringTokenize(outputStr, wxT("\n\r"), wxTOKEN_STRTOK);
 	// Analyze the output
 	bool collect(false);
 	for(size_t i=0; i<outputArr.GetCount(); i++) {

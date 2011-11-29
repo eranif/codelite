@@ -187,7 +187,12 @@ enum CXChildVisitResult VisitorCallback(CXCursor Cursor,
 
 void findFunction()
 {
+	char *partBuffer      = loadFile("../test-sources/file-buffer.cpp");
+	std::string strBuffer = partBuffer;
+	free(partBuffer);
 
+	std::string filename  = "../test-sources/file.cpp";
+	CXUnsavedFile file = {filename.c_str(), strBuffer.c_str(), strBuffer.length()};
 	CXIndex index = clang_createIndex(0, 0);
 	CXTranslationUnit unit = clang_parseTranslationUnit(index,
 	                         "../test-sources/file.cpp",
@@ -200,6 +205,8 @@ void findFunction()
 	                         | CXTranslationUnit_CXXPrecompiledPreamble
 	                         | CXTranslationUnit_CXXChainedPCH
 	                         | CXTranslationUnit_DetailedPreprocessingRecord);
+							 
+	clang_reparseTranslationUnit(unit, 1, &file, clang_defaultReparseOptions(unit));
 
 	CXCursorVisitor visitor = VisitorCallback;
 	clang_visitChildren(clang_getTranslationUnitCursor(unit), visitor, (CXClientData)unit);

@@ -4084,6 +4084,8 @@ void clMainFrame::OnShowFullScreen(wxCommandEvent& e)
 
 void clMainFrame::OnSetStatusMessage(wxCommandEvent& e)
 {
+	CHECK_SHUTDOWN();
+	
 	wxString msg = e.GetString();
 	int col = e.GetInt();
 	int seconds_to_live = e.GetId();

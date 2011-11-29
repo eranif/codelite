@@ -124,7 +124,12 @@ void SQLCommandPanel::ExecuteSql()
 
 						switch (pResultSet->GetMetaData()->GetColumnType(i)) {
 						case ResultSetMetaData::COLUMN_INTEGER:
-							value = wxString::Format(wxT("%i"),pResultSet->GetResultInt(i));
+							if(m_pDbAdapter->GetAdapterType() == IDbAdapter::atSQLITE) {
+								value = pResultSet->GetResultString(i);
+								
+							} else {
+								value = wxString::Format(wxT("%i"),pResultSet->GetResultInt(i));
+							}
 							break;
 
 						case ResultSetMetaData::COLUMN_STRING:

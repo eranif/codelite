@@ -42,7 +42,14 @@ createVariables()
 		elif [ "$is_64bit" = "no" ]; then
 			compiler_extras="-m32 "
 			c_compiler_extras="-m32 "
-	fi
+
+                        ## clang
+                        lib_clang_cmp_flags=" -DHAS_LIBCLANG -I./sdk/clang/include "
+                        lib_clang_link_flags=" -L./sdk/clang/lib -lclang "
+                        lib_clang="./sdk/clang/lib/libclang.dylib"
+                        with_clang="yes"
+
+		fi
 	else # Not darwin
 		if [ "$is_64bit" = "yes" ]; then
 			

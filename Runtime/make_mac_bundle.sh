@@ -86,11 +86,12 @@ do
     cp ${wx_file} ./CodeLite.app/Contents/MacOS/
 done
 
-#echo install_name_tool -change /usr/lib/libcurl.4.dylib @executable_path/libcurl.4.dylib ${exe_name}
-#install_name_tool -change /usr/lib/libcurl.4.dylib @executable_path/libcurl.4.dylib ${exe_name}
-#cp /usr/lib/libcurl.4.dylib ./CodeLite.app/Contents/MacOS/
-
 cp ${exe_name} ./CodeLite.app/Contents/MacOS/${exe_name}
+
+## Fix clang
+cp ../sdk/clang/lib/libclang.dylib ./CodeLite.app/Contents/MacOS/
+echo install_name_tool -change @rpath/libclang.dylib @executable_path/libclang.dylib ./CodeLite.app/Contents/MacOS/codelite
+install_name_tool -change @rpath/libclang.dylib @executable_path/libclang.dylib ./CodeLite.app/Contents/MacOS/codelite
 
 cp -r rc ./CodeLite.app/Contents/SharedSupport/
 cp -r templates ./CodeLite.app/Contents/SharedSupport/

@@ -2219,7 +2219,9 @@ void Manager::DbgStart ( long attachPid )
 
 void Manager::DbgStop()
 {
+#ifndef __WXMAC__
 	GetPerspectiveManager().SavePerspective(DEBUG_LAYOUT);
+#endif
 	GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
 
 	if ( m_watchDlg ) {

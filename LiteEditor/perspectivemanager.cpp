@@ -100,6 +100,11 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
 			EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
 		}
 	}
+	
+#ifdef __WXMAC__
+	clMainFrame::Get()->GetDockingManager().Update();
+#endif
+
 }
 
 void PerspectiveManager::SavePerspective(const wxString& name, bool notify)

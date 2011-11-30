@@ -185,9 +185,10 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 	entry.line.ToLong(&line_number);
 	m_observer->UpdateFileLine(entry.file, line_number);
 
-#elif defined (__WXMSW__)
+#elif defined (__WXMSW__) || defined(__WXMAC__)
 	//Output of -file-list-exec-source-file
 	//^done,line="36",file="a.cpp",fullname="C:/testbug1/a.cpp"
+	//^done,line="2",file="main.cpp",fullname="/Users/eran/main.cpp"
 
 	// By default we use the 'fullname' as our file name. however,
 	// if we are under Windows and the fullname contains the string '/cygdrive'
@@ -274,37 +275,8 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 		}
 	}
 #endif
-
+#endif // Mac || MSW
 	m_observer->UpdateFileLine(fullName, lineno);
-#else
-
-	// On Mac we use the stack info the
-	// get the current file and line from the debugger
-	wxString tmpLine(line);
-	line.StartsWith(wxT("^done,stack=["), &tmpLine);
-
-	tmpLine = tmpLine.Trim().Trim(false);
-	tmpLine.RemoveLast();
-
-	//--------------------------------------------------------
-	//tmpLine contains now string with the following format:
-	//frame={name="Value",...},frame={name="Value",...}
-	wxString remainder(tmpLine);
-	tmpLine		= tmpLine.AfterFirst(wxT('{'));
-	if (tmpLine.IsEmpty()) {
-		return false;
-	}
-
-	remainder	= tmpLine.AfterFirst(wxT('}'));
-	tmpLine		= tmpLine.BeforeFirst(wxT('}'));
-
-	StackEntry entry;
-	ParseStackEntry(tmpLine, entry);
-
-	long line_number;
-	entry.line.ToLong(&line_number);
-	m_observer->UpdateFileLine(entry.file, line_number);
-#endif
 	return true;
 }
 

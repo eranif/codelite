@@ -557,19 +557,13 @@ bool DbgGdb::Interrupt()
 
 bool DbgGdb::QueryFileLine()
 {
-
 #if defined (__WXGTK__)
 	if(!WriteCommand( wxT( "-stack-info-frame" ), new DbgCmdHandlerGetLine( m_observer, this ) ))
 		return false;
-#elif defined (__WXMSW__)
+#elif defined (__WXMSW__) || defined(__WXMAC__)
 	if(!WriteCommand( wxT( "-file-list-exec-source-file" ), new DbgCmdHandlerGetLine( m_observer, this ) ))
 		return false;
-#else
-	//Mac
-	if(!WriteCommand( wxT( "-stack-list-frames 0 0" ), new DbgCmdHandlerGetLine( m_observer, this ) ))
-		return false;
 #endif
-	//return WriteCommand( wxT( "-stack-info-depth" ), new DbgCmdHandlerStackDepth( m_observer, this ) );
 	return true;
 }
 

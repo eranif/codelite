@@ -853,8 +853,9 @@ void LEditor::DoEnsureCaretIsVisible(int pos)
 	int end   = GetSelectionEnd();
 
 	int line = LineFromPosition(pos);
+	line = line > 1 ? line - 1 : line;
 	if ( line >= 0 ) {
-		GotoLine(line > 1 ? line  - 1 : line);
+		GotoLine(line);
 		EnsureVisible(line);
 	}
 

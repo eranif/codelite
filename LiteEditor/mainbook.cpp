@@ -535,10 +535,10 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 	}
 
 	if (position != wxNOT_FOUND) {
-		editor->SetCaretAt(position);
+		editor->SetEnsureCaretIsVisible(position);
 
 	} else if (lineno != wxNOT_FOUND) {
-		editor->GotoLine(lineno);
+		editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno));
 
 	}
 

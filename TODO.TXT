@@ -1,4 +1,7 @@
 - clang: does not diplay static members of file
 - clang: make sure we don't attempt to track PP when the file is not a valid C++ file
 - clang: cache should be persistent (save / load from disk)
-
+- clang: make sure all icons are covered in the completion box
+- clang: if(GetLineCount(|)) hittin Ctrl-Shift-Space does not show the function calltip, adding an extra space before the 'G' makes it work
+  again
+  

@@ -495,7 +495,7 @@ bool CodeLiteApp::OnInit()
 	EditorConfigST::Get()->SetInstallDir( mgr->GetInstallDir() );
 	EditorConfig *cfg = EditorConfigST::Get();
 	if ( !cfg->Load() ) {
-		wxLogMessage(wxT("Failed to load configuration file: ") + wxGetCwd() + wxT("/config/codelite.xml"), wxT("CodeLite"), wxICON_ERROR | wxOK);
+		CL_ERROR(wxT("Failed to load configuration file: %s/config/codelite.xml"), wxGetCwd().c_str());
 		return false;
 	}
 

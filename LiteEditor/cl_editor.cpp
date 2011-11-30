@@ -848,27 +848,16 @@ void LEditor::OnScnPainted(wxScintillaEvent &event)
 
 void LEditor::DoEnsureCaretIsVisible(int pos)
 {
-	// Start by caching any selection, as GotoLine() will clear it
 	int start = GetSelectionStart();
 	int end   = GetSelectionEnd();
-
-	int line = LineFromPosition(pos);
-	line = line > 1 ? line - 1 : line;
-	if ( line >= 0 ) {
-		GotoLine(line);
-		EnsureVisible(line);
+	
+	SetCaretAt(pos);
+	VerticalCentreCaret();
+	
+	// and finally restore any selection
+	if(start != end) {
+		this->SetSelection(start, end);
 	}
-
-	if (start != end) {
-		// If there was a selection, reinstate it
-		SetSelection(start, end);
-	} else {
-		// If not, we need this to set the caret on the correct line
-		// NB we mustn't do this if there *is* a selection,
-		// otherwise the selection is extended to pos
-		SetCurrentPos(pos);
-	}
-	EnsureCaretVisible();
 }
 
 void LEditor::OnSciUpdateUI(wxScintillaEvent &event)

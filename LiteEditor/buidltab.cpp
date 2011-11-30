@@ -727,15 +727,15 @@ wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno, wxMemor
 			for(size_t at=0; at<tmpTip.Length(); at++) {
 #if wxVERSION_NUMBER < 2900
 				wxChar c = tmpTip.GetChar(at);
-#else
-				wxUniChar c = tmpTip.GetChar(at);
-				if ( !c.IsAscii() )	{
-					continue;
-				}
-#endif
-				if( wxIsprint(c) || c == wxT('\n') ) {
+				if( isprint(c) || c == wxT('\n') ) {
 					asciiTip.Append(c);
 				}
+#else
+				wxUniChar c = tmpTip.GetChar(at);
+				if ( c.IsAscii() ) {
+					asciiTip.Append(c);
+				}
+#endif
 			}
 
 			tmpTip = asciiTip;

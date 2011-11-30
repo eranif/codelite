@@ -854,7 +854,7 @@ void LEditor::DoEnsureCaretIsVisible(int pos)
 
 	int line = LineFromPosition(pos);
 	if ( line >= 0 ) {
-		GotoLine(line);
+		GotoLine(line > 1 ? line  - 1 : line);
 		EnsureVisible(line);
 	}
 
@@ -867,10 +867,7 @@ void LEditor::DoEnsureCaretIsVisible(int pos)
 		// otherwise the selection is extended to pos
 		SetCurrentPos(pos);
 	}
-	
-	// EI: EnsureCaretVisible() does not allways provide the wanted results (i.e. in some cases, the selection is out-of-screen)
-	// This is why we use here VerticalCentreCaret() instead
-	VerticalCentreCaret();
+	EnsureCaretVisible();
 }
 
 void LEditor::OnSciUpdateUI(wxScintillaEvent &event)

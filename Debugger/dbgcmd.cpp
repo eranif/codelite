@@ -275,8 +275,8 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 		}
 	}
 #endif
-#endif // Mac || MSW
 	m_observer->UpdateFileLine(fullName, lineno);
+#endif // Mac || MSW
 	return true;
 }
 

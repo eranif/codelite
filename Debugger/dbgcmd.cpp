@@ -167,7 +167,7 @@ static std::map<wxString, wxString> g_fileCache;
 
 bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 {
-#if defined (__WXGTK__)
+#if defined (__WXGTK__) || defined(__WXMAC__)
 	//Output from "-stack-info-frame"
 	//^done,frame={level="0",addr="0x000000000043b227",func="MyClass::DoFoo",file="./Foo.cpp",fullname="/full/path/to/Foo.cpp",line="30"}
 
@@ -185,7 +185,7 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 	entry.line.ToLong(&line_number);
 	m_observer->UpdateFileLine(entry.file, line_number);
 
-#elif defined (__WXMSW__) || defined(__WXMAC__)
+#elif defined (__WXMSW__) 
 	//Output of -file-list-exec-source-file
 	//^done,line="36",file="a.cpp",fullname="C:/testbug1/a.cpp"
 	//^done,line="2",file="main.cpp",fullname="/Users/eran/main.cpp"

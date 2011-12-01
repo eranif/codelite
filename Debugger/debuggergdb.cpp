@@ -557,10 +557,10 @@ bool DbgGdb::Interrupt()
 
 bool DbgGdb::QueryFileLine()
 {
-#if defined (__WXGTK__)
+#if defined (__WXGTK__) || defined(__WXMAC__)
 	if(!WriteCommand( wxT( "-stack-info-frame" ), new DbgCmdHandlerGetLine( m_observer, this ) ))
 		return false;
-#elif defined (__WXMSW__) || defined(__WXMAC__)
+#elif defined (__WXMSW__) 
 	if(!WriteCommand( wxT( "-file-list-exec-source-file" ), new DbgCmdHandlerGetLine( m_observer, this ) ))
 		return false;
 #endif
@@ -1263,6 +1263,8 @@ void DbgGdb::GetDebugeePID(const wxString& line)
 			static wxRegEx reDebuggeePid2(wxT("Thread[ ]*(0[xX][0-9a-fA-F]+)[ ]+\\(LWP ([0-9]+)\\)"));
 			static wxRegEx reDebuggerPidWin(wxT("New Thread ([0-9]+)\\.(0[xX][0-9a-fA-F]+)"));
 			static wxRegEx reGroupStarted(wxT("id=\"([0-9]+)\""));
+			static wxRegEx reSwitchToThread(wxT("Switching to process ([0-9]+)"));
+			
 			// test for the debuggee PID
 			// in the line with the following pattern:
 			// =thread-group-started,id="i1",pid="15599"
@@ -1281,6 +1283,9 @@ void DbgGdb::GetDebugeePID(const wxString& line)
 
 				} else if(reDebuggerPidWin.Matches(line)) {
 					debuggeePidStr = reDebuggerPidWin.GetMatch(line, 1);
+					
+				} else if(reSwitchToThread.Matches(line)) {
+					debuggeePidStr = reSwitchToThread.GetMatch(line, 1);
 				}
 
 				if(!debuggeePidStr.IsEmpty()) {

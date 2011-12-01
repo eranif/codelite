@@ -448,23 +448,23 @@ wxColor DrawingUtils::GetMenuBarBgColour()
 wxColor DrawingUtils::GetTextCtrlBgColour()
 {
 #ifdef __WXGTK__
-	static bool     intitialized(false);
+	//static bool     intitialized(false);
 	static wxColour bgCol(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
-	if( !intitialized ) {
-		// try to get the background colour from a textctrl
-		GtkWidget *textCtrl = gtk_text_view_new();
-		GtkStyle   *def = gtk_rc_get_style( textCtrl );
-		if(!def)
-			def = gtk_widget_get_default_style();
-
-		if(def) {
-			GdkColor col = def->bg[GTK_STATE_NORMAL];
-			bgCol = wxColour(col);
-		}
-		gtk_widget_destroy( textCtrl );
-		intitialized = true;
-	}
+//	if( !intitialized ) {
+//		// try to get the background colour from a textctrl
+//		GtkWidget *textCtrl = gtk_text_view_new();
+//		GtkStyle   *def = gtk_rc_get_style( textCtrl );
+//		if(!def)
+//			def = gtk_widget_get_default_style();
+//
+//		if(def) {
+//			GdkColor col = def->bg[GTK_STATE_NORMAL];
+//			bgCol = wxColour(col);
+//		}
+//		gtk_widget_destroy( textCtrl );
+//		intitialized = true;
+//	}
 	return bgCol;
 	
 #else

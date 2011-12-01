@@ -272,7 +272,7 @@ void SvnConsole::DoInitializeFontsAndColours()
 	m_sci->SetMarginWidth(0, 0);
 	m_sci->SetMarginWidth(1, 0);
 	m_sci->SetMarginWidth(2, 0);
-	m_sci->SetMarginWidth(4, 16);
+	m_sci->SetMarginWidth(4, 0);
 	m_sci->SetScrollWidthTracking(true);
 	m_sci->SetCaretWidth(2);
 	

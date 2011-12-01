@@ -161,7 +161,12 @@ void OutputTabWindow::CreateGUIControls()
 
 
 	// Create the default scintilla control
-	m_sci = new wxScintilla(this);
+#ifdef __WXGTK__
+	m_sci = new wxScintilla(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);
+#else
+	m_sci = new wxScintilla(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
+#endif
+
 	InitStyle(m_sci, wxSCI_LEX_CONTAINER, false);
 
 	// Add the find bar

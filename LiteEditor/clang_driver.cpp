@@ -531,6 +531,14 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 		tag->SetPattern   (entryPattern);
 		tag->SetSignature (entrySignature);
 		switch(kind) {
+		case CXCursor_EnumConstantDecl:
+			tag->SetKind(wxT("enumerator"));
+			break;
+			
+		case CXCursor_EnumDecl:
+			tag->SetKind(wxT("enum"));
+			break;
+
 		case CXCursor_CXXMethod:
 		case CXCursor_Constructor:
 		case CXCursor_Destructor:

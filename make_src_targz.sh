@@ -22,8 +22,11 @@ echo "Creating tarballs"
 cd /tmp/
 rm -fr /tmp/${codelite_ver}.${cur_rev}/sdk/curl
 
-# First for *nix
-tar cvfz ${curdir}/${codelite_ver}.${cur_rev}.tar.gz ${codelite_ver}.${cur_rev}/* --exclude *.exe --exclude *.dll
+# First for Linux
+tar cvfz ${curdir}/${codelite_ver}.${cur_rev}-gtk.src.tar.gz ${codelite_ver}.${cur_rev}/* --exclude *.exe --exclude *.dll --exclude *.dylib
 
-# Then for MSWin
-tar cv --lzma -f ${curdir}/${codelite_ver}.${cur_rev}.tar.7z ${codelite_ver}.${cur_rev}/* --exclude *.so
+# then for MSWin
+tar cv --lzma -f ${curdir}/${codelite_ver}.${cur_rev}-win.src.tar.7z ${codelite_ver}.${cur_rev}/* --exclude *.so --exclude *.dylib
+
+# and OS/X
+tar cvfz ${curdir}/${codelite_ver}.${cur_rev}-mac.src.tar.gz ${codelite_ver}.${cur_rev}/* --exclude *.exe --exclude *.dll --exclude *.so

@@ -3239,7 +3239,7 @@
                         <property name="center_pane">0</property>
                         <property name="class">wxTextCtrl</property>
                         <property name="close_button">1</property>
-                        <property name="construction">m_sci = new wxScintilla(this);</property>
+                        <property name="construction">&#x09;// Create the default scintilla control&#x0A;#ifdef __WXGTK__&#x0A;&#x09;m_sci = new wxScintilla(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);&#x0A;#else&#x0A;&#x09;m_sci = new wxScintilla(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);&#x0A;#endif</property>
                         <property name="context_help"></property>
                         <property name="context_menu">1</property>
                         <property name="declaration">wxScintilla* m_sci;</property>

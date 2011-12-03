@@ -48,7 +48,6 @@ void wxSFFlexGridShape::DoChildrenLayout()
     int nIndex, nRow, nCol, nTotalX, nTotalY;
     size_t i;
 
-    wxRealPoint nAbsPos = GetAbsolutePosition();
     wxRect nCurrRect;
 
     // initialize size arrays

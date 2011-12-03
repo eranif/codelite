@@ -218,10 +218,10 @@ void wxSFEditTextShape::EditLabel()
 
 				if( (m_sText == wxEmptyString) || ((style == wxTE_MULTILINE) && (shpBB.GetWidth() < 50)) )shpBB.SetWidth(50);
 
-				m_pTextCtrl = new wxSFContentCtrl(GetParentCanvas(), textCtrlId, this, m_sText, wxPoint(int((shpPos.x * scale) - dx), int((shpPos.y * scale) - dy)), wxSize(int(shpBB.GetWidth() * scale), int(shpBB.GetHeight() * scale)), style);
-
 				m_nCurrentState = GetStyle();
 				RemoveStyle(sfsSIZE_CHANGE);
+				
+				m_pTextCtrl = new wxSFContentCtrl(GetParentCanvas(), textCtrlId, this, m_sText, wxPoint(int((shpPos.x * scale) - dx), int((shpPos.y * scale) - dy)), wxSize(int(shpBB.GetWidth() * scale), int(shpBB.GetHeight() * scale)), style);
 			}
 			break;
 			

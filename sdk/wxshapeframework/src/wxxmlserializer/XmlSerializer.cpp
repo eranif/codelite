@@ -19,7 +19,6 @@
 #include <wx/listimpl.cpp>
 #include <wx/wfstream.h>
 #include <wx/arrimpl.cpp>
-// #include "wx_xml_compatibility.h" **Don't use this here: it breaks the XS_SERIALIZE and similar macros
 
 WX_DEFINE_EXPORTED_LIST(PropertyList);
 WX_DEFINE_EXPORTED_LIST(SerializableList);
@@ -27,7 +26,7 @@ WX_DEFINE_EXPORTED_LIST(SerializableList);
 // static members
 PropertyIOMap wxXmlSerializer::m_mapPropertyIOHandlers;
 int wxXmlSerializer::m_nRefCounter = 0;
-wxString wxXmlSerializer::m_sLibraryVersion = wxT("1.3.5 beta");
+wxString wxXmlSerializer::m_sLibraryVersion = wxT("1.3.6 beta");
 
 /////////////////////////////////////////////////////////////////////////////////////
 // xsProperty class /////////////////////////////////////////////////////////////////
@@ -234,7 +233,7 @@ xsSerializable* xsSerializable::GetSibbling(wxClassInfo *type)
 xsSerializable* xsSerializable::GetChild(long id, bool recursive)
 {
     SerializableList lstChildren;
-    SerializableList::compatibility_iterator node;
+    SerializableList::compatibility_iterator node = NULL;
 
     if( recursive )
     {

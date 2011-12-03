@@ -341,3 +341,10 @@ void wxSFMultiSelRect::OnTopHandle(wxSFShapeHandle& handle)
 		}
 	}
 }
+
+void wxSFMultiSelRect::OnHandle(wxSFShapeHandle& handle)
+{
+	wxSFRectShape::OnHandle( handle );
+	
+	GetParentCanvas()->InvalidateVisibleRect();
+}

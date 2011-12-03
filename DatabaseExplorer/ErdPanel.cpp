@@ -1,6 +1,7 @@
 #include "ErdPanel.h"
 #include "Art.h"
 #include "databaseexplorer.h"
+#include "imageexportdialog.h"
 
 #include <wx/xrc/xmlres.h>
 
@@ -29,7 +30,7 @@ BEGIN_EVENT_TABLE(ErdPanel, _ErdPanel)
 	EVT_TOOL(XRCID("IDT_SAVE"), ErdPanel::OnSave)
 	EVT_TOOL(XRCID("IDT_ERD_COMMIT"), ErdPanel::OnCommit)
 	EVT_TOOL(XRCID("IDT_ERD_SAVE_SQL"), ErdPanel::OnSaveSql)
-	EVT_TOOL(XRCID("IDT_ERD_SAVE_BMP"), ErdPanel::OnSaveImg)
+	EVT_TOOL(XRCID("IDT_ERD_SAVE_IMG"), ErdPanel::OnSaveImg)
 	EVT_TOOL(XRCID("IDT_ERD_ZOOM100"), ErdPanel::OnZoom100)
 	EVT_TOOL(XRCID("IDT_ERD_ZOOMALL"), ErdPanel::OnZoomAll)
 	EVT_TOOL(XRCID("IDT_PRINT"), ErdPanel::OnPrint)
@@ -120,6 +121,8 @@ ErdPanel::~ErdPanel() {
 
 void ErdPanel::Init(wxWindow* parent, IDbAdapter* dbAdapter) {
 	
+	SetExtraStyle( wxWS_EX_BLOCK_EVENTS );
+	
 	ErdInfo *pInfo = new ErdInfo();
 	pInfo->SetAdapterType( m_pDbAdapter->GetAdapterType() );
 	m_diagramManager.SetRootItem( pInfo );
@@ -135,7 +138,7 @@ void ErdPanel::Init(wxWindow* parent, IDbAdapter* dbAdapter) {
 	m_toolBarErd->AddTool(XRCID("IDT_SAVE"), _("Save"), wxBitmap(filesave_xpm),  _("Save diagram"));
 	m_toolBarErd->AddTool(XRCID("IDT_ERD_SAVE_SQL"), _("Save SQL"), wxBitmap(export_sql_xpm),_("Save SQL"));
 	m_toolBarErd->AddTool(XRCID("IDT_ERD_COMMIT"), _("Commit ERD"), wxBitmap(export_db_xpm),_("Commit ERD"));	
-	m_toolBarErd->AddTool(XRCID("IDT_ERD_SAVE_BMP"), _("Save BMP"), wxBitmap(export_img_xpm),_("Save BMP"));
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_SAVE_IMG"), _("Export canvas to image"), wxBitmap(export_img_xpm),_("Export canvas to image"));
 	m_toolBarErd->AddSeparator();
 	m_toolBarErd->AddTool(XRCID("IDT_PRINT"), _("Print"), wxBitmap(fileprint_xpm),  _("Print diagram"));
 	m_toolBarErd->AddTool(XRCID("IDT_PREVIEW"), _("Preview"), wxBitmap(filepreview_xpm),  _("Print preview"));
@@ -284,10 +287,18 @@ void ErdPanel::OnUpdateUndo(wxUpdateUIEvent& event) {
 }
 
 void ErdPanel::OnSaveImg(wxCommandEvent& event) {
-	wxFileDialog dlg(this, _("Export canvas to BMP..."), wxGetCwd(), wxT(""), wxT("BMP Files (*.bmp)|*.bmp"), wxFD_SAVE);
-
-	if(dlg.ShowModal() == wxID_OK) {
-		m_pFrameCanvas->SaveCanvasToBMP(dlg.GetPath());
+	static wxString prevPath;
+	static wxBitmapType prevType;
+	
+	ImageExportDialog dlg(this);
+	dlg.SetPath( prevPath );
+	dlg.SetBitmapType( prevType );
+	
+	if( dlg.ShowModal() == wxID_OK )
+	{
+		prevPath = dlg.GetPath();
+		prevType = dlg.GetBitmapType();
+        m_pFrameCanvas->SaveCanvasToImage( dlg.GetPath(), dlg.GetBitmapType(), dlg.GetExportCanvas(), dlg.GetScale() );
 	}
 }
 

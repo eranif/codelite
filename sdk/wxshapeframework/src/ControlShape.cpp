@@ -296,7 +296,6 @@ void wxSFControlShape::UpdateShape()
 	if( m_pControl )
 	{
 		wxSize nCtrlSize = m_pControl->GetSize();
-		wxPoint nCtrlPos = m_pControl->GetPosition();
 
 		m_nRectSize.x = nCtrlSize.x + 2*m_nControlOffset;
 		m_nRectSize.y = nCtrlSize.y + 2*m_nControlOffset;

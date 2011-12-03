@@ -1,13 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Nov 24 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __GUI__
-#define __GUI__
+#ifndef __GUI_H__
+#define __GUI_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/intl.h>
 #include <wx/string.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -19,28 +22,29 @@
 #include <wx/settings.h>
 #include <wx/statusbr.h>
 #include <wx/frame.h>
-#include <wx/sizer.h>
-#include <wx/panel.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
 #include <wx/button.h>
+#include <wx/sizer.h>
+#include <wx/radiobut.h>
+#include <wx/statbox.h>
+#include <wx/checkbox.h>
+#include <wx/statline.h>
+#include <wx/dialog.h>
+#include <wx/panel.h>
 #include <wx/toolbar.h>
 #include <wx/wxscintilla.h>
 #ifdef __VISUALC__
 #include <wx/link_additions.h>
 #endif //__VISUALC__
 #include <wx/grid.h>
-#include <wx/stattext.h>
 #include <wx/splitter.h>
-#include <wx/dialog.h>
 #include <wx/treectrl.h>
 #include <wx/filepicker.h>
 #include <wx/listctrl.h>
-#include <wx/textctrl.h>
-#include <wx/statline.h>
 #include <wx/listbox.h>
 #include <wx/notebook.h>
-#include <wx/statbox.h>
 #include <wx/combobox.h>
-#include <wx/checkbox.h>
 #include <wx/radiobox.h>
 #include <wx/gbsizer.h>
 
@@ -77,9 +81,43 @@ class _MainFrame : public wxFrame
 	
 	public:
 		
-		_MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("DatabaseExplorer "), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxMAXIMIZE|wxTAB_TRAVERSAL );
+		_MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("DatabaseExplorer "), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxMAXIMIZE|wxTAB_TRAVERSAL );
 		
 		~_MainFrame();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class _ImageExportDialog
+///////////////////////////////////////////////////////////////////////////////
+class _ImageExportDialog : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText34;
+		wxTextCtrl* m_textCtrlPath;
+		wxButton* m_button29;
+		wxRadioButton* m_radioBtnDefaultScale;
+		wxRadioButton* m_radioBtnScaleCustom;
+		wxTextCtrl* m_textCtrlScale;
+		wxCheckBox* m_checkBoxBackground;
+		wxStaticLine* m_staticline8;
+		wxStdDialogButtonSizer* m_sdbSizer2;
+		wxButton* m_sdbSizer2OK;
+		wxButton* m_sdbSizer2Cancel;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnInit( wxInitDialogEvent& event ) { event.Skip(); }
+		virtual void OnBowseClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnUpdateCustomScale( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnOKClick( wxCommandEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		_ImageExportDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Export image"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
+		~_ImageExportDialog();
 	
 };
 
@@ -163,7 +201,7 @@ class _AdapterSelectDlg : public wxDialog
 	
 	public:
 		
-		_AdapterSelectDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Select dbAdapter"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+		_AdapterSelectDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select dbAdapter"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~_AdapterSelectDlg();
 	
 };
@@ -250,7 +288,7 @@ class _DBSettingsDialog : public wxDialog
 	
 	public:
 		
-		_DBSettingsDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Connection settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		_DBSettingsDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Connection settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~_DBSettingsDialog();
 	
 };
@@ -305,7 +343,6 @@ class _TableSettings : public wxDialog
 		wxStaticText* m_staticText9;
 		wxComboBox* m_comboType;
 		wxStaticText* m_stSize;
-		
 		wxStaticText* m_staticText25;
 		wxTextCtrl* m_txSize;
 		wxStaticText* m_staticText2511;
@@ -355,7 +392,7 @@ class _TableSettings : public wxDialog
 	
 	public:
 		
-		_TableSettings( wxWindow* parent, wxWindowID id = wxID_OK, const wxString& title = wxT("Table settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
+		_TableSettings( wxWindow* parent, wxWindowID id = wxID_OK, const wxString& title = _("Table settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
 		~_TableSettings();
 	
 };
@@ -379,8 +416,6 @@ class _CreateForeignKey : public wxDialog
 		wxTextCtrl* m_txDstTable;
 		wxStaticText* m_staticText18;
 		wxComboBox* m_cmbDstCol;
-		
-		
 		wxButton* m_btnCancel;
 		wxButton* m_btnOK;
 		
@@ -392,7 +427,7 @@ class _CreateForeignKey : public wxDialog
 	
 	public:
 		
-		_CreateForeignKey( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Create foreign key"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
+		_CreateForeignKey( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create foreign key"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
 		~_CreateForeignKey();
 	
 };
@@ -415,7 +450,7 @@ class _LogDialog : public wxDialog
 	
 	public:
 		
-		_LogDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Database log"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,460 ), long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxRESIZE_BORDER ); 
+		_LogDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Database log"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,460 ), long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxRESIZE_BORDER ); 
 		~_LogDialog();
 	
 };
@@ -440,7 +475,7 @@ class _ViewSettings : public wxDialog
 	
 	public:
 		
-		_ViewSettings( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("View settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 650,450 ), long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxRESIZE_BORDER ); 
+		_ViewSettings( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("View settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 650,450 ), long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxRESIZE_BORDER ); 
 		~_ViewSettings();
 	
 };
@@ -464,7 +499,6 @@ class _ClassGenerateDialog : public wxDialog
 		wxButton* m_btnBrowseVirtualDir;
 		wxStaticText* m_staticText29;
 		wxTextCtrl* m_textCtrl19;
-		
 		wxButton* m_button25;
 		wxButton* m_button26;
 		
@@ -476,7 +510,7 @@ class _ClassGenerateDialog : public wxDialog
 	
 	public:
 		
-		_ClassGenerateDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Class generator dialog"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
+		_ClassGenerateDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Class generator dialog"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
 		~_ClassGenerateDialog();
 	
 };
@@ -502,15 +536,12 @@ class _ErdCommitDialog : public wxDialog
 		wxButton* m_btnBackup;
 		wxPanel* m_panel20;
 		wxTextCtrl* m_textCtrl22;
-		
 		wxButton* m_btnWrite;
 		wxButton* m_btnShowSql;
-		
 		wxPanel* m_panel201;
 		wxFilePickerCtrl* m_fileRestore;
 		wxTextCtrl* m_textCtrl221;
 		wxButton* m_btnRestore;
-		
 		wxButton* m_btnBack;
 		wxButton* m_btnNext;
 		
@@ -532,7 +563,7 @@ class _ErdCommitDialog : public wxDialog
 	
 	public:
 		
-		_ErdCommitDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("ERD commit structure"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,500 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+		_ErdCommitDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("ERD commit structure"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,500 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~_ErdCommitDialog();
 	
 };
@@ -555,9 +586,9 @@ class _CodePreviewDialog : public wxDialog
 	
 	public:
 		
-		_CodePreviewDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("SQL Preview"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,470 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		_CodePreviewDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SQL Preview"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,470 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~_CodePreviewDialog();
 	
 };
 
-#endif //__GUI__
+#endif //__GUI_H__

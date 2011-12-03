@@ -45,6 +45,8 @@ extern wxPrintData *g_printData;
 #define sfALL_SHAPES false
 #define sfPROMPT true
 #define sfNO_PROMPT false
+#define sfWITH_BACKGROUND true
+#define sfWITHOUT_BACKGROUND false
 
 // default values
 /*! \brief Default value of wxSFCanvasSettings::m_nBackgroundColor data member */
@@ -337,9 +339,19 @@ public:
 	void SaveCanvas(const wxString& file);
     /*!
      * \brief Export canvas content to BMP file.
+	 * DEPRECATED: use SaveCanvasToImage() instead.
      * \param file Full file name
      */
 	void SaveCanvasToBMP(const wxString& file);
+	/*!
+	 * \brief Export canvas content to image file.
+	 * \param file Full file name
+	 * \param type Image type. See wxBitmapType for more details. Default type is
+	 * wxBITMAP_TYPE_BMP.
+	 * \param background Export also diagram background
+	 * \param scale Image scale. If -1 then current canvas scale id used.
+	 */
+	void SaveCanvasToImage(const wxString& file, wxBitmapType type = wxBITMAP_TYPE_BMP, bool background = true, double scale = -1);
 
     /*!
      * \brief Start interactive connection creation.
@@ -386,11 +398,29 @@ public:
 	/*! \brief Hide handles of all shapes */
 	void HideAllHandles();
 	/*!
-	 * \brief Repaint the shape canvas
+	 * \brief Repaint the shape canvas.
 	 * \param erase TRUE if the canvas should be erased before repainting
 	 * \param rct Refreshed region (rectangle)
 	 */
-	void RefreshCanvas(bool erase, wxRect rct);
+	void RefreshCanvas(bool erase, const wxRect& rct);
+	
+	/*!
+	 * \brief Mark given rectangle as an invalidated one, i.e. as a rectangle which should
+	 * be refreshed (by using wxSFShapeCanvas::RefreshInvalidatedRect()).
+	 * \param rct Rectangle to be invalidated
+	 */
+	void InvalidateRect(const wxRect& rct);
+	
+	/*!
+	 * \brief Mark whole visible canvas portion as an invalidated rectangle.
+	 */
+	void InvalidateVisibleRect();
+	/*!
+	 * \brief Refresh all canvas rectangles marked as invalidated.
+	 * \sa wxSFShapeCanvas::InvalidateRect()
+	 */
+	void RefreshInvalidatedRect();
+	
 	/*!
 	 * \brief Show shapes shadows (only current digram shapes are affected).
 	 *
@@ -1005,6 +1035,8 @@ private:
 	wxDataFormat m_formatShapes;
 
 	wxPoint m_nPrevMousePos;
+	
+	wxRect m_nInvalidateRect;
 
 	/*! \brief Canvas history manager */
 	wxSFCanvasHistory m_CanvasHistory;

@@ -13,8 +13,6 @@
 #define new DEBUG_NEW
 #endif
 
-#include <wx/dcgraph.h>
-
 #include "wx/wxsf/Printout.h"
 #include "wx/wxsf/ScaledDC.h"
 #include "wx/wxsf/ShapeCanvas.h"
@@ -155,23 +153,25 @@ bool wxSFPrintout::OnPrintPage(int page)
         }
 
         // draw the canvas content without any scale (dc is scaled by the printing framework)
+#if wxVERSION_NUMBER < 2900
+		double nScale = 1;
+		if( wxSFShapeCanvas::IsGCEnabled() ) dc->GetUserScale( &nScale, &nScale );
         m_pCanvas->SetScale(1);
 
-		/*#if wxUSE_GRAPHICS_CONTEXT
-		if( wxSFShapeCanvas::IsGCEnabled() )
-		{
-			wxGCDC gdc( dc );
-			m_pCanvas->DrawContent(gdc, sfNOT_FROM_PAINT);
-		}
-		else
-			m_pCanvas->DrawContent(*dc, sfNOT_FROM_PAINT);
+		#ifdef __WXMSW__
+		wxSFScaledDC sdc( (wxWindowDC*)dc, nScale );
+		sdc.PrepareGC();
+        m_pCanvas->DrawContent(sdc, sfNOT_FROM_PAINT);
         #else
 		m_pCanvas->DrawContent(*dc, sfNOT_FROM_PAINT);
-		#endif*/
-		
-		m_pCanvas->DrawContent(*dc, sfNOT_FROM_PAINT);
+		#endif
 
         m_pCanvas->SetScale(prevScale);
+#else
+		m_pCanvas->SetScale(1);
+		m_pCanvas->DrawContent(*dc, sfNOT_FROM_PAINT);
+		m_pCanvas->SetScale(prevScale);
+#endif
 
         // restore previous canvas properties if needed
         if( !m_pCanvas->ContainsStyle( wxSFShapeCanvas::sfsPRINT_BACKGROUND ) )

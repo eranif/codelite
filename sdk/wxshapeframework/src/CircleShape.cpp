@@ -50,7 +50,7 @@ wxSFCircleShape::~wxSFCircleShape()
 //----------------------------------------------------------------------------------//
 
 wxRealPoint wxSFCircleShape::GetBorderPoint(const wxRealPoint& start, const wxRealPoint& end)
-{		
+{
 	double dist = Distance(start, end);
 	wxRealPoint nCenter = GetAbsolutePosition() + wxRealPoint(m_nRectSize.x/2, m_nRectSize.y/2);
 

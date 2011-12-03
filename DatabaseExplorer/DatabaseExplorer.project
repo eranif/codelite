@@ -45,6 +45,8 @@
     <File Name="Ids.cpp"/>
     <File Name="databaseexplorer.cpp"/>
     <File Name="db_explorer_settings.cpp"/>
+    <File Name="imageexportdialog.cpp"/>
+    <File Name="imageexportdialog.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="databaseexplorer.h"/>

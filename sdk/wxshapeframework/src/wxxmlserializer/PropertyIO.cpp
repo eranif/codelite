@@ -20,7 +20,6 @@
 #include <wx/listimpl.cpp>
 #include <wx/arrimpl.cpp>
 #include <limits>
-#include "wx/wx_xml_compatibility.h"
 
 using namespace std;
 using namespace wxXS;
@@ -48,8 +47,13 @@ wxXmlNode* xsPropertyIO::AddPropertyNode(wxXmlNode* parent, const wxString& name
 
 void xsPropertyIO::AppendPropertyType(xsProperty *source, wxXmlNode *target)
 {
+#if wxVERSION_NUMBER < 2900
     target->AddProperty(wxT("name"), source->m_sFieldName);
     target->AddProperty(wxT("type"), source->m_sDataType);
+#else
+	target->AddAttribute(wxT("name"), source->m_sFieldName);
+	target->AddAttribute(wxT("type"), source->m_sDataType);
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -996,7 +1000,11 @@ void xsListSerializablePropIO::Read(xsProperty *property, wxXmlNode *source)
     {
 		if( listNode->GetName() == wxT("object") )
 		{
+#if wxVERSION_NUMBER < 2900
 			xsSerializable* object = (xsSerializable*)wxCreateDynamicObject(listNode->GetPropVal(wxT("type"), wxT("")));
+#else
+			xsSerializable* object = (xsSerializable*)wxCreateDynamicObject(listNode->GetAttribute(wxT("type"), wxT("")));
+#endif
 			if(object)
 			{
 				object->DeserializeObject(listNode);
@@ -1063,7 +1071,11 @@ void xsDynObjPropIO::Read(xsProperty *property, wxXmlNode *source)
 
     if( objectNode && (objectNode->GetName() == wxT("object")) )
     {
+#if wxVERSION_NUMBER < 2900
         *(xsSerializable**)(property->m_pSourceVariable) = (xsSerializable*)wxCreateDynamicObject(objectNode->GetPropVal(wxT("type"), wxT("")));
+#else
+        *(xsSerializable**)(property->m_pSourceVariable) = (xsSerializable*)wxCreateDynamicObject(objectNode->GetAttribute(wxT("type"), wxT("")));
+#endif
 
         xsSerializable* object = *(xsSerializable**)(property->m_pSourceVariable);
         if(object)
@@ -1227,7 +1239,11 @@ void xsMapStringPropIO::Read(xsProperty *property, wxXmlNode *source)
     {
         if(listNode->GetName() == wxT("item"))
         {
+#if wxVERSION_NUMBER < 2900
             (*(StringMap*)property->m_pSourceVariable)[listNode->GetPropVal( wxT("key"), wxT("undef_key") )] = listNode->GetNodeContent();
+#else
+            (*(StringMap*)property->m_pSourceVariable)[listNode->GetAttribute( wxT("key"), wxT("undef_key") )] = listNode->GetNodeContent();
+#endif
         }
 
         listNode = listNode->GetNext();
@@ -1247,7 +1263,11 @@ void xsMapStringPropIO::Write(xsProperty *property, wxXmlNode *target)
 		{
 			wxString key = it->first, value = it->second;
 			pXmlNode = AddPropertyNode(newNode, wxT("item"), it->second);
+#if wxVERSION_NUMBER < 2900
 			pXmlNode->AddProperty(wxT("key"), it->first);
+#else
+			pXmlNode->AddAttribute(wxT("key"), it->first);
+#endif
 		}
 
 		target->AddChild(newNode);

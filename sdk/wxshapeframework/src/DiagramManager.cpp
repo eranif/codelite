@@ -23,7 +23,6 @@
 #include "wx/wxsf/ControlShape.h"
 #include "wx/wxsf/LineShape.h"
 #include "wx/wxsf/GridShape.h"
-#include "wx/wx_xml_compatibility.h"
 
 using namespace wxSFCommonFcn;
 
@@ -39,7 +38,7 @@ wxSFDiagramManager::wxSFDiagramManager()
     m_pShapeCanvas = NULL;
     m_lstIDPairs.DeleteContents(true);
 
-    m_sSFVersion =  wxT("1.11.1 beta");
+    m_sSFVersion =  wxT("1.12.1 beta");
 
     SetSerializerOwner(wxT("wxShapeFramework"));
     SetSerializerVersion(wxT("1.0"));
@@ -295,7 +294,7 @@ void wxSFDiagramManager::RemoveShape(wxSFShapeBase* shape, bool refresh)
 		
         if( pParent ) pParent->Update();
 
-		if( refresh && m_pShapeCanvas ) m_pShapeCanvas->Refresh();
+		if( refresh && m_pShapeCanvas ) m_pShapeCanvas->Refresh(false);
 	}
 }
 
@@ -345,11 +344,11 @@ bool wxSFDiagramManager::DeserializeFromXml(const wxString& file)
 	wxFileInputStream instream(file);
 	if(instream.IsOk())
 	{
-        if( m_pShapeCanvas ) m_pShapeCanvas->ClearCanvasHistory();
+        if( m_pShapeCanvas) m_pShapeCanvas->ClearCanvasHistory();
 
 		fSuccess = DeserializeFromXml(instream);
 
-        if( m_pShapeCanvas ) m_pShapeCanvas->SaveCanvasState();
+        if( m_pShapeCanvas) m_pShapeCanvas->SaveCanvasState();
 	}
 	else
 		wxMessageBox(wxT("Unable to initialize input stream."), wxT("ShapeFramework"), wxOK | wxICON_ERROR);
@@ -412,7 +411,11 @@ void wxSFDiagramManager::_DeserializeObjects(xsSerializable* parent, wxXmlNode* 
 	{
 		if(shapeNode->GetName() == wxT("object"))
 		{
+#if wxVERSION_NUMBER < 2900
 			pShape = AddShape((wxSFShapeBase*)wxCreateDynamicObject(shapeNode->GetPropVal(wxT("type"), wxT(""))), parent, wxPoint(0, 0), true, sfDONT_SAVE_STATE);
+#else
+			pShape = AddShape((wxSFShapeBase*)wxCreateDynamicObject(shapeNode->GetAttribute(wxT("type"), wxT(""))), parent, wxPoint(0, 0), true, sfDONT_SAVE_STATE);
+#endif
 			if(pShape)
 			{
 				// store new assigned ID

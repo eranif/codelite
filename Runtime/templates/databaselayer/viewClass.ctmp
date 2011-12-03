@@ -63,20 +63,12 @@ void %%classColName%%::Fill(wxGrid* pGrid)
 	}	
 }
 
-%%classColName%%* %%classColName%%::Get(DatabaseLayer* pDbLayer, wxArrayString& conditions,CondConType conType)
+%%classColName%%* %%classColName%%::Get(DatabaseLayer* pDbLayer, const wxString& condition)
 {
-	wxString whereStatement = conditions[0];
-	
-	for (int i = 1; i < conditions.Count(); i++) {		
-		if (conType == wAND) whereStatement.Append(wxT(" AND "));
-		if (conType == wOR) whereStatement.Append(wxT(" OR "));
-		whereStatement.Append(conditions[i]);		
-	}
-		
 	%%classColName%%* pCol = NULL;
 	if (pDbLayer){
 		if (pDbLayer->IsOpen()) {
-			PreparedStatement* pStatement = pDbLayer->PrepareStatement(wxT("SELECT * FROM %%classTableName%% WHERE ") + whereStatement);
+			PreparedStatement* pStatement = pDbLayer->PrepareStatement(wxT("SELECT * FROM %%classTableName%% WHERE ") + condition);
 			if (pStatement) {
 				pCol = new %%classColName%%(pStatement->RunQueryWithResults());	
 				pStatement->Close();

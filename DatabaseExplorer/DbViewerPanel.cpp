@@ -13,6 +13,8 @@
 DbViewerPanel::DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pManager)
 	: _DbViewerPanel(parent)
 {
+	SetExtraStyle( wxWS_EX_BLOCK_EVENTS );
+	
 	m_pNotebook = notebook;
 	m_pGlobalParent = parent;
 	m_mgr = pManager;
@@ -98,7 +100,6 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 				pagename = CreatePanelName(tab, DbViewerPanel::Erd);
 				ErdPanel *erdpanel = new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),m_pConnections, (DBETable*) tab->Clone() );
 				AddEditorPage(erdpanel, pagename);
-				m_pagesAdded.Add(pagename);
 
 			} else {
 #if defined (__WXMSW__)
@@ -108,7 +109,6 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 				if(!DoSelectPage(pagename)) {
 					SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),tab->GetParentName(),tab->GetName());
 					AddEditorPage(sqlpage, pagename);
-					m_pagesAdded.Add(pagename);
 				}
 			}
 		}
@@ -118,7 +118,6 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 			if(!DoSelectPage(pagename)) {
 				SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook,pView->GetDbAdapter()->Clone(),pView->GetParentName(),pView->GetName());
 				AddEditorPage(sqlpage, pagename);
-				m_pagesAdded.Add(pagename);
 			}
 		}
 
@@ -136,7 +135,6 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 					sqlpage->Show();
 #endif
 					AddEditorPage(sqlpage, pagename);
-					m_pagesAdded.Add(pagename);
 				}
 			}
 		}
@@ -467,7 +465,6 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 					pagename = CreatePanelName(pTab, DbViewerPanel::Erd);
 					ErdPanel *erdpanel = new ErdPanel(m_pNotebook,pTab->GetDbAdapter()->Clone(),m_pConnections, (DBETable*) pTab->Clone() );
 					AddEditorPage(erdpanel, pagename);
-					m_pagesAdded.Add(pagename);
 				}
 			}
 		} else if (evt.GetId() == XRCID("IDR_DBVIEWER_ERD_DB")) {
@@ -479,7 +476,6 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 					pagename = CreatePanelName(pDb, DbViewerPanel::Erd);
 					ErdPanel *erdpanel = new ErdPanel(m_pNotebook,pDb->GetDbAdapter()->Clone(),m_pConnections, (Database*) pDb->Clone() );
 					AddEditorPage(erdpanel, pagename);
-					m_pagesAdded.Add(pagename);
 				}
 			}
 		} else if (evt.GetId() == XRCID("IDR_DBVIEWER_CLASS_DB")) {
@@ -826,6 +822,7 @@ void DbViewerPanel::AddEditorPage(wxWindow* page, const wxString& name)
 {
 	m_SuppressUpdate = true;
 	m_mgr->AddEditorPage( page, name );
+	m_pagesAdded.Add( name );
 	
 	ErdPanel *erd = wxDynamicCast( page, ErdPanel );
 	if( erd )

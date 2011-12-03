@@ -34,6 +34,14 @@ public:
 	 */
 	virtual void OnBeginHandle(wxSFShapeHandle& handle);
 	/*!
+	 * \brief Event handler called during dragging of the shape handle.
+	 * The function can be overrided if necessary.
+	 *
+	 * The function is called by the framework (by the shape canvas).
+	 * \param handle Reference to dragged handle
+	 */
+	virtual void OnHandle(wxSFShapeHandle& handle);
+	/*!
      * \brief Event handler called at the end of the shape handle dragging process.
 	 * The function can be overrided if neccessary.
 	 * \param handle Reference to dragged shape handle

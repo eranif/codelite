@@ -89,7 +89,7 @@ void wxSFShapeHandle::Draw(wxDC& dc)
 
 void wxSFShapeHandle::Refresh()
 {
-	if(m_pParentShape)m_pParentShape->Refresh();
+	if( m_pParentShape ) m_pParentShape->Refresh( sfDELAYED );
 }
 
 //----------------------------------------------------------------------------------//
@@ -103,7 +103,7 @@ void wxSFShapeHandle::DrawNormal(wxDC& dc)
     #else
     dc.SetPen(*wxBLACK_PEN);
     #endif
-
+	
 	#if wxUSE_GRAPHICS_CONTEXT
     if( wxSFShapeCanvas::IsGCEnabled() )
 	{
@@ -112,7 +112,7 @@ void wxSFShapeHandle::DrawNormal(wxDC& dc)
 	else
 	{
 		dc.SetBrush(*wxBLACK_BRUSH);
-    dc.SetLogicalFunction(wxINVERT);
+		dc.SetLogicalFunction(wxINVERT);
 	}
 	#else
 	dc.SetBrush(*wxBLACK_BRUSH);

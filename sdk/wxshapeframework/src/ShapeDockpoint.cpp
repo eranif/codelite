@@ -166,7 +166,7 @@ wxRealPoint wxSFConnectionPoint::GetConnectionPoint() const
 
 void wxSFConnectionPoint::Refresh()
 {
-	if( m_pParentShape ) m_pParentShape->Refresh();
+	if( m_pParentShape ) m_pParentShape->Refresh( sfDELAYED );
 }
 
 void wxSFConnectionPoint::_OnMouseMove(const wxPoint& pos)

@@ -175,6 +175,7 @@ void FrameCanvas::OnRightDown(wxMouseEvent& event) {
 
 void FrameCanvas::OnKeyDown(wxKeyEvent& event) {
 	wxSFShapeCanvas::OnKeyDown(event);
+	event.Skip();
 }
 
 void FrameCanvas::OnPopupClick(wxCommandEvent &evt) {
@@ -280,7 +281,7 @@ void FrameCanvas::OnLeftDoubleClick(wxMouseEvent& event) {
 				settingDialog.SetTable(table->GetTable(),(wxSFDiagramManager*) table->GetParentManager());
 				settingDialog.ShowModal();
 				table->UpdateColumns();
-				table->Refresh();
+				Refresh(false);
 				SaveCanvasState();
 			}
 		}
@@ -291,7 +292,7 @@ void FrameCanvas::OnLeftDoubleClick(wxMouseEvent& event) {
 				settingDialog.SetView(view->GetView(),(wxSFDiagramManager*) view->GetParentManager() );
 				settingDialog.ShowModal();
 				view->UpdateView();
-				view->Refresh();
+				Refresh(false);
 				SaveCanvasState();
 			}
 		}

@@ -30,6 +30,7 @@
 #define sfWITHCHILDREN true
 #define sfWITHOUTCHILDREN false
 #define sfANY NULL
+#define sfDELAYED true
 
 // default values
 /*! \brief Default value of wxSFShapeBase::m_fVisible data member */
@@ -191,8 +192,11 @@ public:
 
 	// public functions
 
-    /*! \brief Refresh (redraw) the shape */
-	void Refresh();
+    /*! \brief Refresh (redraw) the shape
+	 * \param delayed If TRUE then the shape canvas will be rather invalidated than refreshed.
+	 * \sa wxSFShapeCanvas::InvalidateRect(), wxSFShapeCanvas::RefreshInvalidatedRect()
+	 */
+	void Refresh(bool delayed = false);
 	/*!
 	 * \brief Draw shape. Default implementation tests basic shape visual states
 	 * (normal/ready, mouse is over the shape, dragged shape can be accepted) and
@@ -986,8 +990,10 @@ protected:
     /*!
      * \brief Repaint the shape
      * \param rct Canvas portion that should be updated
+	 * \param delayed If TRUE then the shape canvas will be rather invalidated than refreshed.
+	 * \sa wxSFShapeCanvas::InvalidateRect(), wxSFShapeCanvas::RefreshInvalidatedRect()
      */
-	void Refresh(const wxRect& rct);
+	void Refresh(const wxRect& rct, bool delayed = false);
 	
 	/**
 	 * \brief Get absolute position of the shape parent.

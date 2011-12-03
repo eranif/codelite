@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __editorsettingsdockingwindowsbase__
-#define __editorsettingsdockingwindowsbase__
+#ifndef __EDITORSETTINGSDOCKINGWINDOWSBASE_H__
+#define __EDITORSETTINGSDOCKINGWINDOWSBASE_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/checkbox.h>
 #include <wx/gdicmn.h>
@@ -42,7 +43,6 @@ class EditorSettingsDockingWindowsBase : public wxPanel
 		wxCheckBox* m_checkBoxHideOutputPaneNotIfDebug;
 		wxCheckBox* m_checkBoxHideOutputPaneNotIfTrace;
 		wxCheckBox* m_checkBoxHideOutputPaneNotIfTasks;
-		wxCheckBox* m_checkBoxOutputPaneCanDock;
 		wxCheckBox* m_checkBoxDontFoldSearchResults;
 		wxCheckBox* m_checkBoxFindBarAtBottom;
 		wxCheckBox* m_checkBoxShowDebugOnRun;
@@ -60,4 +60,4 @@ class EditorSettingsDockingWindowsBase : public wxPanel
 	
 };
 
-#endif //__editorsettingsdockingwindowsbase__
+#endif //__EDITORSETTINGSDOCKINGWINDOWSBASE_H__

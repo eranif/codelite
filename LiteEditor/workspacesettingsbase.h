@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __workspacesettingsbase__
-#define __workspacesettingsbase__
+#ifndef __WORKSPACESETTINGSBASE_H__
+#define __WORKSPACESETTINGSBASE_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -87,6 +88,7 @@ class CodeCompletionBasePage : public wxPanel
 		wxTextCtrl* m_textCtrlMacros;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnCCContentModified( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClangCCEnabledUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	
@@ -109,4 +111,4 @@ class CodeCompletionBasePage : public wxPanel
 	
 };
 
-#endif //__workspacesettingsbase__
+#endif //__WORKSPACESETTINGSBASE_H__

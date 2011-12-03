@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -176,14 +176,20 @@ CodeCompletionBasePage::CodeCompletionBasePage( wxWindow* parent, wxWindowID id,
 	this->Layout();
 	
 	// Connect Events
+	m_textCtrlSearchPaths->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( CodeCompletionBasePage::OnCCContentModified ), NULL, this );
 	m_textCtrlSearchPaths->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CodeCompletionBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_textCtrlCmpOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( CodeCompletionBasePage::OnCCContentModified ), NULL, this );
 	m_textCtrlCmpOptions->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CodeCompletionBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_textCtrlMacros->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( CodeCompletionBasePage::OnCCContentModified ), NULL, this );
 }
 
 CodeCompletionBasePage::~CodeCompletionBasePage()
 {
 	// Disconnect Events
+	m_textCtrlSearchPaths->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( CodeCompletionBasePage::OnCCContentModified ), NULL, this );
 	m_textCtrlSearchPaths->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CodeCompletionBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_textCtrlCmpOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( CodeCompletionBasePage::OnCCContentModified ), NULL, this );
 	m_textCtrlCmpOptions->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CodeCompletionBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_textCtrlMacros->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( CodeCompletionBasePage::OnCCContentModified ), NULL, this );
 	
 }

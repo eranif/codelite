@@ -7,19 +7,24 @@ class CodeCompletionPage : public CodeCompletionBasePage
 {
 public:
 	enum {
-		TypeWorkspace,
-		TypeProject
+	    TypeWorkspace,
+	    TypeProject
 	};
+
+protected:
+	int  m_type;
+	bool m_ccChanged;
 	
 protected:
-	int m_type;
-	
+	// Event handlers
+	void OnCCContentModified(wxCommandEvent& event);
+
 public:
 	CodeCompletionPage(wxWindow *parent, int type);
 	virtual ~CodeCompletionPage();
-	
+
 	void Save();
-	
+
 	wxArrayString GetIncludePaths() const;
 	wxString      GetMacros() const;
 	wxString      GetCmpOptions() const;

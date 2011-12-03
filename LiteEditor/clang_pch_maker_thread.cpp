@@ -144,8 +144,9 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
 	bool reparseRequired = true;
 	if(!TU) {
-		
-		DoSetStatusMsg(wxString::Format(wxT("Parsing file %s..."), task->GetFileName().c_str()));
+
+		wxFileName fn(task->GetFileName());
+		DoSetStatusMsg(wxString::Format(wxT("clang: parsing file %s..."), fn.GetFullName().c_str()));
 		
 		int argc(0);
 		char **argv = MakeCommandLine(task->GetCompilationArgs(), argc, !isSource);
@@ -198,7 +199,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	CacheReturner cr(this, task->GetFileName(), TU);
 
 	if(reparseRequired && task->GetContext() == ::CTX_ReparseTU) {
-		DoSetStatusMsg(wxString::Format(wxT("Re-Parsing file %s..."), task->GetFileName().c_str()));
+		DoSetStatusMsg(wxString::Format(wxT("clang: re-parsing file %s..."), task->GetFileName().c_str()));
 
 		// We need to reparse the TU
 		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... [CTX_ReparseTU]"));
@@ -359,6 +360,7 @@ void ClangWorkerThread::ClearCache()
 {
 	wxCriticalSectionLocker locker(m_cs);
 	m_cache.Clear();
+	this->DoSetStatusMsg(wxT("clang: cache cleared"));
 }
 
 bool ClangWorkerThread::IsCacheEmpty()

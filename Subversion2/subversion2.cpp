@@ -31,23 +31,61 @@
 
 static Subversion2* thePlugin = NULL;
 
-static void replaceAll(wxString& str, const wxString& findWhat, const wxString &replaceWith)
+// Convert to Windows EOL
+static void ConvertToWindowsEOL(wxString& str)
 {
-	std::string s            = str.To8BitData().data();
-	std::string find_what    = findWhat.To8BitData().data();
-	std::string replace_with = replaceWith.To8BitData().data();
+	wxString newBuffer;
+	newBuffer.Alloc(str.Len());
+	
+	for(size_t i=0; i<str.Len(); i++) {
+		wxChar nextChar  = wxT('\0');
+		wxChar ch        = str.GetChar(i);
+		if((i + 1) < str.Len()) {
+			nextChar = str.GetChar(i+1);
+		}
 
-	size_t where = s.find(find_what);
-	while( where != std::string::npos ) {
+		if(ch == wxT('\r') && nextChar == wxT('\n')) {
+			newBuffer << wxT("\r\n");
+			i++;
 
-		s.erase (where, find_what.length());
-		s.insert(where, replace_with);
+		} else if(ch == wxT('\n')) {
+			newBuffer << wxT("\r\n");
 
-		where = s.find(find_what, where + replace_with.length());
+		} else if(ch == wxT('\r') && nextChar != wxT('\n')) {
+			newBuffer << wxT("\r\n");
+
+		} else {
+			newBuffer.Append(ch);
+		}
 	}
+	str.swap(newBuffer);
+}
 
-	str.Clear();
-	str = wxString::From8BitData(s.c_str());
+// Convert to Unix style
+static void ConvertToUnixEOL(wxString& str)
+{
+	wxString newBuffer;
+	newBuffer.Alloc(str.Len());
+
+	for(size_t i=0; i<str.Len(); i++) {
+		wxChar nextChar  = wxT('\0');
+		wxChar ch        = str.GetChar(i);
+		if((i + 1) < str.Len()) {
+			nextChar = str.GetChar(i+1);
+		}
+
+		if(ch == wxT('\r') && nextChar == wxT('\n')) {
+			newBuffer << wxT("\n");
+			i++;
+
+		} else if(ch == wxT('\r') && nextChar != wxT('\n')) {
+			newBuffer << wxT("\n");
+
+		} else {
+			newBuffer.Append(ch);
+		}
+	}
+	str.swap(newBuffer);
 }
 
 //Define the plugin entry point
@@ -519,11 +557,10 @@ void Subversion2::Patch(bool dryRun, const wxString &workingDirectory, wxEvtHand
 			if (ReadFileWithConversion(patchFile, fileContent)) {
 				switch(eolPolicy) {
 				case 1: // Windows EOL
-					replaceAll(fileContent, wxT("\r"), wxT(""));
-					replaceAll(fileContent, wxT("\n"), wxT("\r\n"));
+					ConvertToWindowsEOL(fileContent);
 					break;
 				case 2: // Convert to UNIX style
-					replaceAll(fileContent, wxT("\r\n"), wxT("\n"));
+					ConvertToUnixEOL(fileContent);
 					break;
 				}
 

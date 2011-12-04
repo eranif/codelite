@@ -12,7 +12,7 @@
 #include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/panel.h>
-#include "treelistctrl.h"
+#include "cl_treelistctrl.h"
 #include <map>
 #include "debugger.h"
 #include "manager.h"
@@ -62,7 +62,7 @@ private:
 	bool                             m_withButtons;
 
 protected:
-	wxTreeListCtrl*                  m_listTable;
+	clTreeListCtrl*                  m_listTable;
 	wxButton*                        m_button1;
 	wxButton*                        m_button2;
 	wxButton*                        m_button3;

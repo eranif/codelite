@@ -22,7 +22,7 @@
 #include <wx/button.h>
 #include <wx/statline.h>
 #include <wx/sizer.h>
-#include "treelistctrl.h"
+#include "cl_treelistctrl.h"
 #include <wx/gauge.h>
 #include <wx/panel.h>
 
@@ -44,7 +44,7 @@ class CscopeTabBase : public wxPanel
 		wxButton* m_buttonUpdateDbNow;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonClear;
-		wxTreeListCtrl* m_treeCtrlResults;
+		clTreeListCtrl* m_treeCtrlResults;
 		wxStaticText* m_statusMessage;
 		wxGauge* m_gauge;
 		

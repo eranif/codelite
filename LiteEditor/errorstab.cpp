@@ -28,7 +28,7 @@
 #include "drawingutils.h"
 #include "findresultstab.h"
 #include "pluginmanager.h"
-#include "treelistctrl.h"
+#include "cl_treelistctrl.h"
 #include "fileextmanager.h"
 #include "globals.h"
 #include "frame.h"
@@ -68,7 +68,7 @@ ErrorsTab::ErrorsTab ( BuildTab *bt, wxWindow *parent, wxWindowID id, const wxSt
 	
 	// Insert a wxTreeListCtrl 
 	long treeStyle = wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_HAS_BUTTONS|wxTR_ROW_LINES|wxALIGN_CENTER|wxTR_NO_LINES;
-	m_treeListCtrl = new wxTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
+	m_treeListCtrl = new clTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
 	MSWSetNativeTheme(m_treeListCtrl);
 	
 	m_treeListCtrl->AddColumn(_("Message" ), 800);

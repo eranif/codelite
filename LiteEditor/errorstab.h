@@ -27,12 +27,12 @@
 
 #include <vector>
 #include "buidltab.h"
-#include "treelistctrl.h"
+#include "cl_treelistctrl.h"
 
 class ErrorsTab : public OutputTabWindow
 {
 	friend class BuildTab;
-	wxTreeListCtrl* m_treeListCtrl;
+	clTreeListCtrl* m_treeListCtrl;
 	BuildTab*       m_bt;
 	int             m_errorCount;
 	int             m_warningCount;

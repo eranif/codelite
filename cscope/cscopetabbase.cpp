@@ -50,7 +50,7 @@ CscopeTabBase::CscopeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	mainSizer->Add( bSizer31, 0, wxALIGN_RIGHT|wxEXPAND, 5 );
 	
 	long treeStyle = wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_HAS_BUTTONS;
-	m_treeCtrlResults = new wxTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
+	m_treeCtrlResults = new clTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
 	mainSizer->Add( m_treeCtrlResults, 1, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer3;

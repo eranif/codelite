@@ -27,7 +27,7 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
 
 	long treeStyle = wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS;
-	m_listTable = new wxTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
+	m_listTable = new clTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
 	MSWSetNativeTheme(m_listTable);
 	
 	m_listTable->SetForegroundColour(DrawingUtils::GetTextCtrlTextColour());

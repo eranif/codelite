@@ -821,15 +821,16 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	event.Skip();
 }
 
-void LEditor::SetEnsureCaretIsVisible(int pos)
+void LEditor::SetEnsureCaretIsVisible(int pos, bool preserveSelection /*=true*/)
 {
 	OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
 	if (opts && opts->GetWordWrap()) {
 		// If the text may be word-wrapped, don't EnsureVisible immediately but from the
 		// paintevent handler, so that scintilla has time to take word-wrap into account
 		m_positionToEnsureVisible = pos;
+		m_preserveSelection = preserveSelection;
 	} else {
-		DoEnsureCaretIsVisible(pos);
+		DoEnsureCaretIsVisible(pos, preserveSelection);
 		m_positionToEnsureVisible = wxNOT_FOUND;
 	}
 }
@@ -840,22 +841,25 @@ void LEditor::OnScnPainted(wxScintillaEvent &event)
 		return;
 	}
 
-	CL_DEBUG1(wxString::Format(wxT("OnScnPainted: position = %i"), m_positionToEnsureVisible));
+	CL_DEBUG1(wxString::Format(wxT("OnScnPainted: position = %i, preserveSelection = %s"), m_positionToEnsureVisible, m_preserveSelection ? wxT("true"):wxT("false")));
 
-	DoEnsureCaretIsVisible(m_positionToEnsureVisible);
+	DoEnsureCaretIsVisible(m_positionToEnsureVisible, m_preserveSelection);
 	m_positionToEnsureVisible = wxNOT_FOUND;
 }
 
-void LEditor::DoEnsureCaretIsVisible(int pos)
+void LEditor::DoEnsureCaretIsVisible(int pos, bool preserveSelection)
 {
-	int start = GetSelectionStart();
-	int end   = GetSelectionEnd();
-	
+	int start, end;
+	if (preserveSelection) {
+		start = GetSelectionStart();
+		end   = GetSelectionEnd();
+	}
+
 	SetCaretAt(pos);
 	VerticalCentreCaret();
 	
-	// and finally restore any selection
-	if(start != end) {
+	// and finally restore any selection if requested
+	if(preserveSelection && (start != end)) {
 		this->SetSelection(start, end);
 	}
 }
@@ -3285,6 +3289,12 @@ void LEditor::DoSetCaretAt(long pos)
 	SetCurrentPos(pos);
 	SetSelectionStart(pos);
 	SetSelectionEnd(pos);
+	int line = LineFromPosition(pos);
+ 	if ( line >= 0 ) {
+		// This is needed to unfold the line if it were folded
+		// The various other 'EnsureVisible' things don't do this
+ 		EnsureVisible(line);
+ 	}
 }
 
 int LEditor::GetEOLByContent()

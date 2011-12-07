@@ -146,6 +146,7 @@ class LEditor : public wxScintilla, public IEditor
 	bool                                        m_pluginInitializedRMenu;
 	BOM                                         m_fileBom;
 	int                                         m_positionToEnsureVisible;
+	bool                                        m_preserveSelection;
 
 public:
 	static bool                                 m_ccShowPrivateMembers;
@@ -293,14 +294,16 @@ public:
 	 * stores a position for OnScnPainted() to ensure-is-visible in the next scintilla paint event
 	 * This doesn't happen until scintilla painting is complete, so it isn't ruined by e.g. word-wrap
 	 * \param position the position to ensure is visible
+	 * \param preserveSelection preserve any selection
 	 */
-	void SetEnsureCaretIsVisible(int pos);
+	void SetEnsureCaretIsVisible(int pos, bool preserveSelection = true);
 
 	/**
 	 * Does the necessary things to ensure that the destination line of a GoTo is visible
 	 * \param position the position to ensure is visible
+	 * \param preserveSelection cache and reapply any selection, which would otherwise be cleared by scintilla
 	 */	
-	void DoEnsureCaretIsVisible(int pos);
+	void DoEnsureCaretIsVisible(int pos, bool preserveSelection);
 
 	// Bookmark API
 	//-----------------------------------------

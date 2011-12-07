@@ -762,7 +762,6 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxScintilla 
 				}
 			}
 			if (!removed) {
-				editor->SetCaretAt(position);
 				editor->SetEnsureCaretIsVisible(position);
 				editor->SetSelection(position, position + resultLength);
 

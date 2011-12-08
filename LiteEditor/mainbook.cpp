@@ -792,8 +792,10 @@ bool MainBook::CloseAll(bool cancellable)
 #endif
 
 	SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
+	
+	//  OutputTabWindow::OnEditUI will crash on wxGTK-2.9.3 if we don't set the focus somewhere that will still exist
+	m_book->SetFocus();
 
-	//
 	m_book->DeleteAllPages(false);
 
 	// Since we got no more editors opened,

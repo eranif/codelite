@@ -48,13 +48,35 @@ void ImageExportDialog::OnUpdateCustomScale(wxUpdateUIEvent& event)
 }
 
 void ImageExportDialog::OnBowseClick(wxCommandEvent& event)
-{
-	wxFileDialog dlg(this, _("Export ERD to image..."), wxGetCwd(), wxT(""), wxT("BMP Files (*.bmp)|*.bmp|GIF Files (*.gif)|(*.gif)|XPM Files (*.xpm)|*.xpm|PNG Files (*.png)|*.png|JPEG Files (*.jpg)|*.jpg"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+{	
+	wxFileName path( m_Path );
+	wxFileDialog dlg(this, _("Export ERD to image..."), path.GetPath(), path.GetFullName(), wxT("BMP Files (*.bmp)|*.bmp|GIF Files (*.gif)|(*.gif)|XPM Files (*.xpm)|*.xpm|PNG Files (*.png)|*.png|JPEG Files (*.jpg)|*.jpg"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
+	switch( m_BitmapType )
+	{
+		case wxBITMAP_TYPE_BMP:
+			dlg.SetFilterIndex( 0 );
+			break;
+		case wxBITMAP_TYPE_GIF:
+			dlg.SetFilterIndex( 1 );
+			break;
+		case wxBITMAP_TYPE_XPM:
+			dlg.SetFilterIndex( 2 );
+			break;
+		case wxBITMAP_TYPE_PNG:
+			dlg.SetFilterIndex( 3 );
+			break;
+		case wxBITMAP_TYPE_JPEG:
+			dlg.SetFilterIndex( 4 );
+			break;
+		default:
+			break;
+	}
+	
 	if(dlg.ShowModal() == wxID_OK)
 	{
 		m_Path = dlg.GetPath();
-		m_BitmapType = wxBITMAP_TYPE_ANY;
+		m_BitmapType = wxBITMAP_TYPE_BMP;
 		
 		switch( dlg.GetFilterIndex() )
 		{

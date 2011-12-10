@@ -173,7 +173,7 @@ void DebuggerPane::CreateGUIControls()
 		m_book->AddPage(m_breakpoints, name, false, bmp);
 	}
 
-	// Add the 'Breakpoints'
+	// Add the 'Threads'
 	name = wxGetTranslation(THREADS);
 	bmp  = wxXmlResource::Get()->LoadBitmap(wxT("threads"));
 	if( IS_DETACHED(name) ) {

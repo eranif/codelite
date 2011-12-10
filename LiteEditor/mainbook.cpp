@@ -451,7 +451,7 @@ static bool IsFileExists(const wxFileName &filename) {
 #endif
 }
 
-LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectName, int lineno, long position, enum OF_extra extra/*=OF_AddJump*/)
+LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectName, int lineno, long position, enum OF_extra extra/*=OF_AddJump*/, bool preserveSelection /*=true*/)
 {
 	wxFileName fileName(file_name);
 	fileName.MakeAbsolute();
@@ -535,10 +535,10 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 	}
 
 	if (position != wxNOT_FOUND) {
-		editor->SetEnsureCaretIsVisible(position);
+		editor->SetEnsureCaretIsVisible(position, preserveSelection);
 
 	} else if (lineno != wxNOT_FOUND) {
-		editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno));
+		editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno), preserveSelection);
 
 	}
 

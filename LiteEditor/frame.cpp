@@ -28,6 +28,7 @@
 #include "file_logger.h"
 #include "cl_aui_tb_are.h"
 #include "manage_perspective_dlg.h"
+#include "save_perspective_as_dlg.h"
 #include "open_resource_dialog.h" // New open resource
 #include <wx/busyinfo.h>
 #include "tags_parser_search_path_dlg.h"
@@ -4864,11 +4865,10 @@ void clMainFrame::OnManagePerspectives(wxCommandEvent& e)
 
 void clMainFrame::OnSaveLayoutAsPerspective(wxCommandEvent& e)
 {
-	wxString name = wxGetTextFromUser(_("New Perspective name:"), _("Save Perspective As..."));
-	if(name.IsEmpty())
-		return;
-
-	ManagerST::Get()->GetPerspectiveManager().SavePerspective(name);
+	SavePerspectiveDlg dlg(this);
+	if(dlg.ShowModal() == wxID_OK && !dlg.GetPerspectiveName().IsEmpty()) {
+		ManagerST::Get()->GetPerspectiveManager().SavePerspective(dlg.GetPerspectiveName());
+	}
 }
 
 

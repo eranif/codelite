@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -43,10 +43,10 @@ ManagePerspectivesBaseDlg::ManagePerspectivesBaseDlg( wxWindow* parent, wxWindow
 	
 	m_buttonOk = new wxButton( this, wxID_OK, _("&Ok"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonOk->SetDefault(); 
-	buttonSizer->Add( m_buttonOk, 0, wxALL, 5 );
+	buttonSizer->Add( m_buttonOk, 0, wxRIGHT|wxLEFT, 5 );
 	
 	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
-	buttonSizer->Add( m_buttonCancel, 0, wxALL, 5 );
+	buttonSizer->Add( m_buttonCancel, 0, wxRIGHT|wxLEFT, 5 );
 	
 	mainSizer->Add( buttonSizer, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
@@ -71,4 +71,44 @@ ManagePerspectivesBaseDlg::~ManagePerspectivesBaseDlg()
 	m_button4->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ManagePerspectivesBaseDlg::OnRenamePerspective ), NULL, this );
 	m_button4->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ManagePerspectivesBaseDlg::OnRenamePerspectiveUI ), NULL, this );
 	
+}
+
+SavePerspectiveDlgBase::SavePerspectiveDlgBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer5;
+	bSizer5 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Save the current layout as:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1->Wrap( -1 );
+	bSizer5->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	m_comboBox = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+	bSizer5->Add( m_comboBox, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer5->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer6;
+	bSizer6 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_button5 = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button5->SetDefault(); 
+	bSizer6->Add( m_button5, 0, wxALL, 5 );
+	
+	m_button6 = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer6->Add( m_button6, 0, wxALL, 5 );
+	
+	bSizer5->Add( bSizer6, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+	
+	this->SetSizer( bSizer5 );
+	this->Layout();
+	bSizer5->Fit( this );
+	
+	this->Centre( wxBOTH );
+}
+
+SavePerspectiveDlgBase::~SavePerspectiveDlgBase()
+{
 }

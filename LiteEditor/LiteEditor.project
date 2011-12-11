@@ -443,6 +443,8 @@
     <File Name="navbarbase.h"/>
     <File Name="ccboxmainpanel.h"/>
     <File Name="ccboxmainpanel.cpp"/>
+    <File Name="save_perspective_as_dlg.cpp"/>
+    <File Name="save_perspective_as_dlg.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>

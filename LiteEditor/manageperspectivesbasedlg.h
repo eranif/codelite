@@ -1,16 +1,15 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __MANAGEPERSPECTIVESBASEDLG_H__
-#define __MANAGEPERSPECTIVESBASEDLG_H__
+#ifndef __manageperspectivesbasedlg__
+#define __manageperspectivesbasedlg__
 
-#include <wx/artprov.h>
-#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
+
 #include <wx/string.h>
 #include <wx/listbox.h>
 #include <wx/gdicmn.h>
@@ -21,6 +20,8 @@
 #include <wx/sizer.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
+#include <wx/stattext.h>
+#include <wx/combobox.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -55,4 +56,25 @@ class ManagePerspectivesBaseDlg : public wxDialog
 	
 };
 
-#endif //__MANAGEPERSPECTIVESBASEDLG_H__
+///////////////////////////////////////////////////////////////////////////////
+/// Class SavePerspectiveDlgBase
+///////////////////////////////////////////////////////////////////////////////
+class SavePerspectiveDlgBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText1;
+		wxComboBox* m_comboBox;
+		wxStaticLine* m_staticline2;
+		wxButton* m_button5;
+		wxButton* m_button6;
+	
+	public:
+		
+		SavePerspectiveDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Save Perspective As..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
+		~SavePerspectiveDlgBase();
+	
+};
+
+#endif //__manageperspectivesbasedlg__

@@ -211,7 +211,7 @@ public:
 	                   const wxString& caption = _("Find / Replace"),
 	                   const wxPoint& pos = wxDefaultPosition,
 	                   const wxSize& size = wxDefaultSize,
-	                   long style = wxDEFAULT_DIALOG_STYLE);
+	                   long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
 
 	// Creation
 	bool Create(wxWindow* parent,
@@ -220,7 +220,7 @@ public:
 	            const wxString& caption = _("Find / Replace"),
 	            const wxPoint& pos = wxDefaultPosition,
 	            const wxSize& size = wxDefaultSize,
-	            long style = wxDEFAULT_DIALOG_STYLE
+	            long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER
 	           );
 
 	// Return the data

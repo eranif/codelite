@@ -112,19 +112,21 @@ void FindReplaceDialog::CreateGUIControls()
 
 	wxStaticText* itemStaticText;
 	itemStaticText = new wxStaticText( this, wxID_STATIC, wxT("Find What:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	gbSizer->Add(itemStaticText, wxGBPosition(0, 0), wxDefaultSpan, wxALL | wxEXPAND, 5 );
+	gbSizer->Add(itemStaticText, wxGBPosition(0, 0), wxDefaultSpan, wxALL, 5 );
 
 	m_findString = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
 	gbSizer->Add(m_findString, wxGBPosition(0, 1), wxDefaultSpan, wxALL | wxEXPAND, 5 );
 
 	m_replaceWithLabel = new wxStaticText( this, wxID_STATIC, wxT("Replace With:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	gbSizer->Add(m_replaceWithLabel, wxGBPosition(1, 0), wxDefaultSpan, wxALL | wxEXPAND, 5 );
+	gbSizer->Add(m_replaceWithLabel, wxGBPosition(1, 0), wxDefaultSpan, wxALL, 5 );
 
-	m_replaceString = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition);
+	m_replaceString = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
 	gbSizer->Add(m_replaceString, wxGBPosition(1, 1), wxDefaultSpan, wxALL | wxEXPAND, 5 );
 
 	sz = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Options"));
 	gbSizer->Add(sz, wxGBPosition(2, 0), wxGBSpan(1, 2),  wxALL | wxEXPAND, 5 );
+
+	gbSizer->AddGrowableCol(1);
 
 	m_matchCase = new wxCheckBox(this, wxID_ANY, wxT("&Match case"));
 	sz->Add(m_matchCase, 1, wxALL | wxEXPAND, 5 );

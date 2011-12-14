@@ -215,8 +215,15 @@ void CscopeTab::DoItemActivated( wxTreeItemId &item, wxEvent &event )
 				if(m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, data->GetEntry().GetLine()-1)) {
 					IEditor *editor = m_mgr->GetActiveEditor();
 					if( editor && editor->GetFileName().GetFullPath() == fn.GetFullPath() && !GetFindWhat().IsEmpty()) {
+						// We can't use data->GetEntry().GetPattern() as the line to search for as any appended comments have been truncated
+						// For some reason LEditor::DoFindAndSelect checks it against the whole current line
+						// and won't believe a match unless their lengths are the same
+						int line = data->GetEntry().GetLine() - 1;
+						int start = editor->PosFromLine(line);	// PosFromLine() returns the line start position
+						int end = editor->LineEnd(line);
+						wxString searchline(editor->GetTextRange(start, end));
 						// Find and select the entry in the file
-						editor->FindAndSelect(data->GetEntry().GetPattern(), GetFindWhat(), editor->PosFromLine(data->GetEntry().GetLine()-1), m_mgr->GetNavigationMgr());
+						editor->FindAndSelect(searchline, GetFindWhat(), start, m_mgr->GetNavigationMgr());
 					}
 				}
 				return;

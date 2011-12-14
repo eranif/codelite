@@ -88,6 +88,7 @@ protected:
 	bool           m_hideOutputPaneNotIfDebug;
 	bool           m_hideOutputPaneNotIfTrace;
 	bool           m_hideOutputPaneNotIfTasks;
+	bool           m_hideOutputPaneNotIfCscope;
 	bool           m_findBarAtBottom;
 	bool           m_TrimLine;
 	bool           m_AppendLF;
@@ -262,16 +263,22 @@ public:
 		return m_hideOutputPaneNotIfDebug;
 	}
 	void SetHideOutputPaneNotIfTrace(const bool& HideOutpuPaneNotIfTrace) {
-		this->m_hideOutputPaneNotIfTrace= HideOutpuPaneNotIfTrace;
+		this->m_hideOutputPaneNotIfTrace = HideOutpuPaneNotIfTrace;
 	}
 	const bool& GetHideOutputPaneNotIfTrace() const {
 		return m_hideOutputPaneNotIfTrace;
 	}
 	void SetHideOutputPaneNotIfTasks(const bool& HideOutpuPaneNotIfTasks) {
-		this->m_hideOutputPaneNotIfTasks= HideOutpuPaneNotIfTasks;
+		this->m_hideOutputPaneNotIfTasks = HideOutpuPaneNotIfTasks;
 	}
 	const bool& GetHideOutputPaneNotIfTasks() const {
 		return m_hideOutputPaneNotIfTasks;
+	}
+	void SetHideOutputPaneNotIfCscope(const bool& HideOutpuPaneNotIfCscope) {
+		this->m_hideOutputPaneNotIfCscope = HideOutpuPaneNotIfCscope;
+	}
+	const bool& GetHideOutputPaneNotIfCscope() const {
+		return m_hideOutputPaneNotIfCscope;
 	}
 	void SetHideChangeMarkerMargin(bool hideChangeMarkerMargin) {
 		this->m_hideChangeMarkerMargin = hideChangeMarkerMargin;

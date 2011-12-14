@@ -592,6 +592,8 @@ bool EditorConfig::GetPaneStickiness(const wxString& caption)
 		return GetOptions()->GetHideOutputPaneNotIfTrace();
 	} else if (caption == _("Tasks")) {
 		return GetOptions()->GetHideOutputPaneNotIfTasks();
+	} else if (caption == _("CScope")) {
+		return GetOptions()->GetHideOutputPaneNotIfCscope();
 	} 
 	
 	// How did we get here?
@@ -619,6 +621,8 @@ void EditorConfig::SetPaneStickiness(const wxString& caption, bool stickiness)
 		options->SetHideOutputPaneNotIfTrace(stickiness);
 	} else if (caption == _("Tasks")) {
 		options->SetHideOutputPaneNotIfTasks(stickiness);
+	} else if (caption == _("Cscope")) {
+		options->SetHideOutputPaneNotIfCscope(stickiness);
 	} else {
 		return;
 	}

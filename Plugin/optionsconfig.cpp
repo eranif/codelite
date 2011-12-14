@@ -80,6 +80,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         , m_hideOutputPaneNotIfDebug(true)
         , m_hideOutputPaneNotIfTrace(false)
         , m_hideOutputPaneNotIfTasks(false)
+        , m_hideOutputPaneNotIfCscope(false)
         , m_findBarAtBottom(true)
         , m_TrimLine(true)
         , m_AppendLF(true)
@@ -152,6 +153,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
     	m_hideOutputPaneNotIfDebug      = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfDebug"));
     	m_hideOutputPaneNotIfTrace      = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfTrace"));
     	m_hideOutputPaneNotIfTasks      = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfTasks"));
+    	m_hideOutputPaneNotIfCscope     = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfCscope"));
     	m_findBarAtBottom               = XmlUtils::ReadBool  (node, wxT("FindBarAtBottom"),           m_findBarAtBottom);
     	m_disableSmartIndent            = XmlUtils::ReadBool  (node, wxT("DisableSmartIndent"),        m_disableSmartIndent);
     	m_disableSemicolonShift         = XmlUtils::ReadBool  (node, wxT("DisableSemicolonShift"),     m_disableSemicolonShift);
@@ -224,6 +226,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("HideOutputPaneNotIfDebug"),      BoolToString(m_hideOutputPaneNotIfDebug));
 	n->AddProperty(wxT("HideOutputPaneNotIfTrace"),      BoolToString(m_hideOutputPaneNotIfTrace));
 	n->AddProperty(wxT("HideOutputPaneNotIfTasks"),      BoolToString(m_hideOutputPaneNotIfTasks));
+	n->AddProperty(wxT("HideOutputPaneNotIfCscope"),     BoolToString(m_hideOutputPaneNotIfCscope));
 	n->AddProperty(wxT("FindBarAtBottom"),               BoolToString(m_findBarAtBottom));
 	n->AddProperty(wxT("DisableSmartIndent"),            BoolToString(m_disableSmartIndent));
 	n->AddProperty(wxT("DisableSemicolonShift"),         BoolToString(m_disableSemicolonShift));

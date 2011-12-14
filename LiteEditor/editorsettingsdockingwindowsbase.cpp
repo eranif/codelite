@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Sep  3 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -24,55 +24,60 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase( wxWindow* pa
 	sbSizer1->Add( m_checkBoxHideOutputPaneOnClick, 0, wxEXPAND|wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizer1;
-	fgSizer1 = new wxFlexGridSizer( 0, 3, 0, 0 );
+	fgSizer1 = new wxFlexGridSizer( 0, 4, 0, 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_checkBoxHideOutputPaneNotIfBuild = new wxCheckBox( this, wxID_ANY, _("Build"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxHideOutputPaneNotIfBuild->SetToolTip( _("Don't automatically close the Output Pane on an editor click if it's the Debug tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
+	m_checkBoxHideOutputPaneNotIfBuild->SetToolTip( _("Don't automatically close the Output Pane on an editor click if this tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
 	
 	fgSizer1->Add( m_checkBoxHideOutputPaneNotIfBuild, 0, wxALL, 5 );
 	
 	m_checkBoxHideOutputPaneNotIfErrors = new wxCheckBox( this, wxID_ANY, _("Errors"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxHideOutputPaneNotIfErrors->SetToolTip( _("Don't automatically close the Output Pane on an editor click if it's the Debug tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
+	m_checkBoxHideOutputPaneNotIfErrors->SetToolTip( _("Don't automatically close the Output Pane on an editor click if this tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
 	
 	fgSizer1->Add( m_checkBoxHideOutputPaneNotIfErrors, 0, wxALL, 5 );
 	
 	m_checkBoxHideOutputPaneNotIfSearch = new wxCheckBox( this, wxID_ANY, _("Search"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxHideOutputPaneNotIfSearch->SetToolTip( _("Don't automatically close the Output Pane on an editor click if it's the Debug tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
+	m_checkBoxHideOutputPaneNotIfSearch->SetToolTip( _("Don't automatically close the Output Pane on an editor click if this tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
 	
 	fgSizer1->Add( m_checkBoxHideOutputPaneNotIfSearch, 0, wxALL, 5 );
 	
 	m_checkBoxHideOutputPaneNotIfReplace = new wxCheckBox( this, wxID_ANY, _("Replace"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxHideOutputPaneNotIfReplace->SetToolTip( _("Don't automatically close the Output Pane on an editor click if it's the Debug tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
+	m_checkBoxHideOutputPaneNotIfReplace->SetToolTip( _("Don't automatically close the Output Pane on an editor click if this tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
 	
 	fgSizer1->Add( m_checkBoxHideOutputPaneNotIfReplace, 0, wxALL, 5 );
 	
 	m_checkBoxHideOutputPaneNotIfReferences = new wxCheckBox( this, wxID_ANY, _("References"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxHideOutputPaneNotIfReferences->SetToolTip( _("Don't automatically close the Output Pane on an editor click if it's the Debug tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
+	m_checkBoxHideOutputPaneNotIfReferences->SetToolTip( _("Don't automatically close the Output Pane on an editor click if this tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
 	
 	fgSizer1->Add( m_checkBoxHideOutputPaneNotIfReferences, 0, wxALL, 5 );
 	
 	m_checkBoxHideOutputPaneNotIfOutput = new wxCheckBox( this, wxID_ANY, _("Output"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxHideOutputPaneNotIfOutput->SetToolTip( _("Don't automatically close the Output Pane on an editor click if it's the Debug tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
+	m_checkBoxHideOutputPaneNotIfOutput->SetToolTip( _("Don't automatically close the Output Pane on an editor click if this tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
 	
 	fgSizer1->Add( m_checkBoxHideOutputPaneNotIfOutput, 0, wxALL, 5 );
 	
 	m_checkBoxHideOutputPaneNotIfDebug = new wxCheckBox( this, wxID_ANY, _("Debug"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxHideOutputPaneNotIfDebug->SetValue(true); 
-	m_checkBoxHideOutputPaneNotIfDebug->SetToolTip( _("Don't automatically close the Output Pane on an editor click if it's the Debug tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
+	m_checkBoxHideOutputPaneNotIfDebug->SetToolTip( _("Don't automatically close the Output Pane on an editor click if this tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
 	
 	fgSizer1->Add( m_checkBoxHideOutputPaneNotIfDebug, 0, wxALL, 5 );
 	
 	m_checkBoxHideOutputPaneNotIfTrace = new wxCheckBox( this, wxID_ANY, _("Trace"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxHideOutputPaneNotIfTrace->SetToolTip( _("Don't automatically close the Output Pane on an editor click if it's the Debug tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
+	m_checkBoxHideOutputPaneNotIfTrace->SetToolTip( _("Don't automatically close the Output Pane on an editor click if this tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
 	
 	fgSizer1->Add( m_checkBoxHideOutputPaneNotIfTrace, 0, wxALL, 5 );
 	
 	m_checkBoxHideOutputPaneNotIfTasks = new wxCheckBox( this, wxID_ANY, _("Tasks"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxHideOutputPaneNotIfTasks->SetToolTip( _("Don't automatically close the Output Pane on an editor click if it's the Debug tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
+	m_checkBoxHideOutputPaneNotIfTasks->SetToolTip( _("Don't automatically close the Output Pane on an editor click if this tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
 	
 	fgSizer1->Add( m_checkBoxHideOutputPaneNotIfTasks, 0, wxALL, 5 );
+	
+	m_checkBoxHideOutputPaneNotIfCscope = new wxCheckBox( this, wxID_ANY, _("CScope"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxHideOutputPaneNotIfCscope->SetToolTip( _("Don't automatically close the Output Pane on an editor click if this tab that's showing. You probably don't want it to close whenever you set a breakpoint, for example.") );
+	
+	fgSizer1->Add( m_checkBoxHideOutputPaneNotIfCscope, 0, wxALL, 5 );
 	
 	sbSizer1->Add( fgSizer1, 0, wxALIGN_LEFT|wxEXPAND|wxRIGHT|wxLEFT, 20 );
 	
@@ -94,7 +99,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase( wxWindow* pa
 	wxStaticBoxSizer* sbSizer11;
 	sbSizer11 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Debug Pane:") ), wxVERTICAL );
 	
-	m_checkBoxShowDebugOnRun = new wxCheckBox( this, wxID_ANY, _("Show 'Debug' tab on Start Debugger"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxShowDebugOnRun = new wxCheckBox( this, wxID_ANY, _("Show 'Debug' tab on starting the debugger"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxShowDebugOnRun->SetValue(true); 
 	m_checkBoxShowDebugOnRun->SetToolTip( _("When starting the debugger, if the Debug tab is not visible, checking this will make it visible") );
 	
@@ -133,6 +138,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase( wxWindow* pa
 	m_checkBoxHideOutputPaneNotIfDebug->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI ), NULL, this );
 	m_checkBoxHideOutputPaneNotIfTrace->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI ), NULL, this );
 	m_checkBoxHideOutputPaneNotIfTasks->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI ), NULL, this );
+	m_checkBoxHideOutputPaneNotIfCscope->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI ), NULL, this );
 }
 
 EditorSettingsDockingWindowsBase::~EditorSettingsDockingWindowsBase()
@@ -147,5 +153,6 @@ EditorSettingsDockingWindowsBase::~EditorSettingsDockingWindowsBase()
 	m_checkBoxHideOutputPaneNotIfDebug->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI ), NULL, this );
 	m_checkBoxHideOutputPaneNotIfTrace->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI ), NULL, this );
 	m_checkBoxHideOutputPaneNotIfTasks->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI ), NULL, this );
+	m_checkBoxHideOutputPaneNotIfCscope->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI ), NULL, this );
 	
 }

@@ -16,6 +16,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows( wxWindow* parent )
 	m_checkBoxHideOutputPaneNotIfDebug->SetValue     (options->GetHideOutputPaneNotIfDebug());
 	m_checkBoxHideOutputPaneNotIfTrace->SetValue     (options->GetHideOutputPaneNotIfTrace());
 	m_checkBoxHideOutputPaneNotIfTasks->SetValue     (options->GetHideOutputPaneNotIfTasks());
+	m_checkBoxHideOutputPaneNotIfCscope->SetValue    (options->GetHideOutputPaneNotIfCscope());
 	m_checkBoxFindBarAtBottom->SetValue              (options->GetFindBarAtBottom());
 	m_checkBoxDontFoldSearchResults->SetValue        (options->GetDontAutoFoldResults());
 	m_checkBoxShowDebugOnRun->SetValue               (options->GetShowDebugOnRun());
@@ -52,6 +53,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
 	options->SetHideOutputPaneNotIfDebug( m_checkBoxHideOutputPaneNotIfDebug->IsChecked() );
 	options->SetHideOutputPaneNotIfTrace( m_checkBoxHideOutputPaneNotIfTrace->IsChecked() );
 	options->SetHideOutputPaneNotIfTasks( m_checkBoxHideOutputPaneNotIfTasks->IsChecked() );
+	options->SetHideOutputPaneNotIfCscope( m_checkBoxHideOutputPaneNotIfCscope->IsChecked() );
 	options->SetFindBarAtBottom( m_checkBoxFindBarAtBottom->IsChecked() );
 	options->SetDontAutoFoldResults( m_checkBoxDontFoldSearchResults->IsChecked() );
 	options->SetShowDebugOnRun( m_checkBoxShowDebugOnRun->IsChecked() );

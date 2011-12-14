@@ -216,7 +216,7 @@ void CscopeTab::DoItemActivated( wxTreeItemId &item, wxEvent &event )
 					IEditor *editor = m_mgr->GetActiveEditor();
 					if( editor && editor->GetFileName().GetFullPath() == fn.GetFullPath() && !GetFindWhat().IsEmpty()) {
 						// Find and select the entry in the file
-						editor->FindAndSelect(data->GetEntry().GetPattern(), GetFindWhat(), editor->GetCurrentPosition(), m_mgr->GetNavigationMgr());
+						editor->FindAndSelect(data->GetEntry().GetPattern(), GetFindWhat(), editor->PosFromLine(data->GetEntry().GetLine()-1), m_mgr->GetNavigationMgr());
 					}
 				}
 				return;

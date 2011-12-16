@@ -365,11 +365,6 @@ void CCBox::SelectItem(long item)
 
 void CCBox::Show(const wxString& word)
 {
-#ifdef __WXMSW__
-	ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
-	SetClassLongPtr(GetHandle(), GCL_STYLE, style);
-#endif
-
 	wxString lastName;
 	size_t i(0);
 	std::vector<CCItemInfo> _tags;
@@ -697,10 +692,6 @@ void CCBox::PreviousPage()
 void CCBox::HideCCBox()
 {
 	if( IsShown() ) {
-#ifdef __WXMSW__
-		ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
-		SetClassLongPtr(GetHandle(), GCL_STYLE, style);
-#endif
 		Hide();
 		DoHideCCHelpTab();
 		if( !m_constructing ) {

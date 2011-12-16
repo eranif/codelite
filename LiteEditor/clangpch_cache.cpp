@@ -6,7 +6,7 @@
 #include "file_logger.h"
 
 ClangTUCache::ClangTUCache()
-	: m_maxItems(100)
+	: m_maxItems(20)
 {
 }
 

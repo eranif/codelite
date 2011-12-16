@@ -95,18 +95,9 @@ public:
 		: wxSCICallTipBase(parent, param2),
 		  m_ct(ct), m_swx(swx), m_cx(-1), m_cy(-1) 
 	{
-#ifdef __WXMSW__
-		ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
-		SetClassLongPtr(GetHandle(), GCL_STYLE, style);
-#endif
 	}
 
 	~wxSCICallTip() {
-#ifdef __WXMSW__
-		ULONG_PTR style = GetClassLongPtr(this->GetHandle(), GCL_STYLE);
-		SetClassLongPtr(GetHandle(), GCL_STYLE, style);
-#endif
-
 #if wxUSE_POPUPWIN && wxSCI_USE_POPUP && defined(__WXGTK__)
 		wxRect rect = GetRect();
 		rect.x = m_cx;

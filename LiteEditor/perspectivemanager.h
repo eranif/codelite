@@ -32,11 +32,13 @@ public:
 	const wxString& GetActive() const {
 		return m_active;
 	}
+	
+	bool          IsDefaultActive() const;
 	void          LoadPerspective(const wxString &name = wxT(""));
 	void          LoadPerspectiveByMenuId(int id);
 	void          SavePerspective(const wxString &name = wxT(""), bool notify = true);
 	void          SavePerspectiveIfNotExists(const wxString &name);
-
+	
 	wxArrayString GetAllPerspectives();
 	void          DeleteAllPerspectives();
 	void          ClearIds();

@@ -4215,8 +4215,10 @@ void clMainFrame::SaveLayoutAndSession()
 	DetachedPanesInfo dpi(panes);
 	EditorConfigST::Get()->WriteObject(wxT("DetachedPanesList"), &dpi);
 
-	// Update the current perspective
-	ManagerST::Get()->GetPerspectiveManager().SavePerspective();
+	// Update the current perspective - but only if it is the default perspective
+	if(ManagerST::Get()->GetPerspectiveManager().IsDefaultActive()) {
+		ManagerST::Get()->GetPerspectiveManager().SavePerspective();
+	}
 
 	// save the notebooks styles
 	EditorConfigST::Get()->SaveLongValue(wxT("MainBook"),      GetMainBook()->GetBookStyle());
@@ -4336,8 +4338,12 @@ void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 
 	} else {
 		ManagerST::Get()->GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
+		
 		// Update the current perspective
-		ManagerST::Get()->GetPerspectiveManager().SavePerspective();
+		if(ManagerST::Get()->GetPerspectiveManager().IsDefaultActive()) {
+			ManagerST::Get()->GetPerspectiveManager().SavePerspective();
+		}
+		
 	}
 }
 

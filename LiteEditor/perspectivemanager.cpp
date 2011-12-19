@@ -223,3 +223,8 @@ void PerspectiveManager::SavePerspectiveIfNotExists(const wxString& name)
 		SavePerspective(name, false);
 	}
 }
+
+bool PerspectiveManager::IsDefaultActive() const
+{
+	return GetActive() == NORMAL_LAYOUT;
+}

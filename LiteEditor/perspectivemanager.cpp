@@ -39,7 +39,7 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
 	if(pname.IsEmpty()) {
 		pname = m_active;
 	}
-	
+
 	wxString file = DoGetPathFromName(pname);
 	wxString nameOnly;
 
@@ -69,24 +69,13 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
 		m_active = nameOnly;
 		EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
 		
+		if(name == DEBUG_LAYOUT) {
+			DoEnsureDebuggerPanesAreVisible();
+		}
+		
 	} else {
 		if(name == DEBUG_LAYOUT) {
-			bool needUpdate = false;
-			// First time, make sure that the debugger pane is visible
-			wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
-			if(info.IsOk() && !info.IsShown()) {
-				info.Show();
-				needUpdate = true;
-			}
-#ifndef __WXMSW__
-			wxAuiPaneInfo &dbgPaneInfo = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger Console"));
-			if(dbgPaneInfo.IsOk() && !dbgPaneInfo.IsShown()) {
-				dbgPaneInfo.Show();
-				needUpdate = true;
-			}
-#endif
-			if(needUpdate)
-				clMainFrame::Get()->GetDockingManager().Update();
+			DoEnsureDebuggerPanesAreVisible();
 
 			SavePerspective(name);
 			m_active = nameOnly;
@@ -100,7 +89,7 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
 			EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
 		}
 	}
-	
+
 #ifdef __WXMAC__
 	clMainFrame::Get()->GetDockingManager().Update();
 #endif
@@ -227,4 +216,24 @@ void PerspectiveManager::SavePerspectiveIfNotExists(const wxString& name)
 bool PerspectiveManager::IsDefaultActive() const
 {
 	return GetActive() == NORMAL_LAYOUT;
+}
+
+void PerspectiveManager::DoEnsureDebuggerPanesAreVisible()
+{
+	bool needUpdate = false;
+	// First time, make sure that the debugger pane is visible
+	wxAuiPaneInfo &info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
+	if(info.IsOk() && !info.IsShown()) {
+		info.Show();
+		needUpdate = true;
+	}
+#ifndef __WXMSW__
+	wxAuiPaneInfo &dbgPaneInfo = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger Console"));
+	if(dbgPaneInfo.IsOk() && !dbgPaneInfo.IsShown()) {
+		dbgPaneInfo.Show();
+		needUpdate = true;
+	}
+#endif
+	if(needUpdate)
+		clMainFrame::Get()->GetDockingManager().Update();
 }

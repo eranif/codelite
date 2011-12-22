@@ -21,7 +21,8 @@ protected:
 
 protected:
 	wxString DoGetPathFromName(const wxString &name);
-
+	void DoEnsureDebuggerPanesAreVisible();
+	
 public:
 	PerspectiveManager();
 	virtual ~PerspectiveManager();

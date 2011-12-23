@@ -113,7 +113,7 @@ public:
 	LEditor *OpenFile(const wxString &file_name, const wxString &projectName = wxEmptyString,
 	                  int lineno = wxNOT_FOUND, long position = wxNOT_FOUND, enum OF_extra extra = OF_AddJump, bool preserveSelection = true);
 	LEditor *OpenFile(const BrowseRecord &rec) {
-		return OpenFile(rec.filename, rec.project, rec.lineno, rec.position, OF_None);
+		return OpenFile(rec.filename, rec.project, rec.lineno, rec.position, OF_None, false);
 	}
 
 	bool AddPage   (wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false, size_t insert_at_index = wxNOT_FOUND);

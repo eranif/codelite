@@ -183,6 +183,12 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
 	m_dbFile = fileName;
 	ITagsStoragePtr db;
 	db = m_db;
+
+	bool retagIsRequired = false;
+	if(fileName.FileExists() == false) {
+		retagIsRequired = true;
+	}
+	
 	db->OpenDatabase(fileName);
 	db->SetEnableCaseInsensitive( !(m_tagsOptions.GetFlags() & CC_IS_CASE_SENSITIVE) );
 	db->SetSingleSearchLimit(m_tagsOptions.GetCcNumberOfDisplayItems());
@@ -196,6 +202,11 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
 			event.SetEventObject(this);
 			m_evtHandler->ProcessEvent( event );
 		}
+	}
+
+	if(retagIsRequired && m_evtHandler) {
+		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
+		m_evtHandler->AddPendingEvent(e);
 	}
 }
 

@@ -369,27 +369,15 @@ void Cscope::DoCscopeCommand(const wxString &command, const wxString &findWhat, 
 
 void Cscope::OnFindSymbol(wxCommandEvent &e)
 {
-	// sanity
-	if ( m_mgr->GetActiveEditor() == NULL ) {
-		return;
+	wxString word = GetSearchPattern();
+	if (!word.IsEmpty()) {
+		DoFindSymbol(word);
 	}
-
-	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
-	if (word.IsEmpty()) {
-		return;
-	}
-
-	DoFindSymbol(word);
 }
 
 void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
 {
-	// sanity
-	if ( m_mgr->GetActiveEditor() == NULL ) {
-		return;
-	}
-
-	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
+	wxString word = GetSearchPattern();
 	if (word.IsEmpty()) {
 		return;
 	}
@@ -406,12 +394,7 @@ void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
 
 void Cscope::OnFindFunctionsCalledByThisFunction(wxCommandEvent &e)
 {
-	// sanity
-	if ( m_mgr->GetActiveEditor() == NULL ) {
-		return;
-	}
-
-	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
+	wxString word = GetSearchPattern();
 	if (word.IsEmpty()) {
 		return;
 	}
@@ -438,7 +421,7 @@ void Cscope::OnFindFunctionsCalledByThisFunction(wxCommandEvent &e)
 
 void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent &e)
 {
-	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
+	wxString word = GetSearchPattern();
 	if (word.IsEmpty()) {
 		return;
 	}
@@ -599,15 +582,32 @@ void Cscope::OnWorkspaceOpenUI(wxUpdateUIEvent& e)
 	e.Enable(m_mgr->IsWorkspaceOpen());
 }
 
-void Cscope::OnFindUserInsertedSymbol(wxCommandEvent& e)
+void Cscope::OnFindUserInsertedSymbol(wxCommandEvent& WXUNUSED(e))
 {
-	CHECK_CL_SHUTDOWN();
-
-	wxString word = wxGetTextFromUser(_("Find What:"), _("cscope: find symbol"), wxT(""), m_mgr->GetTheApp()->GetTopWindow());
+	wxString word = GetSearchPattern();
 	if(word.IsEmpty())
 		return;
 
 	DoFindSymbol( word );
+}
+
+wxString Cscope::GetSearchPattern() const
+{
+	wxString pattern;
+	if (m_mgr->IsShutdownInProgress()) {
+		return pattern;
+	}
+
+	IEditor* editor = m_mgr->GetActiveEditor();
+	if (editor) {
+		pattern = editor->GetWordAtCaret();
+	}
+
+	if (pattern.IsEmpty()) {
+		pattern = wxGetTextFromUser(_("Enter the symbol to search for:"), _("cscope: find symbol"), wxT(""), m_mgr->GetTheApp()->GetTopWindow());
+	}
+
+	return pattern;
 }
 
 void Cscope::DoFindSymbol(const wxString& word)

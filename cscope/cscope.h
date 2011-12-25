@@ -57,6 +57,7 @@ protected:
 	wxString DoCreateListFile(bool force);
 	void     DoCscopeCommand(const wxString &command, const wxString &findWhat, const wxString &endMsg);
 	void     DoFindSymbol(const wxString& word);
+	wxString GetSearchPattern() const;
 
 	//Event handlers
 	//------------------------------------------

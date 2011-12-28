@@ -47,6 +47,14 @@
 
 static Copyright* thePlugin = NULL;
 
+// Internal events used by this plugin
+enum {
+	CR_copyrights_options = 11000,
+	CR_insert_copyrights,
+	CR_batch_insert_copyrights,
+	CR_insert_prj_copyrights
+};
+
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 {
@@ -84,10 +92,10 @@ Copyright::Copyright(IManager *manager)
 
 Copyright::~Copyright()
 {
-	m_topWin->Disconnect(XRCID("copyrights_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnOptions), NULL, this);
-	m_topWin->Disconnect(XRCID("insert_copyrights"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
-	m_topWin->Disconnect(XRCID("batch_insert_copyrights"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
-	m_topWin->Disconnect(XRCID("insert_prj_copyrights"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnProjectInsertCopyrights), NULL, this);
+	m_topWin->Disconnect(CR_copyrights_options,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnOptions), NULL, this);
+	m_topWin->Disconnect(CR_insert_copyrights,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
+	m_topWin->Disconnect(CR_batch_insert_copyrights, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
+	m_topWin->Disconnect(CR_insert_prj_copyrights,   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnProjectInsertCopyrights), NULL, this);
 }
 
 clToolBar *Copyright::CreateToolBar(wxWindow *parent)
@@ -114,10 +122,10 @@ void Copyright::CreatePluginMenu(wxMenu *pluginsMenu)
 	pluginsMenu->Append(wxID_ANY, _("Copyrights"), menu);
 
 	// connect events
-	m_topWin->Connect(XRCID("copyrights_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnOptions), NULL, this);
-	m_topWin->Connect(XRCID("insert_copyrights"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
-	m_topWin->Connect(XRCID("batch_insert_copyrights"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnBatchInsertCopyrights), NULL, this);
-	m_topWin->Connect(XRCID("insert_prj_copyrights"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnProjectInsertCopyrights), NULL, this);
+	m_topWin->Connect(CR_copyrights_options,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnOptions), NULL, this);
+	m_topWin->Connect(CR_insert_copyrights,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
+	m_topWin->Connect(CR_batch_insert_copyrights, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
+	m_topWin->Connect(CR_insert_prj_copyrights,   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnProjectInsertCopyrights), NULL, this);
 }
 
 void Copyright::HookPopupMenu(wxMenu *menu, MenuType type)

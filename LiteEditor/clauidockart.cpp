@@ -1,6 +1,7 @@
 #include "clauidockart.h"
 #include <wx/image.h>
 #include <wx/dc.h>
+#include <wx/dcmemory.h>
 #include "imanager.h"
 #include "pluginmanager.h"
 #include <wx/settings.h>

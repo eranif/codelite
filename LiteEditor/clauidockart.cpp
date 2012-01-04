@@ -1,6 +1,8 @@
 #include "clauidockart.h"
 #include <wx/image.h>
 #include <wx/dc.h>
+#include "imanager.h"
+#include "pluginmanager.h"
 #include <wx/settings.h>
 #include "drawingutils.h"
 #include "editor_config.h"
@@ -11,6 +13,10 @@
 
 CLAuiDockArt::CLAuiDockArt()
 {
+	SetMetric(wxAUI_DOCKART_CAPTION_SIZE, 20);
+	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
+	m_bmp_caption_active_bg = bmpLoader->LoadBitmap(wxT("aui/caption-active"));
+	
 	wxImage img(closetab_xpm);
 	img.SetAlpha(closetab_alpha, true);
 	m_bmp_close = wxBitmap(img);
@@ -111,4 +117,36 @@ void CLAuiDockArt::DrawBorder(wxDC& dc, wxWindow *WXUNUSED(window), const wxRect
             rect.Deflate(1);
         }
     }
+}
+
+void CLAuiDockArt::DrawCaption(wxDC& dc, wxWindow* win, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane)
+{
+	wxBitmap tmpBmp(rect.width, rect.height);
+	wxMemoryDC memDc(tmpBmp);
+	if(memDc.IsOk()) {
+		int posx(0);
+		
+		// Draw the background image
+		while(posx < rect.width) {
+			memDc.DrawBitmap(m_bmp_caption_active_bg, posx, 0);
+			posx += m_bmp_caption_active_bg.GetWidth();
+		}
+		
+		// calculate the text drawing position
+		int textx, texty;
+		int textWidth, textHeight;
+		textx = 5;
+		wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+		memDc.GetTextExtent(text, &textWidth, &textHeight, NULL, NULL, &font);
+		memDc.SetTextForeground(*wxWHITE);
+		memDc.SetFont(font);
+		texty = (rect.GetHeight() - textHeight) / 2;
+		memDc.DrawText(text, textx, texty);
+		memDc.SelectObject(wxNullBitmap);
+		dc.DrawBitmap(tmpBmp, rect.x, rect.y);
+		
+		
+	} else {
+		wxAuiDefaultDockArt::DrawCaption(dc, win, text, rect, pane);
+	}
 }

@@ -4536,8 +4536,7 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 void clMainFrame::SetAUIManagerFlags()
 {
 	// Set the manager flags
-	unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING    |
-	                           wxAUI_MGR_TRANSPARENT_DRAG | wxAUI_MGR_ALLOW_ACTIVE_PANE;
+	unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING;
 
 	int dockingStyle = EditorConfigST::Get()->GetOptions()->GetDockingStyle();
 	switch(dockingStyle) {
@@ -4552,7 +4551,7 @@ void clMainFrame::SetAUIManagerFlags()
 		break;
 	}
 
-#ifndef __WXGTK__
+#ifdef __WXMAC__
 	auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
 #endif
 

@@ -337,13 +337,15 @@ public:
 	void GetParserMacros(wxString &macros);
 	void SetParserMacros(const wxString &macros);
 	
+	void SetCustomData(const wxString &name, const wxString &value);
+	wxString GetCustomData(const wxString &name);
+	
 	/**
 	 * @brief set and get the active environment variables set name
 	 */
 	void     SetActiveEnvironmentSet(const wxString &setName);
 	wxString GetActiveEnvironmentSet();
 };
-
 
 class WXDLLIMPEXP_SDK LocalWorkspaceST
 {

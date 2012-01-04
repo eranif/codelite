@@ -450,6 +450,9 @@ LocalWorkspace* LocalWorkspaceST::Get()
 
 void LocalWorkspace::GetParserOptions(wxString& opts)
 {
+	if(!SanityCheck())
+		return;
+	
 	opts.Clear();
 	if(!SanityCheck())
 		return;
@@ -463,6 +466,9 @@ void LocalWorkspace::GetParserOptions(wxString& opts)
 
 void LocalWorkspace::SetParserOptions(const wxString& opts)
 {
+	if(!SanityCheck())
+		return;
+	
 	wxXmlNode* optsNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserCmpOptions"));
 	if(optsNode) {
 		m_doc.GetRoot()->RemoveChild(optsNode);
@@ -476,6 +482,9 @@ void LocalWorkspace::SetParserOptions(const wxString& opts)
 
 void LocalWorkspace::GetParserMacros(wxString& macros)
 {
+	if(!SanityCheck())
+		return;
+	
 	macros.Clear();
 	if(!SanityCheck())
 		return;
@@ -489,6 +498,9 @@ void LocalWorkspace::GetParserMacros(wxString& macros)
 
 void LocalWorkspace::SetParserMacros(const wxString& macros)
 {
+	if(!SanityCheck())
+		return;
+		
 	wxXmlNode* optsNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserMacros"));
 	if(optsNode) {
 		m_doc.GetRoot()->RemoveChild(optsNode);
@@ -498,5 +510,35 @@ void LocalWorkspace::SetParserMacros(const wxString& macros)
 	optsNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("WorkspaceParserMacros"));
 	m_doc.GetRoot()->AddChild(optsNode);
 	SetCDATANodeContent(optsNode, macros);
+}
+
+wxString LocalWorkspace::GetCustomData(const wxString& name)
+{
+	if(!SanityCheck())
+		return wxEmptyString;
+		
+	wxXmlNode* customNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), name);
+	if(customNode) {
+		wxString data = customNode->GetNodeContent();
+		data.Trim().Trim(false);
+		return data;
+	}
+	return wxEmptyString;
+}
+
+void LocalWorkspace::SetCustomData(const wxString& name, const wxString& value)
+{
+	if(!SanityCheck())
+		return;
+		
+	wxXmlNode* customNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), name);
+	if(customNode) {
+		m_doc.GetRoot()->RemoveChild(customNode);
+		delete customNode;
+	}
+	
+	customNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, name);
+	m_doc.GetRoot()->AddChild(customNode);
+	SetCDATANodeContent(customNode, value);
 }
 

@@ -227,7 +227,17 @@ void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
 	event.Skip();
 	
 	// Workspace changes its directory to the workspace path, update the SVN path
-	DoRootDirChanged(wxGetCwd());
+	wxString path = ::wxGetCwd();
+	
+	// Check if we got a customized directory
+	if(m_plugin->GetManager()->IsWorkspaceOpen()) {
+		wxString customizedPath = LocalWorkspaceST::Get()->GetCustomData(wxT("SubversionPath"));
+		if(customizedPath.IsEmpty() == false && wxFileName::DirExists(customizedPath)) {
+			path = customizedPath;
+		}
+	}
+	
+	DoRootDirChanged(path);
 	BuildTree();
 }
 
@@ -1098,6 +1108,11 @@ void SubversionView::DoRootDirChanged(const wxString& path)
 		
 		ssd.SetRepos(modDirs);
 		m_plugin->SetSettings(ssd);
+		
+		if(m_plugin->GetManager()->IsWorkspaceOpen()) {
+			LocalWorkspaceST::Get()->SetCustomData(wxT("SubversionPath"), path);
+			LocalWorkspaceST::Get()->Flush();
+		}
 		DoChangeRootPathUI(path);
 		BuildTree();
 	}

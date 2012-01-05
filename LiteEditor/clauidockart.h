@@ -9,6 +9,8 @@ class CLAuiDockArt : public wxAuiDefaultDockArt
 	wxBitmap m_bmp_close;
 	wxBitmap m_bmp_close_active;
 	wxBitmap m_bmp_caption_active_bg;
+	wxBitmap m_bmp_caption_active_left_bg;
+	wxBitmap m_bmp_caption_active_right_bg;
 	
 public:
 	CLAuiDockArt();

@@ -16,7 +16,9 @@ CLAuiDockArt::CLAuiDockArt()
 {
 	SetMetric(wxAUI_DOCKART_CAPTION_SIZE, 20);
 	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
-	m_bmp_caption_active_bg = bmpLoader->LoadBitmap(wxT("aui/caption-active"));
+	m_bmp_caption_active_bg       = bmpLoader->LoadBitmap(wxT("aui/caption-active"));
+	m_bmp_caption_active_left_bg  = bmpLoader->LoadBitmap(wxT("aui/caption-active-left"));
+	m_bmp_caption_active_right_bg = bmpLoader->LoadBitmap(wxT("aui/caption-active-right"));
 	
 	wxImage img(closetab_xpm);
 	img.SetAlpha(closetab_alpha, true);
@@ -132,6 +134,8 @@ void CLAuiDockArt::DrawCaption(wxDC& dc, wxWindow* win, const wxString& text, co
 			memDc.DrawBitmap(m_bmp_caption_active_bg, posx, 0);
 			posx += m_bmp_caption_active_bg.GetWidth();
 		}
+		memDc.DrawBitmap(m_bmp_caption_active_left_bg, 0, 0);
+		memDc.DrawBitmap(m_bmp_caption_active_right_bg, rect.width - m_bmp_caption_active_right_bg.GetWidth(), 0);
 		
 		// calculate the text drawing position
 		int textx, texty;

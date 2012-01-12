@@ -922,12 +922,15 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
 	tmp = expression;
 	expression.EndsWith(word, &tmp);
 	expression = tmp;
-
+	expression.Trim().Trim(false);
+	
+	
 	wxString scope(text);
 	std::vector<wxString> visibleScopes;
 	wxString scopeName = GetLanguage()->GetScopeName(scope, &visibleScopes);
-	if (expression.IsEmpty()) {
-
+	if (expression.IsEmpty() || expression == wxT("::")) {
+		expression.Clear();
+		
 		// add the current scope to the "visibleScopes" to be tested
 		if(scopeName != wxT("<global>")) {
 			visibleScopes.push_back(scopeName);

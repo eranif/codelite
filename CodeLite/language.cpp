@@ -93,6 +93,7 @@ Language::Language()
 	delimArr.push_back(_T("::"));
 	delimArr.push_back(_T("->"));
 	delimArr.push_back(_T("."));
+    delimArr.push_back(wxT("@"));
 	SetAutoCompDeliemters(delimArr);
 }
 

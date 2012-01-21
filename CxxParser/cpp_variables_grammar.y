@@ -139,7 +139,7 @@ translation_unit	:        /*empty*/
                         ;
 
 external_decl	    :    {curr_var.Reset(); gs_names.clear(); s_tmpString.clear(); s_templateInitList.clear();} variables
-						| '@' basic_type_name ';' /* dummy '@' to avoid conflicts .. */
+						| '$' basic_type_name ';' /* dummy '@' to avoid conflicts .. */
 						{
 							isBasicType = true;
 						}
@@ -420,12 +420,16 @@ const_spec	        : /* empty */      {$$ = "";                          }
 amp_item	        : /*empty*/    {$$ = ""; }
                     | '&'            { $$ = $1; }
                     ;
-
+                    
+at_list             :  /* empty */ {$$ = "";}
+                    | '@'          {$$ = "*";}
+                    ;
+                    
 star_list           : /*empty*/        {$$ = ""; }
                     | star_list '*'    {$$ = $1 + $2;}
                     ;
 
-special_star_amp:star_list amp_item { $$ = $1 + $2; }
+special_star_amp:star_list amp_item at_list { $$ = $1 + $2 + $3; }
                         ;
 
 stmnt_starter       : /*empty*/ {$$ = "";}

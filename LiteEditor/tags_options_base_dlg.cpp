@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Dec  2 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -108,6 +108,9 @@ CCDisplayAndBehaviorBase::CCDisplayAndBehaviorBase( wxWindow* parent, wxWindowID
 	m_checkCppKeywordAssist->SetToolTip( _("When enabled, codelite will auto show the code completion box for C/C++ keywords after typing 2 chars") );
 	
 	gSizer1->Add( m_checkCppKeywordAssist, 0, wxALL, 5 );
+	
+	m_checkBoxKeepFunctionSignature = new wxCheckBox( this, wxID_ANY, _("Keep function signature un-formatted"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer1->Add( m_checkBoxKeepFunctionSignature, 0, wxALL|wxEXPAND, 5 );
 	
 	sbSizer2->Add( gSizer1, 1, wxEXPAND, 5 );
 	

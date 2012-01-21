@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Dec  2 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -76,6 +76,7 @@ class CCDisplayAndBehaviorBase : public wxPanel
 		wxCheckBox* m_checkDisplayTypeInfo;
 		wxCheckBox* m_checkDisplayFunctionTip;
 		wxCheckBox* m_checkCppKeywordAssist;
+		wxCheckBox* m_checkBoxKeepFunctionSignature;
 		wxCheckBox* m_checkBoxretagWorkspaceOnStartup;
 		wxCheckBox* m_checkDisableParseOnSave;
 		wxCheckBox* m_checkBoxDeepUsingNamespaceResolving;

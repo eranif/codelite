@@ -1178,7 +1178,14 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno,
 		GetFunctionTipFromTags(tmpCandidates, word, tips);
 	}
 
-	// display call tip with function prototype
+	// In case the user requested that the function signature will not be formatted
+    // respect it and add the 'Tag_No_Signature_Format' flag
+    if(GetCtagsOptions().GetFlags() & CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED) {
+        for(size_t i=0; i<tips.size(); i++) {
+            tips.at(i)->SetFlags(TagEntry::Tag_No_Signature_Format);
+        }
+    }
+    
 	clCallTipPtr ct( new clCallTip(tips) );
 	return ct;
 }

@@ -10,6 +10,7 @@ CCDisplayAndBehvior::CCDisplayAndBehvior( wxWindow* parent, const TagsOptionsDat
 	m_checkBoxretagWorkspaceOnStartup->SetValue      (data.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ? true : false);
 	m_checkBoxDeepUsingNamespaceResolving->SetValue  (data.GetFlags() & CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING ? true : false);
 	m_checkBoxEnableCaseSensitiveCompletion->SetValue(data.GetFlags() & CC_IS_CASE_SENSITIVE ? true : false);
+    m_checkBoxKeepFunctionSignature->SetValue(data.GetFlags() & CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED);
 	m_spinCtrlNumberOfCCItems->SetValue(data.GetCcNumberOfDisplayItems());
 }
 
@@ -22,5 +23,6 @@ void CCDisplayAndBehvior::Save(TagsOptionsData& data)
 	SetFlag(data, CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING, m_checkBoxDeepUsingNamespaceResolving->IsChecked());
 	SetFlag(data, CC_DISABLE_AUTO_PARSING,                m_checkDisableParseOnSave->IsChecked());
 	SetFlag(data, CC_IS_CASE_SENSITIVE,                   m_checkBoxEnableCaseSensitiveCompletion->IsChecked());
+    SetFlag(data, CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED, m_checkBoxKeepFunctionSignature->IsChecked());
 	data.SetCcNumberOfDisplayItems(m_spinCtrlNumberOfCCItems->GetValue());
 }

@@ -220,7 +220,7 @@ static_cast         {}
 const_cast          {}
 reinterpret_cast    {}
 using               { current_scope.str += yytext; }
-throw               {}
+throw               { current_scope.str += yytext; }
 {identifier}        |
 .                   {
 	if(catch_for_scope.empty() == false)

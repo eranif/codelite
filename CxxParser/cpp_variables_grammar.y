@@ -480,7 +480,7 @@ variable_decl       :   const_spec basic_type_name
                         }
                         | const_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER
                         {
-                            $$ = $0;
+                            $$ = $1 + " " + $2 + " " + $3 + " " + $4;
                             $3.erase($3.find_last_not_of(":")+1);
                         	curr_var.m_typeScope = $3;
                         	curr_var.m_type = $4;

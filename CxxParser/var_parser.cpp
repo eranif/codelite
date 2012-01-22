@@ -1247,7 +1247,7 @@ case 87:
 break;
 case 88:
 {
-                            yyval = yyvsp[-4];
+                            yyval = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] + " " + yyvsp[0];
                             yyvsp[-1].erase(yyvsp[-1].find_last_not_of(":")+1);
                         	curr_var.m_typeScope = yyvsp[-1];
                         	curr_var.m_type = yyvsp[0];

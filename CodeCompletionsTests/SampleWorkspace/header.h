@@ -67,3 +67,10 @@ public:
     Tada sad; // Tada cannot be located via Goto Declaration/Implementation
 };
 
+//////////////////////////////////////////////////////////////
+// Test the 'testStructDeclaratorInFuncArgument
+//////////////////////////////////////////////////////////////
+
+void foo_bar(struct wxString *s) {
+    
+}

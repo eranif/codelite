@@ -33,6 +33,7 @@ Variable & Variable::operator =(const Variable &src)
 	m_isBasicType   = src.m_isBasicType;
 	m_rightSideConst= src.m_rightSideConst;
 	m_completeType  = src.m_completeType;
+    m_isVolatile    = src.m_isVolatile;
 	return *this;
 }
 
@@ -54,6 +55,7 @@ void Variable::Reset()
 	m_isBasicType = false;
 	m_rightSideConst = "";
 	m_completeType = "";
+    m_isVolatile = false;
 }
 
 void Variable::Print()
@@ -74,5 +76,6 @@ void Variable::Print()
 			  << "m_isEllips       :" << m_isEllipsis << "\n"
 			  << "m_isBasicType    :" << m_isBasicType << "\n"
 			  << "m_pattern        :" << m_pattern.c_str() << "\n"
-			  << "m_completeType   :" << m_completeType.c_str() << "\n";
+			  << "m_completeType   :" << m_completeType.c_str() << "\n"
+              << "m_isVolatile     :" << m_isVolatile << "\n";
 }

@@ -1862,7 +1862,7 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
 	if ( foo.m_isConst ) {
 		body << wxT(" const");
 	}
-
+    
 	if (!foo.m_throws.empty()) {
 		body << wxT(" throw (") << wxString(foo.m_throws.c_str(), wxConvUTF8) << wxT(")");
 	}
@@ -2092,7 +2092,11 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
 		if (v.m_isConst) {
 			str_output << wxT("const ");
 		}
-
+        
+        if ( v.m_isVolatile ) {
+            str_output << wxT("volatile ");
+        }
+        
 		//add scope
 		if (v.m_typeScope.empty() == false) {
 			str_output << _U(v.m_typeScope.c_str()) << wxT("::");

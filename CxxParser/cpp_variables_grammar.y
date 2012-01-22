@@ -155,15 +155,15 @@ parameter_list	: /* empty */        {$$ = "";}
                             | parameter_list ',' template_parameter {$$ = $1 + $2 + " " + $3;}
                             ;
 
-template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp
+template_parameter	:	const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER special_star_amp
                         {
                             $$ = $1 +  $2 + $3 +$4;
                         }
-                    |  	const_spec nested_scope_specifier basic_type_name special_star_amp
+                    |  	const_or_volatile_spec nested_scope_specifier basic_type_name special_star_amp
                         {
                             $$ = $1 +  $2 + $3 +$4;
                         }
-                    |  	const_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>' special_star_amp
+                    |  	const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>' special_star_amp
                         {
                             $$ = $1 + $2 + $3 +$4 + $5 + $6 + $7 + " " ;
                         }
@@ -175,7 +175,7 @@ template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_sta
 variables           : LE_TYPEDEF LE_STRUCT optional_struct_name '{' {var_consumBracketsContent('{');} typedef_name_list ';'
 					{
 					}
-					| stmnt_starter variable_decl special_star_amp const_spec variable_name_list postfix
+					| stmnt_starter variable_decl special_star_amp const_or_volatile_spec variable_name_list postfix
                         {
                         	if(gs_vars)
                             {
@@ -213,7 +213,7 @@ variables           : LE_TYPEDEF LE_STRUCT optional_struct_name '{' {var_consumB
                         //
                         // Functions arguments:
                         //
-                        | '(' variable_decl special_star_amp const_spec LE_IDENTIFIER postfix2
+                        | '(' variable_decl special_star_amp const_or_volatile_spec LE_IDENTIFIER postfix2
                         {
                         	if(gs_vars)
                             {
@@ -238,7 +238,7 @@ variables           : LE_TYPEDEF LE_STRUCT optional_struct_name '{' {var_consumB
                             	gs_names.clear();
                             }
                         }
-                        | ',' variable_decl special_star_amp const_spec LE_IDENTIFIER postfix2
+                        | ',' variable_decl special_star_amp const_or_volatile_spec LE_IDENTIFIER postfix2
                         {
                         	if(gs_vars && g_isUsedWithinFunc)
                             {
@@ -266,7 +266,7 @@ variables           : LE_TYPEDEF LE_STRUCT optional_struct_name '{' {var_consumB
                             }
                         }
 						// Function arguments without identifier
-                        | '(' variable_decl special_star_amp const_spec postfix3
+                        | '(' variable_decl special_star_amp const_or_volatile_spec postfix3
                         {
                         	if(gs_vars && g_isUsedWithinFunc)
                             {
@@ -294,7 +294,7 @@ variables           : LE_TYPEDEF LE_STRUCT optional_struct_name '{' {var_consumB
                             	cl_scope_less(0);
                             }
                         }
-                        | ',' variable_decl special_star_amp const_spec postfix3
+                        | ',' variable_decl special_star_amp const_or_volatile_spec postfix3
                         {
                         	if(gs_vars && g_isUsedWithinFunc)
                             {
@@ -410,14 +410,19 @@ nested_scope_specifier: /*empty*/ {$$ = "";}
                     | nested_scope_specifier scope_specifier {    $$ = $1 + $2;}
                     ;
 
-const_spec	        : /* empty */      {$$ = "";                          }
-                    | LE_CONST         { $$ = $1;                         }
+volatile_qualifier: /* empty */ { $$ = "";           }
+                  | LE_VOLATILE { $$ = $1; curr_var.m_isVolatile = true; }
+                  ;
+                  
+const_or_volatile_spec: /* empty */    { $$ = "";           }
+                    | LE_CONST volatile_qualifier { $$ = $1;           }
                     | LE_CONST '*'     { $$ = $1 + $2; curr_var.m_rightSideConst = $$;     }
                     | LE_CONST '&'     { $$ = $1 + $2; curr_var.m_rightSideConst = $$;     }
 					| LE_CONST '*' '*' { $$ = $1 + $2 + $3; curr_var.m_rightSideConst = $$;}
+                    | LE_VOLATILE { $$ = $1; curr_var.m_isVolatile = true; }
                     ;
 
-amp_item	        : /*empty*/    {$$ = ""; }
+amp_item            : /*empty*/    {$$ = ""; }
                     | '&'            { $$ = $1; }
                     ;
                     
@@ -440,24 +445,24 @@ stmnt_starter       : /*empty*/ {$$ = "";}
                     ;
 
 /** Variables **/
-variable_decl       :   const_spec basic_type_name
+variable_decl       :   const_or_volatile_spec basic_type_name
                         {
                             $$ = $1 + " " + $2;
                             $2.erase($2.find_last_not_of(":")+1);
                         	curr_var.m_type = $2;
 							curr_var.m_isBasicType = true;
-                        	curr_var.m_isConst = !$1.empty();
+                        	curr_var.m_isConst = ($1.find("const") != std::string::npos);
                         }
-                        |   const_spec nested_scope_specifier LE_IDENTIFIER
+                        |   const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER
                         {
 							$$ = $1 + " " + $2 + $3;
                             $2.erase($2.find_last_not_of(":")+1);
                         	curr_var.m_typeScope = $2;
                         	curr_var.m_type = $3;
-                        	curr_var.m_isConst = !$1.empty();
+                        	curr_var.m_isConst = ($1.find("const") != std::string::npos);
                         	s_tmpString.clear();
                         }
-                        |   const_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>'
+                        |   const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>'
                         {
                             $$ = $1 + " " + $2 + $3 + " " + $4 + $5 + $6;
                             $2.erase($2.find_last_not_of(":")+1);
@@ -465,20 +470,20 @@ variable_decl       :   const_spec basic_type_name
                         	curr_var.m_type = $3;
                         	curr_var.m_isTemplate = true;
                         	curr_var.m_templateDecl = $4 +$5 +$6;
-                        	curr_var.m_isConst = !$1.empty();
+                        	curr_var.m_isConst = ($1.find("const") != std::string::npos);
                         	s_tmpString.clear();
                         }
-                        | const_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER  '{' {s_tmpString = var_consumBracketsContent('{');}
+                        | const_or_volatile_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER  '{' {s_tmpString = var_consumBracketsContent('{');}
                         {
                             $$ = $1 + " " + $2 + " " + $3 + " " + $4 + $5 + $6 + s_tmpString;
                             $3.erase($3.find_last_not_of(":")+1);
                         	curr_var.m_typeScope = $3;
                         	curr_var.m_type = $4;
 							curr_var.m_completeType = $3 + $4;
-                        	curr_var.m_isConst = !$1.empty();
+                        	curr_var.m_isConst = ($1.find("const") != std::string::npos);
                         	s_tmpString.clear();
                         }
-                        | const_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER
+                        | const_or_volatile_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER
                         {
                             $$ = $1 + " " + $2 + " " + $3 + " " + $4;
                             $3.erase($3.find_last_not_of(":")+1);
@@ -486,7 +491,7 @@ variable_decl       :   const_spec basic_type_name
                         	curr_var.m_type = $4;
                         	curr_var.m_isTemplate = !curr_var.m_templateDecl.empty();
 							curr_var.m_completeType = $3 + $4;
-                        	curr_var.m_isConst = !$1.empty();
+                        	curr_var.m_isConst = ($1.find("const") != std::string::npos);
                         	s_tmpString.clear();
                         }
                         ;

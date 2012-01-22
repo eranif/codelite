@@ -150,7 +150,7 @@ TEST_FUNC(testThis)
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/this_ptr.h")), 4, wxT("this->"), LoadFile(wxT("../tests/this_ptr.h")), tags);
 
 #ifdef __WXMSW__
-	CHECK_SIZE(tags.size(), 1293);
+	CHECK_SIZE(tags.size(), 1294);
 #else
 	CHECK_SIZE(tags.size(), 952);
 #endif
@@ -184,7 +184,7 @@ TEST_FUNC(testTemplateTypedef)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_template_typedef.h")), 3, wxT("ManagerST::Get()->"), LoadFile(wxT("../tests/test_template_typedef.h")), tags);
-	CHECK_SIZE(tags.size(), 254);
+	CHECK_SIZE(tags.size(), 253);
 	return true;
 }
 
@@ -242,7 +242,7 @@ TEST_FUNC(testClFrame)
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_cl_frame.h")), 4, wxT("clMainFrame::Get()->"), LoadFile(wxT("../tests/test_cl_frame.h")), tags);
 #ifdef __WXMSW__
-	CHECK_SIZE(tags.size(), 1293);
+	CHECK_SIZE(tags.size(), 1294);
 #else
 	CHECK_SIZE(tags.size(), 952);
 #endif
@@ -302,6 +302,21 @@ TEST_FUNC(testTypedefIteratorInsideClass)
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_typedef_iterator_inside_class.h")), 2, wxT("iter->second->"), LoadFile(wxT("../tests/test_typedef_iterator_inside_class.h")), tags);
 	CHECK_SIZE(tags.size(), 21);
+	return true;
+}
+
+TEST_FUNC(testStrcutDelcratorInFuncArgument)
+{
+	std::vector<TagEntryPtr> tags;
+    wxString codeliteHome;
+    wxGetEnv(wxT("CL_HOME"), &codeliteHome);
+    wxString headerFile;
+    headerFile << codeliteHome << wxT("/SampleWorkspace/header.h");
+    wxFileName fn(headerFile);
+    fn.MakeAbsolute();
+    headerFile = fn.GetFullPath();
+	TagsManagerST::Get()->AutoCompleteCandidates(headerFile, 75, wxT("s->"), wxEmptyString, tags);
+	CHECK_SIZE(tags.size(), 543);
 	return true;
 }
 

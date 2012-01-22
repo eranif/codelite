@@ -36,7 +36,7 @@ public:
 	std::string     m_arrayBrackets;
 	bool            m_isEllipsis;
 	bool            m_isBasicType;
-
+    bool            m_isVolatile;
 public:
 	Variable();
 	virtual ~Variable();

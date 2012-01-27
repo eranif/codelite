@@ -9,7 +9,7 @@ GitCommitEditor::GitCommitEditor(wxWindow* parent)
   StyleClearAll();
   SetLexer(wxSCI_LEX_DIFF);
 
-  wxFont font(10, wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
+  wxFont font(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 
   for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
     StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));

@@ -19,7 +19,7 @@ EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent )
 	sci->SetLexer(wxSCI_LEX_NULL);
 
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
+	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 
 	for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
 		sci->StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
@@ -125,7 +125,7 @@ void EnvVarsTableDlg::DoAddPage(const wxString &name, const wxString &content, b
 	sci->SetLexer(wxSCI_LEX_NULL);
 
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
+	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 
 	for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
 		sci->StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));

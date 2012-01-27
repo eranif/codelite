@@ -49,7 +49,7 @@ void GitCommitDlg::AppendDiff(const wxString& diff)
 		m_editor->SetReadOnly(true);
 	}
 
-	wxFont font(10, wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
+	wxFont font(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 	wxTextAttr atr = m_commitMessage->GetDefaultStyle();
 	atr.SetFont(font);
 	m_commitMessage->SetDefaultStyle(atr);

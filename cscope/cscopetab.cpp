@@ -66,7 +66,7 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 	m_treeCtrlResults->AssignImageList( imageList );
 	
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	m_font = wxFont( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL );
+	m_font = wxFont( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 
 	m_checkBoxUpdateDb->SetValue(data.GetRebuildOption());
 	m_checkBoxRevertedIndex->SetValue(data.GetBuildRevertedIndexOption());

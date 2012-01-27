@@ -180,7 +180,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_MENU_RANGE(RecentFilesSubMenuID, RecentFilesSubMenuID + 10, clMainFrame::OnRecentFile)
 	EVT_MENU_RANGE(RecentWorkspaceSubMenuID, RecentWorkspaceSubMenuID + 10, clMainFrame::OnRecentWorkspace)
 	EVT_MENU(XRCID("load_last_session"),        clMainFrame::OnLoadLastSession)
-	EVT_MENU(XRCID("exit_app"),                 clMainFrame::OnQuit)
+	EVT_MENU(wxID_EXIT,                         clMainFrame::OnQuit)
 
 	EVT_UPDATE_UI(XRCID("refresh_file"),        clMainFrame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("save_file"),           clMainFrame::OnFileExistUpdateUI)
@@ -1176,8 +1176,8 @@ void clMainFrame::CreateNativeToolbar16()
 	tb->AddTool(XRCID("dbg_next"),         _("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/next")),              _("Next"));
 	tb->AddTool(XRCID("dbg_stepout"),      _("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/step_out")),          _("Step Out"));
 
-	tb->Realize();
 	SetToolBar(tb);
+	tb->Realize();
 }
 
 void clMainFrame::CreateNativeToolbar24()
@@ -1185,10 +1185,10 @@ void clMainFrame::CreateNativeToolbar24()
 	//----------------------------------------------
 	//create the standard toolbar
 	//----------------------------------------------
-	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER | wxTB_HORIZONTAL);
 	BitmapLoader &bmpLoader = *(PluginManager::Get()->GetStdIcons());
 
-	tb->SetToolBitmapSize(wxSize(16, 16));
+	tb->SetToolBitmapSize(wxSize(24, 24));
 	tb->AddTool(XRCID("new_file"),        _("New"),             bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_new")),     _("New File"));
 	tb->AddTool(XRCID("open_file"),       _("Open"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_open")),    _("Open File"));
 	tb->AddTool(XRCID("refresh_file"),    _("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_reload")),  _("Reload File"));
@@ -1249,8 +1249,9 @@ void clMainFrame::CreateNativeToolbar24()
 	tb->AddTool(XRCID("dbg_next"),         _("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/next")),              _("Next"));
 	tb->AddTool(XRCID("dbg_stepout"),      _("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_out")),          _("Step Out"));
 
-	tb->Realize();
 	SetToolBar(tb);
+	tb->Realize();
+	
 }
 
 void clMainFrame::CreateToolbars16()
@@ -4182,7 +4183,11 @@ void clMainFrame::SaveLayoutAndSession()
 	} else {
 		m_frameGeneralInfo.SetFrameSize(this->GetSize());
 	}
+#ifdef __WXMAC__
+    m_frameGeneralInfo.SetFramePosition(wxPoint(50, 50));
+#else
 	m_frameGeneralInfo.SetFramePosition(this->GetScreenPosition());
+#endif
 
 	EditorConfigST::Get()->Begin();
 

@@ -56,7 +56,7 @@
 				<checkable>1</checkable>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="exit_app">
+            <object class="wxMenuItem" name="wxID_EXIT">
                 <label>E&amp;xit</label>
             </object>
         </object>

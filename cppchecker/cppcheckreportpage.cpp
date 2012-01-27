@@ -31,11 +31,11 @@ CppCheckReportPage::CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheck
 	wxFont defFont = wxSystemSettings::GetFont ( wxSYS_DEFAULT_GUI_FONT );
 
 #ifdef __WXMAC__
-	wxFont font ( 12, wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL );
-	wxFont bold ( 12, wxFONTFAMILY_TELETYPE, wxNORMAL, wxFONTWEIGHT_BOLD );
+	wxFont font ( 12, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
+	wxFont bold ( 12, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD );
 #else
-	wxFont font ( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL );
-	wxFont bold ( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxFONTWEIGHT_BOLD );
+	wxFont font ( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
+	wxFont bold ( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD );
 #endif
 
 	for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {

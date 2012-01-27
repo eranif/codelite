@@ -96,7 +96,7 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 	}
 
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
+	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 	sci->StyleSetFont(0, font);
 
 	sci->SetIndicatorCurrent(1);

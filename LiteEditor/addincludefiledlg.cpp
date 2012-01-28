@@ -48,7 +48,7 @@ AddIncludeFileDlg::AddIncludeFileDlg( wxWindow* parent, const wxString &fullpath
 	
 	//initialise the preview window
 	//---------------------------------------------------------
-	wxFont font(10, wxFONTFAMILY_TELETYPE, wxNORMAL);
+	wxFont font(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 	m_textCtrlPreview->MarkerDefine(0x7, wxSCI_MARK_ARROW);
 	m_textCtrlPreview->MarkerSetBackground(0x7, wxT("YELLOW GREEN"));
 	m_textCtrlPreview->StyleSetFont(0, font);

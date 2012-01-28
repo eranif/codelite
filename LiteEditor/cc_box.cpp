@@ -406,7 +406,7 @@ void CCBox::Show(const wxString& word)
             bool        collectIt = (!isVisible && !LEditor::m_ccShowPrivateMembers) || (LEditor::m_ccShowPrivateMembers) || (isInScope);
             
             if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED) {
-                tag->SetFlags(TagEntry::Tag_No_Signature_Format);
+                tag->SetFlags(tag->GetFlags() | TagEntry::Tag_No_Signature_Format);
             }
             
             if(collectIt) {

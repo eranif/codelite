@@ -1857,7 +1857,13 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
 		body << wxT("\n");
 
 	body << tag->GetName();
-	body << NormalizeFunctionSig( tag->GetSignature(), tmpFlags);
+    if(tag->GetFlags() & TagEntry::Tag_No_Signature_Format) {
+        body << tag->GetSignature();
+        
+    } else {
+        body << NormalizeFunctionSig( tag->GetSignature(), tmpFlags);
+        
+    }
 
 	if ( foo.m_isConst ) {
 		body << wxT(" const");

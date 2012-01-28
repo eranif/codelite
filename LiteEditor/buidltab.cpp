@@ -183,7 +183,7 @@ void BuildTab::SetStyles ( wxScintilla *sci )
     sci->StyleSetHotSpot ( wxSCI_LEX_GCC_BUILDING, true );
 
     wxFont defFont = wxSystemSettings::GetFont ( wxSYS_DEFAULT_GUI_FONT );
-    wxFont font ( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL );
+    wxFont font ( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
     wxFont bold ( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD );
 
     LexerConfPtr cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
@@ -197,8 +197,8 @@ void BuildTab::SetStyles ( wxScintilla *sci )
                 wxString      face      = sp.GetFaceName();
                 bool          italic    = sp.GetItalic();
 
-                font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , wxNORMAL, false, face);
-                bold = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , wxBOLD,   false, face);
+                font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL , wxFONTWEIGHT_NORMAL, false, face);
+                bold = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL , wxFONTWEIGHT_BOLD,   false, face);
             }
         }
     }

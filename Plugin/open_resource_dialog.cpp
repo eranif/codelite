@@ -24,6 +24,7 @@ OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager)
 		, m_manager(manager)
 		, m_needRefresh(false)
 {
+	Hide();
 	// Create an image list
 	wxImageList *li = new wxImageList(16, 16, true);
 	BitmapLoader *bmpLoader = m_manager->GetStdIcons();
@@ -79,7 +80,6 @@ OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager)
 			}
 		}
 	}
-	
 	m_listOptions->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( OpenResourceDialog::OnItemActivated ), NULL, this );
 	m_listOptions->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED,  wxListEventHandler( OpenResourceDialog::OnItemSelected ), NULL, this );
 }

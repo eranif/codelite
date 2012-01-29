@@ -90,9 +90,9 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
 		}
 	}
 
-#ifdef __WXMAC__
-	clMainFrame::Get()->GetDockingManager().Update();
-#endif
+//#ifdef __WXMAC__
+//	clMainFrame::Get()->GetDockingManager().Update();
+//#endif
 
 }
 

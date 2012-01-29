@@ -560,9 +560,15 @@ createRules_exe ()
 		fi
 	done
 	echo >> Makefile
-
+	
 	echo "${rule_name}: \$(${object_list_name}) SDK" >> Makefile
-	echo "	\$(CMP) -o ${exename} \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
+	if [ "$os_name" = "Darwin" ]; then
+		echo "	\$(CMP) -o ${exename} \$(${object_list_name}) \$(LINK_FLAGS) -headerpad_max_install_names" >> Makefile
+	
+	else
+		echo "	\$(CMP) -o ${exename} \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
+	fi
+	
 	echo "	@echo ==========================================================" >> Makefile
 	echo "	@echo Done, please run \"sudo \$(MAKE) install\"." >> Makefile
 	echo "	@echo ==========================================================" >> Makefile

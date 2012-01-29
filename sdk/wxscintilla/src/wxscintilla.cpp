@@ -3149,7 +3149,7 @@ void wxScintilla::AppendTextRaw (const char* text) {
 // Event handlers
 
 void wxScintilla::OnPaint (wxPaintEvent& WXUNUSED(evt)) {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) || defined(__WXGTK__)
 	// On Mac / Windows there is no real need for this
     wxBufferedPaintDC dc(this);
 #else

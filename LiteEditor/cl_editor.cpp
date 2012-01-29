@@ -1693,6 +1693,10 @@ void LEditor::BraceMatch(long pos)
 		wxScintilla::BraceBadLight(pos);
 	}
 	SetHighlightGuide(indentCol);
+	
+//#ifdef __WXMAC__
+//	Refresh();
+//#endif
 }
 
 void LEditor::BraceMatch(const bool& bSelRegion)
@@ -3348,7 +3352,7 @@ int LEditor::GetEOLByOS()
 	} else {
 		// set the EOL by the hosting OS
 #if defined(__WXMAC__)
-		return wxSCI_EOL_CR;
+		return wxSCI_EOL_LF;
 #elif defined(__WXGTK__)
 		return wxSCI_EOL_LF;
 #else

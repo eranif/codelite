@@ -22,9 +22,13 @@ createPCH()
         
         if [ "$enable_debug" = "yes" ]; then
             echo "all: precompiled_header_dbg.h.gch" >> Makefile
+			echo "" >> Makefile
+			echo "precompiled_header_dbg.h.gch: precompiled_header_dbg.h" >> Makefile
             echo "	\$(CMP) -c precompiled_header_dbg.h \$(CFLAGS)" >> Makefile
         else
             echo "all: precompiled_header_release.h.gch" >> Makefile
+			echo "" >> Makefile
+			echo "precompiled_header_release.h.gch: precompiled_header_release.h" >> Makefile
 			echo "	\$(CMP) -c precompiled_header_release.h \$(CFLAGS)" >> Makefile
         fi
 		

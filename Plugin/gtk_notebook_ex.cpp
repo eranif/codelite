@@ -12,8 +12,14 @@
 #include <wx/debug.h>
 #include <wx/log.h>
 #include <wx/wupdlock.h>
+#ifdef __WXGTK20__
+// We need this ugly hack to workaround a gtk2-wxGTK name-clash^M
+// See http://trac.wxwidgets.org/ticket/10883^M
+#define GSocket GlibGSocket
+#include <gtk-2.0/gtk/gtk.h>
+#undef GSocket
+#endif
 
-#include <gtk/gtk.h>
 #include <wx/imaglist.h>
 
 class MyNotebookPage: public wxObject

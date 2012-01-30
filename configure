@@ -24,12 +24,16 @@ createPCH()
             echo "all: precompiled_header_dbg.h.gch" >> Makefile
 			echo "" >> Makefile
 			echo "precompiled_header_dbg.h.gch: precompiled_header_dbg.h" >> Makefile
-            echo "	\$(CMP) -c precompiled_header_dbg.h \$(CFLAGS)" >> Makefile
+            echo "	\$(CMP) -c precompiled_header_dbg.h \$(CCFLAGS) -fPIC \$(INCLUDES)" >> Makefile
+	    echo "clean: " >> Makefile
+		echo "	\$(RM) -f precompiled_header_dbg.h.gch" >> Makefile
         else
             echo "all: precompiled_header_release.h.gch" >> Makefile
 			echo "" >> Makefile
 			echo "precompiled_header_release.h.gch: precompiled_header_release.h" >> Makefile
-			echo "	\$(CMP) -c precompiled_header_release.h \$(CFLAGS)" >> Makefile
+			echo "	\$(CMP) -c precompiled_header_release.h \$(CCFLAGS) -fPIC \$(INCLUDES)" >> Makefile
+	    echo "clean: " >> Makefile
+		echo "	\$(RM) -f precompiled_header_release.h.gch" >> Makefile
         fi
 		
 		cd "$current_wd"
@@ -227,6 +231,7 @@ createMainTargets()
 	echo "" >> Makefile
 
 	echo "clean: clean_plugins" >> Makefile
+	echo "	@cd PCH && \$(MAKE) clean" >> Makefile
 	echo "	@cd sdk/codelite_indexer && \$(MAKE) clean" >> Makefile
 	echo "	@cd sdk/codelite_cppcheck && \$(MAKE) clean" >> Makefile
 	echo "	\$(RM) \$(OUTPUT_DIR)/*.a \$(OUTPUT_DIR)/*.so" >> Makefile
@@ -476,6 +481,7 @@ createCodeLiteIndexerMakefile ()
 }
 
 ## The rules created here all contain -fPIC. Any other shared-lib-creating functions *must* do this too
+##
 createRules_sharedObject ()
 {
 	files_list=$1
@@ -495,8 +501,16 @@ createRules_sharedObject ()
 	elif [ "$rule_name" = "DatabaseExplorer" ]; then
 		additional_link_libs=$6
 	fi
+	
+	pch_flags=""
+	if [ "$enable_pch" = "yes" ]; then
+		if [ "$enable_debug" = "yes" ]; then
+			pch_flags=" -include precompiled_header_dbg.h -Winvalid-pch "
+		else
+			pch_flags=" -include precompiled_header_release.h -Winvalid-pch "
+		fi
+	fi
 
-	additional_flags=$7
 	if [ "$rule_name" = "ShapeFramework" ] ; then
 	 	createVariables "yes" "-I${base_dir}/sdk/wxshapeframework/src"
 		additional_flags="$additional_flags -DWXMAKINGDLL_WXSF -DWXMAKINGDLL_WXXS"
@@ -535,7 +549,7 @@ createRules_sharedObject ()
 			echo "	\$(GCC) -fPIC \$(CCFLAGS) ${additional_flags} \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
 		else
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "	\$(CMP) -c ${a_file} -fPIC \$(CCFLAGS) ${additional_flags} \$(INCLUDES) -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(CMP) ${pch_flags} -c ${a_file} -fPIC \$(CCFLAGS) ${additional_flags} \$(INCLUDES) -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
 			echo "	\$(CMP) -fPIC \$(CCFLAGS) ${additional_flags} \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
@@ -548,11 +562,15 @@ createRules_sharedObject ()
 	if [ "$os_name" = "Darwin" ]; then
 		shared_obj_switch=" -dynamiclib "
 	fi
+
+	if [ "$enable_pch" = "yes" ]; then
+        	pch_target=" pch_header "
+    	fi
 	
 	if [ "$rule_name" = "SDK" ]; then
-		echo "${rule_name}: CodeLite \$(${object_list_name}) " >> Makefile
+		echo "${rule_name}: ${pch_header} CodeLite \$(${object_list_name}) " >> Makefile
 	else 
-		echo "${rule_name}: \$(${object_list_name})" >> Makefile
+		echo "${rule_name}: ${pch_header} \$(${object_list_name})" >> Makefile
 	fi
 	
 	echo "	\$(CMP) -fPIC ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(PLUGIN_LINK_FLAGS) ${additional_link_libs} -lutil" >> Makefile
@@ -570,6 +588,15 @@ createRules_exe ()
 	object_list_name=$2
 	rule_name=$3
 	exename=$4
+	pch_flags=""
+        if [ "$enable_pch" = "yes" ]; then
+                if [ "$enable_debug" = "yes" ]; then
+                        pch_flags=" -fPIC -include precompiled_header_dbg.h -Winvalid-pch "
+                else
+                        pch_flags=" -fPIC -include precompiled_header_release.h -Winvalid-pch "
+                fi
+        fi
+
 	for a_file in $files_list
 	do
 
@@ -590,7 +617,7 @@ createRules_exe ()
 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
 		else
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "	\$(CMP) -c ${a_file} \$(CCFLAGS) \$(INCLUDES) -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(CMP) ${pch_flags} -c ${a_file} \$(CCFLAGS) \$(INCLUDES) -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
@@ -850,6 +877,7 @@ Show_Help_and_Exit()
 	echo "  --enable-debug          create a debug build (the default is disable)"
 	echo "  --enable-mysql          enable MySQL support in DatabaseExplorer plugin (MySQL connector sources must be installed on the system)"
 	echo "  --enable-postgres       enable PostgreSQL support in DatabaseExplorer plugin (PostgreSQL connector sources must be installed on the system)"
+	echo "  --enable-pch            generate Makefiles that use PreCompiled headers to boost compile time"
 	echo "  --help                  show this help"
 	echo "To build with alternative C++ or C compilers, specify them in the environmental variables CXX and/or CC"
 	echo "Either do: CXX=\"foo\" ./configure --<etc>"
@@ -939,7 +967,7 @@ do
 	elif [ "$1" = "--enable-mysql" ]; then
 		enable_mysql="yes"
     
-    elif [ "$1" = "--with-pch" ]; then
+    elif [ "$1" = "--enable-pch" ]; then
         enable_pch="yes"
         
 	elif [ "$1" = "--enable-postgres" ]; then

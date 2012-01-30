@@ -19,6 +19,7 @@
 #include "PostgreSqlDbAdapter.h"
 #endif
 
+class xsSerializable;
 class AdapterSelectDlg : public _AdapterSelectDlg {
 
 	public:

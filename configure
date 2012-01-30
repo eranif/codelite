@@ -27,6 +27,8 @@ createPCH()
             echo "all: precompiled_header_release.h.gch" >> Makefile
 			echo "	\$(CMP) -c precompiled_header_release.h \$(CFLAGS)" >> Makefile
         fi
+		
+		cd "$current_wd"
     fi
 }
 

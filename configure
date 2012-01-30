@@ -7,6 +7,29 @@
 ##    (at your option) any later version.
 ################################################################################
 
+createPCH()
+{
+    if [ "$enable_pch" = "yes" ]; then
+        # Compile the PCH
+        echo "Generating PCH/Makefile..."
+        current_wd=`pwd`
+
+        cd ./PCH
+
+        ## remove old Makefile
+        rm -fr Makefile
+        createVariables
+        
+        if [ "$enable_debug" = "yes" ]; then
+            echo "all: precompiled_header_dbg.h.gch" >> Makefile
+            echo "	\$(CMP) -c precompiled_header_dbg.h \$(CFLAGS)" >> Makefile
+        else
+            echo "all: precompiled_header_release.h.gch" >> Makefile
+			echo "	\$(CMP) -c precompiled_header_release.h \$(CFLAGS)" >> Makefile
+        fi
+    fi
+}
+
 createRevisionFile()
 {
 	chmod +x ./le_makerevision.sh
@@ -154,8 +177,11 @@ createMainTargets()
 	fi
 
 	## default
-	target_all="all :  pre_build Scintilla ShapeFramework $target_dbl SQLite CodeLite SDK codelite_indexer codelite_cppcheck Plugins LiteEditor "
-	
+    if [ "$enable_pch" = "yes" ]; then
+        pch_target=" pch_header "
+    fi
+	target_all="all : $pch_target pre_build Scintilla ShapeFramework $target_dbl SQLite CodeLite SDK codelite_indexer codelite_cppcheck Plugins LiteEditor "
+  
 	## additional database backends
 
 	## if we are on Linux, print the post message
@@ -166,12 +192,18 @@ createMainTargets()
 	if [ "$os_name" = "Darwin" ]; then
 		target_all="$target_all Plugins mac_bundle"
 	fi
-
+    
 	## add the "all" target to the makefile
 	echo ".PHONY: PrintMsg" >> Makefile
 	echo "${target_all}" >> Makefile
 	echo "" >> Makefile
-
+    
+    if [ "$enable_pch" = "yes" ]; then
+        echo "pch_header:" >> Makefile
+        echo "	@cd PCH/ && \$(MAKE)" >> Makefile
+        echo "" >> Makefile
+    fi
+    
 	echo "codelite_indexer:" >> Makefile
 	echo "	@cd sdk/codelite_indexer/ && \$(MAKE)" >> Makefile
 	echo "	cp -fr sdk/codelite_indexer/codelite_indexer Runtime/." >> Makefile
@@ -900,7 +932,10 @@ do
 
 	elif [ "$1" = "--enable-mysql" ]; then
 		enable_mysql="yes"
-
+    
+    elif [ "$1" = "--with-pch" ]; then
+        enable_pch="yes"
+        
 	elif [ "$1" = "--enable-postgres" ]; then
 		enable_postgres="yes"
 
@@ -946,6 +981,8 @@ rm -fr ./Makefile
 createRevisionFile
 echo "Generating Makefile..."
 createVariables "no"
+
+createPCH
 
 ## Create the various object lists
 createObjectList "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp sdk/wxscintilla/src/scintilla/lexers/*.cxx sdk/wxscintilla/src/scintilla/lexlib/*.cxx" "ScintillaObjects"

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jan 25 2011)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -21,12 +21,16 @@
 #include <wx/statbox.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
-#include <wx/listbox.h>
 #include <wx/fontpicker.h>
-#include <wx/checkbox.h>
 #include <wx/textctrl.h>
-#include <wx/slider.h>
 #include <wx/panel.h>
+#include <wx/bitmap.h>
+#include <wx/image.h>
+#include <wx/icon.h>
+#include <wx/listbox.h>
+#include <wx/checkbox.h>
+#include <wx/slider.h>
+#include <wx/aui/auibook.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -59,7 +63,7 @@ class SyntaxHighlightBaseDlg : public wxDialog
 	
 	public:
 		
-		SyntaxHighlightBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Syntax Highlight:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 557,373 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		SyntaxHighlightBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Syntax Highlight:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 557,373 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SyntaxHighlightBaseDlg();
 	
 };
@@ -72,6 +76,15 @@ class LexerPageBase : public wxPanel
 	private:
 	
 	protected:
+		wxAuiNotebook* m_auinotebook1;
+		wxPanel* m_panel2;
+		wxStaticText* m_staticText6;
+		wxFontPickerCtrl* m_globalFontPicker;
+		wxStaticText* m_staticText7;
+		wxColourPickerCtrl* m_globalBgColourPicker;
+		wxStaticText* m_staticText8;
+		wxTextCtrl* m_fileSpec;
+		wxPanel* m_panel1;
 		wxListBox* m_properties;
 		wxStaticText* m_staticText1;
 		wxButton* m_button5;
@@ -89,12 +102,7 @@ class LexerPageBase : public wxPanel
 		wxCheckBox* m_eolFilled;
 		
 		wxCheckBox* m_styleWithinPreProcessor;
-		wxStaticText* m_staticText6;
-		wxFontPickerCtrl* m_globalFontPicker;
-		wxStaticText* m_staticText7;
-		wxColourPickerCtrl* m_globalBgColourPicker;
-		wxStaticText* m_staticText8;
-		wxTextCtrl* m_fileSpec;
+		wxPanel* m_panel3;
 		wxStaticText* m_staticText9;
 		wxColourPickerCtrl* m_colourPickerSelTextBgColour;
 		wxStaticText* m_staticText11;
@@ -102,18 +110,18 @@ class LexerPageBase : public wxPanel
 		wxButton* m_buttonTextSelApplyToAll;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnFontChanged( wxFontPickerEvent& event ) { event.Skip(); }
+		virtual void OnColourChanged( wxColourPickerEvent& event ) { event.Skip(); }
+		virtual void OnText( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnItemSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEditKeyWordsButton0( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEditKeyWordsButton1( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEditKeyWordsButton2( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEditKeyWordsButton3( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEditKeyWordsButton4( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnFontChanged( wxFontPickerEvent& event ) { event.Skip(); }
-		virtual void OnColourChanged( wxColourPickerEvent& event ) { event.Skip(); }
 		virtual void OnEolFilled( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnStyleWithinPreprocessor( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnStyleWithingPreProcessorUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnText( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnSelTextChanged( wxColourPickerEvent& event ) { event.Skip(); }
 		virtual void OnAlphaChanged( wxScrollEvent& event ) { event.Skip(); }
 		virtual void OnTextSelApplyToAll( wxCommandEvent& event ) { event.Skip(); }
@@ -121,7 +129,7 @@ class LexerPageBase : public wxPanel
 	
 	public:
 		
-		LexerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		LexerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 393,272 ), long style = wxTAB_TRAVERSAL );
 		~LexerPageBase();
 	
 };

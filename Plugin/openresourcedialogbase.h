@@ -1,16 +1,15 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __OPENRESOURCEDIALOGBASE_H__
-#define __OPENRESOURCEDIALOGBASE_H__
+#ifndef __openresourcedialogbase__
+#define __openresourcedialogbase__
 
-#include <wx/artprov.h>
-#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
+
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <wx/gdicmn.h>
@@ -52,9 +51,9 @@ class OpenResourceDialogBase : public wxDialog
 	
 	public:
 		
-		OpenResourceDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open Resource"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 400,300 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		OpenResourceDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open Resource"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 400,300 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~OpenResourceDialogBase();
 	
 };
 
-#endif //__OPENRESOURCEDIALOGBASE_H__
+#endif //__openresourcedialogbase__

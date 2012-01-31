@@ -98,7 +98,7 @@ wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 	long style = wxNB_DEFAULT;
 	m_lexersBook = new wxTreebook(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	MSWSetNativeTheme(m_lexersBook->GetTreeCtrl());
-	
+	m_lexersBook->GetTreeCtrl()->SetSizeHints(150, -1);
 	sz->Add(m_lexersBook, 1, wxEXPAND | wxALL, 5);
 	m_lexersBook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 	m_lexersBook->Connect(ID_buttonTextSelApplyToAll, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightDlg::OnTextSelApplyToAll), NULL, this );

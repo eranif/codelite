@@ -148,10 +148,16 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_auinotebook1->AddPage( m_panel2, _("Global Settings"), true, wxNullBitmap );
 	m_panel1 = new wxPanel( m_auinotebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer51;
-	bSizer51 = new wxBoxSizer( wxHORIZONTAL );
+	bSizer51 = new wxBoxSizer( wxVERTICAL );
+	
+	wxBoxSizer* bSizer8;
+	bSizer8 = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_properties = new wxListBox( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	bSizer51->Add( m_properties, 0, wxALL|wxEXPAND, 5 );
+	bSizer8->Add( m_properties, 0, wxALL|wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer9;
+	bSizer9 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 0, 2, 0, 0 );
@@ -159,33 +165,9 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText1 = new wxStaticText( m_panel1, wxID_ANY, _("Edit Keywords:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1->Wrap( -1 );
-	fgSizer1->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	wxBoxSizer* bSizer5;
-	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_button5 = new wxButton( m_panel1, wxID_ANY, _("Set &0"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	bSizer5->Add( m_button5, 0, wxALL, 5 );
-	
-	m_button6 = new wxButton( m_panel1, wxID_ANY, _("Set &1"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	bSizer5->Add( m_button6, 0, wxALL, 5 );
-	
-	m_button7 = new wxButton( m_panel1, wxID_ANY, _("Set &2"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	bSizer5->Add( m_button7, 0, wxALL, 5 );
-	
-	m_button8 = new wxButton( m_panel1, wxID_ANY, _("Set &3"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	bSizer5->Add( m_button8, 0, wxALL, 5 );
-	
-	m_button9 = new wxButton( m_panel1, wxID_ANY, _("Set &4"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	bSizer5->Add( m_button9, 0, wxALL, 5 );
-	
-	fgSizer1->Add( bSizer5, 1, wxEXPAND, 5 );
-	
 	m_staticText2 = new wxStaticText( m_panel1, wxID_ANY, _("Style Font:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
-	fgSizer1->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer1->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 	
 	m_fontPicker = new wxFontPickerCtrl( m_panel1, wxID_ANY, wxNullFont, wxDefaultPosition, wxDefaultSize, wxFNTP_USEFONT_FOR_LABEL );
 	m_fontPicker->SetMaxPointSize( 100 ); 
@@ -194,18 +176,18 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	
 	fgSizer1->Add( m_fontPicker, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText3 = new wxStaticText( m_panel1, wxID_ANY, _("Style Foreground Colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( m_panel1, wxID_ANY, _("Foreground Colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
-	fgSizer1->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer1->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 	
 	m_colourPicker = new wxColourPickerCtrl( m_panel1, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL|wxCLRP_USE_TEXTCTRL );
 	m_colourPicker->SetToolTip( _("Select the foreground colour for the selected style") );
 	
 	fgSizer1->Add( m_colourPicker, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText4 = new wxStaticText( m_panel1, wxID_ANY, _("Style Background Colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( m_panel1, wxID_ANY, _("Background Colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
-	fgSizer1->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer1->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 	
 	m_bgColourPicker = new wxColourPickerCtrl( m_panel1, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL|wxCLRP_USE_TEXTCTRL );
 	m_bgColourPicker->SetToolTip( _("Select the background colour for the selected style") );
@@ -226,7 +208,38 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_styleWithinPreProcessor = new wxCheckBox( m_panel1, wxID_ANY, _("Styling Within Pre-processor Line"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_styleWithinPreProcessor, 0, wxALL, 5 );
 	
-	bSizer51->Add( fgSizer1, 1, wxEXPAND|wxALL, 5 );
+	bSizer9->Add( fgSizer1, 1, wxEXPAND|wxALL, 5 );
+	
+	m_staticline1 = new wxStaticLine( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer9->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
+	
+	m_staticText1 = new wxStaticText( m_panel1, wxID_ANY, _("Edit Lexer Keyword Sets:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1->Wrap( -1 );
+	bSizer9->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxBoxSizer* bSizer5;
+	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_button5 = new wxButton( m_panel1, wxID_ANY, _("Set &0"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+	bSizer5->Add( m_button5, 0, wxTOP|wxBOTTOM|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_button6 = new wxButton( m_panel1, wxID_ANY, _("Set &1"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+	bSizer5->Add( m_button6, 0, wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_button7 = new wxButton( m_panel1, wxID_ANY, _("Set &2"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+	bSizer5->Add( m_button7, 0, wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_button8 = new wxButton( m_panel1, wxID_ANY, _("Set &3"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+	bSizer5->Add( m_button8, 0, wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_button9 = new wxButton( m_panel1, wxID_ANY, _("Set &4"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+	bSizer5->Add( m_button9, 0, wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	bSizer9->Add( bSizer5, 0, 0, 5 );
+	
+	bSizer8->Add( bSizer9, 1, wxEXPAND, 5 );
+	
+	bSizer51->Add( bSizer8, 1, wxEXPAND, 5 );
 	
 	m_panel1->SetSizer( bSizer51 );
 	m_panel1->Layout();
@@ -278,17 +291,17 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_globalBgColourPicker->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnColourChanged ), NULL, this );
 	m_fileSpec->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( LexerPageBase::OnText ), NULL, this );
 	m_properties->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( LexerPageBase::OnItemSelected ), NULL, this );
-	m_button5->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton0 ), NULL, this );
-	m_button6->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton1 ), NULL, this );
-	m_button7->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton2 ), NULL, this );
-	m_button8->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton3 ), NULL, this );
-	m_button9->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton4 ), NULL, this );
 	m_fontPicker->Connect( wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler( LexerPageBase::OnFontChanged ), NULL, this );
 	m_colourPicker->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnColourChanged ), NULL, this );
 	m_bgColourPicker->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnColourChanged ), NULL, this );
 	m_eolFilled->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( LexerPageBase::OnEolFilled ), NULL, this );
 	m_styleWithinPreProcessor->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( LexerPageBase::OnStyleWithinPreprocessor ), NULL, this );
 	m_styleWithinPreProcessor->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LexerPageBase::OnStyleWithingPreProcessorUI ), NULL, this );
+	m_button5->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton0 ), NULL, this );
+	m_button6->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton1 ), NULL, this );
+	m_button7->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton2 ), NULL, this );
+	m_button8->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton3 ), NULL, this );
+	m_button9->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton4 ), NULL, this );
 	m_colourPickerSelTextBgColour->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnSelTextChanged ), NULL, this );
 	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
 	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
@@ -309,17 +322,17 @@ LexerPageBase::~LexerPageBase()
 	m_globalBgColourPicker->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnColourChanged ), NULL, this );
 	m_fileSpec->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( LexerPageBase::OnText ), NULL, this );
 	m_properties->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( LexerPageBase::OnItemSelected ), NULL, this );
-	m_button5->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton0 ), NULL, this );
-	m_button6->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton1 ), NULL, this );
-	m_button7->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton2 ), NULL, this );
-	m_button8->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton3 ), NULL, this );
-	m_button9->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton4 ), NULL, this );
 	m_fontPicker->Disconnect( wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler( LexerPageBase::OnFontChanged ), NULL, this );
 	m_colourPicker->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnColourChanged ), NULL, this );
 	m_bgColourPicker->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnColourChanged ), NULL, this );
 	m_eolFilled->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( LexerPageBase::OnEolFilled ), NULL, this );
 	m_styleWithinPreProcessor->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( LexerPageBase::OnStyleWithinPreprocessor ), NULL, this );
 	m_styleWithinPreProcessor->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( LexerPageBase::OnStyleWithingPreProcessorUI ), NULL, this );
+	m_button5->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton0 ), NULL, this );
+	m_button6->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton1 ), NULL, this );
+	m_button7->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton2 ), NULL, this );
+	m_button8->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton3 ), NULL, this );
+	m_button9->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton4 ), NULL, this );
 	m_colourPickerSelTextBgColour->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnSelTextChanged ), NULL, this );
 	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
 	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );

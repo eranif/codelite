@@ -29,6 +29,7 @@
 #include <wx/icon.h>
 #include <wx/listbox.h>
 #include <wx/checkbox.h>
+#include <wx/statline.h>
 #include <wx/slider.h>
 #include <wx/aui/auibook.h>
 
@@ -86,12 +87,6 @@ class LexerPageBase : public wxPanel
 		wxTextCtrl* m_fileSpec;
 		wxPanel* m_panel1;
 		wxListBox* m_properties;
-		wxStaticText* m_staticText1;
-		wxButton* m_button5;
-		wxButton* m_button6;
-		wxButton* m_button7;
-		wxButton* m_button8;
-		wxButton* m_button9;
 		wxStaticText* m_staticText2;
 		wxFontPickerCtrl* m_fontPicker;
 		wxStaticText* m_staticText3;
@@ -102,6 +97,13 @@ class LexerPageBase : public wxPanel
 		wxCheckBox* m_eolFilled;
 		
 		wxCheckBox* m_styleWithinPreProcessor;
+		wxStaticLine* m_staticline1;
+		wxStaticText* m_staticText1;
+		wxButton* m_button5;
+		wxButton* m_button6;
+		wxButton* m_button7;
+		wxButton* m_button8;
+		wxButton* m_button9;
 		wxPanel* m_panel3;
 		wxStaticText* m_staticText9;
 		wxColourPickerCtrl* m_colourPickerSelTextBgColour;
@@ -114,14 +116,14 @@ class LexerPageBase : public wxPanel
 		virtual void OnColourChanged( wxColourPickerEvent& event ) { event.Skip(); }
 		virtual void OnText( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnItemSelected( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnEolFilled( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnStyleWithinPreprocessor( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnStyleWithingPreProcessorUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnEditKeyWordsButton0( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEditKeyWordsButton1( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEditKeyWordsButton2( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEditKeyWordsButton3( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEditKeyWordsButton4( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnEolFilled( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnStyleWithinPreprocessor( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnStyleWithingPreProcessorUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnSelTextChanged( wxColourPickerEvent& event ) { event.Skip(); }
 		virtual void OnAlphaChanged( wxScrollEvent& event ) { event.Skip(); }
 		virtual void OnTextSelApplyToAll( wxCommandEvent& event ) { event.Skip(); }
@@ -129,7 +131,7 @@ class LexerPageBase : public wxPanel
 	
 	public:
 		
-		LexerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 393,272 ), long style = wxTAB_TRAVERSAL );
+		LexerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,272 ), long style = wxTAB_TRAVERSAL );
 		~LexerPageBase();
 	
 };

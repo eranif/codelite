@@ -280,7 +280,6 @@ PSCompilerPageBase::PSCompilerPageBase( wxWindow* parent, wxWindowID id, const w
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_compilerPage, wxID_ANY, _("Compiler Options:") ), wxVERTICAL );
 	
 	m_gbSizer2 = new wxGridBagSizer( 0, 0 );
-	m_gbSizer2->AddGrowableCol( 1 );
 	m_gbSizer2->SetFlexibleDirection( wxBOTH );
 	m_gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	

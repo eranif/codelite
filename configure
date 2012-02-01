@@ -877,7 +877,7 @@ Show_Help_and_Exit()
 	echo "  --enable-debug          create a debug build (the default is disable)"
 	echo "  --enable-mysql          enable MySQL support in DatabaseExplorer plugin (MySQL connector sources must be installed on the system)"
 	echo "  --enable-postgres       enable PostgreSQL support in DatabaseExplorer plugin (PostgreSQL connector sources must be installed on the system)"
-	echo "  --enable-pch            generate Makefiles that use PreCompiled headers to boost compile time"
+	echo "  --enable-pch            generate Makefiles that use pre-compiled headers to reduce compile time"
 	echo "  --help                  show this help"
 	echo "To build with alternative C++ or C compilers, specify them in the environmental variables CXX and/or CC"
 	echo "Either do: CXX=\"foo\" ./configure --<etc>"

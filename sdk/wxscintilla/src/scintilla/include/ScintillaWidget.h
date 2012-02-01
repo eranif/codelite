@@ -8,15 +8,15 @@
 
 #ifndef SCINTILLAWIDGET_H
 #define SCINTILLAWIDGET_H
-#ifdef __WXGTK20__
-// We need this ugly hack to workaround a gtk2-wxGTK name-clash^M
-// See http://trac.wxwidgets.org/ticket/10883^M
+
+// NB the next line would normally look for __WXGTK20__, but that's (presumably) not defined in wxScintilla
+#if defined(__WXGTK__)
+// We need this ugly hack to workaround a gtk2-wxGTK name-clash
+// See http://trac.wxwidgets.org/ticket/10883
 #define GSocket GlibGSocket
 #include <gtk-2.0/gtk/gtk.h>
 #undef GSocket
-#endif
 
-#if defined(__WXGTK__)
 #ifdef __cplusplus
 extern "C" {
 #endif

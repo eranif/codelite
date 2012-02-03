@@ -500,6 +500,7 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
     if (m_owner) {
         // Let the owner override the default behavior
         wxCommandEvent e(wxEVT_CCBOX_SELECTION_MADE);
+		e.SetEventObject(m_owner);
         e.SetClientData( (void*)&word );
         if(m_owner->ProcessEvent(e))
             return;

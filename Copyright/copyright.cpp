@@ -109,14 +109,14 @@ void Copyright::CreatePluginMenu(wxMenu *pluginsMenu)
 	wxMenu *menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
-	item = new wxMenuItem(menu, XRCID("insert_copyrights"), _("Insert Copyright Block"), _("Insert Copyright Block"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, CR_insert_copyrights, _("Insert Copyright Block"), _("Insert Copyright Block"), wxITEM_NORMAL);
 	menu->Append(item);
 
-	item = new wxMenuItem(menu, XRCID("batch_insert_copyrights"), _("Batch Insert of Copyright Block"), _("Batch Insert of Copyright Block"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, CR_batch_insert_copyrights, _("Batch Insert of Copyright Block"), _("Batch Insert of Copyright Block"), wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
-	item = new wxMenuItem(menu, XRCID("copyrights_options"), _("Settings..."), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, CR_copyrights_options, _("Settings..."), wxEmptyString, wxITEM_NORMAL);
 
 	menu->Append(item);
 	pluginsMenu->Append(wxID_ANY, _("Copyrights"), menu);

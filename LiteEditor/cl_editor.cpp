@@ -1007,7 +1007,7 @@ void LEditor::OnMarginClick(wxScintillaEvent& event)
 			if (caret_pos != wxNOT_FOUND) {
 				int caret_line = LineFromPosition(caret_pos);
 				if (caret_line != wxNOT_FOUND && GetLineVisible(caret_line) == false) {
-					// the caret line is hidden, make sure the caret is visible
+					// the caret line is hidden (i.e. stuck in a fold) so set it somewhere else
 					while (caret_line >= 0) {
 						if ((GetFoldLevel(caret_line) & wxSCI_FOLDLEVELHEADERFLAG) && GetLineVisible(caret_line)) {
 							SetCaretAt(PositionFromLine(caret_line));
@@ -1015,6 +1015,23 @@ void LEditor::OnMarginClick(wxScintillaEvent& event)
 						}
 						caret_line--;
 					}
+				}
+			}
+			
+			// Try to make as much as possible of the originally-displayed code stay in the same screen position
+			// That's no problem if the fold-head is visible: that line and above automatically stay in place
+			// However if it's off screen and the user clicks in a margin to fold, no part of the function will stay on screen
+			// The following code scrolls the correct amount to keep the position of the lines *below* the function unchanged
+			// This also brings the newly-folded function into view.
+			// NB It fails if the cursor was originally inside the new fold; but at least then the fold head gets shown
+			int foldparent = GetFoldParent(nLine);
+			int firstvisibleline = GetFirstVisibleLine();
+			if (!(GetFoldLevel(nLine) & wxSCI_FOLDLEVELHEADERFLAG) // If the click was below the fold head
+							&& (foldparent < firstvisibleline)) {  // and the fold head is off the screen
+				int linestoscroll = foldparent - GetLastChild(foldparent, -1);
+				// If there are enough lines above the screen to scroll downwards, do so
+				if ((firstvisibleline + linestoscroll) >= 0) {     // linestoscroll will always be negative
+					LineScroll(0, linestoscroll);
 				}
 			}
 		}

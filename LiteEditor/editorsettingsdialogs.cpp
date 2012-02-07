@@ -47,7 +47,7 @@ EditorSettingsDialogs::EditorSettingsDialogs( wxWindow* parent )
 
 	// the value stored is 0 / 1
 	if (bAdjustCPUNumber) {
-		AdjustCPUNumber_idx = m_checkListAnswers->Append(_("Adjust number of build processes according to CPU"));
+		AdjustCPUNumber_idx = m_checkListAnswers->Append(_("Don't offer to adjust the number of build processes according to CPU"));
 		m_checkListAnswers->Check((unsigned int)AdjustCPUNumber_idx, adjustCpuNumber ? true : false);
 	}
 

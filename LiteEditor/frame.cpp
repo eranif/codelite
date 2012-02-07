@@ -2516,16 +2516,24 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 		if ( bs ) {
 			wxString jobs;
 			jobs << cpus;
-
-			if ( bs->GetToolJobs() != jobs ) {
+			
+			long dontPromptForCPUFix(0);
+			EditorConfigST::Get()->GetLongValue(wxT("AdjustCPUNumber"), dontPromptForCPUFix);
+			
+			if ( bs->GetToolJobs() != jobs && !dontPromptForCPUFix) {
 
 				ButtonDetails btn1;
 				btn1.buttonLabel = _("Update Number of Build Processes");
 				btn1.commandId   = XRCID("update_num_builders_count");
 				btn1.window      = this;
 
-				GetMainBook()->ShowMessage(_("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), true,
-				                           PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/settings")), btn1);
+				GetMainBook()->ShowMessage(_("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), 
+											true,
+											PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/settings")), 
+											btn1,
+											ButtonDetails(),
+											ButtonDetails(),
+											CheckboxDetails(wxT("AdjustCPUNumber")));
 			}
 		}
 

@@ -179,7 +179,6 @@ LEditor::LEditor(wxWindow* parent)
 
 	// Create the various tip windows
 	m_functionTip = new clEditorTipWindow(this);
-//	m_debuggerTip = new DisplayVariableDlg(this);
 	m_disableSmartIndent = GetOptions()->GetDisableSmartIndent();
 
 	m_deltas = new EditorDeltasHolder;
@@ -291,7 +290,7 @@ void LEditor::SetProperties()
 	SetMultipleSelection(true);
 	SetRectangularSelectionModifier(wxSCI_SCMOD_CTRL);
 	SetAdditionalSelectionTyping(true);
-	SetVirtualSpaceOptions(1 /* SCVS_RECTANGULARSELECTION=1 | SCVS_USERACCESSIBLE=2 */ );
+	SetVirtualSpaceOptions(1);
 	OptionsConfigPtr options = GetOptions();
 	CallTipUseStyle(1);
 
@@ -547,19 +546,19 @@ void LEditor::SetProperties()
 	//right click menu
 	UsePopUp(m_rightClickMenu ? false : true);
 
-#if defined(__WXMAC__)
-	IndicatorSetUnder(1, false);
-	IndicatorSetUnder(2, false);
-	IndicatorSetUnder(HYPERLINK_INDICATOR, false);
-	IndicatorSetUnder(MATCH_INDICATOR, false);
-	IndicatorSetUnder(DEBUGGER_INDICATOR, false);
-#else
+//#if defined(__WXMAC__)
+//	IndicatorSetUnder(1, false);
+//	IndicatorSetUnder(2, false);
+//	IndicatorSetUnder(HYPERLINK_INDICATOR, false);
+//	IndicatorSetUnder(MATCH_INDICATOR, false);
+//	IndicatorSetUnder(DEBUGGER_INDICATOR, false);
+//#else
 	IndicatorSetUnder(1, true);
 	IndicatorSetUnder(2, true);
 	IndicatorSetUnder(HYPERLINK_INDICATOR, true);
 	IndicatorSetUnder(MATCH_INDICATOR, true);
 	IndicatorSetUnder(DEBUGGER_INDICATOR, true);
-#endif
+//#endif
 
 	SetInidicatorValue(MATCH_INDICATOR,    1);
 	SetInidicatorValue(DEBUGGER_INDICATOR, 1);
@@ -3088,15 +3087,11 @@ int LEditor::SafeGetChar(int pos)
 
 void LEditor::OnDragEnd(wxScintillaEvent& e)
 {
-//	wxUnusedVar(e);
-//	wxLogMessage(wxT("OnDragEnd"));
 	e.Skip();
 }
 
 void LEditor::OnDragStart(wxScintillaEvent& e)
 {
-//	wxUnusedVar(e);
-//	wxLogMessage(wxT("OnDragStart"));
 	e.Skip();
 }
 

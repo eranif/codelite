@@ -83,7 +83,8 @@ FileLogger* FileLogger::Get()
 
 void FileLogger::SetVerbosity(int level)
 {
-	CL_SYSTEM(wxT("Log verbosity is now set to %s"), FileLogger::GetVerbosityAsString(level).c_str());
+	if(level > FileLogger::Warning)
+		CL_SYSTEM(wxT("Log verbosity is now set to %s"), FileLogger::GetVerbosityAsString(level).c_str());
 	m_verbosity = level;
 }
 

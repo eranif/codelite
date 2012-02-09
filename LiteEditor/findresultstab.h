@@ -136,11 +136,14 @@ public:
 		m_changes.push_back(position);
 		m_changes.push_back(length);
 	}
+	
 	void Pop() {
-		//wxCHECK_RET(m_changes.size() > 1, wxT("Trying to undo a non-existent change"));
-		m_changes.pop_back();
-		m_changes.pop_back();
+		if(m_changes.size() > 1) {
+			m_changes.pop_back();
+			m_changes.pop_back();
+		}
 	}
+	
 	void OnFileSaved() {
 		m_changesAtLastSave = m_changes;
 	}

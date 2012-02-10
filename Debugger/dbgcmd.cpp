@@ -967,6 +967,7 @@ bool DbgCmdListThreads::ProcessOutput(const wxString& line)
 {
 	wxUnusedVar(line);
 	static wxRegEx reCommand(wxT("^([0-9]{8})"));
+	static wxRegEx reTableTitle(wxT("^(Id[[:space:]]+Target Id[[:space:]]+Frame)$"));
 
 	wxString output( GetOutput() );
 	DebuggerEvent e;
@@ -980,8 +981,8 @@ bool DbgCmdListThreads::ProcessOutput(const wxString& line)
 		line = line.Trim().Trim(false);
 
 
-		if (reCommand.Matches(line)) {
-			//this is the ack line, ignore it
+		if ((reCommand.Matches(line)) || (reTableTitle.Matches(line))) {
+			//this is the ack line / the table title. Ignore it
 			continue;
 		}
 

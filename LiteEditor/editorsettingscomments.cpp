@@ -35,6 +35,7 @@ EditorSettingsComments::EditorSettingsComments( wxWindow* parent )
 
 	m_checkBoxContCComment->SetValue( data.GetAddStarOnCComment() );
 	m_checkBoxContinueCppComment->SetValue( data.GetContinueCppComment() );
+	m_checkBoxSmartAddFiles->SetValue( EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_SmartAddFiles );
 }
 
 
@@ -47,4 +48,10 @@ void EditorSettingsComments::Save(OptionsConfigPtr options)
 	data.SetContinueCppComment(m_checkBoxContinueCppComment->IsChecked());
 
 	EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &data);
+	size_t flags = options->GetOptions();
+	if( m_checkBoxSmartAddFiles->IsChecked() )
+		flags |= OptionsConfig::Opt_SmartAddFiles;
+	else
+		flags &= ~OptionsConfig::Opt_SmartAddFiles;
+	options->SetOptions(flags);
 }

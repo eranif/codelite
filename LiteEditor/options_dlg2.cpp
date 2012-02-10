@@ -125,7 +125,7 @@ void OptionsDlg2::Initialize()
 	AddSubPage(new EditorOptionsGeneralSavePanel(m_treeBook),       _("Save Options"));
 
 	m_treeBook->AddPage(0, wxT("C++"));
-	AddSubPage(new EditorSettingsComments(m_treeBook),            _("Comments"));
+	AddSubPage(new EditorSettingsComments(m_treeBook),            _("Code Generation & Comments"));
 	AddSubPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), wxT("Doxygen"));
 	AddSubPage(new EditorOptionsGeneralCodeNavPanel(m_treeBook),  _("Quick Code Navigation"));
 

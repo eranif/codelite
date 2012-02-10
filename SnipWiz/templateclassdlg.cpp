@@ -161,15 +161,18 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 		<< _( "Files successfully created." );
 		// We have a .cpp and an .h file, and there may well be a :src and an :include folder available
 		// So try to place the files appropriately. If that fails, dump both in the selected folder
-		if ( m_pManager->AddFilesToVirtualFolderIntelligently( m_textCtrlVD->GetValue(), files )
-				|| m_pManager->AddFilesToVirtualFolder( m_textCtrlVD->GetValue(), files ) ) {
+		
+		bool smartAddFiles = EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_SmartAddFiles;
+		
+		if ( (smartAddFiles && m_pManager->AddFilesToVirtualFolderIntelligently( m_textCtrlVD->GetValue(), files )) || m_pManager->AddFilesToVirtualFolder( m_textCtrlVD->GetValue(), files ) ) 
+		{
 			wxMessageBox(msg, _("Add template class"), wxOK|wxCENTER|wxICON_INFORMATION, this);
 			EndModal(wxID_OK);
 			return;
 		}
 	}
 
-	wxMessageBox(_("Adding the template class failed"), _("Oops"), wxOK|wxCENTER|wxICON_ERROR, this);
+	wxMessageBox(_("Adding the template class failed"), _("Oops"), wxOK|wxCENTER|wxICON_WARNING, this);
 	EndModal(wxID_CANCEL);	// The return value isn't actually used at present, but send Cancel on failure for future-proofing
 }
 

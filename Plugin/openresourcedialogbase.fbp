@@ -94,7 +94,7 @@
                         <property name="context_menu">1</property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>
-                        <property name="font">,90,90,12,76,0</property>
+                        <property name="font">,90,90,-1,76,0</property>
                         <property name="hidden">0</property>
                         <property name="id">wxID_ANY</property>
                         <property name="maximum_size"></property>
@@ -280,7 +280,7 @@
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND|wxRIGHT|wxLEFT</property>
                     <property name="proportion">0</property>
-                    <object class="wxStaticBoxSizer" expanded="0">
+                    <object class="wxStaticBoxSizer" expanded="1">
                         <property name="id">wxID_ANY</property>
                         <property name="label"></property>
                         <property name="minimum_size"></property>

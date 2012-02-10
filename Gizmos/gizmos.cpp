@@ -572,7 +572,8 @@ void WizardsPlugin::CreateClass(const NewClassInfo &info)
 
 	// We have a .cpp and an .h file, and there may well be a :src and an :include folder available
 	// So try to place the files appropriately. If that fails, dump both in the selected folder
-	if (! m_mgr->AddFilesToVirtualFolderIntelligently(info.virtualDirectory, paths) )
+	bool smartAddFiles = EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_SmartAddFiles;
+	if (!smartAddFiles || ! m_mgr->AddFilesToVirtualFolderIntelligently(info.virtualDirectory, paths) )
 		m_mgr->AddFilesToVirtualFolder(info.virtualDirectory, paths);
 }
 

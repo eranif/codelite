@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -16,6 +16,7 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
+#include <wx/statline.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
@@ -25,19 +26,21 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class EditorSettingsCommentsBase
 ///////////////////////////////////////////////////////////////////////////////
-class EditorSettingsCommentsBase : public wxPanel
+class EditorSettingsCommentsBase : public wxPanel 
 {
 	private:
-
+	
 	protected:
+		wxCheckBox* m_checkBoxSmartAddFiles;
+		wxStaticLine* m_staticline1;
 		wxCheckBox* m_checkBoxContCComment;
 		wxCheckBox* m_checkBoxContinueCppComment;
-
+	
 	public:
 		
 		EditorSettingsCommentsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~EditorSettingsCommentsBase();
-
+	
 };
 
 #endif //__editorsettingscommentsbase__

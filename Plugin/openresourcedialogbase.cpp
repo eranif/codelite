@@ -17,7 +17,7 @@ OpenResourceDialogBase::OpenResourceDialogBase( wxWindow* parent, wxWindowID id,
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_textCtrlResourceName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_NO_VSCROLL|wxTE_PROCESS_ENTER|wxTE_RICH2 );
-	m_textCtrlResourceName->SetFont( wxFont( 12, 76, 90, 90, false, wxEmptyString ) );
+	m_textCtrlResourceName->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
 	
 	mainSizer->Add( m_textCtrlResourceName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	

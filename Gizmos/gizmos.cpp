@@ -26,6 +26,7 @@
 #include <wx/app.h>
 #include <wx/menu.h>
 #include <wx/log.h>
+#include "editor_config.h"
 #include <wx/msgdlg.h>
 #include "workspace.h"
 #include "ctags_manager.h"

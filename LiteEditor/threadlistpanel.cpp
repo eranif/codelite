@@ -65,6 +65,7 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray &threads)
 
 		//insert new item (row)
 		info.SetColumn(0);
+		info.SetId(0);
 		item = m_list->InsertItem(info);
 
 		wxString str_id;

@@ -657,28 +657,32 @@ bool FileViewTree::AddFilesToVirtualFolder(const wxString& vdFullPath, wxArraySt
 
 bool FileViewTree::AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths)
 {
-	// Note: This is only used atm to place a pair of cpp/h files, so I'm not checking paths.
-	// If you use the function for anything else in the future...
+	// Try to put .cpp files in a :src and .h files in a :include dir
+	// This should only happen if :src and :include are terminal subdirs of vdFullPath itself, not distant cousins
+	// Note: This function is only used atm to place a pair of cpp/h files, so I'm not checking 'paths'.
+	// If you use it for anything else in the future...
 
-	// The files passed in 'paths' may be a .cpp and an .h. See if there's a :src and :include folder to put them in
-	wxString srcname, includename;
-	size_t basenamelen = vdFullPath.rfind(wxT(":src"));
-	if (basenamelen == wxString::npos) {
-		basenamelen = vdFullPath.rfind(wxT(":include"));
-		if (basenamelen == wxString::npos) {
-			// The selected folder name ends neither in :src nor in :include, so we can't be intelligent this time
-			return false;
-		}
+	// Check first for vdFullPath being one of the subdirs:
+	wxString basename, srcname, includename;
+	if (!vdFullPath.EndsWith(wxT(":src"), &basename)) {
+		vdFullPath.EndsWith(wxT(":include"), &basename);
 	}
-	// OK, the selected folder is suitable; but check there's a matching pair
-	wxString basename = vdFullPath.Left(basenamelen);
-	srcname = basename + wxT(":src");
-	includename = basename + wxT(":include");
-	wxTreeItemId srcitem = ItemByFullPath(srcname);
-	wxTreeItemId includeitem = ItemByFullPath(includename);
-	if (!srcitem.IsOk() || !includeitem.IsOk()) {
+	if (basename.empty()) {
+		basename = vdFullPath;	// If not, assume that we were passed the parent folder
+	}
+
+	// Either way, basename should now contain the putative parent of src and include
+	// Check by getting treeitemids for all 3
+	wxTreeItemId parentitem = ItemByFullPath(basename);
+	if (!parentitem.IsOk()) {
 		return false;
 	}
+	wxTreeItemId srcitem = DoGetItemByText(parentitem, wxT("src"));
+	wxTreeItemId includeitem = DoGetItemByText(parentitem, wxT("include"));
+	if (!(srcitem.IsOk() && includeitem.IsOk())) {
+		return false; // The alleged parent folder doesn't have a relevant matching pair of children
+	}
+	
 	// We're winning. Now it's just a matter of putting the cpp file into :src, etc
 	wxArrayString cppfiles, hfiles;
 	for (int c = (int)paths.GetCount()-1; c >= 0 ; --c) {
@@ -692,8 +696,8 @@ bool FileViewTree::AddFilesToVirtualFolderIntelligently(const wxString& vdFullPa
 		}
 	}
 	// Finally do the Adds
-	AddFilesToVirtualFolder(srcname, cppfiles);
-	AddFilesToVirtualFolder(includename, hfiles);
+	AddFilesToVirtualFolder(basename + wxT(":src"), cppfiles);
+	AddFilesToVirtualFolder(basename + wxT(":include"), hfiles);
 	// There shouldn't have been any other files passed; but if there were, add them to the selected folder
 	if (paths.GetCount()) {
 		AddFilesToVirtualFolder(vdFullPath, paths);

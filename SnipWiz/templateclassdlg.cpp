@@ -28,6 +28,7 @@
 #include <wx/textfile.h>
 #include "virtualdirectoryselector.h"
 #include <wx/filefn.h>
+#include "editor_config.h"
 #include "project.h"
 #include "templateclassdlg.h"
 #include <wx/msgdlg.h>

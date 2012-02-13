@@ -21,7 +21,6 @@
 #    include <wx/imaglist.h>
 #    include <wx/image.h>
 #elif defined(__WXGTK__)
-#    include <gtk/gtk.h>
 #    include <wx/imaglist.h>
 #endif
 

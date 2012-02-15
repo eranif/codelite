@@ -54,19 +54,16 @@ void clProcess::SetPid(long pid)
 void clProcess::Terminate()
 {
 	wxLog::EnableLogging(false);
-	wxKillError rc;
+	
 #ifdef __WXMSW__
-	std::map<unsigned long, bool> tree;
-	ProcUtils::GetProcTree(tree, GetPid());
-
-
-	std::map<unsigned long, bool>::iterator iter = tree.begin();
-	for(; iter != tree.end(); iter++){
-		if(wxProcess::Exists(iter->first)) {
-			wxKill(iter->first, wxSIGKILL, &rc);
-		}
+	HANDLE process = ::OpenProcess( PROCESS_ALL_ACCESS, FALSE, ( DWORD )this->GetPid() );
+	if(process) {
+		::TerminateProcess(process, 0);
+		::CloseHandle(process);
 	}
+	
 #else
+	wxKillError rc;
 	wxKill(GetPid(), wxSIGKILL, &rc, wxKILL_CHILDREN);
 #endif
 

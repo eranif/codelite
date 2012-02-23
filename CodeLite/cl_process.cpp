@@ -56,10 +56,17 @@ void clProcess::Terminate()
 	wxLog::EnableLogging(false);
 	
 #ifdef __WXMSW__
-	HANDLE process = ::OpenProcess( PROCESS_ALL_ACCESS, FALSE, ( DWORD )this->GetPid() );
-	if(process) {
-		::TerminateProcess(process, 0);
-		::CloseHandle(process);
+	std::vector<long> children;
+	children.push_back(this->GetPid());
+	ProcUtils::GetChildren(this->GetPid(), children);
+	
+	for(size_t i=0; i<children.size(); i++)
+	{
+		HANDLE process = ::OpenProcess( PROCESS_ALL_ACCESS, FALSE, ( DWORD ) children.at(i) );
+		if(process) {
+			::TerminateProcess(process, 0);
+			::CloseHandle(process);
+		}
 	}
 	
 #else

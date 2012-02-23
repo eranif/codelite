@@ -1,32 +1,31 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __SUBVERSION2_UI_H__
-#define __SUBVERSION2_UI_H__
+#ifndef __subversion2_ui__
+#define __subversion2_ui__
 
-#include <wx/artprov.h>
-#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
+
 #include <wx/treectrl.h>
-#include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
+#include <wx/string.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/splitter.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/statline.h>
 #include <wx/checklst.h>
 #include <wx/choice.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
+#include <wx/statline.h>
 #include <wx/wxscintilla.h>
 #include <wx/checkbox.h>
 #include <wx/statbox.h>
@@ -63,7 +62,7 @@ class SubversionPageBase : public wxPanel
 	
 	public:
 		
-		SubversionPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		SubversionPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~SubversionPageBase();
 		
 		void m_splitter2OnIdle( wxIdleEvent& )
@@ -86,7 +85,6 @@ class CommitDialogBase : public wxDialog
 		wxTextCtrl* m_textCtrlFrID;
 		wxStaticText* m_staticTextBugID;
 		wxTextCtrl* m_textCtrlBugID;
-		wxStaticLine* m_staticline10;
 		wxSplitterWindow* m_splitter1;
 		wxPanel* m_panel1;
 		wxStaticText* m_staticText2;
@@ -96,7 +94,6 @@ class CommitDialogBase : public wxDialog
 		wxTextCtrl* m_textCtrlMessage;
 		wxStaticText* m_staticText27;
 		wxChoice* m_choiceMessages;
-		wxStaticLine* m_staticline1;
 		wxButton* m_button2;
 		wxButton* m_button3;
 		
@@ -106,12 +103,12 @@ class CommitDialogBase : public wxDialog
 	
 	public:
 		
-		CommitDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Commit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		CommitDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Commit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~CommitDialogBase();
 		
 		void m_splitter1OnIdle( wxIdleEvent& )
 		{
-			m_splitter1->SetSashPosition( 0 );
+			m_splitter1->SetSashPosition( 145 );
 			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CommitDialogBase::m_splitter1OnIdle ), NULL, this );
 		}
 	
@@ -138,7 +135,7 @@ class SvnCopyDialogBase : public wxDialog
 	
 	public:
 		
-		SvnCopyDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create Svn Tag"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 575,315 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		SvnCopyDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create Svn Tag"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 575,315 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SvnCopyDialogBase();
 	
 };
@@ -155,7 +152,7 @@ class SvnShellBase : public wxPanel
 	
 	public:
 		
-		SvnShellBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
+		SvnShellBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
 		~SvnShellBase();
 	
 };
@@ -178,7 +175,7 @@ class SvnLoginDialogBase : public wxDialog
 	
 	public:
 		
-		SvnLoginDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Login"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+		SvnLoginDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Login"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~SvnLoginDialogBase();
 	
 };
@@ -232,7 +229,7 @@ class SvnPreferencesDialogBase : public wxDialog
 	
 	public:
 		
-		SvnPreferencesDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Subversion Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		SvnPreferencesDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Subversion Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SvnPreferencesDialogBase();
 	
 };
@@ -259,7 +256,7 @@ class SvnInfoDialog : public wxDialog
 		wxTextCtrl* m_textCtrlAuthor;
 		wxTextCtrl* m_textCtrlDate;
 		
-		SvnInfoDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Info"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+		SvnInfoDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Info"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~SvnInfoDialog();
 	
 };
@@ -274,9 +271,11 @@ class SvnCheckoutDialogBase : public wxDialog
 	protected:
 		wxStaticText* m_staticText24;
 		wxComboBox* m_comboBoxRepoURL;
+		
 		wxStaticText* m_staticText25;
 		wxTextCtrl* m_textCtrl20;
 		wxButton* m_buttonBrowseDir;
+		
 		wxButton* m_button14;
 		wxButton* m_button15;
 		
@@ -289,7 +288,7 @@ class SvnCheckoutDialogBase : public wxDialog
 	
 	public:
 		
-		SvnCheckoutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Checkout"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		SvnCheckoutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Checkout"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SvnCheckoutDialogBase();
 	
 };
@@ -304,6 +303,7 @@ class SvnLogDialog : public wxDialog
 	protected:
 		wxStaticText* m_staticText28;
 		wxStaticText* m_staticText29;
+		
 		wxStaticLine* m_staticline5;
 		wxButton* m_button17;
 		wxButton* m_button18;
@@ -313,7 +313,7 @@ class SvnLogDialog : public wxDialog
 		wxTextCtrl* m_to;
 		wxCheckBox* m_compact;
 		
-		SvnLogDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Log"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+		SvnLogDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Log"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~SvnLogDialog();
 	
 };
@@ -330,13 +330,14 @@ class DiffDialogBase : public wxDialog
 		wxTextCtrl* m_textCtrlFromRev;
 		wxStaticText* m_staticText26;
 		wxTextCtrl* m_textCtrlToRev;
+		
 		wxStaticLine* m_staticline6;
 		wxButton* m_button20;
 		wxButton* m_button19;
 	
 	public:
 		
-		DiffDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Diff..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		DiffDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Diff..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~DiffDialogBase();
 	
 };
@@ -357,7 +358,7 @@ class ChangeLogPageBase : public wxPanel
 	
 	public:
 		
-		ChangeLogPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
+		ChangeLogPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
 		~ChangeLogPageBase();
 	
 };
@@ -379,13 +380,14 @@ class SvnPropsBaseDlg : public wxDialog
 		wxTextCtrl* m_textCtrlFrURL;
 		wxStaticText* m_staticText34;
 		wxTextCtrl* m_textCtrlFrMsg;
+		
 		wxStaticLine* m_staticline7;
 		wxButton* m_button21;
 		wxButton* m_button22;
 	
 	public:
 		
-		SvnPropsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Properties..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		SvnPropsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Properties..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SvnPropsBaseDlg();
 	
 };
@@ -406,7 +408,7 @@ class PatchDlgBase : public wxDialog
 		wxFilePickerCtrl* m_filePicker;
 		wxRadioBox* m_radioBoxEOLPolicy;
 		
-		PatchDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select patch file:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		PatchDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select patch file:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~PatchDlgBase();
 	
 };
@@ -435,9 +437,9 @@ class SvnSelectLocalRepoBase : public wxDialog
 	
 	public:
 		
-		SvnSelectLocalRepoBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Local Repository:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		SvnSelectLocalRepoBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Local Repository:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SvnSelectLocalRepoBase();
 	
 };
 
-#endif //__SUBVERSION2_UI_H__
+#endif //__subversion2_ui__

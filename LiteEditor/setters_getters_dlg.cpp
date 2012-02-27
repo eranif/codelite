@@ -210,11 +210,27 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool &alreadyExist, 
 	bool startWithUpper  = m_checkStartWithUppercase->IsChecked();
 
 	Variable var;
+    int midFrom(0);
+    
 	wxString method_name, method_signature;
 	if (LanguageST::Get()->VariableFromPattern(tag->GetPattern(), tag->GetName(), var)) {
 		wxString func;
 		wxString scope = _U(var.m_typeScope.c_str());
-
+        
+        wxString tagName = tag->GetName();
+        tagName.MakeLower();
+        
+        
+        bool isBool = (var.m_isBasicType && (var.m_type.find("bool") != std::string::npos));
+        // Incase the member is named 'isXX'
+        // disable the "isBool" functionality
+        if(isBool && tagName.StartsWith(wxT("is"))) {
+            isBool = false;
+            
+        } else if( isBool && (tagName.StartsWith(wxT("m_is")) || tagName.StartsWith(wxT("_is"))) ) {
+            midFrom = 2;
+        }
+        
 		if (!var.m_isPtr && !var.m_isBasicType) {
 			func << wxT("const ");
 			if (!scope.IsEmpty() && !(scope == wxT("<global>"))) {
@@ -231,17 +247,29 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool &alreadyExist, 
 			}
 			func << _U(var.m_type.c_str()) << _U(var.m_templateDecl.c_str()) << _U(var.m_starAmp.c_str()) << wxT(" ");
 		}
-
-
-		if (startWithUpper) {
-			method_name << wxT("Get");
-		} else {
-			method_name << wxT("get");
-		}
-
+        
+        // Prepare the prefix.
+        // Make sure that boolean getters are treated differently 
+        // by making the getter in the format of 'IsXXX' or 'isXXX'
+        wxString prefix = wxT("get");
+        if(isBool) {
+            prefix = wxT("is");
+        }
+        
+        if(startWithUpper) {
+            wxString captializedPrefix = prefix.Mid(0, 1);
+            captializedPrefix.MakeUpper().Append(prefix.Mid(1));
+            prefix.swap(captializedPrefix);
+        }
+        
 		wxString name = _U(var.m_name.c_str());
 		FormatName(name);
-		method_name << name;
+        
+        method_name << prefix; // Add the "Get"
+        if(midFrom) {
+            name = name.Mid(midFrom);
+        }
+		method_name << name;   // Add the name
 
 		// add the method name
 		func << method_name;
@@ -272,7 +300,13 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool &alreadyExist, 
 
 void SettersGettersDlg::FormatName(wxString &name)
 {
-	name.StartsWith(wxT("m_"), &name);
+    if(name.StartsWith(wxT("m_"))) {
+        name = name.Mid(2);
+        
+    } else if(name.StartsWith(wxT("_"))) {
+        name = name.Mid(1);
+    }
+	
 	wxStringTokenizer tkz(name, wxT("_"));
 	name.Clear();
 	while (tkz.HasMoreTokens()) {
@@ -290,13 +324,6 @@ void SettersGettersDlg::UpdatePreview()
 {
 	m_code.Clear();
 	m_code = GenerateFunctions();
-//	m_textPreview->SetReadOnly(false);
-//	//remove previous preview
-//	if (m_textPreview->CanUndo()) m_textPreview->Undo();
-//	m_textPreview->BeginUndoAction();
-//	m_textPreview->InsertTextWithIndentation(m_code, m_lineno);
-//	m_textPreview->EndUndoAction();
-//	m_textPreview->SetReadOnly(true);
 }
 
 void SettersGettersDlg::OnCheckAll(wxCommandEvent &e)

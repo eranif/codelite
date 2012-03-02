@@ -351,6 +351,10 @@ optional_struct_name     : /* empty */
 						| '**' LE_IDENTIFIER
 						;
 						
+fully_qualified_identifier_name: LE_IDENTIFIER {$$ = $1;}
+								| scope_specifier LE_IDENTIFIER {$$ = $2;}
+								;
+								
 typedef_name_list: optional_struct_name
 				 | typedef_name_list ',' optional_struct_name
 				 ;
@@ -359,12 +363,12 @@ ellipsis_prefix: '(' {$$ = $1;}
                 |',' {$$ = $1;}
                 ;
 
-variable_name_list: LE_IDENTIFIER {var_consumeDefaultValueIfNeeded();}
+variable_name_list: fully_qualified_identifier_name {var_consumeDefaultValueIfNeeded();}
                     {
                         curr_var.m_name = $1;
                     	gs_names.push_back(curr_var);
                     }
-                    | variable_name_list ','  special_star_amp LE_IDENTIFIER {var_consumeDefaultValueIfNeeded();}
+                    | variable_name_list ','  special_star_amp fully_qualified_identifier_name {var_consumeDefaultValueIfNeeded();}
                     {
                         //collect all the names
 						curr_var.m_name = $4;

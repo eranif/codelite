@@ -18,5 +18,15 @@ void SvnStatusHandler::Process(const wxString& output)
 //	GetPlugin()->GetShell()->AppendText(output);
 	wxArrayString modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles, lockedFiles;
 	SvnXML::GetFiles(output, modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles, lockedFiles);
+	
+// new code
+   modFiles.Sort();
+   conflictedFiles.Sort();
+   unversionedFiles.Sort();
+   newFiles.Sort();
+   deletedFiles.Sort();
+   lockedFiles.Sort();
+// end of new code
+
 	GetPlugin()->GetSvnView()->UpdateTree(modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles, lockedFiles);
 }

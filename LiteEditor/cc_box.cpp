@@ -306,7 +306,15 @@ bool CCBox::SelectWord(const wxString& word)
                 editor->SetActive();
             }
         }
-    }
+		
+    } else if(m_isKeywordsList) {
+		// When there is no match and the list box is of type "Keywords"
+		// hide it...
+		LEditor *editor = GetEditor();
+		if(editor) {
+			editor->HideCompletionBox();
+		}
+	}
 
     m_timer->Stop();
     m_timer->Start(100, true);

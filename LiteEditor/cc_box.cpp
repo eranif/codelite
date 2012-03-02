@@ -508,8 +508,9 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 
     LEditor *editor = GetEditor();
     int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
-
-    editor->SetSelection(insertPos, editor->GetCurrentPos());
+	int endPos    = editor->WordEndPosition(editor->GetCurrentPos(), true);
+	
+    editor->SetSelection(insertPos, endPos);
     editor->ReplaceSelection(word);
 
     // incase we are adding a function, add '()' at the end of the function name and place the caret in the middle

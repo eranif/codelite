@@ -179,7 +179,6 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
 	bool     cont(true);
 	int      depth(0);
 	bool     prevGt   (false);
-	bool     prevColon(false);
 	wxString expression;
 
 	states->SetPosition(pos);
@@ -194,7 +193,6 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
 		switch (ch) {
 		case wxT(';'):
 			cont = false;
-			prevColon = false;
 			break;
 		case wxT('-'):
 			if (prevGt) {
@@ -207,7 +205,6 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
 					cont = false;
 				}
 			}
-			prevColon = false;
 			break;
 		case wxT(' '):
 		case wxT('\n'):
@@ -215,7 +212,6 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
 		case wxT('\t'):
 		case wxT('\r'):
 			prevGt = false;
-			prevColon = false;
 			if (depth <= 0) {
 				cont = false;
 			}
@@ -223,14 +219,12 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
 		case wxT('{'):
 		case wxT('='):
 			prevGt = false;
-			prevColon = false;
 			cont = false;
 			break;
 		case wxT('('):
 		case wxT('['):
 			depth--;
 			prevGt = false;
-			prevColon = false;
 			if (depth < 0) {
 				//dont include this token
 				cont = false;
@@ -247,7 +241,6 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
 		case wxT('%'):
 		case wxT('?'):
 			prevGt = false;
-			prevColon = false;
 			if (depth <= 0) {
 				//dont include this token
 				cont = false;
@@ -255,12 +248,10 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
 			break;
 		case wxT('>'):
 			prevGt = true;
-			prevColon = false;
 			depth++;
 			break;
 		case wxT('<'):
 			prevGt = false;
-			prevColon = false;
 			depth--;
 			if (depth < 0) {
 				//dont include this token
@@ -270,12 +261,10 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
 		case wxT(')'):
 		case wxT(']'):
 			prevGt = false;
-			prevColon = false;
 			depth++;
 			break;
 		default:
 			prevGt = false;
-			prevColon = false;
 			break;
 		}
 

@@ -307,7 +307,7 @@ void ParseThread::ParseAndStoreFiles(const wxArrayString& arrFiles, int initalCo
 	// Update the retagging timestamp
 	TagsManagerST::Get()->UpdateFilesRetagTimestamp(arrFiles, db);
 
-	if ( m_notifiedWindow && !arrFiles.IsEmpty() ) {
+	if ( m_notifiedWindow ) {
 		wxCommandEvent e(wxEVT_PARSE_THREAD_MESSAGE);
 		wxString message;
 		if(initalCount != -1)
@@ -580,7 +580,6 @@ void ParseThread::ProcessSimpleNoIncludes(ParseRequest* req)
 	}
 	
 	// convert the file to tags
-	TagsManager *tagmgr = TagsManagerST::Get();
 	ITagsStoragePtr db(new TagsStorageSQLite());
 	db->OpenDatabase( dbfile );
 	

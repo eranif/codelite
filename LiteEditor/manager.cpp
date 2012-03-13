@@ -821,6 +821,7 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
 	}
 	
 	if(parsingRequest->_workspaceFiles.empty()) {
+		SetRetagInProgress(false);
 		delete parsingRequest;
 		return;
 	}

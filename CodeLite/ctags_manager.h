@@ -131,7 +131,14 @@ class WXDLLIMPEXP_CL TagsManager : public wxEvtHandler
 	friend class TagsManagerST;
 	friend class DirTraverser;
 	friend class Language;
-
+	
+public:
+	enum RetagType {
+		Retag_Full,
+		Retag_Quick,
+		Retag_Quick_No_Scan
+	};
+	
 public:
 	wxCriticalSection      m_crawlerLocker;
 
@@ -367,7 +374,7 @@ public:
 	 * - update the database again
 	 * @param files list of files, in absolute path, to retag
 	 */
-	void RetagFiles(const std::vector<wxFileName> &files, bool quickRetag);
+	void RetagFiles(const std::vector<wxFileName> &files, RetagType type);
 
 	/**
 	 * Close the workspace database

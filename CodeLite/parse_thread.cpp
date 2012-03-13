@@ -80,6 +80,9 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	case ParseRequest::PR_DELETE_TAGS_OF_FILES:
 		ProcessDeleteTagsOfFiles( req );
 		break;
+	case ParseRequest::PR_PARSE_FILE_NO_INCLUDES:
+		ProcessSimpleNoIncludes( req );
+		break;
 	}
 }
 
@@ -307,7 +310,8 @@ void ParseThread::ParseAndStoreFiles(const wxArrayString& arrFiles, int initalCo
 	if ( m_notifiedWindow && !arrFiles.IsEmpty() ) {
 		wxCommandEvent e(wxEVT_PARSE_THREAD_MESSAGE);
 		wxString message;
-		message << wxT("INFO: Found ") << initalCount << wxT(" system include files. ");
+		if(initalCount != -1)
+			message << wxT("INFO: Found ") << initalCount << wxT(" system include files. ");
 		message << arrFiles.GetCount() << wxT(" needed to be parsed. Stored ") << totalSymbols << wxT(" new tags to the database");
 
 		e.SetClientData(new wxString(message.c_str()));
@@ -558,4 +562,28 @@ ParseThread* ParseThreadST::Get()
 	if(gs_theParseThread == NULL)
 		gs_theParseThread = new ParseThread;
 	return gs_theParseThread;
+}
+
+void ParseThread::ProcessSimpleNoIncludes(ParseRequest* req)
+{
+	std::vector<std::string> files  = req->_workspaceFiles;
+	wxString                 dbfile = req->getDbfile();
+
+	// Filter binary files
+	std::vector<std::string> filteredFiles;
+	wxArrayString filesArr;
+	for(size_t i=0; i<files.size(); i++) {
+		wxString filename = wxString(files.at(i).c_str(), wxConvUTF8);
+		if(TagsManagerST::Get()->IsBinaryFile(filename))
+			continue;
+		filesArr.Add(filename);
+	}
+	
+	// convert the file to tags
+	TagsManager *tagmgr = TagsManagerST::Get();
+	ITagsStoragePtr db(new TagsStorageSQLite());
+	db->OpenDatabase( dbfile );
+	
+	TagsManagerST::Get()->FilterNonNeededFilesForRetaging(filesArr, db);
+	ParseAndStoreFiles(filesArr, -1, db);
 }

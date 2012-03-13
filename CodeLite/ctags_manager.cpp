@@ -1238,7 +1238,7 @@ void TagsManager::DeleteFilesTags(const std::vector<wxFileName> &projectFiles)
 	ParseThreadST::Get()->Add ( req );
 }
 
-void TagsManager::RetagFiles(const std::vector<wxFileName> &files, bool quickRetag)
+void TagsManager::RetagFiles(const std::vector<wxFileName> &files, RetagType type)
 {
 	wxArrayString strFiles;
 	// step 1: remove all non-tags files
@@ -1261,7 +1261,7 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, bool quickRet
 	}
 
 	// step 2: remove all files which do not need retag
-	if ( quickRetag )
+	if ( type == Retag_Quick || type == Retag_Quick_No_Scan )
 		DoFilterNonNeededFilesForRetaging(strFiles, GetDatabase());
 
 	// If there are no files to tag - send the 'end' event
@@ -1278,11 +1278,10 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, bool quickRet
 	DeleteFilesTags(strFiles);
 
 	// step 5: build the database
-	// Expermintal code: perform the 'retag workspace' using the parser thread
-	// Put a request to the parsing thread
 	ParseRequest *req = new ParseRequest();
 	req->setDbFile( GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
-	req->setType  ( ParseRequest::PR_PARSE_AND_STORE );
+	
+	req->setType( type == Retag_Quick_No_Scan ? ParseRequest::PR_PARSE_FILE_NO_INCLUDES : ParseRequest::PR_PARSE_AND_STORE );
 	req->_workspaceFiles.clear();
 	req->_workspaceFiles.reserve( strFiles.size() );
 	for(size_t i=0; i<strFiles.GetCount(); i++) {

@@ -91,7 +91,8 @@ public:
 		PR_FILESAVED,
 		PR_PARSEINCLUDES,
 		PR_PARSE_AND_STORE,
-		PR_DELETE_TAGS_OF_FILES
+		PR_DELETE_TAGS_OF_FILES,
+		PR_PARSE_FILE_NO_INCLUDES
 	};
 
 public:
@@ -195,6 +196,7 @@ private:
 	void ProcessIncludes          (ParseRequest *req);
 	void ProcessParseAndStore     (ParseRequest *req);
 	void ProcessDeleteTagsOfFiles (ParseRequest *req);
+	void ProcessSimpleNoIncludes  (ParseRequest *req);
 	void GetFileListToParse(const wxString &filename, wxArrayString &arrFiles);
 	void ParseAndStoreFiles(const wxArrayString &arrFiles, int initalCount, ITagsStoragePtr db);
 

@@ -38,6 +38,7 @@
 #include "filehistory.h"
 #include "breakpointsmgr.h"
 #include "perspectivemanager.h"
+#include "ctags_manager.h"
 
 class LEditor;
 
@@ -341,7 +342,7 @@ public:
 	/**
 	 * retag workspace
 	 */
-	void RetagWorkspace(bool quickRetag);
+	void RetagWorkspace(TagsManager::RetagType type);
 
 	/**
 	 * @brief the parser thread has completed to scan for include files to parse

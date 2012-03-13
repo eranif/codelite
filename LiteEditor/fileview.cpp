@@ -1326,7 +1326,7 @@ void FileViewTree::OnRetagProject( wxCommandEvent &event )
 void FileViewTree::OnRetagWorkspace( wxCommandEvent &event )
 {
 	wxUnusedVar( event );
-	ManagerST::Get()->RetagWorkspace(true);
+	ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick);
 }
 
 void FileViewTree::OnItemBeginDrag( wxTreeEvent &event )

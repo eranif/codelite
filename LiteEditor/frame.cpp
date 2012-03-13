@@ -3215,7 +3215,12 @@ void clMainFrame::OnAppActivated(wxActivateEvent &e)
 	if (m_theFrame && e.GetActive()) {
 		m_theFrame->ReloadExternallyModifiedProjectFiles();
 		m_theFrame->GetMainBook()->ReloadExternallyModified(true);
+		
+		// Retag the workspace the light way
+		ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick_No_Scan);
+		
 	} else if(m_theFrame) {
+		
 		LEditor *editor = GetMainBook()->GetActiveEditor();
 		if(editor) {
 			// we are loosing the focus
@@ -3223,6 +3228,7 @@ void clMainFrame::OnAppActivated(wxActivateEvent &e)
 			editor->HideCompletionBox();
 		}
 	}
+	
 	e.Skip();
 }
 
@@ -4080,7 +4086,17 @@ void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
 	if(wxTheApp->ProcessEvent(e))
 		return;
 
-	ManagerST::Get()->RetagWorkspace(event.GetId() == XRCID("retag_workspace") ? true : false );
+	TagsManager::RetagType type = TagsManager::Retag_Quick_No_Scan;
+	if(event.GetId() == XRCID("retag_workspace"))
+		type = TagsManager::Retag_Quick;
+		
+	else if(event.GetId() == XRCID("full_retag_workspace"))
+		type = TagsManager::Retag_Full;
+		
+	else if(event.GetId() == XRCID("retag_workspace_no_includes"))
+		type = TagsManager::Retag_Quick_No_Scan;
+		
+	ManagerST::Get()->RetagWorkspace(type);
 }
 
 void clMainFrame::OnShowFullScreen(wxCommandEvent& e)

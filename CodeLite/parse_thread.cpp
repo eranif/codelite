@@ -585,4 +585,10 @@ void ParseThread::ProcessSimpleNoIncludes(ParseRequest* req)
 	
 	TagsManagerST::Get()->FilterNonNeededFilesForRetaging(filesArr, db);
 	ParseAndStoreFiles(filesArr, -1, db);
+	
+	if(m_notifiedWindow) {
+		wxCommandEvent e(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
+		e.SetClientData(NULL);
+		wxPostEvent(m_notifiedWindow, e);
+	}
 }

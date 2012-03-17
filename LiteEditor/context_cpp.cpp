@@ -155,7 +155,7 @@ BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
     EVT_MENU(XRCID("rename_symbol"),                ContextCpp::OnRenameGlobalSymbol)
     EVT_MENU(XRCID("rename_local_variable"),        ContextCpp::OnRenameLocalSymbol)
     EVT_MENU(XRCID("find_references"),              ContextCpp::OnFindReferences)
-
+	EVT_MENU(XRCID("sync_signatures"),              ContextCpp::OnSyncSignatures)
     EVT_MENU(XRCID("retag_file"), ContextCpp::OnRetagFile)
 END_EVENT_TABLE()
 
@@ -2788,3 +2788,104 @@ bool ContextCpp::IsDefaultContext() const
 {
     return false;
 }
+
+void ContextCpp::OnSyncSignatures(wxCommandEvent& e)
+{
+    VALIDATE_WORKSPACE();
+
+    LEditor &rCtrl = GetCtrl();
+	
+    //get expression
+    int pos        = rCtrl.GetCurrentPos();
+    int word_start = rCtrl.WordStartPosition(pos, true);
+    int word_end   = rCtrl.WordEndPosition(pos, true);
+
+    // Read the word that we want to refactor
+    wxString word = rCtrl.GetTextRange(word_start, word_end);
+    if(word.IsEmpty())
+        return;
+
+    // Save all files before 'find usage'
+    if (!clMainFrame::Get()->GetMainBook()->SaveAll(true, false))
+        return;
+
+	int line = rCtrl.GetCurrentLine()+1;
+	
+	// get the full text of the current page
+    wxString text = rCtrl.GetTextRange(0, pos);
+	wxString expr = GetExpression(word_end, false);
+	TagEntryPtr tag = RefactoringEngine::Instance()->SyncSignature(rCtrl.GetFileName(), line, pos, word, text, expr);
+	if(!tag) return;
+	
+	// Locate the function start and end pos
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, 0);
+    if (!editor)
+        return;
+	
+	int end, start;
+	if(DoGetSingatureRange(tag->GetLine()-1, start, end, editor)) {
+		editor->SetSelection(start, end);
+		editor->ReplaceSelection(tag->GetSignature());
+	}
+}
+
+bool ContextCpp::DoGetSingatureRange(int line, int& start, int& end, LEditor *ctrl)
+{
+	start = wxNOT_FOUND;
+	end   = wxNOT_FOUND;
+	
+	int nStart = ctrl->PositionFromLine(line);
+	int nLen   = ctrl->GetLength();
+	int nCur   = nStart;
+	
+	while (nCur < nLen) {
+		wxChar ch = ctrl->SafeGetChar(nCur);
+		if(IsCommentOrString(nCur)) {
+			nCur++;
+			continue;
+		}
+		
+		if(ch == wxT('(')) {
+			start = nCur;
+			nCur++;
+			break;
+		}
+		nCur++;
+	}
+	
+	if(start == wxNOT_FOUND)
+		return false;
+	
+	// search for the function end position
+	int nDepth = 1;
+	while ((nCur < nLen) && nDepth > 0) {
+		
+		if(IsCommentOrString(nCur)) {
+			nCur++;
+			continue;
+		}
+		
+		wxChar ch = ctrl->SafeGetChar(nCur);
+		switch(ch) {
+		case wxT('('):
+			nDepth++;
+			break;
+		case wxT(')'):
+			nDepth--;
+			if(nDepth == 0) {
+				nCur++;
+				end = nCur;
+			}
+			break;
+		default:
+			break;
+		}
+		nCur++;
+	}
+	
+	if(end == wxNOT_FOUND)
+		return false;
+		
+	return true;
+}
+

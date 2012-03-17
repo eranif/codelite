@@ -418,3 +418,41 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 
 	prgDlg->Destroy();
 }
+
+TagEntryPtr RefactoringEngine::SyncSignature(const wxFileName& fn, 
+									  int line, 
+									  int pos, 
+									  const wxString &word, 
+									  const wxString &text,
+									  const wxString &expr)
+{
+	TagEntryPtr func = TagsManagerST::Get()->FunctionFromFileLine(fn, line);
+	if(!func)
+		return NULL;
+	
+	bool bIsImpl = (func->GetKind() == wxT("function"));
+	
+	// Found the counterpart
+	std::vector<TagEntryPtr> tags;
+	TagsManagerST::Get()->FindImplDecl(fn, line, expr, word, text, tags, !bIsImpl);
+	if(tags.size() != 1)
+		return NULL;
+	
+	TagEntryPtr tag = tags.at(0);
+	if(tag->IsMethod() == false)
+		return NULL;
+	
+	wxString signature;
+	if (bIsImpl) {
+		// The "source" is an implementaion, which means that we need to prepare declaration signature
+		// this could be tricky since we might lose the "default" values
+		signature = TagsManagerST::Get()->NormalizeFunctionSig(func->GetSignature(), Normalize_Func_Default_value|Normalize_Func_Name);
+	} else {
+		// Prepare an "implementation" signature
+		signature = TagsManagerST::Get()->NormalizeFunctionSig(func->GetSignature(), Normalize_Func_Name);
+	}
+	
+	tag->SetSignature(signature);
+	return tag;
+}
+

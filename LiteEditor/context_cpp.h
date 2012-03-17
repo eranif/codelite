@@ -132,11 +132,12 @@ public:
 	virtual void OnRenameGlobalSymbol(wxCommandEvent &e);
 	virtual void OnRenameLocalSymbol (wxCommandEvent &e);
 	virtual void OnFindReferences (wxCommandEvent &e);
+	virtual void OnSyncSignatures(wxCommandEvent &e);
 	virtual void OnRetagFile(wxCommandEvent &e);
 	virtual void OnUserTypedXChars(const wxString &word);
 	virtual void OnCallTipClick(wxScintillaEvent &e);
 	virtual void OnCalltipCancel();
-	DECLARE_EVENT_TABLE();
+	DECLARE_EVENT_TABLE()
 
 private:
 	wxString      GetWordUnderCaret();
@@ -150,7 +151,8 @@ private:
 	void          MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr> &tags);
 	void          DoOpenWorkspaceFile();
 	void          DoSetProjectPaths();
-
+	bool          DoGetSingatureRange(int line, int &start, int &end, LEditor *ctrl);
+	
 public:
 	void          DoMakeDoxyCommentString(DoxygenComment &dc);
 

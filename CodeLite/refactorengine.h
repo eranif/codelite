@@ -30,6 +30,7 @@
 #include <wx/filename.h>
 #include <vector>
 #include <list>
+#include "entry.h"
 #include "cppwordscanner.h"
 #include "cpptoken.h"
 #include "codelite_exports.h"
@@ -130,6 +131,12 @@ public:
 	 * @param files list of files to search in
 	 */
 	void FindReferences(const wxString &symname, const wxFileName& fn, int line, int pos, const wxFileList& files);
+	
+	/**
+	 * @brief given a location (file:line:pos) use the current location function signature
+	 * and return the propsed counter-part tag
+	 */
+	TagEntryPtr SyncSignature(const wxFileName& fn, int line, int pos, const wxString &word, const wxString &text, const wxString &expr);
 };
 
 #endif // REFACTORENGINE_H

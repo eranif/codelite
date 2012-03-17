@@ -135,6 +135,7 @@ go_to_function_start|C++::Search|Goto Begining of Current Function|
 go_to_next_function|C++::Search|Goto Begining of Next Function|
 find_references|C++::Search|Find References...|
 insert_doxy_comment|C++::Code Generation / Refactoring|Insert Doxygen Comment|Ctrl-Shift-D
+sync_signatures|C++::Code Generation / Refactoring|Synchronize Signatures...|
 setters_getters|C++::Code Generation / Refactoring|Generate Setters/Getters...|
 move_impl|C++::Code Generation / Refactoring|Move Function Implementation to...|
 add_impl|C++::Code Generation / Refactoring|Add Function Implementation...|

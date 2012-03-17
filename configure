@@ -107,7 +107,15 @@ createVariables()
 			
 		fi
 	fi
-
+	
+	## Should we disable clang support?
+	if [ "$disable_clang" = "yes" ]; then
+		lib_clang_cmp_flags=""
+		lib_clang_link_flags=""
+		lib_clang=""
+		with_clang="no"
+	fi
+	
 	## link databaselayer backends
 	dbl_links="-ldblayersqlite\$(EXT)"
 	if [ "$enable_mysql" = "yes" ] ; then
@@ -878,6 +886,7 @@ Show_Help_and_Exit()
 	echo "  --enable-mysql          enable MySQL support in DatabaseExplorer plugin (MySQL connector sources must be installed on the system)"
 	echo "  --enable-postgres       enable PostgreSQL support in DatabaseExplorer plugin (PostgreSQL connector sources must be installed on the system)"
 	echo "  --enable-pch            generate Makefiles that use pre-compiled headers to reduce compile time"
+	echo "  --without-clang         disable clang support in codelite"
 	echo "  --help                  show this help"
 	echo "To build with alternative C++ or C compilers, specify them in the environmental variables CXX and/or CC"
 	echo "Either do: CXX=\"foo\" ./configure --<etc>"
@@ -959,9 +968,16 @@ else
 fi
 
 ## Process any arguments that were supplied
+
+## By default, we enable clang support
+disable_clang="no"
+
 until [ -z "$1" ]  # Until all parameters used up
 do
-	if [ "$1" = "--enable-debug" ]; then
+	if [ "$1" = "--without-clang" ]; then
+		disable_clang="yes";
+		
+	elif [ "$1" = "--enable-debug" ]; then
 		enable_debug="yes"
 
 	elif [ "$1" = "--enable-mysql" ]; then

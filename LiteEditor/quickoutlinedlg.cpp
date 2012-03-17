@@ -43,6 +43,7 @@
 
 #include "quickoutlinedlg.h"
 #include "drawingutils.h"
+#include "windowattrmanager.h"
 #include "cl_editor.h"
 #include "cpp_symbol_tree.h"
 #include "macros.h"
@@ -57,7 +58,7 @@ BEGIN_EVENT_TABLE(QuickOutlineDlg, wxDialog)
 END_EVENT_TABLE()
 
 QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString &fileName, int id, wxString title, wxPoint pos, wxSize size, int style )
-		: wxDialog( parent, id, title, pos, size, style|wxRAISED_BORDER )
+		: wxDialog( parent, id, title, pos, size, style|wxRAISED_BORDER|wxRESIZE_BORDER)
 		, m_fileName(fileName)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
@@ -100,10 +101,12 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString &fileName, int
 	this->Layout();
 	Centre();
 	m_textFilter->SetFocus();
+	WindowAttrManager::Load(this, wxT("QuickOutlineDlg"), NULL);
 }
 
 QuickOutlineDlg::~QuickOutlineDlg()
 {
+	WindowAttrManager::Save(this, wxT("QuickOutlineDlg"), NULL);
 }
 
 void QuickOutlineDlg::OnCharHook(wxKeyEvent &e)

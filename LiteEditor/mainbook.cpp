@@ -792,9 +792,6 @@ bool MainBook::CloseAll(bool cancellable)
 #endif
 
 	SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
-	
-	//  OutputTabWindow::OnEditUI will crash on wxGTK-2.9.3 if we don't set the focus somewhere that will still exist
-	m_book->SetFocus();
 
 	m_book->DeleteAllPages(false);
 
@@ -813,8 +810,11 @@ bool MainBook::CloseAll(bool cancellable)
 	// Update the frame's title
 	clMainFrame::Get()->SetFrameTitle(NULL);
 
-	// Remove context menu if needed
 	DoHandleFrameMenu(NULL);
+	
+	// OutputTabWindow::OnEditUI will crash on >=wxGTK-2.9.3 if we don't set the focus somewhere that still exists
+	// This workaround doesn't seem to work if applied earlier in the function :/
+	m_book->SetFocus();
 
 	return true;
 }

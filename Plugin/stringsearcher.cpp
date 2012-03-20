@@ -133,6 +133,7 @@ bool StringFindReplacer::DoSimpleSearch(const wchar_t* pinput, int startOffset, 
 
 		if (from >= (int)input.length()) {
 			str.clear();
+            return false;
 		}
 		str = input.substr((size_t)from);
 

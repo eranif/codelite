@@ -731,12 +731,12 @@ bool DbgCmdHandlerRemoteDebugging::ProcessOutput(const wxString& line)
 	m_observer->UpdateRemoteTargetConnected(_("Successfully connected to debugger server"));
 
 	// Apply the breakpoints
-	m_observer->UpdateRemoteTargetConnected(_("Applying breakpoints..."));
+	m_observer->UpdateAddLine(_("Applying breakpoints..."));
 	DbgGdb *gdb = dynamic_cast<DbgGdb*>(m_debugger);
 	if(gdb) {
 		gdb->SetBreakpoints();
 	}
-	m_observer->UpdateRemoteTargetConnected(_("Applying breakpoints... done"));
+	m_observer->UpdateAddLine(_("Applying breakpoints... done"));
 	// continue execution
 	return m_debugger->Continue();
 }

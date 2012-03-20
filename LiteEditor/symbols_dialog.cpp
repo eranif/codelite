@@ -26,6 +26,7 @@
 #include "manager.h"
 #include "macros.h"
 #include "globals.h"
+#include "windowattrmanager.h"
 
 BEGIN_EVENT_TABLE(SymbolsDialog, SymbolsDialogBase)
 	EVT_CHAR_HOOK(SymbolsDialog::OnCharHook)
@@ -46,6 +47,12 @@ SymbolsDialog::SymbolsDialog( wxWindow* parent )
 	
 	m_results->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(SymbolsDialog::OnItemDeselected), NULL, this);
 	Centre();
+	WindowAttrManager::Load(this, wxT("SymbolsDialog"), NULL);
+}
+
+SymbolsDialog::~SymbolsDialog()
+{
+	WindowAttrManager::Save(this, wxT("SymbolsDialog"), NULL);
 }
 
 void SymbolsDialog::AddSymbol(const TagEntryPtr &tag, bool sel)
@@ -170,3 +177,4 @@ void SymbolsDialog::OnCharHook(wxKeyEvent &event)
 	}
 	event.Skip();
 }
+

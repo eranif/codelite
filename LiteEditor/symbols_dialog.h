@@ -49,7 +49,8 @@ class SymbolsDialog : public SymbolsDialogBase
 public:
 	/** Constructor */
 	SymbolsDialog( wxWindow* parent );
-
+	virtual ~SymbolsDialog();
+	
 	/**
 	 * Add symbol to the dialog - this should be called before calling the dialog
 	 * ShowModal() method

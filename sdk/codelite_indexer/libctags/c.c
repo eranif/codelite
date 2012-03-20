@@ -2213,6 +2213,9 @@ static int parseParens (statementInfo *const st, parenInfo *const info)
 
 		switch (c)
 		{
+			// ERAN
+			case '@':
+			// ERAN - END
 			case '&':
 			case '*':
 				info->isPointer = TRUE;

@@ -3217,9 +3217,6 @@ void clMainFrame::OnAppActivated(wxActivateEvent &e)
 		m_theFrame->ReloadExternallyModifiedProjectFiles();
 		m_theFrame->GetMainBook()->ReloadExternallyModified(true);
 		
-		// Retag the workspace the light way
-		ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick_No_Scan);
-		
 	} else if(m_theFrame) {
 		
 		LEditor *editor = GetMainBook()->GetActiveEditor();

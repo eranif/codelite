@@ -911,7 +911,6 @@ wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxS
 
 void CodeLiteApp::OnAppAcitvated(wxActivateEvent& e)
 {
-    e.Skip();
     if(e.GetActive()) {
         
         if(clMainFrame::Get()) {

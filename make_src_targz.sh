@@ -23,10 +23,10 @@ cd /tmp/
 rm -fr /tmp/${codelite_ver}.${cur_rev}/sdk/curl
 
 # First for Linux
-tar cvfz ${curdir}/${codelite_ver}.${cur_rev}-gtk.src.tar.gz ${codelite_ver}.${cur_rev}/* --exclude *.exe --exclude *.dll --exclude *.dylib
+GZIP="-9" tar cvzf ${curdir}/${codelite_ver}.${cur_rev}-gtk.src.tar.gz ${codelite_ver}.${cur_rev}/* --exclude *.exe --exclude *.dll --exclude *.dylib
 
 # then for MSWin
 tar cv --lzma -f ${curdir}/${codelite_ver}.${cur_rev}-win.src.tar.7z ${codelite_ver}.${cur_rev}/* --exclude *.so --exclude *.dylib
 
 # and OS/X
-tar cvfz ${curdir}/${codelite_ver}.${cur_rev}-mac.src.tar.gz ${codelite_ver}.${cur_rev}/* --exclude *.exe --exclude *.dll --exclude *.so
+GZIP="-9" tar cvzf ${curdir}/${codelite_ver}.${cur_rev}-mac.src.tar.gz ${codelite_ver}.${cur_rev}/* --exclude *.exe --exclude *.dll --exclude *.so

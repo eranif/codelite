@@ -530,12 +530,6 @@ bool Notebook::DoNavigate()
 
 void Notebook::OnFocus(wxFocusEvent& e)
 {
-	if( m_style & wxVB_PASS_FOCUS) {
-		wxWindow *w = GetCurrentPage();
-		if(w) {
-			w->SetFocus();
-		}
-	}
 	e.Skip();
 }
 

@@ -70,7 +70,7 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 	if (useBook) {
 
 		// load the book style from the settings file
-		long bookStyle = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_NODND;
+		long bookStyle = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
 		
 #if !CL_USE_NATIVEBOOK
 		bookStyle |= wxAUI_NB_WINDOWLIST_BUTTON;

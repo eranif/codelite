@@ -69,10 +69,10 @@ void MainBook::CreateGuiControls()
 	sz->Add(m_navBar, 0, wxEXPAND);
 	m_navBar->Freeze();
 
-	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_NODND;
+	long style = wxAUI_NB_CLOSE_BUTTON|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
 
 #if !CL_USE_NATIVEBOOK
-	style |= wxVB_PASS_FOCUS | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_SCROLL_BUTTONS;
+	style |= wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_SCROLL_BUTTONS;
 #endif
 
 	// load the notebook style from the configuration settings

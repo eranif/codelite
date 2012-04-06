@@ -43,10 +43,7 @@ enum {
 	wxVB_BOTTOM                 = wxAUI_NB_BOTTOM,
 	wxVB_FIXED_WIDTH            = wxAUI_NB_TAB_FIXED_WIDTH,
 	wxVB_HAS_X                  = wxAUI_NB_CLOSE_ON_ACTIVE_TAB,
-	wxVB_MOUSE_MIDDLE_CLOSE_TAB = 0x00020000,
-	wxVB_NODND                  = 0x00040000,
-	wxVB_NO_TABS                = 0x00100000,
-	wxVB_PASS_FOCUS             = 0x00400000
+	wxVB_MOUSE_MIDDLE_CLOSE_TAB = 0x20000000
 };
 
 class NotebookNavDialog;

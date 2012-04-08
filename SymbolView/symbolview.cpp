@@ -229,22 +229,34 @@ void SymbolViewPlugin::CreateGUIControls()
 	m_tb->ToggleTool(XRCID("link_editor"), true);
 	m_tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), _("Collapse All"), wxITEM_NORMAL);
 	m_tb->AddTool(XRCID("gohome"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), _("Go to Active Editor Symbols"), wxITEM_NORMAL);
-	m_tb->Realize();
-	sz->Add(m_tb, 0, wxEXPAND);
 
 	// sizer for the drop button and view-mode choice box
 	m_choiceSizer = new wxBoxSizer(wxHORIZONTAL);
 	sz->Add(m_choiceSizer, 0, wxEXPAND|wxALL, 1);
-
-	m_viewChoice = new wxChoice(m_symView, wxID_ANY);
+    
+#if wxCHECK_VERSION(2,9,1)
+	m_viewChoice = new wxChoice(m_tb, wxID_ANY);
+#else
+    m_viewChoice = new wxChoice(m_symView, wxID_ANY);
+#endif
 	m_viewChoice->AppendString(m_viewModeNames[vmCurrentFile]);
 	m_viewChoice->Select(0);
-	m_choiceSizer->Add(m_viewChoice, 1, wxEXPAND|wxALL, 1);
+    
+#if wxCHECK_VERSION(2,9,1)
+    m_tb->AddControl(m_viewChoice, wxEmptyString);
+#else
+    m_choiceSizer->Add(m_viewChoice, 1, wxEXPAND|wxALL, 1);
+#endif
+
+	//m_choiceSizer->Add(m_viewChoice, 1, wxEXPAND|wxALL, 1);
 
     m_splitter = new wxSplitterWindow(m_symView, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER|wxSP_3DSASH);
     m_splitter->SetMinimumPaneSize(20);
     sz->Add(m_splitter, 1, wxEXPAND|wxALL, 1);
 
+	m_tb->Realize();
+	sz->Add(m_tb, 0, wxEXPAND);
+    
 	m_viewStack = new WindowStack(m_splitter);
 	for (int i = 0; i < vmMax; i++) {
 		m_viewStack->Add(new WindowStack(m_viewStack), m_viewModeNames[i]);

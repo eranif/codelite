@@ -510,6 +510,8 @@ createRules_sharedObject ()
 		additional_link_libs=$6
 	fi
 	
+	additional_flags=$7
+	
 	pch_flags=""
 	if [ "$enable_pch" = "yes" ]; then
 		if [ "$enable_debug" = "yes" ]; then

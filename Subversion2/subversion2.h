@@ -145,6 +145,9 @@ protected:
 
 	wxString DoGetFileExplorerItemFullPath();
 	wxString DoGetFileExplorerItemPath();
+	
+	wxArrayString DoGetFileExplorerFiles();
+	wxString      DoGetFileExplorerFilesAsString();
 };
 
 #endif //Subversion2

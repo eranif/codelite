@@ -456,6 +456,7 @@ wxTreeItemId wxVirtualDirTreeCtrl::ExpandToPath(const wxFileName &path)
 		if (ItemHasChildren(item)) {
 			Expand(item);
 		}
+		UnselectAll();
 		SelectItem(item);
         EnsureVisible(item);
 		SendCmdEvent(wxEVT_FILE_EXP_REFRESHED);

@@ -36,7 +36,7 @@ static void ConvertToWindowsEOL(wxString& str)
 {
 	wxString newBuffer;
 	newBuffer.Alloc(str.Len());
-	
+
 	for(size_t i=0; i<str.Len(); i++) {
 		wxChar nextChar  = wxT('\0');
 		wxChar ch        = str.GetChar(i);
@@ -355,7 +355,9 @@ void Subversion2::OnAdd(wxCommandEvent& event)
 	if(LoginIfNeeded(event, DoGetFileExplorerItemPath(), loginString) == false) {
 		return;
 	}
-	command << GetSvnExeName(false) << loginString << wxT(" add \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	
+	wxArrayString files = DoGetFileExplorerFiles();
+	command << GetSvnExeName(false) << loginString << wxT(" add ") << DoGetFileExplorerFilesAsString();
 	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnStatusHandler(this, event.GetId(), this));
 }
 
@@ -371,7 +373,7 @@ void Subversion2::OnCommit(wxCommandEvent& event)
 	if(dlg.ShowModal() == wxID_OK) {
 		bool nonInteractive = GetNonInteractiveMode(event);
 		wxString comment = dlg.GetMesasge();
-		command << GetSvnExeName(nonInteractive) << loginString << wxT(" commit \"") << DoGetFileExplorerItemFullPath() << wxT("\" -m \"") << comment << wxT("\"");
+		command << GetSvnExeName(nonInteractive) << loginString << wxT(" commit ") << DoGetFileExplorerFilesAsString() << wxT(" -m \"") << comment << wxT("\"");
 		GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnCommitHandler(this, event.GetId(), this));
 	}
 }
@@ -384,7 +386,7 @@ void Subversion2::OnDelete(wxCommandEvent& event)
 		return;
 	}
 	bool nonInteractive = GetNonInteractiveMode(event);
-	command << GetSvnExeName(nonInteractive) << loginString << wxT(" delete --force \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	command << GetSvnExeName(nonInteractive) << loginString << wxT(" delete --force ") << DoGetFileExplorerFilesAsString();
 	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this, event.GetId(), this));
 }
 
@@ -393,7 +395,7 @@ void Subversion2::OnRevert(wxCommandEvent& event)
 	wxString command;
 	wxString loginString;
 
-	command << GetSvnExeName(false) << loginString << wxT(" revert --recursive \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	command << GetSvnExeName(false) << loginString << wxT(" revert --recursive ") << DoGetFileExplorerFilesAsString();
 	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this, event.GetId(), this));
 }
 
@@ -405,7 +407,7 @@ void Subversion2::OnUpdate(wxCommandEvent& event)
 		return;
 	}
 	bool nonInteractive = GetNonInteractiveMode(event);
-	command << GetSvnExeName(nonInteractive) << loginString << wxT(" update \"") << DoGetFileExplorerItemFullPath() << wxT("\"");
+	command << GetSvnExeName(nonInteractive) << loginString << wxT(" update ") << DoGetFileExplorerFilesAsString();
 	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnUpdateHandler(this, event.GetId(), this));
 }
 
@@ -424,7 +426,7 @@ void Subversion2::OnDiff(wxCommandEvent& event)
 		return;
 	}
 	bool nonInteractive = GetNonInteractiveMode(event);
-	command << GetSvnExeName(nonInteractive) << loginString << wxT("diff -r") << diffAgainst << wxT(" ") << DoGetFileExplorerItemFullPath();
+	command << GetSvnExeName(nonInteractive) << loginString << wxT("diff -r") << diffAgainst << wxT(" ") << DoGetFileExplorerFilesAsString();
 	GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDiffHandler(this, event.GetId(), this), false);
 }
 
@@ -458,6 +460,38 @@ wxString Subversion2::GetSvnExeName(bool nonInteractive)
 
 	executeable << wxT(" --config-dir \"") << GetUserConfigDir() << wxT("\" ");
 	return executeable;
+}
+
+wxString Subversion2::DoGetFileExplorerFilesAsString()
+{
+	wxString s;
+	wxArrayString files = DoGetFileExplorerFiles();
+	for(size_t i=0; i<files.GetCount(); i++) {
+		s << wxT(" \"") << files.Item(i) << wxT("\" ");
+	}
+	return s;
+}
+
+wxArrayString Subversion2::DoGetFileExplorerFiles()
+{
+	wxArrayString files;
+	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
+
+	for(size_t i=0; i<item.m_items.size(); i++) {
+		wxString filename ( item.m_items.at(i).first.GetFullPath() );
+		filename.Trim().Trim(false);
+		
+		if(filename.EndsWith(wxT("\\"))) {
+			filename.RemoveLast();
+
+		} else if(filename.EndsWith(wxT("/"))) {
+			filename.RemoveLast();
+
+		}
+		
+		files.Add(filename);
+	}
+	return files;
 }
 
 wxString Subversion2::DoGetFileExplorerItemFullPath()
@@ -692,16 +726,12 @@ void Subversion2::IgnoreFiles(const wxArrayString& files, bool pattern)
 
 void Subversion2::OnIgnoreFile(wxCommandEvent& event)
 {
-	wxArrayString arr;
-	arr.Add(DoGetFileExplorerItemFullPath());
-	IgnoreFiles(arr, false);
+	IgnoreFiles(DoGetFileExplorerFiles(), false);
 }
 
 void Subversion2::OnIgnoreFilePattern(wxCommandEvent& event)
 {
-	wxArrayString arr;
-	arr.Add(DoGetFileExplorerItemFullPath());
-	IgnoreFiles(arr, true);
+	IgnoreFiles(DoGetFileExplorerFiles(), true);
 }
 
 void Subversion2::EditSettings()
@@ -731,9 +761,7 @@ void Subversion2::OnSelectAsView(wxCommandEvent& event)
 
 void Subversion2::OnBlame(wxCommandEvent& event)
 {
-	wxArrayString files;
-	files.Add(DoGetFileExplorerItemFullPath());
-	Blame(event, files);
+	Blame(event, DoGetFileExplorerFiles());
 }
 
 void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
@@ -883,16 +911,12 @@ void Subversion2::ChangeLog(const wxString& path, const wxString &fullpath, wxCo
 
 void Subversion2::OnLockFile(wxCommandEvent& event)
 {
-	wxArrayString paths;
-	paths.Add( DoGetFileExplorerItemFullPath() );
-	DoLockFile(DoGetFileExplorerItemPath(), paths, event, true);
+	DoLockFile(DoGetFileExplorerItemPath(), DoGetFileExplorerFiles(), event, true);
 }
 
 void Subversion2::OnUnLockFile(wxCommandEvent& event)
 {
-	wxArrayString paths;
-	paths.Add( DoGetFileExplorerItemFullPath() );
-	DoLockFile(DoGetFileExplorerItemPath(), paths, event, false);
+	DoLockFile(DoGetFileExplorerItemPath(), DoGetFileExplorerFiles(), event, false);
 }
 
 void Subversion2::DoLockFile(const wxString& workingDirectory, const wxArrayString &fullpaths, wxCommandEvent& event, bool lock)
@@ -982,3 +1006,4 @@ SvnConsole* Subversion2::GetConsole()
 {
 	return GetSvnView()->GetSubversionConsole();
 }
+

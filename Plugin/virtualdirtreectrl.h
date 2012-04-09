@@ -343,7 +343,7 @@ protected:
 public:
     /** Default constructor of this control. It is similar to the wxTreeCtrl */
     wxVirtualDirTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-                  const wxSize& size = wxDefaultSize, long style = wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT,
+                  const wxSize& size = wxDefaultSize, long style = wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_MULTIPLE,
                   const wxValidator& validator = wxDefaultValidator,
                   const wxString& name = wxT("wxVirtualDirTreeCtrl"));
     virtual ~wxVirtualDirTreeCtrl();

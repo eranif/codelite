@@ -36,6 +36,7 @@
 #include <wx/aui/framemanager.h>
 #include "bitmap_loader.h"
 #include "notebook_ex.h"
+#include <vector>
 
 class TagsManager;
 class Workspace;
@@ -50,15 +51,21 @@ class IMacroManager;
 class wxAuiManager;
 
 //--------------------------
-//Auxulary class
+// Auxulary class
 //--------------------------
+
 class TreeItemInfo
 {
 public:
+	typedef std::pair<wxFileName, wxTreeItemId> Pair_t;
+	typedef std::vector<Pair_t> Vector_t;
+	
+public:
 	wxTreeItemId m_item;
-	wxFileName m_fileName;	//< FileName where available (FileView & File Explorer trees)
-	wxString m_text;		//< Tree item text (all)
-	int	m_itemType;			//< For FileView items (FileView only)
+	wxFileName   m_fileName; //< FileName where available (FileView & File Explorer trees)
+	wxString     m_text;     //< Tree item text (all)
+	int          m_itemType; //< For FileView items (FileView only)
+	TreeItemInfo::Vector_t     m_items;    //< For file explorer which supports multiple selection (File Explorer tree only)
 };
 
 //---------------------------

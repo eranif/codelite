@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "event_notifier.h"
 #include "environmentconfig.h"
 #include "evnvarlist.h"
 #include "crawler_include.h"
@@ -187,12 +188,12 @@ Manager::Manager ( void )
 	Connect(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, wxCommandEventHandler(Manager::OnIncludeFilesScanDone), NULL, this);
 	Connect(wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED,  wxCommandEventHandler(Manager::OnDbContentCacherLoaded), NULL, this);
 
-	wxTheApp->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
 }
 
 Manager::~Manager ( void )
 {
-	wxTheApp->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
 	//stop background processes
 	IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
 
@@ -629,7 +630,7 @@ void Manager::GetWorkspaceFiles ( wxArrayString &files )
 	wxCommandEvent getFilesEevet(wxEVT_CMD_GET_WORKSPACE_FILES);
 	getFilesEevet.SetEventObject(this);
 	getFilesEevet.SetClientData(&files);
-	if(wxTheApp->ProcessEvent(getFilesEevet)) {
+	if(EventNotifier::Get()->ProcessEvent(getFilesEevet)) {
 		return;
 	}
 
@@ -3469,7 +3470,7 @@ void Manager::GetActiveFileProjectFiles(wxArrayString& files)
 	wxCommandEvent getFilesEevet(wxEVT_CMD_GET_CURRENT_FILE_PROJECT_FILES);
 	getFilesEevet.SetEventObject(this);
 	getFilesEevet.SetClientData(&files);
-	if(!wxTheApp->ProcessEvent(getFilesEevet)) {
+	if(!EventNotifier::Get()->ProcessEvent(getFilesEevet)) {
 		// Set default project name
 		wxString project = GetActiveProjectName();
 		if (clMainFrame::Get()->GetMainBook()->GetActiveEditor()) {
@@ -3486,7 +3487,7 @@ void Manager::GetActiveProjectFiles(wxArrayString& files)
 	wxCommandEvent getFilesEevet(wxEVT_CMD_GET_ACTIVE_PROJECT_FILES);
 	getFilesEevet.SetEventObject(this);
 	getFilesEevet.SetClientData(&files);
-	if(!wxTheApp->ProcessEvent(getFilesEevet)) {
+	if(!EventNotifier::Get()->ProcessEvent(getFilesEevet)) {
 		GetProjectFiles(GetActiveProjectName(), files);
 	}
 }
@@ -3497,7 +3498,7 @@ bool Manager::DbgCanInteract()
 	wxCommandEvent evtDbgCanInteract(wxEVT_CMD_DEBUGGER_CAN_INTERACT);
 	evtDbgCanInteract.SetEventObject(this);
 	evtDbgCanInteract.SetInt(0);
-	if(wxTheApp->ProcessEvent(evtDbgCanInteract)) {
+	if(EventNotifier::Get()->ProcessEvent(evtDbgCanInteract)) {
 		return evtDbgCanInteract.GetInt() == 1;
 	}
 

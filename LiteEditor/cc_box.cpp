@@ -40,6 +40,7 @@
 #include <wx/tooltip.h>
 #include <wx/tipwin.h>
 #include <wx/display.h>
+#include "event_notifier.h"
 
 #ifndef wxScintillaEventHandler
 #define wxScintillaEventHandler(func) \
@@ -510,7 +511,7 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
         wxCommandEvent e(wxEVT_CCBOX_SELECTION_MADE);
 		e.SetEventObject(m_owner);
         e.SetClientData( (void*)&word );
-        if(m_owner->ProcessEvent(e))
+        if(EventNotifier::Get()->ProcessEvent(e))
             return;
     }
 
@@ -721,7 +722,7 @@ void CCBox::HideCCBox()
     if(m_owner) {
         wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE_BOX_DISMISSED, GetId());
         evt.SetEventObject(this);
-        m_owner->AddPendingEvent(evt);
+        EventNotifier::Get()->AddPendingEvent(evt);
     }
 
     if(GetEditor()) {
@@ -762,7 +763,7 @@ void CCBox::DoShowTagTip()
         wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE_TAG_COMMENT, GetId());
         evt.SetEventObject(this);
         evt.SetClientData(tag.GetUserData());
-        if(m_owner->ProcessEvent(evt)) {
+        if(EventNotifier::Get()->ProcessEvent(evt)) {
             prefix << evt.GetString();
             gotAComment = true;
         }

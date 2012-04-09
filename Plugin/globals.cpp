@@ -27,6 +27,7 @@
 #include <wx/log.h>
 #include <wx/imaglist.h>
 #include <wx/xrc/xmlres.h>
+#include "event_notifier.h"
 #include "dirtraverser.h"
 #include "imanager.h"
 #include "environmentconfig.h"
@@ -88,9 +89,6 @@ static wxString MacGetInstallPath()
     #include <unistd.h>
     #include <dirent.h>
 #endif
-
-// static initialization
-bool clEventDisabler::eventsDisabled = false;
 
 static bool IsBOMFile(const char* file_name)
 {
@@ -172,37 +170,17 @@ static bool ReadFile8BitData(const char *file_name, wxString &content)
 
 bool SendCmdEvent(int eventId, void *clientData)
 {
-	if(clEventDisabler::eventsDisabled)
-		return false;
-
-	wxCommandEvent e(eventId);
-	if (clientData) {
-		e.SetClientData(clientData);
-	}
-	return wxTheApp->ProcessEvent(e);
+	return EventNotifier::Get()->SendCommandEvent(eventId, clientData);
 }
 
 bool SendCmdEvent(int eventId, void *clientData, const wxString &str)
 {
-	if(clEventDisabler::eventsDisabled)
-		return false;
-		
-	wxCommandEvent e(eventId);
-	e.SetClientData(clientData);
-	e.SetString(str);
-	return wxTheApp->ProcessEvent(e);
+	return EventNotifier::Get()->SendCommandEvent(eventId, clientData, str);
 }
 
 void PostCmdEvent(int eventId, void *clientData)
 {
-	if(clEventDisabler::eventsDisabled)
-		return;
-		
-	wxCommandEvent e(eventId);
-	if (clientData) {
-		e.SetClientData(clientData);
-	}
-	wxTheApp->AddPendingEvent(e);
+	EventNotifier::Get()->PostCommandEvent(eventId, clientData);
 }
 
 void SetColumnText (wxListCtrl *list, long indx, long column, const wxString &rText, int imgId )
@@ -1082,11 +1060,11 @@ void BOM::Clear()
 
 clEventDisabler::clEventDisabler()
 {
-	eventsDisabled = true;
+	EventNotifier::Get()->DisableEvents(true);
 }
 
 clEventDisabler::~clEventDisabler()
 {
-	eventsDisabled = false;
+	EventNotifier::Get()->DisableEvents(false);
 }
 

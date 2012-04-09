@@ -8,6 +8,7 @@
 #include <wx/app.h>
 #include "console_frame.h"
 #include "drawingutils.h"
+#include "event_notifier.h"
 #include "plugin.h"
 #include "windowattrmanager.h"
 #include "globals.h"
@@ -29,7 +30,7 @@ ConsoleFrame::ConsoleFrame( wxWindow* parent, wxWindowID id )
 	this->Layout();
 
 	// Connect Events
-	wxTheApp->Connect(wxEVT_DEBUG_ENDED,               wxCommandEventHandler(ConsoleFrame::OnDebuggerEnded), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_DEBUG_ENDED,               wxCommandEventHandler(ConsoleFrame::OnDebuggerEnded), NULL, this);
 	//wxTheApp->Connect(wxEVT_DEBUG_EDITOR_GOT_CONTROL,  wxCommandEventHandler(ConsoleFrame::OnEditorGotControl), NULL, this);
 	//wxTheApp->Connect(wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEventHandler(ConsoleFrame::OnEditorLostControl), NULL, this);
 }
@@ -37,7 +38,7 @@ ConsoleFrame::ConsoleFrame( wxWindow* parent, wxWindowID id )
 ConsoleFrame::~ConsoleFrame()
 {
 	// Disconnect Events
-	wxTheApp->Disconnect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(ConsoleFrame::OnDebuggerEnded), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(ConsoleFrame::OnDebuggerEnded), NULL, this);
 	//wxTheApp->Disconnect(wxEVT_DEBUG_EDITOR_GOT_CONTROL,  wxCommandEventHandler(ConsoleFrame::OnEditorGotControl), NULL, this);
 	//wxTheApp->Disconnect(wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEventHandler(ConsoleFrame::OnEditorLostControl), NULL, this);
 }

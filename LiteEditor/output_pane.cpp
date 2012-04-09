@@ -26,6 +26,7 @@
 #include "frame.h"
 #include "editor_config.h"
 #include <wx/dcbuffer.h>
+#include "event_notifier.h"
 #include "pluginmanager.h"
 #include "output_pane.h"
 #include "findresultstab.h"
@@ -55,17 +56,17 @@ OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 {
 	Hide();
 	CreateGUIControls();
-	wxTheApp->Connect ( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
-	wxTheApp->Connect ( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
-	wxTheApp->Connect ( wxEVT_BUILD_ENDED ,    wxCommandEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
+	EventNotifier::Get()->Connect ( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
+	EventNotifier::Get()->Connect ( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
+	EventNotifier::Get()->Connect ( wxEVT_BUILD_ENDED ,    wxCommandEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
 }
 
 OutputPane::~OutputPane()
 {
 	delete wxLog::SetActiveTarget(m_logTargetOld);
-	wxTheApp->Disconnect( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
-	wxTheApp->Disconnect( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
-	wxTheApp->Disconnect( wxEVT_BUILD_ENDED ,    wxCommandEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
+	EventNotifier::Get()->Disconnect( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
+	EventNotifier::Get()->Disconnect( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
+	EventNotifier::Get()->Disconnect( wxEVT_BUILD_ENDED ,    wxCommandEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
 }
 
 void OutputPane::CreateGUIControls()

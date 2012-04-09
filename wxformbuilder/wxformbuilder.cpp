@@ -27,6 +27,7 @@
 #include "confformbuilder.h"
 #include <wx/mimetype.h>
 #include "procutils.h"
+#include "event_notifier.h"
 #include "workspace.h"
 #include "project.h"
 #include "processreaderthread.h"
@@ -86,7 +87,7 @@ wxFormBuilder::wxFormBuilder(IManager *manager)
 	m_topWin->Connect(XRCID("wxfb_new_frame"),               wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxFormBuilder::OnNewFrame),             NULL, this);
 	m_topWin->Connect(XRCID("wxfb_new_panel"),               wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxFormBuilder::OnNewPanel),             NULL, this);
 	m_topWin->Connect(XRCID("wxfb_open"),                    wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxFormBuilder::OpenWithWxFb),           NULL, this);
-	m_topWin->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED,         wxCommandEventHandler(wxFormBuilder::OnOpenFile),                                          NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED,         wxCommandEventHandler(wxFormBuilder::OnOpenFile),                                          NULL, this);
 }
 
 wxFormBuilder::~wxFormBuilder()

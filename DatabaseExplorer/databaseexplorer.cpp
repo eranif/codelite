@@ -5,6 +5,7 @@
 #include "ErdPanel.h"
 #include <wx/xrc/xmlres.h>
 #include "wx/wxsf/AutoLayout.h"
+#include "event_notifier.h"
 
 #ifdef DBL_USE_MYSQL
 #include "MySqlDbAdapter.h"
@@ -85,7 +86,7 @@ DatabaseExplorer::DatabaseExplorer(IManager *manager)
 
 	m_mgr->GetTheApp()->Connect(XRCID("erd_open"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
 	m_mgr->GetTheApp()->Connect(XRCID("erd_open"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DatabaseExplorer::OnUpdateOpenWithDBE), NULL, this);
-	m_mgr->GetTheApp()->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED, wxCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED, wxCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
 
 	if( IsDbViewDetached() ) {
 		DockablePane *cp = new DockablePane(book->GetParent()->GetParent(), book, wxT("DbExplorer"), wxNullBitmap, wxSize(200, 200));

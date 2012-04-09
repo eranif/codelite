@@ -67,6 +67,8 @@
     <File Name="conffilelocator.h"/>
     <File Name="string_client_data.h"/>
     <File Name="window_locker.h"/>
+    <File Name="event_notifier.h"/>
+    <File Name="event_notifier.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Builders">
     <File Name="builder.h"/>

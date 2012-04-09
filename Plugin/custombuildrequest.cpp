@@ -25,6 +25,7 @@
 #include <wx/app.h>
 #include <wx/log.h>
 #include "buildmanager.h"
+#include "event_notifier.h"
 #include "asyncprocess.h"
 #include "imanager.h"
 #include <wx/ffile.h>
@@ -70,16 +71,8 @@ void CustomBuildRequest::Process(IManager *manager)
 	wxString pname (proj->GetName());
 	event.SetClientData((void*)&pname);
 	event.SetString( m_info.GetConfiguration() );
-
-	// since this code can be called from inside the application OR
-	// from inside a DLL, we use the application pointer from the manager
-	// when available, otherwise, events will not be processed inside
-	// plugins
-	wxApp *app = manager ? manager->GetTheApp() : wxTheApp;
-	app->ProcessEvent(event);
-
-	if (app->ProcessEvent(event)) {
-
+	
+	if (EventNotifier::Get()->ProcessEvent(event)) {
 		// the build is being handled by some plugin, no need to build it
 		// using the standard way
 		return;

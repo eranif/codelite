@@ -26,6 +26,7 @@
 #include <set>
 #include <wx/app.h>
 #include <wx/wupdlock.h>
+#include "event_notifier.h"
 #include <wx/settings.h>
 #include <wx/menu.h>
 #include <wx/log.h>
@@ -286,16 +287,16 @@ void SymbolViewPlugin::Connect()
 	m_viewChoice->Connect(wxID_ANY, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnViewTypeChanged), NULL, this);
 
 	wxEvtHandler *topwin = m_mgr->GetTheApp();
-	topwin->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SymbolViewPlugin::OnWorkspaceLoaded), NULL, this);
-	topwin->Connect(wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(SymbolViewPlugin::OnProjectFileAdded), NULL, this);
-	topwin->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(SymbolViewPlugin::OnProjectFileRemoved), NULL, this);
-	topwin->Connect(wxEVT_PROJ_REMOVED, wxCommandEventHandler(SymbolViewPlugin::OnProjectAdded), NULL, this);
-	topwin->Connect(wxEVT_PROJ_ADDED, wxCommandEventHandler(SymbolViewPlugin::OnProjectRemoved), NULL, this);
-	topwin->Connect(wxEVT_FILE_RETAGGED, wxCommandEventHandler(SymbolViewPlugin::OnFileRetagged), NULL, this);
-	topwin->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewPlugin::OnActiveEditorChanged), NULL, this);
-	topwin->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewPlugin::OnEditorClosed), NULL, this);
-	topwin->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(SymbolViewPlugin::OnAllEditorsClosed), NULL, this);
-	topwin->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SymbolViewPlugin::OnWorkspaceClosed), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SymbolViewPlugin::OnWorkspaceLoaded), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(SymbolViewPlugin::OnProjectFileAdded), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(SymbolViewPlugin::OnProjectFileRemoved), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_PROJ_REMOVED, wxCommandEventHandler(SymbolViewPlugin::OnProjectAdded), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_PROJ_ADDED, wxCommandEventHandler(SymbolViewPlugin::OnProjectRemoved), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_FILE_RETAGGED, wxCommandEventHandler(SymbolViewPlugin::OnFileRetagged), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewPlugin::OnActiveEditorChanged), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewPlugin::OnEditorClosed), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(SymbolViewPlugin::OnAllEditorsClosed), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SymbolViewPlugin::OnWorkspaceClosed), NULL, this);
     topwin->Connect(XRCID("show_tag_in_symview"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnShowTagInSymView), NULL, this);
 }
 
@@ -345,14 +346,14 @@ void SymbolViewPlugin::UnPlug()
 
 	wxEvtHandler *topwin = m_mgr->GetTheApp();
 
-	topwin->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SymbolViewPlugin::OnWorkspaceLoaded), NULL, this);
-	topwin->Disconnect(wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(SymbolViewPlugin::OnProjectFileAdded), NULL, this);
-	topwin->Disconnect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(SymbolViewPlugin::OnProjectFileRemoved), NULL, this);
-	topwin->Disconnect(wxEVT_PROJ_REMOVED, wxCommandEventHandler(SymbolViewPlugin::OnProjectAdded), NULL, this);
-	topwin->Disconnect(wxEVT_PROJ_ADDED, wxCommandEventHandler(SymbolViewPlugin::OnProjectRemoved), NULL, this);
-	topwin->Disconnect(wxEVT_FILE_RETAGGED, wxCommandEventHandler(SymbolViewPlugin::OnFileRetagged), NULL, this);
-	topwin->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewPlugin::OnActiveEditorChanged), NULL, this);
-	topwin->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewPlugin::OnEditorClosed), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SymbolViewPlugin::OnWorkspaceLoaded), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(SymbolViewPlugin::OnProjectFileAdded), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(SymbolViewPlugin::OnProjectFileRemoved), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_PROJ_REMOVED, wxCommandEventHandler(SymbolViewPlugin::OnProjectAdded), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_PROJ_ADDED, wxCommandEventHandler(SymbolViewPlugin::OnProjectRemoved), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_FILE_RETAGGED, wxCommandEventHandler(SymbolViewPlugin::OnFileRetagged), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewPlugin::OnActiveEditorChanged), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewPlugin::OnEditorClosed), NULL, this);
     topwin->Disconnect(XRCID("show_tag_in_symview"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnShowTagInSymView), NULL, this);
 
 	Notebook *notebook = m_mgr->GetWorkspacePaneNotebook();

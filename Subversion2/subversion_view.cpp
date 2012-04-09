@@ -1,4 +1,5 @@
 #include <wx/app.h>
+#include "event_notifier.h"
 #include "diff_dialog.h"
 #include "svn_checkout_dialog.h"
 #include "subversion2_ui.h"
@@ -80,22 +81,22 @@ SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
 	, m_diffCommand     ( plugin )
 {
 	CreatGUIControls();
-	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_LOADED,      wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),     NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(SubversionView::OnWorkspaceClosed),     NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_FILE_SAVED,            wxCommandEventHandler(SubversionView::OnRefreshView),         NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_PROJ_FILE_ADDED,       wxCommandEventHandler(SubversionView::OnFileAdded  ),         NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_FILE_RENAMED,          wxCommandEventHandler(SubversionView::OnFileRenamed),         NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED,      wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),     NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(SubversionView::OnWorkspaceClosed),     NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,            wxCommandEventHandler(SubversionView::OnRefreshView),         NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED,       wxCommandEventHandler(SubversionView::OnFileAdded  ),         NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_FILE_RENAMED,          wxCommandEventHandler(SubversionView::OnFileRenamed),         NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
 }
 
 SubversionView::~SubversionView()
 {
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_WORKSPACE_LOADED,      wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),     NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(SubversionView::OnWorkspaceClosed),     NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_FILE_SAVED,            wxCommandEventHandler(SubversionView::OnRefreshView),         NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_PROJ_FILE_ADDED,       wxCommandEventHandler(SubversionView::OnFileAdded  ),         NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_FILE_RENAMED,          wxCommandEventHandler(SubversionView::OnFileRenamed),         NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED,      wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),     NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(SubversionView::OnWorkspaceClosed),     NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,            wxCommandEventHandler(SubversionView::OnRefreshView),         NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED,       wxCommandEventHandler(SubversionView::OnFileAdded  ),         NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_FILE_RENAMED,          wxCommandEventHandler(SubversionView::OnFileRenamed),         NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
 }
 
 void SubversionView::OnChangeRootDir( wxCommandEvent& event )
@@ -1000,12 +1001,12 @@ void SubversionView::OnActiveEditorChanged(wxCommandEvent& event)
 
 void SubversionView::DisconnectEvents()
 {
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),          NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionView::OnWorkspaceClosed),          NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_FILE_SAVED,       wxCommandEventHandler(SubversionView::OnRefreshView),              NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_PROJ_FILE_ADDED,  wxCommandEventHandler(SubversionView::OnFileAdded),                NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_FILE_RENAMED,     wxCommandEventHandler(SubversionView::OnFileRenamed),              NULL, this);
-	m_plugin->GetManager()->GetTheApp()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),          NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionView::OnWorkspaceClosed),          NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,       wxCommandEventHandler(SubversionView::OnRefreshView),              NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED,  wxCommandEventHandler(SubversionView::OnFileAdded),                NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_FILE_RENAMED,     wxCommandEventHandler(SubversionView::OnFileRenamed),              NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
 }
 
 void SubversionView::OnOpenFile(wxCommandEvent& event)

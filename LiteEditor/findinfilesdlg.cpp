@@ -25,6 +25,7 @@
 #include "search_thread.h"
 #include <wx/tokenzr.h>
 #include <wx/fontmap.h>
+#include "event_notifier.h"
 #include "dirpicker.h"
 #include "manager.h"
 #include "frame.h"
@@ -129,7 +130,7 @@ void FindInFilesDialog::DoSetFileMask()
 	getFileMaskEvent.SetEventObject(this);
 	getFileMaskEvent.SetInt(0);
 	getFileMaskEvent.SetString(wxT(""));
-	wxTheApp->ProcessEvent(getFileMaskEvent);
+	EventNotifier::Get()->ProcessEvent(getFileMaskEvent);
 
 	// Get the output
 	wxString      pluginMask      = getFileMaskEvent.GetString();

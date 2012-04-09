@@ -26,6 +26,7 @@
 #include "fileextmanager.h"
 #include <wx/app.h>
 #include <wx/msgdlg.h>
+#include "event_notifier.h"
 
 #include "file_logger.h"
 #include "editor_config.h"
@@ -231,7 +232,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 				e.SetClientData( (void*)&depsArr.Item(i) );
 				e.SetString    ( projectSelConf          );
-				wxTheApp->ProcessEvent(e);
+				EventNotifier::Get()->ProcessEvent(e);
 
 				// the result is stored in the 'GetString()'
 				text << wxT("\t") << e.GetString() << wxT("\n");
@@ -310,7 +311,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 		wxCommandEvent e(wxEVT_GET_PROJECT_BUILD_CMD);
 		e.SetClientData((void*)&pname);
 		e.SetString(projectSelConf);
-		wxTheApp->ProcessEvent(e);
+		EventNotifier::Get()->ProcessEvent(e);
 
 		// the build command is in the 'String' member
 		cmd = e.GetString();
@@ -361,7 +362,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 				e.SetClientData( (void*)&pname  );
 				e.SetString    ( projectSelConf );
-				wxTheApp->ProcessEvent(e);
+				EventNotifier::Get()->ProcessEvent(e);
 
 				// the result is stored in the 'GetString()'
 				text << wxT("\t") << e.GetString() << wxT("\n");
@@ -413,7 +414,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 		wxCommandEvent e(wxEVT_GET_PROJECT_CLEAN_CMD);
 		e.SetClientData((void*)&pname);
 		e.SetString(projectSelConf);
-		wxTheApp->ProcessEvent(e);
+		EventNotifier::Get()->ProcessEvent(e);
 
 		// the build command is in the 'String' member
 		cmd = e.GetString();
@@ -1192,7 +1193,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	
 	// Let the plugins add their content here
 	wxCommandEvent e(wxEVT_GET_ADDITIONAL_COMPILEFLAGS);
-	wxTheApp->ProcessEvent(e);
+	EventNotifier::Get()->ProcessEvent(e);
 
 	wxString additionalCompileFlags = e.GetString();
 	if(additionalCompileFlags.IsEmpty() == false) {

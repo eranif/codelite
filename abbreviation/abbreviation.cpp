@@ -28,6 +28,7 @@
 #include "abbreviationssettingsdlg.h"
 #include <wx/bitmap.h>
 #include <wx/menu.h>
+#include "event_notifier.h"
 #include "abbreviation.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/app.h>
@@ -67,7 +68,7 @@ AbbreviationPlugin::AbbreviationPlugin(IManager *manager)
 	m_longName = _("Abbreviation plugin");
 	m_shortName = wxT("abbreviation");
 	m_topWindow = m_mgr->GetTheApp();
-	m_topWindow->Connect(wxEVT_CCBOX_SELECTION_MADE, wxCommandEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_CCBOX_SELECTION_MADE, wxCommandEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
 
 	InitDefaults();
 }
@@ -109,7 +110,7 @@ void AbbreviationPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 
 void AbbreviationPlugin::UnPlug()
 {
-	m_topWindow->Disconnect(wxEVT_CCBOX_SELECTION_MADE, wxCommandEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_CCBOX_SELECTION_MADE, wxCommandEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
 	m_topWindow->Disconnect( XRCID("abbrev_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( AbbreviationPlugin::OnSettings ), NULL, this );
 	m_topWindow->Disconnect( XRCID("abbrev_show"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( AbbreviationPlugin::OnAbbreviations), NULL, this );
 }

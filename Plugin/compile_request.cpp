@@ -25,6 +25,7 @@
 #include "compile_request.h"
 #include <wx/app.h>
 #include <wx/log.h>
+#include "event_notifier.h"
 #include "asyncprocess.h"
 #include "imanager.h"
 #include "macros.h"
@@ -70,13 +71,7 @@ void CompileRequest::Process(IManager *manager)
 		return;
 	}
 
-	// since this code can be called from inside the application OR
-	// from inside a DLL, we use the application pointer from the manager
-	// when available, otherwise, events will not be processed inside
-	// plugins
-	wxApp *app = manager ? manager->GetTheApp() : wxTheApp;
 	wxString pname (proj->GetName());
-
 	//BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	BuilderPtr builder = bm->GetSelectedBuilder();
 	if (m_fileName.IsEmpty() == false) {
@@ -104,7 +99,7 @@ void CompileRequest::Process(IManager *manager)
 	event.SetClientData((void*)&pname);
 	event.SetString( m_info.GetConfiguration() );
 
-	if (app->ProcessEvent(event)) {
+	if (EventNotifier::Get()->ProcessEvent(event)) {
 
 		// the build is being handled by some plugin, no need to build it
 		// using the standard way

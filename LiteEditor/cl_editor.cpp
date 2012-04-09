@@ -27,6 +27,7 @@
 #include "precompiled_header.h"
 #include "cl_editor.h"
 #include "code_completion_manager.h"
+#include "event_notifier.h"
 #include "cl_editor_tip_window.h"
 #include "new_quick_watch_dlg.h"
 #include "buildtabsettingsdata.h"
@@ -1284,7 +1285,7 @@ wxString LEditor::GetWordAtCaret()
 //---------------------------------------------------------------------------
 void LEditor::CompleteWord(bool onlyRefresh)
 {
-	if(clEventDisabler::eventsDisabled)
+	if(EventNotifier::Get()->IsEventsDiabled())
 		return;
 
 	// Let the plugins a chance to override the default behavior
@@ -1292,7 +1293,7 @@ void LEditor::CompleteWord(bool onlyRefresh)
 	evt.SetInt(GetCurrentPosition());
 	evt.SetEventObject(this);
 
-	if(wxTheApp->ProcessEvent(evt)) {
+	if(EventNotifier::Get()->ProcessEvent(evt)) {
 		// the plugin handled the code-complete request
 		return;
 
@@ -1312,14 +1313,14 @@ void LEditor::CompleteWord(bool onlyRefresh)
 //------------------------------------------------------------------
 void LEditor::CodeComplete()
 {
-	if(clEventDisabler::eventsDisabled)
+	if(EventNotifier::Get()->IsEventsDiabled())
 		return;
 
 	wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE);
 	evt.SetInt(GetCurrentPosition());
 	evt.SetEventObject(this);
 
-	if(wxTheApp->ProcessEvent(evt))
+	if(EventNotifier::Get()->ProcessEvent(evt))
 		// the plugin handled the code-complete request
 		return;
 
@@ -1343,7 +1344,7 @@ void LEditor::GotoDefinition()
 	wxCommandEvent event(wxEVT_CMD_FIND_SYMBOL, GetId());
 	event.SetEventObject(this);
 	event.SetString(word.c_str());
-	if(wxTheApp->ProcessEvent(event))
+	if(EventNotifier::Get()->ProcessEvent(event))
 		return;
 
 	m_context->GotoDefinition();
@@ -1409,7 +1410,7 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 		evtTypeinfo.SetEventObject(this);
 		evtTypeinfo.SetInt(event.GetPosition());
 
-		if(wxTheApp->ProcessEvent(evtTypeinfo))
+		if(EventNotifier::Get()->ProcessEvent(evtTypeinfo))
 			return;
 
 		m_context->OnDwellStart(event);
@@ -1421,7 +1422,7 @@ void LEditor::OnDwellEnd(wxScintillaEvent & event)
 	// Allow the plugins to override the default built-in behavior of displaying
 	wxCommandEvent evtTypeinfo(wxEVT_CMD_EDITOR_TIP_DWELL_END, GetId());
 	evtTypeinfo.SetEventObject(this);
-	if(wxTheApp->ProcessEvent(evtTypeinfo))
+	if(EventNotifier::Get()->ProcessEvent(evtTypeinfo))
 		return;
 
 	m_context->OnDwellEnd(event);
@@ -2467,7 +2468,7 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 		// Let the plugins handle this event first
 		wxCommandEvent marginContextMenuEvent(wxEVT_CMD_EDITOR_MARGIN_CONTEXT_MENU, GetId());
 		marginContextMenuEvent.SetEventObject(this);
-		if(wxTheApp->ProcessEvent(marginContextMenuEvent))
+		if(EventNotifier::Get()->ProcessEvent(marginContextMenuEvent))
 			return;
 
 		DoBreakptContextMenu(clientPt);
@@ -2495,7 +2496,7 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 	// Let the plugins handle this event first
 	wxCommandEvent contextMenuEvent(wxEVT_CMD_EDITOR_CONTEXT_MENU, GetId());
 	contextMenuEvent.SetEventObject(this);
-	if(wxTheApp->ProcessEvent(contextMenuEvent))
+	if(EventNotifier::Get()->ProcessEvent(contextMenuEvent))
 		return;
 
 	if(!m_rightClickMenu)
@@ -3377,8 +3378,8 @@ void LEditor::ShowFunctionTipFromCurrentPos()
 {
 	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP) {
 
-		if(clEventDisabler::eventsDisabled)
-		return;
+		if(EventNotifier::Get()->IsEventsDiabled())
+			return;
 
 		int pos = DoGetOpenBracePos();
 
@@ -3387,7 +3388,7 @@ void LEditor::ShowFunctionTipFromCurrentPos()
 		evt.SetEventObject(this);
 		evt.SetInt(pos);
 
-		if(wxTheApp->ProcessEvent(evt))
+		if(EventNotifier::Get()->ProcessEvent(evt))
 			return;
 
 		if (pos != wxNOT_FOUND) {

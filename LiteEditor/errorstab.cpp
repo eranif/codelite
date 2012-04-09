@@ -25,6 +25,7 @@
 #include <wx/xrc/xmlres.h>
 #include "globals.h"
 #include "errorstab.h"
+#include "event_notifier.h"
 #include "drawingutils.h"
 #include "findresultstab.h"
 #include "pluginmanager.h"
@@ -91,7 +92,7 @@ ErrorsTab::ErrorsTab ( BuildTab *bt, wxWindow *parent, wxWindowID id, const wxSt
 #else
 	m_hSizer->Add(m_treeListCtrl, 1, wxEXPAND);
 #endif
-	wxTheApp->Connect ( wxEVT_BUILD_ENDED , wxCommandEventHandler ( ErrorsTab::OnBuildEnded   ), NULL, this );
+	EventNotifier::Get()->Connect ( wxEVT_BUILD_ENDED , wxCommandEventHandler ( ErrorsTab::OnBuildEnded   ), NULL, this );
 	
 	Connect(XRCID("hold_pane_open"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ErrorsTab::OnHoldOpenUpdateUI), NULL, this);
 }

@@ -56,9 +56,6 @@ public:
 class WXDLLIMPEXP_SDK clEventDisabler
 {
 public:
-	static bool eventsDisabled;
-	
-public:
 	clEventDisabler();
 	~clEventDisabler();
 };

@@ -6,6 +6,7 @@
 #include <wx/file.h>
 #include <wx/xrc/xmlres.h>
 #include <stack>
+#include "event_notifier.h"
 
 #include "globals.h"
 
@@ -94,10 +95,10 @@ GitPlugin::GitPlugin(IManager *manager)
 	m_shortName = wxT("git");
 	m_topWindow = m_mgr->GetTheApp();
 
-	m_topWindow->Connect( wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
-	m_topWindow->Connect( wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitPlugin::OnWorkspaceClosed), NULL, this);
-	m_topWindow->Connect( wxEVT_FILE_SAVED, wxCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
-	m_topWindow->Connect( wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
+	EventNotifier::Get()->Connect( wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
+	EventNotifier::Get()->Connect( wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitPlugin::OnWorkspaceClosed), NULL, this);
+	EventNotifier::Get()->Connect( wxEVT_FILE_SAVED, wxCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
+	EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
 
 	m_progressTimer.SetOwner(this);
 }
@@ -272,9 +273,9 @@ void GitPlugin::UnPlug()
 	m_topWindow->Disconnect( XRCID("git_refresh"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnRefresh ), NULL, this );
 	m_topWindow->Disconnect( XRCID("git_garbage_collection"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnGarbageColletion ), NULL, this );
 	/*SYSTEM*/
-	m_topWindow->Disconnect( wxEVT_FILE_SAVED, wxCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
-	m_topWindow->Disconnect( wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
-	m_topWindow->Disconnect( wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
+	EventNotifier::Get()->Disconnect( wxEVT_FILE_SAVED, wxCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
+	EventNotifier::Get()->Disconnect( wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
+	EventNotifier::Get()->Disconnect( wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
 	/*Context Menu*/
 	m_topWindow->Disconnect( XRCID("git_add_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileAddSelected), NULL, this );
 	//m_topWindow->Disconnect( ID_DELETE_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileDeleteSelected), NULL, this );
@@ -1092,7 +1093,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 		}
 	} else if(ga.action == gitResetFile ) {
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT);
-		m_mgr->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(e);
+		EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(e);
 
 		gitAction ga = {gitListAll,wxT("")};
 		m_gitActionQueue.push(ga);

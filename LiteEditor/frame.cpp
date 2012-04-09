@@ -26,6 +26,7 @@
 #include "bitmap_loader.h"
 #include <wx/wupdlock.h>
 #include "file_logger.h"
+#include "event_notifier.h"
 #include "cl_aui_tb_are.h"
 #include "manage_perspective_dlg.h"
 #include "save_perspective_as_dlg.h"
@@ -1725,7 +1726,7 @@ void clMainFrame::OnCloseWorkspace(wxCommandEvent &event)
 	// let the plugins close any custom workspace
 	wxCommandEvent e(wxEVT_CMD_CLOSE_WORKSPACE, GetId());
 	e.SetEventObject(this);
-	wxTheApp->ProcessEvent(e);
+	EventNotifier::Get()->ProcessEvent(e);
 
 	// In any case, make sure that we dont have a workspace opened
 	if (ManagerST::Get()->IsWorkspaceOpen()) {
@@ -1744,7 +1745,7 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent &event)
 	wxCommandEvent e(wxEVT_CMD_OPEN_WORKSPACE, GetId());
 	e.SetEventObject(this);
 	e.SetString(wxT(""));
-	if(wxTheApp->ProcessEvent(e)) {
+	if(EventNotifier::Get()->ProcessEvent(e)) {
 		// the plugin processed it by itself
 		return;
 	}
@@ -1930,7 +1931,7 @@ void clMainFrame::OnWorkspaceOpen(wxUpdateUIEvent &event)
 	wxCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
 	e.SetEventObject(this);
 	e.SetInt(0);
-	wxTheApp->ProcessEvent(e);
+	EventNotifier::Get()->ProcessEvent(e);
 
 	event.Enable(ManagerST::Get()->IsWorkspaceOpen() || e.GetInt());
 }
@@ -1941,7 +1942,7 @@ void clMainFrame::OnProjectNewWorkspace(wxCommandEvent &event)
 	// let the plugins handle this event first
 	wxCommandEvent e(wxEVT_CMD_CREATE_NEW_WORKSPACE, GetId());
 	e.SetEventObject(this);
-	if(wxTheApp->ProcessEvent(e))
+	if(EventNotifier::Get()->ProcessEvent(e))
 		return;
 
 	wxUnusedVar(event);
@@ -1961,7 +1962,7 @@ void clMainFrame::OnProjectNewProject(wxCommandEvent &event)
 	// Let the plugin process this request first
 	wxCommandEvent newProjectEvent(wxEVT_CMD_CREATE_NEW_PROJECT, GetId());
 	newProjectEvent.SetEventObject(this);
-	if(wxTheApp->ProcessEvent(newProjectEvent)) {
+	if(EventNotifier::Get()->ProcessEvent(newProjectEvent)) {
 		return;
 	}
 
@@ -2666,7 +2667,7 @@ void clMainFrame::OnQuickOutline(wxCommandEvent &event)
 	// let the plugins process this first
 	wxCommandEvent evt(wxEVT_CMD_SHOW_QUICK_OUTLINE, GetId());
 	evt.SetEventObject(this);
-	if(wxTheApp->ProcessEvent(evt))
+	if(EventNotifier::Get()->ProcessEvent(evt))
 		return;
 
 	wxUnusedVar(event);
@@ -4081,7 +4082,7 @@ void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
 	bool fullRetag = !(event.GetId() == XRCID("retag_workspace"));
 	wxCommandEvent e(fullRetag ? wxEVT_CMD_RETAG_WORKSPACE_FULL : wxEVT_CMD_RETAG_WORKSPACE, GetId());
 	e.SetEventObject(this);
-	if(wxTheApp->ProcessEvent(e))
+	if(EventNotifier::Get()->ProcessEvent(e))
 		return;
 
 	TagsManager::RetagType type = TagsManager::Retag_Quick_No_Scan;
@@ -4291,7 +4292,7 @@ void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
 	// Let the plugins a chance before we handle this event
 	wxCommandEvent eventOpenResource(wxEVT_CMD_OPEN_RESOURCE, GetId());
 	eventOpenResource.SetEventObject(this);
-	if(wxTheApp->ProcessEvent(eventOpenResource))
+	if(EventNotifier::Get()->ProcessEvent(eventOpenResource))
 		return;
 
 	OpenResourceDialog dlg(this, PluginManager::Get());
@@ -4658,7 +4659,7 @@ void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)
 	wxCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
 	e.SetEventObject(this);
 	e.SetInt(0);
-	wxTheApp->ProcessEvent(e);
+	EventNotifier::Get()->ProcessEvent(e);
 
 	event.Enable((ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress()) || e.GetInt());
 }

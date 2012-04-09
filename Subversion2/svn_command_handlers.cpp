@@ -12,6 +12,7 @@
 #include "changelogpage.h"
 #include "imanager.h"
 #include "ieditor.h"
+#include "event_notifier.h"
 
 void SvnCommitHandler::Process(const wxString& output)
 {
@@ -31,7 +32,7 @@ void SvnUpdateHandler::Process(const wxString& output)
 
 	// Reload any modified files
 	wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT);
-	GetPlugin()->GetManager()->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(e);
+	EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(e);
 
 	// After 'Update' we usually want to do the following:
 	// Reload workspace (if a project file or the workspace were modified)

@@ -27,6 +27,7 @@
 #include "build_settings_config.h"
 #include "asyncprocess.h"
 #include "imanager.h"
+#include "event_notifier.h"
 #include "macros.h"
 #include "compiler.h"
  #include "clean_request.h"
@@ -59,8 +60,7 @@ void CleanRequest::Process(IManager *manager)
 	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
 	BuildManager *       bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
 	Workspace *          w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
-	wxApp *              app = manager ? manager->GetTheApp() : wxTheApp;
-
+	
 
 	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
@@ -103,7 +103,7 @@ void CleanRequest::Process(IManager *manager)
 	event.SetClientData((void*)&pname);
 	event.SetString( m_info.GetConfiguration() );
 
-	if (app->ProcessEvent(event)) {
+	if (EventNotifier::Get()->ProcessEvent(event)) {
 
 		// the build is being handled by some plugin, no need to build it
 		// using the standard way

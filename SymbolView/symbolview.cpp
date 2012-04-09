@@ -244,6 +244,7 @@ void SymbolViewPlugin::CreateGUIControls()
 	m_viewChoice->Select(0);
     
 #if wxCHECK_VERSION(2,9,1)
+	m_tb->AddStretchableSpace();
     m_tb->AddControl(m_viewChoice, wxEmptyString);
 #else
     m_choiceSizer->Add(m_viewChoice, 1, wxEXPAND|wxALL, 1);

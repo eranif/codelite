@@ -3183,7 +3183,7 @@ void Manager::DoRestartCodeLite()
 	                       << wxStandardPaths::Get().GetExecutablePath()
 	                       << wxT("\"");
 
-	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("exit_app"));
+	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_EXIT);
 	clMainFrame::Get()->GetEventHandler()->ProcessEvent(event);
 
 	wxExecute(restartCodeLiteCommand, wxEXEC_ASYNC|wxEXEC_NOHIDE);
@@ -3198,7 +3198,7 @@ void Manager::DoRestartCodeLite()
 	}
 	wxSetWorkingDirectory(GetOriginalCwd());
 
-	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("exit_app"));
+	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_EXIT);
 	clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
 
 	wxExecute(restartCodeLiteCommand, wxEXEC_ASYNC|wxEXEC_NOHIDE);

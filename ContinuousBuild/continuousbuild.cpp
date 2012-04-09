@@ -11,6 +11,7 @@
 #include "custombuildrequest.h"
 #include "compile_request.h"
 #include <wx/app.h>
+#include "environmentconfig.h"
 #include "continousbuildpane.h"
 #include <wx/xrc/xmlres.h>
 #include "continousbuildconf.h"
@@ -198,7 +199,8 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 
 	wxCommandEvent event(wxEVT_SHELL_COMMAND_STARTED);
 	m_mgr->GetOutputPaneNotebook()->GetEventHandler()->AddPendingEvent(event);
-
+	
+	EnvSetter env(NULL, NULL, projectName);
 	CL_DEBUG(wxString::Format(wxT("cmd:%s\n"), cmd.c_str()));
 	if(!m_buildProcess.Execute(cmd, fileName, project->GetFileName().GetPath(), this))
 		return;

@@ -70,7 +70,7 @@ void MainBook::CreateGuiControls()
 	sz->Add(m_navBar, 0, wxEXPAND);
 	m_navBar->Freeze();
 
-	long style = wxAUI_NB_CLOSE_BUTTON|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
+	long style = wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
 
 #if !CL_USE_NATIVEBOOK
 	style |= wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_SCROLL_BUTTONS;

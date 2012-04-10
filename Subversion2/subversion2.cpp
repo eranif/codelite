@@ -263,7 +263,8 @@ void Subversion2::UnPlug()
 	EventNotifier::Get()->Disconnect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, wxCommandEventHandler(Subversion2::OnGetCompileLine), NULL, this);
 
 	m_subversionView->DisconnectEvents();
-
+	//GetManager()->GetDockingManager()->DetachPane(m_subversionView->GetSubversionConsole());
+	
 	// Remove the tab pined to the workspcae pane
 	size_t index(Notebook::npos);
 	SvnSettingsData ssd = GetSettings();

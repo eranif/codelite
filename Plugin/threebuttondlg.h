@@ -45,6 +45,7 @@ protected:
 public:
 	/** Constructor */
 	ThreeButtonDlg( wxWindow* parent, const wxString &msg, const wxString &caption );
+	virtual ~ThreeButtonDlg();
 	bool GetDontAskMeAgain() const {return m_checkBoxRememberMyAnwer->GetValue();}
 };
 

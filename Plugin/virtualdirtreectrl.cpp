@@ -631,7 +631,7 @@ VdtcTreeItemBase *wxVirtualDirTreeCtrl::AddDirItem(const wxString &name)
 
 void wxVirtualDirTreeCtrl::OnAssignIcons(wxImageList &icons)
 {
-	BitmapLoader bmpLoader(wxT("codelite-icons.zip"));
+	BitmapLoader bmpLoader;
 	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/hard_disk")));          //0
 	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/folder")));              //1
 	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/text")));                //2

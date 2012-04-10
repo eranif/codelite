@@ -640,7 +640,7 @@ bool PluginManager::IsShutdownInProgress() const
 BitmapLoader* PluginManager::GetStdIcons()
 {
 	if(!m_bmpLoader) {
-		m_bmpLoader = new BitmapLoader(wxT("codelite-icons.zip"));
+		m_bmpLoader = new BitmapLoader();
 	}
 	return m_bmpLoader;
 }

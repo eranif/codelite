@@ -133,8 +133,11 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 		// Check to see if the user want to continue from start again
 		long res(wxNOT_FOUND);
 		if (!EditorConfigST::Get()->GetLongValue(wxT("FindNextWrapAroundAnswer"), res)) {
+		
 			// First time we are prompting to the user, or the user never
 			// checked the checkbox 'dont ask me again'
+			
+			fwd ? msg = _("CodeLite reached the end of the document, Search again from the start?") : msg = _("CodeLite reached the top of the document, Search again from the bottom?");
 			ThreeButtonDlg dlg(clMainFrame::Get(), msg, _("CodeLite"));
 			res = dlg.ShowModal();
 			if (dlg.GetDontAskMeAgain() && res != wxID_CANCEL) {

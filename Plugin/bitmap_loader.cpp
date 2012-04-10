@@ -4,17 +4,22 @@
 #include <wx/ffile.h>
 #include "globals.h"
 
+std::map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
+std::map<wxString, wxString> BitmapLoader::m_manifest;
+
 BitmapLoader::~BitmapLoader()
 {
 }
 
-BitmapLoader::BitmapLoader(const wxString& zipName)
+BitmapLoader::BitmapLoader()
 	: m_bMapPopulated(false)
 {
-	m_zipPath = wxFileName(wxStandardPaths::Get().GetDataDir(), zipName);
-	if(m_zipPath.FileExists()) {
-		doLoadManifest();
-		doLoadBitmaps();
+	if(m_manifest.empty() || m_toolbarsBitmaps.empty()) {
+		m_zipPath = wxFileName(wxStandardPaths::Get().GetDataDir(), wxT("codelite-icons.zip"));
+		if(m_zipPath.FileExists()) {
+			doLoadManifest();
+			doLoadBitmaps();
+		}
 	}
 }
 

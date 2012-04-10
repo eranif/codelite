@@ -49,16 +49,16 @@ const wxString OutputPane::TRACE_TAB         = _("Trace");
 const wxString OutputPane::SHOW_USAGE        = _("References");
 
 OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
-		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 200))
+		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 250))
 		, m_caption(caption)
 		, m_logTargetOld(NULL)
 		, m_buildInProgress(false)
 {
-	Hide();
 	CreateGUIControls();
 	EventNotifier::Get()->Connect ( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
 	EventNotifier::Get()->Connect ( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
 	EventNotifier::Get()->Connect ( wxEVT_BUILD_ENDED ,    wxCommandEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
+	SetSize(-1, 250);
 }
 
 OutputPane::~OutputPane()

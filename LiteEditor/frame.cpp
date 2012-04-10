@@ -817,15 +817,8 @@ void clMainFrame::CreateGUIControls(void)
 
 	m_outputPane = new OutputPane(this, wxT("Output View"));
 	wxAuiPaneInfo paneInfo;
-	m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(1).Position(0).CaptionVisible(true).MinimizeButton());
+	m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(1).Position(0).CaptionVisible(true).MinimizeButton().Show().BestSize(wxSize(-1, 200)));
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
-
-	// Now it's created, hide it. Otherwise, if codelite.layout doesn't exist, it starts slightly open
-	// That looks silly, and it's difficult for a novice user to know what's happening
-	wxAuiPaneInfo& info = m_mgr.GetPane(wxT("Output View"));
-	if (info.IsOk()) {
-		info.Hide();
-	}
 
 	long show_nav(1);
 	EditorConfigST::Get()->GetLongValue(wxT("ShowNavBar"), show_nav);

@@ -1,5 +1,5 @@
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -33,10 +33,8 @@ ThreeButtonBaseDlg::ThreeButtonBaseDlg( wxWindow* parent, wxWindowID id, const w
 	mainSizer->Add( m_mainPanel, 1, wxEXPAND | wxALL, 5 );
 	
 	m_checkBoxRememberMyAnwer = new wxCheckBox( this, wxID_ANY, _("Remember my answer and dont ask me again"), wxDefaultPosition, wxDefaultSize, 0 );
-	mainSizer->Add( m_checkBoxRememberMyAnwer, 0, wxALL, 5 );
 	
-	m_staticline = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	mainSizer->Add( m_staticline, 0, wxEXPAND | wxALL, 5 );
+	mainSizer->Add( m_checkBoxRememberMyAnwer, 0, wxALL, 5 );
 	
 	wxBoxSizer* buttonSizer;
 	buttonSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -51,7 +49,7 @@ ThreeButtonBaseDlg::ThreeButtonBaseDlg( wxWindow* parent, wxWindowID id, const w
 	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttonSizer->Add( m_buttonCancel, 0, wxALL, 5 );
 	
-	mainSizer->Add( buttonSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	mainSizer->Add( buttonSizer, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -68,5 +66,4 @@ ThreeButtonBaseDlg::~ThreeButtonBaseDlg()
 	m_buttonYes->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ThreeButtonBaseDlg::OnButtonYes ), NULL, this );
 	m_buttonNo->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ThreeButtonBaseDlg::OnButtonNo ), NULL, this );
 	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ThreeButtonBaseDlg::OnButtonCancel ), NULL, this );
-	
 }

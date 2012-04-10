@@ -11,8 +11,8 @@
 class WXDLLIMPEXP_SDK BitmapLoader 
 {
 	wxFileName                              m_zipPath;
-	std::map<wxString, wxBitmap>            m_toolbarsBitmaps;
-	std::map<wxString, wxString>            m_manifest;
+	static std::map<wxString, wxBitmap>     m_toolbarsBitmaps;
+	static std::map<wxString, wxString>     m_manifest;
 	std::map<FileExtManager::FileType, int> m_fileIndexMap;
 	bool                                    m_bMapPopulated;
 	
@@ -20,7 +20,7 @@ protected:
 	void AddImage(int index, FileExtManager::FileType type);
 	
 public:
-	BitmapLoader(const wxString &zipName);
+	BitmapLoader();
 	~BitmapLoader();
 	
 	/**

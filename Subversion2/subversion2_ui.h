@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -18,10 +18,10 @@
 #include <wx/string.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
-#include <wx/splitter.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/checklst.h>
+#include <wx/splitter.h>
 #include <wx/choice.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -50,26 +50,16 @@ class SubversionPageBase : public wxPanel
 	private:
 	
 	protected:
-		wxSplitterWindow* m_splitter2;
-		wxPanel* m_panel7;
 		wxTreeCtrl* m_treeCtrl;
-		wxPanel* m_lowerPane;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnItemActivated( wxTreeEvent& event ) { event.Skip(); }
-		virtual void OnTreeMenu( wxTreeEvent& event ) { event.Skip(); }
+		virtual void OnItemActivated( wxTreeEvent& event ){ event.Skip(); }
+		virtual void OnTreeMenu( wxTreeEvent& event ){ event.Skip(); }
 		
 	
 	public:
-		
 		SubversionPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~SubversionPageBase();
-		
-		void m_splitter2OnIdle( wxIdleEvent& )
-		{
-			m_splitter2->SetSashPosition( 400 );
-			m_splitter2->Disconnect( wxEVT_IDLE, wxIdleEventHandler( SubversionPageBase::m_splitter2OnIdle ), NULL, this );
-		}
 	
 };
 
@@ -98,19 +88,18 @@ class CommitDialogBase : public wxDialog
 		wxButton* m_button3;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnChoiceMessage( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnChoiceMessage( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:
-		
 		CommitDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Commit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~CommitDialogBase();
-		
 		void m_splitter1OnIdle( wxIdleEvent& )
 		{
-			m_splitter1->SetSashPosition( 145 );
-			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CommitDialogBase::m_splitter1OnIdle ), NULL, this );
+		m_splitter1->SetSashPosition( 145 );
+		m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CommitDialogBase::m_splitter1OnIdle ), NULL, this );
 		}
+		
 	
 };
 
@@ -134,7 +123,6 @@ class SvnCopyDialogBase : public wxDialog
 		wxButton* m_button5;
 	
 	public:
-		
 		SvnCopyDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create Svn Tag"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 575,315 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SvnCopyDialogBase();
 	
@@ -151,7 +139,6 @@ class SvnShellBase : public wxPanel
 		wxScintilla* m_sci;
 	
 	public:
-		
 		SvnShellBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
 		~SvnShellBase();
 	
@@ -174,7 +161,6 @@ class SvnLoginDialogBase : public wxDialog
 		wxButton* m_button7;
 	
 	public:
-		
 		SvnLoginDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Login"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~SvnLoginDialogBase();
 	
@@ -219,16 +205,15 @@ class SvnPreferencesDialogBase : public wxDialog
 		wxButton* m_button9;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnBrowseSvnExe( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnUseExternalDiffUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnBrowseDiffViewer( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnBrowseSSHClient( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnAddRevisionMacroUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnBrowseSvnExe( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnUseExternalDiffUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnBrowseDiffViewer( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnBrowseSSHClient( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnAddRevisionMacroUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnButtonOK( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:
-		
 		SvnPreferencesDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Subversion Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SvnPreferencesDialogBase();
 	
@@ -255,7 +240,6 @@ class SvnInfoDialog : public wxDialog
 		wxTextCtrl* m_textCtrlRevision;
 		wxTextCtrl* m_textCtrlAuthor;
 		wxTextCtrl* m_textCtrlDate;
-		
 		SvnInfoDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Info"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~SvnInfoDialog();
 	
@@ -280,14 +264,13 @@ class SvnCheckoutDialogBase : public wxDialog
 		wxButton* m_button15;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnCheckoutDirectoryText( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnBrowseDirectory( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnOK( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnOkUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void OnCheckoutDirectoryText( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnBrowseDirectory( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnOK( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnOkUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		
 	
 	public:
-		
 		SvnCheckoutDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Checkout"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SvnCheckoutDialogBase();
 	
@@ -312,7 +295,6 @@ class SvnLogDialog : public wxDialog
 		wxTextCtrl* m_from;
 		wxTextCtrl* m_to;
 		wxCheckBox* m_compact;
-		
 		SvnLogDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Log"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~SvnLogDialog();
 	
@@ -336,7 +318,6 @@ class DiffDialogBase : public wxDialog
 		wxButton* m_button19;
 	
 	public:
-		
 		DiffDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Diff..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~DiffDialogBase();
 	
@@ -353,11 +334,10 @@ class ChangeLogPageBase : public wxPanel
 		wxTextCtrl* m_textCtrl;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnURL( wxTextUrlEvent& event ) { event.Skip(); }
+		virtual void OnURL( wxTextUrlEvent& event ){ event.Skip(); }
 		
 	
 	public:
-		
 		ChangeLogPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
 		~ChangeLogPageBase();
 	
@@ -386,7 +366,6 @@ class SvnPropsBaseDlg : public wxDialog
 		wxButton* m_button22;
 	
 	public:
-		
 		SvnPropsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Properties..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SvnPropsBaseDlg();
 	
@@ -407,7 +386,6 @@ class PatchDlgBase : public wxDialog
 	public:
 		wxFilePickerCtrl* m_filePicker;
 		wxRadioBox* m_radioBoxEOLPolicy;
-		
 		PatchDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select patch file:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~PatchDlgBase();
 	
@@ -430,13 +408,12 @@ class SvnSelectLocalRepoBase : public wxDialog
 		wxButton* m_button26;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnPathSelected( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnPathActivated( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnMenu( wxMouseEvent& event ) { event.Skip(); }
+		virtual void OnPathSelected( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnPathActivated( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnMenu( wxMouseEvent& event ){ event.Skip(); }
 		
 	
 	public:
-		
 		SvnSelectLocalRepoBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Local Repository:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SvnSelectLocalRepoBase();
 	

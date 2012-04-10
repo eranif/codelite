@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "wx/tokenzr.h"
+#include "wx/tokenzr.h"
 #include "procutils.h"
 #include "winprocess.h"
 
@@ -401,7 +401,7 @@ void ProcUtils::GetChildren(long pid, std::vector<long> &proclist)
 #endif
 }
 
-bool ProcUtils::Shell()
+bool ProcUtils::Shell(const wxString &programConsoleCommand)
 {
 	wxString cmd;
 #ifdef __WXMSW__
@@ -416,18 +416,50 @@ bool ProcUtils::Shell()
 	wxString path = wxGetCwd();
 	cmd = wxString( wxT("osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script with command \"cd ") + path + wxT("\"' -e 'end tell'") );
 #else //non-windows
-	//try to locate the default terminal
+	//try to locate the configured terminal
 	wxString terminal;
 	wxString where;
-	if (Locate(wxT("gnome-terminal"), where)) {
+    wxArrayString tokens;
+    wxArrayString configuredTerminal;
+	/*if (Locate(wxT("gnome-terminal"), where)) {
 		terminal = where;
 	} else if (Locate(wxT("konsole"), where)) {
 		wxString path = wxGetCwd();
 		terminal << where << wxT(" --workdir \"") << path << wxT("\"");
+    } else if (Locate(wxT("terminal"), where)) {
+		terminal = where;
+    } else if (Locate(wxT("lxterminal"), where)) {
+		terminal = where;
 	} else if (Locate(wxT("xterm"), where)) {
 		terminal = where;
 	}
-	cmd = terminal;
+	cmd = terminal;*/
+    terminal = wxT ( "xterm" );
+    if ( !programConsoleCommand.IsEmpty() ) {
+        tokens = wxStringTokenize ( programConsoleCommand, wxT ( " " ), wxTOKEN_STRTOK );
+        if ( !tokens.IsEmpty() ) {
+            configuredTerminal = wxStringTokenize ( tokens.Item(0), wxT ( "/" ), wxTOKEN_STRTOK );
+            if ( !configuredTerminal.IsEmpty() ) {
+                terminal = configuredTerminal.Last();
+                tokens.Clear();
+                configuredTerminal.Clear();
+            }
+        }
+    }
+    if ( Locate ( terminal, where ) ) {
+        if ( terminal == wxT("konsole") ) {
+            wxString path = wxGetCwd();
+            terminal << where << wxT(" --workdir \"") << path << wxT("\"");
+        }
+        else {
+            terminal = where;
+        }
+	}
+    else {
+        return false;
+    }
+    cmd = terminal;
+    terminal.Clear();
 #endif
 	return wxExecute(cmd, wxEXEC_ASYNC) != 0;
 }
@@ -467,7 +499,7 @@ void ProcUtils::SafeExecuteCommand(const wxString &command, wxArrayString &outpu
 	// wait for the process to terminate
 	wxString tmpbuf;
 	wxString buff;
-	
+
 	while (proc->IsAlive()) {
 		tmpbuf.Clear();
 		proc->Read(tmpbuf);
@@ -475,7 +507,7 @@ void ProcUtils::SafeExecuteCommand(const wxString &command, wxArrayString &outpu
 		wxThread::Sleep(100);
 	}
 	tmpbuf.Clear();
-	
+
 	// Read any unread output
 	proc->Read(tmpbuf);
 	while( !tmpbuf.IsEmpty() ) {

@@ -395,7 +395,7 @@ void FileExplorerTree::OnOpenShell(wxCommandEvent &event)
 	// Apply the environment before launching the console
 	EnvSetter env;
 
-	if (!ProcUtils::Shell()) {
+	if (!ProcUtils::Shell( EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand() )) {
 		wxMessageBox(_("Failed to load shell terminal"), _("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}

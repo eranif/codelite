@@ -582,7 +582,7 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
 	long value(0);
 	EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), value);
 	m_highlightWord = (bool)value;
-	
+
 	m_statusbarTimer = new StatusbarTimer(this);
 
 	CreateGUIControls();
@@ -706,7 +706,7 @@ void clMainFrame::Initialize(bool loadLastSession)
 
 	// Keep the current layout before loading the perspective from the disk
 	m_theFrame->m_defaultLayout = m_theFrame->m_mgr.SavePerspective();
-	
+
 	// Save the current layout as the "Default" layout (unless we already got one ...)
 	ManagerST::Get()->GetPerspectiveManager().SavePerspectiveIfNotExists(NORMAL_LAYOUT);
 
@@ -766,7 +766,7 @@ void clMainFrame::CreateGUIControls(void)
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,            frameColor2);
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,     wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTIONTEXT));
 #endif
-	
+
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_SASH_COLOUR,                      DrawingUtils::GetPanelBgColour());
 	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR,                DrawingUtils::GetPanelBgColour());
 
@@ -784,7 +784,7 @@ void clMainFrame::CreateGUIControls(void)
 	CreateViewAsSubMenu();
 	CreateRecentlyOpenedWorkspacesMenu();
 	DoUpdatePerspectiveMenu();
-	
+
 	m_DPmenuMgr = new DockablePaneMenuManager(GetMenuBar(), &m_mgr);
 
 	//---------------------------------------------
@@ -1254,7 +1254,7 @@ void clMainFrame::CreateNativeToolbar24()
 
 	SetToolBar(tb);
 	tb->Realize();
-	
+
 }
 
 void clMainFrame::CreateToolbars16()
@@ -2511,10 +2511,10 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 		if ( bs ) {
 			wxString jobs;
 			jobs << cpus;
-			
+
 			long dontPromptForCPUFix(0);
 			EditorConfigST::Get()->GetLongValue(wxT("AdjustCPUNumber"), dontPromptForCPUFix);
-			
+
 			if ( bs->GetToolJobs() != jobs && !dontPromptForCPUFix) {
 
 				ButtonDetails btn1;
@@ -2522,9 +2522,9 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 				btn1.commandId   = XRCID("update_num_builders_count");
 				btn1.window      = this;
 
-				GetMainBook()->ShowMessage(_("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), 
+				GetMainBook()->ShowMessage(_("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"),
 											true,
-											PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/settings")), 
+											PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/settings")),
 											btn1,
 											ButtonDetails(),
 											ButtonDetails(),
@@ -2583,34 +2583,34 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 				}
 			}
 		}
-		
+
 		///////////////////////////////////////////////////////////////////////
-		// Incase CLANG search paths is empty, auto-populate it with 
+		// Incase CLANG search paths is empty, auto-populate it with
 		// system defaults
-		
+
 		wxString clangSearchPaths = m_tagsOptionsData.GetClangSearchPaths();
 		clangSearchPaths.Trim().Trim(false);
 		if(clangSearchPaths.IsEmpty()) {
-			
+
 			IncludePathLocator locator(PluginManager::Get());
 			wxArrayString paths, excludes;
 			locator.Locate(paths, excludes, false);
-			
+
 			if(paths.IsEmpty() == false) {
 				CL_DEBUG(wxT("Settings clang default search paths to:"));
 				for(size_t i=0; i<paths.GetCount(); i++) {
 					CL_DEBUG(wxT("%s"), paths.Item(i).c_str());
 					clangSearchPaths << paths.Item(i) << wxT("\n");
 				}
-				
+
 				if(!clangSearchPaths.IsEmpty())
 					clangSearchPaths.RemoveLast();
-				
-				
+
+
 				m_tagsOptionsData.SetClangSearchPaths(clangSearchPaths);
 			}
 		}
-		
+
 		/////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////
 
@@ -3210,9 +3210,9 @@ void clMainFrame::OnAppActivated(wxActivateEvent &e)
 	if (m_theFrame && e.GetActive()) {
 		m_theFrame->ReloadExternallyModifiedProjectFiles();
 		m_theFrame->GetMainBook()->ReloadExternallyModified(true);
-		
+
 	} else if(m_theFrame) {
-		
+
 		LEditor *editor = GetMainBook()->GetActiveEditor();
 		if(editor) {
 			// we are loosing the focus
@@ -3220,7 +3220,7 @@ void clMainFrame::OnAppActivated(wxActivateEvent &e)
 			editor->HideCompletionBox();
 		}
 	}
-	
+
 	e.Skip();
 }
 
@@ -3833,8 +3833,8 @@ void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
 
 		// Apply the environment variabels before opening the shell
 		EnvSetter setter;
-		if (!ProcUtils::Shell()) {
-			wxLogMessage(wxString::Format(wxT("Failed to open shell at '%s'"), filepath.c_str()));
+		if (!ProcUtils::Shell( EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand() )) {
+			wxMessageBox(wxString::Format(wxT("Failed to open shell at '%s'"), filepath.c_str()), _("CodeLite"), wxICON_WARNING|wxOK);
 		}
 	}
 }
@@ -4081,13 +4081,13 @@ void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
 	TagsManager::RetagType type = TagsManager::Retag_Quick_No_Scan;
 	if(event.GetId() == XRCID("retag_workspace"))
 		type = TagsManager::Retag_Quick;
-		
+
 	else if(event.GetId() == XRCID("full_retag_workspace"))
 		type = TagsManager::Retag_Full;
-		
+
 	else if(event.GetId() == XRCID("retag_workspace_no_includes"))
 		type = TagsManager::Retag_Quick_No_Scan;
-		
+
 	ManagerST::Get()->RetagWorkspace(type);
 }
 
@@ -4110,7 +4110,7 @@ void clMainFrame::OnShowFullScreen(wxCommandEvent& e)
 void clMainFrame::OnSetStatusMessage(wxCommandEvent& e)
 {
 	CHECK_SHUTDOWN();
-	
+
 	wxString msg = e.GetString();
 	int col = e.GetInt();
 	int seconds_to_live = e.GetId();
@@ -4367,12 +4367,12 @@ void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 
 	} else {
 		ManagerST::Get()->GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
-		
+
 		// Update the current perspective
 		if(ManagerST::Get()->GetPerspectiveManager().IsDefaultActive()) {
 			ManagerST::Get()->GetPerspectiveManager().SavePerspective();
 		}
-		
+
 	}
 }
 
@@ -4557,7 +4557,7 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 
 	m_mgr.LoadPerspective(m_defaultLayout, false);
 	UpdateAUI();
-	
+
 	// Save the current layout as the 'Default' layout
 	ManagerST::Get()->GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
 }

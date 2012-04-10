@@ -222,7 +222,7 @@ Manager::~Manager ( void )
 	SearchThreadST::Free();
 	MenuManager::Free();
 	EnvironmentConfig::Release();
-	
+
 #if HAS_LIBCLANG
 	ClangCodeCompletion::Release();
 #endif
@@ -820,13 +820,13 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
 			continue;
 		parsingRequest->_workspaceFiles.push_back( projectFiles.at(i).GetFullPath().mb_str(wxConvUTF8).data() );
 	}
-	
+
 	if(parsingRequest->_workspaceFiles.empty()) {
 		SetRetagInProgress(false);
 		delete parsingRequest;
 		return;
 	}
-	
+
 	if ( type == TagsManager::Retag_Full || type == TagsManager::Retag_Quick ) {
 		parsingRequest->setType(ParseRequest::PR_PARSEINCLUDES);
 		parsingRequest->setDbFile(TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str());
@@ -834,14 +834,14 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
 		parsingRequest->_quickRetag = (type == TagsManager::Retag_Quick);
 		ParseThreadST::Get()->Add ( parsingRequest );
 		clMainFrame::Get()->SetStatusMessage(_("Scanning for include files to parse..."), 0);
-		
+
 	} else if ( type == TagsManager::Retag_Quick_No_Scan ) {
 		parsingRequest->setType(ParseRequest::PR_PARSE_FILE_NO_INCLUDES);
 		parsingRequest->setDbFile(TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str());
 		parsingRequest->_evtHandler = this;
 		parsingRequest->_quickRetag = true;
 		ParseThreadST::Get()->Add ( parsingRequest );
-		
+
 	}
 }
 
@@ -1412,7 +1412,7 @@ void Manager::ToggleOutputPane(bool hide)
 bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 {
 	clMainFrame::Get()->ViewPane(wxT("Output View"), true);
-	
+
 	// make the output pane visible
 	ToggleOutputPane( false );
 
@@ -2000,10 +2000,34 @@ void Manager::DbgStart ( long attachPid )
 
 #if defined(__WXGTK__)
 	wxString where;
-	if ( !ExeLocator::Locate ( wxT ( "xterm" ), where ) ) {
-		wxMessageBox ( _( "Failed to locate 'xterm' application required by CodeLite, please install it and try again!" ), _("CodeLite" ), wxOK|wxCENTER|wxICON_WARNING, clMainFrame::Get() );
+    wxString terminal;
+    wxArrayString tokens;
+    wxArrayString configuredTerminal;
+	/*if ( !ExeLocator::Locate ( wxT ( "gnome-terminal" ), where ) &&
+         !ExeLocator::Locate ( wxT ( "konsole" ), where )        &&
+         !ExeLocator::Locate ( wxT ( "terminal" ), where )       &&
+         !ExeLocator::Locate ( wxT ( "lxterminal" ), where )     &&
+         !ExeLocator::Locate ( wxT ( "xterm" ), where ) ) {
+		wxMessageBox ( _( "Failed to locate any terminal application required by CodeLite, please install one and try again!" ), _("CodeLite" ), wxOK|wxCENTER|wxICON_WARNING, clMainFrame::Get() );
+		return;
+	}*/
+    terminal = wxT ( "xterm" );
+    if ( !EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand().IsEmpty() ) {
+        tokens = wxStringTokenize ( EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand(), wxT ( " " ), wxTOKEN_STRTOK );
+        if ( !tokens.IsEmpty() ) {
+            configuredTerminal = wxStringTokenize ( tokens.Item(0), wxT ( "/" ), wxTOKEN_STRTOK );
+            if ( !configuredTerminal.IsEmpty() ) {
+                terminal = configuredTerminal.Last();
+                tokens.Clear();
+                configuredTerminal.Clear();
+            }
+        }
+    }
+    if ( !ExeLocator::Locate ( terminal, where ) ) {
+		wxMessageBox ( _( "Failed to locate the configured and default terminal application required by CodeLite, please install it or check your configuration!" ), _("CodeLite" ), wxOK|wxCENTER|wxICON_WARNING, clMainFrame::Get() );
 		return;
 	}
+    terminal.Clear();
 #endif
 
 	if ( attachPid == 1 ) { //attach to process
@@ -3293,12 +3317,12 @@ bool Manager::UpdateParserPaths(bool notify)
 			projectIncludePaths = wxStringTokenize(projSearchPaths, wxT("\r\n"), wxTOKEN_STRTOK);
 		}
 	}
-	
+
 	for(size_t i=0; i<projectIncludePaths.GetCount(); i++) {
-		projectIncludePaths.Item(i) = MacroManager::Instance()->Expand(projectIncludePaths.Item(i), 
+		projectIncludePaths.Item(i) = MacroManager::Instance()->Expand(projectIncludePaths.Item(i),
 																	   PluginManager::Get(), GetActiveProjectName());
 	}
-	
+
 	// Update the parser thread with the new paths
 	wxArrayString globalIncludePath, uniExcludePath;
 	TagsOptionsData tod = clMainFrame::Get()->GetTagsOptions();

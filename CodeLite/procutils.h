@@ -56,7 +56,7 @@ public:
 	static wxString GetProcessNameByPid(long pid);
 	static void GetProcessList(std::vector<ProcessEntry> &proclist);
 	static void GetChildren(long pid, std::vector<long> &children);
-	static bool Shell();
+	static bool Shell(const wxString& programConsoleCommand);
 	static bool Locate(const wxString &name, wxString &where);
 
 	/**

@@ -36,6 +36,7 @@
 #include "editor_config.h"
 #include "wx_xml_compatibility.h"
 #include "manager.h"
+#include "exelocator.h"
 #include "macros.h"
 #include "stack_walker.h"
 #include "procutils.h"
@@ -226,6 +227,8 @@ static void massCopy(const wxString &sourceDir, const wxString &spec, const wxSt
 static void WaitForDebugger(int signo)
 {
 	wxString msg;
+    wxString where;
+
 	msg << wxT("codelite crashed: you may attach to it using gdb\n")
 	    << wxT("or let it crash silently..\n")
 	    << wxT("Attach debugger?\n");
@@ -238,7 +241,19 @@ static void WaitForDebugger(int signo)
 
 		char command[256];
 		memset (command, 0, sizeof(command));
-		sprintf(command, "xterm -T 'gdb' -e 'gdb -p %d'", getpid());
+
+        if (ExeLocator::Locate(wxT("gnome-terminal"), where)) {
+            sprintf(command, "gnome-terminal -T 'gdb' -e 'gdb -p %d'", getpid());
+        } else if (ExeLocator::Locate(wxT("konsole"), where)) {
+            sprintf(command, "konsole -T 'gdb' -e 'gdb -p %d'", getpid());
+        } else if (ExeLocator::Locate(wxT("terminal"), where)) {
+            sprintf(command, "terminal -T 'gdb' -e 'gdb -p %d'", getpid());
+        } else if (ExeLocator::Locate(wxT("lxterminal"), where)) {
+            sprintf(command, "lxterminal -T 'gdb' -e 'gdb -p %d'", getpid());
+        } else {
+            sprintf(command, "xterm -T 'gdb' -e 'gdb -p %d'", getpid());
+        }
+
 		if(system (command) == 0) {
 			signal(signo, SIG_DFL);
 			raise(signo);
@@ -912,11 +927,11 @@ wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxS
 void CodeLiteApp::OnAppAcitvated(wxActivateEvent& e)
 {
     if(e.GetActive()) {
-        
+
         if(clMainFrame::Get()) {
             SetTopWindow(clMainFrame::Get());
         }
-        
+
         if(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsWorkspaceClosing()) {
             // Retag the workspace the light way
             ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick_No_Scan);

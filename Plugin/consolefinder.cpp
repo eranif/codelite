@@ -157,6 +157,10 @@ wxString ConsoleFinder::GetConsoleName()
 		terminal = wxT("gnome-terminal -e ");
 	} else if (ExeLocator::Locate(wxT("konsole"), where)) {
 		terminal = wxT("konsole");
+    } else if (ExeLocator::Locate(wxT("terminal"), where)) {
+		terminal = wxT("terminal -e");
+    } else if (ExeLocator::Locate(wxT("lxterminal"), where)) {
+		terminal = wxT("lxterminal -e");
 	} else if (ExeLocator::Locate(wxT("xterm"), where)) {
 		terminal = wxT("xterm -e ");
 	}

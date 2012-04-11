@@ -263,7 +263,16 @@ void Subversion2::UnPlug()
 	EventNotifier::Get()->Disconnect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, wxCommandEventHandler(Subversion2::OnGetCompileLine), NULL, this);
 
 	m_subversionView->DisconnectEvents();
-	//GetManager()->GetDockingManager()->DetachPane(m_subversionView->GetSubversionConsole());
+
+	// before this plugin is un-plugged we must remove the tab we added
+	for (size_t i=0; i<m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
+		if (GetConsole() == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
+			m_mgr->GetOutputPaneNotebook()->RemovePage(i);
+			GetConsole()->Destroy();
+			break;
+		}
+	}
+	
 	
 	// Remove the tab pined to the workspcae pane
 	size_t index(Notebook::npos);

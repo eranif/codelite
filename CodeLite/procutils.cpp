@@ -449,6 +449,7 @@ bool ProcUtils::Shell(const wxString &programConsoleCommand)
     if ( Locate ( terminal, where ) ) {
         if ( terminal == wxT("konsole") ) {
             wxString path = wxGetCwd();
+			terminal.Clear();
             terminal << where << wxT(" --workdir \"") << path << wxT("\"");
         }
         else {

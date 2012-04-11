@@ -243,7 +243,7 @@ static void WaitForDebugger(int signo)
 		memset (command, 0, sizeof(command));
 
         if (ExeLocator::Locate(wxT("gnome-terminal"), where)) {
-            sprintf(command, "gnome-terminal -T 'gdb' -e 'gdb -p %d'", getpid());
+            sprintf(command, "gnome-terminal -t 'gdb' -e 'gdb -p %d'", getpid());
         } else if (ExeLocator::Locate(wxT("konsole"), where)) {
             sprintf(command, "konsole -T 'gdb' -e 'gdb -p %d'", getpid());
         } else if (ExeLocator::Locate(wxT("terminal"), where)) {

@@ -226,7 +226,6 @@ void FileExplorerTree::OnContextMenu(wxTreeEvent &event)
 {
 	wxTreeItemId item = event.GetItem();
 	if (item.IsOk()) {
-		SelectItem(item);
 		if (m_rclickMenu) {
 
 			// let the plugins hook their content. HookPopupMenu can work only once

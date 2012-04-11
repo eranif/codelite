@@ -11,6 +11,7 @@
 #include "processreaderthread.h"
 #include "subversion2.h"
 #include "lexer_configuration.h"
+#include "notebook_ex.h"
 
 //-------------------------------------------------------------
 BEGIN_EVENT_TABLE(SvnConsole, SvnShellBase)
@@ -149,6 +150,13 @@ bool SvnConsole::IsEmpty()
 
 void SvnConsole::EnsureVisible()
 {
+	Notebook* book = m_plugin->GetManager()->GetOutputPaneNotebook();
+	for(size_t i=0; i<book->GetPageCount(); i++) {
+		if(this == book->GetPage(i)) {
+			book->SetSelection(i);
+			break;
+		}
+	}
 }
 
 void SvnConsole::DoProcessNextCommand()

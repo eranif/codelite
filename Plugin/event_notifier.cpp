@@ -1,4 +1,5 @@
 #include "event_notifier.h"
+#include <wx/app.h>
 
 static EventNotifier *eventNotifier = NULL;
 

@@ -45,7 +45,8 @@ void SvnXML::GetFiles(const wxString &input,
 					  wxArrayString  &unversionedFiles,
 					  wxArrayString  &newFiles,
 					  wxArrayString  &deletedFiles,
-					  wxArrayString  &lockedFiles)
+					  wxArrayString  &lockedFiles,
+					  wxArrayString  &ignoredFiles)
 {
 	// First column information:
 	//
@@ -85,6 +86,9 @@ void SvnXML::GetFiles(const wxString &input,
 		wxChar ch1 = statusLine.GetChar(0);
 		wxChar ch6 = statusLine.GetChar(5);
 		switch(ch1) {
+		case 'I':
+			ignoredFiles.Add(filename);
+			break;
 		case 'A':
 			newFiles.Add(filename);
 			break;

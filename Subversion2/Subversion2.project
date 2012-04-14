@@ -15,6 +15,10 @@
     <File Name="svn_console.cpp"/>
     <File Name="subversion_password_db.cpp"/>
     <File Name="svn_local_properties.cpp"/>
+    <File Name="svn_file_explorer_traverser.h"/>
+    <File Name="svn_file_explorer_traverser.cpp"/>
+    <File Name="svn_overlay_tool.h"/>
+    <File Name="svn_overlay_tool.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="subversion2.h"/>

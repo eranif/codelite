@@ -69,6 +69,8 @@
     <File Name="window_locker.h"/>
     <File Name="event_notifier.h"/>
     <File Name="event_notifier.cpp"/>
+    <File Name="wx_tree_traverser.h"/>
+    <File Name="wx_tree_traverser.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Builders">
     <File Name="builder.h"/>

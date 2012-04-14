@@ -1,8 +1,11 @@
 #include <wx/app.h>
 #include "event_notifier.h"
+#include "svn_overlay_tool.h"
 #include "diff_dialog.h"
+#include "file_logger.h"
 #include "svn_checkout_dialog.h"
 #include "subversion2_ui.h"
+#include "wx_tree_traverser.h"
 #include <wx/settings.h>
 #include "svn_select_local_repo_dlg.h"
 #include <wx/filedlg.h>
@@ -32,7 +35,9 @@
 #include "workspace.h"
 #include "subversion2.h"
 #include "svn_console.h"
+#include "svn_file_explorer_traverser.h"
 #include "globals.h"
+#include "virtualdirtreectrl.h"
 
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 	EVT_UPDATE_UI(XRCID("svn_stop"),         SubversionView::OnStopUI)
@@ -79,24 +84,29 @@ SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
 	, m_plugin          ( plugin )
 	, m_simpleCommand   ( plugin )
 	, m_diffCommand     ( plugin )
+	, m_fileExplorerLastBaseImgIdx (-1)
 {
 	CreatGUIControls();
-	EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED,      wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),     NULL, this);
-	EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(SubversionView::OnWorkspaceClosed),     NULL, this);
-	EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,            wxCommandEventHandler(SubversionView::OnRefreshView),         NULL, this);
-	EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED,       wxCommandEventHandler(SubversionView::OnFileAdded  ),         NULL, this);
-	EventNotifier::Get()->Connect(wxEVT_FILE_RENAMED,          wxCommandEventHandler(SubversionView::OnFileRenamed),         NULL, this);
-	EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED,            wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),           NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,            wxCommandEventHandler(SubversionView::OnWorkspaceClosed),           NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,                  wxCommandEventHandler(SubversionView::OnRefreshView),               NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED,             wxCommandEventHandler(SubversionView::OnFileAdded  ),               NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_FILE_RENAMED,                wxCommandEventHandler(SubversionView::OnFileRenamed),               NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,       wxCommandEventHandler(SubversionView::OnActiveEditorChanged),       NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_CMD_FILE_EXP_ITEM_EXPANDING, wxCommandEventHandler(SubversionView::OnFileExplorerItemExpanding), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_FILE_EXP_REFRESHED,          wxCommandEventHandler(SubversionView::OnFileExplorerItemExpanding), NULL, this);
 }
 
 SubversionView::~SubversionView()
 {
-	EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED,      wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),     NULL, this);
-	EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(SubversionView::OnWorkspaceClosed),     NULL, this);
-	EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,            wxCommandEventHandler(SubversionView::OnRefreshView),         NULL, this);
-	EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED,       wxCommandEventHandler(SubversionView::OnFileAdded  ),         NULL, this);
-	EventNotifier::Get()->Disconnect(wxEVT_FILE_RENAMED,          wxCommandEventHandler(SubversionView::OnFileRenamed),         NULL, this);
-	EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED,            wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),           NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,            wxCommandEventHandler(SubversionView::OnWorkspaceClosed),           NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,                  wxCommandEventHandler(SubversionView::OnRefreshView),               NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED,             wxCommandEventHandler(SubversionView::OnFileAdded  ),               NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_FILE_RENAMED,                wxCommandEventHandler(SubversionView::OnFileRenamed),               NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,       wxCommandEventHandler(SubversionView::OnActiveEditorChanged),       NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_CMD_FILE_EXP_ITEM_EXPANDING, wxCommandEventHandler(SubversionView::OnFileExplorerItemExpanding), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_FILE_EXP_REFRESHED,          wxCommandEventHandler(SubversionView::OnFileExplorerItemExpanding), NULL, this);
 }
 
 void SubversionView::OnChangeRootDir( wxCommandEvent& event )
@@ -150,20 +160,20 @@ void SubversionView::CreatGUIControls()
 
 	// Assign the image list
 	BitmapLoader *bmpLoader = m_plugin->GetManager()->GetStdIcons();
-	
+
 	// Prepare a default image list which contains all the mimetypes knows to FileExtManager
 	wxImageList *imageList =  bmpLoader->MakeStandardMimeImageList();
-	
+
 	// Append the subversion unique icons
 	FOLDER_IMG_ID      = imageList->Add(bmpLoader->LoadBitmap(wxT("mime/16/folder" ) ));
 	MODIFIED_IMG_ID    = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/modified" ) ));
-	NEW_IMG_ID         = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/new" ) ));       
-	DELETED_IMG_ID     = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/deleted" ) ));   
-	CONFLICT_IMG_ID    = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/conflict" ) ));  
+	NEW_IMG_ID         = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/new" ) ));
+	DELETED_IMG_ID     = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/deleted" ) ));
+	CONFLICT_IMG_ID    = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/conflict" ) ));
 	UNVERSIONED_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/unversioned" ) ));
-	PROJECT_IMG_ID     = imageList->Add(bmpLoader->LoadBitmap(wxT("workspace/16/project") ) );   
+	PROJECT_IMG_ID     = imageList->Add(bmpLoader->LoadBitmap(wxT("workspace/16/project") ) );
 	WORKSPACE_IMG_ID   = imageList->Add(bmpLoader->LoadBitmap(wxT("workspace/16/workspace") ) );
-	LOCKED_IMG_ID      = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/locked" ) ) ); 
+	LOCKED_IMG_ID      = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/locked" ) ) );
 
 	m_treeCtrl->AssignImageList( imageList );
 
@@ -199,10 +209,10 @@ void SubversionView::CreatGUIControls()
 	wxSizer *sz = GetSizer();
 	sz->Insert(0, tb, 0, wxEXPAND);
 	tb->Realize();
-	
+
 	m_subversionConsole = new SvnConsole(m_plugin->GetManager()->GetOutputPaneNotebook(), m_plugin);
 	m_plugin->GetManager()->GetOutputPaneNotebook()->AddPage(m_subversionConsole, wxT("Subversion"), false, m_plugin->GetManager()->GetStdIcons()->LoadBitmap(wxT("subversion/16/svn")));
-	
+
 	DoRootDirChanged(wxGetCwd());
 	BuildTree();
 }
@@ -220,17 +230,28 @@ void SubversionView::BuildTree(const wxString& root)
 	DoChangeRootPathUI(root);
 
 	wxString command;
-	command << m_plugin->GetSvnExeName() << wxT(" status");
+	command << m_plugin->GetSvnExeName() << wxT(" --no-ignore status");
 	m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL), m_plugin);
 }
+
+void SubversionView::BuildExplorerTree(const wxString& root)
+{
+	if(root.IsEmpty())
+		return;
+
+	wxString command;
+	command << m_plugin->GetSvnExeName() << wxT(" --no-ignore status");
+	m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL, true, root), m_plugin);
+}
+
 
 void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
 {
 	event.Skip();
-	
+
 	// Workspace changes its directory to the workspace path, update the SVN path
 	wxString path = ::wxGetCwd();
-	
+
 	// Check if we got a customized directory
 	if(m_plugin->GetManager()->IsWorkspaceOpen()) {
 		wxString customizedPath = LocalWorkspaceST::Get()->GetCustomData(wxT("SubversionPath"));
@@ -238,7 +259,7 @@ void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
 			path = customizedPath;
 		}
 	}
-	
+
 	DoRootDirChanged(path);
 	BuildTree();
 }
@@ -255,34 +276,75 @@ void SubversionView::ClearAll()
 	m_treeCtrl->DeleteAllItems();
 }
 
-void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString& conflictedFiles, const wxArrayString& unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles, const wxArrayString& lockedFiles)
+static void DoAddArrayToMap(const wxArrayString &files, SvnFileExplorerTraverser::Map_t& mymap, int type, const wxString &rootDir)
 {
-#ifdef __WXMSW__
-	wxWindowUpdateLocker locker(m_treeCtrl);
-#else
-	clWindowUpdateLocker locker( m_treeCtrl );
-#endif
-
-	ClearAll();
-
-	// Add root node
-	wxString rootDir = DoGetCurRepoPath();
-	wxTreeItemId root = m_treeCtrl->AddRoot(rootDir, FOLDER_IMG_ID, FOLDER_IMG_ID, new SvnTreeData(SvnTreeData::SvnNodeTypeRoot, rootDir));
-
-	if(root.IsOk() == false)
-		return;
-
-	DoAddNode(svnMODIFIED_FILES,    MODIFIED_IMG_ID,    SvnTreeData::SvnNodeTypeModifiedRoot,    modifiedFiles);
-	DoAddNode(svnADDED_FILES,       NEW_IMG_ID,         SvnTreeData::SvnNodeTypeAddedRoot,       newFiles);
-	DoAddNode(svnDELETED_FILES,     DELETED_IMG_ID,     SvnTreeData::SvnNodeTypeDeletedRoot,     deletedFiles);
-	DoAddNode(svnCONFLICTED_FILES,  CONFLICT_IMG_ID,    SvnTreeData::SvnNodeTypeConflictRoot,    conflictedFiles);
-	DoAddNode(svnLOCKED_FILES,      LOCKED_IMG_ID,      SvnTreeData::SvnNodeTypeLockedRoot,      lockedFiles);
-	DoAddNode(svnUNVERSIONED_FILES, UNVERSIONED_IMG_ID, SvnTreeData::SvnNodeTypeUnversionedRoot, unversionedFiles);
-
-	if (m_treeCtrl->ItemHasChildren(root)) {
-		m_treeCtrl->Expand(root);
+	for(size_t i=0; i<files.GetCount(); i++) {
+		SvnFileInfo fi;
+		wxFileName fn(files.Item(i));
+		fn.MakeAbsolute(rootDir);
+		fi.file = fn.GetFullPath();
+		fi.type = type;
+		mymap[fi.file] = fi;
 	}
-	DoLinkEditor();
+}
+
+void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString& conflictedFiles, const wxArrayString& unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles, const wxArrayString& lockedFiles, const wxArrayString& ignoreFiles, bool fileExplorerOnly, const wxString& sRootDir)
+{
+	wxString rootDir = sRootDir;
+	if(rootDir.IsEmpty())
+		rootDir = DoGetCurRepoPath();
+	
+	if( !fileExplorerOnly ) {
+		
+#ifdef __WXMSW__
+		wxWindowUpdateLocker locker(m_treeCtrl);
+#else
+		clWindowUpdateLocker locker( m_treeCtrl );
+#endif
+		ClearAll();
+
+		// Add root node
+		wxTreeItemId root = m_treeCtrl->AddRoot(rootDir, FOLDER_IMG_ID, FOLDER_IMG_ID, new SvnTreeData(SvnTreeData::SvnNodeTypeRoot, rootDir));
+
+		if(root.IsOk() == false)
+			return;
+
+		DoAddNode(svnMODIFIED_FILES,    MODIFIED_IMG_ID,    SvnTreeData::SvnNodeTypeModifiedRoot,    modifiedFiles);
+		DoAddNode(svnADDED_FILES,       NEW_IMG_ID,         SvnTreeData::SvnNodeTypeAddedRoot,       newFiles);
+		DoAddNode(svnDELETED_FILES,     DELETED_IMG_ID,     SvnTreeData::SvnNodeTypeDeletedRoot,     deletedFiles);
+		DoAddNode(svnCONFLICTED_FILES,  CONFLICT_IMG_ID,    SvnTreeData::SvnNodeTypeConflictRoot,    conflictedFiles);
+		DoAddNode(svnLOCKED_FILES,      LOCKED_IMG_ID,      SvnTreeData::SvnNodeTypeLockedRoot,      lockedFiles);
+		DoAddNode(svnUNVERSIONED_FILES, UNVERSIONED_IMG_ID, SvnTreeData::SvnNodeTypeUnversionedRoot, unversionedFiles);
+
+		if (m_treeCtrl->ItemHasChildren(root)) {
+			m_treeCtrl->Expand(root);
+		}
+		DoLinkEditor();
+	}
+	
+	DoCreateFileExplorerImages();
+
+	if(m_fileExplorerLastBaseImgIdx != -1) {
+		// Unified all the arrays into a single map
+		SvnFileExplorerTraverser::Map_t mymap;
+
+		wxVirtualDirTreeCtrl* fileExplorer = (wxVirtualDirTreeCtrl*) m_plugin->GetManager()->GetTree(TreeFileExplorer);
+		wxTreeItemId          feRootItem   = fileExplorer->GetItemByFullPath(rootDir);
+
+		DoAddArrayToMap(modifiedFiles,    mymap, SvnFileExplorerTraverser::Modified,    rootDir);
+		DoAddArrayToMap(newFiles,         mymap, SvnFileExplorerTraverser::New,         rootDir);
+		DoAddArrayToMap(deletedFiles,     mymap, SvnFileExplorerTraverser::Deleted,     rootDir);
+		DoAddArrayToMap(conflictedFiles,  mymap, SvnFileExplorerTraverser::Conflicted,  rootDir);
+		DoAddArrayToMap(lockedFiles,      mymap, SvnFileExplorerTraverser::Locked,      rootDir);
+		DoAddArrayToMap(unversionedFiles, mymap, SvnFileExplorerTraverser::Unversioned, rootDir);
+		DoAddArrayToMap(ignoreFiles,      mymap, SvnFileExplorerTraverser::Ignored,     rootDir);
+
+		CL_DEBUG(wxT("wxTreeTraverser started..."));
+		SvnFileExplorerTraverser traverser(fileExplorer, mymap, m_fileExplorerLastBaseImgIdx);
+		traverser.Traverse(feRootItem);
+		CL_DEBUG(wxT("wxTreeTraverser started...end"));
+
+	}
 }
 
 void SubversionView::DoAddNode(const wxString& title, int imgId, SvnTreeData::SvnNodeType nodeType, const wxArrayString& files)
@@ -304,16 +366,16 @@ void SubversionView::DoAddNode(const wxString& title, int imgId, SvnTreeData::Sv
 		for (size_t i=0; i<files.GetCount(); i++) {
 			wxFileName filename(files.Item(i));
 			wxTreeItemId folderParent = DoGetParentNode(files.Item(i), parent);
-			m_treeCtrl->AppendItem(folderParent, 
-								   filename.GetFullName(), 
-								   DoGetIconIndex(filename.GetFullName()), 
-								   DoGetIconIndex(filename.GetFullName()), 
-								   new SvnTreeData(SvnTreeData::SvnNodeTypeFile, files.Item(i)));
+			m_treeCtrl->AppendItem(folderParent,
+			                       filename.GetFullName(),
+			                       DoGetIconIndex(filename.GetFullName()),
+			                       DoGetIconIndex(filename.GetFullName()),
+			                       new SvnTreeData(SvnTreeData::SvnNodeTypeFile, files.Item(i)));
 		}
 
 		if ( nodeType != SvnTreeData::SvnNodeTypeUnversionedRoot) {
 			m_treeCtrl->Expand(parent);
-			
+
 			// Expand the top level children as well
 			wxTreeItemIdValue cookie;
 			wxTreeItemId child = m_treeCtrl->GetFirstChild(parent, cookie);
@@ -323,7 +385,7 @@ void SubversionView::DoAddNode(const wxString& title, int imgId, SvnTreeData::Sv
 				}
 				child = m_treeCtrl->GetNextChild(parent, cookie);
 			}
-			
+
 		}
 	}
 }
@@ -334,7 +396,7 @@ int SubversionView::DoGetIconIndex(const wxString& filename)
 	int iconIndex = m_plugin->GetManager()->GetStdIcons()->GetMimeImageId(filename);
 	if(iconIndex == wxNOT_FOUND)
 		iconIndex = m_plugin->GetManager()->GetStdIcons()->GetMimeImageId(wxT("file.txt")); // text file icon is the default
-		
+
 	return iconIndex;
 }
 
@@ -388,14 +450,14 @@ SvnTreeData::SvnNodeType SubversionView::DoGetSelectionType(const wxArrayTreeIte
 			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeModifiedRoot;
 			return m_selectionInfo.m_selectionType;
 		}
-		
+
 		if (data->GetType() == SvnTreeData::SvnNodeTypeFolder && items.GetCount() == 1) {
 			// populate the list of paths with all the conflicted paths
 			DoGetPaths( items.Item(i), m_selectionInfo.m_paths );
 			m_selectionInfo.m_selectionType = SvnTreeData::SvnNodeTypeFolder;
 			return m_selectionInfo.m_selectionType;
 		}
-		
+
 		if (type == SvnTreeData::SvnNodeTypeInvalid &&
 		    (data->GetType() == SvnTreeData::SvnNodeTypeFile || data->GetType() == SvnTreeData::SvnNodeTypeRoot)) {
 			type = data->GetType();
@@ -499,7 +561,7 @@ void SubversionView::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths
 	while ( item.IsOk() ) {
 		SvnTreeData *data = (SvnTreeData *)m_treeCtrl->GetItemData(item);
 		if (data) {
-			
+
 			if (data->GetFilepath().IsEmpty() == false && data->GetType() == SvnTreeData::SvnNodeTypeFile) {
 				paths.Add( data->GetFilepath() );
 			}
@@ -507,9 +569,8 @@ void SubversionView::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths
 			if (( data->GetType() == SvnTreeData::SvnNodeTypeAddedRoot    ||
 			      data->GetType() == SvnTreeData::SvnNodeTypeModifiedRoot ||
 			      data->GetType() == SvnTreeData::SvnNodeTypeDeletedRoot  ||
-				  data->GetType() == SvnTreeData::SvnNodeTypeFolder)      &&
-				  m_treeCtrl->ItemHasChildren(item)) 
-			{
+			      data->GetType() == SvnTreeData::SvnNodeTypeFolder)      &&
+			    m_treeCtrl->ItemHasChildren(item)) {
 				DoGetPaths(item, paths);
 			}
 		}
@@ -872,12 +933,12 @@ void SubversionView::OnItemActivated(wxTreeEvent& event)
 			paths.Add(/*DoGetCurRepoPath() + wxFileName::GetPathSeparator() + */data->GetFilepath());
 		}
 	}
-	
+
 	if(paths.IsEmpty()) {
 		event.Skip();
 		return;
 	}
-	
+
 	wxString loginString;
 	if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) {
 		return;
@@ -1096,21 +1157,21 @@ void SubversionView::DoRootDirChanged(const wxString& path)
 {
 	if(path == _("<No repository path is selected>")) {
 		DoChangeRootPathUI(path);
-		
+
 	} else {
-		
+
 		// If a workspace is opened, set this new path to the workspace
 		SvnSettingsData ssd = m_plugin->GetSettings();
-		
+
 		const wxArrayString &repos = ssd.GetRepos();
 		wxArrayString modDirs = repos;
 		if(modDirs.Index(path) == wxNOT_FOUND) {
 			modDirs.Add(path);
 		}
-		
+
 		ssd.SetRepos(modDirs);
 		m_plugin->SetSettings(ssd);
-		
+
 		if(m_plugin->GetManager()->IsWorkspaceOpen()) {
 			LocalWorkspaceST::Get()->SetCustomData(wxT("SubversionPath"), path);
 			LocalWorkspaceST::Get()->Flush();
@@ -1146,10 +1207,10 @@ wxTreeItemId SubversionView::DoFindChild(const wxTreeItemId& parent, const wxStr
 	}
 	// if we reached here, we did not find a tree node for this name
 	return m_treeCtrl->AppendItem(parent, // parent node
-						   name,   // text
-						   FOLDER_IMG_ID,      // folder icon
-						   FOLDER_IMG_ID, 
-						   new SvnTreeData(SvnTreeData::SvnNodeTypeFolder, curpath));
+	                              name,   // text
+	                              FOLDER_IMG_ID,      // folder icon
+	                              FOLDER_IMG_ID,
+	                              new SvnTreeData(SvnTreeData::SvnNodeTypeFolder, curpath));
 }
 
 void SubversionView::OnRename(wxCommandEvent& event)
@@ -1158,7 +1219,7 @@ void SubversionView::OnRename(wxCommandEvent& event)
 	for(size_t i=0; i<m_selectionInfo.m_paths.size(); i++) {
 		wxFileName oldname(DoGetCurRepoPath() + wxFileName::GetPathSeparator() + m_selectionInfo.m_paths.Item(i));
 		wxString newname = wxGetTextFromUser(_("New name:"), _("Svn rename..."), oldname.GetFullName());
-		
+
 		if(newname.IsEmpty() || newname == oldname.GetFullName())
 			continue;
 
@@ -1185,7 +1246,7 @@ wxTreeItemId SubversionView::DoFindFile(const wxTreeItemId& parent, const wxStri
 			return parent;
 		}
 	}
-	
+
 	if(m_treeCtrl->ItemHasChildren(parent)) {
 		wxTreeItemIdValue cookie;
 		wxTreeItemId child = m_treeCtrl->GetFirstChild(parent, cookie);
@@ -1199,3 +1260,76 @@ wxTreeItemId SubversionView::DoFindFile(const wxTreeItemId& parent, const wxStri
 	}
 	return wxTreeItemId();
 }
+
+void SubversionView::DoCreateFileExplorerImages()
+{
+	// Create new bitmaps for the FileExplorer tree
+	// The idea here is to add them in the order of the enum of the appearanced in the enum:
+	//
+	// enum {
+	//     Modified,
+	//     Locked,
+	//     Unversioned,
+	//     Conflicted,
+	//     Deleted,
+	//     New,
+	//     Ok
+	// };
+
+	if(m_fileExplorerLastBaseImgIdx == -1) {
+		wxVirtualDirTreeCtrl* fe = (wxVirtualDirTreeCtrl*)m_plugin->GetManager()->GetTree(TreeFileExplorer);
+		const std::vector<wxBitmap>& images  = fe->GetImages();
+		wxImageList *il = fe->GetImageList();
+		
+		if(!images.empty() && il) {
+			int baseImagesCount = images.size();
+			m_fileExplorerLastBaseImgIdx = baseImagesCount;
+			int idx;
+			for(int i=0; i<baseImagesCount; i++) {
+				idx = il->Add(SvnOverlayTool::Get().OKIcon(images.at(i)));
+			}
+			
+			for(int i=0; i<baseImagesCount; i++) {
+				idx = il->Add(SvnOverlayTool::Get().ModifiedIcon(images.at(i)));
+			}
+
+			for(int i=0; i<baseImagesCount; i++) {
+				idx = il->Add(SvnOverlayTool::Get().LockedIcon(images.at(i)));
+			}
+
+			for(int i=0; i<baseImagesCount; i++) {
+				idx = il->Add(SvnOverlayTool::Get().UnversionedIcon(images.at(i)));
+			}
+
+			for(int i=0; i<baseImagesCount; i++) {
+				idx = il->Add(SvnOverlayTool::Get().ConflictIcon(images.at(i)));
+			}
+
+			for(int i=0; i<baseImagesCount; i++) {
+				idx = il->Add(SvnOverlayTool::Get().DeletedIcon(images.at(i)));
+			}
+			
+			for(int i=0; i<baseImagesCount; i++) {
+				idx = il->Add(SvnOverlayTool::Get().NewIcon(images.at(i)));
+			}
+			wxUnusedVar(idx);
+		}
+		
+		//int newCount = il->GetImageCount();
+		//wxPrintf(wxT("%d\n"), newCount);
+	}
+}
+void SubversionView::OnFileExplorerItemExpanding(wxCommandEvent& e)
+{
+	e.Skip();
+	wxVirtualDirTreeCtrl *tree = (wxVirtualDirTreeCtrl *) m_plugin->GetManager()->GetTree(TreeFileExplorer);
+	wxTreeItemId *item = (wxTreeItemId*) e.GetClientData();
+	
+	if(tree && item && item->IsOk()) {
+		VdtcTreeItemBase* itemData = (VdtcTreeItemBase*)tree->GetItemData(*item);
+		if(itemData) {
+			this->BuildExplorerTree(itemData->GetFullpath());
+		}
+	}
+}
+

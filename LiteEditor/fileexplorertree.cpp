@@ -373,8 +373,11 @@ void FileExplorerTree::OnRefreshNode(wxCommandEvent &event)
 	DoGetSelections(items);
 
 	Freeze();
-	for(size_t i=0; i<items.GetCount(); i++)
-		DoReloadNode(items.Item(i));
+	for(size_t i=0; i<items.GetCount(); i++) {
+		wxTreeItemId item = items.Item(i);
+		DoReloadNode(item);
+		SendCmdEvent(wxEVT_FILE_EXP_REFRESHED, &item);
+	}
 	Thaw();
 }
 

@@ -93,6 +93,10 @@ enum {
 	wxEVT_FILE_EXP_INIT_DONE,
 	//clientData is NULL
 	wxEVT_FILE_EXP_REFRESHED,
+	
+	//clientData is the wxTreeItemId*
+	wxEVT_CMD_FILE_EXP_ITEM_EXPANDING,
+	
 	// an attempt to open a file using double click / ENTER was made
 	// on an item in the 'File Explorer' OR from the 'Workspace' tree
 	// clientData is the full path of the file (wxString*)
@@ -402,6 +406,7 @@ enum {
 	// User m_mgr->GetActiveEditor() to get the current editor Or
 	// IEditor* editor = dynamic_cast<IEditor*>(evt.GetEventObject());
 	// Hover position is set in the evt.GetInt()
+	// NOT IMPLEMENTED YET
 	wxEVT_CMD_DEBUGGER_TIP,
 
 	// codelite needs to know wether the user can interact with the

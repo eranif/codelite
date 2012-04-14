@@ -35,13 +35,7 @@ public:
 	SvnXML();
 	~SvnXML();
 
-	static void GetFiles(const wxString &input,
-						 wxArrayString  &modifiedFiles,
-						 wxArrayString  &conflictedFiles,
-						 wxArrayString  &unversionedFiles,
-						 wxArrayString  &newFiles,
-						 wxArrayString  &deletedFiles,
-						 wxArrayString  &lockedFiles);
+	static void GetFiles(const wxString& input, wxArrayString& modifiedFiles, wxArrayString& conflictedFiles, wxArrayString& unversionedFiles, wxArrayString& newFiles, wxArrayString& deletedFiles, wxArrayString& lockedFiles, wxArrayString& ignoredFiles);
 
 	static void GetSvnInfo(const wxString& input, SvnInfo &svnInfo);
 };

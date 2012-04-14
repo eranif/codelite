@@ -67,7 +67,8 @@ class SubversionView : public SubversionPageBase
 	SvnPageSelectionInfo m_selectionInfo;
 	wxString             m_curpath;
 	SvnConsole*          m_subversionConsole;
-
+	int                  m_fileExplorerLastBaseImgIdx;
+	
 public:
 	enum {
 	    SvnInfo_Tag,
@@ -86,6 +87,8 @@ protected:
 	void DoChangeRootPathUI       (const wxString &path);
 	void DoRootDirChanged    (const wxString &path);
 	wxString DoGetCurRepoPath() const ;
+	void DoCreateFileExplorerImages();
+	
 protected:
 	// Menu management
 	void         CreateFileMenu      (wxMenu *menu);
@@ -94,7 +97,7 @@ protected:
 	wxTreeItemId DoGetParentNode     (const wxString &filename, const wxTreeItemId& parent);
 	wxTreeItemId DoFindChild         (const wxTreeItemId& parent, const wxString &name, const wxString &curpath);
 	wxTreeItemId DoFindFile          (const wxTreeItemId& parent, const wxString &basepath, const wxString& fullpath);
-
+	
 protected:
 	// Handlers for SubversionPageBase events.
 	void OnChangeRootDir ( wxCommandEvent& event );
@@ -137,14 +140,14 @@ protected:
 	void OnLog                (wxCommandEvent &event);
 	void OnLock               (wxCommandEvent &event);
 	void OnUnLock             (wxCommandEvent &event);
-	void OnRootDirChanged     (wxCommandEvent& event);
 	void OnRename             (wxCommandEvent& event);
 
 	DECLARE_EVENT_TABLE()
 
 	void OnStopUI         (wxUpdateUIEvent &event);
 	void OnClearOuptutUI  (wxUpdateUIEvent &event);
-
+	void OnFileExplorerItemExpanding(wxCommandEvent &e);
+	
 public:
 	/** Constructor */
 	SubversionView( wxWindow* parent, Subversion2 *plugin);
@@ -154,9 +157,19 @@ public:
 		return m_subversionConsole;
 	}
 	void     DisconnectEvents();
-	void     UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString &conflictedFiles, const wxArrayString &unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles, const wxArrayString& lockedFiles);
+	void     UpdateTree(const wxArrayString& modifiedFiles, 
+						const wxArrayString &conflictedFiles, 
+						const wxArrayString &unversionedFiles, 
+						const wxArrayString& newFiles, 
+						const wxArrayString& deletedFiles, 
+						const wxArrayString& lockedFiles,
+						const wxArrayString& ignoreFiles,
+						bool fileExplorerOnly,
+						const wxString &rootDir);
 	void     BuildTree();
 	void     BuildTree(const wxString &root);
+	void     BuildExplorerTree(const wxString &root);
+	
 	wxString GetRootDir() const {
 		return DoGetCurRepoPath();
 	}

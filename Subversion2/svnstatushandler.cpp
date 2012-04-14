@@ -4,8 +4,10 @@
 #include "subversion2.h"
 #include "svnxml.h"
 
-SvnStatusHandler::SvnStatusHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner)
-		: SvnCommandHandler(plugin, commandId, owner)
+SvnStatusHandler::SvnStatusHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner, bool fileExplorerOnly, const wxString &rootDir)
+	: SvnCommandHandler(plugin, commandId, owner)
+	, m_fileExplorerOnly(fileExplorerOnly)
+	, m_rootDir(rootDir)
 {
 }
 
@@ -15,18 +17,15 @@ SvnStatusHandler::~SvnStatusHandler()
 
 void SvnStatusHandler::Process(const wxString& output)
 {
-//	GetPlugin()->GetShell()->AppendText(output);
-	wxArrayString modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles, lockedFiles;
-	SvnXML::GetFiles(output, modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles, lockedFiles);
-	
-// new code
-   modFiles.Sort();
-   conflictedFiles.Sort();
-   unversionedFiles.Sort();
-   newFiles.Sort();
-   deletedFiles.Sort();
-   lockedFiles.Sort();
-// end of new code
+	wxArrayString modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles, lockedFiles, ignoredFiles;
+	SvnXML::GetFiles(output, modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles, lockedFiles, ignoredFiles);
 
-	GetPlugin()->GetSvnView()->UpdateTree(modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles, lockedFiles);
+	modFiles.Sort();
+	conflictedFiles.Sort();
+	unversionedFiles.Sort();
+	newFiles.Sort();
+	deletedFiles.Sort();
+	lockedFiles.Sort();
+	ignoredFiles.Sort();
+	GetPlugin()->GetSvnView()->UpdateTree(modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles, lockedFiles, ignoredFiles, m_fileExplorerOnly, m_rootDir);
 }

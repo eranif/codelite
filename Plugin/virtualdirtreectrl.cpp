@@ -47,6 +47,7 @@
 #include "wx/xrc/xmlres.h"
 #include "globals.h"
 #include "bitmap_loader.h"
+#include "event_notifier.h"
 #include "plugin.h"
 
 //#define __PERFORMANCE
@@ -120,7 +121,7 @@ bool wxVirtualDirTreeCtrl::SetRootPath(const wxString &root, bool notify, int fl
 		OnSetRootPath(root);
 
 		// create a root item
-		start = OnCreateTreeItem(VDTC_TI_ROOT, root);
+		start = OnCreateTreeItem(VDTC_TI_ROOT, root, root);
 		if(start)
 		{
 			wxFileName path;
@@ -263,12 +264,11 @@ void wxVirtualDirTreeCtrl::GetFiles(VdtcTreeItemBase *parent, VdtcTreeItemBaseAr
 			while(bOk)
 			{
 				// TODO: Flag for double items
-
-				item = AddFileItem(fname);
+				fpath.SetFullName(fname);
+				item = AddFileItem(fname, fpath.GetFullPath());
 				if(item)
 				{
 					// fill it in, and marshall it by the user for info
-					fpath.SetFullName(fname);
 					if(OnAddFile(*item, fpath))
 						items.Add(item);
 					else
@@ -297,14 +297,14 @@ void wxVirtualDirTreeCtrl::GetDirectories(VdtcTreeItemBase *parent, VdtcTreeItem
 		bool bOk = fdir.GetFirst(&fname, VDTC_DIR_FILESPEC, wxDIR_DIRS | wxDIR_HIDDEN);
 		while(bOk)
 		{
+			fpath = path;
+			fpath.AppendDir(fname);
+				
 			// TODO: Flag for double items
-			item = AddDirItem(fname);
+			item = AddDirItem(fname, fpath.GetPath());
 			if(item)
 			{
 				// fill it in, and marshall it by the user for info
-				fpath = path;
-				fpath.AppendDir(fname);
-
 				if(OnAddDirectory(*item, fpath))
 					items.Add(item);
 				else
@@ -459,7 +459,7 @@ wxTreeItemId wxVirtualDirTreeCtrl::ExpandToPath(const wxFileName &path)
 		UnselectAll();
 		SelectItem(item);
         EnsureVisible(item);
-		SendCmdEvent(wxEVT_FILE_EXP_REFRESHED);
+		SendCmdEvent(wxEVT_FILE_EXP_REFRESHED, &item);
 	}
 	return item;
 }
@@ -596,7 +596,11 @@ void wxVirtualDirTreeCtrl::OnExpanding(wxTreeEvent &event)
 			// extract data element belonging to it, and scan.
 			ScanFromDir(t, GetFullPath(item), VDTC_MIN_SCANDEPTH);
 		}
+		
+		// Notify the plugins
+		EventNotifier::Get()->SendCommandEvent(wxEVT_CMD_FILE_EXP_ITEM_EXPANDING, &item);
 	}
+	
 	// be kind, and let someone else also handle this event
 	event.Skip();
 }
@@ -614,16 +618,16 @@ void wxVirtualDirTreeCtrl::DoReloadNode(const wxTreeItemId &item)
 	}
 }
 
-VdtcTreeItemBase *wxVirtualDirTreeCtrl::AddFileItem(const wxString &name)
+VdtcTreeItemBase *wxVirtualDirTreeCtrl::AddFileItem(const wxString &name, const wxString &fullpath)
 {
 	// call the file item node create method
-	return OnCreateTreeItem(VDTC_TI_FILE, name);
+	return OnCreateTreeItem(VDTC_TI_FILE, name, fullpath);
 }
 
-VdtcTreeItemBase *wxVirtualDirTreeCtrl::AddDirItem(const wxString &name)
+VdtcTreeItemBase *wxVirtualDirTreeCtrl::AddDirItem(const wxString& name, const wxString& fullpath)
 {
 	// call the dir item node create method
-	return OnCreateTreeItem(VDTC_TI_DIR, name);
+	return OnCreateTreeItem(VDTC_TI_DIR, name, fullpath);
 }
 
 
@@ -632,7 +636,7 @@ VdtcTreeItemBase *wxVirtualDirTreeCtrl::AddDirItem(const wxString &name)
 void wxVirtualDirTreeCtrl::OnAssignIcons(wxImageList &icons)
 {
 	BitmapLoader bmpLoader;
-	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/hard_disk")));          //0
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/hard_disk")));           //0
 	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/folder")));              //1
 	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/text")));                //2
 	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/cpp")));                 //3
@@ -648,14 +652,33 @@ void wxVirtualDirTreeCtrl::OnAssignIcons(wxImageList &icons)
 	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/html")));                //13
 	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/makefile")));            //14
 	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/wxfb")));                //15
-	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/cd")));                //16
-	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/erd")));                //17
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/cd")));                  //16
+	icons.Add(bmpLoader.LoadBitmap(wxT("mime/16/erd")));                 //17
+	
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/hard_disk")));           //0
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/folder")));              //1
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/text")));                //2
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/cpp")));                 //3
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/c")));                   //4
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/h")));                   //5
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/exe")));                 //6
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/php")));                 //7
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/dll")));                 //8
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/bmp")));                 //9
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/script")));              //10
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/zip")));                 //11
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/xml")));                 //12
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/html")));                //13
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/makefile")));            //14
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/wxfb")));                //15
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/cd")));                  //16
+	_images.push_back(bmpLoader.LoadBitmap(wxT("mime/16/erd")));                 //17
 }
 
-VdtcTreeItemBase *wxVirtualDirTreeCtrl::OnCreateTreeItem(int type, const wxString &name)
+VdtcTreeItemBase *wxVirtualDirTreeCtrl::OnCreateTreeItem(int type, const wxString &name, const wxString &fullpath)
 {
 	// return a default instance, no extra info needed in this item
-	return new VdtcTreeItemBase(type, name);
+	return new VdtcTreeItemBase(type, name, fullpath);
 }
 
 bool wxVirtualDirTreeCtrl::OnAddRoot(VdtcTreeItemBase &item, const wxFileName &name)

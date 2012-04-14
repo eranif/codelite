@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- /////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 // Name:        wxVirtualDirTreeCtrl.h
 // Author:      XX
 // Created:     Saturday, March 27, 2004 14:15:56
@@ -37,7 +37,7 @@
 //#endif
 
 #ifndef WX_PRECOMP
-    #include "wx/wx.h"
+#include "wx/wx.h"
 #endif
 
 #include <wx/dynarray.h>
@@ -47,17 +47,16 @@
 #include <map>
 #include "codelite_exports.h"
 
-enum
-{
-	VDTC_TI_ROOT = 0,
-	VDTC_TI_DIR,
-	VDTC_TI_FILE
+enum {
+    VDTC_TI_ROOT = 0,
+    VDTC_TI_DIR,
+    VDTC_TI_FILE
 };
 
 #ifdef __WXMSW__
-  #define VDTC_DIR_FILESPEC wxT("*.*")
+#define VDTC_DIR_FILESPEC wxT("*.*")
 #else
-  #define VDTC_DIR_FILESPEC wxT("*")
+#define VDTC_DIR_FILESPEC wxT("*")
 #endif
 
 /// Icon number for root
@@ -100,12 +99,13 @@ enum
 	and VdtcTreeItemBase::GetSelectedIconId() functions if you redefined the bitmaps in the imagelist.
 
 */
-class VdtcTreeItemBase : public wxTreeItemData
+class WXDLLIMPEXP_SDK VdtcTreeItemBase : public wxTreeItemData
 {
 protected:
-	wxString _name;
-	int _type;
+	wxString                _name;
+	int                     _type;
 	std::map<wxString, int> _imgIdx;
+	wxString                _fullpath;
 
 public:
 	/** Default constructor. Pass the parent of this node as a VdtcTreeItemBase object, the type
@@ -127,10 +127,10 @@ public:
 		\endcode
 
 	*/
-	VdtcTreeItemBase(int type, const wxString &name)
+	VdtcTreeItemBase(int type, const wxString &name, const wxString &fullpath)
 		: _name(name)
 		, _type(type)
-	{
+		, _fullpath(fullpath) {
 		_imgIdx[wxT("cpp")] = 3;
 		_imgIdx[wxT("cxx")] = 3;
 		_imgIdx[wxT("cc")]  = 3;
@@ -184,17 +184,16 @@ public:
 
 		// formbuilder files
 		_imgIdx[wxT("fbp")] =  15;
-		
+
 		// codedesigner files
 		_imgIdx[wxT("cdp")] =  16;
-		
+
 		// erd (dbexplorer) files
 		_imgIdx[wxT("erd")] =  17;
 	};
 
 	/** Default destructor */
-	~VdtcTreeItemBase()
-	{
+	~VdtcTreeItemBase() {
 		// NOTE: do not delete the tree item
 		// because the tree item deletes this item data
 	};
@@ -216,15 +215,14 @@ public:
 		- VDTC_ICON_FILE: For a file
 	*/
 	virtual int GetIconId() const {
-		switch(_type)
-		{
-			case VDTC_TI_ROOT:
-				return VDTC_ICON_ROOT;
-			case VDTC_TI_DIR:
-				return VDTC_ICON_DIR;
+		switch(_type) {
+		case VDTC_TI_ROOT:
+			return VDTC_ICON_ROOT;
+		case VDTC_TI_DIR:
+			return VDTC_ICON_DIR;
 		}
 
-		if(_type == VDTC_TI_FILE){
+		if(_type == VDTC_TI_FILE) {
 			//return icon id based on the file extension
 			wxString ext = _name.AfterLast(wxT('.'));
 			ext.MakeLower();
@@ -271,6 +269,9 @@ public:
 		return _type == VDTC_TI_FILE;
 	};
 
+	const wxString& GetFullpath() const {
+		return _fullpath;
+	}
 };
 
 // the formal definition of the array of pointers for tree item base
@@ -298,6 +299,7 @@ private:
 	wxImageList *_iconList;
 	/** Extra flags */
 	int _flags;
+	std::vector<wxBitmap> _images;
 
 #ifdef __WXMSW__
 	std::map< wxString, void*>  _cache;
@@ -341,12 +343,12 @@ protected:
 	void DoReloadNode(const wxTreeItemId &item);
 
 public:
-    /** Default constructor of this control. It is similar to the wxTreeCtrl */
-    wxVirtualDirTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-                  const wxSize& size = wxDefaultSize, long style = wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_MULTIPLE,
-                  const wxValidator& validator = wxDefaultValidator,
-                  const wxString& name = wxT("wxVirtualDirTreeCtrl"));
-    virtual ~wxVirtualDirTreeCtrl();
+	/** Default constructor of this control. It is similar to the wxTreeCtrl */
+	wxVirtualDirTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
+	                     const wxSize& size = wxDefaultSize, long style = wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_MULTIPLE,
+	                     const wxValidator& validator = wxDefaultValidator,
+	                     const wxString& name = wxT("wxVirtualDirTreeCtrl"));
+	virtual ~wxVirtualDirTreeCtrl();
 
 	/** Returns the extra flags currently set set for wxVirtualDirTreeCtrl.
 		\sa SetRootPath */
@@ -354,6 +356,9 @@ public:
 		return _flags;
 	};
 
+	const std::vector<wxBitmap>& GetImages() const {
+		return _images;
+	}
 	/** Sets the root path of the wxVirtualDirTreeCtrl. This will reset the view and restart the
 	    process of notification, and all events that need to be called. Returns false when this
 		root path does not lead to any valid filesystem or directory. Set extra flags for
@@ -417,25 +422,25 @@ public:
 	/** Adds a file item. Be aware that this call does not add it to the wxTreeCtrl. This only creates an instance
 	    of a VtdcTreeItemBase file node. The handler OnCreateTreeItem is called to allow the proper initialisation
 		of every newly created instance of the (inherited) VdtcTreeItemBase class. */
-	VdtcTreeItemBase *AddFileItem(const wxString &name);
+	VdtcTreeItemBase *AddFileItem(const wxString &name, const wxString &fullpath);
 
 	/** Adds a directory item. Be aware that this call does not add it to the wxTreeCtrl. This only creates an instance
 	    of a VtdcTreeItemBase directory node. The handler OnCreateTreeItem is called to allow the proper initialisation
 		of every newly created instance of the (inherited) VdtcTreeItemBase class. */
-	VdtcTreeItemBase *AddDirItem(const wxString &name);
+	VdtcTreeItemBase *AddDirItem(const wxString &name, const wxString &fullpath);
 
 	/** Returns parent of the passed VdtcItemBase object. It will fetch the wxTreeItemId of this parent,
 	    and return the VdtcTreeItemBase parent associated with it. If the associated item is nil, there is no
 		parent, this is most likely the root else an assertion failure occurs */
 	VdtcTreeItemBase *GetParent(VdtcTreeItemBase *item) const {
-		if(!item){
+		if(!item) {
 			return NULL;
 		}
 
 		wxTreeItemId p = GetItemParent(item->GetId());
-		if(p.IsOk()){
+		if(p.IsOk()) {
 			return (VdtcTreeItemBase *)GetItemData(p);
-		}else{
+		} else {
 			return NULL;
 		}
 	};
@@ -506,7 +511,7 @@ public:
 
 		\sa VdtcTreeItemBase
 	*/
-	virtual VdtcTreeItemBase *OnCreateTreeItem(int type, const wxString &name);
+	virtual VdtcTreeItemBase *OnCreateTreeItem(int type, const wxString &name, const wxString &fullpath);
 
 	/** This handler is called before the VdtcTreeItemBase item is added to the root. This will be the first item to be added
 	    before all else is added.
@@ -566,13 +571,13 @@ public:
 	virtual int OnCompareItems(const VdtcTreeItemBase *a, const VdtcTreeItemBase *b);
 
 private:
-    // WDR: member variable declarations for wxVirtualDirTreeCtrl
+	// WDR: member variable declarations for wxVirtualDirTreeCtrl
 
 private:
-    // WDR: handler declarations for wxVirtualDirTreeCtrl
+	// WDR: handler declarations for wxVirtualDirTreeCtrl
 
 private:
-    DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()
 };
 
 

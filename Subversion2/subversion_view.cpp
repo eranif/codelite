@@ -330,7 +330,12 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
 
 		wxVirtualDirTreeCtrl* fileExplorer = (wxVirtualDirTreeCtrl*) m_plugin->GetManager()->GetTree(TreeFileExplorer);
 		wxTreeItemId          feRootItem   = fileExplorer->GetItemByFullPath(rootDir);
-
+		
+#ifdef __WXMSW__
+		wxWindowUpdateLocker locker(fileExplorer);
+#else
+		clWindowUpdateLocker locker(fileExplorer);
+#endif
 		DoAddArrayToMap(modifiedFiles,    mymap, SvnFileExplorerTraverser::Modified,    rootDir);
 		DoAddArrayToMap(newFiles,         mymap, SvnFileExplorerTraverser::New,         rootDir);
 		DoAddArrayToMap(deletedFiles,     mymap, SvnFileExplorerTraverser::Deleted,     rootDir);
@@ -1327,7 +1332,7 @@ void SubversionView::OnFileExplorerItemExpanding(wxCommandEvent& e)
 	
 	if(tree && item && item->IsOk()) {
 		VdtcTreeItemBase* itemData = (VdtcTreeItemBase*)tree->GetItemData(*item);
-		if(itemData) {
+		if(itemData && itemData->IsDir()) {
 			this->BuildExplorerTree(itemData->GetFullpath());
 		}
 	}

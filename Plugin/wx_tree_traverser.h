@@ -21,7 +21,7 @@ public:
 	 * If item is invalid, the traverse will start from the root item
 	 * @param item
 	 */
-	void Traverse(const wxTreeItemId &item = wxTreeItemId());
+	virtual void Traverse(const wxTreeItemId &item = wxTreeItemId());
 	
 	/**
 	 * @brief this method is called by the traverser for every item in the tree

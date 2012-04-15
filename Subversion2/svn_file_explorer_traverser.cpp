@@ -22,11 +22,11 @@ void SvnFileExplorerTraverser::OnItem(const wxTreeItemId& item)
 			filename = wxFileName(itemData->GetFullpath(), wxT(""));
 		else
 			filename = itemData->GetFullpath();
-			
+
 		if(!IsPathUnderSvn(filename.GetFullPath(), itemData->IsDir())) {
 
 			if(itemData->IsDir() && filename.GetDirCount()) {
-				
+
 				// this directory is not under version control, however if the parent directory is under version control
 				// force it to use the 'Unversioned' icon
 				filename.RemoveLastDir();
@@ -46,9 +46,18 @@ void SvnFileExplorerTraverser::OnItem(const wxTreeItemId& item)
 			switch(fi.type) {
 			case Modified:
 			case Locked:
-			case Unversioned:
 			case Conflicted:
-			case Deleted:
+			case Deleted: {
+				// Keep the parents up to be marked as modified
+				wxArrayTreeItemIds parents;
+				DoGetParentsUpToRoot(item, parents);
+
+				for(size_t i=0; i<parents.GetCount(); i++)
+					m_dirs.insert(parents.Item(i));
+				// fall through
+			}
+
+			case Unversioned:
 			case New: {
 				// Example:
 				// Modified - Folder:
@@ -63,7 +72,6 @@ void SvnFileExplorerTraverser::OnItem(const wxTreeItemId& item)
 				m_tree->SetItemImage(item, itemIndx, wxTreeItemIcon_Selected);
 				m_tree->SetItemImage(item, itemIndx, wxTreeItemIcon_SelectedExpanded);
 				break;
-
 			}
 			case Ignored:
 				// do nothing ... keep the current image
@@ -106,5 +114,67 @@ bool SvnFileExplorerTraverser::IsPathUnderSvn(const wxString& path, bool isDir)
 		return exists;
 	} else {
 		return iter->second;
+	}
+}
+
+void SvnFileExplorerTraverser::Traverse(const wxTreeItemId& item)
+{
+	m_rootItem = item;
+	
+	// Determine the root item for our repository
+	wxTreeItemId newRoot = item;
+	while (m_tree->GetRootItem() != newRoot) {
+		
+		VdtcTreeItemBase * itemData = dynamic_cast<VdtcTreeItemBase*>(m_tree->GetItemData(newRoot));
+		if( itemData && IsPathUnderSvn(itemData->GetFullpath(), itemData->IsDir()) ) {
+			
+			m_rootItem = newRoot;
+			newRoot = m_tree->GetItemParent(newRoot);
+			
+		} else {
+			break;
+			
+		}
+	}
+	
+	wxTreeTraverser::Traverse(item);
+
+	// Mark the parents as modified as well
+	if(!m_dirs.empty()) {
+		
+		m_dirs.insert(m_rootItem);
+		Set_t::const_iterator iter = m_dirs.begin();
+		for(; iter != m_dirs.end(); iter++) {
+			VdtcTreeItemBase * itemData = dynamic_cast<VdtcTreeItemBase*>(m_tree->GetItemData(item));
+			if(!itemData)
+				continue;
+
+			int itemIndx = itemData->GetIconId() == -1 ? -1 : m_imgCount + itemData->GetIconId() + (m_imgCount * SvnFileExplorerTraverser::Modified);
+			m_tree->SetItemImage(*iter, itemIndx);
+			m_tree->SetItemImage(*iter, itemIndx, wxTreeItemIcon_Selected);
+			m_tree->SetItemImage(*iter, itemIndx, wxTreeItemIcon_SelectedExpanded);
+		}
+		
+	}
+}
+
+void SvnFileExplorerTraverser::DoGetParentsUpToRoot(const wxTreeItemId& item, wxArrayTreeItemIds& items)
+{
+	if(m_tree->GetRootItem() == item)
+		return;
+
+	wxTreeItemId parent = m_tree->GetItemParent(item);
+	while( parent.IsOk() && parent != m_tree->GetRootItem() ) {
+
+		VdtcTreeItemBase * itemData = dynamic_cast<VdtcTreeItemBase*>(m_tree->GetItemData(parent));
+		if(!itemData)
+			break;
+
+		if(!IsPathUnderSvn(itemData->GetFullpath(), itemData->IsDir()))
+			break;
+
+		items.Add( parent );
+		parent = m_tree->GetItemParent(parent);
+
 	}
 }

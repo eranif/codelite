@@ -191,13 +191,13 @@ public:
 
 		// erd (dbexplorer) files
 		_imgIdx[wxT("erd")] =  17;
-	};
+	}
 
 	/** Default destructor */
 	~VdtcTreeItemBase() {
 		// NOTE: do not delete the tree item
 		// because the tree item deletes this item data
-	};
+	}
 
 	/** Virtual function to report the caption back to the wxTreeCtrl to be added. If the caption should be
 	    something else then the default name it gets from the file (or the root path when this node points
@@ -205,7 +205,7 @@ public:
 	*/
 	virtual const wxString &GetCaption() const {
 		return _name;
-	};
+	}
 
 	/** Virtual function to return the icon ID this node should get. Per default it gets the ID of the
 	    default image list. If you assigned more bitmaps (or different bitmaps) to the image list, return
@@ -238,7 +238,7 @@ public:
 			}
 		}
 		return -1;
-	};
+	}
 
 	/** Virtual function to return the selected icon ID this node should get. Per default there is no icon
 	    associated with a selection. If you would like a selection, inherit this class and redefine this function
@@ -246,29 +246,29 @@ public:
 	*/
 	virtual int GetSelectedIconId() const {
 		return -1;
-	};
+	}
 
 	/** Gets this name. The name of the root is the base path of the whole directory, the
 	   name of a file node is the filename, and from a dir node the directory name.
 	   \sa IsDir, IsFile, IsRoot */
 	const wxString &GetName() {
 		return _name;
-	};
+	}
 
 	/** Returns true if this is of type VDTC_TI_DIR */
 	bool IsDir() const {
 		return _type == VDTC_TI_DIR;
-	};
+	}
 
 	/** Returns true if this is of type VDTC_TI_ROOT */
 	bool IsRoot() const {
 		return _type == VDTC_TI_ROOT;
-	};
+	}
 
 	/** Returns true if this is of type VDTC_TI_FILE */
 	bool IsFile() const {
 		return _type == VDTC_TI_FILE;
-	};
+	}
 
 	const wxString& GetFullpath() const {
 		return _fullpath;
@@ -355,7 +355,7 @@ public:
 		\sa SetRootPath */
 	int GetExtraFlags() const {
 		return _flags;
-	};
+	}
 
 	const std::vector<wxBitmap>& GetImages() const {
 		return _images;
@@ -378,7 +378,7 @@ public:
 	void ResetExtensions() {
 		_extensions.Clear();
 		_extensions.Add(VDTC_DIR_FILESPEC);
-	};
+	}
 
 	/** Returns the relative path of the item with the given wxTreeItemId. This doesn't include the
 	    root node. This can be used in ExpandToPath(). A check is made if the object belonging to this
@@ -444,7 +444,7 @@ public:
 		} else {
 			return NULL;
 		}
-	};
+	}
 
 	/**
 	 * \brief find item which holds fullpath

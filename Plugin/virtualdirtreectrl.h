@@ -44,6 +44,7 @@
 #include <wx/treectrl.h>
 #include <wx/filesys.h>
 #include <wx/imaglist.h>
+#include <vector>
 #include <map>
 #include "codelite_exports.h"
 

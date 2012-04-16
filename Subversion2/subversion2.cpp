@@ -5,6 +5,7 @@
 #include "event_notifier.h"
 #include "subversion_password_db.h"
 #include "svnxml.h"
+#include "virtualdirtreectrl.h"
 #include <wx/tokenzr.h>
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
@@ -374,19 +375,12 @@ void Subversion2::OnAdd(wxCommandEvent& event)
 
 void Subversion2::OnCommit(wxCommandEvent& event)
 {
-	wxString command;
-	wxString loginString;
-	if(LoginIfNeeded(event, DoGetFileExplorerItemPath(), loginString) == false) {
-		return;
-	}
+	wxString rootPath = m_subversionView->GetRootDir();
+	
+	if(rootPath == _("<No repository path is selected>"))
+		rootPath = DoGetFileExplorerItemPath();
 
-	CommitDialog dlg(GetManager()->GetTheApp()->GetTopWindow(), this);
-	if(dlg.ShowModal() == wxID_OK) {
-		bool nonInteractive = GetNonInteractiveMode(event);
-		wxString comment = dlg.GetMesasge();
-		command << GetSvnExeName(nonInteractive) << loginString << wxT(" commit ") << DoGetFileExplorerFilesAsString() << wxT(" -m \"") << comment << wxT("\"");
-		GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnCommitHandler(this, event.GetId(), this));
-	}
+	DoCommit(DoGetFileExplorerFilesToCommitRelativeTo(rootPath), rootPath, event);
 }
 
 void Subversion2::OnDelete(wxCommandEvent& event)
@@ -1018,3 +1012,106 @@ SvnConsole* Subversion2::GetConsole()
 	return GetSvnView()->GetSubversionConsole();
 }
 
+
+void Subversion2::DoCommit(const wxArrayString& files, const wxString& workingDirectory, wxCommandEvent& event)
+{
+	wxString command;
+	wxString loginString;
+	if(LoginIfNeeded(event, workingDirectory, loginString) == false) {
+		return;
+	}
+	
+	SvnInfo svnInfo;
+	DoGetSvnInfoSync(svnInfo, workingDirectory);
+	
+	bool nonInteractive = GetNonInteractiveMode(event);
+	command << GetSvnExeName(nonInteractive) << loginString << wxT(" commit ");
+	
+	CommitDialog dlg(EventNotifier::Get()->TopFrame(), files, svnInfo.m_sourceUrl, this);
+	if(dlg.ShowModal() == wxID_OK) {
+		
+		
+		wxArrayString actualFiles = dlg.GetPaths();
+		if (actualFiles.IsEmpty())
+			return;
+
+		for (size_t i=0; i<actualFiles.GetCount(); i++) {
+			command << wxT("\"") << actualFiles.Item(i) << wxT("\" ");
+		}
+
+		command << wxT(" -m \"");
+		command << dlg.GetMesasge();
+		command << wxT("\"");
+		GetConsole()->Execute(command, workingDirectory, new SvnCommitHandler(this, event.GetId(), this));
+	}
+}
+
+wxArrayString Subversion2::DoGetFileExplorerFilesToCommitRelativeTo(const wxString& wd)
+{
+	wxArrayString files;
+	wxVirtualDirTreeCtrl* fe = dynamic_cast<wxVirtualDirTreeCtrl*>( m_mgr->GetTree(TreeFileExplorer) );
+	if( !fe )
+		return files;
+	
+	wxArrayTreeItemIds items;
+	fe->GetSelections(items);
+	
+	for(size_t i=0; i<items.GetCount(); i++) {
+		
+		VdtcTreeItemBase * itemData = dynamic_cast<VdtcTreeItemBase*>(fe->GetItemData(items.Item(i)));
+		if( !itemData )
+			continue;
+		
+		if(itemData->IsDir()) {
+			
+			// Get the list of modified files from the directory
+			wxFileName dir(itemData->GetFullpath(), wxT(""));
+			wxArrayString modFiles = DoGetSvnStatusQuiet(dir.GetPath());
+			
+			for(size_t j=0; j<modFiles.GetCount(); j++) {
+				wxFileName fn(modFiles.Item(j));
+				fn.MakeAbsolute(dir.GetPath());
+				fn.MakeRelativeTo(wd);
+				
+				if(files.Index(fn.GetFullPath()) == wxNOT_FOUND) {
+					files.Add(fn.GetFullPath());
+				}
+			}
+			
+		} else {
+			wxFileName fn(itemData->GetFullpath());
+			fn.MakeRelativeTo(wd);
+			
+			if(files.Index(fn.GetFullPath()) == wxNOT_FOUND) {
+				files.Add(fn.GetFullPath());
+			}
+		}
+	}
+	return files;
+}
+
+wxArrayString Subversion2::DoGetSvnStatusQuiet(const wxString& wd)
+{
+	wxString command;
+	wxString output;
+
+	command << GetSvnExeName() << wxT(" status -q ");
+	command << wxT("\"") << wd << wxT("\"");
+
+	wxArrayString lines;
+
+	wxLog::EnableLogging(false);
+	ProcUtils::ExecuteCommand(command, lines);
+
+	for(size_t i=0; i<lines.GetCount(); i++) {
+		output << wxT("\r\n") << lines.Item(i);
+	}
+	
+	wxArrayString modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles, lockedFiles, ignoredFiles;
+	SvnXML::GetFiles(output, modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles, lockedFiles, ignoredFiles);
+	
+	modFiles.insert(modFiles.end(), newFiles.begin(), newFiles.end());
+	modFiles.insert(modFiles.end(), deletedFiles.begin(), deletedFiles.end());
+	wxLog::EnableLogging(true);
+	return modFiles;
+}

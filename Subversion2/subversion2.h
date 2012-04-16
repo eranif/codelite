@@ -86,11 +86,14 @@ protected:
 
 	wxMenu* CreateFileExplorerPopMenu();
 	bool    IsSubversionViewDetached ();
+	
 public:
-	void    DoGetSvnInfoSync         (SvnInfo& svnInfo, const wxString &workingDirectory);
-	void    DoSwitchURL              (const wxString &workingDirectory, const wxString &sourceUrl, wxCommandEvent &event);
-	void    DoLockFile               (const wxString &workingDirectory, const wxArrayString &fullpaths, wxCommandEvent &event, bool lock);
-	void    DoRename                 (const wxString &workingDirectory, const wxString &oldname, const wxString &newname, wxCommandEvent &event);
+	void    DoGetSvnInfoSync(SvnInfo& svnInfo, const wxString &workingDirectory);
+	void    DoSwitchURL     (const wxString &workingDirectory, const wxString &sourceUrl, wxCommandEvent &event);
+	void    DoLockFile      (const wxString &workingDirectory, const wxArrayString &fullpaths, wxCommandEvent &event, bool lock);
+	void    DoRename        (const wxString &workingDirectory, const wxString &oldname, const wxString &newname, wxCommandEvent &event);
+	void    DoCommit        (const wxArrayString& files, const wxString &workingDirectory, wxCommandEvent &event);
+	
 public:
 	Subversion2(IManager *manager);
 	~Subversion2();
@@ -142,12 +145,13 @@ protected:
 	void DoInitialize();
 	void DoSetSSH();
 	void DoGetSvnVersion();
-
+	wxArrayString DoGetSvnStatusQuiet(const wxString &wd);
 	wxString DoGetFileExplorerItemFullPath();
 	wxString DoGetFileExplorerItemPath();
 	
 	wxArrayString DoGetFileExplorerFiles();
 	wxString      DoGetFileExplorerFilesAsString();
+	wxArrayString DoGetFileExplorerFilesToCommitRelativeTo(const wxString &wd);
 };
 
 #endif //Subversion2

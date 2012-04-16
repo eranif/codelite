@@ -609,36 +609,8 @@ void SubversionView::OnUpdate(wxCommandEvent& event)
 
 void SubversionView::OnCommit(wxCommandEvent& event)
 {
-	wxString command;
-	wxString loginString;
-	if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) {
-		return;
-	}
-
-	bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
-	command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" commit ");
-
-	SvnInfo svnInfo;
-	m_plugin->DoGetSvnInfoSync(svnInfo, DoGetCurRepoPath());
-
-	CommitDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_selectionInfo.m_paths, svnInfo.m_sourceUrl, m_plugin);
-	if (dlg.ShowModal() == wxID_OK) {
-		m_selectionInfo.m_paths = dlg.GetPaths();
-		if (m_selectionInfo.m_paths.IsEmpty())
-			return;
-
-
-		for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
-			command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
-		}
-
-		command << wxT(" -m \"");
-		command << dlg.GetMesasge();
-		command << wxT("\"");
-		m_plugin->GetConsole()->Execute(command, DoGetCurRepoPath(), new SvnCommitHandler(m_plugin, event.GetId(), this));
-	}
+	m_plugin->DoCommit(m_selectionInfo.m_paths, DoGetCurRepoPath(), event);
 }
-
 
 void SubversionView::OnAdd(wxCommandEvent& event)
 {

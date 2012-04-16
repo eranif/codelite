@@ -47,6 +47,10 @@ CommitDialog::CommitDialog( wxWindow* parent, const wxArrayString &paths, const 
 		, m_plugin(plugin)
 		, m_url(url)
 {
+	wxString title = GetTitle();
+	title << wxT(" - ") << url;
+	SetTitle(title);
+	
 	for (size_t i=0; i<paths.GetCount(); i++) {
 		int index = m_checkListFiles->Append(paths.Item(i));
 		m_checkListFiles->Check((unsigned int)index);

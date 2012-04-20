@@ -59,7 +59,6 @@ wxString CppCommentCreator::CreateComment()
 
 wxString CppCommentCreator::FunctionComment()
 {
-	wxDateTime now = wxDateTime::Now();
 	wxString comment;
 
 	//parse the function signature

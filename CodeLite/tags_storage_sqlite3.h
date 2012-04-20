@@ -111,18 +111,15 @@ class WXDLLIMPEXP_CL clSqliteDB : public wxSQLite3Database
 	std::map<wxString, wxSQLite3Statement> m_statements;
 public:
 	clSqliteDB()
-	: wxSQLite3Database()
-	{
+		: wxSQLite3Database() {
 	}
 
-	void Close()
-	{
+	void Close() {
 		wxSQLite3Database::Close();
 		m_statements.clear();
 	}
 
-	wxSQLite3Statement GetPrepareStatement(const wxString& sql)
-	{
+	wxSQLite3Statement GetPrepareStatement(const wxString& sql) {
 		return wxSQLite3Database::PrepareStatement(sql);
 //		std::map<wxString, wxSQLite3Statement>::iterator iter = m_statements.find(sql);
 //		if(iter == m_statements.end()) {
@@ -588,6 +585,12 @@ public:
 	 * @copydoc ITagStorage::GetMacrosDefined
 	 */
 	virtual void GetMacrosDefined(const std::set<std::string>& files, const std::set<wxString>& usedMacros, wxArrayString& defMacros);
+	
+	/**
+	 * @brief search for a single match in the database for an entry with a given name
+	 */
+	TagEntryPtr GetTagsByNameLimitOne(const wxString& name);
+
 };
 
 #endif // CODELITE_TAGS_DATABASE_H

@@ -1647,6 +1647,19 @@ wxArrayString Language::DoExtractTemplateDeclarationArgs(TagEntryPtr tag)
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+void TemplateHelper::SetTemplateDeclaration(const wxString& templateDeclaration)
+{
+	LanguageST::Get()->ParseTemplateArgs(templateDeclaration, this->templateDeclaration);
+}
+
+void TemplateHelper::SetTemplateInstantiation(const wxString& tempalteInstantiation)
+{
+	this->templateInstantiationVector.clear();
+	wxArrayString l;
+	LanguageST::Get()->ParseTemplateInitList(tempalteInstantiation, l);
+	this->templateInstantiationVector.push_back(l);
+}
+
 void TemplateHelper::SetTemplateInstantiation(const wxArrayString& templInstantiation)
 {
 	// incase we are using template argument as template instantiation,
@@ -1987,3 +2000,5 @@ Language* LanguageST::Get()
 		gs_Language = new Language();
 	return gs_Language;
 }
+
+

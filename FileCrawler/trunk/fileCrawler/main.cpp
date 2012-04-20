@@ -13,6 +13,7 @@ int main(int argc, char **argv)
 //	fcFileOpener::Instance()->AddSearchPath("C:/wxWidgets-2.8.10/include");
 	fcFileOpener::Instance()->AddSearchPath("C:\\MinGW-4.4.0\\include");
 	fcFileOpener::Instance()->AddSearchPath("C:\\MinGW-4.4.0\\lib\\gcc\\mingw32\\4.4.0\\include\\c++");
+	fcFileOpener::Instance()->AddSearchPath("C:\\Users\\eran\\software\\codelite");
 	fcFileOpener::Instance()->AddExcludePath("C:\\MinGW-4.4.0\\lib\\gcc\\mingw32\\4.4.0\\include\\c++\\debug");
 //	fcFileOpener::Instance()->AddExcludePath("C:/wxWidgets-2.8.10/include/wx/unix");
 //	fcFileOpener::Instance()->AddExcludePath("C:/wxWidgets-2.8.10/include/wx/univ");
@@ -29,14 +30,12 @@ int main(int argc, char **argv)
 		}
 		printf("Found %d files \n", fcFileOpener::Instance()->GetResults().size());
 
-	//	double end   = GetTickCount();
-	//	printf("Found %d files in %f seconds\n", fcFileOpener::Instance()->GetResults().size(), (end-start)/1000);
-//		std::set<std::string>::const_iterator iter = fcFileOpener::Instance()->GetResults().begin();
-//
-//		printf("---->\n");
-//		for (; iter != fcFileOpener::Instance()->GetResults().end(); iter ++) {
-//			printf("%s\n", (*iter).c_str());
-//		}
+		std::set<std::string>::const_iterator iter = fcFileOpener::Instance()->GetResults().begin();
+
+		printf("---->\n");
+		for (; iter != fcFileOpener::Instance()->GetResults().end(); iter ++) {
+			printf("%s\n", (*iter).c_str());
+		}
 	}
 
 	std::set<std::string> ns = fcFileOpener::Instance()->GetNamespaces();

@@ -760,7 +760,7 @@ public:
 	 * @param &derivationList
 	 * @return
 	 */
-	bool GetDerivationList(const wxString &path, std::vector<wxString> &derivationList, std::set<wxString> &scannedInherits);
+	bool GetDerivationList(const wxString &path, TagEntryPtr parentTag, std::vector<wxString> &derivationList, std::set<wxString> &scannedInherits);
 
 	/**
 	 * @brief return true if the file is binary (by searching for NULL chars)
@@ -796,7 +796,7 @@ protected:
 	void           TryFindImplDeclUsingNS(const wxString &scope, const wxString &word, bool imp, const std::vector<wxString>& visibleScopes, std::vector<TagEntryPtr> &tags);
 	void           TryReducingScopes(const wxString &scope, const wxString &word, bool imp, std::vector<TagEntryPtr> &tags);
 	wxArrayString  BreakToOuterScopes(const wxString &scope);
-
+	wxString       DoReplaceMacrosFromDatabase(const wxString &name);
 };
 
 /// create the singleton typedef

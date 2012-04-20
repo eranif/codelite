@@ -133,6 +133,7 @@ void ParseThread::SetSearchPaths(const wxArrayString& paths, const wxArrayString
 {
 	wxCriticalSectionLocker locker( m_cs );
 	m_searchPaths.Clear();
+	m_excludePaths.Clear();
 	for (size_t i=0; i<paths.GetCount(); i++) {
 		m_searchPaths.Add( paths.Item(i).c_str() );
 	}

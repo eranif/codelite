@@ -56,7 +56,10 @@ class TemplateHelper
 public:
 	TemplateHelper() {}
 	~TemplateHelper() {}
-
+	
+	void SetTemplateDeclaration(const wxString& templateDeclaration);
+	void SetTemplateInstantiation(const wxString &tempalteInstantiation);
+	
 	void SetTemplateDeclaration(const wxArrayString& templateDeclaration) {
 		this->templateDeclaration = templateDeclaration;
 	}
@@ -91,7 +94,9 @@ public:
 class WXDLLIMPEXP_CL Language
 {
 	friend class LanguageST;
-
+	friend class TagEntry;
+	friend class TemplateHelper;
+	
 private:
 	std::map<char, char>    m_braces;
 	std::vector<wxString>   m_delimArr;

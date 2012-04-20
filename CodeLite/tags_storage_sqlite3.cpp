@@ -121,20 +121,20 @@ void TagsStorageSQLite::CreateSchema()
 		// from the TAGS table, the corresponded entry is also deleted from the
 		// global_tags
 		wxString trigger1 =
-wxT("CREATE TRIGGER IF NOT EXISTS tags_delete AFTER DELETE ON tags ")
-wxT("FOR EACH ROW ")
-wxT("BEGIN ")
-wxT("    DELETE FROM global_tags WHERE global_tags.tag_id = OLD.id;")
-wxT("END;");
+		    wxT("CREATE TRIGGER IF NOT EXISTS tags_delete AFTER DELETE ON tags ")
+		    wxT("FOR EACH ROW ")
+		    wxT("BEGIN ")
+		    wxT("    DELETE FROM global_tags WHERE global_tags.tag_id = OLD.id;")
+		    wxT("END;");
 
 		m_db->ExecuteUpdate(trigger1);
 
 		wxString trigger2 =
-wxT("CREATE TRIGGER IF NOT EXISTS tags_insert AFTER INSERT ON tags ")
-wxT("FOR EACH ROW WHEN NEW.scope = '<global>' ")
-wxT("BEGIN ")
-wxT("    INSERT INTO global_tags (id, name, tag_id) VALUES (NULL, NEW.name, NEW.id);")
-wxT("END;");
+		    wxT("CREATE TRIGGER IF NOT EXISTS tags_insert AFTER INSERT ON tags ")
+		    wxT("FOR EACH ROW WHEN NEW.scope = '<global>' ")
+		    wxT("BEGIN ")
+		    wxT("    INSERT INTO global_tags (id, name, tag_id) VALUES (NULL, NEW.name, NEW.id);")
+		    wxT("END;");
 		m_db->ExecuteUpdate(trigger2);
 
 		// Create unique index on tags table
@@ -625,11 +625,11 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope, const wxStr
 		sql << wxT("ID IN (select tag_id from global_tags where ");
 		DoAddNamePartToQuery(sql, name, partialNameAllowed, false);
 		sql << wxT(" ) ");
-		
+
 	} else {
 		DoAddNamePartToQuery(sql, name, partialNameAllowed, !scope.IsEmpty());
 	}
-	
+
 	sql << wxT(" LIMIT ") << this->GetSingleSearchLimit();
 
 	// get get the tags
@@ -1120,18 +1120,18 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const 
 {
 	if (scope.empty())  return;
 	if (name.IsEmpty()) return;
-	
+
 	wxArrayString scopes = scope;
-	
+
 	// Check the given scopes and remove the '<global>' scope from it
-	// we use the more specialized method for the <global> scope by quering the 
+	// we use the more specialized method for the <global> scope by quering the
 	// GLOBAL_TAGS table
 	int where = scopes.Index(wxT("<global>"));
 	if(where != wxNOT_FOUND) {
 		scopes.RemoveAt(where);
 		GetTagsByScopeAndName(wxString(wxT("<global>")), name, partialNameAllowed, tags);
 	}
-	
+
 	if(scopes.IsEmpty() == false) {
 		wxString sql;
 		sql << wxT("select * from tags where scope in(");
@@ -1146,7 +1146,7 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const 
 		DoAddLimitPartToQuery(sql, tags);
 		// get get the tags
 		DoFetchTags(sql, tags);
-		
+
 	}
 }
 
@@ -1412,8 +1412,7 @@ void TagsStorageSQLite::StoreMacros(const std::map<wxString, PPToken>& table)
 				stmntSimple.Bind(2, iter->second.name);
 				stmntSimple.ExecuteUpdate();
 				stmntSimple.Reset();
-			}
-			else {
+			} else {
 				// macros with replacement.
 				stmntCC.Bind(1, iter->second.fileName);
 				stmntCC.Bind(2, iter->second.line);
@@ -1455,7 +1454,7 @@ void TagsStorageSQLite::GetMacrosDefined(const std::set<std::string>& files, con
 		// Step 1 : Retrieve defined macros in MACROS table
 		wxString req;
 		req << wxT("select name from MACROS where file in (") << sFileList << wxT(")")
-			<< wxT(" and name in (") << sMacroList << wxT(")");
+		    << wxT(" and name in (") << sMacroList << wxT(")");
 		wxSQLite3ResultSet res = m_db->ExecuteQuery(req);
 		while (res.NextRow()) {
 			defMacros.push_back(res.GetString(0));
@@ -1464,7 +1463,7 @@ void TagsStorageSQLite::GetMacrosDefined(const std::set<std::string>& files, con
 		// Step 2 : Retrieve defined macros in SIMPLE_MACROS table
 		req.Clear();
 		req << wxT("select name from SIMPLE_MACROS where file in (") << sFileList << wxT(")")
-			<< wxT(" and name in (") << sMacroList << wxT(")");
+		    << wxT(" and name in (") << sMacroList << wxT(")");
 		res = m_db->ExecuteQuery(req);
 		while (res.NextRow()) {
 			defMacros.push_back(res.GetString(0));
@@ -1479,13 +1478,13 @@ void TagsStorageSQLite::GetTagsByName(const wxString& prefix, std::vector<TagEnt
 	try {
 		if(prefix.IsEmpty())
 			return;
-			
+
 		wxString sql;
 		sql << wxT("select * from tags where ");
 		DoAddNamePartToQuery(sql, prefix, !exactMatch, false);
 		DoAddLimitPartToQuery(sql, tags);
 		DoFetchTags(sql, tags);
-		
+
 	} catch (wxSQLite3Exception &e) {
 		CL_DEBUG(wxT("%s"), e.GetMessage().c_str());
 	}
@@ -1537,4 +1536,27 @@ void TagsStorageSQLite::DoAddLimitPartToQuery(wxString& sql, const std::vector<T
 	}
 }
 
+TagEntryPtr TagsStorageSQLite::GetTagsByNameLimitOne(const wxString& name)
+{
+	try {
+		if(name.IsEmpty())
+			return NULL;
+		
+		std::vector<TagEntryPtr> tags;
+		wxString sql;
+		sql << wxT("select * from tags where ");
+		DoAddNamePartToQuery(sql, name, false, false);
+		sql << wxT(" LIMIT 1 ");
+		
+		DoFetchTags(sql, tags);
+		if(tags.size() == 1)
+			return tags.at(0);
+		else
+			return NULL;
 
+	} catch (wxSQLite3Exception &e) {
+		CL_DEBUG(wxT("%s"), e.GetMessage().c_str());
+	}
+	return NULL;
+
+}

@@ -60,10 +60,10 @@ TEST_FUNC(testMacros)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("wxTheClipboard->"), LoadFile(wxT("../tests/simple_tests.h")), tags);
-	CHECK_SIZE(tags.size(), 71);
+	CHECK_SIZE(tags.size(), 80);
 
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("wxTheApp->"), LoadFile(wxT("../tests/simple_tests.h")), tags);
-	CHECK_SIZE(tags.size(), 184);
+	CHECK_SIZE(tags.size(), 192);
 
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("EG(name)."), LoadFile(wxT("../tests/simple_tests.h")), tags);
 	CHECK_SIZE(tags.size(), 210);
@@ -184,7 +184,7 @@ TEST_FUNC(testTemplateTypedef)
 {
 	std::vector<TagEntryPtr> tags;
 	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_template_typedef.h")), 3, wxT("ManagerST::Get()->"), LoadFile(wxT("../tests/test_template_typedef.h")), tags);
-	CHECK_SIZE(tags.size(), 253);
+	CHECK_SIZE(tags.size(), 256);
 	return true;
 }
 
@@ -402,7 +402,7 @@ void testRetagWorkspace()
 	TagsManagerST::Get()->SetCodeLiteIndexerPath(wxT("/usr/bin"));
 	TagsManagerST::Get()->StartCodeLiteIndexer();
 	TagsManagerST::Get()->OpenDatabase(wxFileName(wxT("test.tags")));
-	TagsManagerST::Get()->RetagFiles(files, false);
+	TagsManagerST::Get()->RetagFiles(files, TagsManager::Retag_Full);
 
 	char line [100];
 	gets(line);

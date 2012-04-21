@@ -1431,11 +1431,7 @@ bool TagsManager::GetDerivationList(const wxString& path, TagEntryPtr parentTag,
 						TemplateHelper th;
 
 						// e.g. template<typename T> class MyClass
-						wxString templateArgs;
-						templateArgs = tag->GetPattern().AfterFirst(wxT('<'));
-						templateArgs = templateArgs.BeforeLast(wxT('>'));
-						templateArgs.Prepend(wxT("<")).Append(wxT(">"));
-
+						wxArrayString templateArgs = GetLanguage()->DoExtractTemplateDeclarationArgs(tag);
 						th.SetTemplateDeclaration(templateArgs);                // <typename T>
 						th.SetTemplateInstantiation(templateInstantiationLine); // e.g. MyClass<wxString>
 

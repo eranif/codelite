@@ -96,6 +96,7 @@ class WXDLLIMPEXP_CL Language
 	friend class LanguageST;
 	friend class TagEntry;
 	friend class TemplateHelper;
+	friend class TagsManager;
 	
 private:
 	std::map<char, char>    m_braces;

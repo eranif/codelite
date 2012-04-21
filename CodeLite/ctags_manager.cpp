@@ -1378,7 +1378,7 @@ bool TagsManager::IsTypeAndScopeExists(wxString &typeName, wxString &scope)
 	return GetDatabase()->IsTypeAndScopeExist(typeName, scope);
 }
 
-bool TagsManager::GetDerivationList(const wxString& path, TagEntryPtr parentTag, std::vector<wxString>& derivationList, std::set<wxString>& scannedInherits)
+bool TagsManager::GetDerivationList(const wxString& path, TagEntryPtr derivedClassTag, std::vector<wxString>& derivationList, std::set<wxString>& scannedInherits)
 {
 	std::vector<TagEntryPtr> tags;
 	TagEntryPtr tag;
@@ -1396,13 +1396,22 @@ bool TagsManager::GetDerivationList(const wxString& path, TagEntryPtr parentTag,
 	}
 
 	if (tag && tag->IsOk()) {
-
-		wxArrayString ineheritsList = tag->GetInheritsAsArrayNoTemplates();
+		
+		// Get the template instantiation list from the child class
+		wxArrayString ineheritsList  = tag->GetInheritsAsArrayNoTemplates();
+		
 		wxString templateInstantiationLine;
-		if(parentTag) {
-			templateInstantiationLine = parentTag->GetPattern().AfterFirst('<');
-			if(!templateInstantiationLine.IsEmpty()) {
-				templateInstantiationLine.Prepend(wxT("<"));
+		if(derivedClassTag) {
+			wxArrayString p_ineheritsListT = derivedClassTag->GetInheritsAsArrayWithTemplates();
+			wxArrayString p_ineheritsList  = derivedClassTag->GetInheritsAsArrayNoTemplates();
+			
+			for(size_t i=0; i<p_ineheritsList.GetCount(); i++) {
+				if(p_ineheritsList.Item(i) == tag->GetName()) {
+					templateInstantiationLine =  p_ineheritsListT.Item(i);
+					templateInstantiationLine = templateInstantiationLine.AfterFirst(wxT('<'));
+					templateInstantiationLine.Prepend(wxT("<"));
+					break;
+				}
 			}
 		}
 
@@ -1427,7 +1436,7 @@ bool TagsManager::GetDerivationList(const wxString& path, TagEntryPtr parentTag,
 					bool testForTemplate = !IsTypeAndScopeExists(inherits, possibleScope);
 
 					// If the type does not exists, check for templates
-					if( testForTemplate && parentTag && isTempplate ) {
+					if( testForTemplate && derivedClassTag && isTempplate ) {
 						TemplateHelper th;
 
 						// e.g. template<typename T> class MyClass

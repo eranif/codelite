@@ -959,10 +959,10 @@ bool Manager::AddFileToProject ( const wxString &fileName, const wxString &vdFul
 	return true;
 }
 
-void Manager::AddFilesToProject ( const wxArrayString &files, const wxString &vdFullPath, wxArrayString &actualAdded )
+void Manager::AddFilesToProject(const wxArrayString& files, const wxString& vdFullPath, wxArrayString& actualAdded)
 {
 	wxString project;
-	project = vdFullPath.BeforeFirst ( wxT ( ':' ) );
+	project = vdFullPath.BeforeFirst(wxT(':'));
 
 	// Add the file to the project
 	wxString errMsg;
@@ -970,33 +970,52 @@ void Manager::AddFilesToProject ( const wxArrayString &files, const wxString &vd
 	size_t i=0;
 
 	//try to find this file in the workspace
-	for ( i=0; i<files.GetCount(); i++ ) {
-		wxString projName = this->GetProjectNameByFile ( files.Item ( i ) );
+	for (i=0; i < files.GetCount(); i++) {
+		wxString projName = this->GetProjectNameByFile(files.Item(i));
 		//allow adding the file, only if it does not already exist under the current project
 		//(it can be already exist under the different project)
-		if ( projName.IsEmpty() || projName != project ) {
-			actualAdded.Add ( files.Item ( i ) );
+		if (projName.IsEmpty() || projName != project) {
+			actualAdded.Add(files.Item(i));
 		}
+#if defined(__WXGTK__)
+			else {
+			// In Linux, files 'abc' and 'Abc' can happily co-exist, so see if that's what's happening
+			wxString projName = this->GetProjectNameByFile(files.Item(i), true); // 'true' is case-sensitive comparison
+			if (projName.IsEmpty() || projName != project) {
+				wxString msg1(_("There is already a file in this folder with a name that matches using case-insensitive comparison"));
+				wxString msg2(_("\nThis won't be a problem on Linux, but it may be on other, case-insensitive platforms"));
+				wxString msg3(_("\n\nAdd the file anyway?"));
+				if (wxMessageBox(msg1+msg2+msg3, _("Possible name-clash"), wxICON_QUESTION|wxYES_NO|wxCANCEL, clMainFrame::Get()) == wxYES) {
+					actualAdded.Add(files.Item(i));
+				}
+			}
+		}
+#endif
 	}
 
-	for ( i=0; i<actualAdded.GetCount(); i++ ) {
+	for (i=0; i < actualAdded.GetCount(); i++) {
 		Workspace *wsp = WorkspaceST::Get();
-		wsp->AddNewFile ( vdFullPath, actualAdded.Item ( i ), errMsg );
+		wsp->AddNewFile (vdFullPath, actualAdded.Item(i), errMsg);
 	}
 
 	//convert wxArrayString to vector for the ctags api
 	std::vector<wxFileName> vFiles;
-	for ( size_t i=0; i<actualAdded.GetCount(); i++ ) {
-		vFiles.push_back ( actualAdded.Item ( i ) );
+	for (size_t i=0; i<actualAdded.GetCount(); i++) {
+		vFiles.push_back(actualAdded.Item(i));
 	}
 
 	//re-tag the added files
-	if ( vFiles.empty() == false ) {
-		TagsManagerST::Get()->RetagFiles ( vFiles, TagsManager::Retag_Quick );
+	if (vFiles.empty() == false) {
+		TagsManagerST::Get()->RetagFiles(vFiles, TagsManager::Retag_Quick);
 	}
 
-	if ( !actualAdded.IsEmpty() ) {
-		SendCmdEvent ( wxEVT_PROJ_FILE_ADDED, ( void* ) &actualAdded );
+	if (!actualAdded.IsEmpty()) {
+		SendCmdEvent(wxEVT_PROJ_FILE_ADDED,(void*)&actualAdded);
+	} 
+	
+	if (actualAdded.GetCount() < files.GetCount()) {
+		wxString msg = wxString::Format(_("%u file(s) not added, probably due to a name-clash"), (unsigned int)(files.GetCount() - actualAdded.GetCount()));
+		wxMessageBox(msg, _("CodeLite"), wxOK, clMainFrame::Get());
 	}
 }
 
@@ -1193,21 +1212,27 @@ void Manager::GetProjectFiles ( const wxString &project, wxArrayString &files )
 	}
 }
 
-wxString Manager::GetProjectNameByFile ( const wxString &fullPathFileName )
+wxString Manager::GetProjectNameByFile(const wxString& fullPathFileName, bool caseSensitive /*= false*/)
 {
 	wxArrayString projects;
-	GetProjectList ( projects );
+	GetProjectList(projects);
 
 	std::vector<wxFileName> files;
-	for ( size_t i=0; i<projects.GetCount(); i++ ) {
+	for (size_t i=0; i < projects.GetCount(); i++) {
 		files.clear();
-		ProjectPtr proj = GetProject ( projects.Item ( i ) );
-		proj->GetFiles ( files, true );
+		ProjectPtr proj = GetProject(projects.Item(i));
+		proj->GetFiles(files, true);
 
-		for ( size_t xx=0; xx<files.size(); xx++ ) {
-			wxString f (files.at ( xx ).GetFullPath());
-			if ( f.CmpNoCase(fullPathFileName) == 0 ) {
-				return proj->GetName();
+		for (size_t xx=0; xx < files.size(); xx++) {
+			wxString f(files.at(xx ).GetFullPath());
+			if (caseSensitive) {
+				if (f.Cmp(fullPathFileName) == 0) {
+					return proj->GetName();
+				}
+			} else {
+				if (f.CmpNoCase(fullPathFileName) == 0) {
+					return proj->GetName();
+				}
 			}
 		}
 	}

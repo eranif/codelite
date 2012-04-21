@@ -446,10 +446,12 @@ public:
 	void GetActiveFileProjectFiles(wxArrayString &files);
 
 	/**
-	 * return the project name that 'fullPathFileName' belogs to. if 2 matches were found, return
-	 * the first one, or empty string if no match was found
+	 * @brief return the project name that 'fullPathFileName' belongs to. if 2 matches are found, return
+	 * the first one, or empty string if no match is found
+	 * \param fullPathFileName the filepath to search with
+	 * \param caseSensitive do a case-sensitive search
 	 */
-	wxString GetProjectNameByFile(const wxString &fullPathFileName);
+	wxString GetProjectNameByFile(const wxString& fullPathFileName, bool caseSensitive = false);
 
 
 	//--------------------------- Project Settings Mgmt -----------------------------
